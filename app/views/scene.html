@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="400px" height="400px">
+	<path d="
+		M 0,{{ dim.radius * dim.unit }}
+		q 0,-{{ dim.radius * dim.unit }} {{ dim.radius * dim.unit }},-{{ dim.radius * dim.unit }}
+		l {{ ( dim.width - 2 * dim.radius ) * dim.unit }},0
+		q {{ dim.radius * dim.unit }},0 {{ dim.radius * dim.unit }},{{ dim.radius * dim.unit }}
+		l 0,{{ ( dim.height - 2 * dim.radius ) * dim.unit }}
+		q 0,{{ dim.radius * dim.unit }} -{{ dim.radius * dim.unit }},{{ dim.radius * dim.unit }}
+		l -{{ ( dim.width - 2 * dim.radius ) * dim.unit }},0
+		q -{{ dim.radius * dim.unit }},0 -{{ dim.radius * dim.unit }},-{{ dim.radius * dim.unit }}
+		z
+	" fill="black" />
+</svg>
