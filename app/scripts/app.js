@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0App', ['prototyp0Filters'])
+angular.module('prototyp0App', [])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {

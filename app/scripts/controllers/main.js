@@ -6,6 +6,8 @@ angular.module('prototyp0App')
 			unit: 200,
 			width: 0.1,
 			height: 0.1,
-			radius: 0
+			radius: 0,
+			largeur: 0,
+			hauteur: 0
 		};
 	});
