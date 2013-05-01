@@ -10,4 +10,4 @@ angular.module('prototyp0App')
 			largeur: 0,
 			hauteur: 0
 		};
-	});
+	});		

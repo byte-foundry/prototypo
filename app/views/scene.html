@@ -1,27 +1,22 @@
+<!--
+	Tentative d'inversion de l'axe Y :
+	transform="matrix(1 0 0 -1 0 800)" 
+-->
+
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="1200" height="800">
-	<g transform="matrix(1 0 0 -1 0 800)" >
-		<path d="
-			M 655,{{650 - dim.hauteur}} 
-			L 655,281 
-			L {{534 - dim.largeur}},281
-			L {{534 - dim.largeur}},308
-			L {{534 - dim.largeur}},335
-			L 571,{{335 + dim.hauteur}} 
-			L 571,{{650 - dim.hauteur}}  
-			L {{534 - dim.largeur}},{{650 - dim.hauteur}}  
-			L {{534 - dim.largeur}},675 
-			L {{534 - dim.largeur}},703 
-			L 612,703 
-			L {{690 + dim.largeur}},703 
-			L {{690 + dim.largeur}},675 
-			L {{690 + dim.largeur}},{{650 - dim.hauteur}}  
-		Z
-		" fill="black" />
-		<circle
+	<g>
+		<path fill="black" 
+			d="{{ dim | glyph:'i' }}  
+			Z
+			"/>
+		<!--<circle
 			class="dot" 
 			cx="613" 
 			cy="152" 
 			r="50"
-		/>
+		/>-->
 	</g>
 </svg>
+
+
+
