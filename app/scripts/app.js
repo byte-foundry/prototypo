@@ -11,4 +11,5 @@ angular.module('prototyp0App', ['prototyp0Filters'])
         redirectTo: '/'
       });
   })
-  .value( 'glyphs', [] );
+  .value( 'glyphs', [] )
+  .value( 'components', [] );
