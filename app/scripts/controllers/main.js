@@ -33,4 +33,4 @@ angular.module('prototyp0App')
 		};
 
 		$scope.glyphs = glyphs;
-});		
+});

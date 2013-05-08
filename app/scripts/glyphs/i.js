@@ -3,7 +3,7 @@ angular.module('prototyp0Glyph', ['prototyp0App','prototyp0Components'])
 		glyphs['i'] = function( dim ) {
 			var glyph = [];
 			var tmp = [];
-			
+
 			// need an initialization to use forward nodes
 
 			glyph[0] = [ 'M', 130, 465 ];
@@ -29,13 +29,13 @@ angular.module('prototyp0Glyph', ['prototyp0App','prototyp0Components'])
 			glyph[19] = [ 'C', 139, 576, 117, 553, 90, 553 ];
 			glyph[20] = [ 'C', 63, 553, 42, 576, 42, 603 ];
 			glyph[21] = [ 'C', 42, 630, 63, 652, 90, 652 ];
-		
+
 			//
 
 			glyph[0] = [ 'M', glyph[16][5], glyph[16][6] ];
 			glyph[1] = [ 'C', glyph[0][1], glyph[0][2], glyph[1][5], glyph[1][6], glyph[0][1], 3 + dim.s_height ];
 
-			
+
 			glyph[2] = [ 'C', glyph[1][5], glyph[1][6], ( tmp[0] = glyph[1][5] + 1 + dim.s_width ), 2 + dim.s_height , tmp[0], 2 + dim.s_height ];
 			glyph[3] = [ 'C', glyph[2][5], glyph[2][6], glyph[2][5], glyph[3][6], glyph[2][5], glyph[2][6] / 2 ];
 			glyph[4] = [ 'C', glyph[2][5], glyph[3][6], glyph[2][5], 0, glyph[2][5], 0 ];
@@ -64,7 +64,7 @@ angular.module('prototyp0Glyph', ['prototyp0App','prototyp0Components'])
 
 			return glyph;
 
-			
+
 		};
 
 		glyphs['H'] = [

@@ -8,7 +8,7 @@ angular.module('prototyp0Filters', ['prototyp0App', 'prototyp0Glyph'])
 			var d = [],
 				array = glyphs[ glyph ]( input );
 
-			_( array ).each(function( line ) { 
+			_( array ).each(function( line ) {
 				d.push( line.join(' ') );
 			});
 
