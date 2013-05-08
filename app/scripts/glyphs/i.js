@@ -83,6 +83,8 @@ angular.module('prototyp0Glyph', ['prototyp0App','prototyp0Components'])
 			['H', '347']
 		];
 
+		glyphs['Z'] = [];
+
 	});
 
 

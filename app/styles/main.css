@@ -3,3 +3,8 @@
 .sliders {
 	position: absolute;
 }
+
+.interface {
+	position:absolute;
+	right: 0;
+}

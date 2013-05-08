@@ -1,9 +1,10 @@
 'use strict';
 
+//angular.module('prototyp0App', ['prototyp0Glyph'])
+
 angular.module('prototyp0App')
-	.controller('MainCtrl', function ( $scope ) {
+	.controller('MainCtrl', function ( $scope, glyphs ) {
 		$scope.dim = {
-			unit: 200,
 
 			s_width: 0,
 			s_height: 0,
@@ -26,9 +27,10 @@ angular.module('prototyp0App')
 			break_path: 0,
 			counter: 0,
 			inktrap: 0,
-
 			roundness: 0.55,
-
 			baseline: 0
+
 		};
-	});		
+
+		$scope.glyphs = glyphs;
+});		
