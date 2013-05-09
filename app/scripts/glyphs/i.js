@@ -1,5 +1,7 @@
-angular.module('prototyp0Glyph', ['prototyp0App','prototyp0Components'])
-	.run(function( glyphs, components ) {
+'use strict';
+
+angular.module('prototyp0.glyphs')
+	.config(function( glyphs, components ) {
 		glyphs['i'] = function( dim ) {
 			var glyph = [];
 			var tmp = [];

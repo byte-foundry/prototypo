@@ -1,8 +1,10 @@
-angular.module('prototyp0Filters', ['prototyp0App', 'prototyp0Glyph'])
+'use strict';
+
+angular.module('prototyp0.filters', [])
 	.filter('glyph', function( $compile, $rootScope, glyphs ) {
 		return function( input, glyph ) {
 			_( input ).each(function( value, key ) {
-				input[ key ] = +value
+				input[ key ] = +value;
 			});
 
 			var d = [],
