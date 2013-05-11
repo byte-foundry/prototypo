@@ -51,9 +51,7 @@ angular.module('prototyp0.glyphs')
 
 			glyph[10] = [ 'C', glyph[9][5], glyph[9][6], glyph[10][5], ( tmp[0] = 3 + dim.s_height ), glyph[6][5] + 1 - (dim.thickness / 2), tmp[0] ];
 
-			glyph[11] = [ 'C', glyph[10][5], glyph[10][6], 50, dim.x_height - 3 - dim.s_height, 50, dim.x_height - 3 - dim.s_height ];
-
-			components['serif-top-left'](dim, glyph, 12);
+			components['serif-top-left'](dim, glyph, 11);
 
 			glyph[16] = [ 'C', 89, glyph[0][2] - dim.s_arc, glyph[0][1], glyph[0][2] - dim.s_arc, glyph[15][5] + dim.thickness / 2 + 1, dim.x_height ];
 

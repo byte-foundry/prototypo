@@ -1,6 +1,5 @@
 'use strict';
 
-//angular.module('prototyp0App', ['prototyp0Glyph'])
 
 angular.module('prototyp0App')
 	.controller('MainCtrl', function ( $scope, glyphs ) {
@@ -8,7 +7,7 @@ angular.module('prototyp0App')
 
 			s_width: 0,
 			s_height: 0,
-			s_median: 0,
+			s_median: 1,
 			s_curve: 0,
 			s_arc: 0,
 			s_terminal: 0,
