@@ -27,7 +27,7 @@ angular.module('prototyp0.components')
 			];
 
 			glyph[index + 2] = [ 'C',
-				tmp[0] - ( tmp[0] - ( tmp[1] = tmp[0] - dim.s_terminal ) /* glyph[index + 2][5] */ ) * dim.roundness,
+				tmp[0] - ( tmp[0] - ( tmp[1] = tmp[0] - dim.s_terminal * dim.s_width ) /* glyph[index + 2][5] */ ) * dim.roundness,
 				glyph[index + 1][6],
 				tmp[1],
 				( tmp[2] = glyph[index + 1][6] + (glyph[index + 3][6] - glyph[index + 1][6]) / 2 ) /* glyph[index + 2][6] */ - ( tmp[2] - tmp[4] ) * dim.roundness,
