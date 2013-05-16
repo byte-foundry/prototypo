@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0App', ['prototyp0.filters', 'prototyp0.glyphs', 'prototyp0.components'])
+angular.module('prototyp0App', ['prototyp0.filters', 'prototyp0.glyphs'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
@@ -10,6 +10,4 @@ angular.module('prototyp0App', ['prototyp0.filters', 'prototyp0.glyphs', 'protot
       .otherwise({
         redirectTo: '/'
       });
-  })
-  .value( 'glyphs', [] )
-  .value( 'components', [] );
+  });

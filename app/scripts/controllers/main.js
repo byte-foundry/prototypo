@@ -2,8 +2,8 @@
 
 
 angular.module('prototyp0App')
-	.controller('MainCtrl', function ( $scope, glyphs ) {
-		$scope.dim = {
+	.controller('MainCtrl', function ( $scope, normalize, calcSegments ) {
+		$scope.sliders = {
 
 			s_width: 0,
 			s_height: 0,
@@ -28,8 +28,16 @@ angular.module('prototyp0App')
 			inktrap: 0,
 			roundness: 0.55,
 			baseline: 0
-
 		};
 
-		$scope.glyphs = glyphs;
-});
+		$scope.segments = [];
+
+		$scope.normalize = normalize;
+
+		$scope.calcSegments = calcSegments;
+
+		$scope.$watch('sliders', function() {
+			$scope.normalize();
+			$scope.calcSegments( 'i' );
+		}, true);
+	});
