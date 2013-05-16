@@ -8,10 +8,10 @@ angular.module('prototyp0.filters', [])
 			});
 
 			var d = [],
-				array = glyphs[ glyph ]( input );
+				segments = glyphs[ glyph ]( input );
 
-			_( array ).each(function( line ) {
-				d.push( line.join(' ') );
+			_( segments ).each(function( segment ) {
+				d.push( segment.join(' ') );
 			});
 
 			return d.join(' ');

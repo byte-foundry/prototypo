@@ -12,9 +12,9 @@ angular.module('prototyp0.components')
 				glyph[index - 1][5],
 				glyph[index - 1][6],
 				glyph[index][5],
-				glyph[index][6],
+				( tmp[6] = dim.x_height - 3 - dim.s_height - ( dim.s_curve * dim.s_width ) ),
 				glyph[index - 1][5],
-				dim.x_height - 3 - dim.s_height - ( dim.s_curve * dim.s_width )
+				tmp[6]
 			];
 
 			glyph[index + 1] = [ 'C',
