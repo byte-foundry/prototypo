@@ -31,7 +31,7 @@ angular.module('prototyp0.components')
 				glyph[index + 1][6],
 				tmp[2],
 				( tmp[3] = tmp[1] / 2 ) /* glyph[index + 2][6] */ + ( tmp[1] - tmp[3] ) * dim.roundness,
-				tmp[2] /* tmp[2] */ ,
+				tmp[2] /* tmp[2] */,
 				tmp[3] /* tmp[3] */
 			];
 
@@ -45,12 +45,12 @@ angular.module('prototyp0.components')
 			];
 
 			glyph[index + 4] = [ 'C',
-				glyph[index + 3][5],
+				tmp[0] - ( tmp[0] - ( tmp[5] = tmp[0] - ( tmp[0] - ( tmp[4] = glyph[index + 4][5] - dim.thickness / 2 - 1 - dim.s_width)  /* may cause some troubles when the start point is not centered on the stem   //  glyph[index][5] */ ) / 2 ) ) * dim.roundness,
 				glyph[index + 3][6],
-				glyph[index + 4][5],
+				tmp[5] + ( tmp[0] - tmp[5] ) * dim.roundness,
 				glyph[index + 4][6],
-				90, /*  /!\ must create relative coordinates /!\  */
-				0
+				tmp[5],
+				dim.s_arc * dim.s_height
 			];
 
 		};

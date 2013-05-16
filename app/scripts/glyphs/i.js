@@ -8,6 +8,56 @@ angular.module('prototyp0.glyphs')
 
 			// need an initialization to use forward points
 
+			/*
+			glyph[0] = [ 'M', 665, 0 ];
+			glyph[1] = [ 'c', 0, 0, -46, 0, -46, 0 ];
+			glyph[2] = [ 'c', 0, 0, -48, 0, -48, 0 ];
+			glyph[3] = [ 'c', 0, 0, 0, 1, 0, 1 ];
+			glyph[4] = [ 'c', 0, 0, 0, 1, 0, 1 ];
+			glyph[5] = [ 'c', 0, 0, 1, 1, 1, 1 ];
+			glyph[6] = [ 'c', 0, 0, -79, 209, -79, 209 ];
+			glyph[7] = [ 'c', 0, 0, 1, 1, 1, 1 ];
+			glyph[8] = [ 'c', 0, 0, -1, 1, -1, 1 ];
+			glyph[9] = [ 'c', 0, 0, -1, -1, -1, -1 ];
+			glyph[10] = [ 'c', 0, 0, -316, 0, -316, 0 ];
+			glyph[11] = [ 'c', 0, 0, -1, 1, -1, 1 ];
+			glyph[12] = [ 'c', 0, 0, -1, 1, -1, -1 ];
+			glyph[13] = [ 'c', 0, 0, 1, -1, 1, -1 ];
+			glyph[14] = [ 'c', 0, 0, -82, -209, -82, -209 ];
+			glyph[15] = [ 'c', 0, 0, 1, -1, 1, -1 ];
+			glyph[16] = [ 'c', 0, 0, 0, -1, 0, -1 ];
+			glyph[17] = [ 'c', 0, 0, 0, -1, 0, -1 ];
+			glyph[18] = [ 'c', 0, 0, -46, 0, -46, 0 ];
+			glyph[19] = [ 'c', 0, 0, -46, 0, -46, 0 ];
+			glyph[20] = [ 'c', 0, 0, 0, 1, 0, 1 ];
+			glyph[21] = [ 'c', 0, 0, 0, 1, 0, 1 ];
+			glyph[22] = [ 'c', 0, 0, 1, 1, 1, 1 ];
+			glyph[23] = [ 'c', 0, 0, 289, 741, 289, 741 ];
+			glyph[24] = [ 'c', 0, 0, -1, 1, -1, 1 ];
+			glyph[25] = [ 'c', 0, 0, 0, 1, 0, 1 ];
+			glyph[26] = [ 'c', 0, 0, 0, 1, 0, 1 ];
+			glyph[27] = [ 'c', 0, 0, 43, 0, 43, 0 ];
+			glyph[28] = [ 'c', 0, 0, 41, 0, 41, 0 ];
+			glyph[29] = [ 'c', 0, 0, 290 - dim.s_height * 0.38978494623656, -744 + dim.s_height, 290 - dim.s_height * 0.38978494623656, -744 + dim.s_height ];
+			glyph[30] = [ 'c', 0, 0, 1 + dim.s_width, -1, 1 + dim.s_width, -1 ];
+			glyph[31] = [ 'c', 0, 0, 0, -1, 0, -1 ];
+			glyph[32] = [ 'c', 0, 0, 0, -1, 0, -1 ];
+
+			glyph[33] = [ 'M', 464, 293 ];
+			glyph[34] = [ 'c', -1, 1, -1, 1, -1, 1 ];
+			glyph[35] = [ 'c', -130, 342, -130, 342, -130, 342 ];
+			glyph[36] = [ 'c', 0, 2, 0, 2, 0, 2 ];
+			glyph[37] = [ 'c', -1, 0, -1, 0, -1, 0 ];
+			glyph[38] = [ 'c', 0, -2, 0, -2, 0, -2 ];
+			glyph[39] = [ 'C', 199, 294, 199, 294, 199, 294 ];
+			glyph[40] = [ 'c', -1, -1, -1, -1, -1, -1 ];
+			glyph[41] = [ 'c', 1, -1, 1, -1, 1, -1 ];
+			glyph[42] = [ 'c', 1, 1, 1, 1, 1, 1 ];
+			glyph[43] = [ 'c', 262, 0, 262, 0, 262, 0 ];
+			glyph[44] = [ 'c', 1, -1, 1, -1, 1, -1 ];
+			glyph[45] = [ 'C', 464, 293, 464, 293, 464, 293 ];
+			*/
+
 			glyph[0] = [ 'M', 130, 465 ];
 			glyph[1] = [ 'C', 130, 465, 130, 3, 130, 3 ];
 			glyph[2] = [ 'C', 130, 3, 131, 2, 131, 2 ];
@@ -33,22 +83,16 @@ angular.module('prototyp0.glyphs')
 
 			//
 
-			glyph[0] = [ 'M', glyph[15][5], glyph[15][6], glyph[15][5], glyph[15][6], glyph[15][5], glyph[15][6] ];  // duplicate [1] & [2] to avoid bug in components [X-1][5] = null
+			glyph[0] = [ 'M', glyph[15][5], dim.x_height, glyph[15][5], dim.x_height, glyph[15][5], dim.x_height ];  // duplicate [1] & [2] to avoid bug in components [X-1][5] = null
 
 			components['serif-bottom-right'](dim, glyph, 1);
-
 			components['serif-bottom-left'](dim, glyph, 6);
 
 			components['serif-top-left'](dim, glyph, 10);
 
-			glyph[15] = [ 'C', 89, glyph[0][2] - dim.s_arc, glyph[0][1], glyph[0][2] - dim.s_arc, glyph[14][5] + dim.thickness / 2 + 1, dim.x_height ];
+			glyph[15] = [ 'C', 89, glyph[0][6] - dim.s_arc * dim.s_height, glyph[0][1], glyph[0][6] - dim.s_arc * dim.s_height, glyph[14][5] + dim.thickness / 2 + 1, glyph[0][6] ];
 
-
-			glyph[16] = [ 'M', 90, glyph[0][2] + 187 ]; // 187 is the distance from the stem to the top of the dot: variable? or depends of Cap height?
-			glyph[17] = [ 'C', glyph[17-1][1] + (glyph[17][5] - glyph[16][1]) * dim.roundness, glyph[16][2], glyph[17][5], glyph[17][6] + (glyph[16][2] - glyph[17][6]) * dim.roundness, 139, 603 ];
-			glyph[18] = [ 'C', glyph[18-1][5], glyph[18-1][6] - (glyph[18-1][6] - glyph[18][6]) * dim.roundness, glyph[18][5] + (glyph[18-1][5] - glyph[18][5]) * dim.roundness, glyph[18][6], 90, 553 ];
-			glyph[19] = [ 'C', glyph[19-1][5] - (glyph[19-1][5] - glyph[19][5]) * dim.roundness, glyph[19-1][6], glyph[19][5], glyph[19][6] - (glyph[19][6] - glyph[19-1][6]) * dim.roundness, 42, 603 ];
-			glyph[20] = [ 'C', glyph[20-1][5], glyph[20-1][6] + (glyph[20][6] - glyph[20-1][6]) * dim.roundness, glyph[20][5] - (glyph[20][5] - glyph[20-1][5]) * dim.roundness, glyph[20][6], 90, 652 ];
+			components['top-dot'](dim, glyph, 16);
 
 			return glyph;
 
@@ -71,7 +115,61 @@ angular.module('prototyp0.glyphs')
 			['H', '347']
 		];
 
-		glyphs['Z'] = [];
+		/*
+
+		glyphs['A']
+
+		glyph[0] = [ 'M', 665.6, 0 ];
+		glyph[1] = [ 'h', -46.24 ];
+		glyph[2] = [ 'h', -48.39 ];
+		glyph[3] = [ 'v', 1.08 ];
+		glyph[4] = [ 'v', 1.07 ];
+		glyph[5] = [ 'l', 1.08, 1.08 ];
+		glyph[6] = [ 'c', 0, 0, 0, 0, -79.57, 209.67 ];
+		glyph[7] = [ 'c', 0, 0, 0, 0, 1.07, 1.08 ];
+		glyph[8] = [ 'c', 0, 0, 0, 0, -1.07, 1.069 ];
+		glyph[9] = [ 'c', 0, 0, 0, 0, -1.08, -1.069 ];
+		glyph[10] = [ 'c', 0, 0, 0, 0, -316.129, 0 ];
+		glyph[11] = [ 'c', 0, 0, 0, 0, -1.07, 1.069 ];
+		glyph[12] = [ 'c', 0, 0, 0, 0, -1.08, -1.069 ];
+		glyph[13] = [ 'c', 0, 0, 0, 0, 1.08, -1.08 ];
+		glyph[14] = [ 'c', 0, 0, 0, 0, -82.801, -209.67 ];
+		glyph[15] = [ 'l', 1.08, -1.08 ];
+		glyph[16] = [ 'V', 1.08 ];
+		glyph[17] = [ 'V', 0 ];
+		glyph[18] = [ 'H', 46.24 ];
+		glyph[19] = [ 'H', 0 ];
+		glyph[20] = [ 'v', 1.08 ];
+		glyph[21] = [ 'v', 1.07 ];
+		glyph[22] = [ 'l', 1.08, 1.08 ];
+		glyph[23] = [ 'l', 289.25, 741.93 ];
+		glyph[24] = [ 'l', -1.08, 1.08 ];
+		glyph[25] = [ 'v', 1.07 ];
+		glyph[26] = [ 'v', 1.08 ];
+		glyph[27] = [ 'h', 43.01 ];
+		glyph[28] = [ 'h', 41.94 ];
+		glyph[29] = [ 'c', 0, 0, 0, 0, 290.319, -745.16 ];
+		glyph[30] = [ 'c', 0, 0, 0, 0, 1.08, -1.08 ];
+		glyph[31] = [ 'V', 1.08 ];
+		glyph[32] = [ 'V', 0 ];
+
+		glyph[33] = [ 'M', 464.52, 293.55 ];
+		glyph[34] = [ 'c', -1.08, 1.07, -1.08, 1.07, -1.08, 1.07 ];
+		glyph[35] = [ 'c', -130.1, 341.94, -130.1, 341.94, -130.1, 341.94 ];
+		glyph[36] = [ 'c', 0, 2.148, 0, 2.148, 0, 2.148 ];
+		glyph[37] = [ 'c', -1.08, 0, -1.08, 0, -1.08, 0 ];
+		glyph[38] = [ 'c', 0, -2.148, 0, -2.148, 0, -2.148 ];
+		glyph[39] = [ 'C', 198.93, 294.62, 198.93, 294.62, 198.93, 294.62 ];
+		glyph[40] = [ 'c', -1.08, -1.07, -1.08, -1.07, -1.08, -1.07 ];
+		glyph[41] = [ 'c', 1.08, -1.08, 1.08, -1.08, 1.08, -1.08 ];
+		glyph[42] = [ 'c', 1.07, 1.08, 1.07, 1.08, 1.07, 1.08 ];
+		glyph[43] = [ 'c', 262.37, 0, 262.37, 0, 262.37, 0 ];
+		glyph[44] = [ 'c', 1.07, -1.08, 1.07, -1.08, 1.07, -1.08 ];
+		glyph[45] = [ 'C', 464.52, 293.55, 464.52, 293.55, 464.52, 293.55 ];
+
+
+*/
+
 
 	});
 
