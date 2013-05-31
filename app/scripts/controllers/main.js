@@ -2,7 +2,7 @@
 
 
 angular.module('prototyp0App')
-	.controller('MainCtrl', function ( $scope, normalize, calcSegments ) {
+	.controller('MainCtrl', function ( $scope, normalize, calcSegments, glyphs ) {
 		$scope.sliders = {
 
 			s_width: 0,
@@ -30,14 +30,24 @@ angular.module('prototyp0App')
 			baseline: 0
 		};
 
+		$scope.glyphs = glyphs;
+		$scope.currentGlyph = glyphs['i'];
+
 		$scope.segments = [];
-
 		$scope.normalize = normalize;
-
 		$scope.calcSegments = calcSegments;
 
-		$scope.$watch('sliders', function() {
+		var uiWatcher = function() {
 			$scope.normalize();
-			$scope.calcSegments( 'i' );
-		}, true);
+			$scope.segments = $scope.currentGlyph( $scope.sliders );
+		};
+		$scope.$watch('sliders', uiWatcher, true);
+		$scope.$watch('currentGlyph', uiWatcher);
+	})
+
+	// FIXME: Why do we need this dummy controller to achieve to way binding across views?
+	.controller('InterfaceCtrl', function( $scope ) {
+		$scope.$watch('currentGlyph', function() {
+			$scope.$parent.$parent.currentGlyph = $scope.currentGlyph;
+		});
 	});

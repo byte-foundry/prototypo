@@ -13,8 +13,9 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 		};
 	})
 	// calculate the segments of a glyph according to the sliders
-	.factory('calcSegments', function( glyphs ) {
-		return function( glyph ) {
-			this.segments = glyphs[ glyph ]( this.sliders );
+	// FIXME: this code is currently useless
+	.factory('calcSegments', function() {
+		return function( glyphFn ) {
+			this.segments = glyphFn( this.sliders );
 		};
 	});

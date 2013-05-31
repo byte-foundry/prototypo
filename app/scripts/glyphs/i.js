@@ -99,7 +99,7 @@ angular.module('prototyp0.glyphs')
 
 		};
 
-		glyphs['H'] = [
+		/*glyphs['H'] = [
 			['M', '347','127'],
 			['v', '235'],
 			['h', '272'],
@@ -113,7 +113,7 @@ angular.module('prototyp0.glyphs')
 			['h', '-73'],
 			['V', '127'],
 			['H', '347']
-		];
+		];*/
 
 		/*
 

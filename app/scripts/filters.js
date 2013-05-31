@@ -80,4 +80,15 @@ angular.module('prototyp0.filters', ['lodash'])
 
 			return d.join(' ');
 		};
+	})
+	.filter('extraCommands', function() {
+		var rrc = /r(c([ ,]+[\d.]+[ ,]+[\d.]+[ ,]+[\d.]+[ ,]+[\d.]+[ ,]+[\d.]+[ ,]+[\d.]+)+)/g,
+			rtriplet = /[ ,]+([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)/g;
+		return function( d ) {
+			return d.replace(rrc, function( all, allButR ) {
+				return allButR.replace(rtriplet, function( all, dc1x, dc1y, rc2x, rc2y, dx, dy ) {
+					return dc1x + ',' + 'dc1y' + ' ' + ( +rc2x + dx ) + ',' + ( +rc2y + dy ) + ' ' + dx + ',' + dy;
+				});
+			});
+		};
 	});

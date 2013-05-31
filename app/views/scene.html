@@ -1,7 +1,7 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="1200" height="800" >
 	<g transform="matrix(1 0 0 -1 0 800) translate(250,50) skewX({{sliders.slant}})">
 		<path fill="black"
-			d="{{ segments | contours }}
+			d="{{ segments | contours | extraCommands }}
 			Z
 			"/>
 		<path fill="blue"
