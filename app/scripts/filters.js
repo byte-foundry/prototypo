@@ -1,12 +1,36 @@
 'use strict';
 
 angular.module('prototyp0.filters', ['lodash'])
+	.filter('compute', function( glyphs, GlyphCache, interpolateGlyph, absolutizeGlyph ) {
+		return function( glyph, sliders ) {
+			var slidersCacheKey = [ glyph ],
+				computedGlyph;
+
+			// make sure sliders value are integers
+			for ( var i in sliders ) {
+				sliders[i] = +sliders[i];
+				slidersCacheKey.push( sliders[i] );
+			}
+
+			if ( ( computedGlyph = GlyphCache.get( slidersCacheKey.join(' ') ) ) ) {
+				return computedGlyph;
+			}
+
+			computedGlyph = interpolateGlyph( glyph, sliders );
+			computedGlyph = absolutizeGlyph( computedGlyph );
+			GlyphCache.put( slidersCacheKey.join(' '), computedGlyph );
+
+			return computedGlyph;
+		};
+	})
+
 	.filter('contours', function( _ ) {
 		return function( segments ) {
 			var d = [];
 
 			_( segments ).each(function( segment ) {
-				d.push( segment.join(' ') );
+				// FIXME: the typeof check will be useless with the new glyph structure
+				d.push( typeof segment === 'string' ? segment : segment.join(' ') );
 			});
 
 			return d.join(' ');
@@ -17,6 +41,11 @@ angular.module('prototyp0.filters', ['lodash'])
 			var d = [];
 
 			_( segments ).each(function( segment ) {
+				// FIXME: the typeof check will be useless with the new glyph structure
+				if ( typeof segment === 'string' ) {
+					segment = segment.split(' ');
+				}
+
 				var l = segment.length,
 					isRelative = /[a-z]/.test( segment[0] );
 
@@ -47,6 +76,11 @@ angular.module('prototyp0.filters', ['lodash'])
 			var d = ['M 0,0'];
 
 			_( segments ).each(function( segment ) {
+				// FIXME: the typeof check will be useless with the new glyph structure
+				if ( typeof segment === 'string' ) {
+					segment = segment.split(' ');
+				}
+
 				var l = segment.length,
 					isRelative = /[a-z]/.test( segment[0] );
 
@@ -79,16 +113,5 @@ angular.module('prototyp0.filters', ['lodash'])
 			});
 
 			return d.join(' ');
-		};
-	})
-	.filter('extraCommands', function() {
-		var rrc = /r(c([ ,]+[\d.]+[ ,]+[\d.]+[ ,]+[\d.]+[ ,]+[\d.]+[ ,]+[\d.]+[ ,]+[\d.]+)+)/g,
-			rtriplet = /[ ,]+([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)/g;
-		return function( d ) {
-			return d.replace(rrc, function( all, allButR ) {
-				return allButR.replace(rtriplet, function( all, dc1x, dc1y, rc2x, rc2y, dx, dy ) {
-					return dc1x + ',' + 'dc1y' + ' ' + ( +rc2x + dx ) + ',' + ( +rc2y + dy ) + ' ' + dx + ',' + dy;
-				});
-			});
 		};
 	});

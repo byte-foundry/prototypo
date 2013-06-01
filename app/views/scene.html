@@ -1,15 +1,15 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="1200" height="800" >
 	<g transform="matrix(1 0 0 -1 0 800) translate(250,50) skewX({{sliders.slant}})">
 		<path fill="black"
-			d="{{ segments | contours | extraCommands }}
+			d="{{ glyph | compute:sliders | contours }}
 			Z
 			"/>
 		<path fill="blue"
-			d="{{ segments | points }}
+			d="{{ glyph | compute:sliders | points }}
 			Z
 			"/>
 		<path fill="none" stroke="red"
-			d="{{ segments | anchors }}"
+			d="{{ glyph | compute:sliders | anchors }}"
 		/>
 			<!-- What's happen if the shape is composed by 2 or more shapes? still need a 'z' closure for each? -->
 
