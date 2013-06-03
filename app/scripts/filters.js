@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('prototyp0.filters', ['lodash'])
-	.filter('compute', function( glyphs, GlyphCache, interpolateGlyph, absolutizeGlyph ) {
+	.filter('compute', function( glyphs, GlyphCache, interpolateGlyph ) {
 		return function( glyph, sliders ) {
+			// FIXME: tthis cache mechanism should probably go into the interpolateGlyph function
 			var slidersCacheKey = [ glyph ],
 				computedGlyph;
 
@@ -17,20 +18,18 @@ angular.module('prototyp0.filters', ['lodash'])
 			}
 
 			computedGlyph = interpolateGlyph( glyph, sliders );
-			computedGlyph = absolutizeGlyph( computedGlyph );
 			GlyphCache.put( slidersCacheKey.join(' '), computedGlyph );
-
 			return computedGlyph;
 		};
 	})
 
 	.filter('contours', function( _ ) {
+		// FIXME: this filter is executed four or five times !?!
 		return function( segments ) {
 			var d = [];
 
 			_( segments ).each(function( segment ) {
-				// FIXME: the typeof check will be useless with the new glyph structure
-				d.push( typeof segment === 'string' ? segment : segment.join(' ') );
+				d.push( segment.join(' ') );
 			});
 
 			return d.join(' ');
@@ -49,12 +48,14 @@ angular.module('prototyp0.filters', ['lodash'])
 				var l = segment.length,
 					isRelative = /[a-z]/.test( segment[0] );
 
-				// move to point
-				d.push([
-					isRelative ? 'm' : 'M',
-					segment[l-2],
-					segment[l-1]
-				].join(' '));
+				if ( l > 1 ) {
+					// move to point
+					d.push([
+						isRelative ? 'm' : 'M',
+						segment[l-2],
+						segment[l-1]
+					].join(' '));
+				}
 
 				// draw debug shape and move back to point
 				d.push(
