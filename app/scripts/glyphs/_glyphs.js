@@ -26,6 +26,7 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 						};
 					}
 				});
+			console.log( context );
 
 			_( interpolatedGlyph ).each(function( segment, i ) {
 				absoluteGlyph[i] = absolutizeSegment(

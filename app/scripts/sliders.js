@@ -94,9 +94,9 @@ angular.module('prototyp0.sliders', [])
 			name: 'crossbar',
 			label: 'Crossbar',
 			min: 0,
-			max: 20,
-			step: 1,
-			init: 0
+			max: 2,
+			step: 0.1,
+			init: 1
 		},
 		{
 			name: 'thickness',
@@ -110,9 +110,9 @@ angular.module('prototyp0.sliders', [])
 			name: 'width',
 			label: 'Width',
 			min: 0,
-			max: 200,
-			step: 1,
-			init: 0
+			max: 1,
+			step: 0.01,
+			init: 1
 		},
 		{
 			name: 'slant',
@@ -128,7 +128,7 @@ angular.module('prototyp0.sliders', [])
 			min: 0,
 			max: 20,
 			step: 1,
-			init: 0
+			init: 1
 		},
 		{
 			name: 'horzContrast',
@@ -136,7 +136,7 @@ angular.module('prototyp0.sliders', [])
 			min: 0,
 			max: 20,
 			step: 1,
-			init: 0
+			init: 1
 		},
 		{
 			name: 'contrast',
@@ -144,7 +144,7 @@ angular.module('prototyp0.sliders', [])
 			min: 0,
 			max: 20,
 			step: 1,
-			init: 0
+			init: 1
 		},
 		{
 			name: 'breakPath',
@@ -187,9 +187,9 @@ angular.module('prototyp0.sliders', [])
 				sliders[name] = +slider;
 			});
 
-			/*if ( sliders.xHeight !== undefined ) {
+			if ( sliders.xHeight !== undefined ) {
 				sliders.capHeight = sliders.xHeight + sliders.capDelta;
 				sliders.ascenderHeight = sliders.xHeight + sliders.ascender;
-			}*/
+			}
 		};
 	});
