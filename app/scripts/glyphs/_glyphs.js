@@ -4,34 +4,36 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 	.constant('glyphs', {} )
 	// calculate the segments of a glyph according to the sliders
 	.factory('interpolateGlyph', function( $interpolate, _, glyphs, absolutizeSegment ) {
-		var rseparator = /[ ,\[\]]+/g;
+		var rseparator = /[ ,]+/g;
 
 		return function( glyph, sliders ) {
-			var glyphFormula = glyphs[ glyph ],
+			var interpolatedGlyph = glyphs[ glyph ].interpolated,
 				position = {
 					x: 0,
 					y: 0
 				},
-				absoluteGlyph = {};
+				absoluteGlyph = {},
+				context = _.extend({}, sliders, {
+					//cur: absoluteGlyph,
+					point: function(i) {
+						var l = absoluteGlyph[i].length;
+						return {
+							x: +absoluteGlyph[i][l-2],
+							y: +absoluteGlyph[i][l-1],
+							toString: function() {
+								return +absoluteGlyph[i][l-2] + ',' + absoluteGlyph[i][l-1];
+							}
+						};
+					}
+				});
 
-			sliders.cur = absoluteGlyph;
-			sliders.point = function(i) {
-				var l = absoluteGlyph[i].length;
-				return [
-					+absoluteGlyph[i][l-2],
-					+absoluteGlyph[i][l-1]
-				];
-			};
-
-			_( glyphFormula ).each(function( segment, i ) {
-				// interpolate and split the segment
-				segment = $interpolate( segment )( sliders ).replace(rseparator, ' ').split(' ');
-				absoluteGlyph[i] = absolutizeSegment( segment, position );
+			_( interpolatedGlyph ).each(function( segment, i ) {
+				absoluteGlyph[i] = absolutizeSegment(
+					// execute interpolated segment and split it
+					segment( context ).replace(rseparator, ' ').split(' '),
+					position
+				);
 			});
-
-			// cleanup sliders object
-			delete sliders.cur;
-			delete sliders.point;
 
 			return absoluteGlyph;
 		};
@@ -111,6 +113,11 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 				break;
 			}
 
+			// round coordinates
+			while ( --l ) {
+				segment[l] = parseInt( segment[l], 10 );
+			}
+
 			return segment;
 		};
 	})
@@ -118,17 +125,17 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 	// find a point on a vector, and add its origin
 	.filter('on', function() {
 		return function( point, segment ) {
-			var vector = [
-					segment.vector[1][0] - segment.vector[0][0],
-					segment.vector[1][1] - segment.vector[0][1]
-				],
+			var vector = {
+					x: segment.vector[1].x - segment.vector[0].x,
+					y: segment.vector[1].y - segment.vector[0].y
+				},
 				tmp = point.x ?
-					[ point.x, ( point.x / vector[0] ) * vector[1] ] :
-					[ ( point.y / vector[1] ) * vector[0] , point.y ];
+					[ point.x, ( point.x / vector.x ) * vector.y ] :
+					[ ( point.y / vector.y ) * vector.x , point.y ];
 
 			if ( segment.origin ) {
-				tmp[0] += segment.origin[0];
-				tmp[1] += segment.origin[1];
+				tmp[0] += segment.origin.x;
+				tmp[1] += segment.origin.y;
 			}
 
 			return tmp.join();

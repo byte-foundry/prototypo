@@ -1,22 +1,4 @@
-<label>S. width: </label><input type="range" min=0 max=100 step="1" ng-model="sliders.s_width" /><br />
-<label>S. height: </label><input type="range" min=0 max=50 step="1" ng-model="sliders.s_height" /><br />
-<label>S. median: </label><input type="range" min=0 max=2 step="0.1" ng-model="sliders.s_median" /><br />
-<label>S. curve: </label><input type="range" min=-0.1 max=1.1 step="0.01" ng-model="sliders.s_curve" /><br />
-<label>S. arc: </label><input type="range" min=-1 max=1 step="0.1" ng-model="sliders.s_arc" /><br />
-<label>S. terminal: </label><input type="range" min=-0.2 max=1 step="0.01" ng-model="sliders.s_terminal" /><br />
-<label>S. symmetry: </label><input type="range" min=0 max=1 step="0.01" ng-model="sliders.s_symmetry" /><br />
-<label>X height: </label><input type="range" min=200 max=600 step="1" ng-model="sliders.x_height" /><br />
-<label>Cap. height: </label><input type="range" min=0 max=20 step="1" ng-model="sliders.cap_height" /><br />
-<label>Ascender: </label><input type="range" min=0 max=20 step="1" ng-model="sliders.ascender" /><br />
-<label>Descender: </label><input type="range" min=0 max=20 step="1" ng-model="sliders.descender" /><br />
-<label>Crossbar: </label><input type="range" min=0 max=20 step="1" ng-model="sliders.crossbar" /><br />
-<label>Thickness: </label><input type="range" min=-70 max=200 step="1" ng-model="sliders.thickness" /><br />
-<label>Width: </label><input type="range" min=0 max=200 step="1" ng-model="sliders.width" /><br />
-<label>Slant: </label><input type="range" min=-5 max=8 step="0.2" ng-model="sliders.slant" /><br />
-<label>Vert. contrast: </label><input type="range" min=0 max=20 step="1" ng-model="sliders.vert_contrast" /><br />
-<label>Hor. contrast: </label><input type="range" min=0 max=20 step="1" ng-model="sliders.hor_contrast" /><br />
-<label>Contrast: </label><input type="range" min=0 max=20 step="1" ng-model="sliders.contrast" /><br />
-<label>Break path: </label><input type="range" min=0 max=20 step="1" ng-model="sliders.break_path" /><br />
-<label>Counter: </label><input type="range" min=0 max=20 step="1" ng-model="sliders.counter" /><br />
-<label>Inktrap: </label><input type="range" min=0 max=20 step="1" ng-model="sliders.inktrap" /><br />
-<label>Roundness: </label><input type="range" min=0 max=1 step="0.01" ng-model="sliders.roundness" /><br />
+<label style="display:block;" ng-repeat="slider in slidersUI">
+	{{slider.label}}
+	<input type="range" min="{{slider.min}}" max={{slider.max}} step="{{slider.step}}" ng-init="sliders[slider.name] = slider.init;" ng-model="sliders[slider.name]" />
+</label>

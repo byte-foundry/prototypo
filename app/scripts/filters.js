@@ -48,14 +48,16 @@ angular.module('prototyp0.filters', ['lodash'])
 				var l = segment.length,
 					isRelative = /[a-z]/.test( segment[0] );
 
-				if ( l > 1 ) {
-					// move to point
-					d.push([
-						isRelative ? 'm' : 'M',
-						segment[l-2],
-						segment[l-1]
-					].join(' '));
+				if ( l < 3 ) {
+					return;
 				}
+
+				// move to point
+				d.push([
+					isRelative ? 'm' : 'M',
+					segment[l-2],
+					segment[l-1]
+				].join(' '));
 
 				// draw debug shape and move back to point
 				d.push(
@@ -93,6 +95,10 @@ angular.module('prototyp0.filters', ['lodash'])
 						segment[2],
 						'z'
 					].join(' '));
+				}
+
+				if ( l < 3 ) {
+					return;
 				}
 
 				// move to next point
