@@ -19,6 +19,8 @@ angular.module('prototyp0.filters', ['lodash'])
 
 			computedGlyph = interpolateGlyph( glyph, sliders );
 			GlyphCache.put( slidersCacheKey.join(' '), computedGlyph );
+			console.log(computedGlyph);
+
 			return computedGlyph;
 		};
 	})
