@@ -3,7 +3,7 @@
 angular.module('prototyp0.glyphs', ['prototyp0.components'])
 	.constant('glyphs', {} )
 	// calculate the segments of a glyph according to the sliders
-	.factory('interpolateGlyph', function( $interpolate, _, glyphs, absolutizeSegment ) {
+	.factory('interpolateGlyph', function( $interpolate, _, glyphs, absolutizeSegment, boundHelpers ) {
 		var rseparator = /[ ,]+/g;
 
 		return function( glyph, sliders ) {
@@ -13,20 +13,7 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 					y: 0
 				},
 				absoluteGlyph = {},
-				context = _.extend({}, sliders, {
-					//cur: absoluteGlyph,
-					point: function(i) {
-						var l = absoluteGlyph[i].length;
-						return {
-							x: +absoluteGlyph[i][l-2],
-							y: +absoluteGlyph[i][l-1],
-							toString: function() {
-								return +absoluteGlyph[i][l-2] + ',' + absoluteGlyph[i][l-1];
-							}
-						};
-					}
-				});
-			console.log( context );
+				context = _.extend({}, sliders, boundHelpers( absoluteGlyph ));
 
 			_( interpolatedGlyph ).each(function( segment, i ) {
 				absoluteGlyph[i] = absolutizeSegment(
@@ -45,6 +32,10 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 		return function( segment, position ) {
 			var j = 0,
 				l = segment.length;
+
+			if ( l < 2 ) {
+				return segment;
+			}
 
 			switch ( segment[0] ) {
 			// end-point of the cubic is absolutely positioned,
@@ -101,6 +92,7 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 			case 'c':
 			case 's':
 			case 't':
+			case 'f':
 				segment[0] = segment[0].toUpperCase();
 				while ( ++j < l ) {
 					segment[j] = +segment[j] + ( j % 2 ? position.x : position.y );
@@ -120,6 +112,41 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 			}
 
 			return segment;
+		};
+	})
+
+	.factory('boundHelpers', function() {
+		return function( glyph ) {
+			return {
+				point: function(i) {
+					var l = glyph[i].length;
+					return {
+						x: +glyph[i][l-2],
+						y: +glyph[i][l-1],
+						xy: +glyph[i][l-2] + ',' + glyph[i][l-1],
+						// FIXME: unfortunately angular doesn't seem to be able to use that
+						toString: function() {
+							return +glyph[i][l-2] + ',' + glyph[i][l-1];
+						}
+					};
+				},
+				find: function( params ) {
+					var start = glyph[params.on[0]].slice(-2),
+						end = glyph[params.on[1]].slice(-2),
+						vector = {
+							x: +end[0] - start[0],
+							y: +end[1] - start[1]
+						},
+						point = params.x ?
+							[ params.x, ( params.x - start[0] ) / vector.x * vector.y + start[1] ]:
+							[ ( params.y - start[1] ) / vector.y * vector.x + start[0], params.y ];
+
+					return point.join(' ');
+				},
+				serif: function() {
+					return 'F';
+				}
+			};
 		};
 	})
 

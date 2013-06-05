@@ -7,16 +7,20 @@ angular.module('prototyp0.glyphs')
 			formula: {
 				0:  'M 20 0',
 				1:  'l -20 0',
-				2:  'l 200 {{xHeight}}',
-				3:  'l 200 -{{xHeight}}',
-				4:  'l -20 0',
-				5:  'L {{ { y: xHeight / 2 } | on:{ vector:[point(3),point(2)], origin:point(4) } }}',
-				6:  'L {{ { y: xHeight / 2 } | on:{ vector:[point(1),point(2)], origin:point(0) } }}',
-				7:  'Z',
-				8:  'M {{ { y: xHeight / 2 + 20 } | on:{ vector:[point(3),point(2)], origin:point(4) } }}',
-				9:  'L {{ { x: +point(2).x - 20 } | on:{ vector:[point(1),point(2)], origin:point(0) } }}',
-				10: 'L {{ { y: xHeight / 2 + 20 } | on:{ vector:[point(1),point(2)], origin:point(0) } }}',
-				11: 'Z'
+				2:  '{{ serif("bottom-left") }}',
+				3:  '{{ serif("top-left") }}',
+				4:  'l 200 {{xHeight}}',
+				5:  'f -20 0',
+				6:  'l 200 -{{xHeight}}',
+				7:  'l -20 0',
+				8:  'F {{ find({x: point(4).x, on: [7,5] }) }}',
+				9:  'L {{ find({y: xHeight / 2, on: [7,8] }) }}',
+				10: 'L {{ find({y: xHeight / 2, on: [0,8] }) }}',
+				11: 'Z',
+				12: 'M {{ find({y: xHeight / 2 + 20, on: [7,8] }) }}',
+				13: 'L {{ point(8).xy }}',
+				14: 'L {{ find({y: xHeight / 2 + 20, on: [0,8] }) }}',
+				15: 'Z',
 			}
 		};
 	});

@@ -30,7 +30,9 @@ angular.module('prototyp0.filters', ['lodash'])
 			var d = [];
 
 			_( segments ).each(function( segment ) {
-				d.push( segment.join(' ') );
+				if ( segment[0] !== 'F' ) {
+					d.push( segment.join(' ') );
+				}
 			});
 
 			return d.join(' ');
