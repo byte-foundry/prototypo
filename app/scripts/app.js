@@ -10,9 +10,9 @@ angular.module('prototyp0App', ['prototyp0.filters', 'prototyp0.caches', 'protot
       .otherwise({
         redirectTo: '/'
       });
-  })
+  });
 
-  .run(function( $interpolate, glyphs, _ ) {
+  /*.run(function( $interpolate, glyphs, _ ) {
     // interpolate all glyphs
     _( glyphs ).each(function( glyph ) {
       glyph.interpolated = {};
@@ -22,4 +22,4 @@ angular.module('prototyp0App', ['prototyp0.filters', 'prototyp0.caches', 'protot
       });
     });
 
-  });
+  });*/

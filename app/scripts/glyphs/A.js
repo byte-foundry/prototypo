@@ -5,22 +5,29 @@ angular.module('prototyp0.glyphs')
 		glyphs['A'] = {
 			reference: {},
 			formula: {
-				0:  'M 20 0',
-				1:  'l -20 0',
-				2:  '{{ serif("bottom-left") }}',
-				3:  '{{ serif("top-left") }}',
-				4:  'l 200 {{xHeight}}',
-				5:  'f -20 0',
-				6:  'l 200 -{{xHeight}}',
-				7:  'l -20 0',
-				8:  'F {{ find({x: point(4).x, on: [7,5] }) }}',
-				9:  'L {{ find({y: xHeight / 2, on: [7,8] }) }}',
-				10: 'L {{ find({y: xHeight / 2, on: [0,8] }) }}',
-				11: 'Z',
-				12: 'M {{ find({y: xHeight / 2 + 20, on: [7,8] }) }}',
-				13: 'L {{ point(8).xy }}',
-				14: 'L {{ find({y: xHeight / 2 + 20, on: [0,8] }) }}',
-				15: 'Z',
+				0:  'M   20 0',
+				1:  'vl  -20 0',
+				2:  'l   200 {{xHeight}}',
+				3:  'vl  -20 0',
+				4:  'l   200 -{{xHeight}}',
+				5:  'vl   -20 0',
+				6:  'vL  {{ find({x: self[2].x, on: [self[5], self[3]] }) }}',
+				7:  'L   {{ find({y: xHeight / 2, on: [self[5], self[6]] }) }}',
+				8:  'L   {{ find({y: xHeight / 2, on: [self[0], self[6]] }) }}',
+				9:  'Z',
+				10: 'M   {{ find({y: xHeight / 2 + 20, on: [self[5], self[6]] }) }}',
+				11: 'L   {{ self[6].xy }}',
+				12: 'L   {{ find({y: xHeight / 2 + 20, on: [self[0], self[6]] }) }}',
+				13: 'Z',
+
+				after1: 'serif {{ {side:"bottom-left", on:[self[1], self[2]] } }}',
+				before2: 'invertedSerif {{ {side:"bottom-left", on:[self[2], self[1]] } }}',
+				after5: 'serif {{ {side:"bottom-left", on:[self[5], self[7]] } }}',
+			},
+			// hook that allows arbitrary javascript to prepare the context for the formula
+			// if we really need it
+			beforeProcessSegments: function( /*context, input, parentOrReference*/ ) {
+				//return context;
 			}
 		};
 	});

@@ -1,26 +1,26 @@
 'use strict';
 
 angular.module('prototyp0.filters', ['lodash'])
-	.filter('compute', function( glyphs, GlyphCache, interpolateGlyph ) {
-		return function( glyph, sliders ) {
-			// FIXME: tthis cache mechanism should probably go into the interpolateGlyph function
+	.filter('compute', function( glyphs, GlyphCache, processGlyph ) {
+		return function( glyph, inputs ) {
+			// FIXME: tthis cache mechanism should probably go into the processGlyph function
 			var slidersCacheKey = [ glyph ],
-				computedGlyph;
+				processedGlyph;
 
-			// make sure sliders value are integers
-			for ( var i in sliders ) {
-				sliders[i] = +sliders[i];
-				slidersCacheKey.push( sliders[i] );
+			// generate cache-key
+			for ( var i in inputs ) {
+				slidersCacheKey.push( inputs[i] );
 			}
 
-			if ( ( computedGlyph = GlyphCache.get( slidersCacheKey.join(' ') ) ) ) {
-				return computedGlyph;
+			if ( ( processedGlyph = GlyphCache.get( slidersCacheKey.join(' ') ) ) ) {
+				return processedGlyph;
 			}
 
-			computedGlyph = interpolateGlyph( glyph, sliders );
-			GlyphCache.put( slidersCacheKey.join(' '), computedGlyph );
+			processedGlyph = [];
+			processGlyph( glyph, inputs, processedGlyph );
+			GlyphCache.put( slidersCacheKey.join(' '), processedGlyph );
 
-			return computedGlyph;
+			return processedGlyph;
 		};
 	})
 
@@ -30,8 +30,8 @@ angular.module('prototyp0.filters', ['lodash'])
 			var d = [];
 
 			_( segments ).each(function( segment ) {
-				if ( segment[0] !== 'F' ) {
-					d.push( segment.join(' ') );
+				if ( segment[0] !== '*' ) {
+					d.push( segment.toString() );
 				}
 			});
 
