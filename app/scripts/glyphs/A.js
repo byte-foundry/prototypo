@@ -21,13 +21,8 @@ angular.module('prototyp0.glyphs')
 				13: 'Z',
 
 				after1: 'serif {{ {side:"bottom-left", on:[self[1], self[2]] } }}',
-				before2: 'invertedSerif {{ {side:"bottom-left", on:[self[2], self[1]] } }}',
+				before2: 'serif {{ {side:"top-left", on:[self[2], self[1]] } }}',
 				after5: 'serif {{ {side:"bottom-left", on:[self[5], self[7]] } }}',
-			},
-			// hook that allows arbitrary javascript to prepare the context for the formula
-			// if we really need it
-			beforeProcessSegments: function( /*context, input, parentOrReference*/ ) {
-				//return context;
 			}
 		};
 	});

@@ -4,30 +4,15 @@ angular.module('prototyp0.components')
 	.config(function( components ) {
 		components['serif'] = {
 			formula: {
-				0: 'vm 0 20',
-				1: 'L {{ find({y: self[0].y + 20, on:params.on }) }}',
-				2: 'l  -40 -20',
-				3: 'l  0 -20',
-				invert: true
-			}
-		};
+				$hDir: '/left$/.test(params.side) ? -1 : 1',
+				$vDir: '/^top/.test(params.side) ? -1 : 1',
 
-		components['invertedSerif'] = {
-			formula: {
-				0: 'vm 0 -20',
-				1: 'L {{ find({y: self[0].y - 20, on:params.on }) }}',
-				2: 'l  -40 20',
-				3: 'l  0 20',
-				invert: false
-			}
-		};
+				0: 'vm 0 {{ 20 * $vDir }}',
+				1: 'L {{ find({y: self[0].y + 20 * $vDir, on:params.on }) }}',
+				2: 'l  {{ 40 * $hDir }} {{ -20 * $vDir }}',
+				3: 'l  0 {{ -20 * $vDir }}',
 
-		components['test'] = {
-			formula: {
-				0: 'vm 0 0',
-				1: 'l -20 20',
-				2: 'l -20 -20',
-				invert: true
+				invert: '( $vDir * $hDir ) == -1'
 			}
 		};
 	});

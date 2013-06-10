@@ -9,7 +9,7 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 		};
 	})
 
-	.factory('processSegments', function( _, prepareJSsegments, prepareContext, absolutizeSegment, components, mergeDestinations ) {
+	.factory('processSegments', function( _, prepareJSsegments, prepareContext, prepareVars, absolutizeSegment, components, mergeDestinations ) {
 		var rseparator = /[ ,]+/g,
 			risAfter = /^after/,
 			rletters = /^[a-z]+/,
@@ -17,14 +17,25 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 
 				var knownSegments = {},
 					tmpDestination = [],
-					context;
+					context,
+					isInverted;
 
 				prepareJSsegments( jsSegments );
-				context = prepareContext( inputs, params, knownSegments, parent );
+				context = prepareContext({
+					inputs: inputs,
+					params: params,
+					self: knownSegments,
+					parent: parent,
+					origin: curPosition
+				});
+				prepareVars( jsSegments, context );
 
 				_( jsSegments.interpolated ).each(function( interpolatedSegment, i ) {
+					if ( i === 'invert' ) {
+						isInverted = interpolatedSegment( context );
+
 					// process segments
-					if ( typeof interpolatedSegment === 'function' ) {
+					} else if ( typeof interpolatedSegment === 'function' ) {
 						tmpDestination.push( knownSegments[i] = absolutizeSegment(
 							interpolatedSegment( context ).replace(rseparator, ' ').split(' '),
 							curPosition
@@ -56,7 +67,7 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 
 				// merge destinations now if the formula didn't include any components
 				if ( tmpDestination.length ) {
-					mergeDestinations( destination, tmpDestination, insertIndex, jsSegments.formula.invert );
+					mergeDestinations( destination, tmpDestination, insertIndex, isInverted );
 				}
 			};
 
@@ -70,27 +81,34 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 			rparams = /{{(.*?)}}/;
 
 		return function( jsSegments ) {
-			// interpolate the formula if necessary
-			if ( !jsSegments.interpolated ) {
-				jsSegments.interpolated = {};
-
-				_( jsSegments.formula ).each(function(segmentFormula, i) {
-
-					if ( typeof segmentFormula === 'string' ) {
-						// interpolate segments
-						if ( !isNaN(+i) ) {
-							jsSegments.interpolated[i] = $interpolate( segmentFormula );
-
-						// interpolate components
-						} else {
-							jsSegments.interpolated[i] = [
-								rcomponent.exec( segmentFormula )[1],
-								$parse( rparams.exec( segmentFormula )[1] )
-							];
-						}
-					}
-				});
+			if ( jsSegments.interpolated ) {
+				return;
 			}
+
+			jsSegments.interpolated = {};
+			jsSegments.vars = {};
+
+			_( jsSegments.formula ).each(function(segmentFormula, i) {
+
+				// when the index is a number, we're dealing w/ a segment
+				if ( !isNaN(+i) ) {
+					jsSegments.interpolated[i] = $interpolate( segmentFormula );
+
+				// when the index starts with $ it a variable
+				} else if ( i.indexOf('$') === 0 ) {
+					jsSegments.vars[i] = segmentFormula;
+
+				} else if ( i === 'invert' ) {
+					jsSegments.interpolated[i] = $parse( segmentFormula );
+
+				// otherwise it's a component
+				} else {
+					jsSegments.interpolated[i] = [
+						rcomponent.exec( segmentFormula )[1],
+						$parse( rparams.exec( segmentFormula )[1] )
+					];
+				}
+			});
 
 			// structure all reference segments if necessary
 			if ( jsSegments.refence && jsSegments.reference[0] && jsSegments.reference[0].constructor === Array ) {
@@ -122,12 +140,13 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 
 	// create the context that will be used to process a segment formula
 	.factory('prepareContext', function( _ ) {
-		return function( inputs, params, self, parent ) {
+		return function( args ) {
 			// FIXME: find a way to allow additional methods created by the users
-			return _.extend({}, inputs, {
-				params: params,
-				self: self,
-				parent: parent,
+			return _.extend({}, args.inputs, {
+				params: args.params,
+				self: args.self,
+				parent: args.parent,
+				origin: args.origin,
 				find: function( params ) {
 					var start = params.on[0],
 						end = params.on[1],
@@ -141,6 +160,35 @@ angular.module('prototyp0.glyphs', ['prototyp0.components'])
 
 					return point.join(' ');
 				}
+			});
+		};
+	})
+
+	// variables in glyph formulas are a very hacky feature,
+	// because logic in Angular template is very limited
+	// basically we create anonymous functions on the fly that accept all context properties as params
+	.factory('prepareVars', function( _ ) {
+		return function( jsSegments, context ) {
+			var vars,
+				args = [];
+
+			_( context ).each(function(value) {
+				args.push( value );
+			});
+
+			_( jsSegments.vars ).each(function(formula, name) {
+				if ( typeof formula === 'string' ) {
+					if ( !vars ) {
+						vars = Object.keys( context ).concat( Object.keys( jsSegments.vars ) );
+					}
+
+					// Security hole
+					jsSegments.vars[ name ] = formula = Function.apply(
+						null, vars.concat( 'return ' + formula )
+					);
+				}
+
+				args.push( context[ name ] = formula.apply( null, args ) );
 			});
 		};
 	})

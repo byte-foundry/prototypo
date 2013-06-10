@@ -11,15 +11,3 @@ angular.module('prototyp0App', ['prototyp0.filters', 'prototyp0.caches', 'protot
         redirectTo: '/'
       });
   });
-
-  /*.run(function( $interpolate, glyphs, _ ) {
-    // interpolate all glyphs
-    _( glyphs ).each(function( glyph ) {
-      glyph.interpolated = {};
-
-      _( glyph.formula ).each(function( segment, i ) {
-        glyph.interpolated[i] = $interpolate( segment );
-      });
-    });
-
-  });*/
