@@ -3,7 +3,8 @@
 angular.module('prototyp0.glyphFilters', ['lodash'])
 	.filter('compute', function( _, GlyphCache, processGlyph ) {
 		return function( glyphCode, font, inputValues ) {
-			if ( !glyphCode || !font ) {
+			// FIXME: ugly race-condition fix. This shouldn't be needed!
+			if ( !glyphCode || !font || !Object.keys( inputValues ).length ) {
 				return;
 			}
 

@@ -18,7 +18,6 @@ angular.module('prototyp0App')
 				});
 		});
 
-		// FIXME: Is currentGlyph used anywhere?
 		$scope.$watch('currentGlyphCode', function() {
 			if ( $scope.currentFont && $scope.currentGlyphCode ) {
 				$scope.currentGlyph = $scope.currentFont.glyphs[ $scope.currentGlyphCode ];
