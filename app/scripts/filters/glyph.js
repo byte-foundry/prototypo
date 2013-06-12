@@ -1,33 +1,6 @@
 'use strict';
 
 angular.module('prototyp0.glyphFilters', ['lodash'])
-	.filter('compute', function( _, GlyphCache, processGlyph ) {
-		return function( glyphCode, font, inputValues ) {
-			// FIXME: ugly race-condition fix. This shouldn't be needed!
-			if ( !glyphCode || !font || !Object.keys( inputValues ).length ) {
-				return;
-			}
-
-			// FIXME: this cache mechanism should probably go into the processGlyph function
-			var slidersCacheKey,
-				processedGlyph;
-
-			// generate cache-key
-			slidersCacheKey = [ glyphCode ].concat( _.map( inputValues, function(val) {
-				return val;
-			})).join();
-
-			if ( ( processedGlyph = GlyphCache.get( slidersCacheKey ) ) ) {
-				return processedGlyph;
-			}
-
-			processedGlyph = processGlyph( font, font.glyphs[glyphCode], inputValues );
-			GlyphCache.put( slidersCacheKey, processedGlyph );
-
-			return processedGlyph;
-		};
-	})
-
 	.filter('contours', function( _ ) {
 		// FIXME: this filter is executed four or five times !?!
 		return function( segments ) {
@@ -47,10 +20,6 @@ angular.module('prototyp0.glyphFilters', ['lodash'])
 			var d = [];
 
 			_( segments ).each(function( segment ) {
-				// FIXME: the typeof check will be useless with the new glyph structure
-				if ( typeof segment === 'string' ) {
-					segment = segment.split(' ');
-				}
 
 				var l = segment.length,
 					isRelative = /[a-z]/.test( segment[0] );
@@ -86,10 +55,6 @@ angular.module('prototyp0.glyphFilters', ['lodash'])
 			var d = ['M 0,0'];
 
 			_( segments ).each(function( segment ) {
-				// FIXME: the typeof check will be useless with the new glyph structure
-				if ( typeof segment === 'string' ) {
-					segment = segment.split(' ');
-				}
 
 				var l = segment.length,
 					isRelative = /[a-z]/.test( segment[0] );
