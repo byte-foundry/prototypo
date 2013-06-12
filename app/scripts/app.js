@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('prototyp0App', ['prototyp0.filters', 'prototyp0.caches', 'prototyp0.glyphs', 'prototyp0.sliders'])
-  .config(function ($routeProvider) {
+angular.module('prototyp0App', ['lodash', 'prototyp0.fontLoader', 'prototyp0.glyphFilters', 'prototyp0.glyphUtils', 'prototyp0.componentUtils', 'prototyp0.segmentUtils', 'prototyp0.glyphCache'])
+  .config(function ( $routeProvider ) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',

@@ -1,24 +1,27 @@
 'use strict';
 
-angular.module('prototyp0.filters', ['lodash'])
-	.filter('compute', function( glyphs, GlyphCache, processGlyph ) {
-		return function( glyph, inputs ) {
-			// FIXME: tthis cache mechanism should probably go into the processGlyph function
-			var slidersCacheKey = [ glyph ],
+angular.module('prototyp0.glyphFilters', ['lodash'])
+	.filter('compute', function( _, GlyphCache, processGlyph ) {
+		return function( glyphCode, font, inputValues ) {
+			if ( !glyphCode || !font ) {
+				return;
+			}
+
+			// FIXME: this cache mechanism should probably go into the processGlyph function
+			var slidersCacheKey,
 				processedGlyph;
 
 			// generate cache-key
-			for ( var i in inputs ) {
-				slidersCacheKey.push( inputs[i] );
-			}
+			slidersCacheKey = [ glyphCode ].concat( _.map( inputValues, function(val) {
+				return val;
+			})).join();
 
-			if ( ( processedGlyph = GlyphCache.get( slidersCacheKey.join(' ') ) ) ) {
+			if ( ( processedGlyph = GlyphCache.get( slidersCacheKey ) ) ) {
 				return processedGlyph;
 			}
 
-			processedGlyph = [];
-			processGlyph( glyph, inputs, processedGlyph );
-			GlyphCache.put( slidersCacheKey.join(' '), processedGlyph );
+			processedGlyph = processGlyph( font, font.glyphs[glyphCode], inputValues );
+			GlyphCache.put( slidersCacheKey, processedGlyph );
 
 			return processedGlyph;
 		};

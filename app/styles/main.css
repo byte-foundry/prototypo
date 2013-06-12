@@ -1,7 +1,10 @@
 /* Will be compiled down to a single stylesheet with your sass files */
 
-.sliders {
+.inputs {
 	position: absolute;
+}
+.inputs label {
+	display: block;
 }
 
 .interface {

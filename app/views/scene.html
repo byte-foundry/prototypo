@@ -1,13 +1,13 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="1200" height="800" >
-	<g transform="matrix(1 0 0 -1 0 800) translate(250,50) skewX({{inputs.slant}})">
+	<g transform="matrix(1 0 0 -1 0 800) translate(250,50) skewX({{inputValues.slant}})">
 		<path fill="black"
-			d="{{ glyph | compute:inputs | contours }}"
+			d="{{ currentGlyphCode | compute:currentFont:inputValues | contours }}"
 		/>
 		<path fill="blue"
-			d="{{ glyph | compute:inputs | points }}"
+			d="{{ currentGlyphCode | compute:currentFont:inputValues | points }}"
 		/>
 		<path fill="none" stroke="red"
-			d="{{ glyph | compute:inputs | anchors }}"
+			d="{{ currentGlyphCode | compute:currentFont:inputValues | anchors }}"
 		/>
 			<!-- What's happen if the shape is composed by 2 or more shapes? still need a 'z' closure for each? -->
 

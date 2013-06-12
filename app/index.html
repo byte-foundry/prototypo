@@ -27,46 +27,31 @@
     <!-- Add your site or application content here -->
     <div class="container" ng-view></div>
 
+    <!-- build:js scripts/scripts.js -->
     <script src="components/angular-latest/build/angular.js"></script>
     <script src="components/angular-latest/build/angular-resource.js"></script>
     <script src="components/angular-latest/build/angular-sanitize.js"></script>
     <script src="components/lodash/lodash.js"></script>
 
-    <!-- build:js scripts/scripts.js -->
-    <script src="scripts/lodash.js"></script>
-    <script src="scripts/filters.js"></script>
-    <script src="scripts/caches.js"></script>
-    <script src="scripts/sliders.js"></script>
+    <script src="scripts/services/lodash.js"></script>
+    <script src="scripts/services/fontLoader.js"></script>
+    <script src="scripts/services/glyphCache.js"></script>
+    <script src="scripts/services/glyphUtils.js"></script>
+    <script src="scripts/services/componentUtils.js"></script>
+    <script src="scripts/services/segmentUtils.js"></script>
 
-    <script src="scripts/glyphs/_glyphs.js"></script>
-    <script src="scripts/glyphs/A.js"></script>
-    <script src="scripts/glyphs/H.js"></script>
-
-    <script src="scripts/components/_components.js"></script>
-
-    <script src="scripts/components/serif-top-left.js"></script>
-    <script src="scripts/components/serif-bottom-right.js"></script>
-    <script src="scripts/components/serif-bottom-left.js"></script>
-
-    <script src="scripts/components/top-dot.js"></script>
-
-    <script src="scripts/components/curve-bottom-right.js"></script>
-    <script src="scripts/components/curve-bottom-left.js"></script>
-    <script src="scripts/components/curve-top-right.js"></script>
-    <script src="scripts/components/curve-top-left.js"></script>
-
-    <script src="scripts/components/serif.js"></script>
+    <script src="scripts/filters/glyph.js"></script>
 
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
     <!-- endbuild -->
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-    <script>
+    <!--<script>
       var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
       (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
       g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
       s.parentNode.insertBefore(g,s)}(document,'script'));
-    </script>
+    </script>-->
   </body>
 </html>
