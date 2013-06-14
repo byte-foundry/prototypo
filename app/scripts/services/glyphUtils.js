@@ -2,9 +2,11 @@
 
 angular.module('prototyp0.glyphUtils', [])
 	.factory('processGlyph', function( _, GlyphCache, processComponent ) {
+		var rexpression = /{/;
+
 		return function( font, glyphCode, inputValues ) {
 			// FIXME: ugly race-condition fix. This shouldn't be needed
-			if ( !glyphCode || !font || !Object.keys( inputValues ).length ) {
+			if ( !glyphCode || rexpression.test(glyphCode) || !font || !Object.keys( inputValues ).length ) {
 				return;
 			}
 

@@ -8,8 +8,12 @@ angular.module('prototyp0App', [
     'prototyp0.componentUtils',
     'prototyp0.segmentUtils',
     'prototyp0.glyphCache',
-    'prototyp0.contourDirective'
+
+    'prototyp0.glyphDirective',
+    'prototyp0.contourDirective',
+    'prototyp0.endpointDirective'
   ])
+
   .config(function ( $routeProvider ) {
     $routeProvider
       .when('/', {

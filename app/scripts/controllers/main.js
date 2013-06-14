@@ -11,19 +11,20 @@ angular.module('prototyp0App')
 			loadFont( $scope.currentFontName )
 				.then(function( font ) {
 					$scope.currentFont = font;
-					$scope.currentGlyphCode = font.order[0];
 					$scope.inputValues = {};
+
+					$scope.currentGlyphCode = font.order[0];
 					$scope.deferChange = function( handler ) {
 						deferedChanges.push( handler );
 					};
 				});
 		});
 
-		$scope.$watch('currentGlyphCode', function() {
+		/*$scope.$watch('currentGlyphCode', function() {
 			if ( $scope.currentFont && $scope.currentGlyphCode ) {
 				$scope.currentGlyph = $scope.currentFont.glyphs[ $scope.currentGlyphCode ];
 			}
-		});
+		});*/
 
 		// make sure all input values are integers
 		$scope.$watch('inputValues', function() {
