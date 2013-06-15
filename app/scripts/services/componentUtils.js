@@ -118,19 +118,35 @@ angular.module('prototyp0.componentUtils', [])
 	// give array segment a ueful structure (direct access to x, y, command)
 	.factory('structureSegment', function( _ ) {
 		return function( arrSegment ) {
-			var l = arrSegment.length;
+			var l = arrSegment.length,
+				// this should be implemented using harmony Proxy but only Firefox has it
+				obj = _.extend({
+					length: l,
+					command: arrSegment[0],
+					controls: [],
+					x: arrSegment[l-2],
+					y: arrSegment[l-1],
+					xy: arrSegment[l-2] + ',' + arrSegment[l-1],
+					toString: function() {
+						return [].join.call( this, ' ');
+					}
+				}, arrSegment);
 
-			// this should be implemented using harmony Proxy but only Firefox has it
-			return _.extend({
-				length: l,
-				command: arrSegment[0],
-				x: arrSegment[l-2],
-				y: arrSegment[l-1],
-				xy: arrSegment[l-2] + ',' + arrSegment[l-1],
-				toString: function() {
-					return [].join.call( this, ' ');
-				}
-			}, arrSegment);
+			if ( l > 3 ) {
+				obj.controls[0] = {
+					x: arrSegment[1],
+					y: arrSegment[2]
+				};
+			}
+
+			if ( l > 5 ) {
+				obj.controls[1] = {
+					x: arrSegment[3],
+					y: arrSegment[4]
+				};
+			}
+
+			return obj;
 		};
 	})
 

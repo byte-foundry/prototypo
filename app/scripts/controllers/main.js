@@ -5,7 +5,7 @@ angular.module('prototyp0App')
 		var deferedChanges = [];
 
 		$scope.currentFontName = 'default';
-		$scope.processGlyph = processGlyph;
+		$scope.currentGlyphCodes = [];
 
 		$scope.$watch('currentFontName', function() {
 			loadFont( $scope.currentFontName )
@@ -13,18 +13,12 @@ angular.module('prototyp0App')
 					$scope.currentFont = font;
 					$scope.inputValues = {};
 
-					$scope.currentGlyphCode = font.order[0];
+					$scope.currentGlyphCodes = [font.order[0]];
 					$scope.deferChange = function( handler ) {
 						deferedChanges.push( handler );
 					};
 				});
 		});
-
-		/*$scope.$watch('currentGlyphCode', function() {
-			if ( $scope.currentFont && $scope.currentGlyphCode ) {
-				$scope.currentGlyph = $scope.currentFont.glyphs[ $scope.currentGlyphCode ];
-			}
-		});*/
 
 		// make sure all input values are integers
 		$scope.$watch('inputValues', function() {
@@ -41,8 +35,9 @@ angular.module('prototyp0App')
 
 	// FIXME: Why do we need those dummy controllers to achieve two way binding across views?
 	.controller('InterfaceCtrl', function( $scope ) {
+		$scope.currentGlyphCodes = [];
 
-		$scope.$watch('currentGlyphCode', function() {
-			$scope.$parent.$parent.currentGlyphCode = $scope.currentGlyphCode;
+		$scope.$watch('currentGlyphCodes[0]', function() {
+			$scope.$parent.$parent.currentGlyphCodes = $scope.currentGlyphCodes;
 		});
 	});
