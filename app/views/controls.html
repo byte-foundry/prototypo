@@ -5,7 +5,7 @@
 		min="{{control.min}}"
 		max="{{control.max}}"
 		step="{{control.step}}"
-		ng-init="controlValues[control.name] = control.init"
-		ng-change="control.onchange && deferChange(onchange.control)"
+		zob-init="controlValues[control.name] = control.init"
+		ng-change="control.onchange && deferChange(control.onchange)"
 	/>
 </label>

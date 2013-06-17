@@ -3,6 +3,7 @@
 angular.module('prototyp0App', [
     'lodash',
     'prototyp0.fontLoader',
+    'prototyp0.controlValuesLoader',
     'prototyp0.glyphFilters',
     'prototyp0.glyphUtils',
     'prototyp0.componentUtils',
