@@ -1,9 +1,9 @@
 /* Will be compiled down to a single stylesheet with your sass files */
 
-.inputs {
+.controls {
 	position: absolute;
 }
-.inputs label {
+.controls label {
 	display: block;
 }
 

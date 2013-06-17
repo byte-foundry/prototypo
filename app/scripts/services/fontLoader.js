@@ -22,14 +22,14 @@ angular.module('prototyp0.fontLoader', ['ngResource'])
 		});
 	})
 
-	.factory( 'Inputs', function( $resource ) {
+	.factory( 'Controls', function( $resource ) {
 
-		return $resource( '/fonts/:font/inputs/inputs.json', {}, {
+		return $resource( '/fonts/:font/controls/controls.json', {}, {
 			get: { method:'GET', params: {font: 'default'} }
 		});
 	})
 
-	.factory('loadFont', function( _, $q, $parse, Font, Glyph, Component, Inputs ) {
+	.factory('loadFont', function( _, $q, $parse, Font, Glyph, Component, Controls ) {
 		return function( fontName ) {
 			var font;
 
@@ -63,15 +63,15 @@ angular.module('prototyp0.fontLoader', ['ngResource'])
 						});
 					}
 
-					if ( !font.inputs ) {
+					if ( !font.controls ) {
 						promises.push(
-							Inputs.get({font: fontName })
+							Controls.get({font: fontName })
 								.$then(function( response ) {
-									font.inputs = response.data.inputs;
+									font.controls = response.data.controls;
 
-									_( font.inputs ).each(function( input ) {
-										if ( input.onchange ) {
-											input.onchange = $parse( input.onchange );
+									_( font.controls ).each(function( control ) {
+										if ( control.onchange ) {
+											control.onchange = $parse( control.onchange );
 										}
 									});
 								})

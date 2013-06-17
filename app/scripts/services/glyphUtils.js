@@ -4,9 +4,9 @@ angular.module('prototyp0.glyphUtils', [])
 	.factory('processGlyph', function( _, GlyphCache, processComponent ) {
 		var rexpression = /{/;
 
-		return function( font, glyphCode, inputValues ) {
+		return function( font, glyphCode, controlValues ) {
 			// FIXME: ugly race-condition fix. This shouldn't be needed
-			if ( !glyphCode || rexpression.test(glyphCode) || !font || !Object.keys( inputValues ).length ) {
+			if ( !glyphCode || rexpression.test(glyphCode) || !font || !Object.keys( controlValues ).length ) {
 				return;
 			}
 
@@ -15,7 +15,7 @@ angular.module('prototyp0.glyphUtils', [])
 				processedGlyph;
 
 			// generate cache-key
-			slidersCacheKey = [ glyphCode ].concat( _.map( inputValues, function(val) {
+			slidersCacheKey = [ glyphCode ].concat( _.map( controlValues, function(val) {
 				return val;
 			})).join();
 
@@ -26,7 +26,7 @@ angular.module('prototyp0.glyphUtils', [])
 			processedGlyph = processComponent({
 				font: font,
 				component: glyph,
-				inputs: inputValues,
+				controls: controlValues,
 				params: {},
 				parent: glyph.reference || {},
 				origin: { x:0, y:0 },

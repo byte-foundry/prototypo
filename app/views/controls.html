@@ -1,0 +1,11 @@
+<label ng-repeat="control in currentFont.controls">
+	{{control.label}}
+	<input type="range"
+		ng-model="controlValues[control.name]"
+		min="{{control.min}}"
+		max="{{control.max}}"
+		step="{{control.step}}"
+		ng-init="controlValues[control.name] = control.init"
+		ng-change="control.onchange && deferChange(onchange.control)"
+	/>
+</label>

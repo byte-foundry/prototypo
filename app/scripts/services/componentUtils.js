@@ -14,7 +14,7 @@ angular.module('prototyp0.componentUtils', [])
 
 				prepareComponent( args.component );
 				context = prepareContext({
-					inputs: args.inputs,
+					controls: args.controls,
 					params: args.params,
 					self: knownSegments,
 					parent: parent,
@@ -45,7 +45,7 @@ angular.module('prototyp0.componentUtils', [])
 						processComponent({
 							font: args.font,
 							component: args.font.components[interpolatedSegment[0]],
-							inputs: args.inputs,
+							controls: args.controls,
 							params: interpolatedSegment[1]( context ),
 							parent: knownSegments,
 							origin: {
@@ -153,7 +153,7 @@ angular.module('prototyp0.componentUtils', [])
 	// create the context that will be used to process a segment formula
 	.factory('prepareContext', function( _, segmentMethods ) {
 		return function( args ) {
-			return _.extend({}, args.inputs, segmentMethods, {
+			return _.extend({}, args.controls, segmentMethods, {
 				params: args.params,
 				self: args.self,
 				parent: args.parent,

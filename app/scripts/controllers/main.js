@@ -5,12 +5,13 @@ angular.module('prototyp0App')
 		var deferedChanges = [];
 
 		$scope.currentFontName = 'default';
+		$scope.currentGlyphCodes = [];
 
 		$scope.$watch('currentFontName', function() {
 			loadFont( $scope.currentFontName )
 				.then(function( font ) {
 					$scope.currentFont = font;
-					$scope.inputValues = {};
+					$scope.controlValues = {};
 
 					$scope.currentGlyphCodes = [font.order[0]];
 					$scope.deferChange = function( handler ) {
@@ -19,14 +20,14 @@ angular.module('prototyp0App')
 				});
 		});
 
-		// make sure all input values are integers
-		$scope.$watch('inputValues', function() {
-			_( $scope.inputValues ).each(function(value, key) {
-				$scope.inputValues[key] = +value;
+		// make sure all control values are integers
+		$scope.$watch('controlValues', function() {
+			_( $scope.controlValues ).each(function(value, key) {
+				$scope.controlValues[key] = +value;
 			});
 
 			_( deferedChanges ).each(function( handler ) {
-				handler( $scope.inputValues );
+				handler( $scope.controlValues );
 			});
 			deferedChanges = [];
 		}, true);

@@ -27,12 +27,12 @@ angular.module('prototyp0.glyphDirective', [])
 					$scope.processedGlyph = processGlyph(
 						$scope.$parent.currentFont,
 						$attrs.glyphCode,
-						$scope.$parent.inputValues
+						$scope.$parent.controlValues
 					);
 				};
 
 				$attrs.$observe('glyph-code', processGlyphTrigger);
-				$scope.$parent.$watch('inputValues', processGlyphTrigger, true);
+				$scope.$parent.$watch('controlValues', processGlyphTrigger, true);
 				$scope.$parent.$watch('currentFont', processGlyphTrigger, true);
 
 			}
