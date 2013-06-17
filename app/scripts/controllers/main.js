@@ -5,7 +5,6 @@ angular.module('prototyp0App')
 		var deferedChanges = [];
 
 		$scope.currentFontName = 'default';
-		$scope.currentGlyphCodes = [];
 
 		$scope.$watch('currentFontName', function() {
 			loadFont( $scope.currentFontName )
@@ -35,8 +34,6 @@ angular.module('prototyp0App')
 
 	// FIXME: Why do we need those dummy controllers to achieve two way binding across views?
 	.controller('InterfaceCtrl', function( $scope ) {
-		$scope.currentGlyphCodes = [];
-
 		$scope.$watch('currentGlyphCodes[0]', function() {
 			$scope.$parent.$parent.currentGlyphCodes = $scope.currentGlyphCodes;
 		});
