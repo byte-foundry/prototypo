@@ -1,35 +1,40 @@
 'use strict';
 
 angular.module('prototyp0App')
-	.controller('MainCtrl', function ( $scope, _, processGlyph, loadFont, ControlValues ) {
+	.controller('MainCtrl', function ( $scope, _, processGlyph, loadFont, ControlValues, AppValues ) {
 		var deferredChanges = [];
 
 		$scope.currentFontName = 'default';
-		$scope.currentGlyphCodes = [];
+		//$scope.currentGlyphCodes = [];
 
 		$scope.$watch('currentFontName', function() {
 			loadFont( $scope.currentFontName )
 				.then(function( font ) {
 					$scope.currentFont = font;
 
-					// load default or saved control values
-					$scope.controlValues = {};
-					ControlValues.get({ font: $scope.currentFontName })
-						.then(function( controlValues ) {
-							// load initial values if none have been saved
-							if ( Object.keys( controlValues ).length === 0 ) {
-								_( font.controls ).each(function(definition) {
-									controlValues[ definition.name ] = definition.init;
-								});
-							}
-
-							$scope.controlValues = controlValues;
-						});
-
-					$scope.currentGlyphCodes = [font.order[0]];
 					$scope.deferChange = function( handler ) {
 						deferredChanges.push( handler );
 					};
+
+					// load default or saved control values
+					$scope.controlValues = {};
+					$scope.resetControlValues = function() {
+						$scope.controlValues = ControlValues.getDefault();
+					};
+					ControlValues.get({ font: $scope.currentFontName })
+						.then(function( controlValues ) {
+							$scope.controlValues = controlValues;
+						});
+
+					// load default or saved app values
+					$scope.appValues = {};
+					$scope.resetAppValues = function() {
+						$scope.appValues = AppValues.getDefault();
+					};
+					AppValues.get({ font: $scope.currentFontName })
+						.then(function( appValues ) {
+							$scope.appValues = appValues;
+						});
 				});
 		});
 
@@ -49,11 +54,18 @@ angular.module('prototyp0App')
 				values: $scope.controlValues
 			});
 		}, true);
-	})
 
-	// FIXME: Why do we need those dummy controllers to achieve two way binding across views?
-	.controller('InterfaceCtrl', function( $scope ) {
-		$scope.$watch('currentGlyphCodes[0]', function() {
-			$scope.$parent.$parent.currentGlyphCodes = $scope.currentGlyphCodes;
-		});
+		$scope.$watch('appValues', function() {
+			AppValues.save({
+				font: $scope.currentFontName,
+				values: $scope.appValues
+			});
+		}, true);
 	});
+
+	/*// FIXME: Why do we need those dummy controllers to achieve two way binding across views?
+	.controller('InterfaceCtrl', function( $scope ) {
+		/*$scope.$watch('userValues.glyphCodes[0]', function() {
+			$scope.$parent.$parent.userValues.glyphCodes = $scope.userValues.glyphCodes;
+		});
+	});*/
