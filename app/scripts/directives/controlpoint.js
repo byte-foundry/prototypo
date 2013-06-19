@@ -2,14 +2,14 @@
 
 angular.module('prototyp0.controlpointDirective', [])
 	.directive('segmentControl', function() {
-		return function( scope, element, attrs ) {
-			scope.$watch('processedGlyph[' + attrs.index + ']', function( segment ) {
-				if ( segment.length === 1 ) {
-					return;
-				}
+		return function( scope, element ) {
+			scope.$watch('control', function( control ) {
+				// find related endPoint
+				/*var segmentIndex = scope.processedSegment.indexOf( scope.segment ),
+					controlIndex = scope;*/
 
 				element.attr('d',
-					'M ' + segment.xy +
+					'M ' + control.x + ',' + control.y +
 					'm 0 2' +
 					'h 2' +
 					'v -4' +
@@ -19,8 +19,8 @@ angular.module('prototyp0.controlpointDirective', [])
 					'm 0 -2'
 				);
 
-				if ( segment.command === '*' ) {
-					element.attr('fill', 'green');
+				if ( scope.segment.command === '*' ) {
+					element.attr('fill', 'orange');
 				}
 			});
 		};
