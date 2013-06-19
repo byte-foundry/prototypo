@@ -3,7 +3,7 @@
 		<path glyph-contour fill="black"></path>
 		<g ng-repeat="segment in processedGlyph">
 			<path segment-endpoint fill="blue" index="{{$index}}" data-coords="{{segment.xy}}"></path>
-			<path ng-repeat="(key, control) in segment.controls" index="{{$index}}" key="{{key}}" segment-control fill="red" data-coords="{{control.x}},{{control.y}}"></path>
+			<path ng-repeat="(key, control) in segment.controls" index="{{$index}}" key="{{key}}" segment-control fill="red" stroke="red" data-coords="{{control.x}},{{control.y}}"></path>
 		</g>
 	</g>
 </svg>
