@@ -19,7 +19,10 @@ angular.module('prototyp0App')
 					// load default or saved control values
 					$scope.controlValues = {};
 					$scope.resetControlValues = function() {
-						$scope.controlValues = ControlValues.getDefault();
+						ControlValues.getDefault()
+							.then(function( values ) {
+								$scope.controlValues = values;
+							});
 					};
 					ControlValues.get({ font: $scope.currentFontName })
 						.then(function( controlValues ) {
@@ -29,7 +32,10 @@ angular.module('prototyp0App')
 					// load default or saved app values
 					$scope.appValues = {};
 					$scope.resetAppValues = function() {
-						$scope.appValues = AppValues.getDefault();
+						AppValues.getDefault()
+							.then(function( values ) {
+								$scope.appValues = values;
+							});
 					};
 					AppValues.get({ font: $scope.currentFontName })
 						.then(function( appValues ) {
