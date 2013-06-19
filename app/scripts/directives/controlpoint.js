@@ -4,6 +4,10 @@ angular.module('prototyp0.controlpointDirective', [])
 	.directive('segmentControl', function() {
 		return function( scope, element, attrs ) {
 			scope.$watch('processedGlyph[' + attrs.index + ']', function( segment ) {
+				if ( segment.length === 1 ) {
+					return;
+				}
+
 				element.attr('d',
 					'M ' + segment.xy +
 					'm 0 2' +

@@ -17,4 +17,17 @@ angular.module('prototyp0.segmentUtils', [])
 
 			return point.join(' ');
 		};
+	})/*
+
+	.config('findOnBezier', function( params ) {
+		var start = params.on[0],
+			end = params.on[1];
+
+			console.log( [].indeOf.apply( this.self, [params.on[0]] ) )
+			//control1 = 
+		// find coordinates of a point at a given percentage on a bezier
 	});
+
+	.config('pointOnStraightSegmentFromPercentage', function(start, end, percentage) {
+
+	})*/;

@@ -126,7 +126,7 @@ angular.module('prototyp0.componentUtils', [])
 					controls: [],
 					x: arrSegment[l-2],
 					y: arrSegment[l-1],
-					xy: arrSegment[l-2] + ',' + arrSegment[l-1],
+					xy: l > 2 && arrSegment[l-2] + ',' + arrSegment[l-1],
 					toString: function() {
 						return [].join.call( this, ' ');
 					}
@@ -153,7 +153,16 @@ angular.module('prototyp0.componentUtils', [])
 	// create the context that will be used to process a segment formula
 	.factory('prepareContext', function( _, segmentMethods ) {
 		return function( args ) {
-			return _.extend({}, args.controls, segmentMethods, {
+			var boundSegmentMethods = {};
+			_( segmentMethods ).each(function( method, key ) {
+				boundSegmentMethods[ key ] = method.bind( {
+					self: args.self,
+					parent: args.parent,
+					origin: args.origin
+				});
+			});
+
+			return _.extend({}, args.controls, boundSegmentMethods, {
 				params: args.params,
 				self: args.self,
 				parent: args.parent,
@@ -204,10 +213,6 @@ angular.module('prototyp0.componentUtils', [])
 				l = segment.length,
 				isVirtual = rvirtual.test( segment[0] ) &&
 					( segment[0] = segment[0].slice(1) );
-
-			if ( l < 2 ) {
-				return segment;
-			}
 
 			switch ( segment[0] ) {
 			// end-point of the cubic is absolutely positioned,
@@ -263,6 +268,9 @@ angular.module('prototyp0.componentUtils', [])
 				}
 				position.x = segment[l-2];
 				position.y = segment[l-1];
+				break;
+			case 'z':
+			case 'Z':
 				break;
 			default:
 				position.x = +segment[l-2];
