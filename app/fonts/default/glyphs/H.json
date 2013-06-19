@@ -1,0 +1,38 @@
+{
+	"reference": {
+		"0":  ["M", 90, 312 ],
+		"1":  ["L",  90, 0 ],
+		"2":  ["L",  0, 0 ],
+		"3":  ["L",  0, 698 ],
+		"4":  ["L",  90, 698 ],
+		"5":  ["L",  90, 386 ],
+		"6":  ["L",  447, 386 ],
+		"7":  ["L",  447, 698 ],
+		"8":  ["L",  537, 698 ],
+		"9":  ["L", 537, 0 ],
+		"10": ["L", 447, 0 ],
+		"11": ["L", 447, 312 ],
+		"12": ["L", 90, 312 ],
+		"13": ["Z"]
+	},
+
+	"formula": {
+		"0":  "M {{ thickness * 1.1 * horzContrast }} {{ 0.55 * crossbar * xHeight - thickness }}",
+		"1":  "L {{ self[0].x }} 0",
+		"2":  "L 0 0",
+		"3":  "L 0 {{ xHeight }}",
+		"4":  "l {{ thickness * 1.1 * horzContrast }} 0",
+		"5":  "L {{ self[4].x }} {{ self[0].y + thickness }}",
+		"6":  "L {{ 0.64 * 700 * width }} {{ self[5].y }}",
+		"7":  "L {{ self[6].x }} {{ self[3].y }}",
+		"8":  "L {{ self[7].x + thickness * 1.1 * horzContrast }} {{ self[3].y }}",
+		"9":  "L {{ self[8].x }} 0",
+		"10": "L {{ self[6].x }} 0",
+		"11": "L {{ self[6].x }} {{ self[5].y - thickness * contrast * vertContrast }}",
+		"12": "L {{ self[0].x }} {{ self[11].y }}",
+		"13": "Z",
+
+		"after2": "serif {{ {side:'bottom-left', on:[self[2], self[3]] } }}",
+		"after1": "serif {{ {side:'bottom-right', on:[self[0], self[1]] } }}"
+	}
+}

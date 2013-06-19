@@ -12,7 +12,8 @@ angular.module('prototyp0App', [
 
     'prototyp0.glyphDirective',
     'prototyp0.contourDirective',
-    'prototyp0.endpointDirective'
+    'prototyp0.endpointDirective',
+    'prototyp0.mySliderDirective'
   ])
 
   .config(function ( $routeProvider ) {

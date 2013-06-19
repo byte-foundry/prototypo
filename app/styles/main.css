@@ -11,3 +11,15 @@
 	position:absolute;
 	right: 0;
 }
+.slider {
+	background-color: lightgrey;
+	width: 200px;
+	position: relative;
+	height: 10px;
+}
+.handle {
+	width: 10px;
+	height: 10px;
+	background-color: red;
+	position: absolute;
+}
