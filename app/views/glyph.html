@@ -5,5 +5,8 @@
 			<path segment-endpoint fill="blue" index="{{$index}}" data-coords="{{segment.xy}}"></path>
 			<path ng-repeat="(key, control) in segment.controls" index="{{$index}}" key="{{key}}" segment-control fill="red" data-coords="{{control.x}},{{control.y}}"></path>
 		</g>
+		<path fill="none" stroke="red" d="M -2500 {{ controlValues.xHeight }} l 12000 0" />
+		<path fill="none" stroke="red" d="M -2500 {{ controlValues.capHeight }} l 12000 0" />
+		<path fill="none" stroke-width="10" stroke="red" d="M -2500 0 l 1200 0" />
 	</g>
 </svg>

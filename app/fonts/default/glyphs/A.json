@@ -17,7 +17,7 @@
 		"13": "Z",
 
 		"after1": "serif {{ {side:'bottom-left', on:[self[1], self[2]] } }}",
-		"before2": "serif {{ {side:'top-left', on:[self[2], self[1]] } }}",
+		"before2": "serif {{ {side:'top-left', on:[self[0], self[2]] } }}",
 		"after5": "serif {{ {side:'bottom-left', on:[self[5], self[7]] } }}"
 	}
 }

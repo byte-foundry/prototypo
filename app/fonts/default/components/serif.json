@@ -3,10 +3,11 @@
 		"$hDir": "/left$/.test(params.side) ? -1 : 1",
 		"$vDir": "/^top/.test(params.side) ? -1 : 1",
 
-		"0": "vm 0 {{ 20 * $vDir }}",
-		"1": "L {{ find({y: self[0].y + 20 * $vDir, on:params.on }) }}",
-		"2": "l  {{ serifWidth * $hDir }} {{ -20 * $vDir }}",
-		"3": "l  0 {{ -20 * $vDir }}",
+		"0": "vm 0 {{ 1 * $vDir }}",
+		"1": "L {{ find({y: self[0].y + serifHeight * $vDir, on:params.on }) }}",
+		"2": "L {{ self[1].x + serifWidth * $hDir }} {{ serifMedian * serifHeight * $vDir }}",
+		"3": "L {{ self[2].x + serifTerminal * serifWidth * $hDir }} {{ self[2].y -self[2].y / 2  * $vDir }}",
+		"4": "L {{ self[2].x }} 0",
 
 		"invert": "( $vDir * $hDir ) == -1"
 	}

@@ -14,10 +14,13 @@
 		"10": "L   {{ 0.43857142857143 * 700 * width }} 270",
 		"11": "rC  0 75 85 0 199 {{ self[5].y - 0.85 * thickness }}",
 		"12": "rC  -72 0 0 63 {{ self[0].x + thickness }} 291",
-		"13": "l   0 -291",
-		"14": "Z",
+		"13": "vl   0 -291",
+		"14": "l    {{ -thickness / 2 }} {{ serifArc * serifHeight }}",
+		"15": "Z",
 
 		"after1": "serif {{ {side:'bottom-left', on:[self[1], self[2]] } }}",
-		"after13": "serif {{ {side:'bottom-right', on:[self[12], self[13]] } }}"
+		"after13": "serif {{ {side:'bottom-right', on:[self[12], self[13]] } }}",
+		"after8": "serif {{ {side:'bottom-right', on:[self[7], self[8]] } }}",
+		"after9": "serif {{ {side:'bottom-left', on:[self[9], self[10]] } }}"
 	}
 }

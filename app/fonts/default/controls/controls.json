@@ -70,7 +70,7 @@
 		"min": 0,
 		"max": 200,
 		"step": 1,
-		"init": 50,
+		"init": 150,
 		"onchange": "capHeight = xHeight + capDelta"
 	},
 	{
