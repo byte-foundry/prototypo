@@ -4,7 +4,9 @@
 	"description": "The first parameterised font",
 	"order": [
 		"A",
-		"S"
+		"S",
+		"H",
+		"n"
 	],
 	"components": [
 		"serif"

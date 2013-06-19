@@ -2,6 +2,7 @@
 
 <label ng-repeat="control in currentFont.controls">
 	{{control.label}}
+	<myslider></myslider>
 	<input type="range"
 		ng-model="controlValues[control.name]"
 		min="{{control.min}}"

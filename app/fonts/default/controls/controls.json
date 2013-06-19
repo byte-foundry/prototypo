@@ -101,7 +101,7 @@
 	{
 		"name": "thickness",
 		"label": "Thickness",
-		"min": -70,
+		"min": 10,
 		"max": 200,
 		"step": 1,
 		"init": 80
@@ -109,8 +109,8 @@
 	{
 		"name": "width",
 		"label": "Width",
-		"min": 0,
-		"max": 1,
+		"min": 0.5,
+		"max": 2,
 		"step": 0.01,
 		"init": 1
 	},

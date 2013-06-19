@@ -5,7 +5,7 @@
 
 		"0": "vm 0 {{ 20 * $vDir }}",
 		"1": "L {{ find({y: self[0].y + 20 * $vDir, on:params.on }) }}",
-		"2": "l  {{ 40 * $hDir }} {{ -20 * $vDir }}",
+		"2": "l  {{ serifWidth * $hDir }} {{ -20 * $vDir }}",
 		"3": "l  0 {{ -20 * $vDir }}",
 
 		"invert": "( $vDir * $hDir ) == -1"
