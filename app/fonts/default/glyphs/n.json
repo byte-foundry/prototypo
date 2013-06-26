@@ -1,9 +1,9 @@
 {
 	"reference": {},
 	"formula": {
-		"0":  "M   0 0",
-		"1":  "vl  0 0",
-		"2":  "l   0 {{ xHeight }}",
+		"0":  "M    {{ thickness / 2 }} {{ serifArc * serifHeight }}",
+		"1":  "vL  0 0",
+		"2":  "l   {{ 0 }} {{ xHeight }}",
 		"3":  "l   {{ 0.9125 * thickness }} 0",
 		"4":  "l   2 -62",
 		"5":  "rC  20 41 -78 0 227 {{ xHeight + 10 }}",
@@ -13,10 +13,9 @@
 		"9":  "l   -80 0",
 		"10": "L   {{ 0.43857142857143 * 700 * width }} 270",
 		"11": "rC  0 75 85 0 199 {{ self[5].y - 0.85 * thickness }}",
-		"12": "rC  -72 0 0 63 {{ self[0].x + thickness }} 291",
+		"12": "rC  -72 0 0 63 {{ self[1].x + thickness }} 291",
 		"13": "vl   0 -291",
-		"14": "l    {{ -thickness / 2 }} {{ serifArc * serifHeight }}",
-		"15": "Z",
+		"14": "Z",
 
 		"after1": "serif {{ {side:'bottom-left', on:[self[1], self[2]] } }}",
 		"after13": "serif {{ {side:'bottom-right', on:[self[12], self[13]] } }}",

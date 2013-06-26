@@ -293,6 +293,7 @@ angular.module('prototyp0.componentUtils', [])
 		};
 	})
 
+	// this merge a component on a glyph
 	.factory('mergeDestinations', function() {
 		return function( destination, source, insertIndex, invert ) {
 			if ( invert ) {
@@ -309,7 +310,7 @@ angular.module('prototyp0.componentUtils', [])
 					// command-specific permutations
 					switch ( source[i].command ) {
 					case 'C':
-						tmp2 = source[i].slice(1,3);
+						tmp2 = [].slice.call(source[i], 1,3);
 						source[i][1] = source[i][3];
 						source[i][2] = source[i][4];
 						source[i][3] = tmp2[0];
