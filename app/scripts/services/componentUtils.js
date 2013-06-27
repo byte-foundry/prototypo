@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototyp0.componentUtils', [])
-	.factory('processComponent', function( _, prepareComponent, prepareContext, prepareVars, absolutizeSegment, mergeDestinations ) {
+	.factory('processComponent', function( _, prepareComponent, prepareContext, prepareVars, absolutizeEndpoints, mergeDestinations ) {
 		var rseparator = /[ ,]+/g,
 			risAfter = /^after/,
 			rletters = /^[a-z]+/,
@@ -28,7 +28,7 @@ angular.module('prototyp0.componentUtils', [])
 
 					// process segments
 					} else if ( typeof interpolatedSegment === 'function' ) {
-						tmpDestination.push( knownSegments[i] = absolutizeSegment(
+						tmpDestination.push( knownSegments[i] = absolutizeEndpoints(
 							interpolatedSegment( context ).replace(rseparator, ' ').split(' '),
 							context.curPos
 						));
@@ -204,8 +204,8 @@ angular.module('prototyp0.componentUtils', [])
 		};
 	})
 
-	// make every point of the glyph absolute and translate non-standard commands
-	.factory('absolutizeSegment', function( structureSegment ) {
+	// make every endpoint of the glyph absolute
+	.factory('absolutizeEndpoints', function( structureSegment ) {
 		var rvirtual = /^v\w/;
 
 		return function( segment, position ) {
@@ -217,39 +217,41 @@ angular.module('prototyp0.componentUtils', [])
 			switch ( segment[0] ) {
 			// end-point of the cubic is absolutely positioned,
 			// anchors are relative to their point
-			case 'rC':
-				segment[1] = +segment[1] + position.x;
-				segment[2] = +segment[2] + position.y;
+			case 'rC': // FIXME: this can go in the defaultt case
+				//segment[1] = +segment[1] + position.x;
+				//segment[2] = +segment[2] + position.y;
 				position.x = +segment[5];
 				position.y = +segment[6];
-				segment[3] = +segment[3] + position.x;
-				segment[4] = +segment[4] + position.y;
+				//segment[3] = +segment[3] + position.x;
+				//segment[4] = +segment[4] + position.y;
 				break;
 			// end-point of the cubic is relatively positioned,
 			// anchors are relative to their point
 			case 'rc':
-				segment[1] = +segment[1] + position.x;
-				segment[2] = +segment[2] + position.y;
+				//segment[1] = +segment[1] + position.x;
+				//segment[2] = +segment[2] + position.y;
 				position.x = segment[5] = +segment[5] + position.x;
 				position.y = segment[6] = +segment[6] + position.y;
-				segment[3] = +segment[3] + position.x;
-				segment[4] = +segment[4] + position.y;
+				//segment[3] = +segment[3] + position.x;
+				//segment[4] = +segment[4] + position.y;
 				break;
 			// end-point of the smooth cubic is absolutely positioned,
 			// anchors are relative to their point
-			case 'rS':
+			case 'rS':  // FIXME: this can go in the default case
 				position.x = +segment[3];
 				position.y = +segment[4];
-				segment[1] = +segment[1] + position.x;
-				segment[2] = +segment[2] + position.y;
+				//segment[1] = +segment[1] + position.x;
+				//segment[2] = +segment[2] + position.y;
 				break;
 			// end-point of the smooth cubic is relatively positioned,
 			// anchors are relative to their point
+			case 'rc':
 			case 'rs':
-				position.x = segment[3] = +segment[3] + position.x;
-				position.y = segment[4] = +segment[4] + position.y;
-				segment[1] = +segment[1] + position.x;
-				segment[2] = +segment[2] + position.y;
+			case 'rq':
+				position.x = segment[l-2] = +segment[l-2] + position.x;
+				position.y = segment[l-1] = +segment[l-1] + position.y;
+				//segment[1] = +segment[1] + position.x;
+				//segment[2] = +segment[2] + position.y;
 				break;
 			case 'h':
 				position.x = segment[1] = +segment[1] + position.x;
@@ -281,8 +283,8 @@ angular.module('prototyp0.componentUtils', [])
 			// transform command
 			segment[0] = isVirtual ?
 				'*' :
-				// keep last letter and uppercase it
-				segment[0].slice(-1).toUpperCase();
+				// uppercase command
+				segment[0].slice(-2,-1) + segment[0].slice(-1).toUpperCase();
 
 			// round coordinates
 			while ( --l ) {
@@ -293,7 +295,7 @@ angular.module('prototyp0.componentUtils', [])
 		};
 	})
 
-	// this merge a component on a glyph
+	// merge a component on a glyph
 	.factory('mergeDestinations', function() {
 		return function( destination, source, insertIndex, invert ) {
 			if ( invert ) {
