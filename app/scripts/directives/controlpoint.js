@@ -7,10 +7,18 @@ angular.module('prototyp0.controlpointDirective', [])
 				// find related endPoint
 				var segmentIndex = scope.processedGlyph.indexOf( scope.segment ),
 					controlIndex = [].indexOf.call( scope.segment.controls, control ),
-					endpoint = scope.processedGlyph[ segmentIndex - 1 + controlIndex ] || {
-						x:  0,
-						y: 0
-					};
+					endpoint,
+					i = 0;
+
+				// search for non-virtual related endpoint
+				do {
+					i--;
+				} while ( scope.processedGlyph[ segmentIndex + i + controlIndex ].command === '*' );
+
+				endpoint = scope.processedGlyph[ segmentIndex + i + controlIndex ] || {
+					x:  0,
+					y: 0
+				};
 
 				element.attr('d',
 					'M ' + endpoint.x + ',' + endpoint.y +
