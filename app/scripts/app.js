@@ -2,6 +2,9 @@
 
 angular.module('prototyp0App', [
     'lodash',
+    'ngRoute',
+    'ngResource',
+
     'prototyp0.fontLoader',
     'prototyp0.valuesLoader',
     'prototyp0.glyphFilters',
@@ -13,7 +16,7 @@ angular.module('prototyp0App', [
     'prototyp0.glyphDirective',
     'prototyp0.contourDirective',
     'prototyp0.endpointDirective',
-    'prototyp0.mySliderDirective',
+    'prototyp0.prettySliderDirective',
     'prototyp0.controlpointDirective'
   ])
 

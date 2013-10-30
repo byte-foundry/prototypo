@@ -3,6 +3,10 @@
 angular.module('prototyp0.segmentUtils', [])
 	.constant('segmentMethods', {})
 
+	.factory('segment', function() {
+		//function Segment()
+	})
+
 	.config(function( segmentMethods ) {
 		segmentMethods.find = function( params ) {
 			var start = params.on[0],

@@ -34,8 +34,8 @@ angular.module('prototyp0.fontLoader', ['ngResource'])
 			var font;
 
 			return Font.get({font: fontName})
-				.$then(function( response ) {
-					font = response.data;
+				.$promise.then(function( response ) {
+					font = response;
 					var promises = [],
 						components = font.components;
 
@@ -44,8 +44,8 @@ angular.module('prototyp0.fontLoader', ['ngResource'])
 						_( font.order ).each(function( glyphCode ) {
 							promises.push(
 								Glyph.get({ font: fontName, glyph: glyphCode + '.json' })
-									.$then(function( response ) {
-										font.glyphs[ glyphCode ] = response.data;
+									.$promise.then(function( response ) {
+										font.glyphs[ glyphCode ] = response;
 									})
 							);
 						});
@@ -56,8 +56,8 @@ angular.module('prototyp0.fontLoader', ['ngResource'])
 						_( components ).each(function( componentName ) {
 							promises.push(
 								Component.get({ font: fontName, component: componentName + '.json' })
-									.$then(function( response ) {
-										font.components[ componentName ] = response.data;
+									.$promise.then(function( response ) {
+										font.components[ componentName ] = response;
 									})
 							);
 						});
@@ -66,8 +66,8 @@ angular.module('prototyp0.fontLoader', ['ngResource'])
 					if ( !font.controls ) {
 						promises.push(
 							Controls.get({font: fontName })
-								.$then(function( response ) {
-									font.controls = response.data.controls;
+								.$promise.then(function( response ) {
+									font.controls = response.controls;
 
 									_( font.controls ).each(function( control ) {
 										if ( control.onchange ) {
