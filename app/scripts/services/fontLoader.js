@@ -11,21 +11,25 @@ angular.module('prototyp0.fontLoader', ['ngResource'])
 	.factory( 'Glyph', function( $resource ) {
 
 		return $resource( '/fonts/:font/glyphs/:glyph', {}, {
-			get: { method:'GET', params: {font: 'default'} }
+			get: { method:'GET', params: {}, transformResponse: function( data ) {
+				return {
+					formula: ( 'M 0 0\n' + data ).split(/\r?\n/)
+				};
+			}}
 		});
 	})
 
 	.factory( 'Component', function( $resource ) {
 
 		return $resource( '/fonts/:font/components/:component', {}, {
-			get: { method:'GET', params: {font: 'default'} }
+			get: { method:'GET', params: {} }
 		});
 	})
 
 	.factory( 'Controls', function( $resource ) {
 
 		return $resource( '/fonts/:font/controls/controls.json', {}, {
-			get: { method:'GET', params: {font: 'default'} }
+			get: { method:'GET', params: {} }
 		});
 	})
 
@@ -43,7 +47,7 @@ angular.module('prototyp0.fontLoader', ['ngResource'])
 						font.glyphs = {};
 						_( font.order ).each(function( glyphCode ) {
 							promises.push(
-								Glyph.get({ font: fontName, glyph: glyphCode + '.json' })
+								Glyph.get({ font: fontName, glyph: glyphCode + '.txt' })
 									.$promise.then(function( response ) {
 										font.glyphs[ glyphCode ] = response;
 									})

@@ -3,7 +3,6 @@
 angular.module('prototyp0App', [
     'lodash',
     'ngRoute',
-    'ngResource',
 
     'prototyp0.fontLoader',
     'prototyp0.valuesLoader',
