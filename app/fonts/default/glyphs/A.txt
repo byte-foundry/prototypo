@@ -1,3 +1,19 @@
-l 200 {{xHeight}}
-l 200 -{{xHeight}}
-z
+M   20 0
+vl  -20 0
+l   200 {{xHeight}}
+vl  -20 0
+l   200 -{{xHeight}}
+vl   -20 0
+vL   {{ find({x: self[3].x, on: [self[6], self[4]] }) }}
+L   {{ find({y: xHeight / 2, on: [self[6], self[7]] }) }}
+L   {{ find({y: xHeight / 2, on: [self[1], self[7]] }) }}
+Z
+M   {{ find({y: xHeight / 2 + 20, on: [self[6], self[7]] }) }}
+L   {{ self[7].xy }}",
+L   {{ find({y: xHeight / 2 + 20, on: [self[1], self[7]] }) }}
+Z
+
+// Components
+after  2: serif ( {side:'bottom-left', on:[self[2], self[3]] } )
+//before 2: serif ( {side:'top-left', on:[self[0], self[2]] } )
+//after  5: serif ( {side:'bottom-left', on:[self[5], self[7]] } )
