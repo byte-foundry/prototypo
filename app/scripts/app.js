@@ -3,6 +3,7 @@
 angular.module('prototyp0App', [
     'lodash',
     'ngRoute',
+    'pasvaz.bindonce',
 
     'prototyp0.fontLoader',
     'prototyp0.valuesLoader',
