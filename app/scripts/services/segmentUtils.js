@@ -3,8 +3,16 @@
 angular.module('prototyp0.segmentUtils', [])
 	.constant('segmentMethods', {})
 
-	.factory('segment', function() {
-		//function Segment()
+	.factory('Segment', function() {
+		var rseparator = /[ ,]+/g;
+
+		function Segment( processedSegment, origin ) {
+			var segmentArray = processedSegment.replace(rseparator, ' ').split(' ');
+
+
+		}
+
+		return Segment;
 	})
 
 	.config(function( segmentMethods ) {

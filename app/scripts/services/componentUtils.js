@@ -1,6 +1,105 @@
 'use strict';
 
 angular.module('prototyp0.componentUtils', [])
+	.factory('Component', function( parseComponent, prepareComponent ) {
+
+		function Component( data ) {
+			this.parse( data );
+			this.prepare();
+		}
+
+		Component.prototype.parse = parseComponent;
+		Component.prototype.prepare = prepareComponent;
+
+		return Component;
+	})
+
+	// parse the content of a component file
+	.factory('parseComponent', function() {
+		var rcomment = /\/\/.*$/gm,
+			rcomponent = /^[\t ]*(after|before)[\t ]+(\d+)[\t ]*:[\t ]*([\w-]+?)\((.*?)\)[\t ]*$/gm,
+			rnormalize = /[ \t]*(?:\r?\n|\r)[ \t]*/g,
+			rtrim = /\n*$/g,
+			rsplit = /(?:\r?\n|\r)/;
+
+		return function( data ) {
+			var components = [];
+
+			data = data
+				// remove single-line comments
+				.replace(rcomment, '')
+
+				// parse components
+				.replace(rcomponent, function() {
+					components.push({
+						insertAt: arguments[2],
+						after: arguments[1] === 'after',
+						type: arguments[3],
+						params: arguments[4]
+					});
+					return '';
+				})
+
+				// normalize new lines and trim lines
+				.replace(rnormalize, '\n')
+
+				// remove empty lines at the end of the file
+				.replace(rtrim, '');
+
+			this.formula = ( '\n' + data ).split(rsplit);
+			this.components = components;
+		};
+	})
+
+	// execute various operations on the JS representation
+	// of a glyph when it is loaded or first used
+	.factory('prepareComponent', function( $interpolate, $parse ) {
+		var rempty = /^[ \t]*$/;
+
+		return function() {
+			if ( this.interpolated ) {
+				return;
+			}
+
+			// interpolate segments
+			this.interpolated = this.formula.map(function( segmentFormula ) {
+				return rempty.test( segmentFormula ) ? false : $interpolate( segmentFormula );
+			});
+
+			// get rid of the formula
+			delete this.formula;
+		};
+	});
+
+	/*.factory('processComponent', function( _, prepareComponent, Segment ) {
+		var risAfter = /^after/,
+			rletters = /^[a-z]+/,
+			processComponent = function( args ) {
+
+				var knownSegments = [],
+					context,
+					isInverted;
+
+				prepareComponent( args.component );
+				context = {
+					controls: args.controls,
+					params: args.params,
+					self: knownSegments,
+					//parent: parent,
+					origin: args.origin
+				};
+
+				args.component.interpolated.each(function( interpolatedSegment, i ) {
+					knownSegments.push( interpolatedSegment && new Segment(
+						interpolatedSegment( context ),
+						context.curPos
+					);
+				});
+			}
+
+		return processComponent;
+	})
+
 	.factory('processComponent', function( _, prepareComponent, prepareContext, prepareVars, absolutizeSegment, mergeDestinations ) {
 		var rseparator = /[ ,]+/g,
 			risAfter = /^after/,
@@ -373,4 +472,4 @@ angular.module('prototyp0.componentUtils', [])
 			// empty the source array to make sure merge happens only once
 			source.splice(0);
 		};
-	});
+	});*/

@@ -12,28 +12,7 @@ angular.module('prototyp0.fontLoader', ['ngResource'])
 
 		return $resource( '/fonts/:font/glyphs/:glyph', {}, {
 			get: { method:'GET', params: {}, transformResponse: function( data ) {
-				var components = {};
-
-				data = data
-					// remove multi-line comments
-					.replace(/\/\*.*?\*\//g, '')
-
-					// remove single-line comments
-					.replace(/\/\/.*$/gm, '')
-
-					// extract components
-					.replace(/^ *(after|before) +(\d+) *: *(.+?)$/gm, function() {
-						components[arguments[1] + arguments[2]] = arguments[3];
-						return '';
-					})
-
-					// remove empty lines
-					.replace(/(?:^|\r?\n)[ \t]*(?:\r?\n|$)/g, '');
-
-				return {
-					formula: ( 'vM 0 0\n' + data ).split(/\r?\n/),
-					components: components
-				};
+				return data;
 			}}
 		});
 	})
