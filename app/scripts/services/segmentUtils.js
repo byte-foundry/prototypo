@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0.segmentUtils', [])
+angular.module('prototypo.segmentUtils', [])
 	.constant('segmentMethods', {})
 
 	.factory('Segment', function() {

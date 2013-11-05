@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0.prettySliderDirective', [])
+angular.module('prototypo.prettySliderDirective', [])
 	.directive('slider', function factory() {
 		return {
 			priority: 0,

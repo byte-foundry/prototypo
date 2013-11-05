@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0.contourDirective', [])
+angular.module('prototypo.contourDirective', [])
 	.directive('glyphContour', function( _ ) {
 		return {
 			restrict: 'EAC',

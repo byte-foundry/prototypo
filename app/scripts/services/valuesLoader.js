@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0.valuesLoader', [])
+angular.module('prototypo.valuesLoader', [])
 	.factory('valuesLoader', function( $q ) {
 		return function(prefix, getDefault) {
 			return {

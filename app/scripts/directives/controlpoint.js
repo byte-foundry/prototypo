@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0.controlpointDirective', [])
+angular.module('prototypo.controlpointDirective', [])
 	.directive('segmentControl', function() {
 		return function( scope, element ) {
 			scope.$watch('control', function( control ) {

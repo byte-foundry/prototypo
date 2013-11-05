@@ -1,74 +1,57 @@
 'use strict';
 
-angular.module('prototyp0.componentUtils', [])
-	.factory('Component', function( parseComponent, prepareComponent ) {
+angular.module('prototypo.componentUtils', [])
+	.factory('Component', function( parseComponent, interpolateComponent, processComponent ) {
 
 		function Component( data ) {
 			this.parse( data );
-			this.prepare();
+			this.interpolate();
+			this.init();
 		}
 
-		Component.prototype.parse = parseComponent;
-		Component.prototype.prepare = prepareComponent;
-
-		return Component;
-	})
-
-	// parse the content of a component file
-	.factory('parseComponent', function() {
-		var rcomment = /\/\/.*$/gm,
-			rcomponent = /^[\t ]*(after|before)[\t ]+(\d+)[\t ]*:[\t ]*([\w-]+?)\((.*?)\)[\t ]*$/gm,
-			rnormalize = /[ \t]*(?:\r?\n|\r)[ \t]*/g,
-			rtrim = /\n*$/g,
-			rsplit = /(?:\r?\n|\r)/;
+		Component.prototype = {
+			parse: parseComponent,
+			interpolate: interpolateComponent,
+			process: processComponent
+		};
 
 		return function( data ) {
-			var components = [];
-
-			data = data
-				// remove single-line comments
-				.replace(rcomment, '')
-
-				// parse components
-				.replace(rcomponent, function() {
-					components.push({
-						insertAt: arguments[2],
-						after: arguments[1] === 'after',
-						type: arguments[3],
-						params: arguments[4]
-					});
-					return '';
-				})
-
-				// normalize new lines and trim lines
-				.replace(rnormalize, '\n')
-
-				// remove empty lines at the end of the file
-				.replace(rtrim, '');
-
-			this.formula = ( '\n' + data ).split(rsplit);
-			this.components = components;
+			return new Component( data );
 		};
 	})
 
-	// execute various operations on the JS representation
-	// of a glyph when it is loaded or first used
-	.factory('prepareComponent', function( $interpolate, $parse ) {
-		var rempty = /^[ \t]*$/;
-
+	.factory('initComponent', function() {
 		return function() {
-			if ( this.interpolated ) {
-				return;
-			}
+			this.segments = [];
+		};
+	})
 
-			// interpolate segments
-			this.interpolated = this.formula.map(function( segmentFormula ) {
-				return rempty.test( segmentFormula ) ? false : $interpolate( segmentFormula );
+	.factory('processComponent', function( Segment ) {
+		function processComponent( args, glyph ) {
+			var context = {
+					controls: args.controls,
+					params: args.params,
+					self: this.segments
+				};
+
+			// initialize the drawing with the origin
+			this.segments[0] = Segment( args.curPos );
+
+			this.formula.forEach(function( segmentFormula, i ) {
+				// only process non-empty segments
+				if ( segmentFormula ) {
+					this.segments[i] = Segment( segmentFormula( context ), args.curPos );
+				}
 			});
 
-			// get rid of the formula
-			delete this.formula;
-		};
+			this.mergeTo( glyph );
+
+			this.components.forEach(function( component ) {
+				component.process( args );
+			});
+		}
+
+		return processComponent;
 	});
 
 	/*.factory('processComponent', function( _, prepareComponent, Segment ) {

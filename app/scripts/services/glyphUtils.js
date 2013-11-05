@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0.glyphUtils', [])
+angular.module('prototypo.glyphUtils', [])
 	.factory('processGlyph', function( _, GlyphCache, processComponent ) {
 		var rexpression = /{/;
 

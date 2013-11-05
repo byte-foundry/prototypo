@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0.fontLoader', ['ngResource'])
+angular.module('prototypo.fontLoader', ['ngResource'])
 	.factory( 'Font', function( $resource ) {
 
 		return $resource( '/fonts/:font/font.json', {}, {
