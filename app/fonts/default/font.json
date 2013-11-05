@@ -3,10 +3,7 @@
 	"version": "0.1.0",
 	"description": "The first parameterised font",
 	"order": [
-		"A",
-		"S",
-		"H",
-		"n"
+		"A"
 	],
 	"components": [
 		"serif"

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0.endpointDirective', [])
+angular.module('prototypo.endpointDirective', [])
 	.directive('segmentEndpoint', function() {
 		return function( scope, element, attrs ) {
 			scope.$watch('processedGlyph[' + attrs.index + ']', function( segment ) {

@@ -1,7 +1,90 @@
 'use strict';
 
-angular.module('prototyp0.componentUtils', [])
-	.factory('processComponent', function( _, prepareComponent, prepareContext, prepareVars, absolutizeEndpoints, mergeDestinations ) {
+angular.module('prototypo.componentUtils', [])
+	.factory('Component', function( parseComponent, interpolateComponent, processComponent ) {
+
+		function Component( data ) {
+			this.parse( data );
+			this.interpolate();
+			this.init();
+		}
+
+		Component.prototype = {
+			parse: parseComponent,
+			interpolate: interpolateComponent,
+			process: processComponent
+		};
+
+		return function( data ) {
+			return new Component( data );
+		};
+	})
+
+	.factory('initComponent', function() {
+		return function() {
+			this.segments = [];
+		};
+	})
+
+	.factory('processComponent', function( Segment ) {
+		function processComponent( args, glyph ) {
+			var context = {
+					controls: args.controls,
+					params: args.params,
+					self: this.segments
+				};
+
+			// initialize the drawing with the origin
+			this.segments[0] = Segment( args.curPos );
+
+			this.formula.forEach(function( segmentFormula, i ) {
+				// only process non-empty segments
+				if ( segmentFormula ) {
+					this.segments[i] = Segment( segmentFormula( context ), args.curPos );
+				}
+			});
+
+			this.mergeTo( glyph );
+
+			this.components.forEach(function( component ) {
+				component.process( args );
+			});
+		}
+
+		return processComponent;
+	});
+
+	/*.factory('processComponent', function( _, prepareComponent, Segment ) {
+		var risAfter = /^after/,
+			rletters = /^[a-z]+/,
+			processComponent = function( args ) {
+
+				var knownSegments = [],
+					context,
+					isInverted;
+
+				prepareComponent( args.component );
+				context = {
+					controls: args.controls,
+					params: args.params,
+					self: knownSegments,
+					//parent: parent,
+					origin: args.origin
+				};
+
+				args.component.interpolated.each(function( interpolatedSegment, i ) {
+					knownSegments.push( interpolatedSegment && new Segment(
+						interpolatedSegment( context ),
+						context.curPos
+					);
+				});
+			}
+
+		return processComponent;
+	})
+
+	.factory('processComponent', function( _, prepareComponent, prepareContext, prepareVars, absolutizeSegment, mergeDestinations ) {
+>>>>>>> test_virtual
 		var rseparator = /[ ,]+/g,
 			risAfter = /^after/,
 			rletters = /^[a-z]+/,
@@ -58,6 +141,29 @@ angular.module('prototyp0.componentUtils', [])
 					}
 				});
 
+				_( args.component.components ).each(function(declaration, i) {
+					// merge destinations before treating first component
+					if ( tmpDestination.length ) {
+						mergeDestinations( args.destination, tmpDestination, args.insertIndex, args.component.formula.invert );
+					}
+
+					var isAfter = risAfter.test(i),
+						newInsertIndex = i.replace( rletters, '' );
+					processComponent({
+						font: args.font,
+						component: args.font.components[declaration[0]],
+						controls: args.controls,
+						params: declaration[1]( context ),
+						parent: knownSegments,
+						origin: {
+							x: knownSegments[newInsertIndex].x,
+							y: knownSegments[newInsertIndex].y
+						},
+						insertIndex: args.destination.indexOf( knownSegments[newInsertIndex] ) + ( isAfter ? 0 : -1 ),
+						destination: args.destination
+					});
+				});
+
 				// merge destinations now if the formula didn't include any components
 				if ( tmpDestination.length ) {
 					mergeDestinations( args.destination, tmpDestination, args.insertIndex, isInverted );
@@ -73,7 +179,7 @@ angular.module('prototyp0.componentUtils', [])
 	// of a glyph when it is loaded or first used
 	.factory('prepareComponent', function( _, $interpolate, $parse, structureSegment ) {
 		var rcomponent = /^(\w+)/,
-			rparams = /{{(.*?)}}/;
+			rparams = /\((.*?)\)/;
 
 		return function( component ) {
 			if ( component.interpolated ) {
@@ -90,14 +196,15 @@ angular.module('prototyp0.componentUtils', [])
 				if ( !isNaN(+i) ) {
 					component.interpolated[i] = $interpolate( segmentFormula );
 
-				// when the index starts with $ it a variable
+				// when the index starts with $ it's a variable (deprecated)
 				} else if ( i.indexOf('$') === 0 ) {
 					component.vars[i] = segmentFormula;
 
+				// invert case (deprecated)
 				} else if ( i === 'invert' ) {
 					component.interpolated[i] = $parse( segmentFormula );
 
-				// otherwise it's a component
+				// otherwise it's a component (deprecated)
 				} else {
 					component.interpolated[i] = [
 						rcomponent.exec( segmentFormula )[1],
@@ -106,7 +213,15 @@ angular.module('prototyp0.componentUtils', [])
 				}
 			});
 
-			// make segments easier to work with
+			// We now have components in a specific property
+			_( component.components ).each(function(declaration, i) {
+				component.components[i] = [
+					rcomponent.exec( declaration )[1],
+					$parse( rparams.exec( declaration )[1] )
+				];
+			});
+
+			// make segments easier to work with (deprecated, probably never worked)
 			if ( component.refence && component.reference[0] && component.reference[0].constructor === Array ) {
 				_( component.reference ).each(function(arrSegment, i) {
 					component.reference[i] = structureSegment( arrSegment );
@@ -313,4 +428,4 @@ angular.module('prototyp0.componentUtils', [])
 			// empty the source array to make sure merge happens only once
 			source.splice(0);
 		};
-	});
+	});*/

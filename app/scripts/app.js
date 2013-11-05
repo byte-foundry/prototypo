@@ -1,20 +1,23 @@
 'use strict';
 
-angular.module('prototyp0App', [
+angular.module('prototypoApp', [
     'lodash',
-    'prototyp0.fontLoader',
-    'prototyp0.valuesLoader',
-    'prototyp0.glyphFilters',
-    'prototyp0.glyphUtils',
-    'prototyp0.componentUtils',
-    'prototyp0.segmentUtils',
-    'prototyp0.glyphCache',
+    'ngRoute',
+    'pasvaz.bindonce',
 
-    'prototyp0.glyphDirective',
-    'prototyp0.contourDirective',
-    'prototyp0.endpointDirective',
-    'prototyp0.mySliderDirective',
-    'prototyp0.controlpointDirective'
+    'prototypo.fontLoader',
+    'prototypo.valuesLoader',
+    'prototypo.glyphFilters',
+    'prototypo.glyphUtils',
+    'prototypo.componentUtils',
+    'prototypo.segmentUtils',
+    'prototypo.glyphCache',
+
+    'prototypo.glyphDirective',
+    'prototypo.contourDirective',
+    'prototypo.endpointDirective',
+    'prototypo.prettySliderDirective',
+    'prototypo.controlpointDirective'
   ])
 
   .config(function ( $routeProvider ) {

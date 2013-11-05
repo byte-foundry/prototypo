@@ -2,8 +2,9 @@
   "name": "prototyp0",
   "version": "0.1.0",
   "dependencies": {
-    "angular-latest": "~1.1.5",
+    "angular-latest": "~1.2.0-rc.3",
     "angular-ui-router": "~0.0.1",
+    "angular-bindonce": "~0.2.1",
     "json3": "~3.2.4",
     "es5-shim": "~2.0.8",
     "lodash": "~1.2.1"

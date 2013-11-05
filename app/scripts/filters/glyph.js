@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0.glyphFilters', ['lodash'])
+angular.module('prototypo.glyphFilters', ['lodash'])
 	.filter('contours', function( _ ) {
 		// FIXME: this filter is executed four or five times !?!
 		return function( segments ) {

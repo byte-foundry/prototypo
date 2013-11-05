@@ -1,13 +1,13 @@
 <input type="button" value="Reset" ng-click="resetControlValues()" />
 
-<label ng-repeat="control in currentFont.controls">
-	{{control.label}}
-
+<label bindonce ng-repeat="control in currentFont.controls">
+	<span bo-text="control.label"></span>
 	<input type="range"
 		ng-model="controlValues[control.name]"
-		min="{{control.min}}"
-		max="{{control.max}}"
-		step="{{control.step}}"
+		bo-attr
+		bo-attr-min="control.min"
+		bo-attr-max="control.max"
+		bo-attr-step="control.step"
 		zob-init="controlValues[control.name] = control.init"
 		ng-change="control.onchange && deferChange(control.onchange)"
 	/>

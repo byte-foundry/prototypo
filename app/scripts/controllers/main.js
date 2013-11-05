@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0App')
+angular.module('prototypoApp')
 	.controller('MainCtrl', function ( $scope, _, processGlyph, loadFont, ControlValues, AppValues ) {
 		var deferredChanges = [];
 

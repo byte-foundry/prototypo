@@ -1,31 +1,23 @@
 'use strict';
 
-angular.module('prototyp0.segmentUtils', [])
+angular.module('prototypo.segmentUtils', [])
 	.constant('segmentMethods', {})
 
-	.factory('findOnBezier', function( segmentMethods ) {
-		return segmentMethods.findOnBezier = function( params ) {
-			var start = params.on[0],
-				end = params.on[1],
-				// intermediate points
-				tmp1 = {
-					x: start.x + ( end.controls[0].x - start.x ) * params.t,
-					y: start.y + ( end.controls[0].y - start.y ) * params.t,
-				},
-				tmp2 = {
-					x: start.x + ( end.controls[1].x - start.x ) * params.t,
-					y: start.y + ( end.controls[1].y - start.y ) * params.t,
-				};
+	.factory('Segment', function() {
+		var rseparator = /[ ,]+/g;
 
-				//console.log( [].indeOf.apply( this.self, [params.on[0]] ) )
-				//control1 =
-			// find coordinates of a point at a given percentage on a bezier
+		function Segment( processedSegment, origin ) {
+			var segmentArray = processedSegment.replace(rseparator, ' ').split(' ');
 
-		};
+
+		}
+
+		return Segment;
 	})
 
-	.factory('findOnLineSegment', function( segmentMethods ) {
-		return segmentMethods.find = function( params ) {
+	.config(function( segmentMethods ) {
+		segmentMethods.find = function( params ) {
+
 			var start = params.on[0],
 				end = params.on[1],
 				vector = {

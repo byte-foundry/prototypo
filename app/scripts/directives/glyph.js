@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototyp0.glyphDirective', [])
+angular.module('prototypo.glyphDirective', [])
 	.directive('glyph', function( processGlyph ) {
 		return {
 			//priority: 0,
