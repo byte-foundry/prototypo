@@ -3,6 +3,11 @@
 angular.module('prototypo.Formula', [])
 	.factory('Formula', function( parseFormula, interpolateFormula ) {
 		function Formula( data ) {
+			// new is optional
+			if ( !( this instanceof Formula ) ) {
+				return new Formula( data );
+			}
+
 			this.parse( data );
 			this.interpolate();
 		}
@@ -12,9 +17,7 @@ angular.module('prototypo.Formula', [])
 			interpolate: function() { interpolateFormula( this ); }
 		};
 
-		return function( data ) {
-			return new Formula( data );
-		};
+		return Formula;
 	})
 
 	// parse the text representation of a formula
@@ -35,7 +38,7 @@ angular.module('prototypo.Formula', [])
 				// parse components
 				.replace(rcomponent, function() {
 					components.push({
-						insertAt: arguments[2],
+						mergeAt: arguments[2],
 						after: arguments[1] === 'after',
 						type: arguments[3],
 						rawParams: arguments[4]

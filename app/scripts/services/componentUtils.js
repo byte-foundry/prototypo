@@ -52,9 +52,9 @@ angular.module('prototypo.componentUtils', [])
 		}
 
 		return processComponent;
-	});
+	})
 
-	/*.factory('processComponent', function( _, prepareComponent, Segment ) {
+	.factory('processComponent', function( _, prepareComponent, Segment ) {
 		var risAfter = /^after/,
 			rletters = /^[a-z]+/,
 			processComponent = function( args ) {
@@ -76,7 +76,7 @@ angular.module('prototypo.componentUtils', [])
 					knownSegments.push( interpolatedSegment && new Segment(
 						interpolatedSegment( context ),
 						context.curPos
-					);
+					));
 				});
 			}
 
@@ -84,7 +84,6 @@ angular.module('prototypo.componentUtils', [])
 	})
 
 	.factory('processComponent', function( _, prepareComponent, prepareContext, prepareVars, absolutizeSegment, mergeDestinations ) {
->>>>>>> test_virtual
 		var rseparator = /[ ,]+/g,
 			risAfter = /^after/,
 			rletters = /^[a-z]+/,
@@ -428,4 +427,4 @@ angular.module('prototypo.componentUtils', [])
 			// empty the source array to make sure merge happens only once
 			source.splice(0);
 		};
-	});*/
+	});

@@ -1,16 +1,13 @@
 'use strict';
 
-describe('Parse Formula', function () {
+describe('Formula', function () {
 
   // load the controller's module
   beforeEach(module('prototypo.Formula'));
 
-  var formula;
-
-  beforeEach(inject(function ( parseFormula ) {
-    formula = {};
-
-    parseFormula( formula, [
+  var _Formula,
+    formula,
+    d0 = [
       '// a simple triangle',
       'M 20 20',
       'l 30 50',
@@ -19,8 +16,24 @@ describe('Parse Formula', function () {
       '',
       'after 1: curve(40)',
       'before 24: serif({width: 12})'
-    ].join('\n'));
+    ].join('\n'),
+    f0,
+    f1;
+
+  beforeEach(inject(function ( Formula, parseFormula ) {
+    _Formula = Formula;
+    formula = {};
+
+    f0 = new Formula( d0 );
+    f1 = Formula( d0 );
+
+    parseFormula( formula, d0 );
   }));
+
+  it('can be called with or without new', function() {
+    expect(f0 instanceof _Formula).toBe(true);
+    expect(f1 instanceof _Formula).toBe(true);
+  });
 
   it('turns a flat text into formula and sub-component arrays', function () {
     expect(formula.raw.constructor).toBe(Array);
@@ -37,8 +50,8 @@ describe('Parse Formula', function () {
 
   it('create an object from each parsed sub-component', function() {
     expect(formula.components.length).toBe(2);
-    expect(formula.components[0].insertAt).toBe('1');
-    expect(formula.components[1].insertAt).toBe('24');
+    expect(formula.components[0].mergeAt).toBe('1');
+    expect(formula.components[1].mergeAt).toBe('24');
     expect(formula.components[0].after).toBe(true);
     expect(formula.components[1].after).toBe(false);
     expect(formula.components[0].type).toBe('curve');
@@ -65,12 +78,12 @@ describe('Interpolate component', function () {
       ],
       components: [
         {
-          insertAt: 1,
+          mergeAt: 1,
           after: true,
           type: 'curve',
           rawParams: '40'
         }, {
-          insertAt: 24,
+          mergeAt: 24,
           after: false,
           type: 'serif',
           rawParams: '{width: 12}'
