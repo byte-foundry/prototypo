@@ -8,14 +8,21 @@ angular.module('prototypo.Point', [])
 				return new Point( x, y );
 			}
 
-			if ( x.constructor === Array ) {
-				this.x = +x[0];
-				this.y = +x[1];
+			if ( x instanceof Array ) {
+				this.x = x[0];
+				this.y = x[1];
 			} else if ( x instanceof Point ) {
 				this.x = x.x;
 				this.y = x.y;
 			} else {
+				this.x = x;
+				this.y = y;
+			}
+
+			if ( typeof this.x === 'string' ) {
 				this.x = +x;
+			}
+			if ( typeof this.y === 'string' ) {
 				this.y = +y;
 			}
 		}
