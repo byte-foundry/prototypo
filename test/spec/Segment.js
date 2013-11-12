@@ -12,6 +12,10 @@ describe('Segment', function() {
     d,
     s0,
     s1,
+    s2,
+    s3,
+    s4,
+    s5,
     s_h,
     s_v,
     s_c,
@@ -66,7 +70,7 @@ describe('Segment', function() {
 
   beforeEach(inject(function( Segment, Point ) {
     _Segment = Segment;
-    o = Point(0,0),
+    o = Point(0,0);
     d = Point(10,-10);
 
     s0 = new Segment('z', Point(o) );
@@ -125,6 +129,11 @@ describe('Segment', function() {
     sa_rQ = Segment( 'rQ 11.11 22.22 33.33 44.44', Point(d) );
     sa_rC = Segment( 'rC 55.55 66.66 77.77 88.88 99.99 11.11', Point(d) );
     sa_rS = Segment( 'rS 22.22 33.33 44.44 55.55', Point(d) );
+
+    s2 = Segment( 'l 10 -10', o );
+    s3 = Segment( 'l 10 -10', o );
+    s4 = Segment( 'l 10 -10', o );
+    s5 = Segment( 'l 10 -10', o );
   }));
 
   it('can be called with or without new', function() {
@@ -136,19 +145,20 @@ describe('Segment', function() {
     // z
     expect(s_z.command).toBe('Z');
     expect(s_z.controls.length).toBe(0);
-    expect(s_z.end).toBe(undefined);
+    expect(s_z.end.x).toBe(0);
+    expect(s_z.end.y).toBe(0);
 
     // h
     expect(s_h.command).toBe('H');
     expect(s_h.controls.length).toBe(0);
     expect(s_h.end.x).toBe(-11.11);
-    expect(s_h.end.y).toBe(undefined);
+    expect(s_h.end.y).toBe(0);
 
     // v
     expect(s_v.command).toBe('V');
     expect(s_v.controls.length).toBe(0);
     expect(s_v.end.y).toBe(-22.22);
-    expect(s_v.end.x).toBe(undefined);
+    expect(s_v.end.x).toBe(0);
 
     // m
     expect(s_m.command).toBe('M');
@@ -225,19 +235,20 @@ describe('Segment', function() {
     // Z
     expect(s_Z.command).toBe('Z');
     expect(s_Z.controls.length).toBe(0);
-    expect(s_Z.end).toBe(undefined);
+    expect(s_Z.end.x).toBe(0);
+    expect(s_Z.end.y).toBe(0);
 
     // H
     expect(s_H.command).toBe('H');
     expect(s_H.controls.length).toBe(0);
     expect(s_H.end.x).toBe(-11.11);
-    expect(s_H.end.y).toBe(undefined);
+    expect(s_H.end.y).toBe(0);
 
     // V
     expect(s_V.command).toBe('V');
     expect(s_V.controls.length).toBe(0);
     expect(s_V.end.y).toBe(-22.22);
-    expect(s_V.end.x).toBe(undefined);
+    expect(s_V.end.x).toBe(0);
 
     // M
     expect(s_M.command).toBe('M');
@@ -333,19 +344,20 @@ describe('Segment', function() {
     // z
     expect(sa_z.command).toBe('Z');
     expect(sa_z.controls.length).toBe(0);
-    expect(sa_z.end).toBe(undefined);
+    expect(sa_z.end.x).toBe(10);
+    expect(sa_z.end.y).toBe(-10);
 
     // h
     expect(sa_h.command).toBe('H');
     expect(sa_h.controls.length).toBe(0);
     expect(sa_h.end.x).toBe(-11.11 + 10);
-    expect(sa_h.end.y).toBe(undefined);
+    expect(sa_h.end.y).toBe(0 - 10);
 
     // v
     expect(sa_v.command).toBe('V');
     expect(sa_v.controls.length).toBe(0);
     expect(sa_v.end.y).toBe(-22.22 - 10);
-    expect(sa_v.end.x).toBe(undefined);
+    expect(sa_v.end.x).toBe(0 + 10);
 
     // m
     expect(sa_m.command).toBe('M');
@@ -420,93 +432,176 @@ describe('Segment', function() {
     expect(sa_rs.controls[1].y).toBe(33.33 + 55.55 - 10);
 
     // Z
-    expect(s_Z.command).toBe('Z');
-    expect(s_Z.controls.length).toBe(0);
-    expect(s_Z.end).toBe(undefined);
+    expect(sa_Z.command).toBe('Z');
+    expect(sa_Z.controls.length).toBe(0);
+    expect(sa_Z.end.x).toBe(10);
+    expect(sa_Z.end.y).toBe(-10);
 
     // H
-    expect(s_H.command).toBe('H');
-    expect(s_H.controls.length).toBe(0);
-    expect(s_H.end.x).toBe(-11.11);
-    expect(s_H.end.y).toBe(undefined);
+    expect(sa_H.command).toBe('H');
+    expect(sa_H.controls.length).toBe(0);
+    expect(sa_H.end.x).toBe(-11.11);
+    expect(sa_H.end.y).toBe(-10);
 
     // V
-    expect(s_V.command).toBe('V');
-    expect(s_V.controls.length).toBe(0);
-    expect(s_V.end.y).toBe(-22.22);
-    expect(s_V.end.x).toBe(undefined);
+    expect(sa_V.command).toBe('V');
+    expect(sa_V.controls.length).toBe(0);
+    expect(sa_V.end.y).toBe(-22.22);
+    expect(sa_V.end.x).toBe(10);
 
     // M
-    expect(s_M.command).toBe('M');
-    expect(s_M.controls.length).toBe(0);
-    expect(s_M.end.x).toBe(-33.33);
-    expect(s_M.end.y).toBe(-44.44);
+    expect(sa_M.command).toBe('M');
+    expect(sa_M.controls.length).toBe(0);
+    expect(sa_M.end.x).toBe(-33.33);
+    expect(sa_M.end.y).toBe(-44.44);
 
     // L
-    expect(s_L.command).toBe('L');
-    expect(s_L.controls.length).toBe(0);
-    expect(s_L.end.x).toBe(55.55);
-    expect(s_L.end.y).toBe(66.66);
+    expect(sa_L.command).toBe('L');
+    expect(sa_L.controls.length).toBe(0);
+    expect(sa_L.end.x).toBe(55.55);
+    expect(sa_L.end.y).toBe(66.66);
 
     // Q
-    expect(s_Q.command).toBe('Q');
-    expect(s_Q.end.x).toBe(99.99);
-    expect(s_Q.end.y).toBe(11.11);
-    expect(s_Q.controls.length).toBe(1);
-    expect(s_Q.controls[0].x).toBe(77.77);
-    expect(s_Q.controls[0].y).toBe(88.88);
+    expect(sa_Q.command).toBe('Q');
+    expect(sa_Q.end.x).toBe(99.99);
+    expect(sa_Q.end.y).toBe(11.11);
+    expect(sa_Q.controls.length).toBe(1);
+    expect(sa_Q.controls[0].x).toBe(77.77);
+    expect(sa_Q.controls[0].y).toBe(88.88);
 
     // C
-    expect(s_C.command).toBe('C');
-    expect(s_C.end.x).toBe(55.55);
-    expect(s_C.end.y).toBe(66.66);
-    expect(s_C.controls.length).toBe(2);
-    expect(s_C.controls[0].x).toBe(11.11);
-    expect(s_C.controls[0].y).toBe(22.22);
-    expect(s_C.controls[1].x).toBe(33.33);
-    expect(s_C.controls[1].y).toBe(44.44);
+    expect(sa_C.command).toBe('C');
+    expect(sa_C.end.x).toBe(55.55);
+    expect(sa_C.end.y).toBe(66.66);
+    expect(sa_C.controls.length).toBe(2);
+    expect(sa_C.controls[0].x).toBe(11.11);
+    expect(sa_C.controls[0].y).toBe(22.22);
+    expect(sa_C.controls[1].x).toBe(33.33);
+    expect(sa_C.controls[1].y).toBe(44.44);
 
     // T
-    expect(s_T.command).toBe('T');
-    expect(s_T.controls.length).toBe(0);
-    expect(s_T.end.x).toBe(77.77);
-    expect(s_T.end.y).toBe(88.88);
+    expect(sa_T.command).toBe('T');
+    expect(sa_T.controls.length).toBe(0);
+    expect(sa_T.end.x).toBe(77.77);
+    expect(sa_T.end.y).toBe(88.88);
 
     // S
-    expect(s_S.command).toBe('S');
-    expect(s_S.controls.length).toBe(1);
-    expect(s_S.end.x).toBe(22.22);
-    expect(s_S.end.y).toBe(33.33);
-    expect(s_S.controls[0].x).toBe(99.99);
-    expect(s_S.controls[0].y).toBe(11.11);
+    expect(sa_S.command).toBe('S');
+    expect(sa_S.controls.length).toBe(1);
+    expect(sa_S.end.x).toBe(22.22);
+    expect(sa_S.end.y).toBe(33.33);
+    expect(sa_S.controls[0].x).toBe(99.99);
+    expect(sa_S.controls[0].y).toBe(11.11);
 
     // rQ
-    expect(s_rQ.command).toBe('Q');
-    expect(s_rQ.end.x).toBe(33.33);
-    expect(s_rQ.end.y).toBe(44.44);
-    expect(s_rQ.controls.length).toBe(2);
-    expect(s_rQ.controls[0]).toBe(undefined);
-    expect(s_rQ.controls[1].x).toBe(11.11 + 33.33);
-    expect(s_rQ.controls[1].y).toBe(22.22 + 44.44);
+    expect(sa_rQ.command).toBe('Q');
+    expect(sa_rQ.end.x).toBe(33.33);
+    expect(sa_rQ.end.y).toBe(44.44);
+    expect(sa_rQ.controls.length).toBe(2);
+    expect(sa_rQ.controls[0]).toBe(undefined);
+    expect(sa_rQ.controls[1].x).toBe(11.11 + 33.33);
+    expect(sa_rQ.controls[1].y).toBe(22.22 + 44.44);
 
     // rC
-    expect(s_rC.command).toBe('C');
-    expect(s_rC.end.x).toBe(99.99);
-    expect(s_rC.end.y).toBe(11.11);
-    expect(s_rC.controls.length).toBe(2);
-    expect(s_rC.controls[0].x).toBe(55.55);
-    expect(s_rC.controls[0].y).toBe(66.66);
-    expect(s_rC.controls[1].x).toBe(77.77 + 99.99);
-    expect(s_rC.controls[1].y).toBe(88.88 + 11.11);
+    expect(sa_rC.command).toBe('C');
+    expect(sa_rC.end.x).toBe(99.99);
+    expect(sa_rC.end.y).toBe(11.11);
+    expect(sa_rC.controls.length).toBe(2);
+    expect(sa_rC.controls[0].x).toBe(55.55);
+    expect(sa_rC.controls[0].y).toBe(66.66);
+    expect(sa_rC.controls[1].x).toBe(77.77 + 99.99);
+    expect(sa_rC.controls[1].y).toBe(88.88 + 11.11);
 
     // rS
-    expect(s_rS.command).toBe('S');
-    expect(s_rS.controls.length).toBe(2);
-    expect(s_rS.end.x).toBe(44.44);
-    expect(s_rS.end.y).toBe(55.55);
-    expect(s_rS.controls[0]).toBe(undefined);
-    expect(s_rS.controls[1].x).toBe(22.22 + 44.44);
-    expect(s_rS.controls[1].y).toBe(33.33 + 55.55);
+    expect(sa_rS.command).toBe('S');
+    expect(sa_rS.controls.length).toBe(2);
+    expect(sa_rS.end.x).toBe(44.44);
+    expect(sa_rS.end.y).toBe(55.55);
+    expect(sa_rS.controls[0]).toBe(undefined);
+    expect(sa_rS.controls[1].x).toBe(22.22 + 44.44);
+    expect(sa_rS.controls[1].y).toBe(33.33 + 55.55);
+  });
+
+  it('should make a sequence of relative segments with a common origin... relative.', function() {
+    expect(s5.end.x).toBe(40);
+    expect(s5.end.y).toBe(-40);
+
+    expect(o.x).toBe(40);
+    expect(o.y).toBe(-40);
+  });
+
+  it('can serialize a segment to SVG without decimals', function() {
+    // z
+    expect(sa_z.toSVG()).toBe('Z');
+
+    // h
+    expect(sa_h.toSVG()).toBe('H -1');
+
+    // v
+    expect(sa_v.toSVG()).toBe('V -32');
+
+    // m
+    expect(sa_m.toSVG()).toBe('M -23 -54');
+
+    // l
+    expect(sa_l.toSVG()).toBe('L 66 57');
+
+    // q
+    expect(sa_q.toSVG()).toBe('Q 88 79 110 1');
+
+    // c
+    expect(sa_c.toSVG()).toBe('C 21 12 43 34 66 57');
+
+    // t
+    expect(sa_t.toSVG()).toBe('T 88 79');
+
+    // s
+    expect(sa_s.toSVG()).toBe('S 110 1 32 23');
+
+    // rq
+    expect(sa_rq.toSVG()).toBe('Q 54 57 43 34');
+
+    // rc
+    expect(sa_rc.toSVG()).toBe('C 66 57 188 90 110 1');
+
+    // rs
+    expect(sa_rs.toSVG()).toBe('S 77 79 54 46');
+
+    // Z
+    expect(sa_Z.toSVG()).toBe('Z');
+
+    // H
+    expect(sa_H.toSVG()).toBe('H -11');
+
+    // V
+    expect(sa_V.toSVG()).toBe('V -22');
+
+    // M
+    expect(sa_M.toSVG()).toBe('M -33 -44');
+
+    // L
+    expect(sa_L.toSVG()).toBe('L 56 67');
+
+    // Q
+    expect(sa_Q.toSVG()).toBe('Q 78 89 100 11');
+
+    // C
+    expect(sa_C.toSVG()).toBe('C 11 22 33 44 56 67');
+
+    // T
+    expect(sa_T.toSVG()).toBe('T 78 89');
+
+    // S
+    expect(sa_S.toSVG()).toBe('S 100 11 22 33');
+
+    // rQ
+    expect(sa_rQ.toSVG()).toBe('Q 44 67 33 44');
+
+    // rC
+    expect(sa_rC.toSVG()).toBe('C 56 67 178 100 100 11');
+
+    // rS
+    expect(sa_rS.toSVG()).toBe('S 67 89 44 56');
   });
 
 });

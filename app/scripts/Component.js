@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('prototypo.Component', [])
-	.factory('Component', function( formulaLib, controls, initComponent, processComponent, mergeComponent, Point ) {
+angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', 'prototypo.formulaLib'])
+	.factory('Component', function( initComponent, processComponent, mergeComponent, Point ) {
 
 		function Component( formula, args ) {
 			// new is optional
@@ -17,7 +17,7 @@ angular.module('prototypo.Component', [])
 
 
 			this.context = {
-				controls: controls,
+				controls: args.controls,
 				params: this.params,
 				self: this.segments
 			};
@@ -25,12 +25,18 @@ angular.module('prototypo.Component', [])
 			this.init();
 
 			this.components = formula.components.map(function( component ) {
-				component.mergeAt = this.segments[ component.mergeAt ];
-				return Component( formulaLib[ component.type ], component );
+				// override current args
+				args.mergeAt = this.segments[ component.mergeAt ];
+				args.after = component.after;
+				args.params = component.params;
+				args.curPos = Point( args.mergeAt.end );
+
+				return Component( args.formulaLib[ component.type ], args );
 			});
 
-			// it should be safe to reset the global curPos here
-			args.curPos = Point(0,0);
+			// probably useless
+			//// it should be safe to reset the global curPos here
+			//args.curPos = Point(0,0);
 		}
 
 		Component.prototype = {
@@ -76,13 +82,15 @@ angular.module('prototypo.Component', [])
 	})
 
 	.factory('mergeComponent', function() {
-		return function( component, glyph ) {
+		return function( component, glyph ) {console.log(typeof component.mergeAt);
 			var insertIndex = component.mergeAt === 0 ?
 				0 :
 				glyph.indexOf( component.mergeAt ) + ( component.after ? 0 : -1 );
 
 			[].splice.apply( glyph, [insertIndex, 0].concat( component.segments ) );
 
-			component.mergeAt.virtual = true;
+			if ( component.mergeAt !== 0 ) {
+				component.mergeAt.virtual = true;
+			}
 		};
 	});

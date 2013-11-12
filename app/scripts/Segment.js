@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.Segment', [])
-	.factory('Segment', function( Point, absolutizeSegment ) {
+	.factory('Segment', function( Point, absolutizeSegment, segmentToSVG ) {
 		var rnormalize = /[, \t]+/g;
 
 		function Segment( data, curPos ) {
@@ -15,7 +15,6 @@ angular.module('prototypo.Segment', [])
 
 			this.virtual = false;
 			this.command = tmp[0];
-			this.start = Point( curPos );
 
 			switch ( tmp[0] ) {
 			case 'h':
@@ -61,23 +60,34 @@ angular.module('prototypo.Segment', [])
 		}
 
 		Segment.prototype = {
-			absolutize: function( curPos ) { absolutizeSegment( this, curPos ); }
+			absolutize: function( curPos ) { absolutizeSegment( this, curPos ); },
+			toSVG: function() { return segmentToSVG( this ); }
 		};
 
 		return Segment;
 	})
 
 	// make endpoint and control-points of the glyph absolute
-	.factory('absolutizeSegment', function() {
-		var rrelative = /R[QCS]/;
+	.factory('absolutizeSegment', function( Point ) {
+		var rrelativeCP = /R[QCS]/;
 
 		return function( segment, curPos ) {
+			segment.start = Point( curPos );
+
 			switch ( segment.command ) {
 			case 'h':
 				curPos.x = segment.end.x += curPos.x;
+				segment.end.y = curPos.y;
+				break;
+			case 'H':
+				segment.end.y = curPos.y;
 				break;
 			case 'v':
+				segment.end.x = curPos.x;
 				curPos.y = segment.end.y += curPos.y;
+				break;
+			case 'V':
+				segment.end.x = curPos.x;
 				break;
 			case 'rc':
 				segment.controls[0].x += curPos.x;
@@ -111,15 +121,12 @@ angular.module('prototypo.Segment', [])
 				break;
 			case 'z':
 			case 'Z':
+				segment.end = segment.start;
 				break;
-			// absolute commands (M, L, C, Q, ...) except Z
+			// absolute commands (M, L, C, Q, ...) except Z, H & V
 			default:
-				if ( segment.end.x ) {
-					curPos.x = segment.end.x;
-				}
-				if ( segment.end.y ) {
-					curPos.y = segment.end.y;
-				}
+				curPos.x = segment.end.x;
+				curPos.y = segment.end.y;
 				break;
 			}
 
@@ -127,12 +134,41 @@ angular.module('prototypo.Segment', [])
 			segment.command = segment.command.toUpperCase();
 
 			// absolutize control-points relative to the end of the segment
-			if ( rrelative.test( segment.command ) ) {
+			if ( rrelativeCP.test( segment.command ) ) {
 				segment.controls[1].x += segment.end.x;
 				segment.controls[1].y += segment.end.y;
 			}
 
 			// remove 'r' indication
 			segment.command = segment.command.slice(-1);
+		};
+	})
+
+	.factory('segmentToSVG', function() {
+		return function( segment ) {
+			var string = [ segment.command ];
+
+			if ( segment.controls[0] ) {
+				string.push( segment.controls[0].toString() );
+			}
+			if ( segment.controls[1] ) {
+				string.push( segment.controls[1].toString() );
+			}
+
+			switch( segment.command.toUpperCase() ) {
+			case 'H':
+				string.push( Math.round( segment.end.x ) );
+				break;
+			case 'V':
+				string.push( Math.round( segment.end.y ) );
+				break;
+			case 'Z':
+				break;
+			default:
+				string.push( segment.end.toString() );
+				break;
+			}
+
+			return string.join(' ');
 		};
 	});

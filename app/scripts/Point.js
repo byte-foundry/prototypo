@@ -29,7 +29,7 @@ angular.module('prototypo.Point', [])
 
 		Point.prototype = {
 			toString: function() {
-				return this.x + ' ' + this.y;
+				return Math.round( this.x ) + ' ' + Math.round( this.y );
 			}
 		};
 
