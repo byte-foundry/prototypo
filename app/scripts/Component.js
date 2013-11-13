@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', 'prototypo.formulaLib'])
-	.factory('Component', function( initComponent, processComponent, mergeComponent, Point ) {
+	.factory('Component', function( initComponent, processComponent, mergeComponent ) {
 
 		function Component( formula, args ) {
 			// new is optional
@@ -10,11 +10,10 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			}
 
 			this.formula = formula;
-			this.segments = [];
+			this.segments = new Array(formula.length);
 			this.mergeAt = args.mergeAt || 0;
-			this.after = args.after || true;
+			this.after = args.after || false;
 			this.params = args.params || function(){};
-
 
 			this.context = {
 				controls: args.controls,
@@ -22,14 +21,15 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				self: this.segments
 			};
 
-			this.init();
+			// too early to initilize, we need a glyph as a context
+			//this.init();
 
 			this.components = formula.components.map(function( component ) {
 				// override current args
 				args.mergeAt = this.segments[ component.mergeAt ];
 				args.after = component.after;
 				args.params = component.params;
-				args.curPos = Point( args.mergeAt.end );
+				//args.curPos = Point( args.mergeAt.end );
 
 				return Component( args.formulaLib[ component.type ], args );
 			});
@@ -48,49 +48,111 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 		return Component;
 	})
 
-	.factory('initComponent', function( Segment ) {
-		return function( component, args ) {
-			component.formula.forEach(function( segmentFormula, i ) {
-				// only process non-empty segments
-				if ( segmentFormula ) {
-					component.segments[i] = Segment( segmentFormula( component.context ), args.curPos );
-				}
-			});
+	.factory('initComponent', function( Point, processComponent ) {
+		return function initComponent( component, curPos ) {
+			var i = 0,
+				hasNaN = false,
+				glyph = [],
+				checkNaN = function( segment ) {
+					return isNaN( segment.x ) || isNaN( segment.y );
+				};
+
+			do {
+				glyph = [];
+				processComponent( component, curPos, glyph, false );
+				hasNaN = glyph.some(checkNaN);
+			} while ( ++i < 10 && hasNaN );
+
+			if ( !hasNaN ) {
+				// save numbers of iterations for later
+				component.iter = i;
+
+				component.components.forEach(function( subcomponent ) {
+					initComponent( subcomponent, Point( typeof subcomponent.mergeAt === 'number' ?
+						// allow numbers to be used for testing purpose
+						glyph[ subcomponent.mergeAt ].end :
+						subcomponent.mergeAt.end
+					));
+				});
+
+			} else {
+				throw 'Component segments cannot be initialized:\n' +
+					component.segments.map(function( segment, i ) { return component.formula[i] + ': ' + segment.toSVG(); }).join('\n');
+			}
 		};
 	})
 
-	.factory('processComponent', function( Segment ) {
-		function processComponent( component, args, glyph ) {
-			// initialize the drawing with the origin
-			component.segments[0] = Segment( args.curPos );
+	.factory('processComponent', function( Segment, Point, mergeComponent, flattenContext ) {
+		function processComponent( component, curPos, glyph, recurse ) {
+
+			// initialize the drawing with the origin as a fake segment
+			component.segments[0] = {
+				end: Point( curPos ),
+				x: curPos.x,
+				y: curPos.y
+			};
+
+			var flatCtx = flattenContext( component.context );
 
 			component.formula.forEach(function( segmentFormula, i ) {
-				// only process non-empty segments
-				if ( segmentFormula ) {
-					component.segments[i] = Segment( segmentFormula( component.context ), args.curPos );
+				if ( i > 0 ) {
+					// only process non-empty segments
+					component.segments[i] = segmentFormula && Segment( segmentFormula( flatCtx ), curPos );
 				}
 			});
 
-			component.mergeTo( glyph );
+			mergeComponent( component, glyph );
 
-			component.components.forEach(function( component ) {
-				component.process( args, glyph );
-			});
+			// don't recurse on initialization
+			if ( recurse !== false ) {
+				component.components.forEach(function( subcomponent ) {
+					processComponent( subcomponent,  Point( typeof subcomponent.mergeAt === 'number' ?
+							// allow numbers to be used for testing purpose
+							glyph[ subcomponent.mergeAt ].end :
+							subcomponent.mergeAt.end
+						), glyph );
+				});
+			}
 		}
 
 		return processComponent;
 	})
 
-	.factory('mergeComponent', function() {
-		return function( component, glyph ) {console.log(typeof component.mergeAt);
-			var insertIndex = component.mergeAt === 0 ?
-				0 :
-				glyph.indexOf( component.mergeAt ) + ( component.after ? 0 : -1 );
+	.factory('mergeComponent', function( Segment ) {
+		return function( component, glyph ) {
+			var insertIndex = ( typeof component.mergeAt === 'number' ?
+						// allow numbers to be used for testing purpose
+						component.mergeAt :
+						glyph.indexOf( component.mergeAt )
+					) + ( component.after ? 1 : 0 );
 
-			[].splice.apply( glyph, [insertIndex, 0].concat( component.segments ) );
+			[].splice.apply( glyph, [insertIndex, 0].concat(
+				// remove empty segments from the glyph
+				component.segments.filter(function( segment ) { return segment instanceof Segment; })
+			));
 
 			if ( component.mergeAt !== 0 ) {
 				component.mergeAt.virtual = true;
 			}
+		};
+	})
+
+	// we wouldn't need this function if we had harmony proxies
+	.factory('flattenContext', function() {
+		return function( context ) {
+			var flatCtx = {},
+				i;
+
+			for ( i in context.controls ) {
+				flatCtx[i] = context.controls[i];
+			}
+
+			for ( i in context.params ) {
+				flatCtx[i] = context.params[i];
+			}
+
+			flatCtx.self = context.self;
+
+			return flatCtx;
 		};
 	});

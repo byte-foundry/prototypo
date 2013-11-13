@@ -64,6 +64,14 @@ angular.module('prototypo.Segment', [])
 			toSVG: function() { return segmentToSVG( this ); }
 		};
 
+		// a segment has x and y properties that are copies of this.end.x and this.end.y
+		Object.defineProperty(Segment.prototype, 'x', {
+			get: function() { return this.end.x; },
+		});
+		Object.defineProperty(Segment.prototype, 'y', {
+			get: function() { return this.end.y; },
+		});
+
 		return Segment;
 	})
 

@@ -141,6 +141,23 @@ describe('Segment', function() {
     expect(s1 instanceof _Segment).toBe(true);
   });
 
+  it('keeps this.x and this.y synchronized to this.end.x and this.end.y', inject(function( Segment, Point ) {
+    var seg1 = Segment('M 10 20', Point(0, 0));
+
+    expect(seg1.x).toBe(10);
+    expect(seg1.x).toBe(seg1.end.x);
+    expect(seg1.y).toBe(20);
+    expect(seg1.y).toBe(seg1.end.y);
+
+    seg1.end = Point(30,40);
+
+    expect(seg1.x).toBe(30);
+    expect(seg1.x).toBe(seg1.end.x);
+    expect(seg1.y).toBe(40);
+    expect(seg1.y).toBe(seg1.end.y);
+
+  }));
+
   it('parses all possible kind of processed segment', function() {
     // z
     expect(s_z.command).toBe('Z');
