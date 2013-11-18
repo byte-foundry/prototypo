@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', 'prototypo.formulaLib'])
+angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 	.factory('Component', function( initComponent, processComponent, mergeComponent ) {
 
 		function Component( formula, args ) {
@@ -33,15 +33,11 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 
 				return Component( args.formulaLib[ component.type ], args );
 			});
-
-			// probably useless
-			//// it should be safe to reset the global curPos here
-			//args.curPos = Point(0,0);
 		}
 
 		Component.prototype = {
-			init: function() { initComponent( this ); },
-			process: function() { processComponent( this ); },
+			init: function( curPos ) { initComponent( this, curPos ); },
+			process: function( curPos, glyph ) { processComponent( this, curPos, glyph ); },
 			mergeTo: function( glyph ) { mergeComponent( this, glyph ); }
 		};
 

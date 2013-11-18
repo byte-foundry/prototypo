@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototypo.Segment', [])
+angular.module('prototypo.Segment', ['prototypo.Point'])
 	.factory('Segment', function( Point, absolutizeSegment, segmentToSVG ) {
 		var rnormalize = /[, \t]+/g;
 

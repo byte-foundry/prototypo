@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypoApp')
-	.controller('MainCtrl', function ( $scope, _, processGlyph, loadFont, ControlValues, AppValues ) {
+	.controller('MainCtrl', function ( $scope, _, loadFont, ControlValues, AppValues ) {
 		var deferredChanges = [];
 
 		$scope.currentFontName = 'default';

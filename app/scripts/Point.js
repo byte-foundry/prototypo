@@ -8,30 +8,35 @@ angular.module('prototypo.Point', [])
 				return new Point( x, y );
 			}
 
-			if ( x instanceof Array ) {
-				this.x = x[0];
-				this.y = x[1];
-			} else if ( x instanceof Point ) {
-				this.x = x.x;
-				this.y = x.y;
-			} else {
-				this.x = x;
-				this.y = y;
-			}
+			this.coords = new Float32Array(2);
 
-			if ( typeof this.x === 'string' ) {
-				this.x = +x;
-			}
-			if ( typeof this.y === 'string' ) {
-				this.y = +y;
+			if ( x instanceof Array ) {
+				this.coords[0] = x[0];
+				this.coords[1] = x[1];
+			} else if ( x instanceof Point ) {
+				this.coords[0] = x.x;
+				this.coords[1] = x.y;
+			} else {
+				this.coords[0] = x;
+				this.coords[1] = y;
 			}
 		}
 
 		Point.prototype = {
 			toString: function() {
-				return Math.round( this.x ) + ' ' + Math.round( this.y );
+				return Math.round( this.coords[0] ) + ' ' + Math.round( this.coords[1] );
 			}
 		};
+
+		// x and y are more convenient than [0] and [1]
+		Object.defineProperty(Point.prototype, 'x', {
+			get: function() { return this.coords[0]; },
+			set: function( x ) { this.coords[0] = x; }
+		});
+		Object.defineProperty(Point.prototype, 'y', {
+			get: function() { return this.coords[1]; },
+			set: function( y ) { this.coords[1] = y; }
+		});
 
 		return Point;
 	});

@@ -3,7 +3,7 @@
 describe('Component', function() {
 
   // load the controller's module
-  beforeEach(module('prototypo.Component', 'prototypo.Point'));
+  beforeEach(module('prototypo.Component'));
 
   var _Component,
     glyph,
