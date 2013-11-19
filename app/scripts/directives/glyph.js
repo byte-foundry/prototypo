@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.glyphDirective', [])
-	.directive('glyph', function( processGlyph ) {
+	.directive('glyph', function() {
 		return {
 			//priority: 0,
 			//template: '<div></div>',
@@ -24,16 +24,19 @@ angular.module('prototypo.glyphDirective', [])
 						return;
 					}
 
-					$scope.processedGlyph = processGlyph(
-						$scope.$parent.currentFont,
-						$attrs.glyphCode,
-						$scope.$parent.controlValues
-					);
+console.log($scope.$parent.currentFont)
+
+					if ( !$scope.currentFont ) {
+						return;
+					}
+
+					// make sure that currentFont corresponds to currentFontName
+					$scope.processedGlyph = $scope.currentFont.process( $attrs.glyphCode );
 				};
 
 				$attrs.$observe('glyph-code', processGlyphTrigger);
 				$scope.$parent.$watch('controlValues', processGlyphTrigger, true);
-				$scope.$parent.$watch('currentFont', processGlyphTrigger, true);
+				$scope.$parent.$watch('currentFontName', processGlyphTrigger, true);
 
 			}
 			//link: function( scope, iElement, iAttrs ) {}

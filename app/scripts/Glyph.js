@@ -1,4 +1,5 @@
 'use strict';
+// TODO: don't recreate glyph segments on every pass, reuse them!
 
 angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 	.factory('Glyph', function( Component, Point, glyphToSVG ) {
@@ -16,7 +17,11 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 		}
 
 		Glyph.prototype = {
-			process: function() { this.component.process( Point(this.origin), this.segments ); },
+			process: function() {
+				this.segment = [];
+				this.component.process( Point(this.origin), this.segments );
+				return this;
+			},
 			toSVG: function() { return glyphToSVG( this ); }
 		};
 

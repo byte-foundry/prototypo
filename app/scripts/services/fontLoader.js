@@ -1,23 +1,25 @@
 'use strict';
 
 angular.module('prototypo.fontLoader', ['ngResource'])
-	.factory( 'Font', function( $resource ) {
+	.factory( 'Fonts', function( $resource ) {
 
 		return $resource( '/fonts/:font/font.json', {}, {
 			get: { method:'GET', params: {font: 'default'} }
 		});
 	})
 
-	.factory( 'Glyph', function( $resource ) {
+	.factory( 'Glyphs', function( $resource ) {
 
 		return $resource( '/fonts/:font/glyphs/:glyph', {}, {
-			get: { method:'GET', params: {}, transformResponse: function( data ) {
-				return data;
-			}}
+			get: { method:'GET', isArray: false, responseType: 'text', params: {}, transformResponse: [function( data ) {
+				return {
+					data: data
+				};
+			}]}
 		});
 	})
 
-	.factory( 'Component', function( $resource ) {
+	.factory( 'Components', function( $resource ) {
 
 		return $resource( '/fonts/:font/components/:component', {}, {
 			get: { method:'GET', params: {} }
@@ -31,11 +33,11 @@ angular.module('prototypo.fontLoader', ['ngResource'])
 		});
 	})
 
-	.factory('loadFont', function( _, $q, $parse, Font, Glyph, Component, Controls ) {
+	.factory('loadFont', function( _, $q, $parse, Fonts, Glyphs, Components, Controls ) {
 		return function( fontName ) {
 			var font;
 
-			return Font.get({font: fontName})
+			return Fonts.get({font: fontName})
 				.$promise.then(function( response ) {
 					font = response;
 					var promises = [],
@@ -45,9 +47,9 @@ angular.module('prototypo.fontLoader', ['ngResource'])
 						font.glyphs = {};
 						_( font.order ).each(function( glyphCode ) {
 							promises.push(
-								Glyph.get({ font: fontName, glyph: glyphCode + '.txt' })
+								Glyphs.get({ font: fontName, glyph: glyphCode + '.txt' })
 									.$promise.then(function( response ) {
-										font.glyphs[ glyphCode ] = response;
+										font.glyphs[ glyphCode ] = response.data;
 									})
 							);
 						});
@@ -57,7 +59,7 @@ angular.module('prototypo.fontLoader', ['ngResource'])
 						font.components = {};
 						_( components ).each(function( componentName ) {
 							promises.push(
-								Component.get({ font: fontName, component: componentName + '.json' })
+								Components.get({ font: fontName, component: componentName + '.json' })
 									.$promise.then(function( response ) {
 										font.components[ componentName ] = response;
 									})
@@ -71,6 +73,8 @@ angular.module('prototypo.fontLoader', ['ngResource'])
 								.$promise.then(function( response ) {
 									font.controls = response.controls;
 
+									// this doesn't belong here.
+									// The loader shouldn't know about the internal structure of the files
 									_( font.controls ).each(function( control ) {
 										if ( control.onchange ) {
 											control.onchange = $parse( control.onchange );

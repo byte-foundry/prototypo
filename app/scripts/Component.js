@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
-	.factory('Component', function( initComponent, processComponent, mergeComponent ) {
+angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', 'prototypo.segmentUtils'])
+	.factory('Component', function( initComponent, processComponent, mergeComponent, findPoint ) {
 
 		function Component( formula, args ) {
 			// new is optional
@@ -13,11 +13,12 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 			this.segments = new Array(formula.length);
 			this.mergeAt = args.mergeAt || 0;
 			this.after = args.after || false;
-			this.params = args.params || function(){};
+			this.args = args.args || {};
 
 			this.context = {
 				controls: args.controls,
-				params: this.params,
+				args: this.args,
+				find: findPoint,
 				self: this.segments
 			};
 
@@ -28,7 +29,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 				// override current args
 				args.mergeAt = this.segments[ component.mergeAt ];
 				args.after = component.after;
-				args.params = component.params;
+				args.args = component.args;
 				//args.curPos = Point( args.mergeAt.end );
 
 				return Component( args.formulaLib[ component.type ], args );
@@ -73,7 +74,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 
 			} else {
 				throw 'Component segments cannot be initialized:\n' +
-					component.segments.map(function( segment, i ) { return component.formula[i] + ': ' + segment.toSVG(); }).join('\n');
+					component.segments.map(function( segment, i ) { return i + ': ' + segment.toSVG(); }).join('\n');
 			}
 		};
 	})
@@ -85,12 +86,13 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 			component.segments[0] = {
 				end: Point( curPos ),
 				x: curPos.x,
-				y: curPos.y
+				y: curPos.y,
+				toSVG: function() { return ''; }
 			};
 
 			var flatCtx = flattenContext( component.context );
 
-			component.formula.forEach(function( segmentFormula, i ) {
+			component.formula.segments.forEach(function( segmentFormula, i ) {
 				if ( i > 0 ) {
 					// only process non-empty segments
 					component.segments[i] = segmentFormula && Segment( segmentFormula( flatCtx ), curPos );
@@ -143,9 +145,11 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 				flatCtx[i] = context.controls[i];
 			}
 
-			for ( i in context.params ) {
-				flatCtx[i] = context.params[i];
+			for ( i in context.args ) {
+				flatCtx[i] = context.args[i];
 			}
+
+			flatCtx.find = context.find;
 
 			flatCtx.self = context.self;
 

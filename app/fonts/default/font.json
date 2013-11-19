@@ -1,11 +1,10 @@
 {
 	"name": "default",
 	"version": "0.1.0",
-	"description": "The first parameterised font",
+	"description": "The first parametric font",
 	"order": [
 		"A"
 	],
 	"components": [
-		"serif"
 	]
 }

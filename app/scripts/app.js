@@ -5,19 +5,26 @@ angular.module('prototypoApp', [
     'ngRoute',
     'pasvaz.bindonce',
 
+    'prototypo.Point',
+    'prototypo.Segment',
+    'prototypo.Formula',
+    'prototypo.Component',
+    'prototypo.Glyph',
+    'prototypo.Font',
+
     'prototypo.fontLoader',
     'prototypo.valuesLoader',
     'prototypo.glyphFilters',
-    'prototypo.glyphUtils',
-    'prototypo.componentUtils',
-    'prototypo.segmentUtils',
-    'prototypo.glyphCache',
+    //'prototypo.glyphUtils',
+    //'prototypo.componentUtils',
+    //'prototypo.segmentUtils',
+    //'prototypo.glyphCache',
 
     'prototypo.glyphDirective',
     'prototypo.contourDirective',
-    'prototypo.endpointDirective',
-    'prototypo.prettySliderDirective',
-    'prototypo.controlpointDirective'
+    //'prototypo.endpointDirective',
+    //'prototypo.prettySliderDirective',
+    //'prototypo.controlpointDirective'
   ])
 
   .config(function ( $routeProvider ) {

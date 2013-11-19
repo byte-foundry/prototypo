@@ -28,7 +28,7 @@ angular.module('prototypo.Point', [])
 			}
 		};
 
-		// x and y are more convenient than [0] and [1]
+		// .x and .y are more convenient than [0] and [1]
 		Object.defineProperty(Point.prototype, 'x', {
 			get: function() { return this.coords[0]; },
 			set: function( x ) { this.coords[0] = x; }

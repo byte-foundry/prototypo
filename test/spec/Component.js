@@ -61,7 +61,7 @@ describe('Component', function() {
       mergeAt: 0,
       after: false,
       context: {},
-      formula: [
+      formula: { segments: [
         false,
         $interpolate( 'm 0 0' ),
         $interpolate( 'l 0 50' ),
@@ -69,18 +69,18 @@ describe('Component', function() {
         $interpolate( 'l 0 -50' ),
         $interpolate( 'l -50 0' ),
         $interpolate( 'z' )
-      ],
+      ]},
       segments: [],
       components: [
         comp2 = {
           mergeAt: 1,
           after: true,
           context: {},
-          formula: [
+          formula: { segments: [
             false,
             $interpolate( 'l 20 20' ),
             $interpolate( 'l 20 -20' )
-          ],
+          ]},
           segments: [],
           components: []
         }
@@ -97,7 +97,7 @@ describe('Component', function() {
   it('can process components with params and controls', inject(function( Point, $interpolate, processComponent ) {
     glyph = [];
 
-    var params = {
+    var args = {
         arbitrary: 20
       },
       controls = {
@@ -108,10 +108,10 @@ describe('Component', function() {
       mergeAt: 0,
       after: false,
       context: {
-        params: params,
+        args: args,
         controls: controls
       },
-      formula: [
+      formula: { segments: [
         false,
         $interpolate( 'm 0 0' ),
         $interpolate( 'l 0 {{ width }}' ),
@@ -119,21 +119,21 @@ describe('Component', function() {
         $interpolate( 'l 0 {{ -width }}' ),
         $interpolate( 'l {{ -width }} 0' ),
         $interpolate( 'z' )
-      ],
+      ]},
       segments: [],
       components: [
         comp2 = {
           mergeAt: 1,
           after: true,
           context: {
-            params: params,
+            args: args,
             controls: controls
           },
-          formula: [
+          formula: { segments: [
             false,
             $interpolate( 'l {{ arbitrary }} {{ arbitrary }}' ),
             $interpolate( 'l {{ arbitrary }} {{ -arbitrary }}' )
-          ],
+          ]},
           segments: [],
           components: []
         }
@@ -154,7 +154,7 @@ describe('Component', function() {
       mergeAt: 0,
       after: false,
       context: {},
-      formula: [
+      formula: { segments: [
         false,
         $interpolate( 'M 0 0' ),
         $interpolate( 'L {{ self[1].x }} {{ self[1].y + 50 }}' ),
@@ -162,18 +162,18 @@ describe('Component', function() {
         $interpolate( 'L {{ self[3].x }} {{ self[3].y - 50 }}' ),
         $interpolate( 'L {{ self[4].x - 50 }} {{ self[4].y }}' ),
         $interpolate( 'z' )
-      ],
+      ]},
       segments: [],
       components: [
         comp2 = {
           mergeAt: 1,
           after: true,
           context: {},
-          formula: [
+          formula: { segments: [
             false,
             $interpolate( 'L {{ self[0].x + 20 }} {{ self[0].y + 20 }}' ),
             $interpolate( 'L {{ self[1].x + 20 }} {{ self[1].y - 20 }}' )
-          ],
+          ]},
           segments: [],
           components: []
         }
@@ -197,7 +197,7 @@ describe('Component', function() {
       mergeAt: 0,
       after: false,
       context: {},
-      formula: [
+      formula: { segments: [
         false,
         $interpolate( 'M 0 0' ),
         $interpolate( 'L {{ self[3].x - 50 }} {{ self[3].y }}' ),
@@ -205,18 +205,18 @@ describe('Component', function() {
         $interpolate( 'L {{ self[5].x + 50 }} {{ self[5].y }}' ),
         $interpolate( 'L {{ self[1].x }} {{ self[1].y }}' ),
         $interpolate( 'z' )
-      ],
+      ]},
       segments: [],
       components: [
         comp2 = {
           mergeAt: 1,
           after: true,
           context: {},
-          formula: [
+          formula: { segments: [
             false,
             $interpolate( 'L {{ self[2].x - 20 }} {{ self[2].y + 20 }}' ),
             $interpolate( 'L {{ self[0].x + 40 }} {{ self[0].y }}' )
-          ],
+          ]},
           segments: [],
           components: []
         }

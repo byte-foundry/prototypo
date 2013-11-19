@@ -5,17 +5,9 @@ angular.module('prototypo.contourDirective', [])
 		return {
 			restrict: 'EAC',
 			controller: function( $scope, $element ) {
-				$scope.$watch('processedGlyph', function( segments ) {
-					if ( segments ) {
-						var d = [];
-
-						_( segments ).each(function( segment ) {
-							if ( segment[0] !== '*' ) {
-								d.push( segment.toString() );
-							}
-						});
-
-						$element.attr( 'd', d.join(' ') );
+				$scope.$watch('processedGlyph', function( glyph ) {
+					if ( glyph ) {
+						$element.attr( 'd', glyph.toSVG() );
 					}
 				});
 			}

@@ -1,37 +1,51 @@
 'use strict';
 
-angular.module('prototypo.segmentUtils', [])
-	.constant('segmentMethods', {})
+angular.module('prototypo.segmentUtils', ['prototypo.Segment'])
+	.factory('findPoint', function( Segment ) {
+		var rstraight = /[LVMH]/;
 
-	.factory('Segment', function() {
-		var rseparator = /[ ,]+/g;
+		return function( args ) {
+			var point,
+				origin,
+				vector;
 
-		function Segment( processedSegment, origin ) {
-			var segmentArray = processedSegment.replace(rseparator, ' ').split(' ');
+			// point on a segment
+			if ( args.x !== undefined || args.y !== undefined ) {
 
+				// point on a straight line
+				if ( ( args.on instanceof Segment && rstraight.test(args.on.command) ) ||
+					args.on.constructor === Array ) {
+					// segment from two points
+					if ( args.on.constructor === Array ) {
+						origin = args.on[0];
+						vector = {
+							x: args.on[1].x - args.on[0].x,
+							y: args.on[1].y - args.on[0].y
+						};
 
-		}
+					// Segment instance
+					} else {
+						origin = args.on.start;
+						vector = {
+							x: args.on.end.x - args.on.start.x,
+							y: args.on.end.y - args.on.start.y
+						};
+					}
 
-		return Segment;
-	})
+					point = args.x !== undefined ?
+						[ args.x, ( args.x - origin.x ) / vector.x * vector.y + origin.y ]:
+						[ ( args.y - origin.y ) / vector.y * vector.x + origin.x, args.y ];
 
-	.config(function( segmentMethods ) {
-		segmentMethods.find = function( params ) {
+				// point on a curve
+				} else {
 
-			var start = params.on[0],
-				end = params.on[1],
-				vector = {
-					x: end.x - start.x,
-					y: end.y - start.y
-				},
-				point = params.x ?
-					[ params.x, ( params.x - start.x ) / vector.x * vector.y + start.y ]:
-					[ ( params.y - start.y ) / vector.y * vector.x + start.x, params.y ];
+				}
+
+			// intersection
+			} else {
+
+			}
 
 			return point.join(' ');
 		};
-	})/*
-
-	.config('pointOnStraightSegmentFromPercentage', function(start, end, percentage) {
-
-	})*/;
+	});

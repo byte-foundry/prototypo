@@ -1,16 +1,16 @@
 'use strict';
 
 angular.module('prototypoApp')
-	.controller('MainCtrl', function ( $scope, _, loadFont, ControlValues, AppValues ) {
+	.controller('MainCtrl', function( $scope, _, loadFont, ControlValues, AppValues, Font, Point ) {
 		var deferredChanges = [];
 
 		$scope.currentFontName = 'default';
 		//$scope.currentGlyphCodes = [];
 
-		$scope.$watch('currentFontName', function() {
+		$scope.$watch('currentFontName', function( name ) {
 			loadFont( $scope.currentFontName )
 				.then(function( font ) {
-					$scope.currentFont = font;
+					$scope.currentFontUI = font;
 
 					$scope.deferChange = function( handler ) {
 						deferredChanges.push( handler );
@@ -27,6 +27,14 @@ angular.module('prototypoApp')
 					ControlValues.get({ font: $scope.currentFontName })
 						.then(function( controlValues ) {
 							$scope.controlValues = controlValues;
+
+							// we need the controlValues to build & init the font
+							$scope.currentFont = Font( name, {
+								glyphCodes: font.order,
+								glyphFormulas: font.glyphs,
+								componentFormulas: font.components,
+								controls: controlValues,
+							});
 						});
 
 					// load default or saved app values
