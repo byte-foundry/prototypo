@@ -31,7 +31,7 @@ angular.module('prototypo.Point', [])
 					' ' +
 					( isNaN( this.coords[1] ) ? '' : Math.round( this.coords[1] ) );
 			},
-			// Angular doesn't use only this
+			// Angular uses only toJSON
 			// keep in mind that JSON.stringify will return ""x y"" instead of "x y"
 			toJSON: function() {
 				return ( isNaN( this.coords[0] ) ? '' : Math.round( this.coords[0] ) ) +
