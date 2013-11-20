@@ -49,4 +49,12 @@ describe('Point structure', function () {
     expect(p5.x).toBe(2);
     expect(p5.y).toBe(5);
   });
+
+  it('can translate a Point on x axis', function() {
+    /*p1.x = 4;
+    p1.y = 7;
+
+    expect(p5.x).toBe(2);
+    expect(p5.y).toBe(5);*/
+  });
 });

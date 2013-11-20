@@ -532,8 +532,8 @@ describe('Segment', function() {
     expect(roundH(sa_rC.end.x)).toBe(roundH(99.99));
     expect(roundH(sa_rC.end.y)).toBe(roundH(11.11));
     expect(sa_rC.controls.length).toBe(2);
-    expect(roundH(sa_rC.controls[0].x)).toBe(roundH(55.55));
-    expect(roundH(sa_rC.controls[0].y)).toBe(roundH(66.66));
+    expect(roundH(sa_rC.controls[0].x)).toBe(roundH(55.55 + 10));
+    expect(roundH(sa_rC.controls[0].y)).toBe(roundH(66.66 - 10));
     expect(roundH(sa_rC.controls[1].x)).toBe(roundH(77.77 + 99.99));
     expect(roundH(sa_rC.controls[1].y)).toBe(roundH(88.88 + 11.11));
 
@@ -623,7 +623,7 @@ describe('Segment', function() {
     expect(sa_rQ.toSVG()).toBe('Q 44 67 33 44');
 
     // rC
-    expect(sa_rC.toSVG()).toBe('C 56 67 178 100 100 11');
+    expect(sa_rC.toSVG()).toBe('C 66 57 178 100 100 11');
 
     // rS
     expect(sa_rS.toSVG()).toBe('S 67 89 44 56');

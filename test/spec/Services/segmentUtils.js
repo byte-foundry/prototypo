@@ -2,7 +2,7 @@
 
 describe('segmentUtils', function() {
 
-	beforeEach(module('prototypo.segmentUtils', 'prototypo.Point'));
+	beforeEach(module('prototypo.segmentUtils', 'prototypo.Segment', 'prototypo.Point'));
 
 	var find,
 		seg1,
@@ -70,22 +70,22 @@ describe('segmentUtils', function() {
 		expect(find({
 			x: 20,
 			on: undefined
-		}).toString()).toBe('20 NaN');
+		}).toString()).toBe('20 ');
 
 		expect(find({
 			y: 60,
 			on: undefined
-		}).toString()).toBe('NaN 60');
+		}).toString()).toBe(' 60');
 
 		expect(find({
 			x: 20,
 			on: [undefined, p1]
-		}).toString()).toBe('20 NaN');
+		}).toString()).toBe('20 ');
 
 		expect(find({
 			y: 60,
 			on: [p1, undefined]
-		}).toString()).toBe('NaN 60');
+		}).toString()).toBe(' 60');
 	});
 
 	/*it('should find the intersection of two straight Segments', function() {
