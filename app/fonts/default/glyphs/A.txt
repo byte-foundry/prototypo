@@ -8,13 +8,8 @@ L   {{ find({x: self[3].x, on: [self[6], self[12]] }) }}
 L   {{ find({y: xHeight / 2, on: [self[6], self[7]] }) }}
 L   {{ find({y: xHeight / 2, on: [self[1], self[7]] }) }}
 Z
-<<<<<<< HEAD
 M   {{ find({ on: self[7], y: xHeight / 2 + 20 }) }}
-L   {{ self[3].x }} {{ self[3].y - 20 }}",
-=======
-M   {{ find({y: xHeight / 2 + 20, on: self[7] }) }}
 L   {{ self[3].x }} {{ self[3].y - 20 }}
->>>>>>> e60b5a506d67a4d1f0c179e2be99c5ea0191ee25
 L   {{ find({y: xHeight / 2 + 20, on: [self[1], self[7]] }) }}
 Z
 
