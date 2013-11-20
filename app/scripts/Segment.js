@@ -97,12 +97,12 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			case 'V':
 				segment.end.x = curPos.x;
 				break;
-			case 'rc':
+			/*case 'rc':
 				segment.controls[0].x += curPos.x;
 				segment.controls[0].y += curPos.y;
 				curPos.x = segment.end.x += curPos.x;
 				curPos.y = segment.end.y += curPos.y;
-				break;
+				break;*/
 			case 'c':
 				segment.controls[0].x += curPos.x;
 				segment.controls[0].y += curPos.y;
@@ -141,7 +141,11 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			// uppercase command
 			segment.command = segment.command.toUpperCase();
 
-			// absolutize control-points relative to the end of the segment
+			// absolutize control-points relative to the ends of the segment
+			if ( segment.command === 'RC' ) {
+				segment.controls[0].x += segment.start.x;
+				segment.controls[0].y += segment.start.y;
+			}
 			if ( rrelativeCP.test( segment.command ) ) {
 				segment.controls[1].x += segment.end.x;
 				segment.controls[1].y += segment.end.y;

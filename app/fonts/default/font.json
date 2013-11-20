@@ -1,7 +1,7 @@
 {
 	"name": "default",
 	"version": "0.1.0",
-	"description": "The first parametric font",
+	"description": "The first parametric typeface",
 	"order": [
 		"A",
 		"h"

@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('prototypo.segmentUtils', ['prototypo.Segment', 'prototypo.Point'])
-	.factory('findPoint', function( Segment, Point ) {
+angular.module('prototypo.segmentUtils', ['prototypo.Point'])
+	.factory('findPoint', function( Point ) {
 		var rstraight = /[LVMH]/;
 
 		return function( args ) {
@@ -18,7 +18,7 @@ angular.module('prototypo.segmentUtils', ['prototypo.Segment', 'prototypo.Point'
 				}
 
 				// point on a straight line
-				if ( ( args.on instanceof Segment && rstraight.test(args.on.command) ) ||
+				if ( ( args.on.command !== undefined && rstraight.test(args.on.command) ) ||
 					args.on.constructor === Array ) {
 					// segment from two points
 					if ( args.on.constructor === Array ) {

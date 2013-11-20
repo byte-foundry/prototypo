@@ -10,10 +10,13 @@ angular.module('prototypo.Point', [])
 
 			this.coords = new Float32Array(2);
 
-			if ( x instanceof Array ) {
+			if ( x === undefined ) {
+				this.coords[0] = x;
+				this.coords[1] = y;
+			} else if ( x.constructor === Array ) {
 				this.coords[0] = x[0];
 				this.coords[1] = x[1];
-			} else if ( x instanceof Point ) {
+			} else if ( x.x !== undefined || x.y !== undefined ) {
 				this.coords[0] = x.x;
 				this.coords[1] = x.y;
 			} else {
@@ -22,15 +25,33 @@ angular.module('prototypo.Point', [])
 			}
 		}
 
-		function toString() {
-			return Math.round( this.coords[0] ) + ' ' + Math.round( this.coords[1] );
-		}
-
 		Point.prototype = {
-			toString: toString,
+			toString: function() {
+				return ( isNaN( this.coords[0] ) ? '' : Math.round( this.coords[0] ) ) +
+					' ' +
+					( isNaN( this.coords[1] ) ? '' : Math.round( this.coords[1] ) );
+			},
 			// Angular doesn't use only this
 			// keep in mind that JSON.stringify will return ""x y"" instead of "x y"
-			toJSON: toString
+			toJSON: function() {
+				return ( isNaN( this.coords[0] ) ? '' : Math.round( this.coords[0] ) ) +
+					' ' +
+					( isNaN( this.coords[1] ) ? '' : Math.round( this.coords[1] ) );
+			},
+
+			translate: function( x, y ) {
+				this.coords[0] += x;
+				this.coords[1] += y;
+				return this;
+			},
+			translateX: function( x ) {
+				this.coords[0] += x;
+				return this;
+			},
+			translateY: function( y ) {
+				this.coords[1] += y;
+				return this;
+			}
 		};
 
 		// .x and .y are more convenient than [0] and [1]
