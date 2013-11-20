@@ -1,0 +1,14 @@
+M	0 0
+l	0 {{ capHeight }}
+l 	{{ thickness }} 0
+L 	{{ thickness }} {{ 0.86666666666667 * xHeight }}
+rC 	{{ ( self[5].x - self[4].x ) / 3 }} {{ self[4].y + ( self[5].y - self[4].y ) / 3 }} {{ - ( self[5].x - self[4].x ) / 3 }} 0 {{ ( self[6].x - self[11].x ) / 2 }} {{ xHeight + 10 }}
+L 	{{ self[9].x + thickness }} {{ 0.81075268817204 * xHeight }}
+L 	{{ self[6].x }} 0
+l 	-{{ thickness }} 0
+L 	{{ 297 * width }} {{ 0.58064516129032 * xHeight }}
+L 	{{ ( self[9].x - self[11].x ) / 2 }} {{ self[6].y - thickness }}
+L 	{{ thickness }} {{ 0.6258064516129 * xHeight }}
+L 	{{ thickness }} 0 
+L 	0 0
+Z
