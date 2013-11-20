@@ -1,16 +1,21 @@
 'use strict';
 
-angular.module('prototypo.segmentUtils', ['prototypo.Segment'])
-	.factory('findPoint', function( Segment ) {
+angular.module('prototypo.segmentUtils', ['prototypo.Segment', 'prototypo.Point'])
+	.factory('findPoint', function( Segment, Point ) {
 		var rstraight = /[LVMH]/;
 
 		return function( args ) {
-			var point,
-				origin,
+			var origin,
 				vector;
 
 			// point on a segment
 			if ( args.x !== undefined || args.y !== undefined ) {
+				// handle cases where on refers to undefined data
+				if ( args.on === undefined || ( args.on.constructor === Array && ( args.on[0] === undefined || args.on[1] === undefined ) ) ) {
+					return args.x !== undefined ?
+						Point( args.x, NaN ):
+						Point( NaN, args.y );
+				}
 
 				// point on a straight line
 				if ( ( args.on instanceof Segment && rstraight.test(args.on.command) ) ||
@@ -32,9 +37,9 @@ angular.module('prototypo.segmentUtils', ['prototypo.Segment'])
 						};
 					}
 
-					point = args.x !== undefined ?
-						[ args.x, ( args.x - origin.x ) / vector.x * vector.y + origin.y ]:
-						[ ( args.y - origin.y ) / vector.y * vector.x + origin.x, args.y ];
+					return args.x !== undefined ?
+						Point( args.x, ( args.x - origin.x ) / vector.x * vector.y + origin.y ):
+						Point( ( args.y - origin.y ) / vector.y * vector.x + origin.x, args.y );
 
 				// point on a curve
 				} else {
@@ -45,7 +50,5 @@ angular.module('prototypo.segmentUtils', ['prototypo.Segment'])
 			} else {
 
 			}
-
-			return point.join(' ');
 		};
 	});

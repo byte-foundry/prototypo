@@ -109,9 +109,9 @@ describe('Segment', function() {
     s_rC = Segment( 'rC 55.55 66.66 77.77 88.88 99.99 11.11', Point(o) );
     s_rS = Segment( 'rS 22.22 33.33 44.44 55.55', Point(o) );
 
-    s_l0 = Segment( '  l  -11.11   22.22 ', Point(o) );
-    s_l1 = Segment( '\t\tl\t \t-33.33 \t 44.44  \t', Point(o) );
-    s_l2 = Segment( ',,l , -55.55, ,66.66  ,', Point(o) );
+    s_l0 = Segment( '  l  "-11.11   22.22" ', Point(o) );
+    s_l1 = Segment( '\t\tl\t "\t-33.33 \t 44.44  \t"', Point(o) );
+    s_l2 = Segment( ',",l" , -55.55, ,66.66  ,', Point(o) );
 
     sa_z = Segment( 'z', Point(d) );
     sa_h = Segment( 'h -11.11', Point(d) );
@@ -348,7 +348,7 @@ describe('Segment', function() {
     expect(roundH(s_rS.controls[1].y)).toBe(roundH(33.33 + 55.55));
   });
 
-  it('ignores spaces, tabs and commas completly', function() {
+  it('ignores spaces, tabs, commas and double-quotes completly', function() {
     expect(s_l0.command).toBe('L');
     expect(s_l0.controls.length).toBe(0);
     expect(roundH(s_l0.end.x)).toBe(roundH(-11.11));

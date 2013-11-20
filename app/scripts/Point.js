@@ -22,10 +22,15 @@ angular.module('prototypo.Point', [])
 			}
 		}
 
+		function toString() {
+			return Math.round( this.coords[0] ) + ' ' + Math.round( this.coords[1] );
+		}
+
 		Point.prototype = {
-			toString: function() {
-				return Math.round( this.coords[0] ) + ' ' + Math.round( this.coords[1] );
-			}
+			toString: toString,
+			// Angular doesn't use only this
+			// keep in mind that JSON.stringify will return ""x y"" instead of "x y"
+			toJSON: toString
 		};
 
 		// .x and .y are more convenient than [0] and [1]

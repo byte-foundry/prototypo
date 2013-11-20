@@ -1,16 +1,16 @@
 M   20 0
-vl  -20 0
+l  -20 0
 l   200 {{xHeight}}
-vl  -20 0
+
 l   200 -{{xHeight}}
-vl   -20 0
-vL   {{ find({x: self[3].x, on: [self[6].end, self[4].end] }) }}
-L   {{ find({y: xHeight / 2, on: [self[6].end, self[7].end] }) }}
-L   {{ find({y: xHeight / 2, on: [self[1].end, self[7].end] }) }}
+l   -20 0
+L   {{ find({x: self[3].x, on: [self[6].end, self[12].end] }) }}
+L   {{ find({y: xHeight / 2, on: [self[6], self[7]] }) }}
+L   {{ find({y: xHeight / 2, on: [self[1], self[7]] }) }}
 Z
 M   {{ find({y: xHeight / 2 + 20, on: self[7] }) }}
-L   {{ self[7].xy }}",
-L   {{ find({y: xHeight / 2 + 20, on: [self[1].end, self[7].end] }) }}
+L   {{ self[3].x }} {{ self[3].y - 20 }}",
+L   {{ find({y: xHeight / 2 + 20, on: [self[1], self[7]] }) }}
 Z
 
 // Components

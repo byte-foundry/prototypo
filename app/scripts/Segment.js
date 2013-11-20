@@ -2,7 +2,7 @@
 
 angular.module('prototypo.Segment', ['prototypo.Point'])
 	.factory('Segment', function( Point, absolutizeSegment, segmentToSVG ) {
-		var rnormalize = /[, \t]+/g;
+		var rnormalize = /[", \t]+/g;
 
 		function Segment( data, curPos ) {
 			// new is optional

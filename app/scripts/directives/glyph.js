@@ -18,20 +18,17 @@ angular.module('prototypo.glyphDirective', [])
 					return;
 				}
 
-				var processGlyphTrigger = function() {
+				var processGlyphTrigger = function() {console.log('here');
 					// FIXME: we shouldn't need this check
 					if ( !$scope.$parent ) {
 						return;
 					}
 
-console.log($scope.$parent.currentFont)
-
-					if ( !$scope.currentFont ) {
+					if ( !$scope.$parent.currentFont ) {
 						return;
 					}
 
-					// make sure that currentFont corresponds to currentFontName
-					$scope.processedGlyph = $scope.currentFont.process( $attrs.glyphCode );
+					$scope.processedGlyph = $scope.$parent.currentFont.process( $attrs.glyphCode );
 				};
 
 				$attrs.$observe('glyph-code', processGlyphTrigger);

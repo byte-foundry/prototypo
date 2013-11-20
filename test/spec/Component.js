@@ -147,7 +147,7 @@ describe('Component', function() {
     expect(glyph[3].toSVG()).toBe('L 40 50');
   }));
 
-  it('can process components with references to previously processed components', inject(function( Point, $interpolate, processComponent ) {
+  it('can process components with references to previously processed coordinates', inject(function( Point, $interpolate, processComponent ) {
     glyph = [];
 
     comp1 = {
@@ -188,6 +188,32 @@ describe('Component', function() {
     expect(glyph.length).toBe(8);
     expect(glyph[2].toSVG()).toBe('L 20 70');
     expect(glyph[3].toSVG()).toBe('L 40 50');
+  }));
+
+  it('can process components with references to previously processed points', inject(function( Point, $interpolate, processComponent ) {
+    glyph = [];
+
+    comp1 = {
+      mergeAt: 0,
+      after: false,
+      context: {},
+      formula: { segments: [
+        false,
+        $interpolate( 'M 0 0' ),
+        $interpolate( 'L 25 50' ),
+        $interpolate( 'L 50 0' ),
+        $interpolate( 'L {{ self[1].end }}' ),
+        $interpolate( 'z' )
+      ]},
+      segments: [],
+      components: []
+    };
+
+    comp1.context.self = comp1.segments;
+
+    processComponent( comp1, Point(0,0), glyph );
+
+    expect(glyph[3].toSVG()).toBe('L 0 0');
   }));
 
   it('can initialize a component', inject(function( Point, $interpolate, initComponent, processComponent ) {
