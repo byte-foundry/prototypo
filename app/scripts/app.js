@@ -36,4 +36,11 @@ angular.module('prototypoApp', [
       .otherwise({
         redirectTo: '/'
       });
+  })
+
+  .filter( 'log', function () {
+    return function( value ) {
+      console.log( value );
+      return value;
+    }
   });

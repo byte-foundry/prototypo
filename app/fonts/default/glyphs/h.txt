@@ -2,13 +2,15 @@ M	0 0
 l	0 {{ ascenderHeight }}
 l 	{{ thickness }} 0
 L 	{{ thickness }} {{ 0.86666666666667 * xHeight }}
-rC 	{{ ( self[5].x - self[4].x ) * 0.125 }} {{ ( self[5].y - self[4].y ) * 0.20603015075377 }} {{ - ( self[5].x - self[4].x ) * 0.54929577464789 }} 0 {{ self[11].x + ( self[6].x - self[11].x ) / 2 }} {{ xHeight + 10 }}
+rC 	{{ ( self[5].x - self[4].x ) * 0.125 }} {{ ( self[5].y - self[4].y ) * 0.56944444444444 }} {{ - ( self[5].x - self[4].x ) * 0.4875 }} 0 {{ self[11].x + ( self[6].x - self[11].x ) / 2 }} {{ xHeight + 10 }}
 rC 	{{ ( self[6].x - self[5].x ) * 0.43125 }} 0 0 {{ - ( self[6].y - self[5].y ) * 0.80402010050251 }} {{ self[9].x + thickness }} {{ 0.59354838709677 * xHeight }}
 L 	{{ self[6].x }} 0
 L 	{{ self[9].x }} 0
 L 	{{ 297 * width }} {{ self[11].y - 0.2625 * thickness }}
-rC 	0 {{ ( self[10].y - self[9].y ) * 0.64655172413793 }} {{ ( self[10].y - self[9].y ) * 0.78703703703704 }} 0 {{ self[11].x + ( self[9].x - self[11].x ) / 2 }} {{ self[5].y - thickness }}
+rC 	0 {{ ( self[10].y - self[9].y ) * 0.64655172413793 }} {{ ( self[10].y - self[9].y ) * 0.78703703703704 }} 0 {{ self[9].x - ( self[9].x - self[11].x ) / 2 }} {{ self[5].y - thickness * 0.85 }}
 rC 	{{ ( self[11].x - self[10].x ) * 0.67289719626168 }} 0 0 {{ ( self[10].y - self[11].y ) * 0.62068965517241 }} {{ thickness }} {{ self[4].y - thickness * 1.4 }}
 L 	{{ thickness }} 0 
 L 	0 0
 Z
+
+// after 7: serif ( { on:[self[7], self[3]] } )

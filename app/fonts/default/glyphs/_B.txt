@@ -1,0 +1,26 @@
+M	0 0
+l 	0 {{ capHeight }}
+l 	{{ self[23].x * 0.61176470588235 }} 0
+rC 	0 0 0 0 {{ self[15].x + thickness * 1.1 }} {{ self[3].y - ( self[5].y - self[3].y ) * 0.57446808510638 }}
+rC 	0 0 0 0 {{ 399 * width }} {{ self[16].y - ( self[16].y - self[22].y ) * 0.35616438356164 }}
+l 	-2 0
+l 	0 -2
+l	2 0
+rC 	0 0 0 0 {{ self[23].x + thickness * 1.1 }} {{ ( self[8].y - self[10].y ) * 0.53950953678474 }}
+rC 	0 0 0 0 {{ 246 * width }} 0
+L 	0 0
+Z 
+M 	{{ thickness * 1.1 }} {{ self[3].y - thickness }}
+L 	{{ self[15].x - ( self[15].x - self[13].x ) * 0.56549520766773 }} 0
+rC 	0 0 0 0 {{ 400 * width }} {{ self[14].y - ( self[14].y - self[16].y ) }}
+rC 	0 0 0 0 {{ self[15].x - ( self[15].x - self[17].x ) * 0.40255591054313 }} {{ self[17].y }}
+L	{{ self[13].x }} {{ capHeight * 0.56590257879656 * crossbar }}
+L 	{{ self[13].x }} {{ self[13].y }}
+Z
+M 	{{ thickness * 1.1 }} {{ thickness }} 
+L 	{{ self[20].x }} {{ self[18].y - thickness * 0.85 }}
+L 	{{ self[23].x * 0.67058823529412 }} {{ self[21].y }}
+rC 	0 0 0 0 {{ 425 * width }} {{ self[20].y }}
+rC 	0 0 0 0 {{ self[23].x * 0.69176470588235 }} {{ self[20].y }}
+L 	{{ self[20].x }} {{ self[20].y }}
+Z
