@@ -22,7 +22,11 @@ angular.module('prototypo.fontLoader', ['ngResource'])
 	.factory( 'Components', function( $resource ) {
 
 		return $resource( '/fonts/:font/components/:component', {}, {
-			get: { method:'GET', params: {} }
+			get: { method:'GET', isArray: false, responseType: 'text', params: {}, transformResponse: [function( data ) {
+				return {
+					data: data
+				};
+			}]}
 		});
 	})
 
@@ -59,9 +63,9 @@ angular.module('prototypo.fontLoader', ['ngResource'])
 						font.components = {};
 						_( components ).each(function( componentName ) {
 							promises.push(
-								Components.get({ font: fontName, component: componentName + '.json' })
+								Components.get({ font: fontName, component: componentName + '.txt' })
 									.$promise.then(function( response ) {
-										font.components[ componentName ] = response;
+										font.components[ componentName ] = response.data;
 									})
 							);
 						});
