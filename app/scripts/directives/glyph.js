@@ -18,7 +18,7 @@ angular.module('prototypo.glyphDirective', [])
 					return;
 				}
 
-				var processGlyphTrigger = function() {console.log('here');
+				var processGlyphTrigger = function() {
 					// FIXME: we shouldn't need this check
 					if ( !$scope.$parent ) {
 						return;
