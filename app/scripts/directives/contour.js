@@ -5,10 +5,10 @@ angular.module('prototypo.contourDirective', [])
 		return {
 			restrict: 'EAC',
 			controller: function( $scope, $element ) {
-				$scope.$watch('processedGlyph.suid', function( suid ) {console.log('suid', suid );
-					//if ( glyph ) {
+				$scope.$watch('processedGlyph.suid', function( suid ) {
+					if ( $scope.processedGlyph ) {
 						$element.attr( 'd', $scope.processedGlyph.toSVG() );
-					//}
+					}
 				});
 			}
 		};
