@@ -13,7 +13,7 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 			this.origin = Point(0,0);
 			this.segments = [];
 			this.component = Component( args.formulaLib[ name ], args );
-			this.component.init( Point(this.origin) );
+			this.component.init( Point(this.origin), [] );
 		}
 
 		Glyph.prototype = {

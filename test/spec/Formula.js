@@ -50,8 +50,8 @@ describe('Formula', function () {
 
   it('create an object from each parsed sub-component', function() {
     expect(formula.components.length).toBe(2);
-    expect(formula.components[0].mergeAt).toBe('1');
-    expect(formula.components[1].mergeAt).toBe('24');
+    expect(formula.components[0].mergeAt).toBe(1);
+    expect(formula.components[1].mergeAt).toBe(24);
     expect(formula.components[0].after).toBe(true);
     expect(formula.components[1].after).toBe(false);
     expect(formula.components[0].type).toBe('curve');

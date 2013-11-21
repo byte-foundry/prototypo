@@ -38,7 +38,7 @@ angular.module('prototypo.Formula', [])
 				// parse components
 				.replace(rcomponent, function() {
 					components.push({
-						mergeAt: arguments[2],
+						mergeAt: +arguments[2],
 						after: arguments[1] === 'after',
 						type: arguments[3],
 						rawParams: arguments[4]

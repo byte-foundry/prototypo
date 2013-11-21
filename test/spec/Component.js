@@ -1,17 +1,16 @@
-'use strict'
+'use strict';
 
 describe('Component', function() {
 
   // load the controller's module
-  beforeEach(module('prototypo.Component'));
+  beforeEach(module('prototypo.Component', 'prototypo.Formula'));
 
   var _Component,
     glyph,
     comp1,
     comp2,
     p1,
-    p2,
-    s1;
+    p2;
 
   beforeEach(inject(function ( Component ) {
     _Component = Component;
@@ -22,11 +21,12 @@ describe('Component', function() {
 
     comp1 = {
       mergeAt: 0,
+      mergeToGlyphAt: 0,
       after: false,
       segments: [
         false,
         Segment('m 0 0', p1 = Point(0,0)),
-        s1 = Segment('l 0 50', p2 = Point( p1 ) ),
+        Segment('l 0 50', p2 = Point( p1 ) ),
         Segment('l 50 0', p1),
         false,
         Segment('l 0 -50', p1),
@@ -35,7 +35,8 @@ describe('Component', function() {
       ],
       components: [
         comp2 = {
-          mergeAt: s1,
+          mergeAt: 2,
+          mergeToGlyphAt: 2,
           after: true,
           segments: [
             false,
@@ -59,6 +60,7 @@ describe('Component', function() {
 
     comp1 = {
       mergeAt: 0,
+      mergeToGlyphAt: 0,
       after: false,
       context: {},
       formula: { segments: [
@@ -73,7 +75,8 @@ describe('Component', function() {
       segments: [],
       components: [
         comp2 = {
-          mergeAt: 1,
+          mergeAt: 2,
+          mergeToGlyphAt: 2,
           after: true,
           context: {},
           formula: { segments: [
@@ -106,6 +109,7 @@ describe('Component', function() {
 
     comp1 = {
       mergeAt: 0,
+      mergeToGlyphAt: 0,
       after: false,
       context: {
         args: args,
@@ -123,7 +127,8 @@ describe('Component', function() {
       segments: [],
       components: [
         comp2 = {
-          mergeAt: 1,
+          mergeAt: 2,
+          mergeToGlyphAt: 2,
           after: true,
           context: {
             args: args,
@@ -152,6 +157,7 @@ describe('Component', function() {
 
     comp1 = {
       mergeAt: 0,
+      mergeToGlyphAt: 0,
       after: false,
       context: {},
       formula: { segments: [
@@ -166,7 +172,8 @@ describe('Component', function() {
       segments: [],
       components: [
         comp2 = {
-          mergeAt: 1,
+          mergeAt: 2,
+          mergeToGlyphAt: 2,
           after: true,
           context: {},
           formula: { segments: [
@@ -195,6 +202,7 @@ describe('Component', function() {
 
     comp1 = {
       mergeAt: 0,
+      mergeToGlyphAt: 0,
       after: false,
       context: {},
       formula: { segments: [
@@ -221,6 +229,7 @@ describe('Component', function() {
 
     comp1 = {
       mergeAt: 0,
+      mergeToGlyphAt: 0,
       after: false,
       context: {},
       formula: { segments: [
@@ -235,7 +244,8 @@ describe('Component', function() {
       segments: [],
       components: [
         comp2 = {
-          mergeAt: 1,
+          mergeAt: 2,
+          mergeToGlyphAt: 2,
           after: true,
           context: {},
           formula: { segments: [
@@ -252,7 +262,43 @@ describe('Component', function() {
     comp1.context.self = comp1.segments;
     comp2.context.self = comp2.segments;
 
-    initComponent( comp1, Point(0,0) );
+    initComponent( comp1, Point(0,0), [] );
+    processComponent( comp1, Point(0,0), glyph );
+
+    expect(glyph.length).toBe(8);
+    expect(glyph[2].toSVG()).toBe('L 20 70');
+    expect(glyph[3].toSVG()).toBe('L 40 50');
+  }));
+
+  it('can create a component from a formula', inject(function( Component, Formula, Point, initComponent, processComponent ) {
+    var glyph = [],
+      comp1 = Component(Formula([
+        '',
+        'M 0 0',
+        'L {{ self[4].x - 50 }} {{ self[4].y }}',
+        'L {{ self[5].x }} {{ self[5].y + 50 }}',
+        'L {{ self[6].x + 50 }} {{ self[6].y }}',
+        'L {{ self[2].x }} {{ self[2].y }}',
+        'z',
+        '',
+        'after 3: angle()'
+      ].join('\n')), {
+        formulaLib: {
+          angle: Formula([
+            'L {{ self[2].x - 20 }} {{ self[2].y + 20 }}',
+            'L {{ self[0].x + 40 }} {{ self[0].y }}'
+          ].join('\n'))
+        }
+      });
+
+    expect(comp1.components[0].mergeAt).toBe(3);
+
+    initComponent( comp1, Point(0,0), [] );
+
+    // .mergeAt shouldn't be modified
+    expect(comp1.components[0].mergeAt).toBe(3);
+    expect(comp1.components[0].mergeToGlyphAt).toBe(2);
+
     processComponent( comp1, Point(0,0), glyph );
 
     expect(glyph.length).toBe(8);
@@ -269,5 +315,4 @@ describe('Component', function() {
     expect(c0 instanceof _Component).toBe(true);
     expect(c1 instanceof _Component).toBe(true);
   });*/
-
 });

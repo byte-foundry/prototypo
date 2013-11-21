@@ -11,7 +11,9 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 
 			this.formula = formula;
 			this.segments = new Array(formula.length);
+			// the 2 following properties are poorly named
 			this.mergeAt = args.mergeAt || 0;
+			this.mergeToGlyphAt = args.mergeToGlyphAt || 0;
 			this.after = args.after || false;
 			this.args = args.args || {};
 
@@ -22,22 +24,18 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				self: this.segments
 			};
 
-			// too early to initilize, we need a glyph as a context
-			//this.init();
-
 			this.components = formula.components.map(function( component ) {
 				// override current args
-				args.mergeAt = this.segments[ component.mergeAt ];
+				args.mergeAt = component.mergeAt;
 				args.after = component.after;
 				args.args = component.args;
-				//args.curPos = Point( args.mergeAt.end );
 
 				return Component( args.formulaLib[ component.type ], args );
-			});
+			}, this);
 		}
 
 		Component.prototype = {
-			init: function( curPos ) { initComponent( this, curPos ); },
+			init: function( curPos, glyph ) { initComponent( this, curPos, glyph ); },
 			process: function( curPos, glyph ) { processComponent( this, curPos, glyph ); },
 			mergeTo: function( glyph ) { mergeComponent( this, glyph ); }
 		};
@@ -45,31 +43,34 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 		return Component;
 	})
 
-	.factory('initComponent', function( Point, processComponent ) {
-		return function initComponent( component, curPos ) {
+	.factory('initComponent', function( Point, processComponent, mergeComponent ) {
+		return function initComponent( component, curPos, glyph ) {
 			var i = 0,
 				hasNaN = false,
-				glyph = [],
+				_glyph,
 				checkNaN = function( segment ) {
 					return isNaN( segment.x ) || isNaN( segment.y );
 				};
 
 			do {
-				glyph = [];
-				processComponent( component, curPos, glyph, false );
-				hasNaN = glyph.some(checkNaN);
+				_glyph = [];
+				processComponent( component, curPos, _glyph, false );
+				hasNaN = _glyph.some(checkNaN);
 			} while ( ++i < 10 && hasNaN );
 
 			if ( !hasNaN ) {
 				// save numbers of iterations for later
 				component.iter = i;
 
+				mergeComponent( component, glyph );
+
 				component.components.forEach(function( subcomponent ) {
-					initComponent( subcomponent, Point( typeof subcomponent.mergeAt === 'number' ?
-						// allow numbers to be used for testing purpose
-						glyph[ subcomponent.mergeAt ].end :
-						subcomponent.mergeAt.end
-					));
+					// init mergeToGlyphAt by searching the attach to the parent in the glyph
+					subcomponent.mergeToGlyphAt =
+						glyph.indexOf( component.segments[ subcomponent.mergeAt ] ) +
+						( subcomponent.after ? 1 : 0 );
+
+					initComponent( subcomponent, component.segments[ subcomponent.mergeAt ].end, glyph );
 				});
 
 			} else {
@@ -104,11 +105,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			// don't recurse on initialization
 			if ( recurse !== false ) {
 				component.components.forEach(function( subcomponent ) {
-					processComponent( subcomponent,  Point( typeof subcomponent.mergeAt === 'number' ?
-							// allow numbers to be used for testing purpose
-							glyph[ subcomponent.mergeAt ].end :
-							subcomponent.mergeAt.end
-						), glyph );
+					processComponent( subcomponent, component.segments[ subcomponent.mergeAt ].end, glyph );
 				});
 			}
 		}
@@ -118,13 +115,8 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 
 	.factory('mergeComponent', function( Segment ) {
 		return function( component, glyph ) {
-			var insertIndex = ( typeof component.mergeAt === 'number' ?
-						// allow numbers to be used for testing purpose
-						component.mergeAt :
-						glyph.indexOf( component.mergeAt )
-					) + ( component.after ? 1 : 0 );
 
-			[].splice.apply( glyph, [insertIndex, 0].concat(
+			[].splice.apply( glyph, [component.mergeToGlyphAt, 0].concat(
 				// remove empty segments from the glyph
 				component.segments.filter(function( segment ) { return segment instanceof Segment; })
 			));
