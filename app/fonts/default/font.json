@@ -3,8 +3,12 @@
 	"version": "0.1.0",
 	"description": "The first parametric typeface",
 	"order": [
-		"A"
+		"_A",
+		"_B",
+		"_H",
+		"h"
 	],
 	"components": [
+		"serif"
 	]
 }

@@ -77,7 +77,7 @@
 		"name": "ascender",
 		"label": "Ascender",
 		"min": 0,
-		"max": 20,
+		"max": 300,
 		"step": 1,
 		"init": 0,
 		"onchange": "ascenderHeight = xHeight + ascender"
@@ -95,7 +95,7 @@
 		"label": "Crossbar",
 		"min": 0,
 		"max": 2,
-		"step": 0.1,
+		"step": 0.05,
 		"init": 1
 	},
 	{
@@ -177,21 +177,5 @@
 		"max": 1,
 		"step": 0.01,
 		"init": 0.55
-	},
-	{
-		"name": "capHeight",
-		"label": "Cap Height",
-		"min": 0,
-		"max": 800,
-		"step": 1,
-		"init": 0
-	},
-	{
-		"name": "ascenderHeight",
-		"label": "Ascender Height",
-		"min": 0,
-		"max": 620,
-		"step": 1,
-		"init": 0
 	}
 ]}

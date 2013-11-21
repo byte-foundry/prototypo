@@ -36,4 +36,12 @@ angular.module('prototypoApp', [
       .otherwise({
         redirectTo: '/'
       });
+  })
+
+  .filter( 'log', function () {
+    return function( value, txt ) {
+      value = Math.round( value * 100 ) / 100 ;
+      console.log( txt + " : " + value );
+      return value;
+    }
   });
