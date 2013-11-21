@@ -39,8 +39,9 @@ angular.module('prototypoApp', [
   })
 
   .filter( 'log', function () {
-    return function( value ) {
-      console.log( value );
+    return function( value, txt ) {
+      value = Math.round( value * 100 ) / 100 ;
+      console.log( txt + " : " + value );
       return value;
     }
   });
