@@ -17,7 +17,7 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 		}
 
 		Glyph.prototype = {
-			process: function() {console.log('glyph.process');
+			process: function() {
 				this.suid = Math.random();
 				this.segments = [];
 				this.component.process( Point(this.origin), this.segments );

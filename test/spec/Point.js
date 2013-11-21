@@ -86,21 +86,21 @@ describe('Point structure', function () {
 
   it('can translate a Point on x axis', inject(function( Point ) {
     var p1 = Point(2,5);
-    p1.translateX(4)
+    p1.translateX(4);
 
     expect(p1.x).toBe(6);
   }));
 
   it('can translate a Point on y axis', inject(function( Point ) {
     var p1 = Point(2,5);
-    p1.translateY(-2)
+    p1.translateY(-2);
 
     expect(p1.y).toBe(3);
   }));
 
   it('can translate a Point on x and y axis', inject(function( Point ) {
     var p1 = Point(2,5);
-    p1.translate(4,-2)
+    p1.translate(4,-2);
 
     expect(p1.x).toBe(6);
     expect(p1.y).toBe(3);
@@ -108,13 +108,13 @@ describe('Point structure', function () {
 
   it('can translate a Point with NaN coords', inject(function( Point ) {
     var p1 = Point(2,undefined);
-    p1.translate(4,-2)
+    p1.translate(4,-2);
 
     expect(p1.x).toBe(6);
     expect(p1.y).toBeNaN();
 
     var p2 = Point(undefined,5);
-    p2.translate(4,-2)
+    p2.translate(4,-2);
 
     expect(p2.y).toBe(3);
     expect(p2.x).toBeNaN();
