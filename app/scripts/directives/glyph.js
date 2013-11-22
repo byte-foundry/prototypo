@@ -12,30 +12,6 @@ angular.module('prototypo.glyphDirective', [])
 			//scope: false,
 			// FIXME: this controller's logic can probably
 			// be implemented using the scope attribute above
-			controller: function( $scope, $element, $attrs ) {
-				// FIXME: we shouldn't need this check
-				if ( !$scope.$parent ) {
-					return;
-				}
-
-				var processGlyphTrigger = function() {
-					// FIXME: we shouldn't need this check
-					if ( !$scope.$parent ) {
-						return;
-					}
-
-					if ( !$scope.$parent.currentFont ) {
-						return;
-					}
-
-					$scope.processedGlyph = $scope.$parent.currentFont.process( $attrs.glyphCode );
-				};
-
-				$attrs.$observe('glyph-code', processGlyphTrigger);
-				$scope.$parent.$watch('controlValues', processGlyphTrigger, true);
-				$scope.$parent.$watch('currentFontName', processGlyphTrigger, true);
-
-			}
-			//link: function( scope, iElement, iAttrs ) {}
+			controller: function() {}
 		};
 	});

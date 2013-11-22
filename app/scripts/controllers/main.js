@@ -67,7 +67,19 @@ angular.module('prototypoApp')
 				font: $scope.currentFontName,
 				values: $scope.controlValues
 			});
+
+			if ( $scope.currentFont ) {
+				$scope.processedGlyph = $scope.currentFont.process( $scope.appValues.glyphCodes );
+			}
 		}, true);
+
+		// when we try to watch '[appValues.glyphCodes,controlsValues]' we reach the 10 digest limit
+		// todo: find out why
+		$scope.$watch('appValues.glyphCodes', function() {
+			if ( $scope.currentFont ) {
+				$scope.processedGlyph = $scope.currentFont.process( $scope.appValues.glyphCodes );
+			}
+		});
 
 		$scope.$watch('appValues', function() {
 			AppValues.save({

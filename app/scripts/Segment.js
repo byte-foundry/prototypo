@@ -14,6 +14,30 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			parseUpdateSegment( this, data );
 
 			this.absolutize( curPos );
+
+			// make all points of the glyph available for debug
+			// this can be done only after the first parseUpdate and absolutize
+			this.$debug = [];
+			if ( this.end ) {
+				this.$debug.push({
+					color: 'blue',
+					end: this.end
+				});
+			}
+			if ( this.controls[0] ) {
+				this.$debug.push({
+					color: 'green',
+					start: this.start,
+					end: this.controls[0]
+				});
+			}
+			if ( this.controls[1] ) {
+				this.$debug.push({
+					color: 'green',
+					start: this.end,
+					end: this.controls[1]
+				});
+			}
 		}
 
 		Segment.prototype = {
@@ -119,7 +143,12 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 		var rrelativeCP = /R[QCS]/;
 
 		return function( segment, curPos ) {
-			segment.start = Point( curPos );
+			if ( segment.start === undefined ) {
+				segment.start = Point( curPos );
+			} else {
+				segment.start.x = curPos.x;
+				segment.start.y = curPos.y;
+			}
 
 			switch ( segment.command ) {
 			case 'h':
