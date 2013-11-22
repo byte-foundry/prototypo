@@ -54,41 +54,41 @@ angular.module('prototypoApp', [
       switch (direction) {
       case "top-left" :
         var c1 = Point(
-          end.x + ( end.x - start.x ) * roundness,
+          ( end.x - start.x ) * roundness * correction,
           0
           );
         var c2 = Point(
           0,
-          start.y - ( end.y - start.y ) * roundness
+          ( start.y - end.y ) * roundness * correction
           );
         break;
       case "top-right" :
         var c1 = Point(
           0,
-          end.y - ( end.y - start.y ) * roundness
+          ( end.y - start.y ) * roundness * correction
           );
         var c2 = Point(
-          start.x - ( end.x - start.x ) * roundness,
+          ( start.x - end.x ) * roundness * correction,
           0
           );
         break;
       case "bottom-right" :
         var c1 = Point(
-          end.x - ( end.x - start.x ) * roundness,
+          ( end.x - start.x ) * roundness * correction,
           0
           );
         var c2 = Point(
           0,
-          start.y - ( start.y - end.y ) * roundness
+          ( start.y - end.y ) * roundness * correction
           );
         break;
       case "bottom-left" :
         var c1 = Point(
           0,
-          end.y + ( start.y - end.y ) * roundness
+          ( end.y - start.y ) * roundness * correction
           );
         var c2 = Point(
-          start.x - ( start.x - end.x ) * roundness,
+          ( start.x - end.x ) * roundness * correction,
           0
           );
         break;

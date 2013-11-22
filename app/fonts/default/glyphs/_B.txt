@@ -1,27 +1,26 @@
 M	0 0
 l 	0 {{ capHeight }}
 l 	{{ 260 * width }} 0
-rC 	{{ 0.54230769230769 * self[4].x }} 0 0 {{ 0 }} {{ self[16].x + thickness * 1.1 }} {{ self[3].y - ( self[3].y - self[5].y ) * 0.57446808510638 }}
-rC 	0 0 0 0 {{ 399 * width }} {{ self[15].y - ( self[15].y - self[25].y ) * 0.35616438356164 }}
-rC 	{{ [ 399 * width , ( self[15].y - ( self[15].y - self[25].y ) * 0.35616438356164 ) ] |curve:"bottom-left":self[1]:roundness:0.5 }}
+rC 	{{ [ self[16].x + thickness * 1.1 , self[3].y - ( self[3].y - self[5].y ) * 0.57446808510638 ] |curve:"bottom-right":self[3]:roundness:1 }}
+rC 	{{ [ 399 * width , ( self[15].y - ( self[15].y - self[25].y ) * 0.35616438356164 ) ] |curve:"bottom-left":self[4]:roundness:1 }}
 l 	-2 0
 l 	0 -2
 l	2 0
-rC 	0 0 0 0 {{ self[22].x + thickness * 1.1 }} {{ ( self[8].y - self[10].y ) * 0.53950953678474 }}
-rC 	0 0 0 0 {{ 246 * width }} 0
+rC 	{{ [ self[22].x + thickness * 1.1 , ( self[8].y - self[10].y ) * 0.53950953678474 ] |curve:"bottom-right":self[8]:roundness:1 }}
+rC 	{{ [ 246 * width , 0 ] |curve:"bottom-left":self[9]:roundness:1 }}
 L 	0 0
 Z 
 M 	{{ thickness * 1.1 }} {{ self[2].y - thickness }}
 L	{{ self[13].x }} {{ capHeight * 0.56590257879656 * crossbar }}
 L 	{{ 274 * width }} {{ self[14].y }}
-rC 	0 0 0 0 {{ 400 * width }} {{ self[17].y - ( self[17].y - self[15].y ) * 0.5 }}
-rC 	0 0 0 0 {{ 264 * width }} {{ self[13].y }}
+rC 	{{ [ 400 * width , self[17].y - ( self[17].y - self[15].y ) * 0.5 ] |curve:"top-left":self[15]:roundness:1 }}
+rC 	{{ [ 264 * width , self[13].y ] |curve:"top-right":self[16]:roundness:1 }}
 L 	{{ self[17].x - ( self[17].x - self[13].x ) * 0.56549520766773 }} {{ self[13].y }}
 Z
 M 	{{ thickness * 1.1 }} {{ thickness }} 
 L 	{{ 294 * width }} {{ self[20].y }}
-rC 	0 0 0 0 {{ 425 * width }} {{ self[23].y - ( self[23].y - self[21].y ) * 0.5 }}
-rC 	0 0 0 0 {{ 285 * width }} {{ self[25].y }}
+rC 	{{ [ 425 * width , self[23].y - ( self[23].y - self[21].y ) * 0.5 ] |curve:"bottom-right":self[21]:roundness:1 }}
+rC 	{{ [ 285 * width , self[25].y ] |curve:"top-right":self[22]:roundness:1 }}
 L 	{{ self[23].x * 0.67058823529412 }} {{ self[25].y }}
 L 	{{ self[20].x }} {{ self[15].y - thickness * 0.85 }}
-Z
+Z {{ roundness |log:"roundness : " }}
