@@ -22,7 +22,7 @@ angular.module('prototypoApp', [
 
     'prototypo.glyphDirective',
     'prototypo.contourDirective',
-    //'prototypo.endpointDirective',
+    'prototypo.endpointDirective',
     //'prototypo.prettySliderDirective',
     //'prototypo.controlpointDirective'
   ])

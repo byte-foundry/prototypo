@@ -1,65 +1,47 @@
 'use strict';
 
 angular.module('prototypo.Segment', ['prototypo.Point'])
-	.factory('Segment', function( Point, absolutizeSegment, segmentToSVG ) {
-		var rnormalize = /[", \t]+/g;
-
+	.factory('Segment', function( parseUpdateSegment, absolutizeSegment, segmentToSVG ) {
 		function Segment( data, curPos ) {
 			// new is optional
 			if ( !( this instanceof Segment ) ) {
 				return new Segment( data, curPos );
 			}
 
-			var tmp = data.replace(rnormalize, ' ').trim().split(' '),
-				length = tmp.length;
-
 			this.virtual = false;
-			this.command = tmp[0];
+			this.controls = [];
 
-			switch ( tmp[0] ) {
-			case 'h':
-			case 'H':
-				this.end = Point( tmp[ length - 1 ], undefined );
-				break;
-			case 'v':
-			case 'V':
-				this.end = Point( undefined, tmp[ length - 1 ] );
-				break;
-			case 'rq':
-			case 'rQ':
-			case 'rs':
-			case 'rS':
-				this.controls = [
-					undefined,
-					Point( tmp[1], tmp[2] )
-				];
-				break;
-			case 'z':
-			case 'Z':
-				this.end = undefined;
-				break;
-			default:
-				break;
-			}
-
-			if ( !( 'end' in this ) ) {
-				this.end = Point( tmp[ length - 2 ], tmp[ length - 1 ] );
-			}
-
-			if ( !( 'controls' in this ) ) {
-				this.controls = [];
-				if ( length > 3 ) {
-					this.controls[0] = Point( tmp[1], tmp[2] );
-				}
-				if ( length > 5 ) {
-					this.controls[1] = Point( tmp[3], tmp[4] );
-				}
-			}
+			parseUpdateSegment( this, data );
 
 			this.absolutize( curPos );
+
+			// make all points of the glyph available for debug
+			// this can be done only after the first parseUpdate and absolutize
+			this.$debug = [];
+			if ( this.end ) {
+				this.$debug.push({
+					color: 'blue',
+					end: this.end
+				});
+			}
+			if ( this.controls[0] ) {
+				this.$debug.push({
+					color: 'green',
+					start: this.start,
+					end: this.controls[0]
+				});
+			}
+			if ( this.controls[1] ) {
+				this.$debug.push({
+					color: 'green',
+					start: this.end,
+					end: this.controls[1]
+				});
+			}
 		}
 
 		Segment.prototype = {
+			update: function( data ) { parseUpdateSegment( this, data ); },
 			absolutize: function( curPos ) { absolutizeSegment( this, curPos ); },
 			toSVG: function() { return segmentToSVG( this ); }
 		};
@@ -75,12 +57,98 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 		return Segment;
 	})
 
+	.factory('parseUpdateSegment', function( Point ) {
+		var rnormalize = /[", \t]+/g;
+
+		return function( segment, data ) {
+			var tmp = data.replace(rnormalize, ' ').trim().split(' '),
+				length = tmp.length;
+
+			segment.command = tmp[0];
+
+			switch ( tmp[0] ) {
+			case 'h':
+			case 'H':
+				if ( segment.end === undefined ) {
+					segment.end = Point( tmp[ length - 1 ], undefined );
+				} else {
+					segment.end.x = tmp[ length - 1 ];
+				}
+				break;
+			case 'v':
+			case 'V':
+				if ( segment.end === undefined ) {
+					segment.end = Point( undefined, tmp[ length - 1 ] );
+				} else {
+					segment.end.y = tmp[ length - 1 ];
+				}
+				break;
+			case 'z':
+			case 'Z':
+				segment.end = undefined;
+				break;
+			case 'rq':
+			case 'rQ':
+			case 'rs':
+			case 'rS':
+				if ( segment.controls[1] === undefined ) {
+					segment.controls[1] = Point( tmp[1], tmp[2] );
+				} else {
+					segment.controls[1].x = tmp[1];
+					segment.controls[1].y = tmp[2];
+				}
+
+				// this code is duplicated below
+				if ( segment.end === undefined ) {
+					segment.end = Point( tmp[ length - 2 ], tmp[ length - 1 ] );
+				} else {
+					segment.end.x = tmp[ length - 2 ];
+					segment.end.y = tmp[ length - 1 ];
+				}
+
+				break;
+			default:
+				if ( length > 3 ) {
+					if ( segment.controls[0] === undefined ) {
+						segment.controls[0] = Point( tmp[1], tmp[2] );
+					} else {
+						segment.controls[0].x = tmp[1];
+						segment.controls[0].y = tmp[2];
+					}
+				}
+				if ( length > 5 ) {
+					if ( segment.controls[1] === undefined ) {
+						segment.controls[1] = Point( tmp[3], tmp[4] );
+					} else {
+						segment.controls[1].x = tmp[3];
+						segment.controls[1].y = tmp[4];
+					}
+				}
+
+				// this code is duplicated above
+				if ( segment.end === undefined ) {
+					segment.end = Point( tmp[ length - 2 ], tmp[ length - 1 ] );
+				} else {
+					segment.end.x = tmp[ length - 2 ];
+					segment.end.y = tmp[ length - 1 ];
+				}
+
+				break;
+			}
+		};
+	})
+
 	// make endpoint and control-points of the glyph absolute
 	.factory('absolutizeSegment', function( Point ) {
 		var rrelativeCP = /R[QCS]/;
 
 		return function( segment, curPos ) {
-			segment.start = Point( curPos );
+			if ( segment.start === undefined ) {
+				segment.start = Point( curPos );
+			} else {
+				segment.start.x = curPos.x;
+				segment.start.y = curPos.y;
+			}
 
 			switch ( segment.command ) {
 			case 'h':
@@ -97,12 +165,6 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			case 'V':
 				segment.end.x = curPos.x;
 				break;
-			/*case 'rc':
-				segment.controls[0].x += curPos.x;
-				segment.controls[0].y += curPos.y;
-				curPos.x = segment.end.x += curPos.x;
-				curPos.y = segment.end.y += curPos.y;
-				break;*/
 			case 'c':
 				segment.controls[0].x += curPos.x;
 				segment.controls[0].y += curPos.y;

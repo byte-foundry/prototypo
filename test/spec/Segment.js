@@ -629,4 +629,21 @@ describe('Segment', function() {
     expect(sa_rS.toSVG()).toBe('S 67 89 44 56');
   });
 
+  it('can reuse an existing segment', inject(function( Segment, Point, parseUpdateSegment, absolutizeSegment ) {
+    var seg1 = Segment( 'rc 10 -10 10 -10 50 50', Point(0,0) );
+
+    parseUpdateSegment( seg1, 'rc 10 -10 10 -10 60 60' );
+    absolutizeSegment( seg1, Point(-20,20) );
+
+    expect(seg1.command).toBe('C');
+    expect(seg1.end.x).toBe(40);
+    expect(seg1.end.y).toBe(80);
+    expect(seg1.start.x).toBe(-20);
+    expect(seg1.start.y).toBe(20);
+    expect(seg1.controls[0].x).toBe(-10);
+    expect(seg1.controls[0].y).toBe(10);
+    expect(seg1.controls[1].x).toBe(50);
+    expect(seg1.controls[1].y).toBe(70);
+  }));
+
 });
