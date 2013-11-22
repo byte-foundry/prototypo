@@ -94,9 +94,15 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			var flatCtx = flattenContext( component.context );
 
 			component.formula.segments.forEach(function( segmentFormula, i ) {
-				if ( i > 0 ) {
-					// only process non-empty segments
-					component.segments[i] = segmentFormula && Segment( segmentFormula( flatCtx ), curPos );
+				// only process non-empty segments
+				if ( i > 0 && segmentFormula ) {
+					if ( component.segments[i] === undefined ) {
+						component.segments[i] = Segment( segmentFormula( flatCtx ), curPos );
+					// reuse existing segments (limit GC and allows control-points viz to be persistant)
+					} else {
+						component.segments[i].update( segmentFormula( flatCtx ) );
+						component.segments[i].absolutize( curPos );
+					}
 				}
 			});
 
