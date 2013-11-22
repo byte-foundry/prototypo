@@ -44,4 +44,55 @@ angular.module('prototypoApp', [
       console.log( txt + " : " + value );
       return value;
     }
+  })
+
+  .filter( 'curve', function ( Point ) {
+    return function ( coords, direction, start, roundness, correction ) {
+      var end = Point(
+        coords
+      );
+      switch (direction) {
+      case "top-left" :
+        var c1 = Point(
+          end.x + ( end.x - start.x ) * roundness,
+          0
+          );
+        var c2 = Point(
+          0,
+          start.y - ( end.y - start.y ) * roundness
+          );
+        break;
+      case "top-right" :
+        var c1 = Point(
+          0,
+          end.y - ( end.y - start.y ) * roundness
+          );
+        var c2 = Point(
+          start.x - ( end.x - start.x ) * roundness,
+          0
+          );
+        break;
+      case "bottom-right" :
+        var c1 = Point(
+          end.x - ( end.x - start.x ) * roundness,
+          0
+          );
+        var c2 = Point(
+          0,
+          start.y - ( start.y - end.y ) * roundness
+          );
+        break;
+      case "bottom-left" :
+        var c1 = Point(
+          0,
+          end.y + ( start.y - end.y ) * roundness
+          );
+        var c2 = Point(
+          start.x - ( start.x - end.x ) * roundness,
+          0
+          );
+        break;
+      }
+      return c1.toString() + ' ' + c2.toString() + ' ' + end.toString();
+    }
   });

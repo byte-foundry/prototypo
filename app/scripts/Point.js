@@ -27,16 +27,16 @@ angular.module('prototypo.Point', [])
 
 		Point.prototype = {
 			toString: function() {
-				return ( isNaN( this.coords[0] ) ? '' : Math.round( this.coords[0] ) ) +
+				return ( isNaN( this.coords[0] ) ? 'NaN' : Math.round( this.coords[0] ) ) +
 					' ' +
-					( isNaN( this.coords[1] ) ? '' : Math.round( this.coords[1] ) );
+					( isNaN( this.coords[1] ) ? 'NaN' : Math.round( this.coords[1] ) );
 			},
 			// Angular uses only toJSON
 			// keep in mind that JSON.stringify will return ""x y"" instead of "x y"
 			toJSON: function() {
-				return ( isNaN( this.coords[0] ) ? '' : Math.round( this.coords[0] ) ) +
+				return ( isNaN( this.coords[0] ) ? 'NaN' : Math.round( this.coords[0] ) ) +
 					' ' +
-					( isNaN( this.coords[1] ) ? '' : Math.round( this.coords[1] ) );
+					( isNaN( this.coords[1] ) ? 'NaN' : Math.round( this.coords[1] ) );
 			},
 
 			translate: function( x, y ) {

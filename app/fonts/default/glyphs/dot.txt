@@ -1,0 +1,8 @@
+M	{{ thickness / 2 }} 20
+rC	{{ [ 0, ( thickness / 2 ) ] |curve:"top-left":self[1]:roundness:0.5 }}
+rC 	{{ [ self[1].x, thickness ] |curve:"top-right":self[2]:roundness:0.5 }}
+rC 	{{ [ thickness, self[2].y ] |curve:"bottom-right":self[3]:roundness:0.5 }}
+rC 	{{ [ self[1].x, self[1].y ] |curve:"bottom-left":self[4]:roundness:0.5 }}
+Z
+
+
