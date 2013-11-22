@@ -2,14 +2,10 @@
 	<g transform="matrix(1 0 0 -1 0 800) translate(400,50) skewX({{controlValues.slant}})">
 		<path glyph-contour fill="black"></path>
 		<g ng-repeat="segment in processedGlyph.segments">
-			<g ng-repeat="cp in segment.$debug">
-				<path segment-endpoint fill="{{cp.color}}" index="{{$index}}" coords="{{cp.end.toString()}}"></path>
+			<g bindonce ng-repeat="cp in segment.$debug">
+				<path segment-endpoint bo-attr bo-attr-fill="cp.color" bo-attr-stroke="cp.color" index="{{$index}}" coords="{{ cp.start.toString() }} {{cp.end.toString()}}"></path>
 			</g>
 		</g>
-		<!--<g ng-repeat="segment in processedGlyph">
-			<path segment-endpoint fill="blue" index="{{$index}}" data-coords="{{segment.xy}}"></path>
-			<path ng-repeat="(key, control) in segment.controls" index="{{$index}}" key="{{key}}" segment-control fill="red" stroke="red" data-coords="{{control.x}},{{control.y}}"></path>
-		</g>-->
 		<path fill="none" stroke="red" d="M -2500 {{ controlValues.xHeight }} l 12000 0" />
 		<path fill="none" stroke="red" d="M -2500 {{ controlValues.capHeight }} l 12000 0" />
 		<path fill="none" stroke="red" d="M -2500 0 l 1200 0" />
