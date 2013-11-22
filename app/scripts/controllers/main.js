@@ -75,7 +75,7 @@ angular.module('prototypoApp')
 
 		// when we try to watch '[appValues.glyphCodes,controlsValues]' we reach the 10 digest limit
 		// todo: find out why
-		$scope.$watch('appValues.glyphCodes', function() {
+		$scope.$watch('appValues.glyphCodes[0]', function() {
 			if ( $scope.currentFont ) {
 				$scope.processedGlyph = $scope.currentFont.process( $scope.appValues.glyphCodes );
 			}
