@@ -1,3 +1,0 @@
-l 0 {{ serifHeight }}
-l {{ serifWidth }} {{ self[1].y }}	
-L {{ self[1].x }} 0

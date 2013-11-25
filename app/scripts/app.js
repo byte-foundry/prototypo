@@ -48,51 +48,27 @@ angular.module('prototypoApp', [
 
   .filter( 'curve', function ( Point ) {
     return function ( coords, direction, start, roundness, correction ) {
-      var end = Point(
-        coords
-      );
+      var end = Point( coords );
       switch (direction) {
       case "top-left" :
-        var c1 = Point(
-          ( end.x - start.x ) * roundness * correction,
-          0
-          );
-        var c2 = Point(
-          0,
-          ( start.y - end.y ) * roundness * correction
-          );
+        var c1 = Point( ( end.x - start.x ) * roundness * correction, 0 );
+        var c2 = Point( 0, ( start.y - end.y ) * roundness * correction );
         break;
       case "top-right" :
-        var c1 = Point(
-          0,
-          ( end.y - start.y ) * roundness * correction
-          );
-        var c2 = Point(
-          ( start.x - end.x ) * roundness * correction,
-          0
-          );
+        var c1 = Point( 0, ( end.y - start.y ) * roundness * correction );
+        var c2 = Point( ( start.x - end.x ) * roundness * correction, 0 );
         break;
       case "bottom-right" :
-        var c1 = Point(
-          ( end.x - start.x ) * roundness * correction,
-          0
-          );
-        var c2 = Point(
-          0,
-          ( start.y - end.y ) * roundness * correction
-          );
+        var c1 = Point( ( end.x - start.x ) * roundness * correction, 0 );
+        var c2 = Point( 0, ( start.y - end.y ) * roundness * correction );
         break;
       case "bottom-left" :
-        var c1 = Point(
-          0,
-          ( end.y - start.y ) * roundness * correction
-          );
-        var c2 = Point(
-          ( start.x - end.x ) * roundness * correction,
-          0
-          );
+        var c1 = Point( 0, ( end.y - start.y ) * roundness * correction );
+        var c2 = Point( ( start.x - end.x ) * roundness * correction, 0 );
         break;
       }
       return c1.toString() + ' ' + c2.toString() + ' ' + end.toString();
     }
   });
+
+

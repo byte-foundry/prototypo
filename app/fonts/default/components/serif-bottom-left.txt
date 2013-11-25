@@ -1,0 +1,5 @@
+L 	{{ self[0].x }} {{ serifHeight }}
+l 	{{ - serifWidth }} {{ serifHeight * serifMedian }}
+l 	{{ - serifCurve * serifWidth }} {{ - ( self[2].y - self[4].y ) / 2 }}
+L 	{{ self[2].x }} 0	
+L 	{{ self[1].x }} {{ serifArc * serifHeight }}
