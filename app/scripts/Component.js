@@ -11,10 +11,21 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 
 			this.formula = formula;
 			this.segments = new Array(formula.length);
-			// the 2 following properties are poorly named
-			this.mergeAt = args.mergeAt || 0;
-			this.mergeToGlyphAt = args.mergeToGlyphAt || 0;
-			this.after = args.after || false;
+
+			// before/after components
+			if ( args.mergeAt !== undefined ) {
+				this.mergeAt = args.mergeAt;
+				this.mergeToGlyphAt = args.mergeToGlyphAt;
+				this.after = args.after;
+			}
+			// cut components
+			if ( args.cut !== undefined ) {
+				this.cut = args.cut;
+				this.from = args.from;
+				this.to = args.to;
+				this.invert = args.invert;
+			}
+
 			this.args = args.args || {};
 
 			this.context = {
@@ -25,10 +36,20 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			};
 
 			this.components = formula.components.map(function( component ) {
-				// override current args
-				args.mergeAt = component.mergeAt;
-				args.after = component.after;
-				args.args = component.args;
+				/* override args */
+				// before/after components
+				if ( component.mergeAt !== undefined ) {
+					args.mergeAt = component.mergeAt;
+					args.after = component.after;
+					args.args = component.args;
+				}
+				// cut components
+				if ( component.cut !== undefined ) {
+					args.cut = component.cut;
+					args.from = component.from;
+					args.to = component.to;
+					args.invert = component.invert;
+				}
 
 				return Component( args.formulaLib[ component.type ], args );
 			}, this);

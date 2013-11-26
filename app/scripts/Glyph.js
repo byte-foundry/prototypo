@@ -10,6 +10,11 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 				return new Glyph( name, args );
 			}
 
+			// the root component is always merged "before 0"
+			args.mergeAt = 0;
+			args.mergeToGlyphAt = 0;
+			args.after = false;
+
 			this.origin = Point(0,0);
 			this.segments = [];
 			this.component = Component( args.formulaLib[ name ], args );

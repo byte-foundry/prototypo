@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.Segment', ['prototypo.Point'])
-	.factory('Segment', function( parseUpdateSegment, absolutizeSegment, segmentToSVG ) {
+	.factory('Segment', function( parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveEnd ) {
 		function Segment( data, curPos ) {
 			// new is optional
 			if ( !( this instanceof Segment ) ) {
@@ -43,7 +43,9 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 		Segment.prototype = {
 			update: function( data ) { parseUpdateSegment( this, data ); },
 			absolutize: function( curPos ) { absolutizeSegment( this, curPos ); },
-			toSVG: function() { return segmentToSVG( this ); }
+			toSVG: function() { return segmentToSVG( this ); },
+			cut: function( from, to ) { return cutSegment( this, from, to ); },
+			moveEnd: function( endPoint, newCoords ) { return moveEnd( this, endPoint, newCoords ); }
 		};
 
 		// a segment has x and y properties that are copies of this.end.x and this.end.y
@@ -209,6 +211,7 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 				segment.controls[0].y += segment.start.y;
 			}
 			if ( rrelativeCP.test( segment.command ) ) {
+				segment.relativeControls = true;
 				segment.controls[1].x += segment.end.x;
 				segment.controls[1].y += segment.end.y;
 			}
@@ -244,5 +247,17 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			}
 
 			return string.join(' ');
+		};
+	})
+
+	.factory('cutSegment', function() {
+		return function( segment, from, to ) {
+
+		};
+	})
+
+	.factory('moveEnd', function() {
+		return function( segment, endPoint, newCoords ) {
+
 		};
 	});

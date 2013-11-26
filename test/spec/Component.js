@@ -283,6 +283,9 @@ describe('Component', function() {
         '',
         'after 3: angle()'
       ].join('\n')), {
+        mergeAt: 0,
+        mergeToGlyphAt: 0,
+        after: false,
         formulaLib: {
           angle: Formula([
             'L {{ self[2].x - 20 }} {{ self[2].y + 20 }}',
