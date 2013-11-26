@@ -12,7 +12,7 @@ angular.module('prototypoApp', [
     'prototypo.Glyph',
     'prototypo.Font',
 
-    'prototypo.fontLoader',
+    'prototypo.typefaceLoader',
     'prototypo.valuesLoader',
     'prototypo.glyphFilters',
     //'prototypo.glyphUtils',
@@ -29,19 +29,19 @@ angular.module('prototypoApp', [
 
   .config(function ( $routeProvider ) {
     $routeProvider
-      .when('/', {
+      .when('/typeface/:typeface/font/:font', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '/typeface/default/font/default'
       });
   })
 
   .filter( 'log', function () {
     return function( value, txt ) {
       value = Math.round( value * 100 ) / 100 ;
-      console.log( txt + " : " + value );
+      console.log( txt + ' : ' + value );
       return value;
-    }
+    };
   });

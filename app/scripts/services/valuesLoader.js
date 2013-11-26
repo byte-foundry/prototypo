@@ -14,7 +14,7 @@ angular.module('prototypo.valuesLoader', [])
 						return deferred.promise;
 
 					} else {
-						return getDefault();
+						return getDefault( params );
 					}
 				},
 				save: function( params ) {
@@ -37,10 +37,10 @@ angular.module('prototypo.valuesLoader', [])
 			'control',
 			function( params ) {
 				return Controls.get(params)
-					.$then(function( response ) {
+					.$promise.then(function( response ) {
 						var controlValues = {};
 
-						_( response.data.controls ).each(function(control) {
+						_( response.controls ).each(function(control) {
 							controlValues[ control.name ] = control.init;
 						});
 
@@ -50,14 +50,14 @@ angular.module('prototypo.valuesLoader', [])
 		);
 	})
 
-	.factory( 'AppValues', function( $q, valuesLoader, Font ) {
+	.factory( 'AppValues', function( $q, valuesLoader, Fonts ) {
 		return valuesLoader(
 			'app',
 			function( params ) {
-				return Font.get(params)
-					.$then(function( response ) {
+				return Fonts.get(params)
+					.$promise.then(function( response ) {
 						return {
-							glyphCodes: [response.data.order[0]]
+							glyphCodes: [response.order[0]]
 						};
 					});
 			}
