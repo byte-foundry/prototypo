@@ -86,6 +86,7 @@ angular.module('prototypo.Point', [])
 	})
 
 	.factory('pointOn', function( Point ) {
+		// this regexp is duplicated in Segment.js
 		var rstraight = /[LVMH]/;
 
 		return function( _point, args ) {

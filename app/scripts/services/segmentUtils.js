@@ -1,5 +1,6 @@
 'use strict';
 
+// DEPRECATED, use filter or method "on" instead (in Point.js)
 angular.module('prototypo.segmentUtils', ['prototypo.Point'])
 	.factory('findPoint', function( Point ) {
 		var rstraight = /[LVMH]/;

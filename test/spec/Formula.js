@@ -124,7 +124,6 @@ describe('Interpolate component', function () {
 		expect( parsed.components[0].cut ).toBe( 3 );
 		expect( parsed.components[0].rawFrom ).toBe( '[30, NaN]' );
 		expect( parsed.components[0].to ).toBe( 'end' );
-		expect( parsed.components[0].invert ).toBe( false );
 		expect( parsed.components[0].type ).toBe( 'serif' );
 		expect( parsed.components[0].rawArgs ).toBe( '{side: "bottom-left"}' );
 	}));

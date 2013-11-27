@@ -67,7 +67,6 @@ angular.module('prototypo.Formula', [])
 						cut: +arguments[1],
 						rawFrom: arguments[2],
 						to: arguments[3],
-						invert: arguments[3] === 'start',
 						type: arguments[4],
 						rawArgs: arguments[5]
 					});

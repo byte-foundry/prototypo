@@ -83,6 +83,25 @@ describe('Point structure', function () {
 		expect(p6.y).toBeNaN();
 		expect(p6.x).toBe(2);
 	}));
+});
+
+describe('translatePoint', function () {
+
+	// load the controller's module
+	beforeEach(module('prototypo.Point'));
+
+	var _Point, p0, p1, p2, p3, p4, p5, p6;
+
+	beforeEach(inject(function ( Point ) {
+		_Point = Point;
+		p0 = new Point(3,6);
+		p1 = Point(2,5);
+		p2 = Point([2,5]);
+		p3 = Point('2','5');
+		p4 = Point(['2','5']);
+		p5 = Point(p1);
+		p6 = Point({x: 2, y: 5});
+	}));
 
 	it('can translate a Point on x axis', inject(function( Point ) {
 		var p1 = Point(2,5);
