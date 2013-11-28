@@ -51,10 +51,15 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 
 		// a segment has x and y properties that are copies of this.end.x and this.end.y
 		Object.defineProperty(Segment.prototype, 'x', {
-			get: function() { return this.end.x; },
+			get: function() { return this.end.x; }
 		});
 		Object.defineProperty(Segment.prototype, 'y', {
-			get: function() { return this.end.y; },
+			get: function() { return this.end.y; }
+		});
+		// make .next non-enumerable
+		Object.defineProperty(Segment.prototype, 'next', {
+			writable: true,
+			enumerable: false
 		});
 
 		return Segment;

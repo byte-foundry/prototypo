@@ -72,37 +72,40 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				_glyph,
 				checkNaN = function( segment ) {
 					return isNaN( segment.x ) || isNaN( segment.y );
-				};
+				},
+				filteredSegments;
 
 			do {
 				_glyph = [];
 				processComponent( component, curPos, _glyph, false );
-				hasNaN = _glyph.some(checkNaN);
+				hasNaN = component.segments.some(checkNaN);
 			} while ( ++i < 10 && hasNaN );
 
 			if ( !hasNaN ) {
 				// save numbers of iterations for later
 				component.iter = i;
 
+				// filter empty segments
+				filteredSegments = component.segments.filter(function( segment ) {
+					return segment instanceof Segment;
+				});
 				// link segments together
-				component.segments
-					.filter(function( segment ) { return segment instanceof Segment; })
-					.forEach(function( segment, i ) {
+				filteredSegments.forEach(function( segment, i ) {
 						if ( !component.firstSegment ) {
 							component.firstSegment = segment;
 						}
 
 						// natural order
-						if ( component.to === 'end' && component.segments[i + 1] ) {
-							segment.next = component.segments[i + 1];
+						if ( component.to === 'end' && this[i + 1] ) {
+							segment.next = this[i + 1];
 						}
 						// invert order
-						if ( component.to === 'start' && component.segments[i - 1] ) {
-							segment.next = component.segments[i - 1];
+						if ( component.to === 'start' && this[i - 1] ) {
+							segment.next = this[i - 1];
 						}
 
 						component.lastSegment = segment;
-					});
+					}, filteredSegments);
 
 				// legacy merge for before/after components
 				if ( component.mergeAt !== undefined ) {
@@ -128,8 +131,9 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 							// link from the component to the beginning of the subcomponent
 							component.segments[ subcomponent.cut ].next = subcomponent.firstSegment;
 							// link back from the end of the subcomponent to the component
-							if ( subcomponent.cut +1 < component.length ) {
-								subcomponent.lastSegment.next = component.segments[  subcomponent.cut +1 ];
+							if ( subcomponent.cut +1 < component.segments.length ) {
+								subcomponent.lastSegment.next = component.segments[ subcomponent.cut +1 ];
+
 							// if the subcomponent was added at the end of the component, update .lastSegment
 							} else {
 								component.lastSegment = subcomponent.lastSegment;
@@ -139,6 +143,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 							// link from the component to the beginning of the subcomponent
 							if ( subcomponent.cut -1 >= 0 ) {
 								component.segments[ subcomponent.cut -1 ].next = subcomponent.firstSegment;
+
 							// if the subcomponent was added at the beginning of the component, update .firstSegment
 							} else {
 								component.firstSegment = subcomponent.firstSegment;
@@ -147,10 +152,13 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 							subcomponent.lastSegment.next = component.segments[ subcomponent.cut ];
 						}
 
-						if ( subcomponent.to === 'end' || subcomponent.cut -1 >= 0 ) {
+						if ( ( subcomponent.to === 'end' && subcomponent.cut +1 < component.segments.length ) ||
+							( subcomponent.to === 'start' && subcomponent.cut -1 >= 0 ) ) {
+
 							moveSegmentEnd(
-								component.segments[ subcomponent.cut + ( subcomponent.to === 'end' ? 0 : -1 ) ],
-								subcomponent.segments[ subcomponent.segments.length -1 ]
+								component.segments[ subcomponent.cut + ( subcomponent.to === 'end' ? 1 : -1 ) ],
+								subcomponent.to === 'start' ? 'end' : 'start',
+								subcomponent.lastSegment[ subcomponent.to ]
 							);
 						}
 					}
@@ -164,7 +172,9 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 	})
 
 	.factory('processComponent', function( Segment, Point, mergeComponent, flattenContext, invertSegment ) {
-		function processComponent( component, curPos, glyph, recurse ) {
+		function processComponent( component, _curPos, glyph, recurse ) {
+			var curPos = Point( _curPos );
+
 			// initialize the drawing with the origin as a fake segment
 			if ( component.segments[0] === undefined ) {
 				component.segments[0] = {
