@@ -99,19 +99,15 @@ describe('Component', function() {
 	it('can process components with params and controls', inject(function( Point, $interpolate, processComponent ) {
 		glyph = [];
 
-		var args = {
-				arbitrary: 20
-			},
-			controls = {
-				width: 50
-			};
+		var argsFn = function() { return { arbitrary: 20 }; },
+			controls = { width: 50 };
 
 		comp1 = {
 			mergeAt: 0,
 			mergeToGlyphAt: 0,
 			after: false,
 			context: {
-				args: args,
+				argsFn: argsFn,
 				controls: controls
 			},
 			formula: { segments: [
@@ -130,7 +126,7 @@ describe('Component', function() {
 					mergeToGlyphAt: 2,
 					after: true,
 					context: {
-						args: args,
+						argsFn: argsFn,
 						controls: controls
 					},
 					formula: { segments: [
@@ -450,7 +446,7 @@ describe('initComponent', function() {
 				segments: [],
 				context: {},
 				cut: 3,
-				from: {x: 40},
+				fromFn: function() { return {x: 40}; },
 				to: 'end',
 				components: []
 			}]
@@ -502,7 +498,7 @@ describe('initComponent', function() {
 				segments: [],
 				context: {},
 				cut: 3,
-				from: {x: 10},
+				fromFn: function() { return {x: 10}; },
 				to: 'start',
 				components: []
 			}]
@@ -529,6 +525,14 @@ describe('initComponent', function() {
 		expect( comp1.segments[3].start.x ).toBe( 10 );
 		expect( comp1.segments[3].start.y ).toBe( 50 );
 	}));
+
+	/*it('can cut the same component twice', function() {
+
+	});*/
+
+	/*it('can add two components that end on the same segment', function() {
+
+	})*/
 });
 
 /*describe('TrailingSpaces with Twilight theme in SublimeText', function() {

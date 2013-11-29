@@ -15,7 +15,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			// before/after components
 			if ( args.mergeAt !== undefined ) {
 				this.mergeAt = args.mergeAt;
-				this.mergeToGlyphAt = args.mergeToGlyphAt;
+				//this.mergeToGlyphAt = args.mergeToGlyphAt;
 				this.after = args.after;
 			}
 			// cut components
@@ -23,15 +23,15 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				this.cut = args.cut;
 				this.from = args.from;
 				this.to = args.to;
-				//this.invert = args.to === 'start';
-				//this.insertAfter = args.cut - ( args.to === 'start' ? 1 : 0 );
 			}
 
 			this.args = args.args || {};
 
 			this.context = {
 				controls: args.controls,
+				// useless, only argsFN is used
 				args: this.args,
+				argsFn: args.argsFn,
 				// deprecated, use filter instead
 				find: findPoint,
 				self: this.segments
@@ -43,7 +43,6 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				if ( component.mergeAt !== undefined ) {
 					args.mergeAt = component.mergeAt;
 					args.after = component.after;
-					args.args = component.args;
 				}
 				// cut components
 				if ( component.cut !== undefined ) {
@@ -51,6 +50,9 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 					args.from = component.from;
 					args.to = component.to;
 				}
+				args.argsFn = component.argsFn;
+				// useless
+				args.args = component.args;
 
 				return Component( args.formulaLib[ component.type ], args );
 			}, this);
@@ -65,7 +67,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 		return Component;
 	})
 
-	.factory('initComponent', function( Segment, Point, processComponent, mergeComponent, cutSegment, moveSegmentEnd ) {
+	.factory('initComponent', function( Segment, Point, processComponent, mergeComponent, cutSegment, moveSegmentEnd, flattenContext ) {
 		return function initComponent( component, curPos, glyph ) {
 			var i = 0,
 				hasNaN = false,
@@ -113,6 +115,13 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				}
 
 				component.components.forEach(function( subcomponent ) {
+					var flatCtx = flattenContext( component.context );
+
+					// the args of the subcomponents have to be recalculated according to the parent context
+					if ( subcomponent.context.argsFn ) {
+						subcomponent.context.args = subcomponent.context.argsFn( flatCtx );
+					}
+
 					if ( subcomponent.mergeAt !== undefined ) {
 						// init mergeToGlyphAt by searching the attach to the parent in the glyph
 						subcomponent.mergeToGlyphAt =
@@ -122,7 +131,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 						initComponent( subcomponent, component.segments[ subcomponent.mergeAt ].end, glyph );
 
 					} else {
-						cutSegment( component.segments[ subcomponent.cut ], subcomponent.from, subcomponent.to );
+						cutSegment( component.segments[ subcomponent.cut ], subcomponent.fromFn( flatCtx ), subcomponent.to );
 
 						initComponent( subcomponent, component.segments[ subcomponent.cut ][ subcomponent.to ] );
 
@@ -176,7 +185,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			var curPos = Point( _curPos );
 
 			// initialize the drawing with the origin as a fake segment
-			if ( component.segments[0] === undefined ) {
+			//if ( component.segments[0] === undefined ) {
 				component.segments[0] = {
 					end: Point( curPos ),
 					x: curPos.x,
@@ -184,10 +193,10 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 					toSVG: function() { return ''; }
 				};
 
-			} else {
+			/*} else {
 				component.segments[0].end.x = component.segments[0].x = curPos.x;
 				component.segments[0].end.y = component.segments[0].y = curPos.y;
-			}
+			}*/
 
 			var flatCtx = flattenContext( component.context );
 
@@ -212,6 +221,11 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			// don't recurse on initialization
 			if ( recurse !== false ) {
 				component.components.forEach(function( subcomponent ) {
+					// the args of the subcomponents have to be recalculated according to the parent context
+					if ( subcomponent.context.argsFn ) {
+						subcomponent.context.args = subcomponent.context.argsFn( flatCtx );
+					}
+
 					// legacy before/after processComponent
 					if ( subcomponent.mergeAt !== undefined ) {
 						processComponent( subcomponent, component.segments[ subcomponent.mergeAt ].end, glyph );

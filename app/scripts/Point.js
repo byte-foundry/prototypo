@@ -82,7 +82,9 @@ angular.module('prototypo.Point', [])
 	})
 
 	.filter('translate', function( translatePoint ) {
-		return translatePoint;
+		return function( point ) {
+			return translatePoint( JSON.parse( point ) ).toString();
+		};
 	})
 
 	.factory('pointOn', function( Point ) {
@@ -140,5 +142,7 @@ angular.module('prototypo.Point', [])
 	})
 
 	.filter('on', function( pointOn ) {
-		return pointOn;
+		return function( point ) {
+			return pointOn( JSON.parse( point ) ).toString();
+		};
 	});

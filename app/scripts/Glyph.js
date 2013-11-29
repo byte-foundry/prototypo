@@ -11,9 +11,12 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 			}
 
 			// the root component is always merged "before 0"
-			args.mergeAt = 0;
+			/*args.mergeAt = 0;
 			args.mergeToGlyphAt = 0;
-			args.after = false;
+			args.after = false;*/
+
+			args.cut = 0;
+			args.to = 'end';
 
 			this.origin = Point(0,0);
 			this.segments = [];
@@ -26,6 +29,15 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 				this.suid = Math.random();
 				this.segments = [];
 				this.component.process( Point(this.origin), this.segments );
+
+				var currSegment = this.component.firstSegment;
+
+				// flatten
+				while ( currSegment ) {
+					this.segments.push( currSegment );
+					currSegment = currSegment.next;
+				}
+
 				return this;
 			},
 			toSVG: function() { return glyphToSVG( this ); }

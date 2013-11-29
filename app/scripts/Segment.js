@@ -56,11 +56,11 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 		Object.defineProperty(Segment.prototype, 'y', {
 			get: function() { return this.end.y; }
 		});
-		// make .next non-enumerable
-		Object.defineProperty(Segment.prototype, 'next', {
+		// I thought this would prevent .next to be enumerated but it doesn't seem to work
+		/*Object.defineProperty(Segment.prototype, 'next', {
 			writable: true,
 			enumerable: false
-		});
+		});*/
 
 		return Segment;
 	})

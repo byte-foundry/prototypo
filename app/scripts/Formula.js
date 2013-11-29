@@ -86,7 +86,7 @@ angular.module('prototypo.Formula', [])
 
 	// execute various operations on the JS representation
 	// of a glyph when it is loaded or first used
-	.factory('interpolateFormula', function( $interpolate ) {
+	.factory('interpolateFormula', function( $interpolate, $parse ) {
 		var rempty = /^[ \t]*$/;
 
 		return function( formula ) {
@@ -103,11 +103,14 @@ angular.module('prototypo.Formula', [])
 
 			// interpolate sub-components params
 			formula.components.forEach(function( component ) {
-				component.args = $interpolate( component.rawArgs );
+				if ( component.rawArgs !== '' ) {
+					component.argsFn = $parse( component.rawArgs );
+				}
 				delete component.rawArgs;
 
-				if ( component.rawFrom !== undefined ) {
-					component.from = $interpolate( component.rawFrom );
+				// undefined test for before/after
+				if ( component.rawFrom !== undefined && component.rawFrom !== '' ) {
+					component.fromFn = $parse( component.rawFrom );
 					delete component.rawFrom;
 				}
 			});
