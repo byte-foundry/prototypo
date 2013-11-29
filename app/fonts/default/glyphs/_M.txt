@@ -14,5 +14,5 @@ L 	{{ self[12].x }} 0
 L 	{{ self[0].x }} 0
 Z
 
-before 7: serif-bottom-right()
-before 13: serif-bottom-right()
+cut {{ self[7] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right
+cut {{ self[13] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right

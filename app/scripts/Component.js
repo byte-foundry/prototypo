@@ -24,7 +24,9 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				this.fromFn = args.fromFn;
 				this.to = args.to;
 			}
+			this.invert = args.to === 'start';
 
+			// useless
 			this.args = args.args || {};
 
 			this.context = {
@@ -93,21 +95,25 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				});
 				// link segments together
 				filteredSegments.forEach(function( segment, i ) {
-						if ( !component.firstSegment ) {
-							component.firstSegment = segment;
-						}
-
 						// natural order
-						if ( component.to === 'end' && this[i + 1] ) {
+						if ( !component.invert && this[i + 1] ) {
 							segment.next = this[i + 1];
 						}
 						// invert order
-						if ( component.to === 'start' && this[i - 1] ) {
+						if ( component.invert && this[i - 1] ) {
 							segment.next = this[i - 1];
 						}
-
-						component.lastSegment = segment;
 					}, filteredSegments);
+
+				// find the beginning and end of the component
+				if ( component.invert ) {
+					component.firstSegment = filteredSegments[ filteredSegments.length -1 ];
+					component.lastSegment = filteredSegments[ 0 ];
+
+				} else {
+					component.firstSegment = filteredSegments[ 0 ];
+					component.lastSegment = filteredSegments[ filteredSegments.length -1 ];
+				}
 
 				// legacy merge for before/after components
 				if ( component.mergeAt !== undefined ) {
@@ -195,8 +201,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				});
 			}
 
-			// invert component
-			if ( component.to === 'start' ) {
+			if ( component.invert ) {
 				component.segments.forEach(invertSegment);
 			}
 		};
@@ -214,7 +219,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			processor( subcomponent, component.segments[ subcomponent.cut ][ subcomponent.to ] );
 
 			// link subcomponent to its parent
-			if ( subcomponent.to === 'end' ) {
+			if ( !subcomponent.invert ) {
 				// link from the component to the beginning of the subcomponent
 				component.segments[ subcomponent.cut ].next = subcomponent.firstSegment;
 				// link back from the end of the subcomponent to the component
@@ -239,13 +244,13 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				subcomponent.lastSegment.next = component.segments[ subcomponent.cut ];
 			}
 
-			if ( ( subcomponent.to === 'end' && subcomponent.cut +1 < component.segments.length ) ||
-				( subcomponent.to === 'start' && subcomponent.cut -1 >= 0 ) ) {
+			if ( ( subcomponent.invert && subcomponent.cut +1 < component.segments.length ) ||
+				( !subcomponent.invert && subcomponent.cut -1 >= 0 ) ) {
 
 				moveSegmentEnd(
-					component.segments[ subcomponent.cut + ( subcomponent.to === 'end' ? 1 : -1 ) ],
-					subcomponent.to === 'start' ? 'end' : 'start',
-					subcomponent.lastSegment[ subcomponent.to ]
+					component.segments[ subcomponent.cut + ( subcomponent.invert ? -1 : 1 ) ],
+					subcomponent.invert ? 'end' : 'start',
+					subcomponent[ ( subcomponent.invert ? 'first' : 'last' ) + 'Segment' ][ subcomponent.to ]
 				);
 			}
 		};

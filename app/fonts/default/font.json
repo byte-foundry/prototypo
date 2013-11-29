@@ -12,11 +12,13 @@
 		"h",
 		"m",
 		"n",
-		"dot"
+		"dot",
+		"d"
 	],
 	"components": [
 		"serif-bottom-right",
 		"serif-bottom-left",
-		"serif-test"
+		"serif-test",
+		"line"
 	]
 }

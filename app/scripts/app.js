@@ -40,7 +40,7 @@ angular.module('prototypoApp', [
 
   .filter( 'log', function () {
     return function( value, txt ) {
-      value = Math.round( value * 100 ) / 100 ;
+      //value = Math.round( value * 100 ) / 100 ;
       console.log( txt + " : " + value );
       return value;
     }

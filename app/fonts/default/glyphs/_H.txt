@@ -13,8 +13,6 @@ L 	{{ self[3].x }} 0
 L 	0 0
 Z
 
-before 8: serif-bottom-right()
-before 12: serif-bottom-right()
-// before 9: serif-test()
-
-// cut self[8] at y: ... to self8.end
+cut {{ self[8] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right
+cut {{ self[10] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to start, add serif-bottom-left
+cut {{ self[12] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right

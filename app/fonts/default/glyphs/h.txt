@@ -13,7 +13,5 @@ L 	{{ thickness }} 0
 L 	0 0
 Z
 
-before 7: serif-bottom-right()
-before 12: serif-bottom-right()
-// after 13: serif-bottom-left()
-// after 13: serif-test()
+cut {{ self[7] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right
+cut {{ self[12] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right

@@ -29,7 +29,7 @@ angular.module('prototypo.Formula', [])
 			rcomment = /\/\/.*$/gm,
 			rdoublequestionmark = /\?\?/g,
 			rbeforeafter = /^(after|before) (\d+) ?: ?([\w-]+?)\((.*?)\)$/gm,
-			rcut = /^cut \{\{ ?self\[ ?(\d+) ?\] ?\}\} from \{\{ ?(.+?) ?\}\} to (start|end),? add ([^ ]+) \{\{ ?(.+?) ?\}\}/gm,
+			rcut = /^cut \{\{ ?self\[ ?(\d+) ?\] ?\}\} from \{\{ ?(.+?) ?\}\} to (start|end),? add ([^ \n]+)(?: \{\{ ?(.+?) ?\}\})?$/gm,
 			rsplit = /(?:\r?\n|\r)/;
 
 		return function( formula, data ) {
@@ -103,7 +103,7 @@ angular.module('prototypo.Formula', [])
 
 			// interpolate sub-components params
 			formula.components.forEach(function( component ) {
-				if ( component.rawArgs !== '' ) {
+				if ( component.rawArgs !== undefined && component.rawArgs !== '' ) {
 					component.argsFn = $parse( component.rawArgs );
 				}
 				delete component.rawArgs;

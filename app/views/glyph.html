@@ -1,4 +1,4 @@
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" height="90%" >
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" height="1000" width="100%" >
 	<g transform="matrix(1 0 0 -1 0 800) translate(400,50) skewX({{controlValues.slant}})">
 		<path glyph-contour fill="black"></path>
 		<g ng-repeat="segment in processedGlyph.segments">
@@ -6,5 +6,5 @@
 				<path segment-endpoint bo-attr bo-attr-fill="point.color" bo-attr-stroke="point.color" index="{{$index}}" coords="{{ point.start.toString() }} {{point.end.toString()}}"></path>
 			</g>
 		</g>
-			</g>
+	</g>
 </svg>
