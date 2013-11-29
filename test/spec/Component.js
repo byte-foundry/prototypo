@@ -315,54 +315,6 @@ describe('Component', function() {
 	});*/
 });
 
-describe('processComponent', function() {
-	it('can process and invert a component', inject(function( Point, $interpolate, processComponent ) {
-		var comp1 = {
-			formula: { segments: [
-				false,
-				$interpolate('m 0 0'),
-				$interpolate('l 0 50'),
-				$interpolate('l 50 0'),
-				$interpolate('l 0 -50'),
-				$interpolate('l -50 0'),
-				$interpolate('z')
-			]},
-			segments: [],
-			context: {},
-			cut: 0,
-			to: 'start',
-			components: []
-		};
-
-		processComponent( comp1, Point(0,0) );
-
-		expect( comp1.segments[1].start.x ).toBe( 0 );
-		expect( comp1.segments[1].start.y ).toBe( 0 );
-		expect( comp1.segments[1].end.x ).toBe( 0 );
-		expect( comp1.segments[1].end.y ).toBe( 0 );
-
-		expect( comp1.segments[2].start.x ).toBe( 0 );
-		expect( comp1.segments[2].start.y ).toBe( 50 );
-		expect( comp1.segments[2].end.x ).toBe( 0 );
-		expect( comp1.segments[2].end.y ).toBe( 0 );
-
-		expect( comp1.segments[3].start.x ).toBe( 50 );
-		expect( comp1.segments[3].start.y ).toBe( 50 );
-		expect( comp1.segments[3].end.x ).toBe( 0 );
-		expect( comp1.segments[3].end.y ).toBe( 50 );
-
-		expect( comp1.segments[4].start.x ).toBe( 50 );
-		expect( comp1.segments[4].start.y ).toBe( 0 );
-		expect( comp1.segments[4].end.x ).toBe( 50 );
-		expect( comp1.segments[4].end.y ).toBe( 50 );
-
-		expect( comp1.segments[5].start.x ).toBe( 0 );
-		expect( comp1.segments[5].start.y ).toBe( 0 );
-		expect( comp1.segments[5].end.x ).toBe( 50 );
-		expect( comp1.segments[5].end.y ).toBe( 0 );
-	}));
-});
-
 describe('initComponent', function() {
 	it('links a non-inverted component on init', inject(function( Point, $interpolate, initComponent ) {
 		var comp1 = {
@@ -533,6 +485,108 @@ describe('initComponent', function() {
 	/*it('can add two components that end on the same segment', function() {
 
 	})*/
+});
+
+describe('processComponent', function() {
+	it('can process and invert a component', inject(function( Point, $interpolate, processComponent ) {
+		var comp1 = {
+			formula: { segments: [
+				false,
+				$interpolate('m 0 0'),
+				$interpolate('l 0 50'),
+				$interpolate('l 50 0'),
+				$interpolate('l 0 -50'),
+				$interpolate('l -50 0'),
+				$interpolate('z')
+			]},
+			segments: [],
+			context: {},
+			cut: 0,
+			to: 'start',
+			components: []
+		};
+
+		processComponent( comp1, Point(0,0) );
+
+		expect( comp1.segments[1].start.x ).toBe( 0 );
+		expect( comp1.segments[1].start.y ).toBe( 0 );
+		expect( comp1.segments[1].end.x ).toBe( 0 );
+		expect( comp1.segments[1].end.y ).toBe( 0 );
+
+		expect( comp1.segments[2].start.x ).toBe( 0 );
+		expect( comp1.segments[2].start.y ).toBe( 50 );
+		expect( comp1.segments[2].end.x ).toBe( 0 );
+		expect( comp1.segments[2].end.y ).toBe( 0 );
+
+		expect( comp1.segments[3].start.x ).toBe( 50 );
+		expect( comp1.segments[3].start.y ).toBe( 50 );
+		expect( comp1.segments[3].end.x ).toBe( 0 );
+		expect( comp1.segments[3].end.y ).toBe( 50 );
+
+		expect( comp1.segments[4].start.x ).toBe( 50 );
+		expect( comp1.segments[4].start.y ).toBe( 0 );
+		expect( comp1.segments[4].end.x ).toBe( 50 );
+		expect( comp1.segments[4].end.y ).toBe( 50 );
+
+		expect( comp1.segments[5].start.x ).toBe( 0 );
+		expect( comp1.segments[5].start.y ).toBe( 0 );
+		expect( comp1.segments[5].end.x ).toBe( 50 );
+		expect( comp1.segments[5].end.y ).toBe( 0 );
+	}));
+
+	it('process and init have the same result', inject(function( Point, $interpolate, processComponent, initComponent ) {
+		var comp2,
+			comp1 = {
+			formula: { segments: [
+				false,
+				$interpolate('m 0 0'),
+				$interpolate('l 0 50'),
+				$interpolate('l 50 0'),
+				$interpolate('l 0 -50'),
+				$interpolate('l -50 0'),
+				$interpolate('z')
+			]},
+			segments: [],
+			context: {},
+			cut: 0,
+			to: 'end',
+			components: [ comp2 = {
+				formula: { segments: [
+					false,
+					$interpolate('l -10 30')
+				]},
+				segments: [],
+				context: {},
+				cut: 3,
+				fromFn: function() { return {x: 10}; },
+				to: 'start',
+				components: []
+			}]
+		};
+
+		initComponent( comp1, Point(0,0) );
+
+		processComponent( comp1, Point(0,0) );
+
+		expect( comp1.firstSegment ).toBe( comp1.segments[1] );
+		expect( comp1.lastSegment ).toBe( comp1.segments[6] );
+
+		expect( comp2.firstSegment ).toBe( comp2.segments[1] );
+		expect( comp2.lastSegment ).toBe( comp2.segments[1] );
+
+		expect( comp1.segments[2].next ).toBe( comp2.segments[1] );
+		expect( comp2.segments[1].next ).toBe( comp1.segments[3] );
+
+		expect( comp1.segments[2].end.x ).toBe( 0 );
+		expect( comp1.segments[2].end.y ).toBe( 80 );
+		expect( comp2.segments[1].start.x ).toBe( 0 );
+		expect( comp2.segments[1].start.y ).toBe( 80 );
+
+		expect( comp2.segments[1].end.x ).toBe( 10 );
+		expect( comp2.segments[1].end.y ).toBe( 50 );
+		expect( comp1.segments[3].start.x ).toBe( 10 );
+		expect( comp1.segments[3].start.y ).toBe( 50 );
+	}));
 });
 
 /*describe('TrailingSpaces with Twilight theme in SublimeText', function() {

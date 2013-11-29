@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.Segment', ['prototypo.Point'])
-	.factory('Segment', function( parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, invertSegment ) {
+	.factory('Segment', function( parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, invertSegment, getSegmentPoints ) {
 		function Segment( data, curPos ) {
 			// new is optional
 			if ( !( this instanceof Segment ) ) {
@@ -10,6 +10,7 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 
 			this.virtual = false;
 			this.controls = [];
+			this.$debug = [];
 
 			parseUpdateSegment( this, data );
 
@@ -17,27 +18,6 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 
 			// make all points of the glyph available for debug
 			// this can be done only after the first parseUpdate and absolutize
-			this.$debug = [];
-			if ( this.end ) {
-				this.$debug.push({
-					color: 'blue',
-					end: this.end
-				});
-			}
-			if ( this.controls[0] ) {
-				this.$debug.push({
-					color: 'green',
-					start: this.start,
-					end: this.controls[0]
-				});
-			}
-			if ( this.controls[1] ) {
-				this.$debug.push({
-					color: 'green',
-					start: this.end,
-					end: this.controls[1]
-				});
-			}
 		}
 
 		Segment.prototype = {
@@ -46,7 +26,8 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			toSVG: function() { return segmentToSVG( this ); },
 			cut: function( from, to ) { return cutSegment( this, from, to ); },
 			moveEnd: function( endPoint, newCoords ) { return moveSegmentEnd( this, endPoint, newCoords ); },
-			invertSegment: function() { return invertSegment( this); }
+			invertSegment: function() { return invertSegment( this); },
+			debug: function() { return getSegmentPoints( this ); }
 		};
 
 		// a segment has x and y properties that are copies of this.end.x and this.end.y
@@ -57,10 +38,10 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			get: function() { return this.end.y; }
 		});
 		// I thought this would prevent .next to be enumerated but it doesn't seem to work
-		/*Object.defineProperty(Segment.prototype, 'next', {
+		Object.defineProperty(Segment.prototype, 'next', {
 			writable: true,
 			enumerable: false
-		});*/
+		});
 
 		return Segment;
 	})
@@ -318,7 +299,7 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 
 	.factory('invertSegment', function() {
 		return function( segment ) {
-			if ( !segment ) {
+			if ( !segment || !segment.start ) {
 				return;
 			}
 
@@ -334,5 +315,34 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			}
 
 			return segment;
+		};
+	})
+
+	.factory('getSegmentPoints', function() {
+		return function( segment ) {
+			if ( !segment.$debug.length ) {
+				if ( segment.end ) {
+					segment.$debug.push({
+						color: 'blue',
+						end: segment.end
+					});
+				}
+				if ( segment.controls[0] ) {
+					segment.$debug.push({
+						color: 'green',
+						start: segment.start,
+						end: segment.controls[0]
+					});
+				}
+				if ( segment.controls[1] ) {
+					segment.$debug.push({
+						color: 'green',
+						start: segment.end,
+						end: segment.controls[1]
+					});
+				}
+			}
+
+			return segment.$debug;
 		};
 	});

@@ -21,7 +21,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			// cut components
 			if ( args.cut !== undefined ) {
 				this.cut = args.cut;
-				this.from = args.from;
+				this.fromFn = args.fromFn;
 				this.to = args.to;
 			}
 
@@ -47,7 +47,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				// cut components
 				if ( component.cut !== undefined ) {
 					args.cut = component.cut;
-					args.from = component.from;
+					args.fromFn = component.fromFn;
 					args.to = component.to;
 				}
 				args.argsFn = component.argsFn;
@@ -67,7 +67,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 		return Component;
 	})
 
-	.factory('initComponent', function( Segment, Point, processComponent, mergeComponent, cutSegment, moveSegmentEnd, flattenContext ) {
+	.factory('initComponent', function( Segment, Point, processComponent, processSubcomponent, mergeComponent ) {
 		return function initComponent( component, curPos, glyph ) {
 			var i = 0,
 				hasNaN = false,
@@ -115,14 +115,12 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				}
 
 				component.components.forEach(function( subcomponent ) {
-					var flatCtx = flattenContext( component.context );
-
-					// the args of the subcomponents have to be recalculated according to the parent context
-					if ( subcomponent.context.argsFn ) {
-						subcomponent.context.args = subcomponent.context.argsFn( flatCtx );
-					}
-
 					if ( subcomponent.mergeAt !== undefined ) {
+						// the args of the subcomponents have to be recalculated according to the parent context
+						if ( subcomponent.context.argsFn ) {
+							subcomponent.context.args = subcomponent.context.argsFn( component.flatContext );
+						}
+
 						// init mergeToGlyphAt by searching the attach to the parent in the glyph
 						subcomponent.mergeToGlyphAt =
 							glyph.indexOf( component.segments[ subcomponent.mergeAt ] ) +
@@ -131,45 +129,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 						initComponent( subcomponent, component.segments[ subcomponent.mergeAt ].end, glyph );
 
 					} else {
-						cutSegment( component.segments[ subcomponent.cut ], subcomponent.fromFn( flatCtx ), subcomponent.to );
-
-						initComponent( subcomponent, component.segments[ subcomponent.cut ][ subcomponent.to ] );
-
-						// link subcomponent to its parent
-						if ( subcomponent.to === 'end' ) {
-							// link from the component to the beginning of the subcomponent
-							component.segments[ subcomponent.cut ].next = subcomponent.firstSegment;
-							// link back from the end of the subcomponent to the component
-							if ( subcomponent.cut +1 < component.segments.length ) {
-								subcomponent.lastSegment.next = component.segments[ subcomponent.cut +1 ];
-
-							// if the subcomponent was added at the end of the component, update .lastSegment
-							} else {
-								component.lastSegment = subcomponent.lastSegment;
-							}
-
-						} else {
-							// link from the component to the beginning of the subcomponent
-							if ( subcomponent.cut -1 >= 0 ) {
-								component.segments[ subcomponent.cut -1 ].next = subcomponent.firstSegment;
-
-							// if the subcomponent was added at the beginning of the component, update .firstSegment
-							} else {
-								component.firstSegment = subcomponent.firstSegment;
-							}
-							// link back from the end of the subcomponent to the component
-							subcomponent.lastSegment.next = component.segments[ subcomponent.cut ];
-						}
-
-						if ( ( subcomponent.to === 'end' && subcomponent.cut +1 < component.segments.length ) ||
-							( subcomponent.to === 'start' && subcomponent.cut -1 >= 0 ) ) {
-
-							moveSegmentEnd(
-								component.segments[ subcomponent.cut + ( subcomponent.to === 'end' ? 1 : -1 ) ],
-								subcomponent.to === 'start' ? 'end' : 'start',
-								subcomponent.lastSegment[ subcomponent.to ]
-							);
-						}
+						processSubcomponent( component, subcomponent, initComponent );
 					}
 				});
 
@@ -180,12 +140,12 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 		};
 	})
 
-	.factory('processComponent', function( Segment, Point, mergeComponent, flattenContext, invertSegment ) {
-		function processComponent( component, _curPos, glyph, recurse ) {
+	.factory('processComponent', function( Segment, Point, processSubcomponent, mergeComponent, flattenContext, invertSegment ) {
+		return function processComponent( component, _curPos, glyph, recurse ) {
 			var curPos = Point( _curPos );
 
 			// initialize the drawing with the origin as a fake segment
-			//if ( component.segments[0] === undefined ) {
+			if ( component.segments[0] === undefined ) {
 				component.segments[0] = {
 					end: Point( curPos ),
 					x: curPos.x,
@@ -193,21 +153,21 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 					toSVG: function() { return ''; }
 				};
 
-			/*} else {
+			} else {
 				component.segments[0].end.x = component.segments[0].x = curPos.x;
 				component.segments[0].end.y = component.segments[0].y = curPos.y;
-			}*/
+			}
 
-			var flatCtx = flattenContext( component.context );
+			component.flatContext = flattenContext( component.context );
 
 			component.formula.segments.forEach(function( segmentFormula, i ) {
 				// only process non-empty segments
 				if ( i > 0 && segmentFormula ) {
 					if ( component.segments[i] === undefined ) {
-						component.segments[i] = Segment( segmentFormula( flatCtx ), curPos );
+						component.segments[i] = Segment( segmentFormula( component.flatContext ), curPos );
 					// reuse existing segments (limit GC and allows control-points viz to be persistant)
 					} else {
-						component.segments[i].update( segmentFormula( flatCtx ) );
+						component.segments[i].update( segmentFormula( component.flatContext ) );
 						component.segments[i].absolutize( curPos );
 					}
 				}
@@ -221,16 +181,16 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			// don't recurse on initialization
 			if ( recurse !== false ) {
 				component.components.forEach(function( subcomponent ) {
-					// the args of the subcomponents have to be recalculated according to the parent context
-					if ( subcomponent.context.argsFn ) {
-						subcomponent.context.args = subcomponent.context.argsFn( flatCtx );
-					}
-
 					// legacy before/after processComponent
 					if ( subcomponent.mergeAt !== undefined ) {
+						// the args of the subcomponents have to be recalculated according to the parent context
+						if ( subcomponent.context.argsFn ) {
+							subcomponent.context.args = subcomponent.context.argsFn( component.$context );
+						}
 						processComponent( subcomponent, component.segments[ subcomponent.mergeAt ].end, glyph );
+
 					} else {
-						processComponent( subcomponent, component.segments[ subcomponent.cut ][ subcomponent.to ] );
+						processSubcomponent( component, subcomponent, processComponent );
 					}
 				});
 			}
@@ -239,9 +199,56 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			if ( component.to === 'start' ) {
 				component.segments.forEach(invertSegment);
 			}
-		}
+		};
+	})
 
-		return processComponent;
+	.factory('processSubcomponent', function( cutSegment, moveSegmentEnd ) {
+		return function( component, subcomponent, processor ) {
+			// the args of the subcomponents have to be recalculated according to the parent context
+			if ( subcomponent.context.argsFn ) {
+				subcomponent.context.args = subcomponent.context.argsFn( component.flatContext );
+			}
+
+			cutSegment( component.segments[ subcomponent.cut ], subcomponent.fromFn( component.flatContext ), subcomponent.to );
+
+			processor( subcomponent, component.segments[ subcomponent.cut ][ subcomponent.to ] );
+
+			// link subcomponent to its parent
+			if ( subcomponent.to === 'end' ) {
+				// link from the component to the beginning of the subcomponent
+				component.segments[ subcomponent.cut ].next = subcomponent.firstSegment;
+				// link back from the end of the subcomponent to the component
+				if ( subcomponent.cut +1 < component.segments.length ) {
+					subcomponent.lastSegment.next = component.segments[ subcomponent.cut +1 ];
+
+				// if the subcomponent was added at the end of the component, update .lastSegment
+				} else {
+					component.lastSegment = subcomponent.lastSegment;
+				}
+
+			} else {
+				// link from the component to the beginning of the subcomponent
+				if ( subcomponent.cut -1 >= 0 ) {
+					component.segments[ subcomponent.cut -1 ].next = subcomponent.firstSegment;
+
+				// if the subcomponent was added at the beginning of the component, update .firstSegment
+				} else {
+					component.firstSegment = subcomponent.firstSegment;
+				}
+				// link back from the end of the subcomponent to the component
+				subcomponent.lastSegment.next = component.segments[ subcomponent.cut ];
+			}
+
+			if ( ( subcomponent.to === 'end' && subcomponent.cut +1 < component.segments.length ) ||
+				( subcomponent.to === 'start' && subcomponent.cut -1 >= 0 ) ) {
+
+				moveSegmentEnd(
+					component.segments[ subcomponent.cut + ( subcomponent.to === 'end' ? 1 : -1 ) ],
+					subcomponent.to === 'start' ? 'end' : 'start',
+					subcomponent.lastSegment[ subcomponent.to ]
+				);
+			}
+		};
 	})
 
 	.factory('mergeComponent', function( Segment ) {
