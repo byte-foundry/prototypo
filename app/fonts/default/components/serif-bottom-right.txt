@@ -1,0 +1,13 @@
+L 	{{ self[0].x }} {{ serifHeight + serifHeight * serifCurve }}
+rC 	{{ [ self[1].x + ( serifWidth * serifCurve ) , serifHeight * serifMedian ] |cuttedCurve:"bottom-left":self[1]:serifRoundness }}
+L 	{{ self[2].x + serifWidth }} {{ serifHeight * serifMedian }}
+rC 	{{ [ self[3].x + serifTerminal * serifWidth , self[3].y - ( self[3].y - self[5].y ) / 2 ] |cuttedCurve:"bottom-right":self[3]:serifTerminalCurve }}
+rC 	{{ [ self[3].x , 0 ] |cuttedCurve:"bottom-left":self[4]:serifTerminalCurve }}
+rC 	{{ - ( self[5].x - self[6].x ) / 3 }} 0 {{ ( self[5].x - self[6].x ) / 3 }} 0 {{ self[1].x - thickness / 2 }} {{ serifArc * serifHeight }}
+
+// row 3 : the first parameter should be:
+// {{ serifWidth }}
+// not:
+// {{ serifWidth - serifHeight * serifCurve }}
+// it allows to make some "fleur de Lys" shape   : )
+// Should we keep this ?
