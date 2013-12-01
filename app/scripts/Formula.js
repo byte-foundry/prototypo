@@ -28,8 +28,8 @@ angular.module('prototypo.Formula', [])
 			rtrimline = /\n+$/g,
 			rcomment = /\/\/.*$/gm,
 			rdoublequestionmark = /\?\?/g,
-			rbeforeafter = /^(after|before) (\d+) ?: ?([\w-]+?)\((.*?)\)$/gm,
-			rcut = /^cut \{\{ ?self\[ ?(\d+) ?\] ?\}\} from \{\{ ?(.+?) ?\}\} to (start|end),? add ([^ ]+) \{\{ ?(.+?) ?\}\}/gm,
+			rreplace = /^replace from self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} to self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} with ([^ \n]+)(?: \{\{ ?(.+?) ?\}\})?$/gm,
+			radd = /^add ([^ \n]+)(?: \{\{ ?(.+?) ?\}\})? at \{\{ ?(.+?) ?\}\}$/gm,
 			rsplit = /(?:\r?\n|\r)/;
 
 		return function( formula, data ) {
@@ -51,24 +51,26 @@ angular.module('prototypo.Formula', [])
 				.replace(rdoublequestionmark, 'NaN')
 
 				// parse before/after components
-				.replace(rbeforeafter, function() {
+				.replace(radd, function() {
 					components.push({
-						mergeAt: +arguments[2],
-						after: arguments[1] === 'after',
-						type: arguments[3],
-						rawArgs: arguments[4]
+						type: 'add',
+						name: arguments[1],
+						rawArgs: arguments[2],
+						rawAt: arguments[3]
 					});
 					return '';
 				})
 
-				// parse cut components
-				.replace(rcut, function() {
+				// parse replace components
+				.replace(rreplace, function() {
 					components.push({
-						cut: +arguments[1],
+						type: 'replace',
+						fromSegment: +arguments[1],
 						rawFrom: arguments[2],
-						to: arguments[3],
-						type: arguments[4],
-						rawArgs: arguments[5]
+						toSegment: +arguments[3],
+						rawTo: arguments[4],
+						name: arguments[5],
+						rawArgs: arguments[6]
 					});
 					return '';
 				})
@@ -90,10 +92,6 @@ angular.module('prototypo.Formula', [])
 		var rempty = /^[ \t]*$/;
 
 		return function( formula ) {
-			if ( formula.segments ) {
-				return;
-			}
-
 			// interpolate segments
 			formula.segments = formula.raw.map(function( rawSegment ) {
 				return rempty.test( rawSegment ) ? false : $interpolate( rawSegment );
@@ -103,16 +101,25 @@ angular.module('prototypo.Formula', [])
 
 			// interpolate sub-components params
 			formula.components.forEach(function( component ) {
-				if ( component.rawArgs !== '' ) {
+				if ( component.rawArgs ) {
 					component.argsFn = $parse( component.rawArgs );
 				}
 				delete component.rawArgs;
 
-				// undefined test for before/after
-				if ( component.rawFrom !== undefined && component.rawFrom !== '' ) {
+				if ( component.rawFrom !== undefined ) {
 					component.fromFn = $parse( component.rawFrom );
-					delete component.rawFrom;
 				}
+				delete component.rawFrom;
+
+				if ( component.rawTo !== undefined ) {
+					component.toFn = $parse( component.rawTo );
+				}
+				delete component.rawTo;
+
+				if ( component.rawAt !== undefined ) {
+					component.atFn = $parse( component.rawAt );
+				}
+				delete component.rawAt;
 			});
 
 			return formula;

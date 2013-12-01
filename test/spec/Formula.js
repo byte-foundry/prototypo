@@ -5,144 +5,119 @@ describe('Formula', function () {
 	// load the controller's module
 	beforeEach(module('prototypo.Formula'));
 
-	var _Formula,
-		formula,
-		d0 = [
+	describe('parseFormula', function() {
+		it('replaces double question marks with NaN', inject(function( parseFormula ) {
+			var formula = parseFormula({}, '??');
+
+			expect( formula.raw[1] ).toBe('NaN');
+		}));
+
+		it('turns a flat text into formula and sub-component arrays', inject(function ( parseFormula ) {
+			var formula = parseFormula({}, '');
+
+			expect(formula.raw.constructor).toBe(Array);
+			expect(formula.components.constructor).toBe(Array);
+		}));
+
+		it('adds an empty line at the beginning of the formula (line 0)', inject(function ( parseFormula ) {
+			var formula = parseFormula({}, '');
+
+			expect(formula.raw[0]).toBe('');
+		}));
+
+		it('removes trailing empty lines and sub-components from formula', inject(function ( parseFormula ) {
+			var formula = parseFormula({}, [
+				'// a simple triangle',
+				'M 20 20',
+				'l 30 50',
+				'l 20 -40',
+				'z',
+				'',
+				'add serif at {{ [2, 3] }}'
+			].join('\n'));
+
+			expect(formula.raw.length).toBe(6);
+		}));
+	});
+
+	it('parses & interpolates segments', inject(function( Formula ) {
+		var f = Formula([
 			'// a simple triangle',
 			'M 20 20',
 			'l 30 50',
 			'l 20 -40',
 			'z',
-			'',
-			'after 1: curve(40)',
-			'before 24: serif({width: 12})'
-		].join('\n'),
-		f0,
-		f1;
+			'// that\'s it!'
+		].join('\n'));
 
-	beforeEach(inject(function ( Formula, parseFormula ) {
-		_Formula = Formula;
-		formula = {};
-
-		f0 = new Formula( d0 );
-		f1 = Formula( d0 );
-
-		parseFormula( formula, d0 );
+		expect( f.segments.length ).toBe( 6 );
+		expect( f.segments[0] ).toBe( false );
+		expect( typeof f.segments[2] ).toBe( 'function' );
 	}));
 
-	it('replaces double question marks with NaN', inject(function( parseFormula ) {
-		var formula = parseFormula({}, '??');
+	it('parses & interpolates "add" components', inject(function( Formula ) {
+		var f = Formula([
+			'// a simple triangle',
+			'M 20 20',
+			'l 30 50',
+			'l 20 -40',
+			'z',
+			'add serif at {{ [2, 3] }}'
+		].join('\n'));
 
-		expect( formula.raw[1] ).toBe('NaN');
+		expect( f.components[0].type ).toBe( 'add' );
+		expect( f.components[0].name ).toBe( 'serif' );
+		expect( f.components[0].argsFn ).toBe( undefined );
+		expect( typeof f.components[0].atFn ).toBe( 'function' );
+
+		var f1 = Formula([
+			'// a simple triangle',
+			'M 20 20',
+			'l 30 50',
+			'l 20 -40',
+			'z',
+			'add serif {{ {width: 12} }} at {{ [2, 3] }}'
+		].join('\n'));
+
+		expect( f1.components[0].type ).toBe( 'add' );
+		expect( f1.components[0].name ).toBe( 'serif' );
+		expect( typeof f1.components[0].argsFn ).toBe( 'function' );
+		expect( typeof f1.components[0].atFn ).toBe( 'function' );
 	}));
 
-	it('can be called with or without new', function() {
-		expect(f0 instanceof _Formula).toBe(true);
-		expect(f1 instanceof _Formula).toBe(true);
-	});
+	it('parses & interpolates "replace" components', inject(function( Formula ) {
+		var f = Formula([
+			'// a simple triangle',
+			'M 20 20',
+			'l 30 50',
+			'l 20 -40',
+			'z',
+			'replace from self[2] at {{ [1,2] }} to self[3] at {{ "end" }} with serif'
+		].join('\n'));
 
-	it('turns a flat text into formula and sub-component arrays', function () {
-		expect(formula.raw.constructor).toBe(Array);
-		expect(formula.components.constructor).toBe(Array);
-	});
+		expect( f.components[0].type ).toBe( 'replace' );
+		expect( f.components[0].fromSegment ).toBe( 2 );
+		expect( typeof f.components[0].fromFn ).toBe( 'function' );
+		expect( f.components[0].toSegment ).toBe( 3 );
+		expect( typeof f.components[0].toFn ).toBe( 'function' );
+		expect( f.components[0].name ).toBe( 'serif' );
+		expect( f.components[0].argsFn ).toBe( undefined );
 
-	it('adds an empty line at the beginning of the formula (line 0)', function () {
-		expect(formula.raw[0]).toBe('');
-	});
+		var f1 = Formula([
+			'// a simple triangle',
+			'M 20 20',
+			'l 30 50',
+			'l 20 -40',
+			'z',
+			'replace from self[2] at {{ [1,??] }} to self[3] at {{ "end" }} with serif {{ [2, 3] }}'
+		].join('\n'));
 
-	it('removes trailing empty lines and sub-components from formula', function () {
-		expect(formula.raw.length).toBe(6);
-	});
-
-	it('create an object from each parsed sub-component', function() {
-		expect(formula.components.length).toBe(2);
-		expect(formula.components[0].mergeAt).toBe(1);
-		expect(formula.components[1].mergeAt).toBe(24);
-		expect(formula.components[0].after).toBe(true);
-		expect(formula.components[1].after).toBe(false);
-		expect(formula.components[0].type).toBe('curve');
-		expect(formula.components[0].rawArgs).toBe('40');
-		expect(formula.components[1].rawArgs).toBe('{width: 12}');
-	});
-});
-
-describe('Interpolate component', function () {
-
-	// load the controller's module
-	beforeEach(module('prototypo.Formula'));
-
-	var formula;
-
-	beforeEach(inject(function ( interpolateFormula ) {
-		formula = {
-			raw: [
-				'',
-				'M 20 20',
-				'l 30 50',
-				'l 20 -40',
-				'z'
-			],
-			components: [
-				{
-					mergeAt: 1,
-					after: true,
-					type: 'curve',
-					rawArgs: '40'
-				}, {
-					mergeAt: 24,
-					after: false,
-					type: 'serif',
-					rawArgs: '{width: 12}'
-				}
-			]
-		};
-
-		interpolateFormula( formula );
-	}));
-
-	it('turns segment formulas into interpolation functions and empty lines into false', function () {
-		expect(typeof formula.segments[0]).toBe('boolean');
-		expect(typeof formula.segments[1]).toBe('function');
-	});
-
-	it('interpolates sub-components args', function() {
-		expect(typeof formula.components[0].argsFn).toBe('function');
-	});
-
-	it('parses "cut" components', inject(function( parseFormula ) {
-		var parsed = parseFormula({}, [
-				'M 10 10',
-				'l 0 50',
-				'l 50 0',
-				'l 0 -50',
-				'l -50 0',
-				'Z',
-				'',
-				'cut {{ self[3] }} from {{ [30, ??] }} to end, add serif {{ {side: "bottom-left"} }}'
-			].join('\n'));
-
-		expect( parsed.components[0].cut ).toBe( 3 );
-		expect( parsed.components[0].rawFrom ).toBe( '[30, NaN]' );
-		expect( parsed.components[0].to ).toBe( 'end' );
-		expect( parsed.components[0].type ).toBe( 'serif' );
-		expect( parsed.components[0].rawArgs ).toBe( '{side: "bottom-left"}' );
-	}));
-
-	it('interpolates "cut" components', inject(function( parseFormula, interpolateFormula ) {
-		var interpolated = interpolateFormula( parseFormula({}, [
-				'M 10 10',
-				'l 0 50',
-				'l 50 0',
-				'l 0 -50',
-				'l -50 0',
-				'Z',
-				'',
-				'cut {{ self[3] }} from {{ [30, ??] }} to end, add serif {{ {side: "bottom-left"} }}'
-			].join('\n')));
-
-		// this assertion doesn't work, angular seems to replace NaN with undefined
-		// expect( interpolated.components[0].fromFn() ).toBe([30, NaN]);
-		expect( interpolated.components[0].fromFn() ).toEqual([30, undefined]);
-		expect( interpolated.components[0].argsFn() ).toEqual({side: 'bottom-left'});
+		expect( f1.components[0].type ).toBe( 'replace' );
+		expect( f1.components[0].fromSegment ).toBe( 2 );
+		expect( typeof f1.components[0].fromFn ).toBe( 'function' );
+		expect( f1.components[0].toSegment ).toBe( 3 );
+		expect( typeof f1.components[0].toFn ).toBe( 'function' );
+		expect( f1.components[0].name ).toBe( 'serif' );
+		expect( typeof f1.components[0].argsFn ).toBe( 'function' );
 	}));
 });
