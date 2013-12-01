@@ -1,0 +1,6 @@
+//
+rC 	{{ [ self[0].x - ( serifWidth * serifCurve ) , serifHeight * serifMedian ] |cuttedCurve:"bottom-left":self[0]:serifRoundness }}
+L 	{{ self[2].x - serifWidth }} {{ serifHeight * serifMedian }}
+rC 	{{ [ self[3].x - serifTerminal * serifWidth , self[3].y - ( self[3].y - self[5].y ) / 2 ] |cuttedCurve:"top-left":self[3]:serifTerminalCurve }}
+rC 	{{ [ self[3].x , 0 ] |cuttedCurve:"top-right":self[4]:serifTerminalCurve }}
+rC 	{{ - ( self[5].x - self[6].x ) / 3 }} 0 {{ ( self[5].x - self[6].x ) / 3 }} 0 {{ self[0].x - thickness / 2 }} {{ serifArc * serifHeight }}

@@ -1,5 +1,5 @@
 M	0 0
-l	0 {{ ascenderHeight }}
+l	0 {{ xHeight }}
 l 	{{ thickness }} 0
 L 	{{ thickness }} {{ 0.86666666666667 * xHeight }}
 rC 	{{ [ self[11].x + ( self[6].x - self[11].x ) / 2 , xHeight + opticRoundness ] |cuttedCurve:"bottom-left":self[4]:roundness:0.14 }}
@@ -13,5 +13,7 @@ L 	{{ thickness }} 0
 L 	0 0
 Z
 
-cut {{ self[7] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right
-cut {{ self[12] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right
+before 7: serif-bottom-right()
+before 12: serif-bottom-right()
+// after 13: serif-bottom-left()
+// after 13: serif-test()

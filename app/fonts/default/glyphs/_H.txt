@@ -1,14 +1,18 @@
 M	0 0
 l	0 {{ capHeight }}
-l	{{ thickness * 1.1 }} 0
+l	{{ thickness }} 0
 L	{{ self[3].x }} {{ crossbar * capHeight * 0.55300859598854 }}
 L	{{ 446 * width }} {{ self[4].y }}
 L	{{ self[5].x }} {{ self[2].y }}
-l	{{ thickness * 1.1 }} 0
+l	{{ thickness }} 0
 L	{{ self[7].x }} 0
-l 	-{{ thickness * 1.1 }} 0
-L 	{{ self[9].x }} {{ self[4].y - ( thickness * 1.1 * 0.85 ) }}
+l 	-{{ thickness }} 0
+L 	{{ self[9].x }} {{ self[4].y - ( thickness * 0.85 ) }}
 L  	{{ self[3].x }} {{ self[10].y }}
 L 	{{ self[3].x }} 0
 L 	0 0
 Z
+
+cut {{ self[8] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right
+cut {{ self[10] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to start, add serif-bottom-left
+cut {{ self[12] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right

@@ -360,13 +360,14 @@ describe('initComponent', function() {
 			context: {},
 			cut: 0,
 			to: 'start',
+			invert: true,
 			components: []
 		};
 
 		initComponent( comp1, Point(0,0) );
 
-		expect( comp1.firstSegment ).toBe( comp1.segments[1] );
-		expect( comp1.lastSegment ).toBe( comp1.segments[6] );
+		expect( comp1.firstSegment ).toBe( comp1.segments[6] );
+		expect( comp1.lastSegment ).toBe( comp1.segments[1] );
 		expect( comp1.segments[6].next ).toBe( comp1.segments[5] );
 		expect( comp1.segments[5].next ).toBe( comp1.segments[4] );
 		// ...
@@ -393,7 +394,8 @@ describe('initComponent', function() {
 			components: [ comp2 = {
 				formula: { segments: [
 					false,
-					$interpolate('l 10 30')
+					$interpolate('l 0 30'),
+					$interpolate('l 10 0')
 				]},
 				segments: [],
 				context: {},
@@ -410,18 +412,19 @@ describe('initComponent', function() {
 		expect( comp1.lastSegment ).toBe( comp1.segments[6] );
 
 		expect( comp2.firstSegment ).toBe( comp2.segments[1] );
-		expect( comp2.lastSegment ).toBe( comp2.segments[1] );
+		expect( comp2.lastSegment ).toBe( comp2.segments[2] );
 
 		expect( comp1.segments[3].next ).toBe( comp2.segments[1] );
-		expect( comp2.segments[1].next ).toBe( comp1.segments[4] );
+		expect( comp2.segments[1].next ).toBe( comp2.segments[2] );
+		expect( comp2.segments[2].next ).toBe( comp1.segments[4] );
 
 		expect( comp1.segments[3].end.x ).toBe( 40 );
 		expect( comp1.segments[3].end.y ).toBe( 50 );
 		expect( comp2.segments[1].start.x ).toBe( 40 );
 		expect( comp2.segments[1].start.y ).toBe( 50 );
 
-		expect( comp2.segments[1].end.x ).toBe( 50 );
-		expect( comp2.segments[1].end.y ).toBe( 80 );
+		expect( comp2.segments[2].end.x ).toBe( 50 );
+		expect( comp2.segments[2].end.y ).toBe( 80 );
 		expect( comp1.segments[4].start.x ).toBe( 50 );
 		expect( comp1.segments[4].start.y ).toBe( 80 );
 	}));
@@ -445,13 +448,15 @@ describe('initComponent', function() {
 			components: [ comp2 = {
 				formula: { segments: [
 					false,
-					$interpolate('l -10 30')
+					$interpolate('l 0 30'),
+					$interpolate('l -10 0')
 				]},
 				segments: [],
 				context: {},
 				cut: 3,
 				fromFn: function() { return {x: 10}; },
 				to: 'start',
+				invert: true,
 				components: []
 			}]
 		};
@@ -461,16 +466,17 @@ describe('initComponent', function() {
 		expect( comp1.firstSegment ).toBe( comp1.segments[1] );
 		expect( comp1.lastSegment ).toBe( comp1.segments[6] );
 
-		expect( comp2.firstSegment ).toBe( comp2.segments[1] );
+		expect( comp2.firstSegment ).toBe( comp2.segments[2] );
 		expect( comp2.lastSegment ).toBe( comp2.segments[1] );
 
-		expect( comp1.segments[2].next ).toBe( comp2.segments[1] );
+		expect( comp1.segments[2].next ).toBe( comp2.segments[2] );
+		expect( comp2.segments[2].next ).toBe( comp2.segments[1] );
 		expect( comp2.segments[1].next ).toBe( comp1.segments[3] );
 
 		expect( comp1.segments[2].end.x ).toBe( 0 );
 		expect( comp1.segments[2].end.y ).toBe( 80 );
-		expect( comp2.segments[1].start.x ).toBe( 0 );
-		expect( comp2.segments[1].start.y ).toBe( 80 );
+		expect( comp2.segments[2].start.x ).toBe( 0 );
+		expect( comp2.segments[2].start.y ).toBe( 80 );
 
 		expect( comp2.segments[1].end.x ).toBe( 10 );
 		expect( comp2.segments[1].end.y ).toBe( 50 );
@@ -503,6 +509,7 @@ describe('processComponent', function() {
 			context: {},
 			cut: 0,
 			to: 'start',
+			invert: true,
 			components: []
 		};
 
@@ -560,6 +567,7 @@ describe('processComponent', function() {
 				cut: 3,
 				fromFn: function() { return {x: 10}; },
 				to: 'start',
+				invert: true,
 				components: []
 			}]
 		};
