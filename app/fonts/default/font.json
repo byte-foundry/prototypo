@@ -9,14 +9,19 @@
 		"_M",
 		"b",
 		"c",
+		"e",
 		"h",
+		"i",
 		"m",
 		"n",
+		"u",
+		"v",
 		"dot"
 	],
 	"components": [
 		"serif-bottom-right",
 		"serif-bottom-left",
-		"serif-test"
+		"serif-test",
+		"top-dot"
 	]
 }

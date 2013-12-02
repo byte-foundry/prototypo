@@ -1,5 +1,5 @@
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" height="90%" >
-	<g transform="matrix(1 0 0 -1 0 800) translate(400,50) skewX({{controlValues.slant}})">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="100%" height="1000" >
+	<g transform="matrix(1 0 0 -1 0 800) translate(400,50) scale({{controlValues.zoom}}) skewX({{controlValues.slant}})">
 		<path glyph-contour fill="black"></path>
 		<g ng-repeat="segment in processedGlyph.segments">
 			<g bindonce ng-repeat="cp in segment.$debug">

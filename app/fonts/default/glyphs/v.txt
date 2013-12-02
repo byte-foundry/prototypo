@@ -1,0 +1,14 @@
+M 	0 {{ xHeight }}
+l 	{{ thickness }} 0	
+L 	{{ 228 |between:self[7].x:378:self[2].x:80 }} {{ thickness / 2 }}
+// l 	2 -10
+// l 	2 0
+// L	{{ find({y: self[3].y , on: [self[5], self[7]] }) }}
+L 	{{ ( 378 - 80 + thickness ) * width }} {{ self[1].y }}
+l 	{{ thickness }} 0
+L 	{{ self[10].x + (13/69) * thickness }} 0
+L   {{ find({y: 0, on: self[3] }) }}
+L   {{ find({y: 0, on: self[7] }) }}
+L 	{{ self[11].x - (19/69) * thickness }} 0
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
