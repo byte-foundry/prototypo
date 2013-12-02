@@ -6,10 +6,10 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 		function Component( args, formulaLib, params ) {
 			// new is optional
 			if ( !( this instanceof Component ) ) {
-				return new Component( args, formulaLib );
+				return new Component( args, formulaLib, params );
 			}
 
-			this.formula = formulaLib[ args.type ];
+			this.formula = formulaLib[ args.name ];
 			this.segments = new Array( this.formula.length );
 
 			for ( var i in args ) {
@@ -131,18 +131,18 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 					component.lastSegment = subcomponent.lastSegment;
 
 				} else if ( subcomponent.type === 'replace' ) {
-					if ( component.fromId < 1 ) {
+					if ( subcomponent.fromId < 1 ) {
 						subcomponent.lastSegment.next = component.firstSegment;
 						component.firstSegment = subcomponent.firstSegment;
 					} else {
-						component.segments[ component.fromId ].next = subcomponent.firstSegment;
+						component.segments[ subcomponent.fromId ].next = subcomponent.firstSegment;
 					}
 
-					if ( component.toId > component.segments.length ) {
+					if ( subcomponent.toId > component.segments.length ) {
 						component.lastSegment.next = subcomponent.firstSegment;
 						component.lastSegment = subcomponent.lastSegment;
 					} else {
-						component.segments[ component.toId ].next = subcomponent.firstSegment;
+						subcomponent.lastSegment.next = component.segments[ subcomponent.toId ];
 					}
 				}
 			});
@@ -223,7 +223,9 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 					cutSegment( component.segments[ subcomponent.toId ], subcomponent.to, 'start' );
 				}
 
-				origin = component.segments[ subcomponent.fromId ].end;
+				origin = subcomponent.invert ?
+					component.segments[ subcomponent.toId ].start:
+					component.segments[ subcomponent.fromId ].end;
 			}
 
 			// init or process subcomponent (depending on the caller)

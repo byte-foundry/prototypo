@@ -322,6 +322,44 @@ describe('Component', function() {
 			expect( c.segments[2].next ).toBe( c.segments[1] );
 			expect( c.segments[1].next ).toBe( undefined );
 		}));
+
+		// TODO: finish this test
+		/*it('links a subcomponent to its parent', inject(function( $interpolate, initComponent) {
+			var c2 = {
+					formula: {segments: [
+						false,
+						$interpolate('m 0 0'),
+						$interpolate('l 0 50'),
+						$interpolate('l 50 0'),
+						$interpolate('l 0 -50'),
+						$interpolate('l -50 0'),
+						$interpolate('z')
+					]},
+					context: {
+						params: {},
+						args: {}
+					},
+					segments: [],
+					components: []
+				},
+				c1 = {
+					formula: {segments: [
+						false,
+						$interpolate('m 0 0'),
+						$interpolate('l 0 50'),
+						$interpolate('l 50 0'),
+						$interpolate('l 0 -50'),
+						$interpolate('l -50 0'),
+						$interpolate('z')
+					]},
+					context: {
+						params: {},
+						args: {}
+					},
+					segments: [],
+					components: []
+				};
+		}));*/
 	});
 
 	describe('processSubcomponent', function() {
@@ -390,6 +428,55 @@ describe('Component', function() {
 
 			expect( origin.x ).toBe( 40 );
 			expect( origin.y ).toBe( 40 );
+		}));
+
+		it('determines the origin, args, "to" and "from" of an inverted "replace" subcomponent', inject(function( Point, Segment, $interpolate, processSubcomponent ) {
+			var origin,
+				sFrom = Segment('L 50 50', Point(0,0)),
+				sTo = Segment('L 50 50', Point(0,0)),
+				c = {
+					flatContext:{ width: 50 },
+					segments: [
+						sFrom,
+						sTo
+					]
+				},
+				sc = {
+					invert: true,
+					type: 'replace',
+					context: {
+						argsFn: function( flatCtx ) { return {width: flatCtx.width}; }
+					},
+					fromId: 0,
+					fromFn: function() { return [NaN,40]; },
+					toId: 1,
+					toFn: function() { return [10,NaN]; }
+				};
+
+			expect(function() {
+				processSubcomponent( c, sc, function( sc, o ) {
+					origin = o;
+					// throw here because we dont want to test gap closing yet
+					throw 'Error';
+				});
+			}).toThrow();
+
+			expect( sc.context.args.width ).toBe( 50 );
+
+			expect( sc.from[0] ).toBeNaN();
+			expect( sc.from[1] ).toBe( 40 );
+
+			expect( sc.to[0] ).toBe( 10 );
+			expect( sc.to[1] ).toBeNaN();
+
+			// cut the segments it is attached to
+			expect( sFrom.end.x ).toBe( 40 );
+			expect( sFrom.end.y ).toBe( 40 );
+			expect( sTo.start.x ).toBe( 10 );
+			expect( sTo.start.y ).toBe( 10 );
+
+			expect( origin.x ).toBe( 10 );
+			expect( origin.y ).toBe( 10 );
 		}));
 
 		describe('gap closing', function() {

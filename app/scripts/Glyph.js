@@ -4,39 +4,34 @@
 angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 	.factory('Glyph', function( Component, Point, glyphToSVG ) {
 
-		function Glyph( name, args ) {
+		function Glyph( name, formulaLib, params ) {
 			// new is optional
 			if ( !( this instanceof Glyph ) ) {
-				return new Glyph( name, args );
+				return new Glyph( name, formulaLib, params );
 			}
 
-			// the root component is always merged "before 0"
-			/*args.mergeAt = 0;
-			args.mergeToGlyphAt = 0;
-			args.after = false;*/
-
-			args.cut = 0;
-			args.to = 'end';
-
+			// TODO: we dont need a .origin
 			this.origin = Point(0,0);
-			this.segments = [];
-			this.component = Component( args.formulaLib[ name ], args );
+			this.component = Component({
+				type: 'add',
+				name: name
+			}, formulaLib, params );
 			this.component.init( Point(this.origin), [] );
+
+			this.segments = [];
+			var currSegment = this.component.firstSegment;
+			// flatten
+			while ( currSegment ) {
+				this.segments.push( currSegment );
+				currSegment = currSegment.next;
+			}
 		}
 
 		Glyph.prototype = {
 			process: function() {
 				this.suid = Math.random();
-				this.segments = [];
-				this.component.process( Point(this.origin), this.segments );
-
-				var currSegment = this.component.firstSegment;
-
-				// flatten
-				while ( currSegment ) {
-					this.segments.push( currSegment );
-					currSegment = currSegment.next;
-				}
+				// TODO: no need to reuse Point constructor here I believe
+				this.component.process( Point(this.origin) );
 
 				return this;
 			},
