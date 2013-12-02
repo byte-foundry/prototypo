@@ -28,7 +28,7 @@ angular.module('prototypo.Formula', [])
 			rtrimline = /\n+$/g,
 			rcomment = /\/\/.*$/gm,
 			rdoublequestionmark = /\?\?/g,
-			rreplace = /^replace from self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} to self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} with ([^ \n]+)(?: \{\{ ?(.+?) ?\}\})?$/gm,
+			rreplace = /^replace from self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} to self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} with( inverted)? ([^ \n]+)(?: \{\{ ?(.+?) ?\}\})?$/gm,
 			radd = /^add ([^ \n]+)(?: \{\{ ?(.+?) ?\}\})? at \{\{ ?(.+?) ?\}\}$/gm,
 			rsplit = /(?:\r?\n|\r)/;
 
@@ -53,6 +53,7 @@ angular.module('prototypo.Formula', [])
 				// parse before/after components
 				.replace(radd, function() {
 					components.push({
+						raw: arguments[0],
 						type: 'add',
 						name: arguments[1],
 						rawArgs: arguments[2],
@@ -63,14 +64,18 @@ angular.module('prototypo.Formula', [])
 
 				// parse replace components
 				.replace(rreplace, function() {
+					var inverted = !!arguments[5];
+
 					components.push({
+						raw: arguments[0],
 						type: 'replace',
-						fromSegment: +arguments[1],
-						rawFrom: arguments[2],
-						toSegment: +arguments[3],
-						rawTo: arguments[4],
-						name: arguments[5],
-						rawArgs: arguments[6]
+						fromId: +arguments[ !inverted ? 1 : 3 ],
+						rawFrom: arguments[ !inverted ? 2 : 4 ],
+						toId: +arguments[ !inverted ? 3 : 1 ],
+						rawTo: arguments[ !inverted ? 4 : 2 ],
+						invert: inverted,
+						name: arguments[6],
+						rawArgs: arguments[7]
 					});
 					return '';
 				})
@@ -120,6 +125,8 @@ angular.module('prototypo.Formula', [])
 					component.atFn = $parse( component.rawAt );
 				}
 				delete component.rawAt;
+
+				delete component.raw;
 			});
 
 			return formula;

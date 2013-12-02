@@ -96,10 +96,11 @@ describe('Formula', function () {
 		].join('\n'));
 
 		expect( f.components[0].type ).toBe( 'replace' );
-		expect( f.components[0].fromSegment ).toBe( 2 );
+		expect( f.components[0].fromId ).toBe( 2 );
 		expect( typeof f.components[0].fromFn ).toBe( 'function' );
-		expect( f.components[0].toSegment ).toBe( 3 );
+		expect( f.components[0].toId ).toBe( 3 );
 		expect( typeof f.components[0].toFn ).toBe( 'function' );
+		expect( f.components[0].invert ).toBe( false );
 		expect( f.components[0].name ).toBe( 'serif' );
 		expect( f.components[0].argsFn ).toBe( undefined );
 
@@ -109,14 +110,15 @@ describe('Formula', function () {
 			'l 30 50',
 			'l 20 -40',
 			'z',
-			'replace from self[2] at {{ [1,??] }} to self[3] at {{ "end" }} with serif {{ [2, 3] }}'
+			'replace from self[2] at {{ [1,??] }} to self[3] at {{ "end" }} with inverted serif {{ [2, 3] }}'
 		].join('\n'));
 
 		expect( f1.components[0].type ).toBe( 'replace' );
-		expect( f1.components[0].fromSegment ).toBe( 2 );
+		expect( f1.components[0].fromId ).toBe( 3 );
 		expect( typeof f1.components[0].fromFn ).toBe( 'function' );
-		expect( f1.components[0].toSegment ).toBe( 3 );
+		expect( f1.components[0].toId ).toBe( 2 );
 		expect( typeof f1.components[0].toFn ).toBe( 'function' );
+		expect( f1.components[0].invert ).toBe( true );
 		expect( f1.components[0].name ).toBe( 'serif' );
 		expect( typeof f1.components[0].argsFn ).toBe( 'function' );
 	}));

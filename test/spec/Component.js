@@ -3,267 +3,502 @@
 beforeEach(module('prototypo.Component', 'prototypo.Formula'));
 
 describe('Component', function() {
+	describe('processComponent', function() {
+		var c;
 
-	var _Component,
-		glyph,
-		comp1,
-		comp2,
-		p1,
-		p2;
+		it('interpolates all the points with an empty .segments array', inject(function( Point, processComponent, $interpolate ) {
+			c = {
+				formula: {segments: [
+					false,
+					$interpolate('m 0 0'),
+					$interpolate('l 20 20'),
+					false,
+					$interpolate('c 10 20 30 40 50 60'),
+					$interpolate('z')
+				]},
+				context: {
+					params: {},
+					args: {}
+				},
+				segments: [],
+				components: []
+			};
 
-	beforeEach(inject(function ( Component ) {
-		_Component = Component;
-	}));
+			processComponent( c, Point(-10, -10) );
 
-	it('merges a subcomponent to its parent and removes empty segments', inject(function( Segment, Point, mergeComponent ) {
-		glyph = [];
+			expect( c.segments.length ).toBe( 6 );
 
-		comp1 = {
-			mergeAt: 0,
-			mergeToGlyphAt: 0,
-			after: false,
-			segments: [
-				false,
-				Segment('m 0 0', p1 = Point(0,0)),
-				Segment('l 0 50', p2 = Point( p1 ) ),
-				Segment('l 50 0', p1),
-				false,
-				Segment('l 0 -50', p1),
-				Segment('l -50 0', p1),
-				Segment('z', p1)
-			],
-			components: [
-				comp2 = {
-					mergeAt: 2,
-					mergeToGlyphAt: 2,
-					after: true,
+			expect( c.segments[1].start.x ).toBe( -10 );
+			expect( c.segments[1].start.y ).toBe( -10 );
+			expect( c.segments[1].end.x ).toBe( -10 );
+			expect( c.segments[1].end.y ).toBe( -10 );
+
+			expect( c.segments[2].start.x ).toBe( -10 );
+			expect( c.segments[2].start.y ).toBe( -10 );
+			expect( c.segments[2].end.x ).toBe( 10 );
+			expect( c.segments[2].end.y ).toBe( 10 );
+
+			expect( c.segments[4].start.x ).toBe( 10 );
+			expect( c.segments[4].start.y ).toBe( 10 );
+			expect( c.segments[4].controls[0].x ).toBe( 10 + 10 );
+			expect( c.segments[4].controls[0].y ).toBe( 10 + 20 );
+			expect( c.segments[4].controls[1].x ).toBe( 10 + 30 );
+			expect( c.segments[4].controls[1].y ).toBe( 10 + 40 );
+			expect( c.segments[4].end.x ).toBe( 10 + 50 );
+			expect( c.segments[4].end.y ).toBe( 10 + 60 );
+		}));
+
+		it('interpolates all the points with an existing .segments array', inject(function( Point, processComponent ) {
+			processComponent( c, Point(-10, -10) );
+
+			expect( c.segments.length ).toBe( 6 );
+
+			expect( c.segments[1].start.x ).toBe( -10 );
+			expect( c.segments[1].start.y ).toBe( -10 );
+			expect( c.segments[1].end.x ).toBe( -10 );
+			expect( c.segments[1].end.y ).toBe( -10 );
+
+			expect( c.segments[2].start.x ).toBe( -10 );
+			expect( c.segments[2].start.y ).toBe( -10 );
+			expect( c.segments[2].end.x ).toBe( 10 );
+			expect( c.segments[2].end.y ).toBe( 10 );
+
+			expect( c.segments[4].start.x ).toBe( 10 );
+			expect( c.segments[4].start.y ).toBe( 10 );
+			expect( c.segments[4].controls[0].x ).toBe( 10 + 10 );
+			expect( c.segments[4].controls[0].y ).toBe( 10 + 20 );
+			expect( c.segments[4].controls[1].x ).toBe( 10 + 30 );
+			expect( c.segments[4].controls[1].y ).toBe( 10 + 40 );
+			expect( c.segments[4].end.x ).toBe( 10 + 50 );
+			expect( c.segments[4].end.y ).toBe( 10 + 60 );
+		}));
+
+		it('interpolates and invert all the points of a component', inject(function( Point, $interpolate, processComponent ) {
+			var c = {
+				invert: true,
+				formula: {segments: [
+					false,
+					$interpolate('m 0 0'),
+					$interpolate('l 20 20'),
+					false,
+					$interpolate('c 10 20 30 40 50 60'),
+					$interpolate('z')
+				]},
+				context: {
+					params: {},
+					args: {}
+				},
+				segments: [],
+				components: []
+			};
+
+			processComponent( c, Point(-10, -10) );
+
+			expect( c.segments.length ).toBe( 6 );
+
+			expect( c.segments[1].start.x ).toBe( -10 );
+			expect( c.segments[1].start.y ).toBe( -10 );
+			expect( c.segments[1].end.x ).toBe( -10 );
+			expect( c.segments[1].end.y ).toBe( -10 );
+
+			expect( c.segments[2].start.x ).toBe( 10 );
+			expect( c.segments[2].start.y ).toBe( 10 );
+			expect( c.segments[2].end.x ).toBe( -10 );
+			expect( c.segments[2].end.y ).toBe( -10 );
+
+			expect( c.segments[4].start.x ).toBe( 10 + 50 );
+			expect( c.segments[4].start.y ).toBe( 10 + 60 );
+			expect( c.segments[4].controls[0].x ).toBe( 10 + 30 );
+			expect( c.segments[4].controls[0].y ).toBe( 10 + 40 );
+			expect( c.segments[4].controls[1].x ).toBe( 10 + 10 );
+			expect( c.segments[4].controls[1].y ).toBe( 10 + 20 );
+			expect( c.segments[4].end.x ).toBe( 10 );
+			expect( c.segments[4].end.y ).toBe( 10 );
+		}));
+
+		it('interpolates params in segment Formulas', inject(function( Point, $interpolate, processComponent ) {
+			var c = {
+				formula: {segments: [
+					false,
+					$interpolate('m 0              0'),
+					$interpolate('l {{ width /2 }} {{ width }}'),
+					false,
+					$interpolate('l {{ width /2 }} {{ -width }}'),
+					$interpolate('l {{ -width   }} 0'),
+					$interpolate('z')
+				]},
+				context: {
+					params: { width: 50 },
+					args: {}
+				},
+				segments: [],
+				components: []
+			};
+
+			processComponent( c, Point(-10, -10) );
+
+			expect( c.segments.length ).toBe( 7 );
+
+			expect( c.segments[2].start.x ).toBe( -10 );
+			expect( c.segments[2].start.y ).toBe( -10 );
+			expect( c.segments[2].end.x ).toBe( 15 );
+			expect( c.segments[2].end.y ).toBe( 40 );
+
+			expect( c.segments[4].start.x ).toBe( 15 );
+			expect( c.segments[4].start.y ).toBe( 40 );
+			expect( c.segments[4].end.x ).toBe( 40 );
+			expect( c.segments[4].end.y ).toBe( -10 );
+
+			expect( c.segments[5].start.x ).toBe( 40 );
+			expect( c.segments[5].start.y ).toBe( -10 );
+			expect( c.segments[5].end.x ).toBe( -10 );
+			expect( c.segments[5].end.y ).toBe( -10 );
+		}));
+
+		it('interpolates arguments in segment Formulas, and they have priority over params', inject(function( Point, $interpolate, processComponent ) {
+			var c = {
+				formula: {segments: [
+					false,
+					$interpolate('m 0              0'),
+					$interpolate('l {{ width /2 }} {{ width }}'),
+					false,
+					$interpolate('l {{ width /2 }} {{ -width }}'),
+					$interpolate('l {{ -width   }} 0'),
+					$interpolate('z')
+				]},
+				context: {
+					params: { width: 40 },
+					args: { width: 50 }
+				},
+				segments: [],
+				components: []
+			};
+
+			processComponent( c, Point(-10, -10) );
+
+			expect( c.segments.length ).toBe( 7 );
+
+			expect( c.segments[2].start.x ).toBe( -10 );
+			expect( c.segments[2].start.y ).toBe( -10 );
+			expect( c.segments[2].end.x ).toBe( 15 );
+			expect( c.segments[2].end.y ).toBe( 40 );
+
+			expect( c.segments[4].start.x ).toBe( 15 );
+			expect( c.segments[4].start.y ).toBe( 40 );
+			expect( c.segments[4].end.x ).toBe( 40 );
+			expect( c.segments[4].end.y ).toBe( -10 );
+
+			expect( c.segments[5].start.x ).toBe( 40 );
+			expect( c.segments[5].start.y ).toBe( -10 );
+			expect( c.segments[5].end.x ).toBe( -10 );
+			expect( c.segments[5].end.y ).toBe( -10 );
+		}));
+	});
+
+	describe('initComponent', function() {
+		it('links the segment of a simple component', inject(function( Point, $interpolate, initComponent ) {
+			var c = {
+					formula: {segments: [
+						false,
+						$interpolate('m  0    0'),
+						$interpolate('l  25  50'),
+						false,
+						$interpolate('l  25 -50'),
+						$interpolate('l -50   0'),
+						$interpolate('z')
+					]},
+					context: {
+						params: {},
+						args: {}
+					},
+					segments: [],
+					components: []
+				};
+
+			initComponent( c, Point( -10, -10 ) );
+
+			expect( c.firstSegment ).toBe( c.segments[1] );
+			expect( c.lastSegment ).toBe( c.segments[6] );
+
+			expect( c.segments[1].next ).toBe( c.segments[2] );
+			expect( c.segments[2].next ).toBe( c.segments[4] );
+			expect( c.segments[4].next ).toBe( c.segments[5] );
+			expect( c.segments[5].next ).toBe( c.segments[6] );
+			expect( c.segments[6].next ).toBe( undefined );
+		}));
+
+		it('can init a segment with references to points that don\'t exist yet', inject(function( Point, $interpolate, initComponent ) {
+
+			var s = [],
+				c = {
+					formula: {segments: [
+						false,
+						$interpolate('M {{ self[2].x - 25 }} {{ self[2].y - 50 }}'),
+						$interpolate('L {{ self[4].x - 25 }} {{ self[4].y + 50 }}'),
+						false,
+						$interpolate('L {{ self[5].x + 50 }} {{ self[5].y }}'),
+						$interpolate('L {{ self[0].x }} {{ self[0].y }}'),
+						$interpolate('z')
+					]},
+					context: {
+						params: {},
+						args: {},
+						self: s
+					},
+					segments: s,
+					components: []
+				};
+
+			initComponent( c, Point(-10, -10) );
+
+			expect( c.segments.length ).toBe( 7 );
+
+			expect( c.segments[2].start.x ).toBe( -10 );
+			expect( c.segments[2].start.y ).toBe( -10 );
+			expect( c.segments[2].end.x ).toBe( 15 );
+			expect( c.segments[2].end.y ).toBe( 40 );
+
+			expect( c.segments[4].start.x ).toBe( 15 );
+			expect( c.segments[4].start.y ).toBe( 40 );
+			expect( c.segments[4].end.x ).toBe( 40 );
+			expect( c.segments[4].end.y ).toBe( -10 );
+
+			expect( c.segments[5].start.x ).toBe( 40 );
+			expect( c.segments[5].start.y ).toBe( -10 );
+			expect( c.segments[5].end.x ).toBe( -10 );
+			expect( c.segments[5].end.y ).toBe( -10 );
+		}));
+
+		it('throws after ten attempts of initializing the component', inject(function( Point, $interpolate, initComponent ) {
+			var c = {
+					formula: {segments: [
+						false,
+						$interpolate('m  0    0'),
+						$interpolate('l  25  NaN'),
+						false,
+						$interpolate('l  25 -50'),
+						$interpolate('l -50   0'),
+						$interpolate('z')
+					]},
+					context: {
+						params: {},
+						args: {}
+					},
+					segments: [],
+					components: []
+				};
+
+			expect(function() { initComponent( c, Point( -10, -10 ) ); }).toThrow();
+		}));
+
+		it('links the segment of an inverted component', inject(function( Point, $interpolate, initComponent ) {
+			var c = {
+					invert: true,
+					formula: {segments: [
+						false,
+						$interpolate('m  0    0'),
+						$interpolate('l  25  50'),
+						false,
+						$interpolate('l  25 -50'),
+						$interpolate('l -50   0'),
+						$interpolate('z')
+					]},
+					context: {
+						params: {},
+						args: {}
+					},
+					segments: [],
+					components: []
+				};
+
+			initComponent( c, Point( -10, -10 ) );
+
+			expect( c.firstSegment ).toBe( c.segments[6] );
+			expect( c.lastSegment ).toBe( c.segments[1] );
+
+			expect( c.segments[6].next ).toBe( c.segments[5] );
+			expect( c.segments[5].next ).toBe( c.segments[4] );
+			expect( c.segments[4].next ).toBe( c.segments[2] );
+			expect( c.segments[2].next ).toBe( c.segments[1] );
+			expect( c.segments[1].next ).toBe( undefined );
+		}));
+	});
+
+	describe('processSubcomponent', function() {
+		it('determines the origin and args of an "add" subcomponent', inject(function( $interpolate, processSubcomponent ) {
+			var origin,
+				c = {
+					type: 'add',
+					context: {
+						argsFn: function( flatCtx ) { return {width: flatCtx.width}; }
+					},
+					atFn: function() { return [2,3]; }
+				};
+
+			processSubcomponent( {flatContext:{ width: 50 }}, c, function( sc, o ) {
+				origin = o;
+			});
+
+			expect( c.context.args.width ).toBe( 50 );
+			expect( origin[0] ).toBe( 2 );
+			expect( origin[1] ).toBe( 3 );
+		}));
+
+		it('determines the origin, args, "to" and "from" of a "replace" subcomponent', inject(function( Point, Segment, $interpolate, processSubcomponent ) {
+			var origin,
+				sFrom = Segment('L 50 50', Point(0,0)),
+				sTo = Segment('L 50 50', Point(0,0)),
+				c = {
+					flatContext:{ width: 50 },
+					segments: [
+						sFrom,
+						sTo
+					]
+				},
+				sc = {
+					type: 'replace',
+					context: {
+						argsFn: function( flatCtx ) { return {width: flatCtx.width}; }
+					},
+					fromId: 0,
+					fromFn: function() { return [NaN,40]; },
+					toId: 1,
+					toFn: function() { return [10,NaN]; }
+				};
+
+			expect(function() {
+				processSubcomponent( c, sc, function( sc, o ) {
+					origin = o;
+					// throw here because we dont want to test gap closing yet
+					throw 'Error';
+				});
+			}).toThrow();
+
+			expect( sc.context.args.width ).toBe( 50 );
+
+			expect( sc.from[0] ).toBeNaN();
+			expect( sc.from[1] ).toBe( 40 );
+
+			expect( sc.to[0] ).toBe( 10 );
+			expect( sc.to[1] ).toBeNaN();
+
+			// cut the segments it is attached to
+			expect( sFrom.end.x ).toBe( 40 );
+			expect( sFrom.end.y ).toBe( 40 );
+			expect( sTo.start.x ).toBe( 10 );
+			expect( sTo.start.y ).toBe( 10 );
+
+			expect( origin.x ).toBe( 40 );
+			expect( origin.y ).toBe( 40 );
+		}));
+
+		describe('gap closing', function() {
+
+			var c;
+
+			beforeEach(inject(function( Point, Segment ) {
+				var p = Point(0,0);
+
+				c = {
 					segments: [
 						false,
-						Segment('l 20 20', p2),
-						Segment('l 20 -20', p2)
-					]
-				}
-			]
-		};
+						Segment('m 0 0', p),
+						Segment('l 0 50', p),
+						Segment('l 50 0', p),
+						Segment('l 0 -50', p),
+						Segment('l -50 0', p),
+						Segment('z', p)
+					],
+					flatContext: {}
+				};
+			}));
 
-		mergeComponent( comp1, glyph );
-		mergeComponent( comp2, glyph );
-
-		expect(glyph.length).toBe(8);
-		expect(glyph[2].toSVG()).toBe('L 20 70');
-		expect(glyph[3].toSVG()).toBe('L 40 50');
-	}));
-
-	it('can process components devoid of references, params, controls or logic', inject(function( Point, $interpolate, processComponent ) {
-		glyph = [];
-
-		comp1 = {
-			mergeAt: 0,
-			mergeToGlyphAt: 0,
-			after: false,
-			context: {},
-			formula: { segments: [
-				false,
-				$interpolate( 'm 0 0' ),
-				$interpolate( 'l 0 50' ),
-				$interpolate( 'l 50 0' ),
-				$interpolate( 'l 0 -50' ),
-				$interpolate( 'l -50 0' ),
-				$interpolate( 'z' )
-			]},
-			segments: [],
-			components: [
-				comp2 = {
-					mergeAt: 2,
-					mergeToGlyphAt: 2,
-					after: true,
+			it('closes the gap after a "replace from <cut> to <start>"', inject(function( Point, Segment, processSubcomponent ) {
+				var sc = {
+					type: 'replace',
 					context: {},
-					formula: { segments: [
-						false,
-						$interpolate( 'l 20 20' ),
-						$interpolate( 'l 20 -20' )
-					]},
-					segments: [],
-					components: []
-				}
-			]
-		};
+					fromId: 3,
+					fromFn: function() { return {x: 40}; },
+					toId: 4,
+					toFn: function() { return 'start'; },
+					firstSegment: Segment('L 40 80', Point(0,0)),
+					lastSegment: Segment('L 50 80', Point(0,0))
+				};
 
-		processComponent( comp1, Point(0,0), glyph );
+				processSubcomponent( c, sc, function(){} );
 
-		expect(glyph.length).toBe(8);
-		expect(glyph[2].toSVG()).toBe('L 20 70');
-		expect(glyph[3].toSVG()).toBe('L 40 50');
-	}));
+				expect( c.segments[3].end.x ).toBe( 40 );
+				expect( c.segments[3].end.y ).toBe( 50 );
 
-	it('can process components with params and controls', inject(function( Point, $interpolate, processComponent ) {
-		glyph = [];
+				expect( c.segments[4].start.x ).toBe( 50 );
+				expect( c.segments[4].start.y ).toBe( 80 );
+			}));
 
-		var argsFn = function() { return { arbitrary: 20 }; },
-			controls = { width: 50 };
+			it('closes the gap before a "replace from <cut> to <end> inverted"', inject(function( Point, Segment, processSubcomponent ) {
+				var sc = {
+					invert: true,
+					type: 'replace',
+					context: {},
+					fromId: 2,
+					fromFn: function() { return 'end'; },
+					toId: 3,
+					toFn: function() { return {x: 10}; },
+					firstSegment: Segment('L 10 80', Point(0,80)),
+					lastSegment: Segment('L 10 50', Point(10,80))
+				};
 
-		comp1 = {
-			mergeAt: 0,
-			mergeToGlyphAt: 0,
-			after: false,
-			context: {
-				argsFn: argsFn,
-				controls: controls
-			},
-			formula: { segments: [
-				false,
-				$interpolate( 'm 0 0' ),
-				$interpolate( 'l 0 {{ width }}' ),
-				$interpolate( 'l {{ width }} 0' ),
-				$interpolate( 'l 0 {{ -width }}' ),
-				$interpolate( 'l {{ -width }} 0' ),
-				$interpolate( 'z' )
-			]},
-			segments: [],
-			components: [
-				comp2 = {
-					mergeAt: 2,
-					mergeToGlyphAt: 2,
-					after: true,
-					context: {
-						argsFn: argsFn,
-						controls: controls
+				processSubcomponent( c, sc, function(){} );
+
+				expect( c.segments[3].start.x ).toBe( 10 );
+				expect( c.segments[3].start.y ).toBe( 50 );
+
+				expect( c.segments[2].end.x ).toBe( 0 );
+				expect( c.segments[2].end.y ).toBe( 80 );
+			}));
+
+			it('can can cut the same segment twice', inject(function( Point, Segment, processSubcomponent ) {
+				var sc1 = {
+						type: 'replace',
+						context: {},
+						fromId: 3,
+						fromFn: function() { return {x: 40}; },
+						toId: 4,
+						toFn: function() { return 'start'; },
+						firstSegment: Segment('L 40 80', Point(0,0)),
+						lastSegment: Segment('L 50 80', Point(0,0))
 					},
-					formula: { segments: [
-						false,
-						$interpolate( 'l {{ arbitrary }} {{ arbitrary }}' ),
-						$interpolate( 'l {{ arbitrary }} {{ -arbitrary }}' )
-					]},
-					segments: [],
-					components: []
-				}
-			]
-		};
+					sc2 = {
+						invert: true,
+						type: 'replace',
+						context: {},
+						fromId: 2,
+						fromFn: function() { return 'end'; },
+						toId: 3,
+						toFn: function() { return {x: 10}; },
+						firstSegment: Segment('L 10 80', Point(0,80)),
+						lastSegment: Segment('L 10 50', Point(10,80))
+					};
 
-		processComponent( comp1, Point(0,0), glyph );
+				processSubcomponent( c, sc1, function(){} );
+				processSubcomponent( c, sc2, function(){} );
 
-		expect(glyph.length).toBe(8);
-		expect(glyph[2].toSVG()).toBe('L 20 70');
-		expect(glyph[3].toSVG()).toBe('L 40 50');
-	}));
+				expect( c.segments[3].start.x ).toBe( 10 );
+				expect( c.segments[3].start.y ).toBe( 50 );
 
-	it('can process components with references to previously processed coordinates', inject(function( Point, $interpolate, processComponent ) {
-		glyph = [];
+				expect( c.segments[2].end.x ).toBe( 0 );
+				expect( c.segments[2].end.y ).toBe( 80 );
 
-		comp1 = {
-			mergeAt: 0,
-			mergeToGlyphAt: 0,
-			after: false,
-			context: {},
-			formula: { segments: [
-				false,
-				$interpolate( 'M 0 0' ),
-				$interpolate( 'L {{ self[1].x }} {{ self[1].y + 50 }}' ),
-				$interpolate( 'L {{ self[2].x + 50 }} {{ self[2].y }}' ),
-				$interpolate( 'L {{ self[3].x }} {{ self[3].y - 50 }}' ),
-				$interpolate( 'L {{ self[4].x - 50 }} {{ self[4].y }}' ),
-				$interpolate( 'z' )
-			]},
-			segments: [],
-			components: [
-				comp2 = {
-					mergeAt: 2,
-					mergeToGlyphAt: 2,
-					after: true,
-					context: {},
-					formula: { segments: [
-						false,
-						$interpolate( 'L {{ self[0].x + 20 }} {{ self[0].y + 20 }}' ),
-						$interpolate( 'L {{ self[1].x + 20 }} {{ self[1].y - 20 }}' )
-					]},
-					segments: [],
-					components: []
-				}
-			]
-		};
+				expect( c.segments[3].end.x ).toBe( 40 );
+				expect( c.segments[3].end.y ).toBe( 50 );
 
-		comp1.context.self = comp1.segments;
-		comp2.context.self = comp2.segments;
+				expect( c.segments[4].start.x ).toBe( 50 );
+				expect( c.segments[4].start.y ).toBe( 80 );
+			}));
+		});
+	});
+});
 
-		processComponent( comp1, Point(0,0), glyph );
-
-		expect(glyph.length).toBe(8);
-		expect(glyph[2].toSVG()).toBe('L 20 70');
-		expect(glyph[3].toSVG()).toBe('L 40 50');
-	}));
-
-	it('can process components with references to previously processed points', inject(function( Point, $interpolate, processComponent ) {
-		glyph = [];
-
-		comp1 = {
-			mergeAt: 0,
-			mergeToGlyphAt: 0,
-			after: false,
-			context: {},
-			formula: { segments: [
-				false,
-				$interpolate( 'M 0 0' ),
-				$interpolate( 'L 25 50' ),
-				$interpolate( 'L 50 0' ),
-				$interpolate( 'L {{ self[1].end }}' ),
-				$interpolate( 'z' )
-			]},
-			segments: [],
-			components: []
-		};
-
-		comp1.context.self = comp1.segments;
-
-		processComponent( comp1, Point(0,0), glyph );
-
-		expect(glyph[3].toSVG()).toBe('L 0 0');
-	}));
-
-	it('can initialize a component', inject(function( Point, $interpolate, initComponent, processComponent ) {
-		glyph = [];
-
-		comp1 = {
-			mergeAt: 0,
-			mergeToGlyphAt: 0,
-			after: false,
-			context: {},
-			formula: { segments: [
-				false,
-				$interpolate( 'M 0 0' ),
-				$interpolate( 'L {{ self[3].x - 50 }} {{ self[3].y }}' ),
-				$interpolate( 'L {{ self[4].x }} {{ self[4].y + 50 }}' ),
-				$interpolate( 'L {{ self[5].x + 50 }} {{ self[5].y }}' ),
-				$interpolate( 'L {{ self[1].x }} {{ self[1].y }}' ),
-				$interpolate( 'z' )
-			]},
-			segments: [],
-			components: [
-				comp2 = {
-					mergeAt: 2,
-					mergeToGlyphAt: 2,
-					after: true,
-					context: {},
-					formula: { segments: [
-						false,
-						$interpolate( 'L {{ self[2].x - 20 }} {{ self[2].y + 20 }}' ),
-						$interpolate( 'L {{ self[0].x + 40 }} {{ self[0].y }}' )
-					]},
-					segments: [],
-					components: []
-				}
-			]
-		};
-
-		comp1.context.self = comp1.segments;
-		comp2.context.self = comp2.segments;
-
-		initComponent( comp1, Point(0,0), [] );
-		processComponent( comp1, Point(0,0), glyph );
-
-		expect(glyph.length).toBe(8);
-		expect(glyph[2].toSVG()).toBe('L 20 70');
-		expect(glyph[3].toSVG()).toBe('L 40 50');
-	}));
+/*describe('Component', function() {
 
 	it('can create a component from a formula', inject(function( Component, Formula, Point, initComponent, processComponent ) {
 		var glyph = [],
@@ -304,308 +539,20 @@ describe('Component', function() {
 		expect(glyph[3].toSVG()).toBe('L 40 50');
 	}));
 
-	/*before(function() {
-		//c0 = Component();
-		//c1 = new Component();
-	});
+	//before(function() {
+	//	//c0 = Component();
+	//	//c1 = new Component();
+	//});
 
-	/*it('can be called with or without new', function() {
-		expect(c0 instanceof _Component).toBe(true);
-		expect(c1 instanceof _Component).toBe(true);
-	});*/
+	//it('can be called with or without new', function() {
+	//	expect(c0 instanceof _Component).toBe(true);
+	//	expect(c1 instanceof _Component).toBe(true);
+	//});
 });
 
 describe('initComponent', function() {
-	it('links a non-inverted component on init', inject(function( Point, $interpolate, initComponent ) {
-		var comp1 = {
-			formula: { segments: [
-				false,
-				$interpolate('m 0 0'),
-				$interpolate('l 0 50'),
-				$interpolate('l 50 0'),
-				$interpolate('l 0 -50'),
-				$interpolate('l -50 0'),
-				$interpolate('z')
-			]},
-			segments: [],
-			context: {},
-			cut: 0,
-			to: 'end',
-			components: []
-		};
-
-		initComponent( comp1, Point(0,0) );
-
-		expect( comp1.firstSegment ).toBe( comp1.segments[1] );
-		expect( comp1.lastSegment ).toBe( comp1.segments[6] );
-		expect( comp1.segments[1].next ).toBe( comp1.segments[2] );
-		expect( comp1.segments[2].next ).toBe( comp1.segments[3] );
-		// ...
-		expect( comp1.segments[4].next ).toBe( comp1.segments[5] );
-		expect( comp1.segments[5].next ).toBe( comp1.segments[6] );
-	}));
-
-	it('links an inverted component on init', inject(function( Point, $interpolate, initComponent ) {
-		var comp1 = {
-			formula: { segments: [
-				false,
-				$interpolate('m 0 0'),
-				$interpolate('l 0 50'),
-				$interpolate('l 50 0'),
-				$interpolate('l 0 -50'),
-				$interpolate('l -50 0'),
-				$interpolate('z')
-			]},
-			segments: [],
-			context: {},
-			cut: 0,
-			to: 'start',
-			invert: true,
-			components: []
-		};
-
-		initComponent( comp1, Point(0,0) );
-
-		expect( comp1.firstSegment ).toBe( comp1.segments[6] );
-		expect( comp1.lastSegment ).toBe( comp1.segments[1] );
-		expect( comp1.segments[6].next ).toBe( comp1.segments[5] );
-		expect( comp1.segments[5].next ).toBe( comp1.segments[4] );
-		// ...
-		expect( comp1.segments[3].next ).toBe( comp1.segments[2] );
-		expect( comp1.segments[2].next ).toBe( comp1.segments[1] );
-	}));
-
-	it('handles "cut to end" subcomponents and link them on init', inject(function( Point, $interpolate, initComponent ) {
-		var comp2,
-			comp1 = {
-			formula: { segments: [
-				false,
-				$interpolate('m 0 0'),
-				$interpolate('l 0 50'),
-				$interpolate('l 50 0'),
-				$interpolate('l 0 -50'),
-				$interpolate('l -50 0'),
-				$interpolate('z')
-			]},
-			segments: [],
-			context: {},
-			cut: 0,
-			to: 'end',
-			components: [ comp2 = {
-				formula: { segments: [
-					false,
-					$interpolate('l 0 30'),
-					$interpolate('l 10 0')
-				]},
-				segments: [],
-				context: {},
-				cut: 3,
-				fromFn: function() { return {x: 40}; },
-				to: 'end',
-				components: []
-			}]
-		};
-
-		initComponent( comp1, Point(0,0) );
-
-		expect( comp1.firstSegment ).toBe( comp1.segments[1] );
-		expect( comp1.lastSegment ).toBe( comp1.segments[6] );
-
-		expect( comp2.firstSegment ).toBe( comp2.segments[1] );
-		expect( comp2.lastSegment ).toBe( comp2.segments[2] );
-
-		expect( comp1.segments[3].next ).toBe( comp2.segments[1] );
-		expect( comp2.segments[1].next ).toBe( comp2.segments[2] );
-		expect( comp2.segments[2].next ).toBe( comp1.segments[4] );
-
-		expect( comp1.segments[3].end.x ).toBe( 40 );
-		expect( comp1.segments[3].end.y ).toBe( 50 );
-		expect( comp2.segments[1].start.x ).toBe( 40 );
-		expect( comp2.segments[1].start.y ).toBe( 50 );
-
-		expect( comp2.segments[2].end.x ).toBe( 50 );
-		expect( comp2.segments[2].end.y ).toBe( 80 );
-		expect( comp1.segments[4].start.x ).toBe( 50 );
-		expect( comp1.segments[4].start.y ).toBe( 80 );
-	}));
-
-	it('handles "cut to start" subcomponents and link them on init', inject(function( Point, $interpolate, initComponent ) {
-		var comp2,
-			comp1 = {
-			formula: { segments: [
-				false,
-				$interpolate('m 0 0'),
-				$interpolate('l 0 50'),
-				$interpolate('l 50 0'),
-				$interpolate('l 0 -50'),
-				$interpolate('l -50 0'),
-				$interpolate('z')
-			]},
-			segments: [],
-			context: {},
-			cut: 0,
-			to: 'end',
-			components: [ comp2 = {
-				formula: { segments: [
-					false,
-					$interpolate('l 0 30'),
-					$interpolate('l -10 0')
-				]},
-				segments: [],
-				context: {},
-				cut: 3,
-				fromFn: function() { return {x: 10}; },
-				to: 'start',
-				invert: true,
-				components: []
-			}]
-		};
-
-		initComponent( comp1, Point(0,0) );
-
-		expect( comp1.firstSegment ).toBe( comp1.segments[1] );
-		expect( comp1.lastSegment ).toBe( comp1.segments[6] );
-
-		expect( comp2.firstSegment ).toBe( comp2.segments[2] );
-		expect( comp2.lastSegment ).toBe( comp2.segments[1] );
-
-		expect( comp1.segments[2].next ).toBe( comp2.segments[2] );
-		expect( comp2.segments[2].next ).toBe( comp2.segments[1] );
-		expect( comp2.segments[1].next ).toBe( comp1.segments[3] );
-
-		expect( comp1.segments[2].end.x ).toBe( 0 );
-		expect( comp1.segments[2].end.y ).toBe( 80 );
-		expect( comp2.segments[2].start.x ).toBe( 0 );
-		expect( comp2.segments[2].start.y ).toBe( 80 );
-
-		expect( comp2.segments[1].end.x ).toBe( 10 );
-		expect( comp2.segments[1].end.y ).toBe( 50 );
-		expect( comp1.segments[3].start.x ).toBe( 10 );
-		expect( comp1.segments[3].start.y ).toBe( 50 );
-	}));
-
-	/*it('can cut the same component twice', function() {
-
-	});*/
-
-	/*it('can add two components that end on the same segment', function() {
-
-	})*/
-});
-
-describe('processComponent', function() {
-	it('can process and invert a component', inject(function( Point, $interpolate, processComponent ) {
-		var comp1 = {
-			formula: { segments: [
-				false,
-				$interpolate('m 0 0'),
-				$interpolate('l 0 50'),
-				$interpolate('l 50 0'),
-				$interpolate('l 0 -50'),
-				$interpolate('l -50 0'),
-				$interpolate('z')
-			]},
-			segments: [],
-			context: {},
-			cut: 0,
-			to: 'start',
-			invert: true,
-			components: []
-		};
-
-		processComponent( comp1, Point(0,0) );
-
-		expect( comp1.segments[1].start.x ).toBe( 0 );
-		expect( comp1.segments[1].start.y ).toBe( 0 );
-		expect( comp1.segments[1].end.x ).toBe( 0 );
-		expect( comp1.segments[1].end.y ).toBe( 0 );
-
-		expect( comp1.segments[2].start.x ).toBe( 0 );
-		expect( comp1.segments[2].start.y ).toBe( 50 );
-		expect( comp1.segments[2].end.x ).toBe( 0 );
-		expect( comp1.segments[2].end.y ).toBe( 0 );
-
-		expect( comp1.segments[3].start.x ).toBe( 50 );
-		expect( comp1.segments[3].start.y ).toBe( 50 );
-		expect( comp1.segments[3].end.x ).toBe( 0 );
-		expect( comp1.segments[3].end.y ).toBe( 50 );
-
-		expect( comp1.segments[4].start.x ).toBe( 50 );
-		expect( comp1.segments[4].start.y ).toBe( 0 );
-		expect( comp1.segments[4].end.x ).toBe( 50 );
-		expect( comp1.segments[4].end.y ).toBe( 50 );
-
-		expect( comp1.segments[5].start.x ).toBe( 0 );
-		expect( comp1.segments[5].start.y ).toBe( 0 );
-		expect( comp1.segments[5].end.x ).toBe( 50 );
-		expect( comp1.segments[5].end.y ).toBe( 0 );
-	}));
-
-	it('process and init have the same result', inject(function( Point, $interpolate, processComponent, initComponent ) {
-		var comp2,
-			comp1 = {
-			formula: { segments: [
-				false,
-				$interpolate('m 0 0'),
-				$interpolate('l 0 50'),
-				$interpolate('l 50 0'),
-				$interpolate('l 0 -50'),
-				$interpolate('l -50 0'),
-				$interpolate('z')
-			]},
-			segments: [],
-			context: {},
-			cut: 0,
-			to: 'end',
-			components: [ comp2 = {
-				formula: { segments: [
-					false,
-					$interpolate('l -10 30')
-				]},
-				segments: [],
-				context: {},
-				cut: 3,
-				fromFn: function() { return {x: 10}; },
-				to: 'start',
-				invert: true,
-				components: []
-			}]
-		};
-
-		initComponent( comp1, Point(0,0) );
-
-		processComponent( comp1, Point(0,0) );
-
-		expect( comp1.firstSegment ).toBe( comp1.segments[1] );
-		expect( comp1.lastSegment ).toBe( comp1.segments[6] );
-
-		expect( comp2.firstSegment ).toBe( comp2.segments[1] );
-		expect( comp2.lastSegment ).toBe( comp2.segments[1] );
-
-		expect( comp1.segments[2].next ).toBe( comp2.segments[1] );
-		expect( comp2.segments[1].next ).toBe( comp1.segments[3] );
-
-		expect( comp1.segments[2].end.x ).toBe( 0 );
-		expect( comp1.segments[2].end.y ).toBe( 80 );
-		expect( comp2.segments[1].start.x ).toBe( 0 );
-		expect( comp2.segments[1].start.y ).toBe( 80 );
-
-		expect( comp2.segments[1].end.x ).toBe( 10 );
-		expect( comp2.segments[1].end.y ).toBe( 50 );
-		expect( comp1.segments[3].start.x ).toBe( 10 );
-		expect( comp1.segments[3].start.y ).toBe( 50 );
-	}));
-});
-
-/*describe('TrailingSpaces with Twilight theme in SublimeText', function() {
-	it('can display duck heads in your code', function() {
-
-			   = 
-
-
-		quack! > 
-
-	});
+	//it('can add two components that end on the same segment', function() {
+	//})
 });*/
 
 

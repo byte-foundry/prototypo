@@ -1,76 +1,48 @@
 'use strict';
 
 angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', 'prototypo.segmentUtils'])
-	.factory('Component', function( initComponent, processComponent, mergeComponent, findPoint ) {
+	.factory('Component', function( initComponent, processComponent ) {
 
-		function Component( formula, args ) {
+		function Component( args, formulaLib, params ) {
 			// new is optional
 			if ( !( this instanceof Component ) ) {
-				return new Component( formula, args );
+				return new Component( args, formulaLib );
 			}
 
-			this.formula = formula;
-			this.segments = new Array(formula.length);
+			this.formula = formulaLib[ args.type ];
+			this.segments = new Array( this.formula.length );
 
-			// before/after components
-			if ( args.mergeAt !== undefined ) {
-				this.mergeAt = args.mergeAt;
-				//this.mergeToGlyphAt = args.mergeToGlyphAt;
-				this.after = args.after;
+			for ( var i in args ) {
+				if ( i !== 'argsFn' ) {
+					this[i] = args[i];
+				}
 			}
-			// cut components
-			if ( args.cut !== undefined ) {
-				this.cut = args.cut;
-				this.fromFn = args.fromFn;
-				this.to = args.to;
-			}
-			this.invert = args.to === 'start';
-
-			// useless
-			this.args = args.args || {};
 
 			this.context = {
-				controls: args.controls,
-				// useless, only argsFN is used
-				args: this.args,
+				params: params,
 				argsFn: args.argsFn,
-				// deprecated, use filter instead
-				find: findPoint,
 				self: this.segments
 			};
 
-			this.components = formula.components.map(function( component ) {
-				/* override args */
-				// before/after components
-				if ( component.mergeAt !== undefined ) {
-					args.mergeAt = component.mergeAt;
-					args.after = component.after;
-				}
-				// cut components
-				if ( component.cut !== undefined ) {
-					args.cut = component.cut;
-					args.fromFn = component.fromFn;
-					args.to = component.to;
-				}
-				args.argsFn = component.argsFn;
-				// useless
-				args.args = component.args;
-
-				return Component( args.formulaLib[ component.type ], args );
-			}, this);
+			this.components = this.formula.components.map(function( subcomponentArgs ) {
+				return Component( subcomponentArgs, formulaLib, params );
+			});
 		}
 
 		Component.prototype = {
-			init: function( curPos, glyph ) { initComponent( this, curPos, glyph ); },
-			process: function( curPos, glyph ) { processComponent( this, curPos, glyph ); },
-			mergeTo: function( glyph ) { mergeComponent( this, glyph ); }
+			init: function( curPos ) {
+				return initComponent( this, curPos );
+			},
+			process: function( curPos ) {
+				return processComponent( this, curPos );
+			}
 		};
 
 		return Component;
 	})
 
-	.factory('initComponent', function( Segment, Point, processComponent, processSubcomponent, mergeComponent ) {
-		return function initComponent( component, curPos, glyph ) {
+	.factory('initComponent', function( Segment, processComponent, processSubcomponent ) {
+		return function initComponent( component, curPos ) {
 			var i = 0,
 				hasNaN = false,
 				_glyph,
@@ -81,73 +53,104 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 
 			do {
 				_glyph = [];
-				processComponent( component, curPos, _glyph, false );
+				processComponent( component, curPos, false );
 				hasNaN = component.segments.some(checkNaN);
 			} while ( ++i < 10 && hasNaN );
 
-			if ( !hasNaN ) {
-				// save numbers of iterations for later
-				component.iter = i;
-
-				// filter empty segments
-				filteredSegments = component.segments.filter(function( segment ) {
-					return segment instanceof Segment;
-				});
-				// link segments together
-				filteredSegments.forEach(function( segment, i ) {
-						// natural order
-						if ( !component.invert && this[i + 1] ) {
-							segment.next = this[i + 1];
-						}
-						// invert order
-						if ( component.invert && this[i - 1] ) {
-							segment.next = this[i - 1];
-						}
-					}, filteredSegments);
-
-				// find the beginning and end of the component
-				if ( component.invert ) {
-					component.firstSegment = filteredSegments[ filteredSegments.length -1 ];
-					component.lastSegment = filteredSegments[ 0 ];
-
-				} else {
-					component.firstSegment = filteredSegments[ 0 ];
-					component.lastSegment = filteredSegments[ filteredSegments.length -1 ];
-				}
-
-				// legacy merge for before/after components
-				if ( component.mergeAt !== undefined ) {
-					mergeComponent( component, glyph );
-				}
-
-				component.components.forEach(function( subcomponent ) {
-					if ( subcomponent.mergeAt !== undefined ) {
-						// the args of the subcomponents have to be recalculated according to the parent context
-						if ( subcomponent.context.argsFn ) {
-							subcomponent.context.args = subcomponent.context.argsFn( component.flatContext );
-						}
-
-						// init mergeToGlyphAt by searching the attach to the parent in the glyph
-						subcomponent.mergeToGlyphAt =
-							glyph.indexOf( component.segments[ subcomponent.mergeAt ] ) +
-							( subcomponent.after ? 1 : 0 );
-
-						initComponent( subcomponent, component.segments[ subcomponent.mergeAt ].end, glyph );
-
-					} else {
-						processSubcomponent( component, subcomponent, initComponent );
-					}
-				});
-
-			} else {
+			// trhow an error after 10 unsuccessful attempts
+			if ( hasNaN ) {
 				throw 'Component segments cannot be initialized:\n' +
 					component.segments.map(function( segment, i ) { return i + ': ' + segment.toSVG(); }).join('\n');
 			}
+
+			// save numbers of iterations for later
+			component.iter = i;
+
+			// filter empty segments
+			filteredSegments = component.segments.filter(function( segment ) {
+				return segment instanceof Segment;
+			});
+			// link segments together
+			filteredSegments.forEach(function( segment, i ) {
+					// natural order
+					if ( !component.invert && this[i + 1] ) {
+						segment.next = this[i + 1];
+					}
+					// invert order
+					if ( component.invert && this[i - 1] ) {
+						segment.next = this[i - 1];
+					}
+				}, filteredSegments);
+
+			// find the beginning and end of the component
+			if ( component.invert ) {
+				component.firstSegment = filteredSegments[ filteredSegments.length -1 ];
+				component.lastSegment = filteredSegments[ 0 ];
+
+			} else {
+				component.firstSegment = filteredSegments[ 0 ];
+				component.lastSegment = filteredSegments[ filteredSegments.length -1 ];
+			}
+
+			component.components.forEach(function( subcomponent ) {
+				if ( subcomponent.type === 'replace' ) {
+					// from segment[n].start <=> from segment[n-1].end
+					subcomponent.from = subcomponent.fromFn( component.flatContext );
+					if ( subcomponent.from === 'start' ) {
+						// search for previous non-false segment
+						// TODO: what happens if we're in an inverted segment? Chaos.
+						do {
+							subcomponent.fromId--;
+						} while (
+							subcomponent.fromId > 0 &&
+							!( component.segments[ component.fromId ] instanceof Segment )
+						);
+						subcomponent.fromFn = function() { return 'end'; };
+					}
+
+					// to segment[n].end <=> to segment[n+1].start
+					subcomponent.to = subcomponent.toFn( component.flatContext );
+					if ( subcomponent.to === 'end' ) {
+						// search for following non-false segment
+						// TODO: what happens if we're in an inverted segment? Chaos.
+						do {
+							subcomponent.toId++;
+						} while (
+							subcomponent.toId < component.segments.length &&
+							!( component.segments[ component.toId ] instanceof Segment )
+						);
+						subcomponent.toFn = function() { return 'start'; };
+					}
+				}
+
+				processSubcomponent( component, subcomponent, initComponent );
+
+				/* link subcomponent */
+				if ( subcomponent.type === 'add' ) {
+					component.lastSegment.next = subcomponent.firstSegment;
+					component.lastSegment = subcomponent.lastSegment;
+
+				} else if ( subcomponent.type === 'replace' ) {
+					if ( component.fromId < 1 ) {
+						subcomponent.lastSegment.next = component.firstSegment;
+						component.firstSegment = subcomponent.firstSegment;
+					} else {
+						component.segments[ component.fromId ].next = subcomponent.firstSegment;
+					}
+
+					if ( component.toId > component.segments.length ) {
+						component.lastSegment.next = subcomponent.firstSegment;
+						component.lastSegment = subcomponent.lastSegment;
+					} else {
+						component.segments[ component.toId ].next = subcomponent.firstSegment;
+					}
+				}
+			});
 		};
 	})
 
-	.factory('processComponent', function( Segment, Point, processSubcomponent, mergeComponent, flattenContext, invertSegment ) {
-		return function processComponent( component, _curPos, glyph, recurse ) {
+	.factory('processComponent', function( Segment, Point, processSubcomponent, flattenContext, invertSegment ) {
+		return function processComponent( component, _curPos, recurse ) {
 			var curPos = Point( _curPos );
 
 			// initialize the drawing with the origin as a fake segment
@@ -166,12 +169,14 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 
 			component.flatContext = flattenContext( component.context );
 
+			/* process segments */
 			component.formula.segments.forEach(function( segmentFormula, i ) {
 				// only process non-empty segments
-				if ( i > 0 && segmentFormula ) {
+				if ( segmentFormula ) {
 					if ( component.segments[i] === undefined ) {
 						component.segments[i] = Segment( segmentFormula( component.flatContext ), curPos );
-					// reuse existing segments (limit GC and allows control-points viz to be persistant)
+
+					// reuse existing segments
 					} else {
 						component.segments[i].update( segmentFormula( component.flatContext ) );
 						component.segments[i].absolutize( curPos );
@@ -179,25 +184,10 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				}
 			});
 
-			// legacy merge for before/after components
-			if ( component.mergeAt !== undefined ) {
-				mergeComponent( component, glyph );
-			}
-
-			// don't recurse on initialization
+			/* process subcomponents (not on init) */
 			if ( recurse !== false ) {
 				component.components.forEach(function( subcomponent ) {
-					// legacy before/after processComponent
-					if ( subcomponent.mergeAt !== undefined ) {
-						// the args of the subcomponents have to be recalculated according to the parent context
-						if ( subcomponent.context.argsFn ) {
-							subcomponent.context.args = subcomponent.context.argsFn( component.$context );
-						}
-						processComponent( subcomponent, component.segments[ subcomponent.mergeAt ].end, glyph );
-
-					} else {
-						processSubcomponent( component, subcomponent, processComponent );
-					}
+					processSubcomponent( component, subcomponent, processComponent );
 				});
 			}
 
@@ -209,63 +199,79 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 
 	.factory('processSubcomponent', function( cutSegment, moveSegmentEnd ) {
 		return function( component, subcomponent, processor ) {
+			var origin;
+
 			// the args of the subcomponents have to be recalculated according to the parent context
 			if ( subcomponent.context.argsFn ) {
 				subcomponent.context.args = subcomponent.context.argsFn( component.flatContext );
 			}
 
-			cutSegment( component.segments[ subcomponent.cut ], subcomponent.fromFn( component.flatContext ), subcomponent.to );
+			/* determine subcomponent origin and cut segments if needed */
+			if ( subcomponent.type === 'add' ) {
+				origin = subcomponent.atFn( component.flatContext );
 
-			processor( subcomponent, component.segments[ subcomponent.cut ][ subcomponent.to ] );
-
-			// link subcomponent to its parent
-			if ( !subcomponent.invert ) {
-				// link from the component to the beginning of the subcomponent
-				component.segments[ subcomponent.cut ].next = subcomponent.firstSegment;
-				// link back from the end of the subcomponent to the component
-				if ( subcomponent.cut +1 < component.segments.length ) {
-					subcomponent.lastSegment.next = component.segments[ subcomponent.cut +1 ];
-
-				// if the subcomponent was added at the end of the component, update .lastSegment
-				} else {
-					component.lastSegment = subcomponent.lastSegment;
+			} else if ( subcomponent.type === 'replace' ) {
+				subcomponent.from = subcomponent.fromFn( component.flatContext );
+				// neither 'start' nor 'end'
+				if ( typeof subcomponent.from !== 'string' ) {
+					cutSegment( component.segments[ subcomponent.fromId ], subcomponent.from, 'end' );
 				}
 
-			} else {
-				// link from the component to the beginning of the subcomponent
-				if ( subcomponent.cut -1 >= 0 ) {
-					component.segments[ subcomponent.cut -1 ].next = subcomponent.firstSegment;
-
-				// if the subcomponent was added at the beginning of the component, update .firstSegment
-				} else {
-					component.firstSegment = subcomponent.firstSegment;
+				subcomponent.to = subcomponent.toFn( component.flatContext );
+				// neither 'start' nor 'end'
+				if ( typeof subcomponent.to !== 'string' ) {
+					cutSegment( component.segments[ subcomponent.toId ], subcomponent.to, 'start' );
 				}
-				// link back from the end of the subcomponent to the component
-				subcomponent.lastSegment.next = component.segments[ subcomponent.cut ];
+
+				origin = component.segments[ subcomponent.fromId ].end;
 			}
 
-			if ( ( subcomponent.invert && subcomponent.cut +1 < component.segments.length ) ||
-				( !subcomponent.invert && subcomponent.cut -1 >= 0 ) ) {
+			// init or process subcomponent (depending on the caller)
+			processor( subcomponent, origin );
 
-				moveSegmentEnd(
-					component.segments[ subcomponent.cut + ( subcomponent.invert ? -1 : 1 ) ],
-					subcomponent.invert ? 'end' : 'start',
-					subcomponent[ ( subcomponent.invert ? 'first' : 'last' ) + 'Segment' ][ subcomponent.to ]
-				);
+			/* close the gaps between component and subcomponent ends */
+			if ( subcomponent.type === 'replace' && !subcomponent.invert ) {
+				/*if ( subcomponent.from === 'end' ) {
+					// do nothing
+				}
+				if ( subcomponent.from === 'start' ) {
+					// we shouldn't be there!
+				}
+				if ( typeof subcomponent.from !== 'string' ) {
+					// do nothing
+				}
+
+				if ( subcomponent.to === 'end' ) {
+					// we shouldn't be there
+				}*/
+				if ( subcomponent.to === 'start' ) {
+					moveSegmentEnd( component.segments[ subcomponent.toId ], 'start', subcomponent.lastSegment.end );
+				}
+				if ( typeof subcomponent.to !== 'string' ) {
+					moveSegmentEnd( subcomponent.lastSegment, 'end', component.segments[ subcomponent.toId ].start );
+				}
 			}
-		};
-	})
 
-	.factory('mergeComponent', function( Segment ) {
-		return function( component, glyph ) {
+			if ( subcomponent.type === 'replace' && subcomponent.invert ) {
+				if ( subcomponent.from === 'end' ) {
+					moveSegmentEnd( component.segments[ subcomponent.fromId ], 'end', subcomponent.firstSegment.start );
+				}
+				/*if ( subcomponent.from === 'start' ) {
+					// we shouldn't be there!
+				}*/
+				if ( typeof subcomponent.from !== 'string' ) {
+					moveSegmentEnd( subcomponent.firstSegment, 'start', component.segments[ subcomponent.fromId ].end );
+				}
 
-			[].splice.apply( glyph, [component.mergeToGlyphAt, 0].concat(
-				// remove empty segments from the glyph
-				component.segments.filter(function( segment ) { return segment instanceof Segment; })
-			));
-
-			if ( component.mergeAt !== 0 ) {
-				component.mergeAt.virtual = true;
+				/*if ( subcomponent.to === 'end' ) {
+					// we shouldn't be there
+				}
+				if ( subcomponent.to === 'start' ) {
+					// do nothing
+				}
+				if ( typeof subcomponent.to !== 'string' ) {
+					// do nothing
+				}*/
 			}
 		};
 	})
@@ -276,16 +282,13 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			var flatCtx = {},
 				i;
 
-			for ( i in context.controls ) {
-				flatCtx[i] = context.controls[i];
+			for ( i in context.params ) {
+				flatCtx[i] = context.params[i];
 			}
 
 			for ( i in context.args ) {
 				flatCtx[i] = context.args[i];
 			}
-
-			// deprecated, use filter "on" instead
-			flatCtx.find = context.find;
 
 			flatCtx.self = context.self;
 
