@@ -7,17 +7,26 @@
 		"_B",
 		"_H",
 		"_M",
+		"a",
 		"b",
 		"c",
+		"d",
+		"e",
+		"f",
+		"g",
 		"h",
+		"i",
+		"l",
 		"m",
 		"n",
+		"u",
+		"v",
 		"dot"
 	],
 	"components": [
 		"serif-bottom-right",
 		"serif-bottom-left",
 		"serif-test",
-		"line"
+		"top-dot"
 	]
 }

@@ -2,13 +2,13 @@ M	0 0
 l	0 {{ ascenderHeight }}
 l 	{{ thickness }} 0
 L 	{{ thickness }} {{ 0.86666666666667 * xHeight }}
-rC 	{{ [ self[11].x + ( self[6].x - self[11].x ) / 2 , xHeight + opticRoundness ] |cuttedCurve:"bottom-left":self[4]:roundness:0.14 }}
-rC 	{{ [ self[9].x + thickness , 0.59354838709677 * xHeight ] |cuttedCurve:"bottom-right":self[5]:roundness }}
+rC 	{{ [ self[11].x + ( self[6].x - self[11].x ) / 2 , xHeight + opticRoundness ] |curve:"both":"bottom-left":self[4]:roundness:0.14 }}
+rC 	{{ [ self[9].x + thickness , 0.59354838709677 * xHeight ] |curve:"both":"bottom-right":self[5]:roundness }}
 L 	{{ self[6].x }} 0
 L 	{{ self[9].x }} 0
 L 	{{ 297 * width }} {{ self[11].y - 0.2625 * thickness }}
-rC 	{{ [ self[9].x - ( self[9].x - self[11].x ) / 2 , self[5].y - thickness * 0.85 ] |cuttedCurve:"top-right":self[9]:roundness }}
-rC 	{{ [ thickness , self[4].y - thickness * 1.4 ] |cuttedCurve:"bottom-right":self[10]:roundness }}
+rC 	{{ [ self[9].x - ( self[9].x - self[11].x ) / 2 , self[5].y - thickness * 0.85 ] |curve:"both":"top-right":self[9]:roundness }}
+rC 	{{ [ thickness , self[4].y - thickness * 1.4 ] |curve:"both":"bottom-right":self[10]:roundness }}
 L 	{{ thickness }} 0
 L 	0 0
 Z

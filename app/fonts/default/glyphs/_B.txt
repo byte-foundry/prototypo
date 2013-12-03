@@ -1,26 +1,26 @@
 M	0 0
 l 	0 {{ capHeight }}
 l 	{{ 260 * width }} 0
-rC 	{{ [ self[16].x + thickness * 1.1 * horzContrast , self[3].y - ( self[3].y - self[5].y ) * 0.57446808510638 ] |cuttedCurve:"bottom-right":self[3]:roundness }}
-rC 	{{ [ 399 * width , ( self[15].y - ( self[15].y - self[25].y ) * 0.35616438356164 ) ] |cuttedCurve:"bottom-left":self[4]:roundness:0.29 }}
+rC 	{{ [ self[16].x + thickness * opticThickness * horzContrast , self[3].y - ( self[3].y - self[5].y ) * 0.57446808510638 ] |curve:"both":"bottom-right":self[3]:roundness }}
+rC 	{{ [ 399 * width - 80 + thickness , ( self[15].y - ( self[15].y - self[25].y ) * 0.35616438356164 ) ] |curve:"reverse":"bottom-left":self[4]:roundness:0.1 }}
 l 	-2 0
 l 	0 -2
 l	2 0
-rC 	{{ [ self[22].x + thickness * 1.1 * horzContrast , ( self[8].y - self[10].y ) * 0.53950953678474 ] |cuttedCurve:"bottom-right":self[8]:roundness:0.29 }}
-rC 	{{ [ 287 * width , 0 ] |cuttedCurve:"bottom-left":self[9]:roundness }}
+rC 	{{ [ self[22].x + thickness * opticThickness * horzContrast , ( self[8].y - self[10].y ) * 0.53950953678474 ] |curve:"reverse":"bottom-right":self[8]:roundness:0.05 }}
+rC 	{{ [ 287 * width , 0 ] |curve:"both":"bottom-left":self[9]:roundness }}
 L 	0 0
 Z
-M 	{{ thickness * 1.1 * horzContrast }} {{ self[2].y - thickness * vertContrast }}
+M 	{{ thickness * opticThickness * horzContrast }} {{ self[2].y - thickness * vertContrast * contrast }}
 L	{{ self[13].x }} {{ capHeight * 0.56590257879656 * crossbar }}
 L 	{{ 274 * width }} {{ self[14].y }}
-rC 	{{ [ 400 * width , self[17].y - ( self[17].y - self[15].y ) * 0.5 ] |cuttedCurve:"top-left":self[15]:roundness }}
-rC 	{{ [ 264 * width , self[13].y ] |cuttedCurve:"top-right":self[16]:roundness }}
+rC 	{{ [ 400 * width , self[17].y - ( self[17].y - self[15].y ) * 0.5 ] |curve:"both":"top-left":self[15]:roundness }}
+rC 	{{ [ 264 * width , self[13].y ] |curve:"both":"top-right":self[16]:roundness }}
 L 	{{ self[17].x - ( self[17].x - self[13].x ) * 0.56549520766773 }} {{ self[13].y }}
 Z
-M 	{{ thickness * 1.1 * horzContrast }} {{ thickness * vertContrast }} 
+M 	{{ thickness * opticThickness * horzContrast }} {{ thickness * vertContrast * contrast }} 
 L 	{{ 294 * width }} {{ self[20].y }}
-rC 	{{ [ 425 * width , self[23].y - ( self[23].y - self[21].y ) * 0.5 ] |cuttedCurve:"bottom-right":self[21]:roundness }}
-rC 	{{ [ 285 * width , self[25].y ] |cuttedCurve:"top-right":self[22]:roundness }}
+rC 	{{ [ 425 * width , self[23].y - ( self[23].y - self[21].y ) * 0.5 ] |curve:"both":"bottom-right":self[21]:roundness }}
+rC 	{{ [ 285 * width , self[25].y ] |curve:"both":"top-right":self[22]:roundness }}
 L 	{{ self[23].x * 0.67058823529412 }} {{ self[25].y }}
-L 	{{ self[20].x }} {{ self[15].y - thickness * 0.85 * vertContrast }}
+L 	{{ self[20].x }} {{ self[15].y - thickness * 0.85 * vertContrast * contrast }}
 Z

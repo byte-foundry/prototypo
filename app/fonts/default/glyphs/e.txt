@@ -1,0 +1,16 @@
+M 	0 {{ xHeight / 2 }}
+rC 	{{ [ self[12].x + ( self[13].x - self[12].x ) / 2 , xHeight + opticRoundness ] |curve:"both":"top-right":self[1]:roundness }}
+rC 	{{ [ self[13].x + thickness *(71/80) , xHeight * (298/465) * crossbar ] |curve:"reverse":"top-left":self[2]:roundness:0.08 }} // ##TODO find an alternative way to -(80 + thickness) to fit hairlines style
+l 	0 {{ -thickness * (62/80) * contrast }}
+L 	{{ self[1].x + thickness * (77/80) }} {{ self[4].y }}
+rC 	{{ [ self[5].x + ( self[7].x - self[5].x ) / 2 , -opticRoundness + thickness * (70/80) * contrast ] |curve:"both":"bottom-left":self[5]:roundness }}
+rC 	{{ [ self[8].x - thickness * (28/80) * contrast , self[8].y + thickness * (57/80) * contrast ] |curve:"reverse":"top-left":self[6]:roundness:0.2 }}
+L 	{{ width * 359 + thickness - 80 }} {{ xHeight * (30/465) }}
+rC 	{{ [ self[6].x , -opticRoundness ] |curve:"reverse":"top-right":self[8]:roundness:-0.2 }}
+rC 	{{ [ self[1].x , self[1].y ] |curve:"both":"top-left":self[9]:roundness }}
+Z
+M 	{{ self[1].x + thickness * (77/80) }} {{ self[3].y }}
+L 	{{ width * 357 }} {{ self[12].y }}
+rC 	{{ [ self[2].x , self[2].y - thickness * (72/80) * contrast ] |curve:"reverse":"top-right":self[13]:roundness:-0.1 }}
+rC 	{{ [ self[12].x , self[3].y ] |curve:"reverse":"top-left":self[14]:roundness:0.1 }}
+Z
