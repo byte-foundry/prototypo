@@ -4,9 +4,6 @@ L 	{{ thickness }} {{ self[2].y }}
 L 	{{ self[3].x }} 0
 L 	{{ self[1].x }} 0
 Z
-M 	{{ 41 |between:self[3].x:80:self[2].x:0 }} {{ xHeight + ( 80 / 465 ) * xHeight }}
-l 0 0
-Z
 
-before 8: top-dot()
-before 4: serif-bottom-right()
+add top-dot at {{ [ self[2].x + ( self[3].x - self[2].x ) / 2 , xHeight + ( 80 / 465 ) * xHeight ] }}
+//before 4: serif-bottom-right()

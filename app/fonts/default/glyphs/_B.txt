@@ -9,7 +9,7 @@ l	2 0
 rC 	{{ [ self[22].x + thickness * opticThickness * horzContrast , ( self[8].y - self[10].y ) * 0.53950953678474 ] |curve:"reverse":"bottom-right":self[8]:roundness:0.05 }}
 rC 	{{ [ 287 * width , 0 ] |curve:"both":"bottom-left":self[9]:roundness }}
 L 	0 0
-Z 
+Z
 M 	{{ thickness * opticThickness * horzContrast }} {{ self[2].y - thickness * vertContrast * contrast }}
 L	{{ self[13].x }} {{ capHeight * 0.56590257879656 * crossbar }}
 L 	{{ 274 * width }} {{ self[14].y }}

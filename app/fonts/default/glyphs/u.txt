@@ -13,4 +13,4 @@ rC 	{{ [ self[1].x , xHeight * (182/465) ] |curve:"both":"top-left":self[11]:rou
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 
-before 8: serif-bottom-right()
+//before 8: serif-bottom-right()

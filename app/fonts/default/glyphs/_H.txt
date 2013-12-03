@@ -6,15 +6,15 @@ L	{{ 446 * width }} {{ self[4].y }}
 L	{{ self[5].x }} {{ self[2].y }}
 l	{{ thickness }} 0
 L	{{ self[7].x }} 0
-l 	-{{ thickness }} 0
-L 	{{ self[9].x }} {{ self[4].y - ( thickness * 0.85 ) }}
-L  	{{ self[3].x }} {{ self[10].y }}
+l 	{{ -thickness /2 }} 0
+l 	{{ -thickness /2 }} 0
+L 	{{ self[10].x }} {{ self[4].y - ( thickness * 0.85 ) }}
+L  	{{ self[3].x }} {{ self[11].y }}
 L 	{{ self[3].x }} 0
+l	{{ -thickness /2 }} 0
 L 	0 0
 Z
 
-before 8: serif-bottom-right()
-before 12: serif-bottom-right()
-// before 9: serif-test()
-
-// cut self[8] at y: ... to self8.end
+replace from self[8] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[10] at {{ "start" }} with serif-bottom-right
+replace from self[11] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[9] at {{ "end" }} with inverted serif-bottom-left
+replace from self[13] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[14] at {{ "start" }} with serif-bottom-right

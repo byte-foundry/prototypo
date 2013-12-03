@@ -77,7 +77,7 @@ angular.module('prototypoApp')
 		// todo: find out why
 		$scope.$watch('appValues.glyphCodes[0]', function() {
 			if ( $scope.currentFont ) {
-				$scope.processedGlyph = $scope.currentFont.process( $scope.appValues.glyphCodes );
+				$scope.processedGlyph = $scope.currentFont.process( $scope.appValues.glyphCodes[0] );
 			}
 		});
 

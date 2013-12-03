@@ -1,5 +1,6 @@
 'use strict';
 
+// DEPRECATED, use filter "on" instead (in Point.js)
 describe('segmentUtils', function() {
 
 	beforeEach(module('prototypo.segmentUtils', 'prototypo.Segment', 'prototypo.Point'));
