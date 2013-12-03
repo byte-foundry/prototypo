@@ -16,10 +16,8 @@ describe('Component', function() {
 					$interpolate('c 10 20 30 40 50 60'),
 					$interpolate('z')
 				]},
-				context: {
-					params: {},
-					args: {}
-				},
+				params: {},
+				args: {},
 				segments: [],
 				components: []
 			};
@@ -84,10 +82,8 @@ describe('Component', function() {
 					$interpolate('c 10 20 30 40 50 60'),
 					$interpolate('z')
 				]},
-				context: {
-					params: {},
-					args: {}
-				},
+				params: {},
+				args: {},
 				segments: [],
 				components: []
 			};
@@ -127,10 +123,8 @@ describe('Component', function() {
 					$interpolate('l {{ -width   }} 0'),
 					$interpolate('z')
 				]},
-				context: {
-					params: { width: 50 },
-					args: {}
-				},
+				params: { width: 50 },
+				args: {},
 				segments: [],
 				components: []
 			};
@@ -166,10 +160,8 @@ describe('Component', function() {
 					$interpolate('l {{ -width   }} 0'),
 					$interpolate('z')
 				]},
-				context: {
-					params: { width: 40 },
-					args: { width: 50 }
-				},
+				params: { width: 40 },
+				args: { width: 50 },
 				segments: [],
 				components: []
 			};
@@ -207,10 +199,8 @@ describe('Component', function() {
 						$interpolate('l -50   0'),
 						$interpolate('z')
 					]},
-					context: {
-						params: {},
-						args: {}
-					},
+					params: {},
+					args: {},
 					segments: [],
 					components: []
 				};
@@ -240,11 +230,8 @@ describe('Component', function() {
 						$interpolate('L {{ self[0].x }} {{ self[0].y }}'),
 						$interpolate('z')
 					]},
-					context: {
-						params: {},
-						args: {},
-						self: s
-					},
+					params: {},
+					args: {},
 					segments: s,
 					components: []
 				};
@@ -280,10 +267,8 @@ describe('Component', function() {
 						$interpolate('l -50   0'),
 						$interpolate('z')
 					]},
-					context: {
-						params: {},
-						args: {}
-					},
+					params: {},
+					args: {},
 					segments: [],
 					components: []
 				};
@@ -303,10 +288,8 @@ describe('Component', function() {
 						$interpolate('l -50   0'),
 						$interpolate('z')
 					]},
-					context: {
-						params: {},
-						args: {}
-					},
+					params: {},
+					args: {},
 					segments: [],
 					components: []
 				};
@@ -335,10 +318,8 @@ describe('Component', function() {
 						$interpolate('l -50 0'),
 						$interpolate('z')
 					]},
-					context: {
-						params: {},
-						args: {}
-					},
+					params: {},
+					args: {},
 					segments: [],
 					components: []
 				},
@@ -352,10 +333,8 @@ describe('Component', function() {
 						$interpolate('l -50 0'),
 						$interpolate('z')
 					]},
-					context: {
-						params: {},
-						args: {}
-					},
+					params: {},
+					args: {},
 					segments: [],
 					components: []
 				};
@@ -367,9 +346,7 @@ describe('Component', function() {
 			var origin,
 				c = {
 					type: 'add',
-					context: {
-						argsFn: function( flatCtx ) { return {width: flatCtx.width}; }
-					},
+					argsFn: function( flatCtx ) { return {width: flatCtx.width}; },
 					atFn: function() { return [2,3]; }
 				};
 
@@ -377,7 +354,7 @@ describe('Component', function() {
 				origin = o;
 			});
 
-			expect( c.context.args.width ).toBe( 50 );
+			expect( c.args.width ).toBe( 50 );
 			expect( origin[0] ).toBe( 2 );
 			expect( origin[1] ).toBe( 3 );
 		}));
@@ -395,9 +372,7 @@ describe('Component', function() {
 				},
 				sc = {
 					type: 'replace',
-					context: {
-						argsFn: function( flatCtx ) { return {width: flatCtx.width}; }
-					},
+					argsFn: function( flatCtx ) { return {width: flatCtx.width}; },
 					fromId: 0,
 					fromFn: function() { return [NaN,40]; },
 					toId: 1,
@@ -412,7 +387,7 @@ describe('Component', function() {
 				});
 			}).toThrow();
 
-			expect( sc.context.args.width ).toBe( 50 );
+			expect( sc.args.width ).toBe( 50 );
 
 			expect( sc.from[0] ).toBeNaN();
 			expect( sc.from[1] ).toBe( 40 );
@@ -444,9 +419,7 @@ describe('Component', function() {
 				sc = {
 					invert: true,
 					type: 'replace',
-					context: {
-						argsFn: function( flatCtx ) { return {width: flatCtx.width}; }
-					},
+					argsFn: function( flatCtx ) { return {width: flatCtx.width}; },
 					fromId: 0,
 					fromFn: function() { return [NaN,40]; },
 					toId: 1,
@@ -461,7 +434,7 @@ describe('Component', function() {
 				});
 			}).toThrow();
 
-			expect( sc.context.args.width ).toBe( 50 );
+			expect( sc.args.width ).toBe( 50 );
 
 			expect( sc.from[0] ).toBeNaN();
 			expect( sc.from[1] ).toBe( 40 );
@@ -503,7 +476,6 @@ describe('Component', function() {
 			it('closes the gap after a "replace from <cut> to <start>"', inject(function( Point, Segment, processSubcomponent ) {
 				var sc = {
 					type: 'replace',
-					context: {},
 					fromId: 3,
 					fromFn: function() { return {x: 40}; },
 					toId: 4,
@@ -525,7 +497,6 @@ describe('Component', function() {
 				var sc = {
 					invert: true,
 					type: 'replace',
-					context: {},
 					fromId: 2,
 					fromFn: function() { return 'end'; },
 					toId: 3,
@@ -546,7 +517,6 @@ describe('Component', function() {
 			it('can can cut the same segment twice', inject(function( Point, Segment, processSubcomponent ) {
 				var sc1 = {
 						type: 'replace',
-						context: {},
 						fromId: 3,
 						fromFn: function() { return {x: 40}; },
 						toId: 4,
@@ -557,7 +527,6 @@ describe('Component', function() {
 					sc2 = {
 						invert: true,
 						type: 'replace',
-						context: {},
 						fromId: 2,
 						fromFn: function() { return 'end'; },
 						toId: 3,

@@ -19,6 +19,6 @@ rC 	{{ [ self[1].x + thickness , self[4].y - thickness * ( 80 / 112 ) ] |cuttedC
 L  	{{ self[18].x }} 0
 Z
 
-cut {{ self[9] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right
-cut {{ self[14] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right
-cut {{ self[19] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right
+replace from self[9] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[9] at {{ "end" }} with serif-bottom-right
+replace from self[14] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[14] at {{ "end" }} with serif-bottom-right
+replace from self[19] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[19] at {{ "end" }} with serif-bottom-right

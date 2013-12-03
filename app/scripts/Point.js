@@ -82,8 +82,8 @@ angular.module('prototypo.Point', [])
 	})
 
 	.filter('translate', function( translatePoint ) {
-		return function( point ) {
-			return translatePoint( JSON.parse( point ) ).toString();
+		return function( point, x, y ) {
+			return translatePoint( point, x, y );
 		};
 	})
 
@@ -126,8 +126,8 @@ angular.module('prototypo.Point', [])
 					}
 
 					return !isNaN(point.coords[0]) ?
-						Point( point.coords[0], ( point.coords[0] - origin.coords[0] ) / vector[0] * vector[1] + origin.coords[1] ):
-						Point( ( point.coords[1] - origin.coords[1] ) / vector[1] * vector[0] + origin.coords[0], point.coords[1] );
+						Point( point.coords[0], ( point.coords[0] - origin.x ) / vector[0] * vector[1] + origin.y ):
+						Point( ( point.coords[1] - origin.y ) / vector[1] * vector[0] + origin.x, point.coords[1] );
 
 				// point on a curve
 				} else {
@@ -142,7 +142,7 @@ angular.module('prototypo.Point', [])
 	})
 
 	.filter('on', function( pointOn ) {
-		return function( point ) {
-			return pointOn( JSON.parse( point ) ).toString();
+		return function( point, args ) {
+			return pointOn( point, args );
 		};
 	});

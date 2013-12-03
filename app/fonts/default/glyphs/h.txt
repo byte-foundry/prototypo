@@ -13,5 +13,5 @@ L 	{{ thickness }} 0
 L 	0 0
 Z
 
-cut {{ self[7] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right
-cut {{ self[12] }} from {{ {y: serifHeight + serifHeight * serifCurve} }} to end, add serif-bottom-right
+replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[7] at {{ "end" }} with serif-bottom-right
+replace from self[12] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[12] at {{ "end" }} with serif-bottom-right

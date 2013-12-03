@@ -24,8 +24,11 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 			args.glyphCodes.forEach(function( code ) {
 				try {
 					this.glyphs[ code ] = Glyph( 'glyph ' + code, formulaLib, args.controls );
-				} catch (e) {
-					throw 'Glyph ' + code + ' cannot be initialized:\n' + e;
+				} catch ( e ) {
+					if ( e.name === 'init component' ) {
+						e.message = 'Glyph ' + code + ' cannot be initialized:\n' + e.message;
+					}
+					throw e;
 				}
 			}, this);
 		}

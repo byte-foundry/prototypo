@@ -13,16 +13,10 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			this.segments = new Array( this.formula.length );
 
 			for ( var i in args ) {
-				if ( i !== 'argsFn' ) {
-					this[i] = args[i];
-				}
+				this[i] = args[i];
 			}
 
-			this.context = {
-				params: params,
-				argsFn: args.argsFn,
-				self: this.segments
-			};
+			this.params = params;
 
 			this.components = this.formula.components.map(function( subcomponentArgs ) {
 				return Component( subcomponentArgs, formulaLib, params );
@@ -49,7 +43,8 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				checkNaN = function( segment ) {
 					return isNaN( segment.x ) || isNaN( segment.y );
 				},
-				filteredSegments;
+				filteredSegments,
+				err;
 
 			do {
 				_glyph = [];
@@ -59,7 +54,9 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 
 			// trhow an error after 10 unsuccessful attempts
 			if ( hasNaN ) {
-				throw 'Component segments cannot be initialized:\n' +
+				err = new Error();
+				err.name = 'init component';
+				err.message = 'Component segments cannot be initialized:\n' +
 					component.segments.map(function( segment, i ) { return i + ': ' + segment.toSVG(); }).join('\n');
 			}
 
@@ -103,7 +100,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 							subcomponent.fromId--;
 						} while (
 							subcomponent.fromId > 0 &&
-							!( component.segments[ component.fromId ] instanceof Segment )
+							!( component.segments[ subcomponent.fromId ] instanceof Segment )
 						);
 						subcomponent.fromFn = function() { return 'end'; };
 					}
@@ -117,7 +114,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 							subcomponent.toId++;
 						} while (
 							subcomponent.toId < component.segments.length &&
-							!( component.segments[ component.toId ] instanceof Segment )
+							!( component.segments[ subcomponent.toId ] instanceof Segment )
 						);
 						subcomponent.toFn = function() { return 'start'; };
 					}
@@ -167,18 +164,18 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				component.segments[0].end.y = component.segments[0].y = curPos.y;
 			}
 
-			component.flatContext = flattenContext( component.context );
+			flattenContext( component );
 
 			/* process segments */
-			component.formula.segments.forEach(function( segmentFormula, i ) {
+			component.formula.segments.forEach(function( segmentFn, i ) {
 				// only process non-empty segments
-				if ( segmentFormula ) {
+				if ( segmentFn ) {
 					if ( component.segments[i] === undefined ) {
-						component.segments[i] = Segment( segmentFormula( component.flatContext ), curPos );
+						component.segments[i] = Segment( segmentFn( component.flatContext ), curPos );
 
 					// reuse existing segments
 					} else {
-						component.segments[i].update( segmentFormula( component.flatContext ) );
+						component.segments[i].update( segmentFn( component.flatContext ) );
 						component.segments[i].absolutize( curPos );
 					}
 				}
@@ -202,8 +199,8 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			var origin;
 
 			// the args of the subcomponents have to be recalculated according to the parent context
-			if ( subcomponent.context.argsFn ) {
-				subcomponent.context.args = subcomponent.context.argsFn( component.flatContext );
+			if ( subcomponent.argsFn ) {
+				subcomponent.args = subcomponent.argsFn( component.flatContext );
 			}
 
 			/* determine subcomponent origin and cut segments if needed */
@@ -280,20 +277,18 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 
 	// we wouldn't need this function if we had harmony proxies
 	.factory('flattenContext', function() {
-		return function( context ) {
-			var flatCtx = {},
-				i;
+		return function( component ) {
+			var i;
+			component.flatContext = {};
 
-			for ( i in context.params ) {
-				flatCtx[i] = context.params[i];
+			for ( i in component.params ) {
+				component.flatContext[i] = component.params[i];
 			}
 
-			for ( i in context.args ) {
-				flatCtx[i] = context.args[i];
+			for ( i in component.args ) {
+				component.flatContext[i] = component.args[i];
 			}
 
-			flatCtx.self = context.self;
-
-			return flatCtx;
+			component.flatContext.self = component.segments;
 		};
 	});
