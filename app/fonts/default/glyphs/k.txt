@@ -1,0 +1,6 @@
+M 	0 0
+L 	{{ self[1].x }} {{ ascenderHeight }}
+L 	{{ self[2].x + thickness }} {{ self[2].y }}
+L 	{{ self[3].x }} 0
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
