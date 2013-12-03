@@ -58,6 +58,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				err.name = 'init component';
 				err.message = 'Component segments cannot be initialized:\n' +
 					component.segments.map(function( segment, i ) { return i + ': ' + segment.toSVG(); }).join('\n');
+				throw err;
 			}
 
 			// save numbers of iterations for later
