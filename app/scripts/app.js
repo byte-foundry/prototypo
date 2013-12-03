@@ -62,6 +62,10 @@ angular.module('prototypoApp', [
       case "top-left" :
         var c1 = Point( ( end.x - start.x ) * roundness - correction * ( end.x - start.x ) * roundness , 0 );
         var c2 = Point( - correction * ( end.x - start.x ) * roundness , ( start.y - end.y ) * roundness );
+        if(extrem == "reverse") { 
+        var c1 = Point( ( end.x - start.x ) * roundness - correction * ( end.x - start.x ) * roundness , 0 );
+        var c2 = Point( - correction * ( end.x - start.x ) * roundness , ( start.y - end.y ) * roundness );
+        }
         break;
       case "top-right" :
         var c1 = Point( correction * ( end.y - start.y ) * roundness , ( end.y - start.y ) * roundness );

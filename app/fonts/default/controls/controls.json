@@ -92,7 +92,7 @@
 	{
 		"name": "ascender",
 		"label": "Ascender",
-		"min": 0,
+		"min": 50,
 		"max": 300,
 		"step": 1,
 		"init": 0,
@@ -101,10 +101,10 @@
 	{
 		"name": "descender",
 		"label": "Descender",
-		"min": 0,
-		"max": 20,
+		"min": -450,
+		"max": -50,
 		"step": 1,
-		"init": 0
+		"init": -210
 	},
 	{
 		"name": "crossbar",

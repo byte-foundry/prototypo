@@ -2,9 +2,11 @@
 	<g transform="matrix(1 0 0 -1 0 800) translate(400,50) scale({{controlValues.zoom}}) skewX({{controlValues.slant}})">
 		<path glyph-contour fill="black"></path>
 		<g ng-repeat="segment in processedGlyph.segments">
+			
 			<g bindonce ng-repeat="cp in segment.$debug">
 				<path segment-endpoint bo-attr bo-attr-fill="cp.color" bo-attr-stroke="cp.color" index="{{$index}}" coords="{{ cp.start.toString() }} {{cp.end.toString()}}"></path>
 			</g>
+			
 		</g>
 			</g>
 </svg>
