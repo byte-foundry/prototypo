@@ -1,0 +1,9 @@
+M 	0 0
+L 	0 {{ xHeight }}
+L 	{{ thickness }} {{ self[2].y }}
+L 	{{ self[3].x }} 0
+L 	{{ self[1].x }} 0
+Z
+
+add top-dot at {{ [ self[2].x + ( self[3].x - self[2].x ) / 2 , xHeight + ( 80 / 465 ) * xHeight ] }}
+//before 4: serif-bottom-right()

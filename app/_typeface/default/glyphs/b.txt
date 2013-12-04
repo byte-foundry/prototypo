@@ -1,0 +1,17 @@
+M 	0 0
+L 	0 {{ ascenderHeight }}
+l 	{{ thickness }} 0
+L 	{{ self[3].x }} {{ thickness <= 80 ? self[14].y + 2.175 * thickness : xHeight * ( 407 / 465 ) }}
+rC 	{{ 0.20689655172414 * ( self[5].x - self[4].x ) }} {{ 0.57971014492754 * ( self[5].y - self[4].y ) }} {{ - 0.44137931034483 * ( self[5].x - self[4].x ) }} 0 {{ self[13].x + 5 }} {{ xHeight + opticRoundness }}  											////////////////// à calculer xx +5
+rC 	{{ [ self[12].x + thickness , xHeight * ( 233 / 465 ) ] |curve:"both":"bottom-right":self[5]:roundness }}
+rC 	{{ [ self[15].x - 3 , -10 ] |curve:"both":"bottom-left":self[6]:roundness }} 					////////////////// à calculer xx -5
+rC 	0 0 0 0 {{ self[1].x + thickness }} {{ xHeight * ( 50 / 565 ) }}
+L 	{{ self[1].x + thickness * ( 77 / 80 ) }} 0
+L 	0 0
+Z
+M 	{{ 364 * width }} {{ self[6].y }}
+rC 	{{ [ self[12].x - ( self[12].x - self[14].x ) / 2 , self[5].y - thickness * ( 71 / 80 ) * contrast] |curve:"both":"top-right":self[12]:roundness }}
+rC 	{{ [ self[1].x + thickness * ( 77 / 80 ) , self[12].y ] |curve:"both":"bottom-right":self[13]:roundness }}
+rC 	{{ [ self[13].x , self[7].y + thickness * ( 73 / 80 ) * contrast ] |curve:"both":"bottom-left":self[14]:roundness }}
+rC 	{{ [ self[12].x , self[12].y ] |curve:"both":"bottom-right":self[15]:roundness }}
+Z

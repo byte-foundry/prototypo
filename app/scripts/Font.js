@@ -23,12 +23,12 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 			this.glyphs = {};
 			args.glyphCodes.forEach(function( code ) {
 				try {
-					this.glyphs[ code ] = Glyph( 'glyph ' + code, {
-						controls: args.controls,
-						formulaLib: formulaLib
-					});
-				} catch (e) {
-					throw 'Glyph ' + code + ' cannot be initialized:\n' + e;
+					this.glyphs[ code ] = Glyph( 'glyph ' + code, formulaLib, args.controls );
+				} catch ( e ) {
+					if ( e.name === 'init component' ) {
+						e.message = 'Glyph ' + code + ' cannot be initialized:\n' + e.message;
+					}
+					throw e;
 				}
 			}, this);
 		}

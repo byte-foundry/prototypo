@@ -1,0 +1,16 @@
+M 	0 {{ xHeight }}
+L 	{{ thickness }} {{ self[1].y }}
+L 	{{ self[2].x }} {{ xHeight * (182/465) }}
+rC 	{{ [ self[3].x + ( self[5].x - self[3].x ) / 2 , - opticRoundness + thickness * (63/80) * contrast ] |curve:"both":"top-right":self[3]:roundness }}
+rC 	{{ [ width * 315 , xHeight * (140/465) - 80 + thickness ] |curve:"both":"bottom-right":self[4]:roundness }}
+L 	{{ self[5].x }} {{ self[1].y }}
+l 	{{ thickness }} 0
+L 	{{ self[7].x }} 0
+l 	{{ - thickness * (76/80) }} 0
+L 	{{ self[9].x - thickness * (3/80) }} {{ xHeight * (50/465) }}
+rC 	{{ [ self[4].x , - opticRoundness ]  |curve:"both":"bottom-left":self[10]:roundness:0.2 }} // should be centered with self[1].x
+rC 	{{ [ self[1].x , xHeight * (182/465) ] |curve:"both":"top-left":self[11]:roundness }}
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
+
+//before 8: serif-bottom-right()
