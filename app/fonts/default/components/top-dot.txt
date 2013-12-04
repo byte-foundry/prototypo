@@ -1,4 +1,6 @@
-rc 	-{{self[2].x * roundness * 1.1 }} 0 0 -{{self[2].x * roundness * 1.1 }} {{ - ( thickness * 1.2 ) / 2 }} {{ ( thickness * 1.2 ) / 2 }}
-rc 	0 {{self[2].x * roundness * 1.1 }} -{{self[2].x * roundness * 1.1 }} 0 {{ ( thickness * 1.2 ) / 2 }} {{ ( thickness * 1.2 ) / 2 }}
-rc 	{{self[2].x * roundness * 1.1 }} 0 0 {{self[2].x * roundness * 1.1 }} {{ ( thickness * 1.2 ) / 2 }} {{ - ( thickness * 1.2 ) / 2 }}
-rc 	0 -{{self[2].x * roundness * 1.1 }} {{self[2].x * roundness * 1.1 }} 0 {{ - ( thickness * 1.2 ) / 2 }} {{ - ( thickness * 1.2 ) / 2 }}
+m 	0 0	
+rc 	-{{self[3].x * roundness * 1.1 }} 0 0 -{{self[3].x * roundness * 1.1 }} {{ - ( thickness * 1.2 ) / 2 }} {{ ( thickness * 1.2 ) / 2 }}
+rc 	0 {{self[3].x * roundness * 1.1 }} -{{self[3].x * roundness * 1.1 }} 0 {{ ( thickness * 1.2 ) / 2 }} {{ ( thickness * 1.2 ) / 2 }}
+rc 	{{self[3].x * roundness * 1.1 }} 0 0 {{self[3].x * roundness * 1.1 }} {{ ( thickness * 1.2 ) / 2 }} {{ - ( thickness * 1.2 ) / 2 }}
+rc 	0 -{{self[3].x * roundness * 1.1 }} {{self[3].x * roundness * 1.1 }} 0 {{ - ( thickness * 1.2 ) / 2 }} {{ - ( thickness * 1.2 ) / 2 }}
+Z
