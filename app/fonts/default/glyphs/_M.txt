@@ -14,5 +14,6 @@ L 	{{ self[12].x }} 0
 L 	{{ self[0].x }} 0
 Z
 
-replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[7] at {{ "end" }} with serif-bottom-right
+replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[9] at {{ "start" }} with serif-bottom-right
+replace from self[9] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[8] at {{ "end" }} with inverted serif-bottom-left
 replace from self[13] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[13] at {{ "end" }} with serif-bottom-right

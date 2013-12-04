@@ -2,14 +2,14 @@
 
 angular.module('prototypo.Segment', ['prototypo.Point'])
 	.factory('Segment', function( parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, invertSegment, getSegmentPoints ) {
-		function Segment( data, curPos ) {
+		function Segment( data, curPos, invert ) {
 			// new is optional
 			if ( !( this instanceof Segment ) ) {
-				return new Segment( data, curPos );
+				return new Segment( data, curPos, invert );
 			}
 
-			this.virtual = false;
 			this.controls = [];
+			this.invert = invert;
 			this.$debug = [];
 
 			parseUpdateSegment( this, data );
@@ -17,7 +17,7 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			this.absolutize( curPos );
 
 			// make all points of the glyph available for debug
-			// this can be done only after the first parseUpdate and absolutize
+			// this can beirtual done only after the first parseUpdate and absolutize
 		}
 
 		Segment.prototype = {
@@ -210,35 +210,6 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 		};
 	})
 
-	.factory('segmentToSVG', function() {
-		return function( segment ) {
-			var string = [ segment.command ];
-
-			if ( segment.controls[0] ) {
-				string.push( segment.controls[0].toString() );
-			}
-			if ( segment.controls[1] ) {
-				string.push( segment.controls[1].toString() );
-			}
-
-			switch( segment.command.toUpperCase() ) {
-			case 'H':
-				string.push( Math.round( segment.end.x ) );
-				break;
-			case 'V':
-				string.push( Math.round( segment.end.y ) );
-				break;
-			case 'Z':
-				break;
-			default:
-				string.push( segment.end.toString() );
-				break;
-			}
-
-			return string.join(' ');
-		};
-	})
-
 	// cut a segment given an x or y coordinate and move the segment end accordingly
 	.factory('cutSegment', function( pointOn, moveSegmentEnd ) {
 		// this regexp is duplicated in Point.js
@@ -318,13 +289,49 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 		};
 	})
 
+	.factory('segmentToSVG', function() {
+		return function( segment ) {
+			var string = [],
+				end = segment.invert ? segment.start : segment.end;
+
+			if ( segment.controls[0] ) {
+				string.push( segment.controls[0].toString() );
+			}
+			if ( segment.controls[1] ) {
+				string[ segment.invert ? 'unshift' : 'push' ]( segment.controls[1].toString() );
+			}
+
+			string.unshift( segment.command );
+
+			switch( segment.command.toUpperCase() ) {
+			case 'H':
+				string.push( Math.round( end.x ) );
+				break;
+			case 'V':
+				string.push( Math.round( end.y ) );
+				break;
+			case 'Z':
+				break;
+			default:
+				string.push( end.toString() );
+				break;
+			}
+
+			return string.join(' ');
+		};
+	})
+
 	.factory('getSegmentPoints', function() {
 		return function( segment ) {
+			var end;
+
 			if ( !segment.$debug.length ) {
-				if ( segment.end ) {
+				end = segment.invert ? segment.start : segment.end;
+
+				if ( end ) {
 					segment.$debug.push({
 						color: 'blue',
-						end: segment.end
+						end: end
 					});
 				}
 				if ( segment.controls[0] ) {
