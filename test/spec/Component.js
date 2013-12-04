@@ -71,7 +71,7 @@ describe('Component', function() {
 			expect( c.segments[4].end.y ).toBe( 10 + 60 );
 		}));
 
-		it('interpolates and invert all the points of a component', inject(function( Point, $interpolate, processComponent ) {
+		it('interpolates all the points of an inverted component', inject(function( Point, $interpolate, processComponent ) {
 			var c = {
 				invert: true,
 				formula: {segments: [
@@ -97,19 +97,19 @@ describe('Component', function() {
 			expect( c.segments[1].end.x ).toBe( -10 );
 			expect( c.segments[1].end.y ).toBe( -10 );
 
-			expect( c.segments[2].start.x ).toBe( 10 );
-			expect( c.segments[2].start.y ).toBe( 10 );
-			expect( c.segments[2].end.x ).toBe( -10 );
-			expect( c.segments[2].end.y ).toBe( -10 );
+			expect( c.segments[2].start.x ).toBe( -10 );
+			expect( c.segments[2].start.y ).toBe( -10 );
+			expect( c.segments[2].end.x ).toBe( 10 );
+			expect( c.segments[2].end.y ).toBe( 10 );
 
-			expect( c.segments[4].start.x ).toBe( 10 + 50 );
-			expect( c.segments[4].start.y ).toBe( 10 + 60 );
-			expect( c.segments[4].controls[0].x ).toBe( 10 + 30 );
-			expect( c.segments[4].controls[0].y ).toBe( 10 + 40 );
-			expect( c.segments[4].controls[1].x ).toBe( 10 + 10 );
-			expect( c.segments[4].controls[1].y ).toBe( 10 + 20 );
-			expect( c.segments[4].end.x ).toBe( 10 );
-			expect( c.segments[4].end.y ).toBe( 10 );
+			expect( c.segments[4].start.x ).toBe( 10 );
+			expect( c.segments[4].start.y ).toBe( 10 );
+			expect( c.segments[4].controls[0].x ).toBe( 10 + 10 );
+			expect( c.segments[4].controls[0].y ).toBe( 10 + 20 );
+			expect( c.segments[4].controls[1].x ).toBe( 10 + 30 );
+			expect( c.segments[4].controls[1].y ).toBe( 10 + 40 );
+			expect( c.segments[4].end.x ).toBe( 10 + 50 );
+			expect( c.segments[4].end.y ).toBe( 10 + 60 );
 		}));
 
 		it('interpolates params in segment Formulas', inject(function( Point, $interpolate, processComponent ) {
@@ -403,6 +403,8 @@ describe('Component', function() {
 
 			expect( origin.x ).toBe( 40 );
 			expect( origin.y ).toBe( 40 );
+			expect( origin.to.x ).toBe( 10 );
+			expect( origin.to.y ).toBe( 10 );
 		}));
 
 		it('determines the origin, args, "to" and "from" of an inverted "replace" subcomponent', inject(function( Point, Segment, $interpolate, processSubcomponent ) {
@@ -450,6 +452,8 @@ describe('Component', function() {
 
 			expect( origin.x ).toBe( 10 );
 			expect( origin.y ).toBe( 10 );
+			expect( origin.to.x ).toBe( 40 );
+			expect( origin.to.y ).toBe( 40 );
 		}));
 
 		describe('gap closing', function() {
@@ -473,7 +477,7 @@ describe('Component', function() {
 				};
 			}));
 
-			it('closes the gap after a "replace from <cut> to <start>"', inject(function( Point, Segment, processSubcomponent ) {
+			/*it('closes the gap after a "replace from <cut> to <start>"', inject(function( Point, Segment, processSubcomponent ) {
 				var sc = {
 					type: 'replace',
 					fromId: 3,
@@ -512,9 +516,9 @@ describe('Component', function() {
 
 				expect( c.segments[2].end.x ).toBe( 0 );
 				expect( c.segments[2].end.y ).toBe( 80 );
-			}));
+			}));*/
 
-			it('can can cut the same segment twice', inject(function( Point, Segment, processSubcomponent ) {
+			it('can cut the same segment twice', inject(function( Point, Segment, processSubcomponent ) {
 				var sc1 = {
 						type: 'replace',
 						fromId: 3,
@@ -522,7 +526,7 @@ describe('Component', function() {
 						toId: 4,
 						toFn: function() { return 'start'; },
 						firstSegment: Segment('L 40 80', Point(0,0)),
-						lastSegment: Segment('L 50 80', Point(0,0))
+						lastSegment: Segment('L 50 50', Point(0,0))
 					},
 					sc2 = {
 						invert: true,
@@ -531,8 +535,8 @@ describe('Component', function() {
 						fromFn: function() { return 'end'; },
 						toId: 3,
 						toFn: function() { return {x: 10}; },
-						firstSegment: Segment('L 10 80', Point(0,80)),
-						lastSegment: Segment('L 10 50', Point(10,80))
+						firstSegment: Segment('L 10 50', Point(0,0)),
+						lastSegment: Segment('L 10 50', Point(0,0))
 					};
 
 				processSubcomponent( c, sc1, function(){} );
@@ -542,13 +546,65 @@ describe('Component', function() {
 				expect( c.segments[3].start.y ).toBe( 50 );
 
 				expect( c.segments[2].end.x ).toBe( 0 );
-				expect( c.segments[2].end.y ).toBe( 80 );
+				expect( c.segments[2].end.y ).toBe( 50 );
 
 				expect( c.segments[3].end.x ).toBe( 40 );
 				expect( c.segments[3].end.y ).toBe( 50 );
 
 				expect( c.segments[4].start.x ).toBe( 50 );
-				expect( c.segments[4].start.y ).toBe( 80 );
+				expect( c.segments[4].start.y ).toBe( 50 );
+			}));
+
+			it('allows two subcomponents to meet at the same point', inject(function( Point, Segment, initComponent ) {
+				var p = Point(0,0),
+					sc1 = {
+						type: 'replace',
+						fromId: 2,
+						fromFn: function() { return {y: 30}; },
+						toId: 4,
+						toFn: function() { return 'start'; },
+						segments: [
+							undefined,
+							Segment('L 25 50', Point(0,0))
+						],
+						components: [],
+						formula: {segments:[]}
+					},
+					sc2 = {
+						type: 'replace',
+						fromId: 3,
+						fromFn: function() { return 'end'; },
+						toId: 5,
+						toFn: function() { return {y: 30}; },
+						segments: [
+							undefined,
+							Segment('L 50 30', Point(0,0))
+						],
+						components: [],
+						formula: {segments:[]}
+					},
+					c = {
+						segments: [
+							undefined,
+							Segment('m 0 0', p),
+							Segment('l 0 50', p),
+							Segment('l 25 0', p),
+							Segment('l 25 0', p),
+							Segment('l 0 -50', p),
+							Segment('l -50 0', p),
+							Segment('z', p)
+						],
+						formula: {segments:[]},
+						flatContext: {},
+						components: [
+							sc1,
+							sc2
+						]
+					};
+
+				initComponent(c, Point(0,0));
+
+				expect( sc1.lastSegment.next ).toBe( sc2.firstSegment );
 			}));
 		});
 	});

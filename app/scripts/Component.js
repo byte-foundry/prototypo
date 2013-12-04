@@ -52,7 +52,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				hasNaN = component.segments.some(checkNaN);
 			} while ( ++i < 10 && hasNaN );
 
-			// trhow an error after 10 unsuccessful attempts
+			// throw an error after 10 unsuccessful attempts
 			if ( hasNaN ) {
 				err = new Error();
 				err.name = 'init component';
@@ -90,7 +90,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				component.lastSegment = filteredSegments[ filteredSegments.length -1 ];
 			}
 
-			component.components.forEach(function( subcomponent ) {
+			component.components.forEach(function( subcomponent, i ) {
 				if ( subcomponent.type === 'replace' ) {
 					// from segment[n].start <=> from segment[n-1].end
 					subcomponent.from = subcomponent.fromFn( component.flatContext );
@@ -133,7 +133,13 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 						subcomponent.lastSegment.next = component.firstSegment;
 						component.firstSegment = subcomponent.firstSegment;
 					} else {
-						component.segments[ subcomponent.fromId ].next = subcomponent.firstSegment;
+						// avoid this subcomponents to be skipped because of the previous subcomponent
+						if ( i > 0 && component.components[ i -1 ].lastSegment.next === component.segments[ subcomponent.fromId ].next ) {
+							component.components[ i -1 ].lastSegment.next = subcomponent.firstSegment;
+
+						} else {
+							component.segments[ subcomponent.fromId ].next = subcomponent.firstSegment;
+						}
 					}
 
 					if ( subcomponent.toId > component.segments.length ) {
@@ -147,7 +153,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 		};
 	})
 
-	.factory('processComponent', function( Segment, Point, processSubcomponent, flattenContext, invertSegment ) {
+	.factory('processComponent', function( Segment, Point, processSubcomponent, flattenContext ) {
 		return function processComponent( component, _curPos, recurse ) {
 			var curPos = Point( _curPos );
 
@@ -172,7 +178,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				// only process non-empty segments
 				if ( segmentFn ) {
 					if ( component.segments[i] === undefined ) {
-						component.segments[i] = Segment( segmentFn( component.flatContext ), curPos );
+						component.segments[i] = Segment( segmentFn( component.flatContext ), curPos, component.invert );
 
 					// reuse existing segments
 					} else {
@@ -188,14 +194,11 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 					processSubcomponent( component, subcomponent, processComponent );
 				});
 			}
-
-			if ( component.invert ) {
-				component.segments.forEach(invertSegment);
-			}
 		};
 	})
 
-	.factory('processSubcomponent', function( cutSegment, moveSegmentEnd ) {
+	// TODO: rename in "determineOrigin"
+	.factory('processSubcomponent', function( cutSegment ) {
 		return function( component, subcomponent, processor ) {
 			var origin;
 
@@ -209,6 +212,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				origin = subcomponent.atFn( component.flatContext );
 
 			} else if ( subcomponent.type === 'replace' ) {
+				// TODO: no need to keep a ref to this from var (and to bellow)
 				subcomponent.from = subcomponent.fromFn( component.flatContext );
 				// neither 'start' nor 'end'
 				if ( typeof subcomponent.from !== 'string' ) {
@@ -224,55 +228,13 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				origin = subcomponent.invert ?
 					component.segments[ subcomponent.toId ].start:
 					component.segments[ subcomponent.fromId ].end;
+				origin.to = subcomponent.invert ?
+					component.segments[ subcomponent.fromId ].end:
+					component.segments[ subcomponent.toId ].start;
 			}
 
 			// init or process subcomponent (depending on the caller)
 			processor( subcomponent, origin );
-
-			/* close the gaps between component and subcomponent ends */
-			if ( subcomponent.type === 'replace' && !subcomponent.invert ) {
-				/*if ( subcomponent.from === 'end' ) {
-					// do nothing
-				}
-				if ( subcomponent.from === 'start' ) {
-					// we shouldn't be there!
-				}
-				if ( typeof subcomponent.from !== 'string' ) {
-					// do nothing
-				}
-
-				if ( subcomponent.to === 'end' ) {
-					// we shouldn't be there
-				}*/
-				if ( subcomponent.to === 'start' ) {
-					moveSegmentEnd( component.segments[ subcomponent.toId ], 'start', subcomponent.lastSegment.end );
-				}
-				if ( typeof subcomponent.to !== 'string' ) {
-					moveSegmentEnd( subcomponent.lastSegment, 'end', component.segments[ subcomponent.toId ].start );
-				}
-			}
-
-			if ( subcomponent.type === 'replace' && subcomponent.invert ) {
-				if ( subcomponent.from === 'end' ) {
-					moveSegmentEnd( component.segments[ subcomponent.fromId ], 'end', subcomponent.firstSegment.start );
-				}
-				/*if ( subcomponent.from === 'start' ) {
-					// we shouldn't be there!
-				}*/
-				if ( typeof subcomponent.from !== 'string' ) {
-					moveSegmentEnd( subcomponent.firstSegment, 'start', component.segments[ subcomponent.fromId ].end );
-				}
-
-				/*if ( subcomponent.to === 'end' ) {
-					// we shouldn't be there
-				}
-				if ( subcomponent.to === 'start' ) {
-					// do nothing
-				}
-				if ( typeof subcomponent.to !== 'string' ) {
-					// do nothing
-				}*/
-			}
 		};
 	})
 
