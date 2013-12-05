@@ -10,4 +10,4 @@ M 	{{ 207 |between:self[2].x:247:self[1].x:167 }} {{ xHeight + ( 80 / 465 ) * xH
 l 	0 0
 Z
 
-before 10: top-dot()
+//before 10: top-dot()

@@ -4,3 +4,11 @@ L 	{{ self[2].x + thickness }} {{ self[2].y }}
 L 	{{ self[3].x }} 0
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
+M 	{{ { y: xHeight * (240/465) * crossbar } | on:self[4] }}
+L 	{{ width * 265 + thickness - 80 }} {{ xHeight }}
+L 	{{ self[8].x + thickness * contrast }} {{ self[8].y }}
+L 	{{ { y: self[7].y + 2 * ( thickness ) * contrast } | on:self[8] | translate:{x: thickness * contrast} }}
+L 	{{ self[12].x + thickness * (102/80) }} 0
+L 	{{ width * 305 + thickness - 80 }} 0
+L 	{{ self[7].x }} {{ self[7].y }}
+Z

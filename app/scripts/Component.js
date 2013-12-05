@@ -165,6 +165,9 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 					y: curPos.y,
 					toSVG: function() { return ''; }
 				};
+				if ( _curPos.to ) {
+					component.segments[0].to = _curPos.to;
+				}
 
 			} else {
 				component.segments[0].end.x = component.segments[0].x = curPos.x;

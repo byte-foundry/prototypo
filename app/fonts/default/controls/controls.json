@@ -11,7 +11,7 @@
 		"name": "serifHeight",
 		"label": "Serif Height",
 		"min": 0,
-		"max": 50,
+		"max": 100,
 		"step": 1,
 		"init": 0
 	},
@@ -210,6 +210,14 @@
 		"max": 20,
 		"step": 1,
 		"init": 10
+	},
+	{
+		"name": "axe",
+		"label": "axe",
+		"min": -50,
+		"max": 50,
+		"step": 0.1,
+		"init": 0
 	},
 	{
 		"name": "zoom",
