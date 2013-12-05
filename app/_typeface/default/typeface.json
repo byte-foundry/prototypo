@@ -24,12 +24,14 @@
 		"o",
 		"p",
 		"q",
+		"r",
 		"u",
 		"v",
 		"dot"
 	],
 	"components": [
 		"serif-top-right",
+		"serif-top-left",
 		"serif-bottom-right",
 		"serif-bottom-left",
 		"serif-test",

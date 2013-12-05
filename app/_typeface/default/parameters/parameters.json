@@ -1,4 +1,4 @@
-{"controls": [
+{"parameters": [
 	{
 		"name": "serifWidth",
 		"label": "Serif Width",
@@ -95,7 +95,7 @@
 		"min": 50,
 		"max": 300,
 		"step": 1,
-		"init": 0,
+		"init": 50,
 		"onchange": "ascenderHeight = xHeight + ascender"
 	},
 	{
@@ -192,8 +192,7 @@
 		"min": 0,
 		"max": 2,
 		"step": 0.01,
-		"init": 0.55,
-		"onchange": "opticRoundness = roundness > 0.7 ? roundness : 10"
+		"init": 0.55
 	},
 	{
 		"name": "opticThickness",
@@ -226,5 +225,13 @@
 		"max": 2,
 		"step": 0.01,
 		"init": 1
+	},
+	{
+		"name": "capHeight",
+		"calculate": "xHeight + capDelta"
+	},
+	{
+		"name": "ascenderHeight",
+		"calculate": "xHeight + ascender"
 	}
 ]}

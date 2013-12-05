@@ -1,0 +1,5 @@
+M 	{{ thickness }} {{ xHeight }}
+L 	{{ self[1].x }} {{ xHeight * (378/465) }}
+rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) * (148/218) , xHeight + opticRoundness ] |curve:"reverse":"top-right":self[2]:roundness:-0.29 }}
+rC 	{{ [ width * 298 , xHeight ] |curve:"reverse":"top-left":self[3]:roundness:0.29 }}
+L 	{{ self[4].x - thickness * (39/80) }} {{ self[4].y - thickness * (75/80) }}

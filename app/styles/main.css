@@ -1,9 +1,9 @@
 /* Will be compiled down to a single stylesheet with your sass files */
 
-.controls {
+.parameters {
 	position: absolute;
 }
-.controls label {
+.parameters label {
 	display: block;
 }
 
