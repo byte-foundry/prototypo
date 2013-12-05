@@ -1,15 +1,15 @@
 M 	0 0
 L 	{{ self[0].x }} {{ capHeight }}
-l 	{{ thickness * 1.1 * 1.20 }} 0
+l 	{{ thickness * opticThickness * 1.20 }} 0
 L 	{{ self[14].x + ( self[7].x - self[14].x ) / 2 }} {{ thickness * 1.275 * contrast }}
 L 	{{ self[8].x }} {{ self[2].y }}
-L 	{{ self[8].x + thickness * 1.1 }} {{ self[2].y }}
+L 	{{ self[8].x + thickness * opticThickness }} {{ self[2].y }}
 L 	{{ self[6].x }} 0
 L 	{{ 575 * width }} 0
 L 	{{ self[8].x }} {{ self[12].y }}
 L 	{{ self[4].x + thickness / 2 * contrast }} 0
 L 	{{ self[10].x - thickness }} 0
-L 	{{ self[0].x + thickness * 1.1 * contrast }} {{ self[2].y - thickness * 2.1625 * contrast }}
+L 	{{ self[0].x + thickness * opticThickness * contrast }} {{ self[2].y - thickness * 2.1625 * contrast }}
 L 	{{ self[12].x }} 0
 L 	{{ self[0].x }} 0
 Z
