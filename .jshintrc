@@ -21,6 +21,7 @@
   "smarttabs": true,
   "globals": {
     "angular": false,
+    "_": false,
     "describe": false,
     "beforeEach": false,
     "it": false,

@@ -1,7 +1,6 @@
 'use strict';
 
 angular.module('prototypoApp', [
-		'lodash',
 		'ngRoute',
 		'pasvaz.bindonce',
 
@@ -12,8 +11,8 @@ angular.module('prototypoApp', [
 		'prototypo.Glyph',
 		'prototypo.Font',
 
-		'prototypo.typefaceLoader',
-		'prototypo.valuesLoader',
+		'prototypo.Typeface',
+		'prototypo.Values',
 		'prototypo.glyphFilters',
 
 		'prototypo.glyphDirective',

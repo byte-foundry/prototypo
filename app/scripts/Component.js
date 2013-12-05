@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', 'prototypo.segmentUtils'])
+angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 	.factory('Component', function( initComponent, processComponent ) {
 
 		function Component( args, formulaLib, params ) {

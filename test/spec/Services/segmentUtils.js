@@ -1,7 +1,8 @@
 'use strict';
 
 // DEPRECATED, use filter "on" instead (in Point.js)
-describe('segmentUtils', function() {
+// TODO: move them to /test/spec/Segment.js
+/*describe('segmentUtils', function() {
 
 	beforeEach(module('prototypo.segmentUtils', 'prototypo.Segment', 'prototypo.Point'));
 
@@ -111,6 +112,6 @@ describe('segmentUtils', function() {
 			y: 60,
 			on: [p1,p2]
 		}).toString()).toBe('30 40');
-	});*/
+	});
 
-});
+});*/

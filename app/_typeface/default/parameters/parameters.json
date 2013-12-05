@@ -220,7 +220,7 @@
 		"init": 1
 	},
 	{
-		"name": "capheight",
+		"name": "capHeight",
 		"calculate": "xHeight + capDelta"
 	},
 	{

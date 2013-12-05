@@ -1,30 +1,32 @@
 'use strict';
 
-angular.module('prototypoApp', ['ngRoute', 'prototypo.Typeface'])
-	.controller('MainCtrl', function( $scope, $routeParams, $parse, $q, _, Typeface, FontValues, AppValues, Font ) {
-		Typeface.get({ typeface: $routeParams.typeface })
+angular.module('prototypoApp')
+	.controller('MainCtrl', function( $scope, $routeParams, $parse, $q, Typeface, FontValues, AppValues, Font ) {
+		var calculated = [];
+		function updateCalculatedParams( values ) {
+			calculated.forEach(function( param ) {
+				if ( $scope.fontValues ) {
+					$scope.fontValues[ param.name ] = param.calculate( values );
+				}
+			});
+		}
+
+		Typeface.get( $routeParams.typeface )
 			/*
 			 * 1. Download typeface data
 			 */
 			.then(function( data ) {
-				var calculated = [];
 				// filter params that are calculated and have no UI
-				data.parameters.forEach(function( param, i ) {
+				data.parameters = data.parameters.filter(function( param ) {
 					if ( param.calculate ) {
 						param.calculate = $parse( param.calculate );
-						calculated.push(param);
-						delete data.parameters[i];
+						calculated.push( param );
+						return false;
 					}
+					return true;
 				});
-				// keep them updated
-				$scope.$watch('fontValues', function( values ) {
-					calculated.forEach(function( param ) {
-						if ( $scope.fontValues ) {
-							$scope.fontValues[ param.name ] = param.calculate( values );
-						}
-					});
-				// deep watch
-				}, true);
+				// keep calculated params updated
+				$scope.$watch('fontValues',	updateCalculatedParams,	true);
 
 				$scope.typeface = data;
 
@@ -49,7 +51,8 @@ angular.module('prototypoApp', ['ngRoute', 'prototypo.Typeface'])
 
 					// persist changes
 					FontValues.save({
-						parameters: $scope.fontValues
+						typeface: $routeParams.typeface,
+						values: $scope.fontValues
 					});
 				// deep watch
 				}, true);
@@ -58,6 +61,7 @@ angular.module('prototypoApp', ['ngRoute', 'prototypo.Typeface'])
 					$scope.typeface.parameters.forEach(function( param ) {
 						$scope.fontValues[ param.name ] = param.init;
 					});
+					updateCalculatedParams( $scope.fontValues );
 				};
 
 				promises.push( FontValues.get({ typeface: $routeParams.typeface })
@@ -68,9 +72,7 @@ angular.module('prototypoApp', ['ngRoute', 'prototypo.Typeface'])
 							$scope.resetFontValues();
 
 						} else {
-							data.parameters.forEach(function( param ) {
-								$scope.fontValues[ param.name ] = param.init;
-							});
+							$scope.fontValues = data;
 						}
 
 						// we can prepare the font
@@ -87,7 +89,10 @@ angular.module('prototypoApp', ['ngRoute', 'prototypo.Typeface'])
 				 */
 				$scope.$watch('appValues', function() {
 					// persist changes
-					AppValues.save( $scope.appValues );
+					AppValues.save({
+						typeface: $routeParams.typeface,
+						values: $scope.appValues
+					});
 				}, true);
 
 				$scope.resetAppValues = function() {
@@ -112,10 +117,11 @@ angular.module('prototypoApp', ['ngRoute', 'prototypo.Typeface'])
 			 * 3. Watch font and app values to process the glyphs
 			 */
 			.then(function() {
-				$scope.$watch(['fontValues','appValues.glyphName'], function() {
-					console.log('watcher, will process');
+				function updateGlyph() {
 					$scope.glyph = $scope.font.process( $scope.appValues.glyphName );
-				// deep watch
-				}, true);
+				}
+
+				$scope.$watch('fontValues', updateGlyph, true);
+				$scope.$watch('appValues.glyphName', updateGlyph);
 			});
 	});

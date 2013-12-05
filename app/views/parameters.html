@@ -1,14 +1,12 @@
-<input type="button" value="Reset" ng-click="resetControlValues()" />
+<input type="button" value="Reset" ng-click="resetFontValues()" />
 
-<label bindonce ng-repeat="control in currentFontUI.controls">
-	<span bo-text="control.label"></span>
+<label bindonce ng-repeat="param in typeface.parameters">
+	<span bo-text="param.label"></span>
 	<input type="range"
-		ng-model="controlValues[control.name]"
+		ng-model="fontValues[param.name]"
 		bo-attr
-		bo-attr-min="control.min"
-		bo-attr-max="control.max"
-		bo-attr-step="control.step"
-		zob-init="controlValues[control.name] = control.init"
-		ng-change="control.onchange && deferChange(control.onchange)"
+		bo-attr-min="param.min"
+		bo-attr-max="param.max"
+		bo-attr-step="param.step"
 	/>
 </label>

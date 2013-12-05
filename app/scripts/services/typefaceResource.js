@@ -40,7 +40,7 @@ angular.module('prototypo.Typeface', ['ngResource'])
 	})
 
 	// This is the simili-resource used in the app
-	.factory('Typeface', function( _, $q, Typefaces, Glyphs, Components, Parameters ) {
+	.factory('Typeface', function( $q, Typefaces, Glyphs, Components, Parameters ) {
 		return { get: function( typefaceName ) {
 			var typeface;
 
