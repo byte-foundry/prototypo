@@ -250,8 +250,8 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 				dy;
 
 			if ( segment.relativeControls ) {
-				dx = newCoords.x - endPoint.x;
-				dy = newCoords.y - endPoint.y;
+				dx = newCoords.coords[0] - endPoint.coords[0];
+				dy = newCoords.coords[1] - endPoint.coords[1];
 
 				if ( endPoint === segment.end && segment.controls[1] !== undefined ) {
 					segment.controls[1].coords[0] += dx;

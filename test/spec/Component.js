@@ -545,7 +545,7 @@ describe('Component', function() {
 				expect( c.segments[3].start.x ).toBe( 10 );
 				expect( c.segments[3].start.y ).toBe( 50 );
 
-				expect( c.segments[2].end.x ).toBe( 0 );
+				expect( c.segments[2].end.x ).toBe( 10 );
 				expect( c.segments[2].end.y ).toBe( 50 );
 
 				expect( c.segments[3].end.x ).toBe( 40 );
@@ -605,6 +605,45 @@ describe('Component', function() {
 				initComponent(c, Point(0,0));
 
 				expect( sc1.lastSegment.next ).toBe( sc2.firstSegment );
+			}));
+
+			it('preserves the coordinates of the end point of an inverted segment', inject(function( Point, Segment, initComponent ) {
+				var p = Point(0,0),
+					sc1 = {
+						invert: true,
+						type: 'replace',
+						fromId: 3,
+						fromFn: function() { return {x: 25}; },
+						toId: 4,
+						toFn: function() { return {y: 30}; },
+						segments: [
+							undefined,
+							Segment('L 25 40', Point(50,30))
+						],
+						components: [],
+						formula: {segments:[]}
+					},
+					c = {
+						segments: [
+							undefined,
+							Segment('m 0 0', p),
+							Segment('l 0 50', p),
+							Segment('l 50 0', p),
+							Segment('l 0 -50', p),
+							Segment('l -50 0', p),
+							Segment('z', p)
+						],
+						formula: {segments:[]},
+						flatContext: {},
+						components: [
+							sc1
+						]
+					};
+
+				initComponent(c, Point(0,0));
+
+				expect( c.segments[3].end.x ).toBe( 25 );
+				expect( c.segments[3].end.y ).toBe( 40 );
 			}));
 		});
 	});

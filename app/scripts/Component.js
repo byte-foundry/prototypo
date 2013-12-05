@@ -201,7 +201,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 	})
 
 	// TODO: rename in "determineOrigin"
-	.factory('processSubcomponent', function( cutSegment ) {
+	.factory('processSubcomponent', function( cutSegment, moveSegmentEnd ) {
 		return function( component, subcomponent, processor ) {
 			var origin;
 
@@ -238,6 +238,12 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 
 			// init or process subcomponent (depending on the caller)
 			processor( subcomponent, origin );
+
+			// the last point of an inverted segment would be ignored when it gets inverted
+			if ( subcomponent.invert ) {
+				// so move the last point of the previous segment
+				moveSegmentEnd( component.segments[ subcomponent.fromId ], 'end', subcomponent.firstSegment.end );
+			}
 		};
 	})
 
