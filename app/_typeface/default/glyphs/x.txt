@@ -1,0 +1,15 @@
+M 	{{ width * 157 }} {{ xHeight * (240/465) }}
+L 	{{ width * 13 }} {{ xHeight }}
+l 	{{ thickness * (89/80) }} 0
+L 	{{ self[1].x + ( self[7].x - self[1].x ) / 2 }} {{ self[1].y + thickness * (42/80) }}
+L 	{{ width * 319 }} {{ self[2].y }}
+l 	{{ thickness * (88/80) }} 0
+L 	{{ self[1].x + thickness * (94/80) }} {{ self[1].y }}
+L 	{{ self[9].x + thickness * (91/80) }} 0
+L 	{{ width * 329 }} 0
+L 	{{ self[1].x + ( self[7].x - self[1].x ) / 2 }} {{ self[1].y - thickness * (44/80) }}
+L 	{{ self[12].x + thickness * (91/80) }} 0
+L 	0 0
+L 	{{ self[1].x }} {{ self[1].y }}
+
+replace from self[8] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[9] at {{ {x: self[9].x + thickness /2 } }} with serif-bottom-right {{ { angle: self[8].angle } }}

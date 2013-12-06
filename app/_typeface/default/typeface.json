@@ -5,6 +5,8 @@
 	"order": [
 		"_A",
 		"_B",
+		"_D",
+		"_E",
 		"_H",
 		"_M",
 		"a",
@@ -29,12 +31,16 @@
 		"t",
 		"u",
 		"v",
+		"x",
+		"z",
 		"dot"
 	],
 	"components": [
 		"serif-top-right",
 		"serif-top-left",
 		"serif-bottom-right",
+		"serif-bottom-right-vert",
+		"serif-top-left-vert",
 		"serif-bottom-left",
 		"serif-test",
 		"top-dot"

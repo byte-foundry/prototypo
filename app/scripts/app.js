@@ -47,6 +47,22 @@ angular.module('prototypoApp', [
 		};
 	})
 
+	.filter( 'translateControl', function () {
+		return function ( segment, index, angle ) {
+			
+			var coords = segment.split(' ');
+			var delta = Math.sin( angle ) * coords[1];
+			console.log(angle, coords[1], delta, +coords[index] + delta);
+			coords[index] = +coords[index] + delta * -1; // -1 ?
+			
+			coords[index + 2] = coords[index + 2] - delta;
+
+			// coords[index + 4] = +coords[index + 4] + delta;
+
+			return coords.join();
+		}
+	})
+
 	.filter( 'curve', function ( Point ) {
 		return function ( coords, extrem, direction, start, roundness, correction ) {
 			if( !correction ) {

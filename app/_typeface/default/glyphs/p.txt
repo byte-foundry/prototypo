@@ -1,8 +1,8 @@
 M 	{{ thickness * (77/80) }} {{ xHeight }}
 L 	{{ thickness }} {{ xHeight * (397/465) }}
-rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) * (143/365) + axe , xHeight + opticRoundness ] |curve:"reverse":"top-right":self[2]:roundness:-0.29 }}
+rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) * (143/365) , xHeight + opticRoundness ] |curve:"reverse":"top-right":self[2]:roundness:-0.29 }}
 rC 	{{ [ self[15].x + thickness , xHeight / 2 ] |curve:"both":"bottom-right":self[3]:roundness }}
-rC 	{{ [ self[3].x - 2 * axe , - opticRoundness ] |curve:"both":"bottom-left":self[4]:roundness }}
+rC 	{{ [ self[3].x , - opticRoundness ] |curve:"both":"bottom-left":self[4]:roundness }}
 rC 	{{ [ self[2].x , xHeight * (54/465) ] |curve:"reverse":"top-left":self[5]:roundness:0.29 }}
 L 	{{ self[6].x }} {{ descender }}
 L 	0 {{ self[7].y }}
@@ -16,6 +16,6 @@ rC 	{{ [ width * 364 , self[13].y ] |curve:"both":"top-left":self[14]:roundness 
 rC 	{{ [ self[12].x , self[12].y ] |curve:"both":"bottom-left":self[15]:roundness }}
 Z
 
-replace from self[7] at {{ {y: self[7].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness /2 } }} with serif-bottom-right
-replace from self[9] at {{ {y: self[8].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness /2 } }} with inverted serif-bottom-left
+//replace from self[7] at {{ {y: self[7].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness /2 } }} with serif-bottom-right
+//replace from self[9] at {{ {y: self[8].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness /2 } }} with inverted serif-bottom-left
 

@@ -6,8 +6,5 @@ L 	0 {{ self[4].y + thickness * (62/80) * contrast }}
 rC 	{{ [ self[1].x , self[3].y ] |curve:"both":"bottom-right":self[5]:roundness }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
-M 	{{ 207 |between:self[2].x:247:self[1].x:167 }} {{ xHeight + ( 80 / 465 ) * xHeight }}
-l 	0 0
-Z
 
-//before 10: top-dot()
+add top-dot at {{ [ self[1].x + ( self[2].x - self[1].x ) / 2 , xHeight + ( 80 / 465 ) * xHeight ] }}
