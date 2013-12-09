@@ -1,4 +1,4 @@
-M 	0 {{ capHeight / 2 |log:"cap" }}
+M 	0 {{ capHeight / 2 }}
 rC 	{{ [ self[1].x + ( self[3].x - self[1].x ) * (327/607) , capHeight + opticRoundness ] | curve:"both":"top-right":self[1]:roundness }} //
 rC 	{{ [ width * 607 + ( thickness-80 ) , capHeight * (552/698) ] | curve:"reverse":"top-left":self[2]:roundness:0.29 }}
 L 	{{ self[3].x - thickness * (89/80) * contrast }} {{ self[3].y - thickness * (25/80) * contrast }}
@@ -11,7 +11,7 @@ L 	{{ self[9].x - width * 92 }} {{ self[9].y }}
 L 	{{ self[10].x }} {{ self[10].y + thickness * (73/80) * contrast }}
 L 	{{ self[9].x + thickness }} {{ self[11].y }}
 L 	{{ self[12].x }} 0
-L 	{{ self[13].x - thickness * (70/80) }} {{ self[13].y + thickness * (9/80) }}
+L 	{{ self[13].x - thickness * (70/80) }} {{ self[13].y + capHeight * (9/698) }}
 L 	{{ self[14].x }} {{ self[14].y + capHeight * (66/698) }}
 rC 	{{ [ self[7].x , -opticRoundness ] | curve:"reverse":"top-right":self[15]:roundness:-0.29 }}
 rC 	{{ [ self[1].x , self[1].y ] | curve:"both":"top-left":self[16]:roundness }}
