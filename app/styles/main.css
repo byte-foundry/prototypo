@@ -8,7 +8,7 @@ body,
 }
 
 body {
-	font-family: "Helvetica", "Arial", "Liberation Sans", sans-serif;
+	font-family: "Courrier", "Liberation Mono", sans-serif;
 	color: #111;
 }
 
@@ -25,14 +25,31 @@ body {
 }
 
 .paramspanel {
+	background-color: #555;
+}
+
+.paramstab-menu li {
 	background-color: #F0F0F0;
+
+	text-align: center;
+}
+.paramstab-menu li.selected {
+	background-color: red;
+}
+
+.paramstab {
 	padding: 1rem;
+	display: none;
+}
+.paramstab.selected {
+	display: block;
 }
 
 .paramctrl {
 	margin-top: 1.4rem;
 
 	font-size: 1.2rem;
+	color: white;
 }
 
 .paramctrl:before {
@@ -50,8 +67,9 @@ body {
 	border-radius: 1rem;
 }
 
-.no-radius {
-	border-radius: 0;
+.paramspanel .dummy {
+	display: block !important;
+	border-radius: 0 !important;
 }
 
 .paramctrl-gutter {

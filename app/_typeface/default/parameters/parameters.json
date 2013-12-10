@@ -1,245 +1,270 @@
 {"parameters": [
 	{
-		"name": "serifWidth",
-		"label": "Serif Width",
-		"min": 0,
-		"max": 100,
-		"step": 1,
-		"init": 0
+		"tab": true,
+		"label": "Func",
+		"icon": "...",
+		"parameters": [
+			{
+				"name": "xHeight",
+				"label": "x Height",
+				"min": 200,
+				"max": 600,
+				"step": 1,
+				"init": 465
+			},
+			{
+				"name": "capDelta",
+				"label": "Capital Height",
+				"min": 0,
+				"max": 400,
+				"step": 1,
+				"init": 233,
+				"onchange": "capHeight = xHeight + capDelta"
+			},
+			{
+				"name": "ascender",
+				"label": "Ascender",
+				"min": 50,
+				"max": 500,
+				"step": 1,
+				"init": 250,
+				"onchange": "ascenderHeight = xHeight + ascender"
+			},
+			{
+				"name": "descender",
+				"label": "Descender",
+				"min": -450,
+				"max": -50,
+				"step": 1,
+				"init": -210
+			},
+			{
+				"name": "crossbar",
+				"label": "Crossbar",
+				"min": 0.8,
+				"max": 1.1,
+				"step": 0.001,
+				"init": 1
+			},
+			{
+				"name": "width",
+				"label": "Width",
+				"min": 0.5,
+				"max": 2,
+				"step": 0.01,
+				"init": 1
+			}
+		]
 	},
 	{
-		"name": "serifHeight",
-		"label": "Serif Height",
-		"min": 0,
-		"max": 100,
-		"step": 1,
-		"init": 0
+		"tab": true,
+		"label": "Style",
+		"icon": "...",
+		"parameters": [
+			{
+				"name": "thickness",
+				"label": "Thickness",
+				"min": 10,
+				"max": 200,
+				"step": 1,
+				"init": 80
+			},
+			{
+				"name": "slant",
+				"label": "Slant",
+				"min": -5,
+				"max": 8,
+				"step": 0.2,
+				"init": 0
+			},
+			{
+				"name": "vertContrast",
+				"label": "Vertical Contrast",
+				"min": 0.1,
+				"max": 1,
+				"step": 0.01,
+				"init": 1
+			},
+			{
+				"name": "horzContrast",
+				"label": "horizontal Contrast",
+				"min": 0.1,
+				"max": 1,
+				"step": 0.01,
+				"init": 1
+			},
+			{
+				"name": "contrast",
+				"label": "Contrast",
+				"min": 0.1,
+				"max": 1,
+				"step": 0.01,
+				"init": 1
+			},
+			{
+				"name": "breakPath",
+				"label": "Break Path",
+				"min": 0,
+				"max": 20,
+				"step": 1,
+				"init": 0
+			},
+			{
+				"name": "counter",
+				"label": "Counter",
+				"min": 0,
+				"max": 20,
+				"step": 1,
+				"init": 0
+			},
+			{
+				"name": "inktrap",
+				"label": "Inktrap",
+				"min": 0,
+				"max": 20,
+				"step": 1,
+				"init": 0
+			},
+			{
+				"name": "roundness",
+				"label": "Roundness",
+				"min": 0,
+				"max": 2,
+				"step": 0.01,
+				"init": 0.65
+			},
+			{
+				"name": "opticThickness",
+				"label": "Optic thickness",
+				"min": 1,
+				"max": 2,
+				"step": 0.1,
+				"init": 1.1
+			},
+			{
+				"name": "opticRoundness",
+				"label": "Optic roundness",
+				"min": 0,
+				"max": 20,
+				"step": 1,
+				"init": 10
+			},
+			{
+				"name": "axe",
+				"label": "axe",
+				"min": -50,
+				"max": 50,
+				"step": 0.1,
+				"init": 0
+			},
+			{
+				"name": "zoom",
+				"label": "zoom",
+				"min": 0.1,
+				"max": 2,
+				"step": 0.01,
+				"init": 1
+			}
+		]
 	},
 	{
-		"name": "serifMedian",
-		"label": "Serif Median",
-		"min": -1,
-		"max": 2,
-		"step": 0.1,
-		"init": 0
+		"tab": true,
+		"label": "Serif",
+		"icon": "...",
+		"parameters": [
+			{
+				"name": "serifWidth",
+				"label": "Serif Width",
+				"min": 0,
+				"max": 100,
+				"step": 1,
+				"init": 0
+			},
+			{
+				"name": "serifHeight",
+				"label": "Serif Height",
+				"min": 0,
+				"max": 100,
+				"step": 1,
+				"init": 0
+			},
+			{
+				"name": "serifMedian",
+				"label": "Serif Median",
+				"min": -1,
+				"max": 2,
+				"step": 0.1,
+				"init": 0
+			},
+			{
+				"name": "serifCurve",
+				"label": "Serif Curve",
+				"min": 0,
+				"max": 3,
+				"step": 0.01,
+				"init": 0
+			},
+			{
+				"name": "serifSlant",
+				"label": "Serif Slant",
+				"min": 0,
+				"max": 50,
+				"step": 1,
+				"init": 0
+			},
+			{
+				"name": "serifRoundness",
+				"label": "Serif Curve Roundness",
+				"min": 0,
+				"max": 2,
+				"step": 0.01,
+				"init": 0.55
+			},
+			{
+				"name": "serifArc",
+				"label": "Serif Arc",
+				"min": -0.5,
+				"max": 0.5,
+				"step": 0.01,
+				"init": 0
+			},
+			{
+				"name": "serifTerminal",
+				"label": "Serif Terminal",
+				"min": -0.2,
+				"max": 1,
+				"step": 0.01,
+				"init": 0
+			},
+			{
+				"name": "serifTerminalCurve",
+				"label": "Serif Terminal Curve",
+				"min": 0,
+				"max": 1.5,
+				"step": 0.01,
+				"init": 0.55
+			},
+			{
+				"name": "serifSymmetry",
+				"label": "Serif Symmetry",
+				"min": 0,
+				"max": 1,
+				"step": 0.01,
+				"init": 0
+			}
+		]
 	},
 	{
-		"name": "serifCurve",
-		"label": "Serif Curve",
-		"min": 0,
-		"max": 3,
-		"step": 0.01,
-		"init": 0
-	},
-	{
-		"name": "serifSlant",
-		"label": "Serif Slant",
-		"min": 0,
-		"max": 50,
-		"step": 1,
-		"init": 0
-	},
-	{
-		"name": "serifRoundness",
-		"label": "Serif Curve Roundness",
-		"min": 0,
-		"max": 2,
-		"step": 0.01,
-		"init": 0.55
-	},
-	{
-		"name": "serifArc",
-		"label": "Serif Arc",
-		"min": -0.5,
-		"max": 0.5,
-		"step": 0.01,
-		"init": 0
-	},
-	{
-		"name": "serifTerminal",
-		"label": "Serif Terminal",
-		"min": -0.2,
-		"max": 1,
-		"step": 0.01,
-		"init": 0
-	},
-	{
-		"name": "serifTerminalCurve",
-		"label": "Serif Terminal Curve",
-		"min": 0,
-		"max": 1.5,
-		"step": 0.01,
-		"init": 0.55
-	},
-	{
-		"name": "serifSymmetry",
-		"label": "Serif Symmetry",
-		"min": 0,
-		"max": 1,
-		"step": 0.01,
-		"init": 0
-	},
-	{
-		"name": "xHeight",
-		"label": "x Height",
-		"min": 200,
-		"max": 600,
-		"step": 1,
-		"init": 465,
-		"onchange": "capHeight = xHeight + capDelta; ascenderHeight = xHeight + ascender"
-	},
-	{
-		"name": "capDelta",
-		"label": "Capital Height",
-		"min": 0,
-		"max": 400,
-		"step": 1,
-		"init": 233,
-		"onchange": "capHeight = xHeight + capDelta"
-	},
-	{
-		"name": "ascender",
-		"label": "Ascender",
-		"min": 50,
-		"max": 500,
-		"step": 1,
-		"init": 250,
-		"onchange": "ascenderHeight = xHeight + ascender"
-	},
-	{
-		"name": "descender",
-		"label": "Descender",
-		"min": -450,
-		"max": -50,
-		"step": 1,
-		"init": -210
-	},
-	{
-		"name": "crossbar",
-		"label": "Crossbar",
-		"min": 0.8,
-		"max": 1.1,
-		"step": 0.001,
-		"init": 1
-	},
-	{
-		"name": "width",
-		"label": "Width",
-		"min": 0.5,
-		"max": 2,
-		"step": 0.01,
-		"init": 1
-	},
-	{
-		"name": "thickness",
-		"label": "Thickness",
-		"min": 10,
-		"max": 200,
-		"step": 1,
-		"init": 80
-	},
-	{
-		"name": "slant",
-		"label": "Slant",
-		"min": -5,
-		"max": 8,
-		"step": 0.2,
-		"init": 0
-	},
-	{
-		"name": "vertContrast",
-		"label": "Vertical Contrast",
-		"min": 0.1,
-		"max": 1,
-		"step": 0.01,
-		"init": 1
-	},
-	{
-		"name": "horzContrast",
-		"label": "horizontal Contrast",
-		"min": 0.1,
-		"max": 1,
-		"step": 0.01,
-		"init": 1
-	},
-	{
-		"name": "contrast",
-		"label": "Contrast",
-		"min": 0.1,
-		"max": 1,
-		"step": 0.01,
-		"init": 1
-	},
-	{
-		"name": "breakPath",
-		"label": "Break Path",
-		"min": 0,
-		"max": 20,
-		"step": 1,
-		"init": 0
-	},
-	{
-		"name": "counter",
-		"label": "Counter",
-		"min": 0,
-		"max": 20,
-		"step": 1,
-		"init": 0
-	},
-	{
-		"name": "inktrap",
-		"label": "Inktrap",
-		"min": 0,
-		"max": 20,
-		"step": 1,
-		"init": 0
-	},
-	{
-		"name": "roundness",
-		"label": "Roundness",
-		"min": 0,
-		"max": 2,
-		"step": 0.01,
-		"init": 0.65
-	},
-	{
-		"name": "opticThickness",
-		"label": "Optic thickness",
-		"min": 1,
-		"max": 2,
-		"step": 0.1,
-		"init": 1.1
-	},
-	{
-		"name": "opticRoundness",
-		"label": "Optic roundness",
-		"min": 0,
-		"max": 20,
-		"step": 1,
-		"init": 10
-	},
-	{
-		"name": "axe",
-		"label": "axe",
-		"min": -50,
-		"max": 50,
-		"step": 0.1,
-		"init": 0
-	},
-	{
-		"name": "zoom",
-		"label": "zoom",
-		"min": 0.1,
-		"max": 2,
-		"step": 0.01,
-		"init": 1
-	},
-	{
-		"name": "capHeight",
-		"calculate": "xHeight + capDelta"
-	},
-	{
-		"name": "ascenderHeight",
-		"calculate": "xHeight + ascender"
+		"vars": true,
+		"parameters": [
+			{
+				"name": "capHeight",
+				"calculate": "xHeight + capDelta"
+			},
+			{
+				"name": "ascenderHeight",
+				"calculate": "xHeight + ascender"
+			}
+		]
 	}
 ]}

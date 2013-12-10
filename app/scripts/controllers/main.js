@@ -14,6 +14,9 @@ angular.module('prototypoApp')
 		// initial state
 		$scope.typeface = {};
 		$scope.fontValues = {};
+		$scope.appValues = {
+			paramTab: 0
+		};
 
 		Typeface.get( $routeParams.typeface )
 			/*
@@ -21,10 +24,12 @@ angular.module('prototypoApp')
 			 */
 			.then(function( data ) {
 				// filter params that are calculated and have no UI
-				data.parameters = data.parameters.filter(function( param ) {
-					if ( param.calculate ) {
-						param.calculate = $parse( param.calculate );
-						calculated.push( param );
+				data.parameters = data.parameters.filter(function( group ) {
+					if ( group.vars ) {
+						group.parameters.forEach(function( param ) {
+							param.calculate = $parse( param.calculate );
+							calculated.push( param );
+						});
 						return false;
 					}
 					return true;
@@ -62,8 +67,10 @@ angular.module('prototypoApp')
 				}, true);
 
 				$scope.resetFontValues = function() {
-					$scope.typeface.parameters.forEach(function( param ) {
-						$scope.fontValues[ param.name ] = param.init;
+					$scope.typeface.parameters.forEach(function( group ) {
+						group.parameters.forEach(function( param ) {
+							$scope.fontValues[ param.name ] = param.init;
+						});
 					});
 					updateCalculatedParams( $scope.fontValues );
 				};
@@ -100,6 +107,7 @@ angular.module('prototypoApp')
 
 				$scope.resetAppValues = function() {
 					$scope.appValues.glyphName = $scope.typeface.order[0];
+					$scope.appValues.paramTab = 0;
 				};
 
 				promises.push( AppValues.get({ typeface: $routeParams.typeface })
@@ -110,7 +118,7 @@ angular.module('prototypoApp')
 							$scope.resetAppValues();
 
 						} else {
-							$scope.appValues = data;
+							_.extend( $scope.appValues, data );
 						}
 					}));
 

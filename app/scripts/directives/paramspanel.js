@@ -66,6 +66,12 @@ angular.module('prototypo.paramspanelDirective', [])
 					subtree: true,
 					attributeFilter: ['value']
 				});
+
+				// tab selection
+				$element.on('click', '.paramstab-menuitem', function() {
+					$scope.appValues.paramTab = +$(this).data('index');
+					$scope.$digest();
+				});
 			}
 		};
 	});
