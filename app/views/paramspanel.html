@@ -1,0 +1,27 @@
+<div class="paramspanel">
+	<input type="button" value="Reset" ng-click="resetFontValues()" />
+
+	<select ng-model="appValues.glyphName" ng-options="value for value in typeface.order"></select>
+
+	<div class="paramctrl-gutter no-radius">
+		<div class="paramctrl-bg no-radius">
+			<div class="paramctrl-handle no-radius"></div>
+		</div>
+	</div>
+
+	<div class="paramctrl" bindonce ng-repeat="param in typeface.parameters"
+		value="{{ fontValues[param.name] }}"
+		bo-attr
+		bo-attr-data-name="param.name"
+		bo-attr-data-min="param.min"
+		bo-attr-data-max="param.max"
+		bo-attr-data-step="param.step"
+	>
+		<label bo-text="param.label"></label>
+		<div class="paramctrl-gutter">
+			<div class="paramctrl-bg">
+				<div class="paramctrl-handle"></div>
+			</div>
+		</div>
+	</div><!-- .parameter -->
+</div>

@@ -1,68 +1,73 @@
 <!doctype html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-    <!-- build:css styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
-    <!-- endbuild -->
-  </head>
-  <body ng-app="prototypoApp" class="{{bodyClass}}">
-    <!--[if lt IE 7]>
-      <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-    <![endif]-->
+<html class="no-js">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title></title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width">
+		<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+		<!-- build:css styles/main.css -->
+		<link rel="stylesheet" href="styles/knacss.css">
+		<link rel="stylesheet" href="styles/main.css">
+		<!-- endbuild -->
 
-    <!--[if lt IE 9]>
-      <script src="components/es5-shim/es5-shim.js"></script>
-      <script src="components/json3/lib/json3.min.js"></script>
-    <![endif]-->
+		<!-- web components // nope, Polymer is too alpha -->
+		<!-- <link rel="import" href="webcomponents/x-params-panel.html"> -->
+		<!-- end web components -->
+	</head>
+	<body ng-app="prototypoApp" class="{{bodyClass}}">
+		<!--[if lt IE 9]>
+			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+		<![endif]-->
 
-    <!-- Add your site or application content here -->
-    <div class="container" ng-view></div>
+		<!-- Add your site or application content here -->
+		<div class="main" ng-view></div>
 
-    <!-- build:js scripts/scripts.js -->
-    <script src="components/angular-latest/build/angular.js"></script>
-    <script src="components/angular-latest/build/angular-route.js"></script>
-    <script src="components/angular-latest/build/angular-resource.js"></script>
-    <script src="components/angular-latest/build/angular-sanitize.js"></script>
-    <script src="components/angular-bindonce/bindonce.js"></script>
-    <script src="components/lodash/lodash.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<!-- build:js scripts/scripts.js -->
+		<script src="components/angular-latest/build/angular.js"></script>
+		<script src="components/angular-latest/build/angular-route.js"></script>
+		<script src="components/angular-latest/build/angular-resource.js"></script>
+		<script src="components/angular-latest/build/angular-sanitize.js"></script>
+		<script src="components/angular-bindonce/bindonce.js"></script>
+		<script src="components/lodash/lodash.js"></script>
+		<!-- <script src="components/polymer/polymer.min.js"></script> // nope, Polymer is too alpha -->
 
-    <script src="scripts/services/glyphCache.js"></script>
-    <script src="scripts/services/typefaceResource.js"></script>
-    <script src="scripts/services/valuesResource.js"></script>
+		<script src="scripts/services/glyphCache.js"></script>
+		<script src="scripts/services/typefaceResource.js"></script>
+		<script src="scripts/services/valuesResource.js"></script>
 
-    <script src="scripts/Font.js"></script>
-    <script src="scripts/Glyph.js"></script>
-    <script src="scripts/Component.js"></script>
-    <script src="scripts/Formula.js"></script>
-    <script src="scripts/Segment.js"></script>
-    <script src="scripts/Point.js"></script>
+		<script src="scripts/Font.js"></script>
+		<script src="scripts/Glyph.js"></script>
+		<script src="scripts/Component.js"></script>
+		<script src="scripts/Formula.js"></script>
+		<script src="scripts/Segment.js"></script>
+		<script src="scripts/Point.js"></script>
 
-    <script src="scripts/filters/glyph.js"></script>
+		<script src="scripts/filters/glyph.js"></script>
 
-    <script src="scripts/directives/glyph.js"></script>
-    <script src="scripts/directives/contour.js"></script>
-    <script src="scripts/directives/endpoint.js"></script>
-    <script src="scripts/directives/controlpoint.js"></script>
+		<script src="scripts/directives/glyph.js"></script>
+		<script src="scripts/directives/contour.js"></script>
+		<script src="scripts/directives/endpoint.js"></script>
+		<script src="scripts/directives/controlpoint.js"></script>
+		<script src="scripts/directives/paramspanel.js"></script>
 
-    <script src="scripts/app.js"></script>
-    <script src="scripts/controllers/main.js"></script>
-    <!-- endbuild -->
+		<script src="scripts/app.js"></script>
+		<script src="scripts/controllers/main.js"></script>
+		<!-- endbuild -->
 
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-    <!--<script>
-      var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-      s.parentNode.insertBefore(g,s)}(document,'script'));
-    </script>-->
-  </body>
+		<!--<script>
+			// if we ever use Polymer again
+			Platform.performMicrotaskCheckpoint();
+		</script>-->
+
+		<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+		<!--<script>
+			var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+			g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+			s.parentNode.insertBefore(g,s)}(document,'script'));
+		</script>-->
+	</body>
 </html>

@@ -11,6 +11,10 @@ angular.module('prototypoApp')
 			});
 		}
 
+		// initial state
+		$scope.typeface = {};
+		$scope.fontValues = {};
+
 		Typeface.get( $routeParams.typeface )
 			/*
 			 * 1. Download typeface data
@@ -28,7 +32,7 @@ angular.module('prototypoApp')
 				// keep calculated params updated
 				$scope.$watch('fontValues',	updateCalculatedParams,	true);
 
-				$scope.typeface = data;
+				_.extend( $scope.typeface, data );
 
 				return data;
 			})
@@ -66,13 +70,12 @@ angular.module('prototypoApp')
 
 				promises.push( FontValues.get({ typeface: $routeParams.typeface })
 					.then(function( data ) {
-						$scope.fontValues = {};
 
 						if ( data === undefined ) {
 							$scope.resetFontValues();
 
 						} else {
-							$scope.fontValues = data;
+							_.extend( $scope.fontValues, data );
 						}
 
 						// we can prepare the font

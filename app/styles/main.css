@@ -1,25 +1,75 @@
 /* Will be compiled down to a single stylesheet with your sass files */
-
-.parameters {
-	position: absolute;
+html,
+body,
+.main,
+.main > div,
+.main > div > div {
+	height: 100%;
 }
-.parameters label {
+
+body {
+	font-family: "Helvetica", "Arial", "Liberation Sans", sans-serif;
+	color: #111;
+}
+
+.scene {
+	width: auto;
+	vertical-align: top;
+}
+.sidebar {
+	width: 300px;
+}
+/* without this, the params panel would be initialized w/ width @100% */
+.sidebar:only-child {
 	display: block;
 }
 
-.interface {
-	position:absolute;
-	right: 0;
+.paramspanel {
+	background-color: #F0F0F0;
+	padding: 1rem;
 }
-.slider {
-	background-color: lightgrey;
-	width: 200px;
-	position: relative;
-	height: 10px;
+
+.paramctrl {
+	margin-top: 1.4rem;
+
+	font-size: 1.2rem;
 }
-.handle {
-	width: 10px;
-	height: 10px;
-	background-color: red;
-	position: absolute;
+
+.paramctrl:before {
+	float: right;
+	content: attr(value);
+}
+
+.paramctrl label {
+	text-transform: uppercase;
+}
+
+.paramctrl-gutter,
+.paramctrl-bg,
+.paramctrl-handle {
+	border-radius: 1rem;
+}
+
+.no-radius {
+	border-radius: 0;
+}
+
+.paramctrl-gutter {
+	overflow: hidden;
+	background-color: #FFF;
+}
+
+.paramctrl-bg {
+	height: 2rem;
+
+	background-color: #90EE90;
+}
+
+.paramctrl-handle {
+	float: right;
+	width: 2rem;
+	height: 2rem;
+	border: 0.5rem solid #90EE90;
+
+	background-color: #575756;
 }
