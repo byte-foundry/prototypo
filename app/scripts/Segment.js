@@ -43,6 +43,13 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			enumerable: false
 		});
 
+		// angle of the segment
+		Object.defineProperty(Segment.prototype, 'angle', {
+			get: function() { 
+				return Math.atan2( this.end.x - this.start.x , this.start.y - this.end.y ); 
+			}
+		});
+
 		return Segment;
 	})
 

@@ -21,14 +21,22 @@
 		"min": -1,
 		"max": 2,
 		"step": 0.1,
-		"init": 1
+		"init": 0
 	},
 	{
 		"name": "serifCurve",
 		"label": "Serif Curve",
 		"min": 0,
-		"max": 2,
+		"max": 3,
 		"step": 0.01,
+		"init": 0
+	},
+	{
+		"name": "serifSlant",
+		"label": "Serif Slant",
+		"min": 0,
+		"max": 50,
+		"step": 1,
 		"init": 0
 	},
 	{
@@ -42,8 +50,8 @@
 	{
 		"name": "serifArc",
 		"label": "Serif Arc",
-		"min": -1,
-		"max": 1,
+		"min": -0.5,
+		"max": 0.5,
 		"step": 0.01,
 		"init": 0
 	},
@@ -61,7 +69,7 @@
 		"min": 0,
 		"max": 1.5,
 		"step": 0.01,
-		"init": 0
+		"init": 0.55
 	},
 	{
 		"name": "serifSymmetry",
@@ -84,18 +92,18 @@
 		"name": "capDelta",
 		"label": "Capital Height",
 		"min": 0,
-		"max": 200,
+		"max": 400,
 		"step": 1,
-		"init": 150,
+		"init": 233,
 		"onchange": "capHeight = xHeight + capDelta"
 	},
 	{
 		"name": "ascender",
 		"label": "Ascender",
 		"min": 50,
-		"max": 300,
+		"max": 500,
 		"step": 1,
-		"init": 50,
+		"init": 250,
 		"onchange": "ascenderHeight = xHeight + ascender"
 	},
 	{
@@ -109,9 +117,17 @@
 	{
 		"name": "crossbar",
 		"label": "Crossbar",
+		"min": 0.8,
+		"max": 1.1,
+		"step": 0.001,
+		"init": 1
+	},
+	{
+		"name": "width",
+		"label": "Width",
 		"min": 0.5,
-		"max": 1.5,
-		"step": 0.05,
+		"max": 2,
+		"step": 0.01,
 		"init": 1
 	},
 	{
@@ -121,14 +137,6 @@
 		"max": 200,
 		"step": 1,
 		"init": 80
-	},
-	{
-		"name": "width",
-		"label": "Width",
-		"min": 0.5,
-		"max": 2,
-		"step": 0.01,
-		"init": 1
 	},
 	{
 		"name": "slant",
@@ -192,7 +200,7 @@
 		"min": 0,
 		"max": 2,
 		"step": 0.01,
-		"init": 0.55
+		"init": 0.65
 	},
 	{
 		"name": "opticThickness",

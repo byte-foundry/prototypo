@@ -1,0 +1,21 @@
+M 	{{ width * 245 }}  {{ capHeight }}
+rC 	{{ [ self[14].x + thickness * opticThickness * (84/88) , self[14].y ] | curve:"both":"bottom-right":self[1]:roundness }}
+rC 	{{ [ self[1].x , self[12].y - thickness * contrast ] | curve:"both":"bottom-left":self[2]:roundness }}
+L 	{{ thickness * opticThickness }} {{ self[3].y }}
+L 	{{ self[4].x }} 0
+L 	0 0
+L 	{{ self[6].x }} {{ self[1].y }}
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
+M 	{{ self[1].x }} {{ self[1].y - thickness * contrast }}
+L 	{{ self[4].x }} {{ self[10].y }}
+L 	{{ self[11].x }} {{ capHeight * (330/698) * crossbar }}
+L 	{{ self[10].x }} {{ self[12].y }}
+rC 	{{ [ width * 416 , self[13].y + (self[15].y - self[13].y ) / 2 ] | curve:"both":"bottom-right":self[13]:roundness }}
+rC 	{{ [ self[10].x , self[10].y ] | curve:"both":"top-right":self[14]:roundness }}
+Z
+
+replace from self[5] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[5].x - thickness * opticThickness /2 } }} with serif-bottom-right {{ { angle: self[5].angle } }}
+replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[6].x + thickness * opticThickness /2 } }} with inverted serif-bottom-left {{ { angle: self[7].angle } }}
+replace from self[7] at {{ {y: self[7].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[8] at {{ {x: self[7].x + thickness * opticThickness /2 } }} with serif-top-left {{ { angle: self[7].angle } }}
+

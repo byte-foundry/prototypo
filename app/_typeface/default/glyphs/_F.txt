@@ -1,0 +1,19 @@
+M 	{{ thickness * opticThickness }} {{ capHeight * (374/698) * crossbar }}
+L 	{{ (self[1].x - 88) + width * 406 }} {{ self[1].y }}
+L 	{{ self[2].x }} {{ self[2].y - thickness * (73/80) * contrast }}
+L 	{{ self[1].x }} {{ self[3].y }}
+L 	{{ self[4].x }} 0
+L 	{{ self[1].x - thickness * opticThickness }} {{ self[5].y }}
+L 	{{ self[6].x }} {{ capHeight }}
+L 	{{ (self[1].x - 88) + width * 433 }} {{ self[7].y }}
+L 	{{ self[8].x }} {{ self[8].y - thickness * (71/80) * contrast }}
+L 	{{ self[1].x }} {{ self[9].y }}
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
+
+replace from self[5] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[5].x - thickness * opticThickness /2 } }} with serif-bottom-right {{ { angle: self[5].angle } }}
+replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[6].x + thickness * opticThickness /2 } }} with inverted serif-bottom-left {{ { angle: self[5].angle } }}
+replace from self[7] at {{ {y: self[7].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[8] at {{ {x: self[8].x - thickness * opticThickness /2 } }} with serif-top-left {{ { angle: self[6].angle } }}
+replace from self[10] at {{ {x: self[9].x - serifHeight - serifHeight * serifCurve} }} to self[9] at {{ {y: self[9].y + thickness * (71/80) * contrast } }} with inverted serif-top-right-vert
+replace from self[2] at {{ {x: self[2].x - serifHeight - serifHeight * serifCurve} }} to self[3] at {{ {y: self[3].y + thickness /2 * (73/80) * contrast } }} with serif-bottom-right-vert
+replace from self[4] at {{ {x: self[3].x - serifHeight - serifHeight * serifCurve} }} to self[3] at {{ {y: self[2].y - thickness /2 * (73/80) * contrast } }} with inverted serif-top-right-vert

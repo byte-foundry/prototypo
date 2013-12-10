@@ -1,0 +1,13 @@
+M 	0 {{ capHeight / 2 }}
+L 	{{ self[1].x }} {{ capHeight }}
+L 	{{ self[2].x + thickness * opticThickness }} {{ self[2].y }}
+L 	{{ self[3].x }} 0
+L 	{{ self[1].x }} {{ self[4].y }}
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
+
+replace from self[4] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[5] at {{ {x: self[4].x - thickness * opticThickness /2 } }} with serif-bottom-right {{ { angle: self[4].angle } }}
+replace from self[6] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[5] at {{ {x: self[5].x + thickness * opticThickness /2 } }} with inverted serif-bottom-left {{ { angle: self[6].angle } }}
+replace from self[2] at {{ {y: self[2].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[3] at {{ {x: self[2].x + thickness * opticThickness /2 } }} with serif-top-left {{ { angle: self[2].angle } }}
+replace from self[4] at {{ {y: self[3].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[3] at {{ {x: self[3].x - thickness * opticThickness /2 } }} with inverted serif-top-right {{ { angle: self[4].angle } }}
+

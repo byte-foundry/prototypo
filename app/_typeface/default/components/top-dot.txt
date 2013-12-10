@@ -1,6 +1,6 @@
 m 	0 0	
-rc 	-{{self[3].x * roundness * 1.1 }} 0 0 -{{self[3].x * roundness * 1.1 }} {{ - ( thickness * 1.2 ) / 2 }} {{ ( thickness * 1.2 ) / 2 }}
-rc 	0 {{self[3].x * roundness * 1.1 }} -{{self[3].x * roundness * 1.1 }} 0 {{ ( thickness * 1.2 ) / 2 }} {{ ( thickness * 1.2 ) / 2 }}
-rc 	{{self[3].x * roundness * 1.1 }} 0 0 {{self[3].x * roundness * 1.1 }} {{ ( thickness * 1.2 ) / 2 }} {{ - ( thickness * 1.2 ) / 2 }}
-rc 	0 -{{self[3].x * roundness * 1.1 }} {{self[3].x * roundness * 1.1 }} 0 {{ - ( thickness * 1.2 ) / 2 }} {{ - ( thickness * 1.2 ) / 2 }}
+rC 	{{ [ self[1].x - ( thickness + opticRoundness ) / 2 , self[1].y + ( thickness + opticRoundness ) / 2 ] | curve:"both":"top-left":self[1]:roundness }}
+rC 	{{ [ self[2].x + ( thickness + opticRoundness ) / 2 , self[2].y + ( thickness + opticRoundness ) / 2 ] | curve:"both":"top-right":self[2]:roundness }}
+rC 	{{ [ self[3].x + ( thickness + opticRoundness ) / 2 , self[3].y - ( thickness + opticRoundness ) / 2 ] | curve:"both":"top-left":self[3]:roundness }}
+rC 	{{ [ self[4].x - ( thickness + opticRoundness ) / 2 , self[4].y - ( thickness + opticRoundness ) / 2 ] | curve:"both":"bottom-left":self[4]:roundness }}
 Z
