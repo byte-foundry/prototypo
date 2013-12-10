@@ -64,6 +64,16 @@ angular.module('prototypoApp', [
 		}
 	})
 
+	.filter( 'control', function () {
+		return function ( segment, index, angle, coefficient ) {
+			
+			var coords = segment.split(' ');
+			coords[index] = +coords[index] + angle * coefficient;
+
+			return coords.join();
+		}
+	})
+
 	.filter( 'curve', function ( Point ) {
 		return function ( coords, extrem, direction, start, roundness, correction ) {
 			if( !correction ) {
