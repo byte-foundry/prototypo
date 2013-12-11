@@ -28,10 +28,10 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 		}
 
 		Glyph.prototype = {
-			process: function() {
+			process: function( full ) {
 				this.suid = Math.random();
 				// TODO: no need to reuse Point constructor here I believe
-				this.component.process( Point(this.origin) );
+				this.component.process( Point(this.origin), full );
 
 				return this;
 			},

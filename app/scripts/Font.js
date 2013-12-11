@@ -3,6 +3,8 @@
 angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 	.factory('Font', function( Glyph, Formula ) {
 		function Font( name, args ) {
+			var self = this;
+
 			// new is optional
 			if ( !( this instanceof Font ) ) {
 				return new Font( name, args );
@@ -21,20 +23,20 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 
 			this.name = name;
 			this.glyphs = {};
-			args.glyphCodes.forEach(function( code ) {
+			$.each( args.glyphCodes, function( code ) {
 				try {
-					this.glyphs[ code ] = Glyph( 'glyph ' + code, formulaLib, args.parameters );
+					self.glyphs[ code ] = Glyph( 'glyph ' + code, formulaLib, args.parameters );
 				} catch ( e ) {
 					if ( e.name === 'init component' ) {
 						e.message = 'Glyph ' + code + ' cannot be initialized:\n' + e.message;
 					}
 					throw e;
 				}
-			}, this);
+			});
 		}
 
 		Font.prototype = {
-			process: function( code ) { return this.glyphs[ code ].process(); }
+			process: function( code, full ) { return this.glyphs[ code ].process( full ); }
 		};
 
 		return Font;

@@ -299,5 +299,5 @@ module.exports = function (grunt) {
     'usemin'
   ]);
 
-  grunt.registerTask('default', ['build']);
+  grunt.registerTask('default', ['server']);
 };

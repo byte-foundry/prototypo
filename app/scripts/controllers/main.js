@@ -11,16 +11,29 @@ angular.module('prototypoApp')
 			});
 		}
 
+		// initial state
+		$scope.typeface = {};
+		$scope.fontValues = {};
+		$scope.appValues = {
+			paramTab: 0
+		};
+		$scope.processGlyphs = function() {
+			$scope.glyph = $scope.font.process( $scope.appValues.glyphName, true );
+			$scope.$digest();
+		};
+
 		Typeface.get( $routeParams.typeface )
 			/*
 			 * 1. Download typeface data
 			 */
 			.then(function( data ) {
 				// filter params that are calculated and have no UI
-				data.parameters = data.parameters.filter(function( param ) {
-					if ( param.calculate ) {
-						param.calculate = $parse( param.calculate );
-						calculated.push( param );
+				data.parameters = data.parameters.filter(function( group ) {
+					if ( group.vars ) {
+						group.parameters.forEach(function( param ) {
+							param.calculate = $parse( param.calculate );
+							calculated.push( param );
+						});
 						return false;
 					}
 					return true;
@@ -28,7 +41,7 @@ angular.module('prototypoApp')
 				// keep calculated params updated
 				$scope.$watch('fontValues',	updateCalculatedParams,	true);
 
-				$scope.typeface = data;
+				$.extend( $scope.typeface, data );
 
 				return data;
 			})
@@ -45,9 +58,9 @@ angular.module('prototypoApp')
 				$scope.$watch('fontValues', function() {
 					// make sure all control values are integers
 					// todo: that should be handled by the directive
-					_( $scope.fontValues ).each(function(value, key) {
+					/*_( $scope.fontValues ).each(function(value, key) {
 						$scope.fontValues[key] = +value;
-					});
+					});*/
 
 					// persist changes
 					FontValues.save({
@@ -58,21 +71,22 @@ angular.module('prototypoApp')
 				}, true);
 
 				$scope.resetFontValues = function() {
-					$scope.typeface.parameters.forEach(function( param ) {
-						$scope.fontValues[ param.name ] = param.init;
+					$scope.typeface.parameters.forEach(function( group ) {
+						group.parameters.forEach(function( param ) {
+							$scope.fontValues[ param.name ] = param.init;
+						});
 					});
 					updateCalculatedParams( $scope.fontValues );
 				};
 
 				promises.push( FontValues.get({ typeface: $routeParams.typeface })
 					.then(function( data ) {
-						$scope.fontValues = {};
 
 						if ( data === undefined ) {
 							$scope.resetFontValues();
 
 						} else {
-							$scope.fontValues = data;
+							$.extend( $scope.fontValues, data );
 						}
 
 						// we can prepare the font
@@ -96,18 +110,19 @@ angular.module('prototypoApp')
 				}, true);
 
 				$scope.resetAppValues = function() {
-					$scope.appValues.glyphName = $scope.typeface.order[0];
+					$scope.appValues.glyphName = Object.keys( $scope.typeface.order )[0];
+					$scope.appValues.paramTab = 0;
 				};
 
 				promises.push( AppValues.get({ typeface: $routeParams.typeface })
 					.then(function( data ) {
 						$scope.appValues = {};
 
-						if ( data === undefined || $scope.typeface.order.indexOf( data.glyphName ) === -1 ) {
+						if ( data === undefined || !( data.glyphName in $scope.typeface.order ) ) {
 							$scope.resetAppValues();
 
 						} else {
-							$scope.appValues = data;
+							$.extend( $scope.appValues, data );
 						}
 					}));
 
@@ -117,11 +132,17 @@ angular.module('prototypoApp')
 			 * 3. Watch font and app values to process the glyphs
 			 */
 			.then(function() {
-				function updateGlyph() {
+				$scope.$watch('fontValues', function() {
 					$scope.glyph = $scope.font.process( $scope.appValues.glyphName );
-				}
+				// deep
+				}, true);
 
-				$scope.$watch('fontValues', updateGlyph, true);
-				$scope.$watch('appValues.glyphName', updateGlyph);
+				$scope.$watch('appValues.glyphName', function() {console.log('here')
+					$scope.glyph = $scope.font.process(
+						$scope.appValues.glyphName,
+						// full
+						true
+					);
+				});
 			});
 	});

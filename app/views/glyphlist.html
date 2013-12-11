@@ -1,0 +1,13 @@
+<div class="glyphlist">
+
+	<ul>
+		<li bindonce ng-repeat="(key, value) in typeface.order"
+		bo-text="key"
+		bo-attr
+		bo-attr-data-id="key"
+		ng-class="appValues.glyphName == key ? 'selected' : ''"
+		>
+		</li>
+	</ul>
+	
+</div>
