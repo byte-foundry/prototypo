@@ -36,18 +36,18 @@ body {
 	border: .2em solid white;
 	background: #f6f6f6 no-repeat center;
 	-webkit-transition: all 200ms ease-in;
-	transition: all 200ms ease-in; 
+	transition: all 200ms ease-in;
 	position: relative;
 }
 .paramstab-menu li.selected,
 .paramstab-menu li:hover {
 	background: #77db77 no-repeat center;
 	-webkit-transition: all 300ms ease-in;
-	transition: all 300ms ease-in; 
+	transition: all 300ms ease-in;
 }
-.paramstab-menu li.selected:after{
-	width: 0; 
-	height: 0; 
+.paramstab-menu li.selected:after {
+	width: 0;
+	height: 0;
 	border-left: .7em solid transparent;
 	border-right: .7em solid transparent;
 	border-top: .6em solid #77db77;
@@ -57,9 +57,9 @@ body {
 	display: inline-block;
 	margin-left: -0.65em;
 }
-.paramstab-menu li.selected:before{
-	width: 0; 
-	height: 0; 
+.paramstab-menu li.selected:before {
+	width: 0;
+	height: 0;
 	border-left: .9em solid transparent;
 	border-right: .9em solid transparent;
 	border-top: .8em solid white;
