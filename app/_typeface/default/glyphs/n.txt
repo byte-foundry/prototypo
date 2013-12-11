@@ -13,5 +13,5 @@ L 	{{ thickness }} 0
 L 	0 0
 Z
 
-replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[7] at {{ "end" }} with serif-bottom-right
-replace from self[12] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[12] at {{ "end" }} with serif-bottom-right
+replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[7] at {{ "end" }} with serif-bottom-right {{ { angle: self[7].angle } }}
+replace from self[12] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[12] at {{ "end" }} with serif-bottom-right {{ { angle: self[12].angle } }}
