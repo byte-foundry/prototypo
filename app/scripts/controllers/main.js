@@ -110,7 +110,7 @@ angular.module('prototypoApp')
 				}, true);
 
 				$scope.resetAppValues = function() {
-					$scope.appValues.glyphName = $scope.typeface.order[0];
+					$scope.appValues.glyphName = Object.keys( $scope.typeface.order )[0];
 					$scope.appValues.paramTab = 0;
 				};
 
@@ -118,7 +118,7 @@ angular.module('prototypoApp')
 					.then(function( data ) {
 						$scope.appValues = {};
 
-						if ( data === undefined || $scope.typeface.order.indexOf( data.glyphName ) === -1 ) {
+						if ( data === undefined || !( data.glyphName in $scope.typeface.order ) ) {
 							$scope.resetAppValues();
 
 						} else {
@@ -137,7 +137,7 @@ angular.module('prototypoApp')
 				// deep
 				}, true);
 
-				$scope.$watch('appValues.glyphName', function() {
+				$scope.$watch('appValues.glyphName', function() {console.log('here')
 					$scope.glyph = $scope.font.process(
 						$scope.appValues.glyphName,
 						// full
