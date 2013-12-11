@@ -1,19 +1,18 @@
-M   20 0
-l  -20 0
-l   200 {{xHeight}}
-
-l   200 -{{xHeight}}
-l   -20 0
-L   {{ {x: self[3].x}	|on:[self[6], self[12]] }}
-L   {{ {y: xHeight / 2}	|on:[self[6], self[7]] }}
-L   {{ {y: xHeight / 2}	|on:[self[1], self[7]] }}
+M 	{{ self[11].x + thickness /2 }} {{ capHeight }}
+L 	{{ self[3].x + thickness * opticThickness }} 0
+L 	{{ width * 535 }} 0
+L 	{{ { y: self[13].y - thickness * (72/80) * contrast } | on:[ self[14], self[3] ] }}
+L 	{{ { y: self[4].y } | on:[self[14] , self[6] ] }}
+L	{{ self[7].x + thickness * opticThickness * contrast }} 0
+L 	0 0
+L 	{{ self[11].x - thickness /2 * contrast }} {{ self[1].y }}
+L 	{{ self[1].x }} {{ self[1].y }}
 Z
-M   {{ {y: xHeight / 2 + 20 } |on:self[7] }}
-L   {{ self[3].x }} {{ self[3].y - 20 }}
-L   {{ {y: xHeight / 2 + 20} |on:[self[1], self[7]] }}
+M	{{ 310 | between:self[2].x:622:self[7].x:0 }} {{ self[1].y - thickness * opticThickness * (100/88) * contrast }}
+L	{{ { y: capHeight * (273/698) * crossbar } | on:[self[14] , self[6] ] }}
+L 	{{ { y: self[12].y } | on:[ self[14], self[3] ] }}
+L 	{{ self[11].x }} {{ self[11].y }}
 Z
 
-// Components
-//after 2: serif ( {side:'bottom-left', on:[self[2], self[3]] } )
-//before 2: serif ( {side:'top-left', on:[self[0], self[2]] } )
-//after  5: serif ( {side:'bottom-left', on:[self[5], self[7]] } )
+replace from self[2] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[3] at {{ {x: self[3].x + thickness /2 } }} with serif-bottom-right {{ { angle: self[2].angle } }}
+replace from self[4] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[3] at {{ {x: self[3].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: self[4].angle } }}

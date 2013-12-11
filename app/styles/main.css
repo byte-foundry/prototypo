@@ -26,6 +26,8 @@ body {
 
 .paramspanel {
 	background-color: #555;
+	height: 100%;
+	box-shadow: 4px 0px 6px #aaa;
 }
 
 .paramstab-menu li {
