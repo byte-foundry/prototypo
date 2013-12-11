@@ -14,8 +14,8 @@
 	<ul class="paramstab-menu unstyled pa0 row">
 		<li class="paramstab-menuitem col" bindonce ng-repeat="group in typeface.parameters"
 			ng-class="appValues.paramTab == $index ? 'selected' : ''"
-			bo-text="group.label"
 			bo-attr
+			bo-attr-title="group.label"
 			bo-attr-data-index="$index"
 		>
 		</li>
