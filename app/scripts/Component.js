@@ -27,8 +27,8 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 			init: function( curPos ) {
 				return initComponent( this, curPos );
 			},
-			process: function( curPos ) {
-				return processComponent( this, curPos );
+			process: function( curPos, full ) {
+				return processComponent( this, curPos, true, full );
 			}
 		};
 
@@ -61,7 +61,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 				throw err;
 			}
 
-			// save numbers of iterations for later
+			// this number will be reused when "fully" processing a component
 			component.iter = i;
 
 			// filter empty segments
@@ -121,7 +121,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 					}
 				}
 
-				processSubcomponent( component, subcomponent, initComponent );
+				processSubcomponent( component, initComponent, subcomponent );
 
 				/* link subcomponent */
 				if ( subcomponent.type === 'add' ) {
@@ -154,47 +154,57 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 	})
 
 	.factory('processComponent', function( Segment, Point, processSubcomponent, flattenContext ) {
-		return function processComponent( component, _curPos, recurse ) {
-			var curPos = Point( _curPos );
+		return function processComponent( component, _curPos, recurse, full ) {
+			var curPos = Point( _curPos ),
+				i = component.iter;
 
-			// initialize the drawing with the origin as a fake segment
-			if ( component.segments[0] === undefined ) {
-				component.segments[0] = {
-					end: Point( curPos ),
-					x: curPos.x,
-					y: curPos.y,
-					toSVG: function() { return ''; }
-				};
-				if ( _curPos.to ) {
-					component.segments[0].to = _curPos.to;
-				}
-
-			} else {
-				component.segments[0].end.x = component.segments[0].x = curPos.x;
-				component.segments[0].end.y = component.segments[0].y = curPos.y;
-			}
-
-			flattenContext( component );
-
-			/* process segments */
-			component.formula.segments.forEach(function( segmentFn, i ) {
-				// only process non-empty segments
-				if ( segmentFn ) {
-					if ( component.segments[i] === undefined ) {
-						component.segments[i] = Segment( segmentFn( component.flatContext ), curPos, component.invert );
-
-					// reuse existing segments
-					} else {
-						component.segments[i].update( segmentFn( component.flatContext ) );
-						component.segments[i].absolutize( curPos );
+			do {
+				// initialize the drawing with the origin as a fake segment
+				if ( component.segments[0] === undefined ) {
+					component.segments[0] = {
+						end: Point( curPos ),
+						x: curPos.x,
+						y: curPos.y,
+						toSVG: function() { return ''; }
+					};
+					if ( _curPos.to ) {
+						component.segments[0].to = _curPos.to;
 					}
+
+				} else {
+					component.segments[0].end.x = component.segments[0].x = curPos.x;
+					component.segments[0].end.y = component.segments[0].y = curPos.y;
 				}
-			});
+
+				flattenContext( component );
+
+				/* process segments */
+				component.formula.segments.forEach(function( segmentFn, i ) {
+					// only process non-empty segments
+					if ( segmentFn ) {
+						if ( component.segments[i] === undefined ) {
+							component.segments[i] = Segment( segmentFn( component.flatContext ), curPos, component.invert );
+
+						// reuse existing segments
+						} else {
+							component.segments[i].update( segmentFn( component.flatContext ) );
+							component.segments[i].absolutize( curPos );
+						}
+					}
+				});
+
+			/* In formulas, segment-1 can use points of segment-3.
+			   Because of this, we might need to process each component more
+			   than once to get it's correct shape.
+			   This won't be done when the user drags a slider, but it must
+			   be done when the user has finished interacting with a slider
+			*/
+			} while ( full === true && --i );
 
 			/* process subcomponents (not on init) */
 			if ( recurse !== false ) {
 				component.components.forEach(function( subcomponent ) {
-					processSubcomponent( component, subcomponent, processComponent );
+					processSubcomponent( component, processComponent, subcomponent );
 				});
 			}
 		};
@@ -202,7 +212,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 
 	// TODO: rename in "determineOrigin"
 	.factory('processSubcomponent', function( cutSegment, moveSegmentEnd ) {
-		return function( component, subcomponent, processor ) {
+		return function( component, processor, subcomponent ) {
 			var origin;
 
 			// the args of the subcomponents have to be recalculated according to the parent context

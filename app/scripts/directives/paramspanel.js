@@ -29,23 +29,20 @@ angular.module('prototypo.paramspanelDirective', [])
 
 				$dummyGutter.remove();
 
-				$element.on('click', '.paramctrl', function( e ) {
+				$element.on('mousedown', '.paramctrl', function( e ) {
+					dragging = this;
 					setValue( this, e.pageX );
 				});
-
-				$element.on('mousedown', '.paramctrl-handle', function() {
-					dragging = this.parentNode.parentNode.parentNode;
-					return false;
-				});
 				$(window).on('mouseup', function() {
-					dragging = undefined;
+					if ( dragging ) {
+						dragging = undefined;
+						$scope.processGlyphs();
+					}
 				});
 				$(window).on('mousemove', function( e ) {
-					if ( !dragging ) {
-						return;
+					if ( dragging ) {
+						setValue( dragging, e.pageX );
 					}
-
-					setValue( dragging, e.pageX );
 				});
 
 				// delegated attr watcher

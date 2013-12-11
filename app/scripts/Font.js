@@ -34,7 +34,7 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 		}
 
 		Font.prototype = {
-			process: function( code ) { return this.glyphs[ code ].process(); }
+			process: function( code, full ) { return this.glyphs[ code ].process( full ); }
 		};
 
 		return Font;

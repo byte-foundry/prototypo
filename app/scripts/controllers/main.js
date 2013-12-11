@@ -17,6 +17,10 @@ angular.module('prototypoApp')
 		$scope.appValues = {
 			paramTab: 0
 		};
+		$scope.processGlyphs = function() {
+			$scope.glyph = $scope.font.process( $scope.appValues.glyphName, true );
+			$scope.$digest();
+		};
 
 		Typeface.get( $routeParams.typeface )
 			/*
@@ -37,7 +41,7 @@ angular.module('prototypoApp')
 				// keep calculated params updated
 				$scope.$watch('fontValues',	updateCalculatedParams,	true);
 
-				_.extend( $scope.typeface, data );
+				$.extend( $scope.typeface, data );
 
 				return data;
 			})
@@ -54,9 +58,9 @@ angular.module('prototypoApp')
 				$scope.$watch('fontValues', function() {
 					// make sure all control values are integers
 					// todo: that should be handled by the directive
-					_( $scope.fontValues ).each(function(value, key) {
+					/*_( $scope.fontValues ).each(function(value, key) {
 						$scope.fontValues[key] = +value;
-					});
+					});*/
 
 					// persist changes
 					FontValues.save({
@@ -82,7 +86,7 @@ angular.module('prototypoApp')
 							$scope.resetFontValues();
 
 						} else {
-							_.extend( $scope.fontValues, data );
+							$.extend( $scope.fontValues, data );
 						}
 
 						// we can prepare the font
@@ -118,7 +122,7 @@ angular.module('prototypoApp')
 							$scope.resetAppValues();
 
 						} else {
-							_.extend( $scope.appValues, data );
+							$.extend( $scope.appValues, data );
 						}
 					}));
 
@@ -128,11 +132,17 @@ angular.module('prototypoApp')
 			 * 3. Watch font and app values to process the glyphs
 			 */
 			.then(function() {
-				function updateGlyph() {
+				$scope.$watch('fontValues', function() {
 					$scope.glyph = $scope.font.process( $scope.appValues.glyphName );
-				}
+				// deep
+				}, true);
 
-				$scope.$watch('fontValues', updateGlyph, true);
-				$scope.$watch('appValues.glyphName', updateGlyph);
+				$scope.$watch('appValues.glyphName', function() {
+					$scope.glyph = $scope.font.process(
+						$scope.appValues.glyphName,
+						// full
+						true
+					);
+				});
 			});
 	});
