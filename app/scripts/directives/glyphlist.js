@@ -7,8 +7,8 @@ angular.module('prototypo.glyphlistDirective', [])
 			templateUrl: 'views/glyphlist.html',
 			replace: true,
 			link: function postLink( $scope, $element ) {
-				
-				$element.on('mousedown', 'li', function( e ) {
+
+				$element.on('mousedown', 'li', function() {
 					$scope.appValues.glyphName = $( this ).data( 'id' );
 					$scope.$apply();
 				});

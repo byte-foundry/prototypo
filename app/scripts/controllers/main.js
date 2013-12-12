@@ -147,7 +147,7 @@ angular.module('prototypoApp')
 				// deep
 				}, true);
 
-				$scope.$watch('appValues.glyphName', function() {console.log('here')
+				$scope.$watch('appValues.glyphName', function() {
 					$scope.glyph = $scope.font.process(
 						$scope.appValues.glyphName,
 						// full
