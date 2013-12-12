@@ -6,24 +6,30 @@ body,
 .main,
 .main > .col,
 .central,
-.scene-wrapper,
 .scene {
 	height: 100%;
 }
 
 .central {
 	display: table;
+	table-layout: fixed;
 	width: 100%;
 }
 .central > .row {
 	display: table-row;
 }
-.glyphlist {
-	height: 40px;
-	background: #555;
+.sidebar {
+	width: 300px;
 }
-.scene-wrapper {
+.glyphlist-row {
+	height: 5.5rem;
+}
+.noverflow {
 	overflow: hidden;
+}
+.scene {
+	width: auto;
+	vertical-align: top;
 }
 
 body {
@@ -31,13 +37,10 @@ body {
 	color: #111;
 }
 
-.scene {
-	width: auto;
-	vertical-align: top;
-}
-.sidebar {
-	width: 300px;
-}
+/* To minimize blue selection when handle sliders */
+::selection { background: transparent; }
+::-moz-selection { background: transparent; }
+
 /* without this, the params panel would be initialized w/ width @100% */
 .sidebar:only-child {
 	display: block;
@@ -45,6 +48,8 @@ body {
 
 .paramspanel {
 	background-color: #555;
+	height: 100%;
+	box-shadow: 4px 0px 6px #aaa;
 }
 
 .paramstab-menu li {
@@ -161,4 +166,27 @@ body {
 	border: 0.5rem solid #90EE90;
 
 	background-color: #575756;
+}
+
+.glyphlist {
+	table-layout: auto;
+	height: 100%;
+	background-color: #f6f6f6;
+}
+.glyphlist li {
+	width: 2rem;
+	height: 100%;
+	font-size: 1.6em;
+	color: #c6c6c6;
+	vertical-align: middle;
+	text-align: center;
+	border-right: 1px solid white;
+	padding: 0 .5em;
+	cursor: pointer;
+}
+
+.glyphlist .selected,
+.glyphlist :hover {
+	background-color: #90EE90;
+	color: white;
 }

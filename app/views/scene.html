@@ -1,17 +1,15 @@
-<div class="scene-wrapper">
-	<div class="scene" style="-webkit-transform: scale(1); transform: scale(1);">
+<div class="scene" style="-webkit-transform: scale(1); transform: scale(1);">
 
-		<!-- using the height attribute on the svg tag would cause rendering issues for Webkit -->
-		<div style="-webkit-transform: matrix(1 0 0 -1 0 0) skewX({{fontValues.slant}}); transform: matrix(1 0 0 -1 0 0) skewX({{fontValues.slant}});">
-			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width=1000 height=1000>
-				<path glyph-contour fill="black"></path>
-				<g ng-repeat="segment in glyph.segments">
-					<g bindonce ng-repeat="cp in segment.debug()">
-						<path segment-endpoint bo-attr bo-attr-fill="cp.color" bo-attr-stroke="cp.color" index="{{$index}}" coords="{{ cp.start.toString() }} {{cp.end.toString()}}"></path>
-					</g>
+	<!-- using the height attribute on the svg tag would cause rendering issues for Webkit -->
+	<div style="-webkit-transform: matrix(1 0 0 -1 0 0) skewX({{fontValues.slant}}); transform: matrix(1 0 0 -1 0 0) skewX({{fontValues.slant}});">
+		<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width=1000 height=1000>
+			<path glyph-contour fill="#3B3B3B"></path>
+			<g ng-repeat="segment in glyph.segments">
+				<g bindonce ng-repeat="cp in segment.debug()">
+					<path segment-endpoint bo-attr bo-attr-fill="cp.color" bo-attr-stroke="cp.color" index="{{$index}}" coords="{{ cp.start.toString() }} {{cp.end.toString()}}"></path>
 				</g>
-			</svg>
-		</div>
+			</g>
+		</svg>
+	</div>
 
-	</div><!-- scene -->
 </div>

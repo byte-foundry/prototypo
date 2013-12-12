@@ -19,7 +19,8 @@ angular.module('prototypoApp', [
 		'prototypo.contourDirective',
 		'prototypo.endpointDirective',
 		'prototypo.paramspanelDirective',
-		'prototypo.sceneDirective'
+		'prototypo.sceneDirective',
+		'prototypo.glyphlistDirective'
 	])
 
 	.config(function ( $routeProvider ) {

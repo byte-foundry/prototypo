@@ -52,9 +52,9 @@ angular.module('prototypo.Typeface', ['ngResource'])
 
 					if ( !typeface.glyphs ) {
 						typeface.glyphs = {};
-						_( typeface.order ).each(function( glyphCode ) {
+						_( typeface.order ).each(function( fileName, glyphCode ) {
 							promises.push(
-								Glyphs.get({ typeface: typefaceName, glyph: glyphCode + '.txt' })
+								Glyphs.get({ typeface: typefaceName, glyph: fileName + '.txt' })
 									.$promise.then(function( response ) {
 										typeface.glyphs[ glyphCode ] = response.data;
 									})
