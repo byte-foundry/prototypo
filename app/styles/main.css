@@ -169,10 +169,14 @@ body {
 	border-right: 1px solid white;
 	padding: 0 .5em;
 	cursor: pointer;
+	-webkit-transition: all 500ms ease-in;
+	transition: all 500ms ease-in;
 }
 
 .glyphlist li.selected, .glyphlist li:hover {
 	background-color: #90EE90;
 	color: white;
+	-webkit-transition: all 200ms ease-in;
+	transition: all 200ms ease-in;
 }
 
