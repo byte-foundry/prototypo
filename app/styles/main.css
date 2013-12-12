@@ -1,10 +1,29 @@
 /* Will be compiled down to a single stylesheet with your sass files */
+
+/* general layout */
 html,
 body,
 .main,
-.main > div,
-.main > div > div {
+.main > .col,
+.central,
+.scene-wrapper,
+.scene {
 	height: 100%;
+}
+
+.central {
+	display: table;
+	width: 100%;
+}
+.central > .row {
+	display: table-row;
+}
+.glyphlist {
+	height: 40px;
+	background: #555;
+}
+.scene-wrapper {
+	overflow: hidden;
 }
 
 body {

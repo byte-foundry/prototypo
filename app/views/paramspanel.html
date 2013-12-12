@@ -3,6 +3,9 @@
 
 	<select ng-model="appValues.glyphName" ng-options="value for value in typeface.order"></select>
 
+	<input type="button" value="+" ng-click="zoom(-1)" />
+	<input type="button" value="-" ng-click="zoom(+1)" />
+
 	<div class="paramstab dummy">
 		<div class="paramctrl-gutter dummy">
 			<div class="paramctrl-bg dummy">

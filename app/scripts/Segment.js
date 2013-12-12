@@ -37,16 +37,14 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 		Object.defineProperty(Segment.prototype, 'y', {
 			get: function() { return this.end.y; }
 		});
-		// I thought this would prevent .next to be enumerated but it doesn't seem to work
+		// I thought this would prevent .next to be enumerated but it doesn't seem to work :-(
 		Object.defineProperty(Segment.prototype, 'next', {
 			writable: true,
 			enumerable: false
 		});
-
-		// angle of the segment
 		Object.defineProperty(Segment.prototype, 'angle', {
-			get: function() { 
-				return Math.atan2( this.end.x - this.start.x , this.start.y - this.end.y ); 
+			get: function() {
+				return Math.atan2( this.end.x - this.start.x , this.start.y - this.end.y );
 			}
 		});
 

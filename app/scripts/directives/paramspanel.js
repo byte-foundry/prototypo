@@ -31,7 +31,7 @@ angular.module('prototypo.paramspanelDirective', [])
 
 				$element.on('mousedown', '.paramctrl', function( e ) {
 					dragging = this;
-					setValue( this, e.pageX );
+					setValue( dragging, e.pageX );
 				});
 				$(window).on('mouseup', function() {
 					if ( dragging ) {

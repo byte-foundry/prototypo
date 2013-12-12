@@ -15,10 +15,20 @@ angular.module('prototypoApp')
 		$scope.typeface = {};
 		$scope.fontValues = {};
 		$scope.appValues = {
-			paramTab: 0
+			paramTab: 0,
+			zoom: 1
 		};
 		$scope.processGlyphs = function() {
 			$scope.glyph = $scope.font.process( $scope.appValues.glyphName, true );
+			$scope.$digest();
+		};
+		$scope.zoom = function( val ) {
+			if ( val === 0 ) {
+				$scope.appValues.zoom = 1;
+			} else {
+				$scope.appValues.zoom =
+					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.5 : +0.5 ), 1 ), 4);
+			}
 			$scope.$digest();
 		};
 
