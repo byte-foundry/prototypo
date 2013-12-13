@@ -11,9 +11,12 @@ angular.module('prototypoApp')
 			});
 		}
 
-		// initial state
+		/* initial state */
+		// agregated content of json files
 		$scope.typeface = {};
+		// font parameters values
 		$scope.fontValues = {};
+		// app values
 		$scope.appValues = {
 			paramTab: 0,
 			zoom: 1

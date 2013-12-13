@@ -1,0 +1,19 @@
+<div class="paramtab" ng-class="appValues.paramTab == $index ? 'selected' : ''">
+	<ul class="unstyled pa0">
+		<li class="paramctrl" bindonce ng-repeat="param in group.parameters"
+			value="{{ fontValues[param.name] }}"
+			bo-attr
+			bo-attr-data-name="param.name"
+			bo-attr-data-min="param.min"
+			bo-attr-data-max="param.max"
+			bo-attr-data-step="param.step"
+		>
+			<label bo-text="param.label"></label>
+			<div class="paramctrl-gutter">
+				<div class="paramctrl-bg">
+					<div class="paramctrl-handle"></div>
+				</div>
+			</div>
+		</li><!-- .parameter -->
+	</ul>
+</div>

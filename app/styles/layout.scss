@@ -1,0 +1,68 @@
+html,
+body,
+.main,
+.main > div {
+	height: 100%;
+}
+
+.cell {
+	position: relative;
+	overflow: hidden;
+}
+.cell > * {
+	// why do we need this absolute in relative container?
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}
+
+/* inside .main
+ ----------------------------------------------------------------- */
+$sidebar-w: 300px;
+
+.sidebar {
+	width: $sidebar-w;
+}
+
+.central {
+	width: -webkit-calc(100% - #{$sidebar-w});
+	width:         calc(100% - #{$sidebar-w});
+}
+
+/* inside .sidebar
+ ----------------------------------------------------------------- */
+$mainmenu-h: 2rem;
+$altscene-h: 10rem;
+$parammenu-h: 8rem;
+
+.mainmenu-cell {
+	height: $mainmenu-h;
+}
+
+.altscene-cell {
+	height: $altscene-h;
+}
+
+.parammenu-cell {
+	height: $parammenu-h;
+}
+
+.paramtabs-cell {
+	height: -webkit-calc(100% - #{$mainmenu-h} - #{$altscene-h} - #{$parammenu-h});
+	height:         calc(100% - #{$mainmenu-h} - #{$altscene-h} - #{$parammenu-h});
+	max-height: -webkit-calc(100% - #{$mainmenu-h} - #{$altscene-h} - #{$parammenu-h});
+	max-height:         calc(100% - #{$mainmenu-h} - #{$altscene-h} - #{$parammenu-h});
+}
+
+/* inside .sidebar
+ ----------------------------------------------------------------- */
+$glyphlist-h: 5.5rem;
+
+.scene-cell {
+	height: -webkit-calc(100% - #{$glyphlist-h});
+	height:         calc(100% - #{$glyphlist-h});
+}
+
+.glyphlist-cell {
+	height: $glyphlist-h;
+}

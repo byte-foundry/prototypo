@@ -1,56 +1,28 @@
-/* Will be compiled down to a single stylesheet with your sass files */
-
-/* general layout */
-html,
-body,
-.main,
-.main > .col,
-.central,
-.scene {
-	height: 100%;
-}
-
-.central {
-	display: table;
-	table-layout: fixed;
-	width: 100%;
-}
-.central > .row {
-	display: table-row;
-}
-.sidebar {
-	width: 300px;
-}
-.glyphlist-row {
-	height: 5.5rem;
-}
-.noverflow {
-	overflow: hidden;
-}
-.scene {
-	width: auto;
-	vertical-align: top;
-}
+@import "variables";
 
 body {
 	font-family: "Courrier", "Liberation Mono", sans-serif;
 	color: #111;
 }
 
+svg {
+	display: block;
+}
+
+.sidebar {
+	background-color: $dark-grey;
+	box-shadow: 4px 0px 6px #aaa;
+}
+
+.scene {
+	height: 100%;
+}
+
 /* To minimize blue selection when handle sliders */
 ::selection { background: transparent; }
 ::-moz-selection { background: transparent; }
 
-/* without this, the params panel would be initialized w/ width @100% */
-.sidebar:only-child {
-	display: block;
-}
-
-.paramspanel {
-	background-color: #555;
-	height: 100%;
-	box-shadow: 4px 0px 6px #aaa;
-}
+/*
 
 .paramstab-menu li {
 	background-color: #F0F0F0;
@@ -166,31 +138,4 @@ body {
 	border: 0.5rem solid #90EE90;
 
 	background-color: #575756;
-}
-
-.glyphlist {
-	table-layout: auto;
-	height: 100%;
-	background-color: #f6f6f6;
-}
-.glyphlist li {
-	width: 2rem;
-	height: 100%;
-	font-size: 1.6em;
-	color: #c6c6c6;
-	vertical-align: middle;
-	text-align: center;
-	border-right: 1px solid white;
-	padding: 0 .5em;
-	cursor: pointer;
-	-webkit-transition: all 500ms ease-in;
-	transition: all 500ms ease-in;
-}
-
-.glyphlist .selected,
-.glyphlist :hover {
-	background-color: #90EE90;
-	color: white;
-	-webkit-transition: all 200ms ease-in;
-	transition: all 200ms ease-in;
-}
+}*/

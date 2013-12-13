@@ -1,9 +1,4 @@
 <div class="paramspanel">
-	<input type="button" value="Reset" ng-click="resetFontValues()" />
-
-	<input type="button" value="+" ng-click="zoom(-1)" />
-	<input type="button" value="-" ng-click="zoom(+1)" />
-
 	<div class="paramstab dummy">
 		<div class="paramctrl-gutter dummy">
 			<div class="paramctrl-bg dummy">
@@ -11,16 +6,6 @@
 			</div>
 		</div>
 	</div>
-
-	<ul class="paramstab-menu unstyled pa0 row">
-		<li class="paramstab-menuitem col" bindonce ng-repeat="group in typeface.parameters"
-			ng-class="appValues.paramTab == $index ? 'selected' : ''"
-			bo-attr
-			bo-attr-title="group.label"
-			bo-attr-data-index="$index"
-		>
-		</li>
-	</ul>
 
 	<div class="paramstab" ng-repeat="group in typeface.parameters"
 		ng-class="appValues.paramTab == $index ? 'selected' : ''"
