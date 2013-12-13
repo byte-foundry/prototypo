@@ -1,0 +1,18 @@
+M 	0 {{ thickness * opticThickness * (74/88) * contrast }}
+L 	{{ width * 393 }} {{ self[4].y - thickness * opticThickness * (74/88) * contrast }}
+L 	0 {{ self[2].y }}
+L 	{{ self[3].x }} {{ capHeight }}
+L	{{ self[2].x + thickness * opticThickness * (100/88) }} {{ self[4].y }}
+L 	{{ self[5].x }} {{ self[2].y }}
+L 	{{ self[1].x + thickness * opticThickness * (104/88) }} {{ self[1].y }}
+L 	{{ self[5].x }} {{ self[7].y }}
+L	{{ self[8].x }} 0
+L 	0 0
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
+
+replace from self[3] at {{ {x: self[3].x + serifHeight + serifHeight * serifCurve} }} to self[4] at {{ {y: self[3].y + thickness * opticThickness * (74/88) * contrast } }} with serif-top-left-vert
+replace from self[8] at {{ {x: self[8].x - serifHeight - serifHeight * serifCurve} }} to self[9] at {{ {y: self[8].y - thickness * opticThickness * (74/88) * contrast } }} with serif-bottom-right-vert
+
+
+// issue on serifArc top-left

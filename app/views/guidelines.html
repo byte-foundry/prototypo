@@ -1,8 +1,4 @@
-<!-- using the height attribute on the svg tag would cause rendering issues for Webkit -->
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="100%" style="height: 99%;">
-	<g transform="matrix(1 0 0 -1 0 800) translate(400,50) scale({{fontValues.zoom}}) skewX({{fontValues.slant}})">
-
-	<guidelines></guidelines>
+<g class="guidelines">
 		<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#ff9cb6" d="M -20000 0 l 40000 0 Z" ></path>
 	    <path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#ffd5e0" d="M -20000 {{ - fontValues.opticRoundness }} l 40000 0 Z" ></path>
 	    <path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#96d2ea" d="M -20000 {{ fontValues.xHeight }} l 40000 0 Z" ></path>
@@ -10,12 +6,4 @@
 	    <path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#dadada" d="M -20000 {{ fontValues.capHeight }} l 40000 0 Z" ></path>
 	    <path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#dadada" d="M -20000 {{ fontValues.ascenderHeight }} l 40000 0 Z" ></path>
 	    <path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#dadada" d="M -20000 {{ fontValues.descender }} l 40000 0 Z" ></path>
-	<path glyph-contour fill="#3B3B3B"></path>
-		<g ng-repeat="segment in glyph.segments">
-			<g bindonce ng-repeat="cp in segment.debug()">
-				<path vector-effect="non-scaling-stroke" stroke-width="1px" segment-endpoint bo-attr bo-attr-fill="cp.color" bo-attr-stroke="cp.color" index="{{$index}}" coords="{{ cp.start.toString() }} {{cp.end.toString()}}"></path>
-			</g>
-		</g>
-	</g>
-</svg>
-<glyphlist></glyphlist>
+</g>

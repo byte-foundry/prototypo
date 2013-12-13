@@ -1,5 +1,5 @@
 //L 	{{ self[0].x }} {{ serifHeight + serifHeight * serifCurve }}
-rC 	{{ [ self[0].x + ( serifHeight * serifCurve ) , self[5].y - serifHeight ] |curve:"both":"top-right":self[0]:serifRoundness }}
+rC 	{{ [ self[0].x + ( serifHeight * serifCurve ) , self[5].y - serifHeight ] |curve:"both":"top-right":self[0]:serifRoundness | translateControl:0:angle  }}
 l 	{{ serifWidth }} {{ - serifHeight * serifMedian }}
 rC 	{{ [ self[3].x + serifTerminal * serifHeight , self[3].y - ( self[3].y - self[5].y ) / 2 ] |curve:"both":"bottom-right":self[3]:serifTerminalCurve }}
 rC 	{{ [ self[3].x , self[0].to.y ] |curve:"both":"bottom-left":self[4]:serifTerminalCurve }}
