@@ -15,4 +15,5 @@ rC 	{{ [ self[12].x , self[5].y + thickness * ( 73 / 80 ) * contrast ] |curve:"b
 rC 	{{ [ self[11].x , self[11].y ] |curve:"both":"bottom-right":self[14]:roundness }}
 Z
 
-replace from self[9] at {{ {y: self[8].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness } }} with inverted serif-bottom-left {{ { angle: self[8].angle } }}
+replace from self[9] at {{ {y: self[8].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness } }} with inverted serif-bottom-left {{ { angle: self[9].angle } }}
+replace from self[9] at {{ {y: self[9].y - serifHeight - serifHeight * serifCurve} }} to self[10] at {{ {x: self[9].x + thickness } }} with serif-top-left {{ { angle: self[9].angle } }}

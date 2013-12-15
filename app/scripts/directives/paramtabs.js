@@ -28,7 +28,7 @@ angular.module('prototypo.paramtabsDirective', [])
 					dragging,
 					parentHeight = $element[0].offsetHeight;
 
-				$dummyGutter.parentNode.remove();
+				$element.find('.paramtab.dummy').remove();
 
 				$element.on('pointerdown', '.paramctrl-gutter', function( e ) {
 					dragging = this.parentNode;

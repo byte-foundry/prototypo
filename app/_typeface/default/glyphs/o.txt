@@ -5,8 +5,8 @@ rC 	{{ [ self[2].x , - opticRoundness ] |curve:"both":"bottom-left":self[3]:roun
 rC 	{{ [ self[1].x , self[1].y ] |curve:"both":"top-left":self[4]:roundness }}
 Z
 M 	{{ self[1].x + thickness }} {{ self[1].y }}
-rC 	{{ [ self[4].x - axe , self[4].y + thickness * (73/80) * contrast ] |curve:"both":"bottom-left":self[7]:roundness }}
+rC 	{{ [ self[4].x - axis , self[4].y + thickness * (73/80) * contrast ] |curve:"both":"bottom-left":self[7]:roundness }}
 rC 	{{ [ width * 363 , self[7].y ] |curve:"both":"top-left":self[8]:roundness }}
-rC 	{{ [ self[2].x + axe , self[2].y - thickness * (71/80) * contrast ] |curve:"both":"top-right":self[9]:roundness }}
+rC 	{{ [ self[2].x + axis , self[2].y - thickness * (71/80) * contrast ] |curve:"both":"top-right":self[9]:roundness }}
 rC 	{{ [ self[7].x , self[7].y ] |curve:"both":"bottom-right":self[10]:roundness }}
 Z

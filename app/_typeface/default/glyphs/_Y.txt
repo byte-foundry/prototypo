@@ -1,0 +1,13 @@
+M 	{{ width * 232 + (thickness * opticThickness - 88)/2 }} {{ capHeight * (278/698) }}
+L 	0 {{ capHeight }}
+l 	{{ thickness * opticThickness * (99/88) }} 0
+L 	{{ self[7].x - thickness * opticThickness * (97/88) / 2 * contrast }} {{ self[1].y + thickness * opticThickness * (76/88) * contrast }}
+L 	{{ self[6].x - thickness * opticThickness * (99/88) * contrast }} {{ self[2].y }} 		/////////////////////
+L 	{{ width * 562 + (thickness * opticThickness * (99/88)) }} {{ self[5].y }} 			/////////////////////
+L 	{{ self[1].x + thickness * opticThickness * (97/88) }} {{ self[1].y }}
+L 	{{ self[7].x }} 0
+L 	{{ self[1].x }} 0
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
+
+

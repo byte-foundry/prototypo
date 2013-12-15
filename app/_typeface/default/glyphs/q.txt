@@ -16,6 +16,6 @@ rC 	{{ [ self[13].x , self[2].y - thickness * (73/80) * contrast ] |curve:"both"
 rC 	{{ [ self[12].x , self[12].y ] |curve:"both":"top-left":self[15]:roundness }}
 Z
 
-replace from self[6] at {{ {y: self[5].y - serifHeight - serifHeight * serifCurve} }} to self[5] at {{ {x: self[5].x - thickness /2 } }} with inverted serif-top-right  {{ { angle: self[5].angle } }}
-replace from self[6] at {{ {y: self[6].y + serifHeight + serifHeight * serifCurve} }} to self[7] at {{ {x: self[7].x + thickness /2 } }} with serif-bottom-right {{ { angle: self[7].angle } }}
-replace from self[8] at {{ {y: self[7].y + serifHeight + serifHeight * serifCurve} }} to self[7] at {{ {x: self[7].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: self[7].angle , serifWidth:serifWidth * 0.5  } }}
+replace from self[6] at {{ {y: self[5].y - serifHeight - serifHeight * serifCurve} }} to self[5] at {{ {x: self[5].x - thickness /2 } }} with inverted serif-top-right  {{ { angle: self[6].angle } }}
+replace from self[6] at {{ {y: self[6].y + serifHeight + serifHeight * serifCurve} }} to self[7] at {{ {x: self[7].x + thickness /2 } }} with serif-bottom-right {{ { angle: self[6].angle } }}
+replace from self[8] at {{ {y: self[7].y + serifHeight + serifHeight * serifCurve} }} to self[7] at {{ {x: self[7].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: self[8].angle , serifWidth:serifWidth * 0.5  } }}

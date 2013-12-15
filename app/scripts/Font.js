@@ -15,7 +15,7 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 				i;
 
 			for ( i in args.glyphFormulas ) {
-				formulaLib['glyph ' + i] = Formula( args.glyphFormulas[i] );
+				formulaLib['glyph:' + i] = Formula( args.glyphFormulas[i] );
 			}
 			for ( i in args.componentFormulas ) {
 				formulaLib[i] = Formula( args.componentFormulas[i] );
@@ -25,7 +25,7 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 			this.glyphs = {};
 			$.each( args.glyphCodes, function( code ) {
 				try {
-					self.glyphs[ code ] = Glyph( 'glyph ' + code, formulaLib, args.parameters );
+					self.glyphs[ code ] = Glyph( 'glyph:' + code, formulaLib, args.parameters );
 				} catch ( e ) {
 					if ( e.name === 'init component' ) {
 						e.message = 'Glyph ' + code + ' cannot be initialized:\n' + e.message;
