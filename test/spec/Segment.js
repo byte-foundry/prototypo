@@ -654,7 +654,7 @@ describe('Segment', function() {
 describe('moveSegmentEnd', function() {
 	it('moves the end of a straight line to the desired point', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg = Segment('L 30 50', Point(10,10));
-		moveSegmentEnd( seg, seg.end, Point(40,40) );
+		moveSegmentEnd( seg, 'end', Point(40,40) );
 
 		expect( seg.start.x ).toBe(10);
 		expect( seg.start.y ).toBe(10);
@@ -664,7 +664,7 @@ describe('moveSegmentEnd', function() {
 
 	it('moves the start of a straight line to the desired point', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg = Segment('L 30 50', Point(10,10));
-		moveSegmentEnd( seg, seg.start, Point(-10,-10) );
+		moveSegmentEnd( seg, 'start', Point(-10,-10) );
 
 		expect( seg.start.x ).toBe(-10);
 		expect( seg.start.y ).toBe(-10);
@@ -674,7 +674,7 @@ describe('moveSegmentEnd', function() {
 
 	it('can move all ends and control-points of an "rC" segment', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg1 = Segment('rC 10 20 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg1, seg1.start, Point(-10,-10) );
+		moveSegmentEnd( seg1, 'start', Point(-10,-10) );
 
 		expect( seg1.start.x ).toBe(-10);
 		expect( seg1.start.y ).toBe(-10);
@@ -686,7 +686,7 @@ describe('moveSegmentEnd', function() {
 		expect( seg1.end.y ).toBe(60);
 
 		var seg2 = Segment('rC 10 20 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg2, seg2.end, Point(70,80) );
+		moveSegmentEnd( seg2, 'end', Point(70,80) );
 
 		expect( seg2.start.x ).toBe(0);
 		expect( seg2.start.y ).toBe(0);
@@ -700,7 +700,7 @@ describe('moveSegmentEnd', function() {
 
 	it('can move all ends and second control-point of an "rQ" segment', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg1 = Segment('rQ 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg1, seg1.start, Point(-10,-10) );
+		moveSegmentEnd( seg1, 'start', Point(-10,-10) );
 
 		expect( seg1.start.x ).toBe(-10);
 		expect( seg1.start.y ).toBe(-10);
@@ -711,7 +711,7 @@ describe('moveSegmentEnd', function() {
 		expect( seg1.end.y ).toBe(60);
 
 		var seg2 = Segment('rS 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg2, seg2.end, Point(70,80) );
+		moveSegmentEnd( seg2, 'end', Point(70,80) );
 
 		expect( seg2.start.x ).toBe(0);
 		expect( seg2.start.y ).toBe(0);
@@ -724,7 +724,7 @@ describe('moveSegmentEnd', function() {
 
 	it('can move all ends and second control-point of an "rS" segment', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg1 = Segment('rS 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg1, seg1.start, Point(-10,-10) );
+		moveSegmentEnd( seg1, 'start', Point(-10,-10) );
 
 		expect( seg1.start.x ).toBe(-10);
 		expect( seg1.start.y ).toBe(-10);
@@ -735,7 +735,7 @@ describe('moveSegmentEnd', function() {
 		expect( seg1.end.y ).toBe(60);
 
 		var seg2 = Segment('rS 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg2, seg2.end, Point(70,80) );
+		moveSegmentEnd( seg2, 'end', Point(70,80) );
 
 		expect( seg2.start.x ).toBe(0);
 		expect( seg2.start.y ).toBe(0);
@@ -748,7 +748,7 @@ describe('moveSegmentEnd', function() {
 
 	it('can move all ends and control-points of a "c" segment', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg1 = Segment('c 10 20 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg1, seg1.start, Point(-10,-10) );
+		moveSegmentEnd( seg1, 'start', Point(-10,-10) );
 
 		expect( seg1.start.x ).toBe(-10);
 		expect( seg1.start.y ).toBe(-10);
@@ -760,7 +760,7 @@ describe('moveSegmentEnd', function() {
 		expect( seg1.end.y ).toBe(60);
 
 		var seg2 = Segment('c 10 20 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg2, seg2.end, Point(70,80) );
+		moveSegmentEnd( seg2, 'end', Point(70,80) );
 
 		expect( seg2.start.x ).toBe(0);
 		expect( seg2.start.y ).toBe(0);
@@ -774,7 +774,7 @@ describe('moveSegmentEnd', function() {
 
 	it('can move all ends and 1st control-point of a "q" segment', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg1 = Segment('q 10 20 50 60', Point(0,0));
-		moveSegmentEnd( seg1, seg1.start, Point(-10,-10) );
+		moveSegmentEnd( seg1, 'start', Point(-10,-10) );
 
 		expect( seg1.start.x ).toBe(-10);
 		expect( seg1.start.y ).toBe(-10);
@@ -785,7 +785,7 @@ describe('moveSegmentEnd', function() {
 		expect( seg1.end.y ).toBe(60);
 
 		var seg2 = Segment('q 10 20 50 60', Point(0,0));
-		moveSegmentEnd( seg2, seg2.end, Point(70,80) );
+		moveSegmentEnd( seg2, 'end', Point(70,80) );
 
 		expect( seg2.start.x ).toBe(0);
 		expect( seg2.start.y ).toBe(0);
@@ -798,7 +798,7 @@ describe('moveSegmentEnd', function() {
 
 	it('can move all ends and 1st control-point of a "s" segment', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg1 = Segment('s 10 20 50 60', Point(0,0));
-		moveSegmentEnd( seg1, seg1.start, Point(-10,-10) );
+		moveSegmentEnd( seg1, 'start', Point(-10,-10) );
 
 		expect( seg1.start.x ).toBe(-10);
 		expect( seg1.start.y ).toBe(-10);
@@ -809,7 +809,7 @@ describe('moveSegmentEnd', function() {
 		expect( seg1.end.y ).toBe(60);
 
 		var seg2 = Segment('s 10 20 50 60', Point(0,0));
-		moveSegmentEnd( seg2, seg2.end, Point(70,80) );
+		moveSegmentEnd( seg2, 'end', Point(70,80) );
 
 		expect( seg2.start.x ).toBe(0);
 		expect( seg2.start.y ).toBe(0);
@@ -822,7 +822,7 @@ describe('moveSegmentEnd', function() {
 
 	it('can move all ends and control-points of a "rc" segment', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg1 = Segment('rc 10 20 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg1, seg1.start, Point(-10,-10) );
+		moveSegmentEnd( seg1, 'start', Point(-10,-10) );
 
 		expect( seg1.start.x ).toBe(-10);
 		expect( seg1.start.y ).toBe(-10);
@@ -834,7 +834,7 @@ describe('moveSegmentEnd', function() {
 		expect( seg1.end.y ).toBe(60);
 
 		var seg2 = Segment('rc 10 20 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg2, seg2.end, Point(70,80) );
+		moveSegmentEnd( seg2, 'end', Point(70,80) );
 
 		expect( seg2.start.x ).toBe(0);
 		expect( seg2.start.y ).toBe(0);
@@ -848,7 +848,7 @@ describe('moveSegmentEnd', function() {
 
 	it('can move all ends and 1st control-point of a "rq" segment', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg1 = Segment('rq 10 20 50 60', Point(0,0));
-		moveSegmentEnd( seg1, seg1.start, Point(-10,-10) );
+		moveSegmentEnd( seg1, 'start', Point(-10,-10) );
 
 		expect( seg1.start.x ).toBe(-10);
 		expect( seg1.start.y ).toBe(-10);
@@ -859,7 +859,7 @@ describe('moveSegmentEnd', function() {
 		expect( seg1.end.y ).toBe(60);
 
 		var seg2 = Segment('rq 10 20 50 60', Point(0,0));
-		moveSegmentEnd( seg2, seg2.end, Point(70,80) );
+		moveSegmentEnd( seg2, 'end', Point(70,80) );
 
 		expect( seg2.start.x ).toBe(0);
 		expect( seg2.start.y ).toBe(0);
@@ -872,7 +872,7 @@ describe('moveSegmentEnd', function() {
 
 	it('can move all ends and 1st control-point of a "rs" segment', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg1 = Segment('rs 10 20 50 60', Point(0,0));
-		moveSegmentEnd( seg1, seg1.start, Point(-10,-10) );
+		moveSegmentEnd( seg1, 'start', Point(-10,-10) );
 
 		expect( seg1.start.x ).toBe(-10);
 		expect( seg1.start.y ).toBe(-10);
@@ -883,7 +883,7 @@ describe('moveSegmentEnd', function() {
 		expect( seg1.end.y ).toBe(60);
 
 		var seg2 = Segment('rs 10 20 50 60', Point(0,0));
-		moveSegmentEnd( seg2, seg2.end, Point(70,80) );
+		moveSegmentEnd( seg2, 'end', Point(70,80) );
 
 		expect( seg2.start.x ).toBe(0);
 		expect( seg2.start.y ).toBe(0);
@@ -896,7 +896,7 @@ describe('moveSegmentEnd', function() {
 
 	it('never moves the control-points of a "C" segment', inject(function( Segment, Point, moveSegmentEnd ) {
 		var seg1 = Segment('C 10 20 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg1, seg1.start, Point(-10,-10) );
+		moveSegmentEnd( seg1, 'start', Point(-10,-10) );
 
 		expect( seg1.start.x ).toBe(-10);
 		expect( seg1.start.y ).toBe(-10);
@@ -908,7 +908,7 @@ describe('moveSegmentEnd', function() {
 		expect( seg1.end.y ).toBe(60);
 
 		var seg2 = Segment('C 10 20 30 40 50 60', Point(0,0));
-		moveSegmentEnd( seg2, seg2.end, Point(70,80) );
+		moveSegmentEnd( seg2, 'end', Point(70,80) );
 
 		expect( seg2.start.x ).toBe(0);
 		expect( seg2.start.y ).toBe(0);
@@ -925,7 +925,7 @@ describe('cutSegment', function() {
 
 	it('cuts a straight line by moving its end to the desired coord (x or y) on this segment', inject(function( Segment, Point, cutSegment ) {
 		var seg1 = Segment('L 30 50', Point(10,10));
-		cutSegment( seg1, {x: 20}, seg1.end );
+		cutSegment( seg1, {x: 20}, 'end' );
 
 		expect( seg1.start.x ).toBe(10);
 		expect( seg1.start.y ).toBe(10);
@@ -933,7 +933,7 @@ describe('cutSegment', function() {
 		expect( seg1.end.y ).toBe(30);
 
 		var seg2 = Segment('L 30 50', Point(10,10));
-		cutSegment( seg2, {x: 20}, seg2.start );
+		cutSegment( seg2, {x: 20}, 'start' );
 
 		expect( seg2.start.x ).toBe(20);
 		expect( seg2.start.y ).toBe(30);

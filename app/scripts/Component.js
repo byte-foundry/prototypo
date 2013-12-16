@@ -35,7 +35,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 		return Component;
 	})
 
-	.factory('initComponent', function( Segment, processComponent, processSubcomponent ) {
+	.factory('initComponent', function( Point, Segment, processComponent, processSubcomponent ) {
 		return function initComponent( component, curPos ) {
 			var i = 0,
 				hasNaN = false,
@@ -71,12 +71,22 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 			// link segments together
 			filteredSegments.forEach(function( segment, i ) {
 					// natural order
-					if ( !component.invert && this[i + 1] ) {
-						segment.next = this[i + 1];
+					if ( !component.invert ) {
+						if ( this[i + 1] ) {
+							segment.next = this[i + 1];
+						}
+						if ( this[i - 1] ) {
+							segment.prev = this[i - 1];
+						}
 					}
 					// invert order
-					if ( component.invert && this[i - 1] ) {
-						segment.next = this[i - 1];
+					if ( component.invert ) {
+						if ( this[i - 1] ) {
+							segment.next = this[i - 1];
+						}
+						if ( this[i + 1] ) {
+							segment.prev = this[i + 1];
+						}
 					}
 				}, filteredSegments);
 
@@ -91,62 +101,86 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 			}
 
 			component.components.forEach(function( subcomponent, i ) {
+				var from,
+					to,
+					fromSeg,
+					toSeg;
+
 				if ( subcomponent.type === 'replace' ) {
+					from = subcomponent.fromFn( component.flatContext );
 					// from segment[n].start <=> from segment[n-1].end
-					subcomponent.from = subcomponent.fromFn( component.flatContext );
-					if ( subcomponent.from === 'start' ) {
+					if ( from === 'start' ) {
 						// search for previous non-false segment
-						// TODO: what happens if we're in an inverted segment? Chaos.
-						do {
-							subcomponent.fromId--;
-						} while (
-							subcomponent.fromId > 0 &&
-							!( component.segments[ subcomponent.fromId ] instanceof Segment )
-						);
+						// TODO: test what happens in an inverted segment.
+						subcomponent.fromId = component.segments.indexOf( component.segments[ subcomponent.fromId ].prev );
 						subcomponent.fromFn = function() { return 'end'; };
 					}
+					fromSeg = component.segments[ subcomponent.fromId ];
 
+					to = subcomponent.toFn( component.flatContext );
 					// to segment[n].end <=> to segment[n+1].start
-					subcomponent.to = subcomponent.toFn( component.flatContext );
-					if ( subcomponent.to === 'end' ) {
+					if ( to === 'end' ) {
 						// search for following non-false segment
-						// TODO: what happens if we're in an inverted segment? Chaos.
-						do {
-							subcomponent.toId++;
-						} while (
-							subcomponent.toId < component.segments.length &&
-							!( component.segments[ subcomponent.toId ] instanceof Segment )
-						);
+						// TODO: test what happens in an inverted segment.
+						subcomponent.toId = component.segments.indexOf( component.segments[ subcomponent.toId ].next );
 						subcomponent.toFn = function() { return 'start'; };
 					}
+					toSeg = component.segments[ subcomponent.toId ];
+
+					// when a segment is going to be cut in the middle,
+					// the rendered points need to be different from the actual ones
+					if (
+						typeof from !== 'string' ||
+						// this should also be the case for the an inverted subcomponent (only on from segment)
+						subcomponent.inverted
+					) {
+						fromSeg.$render.end = Point( fromSeg.end );
+						if ( fromSeg.controls[1] ) {
+							fromSeg.$render.controls[1] = Point( fromSeg.controls[1] );
+						}
+					}
+					if ( typeof to !== 'string' ) {
+						toSeg.$render.start = Point( toSeg.start );
+						if ( toSeg.controls[0] ) {
+							toSeg.$render.controls[0] = Point( toSeg.controls[0] );
+						}
+					}
+
 				}
 
-				processSubcomponent( component, initComponent, subcomponent );
+				processSubcomponent( component, subcomponent, initComponent );
 
 				/* link subcomponent */
+				// TODO: test the .prev linking
 				if ( subcomponent.type === 'add' ) {
 					component.lastSegment.next = subcomponent.firstSegment;
+					//subcomponent.firstSegment.prev = component.lastSegment;
 					component.lastSegment = subcomponent.lastSegment;
 
 				} else if ( subcomponent.type === 'replace' ) {
 					if ( subcomponent.fromId < 1 ) {
 						subcomponent.lastSegment.next = component.firstSegment;
+						//component.firstSegment.prev = subcomponent.lastSegment;
 						component.firstSegment = subcomponent.firstSegment;
 					} else {
 						// avoid this subcomponents to be skipped because of the previous subcomponent
 						if ( i > 0 && component.components[ i -1 ].lastSegment.next === component.segments[ subcomponent.fromId ].next ) {
 							component.components[ i -1 ].lastSegment.next = subcomponent.firstSegment;
+							//subcomponent.firstSegment.prev = component.components[ i -1 ].lastSegment;
 
 						} else {
 							component.segments[ subcomponent.fromId ].next = subcomponent.firstSegment;
+							//subcomponent.firstSegment.prev = component.segments[ subcomponent.fromId ];
 						}
 					}
 
 					if ( subcomponent.toId > component.segments.length ) {
 						component.lastSegment.next = subcomponent.firstSegment;
+						//subcomponent.firstSegment.prev = component.lastSegment;
 						component.lastSegment = subcomponent.lastSegment;
 					} else {
 						subcomponent.lastSegment.next = component.segments[ subcomponent.toId ];
+						//component.segments[ subcomponent.toId ].prev = subcomponent.lastSegment;
 					}
 				}
 			});
@@ -193,7 +227,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 					}
 				});
 
-			/* In formulas, segment-1 can use points of segment-3.
+			/* In formulas, segment:1 can use points of segment:3.
 			   Because of this, we might need to process each component more
 			   than once to get it's correct shape.
 			   This won't be done when the user drags a slider, but it must
@@ -204,16 +238,20 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 			/* process subcomponents (not on init) */
 			if ( recurse !== false ) {
 				component.components.forEach(function( subcomponent ) {
-					processSubcomponent( component, processComponent, subcomponent );
+					processSubcomponent( component, subcomponent, processComponent );
 				});
 			}
 		};
 	})
 
 	// TODO: rename in "determineOrigin"
-	.factory('processSubcomponent', function( cutSegment, moveSegmentEnd ) {
-		return function( component, processor, subcomponent ) {
-			var origin;
+	.factory('processSubcomponent', function( Point, cutSegment, moveSegmentEnd ) {
+		return function( component, subcomponent, processor ) {
+			var origin,
+				from,
+				to,
+				fromSeg,
+				toSeg;
 
 			// the args of the subcomponents have to be recalculated according to the parent context
 			if ( subcomponent.argsFn ) {
@@ -225,25 +263,26 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 				origin = subcomponent.atFn( component.flatContext );
 
 			} else if ( subcomponent.type === 'replace' ) {
-				// TODO: no need to keep a ref to this from var (and to bellow)
-				subcomponent.from = subcomponent.fromFn( component.flatContext );
+				from = subcomponent.fromFn( component.flatContext );
+				fromSeg = component.segments[ subcomponent.fromId ];
 				// neither 'start' nor 'end'
-				if ( typeof subcomponent.from !== 'string' ) {
-					cutSegment( component.segments[ subcomponent.fromId ], subcomponent.from, 'end' );
+				if ( typeof from !== 'string' ) {
+					cutSegment( fromSeg, from, 'end' );
 				}
 
-				subcomponent.to = subcomponent.toFn( component.flatContext );
+				to = subcomponent.toFn( component.flatContext );
+				toSeg = component.segments[ subcomponent.toId ];
 				// neither 'start' nor 'end'
-				if ( typeof subcomponent.to !== 'string' ) {
-					cutSegment( component.segments[ subcomponent.toId ], subcomponent.to, 'start' );
+				if ( typeof to !== 'string' ) {
+					cutSegment( toSeg, to, 'start' );
 				}
 
 				origin = subcomponent.invert ?
-					component.segments[ subcomponent.toId ].start:
-					component.segments[ subcomponent.fromId ].end;
+					toSeg.$render.start:
+					fromSeg.$render.end;
 				origin.to = subcomponent.invert ?
-					component.segments[ subcomponent.fromId ].end:
-					component.segments[ subcomponent.toId ].start;
+					fromSeg.$render.end:
+					toSeg.$render.start;
 			}
 
 			// init or process subcomponent (depending on the caller)
@@ -252,7 +291,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 			// the last point of an inverted segment would be ignored when it gets inverted
 			if ( subcomponent.invert ) {
 				// so move the last point of the previous segment
-				moveSegmentEnd( component.segments[ subcomponent.fromId ], 'end', subcomponent.firstSegment.end );
+				moveSegmentEnd( fromSeg, 'end', subcomponent.firstSegment.end );
 			}
 		};
 	})
