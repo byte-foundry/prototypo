@@ -1,0 +1,20 @@
+$input-h: 3rem;
+
+.preview {
+	&>div {
+		height: calc(100% - #{$input-h});
+		overflow: hidden;
+	}
+
+	input {
+		display: block;
+		height: $input-h;
+		width: 100%;
+
+		color: white;
+
+		background: transparent;
+		border: 0;
+		border-radius: 0;
+	}
+}

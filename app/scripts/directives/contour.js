@@ -4,11 +4,9 @@ angular.module('prototypo.contourDirective', [])
 	.directive('glyphContour', function() {
 		return {
 			restrict: 'EAC',
-			controller: function( $scope, $element ) {
-				$scope.$watch('glyph.suid', function() {
-					if ( $scope.glyph ) {
-						$element.attr( 'd', $scope.glyph.toSVG() );
-					}
+			controller: function( $scope, $element, $attrs ) {
+				$scope.$watch('puid', function() {
+					$element.attr( 'd', $scope.allOutlines[ $attrs.glyphContour ] );
 				});
 			}
 		};

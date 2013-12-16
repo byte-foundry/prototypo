@@ -5,10 +5,6 @@ body {
 	color: #111;
 }
 
-svg {
-	display: block;
-}
-
 .sidebar {
 	background-color: $dark-grey;
 	box-shadow: 4px 0px 6px #aaa;
@@ -16,6 +12,10 @@ svg {
 
 .scene {
 	height: 100%;
+
+	svg {
+		display: block;
+	}
 }
 
 /* To minimize blue selection when handle sliders */

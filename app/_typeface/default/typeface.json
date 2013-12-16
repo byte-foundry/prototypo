@@ -56,7 +56,8 @@
 		"x": { "fileName": "x", "width": 420, "left": 20, "right": 20 },
 		"y": { "fileName": "y", "width": 466, "left": 20, "right": 20 },
 		"z": { "fileName": "z", "width": 366, "left": 20, "right": 20 },
-		".": { "fileName": "dot", "width": 99, "left": 20, "right": 20 }
+		".": { "fileName": "dot", "width": 99, "left": 20, "right": 20 },
+		" ": { "fileName": "space", "width": 230, "left": 20, "right": 20 }
 	},
 	"components": [
 		"serif-top-right",

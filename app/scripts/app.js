@@ -23,7 +23,8 @@ angular.module('prototypoApp', [
 		'prototypo.paramtabDirective',
 		'prototypo.sceneDirective',
 		'prototypo.glyphlistDirective',
-		'prototypo.guidelinesDirective'
+		'prototypo.guidelinesDirective',
+		'prototypo.previewDirective'
 	])
 
 	.config(function ( $routeProvider ) {

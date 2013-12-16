@@ -1,0 +1,16 @@
+<div class="preview">
+	<div>
+		<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+			viewBox="-800 -1400 2000 2000"
+			ng-repeat="char in appValues.string track by $index"
+			width="50px"
+			height="80px"
+			style="display: inline-block; margin-right: calc( -40px + 8px * {{ ( typeface.order[ char ].width * fontValues.width ) / 444 }});"
+		>
+			<g transform="matrix(1 0 0 -1 0 0) skewX({{fontValues.slant}})">
+				<path glyph-contour="{{char}}" fill="#FEFEFE"></path>
+			</g>
+		</svg>
+	</div>
+	<input type="text" ng-model="appValues.string" />
+</div>
