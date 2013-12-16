@@ -56,7 +56,12 @@
 		"x": { "fileName": "x", "width": 420, "left": 20, "right": 20 },
 		"y": { "fileName": "y", "width": 466, "left": 20, "right": 20 },
 		"z": { "fileName": "z", "width": 366, "left": 20, "right": 20 },
-		".": { "fileName": "dot", "width": 99, "left": 20, "right": 20 }
+		".": { "fileName": "dot", "width": 99, "left": 20, "right": 20 },
+		",": { "fileName": "coma", "width": 184, "left": 20, "right": 20 },
+		";": { "fileName": "semicolon", "width": 184, "left": 20, "right": 20 },
+		"1": { "fileName": "one", "width": 175, "left": 20, "right": 20 },
+		"2": { "fileName": "two", "width": 431, "left": 20, "right": 20 },
+		"5": { "fileName": "five", "width": 443, "left": 20, "right": 20 }
 	},
 	"components": [
 		"serif-top-right",
@@ -68,6 +73,8 @@
 		"serif-bottom-left",
 		"serif-test",
 		"top-dot",
-		"acute"
+		"acute",
+		"trap-top-left",
+		"trap-top-right"
 	]
 }

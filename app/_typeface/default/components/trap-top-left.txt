@@ -1,0 +1,4 @@
+l 	{{ thickness * inktrap / 2 }} 0
+rC 	{{ [ self[0].x , self[0].y + thickness * contrast * inktrap / 8 ] | curve:"both":"bottom-right":self[1]:roundness }}
+L 	{{ self[0].x - thickness * contrast * inktrap / 8 }} {{ self[0].y }}
+rC 	{{ [ self[0].x , self[0].y - thickness * inktrap / 2 ] | curve:"both":"bottom-right":self[3]:roundness }}
