@@ -1,0 +1,10 @@
+M 	{{ 87 + thickness * opticThickness }} {{ capHeight }}
+L 	{{ self[1].x }} 0
+L 	{{ self[2].x - thickness * opticThickness }} 0
+L 	{{ self[3].x }} {{ capHeight - thickness * opticThickness * (73/88) }}
+L 	0 {{ self[4].y - thickness * (20/80) }}
+L 	{{ self[5].x }} {{ capHeight - thickness * (30/80) }}
+L 	{{ self[4].x + thickness * (10/80) }} {{ self[1].y }}
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
+

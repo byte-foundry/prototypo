@@ -14,6 +14,7 @@ l	{{ -thickness * opticThickness }} 0
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 
+
 replace from self[8] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[9] at {{ {x: self[9].x + thickness * opticThickness /2 } }} with serif-bottom-right {{ { angle: self[8].angle } }}
 replace from self[10] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[9] at {{ {x: self[9].x + thickness * opticThickness /2 } }} with inverted serif-bottom-left {{ { angle: self[10].angle } }}
 
@@ -25,3 +26,7 @@ replace from self[4] at {{ {y: self[3].y - serifHeight - serifHeight * serifCurv
 
 replace from self[6] at {{ {y: self[6].y - serifHeight - serifHeight * serifCurve} }} to self[7] at {{ {x: self[6].x + thickness * opticThickness /2 } }} with serif-top-left {{ { angle: self[6].angle } }}
 replace from self[8] at {{ {y: self[7].y - serifHeight - serifHeight * serifCurve} }} to self[7] at {{ {x: self[6].x + thickness * opticThickness /2 } }} with inverted serif-top-right {{ { angle: self[8].angle } }}
+
+
+//replace from self[10] at {{ self[10].x }} to self[11] at {{ self[10].y }} with trap-top-right
+replace from self[11] at {{ self[11].x }} to self[12] at {{ self[11].y }} with trap-top-left
