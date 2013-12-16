@@ -66,17 +66,17 @@ angular.module('prototypoApp', [
 			// coords[index + 4] = +coords[index + 4] + delta;
 
 			return coords.join();
-		}
+		};
 	})
 
 	.filter( 'control', function () {
 		return function ( segment, index, angle, coefficient ) {
-			
+
 			var coords = segment.split(' ');
 			coords[index] = +coords[index] + angle * coefficient;
 
 			return coords.join();
-		}
+		};
 	})
 
 	.filter( 'curve', function ( Point ) {
