@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('prototypo.paramspanelDirective', [])
-	.directive('paramspanel', function() {
+angular.module('prototypo.paramtabsDirective', [])
+	.directive('paramtabs', function() {
 		return {
 			restrict: 'E',
-			templateUrl: 'views/paramspanel.html',
+			templateUrl: 'views/paramtabs.html',
 			replace: true,
 			link: function postLink( $scope, $element ) {
 				var $dummyGutter = $element[0].querySelector('.paramctrl-gutter'),
@@ -25,23 +25,25 @@ angular.module('prototypo.paramspanelDirective', [])
 						$scope.fontValues[ name ] = Math.round( Math.round( value / step ) * step * 100 ) / 100;
 						$scope.$digest();
 					},
-					dragging;
+					dragging,
+					parentHeight = $element[0].offsetHeight;
 
-				$dummyGutter.remove();
+				$element.find('.paramtab.dummy').remove();
 
-				$element.on('mousedown', '.paramctrl', function( e ) {
-					dragging = this;
-					setValue( this, e.pageX );
+				$element.on('pointerdown', '.paramctrl-gutter', function( e ) {
+					dragging = this.parentNode;
+					setValue( dragging, e.originalEvent.pageX );
 				});
-				$(window).on('mouseup', function() {
+				$(document.body).on('pointerup', function() {
 					if ( dragging ) {
 						dragging = undefined;
 						$scope.processGlyphs();
 					}
 				});
-				$(window).on('mousemove', function( e ) {
+				$(document.body).on('pointermove', function( e ) {
 					if ( dragging ) {
-						setValue( dragging, e.pageX );
+						setValue( dragging, e.originalEvent.pageX );
+						return false;
 					}
 				});
 
@@ -64,10 +66,32 @@ angular.module('prototypo.paramspanelDirective', [])
 					attributeFilter: ['value']
 				});
 
-				// tab selection
-				$element.on('click', '.paramstab-menuitem', function() {
-					$scope.appValues.paramTab = +$(this).data('index');
-					$scope.$digest();
+				// scroll handler
+				$element.on('wheel', '.toobig', function( e ) {
+					var $this = $(this),
+						scrollDown = e.originalEvent.deltaY > 0,
+						scrollBy = scrollDown ? -40 : 40,
+						currentScroll = +$this.data('scroll'),
+						tabHeight = this.offsetHeight;
+
+					currentScroll = Math.max( Math.min( currentScroll + scrollBy, 0 ), parentHeight - tabHeight );
+
+					if ( scrollDown && currentScroll === parentHeight - tabHeight ) {
+						$this.removeClass('content-below');
+					}
+					if ( !scrollDown && currentScroll > parentHeight - tabHeight ) {
+						$this.addClass('content-below');
+					}
+					if ( !scrollDown && currentScroll === 0 ) {
+						$this.removeClass('content-above');
+					}
+					if ( scrollDown && currentScroll < 0 ) {
+						$this.addClass('content-above');
+					}
+
+					$this
+						.data('scroll', currentScroll)
+						.children().css('transform', 'translateY(' + currentScroll + 'px)');
 				});
 			}
 		};

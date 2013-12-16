@@ -5,11 +5,17 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title></title>
 		<meta name="description" content="">
-		<meta name="viewport" content="width=device-width">
+		<!-- it's an app, disable zooming on mobile devices -->
+		<meta name="viewport" content="target-densitydpi=device-dpi, initial-scale=1.0, user-scalable=no" />
 		<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-		<!-- build:css styles/main.css -->
+
+		<!-- build:css(.tmp) styles/style.css -->
 		<link rel="stylesheet" href="styles/knacss.css">
 		<link rel="stylesheet" href="styles/main.css">
+		<link rel="stylesheet" href="styles/layout.css">
+		<link rel="stylesheet" href="styles/glyphlist.css">
+		<link rel="stylesheet" href="styles/parammenu.css">
+		<link rel="stylesheet" href="styles/paramtabs.css">
 		<!-- endbuild -->
 
 		<!-- web components // nope, Polymer is too alpha -->
@@ -22,10 +28,12 @@
 		<![endif]-->
 
 		<!-- Add your site or application content here -->
-		<div class="main" ng-view></div>
+		<div class="main row" ng-view></div>
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 		<!-- build:js scripts/scripts.js -->
+		<script src="libs/hand.js"></script>
+		<script src="libs/resize.js"></script>
 		<script src="components/angular-latest/build/angular.js"></script>
 		<script src="components/angular-latest/build/angular-route.js"></script>
 		<script src="components/angular-latest/build/angular-resource.js"></script>
@@ -51,7 +59,10 @@
 		<script src="scripts/directives/contour.js"></script>
 		<script src="scripts/directives/endpoint.js"></script>
 		<script src="scripts/directives/controlpoint.js"></script>
-		<script src="scripts/directives/paramspanel.js"></script>
+		<script src="scripts/directives/parammenu.js"></script>
+		<script src="scripts/directives/paramtabs.js"></script>
+		<script src="scripts/directives/paramtab.js"></script>
+		<script src="scripts/directives/scene.js"></script>
 		<script src="scripts/directives/glyphlist.js"></script>
 		<script src="scripts/directives/guidelines.js"></script>
 
@@ -59,10 +70,13 @@
 		<script src="scripts/controllers/main.js"></script>
 		<!-- endbuild -->
 
-		<!--<script>
+		<script>
+			// HANDJS shouldn't process the css
+			HANDJS.doNotProcessCSS = true;
+
 			// if we ever use Polymer again
-			Platform.performMicrotaskCheckpoint();
-		</script>-->
+			//Platform.performMicrotaskCheckpoint();
+		</script>
 
 		<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
 		<!--<script>

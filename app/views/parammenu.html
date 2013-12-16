@@ -1,0 +1,9 @@
+<ul class="parammenu unstyled pa0 row">
+	<li class="col" bindonce ng-repeat="group in typeface.parameters"
+		ng-class="appValues.paramTab == $index ? 'selected' : ''"
+		bo-attr
+		bo-attr-title="group.label"
+		bo-attr-data-index="$index"
+	>
+	</li>
+</ul>

@@ -18,7 +18,10 @@ angular.module('prototypoApp', [
 		'prototypo.glyphDirective',
 		'prototypo.contourDirective',
 		'prototypo.endpointDirective',
-		'prototypo.paramspanelDirective',
+		'prototypo.parammenuDirective',
+		'prototypo.paramtabsDirective',
+		'prototypo.paramtabDirective',
+		'prototypo.sceneDirective',
 		'prototypo.glyphlistDirective',
 		'prototypo.guidelinesDirective'
 	])

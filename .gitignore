@@ -3,5 +3,4 @@ dist
 .tmp
 .sass-cache
 app/components
-app/lib
 app/webcomponents

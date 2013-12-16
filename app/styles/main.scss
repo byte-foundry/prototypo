@@ -1,39 +1,28 @@
-/* Will be compiled down to a single stylesheet with your sass files */
-html,
-body,
-.main,
-.main > div,
-.main > div > div {
-	height: 100%;
-}
+@import "variables";
 
 body {
 	font-family: "Courrier", "Liberation Mono", sans-serif;
 	color: #111;
 }
 
-.scene {
-	width: auto;
-	vertical-align: top;
+svg {
+	display: block;
 }
+
 .sidebar {
-	width: 300px;
+	background-color: $dark-grey;
+	box-shadow: 4px 0px 6px #aaa;
+}
+
+.scene {
+	height: 100%;
 }
 
 /* To minimize blue selection when handle sliders */
 ::selection { background: transparent; }
 ::-moz-selection { background: transparent; }
 
-/* without this, the params panel would be initialized w/ width @100% */
-.sidebar:only-child {
-	display: block;
-}
-
-.paramspanel {
-	background-color: #555;
-	height: 100%;
-	box-shadow: 4px 0px 6px #aaa;
-}
+/*
 
 .paramstab-menu li {
 	background-color: #F0F0F0;
@@ -46,13 +35,13 @@ body {
 	transition: all 200ms ease-in;
 	position: relative;
 }
-.paramstab-menu li.selected,
-.paramstab-menu li:hover {
+.paramstab-menu .selected,
+.paramstab-menu :hover {
 	background: #77db77 no-repeat center;
 	-webkit-transition: all 300ms ease-in;
 	transition: all 300ms ease-in;
 }
-.paramstab-menu li.selected:after {
+.paramstab-menu .selected:after {
 	width: 0;
 	height: 0;
 	border-left: .7em solid transparent;
@@ -64,7 +53,7 @@ body {
 	display: inline-block;
 	margin-left: -0.65em;
 }
-.paramstab-menu li.selected:before {
+.paramstab-menu .selected:before {
 	width: 0;
 	height: 0;
 	border-left: .9em solid transparent;
@@ -149,34 +138,4 @@ body {
 	border: 0.5rem solid #90EE90;
 
 	background-color: #575756;
-}
-
-.glyphlist ul {
-	width: calc(100% - 300px);
-	height: 4em;
-	overflow-y: hidden;
-	background-color: #f6f6f6;
-	position: fixed;
-	bottom: 0;
-}
-.glyphlist li {
-	display: table-cell;
-	font-size: 1.6em;
-	color: #c6c6c6;
-	height: 2.5em;
-	vertical-align: middle;
-	text-align: center;
-	border-right: 1px solid white;
-	padding: 0 .5em;
-	cursor: pointer;
-	-webkit-transition: all 500ms ease-in;
-	transition: all 500ms ease-in;
-}
-
-.glyphlist li.selected, .glyphlist li:hover {
-	background-color: #90EE90;
-	color: white;
-	-webkit-transition: all 200ms ease-in;
-	transition: all 200ms ease-in;
-}
-
+}*/

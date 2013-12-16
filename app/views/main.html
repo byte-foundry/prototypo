@@ -1,6 +1,30 @@
-<div class="row">
-	<div class="col sidebar">
-		<paramspanel></paramspanel>
+<div class="sidebar col">
+	<div class="cell mainmenu-cell">
+		<div>
+			<input type="button" value="Reset" ng-click="resetFontValues()" />
+
+			<input type="button" value="+" ng-click="zoom(-1)" />
+			<input type="button" value="-" ng-click="zoom(+1)" />
+		</div>
 	</div>
-	<div class="col scene" ng-include="'views/glyph.html'"></div>
+	<div class="cell altscene-cell">
+		<div>
+			<input type="text" />
+		</div>
+	</div>
+	<div class="cell parammenu-cell">
+		<parammenu></parammenu>
+	</div>
+	<div class="cell paramtabs-cell">
+		<paramtabs></paramtabs>
+	</div>
+</div>
+
+<div class="central col">
+	<div class="cell scene-cell">
+		<scene></scene>
+	</div>
+	<div class="cell glyphlist-cell">
+		<glyphlist></glyphlist>
+	</div>
 </div>

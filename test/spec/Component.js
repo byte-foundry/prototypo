@@ -379,27 +379,26 @@ describe('Component', function() {
 					toFn: function() { return [10,NaN]; }
 				};
 
-			expect(function() {
-				processSubcomponent( c, sc, function( sc, o ) {
-					origin = o;
-					// throw here because we dont want to test gap closing yet
-					throw 'Error';
-				});
-			}).toThrow();
+			sFrom.$render.end = Point(sFrom.end);
+			sTo.$render.start = Point(sFrom.start);
+
+			processSubcomponent( c, sc, function( sc, o ) {
+				origin = o;
+			});
 
 			expect( sc.args.width ).toBe( 50 );
 
-			expect( sc.from[0] ).toBeNaN();
-			expect( sc.from[1] ).toBe( 40 );
-
-			expect( sc.to[0] ).toBe( 10 );
-			expect( sc.to[1] ).toBeNaN();
-
-			// cut the segments it is attached to
-			expect( sFrom.end.x ).toBe( 40 );
-			expect( sFrom.end.y ).toBe( 40 );
-			expect( sTo.start.x ).toBe( 10 );
-			expect( sTo.start.y ).toBe( 10 );
+			/* cut the segments it is attached to */
+			// dont modify the actual points
+			expect( sFrom.end.x ).toBe( 50 );
+			expect( sFrom.end.y ).toBe( 50 );
+			expect( sTo.start.x ).toBe( 0 );
+			expect( sTo.start.y ).toBe( 0 );
+			// only modify the rendered ones
+			expect( sFrom.$render.end.x ).toBe( 40 );
+			expect( sFrom.$render.end.y ).toBe( 40 );
+			expect( sTo.$render.start.x ).toBe( 10 );
+			expect( sTo.$render.start.y ).toBe( 10 );
 
 			expect( origin.x ).toBe( 40 );
 			expect( origin.y ).toBe( 40 );
@@ -437,12 +436,6 @@ describe('Component', function() {
 			}).toThrow();
 
 			expect( sc.args.width ).toBe( 50 );
-
-			expect( sc.from[0] ).toBeNaN();
-			expect( sc.from[1] ).toBe( 40 );
-
-			expect( sc.to[0] ).toBe( 10 );
-			expect( sc.to[1] ).toBeNaN();
 
 			// cut the segments it is attached to
 			expect( sFrom.end.x ).toBe( 40 );
@@ -642,8 +635,10 @@ describe('Component', function() {
 
 				initComponent(c, Point(0,0));
 
-				expect( c.segments[3].end.x ).toBe( 25 );
-				expect( c.segments[3].end.y ).toBe( 40 );
+				expect( c.segments[3].end.x ).toBe( 50 );
+				expect( c.segments[3].end.y ).toBe( 50 );
+				expect( c.segments[3].$render.end.x ).toBe( 25 );
+				expect( c.segments[3].$render.end.y ).toBe( 40 );
 			}));
 		});
 	});

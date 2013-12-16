@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.Segment', ['prototypo.Point'])
-	.factory('Segment', function( parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, invertSegment, getSegmentPoints ) {
+	.factory('Segment', function( Point, parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, invertSegment, getSegmentPoints ) {
 		function Segment( data, curPos, invert ) {
 			// new is optional
 			if ( !( this instanceof Segment ) ) {
@@ -11,13 +11,25 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			this.controls = [];
 			this.invert = invert;
 			this.$debug = [];
+			this.$render = { controls: [] };
 
 			parseUpdateSegment( this, data );
 
-			this.absolutize( curPos );
+			this.absolutize( curPos || Point(0,0) );
 
-			// make all points of the glyph available for debug
-			// this can beirtual done only after the first parseUpdate and absolutize
+			// this is a copy of the points that should be used when rendering the segment
+			// this allows to have a representation of a component that isn't altered by its subcomponents,
+			// and another representation (render) that is altered.
+			this.$render.end = this.end;
+			if ( this.start ) {
+				this.$render.start = this.start;
+			}
+			if ( this.controls[0] ) {
+				this.$render.controls[0] = this.controls[0];
+			}
+			if ( this.controls[1] ) {
+				this.$render.controls[1] = this.controls[1];
+			}
 		}
 
 		Segment.prototype = {
@@ -37,16 +49,14 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 		Object.defineProperty(Segment.prototype, 'y', {
 			get: function() { return this.end.y; }
 		});
-		// I thought this would prevent .next to be enumerated but it doesn't seem to work
+		// I thought this would prevent .next to be enumerated but it doesn't seem to work :-(
 		Object.defineProperty(Segment.prototype, 'next', {
 			writable: true,
 			enumerable: false
 		});
-
-		// angle of the segment
 		Object.defineProperty(Segment.prototype, 'angle', {
-			get: function() { 
-				return Math.atan2( this.end.x - this.start.x , this.start.y - this.end.y ); 
+			get: function() {
+				return Math.atan2( this.end.x - this.start.x , this.start.y - this.end.y );
 			}
 		});
 
@@ -223,15 +233,11 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 		var rstraight = /[LVMH]/;
 
 		return function( segment, from, _to ) {
-			var p = pointOn( from, segment ),
-				// accept 'start' or 'end' values
-				to = typeof _to === 'string' ?
-					segment[ _to ]:
-					_to;
+			var p = pointOn( from, segment );
 
 			// straight line
 			if ( rstraight.test(segment.command) ) {
-				moveSegmentEnd( segment, to, p );
+				moveSegmentEnd( segment, _to, p );
 
 			// curve
 			} else {
@@ -246,13 +252,12 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 	// the only way to prevent control-points from moving is to use C, Q and S
 	.factory('moveSegmentEnd', function( Point ) {
 		return function( segment, _endPoint, _newCoords ) {
-			var newCoords = _newCoords instanceof Point ?
+			var render = segment.$render,
+				newCoords = _newCoords instanceof Point ?
 					_newCoords:
 					Point( _newCoords ),
-				// accept 'start' or 'end' values
-				endPoint = typeof _endPoint === 'string' ?
-					segment[ _endPoint ]:
-					_endPoint,
+				// only accept 'start' or 'end' values
+				endPoint = render[ _endPoint ],
 				dx,
 				dy;
 
@@ -260,21 +265,28 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 				dx = newCoords.coords[0] - endPoint.coords[0];
 				dy = newCoords.coords[1] - endPoint.coords[1];
 
-				if ( endPoint === segment.end && segment.controls[1] !== undefined ) {
-					segment.controls[1].coords[0] += dx;
-					segment.controls[1].coords[1] += dy;
+				if ( _endPoint === 'end' && render.controls[1] !== undefined ) {
+					render.controls[1].coords[0] += dx;
+					render.controls[1].coords[1] += dy;
 				}
-				if ( endPoint === segment.start && segment.controls[0] !== undefined ) {
-					segment.controls[0].coords[0] += dx;
-					segment.controls[0].coords[1] += dy;
+				if ( _endPoint === 'start' && render.controls[0] !== undefined ) {
+					render.controls[0].coords[0] += dx;
+					render.controls[0].coords[1] += dy;
 				}
 			}
 
 			endPoint.coords[0] = newCoords.coords[0];
 			endPoint.coords[1] = newCoords.coords[1];
+
 		};
 	})
 
+	// useless!!?? (apparently segmentToSVG does late segment inversion, which is good)
+	// we could use it again to invert the points once and for all in $render
+	// but wen should it be invoked?
+	// => not a good idea, moveSegmentEnd works on the $render object but shouldn't care
+	// about .inverted. Or should it? If it allows othe classes to care less about .inverted,
+	// then maybe...
 	.factory('invertSegment', function() {
 		return function( segment ) {
 			if ( !segment || !segment.start ) {
@@ -298,14 +310,15 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 
 	.factory('segmentToSVG', function() {
 		return function( segment ) {
-			var string = [],
-				end = segment.invert ? segment.start : segment.end;
+			var render = segment.$render,
+				string = [],
+				end = segment.invert ? render.start : render.end;
 
-			if ( segment.controls[0] ) {
-				string.push( segment.controls[0].toString() );
+			if ( render.controls[0] ) {
+				string.push( render.controls[0].toString() );
 			}
-			if ( segment.controls[1] ) {
-				string[ segment.invert ? 'unshift' : 'push' ]( segment.controls[1].toString() );
+			if ( render.controls[1] ) {
+				string[ segment.invert ? 'unshift' : 'push' ]( render.controls[1].toString() );
 			}
 
 			string.unshift( segment.command );
@@ -330,10 +343,12 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 
 	.factory('getSegmentPoints', function() {
 		return function( segment ) {
-			var end;
+			var end,
+				render;
 
 			if ( !segment.$debug.length ) {
-				end = segment.invert ? segment.start : segment.end;
+				render = segment.$render;
+				end = segment.invert ? render.start : render.end;
 
 				if ( end ) {
 					segment.$debug.push({
@@ -341,18 +356,18 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 						end: end
 					});
 				}
-				if ( segment.controls[0] ) {
+				if ( render.controls[0] ) {
 					segment.$debug.push({
 						color: 'green',
-						start: segment.start,
-						end: segment.controls[0]
+						start: render.start,
+						end: render.controls[0]
 					});
 				}
-				if ( segment.controls[1] ) {
+				if ( render.controls[1] ) {
 					segment.$debug.push({
 						color: 'green',
-						start: segment.end,
-						end: segment.controls[1]
+						start: render.end,
+						end: render.controls[1]
 					});
 				}
 			}

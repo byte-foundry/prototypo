@@ -1,3 +1,18 @@
-<div ng-repeat="glyphCode in appValues.glyphCodes">
-	<glyph glyph-code="{{ glyphCode }}"></glyph>
+<div class="scene" style="-webkit-transform: scale({{appValues.zoom}}); transform: scale({{appValues.zoom}});">
+
+	<!-- using the height attribute on the svg tag would cause rendering issues for Webkit -->
+	<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+		style="display: none;"
+		viewBox="-800 -1400 2000 2000"
+	>
+		<g transform="matrix(1 0 0 -1 0 0) skewX({{fontValues.slant}})">
+			<path glyph-contour fill="#3B3B3B"></path>
+			<g ng-repeat="segment in glyph.segments">
+				<g bindonce ng-repeat="cp in segment.debug()">
+					<path segment-endpoint bo-attr bo-attr-fill="cp.color" bo-attr-stroke="cp.color" index="{{$index}}" coords="{{ cp.start.toString() }} {{cp.end.toString()}}"></path>
+				</g>
+			</g>
+		</g>
+	</svg>
+
 </div>
