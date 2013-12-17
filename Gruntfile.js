@@ -253,7 +253,8 @@ module.exports = function (grunt) {
             '.htaccess',
             'components/**/*',
             'images/{,*/}*.{gif,webp}',
-            'styles/fonts/*'
+            'styles/fonts/*',
+            '_typeface/**/**/*'
           ]
         }]
       }
@@ -284,7 +285,7 @@ module.exports = function (grunt) {
     'test',
     'compass:dist',
     'useminPrepare',
-    'imagemin',
+    //'imagemin',
     'cssmin',
     'htmlmin',
     'concat',
