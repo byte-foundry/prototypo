@@ -1,17 +1,17 @@
 M 	{{ thickness * (77/80) }} {{ xHeight }}
-L 	{{ thickness }} {{ xHeight * (397/465) }}
+L 	{{ thickness }} {{ xHeight * (397/465) - breakPath }}
 rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) * (143/365) , xHeight + opticRoundness ] |curve:"reverse":"top-right":self[2]:roundness:-0.29 }}
 rC 	{{ [ self[15].x + thickness , xHeight / 2 ] |curve:"both":"bottom-right":self[3]:roundness }}
 rC 	{{ [ self[3].x , - opticRoundness ] |curve:"both":"bottom-left":self[4]:roundness }}
-rC 	{{ [ self[2].x , xHeight * (54/465) ] |curve:"reverse":"top-left":self[5]:roundness:0.29 }}
+rC 	{{ [ self[2].x , xHeight * (54/465) + breakPath /2 ] |curve:"reverse":"top-left":self[5]:roundness:0.29 }}
 L 	{{ self[6].x }} {{ descender }}
 L 	0 {{ self[7].y }}
 L 	{{ self[8].x }} {{ xHeight }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 M	{{ self[15].x + ( self[13].x - self[15].x ) / 2 + axe }} {{ self[3].y - thickness * (73/80) * contrast }}
-rC 	{{ [ self[1].x , xHeight / 2 ] |curve:"both":"bottom-right":self[12]:roundness }}
-rC 	{{ [ self[12].x - (axe*2) , self[5].y + thickness * (71/80) * contrast ] |curve:"both":"top-right":self[13]:roundness }}
+rC 	{{ [ self[1].x , xHeight / 2 ] |curve:"both":"bottom-right":self[12]:roundness:breakPath }}
+rC 	{{ [ self[12].x - (axis*2) , self[5].y + thickness * (71/80) * contrast ] |curve:"both":"top-right":self[13]:roundness }}
 rC 	{{ [ width * 364 , self[13].y ] |curve:"both":"top-left":self[14]:roundness }}
 rC 	{{ [ self[12].x , self[12].y ] |curve:"both":"bottom-left":self[15]:roundness }}
 Z

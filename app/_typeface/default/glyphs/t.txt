@@ -1,6 +1,6 @@
 M 	0 {{ xHeight }}
 L 	{{ width * 64 }} {{ self[1].y }}
-L	{{ self[2].x }} {{ ascenderHeight * (565/720) }} ////
+L	{{ self[2].x }} {{ xHeight + ascender * (100/255) }} ////
 l 	{{ thickness }} {{ thickness * (10/80) }}
 L 	{{ self[4].x }} {{ self[1].y }}
 L 	{{ self[5].x + width * 78 }} {{ self[5].y }}

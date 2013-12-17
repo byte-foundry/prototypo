@@ -7,8 +7,10 @@ Z
 M 	{{ { y: xHeight * (240/465) * crossbar } | on:self[4] }}
 L 	{{ width * 265 + thickness - 80 }} {{ xHeight }}
 L 	{{ self[8].x + thickness * contrast }} {{ self[8].y }}
-L 	{{ { y: self[7].y + 2 * ( thickness ) * contrast } | on:self[8] | translate:{x: thickness * contrast} }}
+L 	{{ { y: contrast < 1 ? self[13].y + (self[11].x - self[12].x) /2 : self[13].y + (self[11].x - self[12].x) /8  } | on:self[8] | translate: ( self[9].x - self[8].x ) }}
 L 	{{ self[12].x + thickness * (102/80) }} 0
 L 	{{ width * 305 + thickness - 80 }} 0
 L 	{{ self[7].x }} {{ self[7].y }}
 Z
+
+// ligne 10 >> ±  L 	{{ { y: contrast < 1 ? self[13].y + (self[11].x - self[12].x) /2 : self[13].y + (self[11].x - self[12].x) /8  } | on:self[8] | translate: ( self[9].x - self[8].x ) }}

@@ -2,6 +2,7 @@
 
 .parammenu-cell {
 	position: relative;
+	overflow: visible;
 }
 
 .parammenu li {
@@ -27,7 +28,7 @@
 	border-left: .7em solid transparent;
 	border-right: .7em solid transparent;
 	border-top: .6em solid #77db77;
-	bottom: -.6em;
+	bottom: -.4em;
 	position: absolute;
 	display: inline-block;
 	margin-left: -0.65em;
@@ -39,7 +40,7 @@
 	border-left: .9em solid transparent;
 	border-right: .9em solid transparent;
 	border-top: .8em solid white;
-	bottom: -.9em;
+	bottom: -.7em;
 	position: absolute;
 	display: inline-block;
 	margin-left: -0.85em;

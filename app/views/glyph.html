@@ -12,11 +12,7 @@
 	    <path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#dadada" d="M -20000 {{ fontValues.descender }} l 40000 0 Z" ></path>
 
 		<path glyph-contour fill="#3B3B3B"></path>
-		<g ng-repeat="segment in glyph.segments">
-			<g bindonce ng-repeat="cp in segment.debug()">
-				<path vector-effect="non-scaling-stroke" stroke-width="1px" segment-endpoint bo-attr bo-attr-fill="cp.color" bo-attr-stroke="cp.color" index="{{$index}}" coords="{{ cp.start.toString() }} {{cp.end.toString()}}"></path>
-			</g>
-		</g>
+
 	</g>
 
 </svg>

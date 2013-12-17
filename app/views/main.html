@@ -1,16 +1,6 @@
 <div class="sidebar col">
-	<div class="cell mainmenu-cell">
-		<div>
-			<input type="button" value="Reset" ng-click="resetFontValues()" />
-
-			<input type="button" value="+" ng-click="zoom(-1)" />
-			<input type="button" value="-" ng-click="zoom(+1)" />
-		</div>
-	</div>
 	<div class="cell altscene-cell">
-		<div>
-			<input type="text" />
-		</div>
+		<preview></preview>
 	</div>
 	<div class="cell parammenu-cell">
 		<parammenu></parammenu>
@@ -27,4 +17,6 @@
 	<div class="cell glyphlist-cell">
 		<glyphlist></glyphlist>
 	</div>
+	<zoom></zoom>
+	<input class="reset btn" type="button" value="Reset" ng-click="resetFontValues()" />
 </div>
