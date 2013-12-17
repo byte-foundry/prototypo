@@ -11,7 +11,7 @@ L 	{{ self[1].x }} {{ self[1].y }}
 Z
 M	{{ self[15].x + ( self[13].x - self[15].x ) / 2 + axe }} {{ self[3].y - thickness * (73/80) * contrast }}
 rC 	{{ [ self[1].x , xHeight / 2 ] |curve:"both":"bottom-right":self[12]:roundness:breakPath }}
-rC 	{{ [ self[12].x - (axe*2) , self[5].y + thickness * (71/80) * contrast ] |curve:"both":"top-right":self[13]:roundness }}
+rC 	{{ [ self[12].x , self[5].y + thickness * (71/80) * contrast ] |curve:"both":"top-right":self[13]:roundness }}
 rC 	{{ [ width * 364 , self[13].y ] |curve:"both":"top-left":self[14]:roundness }}
 rC 	{{ [ self[12].x , self[12].y ] |curve:"both":"bottom-left":self[15]:roundness }}
 Z
