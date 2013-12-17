@@ -1,7 +1,7 @@
 M 	{{ thickness * ( 75 / 80 ) }} {{ xHeight }}
 L 	{{ self[1].x }} {{ xHeight * ( 403 / 465 ) - breakPath }}
 rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) / 2 , xHeight + opticRoundness ] |curve:"both":"bottom-left":self[2]:roundness:0.29 }}
-rC 	{{ [ self[14].x + ( self[11].x - self[14].x ) * ( 52 / 74 ) , xHeight * 0.82526315789474 - breakPath ] |curve:"both":"bottom-right":self[3]:roundness:0.29 }}
+rC 	{{ [ self[14].x + ( self[11].x - self[14].x ) * ( 52 / 74 ) , xHeight * 0.82526315789474 - breakPath ] |curve:"reverse":"top-left":self[3]:roundness:0.29 }}
 rC  {{ [ self[4].x + ( self[6].x - self[4].x ) / 2 , self[3].y ] |curve:"both":"bottom-left":self[4]:roundness:0.29 }}
 rC 	{{ [ self[8].x + thickness , xHeight * 0.59354838709677 ] |curve:"both":"bottom-right":self[5]:roundness }}
 L 	{{ self[6].x }} 0

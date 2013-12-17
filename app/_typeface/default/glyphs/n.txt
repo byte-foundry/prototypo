@@ -7,7 +7,7 @@ rC 	{{ [ self[9].x + thickness , 0.59354838709677 * xHeight ] |curve:"both":"bot
 L 	{{ self[6].x }} 0
 L 	{{ self[9].x }} 0
 L 	{{ 297 * width }} {{ self[11].y - 0.2625 * thickness + breakPath }}
-rC 	{{ [ self[9].x - ( self[9].x - self[11].x ) / 2 , self[5].y - thickness * 0.85 ] |curve:"both":"top-right":self[9]:roundness }}
+rC 	{{ [ self[9].x - ( self[9].x - self[11].x ) / 2 , self[5].y - thickness * 0.85 * contrast ] |curve:"both":"top-right":self[9]:roundness }}
 rC 	{{ [ thickness , self[4].y - thickness * 1.4 ] |curve:"both":"bottom-right":self[10]:roundness:breakPath }}
 L 	{{ thickness }} 0
 L 	0 0

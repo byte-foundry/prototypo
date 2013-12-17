@@ -1,3 +1,5 @@
+@import "variables";
+
 $input-h: 3rem;
 
 .preview {
@@ -5,17 +7,22 @@ $input-h: 3rem;
 		height: -webkit-calc(100% - #{$input-h});
 		height:         calc(100% - #{$input-h});
 		overflow: hidden;
+		background-color: white;
 	}
 
 	input {
 		display: block;
 		height: $input-h;
 		width: 100%;
+		padding: 1.4rem;
 
-		color: white;
+		color: $green;
+		font-size: 1.4rem;
+		letter-spacing: .1rem;
 
-		background: transparent;
-		border: 0;
+		background: lighten( $light-green , 15% );
+		border: 1px solid  $green;
 		border-radius: 0;
 	}
+	border-bottom: 1rem solid lighten( $light-green , 10% );
 }

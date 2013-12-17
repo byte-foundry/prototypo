@@ -16,9 +16,6 @@
 		font-size: 2rem;
 		font-weight: bold;
 		color: $green;
-		cursor: pointer;
-		-webkit-transition: background-color 0.2s ease-in;
-		transition:         background-color 0.2s ease-in;
 	}
 	:nth-child(even) {
 		background-color: lighten( $light-green, 10% );
@@ -26,11 +23,5 @@
 	:hover {
 		background-color: lighten( $light-green, 30% );
 		border: 1px solid $light-green;
-	}
-	input:hover, 
-	input:active, 
-	input:focus {
-		outline:0px !important;
-		-webkit-appearance:none;
 	}
 }

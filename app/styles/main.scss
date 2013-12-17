@@ -22,6 +22,31 @@ svg {
 ::selection { background: transparent; }
 ::-moz-selection { background: transparent; }
 
+.btn {
+	cursor: pointer;
+	-webkit-transition: background-color 0.2s ease-in;
+	transition:         background-color 0.2s ease-in;
+	&:hover, 
+	&:active, 
+	&:focus {
+		outline:0px !important;
+		-webkit-appearance:none;
+	}
+}
+
+.reset {
+	position: absolute;
+	top: 2rem;
+	margin-left: 2.5rem;
+	border: none;
+	background-color: lighten( $light-green, 15% );
+	padding: 1rem 2rem;
+	font-size: 1.5rem;
+	color: $green;
+	&:hover{
+		background-color: lighten( $light-green, 20% );
+	}
+}
 /*
 
 .paramstab-menu li {
