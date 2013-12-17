@@ -8,6 +8,5 @@ L 	{{ self[1].x }} {{ self[1].y }}
 Z
 
 add top-dot at {{ [ self[5].x + ( self[6].x - self[5].x ) / 2 , xHeight + ( 80 / 465 ) * xHeight ] }}
-
 replace from self[5] at {{ {y: self[5].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[6] at {{ {x: self[6].x - thickness /2 } }} with serif-top-left {{ { angle: self[5].angle } }}
 

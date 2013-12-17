@@ -1,0 +1,36 @@
+@import "variables";
+
+.zoom {
+	position: absolute;
+	top: 3rem;
+	right: 3rem;
+	z-index: 10;
+	width: 4rem;
+	opacity: .9;
+	input {
+		border: none;
+		background-color: $light-green;
+		width: 4rem;
+		height: 4rem;
+		float: right;
+		font-size: 2rem;
+		font-weight: bold;
+		color: $green;
+		cursor: pointer;
+		-webkit-transition: background-color 0.2s ease-in;
+		transition:         background-color 0.2s ease-in;
+	}
+	:nth-child(even) {
+		background-color: lighten( $light-green, 10% );
+	}
+	:hover {
+		background-color: lighten( $light-green, 30% );
+		border: 1px solid $light-green;
+	}
+	input:hover, 
+	input:active, 
+	input:focus {
+		outline:0px !important;
+		-webkit-appearance:none;
+	}
+}

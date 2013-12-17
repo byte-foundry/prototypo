@@ -1,9 +1,9 @@
 M 	39 {{ self[7].y + ( self[14].y - self[7].y ) * (10/79) }}
 L 	70 {{ capHeight }}
 L 	{{ self[13].x + ( self[8].x - self[13].x ) * (56/89) }} {{ self[2].y }}
-L 	{{ self[3].x }} {{ self[3].y - thickness* opticThickness * (80/88) * contrast }}
-L 	{{ self[2].x + thickness * opticThickness * (75/88) }} {{ self[4].y }}
-L	{{ self[1].x + thickness * opticThickness }} {{ capHeight * (426/698) }}
+L 	{{ self[3].x }} {{ self[3].y - thickness* opticThickness * (80/88) }}
+L 	{{ self[2].x + thickness * opticThickness * (75/88) * contrast }} {{ self[4].y }}
+L	{{ self[1].x + thickness * opticThickness * contrast }} {{ capHeight * (426/698) }}
 rC 	{{ [ self[6].x + ( self[8].x - self[6].x ) * (100/318) , self[6].y + thickness * (6/80) ] | curve:"reverse":"top-right":self[6]:roundness:-0.29 }} 
 rC 	{{ [ self[13].x + thickness * opticThickness , self[13].y ] | curve:"both":"bottom-right":self[7]:roundness }} 
 rC 	{{ [ self[10].x + ( self[8].x - self[10].x ) * (214/443) , -opticRoundness ] | curve:"both":"bottom-left":self[8]:roundness }} 
