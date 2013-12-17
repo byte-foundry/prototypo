@@ -21,8 +21,12 @@ angular.module('prototypoApp')
 			paramTab: 0,
 			zoom: 1
 		};
+		$scope.allChars = {};
+		$scope.allGlyphs = {};
+		$scope.allOutlines = {};
+
 		$scope.processGlyphs = function() {
-			$scope.glyph = $scope.font.process( $scope.appValues.glyphName, true );
+			//$scope.singleGlyph = $scope.font.process( $scope.appValues.singleChar, true );
 			$scope.$digest();
 		};
 		$scope.zoom = function( val ) {
@@ -104,7 +108,7 @@ angular.module('prototypoApp')
 
 						// we can prepare the font
 						$scope.font = Font( name, {
-							glyphCodes: typeface.order,
+							glyphData: typeface.order,
 							glyphFormulas: typeface.glyphs,
 							componentFormulas: typeface.components,
 							parameters: $scope.fontValues,
@@ -123,7 +127,8 @@ angular.module('prototypoApp')
 				}, true);
 
 				$scope.resetAppValues = function() {
-					$scope.appValues.glyphName = Object.keys( $scope.typeface.order )[0];
+					$scope.appValues.singleChar = Object.keys( $scope.typeface.order )[0];
+					$scope.appValues.string = 'hamburger';
 					$scope.appValues.paramTab = 0;
 				};
 
@@ -131,7 +136,7 @@ angular.module('prototypoApp')
 					.then(function( data ) {
 						$scope.appValues = {};
 
-						if ( data === undefined || !( data.glyphName in $scope.typeface.order ) ) {
+						if ( data === undefined || !( data.singleChar in $scope.typeface.order ) ) {
 							$scope.resetAppValues();
 
 						} else {
@@ -146,16 +151,36 @@ angular.module('prototypoApp')
 			 */
 			.then(function() {
 				$scope.$watch('fontValues', function() {
-					$scope.glyph = $scope.font.process( $scope.appValues.glyphName );
+					var char;
+
+					$scope.puid = Math.random();
+					for ( char in $scope.allChars ) {
+						$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues );
+					}
 				// deep
 				}, true);
 
-				$scope.$watch('appValues.glyphName', function() {
-					$scope.glyph = $scope.font.process(
-						$scope.appValues.glyphName,
-						// full
-						true
-					);
+				$scope.$watch('appValues.string + appValues.singleChar', function( string ) {
+					var chars = {};
+					$scope.puid = Math.random();
+
+					string.split('').forEach(function( char ) {
+						chars[ char ] = true;
+					});
+
+					$scope.allChars = chars;
 				});
+
+				$scope.$watch('allChars', function( newVal, oldVal ) {
+					var char;
+					$scope.puid = Math.random();
+
+					for ( char in newVal ) {
+						if ( !oldVal[char] || newVal === oldVal ) {
+							$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues, true );
+						}
+					}
+				// deep
+				}, true);
 			});
 	});

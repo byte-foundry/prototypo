@@ -1,6 +1,5 @@
 <div class="scene" style="-webkit-transform: scale({{appValues.zoom}}); transform: scale({{appValues.zoom}});">
 
-	<!-- using the height attribute on the svg tag would cause rendering issues for Webkit -->
 	<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 		style="display: none;"
 		viewBox="-800 -1400 2000 2000"
@@ -15,8 +14,9 @@
 	    <path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#dadada" d="M -20000 {{ fontValues.ascenderHeight }} l 40000 0 Z" ></path>
 	    <path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#dadada" d="M -20000 {{ fontValues.descender }} l 40000 0 Z" ></path>
 
-			<path glyph-contour fill="#3B3B3B"></path>
-			<g ng-repeat="segment in glyph.segments">
+			<path glyph-contour="{{appValues.singleChar}}" fill="#3B3B3B"></path>
+			<g ng-repeat="segment in allGlyphs[appValues.singleChar].segments">
+
 				<g bindonce ng-repeat="cp in segment.debug()">
 					<path segment-endpoint bo-attr bo-attr-fill="cp.color" bo-attr-stroke="cp.color" index="{{$index}}" coords="{{ cp.start.toString() }} {{cp.end.toString()}}"></path>
 				</g>

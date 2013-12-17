@@ -10,6 +10,11 @@ angular.module('prototypo.glyphlistDirective', [])
 				var stopWatching,
 					parentWidth = $element[0].parentNode.offsetWidth;
 
+				$element.on('mousedown', 'li', function() {
+					$scope.appValues.singleChar = $( this ).data( 'id' );
+					$scope.$apply();
+				});
+
 				stopWatching = $scope.$watch('typeface.order', function( order ) {
 					if ( !order || !Object.keys(order).length ) {
 						return;
@@ -55,11 +60,6 @@ angular.module('prototypo.glyphlistDirective', [])
 					$this
 						.data('scroll', currentScroll)
 						.children().css('transform', 'translateX(' + currentScroll + 'px)');
-				});
-
-				$element.on('mousedown', 'li', function() {
-					$scope.appValues.glyphName = $( this ).data( 'id' );
-					$scope.$apply();
 				});
 			}
 

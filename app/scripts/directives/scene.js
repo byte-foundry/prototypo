@@ -9,6 +9,7 @@ angular.module('prototypo.sceneDirective', [])
 			link: function( $scope, $element ) {
 				$element.on('wheel', function( e ) {
 					$scope.zoom( e.originalEvent.deltaY );
+					return false;
 				});
 
 				// <svg> is totally unable to handle % dimensions
