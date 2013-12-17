@@ -16,10 +16,15 @@ angular.module('prototypo.previewDirective', [])
 						translate = 0;
 					}
 
-					var curr = $scope.allGlyphs[char].left + translate;
+					// TODO: we shouldn't need this check
+					if ( $scope.allGlyphs[char] ) {
+						var curr = $scope.allGlyphs[char].left + translate;
 
-					translate += $scope.allGlyphs[char].left + $scope.allGlyphs[char].width;
-					return Math.round( curr );
+						translate += $scope.allGlyphs[char].left + $scope.allGlyphs[char].width;
+						return Math.round( curr );
+					}
+
+					return 0;
 				};
 
 				// <svg> is totally unable to handle % dimensions
