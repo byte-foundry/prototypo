@@ -109,7 +109,7 @@ angular.module('prototypoApp', [
 				}
 				break;
 			case 'bottom-right' :
-				c1 = Point( ( end.x - start.x ) * roundness, 0 - correction / 2 );
+				c1 = Point( ( end.x - start.x ) * roundness, 0 );
 				c2 = Point( 0, ( start.y - end.y ) * roundness - correction );
 				if ( extrem === 'reverse' ) {
 				c1 = Point( ( end.x - start.x ) * roundness - correction * ( end.x - start.x ) * roundness, - correction * ( end.x - start.x ) * roundness );
