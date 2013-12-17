@@ -251,7 +251,8 @@ module.exports = function (grunt) {
           src: [
             '*.{ico,txt}',
             '.htaccess',
-            'components/**/*',
+            // uncomment following when disabling concat
+            //'components/**/*',
             'images/{,*/}*.{gif,webp}',
             'styles/fonts/*',
             '_typeface/**/**/*'
@@ -288,6 +289,7 @@ module.exports = function (grunt) {
     //'imagemin',
     'cssmin',
     'htmlmin',
+    // uncomment "component/" copy when disabling concat
     'concat',
     'copy',
     'cdnify',
