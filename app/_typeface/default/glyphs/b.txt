@@ -6,7 +6,7 @@ rC 	{{ [ self[14].x - 3 , - opticRoundness ] |curve:"both":"bottom-left":self[4]
 rC 	{{ [ self[1].x , xHeight * ( 50 / 565 ) ] |curve:"reverse":"top-left":self[5]:roundness:0.29 }} 		
 L 	{{ self[1].x * ( 77 / 80 ) }} 0
 L 	0 0 //// #TODO: fix arc
-L 	{{ self[8].x }} {{ self[1].y }}
+L 	{{ self[8].x }} {{ ascenderHeight }}
 Z
 M 	{{ 364 * width }} {{ self[4].y }}
 rC 	{{ [ self[11].x - ( self[11].x - self[13].x ) / 2 , self[3].y - thickness * ( 71 / 80 ) * contrast] |curve:"both":"top-right":self[11]:roundness }}
