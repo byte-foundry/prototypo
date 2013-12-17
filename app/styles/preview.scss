@@ -2,7 +2,8 @@ $input-h: 3rem;
 
 .preview {
 	&>div {
-		height: calc(100% - #{$input-h});
+		height: -webkit-calc(100% - #{$input-h});
+		height:         calc(100% - #{$input-h});
 		overflow: hidden;
 	}
 

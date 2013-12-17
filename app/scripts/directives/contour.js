@@ -6,7 +6,12 @@ angular.module('prototypo.contourDirective', [])
 			restrict: 'EAC',
 			controller: function( $scope, $element, $attrs ) {
 				$scope.$watch('puid', function() {
-					$element.attr( 'd', $scope.allOutlines[ $attrs.glyphContour ] );
+					var char = $attrs.glyphContour || ' ';
+
+					// TODO: we shouldn't need this check
+					if ( $scope.allGlyphs[char] ) {
+						$element.attr( 'd', $scope.allGlyphs[ char ].svg );
+					}
 				});
 			}
 		};

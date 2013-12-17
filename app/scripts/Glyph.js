@@ -4,18 +4,19 @@
 angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 	.factory('Glyph', function( Component, Point, glyphToSVG ) {
 
-		function Glyph( name, formulaLib, params ) {
+		function Glyph( name, args ) {
 			// new is optional
 			if ( !( this instanceof Glyph ) ) {
-				return new Glyph( name, formulaLib, params );
+				return new Glyph( name, args );
 			}
 
+			this.data = args.data;
 			// TODO: we dont need a .origin
 			this.origin = Point(0,0);
 			this.component = Component({
 				type: 'add',
 				name: name
-			}, formulaLib, params );
+			}, args.formulaLib, args.params );
 			this.component.init( Point(this.origin), [] );
 
 			this.segments = [];
@@ -28,6 +29,17 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 		}
 
 		Glyph.prototype = {
+			read: function( params, full ) {
+				this.component.process( Point(this.origin), full );
+
+				return {
+					segments: this.segments,
+					svg: glyphToSVG( this ),
+					// TODO: this formula shouldn't be hardcoded
+					left: this.data.left,
+					width: params.width * this.data.width + params.thickness + this.data.right
+				};
+			},
 			process: function( full ) {
 				//this.suid = Math.random();
 				// TODO: no need to reuse Point constructor here I believe

@@ -108,7 +108,7 @@ angular.module('prototypoApp')
 
 						// we can prepare the font
 						$scope.font = Font( name, {
-							glyphCodes: typeface.order,
+							glyphData: typeface.order,
 							glyphFormulas: typeface.glyphs,
 							componentFormulas: typeface.components,
 							parameters: $scope.fontValues,
@@ -155,8 +155,7 @@ angular.module('prototypoApp')
 
 					$scope.puid = Math.random();
 					for ( char in $scope.allChars ) {
-						$scope.allGlyphs[char] = $scope.font.process( char );
-						$scope.allOutlines[char] = $scope.allGlyphs[char].toSVG();
+						$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues );
 					}
 				// deep
 				}, true);
@@ -178,8 +177,7 @@ angular.module('prototypoApp')
 
 					for ( char in newVal ) {
 						if ( !oldVal[char] || newVal === oldVal ) {
-							$scope.allGlyphs[char] = $scope.font.process( char, true );
-							$scope.allOutlines[char] = $scope.allGlyphs[char].toSVG();
+							$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues, true );
 						}
 					}
 				// deep
