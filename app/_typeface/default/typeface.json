@@ -62,6 +62,7 @@
 		"1": { "fileName": "one", "width": 175, "left": 20, "right": 20 },
 		"2": { "fileName": "two", "width": 431, "left": 20, "right": 20 },
 		"5": { "fileName": "five", "width": 443, "left": 20, "right": 20 },
+		"8": { "fileName": "eight", "width": 481, "left": 20, "right": 20 },
 		" ": { "fileName": "space", "width": 230, "left": 20, "right": 20 }
 	},
 	"components": [

@@ -1,3 +1,5 @@
+@import "variables";
+
 html,
 body,
 .main,
@@ -18,7 +20,7 @@ body,
 
 /* inside .main
  ----------------------------------------------------------------- */
-$sidebar-w: 300px;
+
 
 .sidebar {
 	width: $sidebar-w;
@@ -31,9 +33,6 @@ $sidebar-w: 300px;
 
 /* inside .sidebar
  ----------------------------------------------------------------- */
-$mainmenu-h: 2rem;
-$altscene-h: 20rem;
-$parammenu-h: 8rem;
 
 .mainmenu-cell {
 	height: $mainmenu-h;
@@ -56,7 +55,6 @@ $parammenu-h: 8rem;
 
 /* inside .sidebar
  ----------------------------------------------------------------- */
-$glyphlist-h: 5.5rem;
 
 .scene-cell {
 	height: -webkit-calc(100% - #{$glyphlist-h});

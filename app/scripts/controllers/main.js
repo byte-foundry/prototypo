@@ -128,7 +128,7 @@ angular.module('prototypoApp')
 
 				$scope.resetAppValues = function() {
 					$scope.appValues.singleChar = Object.keys( $scope.typeface.order )[0];
-					$scope.appValues.string = 'hamburger';
+					$scope.appValues.string = 'Hamburgefonstiv';
 					$scope.appValues.paramTab = 0;
 				};
 
