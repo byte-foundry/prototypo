@@ -54,7 +54,7 @@ angular.module('prototypo.Typeface', ['ngResource'])
 						typeface.glyphs = {};
 						_( typeface.order ).each(function( glyph, glyphCode ) {
 							promises.push(
-								Glyphs.get({ typeface: typefaceName, glyph : glyph.fileName + '.txt' })
+								Glyphs.get({ typeface: typefaceName, glyph : glyph.fileName + '.pgf' })
 									.$promise.then(function( response ) {
 										typeface.glyphs[ glyphCode ] = response.data;
 									})
@@ -66,7 +66,7 @@ angular.module('prototypo.Typeface', ['ngResource'])
 						typeface.components = {};
 						_( components ).each(function( componentName ) {
 							promises.push(
-								Components.get({ typeface: typefaceName, component: componentName + '.txt' })
+								Components.get({ typeface: typefaceName, component: componentName + '.pgf' })
 									.$promise.then(function( response ) {
 										typeface.components[ componentName ] = response.data;
 									})

@@ -18,6 +18,7 @@ angular.module('prototypoApp')
 		$scope.fontValues = {};
 		// app values
 		$scope.appValues = {
+			previewString: true,
 			paramTab: 0,
 			zoom: 1
 		};
@@ -37,6 +38,9 @@ angular.module('prototypoApp')
 					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.25 : +0.25 ), 0.5 ), 4);
 			}
 			$scope.$digest();
+		};
+		$scope.switchPreview = function() {
+			$scope.appValues.previewString = !$scope.appValues.previewString;
 		};
 
 		Typeface.get( $routeParams.typeface )
@@ -128,8 +132,9 @@ angular.module('prototypoApp')
 
 				$scope.resetAppValues = function() {
 					$scope.appValues.singleChar = Object.keys( $scope.typeface.order )[0];
-					$scope.appValues.string = 'hamburger';
+					$scope.appValues.stringChars = '';
 					$scope.appValues.paramTab = 0;
+					$scope.appValues.previewString = true;
 				};
 
 				promises.push( AppValues.get({ typeface: $routeParams.typeface })
@@ -155,12 +160,12 @@ angular.module('prototypoApp')
 
 					$scope.puid = Math.random();
 					for ( char in $scope.allChars ) {
-						$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues );
+						$scope.uniqueGlyphs[char] = $scope.font.read( char, $scope.fontValues );
 					}
 				// deep
 				}, true);
 
-				$scope.$watch('appValues.string + appValues.singleChar', function( string ) {
+				$scope.$watch('appValues.stringChars + appValues.singleChar', function( string ) {
 					var chars = {};
 					$scope.puid = Math.random();
 

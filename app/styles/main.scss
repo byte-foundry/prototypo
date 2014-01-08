@@ -6,16 +6,42 @@ body {
 }
 
 svg {
-	display: block;
+	display: none;
+
+	&.active {
+		display: block;
+	}
 }
 
 .sidebar {
+	position: relative;
+	z-index: 2;
 	background-color: $dark-grey;
 	box-shadow: 4px 0px 6px #aaa;
 }
 
 .scene {
+	position: relative;
 	height: 100%;
+	background-color: white;
+}
+
+
+
+.stringinput input {
+	display: block;
+	height: 100%;
+	width: 100%;
+	padding-left: 1.4rem;
+
+	color: $green;
+	font-size: 1.4rem;
+	letter-spacing: .1rem;
+
+	background: lighten( $light-green , 15% );
+	border: 1px solid  $green;
+	border-bottom: 1rem solid lighten( $light-green , 10% );
+	border-radius: 0;
 }
 
 /* To minimize blue selection when handle sliders */
@@ -26,26 +52,36 @@ svg {
 	cursor: pointer;
 	-webkit-transition: background-color 0.2s ease-in;
 	transition:         background-color 0.2s ease-in;
-	&:hover, 
-	&:active, 
+	&:hover,
+	&:active,
 	&:focus {
 		outline:0px !important;
 		-webkit-appearance:none;
 	}
 }
 
-.reset {
+.reset,
+.switch {
 	position: absolute;
+	z-index: 2;
 	top: 2rem;
-	margin-left: 2.5rem;
-	border: none;
-	background-color: lighten( $light-green, 15% );
+	left: 2.5rem;
+
+	width: auto !important;
+	height: auto !important;
 	padding: 1rem 2rem;
+
 	font-size: 1.5rem;
 	color: $green;
+	background-color: lighten( $light-green, 15% );
+
 	&:hover{
 		background-color: lighten( $light-green, 20% );
 	}
+}
+
+.switch {
+	left: 12rem;
 }
 /*
 

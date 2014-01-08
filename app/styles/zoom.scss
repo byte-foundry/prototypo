@@ -2,12 +2,16 @@
 
 .zoom {
 	position: absolute;
+	z-index: 10;
 	top: 3rem;
 	right: 3rem;
-	z-index: 10;
+
 	width: 4rem;
+	height: auto;
+
 	opacity: .9;
-	input {
+
+	a {
 		border: none;
 		background-color: $light-green;
 		width: 4rem;
@@ -16,7 +20,9 @@
 		font-size: 2rem;
 		font-weight: bold;
 		color: $green;
+		text-align: center;
 	}
+
 	:nth-child(even) {
 		background-color: lighten( $light-green, 10% );
 	}

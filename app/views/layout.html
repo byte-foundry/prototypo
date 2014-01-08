@@ -1,0 +1,29 @@
+<div class="sidebar col">
+	<div class="cell preview-cell">
+		<string ng-show="appValues.previewString" class="ng-hide"></string>
+		<single ng-show="!appValues.previewString" class="ng-hide"></single>
+	</div>
+	<div class="cell stringinput-cell">
+		<div class="stringinput">
+			<input type="text" ng-model="appValues.stringChars" />
+		</div>
+	</div>
+	<div class="cell parammenu-cell">
+		<parammenu></parammenu>
+	</div>
+	<div class="cell paramtabs-cell">
+		<paramtabs></paramtabs>
+	</div>
+</div
+><div class="central col">
+	<div class="cell scene-cell">
+		<string ng-show="!appValues.previewString" class="ng-hide"></string>
+		<single ng-show="appValues.previewString" class="ng-hide"></single>
+		<zoom></zoom>
+		<a class="reset btn" ng-click="resetFontValues()">Reset</a>
+		<a class="switch btn" ng-click="switchPreview()">Switch</a>
+	</div>
+	<div class="cell glyphlist-cell">
+		<glyphlist></glyphlist>
+	</div>
+</div>

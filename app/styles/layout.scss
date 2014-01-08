@@ -31,16 +31,21 @@ $sidebar-w: 300px;
 
 /* inside .sidebar
  ----------------------------------------------------------------- */
-$mainmenu-h: 2rem;
-$altscene-h: 20rem;
+$mainmenu-h: 0rem;
+$stringinput-h: 3.4rem;
+$preview-h: 20rem;
 $parammenu-h: 8rem;
 
 .mainmenu-cell {
 	height: $mainmenu-h;
 }
 
-.altscene-cell {
-	height: $altscene-h;
+.stringinput-cell {
+	height: $stringinput-h;
+}
+
+.preview-cell {
+	height: $preview-h;
 }
 
 .parammenu-cell {
@@ -48,10 +53,8 @@ $parammenu-h: 8rem;
 }
 
 .paramtabs-cell {
-	height: -webkit-calc(100% - #{$mainmenu-h} - #{$altscene-h} - #{$parammenu-h});
-	height:         calc(100% - #{$mainmenu-h} - #{$altscene-h} - #{$parammenu-h});
-	max-height: -webkit-calc(100% - #{$mainmenu-h} - #{$altscene-h} - #{$parammenu-h});
-	max-height:         calc(100% - #{$mainmenu-h} - #{$altscene-h} - #{$parammenu-h});
+	height: -webkit-calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$preview-h} - #{$parammenu-h});
+	height:         calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$preview-h} - #{$parammenu-h});
 }
 
 /* inside .sidebar
