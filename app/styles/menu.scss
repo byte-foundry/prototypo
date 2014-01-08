@@ -1,0 +1,41 @@
+@import "variables";
+
+.menu {
+	position: absolute;
+	top: 1.3rem;
+	margin-left: -2em;
+	width: auto;
+	font-size: 1.6em;
+	color: $green;
+	overflow: visible;
+	.btn {
+		cursor: pointer;
+		display: inline;
+	}
+	ul {
+		display: none;
+		margin-left: 2em;
+		position: relative;
+		top: -3em;
+		width: $sidebar-w;
+		padding-left: 0;
+		border: 1px solid $light-green;
+		border-left-width: 10px;
+		li {
+			list-style-type: none;
+			background-color: lighten( $light-green , 24% );
+			padding: 1em;
+			font-size: 0.7em;
+			border-bottom: 1px solid lighten( $light-green , 15% );
+			width: 100%;
+			cursor: pointer;
+		}
+		li:last-child {
+			border-bottom: none;
+		}
+		li:hover {
+			background-color: $green;
+			color: #fff;
+		}
+	}
+}

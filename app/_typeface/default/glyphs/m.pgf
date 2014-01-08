@@ -8,12 +8,12 @@ L 	{{ self[6].x }} 0
 L 	{{ 614 * width }} 0
 L 	{{ self[8].x }} {{ self[14].y }}
 rC 	{{ [ self[11].x + ( self[9].x - self[11].x ) * ( 506 - 386 ) / ( 614 - 386 ) , self[5].y - thickness * ( 68 / 80 ) * contrast ] |curve:"both":"top-right":self[9]:roundness }}
-rC 	{{ [ self[14].x + thickness * ( 74 / 80 ) , self[16].y - breakPath ] |curve:"both":"bottom-right":self[10]:roundness:breakPath }}
+rC 	{{ [ self[14].x + thickness * ( 74 / 80 ) , self[16].y ] |curve:"both":"bottom-right":self[10]:roundness:breakPath }}
 L 	{{ self[11].x }} 0
 L 	{{ self[14].x }} 0
 L 	{{ width * 312 }} {{ xHeight * ( 270 / 465 ) }}
 rC 	{{ [ self[16].x + ( self[14].x - self[16].x ) * ( 199 - 80 ) / ( 312 - 80 ) , self[10].y ] |curve:"both":"bottom-left":self[14]:roundness }}
-rC 	{{ [ self[19].x + thickness , self[2].y - thickness * ( 80 / 112 ) - breakPath ] |curve:"both":"bottom-right":self[15]:roundness:breakPath }}
+rC 	{{ [ self[19].x + thickness , self[2].y - thickness - breakPath ] |curve:"both":"bottom-right":self[15]:roundness:breakPath }}
 L  	{{ self[16].x }} 0
 L 	0 0
 L 	0 {{ xHeight }}

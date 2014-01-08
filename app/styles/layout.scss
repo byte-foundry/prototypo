@@ -1,3 +1,5 @@
+@import "variables";
+
 html,
 body,
 .main,
@@ -18,7 +20,7 @@ body,
 
 /* inside .main
  ----------------------------------------------------------------- */
-$sidebar-w: 300px;
+
 
 .sidebar {
 	width: $sidebar-w;
@@ -33,7 +35,7 @@ $sidebar-w: 300px;
  ----------------------------------------------------------------- */
 $mainmenu-h: 0rem;
 $stringinput-h: 3.4rem;
-$preview-h: 20rem;
+$string-h: 20rem;
 $parammenu-h: 8rem;
 
 .mainmenu-cell {
@@ -44,8 +46,8 @@ $parammenu-h: 8rem;
 	height: $stringinput-h;
 }
 
-.preview-cell {
-	height: $preview-h;
+.string-cell {
+	height: $string-h;
 }
 
 .parammenu-cell {
@@ -53,13 +55,12 @@ $parammenu-h: 8rem;
 }
 
 .paramtabs-cell {
-	height: -webkit-calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$preview-h} - #{$parammenu-h});
-	height:         calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$preview-h} - #{$parammenu-h});
+	height: -webkit-calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$string-h} - #{$parammenu-h});
+	height:         calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$string-h} - #{$parammenu-h});
 }
 
 /* inside .sidebar
  ----------------------------------------------------------------- */
-$glyphlist-h: 5.5rem;
 
 .scene-cell {
 	height: -webkit-calc(100% - #{$glyphlist-h});
