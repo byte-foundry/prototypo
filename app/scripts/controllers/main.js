@@ -26,10 +26,6 @@ angular.module('prototypoApp')
 		$scope.allGlyphs = {};
 		$scope.allOutlines = {};
 
-		$scope.processGlyphs = function() {
-			//$scope.singleGlyph = $scope.font.process( $scope.appValues.singleChar, true );
-			$scope.$digest();
-		};
 		$scope.zoom = function( val ) {
 			if ( val === 0 ) {
 				$scope.appValues.zoom = 1;
@@ -37,10 +33,14 @@ angular.module('prototypoApp')
 				$scope.appValues.zoom =
 					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.25 : +0.25 ), 0.5 ), 4);
 			}
-			$scope.$digest();
 		};
 		$scope.switchPreview = function() {
 			$scope.appValues.previewString = !$scope.appValues.previewString;
+		};
+
+		var timeout;
+		$scope.readGlyph = function( char ) {
+			
 		};
 
 		Typeface.get( $routeParams.typeface )
@@ -155,11 +155,20 @@ angular.module('prototypoApp')
 			 * 3. Watch font and app values to process the glyphs
 			 */
 			.then(function() {
+				var timeout;
 				$scope.$watch('fontValues', function() {
-					var char;
+					// debounced full read
+					clearTimeout( timeout );
+					timeout = setTimeout(function() {
+						$scope.puid = Math.random();
+						for ( var char in $scope.allChars ) {
+							$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues );
+						}
+						$scope.$digest();
+					}, 100);
 
 					$scope.puid = Math.random();
-					for ( char in $scope.allChars ) {
+					for ( var char in $scope.allChars ) {
 						$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues );
 					}
 				// deep
@@ -167,7 +176,6 @@ angular.module('prototypoApp')
 
 				$scope.$watch('appValues.stringChars + appValues.singleChar', function( string ) {
 					var chars = {};
-					$scope.puid = Math.random();
 
 					string.split('').forEach(function( char ) {
 						chars[ char ] = true;
@@ -177,10 +185,9 @@ angular.module('prototypoApp')
 				});
 
 				$scope.$watch('allChars', function( newVal, oldVal ) {
-					var char;
 					$scope.puid = Math.random();
 
-					for ( char in newVal ) {
+					for ( var char in newVal ) {
 						if ( !oldVal[char] || newVal === oldVal ) {
 							$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues, true );
 						}

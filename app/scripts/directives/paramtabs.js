@@ -34,10 +34,10 @@ angular.module('prototypo.paramtabsDirective', [])
 					dragging = this.parentNode;
 					setValue( dragging, e.originalEvent.pageX );
 				});
+
 				$(window).on('pointerup', function() {
 					if ( dragging ) {
 						dragging = undefined;
-						$scope.processGlyphs();
 					}
 				});
 				$(window).on('pointermove', function( e ) {
