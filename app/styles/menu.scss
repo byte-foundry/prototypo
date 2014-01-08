@@ -2,30 +2,38 @@
 
 .menu {
 	position: absolute;
-	top: 1.3rem;
+	top: 1.6rem;
 	margin-left: -2em;
 	width: auto;
-	font-size: 1.6em;
-	color: $green;
+	font-size: 20px;
+	font-size: 2rem;
 	overflow: visible;
 	.btn {
 		cursor: pointer;
 		display: inline;
+		color: $green;
+		&:hover { color: $light-green; }
 	}
 	ul {
 		display: none;
+		padding-left: 0;
+		margin: 0;
+		color: $green;
+		border: 1px solid $light-green;
+	}
+	ul.level-1 {
 		margin-left: 2em;
 		position: relative;
-		top: -3em;
-		width: $sidebar-w;
-		padding-left: 0;
-		border: 1px solid $light-green;
+		top: -1.3em;
+		max-width: $sidebar-w;
 		border-left-width: 10px;
 		li {
 			list-style-type: none;
 			background-color: lighten( $light-green , 24% );
 			padding: 1em;
-			font-size: 0.7em;
+			padding-right: 2em;
+			font-size: 16px;
+			font-size: 1.6rem;
 			border-bottom: 1px solid lighten( $light-green , 15% );
 			width: 100%;
 			cursor: pointer;
@@ -36,6 +44,12 @@
 		li:hover {
 			background-color: $green;
 			color: #fff;
+		}
+		ul.sub-level {
+			width: 100%;
+			position: absolute;
+			left: 100%;
+			margin-top: -4.1rem;
 		}
 	}
 }
