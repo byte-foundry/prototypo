@@ -1,17 +1,15 @@
 <div class="preview">
-	<div>
+	<div style="height: 100%;">
 		<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 			viewBox="-800 -1400 10000 1800"
-			style="display: none;"
 		>
 			<g transform="matrix(1 0 0 -1 0 0) skewX({{fontValues.slant}})">
 				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#ffd9da" d="M -10000 0 l 20000 0 Z" ></path>
-				<path ng-repeat="char in appValues.string.split('') track by $index"
+				<path ng-repeat="char in appValues.stringChars.split('') track by $index"
 					glyph-contour="{{char}}" fill="#3c3c3b"
 					transform="translate({{ getTranslate( $index, char ) }})"
 				></path>
 			</g>
 		</svg>
 	</div>
-	<input type="text" ng-model="appValues.string" />
 </div>

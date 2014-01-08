@@ -56,7 +56,7 @@ angular.module('prototypo.paramtabsDirective', [])
 							translateX = Math.round( ( ( value - min ) / ( max - min ) ) * rangeWidth ) - rangeWidth;
 
 						$( mutation.target.querySelector('.paramctrl-bg') )
-							.css('transform', 'translateX(' + translateX + 'px)');
+							.css({transform: 'translateX(' + translateX + 'px)'});
 					});
 
 				// config
@@ -91,7 +91,7 @@ angular.module('prototypo.paramtabsDirective', [])
 
 					$this
 						.data('scroll', currentScroll)
-						.children().css('transform', 'translateY(' + currentScroll + 'px)');
+						.children().css({transform: 'translateY(' + currentScroll + 'px)'});
 				});
 			}
 		};

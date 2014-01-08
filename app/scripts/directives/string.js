@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('prototypo.previewDirective', [])
-	.directive('preview', function() {
+angular.module('prototypo.stringDirective', [])
+	.directive('string', function() {
 		return {
 			restrict: 'E',
-			templateUrl: 'views/preview.html',
+			templateUrl: 'views/string.html',
 			replace: true,
 			link: function postLink( $scope, $element ) {
 				var translate = 0,
@@ -27,13 +27,20 @@ angular.module('prototypo.previewDirective', [])
 					return 0;
 				};
 
+				// override 'display: none !important' set by .ng-hide
+				$element[0].style.setProperty('display', 'block', 'important');
+
 				// <svg> is totally unable to handle % dimensions
-				$element.find('svg')
+				$element
+					.find('svg')
 					.attr({
 						width: wrapper.offsetWidth,
 						height: wrapper.offsetHeight
 					})
-					.css({ display: 'block' });
+					.addClass('active')
+					.css('display', 'block');
+
+				$element[0].style.setProperty('display', '');
 			}
 		};
 	});

@@ -3,11 +3,13 @@
 .menu {
 	position: absolute;
 	top: 1.6rem;
+	left: $sidebar-w;
 	margin-left: -2em;
 	width: auto;
 	font-size: 20px;
 	font-size: 2rem;
 	overflow: visible;
+	z-index: 10;
 	.btn {
 		cursor: pointer;
 		display: inline;

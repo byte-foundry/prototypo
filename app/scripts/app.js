@@ -21,19 +21,18 @@ angular.module('prototypoApp', [
 		'prototypo.parammenuDirective',
 		'prototypo.paramtabsDirective',
 		'prototypo.paramtabDirective',
-		'prototypo.sceneDirective',
+		'prototypo.singleDirective',
+		'prototypo.stringDirective',
 		'prototypo.glyphlistDirective',
 		'prototypo.guidelinesDirective',
 		'prototypo.zoomDirective',
-		'prototypo.previewDirective',
-		'prototypo.menuDirective',
-		'prototypo.gridDirective'
+		'prototypo.menuDirective'
 	])
 
 	.config(function ( $routeProvider ) {
 		$routeProvider
 			.when('/typeface/:typeface/font/:font', {
-				templateUrl: 'views/main.html',
+				templateUrl: 'views/layout.html',
 				controller: 'MainCtrl'
 			})
 			.otherwise({

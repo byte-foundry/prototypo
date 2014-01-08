@@ -12,6 +12,8 @@
 
 	ul {
 		padding: 1rem;
+		-webkit-transition: transform 0.3s;
+		        transition: transform 0.3s;
 	}
 
 	&.initialized {
