@@ -35,7 +35,7 @@ body,
  ----------------------------------------------------------------- */
 $mainmenu-h: 0rem;
 $stringinput-h: 3.4rem;
-$string-h: 20rem;
+$preview-h: 20rem;
 $parammenu-h: 8rem;
 
 .mainmenu-cell {
@@ -46,8 +46,8 @@ $parammenu-h: 8rem;
 	height: $stringinput-h;
 }
 
-.string-cell {
-	height: $string-h;
+.preview-cell {
+	height: $preview-h;
 }
 
 .parammenu-cell {
@@ -55,8 +55,8 @@ $parammenu-h: 8rem;
 }
 
 .paramtabs-cell {
-	height: -webkit-calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$string-h} - #{$parammenu-h});
-	height:         calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$string-h} - #{$parammenu-h});
+	height: -webkit-calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$preview-h} - #{$parammenu-h});
+	height:         calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$preview-h} - #{$parammenu-h});
 }
 
 /* inside .sidebar

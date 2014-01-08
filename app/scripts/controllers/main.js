@@ -160,7 +160,7 @@ angular.module('prototypoApp')
 
 					$scope.puid = Math.random();
 					for ( char in $scope.allChars ) {
-						$scope.uniqueGlyphs[char] = $scope.font.read( char, $scope.fontValues );
+						$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues );
 					}
 				// deep
 				}, true);
