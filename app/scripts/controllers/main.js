@@ -38,11 +38,6 @@ angular.module('prototypoApp')
 			$scope.appValues.previewString = !$scope.appValues.previewString;
 		};
 
-		var timeout;
-		$scope.readGlyph = function( char ) {
-			
-		};
-
 		Typeface.get( $routeParams.typeface )
 			/*
 			 * 1. Download typeface data
@@ -77,12 +72,6 @@ angular.module('prototypoApp')
 				 * 2.1 Font values
 				 */
 				$scope.$watch('fontValues', function() {
-					// make sure all control values are integers
-					// todo: that should be handled by the directive
-					/*_( $scope.fontValues ).each(function(value, key) {
-						$scope.fontValues[key] = +value;
-					});*/
-
 					// persist changes
 					FontValues.save({
 						typeface: $routeParams.typeface,
@@ -162,7 +151,7 @@ angular.module('prototypoApp')
 					timeout = setTimeout(function() {
 						$scope.puid = Math.random();
 						for ( var char in $scope.allChars ) {
-							$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues );
+							$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues, true );
 						}
 						$scope.$digest();
 					}, 100);
