@@ -1,27 +1,26 @@
 <div class="scene">
-	
+
 
 	<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+		style="display: none;"
 		viewBox="-800 -1400 2000 2000"
-
 	>
-		<g transform="scale({{appValues.zoom}}) matrix(1 0 0 -1 0 0) skewX({{fontValues.slant}})">
-		
-		<g id="grid" class="grid" transform="translate(-800,-700)">
-	
-		<defs>
-			<pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
-				<path d="M 10 0 L 0 0 0 10" fill="none" stroke="#dedede" stroke-width="0.5"/>
-			</pattern>
-			<pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
-				<rect width="100" height="100" fill="url(#smallGrid)"/>
-				<path d="M 100 0 L 0 0 0 100" fill="none" stroke="#dedede" stroke-width="1"/>
-			</pattern>
-		</defs>
 
-		<rect width="100%" height="100%" fill="url(#grid)" />
-	
-</g>
+		<g transform="scale({{appValues.zoom}}) matrix(1 0 0 -1 0 0) skewX({{fontValues.slant}}) ">
+
+		<g id="grid" class="grid" transform="translate(-800,-600)">
+			<defs>
+				<pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
+					<path d="M 10 0 L 0 0 0 10" fill="none" stroke="#dedede" stroke-width="0.5"/>
+				</pattern>
+				<pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
+					<rect width="100" height="100" fill="url(#smallGrid)"/>
+					<path d="M 100 0 L 0 0 0 100" fill="none" stroke="#dedede" stroke-width="1"/>
+				</pattern>
+			</defs>
+
+			<rect width="100%" height="100%" fill="url(#grid)" />
+		</g>
 
 		<g id="guidelines">
 			<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#ff9cb6" d="M -20000 0 l 40000 0 Z" ></path>
@@ -36,7 +35,7 @@
 
 			<path glyph-contour="{{appValues.singleChar}}" fill="#3B3B3B"></path>
 			<g ng-repeat="segment in allGlyphs[appValues.singleChar].segments">
-			
+
 				<g id="nodes">
 					<g bindonce ng-repeat="cp in segment.debug()">
 						<path segment-endpoint bo-attr bo-attr-fill="cp.color" bo-attr-stroke="cp.color" index="{{$index}}" coords="{{ cp.start.toString() }} {{cp.end.toString()}}"></path>

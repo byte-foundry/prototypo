@@ -24,7 +24,6 @@ angular.module('prototypoApp', [
 		'prototypo.singleDirective',
 		'prototypo.stringDirective',
 		'prototypo.glyphlistDirective',
-		'prototypo.guidelinesDirective',
 		'prototypo.zoomDirective',
 		'prototypo.menuDirective'
 	])
