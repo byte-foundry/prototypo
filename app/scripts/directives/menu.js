@@ -21,7 +21,7 @@ angular.module('prototypo.menuDirective', [])
 				});
 
 				$element.on('pointerdown', '#ui-guidelines', function() {
-					$('#guidelines').fadeToggle();
+					$('#guidelines *').fadeToggle();
 				});
 
 				$element.on('pointerdown', '#ui-grid', function() {
