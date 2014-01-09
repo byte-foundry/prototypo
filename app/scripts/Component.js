@@ -189,10 +189,12 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 
 	.factory('processComponent', function( Segment, Point, processSubcomponent, flattenContext ) {
 		return function processComponent( component, _curPos, recurse, full ) {
-			var curPos = Point( _curPos ),
-				i = component.iter;
+			var curPos,
+				i = component.iter || 1;
 
 			do {
+				curPos = Point( _curPos );
+
 				// initialize the drawing with the origin as a fake segment
 				if ( component.segments[0] === undefined ) {
 					component.segments[0] = {
@@ -201,8 +203,14 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 						y: curPos.y,
 						toSVG: function() { return ''; }
 					};
+					// TODO: this 'to' value shouldn't be a property of curPos
+					// curPos could be renamed to ends and have a .start and .end
 					if ( _curPos.to ) {
-						component.segments[0].to = _curPos.to;
+						Object.defineProperty(component.segments, -1, {
+							writable: true,
+							enumerable: false
+						});
+						component.segments[-1] = _curPos.to;
 					}
 
 				} else {
