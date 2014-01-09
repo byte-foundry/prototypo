@@ -7,7 +7,7 @@ angular.module('prototypo.menuDirective', [])
 			templateUrl: 'views/menu.html',
 			replace: true,
 			link: function postLink( $scope, $element ) {
-				
+
 				$element.on('pointerdown', '.btn', function() {
 					$('.menu ul.level-1').slideToggle('fast');
 				});

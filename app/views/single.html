@@ -1,10 +1,10 @@
 <div class="scene">
 
-
 	<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 		style="display: none;"
 		viewBox="-800 -1400 2000 2000"
 	>
+
 		<g id="grid" class="grid" transform="translate(-1600,-1600) scale({{appValues.zoom}})">
 			<defs>
 				<pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -17,6 +17,7 @@
 			</defs>
 
 			<rect width="800%" height="800%" fill="url(#grid)" />
+
 		</g>
 
 		<g transform="scale({{appValues.zoom}}) matrix(1 0 0 -1 0 0) skewX({{fontValues.slant}}) ">

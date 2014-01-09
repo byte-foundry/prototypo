@@ -55,6 +55,20 @@ describe('Formula', function () {
 		expect( typeof f.segments[2] ).toBe( 'function' );
 	}));
 
+	it('guarantees that all undefined segment coordinates will be parsed as null', inject(function( Formula ) {
+		var f = Formula([
+			'// a simple triangle',
+			'M {{ self[2].x - 2 }} {{ self[2].y * 3 }}',
+			'l 30 50',
+			'l 20 -40',
+			'z',
+			'// that\'s it!'
+		].join('\n'));
+
+		expect( f.segments.length ).toBe( 6 );
+		expect( f.segments[2]() ).toBe( 'M null null' );
+	}));
+
 	it('parses & interpolates "add" components', inject(function( Formula ) {
 		var f = Formula([
 			'// a simple triangle',

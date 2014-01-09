@@ -1,1 +1,1 @@
-L {{ self[0].x }} {{ self[0].to.y }}
+L {{ self[0].x }} {{ self[-1].y }}

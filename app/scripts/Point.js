@@ -75,10 +75,10 @@ angular.module('prototypo.Point', [])
 					x:
 					new Point( x, y );
 
-			if ( !isNaN( p.coords[0] ) ) {
+			if ( point && !isNaN( p.coords[0] ) ) {
 				point.coords[0] += p.coords[0];
 			}
-			if ( !isNaN( p.coords[1] ) ) {
+			if ( point && !isNaN( p.coords[1] ) ) {
 				point.coords[1] += p.coords[1];
 			}
 			return point;

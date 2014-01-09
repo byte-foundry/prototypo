@@ -30,7 +30,8 @@ angular.module('prototypo.Formula', [])
 			rdoublequestionmark = /\?\?/g,
 			rreplace = /^replace from self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} to self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} with( inverted)? ([^ \n]+)(?: \{\{ ?(.+?) ?\}\})?$/gm,
 			radd = /^add ([^ \n]+)(?: \{\{ ?(.+?) ?\}\})? at \{\{ ?(.+?) ?\}\}$/gm,
-			rsplit = /(?:\r?\n|\r)/;
+			rsplit = /(?:\r?\n|\r)/,
+			rnumbervar = /self\[\s*-?\d+\s*\]\.[xya]/g;
 
 		return function( formula, data ) {
 			var components = [];
@@ -49,6 +50,10 @@ angular.module('prototypo.Formula', [])
 
 				// replace double question marks by NaN
 				.replace(rdoublequestionmark, 'NaN')
+
+				// add '1*' multiplier to all self[n].*
+				// to force angular to convert undefined to NaN
+				.replace(rnumbervar, '1*$&')
 
 				// parse before/after components
 				.replace(radd, function() {

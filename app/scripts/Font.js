@@ -32,6 +32,7 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 						formulaLib: formulaLib,
 						params: args.parameters
 					});
+
 				} catch ( e ) {
 					if ( e.name === 'init component' ) {
 						e.message = 'Glyph ' + code + ' cannot be initialized:\n' + e.message;
@@ -43,6 +44,7 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 
 		Font.prototype = {
 			read: function( code, params, full ) { return this.glyphs[ code ].read( params, full ); },
+			// deprecated
 			process: function( code, full ) { return this.glyphs[ code ].process( full ); }
 		};
 

@@ -96,32 +96,32 @@ angular.module('prototypoApp', [
 				c1 = Point( ( end.x - start.x ) * roundness - correction * ( end.x - start.x ) * roundness , 0 );
 				c2 = Point( - correction * ( end.x - start.x ) * roundness , ( start.y - end.y ) * roundness );
 				if ( extrem === 'reverse' ) {
-				c1 = Point( ( end.x - start.x ) * roundness - correction * ( end.x - start.x ) * roundness , 0 );
-				c2 = Point( - correction * ( end.x - start.x ) * roundness , ( start.y - end.y ) * roundness );
+					c1 = Point( ( end.x - start.x ) * roundness - correction * ( end.x - start.x ) * roundness , 0 );
+					c2 = Point( - correction * ( end.x - start.x ) * roundness , ( start.y - end.y ) * roundness );
 				}
 				break;
 			case 'top-right' :
 				c1 = Point( correction * ( end.y - start.y ) * roundness , ( end.y - start.y ) * roundness );
 				c2 = Point( ( start.x - end.x ) * roundness + correction * ( start.x - end.x ) * roundness, 0 );
 				if ( extrem === 'reverse' ) {
-				c1 = Point( - correction * ( end.x - start.x ) * roundness, ( end.y - start.y ) * roundness );
-				c2 = Point( ( start.x - end.x ) * roundness - correction * ( end.x - start.x ) * roundness, 0 );
+					c1 = Point( - correction * ( end.x - start.x ) * roundness, ( end.y - start.y ) * roundness );
+					c2 = Point( ( start.x - end.x ) * roundness - correction * ( end.x - start.x ) * roundness, 0 );
 				}
 				break;
 			case 'bottom-right' :
 				c1 = Point( ( end.x - start.x ) * roundness, 0 - correction / 2 );
 				c2 = Point( 0, ( start.y - end.y ) * roundness - correction );
 				if ( extrem === 'reverse' ) {
-				c1 = Point( ( end.x - start.x ) * roundness - correction * ( end.x - start.x ) * roundness, - correction * ( end.x - start.x ) * roundness );
-				c2 = Point( 0, ( start.y - end.y ) * roundness - correction * ( end.x - start.x ) * roundness );
+					c1 = Point( ( end.x - start.x ) * roundness - correction * ( end.x - start.x ) * roundness, - correction * ( end.x - start.x ) * roundness );
+					c2 = Point( 0, ( start.y - end.y ) * roundness - correction * ( end.x - start.x ) * roundness );
 				}
 				break;
 			case 'bottom-left' :
 				c1 = Point( correction * ( end.x - start.x ) * roundness , ( end.y - start.y ) * roundness );
 				c2 = Point( ( start.x - end.x ) * roundness + correction * ( end.x - start.x ) * roundness, 0 );
 				if ( extrem === 'reverse' ) {
-				c1 = Point( 0 , ( end.y - start.y ) * roundness - correction * ( end.x - start.x ) * roundness );
-				c2 = Point( ( start.x - end.x ) * roundness + correction * ( end.x - start.x ),  - correction * ( end.x - start.x ) * roundness );
+					c1 = Point( 0 , ( end.y - start.y ) * roundness - correction * ( end.x - start.x ) * roundness );
+					c2 = Point( ( start.x - end.x ) * roundness + correction * ( end.x - start.x ),  - correction * ( end.x - start.x ) * roundness );
 				}
 				break;
 			}

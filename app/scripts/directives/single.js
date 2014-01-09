@@ -9,6 +9,7 @@ angular.module('prototypo.singleDirective', [])
 			link: function( $scope, $element ) {
 				$element.on('wheel', function( e ) {
 					$scope.zoom( e.originalEvent.deltaY );
+					$scope.$digest();
 					return false;
 				});
 
