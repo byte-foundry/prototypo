@@ -7,21 +7,21 @@ angular.module('prototypo.stringDirective', [])
 			templateUrl: 'views/string.html',
 			replace: true,
 			link: function postLink( $scope, $element ) {
-				var translate = 0,
+				var translations = [0],
 					wrapper = $element[0].querySelector('div');
 
 				$scope.getTranslate = function( $index, char ) {
-					// reset the translation before the first letter
-					if ( $index === 0 ) {
-						translate = 0;
-					}
-
 					// TODO: we shouldn't need this check
 					if ( $scope.allGlyphs[char] ) {
-						var curr = $scope.allGlyphs[char].left + translate;
+						translations[$index +1] =
+							$scope.allGlyphs[char].left +
+							$scope.allGlyphs[char].width +
+							translations[$index];
 
-						translate += $scope.allGlyphs[char].left + $scope.allGlyphs[char].width;
-						return Math.round( curr );
+						return Math.round(
+							$scope.allGlyphs[char].left +
+							translations[$index]
+						);
 					}
 
 					return 0;
