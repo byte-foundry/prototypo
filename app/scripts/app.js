@@ -48,6 +48,26 @@ angular.module('prototypoApp', [
 		};
 	})
 
+	.filter( 'min', function ( Point )  {
+		return function ( coords, ref, axis ) {
+			var point = Point(coords);
+
+			point[axis] = Math.max( point[axis], ref[axis] );
+
+			return point;
+		};
+	})
+
+	.filter( 'max', function ( Point )  {
+		return function ( coords, ref, axis ) {
+			var point = Point(coords);
+
+			point[axis] = Math.min( point[axis], ref[axis] );
+
+			return point;
+		};
+	})
+
 	.filter( 'between', function () {
 		return function ( position, end, endDefault, start, startDefault ) {
 			return start + ( end - start ) * ( position - startDefault) / ( endDefault - startDefault ) ;
@@ -62,7 +82,6 @@ angular.module('prototypoApp', [
 			var delta = Math.sin( angle ) * coords[1];
 			// console.log(angle, coords[1], delta, +coords[index] + delta);
 			coords[index] = +coords[index] + delta * -1; // -1 ?
-
 			coords[index + 2] = coords[index + 2] - delta;
 
 			// coords[index + 4] = +coords[index + 4] + delta;
