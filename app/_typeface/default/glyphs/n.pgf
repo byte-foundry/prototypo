@@ -1,17 +1,22 @@
-M	0 0
-l	0 {{ xHeight }}
-l 	{{ thickness }} 0
+M 	{{ thickness }} {{ xHeight }}
 L 	{{ thickness }} {{ 0.86666666666667 * xHeight - breakPath }}
-rC 	{{ [ self[11].x + ( self[6].x - self[11].x ) / 2 , xHeight + opticRoundness ] |curve:"both":"bottom-left":self[4]:roundness:0.14 }}
-rC 	{{ [ self[9].x + thickness , 0.59354838709677 * xHeight ] |curve:"both":"bottom-right":self[5]:roundness }}
-L 	{{ self[6].x }} 0
-L 	{{ self[9].x }} 0
-L 	{{ 297 * width }} {{ self[11].y - 0.2625 * thickness + breakPath }}
-rC 	{{ [ self[9].x - ( self[9].x - self[11].x ) / 2 , self[5].y - thickness * 0.85 * contrast ] |curve:"both":"top-right":self[9]:roundness }}
-rC 	{{ [ thickness , self[4].y - thickness * 1.4 ] |curve:"both":"bottom-right":self[10]:roundness:breakPath }}
+rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) / 2 , xHeight + opticRoundness ] |curve:"both":"bottom-left":self[2]:roundness:0.14 }}
+rC 	{{ [ self[7].x + thickness , 0.59354838709677 * xHeight ] |curve:"both":"bottom-right":self[3]:roundness }}
+L 	{{ self[4].x }} 0
+L 	{{ self[7].x }} 0
+L 	{{ 297 * width }} {{ self[9].y - 0.2625 * thickness + breakPath }}
+rC 	{{ [ self[7].x - ( self[7].x - self[9].x ) / 2 , self[3].y - thickness * 0.85 * contrast ] |curve:"both":"top-right":self[7]:roundness }}
+rC 	{{ [ thickness , self[2].y - thickness * 1.4 ] |curve:"both":"bottom-right":self[8]:roundness:breakPath }}
 L 	{{ thickness }} 0
-L 	0 0
+L	0 0
+l	0 {{ xHeight }}
+L 	{{ self[1].x }} {{ self[1].y }}
 Z
 
-replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[7] at {{ "end" }} with serif-bottom-right {{ { angle: self[7].angle } }}
-replace from self[12] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[12] at {{ "end" }} with serif-bottom-right {{ { angle: self[12].angle } }}
+replace from self[5] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[5].x - thickness /2 } }} with serif-bottom-right {{ { angle: self[5].angle } }}
+replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[6].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: self[7].angle , serifWidth:serifWidth * 0.7 } }}
+
+replace from self[10] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[11] at {{ {x: self[10].x - thickness /2 } }} with serif-bottom-right {{ { angle: self[10].angle , serifWidth:serifWidth * 0.7 } }}
+replace from self[12] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[11] at {{ {x: self[11].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: self[12].angle } }}
+
+replace from self[12] at {{ {y: self[12].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[13] at {{ {x: self[12].x + thickness /2} }} with serif-top-left {{ { angle: self[12].angle } }}

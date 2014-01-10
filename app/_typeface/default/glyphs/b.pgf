@@ -1,6 +1,6 @@
 M 	{{ thickness }} {{ ascenderHeight }}
 L 	{{ self[1].x }} {{ xHeight * ( 407 / 465 ) }}
-rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) / 2 , xHeight + opticRoundness ] |curve:"reverse":"top-right":self[2]:roundness:-0.25 }}
+rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) * (142/364) , xHeight + opticRoundness ] |curve:"reverse":"top-right":self[2]:roundness:-0.25 }}
 rC 	{{ [ self[12].x + thickness , xHeight * ( 233 / 465 ) ] |curve:"both":"bottom-right":self[3]:roundness }}
 rC 	{{ [ self[3].x , - opticRoundness ] |curve:"both":"bottom-left":self[4]:roundness }}
 rC 	{{ [ self[1].x , xHeight * ( 50 / 565 ) ] |curve:"reverse":"top-left":self[5]:roundness:0.29 }}
