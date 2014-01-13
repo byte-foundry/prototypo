@@ -3,7 +3,7 @@ L 	0 {{ xHeight * (419/465) * crossbar }}
 L 	{{ self[15].x }} {{ self[2].y }}
 L 	{{ self[3].x }} {{ self[3].y + ( self[5].y - self[3].y ) *  (61/232) }}  /// ascenderHeight should be xHeight * ascender ?
 rC 	{{ [ self[4].x + ( self[6].x - self[4].x ) * (159/219) , ascenderHeight * (651/720) ] |curve:"both":"top-right":self[4]:roundness }}
-rC 	{{ [ self[9].x + width * 139 , ascenderHeight * (640/720) ] |curve:"reverse":"top-left":self[5]:roundness:0.5 }}  /// place points with previous ones
+rC 	{{ [ self[9].x + width * 139 , ascenderHeight * (651/720) - ( ascenderHeight * (11/720) ) * aperture ] |curve:"reverse":"top-left":self[5]:roundness:0.5 }}  /// place points with previous ones
 L 	{{ self[6].x - thickness * (6/80) * contrast }} {{ $result = ( self[8].y - thickness * (3/80) * contrast ) > ( self[6].y - thickness * (60/80) * contrast ) ? self[6].y - thickness * (60/80) * contrast : self[8].y - thickness * (3/80) * contrast }}
 rC 	{{ [ self[5].x , self[5].y - thickness * (68/80) * contrast ] |curve:"reverse":"top-right":self[7]:roundness:-0.5 }}
 rC 	{{ [ self[3].x + thickness , self[10].y + ( self[8].y - self[10].y ) *  (61/232) ] |curve:"both":"top-left":self[8]:roundness }}

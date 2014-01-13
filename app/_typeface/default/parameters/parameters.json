@@ -99,11 +99,11 @@
 				"init": 0
 			},
 			{
-				"name": "counter",
-				"label": "Counter",
+				"name": "aperture",
+				"label": "Aperture",
 				"min": 0,
-				"max": 2,
-				"step": 0.1,
+				"max": 2.2,
+				"step": 0.01,
 				"init": 1
 			},
 			{
