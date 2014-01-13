@@ -120,9 +120,7 @@ angular.module('prototypoApp', [
 
 	.filter( 'curve', function ( Point ) {
 		return function ( coords, extrem, direction, start, roundness, correction ) {
-			if( !correction ) {
-				correction = 0;
-			}
+			if( !correction ) correction = 0;
 
 			var end = Point( coords ),
 				c1,

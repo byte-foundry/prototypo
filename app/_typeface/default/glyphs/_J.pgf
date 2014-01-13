@@ -3,8 +3,8 @@ L 	{{ self[1].x }} {{ capHeight }}
 l 	{{ thickness * opticThickness }} 0
 L 	{{ self[3].x }} {{ self[1].y }}
 rC 	{{ [ self[8].x , - opticRoundness ] | curve:"both":"bottom-left":self[4]:roundness }}
-rC 	{{ [ self[7].x + thickness * opticThickness * (4/88) * contrast , 0 ] |curve:"reverse":"top-left":self[5]:roundness:0.29 }}
-L 	0 {{ self[6].y + thickness * opticThickness * (65/88) * contrast }}
+rC 	{{ [ self[7].x + thickness * opticThickness * (4/88) * contrast , self[5].y + 10 * aperture ] |curve:"reverse":"top-left":self[5]:roundness:0.29 }}
+L 	0 {{ self[6].y + thickness * opticThickness * (65/88) * contrast |min:self[6]:"y" }}
 rC 	{{ [ self[7].x + ( self[4].x - self[7].x ) * (68/334) , self[5].y + thickness * opticThickness * (65/88) * contrast ] |curve:"reverse":"top-right":self[7]:roundness:-0.29 }}
 rC 	{{ [ self[1].x , self[1].y ] | curve:"both":"top-left":self[8]:roundness }}
 Z

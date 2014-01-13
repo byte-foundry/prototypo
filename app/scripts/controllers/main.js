@@ -34,6 +34,12 @@ angular.module('prototypoApp')
 					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.25 : +0.25 ), 0.5 ), 4);
 			}
 		};
+		$scope.translateSceneY = function( val ) {
+			$scope.appValues.translateSceneY = val;
+		};
+		$scope.translateSceneX = function( val ) {
+			$scope.appValues.translateSceneX = val;
+		};
 		$scope.switchPreview = function() {
 			$scope.appValues.previewString = !$scope.appValues.previewString;
 		};
