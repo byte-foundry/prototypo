@@ -24,6 +24,7 @@ angular.module('prototypo.singleDirective', [])
 				
 				$element.on('pointerdown', function( e ) {
 					if (space) {
+						document.body.style.cursor = 'move';
 						if ($scope.appValues.translateSceneY) {
 							startX = e.originalEvent.clientX - $scope.appValues.translateSceneX;
 							startY = e.originalEvent.clientY - $scope.appValues.translateSceneY;
@@ -50,6 +51,7 @@ angular.module('prototypo.singleDirective', [])
 
 				$(window).on('pointerup', function( e ) {
 					pointerDown = false;
+					document.body.style.cursor = 'default';
 				});
 
 

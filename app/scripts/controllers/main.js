@@ -25,13 +25,12 @@ angular.module('prototypoApp')
 		$scope.allChars = {};
 		$scope.allGlyphs = {};
 		$scope.allOutlines = {};
-
 		$scope.zoom = function( val ) {
 			if ( val === 0 ) {
 				$scope.appValues.zoom = 1;
 			} else {
 				$scope.appValues.zoom =
-					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.25 : +0.25 ), 0.5 ), 4);
+					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.25 : +0.25 ), 0.3 ), 5);
 			}
 		};
 		$scope.translateSceneY = function( val ) {

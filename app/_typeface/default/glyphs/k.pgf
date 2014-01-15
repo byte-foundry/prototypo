@@ -5,11 +5,11 @@ L 	{{ self[3].x }} 0
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 M 	{{ { y: xHeight * (240/465) * crossbar } | on:self[4] }}
-L 	{{ width * 265 + thickness - 80 }} {{ xHeight }}
+L 	{{ self[3].x + width * 185 + thickness - 80 }} {{ xHeight }}
 L 	{{ self[8].x + thickness * contrast }} {{ self[8].y }}
-L 	{{ { y: contrast < 1 ? self[13].y + (self[11].x - self[12].x) /2 : self[13].y + (self[11].x - self[12].x) /8  } | on:self[8] | translate: ( self[9].x - self[8].x ) }}
-L 	{{ self[12].x + thickness * (102/80) }} 0
-L 	{{ width * 305 + thickness - 80 }} 0
+L 	{{ { x: self[7].x + (self[9].x - self[8].x) } | on:self[8] |translate: thickness - thickness * contrast }}
+L 	{{ self[12].x + thickness }} 0
+L 	{{ self[3].x + width * 200 + thickness - 80 }} 0
 L 	{{ self[7].x }} {{ self[7].y }}
 Z
 

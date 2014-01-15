@@ -49,18 +49,19 @@ angular.module('prototypoApp', [
 	})
 
 	.filter( 'min', function ( Point )  {
-		return function ( coords, ref, axis ) {
+		return function ( coords, ref, axis, correction ) {
+			if( !correction ) correction = 0;
 			if (ref === undefined) {
 				return coords;
 			}
 			else {
 				if (typeof coords === 'number') {
-					coords = Math.max( coords, ref[axis] );
+					coords = Math.max( coords, ref[axis] + correction );
 					return coords;
 				}
 				else {
 					var point = Point(coords);
-					point[axis] = Math.max( point[axis], ref[axis] );
+					point[axis] = Math.max( point[axis], ref[axis] + correction );
 					return point;
 				}
 			}

@@ -6,10 +6,10 @@ L 	{{ self[1].x }} {{ self[4].y }}
 L 	{{ self[5].x }} {{ self[1].y + thickness * opticThickness * (123/88) * contrast }}
 L 	{{ self[8].x - thickness * opticThickness * (111/88) * contrast }} {{ capHeight }}
 L 	{{ self[1].x - 88 + width * 514 + thickness - 80 }} {{ self[7].y }}
-L 	{{ {y: capHeight * (355/698) * crossbar } |on: self[7] | translate: thickness * opticThickness * (111/88) * contrast }}
+L 	{{ {y: capHeight * (355/698) * crossbar } |on: self[7] | translate: thickness * opticThickness * (111/88) * contrast |min:self[2]:"x":(self[10].x-self[11].x)*2/5 }}
 L 	{{ self[11].x + thickness * opticThickness * (115/88) }} 0
 L 	{{ self[1].x - 88 + width * 429 }} 0
-L 	{{ { x: self[9].x + ( self[11].x - self[10].x ) / 2 } | on: self[9] }}
+L 	{{ { x: self[9].x + ( self[11].x - self[10].x ) / 2 } | on: self[9] |min:self[1]:"x" }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 
