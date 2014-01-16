@@ -93,6 +93,7 @@
 .paramctrl-bg {
 	height: 2rem;
 	background-color: #90EE90;
+	transition: background-color 500ms ease;
 }
 
 .paramctrl-handle {
@@ -100,6 +101,6 @@
 	width: 2rem;
 	height: 2rem;
 	border: 0.5rem solid #90EE90;
-
 	background-color: #575756;
+	transition: border-color 500ms ease;
 }

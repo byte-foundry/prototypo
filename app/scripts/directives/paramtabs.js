@@ -53,10 +53,25 @@ angular.module('prototypo.paramtabsDirective', [])
 						var value = +mutation.target.getAttribute('value'),
 							min = +$( mutation.target ).data('min'),
 							max = +$( mutation.target ).data('max'),
+							minAdviced = +$( mutation.target ).data('minadviced'),
+							maxAdviced = +$( mutation.target ).data('maxadviced'),
 							translateX = Math.round( ( ( value - min ) / ( max - min ) ) * rangeWidth ) - rangeWidth;
 
 						$( mutation.target.querySelector('.paramctrl-bg') )
 							.css({transform: 'translateX(' + translateX + 'px)'});
+
+						if (value<minAdviced || value>maxAdviced) {
+							$( mutation.target.querySelector('.paramctrl-bg') )
+							.css('background-color', '#f4aec2');
+							$( mutation.target.querySelector('.paramctrl-handle') )
+							.css('border-color', '#f4aec2');
+						} 
+						else {
+							$( mutation.target.querySelector('.paramctrl-bg') )
+							.css('background-color', '#90ee90');
+							$( mutation.target.querySelector('.paramctrl-handle') )
+							.css('border-color', '#90ee90');
+						}
 					});
 
 				// config

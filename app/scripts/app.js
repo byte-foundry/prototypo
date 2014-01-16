@@ -25,7 +25,8 @@ angular.module('prototypoApp', [
 		'prototypo.stringDirective',
 		'prototypo.glyphlistDirective',
 		'prototypo.zoomDirective',
-		'prototypo.menuDirective'
+		'prototypo.menuDirective',
+		'prototypo.spacingDirective'
 	])
 
 	.config(function ( $routeProvider ) {

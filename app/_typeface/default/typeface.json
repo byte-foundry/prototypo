@@ -48,7 +48,7 @@
 		"o": { "fileName": "o", "width": 443, "left": 10, "right": 10 },
 		"p": { "fileName": "p", "width": 444, "left": 20, "right": 20 },
 		"q": { "fileName": "q", "width": 444, "left": 20, "right": 20 },
-		"r": { "fileName": "r", "width": 298, "left": 20, "right": 20 },
+		"r": { "fileName": "r", "width": 258, "left": 20, "right": -20 },
 		"s": { "fileName": "s", "width": 300, "left": 20, "right": 20 },
 		"t": { "fileName": "t", "width": 222, "left": 20, "right": 20 },
 		"u": { "fileName": "u", "width": 395, "left": 20, "right": 20 },
