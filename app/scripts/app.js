@@ -4,6 +4,7 @@ angular.module('prototypoApp', [
 		'ngRoute',
 		'pasvaz.bindonce',
 
+		'prototypo.2D',
 		'prototypo.Point',
 		'prototypo.Segment',
 		'prototypo.Formula',

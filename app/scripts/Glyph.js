@@ -30,6 +30,7 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 
 		Glyph.prototype = {
 			read: function( params, full ) {
+				//this.component.transform( 'rotate(45)' );
 				this.component.process( Point(this.origin), full );
 
 				return {
