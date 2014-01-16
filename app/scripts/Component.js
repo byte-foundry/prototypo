@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
-	.factory('Component', function( initComponent, processComponent ) {
+angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', 'prototypo.2D'])
+	.factory('Component', function( initComponent, processComponent, transformComponent ) {
 
 		function Component( args, formulaLib, params ) {
 			// new is optional
@@ -29,7 +29,8 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 			},
 			process: function( curPos, full ) {
 				return processComponent( this, curPos, true, full );
-			}
+			},
+			transform: function( transform ) { return transformComponent( this, transform ); }
 		};
 
 		return Component;
@@ -319,5 +320,18 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point'])
 			}
 
 			component.flatContext.self = component.segments;
+		};
+	})
+
+	.factory('transformComponent', function( transformSegment, transformToMatrix2d ) {
+		return function( component, transform ) {
+			// accept both a matrix or a transform string
+			var matrix = typeof transform === 'string' ?
+					transformToMatrix2d( transform ):
+					transform;
+
+			component.segments.forEach(function( segment ) {
+				transformSegment( segment, matrix );
+			});
 		};
 	});

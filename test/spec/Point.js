@@ -196,4 +196,21 @@ describe('Point structure', function () {
 
 		expect(pointOn({ y: 60 }, [p1, undefined]).toString()).toBe('NaN 60');
 	}));
+
+	it('should find the intersection of two lines', inject(function( pointOn, Segment, Point ) {
+		expect(pointOn([], [
+			Segment('L 50 50', Point(0,0)),
+			Segment('L 50 0', Point(0,50))
+		]).toString()).toBe('25 25');
+
+		expect(pointOn([], [
+			[Point(0,0), Segment('L 50 50', Point(0,0))],
+			[Segment('L 50 0', Point(0,50)), Point(0,50)]
+		]).toString()).toBe('25 25');
+
+		expect(pointOn([], [
+			[Point(0,0), [50, 50]],
+			[{x: 50, y: 0}, Point(0,50)]
+		]).toString()).toBe('25 25');
+	}));
 });

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.Segment', ['prototypo.Point'])
-	.factory('Segment', function( Point, parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, invertSegment, getSegmentPoints ) {
+	.factory('Segment', function( Point, parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, invertSegment, getSegmentPoints, transformSegment ) {
 		function Segment( data, curPos, invert ) {
 			// new is optional
 			if ( !( this instanceof Segment ) ) {
@@ -39,7 +39,8 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			cut: function( from, to ) { return cutSegment( this, from, to ); },
 			moveEnd: function( endPoint, newCoords ) { return moveSegmentEnd( this, endPoint, newCoords ); },
 			invertSegment: function() { return invertSegment( this); },
-			debug: function() { return getSegmentPoints( this ); }
+			debug: function() { return getSegmentPoints( this ); },
+			transform: function( matrix ) { return transformSegment( this, matrix ); }
 		};
 
 		// a segment has x and y properties that are copies of this.end.x and this.end.y
@@ -373,5 +374,22 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			}
 
 			return segment.$debug;
+		};
+	})
+
+	.factory('transformSegment', function( transformPoint ) {
+		return function( segment, matrix ) {
+			if ( segment.start ) {
+				transformPoint( segment.start, matrix );
+			}
+			if ( segment.controls && segment.controls[0] ) {
+				transformPoint( segment.controls[0], matrix );
+			}
+			if ( segment.controls && segment.controls[1] ) {
+				transformPoint( segment.controls[1], matrix );
+			}
+			if ( segment.end ) {
+				transformPoint( segment.end, matrix );
+			}
 		};
 	});

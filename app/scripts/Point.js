@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototypo.Point', [])
+angular.module('prototypo.Point', ['prototypo.2D'])
 	.factory('Point', function() {
 		function Point(x, y) {
 			// new is optional
@@ -28,7 +28,7 @@ angular.module('prototypo.Point', [])
 		return Point;
 	})
 
-	.run(function( Point, translatePoint, pointOn ) {
+	.run(function( Point, translatePoint, pointOn, transformPoint ) {
 		Point.prototype = {
 			toString: function() {
 				return ( isNaN( this.coords[0] ) ? 'NaN' : Math.round( this.coords[0] ) ) +
@@ -55,7 +55,11 @@ angular.module('prototypo.Point', [])
 				return this;
 			},
 
-			on: function( args ) { return pointOn( this, args ); }
+			on: function( args ) { return pointOn( this, args ); },
+
+			transform: function( matrix ) {
+				return transformPoint( this, matrix );
+			}
 		};
 
 		// .x and .y are more convenient than [0] and [1]
@@ -91,7 +95,7 @@ angular.module('prototypo.Point', [])
 		};
 	})
 
-	.factory('pointOn', function( Point ) {
+	.factory('pointOn', function( Point, lineLineIntersection ) {
 		// this regexp is duplicated in Segment.js
 		var rstraight = /[LVMH]/;
 
@@ -102,12 +106,13 @@ angular.module('prototypo.Point', [])
 				origin,
 				vector;
 
+			// handle cases where args refers to undefined data
+			if ( args === undefined || ( args.constructor === Array && ( args[0] === undefined || args[1] === undefined ) ) ) {
+				return point;
+			}
+
 			// point on a segment
 			if ( !isNaN( point.coords[0] ) || !isNaN( point.coords[1] ) ) {
-				// handle cases where args refers to undefined data
-				if ( args === undefined || ( args.constructor === Array && ( args[0] === undefined || args[1] === undefined ) ) ) {
-					return point;
-				}
 
 				// point on a straight line
 				if ( ( args.command !== undefined && rstraight.test(args.command) ) ||
@@ -139,7 +144,44 @@ angular.module('prototypo.Point', [])
 				}
 
 			// intersection
-			} else {
+			} else if ( args.constructor === Array && args.length === 2 ) {
+
+				// line-line intersection
+				if	(
+					( args[0].constructor === Array || rstraight.test(args[0].command) ) &&
+					( args[1].constructor === Array || rstraight.test(args[1].command) )
+					) {
+
+					var p1 = args[0].constructor === Array ?
+							( args[0][0] instanceof Point ?
+								args[0][0]:
+								new Point( args[0][0] ) ):
+							args[0].start,
+						p2 = args[0].constructor === Array ?
+							( args[0][1] instanceof Point ?
+								args[0][1]:
+								new Point( args[0][1] ) ):
+							args[0].end,
+						p3 = args[1].constructor === Array ?
+							( args[1][0] instanceof Point ?
+								args[1][0]:
+								new Point( args[1][0] ) ):
+							args[1].start,
+						p4 = args[1].constructor === Array ?
+							( args[1][1] instanceof Point ?
+								args[1][1]:
+								new Point( args[1][1] ) ):
+							args[1].end;
+
+					return new Point( lineLineIntersection( p1, p2, p3, p4 ) );
+
+				// curve-curve intersection
+				} else if ( args[0].command === 'C' && args[1].command === 'C' ) {
+
+				// line-curve or curve-line intersection
+				} else {
+
+				}
 
 			}
 		};
@@ -148,5 +190,25 @@ angular.module('prototypo.Point', [])
 	.filter('on', function( pointOn ) {
 		return function( point, args ) {
 			return pointOn( point, args );
+		};
+	})
+
+	// TODO: test
+	.factory('transformPoint', function() {
+		return function( point, m, tmp ) {
+			tmp = point.coords[0];
+
+			point.coords[0] = m[0] * tmp + m[2] * point.coords[1] + m[4];
+			point.coords[1] = m[1] * tmp + m[3] * point.coords[1] + m[5];
+		};
+	})
+
+	.filter('transform', function( Point, transformToMatrix2d, transformPoint ) {
+		return function( _point, args ) {
+			var point = _point instanceof Point ?
+					_point:
+					new Point( _point );
+
+			transformPoint( point, transformToMatrix2d( args ) );
 		};
 	});
