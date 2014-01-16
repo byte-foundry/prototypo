@@ -32,6 +32,11 @@ angular.module('prototypo.menuDirective', [])
 					$('.scene #nodes *').fadeToggle();
 				});
 
+				
+				$element.on('pointerdown', '#ui-spacing', function() {
+					$('.scene #spacing *').fadeToggle();
+				});
+
 				$('html').click(function() {
 					$('.menu ul.level-1').css('display', 'none');
 				});

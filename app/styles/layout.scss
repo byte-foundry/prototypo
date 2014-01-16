@@ -36,6 +36,15 @@ body,
 	height: 100%;
 }
 
+#spacing {
+	opacity: 0.7;
+}
+
+.spacingLine {
+	cursor:col-resize;
+}
+
+
 /* inside .sidebar
  ----------------------------------------------------------------- */
 $mainmenu-h: 0rem;

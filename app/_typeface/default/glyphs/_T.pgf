@@ -1,5 +1,5 @@
 M 	0 {{ capHeight }}
-L 	{{ width * 477 + (thickness-80) }} {{ self[1].y }}
+L 	{{ width * 537 + (thickness-80) }} {{ self[1].y }}
 l 	0 {{ - thickness * (71/80) * contrast }}
 L 	{{ self[1].x + ( self[3].x - self[1].x ) /2 + ( thickness * opticThickness ) /2 }} {{ self[3].y }}
 L 	{{ self[4].x }} 0
