@@ -26,7 +26,8 @@
 				"min": 50,
 				"max": 500,
 				"step": 1,
-				"init": 250			},
+				"init": 250
+			},
 			{
 				"name": "descender",
 				"label": "Descender",
