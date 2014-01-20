@@ -1,11 +1,24 @@
 'use strict';
 
 angular.module('prototypo.2D', [])
-	// TODO: memoize this.
-	.factory('transformToMatrix2d', function() {
-		var toRadian = Math.PI * 2 / 360;
+	.factory('transformToMatrix2d', function( $cacheFactory ) {
+		var toRadian = Math.PI * 2 / 360,
+			cache = $cacheFactory('transformToMatrix2d', { capacity: 100 });
 
-		return function( _transforms ) {
+		return function( _transforms, origin ) {
+			var cached;
+
+			if ( origin ) {
+				_transforms =
+					' translate(' + origin.x + ',' + origin.y + ') ' +
+					_transforms +
+					' translate(' + (-origin.x) + ',' + (-origin.y) + ')';
+
+			// it's
+			} else if ( ( cached = cache.get( _transforms ) ) ) {
+				return cached;
+			}
+
 			var transforms = _transforms.split(')'),
 				i = -1,
 				length = transforms.length -1,
@@ -59,10 +72,18 @@ angular.module('prototypo.2D', [])
 					break;
 
 				case 'skewX':
+					// stop parsing transform when encountering skewX(90)
+					// see http://stackoverflow.com/questions/21094958/how-to-deal-with-infinity-in-a-2d-matrix
+					if ( +values[0] === 90 || +values[0] === -90 ) {
+						return rslt;
+					}
 					curr[2] = Math.tan( values[0] * toRadian );
 					break;
 
 				case 'skewY':
+					if ( +values[0] === 90 || +values[0] === -90 ) {
+						return rslt;
+					}
 					curr[1] = Math.tan( values[0] * toRadian );
 					break;
 
@@ -83,19 +104,80 @@ angular.module('prototypo.2D', [])
 				prev[4] = rslt[4];
 				prev[5] = rslt[5];
 
-				// Matrix product (array in column-major order)
-				// the "|| 0" are here to replace NaN values caused by 0 * Infinity
-				// TODO: see if there is a better approach to fixing that problem
-				// http://stackoverflow.com/questions/21094958/how-to-deal-with-infinity-in-a-2d-matrix
-				rslt[0] = prev[0] * curr[0] + ( prev[2] * curr[1] || 0 );
-				rslt[1] = prev[1] * curr[0] + ( prev[3] * curr[1] || 0 );
+				rslt[0] = prev[0] * curr[0] + prev[2] * curr[1];
+				rslt[1] = prev[1] * curr[0] + prev[3] * curr[1];
 				rslt[2] = ( prev[0] * curr[2] || 0 ) + prev[2] * curr[3];
 				rslt[3] = ( prev[1] * curr[2] || 0 ) + prev[3] * curr[3];
 				rslt[4] = prev[0] * curr[4] + prev[2] * curr[5] + prev[4];
 				rslt[5] = prev[1] * curr[4] + prev[3] * curr[5] + prev[5];
 			}
 
+			// it's pointless to cache the transforms that have an origin,
+			// because the origin will most likely be different each time
+			if ( !origin ) {
+				cache.put( _transforms, rslt );
+			}
+
 			return rslt;
+		};
+	})
+
+	.factory('pointOnCubicBezier', function( Point ) {
+		return function( coords, from, segment ) {
+			var start = segment.start,
+				end = segment.end,
+				c1 = segment.controls[0],
+				c2 = segment.controls[1],
+				tmp1 = Point(0,0),
+				tmp2 = Point(0,0),
+				tmp3 = Point(0,0),
+				tmp4 = Point(0,0),
+				tmp5 = Point(0,0),
+				tmp6 = Point(0,0),
+				t = from === 'start' ? 0 : 1,
+				axis = coords.x !== undefined ? 'x' : 'y',
+				ref = coords[axis],
+				comparison =
+					( from === 'start' && end[axis] > start[axis] ) ||
+					( from === 'end' && end[axis] < start[axis] ) ?
+						// tmp6[axis] > ref
+						'>':
+						// tmp6[axis] < ref
+						'<';
+
+			// reference and extremity are supperposed (speed up cases without serifs)
+			// TODO: test that this condition is verified for and only for 'null dimensions' serifs
+			if ( Math.abs( ref - segment[from][axis] ) < 1 ) {
+				return segment[from];
+			}
+
+			while ( (from === 'start' && t <= 1) || ( from === 'end' && t >= 0 ) ) {
+				// third order
+				tmp1.x = start.x + ( c1.x - start.x ) * t;
+				tmp1.y = start.y + ( c1.y - start.y ) * t;
+				tmp2.x = c1.x + ( c2.x - c1.x ) * t;
+				tmp2.y = c1.y + ( c2.y - c1.y ) * t;
+				tmp3.x = c2.x + ( end.x - c2.x ) * t;
+				tmp3.y = c2.y + ( end.y - c2.y ) * t;
+				// second order
+				tmp4.x = tmp1.x + ( tmp2.x - tmp1.x ) * t;
+				tmp4.y = tmp1.y + ( tmp2.y - tmp1.y ) * t;
+				tmp5.x = tmp2.x + ( tmp3.x - tmp2.x ) * t;
+				tmp5.y = tmp2.y + ( tmp3.y - tmp2.y ) * t;
+				// first order
+				tmp6.x = tmp4.x + ( tmp5.x - tmp4.x ) * t;
+				tmp6.y = tmp4.y + ( tmp5.y - tmp4.y ) * t;
+
+				if ( ( comparison === '>' && tmp6[axis] > ref ) || ( comparison === '<' && tmp6[axis] < ref ) ) {
+					return from === 'start' ?
+						[tmp6, tmp5, tmp3, end]:
+						[start, tmp1, tmp4, tmp6];
+				}
+
+				t += 0.05 * ( from === 'start' ? 1 : -1 );
+			}
+
+			return [start, c1, c2, end];
 		};
 	})
 
@@ -120,6 +202,10 @@ angular.module('prototypo.2D', [])
 				( (x1*y2 - y1*x2) * (y3-y4) - (y1-y2) * (x3*y4 - y3*x4) ) / d
 			];
 		};
+	})
+
+	.factory('curveLineIntersection', function() {
+		return function() {};
 	})
 
 	/* the following functions are deprecated and aren't tested */

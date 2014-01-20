@@ -147,10 +147,10 @@ angular.module('prototypo.Point', ['prototypo.2D'])
 			} else if ( args.constructor === Array && args.length === 2 ) {
 
 				// line-line intersection
-				if	(
+				if (
 					( args[0].constructor === Array || rstraight.test(args[0].command) ) &&
 					( args[1].constructor === Array || rstraight.test(args[1].command) )
-					) {
+				) {
 
 					var p1 = args[0].constructor === Array ?
 							( args[0][0] instanceof Point ?
