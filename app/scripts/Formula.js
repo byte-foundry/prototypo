@@ -28,7 +28,7 @@ angular.module('prototypo.Formula', [])
 			rtrimline = /\n+$/g,
 			rcomment = /\/\/.*$/gm,
 			rdoublequestionmark = /\?\?/g,
-			rreplace = /^replace from self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} to self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} with( inverted)? ([^ \n]+)(?: \{\{ ?(.+?) ?\}\})?$/gm,
+			rreplace = /^replace from self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} to self\[ ?(\d+) ?\] at \{\{ ?(.+?) ?\}\} with( inverted)? ([^ \n]+)(?: \{\{ ?(.+?) ?\}\})?(?: transform \{\{ ?(.+?) ?\}\})?$/gm,
 			radd = /^add ([^ \n]+)(?: \{\{ ?(.+?) ?\}\})? at \{\{ ?(.+?) ?\}\}$/gm,
 			rsplit = /(?:\r?\n|\r)/,
 			rnumbervar = /self\[\s*-?\d+\s*\]\.[xya]/g;
@@ -69,18 +69,21 @@ angular.module('prototypo.Formula', [])
 
 				// parse replace components
 				.replace(rreplace, function() {
-					var inverted = !!arguments[5];
+					var invertFromTo = !!arguments[5];
+					// syntax independant alternative, might not work because of Component.js ~@line290
+					//var invertFromTo = +arguments[1] > +arguments[3];
 
 					components.push({
 						raw: arguments[0],
 						type: 'replace',
-						fromId: +arguments[ !inverted ? 1 : 3 ],
-						rawFrom: arguments[ !inverted ? 2 : 4 ],
-						toId: +arguments[ !inverted ? 3 : 1 ],
-						rawTo: arguments[ !inverted ? 4 : 2 ],
-						invert: inverted,
+						fromId: +arguments[ !invertFromTo ? 1 : 3 ],
+						rawFrom: arguments[ !invertFromTo ? 2 : 4 ],
+						toId: +arguments[ !invertFromTo ? 3 : 1 ],
+						rawTo: arguments[ !invertFromTo ? 4 : 2 ],
+						invert: !!arguments[5],
 						name: arguments[6],
-						rawArgs: arguments[7]
+						rawArgs: arguments[7],
+						rawTransform: arguments[8]
 					});
 					return '';
 				})
@@ -115,6 +118,11 @@ angular.module('prototypo.Formula', [])
 					component.argsFn = $parse( component.rawArgs );
 				}
 				delete component.rawArgs;
+
+				if ( component.rawTransform ) {
+					component.transformFn = $parse( component.rawTransform );
+				}
+				delete component.rawTransform;
 
 				if ( component.rawFrom !== undefined ) {
 					component.fromFn = $parse( component.rawFrom );

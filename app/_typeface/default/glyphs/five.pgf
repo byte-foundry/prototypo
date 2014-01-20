@@ -17,4 +17,4 @@ L 	{{ self[1].x }} {{ self[1].y }}
 Z
 
 replace from self[5] at {{ {x: self[4].x - serifHeight - serifHeight * serifCurve} }} to self[4] at {{ {y: self[4].y + thickness * contrast } }} with inverted serif-top-right-vert {{ { angle: self[5].angle } }} 
-replace from self[5] at {{ self[5].x }} to self[6] at {{ self[5].y }} with trap-top-left
+replace from self[5] at {{ {x: self[5].x } }} to self[6] at {{ { y: self[5].y } }} with trap-top-left

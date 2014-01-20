@@ -1,0 +1,6 @@
+m 0 0
+C+ {{ roundness }} 0 0 {{ self[1].x - ( thickness + opticRoundness ) / 2 }} {{ self[1].y + ( thickness + opticRoundness ) / 2 }}
+C+ {{ roundness }} 0 0 {{ self[2].x + ( thickness + opticRoundness ) / 2 }} {{ self[2].y + ( thickness + opticRoundness ) / 2 }}
+C+ {{ roundness }} 0 0 {{ self[3].x + ( thickness + opticRoundness ) / 2 }} {{ self[3].y - ( thickness + opticRoundness ) / 2 }}
+C+ {{ roundness }} 0 0 {{ self[4].x - ( thickness + opticRoundness ) / 2 }} {{ self[4].y - ( thickness + opticRoundness ) / 2 }}
+Z

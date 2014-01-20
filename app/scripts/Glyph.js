@@ -1,8 +1,8 @@
 'use strict';
 // TODO: don't recreate glyph segments on every pass, reuse them!
 
-angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
-	.factory('Glyph', function( Component, Point, glyphToSVG ) {
+angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'prototypo.2D'])
+	.factory('Glyph', function( Component, Point, glyphToSVG, transformGlyph ) {
 
 		function Glyph( name, args ) {
 			// new is optional
@@ -30,7 +30,6 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 
 		Glyph.prototype = {
 			read: function( params, full ) {
-				//this.component.transform( 'rotate(45)' );
 				this.component.process( Point(this.origin), full );
 
 				return {
@@ -45,10 +44,13 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 				//this.suid = Math.random();
 				// TODO: no need to reuse Point constructor here I believe
 				this.component.process( Point(this.origin), full );
-
 				return this;
 			},
-			toSVG: function() { return glyphToSVG( this ); }
+			toSVG: function() { return glyphToSVG( this ); },
+			transform: function( transform ) {
+				transformGlyph( this, transform );
+				return this;
+			}
 		};
 
 		return Glyph;
@@ -59,5 +61,25 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point'])
 			return glyph.segments.map(function( segment ) {
 				return segment.toSVG();
 			}).join('\n');
+		};
+	})
+
+	// this function cannot be used to transform glyphs in real-time,
+	// it would create important distortions when manipulating parameters.
+	// SVG transforms should be used for real-time transformations,
+	// and this function should only be used before generating font files
+	.factory('transformGlyph', function( transformToMatrix2d, transformSegment ) {
+		return function( glyph, transform ) {
+			// accept both a matrix or a transform string
+			var matrix = typeof transform === 'string' ?
+					transformToMatrix2d( transform ):
+					transform,
+				currSegment = glyph.component.firstSegment;
+
+			while ( currSegment ) {
+				// when transforming the whole glyph, use "$render"ed points of the segments
+				transformSegment( currSegment.$render, matrix );
+				currSegment = currSegment.next;
+			}
 		};
 	});
