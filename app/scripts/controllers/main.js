@@ -30,7 +30,7 @@ angular.module('prototypoApp')
 				$scope.appValues.zoom = 1;
 			} else {
 				$scope.appValues.zoom =
-					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.25 : +0.25 ), 0.3 ), 5);
+					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.1 : +0.1 ), 0.1 ), 5);
 			}
 		};
 		$scope.translateSceneY = function( val ) {
@@ -38,6 +38,12 @@ angular.module('prototypoApp')
 		};
 		$scope.translateSceneX = function( val ) {
 			$scope.appValues.translateSceneX = val;
+		};
+		$scope.mouseZoomY = function( val ) {
+			$scope.appValues.mouseZoomY = val;
+		};
+		$scope.mouseZoomX = function( val ) {
+			$scope.appValues.mouseZoomX = val;
 		};
 		$scope.switchPreview = function() {
 			$scope.appValues.previewString = !$scope.appValues.previewString;

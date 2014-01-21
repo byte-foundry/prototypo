@@ -61,7 +61,7 @@
 				"max": 2,
 				"step": 0.01,
 				"init": 1,
-				"minAdviced": 0.6,
+				"minAdviced": 0.85,
 				"maxAdviced": 2
 			},
 			{

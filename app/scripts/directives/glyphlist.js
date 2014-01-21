@@ -11,6 +11,7 @@ angular.module('prototypo.glyphlistDirective', [])
 					parentWidth = $element[0].parentNode.offsetWidth;
 
 				$element.on('mousedown', 'li', function() {
+					$scope.appValues.previewString = true;
 					$scope.appValues.singleChar = $( this ).data( 'id' );
 					$scope.$apply();
 				});
@@ -37,7 +38,7 @@ angular.module('prototypo.glyphlistDirective', [])
 				// scroll handler
 				$element.parent().on('wheel', '.toobig', function( e ) {
 					var $this = $(this),
-						scrollDown = e.originalEvent.deltaY > 0,
+						scrollDown = e.originalEvent.deltaY > 0 || e.originalEvent.deltaX > 0,
 						scrollBy = scrollDown ? -40 : 40,
 						currentScroll = +$this.data('scroll'),
 						selfWidth = this.offsetWidth;

@@ -1,10 +1,10 @@
 M 	{{ width * 268 }} 0
 L	0 {{ capHeight }}
 l 	{{ thickness * opticThickness * (91/88) }} 0
-L 	{{ self[1].x + thickness * opticThickness /2 }} {{ thickness * opticThickness * (108/88) * contrast }}
+L 	{{ [] | on:[ [ self[3].end , { x: self[8].x + thickness * opticThickness * (91/88), y: 0.0 }] , [ self[5].end , { x: self[7].x - thickness * opticThickness * (85/80) * contrast , y: 0.0 }] ] }}
 L 	{{ width * 534 }} {{ self[2].y }}
 l 	{{ thickness * opticThickness * contrast }} 0
-L 	{{ self[4].x + thickness * opticThickness /2 * contrast }} 0
+L   {{ [] | on:[[self[5].end, {x: self[8].x + thickness  * contrast, y: 0 }], [self[3].end, {x: self[8].x + thickness * contrast, y: 0 }]] }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 

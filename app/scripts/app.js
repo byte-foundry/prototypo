@@ -89,6 +89,14 @@ angular.module('prototypoApp', [
 		};
 	})
 
+	.filter( 'adjust', function ()  {
+		return function ( coords, thickness, contrast ) {
+			if( !contrast ) contrast = 1;
+			coords = Math.max( coords, coords + (thickness - 80) * contrast    );
+			return coords;
+		};
+	})
+
 	.filter( 'between', function () {
 		return function ( position, end, endDefault, start, startDefault ) {
 			return start + ( end - start ) * ( position - startDefault) / ( endDefault - startDefault ) ;
@@ -96,7 +104,7 @@ angular.module('prototypoApp', [
 		};
 	})
 
-	.filter( 'translateControl', function () {
+	.filter( 'rotateControl', function () {
 		return function ( segment, index, angle ) {
 
 			var coords = segment.split(' ');

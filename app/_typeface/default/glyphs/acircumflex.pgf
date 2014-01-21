@@ -1,0 +1,4 @@
+M 0 0
+Z
+add glyph:a at {{ [ 0 , 0 ] }}
+add circumflex at {{ [ width * 60 + (thickness-80)/2, xHeight + ( 80 / 465 ) * xHeight ] }}

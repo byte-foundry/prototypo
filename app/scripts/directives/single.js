@@ -8,7 +8,12 @@ angular.module('prototypo.singleDirective', [])
 			replace: true,
 			link: function( $scope, $element ) {
 				$element.on('wheel', function( e ) {
-					$scope.zoom( e.originalEvent.deltaY );
+					var mouseX = e.originalEvent.clientX;
+					var mouseY = e.originalEvent.clientY;
+					// console.log(mouseX, mouseY);
+					$scope.mouseZoomY( mouseY );
+					$scope.mouseZoomX( mouseX );
+					$scope.zoom( e.originalEvent.deltaY);
 					$scope.$digest();
 					return false;
 				});

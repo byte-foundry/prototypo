@@ -6,7 +6,7 @@
 
 	>
 		<g transform="translate({{appValues.translateSceneX}} , {{appValues.translateSceneY}})">
-			<g id="grid" class="grid" transform="translate(-1600,-1600) scale({{appValues.zoom || 1 }})">
+			<g id="grid" class="grid" transform="translate(-1600,-1600)  scale({{appValues.zoom || 1 }}) ">
 				<defs>
 					<pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
 						<path d="M 10 0 L 0 0 0 10" fill="none" stroke="#dedede" vector-effect="non-scaling-stroke" stroke-width="0.5"/>
@@ -21,7 +21,11 @@
 
 			</g>
 
-			<g transform="matrix(1 0 0 -1 0 0) scale({{appValues.zoom || 1}}) skewX({{fontValues.slant}})">
+			<g transform="
+				matrix(1 0 0 -1 0 0)  
+				scale({{appValues.zoom || 1}})  
+				skewX({{fontValues.slant}})
+			">
 
 			<g id="guidelines">
 				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#ff9cb6" d="M -20000 0 l 40000 0 Z" ></path>
@@ -37,9 +41,9 @@
 				<path glyph-contour="{{appValues.singleChar}}" fill="#3B3B3B"></path>
 				
 				<g id="spacing">
-					<path opacity="0.1" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" d="M {{- allGlyphs[appValues.singleChar].left }} -20000 l 0 40000 l -40000 0 l 0 40000 Z" ></path>
+					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" d="M {{- allGlyphs[appValues.singleChar].left }} -20000 l 0 40000 l -40000 0 l 0 40000 Z" ></path>
 					<path class="spacingLine" vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="lightGreen" d="M {{- allGlyphs[appValues.singleChar].left }} -20000 l 0 40000 Z" ></path>
-					<path opacity="0.1" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" d="M {{ allGlyphs[appValues.singleChar].width + allGlyphs[appValues.singleChar].right }} -20000 l 0 40000 l 40000 0 l 0 -40000 Z" ></path>
+					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" d="M {{ allGlyphs[appValues.singleChar].width + allGlyphs[appValues.singleChar].right }} -20000 l 0 40000 l 40000 0 l 0 -40000 Z" ></path>
 					<path class="spacingLine" vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="lightGreen" d="M {{ allGlyphs[appValues.singleChar].width + allGlyphs[appValues.singleChar].right }} -20000 l 0 40000 Z" ></path>
 				</g>
 

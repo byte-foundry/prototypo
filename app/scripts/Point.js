@@ -95,6 +95,13 @@ angular.module('prototypo.Point', ['prototypo.2D'])
 		};
 	})
 
+
+	.filter('translateY', function( translatePoint ) {
+		return function( point, x, y ) {
+			return translatePoint( point, x, y );
+		};
+	})
+
 	.factory('pointOn', function( Point, lineLineIntersection ) {
 		// this regexp is duplicated in Segment.js
 		var rstraight = /[LVMH]/;

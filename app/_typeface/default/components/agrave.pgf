@@ -1,0 +1,8 @@
+m 	0 129
+L	{{ self[1].x + thickness * (92/80) }} {{ self[1].y }}
+L 	{{ self[2].x + width * 92 }} {{ self[1].y - 129}}
+L 	{{ self[3].x - thickness * (74/80) * contrast }} {{ self[3].y }}
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
+
+

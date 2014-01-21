@@ -4,7 +4,7 @@ rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) * (148/218) , xHeight + opticRoun
 rC 	{{ [ width * 298 + (thickness - 80) , xHeight ] |curve:"reverse":"top-left":self[3]:roundness:0.29 }}
 L 	{{ self[4].x - thickness * (39/80) * contrast }} {{ self[4].y - thickness * (75/80) * contrast }}
 rC 	{{ [ self[7].x + ( self[5].x - self[7].x ) * (148/218) , self[3].y - thickness * contrast ] |curve:"reverse":"top-right":self[5]:roundness:-0.29 }} ///
-rC	{{ [ self[1].x , self[2].y - thickness * contrast ] |curve:"both":"bottom-right":self[6]:roundness }} ///
+rC	{{ [ self[1].x , self[2].y - thickness * contrast ] |curve:"reverse":"top-left":self[6]:roundness:0.29 }} ///
 L 	{{ self[7].x }} 0
 l 	{{ -thickness }} 0
 L 	{{ self[9].x }} {{ xHeight }}
