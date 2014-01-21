@@ -17,11 +17,15 @@ angular.module('prototypoApp')
 		// font parameters values
 		$scope.fontValues = {};
 		// app values
-		$scope.appValues = {
+		var initialAppValues = {
 			previewString: true,
 			paramTab: 0,
-			zoom: 1
+			zoom: 1,
+			scenePanX: 0,
+			scenePanY: 0,
+			stringChars: ''
 		};
+		$scope.appValues = $.extend({}, initialAppValues);
 		$scope.allChars = {};
 		$scope.allGlyphs = {};
 		$scope.allOutlines = {};
@@ -32,18 +36,6 @@ angular.module('prototypoApp')
 				$scope.appValues.zoom =
 					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.1 : +0.1 ), 0.1 ), 5);
 			}
-		};
-		$scope.translateSceneY = function( val ) {
-			$scope.appValues.translateSceneY = val;
-		};
-		$scope.translateSceneX = function( val ) {
-			$scope.appValues.translateSceneX = val;
-		};
-		$scope.mouseZoomY = function( val ) {
-			$scope.appValues.mouseZoomY = val;
-		};
-		$scope.mouseZoomX = function( val ) {
-			$scope.appValues.mouseZoomX = val;
 		};
 		$scope.switchPreview = function() {
 			$scope.appValues.previewString = !$scope.appValues.previewString;
@@ -131,10 +123,8 @@ angular.module('prototypoApp')
 				}, true);
 
 				$scope.resetAppValues = function() {
+					$scope.appValues = $.extend($scope.appValues, initialAppValues);
 					$scope.appValues.singleChar = Object.keys( $scope.typeface.order )[0];
-					$scope.appValues.stringChars = '';
-					$scope.appValues.paramTab = 0;
-					$scope.appValues.previewString = true;
 				};
 
 				promises.push( AppValues.get({ typeface: $routeParams.typeface })
