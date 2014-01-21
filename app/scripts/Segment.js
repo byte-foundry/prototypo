@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('prototypo.Segment', ['prototypo.Point'])
+angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 	.factory('Segment', function( Point, parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, invertSegment, getSegmentPoints, transformSegment ) {
 		function Segment( data, curPos, invert ) {
 			// new is optional
@@ -114,6 +114,27 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 				}
 
 				break;
+			case 'c+':
+			case 'c-':
+			case 'C+':
+			case 'C-':
+				segment.roundness = +tmp[1];
+				segment.corrections = tmp.slice(2,4);
+
+				if ( segment.controls.length === 0 ) {
+					segment.controls[0] = Point(0,0);
+					segment.controls[1] = Point(0,0);
+				}
+
+				// duplicated code
+				if ( segment.end === undefined ) {
+					segment.end = Point( tmp[ length - 2 ], tmp[ length - 1 ] );
+				} else {
+					segment.end.x = tmp[ length - 2 ];
+					segment.end.y = tmp[ length - 1 ];
+				}
+
+				break;
 			default:
 				if ( length > 3 ) {
 					if ( segment.controls[0] === undefined ) {
@@ -147,8 +168,6 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 
 	// make endpoint and control-points of the glyph absolute
 	.factory('absolutizeSegment', function( Point ) {
-		var rrelativeCP = /R[QCS]/;
-
 		return function( segment, curPos ) {
 			if ( segment.start === undefined ) {
 				segment.start = Point( curPos );
@@ -195,6 +214,8 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			case 'rq':
 			case 'rc':
 			case 'rs':
+			case 'c+':
+			case 'c-':
 				curPos.x = segment.end.x += curPos.x;
 				curPos.y = segment.end.y += curPos.y;
 				break;
@@ -202,7 +223,7 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			case 'Z':
 				segment.end = segment.start;
 				break;
-			// absolute commands (M, L, C, Q, ...) except Z, H & V
+			// absolute commands (M, L, C, Q, C+/-, ...) except Z, H & V
 			default:
 				curPos.x = segment.end.x;
 				curPos.y = segment.end.y;
@@ -213,36 +234,75 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 			segment.command = segment.command.toUpperCase();
 
 			// absolutize control-points relative to the ends of the segment
-			if ( segment.command === 'RC' ) {
-				segment.controls[0].x += segment.start.x;
-				segment.controls[0].y += segment.start.y;
-			}
-			if ( rrelativeCP.test( segment.command ) ) {
-				segment.relativeControls = true;
+			if ( segment.command[0] === 'R' ) {
+				if ( segment.command === 'RC' ) {
+					segment.controls[0].x += segment.start.x;
+					segment.controls[0].y += segment.start.y;
+				}
+
 				segment.controls[1].x += segment.end.x;
 				segment.controls[1].y += segment.end.y;
+
+				segment.command = segment.command[1];
+				segment.relativeControls = true;
 			}
 
-			// remove 'r' indication
-			segment.command = segment.command.slice(-1);
+			// cubic bezier angle
+			if ( segment.command === 'C+' || segment.command === 'C-' ) {
+				var dx = ( segment.end.x - segment.start.x ) * segment.roundness,
+					dy = ( segment.end.y - segment.start.y ) * segment.roundness;
+
+				if (
+					( segment.command === 'C+' && ( dx * dy > 0 ) ) ||
+					( segment.command === 'C-' && ( dx * dy < 0 ) )
+				) {
+					segment.controls[0].x = segment.start.x;
+					segment.controls[0].y = segment.start.y + dy;
+					segment.controls[1].x = segment.end.x - dx;
+					segment.controls[1].y = segment.end.y;
+
+				} else {
+					segment.controls[0].x = segment.start.x + dx;
+					segment.controls[0].y = segment.start.y;
+					segment.controls[1].x = segment.end.x;
+					segment.controls[1].y = segment.end.y - dy;
+				}
+
+				segment.command = 'C';
+				segment.relativeControls = true;
+			}
 		};
 	})
 
 	// cut a segment given an x or y coordinate and move the segment end accordingly
-	.factory('cutSegment', function( pointOn, moveSegmentEnd ) {
+	.factory('cutSegment', function( Point, moveSegmentEnd, pointOnCubicBezier ) {
 		// this regexp is duplicated in Point.js
 		var rstraight = /[LVMH]/;
 
 		return function( segment, from, _to ) {
-			var p = pointOn( from, segment );
 
 			// straight line
 			if ( rstraight.test(segment.command) ) {
-				moveSegmentEnd( segment, _to, p );
+				var dx = segment.end.x - segment.start.x,
+					dy = segment.end.y - segment.start.y;
+
+				moveSegmentEnd(	segment, _to, !isNaN(from.x) ?
+					Point( from.x, ( from.x - segment.start.x ) / dx * dy + segment.start.y ) :
+					Point( ( from.y - segment.start.y ) / dy * dx + segment.start.x, from.y )
+				);
 
 			// curve
 			} else {
+				var points = pointOnCubicBezier( from, _to, segment );
 
+				segment.$render.start.x = points[0].x;
+				segment.$render.start.y = points[0].y;
+				segment.$render.controls[0].x = points[1].x;
+				segment.$render.controls[0].y = points[1].y;
+				segment.$render.controls[1].x = points[2].x;
+				segment.$render.controls[1].y = points[2].y;
+				segment.$render.end.x = points[3].x;
+				segment.$render.end.y = points[3].y;
 			}
 
 			return segment;
@@ -378,17 +438,17 @@ angular.module('prototypo.Segment', ['prototypo.Point'])
 	})
 
 	.factory('transformSegment', function( transformPoint ) {
-		return function( segment, matrix ) {
-			if ( segment.start ) {
+		return function( segment, matrix, except ) {
+			if ( segment.start && ( except === undefined || except.indexOf( segment.start ) === -1 ) ) {
 				transformPoint( segment.start, matrix );
 			}
-			if ( segment.controls && segment.controls[0] ) {
+			if ( segment.controls && segment.controls[0] && ( except === undefined || except.indexOf( segment.controls[0] ) === -1 ) ) {
 				transformPoint( segment.controls[0], matrix );
 			}
-			if ( segment.controls && segment.controls[1] ) {
+			if ( segment.controls && segment.controls[1] && ( except === undefined || except.indexOf( segment.controls[1] ) === -1 ) ) {
 				transformPoint( segment.controls[1], matrix );
 			}
-			if ( segment.end ) {
+			if ( segment.end && ( except === undefined || except.indexOf( segment.end ) === -1 ) ) {
 				transformPoint( segment.end, matrix );
 			}
 		};

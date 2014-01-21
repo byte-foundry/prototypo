@@ -12,7 +12,7 @@
 						<path d="M 10 0 L 0 0 0 10" fill="none" stroke="#dedede" vector-effect="non-scaling-stroke" stroke-width="0.5"/>
 					</pattern>
 					<pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
-						<rect width="100" height="100" fill="url(#smallGrid)"/>
+						<rect width="100" height="100" fill="url (#smallGrid)"/>
 						<path d="M 100 0 L 0 0 0 100" fill="none" stroke="#dedede" vector-effect="non-scaling-stroke" stroke-width="1"/>
 					</pattern>
 				</defs>
@@ -39,7 +39,7 @@
 			</g>
 
 				<path glyph-contour="{{appValues.singleChar}}" fill="#3B3B3B"></path>
-				
+
 				<g id="spacing">
 					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" d="M {{- allGlyphs[appValues.singleChar].left }} -20000 l 0 40000 l -40000 0 l 0 40000 Z" ></path>
 					<path class="spacingLine" vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="lightGreen" d="M {{- allGlyphs[appValues.singleChar].left }} -20000 l 0 40000 Z" ></path>

@@ -20,13 +20,13 @@ angular.module('prototypo.singleDirective', [])
 
 				// translate the scene with space bar + mouse
 				var startX, startY, endX, endY, pointerDown, space;
-			
+
 				$(document).keyup(function(evt) {
 					if (evt.keyCode == 32) { space = false; }
-				}).keydown(function(evt) { 
+				}).keydown(function(evt) {
 					if (evt.keyCode == 32) { space = true; }
 				});
-				
+
 				$element.on('pointerdown', function( e ) {
 					if (space) {
 						document.body.style.cursor = 'move';
@@ -40,11 +40,11 @@ angular.module('prototypo.singleDirective', [])
 						pointerDown = true;
 					}
 				});
-				
+
 				$element.on('pointermove', function( e ) {
 					if (pointerDown) {
 						var endX = e.originalEvent.clientX;
-						var endY = e.originalEvent.clientY;	
+						var endY = e.originalEvent.clientY;
 						var deltaY =  endY - startY;
 						var deltaX =  endX - startX;
 						$scope.translateSceneY( deltaY );

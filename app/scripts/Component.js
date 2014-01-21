@@ -30,7 +30,13 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			process: function( curPos, full ) {
 				return processComponent( this, curPos, true, full );
 			},
-			transform: function( transform ) { return transformComponent( this, transform ); }
+			transform: function( transform ) { return transformComponent( this, transform ); },
+			// quick and dirty toSVG, should only be used for debugging purpose
+			toSVG: function() {
+				return this.segments.map(function( segment ) {
+					return segment.toSVG();
+				}).join('\n');
+			}
 		};
 
 		return Component;
@@ -254,7 +260,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 	})
 
 	// TODO: rename in "determineOrigin"
-	.factory('processSubcomponent', function( Point, cutSegment, moveSegmentEnd ) {
+	.factory('processSubcomponent', function( Point, cutSegment, moveSegmentEnd, transformComponent, transformToMatrix2d ) {
 		return function( component, subcomponent, processor, full ) {
 			var origin,
 				from,
@@ -289,6 +295,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				origin = subcomponent.invert ?
 					toSeg.$render.start:
 					fromSeg.$render.end;
+				// TODO: this should be a different variable
 				origin.to = subcomponent.invert ?
 					fromSeg.$render.end:
 					toSeg.$render.start;
@@ -296,6 +303,20 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 
 			// init or process subcomponent (depending on the caller)
 			processor( subcomponent, origin, undefined, full );
+
+			if ( subcomponent.transformFn ) {
+				transformComponent(
+					subcomponent,
+					transformToMatrix2d(
+						subcomponent.transformFn( component.flatContext ),
+						toSeg.$render.start
+					),
+					[
+						subcomponent.firstSegment.start && subcomponent.firstSegment.start,
+						subcomponent.firstSegment.controls && subcomponent.firstSegment.controls[0],
+					]
+				);
+			}
 
 			// the last point of an inverted segment would be ignored when it gets inverted
 			if ( subcomponent.invert ) {
@@ -324,14 +345,16 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 	})
 
 	.factory('transformComponent', function( transformSegment, transformToMatrix2d ) {
-		return function( component, transform ) {
+		return function( component, transform, except ) {
 			// accept both a matrix or a transform string
 			var matrix = typeof transform === 'string' ?
 					transformToMatrix2d( transform ):
-					transform;
+					transform,
+				currSegment = component.firstSegment;
 
-			component.segments.forEach(function( segment ) {
-				transformSegment( segment, matrix );
-			});
+			while ( currSegment ) {
+				transformSegment( currSegment, matrix, except );
+				currSegment = currSegment.next;
+			}
 		};
 	});

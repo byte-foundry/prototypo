@@ -374,9 +374,9 @@ describe('Component', function() {
 					type: 'replace',
 					argsFn: function( flatCtx ) { return {width: flatCtx.width}; },
 					fromId: 0,
-					fromFn: function() { return [NaN,40]; },
+					fromFn: function() { return {x: NaN, y: 40}; },
 					toId: 1,
-					toFn: function() { return [10,NaN]; }
+					toFn: function() { return {x: 10, y: NaN}; }
 				};
 
 			sFrom.$render.end = Point(sFrom.end);
@@ -422,9 +422,9 @@ describe('Component', function() {
 					type: 'replace',
 					argsFn: function( flatCtx ) { return {width: flatCtx.width}; },
 					fromId: 0,
-					fromFn: function() { return [NaN,40]; },
+					fromFn: function() { return {x: NaN, y: 40}; },
 					toId: 1,
-					toFn: function() { return [10,NaN]; }
+					toFn: function() { return {x: 10, y: NaN}; }
 				};
 
 			expect(function() {

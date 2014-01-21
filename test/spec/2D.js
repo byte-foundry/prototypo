@@ -39,12 +39,12 @@ describe('2D utils', function () {
 			expect( m[5] ).toBe(  0 );
 		}));
 
-		it('can convert skewX(90) command to a matrix2d', inject(function( transformToMatrix2d ) {
+		it('stops parsing transforms when encountering a skewX(90) command', inject(function( transformToMatrix2d ) {
 			var m = transformToMatrix2d( 'skewX(90)' );
 
 			expect( m[0] ).toBe( 1 );
 			expect( m[1] ).toBe( 0 );
-			expect( m[2] ).toBe( Infinity );
+			expect( m[2] ).toBe( 0 );
 			expect( m[3] ).toBe( 1 );
 			expect( m[4] ).toBe( 0 );
 			expect( m[5] ).toBe( 0 );
@@ -59,6 +59,17 @@ describe('2D utils', function () {
 			expect( m[3] ).toBe( -1 );
 			expect( m[4] ).toBe( -200 );
 			expect( m[5] ).toBe(  0 );
+		}));
+
+		it('accepts a tranform-origin as a second parameter', inject(function( transformToMatrix2d ) {
+			var m = transformToMatrix2d( 'rotate(90)', {x: 50, y: -50} );
+
+			expect( m[0] ).toBe(  0 );
+			expect( m[1] ).toBe(  1 );
+			expect( m[2] ).toBe( -1 );
+			expect( m[3] ).toBe(  0 );
+			expect( m[4] ).toBe(  0 );
+			expect( m[5] ).toBe(  -100 );
 		}));
 	});
 });
