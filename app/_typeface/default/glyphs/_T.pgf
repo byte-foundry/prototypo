@@ -13,5 +13,5 @@ Z
 replace from self[5] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[5].x - thickness * opticThickness /2 } }} with serif-bottom-right {{ { angle: self[5].angle } }}
 replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[6].x + thickness * opticThickness /2 } }} with inverted serif-bottom-left {{ { angle: self[7].angle } }} 
 
-replace from self[4] at {{ {x: self[3].x - serifHeight - serifHeight * serifCurve} }} to self[3] at {{ {y: self[3].y + thickness * (71/80) * contrast } }} with inverted serif-top-right-vert {{ { angle: self[4].angle } }} 
-replace from self[8] at {{ {x: self[8].x + serifHeight + serifHeight * serifCurve} }} to self[9] at {{ {y: self[8].y + thickness * (71/80) * contrast } }} with serif-top-left-vert {{ { angle: self[8].angle } }} 
+replace from self[4] at {{ {x: self[3].x - serifHeight - serifHeight * serifCurve} }} to self[3] at {{ {y: self[3].y + thickness * (71/80) * contrast } }} with inverted serif-top-right-vert {{ { angle: self[3].angle } }}
+replace from self[8] at {{ {x: self[8].x + serifHeight + serifHeight * serifCurve} }} to self[9] at {{ {y: self[8].y + thickness * (71/80) * contrast } }} with serif-top-left-vert transform {{ "rotate("+ serifRotate +")" }}

@@ -2,8 +2,8 @@ M 	0 {{ capHeight * (252/698) }}
 L 	{{ self[1].x }} {{ capHeight }}
 L 	{{ self[2].x + thickness * opticThickness }} {{ self[2].y }}
 L 	{{ self[3].x }} {{ self[1].y }}
-rC 	{{ [ self[4].x + ( self[6].x - self[4].x ) / 2 , self[10].y + thickness * contrast ] | curve:"both":"bottom-left":self[4]:roundness }}
-rC 	{{ [ width * 447 , self[4].y ] | curve:"both":"top-left":self[5]:roundness }}
+rC 	{{ [ self[1].x + ( self[6].x - self[1].x ) / 2 + thickness/2 , self[10].y + thickness * contrast ] | curve:"both":"bottom-left":self[4]:roundness }}
+rC 	{{ [ width * 447 + thickness -80 , self[4].y ]  | curve:"both":"top-left":self[5]:roundness }}
 L 	{{ self[6].x }} {{ self[2].y }}
 L 	{{ self[7].x + thickness * opticThickness * contrast  }} {{ self[7].y }}
 L 	{{ self[8].x }} {{ self[6].y }}
