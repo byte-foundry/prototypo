@@ -19,42 +19,41 @@ angular.module('prototypo.singleDirective', [])
 				});
 
 				// translate the scene with space bar + mouse
-				var startX, startY, endX, endY, pointerDown, space;
+				var startX,
+					startY,
+					//spaceDown,
+					pointerDown;
 
-				$(document).keyup(function(evt) {
-					if (evt.keyCode == 32) { space = false; }
-				}).keydown(function(evt) {
-					if (evt.keyCode == 32) { space = true; }
-				});
+				/*$(document)
+					.on('keyup', function( e ) {
+						if ( e.keyCode === 32 ) {
+							spaceDown = false;
+						}
+					}).on('keydown', function( e ) {
+						if ( e.keyCode === 32) {
+							spaceDown = true;
+						}
+					});*/
 
 				$element.on('pointerdown', function( e ) {
-					if (space) {
-						document.body.style.cursor = 'move';
-						if ($scope.appValues.translateSceneY) {
-							startX = e.originalEvent.clientX - $scope.appValues.translateSceneX;
-							startY = e.originalEvent.clientY - $scope.appValues.translateSceneY;
-						} else {
-							startX = e.originalEvent.clientX;
-							startY = e.originalEvent.clientY;
-						}
-						pointerDown = true;
-					}
+					//if ( spaceDown ) {
+					document.body.style.cursor = 'move';
+					startX = e.originalEvent.clientX - $scope.appValues.scenePanX;
+					startY = e.originalEvent.clientY - $scope.appValues.scenePanY;
+					pointerDown = true;
+					//}
 				});
 
 				$element.on('pointermove', function( e ) {
-					if (pointerDown) {
-						var endX = e.originalEvent.clientX;
-						var endY = e.originalEvent.clientY;
-						var deltaY =  endY - startY;
-						var deltaX =  endX - startX;
-						$scope.translateSceneY( deltaY );
-						$scope.translateSceneX( deltaX );
+					if ( pointerDown ) {
+						$scope.appValues.scenePanX = e.originalEvent.clientX - startX;
+						$scope.appValues.scenePanY = e.originalEvent.clientY - startY;
 						$scope.$digest();
 						return false;
 					}
 				});
 
-				$(window).on('pointerup', function( e ) {
+				$(window).on('pointerup', function() {
 					pointerDown = false;
 					document.body.style.cursor = 'default';
 				});
@@ -72,6 +71,9 @@ angular.module('prototypo.singleDirective', [])
 					})
 					.addClass('active')
 					.css('display', 'block');
+
+				var viewBox = $element.find('svg')[0].viewBox.baseVal;
+				$scope.viewboxScale = $element[0].offsetWidth / ( viewBox.height - viewBox.y );
 
 				$element[0].style.setProperty('display', '');
 			}
