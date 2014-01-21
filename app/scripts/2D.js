@@ -148,7 +148,7 @@ angular.module('prototypo.2D', [])
 			// reference and extremity are supperposed (speed up cases without serifs)
 			// TODO: test that this condition is verified for and only for 'null dimensions' serifs
 			if ( Math.abs( ref - segment[from][axis] ) < 1 ) {
-				return segment[from];
+				return [start, c1, c2, end];;
 			}
 
 			while ( (from === 'start' && t <= 1) || ( from === 'end' && t >= 0 ) ) {

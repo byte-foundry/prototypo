@@ -41,7 +41,6 @@ angular.module('prototypoApp', [
 			});
 	})
 
-	// all those filters belong in filters/formula.js
 	.filter( 'log', function () {
 		return function( value, txt ) {
 			//value = Math.round( value * 100 ) / 100 ;
@@ -121,6 +120,7 @@ angular.module('prototypoApp', [
 		};
 	})
 
+	// deprecated, use C+/C- commands instead
 	.filter( 'curve', function ( Point ) {
 		return function ( coords, extrem, direction, start, roundness, correction ) {
 			if( !correction ) correction = 0;
