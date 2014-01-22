@@ -14,11 +14,10 @@
 				"minAdviced": 300,
 				"maxAdviced": 800,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
+					"Humanist": 508,
+					"Garalde": 510,
+					"Didone": 465,
+					"Mechanistic": 465,
 					"Grotesk": 0
 				}
 			},
@@ -32,12 +31,11 @@
 				"minAdviced": 0,
 				"maxAdviced": 350,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": 233,
+					"Garalde": 233,
+					"Didone": 292,
+					"Mechanistic": 214,
+					"Grotesk": 233
 				}
 			},
 			{
@@ -50,12 +48,11 @@
 				"minAdviced": 50,
 				"maxAdviced": 500,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": 303,
+					"Garalde": 278,
+					"Didone": 303,
+					"Mechanistic": 214,
+					"Grotesk": 250
 				}
 			},
 			{
@@ -68,12 +65,11 @@
 				"minAdviced": -350,
 				"maxAdviced": -100,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
+					"Humanist": -256,
+					"Garalde": -210,
+					"Didone": -210,
 					"Mechanistic": 0,
-					"Grotesk": 0
+					"Grotesk": -210
 				}
 			},
 			{
@@ -86,12 +82,11 @@
 				"minAdviced": 0.88,
 				"maxAdviced": 1.05,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": 1.09,
+					"Garalde": 1.1,
+					"Didone": 1,
+					"Mechanistic": 0.94,
+					"Grotesk": 1
 				}
 			},
 			{
@@ -104,12 +99,11 @@
 				"minAdviced": 0.85,
 				"maxAdviced": 2,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": 0.97,
+					"Garalde": 1.09,
+					"Didone": 1,
+					"Mechanistic": 1,
+					"Grotesk": 1
 				}
 			},
 			{
@@ -124,7 +118,6 @@
 				"presets": {
 					"Humanist": 0,
 					"Garalde": 0,
-					"Transitional": 0,
 					"Didone": 0,
 					"Mechanistic": 0,
 					"Grotesk": 0
@@ -140,12 +133,11 @@
 				"minAdviced": 0.4,
 				"maxAdviced": 1.3,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": 0.58,
+					"Garalde": 0.6,
+					"Didone": 0.65,
+					"Mechanistic": 0.65,
+					"Grotesk": 0.65
 				}
 			}
 		]
@@ -165,12 +157,11 @@
 				"minAdviced": 60,
 				"maxAdviced": 180,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": 98,
+					"Garalde": 95,
+					"Didone": 80,
+					"Mechanistic": 95,
+					"Grotesk": 80
 				}
 			},
 			{
@@ -183,12 +174,11 @@
 				"minAdviced": -1,
 				"maxAdviced": -0.3,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": -0.39,
+					"Garalde": -0.57,
+					"Didone": -0.25,
+					"Mechanistic": -1,
+					"Grotesk": -1
 				}
 			},
 			{
@@ -201,9 +191,8 @@
 				"minAdviced": 0,
 				"maxAdviced": 100,
 				"presets": {
-					"Humanist": 0,
+					"Humanist": 87,
 					"Garalde": 0,
-					"Transitional": 0,
 					"Didone": 0,
 					"Mechanistic": 0,
 					"Grotesk": 0
@@ -219,12 +208,11 @@
 				"minAdviced": 0,
 				"maxAdviced": 2.2,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": 2.2,
+					"Garalde": 1.84,
+					"Didone": 2.2,
+					"Mechanistic": 0.08,
+					"Grotesk": 1
 				}
 			},
 			{
@@ -239,7 +227,6 @@
 				"presets": {
 					"Humanist": 0,
 					"Garalde": 0,
-					"Transitional": 0,
 					"Didone": 0,
 					"Mechanistic": 0,
 					"Grotesk": 0
@@ -255,12 +242,11 @@
 				"minAdviced": 1,
 				"maxAdviced": 2,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": 1.1,
+					"Garalde": 1.1,
+					"Didone": 1.1,
+					"Mechanistic": 1.1,
+					"Grotesk": 1.1
 				}
 			},
 			{
@@ -273,12 +259,11 @@
 				"minAdviced": 0,
 				"maxAdviced": 20,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": 10,
+					"Garalde": 10,
+					"Didone": 10,
+					"Mechanistic": 10,
+					"Grotesk": 10
 				}
 			},
 			{
@@ -291,9 +276,8 @@
 				"minAdviced": -40,
 				"maxAdviced": 40,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
+					"Humanist": -31.5,
+					"Garalde": -23.5,
 					"Didone": 0,
 					"Mechanistic": 0,
 					"Grotesk": 0
@@ -316,11 +300,10 @@
 				"minAdviced": 0,
 				"maxAdviced": 80,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
+					"Humanist": 30,
+					"Garalde": 30,
+					"Didone": 100,
+					"Mechanistic": 90,
 					"Grotesk": 0
 				}
 			},
@@ -334,11 +317,10 @@
 				"minAdviced": 0,
 				"maxAdviced": 80,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
+					"Humanist": 31,
+					"Garalde": 29,
+					"Didone": 20,
+					"Mechanistic": 68,
 					"Grotesk": 0
 				}
 			},
@@ -354,7 +336,6 @@
 				"presets": {
 					"Humanist": 0,
 					"Garalde": 0,
-					"Transitional": 0,
 					"Didone": 0,
 					"Mechanistic": 0,
 					"Grotesk": 0
@@ -370,9 +351,8 @@
 				"minAdviced": 0,
 				"maxAdviced": 3,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
+					"Humanist": 1.77,
+					"Garalde": 1.57,
 					"Didone": 0,
 					"Mechanistic": 0,
 					"Grotesk": 0
@@ -388,12 +368,11 @@
 				"minAdviced": 0,
 				"maxAdviced": 2,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": 0.55,
+					"Garalde": 0.55,
+					"Didone": 0.55,
+					"Mechanistic": 0.55,
+					"Grotesk": 0.55
 				}
 			},
 			{
@@ -406,9 +385,8 @@
 				"minAdviced": -0.5,
 				"maxAdviced": 0.5,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
+					"Humanist": 0.22,
+					"Garalde": 0.19,
 					"Didone": 0,
 					"Mechanistic": 0,
 					"Grotesk": 0
@@ -425,8 +403,7 @@
 				"maxAdviced": 1,
 				"presets": {
 					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
+					"Garalde": 0.23,
 					"Didone": 0,
 					"Mechanistic": 0,
 					"Grotesk": 0
@@ -442,12 +419,11 @@
 				"minAdviced": 0,
 				"maxAdviced": 1.5,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
+					"Humanist": 0.55,
+					"Garalde": 0.55,
+					"Didone": 0.55,
+					"Mechanistic": 0.55,
+					"Grotesk": 0.55
 				}
 			},
 			{
@@ -460,9 +436,8 @@
 				"minAdviced": -35,
 				"maxAdviced": 15,
 				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Transitional": 0,
+					"Humanist": -7,
+					"Garalde": -11,
 					"Didone": 0,
 					"Mechanistic": 0,
 					"Grotesk": 0

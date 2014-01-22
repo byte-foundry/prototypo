@@ -147,7 +147,7 @@ angular.module('prototypo.Point', ['prototypo.2D'])
 
 				// point on a curve
 				} else {
-
+					
 				}
 
 			// intersection

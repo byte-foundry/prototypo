@@ -15,4 +15,4 @@ rC 	{{ [ self[2].x , self[7].y - thickness ] | curve:"both":"bottom-left":self[1
 rC 	{{ [ self[1].x , self[1].y ] | curve:"both":"bottom-right":self[14]:roundness | control:1:width:10 }}
 Z
 
-replace from self[3] at {{ {x: self[3].x - serifHeight - serifHeight * serifCurve} }} to self[4] at {{ {y: self[3].y - thickness * (71/80) * contrast } }} with serif-bottom-right-vert
+replace from self[3] at {{ {x: self[3].x - serifHeight - serifHeight * serifCurve} }} to self[4] at {{ {y: self[4].y + thickness * (74/80) * contrast } }} with serif-bottom-right-vert 
