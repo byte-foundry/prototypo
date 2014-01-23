@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
-	.factory('Font', function( Glyph, Formula ) {
+	.factory('Font', function( Glyph, Formula, fontToDotSVG ) {
 		function Font( name, args ) {
 			var self = this,
 				code;
@@ -45,8 +45,17 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 		Font.prototype = {
 			read: function( code, params, full ) { return this.glyphs[ code ].read( params, full ); },
 			// deprecated
-			process: function( code, full ) { return this.glyphs[ code ].process( full ); }
+			process: function( code, full ) { return this.glyphs[ code ].process( full ); },
+			toDotSVG: function() { return fontToDotSVG( this ); }
 		};
 
 		return Font;
+	})
+
+	.factory('fontToDotSVG', function() {
+		var template = Handlebars.templates.dotsvg;
+
+		return function( font ) {
+			console.log(template({}));
+		};
 	});

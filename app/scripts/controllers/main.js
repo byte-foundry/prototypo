@@ -40,6 +40,9 @@ angular.module('prototypoApp')
 		$scope.switchPreview = function() {
 			$scope.appValues.previewString = !$scope.appValues.previewString;
 		};
+		$scope.exportToSVG = function() {
+			$scope.font.toDotSVG();
+		};
 
 		Typeface.get( $routeParams.typeface )
 			/*

@@ -7,16 +7,16 @@
 	>
 		<defs>
 			<pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
-				<path d="M 10 0 L 0 0 0 10" fill="transparent" stroke="#dedede" vector-effect="non-scaling-stroke" stroke-width="0.5"/>
+				<path d="M 10 0 L 0 0 0 10" fill="transparent" stroke="#dedede" vector-effect="non-scaling-stroke" stroke-width="0.5"></path>
 			</pattern>
 			<pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
-				<rect width="100" height="100" fill="url(#smallGrid)"/>
-				<path d="M 100 0 L 0 0 0 100" fill="transparent" stroke="#dedede" vector-effect="non-scaling-stroke" stroke-width="1"/>
+				<rect width="100" height="100" fill="url(#smallGrid)"></rect>
+				<path d="M 100 0 L 0 0 0 100" fill="transparent" stroke="#dedede" vector-effect="non-scaling-stroke" stroke-width="1"></path>
 			</pattern>
 		</defs>
 
 		<g transform="translate({{appValues.scenePanX / viewboxScale }}, {{appValues.scenePanY / viewboxScale }}) scale({{appValues.zoom}}) matrix(1 0 0 -1 0 0)">
-			<rect x="-20000" y="-20000" width="40000" height="40000" fill="url(#grid)" />
+			<rect x="-20000" y="-20000" width="40000" height="40000" fill="url(#grid)"></rect>
 
 			<g id="guidelines">
 				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#ff9cb6" d="M -20000 0 l 40000 0 Z" ></path>
@@ -29,7 +29,7 @@
 				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#dadada" d="M -20000 {{ fontValues.descender }} l 40000 0 Z" ></path>
 			</g>
 
-			<g transform=" skewX({{fontValues.slant}})">
+			<g transform="skewX({{fontValues.slant}})">
 
 				<path glyph-contour="{{appValues.singleChar}}" fill="#3B3B3B"></path>
 
