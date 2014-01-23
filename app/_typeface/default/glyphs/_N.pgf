@@ -1,7 +1,7 @@
 M 	{{ thickness * opticThickness * (108/88) * contrast }} {{ capHeight }}
-L 	{{ width * 466 + (thickness-80) * contrast }} {{ thickness * opticThickness * (135/88) }}
+L 	{{ self[5].x - thickness * opticThickness * contrast }} {{ thickness * opticThickness * (135/88) }}
 L 	{{ self[2].x }} {{ self[1].y }}
-L 	{{ self[3].x + thickness * opticThickness * contrast }} {{ self[3].y }}
+L 	{{ width * 466 + thickness * opticThickness }} {{ self[3].y }}
 L 	{{ self[4].x }} 0
 l 	{{ - thickness * opticThickness * (103/88) * contrast }} 0
 L 	{{ thickness * opticThickness * contrast }} {{ self[1].y - thickness * opticThickness * (132/88) }}

@@ -289,6 +289,9 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 					segment.controls[1].x = segment.end.x + Math.cos( angle1 ) * c1length;
 					segment.controls[1].y = segment.end.y + Math.sin( angle1 ) * c1length;
 				}
+				/*
+				pour faire les corrections
+				*/
 
 				segment.command = 'C';
 				segment.relativeControls = true;
