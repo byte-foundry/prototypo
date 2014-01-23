@@ -1,0 +1,23 @@
+M 	{{ thickness }} {{ ascenderHeight }}
+L 	{{ thickness }} {{ xHeight * (390/465) - breakPath }}
+rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) / 2 , xHeight + opticRoundness ] |curve:"both":"bottom-left":self[2]:roundness:0.22*width }}
+rC 	{{ [ self[11].x + thickness , xHeight * (276/465) - thickness/2*contrast+40] |curve:"both":"bottom-right":self[3]:roundness }}
+L 	{{ self[4].x }} {{ xHeight * (100/465) }}
+rC 	{{ [ self[5].x + ( self[7].x - self[5].x ) /2 , xHeight * (50/465) ] | curve:"both":"bottom-left":self[5]:roundness }}
+rC 	{{ [ self[5].x + 50 , self[6].y + 20 ] | curve:"reverse":"top-left":self[6]:roundness:0.29 }}
+L 	{{ self[7].x + 30 * contrast }} {{ self[7].y - 10 }}
+rC 	{{ [ self[11].x - ( self[11].x - self[8].x ) /2 , -opticRoundness ] | curve:"reverse":"top-right":self[8]:roundness:-0.29 }}
+rC 	{{ [ self[11].x , self[5].y - 20 ] | curve:"both":"top-left":self[6]:roundness }}
+L 	{{ 297 * width }} {{ xHeight * (270/465) - thickness*contrast+80 }}
+rC 	{{ [ self[11].x - ( self[11].x - self[14].x ) * 0.45 , self[3].y - thickness * 0.85 * contrast ] | max:self[3]:"x" |curve:"both":"top-right":self[11]:roundness }}
+rC 	{{ [ thickness , self[2].y - thickness * contrast ] |curve:"reverse":"top-left":self[12]:roundness:0.29*width }}
+L 	{{ thickness }} 0
+L	0 0
+l	0 {{ ascenderHeight }}
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
+
+//replace from self[10] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[12] at {{ {x: self[10].x - thickness /2 } }} with serif-bottom-right {{ { angle: self[10].angle , serifWidth:serifWidth * 0.7 } }}
+//replace from self[11] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[12] at {{ {x: self[12].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: self[11].angle } }}
+
+//replace from self[11] at {{ {y: self[11].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[12] at {{ {x: self[11].x + thickness /2} }} with serif-top-left {{ { angle: self[11].angle } }}

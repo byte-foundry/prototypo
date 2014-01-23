@@ -6,10 +6,10 @@ L 	{{ self[1].x }} {{ self[1].y }}
 Z
 M 	{{ { y: xHeight * (240/465) * crossbar } | on:self[2] }}
 L 	{{ self[9].x - thickness * contrast }} {{ xHeight }}
-L 	{{ self[1].x + width * 280 + thickness - 80 |max:self[11]:"x" }} {{ self[8].y }}
+L 	{{ self[1].x + width * 280 + (thickness - 80)/4 |max:self[11]:"x" }} {{ self[8].y }}
 L   {{ [] | on:[[self[9], {x: self[2].x + thickness * contrast, y: self[7].y }], [self[11], {x: self[2].x + thickness * (90/80), y: self[7].y }]] }}
 L 	{{ self[12].x + thickness * (90/80) }} 0
-L 	{{ width * 305 + thickness - 80 }} 0
+L 	{{ width * 305 + (thickness - 80)/4 }} 0
 L 	{{ self[7].x }} {{ self[7].y }}
 Z
 

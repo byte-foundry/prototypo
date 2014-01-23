@@ -46,8 +46,9 @@
 		"f": { "fileName": "f", "width": 283, "left": 20, "right": 20 },
 		"g": { "fileName": "g", "width": 433, "left": 20, "right": 20 },
 		"h": { "fileName": "h", "width": 377, "left": 20, "right": 20 },
+		"h.": { "fileName": "h_alt", "width": 377, "left": 20, "right": 20 },
 		"i": { "fileName": "i", "width": 97, "left": 20, "right": 20 },
-		"j": { "fileName": "j", "width": 256, "left": 20, "right": 20 },
+		"j": { "fileName": "j", "width": 256, "left": -50, "right": 20 },
 		"k": { "fileName": "k", "width": 412, "left": 20, "right": 20 },
 		"l": { "fileName": "l", "width": 82, "left": 30, "right": 30 },
 		"m": { "fileName": "m", "width": 694, "left": 20, "right": 20 },
@@ -90,6 +91,7 @@
 		"agrave",
 		"circumflex",
 		"trap-top-left",
-		"trap-top-right"
+		"trap-top-right",
+		"serif-curve-bottom"
 	]
 }
