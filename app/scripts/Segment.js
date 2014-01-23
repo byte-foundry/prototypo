@@ -267,6 +267,9 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 					segment.controls[1].x = segment.end.x;
 					segment.controls[1].y = segment.end.y - dy;
 				}
+				/*
+				pour faire les corrections
+				*/
 
 				segment.command = 'C';
 				segment.relativeControls = true;

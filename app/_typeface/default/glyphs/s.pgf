@@ -1,7 +1,7 @@
 M 	0 {{ self[14].y + ( self[2].y - self[14].y ) /2 }}
 rC 	{{ [ self[1].x + ( self[3].x - self[1].x ) * (241/446) , xHeight + opticRoundness ] | curve:"both":"top-right":self[1]:roundness }}
 rC 	{{ [ self[13].x + ( self[8].x - self[13].x ) * (58/85) , self[2].y - 38 * aperture ] | curve:"reverse":"top-left":self[2]:roundness:0.4 }}
-l 	{{ - thickness / 2 * contrast }} {{ - thickness * (60/80) * contrast }}
+L 	{{ self[3].x - thickness / 2 * contrast }} {{ self[3].y - thickness * (60/80) * contrast |max:self[5]:"y" }}
 rC 	{{ [ self[2].x , self[2].y - thickness * (70/80) * contrast ] | curve:"reverse":"top-right":self[4]:roundness:-0.4 }}
 rC 	{{ [ self[1].x + thickness , self[7].y + ( self[5].y - self[7].y ) /2 ] | curve:"both":"bottom-right":self[5]:roundness }}
 rC 	{{ [ self[2].x , xHeight * (411/698) * crossbar -40 + thickness /2 ] | curve:"both":"bottom-left":self[6]:roundness  | control:3:width:10  }}

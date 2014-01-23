@@ -5,8 +5,8 @@ L 	{{ self[3].x - thickness * opticThickness * (40/88) * contrast }} {{ self[3].
 rC 	{{ [ self[2].x , self[2].y - thickness * contrast ] | curve:"reverse":"top-right":self[4]:roundness:-0.29 }}
 rC 	{{ [ self[1].x + thickness * opticThickness * (95/88) , self[1].y ] | curve:"both":"top-left":self[5]:roundness }}
 rC 	{{ [ self[2].x , self[16].y + thickness * contrast ] | curve:"both":"bottom-left":self[6]:roundness }}
-rC 	{{ [ width * 534 , capHeight * (227/698) ] | curve:"both":"top-left":self[7]:roundness }}
-L 	{{ self[8].x }} {{ self[8].y + capHeight * (31/698) }}
+rC 	{{ [ width * 534 , self[15].y + thickness * contrast ] |max:self[9]:"y" | curve:"reverse":"top-left":self[7]:roundness:0.29 }}
+L 	{{ self[8].x }} {{ capHeight * (258/698) }}
 L 	{{ self[9].x - width * 92 }} {{ self[9].y }}
 L 	{{ self[10].x }} {{ self[10].y + thickness * (73/80) * contrast }}
 L 	{{ self[9].x + thickness }} {{ self[11].y }}
