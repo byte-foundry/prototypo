@@ -1,19 +1,19 @@
 M 	{{ thickness * ( 75 / 80 ) }} {{ xHeight }}
-L 	{{ self[1].x }} {{ xHeight * ( 390 / 465 ) - breakPath }}
-rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) / 2 , xHeight + opticRoundness ] |curve:"both":"bottom-left":self[2]:roundness:0.22*width }}
-rC 	{{ [ self[14].x + ( self[11].x - self[14].x ) * ( 52 / 74 ) , xHeight * 0.82526315789474 - breakPath ] |curve:"reverse":"top-left":self[3]:roundness:0.29 }}
-rC  {{ [ self[4].x + ( self[6].x - self[4].x ) / 2 , self[3].y ] |curve:"both":"bottom-left":self[4]:roundness:0.22*width }}
-rC 	{{ [ self[8].x + thickness , xHeight * 0.59354838709677 ] |curve:"both":"bottom-right":self[5]:roundness }}
+L 	{{ self[1].x }} {{ xHeight * ( 390 / 465 ) }}
+C+  {{ roundness }} {{ 22*width }} 0 {{ self[2].x + ( self[4].x - self[2].x ) / 2 }} {{ xHeight + opticRoundness }}
+C+  {{ roundness }} 0 {{ -22*width }} {{ self[14].x + ( self[11].x - self[14].x ) * ( 52 / 74 ) }} {{ xHeight * 0.82526315789474 }}
+C+  {{ roundness }} {{ 22*width }} 0 {{ self[4].x + ( self[6].x - self[4].x ) / 2 }} {{ self[3].y }}
+C+  {{ roundness }} 0 0 {{ self[8].x + thickness }} {{ xHeight * 0.59354838709677 }}
 L 	{{ self[6].x }} 0
 L 	{{ 614 * width }} 0
 L 	{{ self[8].x }} {{ self[14].y }}
-rC 	{{ [ self[11].x + ( self[9].x - self[11].x ) * ( 506 - 386 ) / ( 614 - 386 ) , self[5].y - thickness * ( 68 / 80 ) * contrast ] |curve:"both":"top-right":self[9]:roundness }}
-rC 	{{ [ self[14].x + thickness * ( 74 / 80 ) , self[16].y ] |curve:"reverse":"top-left":self[10]:roundness:0.29*width }}
+C- 	{{ roundness }} 0 0 {{ self[11].x + ( self[9].x - self[11].x ) * ( 506 - 386 ) / ( 614 - 386 ) }} {{ self[5].y - thickness * ( 68 / 80 ) * contrast }}
+C- 	{{ roundness }} 0 {{ 60 - thickness * (30/80) | min: 0 | max: 40 * width }} {{ self[14].x + thickness * ( 74 / 80 ) }} {{ self[16].y }}
 L 	{{ self[11].x }} 0
 L 	{{ self[14].x }} 0
 L 	{{ width * 312 }} {{ xHeight * ( 270 / 465 ) - thickness*contrast+80 }}
-rC 	{{ [ self[16].x + ( self[14].x - self[16].x ) * ( 199 - 80 ) / ( 312 - 80 ) , self[10].y ] |curve:"both":"bottom-left":self[14]:roundness }}
-rC 	{{ [ self[19].x + thickness , self[2].y - thickness * contrast ] |curve:"reverse":"top-left":self[15]:roundness:0.29*width }}
+C- 	{{ roundness }} 0 0 {{ self[16].x + ( self[14].x - self[16].x ) * ( 199 - 80 ) / ( 312 - 80 ) }} {{ self[10].y }}
+C- 	{{ roundness }} 0 {{ 60 - thickness * (30/80) | min: 0 | max: 40 * width }} {{ self[19].x + thickness }} {{ self[2].y - thickness * contrast }}
 L  	{{ self[16].x }} 0
 L 	0 0
 L 	0 {{ xHeight }}
@@ -31,4 +31,4 @@ replace from self[14] at {{ {y: serifHeight + serifHeight * serifCurve} }} to se
 replace from self[17] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[18] at {{ {x: self[17].x - thickness * opticThickness /2 } }} with serif-bottom-right {{ { angle: self[17].angle , serifWidth:serifWidth * 0.7 } }}
 replace from self[19] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[18] at {{ {x: self[18].x + thickness * opticThickness /2 } }} with inverted serif-bottom-left {{ { angle: self[19].angle } }}
 
-
+// replace from self[7] at {{ {y: thickness + xHeight * (20/465) } }} to self[9] at {{ { x: self[9].x  } }} with serif-curve-bottom {{ { y: thickness * (70/80) + xHeight * (20/465) } }}

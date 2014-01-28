@@ -1,12 +1,12 @@
 M	0 {{ capHeight / 2 }}
-rC 	{{ [ self[1].x + ( self[3].x - self[1].x ) / 2 , capHeight + opticRoundness ] |curve:"both":"top-right":self[1]:roundness }}
-rC 	{{ [ self[9].x + thickness * opticThickness * (80/88) , self[1].y ] |curve:"both":"bottom-right":self[2]:roundness }}
-rC	{{ [ self[2].x , - opticRoundness ] |curve:"both":"bottom-left":self[3]:roundness }}
-rC 	{{ [ self[1].x , self[1].y ] |curve:"both":"top-left":self[4]:roundness }}
+C+ 	{{ roundness }} 0 0 {{ self[1].x + ( self[3].x - self[1].x ) / 2 }} {{ capHeight + opticRoundness }}
+C+ 	{{ roundness }} 0 0 {{ self[9].x + thickness * opticThickness * (80/88) }} {{ self[1].y }}
+C+ 	{{ roundness }} 0 0 {{ self[2].x }} {{ - opticRoundness }}
+C+ 	{{ roundness }} 0 0 {{ self[1].x }} {{ self[1].y }}
 Z
 M 	{{ self[1].x + thickness * opticThickness * (91/88) }} {{ self[1].y }}
-rC 	{{ [ self[2].x , self[4].y + thickness * opticThickness * (83/88) * contrast ] | curve:"both":"top-right":self[7]:roundness }}
-rC 	{{ [ width * 566 , self[1].y ] | curve:"both":"top-left":self[8]:roundness }}
-rC 	{{ [ self[2].x , self[2].y - thickness * opticThickness * (80/88) * contrast ] | curve:"both":"top-right":self[9]:roundness }}
-rC 	{{ [ self[7].x , self[7].y ] | curve:"both":"bottom-right":self[10]:roundness }}
+C- 	{{ roundness }} 0 0 {{ self[2].x }} {{ self[4].y + thickness * opticThickness * (83/88) * contrast }}
+C- 	{{ roundness }} 0 0 {{ width * 566 }} {{ self[1].y }}
+C- 	{{ roundness }} 0 0 {{ self[2].x }} {{ self[2].y - thickness * opticThickness * (80/88) * contrast }}
+C-	{{ roundness }} 0 0 {{ self[7].x }} {{ self[7].y }}
 Z

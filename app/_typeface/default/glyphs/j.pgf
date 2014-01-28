@@ -1,7 +1,7 @@
 M 	{{ self[6].x }} {{ xHeight * (66/465) }}
-rC 	{{ [ self[3].x + thickness * (3/80) * contrast , descender ] |curve:"both":"bottom-left":self[1]:roundness }}
+C+ 	{{ roundness }} 0 0 {{ self[3].x + thickness * (3/80) * contrast }} {{ descender }}
 L 	0 {{ self[2].y + thickness * (62/80) * contrast }}
-rC 	{{ [ self[5].x , self[1].y ] |curve:"both":"bottom-right":self[3]:roundness }}
+C- 	{{ roundness }} 0 0 {{ self[5].x }} {{ self[1].y }}
 L 	167 {{ xHeight }}
 L 	{{ self[5].x + thickness }} {{ self[5].y }}
 L 	{{ self[1].x }} {{ self[1].y }}

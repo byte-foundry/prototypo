@@ -4,15 +4,15 @@ L 	{{ self[13].x + ( self[8].x - self[13].x ) * (56/89) }} {{ self[2].y }}
 L 	{{ self[3].x }} {{ self[3].y - thickness* opticThickness * (80/88) }}
 L 	{{ self[2].x + thickness * opticThickness * (75/88) * contrast }} {{ self[4].y }}
 L	{{ self[1].x + thickness * opticThickness * contrast }} {{ capHeight * (426/698) }}
-rC 	{{ [ self[6].x + ( self[8].x - self[6].x ) * (100/318) , self[6].y + thickness * (6/80) ] | curve:"reverse":"top-right":self[6]:roundness:-0.29 }} 
-rC 	{{ [ self[13].x + thickness * opticThickness , self[13].y ] | curve:"both":"bottom-right":self[7]:roundness }} 
-rC 	{{ [ self[10].x + ( self[8].x - self[10].x ) * (214/443) , -opticRoundness ] | curve:"both":"bottom-left":self[8]:roundness }} 
-rC 	{{ [ 0 , capHeight * (93/698) ] | curve:"reverse":"top-left":self[9]:roundness:0.29 }} 
+C+ 	{{ roundness }} {{ -35 * width }} 0 {{ self[6].x + ( self[8].x - self[6].x ) * (100/318) }} {{ self[6].y + thickness * (6/80) }}
+C+ 	{{ roundness }} 0 0 {{ self[13].x + thickness * opticThickness }} {{ self[13].y }}
+C+ 	{{ roundness }} 0 0 {{ self[10].x + ( self[8].x - self[10].x ) * (214/443) }} {{ -opticRoundness }}
+C+ 	{{ roundness }} 0 {{ -35 * width }} {{ 0 }} {{ capHeight * (93/698) }}
 L 	{{ thickness * opticThickness * (41/88) * contrast }}  {{ self[10].y + thickness * opticThickness * (52/88) * contrast }}
-rC 	{{ [ self[14].x , self[9].y + thickness * opticThickness * (86/88) * contrast ] | curve:"reverse":"top-right":self[11]:roundness:-0.29 }}
-rC 	{{ [ width * 354 , self[12].y + ( self[14].y - self[12].y ) * (144/277) ] | curve:"both":"top-left":self[12]:roundness }}
-rC 	{{ [ self[15].x + ( self[13].x - self[15].x ) * (122/300) , self[7].y - thickness * opticThickness * (80/88) * contrast ] | curve:"both":"top-right":self[13]:roundness }}
-rC 	{{ [ self[1].x + thickness * (16/80) , self[13].y + ( self[14].y - self[13].y ) * (119/133) ] | curve:"reverse":"top-left":self[14]:roundness:0.29 }} /////
+C- 	{{ roundness }} {{ -35 * width }} 0 {{ self[14].x }} {{ self[9].y + thickness * opticThickness * (86/88) * contrast }}
+C- 	{{ roundness }} 0 0 {{ width * 354 }} {{ self[12].y + ( self[14].y - self[12].y ) * (144/277) }}
+C- 	{{ roundness }} 0 0 {{ self[15].x + ( self[13].x - self[15].x ) * (122/300) }} {{ self[7].y - thickness * opticThickness * (80/88) * contrast }}
+C- 	{{ roundness }} 0 {{ 35 * width }} {{ self[1].x + thickness * (16/80) }} {{ self[13].y + ( self[14].y - self[13].y ) * (119/133) }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 
