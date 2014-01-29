@@ -11,8 +11,7 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 			}
 
 			this.data = args.data;
-			// TODO: we dont need a .origin
-			this.origin = Point(0,0);
+			this.origin = Point(this.data.left,0);
 			this.component = Component({
 				type: 'add',
 				name: name
@@ -35,9 +34,9 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 				return {
 					segments: this.segments,
 					svg: glyphToSVG( this ),
+					left: 0,
 					// TODO: this formula shouldn't be hardcoded
-					left: this.data.left,
-					width: params.width * this.data.width + params.thickness + this.data.right
+					advance: this.data.left + params.width * this.data.width + params.thickness + this.data.right
 				};
 			},
 			process: function( full ) {

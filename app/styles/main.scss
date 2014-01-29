@@ -61,7 +61,8 @@ svg {
 }
 
 .reset,
-.switch {
+.switch,
+.dotsvg {
 	position: absolute;
 	z-index: 2;
 	top: 2rem;
@@ -82,6 +83,10 @@ svg {
 
 .switch {
 	left: 12rem;
+}
+
+.dotsvg {
+	left : 22.5rem;
 }
 /*
 

@@ -3,8 +3,7 @@
 angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 	.factory('Font', function( Glyph, Formula, fontToDotSVG ) {
 		function Font( name, args ) {
-			var self = this,
-				code;
+			var self = this;
 
 			// new is optional
 			if ( !( this instanceof Font ) ) {
@@ -12,24 +11,23 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 			}
 
 			// merge glyph and component formulas in a single formulaLib
-			var formulaLib = {},
-				i;
+			this.formulaLib = {};
 
-			for ( i in args.glyphFormulas ) {
-				formulaLib['glyph:' + i] = Formula( args.glyphFormulas[i] );
+			for ( var i in args.glyphFormulas ) {
+				this.formulaLib['glyph:' + i] = Formula( args.glyphFormulas[i] );
 			}
-			for ( i in args.componentFormulas ) {
-				formulaLib[i] = Formula( args.componentFormulas[i] );
+			for ( var j in args.componentFormulas ) {
+				this.formulaLib[j] = Formula( args.componentFormulas[j] );
 			}
 
 			this.name = name;
 			this.glyphs = {};
 
-			for ( code in args.glyphData ) {
+			for ( var code in args.glyphData ) {
 				try {
 					self.glyphs[ code ] = Glyph( 'glyph:' + code, {
 						data: args.glyphData[ code ],
-						formulaLib: formulaLib,
+						formulaLib: this.formulaLib,
 						params: args.parameters
 					});
 
@@ -46,7 +44,7 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 			read: function( code, params, full ) { return this.glyphs[ code ].read( params, full ); },
 			// deprecated
 			process: function( code, full ) { return this.glyphs[ code ].process( full ); },
-			toDotSVG: function() { return fontToDotSVG( this ); }
+			toDotSVG: function( params ) { return fontToDotSVG( this, params ); }
 		};
 
 		return Font;
@@ -55,7 +53,17 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 	.factory('fontToDotSVG', function() {
 		var template = Handlebars.templates.dotsvg;
 
-		return function( font ) {
-			console.log(template({}));
+		return function( font, params ) {
+			var glyphs = {};
+
+			for ( var glyph in font.glyphs ) {
+				if ( glyph.length === 1 ) {
+					glyphs[ glyph ] = font.read( glyph, params, true );
+					glyphs[ glyph ].code = glyph;
+					glyphs[ glyph ].svg = glyphs[ glyph ].svg.replace(/\n/g, ' ');
+				}
+			}
+
+			return template({glyphs: glyphs});
 		};
 	});

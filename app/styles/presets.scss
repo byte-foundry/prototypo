@@ -1,0 +1,26 @@
+.presets {
+	display: none;
+
+	background-color: white;
+}
+
+.presets[class*="preset-"] {
+	display: block;
+}
+
+.presets .preset {
+	display: none;
+}
+
+.preset-0 .preset-0,
+.preset-1 .preset-1,
+.preset-2 .preset-2,
+.preset-3 .preset-3,
+.preset-4 .preset-4,
+.preset-5 .preset-5,
+.preset-6 .preset-6,
+.preset-7 .preset-7,
+.preset-8 .preset-8,
+.preset-9 .preset-9 {
+	display: block !important;
+}

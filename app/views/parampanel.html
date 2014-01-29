@@ -7,7 +7,7 @@
 		</div>
 	</div>
 
-	<div class="paramstab" ng-repeat="group in typeface.parameters"
+	<div class="paramstab" bindonce ng-repeat="group in typeface.parameters"
 		ng-class="appValues.paramTab == $index ? 'selected' : ''"
 	>
 		<div class="paramctrl" bindonce ng-repeat="param in group.parameters"

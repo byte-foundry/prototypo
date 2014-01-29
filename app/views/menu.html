@@ -1,20 +1,19 @@
 <div class="menu">
 	<div class="btn">&#9776;</div>
 	<ul class="level-1">
-		<li>Save the current font</li>
-		<li>Load font</li>
 		<li>
 			Styles presets
-			<ul class="sub-level">
-				<li>Humanist</li>
-				<li>Garalde</li>
-				<li>Transitional</li>
-				<li>Didone</li>
-				<li>Mechanistic</li>
-				<li>Grotesque</li>
+			<ul class="sub-level preset-menu">
+				<li bindonce ng-repeat="(name, preset) in typeface.presets"
+					class="preset-menu-item"
+					bo-text="name"
+					bo-attr
+					bo-attr-data-name="name"
+					bo-attr-data-i="$index">
+				</li>
 			</ul>
 		</li>
-		<li>Export</li>
+		<li ng-click="exportToSVG()">Export as svg font</li>
 		<li>
 			View
 			<ul class="sub-level">

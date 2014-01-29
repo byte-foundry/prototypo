@@ -5,7 +5,8 @@
     "angular-latest": "~1.2.3",
     "angular-ui-router": "~0.0.1",
     "angular-bindonce": "~0.2.1",
-    "lodash": "~1.2.1"
+    "lodash": "~1.2.1",
+    "FileSaver": "git://github.com/eligrey/FileSaver.js/"
   },
   "devDependencies": {
     "angular-mocks": "~1.0.7",

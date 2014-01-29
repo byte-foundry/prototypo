@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypoApp')
-	.controller('MainCtrl', function( $scope, $routeParams, $parse, $q, Typeface, FontValues, AppValues, Font ) {
+	.controller('MainCtrl', function( $scope, $routeParams, $parse, $q, Typeface, FontValues, AppValues, Font, Glyph ) {
 		var calculated = [];
 		function updateCalculatedParams( values ) {
 			calculated.forEach(function( param ) {
@@ -41,7 +41,31 @@ angular.module('prototypoApp')
 			$scope.appValues.previewString = !$scope.appValues.previewString;
 		};
 		$scope.exportToSVG = function() {
-			$scope.font.toDotSVG();
+			saveAs(
+				new Blob(
+					[$scope.font.toDotSVG( $scope.fontValues )],
+					{type: 'application/svg+xml;charset=utf-8'}
+				),
+				'default.svg'
+			);
+
+			// dependency-free exporter, to test.
+			/*var reader = new FileReader();
+			reader.onloadend = function() {
+				window.location = reader.result;
+			};
+			reader.readAsDataURL(new Blob(
+				[$scope.font.toDotSVG( $scope.fontValues )],
+				{type: 'application/svg+xml;charset=utf-8'}
+			));*/
+		};
+		$scope.applyPreset = function( name ) {
+			// the svg path shouldn't be merged to fontValues and its no longer necessary
+			delete $scope.typeface.presets[name].svg;
+
+			$.extend( $scope.fontValues, $scope.typeface.presets[name] );
+
+			$scope.$apply();
 		};
 
 		Typeface.get( $routeParams.typeface )
@@ -60,6 +84,14 @@ angular.module('prototypoApp')
 					}
 					return true;
 				});
+
+				// calculate presets
+				for ( var i in data.presets ) {
+					calculated.forEach(function( param ) {
+						data.presets[i][ param.name ] = param.calculate( data.presets[i] );
+					});
+				}
+
 				// keep calculated params updated
 				$scope.$watch('fontValues',	updateCalculatedParams,	true);
 
@@ -145,7 +177,21 @@ angular.module('prototypoApp')
 				return $q.all( promises );
 			})
 			/*
-			 * 3. Watch font and app values to process the glyphs
+			 * 3. Draw presets
+			 */
+			.then(function() {
+				for ( var i in $scope.typeface.presets ) {
+					var glyph = Glyph( 'sample', {
+							data: { left: 0 },
+							params: $.extend( {}, $scope.fontValues, $scope.typeface.presets[i] ),
+							formulaLib: $scope.font.formulaLib
+						});
+
+					$scope.typeface.presets[i].svg = glyph.toSVG();
+				}
+			})
+			/*
+			 * 4. Watch font and app values to process the glyphs
 			 */
 			.then(function() {
 				var timeout;

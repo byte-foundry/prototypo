@@ -25,6 +25,7 @@
     "_": false,
     "$": false,
     "Handlebars": false,
+    "saveAs": false,
     "describe": false,
     "beforeEach": false,
     "it": false,

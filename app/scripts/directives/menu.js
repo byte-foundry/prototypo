@@ -32,7 +32,6 @@ angular.module('prototypo.menuDirective', [])
 					$('.scene #nodes *').fadeToggle();
 				});
 
-				
 				$element.on('pointerdown', '#ui-spacing', function() {
 					$('.scene #spacing *').fadeToggle();
 				});
@@ -43,6 +42,22 @@ angular.module('prototypo.menuDirective', [])
 
 				$('.menu').click(function(event){
 				    event.stopPropagation();
+				});
+
+
+
+				$element.on('pointerdown', '.preset-menu-item', function() {
+					$scope.applyPreset( $(this).data('name') );
+				});
+
+				$element.on('pointerover', '.preset-menu-item', function() {
+					$scope.selectedPreset = 'preset-' + $(this).data('i');
+					$scope.$apply();
+				});
+
+				$element.find('.preset-menu').on('pointerleave', function() {
+					$scope.selectedPreset = '';
+					$scope.$apply();
 				});
 			}
 		};

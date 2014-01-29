@@ -1,0 +1,16 @@
+<div class="presets" ng-class="selectedPreset">
+	<div style="height: 100%;">
+		<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+			viewBox="-200 -600 550 700"
+		>
+			<g transform="matrix(1 0 0 -1 0 0)">
+				<path bindonce ng-repeat="(name, preset) in typeface.presets"
+					bo-attr
+					bo-attr-d="preset.svg"
+					bo-attr-class="'preset preset-' + $index"
+					fill="#3c3c3b"
+				></path>
+			</g>
+		</svg>
+	</div>
+</div>

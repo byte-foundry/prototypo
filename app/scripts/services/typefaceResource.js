@@ -39,8 +39,15 @@ angular.module('prototypo.Typeface', ['ngResource'])
 		});
 	})
 
+	.factory( 'Presets', function( $resource ) {
+
+		return $resource( '/_typeface/:typeface/parameters/presets.json', {}, {
+			get: { method:'GET', params: {} }
+		});
+	})
+
 	// This is the simili-resource used in the app
-	.factory('Typeface', function( $q, Typefaces, Glyphs, Components, Parameters ) {
+	.factory('Typeface', function( $q, Typefaces, Glyphs, Components, Parameters, Presets ) {
 		return { get: function( typefaceName ) {
 			var typeface;
 
@@ -79,14 +86,13 @@ angular.module('prototypo.Typeface', ['ngResource'])
 							Parameters.get({typeface: typefaceName })
 								.$promise.then(function( response ) {
 									typeface.parameters = response.parameters;
+								})
+						);
 
-									// this doesn't belong here.
-									// The loader shouldn't know about the internal structure of the files
-									/*_( typeface.params ).each(function( param ) {
-										if ( param.calculate ) {
-											param.calculate = $parse( param.calculate );
-										}
-									});*/
+						promises.push(
+							Presets.get({typeface: typefaceName })
+								.$promise.then(function( response ) {
+									typeface.presets = response.presets;
 								})
 						);
 					}
