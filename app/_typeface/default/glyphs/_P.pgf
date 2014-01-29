@@ -1,4 +1,4 @@
-M 	{{ width * 245 }}  {{ capHeight }}
+M 	{{ self[4].x + ( self[14].x - self[4].x ) * (1/2) }}  {{ capHeight }}
 C+ 	{{ roundness }} 0 0 {{ self[14].x + thickness * opticThickness * (84/88) }} {{ self[14].y }}
 C+ 	{{ roundness }} 0 0 {{ self[1].x }} {{ self[12].y - thickness * contrast }}
 L 	{{ thickness * opticThickness }} {{ self[3].y }}
