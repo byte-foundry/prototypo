@@ -46,7 +46,6 @@
 		"f": { "fileName": "f", "width": 283, "left": 20, "right": 20 },
 		"g": { "fileName": "g", "width": 433, "left": 20, "right": 20 },
 		"h": { "fileName": "h", "width": 377, "left": 20, "right": 20 },
-		"h.": { "fileName": "h_alt", "width": 377, "left": 20, "right": 20 },
 		"i": { "fileName": "i", "width": 97, "left": 20, "right": 20 },
 		"j": { "fileName": "j", "width": 256, "left": -50, "right": 20 },
 		"k": { "fileName": "k", "width": 412, "left": 20, "right": 20 },
@@ -61,7 +60,7 @@
 		"t": { "fileName": "t", "width": 222, "left": 20, "right": 20 },
 		"u": { "fileName": "u", "width": 395, "left": 20, "right": 20 },
 		"v": { "fileName": "v", "width": 458, "left": 20, "right": 20 },
-		"w": { "fileName": "w", "width": 700, "left": 20, "right": 20 },
+		"w": { "fileName": "w", "width": 650, "left": 20, "right": 20 },
 		"x": { "fileName": "x", "width": 420, "left": 20, "right": 20 },
 		"y": { "fileName": "y", "width": 466, "left": 20, "right": 20 },
 		"z": { "fileName": "z", "width": 366, "left": 20, "right": 20 },
@@ -72,7 +71,7 @@
 		"2": { "fileName": "two", "width": 431, "left": 20, "right": 20 },
 		"5": { "fileName": "five", "width": 443, "left": 20, "right": 20 },
 		"8": { "fileName": "eight", "width": 481, "left": 20, "right": 20 },
-		" ": { "fileName": "space", "width": 230, "left": 20, "right": 20 },
+		" ": { "fileName": "space", "width": 120, "left": 0, "right": 0 },
 		"?": { "fileName": "question", "width": 230, "left": 20, "right": 20 }
 	},
 	"components": [

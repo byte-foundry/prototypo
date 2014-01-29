@@ -1,14 +1,14 @@
 M 	{{ thickness }} {{ xHeight }}
 L 	{{ self[1].x }} {{ xHeight * (182/465) - 80 + thickness * contrast }}
-rC 	{{ [ self[2].x + ( self[4].x - self[2].x ) / 2 , - opticRoundness + thickness * (63/80) * contrast ] |curve:"both":"top-right":self[2]:roundness }}
-rC 	{{ [ width * 315 , xHeight * (140/465) - 80 + thickness * contrast ] |curve:"both":"bottom-right":self[3]:roundness }}
+C- 	{{ roundness }} 0 0 {{ self[2].x + ( self[4].x - self[2].x ) / 2 }} {{ - opticRoundness + thickness * (63/80) * contrast }}
+C- 	{{ roundness }} 0 0 {{ width * 315 }} {{ xHeight * (140/465) - 80 + thickness * contrast }}
 L 	{{ self[4].x }} {{ self[1].y }}
 l 	{{ thickness }} 0
 L 	{{ self[6].x }} 0
 l 	{{ - thickness * (76/80) }} 0
 L 	{{ self[8].x - thickness * (3/80) }} {{ xHeight * (50/465) }}
-rC 	{{ [ self[12].x + ( self[9].x - self[12].x ) * (1/2) , - opticRoundness ]  |curve:"both":"bottom-left":self[9]:roundness:0.2 }} // should be centered with self[1].x
-rC 	{{ [ 0 , xHeight * (182/465) ] |curve:"both":"top-left":self[10]:roundness }}
+C+ 	{{ roundness }} {{ 35*width }} 0 {{ self[12].x + ( self[9].x - self[12].x ) * (1/2) }} {{ - opticRoundness }}
+C+ 	{{ roundness }} 0 0 {{ 0 }} {{ xHeight * (182/465) }}
 L 	0 {{ self[1].y }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
@@ -17,22 +17,4 @@ replace from self[12] at {{ {y: self[12].y - ( serifHeight + serifHeight * serif
 replace from self[5] at {{ {y: self[5].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[6] at {{ {x: self[5].x + thickness /2} }} with serif-top-left {{ { angle: self[5].angle } }}
 replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[7].x - thickness /2 } }} with serif-bottom-right {{ { angle: self[7].angle } }}
 
-
-
-
-// 	Could be a avenue of inquiry to avoid the contrast issue (l.25)
-//
-//  M 	0 {{ xHeight }}
-//  L 	{{ thickness }} {{ self[1].y }}
-//  L 	{{ self[2].x }} {{ xHeight * (182/465) - 80 + thickness * contrast }}
-//  rC 	{{ [ self[3].x + ( self[5].x - self[3].x ) / 2 , - opticRoundness + thickness * (63/80) * contrast ] |curve:"both":"top-right":self[3]:roundness }}
-//  rC 	{{ [ width * 315 , xHeight * (140/465) - 80 + thickness * contrast ] |curve:"both":"bottom-right":self[4]:roundness }}
-//  L 	{{ self[5].x }} {{ self[1].y }}
-//  l 	{{ thickness }} 0
-//  L 	{{ self[7].x }} 0
-//  l 	{{ - thickness * (76/80) }} 0
-//  L 	{{ self[9].x - thickness * (3/80) }} {{ xHeight * (50/465) }}
-//  rC 	{{ [ self[1].x + ( self[10].x - self[1].x ) * (1/2) , - opticRoundness ]  |curve:"both":"bottom-left":self[10]:roundness:0.2 }} // should be centered with self[1].x
-//  rC 	{{ [ self[1].x , xHeight * (182/465) ] |curve:"both":"top-left":self[11]:roundness }}
-//  L 	{{ self[1].x }} {{ self[1].y }}
-//  Z
+// replace from self[7] at {{ {y: thickness + xHeight * (20/465) } }} to self[9] at {{ { x: self[9].x } }} with serif-curve-bottom {{ { y: self[9].y, angle: 25 } }}

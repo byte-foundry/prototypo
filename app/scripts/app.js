@@ -44,33 +44,105 @@ angular.module('prototypoApp', [
 
 	.filter( 'log', function () {
 		return function( value, txt ) {
-			//value = Math.round( value * 100 ) / 100 ;
 			console.log( txt + ' : ' + value );
 			return value;
 		};
 	})
 
-	.filter( 'min', function ( Point )  {
-		return function ( coords, ref, axis, correction ) {
-			if( !correction ) correction = 0;
-			if (ref === undefined) {
-				return coords;
-			}
-			else {
-				if (typeof coords === 'number') {
-					coords = Math.max( coords, ref[axis] + correction );
-					return coords;
-				}
-				else {
-					var point = Point(coords);
-					point[axis] = Math.max( point[axis], ref[axis] + correction );
-					return point;
-				}
-			}
+	.filter( 'min', function ()  {
+		return function ( val, ref ) {
+			return Math.max(val, ref);
 		};
 	})
 
-	.filter( 'max', function ( Point )  {
+	.filter( 'xMin', function ( Point )  {
+		return function ( _point, _ref ) {
+			if ( _ref === undefined || _point === undefined ) {
+				return _point;
+			}
+			var point = _point.x !== undefined ?
+					_point:
+					new Point( _point ),
+				ref = typeof _ref === 'number' ?
+					_ref:
+					_ref.x;
+			if ( point.x < ref ) {
+				point.x = ref;
+			}
+			return point;
+		};
+	})
+
+	.filter( 'yMin', function ( Point )  {
+		return function ( _point, _ref ) {
+			if ( _ref === undefined || _point === undefined ) {
+				return _point;
+			}
+
+			var point = _point.x !== undefined ?
+					_point:
+					new Point( _point ),
+				ref = typeof _ref === 'number' ?
+					_ref:
+					_ref.y;
+
+			if ( point.y < ref ) {
+				point.y = ref;
+			}
+
+			return point;
+		};
+	})
+
+	.filter( 'max', function ()  {
+		return function ( val, ref ) {
+			return Math.min(val, ref);
+		};
+	})
+
+	.filter( 'xMax', function ( Point )  {
+		return function ( _point, _ref ) {
+			if ( _ref === undefined || _point === undefined ) {
+				return _point;
+			}
+
+			var point = _point.x !== undefined ?
+					_point:
+					new Point( _point ),
+				ref = typeof _ref === 'number' ?
+					_ref:
+					_ref.x;
+
+			if ( point.x > ref ) {
+				point.x = ref;
+			}
+
+			return point;
+		};
+	})
+
+	.filter( 'yMax', function ( Point )  {
+		return function ( _point, _ref ) {
+			if ( _ref === undefined || _point === undefined ) {
+				return _point;
+			}
+
+			var point = _point.x !== undefined ?
+					_point:
+					new Point( _point ),
+				ref = typeof _ref === 'number' ?
+					_ref:
+					_ref.y;
+
+			if ( point.y > ref ) {
+				point.y = ref;
+			}
+
+			return point;
+		};
+	})
+
+	/*.filter( 'max', function ( Point )  {
 		return function ( coords, ref, axis ) {
 			if (ref === undefined) {
 				return coords;
@@ -87,7 +159,7 @@ angular.module('prototypoApp', [
 				}
 			}
 		};
-	})
+	})*/
 
 	.filter( 'adjust', function ()  {
 		return function ( coords, thickness, contrast ) {

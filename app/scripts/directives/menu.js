@@ -29,7 +29,7 @@ angular.module('prototypo.menuDirective', [])
 				});
 
 				$element.on('pointerdown', '#ui-nodes', function() {
-					$('.scene #nodes *').fadeToggle();
+					$('.scene #nodes').fadeToggle();
 				});
 
 				$element.on('pointerdown', '#ui-spacing', function() {

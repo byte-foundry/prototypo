@@ -253,41 +253,68 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				var dx = ( segment.end.x - segment.start.x ) * segment.roundness,
 					dy = ( segment.end.y - segment.start.y ) * segment.roundness,
 					c0length,
-					c1length;
+					c1length,
+					angle0,
+					angle1;
 
-				if (
-					( segment.command === 'C+' && ( dx * dy > 0 ) ) ||
-					( segment.command === 'C-' && ( dx * dy < 0 ) )
-				) {
+				if ( dx * dy === 0 ) {
 					segment.controls[0].x = segment.start.x;
-					segment.controls[0].y = segment.start.y + dy;
-					c0length = Math.abs(dy);
-					segment.controls[1].x = segment.end.x - dx;
+					segment.controls[0].y = segment.start.y;
+					segment.controls[1].x = segment.end.x;
 					segment.controls[1].y = segment.end.y;
-					c1length = Math.abs(dx);
 
 				} else {
-					segment.controls[0].x = segment.start.x + dx;
-					segment.controls[0].y = segment.start.y;
-					c0length = Math.abs(dx);
-					segment.controls[1].x = segment.end.x;
-					segment.controls[1].y = segment.end.y - dy;
-					c1length = Math.abs(dy);
-				}
+					if (
+						( segment.command === 'C+' && ( dx * dy > 0 ) ) ||
+						( segment.command === 'C-' && ( dx * dy < 0 ) )
+					) {
+						segment.controls[0].x = segment.start.x;
+						segment.controls[0].y = segment.start.y + dy;
+						c0length = Math.abs(dy);
+						segment.controls[1].x = segment.end.x - dx;
+						segment.controls[1].y = segment.end.y;
+						c1length = Math.abs(dx);
 
-				if ( segment.corrections[0] ) {
-					var angle0 =
-						Math.atan2( segment.controls[0].y - segment.start.y, segment.controls[0].x - segment.start.x ) +
-						segment.corrections[0] / 180 * Math.PI;
-					segment.controls[0].x = segment.start.x + Math.cos( angle0 ) * c0length;
-					segment.controls[0].y = segment.start.y + Math.sin( angle0 ) * c0length;
-				}
-				if ( segment.corrections[1] ) {
-					var angle1 =
-						Math.atan2( segment.controls[1].y - segment.end.y, segment.controls[1].x - segment.end.x ) +
-						segment.corrections[1] / 180 * Math.PI;
-					segment.controls[1].x = segment.end.x + Math.cos( angle1 ) * c1length;
-					segment.controls[1].y = segment.end.y + Math.sin( angle1 ) * c1length;
+					} else {
+						segment.controls[0].x = segment.start.x + dx;
+						segment.controls[0].y = segment.start.y;
+						c0length = Math.abs(dx);
+						segment.controls[1].x = segment.end.x;
+						segment.controls[1].y = segment.end.y - dy;
+						c1length = Math.abs(dy);
+					}
+
+					if ( segment.corrections[0] ) {
+						angle0 =
+							Math.atan2( segment.controls[0].y - segment.start.y, segment.controls[0].x - segment.start.x ) +
+							segment.corrections[0] / 180 * Math.PI;
+						segment.controls[0].x = segment.start.x + Math.cos( angle0 ) * c0length;
+						segment.controls[0].y = segment.start.y + Math.sin( angle0 ) * c0length;
+					}
+					if ( segment.corrections[1] ) {
+						angle1 =
+							Math.atan2( segment.controls[1].y - segment.end.y, segment.controls[1].x - segment.end.x ) +
+							segment.corrections[1] / 180 * Math.PI;
+						segment.controls[1].x = segment.end.x + Math.cos( angle1 ) * c1length;
+						segment.controls[1].y = segment.end.y + Math.sin( angle1 ) * c1length;
+					}
+
+					// these adjustments are necessary to make the curve pretty
+					// at roundness === 1, control points should be aligned
+					if ( segment.corrections[0] ) {
+						if ( c0length === Math.abs(dy) ) {
+							segment.controls[1].x += Math.cos( angle0 ) * c0length;
+						} else {
+							segment.controls[1].y += Math.sin( angle0 ) * c0length;
+						}
+					}
+					if ( segment.corrections[1] ) {
+						if ( c0length === Math.abs(dy) ) {
+							segment.controls[0].y += Math.sin( angle1 ) * c1length;
+						} else {
+							segment.controls[0].x += Math.cos( angle1 ) * c1length;
+						}
+					}
 				}
 
 				segment.command = 'C';
