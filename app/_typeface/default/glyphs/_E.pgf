@@ -15,7 +15,7 @@ Z
 
 replace from self[12] at {{ {x: self[12].x - serifHeight - serifHeight * serifCurve} }} to self[13] at {{ {y: self[12].y - thickness * (71/80) * contrast } }} with serif-bottom-right-vert
 
-replace from self[8] at {{ {x: self[8].x - serifHeight - serifHeight * serifCurve} }} to self[9] at {{ {y: self[8].y - thickness * (75/80) /2 * contrast } }} with serif-bottom-right-vert {{ { angle: self[9].angle, serifWidth:serifWidth * 0.5 } }}
-replace from self[10] at {{ {x: self[9].x - serifHeight - serifHeight * serifCurve} }} to self[9] at {{ {y: self[8].y - thickness * (75/80) /2 * contrast } }} with inverted serif-top-right-vert {{ { angle: self[9].angle,  serifWidth:serifWidth * 0.5 } }}
+replace from self[8] at {{ {x: self[8].x - serifHeight - serifHeight * serifCurve} }} to self[9] at {{ {y: self[8].y - thickness * (75/80) /2 * contrast } }} with serif-bottom-right-vert {{ { angle: 0, serifWidth:serifWidth * 0.5 } }}
+replace from self[10] at {{ {x: self[9].x - serifHeight - serifHeight * serifCurve} }} to self[9] at {{ {y: self[8].y - thickness * (75/80) /2 * contrast } }} with inverted serif-top-right-vert {{ { angle: 0,  serifWidth:serifWidth * 0.5 } }}
 
-replace from self[6] at {{ {x: self[5].x - serifHeight - serifHeight * serifCurve} }} to self[5] at {{ {y: self[5].y + thickness * (71/80) * contrast } }} with inverted serif-top-right-vert {{ { angle: self[5].angle } }}
+replace from self[6] at {{ {x: self[5].x - serifHeight - serifHeight * serifCurve} }} to self[5] at {{ {y: self[5].y + thickness * (71/80) * contrast } }} with inverted serif-top-right-vert {{ { angle: 0 } }}

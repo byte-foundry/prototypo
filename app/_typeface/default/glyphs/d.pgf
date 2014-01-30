@@ -16,7 +16,7 @@ C- 	{{ roundness }} 0 0 {{ self[13].x }} {{ self[2].y - thickness * (71/80) * co
 C- 	{{ roundness }} 0 0 {{ self[12].x }} {{ self[12].y }}
 Z
 
-replace from self[4] at {{ {y: self[4].y - serifHeight - serifHeight * serifCurve} }} to self[5] at {{ {x: self[4].x + thickness } }} with serif-top-left {{ { angle: self[4].angle } }}
-replace from self[6] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[7] at {{ {x: self[6].x - thickness } }} with serif-bottom-right {{ { angle: self[6].angle } }}
+replace from self[4] at {{ {y: self[4].y - serifHeight - serifHeight * serifCurve} }} to self[5] at {{ {x: self[4].x + thickness } }} with serif-top-left {{ { angle: 0 } }}
+replace from self[6] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[7] at {{ {x: self[6].x - thickness } }} with serif-bottom-right {{ { angle: 0 } }}
 
 // replace from self[6] at {{ {y: thickness + xHeight * (20/465) } }} to self[8] at {{ { x: self[8].x  } }} with serif-curve-bottom {{ { y: self[8].y, angle: 30 } }}

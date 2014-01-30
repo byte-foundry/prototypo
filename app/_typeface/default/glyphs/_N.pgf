@@ -11,10 +11,10 @@ L 	{{ self[9].x }} {{ self[1].y }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 
-replace from self[10] at {{ {y: self[10].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[11] at {{ {x: self[11].x - thickness * opticThickness /2 * contrast } }} with serif-top-left {{ { angle: self[10].angle } }}
+replace from self[10] at {{ {y: self[10].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[11] at {{ {x: self[11].x - thickness * opticThickness /2 * contrast } }} with serif-top-left {{ { angle: 0 } }}
 
-replace from self[3] at {{ {y: self[3].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[4] at {{ {x: self[4].x - thickness * opticThickness /2 * contrast } }} with serif-top-left {{ { angle: self[3].angle } }}
-replace from self[5] at {{ {y: self[4].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[4] at {{ {x: self[4].x - thickness * opticThickness /2 * contrast } }} with inverted serif-top-right {{ { angle: self[5].angle } }}
+replace from self[3] at {{ {y: self[3].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[4] at {{ {x: self[4].x - thickness * opticThickness /2 * contrast } }} with serif-top-left {{ { angle: 0 } }}
+replace from self[5] at {{ {y: self[4].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[4] at {{ {x: self[4].x - thickness * opticThickness /2 * contrast } }} with inverted serif-top-right {{ { angle: 0 } }}
 
-replace from self[8] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[9] at {{ {x: self[9].x + thickness /2 * contrast } }} with serif-bottom-right {{ { angle: self[8].angle } }}
-replace from self[10] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[9] at {{ {x: self[9].x + thickness /2 * contrast } }} with inverted serif-bottom-left {{ { angle: self[10].angle } }}
+replace from self[8] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[9] at {{ {x: self[9].x + thickness /2 * contrast } }} with serif-bottom-right {{ { angle: 0 } }}
+replace from self[10] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[9] at {{ {x: self[9].x + thickness /2 * contrast } }} with inverted serif-bottom-left {{ { angle: 0 } }}

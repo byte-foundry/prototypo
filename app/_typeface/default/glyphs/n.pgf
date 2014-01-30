@@ -13,12 +13,12 @@ l	0 {{ xHeight }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 
-replace from self[5] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[5].x - thickness /2 } }} with serif-bottom-right {{ { angle: self[5].angle } }}
-replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[6].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: self[7].angle , serifWidth:serifWidth * 0.7 } }}
+replace from self[5] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[5].x - thickness /2 } }} with serif-bottom-right {{ { angle: 0 } }}
+replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[6].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: 0 , serifWidth:serifWidth * 0.7 } }}
 
 // replace from self[5] at {{ {y: thickness + xHeight * (20/465) } }} to self[7] at {{ { x: self[7].x  } }} with serif-curve-bottom {{ { y: thickness * (70/80) + xHeight * (20/465) } }}
 
-replace from self[10] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[11] at {{ {x: self[10].x - thickness /2 } }} with serif-bottom-right {{ { angle: self[10].angle , serifWidth:serifWidth * 0.7 } }}
-replace from self[12] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[11] at {{ {x: self[11].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: self[12].angle } }}
+replace from self[10] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[11] at {{ {x: self[10].x - thickness /2 } }} with serif-bottom-right {{ { angle: 0 , serifWidth:serifWidth * 0.7 } }}
+replace from self[12] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[11] at {{ {x: self[11].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: 0 } }}
 
-replace from self[12] at {{ {y: self[12].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[13] at {{ {x: self[12].x + thickness /2} }} with serif-top-left {{ { angle: self[12].angle } }}
+replace from self[12] at {{ {y: self[12].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[13] at {{ {x: self[12].x + thickness /2} }} with serif-top-left {{ { angle: 0 } }}

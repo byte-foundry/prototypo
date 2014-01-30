@@ -44,7 +44,7 @@ angular.module('prototypoApp', [
 
 	.filter( 'log', function () {
 		return function( value, txt ) {
-			console.log( txt + ' : ' + value );
+			console.log( txt + ' :', value );
 			return value;
 		};
 	})
@@ -188,6 +188,17 @@ angular.module('prototypoApp', [
 			// coords[index + 4] = +coords[index + 4] + delta;
 
 			return coords.join();
+		};
+	})
+
+	.filter( 'rotateControl2', function () {
+		return function ( angle, correction ) {
+
+			angle > 0 ? - correction : correction;
+
+			angle = angle / 3.14 * 180 + correction;
+
+			return angle;
 		};
 	})
 

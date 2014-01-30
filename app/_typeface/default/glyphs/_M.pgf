@@ -14,9 +14,9 @@ L 	{{ self[12].x }} {{ capHeight }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 
-replace from self[5] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[5].x - thickness * opticThickness /2 } }} with serif-bottom-right {{ { angle: self[7].angle } }}
-replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[7].x + thickness * opticThickness /2 } }} with inverted serif-bottom-left {{ { angle: self[7].angle } }}
-replace from self[11] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[11] at {{ "end" }} with serif-bottom-right {{ { angle: self[11].angle } }}
-replace from self[13] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[12] at {{ "end" }} with inverted serif-bottom-left {{ { angle: self[13].angle } }}
-replace from self[13] at {{ {y: self[13].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[14] at {{ {x: self[14].x - thickness * opticThickness /2 } }} with serif-top-left {{ { angle: self[13].angle } }}
-replace from self[5] at {{ {y: self[4].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[4] at {{ {x: self[4].x - thickness * opticThickness * contrast /2 } }} with inverted serif-top-right {{ { angle: self[5].angle } }}
+replace from self[5] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[5].x - thickness * opticThickness /2 } }} with serif-bottom-right {{ { angle: 0 } }}
+replace from self[7] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[6] at {{ {x: self[7].x + thickness * opticThickness /2 } }} with inverted serif-bottom-left {{ { angle: 0 } }}
+replace from self[11] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[11] at {{ "end" }} with serif-bottom-right {{ { angle: 0 } }}
+replace from self[13] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[12] at {{ "end" }} with inverted serif-bottom-left {{ { angle: 0 } }}
+replace from self[13] at {{ {y: self[13].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[14] at {{ {x: self[14].x - thickness * opticThickness /2 } }} with serif-top-left {{ { angle: 0 } }}
+replace from self[5] at {{ {y: self[4].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[4] at {{ {x: self[4].x - thickness * opticThickness * contrast /2 } }} with inverted serif-top-right {{ { angle: 0 } }}
