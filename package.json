@@ -23,12 +23,13 @@
     "grunt-open": "~0.2.0",
     "matchdep": "~0.1.1",
     "grunt-google-cdn": "~0.2.2",
-    "grunt-ngmin": "~0.0.3"
+    "grunt-ngmin": "~0.0.3",
+    "grunt-s3": "~0.2.0-alpha.3"
   },
   "engines": {
     "node": ">=0.8.0"
   },
-  "description": "ERROR: No README data found!",
+  "description": "Prototypo, kickstarting font creation",
   "main": "Gruntfile.js",
   "directories": {
     "test": "test"
@@ -40,8 +41,8 @@
     "type": "git",
     "url": "https://github.com/byte-foundry/prototypo.git"
   },
-  "author": "",
-  "license": "BSD-2-Clause",
+  "author": "YM & LRB",
+  "license": "AGPL",
   "bugs": {
     "url": "https://github.com/byte-foundry/prototypo/issues"
   }
