@@ -57,7 +57,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 		});
 		Object.defineProperty(Segment.prototype, 'angle', {
 			get: function() {
-				return Math.atan2( this.end.x - this.start.x , this.start.y - this.end.y );
+				return Math.atan2( this.end.x - this.start.x , this.start.y - this.end.y ) / Math.PI * 180;
 			}
 		});
 

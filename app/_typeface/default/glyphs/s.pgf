@@ -15,6 +15,9 @@ C- 	{{ roundness }} 0 {{ 8 * width * 80 / thickness | max : 8 }} {{ self[2].x }}
 C+ 	{{ roundness }} {{ 8 * width * 80 / thickness | max : 8 }} 0 {{ self[1].x }} {{ self[1].y }}
 Z
 
+// replace from self[4] at {{ {x: self[4].x - serifHeight - serifHeight * serifCurve} }} to self[5] at {{ {y: self[5].y - thickness * (74/80) * contrast } }} with serif-bottom-right-vert 
+
+
 //M 	0 {{ xHeight * (332/465) }}
 //C+ 	{{ roundness }} 0 0 {{ self[1].x + ( self[3].x - self[1].x ) * (241/446) }} {{ xHeight + opticRoundness }}
 //C+ 	{{ roundness }} 0 {{ -35 * width }} {{ width * 352 }} {{ self[2].y - 38 * aperture }}
