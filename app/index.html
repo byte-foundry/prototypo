@@ -39,13 +39,13 @@
 		<script src="libs/jquery.js"></script>
 		<script src="libs/hand.js"></script>
 		<script src="libs/handlebars.runtime.js"></script>
-		<script src="components/angular-latest/build/angular.js"></script>
-		<script src="components/angular-latest/build/angular-route.js"></script>
-		<script src="components/angular-latest/build/angular-resource.js"></script>
-		<script src="components/angular-latest/build/angular-sanitize.js"></script>
-		<script src="components/angular-bindonce/bindonce.js"></script>
-		<script src="components/lodash/lodash.js"></script>
-		<script src="components/FileSaver/FileSaver.js"></script>
+		<script src="bower_components/angular-latest/build/angular.js"></script>
+		<script src="bower_components/angular-latest/build/angular-route.js"></script>
+		<script src="bower_components/angular-latest/build/angular-resource.js"></script>
+		<script src="bower_components/angular-latest/build/angular-sanitize.js"></script>
+		<script src="bower_components/angular-bindonce/bindonce.js"></script>
+		<script src="bower_components/lodash/lodash.js"></script>
+		<script src="bower_components/FileSaver/FileSaver.js"></script>
 
 		<script src="scripts/services/glyphCache.js"></script>
 		<script src="scripts/services/typefaceResource.js"></script>
@@ -79,6 +79,11 @@
 		<script src="scripts/templates/dotsvg.js"></script>
 
 		<script src="scripts/app.js"></script>
+		<!--
+			Very ugly hack to get ngtemplates to work.
+			Change this once https://github.com/yeoman/generator-angular/pull/277 provides a working solution.
+		-->
+		<script src="../.tmp/templates/templates.js"></script>
 		<script src="scripts/controllers/main.js"></script>
 		<!-- endbuild -->
 
@@ -91,11 +96,11 @@
 		</script>
 
 		<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-		<!--<script>
-			var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+		<script>
+			var _gaq=[['_setAccount','UA-41962243-3'],['_trackPageview']];
 			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
 			g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
 			s.parentNode.insertBefore(g,s)}(document,'script'));
-		</script>-->
+		</script>
 	</body>
 </html>

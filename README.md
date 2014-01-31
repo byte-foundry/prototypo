@@ -9,6 +9,7 @@ In order to build Prototypo, you need to install the following software-packages
 - Node.js
 - Grunt
 - Bower
+- Ruby
 - Sass
 
 Installing Prototypo
@@ -20,7 +21,7 @@ Clone a copy of the main Prototypo git repository
 $ git clone git://github.com/byte-foundry/prototypo.git
 ```
 
-Enter the Prototypo repository and install build tools
+Install build scripts
 
 ```bash
 $ cd prototypo && npm install
@@ -48,8 +49,13 @@ Running Prototypo
 -----------------
 
 ```bash
-$ grunt server
+$ grunt serve
 ```
+
+Converting an .svg font to other font formats
+---------------------------------------------
+
+This operation currently requires either [Fontforge](http://fontforge.github.io/en-US/) or using a hosted service such as [Freefontconverter](http://www.freefontconverter.com/).
 
 Running the Unit Tests
 ----------------------
