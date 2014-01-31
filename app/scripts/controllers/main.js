@@ -23,7 +23,7 @@ angular.module('prototypoApp')
 			zoom: 1,
 			scenePanX: 0,
 			scenePanY: 0,
-			stringChars: ''
+			stringChars: 'Hamburgfonstiv'
 		};
 		$scope.appValues = $.extend({}, initialAppValues);
 		$scope.allChars = {};

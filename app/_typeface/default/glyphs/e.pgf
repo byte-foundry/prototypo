@@ -4,7 +4,7 @@ C+ 	{{ roundness }} 0 {{ -8 * width }} {{ self[13].x + thickness *(71/80) }} {{ 
 L 	{{ self[3].x }} {{ self[3].y - thickness * (62/80) * contrast }}
 L 	{{ self[1].x + thickness * (74/80) }} {{ self[4].y }}
 C- 	{{ roundness }} 0 0 {{ self[5].x + ( self[7].x - self[5].x ) / 2 }} {{ -opticRoundness + thickness * (70/80) * contrast }}
-C- 	{{ roundness }} 0 {{ 45 * width }} {{ self[8].x - thickness * (28/80) * contrast }} {{ self[8].y + thickness * (57/80) * contrast |min:self[6].y }}
+C- 	{{ roundness }} 0 {{ 45 * width }} {{ self[8].x - thickness * (28/80) * contrast - 30 + 30 * aperture | max : self[8].x }} {{ self[8].y + thickness * (57/80) * contrast |min:self[6].y }}
 L 	{{ width * 359 + thickness - 80 }} {{ - opticRoundness + xHeight * (30/465) * aperture }}
 C+ 	{{ roundness }} {{ 45 * width }} {{ - breakPath / 4 }} {{ self[2].x }} {{ -opticRoundness }}
 C+ 	{{ roundness }} 0 0 {{ self[1].x }} {{ self[1].y }}
