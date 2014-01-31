@@ -1,5 +1,5 @@
 M 	{{ self[6].x }} {{ xHeight * (66/465) }}
-C+ 	{{ roundness }} 0 0 {{ self[3].x + thickness * (3/80) * contrast }} {{ descender }}
+C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[3].x + thickness * (3/80) * contrast }} {{ descender }}
 L 	0 {{ self[2].y + thickness * (62/80) * contrast }}
 C- 	{{ roundness }} 0 0 {{ self[5].x }} {{ self[1].y }}
 L 	167 {{ xHeight }}

@@ -2,7 +2,7 @@ M 	0 {{ self[16].y }}
 L 	0 {{ xHeight * (419/465) * crossbar }}
 L 	{{ self[15].x }} {{ self[2].y }}
 L 	{{ self[3].x }} {{ self[3].y + ( self[5].y - self[3].y ) *  (61/232) }}  /// ascenderHeight should be xHeight * ascender ?
-C+ 	{{ roundness }} 0 0 {{ self[4].x + ( self[6].x - self[4].x ) * (159/219) }} {{ ascenderHeight * (651/720) }}
+C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[4].x + ( self[6].x - self[4].x ) * (159/219) }} {{ ascenderHeight * (651/720) }}
 C+ 	{{ roundness }} 0 {{ -50 * width }} {{ self[9].x + width * 150 }} {{ ascenderHeight * (651/720) - ( ascenderHeight * (17/720) ) * aperture }}
 L 	{{ self[6].x - thickness * (6/80) * contrast }} {{ $result = ( self[8].y - thickness * (6/80) * contrast ) > ( self[6].y - thickness * (60/80) * contrast ) ? self[6].y - thickness * (60/80) * contrast : self[8].y - thickness * (6/80) * contrast }}
 C- 	{{ roundness }} {{ -50 * width }} 0 {{ self[5].x }} {{ self[5].y - thickness * (70/80) * contrast }}

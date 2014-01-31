@@ -1,9 +1,9 @@
 M 	{{ thickness * (77/80) }} {{ xHeight }}
 L 	{{ thickness }} {{ xHeight * (397/465) }}
-C+ 	{{ roundness }} {{ 35 * width }} 0 {{ self[2].x + ( self[4].x - self[2].x ) * (143/365) }} {{ xHeight + opticRoundness }}
+C+ 	{{ roundness }} {{ 40 * width }} {{ - breakPath / 2 }}  {{ self[2].x + ( self[4].x - self[2].x ) * (143/365) }} {{ xHeight + opticRoundness }}
 C+ 	{{ roundness }} 0 0 {{ self[15].x + thickness }} {{ xHeight / 2 }}
-C+ 	{{ roundness }} 0 0 {{ self[3].x }} {{ - opticRoundness }}
-C+ 	{{ roundness }} 0 {{ -35 * width }} {{ self[2].x }} {{ xHeight * (54/465) }}
+C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[3].x }} {{ - opticRoundness }}
+C+ 	{{ roundness }} 0 {{ -40 * width }} {{ self[2].x }} {{ xHeight * (54/465) }}
 L 	{{ self[6].x }} {{ descender }}
 L 	0 {{ self[7].y }}
 L 	{{ self[8].x }} {{ xHeight }}

@@ -1,18 +1,18 @@
 M 	0 {{ xHeight / 2 }}
-C+ 	{{ roundness }} 0 0 {{ self[1].x + ( self[3].x - self[1].x ) * (222/365) }} {{ xHeight + opticRoundness }}
+C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[1].x + ( self[3].x - self[1].x ) * (222/365) }} {{ xHeight + opticRoundness }}
 C+ 	{{ roundness }} 0 {{ -35 * width }} {{ width * 365 }} {{ xHeight * (414/465) }}
 L 	{{ self[3].x + thickness * (3/80) - 3  | min : self[3].x }} {{ xHeight }}
 l 	{{ thickness * (77/80) }} 0
 L 	{{ self[5].x }} {{ descender }}
 l 	{{ - thickness }} 0
 L 	{{ self[7].x }} {{ xHeight * (55/465) }}
-C+ 	{{ roundness }} {{ 35 * width }} 0 {{ self[2].x }} {{ - opticRoundness }}
+C+ 	{{ roundness }} {{ 35 * width }} {{ - breakPath / 4 }} {{ self[2].x }} {{ - opticRoundness }}
 C+ 	{{ roundness }} 0 0 {{ self[1].x }} {{ self[1].y }}
 Z
 M 	{{ self[1].x + thickness }} {{ self[1].y }}
-C- 	{{ roundness }} 0 0 {{ self[12].x + ( self[14].x - self[12].x ) / 2 }} {{ self[9].y + thickness * (71/80) * contrast }}
+C- 	{{ roundness }} 0 {{ breakPath }} {{ self[12].x + ( self[14].x - self[12].x ) / 2 }} {{ self[9].y + thickness * (71/80) * contrast }}
 C- 	{{ roundness }} 0 0 {{ width * 368 }} {{ self[12].y }}
-C- 	{{ roundness }} 0 0 {{ self[13].x }} {{ self[2].y - thickness * (73/80) * contrast }}
+C- 	{{ roundness }} 0 {{ breakPath }} {{ self[13].x }} {{ self[2].y - thickness * (73/80) * contrast }}
 C- 	{{ roundness }} 0 0 {{ self[12].x }} {{ self[12].y }}
 Z
 
