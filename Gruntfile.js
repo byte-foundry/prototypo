@@ -389,16 +389,18 @@ module.exports = function (grunt) {
 					rel: '<%= yeoman.dist %>/',
 					dest: ''
 				}, {
-					src: '<%= yeoman.dist %>/*.html',
-					rel: '<%= yeoman.dist %>/',
-					dest: '',
-					//options: { gzip: true }
+					src: '<%= yeoman.dist %>/404.html',
+					dest: '404.html',
+					options: { gzip: true }
 				}, {
-					src: '<%= yeoman.dist %>/scripts/*',
-					rel: '<%= yeoman.dist %>/',
-					dest: '',
+					src: '<%= yeoman.dist %>/index.html',
+					dest: 'index.html',
+					options: { gzip: true }
+				}, {
+					src: '<%= yeoman.dist %>/scripts/*.js',
+					dest: 'scripts/',
 					options: {
-						//gzip: true,
+						gzip: true,
 						headers: {
 							// Two Year cache policy (1000 * 60 * 60 * 24 * 730)
 							'Cache-Control': 'max-age=630720000, public',
@@ -406,11 +408,10 @@ module.exports = function (grunt) {
 						}
 					}
 				}, {
-					src: '<%= yeoman.dist %>/styles/*',
-					rel: '<%= yeoman.dist %>/',
-					dest: '',
+					src: '<%= yeoman.dist %>/styles/*.css',
+					dest: 'styles/',
 					options: {
-						//gzip: true,
+						gzip: true,
 						headers: {
 							// Two Year cache policy (1000 * 60 * 60 * 24 * 730)
 							'Cache-Control': 'max-age=630720000, public',
