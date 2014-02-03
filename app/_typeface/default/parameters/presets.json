@@ -1,26 +1,5 @@
 {"presets": {
-		"Humanist": {
-			"xHeight": 508,
-			"capDelta": 233,
-			"ascender": 303,
-			"descender": -256,
-			"crossbar": 1.06,
-			"width": 0.97,
-			"roundness": 0.58,
-			"thickness": 98,
-			"_contrast": -0.39,
-			"breakPath": 5,
-			"aperture": 1.5,
-			"axis": -31.5,
-			"serifMedian": 0,
-			"serifWidth": 30,
-			"serifHeight": 31,
-			"serifCurve": 1.77,
-			"serifArc": 0.22,
-			"serifTerminal": 0,
-			"serifRotate": -7
-		},
-		"Garalde": {
+		"Old Style": {
 			"xHeight": 510,
 			"capDelta": 233,
 			"ascender": 278,
@@ -62,7 +41,7 @@
 			"serifTerminal": 0,
 			"serifRotate": 0
 		},
-		"Mechanistic": {
+		"Slab": {
 			"xHeight": 465,
 			"capDelta": 214,
 			"ascender": 214,
@@ -83,7 +62,7 @@
 			"serifTerminal": 0,
 			"serifRotate": 0
 		},
-		"Grotesk": {
+		"Sans-serif": {
 			"xHeight": 465,
 			"capDelta": 233,
 			"ascender": 250,
