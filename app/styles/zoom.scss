@@ -1,7 +1,6 @@
 @import "variables";
 
-.zoom,
-.switch {
+.zoom {
 	position: absolute;
 	z-index: 10;
 	top: 3rem;
@@ -14,7 +13,7 @@
 
 	a {
 		border: none;
-		background-color: $light-green;
+		background-color: lighten( $light-green, 5% );
 		width: 4rem;
 		height: 4rem;
 		float: right;
