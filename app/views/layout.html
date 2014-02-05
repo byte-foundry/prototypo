@@ -20,8 +20,10 @@
 		<string ng-show="!appValues.previewString" class="ng-hide"></string>
 		<single ng-show="appValues.previewString" class="ng-hide"></single>
 		<zoom></zoom>
-		<a class="reset btn" ng-click="resetFontValues()">Reset</a>
-		<a class="switch btn" ng-click="switchPreview()">Switch</a>
+		<div id="switch">
+			<a class="switch text btn" ng-click="switchPreview()"></a>
+			<a class="switch glyph btn" ng-click="switchPreview()"></a>
+		</div>
 	</div>
 	<div class="cell glyphlist-cell">
 		<glyphlist></glyphlist>

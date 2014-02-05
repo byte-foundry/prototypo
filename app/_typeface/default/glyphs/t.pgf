@@ -10,7 +10,7 @@ L 	{{self[8].x}} {{ xHeight * (90/465) + ( thickness - 80 ) * contrast | max : s
 C- 	{{ roundness }} 0 0 {{ self[9].x + ( self[11].x - self[9].x ) * (31/63) }} {{ self[13].y + thickness * (68/80) * contrast | max : self[8].y - 10 }}
 C- 	{{ roundness }} 0 {{ 45 * width }} {{ self[9].x + width * 63 }} {{ self[10].y + thickness * (3/80) | min : self[12].y }}
 L 	{{ self[11].x }} {{ 0 }}
-C+ 	{{ roundness }} {{ 35 * width }} 0 {{ self[14].x + ( self[12].x - self[14].x ) * (88/143) }} {{ - opticRoundness }}
+C+ 	{{ roundness }} {{ 35 * width }} 0 {{ self[14].x + ( self[12].x - self[14].x ) * (88/143) }} {{ - overshoot }}
 C+ 	{{ roundness }} 0 0 {{ self[2].x  }} {{ xHeight * (95/465) + ( thickness - 80 ) * contrast | max : self[8].y  }}
 L 	{{ self[2].x }} {{ self[7].y }}
 L 	{{ self[1].x }} {{ self[15].y }}

@@ -13,20 +13,20 @@
 
 	a {
 		border: none;
-		background-color: $light-green;
+		background-color: lighten( $light-green, 5% );
 		width: 4rem;
 		height: 4rem;
 		float: right;
-		font-size: 2rem;
+		font-size: 2.5rem;
 		font-weight: bold;
-		color: $green;
+		color: darken( $green, 10% );
 		text-align: center;
 		line-height: 4rem;
 		border: 1px solid transparent;
 	}
 
 	:nth-child(even) {
-		background-color: lighten( $light-green, 10% );
+		background-color: lighten( $light-green, 15% );
 	}
 	:hover {
 		background-color: lighten( $light-green, 30% );

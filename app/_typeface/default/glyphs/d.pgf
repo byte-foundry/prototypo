@@ -1,12 +1,12 @@
 M 	0 {{ xHeight / 2 }}
-C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[1].x + ( self[3].x - self[1].x ) * (222/364) }} {{ xHeight + opticRoundness }}
+C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[1].x + ( self[3].x - self[1].x ) * (222/364) }} {{ xHeight + overshoot }}
 C+ 	{{ roundness }} 0 {{ -30 * width }} {{ width * 364 }} {{ xHeight * (402/465) }}
 L 	{{ self[3].x }} {{ ascenderHeight }}
 l 	{{ thickness }} 0
 L 	{{ self[5].x }} 0
 l 	{{ -thickness * (77/80) }} 0
 L 	{{ self[7].x - thickness *(3/80) }} {{ 50 + breakPath / 2 }}
-C+ 	{{ roundness }} {{ 30 * width + breakPath }} {{ 0 }} {{ self[2].x }} {{ -opticRoundness}}
+C+ 	{{ roundness }} {{ 30 * width + breakPath }} {{ 0 }} {{ self[2].x }} {{ -overshoot}}
 C+ 	{{ roundness }} 0 0 {{ self[1].x }} {{ self[1].y }}
 Z
 M 	{{ self[1].x + thickness }} {{ self[1].y }}

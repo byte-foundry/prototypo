@@ -1,5 +1,5 @@
 rC 	{{ [ self[0].x + ( self[2].x - self[0].x ) /2 , self[4].y + thickness * (60/80)  ] | curve:"both":"bottom-left":self[0]:roundness }}
 rC 	{{ [ self[0].x + 50 * width , self[1].y + 20 ] | curve:"reverse":"top-left":self[1]:roundness:0.29 }}
 L 	{{ self[2].x + thickness * (30/80) * contrast }} {{ self[2].y - thickness * (15/80) * contrast }}
-C+  {{ roundness }} 0 0 {{ self[-1].x - ( self[-1].x - self[3].x ) /2 }} {{ -opticRoundness }}
+C+  {{ roundness }} 0 0 {{ self[-1].x - ( self[-1].x - self[3].x ) /2 }} {{ -overshoot }}
 C+  {{ roundness }} 0 {{ -thickness * (angle/80) | min:-angle }} {{ self[-1].x }} {{ y }}

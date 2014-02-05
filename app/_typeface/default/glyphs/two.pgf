@@ -5,7 +5,7 @@ C- 	{{ roundness }} {{ -50 + 5 * width }} 0 {{ width * 325 }} {{ 504 | between:
 C- 	{{ roundness }} 0 0 {{ self[6].x + ( self[4].x - self[6].x ) /2 }} {{ self[8].y - thickness * opticThickness * (80/88) * contrast }}
 C- 	{{ roundness }} 0 {{ 35 * width }} {{ self[7].x + thickness * (36/80)  * contrast }} {{ self[7].y - thickness * (56/80) * contrast }}
 L 	{{ width * 16 }} {{ capHeight * (630/698) }}
-C+ 	{{ roundness }} {{ 35 * width }} 0 {{ self[7].x + ( self[9].x - self[7].x ) /2 }} {{ capHeight + opticRoundness }}
+C+ 	{{ roundness }} {{ 35 * width }} 0 {{ self[7].x + ( self[9].x - self[7].x ) /2 }} {{ capHeight + overshoot }}
 C+	{{ roundness }} 0 0 {{ self[4].x + thickness * opticThickness * (91/88) }} {{ self[4].y }}
 C+ 	{{ roundness }} 0 {{ -50 + 5 * width }} {{ self[3].x + thickness * opticThickness * (124/88) * contrast }} {{ self[3].y }}	// thickness/width issue
 L 	{{ self[2].x + thickness * opticThickness * (149/88) }} {{ thickness * opticThickness * (80/88) }}

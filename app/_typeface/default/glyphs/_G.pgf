@@ -1,5 +1,5 @@
 M 	0 {{ capHeight / 2 }}
-C+ 	{{ roundness }} 0 0 {{ self[1].x + ( self[12].x - self[1].x ) * (347/607) }} {{ capHeight + opticRoundness }}
+C+ 	{{ roundness }} 0 0 {{ self[1].x + ( self[12].x - self[1].x ) * (347/607) }} {{ capHeight + overshoot }}
 C+ 	{{ roundness }} 0 {{ -35 * width }} {{ width * 607 + ( thickness-80 ) }} {{ self[2].y - 86 * aperture }}
 L 	{{ self[3].x - thickness * opticThickness * (40/88) * contrast }} {{ self[3].y - thickness * opticThickness * (70/88) * contrast |max:self[5].y  }}
 C- 	{{ roundness }} {{ -35 * width }} 0 {{ self[2].x }} {{ self[2].y - thickness * contrast }}
@@ -13,6 +13,6 @@ L 	{{ self[9].x + thickness }} {{ self[11].y }}
 L 	{{ self[12].x }} 0
 L 	{{ self[13].x - thickness * (70/80) }} {{ self[13].y + capHeight * (9/698) }}
 L 	{{ self[14].x }} {{ self[14].y + capHeight * (66/698) }}
-C+ 	{{ roundness }} {{ 35 * width }} 0 {{ self[7].x }} {{ -opticRoundness }}
+C+ 	{{ roundness }} {{ 35 * width }} 0 {{ self[7].x }} {{ -overshoot }}
 C+ 	{{ roundness }} 0 0 {{ self[1].x }} {{ self[1].y }}
 Z

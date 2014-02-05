@@ -1,5 +1,5 @@
 M 	0 {{ capHeight * (500/698) }}
-rC 	{{ [217 , capHeight + opticRoundness ] |curve:"both":"top-right":self[1]:roundness }}
+rC 	{{ [217 , capHeight + overshoot ] |curve:"both":"top-right":self[1]:roundness }}
 Z
 
 add bottom-dot at {{ [ width * 60 + (thickness-80)/2, xHeight + ( 80 / 465 ) * xHeight ] }}

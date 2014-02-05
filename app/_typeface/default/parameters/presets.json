@@ -1,26 +1,5 @@
 {"presets": {
-		"Humanist": {
-			"xHeight": 508,
-			"capDelta": 233,
-			"ascender": 303,
-			"descender": -256,
-			"crossbar": 1.06,
-			"width": 0.97,
-			"roundness": 0.58,
-			"thickness": 98,
-			"_contrast": -0.39,
-			"breakPath": 5,
-			"aperture": 1.5,
-			"axis": -31.5,
-			"serifMedian": 0,
-			"serifWidth": 30,
-			"serifHeight": 31,
-			"serifCurve": 1.77,
-			"serifArc": 0.22,
-			"serifTerminal": 0,
-			"serifRotate": -7
-		},
-		"Garalde": {
+		"Old Style": {
 			"xHeight": 510,
 			"capDelta": 233,
 			"ascender": 278,
@@ -39,9 +18,10 @@
 			"serifCurve": 1.57,
 			"serifArc": 0.19,
 			"serifTerminal": 0.23,
-			"serifRotate": -11
+			"serifRotate": -11,
+			"serifRoundness" : 0.55
 		},
-		"Didone": {
+		"Modern": {
 			"xHeight": 465,
 			"capDelta": 292,
 			"ascender": 303,
@@ -60,9 +40,10 @@
 			"serifCurve": 0,
 			"serifArc": 0,
 			"serifTerminal": 0,
-			"serifRotate": 0
+			"serifRotate": 0,
+			"serifRoundness" : 0.55
 		},
-		"Mechanistic": {
+		"Slab": {
 			"xHeight": 465,
 			"capDelta": 214,
 			"ascender": 214,
@@ -81,9 +62,10 @@
 			"serifCurve": 0,
 			"serifArc": 0,
 			"serifTerminal": 0,
-			"serifRotate": 0
+			"serifRotate": 0,
+			"serifRoundness" : 0.55
 		},
-		"Grotesk": {
+		"Sans-serif": {
 			"xHeight": 465,
 			"capDelta": 233,
 			"ascender": 250,
@@ -102,7 +84,8 @@
 			"serifCurve": 0,
 			"serifArc": 0,
 			"serifTerminal": 0,
-			"serifRotate": 0
+			"serifRotate": 0,
+			"serifRoundness" : 0.55
 		},
 		"Blackletter": {
 			"xHeight": 517,
@@ -117,11 +100,11 @@
 			"breakPath": 35,
 			"aperture": 0.82,
 			"axis": 0,
-			"serifMedian": 0,
-			"serifWidth": 10,
-			"serifHeight": 34,
+			"serifMedian": -1,
+			"serifWidth": 62,
+			"serifHeight": 128,
 			"serifCurve": 0,
-			"serifArc": 0.32,
+			"serifArc": 0.2,
 			"serifTerminal": 0,
 			"serifRotate": 0
 		}

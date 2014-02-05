@@ -2,8 +2,10 @@
 
 $input-h: 3rem;
 
-.preview {
+.preview,
+.presets {
 	&>div {
 		background-color: white;
+		border-right: 1px solid $green;
 	}
 }

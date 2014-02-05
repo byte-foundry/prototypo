@@ -93,7 +93,7 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 				refLength;
 
 			while ( currSegment ) {
-				if ( currSegment.controls[0] && currSegment.controls[0].isSmooth ) {console.log('here', currSegment)
+				if ( currSegment.controls[0] && currSegment.controls[0].isSmooth ) {
 					refLength = Math.sqrt(
 						Math.pow( currSegment.$render.controls[0].x - currSegment.$render.start.x, 2 ) +
 						Math.pow( currSegment.$render.controls[0].y - currSegment.$render.start.y, 2 )
@@ -107,7 +107,7 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 					currSegment.$render.controls[0].y = currSegment.$render.start.y + Math.sin( refAngle ) * refLength;
 				}
 
-				if ( prevSegment && prevSegment.controls[1] && prevSegment.controls[1].isSmooth ) {console.log('there', prevSegment)
+				if ( prevSegment && prevSegment.controls[1] && prevSegment.controls[1].isSmooth ) {
 					refLength = Math.sqrt(
 						Math.pow( prevSegment.$render.controls[1].x - prevSegment.$render.end.x, 2 ) +
 						Math.pow( prevSegment.$render.controls[1].y - prevSegment.$render.end.y, 2 )
