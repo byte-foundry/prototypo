@@ -1,0 +1,4 @@
+C- 	{{ roundness }} {{ angle }} 0 {{ self[0].x + thickness / 2 + thickness / 2 * contrast }} {{ self[2].y + ( self[0].y - self[2].y ) / 2 }} 
+C- 	{{ roundness }} 0 0 {{ self[0].x }} {{ self[0].y + thickness }}
+C- 	{{ roundness }} 0 0 {{ self[1].x - thickness }} {{ self[1].y }}
+C- 	{{ roundness }} 0 0 {{ self[3].x + ( self[0].x - self[3].x ) * 2 / 3 + thickness }} {{ self[-1] }}
