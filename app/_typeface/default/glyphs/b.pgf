@@ -1,8 +1,8 @@
 M 	{{ thickness }} {{ ascenderHeight }}
 L 	{{ self[1].x }} {{ xHeight * ( 407 / 465 ) }}
-C+ 	{{ roundness }} {{ 25 * width }} {{ - breakPath / 2 }} {{ self[2].x + ( self[4].x - self[2].x ) * (152/364) }} {{ xHeight + opticRoundness }}
+C+ 	{{ roundness }} {{ 25 * width }} {{ - breakPath / 2 }} {{ self[2].x + ( self[4].x - self[2].x ) * (152/364) }} {{ xHeight + overshoot }}
 C+ 	{{ roundness }} 0 0 {{ self[12].x + thickness }} {{ xHeight * ( 233 / 465 ) }}
-C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[3].x }} {{ - opticRoundness }}
+C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[3].x }} {{ - overshoot }}
 C+ 	{{ roundness }} 0 {{ -22 * width }} {{ self[1].x }} {{ xHeight * ( 50 / 565 ) + breakPath / 2 }}
 L 	{{ self[1].x * ( 77 / 80 ) }} 0
 L 	0 0 //// #TODO: fix arc

@@ -6,7 +6,7 @@ L 	{{ self[2].x + thickness * opticThickness * (75/88) * contrast }} {{ self[4].
 L	{{ self[1].x + thickness * opticThickness * contrast }} {{ capHeight * (426/698) }}
 C+ 	{{ roundness }} {{ -35 * width }} 0 {{ self[6].x + ( self[8].x - self[6].x ) * (100/318) }} {{ self[6].y + thickness * (6/80) }}
 C+ 	{{ roundness }} 0 0 {{ self[13].x + thickness * opticThickness }} {{ self[13].y }}
-C+ 	{{ roundness }} 0 0 {{ self[10].x + ( self[8].x - self[10].x ) * (214/443) }} {{ -opticRoundness }}
+C+ 	{{ roundness }} 0 0 {{ self[10].x + ( self[8].x - self[10].x ) * (214/443) }} {{ -overshoot }}
 C+ 	{{ roundness }} 0 {{ -35 * width }} {{ 0 }} {{ capHeight * (93/698) }}
 L 	{{ thickness * opticThickness * (41/88) * contrast }}  {{ self[10].y + thickness * opticThickness * (52/88) * contrast }}
 C- 	{{ roundness }} {{ -35 * width }} 0 {{ self[14].x }} {{ self[9].y + thickness * opticThickness * (86/88) * contrast }}

@@ -85,6 +85,8 @@
 		"trap-top-left",
 		"trap-top-right",
 		"serif-curve-bottom",
-		"sample"
+		"sample",
+		"top-terminal-ball",
+		"bottom-terminal-ball"
 	]
 }

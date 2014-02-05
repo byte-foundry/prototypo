@@ -12,14 +12,7 @@
 				"step": 1,
 				"init": 465,
 				"minAdviced": 300,
-				"maxAdviced": 800,
-				"presets": {
-					"Humanist": 508,
-					"Garalde": 510,
-					"Didone": 465,
-					"Mechanistic": 465,
-					"Grotesk": 0
-				}
+				"maxAdviced": 800
 			},
 			{
 				"name": "capDelta",
@@ -29,14 +22,7 @@
 				"step": 1,
 				"init": 233,
 				"minAdviced": 0,
-				"maxAdviced": 350,
-				"presets": {
-					"Humanist": 233,
-					"Garalde": 233,
-					"Didone": 292,
-					"Mechanistic": 214,
-					"Grotesk": 233
-				}
+				"maxAdviced": 350
 			},
 			{
 				"name": "ascender",
@@ -46,14 +32,7 @@
 				"step": 1,
 				"init": 250,
 				"minAdviced": 50,
-				"maxAdviced": 500,
-				"presets": {
-					"Humanist": 303,
-					"Garalde": 278,
-					"Didone": 303,
-					"Mechanistic": 214,
-					"Grotesk": 250
-				}
+				"maxAdviced": 500
 			},
 			{
 				"name": "descender",
@@ -63,14 +42,7 @@
 				"step": 1,
 				"init": -210,
 				"minAdviced": -350,
-				"maxAdviced": -100,
-				"presets": {
-					"Humanist": -256,
-					"Garalde": -210,
-					"Didone": -210,
-					"Mechanistic": 0,
-					"Grotesk": -210
-				}
+				"maxAdviced": -100
 			},
 			{
 				"name": "crossbar",
@@ -80,14 +52,7 @@
 				"step": 0.001,
 				"init": 1,
 				"minAdviced": 0.88,
-				"maxAdviced": 1.05,
-				"presets": {
-					"Humanist": 1.09,
-					"Garalde": 1.1,
-					"Didone": 1,
-					"Mechanistic": 0.94,
-					"Grotesk": 1
-				}
+				"maxAdviced": 1.05
 			},
 			{
 				"name": "width",
@@ -97,14 +62,7 @@
 				"step": 0.01,
 				"init": 1,
 				"minAdviced": 0.85,
-				"maxAdviced": 2,
-				"presets": {
-					"Humanist": 0.97,
-					"Garalde": 1.09,
-					"Didone": 1,
-					"Mechanistic": 1,
-					"Grotesk": 1
-				}
+				"maxAdviced": 2
 			},
 			{
 				"name": "slant",
@@ -114,31 +72,17 @@
 				"step": 0.2,
 				"init": 0,
 				"minAdviced": -5,
-				"maxAdviced": 8,
-				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
-				}
+				"maxAdviced": 8
 			},
 			{
-				"name": "roundness",
-				"label": "Roundness",
+				"name": "overshoot",
+				"label": "Overshoot",
 				"min": 0,
-				"max": 2,
-				"step": 0.01,
-				"init": 0.65,
-				"minAdviced": 0.4,
-				"maxAdviced": 1.3,
-				"presets": {
-					"Humanist": 0.58,
-					"Garalde": 0.6,
-					"Didone": 0.65,
-					"Mechanistic": 0.65,
-					"Grotesk": 0.65
-				}
+				"max": 20,
+				"step": 1,
+				"init": 10,
+				"minAdviced": 0,
+				"maxAdviced": 20
 			}
 		]
 	},
@@ -155,14 +99,7 @@
 				"step": 1,
 				"init": 80,
 				"minAdviced": 60,
-				"maxAdviced": 180,
-				"presets": {
-					"Humanist": 98,
-					"Garalde": 95,
-					"Didone": 80,
-					"Mechanistic": 95,
-					"Grotesk": 80
-				}
+				"maxAdviced": 180
 			},
 			{
 				"name": "_contrast",
@@ -172,31 +109,7 @@
 				"step": 0.01,
 				"init": -1,
 				"minAdviced": -1,
-				"maxAdviced": -0.3,
-				"presets": {
-					"Humanist": -0.39,
-					"Garalde": -0.57,
-					"Didone": -0.25,
-					"Mechanistic": -1,
-					"Grotesk": -1
-				}
-			},
-			{
-				"name": "breakPath",
-				"label": "Break Path",
-				"min": 0,
-				"max": 35,
-				"step": 0.1,
-				"init": 0,
-				"minAdviced": 0,
-				"maxAdviced": 35,
-				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
-				}
+				"maxAdviced": -0.3
 			},
 			{
 				"name": "aperture",
@@ -206,31 +119,7 @@
 				"step": 0.01,
 				"init": 1,
 				"minAdviced": 0,
-				"maxAdviced": 2.2,
-				"presets": {
-					"Humanist": 2.2,
-					"Garalde": 1.84,
-					"Didone": 2.2,
-					"Mechanistic": 0.08,
-					"Grotesk": 1
-				}
-			},
-			{
-				"name": "inktrap",
-				"label": "Inktrap",
-				"min": 0,
-				"max": 0.95,
-				"step": 0.05,
-				"init": 0,
-				"minAdviced": 0,
-				"maxAdviced": 0.95,
-				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
-				}
+				"maxAdviced": 2.2
 			},
 			{
 				"name": "opticThickness",
@@ -240,31 +129,27 @@
 				"step": 0.1,
 				"init": 1.1,
 				"minAdviced": 1,
-				"maxAdviced": 2,
-				"presets": {
-					"Humanist": 1.1,
-					"Garalde": 1.1,
-					"Didone": 1.1,
-					"Mechanistic": 1.1,
-					"Grotesk": 1.1
-				}
+				"maxAdviced": 2
 			},
 			{
-				"name": "opticRoundness",
-				"label": "Optic roundness",
+				"name": "roundness",
+				"label": "Roundness",
 				"min": 0,
-				"max": 20,
-				"step": 1,
-				"init": 10,
+				"max": 2,
+				"step": 0.01,
+				"init": 0.65,
+				"minAdviced": 0.4,
+				"maxAdviced": 1.3
+			},
+			{
+				"name": "breakPath",
+				"label": "Break Path",
+				"min": 0,
+				"max": 35,
+				"step": 0.1,
+				"init": 0,
 				"minAdviced": 0,
-				"maxAdviced": 20,
-				"presets": {
-					"Humanist": 10,
-					"Garalde": 10,
-					"Didone": 10,
-					"Mechanistic": 10,
-					"Grotesk": 10
-				}
+				"maxAdviced": 35
 			},
 			{
 				"name": "axis",
@@ -274,14 +159,17 @@
 				"step": 1,
 				"init": 0,
 				"minAdviced": -30,
-				"maxAdviced": 30,
-				"presets": {
-					"Humanist": -31.5,
-					"Garalde": -23.5,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
-				}
+				"maxAdviced": 30
+			},
+			{
+				"name": "inktrap",
+				"label": "Inktrap",
+				"min": 0,
+				"max": 0.95,
+				"step": 0.05,
+				"init": 0,
+				"minAdviced": 0,
+				"maxAdviced": 0.95
 			}
 		]
 	},
@@ -298,14 +186,7 @@
 				"step": 1,
 				"init": 0,
 				"minAdviced": 0,
-				"maxAdviced": 80,
-				"presets": {
-					"Humanist": 30,
-					"Garalde": 30,
-					"Didone": 100,
-					"Mechanistic": 90,
-					"Grotesk": 0
-				}
+				"maxAdviced": 80
 			},
 			{
 				"name": "serifHeight",
@@ -315,14 +196,7 @@
 				"step": 1,
 				"init": 0,
 				"minAdviced": 0,
-				"maxAdviced": 80,
-				"presets": {
-					"Humanist": 31,
-					"Garalde": 29,
-					"Didone": 20,
-					"Mechanistic": 68,
-					"Grotesk": 0
-				}
+				"maxAdviced": 80
 			},
 			{
 				"name": "serifMedian",
@@ -332,14 +206,7 @@
 				"step": 0.1,
 				"init": 0,
 				"minAdviced": -1,
-				"maxAdviced": 2,
-				"presets": {
-					"Humanist": 0,
-					"Garalde": 0,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
-				}
+				"maxAdviced": 2
 			},
 			{
 				"name": "serifCurve",
@@ -349,14 +216,7 @@
 				"step": 0.01,
 				"init": 0,
 				"minAdviced": 0,
-				"maxAdviced": 3,
-				"presets": {
-					"Humanist": 1.77,
-					"Garalde": 1.57,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
-				}
+				"maxAdviced": 3
 			},
 			{
 				"name": "serifRoundness",
@@ -366,14 +226,7 @@
 				"step": 0.01,
 				"init": 0.55,
 				"minAdviced": 0,
-				"maxAdviced": 2,
-				"presets": {
-					"Humanist": 0.55,
-					"Garalde": 0.55,
-					"Didone": 0.55,
-					"Mechanistic": 0.55,
-					"Grotesk": 0.55
-				}
+				"maxAdviced": 2
 			},
 			{
 				"name": "serifArc",
@@ -383,14 +236,7 @@
 				"step": 0.01,
 				"init": 0,
 				"minAdviced": -0.5,
-				"maxAdviced": 0.5,
-				"presets": {
-					"Humanist": 0.22,
-					"Garalde": 0.19,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
-				}
+				"maxAdviced": 0.5
 			},
 			{
 				"name": "serifTerminal",
@@ -400,14 +246,7 @@
 				"step": 0.01,
 				"init": 0,
 				"minAdviced": -0.2,
-				"maxAdviced": 1,
-				"presets": {
-					"Humanist": 0,
-					"Garalde": 0.23,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
-				}
+				"maxAdviced": 1
 			},
 			{
 				"name": "serifTerminalCurve",
@@ -417,14 +256,7 @@
 				"step": 0.01,
 				"init": 0.55,
 				"minAdviced": 0,
-				"maxAdviced": 1.5,
-				"presets": {
-					"Humanist": 0.55,
-					"Garalde": 0.55,
-					"Didone": 0.55,
-					"Mechanistic": 0.55,
-					"Grotesk": 0.55
-				}
+				"maxAdviced": 1.5
 			},
 			{
 				"name": "serifRotate",
@@ -434,14 +266,7 @@
 				"step": 1,
 				"init": 0,
 				"minAdviced": -35,
-				"maxAdviced": 15,
-				"presets": {
-					"Humanist": -7,
-					"Garalde": -11,
-					"Didone": 0,
-					"Mechanistic": 0,
-					"Grotesk": 0
-				}
+				"maxAdviced": 15
 			}
 		]
 	},

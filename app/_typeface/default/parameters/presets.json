@@ -18,7 +18,8 @@
 			"serifCurve": 1.57,
 			"serifArc": 0.19,
 			"serifTerminal": 0.23,
-			"serifRotate": -11
+			"serifRotate": -11,
+			"serifRoundness" : 0.55
 		},
 		"Modern": {
 			"xHeight": 465,
@@ -39,7 +40,8 @@
 			"serifCurve": 0,
 			"serifArc": 0,
 			"serifTerminal": 0,
-			"serifRotate": 0
+			"serifRotate": 0,
+			"serifRoundness" : 0.55
 		},
 		"Slab": {
 			"xHeight": 465,
@@ -60,7 +62,8 @@
 			"serifCurve": 0,
 			"serifArc": 0,
 			"serifTerminal": 0,
-			"serifRotate": 0
+			"serifRotate": 0,
+			"serifRoundness" : 0.55
 		},
 		"Sans-serif": {
 			"xHeight": 465,
@@ -81,7 +84,8 @@
 			"serifCurve": 0,
 			"serifArc": 0,
 			"serifTerminal": 0,
-			"serifRotate": 0
+			"serifRotate": 0,
+			"serifRoundness" : 0.55
 		},
 		"Blackletter": {
 			"xHeight": 517,

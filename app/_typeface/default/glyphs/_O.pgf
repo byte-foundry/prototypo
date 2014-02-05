@@ -1,7 +1,7 @@
 M	0 {{ capHeight / 2 }}
-C+ 	{{ roundness }} 0 0 {{ self[1].x + ( self[3].x - self[1].x ) / 2 }} {{ capHeight + opticRoundness }}
+C+ 	{{ roundness }} 0 0 {{ self[1].x + ( self[3].x - self[1].x ) / 2 }} {{ capHeight + overshoot }}
 C+ 	{{ roundness }} 0 0 {{ self[9].x + thickness * opticThickness * (80/88) }} {{ self[1].y }}
-C+ 	{{ roundness }} 0 0 {{ self[2].x }} {{ - opticRoundness }}
+C+ 	{{ roundness }} 0 0 {{ self[2].x }} {{ - overshoot }}
 C+ 	{{ roundness }} 0 0 {{ self[1].x }} {{ self[1].y }}
 Z
 M 	{{ self[1].x + thickness * opticThickness * (91/88) }} {{ self[1].y }}
