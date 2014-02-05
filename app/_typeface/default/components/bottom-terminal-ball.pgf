@@ -1,0 +1,4 @@
+C+ 	{{ serifRoundness }} 30 0 {{ self[0].x - serifHeight * 1.4 }} {{ self[0].y + serifHeight * 2 }}
+C+ 	{{ serifRoundness }} 0 0 {{ self[1].x + ( self[3].x - self[1].x ) / 2 }} {{ self[1].y + serifHeight * 2 }}
+C+ 	{{ serifRoundness }} 0 {{ angle + 180 }} {{ self[1].x + serifHeight * 4 }} {{ self[1].y - ( self[1].y - self[-1].y ) / 2 }}
+C- 	{{ serifRoundness }} {{ angle + 180 }} 0 {{ self[-1].x }} {{ self[-1].y }}

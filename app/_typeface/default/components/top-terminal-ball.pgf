@@ -1,0 +1,4 @@
+C+ 	{{ serifRoundness }} 30 0 {{ self[0].x + serifHeight * 1.4 }} {{ self[0].y - serifHeight * 2 }}
+C+ 	{{ serifRoundness }} 0 0 {{ self[1].x - ( self[1].x - self[3].x ) / 2 }} {{ self[1].y - serifHeight * 2 }}
+C+ 	{{ serifRoundness }} 0 {{ angle }} {{ self[1].x - serifHeight * 4 | min : self[-1].x  }} {{ self[-1].y - ( self[-1].y - self[1].y ) / 2 | max : self[0].y - thickness * (60/80) * contrast }}
+C- 	{{ serifRoundness }} {{ angle }} 0 {{ self[-1].x }} {{ self[-1].y }}
