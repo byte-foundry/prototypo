@@ -13,6 +13,14 @@ svg {
 	}
 }
 
+a,
+a:hover,
+a:active,
+a:visited {
+	color: inherit;
+	text-decoration: none;
+}
+
 .sidebar {
 	position: relative;
 	z-index: 2;
@@ -60,13 +68,11 @@ svg {
 	}
 }
 
-.reset,
-.switch,
-.dotsvg {
+.reset {
 	position: absolute;
 	z-index: 2;
-	top: 2rem;
-	left: 2.5rem;
+	top: 3rem;
+	right: 13rem;
 
 	width: auto !important;
 	height: auto !important;
@@ -82,7 +88,16 @@ svg {
 }
 
 .switch {
-	left: 12rem;
+	top: 12rem !important;
+	width:4rem !important;
+	height: 4rem !important;
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAPdJREFUeNqck8ENwjAMRROLAWCD9MC9bMAGdANgih4Rx97YAEZgA8oE9M6h2QBGwJFChSzbCbEUOYrlHz8ntkax9tmO6Bw59t2yq6Qcq4jV6B5CeIWiAxcApcBtSUwTbEpiNhO3j36dwoZMpHtcSWzIRLrGlcS2GbhvRFvE2AvdXMOGzOq4PYvNCW6Y/nF7FhsIbpiK+o8KXcyZbJa40YcLMImeOZJzkgRpT0Lizei2/RW0BHc0ZVbha3vaw8aUW8MhU9wwbkdB4EDGcMK2Cu4eMS7CrO/QnTlsUHB7BbGXsEHA9d8mcxZjA/dDIOMz51YZ/qv7CDAAI9VR+9bIh3EAAAAASUVORK5CYII=');
+	background-repeat: no-repeat;
+	background-position: center;
+
+	&:hover {
+		border: 1px solid $light-green;
+	}
 }
 
 .dotsvg {
