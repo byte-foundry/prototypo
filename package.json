@@ -18,7 +18,7 @@
     "grunt-contrib-jshint": "~0.8.0",
     "grunt-contrib-uglify": "~0.3.2",
     "grunt-contrib-watch": "~0.5.2",
-    "grunt-bower-requirejs": "~0.8.4",
+    "grunt-karma": "~0.7.2",
     "grunt-newer": "~0.5.4",
     "grunt-ngmin": "~0.0.3",
     "grunt-rev": "~0.1.0",
