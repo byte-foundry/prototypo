@@ -100,11 +100,11 @@
 			"breakPath": 35,
 			"aperture": 0.82,
 			"axis": 0,
-			"serifMedian": 0,
-			"serifWidth": 10,
-			"serifHeight": 34,
+			"serifMedian": -1,
+			"serifWidth": 62,
+			"serifHeight": 128,
 			"serifCurve": 0,
-			"serifArc": 0.32,
+			"serifArc": 0.2,
 			"serifTerminal": 0,
 			"serifRotate": 0
 		}
