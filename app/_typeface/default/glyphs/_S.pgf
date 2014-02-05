@@ -19,4 +19,4 @@ Z
 // replace from self[3] at {{ {x: self[3].x - serifHeight - serifHeight * serifCurve} }} to self[5] at {{ {y: self[5].y + thickness * (74/80) * contrast } }} with serif-bottom-right-vert 
 
 replace from self[3] at {{ { y: self[3].y } }} to self[5] at {{ {x: self[5].x } }} with terminal-ball {{ { angle: - self[3].angle + 90, thickness:thickness, contrast:contrast } }}
-replace from self[12] at {{ { y: self[12].y } }} to self[10] at {{ {x: self[10].x } }} with inverted terminal-ball {{ { angle: - self[12].angle + 90, thickness:thickness, contrast:contrast } }}
+replace from self[12] at {{ { y: self[12].y } }} to self[10] at {{ {x: self[10].x } }} with inverted terminal-ball2 {{ { angle: - self[12].angle + 90, thickness:thickness, contrast:contrast } }}
