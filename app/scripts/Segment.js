@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
-	.factory('Segment', function( Point, parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, invertSegment, getSegmentPoints, transformSegment ) {
+	.factory('Segment', function( Point, parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, invertSegment, getSegmentPoints, transformSegment, smoothSegment3 ) {
 		function Segment( data, curPos, invert ) {
 			// new is optional
 			if ( !( this instanceof Segment ) ) {
@@ -20,15 +20,14 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			// this is a copy of the points that should be used when rendering the segment
 			// this allows to have a representation of a component that isn't altered by its subcomponents,
 			// and another representation (render) that is altered.
-			this.$render.end = this.end;
-			if ( this.start ) {
-				this.$render.start = this.start;
-			}
+			this.$render.end = invert ? this.start : this.end;
+			this.$render.start = invert ? this.end : this.start;
+
 			if ( this.controls[0] ) {
-				this.$render.controls[0] = this.controls[0];
+				this.$render.controls[ invert ? 1 : 0 ] = this.controls[0];
 			}
 			if ( this.controls[1] ) {
-				this.$render.controls[1] = this.controls[1];
+				this.$render.controls[ invert ? 0 : 1 ] = this.controls[1];
 			}
 		}
 
@@ -40,7 +39,8 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			moveEnd: function( endPoint, newCoords ) { return moveSegmentEnd( this, endPoint, newCoords ); },
 			invertSegment: function() { return invertSegment( this); },
 			debug: function() { return getSegmentPoints( this ); },
-			transform: function( matrix ) { return transformSegment( this, matrix ); }
+			transform: function( matrix ) { return transformSegment( this, matrix ); },
+			smooth: function( render ) { return smoothSegment3( render ? this.$render : this, this.roundness ); }
 		};
 
 		// a segment has x and y properties that are copies of this.end.x and this.end.y
@@ -118,14 +118,25 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			case 'c-':
 			case 'C+':
 			case 'C-':
+			case 'ch':
+			case 'cv':
+			case 'Ch':
+			case 'Cv':
 				segment.roundness = +tmp[1];
-				// parse correction angles and negate them
-				segment.corrections = tmp.slice(2,4).map(function(x) { return -x; });
 
 				if ( segment.controls.length === 0 ) {
 					segment.controls[0] = Point(0,0);
 					segment.controls[1] = Point(0,0);
 				}
+
+				// parse correction angles and negate them
+				segment.corrections = tmp.slice(2,4).map(function(x, i) {
+					if ( x === 'smooth' ) {
+						segment.controls[i].isSmooth = true;
+						return 0;
+					}
+					return -x;
+				});
 
 				// duplicated code
 				if ( segment.end === undefined ) {
@@ -168,7 +179,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 	})
 
 	// make endpoint and control-points of the glyph absolute
-	.factory('absolutizeSegment', function( Point ) {
+	.factory('absolutizeSegment', function( Point, smoothSegment3 ) {
 		return function( segment, curPos ) {
 			if ( segment.start === undefined ) {
 				segment.start = Point( curPos );
@@ -217,6 +228,8 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			case 'rs':
 			case 'c+':
 			case 'c-':
+			case 'ch':
+			case 'cv':
 				curPos.x = segment.end.x += curPos.x;
 				curPos.y = segment.end.y += curPos.y;
 				break;
@@ -268,6 +281,9 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 						( segment.command === 'C+' && ( dx * dy > 0 ) ) ||
 						( segment.command === 'C-' && ( dx * dy < 0 ) )
 					) {
+						// Ch/Cv compat
+						segment.isSmooth = 'Cv';
+
 						segment.controls[0].x = segment.start.x;
 						segment.controls[0].y = segment.start.y + dy;
 						c0length = Math.abs(dy);
@@ -276,6 +292,9 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 						c1length = Math.abs(dx);
 
 					} else {
+						// Ch/Cv compat
+						segment.isSmooth = 'Ch';
+
 						segment.controls[0].x = segment.start.x + dx;
 						segment.controls[0].y = segment.start.y;
 						c0length = Math.abs(dx);
@@ -301,20 +320,50 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 
 					// these adjustments are necessary to make the curve pretty
 					// at roundness === 1, control points should be aligned
+					if ( segment.corrections[0] || segment.corrections[1] ) {
+						smoothSegment3( segment, segment.roundness );
+					}
+				}
+
+				// cubic bezier angle v2
+				if ( segment.command === 'Ch' || segment.command === 'Cv' ) {
+					// TODO: we might be able to speed up cases where there are no serifs or no roundness
+
+					segment.isSmooth = segment.command;
+
+					if ( segment.command === 'Ch' ) {
+						segment.controls[0].x = segment.start.x;
+						segment.controls[0].y = segment.start.y + dy;
+						segment.controls[1].x = segment.end.x - dx;
+						segment.controls[1].y = segment.end.y;
+
+					} else {
+						segment.controls[0].x = segment.start.x + dx;
+						segment.controls[0].y = segment.start.y;
+						segment.controls[1].x = segment.end.x;
+						segment.controls[1].y = segment.end.y - dy;
+					}
+
 					if ( segment.corrections[0] ) {
-						if ( c0length === Math.abs(dy) ) {
-							segment.controls[1].x += Math.cos( angle0 ) * c0length;
-						} else {
-							segment.controls[1].y += Math.sin( angle0 ) * c0length;
-						}
+						angle0 =
+							Math.atan2( segment.controls[0].y - segment.start.y, segment.controls[0].x - segment.start.x ) +
+							segment.corrections[0] / 180 * Math.PI;
+						segment.controls[0].x = segment.start.x + Math.cos( angle0 ) * c0length;
+						segment.controls[0].y = segment.start.y + Math.sin( angle0 ) * c0length;
 					}
 					if ( segment.corrections[1] ) {
-						if ( c0length === Math.abs(dy) ) {
-							segment.controls[0].y += Math.sin( angle1 ) * c1length;
-						} else {
-							segment.controls[0].x += Math.cos( angle1 ) * c1length;
-						}
+						angle1 =
+							Math.atan2( segment.controls[1].y - segment.start.y, segment.controls[1].x - segment.start.x ) +
+							segment.corrections[1] / 180 * Math.PI;
+						segment.controls[1].x = segment.end.x + Math.cos( angle1 ) * c1length;
+						segment.controls[1].y = segment.end.y + Math.sin( angle1 ) * c1length;
 					}
+
+					// when control angles are adjusted, curve need to be smoothed
+					if ( segment.corrections[0] || segment.corrections[1] ) {
+						smoothSegment3( segment, segment.roundness );
+					}
+
 				}
 
 				segment.command = 'C';
@@ -367,7 +416,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 					_newCoords:
 					Point( _newCoords ),
 				// only accept 'start' or 'end' values
-				endPoint = render[ _endPoint ],
+				endPoint = render[ segment.invert ? ( _endPoint === 'start' ? 'end' : 'start' ) : _endPoint ],
 				dx,
 				dy;
 
@@ -397,6 +446,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 	// => not a good idea, moveSegmentEnd works on the $render object but shouldn't care
 	// about .inverted. Or should it? If it allows othe classes to care less about .inverted,
 	// then maybe...
+	// => That's what we do right now
 	.factory('invertSegment', function() {
 		return function( segment ) {
 			if ( !segment || !segment.start ) {
@@ -421,29 +471,28 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 	.factory('segmentToSVG', function() {
 		return function( segment ) {
 			var render = segment.$render,
-				string = [],
-				end = segment.invert ? render.start : render.end;
+				string = [];
 
 			if ( render.controls[0] ) {
 				string.push( render.controls[0].toString() );
 			}
 			if ( render.controls[1] ) {
-				string[ segment.invert ? 'unshift' : 'push' ]( render.controls[1].toString() );
+				string.push( render.controls[1].toString() );
 			}
 
 			string.unshift( segment.command );
 
 			switch( segment.command.toUpperCase() ) {
 			case 'H':
-				string.push( Math.round( end.x ) );
+				string.push( Math.round( render.end.x ) );
 				break;
 			case 'V':
-				string.push( Math.round( end.y ) );
+				string.push( Math.round( render.end.y ) );
 				break;
 			case 'Z':
 				break;
 			default:
-				string.push( end.toString() );
+				string.push( render.end.toString() );
 				break;
 			}
 
@@ -501,4 +550,95 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				transformPoint( segment.end, matrix );
 			}
 		};
-	});
+	})
+
+	// smoothing that always joins control when roundness === 1
+	.factory('smoothSegment3', function( lineLineIntersection ) {
+		return function( segment, roundness ) {
+			var p = lineLineIntersection( segment.start, segment.controls[0], segment.end, segment.controls[1] );
+
+			if ( p ) {
+				segment.controls[0].x = segment.start.x + ( p[0] - segment.start.x ) * roundness;
+				segment.controls[0].y = segment.start.y + ( p[1] - segment.start.y ) * roundness;
+
+				segment.controls[1].x = segment.end.x + ( p[0] - segment.end.x ) * roundness;
+				segment.controls[1].y = segment.end.y + ( p[1] - segment.end.y ) * roundness;
+			}
+		}
+	})
+
+	/*.factory('getControlAngle', function() {
+		return function( segment, i ) {
+			return segment.controls[i] ?
+				Math.atan2( segment.controls[i].y - segment.start.y, segment.controls[i].x - segment.start.x ):
+				0;
+		};
+	})
+
+	// initial, broken smoothing
+	.factory('smoothSegment1', function() {
+		return function( segment, angle0, angle1, c0length, c1length ) {
+			if ( segment.corrections[0] ) {
+				if ( segment.isSmooth === 'Ch' ) {
+					segment.controls[1].x += Math.cos( angle0 ) * c0length;
+				} else {
+					segment.controls[1].y += Math.sin( angle0 ) * c0length;
+				}
+			}
+			if ( segment.corrections[1] ) {
+				if ( segment.isSmooth === 'Ch' ) {
+					segment.controls[0].y += Math.sin( angle1 ) * c1length;
+				} else {
+					segment.controls[0].x += Math.cos( angle1 ) * c1length;
+				}
+			}
+		};
+	})
+
+	// alternative smoothing that I cannot get to work reliably
+	.factory('smoothSegment2', function( getControlAngle ) {
+		return function( segment, angle0, angle1 ) {
+			var c0dx = segment.controls[1].x - segment.start.x,
+				c0dy = segment.controls[1].y - segment.start.y,
+				c1dx = segment.controls[0].x - segment.end.x,
+				c1dy = segment.controls[0].y - segment.end.y;
+
+			if ( segment.corrections[0] ) {
+				if ( angle1 === undefined ) {
+					angle1 = getControlAngle( segment, 1 );
+				}
+
+				if ( segment.isSmooth === 'Ch' ) {
+					segment.controls[1].x = segment.end.x + Math.sin( angle1 ) * c1dy;
+					segment.controls[1].y = segment.end.y + Math.cos( angle1 ) * c1dy;
+				} else {
+					segment.controls[1].x = segment.end.x + Math.sin( angle1 ) * c1dx;
+					segment.controls[1].y = segment.end.y + Math.cos( angle1 ) * c1dx;
+				}
+			}
+			if ( segment.corrections[1] ) {
+				if ( angle0 === undefined ) {
+					angle0 = getControlAngle( segment, 0 );
+				}
+
+				if ( segment.isSmooth === 'Ch' ) {
+					segment.controls[0].x = segment.start.x + Math.sin( angle0 ) * c0dy;
+					segment.controls[0].y = segment.start.y + Math.cos( angle0 ) * c0dy;
+				} else {
+					segment.controls[0].x = segment.start.x + Math.sin( angle0 ) * c0dx;
+					segment.controls[0].y = segment.start.y + Math.cos( angle0 ) * c0dx;
+				}
+			}
+		}
+	})
+
+	// very bad smoothing, shouldn't be used
+	.factory('smoothSegment4', function( lineLineIntersection ) {
+		return function( segment ) {
+			segment.controls[0].x = segment.start.x + ( segment.controls[1].x - segment.start.x ) * segment.roundness;
+			segment.controls[0].y = segment.start.y + ( segment.controls[1].y - segment.start.y ) * segment.roundness;
+
+			segment.controls[1].x = segment.end.x + ( segment.controls[0].x - segment.end.x ) * segment.roundness;
+			segment.controls[1].y = segment.end.y + ( segment.controls[0].y - segment.end.y ) * segment.roundness;
+		}
+	})*/;

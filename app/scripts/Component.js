@@ -158,7 +158,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 				processSubcomponent( component, subcomponent, initComponent );
 
 				/* link subcomponent */
-				// TODO: test the .prev linking
+				// TODO: test the .prev linking and use it in glyph smoothing
 				if ( subcomponent.type === 'add' ) {
 					component.lastSegment.next = subcomponent.firstSegment;
 					//subcomponent.firstSegment.prev = component.lastSegment;
@@ -349,12 +349,10 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 			// accept both a matrix or a transform string
 			var matrix = typeof transform === 'string' ?
 					transformToMatrix2d( transform ):
-					transform,
-				currSegment = component.firstSegment;
+					transform;
 
-			while ( currSegment ) {
-				transformSegment( currSegment, matrix, except );
-				currSegment = currSegment.next;
-			}
+			component.segments.forEach(function( segment ) {
+				transformSegment( segment, matrix, except );
+			});
 		};
 	});

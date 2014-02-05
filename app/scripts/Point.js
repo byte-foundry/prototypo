@@ -8,20 +8,18 @@ angular.module('prototypo.Point', ['prototypo.2D'])
 				return new Point( x, y );
 			}
 
-			this.coords = new Float32Array(2);
-
 			if ( x === undefined ) {
-				this.coords[0] = x;
-				this.coords[1] = y;
-			} else if ( x.constructor === Array ) {
-				this.coords[0] = x[0];
-				this.coords[1] = x[1];
+				this.coords = new Float32Array([x, y]);
+
+			} else if ( x.constructor === Array || x.constructor === Float32Array ) {
+				this.coords = new Float32Array(x);
+
 			} else if ( x.x !== undefined || x.y !== undefined ) {
-				this.coords[0] = x.x;
-				this.coords[1] = x.y;
+				this.coords = new Float32Array([x.x, x.y]);
+
 			} else {
-				this.coords[0] = x;
-				this.coords[1] = y;
+				this.coords = new Float32Array([x, y]);
+
 			}
 		}
 
@@ -147,7 +145,7 @@ angular.module('prototypo.Point', ['prototypo.2D'])
 
 				// point on a curve
 				} else {
-					
+
 				}
 
 			// intersection

@@ -2,7 +2,7 @@
 // TODO: don't recreate glyph segments on every pass, reuse them!
 
 angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'prototypo.2D'])
-	.factory('Glyph', function( Component, Point, glyphToSVG, transformGlyph ) {
+	.factory('Glyph', function( Component, Point, glyphToSVG, transformGlyph, smoothGlyph ) {
 
 		function Glyph( name, args ) {
 			// new is optional
@@ -30,6 +30,7 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 		Glyph.prototype = {
 			read: function( params, full ) {
 				this.component.process( Point(this.origin), full );
+				smoothGlyph( this );
 
 				return {
 					segments: this.segments,
@@ -78,6 +79,53 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 			while ( currSegment ) {
 				// when transforming the whole glyph, use "$render"ed points of the segments
 				transformSegment( currSegment.$render, matrix );
+				currSegment = currSegment.next;
+			}
+		};
+	})
+
+	.factory('smoothGlyph', function() {
+		return function( glyph ) {
+			// accept both a matrix or a transform string
+			var currSegment = glyph.component.firstSegment,
+				prevSegment,
+				refAngle,
+				refLength;
+
+			while ( currSegment ) {
+				if ( currSegment.controls[0] && currSegment.controls[0].isSmooth ) {console.log('here', currSegment)
+					refLength = Math.sqrt(
+						Math.pow( currSegment.$render.controls[0].x - currSegment.$render.start.x, 2 ) +
+						Math.pow( currSegment.$render.controls[0].y - currSegment.$render.start.y, 2 )
+					);
+
+					refAngle = prevSegment.command === 'C' ?
+						Math.atan2( prevSegment.$render.end.y - prevSegment.$render.controls[1].y, prevSegment.$render.end.x - prevSegment.$render.controls[1].x ):
+						Math.atan2( prevSegment.$render.end.y - prevSegment.$render.start.y, prevSegment.$render.end.x - prevSegment.$render.start.x );
+
+					currSegment.$render.controls[0].x = currSegment.$render.start.x + Math.cos( refAngle ) * refLength;
+					currSegment.$render.controls[0].y = currSegment.$render.start.y + Math.sin( refAngle ) * refLength;
+				}
+
+				if ( prevSegment && prevSegment.controls[1] && prevSegment.controls[1].isSmooth ) {console.log('there', prevSegment)
+					refLength = Math.sqrt(
+						Math.pow( prevSegment.$render.controls[1].x - prevSegment.$render.end.x, 2 ) +
+						Math.pow( prevSegment.$render.controls[1].y - prevSegment.$render.end.y, 2 )
+					);
+
+					refAngle = currSegment.command === 'C' ?
+						Math.atan2( currSegment.$render.controls[0].y - prevSegment.$render.start.y, currSegment.$render.controls[0].x - prevSegment.$render.start.x ):
+						Math.atan2( currSegment.$render.start.y - currSegment.$render.end.y, currSegment.$render.start.x - currSegment.$render.end.x );
+
+					prevSegment.$render.controls[1].x = prevSegment.$render.end.x + Math.cos( refAngle ) * refLength;
+					prevSegment.$render.controls[1].y = prevSegment.$render.end.y + Math.sin( refAngle ) * refLength;
+				}
+
+				if ( prevSegment && prevSegment.isSmooth && ( prevSegment.controls[0].isSmooth || prevSegment.controls[1].isSmooth ) ) {
+					prevSegment.smooth( true );
+				}
+
+				prevSegment = currSegment;
 				currSegment = currSegment.next;
 			}
 		};
