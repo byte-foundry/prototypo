@@ -6,8 +6,6 @@
 }
 
 .parammenu li {
-	position: relative;
-
 	cursor: pointer;
 	border: .2rem solid white;
 	background: $lightest-grey no-repeat center;
@@ -24,26 +22,25 @@
 	content: "";
 
 	position: absolute;
-	display: block;
+	bottom: 0;
 
+	display: block;
 	width: 0;
 	height: 0;
 }
 .parammenu .selected:before {
-	left: calc( 50% - 1.2rem );
-	bottom: -1.1rem;
+	transform: translate( #{$sidebar-w / 6 - 13px }, 11px );
 
-	border-left: 1.2rem solid transparent;
-	border-right: 1.2rem solid transparent;
-	border-top: 1.08rem solid white;
+	border-left: 13px solid transparent;
+	border-right: 13px solid transparent;
+	border-top: 13px solid white;
 }
 .parammenu .selected:after {
-	left: calc( 50% - 0.9rem );
-	bottom: -0.82rem;
+	transform: translate( #{$sidebar-w / 6 - 10px }, 8px );
 
-	border-left: .9rem solid transparent;
-	border-right: .9rem solid transparent;
-	border-top: .81rem solid $green;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-top: 10px solid $green;
 }
 
 // those images should be embedded in parameters.json
