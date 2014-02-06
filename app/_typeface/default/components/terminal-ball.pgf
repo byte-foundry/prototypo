@@ -1,4 +1,4 @@
-C+ 	{{ roundness }} {{ angle }} 0 {{ self[0].x + thickness / 2 + thickness / 2 * contrast }} {{ self[2].y + ( self[0].y - self[2].y ) / 2 }} 
-C+ 	{{ roundness }} 0 0 {{ self[0].x }} {{ self[0].y - thickness }}
-C+ 	{{ roundness }} 0 0 {{ self[1].x - thickness }} {{ self[1].y }}
-C+ 	{{ roundness }} 0 0 {{ self[3].x + ( self[0].x - self[3].x ) * 2 / 3 + thickness }} {{ self[-1] }}
+C+ 	{{ serifRoundness }} smooth 0 {{ self[0].x + thickness * terminalBall  - aperture * 20 }} {{ self[2].y + ( self[0].y - self[2].y ) / 2   }} 
+C+ 	{{ serifRoundness }} smooth 0 {{ self[3].x + ( self[1].x - self[3].x ) / 2 }} {{ self[0].y - thickness * terminalBall - terminalBall * 50  - aperture * 20 * terminalBall }}
+C+ 	{{ serifRoundness }} 0 {{ angle }} {{ self[1].x - thickness * terminalBall - terminalBall * 50 }} {{ self[1].y }}
+C+ 	{{ serifRoundness }} smooth {{ - angle }} {{ self[0].x - thickness / 2 * contrast + terminalBall * 10  * terminalBall }} {{ self[0].y - thickness * (74/80) * contrast }}
