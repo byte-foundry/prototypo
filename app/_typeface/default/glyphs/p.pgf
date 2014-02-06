@@ -16,7 +16,7 @@ C- 	{{ roundness }} 0 0 {{ width * 364 }} {{ self[13].y }}
 C- 	{{ roundness }} 0 {{ breakPath }} {{ self[12].x }} {{ self[12].y }}
 Z
 
-replace from self[7] at {{ {y: self[7].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness /2 } }} with serif-bottom-right {{ { angle: 0 } }}
-replace from self[9] at {{ {y: self[8].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: 0 } }}
+replace from self[7] at {{ {y: self[7].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness /2 } }} with serif-bottom-right 
+replace from self[9] at {{ {y: self[8].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness /2 } }} with inverted serif-bottom-left 
 
-replace from self[9] at {{ {y: self[9].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[10] at {{ {x: self[9].x + thickness * opticThickness /2 } }} with serif-top-left {{ { angle: 0 } }}
+replace from self[9] at {{ {y: self[9].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[10] at {{ {x: self[9].x + thickness * opticThickness /2 } }} with serif-top-left  transform {{ "rotate("+ -serifRotate +")" }}

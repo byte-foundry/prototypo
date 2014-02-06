@@ -267,6 +267,16 @@
 				"init": 0,
 				"minAdviced": -35,
 				"maxAdviced": 15
+			},
+			{
+				"name": "terminalBall",
+				"label": "Terminal Ball",
+				"min": 0,
+				"max": 1,
+				"step": 0.01,
+				"init": 0,
+				"minAdviced": 0,
+				"maxAdviced": 1
 			}
 		]
 	},

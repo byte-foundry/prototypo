@@ -17,12 +17,12 @@
 </div
 ><div class="central col">
 	<div class="cell scene-cell">
-		<string ng-show="!appValues.previewString" class="ng-hide"></string>
-		<single ng-show="appValues.previewString" class="ng-hide"></single>
+		<string ng-show="appValues.viewMode === 'string' " class="ng-hide"></string>
+		<single ng-show="appValues.viewMode === 'single' " class="ng-hide"></single>
 		<zoom></zoom>
 		<div id="switch">
-			<a class="switch text btn" ng-click="switchPreview()"></a>
-			<a class="switch glyph btn" ng-click="switchPreview()"></a>
+			<a class="switch text btn" ng-class="{active: appValues.viewMode === 'string'}" ng-click="changeViewMode( 'string' )"></a>
+			<a class="switch glyph btn" ng-class="{active: appValues.viewMode === 'single'}" ng-click="changeViewMode( 'single' )"></a>
 		</div>
 	</div>
 	<div class="cell glyphlist-cell">

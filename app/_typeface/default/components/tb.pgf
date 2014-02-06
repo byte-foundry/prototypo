@@ -1,0 +1,6 @@
+m 0 0
+C+ 	{{ roundness * terminalBall }} smooth smooth {{ self[1].x - thickness / 2 * contrast + terminalBall * thickness / 2 }} {{ self[1].y - ( self[1].y - self[3].y ) / 2 * terminalBall }}
+C+ 	{{ roundness * terminalBall }} 0 0 {{ self[1].x - thickness / 2 * contrast }} {{ self[1].y  - thickness * (74/80) * contrast - terminalBall * thickness }}
+C+ 	{{ roundness }} 0 0 {{ self[3].x - terminalBall * thickness }} {{ self[1].y - ( self[1].y - self[3].y ) / 2 }}
+C+ 	{{ roundness }} 15 0 {{ self[1].x }} {{ self[1].y }}
+Z
