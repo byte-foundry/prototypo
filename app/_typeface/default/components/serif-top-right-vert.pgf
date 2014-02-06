@@ -1,4 +1,4 @@
-C+ 	{{ serifRoundness }} {{ angle  }} {{ - self[2].angle }} {{ self[4].x - serifHeight }} {{ angle < 90 ? self[0].y - serifHeight * serifCurve : self[0].y - serifHeight * serifCurve | max : self[0].y - serifHeight * serifCurve }}
+C+ 	{{ serifRoundness }} smooth smooth {{ self[4].x - serifHeight }} {{ angle < 90 ? self[0].y - serifHeight * serifCurve : self[0].y - serifHeight * serifCurve | max : self[0].y - serifHeight * serifCurve }}
 l 	{{ - serifHeight * serifMedian }} {{ - serifWidth }}
 C- 	{{ serifRoundness }} {{ - self[2].angle }} 0 {{ self[2].x - ( self[2].x - self[4].x ) / 2 }} {{ self[2].y - serifTerminal * serifHeight }}
 C- 	{{ serifRoundness }} 0 0 {{ self[-1].x }} {{ self[2].y }}

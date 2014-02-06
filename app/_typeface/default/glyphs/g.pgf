@@ -5,7 +5,7 @@ L 	{{ self[3].x }} {{ xHeight }}
 l 	{{ thickness }} 0
 L 	{{ self[5].x }} {{ xHeight * (35/465) }}
 C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[2].x + breakPath }} {{ descender }}
-C+ 	{{ roundness }} 0 {{ -60 * width }} {{ 51 + breakPath }} {{ descender  - descender * (37/210) * aperture }}
+C+ 	{{ roundness }} 0 {{ -60 * width }} {{ 51 + breakPath }} {{ descender - descender * (37/210) * aperture }}
 L 	{{ self[8].x + thickness * (19/80) * contrast }} {{ self[8].y + thickness * (52/80) * contrast |min:self[10].y  }}
 C- 	{{ roundness }} {{ -60 * width }} 0 {{ self[7].x }} {{ self[7].y + thickness * (64/80) * contrast }}
 C- 	{{ roundness }} {{ - breakPath / 2 }} 0 {{ self[4].x }} {{ xHeight * (35/465) }}
