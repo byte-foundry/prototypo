@@ -18,10 +18,11 @@ angular.module('prototypoApp')
 		$scope.fontValues = {};
 		// app values
 		var initialAppValues = {
-			previewString: true,
+			viewMode: 'single',
+			showNodes: false,
 			paramTab: 0,
 			zoom: 1,
-			scenePanX: 0,
+			scenePanX: -50,
 			scenePanY: 0,
 			stringChars: 'Hamburgfonstiv'
 		};
@@ -37,8 +38,9 @@ angular.module('prototypoApp')
 					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.1 : +0.1 ), 0.1 ), 5);
 			}
 		};
-		$scope.switchPreview = function() {
-			$scope.appValues.previewString = !$scope.appValues.previewString;
+		$scope.changeViewMode = function( mode ) {
+			$scope.appValues.viewMode = mode;
+			return mode;
 		};
 		$scope.exportToSVG = function() {
 			saveAs(

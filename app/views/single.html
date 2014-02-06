@@ -41,7 +41,7 @@
 
 				<g ng-repeat="segment in allGlyphs[appValues.singleChar].segments">
 
-					<g id="nodes" >
+					<g id="nodes" ng-show="showNodes" class="ng-hide">
 						<g bindonce ng-repeat="cp in segment.debug()">
 							<path segment-endpoint bo-attr bo-attr-fill="cp.color" bo-attr-stroke="cp.color" index="{{$index}}" coords="{{ cp.start.toString() }} {{cp.end.toString()}}"></path>
 						</g>
