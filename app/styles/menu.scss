@@ -2,15 +2,14 @@
 
 .menu {
 	position: absolute;
-	top: 3rem;
+	top: 0;
 	left: $sidebar-w;
-	margin-left: 3rem;
 	font-size: 14px;
 	font-size: 1.4rem;
-	z-index: 10;
-	background-color: $white;
+	background-color: rgba($white, .75);
 	padding-right: 10em;
 	border: 1px solid lighten( $light-green , 15% );
+	right: 0;
 	ul {
 		position: relative;
 		padding-left: 0;
@@ -51,7 +50,7 @@
 		} 
 
 		ul.sub-level {
-			background-color: $white;
+			background-color: rgba($white, .95);
 			position: absolute;
 			z-index: 15;
 			display: none;
