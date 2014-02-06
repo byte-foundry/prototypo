@@ -17,4 +17,4 @@ C- 	{{ roundness }} 0 0 {{ self[12].x }} {{ self[12].y }}
 Z
 
 replace from self[9] at {{ {y: self[8].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness * (77/80) } }} with inverted serif-bottom-left {{ { angle: 0 } }}
-replace from self[9] at {{ {y: self[9].y - serifHeight - serifHeight * serifCurve} }} to self[10] at {{ {x: self[9].x + thickness } }} with serif-top-left {{ { angle: 0 } }}
+replace from self[9] at {{ {y: self[9].y - serifHeight - serifHeight * serifCurve} }} to self[10] at {{ {x: self[9].x + thickness } }} with serif-top-left {{ { angle: 0 } }} transform {{ "rotate("+ -serifRotate +")" }}
