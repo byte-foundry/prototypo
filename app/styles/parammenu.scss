@@ -6,44 +6,44 @@
 }
 
 .parammenu li {
-	background-color: $lightest-grey;
-	text-align: center;
+	position: relative;
+
 	cursor: pointer;
-	height: 5em;
-	border: .2em solid white;
+	border: .2rem solid white;
 	background: $lightest-grey no-repeat center;
-	-webkit-transition: all 200ms ease-in;
-	transition: all 200ms ease-in;
+
+	-webkit-transition: background-color 200ms ease-in;
+	transition: background-color 200ms ease-in;
 }
 .parammenu .selected,
 .parammenu :hover {
-	background: $green no-repeat center;
-	-webkit-transition: all 300ms ease-in;
-	transition: all 300ms ease-in;
+	background-color: $green;
 }
-.parammenu .selected:after {
-	content: "";
-	width: 0;
-	height: 0;
-	border-left: .7em solid transparent;
-	border-right: .7em solid transparent;
-	border-top: .6em solid #77db77;
-	bottom: -.4em;
-	position: absolute;
-	display: inline-block;
-	margin-left: -0.65em;
-}
+.parammenu .selected:after,
 .parammenu .selected:before {
 	content: "";
+
+	position: absolute;
+	display: block;
+
 	width: 0;
 	height: 0;
-	border-left: .9em solid transparent;
-	border-right: .9em solid transparent;
-	border-top: .8em solid white;
-	bottom: -.7em;
-	position: absolute;
-	display: inline-block;
-	margin-left: -0.85em;
+}
+.parammenu .selected:before {
+	left: calc( 50% - 1.2rem );
+	bottom: -1.1rem;
+
+	border-left: 1.2rem solid transparent;
+	border-right: 1.2rem solid transparent;
+	border-top: 1.08rem solid white;
+}
+.parammenu .selected:after {
+	left: calc( 50% - 0.9rem );
+	bottom: -0.82rem;
+
+	border-left: .9rem solid transparent;
+	border-right: .9rem solid transparent;
+	border-top: .81rem solid $green;
 }
 
 // those images should be embedded in parameters.json
