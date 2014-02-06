@@ -1,5 +1,5 @@
-Prototypo, kickstarting font creation
-=====================================
+Prototypo, the Font Generator
+=============================
 
 Before installing Prototypo
 ---------------------------
