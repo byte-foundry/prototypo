@@ -29,6 +29,22 @@ angular.module('prototypo.singleDirective', [])
 							spaceDown = true;
 						}
 					});*/
+				
+				var counter = 0;
+				$element.on('pointerdown', function( e ) {
+					setTimeout( function() {
+						counter = 0;
+					}, 200 );
+					counter++
+					if(counter == 2) {
+						console.log($scope.appValues.scenePanX);
+						$scope.appValues.zoom = 1.5;
+						$scope.appValues.scenePanX = -120;
+						$scope.appValues.scenePanY = 0;
+						$scope.$digest();
+						return false;
+					}
+				});
 
 				$element.on('pointerdown', function( e ) {
 					//if ( spaceDown ) {

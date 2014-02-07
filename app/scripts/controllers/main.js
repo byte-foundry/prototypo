@@ -21,8 +21,8 @@ angular.module('prototypoApp')
 			viewMode: 'single',
 			showNodes: false,
 			paramTab: 0,
-			zoom: 1,
-			scenePanX: -50,
+			zoom: 1.5,
+			scenePanX: -120,
 			scenePanY: 0,
 			stringChars: 'Hamburgfonstiv'
 		};
@@ -35,7 +35,7 @@ angular.module('prototypoApp')
 				$scope.appValues.zoom = 1;
 			} else {
 				$scope.appValues.zoom =
-					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.1 : +0.1 ), 0.1 ), 5);
+					Math.min( Math.max( $scope.appValues.zoom + ( val > 0 ? -0.15 : +0.15 ), 0.3 ), 7);
 			}
 		};
 		$scope.changeViewMode = function( mode ) {
