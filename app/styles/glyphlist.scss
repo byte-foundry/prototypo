@@ -4,29 +4,52 @@
 	height: 100%;
 	table-layout: auto;
 	background-color: $lightest-grey;
+	padding-left: 2em;
+	transition:        transform 200ms ease-in;
+	border-top: 5px solid $light-green;
+}
+
+.glyphlist-cell:hover .glyphlist{
+	transform:         translateY(-100%);
 }
 
 .glyphlist li {
-	width: 2rem;
-	height: 100%;
-	padding: 0 .5em;
+	min-width: 5rem;
+	height: 6rem;
+	padding: 0 .8em;
 
 	font-size: 2.2rem;
+	line-height: 6rem;
 	color: $light-grey;
-	vertical-align: middle;
 	text-align: center;
 
 	border-right: 1px solid white;
-	cursor: pointer;
+	border-bottom: 1px solid white;
+	cursor: pointer !important;
 
-	-webkit-transition: background-color 0.5s ease-in, color 0.5s ease-in;
 	transition:         background-color 0.5s ease-in, color 0.5s ease-in;
+
+	float: left;
+	display: block;
 }
 
-.glyphlist .selected,
-.glyphlist :hover {
+.glyphlist li.selected,
+.glyphlist li:hover {
 	background-color: $light-green;
 	color: white;
-	-webkit-transition: background-color 0.2s ease-in, color 0.2s ease-in;
 	transition:         background-color 0.2s ease-in, color 0.2s ease-in;
 }
+
+.glyphTab {
+	height: 9rem;
+	margin-top: -9rem;
+	width: 100%;
+	float: left;
+	padding: 1em;
+	span {
+		background-color: $light-green;
+		color: white;
+		padding: 1em;
+	}
+}
+.glyphlist-cell:hover .glyphTab span { opacity: .5; }

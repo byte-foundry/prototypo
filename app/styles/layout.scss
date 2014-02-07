@@ -81,10 +81,10 @@ $parammenu-h: 8rem;
  ----------------------------------------------------------------- */
 
 .scene-cell {
-	height: -webkit-calc(100% - #{$glyphlist-h});
-	height:         calc(100% - #{$glyphlist-h});
+	height: 100%;
 }
 
 .glyphlist-cell {
-	height: $glyphlist-h;
+	height: auto;
+	bottom: 0;	
 }

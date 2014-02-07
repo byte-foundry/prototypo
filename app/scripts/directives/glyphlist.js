@@ -10,6 +10,8 @@ angular.module('prototypo.glyphlistDirective', [])
 				var stopWatching,
 					parentWidth = $element[0].parentNode.offsetWidth;
 
+				$('.glyphlist-cell').css("-webkit-transform", "translateY(100%)");
+
 				$element.on('mousedown', 'li', function() {
 					$scope.appValues.previewString = true;
 					$scope.appValues.singleChar = $( this ).data( 'id' );
@@ -36,7 +38,7 @@ angular.module('prototypo.glyphlistDirective', [])
 				});
 
 				// scroll handler
-				$element.parent().on('wheel', '.toobig', function( e ) {
+				/*$element.parent().on('wheel', '.toobig', function( e ) {
 					var $this = $(this),
 						scrollDown = e.originalEvent.deltaY > 0 || e.originalEvent.deltaX > 0,
 						scrollBy = scrollDown ? -40 : 40,
@@ -61,7 +63,7 @@ angular.module('prototypo.glyphlistDirective', [])
 					$this
 						.data('scroll', currentScroll)
 						.children().css('transform', 'translateX(' + currentScroll + 'px)');
-				});
+				});*/
 			}
 
 		};
