@@ -16,26 +16,21 @@
 		<link rel="stylesheet" href="styles/glyphlist.css">
 		<link rel="stylesheet" href="styles/parammenu.css">
 		<link rel="stylesheet" href="styles/paramtabs.css">
-		<link rel="stylesheet" href="styles/zoom.css">
+		<link rel="stylesheet" href="styles/sceneButtons.css">
 		<link rel="stylesheet" href="styles/preview.css">
 		<link rel="stylesheet" href="styles/menu.css">
 		<link rel="stylesheet" href="styles/presets.css">
 		<!-- endbuild -->
-
-		<!-- web components // nope, Polymer is too alpha -->
-		<!-- <link rel="import" href="webcomponents/x-params-panel.html"> -->
-		<!-- end web components -->
 	</head>
-	<body ng-app="prototypoApp">
+	<body style="overflow: hidden;" ng-app="prototypoApp">
 		<!--[if lt IE 9]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 		<![endif]-->
 
-		<!-- Add your site or application content here -->
 		<div class="main row" ng-view></div>
 
-		<!--<script src="//code.jquery.com/jquery-2.1.0.min.js"></script>-->
 		<!-- build:js scripts/scripts.js -->
+		<!-- we use a patched jQuery, and should do a custom build as well -->
 		<script src="libs/jquery.js"></script>
 		<script src="libs/hand.js"></script>
 		<script src="libs/handlebars.runtime.js"></script>
@@ -71,7 +66,7 @@
 		<script src="scripts/directives/single.js"></script>
 		<script src="scripts/directives/string.js"></script>
 		<script src="scripts/directives/glyphlist.js"></script>
-		<script src="scripts/directives/zoom.js"></script>
+		<script src="scripts/directives/sceneButtons.js"></script>
 		<script src="scripts/directives/menu.js"></script>
 		<script src="scripts/directives/spacing.js"></script>
 		<script src="scripts/directives/presets.js"></script>
@@ -90,9 +85,6 @@
 		<script>
 			// HANDJS shouldn't process the css
 			HANDJS.doNotProcessCSS = true;
-
-			// if we ever use Polymer again
-			//Platform.performMicrotaskCheckpoint();
 		</script>
 
 		<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->

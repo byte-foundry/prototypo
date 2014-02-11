@@ -47,15 +47,15 @@
 }
 
 .glyphTab {
-	height: 9rem;
-	margin-top: -9rem;
+	height: 7.3rem;
+	margin-top: -7.3rem;
 	width: 100%;
 	float: left;
-	padding: 1em;
+	padding: 1rem;
 	span {
 		background-color: $light-green;
 		color: white;
-		padding: 1em;
+		padding: 1.2rem;
 	}
 }
 .glyphlist-cell:hover .glyphTab span { opacity: .5; }

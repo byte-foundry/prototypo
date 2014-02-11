@@ -25,7 +25,7 @@ angular.module('prototypoApp', [
 		'prototypo.singleDirective',
 		'prototypo.stringDirective',
 		'prototypo.glyphlistDirective',
-		'prototypo.zoomDirective',
+		'prototypo.sceneButtonsDirective',
 		'prototypo.menuDirective',
 		'prototypo.spacingDirective',
 		'prototypo.presetsDirective'
