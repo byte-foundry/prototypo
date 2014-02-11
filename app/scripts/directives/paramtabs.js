@@ -29,6 +29,7 @@ angular.module('prototypo.paramtabsDirective', [])
 					parentHeight = $element[0].offsetHeight;
 
 				$element.find('.paramtab.dummy').remove();
+				$element.data('rangeWidth', rangeWidth);
 
 				$element.on('pointerdown', '.paramctrl-gutter', function( e ) {
 					dragging = this.parentNode;
@@ -45,40 +46,6 @@ angular.module('prototypo.paramtabsDirective', [])
 						setValue( dragging, e.originalEvent.pageX );
 						return false;
 					}
-				});
-
-				// delegated attr watcher
-				(new MutationObserver(function(mutations) {
-					mutations.forEach(function( mutation ) {
-						var value = +mutation.target.getAttribute('value'),
-							min = +$( mutation.target ).data('min'),
-							max = +$( mutation.target ).data('max'),
-							minAdviced = +$( mutation.target ).data('minadviced'),
-							maxAdviced = +$( mutation.target ).data('maxadviced'),
-							translateX = Math.round( ( ( value - min ) / ( max - min ) ) * rangeWidth ) - rangeWidth;
-
-						$( mutation.target.querySelector('.paramctrl-bg') )
-							.css({transform: 'translateX(' + translateX + 'px)'});
-
-						if (value<minAdviced || value>maxAdviced) {
-							$( mutation.target.querySelector('.paramctrl-bg') )
-							.css('background-color', '#f4aec2');
-							$( mutation.target.querySelector('.paramctrl-handle') )
-							.css('border-color', '#f4aec2');
-						} 
-						else {
-							$( mutation.target.querySelector('.paramctrl-bg') )
-							.css('background-color', '#90ee90');
-							$( mutation.target.querySelector('.paramctrl-handle') )
-							.css('border-color', '#90ee90');
-						}
-					});
-
-				// config
-				})).observe( $element[0], {
-					attributes: true,
-					subtree: true,
-					attributeFilter: ['value']
 				});
 
 				// scroll handler

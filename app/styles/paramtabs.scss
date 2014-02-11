@@ -61,21 +61,38 @@
 	color: $lightest-grey;
 }
 
-.paramctrl:before {
-	float: right;
-	content: attr(value);
-	opacity: .1;
-}
-
-.paramctrl:hover:before {
-	opacity: 1;
-}
-
 .paramctrl label {
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 	padding-left: .8em;
 	pointer-events: none;
+}
+
+.paramctrl input {
+	display: inline-block;
+	float: right;
+	width: 5rem;
+
+	font-size: inherit;
+	text-align: right;
+
+	background: none;
+	border: 0;
+	border-radius: 0;
+
+	color: $medium-grey;
+	&:hover,
+	&:focus {
+		color: inherit;
+	}
+
+	// remove spinner buttons in webkit
+	// they look ok in Firefox, so we leave them alone
+	&::-webkit-inner-spin-button,
+	&::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
 }
 
 .paramctrl-gutter,
@@ -95,6 +112,14 @@
 	height: 2rem;
 	background-color: #90EE90;
 	transition: background-color 500ms ease;
+
+	&.out-of-advised {
+		background-color: $warning;
+
+		.paramctrl-handle {
+			border-color: $warning;
+		}
+	}
 }
 
 .paramctrl-handle {
