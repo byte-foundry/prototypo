@@ -53,31 +53,31 @@
 							fill="blue"
 							d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} m 0 3 h 3 v -6 h -6 v 6 z">
 						</path>
-						<path bo-if="segment.$render.controls[0]"
+						<path bo-if="segment.$render.ctrl0"
 							style="pointer-events: none;"
 							stroke="green"
-							d="M {{ segment.$render.start.x }} {{ segment.$render.start.y }} L {{ segment.$render.controls[0].x }} {{ segment.$render.controls[0].y }} z">
+							d="M {{ segment.$render.start.x }} {{ segment.$render.start.y }} L {{ segment.$render.ctrl0.x }} {{ segment.$render.ctrl0.y }} z">
 						</path>
-						<path bo-if="segment.$render.controls[1]"
+						<path bo-if="segment.$render.ctrl1"
 							style="pointer-events: none;"
 							stroke="green"
-							d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} L {{ segment.$render.controls[1].x }} {{ segment.$render.controls[1].y }} z">
+							d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} L {{ segment.$render.ctrl1.x }} {{ segment.$render.ctrl1.y }} z">
 						</path>
-						<path bindonce bo-if="segment.$render.controls[0]"
+						<path bindonce bo-if="segment.$render.ctrl0"
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node"
-							data-type="control0"
+							data-type="ctrl0"
 							fill="green"
-							d="M {{ segment.$render.controls[0].x - 3 }} {{ segment.$render.controls[0].y }} l 3 3 l 3 -3 l -3 -3 z">
+							d="M {{ segment.$render.ctrl0.x - 3 }} {{ segment.$render.ctrl0.y }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
-						<path bindonce bo-if="segment.$render.controls[1]"
+						<path bindonce bo-if="segment.$render.ctrl1"
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node"
-							data-type="control1"
+							data-type="ctrl1"
 							fill="green"
-							d="M {{ segment.$render.controls[1].x - 3 }} {{ segment.$render.controls[1].y }} l 3 3 l 3 -3 l -3 -3 z">
+							d="M {{ segment.$render.ctrl1.x - 3 }} {{ segment.$render.ctrl1.y }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
 					</g>
 				</g>

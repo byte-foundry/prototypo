@@ -8,9 +8,8 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				return new Segment( data, curPos, invert );
 			}
 
-			this.controls = [];
 			this.invert = invert;
-			this.$render = { controls: [] };
+			this.$render = {};
 
 			parseUpdateSegment( this, data );
 
@@ -22,11 +21,11 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			this.$render.end = invert ? this.start : this.end;
 			this.$render.start = invert ? this.end : this.start;
 
-			if ( this.controls[0] ) {
-				this.$render.controls[ invert ? 1 : 0 ] = this.controls[0];
+			if ( this.ctrl0 !== undefined ) {
+				this.$render[ 'ctrl' + ( invert ? 1 : 0 ) ] = this.ctrl0;
 			}
-			if ( this.controls[1] ) {
-				this.$render.controls[ invert ? 0 : 1 ] = this.controls[1];
+			if ( this.ctrl1 !== undefined ) {
+				this.$render[ 'ctrl' + ( invert ? 0 : 1 ) ] = this.ctrl1;
 			}
 		}
 
@@ -96,11 +95,11 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			case 'rQ':
 			case 'rs':
 			case 'rS':
-				if ( segment.controls[1] === undefined ) {
-					segment.controls[1] = Point( tmp[1], tmp[2] );
+				if ( segment.ctrl1 === undefined ) {
+					segment.ctrl1 = Point( tmp[1], tmp[2] );
 				} else {
-					segment.controls[1].x = tmp[1];
-					segment.controls[1].y = tmp[2];
+					segment.ctrl1.x = tmp[1];
+					segment.ctrl1.y = tmp[2];
 				}
 
 				// this code is duplicated below
@@ -122,15 +121,15 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			case 'Cv':
 				segment.roundness = +tmp[1];
 
-				if ( segment.controls.length === 0 ) {
-					segment.controls[0] = Point(0,0);
-					segment.controls[1] = Point(0,0);
+				if ( segment.ctrl0 === undefined && segment.ctrl1 === undefined ) {
+					segment.ctrl0 = Point(0,0);
+					segment.ctrl1 = Point(0,0);
 				}
 
 				// parse correction angles and negate them
 				segment.corrections = tmp.slice(2,4).map(function(x, i) {
 					if ( x === 'smooth' ) {
-						segment.controls[i].isSmooth = true;
+						segment[ 'ctrl' + i ].isSmooth = true;
 						return 0;
 					}
 					return -x;
@@ -147,19 +146,19 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				break;
 			default:
 				if ( length > 3 ) {
-					if ( segment.controls[0] === undefined ) {
-						segment.controls[0] = Point( tmp[1], tmp[2] );
+					if ( segment.ctrl0 === undefined ) {
+						segment.ctrl0 = Point( tmp[1], tmp[2] );
 					} else {
-						segment.controls[0].x = tmp[1];
-						segment.controls[0].y = tmp[2];
+						segment.ctrl0.x = tmp[1];
+						segment.ctrl0.y = tmp[2];
 					}
 				}
 				if ( length > 5 ) {
-					if ( segment.controls[1] === undefined ) {
-						segment.controls[1] = Point( tmp[3], tmp[4] );
+					if ( segment.ctrl1 === undefined ) {
+						segment.ctrl1 = Point( tmp[3], tmp[4] );
 					} else {
-						segment.controls[1].x = tmp[3];
-						segment.controls[1].y = tmp[4];
+						segment.ctrl1.x = tmp[3];
+						segment.ctrl1.y = tmp[4];
 					}
 				}
 
@@ -202,18 +201,18 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				segment.end.x = curPos.x;
 				break;
 			case 'c':
-				segment.controls[0].x += curPos.x;
-				segment.controls[0].y += curPos.y;
-				segment.controls[1].x += curPos.x;
-				segment.controls[1].y += curPos.y;
+				segment.ctrl0.x += curPos.x;
+				segment.ctrl0.y += curPos.y;
+				segment.ctrl1.x += curPos.x;
+				segment.ctrl1.y += curPos.y;
 				curPos.x = segment.end.x += curPos.x;
 				curPos.y = segment.end.y += curPos.y;
 				segment.relativeControls = true;
 				break;
 			case 'q':
 			case 's':
-				segment.controls[0].x += curPos.x;
-				segment.controls[0].y += curPos.y;
+				segment.ctrl0.x += curPos.x;
+				segment.ctrl0.y += curPos.y;
 				curPos.x = segment.end.x += curPos.x;
 				curPos.y = segment.end.y += curPos.y;
 				segment.relativeControls = true;
@@ -248,12 +247,12 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			// absolutize control-points relative to the ends of the segment
 			if ( segment.command[0] === 'R' ) {
 				if ( segment.command === 'RC' ) {
-					segment.controls[0].x += segment.start.x;
-					segment.controls[0].y += segment.start.y;
+					segment.ctrl0.x += segment.start.x;
+					segment.ctrl0.y += segment.start.y;
 				}
 
-				segment.controls[1].x += segment.end.x;
-				segment.controls[1].y += segment.end.y;
+				segment.ctrl1.x += segment.end.x;
+				segment.ctrl1.y += segment.end.y;
 
 				segment.command = segment.command[1];
 				segment.relativeControls = true;
@@ -269,10 +268,10 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 					angle1;
 
 				if ( dx * dy === 0 ) {
-					segment.controls[0].x = segment.start.x;
-					segment.controls[0].y = segment.start.y;
-					segment.controls[1].x = segment.end.x;
-					segment.controls[1].y = segment.end.y;
+					segment.ctrl0.x = segment.start.x;
+					segment.ctrl0.y = segment.start.y;
+					segment.ctrl1.x = segment.end.x;
+					segment.ctrl1.y = segment.end.y;
 
 				} else {
 					if (
@@ -282,38 +281,38 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 						// Ch/Cv compat
 						segment.isSmooth = 'Cv';
 
-						segment.controls[0].x = segment.start.x;
-						segment.controls[0].y = segment.start.y + dy;
+						segment.ctrl0.x = segment.start.x;
+						segment.ctrl0.y = segment.start.y + dy;
 						c0length = Math.abs(dy);
-						segment.controls[1].x = segment.end.x - dx;
-						segment.controls[1].y = segment.end.y;
+						segment.ctrl1.x = segment.end.x - dx;
+						segment.ctrl1.y = segment.end.y;
 						c1length = Math.abs(dx);
 
 					} else {
 						// Ch/Cv compat
 						segment.isSmooth = 'Ch';
 
-						segment.controls[0].x = segment.start.x + dx;
-						segment.controls[0].y = segment.start.y;
+						segment.ctrl0.x = segment.start.x + dx;
+						segment.ctrl0.y = segment.start.y;
 						c0length = Math.abs(dx);
-						segment.controls[1].x = segment.end.x;
-						segment.controls[1].y = segment.end.y - dy;
+						segment.ctrl1.x = segment.end.x;
+						segment.ctrl1.y = segment.end.y - dy;
 						c1length = Math.abs(dy);
 					}
 
 					if ( segment.corrections[0] ) {
 						angle0 =
-							Math.atan2( segment.controls[0].y - segment.start.y, segment.controls[0].x - segment.start.x ) +
+							Math.atan2( segment.ctrl0.y - segment.start.y, segment.ctrl0.x - segment.start.x ) +
 							segment.corrections[0] / 180 * Math.PI;
-						segment.controls[0].x = segment.start.x + Math.cos( angle0 ) * c0length;
-						segment.controls[0].y = segment.start.y + Math.sin( angle0 ) * c0length;
+						segment.ctrl0.x = segment.start.x + Math.cos( angle0 ) * c0length;
+						segment.ctrl0.y = segment.start.y + Math.sin( angle0 ) * c0length;
 					}
 					if ( segment.corrections[1] ) {
 						angle1 =
-							Math.atan2( segment.controls[1].y - segment.end.y, segment.controls[1].x - segment.end.x ) +
+							Math.atan2( segment.ctrl1.y - segment.end.y, segment.ctrl1.x - segment.end.x ) +
 							segment.corrections[1] / 180 * Math.PI;
-						segment.controls[1].x = segment.end.x + Math.cos( angle1 ) * c1length;
-						segment.controls[1].y = segment.end.y + Math.sin( angle1 ) * c1length;
+						segment.ctrl1.x = segment.end.x + Math.cos( angle1 ) * c1length;
+						segment.ctrl1.y = segment.end.y + Math.sin( angle1 ) * c1length;
 					}
 
 					// these adjustments are necessary to make the curve pretty
@@ -330,31 +329,31 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 					segment.isSmooth = segment.command;
 
 					if ( segment.command === 'Ch' ) {
-						segment.controls[0].x = segment.start.x;
-						segment.controls[0].y = segment.start.y + dy;
-						segment.controls[1].x = segment.end.x - dx;
-						segment.controls[1].y = segment.end.y;
+						segment.ctrl0.x = segment.start.x;
+						segment.ctrl0.y = segment.start.y + dy;
+						segment.ctrl1.x = segment.end.x - dx;
+						segment.ctrl1.y = segment.end.y;
 
 					} else {
-						segment.controls[0].x = segment.start.x + dx;
-						segment.controls[0].y = segment.start.y;
-						segment.controls[1].x = segment.end.x;
-						segment.controls[1].y = segment.end.y - dy;
+						segment.ctrl0.x = segment.start.x + dx;
+						segment.ctrl0.y = segment.start.y;
+						segment.ctrl1.x = segment.end.x;
+						segment.ctrl1.y = segment.end.y - dy;
 					}
 
 					if ( segment.corrections[0] ) {
 						angle0 =
-							Math.atan2( segment.controls[0].y - segment.start.y, segment.controls[0].x - segment.start.x ) +
+							Math.atan2( segment.ctrl0.y - segment.start.y, segment.ctrl0.x - segment.start.x ) +
 							segment.corrections[0] / 180 * Math.PI;
-						segment.controls[0].x = segment.start.x + Math.cos( angle0 ) * c0length;
-						segment.controls[0].y = segment.start.y + Math.sin( angle0 ) * c0length;
+						segment.ctrl0.x = segment.start.x + Math.cos( angle0 ) * c0length;
+						segment.ctrl0.y = segment.start.y + Math.sin( angle0 ) * c0length;
 					}
 					if ( segment.corrections[1] ) {
 						angle1 =
-							Math.atan2( segment.controls[1].y - segment.start.y, segment.controls[1].x - segment.start.x ) +
+							Math.atan2( segment.ctrl1.y - segment.start.y, segment.ctrl1.x - segment.start.x ) +
 							segment.corrections[1] / 180 * Math.PI;
-						segment.controls[1].x = segment.end.x + Math.cos( angle1 ) * c1length;
-						segment.controls[1].y = segment.end.y + Math.sin( angle1 ) * c1length;
+						segment.ctrl1.x = segment.end.x + Math.cos( angle1 ) * c1length;
+						segment.ctrl1.y = segment.end.y + Math.sin( angle1 ) * c1length;
 					}
 
 					// when control angles are adjusted, curve need to be smoothed
@@ -393,10 +392,10 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 
 				segment.$render.start.x = points[0].x;
 				segment.$render.start.y = points[0].y;
-				segment.$render.controls[0].x = points[1].x;
-				segment.$render.controls[0].y = points[1].y;
-				segment.$render.controls[1].x = points[2].x;
-				segment.$render.controls[1].y = points[2].y;
+				segment.$render.ctrl0.x = points[1].x;
+				segment.$render.ctrl0.y = points[1].y;
+				segment.$render.ctrl1.x = points[2].x;
+				segment.$render.ctrl1.y = points[2].y;
 				segment.$render.end.x = points[3].x;
 				segment.$render.end.y = points[3].y;
 			}
@@ -422,13 +421,13 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				dx = newCoords.coords[0] - endPoint.coords[0];
 				dy = newCoords.coords[1] - endPoint.coords[1];
 
-				if ( _endPoint === 'end' && render.controls[1] !== undefined ) {
-					render.controls[1].coords[0] += dx;
-					render.controls[1].coords[1] += dy;
+				if ( _endPoint === 'end' && render.ctrl1 !== undefined ) {
+					render.ctrl1.coords[0] += dx;
+					render.ctrl1.coords[1] += dy;
 				}
-				if ( _endPoint === 'start' && render.controls[0] !== undefined ) {
-					render.controls[0].coords[0] += dx;
-					render.controls[0].coords[1] += dy;
+				if ( _endPoint === 'start' && render.ctrl0 !== undefined ) {
+					render.ctrl0.coords[0] += dx;
+					render.ctrl0.coords[1] += dy;
 				}
 			}
 
@@ -456,10 +455,10 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			segment.end = segment.start;
 			segment.start = tmp;
 
-			if ( segment.controls ) {
-				tmp = segment.controls[1];
-				segment.controls[1] = segment.controls[0];
-				segment.controls[0] = tmp;
+			if ( segment.ctrl0 !== undefined || segment.ctrl1 !== undefined ) {
+				tmp = segment.ctrl1;
+				segment.ctrl1 = segment.ctrl0;
+				segment.ctrl0 = tmp;
 			}
 
 			return segment;
@@ -471,11 +470,11 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			var render = segment.$render,
 				string = [];
 
-			if ( render.controls[0] ) {
-				string.push( render.controls[0].toString() );
+			if ( render.ctrl0 ) {
+				string.push( render.ctrl0.toString() );
 			}
-			if ( render.controls[1] ) {
-				string.push( render.controls[1].toString() );
+			if ( render.ctrl1 ) {
+				string.push( render.ctrl1.toString() );
 			}
 
 			string.unshift( segment.command );
@@ -503,11 +502,11 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			if ( segment.start && ( except === undefined || except.indexOf( segment.start ) === -1 ) ) {
 				transformPoint( segment.start, matrix );
 			}
-			if ( segment.controls && segment.controls[0] && ( except === undefined || except.indexOf( segment.controls[0] ) === -1 ) ) {
-				transformPoint( segment.controls[0], matrix );
+			if ( segment.controls && segment.ctrl0 && ( except === undefined || except.indexOf( segment.ctrl0 ) === -1 ) ) {
+				transformPoint( segment.ctrl0, matrix );
 			}
-			if ( segment.controls && segment.controls[1] && ( except === undefined || except.indexOf( segment.controls[1] ) === -1 ) ) {
-				transformPoint( segment.controls[1], matrix );
+			if ( segment.controls && segment.ctrl1 && ( except === undefined || except.indexOf( segment.ctrl1 ) === -1 ) ) {
+				transformPoint( segment.ctrl1, matrix );
 			}
 			if ( segment.end && ( except === undefined || except.indexOf( segment.end ) === -1 ) ) {
 				transformPoint( segment.end, matrix );
@@ -518,14 +517,14 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 	// efficient smoothing that always joins control when roundness === 1
 	.factory('smoothSegment3', function( lineLineIntersection ) {
 		return function( segment, roundness ) {
-			var p = lineLineIntersection( segment.start, segment.controls[0], segment.end, segment.controls[1] );
+			var p = lineLineIntersection( segment.start, segment.ctrl0, segment.end, segment.ctrl1 );
 
 			if ( p ) {
-				segment.controls[0].x = segment.start.x + ( p[0] - segment.start.x ) * roundness;
-				segment.controls[0].y = segment.start.y + ( p[1] - segment.start.y ) * roundness;
+				segment.ctrl0.x = segment.start.x + ( p[0] - segment.start.x ) * roundness;
+				segment.ctrl0.y = segment.start.y + ( p[1] - segment.start.y ) * roundness;
 
-				segment.controls[1].x = segment.end.x + ( p[0] - segment.end.x ) * roundness;
-				segment.controls[1].y = segment.end.y + ( p[1] - segment.end.y ) * roundness;
+				segment.ctrl1.x = segment.end.x + ( p[0] - segment.end.x ) * roundness;
+				segment.ctrl1.y = segment.end.y + ( p[1] - segment.end.y ) * roundness;
 			}
 		}
 	})
@@ -539,7 +538,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 	/*.factory('getControlAngle', function() {
 		return function( segment, i ) {
 			return segment.controls[i] ?
-				Math.atan2( segment.controls[i].y - segment.start.y, segment.controls[i].x - segment.start.x ):
+				Math.atan2( segment[ 'ctrl' + i ].y - segment.start.y, segment[ 'ctrl' + i ].x - segment.start.x ):
 				0;
 		};
 	})
@@ -549,16 +548,16 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 		return function( segment, angle0, angle1, c0length, c1length ) {
 			if ( segment.corrections[0] ) {
 				if ( segment.isSmooth === 'Ch' ) {
-					segment.controls[1].x += Math.cos( angle0 ) * c0length;
+					segment.ctrl1.x += Math.cos( angle0 ) * c0length;
 				} else {
-					segment.controls[1].y += Math.sin( angle0 ) * c0length;
+					segment.ctrl1.y += Math.sin( angle0 ) * c0length;
 				}
 			}
 			if ( segment.corrections[1] ) {
 				if ( segment.isSmooth === 'Ch' ) {
-					segment.controls[0].y += Math.sin( angle1 ) * c1length;
+					segment.ctrl0.y += Math.sin( angle1 ) * c1length;
 				} else {
-					segment.controls[0].x += Math.cos( angle1 ) * c1length;
+					segment.ctrl0.x += Math.cos( angle1 ) * c1length;
 				}
 			}
 		};
@@ -567,10 +566,10 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 	// alternative smoothing that I cannot get to work reliably
 	.factory('smoothSegment2', function( getControlAngle ) {
 		return function( segment, angle0, angle1 ) {
-			var c0dx = segment.controls[1].x - segment.start.x,
-				c0dy = segment.controls[1].y - segment.start.y,
-				c1dx = segment.controls[0].x - segment.end.x,
-				c1dy = segment.controls[0].y - segment.end.y;
+			var c0dx = segment.ctrl1.x - segment.start.x,
+				c0dy = segment.ctrl1.y - segment.start.y,
+				c1dx = segment.ctrl0.x - segment.end.x,
+				c1dy = segment.ctrl0.y - segment.end.y;
 
 			if ( segment.corrections[0] ) {
 				if ( angle1 === undefined ) {
@@ -578,11 +577,11 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				}
 
 				if ( segment.isSmooth === 'Ch' ) {
-					segment.controls[1].x = segment.end.x + Math.sin( angle1 ) * c1dy;
-					segment.controls[1].y = segment.end.y + Math.cos( angle1 ) * c1dy;
+					segment.ctrl1.x = segment.end.x + Math.sin( angle1 ) * c1dy;
+					segment.ctrl1.y = segment.end.y + Math.cos( angle1 ) * c1dy;
 				} else {
-					segment.controls[1].x = segment.end.x + Math.sin( angle1 ) * c1dx;
-					segment.controls[1].y = segment.end.y + Math.cos( angle1 ) * c1dx;
+					segment.ctrl1.x = segment.end.x + Math.sin( angle1 ) * c1dx;
+					segment.ctrl1.y = segment.end.y + Math.cos( angle1 ) * c1dx;
 				}
 			}
 			if ( segment.corrections[1] ) {
@@ -591,11 +590,11 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				}
 
 				if ( segment.isSmooth === 'Ch' ) {
-					segment.controls[0].x = segment.start.x + Math.sin( angle0 ) * c0dy;
-					segment.controls[0].y = segment.start.y + Math.cos( angle0 ) * c0dy;
+					segment.ctrl0.x = segment.start.x + Math.sin( angle0 ) * c0dy;
+					segment.ctrl0.y = segment.start.y + Math.cos( angle0 ) * c0dy;
 				} else {
-					segment.controls[0].x = segment.start.x + Math.sin( angle0 ) * c0dx;
-					segment.controls[0].y = segment.start.y + Math.cos( angle0 ) * c0dx;
+					segment.ctrl0.x = segment.start.x + Math.sin( angle0 ) * c0dx;
+					segment.ctrl0.y = segment.start.y + Math.cos( angle0 ) * c0dx;
 				}
 			}
 		}
@@ -604,10 +603,10 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 	// very bad smoothing, shouldn't be used
 	.factory('smoothSegment4', function( lineLineIntersection ) {
 		return function( segment ) {
-			segment.controls[0].x = segment.start.x + ( segment.controls[1].x - segment.start.x ) * segment.roundness;
-			segment.controls[0].y = segment.start.y + ( segment.controls[1].y - segment.start.y ) * segment.roundness;
+			segment.ctrl0.x = segment.start.x + ( segment.ctrl1.x - segment.start.x ) * segment.roundness;
+			segment.ctrl0.y = segment.start.y + ( segment.ctrl1.y - segment.start.y ) * segment.roundness;
 
-			segment.controls[1].x = segment.end.x + ( segment.controls[0].x - segment.end.x ) * segment.roundness;
-			segment.controls[1].y = segment.end.y + ( segment.controls[0].y - segment.end.y ) * segment.roundness;
+			segment.ctrl1.x = segment.end.x + ( segment.ctrl0.x - segment.end.x ) * segment.roundness;
+			segment.ctrl1.y = segment.end.y + ( segment.ctrl0.y - segment.end.y ) * segment.roundness;
 		}
 	})*/;

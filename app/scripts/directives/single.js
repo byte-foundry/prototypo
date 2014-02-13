@@ -87,11 +87,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						$scope
 							.allGlyphs[ $scope.appValues.singleChar ]
 							.segments[ $(this).data('index') ]
-							.$render[ $(this).data('type') === 'end' ? 'end' : 'controls' ];
-
-					if ( draggingNode.length ) {
-						draggingNode = draggingNode[ $(this).data('type') === 'control0' ? 0 : 1 ];
-					}
+							.$render[ $(this).data('type') ];
 
 					startX = e.originalEvent.clientX;
 					startY = e.originalEvent.clientY;

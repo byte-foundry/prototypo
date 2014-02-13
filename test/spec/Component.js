@@ -38,10 +38,10 @@ describe('Component', function() {
 
 			expect( c.segments[4].start.x ).toBe( 10 );
 			expect( c.segments[4].start.y ).toBe( 10 );
-			expect( c.segments[4].controls[0].x ).toBe( 10 + 10 );
-			expect( c.segments[4].controls[0].y ).toBe( 10 + 20 );
-			expect( c.segments[4].controls[1].x ).toBe( 10 + 30 );
-			expect( c.segments[4].controls[1].y ).toBe( 10 + 40 );
+			expect( c.segments[4].ctrl0.x ).toBe( 10 + 10 );
+			expect( c.segments[4].ctrl0.y ).toBe( 10 + 20 );
+			expect( c.segments[4].ctrl1.x ).toBe( 10 + 30 );
+			expect( c.segments[4].ctrl1.y ).toBe( 10 + 40 );
 			expect( c.segments[4].end.x ).toBe( 10 + 50 );
 			expect( c.segments[4].end.y ).toBe( 10 + 60 );
 		}));
@@ -63,10 +63,10 @@ describe('Component', function() {
 
 			expect( c.segments[4].start.x ).toBe( 10 );
 			expect( c.segments[4].start.y ).toBe( 10 );
-			expect( c.segments[4].controls[0].x ).toBe( 10 + 10 );
-			expect( c.segments[4].controls[0].y ).toBe( 10 + 20 );
-			expect( c.segments[4].controls[1].x ).toBe( 10 + 30 );
-			expect( c.segments[4].controls[1].y ).toBe( 10 + 40 );
+			expect( c.segments[4].ctrl0.x ).toBe( 10 + 10 );
+			expect( c.segments[4].ctrl0.y ).toBe( 10 + 20 );
+			expect( c.segments[4].ctrl1.x ).toBe( 10 + 30 );
+			expect( c.segments[4].ctrl1.y ).toBe( 10 + 40 );
 			expect( c.segments[4].end.x ).toBe( 10 + 50 );
 			expect( c.segments[4].end.y ).toBe( 10 + 60 );
 		}));
@@ -104,10 +104,10 @@ describe('Component', function() {
 
 			expect( c.segments[4].start.x ).toBe( 10 );
 			expect( c.segments[4].start.y ).toBe( 10 );
-			expect( c.segments[4].controls[0].x ).toBe( 10 + 10 );
-			expect( c.segments[4].controls[0].y ).toBe( 10 + 20 );
-			expect( c.segments[4].controls[1].x ).toBe( 10 + 30 );
-			expect( c.segments[4].controls[1].y ).toBe( 10 + 40 );
+			expect( c.segments[4].ctrl0.x ).toBe( 10 + 10 );
+			expect( c.segments[4].ctrl0.y ).toBe( 10 + 20 );
+			expect( c.segments[4].ctrl1.x ).toBe( 10 + 30 );
+			expect( c.segments[4].ctrl1.y ).toBe( 10 + 40 );
 			expect( c.segments[4].end.x ).toBe( 10 + 50 );
 			expect( c.segments[4].end.y ).toBe( 10 + 60 );
 		}));
