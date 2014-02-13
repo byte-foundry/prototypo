@@ -42,7 +42,7 @@ a:visited {
 	width: 100%;
 	padding-left: 1.4rem;
 
-	color: $green;
+	color: lighten($dark-grey, 15%);
 	font-size: 1.4rem;
 	letter-spacing: .1rem;
 
