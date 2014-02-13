@@ -30,9 +30,9 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				});
 
 				var $transformed = $element.find('#transformed'),
-					startX,
-					startY,
-					startPoint,
+					$contour = $element.find('#glyph-contour'),
+					start = {},
+					prev = {},
 					draggingScene,
 					draggingNode;
 
@@ -45,8 +45,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				$element.on('pointermove', function( e ) {
 					if ( draggingScene ) {
 						throttle(function() {
-							$scope.appValues.scenePanX = e.originalEvent.clientX - startX;
-							$scope.appValues.scenePanY = e.originalEvent.clientY - startY;
+							$scope.appValues.scenePanX = e.originalEvent.clientX - start.x;
+							$scope.appValues.scenePanY = e.originalEvent.clientY - start.y;
 							$scope.$digest();
 						});
 						return false;
@@ -56,17 +56,29 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						throttle(function() {
 							// map the dragged deltas to the scene coordinate system
 							var p = Point(
-									e.originalEvent.clientX - startX,
-									e.originalEvent.clientY - startY
+									e.originalEvent.clientX - prev.clientX,
+									e.originalEvent.clientY - prev.clientY
 								),
 								m = $transformed[0].getCTM().inverse();
 
 							p.transform( m );
 
-							draggingNode.x = startPoint.x + p.x - m.e;
-							draggingNode.y = startPoint.y + p.y - m.f;
+							start.segment.translatePoint(
+								start.type,
+								p.x - m.e,
+								p.y - m.f
+							);
+
+							// dirty outline update
+							$scope.allGlyphs[ $scope.appValues.singleChar ].svg =
+								$scope.font.glyphs[ $scope.appValues.singleChar ]
+									.smooth()
+									.toSVG();
 
 							$scope.$digest();
+
+							prev.clientX = e.originalEvent.clientX;
+							prev.clientY = e.originalEvent.clientY;
 						});
 					}
 				});
@@ -74,8 +86,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				/* scene drag handler */
 				$element.on('pointerdown', function( e ) {
 					document.body.style.cursor = 'move';
-					startX = e.originalEvent.clientX - $scope.appValues.scenePanX;
-					startY = e.originalEvent.clientY - $scope.appValues.scenePanY;
+					start.x = e.originalEvent.clientX - $scope.appValues.scenePanX;
+					start.y = e.originalEvent.clientY - $scope.appValues.scenePanY;
 					draggingScene = true;
 				});
 
@@ -83,15 +95,13 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				$element.on('pointerdown', '.node', function( e ) {
 					document.body.style.cursor = 'move';
 
-					draggingNode =
-						$scope
-							.allGlyphs[ $scope.appValues.singleChar ]
-							.segments[ $(this).data('index') ]
-							.$render[ $(this).data('type') ];
+					draggingNode = true;
 
-					startX = e.originalEvent.clientX;
-					startY = e.originalEvent.clientY;
-					startPoint = Point( draggingNode );
+					prev.clientX = e.originalEvent.clientX;
+					prev.clientY = e.originalEvent.clientY;
+					start.segment = $(this).scope().$parent.segment;
+					start.type = $(this).data('type');
+					start.point = Point( draggingNode );
 
 					return false;
 				});

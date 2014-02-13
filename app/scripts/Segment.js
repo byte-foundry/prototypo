@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
-	.factory('Segment', function( Point, parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, transformSegment, smoothSegment3, moveSegmentPointTo ) {
-		function Segment( data, curPos, invert ) {
+	.factory('Segment', function( Point, parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, transformSegment, smoothSegment3, translateSegmentPoint ) {
+		function Segment( data, prevEnd, invert ) {
 			// new is optional
 			if ( !( this instanceof Segment ) ) {
-				return new Segment( data, curPos, invert );
+				return new Segment( data, prevEnd, invert );
 			}
 
 			this.invert = invert;
@@ -13,7 +13,8 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 
 			parseUpdateSegment( this, data );
 
-			this.absolutize( curPos || Point(0,0) );
+			this.start = prevEnd;
+			this.absolutize( prevEnd || Point(0,0) );
 
 			// this is a copy of the points that should be used when rendering the segment
 			// this allows to have a representation of a component that isn't altered by its subcomponents,
@@ -31,13 +32,13 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 
 		Segment.prototype = {
 			update: function( data ) { parseUpdateSegment( this, data ); },
-			absolutize: function( curPos ) { absolutizeSegment( this, curPos ); },
+			absolutize: function( prevEnd ) { absolutizeSegment( this, prevEnd ); },
 			toSVG: function() { return segmentToSVG( this ); },
 			cut: function( from, to ) { return cutSegment( this, from, to ); },
 			moveEnd: function( endPoint, newCoords ) { return moveSegmentEnd( this, endPoint, newCoords ); },
 			transform: function( matrix ) { return transformSegment( this, matrix ); },
 			smooth: function( render ) { return smoothSegment3( render ? this.$render : this, this.roundness ); },
-			movePointTo: function( type, coords ) { return moveSegmentPointTo( this, type, coors ); }
+			translatePoint: function( type, dx, dy ) { return translateSegmentPoint( this, type, dx, dy ); }
 		};
 
 		// a segment has x and y properties that are copies of this.end.x and this.end.y
@@ -177,13 +178,9 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 
 	// make endpoint and control-points of the glyph absolute
 	.factory('absolutizeSegment', function( Point, smoothSegment3 ) {
-		return function( segment, curPos ) {
-			if ( segment.start === undefined ) {
-				segment.start = Point( curPos );
-			} else {
-				segment.start.x = curPos.x;
-				segment.start.y = curPos.y;
-			}
+		return function( segment, _curPos ) {
+			// TODO: remove all curPos updates and the following line
+			var curPos = Point( _curPos );
 
 			switch ( segment.command ) {
 			case 'h':
@@ -404,7 +401,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 		};
 	})
 
-	// moves one endpoint of the segment and the attached control-points
+	// moves one endpoint of the segment and the attached control-point
 	// the only way to prevent control-points from moving is to use C, Q and S
 	.factory('moveSegmentEnd', function( Point ) {
 		return function( segment, _endPoint, _newCoords ) {
@@ -434,6 +431,33 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			endPoint.coords[0] = newCoords.coords[0];
 			endPoint.coords[1] = newCoords.coords[1];
 
+		};
+	})
+
+	// translate a point of the segment, used when dragging
+	.factory('translateSegmentPoint', function() {
+		return function( segment, type, dx, dy ) {
+			switch ( type ) {
+			case 'end':
+				segment.$render.end.x += dx;
+				segment.$render.end.y += dy;
+
+				if ( segment.$render.ctrl1 ) {
+					segment.$render.ctrl1.x += dx;
+					segment.$render.ctrl1.y += dy;
+				}
+
+				if ( segment.next && segment.next.$render.ctrl0 ) {
+					segment.next.$render.ctrl0.x += dx;
+					segment.next.$render.ctrl0.y += dy;
+				}
+
+				break;
+
+			default:
+				segment.$render[type].x += dx;
+				segment.$render[type].y += dy;
+			}
 		};
 	})
 
@@ -499,13 +523,10 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 
 	.factory('transformSegment', function( transformPoint ) {
 		return function( segment, matrix, except ) {
-			if ( segment.start && ( except === undefined || except.indexOf( segment.start ) === -1 ) ) {
-				transformPoint( segment.start, matrix );
-			}
-			if ( segment.controls && segment.ctrl0 && ( except === undefined || except.indexOf( segment.ctrl0 ) === -1 ) ) {
+			if ( segment.ctrl0 && ( except === undefined || except.indexOf( segment.ctrl0 ) === -1 ) ) {
 				transformPoint( segment.ctrl0, matrix );
 			}
-			if ( segment.controls && segment.ctrl1 && ( except === undefined || except.indexOf( segment.ctrl1 ) === -1 ) ) {
+			if ( segment.ctrl1 && ( except === undefined || except.indexOf( segment.ctrl1 ) === -1 ) ) {
 				transformPoint( segment.ctrl1, matrix );
 			}
 			if ( segment.end && ( except === undefined || except.indexOf( segment.end ) === -1 ) ) {
@@ -527,12 +548,6 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				segment.ctrl1.y = segment.end.y + ( p[1] - segment.end.y ) * roundness;
 			}
 		}
-	})
-
-	.factory('moveSegmentPointTo', function() {
-		return function() {
-
-		};
 	})
 
 	/*.factory('getControlAngle', function() {

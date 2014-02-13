@@ -7,7 +7,6 @@ Z
 
 add top-dot at {{ [ thickness /2 - opticThickness , xHeight + ( 80 / 465 ) * xHeight ] }}
 
-replace from self[2] at {{ {y: serifHeight + serifHeight * serifCurve } }} to self[3] at {{ {x: self[3].x + thickness /2 } }} with serif-bottom-right {{ { angle: 0 } }} 
-replace from self[4] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[3] at {{ {x: self[3].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: 0 } }} 
+replace from self[2] at {{ {y: serifHeight + serifHeight * serifCurve } }} to self[3] at {{ {x: self[3].x + thickness /2 } }} with serif-bottom-right {{ { angle: 0 } }}
+replace from self[4] at {{ {y: serifHeight + serifHeight * serifCurve} }} to self[3] at {{ {x: self[3].x + thickness /2 } }} with inverted serif-bottom-left {{ { angle: 0 } }}
 replace from self[4] at {{ {y: self[4].y - ( serifHeight + serifHeight * serifCurve ) } }} to self[5] at {{ {x: self[5].x - thickness /2 } }} with serif-top-left {{ { angle: 0 } }} transform {{ "rotate("+ -serifRotate +")" }}
-
