@@ -62,15 +62,15 @@ angular.module('prototypo.paramtabsDirective', [])
 
 						if (value<minAdviced || value>maxAdviced) {
 							$( mutation.target.querySelector('.paramctrl-bg') )
-							.css('background-color', '#f4aec2');
+							.css('background-color', '#ff725e');
 							$( mutation.target.querySelector('.paramctrl-handle') )
-							.css('border-color', '#f4aec2');
+							.css('border-color', '#ff725e');
 						} 
 						else {
 							$( mutation.target.querySelector('.paramctrl-bg') )
-							.css('background-color', '#90ee90');
+							.css('background-color', '#49e4a9');
 							$( mutation.target.querySelector('.paramctrl-handle') )
-							.css('border-color', '#90ee90');
+							.css('border-color', '#49e4a9');
 						}
 					});
 
