@@ -30,9 +30,10 @@
 
 			<g id="transformed" ng-attr-transform="skewX({{ fontValues.slant || 0 }})">
 
-				<path glyph-contour="{{appValues.singleChar}}"
-					fill="{{ appValues.outlineOnly ? 'none' :appValues.negative ? '#ffffff' : '#3B3B3B' }}"
-					stroke="{{ appValues.outlineOnly ? '#888888' : 'none' }}"
+				<path id="glyph-contour"
+					ng-attr-d="{{ allGlyphs[ appValues.singleChar || ' ' ].svg }}"
+					ng-attr-fill="{{ appValues.outlineOnly ? 'none' :appValues.negative ? '#ffffff' : '#3B3B3B' }}"
+					ng-attr-stroke="{{ appValues.outlineOnly ? '#888888' : 'none' }}"
 					vector-effect="non-scaling-stroke"
 				></path>
 
@@ -52,6 +53,7 @@
 							data-type="end"
 							ng-attr-d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} m 0 3 h 3 v -6 h -6 v 6 z">
 						</path>
+
 						<path bo-if="segment.$render.ctrl0"
 							style="pointer-events: none;"
 							class="ctrl-line"
@@ -62,6 +64,7 @@
 							class="ctrl-line"
 							ng-attr-d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} L {{ segment.$render.ctrl1.x }} {{ segment.$render.ctrl1.y }} z">
 						</path>
+
 						<path bindonce bo-if="segment.$render.ctrl0"
 							bo-attr
 							bo-attr-data-index="$index"
@@ -74,7 +77,7 @@
 							bo-attr-data-index="$index"
 							class="node ctrl"
 							data-type="ctrl1"
-							ng-attr-d="M {{ segment.$render.ctrl1.x - 3 }} {{ segment.$render.ctrl1.y }} l 3 3 l 3 -3 l -3 -3 z">
+							ng-attr-d="M {{ segment.$render.ctrl1.x - 3 }} {{ segment.$render.ctrl1.y }} l 3 3 l 3 -3 l -3 -3 z"
 						</path>
 					</g>
 				</g>

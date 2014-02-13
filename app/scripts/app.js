@@ -17,7 +17,6 @@ angular.module('prototypoApp', [
 		'prototypo.Values',
 
 		'prototypo.glyphDirective',
-		'prototypo.contourDirective',
 		'prototypo.parammenuDirective',
 		'prototypo.paramtabsDirective',
 		'prototypo.paramtabDirective',

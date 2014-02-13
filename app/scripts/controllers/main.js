@@ -214,14 +214,12 @@ angular.module('prototypoApp')
 					// debounced full read
 					clearTimeout( timeout );
 					timeout = setTimeout(function() {
-						$scope.puid = Math.random();
 						for ( var char in $scope.allChars ) {
 							$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues, true );
 						}
 						$scope.$digest();
 					}, 100);
 
-					$scope.puid = Math.random();
 					for ( var char in $scope.allChars ) {
 						$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues );
 					}
@@ -238,8 +236,6 @@ angular.module('prototypoApp')
 				});
 
 				$scope.$watch('allChars', function( newVal, oldVal ) {
-					$scope.puid = Math.random();
-
 					for ( var char in newVal ) {
 						if ( !oldVal[char] || newVal === oldVal ) {
 							$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues, true );

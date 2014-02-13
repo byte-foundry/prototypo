@@ -169,6 +169,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 						subcomponent.lastSegment.next = component.firstSegment;
 						//component.firstSegment.prev = subcomponent.lastSegment;
 						component.firstSegment = subcomponent.firstSegment;
+
 					} else {
 						// avoid this subcomponents to be skipped because of the previous subcomponent
 						if ( i > 0 && component.components[ i -1 ].lastSegment.next === component.segments[ subcomponent.fromId ].next ) {
@@ -185,6 +186,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 						component.lastSegment.next = subcomponent.firstSegment;
 						//subcomponent.firstSegment.prev = component.lastSegment;
 						component.lastSegment = subcomponent.lastSegment;
+
 					} else {
 						subcomponent.lastSegment.next = component.segments[ subcomponent.toId ];
 						//component.segments[ subcomponent.toId ].prev = subcomponent.lastSegment;
@@ -239,6 +241,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 							component.segments[i].update( segmentFn( component.flatContext ) );
 							component.segments[i].absolutize( curPos );
 						}
+						curPos = component.segments[i].end;
 					}
 				});
 

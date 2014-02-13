@@ -53,6 +53,10 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 			transform: function( transform ) {
 				transformGlyph( this, transform );
 				return this;
+			},
+			smooth: function() {
+				smoothGlyph( this );
+				return this;
 			}
 		};
 

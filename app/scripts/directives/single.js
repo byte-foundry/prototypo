@@ -34,15 +34,13 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				});
 
 				var $transformed = $element.find('#transformed'),
-					startX,
-					startY,
-					startPoint,
+					start = {},
+					prev = {},
 					isDraggingScene,
 					isDraggingLine,
 					isDraggingNode,
 					draggedLine,
-					draggedNode,
-					startLine;
+					draggedNode;
 
 				$(window).on('pointerup', function() {
 					isDraggingScene = undefined;
@@ -65,8 +63,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				$element.on('pointermove', function( e ) {
 					if ( isDraggingScene ) {
 						throttle(function() {
-							$scope.appValues.scenePanX = e.clientX - startX;
-							$scope.appValues.scenePanY = e.clientY - startY;
+							$scope.appValues.scenePanX = e.clientX - start.x;
+							$scope.appValues.scenePanY = e.clientY - start.y;
 							$scope.$digest();
 						});
 						return false;
@@ -76,7 +74,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						throttle(function() {
 							// map the dragged deltas to the scene coordinate system
 							var p = Point(
-									startX - e.clientX,
+									start.x - e.clientX,
 									0
 								),
 								m = $transformed[0].getCTM().inverse();
@@ -85,7 +83,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 							$scope
 								.allGlyphs[ $scope.appValues.singleChar ]
-								[ draggedLine ] = startLine + p.x - m.e;
+								[ draggedLine ] = start.line + p.x - m.e;
 
 							$scope.$digest();
 						});
@@ -96,17 +94,29 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						throttle(function() {
 							// map the dragged deltas to the scene coordinate system
 							var p = Point(
-									e.clientX - startX,
-									e.clientY - startY
+									e.clientX - prev.clientX,
+									e.clientY - prev.clientY
 								),
 								m = $transformed[0].getCTM().inverse();
 
 							p.transform( m );
 
-							draggedNode.x = startPoint.x + p.x - m.e;
-							draggedNode.y = startPoint.y + p.y - m.f;
+							start.segment.translatePoint(
+								start.type,
+								p.x - m.e,
+								p.y - m.f
+							);
+
+							// dirty outline update
+							$scope.allGlyphs[ $scope.appValues.singleChar ].svg =
+								$scope.font.glyphs[ $scope.appValues.singleChar ]
+									.smooth()
+									.toSVG();
 
 							$scope.$digest();
+
+							prev.clientX = e.clientX;
+							prev.clientY = e.clientY;
 						});
 					}
 				});
@@ -115,8 +125,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				$element.on('pointerdown', function( e ) {
 					if ( e.which !== 3 ) {
 						document.body.style.cursor = 'move';
-						startX = e.clientX - $scope.appValues.scenePanX;
-						startY = e.clientY - $scope.appValues.scenePanY;
+						start.x = e.clientX - $scope.appValues.scenePanX;
+						start.y = e.clientY - $scope.appValues.scenePanY;
 
 						isDraggingScene = true;
 					}
@@ -152,9 +162,10 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 								.segments[ $(this).data('index') ]
 								.$render[ $(this).data('type') ];
 
-						startX = e.clientX;
-						startY = e.clientY;
-						startPoint = Point( draggedNode );
+						prev.clientX = e.clientX;
+						prev.clientY = e.clientY;
+						start.segment = $(this).scope().$parent.segment;
+						start.type = $(this).data('type');
 
 						return false;
 					}
@@ -167,13 +178,10 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 						isDraggingLine = true;
 						draggedLine = this.getAttribute('id');
-						startLine = $scope
+						start.line = $scope
 							.allGlyphs[ $scope.appValues.singleChar ]
 							[ draggedLine ];
-						startX = e.clientX;
-
-						//document.getElementById("tempSpacing").style.borderWidth = '1px';
-						//document.getElementById("tempSpacing").style.left = startX + 'px';
+						start.x = e.clientX;
 
 						return false;
 					}

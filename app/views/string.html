@@ -18,8 +18,9 @@
 				</g>
 
 				<path ng-repeat="char in appValues.stringChars.split('') track by $index"
-					glyph-contour="{{char}}"
-					fill="{{ appValues.outlineOnly ? 'none' :appValues.negative ? '#ffffff' : '#3c3c3b' }}"
+					class="glyph-contour"
+					ng-attr-d="{{ allGlyphs[ char ].svg }}"
+					ng-attr-fill="{{ appValues.outlineOnly ? 'none' :appValues.negative ? '#ffffff' : '#3c3c3b' }}"
 					ng-attr-transform="translate({{ getTranslate( $index, char ) }})"
 				></path>
 			</g>
