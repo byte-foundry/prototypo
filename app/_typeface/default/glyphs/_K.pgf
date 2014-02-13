@@ -1,15 +1,15 @@
-M 	{{ thickness * opticThickness }} {{ capHeight * (208/698) }}  // {{ { x: thickness * opticThickness } |on: self[3] }}
+M 	{{ thickness * opticThickness }} {{ capHeight * (208/698) }} 
 L 	{{ self[1].x }} 0
 L 	0 0
 L 	{{ self[3].x }} {{ capHeight }}
 L 	{{ self[1].x }} {{ self[4].y }}
-L 	{{ self[5].x }} {{ self[1].y + thickness * opticThickness * (123/88) * contrast }}
+L 	{{ self[5].x }} {{ self[1].y + thickness * opticThickness * (123/88) * contrast | max : capHeight - thickness }}
 L 	{{ self[8].x - thickness * opticThickness * (111/88) * contrast }} {{ capHeight }}
 L 	{{ self[1].x - 88 + width * 514 + thickness - 80 }} {{ self[7].y }}
-L 	{{ {y: capHeight * (355/698) * crossbar } |on: self[7] | translate: thickness * opticThickness * (111/88) * contrast }}
-L 	{{ self[11].x + thickness * opticThickness * (115/88) }} 0
+L 	{{ {y: capHeight * (355/698) * crossbar } |on: self[7] | translate: thickness * opticThickness * (111/88) * contrast | xMin:self[12].x | yMin : self[12] }} // need to set xMin:self[12] + thickness
+L 	{{ self[11].x + thickness * opticThickness * (115/88)  }} 0
 L 	{{ self[1].x - 88 + width * 429 }} 0
-L 	{{ { x: self[9].x + ( self[11].x - self[10].x ) / 2 } | on: self[9] | xMin:self[1] | yMin : self[1].y + ( self[6].y - self[1].y ) / 2 }}
+L 	{{ { x: self[9].x + ( self[11].x - self[10].x ) / 2 } | on: self[9] | xMin:self[1].x + 70 * width * contrast | yMin : self[1].y + ( self[6].y - self[1].y ) / 2 }} // ± the solution to avoid weird thickness behavior
 L 	{{ { x: self[1].x } | on: self[9] | yMin : 0 }}
 Z
 
