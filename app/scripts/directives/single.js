@@ -37,7 +37,6 @@ angular.module('prototypo.singleDirective', [])
 					}, 200 );
 					counter++
 					if(counter == 2) {
-						console.log($scope.appValues.scenePanX);
 						$scope.appValues.zoom = 1.5;
 						$scope.appValues.scenePanX = -120;
 						$scope.appValues.scenePanY = 0;
