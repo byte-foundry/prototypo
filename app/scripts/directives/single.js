@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('prototypo.singleDirective', [])
-	.directive('single', function() {
+angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils'])
+	.directive('single', function( Point, throttle ) {
 		return {
 			restrict: 'E',
 			templateUrl: 'views/single.html',
@@ -13,23 +13,7 @@ angular.module('prototypo.singleDirective', [])
 					return false;
 				});
 
-				// translate the scene with space bar + mouse
-				var startX,
-					startY,
-					//spaceDown,
-					pointerDown;
-
-				/*$(document)
-					.on('keyup', function( e ) {
-						if ( e.keyCode === 32 ) {
-							spaceDown = false;
-						}
-					}).on('keydown', function( e ) {
-						if ( e.keyCode === 32) {
-							spaceDown = true;
-						}
-					});*/
-				
+				// reset scene zoom and position on double-tap
 				var counter = 0;
 				$element.on('pointerdown', function( e ) {
 					setTimeout( function() {
@@ -37,7 +21,6 @@ angular.module('prototypo.singleDirective', [])
 					}, 200 );
 					counter++
 					if(counter == 2) {
-						console.log($scope.appValues.scenePanX);
 						$scope.appValues.zoom = 1.5;
 						$scope.appValues.scenePanX = -120;
 						$scope.appValues.scenePanY = 0;
@@ -46,30 +29,79 @@ angular.module('prototypo.singleDirective', [])
 					}
 				});
 
-				$element.on('pointerdown', function( e ) {
-					//if ( spaceDown ) {
-					document.body.style.cursor = 'move';
-					startX = e.originalEvent.clientX - $scope.appValues.scenePanX;
-					startY = e.originalEvent.clientY - $scope.appValues.scenePanY;
-					pointerDown = true;
-					//}
-				});
-
-				$element.on('pointermove', function( e ) {
-					if ( pointerDown ) {
-						$scope.appValues.scenePanX = e.originalEvent.clientX - startX;
-						$scope.appValues.scenePanY = e.originalEvent.clientY - startY;
-						$scope.$digest();
-						return false;
-					}
-				});
+				var $transformed = $element.find('#transformed'),
+					startX,
+					startY,
+					startPoint,
+					draggingScene,
+					draggingNode;
 
 				$(window).on('pointerup', function() {
-					pointerDown = false;
+					draggingScene = false;
+					draggingNode = false;
 					document.body.style.cursor = 'default';
 				});
 
+				$element.on('pointermove', function( e ) {
+					if ( draggingScene ) {
+						throttle(function() {
+							$scope.appValues.scenePanX = e.originalEvent.clientX - startX;
+							$scope.appValues.scenePanY = e.originalEvent.clientY - startY;
+							$scope.$digest();
+						});
+						return false;
+					}
 
+					if ( draggingNode ) {
+						throttle(function() {
+							// map the dragged deltas to the scene coordinate system
+							var p = Point(
+									e.originalEvent.clientX - startX,
+									e.originalEvent.clientY - startY
+								),
+								m = $transformed[0].getCTM().inverse();
+
+							p.transform( m );
+
+							draggingNode.x = startPoint.x + p.x - m.e;
+							draggingNode.y = startPoint.y + p.y - m.f;
+
+							$scope.$digest();
+						});
+					}
+				});
+
+				/* scene drag handler */
+				$element.on('pointerdown', function( e ) {
+					document.body.style.cursor = 'move';
+					startX = e.originalEvent.clientX - $scope.appValues.scenePanX;
+					startY = e.originalEvent.clientY - $scope.appValues.scenePanY;
+					draggingScene = true;
+				});
+
+				/* node drag handler */
+				$element.on('pointerdown', '.node', function( e ) {
+					document.body.style.cursor = 'move';
+
+					draggingNode =
+						$scope
+							.allGlyphs[ $scope.appValues.singleChar ]
+							.segments[ $(this).data('index') ]
+							.$render[ $(this).data('type') === 'end' ? 'end' : 'controls' ];
+
+					if ( draggingNode.length ) {
+						draggingNode = draggingNode[ $(this).data('type') === 'control0' ? 0 : 1 ];
+					}
+
+					startX = e.originalEvent.clientX;
+					startY = e.originalEvent.clientY;
+					startPoint = Point( draggingNode );
+
+					return false;
+				});
+
+
+				/* Set <svg> dimension during postLink */
 				// override 'display: none !important' set by .ng-hide
 				$element[0].style.setProperty('display', 'block', 'important');
 

@@ -19,7 +19,8 @@ angular.module('prototypoApp')
 		// app values
 		var initialAppValues = {
 			viewMode: 'single',
-			showNodes: false,
+			displayNodes: false,
+			outlineOnly: false,
 			paramTab: 0,
 			zoom: 1.5,
 			scenePanX: -120,

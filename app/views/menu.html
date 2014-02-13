@@ -3,17 +3,14 @@
 		<li class="logo">
 			<ul class="sub-level level-2">
 				<li><a target="_blank" href="http://blog.prototypo.io">About prototypo</a></li>
-				<li class="disable">item 2</li>
-				<li class="disable">item 3</li>
+				<li><a href="http://blog.prototypo.io" target="_blank">Latest news</a></li>
 			</ul>
 		</li>
 		<li>
 			File
 			<ul class="sub-level level-2">
 				<li ng-click="resetFontValues()">New font</li>
-				<li class="disable">Save font settings</li>
 				<li class="disable">load font settings</li>
-				<li class="disable">Export font as UFO</li>
 				<li class="disable">Export fontface kit</li>
 				<li ng-click="exportToSVG()">Export as svg font</li>
 			</ul>
@@ -43,7 +40,6 @@
 				</li>
 				<li class="disable">New glyph</li>
 				<li class="disable">New component</li>
-				<li class="disable">item 3</li>
 			</ul>
 		</li>
 		<li>
@@ -52,7 +48,8 @@
 				<li id="ui-guidelines">Toggle guidelines</li>
 				<li>Toggle colors</li>
 				<li id="ui-grid">Toggle grid</li>
-				<li ng-click="showNodes = !showNodes">Toggle nodes</li>
+				<li ng-click="appValues.displayNodes = !appValues.displayNodes">Toggle nodes</li>
+				<li ng-click="appValues.outlineOnly = !appValues.outlineOnly">Toggle outline</li>
 				<li id="ui-spacing">Toggle spacing</li>
 			</ul>
 		</li>
@@ -60,8 +57,8 @@
 			Help
 			<ul class="sub-level level-2">
 				<li class="disable">Documentation</li>
-				<li><a href="https://github.com/byte-foundry/prototypo/issues?state=open" target="_blank">Found a bug?</a></li>
-				<li class="disable">item 3</li>
+				<li class="disable">Forum</li>
+				<li><a href="https://github.com/byte-foundry/prototypo/issues?state=open" target="_blank">Bug tracker</a></li>
 			</ul>
 		</li>
 	</ul>

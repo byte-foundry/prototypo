@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.paramtabsDirective', [])
-	.directive('paramtabs', function() {
+	.directive('paramtabs', function( throttle ) {
 		return {
 			restrict: 'E',
 			templateUrl: 'views/paramtabs.html',
@@ -43,7 +43,9 @@ angular.module('prototypo.paramtabsDirective', [])
 				});
 				$(window).on('pointermove', function( e ) {
 					if ( dragging ) {
-						setValue( dragging, e.originalEvent.pageX );
+						throttle(function() {
+							setValue( dragging, e.originalEvent.pageX );
+						});
 						return false;
 					}
 				});

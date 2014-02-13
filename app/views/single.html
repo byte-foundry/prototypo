@@ -28,9 +28,13 @@
 				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#dadada" d="M -20000 {{ fontValues.descender }} l 40000 0 Z" ></path>
 			</g>
 
-			<g transform="skewX({{fontValues.slant}})">
+			<g id="transformed" transform="skewX({{fontValues.slant}})">
 
-				<path glyph-contour="{{appValues.singleChar}}" fill="#3B3B3B"></path>
+				<path glyph-contour="{{appValues.singleChar}}"
+					fill="{{ appValues.outlineOnly ? 'none' : '#3B3B3B' }}"
+					stroke="{{ appValues.outlineOnly ? '#888888' : 'none' }}"
+					vector-effect="non-scaling-stroke"
+				></path>
 
 				<g id="spacing">
 					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" d="M {{- allGlyphs[appValues.singleChar].left }} -20000 l 0 40000 l -40000 0 l 0 40000 Z" ></path>
@@ -39,17 +43,46 @@
 					<path class="spacingLine" vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="lightGreen" d="M {{ allGlyphs[appValues.singleChar].width + allGlyphs[appValues.singleChar].right }} -20000 l 0 40000 Z" ></path>
 				</g>
 
-				<g ng-repeat="segment in allGlyphs[appValues.singleChar].segments">
-
-					<g id="nodes" ng-show="showNodes" class="ng-hide">
-						<g bindonce ng-repeat="cp in segment.debug()">
-							<path segment-endpoint bo-attr bo-attr-fill="cp.color" bo-attr-stroke="cp.color" index="{{$index}}" coords="{{ cp.start.toString() }} {{cp.end.toString()}}"></path>
-						</g>
+				<g class="nodes" ng-show="appValues.displayNodes" class="ng-hide">
+					<g bindonce ng-repeat="segment in allGlyphs[appValues.singleChar].segments">
+						<path bindonce bo-if="segment.$render.end"
+							bo-attr
+							bo-attr-data-index="$index"
+							class="node"
+							data-type="end"
+							fill="blue"
+							d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} m 0 3 h 3 v -6 h -6 v 6 z">
+						</path>
+						<path bo-if="segment.$render.controls[0]"
+							style="pointer-events: none;"
+							stroke="green"
+							d="M {{ segment.$render.start.x }} {{ segment.$render.start.y }} L {{ segment.$render.controls[0].x }} {{ segment.$render.controls[0].y }} z">
+						</path>
+						<path bo-if="segment.$render.controls[1]"
+							style="pointer-events: none;"
+							stroke="green"
+							d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} L {{ segment.$render.controls[1].x }} {{ segment.$render.controls[1].y }} z">
+						</path>
+						<path bindonce bo-if="segment.$render.controls[0]"
+							bo-attr
+							bo-attr-data-index="$index"
+							class="node"
+							data-type="control0"
+							fill="green"
+							d="M {{ segment.$render.controls[0].x - 3 }} {{ segment.$render.controls[0].y }} l 3 3 l 3 -3 l -3 -3 z">
+						</path>
+						<path bindonce bo-if="segment.$render.controls[1]"
+							bo-attr
+							bo-attr-data-index="$index"
+							class="node"
+							data-type="control1"
+							fill="green"
+							d="M {{ segment.$render.controls[1].x - 3 }} {{ segment.$render.controls[1].y }} l 3 3 l 3 -3 l -3 -3 z">
+						</path>
 					</g>
-
 				</g>
 			</g>
-		</g>
+		</g></g>
 	</svg>
 
 </div>

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
-	.factory('Segment', function( Point, parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, invertSegment, getSegmentPoints, transformSegment, smoothSegment3 ) {
+	.factory('Segment', function( Point, parseUpdateSegment, absolutizeSegment, segmentToSVG, cutSegment, moveSegmentEnd, transformSegment, smoothSegment3, moveSegmentPointTo ) {
 		function Segment( data, curPos, invert ) {
 			// new is optional
 			if ( !( this instanceof Segment ) ) {
@@ -10,7 +10,6 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 
 			this.controls = [];
 			this.invert = invert;
-			this.$debug = [];
 			this.$render = { controls: [] };
 
 			parseUpdateSegment( this, data );
@@ -37,10 +36,9 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			toSVG: function() { return segmentToSVG( this ); },
 			cut: function( from, to ) { return cutSegment( this, from, to ); },
 			moveEnd: function( endPoint, newCoords ) { return moveSegmentEnd( this, endPoint, newCoords ); },
-			invertSegment: function() { return invertSegment( this); },
-			debug: function() { return getSegmentPoints( this ); },
 			transform: function( matrix ) { return transformSegment( this, matrix ); },
-			smooth: function( render ) { return smoothSegment3( render ? this.$render : this, this.roundness ); }
+			smooth: function( render ) { return smoothSegment3( render ? this.$render : this, this.roundness ); },
+			movePointTo: function( type, coords ) { return moveSegmentPointTo( this, type, coors ); }
 		};
 
 		// a segment has x and y properties that are copies of this.end.x and this.end.y
@@ -446,7 +444,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 	// => not a good idea, moveSegmentEnd works on the $render object but shouldn't care
 	// about .inverted. Or should it? If it allows othe classes to care less about .inverted,
 	// then maybe...
-	// => That's what we do right now
+	// => That's what we do right now, so yes it is useless
 	.factory('invertSegment', function() {
 		return function( segment ) {
 			if ( !segment || !segment.start ) {
@@ -500,41 +498,6 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 		};
 	})
 
-	.factory('getSegmentPoints', function() {
-		return function( segment ) {
-			var end,
-				render;
-
-			if ( !segment.$debug.length ) {
-				render = segment.$render;
-				end = segment.invert ? render.start : render.end;
-
-				if ( end ) {
-					segment.$debug.push({
-						color: 'blue',
-						end: end
-					});
-				}
-				if ( render.controls[0] ) {
-					segment.$debug.push({
-						color: 'green',
-						start: render.start,
-						end: render.controls[0]
-					});
-				}
-				if ( render.controls[1] ) {
-					segment.$debug.push({
-						color: 'green',
-						start: render.end,
-						end: render.controls[1]
-					});
-				}
-			}
-
-			return segment.$debug;
-		};
-	})
-
 	.factory('transformSegment', function( transformPoint ) {
 		return function( segment, matrix, except ) {
 			if ( segment.start && ( except === undefined || except.indexOf( segment.start ) === -1 ) ) {
@@ -552,7 +515,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 		};
 	})
 
-	// smoothing that always joins control when roundness === 1
+	// efficient smoothing that always joins control when roundness === 1
 	.factory('smoothSegment3', function( lineLineIntersection ) {
 		return function( segment, roundness ) {
 			var p = lineLineIntersection( segment.start, segment.controls[0], segment.end, segment.controls[1] );
@@ -565,6 +528,12 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				segment.controls[1].y = segment.end.y + ( p[1] - segment.end.y ) * roundness;
 			}
 		}
+	})
+
+	.factory('moveSegmentPointTo', function() {
+		return function() {
+
+		};
 	})
 
 	/*.factory('getControlAngle', function() {
