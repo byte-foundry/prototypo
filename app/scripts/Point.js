@@ -198,13 +198,19 @@ angular.module('prototypo.Point', ['prototypo.2D'])
 		};
 	})
 
-	// TODO: test
 	.factory('transformPoint', function() {
-		return function( point, m, tmp ) {
-			tmp = point.coords[0];
+		return function( point, m ) {
+			var coords0 = point.coords[0];
 
-			point.coords[0] = m[0] * tmp + m[2] * point.coords[1] + m[4];
-			point.coords[1] = m[1] * tmp + m[3] * point.coords[1] + m[5];
+			if ( m.constructor === Float32Array ) {
+				point.coords[0] = m[0] * coords0 + m[2] * point.coords[1] + m[4];
+				point.coords[1] = m[1] * coords0 + m[3] * point.coords[1] + m[5];
+
+			// a.constructor === SVGMatrix
+			} else {
+				point.coords[0] = m.a * coords0 + m.c * point.coords[1] + m.e;
+				point.coords[1] = m.b * coords0 + m.d * point.coords[1] + m.f;
+			}
 		};
 	})
 

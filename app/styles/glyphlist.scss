@@ -1,19 +1,28 @@
 @import "variables";
 
 .glyphlist {
-	height: 100%;
-	table-layout: auto;
-	background-color: $lightest-grey;
-	padding-left: 2em;
-	transition:        transform 200ms ease-in;
-	border-top: 5px solid $light-green;
-}
+	position: absolute;
+	bottom: 0;
+	z-index: 2;
+	transform: translateY(100%);
 
-.glyphlist-cell:hover .glyphlist{
-	transform:         translateY(-100%);
+	height: auto;
+	padding-left: 2rem;
+	border-top: 5px solid $light-green;
+
+	background-color: $lightest-grey;
+
+	transition: transform 200ms ease-in;
+
+	&:hover {
+		transform: translateY(0);
+	}
 }
 
 .glyphlist li {
+	float: left;
+	display: block;
+
 	min-width: 5rem;
 	height: 6rem;
 	padding: 0 .8em;
@@ -27,29 +36,26 @@
 	border-bottom: 1px solid white;
 	cursor: pointer !important;
 
-	transition:         background-color 0.5s ease-in, color 0.5s ease-in;
-
-	float: left;
-	display: block;
+	transition: background-color 0.5s ease-in, color 0.5s ease-in;
 }
 
 .glyphlist li.selected,
 .glyphlist li:hover {
 	background-color: $light-green;
 	color: white;
-	transition:         background-color 0.2s ease-in, color 0.2s ease-in;
+	transition: background-color 0.2s ease-in, color 0.2s ease-in;
 }
 
 .glyphTab {
-	height: 9rem;
-	margin-top: -9rem;
+	height: 7.3rem;
+	margin-top: -7.3rem;
 	width: 100%;
 	float: left;
-	padding: 1em;
+	padding: 1rem;
 	span {
 		background-color: $light-green;
 		color: white;
-		padding: 1em;
+		padding: 1.2rem;
 	}
 }
 .glyphlist-cell:hover .glyphTab span { opacity: .5; }

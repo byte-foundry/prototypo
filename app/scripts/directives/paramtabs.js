@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypo.paramtabsDirective', [])
-	.directive('paramtabs', function() {
+	.directive('paramtabs', function( throttle ) {
 		return {
 			restrict: 'E',
 			templateUrl: 'views/paramtabs.html',
@@ -29,6 +29,7 @@ angular.module('prototypo.paramtabsDirective', [])
 					parentHeight = $element[0].offsetHeight;
 
 				$element.find('.paramtab.dummy').remove();
+				$element.data('rangeWidth', rangeWidth);
 
 				$element.on('pointerdown', '.paramctrl-gutter', function( e ) {
 					dragging = this.parentNode;
@@ -42,43 +43,11 @@ angular.module('prototypo.paramtabsDirective', [])
 				});
 				$(window).on('pointermove', function( e ) {
 					if ( dragging ) {
-						setValue( dragging, e.originalEvent.pageX );
+						throttle(function() {
+							setValue( dragging, e.originalEvent.pageX );
+						});
 						return false;
 					}
-				});
-
-				// delegated attr watcher
-				(new MutationObserver(function(mutations) {
-					mutations.forEach(function( mutation ) {
-						var value = +mutation.target.getAttribute('value'),
-							min = +$( mutation.target ).data('min'),
-							max = +$( mutation.target ).data('max'),
-							minAdviced = +$( mutation.target ).data('minadviced'),
-							maxAdviced = +$( mutation.target ).data('maxadviced'),
-							translateX = Math.round( ( ( value - min ) / ( max - min ) ) * rangeWidth ) - rangeWidth;
-
-						$( mutation.target.querySelector('.paramctrl-bg') )
-							.css({transform: 'translateX(' + translateX + 'px)'});
-
-						if (value<minAdviced || value>maxAdviced) {
-							$( mutation.target.querySelector('.paramctrl-bg') )
-							.css('background-color', '#ff725e');
-							$( mutation.target.querySelector('.paramctrl-handle') )
-							.css('border-color', '#ff725e');
-						} 
-						else {
-							$( mutation.target.querySelector('.paramctrl-bg') )
-							.css('background-color', '#49e4a9');
-							$( mutation.target.querySelector('.paramctrl-handle') )
-							.css('border-color', '#49e4a9');
-						}
-					});
-
-				// config
-				})).observe( $element[0], {
-					attributes: true,
-					subtree: true,
-					attributeFilter: ['value']
 				});
 
 				// scroll handler

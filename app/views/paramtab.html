@@ -1,7 +1,7 @@
 <div class="paramtab" ng-class="appValues.paramTab == $index ? 'selected' : ''">
 	<ul class="unstyled pa0">
 		<li class="paramctrl" bindonce ng-repeat="param in group.parameters"
-			value="{{ fontValues[param.name] }}"
+			bo-id="'param-' + param.name"
 			bo-attr
 			bo-attr-data-name="param.name"
 			bo-attr-data-min="param.min"
@@ -11,6 +11,13 @@
 			bo-attr-data-maxAdviced="param.maxAdviced"
 		>
 			<label bo-text="param.label"></label>
+			<input type="number" ng-model="fontValues[param.name]" bindonce
+				bo-attr
+				bo-attr-name="param.name"
+				bo-attr-min="param.min"
+				bo-attr-max="param.max"
+				bo-attr-step="param.step"
+			/>
 			<div class="paramctrl-gutter">
 				<div class="paramctrl-bg">
 					<div class="paramctrl-handle"></div>

@@ -1,0 +1,11 @@
+<div class="scene-buttons">
+	<div class="zoom">
+		<a class="zoom-out btn" ng-click="zoom(-1)">+</a>
+		<a class="zoom-in btn" ng-click="zoom(+1)">-</a>
+	</div>
+
+	<div class="view-mode">
+		<a class="single btn" ng-class="{active: appValues.viewMode === 'single'}" ng-click="changeViewMode( 'single' )"></a>
+		<a class="string btn" ng-class="{active: appValues.viewMode === 'string'}" ng-click="changeViewMode( 'string' )"></a>
+	</div>
+</div>

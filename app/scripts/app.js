@@ -4,6 +4,7 @@ angular.module('prototypoApp', [
 		'ngRoute',
 		'pasvaz.bindonce',
 
+		'prototypo.Utils',
 		'prototypo.2D',
 		'prototypo.Point',
 		'prototypo.Segment',
@@ -14,18 +15,16 @@ angular.module('prototypoApp', [
 
 		'prototypo.Typeface',
 		'prototypo.Values',
-		'prototypo.glyphFilters',
 
 		'prototypo.glyphDirective',
 		'prototypo.contourDirective',
-		'prototypo.endpointDirective',
 		'prototypo.parammenuDirective',
 		'prototypo.paramtabsDirective',
 		'prototypo.paramtabDirective',
 		'prototypo.singleDirective',
 		'prototypo.stringDirective',
 		'prototypo.glyphlistDirective',
-		'prototypo.zoomDirective',
+		'prototypo.sceneButtonsDirective',
 		'prototypo.menuDirective',
 		'prototypo.spacingDirective',
 		'prototypo.presetsDirective'
@@ -142,29 +141,10 @@ angular.module('prototypoApp', [
 		};
 	})
 
-	/*.filter( 'max', function ( Point )  {
-		return function ( coords, ref, axis ) {
-			if (ref === undefined) {
-				return coords;
-			}
-			else {
-				if (typeof coords === 'number') {
-					coords = Math.min( coords, ref[axis] );
-					return coords;
-				}
-				else {
-					var point = Point(coords);
-					point[axis] = Math.min( point[axis], ref[axis] );
-					return point;
-				}
-			}
-		};
-	})*/
-
 	.filter( 'adjust', function ()  {
 		return function ( coords, thickness, contrast ) {
 			if( !contrast ) contrast = 1;
-			coords = Math.max( coords, coords + (thickness - 80) * contrast    );
+			coords = Math.max( coords, coords + (thickness - 80) * contrast );
 			return coords;
 		};
 	})
@@ -173,42 +153,6 @@ angular.module('prototypoApp', [
 		return function ( position, end, endDefault, start, startDefault ) {
 			return start + ( end - start ) * ( position - startDefault) / ( endDefault - startDefault ) ;
 			// example: {{ 250 |between:self[3].x:400:self[1].x:100 }}
-		};
-	})
-
-	.filter( 'rotateControl', function () {
-		return function ( segment, index, angle ) {
-
-			var coords = segment.split(' ');
-			var delta = Math.sin( angle ) * coords[1];
-			// console.log(angle, coords[1], delta, +coords[index] + delta);
-			coords[index] = +coords[index] + delta * -1; // -1 ?
-			coords[index + 2] = coords[index + 2] - delta;
-
-			// coords[index + 4] = +coords[index + 4] + delta;
-
-			return coords.join();
-		};
-	})
-
-	.filter( 'rotateControl2', function () {
-		return function ( angle, correction ) {
-
-			angle > 0 ? - correction : correction;
-
-			angle = angle / 3.14 * 180 + correction;
-
-			return angle;
-		};
-	})
-
-	.filter( 'control', function () {
-		return function ( segment, index, angle, coefficient ) {
-
-			var coords = segment.split(' ');
-			coords[index] = +coords[index] + angle * coefficient;
-
-			return coords.join();
 		};
 	})
 

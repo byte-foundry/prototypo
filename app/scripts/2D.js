@@ -126,8 +126,8 @@ angular.module('prototypo.2D', [])
 		return function( coords, from, segment ) {
 			var start = segment.start,
 				end = segment.end,
-				c1 = segment.controls[0],
-				c2 = segment.controls[1],
+				c1 = segment.ctrl0,
+				c2 = segment.ctrl1,
 				tmp1 = Point(0,0),
 				tmp2 = Point(0,0),
 				tmp3 = Point(0,0),

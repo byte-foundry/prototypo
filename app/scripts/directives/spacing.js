@@ -7,10 +7,6 @@ angular.module('prototypo.spacingDirective', [])
 			templateUrl: 'views/spacing.html',
 			replace: true,
 			link: function postLink( $scope, $element ) {
-				
-
-				
-				
 			}
 
 		};

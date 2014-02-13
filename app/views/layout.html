@@ -19,15 +19,9 @@
 	<div class="cell scene-cell">
 		<string ng-show="appValues.viewMode === 'string' " class="ng-hide"></string>
 		<single ng-show="appValues.viewMode === 'single' " class="ng-hide"></single>
-		<zoom></zoom>
-		<div id="switch">
-			<a class="switch text btn" ng-class="{active: appValues.viewMode === 'string'}" ng-click="changeViewMode( 'string' )"></a>
-			<a class="switch glyph btn" ng-class="{active: appValues.viewMode === 'single'}" ng-click="changeViewMode( 'single' )"></a>
-		</div>
-		<div class="glyphlist-cell">
+		<scene-buttons></scene-buttons>
 		<glyphlist></glyphlist>
 	</div>
-	</div>
-	
+
 	<menu></menu>
 </div>

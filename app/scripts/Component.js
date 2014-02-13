@@ -138,18 +138,18 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 					// the rendered points need to be different from the actual ones
 					if (
 						typeof from !== 'string' ||
-						// this should also be the case for the an inverted subcomponent (only on from segment)
+						// this should also be the case for an inverted subcomponent (only on from segment)
 						subcomponent.inverted
 					) {
 						fromSeg.$render.end = Point( fromSeg.end );
-						if ( fromSeg.controls[1] ) {
-							fromSeg.$render.controls[1] = Point( fromSeg.controls[1] );
+						if ( fromSeg.ctrl1 ) {
+							fromSeg.$render.ctrl1 = Point( fromSeg.ctrl1 );
 						}
 					}
 					if ( typeof to !== 'string' ) {
 						toSeg.$render.start = Point( toSeg.start );
-						if ( toSeg.controls[0] ) {
-							toSeg.$render.controls[0] = Point( toSeg.controls[0] );
+						if ( toSeg.ctrl0 ) {
+							toSeg.$render.ctrl0 = Point( toSeg.ctrl0 );
 						}
 					}
 
@@ -313,7 +313,7 @@ angular.module('prototypo.Component', ['prototypo.Segment', 'prototypo.Point', '
 					),
 					[
 						subcomponent.firstSegment.start && subcomponent.firstSegment.start,
-						subcomponent.firstSegment.controls && subcomponent.firstSegment.controls[0],
+						subcomponent.firstSegment.ctrl0,
 					]
 				);
 			}

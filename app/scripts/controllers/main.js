@@ -19,7 +19,8 @@ angular.module('prototypoApp')
 		// app values
 		var initialAppValues = {
 			viewMode: 'single',
-			showNodes: false,
+			displayNodes: false,
+			outlineOnly: false,
 			paramTab: 0,
 			zoom: 1.5,
 			scenePanX: -120,
@@ -95,7 +96,7 @@ angular.module('prototypoApp')
 				}
 
 				// keep calculated params updated
-				$scope.$watch('fontValues',	updateCalculatedParams,	true);
+				$scope.$watchCollection( 'fontValues', updateCalculatedParams );
 
 				$.extend( $scope.typeface, data );
 
@@ -111,14 +112,13 @@ angular.module('prototypoApp')
 				/*
 				 * 2.1 Font values
 				 */
-				$scope.$watch('fontValues', function() {
+				$scope.$watchCollection('fontValues', function() {
 					// persist changes
 					FontValues.save({
 						typeface: $routeParams.typeface,
 						values: $scope.fontValues
 					});
-				// deep watch
-				}, true);
+				});
 
 				$scope.resetFontValues = function() {
 					$scope.typeface.parameters.forEach(function( group ) {
@@ -151,13 +151,13 @@ angular.module('prototypoApp')
 				/*
 				 * 2.2 App values
 				 */
-				$scope.$watch('appValues', function() {
+				$scope.$watchCollection('appValues', function() {
 					// persist changes
 					AppValues.save({
 						typeface: $routeParams.typeface,
 						values: $scope.appValues
 					});
-				}, true);
+				});
 
 				$scope.resetAppValues = function() {
 					$scope.appValues = $.extend($scope.appValues, initialAppValues);
@@ -197,7 +197,7 @@ angular.module('prototypoApp')
 			 */
 			.then(function() {
 				var timeout;
-				$scope.$watch('fontValues', function() {
+				$scope.$watchCollection('fontValues', function() {
 					// debounced full read
 					clearTimeout( timeout );
 					timeout = setTimeout(function() {
@@ -212,8 +212,7 @@ angular.module('prototypoApp')
 					for ( var char in $scope.allChars ) {
 						$scope.allGlyphs[char] = $scope.font.read( char, $scope.fontValues );
 					}
-				// deep
-				}, true);
+				});
 
 				$scope.$watch('appValues.stringChars + appValues.singleChar', function( string ) {
 					var chars = {};
