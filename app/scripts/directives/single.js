@@ -30,6 +30,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				});
 
 				var $transformed = $element.find('#transformed'),
+					$contextMenu = $element.find('#contextMenu'),
 					startX,
 					startY,
 					startPoint,
@@ -73,27 +74,48 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 				/* scene drag handler */
 				$element.on('pointerdown', function( e ) {
-					document.body.style.cursor = 'move';
-					startX = e.originalEvent.clientX - $scope.appValues.scenePanX;
-					startY = e.originalEvent.clientY - $scope.appValues.scenePanY;
-					draggingScene = true;
+					e = e || window.event;
+					if ( e.which != 3 ) {
+						document.body.style.cursor = 'move';
+						startX = e.originalEvent.clientX - $scope.appValues.scenePanX;
+						startY = e.originalEvent.clientY - $scope.appValues.scenePanY;
+						draggingScene = true;
+					}
+				});
+
+				$element.on('pointerdown', function( e ) {
+					e = e || window.event;
+					if ( e.which == 3 ) {
+						var posx = e.clientX +window.pageXOffset +'px';
+			            var posy = e.clientY + window.pageYOffset + 'px';
+			            contextMenu.style.position = 'absolute';
+			            contextMenu.style.display = 'block';
+			            contextMenu.style.left = posx;
+			            contextMenu.style.top = posy;
+					}
+					else {
+						contextMenu.style.display = 'none';
+					}
 				});
 
 				/* node drag handler */
 				$element.on('pointerdown', '.node', function( e ) {
-					document.body.style.cursor = 'move';
+					e = e || window.event;
+					if ( e.which != 3 ) {
+						document.body.style.cursor = 'move';
 
-					draggingNode =
-						$scope
-							.allGlyphs[ $scope.appValues.singleChar ]
-							.segments[ $(this).data('index') ]
-							.$render[ $(this).data('type') ];
+						draggingNode =
+							$scope
+								.allGlyphs[ $scope.appValues.singleChar ]
+								.segments[ $(this).data('index') ]
+								.$render[ $(this).data('type') ];
 
-					startX = e.originalEvent.clientX;
-					startY = e.originalEvent.clientY;
-					startPoint = Point( draggingNode );
+						startX = e.originalEvent.clientX;
+						startY = e.originalEvent.clientY;
+						startPoint = Point( draggingNode );
 
-					return false;
+						return false;
+					}
 				});
 
 
