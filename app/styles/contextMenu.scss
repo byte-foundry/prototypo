@@ -32,6 +32,15 @@
 				color: $white;
 				background-color: $green;
 			}
+			&.disable {
+				color: $green;
+				background-color: lighten($light-green, 15%);
+				cursor: default;
+				&:hover {
+					color: $green;
+					background-color: lighten($light-green, 15%);
+				}
+			}
 		}
 	}
 }

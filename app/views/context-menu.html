@@ -6,7 +6,7 @@
             class="display"
             >guidelines
         </li>
-        <li>Toggle colors</li>
+        <li class="disable">Toggle colors</li>
         <li 
             ng-click="appValues.displayGrid = !appValues.displayGrid"
             ng-class="{ 'active' : appValues.displayGrid }"
@@ -15,6 +15,7 @@
         </li>
         <li 
             ng-click="appValues.displayNodes = !appValues.displayNodes"
+            ng-class="{ 'active' : appValues.displayNodes }"
             class="display"
             >nodes
         </li>
