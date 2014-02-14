@@ -18,3 +18,31 @@ Z
 
 replace from self[9] at {{ {y: self[8].y + serifHeight + serifHeight * serifCurve} }} to self[8] at {{ {x: self[8].x + thickness * (77/80) } }} with inverted serif-bottom-left {{ { angle: 0 } }}
 replace from self[9] at {{ {y: self[9].y - serifHeight - serifHeight * serifCurve} }} to self[10] at {{ {x: self[9].x + thickness } }} with serif-top-left {{ { angle: 0 } }} transform {{ "rotate("+ -serifRotate +")" }}
+
+//
+//  Multiple components /b
+//
+//
+// M 	{{ thickness }} {{ ascenderHeight }}
+// L 	{{ self[1].x }} {{ xHeight * ( 50 / 565 ) + breakPath / 2 }}
+// L 	{{ self[2].x  * ( 77 / 80 ) }} 0 
+// L 	0 0 
+// L 	{{ self[4].x }} {{ ascenderHeight }}
+// L 	{{ self[1].x }} {{ self[1].y }}
+// Z
+// M 	{{ self[1].x - thickness * contrast / 5 }} {{ xHeight * ( 407 / 465 ) }}
+// C+ 	{{ roundness }} {{ 25 * width }} {{ - breakPath / 2 }} {{ self[8].x + ( self[10].x - self[8].x ) * (152/364) }} {{ xHeight + overshoot }}
+// C+ 	{{ roundness }} 0 0 {{ self[15].x + thickness }} {{ xHeight * ( 233 / 465 ) }}
+// C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[9].x }} {{ - overshoot }}
+// C+ 	{{ roundness }} 0 {{ -22 * width }} {{ self[1].x - thickness * contrast / 5 }} {{ self[2].y }}
+// L 	{{ self[12].x }} {{ self[12].y + thickness * contrast }}
+// C- 	{{ roundness }} {{ -22 * width }} 0 {{ self[13].x + ( self[15].x - self[13].x ) / 2 }} {{ self[11].y + thickness * contrast }}
+// C- 	{{ roundness }} 0 0 {{ 364 * width }} {{ self[10].y }}
+// C- 	{{ roundness }} 0 0 {{ self[14].x }} {{ self[9].y - thickness * contrast }}
+// C- 	{{ roundness }} 0 {{ 22 * width }} {{ self[8].x }} {{ self[8].y - thickness * contrast }}
+// L 	{{ self[8].x }} {{ self[8].y }}
+// Z
+
+
+// replace from self[5] at {{ {y: self[4].y + serifHeight + serifHeight * serifCurve} }} to self[4] at {{ {x: self[4].x + thickness * (77/80) } }} with inverted serif-bottom-left {{ { angle: 0 } }}
+// replace from self[5] at {{ {y: self[5].y - serifHeight - serifHeight * serifCurve} }} to self[6] at {{ {x: self[5].x + thickness } }} with serif-top-left {{ { angle: 0 } }} transform {{ "rotate("+ -serifRotate +")" }}
