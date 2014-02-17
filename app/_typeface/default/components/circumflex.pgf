@@ -1,9 +1,9 @@
 m 	{{ width * 138 }} {{ 75 }}
 L 	{{ self[3].x + thickness * (74/80) * contrast }} {{ self[1].y - 75 }}
-L 	{{ self[1].x - width * 138 - thickness +80 }} {{ self[2].y }}
-L 	{{ self[1].x - thickness * (43/80) * contrast }} {{ self[1].y + thickness * (56/80) }}
+L 	{{ self[1].x - width * 138 - thickness/2 + 40 - thickness/2 * contrast + 40 }} {{ self[2].y }}
+L 	{{ self[1].x - thickness * (43/80) * contrast }} {{ self[1].y + thickness * (56/80) * contrast }}
 L 	{{ self[1].x + thickness * (43/80) * contrast }} {{ self[4].y }}
-L 	{{ self[1].x + width * 138 + thickness -80 }} {{ self[2].y }}
+L 	{{ self[1].x + width * 138 + thickness/2 - 40 + thickness/2 * contrast - 40 }} {{ self[2].y }}
 L 	{{ self[6].x - thickness * (74/80) * contrast }} {{ self[2].y }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
