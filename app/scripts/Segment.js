@@ -338,7 +338,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 
 				segment.isSmooth = segment.command;
 
-				if ( segment.command === 'CH' ) {
+				if ( segment.command === 'CV' ) {
 					segment.ctrl0.x = segment.start.x;
 					segment.ctrl0.y = segment.start.y + dy;
 					c0length = Math.abs(dy);
@@ -511,13 +511,10 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 
 	.factory('transformSegment', function( transformPoint ) {
 		return function( segment, matrix, except ) {
-			if ( segment.start && ( except === undefined || except.indexOf( segment.start ) === -1 ) ) {
-				transformPoint( segment.start, matrix );
-			}
-			if ( segment.controls && segment.ctrl0 && ( except === undefined || except.indexOf( segment.ctrl0 ) === -1 ) ) {
+			if ( segment.ctrl0 && ( except === undefined || except.indexOf( segment.ctrl0 ) === -1 ) ) {
 				transformPoint( segment.ctrl0, matrix );
 			}
-			if ( segment.controls && segment.ctrl1 && ( except === undefined || except.indexOf( segment.ctrl1 ) === -1 ) ) {
+			if ( segment.ctrl1 && ( except === undefined || except.indexOf( segment.ctrl1 ) === -1 ) ) {
 				transformPoint( segment.ctrl1, matrix );
 			}
 			if ( segment.end && ( except === undefined || except.indexOf( segment.end ) === -1 ) ) {
