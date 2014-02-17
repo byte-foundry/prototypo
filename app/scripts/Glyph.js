@@ -35,9 +35,10 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 				return {
 					segments: this.segments,
 					svg: glyphToSVG( this ),
-					left: 0,
+					left: this.data.left,
 					// TODO: this formula shouldn't be hardcoded
-					advance: this.data.left + params.width * this.data.width + params.thickness + this.data.right
+					// 80 is the original value of thickness
+					advance: this.data.left + params.width * this.data.width + params.thickness - 80 +  this.data.right
 				};
 			},
 			process: function( full ) {
