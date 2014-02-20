@@ -35,12 +35,27 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 					startY,
 					startPoint,
 					draggingScene,
+					draggingLine,
+					lineId,
+					startLine,
 					draggingNode;
 
 				$(window).on('pointerup', function() {
-					draggingScene = false;
-					draggingNode = false;
+					draggingScene = undefined;
+					draggingNode = undefined;
+					draggingLine = undefined;
 					document.body.style.cursor = 'default';
+
+					/*if ( draggingLine ) {
+						$scope
+							.allGlyphs[ $scope.appValues.singleChar ]
+							[ lineId ] -= dx;
+
+						$scope.$digest();
+						document.getElementById("tempSpacing").style.borderWidth = '0px';
+						draggingLine = false;
+					}*/
+
 				});
 
 				$element.on('pointermove', function( e ) {
@@ -48,6 +63,26 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						throttle(function() {
 							$scope.appValues.scenePanX = e.originalEvent.clientX - startX;
 							$scope.appValues.scenePanY = e.originalEvent.clientY - startY;
+							$scope.$digest();
+						});
+						return false;
+					}
+
+					if ( draggingLine ) {
+						throttle(function() {
+							// map the dragged deltas to the scene coordinate system
+							var p = Point(
+									startX - e.originalEvent.clientX,
+									0
+								),
+								m = $transformed[0].getCTM().inverse();
+
+							p.transform( m );
+
+							$scope
+								.allGlyphs[ $scope.appValues.singleChar ]
+								[ draggingLine ] = startLine + p.x - m.e;
+
 							$scope.$digest();
 						});
 						return false;
@@ -74,7 +109,6 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 				/* scene drag handler */
 				$element.on('pointerdown', function( e ) {
-					e = e || window.event;
 					if ( e.which != 3 ) {
 						document.body.style.cursor = 'move';
 						startX = e.originalEvent.clientX - $scope.appValues.scenePanX;
@@ -84,7 +118,6 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				});
 
 				$element.on('pointerdown', function( e ) {
-					e = e || window.event;
 					if ( e.which == 3 ) {
 						var posx = e.clientX +window.pageXOffset +'px';
 			            var posy = e.clientY + window.pageYOffset + 'px';
@@ -100,7 +133,6 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 				/* node drag handler */
 				$element.on('pointerdown', '.node', function( e ) {
-					e = e || window.event;
 					if ( e.which != 3 ) {
 						document.body.style.cursor = 'move';
 
@@ -117,6 +149,25 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						return false;
 					}
 				});
+
+				/* spacing lines drag handler */
+				$element.on('pointerdown', '.spacingLine', function( e ) {
+					if ( e.which != 3 ) {
+						document.body.style.cursor = 'col-resize';
+
+						draggingLine = this.getAttribute('id');
+						startLine = $scope
+							.allGlyphs[ $scope.appValues.singleChar ]
+							[ draggingLine ];
+						startX = e.originalEvent.clientX;
+
+						//document.getElementById("tempSpacing").style.borderWidth = '1px';
+						//document.getElementById("tempSpacing").style.left = startX + 'px';
+
+						return false;
+					}
+				});
+
 
 
 				/* Set <svg> dimension during postLink */

@@ -11,3 +11,16 @@
 .ctrl-line {
 	stroke: $red;
 }
+
+#spacing {
+	opacity: 0.7;
+}
+
+.spacingLine {
+	cursor: col-resize;
+}
+
+.spacingLine:hover {
+	stroke-width: 10px;
+	transition: all 100ms linear;
+}
