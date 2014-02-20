@@ -1,0 +1,4 @@
+M 0 0
+Z
+add top-dot at {{ [ thickness , xHeight * (150/465) + thickness - 80] }}
+add bottom-dot at {{ [ thickness , 0] }}

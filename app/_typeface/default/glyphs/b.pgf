@@ -1,16 +1,16 @@
 M 	{{ thickness }} {{ ascenderHeight }}
 L 	{{ self[1].x }} {{ xHeight * ( 407 / 465 ) }}
-C+ 	{{ roundness }} {{ 25 * width }} {{ - breakPath / 2 }} {{ self[2].x + ( self[4].x - self[2].x ) * (152/364) }} {{ xHeight + overshoot }}
+C+ 	{{ roundness }} {{ 35 * width }} {{ - breakPath / 2 }} {{ self[2].x + ( self[4].x - self[2].x ) * (152/364) }} {{ xHeight + overshoot }}
 C+ 	{{ roundness }} 0 0 {{ self[12].x + thickness }} {{ xHeight * ( 233 / 465 ) }}
 C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[3].x }} {{ - overshoot }}
-C+ 	{{ roundness }} 0 {{ -22 * width }} {{ self[1].x }} {{ xHeight * ( 50 / 565 ) + breakPath / 2 }}
+C+ 	{{ roundness }} 0 {{ - 35 * width }} {{ self[1].x }} {{ xHeight * ( 60 / 565 ) + breakPath / 2 }}
 L 	{{ self[1].x * ( 77 / 80 ) }} 0
 L 	0 0 //// #TODO: fix arc
 L 	{{ self[8].x }} {{ ascenderHeight }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 M 	{{ 364 * width }} {{ self[4].y }}
-C- 	{{ roundness }} 0 {{ breakPath }} {{ self[14].x + ( self[16].x - self[14].x ) /2 }} {{ self[3].y - thickness * ( 71 / 80 ) * contrast }}
+C-	{{ roundness }} 0 {{ breakPath }} {{ self[14].x + ( self[16].x - self[14].x ) /2 }} {{ self[3].y - thickness * ( 71 / 80 ) * contrast }}
 C- 	{{ roundness }} 0 0 {{ self[8].x + thickness * ( 77 / 80 ) }} {{ self[12].y }}
 C- 	{{ roundness }} 0 {{ breakPath }} {{ self[13].x }} {{ self[5].y + thickness * ( 73 / 80 ) * contrast }}
 C- 	{{ roundness }} 0 0 {{ self[12].x }} {{ self[12].y }}
@@ -30,16 +30,16 @@ replace from self[9] at {{ {y: self[9].y - serifHeight - serifHeight * serifCurv
 // L 	{{ self[4].x }} {{ ascenderHeight }}
 // L 	{{ self[1].x }} {{ self[1].y }}
 // Z
-// M 	{{ self[1].x - thickness * contrast / 5 }} {{ xHeight * ( 407 / 465 ) }}
-// C+ 	{{ roundness }} {{ 25 * width }} {{ - breakPath / 2 }} {{ self[8].x + ( self[10].x - self[8].x ) * (152/364) }} {{ xHeight + overshoot }}
+// M 	{{ self[1].x - thickness * contrast }} {{ self[10].y + (107/465) * xHeight * aperture - thickness * contrast | min : self[10].y }}
+// C+ 	{{ roundness }} {{ 22 * width * aperture}} {{ - breakPath / 2 }} {{ self[8].x + ( self[10].x - self[8].x ) * (152/364) }} {{ xHeight + overshoot }}
 // C+ 	{{ roundness }} 0 0 {{ self[15].x + thickness }} {{ xHeight * ( 233 / 465 ) }}
 // C+ 	{{ roundness }} 0 {{ - breakPath / 2 }} {{ self[9].x }} {{ - overshoot }}
-// C+ 	{{ roundness }} 0 {{ -22 * width }} {{ self[1].x - thickness * contrast / 5 }} {{ self[2].y }}
-// L 	{{ self[12].x }} {{ self[12].y + thickness * contrast }}
-// C- 	{{ roundness }} {{ -22 * width }} 0 {{ self[13].x + ( self[15].x - self[13].x ) / 2 }} {{ self[11].y + thickness * contrast }}
+// C+ 	{{ roundness }} 0 {{ -22 * width * aperture }} {{ self[8].x }} {{ self[10].y - ((233-50)/465) * xHeight * aperture | min : xHeight * ( 50 / 565 ) }}
+// L 	{{ self[1].x }} {{ self[12].y }}
+// C- 	{{ roundness }} {{ -22 * width * aperture }} 0 {{ self[12].x + ( self[15].x - self[13].x ) /2 }} {{ self[11].y + thickness * contrast }}
 // C- 	{{ roundness }} 0 0 {{ 364 * width }} {{ self[10].y }}
-// C- 	{{ roundness }} 0 0 {{ self[14].x }} {{ self[9].y - thickness * contrast }}
-// C- 	{{ roundness }} 0 {{ 22 * width }} {{ self[8].x }} {{ self[8].y - thickness * contrast }}
+// C- 	{{ roundness }} 0 0 {{ self[14].x | min : self[1].x }} {{ self[9].y - thickness * contrast }}
+// C- 	{{ roundness }} 0 {{ 22 * width * aperture }} {{ self[1].x }} {{ self[8].y  }}
 // L 	{{ self[8].x }} {{ self[8].y }}
 // Z
 
