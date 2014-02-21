@@ -31,7 +31,7 @@
 			<g id="transformed" transform="skewX({{fontValues.slant}})">
 
 				<path glyph-contour="{{appValues.singleChar}}"
-					fill="{{ appValues.outlineOnly ? 'none' : '#3B3B3B' }}"
+					fill="{{ appValues.outlineOnly ? 'none' :appValues.negative ? '#ffffff' : '#3B3B3B' }}"
 					stroke="{{ appValues.outlineOnly ? '#888888' : 'none' }}"
 					vector-effect="non-scaling-stroke"
 				></path>

@@ -21,6 +21,7 @@ angular.module('prototypoApp')
 			viewMode: 'single',
 			displayNodes: false,
 			outlineOnly: false,
+			negative: false,
 			displayGrid: true,
 			displayGuideLines: true,
 			displaySpacing: false,

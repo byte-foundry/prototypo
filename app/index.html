@@ -29,7 +29,7 @@
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 		<![endif]-->
 
-		<div class="main row" ng-view></div>
+		<div class="main row" ng-view ng-class="{ negative : appValues.negative }"></div>
 
 		<!-- build:js scripts/scripts.js -->
 		<!-- we use a patched jQuery, and should do a custom build as well -->

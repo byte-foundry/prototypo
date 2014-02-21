@@ -1,12 +1,15 @@
 <div class="contextMenu" id="contextMenu">
     <ul>
+         <li 
+            ng-click="appValues.negative = !appValues.negative"
+            >Toggle colors
+        </li>
         <li 
             ng-click="appValues.displayGuideLines = !appValues.displayGuideLines"
             ng-class="{ 'active' : appValues.displayGuideLines }"
             class="display"
             >guidelines
         </li>
-        <li class="disable">Toggle colors</li>
         <li 
             ng-click="appValues.displayGrid = !appValues.displayGrid"
             ng-class="{ 'active' : appValues.displayGrid }"
