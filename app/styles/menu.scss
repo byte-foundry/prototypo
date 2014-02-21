@@ -40,19 +40,19 @@
 			color: #fff;
 		}
 
-		li.arrow:after { 
+		li.arrow:after {
 			content: '▶';
 			color: $light-green;
 			position: absolute;
 			right: 1em;
 			top: 40%;
 			font-size: .6em;
-		} 
+		}
 
 		ul.sub-level {
 			background-color: rgba($white, .95);
 			position: absolute;
-			z-index: 15;
+			z-index: 5;
 			display: none;
 			max-width: $sidebar-w;
 			top: 4rem;

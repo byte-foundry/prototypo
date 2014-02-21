@@ -3,11 +3,11 @@
 		<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 			viewBox="-800 -1400 10000 2200"
 		>
-			<g transform="matrix(1 0 0 -1 0 0) skewX({{fontValues.slant}})">
+			<g ng-attr-transform="matrix(1 0 0 -1 0 0) skewX({{ fontValues.slant || 0 }})">
 				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#ffd9da" d="M -20000 0 l 150000 0 Z" ></path>
 				<path ng-repeat="char in appValues.stringChars.split('') track by $index"
 					glyph-contour="{{char}}" fill="#3c3c3b"
-					transform="translate({{ getTranslate( $index, char ) }})"
+					ng-attr-transform="translate({{ getTranslate( $index, char ) }})"
 				></path>
 			</g>
 		</svg>

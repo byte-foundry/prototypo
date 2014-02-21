@@ -1,27 +1,31 @@
-<div class="sidebar col">
-	<div class="cell preview-cell">
-		<string></string>
-		<presets></presets>
-	</div>
-	<div class="cell stringinput-cell">
-		<div class="stringinput">
-			<input type="text" ng-model="appValues.stringChars" />
+<div class="row">
+	<div class="sidebar col">
+		<div class="cell preview-cell">
+			<string></string>
+			<presets></presets>
 		</div>
+		<div class="cell stringinput-cell">
+			<div class="stringinput">
+				<input type="text" ng-model="appValues.stringChars" />
+			</div>
+		</div>
+		<div class="cell parammenu-cell">
+			<parammenu></parammenu>
+		</div>
+		<div class="cell paramtabs-cell">
+			<paramtabs></paramtabs>
+		</div>
+	</div
+	><div class="central col">
+		<div class="cell scene-cell">
+			<string ng-show="appValues.viewMode === 'string' " class="ng-hide"></string>
+			<single ng-show="appValues.viewMode === 'single' " class="ng-hide"></single>
+			<scene-buttons></scene-buttons>
+			<glyphlist></glyphlist>
+		</div>
+		<menu></menu>
+		<context-menu></context-menu>
 	</div>
-	<div class="cell parammenu-cell">
-		<parammenu></parammenu>
-	</div>
-	<div class="cell paramtabs-cell">
-		<paramtabs></paramtabs>
-	</div>
-</div
-><div class="central col">
-	<div class="cell scene-cell">
-		<string ng-show="appValues.viewMode === 'string' " class="ng-hide"></string>
-		<single ng-show="appValues.viewMode === 'single' " class="ng-hide"></single>
-		<scene-buttons></scene-buttons>
-		<glyphlist></glyphlist>
-	</div>
-	<menu></menu>
-	<context-menu></context-menu>
 </div>
+
+<splash ng-show="appValues.showSplash" class="ng-hide"></splash>

@@ -1,0 +1,71 @@
+@import "variables";
+
+.splash-wrapper {
+	position: absolute;
+	z-index: 10;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+
+	text-align: center;
+	background-color: rgba(0,0,0,0.6);
+
+	// vertically centered trick
+	&:before {
+		content: '';
+		display: inline-block;
+		height: 100%;
+		vertical-align: middle;
+	}
+}
+
+.splash {
+	vertical-align: middle;
+	position: relative;
+	display: inline-block;
+	width: 600px;
+	height: 400px;
+	padding: 30px;
+
+	text-align: left;
+	color: white;
+	font-family: "Helvetica", "Arial", "Liberation Sans", sans-serif;
+
+	background-color: $green;
+
+	.close {
+		vertical-align: top;
+		position: absolute;
+		top: 2px;
+		right: 5px;
+		display: block;
+		width: 28px;
+		height: 27px;
+
+		font-size: 2.5em;
+		line-height: 1;
+		text-decoration: none;
+		text-align: center;
+
+		cursor: pointer;
+	}
+
+	h3,
+	h4 {
+		color: $dark-grey;
+	}
+
+	ul {
+		padding-left: 0;
+	}
+
+	li {
+		line-height: 1.6;
+	}
+
+	a {
+		text-decoration: underline;
+		font-weight: bold;
+	}
+}

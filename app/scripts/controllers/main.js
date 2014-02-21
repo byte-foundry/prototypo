@@ -18,6 +18,7 @@ angular.module('prototypoApp')
 		$scope.fontValues = {};
 		// app values
 		var initialAppValues = {
+			showSplash: true,
 			viewMode: 'single',
 			displayNodes: false,
 			outlineOnly: false,

@@ -22,14 +22,15 @@
 		<link rel="stylesheet" href="styles/presets.css">
 		<link rel="stylesheet" href="styles/single.css">
 		<link rel="stylesheet" href="styles/contextMenu.css">
+		<link rel="stylesheet" href="styles/splash.css">
 		<!-- endbuild -->
 	</head>
-	<body style="overflow: hidden;" ng-app="prototypoApp" oncontextmenu="return false">
+	<body style="overflow: hidden;" ng-app="prototypoApp">
 		<!--[if lt IE 9]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 		<![endif]-->
 
-		<div class="main row" ng-view></div>
+		<div class="main" ng-view></div>
 
 		<!-- build:js scripts/scripts.js -->
 		<!-- we use a patched jQuery, and should do a custom build as well -->
@@ -70,6 +71,7 @@
 		<script src="scripts/directives/spacing.js"></script>
 		<script src="scripts/directives/presets.js"></script>
 		<script src="scripts/directives/contextMenu.js"></script>
+		<script src="scripts/directives/splash.js"></script>
 
 		<script src="scripts/templates/dotsvg.js"></script>
 
@@ -83,16 +85,23 @@
 		<!-- endbuild -->
 
 		<script>
+			/* jshint ignore:start */
 			// HANDJS shouldn't process the css
 			HANDJS.doNotProcessCSS = true;
-		</script>
-
-		<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-		<script>
+			// google analytics
 			var _gaq=[['_setAccount','UA-41962243-3'],['_trackPageview']];
 			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
 			g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
 			s.parentNode.insertBefore(g,s)}(document,'script'));
+			// user report
+			var _urq = _urq || [];
+			_urq.push(['initSite', 'b638bdce-9b2b-4a8f-9508-835a37af64a9']);
+			(function() {
+			var ur = document.createElement('script'); ur.type = 'text/javascript'; ur.async = true;
+			ur.src = ('https:' == document.location.protocol ? 'https://cdn.userreport.com/userreport.js' : 'http://cdn.userreport.com/userreport.js');
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ur, s);
+			})();
+			/* jshint ignore:end */
 		</script>
 	</body>
 </html>

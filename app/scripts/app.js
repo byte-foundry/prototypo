@@ -28,7 +28,8 @@ angular.module('prototypoApp', [
 		'prototypo.menuDirective',
 		'prototypo.spacingDirective',
 		'prototypo.presetsDirective',
-		'prototypo.contextMenuDirective'
+		'prototypo.contextMenuDirective',
+		'prototypo.splashDirective'
 	])
 
 	.config(function ( $routeProvider ) {

@@ -3,9 +3,24 @@
 html,
 body,
 .main,
-.main > div {
+.main > .row,
+.main > .row > .col {
 	height: 100%;
 }
+
+/* table layout */
+.row {
+	display: table;
+	table-layout: fixed;
+	width: 100%;
+}
+.row > *,
+.col {
+	display: table-cell;
+	vertical-align: top;
+}
+
+/* vertical cells */
 
 .cell {
 	position: relative;

@@ -15,28 +15,28 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 				// reset scene zoom and position on double-tap
 				var counter = 0;
-				$element.on('pointerdown', function( e ) {
+				$element.on('pointerdown', function() {
 					setTimeout( function() {
 						counter = 0;
 					}, 200 );
-					counter++
-					if(counter == 2) {
+					counter++;
+
+					if ( counter === 2 ) {
 						$scope.appValues.zoom = 1.5;
 						$scope.appValues.scenePanX = -120;
 						$scope.appValues.scenePanY = 0;
+
 						$scope.$digest();
 						return false;
 					}
 				});
 
 				var $transformed = $element.find('#transformed'),
-					$contextMenu = $element.find('#contextMenu'),
 					startX,
 					startY,
 					startPoint,
 					draggingScene,
 					draggingLine,
-					lineId,
 					startLine,
 					draggingNode;
 
@@ -109,7 +109,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 				/* scene drag handler */
 				$element.on('pointerdown', function( e ) {
-					if ( e.which != 3 ) {
+					if ( e.which !== 3 ) {
 						document.body.style.cursor = 'move';
 						startX = e.originalEvent.clientX - $scope.appValues.scenePanX;
 						startY = e.originalEvent.clientY - $scope.appValues.scenePanY;
@@ -118,22 +118,25 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				});
 
 				$element.on('pointerdown', function( e ) {
-					if ( e.which == 3 ) {
-						var posx = e.clientX +window.pageXOffset +'px';
-			            var posy = e.clientY + window.pageYOffset + 'px';
-			            contextMenu.style.position = 'absolute';
-			            contextMenu.style.display = 'block';
-			            contextMenu.style.left = posx;
-			            contextMenu.style.top = posy;
+					if ( e.which === 3 ) {
+						$('#contextmenu').css({
+							display: 'block',
+							left: e.clientX + window.pageXOffset + 'px',
+							top: e.clientY + window.pageYOffset + 'px'
+						});
+
+					} else {
+						$('#contextmenu').css( 'display', 'none' );
 					}
-					else {
-						contextMenu.style.display = 'none';
-					}
+
+				// prevent defautlt context-menu
+				}).parent().parent().on('contextmenu', function() {
+					return false;
 				});
 
 				/* node drag handler */
 				$element.on('pointerdown', '.node', function( e ) {
-					if ( e.which != 3 ) {
+					if ( e.which !== 3 ) {
 						document.body.style.cursor = 'move';
 
 						draggingNode =
@@ -152,7 +155,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 				/* spacing lines drag handler */
 				$element.on('pointerdown', '.spacingLine', function( e ) {
-					if ( e.which != 3 ) {
+					if ( e.which !== 3 ) {
 						document.body.style.cursor = 'col-resize';
 
 						draggingLine = this.getAttribute('id');

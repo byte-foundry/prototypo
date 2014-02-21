@@ -1,11 +1,14 @@
 @import "variables";
 
-.contextMenu {
+.contextmenu {
 	display: none;
+	position: absolute;
+
 	ul {
 		background-color: lighten($light-green, 5%);
 		padding: 0;
 		border-top: 2rem solid darken($green, 10%);
+
 		li {
 			list-style: none;
 			padding: 1rem 6rem 1rem 2rem;
