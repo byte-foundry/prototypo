@@ -36,7 +36,7 @@ $ bower install
 Install latest version of Angular
 
 ```bash
-$ cd app/components/angular-latest && npm install
+$ cd app/bower_components/angular-latest && npm install
 ```
 
 Finally build latest version of Angular
