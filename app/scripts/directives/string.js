@@ -15,8 +15,8 @@ angular.module('prototypo.stringDirective', [])
 					if ( $scope.allGlyphs[char] ) {
 						translations[$index +1] =
 							$scope.allGlyphs[char].left +
-							$scope.allGlyphs[char].advance +
-							// $scope.allGlyphs[char].right +
+							$scope.allGlyphs[char].advance -
+							$scope.allGlyphs[char].right +
 							translations[$index];
 
 						return Math.round(

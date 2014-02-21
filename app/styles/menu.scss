@@ -82,3 +82,9 @@
 		&:hover { background-color: transparent !important; }
 	}
 }
+
+.negative {
+	.menu {
+		background-color: rgba($white, 1);
+	}
+}

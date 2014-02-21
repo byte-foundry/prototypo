@@ -22,6 +22,7 @@ angular.module('prototypoApp')
 			viewMode: 'single',
 			displayNodes: false,
 			outlineOnly: false,
+			negative: false,
 			displayGrid: true,
 			displayGuideLines: true,
 			displaySpacing: false,
@@ -31,7 +32,7 @@ angular.module('prototypoApp')
 			scenePanY: 0,
 			stringChars: 'Hamburgfonstiv'
 		};
-		$scope.appValues = $.extend({}, initialAppValues);
+		$scope.appValues = {};
 		$scope.allChars = {};
 		$scope.allGlyphs = {};
 		$scope.allOutlines = {};
@@ -170,13 +171,11 @@ angular.module('prototypoApp')
 
 				promises.push( AppValues.get({ typeface: $routeParams.typeface })
 					.then(function( data ) {
-						$scope.appValues = {};
-
 						if ( data === undefined || !( data.singleChar in $scope.typeface.order ) ) {
 							$scope.resetAppValues();
 
 						} else {
-							$.extend( $scope.appValues, data );
+							$.extend( $scope.appValues, initialAppValues, data );
 						}
 					}));
 

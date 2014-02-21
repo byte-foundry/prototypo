@@ -75,11 +75,11 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 			if ( glyph.component.name != 'sample') {
 				/*console.log(
 					glyph.component.name
-					+ ' > ' + 
-					glyph.data.left, 
-					leftestPoint, 
-					glyph.data.right, 
-					rightestPoint 
+					+ ' > ' +
+					glyph.data.left,
+					leftestPoint,
+					glyph.data.right,
+					rightestPoint
 				);*/
 			}
 			return svg;

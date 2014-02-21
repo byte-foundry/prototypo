@@ -27,14 +27,18 @@ a:visited {
 	background-color: $dark-grey;
 	box-shadow: 4px 0px 6px #aaa;
 }
+.negative .sidebar{
+	box-shadow: 2px 0px 5px #222
+}
 
 .scene {
 	position: relative;
 	height: 100%;
-	background-color: white;
 }
 
-
+.negative .central {
+	background-color: $black;
+}
 
 .stringinput input {
 	display: block;
@@ -53,8 +57,8 @@ a:visited {
 }
 
 /* To minimize blue selection when handle sliders */
-::selection { background: transparent; }
-::-moz-selection { background: transparent; }
+//::selection { background: transparent; }
+//::-moz-selection { background: transparent; }
 
 .btn {
 	cursor: pointer;

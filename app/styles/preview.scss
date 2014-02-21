@@ -9,3 +9,9 @@ $input-h: 3rem;
 		border-right: 1px solid $green;
 	}
 }
+
+.central .preview path:hover {
+	fill: lighten($dark-grey,15%);
+	transition: fill 0.15s ease-in, color 0.15s ease-in;
+	cursor: pointer;
+}
