@@ -1,0 +1,6 @@
+M 	0 {{ xHeight / 2 * crossbar - thickness / 2 * contrast + 40 }}
+l 	0 {{ thickness * (75/80) * contrast }}
+l 	{{ width * 600 }} 0
+l 	0 {{ - thickness * (75/80) * contrast }}
+L 	{{ self[1].x }} {{ self[1].y }}
+Z

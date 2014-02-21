@@ -29,7 +29,7 @@
     "time-grunt": "~0.2.1",
 
     "grunt-angular-templates": "~0.5.1",
-    "grunt-s3": "~0.2.0-alpha.3"
+    "grunt-s3": "git+https://github.com/pifantastic/grunt-s3.git#2ad0edc4aab2e57058de5c0e13ac414f0be1c54a"
   },
   "engines": {
     "node": ">=0.10.0"

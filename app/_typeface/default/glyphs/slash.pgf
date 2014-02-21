@@ -1,0 +1,6 @@
+M 	0 {{ - overshoot }}
+L 	140 {{ capHeight + overshoot }}
+l 	{{ thickness * opticThickness }} 0
+L 	{{ self[1].x + thickness * opticThickness }} {{ self[1].y }}
+L 	{{ self[1].x }} {{ self[1].y }}
+Z

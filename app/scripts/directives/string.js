@@ -16,6 +16,7 @@ angular.module('prototypo.stringDirective', [])
 						translations[$index +1] =
 							$scope.allGlyphs[char].left +
 							$scope.allGlyphs[char].advance +
+							// $scope.allGlyphs[char].right +
 							translations[$index];
 
 						return Math.round(
@@ -41,6 +42,24 @@ angular.module('prototypo.stringDirective', [])
 					.css('display', 'block');
 
 				$element[0].style.setProperty('display', '');
+
+				// go to glyph on double-tap
+				var counter = 0;
+				$element.on('pointerdown', 'path', function( e ) {
+					var id = e.target.getAttribute('glyph-contour');
+					setTimeout( function() {
+						counter = 0;
+					}, 200 );
+					counter++
+					if(counter == 2) {
+						$scope.appValues.viewMode = 'single';
+						$scope.appValues.singleChar = id;
+						$scope.$digest();
+						return false;
+					}
+				});
+
+
 			}
 		};
 	});

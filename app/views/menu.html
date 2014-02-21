@@ -45,12 +45,12 @@
 		<li>
 			View
 			<ul class="sub-level level-2">
-				<li id="ui-guidelines">Toggle guidelines</li>
-				<li>Toggle colors</li>
-				<li id="ui-grid">Toggle grid</li>
-				<li ng-click="appValues.displayNodes = !appValues.displayNodes">Toggle nodes</li>
-				<li ng-click="appValues.outlineOnly = !appValues.outlineOnly">Toggle outline</li>
-				<li id="ui-spacing">Toggle spacing</li>
+				<li ng-click="appValues.displayGuideLines = !appValues.displayGuideLines">Toggle guidelines</li>
+		        <li>Toggle colors</li>
+		        <li ng-click="appValues.displayGrid = !appValues.displayGrid">Toggle grid</li>
+		        <li ng-click="appValues.displayNodes = !appValues.displayNodes">Toggle nodes</li>
+		        <li ng-click="appValues.outlineOnly = !appValues.outlineOnly">Toggle outline</li>
+		        <li ng-click="appValues.displaySpacing = !appValues.displaySpacing">Toggle spacing</li>
 			</ul>
 		</li>
 		<li>
@@ -59,6 +59,7 @@
 				<li class="disable">Documentation</li>
 				<li class="disable">Forum</li>
 				<li><a href="https://github.com/byte-foundry/prototypo/issues?state=open" target="_blank">Bug tracker</a></li>
+				<li onclick="localStorage.clear();window.location.reload();">Reset App</li>
 			</ul>
 		</li>
 	</ul>

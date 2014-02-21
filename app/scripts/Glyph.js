@@ -35,9 +35,12 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 				return {
 					segments: this.segments,
 					svg: glyphToSVG( this ),
-					left: 0,
+					left: this.data.left,
+					right: this.data.right,
 					// TODO: this formula shouldn't be hardcoded
-					advance: this.data.left + params.width * this.data.width + params.thickness + this.data.right
+					// 80 is the original value of thickness
+					advance: this.data.left + params.width * this.data.width + params.thickness - 80 + this.data.right
+					// advance: this.data.left + this.leftestPoint + this.rightestPoint + this.data.right
 				};
 			},
 			process: function( full ) {
@@ -58,9 +61,28 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 
 	.factory('glyphToSVG', function() {
 		return function( glyph ) {
-			return glyph.segments.map(function( segment ) {
+			var bounding = [];
+			var svg =  glyph.segments.map(function( segment ) {
+				if ( glyph.component.name != 'sample') {
+					bounding.push( segment.$render.end.x ) ;
+				}
 				return segment.toSVG();
 			}).join('\n');
+			var rightestPoint = Math.max.apply( null, bounding );
+			glyph.rightestPoint = rightestPoint;
+			var leftestPoint = Math.min.apply( null, bounding );
+			glyph.leftestPoint = - leftestPoint;
+			if ( glyph.component.name != 'sample') {
+				console.log(
+					glyph.component.name
+					+ ' > ' + 
+					glyph.data.left, 
+					leftestPoint, 
+					glyph.data.right, 
+					rightestPoint 
+				);
+			}
+			return svg;
 		};
 	})
 

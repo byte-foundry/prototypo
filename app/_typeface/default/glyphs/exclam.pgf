@@ -1,0 +1,7 @@
+M 	0 {{ ascenderHeight + serifRotate }}
+L 	{{ self[1].x + thickness }} {{ ascenderHeight }}
+L 	{{ self[2].x / 2 + thickness * contrast / 2 }} {{ capHeight * (70/698) + thickness }}
+L	{{ self[2].x / 2 - thickness * contrast / 2 }} {{ self[3].y }}
+L 	{{ self[1].x }} {{ self[1].y }}
+Z
+add bottom-dot at {{ [ self[1].x + ( self[2].x - self[1].x ) / 2 , -overshoot] }}

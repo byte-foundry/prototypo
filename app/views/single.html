@@ -15,17 +15,17 @@
 		</defs>
 
 		<g transform="translate({{appValues.scenePanX / viewboxScale }}, {{appValues.scenePanY / viewboxScale }}) scale({{appValues.zoom}}) matrix(1 0 0 -1 0 0)">
-			<rect x="-20000" y="-20000" width="40000" height="40000" fill="url(#grid)" style="pointer-events:none;"></rect>
+			<rect ng-show="appValues.displayGrid" class="ng-hide" x="-20000" y="-20000" width="40000" height="40000" fill="url(#grid)" style="pointer-events:none;"></rect>
 
-			<g id="guidelines" style="pointer-events:none;">
-				<path title="test" vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#ff9cb6" d="M -20000 0 l 40000 0 Z" ></path>
-				<path vector-effect="non-scaling-stroke" stroke-width="1px" opacity=".6" fill="#f9e8ef" stroke="#ffd5e0" d="M -20000 {{ - fontValues.overshoot }} l 40000 0 l 0 {{ fontValues.overshoot }} l -40000 0 Z" ></path>
-				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#96d2ea" d="M -20000 {{ fontValues.xHeight }} l 40000 0 Z" ></path>
-				<path vector-effect="non-scaling-stroke" stroke-width="1px" opacity=".6" fill="#e1f1f9" stroke="#d2e9f7" d="M -20000 {{ fontValues.xHeight + fontValues.overshoot }} l 40000 0 l 0 {{ - fontValues.overshoot }} l -40000 0 Z" ></path>
-				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#dadada" d="M -20000 {{ fontValues.capHeight }} l 40000 0 Z" ></path>
-				<path vector-effect="non-scaling-stroke" stroke-width="1px" opacity=".6" fill="#fefefe" stroke="#e9e9e9" d="M -20000 {{ fontValues.capHeight + fontValues.overshoot}} l 40000 0 l 0 {{ - fontValues.overshoot }} l -40000 0 Z" ></path>
-				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#dadada" d="M -20000 {{ fontValues.ascenderHeight }} l 40000 0 Z" ></path>
-				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#dadada" d="M -20000 {{ fontValues.descender }} l 40000 0 Z" ></path>
+			<g id="guidelines" style="pointer-events:none;" ng-show="appValues.displayGuideLines" class="ng-hide">
+				<path title="test" vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#ff9cb6" ng-attr-d="M -20000 0 l 40000 0 Z" ></path>
+				<path vector-effect="non-scaling-stroke" stroke-width="1px" opacity=".6" fill="#f9e8ef" stroke="#ffd5e0" ng-attr-d="M -20000 {{ - fontValues.overshoot || 0 }} l 40000 0 l 0 {{ fontValues.overshoot || 0 }} l -40000 0 Z" ></path>
+				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#96d2ea" ng-attr-d="M -20000 {{ fontValues.xHeight || 0 }} l 40000 0 Z" ></path>
+				<path vector-effect="non-scaling-stroke" stroke-width="1px" opacity=".6" fill="#e1f1f9" stroke="#d2e9f7" ng-attr-d="M -20000 {{ fontValues.xHeight + fontValues.overshoot || 0 }} l 40000 0 l 0 {{ - fontValues.overshoot || 0 }} l -40000 0 Z" ></path>
+				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#dadada" ng-attr-d="M -20000 {{ fontValues.capHeight || 0 }} l 40000 0 Z" ></path>
+				<path vector-effect="non-scaling-stroke" stroke-width="1px" opacity=".6" fill="#fefefe" stroke="#e9e9e9" ng-attr-d="M -20000 {{ fontValues.capHeight + fontValues.overshoot || 0 }} l 40000 0 l 0 {{ - fontValues.overshoot || 0 }} l -40000 0 Z" ></path>
+				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#dadada" ng-attr-d="M -20000 {{ fontValues.ascenderHeight || 0 }} l 40000 0 Z" ></path>
+				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#dadada" ng-attr-d="M -20000 {{ fontValues.descender || 0 }} l 40000 0 Z" ></path>
 			</g>
 
 			<g id="transformed" transform="skewX({{fontValues.slant}})">
@@ -36,11 +36,11 @@
 					vector-effect="non-scaling-stroke"
 				></path>
 
-				<g id="spacing">
-					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" d="M {{- allGlyphs[appValues.singleChar].left }} -20000 l 0 40000 l -40000 0 l 0 40000 Z" ></path>
-					<path class="spacingLine" vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="lightGreen" d="M {{- allGlyphs[appValues.singleChar].left }} -20000 l 0 40000 Z" ></path>
-					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" d="M {{ allGlyphs[appValues.singleChar].width + allGlyphs[appValues.singleChar].right }} -20000 l 0 40000 l 40000 0 l 0 -40000 Z" ></path>
-					<path class="spacingLine" vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="lightGreen" d="M {{ allGlyphs[appValues.singleChar].width + allGlyphs[appValues.singleChar].right }} -20000 l 0 40000 Z" ></path>
+				<g id="spacing" ng-show="appValues.displaySpacing" class="ng-hide">
+					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" ng-attr-d="M {{- allGlyphs[appValues.singleChar].left || 0 }} -20000 l 0 40000 l -40000 0 l 0 40000 Z" ></path>
+					<path class="spacingLine" id="left" vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="lightGreen" ng-attr-d="M {{- allGlyphs[appValues.singleChar].left || 0 }} -20000 l 0 40000 Z" ></path>
+					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" ng-attr-d="M {{ allGlyphs[appValues.singleChar].advance - allGlyphs[appValues.singleChar].right || 0 }} -20000 l 0 40000 l 40000 0 l 0 -40000 Z" ></path>
+					<path class="spacingLine" id="right" vector-effect="non-scaling-stroke" stroke-width="1px" fill="red" stroke="lightGreen" ng-attr-d="M {{ allGlyphs[appValues.singleChar].advance - allGlyphs[appValues.singleChar].right || 0 }} -20000 l 0 40000 Z" ></path>
 				</g>
 
 				<g class="nodes" ng-show="appValues.displayNodes" class="ng-hide">
@@ -50,36 +50,35 @@
 							bo-attr-data-index="$index"
 							class="node end"
 							data-type="end"
-							d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} m 0 3 h 3 v -6 h -6 v 6 z">
+							ng-attr-d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} m 0 3 h 3 v -6 h -6 v 6 z">
 						</path>
 						<path bo-if="segment.$render.ctrl0"
 							style="pointer-events: none;"
 							class="ctrl-line"
-							d="M {{ segment.$render.start.x }} {{ segment.$render.start.y }} L {{ segment.$render.ctrl0.x }} {{ segment.$render.ctrl0.y }} z">
+							ng-attr-d="M {{ segment.$render.start.x }} {{ segment.$render.start.y }} L {{ segment.$render.ctrl0.x }} {{ segment.$render.ctrl0.y }} z">
 						</path>
 						<path bo-if="segment.$render.ctrl1"
 							style="pointer-events: none;"
 							class="ctrl-line"
-							d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} L {{ segment.$render.ctrl1.x }} {{ segment.$render.ctrl1.y }} z">
+							ng-attr-d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} L {{ segment.$render.ctrl1.x }} {{ segment.$render.ctrl1.y }} z">
 						</path>
 						<path bindonce bo-if="segment.$render.ctrl0"
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node ctrl"
 							data-type="ctrl0"
-							d="M {{ segment.$render.ctrl0.x - 3 }} {{ segment.$render.ctrl0.y }} l 3 3 l 3 -3 l -3 -3 z">
+							ng-attr-d="M {{ segment.$render.ctrl0.x - 3 }} {{ segment.$render.ctrl0.y }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
 						<path bindonce bo-if="segment.$render.ctrl1"
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node ctrl"
 							data-type="ctrl1"
-							d="M {{ segment.$render.ctrl1.x - 3 }} {{ segment.$render.ctrl1.y }} l 3 3 l 3 -3 l -3 -3 z">
+							ng-attr-d="M {{ segment.$render.ctrl1.x - 3 }} {{ segment.$render.ctrl1.y }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
 					</g>
 				</g>
 			</g>
 		</g></g>
 	</svg>
-
 </div>

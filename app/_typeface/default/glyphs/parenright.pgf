@@ -1,0 +1,8 @@
+M 	{{ 180 }} {{ xHeight / 2 }}
+C- 	{{ roundness }} 0 {{ 60 * contrast }} {{ self[3].x + thickness * opticThickness * (80/88) * contrast }} {{ capHeight }}
+L 	{{ width * 100 - thickness }} {{ self[2].y }}
+C+ 	{{ roundness }} {{ 60 * contrast }} 0 {{ self[1].x - thickness * opticThickness }} {{ self[1].y }}
+C+ 	{{ roundness }} 0 {{ -60 * contrast }} {{ self[3].x }} {{ descender }}
+L 	{{ self[2].x }} {{ self[5].y }}
+C- 	{{ roundness }} {{ -60 * contrast }} 0 {{ self[1].x }} {{ self[1].y }}
+Z

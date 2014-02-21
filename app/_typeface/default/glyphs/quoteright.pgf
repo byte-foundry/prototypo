@@ -1,0 +1,9 @@
+M 	0 {{ capHeight }}
+l 	{{ thickness }} 0
+L 	{{ self[2].x }} {{ self[4].y - thickness | min : self[2].y - ( self[2].y - self[4].y ) / 2 }}
+L 	{{ self[1].x + thickness / 2 * contrast }} {{ self[1].y - thickness * 2 | min : xHeight }}
+L 	0 {{ self[4].y }}
+L 	{{ self[3].x - ( self[3].x - self[7].x ) / 2 * contrast }} {{ self[3].y }}
+L 	0 {{ self[6].y }}
+L 	{{ self[1].x }} {{ self[1].y }}
+Z

@@ -41,18 +41,6 @@ angular.module('prototypo.menuDirective', [])
 					$('ul.level-2', this).css('display', 'block');
 				});
 
-				$element.on('pointerdown', '#ui-guidelines', function() {
-					$('#guidelines *').fadeToggle();
-				});
-
-				$element.on('pointerdown', '#ui-grid', function() {
-					$('#grid *').fadeToggle();
-				});
-
-				$element.on('pointerdown', '#ui-spacing', function() {
-					$('.scene #spacing *').fadeToggle();
-				});
-
 				$('html').click(function() {
 					$('.menu ul.sub-level').css('display', 'none');
 					$('.menu ul.level-1 li').removeClass('active');

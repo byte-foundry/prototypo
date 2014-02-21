@@ -21,9 +21,10 @@
 		<link rel="stylesheet" href="styles/menu.css">
 		<link rel="stylesheet" href="styles/presets.css">
 		<link rel="stylesheet" href="styles/single.css">
+		<link rel="stylesheet" href="styles/contextMenu.css">
 		<!-- endbuild -->
 	</head>
-	<body style="overflow: hidden;" ng-app="prototypoApp">
+	<body style="overflow: hidden;" ng-app="prototypoApp" oncontextmenu="return false">
 		<!--[if lt IE 9]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 		<![endif]-->
@@ -68,6 +69,7 @@
 		<script src="scripts/directives/menu.js"></script>
 		<script src="scripts/directives/spacing.js"></script>
 		<script src="scripts/directives/presets.js"></script>
+		<script src="scripts/directives/contextMenu.js"></script>
 
 		<script src="scripts/templates/dotsvg.js"></script>
 
