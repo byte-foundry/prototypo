@@ -73,6 +73,7 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 			var leftestPoint = Math.min.apply( null, bounding );
 			glyph.leftestPoint = - leftestPoint;
 			if ( glyph.component.name != 'sample') {
+				/*
 				console.log(
 					glyph.component.name
 					+ ' > ' + 
@@ -81,6 +82,7 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 					glyph.data.right, 
 					rightestPoint 
 				);
+				*/
 			}
 			return svg;
 		};

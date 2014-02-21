@@ -13,7 +13,7 @@ L 	{{ self[1].x }} {{ self[11].y }}
 L 	{{ self[1].x }} {{ self[1].y }}
 Z
 
-replace from self[12] at {{ {x: self[12].x - serifHeight - serifHeight * serifCurve} }} to self[13] at {{ {y: self[12].y - thickness * (71/80) * contrast } }} with serif-bottom-right-vert {{ { angle: 0 , serifWidth:serifWidth * 0.7 } }}
+replace from self[12] at {{ {x: self[12].x - serifHeight - serifHeight * serifCurve} }} to self[13] at {{ {y: self[12].y - thickness * (71/80) * contrast } }} with serif-bottom-right-vert  {{ { angle: 0 , serifWidth:serifWidth * 0.7 } }} 
 
 replace from self[8] at {{ {x: self[8].x - serifHeight - serifHeight * serifCurve} }} to self[9] at {{ {y: self[8].y - thickness * (75/80) /2 * contrast } }} with serif-bottom-right-vert {{ { angle: 0 , serifWidth:serifWidth * 0.5 } }}
 replace from self[10] at {{ {x: self[9].x - serifHeight - serifHeight * serifCurve} }} to self[9] at {{ {y: self[8].y - thickness * (75/80) /2 * contrast } }} with inverted serif-top-right-vert {{ { angle: 0 , serifWidth:serifWidth * 0.5 } }}
