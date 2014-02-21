@@ -14,4 +14,5 @@ $input-h: 3rem;
 	fill: lighten($dark-grey,15%);
 	transition: fill 0.15s ease-in, color 0.15s ease-in;
 	cursor: pointer;
+	box-shadow: 2px 0px 5px #222
 }
