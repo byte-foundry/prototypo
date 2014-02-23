@@ -33,7 +33,7 @@ angular.module('prototypo.paramtabsDirective', [])
 
 				$element.on('pointerdown', '.paramctrl-gutter', function( e ) {
 					dragging = this.parentNode;
-					setValue( dragging, e.originalEvent.pageX );
+					setValue( dragging, e.pageX );
 				});
 
 				$(window).on('pointerup', function() {
@@ -44,7 +44,7 @@ angular.module('prototypo.paramtabsDirective', [])
 				$(window).on('pointermove', function( e ) {
 					if ( dragging ) {
 						throttle(function() {
-							setValue( dragging, e.originalEvent.pageX );
+							setValue( dragging, e.pageX );
 						});
 						return false;
 					}
