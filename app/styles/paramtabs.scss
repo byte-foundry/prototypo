@@ -59,12 +59,18 @@
 	margin-top: 1.4rem;
 	font-size: 1.2rem;
 	color: $lightest-grey;
+
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .paramctrl label {
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 	padding-left: .8em;
+
 	pointer-events: none;
 }
 

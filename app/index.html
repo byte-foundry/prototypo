@@ -28,7 +28,7 @@
 		<!-- endbuild -->
 
 	</head>
-	<body style="overflow: hidden;" ng-app="prototypoApp">
+	<body ng-app="prototypoApp">
 		<!--[if lt IE 9]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 		<![endif]-->
@@ -36,8 +36,9 @@
 		<div class="main" ng-view></div>
 
 		<!-- build:js scripts/scripts.js -->
-		<!-- we use a patched jQuery, and should do a custom build as well -->
-		<script src="libs/jquery.js"></script>
+		<script src="bower_components/jquery/dist/jquery.js"></script>
+		<script src="libs/jquery.wheel.js"></script>
+		<script src="libs/jquery.hand.js"></script>
 		<script src="libs/hand.js"></script>
 		<script src="libs/handlebars.runtime.js"></script>
 		<script src="bower_components/angular-latest/build/angular.js"></script>

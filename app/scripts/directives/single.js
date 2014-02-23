@@ -8,8 +8,10 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 			replace: true,
 			link: function( $scope, $element ) {
 				$element.on('wheel', function( e ) {
-					$scope.zoom( e.originalEvent.deltaY );
-					$scope.$digest();
+					throttle(function() {
+						$scope.zoom( e.deltaY );
+						$scope.$digest();
+					});
 					return false;
 				});
 
@@ -61,8 +63,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				$element.on('pointermove', function( e ) {
 					if ( draggingScene ) {
 						throttle(function() {
-							$scope.appValues.scenePanX = e.originalEvent.clientX - startX;
-							$scope.appValues.scenePanY = e.originalEvent.clientY - startY;
+							$scope.appValues.scenePanX = e.clientX - startX;
+							$scope.appValues.scenePanY = e.clientY - startY;
 							$scope.$digest();
 						});
 						return false;
@@ -72,7 +74,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						throttle(function() {
 							// map the dragged deltas to the scene coordinate system
 							var p = Point(
-									startX - e.originalEvent.clientX,
+									startX - e.clientX,
 									0
 								),
 								m = $transformed[0].getCTM().inverse();
@@ -92,8 +94,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						throttle(function() {
 							// map the dragged deltas to the scene coordinate system
 							var p = Point(
-									e.originalEvent.clientX - startX,
-									e.originalEvent.clientY - startY
+									e.clientX - startX,
+									e.clientY - startY
 								),
 								m = $transformed[0].getCTM().inverse();
 
@@ -111,8 +113,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				$element.on('pointerdown', function( e ) {
 					if ( e.which !== 3 ) {
 						document.body.style.cursor = 'move';
-						startX = e.originalEvent.clientX - $scope.appValues.scenePanX;
-						startY = e.originalEvent.clientY - $scope.appValues.scenePanY;
+						startX = e.clientX - $scope.appValues.scenePanX;
+						startY = e.clientY - $scope.appValues.scenePanY;
 						draggingScene = true;
 					}
 				});
@@ -145,8 +147,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 								.segments[ $(this).data('index') ]
 								.$render[ $(this).data('type') ];
 
-						startX = e.originalEvent.clientX;
-						startY = e.originalEvent.clientY;
+						startX = e.clientX;
+						startY = e.clientY;
 						startPoint = Point( draggingNode );
 
 						return false;
@@ -162,7 +164,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						startLine = $scope
 							.allGlyphs[ $scope.appValues.singleChar ]
 							[ draggingLine ];
-						startX = e.originalEvent.clientX;
+						startX = e.clientX;
 
 						//document.getElementById("tempSpacing").style.borderWidth = '1px';
 						//document.getElementById("tempSpacing").style.left = startX + 'px';

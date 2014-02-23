@@ -14,7 +14,7 @@ angular.module('prototypo.Utils', [])
 				if ( toExecute ) {
 					toExecute();
 				}
-				toExecute = null;
+				toExecute = undefined;
 			});
 		};
 	});

@@ -1,6 +1,8 @@
 @import "variables";
 
 body {
+	overflow: hidden;
+
 	font-family: "Liberation Mono", "Lucida Console", "Monaco", "courrier new", monospace;
 	color: #111;
 }

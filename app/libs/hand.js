@@ -499,7 +499,7 @@
             node = node.parentNode;
         }
     }
-    
+
     // Handling events on window to prevent unwanted super-bubbling
     // All mouse events are affected by touch fallback
     function applySimpleEventTunnels(nameGenerator, eventGenerator) {

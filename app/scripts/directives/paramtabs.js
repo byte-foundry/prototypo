@@ -53,7 +53,7 @@ angular.module('prototypo.paramtabsDirective', [])
 				// scroll handler
 				$element.on('wheel', '.toobig', function( e ) {
 					var $this = $(this),
-						scrollDown = e.originalEvent.deltaY > 0,
+						scrollDown = e.deltaY > 0,
 						scrollBy = scrollDown ? -20 : 20,
 						currentScroll = +$this.data('scroll'),
 						tabHeight = this.offsetHeight;

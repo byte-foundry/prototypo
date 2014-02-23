@@ -29,11 +29,11 @@ angular.module('prototypo.menuDirective', [])
 				});
 
 				$element.on('mouseover', 'li:has(> ul.level-3)', function() {
-						$('ul.level-3', this).css('display', 'block');
+					$('ul.level-3', this).css('display', 'block');
 				});
 
 				$element.on('mouseout', 'li:has(> ul.level-3)', function() {
-						$('ul.level-3', this).css('display', 'none');
+					$('ul.level-3', this).css('display', 'none');
 				});
 
 				$element.on('pointerdown', 'li:has(> ul)', function() {

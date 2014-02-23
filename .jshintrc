@@ -23,6 +23,7 @@
   "globals": {
     "angular": false,
     "_": false,
+    "jQuery" : false,
     "$": false,
     "Handlebars": false,
     "saveAs": false,

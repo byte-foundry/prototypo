@@ -11,6 +11,13 @@ angular.module('prototypo.parammenuDirective', [])
 				$element.on('click', 'li', function() {
 					$scope.appValues.paramTab = +$(this).data('index');
 					$scope.$digest();
+
+					// workaround IE bug
+					$('.paramtabs-cell')
+						.css('overflow', 'visible')
+						.css('height');
+					$('.paramtabs-cell')
+						.css('overflow', '');
 				});
 			}
 		};
