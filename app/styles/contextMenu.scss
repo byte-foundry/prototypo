@@ -35,7 +35,7 @@
 				color: $white;
 				background-color: $green;
 			}
-			&.disable {
+			&.disabled {
 				color: $green;
 				background-color: lighten($light-green, 15%);
 				cursor: default;
