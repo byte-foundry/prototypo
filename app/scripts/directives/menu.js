@@ -12,6 +12,14 @@ angular.module('prototypo.menuDirective', [])
 			replace: true,
 			link: function postLink( $scope, $element ) {
 
+				// prevent clicks on disabled items
+				$element[0].addEventListener('click', function( event ) {
+					if ( $( event.target ).is('li.disabled') ) {
+						event.stopPropagation();
+						event.preventDefault();
+					}
+				}, true);
+
 				$element.on('pointerdown', 'ul.level-1 li', function() {
 					$('.menu ul.level-1 li').removeClass('active');
 					$(this).addClass('active');

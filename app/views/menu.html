@@ -10,17 +10,17 @@
 			File
 			<ul class="sub-level level-2">
 				<li ng-click="resetFontValues()">New font</li>
-				<li class="disable">load font settings</li>
-				<li class="disable">Export fontface kit</li>
+				<li class="disabled">load font settings</li>
+				<li class="disabled">Export fontface kit</li>
 				<li ng-click="exportToSVG()">Export as svg font</li>
 			</ul>
 		</li>
 		<li>
 			Edit
 			<ul class="sub-level level-2">
-				<li class="disable">Modify current glyph template</li>
-				<li class="disable">item 2</li>
-				<li class="disable">item 3</li>
+				<li class="disabled">Modify current glyph template</li>
+				<li class="disabled">item 2</li>
+				<li class="disabled">item 3</li>
 			</ul>
 		</li>
 		<li>
@@ -38,8 +38,8 @@
 						</li>
 					</ul>
 				</li>
-				<li class="disable">New glyph</li>
-				<li class="disable">New component</li>
+				<li class="disabled">New glyph</li>
+				<li class="disabled">New component</li>
 			</ul>
 		</li>
 		<li>
@@ -47,16 +47,17 @@
 			<ul class="sub-level level-2">
 				<li ng-click="appValues.displayGuideLines = !appValues.displayGuideLines">Toggle guidelines</li>
 		        <li ng-click="appValues.negative = !appValues.negative">Toggle colors</li>
-		        <li ng-click="appValues.displayGrid = !appValues.displayGrid">Toggle grid</li>
-		        <li ng-click="appValues.displayNodes = !appValues.displayNodes">Toggle nodes</li>
-		        <li ng-click="appValues.outlineOnly = !appValues.outlineOnly">Toggle outline</li>
-		        <li ng-click="appValues.displaySpacing = !appValues.displaySpacing">Toggle spacing</li>
+		        <li ng-class=" { disabled: appValues.viewMode === 'string' } " ng-click="appValues.displayGrid = !appValues.displayGrid">Toggle grid</li>
+		        <li ng-class=" { disabled: appValues.viewMode === 'string' } " ng-click="appValues.displayNodes = !appValues.displayNodes">Toggle nodes</li>
+		        <li ng-class=" { disabled: appValues.viewMode === 'string' } " ng-click="appValues.outlineOnly = !appValues.outlineOnly">Toggle outline</li>
+		        <li ng-class=" { disabled: appValues.viewMode === 'string' } " ng-click="appValues.displaySpacing = !appValues.displaySpacing">Toggle spacing</li>
+		        <li ng-class=" { disabled: appValues.viewMode === 'single' } " ng-click="appValues.invertFont = !appValues.invertFont">Inverted view</li>
 			</ul>
 		</li>
 		<li>
 			Help
 			<ul class="sub-level level-2">
-				<li class="disable">Documentation</li>
+				<li class="disabled">Documentation</li>
 				<li><a href="https://github.com/byte-foundry/prototypo/issues?state=open" target="_blank">Bug tracker</a></li>
 				<li ng-click="appValues.showSplash = true">About the beta</li>
 				<li onclick="localStorage.clear();window.location.reload();">Reset App</li>

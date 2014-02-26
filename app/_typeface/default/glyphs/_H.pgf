@@ -28,5 +28,5 @@ replace from self[6] at {{ {y: self[6].y - serifHeight - serifHeight * serifCurv
 replace from self[8] at {{ {y: self[7].y - serifHeight - serifHeight * serifCurve} }} to self[7] at {{ {x: self[6].x + thickness * opticThickness /2 } }} with inverted serif-top-right {{ { angle: 0 } }}
 
 
-//replace from self[10] at {{ self[10].y }} to self[11] at {{ self[10].x }} with trap-top-right
-replace from self[11] at {{ { x: self[11].x } }} to self[12] at {{ { y: self[11].y } }} with trap-top-left
+// replace from self[10] at {{ self[10].y }} to self[11] at {{ self[10].x }} with trap-top-right
+// replace from self[11] at {{ { x: self[11].x } }} to self[12] at {{ { y: self[11].y } }} with trap-top-left

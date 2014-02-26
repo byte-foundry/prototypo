@@ -1,12 +1,12 @@
 M	0 {{ capHeight / 2 }}
 C+ 	{{ roundness }} 0 0 {{ self[1].x + ( self[3].x - self[1].x ) * (323/530) }} {{ capHeight + overshoot }}
-C+ 	{{ roundness }} 0 {{ -35 * width }} {{ self[6].x + width * (530-88) }} {{ self[2].y - 56 * aperture }}
+C+ 	{{ roundness }} 0 {{ -60 * width + aperture * 15 * width }} {{ self[6].x + width * (530-88) }} {{ self[2].y - 56 * aperture }}
 L 	{{ self[3].x - thickness * opticThickness * (40/88) * contrast }} {{ self[3].y - thickness * opticThickness * (70/88) * contrast |max:self[5].y  }}
-C- 	{{ roundness }} {{ -35 * width }} 0 {{ self[2].x }} {{ self[2].y - thickness * opticThickness * (80/88) * contrast }}
+C- 	{{ roundness }} {{ -60 * width + aperture * 15 * width }} 0 {{ self[2].x }} {{ self[2].y - thickness * opticThickness * (80/88) * contrast }}
 C- 	{{ roundness }} 0 0 {{ self[1].x + thickness * opticThickness }} {{ self[1].y }}
 C- 	{{ roundness }} 0 0 {{ self[2].x }} {{ self[10].y + thickness * opticThickness * (76/88) * contrast }}
-C- 	{{ roundness }} 0 {{ 35 * width }} {{ self[4].x }} {{ self[9].y + thickness * opticThickness * (70/88) * contrast }}
+C- 	{{ roundness }} 0 {{ 60 * width - aperture * 15 * width }} {{ self[4].x }} {{ self[9].y + thickness * opticThickness * (70/88) * contrast | min : self[7].y }}
 L 	{{ self[3].x }} {{ self[10].y + 56 * aperture }}
-C+ 	{{ roundness }} {{ 35 * width }} 0 {{ self[2].x }} {{ - overshoot }}
+C+ 	{{ roundness }} {{ 60 * width - aperture * 15 * width }} 0 {{ self[2].x }} {{ - overshoot }}
 C+	{{ roundness }} 0 0 {{ self[1].x }} {{ self[1].y }}
 Z

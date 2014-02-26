@@ -29,6 +29,7 @@ angular.module('prototypoApp', [
 		'prototypo.spacingDirective',
 		'prototypo.presetsDirective',
 		'prototypo.contextMenuDirective',
+		'prototypo.contextMenuStringDirective',
 		'prototypo.splashDirective'
 	])
 

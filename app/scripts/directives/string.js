@@ -28,6 +28,24 @@ angular.module('prototypo.stringDirective', [])
 					return 0;
 				};
 
+				// contextMenu
+				$element.on('pointerdown', function( e ) {
+					if ( e.which === 3 ) {
+						$('#contextmenuString').css({
+							display: 'block',
+							left: e.clientX + window.pageXOffset + 'px',
+							top: e.clientY + window.pageYOffset + 'px'
+						});
+
+					} else {
+						$('#contextmenuString').css( 'display', 'none' );
+					}
+
+				// prevent defautlt context-menu
+				}).parent().parent().on('contextmenu', function() {
+					return false;
+				});
+
 				// override 'display: none !important' set by .ng-hide
 				$element[0].style.setProperty('display', 'block', 'important');
 

@@ -1,0 +1,31 @@
+<div class="contextmenu" id="contextmenuString">
+	<ul>
+		<li
+			ng-click="appValues.negative = !appValues.negative"
+			>Toggle colors
+		</li>
+		<li
+			ng-click="appValues.displayGuideLines = !appValues.displayGuideLines"
+			ng-class="{ 'active' : appValues.displayGuideLines }"
+			class="display"
+			>guidelines
+		</li>
+		<li
+			ng-click="appValues.invertFont = !appValues.invertFont"
+			ng-class="{ 'active' : appValues.invertFont }"
+			>Inverted view
+		</li>
+		<li
+			ng-click=""
+			ng-class=""
+			class="disabled"
+			>Set spacing
+		</li>
+		<li
+			ng-click=""
+			ng-class=""
+			class="disabled"
+			>Set kerning
+		</li>
+	</ul>
+</div>
