@@ -45,12 +45,13 @@
 		<li>
 			View
 			<ul class="sub-level level-2">
-				<li ng-class=" { disabled: appValues.viewMode === 'string' } " ng-click="appValues.displayGuideLines = !appValues.displayGuideLines">Toggle guidelines</li>
-		        <li ng-class=" { disabled: appValues.viewMode === 'string' } " ng-click="appValues.negative = !appValues.negative">Toggle colors</li>
+				<li ng-click="appValues.displayGuideLines = !appValues.displayGuideLines">Toggle guidelines</li>
+		        <li ng-click="appValues.negative = !appValues.negative">Toggle colors</li>
 		        <li ng-class=" { disabled: appValues.viewMode === 'string' } " ng-click="appValues.displayGrid = !appValues.displayGrid">Toggle grid</li>
 		        <li ng-class=" { disabled: appValues.viewMode === 'string' } " ng-click="appValues.displayNodes = !appValues.displayNodes">Toggle nodes</li>
 		        <li ng-class=" { disabled: appValues.viewMode === 'string' } " ng-click="appValues.outlineOnly = !appValues.outlineOnly">Toggle outline</li>
 		        <li ng-class=" { disabled: appValues.viewMode === 'string' } " ng-click="appValues.displaySpacing = !appValues.displaySpacing">Toggle spacing</li>
+		        <li ng-class=" { disabled: appValues.viewMode === 'single' } " ng-click="appValues.invertFont = !appValues.invertFont">Inverted view</li>
 			</ul>
 		</li>
 		<li>

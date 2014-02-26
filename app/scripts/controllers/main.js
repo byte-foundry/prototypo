@@ -20,6 +20,7 @@ angular.module('prototypoApp')
 		var initialAppValues = {
 			showSplash: true,
 			viewMode: 'single',
+			invertedFont: false,
 			displayNodes: false,
 			outlineOnly: false,
 			negative: false,
