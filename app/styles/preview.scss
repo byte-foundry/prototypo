@@ -12,6 +12,9 @@ $input-h: 3rem;
 
 .sidebar {
 	.preview {
+		#string {
+			transform: scale(1,-1) !important; // overide inverted view in sidebar
+		}
 		path {
 			fill: $dark-grey !important; // overide negative view
 		}

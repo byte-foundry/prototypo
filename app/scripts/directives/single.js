@@ -119,6 +119,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 					}
 				});
 
+				// contextMenu
 				$element.on('pointerdown', function( e ) {
 					if ( e.which === 3 ) {
 						$('#contextmenu').css({
