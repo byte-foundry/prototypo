@@ -5,7 +5,7 @@
 		>
 			<g id="string" ng-attr-transform="scale( 1 , {{ appValues.invertFont ? 1 : -1 }} ) translate ( 0 , {{ appValues.invertFont ? 0 : -fontValues.capHeight || -800 }} ) skewX({{ fontValues.slant || 0 }}) ">
 
-				<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#ffd9da" d="M -20000 0 l 150000 0 Z" ></path>
+				<path class="baseLine" vector-effect="non-scaling-stroke" stroke-width="1px" fill="green" stroke="#ffd9da" d="M -20000 0 l 150000 0 Z" ></path>
 
 				<g id="guidelines" style="pointer-events:none;" ng-show="appValues.displayGuideLines" class="ng-hide">
 					<path vector-effect="non-scaling-stroke" stroke-width="1px" opacity=".6" fill="#f9e8ef" stroke="#ffd5e0" ng-attr-d="M -20000 {{ - fontValues.overshoot || 0 }} l 40000 0 l 0 {{ fontValues.overshoot || 0 }} l -40000 0 Z" ></path>

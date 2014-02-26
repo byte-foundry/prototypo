@@ -30,6 +30,9 @@ $input-h: 3rem;
 			background-color: transparent;
 			border-right: none;
 		}
+		path.baseLine {
+			display: none;
+		}
 		path:hover {
 			fill: lighten($dark-grey,15%);
 			transition: fill 0.15s ease-in, color 0.15s ease-in;
