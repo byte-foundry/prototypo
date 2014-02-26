@@ -23,28 +23,29 @@ angular.module('prototypo.paramtabsDirective', [])
 							value = ( translateX + rangeWidth ) / rangeWidth * ( max - min ) + min;
 
 						$scope.fontValues[ name ] = Math.round( Math.round( value / step ) * step * 100 ) / 100;
+
 						$scope.$digest();
 					},
-					dragging,
+					isDraggingParam,
+					draggedParam,
 					parentHeight = $element[0].offsetHeight;
 
 				$element.find('.paramtab.dummy').remove();
 				$element.data('rangeWidth', rangeWidth);
 
 				$element.on('pointerdown', '.paramctrl-gutter', function( e ) {
-					dragging = this.parentNode;
-					setValue( dragging, e.pageX );
+					isDraggingParam = true;
+					draggedParam = this.parentNode;
+					setValue( draggedParam, e.pageX );
 				});
 
 				$(window).on('pointerup', function() {
-					if ( dragging ) {
-						dragging = undefined;
-					}
+					isDraggingParam = undefined;
 				});
 				$(window).on('pointermove', function( e ) {
-					if ( dragging ) {
+					if ( isDraggingParam ) {
 						throttle(function() {
-							setValue( dragging, e.pageX );
+							setValue( draggedParam, e.pageX );
 						});
 						return false;
 					}

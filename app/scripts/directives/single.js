@@ -37,15 +37,17 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 					startX,
 					startY,
 					startPoint,
-					draggingScene,
-					draggingLine,
-					startLine,
-					draggingNode;
+					isDraggingScene,
+					isDraggingLine,
+					isDraggingNode,
+					draggedLine,
+					draggedNode,
+					startLine;
 
 				$(window).on('pointerup', function() {
-					draggingScene = undefined;
-					draggingNode = undefined;
-					draggingLine = undefined;
+					isDraggingScene = undefined;
+					isDraggingNode = undefined;
+					isDraggingLine = undefined;
 					document.body.style.cursor = 'default';
 
 					/*if ( draggingLine ) {
@@ -61,7 +63,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				});
 
 				$element.on('pointermove', function( e ) {
-					if ( draggingScene ) {
+					if ( isDraggingScene ) {
 						throttle(function() {
 							$scope.appValues.scenePanX = e.clientX - startX;
 							$scope.appValues.scenePanY = e.clientY - startY;
@@ -70,7 +72,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						return false;
 					}
 
-					if ( draggingLine ) {
+					if ( isDraggingLine ) {
 						throttle(function() {
 							// map the dragged deltas to the scene coordinate system
 							var p = Point(
@@ -83,14 +85,14 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 							$scope
 								.allGlyphs[ $scope.appValues.singleChar ]
-								[ draggingLine ] = startLine + p.x - m.e;
+								[ draggedLine ] = startLine + p.x - m.e;
 
 							$scope.$digest();
 						});
 						return false;
 					}
 
-					if ( draggingNode ) {
+					if ( isDraggingNode ) {
 						throttle(function() {
 							// map the dragged deltas to the scene coordinate system
 							var p = Point(
@@ -101,8 +103,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 							p.transform( m );
 
-							draggingNode.x = startPoint.x + p.x - m.e;
-							draggingNode.y = startPoint.y + p.y - m.f;
+							draggedNode.x = startPoint.x + p.x - m.e;
+							draggedNode.y = startPoint.y + p.y - m.f;
 
 							$scope.$digest();
 						});
@@ -115,7 +117,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						document.body.style.cursor = 'move';
 						startX = e.clientX - $scope.appValues.scenePanX;
 						startY = e.clientY - $scope.appValues.scenePanY;
-						draggingScene = true;
+
+						isDraggingScene = true;
 					}
 				});
 
@@ -141,7 +144,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 					if ( e.which !== 3 ) {
 						document.body.style.cursor = 'move';
 
-						draggingNode =
+						isDraggingNode = true;
+						draggedNode =
 							$scope
 								.allGlyphs[ $scope.appValues.singleChar ]
 								.segments[ $(this).data('index') ]
@@ -149,7 +153,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 						startX = e.clientX;
 						startY = e.clientY;
-						startPoint = Point( draggingNode );
+						startPoint = Point( draggedNode );
 
 						return false;
 					}
@@ -160,10 +164,11 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 					if ( e.which !== 3 ) {
 						document.body.style.cursor = 'col-resize';
 
-						draggingLine = this.getAttribute('id');
+						isDraggingLine = true;
+						draggedLine = this.getAttribute('id');
 						startLine = $scope
 							.allGlyphs[ $scope.appValues.singleChar ]
-							[ draggingLine ];
+							[ draggedLine ];
 						startX = e.clientX;
 
 						//document.getElementById("tempSpacing").style.borderWidth = '1px';
