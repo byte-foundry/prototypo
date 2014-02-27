@@ -64,20 +64,38 @@
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	&:hover .reset {
+		opacity: 1;
+		transition: opacity 500ms ease;
+	}
 }
 
 .paramctrl label {
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 	padding-left: .8em;
+	display: inline-block;
 
 	pointer-events: none;
 }
 
+.paramctrl .reset {
+	opacity: 0;
+	margin-left: 1rem;
+	display: inline-block;
+
+	cursor: pointer;
+	color: $medium-grey;
+	&:hover {
+		color: $red;
+	}
+}
+
 .paramctrl input {
 	display: inline-block;
-	float: right;
-	width: 5rem;
+	position: absolute;
+	right: .8em;
+	width: 4rem;
 
 	font-size: inherit;
 	text-align: right;

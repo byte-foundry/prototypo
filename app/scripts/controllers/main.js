@@ -31,7 +31,8 @@ angular.module('prototypoApp')
 			zoom: 1.5,
 			scenePanX: -120,
 			scenePanY: 0,
-			stringChars: 'Hamburgfonstiv'
+			stringChars: 'Hamburgfonstiv',
+			currentPreset: 'Sans-serif'
 		};
 		$scope.appValues = {};
 		$scope.allChars = {};
@@ -72,6 +73,7 @@ angular.module('prototypoApp')
 			// the svg path shouldn't be merged to fontValues and its no longer necessary
 			delete $scope.typeface.presets[name].svg;
 
+			$scope.appValues.currentPreset = name;
 			$.extend( $scope.fontValues, $scope.typeface.presets[name] );
 
 			$scope.$apply();
