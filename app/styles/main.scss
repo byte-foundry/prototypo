@@ -51,8 +51,8 @@ a:visited {
 	display: block;
 	height: 100%;
 	width: 100%;
-	padding: 1.8rem;
 	padding-left: 1.4rem;
+	-moz-box-sizing: border-box;
 
 	color: lighten($dark-grey, 15%);
 	font-size: 1.4rem;
@@ -73,7 +73,7 @@ a:visited {
 		content: "";
 
 		position: absolute;
-		left: 44px; // not hard value?
+		left: 40px; // not hard value?
 
 		display: block;
 		width: 0;
