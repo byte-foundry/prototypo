@@ -7,7 +7,6 @@ angular.module('prototypo.parampanelDirective', [])
 			templateUrl: 'views/parampanel.html',
 			replace: true,
 			link: function postLink( $scope, $element ) {
-				
 			}
 		};
 	});

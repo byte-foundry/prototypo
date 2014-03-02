@@ -1,30 +1,34 @@
 'use strict';
 
 angular.module('prototypo.Values', [])
-	.factory('valuesResource', function( $q ) {
+	.factory('valuesResource', function() {
+		// block hoodie synchronization for now
+		$.ajaxSetup({
+			beforeSend: function( xhr, opts ) {
+				return !!opts.url.indexOf('/_api/');
+			}
+		});
+
+		var hoodie = new Hoodie();
+
 		return function( prefix ) {
 			return {
 				get: function( params ) {
-					var deferred = $q.defer(),
-						storedValues = JSON.parse( localStorage[ prefix + 'Values[' + params.typeface + ']' ] || '{}' );
-
-					deferred.resolve( Object.keys( storedValues ).length !== 0 ?
-						storedValues:
-						undefined
-					);
-					return deferred.promise;
+					return hoodie.store.find( prefix + 'values', params.typeface )
+						.then(function( object ) {
+							return object.values;
+						});
 				},
+
 				save: function( params ) {
-					var deferred = $q.defer();
+					return hoodie.store.add( prefix + 'values', {
+							id: params.typeface,
+							values: params.values
+						});
+				},
 
-					if ( !params || !params.values || Object.keys( params.values ).length === 0 ) {
-						deferred.reject( false );
-						return deferred.promise;
-					}
-
-					localStorage[ prefix + 'Values[' + params.typeface + ']' ] = JSON.stringify( params.values );
-					deferred.resolve( true );
-					return deferred.promise;
+				clear: function() {
+					return hoodie.store.removeAll( prefix + 'values' );
 				}
 			};
 		};

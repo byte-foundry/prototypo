@@ -27,6 +27,7 @@
     "$": false,
     "Handlebars": false,
     "saveAs": false,
+    "Hoodie": false,
     "describe": false,
     "beforeEach": false,
     "it": false,

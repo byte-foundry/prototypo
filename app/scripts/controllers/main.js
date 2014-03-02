@@ -76,6 +76,10 @@ angular.module('prototypoApp')
 
 			$scope.$apply();
 		};
+		$scope.resetApp = function() {
+			localStorage.clear();
+			window.location.reload();
+		};
 
 		Typeface.get( $routeParams.typeface )
 			/*
@@ -136,15 +140,15 @@ angular.module('prototypoApp')
 				};
 
 				promises.push( FontValues.get({ typeface: $routeParams.typeface })
-					.then(function( data ) {
-
-						if ( data === undefined ) {
-							$scope.resetFontValues();
-
-						} else {
+					.then(
+						function done( data ) {
 							$.extend( $scope.fontValues, data );
+
+						}, function fail() {
+							$scope.resetFontValues();
 						}
 
+					).always(function() {
 						// we can prepare the font
 						$scope.font = Font( name, {
 							glyphData: typeface.order,
@@ -171,21 +175,24 @@ angular.module('prototypoApp')
 				};
 
 				promises.push( AppValues.get({ typeface: $routeParams.typeface })
-					.then(function( data ) {
-						if ( data === undefined || !( data.singleChar in $scope.typeface.order ) ) {
+					.then(
+						function done( data ) {
+							if ( !( data.singleChar in $scope.typeface.order ) ) {
+								$scope.resetAppValues();
+							} else {
+								$.extend( $scope.appValues, initialAppValues, data );
+							}
+						}, function fail() {
 							$scope.resetAppValues();
-
-						} else {
-							$.extend( $scope.appValues, initialAppValues, data );
 						}
-					}));
+					));
 
 				return $q.all( promises );
 			})
 			/*
 			 * 3. Draw presets
 			 */
-			.then(function() {
+			.finally(function() {
 				for ( var i in $scope.typeface.presets ) {
 					var glyph = Glyph( 'sample', {
 							data: { left: 0 },
@@ -199,7 +206,7 @@ angular.module('prototypoApp')
 			/*
 			 * 4. Watch font and app values to process the glyphs
 			 */
-			.then(function() {
+			.finally(function() {
 				var timeout;
 				$scope.$watchCollection('fontValues', function() {
 					// debounced full read
