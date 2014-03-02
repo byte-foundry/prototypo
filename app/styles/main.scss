@@ -42,11 +42,17 @@ a:visited {
 	background-color: $black;
 }
 
-.stringinput input {
+.stringinput-cell,
+.stringinput {
+	overflow: visible !important;
+}
+.stringinput {
+	input {
 	display: block;
 	height: 100%;
 	width: 100%;
 	padding-left: 1.4rem;
+	-moz-box-sizing: border-box;
 
 	color: lighten($dark-grey, 15%);
 	font-size: 1.4rem;
@@ -56,6 +62,34 @@ a:visited {
 	border: 1px solid  $green;
 	border-bottom: 1rem solid lighten( $light-green , 10% );
 	border-radius: 0;
+		&:focus,
+		&:hover {
+			outline: none;
+			background: lighten( $light-green , 25% );
+		}
+	}
+	&:before,
+	&:after {
+		content: "";
+
+		position: absolute;
+		left: 40px; // not hard value?
+
+		display: block;
+		width: 0;
+		height: 0;
+
+		border-left: 10px solid transparent;
+		border-right: 10px solid transparent;
+	}
+	&:before {
+		top: -10px;
+		border-bottom: 10px solid $light-green;
+	}
+	&:after {
+		top: -8px;
+		border-bottom: 10px solid lighten( $light-green , 15% );
+	}
 }
 
 /* To minimize blue selection when handle sliders */

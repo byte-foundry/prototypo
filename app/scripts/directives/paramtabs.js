@@ -51,6 +51,13 @@ angular.module('prototypo.paramtabsDirective', [])
 					}
 				});
 
+				$element.on('pointerdown', '.reset', function() {
+					var name = $(this.parentNode).data('name');
+
+					$scope.fontValues[ name ] = $scope.typeface.presets[ $scope.appValues.currentPreset ][ name ];
+					$scope.$digest();
+				});
+
 				// scroll handler
 				$element.on('wheel', '.toobig', function( e ) {
 					var $this = $(this),

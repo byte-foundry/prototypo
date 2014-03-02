@@ -12,6 +12,10 @@ angular.module('prototypo.glyphlistDirective', [])
 					$scope.appValues.singleChar = $( this ).data( 'id' );
 					$scope.$apply();
 				});
+
+				$element.on('pointerdown', '.fixGlyphList', function() {
+					$('.glyphlist').toggleClass('fix');
+				});
 			}
 
 		};
