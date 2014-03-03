@@ -9,7 +9,7 @@ angular.module('prototypo.Values', [])
 			}
 		});
 
-		var hoodie = new Hoodie();
+		var hoodie = window.hoodie = new Hoodie();
 
 		return function( prefix ) {
 			return {
