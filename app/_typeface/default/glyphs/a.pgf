@@ -19,4 +19,4 @@ C- 	{{ roundness }} 0 0 {{ self[15].x }} {{ self[17].y + ( self[15].y - self[17]
 L 	{{ self[15].x }} {{ self[15].y }}
 Z
 
-replace from self[8] at {{ {y: thickness + xHeight * (20/465) } }} to self[12] at {{ { x: self[12].x  } }} with serif-curve-bottom {{ { y: self[8].y } }}
+// replace from self[8] at {{ {y: thickness + xHeight * (20/465) } }} to self[12] at {{ { x: self[12].x  } }} with serif-curve-bottom {{ { y: self[8].y } }}

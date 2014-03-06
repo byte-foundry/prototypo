@@ -62,6 +62,17 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 				});
 
+				var space = false;
+				$(document).keyup(function(evt) {
+					if (evt.keyCode == 32) {
+						space = false;
+					}
+				}).keydown(function(evt) {
+					if (evt.keyCode == 32) {
+						space = true;
+					}
+				});
+				
 				$element.on('pointermove', function( e ) {
 					if ( isDraggingScene ) {
 						throttle(function() {
@@ -113,7 +124,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 				/* scene drag handler */
 				$element.on('pointerdown', function( e ) {
-					if ( e.which !== 3 ) {
+					if ( e.which !== 3 && space ) {
 						document.body.style.cursor = 'move';
 						startX = e.clientX - $scope.appValues.scenePanX;
 						startY = e.clientY - $scope.appValues.scenePanY;
