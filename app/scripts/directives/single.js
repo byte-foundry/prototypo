@@ -60,6 +60,17 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 				});
 
+				var space = false;
+				$(document).keyup(function(evt) {
+					if (evt.keyCode == 32) {
+						space = false;
+					}
+				}).keydown(function(evt) {
+					if (evt.keyCode == 32) {
+						space = true;
+					}
+				});
+
 				$element.on('pointermove', function( e ) {
 					if ( isDraggingScene ) {
 						throttle(function() {
@@ -97,14 +108,23 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 									e.clientX - prev.clientX,
 									e.clientY - prev.clientY
 								),
-								m = $transformed[0].getCTM().inverse();
+								m = $transformed[0].getCTM().inverse(),
+								tx = 0,
+								ty = 0;
 
 							p.transform( m );
 
+							if ( !e.shiftKey || Math.abs( e.clientX - start.clientX ) >= Math.abs( e.clientY - start.clientY ) ) {
+								tx = p.x - m.e;
+							}
+							if ( !e.shiftKey || Math.abs( e.clientY - start.clientY ) >= Math.abs( e.clientX - start.clientX ) ) {
+								ty = p.y - m.f;
+							}
+
 							start.segment.translatePoint(
 								start.type,
-								p.x - m.e,
-								p.y - m.f
+								tx,
+								ty
 							);
 
 							// dirty outline update
@@ -123,7 +143,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 				/* scene drag handler */
 				$element.on('pointerdown', function( e ) {
-					if ( e.which !== 3 ) {
+					if ( e.which !== 3 && space ) {
 						document.body.style.cursor = 'move';
 						start.x = e.clientX - $scope.appValues.scenePanX;
 						start.y = e.clientY - $scope.appValues.scenePanY;
@@ -162,8 +182,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 								.segments[ $(this).data('index') ]
 								.$render[ $(this).data('type') ];
 
-						prev.clientX = e.clientX;
-						prev.clientY = e.clientY;
+						start.clientX = prev.clientX = e.clientX;
+						start.clientY = prev.clientY = e.clientY;
 						start.segment = $(this).scope().$parent.segment;
 						start.type = $(this).data('type');
 
