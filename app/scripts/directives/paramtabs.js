@@ -52,9 +52,10 @@ angular.module('prototypo.paramtabsDirective', [])
 				});
 
 				$element.on('pointerdown', '.reset', function() {
-					var name = $(this.parentNode).data('name');
+					var $item = $(this.parentNode);
+						name = $item.data('name');
 
-					$scope.fontValues[ name ] = $scope.typeface.presets[ $scope.appValues.currentPreset ][ name ];
+					$scope.fontValues[ name ] = $scope.typeface.presets[ $scope.appValues.currentPreset ][ name ] || $item.data('init');
 					$scope.$digest();
 				});
 
