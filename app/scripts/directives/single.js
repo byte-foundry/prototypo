@@ -179,8 +179,6 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 					}
 				});
 
-
-
 				/* Set <svg> dimension during postLink */
 				// override 'display: none !important' set by .ng-hide
 				$element[0].style.setProperty('display', 'block', 'important');

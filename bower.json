@@ -1,14 +1,16 @@
 {
   "name": "prototyp0",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "dependencies": {
-    "angular-latest": "~1.2.3",
-    "angular-ui-router": "~0.0.1",
-    "angular-bindonce": "~0.2.1",
+    "angular": "~1.2.14",
+    "angular-route": "~1.2.14",
+    "angular-resource": "~1.2.14",
+    "angular-sanitize": "~1.2.14",
+    "angular-bindonce": "~0.3.1",
     "jquery": "~2.1.0",
     "lodash": "~1.2.1",
     "FileSaver": "git://github.com/eligrey/FileSaver.js/",
-    "hoodie": "~0.6.5"
+    "hoodie": "~0.7.1"
   },
   "devDependencies": {
     "angular-mocks": "~1.0.7",

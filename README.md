@@ -9,8 +9,6 @@ In order to build Prototypo, you need to install the following software-packages
 - Node.js
 - Grunt
 - Bower
-- Ruby
-- Sass
 
 Installing Prototypo
 --------------------
@@ -18,31 +16,19 @@ Installing Prototypo
 Clone a copy of the main Prototypo git repository
 
 ```bash
-$ git clone git://github.com/byte-foundry/prototypo.git
+$ git clone git://github.com/byte-foundry/prototypo.git && cd prototypo
 ```
 
 Install build scripts
 
 ```bash
-$ cd prototypo && npm install
+$ npm install
 ```
 
 Download frontend libraries
 
 ```bash
 $ bower install
-```
-
-Install latest version of Angular
-
-```bash
-$ cd app/bower_components/angular-latest && npm install
-```
-
-Finally build latest version of Angular
-
-```bash
-$ grunt && cd ../../..
 ```
 
 Running Prototypo

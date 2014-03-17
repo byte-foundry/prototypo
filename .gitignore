@@ -6,3 +6,4 @@ app/components
 app/bower_components
 app/webcomponents
 grunt-aws.json
+npm-debug.log
