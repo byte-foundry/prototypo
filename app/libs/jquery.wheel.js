@@ -1,7 +1,7 @@
 'use strict';
 (function($) {
 
-	// Don't polyfill wheel event in Chrom and Firefox
+	// Don't polyfill wheel event in Chrome and Firefox
 	if ( 'onwheel' in window ) {
 		// but pass data to handler
 		$.event.fixHooks.wheel = {
