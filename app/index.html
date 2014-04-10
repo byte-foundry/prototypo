@@ -38,8 +38,12 @@
 		<!-- build:js scripts/scripts.js -->
 		<script src="bower_components/jquery/dist/jquery.js"></script>
 		<script src="libs/jquery.wheel.js"></script>
-		<script src="libs/jquery.hand.js"></script>
-		<script src="libs/hand.js"></script>
+		<script src="libs/jquery.pointerevents-compat.js"></script>
+		<!--<script src="libs/hand.js"></script>-->
+
+		<script src="libs/pointerevents.dev.js"></script>
+		<script src="libs/pointergestures.dev.js"></script>
+
 		<script src="libs/handlebars.runtime.js"></script>
 		<script src="bower_components/angular/angular.js"></script>
 		<script src="bower_components/angular-route/angular-route.js"></script>
@@ -78,6 +82,8 @@
 		<script src="scripts/directives/contextMenuString.js"></script>
 		<script src="scripts/directives/splash.js"></script>
 
+		<!--<script src="webcomponents/always-valid.js"></script>-->
+
 		<script src="scripts/templates/dotsvg.js"></script>
 
 		<script src="scripts/app.js"></script>
@@ -92,7 +98,7 @@
 		<script>
 			/* jshint ignore:start */
 			// HANDJS shouldn't process the css
-			HANDJS.doNotProcessCSS = true;
+			//HANDJS.doNotProcessCSS = true;
 			// google analytics
 			var _gaq=[['_setAccount','UA-41962243-3'],['_trackPageview']];
 			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];

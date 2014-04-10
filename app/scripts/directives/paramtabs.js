@@ -26,33 +26,28 @@ angular.module('prototypo.paramtabsDirective', [])
 
 						$scope.$digest();
 					},
-					isDraggingParam,
 					draggedParam,
 					parentHeight = $element[0].offsetHeight;
 
 				$element.find('.paramtab.dummy').remove();
 				$element.data('rangeWidth', rangeWidth);
 
+				// drag slider handler
 				$element.on('pointerdown', '.paramctrl-gutter', function( e ) {
-					isDraggingParam = true;
 					draggedParam = this.parentNode;
 					setValue( draggedParam, e.pageX );
 				});
 
-				$(window).on('pointerup', function() {
-					isDraggingParam = undefined;
-				});
-				$(window).on('pointermove', function( e ) {
-					if ( isDraggingParam ) {
-						throttle(function() {
-							setValue( draggedParam, e.pageX );
-						});
-						return false;
-					}
+				$element.on('track', '.paramctrl-gutter', function( e ) {
+					throttle(function() {
+						setValue( draggedParam, e.pageX );
+					});
+					return false;
 				});
 
+				// reset handler
 				$element.on('pointerdown', '.reset', function() {
-					var $item = $(this.parentNode);
+					var $item = $(this.parentNode),
 						name = $item.data('name');
 
 					$scope.fontValues[ name ] = $scope.typeface.presets[ $scope.appValues.currentPreset ][ name ] || $item.data('init');

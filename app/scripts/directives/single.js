@@ -72,7 +72,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 						space = true;
 					}
 				});
-				
+
 				$element.on('pointermove', function( e ) {
 					if ( isDraggingScene ) {
 						throttle(function() {

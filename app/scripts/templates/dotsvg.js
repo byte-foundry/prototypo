@@ -6,7 +6,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
 function program1(depth0,data) {
-  
   var buffer = "", stack1;
   buffer += "\n<glyph unicode=\""
     + escapeExpression(((stack1 = (depth0 && depth0.code)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))

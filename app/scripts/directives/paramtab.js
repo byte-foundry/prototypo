@@ -8,6 +8,7 @@ angular.module('prototypo.paramtabDirective', [])
 			replace: true,
 			link: function postLink( $scope, $element ) {
 				var rangeWidth = $element.parent().data('rangeWidth'),
+
 					changeHandler = function( newValues, oldValues ) {
 						var li;
 
@@ -15,45 +16,45 @@ angular.module('prototypo.paramtabDirective', [])
 							if ( newValues[i] !== oldValues[i] && ( li = $element[0].querySelector('#param-' + i) ) ) {
 								var value = newValues[i],
 									bg = li.querySelector('.paramctrl-bg'),
-									min = +$( li ).data('min'),
-									max = +$( li ).data('max'),
-									minAdviced = +$( li ).data('minadviced'),
-									maxAdviced = +$( li ).data('maxadviced'),
+									$li = $(li),
+									min = +$li.data('min'),
+									max = +$li.data('max'),
+									minRecommended = +$li.data('minrecommended'),
+									maxRecommended = +$li.data('maxrecommended'),
 									translateX = Math.round( ( ( value - min ) / ( max - min ) ) * rangeWidth ) - rangeWidth;
 
 								$( bg ).css({transform: 'translateX(' + translateX + 'px)'});
 
 								// TODO: this could be optimized to only touch classList when needed
-								if ( value < minAdviced || value > maxAdviced ) {
-									$( bg ).addClass('out-of-advised');
+								if ( value < minRecommended || value > maxRecommended ) {
+									$( bg ).addClass('out-of-recommended');
 								} else {
-									$( bg ).removeClass('out-of-advised');
+									$( bg ).removeClass('out-of-recommended');
 								}
 							}
 						}
 					},
-					stopWatching;
 
-				stopWatching = $scope.$watch('typeface.parameters', function( parameters ) {
-					if ( !parameters || !parameters.length ) {
-						return;
-					}
+					stopWatching = $scope.$watch('typeface.parameters', function( parameters ) {
+						if ( !parameters || !parameters.length ) {
+							return;
+						}
 
-					var parentHeight = $element[0].parentNode.offsetHeight,
-						selfHeight = $element[0].offsetHeight;
+						var parentHeight = $element[0].parentNode.offsetHeight,
+							selfHeight = $element[0].offsetHeight;
 
-					if ( selfHeight > parentHeight ) {
-						$element
-							.addClass('toobig content-below')
-							.data({ scroll: 0 });
-					}
+						if ( selfHeight > parentHeight ) {
+							$element
+								.addClass('toobig content-below')
+								.data({ scroll: 0 });
+						}
 
-					changeHandler( $scope.fontValues, {} );
+						changeHandler( $scope.fontValues, {} );
 
-					$element.addClass('initialized');
-					// we shouldn't need to watch longer than that
-					stopWatching();
-				});
+						$element.addClass('initialized');
+						// we shouldn't need to watch longer than that
+						stopWatching();
+					});
 
 				$scope.$watch('fontValues', changeHandler, true);
 			}

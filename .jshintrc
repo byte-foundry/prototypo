@@ -26,6 +26,7 @@
     "jQuery" : false,
     "$": false,
     "Handlebars": false,
+    "xtag": false,
     "saveAs": false,
     "Hoodie": false,
     "describe": false,

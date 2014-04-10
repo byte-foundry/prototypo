@@ -9,6 +9,13 @@
 		};
 	});
 
+	'tap hold holdpulse release flick trackstart track trackend pinch rotate'.split(' ').forEach(function( type ) {
+		$.event.fixHooks[type] = {
+			props: $.event.mouseHooks.props,
+			filter: $.event.mouseHooks.filter
+		};
+	});
+
 	$.each({
 		pointerenter: 'pointerover',
 		pointerleave: 'pointerout'

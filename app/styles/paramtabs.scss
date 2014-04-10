@@ -137,7 +137,7 @@
 	background-color: $green;
 	transition: background-color 500ms ease;
 
-	&.out-of-advised {
+	&.out-of-recommended {
 		background-color: $red;
 
 		.paramctrl-handle {
