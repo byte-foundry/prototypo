@@ -6,7 +6,7 @@
 </defs>
 <g transform="matrix(1 0 0 -1 0 0) scale(0.78)">
 	{{#each groups}}
-		<g transform="this.transform">
+		<g transform="{{this.transform}}">
 			{{#each this.outlines}}
 				<path transform="{{this.transform}}" d="{{this.svg}}" fill="#3B3B3B" stroke="none"></path>
 			{{/each}}
