@@ -247,5 +247,86 @@ angular.module('prototypoApp')
 					}
 				// deep
 				}, true);
+
+
+
+				var groups = [],
+					randomOutlines = [],
+					rAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame,
+					template = Handlebars.templates.planche;
+
+				$scope.randomOutline = function randomOutline() {
+					var allGlyphs = Object.keys( $scope.typeface.order ),
+						randomIndex = Math.round( Math.random() * ( allGlyphs.length - 14 ) ),
+						randomGlyph = allGlyphs[ randomIndex ];
+
+					// pick random font values
+					$scope.typeface.parameters.forEach(function( group ) {
+						group.parameters.forEach(function( param ) {
+							// There's one 1/5 chance to set the param randomly, otherwise it's reset
+							$scope.fontValues[ param.name ] = Math.random() * 4 > 3 ?
+								param.min + Math.random() * ( param.max - param.min ):
+								param.init;
+						});
+					});
+					updateCalculatedParams( $scope.fontValues );
+
+					if ( Math.random() * 4 > 3 ) {
+						$scope.fontValues.serifWidth = 1 + Math.random() * 100;
+						$scope.fontValues.serifHeight = 0 + Math.random() * 80;
+					}
+
+					// small fixes
+					/*$scope.fontValues.roundness *= 0.75;
+					$scope.fontValues.serifWidth /= 2;
+					$scope.fontValues.serifHeight /= 4;
+					$scope.fontValues.serifCurve /= 2;
+					$scope.fontValues.serifRoundness /= 10;
+					$scope.fontValues.serifWidth = Math.max( $scope.fontValues.serifWidth, 1 );
+					$scope.fontValues.serifTerminal = Math.max( $scope.fontValues.serifTerminal, 0 );*/
+
+					$scope.appValues.singleChar = randomGlyph;
+
+					return $scope.font.read( randomGlyph, $scope.fontValues, true );
+				};
+
+				$scope.randomOutlines = function() {
+					randomOutlines.push({
+						svg: $scope.randomOutline().svg.replace(/\s/g, ' '),
+						transform:
+							'translate(' +
+							( 1500 * ( randomOutlines.length % 12 ) ) +
+							', ' +
+							( 1500 * Math.floor( randomOutlines.length / 12 ) ) +
+							')'
+					});
+
+					if ( groups.length < 2 || randomOutlines.length < 216 ) {
+						rAF(function() {
+							$scope.randomOutlines();
+							$scope.$digest();
+						});
+					}
+
+					if ( randomOutlines.length === 216 ) {
+						groups.push({
+							transform: 'translate(' + ( groups.length * 12000 ) + ',0)',
+							outlines: randomOutlines
+						});
+
+						randomOutlines = [];
+					}
+				};
+
+				$scope.exportOutlines = function() {
+					saveAs(
+						new Blob(
+							[template({groups: groups})],
+							{type: 'application/svg+xml;charset=utf-8'}
+						),
+						'default.svg'
+					);
+				};
 			});
+
 	});
