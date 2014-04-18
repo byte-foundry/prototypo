@@ -40,6 +40,8 @@
     "test": "test"
   },
   "scripts": {
+    "postinstall": "bower install",
+    "start": "grunt serve",
     "test": "grunt test"
   },
   "repository": {
