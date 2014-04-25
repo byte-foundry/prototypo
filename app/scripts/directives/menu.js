@@ -101,12 +101,6 @@ angular.module('prototypo.menuDirective', [])
 						$scope.fontValues.serifHeight = 0 + Math.random() * 80;
 					}
 
-					// small fixes
-					/*$scope.fontValues.roundness *= 0.75;
-					$scope.fontValues.serifWidth /= 2;
-					$scope.fontValues.serifHeight /= 4;
-					$scope.fontValues.serifCurve /= 2;
-					$scope.fontValues.serifRoundness /= 10;*/
 					$scope.fontValues.serifWidth = Math.max( $scope.fontValues.serifWidth, 1 );
 					$scope.fontValues.serifTerminal = Math.max( $scope.fontValues.serifTerminal, 0 );
 
