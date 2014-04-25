@@ -19,16 +19,10 @@ Clone a copy of the main Prototypo git repository
 $ git clone git://github.com/byte-foundry/prototypo.git && cd prototypo
 ```
 
-Install build scripts
+Install build scripts and frontend libraries
 
 ```bash
 $ npm install
-```
-
-Download frontend libraries
-
-```bash
-$ bower install
 ```
 
 Running Prototypo
