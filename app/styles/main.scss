@@ -23,6 +23,23 @@ a:visited {
 	text-decoration: none;
 }
 
+// Prevent all text selection...
+* {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+// ...except where it makes sense
+input,
+textarea {
+	-moz-user-select: text;
+	-webkit-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
 .sidebar {
 	position: relative;
 	z-index: 2;
@@ -91,10 +108,6 @@ a:visited {
 		border-bottom: 10px solid lighten( $light-green , 15% );
 	}
 }
-
-/* To minimize blue selection when handle sliders */
-//::selection { background: transparent; }
-//::-moz-selection { background: transparent; }
 
 .btn {
 	cursor: pointer;
