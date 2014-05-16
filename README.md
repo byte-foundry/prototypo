@@ -1,5 +1,5 @@
-Prototypo, the Font Generator
-=============================
+Prototypo, Streamlining font creation [![Build Status](https://travis-ci.org/byte-foundry/prototypo.svg?branch=master)](https://travis-ci.org/byte-foundry/prototypo)
+=====================================
 
 Before installing Prototypo
 ---------------------------
