@@ -6,7 +6,7 @@ angular.module('prototypo.contextMenuDirective', [])
 			restrict: 'E',
 			templateUrl: 'views/context-menu.html',
 			replace: true,
-			link: function postLink( $scope, $element ) {
+			link: function postLink( /*$scope, $element*/ ) {
 			}
 
 		};

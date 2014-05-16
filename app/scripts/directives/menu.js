@@ -1,7 +1,5 @@
 'use strict';
 
-		var active;
-
 angular.module('prototypo.menuDirective', [])
 	.directive('menu', function() {
 
@@ -11,6 +9,8 @@ angular.module('prototypo.menuDirective', [])
 			templateUrl: 'views/menu.html',
 			replace: true,
 			link: function postLink( $scope, $element ) {
+
+				var active;
 
 				// prevent clicks on disabled items
 				$element[0].addEventListener('click', function( event ) {

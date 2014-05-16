@@ -37,7 +37,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			moveEnd: function( endPoint, newCoords ) { return moveSegmentEnd( this, endPoint, newCoords ); },
 			transform: function( matrix ) { return transformSegment( this, matrix ); },
 			smooth: function( render ) { return smoothSegment3( render ? this.$render : this, this.roundness ); },
-			movePointTo: function( type, coords ) { return moveSegmentPointTo( this, type, coors ); }
+			movePointTo: function( type, coords ) { return moveSegmentPointTo( this, type, coords ); }
 		};
 
 		// a segment has x and y properties that are copies of this.end.x and this.end.y
@@ -260,7 +260,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 
 			// cubic bezier angle
 			if ( segment.command === 'C+' || segment.command === 'C-' ) {
-				var dx = ( segment.end.x - segment.start.x ) * segment.roundness,
+				let dx = ( segment.end.x - segment.start.x ) * segment.roundness,
 					dy = ( segment.end.y - segment.start.y ) * segment.roundness,
 					c0length,
 					c1length,
@@ -329,7 +329,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			// cubic bezier angle v2
 			if ( segment.command === 'CH' || segment.command === 'CV' ) {
 				// TODO: we might be able to speed up cases where there are no serifs or no roundness
-				var dx = ( segment.end.x - segment.start.x ) * segment.roundness,
+				let dx = ( segment.end.x - segment.start.x ) * segment.roundness,
 					dy = ( segment.end.y - segment.start.y ) * segment.roundness,
 					c0length,
 					c1length,
@@ -535,7 +535,7 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				segment.ctrl1.x = segment.end.x + ( p[0] - segment.end.x ) * roundness;
 				segment.ctrl1.y = segment.end.y + ( p[1] - segment.end.y ) * roundness;
 			}
-		}
+		};
 	})
 
 	.factory('moveSegmentPointTo', function() {

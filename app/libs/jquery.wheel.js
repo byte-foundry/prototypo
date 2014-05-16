@@ -1,4 +1,5 @@
 'use strict';
+
 (function($) {
 
 	// Don't polyfill wheel event in Chrome and Firefox

@@ -61,27 +61,28 @@ angular.module('prototypo.Glyph', ['prototypo.Component', 'prototypo.Point', 'pr
 
 	.factory('glyphToSVG', function() {
 		return function( glyph ) {
-			var bounding = [];
-			var svg =  glyph.segments.map(function( segment ) {
-				if ( glyph.component.name != 'sample') {
-					bounding.push( segment.$render.end.x ) ;
-				}
-				return segment.toSVG();
-			}).join('\n');
-			var rightestPoint = Math.max.apply( null, bounding );
-			glyph.rightestPoint = rightestPoint;
-			var leftestPoint = Math.min.apply( null, bounding );
-			glyph.leftestPoint = - leftestPoint;
-			if ( glyph.component.name != 'sample') {
-				/*console.log(
+			var bounds = [],
+				svg =  glyph.segments.map(function( segment ) {
+					if ( glyph.component.name !== 'sample' ) {
+						bounds.push( segment.$render.end.x ) ;
+					}
+					return segment.toSVG();
+				}).join('\n');
+
+			glyph.rightestPoint = Math.max.apply( null, bounds );
+			glyph.leftestPoint = -Math.min.apply( null, bounds );
+
+			/*if ( glyph.component.name !== 'sample' ) {
+				console.log(
 					glyph.component.name
 					+ ' > ' +
 					glyph.data.left,
 					leftestPoint,
 					glyph.data.right,
 					rightestPoint
-				);*/
-			}
+				);
+			}*/
+
 			return svg;
 		};
 	})

@@ -40,10 +40,10 @@ module.exports = function (grunt) {
 					livereload: true
 				}
 			},
-			//jsTest: {
-			//	files: ['test/spec/{,*/}*.js'],
-			//	tasks: ['newer:jshint:test', 'karma']
-			//},
+			jsTest: {
+				files: ['test/spec/{,*/}*.js'],
+				tasks: ['newer:jshint:test'/*, 'karma'*/]
+			},
 			sass: {
 				files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
 				tasks: ['sass', 'autoprefixer']
@@ -93,6 +93,14 @@ module.exports = function (grunt) {
 			dist: {
 				options: {
 					base: '<%= yeoman.dist %>'
+				}
+			}
+		},
+
+		traceur: {
+			custom: {
+				files:{
+					'build/': ['<%= yeoman.app %>/scripts/{,*/}*.js']
 				}
 			}
 		},
@@ -430,8 +438,7 @@ module.exports = function (grunt) {
 
 		grunt.task.run([
 			'clean:server',
-			// bower install must be run manually because of angular-latest
-			//'bower-install',
+			'bower-install',
 			'concurrent:server',
 			'autoprefixer',
 			'connect:livereload',
@@ -454,8 +461,7 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('build', [
 		'clean:dist',
-		// bower install must be run manually because of angular-latest
-		//'bower-install',
+		'bower-install',
 		'ngtemplates',
 		'useminPrepare',
 		'concurrent:dist',
@@ -463,6 +469,7 @@ module.exports = function (grunt) {
 		'concat',
 		'ngmin',
 		'copy:dist',
+		// not sure cdnify is a good idea
 		//'cdnify',
 		'cssmin',
 		'uglify',

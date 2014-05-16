@@ -2,14 +2,14 @@
 
 angular.module('prototypo.Values', [])
 	.factory('valuesResource', function() {
-		// block hoodie synchronization for now
-		$.ajaxSetup({
+		/*$.ajaxSetup({
 			beforeSend: function( xhr, opts ) {
-				return !!opts.url.indexOf('/_api/');
+				// block hoodie synchronization for now
+				//return !!opts.url.indexOf('/_api/');
 			}
-		});
+		});*/
 
-		var hoodie = window.hoodie = new Hoodie();
+		var hoodie = window.hoodie = new Hoodie('http://prototypo.cloudapp.net:6001/');
 
 		return function( prefix ) {
 			return {

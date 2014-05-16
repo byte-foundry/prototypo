@@ -64,11 +64,11 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 				var space = false;
 				$(document).keyup(function(evt) {
-					if (evt.keyCode == 32) {
+					if ( evt.keyCode === 32 ) {
 						space = false;
 					}
 				}).keydown(function(evt) {
-					if (evt.keyCode == 32) {
+					if ( evt.keyCode === 32 ) {
 						space = true;
 					}
 				});
