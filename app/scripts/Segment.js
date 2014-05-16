@@ -258,14 +258,17 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 				segment.relativeControls = true;
 			}
 
+			var dx,
+				dy,
+				c0length,
+				c1length,
+				angle0,
+				angle1;
+
 			// cubic bezier angle
 			if ( segment.command === 'C+' || segment.command === 'C-' ) {
-				let dx = ( segment.end.x - segment.start.x ) * segment.roundness,
-					dy = ( segment.end.y - segment.start.y ) * segment.roundness,
-					c0length,
-					c1length,
-					angle0,
-					angle1;
+				dx = ( segment.end.x - segment.start.x ) * segment.roundness;
+				dy = ( segment.end.y - segment.start.y ) * segment.roundness;
 
 				if ( dx * dy === 0 ) {
 					segment.ctrl0.x = segment.start.x;
@@ -329,12 +332,8 @@ angular.module('prototypo.Segment', ['prototypo.Point', 'prototypo.2D'])
 			// cubic bezier angle v2
 			if ( segment.command === 'CH' || segment.command === 'CV' ) {
 				// TODO: we might be able to speed up cases where there are no serifs or no roundness
-				let dx = ( segment.end.x - segment.start.x ) * segment.roundness,
-					dy = ( segment.end.y - segment.start.y ) * segment.roundness,
-					c0length,
-					c1length,
-					angle0,
-					angle1;
+				dx = ( segment.end.x - segment.start.x ) * segment.roundness;
+				dy = ( segment.end.y - segment.start.y ) * segment.roundness;
 
 				segment.isSmooth = segment.command;
 
