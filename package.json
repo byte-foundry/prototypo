@@ -30,7 +30,11 @@
     "grunt-angular-templates": "~0.5.3",
     "grunt-s3": "git+https://github.com/pifantastic/grunt-s3.git#2ad0edc4aab2e57058de5c0e13ac414f0be1c54a",
     "grunt-invalidate-cloudfront": "~0.1.4",
-    "grunt-traceur": "~0.1.1"
+    "grunt-traceur": "~0.1.1",
+
+    "karma": "~0.12.0",
+    "karma-jasmine": "~0.1.5",
+    "karma-phantomjs-launcher": "~0.1.4"
   },
   "engines": {
     "node": ">=0.10.0"
