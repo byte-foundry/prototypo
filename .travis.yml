@@ -3,16 +3,14 @@ node_js:
 - '0.10'
 before_install:
 - npm install -g grunt-cli bower
-
 after_script:
 - grunt build
 - grunt deploy
-
 env:
   global:
-  - secure: nVqHn+TpRq5inP7xim0aNx2AupVeYruMZI4zgbrrKQL3L7Smx+FJe4prMqf81mgNl0G8u2v1EHYw486ugcnJjmT4t6sqikQiNoiJmj1mNzZcX0jgRY0ECNyUknividBLWhjTVtm+2fasjhhLlHGXDHjfhE0m24li/Qnq0O24doM=
-  - secure: NgiU9KIeq4ukJQ/4HKvoL0OyTbf3zrGKL8jvemHt0kjArL6IrS90qndI2WN6SNolbLAzvlUE5G3mLS069+i5PwvSlb7zq3xIM/kP3UWiy9qN5AJsLIPvodxwng7CANcMrG70n7UcZ9Y6yNNfuB/wKNErRF5v/CyGFvG2qvFoLcY=
-  - secure: OmLrdttsXG/ORNF8fP6e2Li8tm21ungq3J+fjCW30kLC2rM0ruzqMy4qnfb9uVVqKE44ML9GU2pGX7wubGZtRql7db7QjKVmlhQd1Op60gZSSURct2moFGgtmYSKXkKcvW/HCeH0F2qMRC+XoyHXBWFIdjRatsft6G+NwHMreRM=
-  - secure: SbqxWNPjV+TV3GyQtljjBKXaTjPz/5RjBmvTAov803rDwoFK401SNfFB0B+ibbx/0pgana1xTmz0pA62LHeBrapZ4jyAF/IZs9loZaBGxnhgP7p+fQ82VfwWakj+BnCaRBEz9WbLVwRIZVhMwBeHubYasZXbBlL4hNHLmkGr1OQ=
-  - secure: ee2m5aCK3AEogsAyH/RBludUSo8NHd323Hp+a/bSZm0dsTZC1NutNcgB6MXzNddxSpx2IUe7HE8blKmvCiXfAB2ShezzHKilaRPHM+4yTrsANZOGTd/bxitBdU/ZEf7q1d7zobyVI3rg0kFZ7caXsInIz8EWIl8f0pMfqERcM0c=
-  - secure: oV1/ZgirmLMieFBhbu5r/tUUJlREiVnfMLJ8nxi8SKAe/l8Ko/miMA0sglvM14gGNjlKULr+GWbyhUqtTdp7SzDm/Ap5ntllfzZmVnhBrj/jdR65jqfjsFiq/WXsS+mwzsPUvJVoer+X6pUKr2M17Vuqj4/TJBEAgUDiM68tf5Q=
+  - secure: l3fzFu9Ovv11nnQFAL2ueV+WREcpzsXtb3ipnnKRpcI2MmlfDbznScr12yyJ3W4kWY1SuctlBNl1X/6hEndNBVjJB59nrFfXnx3dMJeD6KndR3xsYgIIbM/uX/vhNPN9RURKiAG9QEoLvNYu5nwri8GAAQoFUBpJXhuBBhiH9UI=
+  - secure: IZRRIEseisFonoUz3WTuCW+2Pls6NUy4lcU/7ymOIle0ytAhtTVR+esXl0Mz3VM+ldUqP5Zhk++LgI/OIBp1bH3tTdBces4skyUh71OLRMdSDf5CnnEUTA/Pa93W0N/je//PCBYsTaq2WiK9nLJISruQL61hVSqBBKiFRm+oRCA=
+  - secure: TIJiUbe1M7JxcLCOGOS6YTxQW2fKh/C8+xOJum43xcz9RgIatCVnw2C0VHeOHAG29lr9DtkQUwa2XXfoSkbrq8Mbtqu+wUgCjPRvP4Ts2m3nlUtie2JHVi94yBbj0Eeef7T6fsCT5cLta2dM3NxZ+OuYviRgYAtgZJxuwY3Vx4g=
+  - secure: PsCZ+H8pDcviLazwY9AReTCbnUx5OlpCLvvcknbIJSuBHcv9AF9u1Cv8/r3N/Crr35Zz+DD0phA9j8ryPI7H3op7LSsiEEcvtUST5R87K/a2SkBpn4sORYqMpE0t4pm9y15sdJJkuDGRfLvm7zBf5a4xSyoyXMDtxgNk71SQAjg=
+  - secure: JwJqsg28D0aldardzcoHn/hj0tT65P4I/pD61kVlHnGsdvKc26FZ/w3vgoHe1wOrvja3D0NyOoBW+xBLp1tLSK2Bi8KREo2TXBGA9cUu7QbFzJ0qx/V7upXNVWADLgaQjLWy5a2GfkoUrQV08nYA9uQgEBuYl0v0A+nv/+tdG5Q=
+  - secure: GE8Cc/DoG84cIdQ5fE9ZCocIqQBWzQ1wOR9sW6QDXO/SkU3SDltMAcqyuVk2lxjLSi/zpckpdUFvOdPuluBnWIDvrQJFAmlIaOb35DvWaENGmmzasDVaVIy5wTjCrnReIRy7i/zSt6PYovXHAsuJf05S+HM9oH3QceWGMikQFpU=
