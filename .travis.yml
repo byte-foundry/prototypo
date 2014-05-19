@@ -3,6 +3,11 @@ node_js:
 - '0.10'
 before_install:
 - npm install -g grunt-cli bower
+
+after_script:
+- grunt build
+- grunt deploy
+
 env:
   global:
   - secure: nVqHn+TpRq5inP7xim0aNx2AupVeYruMZI4zgbrrKQL3L7Smx+FJe4prMqf81mgNl0G8u2v1EHYw486ugcnJjmT4t6sqikQiNoiJmj1mNzZcX0jgRY0ECNyUknividBLWhjTVtm+2fasjhhLlHGXDHjfhE0m24li/Qnq0O24doM=

@@ -468,7 +468,6 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('build', [
 		'clean:dist',
-		'bower-install',
 		'ngtemplates',
 		'useminPrepare',
 		'concurrent:dist',
@@ -486,9 +485,6 @@ module.exports = function (grunt) {
 	]);
 
 	grunt.registerTask('deploy', [
-		'newer:jshint',
-		'test',
-		'build',
 		's3',
 		'invalidate_cloudfront'
 	]);
