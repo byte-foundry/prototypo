@@ -17,6 +17,7 @@
     "grunt-contrib-jshint": "~0.8.0",
     "grunt-contrib-uglify": "~0.3.2",
     "grunt-contrib-watch": "~0.5.2",
+    "karma": "~0.8",
     "grunt-karma": "~0.8.3",
     "karma-jasmine": "~0.1.5",
     "grunt-newer": "~0.5.4",
@@ -30,6 +31,7 @@
     "time-grunt": "~0.2.1",
     "grunt-angular-templates": "~0.5.3",
     "grunt-s3": "git+https://github.com/pifantastic/grunt-s3.git#2ad0edc4aab2e57058de5c0e13ac414f0be1c54a",
+    "grunt-invalidate-cloudfront": "~0.1.4",
     "grunt-traceur": "~0.1.1"
   },
   "engines": {

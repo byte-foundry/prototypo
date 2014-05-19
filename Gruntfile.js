@@ -372,9 +372,9 @@ module.exports = function (grunt) {
 		aws: awsConfig,
 		s3: {
 			options: {
-				key: '<%= aws.key %>',
-				secret: '<%= aws.secret %>',
-				bucket: '<%= aws.bucket %>',
+				key: '<%= aws.s3.key %>',
+				secret: '<%= aws.s3.secret %>',
+				bucket: '<%= aws.s3.bucket %>',
 				access: 'public-read'
 			},
 			// _typeface isn't revved yet, so don't cache it.
@@ -427,6 +427,20 @@ module.exports = function (grunt) {
 					dest: 'robots.txt'
 				}]
 			}
+		},
+
+		'invalidate_cloudfront': {
+			options: {
+				key: '<%= aws.cloudfront.key %>',
+				secret: '<%= aws.cloudfront.secret %>',
+				distribution: '<%= aws.cloudfront.distribution %>'
+			},
+			production: {
+				files: [{
+					src: ['<%= yeoman.dist %>/index.html'],
+					dest: 'index.html'
+				}]
+			}
 		}
 	});
 
@@ -476,6 +490,14 @@ module.exports = function (grunt) {
 		'rev',
 		'usemin'/*,
 		'htmlmin'*/
+	]);
+
+	grunt.registerTask('deploy', [
+		'newer:jshint',
+		'test',
+		'build',
+		's3',
+		'invalidate_cloudfront'
 	]);
 
 	grunt.registerTask('default', [

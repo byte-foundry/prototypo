@@ -21,8 +21,7 @@ module.exports = function(config) {
 
 		// list of files to exclude
 		exclude: [
-			'app/scripts/templates/*.js',
-			'karma.conf.js'
+			'app/scripts/templates/*.js'
 		],
 
 		// test results reporter to use
