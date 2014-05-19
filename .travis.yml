@@ -1,5 +1,13 @@
 language: node_js
 node_js:
-  - "0.10"
+- '0.11'
 before_install:
-  - npm install -g grunt-cli bower
+- npm install -g grunt-cli bower
+env:
+  global:
+  - secure: nVqHn+TpRq5inP7xim0aNx2AupVeYruMZI4zgbrrKQL3L7Smx+FJe4prMqf81mgNl0G8u2v1EHYw486ugcnJjmT4t6sqikQiNoiJmj1mNzZcX0jgRY0ECNyUknividBLWhjTVtm+2fasjhhLlHGXDHjfhE0m24li/Qnq0O24doM=
+  - secure: NgiU9KIeq4ukJQ/4HKvoL0OyTbf3zrGKL8jvemHt0kjArL6IrS90qndI2WN6SNolbLAzvlUE5G3mLS069+i5PwvSlb7zq3xIM/kP3UWiy9qN5AJsLIPvodxwng7CANcMrG70n7UcZ9Y6yNNfuB/wKNErRF5v/CyGFvG2qvFoLcY=
+  - secure: OmLrdttsXG/ORNF8fP6e2Li8tm21ungq3J+fjCW30kLC2rM0ruzqMy4qnfb9uVVqKE44ML9GU2pGX7wubGZtRql7db7QjKVmlhQd1Op60gZSSURct2moFGgtmYSKXkKcvW/HCeH0F2qMRC+XoyHXBWFIdjRatsft6G+NwHMreRM=
+  - secure: SbqxWNPjV+TV3GyQtljjBKXaTjPz/5RjBmvTAov803rDwoFK401SNfFB0B+ibbx/0pgana1xTmz0pA62LHeBrapZ4jyAF/IZs9loZaBGxnhgP7p+fQ82VfwWakj+BnCaRBEz9WbLVwRIZVhMwBeHubYasZXbBlL4hNHLmkGr1OQ=
+  - secure: ee2m5aCK3AEogsAyH/RBludUSo8NHd323Hp+a/bSZm0dsTZC1NutNcgB6MXzNddxSpx2IUe7HE8blKmvCiXfAB2ShezzHKilaRPHM+4yTrsANZOGTd/bxitBdU/ZEf7q1d7zobyVI3rg0kFZ7caXsInIz8EWIl8f0pMfqERcM0c=
+  - secure: oV1/ZgirmLMieFBhbu5r/tUUJlREiVnfMLJ8nxi8SKAe/l8Ko/miMA0sglvM14gGNjlKULr+GWbyhUqtTdp7SzDm/Ap5ntllfzZmVnhBrj/jdR65jqfjsFiq/WXsS+mwzsPUvJVoer+X6pUKr2M17Vuqj4/TJBEAgUDiM68tf5Q=

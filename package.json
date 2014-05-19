@@ -35,7 +35,7 @@
     "grunt-traceur": "~0.1.1"
   },
   "engines": {
-    "node": ">=0.11.0"
+    "node": ">=0.10.0"
   },
   "description": "Prototypo, kickstarting font creation",
   "main": "Gruntfile.js",
