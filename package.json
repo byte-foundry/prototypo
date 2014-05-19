@@ -17,9 +17,7 @@
     "grunt-contrib-jshint": "~0.8.0",
     "grunt-contrib-uglify": "~0.3.2",
     "grunt-contrib-watch": "~0.5.2",
-    "karma": "~0.12.0",
     "grunt-karma": "~0.8.3",
-    "karma-jasmine": "~0.1.5",
     "grunt-newer": "~0.5.4",
     "grunt-ngmin": "~0.0.3",
     "grunt-rev": "~0.1.0",
@@ -45,7 +43,7 @@
   "scripts": {
     "postinstall": "bower install",
     "start": "grunt serve",
-    "test": "./node_modules/karma/bin/karma start --single-run --browsers Firefox"
+    "test": "./node_modules/karma/bin/karma start --single-run --browsers PhantomJS"
   },
   "repository": {
     "type": "git",
