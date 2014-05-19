@@ -3,6 +3,11 @@
 // Karma configuration
 module.exports = function(config) {
 	config.set({
+		plugins: [
+			'karma-jasmine',
+			'karma-phantomjs-launcher',
+			'karma-firefox-launcher'
+		],
 
 		frameworks: ['jasmine'],
 
