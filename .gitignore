@@ -5,5 +5,5 @@ dist
 app/components
 app/bower_components
 app/webcomponents
-grunt-aws.json
+aws.conf.json
 npm-debug.log

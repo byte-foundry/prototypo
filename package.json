@@ -45,7 +45,7 @@
   "scripts": {
     "postinstall": "bower install",
     "start": "grunt serve",
-    "test": "./node_modules/karma/bin/karma start --single-run --browsers PhantomJS"
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
   },
   "repository": {
     "type": "git",

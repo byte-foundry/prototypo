@@ -15,12 +15,6 @@ module.exports = function (grunt) {
 	// Time how long tasks take. Can help when optimizing build times
 	require('time-grunt')(grunt);
 
-	// loading aws-config is optional
-	var awsConfig;
-	try {
-		awsConfig = grunt.file.readJSON('grunt-aws.json');
-	} catch( e ) {}
-
 	// Define the configuration for all the tasks
 	grunt.initConfig({
 
@@ -369,12 +363,11 @@ module.exports = function (grunt) {
 		},
 
 		// allow dist folder to be uploaded to s3
-		aws: awsConfig,
 		s3: {
 			options: {
-				key: '<%= aws.s3.key %>',
-				secret: '<%= aws.s3.secret %>',
-				bucket: '<%= aws.s3.bucket %>',
+				key: process.env.S3_KEY,
+				secret: process.env.S3_SECRET,
+				bucket: process.env.S3_BUCKET,
 				access: 'public-read'
 			},
 			// _typeface isn't revved yet, so don't cache it.
@@ -431,9 +424,9 @@ module.exports = function (grunt) {
 
 		'invalidate_cloudfront': {
 			options: {
-				key: '<%= aws.cloudfront.key %>',
-				secret: '<%= aws.cloudfront.secret %>',
-				distribution: '<%= aws.cloudfront.distribution %>'
+				key: process.env.CF_KEY,
+				secret: process.env.CF_SECRET,
+				distribution: process.env.CF_DISTRIB
 			},
 			production: {
 				files: [{
