@@ -11,8 +11,8 @@
 				"max": 900,
 				"step": 1,
 				"init": 465,
-				"minAdviced": 300,
-				"maxAdviced": 800
+				"minAdvised": 300,
+				"maxAdvised": 800
 			},
 			{
 				"name": "capDelta",
@@ -21,8 +21,8 @@
 				"max": 400,
 				"step": 1,
 				"init": 233,
-				"minAdviced": 0,
-				"maxAdviced": 350
+				"minAdvised": 0,
+				"maxAdvised": 350
 			},
 			{
 				"name": "ascender",
@@ -31,8 +31,8 @@
 				"max": 500,
 				"step": 1,
 				"init": 250,
-				"minAdviced": 50,
-				"maxAdviced": 500
+				"minAdvised": 50,
+				"maxAdvised": 500
 			},
 			{
 				"name": "descender",
@@ -41,8 +41,8 @@
 				"max": -50,
 				"step": 1,
 				"init": -210,
-				"minAdviced": -350,
-				"maxAdviced": -100
+				"minAdvised": -350,
+				"maxAdvised": -100
 			},
 			{
 				"name": "crossbar",
@@ -51,8 +51,8 @@
 				"max": 1.1,
 				"step": 0.001,
 				"init": 1,
-				"minAdviced": 0.88,
-				"maxAdviced": 1.05
+				"minAdvised": 0.88,
+				"maxAdvised": 1.05
 			},
 			{
 				"name": "width",
@@ -61,8 +61,8 @@
 				"max": 2,
 				"step": 0.01,
 				"init": 1,
-				"minAdviced": 0.85,
-				"maxAdviced": 2
+				"minAdvised": 0.85,
+				"maxAdvised": 2
 			},
 			{
 				"name": "slant",
@@ -71,8 +71,8 @@
 				"max": 8,
 				"step": 0.2,
 				"init": 0,
-				"minAdviced": -5,
-				"maxAdviced": 8
+				"minAdvised": -5,
+				"maxAdvised": 8
 			},
 			{
 				"name": "overshoot",
@@ -81,8 +81,8 @@
 				"max": 20,
 				"step": 1,
 				"init": 10,
-				"minAdviced": 0,
-				"maxAdviced": 20
+				"minAdvised": 0,
+				"maxAdvised": 20
 			}
 		]
 	},
@@ -98,8 +98,8 @@
 				"max": 300,
 				"step": 1,
 				"init": 80,
-				"minAdviced": 60,
-				"maxAdviced": 180
+				"minAdvised": 60,
+				"maxAdvised": 180
 			},
 			{
 				"name": "_contrast",
@@ -108,8 +108,8 @@
 				"max": -0.1,
 				"step": 0.01,
 				"init": -1,
-				"minAdviced": -1,
-				"maxAdviced": -0.3
+				"minAdvised": -1,
+				"maxAdvised": -0.3
 			},
 			{
 				"name": "aperture",
@@ -118,8 +118,8 @@
 				"max": 2.2,
 				"step": 0.01,
 				"init": 1,
-				"minAdviced": 0,
-				"maxAdviced": 2.2
+				"minAdvised": 0,
+				"maxAdvised": 2.2
 			},
 			{
 				"name": "opticThickness",
@@ -128,8 +128,8 @@
 				"max": 2,
 				"step": 0.1,
 				"init": 1.1,
-				"minAdviced": 1,
-				"maxAdviced": 2
+				"minAdvised": 1,
+				"maxAdvised": 2
 			},
 			{
 				"name": "roundness",
@@ -138,8 +138,8 @@
 				"max": 2,
 				"step": 0.01,
 				"init": 0.65,
-				"minAdviced": 0.4,
-				"maxAdviced": 1.3
+				"minAdvised": 0.4,
+				"maxAdvised": 1.3
 			},
 			{
 				"name": "breakPath",
@@ -148,8 +148,8 @@
 				"max": 35,
 				"step": 0.1,
 				"init": 0,
-				"minAdviced": 0,
-				"maxAdviced": 35
+				"minAdvised": 0,
+				"maxAdvised": 35
 			},
 			{
 				"name": "axis",
@@ -158,8 +158,8 @@
 				"max": 90,
 				"step": 1,
 				"init": 0,
-				"minAdviced": -30,
-				"maxAdviced": 30
+				"minAdvised": -30,
+				"maxAdvised": 30
 			}
 		]
 	},
@@ -175,8 +175,8 @@
 				"max": 200,
 				"step": 1,
 				"init": 0,
-				"minAdviced": 0,
-				"maxAdviced": 80
+				"minAdvised": 0,
+				"maxAdvised": 80
 			},
 			{
 				"name": "serifHeight",
@@ -185,8 +185,8 @@
 				"max": 200,
 				"step": 1,
 				"init": 0,
-				"minAdviced": 0,
-				"maxAdviced": 80
+				"minAdvised": 0,
+				"maxAdvised": 80
 			},
 			{
 				"name": "serifMedian",
@@ -195,8 +195,8 @@
 				"max": 2,
 				"step": 0.1,
 				"init": 0,
-				"minAdviced": -1,
-				"maxAdviced": 2
+				"minAdvised": -1,
+				"maxAdvised": 2
 			},
 			{
 				"name": "serifCurve",
@@ -205,8 +205,8 @@
 				"max": 3,
 				"step": 0.01,
 				"init": 0,
-				"minAdviced": 0,
-				"maxAdviced": 3
+				"minAdvised": 0,
+				"maxAdvised": 3
 			},
 			{
 				"name": "serifRoundness",
@@ -215,8 +215,8 @@
 				"max": 2,
 				"step": 0.01,
 				"init": 0.55,
-				"minAdviced": 0,
-				"maxAdviced": 2
+				"minAdvised": 0,
+				"maxAdvised": 2
 			},
 			{
 				"name": "serifArc",
@@ -225,8 +225,8 @@
 				"max": 0.5,
 				"step": 0.01,
 				"init": 0,
-				"minAdviced": -0.5,
-				"maxAdviced": 0.5
+				"minAdvised": -0.5,
+				"maxAdvised": 0.5
 			},
 			{
 				"name": "serifTerminal",
@@ -235,8 +235,8 @@
 				"max": 1,
 				"step": 0.01,
 				"init": 0,
-				"minAdviced": -0.2,
-				"maxAdviced": 1
+				"minAdvised": -0.2,
+				"maxAdvised": 1
 			},
 			{
 				"name": "serifTerminalCurve",
@@ -245,8 +245,8 @@
 				"max": 1.5,
 				"step": 0.01,
 				"init": 0.55,
-				"minAdviced": 0,
-				"maxAdviced": 1.5
+				"minAdvised": 0,
+				"maxAdvised": 1.5
 			},
 			{
 				"name": "serifRotate",
@@ -255,8 +255,8 @@
 				"max": 15,
 				"step": 1,
 				"init": 0,
-				"minAdviced": -35,
-				"maxAdviced": 15
+				"minAdvised": -35,
+				"maxAdvised": 15
 			},
 			{
 				"name": "terminalBall",
@@ -265,8 +265,8 @@
 				"max": 1,
 				"step": 0.01,
 				"init": 0,
-				"minAdviced": 0,
-				"maxAdviced": 1
+				"minAdvised": 0,
+				"maxAdvised": 1
 			}
 		]
 	},

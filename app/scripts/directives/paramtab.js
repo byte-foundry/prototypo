@@ -19,17 +19,17 @@ angular.module('prototypo.paramtabDirective', [])
 									$li = $(li),
 									min = +$li.data('min'),
 									max = +$li.data('max'),
-									minRecommended = +$li.data('minrecommended'),
-									maxRecommended = +$li.data('maxrecommended'),
+									minAdvised = +$li.data('minadvised'),
+									maxAdvised = +$li.data('maxadvised'),
 									translateX = Math.round( ( ( value - min ) / ( max - min ) ) * rangeWidth ) - rangeWidth;
 
 								$( bg ).css({transform: 'translateX(' + translateX + 'px)'});
 
 								// TODO: this could be optimized to only touch classList when needed
-								if ( value < minRecommended || value > maxRecommended ) {
-									$( bg ).addClass('out-of-recommended');
+								if ( value < minAdvised || value > maxAdvised ) {
+									$( bg ).addClass('ill-advised');
 								} else {
-									$( bg ).removeClass('out-of-recommended');
+									$( bg ).removeClass('ill-advised');
 								}
 							}
 						}
