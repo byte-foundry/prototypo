@@ -25,6 +25,7 @@
 					downs = 0;
 					return oldHandler.apply( this, arguments );
 				}
+
 			};
 		}
 	};
@@ -32,8 +33,8 @@
 	function downHandler( event ) {
 		// change type
 		event.type = 'doubletap';
-		// re-trigger event
-		$(event.currentTarget).triggerHandler(event);
+		// re-trigger event (.timeStamp is in microseconds in Firefox)
+		$(event.currentTarget).triggerHandler(event, Date.now());
 	}
 
 })(jQuery);

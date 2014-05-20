@@ -60,13 +60,8 @@
 	font-size: 1.2rem;
 	color: $lightest-grey;
 
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 	&:hover .reset {
 		opacity: 1;
-		transition: opacity 500ms ease;
 	}
 }
 
@@ -86,16 +81,18 @@
 
 	cursor: pointer;
 	color: $medium-grey;
+
+	transition: opacity 500ms ease;
+
 	&:hover {
 		color: $red;
 	}
 }
 
 .paramctrl input {
-	display: inline-block;
-	position: absolute;
-	right: .8em;
+	float: right;
 	width: 4rem;
+	margin-top: 0.75rem;
 
 	font-size: inherit;
 	text-align: right;

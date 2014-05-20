@@ -16,21 +16,13 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				});
 
 				// reset scene zoom and position on double-tap
-				var counter = 0;
-				$element.on('pointerdown', function() {
-					setTimeout( function() {
-						counter = 0;
-					}, 200 );
-					counter++;
+				$element.on('doubletap', function() {
+					$scope.appValues.zoom = 1.5;
+					$scope.appValues.scenePanX = -120;
+					$scope.appValues.scenePanY = 0;
 
-					if ( counter === 2 ) {
-						$scope.appValues.zoom = 1.5;
-						$scope.appValues.scenePanX = -120;
-						$scope.appValues.scenePanY = 0;
-
-						$scope.$digest();
-						return false;
-					}
+					$scope.$digest();
+					return false;
 				});
 
 				var $transformed = $element.find('#transformed'),

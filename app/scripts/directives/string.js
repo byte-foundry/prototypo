@@ -62,18 +62,11 @@ angular.module('prototypo.stringDirective', [])
 				$element[0].style.setProperty('display', '');
 
 				// go to glyph on double-tap
-				var counter = 0;
-				$element.on('pointerdown', 'path', function( e ) {
-					setTimeout( function() {
-						counter = 0;
-					}, 200 );
-					counter++;
-					if( counter === 2 ) {
-						$scope.appValues.viewMode = 'single';
-						$scope.appValues.singleChar = e.target.getAttribute('glyph-contour');
-						$scope.$digest();
-						return false;
-					}
+				$element.on('doubletap', 'path', function( e ) {
+					$scope.appValues.viewMode = 'single';
+					$scope.appValues.singleChar = e.target.getAttribute('glyph-contour');
+					$scope.$digest();
+					return false;
 				});
 
 
