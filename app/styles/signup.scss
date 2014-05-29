@@ -1,0 +1,10 @@
+@import "variables";
+
+.signup {
+	input.ng-dirty.ng-invalid {
+		box-shadow: 0 0 5px $red;
+	}
+	input[disabled] {
+		background-color: $light-grey;
+	}
+}

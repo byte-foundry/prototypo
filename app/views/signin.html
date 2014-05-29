@@ -1,0 +1,25 @@
+<form class="signin" name="signin" novalidate>
+	<h4 class="txtcenter mb1">Sign In</h4>
+	<label for="s-email">Email</label>
+	<input type="text" id="s-email" name="email"
+		ng-model="email"
+		required>
+
+	<label for="s-password">Password</label>
+	<input type="password" id="s-password" name="password"
+		ng-model="password"
+		required>
+
+	<div class="error" ng-show="showErrors">
+		<p ng-show="signin.$error.dontmatch">
+			email or password incorrect
+		</p>
+		<p ng-show="signin.email.$error.required">
+			email required
+		</p>
+		<p ng-show="signin.password.$error.required">
+			password required
+		</p>
+	</div>
+	<input type="button" value="Sign In" ng-click="signIn()">
+</form>

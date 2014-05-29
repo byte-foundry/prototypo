@@ -1,15 +1,13 @@
 'use strict';
 
 angular.module('prototypo.Values', [])
-	.factory('valuesResource', function() {
-		/*$.ajaxSetup({
+	.factory('valuesResource', function( hoodie ) {
+		$.ajaxSetup({
 			beforeSend: function( xhr, opts ) {
 				// block hoodie synchronization for now
-				//return !!opts.url.indexOf('/_api/');
+				return !!opts.url.indexOf('/_api/');
 			}
-		});*/
-
-		var hoodie = window.hoodie = new Hoodie('http://prototypo.cloudapp.net:6001/');
+		});
 
 		return function( prefix ) {
 			return {
