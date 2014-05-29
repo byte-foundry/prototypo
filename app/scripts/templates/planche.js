@@ -27,7 +27,7 @@ function program2(depth0,data) {
   return buffer;
   }
 
-  buffer += "<?xml version=\"1.0\" standalone=\"no\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg xmlns=\"http://www.w3.org/2000/svg\">\n<metadata></metadata>\n<defs>\n</defs>\n<g transform=\"matrix(1 0 0 -1 0 0) scale(0.78)\">\n	";
+  buffer += "<?xml version=\"1.0\" standalone=\"no\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg xmlns=\"http://www.w3.org/2000/svg\">\n<metadata></metadata>\n<defs>\n</defs>\n<g transform=\"matrix(1 0 0 -1 0 0) scale(0.03)\">\n	";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.groups), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</g>\n</svg>";

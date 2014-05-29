@@ -280,10 +280,10 @@ angular.module('prototypoApp')
 					/*$scope.fontValues.roundness *= 0.75;
 					$scope.fontValues.serifWidth /= 2;
 					$scope.fontValues.serifHeight /= 4;
+					$scope.fontValues.serifWidth = Math.max( $scope.fontValues.serifWidth, 1 );*/
+					$scope.fontValues.serifTerminal = Math.max( $scope.fontValues.serifTerminal, 0 );
 					$scope.fontValues.serifCurve /= 2;
 					$scope.fontValues.serifRoundness /= 10;
-					$scope.fontValues.serifWidth = Math.max( $scope.fontValues.serifWidth, 1 );
-					$scope.fontValues.serifTerminal = Math.max( $scope.fontValues.serifTerminal, 0 );*/
 
 					$scope.appValues.singleChar = randomGlyph;
 
@@ -301,7 +301,7 @@ angular.module('prototypoApp')
 							')'
 					});
 
-					if ( groups.length < 2 || randomOutlines.length < 216 ) {
+					if ( groups.length < 6 || randomOutlines.length < 216 ) {
 						rAF(function() {
 							$scope.randomOutlines();
 							$scope.$digest();
@@ -310,7 +310,7 @@ angular.module('prototypoApp')
 
 					if ( randomOutlines.length === 216 ) {
 						groups.push({
-							transform: 'translate(' + ( groups.length * 12000 ) + ',0)',
+							transform: 'translate(' + ( groups.length * 20000 ) + ',0)',
 							outlines: randomOutlines
 						});
 
@@ -318,7 +318,7 @@ angular.module('prototypoApp')
 					}
 				};
 
-				$scope.exportOutlines = function() {
+				$scope.exportOutlines = function() {console.log(groups)
 					saveAs(
 						new Blob(
 							[template({groups: groups})],
