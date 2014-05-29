@@ -31,6 +31,10 @@ angular.module('prototypo.signinDirective', [])
 								}
 							});
 					};
+
+					$scope.$watch('email + password', function() {
+						$scope.signin.$setValidity('dontmatch', true);
+					});
 				}
 			}
 		};

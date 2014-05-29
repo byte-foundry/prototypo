@@ -62,7 +62,7 @@ angular.module('prototypoApp', [
 				redirectTo: '/typeface/default/font/default'
 			});
 
-		hoodieProvider.config('http://127.0.0.1:6004/');
+		hoodieProvider.config('http://prototypo.cloudapp.net:6004');
 	})
 
 	.run(function( $rootScope, $location ) {
@@ -73,7 +73,7 @@ angular.module('prototypoApp', [
 				$location
 					.path('/login')
 					// remember next path
-					.search({next: next.split('#')[1]});
+					.search({next: next.split('#')[1] || '/'});
 			}
 
 			// prevent access to login when users have a valid session
