@@ -4,12 +4,18 @@ angular.module('prototypoApp')
 	.controller('MainCtrl', function( $scope, $routeParams, $parse, $q, Typeface, FontValues, AppValues, Font, Glyph ) {
 		var calculated = [];
 		function updateCalculatedParams( values ) {
-			calculated.forEach(function( param ) {
-				if ( $scope.fontValues ) {
+			if ( values && Object.keys( values ).length ) {
+				calculated.forEach(function( param ) {
 					$scope.fontValues[ param.name ] = param.calculate( values );
-				}
-			});
+				});
+			}
 		}
+
+		window.resetValues = function() {
+			$scope.resetAppValues();
+			$scope.resetFontValues();
+			$scope.$apply();
+		};
 
 		/* initial state */
 		// agregated content of json files
@@ -151,14 +157,28 @@ angular.module('prototypoApp')
 							$scope.resetFontValues();
 						}
 
+					// we can prepare the font
 					).always(function() {
-						// we can prepare the font
-						$scope.font = Font( name, {
-							glyphData: typeface.order,
-							glyphFormulas: typeface.glyphs,
-							componentFormulas: typeface.components,
-							parameters: $scope.fontValues,
-						});
+						// try user values first
+						try {
+							$scope.font = Font( name, {
+								glyphData: typeface.order,
+								glyphFormulas: typeface.glyphs,
+								componentFormulas: typeface.components,
+								parameters: $scope.fontValues
+							});
+
+						// fallback to default values
+						} catch (e) {
+							console.error('corrupted font values');
+							$scope.resetFontValues();
+							$scope.font = Font( name, {
+								glyphData: typeface.order,
+								glyphFormulas: typeface.glyphs,
+								componentFormulas: typeface.components,
+								parameters: $scope.fontValues
+							});
+						}
 					}));
 
 				/*

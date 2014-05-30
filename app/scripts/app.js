@@ -57,20 +57,20 @@ angular.module('prototypoApp', [
 	})
 
 	.run(function( $rootScope, $location ) {
-		/*// detect Paypal donations
-		var auth = $location.search().auth;
-		if ( auth ) {
-			// store it for later use
-			window.sessionStorage.appkey = auth;
-			// clear query params
-			$location.path('/login');
-		}
-
 		// always redirect to login when not logged in
 		$rootScope.$on('$locationChangeStart', function(event, next) {
+			// detect Paypal donations
+			var auth = $location.search().auth;
+			if ( auth ) {
+				// store it for later use
+				window.sessionStorage.appkey = auth;
+				// clear query params
+				return $location.path('/login').search({});
+			}
+
 			// dont redirect if already logged-in or already heading to login
 			if ( !window.hoodie.account.hasAccount() && !/^\/login/.test(next.split('#')[1]) ) {
-				$location
+				return $location
 					.path('/login')
 					// remember next path
 					.search({next: next.split('#')[1] || '/'});
@@ -78,9 +78,9 @@ angular.module('prototypoApp', [
 
 			// prevent access to login when users have a valid session
 			if ( window.hoodie.account.hasAccount() && /^\/login/.test(next.split('#')[1]) ) {
-				$location.url($location.search().next || '/');
+				return $location.url($location.search().next || '/');
 			}
-		});*/
+		});
 	});
 
 	// All filters have moved to Formula.js

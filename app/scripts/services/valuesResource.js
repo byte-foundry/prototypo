@@ -19,8 +19,7 @@ angular.module('prototypo.Values', [])
 				},
 
 				save: function( params ) {
-					return hoodie.store.add( prefix + 'values', {
-							id: params.typeface,
+					return hoodie.store.updateOrAdd( prefix + 'values', params.typeface, {
 							values: params.values
 						});
 				},
