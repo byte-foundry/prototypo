@@ -40,7 +40,7 @@ angular.module('prototypo.paramtabsDirective', [])
 
 				$element.on('track', '.paramctrl-gutter', function( e ) {
 					throttle(function() {
-						setValue( draggedParam, e.pageX );
+						setValue( draggedParam, e.originalEvent.pageX );
 					});
 					return false;
 				});

@@ -2,12 +2,12 @@
 
 angular.module('prototypo.Values', [])
 	.factory('valuesResource', function( hoodie ) {
-		$.ajaxSetup({
+		/*$.ajaxSetup({
 			beforeSend: function( xhr, opts ) {
 				// block hoodie synchronization for now
-				return !!opts.url.indexOf('/_api/');
+				return !/_changes\?/.test(opts.url);
 			}
-		});
+		});*/
 
 		return function( prefix ) {
 			return {

@@ -37,15 +37,6 @@ angular.module('prototypoApp', [
 	])
 
 	.config(function( $routeProvider, hoodieProvider ) {
-		// detect Paypal donations
-		var auth = window.location.search.match(/(&|\?)auth=(.*?)(\?|$)/);
-		if ( auth && auth[2] ) {
-			// store it for later use
-			window.sessionStorage.appkey = auth[2];
-			// clear query params
-			window.history.pushState({auth: auth[2]}, '', '/');
-		}
-
 		$routeProvider
 			.when('/', {
 				redirectTo: '/typeface/default/font/default'
@@ -66,6 +57,15 @@ angular.module('prototypoApp', [
 	})
 
 	.run(function( $rootScope, $location ) {
+		/*// detect Paypal donations
+		var auth = $location.search().auth;
+		if ( auth ) {
+			// store it for later use
+			window.sessionStorage.appkey = auth;
+			// clear query params
+			$location.path('/login');
+		}
+
 		// always redirect to login when not logged in
 		$rootScope.$on('$locationChangeStart', function(event, next) {
 			// dont redirect if already logged-in or already heading to login
@@ -80,7 +80,7 @@ angular.module('prototypoApp', [
 			if ( window.hoodie.account.hasAccount() && /^\/login/.test(next.split('#')[1]) ) {
 				$location.url($location.search().next || '/');
 			}
-		});
+		});*/
 	});
 
 	// All filters have moved to Formula.js
