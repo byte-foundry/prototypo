@@ -386,6 +386,17 @@ module.exports = function (grunt) {
 					dest: 'index.html',
 					options: { gzip: true }
 				}, {
+					src: '<%= yeoman.dist %>/images/*.{png,jpg,svg}',
+					dest: 'images/',
+					options: {
+						gzip: false,
+						headers: {
+							// Two Year cache policy (1000 * 60 * 60 * 24 * 730)
+							'Cache-Control': 'max-age=630720000, public',
+							'Expires': new Date(Date.now() + 63072000000).toUTCString(),
+						}
+					}
+				}, {
 					src: '<%= yeoman.dist %>/scripts/*.js',
 					dest: 'scripts/',
 					options: {
