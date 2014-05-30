@@ -1,4 +1,4 @@
-<form class="signin" name="signin" novalidate>
+<form class="signin" name="signin" novalidate ng-submit="signIn()">
 	<h4 class="txtcenter mb1">Sign In</h4>
 	<label for="s-email">Email</label>
 	<input type="text" id="s-email" name="email"
@@ -21,5 +21,5 @@
 			password required
 		</p>
 	</div>
-	<input type="button" value="Sign In" ng-click="signIn()">
+	<input type="submit" value="Sign In">
 </form>

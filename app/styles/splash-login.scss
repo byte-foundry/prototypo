@@ -25,7 +25,8 @@
 		color: $dark-grey;
 	}
 
-	input[type="button"] {
+	input[type="button"],
+	input[type="submit"] {
 		float: right;
 		display: inline-block;
 		width: auto;

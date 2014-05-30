@@ -1,4 +1,4 @@
-<form class="signup" name="signup" novalidate>
+<form class="signup" name="signup" novalidate ng-submit="signUp()">
 	<h4 class="txtcenter mb1">Register</h4>
 	<label for="r-email">Email</label>
 	<input type="email" id="r-email" name="email"
@@ -55,5 +55,5 @@
 			invalid key
 		</p>
 	</div>
-	<input type="button" value="Register" ng-click="signUp()">
+	<input type="submit" value="Register">
 </form>

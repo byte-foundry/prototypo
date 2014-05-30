@@ -199,7 +199,7 @@ module.exports = function (grunt) {
 			html: ['<%= yeoman.dist %>/{,*/}*.html'],
 			css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
 			options: {
-				assetsDirs: ['<%= yeoman.dist %>']
+				assetsDirs: ['<%= yeoman.dist %>', '<%= yeoman.dist %>/images']
 			}
 		},
 
@@ -274,7 +274,7 @@ module.exports = function (grunt) {
 						'*.{ico,png,txt}',
 						'.htaccess',
 						'*.html',
-						'images/{,*/}*.{webp}',
+						'images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
 						'fonts/*',
 						// uncomment the following line when disabling ngtemplates
 						//'views/{,*/}*.html',
