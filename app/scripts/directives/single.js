@@ -144,7 +144,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				});
 
 				/* node drag handler */
-				$element.on('pointerdown', '.node', function( e ) {
+				/*$element.on('pointerdown', '.node', function( e ) {
 					if ( e.which !== 3 ) {
 						document.body.style.cursor = 'move';
 
@@ -161,10 +161,10 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 						return false;
 					}
-				});
+				});*/
 
 				/* spacing lines drag handler */
-				$element.on('pointerdown', '.spacingLine', function( e ) {
+				/*$element.on('pointerdown', '.spacingLine', function( e ) {
 					if ( e.which !== 3 ) {
 						document.body.style.cursor = 'col-resize';
 
@@ -180,7 +180,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 
 						return false;
 					}
-				});
+				});*/
 
 				/* Set <svg> dimension during postLink */
 				// override 'display: none !important' set by .ng-hide
