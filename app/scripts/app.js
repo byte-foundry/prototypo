@@ -68,6 +68,11 @@ angular.module('prototypoApp', [
 				return $location.path('/login').search({});
 			}
 
+			// identify user for UserVoice when logged-in
+			if ( window.hoodie.account.hasAccount() ) {
+				window.UserVoice.push(['identify', {email: window.hoodie.account.username}]);
+			}
+
 			// dont redirect if already logged-in or already heading to login
 			if ( !window.hoodie.account.hasAccount() && !/^\/login/.test(next.split('#')[1]) ) {
 				return $location

@@ -32,14 +32,14 @@ Running Prototypo
 $ grunt serve
 ```
 
-Converting an .svg font to other font formats
----------------------------------------------
-
-This operation currently requires either [Fontforge](http://fontforge.github.io/en-US/) or using a hosted service such as [Freefontconverter](http://www.freefontconverter.com/).
-
 Running the Unit Tests
 ----------------------
 
 ```bash
 $ grunt test
 ```
+
+Converting an .svg font to other font formats
+---------------------------------------------
+
+This operation currently requires either [Fontforge](http://fontforge.github.io/en-US/) or using a hosted service such as [Freefontconverter](http://www.freefontconverter.com/).
