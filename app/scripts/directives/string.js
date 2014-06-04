@@ -37,13 +37,17 @@ angular.module('prototypo.stringDirective', [])
 							top: e.clientY + window.pageYOffset + 'px'
 						});
 
-					} else {
-						$('#contextmenuString').css( 'display', 'none' );
 					}
 
 				// prevent defautlt context-menu
 				}).parent().parent().on('contextmenu', function() {
 					return false;
+				});
+
+				$(window).on('pointerdown', function( e ) {
+					if ( e.which !== 3 && $(e.target).closest($('#contextmenuString')[0]).length === 0 ) {
+						$('#contextmenuString').css( 'display', 'none' );
+					}
 				});
 
 				// override 'display: none !important' set by .ng-hide

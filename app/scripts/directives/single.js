@@ -133,14 +133,17 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 							left: e.clientX + window.pageXOffset + 'px',
 							top: e.clientY + window.pageYOffset + 'px'
 						});
-
-					} else {
-						$('#contextmenu').css( 'display', 'none' );
 					}
 
 				// prevent defautlt context-menu
 				}).parent().parent().on('contextmenu', function() {
 					return false;
+				});
+
+				$(window).on('pointerdown', function( e ) {
+					if ( e.which !== 3 && $(e.target).closest($('#contextmenu')[0]).length === 0 ) {
+						$('#contextmenu').css( 'display', 'none' );
+					}
 				});
 
 				/* node drag handler */
