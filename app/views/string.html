@@ -17,11 +17,14 @@
 					<path vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="#dadada" ng-attr-d="M -20000 {{ fontValues.descender || 0 }} l 40000 0 Z" ></path>
 				</g>
 
-				<path ng-repeat="char in appValues.stringChars.split('') track by $index"
-					glyph-contour="{{char}}"
-					fill="{{ appValues.outlineOnly ? 'none' :appValues.negative ? '#ffffff' : '#3c3c3b' }}"
-					ng-attr-transform="translate({{ getTranslate( $index, char ) }})"
-				></path>
+				<g id="transformed" ng-attr-transform="skewX({{ fontValues.slant || 0 }})">
+					<path ng-repeat="char in appValues.stringChars.split('') track by $index"
+						glyph-contour="{{char}}"
+						fill="{{ appValues.outlineOnly ? 'none' :appValues.negative ? '#ffffff' : '#3c3c3b' }}"
+						ng-attr-transform="translate({{ getTranslate( $index, char ) }})"
+					></path>
+				</g>
+				
 			</g>
 		</svg>
 	</div>
