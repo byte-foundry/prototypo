@@ -31,13 +31,18 @@ angular.module('prototypo.signupDirective', [])
 
 						hoodie.account.signUp($scope.email, $scope.password)
 							.done(function() {
-								hoodie.store.add('appkey', $scope.key);
+								hoodie.store.add('appkey', {value: $scope.key});
 								$location.url('/');
 								$scope.$apply();
 							})
-							.fail(function() {
+							.fail(function( err ) {
 								$scope.showErrors = true;
-								$scope.signup.email.$setValidity('alreadyregistered', false);
+
+								if ( err.status === 409 ) {
+									$scope.signup.email.$setValidity('alreadyregistered', false);
+								} else {
+									$scope.signup.$setValidity('unexpected', false);
+								}
 
 								// sometimes the fail callback is called synchronously
 								if ($scope.$root.$$phase !== '$apply' && $scope.$root.$$phase !== '$digest') {

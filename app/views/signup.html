@@ -27,6 +27,9 @@
 		>
 
 	<div class="error" ng-show="showErrors">
+		<p ng-show="signup.$error.unexpected">
+			unexpected error
+		</p>
 		<p ng-show="signup.email.$error.required">
 			email required
 		</p>

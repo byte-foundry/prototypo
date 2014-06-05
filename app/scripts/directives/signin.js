@@ -20,8 +20,7 @@ angular.module('prototypo.signinDirective', [])
 								$location.url($location.search().next || '/');
 								$scope.$apply();
 							})
-							.fail(function(e) {
-								console.log(e);
+							.fail(function() {
 								$scope.showErrors = true;
 								$scope.signin.$setValidity('dontmatch', false);
 

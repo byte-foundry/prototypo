@@ -53,7 +53,7 @@ angular.module('prototypoApp', [
 				redirectTo: '/typeface/default/font/default'
 			});
 
-		hoodieProvider.config('http://prototypo.cloudapp.net:6004');
+		hoodieProvider.config('http://prototypo.cloudapp.net');
 	})
 
 	.run(function( $rootScope, $location ) {
