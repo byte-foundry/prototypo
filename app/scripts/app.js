@@ -49,6 +49,10 @@ angular.module('prototypoApp', [
 				templateUrl: 'views/layout.html',
 				controller: 'MainCtrl'
 			})
+			.when('/outdated', {
+				templateUrl: 'views/splash-outdated-browser.html',
+				controller: function() {}
+			})
 			.otherwise({
 				redirectTo: '/typeface/default/font/default'
 			});
@@ -84,6 +88,18 @@ angular.module('prototypoApp', [
 			// prevent access to login when users have a valid session
 			if ( window.hoodie.account.hasAccount() && /^\/login/.test(next.split('#')[1]) ) {
 				return $location.url($location.search().next || '/');
+			}
+
+			// detect incompatible browsers
+			if ( 
+				(jQuery.browser.chrome && parseFloat( jQuery.browser.version ) < 30) ||
+				(jQuery.browser.mozilla && parseFloat( jQuery.browser.version ) < 25) ||
+				(jQuery.browser.msie && parseFloat( jQuery.browser.version ) < 11) ||
+				(jQuery.browser.safari && parseFloat( jQuery.browser.version ) < 536) 
+			) {
+				console.log("ERROR — incompatible browser: ", jQuery.browser );
+				return $location
+					.path('/outdated')
 			}
 		});
 	});
