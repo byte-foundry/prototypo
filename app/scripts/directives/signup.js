@@ -14,7 +14,7 @@ angular.module('prototypo.signupDirective', [])
 						delete window.sessionStorage.appkey;
 					}
 				},
-				post: function postLink( $scope ) {
+				post: function postLink( $scope/*, $element*/ ) {
 					$scope.$watch('password + confirm', function() {
 						$scope.signup.confirm.$setValidity('dontmatch', $scope.password === $scope.confirm);
 					});
@@ -23,17 +23,38 @@ angular.module('prototypo.signupDirective', [])
 						$scope.signup.email.$setValidity('alreadyregistered', true);
 					});
 
+					$scope.$watch('email + password', function() {
+						$scope.notifyurl =
+							'http://prototypo-keygen.azurewebsites.net/?' + [
+								'email=' + encodeURIComponent( $scope.email ),
+								'password=' + encodeURIComponent( $scope.password ),
+								'baseurl=' + encodeURIComponent( hoodie.baseUrl )
+							].join('&');
+					});
+
+					/*$element.on('submit', function() {
+						if ( $scope.signup.$invalid ) {
+							$scope.showErrors = true;
+							return false;
+						}
+					});*/
+
 					$scope.signUp = function() {
 						if ( $scope.signup.$invalid ) {
 							$scope.showErrors = true;
-							return;
+							return false;
 						}
 
 						hoodie.account.signUp($scope.email, $scope.password)
 							.done(function() {
-								hoodie.store.add('appkey', {value: $scope.key});
+								// the user registered with an app key
+								if ( window.sessionStorage.appkey ) {
+									hoodie.store.add('appkey', {id: 0, value: $scope.key});
+								}
+
 								$location.url('/');
 								$scope.$apply();
+
 							})
 							.fail(function( err ) {
 								$scope.showErrors = true;

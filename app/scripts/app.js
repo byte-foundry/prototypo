@@ -56,25 +56,27 @@ angular.module('prototypoApp', [
 		hoodieProvider.config('http://prototypo.cloudapp.net');
 	})
 
-	.run(function( $rootScope, $location ) {
+	.run(function( $rootScope, $location, hoodie ) {
+
+		if ( hoodie.account.hasAccount() ) {
+			// identify user for UserVoice when logged-in
+			window.UserVoice.push(['identify', {email: hoodie.account.username}]);
+		}
+
 		// always redirect to login when not logged in
 		$rootScope.$on('$locationChangeStart', function(event, next) {
-			// detect Paypal donations
-			var auth = $location.search().auth;
-			if ( auth ) {
+			var search = $location.search();
+
+			// detect appkey
+			if ( search.auth ) {
 				// store it for later use
-				window.sessionStorage.appkey = auth;
+				window.sessionStorage.appkey = search.auth;
 				// clear query params
 				return $location.path('/login').search({});
 			}
 
-			// identify user for UserVoice when logged-in
-			if ( window.hoodie.account.hasAccount() ) {
-				window.UserVoice.push(['identify', {email: window.hoodie.account.username}]);
-			}
-
 			// dont redirect if already logged-in or already heading to login
-			if ( !window.hoodie.account.hasAccount() && !/^\/login/.test(next.split('#')[1]) ) {
+			if ( !hoodie.account.hasAccount() && !/^\/login/.test(next.split('#')[1]) ) {
 				return $location
 					.path('/login')
 					// remember next path
@@ -82,7 +84,7 @@ angular.module('prototypoApp', [
 			}
 
 			// prevent access to login when users have a valid session
-			if ( window.hoodie.account.hasAccount() && /^\/login/.test(next.split('#')[1]) ) {
+			if ( hoodie.account.hasAccount() && /^\/login/.test(next.split('#')[1]) ) {
 				return $location.url($location.search().next || '/');
 			}
 		});

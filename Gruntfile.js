@@ -495,10 +495,19 @@ module.exports = function (grunt) {
 		'htmlmin'*/
 	]);
 
-	grunt.registerTask('deploy', [
-		's3',
-		'invalidate_cloudfront'
-	]);
+	grunt.registerTask('deploy', function() {
+		// only deploy from byte-foundry/prototypo/master
+		if (
+			process.env.TRAVIS &&
+			process.env.TRAVIS_BRANCH === 'master' &&
+			process.env.TRAVIS_REPO_SLUG === 'byte-foundry/prototypo'
+		) {
+			grunt.task.run([
+				's3',
+				'invalidate_cloudfront'
+			]);
+		}
+	});
 
 	grunt.registerTask('default', [
 		'newer:jshint',

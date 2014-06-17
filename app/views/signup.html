@@ -1,4 +1,9 @@
-<form class="signup" name="signup" novalidate ng-submit="signUp()">
+<form class="signup" name="signup"
+	novalidate
+	zaction="https://www.sandbox.paypal.com/cgi-bin/webscr"
+	ng-submit="signUp()"
+	method="post"
+>
 	<h4 class="txtcenter mb1">Register</h4>
 	<label for="r-email">Email</label>
 	<input type="email" id="r-email" name="email"
@@ -16,6 +21,11 @@
 	<input type="password" id="r-confirm" name="confirm"
 		ng-model="confirm"
 		required>
+
+	<!-- paypal dontation variables -->
+	<input type="hidden" name="cmd" value="_s-xclick">
+	<input type="hidden" name="hosted_button_id" value="QSRDMYSK34U28">
+	<input type="hidden" name="notify_url" ng-model="notifyurl">
 
 	<label for="r-password">App key</label>
 	<a class="small" href="http://www.prototypo.io/support.html">(No Key? Donate to get one now)</a>
@@ -58,5 +68,6 @@
 			invalid key
 		</p>
 	</div>
+
 	<input type="submit" value="Register">
 </form>
