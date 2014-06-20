@@ -12,7 +12,16 @@
 				<li ng-click="resetFontValues()">New font</li>
 				<li class="disabled">load font settings</li>
 				<li class="disabled">Export fontface kit</li>
-				<li ng-click="exportToSVG()">Export as svg font</li>
+				<li class="arrow">
+					Export font
+					<ul class="sub-level level-3 preset-menu">
+						<li ng-click="exportFont('otf')">Export as otf font</li>
+						<li ng-click="exportFont('ttf')">Export as ttf font</li>
+						<li ng-click="exportFont('eot')">Export as eot font</li>
+						<li ng-click="exportFont('woff')">Export as woff font</li>
+						<li ng-click="exportToSVG()">Export as svg font</li>
+					</ul>
+				</li>
 			</ul>
 		</li>
 		<li>
