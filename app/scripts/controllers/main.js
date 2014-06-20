@@ -75,6 +75,39 @@ angular.module('prototypoApp')
 				{type: 'application/svg+xml;charset=utf-8'}
 			));*/
 		};
+		// export fonts via http://onlinefontconverter.com API
+		$scope.exportFont = function( format ) {
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', 'https://ofc.p.mashape.com/directConvert/', true);
+
+			xhr.setRequestHeader('X-Mashape-Authorization', 'HpnoZhEC5AmdsUaFtNpf2WPv0vLoT4LT');
+			xhr.responseType = 'arraybuffer';
+
+			xhr.onload = function() {
+				saveAs(
+					new Blob(
+						[xhr.response],
+						{type: 'application/octet-stream'}
+					),
+					'font.zip'
+				);
+			};
+			try { 
+				var data = new FormData(),
+				font = new Blob(
+					[$scope.font.toDotSVG( $scope.fontValues )],
+					{type: 'application/svg+xml;charset=utf-8'}
+				);
+			data.append( 'file', font );
+			data.append( 'format', format );
+
+			xhr.send( data );
+
+			} catch (e) {
+				console.log(e);
+			}
+			return false;
+		};
 		$scope.applyPreset = function( name ) {
 			// the svg path shouldn't be merged to fontValues and its no longer necessary
 			delete $scope.typeface.presets[name].svg;
