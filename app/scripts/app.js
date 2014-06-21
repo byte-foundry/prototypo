@@ -95,7 +95,8 @@ angular.module('prototypoApp', [
 			// detect incompatible browsers
 			if ( 
 				(jQuery.browser.chrome && parseFloat( jQuery.browser.version ) < 30) ||
-				(jQuery.browser.mozilla && parseFloat( jQuery.browser.version ) < 25) ||
+				(jQuery.browser.mozilla && parseFloat(jQuery.browser.version) < 25
+					&& (!navigator.userAgent.match(/Trident\/7\./))) ||
 				(jQuery.browser.msie && parseFloat( jQuery.browser.version ) < 11) ||
 				(jQuery.browser.safari && parseFloat( jQuery.browser.version ) < 536) 
 			) {
