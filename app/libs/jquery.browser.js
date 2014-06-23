@@ -10,7 +10,7 @@
 	var match = /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
 		/(webkit)[ \/]([\w.]+)/.exec( ua ) ||
 		/(opera)(?:.*version|)[ \/]([\w.]+)/.exec( ua ) ||
-		/(msie) ([\w.]+)/.exec( ua ) ||
+		/(msie|trident).*? (?:rv:)?([\w.]+)/.exec( ua ) ||
 		ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec( ua ) ||
 		[];
 
@@ -35,6 +35,11 @@ if ( !jQuery.browser ) {
 		browser.webkit = true;
 	} else if ( browser.webkit ) {
 		browser.safari = true;
+	}
+
+	// trident is msie
+	if ( browser.trident ) {
+		browser.msie = true;
 	}
 
 	jQuery.browser = browser;
