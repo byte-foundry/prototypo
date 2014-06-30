@@ -73,8 +73,6 @@ angular.module('prototypo.menuDirective', [])
 					$scope.$apply();
 				});
 
-
-
 				var groups = [],
 					randomOutlines = [],
 					rAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame,
@@ -146,6 +144,25 @@ angular.module('prototypo.menuDirective', [])
 						'default.svg'
 					);
 				};
+
+				$(window).keydown(function( event ) {
+					if ( ( event.keyCode === 90 && event.metaKey && event.shiftKey ) ||
+						 ( event.keyCode === 90 && event.ctrlKey && event.shiftKey ) ||
+						 ( event.keyCode === 89 && event.metaKey ) ||
+						 ( event.keyCode === 89 && event.ctrlKey ) ) {
+
+						$scope.redo();
+						return false;
+					}
+
+					else if ( ( event.keyCode === 90 && event.metaKey ) ||
+							  ( event.keyCode === 90 && event.ctrlKey ) ) {
+
+						$scope.undo();
+						return false;
+					}
+				});
+
 			}
 		};
 	});
