@@ -81,6 +81,14 @@
 		cursor: default !important;
 		&:hover { background-color: transparent !important; }
 	}
+	.shortcut {
+		position: absolute;
+		right: 1em;
+		top: calc(50% - 0.5em);
+		color: $medium-grey;
+		font-size: .8em;
+
+	}
 }
 
 .negative {
