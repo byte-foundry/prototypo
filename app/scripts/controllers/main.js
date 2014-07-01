@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('prototypoApp')
-	.controller('MainCtrl', function( $scope, $routeParams, $parse, $q, Typeface, FontValues, AppValues, Font, Glyph ) {
+	.controller('MainCtrl', function( $scope, $routeParams, $parse, $q, History, Typeface, FontValues, AppValues, Font, Glyph ) {
 		var calculated = [];
+
 		function updateCalculatedParams( values ) {
 			if ( values && Object.keys( values ).length ) {
 				calculated.forEach(function( param ) {
@@ -44,6 +45,7 @@ angular.module('prototypoApp')
 		$scope.allChars = {};
 		$scope.allGlyphs = {};
 		$scope.allOutlines = {};
+
 		$scope.zoom = function( val ) {
 			if ( val === 0 ) {
 				$scope.appValues.zoom = 1;
@@ -301,6 +303,66 @@ angular.module('prototypoApp')
 					}
 				// deep
 				}, true);
+				
+
+				var isDoing = false,
+					historyTimeout,
+					_oldValues;
+
+				$scope.undo = function() { 
+					isDoing = true;
+					History.undo( $scope.fontValues );
+					if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+					    $scope.$apply();
+					}
+
+					setTimeout(function() {
+						// this should always happen after the next apply
+						// but we can't delay the apply of ng-click
+						isDoing = false;
+					}, 0);
+				};
+
+				$scope.redo = function() {
+					isDoing = true;
+					History.redo( $scope.fontValues );
+					if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+					    $scope.$apply();
+					}
+
+					setTimeout(function() {
+						// this should always happen after the next apply
+						// but we can't delay the apply of ng-click
+						isDoing = false;
+					}, 0);
+				};
+
+				$scope.$watchCollection('fontValues', function(newValues, oldValues) {console.log(isDoing);
+					if ( isDoing ) {
+						return;
+					}
+
+					if ( !_oldValues ) {
+						_oldValues = oldValues;
+					}
+
+					clearTimeout( historyTimeout );
+					historyTimeout = setTimeout(function() {
+						var modified = {};
+
+						for ( var i in newValues ) {
+							if ( newValues[i] !== _oldValues[i] ) {
+								modified[i] = newValues[i] - _oldValues[i];
+							}
+						}
+
+						if ( Object.keys(modified).length ) {
+							History.add(modified);
+						}
+
+						_oldValues = undefined;
+					}, 500);
+				});
 			});
 
 	});

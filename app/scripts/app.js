@@ -4,6 +4,7 @@ angular.module('prototypoApp', [
 		'ngRoute',
 		'pasvaz.bindonce',
 		'angular.hoodie',
+		'prototypo.History',
 
 		'prototypo.Utils',
 		'prototypo.2D',

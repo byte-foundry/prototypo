@@ -66,7 +66,7 @@ describe('Formula', function () {
 		].join('\n'));
 
 		expect( f.segments.length ).toBe( 6 );
-		expect( f.segments[2]() ).toBe( 'M null null' );
+		expect( f.segments[2]() ).toBe( 'M NaN NaN' );
 	}));
 
 	it('parses & interpolates "add" components', inject(function( Formula ) {
