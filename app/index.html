@@ -34,6 +34,9 @@
 		<!--[if lt IE 9]>
 			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
 		<![endif]-->
+        <script type="text/javascript">
+            var WRInitTime=(new Date()).getTime();
+        </script>
 
 		<div class="main" ng-view></div>
 
@@ -124,5 +127,11 @@
 			//UserVoice.push(['autoprompt', {}]);
 			/* jshint ignore:end */
 		</script>
+        <script type='text/javascript'>
+            document.write(unescape("%3Cscript%20src='"+
+            (document.location.protocol=='https:'?
+            "https://cdnssl.clicktale.net/www07/ptc/718f9b6f-5577-429a-a7d6-e8af0c8f22c5.js":
+            "http://cdn.clicktale.net/www07/ptc/718f9b6f-5577-429a-a7d6-e8af0c8f22c5.js")+"'%20type='text/javascript'%3E%3C/script%3E"));
+        </script>
 	</body>
 </html>
