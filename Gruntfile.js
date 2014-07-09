@@ -295,6 +295,13 @@ module.exports = function (grunt) {
 				cwd: '<%= yeoman.app %>/styles',
 				dest: '.tmp/styles/',
 				src: '{,*/}*.css'
+			},
+			zip: {
+				files: [
+				{ expand: true, dot: true, cwd: '<%= yeoman.dist %>', dest: '<%= yeoman.dist %>', src: ['scripts/*.gz'], ext: '.scripts.js' },
+				{ expand: true, dot: true, cwd: '<%= yeoman.dist %>', dest: '<%= yeoman.dist %>', src: ['styles/*.gz'], ext: '.style.css' },
+				{ expand: true, dot: true, cwd: '<%= yeoman.dist %>', dest: '<%= yeoman.dist %>', src: ['*.html.gz'], ext: '.html' }
+				]
 			}
 		},
 
@@ -369,9 +376,9 @@ module.exports = function (grunt) {
 			  mode: 'gzip'
 			},
 			files: [
-				{expand: true, src: ['<%= yeoman.dist %>/*.html'], dest: '', ext:'.html'},
-				{expand: true, src: ['<%= yeoman.dist %>/scripts/*.js'], dest: '', ext:'.scripts.js'},
-				{expand: true, src: ['<%= yeoman.dist %>/styles/*.css'], dest: '', ext:'.style.css'}
+				{expand: true, src: ['<%= yeoman.dist %>/*.html'], dest: '', ext:'.html.gz'},
+				{expand: true, src: ['<%= yeoman.dist %>/scripts/*.js'], dest: '', ext:'.scripts.js.gz'},
+				{expand: true, src: ['<%= yeoman.dist %>/styles/*.css'], dest: '', ext:'.style.css.gz'}
 			]
 		  }
 		},
@@ -498,6 +505,7 @@ module.exports = function (grunt) {
 		) {
 			grunt.task.run([
 				'compress',
+				'copy:zip',
 				'aws_s3',
 				'invalidate_cloudfront'
 			]);
