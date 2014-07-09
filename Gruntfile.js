@@ -362,6 +362,20 @@ module.exports = function (grunt) {
 			}
 		},
 
+		// gzip etc
+		compress: {
+		  dev: {
+			options: {
+			  mode: 'gzip'
+			},
+			files: [
+				{expand: true, src: ['<%= yeoman.dist %>/*.html'], dest: '', ext:'.html'},
+				{expand: true, src: ['<%= yeoman.dist %>/scripts/*.js'], dest: '', ext:'.scripts.js'},
+				{expand: true, src: ['<%= yeoman.dist %>/styles/*.css'], dest: '', ext:'.style.css'}
+			]
+		  }
+		},
+
 		// allow dist folder to be uploaded to s3
 		aws_s3: {
 			options: {
@@ -377,7 +391,7 @@ module.exports = function (grunt) {
 			// I don't think index.html should be cached.
 			dev: {
 				files: [
-					{expand: true, cwd: '<%= yeoman.dist %>/', src: ['_typeface/**/**/*'], dest: '', params: { ContentEncoding: 'gzip' } },
+					{expand: true, cwd: '<%= yeoman.dist %>/', src: ['_typeface/**/**/*'], dest: ''/*, params: { ContentEncoding: 'gzip' }*/ },
 					{expand: true, cwd: '<%= yeoman.dist %>/', src: ['*.html'], dest: '', params: { ContentEncoding: 'gzip' } },
 					{expand: true, cwd: '<%= yeoman.dist %>/', src: ['images/*.{png,jpg,svg}'], dest: '',
 						params: {
@@ -483,6 +497,7 @@ module.exports = function (grunt) {
 			process.env.TRAVIS_REPO_SLUG === 'byte-foundry/prototypo'
 		) {
 			grunt.task.run([
+				'compress',
 				'aws_s3',
 				'invalidate_cloudfront'
 			]);
