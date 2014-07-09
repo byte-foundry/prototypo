@@ -28,7 +28,7 @@
     "load-grunt-tasks": "~0.2.0",
     "time-grunt": "~0.2.1",
     "grunt-angular-templates": "~0.5.3",
-	"grunt-aws-s3": "0.9.0",
+    "grunt-aws-s3": "0.9.0",
     "grunt-invalidate-cloudfront": "~0.1.4",
     "grunt-traceur": "~0.1.1",
     "karma": "~0.12.0",

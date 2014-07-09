@@ -483,14 +483,10 @@ module.exports = function (grunt) {
 			process.env.TRAVIS_REPO_SLUG === 'byte-foundry/prototypo'
 		) {
 			grunt.task.run([
-				's3',
+				'aws_s3',
 				'invalidate_cloudfront'
 			]);
 		}
-	});
-	
-	grunt.registerTask('deploy-test', function() {
-		grunt.task.run(['aws_s3']);
 	});
 
 	grunt.registerTask('default', [
