@@ -363,76 +363,56 @@ module.exports = function (grunt) {
 		},
 
 		// allow dist folder to be uploaded to s3
-		s3: {
+		aws_s3: {
 			options: {
-				key: process.env.S3_KEY,
-				secret: process.env.S3_SECRET,
+				accessKeyId: process.env.S3_KEY,
+				secretAccessKey: process.env.S3_SECRET,
 				bucket: process.env.S3_BUCKET,
+				region: 'eu-west-1',
 				access: 'public-read'
+//				uploadConcurrency: 5, // 5 simultaneous uploads
+//    			downloadConcurrency: 5 // 5 simultaneous downloads
 			},
 			// _typeface isn't revved yet, so don't cache it.
 			// I don't think index.html should be cached.
 			dev: {
-				upload: [{
-					src: '<%= yeoman.dist %>/_typeface/**/**/*',
-					rel: '<%= yeoman.dist %>/',
-					dest: ''
-				}, {
-					src: '<%= yeoman.dist %>/404.html',
-					dest: '404.html',
-					options: { gzip: true }
-				}, {
-					src: '<%= yeoman.dist %>/index.html',
-					dest: 'index.html',
-					options: { gzip: true }
-				}, {
-					src: '<%= yeoman.dist %>/images/*.{png,jpg,svg}',
-					dest: 'images/',
-					options: {
-						gzip: false,
-						headers: {
+				files: [
+					{expand: true, cwd: '<%= yeoman.dist %>/', src: ['_typeface/**/**/*'], dest: '', params: { ContentEncoding: 'gzip' } },
+					{expand: true, cwd: '<%= yeoman.dist %>/', src: ['*.html'], dest: '', params: { ContentEncoding: 'gzip' } },
+					{expand: true, cwd: '<%= yeoman.dist %>/', src: ['images/*.{png,jpg,svg}'], dest: '',
+						params: {
 							// Two Year cache policy (1000 * 60 * 60 * 24 * 730)
-							'Cache-Control': 'max-age=630720000, public',
-							'Expires': new Date(Date.now() + 63072000000).toUTCString(),
+							CacheControl: 'max-age=630720000, public',
+							Expires: new Date(Date.now() + 63072000000)
 						}
-					}
-				}, {
-					src: '<%= yeoman.dist %>/scripts/*.js',
-					dest: 'scripts/',
-					options: {
-						gzip: true,
-						headers: {
+					},
+					{expand: true, cwd: '<%= yeoman.dist %>/', src: ['scripts/*.js'], dest: '',
+						params: {
 							// Two Year cache policy (1000 * 60 * 60 * 24 * 730)
-							'Cache-Control': 'max-age=630720000, public',
-							'Expires': new Date(Date.now() + 63072000000).toUTCString(),
+							CacheControl: 'max-age=630720000, public',
+							Expires: new Date(Date.now() + 63072000000),
+							ContentEncoding: 'gzip'
 						}
-					}
-				}, {
-					src: '<%= yeoman.dist %>/styles/*.css',
-					dest: 'styles/',
-					options: {
-						gzip: true,
-						headers: {
+					},
+					{expand: true, cwd: '<%= yeoman.dist %>/', src: ['styles/*.css'], dest: '',
+						params: {
 							// Two Year cache policy (1000 * 60 * 60 * 24 * 730)
-							'Cache-Control': 'max-age=630720000, public',
-							'Expires': new Date(Date.now() + 63072000000).toUTCString(),
+							CacheControl: 'max-age=630720000, public',
+							Expires: new Date(Date.now() + 63072000000),
+							ContentEncoding: 'gzip'
 						}
-					}
-				}, {
-					src: '<%= yeoman.dist %>/favicon.ico',
-					dest: 'favicon.ico',
-					options: { headers: {
-						// One week cache policy (1000 * 60 * 60 * 24 * 7)
-						'Cache-Control': 'max-age=604800000, public',
-						'Expires': new Date(Date.now() + 604800000).toUTCString(),
-					}}
-				}, {
-					src: '<%= yeoman.dist %>/robots.txt',
-					dest: 'robots.txt'
-				}]
+					},
+					{expand: true, cwd: '<%= yeoman.dist %>/', src: ['favicon.ico'], dest: '',
+						params: {
+							// One week cache policy (1000 * 60 * 60 * 24 * 7)
+							CacheControl: 'max-age=604800000, public',
+							Expires: new Date(Date.now() + 604800000)
+						}
+					},
+					{expand: true, cwd: '<%= yeoman.dist %>/', src: ['robots.txt'], dest: '' }
+				]
 			}
 		},
-
 		'invalidate_cloudfront': {
 			options: {
 				key: process.env.CF_KEY,
@@ -507,6 +487,10 @@ module.exports = function (grunt) {
 				'invalidate_cloudfront'
 			]);
 		}
+	});
+	
+	grunt.registerTask('deploy-test', function() {
+		grunt.task.run(['aws_s3']);
 	});
 
 	grunt.registerTask('default', [
