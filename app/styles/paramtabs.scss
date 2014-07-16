@@ -1,6 +1,7 @@
 @import "variables";
 
 .paramtabs {
+	overflow-y: scroll;
 	.dummy {
 		display: block !important;
 		border-radius: 0 !important;
