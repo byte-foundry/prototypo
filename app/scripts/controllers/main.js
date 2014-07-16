@@ -12,6 +12,20 @@ angular.module('prototypoApp')
 			}
 		}
 
+		// github.com/ssorallen/blob-feature-check/
+		(function() {
+			var svg = new Blob(["<svg xmlns='http://www.w3.org/2000/svg'></svg>"], {type: 'image/svg+xml;charset=utf-8'});
+			var url = window.webkitURL || window.URL;
+			var objectUrl = url.createObjectURL(svg);
+
+			if (/^blob:/.exec(objectUrl) !== null) {
+				var img = new Image();
+				img.onload = function() { $scope.blobURL = false; };
+				img.onerror = function() { $scope.blobURL = '*** Notice to Safari users ***\n Please rename the downloaded file to font.zip.'; };
+				img.src = objectUrl;
+			}
+		})();
+
 		window.resetValues = function() {
 			$scope.resetAppValues();
 			$scope.resetFontValues();
@@ -58,15 +72,20 @@ angular.module('prototypoApp')
 			$scope.appValues.viewMode = mode;
 			return mode;
 		};
-		$scope.exportToSVG = function() {
-			saveAs(
-				new Blob(
-					[$scope.font.toDotSVG( $scope.fontValues )],
-					{type: 'application/svg+xml;charset=utf-8'}
-				),
-				'default.svg'
-			);
 
+		function saveZip(zip) {
+			//prompt user to rename the file since Safari doesn't support the download attribute
+			if ($scope.blobURL) alert($scope.blobURL);
+			var link = document.createElement('a');
+			link.download = 'font.zip';
+			link.href = 'data:application/zip;base64,' + zip;
+			link.click();
+		}
+		//safari 6 and 7 don't support blob URLs hence we are using data URIs
+		$scope.exportToSVG = function() {
+			var zip = new JSZip();
+			zip.file('font.svg', $scope.font.toDotSVG( $scope.fontValues ));
+			saveZip(zip.generate());
 			// dependency-free exporter, to test.
 			/*var reader = new FileReader();
 			reader.onloadend = function() {
@@ -80,34 +99,34 @@ angular.module('prototypoApp')
 		// export fonts via http://onlinefontconverter.com API
 		$scope.exportFont = function( format ) {
 			var xhr = new XMLHttpRequest();
-			xhr.open('POST', 'https://ofc.p.mashape.com/directConvert/', true);
 
+			xhr.open('POST', 'https://ofc.p.mashape.com/directConvert/', true);
 			xhr.setRequestHeader('X-Mashape-Authorization', 'HpnoZhEC5AmdsUaFtNpf2WPv0vLoT4LT');
 			xhr.responseType = 'arraybuffer';
-
 			xhr.onload = function() {
-				saveAs(
-					new Blob(
-						[xhr.response],
-						{type: 'application/octet-stream'}
-					),
-					'font.zip'
-				);
+				if ($scope.blobURL) {
+					saveZip(btoa(String.fromCharCode.apply(null, new Uint8Array(xhr.response))));
+				} else {
+					saveAs(
+						new Blob(
+							[xhr.response],
+							{type: 'application/octet-stream'}
+						),
+						'font.zip'
+					);
+				}
 			};
+
 			try { 
 				var data = new FormData(),
 				font = new Blob(
 					[$scope.font.toDotSVG( $scope.fontValues )],
 					{type: 'application/svg+xml;charset=utf-8'}
 				);
-			data.append( 'file', font );
-			data.append( 'format', format );
-
-			xhr.send( data );
-
-			} catch (e) {
-				console.log(e);
-			}
+				data.append( 'file', font );
+				data.append( 'format', format );
+				xhr.send( data );
+			} catch (e) { console.log(e); }
 			return false;
 		};
 		$scope.applyPreset = function( name ) {
