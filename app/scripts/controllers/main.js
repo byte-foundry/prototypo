@@ -74,9 +74,9 @@ angular.module('prototypoApp')
 		};
 
 		function saveZip(zip) {
-			//prompt user to rename the file since Safari doesn't support the download attribute
-			if ($scope.blobURL) alert($scope.blobURL);
 			var link = document.createElement('a');
+			//prompt user to rename the file since Safari doesn't support the download attribute
+			if (typeof link.download === "undefined") alert($scope.blobURL);
 			link.download = 'font.zip';
 			link.href = 'data:application/zip;base64,' + zip;
 			link.click();
