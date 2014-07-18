@@ -47,7 +47,7 @@ Roadmap to v1.0
 - automatic spacing ([#124](../../issues/124))
 - generating binary font-files such as .otf, see the [current workaround](#converting-an-svg-font-to-other-font-formats) ([#12](../../issues/12))
 - personnal library to save and load different fonts ([#125](../../issues/125))
-- undo/redo history ([#94](../../issues/94))
+- <del>undo/redo history</del> ([#94](../../issues/94))
 
 Known issues
 ------------
