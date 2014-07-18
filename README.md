@@ -52,7 +52,6 @@ Roadmap to v1.0
 Known issues
 ------------
 
-- font export is broken in Safari ([#111](../../issues/111))
 - the application doesn't adapt to the window being resized ([#108](../../issues/108))
 
 
