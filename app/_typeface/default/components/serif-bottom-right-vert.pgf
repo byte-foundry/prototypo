@@ -1,5 +1,0 @@
-C- 	{{ serifRoundness }} {{ angle }} {{ - self[2].angle - 180 }}  {{ self[4].x - serifHeight }} {{ self[0].y + ( serifHeight * serifCurve ) }}
-l 	 {{ - serifHeight * serifMedian }} {{ serifWidth }}
-C+ 	{{ serifRoundness }} 0 0 {{ self[2].x - ( self[2].x - self[4].x ) / 2 }} {{ self[2].y + serifTerminal * serifHeight }}
-C+ 	{{ serifRoundness }} 0 0 {{ self[-1].x + serifSlant }} {{ self[2].y }}
-rC 	0 {{ - ( self[4].y - self[5].y ) / 3 }} 0 {{ ( self[4].y - self[5].y ) / 3 }}  {{ self[4].x - serifArc * serifHeight - serifSlant }} {{ self[-1].y }}

@@ -8,7 +8,7 @@
     "angular-sanitize": "~1.2.16",
     "angular-bindonce": "~0.3.1",
     "jquery": "~2.1.1",
-    "lodash": "~1.2.1",
+    "lodash": "~2.4.1",
     "FileSaver": "git://github.com/eligrey/FileSaver.js/",
     "hoodie": "~0.9.6",
     "pointerevents-polyfill": "git://github.com/Polymer/PointerEvents.git/",
@@ -16,9 +16,11 @@
   },
   "devDependencies": {
     "angular-mocks": "~1.0.7",
-    "angular-scenario": "~1.0.7"
+    "angular-scenario": "~1.0.7",
+    "lodash": "~2.4.1"
   },
   "resolutions": {
-    "angular": "~1.2.16"
+    "angular": "~1.2.16",
+    "lodash": "~2.4.1"
   }
 }

@@ -1,4 +1,0 @@
-l 	{{ thickness * inktrap / 2 }} 0
-C+ 	{{ roundness }} smooth -45 {{ self[0].x }} {{ self[0].y + thickness * contrast * inktrap / 8 }}
-L 	{{ self[0].x - thickness * contrast * inktrap / 8 }} {{ self[0].y }}
-C+ 	{{ roundness }} 45 smooth {{ self[0].x }} {{ self[0].y - thickness * inktrap / 2 }}

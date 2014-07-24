@@ -5,11 +5,6 @@ angular.module('prototypo.Font', ['prototypo.Glyph', 'prototypo.Formula'])
 		function Font( name, args ) {
 			var self = this;
 
-			// new is optional
-			if ( !( this instanceof Font ) ) {
-				return new Font( name, args );
-			}
-
 			// merge glyph and component formulas in a single formulaLib
 			this.formulaLib = {};
 

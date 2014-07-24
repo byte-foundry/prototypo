@@ -10,7 +10,7 @@ angular.module('prototypo.contourDirective', [])
 
 					// TODO: we shouldn't need this check
 					if ( $scope.allGlyphs[char] ) {
-						$element.attr( 'd', $scope.allGlyphs[ char ].svg );
+						$element.attr( 'd', $scope.allGlyphs[ char ].d );
 					}
 				}
 

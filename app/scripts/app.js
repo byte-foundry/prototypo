@@ -4,18 +4,12 @@ angular.module('prototypoApp', [
 		'ngRoute',
 		'pasvaz.bindonce',
 		'angular.hoodie',
+		'angular.watchCollectionDiff',
 
-		'prototypo.Utils',
-		'prototypo.2D',
-		'prototypo.Point',
-		'prototypo.Segment',
-		'prototypo.Formula',
-		'prototypo.Component',
-		'prototypo.Glyph',
-		'prototypo.Font',
+		'prototypo.Typefaces',
+		'prototypo.Values',
 
 		'prototypo.Typeface',
-		'prototypo.Values',
 
 		'prototypo.glyphDirective',
 		'prototypo.contourDirective',
@@ -68,7 +62,7 @@ angular.module('prototypoApp', [
 		}
 
 		// always redirect to login when not logged in
-		$rootScope.$on('$locationChangeStart', function(event, next) {
+		/*$rootScope.$on('$locationChangeStart', function(event, next) {
 			var search = $location.search();
 
 			// detect appkey
@@ -93,17 +87,16 @@ angular.module('prototypoApp', [
 			}
 
 			// detect incompatible browsers
-			if ( 
+			if (
 				(jQuery.browser.chrome && parseFloat( jQuery.browser.version ) < 30) ||
 				(jQuery.browser.mozilla && parseFloat( jQuery.browser.version ) < 25) ||
 				(jQuery.browser.msie && parseFloat( jQuery.browser.version ) < 11) ||
-				(jQuery.browser.safari && parseFloat( jQuery.browser.version ) < 536) 
+				(jQuery.browser.safari && parseFloat( jQuery.browser.version ) < 536)
 			) {
-				console.log("ERROR — incompatible browser: ", jQuery.browser );
 				return $location
-					.path('/outdated')
+					.path('/outdated');
 			}
-		});
+		});*/
 	});
 
 	// All filters have moved to Formula.js

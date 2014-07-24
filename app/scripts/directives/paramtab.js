@@ -35,7 +35,7 @@ angular.module('prototypo.paramtabDirective', [])
 						}
 					},
 
-					stopWatching = $scope.$watch('typeface.parameters', function( parameters ) {
+					stopWatching = $scope.$watch('parameters', function( parameters ) {
 						if ( !parameters || !parameters.length ) {
 							return;
 						}

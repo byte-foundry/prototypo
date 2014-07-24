@@ -30,11 +30,11 @@
 
 			<g id="transformed" ng-attr-transform="skewX({{ fontValues.slant || 0 }})">
 
-				<path glyph-contour="{{appValues.singleChar}}"
-					fill="{{ appValues.outlineOnly ? 'none' :appValues.negative ? '#ffffff' : '#3B3B3B' }}"
-					stroke="{{ appValues.outlineOnly ? '#888888' : 'none' }}"
-					vector-effect="non-scaling-stroke"
-				></path>
+					<path glyph-contour="{{appValues.singleChar}}"
+						fill="{{ appValues.outlineOnly ? 'none' :appValues.negative ? '#ffffff' : '#3B3B3B' }}"
+						stroke="{{ appValues.outlineOnly ? '#888888' : 'none' }}"
+						vector-effect="non-scaling-stroke"
+					></path>
 
 				<g id="spacing" ng-show="appValues.displaySpacing" class="ng-hide">
 					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" ng-attr-d="M {{- allGlyphs[appValues.singleChar].left || 0 }} -20000 l 0 40000 l -40000 0 l 0 40000 Z" ></path>
@@ -44,37 +44,22 @@
 				</g>
 
 				<g class="nodes" ng-show="appValues.displayNodes" class="ng-hide">
-					<g bindonce ng-repeat="segment in allGlyphs[appValues.singleChar].segments">
-						<path bindonce bo-if="segment.$render.end"
+					<g bindonce ng-repeat="node in allGlyphs[appValues.singleChar][0].skeletons.all[0].nodes">
+						<path bindonce
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node end"
 							data-type="end"
-							ng-attr-d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} m 0 3 h 3 v -6 h -6 v 6 z">
-						</path>
-						<path bo-if="segment.$render.ctrl0"
-							style="pointer-events: none;"
-							class="ctrl-line"
-							ng-attr-d="M {{ segment.$render.start.x }} {{ segment.$render.start.y }} L {{ segment.$render.ctrl0.x }} {{ segment.$render.ctrl0.y }} z">
-						</path>
-						<path bo-if="segment.$render.ctrl1"
-							style="pointer-events: none;"
-							class="ctrl-line"
-							ng-attr-d="M {{ segment.$render.end.x }} {{ segment.$render.end.y }} L {{ segment.$render.ctrl1.x }} {{ segment.$render.ctrl1.y }} z">
-						</path>
-						<path bindonce bo-if="segment.$render.ctrl0"
+							ng-attr-d="M {{ node.x }} {{ node.y }} m 0 3 h 3 v -6 h -6 v 6 z"></path>
+					</g>
+
+					<g bindonce ng-repeat="node in allGlyphs[appValues.singleChar][0].contours.all[0].nodes">
+						<path bindonce
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node ctrl"
 							data-type="ctrl0"
-							ng-attr-d="M {{ segment.$render.ctrl0.x - 3 }} {{ segment.$render.ctrl0.y }} l 3 3 l 3 -3 l -3 -3 z">
-						</path>
-						<path bindonce bo-if="segment.$render.ctrl1"
-							bo-attr
-							bo-attr-data-index="$index"
-							class="node ctrl"
-							data-type="ctrl1"
-							ng-attr-d="M {{ segment.$render.ctrl1.x - 3 }} {{ segment.$render.ctrl1.y }} l 3 3 l 3 -3 l -3 -3 z">
+							ng-attr-d="M {{ node.x - 3 }} {{ node.y }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
 					</g>
 				</g>
