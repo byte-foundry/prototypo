@@ -1,0 +1,31 @@
+<div class="content-wrapper">
+	
+	<div class="header">
+		<div class="title">
+			<b>32.187</b> fonts created.
+			<br>
+			Filter by <b>number of variants </b> and <b>ascendant</b> and display <b>50</b> fonts
+		</div>
+	</div>
+	
+	<div class="content">
+
+		<ul class="circle clearfix">
+			<li ng-repeat="item in library">
+				<!-- 	we use font-family only for experiment design. 
+						Need a real svg later 	-->
+				<div class="font" style="font-family: '{{ item.type }}'">Aa</div>
+				<span class="variants">{{ item.variants }}</span>
+				<div class="stars">
+					<div class="mask">
+						<div class="value"
+							 style="width:{{ item.stars }}%">
+						</div> 
+					</div>
+				</div>
+			</li>
+		</ul>
+
+	</div>
+
+</div>

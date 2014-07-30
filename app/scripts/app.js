@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypoApp', [
-		'ngRoute',
+		'ui.router',
 		'pasvaz.bindonce',
 		'angular.hoodie',
 		'prototypo.History',
@@ -36,32 +36,70 @@ angular.module('prototypoApp', [
 		'prototypo.registerDirective',
 		'prototypo.loginDirective',
 		'prototypo.trackingDirective',
-		'prototypo.useradminDirective'
+		'prototypo.adminDirective',
+		'prototypo.profilDirective',
+		'prototypo.communityDirective',
+		'prototypo.projectsDirective'
 	])
 
-	.config(function( $routeProvider, hoodieProvider ) {
-		$routeProvider
-			.when('/', {
-				redirectTo: '/typeface/default/font/default'
-			})
-			.when('/register', {
-				template: '<register></register>',
-				controller: function() {}
-			})
-			.when('/login', {
-				template: '<login></login>',
-				controller: function() {}
-			})
-			.when('/typeface/:typeface/font/:font', {
+	.config(function( $stateProvider, $urlRouterProvider, hoodieProvider ) {
+		$urlRouterProvider.otherwise('/typeface/default/font/default');
+		$stateProvider
+			.state('index', {
+				url: '/typeface/{typeface:.*}/font/{font:.*}',
 				templateUrl: 'views/layout.html',
 				controller: 'MainCtrl'
 			})
-			.when('/outdated', {
+			.state('register', {
+				url: '/register',
+				template: '<register></register>'
+			})
+			.state('login', {
+				url: '/login',
+				template: '<login></login>'
+			})
+			.state('admin', {
+				url: '/admin',
+				template: '<admin></admin>'
+			})
+			.state('admin.profil', {
+				url: '/profil',
+				template: '<profil></profil>'
+			})
+			.state('admin.projects', {
+				url: '/projects',
+				template: '<projects></projects>',
+				controller: function($scope) {
+					$scope.active = undefined;
+				}
+			})
+			.state('admin.community', {
+				url: '/community',
+				template: '<community></community>'
+			})
+			.state('admin.documentation', {
+				url: '/documentation',
+				templateUrl: 'views/admin/documentation.html',
+				controller: function($scope) {
+					$scope.items = ['A', 'List', 'Of', 'Items'];
+				}
+			})
+			.state('admin.help', {
+				url: '/help',
+				templateUrl: 'views/admin/help.html',
+				controller: function($scope) {
+					$scope.items = ['A', 'List', 'Of', 'Items'];
+				}
+			})
+			.state('active', {
+				url: '/typeface/{typeface:.*}/font/{font:.*}',
+				templateUrl: 'views/layout.html',
+				controller: 'MainCtrl'
+			})
+			.state('outdated', {
+				url: '/outdated',
 				templateUrl: 'views/splash-outdated-browser.html',
 				controller: function() {}
-			})
-			.otherwise({
-				redirectTo: '/typeface/default/font/default'
 			});
 
 		hoodieProvider.config('http://prototypo.cloudapp.net');

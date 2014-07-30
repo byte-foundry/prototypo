@@ -1,0 +1,34 @@
+<div class="content-wrapper">
+	<div class="header">
+		<div class="title">It's on your own.</div>
+	</div>
+	<div class="content">
+
+		<div class="pa2"><h2>Change password</h2></div>
+
+		<div class="pa2">
+			<form name="changePassword" ng-submit="changePasswordForm()" ng-hide="showSucess">
+				<label for="r-password">Password (6 characters or more)</label>
+				<input type="password" id="r-password" name="password"
+				ng-model="password"
+				ng-minlength="6"
+				required>
+
+				<label for="r-confirm">Confirm password</label>
+				<input type="password" id="r-confirm" name="confirm"
+				ng-model="confirm"
+				required>
+
+				<div class="error" ng-show="showErrors">
+					passwords don't match
+				</div>
+
+				<input type="submit" value="Change password" ng-disabled="!match">
+			</form>
+			<div ng-show="showSucess">
+				<div class="h1-like white">Password successfully changed!</div>
+			</div>
+
+		</div>
+	</div>
+</div>

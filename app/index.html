@@ -28,7 +28,7 @@
 		<link rel="stylesheet" href="styles/splash-login.css">
 		<link rel="stylesheet" href="styles/register.css">
 		<link rel="stylesheet" href="styles/tracking.css">
-		<link rel="stylesheet" href="styles/userAdmin.css">
+		<link rel="stylesheet" href="styles/admin.css">
 		<!-- endbuild -->
 
 	</head>
@@ -40,7 +40,8 @@
 			var WRInitTime=(new Date()).getTime();
 		</script>
 
-		<div class="main" ng-view></div>
+		<!-- <div class="main" ng-view></div> -->
+		<div class="main" ui-view></div>
 
 		<!-- build:js scripts/scripts.js -->
 		<script src="bower_components/jquery/dist/jquery.js"></script>
@@ -53,7 +54,7 @@
 
 		<script src="libs/handlebars.runtime.js"></script>
 		<script src="bower_components/angular/angular.js"></script>
-		<script src="bower_components/angular-route/angular-route.js"></script>
+		<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 		<script src="bower_components/angular-resource/angular-resource.js"></script>
 		<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 		<script src="bower_components/angular-bindonce/bindonce.js"></script>
@@ -93,7 +94,10 @@
 		<script src="scripts/directives/register.js"></script>
 		<script src="scripts/directives/login.js"></script>
 		<script src="scripts/directives/tracking.js"></script>
-		<script src="scripts/directives/useradmin.js"></script>
+		<script src="scripts/directives/admin.js"></script>
+		<script src="scripts/directives/profil.js"></script>
+		<script src="scripts/directives/community.js"></script>
+		<script src="scripts/directives/projects.js"></script>
 
 		<script src="views/dotsvg.js"></script>
 		<script src="views/planche.js"></script>

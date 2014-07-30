@@ -1,0 +1,42 @@
+<div id="admin" class="main admin">
+
+	<a href="#/" class="close right pa3 hover">&nbsp;</a>
+	
+	<div class="aside">
+		<a ui-sref="admin">
+			<div class="header">
+				<div>Hi <span id="userName"></span>!</div>
+				<img id="avatar" src="./images/avatars/avatar.svg" alt="avatar">
+			</div>
+		</a>
+		<ul>
+			<li ui-sref-active="active">
+				<a ui-sref="admin.profil">My profil</a>
+			</li>
+			<li ui-sref-active="active"  class="z-disabled">
+				<a ui-sref="admin.projects">My projects</a>
+			</li>
+			<li ui-sref-active="active"  class="z-disabled">
+				<a ui-sref="admin.community">Browse community</a>
+			</li>
+			<li ui-sref-active="active"  class="z-disabled">
+				<a ui-sref="admin.documentation">Documentation</a>
+			</li>
+			<li ui-sref-active="active"  class="z-disabled">
+				<a ui-sref="admin.help">Help</a>
+			</li>
+		</ul>
+	</div>
+
+	<div class="content-wrapper" ui-view>
+
+		<div class="header">
+			<div class="title">this is your dashboard</div>
+		</div>
+
+		<div class="content">
+		</div>
+
+	</div>
+
+</div>

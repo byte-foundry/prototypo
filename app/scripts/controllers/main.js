@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypoApp')
-	.controller('MainCtrl', function( $scope, $routeParams, $parse, $q, History, Typeface, FontValues, AppValues, Font, Glyph ) {
+	.controller('MainCtrl', function( $scope, $stateParams, $parse, $q, History, Typeface, FontValues, AppValues, Font, Glyph ) {
 		var calculated = [];
 
 		function updateCalculatedParams( values ) {
@@ -26,7 +26,6 @@ angular.module('prototypoApp')
 		// app values
 		var initialAppValues = {
 			showForm: true,
-			showUserAdmin: true,
 			showTrackInfo: true,
 			showSplash: true,
 			viewMode: 'single',
@@ -128,7 +127,7 @@ angular.module('prototypoApp')
 		};
 		$scope.updateCalculatedParams = updateCalculatedParams;
 
-		Typeface.get( $routeParams.typeface )
+		Typeface.get( 'default' )
 			/*
 			 * 1. Download typeface data
 			 */
@@ -172,7 +171,7 @@ angular.module('prototypoApp')
 				$scope.$watchCollection('fontValues', function() {
 					// persist changes
 					FontValues.save({
-						typeface: $routeParams.typeface,
+						typeface: $stateParams.typeface,
 						values: $scope.fontValues
 					});
 				});
@@ -186,7 +185,7 @@ angular.module('prototypoApp')
 					updateCalculatedParams( $scope.fontValues );
 				};
 
-				promises.push( FontValues.get({ typeface: $routeParams.typeface })
+				promises.push( FontValues.get({ typeface: $stateParams.typeface })
 					.then(
 						function done( data ) {
 							$.extend( $scope.fontValues, data );
@@ -225,7 +224,7 @@ angular.module('prototypoApp')
 				$scope.$watchCollection('appValues', function() {
 					// persist changes
 					AppValues.save({
-						typeface: $routeParams.typeface,
+						typeface: $stateParams.typeface,
 						values: $scope.appValues
 					});
 				});
@@ -235,7 +234,7 @@ angular.module('prototypoApp')
 					$scope.appValues.singleChar = Object.keys( $scope.typeface.order )[0];
 				};
 
-				promises.push( AppValues.get({ typeface: $routeParams.typeface })
+				promises.push( AppValues.get({ typeface: 'default' })
 					.then(
 						function done( data ) {
 							if ( !( data.singleChar in $scope.typeface.order ) ) {

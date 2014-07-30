@@ -1,7 +1,6 @@
 {
   "name": "prototypo",
   "version": "0.1.0",
-  "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.4",
     "grunt-autoprefixer": "~0.7.2",

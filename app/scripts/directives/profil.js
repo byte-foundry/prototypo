@@ -1,19 +1,17 @@
 'use strict';
 
-angular.module('prototypo.useradminDirective', [])
-	.directive('useradmin', function() {
+angular.module('prototypo.profilDirective', [])
+	.directive('profil', function() {
 		return {
 			restrict: 'E',
-			templateUrl: 'views/userAdmin.html',
+			templateUrl: 'views/admin/profil.html',
 			replace: true,
 			link: function postLink( $scope, $element ) {
-				// Display User name
-				$('#userName').append(hoodie.account.username);	
 
 				// Password	
 				$scope.changePasswordForm = function() {
 					console.log($scope.password);
-					// currentpassword has no effect
+					// TODO: currentpassword has no effect
 					hoodie.account.changePassword('currentpassword', $scope.password);
 					$scope.showSucess = true;
 				}
@@ -32,9 +30,6 @@ angular.module('prototypo.useradminDirective', [])
 						$scope.showErrors = false;
 					}
 				});
-
-				
-
 			}
 		};
 	});

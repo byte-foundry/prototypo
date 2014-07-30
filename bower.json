@@ -12,7 +12,8 @@
     "FileSaver": "git://github.com/eligrey/FileSaver.js/",
     "hoodie": "~0.9.6",
     "pointerevents-polyfill": "git://github.com/Polymer/PointerEvents.git/",
-    "PointerGestures": "git://github.com/Polymer/PointerGestures.git/"
+    "PointerGestures": "git://github.com/Polymer/PointerGestures.git/",
+    "angular-ui-router": "~0.2.11"
   },
   "devDependencies": {
     "angular-mocks": "~1.0.7",

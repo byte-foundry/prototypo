@@ -1,0 +1,334 @@
+@import "variables";
+
+#admin {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: $grey-3;
+	z-index: 11;
+	width: 100%;
+
+	.close {
+		position: absolute;
+		z-index: 2;
+		right: 0em;
+		color: $red;
+		font-size: 3em;
+		line-height: 1;
+		display: block;
+		&:before,
+		&:after {
+			transition: 250ms ease;
+			content: "";
+			display: block;
+			border-top: 1px solid $red;
+			transform: rotate(45deg);
+			width: 1em;
+			position: absolute;
+			top: 1em;
+
+		}
+		&:after {
+			transform: rotate(-45deg);
+		}
+		&:hover {
+			&:before {
+				transform: rotate(-45deg);
+			}
+			&:after {
+				transform: rotate(45deg);
+			}
+		}
+	}
+
+	.header {
+		height: $header-h;
+		max-height: $header-h;
+		overflow: hidden;
+		background-color: $white;
+		color: $dark-grey;
+		padding: 1em;
+		#avatar {
+			position: relative;
+			bottom: -10px;
+		}
+	}
+
+	.aside {
+		.header {
+			background-color: $grey-1;
+		}
+		width: $sidebar-w;
+		background-color: $dark-grey;
+		position: relative;
+		float: left;
+		height: 100%;
+		color: $white;
+
+		ul {
+			padding: 0;
+			margin: 0;
+			li {
+				list-style: none;
+				border-bottom: 1px solid $dark-grey;
+				background-color: lighten($dark-grey, 2%);
+				color: $white;
+				position: relative;
+				-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit  */
+				-moz-box-sizing: border-box;    /* Firefox, other Gecko         */
+				box-sizing: border-box;
+				a {
+					padding: 1em;
+					display: block;
+				}
+			}
+			li.active, li:hover {
+				cursor: pointer;
+				background-color: $black;
+			}
+			li.active {
+				// &:after {
+				// 	content: "";
+				// 	background-color: $black;
+				// 	height: 100%;
+				// 	width: 8px;
+				// 	position: absolute;
+				// 	left: 100%;
+				// 	top: 0;
+				// 	bottom: 0;
+				// }
+			}
+			li.disabled {
+				cursor: default;
+				background-color: lighten($dark-grey, 2%);
+				color: lighten($dark-grey, 20%);
+			}
+
+		}
+	}
+
+	.content-wrapper {
+		height: 100%;
+		.header {
+			background-color: $white;
+			position: relative;
+			.title {
+				position: absolute;
+				bottom: 0;
+				color: $dark-grey;
+				font-size: 16px;
+				font-weight: normal;
+				padding: 1em;
+			}
+		}
+		.content {
+			label {
+				color: black;
+			}
+			height: calc(100% - #{$header-h});
+			overflow-y: scroll;
+		}
+	}
+}
+
+ul {
+	padding: 0;
+	li {
+		list-style: none;
+		font-size: 1em;
+	}
+}
+
+.variants {
+	width: 2.35em;
+	max-width: 2.35em;
+	height: 2.4em;
+	font-size: 14px;
+	display: inline-block;
+	height: 32px;
+	line-height: 2em;
+	border-radius: 50%;
+	text-align: center;
+	border: 3px solid $green;
+	color: $green;
+	font-weight: bold;
+	background-color: white;
+	padding: 0;
+}
+
+ul.list {
+	li {
+		position: relative;
+		background-color: $grey-1;
+		font-size: 5em;
+		line-height: 1;
+		color: $dark-grey;
+		padding: 80px 85px;
+		&:nth-child(odd) {
+			background-color: $grey-3;
+		}
+		.menu-library {
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			background-color: lighten($dark-grey, 2%);
+			font-size: 10px; /* temp */
+			min-width: $sidebar-w;
+			display: none;
+			ul {
+				padding-left: 13em;
+				height: 100%;
+				li {
+					display: table;
+					width: 100%;
+					font-size: 16px;
+					padding: 1em;
+					list-style: none;
+					border-bottom: 1px solid $dark-grey;
+					background-color: lighten($dark-grey, 5%);
+					color: $white;
+					position: relative;
+					-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit  */
+					-moz-box-sizing: border-box;    /* Firefox, other Gecko         */
+					box-sizing: border-box;
+					min-height: 25%;
+					a {
+						display: table-cell;
+						vertical-align: middle;
+					}
+					&:hover {
+						cursor: pointer;
+						background-color: $black;
+					}
+				}
+				.close-icon {
+					background-color: $red;
+					position: absolute;
+					top: 0;
+					right: -2em;
+					height: 2em;
+					width: 2em;
+					padding: .5em;
+					color: white;
+					line-height: 1;
+					font-size: 2em;
+					text-align: center;
+					display: table;
+					span {
+						display: table-cell;
+						vertical-align: middle;
+					}
+					&:hover {
+						opacity: .8;
+						cursor: pointer;
+					}
+				}
+			}
+		}
+		.btn-menu-library {
+			position: absolute;
+			top: 30px;
+			left: 30px;
+			line-height: 0;
+			text-align: center;
+			span {
+				float: left;
+				margin-right: 20px;
+			}
+			.variants {
+				background-color: $grey-1;
+			}
+			.options {
+				padding-top: 5px;
+				svg {
+					display: block;
+					fill: $light-grey;
+				}
+				&:hover,
+				&.active {
+					svg { 
+						fill: $green;
+						cursor: pointer; 
+					}
+				}
+			}
+		}
+		&.active {
+			padding-left: calc(1em + #{$sidebar-w});
+			background-color: lighten($dark-grey, 2%);
+			.font {
+				color: $white;
+			}
+			.menu-library {
+				display: block;
+			}
+			.variants {
+				background-color: $white;
+				border-color: $white;
+				color: $medium-grey;
+			}
+			.options {
+				svg {
+					fill: $green;
+				}
+			}
+		}
+	}
+}
+
+ul.circle {
+	padding: 3em;
+	margin: 0;
+	li {
+		width: 15em;
+		height: 15em;
+		border-radius: 50%;
+		background-color: white;
+		float: left;
+		position: relative;
+		margin: 0 3em 3em 0;
+		list-style: none;
+		.font {
+			font-size: 100px; 		/* UGLY, just a test */
+			text-align: center; 	/* UGLY, just a test */
+			padding: .3em 0; 		/* UGLY, just a test */
+		}
+		.variants {
+			position: absolute;
+			top: 1.1em;
+			right: 1.1em;
+		}
+		.stars {
+			position: absolute;
+			left: 0;
+			display: inline;
+			bottom: 1em;
+			font-size: 1.4em;
+			width: 100%;
+			.mask {
+				width: 80px;
+				height: 13px;
+				margin: 0 auto;
+				background-color: $medium-grey;
+				.value {
+					background-color: $green;
+					width: 50%;
+					height: 100%;
+				}
+				&:after {
+					content: "";
+					display: block;
+					width: 100%;
+					height: 100%;
+					position: absolute;
+					top: 0;
+					background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAANCAYAAAA+AemEAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAXtJREFUeNrsl9GRhCAMhuUqoARLsARLsARL2BK4CvY6YDuwBO1gdyvQreDsgIOZOMMhcD/Gh324zPCC5PdLIBGFsVb922H7yDxb7Lgx9T+Z/o7hi6nh/FeG/5plMGnr7ajNcZtJXzM0FJPh2w5JOhwGSVo7q3LBMxPQk3/NCZ7JoMg/mYACBoUk0DmMdnReAmuam8GX3u0YglOuSAOFdmsvTIZxC540LgUMJsIgYwxbAke0IVBpx6wD/SUFuAv6BIaey+AnHWHwT6AGnNpMKbj5BtDIlSPC0LwTQ4U6Z3YdCoB2Hell+mDyoCSezRD7iNQJR7R/6MzpRa1hMgwnMLQIw+4eKIRYMvchxF6ZOx1kluHB1Hgm5h8FDBOiESZwCkpWeU31Cb578r6c120nMxuTBIwwvEo0iEF7DCt4EJaAQSfzEBzbKznMQU9RYA801CN05ErQgiWoaW2MoUPLL3JvK2EYaO39LwYR/Au73ZEVz7ga787w69mPAAMA0raYieSp09wAAAAASUVORK5CYII=');
+					background-repeat: no-repeat;
+				}
+			}
+		}
+	}
+}
