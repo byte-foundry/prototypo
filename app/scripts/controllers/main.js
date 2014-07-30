@@ -337,7 +337,7 @@ angular.module('prototypoApp')
 					}, 0);
 				};
 
-				$scope.$watchCollection('fontValues', function(newValues, oldValues) {console.log(isDoing);
+				$scope.$watchCollection('fontValues', function(newValues, oldValues) {
 					if ( isDoing ) {
 						return;
 					}
