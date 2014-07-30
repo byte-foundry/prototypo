@@ -6,7 +6,7 @@
 			<g transform="matrix(1 0 0 -1 0 0)">
 				<path bindonce ng-repeat="(name, preset) in typeface.presets"
 					bo-attr
-					bo-attr-d="preset.svg"
+					ng-attr-d="{{preset.svg}}"
 					bo-attr-class="'preset preset-' + $index"
 					fill="#3c3c3b"
 				></path>
