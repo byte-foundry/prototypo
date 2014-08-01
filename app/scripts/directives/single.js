@@ -202,4 +202,9 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 				$element[0].style.setProperty('display', '');
 			}
 		};
+	})
+	.filter('int', function() {
+		return function( input ) {
+			return Math.round( input );
+		};
 	});

@@ -16,7 +16,7 @@ angular.module('prototypo.NodeList', ['prototypo.Node'])
 
 			// cycle can be set either through the second argument of the function,
 			// or, for convenience, as the last element of nodesData
-			if ( nodesData[ nodesData.length -1 ] === 'cycle' ) {//console.log('cycle!')
+			if ( nodesData[ nodesData.length -1 ] === 'cycle' ) {
 				nodesData.splice(-1);
 				this.cycle = true;
 			} else {
@@ -24,7 +24,7 @@ angular.module('prototypo.NodeList', ['prototypo.Node'])
 			}
 
 			this.nodes = nodesData.map(function( data ) {
-				return data.constructor === Node ?
+				return data instanceof Node ?
 					data:
 					new Node( data );
 			});

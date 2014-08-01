@@ -7,14 +7,19 @@ angular.module('prototypo.Component', ['prototypo.Collection', 'prototypo.Skelet
 			//var self = this;
 
 			this.origin = new Point(0, 0);
-			this.points = new Collection( Point );
-			this.skeletons = new Collection( Skeleton );
-			this.contours = new Collection( Contour );
+			var points = new Collection( Point ),
+				skeletons = new Collection( Skeleton ),
+				contours = new Collection( Contour );
+
+			this.skeletons = skeletons.all;
+			this.contours = contours.all;
+			this.allContours = [];
+			this.allNodes = [];
 
 			this.processor = data(
-				this.points,
-				this.skeletons,
-				this.contours,
+				points,
+				skeletons,
+				contours,
 				function include() {}
 			);
 		}
@@ -22,13 +27,47 @@ angular.module('prototypo.Component', ['prototypo.Collection', 'prototypo.Skelet
 		Component.prototype.process = function( fontValues ) {
 			execWith(this.processor, _.extend({origin: this.origin}, fontValues));
 
-			this.skeletons.all.forEach(function(skeleton) {
-				skeleton.updateContours();
+			this.skeletons.forEach(function(skeleton) {
+				skeleton.updateContours(fontValues);
 			});
 
-			this.contours.all.forEach(function(contour) {
-				contour.updateControls();
+			this.contours.forEach(function(contour) {
+				contour.updateControls(fontValues);
 			});
+
+			if ( this.allNodes.length === 0 ) {
+				this.collectContours();
+
+				this.collectNodes();
+			}
+
+			this.allContours.forEach(function( contour ) {
+				contour.toSVG();
+			});
+
+			return this;
+		};
+
+		// to test
+		Component.prototype.collectContours = function() {
+			this.allContours = [].concat.apply(
+				this.contours,
+				this.skeletons.map(function( skeleton ) {
+					return skeleton.contours;
+				})
+			);
+
+			return this;
+		};
+
+		// to test
+		Component.prototype.collectNodes = function() {
+			this.allNodes = [].concat.apply(
+				[],
+				this.allContours.map(function( contour ) {
+					return contour.nodes;
+				})
+			);
 
 			return this;
 		};
@@ -43,7 +82,7 @@ angular.module('prototypo.Component', ['prototypo.Collection', 'prototypo.Skelet
 				}
 			});
 
-			fn.apply(null, args);
+			fn.apply(scope, args);
 		}
 
 		return Component;

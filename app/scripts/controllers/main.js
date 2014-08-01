@@ -118,8 +118,6 @@
 				$scope.fontValues
 			);
 
-			console.log($scope.allGlyphs[$scope.appValues.singleChar]);
-
 			// persist values
 			FontValues.save({
 				typeface: $routeParams.typeface,

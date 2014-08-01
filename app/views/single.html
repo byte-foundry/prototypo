@@ -30,11 +30,15 @@
 
 			<g id="transformed" ng-attr-transform="skewX({{ fontValues.slant || 0 }})">
 
-					<path glyph-contour="{{appValues.singleChar}}"
+				<g class="contours" ng-repeat="contour in allGlyphs[appValues.singleChar][0].allContours">
+					<path
+						data-index="$index"
+						ng-attr-d="{{contour.d}}"
 						fill="{{ appValues.outlineOnly ? 'none' :appValues.negative ? '#ffffff' : '#3B3B3B' }}"
 						stroke="{{ appValues.outlineOnly ? '#888888' : 'none' }}"
 						vector-effect="non-scaling-stroke"
 					></path>
+				</g>
 
 				<g id="spacing" ng-show="appValues.displaySpacing" class="ng-hide">
 					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" ng-attr-d="M {{- allGlyphs[appValues.singleChar].left || 0 }} -20000 l 0 40000 l -40000 0 l 0 40000 Z" ></path>
@@ -44,22 +48,32 @@
 				</g>
 
 				<g class="nodes" ng-show="appValues.displayNodes" class="ng-hide">
-					<g bindonce ng-repeat="node in allGlyphs[appValues.singleChar][0].skeletons.all[0].nodes">
-						<path bindonce
+					<g bindonce ng-repeat="node in allGlyphs[appValues.singleChar][0].allNodes">
+						<path
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node end"
 							data-type="end"
-							ng-attr-d="M {{ node.x }} {{ node.y }} m 0 3 h 3 v -6 h -6 v 6 z"></path>
-					</g>
-
-					<g bindonce ng-repeat="node in allGlyphs[appValues.singleChar][0].contours.all[0].nodes">
-						<path bindonce
+							ng-attr-d="M {{ node.x | int }} {{ node.y | int }} m 0 3 h 3 v -6 h -6 v 6 z"></path>
+						<path
+							style="pointer-events: none;"
+							class="ctrl-line"
+							ng-attr-d="M {{ node.lc.x | int }} {{ node.lc.y | int }} L {{ node.x | int }} {{ node.y | int }} L {{ node.rc.x | int }} {{ node.rc.y | int }}"
+							fill="none">
+						</path>
+						<path
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node ctrl"
 							data-type="ctrl0"
-							ng-attr-d="M {{ node.x - 3 }} {{ node.y }} l 3 3 l 3 -3 l -3 -3 z">
+							ng-attr-d="M {{ node.lc.x - 3 | int }} {{ node.lc.y | int }} l 3 3 l 3 -3 l -3 -3 z">
+						</path>
+						<path
+							bo-attr
+							bo-attr-data-index="$index"
+							class="node ctrl"
+							data-type="ctrl1"
+							ng-attr-d="M {{ node.rc.x - 3 | int }} {{ node.rc.y | int }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
 					</g>
 				</g>

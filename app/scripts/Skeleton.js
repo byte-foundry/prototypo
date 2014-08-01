@@ -26,7 +26,7 @@ angular.module('prototypo.Skeleton', ['prototypo.Contour', 'prototypo.NodeList',
 			var contour;
 
 			contour = new Contour( this.nodes.map(function(node) {
-					return ( node.right = new Node({
+					return ( node.left = new Node({
 							c: null,
 							lType: node.lType,
 							rType: node.rType
@@ -38,10 +38,11 @@ angular.module('prototypo.Skeleton', ['prototypo.Contour', 'prototypo.NodeList',
 			this.contours.push( contour );
 
 			contour = new Contour( this.nodes.reverse().map(function(node) {
-					return ( node.left = new Node({
+					return ( node.right = new Node({
 							c: null,
-							lType: node.lType,
-							rType: node.rType
+							// use opposite type
+							lType: node.rType,
+							rType: node.lType
 						})
 					);
 				})
@@ -64,14 +65,35 @@ angular.module('prototypo.Skeleton', ['prototypo.Contour', 'prototypo.NodeList',
 			return this;
 		};
 
-		Skeleton.prototype.updateContours = function() {
+		Skeleton.prototype.expand = function( fontValues ) {
 			this.nodes.forEach(function(node) {
-				node.rc.x = node.x + 5;
-				node.rc.y = node.y;
+				var width = node.width || fontValues.thickness,
+					distribution = ( node.distr === undefined ? 0.5 : node.distr ),
+					angle = node.angle * ( Math.PI * 2 / 360 ) || 0;
 
-				node.lc.x = node.x - 5;
-				node.lc.y = node.y;
+				node.left.x = node.x + ( width * ( distribution ) * Math.cos( angle + Math.PI ) );
+				node.left.y = node.y + ( width * ( distribution ) * Math.sin( angle + Math.PI ) );
+
+				node.right.x = node.x + ( width * ( 1 - distribution ) * Math.cos( angle ) );
+				node.right.y = node.y + ( width * ( 1 - distribution ) * Math.sin( angle ) );
 			});
+		};
+
+		// TODO: this function should be part of the typeface file
+		// (but this one can be the default one)
+		Skeleton.prototype.updateContours = function( fontValues ) {
+			this.expand( fontValues );
+
+			if ( !this.cycle ) {
+				var firstNode = this.nodes[0],
+					lastNode = this.nodes[this.nodes.length - 1];
+
+				firstNode.right.rType = 'line';
+				firstNode.left.lType = 'line';
+
+				lastNode.right.lType = 'line';
+				lastNode.left.rType = 'line';
+			}
 
 			this.contours.forEach(function(contour) {
 				contour.updateControls();

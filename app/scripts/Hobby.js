@@ -38,6 +38,7 @@ angular.module('prototypo.Hobby', [])
 	.constant('nodeType', {
 		endpoint:	0,
 		explicit:	1,
+		line:		1,
 		given:		2,
 		curl:		3,
 		open:		4,
@@ -52,7 +53,7 @@ angular.module('prototypo.Hobby', [])
 		5: 'endcycle'
 	})
 
-	.factory('updateControls', function(mp_endpoint, mp_explicit, mp_given, mp_curl, mp_open, mp_end_cycle) {
+	.factory('updateControls', function(mp_endpoint, mp_explicit, mp_given, mp_curl, mp_open, mp_end_cycle, nodeType) {
 
 		var unity = 1.0,
 			two = 2.0,
@@ -75,13 +76,13 @@ angular.module('prototypo.Hobby', [])
 			if (p.rtype > mp_explicit && (Math.pow(p.x_pt - q.x_pt, 2) + Math.pow(p.y_pt - q.y_pt,2) < Math.pow(epsilon, 2))) {
 				p.rtype = mp_explicit;
 				if (p.ltype == mp_open) {
-				p.ltype = mp_curl;
-				p.left_curl = unity;
+					p.ltype = mp_curl;
+					p.left_curl = unity;
 				}
 				q.ltype = mp_explicit;
 				if (q.rtype == mp_open) {
-				q.rtype = mp_curl;
-				q.right_curl = unity;
+					q.rtype = mp_curl;
+					q.right_curl = unity;
 				}
 				p.rx_pt = p.x_pt;
 				q.lx_pt = p.x_pt;
@@ -146,9 +147,9 @@ angular.module('prototypo.Hobby', [])
 				}
 				}
 				if (k == n) {
-				psi.push(0);
+					psi.push(0);
 				} else {
-				psi.push(psi[1]);
+					psi.push(psi[1]);
 				}
 				if (q.ltype == mp_open) {
 				delx_pt = (q.rx_pt - q.x_pt);
@@ -204,109 +205,110 @@ angular.module('prototypo.Hobby', [])
 			t = s.next;
 			if (k == 0) {
 				if (s.rtype == mp_given) {
-				if (t.ltype == mp_given) {
-					aa = mp_n_arg(delta_x[0], delta_y[0]);
-					// tuple([ct, st]) = mp_n_sin_cos((p.right_given() - aa));
-					// tuple([cf, sf]) = mp_n_sin_cos((q.left_given() - aa));
-					ct_st = mp_n_sin_cos(p.right_given - aa);
-					ct = ct_st[0];
-					st = ct_st[1];
-					cf_sf = mp_n_sin_cos(q.left_given - aa);
-					cf = cf_sf[0];
-					sf = cf_sf[1];
-					mp_set_controls(p, q, delta_x[0], delta_y[0], st, ct, -sf, cf);
-					return;
-				} else {
-					vv[0] = s.right_given - mp_n_arg(delta_x[0], delta_y[0]);
-					vv[0] = reduce_angle(vv[0]);
-					uu[0] = 0;
-					ww[0] = 0;
-				}
-				} else {
-				if (s.rtype == mp_curl) {
-					if (t.ltype == mp_curl) {
-					p.rtype = mp_explicit;
-					q.ltype = mp_explicit;
-					lt = Math.abs(q.left_tension);
-					rt = Math.abs(p.right_tension);
-					ff = unity / (3.0 * rt);
-					p.rx_pt = p.x_pt + (delta_x[0] * ff);
-					p.ry_pt = p.y_pt + (delta_y[0] * ff);
-					ff = unity / (3.0 * lt);
-					q.lx_pt = q.x_pt - (delta_x[0] * ff);
-					q.ly_pt = q.y_pt - (delta_y[0] * ff);
-					return;
+					if (t.ltype == mp_given) {
+						aa = mp_n_arg(delta_x[0], delta_y[0]);
+						// tuple([ct, st]) = mp_n_sin_cos((p.right_given() - aa));
+						// tuple([cf, sf]) = mp_n_sin_cos((q.left_given() - aa));
+						ct_st = mp_n_sin_cos(p.right_given - aa);
+						ct = ct_st[0];
+						st = ct_st[1];
+						cf_sf = mp_n_sin_cos(q.left_given - aa);
+						cf = cf_sf[0];
+						sf = cf_sf[1];
+						mp_set_controls(p, q, delta_x[0], delta_y[0], st, ct, -sf, cf);
+						return;
 					} else {
-					cc = s.right_curl;
-					lt = Math.abs(t.left_tension);
-					rt = Math.abs(s.right_tension);
-					uu[0] = mp_curl_ratio(cc, rt, lt);
-					vv[0] = -(psi[1] * uu[0]);
-					ww[0] = 0;
+						vv[0] = s.right_given - mp_n_arg(delta_x[0], delta_y[0]);
+						vv[0] = reduce_angle(vv[0]);
+						uu[0] = 0;
+						ww[0] = 0;
 					}
 				} else {
-					if (s.rtype == mp_open) {
-					uu[0] = 0;
-					vv[0] = 0;
-					ww[0] = fraction_one;
+					if (s.rtype == mp_curl) {
+						if (t.ltype == mp_curl) {
+							p.rtype = mp_explicit;
+							q.ltype = mp_explicit;
+							lt = Math.abs(q.left_tension);
+							rt = Math.abs(p.right_tension);
+							ff = unity / (3.0 * rt);
+							p.rx_pt = p.x_pt + (delta_x[0] * ff);
+							p.ry_pt = p.y_pt + (delta_y[0] * ff);
+							ff = unity / (3.0 * lt);
+							q.lx_pt = q.x_pt - (delta_x[0] * ff);
+							q.ly_pt = q.y_pt - (delta_y[0] * ff);
+							return;
+						} else {
+							cc = s.right_curl;
+							lt = Math.abs(t.left_tension);
+							rt = Math.abs(s.right_tension);
+							uu[0] = mp_curl_ratio(cc, rt, lt);
+							vv[0] = -(psi[1] * uu[0]);
+							ww[0] = 0;
+						}
+					} else {
+						if (s.rtype == mp_open) {
+							uu[0] = 0;
+							vv[0] = 0;
+							ww[0] = fraction_one;
+						}
 					}
-				}
 				}
 			} else {
 				if (s.ltype == mp_end_cycle || s.ltype == mp_open) {
-				aa = unity / (3 * Math.abs(r.right_tension) - unity);
-				dd = delta[k] * (fraction_three - (unity / Math.abs(r.right_tension)));
-				bb = unity / (3 * Math.abs(t.left_tension) - unity);
-				ee = delta[k - 1] * (fraction_three - (unity / Math.abs(t.left_tension)));
-				cc = (fraction_one - (uu[k - 1] * aa));
-				dd = dd * cc;
-				lt = Math.abs(s.left_tension);
-				rt = Math.abs(s.right_tension);
-				if (lt < rt) {
-					dd *= Math.pow(lt / rt, 2);
-				} else {
-					if (lt > rt) {
-					ee *= Math.pow(rt / lt, 2);
+					aa = unity / (3 * Math.abs(r.right_tension) - unity);
+					dd = delta[k] * (fraction_three - (unity / Math.abs(r.right_tension)));
+					bb = unity / (3 * Math.abs(t.left_tension) - unity);
+					ee = delta[k - 1] * (fraction_three - (unity / Math.abs(t.left_tension)));
+					cc = (fraction_one - (uu[k - 1] * aa));
+					dd = dd * cc;
+					lt = Math.abs(s.left_tension);
+					rt = Math.abs(s.right_tension);
+
+					if (lt < rt) {
+						dd *= Math.pow(lt / rt, 2);
+					} else {
+						if (lt > rt) {
+							ee *= Math.pow(rt / lt, 2);
+						}
 					}
-				}
-				ff = (ee / (ee + dd));
-				uu[k] = (ff * bb);
-				acc = -(psi[k + 1] * uu[k]);
-				if (r.rtype == mp_curl) {
-					ww[k] = 0;
-					vv[k] = (acc - (psi[1] * (fraction_one - ff)));
-				} else {
-					ff = ((fraction_one - ff) / cc);
-					acc = (acc - (psi[k] * ff));
-					ff = ff * aa;
-					vv[k] = (acc - (vv[k - 1] * ff));
-					ww[k] = -(ww[k - 1] * ff);
-				}
-				if (s.ltype == mp_end_cycle) {
-					aa = 0;
-					bb = fraction_one;
-					while (true) {
-					k -= 1;
-					if (k == 0) {
-						k = n;
+					ff = (ee / (ee + dd));
+					uu[k] = (ff * bb);
+					acc = -(psi[k + 1] * uu[k]);
+					if (r.rtype == mp_curl) {
+						ww[k] = 0;
+						vv[k] = (acc - (psi[1] * (fraction_one - ff)));
+					} else {
+						ff = ((fraction_one - ff) / cc);
+						acc = (acc - (psi[k] * ff));
+						ff = ff * aa;
+						vv[k] = (acc - (vv[k - 1] * ff));
+						ww[k] = -(ww[k - 1] * ff);
 					}
-					aa = vv[k] - (aa * uu[k]);
-					bb = ww[k] - (bb * uu[k]);
-					if (k == n) {
+					if (s.ltype == mp_end_cycle) {
+						aa = 0;
+						bb = fraction_one;
+						while (true) {
+							k -= 1;
+							if (k == 0) {
+								k = n;
+							}
+							aa = vv[k] - (aa * uu[k]);
+							bb = ww[k] - (bb * uu[k]);
+							if (k == n) {
+								break;
+							}
+						}
+						aa = (aa / (fraction_one - bb));
+						theta[n] = aa;
+						vv[0] = aa;
+						// k_val = range(1, n);
+						// for (k_idx in k_val) {
+						for (var k=1; k<n; k++) {
+							// k = k_val[k_idx];
+							vv[k] = (vv[k] + (aa * ww[k]));
+						}
 						break;
 					}
-					}
-					aa = (aa / (fraction_one - bb));
-					theta[n] = aa;
-					vv[0] = aa;
-					// k_val = range(1, n);
-					// for (k_idx in k_val) {
-					for (var k=1; k<n; k++) {
-					// k = k_val[k_idx];
-					vv[k] = (vv[k] + (aa * ww[k]));
-					}
-					break;
-				}
 				} else {
 				if (s.ltype == mp_curl) {
 					cc = s.left_curl;
@@ -371,29 +373,29 @@ angular.module('prototypo.Hobby', [])
 			rr = mp_velocity(st, ct, sf, cf, rt);
 			ss = mp_velocity(sf, cf, st, ct, lt);
 
-			// console.log('lt rt rr ss', lt, rt, rr, ss);
 			if (p.right_tension < 0 || q.left_tension < 0) {
-			if (st >= 0 && sf >= 0 || st <= 0 && sf <= 0) {
-				sine = ((Math.abs(st) * cf) + (Math.abs(sf) * ct));
-				if (sine > 0) {
-				sine *= 1.00024414062;
-				if (p.right_tension < 0) {
-					if (mp_ab_vs_cd(Math.abs(sf), fraction_one, rr, sine) < 0) {
-					rr = (abs(sf) / sine);
+				if (st >= 0 && sf >= 0 || st <= 0 && sf <= 0) {
+					sine = ((Math.abs(st) * cf) + (Math.abs(sf) * ct));
+					if (sine > 0) {
+						sine *= 1.00024414062;
+						if (p.right_tension < 0) {
+							if (mp_ab_vs_cd(Math.abs(sf), fraction_one, rr, sine) < 0) {
+								rr = (abs(sf) / sine);
+							}
+						}
+						if (q.left_tension < 0) {
+							if (mp_ab_vs_cd(Math.abs(st), fraction_one, ss, sine) < 0) {
+								ss = (Math.abs(st) / sine);
+							}
+						}
 					}
 				}
-				if (q.left_tension < 0) {
-					if (mp_ab_vs_cd(Math.abs(st), fraction_one, ss, sine) < 0) {
-					ss = (Math.abs(st) / sine);
-					}
-				}
-				}
-			}
 			}
 			p.rx_pt = (p.x_pt + (((delta_x * ct) - (delta_y * st)) * rr));
 			p.ry_pt = (p.y_pt + (((delta_y * ct) + (delta_x * st)) * rr));
 			q.lx_pt = (q.x_pt - (((delta_x * cf) + (delta_y * sf)) * ss));
 			q.ly_pt = (q.y_pt - (((delta_y * cf) - (delta_x * sf)) * ss));
+
 			p.rtype = mp_explicit;
 			q.ltype = mp_explicit;
 		}
@@ -405,30 +407,30 @@ angular.module('prototypo.Hobby', [])
 			alpha = 1.0 / a_tension;
 			beta = 1.0 / b_tension;
 			return Math.min (4.0,
-			((3.0 - alpha) * Math.pow(alpha, 2) * gamma + Math.pow(beta, 3)) / (Math.pow(alpha, 3) * gamma + (3.0 - beta) * Math.pow(beta, 2))
+				((3.0 - alpha) * Math.pow(alpha, 2) * gamma + Math.pow(beta, 3)) / (Math.pow(alpha, 3) * gamma + (3.0 - beta) * Math.pow(beta, 2))
 			);
 		}
 		function mp_ab_vs_cd(a, b, c, d) {
 			if (a * b == c * d) {
-			return 0;
+				return 0;
 			}
 			if (a * b > c * d) {
-			return 1;
+				return 1;
 			}
 			return -1;
 		}
 		function mp_velocity(st, ct, sf, cf, t) {
 			return Math.min (4.0,
-			(2.0 + Math.sqrt(2) * (st - sf / 16.0) * (sf - st / 16.0) * (ct - cf)) / (1.5 * t * ((2 + (Math.sqrt(5) - 1) * ct) + (3 - Math.sqrt(5)) * cf))
+				(2.0 + Math.sqrt(2) * (st - sf / 16.0) * (sf - st / 16.0) * (ct - cf)) / (1.5 * t * ((2 + (Math.sqrt(5) - 1) * ct) + (3 - Math.sqrt(5)) * cf))
 			);
 		}
 		function reduce_angle(A) {
 			if (Math.abs(A) > one_eighty_deg) {
-			if (A > 0) {
-				A -= three_sixty_deg;
-			} else {
-				A += three_sixty_deg;
-			}
+				if (A > 0) {
+					A -= three_sixty_deg;
+				} else {
+					A += three_sixty_deg;
+				}
 			}
 			return A;
 		}
@@ -436,14 +438,66 @@ angular.module('prototypo.Hobby', [])
 			var n = 1;
 			var p = self.next;
 			while (p != self) {
-			n += 1;
-			p = p.next;
+				n += 1;
+				p = p.next;
 			}
 			return n;
 		}
 
-		return mp_make_choices;
-});
+		// hobby uses an internal copy of types that need to be reset
+		// before using make choices
+		return function( knots ) {
+			var knot = knots;
+
+			do {
+				knot.ltype = nodeType[knot._lType];
+				knot.rtype = nodeType[knot._rType];
+
+			} while ( ( knot = knot.next ) && knot !== knots );
+
+			mp_make_choices( knots );
+		};
+
+	}).run(function( Node, nodeType, reverseNodeType ) {
+
+		// most properties of the node need to be mirrored to be usable by Hobby algorithm
+		Object.defineProperty(Node.prototype, 'x_pt', {
+			get: function() { return this.coords[0]; },
+			set: function( x ) { this.coords[0] = x; }
+		});
+		Object.defineProperty(Node.prototype, 'y_pt', {
+			get: function() { return this.coords[1]; },
+			set: function( y ) { this.coords[1] = y; }
+		});
+
+		Object.defineProperty(Node.prototype, 'lx_pt', {
+			get: function() { return this.lc.coords[0]; },
+			set: function( x ) { this.lc.coords[0] = x; }
+		});
+		Object.defineProperty(Node.prototype, 'ly_pt', {
+			get: function() { return this.lc.coords[1]; },
+			set: function( y ) { this.lc.coords[1] = y; }
+		});
+
+		Object.defineProperty(Node.prototype, 'rx_pt', {
+			get: function() { return this.rc.coords[0]; },
+			set: function( x ) { this.rc.coords[0] = x; }
+		});
+		Object.defineProperty(Node.prototype, 'ry_pt', {
+			get: function() { return this.rc.coords[1]; },
+			set: function( y ) { this.rc.coords[1] = y; }
+		});
+
+		Object.defineProperty(Node.prototype, 'left_tension', {
+			get: function() { return this.lTension; },
+			set: function( t ) { this.lTension = t; }
+		});
+		Object.defineProperty(Node.prototype, 'right_tension', {
+			get: function() { return this.rTension; },
+			set: function( t ) { this.rTension = t; }
+		});
+
+	});
 /*jshint ignore:end */
 
 
