@@ -1,0 +1,39 @@
+<div class="splash-login-bg bb">
+	<div class="splash-login-wrapper splash-wrapper ng-hide" ng-show="!isLoggedIn">
+		<div class="splash">
+			<div class="visuel"></div>
+			<div class="splash-content">
+				<div class="row mt2">
+					<form class="signin" name="signin" novalidate ng-submit="signIn()">
+						<h4 class="mb1">Sign In</h4>
+						<label for="s-email">Email</label>
+						<input type="text" id="s-email" name="email"
+						ng-model="email"
+						required>
+
+						<label for="s-password">Password</label>
+						<input type="password" id="s-password" name="password"
+						ng-model="password"
+						required>
+
+						<div class="error" ng-show="showErrors">
+							<p ng-show="signin.$error.dontmatch">
+								email or password incorrect
+							</p>
+							<p ng-show="signin.email.$error.required">
+								email required
+							</p>
+							<p ng-show="signin.password.$error.required">
+								password required
+							</p>
+						</div>
+
+						<a href="" id="resetPassword" class="mention">Request a password reset</a>
+						<input type="submit" value="Sign In">
+					</form>
+				</div>
+				<a href="/#/register" class="discret">I want to register</a>
+			</div>
+		</div>
+	</div>
+</div>

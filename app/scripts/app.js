@@ -33,8 +33,8 @@ angular.module('prototypoApp', [
 		'prototypo.contextMenuDirective',
 		'prototypo.contextMenuStringDirective',
 		'prototypo.splashDirective',
-		'prototypo.signupDirective',
-		'prototypo.signinDirective',
+		'prototypo.registerDirective',
+		'prototypo.loginDirective',
 		'prototypo.trackingDirective'
 	])
 
@@ -43,8 +43,12 @@ angular.module('prototypoApp', [
 			.when('/', {
 				redirectTo: '/typeface/default/font/default'
 			})
+			.when('/register', {
+				template: '<register></register>',
+				controller: function() {}
+			})
 			.when('/login', {
-				templateUrl: 'views/splash-login.html',
+				template: '<login></login>',
 				controller: function() {}
 			})
 			.when('/typeface/:typeface/font/:font', {
@@ -78,19 +82,19 @@ angular.module('prototypoApp', [
 				// store it for later use
 				window.sessionStorage.appkey = search.auth;
 				// clear query params
-				return $location.path('/login').search({});
+				return $location.path('/register').search({});
 			}
 
 			// dont redirect if already logged-in or already heading to login
-			if ( !hoodie.account.hasAccount() && !/^\/login/.test(next.split('#')[1]) ) {
+			if ( !hoodie.account.hasAccount() && !/^\/(register|login)/.test(next.split('#')[1]) ) {
 				return $location
-					.path('/login')
+					.path('/register')
 					// remember next path
 					.search({next: next.split('#')[1] || '/'});
 			}
 
-			// prevent access to login when users have a valid session
-			if ( hoodie.account.hasAccount() && /^\/login/.test(next.split('#')[1]) ) {
+			// prevent access to register or login when users have a valid session
+			if ( hoodie.account.hasAccount() && /^\/(register|login)/.test(next.split('#')[1]) ) {
 				return $location.url($location.search().next || '/');
 			}
 

@@ -20,6 +20,14 @@ angular.module('prototypo.menuDirective', [])
 					}
 				}, true);
 
+
+				$element.on('pointerdown', '#logout', function() {
+					hoodie.account.signOut().done(function (user) {
+				        location.reload();
+				    });
+				});
+
+
 				$element.on('pointerdown', 'ul.level-1 li', function() {
 					$('.menu ul.level-1 li').removeClass('active');
 					$(this).addClass('active');
