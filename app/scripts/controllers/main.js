@@ -25,6 +25,7 @@ angular.module('prototypoApp')
 		$scope.fontValues = {};
 		// app values
 		var initialAppValues = {
+			showTrackInfo: true,
 			showSplash: true,
 			viewMode: 'single',
 			invertedFont: false,

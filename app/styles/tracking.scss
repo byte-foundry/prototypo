@@ -1,0 +1,21 @@
+@import "variables";
+
+#tracking {
+	position: absolute;
+	top: 40px;
+	left: $sidebar-w;
+	right: 0;
+	padding: .5em 1em;
+	background-color: rgba(lighten($red, 15%),.85);
+	color: $red;
+	z-index: 10;
+	border: 1px dotted $red;
+	button {
+		border: 1px solid $red;
+		padding: .2em .5em;
+		background-color: rgba(lighten($red, 20%),.85);
+		color: $red;
+		font-size: 1em;
+		cursor: pointer;
+	}
+}
