@@ -11,16 +11,8 @@ angular.module('prototypo.loginDirective', [])
 
 				post: function postLink( $scope, $element ) {
 
-					$element.on('pointerdown', '#resetPassword', function() {
-						var resetPassword = confirm("At Prototypo, we love use sides open-source projects.\n\nTo manage synchronisation and login, we use hoodie, a great solution for [insert description here] and they make all their best to improve their library, as the \"reset my password option\" for example : )\n\nFor the moment, we do it manually, so click 'OK' to ask us");
-						if (resetPassword == true) {
-						    var link = "mailto:support@prototypo.io"
-						    	+ "?subject=Prototypo | Reset my password"
-						    	+ "&body=Oh no : (%0D%0A%0D%0AI do not remember my password… Can you reset my account guys? %0D%0AThe email I used to register is [ Yes, it's your turn to write ] %0D%0A%0D%0A You rock guys, Thank you!"
-						    ;
-
-					    window.location.href = link;
-						}
+					$element.on('pointerdown', '.resetPassword', function() {
+						$("#hoodie").toggle();
 					});
 
 					$scope.signIn = function() {

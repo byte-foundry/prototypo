@@ -55,7 +55,7 @@
 		padding: .9em;
 		color: $white;
 		border: 3px solid $white;
-		background-color: $green;
+		background-color: transparent;
 
 		cursor: pointer;
 
@@ -100,6 +100,35 @@
 
 		p {
 			margin: 0;
+		}
+	}
+}
+
+#hoodie {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: $green;
+	z-index: 11;
+	width: 100%;
+	div {
+		margin: 10% auto;
+		width: 500px;
+		display: block;
+		font-weight: bold;
+		a {
+			font-weight: inherit;
+		}
+		.discret {
+			width: calc(50% - 10px);
+			float: left;
+
+			margin-top: 2em;
+			margin-right: 10px;
+			border: 3px solid $white;
 		}
 	}
 }
