@@ -15,6 +15,7 @@ describe('Contour structure', function () {
 
 		expect(ct.nodes.length).toBe(4);
 		expect(ct.cycle).toBe(true);
+		expect(ct.nodes[ct.nodes.length - 1].next).toBe(ct.nodes[0]);
 	}));
 
 	it('should create a nodelist from nodedata, from an array of nodes', inject(function(Contour) {
@@ -132,6 +133,39 @@ describe('Contour structure', function () {
 			expect(Math.round(ct.nodes[3].lc.y)).toBe(28);
 			expect(Math.round(ct.nodes[3].rc.x)).toBe(72);
 			expect(Math.round(ct.nodes[3].rc.y)).toBe(-28);
+		}));
+
+		// this is equivalent to the first update controls test in skeleton.js
+		it('update controls with a complex contour', inject(function(Contour) {
+			var ct = new Contour([
+					{c: [-10, 0], lType: 'line', rType: 'line'},
+					{c: [50, 100], lType: 'line'},
+					{c: [110, 0], rType: 'line'},
+					{c: [90, 0], lType: 'line'},
+					{c: [50, 90], rType: 'line'},
+					{c: [10, 0], lType: 'line', rType: 'line'}
+				]),
+				nodes = ct.nodes;
+
+			ct.updateControls();
+
+			expect(nodes[0].lType).toBe('line');
+			expect(nodes[0].rType).toBe('line');
+
+			expect(nodes[1].lType).toBe('line');
+			expect(nodes[1].rType).toBe('open');
+
+			expect(nodes[2].lType).toBe('open');
+			expect(nodes[2].rType).toBe('line');
+
+			expect(nodes[3].lType).toBe('line');
+			expect(nodes[3].rType).toBe('open');
+
+			expect(nodes[4].lType).toBe('open');
+			expect(nodes[4].rType).toBe('line');
+
+			expect(nodes[5].lType).toBe('line');
+			expect(nodes[5].rType).toBe('line');
 		}));
 
 	});

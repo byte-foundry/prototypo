@@ -450,8 +450,8 @@ angular.module('prototypo.Hobby', [])
 			var knot = knots;
 
 			do {
-				knot.ltype = nodeType[knot._lType];
-				knot.rtype = nodeType[knot._rType];
+				knot.ltype = nodeType[knot.lType];
+				knot.rtype = nodeType[knot.rType];
 
 			} while ( ( knot = knot.next ) && knot !== knots );
 

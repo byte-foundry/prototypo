@@ -79,21 +79,27 @@ angular.module('prototypo.Skeleton', ['prototypo.Contour', 'prototypo.NodeList',
 			});
 		};
 
+		Skeleton.prototype.updateEnds = function() {
+			if ( this.cycle ) {
+				return;
+			}
+
+			var firstNode = this.nodes[0],
+				lastNode = this.nodes[this.nodes.length - 1];
+
+			firstNode.right.rType = 'line';
+			firstNode.left.lType = 'line';
+
+			lastNode.right.lType = 'line';
+			lastNode.left.rType = 'line';
+		};
+
 		// TODO: this function should be part of the typeface file
 		// (but this one can be the default one)
 		Skeleton.prototype.updateContours = function( fontValues ) {
 			this.expand( fontValues );
 
-			if ( !this.cycle ) {
-				var firstNode = this.nodes[0],
-					lastNode = this.nodes[this.nodes.length - 1];
-
-				firstNode.right.rType = 'line';
-				firstNode.left.lType = 'line';
-
-				lastNode.right.lType = 'line';
-				lastNode.left.rType = 'line';
-			}
+			this.updateEnds();
 
 			this.contours.forEach(function(contour) {
 				contour.updateControls();

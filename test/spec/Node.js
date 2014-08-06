@@ -26,12 +26,14 @@ describe('Node structure', function () {
 		expect(n.rTension).toBe(1);
 	}));
 
-	it('should copy the node coordinates to the control points when their type is line', inject(function(Node) {
+	/*it('should copy the node coordinates to the control points when their type is line', inject(function(Node) {
 		var n = new Node({
-			c: [12,23],
-			lType: 'line',
-			rType: 'line'
-		});
+				c: [12,23],
+				lType: 'line',
+				rType: 'line'
+			}),
+			lc = n.lc,
+			rc = n.rc;
 
 		expect(n.lc.x).toBe(12);
 		expect(n.lc.y).toBe(23);
@@ -46,6 +48,11 @@ describe('Node structure', function () {
 			rType: 'line'
 		});
 
+		expect(n.rc).toBe(rc);
+		expect(n.lc).toBe(lc);
+		expect(n.rc.coords).toBe(rc.coords);
+		expect(n.lc.coords).toBe(lc.coords);
+
 		expect(n.lc.x).toBe(34);
 		expect(n.lc.y).toBe(45);
 		expect(n.rc.x).toBe(34);
@@ -58,8 +65,10 @@ describe('Node structure', function () {
 			'when their type is line and the initial node was a placeholder', inject(function(Node) {
 
 		var n2 = new Node({
-			c: null
-		});
+				c: null
+			}),
+			lc = n2.lc,
+			rc = n2.rc;
 
 		n2._({
 			c: [34,45],
@@ -67,11 +76,16 @@ describe('Node structure', function () {
 			rType: 'line'
 		});
 
+		expect(n2.rc).toBe(rc);
+		expect(n2.lc).toBe(lc);
+		expect(n2.rc.coords).toBe(rc.coords);
+		expect(n2.lc.coords).toBe(lc.coords);
+
 		expect(n2.lc.x).toBe(34);
 		expect(n2.lc.y).toBe(45);
 		expect(n2.rc.x).toBe(34);
 		expect(n2.rc.y).toBe(45);
 		expect(n2.lType).toBe('line');
 		expect(n2.rType).toBe('line');
-	}));
+	}));*/
 });

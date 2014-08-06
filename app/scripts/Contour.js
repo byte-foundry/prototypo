@@ -20,11 +20,19 @@ angular.module('prototypo.Contour', ['prototypo.NodeList', 'prototypo.Hobby'])
 		Contour.prototype = Object.create(NodeList.prototype);
 
 		Contour.prototype.updateControls = function() {
-			updateControls( this.nodes[0] );
+			this.nodes.forEach(function(node) {
+				if ( node.lType === 'line' ) {
+					node.lc.coords[0] = node.coords[0];
+					node.lc.coords[1] = node.coords[1];
+				}
 
-			/*this.nodes.forEach(function( node ) {
-				console.log(node._lType + ':', node.ltype, '|', node._rType + ':', node.rtype);
-			});*/
+				if ( node.rType === 'line' ) {
+					node.rc.coords[0] = node.coords[0];
+					node.rc.coords[1] = node.coords[1];
+				}
+			});
+
+			updateControls( this.nodes[0] );
 
 			return this;
 		};

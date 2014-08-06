@@ -56,33 +56,5 @@ angular.module('prototypo.Node', ['prototypo.Hobby', 'prototypo.Point'])
 			return this;
 		};
 
-		// the type 'line' is equivalent to 'explicit' with null controls
-		Object.defineProperty(Node.prototype, 'lType', {
-			set: function( type ) {
-				if ( type === 'line' ) {
-					this.lc.coords[0] = this.coords[0];
-					this.lc.coords[1] = this.coords[1];
-				}
-
-				this._lType = type;
-			},
-			get: function() {
-				return this._lType;
-			}
-		});
-		Object.defineProperty(Node.prototype, 'rType', {
-			set: function( type ) {
-				if ( type === 'line' ) {
-					this.rc.coords[0] = this.coords[0];
-					this.rc.coords[1] = this.coords[1];
-				}
-
-				this._rType = type;
-			},
-			get: function() {
-				return this._rType;
-			}
-		});
-
 		return Node;
 	});
