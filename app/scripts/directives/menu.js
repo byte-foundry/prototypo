@@ -26,7 +26,6 @@ angular.module('prototypo.menuDirective', [])
 					active = true;
 				});
 
-
 				$element.on('mouseover', 'li:has(> ul)', function() {
 					if(active) {
 						$('.menu ul.level-1 li').removeClass('active');
@@ -49,7 +48,7 @@ angular.module('prototypo.menuDirective', [])
 					$('ul.level-2', this).css('display', 'block');
 				});
 
-				$('html').click(function() {
+				$('html, .closeSubLevel').click(function() {
 					$('.menu ul.sub-level').css('display', 'none');
 					$('.menu ul.level-1 li').removeClass('active');
 					active = false;

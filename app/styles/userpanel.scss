@@ -1,0 +1,69 @@
+@import "variables";
+
+#userPanel {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: $black;
+	z-index: 10;
+	
+	color: $white;
+
+	section, h3 {
+		padding: 1em;
+	}
+	
+	.user-thumb {
+		width: 40%;
+		margin: 2em auto;
+	}
+	.fonts ul.typeface {
+		margin: 0;
+		padding: 0;
+		li {
+			position: relative;
+			
+			list-style: none;
+			padding:.5em 1em;
+			background-color: lighten($black, 2%);
+			&:nth-child(odd) {
+				background-color: lighten($black, 5%);
+			}
+			&:hover {
+				background-color: $white;
+				color: $black;
+				cursor: pointer;
+			}
+			ul.modifyTypeface {
+				background-image: url('../images/edit.svg');
+				background-repeat: no-repeat;
+				background-position: center right;
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				display: block;
+				padding-right: .3em;
+				&:hover {
+					li { 
+						display: block;
+						color: $white; 
+					}
+				}
+				li {
+					display: none;
+					position: relative;
+					left: 100%;
+					top: 0;
+					background-color: $black;
+					&:hover {
+						background-color: $white;
+						color: $black;
+					}
+				}
+			}
+		}
+	}
+}

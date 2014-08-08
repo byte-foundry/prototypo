@@ -1,0 +1,27 @@
+@import "variables";
+
+#library {
+	position: absolute;
+	top: 2.8em;
+	bottom: 0;
+	z-index: 10;
+	.icon {
+		padding: .5em;
+		background-color: $light-grey;
+		border-radius: 5px;
+		margin-top: 1em;
+		width: 2.8em;
+		opacity: .5;
+		&:hover {
+			opacity: 1;
+			cursor: pointer;
+		}
+	}
+	.content {
+		width: $sidebar-w;
+		background-color: $black;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+	}
+}
