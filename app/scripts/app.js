@@ -64,6 +64,11 @@ angular.module('prototypoApp', [
 
 	.run(function( $rootScope, $location, hoodie ) {
 
+		// check server connection
+		hoodie.checkConnection().fail(function(){
+			if ( !hoodie.account.hasAccount() ) $('#serverDown').show();
+		});
+
 		if ( hoodie.account.hasAccount() ) {
 			// identify user for UserVoice when logged-in
 			window.UserVoice.push(['identify', {email: hoodie.account.username}]);
