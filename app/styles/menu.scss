@@ -1,6 +1,7 @@
 @import "variables";
 
 .menu {
+	z-index: 1000;
 	position: absolute;
 	top: 0;
 	left: $sidebar-w;

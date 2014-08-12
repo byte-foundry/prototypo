@@ -1,6 +1,9 @@
 <div id="library">
-	<div class="content" ng-show="displayLibraryPanel">
-		<h1>Library</h1>
+	<div class="content" ng-hide="appValues.displayLibraryPanel">
+		<div class="txtright" ng-click="appValues.displayLibraryPanel = !appValues.displayLibraryPanel">close</div>
+		<h3>My fonts</h3>
+		<div id="removeAll" class="pa3">removeAll</div>
+		<div class="fonts"><ul class="typeface"></ul></div>
 	</div>
-	<img class="icon" src="../images/library.svg" ng-click="appValues.displayLibraryPanel = !appValues.displayLibraryPanel">
+	<img class="icon" src="../images/library.svg"  ng-show="appValues.displayLibraryPanel" ng-click="appValues.displayLibraryPanel = !appValues.displayLibraryPanel">
 </div>

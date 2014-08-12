@@ -18,6 +18,13 @@ angular.module('prototypo.Values', [])
 						});
 				},
 
+				findAll: function() {
+					return hoodie.store.findAll( prefix + 'values' )
+						.then(function( object ) {
+							return object;
+						});
+				},
+
 				save: function( params ) {
 					return hoodie.store.updateOrAdd( prefix + 'values', params.typeface, {
 							values: params.values

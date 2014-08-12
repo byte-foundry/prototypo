@@ -2,7 +2,8 @@
 
 #library {
 	position: absolute;
-	top: 2.8em;
+	// top: 2.8em;
+	top: 42px;
 	bottom: 0;
 	z-index: 10;
 	.icon {
@@ -23,5 +24,53 @@
 		position: absolute;
 		top: 0;
 		bottom: 0;
+		color: $white;
+		.fonts ul.typeface {
+		margin: 0;
+		padding: 0;
+		li {
+			position: relative;
+			
+			list-style: none;
+			padding:.5em 1em;
+			background-color: lighten($black, 2%);
+			&:nth-child(odd) {
+				background-color: lighten($black, 5%);
+			}
+			&:hover {
+				background-color: $white;
+				color: $black;
+				cursor: pointer;
+			}
+			ul.modifyTypeface {
+				background-image: url('../images/edit.svg');
+				background-repeat: no-repeat;
+				background-position: center right;
+				position: absolute;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				display: block;
+				// padding-right: .3em;
+				&:hover {
+					li { 
+						display: block;
+						color: $white; 
+					}
+				}
+				li {
+					display: none;
+					position: relative;
+					left: 100%;
+					top: 0;
+					background-color: $black;
+					&:hover {
+						background-color: $white;
+						color: $black;
+					}
+				}
+			}
+		}
+	}
 	}
 }
