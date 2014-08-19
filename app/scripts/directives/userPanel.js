@@ -13,9 +13,6 @@ angular.module('prototypo.userPanelDirective', [])
 
 				// hoodie.account.changeUsername('currentpassword', 'newusername');
 
-
-
-
 			}
 		};
 	});

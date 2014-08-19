@@ -1,9 +1,14 @@
 <div id="library">
-	<div class="content" ng-hide="appValues.displayLibraryPanel">
+	<div class="content" ng-show="appValues.displayLibraryPanel">
 		<div class="txtright" ng-click="appValues.displayLibraryPanel = !appValues.displayLibraryPanel">close</div>
 		<h3>My fonts</h3>
 		<div id="removeAll" class="pa3">removeAll</div>
-		<div class="fonts"><ul class="typeface"></ul></div>
+		<div class="fonts">
+			<ul class="typeface"></ul>
+		</div>
+		<!-- <ul class="savedFonts" ng-repeat="font in saveFont">
+			<li>{{font.title}}</li>
+		</ul> -->
 	</div>
-	<img class="icon" src="../images/library.svg"  ng-show="appValues.displayLibraryPanel" ng-click="appValues.displayLibraryPanel = !appValues.displayLibraryPanel">
+	<img class="icon" src="../images/library.svg"  ng-hide="appValues.displayLibraryPanel" ng-click="appValues.displayLibraryPanel = !appValues.displayLibraryPanel">
 </div>

@@ -4,7 +4,7 @@
 			<ul class="sub-level level-2">
 				<li><a target="_blank" href="http://blog.prototypo.io">About prototypo</a></li>
 				<li><a href="http://blog.prototypo.io" target="_blank">Latest news</a></li>
-				<li ng-click="appValues.displayUserPanel = !appValues.displayUserPanel">My library</li>
+				<li ng-click="appValues.displayUserPanel = !appValues.displayUserPanel">My account</li>
 				<li class="disabled" id="signOut">Sign out</li>
 
 			</ul>
@@ -13,7 +13,7 @@
 			File
 			<ul class="sub-level level-2">
 				<li class="closeSubLevel" ng-click="appValues.displayNewFontInput = !appValues.displayNewFontInput">New font</li>
-				<li ng-click="saveCurrent()">Save current font</li>
+				<li class="disabled" ng-click="saveCurrent()">Save current font</li>
 				<li class="disabled">load font settings</li>
 				<li class="disabled">Export fontface kit</li>
 				<li class="arrow">

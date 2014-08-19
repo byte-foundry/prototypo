@@ -43,13 +43,13 @@ angular.module('prototypoApp', [
 	.config(function( $routeProvider, hoodieProvider ) {
 		$routeProvider
 			.when('/', {
-				redirectTo: '/typeface/default/font/default'
+				redirectTo: '/default/regular'
 			})
 			.when('/login', {
 				templateUrl: 'views/splash-login.html',
 				controller: function() {}
 			})
-			.when('/typeface/:typeface/font/:font', {
+			.when('/:typeface/:font', {
 				templateUrl: 'views/layout.html',
 				controller: 'MainCtrl'
 			})
@@ -58,7 +58,7 @@ angular.module('prototypoApp', [
 				controller: function() {}
 			})
 			.otherwise({
-				redirectTo: '/typeface/default/font/default'
+				redirectTo: '/default/regular'
 			});
 
 		hoodieProvider.config('http://prototypo.cloudapp.net');

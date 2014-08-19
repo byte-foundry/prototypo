@@ -52,21 +52,21 @@ angular.module('prototypoApp')
 		$scope.allGlyphs = {};
 		$scope.allOutlines = {};
 
-		$scope.saveCurrent = function() {
+		// $scope.saveCurrent = function() {
 
-			var save = {},
-				title = 'le titre - ' + Math.round(Math.random(0,100) * 100);
-				save[ 'template' ] = $scope.typeface.name;
+		// 	var save = {},
+		// 		title = 'le titre - ' + Math.round(Math.random(0,100) * 100);
+		// 		save['title'] = title;
 
-			$scope.typeface.parameters.forEach(function( group ) {
-				group.parameters.forEach(function( param ) {
-					save[ param.name ] = $scope.fontValues[ param.name ];
-				});
-			});
+		// 	$scope.typeface.parameters.forEach(function( group ) {
+		// 		group.parameters.forEach(function( param ) {
+		// 			save[ param.name ] = $scope.fontValues[ param.name ];
+		// 		});
+		// 	});
 
-			$scope.saveFont[title] = (save);
-			console.log($scope.saveFont);
-		};
+		// 	$scope.saveFont[title] = (save);
+		// 	console.log($scope.saveFont.title);
+		// };
 		$scope.zoom = function( val ) {
 			if ( val === 0 ) {
 				$scope.appValues.zoom = 1;
@@ -141,8 +141,24 @@ angular.module('prototypoApp')
 			$scope.$apply();
 		};
 		$scope.resetApp = function() {
+
+			// Dirty reset app
+			// Should work with this function, but it does not:
+			// hoodie.store.removeAll(function(object){}).done(function (objects) {});
+			
 			localStorage.clear();
-			window.location.reload();
+			hoodie.store.removeAll('appvalues')
+				.then(function (objects) {
+					localStorage.clear();
+					hoodie.store.removeAll('fontvalues')
+						.then(function (objects) {
+							localStorage.clear();
+							window.location.reload();
+						});
+				});
+
+			// hoodie.store.findAll().done(function(object){console.log(object);})
+
 		};
 		$scope.updateCalculatedParams = updateCalculatedParams;
 
@@ -220,12 +236,25 @@ angular.module('prototypoApp')
 						var name = $scope.fontName,
 							urlName = RemoveDiacritics(name).toLowerCase(),
 							urlName = urlName.replace(/([^\da-zA-Z])+/g, '').replace(/^(-)+|(-)+$/g,''),
-							url = 'typeface/' + urlName + '/font/default';
+							url = urlName + '/regular';
 
-						$scope.fontValues['_name'] = name;
 						$location.path( url );
 						$scope.resetFontValues();
-						fillInLibrary();
+						// $scope.fontValues['fontName'] = name;
+
+						var type = 'fontvalues',
+							id = urlName,
+							update = {fontName: name};
+
+						hoodie.store.update(type, id, update)
+						  .done(function (updatedObject) {
+						  	updatedObject.fontName = 'name';
+						  })
+						  .fail(function () {
+						  	alert('fail');
+						  });
+
+						// fillInLibrary();
 					}
 
 					return false;
