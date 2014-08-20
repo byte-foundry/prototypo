@@ -10,7 +10,17 @@
 			File
 			<ul class="sub-level level-2">
 				<li ng-click="resetFontValues()">New font</li>
-				<li class="disabled">load font settings</li>
+				<li ng-click="saveCurrent()">Save version</li>
+				<li ng-class="!fontValues.saveFont.length ? 'disabled' : 'arrow'">
+					load font settings
+					<ul class="sub-level level-3 preset-menu">
+						<!-- TODO: We should display the font from newsest to oldest -->
+						<li ng-repeat="version in fontValues.saveFont | orderBy: $index | limitTo: 6">
+							<span ng-hide="$index === 5" ng-click="loadVersion()">{{version.title}}</span>
+							<span ng-show="$index === 5" ng-click="appValues.showFontVersions != appValues.showFontVersions">all versions</span>
+						</li>
+					</ul>
+				</li>
 				<li class="disabled">Export fontface kit</li>
 				<li class="arrow">
 					Export font
@@ -71,6 +81,8 @@
 				<li><a href="https://github.com/byte-foundry/prototypo/issues?state=open" target="_blank">Bug tracker</a></li>
 				<li ng-click="appValues.showSplash = true">About the beta</li>
 				<li ng-click="resetApp()">Reset App</li>
+				<li ng-click="hardReset()">Hard reset</li>
+				<li ng-click="debug()">debug</li>
 			</ul>
 		</li>
 	</ul>

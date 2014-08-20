@@ -1,0 +1,7 @@
+<div id="versions" ng-show="appValues.showFontVersions">
+	<ul>
+		<span ng-repeat="variant in libraryValues.variants" ng-click="">
+			<li ng-repeat="version in variant.versions">{{ version.xHeight }}</li>
+		</span>
+	</ul>
+</div>

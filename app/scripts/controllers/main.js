@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('prototypoApp')
-	.controller('MainCtrl', function( $scope, $routeParams, $parse, $q, History, Typeface, FontValues, AppValues, Font, Glyph ) {
+	.controller('MainCtrl', function( $scope, $routeParams, $parse, $q, History, Typeface, FontValues, AppValues, LibraryValues, Font, Glyph ) {
 		var calculated = [];
 
 		function updateCalculatedParams( values ) {
@@ -21,10 +21,13 @@ angular.module('prototypoApp')
 		/* initial state */
 		// agregated content of json files
 		$scope.typeface = {};
+		// all fonts values
+		$scope.libraryValues = {};
 		// font parameters values
 		$scope.fontValues = {};
 		// app values
 		var initialAppValues = {
+			showFontVersions: true,
 			showTrackInfo: true,
 			showSplash: true,
 			viewMode: 'single',
@@ -43,9 +46,46 @@ angular.module('prototypoApp')
 			currentPreset: 'Sans-serif'
 		};
 		$scope.appValues = {};
+		// $scope.fontValues.saveFont = [];
 		$scope.allChars = {};
 		$scope.allGlyphs = {};
 		$scope.allOutlines = {};
+
+		$scope.debug = function() {
+			// console.log($scope.fontValues);
+			// console.log($scope.appValues);
+			console.log($scope.libraryValues);
+			// console.log($scope.libraryValues.typefaceName);
+		};
+
+		$scope.saveCurrent = function() {
+
+			// console.log($scope.fontValues.saveFont.lenght);
+			var save = {};
+				// version = $scope.fontValues.saveFont.length + 1,
+				// title = 'version #' + version;
+				// save['title'] = title;
+
+			$scope.typeface.parameters.forEach(function( group ) {
+				group.parameters.forEach(function( param ) {
+					save[ param.name ] = $scope.fontValues[ param.name ];
+				});
+			});
+
+			// $scope.fontValues.saveFont.push( save );
+			$scope.libraryValues.variants[0].versions.push( save );
+			//console.log(old);
+			// $scope.libraryValues.variants[0].versions.push( save );
+		};
+
+
+		$scope.loadVersion = function() {
+			// $scope.typeface.parameters.forEach(function( group ) {
+			// 	group.parameters.forEach(function( param ) {
+			// 		save[ param.name ] = $scope.fontValues[ param.name ];
+			// 	});
+			// });
+		};
 
 		$scope.zoom = function( val ) {
 			if ( val === 0 ) {
@@ -120,13 +160,37 @@ angular.module('prototypoApp')
 
 			$scope.$apply();
 		};
+
 		$scope.resetApp = function() {
 			localStorage.clear();
 			window.location.reload();
 		};
+
+		$scope.hardReset = function() {
+			$scope.resetAppValues();
+			$scope.resetFontValues();
+			localStorage.clear();
+			hoodie.store.removeAll('fontvalues')
+			  	.done(function (objects) {
+				  	FontValues.save({
+							typeface: $routeParams.typeface,
+							values: $scope.fontValues
+						});
+				  	// $scope.fontValues.saveFont = [];
+				});
+			hoodie.store.removeAll('appvalues')
+			  	.done(function (objects) {
+				  	AppValues.save({
+							typeface: $routeParams.typeface,
+							values: $scope.appValues
+						});
+				});
+			window.location.reload();
+		};
+
 		$scope.updateCalculatedParams = updateCalculatedParams;
 
-		Typeface.get( $routeParams.typeface )
+		Typeface.get( 'default' )
 			/*
 			 * 1. Download typeface data
 			 */
@@ -159,7 +223,7 @@ angular.module('prototypoApp')
 			})
 
 			/*
-			 * 2. Load font and app values
+			 * 2. Load font, app & library values
 			 */
 			.then(function( typeface ) {
 				var promises = [];
@@ -233,7 +297,7 @@ angular.module('prototypoApp')
 					$scope.appValues.singleChar = Object.keys( $scope.typeface.order )[0];
 				};
 
-				promises.push( AppValues.get({ typeface: $routeParams.typeface })
+				promises.push( AppValues.get({ typeface: 'default' })
 					.then(
 						function done( data ) {
 							if ( !( data.singleChar in $scope.typeface.order ) ) {
@@ -245,6 +309,57 @@ angular.module('prototypoApp')
 							$scope.resetAppValues();
 						}
 					));
+
+			/*
+			 * 2.3 Library values
+			 */
+			 $scope.$watchCollection('libraryValues', function() {
+					// persist changes
+					LibraryValues.save({
+						typeface: $routeParams.typeface,
+						values: $scope.libraryValues
+					});
+				});
+
+				$scope.resetLibraryValues = function() {
+					$scope.libraryValues = [];
+				};
+
+				promises.push( LibraryValues.get({ typeface: 'default' })
+					.then(
+						function done( data ) {
+							$.extend( $scope.libraryValues, data );
+
+						}, function fail() {
+							$scope.resetLibraryValues();
+						}
+
+					// we can prepare the library
+					).always(function() {
+						// try user values first
+						try {
+							$scope.library = Library( name, {
+								// glyphData: typeface.order,
+								// glyphFormulas: typeface.glyphs,
+								// componentFormulas: typeface.components,
+								// parameters: $scope.fontValues
+							});
+						// fallback to default values
+						} catch (e) {
+							console.error('corrupted library values');
+							$scope.resetLibraryValues();
+							// Store default fontValues depending url names
+							$scope.libraryValues = {
+								typefaceName: $routeParams.typeface,
+								variants: [
+									{
+										variantName: $routeParams.variant,
+										versions: [ $scope.fontValues ]
+									}
+								]
+							};
+						}
+					}));
 
 				return $q.all( promises );
 			})

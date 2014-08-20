@@ -35,19 +35,20 @@ angular.module('prototypoApp', [
 		'prototypo.splashDirective',
 		'prototypo.signupDirective',
 		'prototypo.signinDirective',
-		'prototypo.trackingDirective'
+		'prototypo.trackingDirective',
+		'prototypo.fontVersionsDirective'
 	])
 
 	.config(function( $routeProvider, hoodieProvider ) {
 		$routeProvider
 			.when('/', {
-				redirectTo: '/typeface/default/font/default'
+				redirectTo: '/default/regular/0'
 			})
 			.when('/login', {
 				templateUrl: 'views/splash-login.html',
 				controller: function() {}
 			})
-			.when('/typeface/:typeface/font/:font', {
+			.when('/:typeface/:variant/:version', {
 				templateUrl: 'views/layout.html',
 				controller: 'MainCtrl'
 			})
@@ -56,7 +57,7 @@ angular.module('prototypoApp', [
 				controller: function() {}
 			})
 			.otherwise({
-				redirectTo: '/typeface/default/font/default'
+				redirectTo: '/default/regular/0'
 			});
 
 		hoodieProvider.config('http://prototypo.cloudapp.net');

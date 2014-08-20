@@ -1,0 +1,10 @@
+@import "variables";
+
+#versions {
+	position: absolute;
+	left: $sidebar-w;
+	top: 2.85em;
+	bottom: 0;
+	width: $sidebar-w;
+	background-color: green;
+}

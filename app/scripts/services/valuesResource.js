@@ -37,4 +37,8 @@ angular.module('prototypo.Values', [])
 
 	.factory( 'AppValues', function( valuesResource ) {
 		return valuesResource( 'app' );
+	})
+
+	.factory( 'LibraryValues', function( valuesResource ) {
+		return valuesResource( 'library' );
 	});

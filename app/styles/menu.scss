@@ -10,6 +10,7 @@
 	padding-right: 10em;
 	border: 1px solid lighten( $light-green , 15% );
 	right: 0;
+	min-height: $menu-h;
 	ul {
 		position: relative;
 		padding-left: 0;
