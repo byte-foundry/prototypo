@@ -97,7 +97,7 @@ angular.module('prototypo.Point', ['prototypo.2D'])
 			return this;
 		};
 
-		Point.prototype.toString = function() {
+		Point.prototype.toString = Point.prototype.toJSON = function() {
 			return ( isNaN( this.coords[0] ) ? 'NaN' : Math.round( this.coords[0] ) ) +
 				' ' +
 				( isNaN( this.coords[1] ) ? 'NaN' : Math.round( this.coords[1] ) );
@@ -105,11 +105,11 @@ angular.module('prototypo.Point', ['prototypo.2D'])
 
 		// Angular uses only toJSON
 		// keep in mind that JSON.stringify will return ""x y"" instead of "x y"
-		Point.prototype.toJSON = function() {
-			return ( isNaN( this.coords[0] ) ? 'NaN' : Math.round( this.coords[0] ) ) +
-				' ' +
-				( isNaN( this.coords[1] ) ? 'NaN' : Math.round( this.coords[1] ) );
-		};
+		// Point.prototype.toJSON = function() {
+		// 	return ( isNaN( this.coords[0] ) ? 'NaN' : Math.round( this.coords[0] ) ) +
+		// 		' ' +
+		// 		( isNaN( this.coords[1] ) ? 'NaN' : Math.round( this.coords[1] ) );
+		// };
 
 		return Point;
 	})

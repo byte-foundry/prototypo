@@ -13,7 +13,7 @@ angular.module('prototypo.Component', ['prototypo.Collection', 'prototypo.Skelet
 
 			this.skeletons = skeletons.all;
 			this.contours = contours.all;
-			this.allContours = [];
+			this.allComponents = [];
 			this.allNodes = [];
 
 			this.processor = data(
@@ -36,26 +36,21 @@ angular.module('prototypo.Component', ['prototypo.Collection', 'prototypo.Skelet
 			});
 
 			if ( this.allNodes.length === 0 ) {
-				this.collectContours();
+				this.collectComponents();
 
 				this.collectNodes();
 			}
 
-			this.allContours.forEach(function( contour ) {
-				contour.toSVG();
+			this.allComponents.forEach(function( component ) {
+				component.toSVG();
 			});
 
 			return this;
 		};
 
 		// to test
-		Component.prototype.collectContours = function() {
-			this.allContours = [].concat.apply(
-				this.contours,
-				this.skeletons.map(function( skeleton ) {
-					return skeleton.contours;
-				})
-			);
+		Component.prototype.collectComponents = function() {
+			this.allComponents = this.contours.concat( this.skeletons );
 
 			return this;
 		};
@@ -64,12 +59,40 @@ angular.module('prototypo.Component', ['prototypo.Collection', 'prototypo.Skelet
 		Component.prototype.collectNodes = function() {
 			this.allNodes = [].concat.apply(
 				[],
-				this.allContours.map(function( contour ) {
-					return contour.nodes;
+				this.allComponents.map(function( component ) {
+					// cycling skeleton
+					if ( component.contours && component.contours.length === 2 ) {
+						return component.contours[0].nodes.concat( component.contours[1].nodes );
+
+					// open skeleton
+					} else if ( component.contours && component.contours.length === 1 ) {
+						return component.contours[0].nodes;
+
+					// contour
+					} else {
+						return component.nodes;
+
+					}
 				})
 			);
 
 			return this;
+		};
+
+		Component.prototype.toSVG = function() {
+			// cycling skeleton
+			if ( this.contours && this.contours.length === 2 ) {
+				return this.contours[0].toSVG() + this.contours[1].toSVG();
+
+			// open skeleton
+			} else if ( this.contours && this.contours.length === 1 ) {
+				return this.contours[0].toSVG();
+
+			// contour
+			} else {
+				return this.toSVG();
+
+			}
 		};
 
 		function execWith( argNames, scope ) {

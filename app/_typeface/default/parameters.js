@@ -134,12 +134,12 @@ exports.parameters = [
 			{
 				name: 'roundness',
 				label: 'Roundness',
-				min: 0,
-				max: 2,
-				step: 0.01,
-				init: 0.65,
-				minAdvised: 0.4,
-				maxAdvised: 1.3
+				min: 1,
+				max: 4,
+				step: 0.1,
+				init: 1,
+				minAdvised: 1,
+				maxAdvised: 1.5
 			},
 			{
 				name: 'breakPath',

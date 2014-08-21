@@ -5,14 +5,14 @@ angular.module('prototypo.Node', ['prototypo.Hobby', 'prototypo.Point'])
 
 		function Node( data ) {
 			return this instanceof Node ?
-				Node.prototype._.call( this, data, true ):
-				new Node.prototype._( data, true );
+				Node.prototype._.call( this, data ):
+				new Node.prototype._( data );
 		}
 
 		Node.prototype = Object.create(Point.prototype);
 
 		// constructor
-		Node.prototype._ = function( data, create ) {
+		Node.prototype._ = function( data ) {
 			if ( data.lType === 'line' ) {
 				data.lc = data.c;
 			}
@@ -20,11 +20,13 @@ angular.module('prototypo.Node', ['prototypo.Hobby', 'prototypo.Point'])
 				data.rc = data.c;
 			}
 
-			if ( create ) {
+			// create
+			if ( !this.lc ) {
 				Point.call( this, data.c );
 				this.lc = new Point( data.lc );
 				this.rc = new Point( data.rc );
 
+			// update
 			} else {
 				Point.prototype._.call( this, data.c );
 				this.lc._( data.lc );

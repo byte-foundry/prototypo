@@ -14,7 +14,7 @@
 			</pattern>
 		</defs>
 
-		<g ng-attr-transform="translate({{ ( appValues.scenePanX / viewboxScale ) || 0 }}, {{ ( appValues.scenePanY / viewboxScale ) || 0 }}) scale({{appValues.zoom || 1}}) matrix(1 0 0 -1 0 0)">
+		<g ng-attr-transform="translate({{ ( appValues.scenePanX / viewboxScale ) || 0 }}, {{ ( appValues.scenePanY / viewboxScale ) || 0 }}) scale({{appValues.zoom || 1}}) translate({{ -( appValues.scenePanX / viewboxScale ) || 0 }}, {{ -( appValues.scenePanY / viewboxScale ) || 0 }}) matrix(1 0 0 -1 0 0)">
 			<rect ng-show="appValues.displayGrid" class="ng-hide" x="-20000" y="-20000" width="40000" height="40000" fill="url(#grid)" style="pointer-events:none;"></rect>
 
 			<g id="guidelines" style="pointer-events:none;" ng-show="appValues.displayGuideLines" class="ng-hide">
@@ -30,7 +30,7 @@
 
 			<g id="transformed" ng-attr-transform="skewX({{ fontValues.slant || 0 }})">
 
-				<g class="contours" ng-repeat="contour in allGlyphs[appValues.singleChar][0].allContours">
+				<g class="contours" ng-repeat="contour in allGlyphs[appValues.singleChar][0].allComponents">
 					<path
 						data-index="$index"
 						ng-attr-d="{{contour.d}}"

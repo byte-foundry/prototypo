@@ -19,7 +19,7 @@ describe('NodeList structure', function () {
 		expect(nl.nodes[0].next).toBe(nl.nodes[1]);
 		expect(nl.nodes[1].next).toBe(nl.nodes[2]);
 		expect(nl.nodes[2].next).toBe(nl.nodes[3]);
-		expect(nl.nodes[3].next).toBe(undefined);
+		expect(nl.nodes[3].next).toBe(nl.nodes[0]);
 	}));
 
 	it('should create a linked node list from an array of node data', inject(function(NodeList) {
@@ -35,7 +35,7 @@ describe('NodeList structure', function () {
 		expect(nl.nodes[0].next).toBe(nl.nodes[1]);
 		expect(nl.nodes[1].next).toBe(nl.nodes[2]);
 		expect(nl.nodes[2].next).toBe(nl.nodes[3]);
-		expect(nl.nodes[3].next).toBe(undefined);
+		expect(nl.nodes[3].next).toBe(nl.nodes[0]);
 	}));
 
 	it('should create a cycling linked node list from node data', inject(function(NodeList) {
@@ -49,6 +49,23 @@ describe('NodeList structure', function () {
 		expect(nl.nodes.length).toBe(4);
 		expect(nl.nodes[0].prev).toBe(nl.nodes[3]);
 		expect(nl.nodes[3].next).toBe(nl.nodes[0]);
+	}));
+
+	it('should handle line instructions between nodes', inject(function(NodeList) {
+		var nl = new NodeList([
+			{c: [0, 0]},
+			{c: [0, 100]},
+			'line',
+			{c: [100, 100]},
+			{c: [100, 0]}
+		]);
+
+		expect(nl.nodes.length).toBe(4);
+		expect(nl.nodes[1].next).toBe(nl.nodes[2]);
+		expect(nl.nodes[2].prev).toBe(nl.nodes[1]);
+
+		expect(nl.nodes[1].rType).toBe('line');
+		expect(nl.nodes[2].lType).toBe('line');
 	}));
 
 	it('should be possible to add a NodeList to a NodeList', inject(function(NodeList) {
