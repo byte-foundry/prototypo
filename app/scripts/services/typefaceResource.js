@@ -5,14 +5,14 @@ angular.module('prototypo.Typeface', ['ngResource'])
 	// ultimately, a typeface should be loaded in a single request
 	.factory( 'Typefaces', function( $resource ) {
 
-		return $resource( '/_typeface/:typeface/typeface.json', {}, {
+		return $resource( '_typeface/:typeface/typeface.json', {}, {
 			get: { method:'GET', params: {} }
 		});
 	})
 
 	.factory( 'Glyphs', function( $resource ) {
 
-		return $resource( '/_typeface/:typeface/glyphs/:glyph', {}, {
+		return $resource( '_typeface/:typeface/glyphs/:glyph', {}, {
 			get: { method:'GET', isArray: false, responseType: 'text', params: {}, transformResponse: [function( data ) {
 				return {
 					data: data
@@ -23,7 +23,7 @@ angular.module('prototypo.Typeface', ['ngResource'])
 
 	.factory( 'Components', function( $resource ) {
 
-		return $resource( '/_typeface/:typeface/components/:component', {}, {
+		return $resource( '_typeface/:typeface/components/:component', {}, {
 			get: { method:'GET', isArray: false, responseType: 'text', params: {}, transformResponse: [function( data ) {
 				return {
 					data: data
@@ -34,14 +34,14 @@ angular.module('prototypo.Typeface', ['ngResource'])
 
 	.factory( 'Parameters', function( $resource ) {
 
-		return $resource( '/_typeface/:typeface/parameters/parameters.json', {}, {
+		return $resource( '_typeface/:typeface/parameters/parameters.json', {}, {
 			get: { method:'GET', params: {} }
 		});
 	})
 
 	.factory( 'Presets', function( $resource ) {
 
-		return $resource( '/_typeface/:typeface/parameters/presets.json', {}, {
+		return $resource( '_typeface/:typeface/parameters/presets.json', {}, {
 			get: { method:'GET', params: {} }
 		});
 	})

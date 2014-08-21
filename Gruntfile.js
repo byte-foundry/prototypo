@@ -274,6 +274,7 @@ module.exports = function (grunt) {
 						'*.{ico,png,txt}',
 						'.htaccess',
 						'*.html',
+						'package.json', // for node-webkit
 						'images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
 						'fonts/*',
 						// uncomment the following line when disabling ngtemplates
@@ -392,7 +393,7 @@ module.exports = function (grunt) {
 				region: 'eu-west-1',
 				access: 'public-read'
 //				uploadConcurrency: 5, // 5 simultaneous uploads
-//    			downloadConcurrency: 5 // 5 simultaneous downloads
+//				downloadConcurrency: 5 // 5 simultaneous downloads
 			},
 			// _typeface isn't revved yet, so don't cache it.
 			// I don't think index.html should be cached.
@@ -446,9 +447,17 @@ module.exports = function (grunt) {
 					dest: 'index.html'
 				}]
 			}
-		}
+		},
+		nodewebkit: {
+			options: {
+				platforms: ['win','osx'],
+				buildDir: './webkitbuilds', // Where the build version of my node-webkit app is saved
+			},
+			src: ['<%= yeoman.dist %>/**/*'] // Your node-webkit app
+		},
 	});
 
+	grunt.loadNpmTasks('grunt-node-webkit-builder');
 
 	grunt.registerTask('serve', function (target) {
 		if (target === 'dist') {
@@ -492,7 +501,8 @@ module.exports = function (grunt) {
 		'cssmin',
 		'uglify',
 		'rev',
-		'usemin'/*,
+		'usemin',
+		'nodewebkit'/*,
 		'htmlmin'*/
 	]);
 

@@ -1,0 +1,12 @@
+{
+	"name": "Prototypo",
+	"version": "0.0.1",
+	"main": "index.html",
+	"window": {
+		"fullscreen": true,
+		"frame": true,
+		"toolbar": false,
+		"width": 800,
+		"height": 600
+	}
+}
