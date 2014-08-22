@@ -30,7 +30,7 @@
 
 			<g id="transformed" ng-attr-transform="skewX({{ fontValues.slant || 0 }})">
 
-				<g class="contours" ng-repeat="contour in allGlyphs[appValues.singleChar][0].allComponents">
+				<g class="contours" ng-repeat="contour in allChars[appValues.singleChar].allComponents">
 					<path
 						data-index="$index"
 						ng-attr-d="{{contour.d}}"
@@ -41,14 +41,14 @@
 				</g>
 
 				<g id="spacing" ng-show="appValues.displaySpacing" class="ng-hide">
-					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" ng-attr-d="M {{- allGlyphs[appValues.singleChar].left || 0 }} -20000 l 0 40000 l -40000 0 l 0 40000 Z" ></path>
-					<path class="spacingLine" id="left" vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="lightGreen" ng-attr-d="M {{- allGlyphs[appValues.singleChar].left || 0 }} -20000 l 0 40000 Z" ></path>
-					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" ng-attr-d="M {{ allGlyphs[appValues.singleChar].advance - allGlyphs[appValues.singleChar].right || 0 }} -20000 l 0 40000 l 40000 0 l 0 -40000 Z" ></path>
-					<path class="spacingLine" id="right" vector-effect="non-scaling-stroke" stroke-width="1px" fill="red" stroke="lightGreen" ng-attr-d="M {{ allGlyphs[appValues.singleChar].advance - allGlyphs[appValues.singleChar].right || 0 }} -20000 l 0 40000 Z" ></path>
+					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" ng-attr-d="M {{- allChars[appValues.singleChar].left || 0 }} -20000 l 0 40000 l -40000 0 l 0 40000 Z" ></path>
+					<path class="spacingLine" id="left" vector-effect="non-scaling-stroke" stroke-width="1px" fill="lightGreen" stroke="lightGreen" ng-attr-d="M {{- allChars[appValues.singleChar].left || 0 }} -20000 l 0 40000 Z" ></path>
+					<path opacity="0.25" vector-effect="non-scaling-stroke" stroke-width="1px" fill="#e1ffd2" stroke="lightGreen" ng-attr-d="M {{ allChars[appValues.singleChar].advance - allChars[appValues.singleChar].right || 0 }} -20000 l 0 40000 l 40000 0 l 0 -40000 Z" ></path>
+					<path class="spacingLine" id="right" vector-effect="non-scaling-stroke" stroke-width="1px" fill="red" stroke="lightGreen" ng-attr-d="M {{ allChars[appValues.singleChar].advance - allChars[appValues.singleChar].right || 0 }} -20000 l 0 40000 Z" ></path>
 				</g>
 
 				<g class="nodes" ng-show="appValues.displayNodes" class="ng-hide">
-					<g bindonce ng-repeat="node in allGlyphs[appValues.singleChar][0].allNodes">
+					<g bindonce ng-repeat="node in allChars[appValues.singleChar].allNodes">
 						<path
 							bo-attr
 							bo-attr-data-index="$index"

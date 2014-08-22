@@ -87,7 +87,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 							p.transform( m );
 
 							$scope
-								.allGlyphs[ $scope.appValues.singleChar ]
+								.allChars[ $scope.appValues.singleChar ]
 								[ draggedLine ] = startLine + p.x - m.e;
 
 							$scope.$digest();

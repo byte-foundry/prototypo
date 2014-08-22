@@ -10,25 +10,19 @@ angular.module('prototypo.Typeface', ['prototypo.Component', 'prototypo.Glyph'])
 
 			_(data.components).forEach(function(data, id) {
 				self.components[id] = new Component( data, fontValues );
-
-				var match;
-				if ( ( match = id.match(/^glyph-(.+?)(?:-(.+?))?$/) ) ) {
-					if ( !self.glyphs[match[1]] ) {
-						self.glyphs[match[1]] = {};
-					}
-					self.glyphs[match[1]][match[2] || 0] = self.components[id];
-				}
 			});
 		}
 
-		Typeface.prototype.process = function( chars, fontValues/*, cmap*/ ) {
+		Typeface.prototype.process = function( chars, fontValues, cmap ) {
+			var allChars = {};
+
 			chars.forEach(function(char) {
-				if ( this.glyphs[char] ) {
-					this.glyphs[char][0].process( fontValues );
+				if ( cmap[char] ) {
+					allChars[char] = this.components[ cmap[char] ].process( fontValues );
 				}
 			}, this);
 
-			return this.glyphs;
+			return allChars;
 		};
 
 		return Typeface;

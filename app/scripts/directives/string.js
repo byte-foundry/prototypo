@@ -12,15 +12,15 @@ angular.module('prototypo.stringDirective', [])
 
 				$scope.getTranslate = function( $index, char ) {
 					// TODO: we shouldn't need this check
-					if ( $scope.allGlyphs[char] ) {
+					if ( $scope.allChars[char] ) {
 						translations[$index +1] =
-							$scope.allGlyphs[char].left +
-							$scope.allGlyphs[char].advance -
-							$scope.allGlyphs[char].right +
+							$scope.allChars[char].left +
+							$scope.allChars[char].advance -
+							$scope.allChars[char].right +
 							translations[$index];
 
 						return Math.round(
-							$scope.allGlyphs[char].left +
+							$scope.allChars[char].left +
 							translations[$index]
 						);
 					}

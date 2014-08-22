@@ -34,7 +34,9 @@
 
 		$scope.fontValues = {};
 		$scope.appValues = {};
-		$scope.allGlyphs = {};
+		$scope.allChars = {};
+		$scope.cAlt = {};
+		$scope.cMap = {};
 		//$scope.allOutlines = {};
 		//$scope.appValues.singleChar = '';
 		//$scope.appValues.stringChars = '';
@@ -67,6 +69,11 @@
 				_(thisCtrl.calculated).forEach(function(calc, name) {
 					preset[name] = calc( preset );
 				});
+			});
+
+			$scope.cAlt = typedata.conf.cAlt;
+			_(typedata.conf.cAlt).forEach(function( c, i ) {
+				$scope.cMap[i] = c[0];
 			});
 
 			var promises = [];
@@ -113,9 +120,10 @@
 				$scope.fontValues[name] = calc( $scope.fontValues );
 			});
 
-			$scope.allGlyphs = thisCtrl.font.process(
+			$scope.allChars = thisCtrl.font.process(
 				_.unique(($scope.appValues.singleChar + $scope.appValues.stringChars).split('')),
-				$scope.fontValues
+				$scope.fontValues,
+				$scope.cMap
 			);
 
 			// persist values
@@ -141,9 +149,10 @@
 					return;
 				}
 
-				$scope.allGlyphs = thisCtrl.font.process(
+				$scope.allChars = thisCtrl.font.process(
 					_.unique(($scope.appValues.singleChar + $scope.appValues.stringChars).split('')),
-					$scope.fontValues
+					$scope.fontValues,
+					$scope.cMap
 				);
 			});
 

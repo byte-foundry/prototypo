@@ -9,8 +9,8 @@ angular.module('prototypo.contourDirective', [])
 					var char = $attrs.glyphContour || ' ';
 
 					// TODO: we shouldn't need this check
-					if ( $scope.allGlyphs[char] ) {
-						$element.attr( 'd', $scope.allGlyphs[ char ].d );
+					if ( $scope.allChars[char] ) {
+						$element.attr( 'd', $scope.allChars[ char ].d );
 					}
 				}
 

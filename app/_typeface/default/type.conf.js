@@ -4,7 +4,8 @@ exports.conf = {
 	description: 'The first parametric typeface',
 	'cap-height': 720,
 	'descendent-height': 210,
-	order: [
-		'A'
-	]
+	cAlt: {
+		'A': ['glyph-a-cap'],
+		'O': ['glyph-o-cap']
+	}
 };

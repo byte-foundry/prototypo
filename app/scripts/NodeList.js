@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('prototypo.NodeList', ['prototypo.Node', 'prototypo.Hobby'])
-	.factory('NodeList', function( Node, updateControls ) {
+angular.module('prototypo.NodeList', ['prototypo.Node'])
+	.factory('NodeList', function( Node ) {
 
 		function NodeList( nodesData, cycle ) {
 			// nodes can be in a single array or all arguments
@@ -109,25 +109,6 @@ angular.module('prototypo.NodeList', ['prototypo.Node', 'prototypo.Hobby'])
 		Object.defineProperty(NodeList.prototype, 'length', {
 			get: function() { return this.nodes.length; }
 		});
-
-		NodeList.prototype.updateControls = function() {
-
-			this.nodes.forEach(function(node) {
-				if ( node.lType === 'line' ) {
-					node.lc.coords[0] = node.coords[0];
-					node.lc.coords[1] = node.coords[1];
-				}
-
-				if ( node.rType === 'line' ) {
-					node.rc.coords[0] = node.coords[0];
-					node.rc.coords[1] = node.coords[1];
-				}
-			}, this);
-
-			updateControls( this.nodes[0] );
-
-			return this;
-		};
 
 		return NodeList;
 	});

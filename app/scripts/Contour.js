@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('prototypo.Contour', ['prototypo.NodeList'])
-	.factory('Contour', function( NodeList ) {
+angular.module('prototypo.Contour', ['prototypo.NodeList', 'prototypo.Point', 'prototypo.2D', 'prototypo.Hobby'])
+	.factory('Contour', function( NodeList, Point, updateControls, lineLineIntersection ) {
 
 		function Contour( nodesData ) {
 			// nodes can be in a single array or all arguments
@@ -56,6 +56,45 @@ angular.module('prototypo.Contour', ['prototypo.NodeList'])
 			this.d = path.join(' ');
 
 			return this.d;
+		};
+
+		Contour.prototype.updateControls = function() {
+
+			this.nodes.forEach(function(node) {
+				if ( node.lType === 'line' ) {
+					node.lc.coords[0] = node.coords[0];
+					node.lc.coords[1] = node.coords[1];
+				}
+
+				if ( node.rType === 'line' ) {
+					node.rc.coords[0] = node.coords[0];
+					node.rc.coords[1] = node.coords[1];
+				}
+			}, this);
+
+			updateControls( this.nodes[0] );
+
+			return this;
+		};
+
+		Contour.prototype.applyRoundness = function( roundness ) {
+			var p = new Point();
+
+			this.nodes.forEach(function(node) {
+				if ( node.rType === 'open' && node.next ) {
+					p._( lineLineIntersection( node, node.rc, node.next, node.next.lc ) );
+
+					node.rc._(
+						node.x + roundness * ( p.x - node.x ),
+						node.y + roundness * ( p.y - node.y )
+					);
+
+					node.next.lc._(
+						node.next.x + roundness * ( p.x - node.next.x ),
+						node.next.y + roundness * ( p.y - node.next.y )
+					);
+				}
+			});
 		};
 
 		return Contour;

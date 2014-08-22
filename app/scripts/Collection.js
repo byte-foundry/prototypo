@@ -11,7 +11,7 @@ angular.module('prototypo.Collection', [])
 					} else {
 						return {
 							_: function() {
-								indexer.all[id] = Type.apply(null, arguments);
+								return ( indexer.all[id] = Type.apply(null, arguments) );
 							}
 						};
 					}
