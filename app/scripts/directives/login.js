@@ -11,8 +11,32 @@ angular.module('prototypo.loginDirective', [])
 
 				post: function postLink( $scope, $element ) {
 
+
+
 					$element.on('pointerdown', '.resetPassword', function() {
 						$("#hoodie").toggle();
+					});
+
+					$scope.resetPassword = function() {
+						if ( $scope.resetpassword.$invalid ) {
+							$scope.showErrors = true;
+							return;
+						}
+						hoodie.account.resetPassword($scope.resetEmail)
+							.done(function() {
+								console.log('success');
+								$scope.showSuccess = true;
+								$scope.$apply();
+							})
+							.fail(function() {
+								console.log('fail');
+							});
+					};
+
+					// TOFIX: this watch never fires, find out why!
+					$scope.$watch('resetEmail', function() {
+						$scope.showErrors = false;
+						$scope.resetpassword.$setValidity('pattern', true);
 					});
 
 					$scope.signIn = function() {
@@ -39,9 +63,9 @@ angular.module('prototypo.loginDirective', [])
 
 					$scope.$watch('email + password', function() {
 						$scope.signin.$setValidity('dontmatch', true);
+						$scope.showErrors = false;
+						$scope.$apply();
 					});
-
-					
 
 				}
 			}

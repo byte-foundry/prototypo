@@ -7,6 +7,7 @@
 					<form class="signin" name="signin" novalidate ng-submit="signIn()">
 						<h4 class="mb1">Sign In</h4>
 						<label for="s-email">Email</label>
+
 						<input type="text" id="s-email" name="email"
 						ng-model="email"
 						required>
@@ -37,19 +38,36 @@
 		</div>
 		<div id="hoodie" class="splash">
 			<div class="splash-content big pa3">
-				<img src="http://hood.ie/images/f5af4e56.hoodie_logo.png" alt="hoodie">
 				<div class="mt2">
-					<p>At Prototypo, we love use sides open-source projects.</p>
-					<p>To manage synchronisation and login, we use <a href="http://hood.ie/" target="_blank">hoodie</a>, a great solution for [insert description here] and they make all their best to improve their library, as the "reset my password" option for example : )</p>
-					<p>For the moment, we do it manually, so click 'OK' to ask us</p>
-					<div class="resetPassword discret">Cancel</div>
-					<a  class="discret"
-						href="mailto:support@prototypo.io
-							?subject=Prototypo | Reset my password
-							&body=Oh no : (%0D%0A%0D%0AI do not remember my password… Can you reset my account guys? %0D%0AThe email I used to register is [ Yes, it's your turn to write ] %0D%0A%0D%0A You rock guys, Thank you!
-							">
-						Ok
-					</a>
+					<form class="signin" name="resetpassword" novalidate ng-submit="resetPassword()" ng-show="!showSuccess">
+						<p>Please fill the following input with the email adress you've used to register.</p>
+						<input 
+							type="text" 
+							class="mt2" 
+							name="resetEmail" 
+							ng-model="resetEmail" 
+							ng-pattern="/.+?@.+/"
+							required
+							>
+
+						<div class="error" ng-show="showErrors">
+							<p ng-show="resetpassword.resetEmail.$error.required">
+								email required
+							</p>
+							<p ng-show="resetpassword.resetEmail.$error.pattern">
+								email invalid
+							</p>
+						</div>
+
+						<p>We will send you a new password, and you will be able to change your password once connected in "P" menu.</p>
+						<input class="resetPassword discret" value="Cancel">
+						<input class="discret" type="submit" value="Reset password">
+					</form>
+					<div ng-show="showSuccess">
+						<p class="h1-like">Yeehaw!</p>
+						<p class="h2-like">Check your favorite mailbox!</p>
+						<input class="resetPassword discret" value="Back to login page">
+					</div>
 				</div>
 			</div>
 		</div>

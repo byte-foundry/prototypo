@@ -35,7 +35,8 @@ angular.module('prototypoApp', [
 		'prototypo.splashDirective',
 		'prototypo.registerDirective',
 		'prototypo.loginDirective',
-		'prototypo.trackingDirective'
+		'prototypo.trackingDirective',
+		'prototypo.useradminDirective'
 	])
 
 	.config(function( $routeProvider, hoodieProvider ) {

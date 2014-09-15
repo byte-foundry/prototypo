@@ -1,0 +1,51 @@
+@import "variables";
+
+#userAdmin {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: $green;
+	z-index: 11;
+	width: 100%;
+
+	.aside {
+		width: 30%;
+		max-width: 400px;
+		background-color: $dark-grey;
+		position: relative;
+		float: left;
+		height: 100%;
+		color: $white;
+
+		ul {
+			padding: 0;
+			
+			li {
+				padding: 1em;
+				list-style: none;
+				border-bottom: 1px solid $dark-grey;
+				background-color: lighten($dark-grey, 2%);
+				color: $white;
+			}
+			li.active, li:hover {
+				cursor: pointer;
+				background-color: $white;
+				color: $dark-grey;
+			}
+			li.disabled {
+				cursor: default;
+				background-color: lighten($dark-grey, 2%);
+				color: lighten($dark-grey, 20%);
+			}
+
+		}
+	}
+
+	.content {
+		position: relative;
+		float: left;
+		width: 70%;
+	}
+}
