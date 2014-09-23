@@ -20,6 +20,12 @@ body,
 	vertical-align: top;
 }
 
+/* safari 7.1 hack | why? */
+.central.col {
+	display: inline-block;
+}
+/* end hack */
+
 /* vertical cells */
 
 .cell {
@@ -42,8 +48,9 @@ body,
 }
 
 .central {
-	width: -webkit-calc(100% - #{$sidebar-w});
-	width:         calc(100% - #{$sidebar-w});
+	// width: -webkit-calc(100% - #{$sidebar-w});
+	// width:         calc(100% - #{$sidebar-w});
+	width: 100%;
 }
 
 .grid {
