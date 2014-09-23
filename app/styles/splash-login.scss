@@ -4,56 +4,145 @@
 	width: 100%;
 	height: 100%;
 
-	background: url(../images/prototypo-blured.png);
+	// background: url(../images/prototypo-blured.png);
 	background-repeat: none;
 	background-size: 100%
 }
 
-.splash-login-wrapper {
-	input {
+.splash-login-wrapper, .userAdmin {
+
+	*:hover {
+		transition: all 300ms ease;
+	}
+
+	input,
+	.discret {
 		display: block;
 		width: 100%;
 
-		border: 1px solid $light-grey;
-		border-radius: 2px;
+		border: 1px solid $light-green;
+		border-radius: 10px;
+		padding: .8em;
+		background-color: $white;
+		font-size: 1.1em;
+
+		margin-bottom: 1em;
+		&[type="text"]:disabled {
+			background-color: $light-green;
+		}
 	}
 
 	label {
 		display: inline-block;
-		margin-top: 5px;
+		margin-bottom: 5px;
 
-		color: $dark-grey;
+		color: $white;
+		font-weight: bold;
 	}
 
 	input[type="button"],
-	input[type="submit"] {
+	input[type="submit"],
+	.discret {
 		float: right;
 		display: inline-block;
 		width: auto;
 		margin-top: 10px;
-		padding: 3px;
 
-		border: 0;
-		background-color: $green;
+		color: $white;
+		font-size: 1.1em;
+		font-weight: normal;
+
+		padding: .9em;
+		color: $white;
+		border: 3px solid $white;
+		background-color: transparent;
+
+		cursor: pointer;
+
+		&:hover {
+			background-color: $white;
+			color: $green;
+		}
+		&:disabled {
+			opacity: .4;
+			cursor: default;
+			
+			background-color: transparent;
+			color: $white;
+		}
+	}
+
+	.discret {
+		border: 3px solid $green;
+		font-size: 1.1em;
+		width: 100%;
+		text-decoration: none;
+		text-align: center;
 	}
 
 	a {
 		font-weight: normal;
 	}
 
+	.mention {
+		text-decoration: none;
+		font-weight: bold;
+		font-size: .9em;
+		margin-top: .5em;
+		display: inline-block;
+	}
+
 	.error {
-		float: left;
+		// float: left;
 		// one line high
-		height: calc( 1.5 * 1.4em );
+		// height: calc( 1.5 * 1.4em );
+
 		overflow: hidden;
 		// matches buttons margin and padding
-		margin-top: 10px;
-		padding-top: 3px;
+		margin: 2em 0;
+		padding: .8em;
 
+		background-color: lighten($red,25%);
 		color: $red;
 
 		p {
 			margin: 0;
+		}
+	}
+	
+	@media (max-height: 700px) {
+		.visuel {
+			display: none;
+		}
+	}
+	
+}
+
+#hoodie {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: $green;
+	z-index: 11;
+	width: 100%;
+	div {
+		margin: 10% auto;
+		width: 500px;
+		display: block;
+		font-weight: bold;
+		a {
+			font-weight: inherit;
+		}
+		.discret {
+			width: calc(50% - 10px);
+			float: left;
+
+			margin-top: 2em;
+			margin-right: 10px;
+			border: 3px solid $white;
 		}
 	}
 }

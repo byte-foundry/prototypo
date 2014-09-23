@@ -1,0 +1,85 @@
+<div class="splash-login-bg">
+	<div class="splash-login-wrapper splash-wrapper ng-hide" ng-show="!isLoggedIn">
+		<div class="splash">
+			<div class="visuel"></div>
+			<div class="splash-content">
+				<div class="row mt2">
+					<form class="signup" name="signup"
+					novalidate
+					zaction="https://www.sandbox.paypal.com/cgi-bin/webscr"
+					ng-submit="signUp()"
+					method="post"
+					>
+					<h4 class="mb1">Register</h4>
+					<label for="r-email">Email</label>
+					<input type="email" id="r-email" name="email"
+					ng-model="email"
+					ng-pattern="/.+?@.+/"
+					required>
+
+					<label for="r-password">Password (6 characters or more)</label>
+					<input type="password" id="r-password" name="password"
+					ng-model="password"
+					ng-minlength="6"
+					required>
+
+					<label for="r-confirm">Confirm password</label>
+					<input type="password" id="r-confirm" name="confirm"
+					ng-model="confirm"
+					required>
+
+					<!-- paypal dontation variables -->
+					<input type="hidden" name="cmd" value="_s-xclick">
+					<input type="hidden" name="hosted_button_id" value="QSRDMYSK34U28">
+					<input type="hidden" name="notify_url" ng-model="notifyurl">
+
+					<label for="r-password">App key</label>
+					<a class="" href="http://www.prototypo.io/support.html">(No Key? Donate to get one now)</a>
+					<input type="text" id="r-key" name="key"
+					ng-model="key"
+					ng-minlength="19"
+					required
+					disabled
+					>
+
+					<div class="error" ng-show="showErrors">
+						<p ng-show="signup.$error.unexpected">
+							unexpected error
+						</p>
+						<p ng-show="signup.email.$error.required">
+							email required
+						</p>
+						<p ng-show="signup.email.$error.pattern">
+							email invalid
+						</p>
+						<p ng-show="signup.email.$error.alreadyregistered">
+							email already registered
+						</p>
+						<p ng-show="signup.password.$error.required">
+							password required
+						</p>
+						<p ng-show="signup.password.$error.minlength">
+							password too short
+						</p>
+						<p ng-show="signup.confirm.$error.required">
+							confirm password
+						</p>
+						<p ng-show="signup.confirm.$error.dontmatch">
+							passwords don't match
+						</p>
+						<p ng-show="signup.key.$error.required">
+							invalid key
+						</p>
+						<p ng-show="signup.key.$error.minlength">
+							invalid key
+						</p>
+					</div>
+
+					<input type="submit" value="Register">
+				</form>
+			</div>
+			<a href="/#/login" class="discret">I already have an account</a>
+		</div>
+	</div>
+</div>
+</div>

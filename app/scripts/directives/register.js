@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('prototypo.signupDirective', [])
-	.directive('signup', function( hoodie, $location ) {
+angular.module('prototypo.registerDirective', [])
+	.directive('register', function( hoodie, $location ) {
 		return {
 			restrict: 'E',
-			templateUrl: 'views/signup.html',
+			templateUrl: 'views/register.html',
 			replace: true,
 			scope: {},
 			link: {
