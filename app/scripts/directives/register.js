@@ -11,7 +11,6 @@ angular.module('prototypo.registerDirective', [])
 				pre: function preLink( $scope ) {
 					if ( window.sessionStorage.appkey ) {
 						$scope.key = window.sessionStorage.appkey;
-						delete window.sessionStorage.appkey;
 					}
 				},
 				post: function postLink( $scope/*, $element*/ ) {
