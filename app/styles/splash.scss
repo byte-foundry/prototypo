@@ -1,6 +1,7 @@
 @import "variables";
 
 .splash-wrapper {
+	overflow-y: scroll;
 	position: absolute;
 	z-index: 10;
 	top: 0;

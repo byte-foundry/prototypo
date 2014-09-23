@@ -64,7 +64,7 @@ angular.module('prototypo.loginDirective', [])
 					$scope.$watch('email + password', function() {
 						$scope.signin.$setValidity('dontmatch', true);
 						$scope.showErrors = false;
-						$scope.$apply();
+						// $scope.$apply();
 					});
 
 				}
