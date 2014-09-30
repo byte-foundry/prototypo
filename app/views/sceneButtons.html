@@ -8,4 +8,17 @@
 		<a class="single btn" ng-class="{active: appValues.viewMode === 'single'}" ng-click="changeViewMode( 'single' )"></a>
 		<a class="string btn" ng-class="{active: appValues.viewMode === 'string'}" ng-click="changeViewMode( 'string' )"></a>
 	</div>
+	<div class="form" ng-class="{active: appValues.showForm}">
+		<span class="close" 
+				ng-click="appValues.showForm = !appValues.showForm"
+				ng-show="appValues.showForm"
+				>×
+		</span>
+		<a href="https://docs.google.com/forms/d/1icTIpQnoTuttMZYAd3HwVtpEbnWdSg6cMzAJ9WQcQOg/viewform?usp=send_form" target="_blank">
+			<div class="text">
+				30s to answer to 6 questions?
+			</div>
+			<div class="icon"></div>
+		</a>
+	</div>
 </div>
