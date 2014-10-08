@@ -3,12 +3,12 @@
 (function(angular) {
 
 	angular.module('prototypoApp').controller('MainCtrl', [
-		'$scope', '$routeParams', '$parse', '$q', 'Typefaces', 'FontValues', 'AppValues', 'Typeface',
+		'$scope', '$routeParams', '$parse', '$q', 'Typefaces', 'FontValues', 'AppValues',
 		MainCtrl
 	]);
 
 	// jshint latedef:nofunc
-	function MainCtrl( $scope, $routeParams, $parse, $q, Typefaces, FontValues, AppValues, Typeface ) {
+	function MainCtrl( $scope, $routeParams, $parse, $q, Typefaces, FontValues, AppValues ) {
 
 		var thisCtrl = this;
 
@@ -71,8 +71,8 @@
 				});
 			});
 
-			$scope.cAlt = typedata.conf.cAlt;
-			_(typedata.conf.cAlt).forEach(function( c, i ) {
+			$scope.cAlt = typedata.info.cAlt;
+			_(typedata.info['glyph-order']).forEach(function( c, i ) {
 				$scope.cMap[i] = c[0];
 			});
 
@@ -88,7 +88,7 @@
 					}
 
 				).always(function() {
-					thisCtrl.font = new Typeface( typedata, $scope.fontValues );
+					thisCtrl.font = prototypo( typedata, $scope.fontValues );
 				}));
 
 			promises.push( AppValues.get({ typeface: $routeParams.typeface })
@@ -120,10 +120,9 @@
 				$scope.fontValues[name] = calc( $scope.fontValues );
 			});
 
-			$scope.allChars = thisCtrl.font.process(
+			$scope.allChars = thisCtrl.font.update(
 				_.unique(($scope.appValues.singleChar + $scope.appValues.stringChars).split('')),
-				$scope.fontValues,
-				$scope.cMap
+				$scope.fontValues
 			);
 
 			// persist values
@@ -149,7 +148,7 @@
 					return;
 				}
 
-				$scope.allChars = thisCtrl.font.process(
+				$scope.allChars = thisCtrl.font.update(
 					_.unique(($scope.appValues.singleChar + $scope.appValues.stringChars).split('')),
 					$scope.fontValues,
 					$scope.cMap

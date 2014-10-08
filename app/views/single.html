@@ -30,10 +30,12 @@
 
 			<g id="transformed" ng-attr-transform="skewX({{ fontValues.slant || 0 }})">
 
-				<g class="contours" ng-repeat="contour in allChars[appValues.singleChar].allComponents">
+				<g class="contours" ng-repeat="contour in allChars[appValues.singleChar].contours">
 					<path
+						ng-if="contour.pathData"
+						ng-class="{{contour.tags.toString()}}"
 						data-index="$index"
-						ng-attr-d="{{contour.d}}"
+						ng-attr-d="{{contour.pathData}}"
 						fill="{{ appValues.outlineOnly ? 'none' :appValues.negative ? '#ffffff' : '#3B3B3B' }}"
 						stroke="{{ appValues.outlineOnly ? '#888888' : 'none' }}"
 						vector-effect="non-scaling-stroke"
@@ -48,7 +50,7 @@
 				</g>
 
 				<g class="nodes" ng-show="appValues.displayNodes" class="ng-hide">
-					<g bindonce ng-repeat="node in allChars[appValues.singleChar].allNodes">
+					<g bindonce ng-repeat="node in allChars[appValues.singleChar].nodes">
 						<path
 							bo-attr
 							bo-attr-data-index="$index"
@@ -58,22 +60,21 @@
 						<path
 							style="pointer-events: none;"
 							class="ctrl-line"
-							ng-attr-d="M {{ node.lc.x | int }} {{ node.lc.y | int }} L {{ node.x | int }} {{ node.y | int }} L {{ node.rc.x | int }} {{ node.rc.y | int }}"
+							ng-attr-d="M {{ node.lCtrl.x | int }} {{ node.lCtrl.y | int }} L {{ node.x | int }} {{ node.y | int }} L {{ node.rCtrl.x | int }} {{ node.rCtrl.y | int }}"
 							fill="none">
-						</path>
 						<path
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node ctrl"
 							data-type="ctrl0"
-							ng-attr-d="M {{ node.lc.x - 3 | int }} {{ node.lc.y | int }} l 3 3 l 3 -3 l -3 -3 z">
+							ng-attr-d="M {{ node.lCtrl.x - 3 | int }} {{ node.lCtrl.y | int }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
 						<path
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node ctrl"
 							data-type="ctrl1"
-							ng-attr-d="M {{ node.rc.x - 3 | int }} {{ node.rc.y | int }} l 3 3 l 3 -3 l -3 -3 z">
+							ng-attr-d="M {{ node.lCtrl.x - 3 | int }} {{ node.lCtrl.y | int }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
 					</g>
 				</g>

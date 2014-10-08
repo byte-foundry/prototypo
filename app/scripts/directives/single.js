@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils'])
-	.directive('single', function( Point, throttle ) {
+angular.module('prototypo.singleDirective', ['prototypo.Utils'])
+	.directive('single', function( throttle ) {
 		return {
 			restrict: 'E',
 			templateUrl: 'views/single.html',
@@ -25,7 +25,8 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 					return false;
 				});
 
-				var $transformed = $element.find('#transformed'),
+				var Point = prototypo.Point,
+					$transformed = $element.find('#transformed'),
 					startX,
 					startY,
 					startPoint,
@@ -78,7 +79,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 					if ( isDraggingLine ) {
 						throttle(function() {
 							// map the dragged deltas to the scene coordinate system
-							var p = Point(
+							var p = new Point(
 									startX - e.clientX,
 									0
 								),
@@ -98,7 +99,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Point', 'prototypo.Utils
 					if ( isDraggingNode ) {
 						throttle(function() {
 							// map the dragged deltas to the scene coordinate system
-							var p = Point(
+							var p = new Point(
 									e.clientX - startX,
 									e.clientY - startY
 								),

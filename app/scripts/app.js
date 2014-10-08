@@ -9,8 +9,6 @@ angular.module('prototypoApp', [
 		'prototypo.Typefaces',
 		'prototypo.Values',
 
-		'prototypo.Typeface',
-
 		'prototypo.glyphDirective',
 		'prototypo.contourDirective',
 		'prototypo.parammenuDirective',

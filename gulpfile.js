@@ -92,7 +92,7 @@ gulp.task('build-typeface', function() {
 });
 
 gulp.task('watch', function () {
-	var watcher = gulp.watch(paths.components, ['build-typeface']); // watch the same files in our scripts task
+	var watcher = gulp.watch([paths.components, paths.typeface], ['build-typeface']); // watch the same files in our scripts task
 	watcher.on('change', function (event) {
 		if (event.type === 'deleted') { // if a file is deleted, forget about it
 			delete cached.caches.components[event.path]; // gulp-cached remove api
