@@ -26,7 +26,7 @@ angular.module('prototypoApp')
 		// app values
 		var initialAppValues = {
 			showForm: true,
-			showUserAdmin: true,
+			showUserAdmin: false,
 			showTrackInfo: true,
 			showSplash: true,
 			viewMode: 'single',

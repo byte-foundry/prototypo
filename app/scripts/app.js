@@ -69,11 +69,6 @@ angular.module('prototypoApp', [
 
 	.run(function( $rootScope, $location, hoodie ) {
 
-		// check server connection
-		hoodie.checkConnection().fail(function(){
-			if ( !hoodie.account.hasAccount() ) $('#serverDown').show();
-		});
-
 		if ( hoodie.account.hasAccount() ) {
 			// identify user for UserVoice when logged-in
 			window.UserVoice.push(['identify', {email: hoodie.account.username}]);
@@ -91,18 +86,33 @@ angular.module('prototypoApp', [
 				return $location.path('/register').search({});
 			}
 
-			// dont redirect if already logged-in or already heading to login
-			if ( !hoodie.account.hasAccount() && !/^\/(register|login)/.test(next.split('#')[1]) ) {
-				return $location
-					.path('/register')
-					// remember next path
-					.search({next: next.split('#')[1] || '/'});
-			}
+			// check server connection
+			console.log('checkConnection......');
+			hoodie.checkConnection().done(function(){
+				console.log('Hoodie Connection OK');
+				// dont redirect if already logged-in or already heading to login
+				if ( !hoodie.account.hasAccount() && !/^\/(register|login)/.test(next.split('#')[1]) ) {
+					return $location
+						.path('/register')
+						// remember next path
+						.search({next: next.split('#')[1] || '/'});
+				}
 
-			// prevent access to register or login when users have a valid session
-			if ( hoodie.account.hasAccount() && /^\/(register|login)/.test(next.split('#')[1]) ) {
-				return $location.url($location.search().next || '/');
-			}
+				// prevent access to register or login when users have a valid session
+				if ( hoodie.account.hasAccount() && /^\/(register|login)/.test(next.split('#')[1]) ) {
+					return $location.url($location.search().next || '/');
+				}
+			}).fail(function(){
+				if ( !hoodie.account.hasAccount() ) {
+					console.log('fail and no account registred');
+				} else {		
+					console.log('fail but user has account');
+				}
+				$('#serverDown').show();
+			}).always(function(){
+				console.log('END checkConnection');
+			});
+			
 
 			// detect incompatible browsers
 			if ( 
@@ -113,7 +123,7 @@ angular.module('prototypoApp', [
 			) {
 				console.log("ERROR — incompatible browser: ", jQuery.browser );
 				return $location
-					.path('/outdated')
+					.path('/outdated');
 			}
 		});
 	});
