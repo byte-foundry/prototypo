@@ -39,14 +39,15 @@ angular.module('prototypoApp', [
 		'prototypo.adminDirective',
 		'prototypo.profilDirective',
 		'prototypo.communityDirective',
-		'prototypo.projectsDirective'
+		'prototypo.projectsDirective',
+		'prototypo.newprojectDirective'
 	])
 
 	.config(function( $stateProvider, $urlRouterProvider, hoodieProvider ) {
-		$urlRouterProvider.otherwise('/typeface/default/font/default');
+		$urlRouterProvider.otherwise('/default/regular/0');
 		$stateProvider
 			.state('index', {
-				url: '/typeface/{typeface:.*}/font/{font:.*}',
+				url: '/{typeface:.*}/{font:.*}/{version:.*}',
 				templateUrl: 'views/layout.html',
 				controller: 'MainCtrl'
 			})
@@ -57,6 +58,10 @@ angular.module('prototypoApp', [
 			.state('login', {
 				url: '/login',
 				template: '<login></login>'
+			})
+			.state('newproject', {
+				url: '/new',
+				template: '<newproject></newproject>'
 			})
 			.state('admin', {
 				url: '/admin',

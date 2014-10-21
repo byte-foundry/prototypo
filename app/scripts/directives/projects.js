@@ -20,73 +20,54 @@ angular.module('prototypo.projectsDirective', [])
 					}
 				};
 
-				$scope.library = [
-					{
-						"name": "A",
-						"type": "Times new roman",
-						"variants": 2
-					},
-					{
-						"name": "A",
-						"type": "Palatino",
-						"variants": 1
-					},
-					{
-						"name": "A",
-						"type": "Monaco",
-						"variants": 4
-					},
-					{
-						"name": "A",
-						"type": "Georgia",
-						"variants": 6
-					},
-					{
-						"name": "A",
-						"type": "Comic sans MS",
-						"variants": 6
-					},
-					{
-						"name": "A",
-						"type": "Tahoma",
-						"variants": 2
-					},
-					{
-						"name": "A",
-						"type": "Palatino",
-						"variants": 1
-					},
-					{
-						"name": "A",
-						"type": "Arial",
-						"variants": 4
-					},
-					{
-						"name": "A",
-						"type": "Comic sans MS",
-						"variants": 6
-					},
-					{
-						"name": "A",
-						"type": "Times new roman",
-						"variants": 2
-					},
-					{
-						"name": "A",
-						"type": "Palatino",
-						"variants": 1
-					},
-					{
-						"name": "A",
-						"type": "Arial",
-						"variants": 4
-					},
-					{
-						"name": "A",
-						"type": "monaco",
-						"variants": 4
-					}
-				];
+				$scope.library = [];
+
+				var type = 'fontvalues',
+					i = 0;
+
+				hoodie.store.findAll(type)
+				  .done(function (tasks) {
+				    console.log(tasks);
+				    for (var i = 0; i < tasks.length; i++) {
+				    	if (!tasks[i].fontName) tasks[i].fontName = tasks[i].id;
+				    	$scope.library.push(
+				    		{
+				    			"name": tasks[i].fontName,
+								"type": tasks[i].id,
+								"id": tasks[i].id,
+								"variants": Math.round(Math.random(0,100) * 10) + 1
+							}
+				    	);
+				    }
+				  });
+
+				// $scope.library.push(
+				// 	{
+				// 		"name": "Palatino",
+				// 		"type": "Palatino",
+				// 		"variants": 1
+				// 	},
+				// 	{
+				// 		"name": "Monaco",
+				// 		"type": "Monaco",
+				// 		"variants": 4
+				// 	},
+				// 	{
+				// 		"name": "Georgia",
+				// 		"type": "Georgia",
+				// 		"variants": 6
+				// 	},
+				// 	{
+				// 		"name": "Comic sans MS",
+				// 		"type": "Comic sans MS",
+				// 		"variants": 6
+				// 	},
+				// 	{
+				// 		"name": "Times new roman",
+				// 		"type": "Times new roman",
+				// 		"variants": 2
+				// 	}
+				// );
 
 
 

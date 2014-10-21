@@ -121,6 +121,7 @@
 				font-size: 16px;
 				font-weight: normal;
 				padding: 1em;
+				width: 100%;
 			}
 		}
 		.content {
@@ -159,13 +160,15 @@ ul {
 }
 
 ul.list {
-	li {
+	li.line {
 		position: relative;
+		overflow-x: hidden;
 		background-color: $grey-1;
 		font-size: 5em;
 		line-height: 1;
 		color: $dark-grey;
 		padding: 80px 85px;
+		border-left: 8px solid $medium-grey;
 		&:nth-child(odd) {
 			background-color: $grey-3;
 		}
@@ -204,28 +207,6 @@ ul.list {
 						background-color: $black;
 					}
 				}
-				.close-icon {
-					background-color: $red;
-					position: absolute;
-					top: 0;
-					right: -2em;
-					height: 2em;
-					width: 2em;
-					padding: .5em;
-					color: white;
-					line-height: 1;
-					font-size: 2em;
-					text-align: center;
-					display: table;
-					span {
-						display: table-cell;
-						vertical-align: middle;
-					}
-					&:hover {
-						opacity: .8;
-						cursor: pointer;
-					}
-				}
 			}
 		}
 		.btn-menu-library {
@@ -256,7 +237,14 @@ ul.list {
 				}
 			}
 		}
+		&:hover {
+			border-left: 8px solid $green;
+			&.active {
+				border-left: none;
+			}
+		}
 		&.active {
+			cursor: default;
 			padding-left: calc(1em + #{$sidebar-w});
 			background-color: lighten($dark-grey, 2%);
 			.font {
@@ -274,6 +262,34 @@ ul.list {
 				svg {
 					fill: $green;
 				}
+			}
+			.close-icon {
+				margin-right: 0;
+			}
+		}
+		.close-icon {
+			background-color: #ff725e;
+			position: absolute;
+			top: 0;
+			right: 0px;
+			height: 40px;
+			width: 40px;
+			padding: 5px;
+			color: white;
+			line-height: 0;
+			font-size: 20px;
+			text-align: center;
+			display: table;
+			transition: 600ms ease;
+			margin-right: -100px;
+			span {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			&:hover {
+				opacity: .8;
+				cursor: pointer;
+				transition: 100ms ease;
 			}
 		}
 	}

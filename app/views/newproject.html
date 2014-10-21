@@ -1,0 +1,41 @@
+<div class="bg-green" style="height:100%">
+	<div class="w50 center">
+
+		<h1 class="pb3 pt3">Create a new project</h1>
+
+			<div class="mt3	mb2 clearfix input-wrapper giant">
+				<label class="mr2" for="inputFontName">Font name</label>
+				<input 	type="text" name="inputFontName"
+						class="input right" 
+						value="{{ fontName }}" 
+						ng-model="fontName"
+						>
+			</div>
+
+			<div class="mb2 clearfix input-wrapper giant">
+				<label class="mr2" for="uriFontName">Url name</label>
+				<input 	type="text" name="uriFontName"
+						class="input right" 
+						disabled 
+						value="{{ uriName }}"
+						>
+			</div>
+
+			<div class="mb2 clearfix input-wrapper giant">
+				<label class="mr2" for="variant">Variant</label>
+				<select name="variant"
+						class="input right">
+							<option value="regular">Regular</option>
+							<option value="bold">Bold</option>
+							<option value="italic">Italic</option>
+							<option value="bold italic">Bold italic</option>
+				</select>
+			</div>
+
+			<div class="right input-wrapper giant">
+				<a class="input btn mr2" href="/">Cancel</a>
+				<input class="input" type="submit" ng-click="newProject()" value="Ok">
+			</div>
+
+	</div>
+</div>

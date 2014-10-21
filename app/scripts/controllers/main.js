@@ -3,7 +3,6 @@
 angular.module('prototypoApp')
 	.controller('MainCtrl', function( $scope, $stateParams, $parse, $q, History, Typeface, FontValues, AppValues, Font, Glyph ) {
 		var calculated = [];
-
 		function updateCalculatedParams( values ) {
 			if ( values && Object.keys( values ).length ) {
 				calculated.forEach(function( param ) {
@@ -25,6 +24,9 @@ angular.module('prototypoApp')
 		$scope.fontValues = {};
 		// app values
 		var initialAppValues = {
+			fontName: 'default',
+			variant: 'default',
+			version: 0,
 			showForm: true,
 			showTrackInfo: true,
 			showSplash: true,

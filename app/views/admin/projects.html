@@ -1,7 +1,10 @@
 <div class="content-wrapper">
 	
 	<div class="header">
-		<div class="title">You have <b>{{ library.length }}</b> projects.</div>
+		<div class="title">
+			You have <b>{{ library.length }}</b> projects.
+			<span class="right pr2"><a ui-sref="newproject"><b>New project</b></a></span>
+		</div>
 	</div>
 	
 	<div class="content">
@@ -13,7 +16,7 @@
 						<li><a>Download fonts</a></li>
 						<li><a>Public release</a></li>
 						<li><a>Private release</a></li>
-						<div class="close-icon" ng-click="toggleClass( $index )"><span>×</span></div>
+						
 					</ul>
 				</div>
 				<div class="btn-menu-library">
@@ -24,9 +27,14 @@
 				</div>
 				<!-- 	we use font-family only for experiment design. 
 						Need a real svg later 	-->
-				<div class="font" style="font-family: '{{ item.type }}'">
-					{{ item.type }}
-				</div>
+				<a href="#/{{ item.id }}/default/0">
+					<div class="font" style="font-family: '{{ item.type }}'">
+						{{ item.name }} 
+						<span class="variant">{{ item.variant }}</span>
+						<div>{{ item.id }}</div>
+					</div>
+				</a>
+				<div class="close-icon" ng-click="toggleClass( $index )"><span>×</span></div>
 			</li>
 		</ul>
 

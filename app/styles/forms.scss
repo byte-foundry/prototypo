@@ -1,0 +1,38 @@
+@import "variables";
+
+.input-wrapper {
+	input,
+	select,
+	a.input {
+		border: 2px solid $green;
+		border-radius: 10px;
+		padding: .8em;
+		background-color: $white;
+		font-size: 1.1em;
+		&[type="submit"],
+		.btn {
+			transition: 400ms ease;
+			cursor: pointer;
+			border-color: $white;
+			background-color: transparent;
+			color: $white;
+			padding: .8em 1em;
+			&:hover {
+				background-color: $white;
+				color: $green;
+			}
+		}
+		&:disabled {
+			background-color: $grey-3;
+			color: $light-grey;
+		}
+	}
+	label {
+		color: $white;
+	}
+	&.giant {
+		font-size: 2em;
+		min-width: 70%;
+	}
+}
+
