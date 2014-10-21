@@ -30,7 +30,7 @@
 
 			<g id="transformed" ng-attr-transform="skewX({{ fontValues.slant || 0 }})">
 
-				<g class="contours" ng-repeat="contour in allChars[appValues.singleChar].contours">
+				<g class="contours" ng-repeat="contour in allChars[appValues.singleChar].allContours">
 					<path
 						ng-if="contour.pathData"
 						ng-class="{{contour.tags.toString()}}"
@@ -50,7 +50,7 @@
 				</g>
 
 				<g class="nodes" ng-show="appValues.displayNodes" class="ng-hide">
-					<g bindonce ng-repeat="node in allChars[appValues.singleChar].nodes">
+					<g bindonce ng-repeat="node in allChars[appValues.singleChar].allNodes">
 						<path
 							bo-attr
 							bo-attr-data-index="$index"

@@ -69,9 +69,22 @@ angular.module('prototypo.singleDirective', ['prototypo.Utils'])
 				$element.on('pointermove', function( e ) {
 					if ( isDraggingScene ) {
 						throttle(function() {
-							$scope.appValues.scenePanX = e.clientX - startX;
-							$scope.appValues.scenePanY = e.clientY - startY;
-							$scope.$digest();
+							// map the dragged deltas to the scene coordinate system
+							var p = new Point(
+									e.clientX - startX,
+									e.clientY - startY
+								),
+								m = $transformed[0].getCTM().inverse();
+
+							p.transform( m );
+
+							$scope.appValues.scenePanX = startX + p.x - m.e;
+							$scope.appValues.scenePanY = startY + p.y - m.f;
+
+							$scope.$apply();
+							// $scope.appValues.scenePanX = e.clientX - startX;
+							// $scope.appValues.scenePanY = e.clientY - startY;
+							// $scope.$digest();
 						});
 						return false;
 					}

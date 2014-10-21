@@ -32,9 +32,9 @@
 			currentPreset: 'Sans-serif'
 		};
 
-		$scope.fontValues = {};
-		$scope.appValues = {};
-		$scope.allChars = {};
+		$scope.fontValues = this.fontValues = {};
+		$scope.appValues = this.appValues = {};
+		$scope.allChars = this.allChars = {};
 		$scope.cAlt = {};
 		$scope.cMap = {};
 		//$scope.allOutlines = {};
@@ -46,9 +46,12 @@
 		$scope.exportToSVG = this.exportToSVG;
 		$scope.applyPreset = this.applyPreset;
 		$scope.updateCalculatedParams = this.updateCalculatedParams;
+		$scope.resetFontValue = this.resetFontValue;
 
 		// load default typeface
 		Typefaces.get({ typeface: $routeParams.typeface }).$promise.then(function( typedata ) {
+			$scope.fontObject = thisCtrl.fontObject = typedata;
+
 			thisCtrl.initialFontValues = {};
 			// save initial fontValues
 			typedata.parameters.forEach(function( group ) {
@@ -88,7 +91,7 @@
 					}
 
 				).always(function() {
-					thisCtrl.font = prototypo( typedata, $scope.fontValues );
+					thisCtrl.font = prototypo( typedata );
 				}));
 
 			promises.push( AppValues.get({ typeface: $routeParams.typeface })
@@ -101,7 +104,7 @@
 						//}
 					}, function fail() {
 						$.extend($scope.appValues, thisCtrl.initialAppValues, {
-							singleChar: typedata.conf.order[0]
+							singleChar: typedata.info['glyph-order'][ Object.keys(typedata.info['glyph-order'])[0] ]
 						});
 					}
 				));
@@ -209,10 +212,10 @@
 
 	MainCtrl.prototype.applyPreset = function( name ) {
 		// the svg path shouldn't be merged to fontValues and its no longer necessary
-		delete this.typeface.presets[name].svg;
+		delete this.fontObject.presets[name].svg;
 
 		this.appValues.currentPreset = name;
-		$.extend( this.fontValues, this.typeface.presets[name] );
+		$.extend( this.fontValues, this.fontObject.presets[name] );
 
 		this.$apply();
 	};

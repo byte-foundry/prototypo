@@ -81,12 +81,13 @@ angular.module('prototypo.menuDirective', [])
 					template = Handlebars.templates.planche;
 
 				$scope.randomOutline = function randomOutline() {
+					// TOFIX: $scope.typeface.order no longer exists
 					var allGlyphs = Object.keys( $scope.typeface.order ),
 						randomIndex = Math.round( Math.random() * ( allGlyphs.length - 14 ) ),
 						randomGlyph = allGlyphs[ randomIndex ];
 
 					// pick random font values
-					$scope.typeface.parameters.forEach(function( group ) {
+					$scope.fontObject.parameters.forEach(function( group ) {
 						group.parameters.forEach(function( param ) {
 							// There's 1/4 chance to set the param randomly, otherwise it's reset
 							$scope.fontValues[ param.name ] = Math.random() * 4 > 3 ?

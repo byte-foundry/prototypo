@@ -50,8 +50,8 @@ angular.module('prototypo.paramtabsDirective', [])
 					var $item = $(this.parentNode),
 						name = $item.data('name');
 
-					$scope.fontValues[ name ] = $scope.typeface.presets[ $scope.appValues.currentPreset ][ name ] || $item.data('init');
-					$scope.$digest();
+					$scope.fontValues[ name ] = $scope.fontObject.presets[ $scope.appValues.currentPreset ][ name ] || $item.data('init');
+					$scope.$apply();
 				});
 
 				// scroll handler
