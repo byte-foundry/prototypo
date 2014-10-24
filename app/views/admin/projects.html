@@ -12,11 +12,10 @@
 			<li ng-repeat="item in library" class="line" id="line-{{$index}}">
 				<div class="menu-library" ng-class="isGrey[$index]">
 					<ul>
-						<li><a>Show all</a></li>
+						<li><a href="#/library/{{ item.id }}">Setup typeface</a></li>
+						<li><a>Show family</a></li>
 						<li><a>Download fonts</a></li>
-						<li><a>Public release</a></li>
-						<li><a>Private release</a></li>
-						
+						<li><a>Release</a></li>						
 					</ul>
 				</div>
 				<div class="btn-menu-library">
@@ -27,14 +26,18 @@
 				</div>
 				<!-- 	we use font-family only for experiment design. 
 						Need a real svg later 	-->
-				<a href="#/{{ item.id }}/default/0">
-					<div class="font" style="font-family: '{{ item.type }}'">
-						{{ item.name }} 
-						<span class="variant">{{ item.variant }}</span>
-						<div>{{ item.id }}</div>
+				<a href="#/{{ item.id }}/{{ item.variant }}/{{ item.version }}">
+					<div class="font">
+						<span>{{ item.name }}</span>
 					</div>
 				</a>
 				<div class="close-icon" ng-click="toggleClass( $index )"><span>×</span></div>
+				<div class="infos">
+					<span class="id"><b>id:</b> {{ item.id }}</span>
+					<span class="version"><b>versions:</b> {{ item.version || 0 }}</span>
+					<span class="variant"><b>variant:</b> {{ item.variant || 'regular' }}</span>
+				</div>
+				<div class="comments">{{ item.comments || 0 }}</div>
 			</li>
 		</ul>
 

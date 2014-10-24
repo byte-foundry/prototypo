@@ -40,7 +40,8 @@ angular.module('prototypoApp', [
 		'prototypo.profilDirective',
 		'prototypo.communityDirective',
 		'prototypo.projectsDirective',
-		'prototypo.newprojectDirective'
+		'prototypo.newprojectDirective',
+		'prototypo.libraryDirective'
 	])
 
 	.config(function( $stateProvider, $urlRouterProvider, hoodieProvider ) {
@@ -96,8 +97,17 @@ angular.module('prototypoApp', [
 					$scope.items = ['A', 'List', 'Of', 'Items'];
 				}
 			})
+			.state('library', {
+				url: '/library',
+				templateUrl: 'views/library.html'
+			})
+			.state('library.typeface', {
+				url: '/{typeface:.*}',
+				templateUrl: 'views/library.html',
+				controller: 'MainCtrl'
+			})
 			.state('active', {
-				url: '/typeface/{typeface:.*}/font/{font:.*}',
+				url: '/{typeface:.*}/{font:.*}/{version:.*}',
 				templateUrl: 'views/layout.html',
 				controller: 'MainCtrl'
 			})

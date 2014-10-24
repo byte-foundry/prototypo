@@ -35,7 +35,10 @@ angular.module('prototypo.projectsDirective', [])
 				    			"name": tasks[i].fontName,
 								"type": tasks[i].id,
 								"id": tasks[i].id,
-								"variants": Math.round(Math.random(0,100) * 10) + 1
+								"variant": tasks[i].variant,
+								"variants": Math.round(Math.random(0,100) * 10) + 1,
+								"version": Math.round(Math.random(0,100) * 10) + 1,
+								"comments": Math.round(Math.random(0,1000) * 10) + 1
 							}
 				    	);
 				    }

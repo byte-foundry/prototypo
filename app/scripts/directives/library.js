@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('prototypo.adminDirective', [])
-	.directive('admin', function() {
+angular.module('prototypo.libraryDirective', [])
+	.directive('library', function() {
 		return {
 			restrict: 'E',
-			templateUrl: 'views/admin.html',
+			templateUrl: 'views/library.html',
 			replace: true,
 			link: function postLink( $scope, $element ) {
 
@@ -17,7 +17,6 @@ angular.module('prototypo.adminDirective', [])
 					+ $scope.appValues.variant + '/'
 					+ $scope.appValues.version + '/';
 				$('#back').attr('href', href);
-				
 console.log(href);
 				
 			}
