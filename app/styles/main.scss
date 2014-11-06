@@ -69,20 +69,22 @@ textarea {
 }
 .stringinput {
 	input {
-	display: block;
-	height: 100%;
-	width: 100%;
-	padding-left: 1.4rem;
-	-moz-box-sizing: border-box;
+		display: block;
+		height: 100%;
+		width: 100%;
+		padding-left: 1.4rem;
+		-moz-box-sizing: border-box;
 
-	color: lighten($dark-grey, 15%);
-	font-size: 1.4rem;
-	letter-spacing: .1rem;
+		color: lighten($dark-grey, 15%);
+		font-family: 'preview';
+		font-size: 2.5rem;
+		letter-spacing: .1rem;
 
-	background: lighten( $light-green , 15% );
-	border: 1px solid  $green;
-	border-bottom: 1rem solid lighten( $light-green , 10% );
-	border-radius: 0;
+		background: lighten( $light-green , 15% );
+		border: 1px solid  $green;
+		border-bottom: 1rem solid lighten( $light-green , 10% );
+		border-radius: 0;
+
 		&:focus,
 		&:hover {
 			outline: none;

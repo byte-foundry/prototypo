@@ -137,16 +137,6 @@ angular.module('prototypo.menuDirective', [])
 						randomOutlines = [];
 					}
 				};
-
-				$scope.exportOutlines = function() {
-					saveAs(
-						new Blob(
-							[template({groups: groups})],
-							{type: 'application/svg+xml;charset=utf-8'}
-						),
-						'default.svg'
-					);
-				};
 			}
 		};
 	});

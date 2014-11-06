@@ -43,7 +43,7 @@
 		$scope.zoom = this.zoom;
 		$scope.resetApp = this.resetApp;
 		$scope.changeViewMode = this.changeViewMode;
-		$scope.exportToSVG = this.exportToSVG;
+		$scope.exportToSVG = this.exportToSVG.bind(this);
 		$scope.applyPreset = this.applyPreset;
 		$scope.updateCalculatedParams = this.updateCalculatedParams;
 		$scope.resetFontValue = this.resetFontValue;
@@ -123,10 +123,12 @@
 				$scope.fontValues[name] = calc( $scope.fontValues );
 			});
 
+			var allChars = _.unique(($scope.appValues.singleChar + $scope.appValues.stringChars).split(''));
 			$scope.allChars = thisCtrl.font.update(
-				_.unique(($scope.appValues.singleChar + $scope.appValues.stringChars).split('')),
+				allChars,
 				$scope.fontValues
 			);
+			thisCtrl.font.addToFonts( allChars, {familyName: 'preview'} );
 
 			// persist values
 			FontValues.save({
@@ -151,11 +153,12 @@
 					return;
 				}
 
+				var allChars = _.unique(($scope.appValues.singleChar + $scope.appValues.stringChars).split(''));
 				$scope.allChars = thisCtrl.font.update(
-					_.unique(($scope.appValues.singleChar + $scope.appValues.stringChars).split('')),
-					$scope.fontValues,
-					$scope.cMap
+					allChars,
+					$scope.fontValues
 				);
+				thisCtrl.font.addToFonts( allChars, {familyName: 'preview'} );
 			});
 
 		$scope.$watchCollection('appValues', function() {
@@ -190,10 +193,16 @@
 		return mode;
 	};
 
+	function fontToDotSVG( font, params ) {
+		var template = Handlebars.templates.dotsvg;
+
+		return template({glyphs: font.update( Object.keys( font.cmap ), params ) });
+	}
+
 	MainCtrl.prototype.exportToSVG = function() {
 		saveAs(
 			new Blob(
-				[this.font.toDotSVG( this.fontValues )],
+				[ fontToDotSVG( this.font, this.fontValues ) ],
 				{type: 'application/svg+xml;charset=utf-8'}
 			),
 			'default.svg'
