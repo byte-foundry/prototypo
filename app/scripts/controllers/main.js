@@ -114,7 +114,7 @@
 		})
 		.finally($scope.apply);
 
-		var allChars = '';
+		var allChars = [];
 
 		$scope.$watch('fontValues', function() {
 			if ( !Object.keys( $scope.fontValues ).length ) {
@@ -188,7 +188,7 @@
 		return mode;
 	};
 
-	MainCtrl.prototype.updateSVGOT = function( $scope, allChars ) {console.log(allChars);
+	MainCtrl.prototype.updateSVGOT = function( $scope, allChars ) {
 		$scope.allChars = this.font.update(
 			allChars,
 			$scope.fontValues

@@ -60,6 +60,7 @@
 						<path
 							style="pointer-events: none;"
 							class="ctrl-line"
+							ng-if="!node.expanded"
 							ng-attr-d="M {{ node.lCtrl.x | int }} {{ node.lCtrl.y | int }} L {{ node.x | int }} {{ node.y | int }} L {{ node.rCtrl.x | int }} {{ node.rCtrl.y | int }}"
 							fill="none">
 						<path
