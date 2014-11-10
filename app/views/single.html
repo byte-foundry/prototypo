@@ -56,13 +56,15 @@
 							bo-attr-data-index="$index"
 							class="node end"
 							data-type="end"
-							ng-attr-d="M {{ node.x | int }} {{ node.y | int }} m 0 3 h 3 v -6 h -6 v 6 z"></path>
+							ng-attr-d="M {{ node.x | int }} {{ node.y | int }} m 0 3 h 3 v -6 h -6 v 6 z">
+						</path>
 						<path
 							style="pointer-events: none;"
 							class="ctrl-line"
 							ng-if="!node.expanded"
 							ng-attr-d="M {{ node.lCtrl.x | int }} {{ node.lCtrl.y | int }} L {{ node.x | int }} {{ node.y | int }} L {{ node.rCtrl.x | int }} {{ node.rCtrl.y | int }}"
 							fill="none">
+						</path>
 						<path
 							bo-attr
 							bo-attr-data-index="$index"

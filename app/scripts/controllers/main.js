@@ -28,7 +28,8 @@
 			scenePanX: -120,
 			scenePanY: 0,
 			singleChar: 'A',
-			stringChars: 'Hamburgfonstiv',
+			stringChars: 'Type your text',
+			paragraphChars: 'Hamburgfonstiv',
 			currentPreset: 'Sans-serif'
 		};
 
@@ -140,11 +141,11 @@
 		$scope.$watch(
 			// watch the list of unique characters used throughout the app
 			function() {
-				if ( !$scope.appValues.singleChar && !$scope.appValues.stringChars ) {
+				if ( !$scope.appValues.singleChar && !$scope.appValues.stringChars && !$scope.appValues.paragraphChars ) {
 					return '';
 				}
 
-				allChars = _.unique(($scope.appValues.singleChar + $scope.appValues.stringChars).split('')).sort();
+				allChars = _.unique(($scope.appValues.singleChar + $scope.appValues.stringChars + $scope.appValues.paragraphChars).split('')).sort();
 
 				return allChars.join('');
 			},
@@ -170,11 +171,17 @@
 	}
 
 	MainCtrl.prototype.zoom = function( val ) {
-		if ( val === 0 ) {
-			this.appValues.zoom = 1;
-		} else {
-			this.appValues.zoom =
-				Math.min( Math.max( this.appValues.zoom + ( val > 0 ? -0.15 : +0.15 ), 0.3 ), 7);
+		if( this.appValues.viewMode === 'single' ) {
+			if ( val === 0 ) {
+				this.appValues.zoom = 1;
+			} else {
+				this.appValues.zoom =
+					Math.min( Math.max( this.appValues.zoom + ( val > 0 ? -0.15 : +0.15 ), 0.3 ), 7);
+			}
+		}
+		else {
+			var size = parseFloat($('textarea.string').css('font-size'));
+			$('textarea.string').css('font-size', size + val * -10 + "px" );
 		}
 	};
 
@@ -183,7 +190,7 @@
 		window.location.reload();
 	};
 
-	MainCtrl.prototype.changeMode = function( mode ) {
+	MainCtrl.prototype.changeViewMode = function( mode ) {
 		this.appValues.viewMode = mode;
 		return mode;
 	};
