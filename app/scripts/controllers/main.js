@@ -46,6 +46,7 @@
 		$scope.changeViewMode = this.changeViewMode;
 		$scope.exportToSVG = this.exportToSVG.bind(this);
 		$scope.exportToOTF = this.exportToOTF.bind(this);
+		$scope.openInGlyphr = this.openInGlyphr.bind(this);
 		$scope.applyPreset = this.applyPreset;
 		$scope.updateCalculatedParams = this.updateCalculatedParams;
 		$scope.resetFontValue = this.resetFontValue;
@@ -203,6 +204,32 @@
 
 		this.font.toSVG( allChars );
 		this.font.addToFonts( allChars, {familyName: 'preview'} );
+	};
+
+	var messageListener;
+	MainCtrl.prototype.openInGlyphr = function() {
+		this.font.update( true, this.fontValues );
+
+		window.open('http://localhost:8081/dev/Glyphr_Studio.html');
+
+		if ( messageListener ) {
+			return;
+		}
+
+		var self = this;
+		messageListener = window.addEventListener('message', function( event ) {
+			if ( event.data === 'ready' ) {
+				var glyphs = self.font.toSVG( true, self.fontValues ),
+					data = Handlebars.templates.dotsvg({
+							glyphs: glyphs
+						});
+
+				event.source.postMessage(
+					data,
+					event.origin
+				);
+			}
+		});
 	};
 
 	MainCtrl.prototype.exportToSVG = function() {
