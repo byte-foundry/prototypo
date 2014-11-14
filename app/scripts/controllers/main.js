@@ -210,7 +210,7 @@
 	MainCtrl.prototype.openInGlyphr = function() {
 		this.font.update( true, this.fontValues );
 
-		window.open('http://localhost:8081/dev/Glyphr_Studio.html');
+		window.open('http://glyphrstudio.com/online/');
 
 		if ( messageListener ) {
 			return;
