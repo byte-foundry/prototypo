@@ -64,7 +64,7 @@ angular.module('prototypoApp', [
 				redirectTo: '/typeface/default/font/default'
 			});
 
-		hoodieProvider.config('http://prototypo.cloudapp.net');
+		hoodieProvider.config('https://prototypo.appback.com');
 	})
 
 	.run(function( $rootScope, $location, hoodie ) {
@@ -105,7 +105,7 @@ angular.module('prototypoApp', [
 			}).fail(function(){
 				if ( !hoodie.account.hasAccount() ) {
 					console.log('fail and no account registred');
-				} else {		
+				} else {
 					console.log('fail but user has account');
 				}
 				$('#serverDown').show();
@@ -119,7 +119,7 @@ angular.module('prototypoApp', [
 				(jQuery.browser.chrome && parseFloat( jQuery.browser.version ) < 30) ||
 				(jQuery.browser.mozilla && parseFloat( jQuery.browser.version ) < 25) ||
 				(jQuery.browser.msie && parseFloat( jQuery.browser.version ) < 11) ||
-				(jQuery.browser.safari && parseFloat( jQuery.browser.version ) < 536) 
+				(jQuery.browser.safari && parseFloat( jQuery.browser.version ) < 536)
 			) {
 				console.log("ERROR — incompatible browser: ", jQuery.browser );
 				return $location
