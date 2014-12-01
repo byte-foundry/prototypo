@@ -49,7 +49,7 @@ angular.module('prototypoApp', [
 				redirectTo: '/typeface/default/font/default'
 			});
 
-		hoodieProvider.config('http://prototypo.cloudapp.net');
+		hoodieProvider.config('https://prototypo.appback.com');
 	})
 
 	.run(function( $rootScope, $location, hoodie ) {
