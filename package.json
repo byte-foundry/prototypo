@@ -1,7 +1,9 @@
 {
   "name": "prototypo",
   "version": "0.1.0",
-  "dependencies": {},
+  "dependencies": {
+    "grunt-sass": "^0.17.0"
+  },
   "devDependencies": {
     "grunt": "~0.4.4",
     "grunt-autoprefixer": "~0.7.2",

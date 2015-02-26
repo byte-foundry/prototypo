@@ -4,6 +4,7 @@ node_js:
 before_install:
 - npm install -g grunt-cli bower
 after_script:
+- bower install
 - grunt build
 - grunt deploy
 env:
