@@ -12,10 +12,7 @@
     "FileSaver": "git://github.com/eligrey/FileSaver.js/",
     "hoodie": "~0.9.6",
     "pointerevents-polyfill": "git://github.com/Polymer/PointerEvents.git/",
-    "PointerGestures": "git://github.com/Polymer/PointerGestures.git/",
-    "opentype.js": "~0.3.0",
-    "Font": "https://github.com/Pomax/Font.js",
-    "Font.js": "https://github.com/Pomax/Font.js.git"
+    "PointerGestures": "git://github.com/Polymer/PointerGestures.git/"
   },
   "devDependencies": {
     "angular-mocks": "~1.0.7",

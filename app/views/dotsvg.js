@@ -6,18 +6,19 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
 function program1(depth0,data) {
+  
   var buffer = "", stack1;
-  buffer += "\n<glyph unicode=\""
-    + escapeExpression(((stack1 = (depth0 && String.fromCharCode( depth0.unicode ))),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" horiz-adv-x=\""
-    + escapeExpression(((stack1 = (depth0 && depth0.advanceWidth || 512)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+  buffer += "\n<glyph unicode=\"&#"
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.ot)),stack1 == null || stack1 === false ? stack1 : stack1.unicode)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + ";\" horiz-adv-x=\""
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.ot)),stack1 == null || stack1 === false ? stack1 : stack1.advanceWidth)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\" d=\""
-    + escapeExpression(((stack1 = (depth0 && depth0.pathData)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = (depth0 && depth0.svgData)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"/>\n";
   return buffer;
   }
 
-  buffer += "<?xml version=\"1.0\" standalone=\"no\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg xmlns=\"http://www.w3.org/2000/svg\">\n<metadata></metadata>\n<defs>\n<font id=\"prototypo-";
+  buffer += "<?xml version=\"1.0\" standalone=\"no\"?>\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n<svg xmlns=\"http://www.w3.org/2000/svg\">\n<metadata></metadata>\n<defs>\n<font id=\"";
   if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)

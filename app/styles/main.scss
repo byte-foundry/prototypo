@@ -76,7 +76,6 @@ textarea {
 		-moz-box-sizing: border-box;
 
 		color: lighten($dark-grey, 15%);
-		font-family: 'preview', sans-serif;
 		font-size: 2.5rem;
 		letter-spacing: .1rem;
 
@@ -123,7 +122,6 @@ textarea.string {
 	padding: 100px;
 	font-size: 11em;
 	line-height: 1;
-	font-family: 'preview', sans-serif;
 	border: none;
 	text-shadow: 0 0 1px rgba(0,0,0,0.5);
 	color: $dark-grey;

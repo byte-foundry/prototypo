@@ -29,7 +29,7 @@
 			scenePanY: 0,
 			singleChar: 'A',
 			stringChars: 'Type your text',
-			paragraphChars: 'Hamburgfonstiv',
+			paragraphChars: 'Hamburgefonstiv',
 			currentPreset: 'Sans-serif'
 		};
 
@@ -50,7 +50,8 @@
 		$scope.applyPreset = this.applyPreset;
 		$scope.updateCalculatedParams = this.updateCalculatedParams;
 		$scope.resetFontValue = this.resetFontValue;
-
+		$scope.StringFromCharCode = String.fromCharCode;
+console.log('a');
 		// load default typeface
 		Typefaces.get({ typeface: $routeParams.typeface }).$promise.then(function( typedata ) {
 			$scope.fontObject = thisCtrl.fontObject = typedata;
@@ -77,9 +78,10 @@
 				});
 			});
 
-			$scope.cAlt = typedata.info.cAlt;
-			_(typedata.info['glyph-order']).forEach(function( c, i ) {
-				$scope.cMap[i] = c[0];
+			prototypo.setup(document.createElement('canvas'));
+			$scope.font = prototypo.ParametricFont( typedata );console.log($scope.font);
+			$scope.font.glyphs.forEach(function(glyph) {
+				glyph.allNodes = thisCtrl.gatherNodes( glyph );
 			});
 
 			var promises = [];
@@ -128,7 +130,10 @@
 				$scope.fontValues[name] = calc( $scope.fontValues );
 			});
 
-			thisCtrl.updateSVGOT( $scope, allChars );
+			$scope.font.update( $scope.fontValues );
+			$scope.font.updateSVGData();
+			$scope.font.updateOTCommands();
+			$scope.font.addToFonts();
 
 			// persist values
 			FontValues.save({
@@ -146,16 +151,21 @@
 					return '';
 				}
 
-				allChars = _.unique(($scope.appValues.singleChar + $scope.appValues.stringChars + $scope.appValues.paragraphChars).split('')).sort();
+				// TODO: single char should be a character, not a number
+				allChars = _.unique((String.fromCharCode($scope.appValues.singleChar) + $scope.appValues.stringChars + $scope.appValues.paragraphChars).split('')).sort();
 
 				return allChars.join('');
 			},
 			function() {
-				if ( !thisCtrl.font ) {
+				if ( !$scope.font ) {
 					return;
 				}
 
-				thisCtrl.updateSVGOT( $scope, allChars );
+				$scope.font.subset = allChars.join('');
+				$scope.font.update( $scope.fontValues );
+				$scope.font.updateSVGData();
+				$scope.font.updateOTCommands();
+				$scope.font.addToFonts();
 			});
 
 		$scope.$watchCollection('appValues', function() {
@@ -182,7 +192,7 @@
 		}
 		else {
 			var size = parseFloat($('textarea.string').css('font-size'));
-			$('textarea.string').css('font-size', size + val * -10 + "px" );
+			$('textarea.string').css('font-size', size + val * -10 + 'px' );
 		}
 	};
 
@@ -196,19 +206,24 @@
 		return mode;
 	};
 
-	MainCtrl.prototype.updateSVGOT = function( $scope, allChars ) {
-		$scope.allChars = this.font.update(
-			allChars,
-			$scope.fontValues
-		);
+	// MainCtrl.prototype.updateSVGOT = function( $scope, allChars ) {console.log('here');
+	// 	// this.font.update( allChars,
+	// 	// 	$scope.fontValues
+	// 	// );
 
-		this.font.toSVG( allChars );
-		this.font.addToFonts( allChars, {familyName: 'preview'} );
-	};
+	// 	// this.font.toSVG( allChars );
+	// 	// this.font.addToFonts( allChars, {familyName: 'preview'} );
+
+	// 	this.font.subset = allChars;
+	// 	this.font.update( $scope.fontValues );
+	// 	this.font.updateSVGData();
+	// 	this.font.addToFonts();
+	// };
 
 	var messageListener;
 	MainCtrl.prototype.openInGlyphr = function() {
 		this.font.update( true, this.fontValues );
+		this.font.updateSVGData();
 
 		window.open('http://glyphrstudio.com/online/');
 
@@ -219,9 +234,8 @@
 		var self = this;
 		messageListener = window.addEventListener('message', function( event ) {
 			if ( event.data === 'ready' ) {
-				var glyphs = self.font.toSVG( true, self.fontValues ),
-					data = Handlebars.templates.dotsvg({
-							glyphs: glyphs
+				var data = Handlebars.templates.dotsvg({
+							glyphs: self.font.charMap,
 						});
 
 				event.source.postMessage(
@@ -233,12 +247,13 @@
 	};
 
 	MainCtrl.prototype.exportToSVG = function() {
-		this.font.update( true, this.fontValues );
+		this.font.update( this.fontValues );
+		this.font.updateSVGData();
 
 		saveAs(
 			new Blob(
 				[ Handlebars.templates.dotsvg({
-					glyphs: this.font.toSVG( true, this.fontValues )
+					glyphs: this.font.charMap
 				}) ],
 				{type: 'application/svg+xml;charset=utf-8'}
 			),
@@ -257,11 +272,12 @@
 	};
 
 	MainCtrl.prototype.exportToOTF = function() {
-		this.font.update( true, this.fontValues );
+		this.font.update( this.fontValues );
+		this.font.updateOTCommands();
 
 		saveAs(
 			new Blob(
-				[ new DataView( this.font.toOT( true ).toBuffer() ) ],
+				[ new DataView( this.font.ot.toBuffer() ) ],
 				{type: 'font/opentype'}
 			),
 			'default.otf'
@@ -276,6 +292,24 @@
 		$.extend( this.fontValues, this.fontObject.presets[name] );
 
 		this.$apply();
+	};
+
+	MainCtrl.prototype.gatherNodes = function( glyph, allNodes ) {
+		if ( !allNodes ) {
+			allNodes = [];
+		}
+
+		glyph.contours.forEach(function(contour) {
+			contour.nodes.forEach(function(node) {
+				allNodes.push(node);
+			});
+		});
+
+		glyph.components.forEach(function(component) {
+			this.gatherNodes(component, allNodes);
+		}, this);
+
+		return allNodes;
 	};
 
 })(angular);

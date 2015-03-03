@@ -8,7 +8,7 @@
 <missing-glyph horiz-adv-x="500" />
 <glyph unicode="&#xd;" horiz-adv-x="681" />
 {{#each glyphs}}
-<glyph unicode="{{ String.fromCharCode( this.unicode ) }}" horiz-adv-x="{{this.advanceWidth || 512}}" d="{{this.pathData}}"/>
+<glyph unicode="&#{{ this.ot.unicode }};" horiz-adv-x="{{this.ot.advanceWidth}}" d="{{this.svgData}}"/>
 {{/each}}
 </font>
 </defs>

@@ -3,8 +3,8 @@
 		<span>Glyph list</span>
 		<span class="fixGlyphList"></span>
 	</div>
-	<li class="col" bindonce ng-repeat="(key, value) in cMap"
-	bo-text="key"
+	<li class="col" bindonce ng-repeat="(key, value) in font.charMap"
+	bo-text="StringFromCharCode( key )"
 	bo-attr
 	bo-attr-data-id="key"
 	ng-class="appValues.singleChar == key ? 'selected' : ''"

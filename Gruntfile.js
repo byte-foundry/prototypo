@@ -70,6 +70,7 @@ module.exports = function (grunt) {
 					open: 'http://localhost:<%= connect.options.port %>',
 					base: [
 						'.tmp',
+						'node_modules',
 						'<%= yeoman.app %>'
 					]
 				}
@@ -80,6 +81,7 @@ module.exports = function (grunt) {
 					base: [
 						'.tmp',
 						'test',
+						'node_modules',
 						'<%= yeoman.app %>'
 					]
 				}
