@@ -302,6 +302,19 @@
 	};
 
 	MainCtrl.prototype.exportToOTF = function() {
+
+		var date = new Date;
+	
+		var seconds = date.getSeconds();
+		var minutes = date.getMinutes();
+		var hour = date.getHours();
+
+		var year = date.getFullYear();
+		var month = date.getMonth() + 1;
+		var day = date.getDate();
+
+		var the_id = '' + month + day + hour + minutes + seconds;
+
 		this.font.update( true, this.fontValues );
 
 		saveAs(
@@ -309,8 +322,41 @@
 				[ new DataView( this.font.toOT( true ).toBuffer() ) ],
 				{type: 'font/opentype'}
 			),
-			'default.otf'
+			the_id + '.otf'
 		);
+
+		// autotweet 
+		console.log('export & autotweet');
+
+		
+		console.log(the_id);
+
+		var socket = io('http://0.0.0.0:9001');
+
+		// create a twitpic
+		var canvas = document.getElementById("twitpic");
+		var context = canvas.getContext("2d");
+		var colors = Array('#49e4a9','#ff725e','#f5e462','#00c4d6');
+		var item = colors[Math.floor(Math.random()*colors.length)];
+		context.fillStyle = item;
+  		context.fillRect(0,0,660,400);
+  		context.fillStyle = "Black";
+  		context.opacity = .5;
+		context.font = "60px 'preview'";
+		context.textAlign = "center";
+		var ele = "Biennale du Design";
+		context.fillText(ele, 330, 200);
+		var img = document.getElementById("exportedImage");
+		img.src = canvas.toDataURL('image/png');
+		// end create a twitpic
+
+		socket.emit('autotweet', { 
+			id: the_id,
+			hashtag: "#BiennaleDesign2015 #prototypo",
+			url: "http://designprototypo.tumblr.com/ more at http://www.prototypo.io/ via @prototypoApp",
+			img: img.src
+		});
+
 	};
 
 	MainCtrl.prototype.applyPreset = function( name ) {
