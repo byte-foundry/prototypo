@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PointerGestures Delta Tracking</title>
+  <style>
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      background: whitesmoke;
+    }
+    #real {
+      background: black;
+      z-index: 1;
+    }
+    #ghost {
+      background: gray;
+      pointer-events: none;
+    }
+    #ghostghost {
+      background: lightgray;
+      pointer-events: none;
+    }
+    div {
+      -webkit-user-select: none;
+      height: 100px;
+      width: 100px;
+      position: absolute;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+  </style>
+  <script src="../../pointergestures.js"></script>
+</head>
+<body touch-action="none">
+
+  <div id="real"></div>
+  <div id="ghost"></div>
+  <div id="ghostghost"></div>
+
+  <script>
+    function translate(el, x, y) {
+      x = Math.max(0, x - 50); y = Math.max(0, y - 50);
+      el.style.transfomrm = el.style.webkitTransform = 'translateX(' + x + 'px) translateY(' + y + 'px)';
+    }
+    real.addEventListener('track', function(e) {
+      requestAnimationFrame(function() {
+        translate(real, e.clientX, e.clientY);
+        translate(ghost, e.clientX - e.ddx, e.clientY - e.ddy);
+        translate(ghostghost, e.clientX - e.dx, e.clientY - e.dy);
+      });
+    });
+  </script>
+</body>
+</html>

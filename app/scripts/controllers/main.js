@@ -17,6 +17,7 @@
 			showSplash: true,
 			viewMode: 'single',
 			invertedFont: false,
+			displayUI: false,
 			displayNodes: false,
 			displayNodesCoordinates: false,
 			displayCtrlCoordinates: false,
@@ -171,8 +172,50 @@
 				values: $scope.appValues
 			});
 		});
-	}
+	
+		// Console BDSE
+		var socket = io('http://0.0.0.0:9001');
 
+		socket.on('update', function(obj){
+			// console.log(obj.id, obj.value);
+			if(obj.id === "A-1"){
+				$scope.fontValues.thickness = Math.round(obj.value) * 2;
+				$scope.$apply();
+			}
+		});
+
+		// socket.on('reset', function(obj){
+		// 	console.log(obj.id);
+		// 	if( obj.value === true ) {
+		// 		$('.slider').css('background-color', 'red');
+		// 	} else {
+		// 		$('.slider').css('background-color', 'blue');
+		// 	}
+		// });
+
+		// socket.on('switch', function(obj){
+		// 	console.log(obj.id);
+		// 	if( obj.value === false ) {
+		// 		$('.slider').css('background-color', 'black');
+		// 		$('body').css('background-color', 'white');
+		// 	} else {
+		// 		$('.slider').css('background-color', 'white');
+		// 		$('body').css('background-color', 'black');
+		// 	}
+		// });
+
+
+		// socket.on('export', function(obj){
+		// 	console.log(obj.id);
+		// 	if( obj.value === false ) {
+		// 		$('body').css('background-color', 'white');
+		// 	} else {
+		// 		$('body').css('background-color', 'red');
+		// 	}
+		// });
+
+	}
+// end MainCtrl
 	MainCtrl.prototype.zoom = function( val ) {
 		if( this.appValues.viewMode === 'single' ) {
 			if ( val === 0 ) {

@@ -1,0 +1,48 @@
+{
+  "name": "opentype.js",
+  "description": "OpenType font parser",
+  "version": "0.3.1",
+  "author": {
+    "name": "Frederik De Bleser",
+    "email": "frederik@burocrazy.com"
+  },
+  "keywords": [
+    "graphics",
+    "fonts",
+    "opentype",
+    "otf",
+    "ttf",
+    "type"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://raw.github.com/nodebox/opentype.js/master/LICENSE"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nodebox/opentype.js.git"
+  },
+  "main": "opentype.js",
+  "bin": {
+    "ot": "./bin/ot"
+  },
+  "scripts": {
+    "start": "mkdir -p build && bin/server.js",
+    "test": "jshint src",
+    "browserify": "browserify src/opentype.js --bare --standalone opentype > dist/opentype.js",
+    "uglify": "browserify src/opentype.js --bare --standalone opentype -g uglifyify > dist/opentype.min.js",
+    "dist": "npm run test && npm run browserify && npm run uglify"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^6.2.0",
+    "grunt": "~0.4.2",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-release": "~0.7.0",
+    "jshint": "~2.5.0",
+    "uglifyify": "^2.6.0",
+    "watchify": "^0.10.2"
+  }
+}

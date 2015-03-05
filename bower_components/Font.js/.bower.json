@@ -1,0 +1,14 @@
+{
+  "name": "Font.js",
+  "main": "./Font.js",
+  "homepage": "https://github.com/Pomax/Font.js",
+  "_release": "9e72a914dc",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "9e72a914dc3ea1bf8129636ff718fd81a2dbbd92"
+  },
+  "_source": "https://github.com/Pomax/Font.js.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/Pomax/Font.js.git"
+}

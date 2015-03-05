@@ -1,0 +1,10 @@
+{
+  "name": "Font",
+  "_cacheHeaders": {
+    "Content-Type": "text/html; charset=utf-8"
+  },
+  "main": "index.js",
+  "_source": "https://github.com/Pomax/Font.js",
+  "_target": "*",
+  "_originalSource": "https://github.com/Pomax/Font.js"
+}

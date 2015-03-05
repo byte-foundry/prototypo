@@ -1,5 +1,5 @@
 <div class="row" ng-class="{ negative : appValues.negative }">
-	<div class="sidebar col">
+	<div class="sidebar col" ng-hide="appValues.displayUI">
 		<div class="cell stringinput-cell">
 			<div class="stringinput">
 				<input type="text" ng-model="appValues.stringChars" />
@@ -11,15 +11,15 @@
 		<div class="cell paramtabs-cell">
 			<paramtabs></paramtabs>
 		</div>
-	</div
-	><div class="central col">
+	</div>
+	<div class="central col">
 		<div class="cell scene-cell">
-			<string ng-show="appValues.viewMode === 'string' " class="ng-hide"></string>
-			<single ng-show="appValues.viewMode === 'single' " class="ng-hide"></single>
-			<scene-buttons></scene-buttons>
-			<glyphlist></glyphlist>
+			<string ng-hide="appValues.viewMode === 'string' " class="ng-hide"></string>
+			<single ng-hide="appValues.viewMode === 'single' " class="ng-hide"></single>
+			<scene-buttons ng-hide="appValues.displayUI"></scene-buttons>
+			<glyphlist ng-hide="appValues.displayUI"></glyphlist>
 		</div>
-		<menu></menu>
+		<menu ng-hide="appValues.displayUI"></menu>
 		<context-menu></context-menu>
 		<context-menu-string></context-menu-string>
 	</div>

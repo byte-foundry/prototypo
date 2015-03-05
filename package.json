@@ -1,7 +1,11 @@
 {
   "name": "prototypo",
   "version": "0.1.0",
-  "dependencies": {},
+  "dependencies": {
+    "johnny-five": "^0.8.46",
+    "socket.io": "^1.3.5",
+    "socket.io-client": "^1.3.5"
+  },
   "devDependencies": {
     "grunt": "~0.4.4",
     "grunt-angular-templates": "~0.5.3",

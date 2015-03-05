@@ -70,7 +70,8 @@ module.exports = function (grunt) {
 					open: true,
 					base: [
 						'.tmp',
-						'<%= yeoman.app %>'
+						'<%= yeoman.app %>',
+						'node_modules'
 					]
 				}
 			},

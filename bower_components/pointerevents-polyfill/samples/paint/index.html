@@ -1,0 +1,36 @@
+<!doctype html>
+<!--
+ Copyright 2012-2014 The Polymer Authors. All rights reserved.
+ Use of this source code is governed by a BSD-style
+ license that can be found in the LICENSE file.
+-->
+<head>
+<meta name="viewport" content="width=device-width">
+<meta charset="UTF-8">
+<title>PointerEvents Paint</title>
+</head>
+
+<style>
+html, body {
+  padding: 0; margin: 0;
+  overflow: hidden;
+}
+  canvas {
+    background: lightgreen;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+</style>
+
+<canvas width="800" height="600" touch-action="none"></canvas>
+
+<!-- Pointer events library. -->
+<script src="../../pointerevents.js"></script>
+<script src="paint.js"></script>
+<script>
+window.addEventListener('load', init);
+
+function init() {
+  var painter = new Paint({el: document.querySelector('canvas')});
+};
+</script>
