@@ -23,6 +23,20 @@
 			>nodes
 		</li>
 		<li
+			ng-show="appValues.displayNodes"
+			ng-click="appValues.displayNodesCoordinates = !appValues.displayNodesCoordinates"
+			ng-class="{ 'active' : appValues.displayNodesCoordinates }"
+			class="display"
+			>nodes coordinates
+		</li>
+		<li
+			ng-show="appValues.displayNodes"
+			ng-click="appValues.displayCtrlCoordinates = !appValues.displayCtrlCoordinates"
+			ng-class="{ 'active' : appValues.displayCtrlCoordinates }"
+			class="display"
+			>offcurves coordinates
+		</li>
+		<li
 			ng-click="appValues.outlineOnly = !appValues.outlineOnly"
 			ng-class="{ 'active' : appValues.outlineOnly }"
 			class="display"

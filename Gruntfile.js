@@ -288,6 +288,10 @@ module.exports = function (grunt) {
 					cwd: '.tmp/images',
 					dest: '<%= yeoman.dist %>/images',
 					src: ['generated/*']
+				}, {
+					expand: false,
+					src: 'app/bower_components/genese.ptf/dist/font.json',
+					dest: 'dist/bower_components/genese.ptf/dist/font.json'
 				}]
 			},
 			styles: {

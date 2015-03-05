@@ -6,11 +6,11 @@
 	>
 		<defs>
 			<pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
-				<path d="M 10 0 L 0 0 0 10" fill="transparent" stroke="#dedede" vector-effect="non-scaling-stroke" stroke-width="0.5"></path>
+				<path ng-attr-d="M 10 0 L 0 0 0 10" fill="transparent" stroke="#dedede" vector-effect="non-scaling-stroke" stroke-width="0.5"></path>
 			</pattern>
 			<pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
 				<rect width="100" height="100" fill="url(#smallGrid)"></rect>
-				<path d="M 100 0 L 0 0 0 100" fill="transparent" stroke="#dedede" vector-effect="non-scaling-stroke" stroke-width="1"></path>
+				<path ng-attr-d="M 100 0 L 0 0 0 100" fill="transparent" stroke="#dedede" vector-effect="non-scaling-stroke" stroke-width="1"></path>
 			</pattern>
 		</defs>
 
@@ -52,12 +52,23 @@
 				<g class="nodes" ng-show="appValues.displayNodes" class="ng-hide">
 					<g bindonce ng-repeat="node in allChars[appValues.singleChar].allNodes">
 						<path
-							bo-attr
+						bo-attr
 							bo-attr-data-index="$index"
+							id="{{'node-' + $index}}"
 							class="node end"
 							data-type="end"
 							ng-attr-d="M {{ node.x | int }} {{ node.y | int }} m 0 3 h 3 v -6 h -6 v 6 z">
 						</path>
+					 	<text 
+					 		ng-if="node.x || node.y"
+							id="{{'coordinates-' + $index}}"
+							ng-attr-transform="scale(1,-1) translate(0, {{ - node.y * 2 }})"
+							x="{{ node.x + 5 }}" 
+							y="{{ node.y - 5 }}"
+							ng-show="appValues.displayNodesCoordinates"
+					        class="node ng-hide coord">
+					    	{{ node.x | int }} {{ node.y | int }}
+					 	</text>
 						<path
 							style="pointer-events: none;"
 							class="ctrl-line"
@@ -70,8 +81,18 @@
 							bo-attr-data-index="$index"
 							class="node ctrl"
 							data-type="ctrl0"
-							ng-attr-d="M {{ node.lCtrl.x - 3 | int }} {{ node.lCtrl.y | int }} l 3 3 l 3 -3 l -3 -3 z">
+							ng-attr-d="M {{ node.rCtrl.x - 3 | int }} {{ node.rCtrl.y | int }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
+						<text 
+							ng-if="node.rCtrl.x || node.rCtrl.y"
+							id="{{'coordinates-' + $index}}"
+							ng-attr-transform="scale(1,-1) translate(0, {{ - node.rCtrl.y * 2 }})"
+							x="{{ node.rCtrl.x + 5 }}" 
+							y="{{ node.rCtrl.y - 5 }}"
+							ng-show="appValues.displayCtrlCoordinates"
+							class="ctrl">
+					    	{{ node.rCtrl.x | int }} {{ node.rCtrl.y | int }}
+					 	</text>
 						<path
 							bo-attr
 							bo-attr-data-index="$index"
@@ -79,6 +100,16 @@
 							data-type="ctrl1"
 							ng-attr-d="M {{ node.lCtrl.x - 3 | int }} {{ node.lCtrl.y | int }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
+						<text 
+							ng-if="node.lCtrl.x || node.lCtrl.y"
+							id="{{'coordinates-' + $index}}"
+							ng-attr-transform="scale(1,-1) translate(0, {{ - node.lCtrl.y * 2 }})"
+							x="{{ node.lCtrl.x + 5 }}" 
+							y="{{ node.lCtrl.y - 5 }}"
+							ng-show="appValues.displayCtrlCoordinates"
+							class="ctrl">
+					    	{{ node.lCtrl.x | int }} {{ node.lCtrl.y | int }}
+					 	</text>
 					</g>
 				</g>
 			</g>

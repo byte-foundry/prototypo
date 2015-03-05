@@ -82,9 +82,9 @@ angular.module('prototypo.singleDirective', ['prototypo.Utils'])
 							$scope.appValues.scenePanY = startY + p.y - m.f;
 
 							$scope.$apply();
-							// $scope.appValues.scenePanX = e.clientX - startX;
-							// $scope.appValues.scenePanY = e.clientY - startY;
-							// $scope.$digest();
+							$scope.appValues.scenePanX = e.clientX - startX;
+							$scope.appValues.scenePanY = e.clientY - startY;
+							$scope.$digest();
 						});
 						return false;
 					}
@@ -155,6 +155,11 @@ angular.module('prototypo.singleDirective', ['prototypo.Utils'])
 				// prevent defautlt context-menu
 				}).parent().parent().on('contextmenu', function() {
 					return false;
+				});
+				
+				/* node coordinates visibilty */
+				$element.on('pointerdown', '.node.end', function( e ) {
+					$(this).next().toggle();
 				});
 
 				/* node drag handler */
