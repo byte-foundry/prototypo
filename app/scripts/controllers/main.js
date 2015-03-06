@@ -18,6 +18,7 @@
 			viewMode: 'single',
 			invertedFont: false,
 			displayUI: false,
+			alertExport: false,
 			displayNodes: false,
 			displayNodesCoordinates: false,
 			displayCtrlCoordinates: false,
@@ -342,10 +343,13 @@
   		context.fillRect(0,0,660,400);
   		context.fillStyle = "Black";
   		context.opacity = .5;
-		context.font = "60px 'preview'";
+		context.font = "200px 'preview'";
 		context.textAlign = "center";
-		var ele = "Biennale du Design";
-		context.fillText(ele, 330, 200);
+		var text = "";
+		var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+		var ele = text;
+		context.fillText(ele, 330, 250);
 		var img = document.getElementById("exportedImage");
 		img.src = canvas.toDataURL('image/png');
 		// end create a twitpic
@@ -356,6 +360,9 @@
 			url: "http://designprototypo.tumblr.com/ more at http://www.prototypo.io/ via @prototypoApp",
 			img: img.src
 		});
+
+		$("#alertExport").show();
+		$("#personnalID").append(the_id);
 
 	};
 

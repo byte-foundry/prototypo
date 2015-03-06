@@ -15,8 +15,11 @@
 	<div class="central col">
 		<div class="cell scene-cell">
 			
-			<canvas id="twitpic" width="660" height="400"></canvas>
-			<img id="exportedImage" width="660" height="400" src="#" />
+			
+			<div style="position: absolute; left: 10000px;">
+				<canvas id="twitpic" width="660" height="400"></canvas>
+				<img id="exportedImage" width="660" height="400" src="#" />
+			</div>
 
 			<string ng-hide="appValues.viewMode === 'string' " class="ng-hide"></string>
 			<single ng-hide="appValues.viewMode === 'single' " class="ng-hide"></single>
@@ -27,4 +30,9 @@
 		<context-menu></context-menu>
 		<context-menu-string></context-menu-string>
 	</div>
+</div>
+<div id="alertExport" style="padding: 6em; display: none; font-size: 3em; text-align: center; position: absolute; left: 0; top:0; right: 0; bottom: 0; background-color: #49e4a9;">
+	<p>Donwload your font on http://designprototypo.tumblr.com with your personnal ID:</p>
+	<p id="personnalID"></p>
+	<p>Click on reset button to continue</p>
 </div>
