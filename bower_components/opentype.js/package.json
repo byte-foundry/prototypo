@@ -1,7 +1,7 @@
 {
   "name": "opentype.js",
   "description": "OpenType font parser",
-  "version": "0.3.1",
+  "version": "0.4.3",
   "author": {
     "name": "Frederik De Bleser",
     "email": "frederik@burocrazy.com"
@@ -24,7 +24,7 @@
     "type": "git",
     "url": "git://github.com/nodebox/opentype.js.git"
   },
-  "main": "opentype.js",
+  "main": "dist/opentype.js",
   "bin": {
     "ot": "./bin/ot"
   },
@@ -38,11 +38,8 @@
   "dependencies": {},
   "devDependencies": {
     "browserify": "^6.2.0",
-    "grunt": "~0.4.2",
-    "grunt-contrib-uglify": "~0.4.0",
-    "grunt-release": "~0.7.0",
-    "jshint": "~2.5.0",
+    "jshint": "^2.5.10",
     "uglifyify": "^2.6.0",
-    "watchify": "^0.10.2"
+    "watchify": "^2.1.1"
   }
 }

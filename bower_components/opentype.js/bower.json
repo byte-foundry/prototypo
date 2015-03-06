@@ -1,6 +1,6 @@
 {
   "name": "opentype.js",
-  "version": "0.3.1",
+  "version": "0.4.3",
   "main": "dist/opentype.js",
   "keywords": [
     "vector",
@@ -9,10 +9,13 @@
     "2d"
   ],
   "ignore": [
+    ".jshintignore",
+    ".jshintrc",
     "build",
     "g",
     "src",
-    "test"
+    "test",
+    "*.html"
   ],
   "dependencies": {
   }

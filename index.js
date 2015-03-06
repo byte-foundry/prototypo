@@ -1,5 +1,6 @@
 // var app = require('express')();
 // var http = require('http').Server(app);
+'use strict';
 var io = require('socket.io')(9001);
 
 // app.get('/', function(req, res){
@@ -10,75 +11,128 @@ var io = require('socket.io')(9001);
 //   console.log('listening on *:3000');
 // });
 
-var five = require("johnny-five"),
-    boards, 
-    nbSliders = 12;
-
-boards = [
-  new five.Board({ id: "A" }),
-  new five.Board({ id: "B" })
-];
-
+var five = require('johnny-five'),
+    updates = {},
+    sliderMap = {
+      A: {
+        0: ['midWidth', 0.2, 3.1],
+        1: ['serifWidth', 0, 220],
+        // courbure
+        2: ['serifTerminalCurve', 0, 1.5],
+        3: ['serifTerminal', -2.45, 1],
+        // Ampleur de courbure
+        4: ['serifCurve', 0, 6],
+        // COurbure d'empattement
+        5: ['serifRoundness', 0, 2],
+        6: ['serifMedian', 0.2, 2],
+        7: ['serifHeight', 0, 150],
+        8: ['curviness', 0.1, 1.4],
+        9: ['',0,100],
+        10: ['slant', -5, 8]
+      },
+      B: {
+        0: ['ascender', 50, 530],
+        1: ['xHeight', 300, 960],
+        2: ['axis', -35, 35],
+        3: ['_contrast', -1, 0.9],
+        4: ['crossbar', 0.8, 1.2],
+        5: ['thickness', 4, 700],
+        6: ['width', 0.5, 2.15],
+        7: ['capDelta', 0, 620],
+        8: ['aperture', 0.2, 1.9],
+        9: ['opticThickness', 1, 2.1],
+        10: ['descender', -450, 170]
+      }
+    },
+    charMap = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 // Add ready event handlers to both boards.
-boards.forEach(function( board ) {
-  board.on("ready", function() {
+[
+  new five.Board({ id: 'A' }),
+  new five.Board({ id: 'B' })
+].forEach(function( board ) {
 
-    console.log(board.id +  " ready!" );
+  board.on('ready', function() {
 
-    for (var i = 0; i < nbSliders; i++) {
-      (function(i) {
-        // console.log(i);
-        var slider = new five.Sensor({
-          pin: "A" + i,
+    console.log(board.id +  ' ready!' );
+
+    Object.keys(sliderMap[board.id]).forEach(function(name) {
+      var params = sliderMap[board.id][name],
+        slider = new five.Sensor({
+          pin: 'A' + name,
           board: board,
-          threshold: 2
+          threshold: 3
         });
 
-
-        slider.scale([0, 100]).on("slide", function() {
-          io.emit('update', { id: board.id + '-' + i, value: this.value } );
-          // console.log("slide " + i + " of " + board.id + " > ", this.value);
+        slider.scale(params.slice(1)).on('slide', function() {
+          updates[params[0] || board.id + name] = this.value;
         });
-      })(i);
-    }
+    });
 
-    if( board.id == 'A' ) {
+    if( board.id === 'A' ) {
 
-      BTNreset = new five.Button(12);
+      var BTNreset = new five.Button(12);
 
-      BTNreset.on("down", function() {
-        console.log("reset ok");
+      BTNreset.on('down', function() {
+        console.log('reset ok');
         io.emit('reset', { id: 'reset', value: true } );
       });
-      BTNreset.on("up", function() {
+      BTNreset.on('up', function() {
         io.emit('reset', { id: 'reset', value: false } );
       });
 
-      BTNswitch = new five.Button(13);
+      var BTNswitch = new five.Button(13);
 
-      BTNswitch.on("down", function() {
-        console.log("switch ok");
+      BTNswitch.on('down', function() {
+        console.log('switch ok');
         io.emit('switch', { id: 'switch', value: true } );
       });
-      BTNswitch.on("up", function() {
+      BTNswitch.on('up', function() {
         io.emit('switch', { id: 'switch', value: false } );
       });
 
-      BTNexport = new five.Button(14);
+      var BTNexport = new five.Button(14);
 
-      BTNexport.on("down", function() {
-        console.log("export ok");
+      BTNexport.on('down', function() {
+        console.log('export ok');
         io.emit('export', { id: 'export', value: true } );
       });
-      BTNexport.on("up", function() {
+      BTNexport.on('up', function() {
         io.emit('export', { id: 'export', value: false } );
       });
 
+      var slider = new five.Sensor({
+          pin: 'A11',
+          board: board,
+          threshold: 1
+        }),
+        prevChar;
+
+        slider.scale([0, charMap.length -1]).on('slide', function() {
+          var currChar = charMap[Math.round(this.value)];
+          if ( currChar === prevChar  ) {
+            return;
+          }
+
+          console.log('switch char', currChar);
+          io.emit('char', currChar);
+          prevChar = currChar;
+        });
     }
 
   });
 });
+
+setInterval(function() {
+  if ( Object.keys(updates).length === 0 ) {
+    return;
+  }
+
+  console.log(updates);
+  io.emit('updates', updates);
+  updates = {};
+
+}, 100);
 
 
 // twitter

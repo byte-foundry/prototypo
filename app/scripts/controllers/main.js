@@ -173,24 +173,28 @@
 				values: $scope.appValues
 			});
 		});
-	
+
 		// Console BDSE
 		var socket = io('http://0.0.0.0:9001');
 
-		socket.on('update', function(obj){
-			// console.log(obj.id, obj.value);
-			if(obj.id === "A-1"){
-				$scope.fontValues.thickness = Math.round(obj.value) * 2;
+		socket.on('updates', function( values ) {
+			for ( var i in values ) {
+				$scope.fontValues[i] = values[i];
 				$scope.$apply();
 			}
+		});
+
+		socket.on('char', function( value ) {
+			$scope.appValues.singleChar = value;
+			$scope.$apply();
 		});
 
 		socket.on('reset', function(obj){
 			// console.log(obj.id);
 			if( obj.value === true ) {
 				localStorage.clear();
-				window.location.reload();	
-			} 
+				window.location.reload();
+			}
 		});
 
 		// socket.on('switch', function(obj){
@@ -213,7 +217,6 @@
 
 	}
 	// end MainCtrl
-	
 	MainCtrl.prototype.zoom = function( val ) {
 		if( this.appValues.viewMode === 'single' ) {
 			if ( val === 0 ) {
@@ -235,7 +238,7 @@
 	};
 
 	MainCtrl.prototype.changeViewMode = function( mode ) {
-		this.appValues.viewMode = mode;
+		this.appValues.viewMode = mode;console.log(mode);
 		return mode;
 	};
 

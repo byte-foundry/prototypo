@@ -71,7 +71,8 @@ module.exports = function (grunt) {
 					base: [
 						'.tmp',
 						'<%= yeoman.app %>',
-						'node_modules'
+						'node_modules',
+						'bower_components'
 					]
 				}
 			},

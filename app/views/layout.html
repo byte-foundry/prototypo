@@ -14,15 +14,13 @@
 	</div>
 	<div class="central col">
 		<div class="cell scene-cell">
-			
-			
 			<div style="position: absolute; left: 10000px;">
 				<canvas id="twitpic" width="660" height="400"></canvas>
 				<img id="exportedImage" width="660" height="400" src="#" />
 			</div>
 
-			<string ng-hide="appValues.viewMode === 'string' " class="ng-hide"></string>
-			<single ng-hide="appValues.viewMode === 'single' " class="ng-hide"></single>
+			<string ng-show="appValues.viewMode === 'string' " class="ng-hide"></string>
+			<single ng-show="appValues.viewMode === 'single' " class="ng-hide"></single>
 			<scene-buttons ng-hide="appValues.displayUI"></scene-buttons>
 			<glyphlist ng-hide="appValues.displayUI"></glyphlist>
 		</div>
