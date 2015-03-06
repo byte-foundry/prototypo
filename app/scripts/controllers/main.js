@@ -356,7 +356,7 @@
 
 		socket.emit('autotweet', { 
 			id: the_id,
-			hashtag: "#BiennaleDesign2015 #prototypo",
+			hashtag: "#biennaledesign15 #design #typeface",
 			url: "http://designprototypo.tumblr.com/ more at http://www.prototypo.io/ via @prototypoApp",
 			img: img.src
 		});
