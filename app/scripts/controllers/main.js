@@ -185,14 +185,13 @@
 			}
 		});
 
-		// socket.on('reset', function(obj){
-		// 	console.log(obj.id);
-		// 	if( obj.value === true ) {
-		// 		$('.slider').css('background-color', 'red');
-		// 	} else {
-		// 		$('.slider').css('background-color', 'blue');
-		// 	}
-		// });
+		socket.on('reset', function(obj){
+			// console.log(obj.id);
+			if( obj.value === true ) {
+				localStorage.clear();
+				window.location.reload();	
+			} 
+		});
 
 		// socket.on('switch', function(obj){
 		// 	console.log(obj.id);
@@ -205,18 +204,16 @@
 		// 	}
 		// });
 
-
 		// socket.on('export', function(obj){
-		// 	console.log(obj.id);
-		// 	if( obj.value === false ) {
-		// 		$('body').css('background-color', 'white');
-		// 	} else {
-		// 		$('body').css('background-color', 'red');
-		// 	}
+		// 	// console.log(obj.id);
+		// 	if( obj.value === true ) {
+		// 		// MainCtrl.prototype.exportToOTF();	
+		// 	} 
 		// });
 
 	}
-// end MainCtrl
+	// end MainCtrl
+	
 	MainCtrl.prototype.zoom = function( val ) {
 		if( this.appValues.viewMode === 'single' ) {
 			if ( val === 0 ) {

@@ -10,75 +10,75 @@ var io = require('socket.io')(9001);
 //   console.log('listening on *:3000');
 // });
 
-// var five = require("johnny-five"),
-//     boards, 
-//     nbSliders = 12;
+var five = require("johnny-five"),
+    boards, 
+    nbSliders = 12;
 
-// boards = [
-//   new five.Board({ id: "A" }),
-//   new five.Board({ id: "B" })
-// ];
+boards = [
+  new five.Board({ id: "A" }),
+  new five.Board({ id: "B" })
+];
 
 
 // Add ready event handlers to both boards.
-// boards.forEach(function( board ) {
-//   board.on("ready", function() {
+boards.forEach(function( board ) {
+  board.on("ready", function() {
 
-//     console.log(board.id +  " ready!" );
+    console.log(board.id +  " ready!" );
 
-//     for (var i = 0; i < nbSliders; i++) {
-//       (function(i) {
-//         // console.log(i);
-//         var slider = new five.Sensor({
-//           pin: "A" + i,
-//           board: board,
-//           threshold: 2
-//         });
+    for (var i = 0; i < nbSliders; i++) {
+      (function(i) {
+        // console.log(i);
+        var slider = new five.Sensor({
+          pin: "A" + i,
+          board: board,
+          threshold: 2
+        });
 
 
-//         slider.scale([0, 100]).on("slide", function() {
-//           io.emit('update', { id: board.id + '-' + i, value: this.value } );
-//           console.log("slide " + i + " of " + board.id + " > ", this.value);
-//         });
-//       })(i);
-//     }
+        slider.scale([0, 100]).on("slide", function() {
+          io.emit('update', { id: board.id + '-' + i, value: this.value } );
+          // console.log("slide " + i + " of " + board.id + " > ", this.value);
+        });
+      })(i);
+    }
 
-//     if( board.id == 'A' ) {
+    if( board.id == 'A' ) {
 
-//       BTNreset = new five.Button(12);
+      BTNreset = new five.Button(12);
 
-//       BTNreset.on("down", function() {
-//         console.log("reset ok");
-//         io.emit('reset', { id: 'reset', value: true } );
-//       });
-//       BTNreset.on("up", function() {
-//         io.emit('reset', { id: 'reset', value: false } );
-//       });
+      BTNreset.on("down", function() {
+        console.log("reset ok");
+        io.emit('reset', { id: 'reset', value: true } );
+      });
+      BTNreset.on("up", function() {
+        io.emit('reset', { id: 'reset', value: false } );
+      });
 
-//       BTNswitch = new five.Button(13);
+      BTNswitch = new five.Button(13);
 
-//       BTNswitch.on("down", function() {
-//         console.log("switch ok");
-//         io.emit('switch', { id: 'switch', value: true } );
-//       });
-//       BTNswitch.on("up", function() {
-//         io.emit('switch', { id: 'switch', value: false } );
-//       });
+      BTNswitch.on("down", function() {
+        console.log("switch ok");
+        io.emit('switch', { id: 'switch', value: true } );
+      });
+      BTNswitch.on("up", function() {
+        io.emit('switch', { id: 'switch', value: false } );
+      });
 
-//       BTNexport = new five.Button(14);
+      BTNexport = new five.Button(14);
 
-//       BTNexport.on("down", function() {
-//         console.log("export ok");
-//         io.emit('export', { id: 'export', value: true } );
-//       });
-//       BTNexport.on("up", function() {
-//         io.emit('export', { id: 'export', value: false } );
-//       });
+      BTNexport.on("down", function() {
+        console.log("export ok");
+        io.emit('export', { id: 'export', value: true } );
+      });
+      BTNexport.on("up", function() {
+        io.emit('export', { id: 'export', value: false } );
+      });
 
-//     }
+    }
 
-//   });
-// });
+  });
+});
 
 
 // twitter
@@ -123,7 +123,7 @@ io.sockets.on('connection', function (socket) {
         // tumblr post
         var options = {
             title: '#' + obj.id,
-            body: '<img src="' + obj.img + '"/><br/><br/><p><a target="_blank" style="font-size:24px; font-weight: bold;" href="https://dl.dropboxusercontent.com/u/3400076/biennale/' + obj.id + '.otf">Download the font</a></p><p><a href="http://www.prototypo.io/#win">Get a chance to access to the dev version by subscribing to our newsletter.<br/>Each week, we pick randomly 2 subscribers!    </a></p><p>    <a href="http://www.prototypo.io/support.html">Support an open-source project!    </a></p>'
+            body: '<img src="' + obj.img + '"/><br/><br/><p><a target="_blank" style="font-size:24px; font-weight: bold;" href="https://dl.dropboxusercontent.com/u/3400076/biennale/' + obj.id + '.otf">Download the font</a></p><p><a href="http://www.prototypo.io/#win">Get a chance to access to the dev version by subscribing to our newsletter.<br/>Each week, we pick randomly 2 subscribers!    </a></p><p>    <a href="http://www.prototypo.io/support.html">Support an open-source project!</a><a style="float:right; color: #ff725e;" href="http://www.prototypo.io"><b>More about Prototypo</b></a></p>'
         };
 
         client.text('designprototypo.tumblr.com', options, function (response) {});
