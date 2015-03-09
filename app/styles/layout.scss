@@ -44,6 +44,7 @@ body,
 .central {
 	width: -webkit-calc(100% - #{$sidebar-w});
 	width:         calc(100% - #{$sidebar-w});
+	width: 100%; // biennale
 }
 
 .grid {
