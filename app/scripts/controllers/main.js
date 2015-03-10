@@ -17,7 +17,7 @@
 			showSplash: true,
 			viewMode: 'single',
 			invertedFont: false,
-			displayUI: false,
+			displayUI: true,
 			alertExport: false,
 			displayNodes: false,
 			displayNodesCoordinates: false,
@@ -28,11 +28,11 @@
 			displayGuideLines: true,
 			displaySpacing: false,
 			paramTab: 0,
-			zoom: 1.5,
-			scenePanX: -120,
+			zoom: 0.9,
+			scenePanX: -250,
 			scenePanY: 0,
 			singleChar: 'A',
-			stringChars: 'Type your text',
+			stringChars: '',
 			paragraphChars: 'Hamburgfonstiv',
 			currentPreset: 'Sans-serif'
 		};
@@ -189,11 +189,28 @@
 			$scope.$apply();
 		});
 
+		socket.on('pangram', function( value ) {
+			$scope.appValues.paragraphChars = value;
+			$scope.$apply();
+		});
+
 		socket.on('reset', function(obj){
 			// console.log(obj.id);
 			if( obj.value === true ) {
 				localStorage.clear();
 				window.location.reload();
+			}
+		});
+
+		socket.on('switch', function(mode) {
+			$scope.appValues.viewMode = mode;
+			$scope.$apply();
+		});
+
+		socket.on('export', function(obj) {
+			if ( obj.value === true ) {
+				$scope.exportToOTF();
+				$scope.$apply();
 			}
 		});
 
@@ -211,7 +228,7 @@
 		// socket.on('export', function(obj){
 		// 	// console.log(obj.id);
 		// 	if( obj.value === true ) {
-		// 		// MainCtrl.prototype.exportToOTF();	
+		// 		// MainCtrl.prototype.exportToOTF();
 		// 	} 
 		// });
 
@@ -228,7 +245,7 @@
 		}
 		else {
 			var size = parseFloat($('textarea.string').css('font-size'));
-			$('textarea.string').css('font-size', size + val * -10 + "px" );
+			$('textarea.string').css('font-size', size + val * -10 + 'px' );
 		}
 	};
 
@@ -238,7 +255,7 @@
 	};
 
 	MainCtrl.prototype.changeViewMode = function( mode ) {
-		this.appValues.viewMode = mode;console.log(mode);
+		this.appValues.viewMode = mode;
 		return mode;
 	};
 

@@ -33,9 +33,9 @@ var five = require('johnny-five'),
       B: {
         0: ['ascender', 50, 530],
         1: ['xHeight', 300, 960],
-        2: ['axis', -35, 35],
+        //2: ['axis', -35, 35],
         3: ['_contrast', -1, 0.9],
-        4: ['crossbar', 0.8, 1.2],
+        //4: ['crossbar', 0.8, 1.2],
         5: ['thickness', 4, 700],
         6: ['width', 0.5, 2.15],
         7: ['capDelta', 0, 620],
@@ -44,7 +44,16 @@ var five = require('johnny-five'),
         10: ['descender', -450, 170]
       }
     },
-    charMap = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    charMap = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+    pangrams = [
+      'Bachez la queue du wagon taxi avec les pyjamas du fakir',
+      'Monsieur Jack vous dactylographiez bien mieux que votre ami Wolf',
+      'Voix ambigue d un coeur qui au zephyr prefere les jattes de kiwis',
+      'Mon pauvre zebu ankylose choque deux fois ton wagon jaune',
+      'Le vif zephyr jubile sur les kumquats du clown gracieux',
+      'Portez ce vieux whisky au juge blond qui fume',
+      'Buvez de ce whisky que le patron juge fameux'
+    ];
 
 // Add ready event handlers to both boards.
 [
@@ -61,7 +70,7 @@ var five = require('johnny-five'),
         slider = new five.Sensor({
           pin: 'A' + name,
           board: board,
-          threshold: 3
+          threshold: 4
         });
 
         slider.scale(params.slice(1)).on('slide', function() {
@@ -76,19 +85,21 @@ var five = require('johnny-five'),
       BTNreset.on('down', function() {
         console.log('reset ok');
         io.emit('reset', { id: 'reset', value: true } );
+        setTimeout(function() {
+          io.emit('switch', toggle.isClosed ? 'single' : 'string');
+        }, 2000);
       });
       BTNreset.on('up', function() {
         io.emit('reset', { id: 'reset', value: false } );
       });
 
-      var BTNswitch = new five.Button(13);
+      var toggle = new five.Switch(13);
 
-      BTNswitch.on('down', function() {
-        console.log('switch ok');
-        io.emit('switch', { id: 'switch', value: true } );
+      toggle.on('closed', function() {
+        io.emit('switch', 'single');
       });
-      BTNswitch.on('up', function() {
-        io.emit('switch', { id: 'switch', value: false } );
+      toggle.on('open', function() {
+        io.emit('switch', 'string');
       });
 
       var BTNexport = new five.Button(14);
@@ -106,17 +117,30 @@ var five = require('johnny-five'),
           board: board,
           threshold: 1
         }),
-        prevChar;
+        prevChar,
+        prevPangram;
 
         slider.scale([0, charMap.length -1]).on('slide', function() {
-          var currChar = charMap[Math.round(this.value)];
-          if ( currChar === prevChar  ) {
-            return;
-          }
+          // 'single' mode
+          if ( toggle.isClosed ) {
+            var currChar = charMap[Math.round(this.value)];
+            if ( currChar === prevChar  ) {
+              return;
+            }
 
-          console.log('switch char', currChar);
-          io.emit('char', currChar);
-          prevChar = currChar;
+            io.emit('char', currChar);
+            prevChar = currChar;
+
+          // 'string' mode
+          } else {
+            var currPangram = pangrams[Math.round(this.value) % pangrams.length];
+            if ( currPangram === prevPangram  ) {
+              return;
+            }
+
+            io.emit('pangram', currPangram);
+            prevPangram = currPangram;
+          }
         });
     }
 

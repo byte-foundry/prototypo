@@ -187,7 +187,7 @@ module.exports = function (grunt) {
 		},
 
 		// Reads HTML for usemin blocks to enable smart builds that automatically
-		// concat, minify and revision files. Creates configurations in memory so
+		// concatenates, minify and revision files. Creates configurations in memory so
 		// additional tasks can operate on them
 		useminPrepare: {
 			html: '<%= yeoman.app %>/index.html',
@@ -291,9 +291,13 @@ module.exports = function (grunt) {
 					dest: '<%= yeoman.dist %>/images',
 					src: ['generated/*']
 				}, {
+				//	expand: false,
+				//	src: 'app/bower_components/genese.ptf/dist/font.json',
+				//	dest: 'dist/bower_components/genese.ptf/dist/font.json'
 					expand: false,
-					src: 'app/bower_components/genese.ptf/dist/font.json',
-					dest: 'dist/bower_components/genese.ptf/dist/font.json'
+					cwd: '.',
+					src: 'node_modules/Genese/dist/font.json',
+					dest: 'dist/Genese/dist/font.json'
 				}]
 			},
 			styles: {
