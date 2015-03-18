@@ -60,15 +60,15 @@
 							ng-attr-d="M {{ node.x | int }} {{ node.y | int }} m 0 3 h 3 v -6 h -6 v 6 z">
 						</path>
 						<text 
--					 		ng-if="node.x || node.y"
--							id="{{'coordinates-' + $index}}"
--							ng-attr-transform="scale(1,-1) translate(0, {{ - node.y * 2 }})"
--							ng-attr-x="{{ node.x + 5 }}" 
--							ng-attr-y="{{ node.y - 5 }}"
--							ng-show="appValues.displayNodesCoordinates"
--					        class="node ng-hide coord">
--					    	{{ node.x | int }} {{ node.y | int }}
--					 	</text>
+					 		ng-if="node.x || node.y"
+							id="{{'coordinates-' + $index}}"
+							ng-attr-transform="scale(1,-1) translate(0, {{ - node.y * 2 }})"
+							ng-attr-x="{{ node.x + 5 }}" 
+							ng-attr-y="{{ node.y - 5 }}"
+							ng-show="appValues.displayNodesCoordinates"
+					        class="node ng-hide coord">
+					    	{{ node.x | int }} {{ node.y | int }}
+					 	</text>
 						<path
 							bo-attr
 							bo-attr-data-index="$index"
@@ -84,15 +84,15 @@
 							ng-attr-d="M {{ node.x + node.handleIn.x - 3 | int }} {{ node.y + node.handleIn.y | int }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
 						<text 
--							ng-if="node.handleIn.x || node.handleIn.y"
--							id="{{'coordinates-' + $index}}"
---							ng-attr-transform="scale(1,-1) translate(0, {{ - ( node.y + node.handleIn.y ) * 2 }})"
+							ng-if="node.handleIn.x || node.handleIn.y"
+							id="{{'coordinates-' + $index}}"
+							ng-attr-transform="scale(1,-1) translate(0, {{ - ( node.y + node.handleIn.y ) * 2 }})"
 							ng-attr-x="{{ node.x + node.handleIn.x + 5 }}" 
--							ng-attr-y="{{ node.y + node.handleIn.y - 5 }}"
--							ng-show="appValues.displayCtrlCoordinates"
--							class="ctrl">
--					    	{{ node.x + node.handleIn.x | int }} {{ node.y + node.handleIn.y | int }}
--					 	</text>
+							ng-attr-y="{{ node.y + node.handleIn.y - 5 }}"
+							ng-show="appValues.displayCtrlCoordinates"
+							class="ctrl">
+					    	{{ node.x + node.handleIn.x | int }} {{ node.y + node.handleIn.y | int }}
+					 	</text>
 						<path
 							bo-attr
 							bo-attr-data-index="$index"
@@ -101,15 +101,15 @@
 							ng-attr-d="M {{ node.x + node.handleOut.x - 3 | int }} {{ node.y + node.handleOut.y | int }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
 						<text 
--							ng-if="node.handleOut.x || node.handleOut.y"
--							id="{{'coordinates-' + $index}}"
---							ng-attr-transform="scale(1,-1) translate(0, {{ - ( node.y + node.handleOut.y ) * 2 }})"
+							ng-if="node.handleOut.x || node.handleOut.y"
+							id="{{'coordinates-' + $index}}"
+							ng-attr-transform="scale(1,-1) translate(0, {{ - ( node.y + node.handleOut.y ) * 2 }})"
 							ng-attr-x="{{ node.x + node.handleOut.x + 5 }}" 
--							ng-attr-y="{{ node.y + node.handleOut.y - 5 }}"
--							ng-show="appValues.displayCtrlCoordinates"
--							class="ctrl">
--					    	{{ node.x + node.handleOut.x | int }} {{ node.y + node.handleOut.y | int }}
--					 	</text>
+							ng-attr-y="{{ node.y + node.handleOut.y - 5 }}"
+							ng-show="appValues.displayCtrlCoordinates"
+							class="ctrl">
+					    	{{ node.x + node.handleOut.x | int }} {{ node.y + node.handleOut.y | int }}
+					 	</text>
 					</g>
 				</g>
 			</g>
