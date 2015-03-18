@@ -24,3 +24,13 @@
 	stroke-width: 10px;
 	transition: all 100ms linear;
 }
+
+.nodes text {
+	font-size: 8px;
+	&.node {
+		fill: $red;
+	}
+	&.ctrl {
+		fill: $blue;
+	}
+}

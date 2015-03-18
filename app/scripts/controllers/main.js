@@ -18,6 +18,8 @@
 			viewMode: 'single',
 			invertedFont: false,
 			displayNodes: false,
+			displayNodesCoordinates: false,
+			displayCtrlCoordinates: false,
 			outlineOnly: false,
 			negative: false,
 			displayGrid: true,
