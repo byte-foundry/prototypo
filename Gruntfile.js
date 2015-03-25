@@ -201,7 +201,7 @@ module.exports = function (grunt) {
 			html: ['<%= yeoman.dist %>/{,*/}*.html'],
 			css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
 			options: {
-				assetsDirs: ['<%= yeoman.dist %>', '<%= yeoman.dist %>/images']
+				assetsDirs: ['node_modules', '<%= yeoman.dist %>', '<%= yeoman.dist %>/images']
 			}
 		},
 
@@ -290,6 +290,16 @@ module.exports = function (grunt) {
 					cwd: '.tmp/images',
 					dest: '<%= yeoman.dist %>/images',
 					src: ['generated/*']
+				}, {
+					expand: false,
+					cwd: '.',
+					src: 'node_modules/genese.ptf/dist/font.json',
+					dest: '<%= yeoman.dist %>/genese.ptf/dist/font.json'
+				}, {
+					expand: false,
+					cwd: '.',
+					src: 'node_modules/prototypo.js/dist/prototypo.js',
+					dest: '<%= yeoman.dist %>/prototypo.js/dist/prototypo.js'
 				}]
 			},
 			styles: {
