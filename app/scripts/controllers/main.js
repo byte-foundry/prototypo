@@ -53,7 +53,7 @@
 		$scope.updateCalculatedParams = this.updateCalculatedParams;
 		$scope.resetFontValue = this.resetFontValue;
 		$scope.StringFromCharCode = String.fromCharCode;
-console.log('a');
+
 		// load default typeface
 		Typefaces.get({ typeface: $routeParams.typeface }).$promise.then(function( typedata ) {
 			$scope.fontObject = thisCtrl.fontObject = typedata;
