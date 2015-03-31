@@ -23,6 +23,12 @@
 			>nodes
 		</li>
 		<li
+			ng-click="appValues.displayNodesSkeleton = !appValues.displayNodesSkeleton"
+			ng-class="{ 'active' : appValues.displayNodesSkeleton }"
+			class="display"
+			>nodes skeleton
+		</li>
+		<li
 			ng-show="appValues.displayNodes"
 			ng-click="appValues.displayNodesCoordinates = !appValues.displayNodesCoordinates"
 			ng-class="{ 'active' : appValues.displayNodesCoordinates }"

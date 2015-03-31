@@ -50,26 +50,37 @@
 				<g class="nodes" ng-show="appValues.displayNodes" class="ng-hide">
 					<g bindonce
 						ng-repeat="node in font.charMap[appValues.singleChar].allNodes"
-						ng-if="!node.expandedTo"
 					>
 						<path
+							ng-if="node.expandedTo"
+							bo-attr
+							bo-attr-data-index="$index"
+							class="node skeleton"
+							data-type="skeleton"
+							ng-show="appValues.displayNodesSkeleton"
+							ng-attr-d="M {{ node.x | int }} {{ node.y | int }} m 0 5 h 5 v -10 h -10 v 10 z">
+						</path>
+						<path
+							ng-if="!node.expandedTo"
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node end"
 							data-type="end"
 							ng-attr-d="M {{ node.x | int }} {{ node.y | int }} m 0 3 h 3 v -6 h -6 v 6 z">
 						</path>
-						<text 
-					 		ng-if="node.x || node.y"
+						<text
+							ng-if="!node.expandedTo"
+							ng-if="node.x || node.y"
 							id="{{'coordinates-' + $index}}"
 							ng-attr-transform="scale(1,-1) translate(0, {{ - node.y * 2 }})"
-							ng-attr-x="{{ node.x + 5 }}" 
+							ng-attr-x="{{ node.x + 5 }}"
 							ng-attr-y="{{ node.y - 5 }}"
 							ng-show="appValues.displayNodesCoordinates"
-					        class="node ng-hide coord">
-					    	{{ node.x | int }} {{ node.y | int }}
-					 	</text>
+							class="node ng-hide coord">
+							{{ node.x | int }} {{ node.y | int }}
+						</text>
 						<path
+							ng-if="!node.expandedTo"
 							bo-attr
 							bo-attr-data-index="$index"
 							class="ctrl-line"
@@ -77,34 +88,38 @@
 							fill="none">
 						</path>
 						<path
+							ng-if="!node.expandedTo"
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node ctrl"
 							data-type="ctrl0"
 							ng-attr-d="M {{ node.x + node.handleIn.x - 3 | int }} {{ node.y + node.handleIn.y | int }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
-						<text 
+						<text
+							ng-if="!node.expandedTo"
 							ng-if="node.handleIn.x || node.handleIn.y"
 							id="{{'coordinates-' + $index}}"
 							ng-attr-transform="scale(1,-1) translate(0, {{ - ( node.y + node.handleIn.y ) * 2 }})"
-							ng-attr-x="{{ node.x + node.handleIn.x + 5 }}" 
+							ng-attr-x="{{ node.x + node.handleIn.x + 5 }}"
 							ng-attr-y="{{ node.y + node.handleIn.y - 5 }}"
 							ng-show="appValues.displayCtrlCoordinates"
 							class="ctrl">
 					    	{{ node.x + node.handleIn.x | int }} {{ node.y + node.handleIn.y | int }}
 					 	</text>
 						<path
+							ng-if="!node.expandedTo"
 							bo-attr
 							bo-attr-data-index="$index"
 							class="node ctrl"
 							data-type="ctrl1"
 							ng-attr-d="M {{ node.x + node.handleOut.x - 3 | int }} {{ node.y + node.handleOut.y | int }} l 3 3 l 3 -3 l -3 -3 z">
 						</path>
-						<text 
+						<text
+							ng-if="!node.expandedTo"
 							ng-if="node.handleOut.x || node.handleOut.y"
 							id="{{'coordinates-' + $index}}"
 							ng-attr-transform="scale(1,-1) translate(0, {{ - ( node.y + node.handleOut.y ) * 2 }})"
-							ng-attr-x="{{ node.x + node.handleOut.x + 5 }}" 
+							ng-attr-x="{{ node.x + node.handleOut.x + 5 }}"
 							ng-attr-y="{{ node.y + node.handleOut.y - 5 }}"
 							ng-show="appValues.displayCtrlCoordinates"
 							class="ctrl">
