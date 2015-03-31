@@ -15,9 +15,10 @@
 		// initial state
 		this.initialAppValues = {
 			showSplash: true,
-			viewMode: 'single',
+			viewMode: 'string',
 			invertedFont: false,
 			displayNodes: false,
+			displayNodesSkeleton: false,
 			displayNodesCoordinates: false,
 			displayCtrlCoordinates: false,
 			outlineOnly: false,
@@ -31,7 +32,7 @@
 			scenePanY: 0,
 			singleChar: 'A',
 			stringChars: 'Type your text',
-			paragraphChars: 'Hamburgefonstiv',
+			paragraphChars: 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ',
 			currentPreset: 'Sans-serif'
 		};
 
