@@ -26,6 +26,7 @@ angular.module('prototypo.singleDirective', ['prototypo.Utils'])
 				});
 
 				var Point = prototypo.Point,
+				Matrix = prototypo.Matrix,
 					$transformed = $element.find('#transformed'),
 					startX,
 					startY,
@@ -74,9 +75,14 @@ angular.module('prototypo.singleDirective', ['prototypo.Utils'])
 									e.clientX - startX,
 									e.clientY - startY
 								),
-								m = $transformed[0].getCTM().inverse();
+								m = $transformed[0].getCTM().inverse(),
+								m2;
 
-							p.transform( m );
+							p = p.transform(
+									m2 = new Matrix(
+										m.a, m.c, m.b, m.d, m.e, m.f
+									)
+							);
 
 							$scope.appValues.scenePanX = startX + p.x - m.e;
 							$scope.appValues.scenePanY = startY + p.y - m.f;
