@@ -82,7 +82,7 @@
 			});
 
 			prototypo.setup(document.createElement('canvas'));
-			$scope.font = prototypo.ParametricFont( typedata );console.log($scope.font);
+			$scope.font = prototypo.parametricFont( typedata );
 			$scope.font.glyphs.forEach(function(glyph) {
 				glyph.allNodes = thisCtrl.gatherNodes( glyph );
 			});
