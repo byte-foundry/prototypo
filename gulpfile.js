@@ -1,3 +1,6 @@
+var Promise = (global || window).Promise = require('bluebird'); //Bluebird promise are way better than native
+var fs = Promise.promisifyAll(require('fs')); //We just want promise seriously
+
 var gulp = require('gulp');
 // CSS Dep
 var sass = require('gulp-sass');
@@ -18,6 +21,8 @@ var gutil = require('gulp-util');
 var sourcemaps = require('gulp-sourcemaps');
 var browserSync = require('browser-sync').create();
 var assign = require('lodash.assign');
+var filter = require('gulp-filter');
+var through = require('through');
 
 // Browserify setup
 /* What we want right now :
@@ -25,9 +30,9 @@ var assign = require('lodash.assign');
  * - watchified bundle generation
  */
 
-var customBrowserifyOpts = {
+ customBrowserifyOpts = {
 	entries: ['./app/scripts/main.js'],
-	debug: gutil.env.type == 'prod' ? false : true
+	debug: gutil.env.type == 'prod' ? false : true,
 }
 
 var opts = assign({}, watchify.args, customBrowserifyOpts);
@@ -41,27 +46,49 @@ gulp.task('css-app', function() {
 		.pipe(sourcemaps.write())
 		.pipe(gutil.env.type == 'prod' ? minifyCss() : gutil.noop())
 		.pipe(gulp.dest('./dist/assets/'))
-		.pipe(gulp.filter('**/*.css'))
+		.pipe(filter('**/*.css'))
 		.pipe(browserSync.reload({stream:true}));
 });
 
 function bundle() {
-	return b.bundle()
-		.on('error', gutil.log.bind(gutil, 'Browserify Error'))
-		.pipe(source('bundle.js'))
-		.pipe(buffer())
-		.pipe(sourcemaps.init({loadMaps:true}))
-		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest('./dist'))
+	return b.then(function(b) {
+
+		return b.bundle()
+			.on('error', gutil.log.bind(gutil, 'Browserify Error'))
+			.pipe(source('bundle.js'))
+			.pipe(buffer())
+			.pipe(sourcemaps.init({loadMaps:true}))
+			.pipe(sourcemaps.write('./'))
+			.pipe(gulp.dest('./dist'))
+	})
 }
 
-var bBase = browserify(opts)
-				.transform(babelify.configure({
-					stage: 0 //enabling that es7 goodness
-				}));
-var b = watchify(bBase);
-b.on('update',bundle);
-b.on('log',gutil.log);
+var readPrelude = fs.readFileAsync('./__prelude.js');
+
+var bBase = readPrelude.then(function(prelude) {
+	return browserify(opts)
+		.transform(function(file) {
+			var data = prelude;
+			return through(write, end);
+
+			function write(buf) { data += buf }
+
+			function end() {
+				this.queue(data);
+				this.queue(null);
+			}
+		})
+		.transform(babelify.configure({
+			stage: 0 //enabling that es7 goodness
+		}));
+});
+
+var b = bBase.then(function(browserify) {
+	var b = watchify(browserify)
+	b.on('update',bundle);
+	b.on('log',gutil.log);
+	return b;
+});
 
 gulp.task('browserify', bundle);
 
