@@ -1,6 +1,16 @@
 Prototypo, Streamlining font creation [![Build Status](https://travis-ci.org/byte-foundry/prototypo.svg?branch=master)](https://travis-ci.org/byte-foundry/prototypo)
 =====================================
 
+BEFORE ANYTHING !
+-----------------
+Use git flow on this branch (reactify-and-cleanup)
+Add --no-ff to your merge options on this branch.
+If you merge a branch on reactify-and-cleanup with ff I'll will cut you
+
+Labeling convention:
+- Feature -> feat/name-of-feature
+- Fix -> fix/name-of-fix_issuenumber
+
 Before installing Prototypo
 ---------------------------
 
