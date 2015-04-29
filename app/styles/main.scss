@@ -1,7 +1,13 @@
 @import "variables";
 
+html {
+	font-size:62.5%;
+}
+
 body {
 	overflow: hidden;
+	font-size:1.4em;
+	line-height:1.5;
 
 	font-family: "Liberation Mono", "Lucida Console", "Monaco", "courrier new", monospace;
 	color: #111;
@@ -33,6 +39,12 @@ a:visited {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+// Everybody has border-box sizing
+* {
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
 }
 
 // ...except where it makes sense

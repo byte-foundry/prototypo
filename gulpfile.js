@@ -37,6 +37,18 @@ var through = require('through');
 
 var opts = assign({}, watchify.args, customBrowserifyOpts);
 
+gulp.task('images', function() {
+	gulp.src('./app/images/*.*')
+		.pipe(gulp.dest('./dist/assets/images/'));
+});
+
+gulp.task('css-vendor', function() {
+	//This is a bit hackish but right now i don't care
+	gulp.src('./node_modules/normalize.css/normalize.css')
+		.pipe(concat('vendor.css'))
+		.pipe(gulp.dest('./dist/assets/'));
+})
+
 
 gulp.task('css-app', function() {
 	gulp.src('./app/styles/*.scss')
@@ -96,7 +108,7 @@ gulp.task('build', [], function() {
 
 })
 
-gulp.task('serve', ['css-app', 'browserify'], function() {
+gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
 	browserSync.init({
 		server:'./dist'
 	});
