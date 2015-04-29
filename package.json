@@ -5,7 +5,9 @@
     "babel": "^5.1.11",
     "bluebird": "^2.9.24",
     "lodash": "^3.7.0",
-    "prototypo.js": "^0.2.0"
+    "prototypo.js": "^0.2.0",
+    "react": "^0.13.2",
+    "react-router": "^0.13.3"
   },
   "devDependencies": {
     "babelify": "^6.0.2",
