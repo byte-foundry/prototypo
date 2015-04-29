@@ -1,0 +1,69 @@
+.slider {
+	margin-bottom:15px;
+
+	&-title {
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		padding-left: 0.8em;
+		display: inline-block;
+		pointer-events: none;
+	}
+
+	&-reset {
+		opacity: 0;
+		margin-left: 0.8rem;
+		display: inline-block;
+		cursor: pointer;
+	//TODO(franz): integrate in theme
+		color: #7e7e7e;
+		transition: opacity 500ms ease;
+	}
+
+	&:hover &-reset {
+		opacity: 1;
+	}
+
+	&-text-controller {
+		float: right;
+		width: 4rem;
+		font-size: inherit;
+		text-align: right;
+		background: none;
+		border: 0;
+		border-radius: 0;
+	//TODO(franz): integrate in theme
+		color: #7e7e7e;
+	}
+
+	&-controller {
+		overflow: hidden;
+		background-color: #FFF;
+		margin-top: 2px;
+
+		&, &-bg, &-handle {
+			border-radius: 1rem;
+			cursor: pointer;
+		}
+
+		&-bg {
+			height: 2rem;
+			background-color: #49e4a9;
+			transition: background-color 500ms ease;
+		}
+
+		&-handle {
+			float: right;
+			width: 2rem;
+			height: 2rem;
+			border: 0.5rem solid #49e4a9;
+			background-color: #555555;
+			transition: border-color 500ms ease;
+		}
+	}
+}
+
+.sliders {
+	//TODO(franz): integrate in theme
+	color:#f6f6f6;
+	padding:1rem;
+}
