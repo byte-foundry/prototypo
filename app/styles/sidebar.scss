@@ -1,0 +1,11 @@
+@import "variables";
+
+#sidebar {
+	height:100%;
+	width: $sidebar-w;
+	position: relative;
+	z-index: 2;
+	//TODO(franz): integrate in themified css
+	background-color: $dark-grey;
+	box-shadow: 4px 0px 6px #aaa;
+}
