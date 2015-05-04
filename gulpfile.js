@@ -51,7 +51,7 @@ gulp.task('css-vendor', function() {
 
 
 gulp.task('css-app', function() {
-	gulp.src('./app/styles/*.scss')
+	gulp.src('./app/styles/**/*.scss')
 		.pipe(sourcemaps.init())
 		.pipe(sass())
 		.pipe(concat('app.css'))
@@ -80,14 +80,22 @@ var readPrelude = fs.readFileAsync('./__prelude.js');
 var bBase = readPrelude.then(function(prelude) {
 	return browserify(opts)
 		.transform(function(file) {
-			var data = prelude;
-			return through(write, end);
+			if (file.indexOf('prototypo/app/scripts') != -1) {
+				var data = prelude;
+				return through(write, end);
 
-			function write(buf) { data += buf }
+				function write(buf) { data += buf }
 
-			function end() {
-				this.queue(data);
-				this.queue(null);
+				function end() {
+					this.queue(data);
+					this.queue(null);
+				}
+			} else {
+				return through(function write(data) {
+					this.queue(data);
+				}, function end() {
+					this.queue(null);
+				});
 			}
 		})
 		.transform(babelify.configure({
@@ -113,7 +121,7 @@ gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
 		server:'./dist'
 	});
 
-	gulp.watch('./app/styles/*.scss',['css-app']);
+	gulp.watch('./app/styles/**/*.scss',['css-app']);
 	gulp.watch('./dist/bundle.js',browserSync.reload);
 });
 

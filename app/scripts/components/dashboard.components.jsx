@@ -1,5 +1,6 @@
 import React from 'react';
 import Sidebar from './sidebar.components.jsx';
+import Workboard from './workboard.components.jsx';
 
 export default class Dashboard extends React.Component {
 
@@ -22,6 +23,7 @@ export default class Dashboard extends React.Component {
 		return (
 			<div id="dashboard">
 				<Sidebar />
+				<Workboard />
 			</div>
 		)
 	}

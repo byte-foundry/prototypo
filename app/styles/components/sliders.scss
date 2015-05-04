@@ -1,3 +1,5 @@
+@import "../variables";
+
 .slider {
 	margin-bottom:15px;
 
@@ -64,6 +66,6 @@
 
 .sliders {
 	//TODO(franz): integrate in theme
-	color:#f6f6f6;
+	color:$white;
 	padding:1rem;
 }

@@ -1,0 +1,32 @@
+@import "../variables";
+
+.glyph-list {
+	background-color:$dark-grey;
+	color:$white;
+	padding-top:5px;
+
+	&-glyph {
+		float:left;
+		height:49px;
+		width:49px;
+		background-color:lighten($dark-grey, 2%);
+		border-bottom:solid 1px $dark-grey;
+		border-left:solid 1px $dark-grey;
+		text-align: center;
+		cursor:pointer;
+		transition:background-color .2s ease, color .2s ease;
+
+		&:hover {
+			background-color:$green;
+			color:$white;
+		}
+
+		&:before {
+			display: inline-block;
+			content:"";
+			height:100%;
+			line-height: 100%;
+			vertical-align: middle;
+		}
+	}
+}

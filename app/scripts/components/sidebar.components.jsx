@@ -9,7 +9,7 @@ export default class Sidebar extends React.Component {
 			<div id='sidebar'>
 				<SideTabs>
 					<SideTab iconUrl="font-controls.png">
-						<FontControls/>
+						<FontControls />
 					</SideTab>
 				</SideTabs>
 			</div>

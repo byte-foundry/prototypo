@@ -1,11 +1,17 @@
 import React from 'react';
+import classNames from 'classnames';
 
 export class ControlsTabs extends React.Component {
 
 	render() {
-		const headers = _.map(this.props.children,(child) => {
+		const headers = _.map(this.props.children,({props: {iconId, name}}) => {
+			const classes = classNames({
+				'controls-tabs-icon': true,
+				'is-active': this.props.tab == name,
+			});
+
 			return (
-				<li className='controls-tabs-icon' id={child.props.iconId}>
+				<li className={classes} id={iconId}>
 				</li>
 			);
 		});

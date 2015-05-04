@@ -13,6 +13,19 @@ body {
 	color: #111;
 }
 
+.clearfix {
+	*zoom:1;
+
+	&:before, &:after {
+		content:"";
+		display:table;
+	}
+
+	&:after {
+		clear:both;
+	}
+}
+
 svg {
 	display: none;
 

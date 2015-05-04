@@ -25,14 +25,14 @@ export default class FontControls extends React.Component {
 
 		return (
 			<div class="font-controls">
-				<ControlsTabs>
-					<ControlsTab iconId="functional">
+				<ControlsTabs tab={this.state.fontControls.tab} >
+					<ControlsTab iconId="functional" name="functional">
 						<Sliders params={params}/>
 					</ControlsTab>
-					<ControlsTab iconId="style">
+					<ControlsTab iconId="style" name="style">
 						<Sliders params={params}/>
 					</ControlsTab>
-					<ControlsTab iconId="serif">
+					<ControlsTab iconId="serif" name="serif">
 						<Sliders params={params}/>
 					</ControlsTab>
 				</ControlsTabs>
