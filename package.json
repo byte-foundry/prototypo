@@ -2,13 +2,16 @@
   "name": "prototypo",
   "version": "0.1.0",
   "dependencies": {
-    "babel": "^5.1.11",
+    "babel": "^5.1.13",
     "bluebird": "^2.9.24",
+    "lifespan": "^3.0.0",
     "lodash": "^3.7.0",
+    "nexus-flux": "^3.2.0",
     "normalize.css": "^3.0.3",
     "prototypo.js": "^0.2.0",
     "react": "^0.13.2",
-    "react-router": "^0.13.3"
+    "react-router": "^0.13.3",
+    "remutable": "^1.0.0"
   },
   "devDependencies": {
     "babelify": "^6.0.2",
