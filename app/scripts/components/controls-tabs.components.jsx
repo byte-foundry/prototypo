@@ -1,8 +1,16 @@
 import React from 'react';
+import Lifespan from 'lifespan';
 import classNames from 'classnames';
+import LocalClient from '../stores/local-client.stores.jsx';
 
 export class ControlsTabs extends React.Component {
+	componentWillMount() {
+		this.client = new LocalClient().instance;
 
+		this.changeTab = (name) => {
+			this.client.dispatchAction('/change-tab',{name});
+		};
+	}
 	render() {
 		const headers = _.map(this.props.children,({props: {iconId, name}}) => {
 			const classes = classNames({
@@ -11,7 +19,10 @@ export class ControlsTabs extends React.Component {
 			});
 
 			return (
-				<li className={classes} id={iconId}>
+				<li className={classes} id={iconId}
+					onClick={() => {
+						this.changeTab(name)
+					}}>
 				</li>
 			);
 		});
