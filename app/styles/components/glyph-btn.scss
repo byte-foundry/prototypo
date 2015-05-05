@@ -1,0 +1,23 @@
+@import "../variables";
+
+.glyph-btn {
+	color:$white;
+	cursor:pointer;
+	&-label {
+		display:block;
+		float:left;
+		height:45px;
+		font-size: 1.2rem;
+		padding: 10px;
+		background-color: $dark-grey;
+		text-transform: uppercase;
+		cursor:pointer;
+	}
+
+	&-lock {
+		float:left;
+		height:45px;
+		background-color: $medium-grey;
+		width:45px;
+	}
+}

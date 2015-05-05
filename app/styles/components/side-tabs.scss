@@ -1,0 +1,35 @@
+.side-tabs {
+	&-headers {
+		width:70px;
+		float:left;
+	}
+
+	&-icon-headers {
+		height:82px;
+		padding-top:19px;
+		padding-left:22px;
+	}
+
+	&-icon {
+		height:73px;
+		padding-left:20px;
+		padding-top:22px;
+		cursor:pointer;
+
+		&.is-active, &:hover {
+			//TODO(franz): integrate in themified css
+			background-color: #4a4a4a;
+		}
+	}
+}
+
+.side-tab {
+	margin-left: 70px;
+	background-color:#4a4a4a;
+	height:100%;
+	display:none;
+
+	&.is-active {
+		display:block;
+	}
+}
