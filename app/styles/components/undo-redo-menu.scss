@@ -1,0 +1,17 @@
+@import "../variables";
+
+.undo-redo-menu {
+	display:flex;
+	flex-flow:row nowrap;
+
+	&-undo-btn, &-redo-btn {
+		height:35px;
+		width:35px;
+		padding:9px;
+		cursor:pointer;
+
+		&:hover {
+			background-color: lighten($dark-grey,4%);
+		}
+	}
+}

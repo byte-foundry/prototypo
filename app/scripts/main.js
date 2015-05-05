@@ -15,9 +15,7 @@ const eventBackLog = stores['/eventBackLog'] = new Remutable({
 	]
 });
 
-const fontControls = stores['/fontControls'] = new Remutable({
-	tab:'functional',
-});
+const fontControls = stores['/fontControls'] = new Remutable({});
 const localServer = new LocalServer(stores).instance;
 const localClient = new LocalClient(localServer).instance;
 

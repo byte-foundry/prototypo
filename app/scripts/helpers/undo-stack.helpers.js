@@ -4,15 +4,18 @@ const registerToUndoStack = function(remut, storeName, client, lifespan) {
 	client.getStore('/eventBackLog', lifespan)
 		.onUpdate(({head}) => {
 			const jsHead = head.toJS();
-			const backLog = jsHead.eventList[jsHead.from];
-			if (backLog.store === storeName) {
-				const patch = Patch.fromJSON(backLog.patch);
-				if (jsHead.from > jsHead.to) {
-					remut.apply(Patch.revert(patch));
-				}
-				else if (jsHead.from < jsHead.to) {
-					remut.apply(patch);
-				}
+			let patch;
+			let backLog;
+			if (jsHead.from > jsHead.to) {
+				backLog = jsHead.eventList[jsHead.from];
+				patch = Patch.revert(Patch.fromJSON(backLog.patch));
+			}
+			else if (jsHead.from < jsHead.to) {
+				backLog = jsHead.eventList[jsHead.to];
+				patch = Patch.fromJSON(backLog.patch);
+			}
+			if (backLog && backLog.store === storeName) {
+				remut.apply(patch);
 			}
 		})
 		.onDelete(() => {});
