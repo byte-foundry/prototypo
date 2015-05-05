@@ -10,6 +10,13 @@
 		padding:9px;
 		cursor:pointer;
 
+		&.is-disabled {
+			background-color: darken($dark-grey, 4%);
+			&:hover {
+				background-color:darken($dark-grey, 4%);
+			}
+		}
+
 		&:hover {
 			background-color: lighten($dark-grey,4%);
 		}
