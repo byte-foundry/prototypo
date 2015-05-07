@@ -16,6 +16,7 @@ const eventBackLog = stores['/eventBackLog'] = new Remutable({
 });
 
 const fontControls = stores['/fontControls'] = new Remutable({});
+const sideBarTab = stores['/sideBarTab'] = new Remutable({});
 const localServer = new LocalServer(stores).instance;
 const localClient = new LocalClient(localServer).instance;
 
@@ -55,7 +56,7 @@ const actions = {
 		newEventList.push(
 			{
 				patch:patch.toJSON(),
-				store:'/fontControls',
+				store:store,
 			});
 		const eventPatch = eventBackLog.set('eventList',newEventList)
 			.set('to',undefined)

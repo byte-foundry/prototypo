@@ -3,9 +3,9 @@ import React from 'react';
 export class Sliders extends React.Component {
 
 	render() {
-		const sliders = _.map(this.props.params, (param) => {
+		const sliders = _.map(this.props.params, (param,i) => {
 			return (
-				<Slider title={param.title} value={param.value}/>
+				<Slider title={param.title} value={param.value} key={param.title+i}/>
 			);
 		});
 

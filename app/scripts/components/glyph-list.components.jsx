@@ -120,8 +120,8 @@ export default class GlyphList extends React.Component {
 		return (
 			<div className="glyph-list clearfix">
 				{
-					_.map(glyphs, (glyph) => {
-						return (<Glyph glyph={glyph} />);
+					_.map(glyphs, (glyph,i) => {
+						return (<Glyph glyph={glyph} key={glyph+i}/>);
 					})
 				}
 			</div>
