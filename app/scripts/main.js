@@ -6,6 +6,8 @@ import LocalClient from './stores/local-client.stores.jsx';
 import LocalServer from './stores/local-server.stores.jsx';
 const { Patch } = Remutable;
 
+React.initializeTouchEvents(true);
+
 const stores = {};
 const eventBackLog = stores['/eventBackLog'] = new Remutable({
 	from:0,
@@ -15,11 +17,16 @@ const eventBackLog = stores['/eventBackLog'] = new Remutable({
 	]
 });
 
-const fontControls = stores['/fontControls'] = new Remutable({});
+const fontTab = stores['/fontTab'] = new Remutable({});
+
+const fontControls = stores['/fontControls'] = new Remutable({
+	params:{},
+});
+
+
 const sideBarTab = stores['/sideBarTab'] = new Remutable({});
 const localServer = new LocalServer(stores).instance;
 const localClient = new LocalClient(localServer).instance;
-
 
 const actions = {
 	'/go-back': () => {
@@ -48,7 +55,7 @@ const actions = {
 		}
 	},
 	'/store-action':({store,patch}) => {
-		const newEventList = eventBackLog.get('eventList');
+		const newEventList = Array.from(eventBackLog.get('eventList'));
 		const eventIndex = eventBackLog.get('to') || eventBackLog.get('from');
 		if (newEventList.length - 1 > eventIndex) {
 			newEventList.splice(eventIndex + 1, newEventList.length);

@@ -21,6 +21,46 @@ const registerToUndoStack = function(remut, storeName, client, lifespan) {
 		.onDelete(() => {});
 }
 
+//Allow to setup granularity for undo stack
+class BatchUpdate {
+	constructor(remut, storeName, client, lifespan, criteria) {
+		registerToUndoStack(remut, storeName, client, lifespan);
+
+		this.storeName = storeName;
+		this.client = client;
+		this.criteria = typeof criteria == 'number' ? (newValue, oldValue) => {
+			return Math.abs(newValue - oldValue) > criteria
+		} : criteria;
+	}
+
+	update(patch, prop) {
+		let newPatch;
+		if (this.patch) {
+			newPatch = Patch.combine(this.patch,patch);
+		} else {
+			newPatch = patch;
+		}
+
+		if (patch.mutations.values.f && this.criteria(patch.mutations.values.t[prop],patch.mutations.values.f[prop])) {
+			this.client.dispatchAction('/store-action',{store:this.storeName,newPatch});
+			this.patch = undefined;
+		}
+		else {
+			this.patch = newPatch;
+		}
+	}
+
+	forceUpdate(patch) {
+		let newPatch
+		if (this.patch) {
+			newPatch = Patch.combine(this.patch,patch);
+		}
+		this.client.dispatchAction('/store-action',{store:this.storeName,patch:newPatch});
+		this.patch = undefined;
+	}
+}
+
 export default {
 	registerToUndoStack,
+	BatchUpdate,
 }

@@ -20,17 +20,12 @@ export default class Sidebar extends React.Component {
 			})
 			.onDelete(() => this.setState(undefined)).value);
 
-
-		registerToUndoStack(sideBarTab, '/sideBarTab', this.client, this.lifespan);
-
 		server.on('action', ({path, params}) => {
 			if (path == '/change-tab-sidebar') {
 
 				const name = params.name;
 				const patch = sideBarTab.set('tab',name).commit();
 				server.dispatchUpdate('/sideBarTab', patch);
-				this.client.dispatchAction('/store-action',{store:'/sideBarTab',patch});
-
 			}
 		}, this.lifespan);
 

@@ -1,0 +1,584 @@
+* [31m1e34b9f[m -[33m (HEAD, feat/ui-interaction)[m basic ui interactions [32m(14 seconds ago) [1;34m<FranzP>[m
+*   [31mbb81e2a[m -[33m (reactify-and-cleanup)[m Merge branch 'feat/undo-stack' into reactify-and-cleanup [32m(2 days ago) [1;34m<FranzP>[m
+[32m|[m[33m\[m  
+[32m|[m * [31m4679fe6[m -[33m (feat/undo-stack)[m end of stack [32m(2 days ago) [1;34m<FranzP>[m
+[32m|[m * [31meb01b71[m -[33m[m fix to undo stack and top menu bar with undo and redo buttons [32m(2 days ago) [1;34m<FranzP>[m
+[32m|[m * [31m5642654[m -[33m[m basic undo stack [32m(3 days ago) [1;34m<FranzP>[m
+[32m|[m[32m/[m  
+*   [31m23d0d75[m -[33m (origin/reactify-and-cleanup)[m Merge branch 'feat/sidebar-components' into reactify-and-cleanup [32m(3 days ago) [1;34m<FranzP>[m
+[34m|[m[35m\[m  
+[34m|[m * [31m653e5c9[m -[33m (origin/feat/sidebar-components, feat/sidebar-components)[m i forgot to make a new branch but this is about the layout of the glyph list [32m(3 days ago) [1;34m<FranzP>[m
+[34m|[m * [31m9beb9f0[m -[33m[m controls components [32m(8 days ago) [1;34m<FranzP>[m
+[34m|[m * [31m59b7b42[m -[33m[m sidebar css [32m(8 days ago) [1;34m<FranzP>[m
+[34m|[m * [31m387ac7d[m -[33m[m added dashboard components [32m(8 days ago) [1;34m<FranzP>[m
+[34m|[m * [31m63b9f7e[m -[33m[m added sidebar components [32m(8 days ago) [1;34m<FranzP>[m
+[34m|[m * [31m275f7d9[m -[33m[m basic css setup using normalize [32m(8 days ago) [1;34m<FranzP>[m
+[34m|[m * [31m793e42a[m -[33m[m main entry point for the react app [32m(8 days ago) [1;34m<FranzP>[m
+[34m|[m[34m/[m  
+* [31mb0dbe6a[m -[33m[m added react and react router dependency and 'use strict' to prelude [32m(8 days ago) [1;34m<FranzP>[m
+* [31m3d068bf[m -[33m (feat/router-and-main-entry-point-setup)[m added warning to README.md about git flow convention [32m(13 days ago) [1;34m<FranzP>[m
+*   [31macbc86f[m -[33m[m Merge branch 'feat/creating-new-gulpfile' into reactify-and-cleanup [32m(13 days ago) [1;34m<FranzP>[m
+[36m|[m[1;31m\[m  
+[36m|[m * [31m1360860[m -[33m (origin/feat/creating-new-gulpfile, feat/creating-new-gulpfile)[m added a prelude file inject into all module (currently loas lodash and bluebird promise into all modules) [32m(13 days ago) [1;34m<FranzP>[m
+[36m|[m * [31m5415cbe[m -[33m[m new gulpfile only the dev pipeline is available [32m(13 days ago) [1;34m<FranzP>[m
+[36m|[m * [31m1f266b0[m -[33m[m adding a new entry point just to be able to load the current app [32m(13 days ago) [1;34m<FranzP>[m
+[36m|[m[36m/[m  
+*   [31m973b058[m -[33m[m Merge branch 'cleaning-up-stuff' into reactify-and-cleanup [32m(13 days ago) [1;34m<FranzP>[m
+[1;32m|[m[1;33m\[m  
+[1;32m|[m * [31m594c947[m -[33m (cleaning-up-stuff)[m removing useless scripts files [32m(13 days ago) [1;34m<FranzP>[m
+[1;32m|[m * [31m48a25f9[m -[33m[m remove useless gulpfile.js [32m(13 days ago) [1;34m<FranzP>[m
+[1;32m|[m[1;32m/[m  
+*   [31m3929c6c[m -[33m (origin/prototypo2, prototypo2)[m Merge branch 'prototypo2' of github.com:byte-foundry/prototypo into prototypo2 [32m(2 weeks ago) [1;34m<=>[m
+[1;34m|[m[1;35m\[m  
+[1;34m|[m * [31m59a714c[m -[33m[m Update README.md [32m(4 weeks ago) [1;34m<yannickmathey>[m
+* [1;35m|[m [31med70b15[m -[33m[m prototypo.js main function has been renamed [32m(2 weeks ago) [1;34m<=>[m
+[1;35m|[m[1;35m/[m  
+* [31m8a93b4b[m -[33m[m remove unnecessary folder [32m(5 weeks ago) [1;34m<yannick mathey>[m
+* [31m82e2608[m -[33m[m do not dispay NodesSkeleton if !displayNodes [32m(5 weeks ago) [1;34m<yannick mathey>[m
+* [31mc8c38fe[m -[33m[m restore partial scene drag [32m(5 weeks ago) [1;34m<yannick mathey>[m
+* [31m7897053[m -[33m[m Display alphabet at init [32m(5 weeks ago) [1;34m<yannick mathey>[m
+* [31mc920155[m -[33m[m Display/Hide nodes of skeleton [32m(5 weeks ago) [1;34m<yannick mathey>[m
+* [31mf50e1a6[m -[33m[m Try to fix the build [32m(6 weeks ago) [1;34m<=>[m
+* [31m54e8f1f[m -[33m[m commit for ym [32m(6 weeks ago) [1;34m<=>[m
+* [31mbe9a341[m -[33m[m Remove typo [32m(7 weeks ago) [1;34m<Yannick Mathey>[m
+* [31mae33e3e[m -[33m[m Remove browser "invalid attribute value" errors (coordinates) [32m(7 weeks ago) [1;34m<Yannick Mathey>[m
+* [31ma717500[m -[33m[m Display nodes coordinates [32m(7 weeks ago) [1;34m<Yannick Mathey>[m
+* [31mb58048d[m -[33m[m Prototypo is now powered by prototypo.js, powered by plumin.js Time to clean things up! [32m(9 weeks ago) [1;34m<louisremi>[m
+* [31m3010835[m -[33m[m commit before new branch [32m(2 months ago) [1;34m<louisremi>[m
+* [31mc2c9678[m -[33m (origin/skeleton, skeleton)[m Fix prototypojs path and livereload should open localhost [32m(5 months ago) [1;34m<louisremi>[m
+* [31me8d9430[m -[33m[m remove bezier dependency, switch to appback backend [32m(5 months ago) [1;34m<louisremi>[m
+* [31m991749a[m -[33m[m Restore sidebar css variable [32m(5 months ago) [1;34m<louisremi>[m
+* [31m5e2d852[m -[33m[m Glyphr Studio beta5 is online! [32m(6 months ago) [1;34m<louisremi>[m
+* [31mea22c81[m -[33m[m Add "Open in Glyphr Studio" [32m(6 months ago) [1;34m<louisremi>[m
+* [31m0bc258f[m -[33m[m paragraph preview [32m(6 months ago) [1;34m<Yannick Mathey>[m
+* [31mc6d881d[m -[33m[m fox most of setAttribute('d', ...) errors [32m(6 months ago) [1;34m<louisremi>[m
+* [31mabb8102[m -[33m[m Add export to otf button, factorize main.js watchers [32m(6 months ago) [1;34m<louisremi>[m
+* [31m6c80dba[m -[33m[m Restore SVG export and string preview [32m(6 months ago) [1;34m<louisremi>[m
+* [31m80caa0d[m -[33m[m Adapt scene to skeleton glyphs [32m(7 months ago) [1;34m<louisremi>[m
+* [31m85b0af8[m -[33m[m Switch core [32m(7 months ago) [1;34m<louisremi>[m
+* [31m19bd62a[m -[33m[m Restore glyphlist [32m(9 months ago) [1;34m<louisremi>[m
+* [31mc0ab552[m -[33m[m Weird expand variation [32m(9 months ago) [1;34m<louisremi>[m
+* [31me46c7f7[m -[33m[m Skeleton with lines is working [32m(9 months ago) [1;34m<louisremi>[m
+* [31m809d75a[m -[33m[m skeleton expending [32m(9 months ago) [1;34m<louisremi>[m
+* [31ma3f64dc[m -[33m[m Initial commit of Prototypo's new core [32m(10 months ago) [1;34m<louisremi>[m
+* [31mc76e070[m -[33m[m initial formula parser [32m(11 months ago) [1;34m<louisremi>[m
+*   [31ma405d96[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(11 months ago) [1;34m<louisremi>[m
+[1;36m|[m[31m\[m  
+[1;36m|[m *   [31mc1f433d[m -[33m[m Merge branch 'detect-outdated-browser' [32m(11 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m [32m|[m[33m\[m  
+[1;36m|[m [32m|[m * [31m633c669[m -[33m (origin/detect-outdated-browser)[m Detect outdated browsers [32m(11 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m [32m|[m[32m/[m  
+* [32m|[m [31m42c293b[m -[33m[m fix #123 allow deploys only from byte-foundry/prototypo/master + restore previous registration mechanism and [32m(11 months ago) [1;34m<louisremi>[m
+[32m|[m[32m/[m  
+*   [31ma9c15b8[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(11 months ago) [1;34m<louisremi>[m
+[34m|[m[35m\[m  
+[34m|[m * [31m413804b[m -[33m[m change url to convert online [32m(11 months ago) [1;34m<yannick mathey>[m
+* [35m|[m [31mc0be009[m -[33m[m Connect to backend on port 80, of course! [32m(11 months ago) [1;34m<louisremi>[m
+[35m|[m[35m/[m  
+* [31m0b5d94c[m -[33m[m Fix #129: Disable node and line dragging for now [32m(11 months ago) [1;34m<louisremi>[m
+* [31mf49f331[m -[33m[m Fix reset button margin [32m(11 months ago) [1;34m<louisremi>[m
+*   [31mb989d43[m -[33m[m fix conflict [32m(11 months ago) [1;34m<louisremi>[m
+[36m|[m[1;31m\[m  
+[36m|[m * [31m3642a6c[m -[33m[m Add roadmap and known issues [32m(11 months ago) [1;34m<Louis-Rémi Babé>[m
+* [1;31m|[m [31mab6e556[m -[33m[m Replace UserReport widget with UserVoice [32m(11 months ago) [1;34m<louisremi>[m
+[1;31m|[m[1;31m/[m  
+* [31md849894[m -[33m[m include image folder in s3 task [32m(11 months ago) [1;34m<louisremi>[m
+* [31med7ce78[m -[33m[m fix splash-login background and forms [32m(11 months ago) [1;34m<louisremi>[m
+* [31mb7d39ec[m -[33m[m Ignore corrupted font values [32m(11 months ago) [1;34m<louisremi>[m
+* [31ma0e6ec7[m -[33m[m move knackss to styles/ again [32m(11 months ago) [1;34m<louisremi>[m
+* [31m1557e66[m -[33m[m Update hoodie endpoint [32m(11 months ago) [1;34m<louisremi>[m
+* [31ma66e6d0[m -[33m (origin/signin)[m Initial signup/signin directives [32m(11 months ago) [1;34m<louisremi>[m
+* [31m9e64236[m -[33m[m Fix #122 create doubletap special event [32m(12 months ago) [1;34m<louisremi>[m
+* [31m8862467[m -[33m[m Fix "out-of-adviced" feature, rename to "ill-advised" [32m(12 months ago) [1;34m<louisremi>[m
+* [31m348774b[m -[33m[m update AWS environment variables [32m(12 months ago) [1;34m<louisremi>[m
+* [31ma7338aa[m -[33m[m Add build and deploy tasks as after_script [32m(12 months ago) [1;34m<louisremi>[m
+* [31m21fdc5f[m -[33m[m declare karma and karma plugins as explicit dependencies in package.json [32m(12 months ago) [1;34m<louisremi>[m
+* [31m5cab8ec[m -[33m[m Explicitely specifying plugins [32m(12 months ago) [1;34m<louisremi>[m
+* [31m16b6de9[m -[33m[m Giving logLevel DEBUG a try [32m(12 months ago) [1;34m<louisremi>[m
+* [31m4beae50[m -[33m[m Giving Firefox testing a try + Prototypo will only install with Node 0.10 [32m(12 months ago) [1;34m<louisremi>[m
+* [31m21c134d[m -[33m[m giving node 0.8 a try [32m(12 months ago) [1;34m<louisremi>[m
+* [31me3bfe29[m -[33m[m AWS config set as environment variables by Travis [32m(12 months ago) [1;34m<louisremi>[m
+* [31mc4af541[m -[33m[m Givig node 0.11 a try [32m(12 months ago) [1;34m<louisremi>[m
+* [31mc3b73bc[m -[33m[m use exact command from Karma docs for Travis testing + remove references to node latest in tests [32m(12 months ago) [1;34m<louisremi>[m
+* [31m76f47db[m -[33m[m oops karma version [32m(12 months ago) [1;34m<louisremi>[m
+* [31m1e23074[m -[33m[m add karma to devDependencies [32m(12 months ago) [1;34m<louisremi>[m
+* [31m39e4ecd[m -[33m[m round some numbers in transformToMatrix2d to get test to pass in PhantomJS [32m(12 months ago) [1;34m<louisremi>[m
+* [31mdb04e89[m -[33m[m npm test should use PhantomJS to work in Travis [32m(12 months ago) [1;34m<louisremi>[m
+* [31ma4b4c5d[m -[33m[m Add karma-jasmine to devDependencies [32m(12 months ago) [1;34m<louisremi>[m
+* [31m83a7e70[m -[33m[m Get rid of let keyword, it's just too early to use it. [32m(12 months ago) [1;34m<louisremi>[m
+* [31ma7fab06[m -[33m[m update Angular dependency to 1.2.16 and add resolution [32m(12 months ago) [1;34m<louisremi>[m
+* [31mb519bfb[m -[33m[m one more time [32m(12 months ago) [1;34m<louisremi>[m
+* [31m3f5a1b0[m -[33m[m Fix build (hopefully) and add Travis badge to readme [32m(12 months ago) [1;34m<louisremi>[m
+* [31m33b3e72[m -[33m[m Restore jshint task and add traceur task + fix jshint errors [32m(12 months ago) [1;34m<louisremi>[m
+* [31m57f0cdc[m -[33m[m Switch from AGPL to GPLv3 [32m(1 year ago) [1;34m<louisremi>[m
+* [31m65eae0c[m -[33m[m Remove poster features from UI [32m(1 year ago) [1;34m<louisremi>[m
+*   [31m14e4f52[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year ago) [1;34m<louisremi>[m
+[1;32m|[m[1;33m\[m  
+[1;32m|[m *   [31mdf7d2f6[m -[33m[m Merge pull request #118 from kennethormandy/npm-start [32m(1 year ago) [1;34m<Louis-Rémi Babé>[m
+[1;32m|[m [1;34m|[m[1;35m\[m  
+[1;32m|[m [1;34m|[m * [31mf8d1acb[m -[33m[m Adds additional npm scripts [32m(1 year, 1 month ago) [1;34m<Kenneth Ormandy>[m
+[1;32m|[m [1;34m|[m[1;34m/[m  
+* [1;34m|[m [31m6a51dac[m -[33m[m Prevent all text selection, except where it makes sense [32m(1 year ago) [1;34m<louisremi>[m
+* [1;34m|[m [31mde082e6[m -[33m[m fix template planche [32m(1 year, 1 month ago) [1;34m<louisremi>[m
+* [1;34m|[m [31m0bdf253[m -[33m[m random outlines [32m(1 year, 1 month ago) [1;34m<louisremi>[m
+* [1;34m|[m [31m73e5b79[m -[33m[m switch from Hand.js to Polymer pointerevents lib [32m(1 year, 1 month ago) [1;34m<louisremi>[m
+* [1;34m|[m [31m34b6569[m -[33m[m update Hand.js to fix incompatibilities with Firefox Nightly [32m(1 year, 1 month ago) [1;34m<louisremi>[m
+[1;34m|[m[1;34m/[m  
+*   [31m8b4255e[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+[1;36m|[m[31m\[m  
+[1;36m|[m * [31m85ae992[m -[33m[m debug reset [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31mfe07ba0[m -[33m[m debug serif top left [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31m517b017[m -[33m[m add key event (spacebar) to drag the scene [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+* [31m|[m [31m5ed718a[m -[33m[m Replace compass with libsass, replace angular-latest with bower-angular + update README [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+[31m|[m[31m/[m  
+* [31m491985c[m -[33m[m Remove lodash dependency (for now) [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+*   [31m91899b1[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+[32m|[m[33m\[m  
+[32m|[m * [31m9cdc2d0[m -[33m[m add reset button for each slider [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[32m|[m * [31m5d935b7[m -[33m[m debug e / aperture [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[32m|[m * [31m5bb9b16[m -[33m[m fix input issue in firefox [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[32m|[m * [31m6a39822[m -[33m[m fix glyphList on click [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[32m|[m * [31m77e6b82[m -[33m[m Test enhancement visibility of preview input [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+* [33m|[m [31mf97b408[m -[33m[m Abstract local storage with Hoodie [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+[33m|[m[33m/[m  
+*   [31m5aa6589[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+[34m|[m[35m\[m  
+[34m|[m * [31m538333d[m -[33m[m remove baseline on scene when guidelines are hidden [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[34m|[m * [31m64330ad[m -[33m[m Add string contextMenu [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[34m|[m * [31m96b1af7[m -[33m[m Add features to string view [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[34m|[m * [31m530a9ee[m -[33m[m FIX #104 [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[34m|[m * [31m5ae10be[m -[33m[m FIX #106 [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[34m|[m * [31m015b4cc[m -[33m[m debug before beta send [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+* [35m|[m [31mbec6e42[m -[33m[m Fix #105 by using two variables for throttled actions isDraggingX and draggedX [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+[35m|[m[35m/[m  
+* [31m5da8e3f[m -[33m[m forgot those two little huckers [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+* [31m93e97da[m -[33m[m jQuery special events for pointer events and wheel event -> get rid of .original events -> fix incompatibilities in IE11 and hopefully Safari7 [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+*   [31me0023f7[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+[36m|[m[1;31m\[m  
+[36m|[m * [31m4fa8b11[m -[33m[m Add top menu negative view [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+* [1;31m|[m   [31mc123a03[m -[33m[m Fix conflicts and prevent splash screen to appear while the typeface is loading [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+[1;32m|[m[1;31m\[m [1;31m\[m  
+[1;32m|[m [1;31m|[m[1;31m/[m  
+[1;32m|[m * [31m2a4d4d8[m -[33m[m debug partially serif rotation + curve [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m * [31m5b1ee41[m -[33m[m add color change on string path [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m * [31m7ae9e42[m -[33m[m debug inktrap [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m * [31m082073a[m -[33m[m Add negative view [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+* [1;33m|[m [31m153183f[m -[33m[m Add "about" screen and UserReport button + remove last svg errors in Firefox [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+[1;33m|[m[1;33m/[m  
+*   [31m16a4e44[m -[33m[m resolve conflicts [32m(1 year, 2 months ago) [1;34m<louisremi>[m
+[1;34m|[m[1;35m\[m  
+[1;34m|[m *   [31m8faa467[m -[33m[m Merge pull request #103 from HipsterBrown/master [32m(1 year, 2 months ago) [1;34m<Louis-Rémi Babé>[m
+[1;34m|[m [1;36m|[m[31m\[m  
+[1;34m|[m [1;36m|[m * [31m50ac861[m -[33m[m updated README to correct path to angular-latest [32m(1 year, 2 months ago) [1;34m<HipsterBrown>[m
+[1;34m|[m [1;36m|[m[1;36m/[m  
+[1;34m|[m * [31m4bf3b53[m -[33m[m s3 [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31mc88644c[m -[33m[m add a reset App button [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31m9abf0d3[m -[33m[m test Spacing [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31m244b936[m -[33m[m add Glyphs [32m(1 year, 2 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31mcb8b9de[m -[33m[m Add glyphs [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31m323e89a[m -[33m[m Test spacing [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31mc71ec04[m -[33m[m debug Circumflex contrast [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31mbf5ff4d[m -[33m[m debug Cv/Ch [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31md6ecbf3[m -[33m[m add glyphs [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31m34eaa6c[m -[33m[m debug spacing [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31m4c61352[m -[33m[m add glyphs [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31m4c68435[m -[33m[m Go to glyph [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31m95e61e1[m -[33m[m test e [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31m1cefd65[m -[33m[m Add disable class to contextMenu [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31me950fa4[m -[33m[m Add contextMenu [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31m0264f6c[m -[33m[m debug Ch/Cv command [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m * [31m2ac8637[m -[33m[m remove console alert [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [31m|[m [31mef4d8ea[m -[33m[m fix control transformation [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[31m|[m[31m/[m  
+* [31m1370b40[m -[33m[m change handle color [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+*   [31m543be44[m -[33m[m Merge branch 'master' of https://github.com/byte-foundry/prototypo [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[32m|[m[33m\[m  
+[32m|[m * [31mb4e7764[m -[33m[m rename segment.controls[0/1] to segment.ctrl0/1 [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[32m|[m * [31m047f46f[m -[33m[m throttle pointermove interactions, huge perf win + get rid of segment.$debug (perf) + outline mode [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[32m|[m * [31m3b88f29[m -[33m[m oops [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[32m|[m * [31m16af36a[m -[33m[m view mode buttons were inverted [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[32m|[m * [31m0d4f39a[m -[33m[m fix #63 & fix #56 Use <input type="number" /> to display a parameter value [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[32m|[m * [31m2286509[m -[33m[m fix #72 & fix #66 buttons on the scene and param labels shouldn't be draggable [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[32m|[m * [31m0bf29d5[m -[33m[m Fix glyphlist in Firefox, cleanup directive [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+* [33m|[m [31m9a003a4[m -[33m[m remove console.log [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [33m|[m [31m91d0d8e[m -[33m[m debug K [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [33m|[m [31md134e4f[m -[33m[m Change colors [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[33m|[m[33m/[m  
+* [31mbade215[m -[33m[m Snap to scale [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [31md0ec130[m -[33m[m FIX #65 [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+*   [31m28ad623[m -[33m[m Merge branch 'master' of https://github.com/byte-foundry/prototypo [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[34m|[m[35m\[m  
+[34m|[m * [31m0066f31[m -[33m[m maybe this tab the params tab-menu is going to be cross-browser [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[34m|[m *   [31m33faf75[m -[33m[m Merge branch 'fix_#95' [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[34m|[m [36m|[m[1;31m\[m  
+[34m|[m [36m|[m * [31m0a6ffa5[m -[33m[m Make the parameters tab-menu compatible with IE11 [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[34m|[m * [1;31m|[m   [31mc48d102[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[34m|[m [1;31m|[m[1;33m\[m [1;31m\[m  
+[34m|[m [1;31m|[m [1;33m|[m[1;31m/[m  
+[34m|[m [1;31m|[m[1;31m/[m[1;33m|[m   
+[34m|[m * [1;33m|[m [31m98134be[m -[33m[m grunt-s3 "gzip" option now works [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+* [1;33m|[m [1;33m|[m [31md3bdf38[m -[33m[m Glyph /e from scratch [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;33m|[m [1;33m|[m[1;33m/[m  
+[1;33m|[m[1;33m/[m[1;33m|[m   
+* [1;33m|[m [31m344cd9e[m -[33m[m debug [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [1;33m|[m [31m842eed4[m -[33m[m replace top nav [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [1;33m|[m [31mc764ba9[m -[33m[m remove terminal balls [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [1;33m|[m [31mc006562[m -[33m[m toggle view enabled [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [1;33m|[m [31m24688c9[m -[33m[m Add serif rotation [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [1;33m|[m [31m089ca4d[m -[33m[m Hide outline points [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;33m|[m[1;33m/[m  
+*   [31m1f4e88e[m -[33m[m resolve conflicts [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[1;34m|[m[1;35m\[m  
+[1;34m|[m * [31mb9024d1[m -[33m[m add terminal bottom [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [1;35m|[m [31m5540376[m -[33m[m Update to latest karma and fix karma.conf.js [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+* [1;35m|[m   [31m4a05531[m -[33m[m resolve conflicts [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[1;36m|[m[1;35m\[m [1;35m\[m  
+[1;36m|[m [1;35m|[m[1;35m/[m  
+[1;36m|[m * [31m6f54592[m -[33m[m minimize preview size [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31ma7678fb[m -[33m[m … sync [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31mc4506af[m -[33m[m drawing bug fix [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31m39fc732[m -[33m[m FIX #67 [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31m38b06d9[m -[33m[m Serif curve & median [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31m274abac[m -[33m[m test terminal ball [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31m10ffe2d[m -[33m[m FIX #76 [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31mbb46f2e[m -[33m[m test debug serif [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31mbcb0d0f[m -[33m[m fix #81 [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31maa2f3b2[m -[33m[m add serifs E [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31mb1aadb7[m -[33m[m hide terminal verbose [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31m8d73864[m -[33m[m debug sync bower [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31m094e312[m -[33m[m make overshoots lines more visible [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31mffb4185[m -[33m[m improve intuitivity [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31m43bec39[m -[33m[m debug [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31m4c875bb[m -[33m[m feedback from #81 issue [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m * [31m2fcecaa[m -[33m[m Debug A [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [31m|[m [31mc2f3d38[m -[33m[m fix gruntfile [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+* [31m|[m [31m536a42c[m -[33m[m Fix #86 New smooth segments syntax: Ch and Cv New segment smoothing algorithm New smooth endpoints syntax: Ch/v {{ roundness }} smooth smooth {{ X }} {{ Y }} + points of inverted segments are in outline order in .$render property + fix s3 task in gruntfile + fix transformComponent: stay inside the component, don't use segment.next [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[31m|[m[31m/[m  
+* [31m48aa5b7[m -[33m[m Fix low r missing Z command (letter was missing in fontforge) [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+* [31m559410f[m -[33m[m Gruntfile updated with generator-angular 0.7.1 + pre-compiled and revved templates, much smaller build! [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+* [31m1007e52[m -[33m[m add BlackLetter preset [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [31mec7bf63[m -[33m[m breakpath adjustments [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+*   [31m1ac6856[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[32m|[m[33m\[m  
+[32m|[m * [31m1ed9be2[m -[33m[m fix angle in components [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [33m|[m [31md9dc54a[m -[33m[m fix #32 add README [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+* [33m|[m [31md65f545[m -[33m[m Exclude handlebars templates in karma.conf.js + add custom version of jQuery with improved Pointer Events compatibility [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[33m|[m[33m/[m  
+* [31m0119622[m -[33m[m fix grotesk preset [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+*   [31m2fc4266[m -[33m[m resolve conflicts [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[34m|[m[35m\[m  
+[34m|[m * [31mba4c47a[m -[33m[m tmp [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[34m|[m * [31m0626b73[m -[33m[m remove rC from \s and \S [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[34m|[m * [31m519f10e[m -[33m[m rC replaced by C+ / C- [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [35m|[m [31m35f695b[m -[33m[m aaaaaaand presets are here! #betaIsComing [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[35m|[m[35m/[m  
+* [31m99ae046[m -[33m[m test serif tail [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [31m6e4aae4[m -[33m[m minor corrections [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+*   [31m948375d[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[36m|[m[1;31m\[m  
+[36m|[m * [31m2a4bae8[m -[33m[m debug letters [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [1;31m|[m [31mdbf687d[m -[33m[m add C+/C+ control corrections [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+* [1;31m|[m [31m37c5f89[m -[33m[m what the stash? [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[1;31m|[m[1;31m/[m  
+* [31maae6f86[m -[33m[m presets values [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [31m72e641f[m -[33m[m resolve conflicts [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+*   [31mea004d6[m -[33m[m Merge branch 'master' of https://github.com/byte-foundry/prototypo [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m[1;33m\[m  
+[1;32m|[m *   [31m159b443[m -[33m[m merge fix_#58 and resolve conflicts [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[1;32m|[m [1;34m|[m[1;35m\[m  
+[1;32m|[m [1;34m|[m * [31m40c2778[m -[33m[m fix #58 better, x-browser panning and zooming with grids (imperfect but good enough for beta) [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+* [1;34m|[m [1;35m|[m [31m116911e[m -[33m[m sync + Q [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m[1;34m/[m [1;35m/[m  
+* [1;35m|[m [31mcea9b9d[m -[33m[m resolve conflicts [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+* [1;35m|[m   [31mf948fc6[m -[33m[m Merge branch 'master' of https://github.com/byte-foundry/prototypo [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m[1;35m\[m [1;35m\[m  
+[1;36m|[m [1;35m|[m[1;35m/[m  
+[1;36m|[m * [31mbee623c[m -[33m[m fix #57 glyph contour and glyph debug were sometimes desynchronized [32m(1 year, 3 months ago) [1;34m<louisremi>[m
+[1;36m|[m *   [31m6224986[m -[33m[m Merge branch 'fix_#14' [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+[1;36m|[m [32m|[m[33m\[m  
+[1;36m|[m [32m|[m * [31md1c19c5[m -[33m (origin/fix_#14)[m Initial implementation of serif on cubic bezier, component transforms and C+/C- commands. Fixes #14 and #29 [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+* [32m|[m [33m|[m [31m20788e2[m -[33m[m + add glyph [32m(1 year, 3 months ago) [1;34m<yannick mathey>[m
+[32m|[m[32m/[m [33m/[m  
+* [33m|[m   [31mffcfc1f[m -[33m[m Merge remote-tracking branch 'origin/fix_#14' [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+[34m|[m[33m\[m [33m\[m  
+[34m|[m [33m|[m[33m/[m  
+[34m|[m * [31m3f979a5[m -[33m[m line-line intersection with tests, fixes #54 + usage example in k.pgf [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+* [35m|[m [31m78b6c4c[m -[33m[m Add warning values [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+* [35m|[m [31ma77ac38[m -[33m[m add spacing guidelines [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+* [35m|[m [31m00ae1b6[m -[33m[m test [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+* [35m|[m [31m6c1d82e[m -[33m[m k issue [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+* [35m|[m [31m5fd3254[m -[33m[m Add translate scene function [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+* [35m|[m [31m5bda427[m -[33m[m debug |min & |max filters [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+* [35m|[m [31m364174d[m -[33m[m add filters [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+[35m|[m[35m/[m  
+*   [31mfc0ee1d[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+[36m|[m[1;31m\[m  
+[36m|[m *   [31m1fdb317[m -[33m[m resolve conflicts [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+[36m|[m [1;32m|[m[1;33m\[m  
+[36m|[m * [1;33m|[m [31md1e59f1[m -[33m[m debug glyhps [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+* [1;33m|[m [1;33m|[m [31m6785d90[m -[33m[m Fix incorrect character translations in string views [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+[1;33m|[m [1;33m|[m[1;33m/[m  
+[1;33m|[m[1;33m/[m[1;33m|[m   
+* [1;33m|[m   [31me5f0fc4[m -[33m[m resolve conflicts [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+[1;34m|[m[1;33m\[m [1;33m\[m  
+[1;34m|[m [1;33m|[m[1;33m/[m  
+[1;34m|[m * [31m288863c[m -[33m[m debug Safari & Firefox [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+* [1;35m|[m [31m9e1269e[m -[33m[m fixes most "initial glyph rendering" bugs + self[0].to has been renamed self[-1] [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+* [1;35m|[m [31mf0214af[m -[33m[m cleanup main.js [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+* [1;35m|[m [31md9890ee[m -[33m[m work around some rendering bugs on initial rendering -> those bugs still appear when switching to a different glyph, they still need to be fixed + perf dramatically improved in Firefox nightly, without any reason. + update Hand.js version to support pointer event on window object (Firefox incompatibility) [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+[1;35m|[m[1;35m/[m  
+*   [31m7987c3b[m -[33m[m resolve conflicts [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+[1;36m|[m[31m\[m  
+[1;36m|[m * [31med6af7d[m -[33m[m please test before commiting, says LRB to himself. [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+[1;36m|[m *   [31m7910fc5[m -[33m[m resolve conflicts [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+[1;36m|[m [32m|[m[33m\[m  
+[1;36m|[m * [33m|[m [31m148c695[m -[33m[m It's now possible to switch between character and string edition + change glyph formula extension to .pgf [32m(1 year, 4 months ago) [1;34m<louisremi>[m
+* [33m|[m [33m|[m [31mffab54b[m -[33m[m add UI features [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+[33m|[m [33m|[m[33m/[m  
+[33m|[m[33m/[m[33m|[m   
+* [33m|[m [31m182179b[m -[33m[m menu + debug glyphs [32m(1 year, 4 months ago) [1;34m<yannick mathey>[m
+* [33m|[m   [31m73c33ee[m -[33m[m Merge branch 'master' of https://github.com/byte-foundry/prototypo [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[34m|[m[33m\[m [33m\[m  
+[34m|[m [33m|[m[33m/[m  
+[34m|[m * [31mb4ad454[m -[33m[m fix string input in Firefox [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m * [31m7d7cff7[m -[33m[m improve gruntfile [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m * [31m24318af[m -[33m[m Functional "grunt build", almost (the "p" glyph must be removed from typeface.json) [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m * [31m3056e6c[m -[33m[m tweak scrolling bejavior of paramtabs [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m * [31m08c5182[m -[33m[m various glyph's corrections [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[34m|[m *   [31m27d4551[m -[33m[m Merge remote-tracking branch 'origin/fix_#43' into new_glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[34m|[m [36m|[m[1;31m\[m  
+[34m|[m [36m|[m * [31m6b2d7bf[m -[33m (origin/fix_#43)[m fix interpolation error [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m * [1;31m|[m [31me8a1e09[m -[33m[m debug b [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[34m|[m * [1;31m|[m   [31m4d89e3d[m -[33m[m Merge remote-tracking branch 'origin/fix_#43' into new_glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[34m|[m [1;32m|[m[1;31m\[m [1;31m\[m  
+[34m|[m [1;32m|[m [1;31m|[m[1;31m/[m  
+[34m|[m [1;32m|[m * [31m9b95c17[m -[33m[m Far less hacky word preview [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m [1;32m|[m * [31mc51022d[m -[33m[m hacky word preview, but it's there. [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m [1;32m|[m *   [31md98195c[m -[33m[m resolve conflicts [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m [1;32m|[m [1;34m|[m[1;35m\[m  
+[34m|[m [1;32m|[m * [1;35m|[m [31md931ac9[m -[33m[m commit A and B serifs [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m * [1;35m|[m [1;35m|[m [31mc8d5bff[m -[33m[m glyph + breakPath [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+* [1;35m|[m [1;35m|[m [1;35m|[m   [31m3b1d60a[m -[33m[m Merge branch 'new_glyphs' [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;35m|[m[1;35m\[m [1;35m\[m [1;35m\[m [1;35m\[m  
+[1;35m|[m [1;35m|[m[1;35m/[m [1;35m/[m [1;35m/[m  
+[1;35m|[m [1;35m|[m [1;35m/[m [1;35m/[m   
+[1;35m|[m [1;35m|[m[1;35m/[m [1;35m/[m    
+[1;35m|[m[1;35m/[m[1;35m|[m [1;35m|[m     
+[1;35m|[m * [1;35m|[m   [31mc3eb06c[m -[33m[m Merge remote-tracking branch 'origin/fix_#47' into new_glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;35m|[m [32m|[m[1;35m\[m [1;35m\[m  
+[1;35m|[m [32m|[m [1;35m|[m[1;35m/[m  
+[1;35m|[m [32m|[m * [31mfdbb3d6[m -[33m (origin/fix_#47)[m All segment now have a .$render that allows a subcomponent to cut its parent without altering its original coordinates + all tests are green :-) [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[1;35m|[m [32m|[m[1;35m/[m  
+[1;35m|[m[1;35m/[m[32m|[m   
+* [32m|[m   [31m04679f0[m -[33m[m resolve conflicts [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m[35m\[m [32m\[m  
+* [35m|[m [32m|[m [31me01a289[m -[33m (origin/fix_#45)[m new layout from scratch + switch to sass [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+* [35m|[m [32m|[m   [31meb9ff31[m -[33m[m resolve conflicts, again [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m[1;31m\[m [35m\[m [32m\[m  
+[36m|[m * [35m\[m [32m\[m   [31mee26a04[m -[33m[m Merge branch 'new_glyphs' [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[36m|[m [1;32m|[m[1;33m\[m [35m\[m [32m\[m  
+[36m|[m * [1;33m\[m [35m\[m [32m\[m   [31m7e43629[m -[33m[m Merge branch 'new_glyphs' [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[36m|[m [1;34m|[m[1;35m\[m [1;33m\[m [35m\[m [32m\[m  
+* [1;34m|[m [1;35m\[m [1;33m\[m [35m\[m [32m\[m   [31m9ffde60[m -[33m[m resolve conflicts [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[1;36m|[m[1;34m\[m [1;34m\[m [1;35m\[m [1;33m\[m [35m\[m [32m\[m  
+[1;36m|[m [1;34m|[m[1;34m/[m [1;35m/[m [1;33m/[m [35m/[m [32m/[m  
+[1;36m|[m * [1;35m|[m [1;33m|[m [35m|[m [32m|[m [31m4fd1d74[m -[33m[m resolve conflits [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+* [31m|[m [1;35m|[m [1;33m|[m [35m|[m [32m|[m [31mc320d35[m -[33m[m add scene directive [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[31m|[m [31m|[m [1;35m|[m [1;33m|[m [35m|[m * [31m58045d1[m -[33m[m Add glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[31m|[m [31m|[m [1;35m|[m [1;33m|[m [35m|[m[35m/[m  
+[31m|[m [31m|[m [1;35m|[m [1;33m|[m * [31m869f4e9[m -[33m[m Add glyphs + guidelines [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[31m|[m [31m|[m [1;35m|[m [1;33m|[m[1;33m/[m  
+[31m|[m [31m|[m [1;35m|[m * [31m45d96a1[m -[33m[m add spacing values [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[31m|[m [31m|[m [1;35m|[m[1;35m/[m  
+[31m|[m [31m|[m * [31m9fae77e[m -[33m[m Add new properties to the typeface [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[31m|[m [31m|[m *   [31ma48c701[m -[33m[m Merge branch 'master' into new_glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[31m|[m [31m|[m [32m|[m[31m\[m  
+[31m|[m [31m|[m [32m|[m[31m/[m  
+[31m|[m [31m|[m[31m/[m[32m|[m   
+[31m|[m * [32m|[m [31m3b5f776[m -[33m[m add glyph list menu [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[31m|[m * [32m|[m [31m744eec8[m -[33m[m Debug A [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[31m|[m[31m/[m [32m/[m  
+* [32m|[m [31mf8a9834[m -[33m[m fix glyph rendering issues in webkit when <svg>'s height is 100% [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+* [32m|[m   [31mf413ebb[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m[35m\[m [32m\[m  
+[34m|[m * [32m|[m [31m7ea29e7[m -[33m[m tab + arrow [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[34m|[m * [32m|[m [31m2af4f95[m -[33m[m skin tab [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[34m|[m * [32m|[m   [31m19e6a39[m -[33m[m Merge branch 'new_glyphs' [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[34m|[m [36m|[m[32m\[m [32m\[m  
+[34m|[m [36m|[m [32m|[m[32m/[m  
+[34m|[m [36m|[m * [31m2816b8d[m -[33m[m debug V [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[34m|[m [36m|[m * [31m30bf95c[m -[33m[m + S glyph [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+* [36m|[m [1;31m|[m [31m69fa9a9[m -[33m[m improve slider behavior and fully process components when needed [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m[36m/[m [1;31m/[m  
+* [1;31m|[m [31mecdcecd[m -[33m (origin/fix_#11)[m tabbed parameters! [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+* [1;31m|[m   [31m467074e[m -[33m[m Merge branch 'new_glyphs' of github.com:byte-foundry/prototypo into fix_#11 [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[1;32m|[m[1;31m\[m [1;31m\[m  
+[1;32m|[m [1;31m|[m[1;31m/[m  
+[1;32m|[m * [31m308caa7[m -[33m[m order sliders [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m * [31mdb64ead[m -[33m[m add glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m * [31m9d96039[m -[33m[m add glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m * [31mcd64c64[m -[33m[m debug oblique serifs + new glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m * [31m2978764[m -[33m[m add glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+* [1;33m|[m [31m3ca7682[m -[33m[m Custom range inputs! [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[1;33m|[m[1;33m/[m  
+* [31m802c25c[m -[33m[m fix: very end of an inverted segment was ignored when the segment was rendered [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+*   [31mb639731[m -[33m[m Merge remote-tracking branch 'origin/fix_#34' into new_glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;34m|[m[1;35m\[m  
+[1;34m|[m * [31m392f267[m -[33m (origin/fix_#34)[m simplify main controller, remove old files and fix reset button [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[1;34m|[m *   [31m622762a[m -[33m[m resolve conflicts [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[1;34m|[m [1;36m|[m[31m\[m  
+[1;34m|[m * [31m|[m [31m1357922[m -[33m[m begin main controller rewrite [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+* [31m|[m [31m|[m [31m78a9489[m -[33m[m add serif top right [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+* [31m|[m [31m|[m   [31m3d4ec76[m -[33m[m Merge branch 'master' into new_glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[32m|[m[31m\[m [31m\[m [31m\[m  
+[32m|[m [31m|[m [31m|[m[31m/[m  
+[32m|[m [31m|[m[31m/[m[31m|[m   
+[32m|[m * [31m|[m   [31me4cf67f[m -[33m[m Merge branch 'fix_#38' of github.com:byte-foundry/prototypo into fix_#38 [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[32m|[m [34m|[m[35m\[m [31m\[m  
+[32m|[m * [35m|[m [31m|[m [31m156bc77[m -[33m[m Only invert segments at rendering [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+* [35m|[m [35m|[m [31m|[m   [31m8d4cb3b[m -[33m[m Merge branch 'fix_#38' into new_glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[36m|[m[35m\[m [35m\[m [35m\[m [31m\[m  
+[36m|[m [35m|[m [35m|[m[35m/[m [31m/[m  
+[36m|[m [35m|[m[35m/[m[35m|[m [31m|[m   
+[36m|[m * [35m|[m [31m|[m [31m9a78d7a[m -[33m (origin/fix_#38)[m resolve conflicts [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[36m|[m [35m|[m[35m/[m [31m/[m  
+[36m|[m * [31m|[m   [31mb9c52da[m -[33m[m resolve conflicts [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m [1;32m|[m[1;33m\[m [31m\[m  
+[36m|[m * [1;33m|[m [31m|[m [31m2e7d65d[m -[33m[m fix regression [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m * [1;33m|[m [31m|[m [31ma9680b4[m -[33m[m fix all glyphs so that they work with the new syntax [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m * [1;33m|[m [31m|[m [31m43514c2[m -[33m[m fix various bugs that were not properly tested [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m * [1;33m|[m [31m|[m [31m71c9c09[m -[33m[m "replace" components should no be as capable as "cut" components + remove "before/after" and "cut" components [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m * [1;33m|[m [31m|[m   [31mcfdac58[m -[33m[m resolve conflicts [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m [1;34m|[m[1;35m\[m [1;33m\[m [31m\[m  
+[36m|[m [1;34m|[m * [1;33m|[m [31m|[m [31m15b432f[m -[33m[m component.firstSegment and component.lastSegment should be inverted in an inverted component [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m [1;34m|[m * [1;33m|[m [31m|[m   [31m325ce2a[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m [1;34m|[m [1;36m|[m[31m\[m [1;33m\[m [31m\[m  
+[36m|[m * [1;36m|[m [31m|[m [1;33m|[m [31m|[m [31m3ead38d[m -[33m[m get rid of "before/after" and "cut" formulas, implement "replace" and "add" formulas [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m [1;36m|[m[1;36m/[m [31m/[m [1;33m/[m [31m/[m  
+[36m|[m * [31m|[m [1;33m|[m [31m|[m [31m5cfa240[m -[33m[m fix #36: subcomponent args can now be used, + new subcomponent syntax [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m * [31m|[m [1;33m|[m [31m|[m [31m941453c[m -[33m[m fix #40: update the tests of Formula to use argsFn [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m * [31m|[m [1;33m|[m [31m|[m [31medc25d1[m -[33m[m Basic tests for cut components now pass [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m * [31m|[m [1;33m|[m [31m|[m [31m1acfa59[m -[33m[m Implementation is here, only problem: it hasn't been tested in any way. [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m * [31m|[m [1;33m|[m [31m|[m [31mb7d5d19[m -[33m[m fix #33: turn segment utils into filters [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[36m|[m [31m|[m [31m|[m[31m_[m[1;33m|[m[31m/[m  
+[36m|[m [31m|[m[31m/[m[31m|[m [1;33m|[m   
+* [31m|[m [31m|[m [1;33m|[m [31mda6b7a1[m -[33m[m add glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;33m|[m [31m|[m[1;33m_[m[31m|[m[1;33m/[m  
+[1;33m|[m[1;33m/[m[31m|[m [31m|[m   
+* [31m|[m [31m|[m [31m874e79d[m -[33m[m new glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+* [31m|[m [31m|[m [31m5b218d8[m -[33m[m modif glyphs [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[31m|[m [31m|[m[31m/[m  
+[31m|[m[31m/[m[31m|[m   
+* [31m|[m [31m03a3702[m -[33m[m +add glyphs & functions [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+* [31m|[m [31m497652b[m -[33m[m serif-bottom-right V0.9 [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+* [31m|[m   [31m8ae13ea[m -[33m[m Merge branch 'fix_#31' of https://github.com/byte-foundry/prototypo [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[32m|[m[31m\[m [31m\[m  
+[32m|[m [31m|[m[31m/[m  
+[32m|[m * [31m4d7d624[m -[33m (origin/fix_#31)[m improve point visualization and bind-once colors [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+* [33m|[m [31m58dd51f[m -[33m[m debug curves [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+* [33m|[m   [31m2b083bb[m -[33m[m Merge branch 'fix_#31' of https://github.com/byte-foundry/prototypo [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[34m|[m[33m\[m [33m\[m  
+[34m|[m [33m|[m[33m/[m  
+[34m|[m * [31md1f17af[m -[33m[m restore initial points visualization [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[34m|[m * [31m1b0504e[m -[33m[m Make it possible to reuse segments + include "NaN" in Point serialization [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+* [35m|[m   [31m4858f4e[m -[33m[m Add filter curve & dot (glyph) [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[36m|[m[35m\[m [35m\[m  
+[36m|[m [35m|[m[35m/[m  
+[36m|[m * [31m64bbda3[m -[33m[m restore an ugly scope check [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+* [1;31m|[m [31mf3a8f92[m -[33m[m sync versions LRB YM [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;31m|[m[1;31m/[m  
+*   [31m26f72dd[m -[33m[m Merge branch 'master' of github.com:byte-foundry/prototypo [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[1;32m|[m[1;33m\[m  
+[1;32m|[m * [31m874fd8a[m -[33m[m add a txt variable for log info [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m * [31mfc7df2c[m -[33m[m Add _B glyph Add filter "| log" [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m *   [31m1faebea[m -[33m[m Merge branch 'master' of https://github.com/byte-foundry/prototypo [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m [1;34m|[m[1;35m\[m  
+[1;32m|[m * [1;35m|[m [31m0869c1c[m -[33m[m Add functions h glyph [32m(1 year, 5 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m * [1;35m|[m [31m5cc92de[m -[33m[m resolve conflit [32m(1 year, 6 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m * [1;35m|[m   [31ma62077f[m -[33m[m Resolve conflicts [32m(1 year, 6 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m [1;36m|[m[31m\[m [1;35m\[m  
+[1;32m|[m * [31m|[m [1;35m|[m [31m81e2a70[m -[33m[m Merge branch 'master' of https://github.com/byte-foundry/prototypo [32m(1 year, 6 months ago) [1;34m<yannick mathey>[m
+[1;32m|[m * [31m|[m [1;35m|[m [31m6a5c9ad[m -[33m[m Add h glyph [32m(1 year, 6 months ago) [1;34m<yannick mathey>[m
+* [31m|[m [31m|[m [1;35m|[m [31m9a28540[m -[33m[m It's finally possible to create a component with subcomponents from a formula + cleaner code (no edge case for unit test) + more efficient merging [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+[1;35m|[m [31m|[m[1;35m_[m[31m|[m[1;35m/[m  
+[1;35m|[m[1;35m/[m[31m|[m [31m|[m   
+* [31m|[m [31m|[m [31m64ef148[m -[33m[m Fix component loading [32m(1 year, 5 months ago) [1;34m<louisremi>[m
+* [31m|[m [31m|[m [31mb9241ad[m -[33m[m add 'translate', 'translateX' and 'translateY' methods to Point [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+[31m|[m [31m|[m[31m/[m  
+[31m|[m[31m/[m[31m|[m   
+* [31m|[m [31me60b5a5[m -[33m[m fix: first control point of rC segment wasn't relative to the start of the segment [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+[31m|[m[31m/[m  
+* [31m207451d[m -[33m[m Quick fix to get things working again [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+* [31mb28b85a[m -[33m[m rewrite the "find" util to be more flexible and test it [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+* [31mcd435f6[m -[33m[m Point coordinates are now native Float 32 + round all numbers in tests [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+* [31mb84f615[m -[33m[m initComponent and forward references, baby! [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+* [31md69969d[m -[33m[m Test segments to SVG [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+* [31me8b5e57[m -[33m[m Segments are now thoroughly tested, and that's a good start! [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+* [31m791e2d6[m -[33m[m All structures can now be called with or without new [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+*   [31m9890d01[m -[33m[m merge and resolve conflicts [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+[32m|[m[33m\[m  
+[32m|[m * [31mff2f341[m -[33m[m moar tests and less jshint warnings. yeah! [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+[32m|[m * [31me8ff7aa[m -[33m[m first batch of tests [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+[32m|[m * [31m9b3799a[m -[33m[m added components to flat glyph formula [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+[32m|[m * [31m2d9b4e5[m -[33m[m switch most range-input attributes to bindonce equivalents. Much smoother in Firefox. [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+[32m|[m * [31m0e286d9[m -[33m[m switch to txt files for glyph and component formulas [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+[32m|[m * [31meb12d2b[m -[33m[m Update to Angular 1.2.0-rc3 [32m(1 year, 6 months ago) [1;34m<louisremi>[m
+* [33m|[m [31m4ab1d03[m -[33m[m commit before tests [32m(1 year, 10 months ago) [1;34m<louisremi>[m
+* [33m|[m [31mb71a635[m -[33m[m fix #30 by making sure controlpoints aren't linked to virtual endpoints [32m(1 year, 10 months ago) [1;34m<louisremi>[m
+* [33m|[m [31m6eada74[m -[33m[m fix #26 by trimming segment formula [32m(1 year, 10 months ago) [1;34m<louisremi>[m
+* [33m|[m [31m657678c[m -[33m[m fix #27 and fix #28 by absolutizing segments in two steps [32m(1 year, 10 months ago) [1;34m<louisremi>[m
+[33m|[m[33m/[m  
+* [31m2484abc[m -[33m[m First virtual moveTo in serif component was deleted [32m(1 year, 10 months ago) [1;34m<YannickMathey>[m
+* [31m1eb05b6[m -[33m[m A bug appears with direction and rC command in components [32m(1 year, 10 months ago) [1;34m<YannickMathey>[m
+*   [31m5d1a525[m -[33m[m Merge branch 'master' of https://github.com/louisremi/p0 [32m(1 year, 11 months ago) [1;34m<YannickMathey>[m
+[34m|[m[35m\[m  
+[34m|[m *   [31md79592a[m -[33m[m Merge branch 'master' of github.com:louisremi/p0 [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+[34m|[m [36m|[m[1;31m\[m  
+[34m|[m * [1;31m|[m [31m87d7d63[m -[33m[m complete debug path for bezier curves [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [1;31m|[m [1;31m|[m [31m1e7a489[m -[33m[m serif modifications [32m(1 year, 11 months ago) [1;34m<YannickMathey>[m
+[1;31m|[m [1;31m|[m[1;31m/[m  
+[1;31m|[m[1;31m/[m[1;31m|[m   
+* [1;31m|[m   [31m36af87e[m -[33m[m Merge branch 'master' of https://github.com/louisremi/p0 [32m(1 year, 11 months ago) [1;34m<YannickMathey>[m
+[1;32m|[m[1;31m\[m [1;31m\[m  
+[1;32m|[m [1;31m|[m[1;31m/[m  
+[1;32m|[m * [31mf85aaf6[m -[33m[m Add incomplete debug path for control points [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+[1;32m|[m * [31mf59b2cc[m -[33m[m Fix "reset button corrupts the entire app" and "z command generates invalid svg in debug points" [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [1;33m|[m [31m5178432[m -[33m[m glyph n [32m(1 year, 11 months ago) [1;34m<YannickMathey>[m
+[1;33m|[m[1;33m/[m  
+* [31m7f03518[m -[33m[m Persist control values and other UI values in localStorage [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31m9c03a2d[m -[33m[m save and restore control values [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31m6076be6[m -[33m[m rename inputs and inputValeus to controls and controlValues [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31m2bebeca[m -[33m[m fix #22 (empty option in glyph select) + add omitted files [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31m9699e85[m -[33m[m Add an S glyph [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31m780ecd6[m -[33m[m create different directives: glyph, glyph-contour and segment-endpoint [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31m1668af4[m -[33m[m add missing file [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31mf566d38[m -[33m[m convert contour filter to a directive [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31m7ed74e5[m -[33m[m Temporary fix for the race-condition [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31mb661440[m -[33m[m global refactoring to create a dynamically loaded font folder + there's an important rendering bug due to a race condition [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31mde2f0eb[m -[33m[m Implement glyph variables + switch to Angular 1.1.5 [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31m82b9989[m -[33m[m early implementation of components with simple syntax + 'self' and 'parent' of glyph formula are arrays, not functions [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31m2d7af70[m -[33m[m Add an 'f/F' command to the svg syntax to create fictional points + simplify the 'point on segment' syntax [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+*   [31m38386a6[m -[33m[m restore the glyph select + adapt the H to the new syntax [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+[1;34m|[m[1;35m\[m  
+[1;34m|[m * [31m142094a[m -[33m[m adding the glyph ‘H’ with the new drawing system [32m(1 year, 11 months ago) [1;34m<YannickMathey>[m
+* [1;35m|[m [31mb4a3bad[m -[33m[m Make all sliders a json object [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+[1;35m|[m[1;35m/[m  
+* [31m707af89[m -[33m (origin/object_glyph)[m implement 'on' filter [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31m6a67edc[m -[33m[m new glyph syntax [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+* [31m4e580c7[m -[33m[m Add glyph select [32m(1 year, 11 months ago) [1;34m<louisremi>[m
+*   [31mf93436a[m -[33m[m merge and resolve conflicts [32m(2 years ago) [1;34m<louisremi>[m
+[1;36m|[m[31m\[m  
+[1;36m|[m * [31ma77e381[m -[33m[m add of some components (top-dot, etc.) add the A glyph (still under comments) add the slant option some bugs corrections [32m(2 years ago) [1;34m<YannickMathey>[m
+* [31m|[m [31mc346919[m -[33m[m First commit of debug shapes [32m(2 years ago) [1;34m<louisremi>[m
+[31m|[m[31m/[m  
+* [31m3c1fe60[m -[33m[m Add serif-bottom-left & right functions s_arc still buggy [32m(2 years ago) [1;34m<YannickMathey>[m
+* [31m4a50c14[m -[33m[m add and setup the top-left serif function still buggy for the s_arc parameter [32m(2 years ago) [1;34m<YannickMathey>[m
+* [31md439424[m -[33m[m Fix module definition and dependency injection [32m(2 years ago) [1;34m<louisremi>[m
+* [31m3a23c63[m -[33m[m suppression espaces [32m(2 years ago) [1;34m<YannickMathey>[m
+* [31mc9831da[m -[33m[m test ajout select (glyphs) [32m(2 years ago) [1;34m<YannickMathey>[m
+* [31mb3a3e6f[m -[33m[m avance sur le dessin du i + ajout de la fonction components (serif) + ajout différents sliders [32m(2 years ago) [1;34m<YannickMathey>[m
+* [31m66e1b82[m -[33m[m ajout/modification du glyphe i sans string dans l'array [32m(2 years ago) [1;34m<YannickMathey>[m
+* [31m0ea68d9[m -[33m[m glyphe i dans un fichier séparé [32m(2 years ago) [1;34m<YannickMathey>[m
+* [31mc60f184[m -[33m[m test du glyphe i avec hauteur / largeur [32m(2 years ago) [1;34m<YannickMathey>[m
+* [31m02eb80f[m -[33m[m suppression du fichier filters.js [32m(2 years ago) [1;34m<YannickMathey>[m
+* [31mb6e0528[m -[33m[m first commit [32m(2 years ago) [1;34m<louisremi>[m

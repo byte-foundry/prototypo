@@ -118,7 +118,7 @@ gulp.task('build', [], function() {
 
 gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
 	browserSync.init({
-		server:'./dist'
+		server:['./dist','./node_modules']
 	});
 
 	gulp.watch('./app/styles/**/*.scss',['css-app']);

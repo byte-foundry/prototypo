@@ -18,7 +18,12 @@ export default class UndoRedoMenu extends React.Component {
 
 		const eventBackLog = this.client.getStore('/eventBackLog',this.lifespan)
 			.onUpdate(({head}) => {
-				this.setState(head.toJS());
+				const headJs = head.toJS();
+				this.setState({
+					to:headJs.to,
+					from:headJs.from,
+					eventList:headJs.eventList,
+				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
