@@ -9,12 +9,30 @@
 		width:35px;
 		padding:9px;
 		cursor:pointer;
+		overflow:visible;
+
+		&-tooltip {
+			position: absolute;
+			opacity: 0;
+			background: lighten($dark-grey, 4%);
+			left: 0px;
+			top: 35px;
+			padding: 10px;
+		}
 
 		&.is-disabled {
 			background-color: darken($dark-grey, 4%);
 			&:hover {
 				background-color:darken($dark-grey, 4%);
 			}
+
+			&:hover &-tooltip {
+				opacity: 0;
+			}
+		}
+
+		&:hover &-tooltip {
+			opacity: 1;
 		}
 
 		&:hover {

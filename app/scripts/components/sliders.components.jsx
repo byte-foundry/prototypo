@@ -3,6 +3,7 @@ import ClassNames from 'classnames';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {registerToUndoStack} from '../helpers/undo-stack.helpers.js';
+import DOM from '../helpers/dom.helpers.js';
 
 export class Sliders extends React.Component {
 
@@ -33,15 +34,20 @@ export class Slider extends React.Component {
 		this.lifespan.release();
 	}
 
+	resetValue() {
+		this.client.dispatchAction('/change-param',{value:this.props.param.init,name:this.props.param.name,force:true});
+	}
+
 	render() {
 		const value = this.props.value || this.props.param.init;
 		return (
 			<div className="slider">
 				<label className="slider-title">{this.props.param.label}</label>
-				<div className="slider-reset">reset</div>
-				<SliderTextController value={value} name={this.props.param.name}/>
+				<div className="slider-reset" onClick={() => {this.resetValue()}}>reset</div>
+				<SliderTextController value={value} name={this.props.param.name} label={this.props.param.label}/>
 				<SliderController value={value}
 					name={this.props.param.name}
+					label={this.props.param.label}
 					min={this.props.param.min}
 					max={this.props.param.max}
 					minAdvised={this.props.param.minAdvised}
@@ -67,21 +73,27 @@ export class SliderController extends React.Component {
 	handleDown(e) {
 		this.tracking = true;
 		this.currentX = e.pageX
+
+		e.stopPropagation();
 	}
 
-	handleUp() {
+	handleUp(e) {
 		if (this.tracking) {
+
 			this.tracking = false;
-			this.client.dispatchAction('/change-param',{value:this.props.value,name:this.props.name,force:true});
+			this.client.dispatchAction('/change-param',{value:this.props.value,name:this.props.name,label:this.props.label,force:true});
+
+			e.stopPropagation();
+
 		}
 	}
 
 	handleMove(e) {
 		if (this.tracking) {
 			const newX = e.pageX || e.screenX;
-			const variation = (newX - this.currentX)/this.sliderWidth*(this.props.max - this.props.min);
-
+			const variation = (newX - this.currentX) / this.sliderWidth * (this.props.max - this.props.min);
 			let newValue = this.props.value + variation;
+
 			newValue = Math.min(Math.max(newValue,this.props.min),this.props.max);
 
 			this.client.dispatchAction('/change-param',{value:newValue,name:this.props.name});
@@ -89,22 +101,35 @@ export class SliderController extends React.Component {
 		}
 	}
 
+	handleClick(e) {
+		const newX = e.pageX || e.screenX;
+		const {offsetLeft} = DOM.getAbsOffset(React.findDOMNode(this.refs.slider));
+		let newValue = ( ( newX - offsetLeft ) / this.sliderWidth * (this.props.max - this.props.min)) + this.props.min;
+
+		newValue = Math.min(Math.max(newValue,this.props.min),this.props.max);
+
+		this.client.dispatchAction('/change-param',{value:newValue,name:this.props.name,label:this.props.label,force:true});
+		this.currentX = newX;
+
+	}
+
 	render() {
-		const translateX = (this.props.max - this.props.value) / (this.props.max - this.props.min) * 100.0;
+		const translateX = (this.props.max - this.props.value) / (this.props.max - this.props.min) * 92.0;
 		const transform = {
 			transform: `translateX(-${translateX}%)`
 		};
 
 		const classes = ClassNames({
 			'slider-controller-bg':true,
-			'is-not-advised':this.props.max < this.props.minAdvised || this.props.max > this.props.maxAdvised,
+			'is-not-advised':this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised,
 		});
 
 		return (
 			<div className="slider-controller" ref="slider"
 				onMouseUp={(e) => { this.handleUp(e) }}
 				onMouseMove={(e) => { this.handleMove(e) }}
-				onMouseLeave={(e) => { this.handleUp(e) }}>
+				onMouseLeave={(e) => { this.handleUp(e) }}
+				onClick={(e) => { this.handleClick(e) }} >
 				<div className={classes} style={transform}>
 					<div
 						className="slider-controller-handle"
@@ -140,6 +165,7 @@ export class SliderTextController extends React.Component {
 						{
 							name:this.props.name,
 							value:e.target.value,
+							label:this.props.label,
 							force:true,
 						});
 				}}

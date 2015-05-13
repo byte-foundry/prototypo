@@ -23,7 +23,7 @@ const registerToUndoStack = function(remut, storeName, client, lifespan) {
 
 //Allow to setup granularity for undo stack
 class BatchUpdate {
-	constructor(remut, storeName, client, lifespan, criteria) {
+	constructor(remut, storeName, client, lifespan, criteria, labelGenerator) {
 		registerToUndoStack(remut, storeName, client, lifespan);
 
 		this.storeName = storeName;
@@ -31,14 +31,15 @@ class BatchUpdate {
 		this.criteria = typeof criteria == 'number' ? (newValue, oldValue) => {
 			return Math.abs(newValue - oldValue) > criteria
 		} : criteria;
+
+		this.labelGenerator = labelGenerator;
 	}
 
 	update(patch, prop) {
-		let newPatch;
+		let newPatch = patch;
+
 		if (this.patch) {
 			newPatch = Patch.combine(this.patch,patch);
-		} else {
-			newPatch = patch;
 		}
 
 		if (patch.mutations.values.f && this.criteria(patch.mutations.values.t[prop],patch.mutations.values.f[prop])) {
@@ -50,12 +51,14 @@ class BatchUpdate {
 		}
 	}
 
-	forceUpdate(patch) {
-		let newPatch
+	forceUpdate(patch, prop) {
+		let newPatch = patch;
+
 		if (this.patch) {
 			newPatch = Patch.combine(this.patch,patch);
 		}
-		this.client.dispatchAction('/store-action',{store:this.storeName,patch:newPatch});
+
+		this.client.dispatchAction('/store-action',{store:this.storeName,patch:newPatch,label:this.labelGenerator(prop)});
 		this.patch = undefined;
 	}
 }

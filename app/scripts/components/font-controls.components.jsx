@@ -6,7 +6,7 @@ import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
-import {Typefaces} from '../services/typefaces.services.js';
+import {FontValues} from '../services/values.services.js';
 
 export default class FontControls extends React.Component {
 
@@ -25,7 +25,14 @@ export default class FontControls extends React.Component {
 		const fontControls = await this.client.fetch('/fontControls');
 		const fontTab = await this.client.fetch('/fontTab');
 
-		this.undoWatcher = new BatchUpdate(fontControls, '/fontControls', this.client, this.lifespan, Infinity);
+		this.undoWatcher = new BatchUpdate(fontControls,
+			'/fontControls',
+			this.client,
+			this.lifespan,
+			Infinity,
+			(name) => {
+				return `modifier ${name}`;
+			});
 
 		server.on('action', ({path, params}) => {
 			if (path == '/change-tab-font') {
@@ -38,29 +45,27 @@ export default class FontControls extends React.Component {
 				let newParams = {};
 				Object.assign(newParams, fontControls.get('values'));
 				newParams[params.name] = params.value;
+
 				const patch = fontControls.set('values',newParams).commit();
+
 				server.dispatchUpdate('/fontControls',patch);
+				//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+				// FontValues.save({
+				// 	typeface: 'default',
+				// 	values: newParams,
+				// });
+
 				if (params.force) {
-					this.undoWatcher.forceUpdate(patch);
+
+					this.undoWatcher.forceUpdate(patch, params.label);
+
 				} else {
-					this.undoWatcher.update(patch, params.name);
+
+					this.undoWatcher.update(patch, params.label);
+
 				}
-			}
-			else if (path == '/load-params') {
-				const patch = fontControls.set('values',params).commit();
-				server.dispatchUpdate('/fontControls',patch);
-				this.client.dispatchAction('/store-action',{store:'/fontControls',patch});
-			}
-		}, this.lifespan);
 
-
-		const parameters = await Typefaces.get();
-
-		this.setState({
-			parameters,
-		});
-
-		this.client.dispatchAction('/load-params',parameters.presets.Blackletter);
+			}}, this.lifespan);
 
 		this.client.getStore('/fontTab', this.lifespan)
 			.onUpdate(({head}) => {
@@ -76,11 +81,21 @@ export default class FontControls extends React.Component {
 				const headJS = head.toJS();
 				this.setState({
 					values:headJS.values,
+					parameters:headJS.parameters,
 				});
+				this.client.dispatchAction('/update-font',headJS.values);
 			})
 			.onDelete(() => this.setState(undefined)).value;
 
 		this.client.dispatchAction('/change-tab-font',{name: 'Func'});
+
+		const parameters = fontControls.get('parameters');
+		const values = fontControls.get('values');
+
+		this.setState({
+			parameters,
+			values,
+		});
 	}
 
 	componentWillUnmount() {
@@ -88,13 +103,13 @@ export default class FontControls extends React.Component {
 	}
 
 	render() {
-		const tabs = this.state.parameters ? _.map(this.state.parameters.parameters,(group) => {
+		const tabs = _.map(this.state.parameters,(group) => {
 			return (
 				<ControlsTab iconId={group.label} name={group.label} key={group.label}>
 					<Sliders params={group.parameters} values={this.state.values}/>
 				</ControlsTab>
 			);
-		}) : undefined;
+		});
 
 		return (
 			<div className="font-controls">

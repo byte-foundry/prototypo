@@ -16,6 +16,8 @@ var buffer = require('vinyl-buffer');
 var minifyCss = require('gulp-minify-css');
 
 //Utils
+var del = require('del');
+var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var gutil = require('gulp-util');
 var sourcemaps = require('gulp-sourcemaps');
@@ -33,6 +35,12 @@ var through = require('through');
  customBrowserifyOpts = {
 	entries: ['./app/scripts/main.js'],
 	debug: gutil.env.type == 'prod' ? false : true,
+	noParse: [
+		'../../node_modules/prototypo.js/dist/prototypo.js',
+		'../node_modules/prototypo.js/dist/prototypo.js',
+		'./node_modules/prototypo.js/dist/prototypo.js',
+		'/home/franzp/work/prototypo/node_modules/prototypo.js/dist/prototypo.js'
+	]
 }
 
 var opts = assign({}, watchify.args, customBrowserifyOpts);
@@ -71,6 +79,7 @@ function bundle() {
 			.pipe(buffer())
 			.pipe(sourcemaps.init({loadMaps:true}))
 			.pipe(sourcemaps.write('./'))
+//			.pipe(gutil.env.type == 'prod' ? uglify() :gutil.noop())
 			.pipe(gulp.dest('./dist'))
 	})
 }
@@ -104,17 +113,19 @@ var bBase = readPrelude.then(function(prelude) {
 });
 
 var b = bBase.then(function(browserify) {
-	var b = watchify(browserify)
+	var b = gutil.env.type == 'prod' ? browserify : watchify(browserify);
 	b.on('update',bundle);
 	b.on('log',gutil.log);
 	return b;
 });
 
+gulp.task('clean',function() {
+	del.sync(['dist']);
+})
+
 gulp.task('browserify', bundle);
 
-gulp.task('build', [], function() {
-
-})
+gulp.task('build', ['clean','images','css-vendor','css-app','browserify']);
 
 gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
 	browserSync.init({
