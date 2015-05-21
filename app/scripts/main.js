@@ -1,13 +1,18 @@
 import React from 'react';
 import Router from 'react-router';
+
 import Dashboard from './components/dashboard.components.jsx';
+import SitePortal from './components/site-portal.components.jsx'
+import NotLoggedIn from './not-logged-in.components.jsx';
+
 import Remutable from 'remutable';
 import LocalClient from './stores/local-client.stores.jsx';
 import LocalServer from './stores/local-server.stores.jsx';
 const { Patch } = Remutable;
+
 import {Typefaces} from './services/typefaces.services.js';
-import Prototypo from '../../node_modules/prototypo.js/dist/prototypo.js';
 import {FontValues} from './services/values.services.js';
+import Prototypo from '../../node_modules/prototypo.js/dist/prototypo.js';
 
 React.initializeTouchEvents(true);
 
@@ -191,7 +196,9 @@ class App extends React.Component {
 
 let Routes = (
   <Route handler={App} name="app" path="/">
-    <DefaultRoute handler={Dashboard}/>
+    <DefaultRoute handler={SitePortal}/>
+    <Route name="/dashboard" handler={Dashboard}/>
+    <Route name="/signin" handler={NotLoggedIn}/>
   </Route>
 );
 
