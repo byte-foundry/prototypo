@@ -28,6 +28,15 @@ angular.module('prototypo.stringDirective', [])
 					return 0;
 				};
 
+				// ///// tmp HACK to replace unicode ////
+				// $element.bind('input propertychange', function() {
+				// 	var textarea = $('textarea.string'),
+				// 		txt = textarea.val();
+				// 		textarea.val(txt.replace(/,/g, '^'));
+				// 		textarea.val(txt.replace(/\./g, '_'));
+				// })
+				// ///////////////////////////////////////
+
 				// contextMenu
 				$element.on('pointerdown', function( e ) {
 					if ( e.which === 3 ) {

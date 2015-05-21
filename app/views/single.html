@@ -1,5 +1,7 @@
 <div class="scene">
 
+	<div id="pattern" ng-show="appValues.displayPattern" class="ng-hide">{{ StringFromCharCode( font.charMap[appValues.singleChar].ot.unicode ) }}</div>
+
 	<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
 		style="display: none;"
 		viewBox="-800 -1400 2000 2000"
@@ -14,7 +16,8 @@
 			</pattern>
 		</defs>
 
-		<g ng-attr-transform="translate({{ ( appValues.scenePanX / viewboxScale ) || 0 }}, {{ ( appValues.scenePanY / viewboxScale ) || 0 }}) scale({{appValues.zoom || 1}}) translate({{ -( appValues.scenePanX / viewboxScale ) || 0 }}, {{ -( appValues.scenePanY / viewboxScale ) || 0 }}) matrix(1 0 0 -1 0 0)">
+		<!-- <g ng-attr-transform="translate({{ ( appValues.scenePanX / viewboxScale ) || 0 }}, {{ ( appValues.scenePanY / viewboxScale ) || 0 }}) scale({{appValues.zoom || 1}}) translate({{ -( appValues.scenePanX / viewboxScale ) || 0 }}, {{ -( appValues.scenePanY / viewboxScale ) || 0 }}) matrix(1 0 0 -1 0 0)"> -->
+		<g ng-attr-transform="translate( -1000 , {{ ( appValues.scenePanY / viewboxScale ) || 0 }}) scale({{appValues.zoom || 1}}) translate({{ -( appValues.scenePanX / viewboxScale ) || 0 }}, {{ -( appValues.scenePanY / viewboxScale ) || 0 }}) matrix(1 0 0 -1 0 0)">
 			<rect ng-show="appValues.displayGrid" class="ng-hide" x="-20000" y="-20000" width="40000" height="40000" fill="url(#grid)" style="pointer-events:none;"></rect>
 
 			<g id="guidelines" style="pointer-events:none;" ng-show="appValues.displayGuideLines" class="ng-hide">
@@ -29,6 +32,8 @@
 			</g>
 
 			<g id="transformed" ng-attr-transform="skewX({{ fontValues.slant || 0 }})">
+
+
 
 				<g class="contours">
 					<path

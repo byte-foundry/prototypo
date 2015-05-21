@@ -15,6 +15,11 @@ angular.module('prototypo.singleDirective', ['prototypo.Utils'])
 					return false;
 				});
 
+				// drag layer static font pattern
+				$(function() {
+					$( "#pattern" ).draggable();
+				});
+
 				// reset scene zoom and position on double-tap
 				$element.on('doubletap', function() {
 					$scope.appValues.zoom = 1.5;

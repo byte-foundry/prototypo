@@ -24,6 +24,7 @@
 			outlineOnly: false,
 			negative: false,
 			displayGrid: true,
+			displayPattern: false,
 			displayGuideLines: true,
 			displaySpacing: false,
 			paramTab: 0,
@@ -32,7 +33,8 @@
 			scenePanY: 0,
 			singleChar: 'A',
 			stringChars: 'Type your text',
-			paragraphChars: 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ',
+			// paragraphChars: 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ',
+			paragraphChars: 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/',
 			currentPreset: 'Sans-serif'
 		};
 
@@ -82,7 +84,7 @@
 			});
 
 			prototypo.setup(document.createElement('canvas'));
-			$scope.font = prototypo.ParametricFont( typedata );console.log($scope.font);
+			$scope.font = prototypo.parametricFont( typedata );
 			$scope.font.glyphs.forEach(function(glyph) {
 				glyph.allNodes = thisCtrl.gatherNodes( glyph );
 			});
@@ -314,5 +316,6 @@
 
 		return allNodes;
 	};
+
 
 })(angular);

@@ -50,6 +50,12 @@
 			>outline
 		</li>
 		<li
+			ng-click="appValues.displayPattern = !appValues.displayPattern; appValues.outlineOnly = true; appValues.zoom = 1.5; appValues.scenePanX = -120; appValues.scenePanY = 0"
+			ng-class="{ 'active' : appValues.displayPattern }"
+			class="display"
+			>pattern
+		</li>
+		<li
 			ng-click="appValues.displaySpacing = !appValues.displaySpacing"
 			ng-class="{ 'active' : appValues.displaySpacing }"
 			class="display"
