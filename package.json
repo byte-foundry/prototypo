@@ -4,6 +4,7 @@
   "dependencies": {
     "babel": "^5.1.13",
     "bluebird": "^2.9.24",
+    "classnames": "^2.1.1",
     "del": "^1.1.1",
     "gulp-uglify": "^1.2.0",
     "hoodie": "^2.0.4",
