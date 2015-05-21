@@ -1,8 +1,18 @@
 import React from 'react';
 import Sidebar from './sidebar.components.jsx';
 import Workboard from './workboard.components.jsx';
+import HoodieApi from '../services/hoodie.services.js';
 
 export default class Dashboard extends React.Component {
+
+	async componentWillMount() {
+		try {
+			const isLoggedIn = await HoodieApi.setup();
+		}
+		catch (err) {
+			location.href('#/signin');
+		}
+	}
 
 	render() {
 

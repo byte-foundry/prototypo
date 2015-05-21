@@ -14,6 +14,7 @@ import {Typefaces} from './services/typefaces.services.js';
 import {FontValues} from './services/values.services.js';
 import Prototypo from '../../node_modules/prototypo.js/dist/prototypo.js';
 
+
 React.initializeTouchEvents(true);
 
 const stores = {};
@@ -168,8 +169,8 @@ async function createStores() {
 
 	localClient.dispatchAction('/create-font', typedata);
 	try {
-		const fontValues = await FontValues.get({typeface:'default'});
-		localClient.dispatchAction('/load-values', _.extend(initValues,_.extend(presetValues,fontValues.values)));
+		// const fontValues = await FontValues.get({typeface:'default'});
+		// localClient.dispatchAction('/load-values', _.extend(initValues,_.extend(presetValues,fontValues.values)));
 	}
 	catch (err) {
 		localClient.dispatchAction('/load-values',_.extend(fontControls.get('values'), _.extend(initValues,presetValues)));
@@ -197,8 +198,8 @@ class App extends React.Component {
 let Routes = (
   <Route handler={App} name="app" path="/">
     <DefaultRoute handler={SitePortal}/>
-    <Route name="/dashboard" handler={Dashboard}/>
-    <Route name="/signin" handler={NotLoggedIn}/>
+    <Route name="dashboard" handler={Dashboard}/>
+    <Route name="signin" handler={NotLoggedIn}/>
   </Route>
 );
 
