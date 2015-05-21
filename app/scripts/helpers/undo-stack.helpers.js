@@ -1,6 +1,6 @@
 import {Patch} from 'remutable';
 
-const registerToUndoStack = function(remut, storeName, client, lifespan) {
+const registerToUndoStack = function(remut, storeName, client, lifespan, cb = () => {}) {
 	client.getStore('/eventBackLog', lifespan)
 		.onUpdate(({head}) => {
 			const jsHead = head.toJS();
@@ -16,6 +16,7 @@ const registerToUndoStack = function(remut, storeName, client, lifespan) {
 			}
 			if (backLog && backLog.store === storeName) {
 				remut.apply(patch);
+				cb(remut.head.toJS());
 			}
 		})
 		.onDelete(() => {});
@@ -23,8 +24,8 @@ const registerToUndoStack = function(remut, storeName, client, lifespan) {
 
 //Allow to setup granularity for undo stack
 class BatchUpdate {
-	constructor(remut, storeName, client, lifespan, criteria, labelGenerator) {
-		registerToUndoStack(remut, storeName, client, lifespan);
+	constructor(remut, storeName, client, lifespan, labelGenerator, cb, criteria = () => { return false; }) {
+		registerToUndoStack(remut, storeName, client, lifespan, cb);
 
 		this.storeName = storeName;
 		this.client = client;

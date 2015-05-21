@@ -29,10 +29,16 @@ export default class FontControls extends React.Component {
 			'/fontControls',
 			this.client,
 			this.lifespan,
-			Infinity,
 			(name) => {
 				return `modifier ${name}`;
-			});
+			},
+			(headJS) => {
+				FontValues.save({
+					typeface: 'default',
+					values: headJS.values,
+				});
+			}
+			);
 
 		server.on('action', ({path, params}) => {
 			if (path == '/change-tab-font') {
@@ -49,15 +55,15 @@ export default class FontControls extends React.Component {
 				const patch = fontControls.set('values',newParams).commit();
 
 				server.dispatchUpdate('/fontControls',patch);
-				//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
-				// FontValues.save({
-				// 	typeface: 'default',
-				// 	values: newParams,
-				// });
 
 				if (params.force) {
 
+					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 					this.undoWatcher.forceUpdate(patch, params.label);
+					FontValues.save({
+						typeface: 'default',
+						values: newParams,
+					});
 
 				} else {
 

@@ -1,22 +1,28 @@
-import Hoodie from 'hoodie';
+import PouchDB from 'pouchdb';
+import HoodiePouch from 'pouchdb-hoodie-api';
+PouchDB.plugin(HoodiePouch);
+let db = PouchDB('https://prototypo.appback.com/_api/user%2Fyebrzd8',{
+	auth: {
+		username: 'admin',
+		password: '0pyt0t0rp',
+	}
+});
+let api = db.hoodieApi();
 
 // const hoodie = new Hoodie('https://prototypo.appback.com');
 
 function values(prefix) {
 	return {
 		get(params) {
-			return hoodie.store.find(prefix + 'values', params.typeface)
-				.then(function(object) {
-					return object.values;
-				});
+			return api.find(`${prefix}values/${params.typeface}`);
 		},
 		save(params) {
-			return hoodie.store.updateOrAdd(prefix + 'values', params.typeface,{
+			return api.updateOrAdd(`${prefix}values/${params.typeface}`,{
 					values: params.values
 				});
 		},
 		clear() {
-			return hoodie.store.removeAll(prefix + 'values');
+			return api.removeAll(`${prefix}values`);
 		}
 	}
 }

@@ -11,6 +11,8 @@
     "lodash": "^3.7.0",
     "nexus-flux": "^3.2.0",
     "normalize.css": "^3.0.3",
+    "pouchdb": "^3.5.0",
+    "pouchdb-hoodie-api": "^1.0.2",
     "prototypo.js": "^0.2.0",
     "react": "^0.13.2",
     "react-router": "^0.13.3",

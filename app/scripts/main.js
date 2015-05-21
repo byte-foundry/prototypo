@@ -32,6 +32,8 @@ const sideBarTab = stores['/sideBarTab'] = new Remutable({});
 
 const fontStore = stores['/fontStore'] = new Remutable({});
 
+const glyphs = stores['/glyphs'] = new Remutable({});
+
 async function createStores() {
 
 	const actions = {
@@ -50,10 +52,15 @@ async function createStores() {
 			localServer.dispatchUpdate('/fontControls',patch);
 			localClient.dispatchAction('/store-action',{store:'/fontControls',patch});
 		},
+		'/load-glyphs': (params) => {
+			const patch = glyphs
+				.set('glyphs',params)
+				.commit()
+			localServer.dispatchUpdate('/glyphs',patch);
+		},
 		'/create-font': (params) => {
 			const patch = fontStore
 				.set('fontName', font.ot.familyName)
-				.set('glyphs', params.glyphs)
 				.commit();
 			localServer.dispatchUpdate('/fontStore',patch);
 		},
@@ -140,7 +147,12 @@ async function createStores() {
 	}, localServer.lifespan);
 
 	const typedata = await Typefaces.get();
+
+	Prototypo.setup(document.createElement('canvas'));
+	const font = Prototypo.parametricFont(typedata);
+
 	localClient.dispatchAction('/load-params', typedata.parameters);
+	localClient.dispatchAction('/load-glyphs', font.altMap);
 	const initValues = {};
 	_.each(typedata.parameters,(group) => {
 		return _.each(group.parameters, (param) => {
@@ -149,15 +161,14 @@ async function createStores() {
 	});
 	const presetValues = typedata.presets.Modern;
 
-	Prototypo.setup(document.createElement('canvas'));
-	const font = Prototypo.parametricFont(typedata);
 	localClient.dispatchAction('/create-font', typedata);
 	try {
 		const fontValues = await FontValues.get({typeface:'default'});
-		localClient.dispatchAction('/load-values', _.extend(fontControls.get('values'),_.extend(initValues,presetValues)));
+		localClient.dispatchAction('/load-values', _.extend(initValues,_.extend(presetValues,fontValues.values)));
 	}
 	catch (err) {
 		localClient.dispatchAction('/load-values',_.extend(fontControls.get('values'), _.extend(initValues,presetValues)));
+		console.log(err);
 	}
 }
 

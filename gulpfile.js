@@ -129,7 +129,8 @@ gulp.task('build', ['clean','images','css-vendor','css-app','browserify']);
 
 gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
 	browserSync.init({
-		server:['./dist','./node_modules']
+		server:['./dist','./node_modules'],
+		port:9000
 	});
 
 	gulp.watch('./app/styles/**/*.scss',['css-app']);

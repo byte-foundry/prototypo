@@ -6,6 +6,7 @@
 	padding-top:5px;
 
 	&-glyph {
+		box-sizing:content-box;
 		float:left;
 		height:49px;
 		width:49px;
@@ -15,10 +16,64 @@
 		text-align: center;
 		cursor:pointer;
 		transition:background-color .2s ease, color .2s ease;
+		position:relative;
+
+		&.is-commented {
+			background-color:lighten($green, 10%);
+			color:$black;
+		}
+
+		&.is-read {
+			background-color:$light-grey;
+			color:$black;
+		}
+
+		.alternate-glyph-list {
+			display:none;
+			position:absolute;
+			bottom:48px;
+
+			.glyph-list-glyph {
+				border:none;
+			}
+		}
 
 		&:hover {
+			.alternate-glyph-list {
+				display: block;
+			}
+		}
+
+		&:hover, &.is-selected {
 			background-color:$green;
 			color:$white;
+		}
+
+		&-right-indicator, &-left-indicator {
+			height: 5px;
+			position: absolute;
+			bottom: 0px;
+			width: 25px;
+		}
+
+		&-right-indicator {
+			left: 0px;
+		}
+
+		&-left-indicator {
+			left: 25px;
+		}
+
+		&.is-manually-modified &-right-indicator, &.is-manually-modified &-left-indicator {
+			background-color:$red;
+		}
+
+		&.is-parametrized &-right-indicator, &.is-parametrized &-left-indicator {
+			background-color:$blue;
+		}
+
+		&.is-manually-modified.is-parametrized &-right-indicator {
+			background-color: $red;
 		}
 
 		&:before {
@@ -28,5 +83,6 @@
 			line-height: 100%;
 			vertical-align: middle;
 		}
+
 	}
 }
