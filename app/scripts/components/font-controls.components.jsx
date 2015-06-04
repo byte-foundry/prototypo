@@ -5,36 +5,103 @@ import {Sliders} from './sliders.components.jsx';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
-import {registerToUndoStack} from '../helpers/undo-stack.helpers.js';
+import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
+import {FontValues} from '../services/values.services.js';
 
 export default class FontControls extends React.Component {
 
-	componentWillMount() {
+	constructor(props) {
+		super(props);
+		this.state = {
+			tabControls: 'Func',
+		};
+	}
+
+	async componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = new LocalClient().instance;
 		const server = new LocalServer().instance;
 
-		const fontControls = new Remutable(this.client.getStore('/fontControls', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({fontControls: head.toJS()});
-			})
-			.onDelete(() => this.setState({fontControls: undefined})).value);
+		const fontControls = await this.client.fetch('/fontControls');
+		const fontTab = await this.client.fetch('/fontTab');
 
-		registerToUndoStack(fontControls,'/fontControls',this.client,this.lifespan);
-
+		this.undoWatcher = new BatchUpdate(fontControls,
+			'/fontControls',
+			this.client,
+			this.lifespan,
+			(name) => {
+				return `modifier ${name}`;
+			},
+			(headJS) => {
+			FontValues.save({
+				typeface: 'default',
+				values: headJS.values,
+			});
+			}
+			);
 
 		server.on('action', ({path, params}) => {
-			if (path == '/change-tab') {
+			if (path == '/change-tab-font') {
 
-				const name = params.name;
-				const patch = fontControls.set('tab',name).commit();
-				server.dispatchUpdate('/fontControls', patch);
-				this.client.dispatchAction('/store-action',{store:'/fontControls',patch});
+				const patch = fontTab.set('tab',params.name).commit();
+				server.dispatchUpdate('/fontTab', patch);
 
 			}
-		}, this.lifespan);
+			else if (path == '/change-param') {
+				let newParams = {};
+				Object.assign(newParams, fontControls.get('values'));
+				newParams[params.name] = params.value;
 
-		this.client.dispatchAction('/change-tab',{name: 'functional'});
+				const patch = fontControls.set('values',newParams).commit();
+
+				server.dispatchUpdate('/fontControls',patch);
+
+				if (params.force) {
+
+					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+					this.undoWatcher.forceUpdate(patch, params.label);
+					FontValues.save({
+						typeface: 'default',
+						values: newParams,
+					});
+
+				} else {
+
+					this.undoWatcher.update(patch, params.label);
+
+				}
+
+			}}, this.lifespan);
+
+		this.client.getStore('/fontTab', this.lifespan)
+			.onUpdate(({head}) => {
+				const headJS = head.toJS();
+				this.setState({
+					tabControls:headJS.tab,
+				});
+			})
+			.onDelete(() => this.setState(undefined)).value;
+
+		this.client.getStore('/fontControls', this.lifespan)
+			.onUpdate(({head}) => {
+				const headJS = head.toJS();
+				this.setState({
+					values:headJS.values,
+					parameters:headJS.parameters,
+				});
+				this.client.dispatchAction('/update-font',headJS.values);
+			})
+			.onDelete(() => this.setState(undefined)).value;
+
+		this.client.dispatchAction('/change-tab-font',{name: 'Func'});
+
+		const parameters = fontControls.get('parameters');
+		const values = fontControls.get('values');
+
+		this.setState({
+			parameters,
+			values,
+		});
 	}
 
 	componentWillUnmount() {
@@ -42,37 +109,18 @@ export default class FontControls extends React.Component {
 	}
 
 	render() {
-		const params = [
-			{
-				title:"Thickness",
-				value:57,
-			},
-			{
-				title:"Thickness",
-				value:57,
-			},
-			{
-				title:"Thickness",
-				value:57,
-			},
-			{
-				title:"Thickness",
-				value:57,
-			}
-		];
+		const tabs = _.map(this.state.parameters,(group) => {
+			return (
+				<ControlsTab iconId={group.label} name={group.label} key={group.label}>
+					<Sliders params={group.parameters} values={this.state.values}/>
+				</ControlsTab>
+			);
+		});
 
 		return (
-			<div class="font-controls">
-				<ControlsTabs tab={this.state.fontControls.tab} >
-					<ControlsTab iconId="functional" name="functional">
-						<Sliders params={params}/>
-					</ControlsTab>
-					<ControlsTab iconId="style" name="style">
-						<Sliders params={params}/>
-					</ControlsTab>
-					<ControlsTab iconId="serif" name="serif">
-						<Sliders params={params}/>
-					</ControlsTab>
+			<div className="font-controls">
+				<ControlsTabs tab={this.state.tabControls} >
+					{tabs}
 				</ControlsTabs>
 			</div>
 		)

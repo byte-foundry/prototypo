@@ -1,25 +1,47 @@
 import React from 'react';
+import ClassNames from 'classnames';
+import LocalClient from '../stores/local-client.stores.jsx';
 
 export class SideTabs extends React.Component {
+
+	componentWillMount() {
+		this.client = new LocalClient().instance;
+
+		this.changeTab = (name) => {
+			this.client.dispatchAction('/change-tab-sidebar',{name});
+		};
+	}
 
 	render() {
 
 		let children;
 
-		if (typeof this.props.children == 'object') {
+		if (!Array.isArray(this.props.children)) {
 			children = [this.props.children];
 		}
 		else {
 			children = this.props.children;
 		}
 
-		const headers = _.map(children,(child) => {
+		const headers = _.map(children,({props: {iconUrl, name}}) => {
+			const classes = ClassNames({
+				'side-tabs-icon':true,
+				'is-active': name === this.props.tab,
+			});
+
 			return (
-				<div className="side-tabs-icon">
-					<img src={`assets/images/${child.props.iconUrl}`}/>
+				<div className={classes} onClick={() => {
+					this.changeTab(name);
+				}} key={`${name}SideHeader`}>
+					<img src={`assets/images/${iconUrl}`}/>
 				</div>
 			);
 		});
+
+		const tab = _.map(children,(child) => {
+			if (this.props.tab === child.props.name)
+				return child;
+		})
 
 		return (
 			<div className="side-tabs">
@@ -30,7 +52,7 @@ export class SideTabs extends React.Component {
 					{headers}
 				</div>
 				<div className="side-tabs-container">
-					{this.props.children}
+					{tab}
 				</div>
 			</div>
 		)
@@ -41,7 +63,7 @@ export class SideTab extends React.Component {
 
 	render() {
 		return (
-			<div className="side-tab is-active">
+			<div className="side-tab is-active" key={`${this.props.name}SideTab`}>
 				{this.props.children}
 			</div>
 		)

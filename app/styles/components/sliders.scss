@@ -51,6 +51,14 @@
 			height: 2rem;
 			background-color: #49e4a9;
 			transition: background-color 500ms ease;
+
+			&.is-not-advised {
+				background-color:$red;
+			}
+		}
+
+		&-bg.is-not-advised &-handle {
+			border-color:$red;
 		}
 
 		&-handle {

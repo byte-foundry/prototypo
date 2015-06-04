@@ -18,7 +18,12 @@ export default class UndoRedoMenu extends React.Component {
 
 		const eventBackLog = this.client.getStore('/eventBackLog',this.lifespan)
 			.onUpdate(({head}) => {
-				this.setState(head.toJS());
+				const headJs = head.toJS();
+				this.setState({
+					to:headJs.to,
+					from:headJs.from,
+					eventList:headJs.eventList,
+				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -30,8 +35,9 @@ export default class UndoRedoMenu extends React.Component {
 	}
 
 	render() {
-		const undoDisabled = (this.state.to || this.state.from) < 2;
-		const redoDisabled = (this.state.to || this.state.from) > (this.state.eventList.length - 2);
+		const whereAt = this.state.to || this.state.from;
+		const undoDisabled = whereAt < 2;
+		const redoDisabled = whereAt > (this.state.eventList.length - 2);
 		const undoClass = ClassNames({
 			'undo-redo-menu-undo-btn':true,
 			'is-disabled':undoDisabled,
@@ -40,6 +46,7 @@ export default class UndoRedoMenu extends React.Component {
 			'undo-redo-menu-redo-btn':true,
 			'is-disabled':redoDisabled,
 		});
+
 		return (
 			<div className="undo-redo-menu">
 				<div className={undoClass} onClick={() => {
@@ -47,12 +54,18 @@ export default class UndoRedoMenu extends React.Component {
 						this.client.dispatchAction('/go-back');
 				}}>
 					<img src="assets/images/undo-arrow.png" />
+					<div className="undo-redo-menu-undo-btn-tooltip">
+						Annuler {this.state.eventList.length ? this.state.eventList[whereAt].label : ''}
+					</div>
 				</div>
 				<div className={redoClass} onClick={() => {
 					if (!redoDisabled)
 						this.client.dispatchAction('/go-forward');
 				}}>
 					<img src="assets/images/redo-arrow.png" />
+					<div className="undo-redo-menu-redo-btn-tooltip">
+						Rétablir {!redoDisabled ? this.state.eventList[whereAt+1].label : ''}
+					</div>
 				</div>
 			</div>
 		)

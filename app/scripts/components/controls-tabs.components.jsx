@@ -8,7 +8,7 @@ export class ControlsTabs extends React.Component {
 		this.client = new LocalClient().instance;
 
 		this.changeTab = (name) => {
-			this.client.dispatchAction('/change-tab',{name});
+			this.client.dispatchAction('/change-tab-font',{name});
 		};
 	}
 	render() {
@@ -22,10 +22,15 @@ export class ControlsTabs extends React.Component {
 				<li className={classes} id={iconId}
 					onClick={() => {
 						this.changeTab(name)
-					}}>
+					}} key={`${name}ControlsHeader`}>
 				</li>
 			);
 		});
+
+		const tab = _.map(this.props.children, (child) => {
+			if (child.props.name === this.props.tab)
+				return child;
+		})
 
 		return (
 			<div className="controls-tabs">
@@ -33,7 +38,7 @@ export class ControlsTabs extends React.Component {
 					{headers}
 				</ul>
 				<div className="controls-tabs-container">
-					{this.props.children}
+					{tab}
 				</div>
 			</div>
 		)
@@ -44,7 +49,7 @@ export class ControlsTab extends React.Component {
 
 	render() {
 		return (
-			<div className="controls-tab">
+			<div className="controls-tab" key={`${this.props.name}ControlsTab`}>
 				{this.props.children}
 			</div>
 		)
