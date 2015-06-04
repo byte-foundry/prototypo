@@ -2,16 +2,48 @@ import React from 'react';
 import Sidebar from './sidebar.components.jsx';
 import Workboard from './workboard.components.jsx';
 import HoodieApi from '../services/hoodie.services.js';
+import Lifespan from 'lifespan';
+import LocalClient from '../stores/local-client.stores.jsx';
+import {Typefaces} from '../services/typefaces.services.js';
+import {FontValues} from '../services/values.services.js';
+import pleaseWait from 'please-wait';
 
 export default class Dashboard extends React.Component {
 
 	async componentWillMount() {
 		try {
+			this.lifespan = new Lifespan();
+			this.client = new LocalClient().instance;
 			const isLoggedIn = await HoodieApi.setup();
+
+			const fontControls = await this.client.fetch('/fontControls');
+			const typedata = await Typefaces.get();
+			const initValues = {};
+			_.each(typedata.parameters,(group) => {
+				return _.each(group.parameters, (param) => {
+					initValues[param.name] = param.init;
+				});
+			});
+			const presetValues = typedata.presets.Modern;
+
+			this.client.dispatchAction('/create-font', typedata);
+			try {
+				const fontValues = await FontValues.get({typeface:'default'});
+				this.client.dispatchAction('/load-values', _.extend(initValues,_.extend(presetValues,fontValues.values)));
+			}
+			catch (err) {
+				this.client.dispatchAction('/load-values',_.extend(fontControls.get('values'), _.extend(initValues,presetValues)));
+				console.log(err);
+			}
+			pleaseWait.instance.finish();
 		}
 		catch (err) {
-			location.href('#/signin');
+			location.href = '#/signin';
 		}
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 	render() {

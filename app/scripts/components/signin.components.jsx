@@ -1,28 +1,40 @@
 import React from 'react';
+import HoodieApi from '../services/hoodie.services.js';
 
-export default class Signin extends React.component {
+export default class Signin extends React.Component {
+	signIn() {
+		HoodieApi.login(`user/${React.findDOMNode(this.refs.email).value}`,
+			React.findDOMNode(this.refs.password).value)
+			.then(() => {
+				location.href = '#/dashboard';
+			})
+	}
 	render() {
 		return (
-			<div class="signin">
-				<h1>Sign in</h1>
-				<label for="email-sign-in">Email</label>
+			<div className="sign-in">
+				<h1 className="sign-in-title">Sign in</h1>
+				<label className="sign-in-label" for="email-sign-in">Email</label>
 				<input
+					className="sign-in-input"
 					id="email-sign-in"
 					name="email-sign-in"
 					required
 					type="email"
+					ref="email"
 					placeholder="Email"/>
-				<label for="password-sign-in">Password</label>
+				<label className="sign-in-label" for="password-sign-in">Password</label>
 				<input
+					className="sign-in-input"
 					id="password-sign-in"
 					name="password-sign-in"
+					ref="password"
 					type="password"
 					required
 					placeholder="Password"/>
 				<a href="about:blank">
-					Forgotton your password ?
+					Forgotten your password ?
 				</a>
-				<button class="signin">Sign in</button>
+				<button className="sign-in-button" onClick={(e) => {this.signIn()}}>Sign in</button>
 			</div>
 		)
 	}

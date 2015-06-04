@@ -1,5 +1,5 @@
 import React from 'react';
-import HoodieApi from '../services/hoodie.services.jsx';
+import HoodieApi from '../services/hoodie.services.js';
 
 export default class SitePortal extends React.Component {
 	componentWillMount() {
@@ -8,7 +8,7 @@ export default class SitePortal extends React.Component {
 				location.href = '#/dashboard';
 			})
 			.catch(() => {
-				location.href = '#/login';
+				location.href = '#/signin';
 			})
 	}
 

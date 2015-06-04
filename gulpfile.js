@@ -52,7 +52,7 @@ gulp.task('images', function() {
 
 gulp.task('css-vendor', function() {
 	//This is a bit hackish but right now i don't care
-	gulp.src('./node_modules/normalize.css/normalize.css')
+	gulp.src(['./node_modules/normalize.css/normalize.css','./node_modules/please-wait/build/please-wait.css'])
 		.pipe(concat('vendor.css'))
 		.pipe(gulp.dest('./dist/assets/'));
 })
@@ -125,7 +125,7 @@ gulp.task('clean',function() {
 
 gulp.task('browserify', bundle);
 
-gulp.task('build', ['clean','images','css-vendor','css-app','browserify']);
+gulp.task('build', ['images','css-vendor','css-app','browserify']);
 
 gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
 	browserSync.init({

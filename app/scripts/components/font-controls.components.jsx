@@ -33,10 +33,10 @@ export default class FontControls extends React.Component {
 				return `modifier ${name}`;
 			},
 			(headJS) => {
-				FontValues.save({
-					typeface: 'default',
-					values: headJS.values,
-				});
+			FontValues.save({
+				typeface: 'default',
+				values: headJS.values,
+			});
 			}
 			);
 

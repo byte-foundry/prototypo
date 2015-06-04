@@ -1,11 +1,16 @@
 import React from 'react';
+
 import {SideTabs, SideTab} from './side-tabs.components.jsx';
 import FontControls from './font-controls.components.jsx';
-import Remutable from 'remutable';
-import Lifespan from 'lifespan';
+import Subscriptions from './subscriptions.components.jsx';
+
 import LocalClient from '../stores/local-client.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
+
 import {registerToUndoStack} from '../helpers/undo-stack.helpers.js';
+
+import Remutable from 'remutable';
+import Lifespan from 'lifespan';
 
 export default class Sidebar extends React.Component {
 
@@ -40,7 +45,7 @@ export default class Sidebar extends React.Component {
 						<FontControls />
 					</SideTab>
 					<SideTab iconUrl="font-controls.png" name="yo">
-						<div>yo</div>
+						<Subscriptions />
 					</SideTab>
 				</SideTabs>
 			</div>
