@@ -21,7 +21,7 @@ const { Patch } = Remutable;
 import {Typefaces} from './services/typefaces.services.js';
 import Prototypo from '../../node_modules/prototypo.js/dist/prototypo.js';
 
-
+Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi')
 React.initializeTouchEvents(true);
 
 const stores = {};

@@ -130,7 +130,8 @@ gulp.task('build', ['images','css-vendor','css-app','browserify']);
 gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
 	browserSync.init({
 		server:['./dist','./node_modules'],
-		port:9000
+		port:9000,
+		logLevel:'debug'
 	});
 
 	gulp.watch('./app/styles/**/*.scss',['css-app']);

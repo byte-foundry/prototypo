@@ -21,6 +21,7 @@ export default class HoodieApi {
 					const db = PouchDB(`${backUrl}/user%2F${id}`);
 					HoodieApi.instance = db.hoodieApi();
 					HoodieApi.instance.hoodieId = id;
+					HoodieApi.instance.email = respJSON.userCtx.name.split('/')[1];
 					resolve();
 				}
 				else {
@@ -52,6 +53,7 @@ export default class HoodieApi {
 				const db = PouchDB(`${backUrl}/user%2F${id}`);
 				HoodieApi.instance = db.hoodieApi();
 				HoodieApi.instance.hoodieId = id;
+				HoodieApi.instance.email = respJSON.name.split('/')[1];
 				resolve();
 				console.log('We in');
 			}

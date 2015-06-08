@@ -6,7 +6,8 @@ import LocalServer from '../stores/local-server.stores.jsx';
 import RemoteClient from 'nexus-flux-socket.io/client';
 import {Subscribe} from 'nexus-flux/dist/Server.Event';
 import {SubscriptionService} from '../services/subscriptions.services.js';
- import HoodieApi from '../services/hoodie.services.js';
+import HoodieApi from '../services/hoodie.services.js';
+import uuid from 'node-uuid';
 
 import SubscriptionWidget from './subscription-widget.components.jsx';
 import SubscriptionPurchase from './subscription-purchase.components.jsx';
@@ -24,56 +25,6 @@ export default class Subscriptions extends React.Component {
 
 	async componentWillMount() {
 		this.lifespan = new Lifespan();
-		this.client = new LocalClient().instance;
-		const server = new LocalServer().instance;
-
-		const cardStore = server.stores['/cards'] = new Remutable({});
-		const subStore = server.stores['/subscriptions'] = new Remutable({});
-
-		this.lifespan.onRelease(() => {
-			server.stores['/cards'] = undefined;
-			server.stores['/subscriptions'] = undefined;
-		});
-
-		this.client.getStore('/subscriptions',this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					subscriptions:head.toJS(),
-				});
-			})
-			.onDelete(() => {
-				this.setState({
-					subscriptions:undefined,
-				});
-			});
-
-		this.client.getStore('/cards',this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					cards:head.toJS(),
-				});
-			})
-			.onDelete(() => {
-				this.setState({
-					cards:undefined,
-				});
-			});
-
-		server.on('action',({path,params}) => {
-			if (path == '/load-subscriptions') {
-				const patch = subStore.set('subscriptions',params).commit();
-				server.dispatchUpdate('/subscriptions',patch);
-			} else if (path == '/load-cards') {
-				const patch = cardStore.set('cards',params).commit();
-				server.dispatchUpdate('/cards',patch);
-			}
-		});
-
-		const subscriptions = await SubscriptionService.mySubscription();
-		const cards = await SubscriptionService.myCards();
-
-		this.client.dispatchAction('/load-subscriptions',subscriptions);
-		this.client.dispatchAction('/load-cards',cards);
 
 	}
 
@@ -102,15 +53,58 @@ export default class Subscriptions extends React.Component {
 	}
 
 	connect() {
-		console.log(HoodieApi);
-		HoodieApi.instance.find('stripe-channel/undefined')
-			.then(function(doc) {
-				const client = new RemoteClient('http://localhost:43430');
+		const storeId = this.storeId = `/stripe${uuid.v4()}`;
+		HoodieApi.startTask('stripe','create-store',{storeId})
+			.then(() => {
+				const client = this.client = new RemoteClient('http://localhost:43430');
+				const storeName = `${storeId}$$${HoodieApi.instance.hoodieId}`;
+				const interval = setInterval(async () => {
+					try {
+						const store = await client.fetch(storeName);
+						clearInterval(interval);
 
-				const store = client.fetch(`${doc.path}$$${HoodieApi.instance.hoodieId}`);
-
-				debugger;
+						client.getStore(storeName,this.lifespan)
+							.onUpdate(({head}) => {
+								this.setState(head.toJS());
+							})
+							.onDelete(() => {
+								this.setState(undefined);
+							});
+					}
+					catch (error) {
+						if (error.status !== 404) {
+							clearInterval(interval);
+							console.log(`Don't go here please`);
+						}
+					}
+				},200);
+			})
+			.catch(() => {
+				console.log('Albany we have a problem !')
 			});
+	}
+
+	addCard() {
+		const cardNumber = React.findDOMNode(this.refs.cardNumber);
+		const year = React.findDOMNode(this.refs.year);
+		const month = React.findDOMNode(this.refs.month);
+		const cvc = React.findDOMNode(this.refs.cvc);
+		const client = this.client;
+		const data = {
+			path:this.storeId,
+			hoodieId: HoodieApi.instance.hoodieId,
+			email:HoodieApi.instance.email,
+		}
+
+		Stripe.card.createToken({
+			number: cardNumber.value,
+			cvc: cvc.value,
+			exp_month: month.value,
+			exp_year: year.value,
+		}, (status, response) => {
+			data.token = response.id;
+			client.dispatchAction('/add-customer',data);
+		})
 	}
 
 	render() {
@@ -125,10 +119,13 @@ export default class Subscriptions extends React.Component {
 		}
 		return (
 			<div>
-				<CardsWidget cards={this.state.cards} />
 				<button onClick={() => { SubscriptionService.mySubscription()}}>Create remote store</button>
-				<button onClick={this.connect}>Connect to link</button>
-				{content}
+				<button onClick={() => {this.connect()}}>Connect to link</button>
+				<input ref="cardNumber" type="text"/>
+				<input ref="cvc" type="text"/>
+				<input ref="month" type="text"/>
+				<input ref="year" type="text"/>
+				<button onClick={() => {this.addCard()}}>Create Card</button>
 			</div>
 		)
 	}
