@@ -140,4 +140,16 @@ gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
 	gulp.watch('./dist/bundle.js',browserSync.reload);
 });
 
+gulp.task('test-serve', function() {
+	browserSync.init({
+		server:['./dist','./node_modules'],
+		port:9000,
+		ghostMode:false
+	});
+
+	gulp.watch('./app/styles/**/*.scss',['css-app']);
+	gulp.watch('./dist/bundle.js',browserSync.reload);
+
+})
+
 gulp.task('default',['serve']);
