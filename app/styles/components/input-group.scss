@@ -1,0 +1,23 @@
+@import "../variables";
+.input-group {
+	border: 1px solid #6ceab4;
+	border-radius: 10px;
+	background-color: #fefefe;
+	color:$dark-grey;
+	font-size: 1.1em;
+	margin-bottom: 1em;
+	display:inline-block;
+
+	input {
+		background-color: transparent;
+		border: none;
+		padding: 7px;
+		text-align:right;
+	}
+
+	&-suffix {
+		display: inline;
+		padding: 7px 15px;
+		border-left: solid 1px $green;
+	}
+}

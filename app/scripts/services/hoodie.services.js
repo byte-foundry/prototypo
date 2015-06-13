@@ -22,6 +22,9 @@ export default class HoodieApi {
 					HoodieApi.instance = db.hoodieApi();
 					HoodieApi.instance.hoodieId = id;
 					HoodieApi.instance.email = respJSON.userCtx.name.split('/')[1];
+					_.each(HoodieApi.eventSub['connected'], (cb) => {
+						cb();
+					});
 					resolve();
 				}
 				else {
@@ -54,6 +57,9 @@ export default class HoodieApi {
 				HoodieApi.instance = db.hoodieApi();
 				HoodieApi.instance.hoodieId = id;
 				HoodieApi.instance.email = respJSON.name.split('/')[1];
+				_.each(HoodieApi.eventSub['connected'], (cb) => {
+					cb();
+				});
 				resolve();
 				console.log('We in');
 			}
@@ -129,6 +135,18 @@ export default class HoodieApi {
 		params.id = `$${type}/${type}`;
 		params.type = `$${type}`;
 		return HoodieApi.instance.add(params);
+	}
+
+	static on(event, callback) {
+		if (!HoodieApi.eventSub) {
+			HoodieApi.eventSub = {};
+		}
+
+		if (!HoodieApi.eventSub[event]) {
+			HoodieApi.eventSub[event] = [];
+		}
+
+		HoodieApi.eventSub[event].push(callback);
 	}
 }
 

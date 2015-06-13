@@ -12,14 +12,18 @@ import Router from 'react-router';
 import Dashboard from './components/dashboard.components.jsx';
 import SitePortal from './components/site-portal.components.jsx'
 import NotLoggedIn from './components/not-logged-in.components.jsx';
+import Subscriptions from './components/subscriptions.components.jsx';
 
 import Remutable from 'remutable';
 import LocalClient from './stores/local-client.stores.jsx';
 import LocalServer from './stores/local-server.stores.jsx';
+import RemoteClient from './stores/remote-client.stores.jsx';
 const { Patch } = Remutable;
 
 import {Typefaces} from './services/typefaces.services.js';
 import Prototypo from '../../node_modules/prototypo.js/dist/prototypo.js';
+import HoodieApi from './services/hoodie.services.js';
+import uuid from 'node-uuid';
 
 Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi')
 React.initializeTouchEvents(true);
@@ -46,6 +50,12 @@ const sideBarTab = stores['/sideBarTab'] = new Remutable({});
 const fontStore = stores['/fontStore'] = new Remutable({});
 
 const glyphs = stores['/glyphs'] = new Remutable({});
+
+RemoteClient.createClient('subscription','http://localhost:43430');
+
+HoodieApi.on('connected',() => {
+	RemoteClient.initRemoteStore('stripe', `/stripe${uuid.v4()}$$${HoodieApi.instance.hoodieId}`,'subscription');
+});
 
 async function createStores() {
 
@@ -189,6 +199,7 @@ let Routes = (
     <DefaultRoute handler={SitePortal}/>
     <Route name="/dashboard" handler={Dashboard}/>
     <Route name="/signin" handler={NotLoggedIn}/>
+    <Route name="/subscription" handler={Subscriptions}/>
   </Route>
 );
 

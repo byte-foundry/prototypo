@@ -1,10 +1,129 @@
 import React from 'react';
+import ClassNames from 'classnames';
+import WaitForLoad from './wait-for-load.components.jsx';
+import moment from 'moment';
 
 export default class CardsWidget extends React.Component {
 	render() {
+
+		let content;
+
+		if (this.props.cards.length == 0) {
+			content = <CardForm errors={this.props.errors} addCard={this.props.addCard} loaded={this.props.loaded}/>
+		}
+		else {
+			content = _.map(this.props.cards, (card) => {
+				return (
+				<WaitForLoad loaded={this.props.loaded}>
+					<div className="cards-widget-list">
+						<h1 className="cards-widget-list-title">Your cards</h1>
+						<CardWidget card={card} deleteCard={this.props.deleteCard}/>
+					</div>
+				</WaitForLoad>
+				)
+			});
+		}
+
 		return (
-			<div>
-				Cards
+			<div className="cards-widget">
+				{content}
+			</div>
+		)
+	}
+}
+
+class CardWidget extends React.Component {
+	render() {
+		const warning = moment(`01/${this.props.card.exp_month}/${this.props.card.exp_year}`,'DD/MM/YYYY')
+			.endOf('month').diff(moment(),'months') < 1 ? (<div className="card-widget-info-warning">Your card expire soon you should change it</div>) : undefined;
+		return (
+			<div className="card-widget">
+				<div className="card-widget-img">
+					<img src="assets/images/super-credit-card.svg"/>
+				</div>
+				<div className="card-widget-info">
+					<h3 className="card-widget-info-title">Your card info</h3>
+					<p>**** **** **** {this.props.card.last4}</p>
+					<p>expire {this.props.card.exp_month} / {this.props.card.exp_year}</p>
+					<button className="card-widget-info-button" onClick={() => { this.props.deleteCard(this.props.card.id) }}>Delete card</button>
+					<button className="card-widget-info-button" >Change card</button>
+					{warning}
+				</div>
+			</div>
+		)
+	}
+}
+
+class CardForm extends React.Component {
+
+	addCard() {
+		const info = {
+			cardNumber: React.findDOMNode(this.refs.cardNumber).value,
+			cvc: React.findDOMNode(this.refs.cvc).value,
+			month: React.findDOMNode(this.refs.month).value,
+			year: React.findDOMNode(this.refs.year).value,
+		}
+
+		this.props.addCard(info);
+	}
+
+	render() {
+
+		const numberClasses = ClassNames({
+			"is-error":this.props.errors.code === 'incorrect_number' || this.props.errors.code === 'invalid_number',
+			"cards-widget-add-number":true,
+			"cards-widget-add-input":true,
+		});
+		const monthClasses = ClassNames({
+			"is-error": this.props.errors.code === 'invalid_expiry_month',
+			"cards-widget-add-month":true,
+			"cards-widget-add-input":true,
+		});
+		const yearClasses = ClassNames({
+			"is-error": this.props.errors.code === 'invalid_expiry_year',
+			"cards-widget-add-year":true,
+			"cards-widget-add-input":true,
+		});
+		const cvcClasses = ClassNames({
+			"is-error": this.props.errors.code === 'invalid_cvc',
+			"cards-widget-add-cvc":true,
+			"cards-widget-add-input":true,
+		});
+		return (<div className="cards-widget-add">
+				<h3 className="cards-widget-add-title">
+					You currently do not have a card registered in your account
+				</h3>
+				<p className="cards-widget-add-intro">
+					Fill your card info to register your card.
+				</p>
+				<div className="cards-widget-add-form">
+					<div className="cards-widget-add-form-disclaimer">
+						This is a secured form. Your informations are safe.
+					</div>
+					<div className="cards-widget-add-line clearfix">
+						<div className="cards-widget-add-line-block">
+							<label for="number">Card number</label>
+							<input id="number" className={numberClasses} ref="cardNumber" placeholder="4242 4242 4242 4242" type="text"/>
+						</div>
+					</div>
+					<div className="cards-widget-add-line clearfix">
+						<div className="cards-widget-add-line-block">
+							<label for="exp_month">Month</label>
+							<input id="exp_month" className={monthClasses} ref="month" placeholder="12" type="text"/>
+						</div>
+						<div className="cards-widget-add-line-block">
+							<label for="exp_year">Year</label>
+							<input id="exp_year" className={yearClasses} ref="year" placeholder="2015" type="text"/>
+						</div>
+						<div className="cards-widget-add-line-block flex3 align-end">
+							<label for="cvc">CVC</label>
+							<input id="cvc" className={cvcClasses} ref="cvc" placeholder="123" type="text"/>
+						</div>
+					</div>
+					<WaitForLoad loaded={this.props.loaded}>
+						<button className="cards-widget-add-button" onClick={() => {this.addCard()}}>Add my card</button>
+					</WaitForLoad>
+				</div>
 			</div>
 		)
 	}

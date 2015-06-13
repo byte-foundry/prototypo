@@ -28,8 +28,18 @@
 	background-color:#4a4a4a;
 	height:100%;
 	display:none;
+	transition:width .2s ease;
+	box-shadow: 4px 0px 6px #aaa;
+	position:relative;
+	z-index:2;
 
 	&.is-active {
 		display:block;
+	}
+
+	&-big {
+		width:800px;
+		z-index:5;
+		box-shadow: none;
 	}
 }

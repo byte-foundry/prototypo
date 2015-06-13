@@ -62,8 +62,14 @@ export class SideTabs extends React.Component {
 export class SideTab extends React.Component {
 
 	render() {
+		const classes = ClassNames({
+			"side-tab": true,
+			"is-active": true,
+			"side-tab-big": !!this.props.big,
+		});
+
 		return (
-			<div className="side-tab is-active" key={`${this.props.name}SideTab`}>
+			<div className={classes} key={`${this.props.name}SideTab`}>
 				{this.props.children}
 			</div>
 		)

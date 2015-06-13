@@ -24,6 +24,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var browserSync = require('browser-sync').create();
 var assign = require('lodash.assign');
 var filter = require('gulp-filter');
+var autoprefixer = require('gulp-autoprefixer');
 var through = require('through');
 
 // Browserify setup
@@ -63,6 +64,7 @@ gulp.task('css-app', function() {
 		.pipe(sourcemaps.init())
 		.pipe(sass())
 		.pipe(concat('app.css'))
+		.pipe(autoprefixer())
 		.pipe(sourcemaps.write())
 		.pipe(gutil.env.type == 'prod' ? minifyCss() : gutil.noop())
 		.pipe(gulp.dest('./dist/assets/'))
@@ -131,7 +133,7 @@ gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
 	browserSync.init({
 		server:['./dist','./node_modules'],
 		port:9000,
-		logLevel:'debug'
+		ghostMode:false
 	});
 
 	gulp.watch('./app/styles/**/*.scss',['css-app']);

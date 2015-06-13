@@ -1,0 +1,163 @@
+@import "../variables";
+
+.flex3 {
+	flex:3 !important;
+}
+
+.align-end {
+	align-items:flex-end !important;
+}
+
+.subscription {
+	padding-left:20px;
+}
+
+.cards-widget {
+	color:#fff;
+
+	.wait-for-load {
+		height:40%;
+	}
+
+	&-list {
+
+		padding-top:40px;
+
+		&-title {
+			margin-top: 0px;
+		}
+	}
+
+	&-add {
+
+		&-title {
+			margin:0;
+			padding-top:40px;
+		}
+
+		&-form {
+			display:flex;
+			width:300px;
+			margin:auto;
+			flex-direction:column;
+
+			&-disclaimer {
+				padding:10px;
+				margin-bottom:10px;
+				background-color:$green;
+			}
+		}
+
+		&-line {
+			display:flex;
+			align-items:stretch;
+			flex-direction: row;
+
+			&-block {
+				flex:1;
+				display:flex;
+				flex-direction: column;
+				align-items:stretch;
+
+				label {
+					color:$light-grey;
+				}
+			}
+		}
+
+		&-number {
+			width:100%
+		}
+
+		&-cvc {
+			width:60px;
+		}
+
+		&-month {
+			width:50px;
+		}
+
+		&-year {
+			width:70px;
+		}
+
+		&-input {
+			display: block;
+			border: 1px solid #6ceab4;
+			border-radius: 10px;
+			padding: .8em;
+			background-color: #fefefe;
+			color:$dark-grey;
+			font-size: 1.1em;
+			margin-bottom: 1em;
+
+			&.is-error {
+				border:2px solid $red;
+			}
+		}
+
+		&-button {
+			display: inline-block;
+			width: auto;
+			margin-top:auto;
+			font-size: 1.1em;
+			font-weight: 400;
+			padding: .9em;
+			color: #fefefe;
+			border: 3px solid #fefefe;
+			background-color: transparent;
+			cursor: pointer;
+			transition:all .2s ease;
+			border-radius:10px;
+
+			&:hover {
+				background-color: #fefefe;
+				color: #49e4a9;
+			}
+		}
+	}
+}
+
+.card-widget {
+	display:flex;
+
+	img {
+		width:229px;
+	}
+
+	&-info {
+		margin-left:40px;
+
+		&-warning {
+			background-color:$yellow;
+			color:$dark-grey;
+			margin-top: 10px;
+			padding:10px;
+		}
+
+		&-button {
+			display: inline-block;
+			width: auto;
+			margin-top:-12px;
+			margin-right: 10px;
+			font-size: 0.8em;
+			font-weight: 400;
+			padding: .9em;
+			color: #fefefe;
+			border: 3px solid #fefefe;
+			background-color: transparent;
+			cursor: pointer;
+			transition:all .2s ease;
+			border-radius:10px;
+
+			&:hover {
+				background-color: #fefefe;
+				color: #49e4a9;
+			}
+		}
+
+		&-title {
+			margin-top:0;
+		}
+	}
+}

@@ -44,7 +44,7 @@ export default class Sidebar extends React.Component {
 					<SideTab iconUrl="font-controls.png" name="sliders">
 						<FontControls />
 					</SideTab>
-					<SideTab iconUrl="font-controls.png" name="yo">
+					<SideTab iconUrl="font-controls.png" name="yo" big={true}>
 						<Subscriptions />
 					</SideTab>
 				</SideTabs>

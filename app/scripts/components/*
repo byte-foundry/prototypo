@@ -126,19 +126,6 @@ export default class Subscriptions extends React.Component {
 		});
 	}
 
-	subscribeWithCoupon(coupon) {
-		const path = this.storeName;
-		this.setState({
-			subLoaded:false,
-		});
-
-		this.client.dispatchAction('/coupon-sub', {
-			path,
-			customerId: this.state.customerId,
-			coupon,
-		});
-	}
-
 	unsubscribe(subscriptionId) {
 		const path = this.storeName;
 		this.setState({
@@ -159,11 +146,7 @@ export default class Subscriptions extends React.Component {
 		if (this.state.subscriptions.length) {
 
 			const subs = _.map(this.state.subscriptions, (sub) => {
-				return (<SubscriptionWidget
-					subscription={sub}
-					unsubscribe={(id) => { this.unsubscribe(id); }}
-					loaded={this.state.subLoaded}
-					validate={(coupon) => { this.subscribeWithCoupon(coupon); }}/>)
+				return (<SubscriptionWidget subscription={sub} unsubscribe={(id) => { this.unsubscribe(id); }} loaded={this.state.subLoaded}/>)
 			});
 			content = (
 				<div>
@@ -173,10 +156,7 @@ export default class Subscriptions extends React.Component {
 			);
 		}
 		else if (this.state.cards.length) {
-			content = <SubscriptionPurchase
-				subscribe={(amount) => { this.subscribe(amount) }}
-				loaded={this.state.subLoaded}
-				validate={(coupon) => { this.subscribeWithCoupon(coupon); }}/>;
+			content = <SubscriptionPurchase subscribe={(amount) => { this.subscribe(amount) }} loaded={this.state.subLoaded}/>;
 		}
 
 		return (
