@@ -17,7 +17,8 @@ export default class Dashboard extends React.Component {
 			const isLoggedIn = await HoodieApi.setup();
 
 			const fontControls = await this.client.fetch('/fontControls');
-			const typedata = await Typefaces.get();
+			const typedataJSON = await Typefaces.getFont();
+			const typedata = JSON.parse(typedataJSON);
 			const initValues = {};
 			_.each(typedata.parameters,(group) => {
 				return _.each(group.parameters, (param) => {
@@ -26,7 +27,6 @@ export default class Dashboard extends React.Component {
 			});
 			const presetValues = typedata.presets.Modern;
 
-			this.client.dispatchAction('/create-font', typedata);
 			try {
 				const fontValues = await FontValues.get({typeface:'default'});
 				this.client.dispatchAction('/load-values', _.extend(initValues,_.extend(presetValues,fontValues.values)));

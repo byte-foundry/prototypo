@@ -1,0 +1,18 @@
+@import "../variables";
+
+.prototypo-canvas-container {
+	position:relative;
+	z-index:1;
+}
+
+.prototypo-panel-buttons-list {
+	position:absolute;
+	top:40px;
+	right:10;
+	z-index:5;
+	&-button {
+		background-color:$green;
+		padding:10px;
+		margin-top:10px;
+	}
+}

@@ -1,5 +1,6 @@
 var Promise = (global || window).Promise = require('bluebird'); //Bluebird promise are way better than native
 var fs = Promise.promisifyAll(require('fs')); //We just want promise seriously
+var path = require('path');
 
 var gulp = require('gulp');
 // CSS Dep
@@ -7,6 +8,7 @@ var sass = require('gulp-sass');
 
 // BROWSERIFY Dep
 var browserify = require('browserify');
+var shim = require('browserify-shim');
 var babelify = require('babelify');
 var watchify = require('watchify')
 var source = require('vinyl-source-stream');
@@ -37,10 +39,8 @@ var through = require('through');
 	entries: ['./app/scripts/main.js'],
 	debug: gutil.env.type == 'prod' ? false : true,
 	noParse: [
-		'../../node_modules/prototypo.js/dist/prototypo.js',
-		'../node_modules/prototypo.js/dist/prototypo.js',
-		'./node_modules/prototypo.js/dist/prototypo.js',
-		'/home/franzp/work/prototypo/node_modules/prototypo.js/dist/prototypo.js'
+		path.resolve('node_modules/prototypo.js/dist/prototypo.js'),
+		path.resolve('node_modules/prototypo-canvas/dist/prototypo-canvas.js')
 	]
 }
 
@@ -110,7 +110,8 @@ var bBase = readPrelude.then(function(prelude) {
 			}
 		})
 		.transform(babelify.configure({
-			stage: 0 //enabling that es7 goodness
+			stage: 0, //enabling that es7 goodness
+			only: './app/scripts'
 		}));
 });
 

@@ -154,6 +154,42 @@ export default class Subscriptions extends React.Component {
 		this.client.dispatchAction('/remove-subscription',data);
 	}
 
+	changeCard(cardId,{cardNumber, year, month, cvc}) {
+		const path = this.storeName;
+		this.setState({
+			cardLoaded:false,
+		});
+		const data = {
+			path,
+			cardId,
+			customerId: this.state.customerId,
+		};
+
+		const client = this.client;
+
+		return new Promise((resolve, reject) => {
+			Stripe.card.createToken({
+				number: cardNumber,
+				cvc: cvc,
+				exp_month: month,
+				exp_year: year,
+			}, (status, response) => {
+				if (response.error) {
+					this.setState({
+						error:response.error,
+						cardLoaded:true,
+					});
+					reject();
+				}
+				else {
+					data.token = response.id;
+					client.dispatchAction('/change-source', data);
+					resolve();
+				}
+			});
+		})
+	}
+
 	render() {
 		let content;
 		if (this.state.subscriptions.length) {
@@ -185,6 +221,7 @@ export default class Subscriptions extends React.Component {
 					<CardsWidget
 						cards={this.state.cards}
 						addCard={(info) => { this.addCard(info) }}
+						changeCard={(id,info) => { return this.changeCard(id,info) }}
 						deleteCard={(id) => {this.deleteCard(id)}}
 						loaded={this.state.cardLoaded}
 						errors={this.state.error}/>

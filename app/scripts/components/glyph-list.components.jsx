@@ -33,15 +33,6 @@ export default class GlyphList extends React.Component {
 				//TODO(franz): Here we shall save stuff to hoodie
 			});
 
-		server.on('action', ({path, params: {unicode}}) => {
-			if (path == '/select-glyph') {
-				const patch = glyphs.set('selected',unicode).commit();
-				server.dispatchUpdate('/glyphs', patch);
-
-				this.undoWatcher.forceUpdate(patch,params.label);
-			}
-		});
-
 		this.client.getStore('/glyphs', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState(head.toJS());

@@ -1,6 +1,7 @@
 import React from 'react';
 import ClassNames from 'classnames';
 import WaitForLoad from './wait-for-load.components.jsx';
+import Modal from './modal.components.jsx';
 import moment from 'moment';
 
 export default class CardsWidget extends React.Component {
@@ -9,7 +10,17 @@ export default class CardsWidget extends React.Component {
 		let content;
 
 		if (this.props.cards.length == 0) {
-			content = <CardForm errors={this.props.errors} addCard={this.props.addCard} loaded={this.props.loaded}/>
+			content = (
+				<div>
+					<h3 className="cards-widget-add-title">
+						You currently do not have a card registered in your account
+					</h3>
+					<p className="cards-widget-add-intro">
+						Fill your card info to register your card.
+					</p>
+					<CardForm errors={this.props.errors} addCard={this.props.addCard} loaded={this.props.loaded}/>
+				</div>
+			)
 		}
 		else {
 			content = _.map(this.props.cards, (card) => {
@@ -17,7 +28,12 @@ export default class CardsWidget extends React.Component {
 				<WaitForLoad loaded={this.props.loaded}>
 					<div className="cards-widget-list">
 						<h1 className="cards-widget-list-title">Your cards</h1>
-						<CardWidget card={card} deleteCard={this.props.deleteCard}/>
+						<CardWidget
+							card={card}
+							errors={this.props.errors}
+							deleteCard={this.props.deleteCard}
+							changeCard={this.props.changeCard}
+							loaded={this.props.loaded}/>
 					</div>
 				</WaitForLoad>
 				)
@@ -33,6 +49,11 @@ export default class CardsWidget extends React.Component {
 }
 
 class CardWidget extends React.Component {
+	componentWillMount() {
+		this.setState({
+			changeCard:false,
+		});
+	}
 	render() {
 		const warning = moment(`01/${this.props.card.exp_month}/${this.props.card.exp_year}`,'DD/MM/YYYY')
 			.endOf('month').diff(moment(),'months') < 1 ? (<div className="card-widget-info-warning">Your card expire soon you should change it</div>) : undefined;
@@ -46,9 +67,27 @@ class CardWidget extends React.Component {
 					<p>**** **** **** {this.props.card.last4}</p>
 					<p>expire {this.props.card.exp_month} / {this.props.card.exp_year}</p>
 					<button className="card-widget-info-button" onClick={() => { this.props.deleteCard(this.props.card.id) }}>Delete card</button>
-					<button className="card-widget-info-button" >Change card</button>
+					<button className="card-widget-info-button" onClick={() => { this.setState({changeCard:true}); }}>Change card</button>
 					{warning}
 				</div>
+				<Modal show={this.state.changeCard}>
+					<h1 className="cards-widget-add-title">
+						Change your payment card
+					</h1>
+					<CardForm
+						errors={this.props.errors}
+						loaded={this.props.loaded}
+						changeTitle={true}
+						addCard={(info) => {
+						this.props.changeCard.bind(null,this.props.card.id)(info)
+							.then(() => {
+								this.setState({
+									changeCard:false,
+								});
+							})
+							.catch(() => { })
+					}}/>
+				</Modal>
 			</div>
 		)
 	}
@@ -89,13 +128,8 @@ class CardForm extends React.Component {
 			"cards-widget-add-cvc":true,
 			"cards-widget-add-input":true,
 		});
+
 		return (<div className="cards-widget-add">
-				<h3 className="cards-widget-add-title">
-					You currently do not have a card registered in your account
-				</h3>
-				<p className="cards-widget-add-intro">
-					Fill your card info to register your card.
-				</p>
 				<div className="cards-widget-add-form">
 					<div className="cards-widget-add-form-disclaimer">
 						This is a secured form. Your informations are safe.

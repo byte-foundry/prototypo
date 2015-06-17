@@ -2,7 +2,8 @@ import PouchDB from 'pouchdb';
 import HoodiePouch from 'pouchdb-hoodie-api';
 PouchDB.plugin(HoodiePouch);
 
-const backUrl = 'http://localhost:6004';
+//const backUrl = 'http://localhost:6004';
+const backUrl = 'https://prototypo.appback.com/_api';
 
 export default class HoodieApi {
 
@@ -22,9 +23,11 @@ export default class HoodieApi {
 					HoodieApi.instance = db.hoodieApi();
 					HoodieApi.instance.hoodieId = id;
 					HoodieApi.instance.email = respJSON.userCtx.name.split('/')[1];
-					_.each(HoodieApi.eventSub['connected'], (cb) => {
-						cb();
-					});
+					if (HoodieApi.eventSub) {
+						_.each(HoodieApi.eventSub['connected'], (cb) => {
+							cb();
+						});
+					}
 					resolve();
 				}
 				else {

@@ -21,7 +21,8 @@ import RemoteClient from './stores/remote-client.stores.jsx';
 const { Patch } = Remutable;
 
 import {Typefaces} from './services/typefaces.services.js';
-import Prototypo from '../../node_modules/prototypo.js/dist/prototypo.js';
+// import Prototypo from '../../node_modules/prototypo.js/dist/prototypo.js';
+import PrototypoCanvas from '../../node_modules/prototypo-canvas/dist/prototypo-canvas.js';
 import HoodieApi from './services/hoodie.services.js';
 import uuid from 'node-uuid';
 
@@ -51,11 +52,17 @@ const fontStore = stores['/fontStore'] = new Remutable({});
 
 const glyphs = stores['/glyphs'] = new Remutable({});
 
-RemoteClient.createClient('subscription','http://localhost:43430');
+const panel = stores['/panel'] = new Remutable({});
 
-HoodieApi.on('connected',() => {
-	RemoteClient.initRemoteStore('stripe', `/stripe${uuid.v4()}$$${HoodieApi.instance.hoodieId}`,'subscription');
-});
+const canvasEl = window.canvasElement = document.createElement('canvas');
+canvasEl.width = 1024;
+canvasEl.height = 1024;
+
+//RemoteClient.createClient('subscription','http://localhost:43430');
+
+//HoodieApi.on('connected',() => {
+//	RemoteClient.initRemoteStore('stripe', `/stripe${uuid.v4()}$$${HoodieApi.instance.hoodieId}`,'subscription');
+//});
 
 async function createStores() {
 
@@ -82,20 +89,22 @@ async function createStores() {
 		},
 		'/create-font': (params) => {
 			const patch = fontStore
-				.set('fontName', font.ot.familyName)
+				.set('fontName', params.font.ot.familyName)
 				.commit();
 			localServer.dispatchUpdate('/fontStore',patch);
 		},
 		'/update-font': (params) => {
-			font.subset =  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-			params.ascenderHeight = params.ascender + params.xHeight;
-			params.capHeight = params.xHeight + params.capDelta;
-			params.contrast = -params._contrast;
-			params.spacing = 1;
-			font.update(params);
-			font.updateSVGData();
-			font.updateOTCommands();
-			font.addToFonts();
+			fontPromise
+				.then(() => {
+					font.subset(panel.head.toJS().text);
+					if (params) {
+						params.ascenderHeight = params.ascender + params.xHeight;
+						params.capHeight = params.xHeight + params.capDelta;
+						params.contrast = -params._contrast;
+						params.spacing = 1;
+						font.update(params);
+					}
+				});
 		},
 		'/go-back': () => {
 
@@ -156,6 +165,31 @@ async function createStores() {
 				.set('from',newEventList.length - 1).commit();
 			localServer.dispatchUpdate('/eventBackLog',eventPatch);
 		},
+		'/select-glyph':({unicode}) => {
+				const patch = glyphs.set('selected',unicode).commit();
+				localServer.dispatchUpdate('/glyphs', patch);
+
+				font.displayChar(String.fromCharCode(unicode));
+
+				// this.undoWatcher.forceUpdate(patch,params.label);
+		},
+		'/change-panel-mode': ({mode}) => {
+			const patch = panel.set('mode',mode).commit();
+			localServer.dispatchUpdate('/panel',patch);
+		},
+		'/store-panel-pos': ({pos}) => {
+			const patch = panel.set('pos',pos).commit();
+			localServer.dispatchUpdate('/panel',patch);
+		},
+		'/store-panel-zoom': ({zoom}) => {
+			const patch = panel.set('zoom',zoom).commit();
+			localServer.dispatchUpdate('/panel',patch);
+		},
+		'/store-text': ({text}) => {
+			const patch = panel.set('text',text).commit();
+			localServer.dispatchUpdate('/panel',patch);
+			localClient.dispatchAction('/update-font',{});
+		}
 	}
 
 	localServer.on('action',({path, params}) => {
@@ -168,41 +202,57 @@ async function createStores() {
 
 	}, localServer.lifespan);
 
-	const typedata = await Typefaces.get();
+	const typedataJSON = await Typefaces.getFont();
+	const typedata = JSON.parse(typedataJSON);
+	const prototypoSource = await Typefaces.getPrototypo();
 
-	Prototypo.setup(document.createElement('canvas'));
-	const font = Prototypo.parametricFont(typedata);
+
+	// Prototypo.setup(document.createElement('canvas'));
+	// const font = Prototypo.parametricFont(typedata);
+
+
+	const fontPromise = PrototypoCanvas.load({
+		canvas:canvasEl,
+		fontSource: typedataJSON,
+		prototypoSource: prototypoSource,
+	});
+
+	const font = window.fontInstance = await fontPromise;
+	font.displayChar('A');
+	localClient.dispatchAction('/create-font', font);
 
 	localClient.dispatchAction('/load-params', typedata.parameters);
-	localClient.dispatchAction('/load-glyphs', font.altMap);
+	localClient.dispatchAction('/load-glyphs', font.font.altMap);
 }
 
-createStores();
+createStores()
+	.then(() => {
+		const Route = Router.Route,
+		  RouteHandler = Router.RouteHandler,
+		  DefaultRoute = Router.DefaultRoute;
+
+		const content = document.getElementById('content');
+
+		class App extends React.Component {
+		  render() {
+		    return (
+		        <RouteHandler />
+		    );
+		  }
+		}
+
+		let Routes = (
+		  <Route handler={App} name="app" path="/">
+		    <DefaultRoute handler={SitePortal}/>
+		    <Route name="/dashboard" handler={Dashboard}/>
+		    <Route name="/signin" handler={NotLoggedIn}/>
+		    <Route name="/subscription" handler={Subscriptions}/>
+		  </Route>
+		);
+
+		Router.run(Routes, function (Handler) {
+		  React.render(<Handler />, content);
+		});
+	});
 
 
-const Route = Router.Route,
-  RouteHandler = Router.RouteHandler,
-  DefaultRoute = Router.DefaultRoute;
-
-const content = document.getElementById('content');
-
-class App extends React.Component {
-  render() {
-    return (
-        <RouteHandler />
-    );
-  }
-}
-
-let Routes = (
-  <Route handler={App} name="app" path="/">
-    <DefaultRoute handler={SitePortal}/>
-    <Route name="/dashboard" handler={Dashboard}/>
-    <Route name="/signin" handler={NotLoggedIn}/>
-    <Route name="/subscription" handler={Subscriptions}/>
-  </Route>
-);
-
-Router.run(Routes, function (Handler) {
-  React.render(<Handler />, content);
-});
