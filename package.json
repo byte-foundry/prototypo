@@ -3,15 +3,16 @@
   "version": "0.1.0",
   "dependencies": {
     "babel": "^5.5.8",
+    "babel-runtime": "^5.5.8",
     "bluebird": "^2.9.30",
     "classnames": "^2.1.2",
     "del": "^1.2.0",
     "hoodie": "^2.0.4",
-    "lifespan": "^5.0.1",
+    "lifespan": "^3.1.1",
     "lodash": "^3.9.3",
     "moment": "^2.10.3",
-    "nexus-flux": "^4.0.2",
-    "nexus-flux-socket.io": "^3.0.3",
+    "nexus-flux": "^3.4.4",
+    "nexus-flux-socket.io": "^2.6.0",
     "node-uuid": "^1.4.3",
     "normalize.css": "^3.0.3",
     "please-wait": "0.0.5",
@@ -21,7 +22,7 @@
     "prototypo.js": "^0.6.0",
     "react": "^0.13.3",
     "react-router": "^0.13.3",
-    "remutable": "^3.0.1"
+    "remutable": "^1.1.1"
   },
   "devDependencies": {
     "babelify": "^6.1.2",
