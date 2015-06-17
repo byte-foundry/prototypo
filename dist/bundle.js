@@ -144,7 +144,7 @@ function createStores() {
 					},
 					'/update-font': function updateFont(params) {
 						fontPromise.then(function () {
-							font.subset(panel.head.toJS().text);
+							font.subset(panel.head.toJS().text || false);
 							if (params) {
 								params.ascenderHeight = params.ascender + params.xHeight;
 								params.capHeight = params.xHeight + params.capDelta;
@@ -4364,9 +4364,11 @@ var HoodieApi = (function () {
 					HoodieApi.instance = db.hoodieApi();
 					HoodieApi.instance.hoodieId = id;
 					HoodieApi.instance.email = respJSON.name.split('/')[1];
-					_.each(HoodieApi.eventSub['connected'], function (cb) {
-						cb();
-					});
+					if (HoodieApi.eventSub) {
+						_.each(HoodieApi.eventSub['connected'], function (cb) {
+							cb();
+						});
+					}
 					resolve();
 					console.log('We in');
 				};

@@ -96,7 +96,7 @@ async function createStores() {
 		'/update-font': (params) => {
 			fontPromise
 				.then(() => {
-					font.subset(panel.head.toJS().text);
+					font.subset(panel.head.toJS().text || false);
 					if (params) {
 						params.ascenderHeight = params.ascender + params.xHeight;
 						params.capHeight = params.xHeight + params.capDelta;

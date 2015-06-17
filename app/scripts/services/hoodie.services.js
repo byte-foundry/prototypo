@@ -60,9 +60,11 @@ export default class HoodieApi {
 				HoodieApi.instance = db.hoodieApi();
 				HoodieApi.instance.hoodieId = id;
 				HoodieApi.instance.email = respJSON.name.split('/')[1];
-				_.each(HoodieApi.eventSub['connected'], (cb) => {
-					cb();
-				});
+				if (HoodieApi.eventSub) {
+					_.each(HoodieApi.eventSub['connected'], (cb) => {
+						cb();
+					});
+				}
 				resolve();
 				console.log('We in');
 			}
