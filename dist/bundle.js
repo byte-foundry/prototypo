@@ -1677,6 +1677,11 @@ var PrototypoText = (function (_React$Component) {
 			this.lifespan.release();
 		}
 	}, {
+		key: 'updateSubset',
+		value: function updateSubset() {
+			fontInstance.subset(_react2['default'].findDOMNode(this.refs.text).value);
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			var style = {
@@ -4068,12 +4073,12 @@ function createStores() {
 					'/load-params': function loadParams(params) {
 						var patch = fontControls.set('parameters', params).commit();
 						localServer.dispatchUpdate('/fontControls', patch);
-						localClient.dispatchAction('/update-font', params);
 					},
 					'/load-values': function loadValues(params) {
 						var patch = fontControls.set('values', params).commit();
 						localServer.dispatchUpdate('/fontControls', patch);
 						localClient.dispatchAction('/store-action', { store: '/fontControls', patch: patch });
+						localClient.dispatchAction('/update-font', params);
 					},
 					'/load-glyphs': function loadGlyphs(params) {
 						var patch = glyphs.set('glyphs', params).commit();
@@ -4086,13 +4091,11 @@ function createStores() {
 					'/update-font': function updateFont(params) {
 						fontPromise.then(function () {
 							font.subset(panel.head.toJS().text || false);
-							if (params) {
-								params.ascenderHeight = params.ascender + params.xHeight;
-								params.capHeight = params.xHeight + params.capDelta;
-								params.contrast = -params._contrast;
-								params.spacing = 1;
-								font.update(params);
-							}
+							params.ascenderHeight = params.ascender + params.xHeight;
+							params.capHeight = params.xHeight + params.capDelta;
+							params.contrast = -params._contrast;
+							params.spacing = 1;
+							font.update(params);
 						});
 					},
 					'/go-back': function goBack() {
@@ -4178,7 +4181,7 @@ function createStores() {
 
 						var patch = panel.set('text', text).commit();
 						localServer.dispatchUpdate('/panel', patch);
-						localClient.dispatchAction('/update-font', {});
+						font.subset(panel.head.toJS().text || false);
 					}
 				};
 

@@ -72,7 +72,6 @@ async function createStores() {
 				.set('parameters',params)
 				.commit();
 			localServer.dispatchUpdate('/fontControls',patch);
-			localClient.dispatchAction('/update-font', params);
 		},
 		'/load-values': (params) => {
 			const patch = fontControls
@@ -80,6 +79,7 @@ async function createStores() {
 				.commit();
 			localServer.dispatchUpdate('/fontControls',patch);
 			localClient.dispatchAction('/store-action',{store:'/fontControls',patch});
+			localClient.dispatchAction('/update-font', params);
 		},
 		'/load-glyphs': (params) => {
 			const patch = glyphs
@@ -97,13 +97,11 @@ async function createStores() {
 			fontPromise
 				.then(() => {
 					font.subset(panel.head.toJS().text || false);
-					if (params) {
-						params.ascenderHeight = params.ascender + params.xHeight;
-						params.capHeight = params.xHeight + params.capDelta;
-						params.contrast = -params._contrast;
-						params.spacing = 1;
-						font.update(params);
-					}
+					params.ascenderHeight = params.ascender + params.xHeight;
+					params.capHeight = params.xHeight + params.capDelta;
+					params.contrast = -params._contrast;
+					params.spacing = 1;
+					font.update(params);
 				});
 		},
 		'/go-back': () => {
@@ -188,8 +186,8 @@ async function createStores() {
 		'/store-text': ({text}) => {
 			const patch = panel.set('text',text).commit();
 			localServer.dispatchUpdate('/panel',patch);
-			localClient.dispatchAction('/update-font',{});
-		}
+			font.subset(panel.head.toJS().text || false);
+		},
 	}
 
 	localServer.on('action',({path, params}) => {

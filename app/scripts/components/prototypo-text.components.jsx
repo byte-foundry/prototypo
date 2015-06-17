@@ -39,6 +39,10 @@ export default class PrototypoText extends React.Component {
 		this.lifespan.release();
 	}
 
+	updateSubset() {
+		fontInstance.subset(React.findDOMNode(this.refs.text).value);
+	}
+
 	render() {
 		const style = {
 			'fontFamily':`${this.props.fontName || 'theyaintus'}, 'sans-serif'`,
