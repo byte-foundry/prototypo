@@ -244,9 +244,9 @@ createStores()
 		let Routes = (
 		  <Route handler={App} name="app" path="/">
 		    <DefaultRoute handler={SitePortal}/>
-		    <Route name="/dashboard" handler={Dashboard}/>
-		    <Route name="/signin" handler={NotLoggedIn}/>
-		    <Route name="/subscription" handler={Subscriptions}/>
+		    <Route name="dashboard" handler={Dashboard}/>
+		    <Route name="signin" handler={NotLoggedIn}/>
+		    <Route name="subscription" handler={Subscriptions}/>
 		  </Route>
 		);
 
