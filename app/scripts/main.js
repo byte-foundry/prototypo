@@ -27,7 +27,6 @@ import HoodieApi from './services/hoodie.services.js';
 import uuid from 'node-uuid';
 
 Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi')
-React.initializeTouchEvents(true);
 
 const stores = {};
 const localServer = new LocalServer(stores).instance;
@@ -253,5 +252,3 @@ createStores()
 		  React.render(<Handler />, content);
 		});
 	});
-
-

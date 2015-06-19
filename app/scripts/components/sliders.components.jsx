@@ -64,6 +64,8 @@ export class SliderController extends React.Component {
 		this.client = LocalClient.instance();
 		const slider = React.findDOMNode(this.refs.slider);
 		this.sliderWidth = slider.offsetWidth;
+		this.bindedHandleUp = this.handleUp.bind(this);
+		this.bindedHandleMove = this.handleMove.bind(this);
 	}
 
 	componentWillUnmount() {
@@ -75,6 +77,9 @@ export class SliderController extends React.Component {
 		this.currentX = e.pageX
 
 		e.stopPropagation();
+
+		document.addEventListener('mouseup',this.bindedHandleUp);
+		window.addEventListener('mousemove',this.bindedHandleMove);
 	}
 
 	handleUp(e) {
@@ -84,6 +89,9 @@ export class SliderController extends React.Component {
 			this.client.dispatchAction('/change-param',{value:this.props.value,name:this.props.name,label:this.props.label,force:true});
 
 			e.stopPropagation();
+
+			document.removeEventListener('mouseup',this.bindedHandleUp);
+			window.removeEventListener('mousemove',this.bindedHandleMove);
 
 		}
 	}
@@ -123,9 +131,6 @@ export class SliderController extends React.Component {
 			'slider-controller-bg':true,
 			'is-not-advised':this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised,
 		});
-
-		document.addEventListener('mouseup',(e) => { this.handleUp(e)});
-		document.addEventListener('mousemove', (e) => { this.handleMove(e)});
 
 		return (
 			<div className="slider-controller" ref="slider"
