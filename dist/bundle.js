@@ -1552,6 +1552,12 @@ var PrototypoPanel = (function (_React$Component) {
 			});
 		}
 	}, {
+		key: 'resetView',
+		value: function resetView() {
+			fontInstance.view.center = [0, 0];
+			fontInstance.zoom = 0.5;
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;
@@ -1582,7 +1588,7 @@ var PrototypoPanel = (function (_React$Component) {
 					} }), _react2['default'].createElement(ContextualMenuItem, { text: '' + (!fontInstance.showCoords ? 'Show' : 'Hide') + ' coords', click: function () {
 						fontInstance.showCoords = !fontInstance.showCoords;
 					} }), _react2['default'].createElement(ContextualMenuItem, { text: 'Reset view', click: function () {
-						fontInstance.view.center = [0, 0];fontInstance.zoom = 0.5;
+						_this2.resetView();
 					} }), _react2['default'].createElement(ContextualMenuItem, { text: '' + (this.state.shadow ? 'Hide' : 'Show') + ' shadow', click: function () {
 						_this2.setState({ shadow: !_this2.state.shadow });
 					} })];
@@ -1590,12 +1596,18 @@ var PrototypoPanel = (function (_React$Component) {
 
 			return _react2['default'].createElement(
 				'div',
-				{ id: 'prototypopanel', onContextMenu: function (e) {
+				{ id: 'prototypopanel',
+					onContextMenu: function (e) {
 						_this2.showContextMenu(e);
-					}, onClick: function () {
+					},
+					onClick: function () {
 						_this2.hideContextMenu();
-					}, onMouseLeave: function () {
+					},
+					onMouseLeave: function () {
 						_this2.hideContextMenu();
+					},
+					onDoubleClick: function () {
+						_this2.resetView();
 					} },
 				view,
 				_react2['default'].createElement(
@@ -2605,18 +2617,16 @@ var SliderController = (function (_React$Component3) {
 				'is-not-advised': this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised
 			});
 
+			document.addEventListener('mouseup', function (e) {
+				_this3.handleUp(e);
+			});
+			document.addEventListener('mousemove', function (e) {
+				_this3.handleMove(e);
+			});
+
 			return _react2['default'].createElement(
 				'div',
 				{ className: 'slider-controller', ref: 'slider',
-					onMouseUp: function (e) {
-						_this3.handleUp(e);
-					},
-					onMouseMove: function (e) {
-						_this3.handleMove(e);
-					},
-					onMouseLeave: function (e) {
-						_this3.handleUp(e);
-					},
 					onClick: function (e) {
 						_this3.handleClick(e);
 					} },

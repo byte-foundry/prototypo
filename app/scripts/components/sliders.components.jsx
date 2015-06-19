@@ -124,11 +124,11 @@ export class SliderController extends React.Component {
 			'is-not-advised':this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised,
 		});
 
+		document.addEventListener('mouseup',(e) => { this.handleUp(e)});
+		document.addEventListener('mousemove', (e) => { this.handleMove(e)});
+
 		return (
 			<div className="slider-controller" ref="slider"
-				onMouseUp={(e) => { this.handleUp(e) }}
-				onMouseMove={(e) => { this.handleMove(e) }}
-				onMouseLeave={(e) => { this.handleUp(e) }}
 				onClick={(e) => { this.handleClick(e) }} >
 				<div className={classes} style={transform}>
 					<div

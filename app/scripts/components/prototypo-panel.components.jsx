@@ -92,6 +92,11 @@ export default class PrototypoPanel extends React.Component {
 		});
 	}
 
+	resetView() {
+		fontInstance.view.center = [0,0];
+		fontInstance.zoom = 0.5;
+	}
+
 	render() {
 		let view;
 		let menu;
@@ -112,13 +117,17 @@ export default class PrototypoPanel extends React.Component {
 				<ContextualMenuItem text={`${!fontInstance.showNodes ? 'Show' : 'Hide'} nodes`} click={() => { fontInstance.showNodes = !fontInstance.showNodes; }}/>,
 				<ContextualMenuItem text={`${fontInstance.fill ? 'Show' : 'Hide'} outline`} click={() => { fontInstance.fill = !fontInstance.fill; }}/>,
 				<ContextualMenuItem text={`${!fontInstance.showCoords ? 'Show' : 'Hide'} coords`} click={() => { fontInstance.showCoords = !fontInstance.showCoords; }}/>,
-				<ContextualMenuItem text="Reset view" click={() => { fontInstance.view.center = [0,0]; fontInstance.zoom = 0.5}}/>,
+				<ContextualMenuItem text="Reset view" click={() => { this.resetView() }}/>,
 				<ContextualMenuItem text={`${this.state.shadow ? 'Hide' : 'Show'} shadow`} click={() => { this.setState({shadow:!this.state.shadow})}}/>,
 			]
 		}
 
 		return (
-			<div id="prototypopanel" onContextMenu={(e) => {this.showContextMenu(e)}} onClick={() => { this.hideContextMenu() }} onMouseLeave={() => {this.hideContextMenu()}}>
+			<div id="prototypopanel"
+				onContextMenu={(e) => {this.showContextMenu(e)}}
+				onClick={() => { this.hideContextMenu() }}
+				onMouseLeave={() => {this.hideContextMenu()}}
+				onDoubleClick={() => { this.resetView() }}>
 				{view}
 				<div className="prototypo-panel-buttons-list">
 					<div className="prototypo-panel-buttons-list-button" onClick={() => { this.changeMode('text')}}>
