@@ -2,6 +2,7 @@
 
 .slider {
 	margin-bottom:15px;
+	font-size: 0.8em;
 
 	&-title {
 		text-transform: uppercase;
@@ -48,7 +49,7 @@
 		}
 
 		&-bg {
-			height: 2rem;
+			height: 1.9rem;
 			background-color: #49e4a9;
 			transition: background-color 500ms ease;
 
@@ -63,8 +64,8 @@
 
 		&-handle {
 			float: right;
-			width: 2rem;
-			height: 2rem;
+			width: 1.9rem;
+			height: 1.9rem;
 			border: 0.5rem solid #49e4a9;
 			background-color: #555555;
 			transition: border-color 500ms ease;

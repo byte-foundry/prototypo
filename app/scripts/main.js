@@ -55,6 +55,7 @@ const glyphs = stores['/glyphs'] = new Remutable({});
 const panel = stores['/panel'] = new Remutable({});
 
 const canvasEl = window.canvasElement = document.createElement('canvas');
+canvasEl.className = "prototypo-canvas";
 canvasEl.width = 1024;
 canvasEl.height = 1024;
 

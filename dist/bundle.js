@@ -4179,6 +4179,7 @@ var glyphs = stores['/glyphs'] = new _remutable2['default']({});
 var panel = stores['/panel'] = new _remutable2['default']({});
 
 var canvasEl = window.canvasElement = document.createElement('canvas');
+canvasEl.className = 'prototypo-canvas';
 canvasEl.width = 1024;
 canvasEl.height = 1024;
 

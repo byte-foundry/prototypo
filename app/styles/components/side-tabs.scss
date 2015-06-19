@@ -1,3 +1,5 @@
+@import "../variables";
+
 .side-tabs {
 	&-headers {
 		width:70px;
@@ -5,9 +7,10 @@
 	}
 
 	&-icon-headers {
-		height:82px;
+		height:72px;
 		padding-top:19px;
 		padding-left:22px;
+		background-color: $white;
 	}
 
 	&-icon {
