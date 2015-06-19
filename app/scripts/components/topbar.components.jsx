@@ -16,7 +16,7 @@ export default class Topbar extends React.Component {
 	}
 
 	componentWillMount() {
-		this.client = new LocalClient().instance;
+		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
 		const eventBackLog = this.client.getStore('/eventBackLog',this.lifespan)

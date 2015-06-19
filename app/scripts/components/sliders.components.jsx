@@ -27,7 +27,7 @@ export class Slider extends React.Component {
 
 	componentWillMount() {
 		this.lifespan = new Lifespan();
-		this.client = new LocalClient().instance;
+		this.client = LocalClient.instance();
 	}
 
 	componentWillUnmount() {
@@ -61,7 +61,7 @@ export class SliderController extends React.Component {
 
 	componentDidMount() {
 		this.lifespan = new Lifespan();
-		this.client = new LocalClient().instance;
+		this.client = LocalClient.instance();
 		const slider = React.findDOMNode(this.refs.slider);
 		this.sliderWidth = slider.offsetWidth;
 	}
@@ -146,7 +146,7 @@ export class SliderTextController extends React.Component {
 
 	componentWillMount() {
 		this.lifespan = new Lifespan();
-		this.client = new LocalClient().instance;
+		this.client = LocalClient.instance();
 	}
 
 	componentWillUnmount() {

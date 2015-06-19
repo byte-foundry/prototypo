@@ -455,7 +455,7 @@ var ControlsTabs = (function (_React$Component) {
 		value: function componentWillMount() {
 			var _this = this;
 
-			this.client = new _storesLocalClientStoresJsx2['default']().instance;
+			this.client = _storesLocalClientStoresJsx2['default'].instance();
 
 			this.changeTab = function (name) {
 				_this.client.dispatchAction('/change-tab-font', { name: name });
@@ -616,7 +616,7 @@ var Dashboard = (function (_React$Component) {
 								while (1) switch (context$3$0.prev = context$3$0.next) {
 									case 0:
 										this.lifespan = new _lifespan2['default']();
-										this.client = new _storesLocalClientStoresJsx2['default']().instance;
+										this.client = _storesLocalClientStoresJsx2['default'].instance();
 										context$3$0.next = 4;
 										return regeneratorRuntime.awrap(_servicesHoodieServicesJs2['default'].setup());
 
@@ -797,7 +797,7 @@ var FontControls = (function (_React$Component) {
 				while (1) switch (context$2$0.prev = context$2$0.next) {
 					case 0:
 						this.lifespan = new _lifespan2['default']();
-						this.client = new _storesLocalClientStoresJsx2['default']().instance;
+						this.client = _storesLocalClientStoresJsx2['default'].instance();
 						server = new _storesLocalServerStoresJsx2['default']().instance;
 						context$2$0.next = 5;
 						return regeneratorRuntime.awrap(this.client.fetch('/fontControls'));
@@ -1058,7 +1058,7 @@ var GlyphList = (function (_React$Component) {
 				while (1) switch (context$2$0.prev = context$2$0.next) {
 					case 0:
 						this.lifespan = new _lifespan2['default']();
-						this.client = new _storesLocalClientStoresJsx2['default']().instance;
+						this.client = _storesLocalClientStoresJsx2['default'].instance();
 						server = new _storesLocalServerStoresJsx2['default']().instance;
 						context$2$0.next = 5;
 						return regeneratorRuntime.awrap(this.client.fetch('/glyphs'));
@@ -1227,7 +1227,7 @@ var Glyph = (function (_React$Component) {
 	_createClass(Glyph, [{
 		key: 'selectGlyph',
 		value: function selectGlyph() {
-			var client = new _storesLocalClientStoresJsx2['default']().instance;
+			var client = _storesLocalClientStoresJsx2['default'].instance();
 
 			client.dispatchAction('/select-glyph', { unicode: this.props.unicode });
 		}
@@ -1421,6 +1421,8 @@ Object.defineProperty(exports, '__esModule', {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -1448,12 +1450,18 @@ var _ = require('lodash');
 var Promise = (global || window).Promise = require('bluebird');
 
 var PrototypoPanel = (function (_React$Component) {
-	function PrototypoPanel() {
+	function PrototypoPanel(props) {
 		_classCallCheck(this, PrototypoPanel);
 
-		if (_React$Component != null) {
-			_React$Component.apply(this, arguments);
-		}
+		_get(Object.getPrototypeOf(PrototypoPanel.prototype), 'constructor', this).call(this, props);
+		this.state = {
+			contextMenuPos: { x: 0, y: 0 },
+			showContextMenu: false,
+			glyph: {},
+			panel: {
+				mode: 'text'
+			}
+		};
 	}
 
 	_inherits(PrototypoPanel, _React$Component);
@@ -1463,15 +1471,23 @@ var PrototypoPanel = (function (_React$Component) {
 		value: function componentWillMount() {
 			var _this = this;
 
-			this.client = _storesLocalClientStoresJsx2['default'].instance;
+			this.client = _storesLocalClientStoresJsx2['default'].instance();
 			this.lifespan = new _lifespan2['default']();
 
 			this.client.getStore('/panel', this.lifespan).onUpdate(function (_ref) {
 				var head = _ref.head;
 
-				_this.setState(head.toJS());
+				_this.setState({ panel: head.toJS() });
 			}).onDelete(function () {
-				_this.setState(undefined);
+				_this.setState({ panel: undefined });
+			});
+
+			this.client.getStore('/glyphs', this.lifespan).onUpdate(function (_ref2) {
+				var head = _ref2.head;
+
+				_this.setState({ glyph: head.toJS() });
+			}).onDelete(function () {
+				_this.setState({ glyph: undefined });
 			});
 		}
 	}, {
@@ -1486,8 +1502,8 @@ var PrototypoPanel = (function (_React$Component) {
 				canvasEl.addEventListener('wheel', fontInstance.wheelHandler.bind(fontInstance));
 				canvasEl.addEventListener('mousedown', fontInstance.downHandler.bind(fontInstance));
 				canvasEl.addEventListener('mouseup', fontInstance.upHandler.bind(fontInstance));
-				fontInstance.zoom = this.state.zoom ? this.state.zoom : 0.5;
-				fontInstance.view.center = this.state.pos ? this.state.pos : fontInstance.view.center;
+				fontInstance.zoom = this.state.panel.zoom ? this.state.panel.zoom : 0.5;
+				fontInstance.view.center = this.state.panel.pos ? this.state.panel.pos : fontInstance.view.center;
 			}
 		}
 	}, {
@@ -1515,44 +1531,72 @@ var PrototypoPanel = (function (_React$Component) {
 			}
 		}
 	}, {
+		key: 'showContextMenu',
+		value: function showContextMenu(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.setState({
+				showContextMenu: true,
+				contextMenuPos: { x: e.clientX, y: e.clientY }
+			});
+		}
+	}, {
+		key: 'hideContextMenu',
+		value: function hideContextMenu() {
+			if (this.state.panel.mode === 'glyph') {
+				this.client.dispatchAction('/store-panel-pos', { pos: fontInstance.view.center });
+				this.client.dispatchAction('/store-panel-zoom', { zoom: fontInstance.zoom });
+			}
+			this.setState({
+				showContextMenu: false
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;
 
 			var view = undefined;
+			var menu = undefined;
 
-			if (!this.state || this.state.mode === 'text') {
+			if (!this.state || this.state.panel.mode === 'text') {
 				view = _react2['default'].createElement(_prototypoTextComponentsJsx2['default'], { fontName: this.props.fontName });
-			} else if (this.state.mode === 'glyph') {
-				view = _react2['default'].createElement('div', { ref: 'canvas', className: 'prototypo-canvas-container' });
-			}
-
-			var contextualButtons = undefined;
-			if (this.state && this.state.mode === 'glyph') {
-				contextualButtons = [_react2['default'].createElement(
-					'div',
-					{ className: 'prototypo-panel-buttons-list-button', onClick: function () {
-							fontInstance.fill = !fontInstance.fill;
-						} },
-					'Outline'
-				), _react2['default'].createElement(
-					'div',
-					{ className: 'prototypo-panel-buttons-list-button', onClick: function () {
-							fontInstance.showNodes = !fontInstance.showNodes;
-						} },
-					'Show nodes'
-				), _react2['default'].createElement(
-					'div',
-					{ className: 'prototypo-panel-buttons-list-button', onClick: function () {
-							fontInstance.showCoords = !fontInstance.showCoords;
-						} },
-					'Show coord'
-				)];
+				menu = [_react2['default'].createElement(ContextualMenuItem, { text: 'Toggle colors', click: function () {
+						_this2.setState({ invertedColors: !_this2.state.invertedColors });
+					} }), _react2['default'].createElement(ContextualMenuItem, { text: 'Inverted view', click: function () {
+						_this2.setState({ invertedView: !_this2.state.invertedView });
+					} })];
+			} else if (this.state.panel.mode === 'glyph') {
+				view = [_react2['default'].createElement('div', { ref: 'canvas', className: 'prototypo-canvas-container' })];
+				if (this.state.shadow) {
+					view.push(_react2['default'].createElement(
+						'div',
+						{ className: 'shadow-of-the-colossus' },
+						String.fromCharCode(this.state.glyph.selected)
+					));
+				}
+				menu = [_react2['default'].createElement(ContextualMenuItem, { text: '' + (!fontInstance.showNodes ? 'Show' : 'Hide') + ' nodes', click: function () {
+						fontInstance.showNodes = !fontInstance.showNodes;
+					} }), _react2['default'].createElement(ContextualMenuItem, { text: '' + (fontInstance.fill ? 'Show' : 'Hide') + ' outline', click: function () {
+						fontInstance.fill = !fontInstance.fill;
+					} }), _react2['default'].createElement(ContextualMenuItem, { text: '' + (!fontInstance.showCoords ? 'Show' : 'Hide') + ' coords', click: function () {
+						fontInstance.showCoords = !fontInstance.showCoords;
+					} }), _react2['default'].createElement(ContextualMenuItem, { text: 'Reset view', click: function () {
+						fontInstance.view.center = [0, 0];fontInstance.zoom = 0.5;
+					} }), _react2['default'].createElement(ContextualMenuItem, { text: '' + (this.state.shadow ? 'Hide' : 'Show') + ' shadow', click: function () {
+						_this2.setState({ shadow: !_this2.state.shadow });
+					} })];
 			}
 
 			return _react2['default'].createElement(
 				'div',
-				{ id: 'prototypopanel' },
+				{ id: 'prototypopanel', onContextMenu: function (e) {
+						_this2.showContextMenu(e);
+					}, onClick: function () {
+						_this2.hideContextMenu();
+					}, onMouseLeave: function () {
+						_this2.hideContextMenu();
+					} },
 				view,
 				_react2['default'].createElement(
 					'div',
@@ -1577,8 +1621,12 @@ var PrototypoPanel = (function (_React$Component) {
 								_this2.changeMode('half');
 							} },
 						'Half and Half'
-					),
-					contextualButtons
+					)
+				),
+				_react2['default'].createElement(
+					ContextualMenu,
+					{ show: this.state.showContextMenu, pos: this.state.contextMenuPos },
+					menu
 				)
 			);
 		}
@@ -1588,6 +1636,66 @@ var PrototypoPanel = (function (_React$Component) {
 })(_react2['default'].Component);
 
 exports['default'] = PrototypoPanel;
+
+var ContextualMenu = (function (_React$Component2) {
+	function ContextualMenu() {
+		_classCallCheck(this, ContextualMenu);
+
+		if (_React$Component2 != null) {
+			_React$Component2.apply(this, arguments);
+		}
+	}
+
+	_inherits(ContextualMenu, _React$Component2);
+
+	_createClass(ContextualMenu, [{
+		key: 'render',
+		value: function render() {
+			var menuStyle = {
+				top: this.props.pos.y - 15,
+				left: this.props.pos.x - 340
+			};
+
+			return this.props.show ? _react2['default'].createElement(
+				'div',
+				{ className: 'contextual-menu', style: menuStyle },
+				_react2['default'].createElement(
+					'ul',
+					{ className: 'contextual-menu-list' },
+					this.props.children
+				)
+			) : false;
+		}
+	}]);
+
+	return ContextualMenu;
+})(_react2['default'].Component);
+
+var ContextualMenuItem = (function (_React$Component3) {
+	function ContextualMenuItem() {
+		_classCallCheck(this, ContextualMenuItem);
+
+		if (_React$Component3 != null) {
+			_React$Component3.apply(this, arguments);
+		}
+	}
+
+	_inherits(ContextualMenuItem, _React$Component3);
+
+	_createClass(ContextualMenuItem, [{
+		key: 'render',
+		value: function render() {
+			return _react2['default'].createElement(
+				'li',
+				{ className: 'contextual-menu-list-item', onClick: this.props.click },
+				this.props.text
+			);
+		}
+	}]);
+
+	return ContextualMenuItem;
+})(_react2['default'].Component);
+
 module.exports = exports['default'];
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
@@ -1640,7 +1748,7 @@ var PrototypoText = (function (_React$Component) {
 		value: function componentWillMount() {
 			var _this = this;
 
-			this.client = _storesLocalClientStoresJsx2['default'].instance;
+			this.client = _storesLocalClientStoresJsx2['default'].instance();
 			this.lifespan = new _lifespan2['default']();
 
 			this.client.fetch('/panel').then(function (store) {
@@ -1684,6 +1792,8 @@ var PrototypoText = (function (_React$Component) {
 	}, {
 		key: 'render',
 		value: function render() {
+			var _this2 = this;
+
 			var style = {
 				'fontFamily': '' + (this.props.fontName || 'theyaintus') + ', \'sans-serif\''
 			};
@@ -1695,7 +1805,10 @@ var PrototypoText = (function (_React$Component) {
 					ref: 'text',
 					className: 'prototypo-text-string',
 					spellCheck: 'false',
-					style: style
+					style: style,
+					onChange: function () {
+						_this2.updateSubset();
+					}
 				})
 			);
 		}
@@ -1861,7 +1974,7 @@ var SideTabs = (function (_React$Component) {
 		value: function componentWillMount() {
 			var _this = this;
 
-			this.client = new _storesLocalClientStoresJsx2['default']().instance;
+			this.client = _storesLocalClientStoresJsx2['default'].instance();
 
 			this.changeTab = function (name) {
 				_this.client.dispatchAction('/change-tab-sidebar', { name: name });
@@ -2034,7 +2147,7 @@ var Sidebar = (function (_React$Component) {
 			var _this = this;
 
 			this.lifespan = new _lifespan2['default']();
-			this.client = new _storesLocalClientStoresJsx2['default']().instance;
+			this.client = _storesLocalClientStoresJsx2['default'].instance();
 			var server = new _storesLocalServerStoresJsx2['default']().instance;
 
 			var sideBarTab = new _remutable2['default'](this.client.getStore('/sideBarTab', this.lifespan).onUpdate(function (_ref) {
@@ -2354,7 +2467,7 @@ var Slider = (function (_React$Component2) {
 		key: 'componentWillMount',
 		value: function componentWillMount() {
 			this.lifespan = new _lifespan2['default']();
-			this.client = new _storesLocalClientStoresJsx2['default']().instance;
+			this.client = _storesLocalClientStoresJsx2['default'].instance();
 		}
 	}, {
 		key: 'componentWillUnmount',
@@ -2419,7 +2532,7 @@ var SliderController = (function (_React$Component3) {
 		key: 'componentDidMount',
 		value: function componentDidMount() {
 			this.lifespan = new _lifespan2['default']();
-			this.client = new _storesLocalClientStoresJsx2['default']().instance;
+			this.client = _storesLocalClientStoresJsx2['default'].instance();
 			var slider = _react2['default'].findDOMNode(this.refs.slider);
 			this.sliderWidth = slider.offsetWidth;
 		}
@@ -2542,7 +2655,7 @@ var SliderTextController = (function (_React$Component4) {
 		key: 'componentWillMount',
 		value: function componentWillMount() {
 			this.lifespan = new _lifespan2['default']();
-			this.client = new _storesLocalClientStoresJsx2['default']().instance;
+			this.client = _storesLocalClientStoresJsx2['default'].instance();
 		}
 	}, {
 		key: 'componentWillUnmount',
@@ -3403,7 +3516,7 @@ var Topbar = (function (_React$Component) {
 		value: function componentWillMount() {
 			var _this = this;
 
-			this.client = new _storesLocalClientStoresJsx2['default']().instance;
+			this.client = _storesLocalClientStoresJsx2['default'].instance();
 			this.lifespan = new _lifespan2['default']();
 
 			var eventBackLog = this.client.getStore('/eventBackLog', this.lifespan).onUpdate(function (_ref) {
@@ -3554,7 +3667,7 @@ var UndoRedoMenu = (function (_React$Component) {
 		value: function componentWillMount() {
 			var _this = this;
 
-			this.client = new _storesLocalClientStoresJsx2['default']().instance;
+			this.client = _storesLocalClientStoresJsx2['default'].instance();
 			this.lifespan = new _lifespan2['default']();
 
 			var eventBackLog = this.client.getStore('/eventBackLog', this.lifespan).onUpdate(function (_ref) {
@@ -3767,7 +3880,7 @@ var Workboard = (function (_React$Component) {
 			var _this = this;
 
 			this.lifespan = new _lifespan2['default']();
-			this.client = new _storesLocalClientStoresJsx2['default']().instance;
+			this.client = _storesLocalClientStoresJsx2['default'].instance();
 
 			var fontStore = this.client.fetch('/fontStore');
 			this.setState({
@@ -4033,7 +4146,8 @@ _react2['default'].initializeTouchEvents(true);
 
 var stores = {};
 var localServer = new _storesLocalServerStoresJsx2['default'](stores).instance;
-var localClient = new _storesLocalClientStoresJsx2['default'](localServer).instance;
+_storesLocalClientStoresJsx2['default'].setup(localServer);
+var localClient = _storesLocalClientStoresJsx2['default'].instance();
 var eventBackLog = stores['/eventBackLog'] = new _remutable2['default']({
 	from: 0,
 	to: undefined,
@@ -4668,20 +4782,23 @@ var _ = require('lodash');
 var Promise = (global || window).Promise = require('bluebird');
 
 var LocalClient = (function () {
-	function LocalClient(server) {
+	function LocalClient() {
 		_classCallCheck(this, LocalClient);
-
-		if (!LocalClient.instance) {
-			LocalClient.instance = new _nexusFluxAdaptersLocal.Client(server);
-		} else if (server) {
-			throw new Error('You cannot instantiate the local client with a server twice');
-		}
 	}
 
-	_createClass(LocalClient, [{
+	_createClass(LocalClient, null, [{
+		key: 'setup',
+		value: function setup(server) {
+			if (!LocalClient.ServerInstance) {
+				LocalClient.ServerInstance = server;
+			} else if (server) {
+				throw new Error('You cannot instantiate the local client with a server twice');
+			}
+		}
+	}, {
 		key: 'instance',
-		get: function () {
-			return LocalClient.instance;
+		value: function instance() {
+			return new _nexusFluxAdaptersLocal.Client(LocalClient.ServerInstance);
 		}
 	}]);
 

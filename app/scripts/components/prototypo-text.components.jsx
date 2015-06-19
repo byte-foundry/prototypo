@@ -5,7 +5,7 @@ import Lifespan from 'lifespan';
 export default class PrototypoText extends React.Component {
 
 	componentWillMount() {
-		this.client = LocalClient.instance;
+		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
 		this.client.fetch('/panel')
@@ -55,6 +55,7 @@ export default class PrototypoText extends React.Component {
 					className="prototypo-text-string"
 					spellCheck="false"
 					style={style}
+					onChange={() => {this.updateSubset()}}
 				></textarea>
 			</div>
 		)

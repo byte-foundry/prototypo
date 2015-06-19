@@ -14,7 +14,7 @@ export default class Workboard extends React.Component {
 
 	componentWillMount() {
 		this.lifespan = new Lifespan();
-		this.client = new LocalClient().instance;
+		this.client = LocalClient.instance();
 
 
 		const fontStore = this.client.fetch('/fontStore');

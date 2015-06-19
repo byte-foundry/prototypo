@@ -19,7 +19,7 @@ export default class FontControls extends React.Component {
 
 	async componentWillMount() {
 		this.lifespan = new Lifespan();
-		this.client = new LocalClient().instance;
+		this.client = LocalClient.instance();
 		const server = new LocalServer().instance;
 
 		const fontControls = await this.client.fetch('/fontControls');

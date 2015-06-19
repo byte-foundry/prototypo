@@ -31,7 +31,8 @@ React.initializeTouchEvents(true);
 
 const stores = {};
 const localServer = new LocalServer(stores).instance;
-const localClient = new LocalClient(localServer).instance;
+LocalClient.setup(localServer);
+const localClient = LocalClient.instance();
 const eventBackLog = stores['/eventBackLog'] = new Remutable({
 	from:0,
 	to:undefined,

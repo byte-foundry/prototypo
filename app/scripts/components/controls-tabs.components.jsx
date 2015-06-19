@@ -5,7 +5,7 @@ import LocalClient from '../stores/local-client.stores.jsx';
 
 export class ControlsTabs extends React.Component {
 	componentWillMount() {
-		this.client = new LocalClient().instance;
+		this.client = LocalClient.instance();
 
 		this.changeTab = (name) => {
 			this.client.dispatchAction('/change-tab-font',{name});

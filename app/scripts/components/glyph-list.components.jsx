@@ -16,7 +16,7 @@ export default class GlyphList extends React.Component {
 
 	async componentWillMount() {
 		this.lifespan = new Lifespan();
-		this.client = new LocalClient().instance;
+		this.client = LocalClient.instance();
 		const server = new LocalServer().instance;
 
 		const glyphs = await this.client.fetch('/glyphs');

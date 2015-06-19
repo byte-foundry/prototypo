@@ -6,7 +6,7 @@ import AlternateGlyphList from './alternate-glyph-list.components.jsx';
 export default class Glyph extends React.Component {
 
 	selectGlyph() {
-		const client = new LocalClient().instance;
+		const client = LocalClient.instance();
 
 		client.dispatchAction('/select-glyph',{unicode:this.props.unicode});
 	}

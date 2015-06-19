@@ -16,7 +16,7 @@ export default class Sidebar extends React.Component {
 
 	componentWillMount() {
 		this.lifespan = new Lifespan();
-		this.client = new LocalClient().instance;
+		this.client = LocalClient.instance();
 		const server = new LocalServer().instance;
 
 		const sideBarTab = new Remutable(this.client.getStore('/sideBarTab', this.lifespan)
