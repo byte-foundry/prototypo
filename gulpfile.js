@@ -51,6 +51,11 @@ gulp.task('images', function() {
 		.pipe(gulp.dest('./dist/assets/images/'));
 });
 
+gulp.task('cp-prototypo.js', function() {
+	gulp.src('./node_modules/prototypo.js/dist/prototypo.js')
+		.pipe(gulp.dest('./dist/prototypo.js/dist/'));
+});
+
 gulp.task('css-vendor', function() {
 	//This is a bit hackish but right now i don't care
 	gulp.src(['./node_modules/normalize.css/normalize.css','./node_modules/please-wait/build/please-wait.css'])
@@ -66,7 +71,7 @@ gulp.task('css-app', function() {
 		.pipe(concat('app.css'))
 		.pipe(autoprefixer())
 		.pipe(sourcemaps.write())
-		.pipe(gutil.env.type == 'prod' ? minifyCss() : gutil.noop())
+		//.pipe(gutil.env.type == 'prod' ? minifyCss() : gutil.noop())
 		.pipe(gulp.dest('./dist/assets/'))
 		.pipe(filter('**/*.css'))
 		.pipe(browserSync.reload({stream:true}));
@@ -128,7 +133,7 @@ gulp.task('clean',function() {
 
 gulp.task('browserify', bundle);
 
-gulp.task('build', ['images','css-vendor','css-app','browserify']);
+gulp.task('build', ['images','css-vendor','css-app','browserify','cp-prototypo.js']);
 
 gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
 	browserSync.init({

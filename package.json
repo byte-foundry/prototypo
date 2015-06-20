@@ -41,6 +41,7 @@
     "jshint-stylish": "~2.0.0",
     "lodash.assign": "^3.2.0",
     "merge-stream": "~0.1.7",
+    "surge": "^0.14.2",
     "through": "^2.3.7",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",

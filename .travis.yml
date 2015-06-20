@@ -1,12 +1,13 @@
 language: node_js
 node_js:
 - '0.10'
-before_install:
-- npm install -g grunt-cli bower
 after_script:
-- bower install
-- grunt build
-- grunt deploy
+- npm install
+- npm dedupe
+- gulp build
+- uglifyjs dist/bundle.js -o dist/bundle.js --in-source-map dist/bundle.js.map --source-map dist/bundle.js.map
+after_success:
+- surge --project ./dist --domain newui.prototypo.io
 env:
   global:
   - secure: l3fzFu9Ovv11nnQFAL2ueV+WREcpzsXtb3ipnnKRpcI2MmlfDbznScr12yyJ3W4kWY1SuctlBNl1X/6hEndNBVjJB59nrFfXnx3dMJeD6KndR3xsYgIIbM/uX/vhNPN9RURKiAG9QEoLvNYu5nwri8GAAQoFUBpJXhuBBhiH9UI=

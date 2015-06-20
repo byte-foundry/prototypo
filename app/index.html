@@ -1,126 +1,14 @@
 <!doctype html>
-<html class="no-js">
+<html>
 	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<title></title>
-		<meta name="description" content="">
-		<!-- it's an app, disable zooming on mobile devices -->
-		<meta name="viewport" content="target-densitydpi=device-dpi, initial-scale=1.0, user-scalable=no" />
-		<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-
-		<!-- build:css(.tmp) styles/style.css -->
-		<link rel="stylesheet" href="styles/knacss.css">
-		<link rel="stylesheet" href="bower_components/angular/angular-csp.css">
-
-		<link rel="stylesheet" href="styles/main.css">
-		<link rel="stylesheet" href="styles/layout.css">
-		<link rel="stylesheet" href="styles/glyphlist.css">
-		<link rel="stylesheet" href="styles/parammenu.css">
-		<link rel="stylesheet" href="styles/paramtabs.css">
-		<link rel="stylesheet" href="styles/sceneButtons.css">
-		<link rel="stylesheet" href="styles/preview.css">
-		<link rel="stylesheet" href="styles/menu.css">
-		<link rel="stylesheet" href="styles/presets.css">
-		<link rel="stylesheet" href="styles/single.css">
-		<link rel="stylesheet" href="styles/contextMenu.css">
-		<link rel="stylesheet" href="styles/splash.css">
-		<link rel="stylesheet" href="styles/splash-login.css">
-		<link rel="stylesheet" href="styles/signup.css">
-		<!-- endbuild -->
-
+		<title>Prototypo - New UI</title>
+		<link rel="stylesheet" type="text/scss" href="assets/app.css"/>
+		<link rel="stylesheet" type="text/scss" href="assets/vendor.css"/>
 	</head>
-	<body ng-app="prototypoApp">
-		<!--[if lt IE 9]>
-			<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-		<![endif]-->
-
-		<div class="main" ng-view></div>
-
-		<script src="prototypo.js/dist/prototypo.js"></script>
-		<!-- build:js scripts/scripts.js -->
-		<script src="bower_components/lodash/dist/lodash.js"></script>
-		<script src="bower_components/jquery/dist/jquery.js"></script>
-		<script src="libs/jquery.browser.js"></script>
-		<script src="libs/jquery.wheel.js"></script>
-		<script src="libs/jquery.doubletap.js"></script>
-
-		<script src="libs/pointerevents.dev.js"></script>
-		<script src="libs/pointergestures.dev.js"></script>
-
-		<script src="libs/handlebars.runtime.js"></script>
-		<script src="bower_components/angular/angular.js"></script>
-		<script src="bower_components/angular-route/angular-route.js"></script>
-		<script src="bower_components/angular-resource/angular-resource.js"></script>
-		<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-		<script src="bower_components/angular-bindonce/bindonce.js"></script>
-		<script src="libs/angular-watch-collection-diff.js"></script>
-		<script src="bower_components/FileSaver/FileSaver.js"></script>
-		<script src="bower_components/hoodie/dist/hoodie.js"></script>
-
-		<script src="scripts/services/glyphCache.js"></script>
-		<script src="scripts/services/typefacesResource.js"></script>
-		<script src="scripts/services/valuesResource.js"></script>
-		<script src="scripts/services/angular.hoodie.js"></script>
-
-		<script src="scripts/Utils.js"></script>
-
-		<script src="scripts/directives/glyph.js"></script>
-		<script src="scripts/directives/contour.js"></script>
-		<script src="scripts/directives/parammenu.js"></script>
-		<script src="scripts/directives/paramtabs.js"></script>
-		<script src="scripts/directives/paramtab.js"></script>
-		<script src="scripts/directives/single.js"></script>
-		<script src="scripts/directives/string.js"></script>
-		<script src="scripts/directives/glyphlist.js"></script>
-		<script src="scripts/directives/sceneButtons.js"></script>
-		<script src="scripts/directives/menu.js"></script>
-		<script src="scripts/directives/spacing.js"></script>
-		<script src="scripts/directives/presets.js"></script>
-		<script src="scripts/directives/contextMenu.js"></script>
-		<script src="scripts/directives/contextMenuString.js"></script>
-		<script src="scripts/directives/splash.js"></script>
-		<script src="scripts/directives/signup.js"></script>
-		<script src="scripts/directives/signin.js"></script>
-
-		<script src="views/dotsvg.js"></script>
-		<script src="views/planche.js"></script>
-
-		<script src="scripts/app.js"></script>
-		<!--
-			Very ugly hack to get ngtemplates to wrok.
-			Change this once https://github.com/yeoman/generator-angular/pull/277 provides a working solution.
-		-->
-		<script src="../.tmp/templates/templates.js"></script>
-
-		<script src="scripts/controllers/main.js"></script>
-		<!-- endbuild -->
-
-		<script id="typeface-loader" src=""></script>
-
-		<script>
-			/* jshint ignore:start */
-			// HANDJS shouldn't process the css
-			//HANDJS.doNotProcessCSS = true;
-			// google analytics
-			var _gaq=[['_setAccount','UA-41962243-3'],['_trackPageview']];
-			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-			g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-			s.parentNode.insertBefore(g,s)}(document,'script'));
-
-			// Include the UserVoice JavaScript SDK (only needed once on a page)
-			UserVoice=window.UserVoice||[];(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/fgYcK9ccsqxuqBtQJSOrWA.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})();
-			// widget theme
-			UserVoice.push(['set', {
-				accent_color: '#49E4A9',
-				trigger_color: 'white',
-				trigger_background_color: '#49E4A9'
-			}]);
-			// Add default trigger to the bottom-right corner of the window:
-			UserVoice.push(['addTrigger', { mode: 'contact', trigger_position: 'bottom-right' }]);
-			// Autoprompt for Satisfaction and SmartVote (only displayed under certain conditions)
-			//UserVoice.push(['autoprompt', {}]);
-			/* jshint ignore:end */
-		</script>
+	<body>
+		<div id="content"></div>
+		<script type="text/javascript" src="prototypo.js/dist/prototypo.js"></script>
+		<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+		<script type="text/javascript" src="bundle.js"></script>
 	</body>
 </html>
