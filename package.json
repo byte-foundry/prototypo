@@ -51,7 +51,7 @@
     "node": ">=0.10.0"
   },
   "description": "Prototypo, kickstarting font creation",
-  "main": "Gruntfile.js",
+  "main": "gulpfile.js",
   "directories": {
     "test": "test"
   },

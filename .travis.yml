@@ -8,11 +8,3 @@ after_script:
 - uglifyjs dist/bundle.js -o dist/bundle.js --in-source-map dist/bundle.js.map --source-map dist/bundle.js.map
 after_success:
 - surge --project ./dist --domain newui.prototypo.io
-env:
-  global:
-  - secure: l3fzFu9Ovv11nnQFAL2ueV+WREcpzsXtb3ipnnKRpcI2MmlfDbznScr12yyJ3W4kWY1SuctlBNl1X/6hEndNBVjJB59nrFfXnx3dMJeD6KndR3xsYgIIbM/uX/vhNPN9RURKiAG9QEoLvNYu5nwri8GAAQoFUBpJXhuBBhiH9UI=
-  - secure: IZRRIEseisFonoUz3WTuCW+2Pls6NUy4lcU/7ymOIle0ytAhtTVR+esXl0Mz3VM+ldUqP5Zhk++LgI/OIBp1bH3tTdBces4skyUh71OLRMdSDf5CnnEUTA/Pa93W0N/je//PCBYsTaq2WiK9nLJISruQL61hVSqBBKiFRm+oRCA=
-  - secure: TIJiUbe1M7JxcLCOGOS6YTxQW2fKh/C8+xOJum43xcz9RgIatCVnw2C0VHeOHAG29lr9DtkQUwa2XXfoSkbrq8Mbtqu+wUgCjPRvP4Ts2m3nlUtie2JHVi94yBbj0Eeef7T6fsCT5cLta2dM3NxZ+OuYviRgYAtgZJxuwY3Vx4g=
-  - secure: PsCZ+H8pDcviLazwY9AReTCbnUx5OlpCLvvcknbIJSuBHcv9AF9u1Cv8/r3N/Crr35Zz+DD0phA9j8ryPI7H3op7LSsiEEcvtUST5R87K/a2SkBpn4sORYqMpE0t4pm9y15sdJJkuDGRfLvm7zBf5a4xSyoyXMDtxgNk71SQAjg=
-  - secure: JwJqsg28D0aldardzcoHn/hj0tT65P4I/pD61kVlHnGsdvKc26FZ/w3vgoHe1wOrvja3D0NyOoBW+xBLp1tLSK2Bi8KREo2TXBGA9cUu7QbFzJ0qx/V7upXNVWADLgaQjLWy5a2GfkoUrQV08nYA9uQgEBuYl0v0A+nv/+tdG5Q=
-  - secure: GE8Cc/DoG84cIdQ5fE9ZCocIqQBWzQ1wOR9sW6QDXO/SkU3SDltMAcqyuVk2lxjLSi/zpckpdUFvOdPuluBnWIDvrQJFAmlIaOb35DvWaENGmmzasDVaVIy5wTjCrnReIRy7i/zSt6PYovXHAsuJf05S+HM9oH3QceWGMikQFpU=
