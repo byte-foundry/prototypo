@@ -143,7 +143,7 @@ gulp.task('clean',function() {
 
 gulp.task('browserify', bundle);
 
-gulp.task('build', ['images','css-vendor','css-app','browserify','cp-prototypo.js']);
+gulp.task('build', ['images','css-vendor','css-app','browserify','cp-prototypo.js','cp-genese']);
 
 gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
 	browserSync.init({
