@@ -14,6 +14,7 @@
     "nexus-flux": "^3.4.4",
     "nexus-flux-socket.io": "^2.6.0",
     "node-uuid": "^1.4.3",
+    "genese.ptf": "byte-foundry/genese.ptf",
     "normalize.css": "^3.0.3",
     "please-wait": "0.0.5",
     "pouchdb": "^3.6.0",

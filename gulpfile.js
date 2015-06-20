@@ -56,6 +56,11 @@ gulp.task('cp-prototypo.js', function() {
 		.pipe(gulp.dest('./dist/prototypo.js/dist/'));
 });
 
+gulp.task('cp-genese', function() {
+	gulp.src('./node_modules/genese.ptf/dist/font.json')
+		.pipe(gulp.dest('./dist/genese.ptf/dist/'));
+});
+
 gulp.task('css-vendor', function() {
 	//This is a bit hackish but right now i don't care
 	gulp.src(['./node_modules/normalize.css/normalize.css','./node_modules/please-wait/build/please-wait.css'])
