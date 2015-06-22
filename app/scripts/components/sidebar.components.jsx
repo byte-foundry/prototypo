@@ -2,6 +2,8 @@ import React from 'react';
 
 import {SideTabs, SideTab} from './side-tabs.components.jsx';
 import FontControls from './font-controls.components.jsx';
+import FontInfos from './font-infos.components.jsx';
+import FontsCollection from './fonts-collection.components.jsx';
 import Subscriptions from './subscriptions.components.jsx';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -41,10 +43,16 @@ export default class Sidebar extends React.Component {
 		return (
 			<div id='sidebar'>
 				<SideTabs tab={this.state.tab}>
-					<SideTab iconUrl="font-controls.png" name="sliders">
+					<SideTab iconUrl="font-controls.svg" name="sliders">
 						<FontControls />
 					</SideTab>
-					<SideTab iconUrl="font-controls.png" name="yo" big={true}>
+					<SideTab iconUrl="font-infos.svg" name="font-infos" big={true}>
+						<FontInfos />
+					</SideTab>
+					<SideTab iconUrl="fonts-collection.svg" name="fonts-collection" big={true}>
+						<FontsCollection />
+					</SideTab>
+					<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true}>
 						<Subscriptions />
 					</SideTab>
 				</SideTabs>
