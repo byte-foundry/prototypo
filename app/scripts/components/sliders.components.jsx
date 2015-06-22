@@ -74,7 +74,14 @@ export class SliderController extends React.Component {
 
 	handleDown(e) {
 		this.tracking = true;
-		this.currentX = e.pageX
+		const newX = e.pageX || e.screenX;
+		const {offsetLeft} = DOM.getAbsOffset(React.findDOMNode(this.refs.slider));
+		let newValue = ( ( newX - offsetLeft ) / this.sliderWidth * (this.props.max - this.props.min)) + this.props.min;
+
+		newValue = Math.min(Math.max(newValue,this.props.min),this.props.max);
+
+		this.client.dispatchAction('/change-param',{value:newValue,name:this.props.name,label:this.props.label,force:true});
+		this.currentX = newX;
 
 		e.stopPropagation();
 
@@ -99,10 +106,20 @@ export class SliderController extends React.Component {
 	handleMove(e) {
 		if (this.tracking) {
 			const newX = e.pageX || e.screenX;
-			const variation = (newX - this.currentX) / this.sliderWidth * (this.props.max - this.props.min);
-			let newValue = this.props.value + variation;
+			const el = React.findDOMNode(this.refs.slider);
+			const {offsetLeft} = DOM.getAbsOffset(el);
 
-			newValue = Math.min(Math.max(newValue,this.props.min),this.props.max);
+			let newValue;
+
+			if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
+				const variation = (newX - this.currentX) / this.sliderWidth * (this.props.max - this.props.min);
+				newValue = this.props.value + variation;
+
+				newValue = Math.min(Math.max(newValue,this.props.min),this.props.max);
+			}
+			else {
+				newValue = newX < offsetLeft ? this.props.min : this.props.max
+			}
 
 			this.client.dispatchAction('/change-param',{value:newValue,name:this.props.name});
 			this.currentX = newX;
@@ -110,14 +127,6 @@ export class SliderController extends React.Component {
 	}
 
 	handleClick(e) {
-		const newX = e.pageX || e.screenX;
-		const {offsetLeft} = DOM.getAbsOffset(React.findDOMNode(this.refs.slider));
-		let newValue = ( ( newX - offsetLeft ) / this.sliderWidth * (this.props.max - this.props.min)) + this.props.min;
-
-		newValue = Math.min(Math.max(newValue,this.props.min),this.props.max);
-
-		this.client.dispatchAction('/change-param',{value:newValue,name:this.props.name,label:this.props.label,force:true});
-		this.currentX = newX;
 
 	}
 
@@ -134,13 +143,11 @@ export class SliderController extends React.Component {
 
 		return (
 			<div className="slider-controller" ref="slider"
-				onClick={(e) => { this.handleClick(e) }} >
+				onMouseDown={(e) => { this.handleDown(e)}}>
 				<div className={classes} style={transform}>
 					<div
 						className="slider-controller-handle"
-						ref="handle"
-						onMouseDown={(e) => { this.handleDown(e) }}
-						></div>
+						ref="handle" ></div>
 				</div>
 			</div>
 		)
