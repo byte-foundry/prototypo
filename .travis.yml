@@ -2,9 +2,11 @@ language: node_js
 node_js:
 - '0.10'
 before_script:
+- npm install -g uglifyjs
 after_script:
 - npm install
 - npm dedupe
 - gulp build --type=prod
 - uglifyjs dist/bundle.js -o dist/bundle.js --in-source-map dist/bundle.js.map --source-map dist/bundle.js.map
+- ls -Rl dist/
 - surge --project ./dist --domain newui.prototypo.io
