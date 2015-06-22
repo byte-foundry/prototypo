@@ -58,7 +58,7 @@ gulp.task('cp-prototypo.js', function() {
 });
 
 gulp.task('cp-genese', function() {
-	gulp.src('./node_modules/genese.ptf/dist/font.json')
+	gulp.src('./node_modules/Genese/dist/font.json')
 		.pipe(gulp.dest('./dist/genese.ptf/dist/'));
 });
 
