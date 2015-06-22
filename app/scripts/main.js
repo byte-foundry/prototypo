@@ -200,7 +200,7 @@ async function createStores() {
 
 		if(actions[path] !== void 0) {
 
-		    actions[path](params);
+			actions[path](params);
 
 		}
 
@@ -209,16 +209,22 @@ async function createStores() {
 	const typedataJSON = await Typefaces.getFont();
 	const typedata = JSON.parse(typedataJSON);
 	const prototypoSource = await Typefaces.getPrototypo();
+	let workerUrl;
+	let prototypoUrl;
 
-
-	// Prototypo.setup(document.createElement('canvas'));
-	// const font = Prototypo.parametricFont(typedata);
-
+	// The worker will be built from URL when during development, and from
+	// source in production.
+	if ( process.env.NODE_ENV !== 'production' ) {
+		workerUrl = '/prototypo-canvas/src/worker.js';
+		prototypoUrl = '/prototypo.js/dist/prototypo.js';
+	}
 
 	const fontPromise = PrototypoCanvas.load({
 		canvas:canvasEl,
 		fontSource: typedataJSON,
 		prototypoSource: prototypoSource,
+		workerUrl,
+		prototypoUrl,
 	});
 
 	const font = window.fontInstance = await fontPromise;

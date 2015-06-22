@@ -10,7 +10,8 @@ var sass = require('gulp-sass');
 var browserify = require('browserify');
 var shim = require('browserify-shim');
 var babelify = require('babelify');
-var watchify = require('watchify')
+var watchify = require('watchify');
+var envify = require('envify/custom');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 
@@ -100,6 +101,7 @@ var readPrelude = fs.readFileAsync('./__prelude.js');
 
 var bBase = readPrelude.then(function(prelude) {
 	return browserify(opts)
+		// adds __prelude.js to all files in app/scripts
 		.transform(function(file) {
 			if (file.indexOf('prototypo/app/scripts') != -1) {
 				var data = prelude;
@@ -122,6 +124,9 @@ var bBase = readPrelude.then(function(prelude) {
 		.transform(babelify.configure({
 			stage: 0, //enabling that es7 goodness
 			only: './app/scripts'
+		}))
+		.transform(envify({
+			NODE_ENV: gutil.env.type === 'prod' ? 'production' : 'development'
 		}));
 });
 
