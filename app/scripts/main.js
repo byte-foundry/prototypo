@@ -95,6 +95,11 @@ async function createStores() {
 			localServer.dispatchUpdate('/fontStore',patch);
 		},
 		'/update-font': (params) => {
+			// we need a non-empty params object
+			if ( !params || !Object.keys( params ).length ) {
+				return;
+			}
+
 			fontPromise
 				.then(() => {
 					font.subset(panel.head.toJS().text || false);
