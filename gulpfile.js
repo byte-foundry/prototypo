@@ -62,6 +62,11 @@ gulp.task('cp-genese', function() {
 		.pipe(gulp.dest('./dist/genese.ptf/dist/'));
 });
 
+gulp.task('cp-static', function() {
+	gulp.src(['./app/index.html','./app/robots.txt','./app/favicon.ico','404.html'])
+		.pipe(gulp.dest('./dist/'));
+});
+
 gulp.task('css-vendor', function() {
 	//This is a bit hackish but right now i don't care
 	gulp.src(['./node_modules/normalize.css/normalize.css','./node_modules/please-wait/build/please-wait.css'])
@@ -143,17 +148,19 @@ gulp.task('clean',function() {
 
 gulp.task('browserify', bundle);
 
-gulp.task('build', ['images','css-vendor','css-app','browserify','cp-prototypo.js','cp-genese']);
+gulp.task('build', ['images','css-vendor','css-app','browserify','cp-prototypo.js','cp-genese','cp-static']);
 
-gulp.task('serve', ['images','css-vendor','css-app', 'browserify'], function() {
-	browserSync.init({
-		server:['./dist','./node_modules'],
-		port:9000,
-		ghostMode:false
-	});
+gulp.task('serve', ['images','css-vendor','css-app', 'browserify','cp-static'], function() {
+	bBase.then(function() {
+		browserSync.init({
+			server:['./dist','./node_modules'],
+			port:9000,
+			ghostMode:false
+		});
 
-	gulp.watch('./app/styles/**/*.scss',['css-app']);
-	gulp.watch('./dist/bundle.js',browserSync.reload);
+		gulp.watch('./app/styles/**/*.scss',['css-app']);
+		gulp.watch('./dist/bundle.js',browserSync.reload);
+	})
 });
 
 gulp.task('test-serve', function() {
