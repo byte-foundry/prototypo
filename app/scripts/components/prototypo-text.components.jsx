@@ -35,7 +35,9 @@ export default class PrototypoText extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.client.dispatchAction('/store-text',{text:React.findDOMNode(this.refs.text).value});
+		if (React.findDOMNode(this.refs.text).value) {
+			this.client.dispatchAction('/store-text',{text:React.findDOMNode(this.refs.text).value});
+		}
 		this.lifespan.release();
 	}
 

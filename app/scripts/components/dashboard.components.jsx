@@ -5,7 +5,7 @@ import HoodieApi from '../services/hoodie.services.js';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {Typefaces} from '../services/typefaces.services.js';
-import {FontValues} from '../services/values.services.js';
+import {FontValues, AppValues} from '../services/values.services.js';
 import pleaseWait from 'please-wait';
 
 export default class Dashboard extends React.Component {
@@ -30,6 +30,9 @@ export default class Dashboard extends React.Component {
 			try {
 				const fontValues = await FontValues.get({typeface:'default'});
 				this.client.dispatchAction('/load-values', _.extend(initValues,_.extend(presetValues,fontValues.values)));
+
+				const appValues = await AppValues.get({typeface:'default'});
+				this.client.dispatchAction('/load-app-values',appValues);
 			}
 			catch (err) {
 				this.client.dispatchAction('/load-values',_.extend(fontControls.get('values'), _.extend(initValues,presetValues)));

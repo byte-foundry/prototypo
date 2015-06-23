@@ -25,6 +25,13 @@ export default class FontControls extends React.Component {
 		const fontControls = await this.client.fetch('/fontControls');
 		const fontTab = await this.client.fetch('/fontTab');
 
+		const debouncedSave = _.debounce((values) => {
+			FontValues.save({
+				typeface: 'default',
+				values: values,
+			});
+		}, 300)
+
 		this.undoWatcher = new BatchUpdate(fontControls,
 			'/fontControls',
 			this.client,
@@ -33,10 +40,7 @@ export default class FontControls extends React.Component {
 				return `modifier ${name}`;
 			},
 			(headJS) => {
-			FontValues.save({
-				typeface: 'default',
-				values: headJS.values,
-			});
+				debouncedSave(headJS.values);
 			}
 			);
 
@@ -60,11 +64,7 @@ export default class FontControls extends React.Component {
 
 					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 					this.undoWatcher.forceUpdate(patch, params.label);
-					FontValues.save({
-						typeface: 'default',
-						values: newParams,
-					});
-
+					debouncedSave(newParams);
 				} else {
 
 					this.undoWatcher.update(patch, params.label);

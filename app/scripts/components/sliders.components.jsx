@@ -35,7 +35,7 @@ export class Slider extends React.Component {
 	}
 
 	resetValue() {
-		this.client.dispatchAction('/change-param',{value:this.props.param.init,name:this.props.param.name,force:true});
+		this.client.dispatchAction('/change-param',{value:this.props.param.init,name:this.props.param.name,label:this.props.param.label,force:true});
 	}
 
 	render() {
