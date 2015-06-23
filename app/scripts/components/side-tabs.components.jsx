@@ -47,7 +47,7 @@ export class SideTabs extends React.Component {
 			<div className="side-tabs">
 				<div className="side-tabs-headers">
 					<div className="side-tabs-icon-headers">
-						<img src='assets/images/prototypo-icon.png'/>
+						<img src='assets/images/prototypo-icon.svg'/>
 					</div>
 					{headers}
 				</div>
