@@ -23,7 +23,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setupText() {
-		React.findDOMNode(this.refs.text).textContent = this.state ? this.state.text : '';
+		React.findDOMNode(this.refs.text).textContent = this.state && this.state.text.length > 0 ? this.state.text : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
 	}
 
 	componentDidUpdate() {
