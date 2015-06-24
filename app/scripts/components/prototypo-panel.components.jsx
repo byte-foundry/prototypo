@@ -1,8 +1,9 @@
 import React from 'react';
-import PrototypoText from './prototypo-text.components.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import ClassNames from 'classnames';
+
+import PrototypoText from './prototypo-text.components.jsx';
+import PrototypoCanvas from './prototypo-canvas.components.jsx';
 
 
 export default class PrototypoPanel extends React.Component {
@@ -22,11 +23,6 @@ export default class PrototypoPanel extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		const panel = await this.client.fetch('/panel');
-		this.setState({panel:panel.head.toJS()});
-		const glyph = await this.client.fetch('/glyphs');
-		this.setState({glyph:glyph.head.toJS()});
-
 		this.client.getStore('/panel',this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({panel:head.toJS()});
@@ -44,25 +40,11 @@ export default class PrototypoPanel extends React.Component {
 			});
 	}
 
-	setupCanvas() {
-		const canvasContainer = React.findDOMNode(this.refs.canvas);
-		canvasContainer.appendChild(window.canvasElement);
-		fontInstance.zoom = this.state.panel.zoom ? this.state.panel.zoom : 0.5;
-		fontInstance.view.center = this.state.panel.pos ? this.state.panel.pos : fontInstance.view.center;
-	}
-
-	componentDidUpdate() {
-		this.setupCanvas();
-	}
-
-	componentDidMount() {
-		const canvasContainer = React.findDOMNode(this.refs.canvas);
-		canvasContainer.addEventListener('mousemove', fontInstance.moveHandler.bind(fontInstance));
-		canvasContainer.addEventListener('wheel',fontInstance.wheelHandler.bind(fontInstance));
-		canvasContainer.addEventListener('mousedown',fontInstance.downHandler.bind(fontInstance));
-		canvasContainer.addEventListener('mouseup',fontInstance.upHandler.bind(fontInstance));
-
-		this.setupCanvas();
+	resetView() {
+		this.client.dispatchAction('/store-panel-param', {
+			pos:prototypo.paper.Point(0,0),
+			zoom:0.5,
+		})
 	}
 
 	componentWillUnmount() {
@@ -70,11 +52,9 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	changeMode(e, mode) {
-		this.client.dispatchAction('/store-panel-param', {value:mode, name:'mode'});
-		if (mode !== 'glyph') {
-			this.client.dispatchAction('/store-panel-param', {value:fontInstance.view.center, name:'pos'});
-			this.client.dispatchAction('/store-panel-param', {value:fontInstance.zoom, name:'zoom'});
-		}
+		this.client.dispatchAction('/store-panel-param',{
+			mode:mode
+		});
 		e.stopPropagation();
 	}
 
@@ -88,46 +68,53 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	hideContextMenu() {
-		if (this.state.panel.mode === 'glyph') {
-			this.client.dispatchAction('/store-panel-param', {value:fontInstance.view.center, name:'pos'});
-			this.client.dispatchAction('/store-panel-param', {value:fontInstance.zoom, name:'zoom'});
+		if (this.state.showContextMenu) {
+			this.setState({
+				showContextMenu:false,
+			});
 		}
-		this.setState({
-			showContextMenu:false,
-		});
-	}
-
-	resetView() {
-		fontInstance.view.center = [0,0];
-		fontInstance.zoom = 0.5;
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] prototypopanel');
+			//console.trace();
+		}
 		let view;
 		let menu;
-		const canvasClass = ClassNames({
-			'is-hidden':this.state.panel.mode === 'glyph',
-			'prototypo-canvas-container':true,
-		});
-		view = [<div ref="canvas" className="prototypo-canvas-container"></div>];
+		view = [<PrototypoCanvas panel={this.state.panel} glyph={this.state.glyph} reset={this.resetView}/>];
 
 		if (this.state.panel.mode === 'text') {
 			view.push(<PrototypoText fontName={this.props.fontName}/>);
 			menu = [
-				<ContextualMenuItem text="Toggle colors" click={() => {this.setState({invertedColors:!this.state.invertedColors})}}/>,
-				<ContextualMenuItem text="Inverted view" click={() => {this.setState({invertedView:!this.state.invertedView})}}/>,
+				<ContextualMenuItem
+					text="Toggle colors"
+					click={() => { this.client.dispatchAction('/store-panel-param',{invertedView:!this.state.panel.invertedView}) }}/>,
+				<ContextualMenuItem
+					text="Inverted view"
+					click={() => { this.client.dispatchAction('/store-panel-param',{invertedColors:!this.state.panel.invertedColors}) }}/>,
 			]
 		}
 		else {
-			if (this.state.shadow) {
+			if (this.state.panel.shadow) {
 				view.push(<div className="shadow-of-the-colossus">{String.fromCharCode(this.state.glyph.selected)}</div>)
 			}
 			menu = [
-				<ContextualMenuItem text={`${!fontInstance.showNodes ? 'Show' : 'Hide'} nodes`} click={() => { fontInstance.showNodes = !fontInstance.showNodes; }}/>,
-				<ContextualMenuItem text={`${fontInstance.fill ? 'Show' : 'Hide'} outline`} click={() => { fontInstance.fill = !fontInstance.fill; }}/>,
-				<ContextualMenuItem text={`${!fontInstance.showCoords ? 'Show' : 'Hide'} coords`} click={() => { fontInstance.showCoords = !fontInstance.showCoords; }}/>,
-				<ContextualMenuItem text="Reset view" click={() => { this.resetView() }}/>,
-				<ContextualMenuItem text={`${this.state.shadow ? 'Hide' : 'Show'} shadow`} click={() => { this.setState({shadow:!this.state.shadow})}}/>,
+				<ContextualMenuItem
+					text={`${!fontInstance.showNodes ? 'Show' : 'Hide'} nodes`}
+					click={() => { this.client.dispatchAction('/store-panel-param',{nodes:!this.state.panel.nodes}) }}/>,
+				<ContextualMenuItem
+					text={`${fontInstance.fill ? 'Show' : 'Hide'} outline`}
+					click={() => { this.client.dispatchAction('/store-panel-param',{outline:!this.state.panel.outline}) }}/>,
+				<ContextualMenuItem
+					text={`${!fontInstance.showCoords ? 'Show' : 'Hide'} coords`}
+					click={() => { this.client.dispatchAction('/store-panel-param',{coords:!this.state.panel.coords}) }}/>,
+				<ContextualMenuItem
+					text="Reset view"
+					click={() => { this.resetView() }}/>,
+				<ContextualMenuItem
+					text={`${this.state.shadow ? 'Hide' : 'Show'} shadow`}
+					click={() => { this.client.dispatchAction('/store-panel-param',{shadow:!this.state.panel.shadow}) }}/>,
 			]
 		}
 
@@ -135,8 +122,7 @@ export default class PrototypoPanel extends React.Component {
 			<div id="prototypopanel"
 				onContextMenu={(e) => {this.showContextMenu(e)}}
 				onClick={() => { this.hideContextMenu() }}
-				onMouseLeave={() => {this.hideContextMenu()}}
-				onDoubleClick={() => { this.resetView() }}>
+				onMouseLeave={() => {this.hideContextMenu()}}>
 				{view}
 				<div className="prototypo-panel-buttons-list">
 					<div className="prototypo-panel-buttons-list-button" onClick={(e) => {
@@ -160,6 +146,7 @@ export default class PrototypoPanel extends React.Component {
 		)
 	}
 }
+
 
 class ContextualMenu extends React.Component {
 	render() {

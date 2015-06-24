@@ -78,14 +78,12 @@ async function createStores() {
 			zoom: panel.get('zoom'),
 			pos: panel.get('pos'),
 			text: panel.get('text'),
-			contextMenu:  {
-				nodes: panel.get('nodes'),
-				outline: panel.get('outline'),
-				coords: panel.get('coords'),
-				shadow: panel.get('shadow'),
-				invertedView: panel.get('invertedView'),
-				invertedColors: panel.get('invertedColors'),
-			}
+			nodes: panel.get('nodes'),
+			outline: panel.get('outline'),
+			coords: panel.get('coords'),
+			shadow: panel.get('shadow'),
+			invertedView: panel.get('invertedView'),
+			invertedColors: panel.get('invertedColors'),
 		}
 
 		AppValues.save({typeface:'default', values:appValues});
@@ -206,8 +204,11 @@ async function createStores() {
 
 				saveAppValues();
 		},
-		'/store-panel-param': ({value, name}) => {
-			const patch = panel.set(name,value).commit();
+		'/store-panel-param': (params) => {
+			_.forEach(params, (value, name) => {
+				panel.set(name,value);
+			});
+			const patch = panel.commit();
 			localServer.dispatchUpdate('/panel',patch);
 			saveAppValues();
 		},

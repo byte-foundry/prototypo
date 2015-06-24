@@ -131,7 +131,8 @@ var bBase = readPrelude.then(function(prelude) {
 			only: './app/scripts'
 		}))
 		.transform(envify({
-			NODE_ENV: gutil.env.type === 'prod' ? 'production' : 'development'
+			NODE_ENV: gutil.env.type === 'prod' ? 'production' : 'development',
+			__SHOW_RENDER__: gutil.env.type === 'debug' ? true : false
 		}));
 });
 
@@ -151,16 +152,14 @@ gulp.task('browserify', bundle);
 gulp.task('build', ['images','css-vendor','css-app','browserify','cp-prototypo.js','cp-genese','cp-static']);
 
 gulp.task('serve', ['images','css-vendor','css-app', 'browserify','cp-static'], function() {
-	bBase.then(function() {
-		browserSync.init({
-			server:['./dist','./node_modules'],
-			port:9000,
-			ghostMode:false
-		});
+	browserSync.init({
+		server:['./dist','./node_modules'],
+		port:9000,
+		ghostMode:false
+	});
 
-		gulp.watch('./app/styles/**/*.scss',['css-app']);
-		gulp.watch('./dist/bundle.js',browserSync.reload);
-	})
+	gulp.watch('./app/styles/**/*.scss',['css-app']);
+	gulp.watch('./dist/bundle.js',browserSync.reload);
 });
 
 gulp.task('test-serve', function() {
