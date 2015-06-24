@@ -11,7 +11,6 @@ export default class NotLoggedIn extends React.Component {
 		return (
 			<div id="notloggedin">
 				<Signin />
-				<Register />
 			</div>
 		)
 	}

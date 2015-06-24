@@ -25,6 +25,7 @@ import {Typefaces} from './services/typefaces.services.js';
 import PrototypoCanvas from '../../node_modules/prototypo-canvas/dist/prototypo-canvas.js';
 import HoodieApi from './services/hoodie.services.js';
 import uuid from 'node-uuid';
+import {AppValues} from './services/values.services.js';
 
 Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi')
 
@@ -50,7 +51,9 @@ const sideBarTab = stores['/sideBarTab'] = new Remutable({});
 
 const fontStore = stores['/fontStore'] = new Remutable({});
 
-const glyphs = stores['/glyphs'] = new Remutable({});
+const glyphs = stores['/glyphs'] = new Remutable({
+	selected:'A',
+});
 
 const panel = stores['/panel'] = new Remutable({});
 
@@ -59,13 +62,37 @@ canvasEl.className = "prototypo-canvas";
 canvasEl.width = 1024;
 canvasEl.height = 1024;
 
-//RemoteClient.createClient('subscription','http://localhost:43430');
+//RemoteClient.createClient('sub80scription','http://localhost:43430');
 
 //HoodieApi.on('connected',() => {
 //	RemoteClient.initRemoteStore('stripe', `/stripe${uuid.v4()}$$${HoodieApi.instance.hoodieId}`,'subscription');
 //});
 
 async function createStores() {
+
+	const saveAppValues = _.debounce(() => {
+
+		const appValues = {
+			selected: glyphs.get('selected'),
+			mode: panel.get('mode'),
+			zoom: panel.get('zoom'),
+			pos: panel.get('pos'),
+			text: panel.get('text'),
+			nodes: panel.get('nodes'),
+			outline: panel.get('outline'),
+			coords: panel.get('coords'),
+			shadow: panel.get('shadow'),
+			invertedView: panel.get('invertedView'),
+			invertedColors: panel.get('invertedColors'),
+		}
+
+		AppValues.save({typeface:'default', values:appValues});
+	}, 300);
+
+	window.addEventListener('unload', () => {
+		saveAppValues();
+		FontValues.save({typeface: 'default', values: fontControls.head.toJS()});
+	})
 
 	const actions = {
 		'/load-params': (params) => {
@@ -175,24 +202,40 @@ async function createStores() {
 
 				font.displayChar(String.fromCharCode(unicode));
 
-				// this.undoWatcher.forceUpdate(patch,params.label);
+				saveAppValues();
 		},
-		'/change-panel-mode': ({mode}) => {
-			const patch = panel.set('mode',mode).commit();
+		'/store-panel-param': (params) => {
+			_.forEach(params, (value, name) => {
+				panel.set(name,value);
+			});
+			const patch = panel.commit();
 			localServer.dispatchUpdate('/panel',patch);
-		},
-		'/store-panel-pos': ({pos}) => {
-			const patch = panel.set('pos',pos).commit();
-			localServer.dispatchUpdate('/panel',patch);
-		},
-		'/store-panel-zoom': ({zoom}) => {
-			const patch = panel.set('zoom',zoom).commit();
-			localServer.dispatchUpdate('/panel',patch);
+			saveAppValues();
 		},
 		'/store-text': ({text}) => {
 			const patch = panel.set('text',text).commit();
 			localServer.dispatchUpdate('/panel',patch);
 			font.subset(panel.head.toJS().text || false);
+			saveAppValues();
+		},
+		'/load-app-values': ({values}) => {
+			const patchGlyph = glyphs.set('selected', values.selected).commit();
+			font.displayChar(String.fromCharCode(values.selected));
+			localServer.dispatchUpdate('/glyphs', patchGlyph);
+
+			const patchPanel = panel
+				.set('zoom',values.zoom)
+				.set('pos', values.pos)
+				.set('text', values.text)
+				.set('mode', values.mode)
+				.set('select', values.selected)
+				.set('nodes', values.nodes)
+				.set('outline', values.outline)
+				.set('coords', values.coords)
+				.set('shadow', values.shadow)
+				.commit();
+
+			localServer.dispatchUpdate('/panel', patchPanel);
 		},
 	}
 
