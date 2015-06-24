@@ -228,6 +228,11 @@ async function createStores() {
 				.set('pos', values.pos)
 				.set('text', values.text)
 				.set('mode', values.mode)
+				.set('select', values.selected)
+				.set('nodes', values.nodes)
+				.set('outline', values.outline)
+				.set('coords', values.coords)
+				.set('shadow', values.shadow)
 				.commit();
 
 			localServer.dispatchUpdate('/panel', patchPanel);

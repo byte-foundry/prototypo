@@ -24,7 +24,7 @@ export default class PrototypoCanvas extends React.Component {
 
 		fontInstance.showNodes = this.props.panel.nodes || false;
 		fontInstance.showCoords = this.props.panel.coords || false;
-		fontInstance.fill = !this.props.panel.outline || true;
+		fontInstance.fill = !this.props.panel.outline;
 	}
 
 	componentDidUpdate() {
