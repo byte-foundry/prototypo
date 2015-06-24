@@ -14,6 +14,10 @@
 		height:35px;
 		cursor:pointer;
 
+		&.is-aligned-right {
+			float:right;
+		}
+
 		&-dropdown {
 			padding:0px;
 			height:0px;
@@ -52,6 +56,19 @@
 				&-title {
 					padding-top:7px;
 					float:left;
+				}
+
+				&-checkbox {
+					float:left;
+					margin-top:7px;
+					margin-right: 10px;
+					border:solid 3px $green;
+					width:20px;
+					height:20px;
+
+					&.is-checked {
+						background-color:$green;
+					}
 				}
 
 				&-shortcut {

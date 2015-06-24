@@ -64,7 +64,7 @@ export default class PrototypoCanvas extends React.Component {
 
 	render() {
 		const canvasClass = ClassNames({
-			'is-hidden':this.props.panel.mode !== 'glyph',
+			'is-hidden':this.props.panel.mode.indexOf('glyph') === -1,
 			'prototypo-canvas-container':true,
 		});
 

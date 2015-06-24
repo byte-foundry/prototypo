@@ -55,7 +55,7 @@ const glyphs = stores['/glyphs'] = new Remutable({
 	selected:'A',
 });
 
-const panel = stores['/panel'] = new Remutable({});
+const panel = stores['/panel'] = new Remutable({mode:[]});
 
 const canvasEl = window.canvasElement = document.createElement('canvas');
 canvasEl.className = "prototypo-canvas";
@@ -95,9 +95,10 @@ async function createStores() {
 	})
 
 	const actions = {
-		'/load-params': (params) => {
+		'/load-params': ({parameters, presets}) => {
 			const patch = fontControls
-				.set('parameters',params)
+				.set('parameters',parameters)
+				.set('presets', presets)
 				.commit();
 			localServer.dispatchUpdate('/fontControls',patch);
 		},
@@ -227,7 +228,7 @@ async function createStores() {
 				.set('zoom',values.zoom)
 				.set('pos', values.pos)
 				.set('text', values.text)
-				.set('mode', values.mode)
+				.set('mode', values.mode || [])
 				.set('select', values.selected)
 				.set('nodes', values.nodes)
 				.set('outline', values.outline)
@@ -274,7 +275,7 @@ async function createStores() {
 	font.displayChar('A');
 	localClient.dispatchAction('/create-font', font);
 
-	localClient.dispatchAction('/load-params', typedata.parameters);
+	localClient.dispatchAction('/load-params', typedata);
 	localClient.dispatchAction('/load-glyphs', font.font.altMap);
 }
 

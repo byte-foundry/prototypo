@@ -15,7 +15,9 @@ export default class PrototypoPanel extends React.Component {
 			contextMenuPos:{x:0,y:0},
 			showContextMenu:false,
 			glyph:{},
-			panel: {},
+			panel: {
+				mode:['text'],
+			},
 		};
 	}
 
@@ -84,7 +86,7 @@ export default class PrototypoPanel extends React.Component {
 		let menu;
 		view = [<PrototypoCanvas panel={this.state.panel} glyph={this.state.glyph} reset={this.resetView}/>];
 
-		if (this.state.panel.mode === 'text') {
+		if (this.state.panel.mode.indexOf('text') != -1) {
 			view.push(<PrototypoText fontName={this.props.fontName}/>);
 			menu = [
 				<ContextualMenuItem
@@ -124,21 +126,6 @@ export default class PrototypoPanel extends React.Component {
 				onClick={() => { this.hideContextMenu() }}
 				onMouseLeave={() => {this.hideContextMenu()}}>
 				{view}
-				<div className="prototypo-panel-buttons-list">
-					<div className="prototypo-panel-buttons-list-button" onClick={(e) => {
-						this.changeMode(e, 'text');
-					}}>
-						Text view
-					</div>
-					<div className="prototypo-panel-buttons-list-button" onClick={(e) => {
-					 	this.changeMode(e, 'glyph')
-					 }}>
-						Glyph view
-					</div>
-					<div className="prototypo-panel-buttons-list-button" onClick={() => { this.changeMode('half')}}>
-						Half and Half
-					</div>
-				</div>
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
 					{menu}
 				</ContextualMenu>

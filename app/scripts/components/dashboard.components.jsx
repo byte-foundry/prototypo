@@ -25,7 +25,7 @@ export default class Dashboard extends React.Component {
 					initValues[param.name] = param.init;
 				});
 			});
-			const presetValues = typedata.presets.Modern;
+			const presetValues = typedata.presets['Modern'];
 
 			try {
 				const fontValues = await FontValues.get({typeface:'default'});

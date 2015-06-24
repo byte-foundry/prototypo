@@ -3,6 +3,8 @@
 .prototypo-canvas-container {
 	position:relative;
 	z-index:1;
+	flex:1;
+	overflow:hidden;
 }
 
 .prototypo-panel-buttons-list {
