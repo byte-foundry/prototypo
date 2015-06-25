@@ -1,10 +1,18 @@
 @import "../variables";
 
-.prototypo-canvas-container {
+.prototypo-canvas {
+	height:100%;
+	width:100%;
 	position:relative;
 	z-index:1;
 	flex:1;
-	overflow:hidden;
+
+	&-container {
+		height:100%;
+		width:100%;
+		overflow:hidden;
+	}
+
 }
 
 .prototypo-panel-buttons-list {

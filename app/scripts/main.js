@@ -59,9 +59,8 @@ const panel = stores['/panel'] = new Remutable({mode:[]});
 
 const canvasEl = window.canvasElement = document.createElement('canvas');
 canvasEl.className = "prototypo-canvas";
-canvasEl.width = 1024;
-canvasEl.height = 1024;
-
+canvasEl.width = 0;
+canvasEl.height = 0;
 //RemoteClient.createClient('sub80scription','http://localhost:43430');
 
 //HoodieApi.on('connected',() => {
@@ -70,7 +69,14 @@ canvasEl.height = 1024;
 
 async function createStores() {
 
+	//I know this is ugly but for now it's like this.
+	//We need some transient state to know when we loaded appValues
+	let appValuesLoaded = false;
+
 	const saveAppValues = _.debounce(() => {
+		if (!appValuesLoaded) {
+			return;
+		}
 
 		const appValues = {
 			selected: glyphs.get('selected'),
@@ -237,6 +243,7 @@ async function createStores() {
 				.commit();
 
 			localServer.dispatchUpdate('/panel', patchPanel);
+			appValuesLoaded = true;
 		},
 	}
 
