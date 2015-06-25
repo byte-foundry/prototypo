@@ -108,7 +108,7 @@ export default class PrototypoCanvas extends React.Component {
 		e.stopPropagation();
 		this.setState({
 			showContextMenu:true,
-			contextMenuPos:{x:e.clientX,y:e.clientY},
+			contextMenuPos:{x:e.nativeEvent.offsetX,y:e.nativeEvent.offsetY},
 		});
 	}
 
@@ -123,7 +123,7 @@ export default class PrototypoCanvas extends React.Component {
 	render() {
 		const canvasClass = ClassNames({
 			'is-hidden':this.props.panel.mode.indexOf('glyph') === -1,
-			'prototypo-canvas-container':true,
+			'prototypo-canvas':true,
 		});
 
 		const menu = [
@@ -145,11 +145,12 @@ export default class PrototypoCanvas extends React.Component {
 		];
 
 		return (
-			<div className="prototypo-canvas"
+			<div
+				className={canvasClass}
 				onContextMenu={(e) => { this.showContextMenu(e) }}
 				onClick={() => { this.hideContextMenu() }}
 				onMouseLeave={() => { this.hideContextMenu() }}>
-				<div ref="canvas" className={canvasClass} onDoubleClick={() => { this.props.reset() }}></div>
+				<div ref="canvas" className="prototypo-canvas-container" onDoubleClick={() => { this.props.reset() }}></div>
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
 					{menu}
 				</ContextualMenu>

@@ -3,4 +3,18 @@
 	padding-top:35px;
 	position:relative;
 	display:flex;
+	flex-direction:column;
+}
+
+#prototypoword {
+	flex:1.33;
+	overflow:visible;
+	position:relative;
+}
+
+#prototypotextandglyph {
+	flex:4;
+	display:flex;
+	flex-direction:row;
+	overflow:hidden;
 }

@@ -1,6 +1,9 @@
 .prototypo-text {
-	height: 100%;
 	flex:1;
+	max-height: 100%;
+	overflow-y:auto;
+	position:relative;
+
 	&-string {
 		height:100%;
 		width:100%;

@@ -218,10 +218,10 @@ async function createStores() {
 			localServer.dispatchUpdate('/panel',patch);
 			saveAppValues();
 		},
-		'/store-text': ({text}) => {
-			const patch = panel.set('text',text).commit();
+		'/store-text': ({value, propName}) => {
+			const patch = panel.set(propName,value).commit();
 			localServer.dispatchUpdate('/panel',patch);
-			font.subset = panel.head.toJS().text || false;
+			font.subset = panel.head.toJS().text + panel.head.toJS().word || false;
 			saveAppValues();
 		},
 		'/load-app-values': ({values}) => {
@@ -233,6 +233,7 @@ async function createStores() {
 				.set('zoom',values.zoom)
 				.set('pos', values.pos)
 				.set('text', values.text)
+				.set('word', values.word)
 				.set('mode', values.mode || [])
 				.set('select', values.selected)
 				.set('nodes', values.nodes)
