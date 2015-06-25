@@ -2,9 +2,10 @@ import React from 'react';
 
 class ContextualMenu extends React.Component {
 	render() {
+
 		const menuStyle = {
-			top:this.props.pos.y-15,
-			left:this.props.pos.x-340,
+			top:this.props.pos.y,
+			left:this.props.pos.x,
 		};
 
 		return this.props.show ? (

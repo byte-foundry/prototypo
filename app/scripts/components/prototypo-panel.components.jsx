@@ -4,6 +4,7 @@ import Lifespan from 'lifespan';
 
 import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
+import PrototypoWord from './prototypo-word.components.jsx';
 
 
 export default class PrototypoPanel extends React.Component {
@@ -65,22 +66,47 @@ export default class PrototypoPanel extends React.Component {
 			console.log('[RENDER] prototypopanel');
 			//console.trace();
 		}
-		let view;
-		let menu;
-		view = [<PrototypoCanvas panel={this.state.panel} glyph={this.state.glyph} reset={() => { this.resetView() }}/>];
 
-		if (this.state.panel.mode.indexOf('text') != -1) {
-			view.push(<PrototypoText fontName={this.props.fontName}/>);
+		let textAndGlyph;
+		let word;
+
+		textAndGlyph = [<PrototypoCanvas panel={this.state.panel} glyph={this.state.glyph} reset={() => { this.resetView() }}/>];
+		const hasGlyph = this.state.panel.mode.indexOf('glyph') != -1;
+		const hasText = this.state.panel.mode.indexOf('text') != -1;
+
+		if (hasText) {
+			textAndGlyph.push(<PrototypoText fontName={this.props.fontName} panel={this.state.panel} field="text"/>);
 		}
-		else {
-			if (this.state.panel.shadow) {
-				view.push(<div className="shadow-of-the-colossus">{String.fromCharCode(this.state.glyph.selected)}</div>)
-			}
+		else if (hasGlyph && this.state.panel.shadow) {
+			textAndGlyph.push(<div className="shadow-of-the-colossus">{String.fromCharCode(this.state.glyph.selected)}</div>)
+		}
+
+		if (this.state.panel.mode.indexOf('word') != -1) {
+			word = <PrototypoWord fontName={this.props.fontName} panel={this.state.panel} field="word"/>;
+		}
+
+		let down;
+		if (hasGlyph || hasText) {
+			down = (
+				<div id="prototypotextandglyph">
+					{textAndGlyph}
+				</div>
+			);
+		}
+
+		let up;
+		if (word) {
+			up = (
+				<div id="prototypoword">
+					{word}
+				</div>
+			);
 		}
 
 		return (
 			<div id="prototypopanel">
-				{view}
+				{up}
+				{down}
 			</div>
 		)
 	}

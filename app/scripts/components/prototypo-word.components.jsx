@@ -4,7 +4,9 @@ import Lifespan from 'lifespan';
 
 import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
 
-export default class PrototypoText extends React.Component {
+//Right now PrototypoWord is just like PrototypoText (except some css consideration)
+//However it will change at some point
+export default class PrototypoWord extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -86,28 +88,32 @@ export default class PrototypoText extends React.Component {
 		const style = {
 			'fontFamily':`${this.props.fontName || 'theyaintus'}, 'sans-serif'`,
 			'fontSize': `${17 / this.props.panel.mode.length}rem`,
-			'color': this.props.panel.invertedTextColors ? '#fefefe' : '#232323',
-			'backgroundColor': !this.props.panel.invertedTextColors ? '#fefefe' : '#232323',
-			'transform': this.props.panel.invertedTextView ? 'scaleY(-1)' : 'scaleY(1)',
+			'color': this.props.panel.invertedWordColors ? '#fefefe' : '#232323',
+			'backgroundColor': !this.props.panel.invertedWordColors ? '#fefefe' : '#232323',
+			'transform': this.props.panel.invertedWordView ? 'scaleY(-1)' : 'scaleY(1)',
 		};
 
 		const menu = [
 			<ContextualMenuItem
-				text="Toggle colors"
+				text="Inverted view"
+				key="colors"
+				click={() => { this.client.dispatchAction('/store-panel-param',{invertedWordView:!this.props.panel.invertedWordView}) }}/>,
+			<ContextualMenuItem
 				key="view"
-				click={() => { this.client.dispatchAction('/store-panel-param',{invertedTextColors:!this.props.panel.invertedTextColors}) }}/>,
+				text="Toggle colors"
+				click={() => { this.client.dispatchAction('/store-panel-param',{invertedWordColors:!this.props.panel.invertedWordColors}) }}/>,
 		]
 
 		return (
 			<div
-				className="prototypo-text"
+				className="prototypo-word"
 				onContextMenu={(e) => { this.showContextMenu(e) }}
 				onClick={() => { this.hideContextMenu() }}
 				onMouseLeave={() => { this.hideContextMenu() }}>
 				<div
 					contentEditable="true"
 					ref="text"
-					className="prototypo-text-string"
+					className="prototypo-word-string"
 					spellCheck="false"
 					style={style}
 					onInput={() => { this.updateSubset() }}
