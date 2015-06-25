@@ -55,13 +55,12 @@ const glyphs = stores['/glyphs'] = new Remutable({
 	selected:'A',
 });
 
-const panel = stores['/panel'] = new Remutable({});
+const panel = stores['/panel'] = new Remutable({mode:[]});
 
 const canvasEl = window.canvasElement = document.createElement('canvas');
 canvasEl.className = "prototypo-canvas";
-canvasEl.width = 1024;
-canvasEl.height = 1024;
-
+canvasEl.width = 0;
+canvasEl.height = 0;
 //RemoteClient.createClient('sub80scription','http://localhost:43430');
 
 //HoodieApi.on('connected',() => {
@@ -70,7 +69,14 @@ canvasEl.height = 1024;
 
 async function createStores() {
 
+	//I know this is ugly but for now it's like this.
+	//We need some transient state to know when we loaded appValues
+	let appValuesLoaded = false;
+
 	const saveAppValues = _.debounce(() => {
+		if (!appValuesLoaded) {
+			return;
+		}
 
 		const appValues = {
 			selected: glyphs.get('selected'),
@@ -95,9 +101,10 @@ async function createStores() {
 	})
 
 	const actions = {
-		'/load-params': (params) => {
+		'/load-params': ({parameters, presets}) => {
 			const patch = fontControls
-				.set('parameters',params)
+				.set('parameters',parameters)
+				.set('presets', presets)
 				.commit();
 			localServer.dispatchUpdate('/fontControls',patch);
 		},
@@ -227,7 +234,7 @@ async function createStores() {
 				.set('zoom',values.zoom)
 				.set('pos', values.pos)
 				.set('text', values.text)
-				.set('mode', values.mode)
+				.set('mode', values.mode || [])
 				.set('select', values.selected)
 				.set('nodes', values.nodes)
 				.set('outline', values.outline)
@@ -236,6 +243,7 @@ async function createStores() {
 				.commit();
 
 			localServer.dispatchUpdate('/panel', patchPanel);
+			appValuesLoaded = true;
 		},
 	}
 
@@ -274,7 +282,7 @@ async function createStores() {
 	font.displayChar('A');
 	localClient.dispatchAction('/create-font', font);
 
-	localClient.dispatchAction('/load-params', typedata.parameters);
+	localClient.dispatchAction('/load-params', typedata);
 	localClient.dispatchAction('/load-glyphs', font.font.altMap);
 }
 

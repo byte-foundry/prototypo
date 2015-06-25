@@ -54,7 +54,12 @@ export default class FontControls extends React.Component {
 			else if (path == '/change-param') {
 				let newParams = {};
 				Object.assign(newParams, fontControls.get('values'));
-				newParams[params.name] = params.value;
+				if (params.values) {
+					_.assign(newParams, params.values)
+				}
+				else {
+					newParams[params.name] = params.value;
+				}
 
 				const patch = fontControls.set('values',newParams).commit();
 

@@ -4,8 +4,13 @@ import Classnames from 'classnames';
 class TopBarMenu extends React.Component {
 	render() {
 		const headers = _.map(this.props.children,(child) => {
+			const classes = Classnames({
+				'top-bar-menu-item':true,
+				'is-aligned-right':child.props.alignRight,
+			});
+
 			return (
-				<li className="top-bar-menu-item" key={child.props.name}>
+				<li className={classes} key={child.props.name}>
 					{child.props.name}
 					{child}
 				</li>
@@ -66,8 +71,35 @@ class TopBarMenuDropdownItem extends React.Component {
 	}
 }
 
+class TopBarMenuDropdownCheckBox extends React.Component {
+	componentWillMount() {
+
+	}
+
+	render() {
+		const classes = Classnames({
+			'top-bar-menu-item-dropdown-item':true,
+			'is-disabled':this.props.disabled,
+		});
+
+		const checkboxClasses = Classnames({
+			'top-bar-menu-item-dropdown-item-checkbox':true,
+			'is-checked':this.props.checked,
+		});
+
+		return (
+			<li className={classes} onClick={this.props.handler}>
+				<span className={checkboxClasses}></span>
+				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
+				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
+			</li>
+		)
+	}
+}
+
 export {
 	TopBarMenu,
 	TopBarMenuDropdown,
 	TopBarMenuDropdownItem,
+	TopBarMenuDropdownCheckBox,
 }

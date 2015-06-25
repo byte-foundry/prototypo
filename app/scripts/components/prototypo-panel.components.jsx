@@ -15,7 +15,9 @@ export default class PrototypoPanel extends React.Component {
 			contextMenuPos:{x:0,y:0},
 			showContextMenu:false,
 			glyph:{},
-			panel: {},
+			panel: {
+				mode:['text'],
+			},
 		};
 	}
 
@@ -42,7 +44,7 @@ export default class PrototypoPanel extends React.Component {
 
 	resetView() {
 		this.client.dispatchAction('/store-panel-param', {
-			pos:prototypo.paper.Point(0,0),
+			pos:new prototypo.paper.Point(0,0),
 			zoom:0.5,
 		})
 	}
@@ -58,23 +60,6 @@ export default class PrototypoPanel extends React.Component {
 		e.stopPropagation();
 	}
 
-	showContextMenu(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		this.setState({
-			showContextMenu:true,
-			contextMenuPos:{x:e.clientX,y:e.clientY},
-		});
-	}
-
-	hideContextMenu() {
-		if (this.state.showContextMenu) {
-			this.setState({
-				showContextMenu:false,
-			});
-		}
-	}
-
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] prototypopanel');
@@ -82,95 +67,21 @@ export default class PrototypoPanel extends React.Component {
 		}
 		let view;
 		let menu;
-		view = [<PrototypoCanvas panel={this.state.panel} glyph={this.state.glyph} reset={this.resetView}/>];
+		view = [<PrototypoCanvas panel={this.state.panel} glyph={this.state.glyph} reset={() => { this.resetView() }}/>];
 
-		if (this.state.panel.mode === 'text') {
+		if (this.state.panel.mode.indexOf('text') != -1) {
 			view.push(<PrototypoText fontName={this.props.fontName}/>);
-			menu = [
-				<ContextualMenuItem
-					text="Toggle colors"
-					click={() => { this.client.dispatchAction('/store-panel-param',{invertedView:!this.state.panel.invertedView}) }}/>,
-				<ContextualMenuItem
-					text="Inverted view"
-					click={() => { this.client.dispatchAction('/store-panel-param',{invertedColors:!this.state.panel.invertedColors}) }}/>,
-			]
 		}
 		else {
 			if (this.state.panel.shadow) {
 				view.push(<div className="shadow-of-the-colossus">{String.fromCharCode(this.state.glyph.selected)}</div>)
 			}
-			menu = [
-				<ContextualMenuItem
-					text={`${!fontInstance.showNodes ? 'Show' : 'Hide'} nodes`}
-					click={() => { this.client.dispatchAction('/store-panel-param',{nodes:!this.state.panel.nodes}) }}/>,
-				<ContextualMenuItem
-					text={`${fontInstance.fill ? 'Show' : 'Hide'} outline`}
-					click={() => { this.client.dispatchAction('/store-panel-param',{outline:!this.state.panel.outline}) }}/>,
-				<ContextualMenuItem
-					text={`${!fontInstance.showCoords ? 'Show' : 'Hide'} coords`}
-					click={() => { this.client.dispatchAction('/store-panel-param',{coords:!this.state.panel.coords}) }}/>,
-				<ContextualMenuItem
-					text="Reset view"
-					click={() => { this.resetView() }}/>,
-				<ContextualMenuItem
-					text={`${this.state.shadow ? 'Hide' : 'Show'} shadow`}
-					click={() => { this.client.dispatchAction('/store-panel-param',{shadow:!this.state.panel.shadow}) }}/>,
-			]
 		}
 
 		return (
-			<div id="prototypopanel"
-				onContextMenu={(e) => {this.showContextMenu(e)}}
-				onClick={() => { this.hideContextMenu() }}
-				onMouseLeave={() => {this.hideContextMenu()}}>
+			<div id="prototypopanel">
 				{view}
-				<div className="prototypo-panel-buttons-list">
-					<div className="prototypo-panel-buttons-list-button" onClick={(e) => {
-						this.changeMode(e, 'text');
-					}}>
-						Text view
-					</div>
-					<div className="prototypo-panel-buttons-list-button" onClick={(e) => {
-					 	this.changeMode(e, 'glyph')
-					 }}>
-						Glyph view
-					</div>
-					<div className="prototypo-panel-buttons-list-button" onClick={() => { this.changeMode('half')}}>
-						Half and Half
-					</div>
-				</div>
-				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
-					{menu}
-				</ContextualMenu>
 			</div>
-		)
-	}
-}
-
-
-class ContextualMenu extends React.Component {
-	render() {
-		const menuStyle = {
-			top:this.props.pos.y-15,
-			left:this.props.pos.x-340,
-		};
-
-		return this.props.show ? (
-			<div className="contextual-menu" style={menuStyle}>
-				<ul className="contextual-menu-list">
-					{this.props.children}
-				</ul>
-			</div>
-		) : false;
-	}
-}
-
-class ContextualMenuItem extends React.Component {
-	render() {
-		return (
-			<li className="contextual-menu-list-item" onClick={this.props.click}>
-				{this.props.text}
-			</li>
 		)
 	}
 }
