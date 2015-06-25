@@ -53,7 +53,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	updateSubset() {
-		fontInstance.subset(React.findDOMNode(this.refs.text).value);
+		fontInstance.subset = React.findDOMNode(this.refs.text).value;
 	}
 
 	showContextMenu(e) {

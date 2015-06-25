@@ -20,8 +20,8 @@
     "pouchdb": "^3.6.0",
     "pouchdb-authentication": "^0.4.0",
     "pouchdb-hoodie-api": "^1.0.3",
-    "prototypo.js": "^0.6.1",
-    "prototypo-canvas": "^1.0.0",
+    "prototypo.js": "^0.6.3",
+    "prototypo-canvas": "^1.1.2",
     "react": "^0.13.3",
     "react-router": "^0.13.3",
     "remutable": "^1.1.1"

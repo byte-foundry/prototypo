@@ -136,7 +136,6 @@ async function createStores() {
 
 			fontPromise
 				.then(() => {
-					font.subset(panel.head.toJS().text || false);
 					params.ascenderHeight = params.ascender + params.xHeight;
 					params.capHeight = params.xHeight + params.capDelta;
 					params.contrast = -params._contrast;
@@ -222,7 +221,7 @@ async function createStores() {
 		'/store-text': ({text}) => {
 			const patch = panel.set('text',text).commit();
 			localServer.dispatchUpdate('/panel',patch);
-			font.subset(panel.head.toJS().text || false);
+			font.subset = panel.head.toJS().text || false;
 			saveAppValues();
 		},
 		'/load-app-values': ({values}) => {
