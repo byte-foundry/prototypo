@@ -2,7 +2,7 @@ import pleaseWait from 'please-wait';
 
 pleaseWait.instance = pleaseWait.pleaseWait({
 	logo:'/assets/images/prototypo-icon.svg',
-	backgroundColor: '#49e4a9',
+	// backgroundColor: '#49e4a9',
 	loadingHtml:`Hey man I'm loading`,
 });
 
