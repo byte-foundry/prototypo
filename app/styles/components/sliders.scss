@@ -50,7 +50,7 @@
 
 		&-bg {
 			height: 1.9rem;
-			background-color: #49e4a9;
+			background-color: $green;
 			transition: background-color 500ms ease;
 
 			&.is-not-advised {
