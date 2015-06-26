@@ -45,6 +45,14 @@
 				padding-left:20px;
 				cursor:pointer;
 
+				&.is-checkbox:hover {
+					background:$dark-grey;
+				}
+
+				&:hover &-checkbox {
+					background-color:$white;
+				}
+
 				&.is-disabled {
 					color:darken($white,20%);
 				}
@@ -60,11 +68,12 @@
 
 				&-checkbox {
 					float:left;
-					margin-top:7px;
-					margin-right: 10px;
-					border:solid 3px $green;
-					width:20px;
-					height:20px;
+					margin-top:12px;
+					margin-right: 12px;
+					border:solid 1px $light-grey;
+					width:10px;
+					height:10px;
+					border-radius: 2px;
 
 					&.is-checked {
 						background-color:$green;

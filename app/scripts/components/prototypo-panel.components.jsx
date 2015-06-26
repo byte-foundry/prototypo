@@ -54,11 +54,9 @@ export default class PrototypoPanel extends React.Component {
 		this.lifespan.release();
 	}
 
-	changeMode(e, mode) {
-		this.client.dispatchAction('/store-panel-param',{
-			mode:mode
-		});
-		e.stopPropagation();
+	closeView(name) {
+		const newViewMode = _.xor(this.props.panel.mode, [name]);
+		this.client.dispatchAction('/store-panel-param',{mode:newViewMode});
 	}
 
 	render() {
@@ -70,19 +68,31 @@ export default class PrototypoPanel extends React.Component {
 		let textAndGlyph;
 		let word;
 
-		textAndGlyph = [<PrototypoCanvas panel={this.state.panel} glyph={this.state.glyph} reset={() => { this.resetView() }}/>];
+		textAndGlyph = [<PrototypoCanvas
+			panel={this.state.panel}
+			glyph={this.state.glyph}
+			reset={() => { this.resetView() }}
+			close={(name) => { this.closeView(name) }}/>];
 		const hasGlyph = this.state.panel.mode.indexOf('glyph') != -1;
 		const hasText = this.state.panel.mode.indexOf('text') != -1;
 
 		if (hasText) {
-			textAndGlyph.push(<PrototypoText fontName={this.props.fontName} panel={this.state.panel} field="text"/>);
+			textAndGlyph.push(<PrototypoText
+				fontName={this.props.fontName}
+				panel={this.state.panel}
+				close={(name) => { this.closeView(name) }}
+				field="text"/>);
 		}
 		else if (hasGlyph && this.state.panel.shadow) {
 			textAndGlyph.push(<div className="shadow-of-the-colossus">{String.fromCharCode(this.state.glyph.selected)}</div>)
 		}
 
 		if (this.state.panel.mode.indexOf('word') != -1) {
-			word = <PrototypoWord fontName={this.props.fontName} panel={this.state.panel} field="word"/>;
+			word = <PrototypoWord
+				fontName={this.props.fontName}
+				panel={this.state.panel}
+				close={(name) => { this.closeView(name) }}
+				field="word"/>;
 		}
 
 		let down;

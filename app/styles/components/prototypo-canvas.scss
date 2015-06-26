@@ -6,6 +6,7 @@
 	position:relative;
 	z-index:1;
 	flex:1;
+	border-right:solid 1px $light-grey;
 
 	&-container {
 		height:100%;
