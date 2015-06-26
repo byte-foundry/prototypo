@@ -79,6 +79,7 @@ class TopBarMenuDropdownCheckBox extends React.Component {
 	render() {
 		const classes = Classnames({
 			'top-bar-menu-item-dropdown-item':true,
+			'is-checkbox': true,
 			'is-disabled':this.props.disabled,
 		});
 

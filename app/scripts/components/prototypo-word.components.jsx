@@ -3,6 +3,7 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 
 import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
+import CloseButton from './close-button.components.jsx';
 
 //Right now PrototypoWord is just like PrototypoText (except some css consideration)
 //However it will change at some point
@@ -63,16 +64,23 @@ export default class PrototypoWord extends React.Component {
 	updateSubset() {
 		const textDiv = React.findDOMNode(this.refs.text);
 		if (textDiv && textDiv.value) {
-			fontInstance.subset(textDiv.value);
+			fontInstance.subset = textDiv.value;
 		}
 	}
 
 	showContextMenu(e) {
 		e.preventDefault();
 		e.stopPropagation();
+		const contextMenuPos = {x:e.nativeEvent.offsetX};
+		if (this.props.panel.invertedWordView) {
+			contextMenuPos.y = React.findDOMNode(this.refs.text).clientHeight - e.nativeEvent.offsetY;
+		}
+		else {
+			contextMenuPos.y = e.nativeEvent.offsetY;
+		}
 		this.setState({
 			showContextMenu:true,
-			contextMenuPos:{x:e.nativeEvent.offsetX,y:e.nativeEvent.offsetY},
+			contextMenuPos,
 		});
 	}
 
@@ -87,7 +95,7 @@ export default class PrototypoWord extends React.Component {
 	render() {
 		const style = {
 			'fontFamily':`${this.props.fontName || 'theyaintus'}, 'sans-serif'`,
-			'fontSize': `${17 / this.props.panel.mode.length}rem`,
+			'fontSize': `${17 / (this.props.panel.mode.indexOf('glyph') != -1 || this.props.panel.mode.indexOf('text') != -1 ? 2 : 1)}rem`,
 			'color': this.props.panel.invertedWordColors ? '#fefefe' : '#232323',
 			'backgroundColor': !this.props.panel.invertedWordColors ? '#fefefe' : '#232323',
 			'transform': this.props.panel.invertedWordView ? 'scaleY(-1)' : 'scaleY(1)',
@@ -119,6 +127,7 @@ export default class PrototypoWord extends React.Component {
 					onInput={() => { this.updateSubset() }}
 					onBlur={() => { this.saveText() }}
 				></div>
+				<CloseButton click={() => { this.props.close('word') }}/>
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
 					{menu}
 				</ContextualMenu>

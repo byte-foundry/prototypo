@@ -4,6 +4,7 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 
 import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
+import CloseButton from './close-button.components.jsx';
 
 export default class PrototypoCanvas extends React.Component {
 
@@ -151,6 +152,7 @@ export default class PrototypoCanvas extends React.Component {
 				onClick={() => { this.hideContextMenu() }}
 				onMouseLeave={() => { this.hideContextMenu() }}>
 				<div ref="canvas" className="prototypo-canvas-container" onDoubleClick={() => { this.props.reset() }}></div>
+				<CloseButton click={() => { this.props.close('glyph') }}/>
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
 					{menu}
 				</ContextualMenu>

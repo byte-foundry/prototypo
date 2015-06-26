@@ -78,19 +78,8 @@ async function createStores() {
 			return;
 		}
 
-		const appValues = {
-			selected: glyphs.get('selected'),
-			mode: panel.get('mode'),
-			zoom: panel.get('zoom'),
-			pos: panel.get('pos'),
-			text: panel.get('text'),
-			nodes: panel.get('nodes'),
-			outline: panel.get('outline'),
-			coords: panel.get('coords'),
-			shadow: panel.get('shadow'),
-			invertedView: panel.get('invertedView'),
-			invertedColors: panel.get('invertedColors'),
-		}
+		const appValues = panel.head.toJS();
+		appValues.selected = glyphs.get('selected');
 
 		AppValues.save({typeface:'default', values:appValues});
 	}, 300);
@@ -136,7 +125,6 @@ async function createStores() {
 
 			fontPromise
 				.then(() => {
-					font.subset(panel.head.toJS().text || false);
 					params.ascenderHeight = params.ascender + params.xHeight;
 					params.capHeight = params.xHeight + params.capDelta;
 					params.contrast = -params._contrast;
@@ -222,7 +210,7 @@ async function createStores() {
 		'/store-text': ({value, propName}) => {
 			const patch = panel.set(propName,value).commit();
 			localServer.dispatchUpdate('/panel',patch);
-			font.subset(panel.head.toJS().text + panel.head.toJS().word || false);
+			font.subset = panel.head.toJS().text + panel.head.toJS().word || false;
 			saveAppValues();
 		},
 		'/load-app-values': ({values}) => {
@@ -230,18 +218,11 @@ async function createStores() {
 			font.displayChar(String.fromCharCode(values.selected));
 			localServer.dispatchUpdate('/glyphs', patchGlyph);
 
-			const patchPanel = panel
-				.set('zoom',values.zoom)
-				.set('pos', values.pos)
-				.set('text', values.text)
-				.set('word', values.word)
-				.set('mode', values.mode || [])
-				.set('select', values.selected)
-				.set('nodes', values.nodes)
-				.set('outline', values.outline)
-				.set('coords', values.coords)
-				.set('shadow', values.shadow)
-				.commit();
+			_.forEach(values, (value, name) => {
+				panel.set(name,value);
+			})
+
+			const patchPanel = panel.commit();
 
 			localServer.dispatchUpdate('/panel', patchPanel);
 			appValuesLoaded = true;

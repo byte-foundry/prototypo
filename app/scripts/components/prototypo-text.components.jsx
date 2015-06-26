@@ -3,6 +3,7 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 
 import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
+import CloseButton from './close-button.components.jsx';
 
 export default class PrototypoText extends React.Component {
 
@@ -61,16 +62,23 @@ export default class PrototypoText extends React.Component {
 	updateSubset() {
 		const textDiv = React.findDOMNode(this.refs.text);
 		if (textDiv && textDiv.value) {
-			fontInstance.subset(textDiv.value);
+			fontInstance.subset = textDiv.value;
 		}
 	}
 
 	showContextMenu(e) {
 		e.preventDefault();
 		e.stopPropagation();
+		const contextMenuPos = {x:e.nativeEvent.offsetX};
+		if (this.props.panel.invertedTextView) {
+			contextMenuPos.y = React.findDOMNode(this.refs.text).clientHeight - e.nativeEvent.offsetY;
+		}
+		else {
+			contextMenuPos.y = e.nativeEvent.offsetY;
+		}
 		this.setState({
 			showContextMenu:true,
-			contextMenuPos:{x:e.nativeEvent.offsetX,y:e.nativeEvent.offsetY},
+			contextMenuPos,
 		});
 	}
 
@@ -85,13 +93,17 @@ export default class PrototypoText extends React.Component {
 	render() {
 		const style = {
 			'fontFamily':`${this.props.fontName || 'theyaintus'}, 'sans-serif'`,
-			'fontSize': `${17 / this.props.panel.mode.length}rem`,
+			'fontSize': `${17 / (this.props.panel.mode.indexOf('word') != -1 || this.props.panel.mode.indexOf('glyph') != -1 ? 2 : 1) }rem`,
 			'color': this.props.panel.invertedTextColors ? '#fefefe' : '#232323',
 			'backgroundColor': !this.props.panel.invertedTextColors ? '#fefefe' : '#232323',
 			'transform': this.props.panel.invertedTextView ? 'scaleY(-1)' : 'scaleY(1)',
 		};
 
 		const menu = [
+			<ContextualMenuItem
+				text="Inverted view"
+				key="colors"
+				click={() => { this.client.dispatchAction('/store-panel-param',{invertedTextView:!this.props.panel.invertedTextView}) }}/>,
 			<ContextualMenuItem
 				text="Toggle colors"
 				key="view"
@@ -113,6 +125,7 @@ export default class PrototypoText extends React.Component {
 					onInput={() => { this.updateSubset() }}
 					onBlur={() => { this.saveText() }}
 				></div>
+				<CloseButton click={() => { this.props.close('text') }}/>
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
 					{menu}
 				</ContextualMenu>
