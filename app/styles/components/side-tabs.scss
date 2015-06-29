@@ -38,10 +38,9 @@
 			bottom: 0;
 		}
 
-		// &.has-news:before {
 		&.has-news:after {
 			content: "";
-
+			
 			position: absolute;
 			top: 15px;
 			right: 12px;
@@ -49,7 +48,29 @@
 			width: 10px;
 			height: 10px;
 			border-radius: 50%;
-			background: $red;
+			// border: 1px solid $dark-red;
+			background-color: $red;
+
+		    -webkit-animation-name: example;
+			animation-name: example;
+		    -webkit-animation-duration: 2s;
+		    animation-duration: 2s;
+			-webkit-animation-iteration-count: infinite;
+			animation-iteration-count: infinite;
+
+			/* Chrome, Safari, Opera */
+			@-webkit-keyframes example {
+			    0% {background-color: $red;}
+			    30% {background-color: $dark-red;}
+				100% {background-color: $red;}
+			}
+
+			/* Standard syntax */
+			@keyframes example {
+			    0% {background-color: $red;}
+			    30% {background-color: $dark-red;}
+				100% {background-color: $red;}
+			}
 		}
 	}
 }
