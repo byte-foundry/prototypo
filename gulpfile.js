@@ -98,7 +98,7 @@ function bundle() {
 			.pipe(sourcemaps.init({loadMaps:true}))
 			.pipe(sourcemaps.write('./'))
 //			.pipe(gutil.env.type == 'prod' ? uglify() :gutil.noop())
-			.pipe(gulp.dest('./dist'))
+			.pipe(gulp.dest('dist'))
 	})
 }
 
