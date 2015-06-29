@@ -1,4 +1,4 @@
-import {Server} from 'nexus-flux/adapters/Local';
+import {Server} from 'nexus-flux/src/adapters/Local';
 
 export default class LocalServer {
 	constructor(stores) {

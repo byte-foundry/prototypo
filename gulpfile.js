@@ -39,6 +39,7 @@ var through = require('through');
  customBrowserifyOpts = {
 	entries: ['./app/scripts/main.js'],
 	debug: true,//gutil.env.type == 'prod' ? false : true,
+	extensions: ['.jsx'],
 	noParse: [
 		path.resolve('node_modules/prototypo.js/dist/prototypo.js'),
 		path.resolve('node_modules/prototypo-canvas/dist/prototypo-canvas.js')
@@ -134,7 +135,7 @@ var bBase = readPrelude.then(function(prelude) {
 		})
 		.transform(babelify.configure({
 			stage: 0, //enabling that es7 goodness
-			only: './app/scripts'
+			extensions:['.jsx','.js']
 		}))
 		.transform(envify({
 			NODE_ENV: gutil.env.type === 'prod' ? 'production' : 'development',

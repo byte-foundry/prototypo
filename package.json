@@ -8,11 +8,11 @@
     "classnames": "^2.1.2",
     "del": "^1.2.0",
     "hoodie": "^2.0.4",
-    "lifespan": "^3.1.1",
+    "lifespan": "FranzPoize/lifespan#master",
     "lodash": "^3.9.3",
     "moment": "^2.10.3",
-    "nexus-flux": "^3.4.4",
-    "nexus-flux-socket.io": "^2.6.0",
+    "nexus-flux": "FranzPoize/nexus-flux#master",
+    "nexus-flux-socket.io": "FranzPoize/nexus-flux-socket.io#master",
     "node-uuid": "^1.4.3",
     "genese.ptf": "byte-foundry/genese.ptf#john-fell-plumin-dist",
     "normalize.css": "^3.0.3",
@@ -24,7 +24,7 @@
     "prototypo-canvas": "^1.1.2",
     "react": "^0.13.3",
     "react-router": "^0.13.3",
-    "remutable": "^1.1.1"
+    "remutable": "FranzPoize/remutable#master"
   },
   "devDependencies": {
     "babelify": "^6.1.2",
@@ -48,7 +48,10 @@
     "through": "^2.3.7",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.2.2"
+    "watchify": "^3.2.2",
+    "gulp-eslint": "^0.14.0",
+    "gulp-mocha": "^2.1.1",
+    "gulp-plumber": "^1.0.1"
   },
   "engines": {
     "node": ">=0.10.0"

@@ -55,8 +55,10 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	closeView(name) {
-		const newViewMode = _.xor(this.props.panel.mode, [name]);
-		this.client.dispatchAction('/store-panel-param',{mode:newViewMode});
+		const newViewMode = _.xor(this.state.panel.mode, [name]);
+		if (newViewMode.length > 0) {
+			this.client.dispatchAction('/store-panel-param',{mode:newViewMode});
+		}
 	}
 
 	render() {

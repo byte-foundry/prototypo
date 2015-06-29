@@ -68,7 +68,9 @@ export default class Topbar extends React.Component {
 
 	toggleView(name) {
 		const newViewMode = _.xor(this.state.panel.mode,[name]);
-		this.client.dispatchAction('/store-panel-param',{mode:newViewMode});
+		if (newViewMode.length > 0) {
+			this.client.dispatchAction('/store-panel-param',{mode:newViewMode});
+		}
 	}
 
 	render() {
