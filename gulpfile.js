@@ -38,7 +38,7 @@ var through = require('through');
 
  customBrowserifyOpts = {
 	entries: ['./app/scripts/main.js'],
-	debug: gutil.env.type == 'prod' ? false : true,
+	debug: true,//gutil.env.type == 'prod' ? false : true,
 	noParse: [
 		path.resolve('node_modules/prototypo.js/dist/prototypo.js'),
 		path.resolve('node_modules/prototypo-canvas/dist/prototypo-canvas.js')
@@ -63,9 +63,15 @@ gulp.task('cp-genese', function() {
 });
 
 gulp.task('cp-static', function() {
-	gulp.src(['./app/index.html','./app/robots.txt','./app/favicon.ico','404.html','./app/scripts/**/*.*'])
+	gulp.src(['./app/index.html','./app/robots.txt','./app/favicon.ico','404.html'])
 		.pipe(gulp.dest('./dist/'));
 });
+
+gulp.task('cp-scripts', function() {
+	gulp.src(['./app/scripts/**/*.*'])
+		.pipe(gulp.dest('./dist/app/scripts'));
+
+})
 
 gulp.task('css-vendor', function() {
 	//This is a bit hackish but right now i don't care
@@ -149,7 +155,7 @@ gulp.task('clean',function() {
 
 gulp.task('browserify', bundle);
 
-gulp.task('build', ['images','css-vendor','css-app','browserify','cp-prototypo.js','cp-genese','cp-static']);
+gulp.task('build', ['images','css-vendor','css-app','browserify','cp-prototypo.js','cp-genese','cp-static','cp-scripts']);
 
 gulp.task('serve', ['images','css-vendor','css-app', 'browserify','cp-static'], function() {
 	browserSync.init({
