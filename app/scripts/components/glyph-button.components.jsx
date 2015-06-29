@@ -7,7 +7,9 @@ export default class GlyphButton extends React.Component {
 				<label className="glyph-btn-label">
 					Glyph list
 				</label>
-				<div className="glyph-btn-lock">
+				<div className="glyph-btn-wrapper">
+					<div className="glyph-btn-lock">
+					</div>
 				</div>
 			</div>
 		)
