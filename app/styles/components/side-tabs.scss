@@ -8,7 +8,9 @@
 	}
 
 	&-headers {
+		position: relative;
 		width:70px;
+		height: 100%;
 		float:left;
 	}
 
@@ -21,6 +23,7 @@
 
 	&-icon {
 		height:73px;
+		width: 100%;
 		padding-left:20px;
 		padding-top:22px;
 		cursor:pointer;
@@ -28,6 +31,25 @@
 		&.is-active, &:hover {
 			//TODO(franz): integrate in themified css
 			background-color: #4a4a4a;
+		}
+
+		&.is-bottom {
+			position: absolute;
+			bottom: 0;
+		}
+
+		// &.has-news:before {
+		&.has-news:after {
+			content: "";
+
+			position: absolute;
+			top: 15px;
+			right: 12px;
+
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background: $red;
 		}
 	}
 }
@@ -50,5 +72,11 @@
 		width:800px;
 		z-index:5;
 		box-shadow: none;
+		padding: 2em;
+	}
+
+	h2,
+	p {
+		color: $white;
 	}
 }

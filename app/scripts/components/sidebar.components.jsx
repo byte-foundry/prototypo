@@ -5,6 +5,7 @@ import FontControls from './font-controls.components.jsx';
 import FontInfos from './font-infos.components.jsx';
 import FontsCollection from './fonts-collection.components.jsx';
 import Subscriptions from './subscriptions.components.jsx';
+import NewsFeed from './news-feed.components.jsx';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
@@ -54,6 +55,9 @@ export default class Sidebar extends React.Component {
 					</SideTab>
 					<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true}>
 						<Subscriptions />
+					</SideTab>
+					<SideTab iconUrl="feed-panel.svg" name="news-feed" big={true} bottom={true}>
+						<NewsFeed />
 					</SideTab>
 				</SideTabs>
 			</div>
