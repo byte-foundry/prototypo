@@ -4,6 +4,7 @@ node_js:
 before_script:
 - npm install -g uglifyjs
 - npm install -g surge
+- npm install -g gulp
 after_script:
 - npm install
 - npm dedupe
