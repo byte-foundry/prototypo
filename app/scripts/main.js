@@ -58,7 +58,7 @@ const glyphs = stores['/glyphs'] = new Remutable({
 const panel = stores['/panel'] = new Remutable({mode:[]});
 
 const canvasEl = window.canvasElement = document.createElement('canvas');
-canvasEl.className = "prototypo-canvas";
+canvasEl.className = "prototypo-canvas-container-canvas";
 canvasEl.width = 0;
 canvasEl.height = 0;
 //RemoteClient.createClient('sub80scription','http://localhost:43430');
