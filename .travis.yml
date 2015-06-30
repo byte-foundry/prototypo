@@ -3,6 +3,7 @@ node_js:
 - '0.10'
 before_script:
 - npm install -g uglifyjs
+- npm install -g surge
 after_script:
 - npm install
 - npm dedupe
