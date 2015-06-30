@@ -1,7 +1,6 @@
 @import "../variables";
 
 .prototypo-canvas {
-	height:100%;
 	width:100%;
 	position:relative;
 	z-index:1;
@@ -12,11 +11,15 @@
 	flex-direction:row;
 
 	&-container {
-		height:100%;
 		width:100%;
 		overflow:hidden;
 		display:inline-flex;
 		align-self:stretch;
+
+		&-canvas {
+			height:100%;
+			width:100%;
+		}
 	}
 
 }
@@ -31,8 +34,4 @@
 		padding:10px;
 		margin-top:10px;
 	}
-}
-
-.prototypo-canvas {
-	// width: 100%;
 }
