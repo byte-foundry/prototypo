@@ -7,11 +7,16 @@
 	z-index:1;
 	flex:1;
 	border-right:solid 1px $light-grey;
+	align-self:stretch;
+	display:flex;
+	flex-direction:row;
 
 	&-container {
 		height:100%;
 		width:100%;
 		overflow:hidden;
+		display:inline-flex;
+		align-self:stretch;
 	}
 
 }
