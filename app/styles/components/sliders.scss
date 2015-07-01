@@ -71,6 +71,14 @@
 			transition: border-color 500ms ease;
 		}
 	}
+
+	&.is-disabled {
+		opacity: .4;
+		* {
+			cursor: not-allowed;
+		}
+	}
+
 }
 
 .sliders {
