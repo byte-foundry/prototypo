@@ -8,7 +8,9 @@
 	}
 
 	&-headers {
+		position: relative;
 		width:70px;
+		height: 100%;
 		float:left;
 	}
 
@@ -21,6 +23,7 @@
 
 	&-icon {
 		height:73px;
+		width: 100%;
 		padding-left:20px;
 		padding-top:22px;
 		cursor:pointer;
@@ -28,6 +31,46 @@
 		&.is-active, &:hover {
 			//TODO(franz): integrate in themified css
 			background-color: #4a4a4a;
+		}
+
+		&.is-bottom {
+			position: absolute;
+			bottom: 0;
+		}
+
+		&.has-news:after {
+			content: "";
+			
+			position: absolute;
+			top: 15px;
+			right: 12px;
+
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			// border: 1px solid $dark-red;
+			background-color: $red;
+
+		    -webkit-animation-name: example;
+			animation-name: example;
+		    -webkit-animation-duration: 2s;
+		    animation-duration: 2s;
+			-webkit-animation-iteration-count: infinite;
+			animation-iteration-count: infinite;
+
+			/* Chrome, Safari, Opera */
+			@-webkit-keyframes example {
+			    0% {background-color: $red;}
+			    30% {background-color: $dark-red;}
+				100% {background-color: $red;}
+			}
+
+			/* Standard syntax */
+			@keyframes example {
+			    0% {background-color: $red;}
+			    30% {background-color: $dark-red;}
+				100% {background-color: $red;}
+			}
 		}
 	}
 }
@@ -50,5 +93,11 @@
 		width:800px;
 		z-index:5;
 		box-shadow: none;
+		padding: 2em;
+	}
+
+	h2,
+	p {
+		color: $white;
 	}
 }
