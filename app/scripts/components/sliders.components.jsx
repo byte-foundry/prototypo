@@ -40,18 +40,25 @@ export class Slider extends React.Component {
 
 	render() {
 		const value = this.props.value || this.props.param.init;
+
+		const classes = ClassNames({
+			'slider': true,
+			'is-disabled':this.props.param.disabled
+		});
+
 		return (
-			<div className="slider">
+			<div className={classes}>
 				<label className="slider-title">{this.props.param.label}</label>
 				<div className="slider-reset" onClick={() => {this.resetValue()}}>reset</div>
-				<SliderTextController value={value} name={this.props.param.name} label={this.props.param.label}/>
+				<SliderTextController value={value} name={this.props.param.name} label={this.props.param.label} disabled={this.props.param.disabled}/>
 				<SliderController value={value}
 					name={this.props.param.name}
 					label={this.props.param.label}
 					min={this.props.param.min}
 					max={this.props.param.max}
 					minAdvised={this.props.param.minAdvised}
-					maxAdvised={this.props.param.maxAdvised}/>
+					maxAdvised={this.props.param.maxAdvised}
+					disabled={this.props.param.disabled}/>
 			</div>
 		)
 	}
@@ -73,6 +80,9 @@ export class SliderController extends React.Component {
 	}
 
 	handleDown(e) {
+		if (this.props.disabled) {
+			return;
+		}
 		this.tracking = true;
 		const newX = e.pageX || e.screenX;
 		const {offsetLeft} = DOM.getAbsOffset(React.findDOMNode(this.refs.slider));
@@ -181,6 +191,7 @@ export class SliderTextController extends React.Component {
 							force:true,
 						});
 				}}
+				disabled={this.props.disabled}
 			/>
 		)
 	}
