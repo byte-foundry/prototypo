@@ -1,0 +1,45 @@
+@import "../variables";
+
+.hover-view-menu {
+	position:absolute;
+	top:50px;
+	right:10px;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: flex-end;
+	z-index:12;
+
+	&-img {
+		background-color:$white;
+	}
+
+	&-dropdown {
+		display: none;
+		justify-content: flex-start;
+		flex-flow:column nowrap;
+		background-color: $dark-grey;
+		color:$white;
+		padding:0px 20px 20px;
+
+		&-item {
+			display:flex;
+			flex-flow:row nowrap;
+			justify-content:flex-start;
+			margin-top:20px;
+			cursor:pointer;
+
+			&-checkbox {
+				padding-right:10px;
+			}
+
+			&-text {
+				text-transform: capitalize;
+			}
+		}
+	}
+
+
+	&:hover &-dropdown {
+		display:flex;
+	}
+}
