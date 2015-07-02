@@ -1,10 +1,12 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
+import ClassNames from 'classnames';
 
 import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
 import PrototypoWord from './prototypo-word.components.jsx';
+import HoverViewMenu from './hover-view-menu.components.jsx';
 
 
 export default class PrototypoPanel extends React.Component {
@@ -54,7 +56,7 @@ export default class PrototypoPanel extends React.Component {
 		this.lifespan.release();
 	}
 
-	closeView(name) {
+	toggleView(name) {
 		const newViewMode = _.xor(this.state.panel.mode, [name]);
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-panel-param',{mode:newViewMode});
@@ -74,7 +76,7 @@ export default class PrototypoPanel extends React.Component {
 			panel={this.state.panel}
 			glyph={this.state.glyph}
 			reset={() => { this.resetView() }}
-			close={(name) => { this.closeView(name) }}/>];
+			close={(name) => { this.toggleView(name) }}/>];
 		const hasGlyph = this.state.panel.mode.indexOf('glyph') != -1;
 		const hasText = this.state.panel.mode.indexOf('text') != -1;
 
@@ -82,7 +84,7 @@ export default class PrototypoPanel extends React.Component {
 			textAndGlyph.push(<PrototypoText
 				fontName={this.props.fontName}
 				panel={this.state.panel}
-				close={(name) => { this.closeView(name) }}
+				close={(name) => { this.toggleView(name) }}
 				field="text"/>);
 		}
 		else if (hasGlyph && this.state.panel.shadow) {
@@ -93,14 +95,17 @@ export default class PrototypoPanel extends React.Component {
 			word = <PrototypoWord
 				fontName={this.props.fontName}
 				panel={this.state.panel}
-				close={(name) => { this.closeView(name) }}
+				close={(name) => { this.toggleView(name) }}
 				field="word"/>;
 		}
 
 		let down;
 		if (hasGlyph || hasText) {
+			const classes = ClassNames({
+				'is-up':!word,
+			});
 			down = (
-				<div id="prototypotextandglyph">
+				<div id="prototypotextandglyph" className={classes}>
 					{textAndGlyph}
 				</div>
 			);
@@ -109,7 +114,7 @@ export default class PrototypoPanel extends React.Component {
 		let up;
 		if (word) {
 			up = (
-				<div id="prototypoword">
+				<div id="prototypoword" className="is-up">
 					{word}
 				</div>
 			);
@@ -119,6 +124,7 @@ export default class PrototypoPanel extends React.Component {
 			<div id="prototypopanel">
 				{up}
 				{down}
+				<HoverViewMenu mode={this.state.panel.mode} toggleView={(text) => { this.toggleView(text) }}/>
 			</div>
 		)
 	}
