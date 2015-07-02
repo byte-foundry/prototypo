@@ -9,7 +9,11 @@ body {
 	font-size:1.4em;
 	line-height:1.5;
 
-	font-family: "Liberation Mono", "Lucida Console", "Monaco", "courrier new", monospace;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-weight: 600;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
 	color: #111;
 }
 
