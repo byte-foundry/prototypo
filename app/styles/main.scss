@@ -21,12 +21,12 @@ body {
 	background: #49e4a9; /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
 	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNDllNGE5IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwZTI4YiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
-	background: -moz-linear-gradient(-45deg, #49e4a9 0%, #00e28b 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#49e4a9), color-stop(100%,#00e28b)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(-45deg, #49e4a9 0%,#00e28b 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(-45deg, #49e4a9 0%,#00e28b 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(-45deg, #49e4a9 0%,#00e28b 100%); /* IE10+ */
-	background: linear-gradient(135deg, #49e4a9 0%,#00e28b 100%); /* W3C */
+	background: -moz-linear-gradient(-45deg, #49e4a9 0%, #00e28b 70%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#49e4a9), color-stop(70%,#00e28b)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(-45deg, #49e4a9 0%,#00e28b 70%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(-45deg, #49e4a9 0%,#00e28b 70%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(-45deg, #49e4a9 0%,#00e28b 70%); /* IE10+ */
+	background: linear-gradient(135deg, #49e4a9 0%,#00e28b 70%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#49e4a9', endColorstr='#00e28b',GradientType=1 ); /* IE6-8 fallback on horizontal gradient */
 }
 
