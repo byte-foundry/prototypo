@@ -30,6 +30,11 @@ body {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#49e4a9', endColorstr='#00e28b',GradientType=1 ); /* IE6-8 fallback on horizontal gradient */
 }
 
+.pg-loading-html {
+	color: $white;
+	font-size: 2em;
+}
+
 .clearfix {
 	*zoom:1;
 
