@@ -13,6 +13,8 @@ import Dashboard from './components/dashboard.components.jsx';
 import SitePortal from './components/site-portal.components.jsx'
 import NotLoggedIn from './components/not-logged-in.components.jsx';
 import Subscriptions from './components/subscriptions.components.jsx';
+import Signin from './components/signin.components.jsx';
+import ForgottenPassword from './components/forgotten-password.components.jsx';
 
 import Remutable from 'remutable';
 import LocalClient from './stores/local-client.stores.jsx';
@@ -288,7 +290,10 @@ createStores()
 		  <Route handler={App} name="app" path="/">
 		    <DefaultRoute handler={SitePortal}/>
 		    <Route name="dashboard" handler={Dashboard}/>
-		    <Route name="signin" handler={NotLoggedIn}/>
+		    <Route name="signin" handler={NotLoggedIn}>
+			    <Route name="forgotten" handler={ForgottenPassword}/>
+		    	<DefaultRoute handler={Signin}/>
+		    </Route>
 		    <Route name="subscription" handler={Subscriptions}/>
 		  </Route>
 		);
