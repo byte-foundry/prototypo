@@ -1,4 +1,5 @@
 import PouchDB from 'pouchdb';
+import HOODIE from '../helpers/hoodie.helpers.js';
 import HoodiePouch from 'pouchdb-hoodie-api';
 PouchDB.plugin(HoodiePouch);
 
@@ -16,6 +17,11 @@ export default class HoodieApi {
 			xhr.withCredentials = true;
 
 			xhr.onload = (e) => {
+				if (e.target.status !== 200) {
+					reject(JSON.parse(e.target.responseText));
+					return;
+				}
+
 				const respJSON = JSON.parse(e.target.responseText);
 				if (respJSON.userCtx.name) {
 					const id = respJSON.userCtx.roles[0];
@@ -54,6 +60,11 @@ export default class HoodieApi {
 			xhr.withCredentials = true;
 
 			xhr.onload = (e) => {
+				if (e.target.status !== 200) {
+					reject(JSON.parse(e.target.responseText));
+					return;
+				}
+
 				const respJSON = JSON.parse(e.target.responseText);
 				const id = respJSON.roles[0];
 				const db = PouchDB(`${backUrl}/user%2F${id}`);
@@ -124,6 +135,11 @@ export default class HoodieApi {
 			xhr.withCredentials = true;
 
 			xhr.onload = (e) => {
+				if (e.target.status !== 201) {
+					reject(JSON.parse(e.target.responseText));
+					return;
+				}
+
 				resolve(e.responseText);
 			}
 
@@ -133,6 +149,41 @@ export default class HoodieApi {
 
 			xhr.send(JSON.stringify(payload));
 		});
+	}
+
+	static askPasswordReset(username) {
+		return new Promise((resolve, reject) => {
+
+			const resetId = `${username}/${HOODIE.generateId()}`;
+
+			const key = `org.couchdb.user:$passwordReset/${resetId}`;
+			const xhr = new XMLHttpRequest();
+			const payload = {
+				_id:key,
+				name:`$passwordReset/${resetId}`,
+				type:'user',
+				roles:[],
+				password:resetId,
+				updatedAt:new Date(),
+				createdAt:new Date(),
+			}
+
+			xhr.open('PUT', `${backUrl}/_users/${encodeURIComponent(key)}`);
+			xhr.setRequestHeader('Content-type','application/json');
+			xhr.withCredentials = true;
+
+			xhr.onload = (e) => {
+				resolve();
+			}
+
+			xhr.onerror = (e) => {
+				reject();
+			}
+
+			xhr.send(JSON.stringify(payload));
+
+		});
+		//TODO(franz): Thou shall code the checkPasswordReset at a later point in time
 	}
 
 	static startTask(type, subType, params = {}) {

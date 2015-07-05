@@ -1,0 +1,12 @@
+@import "../variables";
+
+.warning-message {
+	border: solid 2px $yellow;
+	background-color: $white;
+	color: lighten($medium-grey,2%);
+	padding: .8em;
+	font-size: 1em;
+	border-radius: 8px;
+	margin: 10px 0px;
+	border-left-width: 20px;
+}
