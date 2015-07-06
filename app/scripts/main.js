@@ -125,10 +125,6 @@ async function createStores() {
 
 			fontPromise
 				.then(() => {
-					params.ascenderHeight = params.ascender + params.xHeight;
-					params.capHeight = params.xHeight + params.capDelta;
-					params.contrast = -params._contrast;
-					params.spacing = 1;
 					font.update(params);
 				});
 		},
