@@ -10,7 +10,8 @@ export default class Signin extends React.Component {
 			warningMessage:undefined,
 		};
 	}
-	signIn() {
+	signIn(e) {
+		e.preventDefault();
 		HoodieApi.login(`user/${React.findDOMNode(this.refs.email).value}`,
 			React.findDOMNode(this.refs.password).value)
 			.then(() => {
@@ -21,10 +22,11 @@ export default class Signin extends React.Component {
 					warningMessage: err.error === 'unauthorized' ? 'You made a mistake in your email or password' : 'An unexpected error occured please contact contact@prototypo.io and provide us with your username',
 				});
 			})
+		return;
 	}
 	render() {
 		return (
-			<div className="sign-in">
+			<form className="sign-in" onSubmit={(e) => {this.signIn(e)}}>
 				<h1 className="sign-in-title">Sign in</h1>
 				<label className="sign-in-label" htmlFor="email-sign-in">Email</label>
 				<input
@@ -50,8 +52,8 @@ export default class Signin extends React.Component {
 				{((message) => {if (message) {
 					return <WarningMessage text={message}/>
 				}})(this.state.warningMessage)}
-				<button className="sign-in-button" onClick={(e) => {this.signIn()}}>Sign in</button>
-			</div>
+				<button className="sign-in-button">Sign in</button>
+			</form>
 		)
 	}
 }

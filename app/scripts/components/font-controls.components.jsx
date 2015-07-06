@@ -45,13 +45,7 @@ export default class FontControls extends React.Component {
 			);
 
 		server.on('action', ({path, params}) => {
-			if (path == '/change-tab-font') {
-
-				const patch = fontTab.set('tab',params.name).commit();
-				server.dispatchUpdate('/fontTab', patch);
-
-			}
-			else if (path == '/change-param') {
+			if (path == '/change-param') {
 				let newParams = {};
 				Object.assign(newParams, fontControls.get('values'));
 				if (params.values) {
