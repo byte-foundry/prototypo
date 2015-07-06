@@ -35,6 +35,12 @@ export default class Dashboard extends React.Component {
 				this.client.dispatchAction('/load-app-values',appValues);
 			}
 			catch (err) {
+				this.client.dispatchAction('/load-app-values',{
+					values: {
+						mode:'glyph',
+						selected:'A',
+					}
+				});
 				this.client.dispatchAction('/load-values',_.extend(fontControls.get('values'), _.extend(initValues,presetValues)));
 				console.log(err);
 			}
