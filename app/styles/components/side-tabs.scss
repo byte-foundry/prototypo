@@ -12,6 +12,8 @@
 		width:70px;
 		height: 100%;
 		float:left;
+
+		box-shadow: inset -3px 0px 5px 0px darken($dark-grey, 2%);
 	}
 
 	&-icon-headers {
@@ -40,7 +42,7 @@
 
 		&.has-news:after {
 			content: "";
-			
+
 			position: absolute;
 			top: 15px;
 			right: 12px;
@@ -61,14 +63,14 @@
 			/* Chrome, Safari, Opera */
 			@-webkit-keyframes example {
 			    0% {background-color: $red;}
-			    30% {background-color: $dark-red;}
+			    30% {background-color: mix($dark-grey, $red);}
 				100% {background-color: $red;}
 			}
 
 			/* Standard syntax */
 			@keyframes example {
 			    0% {background-color: $red;}
-			    30% {background-color: $dark-red;}
+			    30% {background-color: mix($dark-grey, $red);}
 				100% {background-color: $red;}
 			}
 		}
@@ -81,7 +83,6 @@
 	height:100%;
 	display:none;
 	transition:width .2s ease;
-	box-shadow: 4px 0px 6px #aaa;
 	position:relative;
 	z-index:2;
 
