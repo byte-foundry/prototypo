@@ -1,0 +1,54 @@
+@import "../variables";
+
+.account {
+
+	&-block {
+
+		&-title {
+			color:$white;
+		}
+
+		&-form {
+
+			&-label {
+				display: block;
+				color:$white;
+				font-size:1.1em;
+				padding-bottom:10px;
+			}
+
+			&-input {
+				display:block;
+				width: 40%;
+				border: 1px solid #6ceab4;
+				border-radius: 10px;
+				padding: .8em;
+				background-color: #fefefe;
+				color:$dark-grey;
+				font-size: 1.1em;
+				margin-bottom: 1em;
+			}
+
+			&-button {
+				display: inline-block;
+				width: auto;
+				align-self:flex-end;
+				margin-top:auto;
+				font-size: 1.1em;
+				font-weight: 400;
+				padding: .9em;
+				color: #fefefe;
+				border: 3px solid #fefefe;
+				background-color: transparent;
+				cursor: pointer;
+				transition:all .2s ease;
+				border-radius:10px;
+
+				&:hover {
+					background-color: #fefefe;
+					color: #49e4a9;
+				}
+			}
+		}
+	}
+}

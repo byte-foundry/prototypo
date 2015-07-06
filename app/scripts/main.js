@@ -82,6 +82,7 @@ async function createStores() {
 
 		const appValues = panel.head.toJS();
 		appValues.selected = glyphs.get('selected');
+		appValues.tab = fontTab.get('tab');
 
 		AppValues.save({typeface:'default', values:appValues});
 	}, 300);
@@ -212,9 +213,15 @@ async function createStores() {
 			saveAppValues();
 		},
 		'/load-app-values': ({values}) => {
+			values.selected = values.selected || 'A'.charCodeAt(0);
 			const patchGlyph = glyphs.set('selected', values.selected).commit();
 			font.displayChar(String.fromCharCode(values.selected));
 			localServer.dispatchUpdate('/glyphs', patchGlyph);
+
+			const patchTab = fontTab.set('tab', values.tab || 'Func').commit();
+			localServer.dispatchUpdate('/fontTab',patchTab);
+
+			values.mode = values.mode || ['glyph'];
 
 			_.forEach(values, (value, name) => {
 				panel.set(name,value);
@@ -225,6 +232,12 @@ async function createStores() {
 			localServer.dispatchUpdate('/panel', patchPanel);
 			appValuesLoaded = true;
 		},
+		'/change-tab-font':({name}) => {
+
+			const patch = fontTab.set('tab',name).commit();
+			localServer.dispatchUpdate('/fontTab', patch);
+			saveAppValues();
+		}
 	}
 
 	localServer.on('action',({path, params}) => {

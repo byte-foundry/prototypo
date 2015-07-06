@@ -186,6 +186,49 @@ export default class HoodieApi {
 		//TODO(franz): Thou shall code the checkPasswordReset at a later point in time
 	}
 
+	static changePassword(password) {
+		const db = `org.couchdb.user:user/${HoodieApi.instance.email}`;
+		return new Promise((resolve, reject) => {
+			const xhr = new XMLHttpRequest();
+
+			xhr.open('GET', `${backUrl}/_users/${encodeURIComponent(db)}`);
+			xhr.withCredentials = true;
+
+			xhr.onload = (e) => {
+				resolve(e)
+			}
+
+			xhr.onerror = (e) => {
+				reject();
+			}
+
+			xhr.send();
+		})
+		.then((e) => {
+			const user = JSON.parse(e.target.responseText);
+
+			user.salt = undefined;
+			user.updatedAt = new Date();
+			user.password = password;
+
+			return new Promise((resolve, reject) => {
+				const xhr = new XMLHttpRequest();
+				xhr.open('PUT', `${backUrl}/_users/${encodeURIComponent(db)}`);
+				xhr.withCredentials = true;
+
+				xhr.onload = (e) => {
+					resolve(e)
+				}
+
+				xhr.onerror = (e) => {
+					reject();
+				}
+
+				xhr.send(JSON.stringify(user));
+			});
+		})
+	}
+
 	static startTask(type, subType, params = {}) {
 		params.subType = subType;
 		params.id = `$${type}/${type}`;
