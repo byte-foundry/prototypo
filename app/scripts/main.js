@@ -90,9 +90,9 @@ async function createStores() {
 	})
 
 	const actions = {
-		'/load-params': ({parameters, presets}) => {
+		'/load-params': ({controls, presets}) => {
 			const patch = fontControls
-				.set('parameters',parameters)
+				.set('parameters',controls)
 				.set('presets', presets)
 				.commit();
 			localServer.dispatchUpdate('/fontControls',patch);
