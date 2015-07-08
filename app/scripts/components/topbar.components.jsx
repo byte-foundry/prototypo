@@ -47,7 +47,7 @@ export default class Topbar extends React.Component {
 	}
 
 	async resetAllParams() {
-		const typedata = await this.client.fetch('/fontControls');
+		const typedata = await this.client.fetch('/fontParameters');
 
 		this.client.dispatchAction('/change-param',{values:typedata.head.toJS().presets['Modern'], force:true});
 	}
