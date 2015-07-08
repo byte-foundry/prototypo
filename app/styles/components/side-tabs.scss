@@ -35,6 +35,11 @@
 			background-color: #4a4a4a;
 		}
 
+		&.is-disabled {
+			opacity: 0.2;
+			cursor: default;
+		}
+
 		&.is-bottom {
 			position: absolute;
 			bottom: 0;

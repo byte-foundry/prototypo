@@ -47,10 +47,10 @@ export default class Sidebar extends React.Component {
 					<SideTab iconUrl="font-controls.svg" name="sliders">
 						<FontControls />
 					</SideTab>
-					<SideTab iconUrl="font-infos.svg" name="font-infos" big={true}>
+					<SideTab iconUrl="font-infos.svg" name="font-infos" big={true} disabled={true}>
 						<FontInfos />
 					</SideTab>
-					<SideTab iconUrl="fonts-collection.svg" name="fonts-collection" big={true}>
+					<SideTab iconUrl="fonts-collection.svg" name="fonts-collection" big={true} disabled={true}>
 						<FontsCollection />
 					</SideTab>
 					<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true}>
