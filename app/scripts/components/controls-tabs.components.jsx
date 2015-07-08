@@ -2,6 +2,7 @@ import React from 'react';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
 import LocalClient from '../stores/local-client.stores.jsx';
+import GeminiScrollbar from 'react-gemini-scrollbar';
 
 export class ControlsTabs extends React.Component {
 	componentWillMount() {
@@ -37,9 +38,11 @@ export class ControlsTabs extends React.Component {
 				<ul className="controls-tabs-headers">
 					{headers}
 				</ul>
-				<div className="controls-tabs-container">
-					{tab}
-				</div>
+				<GeminiScrollbar autoshow={true}>
+					<div className="controls-tabs-container">
+						{tab}
+					</div>
+				</GeminiScrollbar>
 			</div>
 		)
 	}

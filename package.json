@@ -24,7 +24,8 @@
     "prototypo-canvas": "byte-foundry/prototypo-canvas#master",
     "react": "^0.13.3",
     "react-router": "^0.13.3",
-    "remutable": "FranzPoize/remutable#master"
+    "remutable": "FranzPoize/remutable#master",
+    "react-gemini-scrollbar": "^1.1.1"
   },
   "devDependencies": {
     "babelify": "^6.1.2",
