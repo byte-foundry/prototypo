@@ -12,5 +12,5 @@ after_script:
 - surge --project ./dist --domain newui.prototypo.io
 branches:
   only:
-    - reactify-and-cleanup
+    - master
 
