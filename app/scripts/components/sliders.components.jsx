@@ -46,7 +46,7 @@ export class Slider extends React.Component {
 	}
 
 	render() {
-		const value = this.props.value || this.props.param.init;
+		const value = this.props.value !== undefined ? this.props.value : this.props.param.init;
 
 		const classes = ClassNames({
 			'slider': true,
