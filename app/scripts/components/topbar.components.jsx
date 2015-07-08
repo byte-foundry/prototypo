@@ -46,11 +46,11 @@ export default class Topbar extends React.Component {
 			})
 	}
 
-	async exportOTF() {
-		console.log('export to OTF')
+	exportOTF() {
+		fontInstance.download();
 	}
 
-	async exportGlyphr() {
+	exportGlyphr() {
 		console.log('export to Glyphr')
 	}
 
