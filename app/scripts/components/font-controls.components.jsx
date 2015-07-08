@@ -23,6 +23,7 @@ export default class FontControls extends React.Component {
 		const server = new LocalServer().instance;
 
 		const fontControls = await this.client.fetch('/fontControls');
+		const fontParameters = await this.client.fetch('/fontParameters');
 		const fontTab = await this.client.fetch('/fontTab');
 
 		const debouncedSave = _.debounce((values) => {
@@ -86,15 +87,23 @@ export default class FontControls extends React.Component {
 				const headJS = head.toJS();
 				this.setState({
 					values:headJS.values,
-					parameters:headJS.parameters,
 				});
 				this.client.dispatchAction('/update-font',headJS.values);
 			})
 			.onDelete(() => this.setState(undefined)).value;
 
+		this.client.getStore('/fontParameters', this.lifespan)
+			.onUpdate(({head}) => {
+				const headJS = head.toJS();
+				this.setState({
+					parameters:headJS.parameters,
+				});
+			})
+			.onDelete(() => this.setState(undefined)).value;
+
 		this.client.dispatchAction('/change-tab-font',{name: 'Func'});
 
-		const parameters = fontControls.get('parameters');
+		const parameters = fontParameters.get('parameters');
 		const values = fontControls.get('values');
 
 		this.setState({

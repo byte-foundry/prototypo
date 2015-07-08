@@ -49,6 +49,8 @@ const fontControls = stores['/fontControls'] = new Remutable({
 	values:{},
 });
 
+const fontParameters = stores['/fontParameters'] = new Remutable({});
+
 const sideBarTab = stores['/sideBarTab'] = new Remutable({});
 
 const fontStore = stores['/fontStore'] = new Remutable({});
@@ -94,11 +96,11 @@ async function createStores() {
 
 	const actions = {
 		'/load-params': ({controls, presets}) => {
-			const patch = fontControls
+			const patch = fontParameters
 				.set('parameters',controls)
 				.set('presets', presets)
 				.commit();
-			localServer.dispatchUpdate('/fontControls',patch);
+			localServer.dispatchUpdate('/fontParameters',patch);
 		},
 		'/load-values': (params) => {
 			const patch = fontControls

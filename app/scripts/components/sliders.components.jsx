@@ -38,6 +38,13 @@ export class Slider extends React.Component {
 		this.client.dispatchAction('/change-param',{value:this.props.param.init,name:this.props.param.name,label:this.props.param.label,force:true});
 	}
 
+	shouldComponentUpdate(nextProps) {
+		if (nextProps.value && this.props.value) {
+			return nextProps.value !== this.props.value;
+		}
+		return true;
+	}
+
 	render() {
 		const value = this.props.value || this.props.param.init;
 
@@ -66,13 +73,16 @@ export class Slider extends React.Component {
 
 export class SliderController extends React.Component {
 
-	componentDidMount() {
+	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
-		const slider = React.findDOMNode(this.refs.slider);
-		this.sliderWidth = slider.offsetWidth;
 		this.bindedHandleUp = this.handleUp.bind(this);
 		this.bindedHandleMove = this.handleMove.bind(this);
+	}
+
+	componentDidMount() {
+		const slider = React.findDOMNode(this.refs.slider);
+		this.sliderWidth = slider.offsetWidth;
 	}
 
 	componentWillUnmount() {
