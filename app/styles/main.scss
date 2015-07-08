@@ -4,6 +4,16 @@ html {
 	font-size:62.5%;
 }
 
+::selection {
+	background-color:$light-green;
+	color:$white;
+}
+
+::-moz-selection {
+	background-color:$light-green;
+	color:$white;
+}
+
 body {
 	overflow: hidden;
 	font-size:1.4em;
