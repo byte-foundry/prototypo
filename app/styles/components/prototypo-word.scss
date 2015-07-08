@@ -1,0 +1,17 @@
+.prototypo-word {
+	flex:1;
+	height: 100%;
+	overflow:visible;
+	position:absolute;
+	width:100%;
+
+	&-string {
+		height:100%;
+		width:100%;
+		font-size: 17rem;
+		font-weight: normal;
+		padding: 0.1em;
+		overflow:auto;
+		text-align: center;
+	}
+}

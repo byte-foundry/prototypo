@@ -1,5 +1,0 @@
-C- 	{{ serifRoundness }} smooth smooth {{ self[0].x + serifHeight * serifCurve * width | min : self[0].x + serifHeight * serifCurve }} {{ self[4].y + serifHeight }}
-l 	{{ serifWidth }} {{ serifHeight * serifMedian }}
-C+ 	{{ serifTerminalCurve }} {{ - self[2].angle + 90 }}  0 {{ self[2].x + serifTerminal * serifHeight }} {{ self[2].y - ( self[2].y - self[4].y ) / 2 }}
-C+ 	{{ serifTerminalCurve }} 0 0 {{ self[2].x }} {{ self[-1].y }}
-rC 	{{ - ( self[4].x - self[5].x ) / 3 }} 0 {{ ( self[4].x - self[5].x ) / 3 }} 0 {{ self[-1].x }} {{ self[4].y + serifArc * serifHeight }}

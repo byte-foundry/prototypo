@@ -1,4 +1,0 @@
-M 0 0
-Z
-add top-dot at {{ [ 50 + thickness , xHeight * (150/465) ] }}
-add glyph:, at {{ [ 0 , 0 ] }}

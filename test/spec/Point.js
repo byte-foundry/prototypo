@@ -147,7 +147,7 @@ describe('translatePoint', function () {
 	}));
 });
 
-describe('Point structure', function () {
+/*describe('Point structure', function () {
 
 	beforeEach(module('prototypo.Point', 'prototypo.Segment'));
 
@@ -213,4 +213,4 @@ describe('Point structure', function () {
 			[{x: 50, y: 0}, Point(0,50)]
 		]).toString()).toBe('25 25');
 	}));
-});
+});*/

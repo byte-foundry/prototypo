@@ -1,0 +1,9 @@
+@import "../variables";
+
+#sidebar {
+	height:100%;
+	flex-basis: $sidebar-w;
+	position: relative;
+	//TODO(franz): integrate in themified css
+	background-color: $dark-grey;
+}

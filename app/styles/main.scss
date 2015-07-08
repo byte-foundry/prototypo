@@ -1,10 +1,58 @@
 @import "variables";
 
+html {
+	font-size:62.5%;
+}
+
+::selection{
+	background-color: lighten($light-green, 25%);
+}
+::-moz-selection {
+	background-color: lighten($light-green, 25%);
+}
+
 body {
 	overflow: hidden;
+	font-size:1.4em;
+	line-height:1.5;
 
-	font-family: "Liberation Mono", "Lucida Console", "Monaco", "courrier new", monospace;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-weight: 600;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
 	color: #111;
+}
+
+.pg-loading-screen {
+	background: #49e4a9; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNDllNGE5IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwZTI4YiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
+	background: -moz-linear-gradient(-45deg, #49e4a9 0%, #00e28b 70%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#49e4a9), color-stop(70%,#00e28b)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(-45deg, #49e4a9 0%,#00e28b 70%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(-45deg, #49e4a9 0%,#00e28b 70%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(-45deg, #49e4a9 0%,#00e28b 70%); /* IE10+ */
+	background: linear-gradient(135deg, #49e4a9 0%,#00e28b 70%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#49e4a9', endColorstr='#00e28b',GradientType=1 ); /* IE6-8 fallback on horizontal gradient */
+}
+
+.pg-loading-html {
+	color: $white;
+	font-size: 2em;
+}
+
+.clearfix {
+	*zoom:1;
+
+	&:before, &:after {
+		content:"";
+		display:table;
+	}
+
+	&:after {
+		clear:both;
+	}
 }
 
 svg {
@@ -35,6 +83,12 @@ a:visited {
 	user-select: none;
 }
 
+// Everybody has border-box sizing
+* {
+	-moz-box-sizing:border-box;
+	box-sizing:border-box;
+}
+
 // ...except where it makes sense
 input,
 textarea {
@@ -50,113 +104,7 @@ textarea {
 	background-color: $dark-grey;
 	box-shadow: 4px 0px 6px #aaa;
 }
-.negative .sidebar{
-	box-shadow: 2px 0px 5px #222
-}
 
-.scene {
-	position: relative;
-	height: 100%;
-}
-
-.negative .central {
-	background-color: $black;
-}
-
-.stringinput-cell,
-.stringinput {
-	overflow: visible !important;
-}
-.stringinput {
-	input {
-	display: block;
-	height: 100%;
-	width: 100%;
-	padding-left: 1.4rem;
-	-moz-box-sizing: border-box;
-
-	color: lighten($dark-grey, 15%);
-	font-size: 1.4rem;
-	letter-spacing: .1rem;
-
-	background: lighten( $light-green , 15% );
-	border: 1px solid  $green;
-	border-bottom: 1rem solid lighten( $light-green , 10% );
-	border-radius: 0;
-		&:focus,
-		&:hover {
-			outline: none;
-			background: lighten( $light-green , 25% );
-		}
-	}
-	&:before,
-	&:after {
-		content: "";
-
-		position: absolute;
-		left: 40px; // not hard value?
-
-		display: block;
-		width: 0;
-		height: 0;
-
-		border-left: 10px solid transparent;
-		border-right: 10px solid transparent;
-	}
-	&:before {
-		top: -10px;
-		border-bottom: 10px solid $light-green;
-	}
-	&:after {
-		top: -8px;
-		border-bottom: 10px solid lighten( $light-green , 15% );
-	}
-}
-
-.btn {
-	cursor: pointer;
-	-webkit-transition: background-color 0.2s ease-in;
-	transition:         background-color 0.2s ease-in;
-	&:hover,
-	&:active,
-	&:focus {
-		outline:0px !important;
-		-webkit-appearance:none;
-	}
-}
-
-.btn-XL {
-	cursor: pointer;
-	border: 1px solid $white;
-	border-radius: 10px;
-	padding: .6em 1.2em;
-	background-color: transparent;
-	font-size: 2em;
-	color: $white;
-	&:hover {
-		background-color: $white;
-		color: $black;
-	}
-}
-
-#serverDown {
-	display: none;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	background-color: $black;
-	left: 0;
-	right: 0;
-	padding: 2em;
-	text-align: center;
-	z-index: 1000000;
-	color: $white;
-}
-
-.white {
-	color: $white;
-}
-
-.hover {
-	cursor: pointer;
+.is-hidden {
+	display:none !important;
 }

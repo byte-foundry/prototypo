@@ -1,6 +1,16 @@
 Prototypo, Streamlining font creation [![Build Status](https://travis-ci.org/byte-foundry/prototypo.svg?branch=master)](https://travis-ci.org/byte-foundry/prototypo)
 =====================================
 
+BEFORE ANYTHING !
+-----------------
+Use git flow on this branch (reactify-and-cleanup)
+Add --no-ff to your merge options on this branch.
+If you merge a branch on reactify-and-cleanup with ff I'll will cut you
+
+Labeling convention:
+- Feature -> feat/name-of-feature
+- Fix -> fix/name-of-fix_issuenumber
+
 Before installing Prototypo
 ---------------------------
 
@@ -42,10 +52,10 @@ $ grunt test
 Roadmap to v1.0
 ===============
 
-- possibility to modify text directly in the preview ([#78](../../issues/78))
+- possibility to modify text directly in the preview ([#78](../../issues/78)) ……… ✓
 - a complete alphabet with alternates (some numbers, punctuation and accents are missing)
 - automatic spacing ([#124](../../issues/124))
-- generating binary font-files such as .otf, see the [current workaround](#converting-an-svg-font-to-other-font-formats) ([#12](../../issues/12))
+- generating binary font-files such as .otf, see the [current workaround](#converting-an-svg-font-to-other-font-formats) ([#12](../../issues/12)) ……… ✓
 - personnal library to save and load different fonts ([#125](../../issues/125))
 - <del>undo/redo history</del> ([#94](../../issues/94))
 

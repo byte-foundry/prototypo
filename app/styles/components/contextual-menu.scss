@@ -1,0 +1,41 @@
+@import "../variables";
+
+.shadow-of-the-colossus {
+	position:absolute;
+	z-index:9;
+	top: 13.4%;
+	left: 49.7%;
+	font-family: 'Prototypo - John Fell';
+	font-size: 501px;
+	color: rgba(255,0,123,0.3);
+	font-weight: normal;
+}
+
+.contextual-menu {
+	position:absolute;
+	z-index:10;
+
+	&-list {
+		border-top:solid 10px #000;
+		list-style-type:none;
+		padding:0;
+
+		&-item {
+			padding:15px;
+			color:$white;
+			background-color:$dark-grey;
+			width: 200px;
+			border-bottom:solid 1px $light-grey;
+			cursor:pointer;
+
+			&:hover {
+				background-color:$green;
+				color:$dark-grey;
+			}
+
+			&.is-inactive {
+				color:$medium-grey;
+			}
+		}
+	}
+}

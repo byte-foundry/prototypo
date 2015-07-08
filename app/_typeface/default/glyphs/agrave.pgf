@@ -1,4 +1,0 @@
-M 0 0
-Z
-add glyph:a at {{ [ 0 , 0 ] }}
-add agrave at {{ [ width * 80 , xHeight + ( 80 / 465 ) * xHeight ] }}

@@ -1,0 +1,41 @@
+@import "../variables";
+
+.glyph-btn {
+	color:$white;
+	cursor:pointer;
+	&-label {
+		display:block;
+		float:left;
+		height:45px;
+		font-size: 1.2rem;
+		padding: 10px;
+		background-color: $dark-grey;
+		text-transform: uppercase;
+		cursor:pointer;
+		line-height: 2.5;
+	}
+
+	&-wrapper {
+		float: left;
+		display: inline-table;
+		background-color: $medium-grey;
+
+		&:hover {
+			background-color: $green;
+		}
+	}
+
+	&-lock {
+		float:left;
+		height:45px;
+		width:45px;
+
+		background-color: $dark-grey;
+	    -webkit-mask:  url('./images/lock-panel.svg') no-repeat 50% 50%;
+	    mask: url('./images/lock-panel.svg') no-repeat 50% 50%;
+
+		&:hover {
+			background-color: white;
+		}
+	}
+}

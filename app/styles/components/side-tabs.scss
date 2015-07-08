@@ -1,0 +1,109 @@
+@import "../variables";
+
+.side-tabs {
+	height:100%;
+
+	&-container {
+		height:100%;
+	}
+
+	&-headers {
+		position: relative;
+		width:70px;
+		height: 100%;
+		float:left;
+
+		box-shadow: inset -3px 0px 5px 0px darken($dark-grey, 2%);
+	}
+
+	&-icon-headers {
+		height:72px;
+		padding-top:19px;
+		padding-left:22px;
+		background-color: $white;
+	}
+
+	&-icon {
+		height:73px;
+		width: 100%;
+		padding-left:20px;
+		padding-top:22px;
+		cursor:pointer;
+
+		&.is-active, &:hover {
+			//TODO(franz): integrate in themified css
+			background-color: #4a4a4a;
+		}
+
+		&.is-disabled {
+			opacity: 0.2;
+			cursor: default;
+		}
+
+		&.is-bottom {
+			position: absolute;
+			bottom: 0;
+		}
+
+		&.has-news:after {
+			content: "";
+
+			position: absolute;
+			top: 15px;
+			right: 12px;
+
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			// border: 1px solid $dark-red;
+			background-color: $red;
+
+		    -webkit-animation-name: example;
+			animation-name: example;
+		    -webkit-animation-duration: 2s;
+		    animation-duration: 2s;
+			-webkit-animation-iteration-count: infinite;
+			animation-iteration-count: infinite;
+
+			/* Chrome, Safari, Opera */
+			@-webkit-keyframes example {
+			    0% {background-color: $red;}
+			    30% {background-color: mix($dark-grey, $red);}
+				100% {background-color: $red;}
+			}
+
+			/* Standard syntax */
+			@keyframes example {
+			    0% {background-color: $red;}
+			    30% {background-color: mix($dark-grey, $red);}
+				100% {background-color: $red;}
+			}
+		}
+	}
+}
+
+.side-tab {
+	margin-left: 70px;
+	background-color:#4a4a4a;
+	height:100%;
+	display:none;
+	transition:width .2s ease;
+	position:relative;
+	z-index:2;
+
+	&.is-active {
+		display:block;
+	}
+
+	&-big {
+		width:800px;
+		z-index:5;
+		box-shadow: none;
+		padding: 2em;
+	}
+
+	h2,
+	p {
+		color: $white;
+	}
+}

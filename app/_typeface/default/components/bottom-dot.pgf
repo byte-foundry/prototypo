@@ -1,6 +1,0 @@
-m 0 0
-C+ {{ roundness }} 0 0 {{ self[1].x - ( thickness + overshoot ) / 2 }} {{ self[1].y + ( thickness + overshoot ) / 2 }}
-C+ {{ roundness }} 0 0 {{ self[2].x + ( thickness + overshoot ) / 2 }} {{ self[2].y + ( thickness + overshoot ) / 2 }}
-C+ {{ roundness }} 0 0 {{ self[3].x + ( thickness + overshoot ) / 2 }} {{ self[3].y - ( thickness + overshoot ) / 2 }}
-C+ {{ roundness }} 0 0 {{ self[4].x - ( thickness + overshoot ) / 2 }} {{ self[4].y - ( thickness + overshoot ) / 2 }}
-Z

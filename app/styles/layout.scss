@@ -1,101 +1,10 @@
 @import "variables";
 
 html,
-body,
-.main,
-.main > .row,
-.main > .row > .col {
+body {
 	height: 100%;
 }
 
-/* table layout */
-.row {
-	display: table;
-	table-layout: fixed;
-	width: 100%;
-}
-.row > *,
-.col {
-	display: table-cell;
-	vertical-align: top;
-}
-
-/* safari 7.1 hack | why? */
-.central.col {
-	display: inline-block;
-}
-.scene-cell svg { width: 100%; }
-/* end hack */
-
-/* vertical cells */
-
-.cell {
-	position: relative;
-	overflow: hidden;
-}
-.cell > * {
-	// why do we need this absolute in relative container?
-	position: absolute;
-	height: 100%;
-	width: 100%;
-}
-
-/* inside .main
- ----------------------------------------------------------------- */
-
-
-.sidebar {
-	width: $sidebar-w;
-}
-
-.central {
-	// width: -webkit-calc(100% - #{$sidebar-w});
-	// width:         calc(100% - #{$sidebar-w});
-	width: 100%;
-}
-
-.grid {
-	width: 100%;
-	height: 100%;
-}
-
-.negative #grid * {
-	opacity: .2;
-}
-
-
-
-/* inside .sidebar
- ----------------------------------------------------------------- */
-$mainmenu-h: 0rem;
-$stringinput-h: 7rem;
-$preview-h: 15rem;
-$parammenu-h: 8rem;
-
-.mainmenu-cell {
-	height: $mainmenu-h;
-}
-
-.stringinput-cell {
-	height: $stringinput-h;
-}
-
-.preview-cell {
-	height: $preview-h;
-}
-
-.parammenu-cell {
-	height: $parammenu-h;
-}
-
-.paramtabs-cell {
-	height: -webkit-calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$preview-h} - #{$parammenu-h});
-	height:         calc(100% - #{$mainmenu-h} - #{$stringinput-h} - #{$preview-h} - #{$parammenu-h});
-}
-
-/* inside .sidebar
- ----------------------------------------------------------------- */
-
-.scene-cell {
-	height: 100%;
+#content {
+	height:100%;
 }
