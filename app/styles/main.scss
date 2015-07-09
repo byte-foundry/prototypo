@@ -4,14 +4,11 @@ html {
 	font-size:62.5%;
 }
 
-::selection {
-	background-color:$light-green;
-	color:$white;
+::selection{
+	background-color: lighten($light-green, 25%);
 }
-
 ::-moz-selection {
-	background-color:$light-green;
-	color:$white;
+	background-color: lighten($light-green, 25%);
 }
 
 body {
