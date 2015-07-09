@@ -46,6 +46,14 @@ export default class Topbar extends React.Component {
 			})
 	}
 
+	async exportOTF() {
+		console.log('export to OTF')
+	}
+
+	async exportGlyphr() {
+		console.log('export to Glyphr')
+	}
+
 	async resetAllParams() {
 		const typedata = await this.client.fetch('/fontControls');
 
@@ -84,6 +92,8 @@ export default class Topbar extends React.Component {
 				<TopBarMenu>
 					<TopBarMenuDropdown name="File">
 						<TopBarMenuDropdownItem name="Logout" handler={this.logout}/>
+						<TopBarMenuDropdownItem name="Export to OTF" handler={this.exportOTF}/>
+						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr}/>
 						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams() }}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">
