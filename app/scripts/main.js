@@ -55,6 +55,11 @@ const sideBarTab = stores['/sideBarTab'] = new Remutable({});
 
 const fontStore = stores['/fontStore'] = new Remutable({});
 
+const tagStore = stores['/tagStore'] = new Remutable({
+	selected:'all',
+	pinned:[],
+});
+
 const glyphs = stores['/glyphs'] = new Remutable({
 	selected:'A',
 });
@@ -115,6 +120,27 @@ async function createStores() {
 				.set('glyphs',params)
 				.commit()
 			localServer.dispatchUpdate('/glyphs',patch);
+		},
+		'/load-tags': (params) => {
+			const patch = tagStore
+				.set('tags',params)
+				.commit()
+			localServer.dispatchUpdate('/tagStore',patch);
+		},
+		'/select-tag': (params) => {
+			const patch = tagStore
+				.set('selected',params)
+				.commit();
+
+			localServer.dispatchUpdate('/tagStore',patch);
+		},
+		'/add-pinned': (params) => {
+			const pinned = _.xor(tagStore.get('pinned'),[params]);
+			const patch = tagStore
+				.set('pinned',pinned)
+				.commit();
+
+			localServer.dispatchUpdate('/tagStore',patch);
 		},
 		'/create-font': (params) => {
 			const patch = fontStore
@@ -279,6 +305,7 @@ async function createStores() {
 
 	localClient.dispatchAction('/load-params', typedata);
 	localClient.dispatchAction('/load-glyphs', font.font.altMap);
+	localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 }
 
 createStores()

@@ -1,41 +1,92 @@
 @import "../variables";
 
-.glyph-btn {
+.glyph-btn-list {
 	color:$white;
 	cursor:pointer;
-	&-label {
-		display:block;
-		float:left;
-		height:45px;
-		font-size: 1.2rem;
-		padding: 10px;
-		background-color: $dark-grey;
-		text-transform: uppercase;
-		cursor:pointer;
-		line-height: 2.5;
-	}
+	display:flex;
+	flex-direction:row;
+	height:45px;
+	&-dropup {
+		display: flex;
+		flex-direction: column;
+		align-self: flex-end;
 
-	&-wrapper {
-		float: left;
-		display: inline-table;
-		background-color: $medium-grey;
+		&-list {
+			display:none;
+			background-color:$dark-grey;
+			list-style-type:none;
+			margin: 0;
+			padding: 0;
+			width:210px;
 
-		&:hover {
-			background-color: $green;
+			&-item {
+				padding: 10px;
+				cursor:pointer;
+				border-bottom: solid 1px $light-grey;
+				flex:1 1 50%;
+				display:flex;
+				flex-direction:row;
+
+				&-icon {
+					flex:1 0 30px;
+
+					&:hover {
+						background-color:$red;
+					}
+				}
+
+				&-text {
+					flex:1 1 100%;
+				}
+
+				&:hover {
+					background-color:$green;
+				}
+			}
+		}
+
+		&.is-active &-list {
+			display:flex;
+			flex-flow:row wrap;
 		}
 	}
-
-	&-lock {
-		float:left;
-		height:45px;
-		width:45px;
-
-		background-color: $dark-grey;
-	    -webkit-mask:  url('./images/lock-panel.svg') no-repeat 50% 50%;
-	    mask: url('./images/lock-panel.svg') no-repeat 50% 50%;
-
-		&:hover {
-			background-color: white;
+	&-btn {
+		&-label {
+			display:block;
+			float:left;
+			height:45px;
+			font-size: 1.2rem;
+			padding: 10px;
+			background-color: $dark-grey;
+			text-transform: uppercase;
+			cursor:pointer;
+			line-height: 2.5;
 		}
+
+		&-wrapper {
+			float: left;
+			display: inline-table;
+			background-color: $medium-grey;
+
+			&:hover {
+				background-color: $green;
+			}
+		}
+
+		&-lock {
+			float:left;
+			height:45px;
+			width:45px;
+
+			background-color: $dark-grey;
+		    -webkit-mask:  url('./images/lock-panel.svg') no-repeat 50% 50%;
+		    mask: url('./images/lock-panel.svg') no-repeat 50% 50%;
+
+			&:hover {
+				background-color: white;
+			}
+		}
+
 	}
+
 }
