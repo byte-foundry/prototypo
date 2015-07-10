@@ -4,7 +4,8 @@ Typefaces.getFont = () => {
 	const xhr = new XMLHttpRequest();
 
 	return new Promise((resolve,reject) => {
-		xhr.open('GET','/genese.ptf/dist/font.json');
+		// xhr.open('GET','/genese.ptf/dist/font.json');
+		xhr.open('GET','/john-fell.ptf/dist/font.json');
 
 		xhr.onload = (e) => {
 			resolve(e.target.responseText);
