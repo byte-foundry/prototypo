@@ -59,8 +59,8 @@ gulp.task('cp-prototypo.js', function() {
 });
 
 gulp.task('cp-genese', function() {
-	gulp.src('./node_modules/genese.ptf/dist/font.json')
-		.pipe(gulp.dest('./dist/genese.ptf/dist/'));
+	gulp.src('./node_modules/john-fell.ptf/dist/font.json')
+		.pipe(gulp.dest('./dist/john-fell.ptf/dist/'));
 });
 
 gulp.task('cp-static', function() {
