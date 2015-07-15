@@ -75,6 +75,9 @@ export default class PrototypoCanvas extends React.Component {
 
 	wheel(e) {
 		fontInstance.wheelHandler.bind(fontInstance)(e);
+		this.client.dispatchAction('/store-panel-param', {
+			zoom: fontInstance.zoom,
+		})
 	}
 
 	mouseDown(e) {

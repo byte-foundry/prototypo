@@ -90,6 +90,7 @@
 	transition:width .2s ease;
 	position:relative;
 	z-index:2;
+	width:270px;
 
 	&.is-active {
 		display:block;
