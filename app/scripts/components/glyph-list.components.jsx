@@ -1,5 +1,6 @@
 import React from 'react';
 import Glyph from './glyph.components.jsx';
+import GlyphTagList from './glyph-tag-list.components.jsx';
 
 export default class GlyphList extends React.Component {
 
@@ -24,6 +25,7 @@ export default class GlyphList extends React.Component {
 		});
 		return (
 			<div className="glyph-list clearfix">
+				<GlyphTagList />
 				{
 					_.map(glyphs, (glyph, unicode) => {
 						if (selectedGlyph == unicode)

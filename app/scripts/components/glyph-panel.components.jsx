@@ -59,11 +59,12 @@ export default class GlyphPanel extends React.Component {
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
+
 	render() {
 		return (
 			<div id="glyphpanel">
-				<GlyphButton tags={this.state.tags.tags} selected={this.state.tags.selected} pinned={this.state.tags.pinned}/>
-				<GlyphList glyphs={this.state.glyphs.glyphs} selected={this.state.glyphs.selected} selectedTag={this.state.tags.selected}/>
+				<GlyphButton selected={this.state.tags.selected} pinned={this.state.tags.pinned}/>
+				<GlyphList glyphs={this.state.glyphs.glyphs} selected={this.state.glyphs.selected} selectedTag={this.state.tags.selected} tags={this.state.tags.tags}/>
 			</div>
 		)
 	}
