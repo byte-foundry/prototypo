@@ -1,5 +1,4 @@
 import React from 'react';
-import Remutable from 'remutable';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
@@ -16,10 +15,6 @@ export default class GlyphButton extends React.Component {
 
 	componentWillUnmount() {
 		this.lifespan.release();
-	}
-
-	selectTag(tag) {
-		this.client.dispatchAction('/select-tag',tag);
 	}
 
 	addToPinned(tag,e) {
@@ -50,12 +45,6 @@ export default class GlyphButton extends React.Component {
 			);
 		})
 
-		const tagClasses = ClassNames({
-			"glyph-btn-list-btn":true,
-			"glyph-btn-list-dropup":true,
-			"is-active":this.state.tagList,
-		});
-
 		return (
 			<div className="glyph-btn-list">
 				<div className="glyph-btn-list-btn clearfix">
@@ -68,36 +57,6 @@ export default class GlyphButton extends React.Component {
 					</div>
 				</div>
 				{pinned}
-				<div className={tagClasses}
-					onMouseLeave={() => {
-						this.setState({
-							tagList:false,
-						})
-					}}
-				>
-					<ul className="glyph-btn-list-dropup-list">
-						{_.map(this.props.tags, (tag) => {
-							return (
-								<li className="glyph-btn-list-dropup-list-item" onClick={() => {
-									this.selectTag(tag);
-									this.setState({
-										tagList:false,
-									});
-								}}>
-									<div className="glyph-btn-list-dropup-list-item-text">
-										{tag}
-									</div>
-									<div className="glyph-btn-list-dropup-list-item-icon" onClick={(e) => { this.addToPinned(tag, e) }}>
-									+
-									</div>
-								</li>
-							)
-						})}
-					</ul>
-					<label className="glyph-btn-list-btn-label" onClick={() => { this.setState({tagList:!this.state.tagList}) }}>
-						{this.props.selected}
-					</label>
-				</div>
 			</div>
 		)
 	}
