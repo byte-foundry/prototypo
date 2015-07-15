@@ -22,6 +22,11 @@ export default class GlyphButton extends React.Component {
 		this.client.dispatchAction('/select-tag',tag);
 	}
 
+	addToPinned(tag,e) {
+		e.stopPropagation();
+		this.client.dispatchAction('/add-pinned',tag);
+	}
+
 	render() {
 		let pinned = [];
 
@@ -42,7 +47,8 @@ export default class GlyphButton extends React.Component {
 						{tag}
 					</label>
 					<div className="glyph-btn-list-btn-tag-wrapper">
-						<div className="glyph-btn-list-btn-tag-wrapper-close">
+						<div className="glyph-btn-list-btn-tag-wrapper-close"
+							onClick={(e) => { this.addToPinned(tag,e) }}>
 							×
 						</div>
 					</div>
