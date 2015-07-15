@@ -8,7 +8,7 @@
 	transition: -webkit-transform .2s ease;
 	transition: transform .2s ease;
 
-	&:hover {
+	&:hover, &.is-locked {
 		transform:translateY(0);
 	}
 }

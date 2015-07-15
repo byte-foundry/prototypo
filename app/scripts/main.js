@@ -226,6 +226,11 @@ async function createStores() {
 
 				saveAppValues();
 		},
+		'/toggle-lock-list': ({}) => {
+			const lockState = glyphs.get('locked');
+			const patch = glyphs.set('locked', !lockState).commit();
+			localServer.dispatchUpdate('/glyphs', patch);
+		},
 		'/store-panel-param': (params) => {
 			_.forEach(params, (value, name) => {
 				panel.set(name,value);

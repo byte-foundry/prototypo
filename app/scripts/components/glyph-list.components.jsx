@@ -25,7 +25,8 @@ export default class GlyphList extends React.Component {
 		});
 		return (
 			<div className="glyph-list clearfix">
-				<GlyphTagList />
+				<GlyphTagList tags={this.props.tags}/>
+				<div className="glyph-list-glyphs">
 				{
 					_.map(glyphs, (glyph, unicode) => {
 						if (selectedGlyph == unicode)
@@ -35,6 +36,7 @@ export default class GlyphList extends React.Component {
 
 					})
 				}
+				</div>
 			</div>
 		)
 	}

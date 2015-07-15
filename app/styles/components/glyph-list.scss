@@ -1,9 +1,49 @@
 @import "../variables";
 
+.glyph-tag-list {
+	flex:0 0 175px;
+	list-style-type:none;
+	margin:0;
+	padding:0;
+}
+
+.glyph-tag {
+	display:flex;
+	justify-content:space-between;
+	border-bottom:solid 1px $light-grey;
+	line-height:29px;
+	cursor:pointer;
+
+	&:hover {
+		background-color:$green;
+	}
+
+	&-name {
+		padding:10px;
+	}
+
+	&-button {
+		align-self:stretch;
+		background-color:$medium-grey;
+		width:50px;
+		font-size:40px;
+		padding-left: 15px;
+		padding-top: 10px;
+		color:$dark-grey;
+
+		&:hover {
+			background-color:$green;
+			color:$white;
+		}
+	}
+}
+
 .glyph-list {
 	background-color:$dark-grey;
 	color:$white;
 	padding-top:5px;
+	display:flex;
+	flex-direction:row;
 
 	&-glyph {
 		box-sizing:content-box;
