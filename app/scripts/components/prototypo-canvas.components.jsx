@@ -46,20 +46,16 @@ export default class PrototypoCanvas extends React.Component {
 				window.canvasElement.height);
 			if (oldSize.width && oldSize.height) {
 				const center = fontInstance.view.center.clone();
-				center.y = -center.y;
+				const glyphCenter = fontInstance.currGlyph.getPosition();
 
-				const oldDistance = fontInstance.currGlyph.getPosition().subtract(center);
+				const oldGlyphRelativePos = glyphCenter.subtract(center);
 				const newSize = new prototypo.paper.Size(
 					canvasContainer.clientWidth,canvasContainer.clientHeight);
 				const ratio = newSize.divide(oldSize);
 
-				const newDistance = new prototypo.paper.Point(oldDistance.x * ratio.width, oldDistance.y * ratio.height);
-				const newCenter = new prototypo.paper.Point(center.x * ratio.width, center.y * ratio.height);
-
-				fontInstance.currGlyph.setPosition(newCenter.add(newDistance));
-				newCenter.y = -newCenter.y;
-
-				this.client.dispatchAction('/store-panel-param',{pos:newCenter});
+				const newDistance = new prototypo.paper.Point(oldGlyphRelativePos.x * ratio.width, oldGlyphRelativePos.y * ratio.height);
+				const newCenterPos = glyphCenter.subtract(newDistance);
+				this.client.dispatchAction('/store-panel-param',{pos:newCenterPos});
 			}
 
 			window.canvasElement.width = canvasContainer.clientWidth;
