@@ -5,10 +5,10 @@ html {
 }
 
 ::selection{
-	background-color: lighten($light-green, 25%);
+	background-color: $yellow;
 }
 ::-moz-selection {
-	background-color: lighten($light-green, 25%);
+	background-color: $yellow;
 }
 
 body {

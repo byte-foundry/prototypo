@@ -55,6 +55,11 @@ const sideBarTab = stores['/sideBarTab'] = new Remutable({});
 
 const fontStore = stores['/fontStore'] = new Remutable({});
 
+const tagStore = stores['/tagStore'] = new Remutable({
+	selected:'all',
+	pinned:[],
+});
+
 const glyphs = stores['/glyphs'] = new Remutable({
 	selected:'A',
 });
@@ -85,6 +90,7 @@ async function createStores() {
 		const appValues = panel.head.toJS();
 		appValues.selected = glyphs.get('selected');
 		appValues.tab = fontTab.get('tab');
+		appValues.pinned = tagStore.get('pinned');
 
 		AppValues.save({typeface:'default', values:appValues});
 	}, 300);
@@ -115,6 +121,28 @@ async function createStores() {
 				.set('glyphs',params)
 				.commit()
 			localServer.dispatchUpdate('/glyphs',patch);
+		},
+		'/load-tags': (params) => {
+			const patch = tagStore
+				.set('tags',params)
+				.commit()
+			localServer.dispatchUpdate('/tagStore',patch);
+		},
+		'/select-tag': (params) => {
+			const patch = tagStore
+				.set('selected',params)
+				.commit();
+
+			localServer.dispatchUpdate('/tagStore',patch);
+		},
+		'/add-pinned': (params) => {
+			const pinned = _.xor(tagStore.get('pinned'),[params]);
+			const patch = tagStore
+				.set('pinned',pinned)
+				.commit();
+
+			localServer.dispatchUpdate('/tagStore',patch);
+			saveAppValues();
 		},
 		'/create-font': (params) => {
 			const patch = fontStore
@@ -200,6 +228,11 @@ async function createStores() {
 
 				saveAppValues();
 		},
+		'/toggle-lock-list': ({}) => {
+			const lockState = glyphs.get('locked');
+			const patch = glyphs.set('locked', !lockState).commit();
+			localServer.dispatchUpdate('/glyphs', patch);
+		},
 		'/store-panel-param': (params) => {
 			_.forEach(params, (value, name) => {
 				panel.set(name,value);
@@ -222,6 +255,9 @@ async function createStores() {
 
 			const patchTab = fontTab.set('tab', values.tab || 'Func').commit();
 			localServer.dispatchUpdate('/fontTab',patchTab);
+
+			const patchTag = tagStore.set('pinned', values.pinned || []).commit();
+			localServer.dispatchUpdate('/tagStore',patchTag);
 
 			values.mode = values.mode || ['glyph'];
 
@@ -279,6 +315,7 @@ async function createStores() {
 
 	localClient.dispatchAction('/load-params', typedata);
 	localClient.dispatchAction('/load-glyphs', font.font.altMap);
+	localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 }
 
 createStores()

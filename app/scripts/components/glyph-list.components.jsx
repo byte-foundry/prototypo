@@ -1,57 +1,35 @@
 import React from 'react';
 import Glyph from './glyph.components.jsx';
-import Remutable from 'remutable';
-import Lifespan from 'lifespan';
-import LocalClient from '../stores/local-client.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
-import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
+import GlyphTagList from './glyph-tag-list.components.jsx';
 
 export default class GlyphList extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			glyphs: undefined,
-		};
-	}
 
-	async componentWillMount() {
-		this.lifespan = new Lifespan();
-		this.client = LocalClient.instance();
-		const server = new LocalServer().instance;
-
-		const glyphs = await this.client.fetch('/glyphs');
-
-		this.undoWatcher = new BatchUpdate(glyphs,
-			'/glyphs',
-			this.client,
-			this.lifespan,
-			(name) => {
-				return `selectioner ${name}`;
-			},
-			(headJS) => {
-				return true;
-				//TODO(franz): Here we shall save stuff to hoodie
-			});
-
-		this.client.getStore('/glyphs', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState(head.toJS());
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
+	shouldComponentUpdate(newProps) {
+		if (this.props.selected === newProps.selected &&
+			this.props.selectedTag === newProps.selectedTag &&
+			_.isEqual(this.props.pinned, newProps.pinned).length &&
+			this.props.glyphs === newProps.glyphs) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 
 	render() {
-		const selectedGlyph = this.state.selected;
+		const selectedGlyph = this.props.selected;
+		const glyphs = _.pick(this.props.glyphs, (glyph) => {
+			if (glyph[0].src) {
+				return glyph[0].src.tags.indexOf(this.props.selectedTag) != -1
+			}
+			else return false;
+		});
 		return (
 			<div className="glyph-list clearfix">
+				<GlyphTagList tags={this.props.tags} pinned={this.props.pinned} selected={this.props.selectedTag}/>
+				<div className="glyph-list-glyphs">
 				{
-					_.map(this.state.glyphs, (glyph, unicode) => {
+					_.map(glyphs, (glyph, unicode) => {
 						if (selectedGlyph == unicode)
 							return (<Glyph glyph={glyph} selected={true} unicode={unicode} key={unicode} />);
 						else
@@ -59,6 +37,7 @@ export default class GlyphList extends React.Component {
 
 					})
 				}
+				</div>
 			</div>
 		)
 	}

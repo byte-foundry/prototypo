@@ -1,9 +1,67 @@
 @import "../variables";
 
+.glyph-tag-list {
+	flex:0 0 175px;
+	list-style-type:none;
+	margin:0;
+	padding:0;
+}
+
+.glyph-tag {
+	display:flex;
+	justify-content:space-between;
+	border-bottom:solid 1px lighten($dark-grey, 4%);
+	line-height:12px;
+	cursor:pointer;
+
+	&:hover {
+		background-color:$green;
+	}
+
+	&.is-active {
+		background-color: $white;
+		color: $dark-grey;
+	}
+
+	&-name {
+		padding:10px;
+	}
+
+	&-button {
+		align-self:stretch;
+		width:30px;
+		background-color: darken($dark-grey, 2%);
+
+		&-icon {
+			align-self:stretch;
+			width:30px;
+			height:30px;
+
+			background-color: $medium-grey;
+			-webkit-mask:  url('./images/pin.svg') no-repeat center;
+			mask: url('./images/pin.svg') no-repeat center;
+		}
+
+		&:hover {
+			background-color: $white;
+		}
+
+		&.is-pinned &-icon {
+			background-color: $white;
+			&:hover {
+				background-color: $medium-grey;
+			}
+		}
+
+	}
+}
+
 .glyph-list {
 	background-color:$dark-grey;
 	color:$white;
 	padding-top:5px;
+	display:flex;
+	flex-direction:row;
 
 	&-glyph {
 		box-sizing:content-box;
