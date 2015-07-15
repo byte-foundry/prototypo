@@ -10,12 +10,17 @@
 .glyph-tag {
 	display:flex;
 	justify-content:space-between;
-	border-bottom:solid 1px $light-grey;
-	line-height:29px;
+	border-bottom:solid 1px lighten($dark-grey, 4%);
+	line-height:12px;
 	cursor:pointer;
 
 	&:hover {
 		background-color:$green;
+	}
+
+	&.is-active {
+		background-color: $white;
+		color: $dark-grey;
 	}
 
 	&-name {
@@ -24,17 +29,30 @@
 
 	&-button {
 		align-self:stretch;
-		background-color:$medium-grey;
-		width:50px;
-		font-size:40px;
-		padding-left: 15px;
-		padding-top: 10px;
-		color:$dark-grey;
+		width:30px;
+		background-color: darken($dark-grey, 2%);
+
+		&-icon {
+			align-self:stretch;
+			width:30px;
+			height:30px;
+
+			background-color: $medium-grey;
+			-webkit-mask:  url('./images/pin.svg') no-repeat center;
+			mask: url('./images/pin.svg') no-repeat center;
+		}
 
 		&:hover {
-			background-color:$green;
-			color:$white;
+			background-color: $white;
 		}
+
+		&.is-pinned &-icon {
+			background-color: $white;
+			&:hover {
+				background-color: $medium-grey;
+			}
+		}
+
 	}
 }
 

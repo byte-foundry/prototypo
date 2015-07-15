@@ -7,6 +7,7 @@ export default class GlyphList extends React.Component {
 	shouldComponentUpdate(newProps) {
 		if (this.props.selected === newProps.selected &&
 			this.props.selectedTag === newProps.selectedTag &&
+			_.isEqual(this.props.pinned, newProps.pinned).length &&
 			this.props.glyphs === newProps.glyphs) {
 			return false;
 		}
@@ -25,7 +26,7 @@ export default class GlyphList extends React.Component {
 		});
 		return (
 			<div className="glyph-list clearfix">
-				<GlyphTagList tags={this.props.tags}/>
+				<GlyphTagList tags={this.props.tags} pinned={this.props.pinned} selected={this.props.selectedTag}/>
 				<div className="glyph-list-glyphs">
 				{
 					_.map(glyphs, (glyph, unicode) => {

@@ -51,6 +51,8 @@
 		}
 	}
 	&-btn {
+		align-self: flex-end;
+
 		&-label {
 			display:block;
 			float:left;
@@ -61,6 +63,31 @@
 			text-transform: uppercase;
 			cursor:pointer;
 			line-height: 2.5;
+		}
+
+		&-tags {
+			background-color: $black !important;
+			text-transform: none;
+			height: 24px;
+			line-height: 0.4;
+			border-right: 1px solid darken($medium-grey, 20%);
+			border-bottom: 1px solid darken($medium-grey, 20%);
+
+			&:hover {
+				background-color: $medium-grey !important;
+				border-color: $medium-grey;
+			}
+
+			&.is-active {
+				background-color: $white !important;
+				color: $dark-grey;
+				border-color: $white;
+				border-top: 1px solid $light-grey;
+			}
+		}
+
+		&:last-of-type &-tags.is-active {
+			border-color: $light-grey;
 		}
 
 		&-wrapper {
@@ -84,6 +111,35 @@
 
 			&:hover, &.is-locked {
 				background-color: white;
+			}
+		}
+
+		&:hover &-tag-wrapper {
+			display: block;
+		}
+
+		&-tag-wrapper {
+			float: left;
+			display: none;
+			width: 0;
+			height: 0;
+
+			&-close {
+				position: relative;
+
+				top: -7px;
+				right: 8px;
+				border-radius: 50%;
+				color: $white;
+				background-color:$red;
+				height: 15px;
+				width: 15px;
+				text-align: center;
+				line-height: 1;
+
+				&:hover {
+					background-color: darken($red, 10%);
+				}
 			}
 		}
 
