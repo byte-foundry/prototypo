@@ -37,14 +37,21 @@ class GlyphTag extends React.Component {
 		this.client.dispatchAction('/select-tag',tag);
 	}
 
+	addToPinned(tag,e) {
+		e.stopPropagation();
+		this.client.dispatchAction('/add-pinned',tag);
+	}
+
 	render() {
-		<div className="glyph-tag" onClick={() => { this.seleteTag() }}>
-			<div className="glyph-tag-name">
-				{this.props.tag}
+		return (
+			<div className="glyph-tag" onClick={() => { this.selectTag(this.props.tag) }}>
+				<div className="glyph-tag-name">
+					{this.props.tag}
+					</div>
+				<div className="glyph-tag-button" onClick={(e) => { this.addToPinned(this.props.tag,e) }}>
+					+
 				</div>
-			<div className="glyph-tag-button">
-				+
 			</div>
-		</div>
+		)
 	}
 }

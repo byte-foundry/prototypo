@@ -8,18 +8,18 @@ export default class GlyphButton extends React.Component {
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
-		this.setState({
-			tagList:false,
-		});
 	}
 
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
 
-	addToPinned(tag,e) {
-		e.stopPropagation();
-		this.client.dispatchAction('/add-pinned',tag);
+	toggleLockList() {
+		this.client.dispatchAction('/toggle-lock-list',{});
+	}
+
+	selectTag(tag) {
+		this.client.dispatchAction('/select-tag',tag);
 	}
 
 	render() {
@@ -30,9 +30,6 @@ export default class GlyphButton extends React.Component {
 				<div className="glyph-btn-list-btn clearfix"
 					onClick={() => {
 						this.selectTag(tag);
-						this.setState({
-							tagList:false,
-						});
 					}}>
 					<label className="glyph-btn-list-btn-label">
 						{tag}
@@ -45,14 +42,19 @@ export default class GlyphButton extends React.Component {
 			);
 		})
 
+		const lockClasses = ClassNames({
+			'glyph-btn-list-btn-lock':true,
+			'is-locked': this.props.locked,
+		});
+
 		return (
 			<div className="glyph-btn-list">
 				<div className="glyph-btn-list-btn clearfix">
 					<label className="glyph-btn-list-btn-label">
 						Glyph list
 					</label>
-					<div className="glyph-btn-list-btn-wrapper">
-						<div className="glyph-btn-list-btn-lock">
+					<div className="glyph-btn-list-btn-wrapper" onClick={() => { this.toggleLockList() }}>
+						<div className={lockClasses}>
 						</div>
 					</div>
 				</div>
