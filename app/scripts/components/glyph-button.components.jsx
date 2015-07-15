@@ -26,16 +26,24 @@ export default class GlyphButton extends React.Component {
 		let pinned = [];
 
 		_.forEach(this.props.pinned, (tag) => {
+
+			const tagClasses = ClassNames({
+				'glyph-btn-list-btn-label': true,
+				'glyph-btn-list-btn-tags': true,
+				'is-active': this.props.selected === tag,
+			});
+
 			pinned.push(
 				<div className="glyph-btn-list-btn clearfix"
 					onClick={() => {
 						this.selectTag(tag);
 					}}>
-					<label className="glyph-btn-list-btn-label">
+					<label className={tagClasses}>
 						{tag}
 					</label>
-					<div className="glyph-btn-list-btn-wrapper">
-						<div className="glyph-btn-list-btn-close">
+					<div className="glyph-btn-list-btn-tag-wrapper">
+						<div className="glyph-btn-list-btn-tag-wrapper-close">
+							×
 						</div>
 					</div>
 				</div>

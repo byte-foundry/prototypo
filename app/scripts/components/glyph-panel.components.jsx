@@ -71,7 +71,7 @@ export default class GlyphPanel extends React.Component {
 		return (
 			<div id="glyphpanel" className={classes}>
 				<GlyphButton locked={this.state.glyphs.locked} selected={this.state.tags.selected} pinned={this.state.tags.pinned}/>
-				<GlyphList glyphs={this.state.glyphs.glyphs} selected={this.state.glyphs.selected} selectedTag={this.state.tags.selected} tags={this.state.tags.tags}/>
+				<GlyphList pinned={this.state.tags.pinned} glyphs={this.state.glyphs.glyphs} selected={this.state.glyphs.selected} selectedTag={this.state.tags.selected} tags={this.state.tags.tags}/>
 			</div>
 		)
 	}

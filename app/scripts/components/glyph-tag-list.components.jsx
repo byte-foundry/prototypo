@@ -2,6 +2,7 @@ import React from 'react';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
+import ClassNames from 'classnames';
 
 export default class GlyphTagList extends React.Component {
 	render() {
@@ -11,7 +12,7 @@ export default class GlyphTagList extends React.Component {
 				{_.map(this.props.tags, (tag) => {
 					return (
 						<li className="glyph-tag-list-item">
-							<GlyphTag tag={tag}/>
+							<GlyphTag tag={tag} selected={this.props.selected} pinned={this.props.pinned}/>
 						</li>
 					)
 				})}
@@ -43,13 +44,26 @@ class GlyphTag extends React.Component {
 	}
 
 	render() {
+
+		const iconClasses = ClassNames({
+			'glyph-tag-button': true,
+			'is-pinned': this.props.pinned && this.props.pinned.indexOf(this.props.tag) != -1,
+		});
+
+		const itemClasses = ClassNames({
+			'glyph-tag': true,
+			'is-active': this.props.selected === this.props.tag,
+		});
+
 		return (
-			<div className="glyph-tag" onClick={() => { this.selectTag(this.props.tag) }}>
+			<div className={itemClasses} onClick={() => { this.selectTag(this.props.tag) }}>
 				<div className="glyph-tag-name">
 					{this.props.tag}
+				</div>
+				<div className={iconClasses} onClick={(e) => { this.addToPinned(this.props.tag,e) }}>
+					<div className="glyph-tag-button-icon">
+						&nbsp;
 					</div>
-				<div className="glyph-tag-button" onClick={(e) => { this.addToPinned(this.props.tag,e) }}>
-					+
 				</div>
 			</div>
 		)
