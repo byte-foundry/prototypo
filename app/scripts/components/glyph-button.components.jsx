@@ -40,6 +40,7 @@ export default class GlyphButton extends React.Component {
 
 			pinned.push(
 				<div className="glyph-btn-list-btn clearfix"
+					key={`button${tag}`}
 					onClick={() => {
 						this.selectTag(tag);
 					}}>

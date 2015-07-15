@@ -11,8 +11,13 @@ export default class GlyphTagList extends React.Component {
 			<ul className="glyph-tag-list">
 				{_.map(this.props.tags, (tag) => {
 					return (
-						<li className="glyph-tag-list-item">
-							<GlyphTag tag={tag} selected={this.props.selected} pinned={this.props.pinned}/>
+						<li
+							key={tag}
+							className="glyph-tag-list-item">
+							<GlyphTag
+								tag={tag}
+								selected={this.props.selected}
+								pinned={this.props.pinned}/>
 						</li>
 					)
 				})}

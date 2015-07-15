@@ -39,8 +39,10 @@ export default class PrototypoCanvas extends React.Component {
 		fontInstance.fill = !this.props.panel.outline;
 
 		const canvasContainer = React.findDOMNode(this.refs.canvas);
-		if (canvasContainer.clientWidth !== window.canvasElement.width ||
-			canvasContainer.clientHeight !== window.canvasElement.height) {
+		if (canvasContainer.clientWidth &&
+			canvasContainer.clientHeight &&
+			(canvasContainer.clientWidth !== window.canvasElement.width ||
+			canvasContainer.clientHeight !== window.canvasElement.height)) {
 
 			const oldSize = new prototypo.paper.Size(window.canvasElement.width,
 				window.canvasElement.height);
@@ -128,18 +130,23 @@ export default class PrototypoCanvas extends React.Component {
 
 		const menu = [
 			<ContextualMenuItem
+				key="nodes"
 				text={`${!fontInstance.showNodes ? 'Show' : 'Hide'} nodes`}
 				click={() => { this.client.dispatchAction('/store-panel-param',{nodes:!this.props.panel.nodes}) }}/>,
 			<ContextualMenuItem
+				key="outline"
 				text={`${fontInstance.fill ? 'Show' : 'Hide'} outline`}
 				click={() => { this.client.dispatchAction('/store-panel-param',{outline:!this.props.panel.outline}) }}/>,
 			<ContextualMenuItem
+				key="coords"
 				text={`${!fontInstance.showCoords ? 'Show' : 'Hide'} coords`}
 				click={() => { this.client.dispatchAction('/store-panel-param',{coords:!this.props.panel.coords}) }}/>,
 			<ContextualMenuItem
+				key="reset"
 				text="Reset view"
 				click={() => { this.props.reset() }}/>,
 			<ContextualMenuItem
+				key="shadow"
 				text={`${this.props.panel.shadow ? 'Hide' : 'Show'} shadow`}
 				click={() => { this.client.dispatchAction('/store-panel-param',{shadow:!this.props.panel.shadow}) }}/>,
 		];
