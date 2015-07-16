@@ -1,0 +1,21 @@
+.not-a-browser-logos {
+	display:flex;
+	flex-direction:row;
+	justify-content:space-between;
+	padding-top:30px;
+
+	&-link {
+		display: block;
+		width:70px;
+		height:70px;
+
+		img {
+			width: 70px;
+			height: 70px;
+		}
+
+		label {
+			font-size:10px;
+		}
+	}
+}
