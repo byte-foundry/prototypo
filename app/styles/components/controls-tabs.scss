@@ -1,3 +1,5 @@
+@import "../variables";
+
 .font-controls {
 	height:100%;
 }
@@ -26,7 +28,7 @@
 		position:relative;
 
 		&.is-active, &:hover {
-			background-color:#49e4a9;
+			background-color:$green;
 		}
 
 		&.is-active:after {
@@ -44,7 +46,7 @@
 			transform: translate(35px, 8px);
 			border-left: 10px solid transparent;
 			border-right: 10px solid transparent;
-			border-top: 10px solid #49e4a9;
+			border-top: 10px solid $green;
 		}
 	}
 }
