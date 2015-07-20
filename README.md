@@ -5,7 +5,7 @@ BEFORE ANYTHING !
 -----------------
 Use git flow on this branch (reactify-and-cleanup)
 Add --no-ff to your merge options on this branch.
-If you merge a branch on reactify-and-cleanup with ff I'll will cut you
+If you merge a branch on reactify-and-cleanup with ff I'll be really sad and cry
 
 Labeling convention:
 - Feature -> feat/name-of-feature
@@ -17,8 +17,7 @@ Before installing Prototypo
 In order to build Prototypo, you need to install the following software-packages on your system:
 - Git
 - Node.js
-- Grunt
-- Bower
+- Gulp
 
 Installing Prototypo
 --------------------
@@ -39,15 +38,10 @@ Running Prototypo
 -----------------
 
 ```bash
-$ grunt serve
+$ gulp serve
 ```
 
-Running the Unit Tests
-----------------------
-
-```bash
-$ grunt test
-```
+You'll want the server to be running on localhost:9000 if you want to connect to our hoodie app. You can also run your own hoodie app (documentation on how to install and configure prototypo for your own hoodie app coming soon)
 
 Roadmap to v1.0
 ===============
