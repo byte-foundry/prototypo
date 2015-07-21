@@ -41,7 +41,36 @@ Running Prototypo
 $ gulp serve
 ```
 
-You'll want the server to be running on localhost:9000 if you want to connect to our hoodie app. You can also run your own hoodie app (documentation on how to install and configure prototypo for your own hoodie app coming soon)
+You'll want the server to be running on localhost:9000 if you want to connect to our hoodie app.
+
+Running Prototypo with you own Hoodie app
+-----------------------------------------
+
+### Requirements
+* Install hoodie and its requirements by following the doc (http://docs.hood.ie/en/start/)
+* Install adhoc-cors-proxy by running `npm install -g adhoc-cors-proxy`
+
+### Creating and launching the hoodie app (http://docs.hood.ie/en/start/getting-started/getting-started-1.html)
+* Create your hoodie app `hoodie new prototypo-hoodie`
+* Launch the hoodie app
+```bash
+$ cd prototypo-hoodie
+$ hoodie start
+```
+* Set up the cors proxy (there is other to circumvent this problem using nginx as a proxy, even without cors, but this is easier)
+```bash
+ corsproxy <hoodie_couchdb_address>:<hoodie_couchdb_port> --port=<port_you_want_to_access_hoodie_from> --origin=http://localhost:<port_of_prototypo> --credentials
+ ```
+
+### Configuring Prototypo
+* In `app/scripts/services/hoodie.services.js` line 6 change `backUrl` to
+```
+http://localhost:<port_you_want_to_access_hoodie_from>
+```
+* Launch Prototypo
+```bash
+gulp serve
+```
 
 Roadmap to v1.0
 ===============
