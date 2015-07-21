@@ -64,8 +64,8 @@ $ hoodie start
 
 ### Configuring Prototypo
 * In `app/scripts/services/hoodie.services.js` line 6 change `backUrl` to
-```
-http://localhost:<port_you_want_to_access_hoodie_from>
+```js
+const backUrl = 'http://localhost:<port_you_want_to_access_hoodie_from>';
 ```
 * Launch Prototypo
 ```bash
