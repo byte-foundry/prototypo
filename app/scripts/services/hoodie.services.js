@@ -30,7 +30,7 @@ export default class HoodieApi {
 					HoodieApi.instance.hoodieId = id;
 					HoodieApi.instance.email = respJSON.userCtx.name.split('/')[1];
 					if (HoodieApi.eventSub) {
-						_.each(HoodieApi.eventSub['connected'], (cb) => {
+						_.each(HoodieApi.eventSub.connected, (cb) => {
 							cb();
 						});
 					}
@@ -39,24 +39,24 @@ export default class HoodieApi {
 				else {
 					reject();
 				}
-			}
+			};
 
 			xhr.onerror = (e) => {
 				reject();
-			}
+			};
 
 			xhr.send();
 
 		});
 	}
 
-	static login(user,password) {
+	static login(user, password) {
 		return new Promise((resolve, reject) => {
 
 			const xhr = new XMLHttpRequest();
 
 			xhr.open('POST', `${backUrl}/_session`);
-			xhr.setRequestHeader('Content-type','application/json');
+			xhr.setRequestHeader('Content-type', 'application/json');
 			xhr.withCredentials = true;
 
 			xhr.onload = (e) => {
@@ -72,18 +72,18 @@ export default class HoodieApi {
 				HoodieApi.instance.hoodieId = id;
 				HoodieApi.instance.email = respJSON.name.split('/')[1];
 				if (HoodieApi.eventSub) {
-					_.each(HoodieApi.eventSub['connected'], (cb) => {
+					_.each(HoodieApi.eventSub.connected, (cb) => {
 						cb();
 					});
 				}
 				resolve();
 				console.log('We in');
-			}
+			};
 
 			xhr.onerror = (e) => {
 				reject();
 				console.log('We not in');
-			}
+			};
 
 			xhr.send(`{"name":"${user}","password":"${password}"}`);
 
@@ -95,16 +95,16 @@ export default class HoodieApi {
 			const xhr = new XMLHttpRequest();
 
 			xhr.open('DELETE', `${backUrl}/_session`);
-			xhr.setRequestHeader('Content-type','application/json');
+			xhr.setRequestHeader('Content-type', 'application/json');
 			xhr.withCredentials = true;
 
 			xhr.onload = (e) => {
 				resolve();
-				}
+			};
 
 			xhr.onerror = (e) => {
 				reject();
-			}
+			};
 
 			xhr.send();
 
@@ -118,19 +118,19 @@ export default class HoodieApi {
 			const hoodieId = Math.random().toString().substr(2);
 
 			const payload = {
-				_id:`org.couchdb.user:user/${username}`,
-				name:`user/${username}`,
-				type:'user',
-				roles:[],
-				password:password,
+				_id: `org.couchdb.user:user/${username}`,
+				name: `user/${username}`,
+				type: 'user',
+				roles: [],
+				password: password,
 				hoodieId,
-				database:`user/${hoodieId}`,
-				updatedAt:new Date(),
-				createdAt:new Date(),
-				signedUpAt:new Date(),
+				database: `user/${hoodieId}`,
+				updatedAt: new Date(),
+				createdAt: new Date(),
+				signedUpAt: new Date(),
 			}
 
-			xhr.open('PUT',`${backUrl}/_users/${encodeURIComponent(payload._id)}`);
+			xhr.open('PUT', `${backUrl}/_users/${encodeURIComponent(payload._id)}`);
 			xhr.setRequestHeader('Content-type', 'application/json');
 			xhr.withCredentials = true;
 
@@ -141,11 +141,11 @@ export default class HoodieApi {
 				}
 
 				resolve(e.responseText);
-			}
+			};
 
 			xhr.reject = (e) => {
 				reject();
-			}
+			};
 
 			xhr.send(JSON.stringify(payload));
 		});
@@ -159,26 +159,26 @@ export default class HoodieApi {
 			const key = `org.couchdb.user:$passwordReset/${resetId}`;
 			const xhr = new XMLHttpRequest();
 			const payload = {
-				_id:key,
-				name:`$passwordReset/${resetId}`,
-				type:'user',
-				roles:[],
-				password:resetId,
-				updatedAt:new Date(),
-				createdAt:new Date(),
-			}
+				_id: key,
+				name: `$passwordReset/${resetId}`,
+				type: 'user',
+				roles: [],
+				password: resetId,
+				updatedAt: new Date(),
+				createdAt: new Date(),
+			};
 
 			xhr.open('PUT', `${backUrl}/_users/${encodeURIComponent(key)}`);
-			xhr.setRequestHeader('Content-type','application/json');
+			xhr.setRequestHeader('Content-type', 'application/json');
 			xhr.withCredentials = true;
 
 			xhr.onload = (e) => {
 				resolve();
-			}
+			};
 
 			xhr.onerror = (e) => {
 				reject();
-			}
+			};
 
 			xhr.send(JSON.stringify(payload));
 
@@ -195,12 +195,12 @@ export default class HoodieApi {
 			xhr.withCredentials = true;
 
 			xhr.onload = (e) => {
-				resolve(e)
-			}
+				resolve(e);
+			};
 
 			xhr.onerror = (e) => {
 				reject();
-			}
+			};
 
 			xhr.send();
 		})
@@ -217,16 +217,16 @@ export default class HoodieApi {
 				xhr.withCredentials = true;
 
 				xhr.onload = (e) => {
-					resolve(e)
-				}
+					resolve(e);
+				};
 
 				xhr.onerror = (e) => {
 					reject();
-				}
+				};
 
 				xhr.send(JSON.stringify(user));
 			});
-		})
+		});
 	}
 
 	static startTask(type, subType, params = {}) {

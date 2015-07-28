@@ -1,5 +1,4 @@
 import React from 'react';
-import GlyphButton from './glyph-button.components.jsx';
 import GlyphList from './glyph-list.components.jsx';
 import Remutable from 'remutable';
 import Lifespan from 'lifespan';
@@ -36,6 +35,15 @@ export default class GlyphPanel extends React.Component {
 				return true;
 				//TODO(franz): Here we shall save stuff to hoodie
 			});
+		this.client.getStore('/panel', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					show:head.toJS().mode.indexOf('list') !== -1,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 
 		this.client.getStore('/glyphs', this.lifespan)
 			.onUpdate(({head}) => {
@@ -66,12 +74,12 @@ export default class GlyphPanel extends React.Component {
 
 		const classes = ClassNames({
 			'is-locked': this.state.glyphs.locked,
+			'is-active': this.state.show,
 		})
 
 		return (
 			<div id="glyphpanel" className={classes}>
-				<GlyphButton locked={this.state.glyphs.locked} selected={this.state.tags.selected} pinned={this.state.tags.pinned}/>
-				<GlyphList pinned={this.state.tags.pinned} glyphs={this.state.glyphs.glyphs} selected={this.state.glyphs.selected} selectedTag={this.state.tags.selected} tags={this.state.tags.tags}/>
+				<GlyphList tags={this.state.tags.tags} pinned={this.state.tags.pinned} glyphs={this.state.glyphs.glyphs} selected={this.state.glyphs.selected} selectedTag={this.state.tags.selected}/>
 			</div>
 		)
 	}

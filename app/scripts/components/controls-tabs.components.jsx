@@ -20,10 +20,12 @@ export class ControlsTabs extends React.Component {
 			});
 
 			return (
-				<li className={classes} id={iconId}
-					onClick={() => {
-						this.changeTab(name)
-					}} key={`${name}ControlsHeader`}>
+				<li className={classes}>
+					<span className={classes} id={iconId}
+						onClick={() => {
+							this.changeTab(name)
+						}} key={`${name}ControlsHeader`}>
+					</span>
 				</li>
 			);
 		});

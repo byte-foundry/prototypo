@@ -22,6 +22,8 @@ export default class PrototypoPanel extends React.Component {
 				mode:['text'],
 			},
 		};
+
+		this.availableMode = ['glyph','text','word'];
 	}
 
 	async componentWillMount() {
@@ -57,9 +59,9 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.xor(this.state.panel.mode, [name]);
+		const newViewMode =_.intersection(_.xor(this.state.panel.mode, [name]),this.availableMode);
 		if (newViewMode.length > 0) {
-			this.client.dispatchAction('/store-panel-param',{mode:newViewMode});
+			this.client.dispatchAction('/store-panel-param', {mode: newViewMode});
 		}
 	}
 
@@ -101,11 +103,8 @@ export default class PrototypoPanel extends React.Component {
 
 		let down;
 		if (hasGlyph || hasText) {
-			const classes = ClassNames({
-				'is-up':!word,
-			});
 			down = (
-				<div id="prototypotextandglyph" className={classes}>
+				<div id="prototypotextandglyph">
 					{textAndGlyph}
 				</div>
 			);
@@ -114,7 +113,7 @@ export default class PrototypoPanel extends React.Component {
 		let up;
 		if (word) {
 			up = (
-				<div id="prototypoword" className="is-up">
+				<div id="prototypoword">
 					{word}
 				</div>
 			);
@@ -124,7 +123,6 @@ export default class PrototypoPanel extends React.Component {
 			<div id="prototypopanel">
 				{up}
 				{down}
-				<HoverViewMenu mode={this.state.panel.mode} toggleView={(text) => { this.toggleView(text) }}/>
 			</div>
 		)
 	}
