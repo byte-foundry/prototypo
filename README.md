@@ -1,4 +1,4 @@
-Prototypo, Streamlining font creation [![Build Status](https://travis-ci.org/byte-foundry/prototypo.svg?branch=master)](https://travis-ci.org/byte-foundry/prototypo)
+Prototypo, Streamlining font creation [![Build Status](https://travis-ci.org/byte-foundry/prototypo.svg?branch=master)](https://travis-ci.org/byte-foundry/prototypo) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/byte-foundry/prototypo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 =====================================
 
 BEFORE ANYTHING !
@@ -41,23 +41,51 @@ Running Prototypo
 $ gulp serve
 ```
 
-You'll want the server to be running on localhost:9000 if you want to connect to our hoodie app. You can also run your own hoodie app (documentation on how to install and configure prototypo for your own hoodie app coming soon)
+You'll want the server to be running on localhost:9000 if you want to connect to our hoodie app.
+
+Running Prototypo with you own Hoodie app
+-----------------------------------------
+
+### Requirements
+* Install hoodie and its requirements by following the doc (http://docs.hood.ie/en/start/)
+* Install adhoc-cors-proxy by running `npm install -g adhoc-cors-proxy`
+
+### Creating and launching the hoodie app (http://docs.hood.ie/en/start/getting-started/getting-started-1.html)
+* Create your hoodie app `hoodie new prototypo-hoodie`
+* Launch the hoodie app
+```bash
+$ cd prototypo-hoodie
+$ hoodie start
+```
+* Set up the cors proxy (there is other to circumvent this problem using nginx as a proxy, even without cors, but this is easier)
+```bash
+ corsproxy <hoodie_couchdb_address>:<hoodie_couchdb_port> --port=<port_you_want_to_access_hoodie_from> --origin=http://localhost:<port_of_prototypo> --credentials
+ ```
+
+### Configuring Prototypo
+* In `app/scripts/services/hoodie.services.js` line 6 change `backUrl` to
+```js
+const backUrl = 'http://localhost:<port_you_want_to_access_hoodie_from>';
+```
+* Launch Prototypo
+```bash
+gulp serve
+```
 
 Roadmap to v1.0
 ===============
 
 - possibility to modify text directly in the preview ([#78](../../issues/78)) ……… ✓
-- a complete alphabet with alternates (some numbers, punctuation and accents are missing)
+- a complete alphabet with alternates (some numbers, punctuation and accents are missing) ……… ✓
 - automatic spacing ([#124](../../issues/124))
 - generating binary font-files such as .otf, see the [current workaround](#converting-an-svg-font-to-other-font-formats) ([#12](../../issues/12)) ……… ✓
 - personnal library to save and load different fonts ([#125](../../issues/125))
-- <del>undo/redo history</del> ([#94](../../issues/94))
+- undo/redo history ([#94](../../issues/94)) ……… ✓
 
 Known issues
 ------------
 
 - font export is broken in Safari ([#111](../../issues/111))
-- the application doesn't adapt to the window being resized ([#108](../../issues/108))
 
 
 Converting an .svg font to other font formats
