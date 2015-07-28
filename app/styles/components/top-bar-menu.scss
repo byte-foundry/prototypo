@@ -6,6 +6,7 @@
 	margin:0;
 	height:35px;
 	float:left;
+	width:100%;
 
 	&-item {
 		position:relative;
@@ -18,6 +19,20 @@
 
 		&.is-aligned-right {
 			float:right;
+
+			& .top-bar-menu-item-dropdown {
+				left:auto;
+				right:0px;
+			}
+		}
+		
+		&.is-icon-menu {
+			background-color:$green;
+			padding:0 3px;
+		}
+
+		&-img {
+			background-color:$white;
 		}
 
 		&-dropdown {
@@ -30,6 +45,10 @@
 			overflow:hidden;
 			background-color: $dark-grey;
 			width:300px;
+
+			&.is-small {
+				width:150px;
+			}
 
 			&:before {
 				content:' ';
@@ -47,12 +66,14 @@
 				padding-left:20px;
 				cursor:pointer;
 
-				&.is-checkbox:hover {
-					background:$dark-grey;
+				&.is-checkbox {
+					display:flex;
+					flex-flow:row nowrap;
+					padding-top:7px;
 				}
 
-				&:hover &-checkbox {
-					background-color:$white;
+				&.is-checkbox:hover {
+					background:lighten($dark-grey,5%);
 				}
 
 				&.is-disabled {
@@ -68,18 +89,10 @@
 					float:left;
 				}
 
-				&-checkbox {
-					float:left;
-					margin-top:12px;
-					margin-right: 12px;
-					border:solid 1px $light-grey;
-					width:10px;
-					height:10px;
-					border-radius: 2px;
-
-					&.is-checked {
-						background-color:$green;
-					}
+				&.is-checkbox &-title {
+					padding-top:0px;
+					float:none;
+					padding-left:10px;
 				}
 
 				&-shortcut {

@@ -1,14 +1,19 @@
+@import '../variables';
+
 #glyphpanel {
 	position:absolute;
+	right:0;
 	bottom:0;
 	z-index:3;
-	width:100%;
-	-webkit-transform: translateY(calc(100% - 50px));
-	transform: translateY(calc(100% - 50px));
+	width:201px;
+	height:calc(100% - 35px);
+	-webkit-transform: translateX(calc(100%));
+	transform: translateX(calc(100%));
 	transition: -webkit-transform .2s ease;
 	transition: transform .2s ease;
+	background-color:$dark-grey;
 
-	&:hover, &.is-locked {
-		transform:translateY(0);
+	&.is-active {
+		transform:translateX(0);
 	}
 }

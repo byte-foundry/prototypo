@@ -1,19 +1,24 @@
 @import '../variables';
 
 .close-button {
-	width:15px;
-	height:15px;
-	background-color:$red;
+	width:16px;
+	height:16px;
+	background-color:lighten($red,10%);
+	background-opacity:20%;
 	color:$white;
 	position:absolute;
 	top:15px;
 	right:15px;
 	font-weight:900;
 	cursor:pointer;
-	z-index:13;
+	z-index:2;
+	background-image:url('images/close-icon.svg');
+	background-position-x:-2px;
+	background-position-y:-2px;
 
 	&:hover {
-		background-color:darken($red,5%);
+		background-color:$red;
+		background-image:url('images/close-icon-hover.svg');
 	}
 }
 

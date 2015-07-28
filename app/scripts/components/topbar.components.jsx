@@ -1,6 +1,6 @@
 import React from 'react';
 import UndoRedoMenu from './undo-redo-menu.components.jsx';
-import {TopBarMenu, TopBarMenuDropdown, TopBarMenuDropdownItem, TopBarMenuDropdownCheckBox} from './top-bar-menu.components.jsx';
+import {TopBarMenu, TopBarMenuDropdown, TopBarMenuDropdownItem, TopBarMenuDropdownCheckBox, TopBarMenuAction} from './top-bar-menu.components.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
@@ -107,7 +107,9 @@ export default class Topbar extends React.Component {
 						}}/>
 						<TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/>
 					</TopBarMenuDropdown>
-					<TopBarMenuDropdown name="View" alignRight={true}>
+					<TopBarMenuAction name="Glyphlist" click={(e) => { this.toggleView('list') }} alignRight={true}>
+					</TopBarMenuAction>
+					<TopBarMenuDropdown img="assets/images/views-icon.svg" alignRight={true} small={true}>
 						<TopBarMenuDropdownCheckBox name="Glyph" checked={this.state.panel.mode.indexOf('glyph') !== -1} handler={() => { this.toggleView('glyph') }}/>
 						<TopBarMenuDropdownCheckBox name="Text" checked={this.state.panel.mode.indexOf('text') !== -1} handler={() => { this.toggleView('text') }}/>
 						<TopBarMenuDropdownCheckBox name="Word" checked={this.state.panel.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word') }}/>

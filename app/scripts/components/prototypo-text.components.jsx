@@ -63,6 +63,8 @@ export default class PrototypoText extends React.Component {
 		const textDiv = React.findDOMNode(this.refs.text);
 		if (textDiv && textDiv.value) {
 			fontInstance.subset = textDiv.value;
+			//This is a workaround the font should update when the subset changes
+			fontInstance.update();
 		}
 	}
 

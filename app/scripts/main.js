@@ -141,7 +141,7 @@ if (!isSafari && !isIE) {
 
 				localServer.dispatchUpdate('/tagStore',patch);
 			},
-			'/add-pinned': (params) => {
+			'/toggle-pinned': (params) => {
 				const pinned = _.xor(tagStore.get('pinned'),[params]);
 				const patch = tagStore
 					.set('pinned',pinned)
@@ -231,6 +231,12 @@ if (!isSafari && !isIE) {
 					localServer.dispatchUpdate('/glyphs', patch);
 
 					font.displayChar(String.fromCharCode(unicode));
+
+					const newViewMode = _.union(panel.get('mode'),['glyph']);
+					if (newViewMode.length > 0) {
+						const patch = panel.set('mode',newViewMode).commit();
+						localServer.dispatchUpdate('/panel', patch);
+					}
 
 					saveAppValues();
 			},

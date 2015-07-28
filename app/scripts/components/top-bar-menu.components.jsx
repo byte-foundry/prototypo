@@ -1,5 +1,6 @@
 import React from 'react';
 import Classnames from 'classnames';
+import CheckBoxWithImg from './checkbox-with-img.components.jsx'
 
 class TopBarMenu extends React.Component {
 	render() {
@@ -7,11 +8,12 @@ class TopBarMenu extends React.Component {
 			const classes = Classnames({
 				'top-bar-menu-item':true,
 				'is-aligned-right':child.props.alignRight,
+				'is-icon-menu': !!child.props.img,
 			});
 
 			return (
-				<li className={classes} key={child.props.name}>
-					{child.props.name}
+				<li className={classes} key={child.props.name || child.props.img}>
+					{child.type.getHeader(child.props)}
 					{child}
 				</li>
 			)
@@ -25,12 +27,31 @@ class TopBarMenu extends React.Component {
 }
 
 class TopBarMenuDropdown extends React.Component {
+	static getHeader(props) {
+		return props.name || <img className="top-bar-menu-item-img" src={props.img}/>;
+	}
+
 	render() {
+		const classes = Classnames({
+			'top-bar-menu-item-dropdown':true,
+			'is-small':this.props.small,
+		});
+
 		return (
-			<ul className="top-bar-menu-item-dropdown">
+			<ul className={classes}>
 				{this.props.children}
 			</ul>
 		)
+	}
+}
+
+class TopBarMenuAction extends React.Component {
+	static getHeader(props) {
+		return <span onClick={(e) => props.click(e)}>{props.name}</span>;
+	}
+
+	render() {
+		return false;
 	}
 }
 
@@ -90,7 +111,7 @@ class TopBarMenuDropdownCheckBox extends React.Component {
 
 		return (
 			<li className={classes} onClick={this.props.handler}>
-				<span className={checkboxClasses}></span>
+				<CheckBoxWithImg checked={this.props.checked}/>
 				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
 				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
 			</li>
@@ -103,4 +124,5 @@ export {
 	TopBarMenuDropdown,
 	TopBarMenuDropdownItem,
 	TopBarMenuDropdownCheckBox,
+	TopBarMenuAction,
 }
