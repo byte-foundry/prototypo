@@ -1,6 +1,7 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
+import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 
 import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
@@ -73,10 +74,10 @@ export default class PrototypoText extends React.Component {
 		e.stopPropagation();
 		const contextMenuPos = {x:e.nativeEvent.offsetX};
 		if (this.props.panel.invertedTextView) {
-			contextMenuPos.y = React.findDOMNode(this.refs.text).clientHeight - e.nativeEvent.offsetY;
+			contextMenuPos.y = React.findDOMNode(this.refs.text).clientHeight - e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
 		}
 		else {
-			contextMenuPos.y = e.nativeEvent.offsetY;
+			contextMenuPos.y = e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
 		}
 		this.setState({
 			showContextMenu:true,
@@ -118,15 +119,17 @@ export default class PrototypoText extends React.Component {
 				onContextMenu={(e) => { this.showContextMenu(e) }}
 				onClick={() => { this.hideContextMenu() }}
 				onMouseLeave={() => { this.hideContextMenu() }}>
-				<div
-					contentEditable="true"
-					ref="text"
-					className="prototypo-text-string"
-					spellCheck="false"
-					style={style}
-					onInput={() => { this.updateSubset() }}
-					onBlur={() => { this.saveText() }}
-				></div>
+				<ReactGeminiScrollbar>
+					<div
+						contentEditable="true"
+						ref="text"
+						className="prototypo-text-string"
+						spellCheck="false"
+						style={style}
+						onInput={() => { this.updateSubset() }}
+						onBlur={() => { this.saveText() }}
+						></div>
+				</ReactGeminiScrollbar>
 				<CloseButton click={() => { this.props.close('text') }}/>
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
 					{menu}

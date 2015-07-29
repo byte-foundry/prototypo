@@ -1,7 +1,5 @@
 .prototypo-text {
 	flex:1;
-	max-height: 100%;
-	overflow-y:auto;
 	position:relative;
 
 	&-string {
@@ -12,5 +10,9 @@
 		padding: 0.8em;
 		outline:none;
 		word-break:break-all;
+	}
+
+	.gm-scrollbar-container {
+		position: absolute;
 	}
 }
