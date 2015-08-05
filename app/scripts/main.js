@@ -70,6 +70,10 @@ if (!isSafari && !isIE) {
 		selected:'A',
 	});
 
+	const fontTemplate = stores['/fontTemplate'] = new Remutable({
+		selected:'john-fell.ptf',
+	});
+
 	const panel = stores['/panel'] = new Remutable({mode:[]});
 
 	const canvasEl = window.canvasElement = document.createElement('canvas');
@@ -287,6 +291,26 @@ if (!isSafari && !isIE) {
 				const patch = fontTab.set('tab',name).commit();
 				localServer.dispatchUpdate('/fontTab', patch);
 				saveAppValues();
+			},
+			'/change-font': async (repo) => {
+				const patch = fontTemplate.set('selected',repo)
+					.set('loadingFont',true).commit();
+				localServer.dispatchUpdate('/fontTemplate', patch);
+
+				const typedataJSON = await Typefaces.getFont(repo);
+				const typedata = JSON.parse(typedataJSON);
+
+				await fontInstance.changeFont({
+					fontSource: typedataJSON,
+				});
+
+				localClient.dispatchAction('/create-font', fontInstance);
+
+				localClient.dispatchAction('/load-params', typedata);
+				localClient.dispatchAction('/load-glyphs', fontInstance.font.altMap);
+				localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
+				const patchEndLoading = fontTemplate.set('loadingFont',false).commit();
+				localServer.dispatchUpdate('/fontTemplate',patch);
 			}
 		}
 
@@ -300,7 +324,7 @@ if (!isSafari && !isIE) {
 
 		}, localServer.lifespan);
 
-		const typedataJSON = await Typefaces.getFont();
+		const typedataJSON = await Typefaces.getFont(fontTemplate.get('selected'));
 		const typedata = JSON.parse(typedataJSON);
 		const prototypoSource = await Typefaces.getPrototypo();
 		let workerUrl;

@@ -11,6 +11,16 @@ html {
 	background-color: $yellow;
 }
 
+@font-face {
+	font-family: "John Fell";
+	src: url("fonts/johnfell.otf");
+}
+
+@font-face {
+	font-family: "Venus 8";
+	src: url("fonts/venus8.otf");
+}
+
 body {
 	overflow: hidden;
 	font-size:1.4em;
