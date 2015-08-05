@@ -24,7 +24,7 @@ export default class Sidebar extends React.Component {
 
 		const sideBarTab = new Remutable(this.client.getStore('/sideBarTab', this.lifespan)
 			.onUpdate(({head}) => {
-				this.setState(head.toJS());
+				this.setState({tab:head.toJS().tab});
 			})
 			.onDelete(() => this.setState(undefined)).value);
 
@@ -38,6 +38,19 @@ export default class Sidebar extends React.Component {
 		}, this.lifespan);
 
 		this.client.dispatchAction('/change-tab-sidebar',{name: 'sliders'});
+
+		this.setState({
+			fonts:[{
+				name:'John Fell',
+				familyName: 'John Fell',
+				repo: 'john-fell.ptf',
+			},
+			{
+				name:'Venus',
+				familyName: 'Venus 8',
+				repo: 'venus.ptf',
+			}],
+		});
 	}
 
 	render() {
@@ -47,8 +60,8 @@ export default class Sidebar extends React.Component {
 					<SideTab iconUrl="font-controls.svg" name="sliders">
 						<FontControls />
 					</SideTab>
-					<SideTab iconUrl="font-infos.svg" name="font-infos" big={true} disabled={true}>
-						<FontInfos />
+					<SideTab iconUrl="font-infos.svg" name="font-infos" big={true}>
+						<FontInfos fonts={this.state.fonts}/>
 					</SideTab>
 					<SideTab iconUrl="fonts-collection.svg" name="fonts-collection" big={true} disabled={true}>
 						<FontsCollection />

@@ -51,6 +51,8 @@ var opts = assign({}, watchify.args, customBrowserifyOpts);
 gulp.task('images', function() {
 	gulp.src('./app/images/*.*')
 		.pipe(gulp.dest('./dist/assets/images/'));
+	gulp.src('./app/fonts/*.*')
+		.pipe(gulp.dest('./dist/assets/fonts/'));
 });
 
 gulp.task('cp-prototypo.js', function() {

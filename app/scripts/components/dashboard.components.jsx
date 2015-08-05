@@ -17,7 +17,8 @@ export default class Dashboard extends React.Component {
 			const isLoggedIn = await HoodieApi.setup();
 
 			const fontControls = await this.client.fetch('/fontControls');
-			const typedataJSON = await Typefaces.getFont();
+			const fontTemplate = await this.client.fetch('/fontTemplate');
+			const typedataJSON = await Typefaces.getFont(fontTemplate.get('selected'));
 			const typedata = JSON.parse(typedataJSON);
 			const initValues = {};
 			_.each(typedata.parameters,(group) => {
