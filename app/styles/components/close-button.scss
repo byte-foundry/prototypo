@@ -1,10 +1,10 @@
 @import '../variables';
 
 .close-button {
-	width:16px;
-	height:16px;
-	background-color:lighten($red,10%);
-	background-opacity:20%;
+	width:20px;
+	height:20px;
+	border: 1px solid $red;
+	border-radius: 50%;
 	color:$white;
 	position:absolute;
 	top:15px;
@@ -12,13 +12,22 @@
 	font-weight:900;
 	cursor:pointer;
 	z-index:2;
-	background-image:url('images/close-icon.svg');
-	background-position-x:-2px;
-	background-position-y:-2px;
+
+	&-icon {
+		height: 30%;
+		margin-top: 35%;
+		background-color: $red;
+
+		-webkit-mask:  url('./images/close-icon.svg') no-repeat center;
+		mask: url('./images/close-icon.svg') no-repeat center;
+	}
 
 	&:hover {
 		background-color:$red;
-		background-image:url('images/close-icon-hover.svg');
+	}
+
+	&:hover &-icon {
+		background-color: $white;
 	}
 }
 
