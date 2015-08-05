@@ -6,11 +6,28 @@
 	padding:0;
 
 	&-selected {
-		padding:10px;
+		padding:10px 0 10px 10px;
 		cursor:pointer;
+
+		&-icon {
+			width: 10px;
+			height: 10px;
+			float: right;
+			padding: .7em 1.1em;
+
+			background-color: $medium-grey;
+			-webkit-mask:  url('./images/list-icon.svg') no-repeat center;
+			mask: url('./images/list-icon.svg') no-repeat center;
+		}
 
 		&:hover {
 			background-color:$green;
+			color: $white;
+			border-top-color: $green;
+		}
+
+		&:hover &-icon {
+			background-color: $white;
 		}
 	}
 
@@ -23,6 +40,13 @@
 		padding:0;
 		display:none;
 		background-color:$dark-grey;
+	}
+
+	&.is-active &-selected {
+		&-icon {
+			-webkit-mask:  url('./images/close-icon.svg') no-repeat center;
+			mask: url('./images/close-icon.svg') no-repeat center;
+		}
 	}
 
 	&.is-active &-dropdown {
@@ -80,9 +104,10 @@
 }
 
 .glyph-list {
-	background-color:$dark-grey;
-	color:$white;
-	padding-top:5px;
+	background-color: $dark-grey;
+	color: $medium-grey;
+	border-top: lighten($dark-grey, 3%) 1px solid;
+
 	display:flex;
 	flex-direction:column;
 	width:100%;
