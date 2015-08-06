@@ -1,11 +1,25 @@
 @import '../variables';
 
 .zoom-button {
-	background-color:$green;
-	color:$white;
-	margin-top:10px;
-	width:16px;
-	height:16px;
-	font-size:16px;
-	cursor:pointer;
+	border: 2px solid lighten($light-grey, 10%);
+	color: $light-grey;
+	margin-top: 20px;
+	width: 24px;
+	height: 24px;
+	font-size: 20px;
+	line-height: 20px;
+	text-align: center;
+	cursor: pointer;
+	margin-left: -2px;
+
+	&:hover {
+		background-color: $green;
+		border-color: $green;
+		color: $white;
+	}
+}
+
+.zoom-button + .zoom-button {
+	margin-top: -2px;
+	line-height: 18px;
 }
