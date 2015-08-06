@@ -32,7 +32,11 @@ export default class PrototypoText extends React.Component {
 			})
 			.onDelete(() => {
 				this.setState(undefined);
-			})
+			});
+
+		this.saveTextDebounced = _.debounce((text, prop) => {
+			this.client.dispatchAction('/store-text',{value:text, propName:prop});
+		}, 500);
 	}
 
 	setupText() {
@@ -56,7 +60,7 @@ export default class PrototypoText extends React.Component {
 	saveText() {
 		const textDiv = React.findDOMNode(this.refs.text);
 		if (textDiv && textDiv.innerText) {
-			this.client.dispatchAction('/store-text',{value:textDiv.innerText,propName:this.props.field});
+			this.saveTextDebounced(textDiv.innerText, this.props.field);
 		}
 	}
 
@@ -66,6 +70,8 @@ export default class PrototypoText extends React.Component {
 			fontInstance.subset = textDiv.value;
 			//This is a workaround the font should update when the subset changes
 			fontInstance.update();
+
+			this.saveText();
 		}
 	}
 
