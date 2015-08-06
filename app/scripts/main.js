@@ -350,7 +350,7 @@ if (!isSafari && !isIE) {
 				console.log(err);
 			}
 
-			const typedataJSON = await Typefaces.getFont(appValues.values.template);
+			const typedataJSON = await Typefaces.getFont(appValues.values.template || 'john-fell.ptf');
 			const typedata = JSON.parse(typedataJSON);
 
 			const initValues = {};
