@@ -30,7 +30,8 @@ export default class GlyphTagList extends React.Component {
 				})
 			}}>
 				<div className="glyph-tag-list-selected">
-					{this.props.selected}
+					Filter by {this.props.selected}
+					<span className="glyph-tag-list-selected-icon"></span>
 				</div>
 				<ul className="glyph-tag-list-dropdown">
 					{_.map(this.props.tags, (tag) => {
@@ -61,7 +62,7 @@ class GlyphPinnedTag extends React.Component {
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
-	
+
 	selectTag(tag,e) {
 		e.stopPropagation();
 		this.client.dispatchAction('/select-tag',tag);
@@ -84,7 +85,7 @@ class GlyphPinnedTag extends React.Component {
 				<div className="glyph-tag-name">
 					{this.props.tag}
 				</div>
-				<div className="glyph-tag-button" onClick={(e) => { this.removeFromPinned(this.props.tag,e) }}>
+				<div className="glyph-tag-button is-pinned" onClick={(e) => { this.removeFromPinned(this.props.tag,e) }}>
 					<div className="glyph-tag-button-icon">
 						&nbsp;
 					</div>

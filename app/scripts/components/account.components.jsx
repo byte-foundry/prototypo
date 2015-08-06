@@ -46,7 +46,7 @@ export default class Account extends React.Component {
 		if (!this.state.passwordChanged) {
 			changePassContent = (
 				<div className="account-block">
-					<h1 className="account-block-title">Change password</h1>
+					<h2 className="account-block-title side-tab-h2">Change password</h2>
 					<form className="account-block-form" onSubmit={(e) => { this.changePassword(e) }}>
 						<label className="account-block-form-label" htmlFor="new-password">New password (at least 6 characters)</label>
 						<input className="account-block-form-input" ref="password" type="password" id="new-password" name="new-password"/>
@@ -68,6 +68,7 @@ export default class Account extends React.Component {
 
 		return (
 			<div className="account">
+				<h1 className="account-block-title side-tab-h1">Admin panel</h1>
 				{changePassContent}
 			</div>
 		)

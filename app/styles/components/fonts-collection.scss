@@ -1,0 +1,56 @@
+@import '../variables';
+
+.fonts-collection {
+
+	&-selectors {
+		padding:0;
+		margin:0;
+		list-style: none;
+		color:$white;
+		font-size:22px;
+		font-weight: normal;
+	}
+
+	&-title {
+		color:$white;
+		font-size:30px;
+	}
+}
+
+.font-selector {
+	cursor:pointer;
+	padding:10px 20px;
+	background-color:$dark-grey;
+
+	&.is-selected {
+		background-color:$light-grey;
+		color: $dark-grey;
+		&::after {
+			content: "";
+		    background: no-repeat center $dark-grey;
+			-webkit-mask:  url('./images/selected-icon.svg') no-repeat center;
+			mask: url('./images/list-selected.svg') no-repeat center;
+			float: right;
+		    width: 50px;
+		    height: 50px;
+		    display: block;
+		}
+		&:hover {
+			background-color: $light-grey;
+			cursor: default;
+		}
+	}
+
+	&:first-of-type {
+		// border-top:solid 1px $medium-grey;
+	}
+
+	&:hover {
+		background-color:$medium-grey;
+	}
+
+	&-name {
+		line-height:51px;
+		display:inline-block;
+	}
+}

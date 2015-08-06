@@ -41,12 +41,12 @@ export default class Sidebar extends React.Component {
 
 		this.setState({
 			fonts:[{
-				name:'John Fell',
+				name:'Prototypo John Fell',
 				familyName: 'John Fell',
 				repo: 'john-fell.ptf',
 			},
 			{
-				name:'Venus',
+				name:'Prototypo Grotesk',
 				familyName: 'Venus 8',
 				repo: 'venus.ptf',
 			}],
@@ -57,19 +57,19 @@ export default class Sidebar extends React.Component {
 		return (
 			<div id='sidebar'>
 				<SideTabs tab={this.state.tab}>
-					<SideTab iconUrl="font-controls.svg" name="sliders">
+					<SideTab iconUrl="font-controls.svg" name="sliders" legend="Parameters">
 						<FontControls />
 					</SideTab>
-					<SideTab iconUrl="font-infos.svg" name="font-infos" big={true}>
-						<FontInfos fonts={this.state.fonts}/>
+					<SideTab iconUrl="font-infos.svg" name="font-infos" big={true} disabled={true} legend="Settings">
+						<FontInfos />
 					</SideTab>
-					<SideTab iconUrl="fonts-collection.svg" name="fonts-collection" big={true} disabled={true}>
-						<FontsCollection />
+					<SideTab iconUrl="fonts-collection.svg" name="fonts-collection" big={true} legend="Collection">
+						<FontsCollection fonts={this.state.fonts}/>
 					</SideTab>
-					<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true}>
+					<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} legend="Admin">
 						<Account />
 					</SideTab>
-					<SideTab iconUrl="feed-panel.svg" name="news-feed" big={true} bottom={true}>
+					<SideTab iconUrl="feed-panel.svg" name="news-feed" big={true} bottom={true} legend="News">
 						<NewsFeed />
 					</SideTab>
 				</SideTabs>
