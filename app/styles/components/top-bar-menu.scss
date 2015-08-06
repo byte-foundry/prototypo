@@ -26,6 +26,10 @@
 			}
 		}
 
+		&.is-action {
+			padding: 0;
+		}
+
 		&.is-icon-menu {
 			// background-color:$green;
 			padding:0 3px;
@@ -125,4 +129,9 @@
 			height:auto;
 		}
 	}
+}
+
+.top-bar-menu-action {
+	padding: 5px 20px;
+	height: 35px;
 }
