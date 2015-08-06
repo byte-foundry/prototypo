@@ -52,17 +52,6 @@ export default class PrototypoText extends React.Component {
 		}
 	}
 
-	updateSubset() {
-		const textDiv = React.findDOMNode(this.refs.text);
-		if (textDiv && textDiv.innerText) {
-			fontInstance.subset = textDiv.value;
-			//This is a workaround the font should update when the subset changes
-			fontInstance.update();
-
-			this.saveText();
-		}
-	}
-
 	showContextMenu(e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -124,7 +113,7 @@ export default class PrototypoText extends React.Component {
 						className="prototypo-text-string"
 						spellCheck="false"
 						style={style}
-						onInput={() => { this.updateSubset() }}
+						onInput={() => { this.saveText() }}
 						onBlur={() => { this.saveText() }}
 						></div>
 				</ReactGeminiScrollbar>
