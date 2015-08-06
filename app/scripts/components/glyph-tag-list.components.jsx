@@ -85,7 +85,7 @@ class GlyphPinnedTag extends React.Component {
 				<div className="glyph-tag-name">
 					{this.props.tag}
 				</div>
-				<div className="glyph-tag-button" onClick={(e) => { this.removeFromPinned(this.props.tag,e) }}>
+				<div className="glyph-tag-button is-pinned" onClick={(e) => { this.removeFromPinned(this.props.tag,e) }}>
 					<div className="glyph-tag-button-icon">
 						&nbsp;
 					</div>

@@ -52,17 +52,19 @@
 	&.is-active &-dropdown {
 		display:block;
 	}
+
 }
 
 .glyph-tag {
 	display:flex;
 	justify-content:space-between;
-	border-bottom:solid 1px lighten($dark-grey, 4%);
+	border-top:solid 1px lighten($dark-grey, 4%);
 	line-height:12px;
 	cursor:pointer;
 
 	&:hover {
 		background-color:$green;
+		color: $white;
 	}
 
 	&.is-active {
