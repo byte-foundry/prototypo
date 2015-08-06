@@ -41,12 +41,12 @@ export default class Sidebar extends React.Component {
 
 		this.setState({
 			fonts:[{
-				name:'John Fell',
+				name:'Prototypo John Fell',
 				familyName: 'John Fell',
 				repo: 'john-fell.ptf',
 			},
 			{
-				name:'Venus',
+				name:'Prototypo Grotesk',
 				familyName: 'Venus 8',
 				repo: 'venus.ptf',
 			}],
