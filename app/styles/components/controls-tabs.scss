@@ -32,6 +32,19 @@
 			background-color:$green;
 			border: none;
 			transition: all 300ms ease;
+			.controls-tabs-icon-legend {
+				display: none;
+			}
+		}
+
+		&-legend {
+			color: $medium-grey;
+			position: absolute;
+			bottom: 5px;
+			text-align: center;
+			width: 100%;
+			font-size: 10px;
+			letter-spacing: 0.05em;
 		}
 
 		&.is-active:after {

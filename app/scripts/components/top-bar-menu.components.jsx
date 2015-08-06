@@ -8,6 +8,7 @@ class TopBarMenu extends React.Component {
 			const classes = Classnames({
 				'top-bar-menu-item':true,
 				'is-aligned-right':child.props.alignRight,
+				'is-action': child.props.action,
 				'is-icon-menu': !!child.props.img,
 			});
 
@@ -28,7 +29,11 @@ class TopBarMenu extends React.Component {
 
 class TopBarMenuDropdown extends React.Component {
 	static getHeader(props) {
-		return props.name || <img className="top-bar-menu-item-img" src={props.img}/>;
+		const content = ({
+			'title': props.name ? <span className="top-bar-menu-item-title">{props.name}</span> : false,
+			'img': props.img ? <img className="top-bar-menu-item-img" src={props.img}/> : false
+		});
+		return {content};
 	}
 
 	render() {
@@ -47,7 +52,7 @@ class TopBarMenuDropdown extends React.Component {
 
 class TopBarMenuAction extends React.Component {
 	static getHeader(props) {
-		return <span onClick={(e) => props.click(e)}>{props.name}</span>;
+		return <div className="top-bar-menu-action" onClick={(e) => props.click(e)}>{props.name}</div>;
 	}
 
 	render() {

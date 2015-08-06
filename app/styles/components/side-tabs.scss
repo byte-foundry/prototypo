@@ -23,6 +23,17 @@
 		background-color: $white;
 	}
 
+	&-legend {
+		position: absolute;
+		left: 0;
+		right: 0;
+		font-size: 10px;
+		letter-spacing: 0.05em;
+		text-align: center;
+		color: $medium-grey;
+		margin-top: -2px;
+	}
+
 	&-icon {
 		height:73px;
 		width: 100%;
@@ -33,6 +44,9 @@
 		&.is-active, &:hover {
 			//TODO(franz): integrate in themified css
 			background-color: #4a4a4a;
+			.side-tabs-legend {
+				display: none;
+			}
 		}
 
 		&.is-disabled {
@@ -45,20 +59,10 @@
 			bottom: 0;
 		}
 
-		&.has-news:after {
-			content: "";
-
-			position: absolute;
-			top: 15px;
-			right: 12px;
-
-			width: 10px;
-			height: 10px;
-			border-radius: 50%;
-			// border: 1px solid $dark-red;
+		&.has-news {
 			background-color: $red;
 
-		    -webkit-animation-name: example;
+			-webkit-animation-name: example;
 			animation-name: example;
 		    -webkit-animation-duration: 2s;
 		    animation-duration: 2s;
@@ -67,18 +71,24 @@
 
 			/* Chrome, Safari, Opera */
 			@-webkit-keyframes example {
-			    0% {background-color: $red;}
-			    30% {background-color: mix($dark-grey, $red);}
-				100% {background-color: $red;}
+			    0% {background-color: lighten($red, 2%);}
+			    30% {background-color: mix($dark-red, $red);}
+				100% {background-color: lighten($red, 2%);}
 			}
 
 			/* Standard syntax */
 			@keyframes example {
-			    0% {background-color: $red;}
-			    30% {background-color: mix($dark-grey, $red);}
-				100% {background-color: $red;}
+			    0% {background-color: lighten($red, 2%);}
+			    30% {background-color: mix($dark-red, $red);}
+				100% {background-color: lighten($red, 2%);}
 			}
 		}
+	}
+}
+
+.has-news {
+	.side-tabs-legend {
+		color: $white !important;
 	}
 }
 
@@ -98,7 +108,7 @@
 
 	&-big {
 		width:800px;
-		z-index:5;
+		z-index:6;
 		box-shadow: none;
 		padding: 2em;
 	}

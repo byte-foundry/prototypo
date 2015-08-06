@@ -1,9 +1,11 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
+import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 
 import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
+import ZoomButtons from './zoom-buttons.components.jsx';
 
 //Right now PrototypoWord is just like PrototypoText (except some css consideration)
 //However it will change at some point
@@ -22,18 +24,9 @@ export default class PrototypoWord extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.fetch('/panel')
-			.then((store) => {
-				this.setState(store.head.toJS());
-			});
-
-		this.client.getStore('/panel',this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState(head.toJS());
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			})
+		this.saveTextDebounced = _.debounce((text, prop) => {
+			this.client.dispatchAction('/store-text',{value:text, propName:prop});
+		}, 500);
 	}
 
 	setupText() {
@@ -57,14 +50,18 @@ export default class PrototypoWord extends React.Component {
 	saveText() {
 		const textDiv = React.findDOMNode(this.refs.text);
 		if (textDiv && textDiv.innerText) {
-			this.client.dispatchAction('/store-text',{value:textDiv.innerText,propName:this.props.field});
+			this.saveTextDebounced(textDiv.innerText, this.props.field);
 		}
 	}
 
 	updateSubset() {
 		const textDiv = React.findDOMNode(this.refs.text);
-		if (textDiv && textDiv.value) {
+		if (textDiv && textDiv.innerText) {
 			fontInstance.subset = textDiv.value;
+			//This is a workaround the font should update when the subset changes
+			fontInstance.update();
+
+			this.saveText();
 		}
 	}
 
@@ -73,10 +70,10 @@ export default class PrototypoWord extends React.Component {
 		e.stopPropagation();
 		const contextMenuPos = {x:e.nativeEvent.offsetX};
 		if (this.props.panel.invertedWordView) {
-			contextMenuPos.y = React.findDOMNode(this.refs.text).clientHeight - e.nativeEvent.offsetY;
+			contextMenuPos.y = React.findDOMNode(this.refs.text).clientHeight - e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
 		}
 		else {
-			contextMenuPos.y = e.nativeEvent.offsetY;
+			contextMenuPos.y = e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
 		}
 		this.setState({
 			showContextMenu:true,
@@ -92,10 +89,14 @@ export default class PrototypoWord extends React.Component {
 		}
 	}
 
+	changeTextFontSize(wordFontSize) {
+		this.client.dispatchAction('/store-panel-param', {wordFontSize});
+	}
+
 	render() {
 		const style = {
 			'fontFamily':`${this.props.fontName || 'theyaintus'}, 'sans-serif'`,
-			'fontSize': `${17 / (this.props.panel.mode.indexOf('glyph') != -1 || this.props.panel.mode.indexOf('text') != -1 ? 2 : 1)}rem`,
+			'fontSize': `${this.props.panel.wordFontSize || 1}em`,
 			'color': this.props.panel.invertedWordColors ? '#fefefe' : '#232323',
 			'backgroundColor': !this.props.panel.invertedWordColors ? '#fefefe' : '#232323',
 			'transform': this.props.panel.invertedWordView ? 'scaleY(-1)' : 'scaleY(1)',
@@ -118,16 +119,24 @@ export default class PrototypoWord extends React.Component {
 				onContextMenu={(e) => { this.showContextMenu(e) }}
 				onClick={() => { this.hideContextMenu() }}
 				onMouseLeave={() => { this.hideContextMenu() }}>
-				<div
-					contentEditable="true"
-					ref="text"
-					className="prototypo-word-string"
-					spellCheck="false"
-					style={style}
-					onInput={() => { this.updateSubset() }}
-					onBlur={() => { this.saveText() }}
-				></div>
-				<CloseButton click={() => { this.props.close('word') }}/>
+				<ReactGeminiScrollbar>
+					<div
+						contentEditable="true"
+						ref="text"
+						className="prototypo-word-string"
+						spellCheck="false"
+						style={style}
+						onInput={() => { this.updateSubset() }}
+						onBlur={() => { this.saveText() }}
+						></div>
+				</ReactGeminiScrollbar>
+				<div className="action-bar">
+					<CloseButton click={() => { this.props.close('word') }}/>
+					<ZoomButtons 
+						plus={() => { this.changeTextFontSize(this.props.panel.wordFontSize + 0.3) }}
+						minus={() => { this.changeTextFontSize(this.props.panel.wordFontSize - 0.3) }}
+					/>
+				</div>
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
 					{menu}
 				</ContextualMenu>

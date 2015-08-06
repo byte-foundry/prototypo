@@ -11,6 +11,16 @@ html {
 	background-color: $yellow;
 }
 
+@font-face {
+	font-family: "John Fell";
+	src: url("fonts/johnfell.otf");
+}
+
+@font-face {
+	font-family: "Venus 8";
+	src: url("fonts/venus8.otf");
+}
+
 body {
 	overflow: hidden;
 	font-size:1.4em;
@@ -73,6 +83,19 @@ a:active,
 a:visited {
 	color: inherit;
 	text-decoration: none;
+}
+
+.side-tab-h1 {
+	color: $white;
+	font-size: 22px !important;
+	margin: 0 0 1em 0;
+	line-height: 1;
+}
+
+
+.side-tab-h2 {
+	border-top: 1px solid $medium-grey;
+	padding-top: 0.83em;
 }
 
 // Prevent all text selection...

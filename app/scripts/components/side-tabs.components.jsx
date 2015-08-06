@@ -25,7 +25,7 @@ export class SideTabs extends React.Component {
 			children = this.props.children;
 		}
 
-		const headers = _.map(children,({props: {bottom, iconUrl, name, disabled}}) => {
+		const headers = _.map(children,({props: {bottom, iconUrl, name, disabled, legend}}) => {
 			const classes = ClassNames({
 				'side-tabs-icon':true,
 				'is-active': name === this.props.tab,
@@ -39,6 +39,7 @@ export class SideTabs extends React.Component {
 					this.changeTab(name, disabled);
 				}} key={`${name}SideHeader`}>
 					<img src={`assets/images/${iconUrl}`}/>
+					<div className="side-tabs-legend is-legend-active">{legend}</div>
 				</div>
 			);
 		});
