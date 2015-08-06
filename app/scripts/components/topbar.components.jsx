@@ -109,7 +109,7 @@ export default class Topbar extends React.Component {
 					</TopBarMenuDropdown>
 					<TopBarMenuAction name="Glyphlist" click={(e) => { this.toggleView('list') }} alignRight={true}>
 					</TopBarMenuAction>
-					<TopBarMenuDropdown img="assets/images/views-icon.svg" alignRight={true} small={true}>
+					<TopBarMenuDropdown name="Toggle views" img="assets/images/views-icon.svg" alignRight={true} small={true}>
 						<TopBarMenuDropdownCheckBox name="Glyph" checked={this.state.panel.mode.indexOf('glyph') !== -1} handler={() => { this.toggleView('glyph') }}/>
 						<TopBarMenuDropdownCheckBox name="Text" checked={this.state.panel.mode.indexOf('text') !== -1} handler={() => { this.toggleView('text') }}/>
 						<TopBarMenuDropdownCheckBox name="Word" checked={this.state.panel.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word') }}/>

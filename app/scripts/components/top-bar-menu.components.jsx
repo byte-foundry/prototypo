@@ -28,7 +28,11 @@ class TopBarMenu extends React.Component {
 
 class TopBarMenuDropdown extends React.Component {
 	static getHeader(props) {
-		return props.name || <img className="top-bar-menu-item-img" src={props.img}/>;
+		const content = ({
+			'title': props.name ? <span className="top-bar-menu-item-title">{props.name}</span> : false,
+			'img': props.img ? <img className="top-bar-menu-item-img" src={props.img}/> : false
+		});
+		return {content};
 	}
 
 	render() {

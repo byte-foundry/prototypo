@@ -3,7 +3,7 @@
 .close-button {
 	width:20px;
 	height:20px;
-	border: 1px solid $red;
+	border: 2px solid $red;
 	border-radius: 50%;
 	color:$white;
 	position:absolute;
@@ -14,8 +14,8 @@
 	z-index:2;
 
 	&-icon {
-		height: 30%;
-		margin-top: 35%;
+		height: 40%;
+		margin-top: 31%;
 		background-color: $red;
 
 		-webkit-mask:  url('./images/close-icon.svg') no-repeat center;
