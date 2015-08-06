@@ -1,9 +1,9 @@
 import pleaseWait from 'please-wait';
 
 pleaseWait.instance = pleaseWait.pleaseWait({
-	logo:'/assets/images/prototypo-loading.svg',
+	logo: '/assets/images/prototypo-loading.svg',
 	// backgroundColor: '#49e4a9',
-	loadingHtml:`Hello Prototypo`,
+	loadingHtml: `Hello Prototypo`,
 });
 
 var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
@@ -13,7 +13,7 @@ import React from 'react';
 import Router from 'react-router';
 
 import Dashboard from './components/dashboard.components.jsx';
-import SitePortal from './components/site-portal.components.jsx'
+import SitePortal from './components/site-portal.components.jsx';
 import NotLoggedIn from './components/not-logged-in.components.jsx';
 import Subscriptions from './components/subscriptions.components.jsx';
 import Signin from './components/signin.components.jsx';
@@ -31,19 +31,19 @@ import {Typefaces} from './services/typefaces.services.js';
 import PrototypoCanvas from '../../node_modules/prototypo-canvas/dist/prototypo-canvas.js';
 import HoodieApi from './services/hoodie.services.js';
 import uuid from 'node-uuid';
-import {AppValues} from './services/values.services.js';
+import {FontValues, AppValues} from './services/values.services.js';
 
 if (!isSafari && !isIE) {
 
-	Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi')
+	Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
 	const stores = {};
 	const localServer = new LocalServer(stores).instance;
 	LocalClient.setup(localServer);
 	const localClient = LocalClient.instance();
 	const eventBackLog = stores['/eventBackLog'] = new Remutable({
-		from:0,
-		to:undefined,
+		from: 0,
+		to: undefined,
 		eventList: [
 			undefined
 		]
@@ -52,7 +52,7 @@ if (!isSafari && !isIE) {
 	const fontTab = stores['/fontTab'] = new Remutable({});
 
 	const fontControls = stores['/fontControls'] = new Remutable({
-		values:{},
+		values: {},
 	});
 
 	const fontParameters = stores['/fontParameters'] = new Remutable({});
@@ -62,19 +62,22 @@ if (!isSafari && !isIE) {
 	const fontStore = stores['/fontStore'] = new Remutable({});
 
 	const tagStore = stores['/tagStore'] = new Remutable({
-		selected:'all',
-		pinned:[],
+		selected: 'all',
+		pinned: [],
 	});
 
 	const glyphs = stores['/glyphs'] = new Remutable({
-		selected:'A',
+		selected: 'A',
 	});
 
 	const fontTemplate = stores['/fontTemplate'] = new Remutable({
-		selected:'john-fell.ptf',
 	});
 
-	const panel = stores['/panel'] = new Remutable({mode:[]});
+	const panel = stores['/panel'] = new Remutable({
+		mode: [],
+		textFontSize: 1,
+		wordFontSize: 1,
+	});
 
 	const canvasEl = window.canvasElement = document.createElement('canvas');
 	canvasEl.className = "prototypo-canvas-container-canvas";
@@ -101,6 +104,7 @@ if (!isSafari && !isIE) {
 			appValues.selected = glyphs.get('selected');
 			appValues.tab = fontTab.get('tab');
 			appValues.pinned = tagStore.get('pinned');
+			appValues.template = fontTemplate.get('selected');
 
 			AppValues.save({typeface:'default', values:appValues});
 		}, 300);
@@ -166,10 +170,7 @@ if (!isSafari && !isIE) {
 					return;
 				}
 
-				fontPromise
-					.then(() => {
-						font.update(params);
-					});
+				fontInstance.update(params);
 			},
 			'/go-back': () => {
 
@@ -234,7 +235,7 @@ if (!isSafari && !isIE) {
 					const patch = glyphs.set('selected',unicode).commit();
 					localServer.dispatchUpdate('/glyphs', patch);
 
-					font.displayChar(String.fromCharCode(unicode));
+					fontInstance.displayChar(String.fromCharCode(unicode));
 
 					const newViewMode = _.union(panel.get('mode'),['glyph']);
 					if (newViewMode.length > 0) {
@@ -260,13 +261,13 @@ if (!isSafari && !isIE) {
 			'/store-text': ({value, propName}) => {
 				const patch = panel.set(propName,value).commit();
 				localServer.dispatchUpdate('/panel',patch);
-				font.subset = panel.head.toJS().text + panel.head.toJS().word || false;
+				fontInstance.subset = panel.head.toJS().text + panel.head.toJS().word || false;
 				saveAppValues();
 			},
 			'/load-app-values': ({values}) => {
 				values.selected = values.selected || 'A'.charCodeAt(0);
 				const patchGlyph = glyphs.set('selected', values.selected).commit();
-				font.displayChar(String.fromCharCode(values.selected));
+				fontInstance.displayChar(String.fromCharCode(values.selected));
 				localServer.dispatchUpdate('/glyphs', patchGlyph);
 
 				const patchTab = fontTab.set('tab', values.tab || 'Func').commit();
@@ -284,6 +285,9 @@ if (!isSafari && !isIE) {
 				const patchPanel = panel.commit();
 
 				localServer.dispatchUpdate('/panel', patchPanel);
+				const patchTemplate = fontTemplate.set('selected',values.template).commit();
+				localServer.dispatchUpdate('/fontTemplate', patchTemplate);
+
 				appValuesLoaded = true;
 			},
 			'/change-tab-font':({name}) => {
@@ -291,6 +295,7 @@ if (!isSafari && !isIE) {
 				const patch = fontTab.set('tab',name).commit();
 				localServer.dispatchUpdate('/fontTab', patch);
 				saveAppValues();
+
 			},
 			'/change-font': async (repo) => {
 				const patch = fontTemplate.set('selected',repo)
@@ -324,73 +329,117 @@ if (!isSafari && !isIE) {
 
 		}, localServer.lifespan);
 
-		const typedataJSON = await Typefaces.getFont(fontTemplate.get('selected'));
-		const typedata = JSON.parse(typedataJSON);
-		const prototypoSource = await Typefaces.getPrototypo();
-		let workerUrl;
-		let prototypoUrl;
 
-		// The worker will be built from URL when during development, and from
-		// source in production.
-		if ( process.env.NODE_ENV !== 'production' ) {
-			workerUrl = '/prototypo-canvas/src/worker.js';
-			prototypoUrl = '/prototypo.js/dist/prototypo.js';
+		//Login checking and app and font values loading
+		try {
+			await HoodieApi.setup();
+
+			let appValues;
+			try {
+				appValues = await AppValues.get({typeface: 'default'});
+			}
+			catch(err) {
+				appValues = {
+					values: {
+						mode: 'glyph',
+						selected: 'A',
+						template: 'john-fell.ptf',
+					}
+				};
+
+				console.log(err);
+			}
+
+			const typedataJSON = await Typefaces.getFont(appValues.values.template);
+			const typedata = JSON.parse(typedataJSON);
+
+			const initValues = {};
+			_.each(typedata.parameters ,(group) => {
+				return _.each(group.parameters, (param) => {
+					initValues[param.name] = param.init;
+				});
+			});
+
+			const presetValues = typedata.presets['Modern'];
+			const prototypoSource = await Typefaces.getPrototypo();
+			let workerUrl;
+			let prototypoUrl;
+
+			// The worker will be built from URL when during development, and from
+			// source in production.
+			if ( process.env.NODE_ENV !== 'production' ) {
+				workerUrl = '/prototypo-canvas/src/worker.js';
+				prototypoUrl = '/prototypo.js/dist/prototypo.js';
+			}
+
+			const fontPromise = PrototypoCanvas.load({
+				canvas: canvasEl,
+				fontSource: typedataJSON,
+				prototypoSource: prototypoSource,
+				workerUrl,
+				prototypoUrl,
+			});
+
+			const font = window.fontInstance = await fontPromise;
+			font.displayChar('A');
+			localClient.dispatchAction('/create-font', font);
+
+			localClient.dispatchAction('/load-params', typedata);
+			localClient.dispatchAction('/load-glyphs', font.font.altMap);
+			localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
+			localClient.dispatchAction('/load-app-values', appValues);
+
+			try {
+				const fontValues = await FontValues.get({typeface: 'default'});
+				localClient.dispatchAction('/load-values', _.extend(initValues,_.extend(presetValues,fontValues.values)));
+			}
+			catch (err) {
+				localClient.dispatchAction('/load-values', _.extend(fontControls.get('values'), _.extend(initValues,presetValues)));
+				console.log(err);
+			}
 		}
-
-		const fontPromise = PrototypoCanvas.load({
-			canvas:canvasEl,
-			fontSource: typedataJSON,
-			prototypoSource: prototypoSource,
-			workerUrl,
-			prototypoUrl,
-		});
-
-		const font = window.fontInstance = await fontPromise;
-		font.displayChar('A');
-		localClient.dispatchAction('/create-font', font);
-
-		localClient.dispatchAction('/load-params', typedata);
-		localClient.dispatchAction('/load-glyphs', font.font.altMap);
-		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
+		catch (err) {
+			location.href = '#/signin';
+		}
 	}
 
 	createStores()
 		.then(() => {
 			const Route = Router.Route,
-			  RouteHandler = Router.RouteHandler,
-			  DefaultRoute = Router.DefaultRoute;
+				RouteHandler = Router.RouteHandler,
+				DefaultRoute = Router.DefaultRoute;
 
 			const content = document.getElementById('content');
 
 			class App extends React.Component {
-			  render() {
-			    return (
-			        <RouteHandler />
-			    );
-			  }
+				render() {
+					return (
+						<RouteHandler />
+					);
+				}
 			}
 
 			let Routes = (
-			  <Route handler={App} name="app" path="/">
-			    <DefaultRoute handler={SitePortal}/>
-			    <Route name="dashboard" handler={Dashboard}/>
-			    <Route name="signin" handler={NotLoggedIn}>
-				    <Route name="forgotten" handler={ForgottenPassword}/>
-			    	<DefaultRoute handler={Signin}/>
-			    </Route>
-			    <Route name="subscription" handler={Subscriptions}/>
-			  </Route>
+				<Route handler={App} name="app" path="/">
+					<DefaultRoute handler={SitePortal}/>
+					<Route name="dashboard" handler={Dashboard}/>
+					<Route name="signin" handler={NotLoggedIn}>
+						<Route name="forgotten" handler={ForgottenPassword}/>
+						<DefaultRoute handler={Signin}/>
+					</Route>
+					<Route name="subscription" handler={Subscriptions}/>
+				</Route>
 			);
 
 			Router.run(Routes, function (Handler) {
-			  React.render(<Handler />, content);
+				React.render(<Handler />, content);
 			});
 		});
 }
 else {
 	const Route = Router.Route,
-	  RouteHandler = Router.RouteHandler,
-	  DefaultRoute = Router.DefaultRoute;
+		RouteHandler = Router.RouteHandler,
+		DefaultRoute = Router.DefaultRoute;
 
 	const content = document.getElementById('content');
 

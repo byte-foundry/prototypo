@@ -158,7 +158,9 @@ export default class PrototypoCanvas extends React.Component {
 				onClick={() => { this.hideContextMenu() }}
 				onMouseLeave={() => { this.hideContextMenu() }}>
 				<div ref="canvas" className="prototypo-canvas-container" onDoubleClick={() => { this.props.reset() }}></div>
-				<CloseButton click={() => { this.props.close('glyph') }}/>
+				<div className="action-bar">
+					<CloseButton click={() => { this.props.close('glyph') }}/>
+				</div>
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
 					{menu}
 				</ContextualMenu>
