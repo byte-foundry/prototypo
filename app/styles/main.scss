@@ -85,6 +85,19 @@ a:visited {
 	text-decoration: none;
 }
 
+.side-tab-h1 {
+	color: $white;
+	font-size: 22px !important;
+	margin: 0 0 1em 0;
+	line-height: 1;
+}
+
+
+.side-tab-h2 {
+	border-top: 1px solid $medium-grey;
+	padding-top: 0.83em;
+}
+
 // Prevent all text selection...
 * {
 	-moz-user-select: none;

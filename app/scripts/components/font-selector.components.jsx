@@ -28,8 +28,8 @@ export default class FontSelector extends React.Component {
 		});
 
 		return (
-			<li className={classes}>
-				<div style={family} className="font-selector-name" onClick={ () => { this.changeFont() }}>{`${this.props.font.name} - ${this.props.text}`}</div>
+			<li className={classes} onClick={ () => { this.changeFont() }}>
+				<div style={family} className="font-selector-name">{`${this.props.font.name} - ${this.props.text}`}</div>
 			</li>
 		)
 	}
