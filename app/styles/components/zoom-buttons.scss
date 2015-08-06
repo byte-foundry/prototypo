@@ -1,0 +1,11 @@
+@import '../variables';
+
+.zoom-button {
+	background-color:$green;
+	color:$white;
+	margin-top:10px;
+	width:16px;
+	height:16px;
+	font-size:16px;
+	cursor:pointer;
+}
