@@ -92,12 +92,16 @@
 					background:lighten($dark-grey,5%);
 				}
 
-				&.is-disabled {
-					color: $medium-grey;
-				}
-
 				&:hover {
 					background:$green;
+				}
+
+				&.is-disabled {
+					color: $medium-grey;
+					cursor: default;
+					&:hover {
+						background:$light-grey;
+					}
 				}
 
 				&-title {

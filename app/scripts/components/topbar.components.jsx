@@ -92,6 +92,7 @@ export default class Topbar extends React.Component {
 				<TopBarMenu>
 					<TopBarMenuDropdown name="File">
 						<TopBarMenuDropdownItem name="Logout" handler={this.logout}/>
+						<TopBarMenuDropdownItem name="New font" disabled={true} handler={() => {}}/>
 						<TopBarMenuDropdownItem name="Export to OTF" handler={this.exportOTF}/>
 						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr}/>
 						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams() }}/>
@@ -106,6 +107,18 @@ export default class Topbar extends React.Component {
 								this.client.dispatchAction('/go-forward');
 						}}/>
 						<TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/>
+					</TopBarMenuDropdown>
+					<TopBarMenuDropdown name="View">
+						<TopBarMenuDropdownItem name="Toggle legends" disabled={true} handler={() => {}}/>
+						<TopBarMenuDropdownItem name="Toggle nodes" disabled={true} handler={() => {}}/>
+						<TopBarMenuDropdownItem name="Toggle coordinates" disabled={true} handler={() => {}}/>
+						<TopBarMenuDropdownItem name="Toggle outline" disabled={true} handler={() => {}}/>
+						<TopBarMenuDropdownItem name="Toggle guidelines" disabled={true} handler={() => {}}/>
+						<TopBarMenuDropdownItem name="Toggle grid" disabled={true} handler={() => {}}/>
+					</TopBarMenuDropdown>
+					<TopBarMenuDropdown name="Help">
+						<TopBarMenuDropdownItem name="Documentation" disabled={true} handler={() => {}}/>
+						<TopBarMenuDropdownItem name="Bug tracker" disabled={true} handler={() => {}}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuAction name="Glyphs list" click={(e) => { this.toggleView('list') }} alignRight={true} action={true}>
 					</TopBarMenuAction>
