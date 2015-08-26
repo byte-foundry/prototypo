@@ -20,12 +20,10 @@ export class ControlsTabs extends React.Component {
 			});
 
 			return (
-				<li className={classes}>
-					<span className={classes} id={iconId}
-						onClick={() => {
-							this.changeTab(name)
-						}} key={`${name}ControlsHeader`}>
-					</span>
+				<li className={classes} id={iconId}
+					onClick={() => {
+						this.changeTab(name)
+					}} key={`${name}ControlsHeader`}>
 					<div className="controls-tabs-icon-legend is-legend-active">{name}</div>
 				</li>
 			);
