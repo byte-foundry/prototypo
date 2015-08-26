@@ -17,8 +17,7 @@
 		margin-left: 0.8rem;
 		display: inline-block;
 		cursor: pointer;
-	//TODO(franz): integrate in theme
-		color: #7e7e7e;
+		color: $medium-grey;
 		transition: opacity 500ms ease;
 	}
 
@@ -34,8 +33,11 @@
 		background: none;
 		border: 0;
 		border-radius: 0;
-	//TODO(franz): integrate in theme
-		color: #7e7e7e;
+		color: $medium-grey;
+
+		// we'll use textfield appearance until we've figured out sth better
+		-moz-appearance: textfield;
+		-webkit-appearance: textfield;
 	}
 
 	&-controller {
@@ -82,7 +84,6 @@
 }
 
 .sliders {
-	//TODO(franz): integrate in theme
-	color:$white;
+	color: $white;
 	padding:1rem;
 }
