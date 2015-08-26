@@ -23,22 +23,26 @@
 		height:72px;
 		float:left;
 		width:90px;
-		background: lighten($dark-grey, 2%) no-repeat center;
+		background-color: $medium-grey no-repeat center;
+		background-repeat: no-repeat;
+		background-position: 50% 50%;
+		filter: contrast(40%);
 		cursor: pointer;
 		position:relative;
 		border-right: $dark-grey 1px solid;
+		transition: background-color 300ms ease;
 
 		&.is-active, &:hover {
-			background-color:$green;
+			background-color: $green;
+			filter: contrast(100%);
 			border: none;
-			transition: all 300ms ease;
 			.controls-tabs-icon-legend {
 				display: none;
 			}
 		}
 
 		&-legend {
-			color: $medium-grey;
+			color: white;
 			position: absolute;
 			bottom: 5px;
 			text-align: center;
@@ -55,10 +59,7 @@
 			display: block;
 			width: 0;
 			height: 0;
-		}
 
-		&.is-active:after {
-			-webkit-transform: translate(35px, 8px);
 			transform: translate(35px, 8px);
 			border-left: 10px solid transparent;
 			border-right: 10px solid transparent;
@@ -66,26 +67,26 @@
 		}
 	}
 
-	&-icon span {
-		background-color: $medium-grey;
+	// &-icon span {
+	// 	background-color: $medium-grey;
+	//
+	// 	&.is-active, &:hover {
+	// 		background-color: white;
+	// 	}
+	// }
 
-		&.is-active, &:hover {
-			background-color: white;
-		}
-	}
+
 }
 
+// TODO: ids are forbidden, get rid of 'em
 #Func {
-	-webkit-mask:  url('./images/func.svg') no-repeat 50% 50%;
-	mask: url('./images/func.svg') no-repeat 50% 50%;
+	background-image: url('./images/func.svg');
 }
 
 #Style {
-	-webkit-mask:  url('./images/style.svg') no-repeat 50% 50%;
-	mask: url('./images/style.svg') no-repeat 50% 50%;
+	background-image: url('./images/style.svg');
 }
 
 #Serif {
-	-webkit-mask:  url('./images/serif.svg') no-repeat 50% 50%;
-	mask: url('./images/serif.svg') no-repeat 50% 50%;
+	background-image: url('./images/serif.svg');
 }
