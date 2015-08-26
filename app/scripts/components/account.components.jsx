@@ -68,7 +68,7 @@ export default class Account extends React.Component {
 
 		return (
 			<div className="account">
-				<h1 className="account-block-title side-tab-h1">Admin panel</h1>
+				<h1 className="account-block-title side-tab-h1">My informations</h1>
 				{changePassContent}
 			</div>
 		)

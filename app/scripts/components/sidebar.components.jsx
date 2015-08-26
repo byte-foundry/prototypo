@@ -66,7 +66,7 @@ export default class Sidebar extends React.Component {
 					<SideTab iconUrl="fonts-collection.svg" name="fonts-collection" big={true} legend="Collection">
 						<FontsCollection fonts={this.state.fonts}/>
 					</SideTab>
-					<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} legend="Admin">
+					<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} legend="Profile">
 						<Account />
 					</SideTab>
 					<SideTab iconUrl="feed-panel.svg" name="news-feed" big={true} bottom={true} legend="News">
