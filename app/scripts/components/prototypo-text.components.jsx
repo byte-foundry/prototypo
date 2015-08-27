@@ -82,7 +82,7 @@ export default class PrototypoText extends React.Component {
 
 	render() {
 		const style = {
-			'fontFamily':`${this.props.fontName || 'theyaintus'}, 'sans-serif'`,
+			'fontFamily':`'${this.props.fontName || 'theyaintus'}', sans-serif`,
 			'fontSize': `${this.props.panel.textFontSize || 1}em`,
 			'color': this.props.panel.invertedTextColors ? '#fefefe' : '#232323',
 			'backgroundColor': !this.props.panel.invertedTextColors ? '#fefefe' : '#232323',
@@ -119,7 +119,7 @@ export default class PrototypoText extends React.Component {
 				</ReactGeminiScrollbar>
 				<div className="action-bar">
 					<CloseButton click={() => { this.props.close('text') }}/>
-					<ZoomButtons 
+					<ZoomButtons
 						plus={() => { this.changeTextFontSize(this.props.panel.textFontSize + 0.3) }}
 						minus={() => { this.changeTextFontSize(this.props.panel.textFontSize - 0.3) }}
 					/>

@@ -72,22 +72,22 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	mouseMove(e) {
-		fontInstance.moveHandler.bind(fontInstance)(e);
+		fontInstance.onMove.bind(fontInstance)(e);
 	}
 
 	wheel(e) {
-		fontInstance.wheelHandler.bind(fontInstance)(e);
+		fontInstance.onWheel.bind(fontInstance)(e);
 		this.client.dispatchAction('/store-panel-param', {
 			zoom: fontInstance.zoom,
 		})
 	}
 
 	mouseDown(e) {
-		fontInstance.downHandler.bind(fontInstance)(e);
+		fontInstance.onDown.bind(fontInstance)(e);
 	}
 
 	mouseUp(e) {
-		fontInstance.upHandler.bind(fontInstance)(e);
+		fontInstance.onUp.bind(fontInstance)(e);
 		this.client.dispatchAction('/store-panel-param',{
 			pos: fontInstance.view.center,
 			zoom: fontInstance.zoom,

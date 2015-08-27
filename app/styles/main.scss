@@ -114,7 +114,8 @@ a:visited {
 
 // ...except where it makes sense
 input,
-textarea {
+textarea,
+[contenteditable] {
 	-moz-user-select: text;
 	-webkit-user-select: text;
 	-ms-user-select: text;
