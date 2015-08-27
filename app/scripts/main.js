@@ -3,11 +3,16 @@ import pleaseWait from 'please-wait';
 pleaseWait.instance = pleaseWait.pleaseWait({
 	logo: '/assets/images/prototypo-loading.svg',
 	// backgroundColor: '#49e4a9',
-	loadingHtml: `Hello Prototypo`,
+	loadingHtml: 'Hello Prototypo',
 });
 
-var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
+// Naughty naughty browser sniffing.
+// TODO: replace UA sniffing by feature detection. Here's what we need:
+// - document.fonts
+// - what else?
+var ua = navigator.userAgent;
+var isSafari = ua.indexOf('Safari') !== -1 && ua.indexOf('Chrome') === -1;
+var isIE = ua.indexOf('Trident') !== -1;
 
 import React from 'react';
 import Router from 'react-router';
@@ -33,7 +38,16 @@ import HoodieApi from './services/hoodie.services.js';
 import uuid from 'node-uuid';
 import {FontValues, AppValues} from './services/values.services.js';
 
-if (!isSafari && !isIE) {
+if ( isSafari || isIE ) {
+	const Route = Router.Route,
+		RouteHandler = Router.RouteHandler,
+		DefaultRoute = Router.DefaultRoute;
+
+	const content = document.getElementById('content');
+
+	React.render(<NotABrowser />, content);
+
+} else {
 
 	Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
@@ -261,7 +275,8 @@ if (!isSafari && !isIE) {
 			'/store-text': ({value, propName}) => {
 				const patch = panel.set(propName,value).commit();
 				localServer.dispatchUpdate('/panel',patch);
-				fontInstance.subset = panel.head.toJS().text + panel.head.toJS().word || false;
+
+				fontInstance.subset = panel.head.toJS().text + panel.head.toJS().word || '';
 				saveAppValues();
 			},
 			'/load-app-values': ({values}) => {
@@ -305,9 +320,7 @@ if (!isSafari && !isIE) {
 				const typedataJSON = await Typefaces.getFont(repo);
 				const typedata = JSON.parse(typedataJSON);
 
-				await fontInstance.changeFont({
-					fontSource: typedataJSON,
-				});
+				await fontInstance.loadFont( typedata.fontinfo.familyName, typedataJSON );
 
 				localClient.dispatchAction('/create-font', fontInstance);
 
@@ -321,10 +334,8 @@ if (!isSafari && !isIE) {
 
 		localServer.on('action',({path, params}) => {
 
-			if(actions[path] !== void 0) {
-
+			if ( actions[path] !== void 0 ) {
 				actions[path](params);
-
 			}
 
 		}, localServer.lifespan);
@@ -347,7 +358,7 @@ if (!isSafari && !isIE) {
 					}
 				};
 
-				console.log(err);
+				console.error(err);
 			}
 
 			const typedataJSON = await Typefaces.getFont(appValues.values.template || 'john-fell.ptf');
@@ -361,26 +372,24 @@ if (!isSafari && !isIE) {
 			});
 
 			const presetValues = typedata.presets['Modern'];
-			const prototypoSource = await Typefaces.getPrototypo();
+			// const prototypoSource = await Typefaces.getPrototypo();
+			let workerDeps = document.querySelector('script[src*=prototypo\\.]').src;
 			let workerUrl;
-			let prototypoUrl;
 
-			// The worker will be built from URL when during development, and from
+			// The worker will be built from URL during development, and from
 			// source in production.
 			if ( process.env.NODE_ENV !== 'production' ) {
 				workerUrl = '/prototypo-canvas/src/worker.js';
-				prototypoUrl = '/prototypo.js/dist/prototypo.js';
 			}
 
-			const fontPromise = PrototypoCanvas.load({
+			const fontPromise = PrototypoCanvas.init({
 				canvas: canvasEl,
-				fontSource: typedataJSON,
-				prototypoSource: prototypoSource,
 				workerUrl,
-				prototypoUrl,
+				workerDeps,
 			});
 
 			const font = window.fontInstance = await fontPromise;
+			await font.loadFont( typedata.fontinfo.familyName, typedataJSON );
 			font.displayChar('A');
 			localClient.dispatchAction('/create-font', font);
 
@@ -395,7 +404,7 @@ if (!isSafari && !isIE) {
 			}
 			catch (err) {
 				localClient.dispatchAction('/load-values', _.extend(fontControls.get('values'), _.extend(initValues,presetValues)));
-				console.log(err);
+				console.error(err);
 			}
 		}
 		catch (err) {
@@ -435,13 +444,4 @@ if (!isSafari && !isIE) {
 				React.render(<Handler />, content);
 			});
 		});
-}
-else {
-	const Route = Router.Route,
-		RouteHandler = Router.RouteHandler,
-		DefaultRoute = Router.DefaultRoute;
-
-	const content = document.getElementById('content');
-
-	React.render(<NotABrowser />, content);
 }

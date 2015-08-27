@@ -76,8 +76,13 @@ export class SliderController extends React.Component {
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
-		this.bindedHandleUp = this.handleUp.bind(this);
-		this.bindedHandleMove = this.handleMove.bind(this);
+
+		document.addEventListener( 'mouseup',
+			this.handleUp.bind(this) );
+		window.addEventListener( 'mousemove',
+			this.handleMove.bind(this) );
+		document.addEventListener( 'selectstart',
+			this.handleSelectstart.bind(this) );
 	}
 
 	componentDidMount() {
@@ -93,6 +98,7 @@ export class SliderController extends React.Component {
 		if (this.props.disabled) {
 			return;
 		}
+
 		this.tracking = true;
 		const newX = e.pageX || e.screenX;
 		const {offsetLeft} = DOM.getAbsOffset(React.findDOMNode(this.refs.slider));
@@ -104,45 +110,48 @@ export class SliderController extends React.Component {
 		this.currentX = newX;
 
 		e.stopPropagation();
-
-		document.addEventListener('mouseup',this.bindedHandleUp);
-		window.addEventListener('mousemove',this.bindedHandleMove);
 	}
 
 	handleUp(e) {
-		if (this.tracking) {
-
-			this.tracking = false;
-			this.client.dispatchAction('/change-param',{value:this.props.value,name:this.props.name,label:this.props.label,force:true});
-
-			e.stopPropagation();
-
-			document.removeEventListener('mouseup',this.bindedHandleUp);
-			window.removeEventListener('mousemove',this.bindedHandleMove);
-
+		if ( !this.tracking ) {
+			return;
 		}
+
+		this.tracking = false;
+		this.client.dispatchAction('/change-param',{value:this.props.value,name:this.props.name,label:this.props.label,force:true});
+
+		e.stopPropagation();
 	}
 
 	handleMove(e) {
-		if (this.tracking) {
-			const newX = e.pageX || e.screenX;
-			const el = React.findDOMNode(this.refs.slider);
-			const {offsetLeft} = DOM.getAbsOffset(el);
+		if ( !this.tracking ) {
+			return;
+		}
 
-			let newValue;
+		const newX = e.pageX || e.screenX;
+		const el = React.findDOMNode(this.refs.slider);
+		const {offsetLeft} = DOM.getAbsOffset(el);
 
-			if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
-				const variation = (newX - this.currentX) / this.sliderWidth * (this.props.max - this.props.min);
-				newValue = this.props.value + variation;
+		let newValue;
 
-				newValue = Math.min(Math.max(newValue,this.props.min),this.props.max);
-			}
-			else {
-				newValue = newX < offsetLeft ? this.props.min : this.props.max
-			}
+		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
+			const variation = (newX - this.currentX) / this.sliderWidth * (this.props.max - this.props.min);
+			newValue = this.props.value + variation;
 
-			this.client.dispatchAction('/change-param',{value:newValue,name:this.props.name});
-			this.currentX = newX;
+			newValue = Math.min(Math.max(newValue,this.props.min),this.props.max);
+		}
+		else {
+			newValue = newX < offsetLeft ? this.props.min : this.props.max
+		}
+
+		this.client.dispatchAction('/change-param',{value:newValue,name:this.props.name});
+		this.currentX = newX;
+	}
+
+	// This prevents preview text to be selected whil using the sliders
+	handleSelectstart(e) {
+		if ( this.tracking ) {
+			return e.preventDefault();
 		}
 	}
 
