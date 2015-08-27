@@ -35,8 +35,7 @@ export class ControlsTabs extends React.Component {
 		})
 
 		return (
-			<div className="controls-tabs"
-				onSelectstart="event.preventDefault();">
+			<div className="controls-tabs">
 				<ul className="controls-tabs-headers">
 					{headers}
 				</ul>
