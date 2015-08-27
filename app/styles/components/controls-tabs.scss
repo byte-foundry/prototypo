@@ -23,10 +23,9 @@
 		height:72px;
 		float:left;
 		width:90px;
-		background-color: $medium-grey no-repeat center;
+		background-color: lighten($black, 5%);
 		background-repeat: no-repeat;
 		background-position: 50% 50%;
-		filter: contrast(40%);
 		cursor: pointer;
 		position:relative;
 		border-right: $dark-grey 1px solid;
@@ -42,7 +41,7 @@
 		}
 
 		&-legend {
-			color: white;
+			color: $medium-grey;
 			position: absolute;
 			bottom: 5px;
 			text-align: center;
