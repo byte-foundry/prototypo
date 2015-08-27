@@ -68,7 +68,17 @@ export default class Account extends React.Component {
 
 		return (
 			<div className="account">
-				<h1 className="account-block-title side-tab-h1">My informations</h1>
+				<h1 className="account-block-title side-tab-h1">
+					Admin panel
+					<div className="account-block-title-email">
+						<span className="account-block-title-email-icon">
+							<span className="account-block-title-email-icon-logout">
+								logout
+							</span>
+						</span>
+						{HoodieApi.instance.email}
+					</div>
+				</h1>
 				{changePassContent}
 			</div>
 		)

@@ -248,4 +248,3 @@ export default class HoodieApi {
 		HoodieApi.eventSub[event].push(callback);
 	}
 }
-
