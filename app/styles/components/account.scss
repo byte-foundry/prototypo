@@ -6,6 +6,41 @@
 
 		&-title {
 			color:$white;
+			&-email {
+				float: right;
+				font-size: .6em;
+				&-icon {
+					width: 24px;
+					height: 24px;
+					display: inline-block;
+					margin-right: 1em;
+					border-radius: 12px;
+					background: url('./images/admin-panel.svg') no-repeat 6px center $dark-grey;
+					background-size: 12px;
+					vertical-align: middle;
+					transition: width 400ms ease;
+					cursor: pointer;
+					overflow: hidden;
+					&-logout {
+						display: none;
+						float: right;
+						line-height: 2;
+						margin-bottom: 500px;
+					}
+					&:hover {
+						width: 85px; // #TODO: should be auto, but transition will not work
+						background-position: 12px center;
+						background-color: $red;
+						padding-right: 1em;
+					}
+
+					&:hover &-logout {
+						display: block;
+						opacity: 1;
+						margin-bottom: 0;
+					}
+				}
+			}
 		}
 
 		&-form {
