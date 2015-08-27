@@ -51,7 +51,7 @@ export default class Topbar extends React.Component {
 	}
 
 	exportGlyphr() {
-		console.log('export to Glyphr')
+		fontInstance.openInGlyphr();
 	}
 
 	async resetAllParams() {
