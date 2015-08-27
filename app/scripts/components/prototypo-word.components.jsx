@@ -49,8 +49,8 @@ export default class PrototypoWord extends React.Component {
 
 	saveText() {
 		const textDiv = React.findDOMNode(this.refs.text);
-		if (textDiv && textDiv.innerText) {
-			this.saveTextDebounced(textDiv.innerText, this.props.field);
+		if (textDiv && textDiv.textContent) {
+			this.saveTextDebounced(textDiv.textContent, this.props.field);
 		}
 	}
 
@@ -116,7 +116,6 @@ export default class PrototypoWord extends React.Component {
 						spellCheck="false"
 						style={style}
 						onInput={() => { this.saveText() }}
-						onBlur={() => { this.saveText() }}
 						></div>
 				</ReactGeminiScrollbar>
 				<div className="action-bar">
