@@ -13,10 +13,11 @@
 	&-icon {
 		height: 40%;
 		margin-top: 31%;
-		background-color: $red;
 
-		-webkit-mask:  url('./images/close-icon.svg') no-repeat center;
-		mask: url('./images/close-icon.svg') no-repeat center;
+		background: url('./images/close-icon-red.svg');
+		background-position: center;
+		background-repeat: no-repeat;
+
 	}
 
 	&:hover {
@@ -24,7 +25,7 @@
 	}
 
 	&:hover &-icon {
-		background-color: $white;
+		background-image: url('./images/close-icon.svg');
 	}
 }
 
