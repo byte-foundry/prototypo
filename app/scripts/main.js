@@ -37,6 +37,7 @@ import PrototypoCanvas from '../../node_modules/prototypo-canvas/dist/prototypo-
 import HoodieApi from './services/hoodie.services.js';
 import uuid from 'node-uuid';
 import {FontValues, AppValues} from './services/values.services.js';
+import {Commits} from './services/commits.services.js';
 
 if ( isSafari || isIE ) {
 	const Route = Router.Route,
@@ -91,6 +92,9 @@ if ( isSafari || isIE ) {
 		mode: [],
 		textFontSize: 1,
 		wordFontSize: 1,
+	});
+
+	const commits = stores['/commits'] = new Remutable({
 	});
 
 	const canvasEl = window.canvasElement = document.createElement('canvas');
@@ -329,6 +333,16 @@ if ( isSafari || isIE ) {
 				localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 				const patchEndLoading = fontTemplate.set('loadingFont',false).commit();
 				localServer.dispatchUpdate('/fontTemplate',patch);
+			},
+			'/load-commits': async (repo) => {
+
+				const lastcommitsJSON = await Commits.getCommits('prototypo');
+				const lastcommits = JSON.parse(lastcommitsJSON);
+
+				// console.log(lastcommits);
+
+				localServer.dispatchUpdate('/commits', lastcommits);
+
 			}
 		}
 
@@ -397,6 +411,8 @@ if ( isSafari || isIE ) {
 			localClient.dispatchAction('/load-glyphs', font.font.altMap);
 			localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 			localClient.dispatchAction('/load-app-values', appValues);
+
+			localClient.dispatchAction('/load-commits');
 
 			try {
 				const fontValues = await FontValues.get({typeface: 'default'});

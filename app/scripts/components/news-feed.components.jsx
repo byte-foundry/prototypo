@@ -1,42 +1,63 @@
 import React from 'react';
+import {Commits} from '../services/commits.services.js';
+import Lifespan from 'lifespan';
+import LocalClient from '../stores/local-client.stores.jsx';
+import LocalServer from '../stores/local-server.stores.jsx';
+import CommitsList from './commits-list.components.jsx';
 
 export default class NewsFeed extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			// latestCommit: {},
+			commits: []
+		};
+	}
+
+	async componentWillMount() {
+		this.lifespan = new Lifespan();
+		this.client = LocalClient.instance();
+
+		const lastcommitsJSON = await Commits.getCommits('prototypo');
+		const lastcommits = JSON.parse(lastcommitsJSON);
+
+		console.log(lastcommits);
+
+		this.setState({
+			commits: lastcommits
+		});
+
+		// this.client.getStore('/commits', this.lifespan)
+		// 	.onUpdate(() => {
+		// 		this.setState({
+		// 			commits: lastcommits
+		// 		});
+		// 	})
+		// 	.onDelete(() => {
+		// 		this.setState(undefined);
+		// 	});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
 
 	render() {
+
+		const displayCommits = _.map(this.state.commits, (commit) => {
+			return <CommitsList title={commit.commit.message} date={commit.commit.author.date}/>
+		});
+		
 		return (
 			<div className="news-feed has-news">
+
 				<h1 className="news-feed-title side-tab-h1">News feed and updates</h1>
-				<div className="news-feed-article">
-					<h2 className="side-tab-h2">Title</h2>
-					<p className="news-feed-date">29th june, 2015</p>
-					<p>
-						Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Vestibulum id ligula porta felis euismod semper.
-					</p>
-				</div>
-				<div className="news-feed-article">
-					<h2 className="side-tab-h2">Title</h2>
-					<p className="news-feed-date">26th june, 2015</p>
-					<p>
-						Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Curabitur blandit tempus porttitor. Donec ullamcorper nulla non metus auctor fringilla. Nullam quis risus eget urna mollis ornare vel eu leo. Donec ullamcorper nulla non metus auctor fringilla.
-						Aenean lacinia bibendum nulla sed consectetur. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Donec ullamcorper nulla non metus auctor fringilla.
-					</p>
-				</div>
-				<div className="news-feed-article">
-					<h2 className="side-tab-h2">Title</h2>
-					<p className="news-feed-date">12th june, 2015</p>
-					<p>
-						Cras justo odio, dapibus ac facilisis in, egestas eget quam. Cras mattis consectetur purus sit amet fermentum. Donec sed odio dui. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-					</p>
-				</div>
-				<div className="news-feed-article">
-					<h2 className="side-tab-h2">Title</h2>
-					<p className="news-feed-date">06th june, 2015</p>
-					<p>
-						Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Vestibulum id ligula porta felis euismod semper. Aenean lacinia bibendum nulla sed consectetur. Donec id elit non mi porta gravida at eget metus. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-						Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec ullamcorper nulla non metus auctor fringilla. Donec ullamcorper nulla non metus auctor fringilla. Nullam quis risus eget urna mollis ornare vel eu leo.
-					</p>
-				</div>
+				<ul>
+					{displayCommits}
+				</ul>
+
 			</div>
+
 		)
 	}
 }
