@@ -20,14 +20,25 @@ export default class CommitsList extends React.Component {
 			// 'is-selected': this.props.selectedRepo === this.props.font.repo,
 		});
 
+		var results = this.props.content;
+
 		return (
 			<li className="news-feed-article">
-				<h2>
-					<div>{`${this.props.title}`}</div>
+				<h2 className="news-feed-article-title">
+					<div>
+						<a href={`${this.props.url}`} title="See the commit on Git Hub" target="_blank">
+							{`${this.props.title}`}
+						</a>
+					</div>
 				</h2>
-				<p className="news-feed-date">
-					{`${this.props.date}`}
+				<p className="news-feed-article-date">
+					{`${new Date(this.props.date)}`}
 				</p>
+				<div className="news-feed-article-content">
+					{results.map(function(result) {
+						return <p key={result.id}>{result}</p>;
+					})}
+				</div>
 			</li>
 		)
 	}
