@@ -1,5 +1,13 @@
+@import '../variables';
+
 .wait-for-load {
 	display:flex;
 	align-items:center;
 	height:100%;
+}
+
+.sk-secondary-color {
+	div {
+		background-color:$white !important;
+	}
 }

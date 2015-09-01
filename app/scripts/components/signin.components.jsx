@@ -3,6 +3,7 @@ import HoodieApi from '../services/hoodie.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import WarningMessage from './warning-message.components.jsx';
+import WaitForLoad from './wait-for-load.components.jsx';
 
 export default class Signin extends React.Component {
 	constructor(props) {
@@ -14,16 +15,33 @@ export default class Signin extends React.Component {
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
+		this.setState({
+			loading: true,
+		});
 	}
+
 	signIn(e) {
+		this.setState({
+			loading: false,
+		});
+
 		e.preventDefault();
+
 		this.client.dispatchAction('/login',
 		{
 			login: React.findDOMNode(this.refs.email).value,
 			password: React.findDOMNode(this.refs.password).value
 		});
+
 		return;
 	}
+
+	componentWillUnmount() {
+		this.setState({
+			loading: false,
+		});
+	}
+
 	render() {
 		return (
 			<form className="sign-in" onSubmit={(e) => {this.signIn(e)}}>
@@ -51,8 +69,10 @@ export default class Signin extends React.Component {
 				</a>
 				{((message) => {if (message) {
 					return <WarningMessage text={message}/>
-				}})(this.state.warningMessage)}
-				<button className="sign-in-button">Sign in</button>
+					}})(this.state.warningMessage)}
+				<WaitForLoad loaded={this.state.loading} secColor={true}>
+					<button className="sign-in-button">Sign in</button>
+				</WaitForLoad>
 			</form>
 		)
 	}
