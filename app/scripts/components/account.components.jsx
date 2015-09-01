@@ -1,6 +1,7 @@
 import React from 'react';
 import HoodieApi from '../services/hoodie.services.js';
 import WarningMessage from './warning-message.components.jsx';
+import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class Account extends React.Component {
 	constructor(props) {
@@ -27,11 +28,19 @@ export default class Account extends React.Component {
 		return;
 	}
 
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
 	componentWillUnmount() {
 		this.setState({
 			passwordChanged:false,
 			passwordToShort:false,
 		});
+	}
+
+	logout() {
+		this.client.dispatchAction('/logout');
 	}
 
 	render() {
@@ -71,7 +80,7 @@ export default class Account extends React.Component {
 				<h1 className="account-block-title side-tab-h1">
 					Admin panel
 					<div className="account-block-title-email">
-						<span className="account-block-title-email-icon">
+						<span className="account-block-title-email-icon" onClick={() => {this.logout()}}>
 							<span className="account-block-title-email-icon-logout">
 								logout
 							</span>

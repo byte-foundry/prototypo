@@ -342,6 +342,16 @@ if ( isSafari || isIE ) {
 							warningMessage: err.error === 'unauthorized' ? 'You made a mistake in your email or password' : 'An unexpected error occured please contact contact@prototypo.io and provide us with your username',
 						});
 					})
+			},
+			'/logout': async () => {
+				try {
+					await HoodieApi.logout();
+					location.href = '#/signin';
+				}
+				catch (error) {
+					console.log(`you probably don't have internet`);
+					location.href = '#/signin';
+				}
 			}
 		}
 
