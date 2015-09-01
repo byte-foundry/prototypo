@@ -394,6 +394,8 @@ if ( isSafari || isIE ) {
 					values: {
 						mode: 'glyph',
 						selected: 'A',
+						word: 'Hello',
+						text: 'World',
 						template: 'john-fell.ptf',
 					}
 				};
@@ -430,7 +432,8 @@ if ( isSafari || isIE ) {
 
 			const font = window.fontInstance = await fontPromise;
 			await font.loadFont( typedata.fontinfo.familyName, typedataJSON );
-			font.displayChar('A');
+			font.subset = appValues.values.text + appValues.values.word;
+			font.displayChar( appValues.values.selected );
 			localClient.dispatchAction('/create-font', font);
 
 			localClient.dispatchAction('/load-params', typedata);
