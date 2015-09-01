@@ -9,6 +9,7 @@
 	&-selected {
 		padding:10px 0 10px 10px;
 		cursor:pointer;
+		background-color: $black;
 
 		&-icon {
 			width: 10px;
@@ -16,9 +17,9 @@
 			float: right;
 			padding: .7em 1.1em;
 
-			background-color: $medium-grey;
-			-webkit-mask:  url('./images/list-icon.svg') no-repeat center;
-			mask: url('./images/list-icon.svg') no-repeat center;
+			background-image: url('./images/list-icon.svg');
+			background-position: center;
+			background-repeat: no-repeat;
 		}
 
 		&:hover {
@@ -26,10 +27,10 @@
 			color: $white;
 			border-top-color: $green;
 		}
+	}
 
-		&:hover &-icon {
-			background-color: $white;
-		}
+	&.is-active &-icon {
+		background-image: url('./images/close-icon.svg');
 	}
 
 	&-dropdown {
@@ -45,15 +46,13 @@
 
 	&.is-active &-selected {
 		&-icon {
-			-webkit-mask:  url('./images/close-icon.svg') no-repeat center;
-			mask: url('./images/close-icon.svg') no-repeat center;
+			background-image: url('./images/close-icon.svg');
 		}
 	}
 
 	&.is-active &-dropdown {
 		display:block;
 	}
-
 }
 
 .glyph-tag {
@@ -96,21 +95,24 @@
 		&-icon {
 			align-self:stretch;
 			width:30px;
-			height:30px;
+			height:32px;
 
-			background-color: $medium-grey;
-			-webkit-mask:  url('./images/pin.svg') no-repeat center;
-			mask: url('./images/pin.svg') no-repeat center;
+			background-image: url('./images/pin-off.svg');
+			background-position: center;
+			background-repeat: no-repeat;
 		}
 
-		&:hover {
-			background-color: $white;
+		&:hover &-icon {
+			background-color: $black;
+			background-image: url('./images/pin-on.svg');
 		}
 
 		&.is-pinned &-icon {
-			background-color: $white;
+			background-image: url('./images/pin-on.svg');
 			&:hover {
-				background-color: $medium-grey;
+				// opacity: .4;
+				background-color: $black;
+				background-image: url('./images/pin-off.svg');
 			}
 		}
 

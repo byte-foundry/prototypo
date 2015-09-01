@@ -94,7 +94,7 @@
 
 .side-tab {
 	margin-left: 70px;
-	background-color:#4a4a4a;
+	background-color: $dark-grey;
 	height:100%;
 	display:none;
 	transition:width .2s ease;
@@ -111,6 +111,17 @@
 		z-index:6;
 		box-shadow: none;
 		padding: 2em;
+		&::before {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: -1;
+			width: 300%;
+			height: 100%;
+			background-color: $dark-grey;
+			opacity: .7;
+		}
 	}
 
 	h2,

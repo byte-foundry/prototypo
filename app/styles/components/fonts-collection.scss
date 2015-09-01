@@ -6,7 +6,7 @@
 		padding:0;
 		margin:0;
 		list-style: none;
-		color:$white;
+		color:$black;
 		font-size:22px;
 		font-weight: normal;
 	}
@@ -20,11 +20,11 @@
 .font-selector {
 	cursor:pointer;
 	padding:10px 20px;
-	background-color:$dark-grey;
+	background-color:$white;
 
 	&.is-selected {
-		background-color:$light-grey;
-		color: $dark-grey;
+		background-color:$green;
+		color: $white;
 		&::after {
 			content: "";
 		    background: no-repeat center $dark-grey;
@@ -36,7 +36,7 @@
 		    display: block;
 		}
 		&:hover {
-			background-color: $light-grey;
+			background-color: $green;
 			cursor: default;
 		}
 	}
@@ -46,7 +46,8 @@
 	}
 
 	&:hover {
-		background-color:$medium-grey;
+		background-color:$black;
+		color: $white;
 	}
 
 	&-name {

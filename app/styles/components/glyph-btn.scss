@@ -1,148 +1,150 @@
 @import "../variables";
 
-.glyph-btn-list {
-	color:$white;
-	cursor:pointer;
-	display:flex;
-	flex-direction:row;
-	height:45px;
-	&-dropup {
-		display: flex;
-		flex-direction: column;
-		align-self: flex-end;
-
-		&-list {
-			display:none;
-			background-color:$dark-grey;
-			list-style-type:none;
-			margin: 0;
-			padding: 0;
-			width:210px;
-
-			&-item {
-				padding: 10px;
-				cursor:pointer;
-				border-bottom: solid 1px $light-grey;
-				flex:1 1 50%;
-				display:flex;
-				flex-direction:row;
-
-				&-icon {
-					flex:1 0 30px;
-
-					&:hover {
-						background-color:$red;
-					}
-				}
-
-				&-text {
-					flex:1 1 100%;
-				}
-
-				&:hover {
-					background-color:$green;
-				}
-			}
-		}
-
-		&.is-active &-list {
-			display:flex;
-			flex-flow:row wrap;
-		}
-	}
-	&-btn {
-		align-self: flex-end;
-
-		&-label {
-			display:block;
-			float:left;
-			height:45px;
-			font-size: 1.2rem;
-			padding: 10px;
-			background-color: $dark-grey;
-			text-transform: uppercase;
-			cursor:pointer;
-			line-height: 2.5;
-		}
-
-		&-tags {
-			background-color: $black !important;
-			text-transform: none;
-			height: 24px;
-			line-height: 0.4;
-			border-right: 1px solid darken($medium-grey, 20%);
-			border-bottom: 1px solid darken($medium-grey, 20%);
-
-			&:hover {
-				background-color: $medium-grey !important;
-				border-color: $medium-grey;
-			}
-
-			&.is-active {
-				background-color: $white !important;
-				color: $dark-grey;
-				border-color: $white;
-				border-top: 1px solid $light-grey;
-			}
-		}
-
-		&:last-of-type &-tags.is-active {
-			border-color: $light-grey;
-		}
-
-		&-wrapper {
-			float: left;
-			display: inline-table;
-			background-color: $medium-grey;
-
-			&:hover, &.is-locked {
-				background-color: $green;
-			}
-		}
-
-		&-lock {
-			float:left;
-			height:45px;
-			width:45px;
-
-			background-color: $dark-grey;
-		    -webkit-mask:  url('./images/lock-panel.svg') no-repeat 50% 50%;
-		    mask: url('./images/lock-panel.svg') no-repeat 50% 50%;
-
-			&:hover, &.is-locked {
-				background-color: white;
-			}
-		}
-
-		&:hover &-tag-wrapper {
-			display: block;
-		}
-
-		&-tag-wrapper {
-			float: left;
-			display: none;
-			width: 0;
-			height: 0;
-
-			&-close {
-				position: relative;
-
-				top: -7px;
-				right: 8px;
-				border-radius: 50%;
-				color: $white;
-				background-color:$red;
-				height: 15px;
-				width: 15px;
-				text-align: center;
-				line-height: 1;
-
-				&:hover {
-					background-color: darken($red, 10%);
-				}
-			}
-		}
-
-	}
-
-}
+// @FranzP can we remove those lines?
+//
+// .glyph-btn-list {
+// 	color:$white;
+// 	cursor:pointer;
+// 	display:flex;
+// 	flex-direction:row;
+// 	height:45px;
+// 	&-dropup {
+// 		display: flex;
+// 		flex-direction: column;
+// 		align-self: flex-end;
+//
+// 		&-list {
+// 			display:none;
+// 			background-color:$dark-grey;
+// 			list-style-type:none;
+// 			margin: 0;
+// 			padding: 0;
+// 			width:210px;
+//
+// 			&-item {
+// 				padding: 10px;
+// 				cursor:pointer;
+// 				border-bottom: solid 1px $light-grey;
+// 				flex:1 1 50%;
+// 				display:flex;
+// 				flex-direction:row;
+//
+// 				&-icon {
+// 					flex:1 0 30px;
+//
+// 					&:hover {
+// 						background-color:$red;
+// 					}
+// 				}
+//
+// 				&-text {
+// 					flex:1 1 100%;
+// 				}
+//
+// 				&:hover {
+// 					background-color:$green;
+// 				}
+// 			}
+// 		}
+//
+// 		&.is-active &-list {
+// 			display:flex;
+// 			flex-flow:row wrap;
+// 		}
+// 	}
+// 	&-btn {
+// 		align-self: flex-end;
+//
+// 		&-label {
+// 			display:block;
+// 			float:left;
+// 			height:45px;
+// 			font-size: 1.2rem;
+// 			padding: 10px;
+// 			background-color: $dark-grey;
+// 			text-transform: uppercase;
+// 			cursor:pointer;
+// 			line-height: 2.5;
+// 		}
+//
+// 		&-tags {
+// 			background-color: $black !important;
+// 			text-transform: none;
+// 			height: 24px;
+// 			line-height: 0.4;
+// 			border-right: 1px solid darken($medium-grey, 20%);
+// 			border-bottom: 1px solid darken($medium-grey, 20%);
+//
+// 			&:hover {
+// 				background-color: $medium-grey !important;
+// 				border-color: $medium-grey;
+// 			}
+//
+// 			&.is-active {
+// 				background-color: $white !important;
+// 				color: $dark-grey;
+// 				border-color: $white;
+// 				border-top: 1px solid $light-grey;
+// 			}
+// 		}
+//
+// 		&:last-of-type &-tags.is-active {
+// 			border-color: $light-grey;
+// 		}
+//
+// 		&-wrapper {
+// 			float: left;
+// 			display: inline-table;
+// 			background-color: $medium-grey;
+//
+// 			&:hover, &.is-locked {
+// 				background-color: $green;
+// 			}
+// 		}
+//
+// 		&-lock {
+// 			float:left;
+// 			height:45px;
+// 			width:45px;
+//
+// 			background-color: $dark-grey;
+// 		    -webkit-mask:  url('./images/lock-panel.svg') no-repeat 50% 50%;
+// 		    mask: url('./images/lock-panel.svg') no-repeat 50% 50%;
+//
+// 			&:hover, &.is-locked {
+// 				background-color: white;
+// 			}
+// 		}
+//
+// 		&:hover &-tag-wrapper {
+// 			display: block;
+// 		}
+//
+// 		&-tag-wrapper {
+// 			float: left;
+// 			display: none;
+// 			width: 0;
+// 			height: 0;
+//
+// 			&-close {
+// 				position: relative;
+//
+// 				top: -7px;
+// 				right: 8px;
+// 				border-radius: 50%;
+// 				color: $white;
+// 				background-color:$red;
+// 				height: 15px;
+// 				width: 15px;
+// 				text-align: center;
+// 				line-height: 1;
+//
+// 				&:hover {
+// 					background-color: darken($red, 10%);
+// 				}
+// 			}
+// 		}
+//
+// 	}
+//
+// }
