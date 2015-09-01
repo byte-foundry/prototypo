@@ -1,5 +1,6 @@
 import React from 'react';
 import HoodieApi from '../services/hoodie.services.js';
+import LocalClient from '../stores/local-client.stores.jsx';
 
 import WarningMessage from './warning-message.components.jsx';
 
@@ -10,18 +11,17 @@ export default class Signin extends React.Component {
 			warningMessage:undefined,
 		};
 	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
 	signIn(e) {
 		e.preventDefault();
-		HoodieApi.login(`user/${React.findDOMNode(this.refs.email).value}`,
-			React.findDOMNode(this.refs.password).value)
-			.then(() => {
-				location.href = '#/dashboard';
-			})
-			.catch((err) => {
-				this.setState({
-					warningMessage: err.error === 'unauthorized' ? 'You made a mistake in your email or password' : 'An unexpected error occured please contact contact@prototypo.io and provide us with your username',
-				});
-			})
+		this.client.dispatchAction('/login',
+		{
+			login: React.findDOMNode(this.refs.email).value,
+			password: React.findDOMNode(this.refs.password).value
+		});
 		return;
 	}
 	render() {
