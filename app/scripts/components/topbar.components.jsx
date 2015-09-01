@@ -64,14 +64,8 @@ export default class Topbar extends React.Component {
 		this.lifespan.release();
 	}
 
-	async logout() {
-		try {
-			const result = await HoodieApi.logout();
-			location.href = '#/signin';
-		}
-		catch (error) {
-			console.log(`you probably don't have internet`);
-		}
+	logout() {
+		this.client.dispatchAction('/logout');
 	}
 
 	toggleView(name) {
@@ -91,7 +85,7 @@ export default class Topbar extends React.Component {
 			<div id="topbar">
 				<TopBarMenu>
 					<TopBarMenuDropdown name="File">
-						<TopBarMenuDropdownItem name="Logout" handler={this.logout}/>
+						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout()}}/>
 						<TopBarMenuDropdownItem name="Export to OTF" handler={this.exportOTF}/>
 						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr}/>
 						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams() }}/>

@@ -347,6 +347,16 @@ if ( isSafari || isIE ) {
 						});
 					})
 			},
+			'/logout': async () => {
+				try {
+					await HoodieApi.logout();
+					location.href = '#/signin';
+				}
+				catch (error) {
+					console.log(`you probably don't have internet`);
+					location.href = '#/signin';
+				}
+			},
 			'/load-commits': async (repo) => {
 
 				const lastcommitsJSON = await Commits.getCommits('prototypo');
