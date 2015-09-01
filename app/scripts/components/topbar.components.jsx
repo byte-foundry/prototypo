@@ -54,10 +54,22 @@ export default class Topbar extends React.Component {
 		fontInstance.openInGlyphr();
 	}
 
-	async resetAllParams() {
-		const typedata = await this.client.fetch('/fontParameters');
+	resetAllParams() {
+		//const typedata = await this.client.fetch('/fontParameters');
+		//
+		this.client.fetch('/fontParameters')
+			.then((typedata) => {
+		const params = typedata.head.toJS().parameters;
+		const flattenParams = _.flatten(_.map(params,(paramObject) => {
+			return paramObject.parameters;
+		}))
+		const defaultParams = _.transform(flattenParams, (result, param) => {
+			result[param.name] = param.init;
+		}, {});
 
-		this.client.dispatchAction('/change-param',{values:typedata.head.toJS().presets['Modern'], force:true});
+		this.client.dispatchAction('/change-param',{values:defaultParams, force:true});
+			});
+		
 	}
 
 	componentWillUnmount() {
