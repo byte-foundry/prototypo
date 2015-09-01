@@ -5,6 +5,7 @@
 	margin:0;
 	padding:0;
 
+
 	&-selected {
 		padding:10px 0 10px 10px;
 		cursor:pointer;
@@ -70,11 +71,21 @@
 	&.is-active {
 		background-color: $white;
 		color: $dark-grey;
+		.glyph-tag-name {
+			&:before {
+				content: "→";
+			}
+		}
 	}
 
 	&-name {
 		padding:10px;
 		text-transform: capitalize;
+		&:before {
+			content: "⇢";
+			display: inline-block;
+			margin-right: .5em;
+		}
 	}
 
 	&-button {
