@@ -329,6 +329,19 @@ if ( isSafari || isIE ) {
 				localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 				const patchEndLoading = fontTemplate.set('loadingFont',false).commit();
 				localServer.dispatchUpdate('/fontTemplate',patch);
+			},
+			'/login': ({login, password}) => {
+				HoodieApi.login(`user/${login}`,
+					password)
+					.then(async () => {
+						await loadStuff();
+						location.href = '#/dashboard';
+					})
+					.catch((err) => {
+						this.setState({
+							warningMessage: err.error === 'unauthorized' ? 'You made a mistake in your email or password' : 'An unexpected error occured please contact contact@prototypo.io and provide us with your username',
+						});
+					})
 			}
 		}
 
@@ -341,6 +354,10 @@ if ( isSafari || isIE ) {
 		}, localServer.lifespan);
 
 
+		await loadStuff();
+	}
+
+	async function loadStuff() {
 		//Login checking and app and font values loading
 		try {
 			await HoodieApi.setup();

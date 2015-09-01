@@ -9,10 +9,6 @@ export default class Dashboard extends React.Component {
 		pleaseWait.instance.finish();
 	}
 
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
 	render() {
 
 		/* These are some guidelines about css:
