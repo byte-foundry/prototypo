@@ -39,7 +39,15 @@ export default class NewsFeed extends React.Component {
 	componentDidMount() {
 		let script = document.createElement("script");
 		script.src = 'http://slackin.prototypo.io/slackin.js?large';
-		document.getElementById('slackin').appendChild(script);
+		React.findDOMNode(this.refs.slackin).appendChild(script);
+
+		window.UserVoice.push(['addTrigger', '#contact_us', {
+			mode: 'contact', // Modes: contact (default), smartvote, satisfaction
+			trigger_position: 'top-right',
+			trigger_color: 'white',
+			trigger_background_color: '#458dd6',
+			accent_color: '#458dd6'
+		}]);
 	}
 
 	componentWillUnmount() {
@@ -58,14 +66,26 @@ export default class NewsFeed extends React.Component {
 		});
 
 		return (
+
 			<div className="news-feed has-news">
 				<h1 className="news-feed-title side-tab-h1">News feed and updates</h1>
-				<div id="slackin"></div>
+				<ReactGeminiScrollbar autoshow={true}>
 				<ul className="news-feed-list">
+					<div className="news-feed-header">
+						<p>
+							Here are listed the last modifications in Prototypo.
+						<br/>
+							If you want to say Hi or report an issue, join the chat room on Slack or pick up some lines with UserVoice!
+						</p>
+						<div className="clearfix">
+							<div className="news-feed-header-slack" ref="slackin"></div>
+							<div className="news-feed-header-uservoice" id="contact_us">UserVoice</div>
+						</div>
+					</div>
 					{displayCommits}
 				</ul>
+				</ReactGeminiScrollbar>
 			</div>
-
 		)
 	}
 }

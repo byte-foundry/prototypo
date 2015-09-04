@@ -122,6 +122,13 @@
 			background-color: $dark-grey;
 			opacity: .7;
 		}
+		&.no-padding {
+			padding: 0;
+			h1 {
+				padding: 1.25em;
+				padding-bottom: 0;
+			}
+		}
 	}
 
 	h2,

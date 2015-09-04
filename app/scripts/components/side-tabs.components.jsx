@@ -73,6 +73,7 @@ export class SideTab extends React.Component {
 			"is-active": true,
 			"side-tab-big": !!this.props.big,
 			"is-disabled": !!this.props.disabled,
+			"no-padding": !!this.props.padding,
 		});
 
 		return (
