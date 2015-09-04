@@ -68,7 +68,6 @@ export default class PrototypoPanel extends React.Component {
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] prototypopanel');
-			//console.trace();
 		}
 
 		let textAndGlyph;

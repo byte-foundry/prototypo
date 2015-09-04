@@ -77,12 +77,11 @@ export default class HoodieApi {
 					});
 				}
 				resolve();
-				console.log('We in');
 			};
 
 			xhr.onerror = (e) => {
 				reject();
-				console.log('We not in');
+				console.error('We not in');
 			};
 
 			xhr.send(`{"name":"${user}","password":"${password}"}`);

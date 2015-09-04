@@ -20,12 +20,9 @@ export default class NewsFeed extends React.Component {
 		this.client = LocalClient.instance();
 
 		const lastcommitsJSON = await Commits.getCommits('prototypo');
-		const lastcommits = JSON.parse(lastcommitsJSON);
-
-		console.log(lastcommits);
 
 		this.setState({
-			commits: lastcommits
+			commits: JSON.parse(lastcommitsJSON)
 		});
 
 		// this.client.getStore('/commits', this.lifespan)
@@ -39,6 +36,12 @@ export default class NewsFeed extends React.Component {
 		// 	});
 	}
 
+	componentDidMount() {
+		let script = document.createElement("script");
+		script.src = 'http://slackin.prototypo.io/slackin.js?large';
+		document.getElementById('slackin').appendChild(script);
+	}
+
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
@@ -47,19 +50,9 @@ export default class NewsFeed extends React.Component {
 
 		const displayCommits = _.map(this.state.commits, (commit) => {
 
-			var commitMessage = commit.commit.message.split(/(\r?\n|\r)/g),
-				commitTitle = commitMessage[0],
-				tmp = commitMessage.slice(1).filter(Boolean);
-
-				// console.log(commitContent);
-
-				var commitContent = [];
-
-				for (var key in tmp) {
-					if (tmp.hasOwnProperty(key)) {
-						tmp[key].length > 1 ? commitContent.push(tmp[key]) : '';
-					}
-				}
+			let commitMessage = commit.commit.message.split(/\x0A/);
+			let commitTitle = commitMessage[0];
+			let commitContent = commitMessage.slice(1).filter(Boolean);
 
 			return <CommitsList title={commitTitle} content={commitContent} date={commit.commit.author.date} url={commit.html_url}/>
 		});
@@ -67,6 +60,7 @@ export default class NewsFeed extends React.Component {
 		return (
 			<div className="news-feed has-news">
 				<h1 className="news-feed-title side-tab-h1">News feed and updates</h1>
+				<div id="slackin"></div>
 				<ul className="news-feed-list">
 					{displayCommits}
 				</ul>
