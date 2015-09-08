@@ -69,7 +69,9 @@ export default class NewsFeed extends React.Component {
 
 			<div className="news-feed has-news">
 				<h1 className="news-feed-title side-tab-h1">News feed and updates</h1>
+
 				<ReactGeminiScrollbar autoshow={true}>
+
 				<ul className="news-feed-list">
 					<div className="news-feed-header">
 						<p>
