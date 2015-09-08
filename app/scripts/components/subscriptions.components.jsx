@@ -59,7 +59,7 @@ export default class Subscriptions extends React.Component {
 		}
 		catch (error) {
 			if (error.status !== 404) {
-				console.log(`Don't go here please`);
+				console.error(`Don't go here please`);
 			}
 		}
 	}

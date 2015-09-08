@@ -2,7 +2,7 @@ import React from 'react';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import ClassNames from 'classnames';
-import moment from 'moment/min/moment-with-locales.min';
+import moment from 'moment/min/moment-with-locales';
 
 export default class CommitsList extends React.Component {
 	componentWillMount() {
@@ -20,8 +20,6 @@ export default class CommitsList extends React.Component {
 	render() {
 
 		const classes = ClassNames({
-			// 'font-selector': true,
-			// 'is-selected': this.props.selectedRepo === this.props.font.repo,
 		});
 
 		var results = this.props.content;
@@ -39,8 +37,8 @@ export default class CommitsList extends React.Component {
 					{`${moment(this.props.date).format('L')}`}
 				</p>
 				<div className="news-feed-article-content">
-					{results.map(function(result) {
-						return <p key={result.id}>{result}</p>;
+					{this.props.content.map(function(line, i) {
+						return <p key={ i }>{ line }</p>;
 					})}
 				</div>
 			</li>

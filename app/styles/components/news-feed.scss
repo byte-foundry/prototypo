@@ -1,12 +1,68 @@
 @import '../variables';
 
+
+.__slackin {
+	z-index: 10;
+}
+
 .news-feed {
 
-	padding: 0 !important;
+	height: 100%;
+
+	&-header {
+		background-color: lighten($blue, 0%);
+		color: $white;
+		padding: 1em 2em 2em;
+		p {
+			margin-top: 12px;
+		}
+		&-slack,
+		&-uservoice {
+			float: left;
+			display: inline-block;
+		}
+		&-uservoice {
+			position: relative;
+			margin-left: 1em;
+			// Sync with slack css btn
+			padding: 3px 10px 3px 28px;
+		    font-size: 16px;
+		    line-height: 22px;
+		    border-radius: 4px;
+			background-color: #eee;
+			background-image: linear-gradient(#fcfcfc, #eee);
+			background-repeat: no-repeat;
+			border: 1px solid #d5d5d5;
+			color: #333;
+			text-decoration: none;
+			text-shadow: 0 1px 0 #fff;
+			white-space: nowrap;
+			cursor: pointer;
+			transition: background-color 200ms;
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			&:hover {
+				background: #ddd;
+			}
+			// end sync
+			&:before {
+				content: "";
+				position: absolute;
+				left: 2px;
+				background-image: url('./images/uservoice.svg');
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: 90%;
+				width: 22px;
+				height: 22px;
+				margin-right: 5px;
+				display: inline-block;
+			}
+		}
+	}
 
 	&-list {
 		background-color: lighten($blue, 55%);
-		position: absolute;
+		// position: absolute;
 		padding: 0;
 		left: 0;
 		margin-top: 0;
