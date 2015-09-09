@@ -1,6 +1,6 @@
 {
   "name": "prototypo",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "dependencies": {
     "babel": "^5.5.8",
     "babel-runtime": "^5.5.8",
@@ -56,7 +56,7 @@
     "gulp-plumber": "^1.0.1"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=0.12.0"
   },
   "description": "Prototypo, kickstarting font creation",
   "main": "gulpfile.js",
@@ -71,7 +71,7 @@
     "url": "https://github.com/byte-foundry/prototypo.git"
   },
   "author": "YM & LRB",
-  "license": "AGPL",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/byte-foundry/prototypo/issues"
   }
