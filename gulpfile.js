@@ -1,34 +1,38 @@
-var Promise = (global || window).Promise = require('bluebird'); //Bluebird promise are way better than native
-var fs = Promise.promisifyAll(require('fs')); //We just want promise seriously
-var path = require('path');
+var Promise         = require('bluebird'); //Bluebird promise are way better than native
+var fs              = Promise.promisifyAll(require('fs')); //We just want promise seriously
+var path            = require('path');
 
-var gulp = require('gulp');
-// CSS Dep
-var sass = require('gulp-sass');
+var gulp            = require('gulp');
 
 // BROWSERIFY Dep
-var browserify = require('browserify');
-var shim = require('browserify-shim');
-var babelify = require('babelify');
-var watchify = require('watchify');
-var envify = require('envify/custom');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
+var browserify      = require('browserify');
+var shim            = require('browserify-shim');
+var babelify        = require('babelify');
+var watchify        = require('watchify');
+var envify          = require('envify/custom');
+var source          = require('vinyl-source-stream');
+var buffer          = require('vinyl-buffer');
 
 //CSS Dep
-var minifyCss = require('gulp-minify-css');
+var sass            = require('gulp-sass');
+var minifyCss       = require('gulp-minify-css');
 
 //Utils
-var del = require('del');
-var uglify = require('gulp-uglify');
-var concat = require('gulp-concat');
-var gutil = require('gulp-util');
-var sourcemaps = require('gulp-sourcemaps');
-var browserSync = require('browser-sync').create();
-var assign = require('lodash.assign');
-var filter = require('gulp-filter');
-var autoprefixer = require('gulp-autoprefixer');
-var through = require('through');
+var del             = require('del');
+var uglify          = require('gulp-uglify');
+var concat          = require('gulp-concat');
+var gutil           = require('gulp-util');
+var sourcemaps      = require('gulp-sourcemaps');
+var rev             = require('gulp-rev');
+var revReplace      = require('gulp-rev-replace');
+var useref          = require('gulp-useref');
+var gulpif          = require('gulp-if');
+var uglify          = require('gulp-uglify');
+var browserSync     = require('browser-sync').create();
+var assign          = require('lodash.assign');
+var filter          = require('gulp-filter');
+var autoprefixer    = require('gulp-autoprefixer');
+var through         = require('through');
 
 // Browserify setup
 /* What we want right now :
@@ -36,7 +40,7 @@ var through = require('through');
  * - watchified bundle generation
  */
 
- customBrowserifyOpts = {
+customBrowserifyOpts = {
 	entries: ['./app/scripts/main.js'],
 	debug: true,//gutil.env.type == 'prod' ? false : true,
 	extensions: ['.jsx'],
