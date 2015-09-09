@@ -23,13 +23,16 @@ export default class PrototypoText extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.saveTextDebounced = _.debounce((text, prop) => {
-			this.client.dispatchAction('/store-text',{value:text, propName:prop});
+			//			if (text !== this.props.panel[this.props.field]) {
+				this.client.dispatchAction('/store-text',{value:text, propName:prop});
+				//}
 		}, 500);
 	}
 
 	setupText() {
 		const content = this.props.panel[this.props.field];
 		React.findDOMNode(this.refs.text).textContent = content && content.length > 0 ? content : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
+		this.saveText();
 	}
 
 	componentDidUpdate() {

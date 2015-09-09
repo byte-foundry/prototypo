@@ -90,8 +90,8 @@ if ( isSafari || isIE ) {
 
 	const panel = stores['/panel'] = new Remutable({
 		mode: [],
-		textFontSize: 1,
-		wordFontSize: 1,
+		textFontSize: 6,
+		wordFontSize: 4.5,
 	});
 
 	const commits = stores['/commits'] = new Remutable({
@@ -393,11 +393,12 @@ if ( isSafari || isIE ) {
 			catch(err) {
 				appValues = {
 					values: {
-						mode: 'glyph',
-						selected: 'A',
+						mode: ['glyph'],
+						selected: 'A'.charCodeAt(0).toString(),
 						word: 'Hello',
 						text: 'World',
 						template: 'john-fell.ptf',
+						pos: ['Point', 457, -364],
 					}
 				};
 
@@ -408,13 +409,12 @@ if ( isSafari || isIE ) {
 			const typedata = JSON.parse(typedataJSON);
 
 			const initValues = {};
-			_.each(typedata.parameters ,(group) => {
+			_.each(typedata.controls ,(group) => {
 				return _.each(group.parameters, (param) => {
 					initValues[param.name] = param.init;
 				});
 			});
 
-			const presetValues = typedata.presets['Modern'];
 			// const prototypoSource = await Typefaces.getPrototypo();
 			let workerDeps = document.querySelector('script[src*=prototypo\\.]').src;
 			let workerUrl;
@@ -447,10 +447,15 @@ if ( isSafari || isIE ) {
 
 			try {
 				const fontValues = await FontValues.get({typeface: 'default'});
-				localClient.dispatchAction('/load-values', _.extend(initValues,_.extend(presetValues,fontValues.values)));
+				localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
 			}
 			catch (err) {
-				localClient.dispatchAction('/load-values', _.extend(fontControls.get('values'), _.extend(initValues,presetValues)));
+				const values =  _.extend(fontControls.get('values'),initValues)
+				localClient.dispatchAction('/load-values',values);
+				FontValues.save({
+					typeface: 'default',
+					values,
+				});
 				console.error(err);
 			}
 		}

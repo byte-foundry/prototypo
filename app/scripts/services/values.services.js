@@ -19,6 +19,6 @@ function values(prefix) {
 }
 
 export default {
-	AppValues: values('app'),
-	FontValues: values('font'),
+	AppValues: values('newapp'),
+	FontValues: values('newfont'),
 }
