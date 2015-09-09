@@ -2,9 +2,10 @@
 <html>
 	<head>
 		<title>Prototypo - New UI</title>
-		<link rel="stylesheet" type="text/css" href="assets/app.css"/>
+		<!-- build:css(.tmp) dist/assets/bundle.css -->
 		<link rel="stylesheet" type="text/css" href="assets/vendor.css"/>
-		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:600' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="assets/app.css"/>
+		<!-- endbuild -->
 	</head>
 	<body>
 		<div id="content"></div>
@@ -12,20 +13,40 @@
 		<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 		<script type="text/javascript" src="bundle.js"></script>
 		<script>
-		// google analytics
-		var _gaq=[['_setAccount','UA-41962243-3'],['_trackPageview']];
-		(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-		g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-		s.parentNode.insertBefore(g,s)}(document,'script'));
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-		// Include the UserVoice JavaScript SDK (only needed once on a page)
-		UserVoice = window.UserVoice||[];(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/fgYcK9ccsqxuqBtQJSOrWA.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})();
-		// widget theme
-		UserVoice.push(['set', {
-			accent_color: '#49E4A9',
-			trigger_color: 'white',
-			trigger_background_color: '#49E4A9'
-		}]);
+			ga('create', 'UA-41962243-3', 'auto');
+			ga('send', 'pageview');
+
+			window.addEventListener('error', function(e) {
+				ga( 'send', 'event', 'js-error', e.message, e.filename + ':  ' + e.lineno );
+			});
+
+			// Include the UserVoice JavaScript SDK (only needed once on a page)
+			UserVoice = window.UserVoice||[];(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/fgYcK9ccsqxuqBtQJSOrWA.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})();
+			// widget theme
+			UserVoice.push(['set', {
+				accent_color: '#49E4A9',
+				trigger_color: 'white',
+				trigger_background_color: '#49E4A9'
+			}]);
+
+			WebFontConfig = {
+				google: { families: [ 'Source+Sans+Pro:600:latin' ] },
+				timeout: 2000
+			};
+			(function() {
+				var wf = document.createElement('script');
+				wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+				'://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+				wf.type = 'text/javascript';
+				wf.async = 'true';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(wf, s);
+			})();
 		</script>
 	</body>
 </html>
