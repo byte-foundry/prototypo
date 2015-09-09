@@ -278,9 +278,10 @@ if ( isSafari || isIE ) {
 			},
 			'/store-text': ({value, propName}) => {
 				const patch = panel.set(propName,value).commit();
+				const subset = panel.head.toJS().text + panel.head.toJS().word;
 				localServer.dispatchUpdate('/panel',patch);
 
-				fontInstance.subset = panel.head.toJS().text + panel.head.toJS().word || '';
+				fontInstance.subset = typeof subset === 'string' ? subset : '';
 				saveAppValues();
 			},
 			'/load-app-values': ({values}) => {
