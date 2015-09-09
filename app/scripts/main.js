@@ -432,8 +432,10 @@ if ( isSafari || isIE ) {
 			});
 
 			const font = window.fontInstance = await fontPromise;
+			const subset = appValues.values.text + appValues.values.word;
 			await font.loadFont( typedata.fontinfo.familyName, typedataJSON );
-			font.subset = appValues.values.text + appValues.values.word;
+			font.subset = typeof subset === 'string' ? subset : '';
+			font.displayChar( appValues.values.selected );
 			localClient.dispatchAction('/create-font', font);
 
 			localClient.dispatchAction('/load-params', typedata);
