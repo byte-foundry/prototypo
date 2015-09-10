@@ -70,15 +70,41 @@
 
 	&-article {
 		list-style: none;
-		padding: 0 1em 2em 2em;
+		padding: 2em 1em 1em 2em;
 
 		&:nth-child(even) {
 			background-color: lighten($blue, 52%);
-			padding: .5em 1em 2em 2em;
+		}
+
+		&-header {
+			span {
+				padding: 5px 8px;
+				border-radius: 5px;
+				font-size: .8em;
+			}
+			&-repo {
+				margin-bottom: 0;
+				color: $dark-grey;
+				background-color: $yellow;
+				position: relative;
+				margin-right: 10px;
+				display: inline-block;
+				text-transform: uppercase;
+				letter-spacing: .02em;
+				&.is-font {
+					color: $white;
+					background-color: $blue;
+				}
+			}
+			&-date {
+				color: $medium-grey !important;
+				background-color: $white;
+			}
 		}
 
 		&-title {
-			margin-bottom: 0;
+			position: relative;
+			margin-top: 0.2em;
 			color: $green;
 			a {
 				color: $blue !important;
@@ -100,14 +126,11 @@
 			margin-top: 15px;
 			p {
 				margin: 0 0 5px 0;
-				color: $dark-grey !important;
+				color: $medium-grey !important;
 			}
-		}
-
-		&-date {
-			color: $dark-grey !important;
-			font-size: .8em;
-			margin: 5px 0 0;
+			&:empty {
+				display: none;
+			}
 		}
 
 	}

@@ -20,12 +20,22 @@ export default class CommitsList extends React.Component {
 	render() {
 
 		const classes = ClassNames({
+			"news-feed-article-header-repo": true,
+			"is-font": this.props.repo != 'prototypo',
 		});
 
 		var results = this.props.content;
 
 		return (
 			<li className="news-feed-article">
+				<div className="news-feed-article-header">
+					<span className={classes}>
+						{`${this.props.repo}`}
+					</span>
+					<span className="news-feed-article-header-date">
+						{`${moment(this.props.date).format('L')}`}
+					</span>
+				</div>
 				<h2 className="news-feed-article-title">
 					<div>
 						<a href={`${this.props.url}`} title="See the commit on Git Hub" target="_blank">
@@ -33,9 +43,6 @@ export default class CommitsList extends React.Component {
 						</a>
 					</div>
 				</h2>
-				<p className="news-feed-article-date">
-					{`${moment(this.props.date).format('L')}`}
-				</p>
 				<div className="news-feed-article-content">
 					{this.props.content.map(function(line, i) {
 						return <p key={ i }>{ line }</p>;
