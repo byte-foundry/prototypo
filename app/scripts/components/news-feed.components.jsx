@@ -19,11 +19,30 @@ export default class NewsFeed extends React.Component {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		const lastcommitsJSON = await Commits.getCommits('prototypo');
+		const repos = ['prototypo', 'john-fell.ptf', 'venus.ptf'];
+
+		const lastcommitsJSON = await Promise.all(repos.map((repo) => {
+			return Commits.getCommits(repo);
+		}));
 
 		this.setState({
-			commits: JSON.parse(lastcommitsJSON)
+			commits: lastcommitsJSON
+				.reduce((a, b) => {
+					return a.concat(JSON.parse(b));
+				}, [])
+				.sort((a, b) => {
+					if (a.commit.author.date < b.commit.author.date) {
+						return -1;
+					}
+					if (a.commit.author.date > b.commit.author.date) {
+						return 1;
+					}
+					return 0;
+				})
+				.reverse()
 		});
+
+		console.log(this.state.commits);
 
 		// this.client.getStore('/commits', this.lifespan)
 		// 	.onUpdate(() => {
@@ -42,11 +61,7 @@ export default class NewsFeed extends React.Component {
 		React.findDOMNode(this.refs.slackin).appendChild(script);
 
 		window.UserVoice.push(['addTrigger', '#contact_us', {
-			mode: 'contact', // Modes: contact (default), smartvote, satisfaction
-			trigger_position: 'top-right',
-			trigger_color: 'white',
-			trigger_background_color: '#458dd6',
-			accent_color: '#458dd6'
+			mode: 'contact'
 		}]);
 	}
 
@@ -58,11 +73,12 @@ export default class NewsFeed extends React.Component {
 
 		const displayCommits = _.map(this.state.commits, (commit) => {
 
+			let commitRepo = commit.url.match(/(byte-foundry\/)(.*)(\/commits)/)[2];
 			let commitMessage = commit.commit.message.split(/\x0A/);
 			let commitTitle = commitMessage[0];
 			let commitContent = commitMessage.slice(1).filter(Boolean);
 
-			return <CommitsList title={commitTitle} content={commitContent} date={commit.commit.author.date} url={commit.html_url}/>
+			return <CommitsList repo={commitRepo} title={commitTitle} content={commitContent} date={commit.commit.author.date} url={commit.html_url}/>
 		});
 
 		return (
