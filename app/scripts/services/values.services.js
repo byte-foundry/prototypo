@@ -1,5 +1,5 @@
- import PouchDB from 'pouchdb';
- import HoodieApi from './hoodie.services.js';
+import PouchDB from 'pouchdb';
+import HoodieApi from './hoodie.services.js';
 
 
 function values(prefix) {

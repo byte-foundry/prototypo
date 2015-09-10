@@ -2,6 +2,7 @@ import React from 'react';
 import HoodieApi from '../services/hoodie.services.js';
 import WarningMessage from './warning-message.components.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
+import Log from '../services/log.services.js';
 
 export default class Account extends React.Component {
 	constructor(props) {
@@ -13,7 +14,7 @@ export default class Account extends React.Component {
 		const password = React.findDOMNode(this.refs.password).value;
 		if (password.length < 6) {
 			this.setState({
-				passwordToShort:true,
+				passwordTooShort:true,
 			});
 
 			return;
@@ -35,19 +36,20 @@ export default class Account extends React.Component {
 	componentWillUnmount() {
 		this.setState({
 			passwordChanged:false,
-			passwordToShort:false,
+			passwordTooShort:false,
 		});
 	}
 
 	logout() {
 		this.client.dispatchAction('/logout');
+		Log.ui('Account.logout');
 	}
 
 	render() {
-		let passwordToShort = false;
+		let passwordTooShort = false;
 
-		if (this.state.passwordToShort) {
-			passwordToShort = `You're password is to short (must be 6 characters long at least)`;
+		if (this.state.passwordTooShort) {
+			passwordTooShort = `You're password is too short (must be 6 characters long at least)`;
 		}
 
 		let changePassContent = false;
@@ -61,7 +63,7 @@ export default class Account extends React.Component {
 						<input className="account-block-form-input" ref="password" type="password" id="new-password" name="new-password"/>
 						{((message) => {if (message) {
 							return <WarningMessage text={message}/>
-						}})(passwordToShort)}
+						}})(passwordTooShort)}
 						<button className="account-block-form-button">Change password</button>
 					</form>
 				</div>

@@ -1,8 +1,8 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
 import HoodieApi from '../services/hoodie.services.js';
-
 import WarningMessage from './warning-message.components.jsx';
+import Log from '../services/log.services.js';
 
 export default class ForgottenPassword extends React.Component {
 	constructor(props) {
@@ -10,7 +10,7 @@ export default class ForgottenPassword extends React.Component {
 
 		this.state = {};
 	}
-	async resetPassord() {
+	async resetPassword() {
 		const email = React.findDOMNode(this.refs.email).value;
 		if (!(/.+\@.+\..+/.test(email))) {
 			this.setState({
@@ -18,6 +18,9 @@ export default class ForgottenPassword extends React.Component {
 			});
 			return;
 		}
+
+		Log.ui('ForgottenPassword.resetPassword', email);
+
 		const result = await HoodieApi.askPasswordReset(email);
 		this.setState({
 			reset:true,
@@ -51,7 +54,7 @@ export default class ForgottenPassword extends React.Component {
 						}}>Cancel</button>
 					<button className="forgotten-password-button"
 						onClick={() => {
-							this.resetPassord()
+							this.resetPassword()
 						}}>Reset Password</button>
 				</div>,
 			]

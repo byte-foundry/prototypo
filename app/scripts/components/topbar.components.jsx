@@ -4,6 +4,7 @@ import {TopBarMenu, TopBarMenuDropdown, TopBarMenuDropdownItem, TopBarMenuDropdo
 import HoodieApi from '../services/hoodie.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
+import Log from '../services/log.services.js';
 
 export default class Topbar extends React.Component {
 
@@ -48,10 +49,12 @@ export default class Topbar extends React.Component {
 
 	exportOTF() {
 		fontInstance.download();
+		Log.ui('Topbar.exportOTF');
 	}
 
 	exportGlyphr() {
 		fontInstance.openInGlyphr();
+		Log.ui('Topbar.exportGlyphr');
 	}
 
 	resetAllParams() {
@@ -69,7 +72,7 @@ export default class Topbar extends React.Component {
 
 		this.client.dispatchAction('/change-param',{values:defaultParams, force:true});
 			});
-		
+
 	}
 
 	componentWillUnmount() {
@@ -78,6 +81,7 @@ export default class Topbar extends React.Component {
 
 	logout() {
 		this.client.dispatchAction('/logout');
+		Log.ui('Topbar.logout');
 	}
 
 	toggleView(name) {

@@ -12,6 +12,8 @@ import LocalServer from '../stores/local-server.stores.jsx';
 
 import {registerToUndoStack} from '../helpers/undo-stack.helpers.js';
 
+import Log from '../services/log.services.js';
+
 import Remutable from 'remutable';
 import Lifespan from 'lifespan';
 
@@ -34,10 +36,12 @@ export default class Sidebar extends React.Component {
 				const name = params.name;
 				const patch = sideBarTab.set('tab',name).commit();
 				server.dispatchUpdate('/sideBarTab', patch);
+
+				Log.ui('Sidebar/change-tab-sidebar', name);
 			}
 		}, this.lifespan);
 
-		this.client.dispatchAction('/change-tab-sidebar',{name: 'sliders'});
+		this.client.dispatchAction('/change-tab-sidebar', {name: 'sliders'});
 
 		this.setState({
 			fonts:[{
