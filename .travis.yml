@@ -2,9 +2,9 @@ sudo: false
 language: node_js
 node_js:
 - '0.12'
-before_script:
+before_install:
 - npm install -g uglifyjs
-- npm install
+after_install:
 - npm dedupe
 script: gulp build --type=prod
 after_script:

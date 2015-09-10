@@ -2,6 +2,7 @@ import React from 'react';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import ClassNames from 'classnames';
+import Log from '../services/log.services.js';
 
 export default class FontSelector extends React.Component {
 	componentWillMount() {
@@ -15,6 +16,7 @@ export default class FontSelector extends React.Component {
 
 	changeFont() {
 		this.client.dispatchAction('/change-font', this.props.font.repo);
+		Log.ui('FontSelector.changeFont', this.props.font.repo);
 	}
 
 	render() {

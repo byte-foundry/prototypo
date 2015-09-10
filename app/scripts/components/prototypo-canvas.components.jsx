@@ -1,6 +1,7 @@
 import React from 'react';
 import ClassNames from 'classnames';
 import LocalClient from '../stores/local-client.stores.jsx';
+import Log from '../services/log.services.js';
 import Lifespan from 'lifespan';
 
 import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
@@ -112,6 +113,8 @@ export default class PrototypoCanvas extends React.Component {
 			showContextMenu:true,
 			contextMenuPos:{x:e.nativeEvent.offsetX,y:e.nativeEvent.offsetY},
 		});
+
+		Log.ui('PrototypoCanvas.showContextMenu');
 	}
 
 	hideContextMenu() {

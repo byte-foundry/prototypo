@@ -3,15 +3,18 @@ import Lifespan from 'lifespan';
 import classNames from 'classnames';
 import LocalClient from '../stores/local-client.stores.jsx';
 import GeminiScrollbar from 'react-gemini-scrollbar';
+import Log from '../services/log.services.js';
 
 export class ControlsTabs extends React.Component {
 	componentWillMount() {
 		this.client = LocalClient.instance();
-
-		this.changeTab = (name) => {
-			this.client.dispatchAction('/change-tab-font',{name});
-		};
 	}
+
+	changeTab(name) {
+		this.client.dispatchAction('/change-tab-font',{name});
+		Log.ui('ControlsTabs.changeTab', name);
+	}
+
 	render() {
 		const headers = _.map(this.props.children,({props: {iconId, name}}) => {
 			const classes = classNames({

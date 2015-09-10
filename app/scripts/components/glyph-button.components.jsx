@@ -3,6 +3,8 @@ import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import ClassNames from 'classnames';
+import Log from '../services/log.services.js';
+
 
 export default class GlyphButton extends React.Component {
 	componentWillMount() {
@@ -15,7 +17,8 @@ export default class GlyphButton extends React.Component {
 	}
 
 	toggleLockList() {
-		this.client.dispatchAction('/toggle-lock-list',{});
+		this.client.dispatchAction('/toggle-lock-list', {});
+		Log.ui('GlyphButton.toggleLockList');
 	}
 
 	selectTag(tag) {
