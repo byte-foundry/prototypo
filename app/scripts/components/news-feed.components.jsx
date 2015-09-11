@@ -10,7 +10,7 @@ export default class NewsFeed extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			// latestCommit: {},
+			latestCommit: '',
 			commits: []
 		};
 	}
@@ -42,17 +42,10 @@ export default class NewsFeed extends React.Component {
 				.reverse()
 		});
 
-		console.log(this.state.commits);
+		this.setState({
+			latestCommit: this.state.commits[0].sha
+		});
 
-		// this.client.getStore('/commits', this.lifespan)
-		// 	.onUpdate(() => {
-		// 		this.setState({
-		// 			commits: lastcommits
-		// 		});
-		// 	})
-		// 	.onDelete(() => {
-		// 		this.setState(undefined);
-		// 	});
 	}
 
 	componentDidMount() {
@@ -86,22 +79,22 @@ export default class NewsFeed extends React.Component {
 			<div className="news-feed has-news">
 				<h1 className="news-feed-title side-tab-h1">News feed and updates</h1>
 
-				<ReactGeminiScrollbar autoshow={true}>
-
-				<ul className="news-feed-list">
-					<div className="news-feed-header">
-						<p>
-							Here are listed the last modifications in Prototypo.
-						<br/>
-							If you want to say Hi or report an issue, join the chat room on Slack or pick up some lines with UserVoice!
-						</p>
-						<div className="clearfix">
-							<div className="news-feed-header-slack" ref="slackin"></div>
-							<div className="news-feed-header-uservoice" id="contact_us">UserVoice</div>
-						</div>
+				<div className="news-feed-header">
+					<p>
+						Here are listed the last modifications in Prototypo.
+					<br/>
+						If you want to report an issue or simply say Hi, drop us a line on UserVoice or join our Slack chat room!
+					</p>
+					<div>
+						<span className="news-feed-header-slack" ref="slackin"></span>
+						<span className="news-feed-header-uservoice" id="contact_us">UserVoice</span>
 					</div>
-					{displayCommits}
-				</ul>
+				</div>
+
+				<ReactGeminiScrollbar autoshow={true}>
+					<ul className="news-feed-list">
+						{displayCommits}
+					</ul>
 				</ReactGeminiScrollbar>
 			</div>
 		)

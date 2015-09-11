@@ -16,14 +16,10 @@
 		p {
 			margin-top: 12px;
 		}
-		&-slack,
 		&-uservoice {
 			float: left;
-			display: inline-block;
-		}
-		&-uservoice {
 			position: relative;
-			margin-left: 1em;
+			margin-right: 1em;
 			// Sync with slack css btn
 			padding: 3px 10px 3px 28px;
 		    font-size: 16px;
@@ -62,10 +58,9 @@
 
 	&-list {
 		background-color: lighten($blue, 55%);
-		// position: absolute;
 		padding: 0;
-		left: 0;
 		margin-top: 0;
+		padding-bottom: 20em;
 	}
 
 	&-article {
