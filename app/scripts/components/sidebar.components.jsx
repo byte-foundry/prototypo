@@ -74,11 +74,11 @@ export default class Sidebar extends React.Component {
 						<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} legend="Profile">
 							<Account />
 						</SideTab>
-						<SideTab iconUrl="feed-panel.svg" name="news-feed" big={true} bottom={true} padding={true} legend="News">
-							<NewsFeed />
-						</SideTab>
 						<SideTab iconUrl="help-panel.svg" name="help-panel" big={true} bottom={true} padding={true} legend="Help">
 							<HelpPanel />
+						</SideTab>
+						<SideTab iconUrl="feed-panel.svg" name="news-feed" big={true} bottom={true} padding={true} legend="News">
+							<NewsFeed />
 						</SideTab>
 					</SideTabs>
 			</div>

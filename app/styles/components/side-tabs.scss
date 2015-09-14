@@ -60,10 +60,6 @@
 		padding-top:22px;
 		cursor:pointer;
 
-		&[name='help-panel'] {
-			border-top: 1px solid $black;
-		}
-
 		&.is-active, &:hover {
 			//TODO(franz): integrate in themified css
 			background-color: #4a4a4a;
