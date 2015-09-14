@@ -334,18 +334,9 @@ if ( isSafari || isIE ) {
 				const patchEndLoading = fontTemplate.set('loadingFont',false).commit();
 				localServer.dispatchUpdate('/fontTemplate',patch);
 			},
-			'/login': ({login, password}) => {
-				HoodieApi.login(`user/${login}`,
-					password)
-					.then(async () => {
-						await loadStuff();
-						location.href = '#/dashboard';
-					})
-					.catch((err) => {
-						this.setState({
-							warningMessage: err.error === 'unauthorized' ? 'You made a mistake in your email or password' : 'An unexpected error occured please contact contact@prototypo.io and provide us with your username',
-						});
-					})
+			'/login': async () => {
+				await loadStuff();
+				location.href = '#/dashboard';
 			},
 			'/logout': async () => {
 				try {
