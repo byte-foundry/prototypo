@@ -397,7 +397,7 @@ if ( isSafari || isIE ) {
 						selected: 'A'.charCodeAt(0).toString(),
 						word: 'Hello',
 						text: 'World',
-						template: 'john-fell.ptf',
+						template: 'venus.ptf',
 						pos: ['Point', 457, -364],
 					}
 				};
@@ -405,7 +405,7 @@ if ( isSafari || isIE ) {
 				console.error(err);
 			}
 
-			const typedataJSON = await Typefaces.getFont(appValues.values.template || 'john-fell.ptf');
+			const typedataJSON = await Typefaces.getFont(appValues.values.template || 'venus.ptf');
 			const typedata = JSON.parse(typedataJSON);
 
 			const initValues = {};
