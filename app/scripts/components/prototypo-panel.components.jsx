@@ -14,19 +14,13 @@ export default class PrototypoPanel extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			contextMenuPos:{x:0,y:0},
-			showContextMenu:false,
-			glyph:{},
-			panel: {
-				mode:['text'],
-			},
-		};
+		this.state = {};
 
 		this.availableMode = ['glyph','text','word'];
 	}
 
 	async componentWillMount() {
+
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
@@ -68,6 +62,10 @@ export default class PrototypoPanel extends React.Component {
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] prototypopanel');
+		}
+
+		if (!this.state.panel) {
+			return false;
 		}
 
 		let textAndGlyph;
