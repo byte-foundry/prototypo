@@ -25,24 +25,28 @@ export class SideTabs extends React.Component {
 			children = this.props.children;
 		}
 
-		const headers = _.map(children,({props: {bottom, iconUrl, name, disabled, legend}}) => {
+		const tabIcons = _.map(children,({props: {bottom, iconUrl, name, disabled, legend}}) => {
 			const classes = ClassNames({
 				'side-tabs-icon':true,
 				'is-active': name === this.props.tab,
 				'is-bottom': !!bottom,
-				'has-news': !!bottom,
+				// 'has-news': name === 'news-feed',
 				'is-disabled': !!disabled,
 			});
 
-			return (
-				<div className={classes} onClick={() => {
+			return {
+				bottom,
+				element: <div className={classes} name={name} onClick={() => {
 					this.changeTab(name, disabled);
 				}} key={`${name}SideHeader`}>
 					<img src={`assets/images/${iconUrl}`}/>
 					<div className="side-tabs-legend is-legend-active">{legend}</div>
-				</div>
-			);
+				</div>,
+			};
 		});
+
+		const header = _.filter(tabIcons,{bottom:undefined});
+		const footer = _.filter(tabIcons,{bottom:true});
 
 		const tab = _.map(children,(child) => {
 			if (this.props.tab === child.props.name)
@@ -55,7 +59,12 @@ export class SideTabs extends React.Component {
 					<div className="side-tabs-icon-headers">
 						<img src='assets/images/prototypo-icon.svg'/>
 					</div>
-					{headers}
+					<div className="side-tabs-icon-headers-top">
+						{((items) => {return _.map(items, (item) => {return item.element}) })(header)}
+					</div>
+					<div className="side-tabs-icon-headers-bottom">
+						{((items) => {return _.map(items, (item) => {return item.element}) })(footer)}
+					</div>
 				</div>
 				<div className="side-tabs-container">
 					{tab}
