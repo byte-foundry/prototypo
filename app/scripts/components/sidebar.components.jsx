@@ -6,6 +6,7 @@ import FontInfos from './font-infos.components.jsx';
 import FontsCollection from './fonts-collection.components.jsx';
 import Account from './account.components.jsx';
 import NewsFeed from './news-feed.components.jsx';
+import HelpPanel from './help-panel.components.jsx';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
@@ -64,22 +65,25 @@ export default class Sidebar extends React.Component {
 		return (
 			<div id='sidebar'>
 				<SideTabs tab={this.state.tab}>
-					<SideTab iconUrl="font-controls.svg" name="sliders" legend="Parameters">
-						<FontControls />
-					</SideTab>
-					<SideTab iconUrl="font-infos.svg" name="font-infos" big={true} disabled={true} legend="Settings">
-						<FontInfos />
-					</SideTab>
-					<SideTab iconUrl="fonts-collection.svg" name="fonts-collection" big={true} legend="Collection">
-						<FontsCollection fonts={this.state.fonts}/>
-					</SideTab>
-					<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} legend="Profile">
-						<Account />
-					</SideTab>
-					<SideTab iconUrl="feed-panel.svg" name="news-feed" big={true} bottom={true} padding={true} legend="News">
-						<NewsFeed />
-					</SideTab>
-				</SideTabs>
+						<SideTab iconUrl="font-controls.svg" name="sliders" legend="Parameters">
+							<FontControls />
+						</SideTab>
+						<SideTab iconUrl="font-infos.svg" name="font-infos" big={true} disabled={true} legend="Settings">
+							<FontInfos />
+						</SideTab>
+						<SideTab iconUrl="fonts-collection.svg" name="fonts-collection" big={true} legend="Collection">
+							<FontsCollection fonts={this.state.fonts}/>
+						</SideTab>
+						<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} legend="Profile">
+							<Account />
+						</SideTab>
+						<SideTab iconUrl="help-panel.svg" name="help-panel" big={true} bottom={true} padding={true} legend="Help">
+							<HelpPanel />
+						</SideTab>
+						<SideTab iconUrl="feed-panel.svg" name="news-feed" big={true} bottom={true} padding={true} legend="News">
+							<NewsFeed />
+						</SideTab>
+					</SideTabs>
 			</div>
 		)
 	}

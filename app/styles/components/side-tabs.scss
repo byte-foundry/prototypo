@@ -3,6 +3,7 @@
 .side-tabs {
 	height:100%;
 
+
 	&-container {
 		height:100%;
 	}
@@ -14,13 +15,31 @@
 		float:left;
 
 		box-shadow: inset -3px 0px 5px 0px darken($dark-grey, 2%);
+
+		display: flex;
+		flex-flow: column nowrap;
+		justify-content: space-between;
 	}
 
 	&-icon-headers {
-		height:72px;
+		flex:0 0 72px;
 		padding-top:19px;
 		padding-left:22px;
 		background-color: $white;
+
+		&-top {
+			flex: 1 1 100%;
+			display: flex;
+			flex-flow: column nowrap;
+			justify-content: flex-start;
+		}
+
+		&-bottom {
+			flex: 1 1 100%;
+			display: flex;
+			flex-flow: column nowrap;
+			justify-content: flex-end;
+		}
 	}
 
 	&-legend {
@@ -52,11 +71,6 @@
 		&.is-disabled {
 			opacity: 0.2;
 			cursor: default;
-		}
-
-		&.is-bottom {
-			position: absolute;
-			bottom: 0;
 		}
 
 		&.has-news {
