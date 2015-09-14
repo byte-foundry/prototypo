@@ -123,6 +123,7 @@ if ( isSafari || isIE ) {
 			appValues.tab = fontTab.get('tab');
 			appValues.pinned = tagStore.get('pinned');
 			appValues.template = fontTemplate.get('selected');
+			appValues.latestCommit = commits.get('latest');
 
 			AppValues.save({typeface:'default', values:appValues});
 		}, 300);
@@ -295,6 +296,9 @@ if ( isSafari || isIE ) {
 				const patchTag = tagStore.set('pinned', values.pinned || []).commit();
 				localServer.dispatchUpdate('/tagStore',patchTag);
 
+				const patchCommit = commits.set('latest', values.latestCommit).commit();
+				localServer.dispatchUpdate('/commits',patchCommit);
+
 				values.mode = values.mode || ['glyph'];
 
 				_.forEach(values, (value, name) => {
@@ -350,12 +354,38 @@ if ( isSafari || isIE ) {
 			},
 			'/load-commits': async (repo) => {
 
-				const lastcommitsJSON = await Commits.getCommits('prototypo');
-				const lastcommits = JSON.parse(lastcommitsJSON);
+				const repos = ['prototypo', 'john-fell.ptf', 'venus.ptf'];
+				const lastcommitsJSON = await Promise.all(repos.map((repo) => {
+					return Commits.getCommits(repo);
+				}));
+				const lastCommits = lastcommitsJSON
+					.reduce((a, b) => {
+						return a.concat(JSON.parse(b));
+					}, [])
+					.filter((commit) => {
+						return commit.commit.message.toLowerCase().indexOf('changelog') !== -1;
+					})
+					.sort((a, b) => {
+						if (a.commit.author.date < b.commit.author.date) {
+							return -1;
+						}
+						if (a.commit.author.date > b.commit.author.date) {
+							return 1;
+						}
+						return 0;
+					})
+					.reverse();
 
 				// console.log(lastcommits);
+				const patch = commits.set('list',lastCommits).commit();
 
-				localServer.dispatchUpdate('/commits', lastcommits);
+				localServer.dispatchUpdate('/commits', patch);
+			},
+			'/view-commit': ({latest}) => {
+				const patch = commits.set('latest',latest).commit();
+
+				localServer.dispatchUpdate('/commits', patch);
+				saveAppValues();
 			}
 		}
 
