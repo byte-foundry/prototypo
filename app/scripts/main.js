@@ -363,7 +363,7 @@ if ( isSafari || isIE ) {
 						return a.concat(JSON.parse(b));
 					}, [])
 					.filter((commit) => {
-						return commit.commit.message.toLowerCase().indexOf('changelog') !== -1;
+						return commit.commit.message.indexOf('Changelog') !== -1;
 					})
 					.sort((a, b) => {
 						if (a.commit.author.date < b.commit.author.date) {
