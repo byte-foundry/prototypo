@@ -4,6 +4,9 @@ import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class HoverViewMenu extends React.Component {
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] HoverViewMenu');
+		}
 		return (
 			<div className="hover-view-menu">
 				<img className="hover-view-menu-img" src="assets/images/views-icon.svg"></img>
@@ -29,6 +32,9 @@ export default class HoverViewMenu extends React.Component {
 class HoverViewMenuItem extends React.Component {
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] HoverViewMenuItem');
+		}
 		return (
 			<div className="hover-view-menu-dropdown-item" onClick={() => {this.props.toggleView(this.props.text)}}>
 				<div className="hover-view-menu-dropdown-item-checkbox">

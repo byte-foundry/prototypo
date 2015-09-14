@@ -52,6 +52,9 @@ export default class Signin extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] Signin');
+		}
 		return (
 			<form className="sign-in" onSubmit={(e) => {this.signIn(e)}}>
 				<h1 className="sign-in-title">Sign in</h1>

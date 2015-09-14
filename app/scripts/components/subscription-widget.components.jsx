@@ -4,6 +4,9 @@ import WaitForLoad from './wait-for-load.components.jsx';
 
 export default class SubscriptionWidget extends React.Component {
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] SubscriptionWidget');
+		}
 		const since = `Since ${moment.unix(this.props.subscription.start).format('DD/MM/YYYY')}`;
 		const trial = `Trial ends the ${moment.unix(this.props.subscription.trial_end).format('DD/MM/YYYY')}`;
 		const amount = `$${(this.props.subscription.plan.amount/100).toFixed(2)}/month`;

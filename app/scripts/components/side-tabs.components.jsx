@@ -15,6 +15,9 @@ export class SideTabs extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] side tabs');
+		}
 
 		let children;
 
@@ -68,6 +71,9 @@ export class SideTabs extends React.Component {
 export class SideTab extends React.Component {
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] side tab');
+		}
 		const classes = ClassNames({
 			"side-tab": true,
 			"is-active": true,

@@ -12,6 +12,9 @@ export default class Glyph extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] Glyph');
+		}
 		const showAlts = Array.isArray(this.props.glyph) && this.props.glyph.length > 1;
 		const glyph = showAlts ? this.props.glyph[0] : this.props.glyph;
 

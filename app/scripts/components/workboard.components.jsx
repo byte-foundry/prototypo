@@ -37,6 +37,9 @@ export default class Workboard extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] Workboard');
+		}
 		return (
 			<div id="workboard">
 				<Topbar />

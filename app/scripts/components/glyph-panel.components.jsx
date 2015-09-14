@@ -71,6 +71,9 @@ export default class GlyphPanel extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] GlyphPanel');
+		}
 
 		const classes = ClassNames({
 			'is-locked': this.state.glyphs.locked,

@@ -55,6 +55,9 @@ export default class NewsFeed extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] NewsFeed');
+		}
 
 		const displayCommits = _.map(this.state.commits, (commit) => {
 

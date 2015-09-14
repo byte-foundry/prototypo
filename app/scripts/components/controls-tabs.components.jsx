@@ -16,6 +16,10 @@ export class ControlsTabs extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] controls tabs');
+		}
+
 		const headers = _.map(this.props.children,({props: {iconId, name}}) => {
 			const classes = classNames({
 				'controls-tabs-icon': true,
@@ -55,6 +59,10 @@ export class ControlsTabs extends React.Component {
 export class ControlsTab extends React.Component {
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] controls tab');
+		}
+
 		return (
 			<div className="controls-tab" key={`${this.props.name}ControlsTab`}>
 				{this.props.children}

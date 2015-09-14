@@ -18,6 +18,9 @@ export default class CommitsList extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] commits list');
+		}
 
 		const classes = ClassNames({
 		});

@@ -4,6 +4,9 @@ import Glyph from './glyph.components.jsx';
 export default class AlternateGlyphList extends React.Component {
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] alternateGlyphList');
+		}
 		return (
 			<div className="alternate-glyph-list">
 				{

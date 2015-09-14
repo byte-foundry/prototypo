@@ -31,6 +31,10 @@ export default class GlyphButton extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] glyph button');
+		}
+
 		let pinned = [];
 
 		_.forEach(this.props.pinned, (tag) => {

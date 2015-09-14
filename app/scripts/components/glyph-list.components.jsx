@@ -18,6 +18,9 @@ export default class GlyphList extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] GlyphList');
+		}
 		const selectedGlyph = this.props.selected;
 		const glyphs = _.pick(this.props.glyphs, (glyph) => {
 			if (glyph[0].src) {

@@ -9,6 +9,9 @@ export default class NotLoggedIn extends React.Component {
 		pleaseWait.instance.finish();
 	}
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] NotLoggedIn');
+		}
 		return (
 			<div id="notloggedin">
 				<RouteHandler />

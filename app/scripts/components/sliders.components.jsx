@@ -8,6 +8,9 @@ import DOM from '../helpers/dom.helpers.js';
 export class Sliders extends React.Component {
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] sliders');
+		}
 		const sliders = _.map(this.props.params, (param,i) => {
 			const value = this.props.values ? this.props.values[param.name] : undefined;
 			return (
@@ -46,6 +49,9 @@ export class Slider extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] slider');
+		}
 		const value = this.props.value !== undefined ? this.props.value : this.props.param.init;
 
 		const classes = ClassNames({

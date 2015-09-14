@@ -6,6 +6,9 @@ import moment from 'moment';
 
 export default class CardsWidget extends React.Component {
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] cards widget');
+		}
 
 		let content;
 

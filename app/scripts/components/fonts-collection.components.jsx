@@ -29,6 +29,10 @@ export default class FontsCollection extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] fonts collection');
+		}
+
 		const fonts = _.map(this.props.fonts, (font) => {
 			return <FontSelector font={font} text={this.defaultText} selectedRepo={this.state.selected}/>
 		});

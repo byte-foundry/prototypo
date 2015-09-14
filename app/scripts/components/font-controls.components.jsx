@@ -117,6 +117,10 @@ export default class FontControls extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] font controls');
+		}
+
 		const tabs = _.map(this.state.parameters,(group) => {
 			return (
 				<ControlsTab iconId={group.label} name={group.label} key={group.label}>

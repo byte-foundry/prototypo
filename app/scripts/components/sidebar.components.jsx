@@ -58,6 +58,9 @@ export default class Sidebar extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] Sidebar');
+		}
 		return (
 			<div id='sidebar'>
 				<SideTabs tab={this.state.tab}>

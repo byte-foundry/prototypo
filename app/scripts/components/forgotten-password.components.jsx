@@ -43,6 +43,10 @@ export default class ForgottenPassword extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] forgotten password');
+		}
+
 		let warning = false;
 
 		if (this.state.notAnEmail) {

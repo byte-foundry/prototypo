@@ -24,6 +24,9 @@ export default class Dashboard extends React.Component {
 		 * - layout styles are prefixed with "l-"
 		 * - state styles are prefixed with "is-"
 		*/
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] dashboard');
+		}
 
 		return (
 			<div id="dashboard">

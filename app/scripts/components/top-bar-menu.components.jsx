@@ -4,6 +4,9 @@ import CheckBoxWithImg from './checkbox-with-img.components.jsx'
 
 class TopBarMenu extends React.Component {
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] TopBarMenu');
+		}
 		const headers = _.map(this.props.children,(child) => {
 			const classes = Classnames({
 				'top-bar-menu-item':true,
@@ -37,6 +40,9 @@ class TopBarMenuDropdown extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] topbarmenudropdown');
+		}
 		const classes = Classnames({
 			'top-bar-menu-item-dropdown':true,
 			'is-small':this.props.small,
@@ -56,6 +62,9 @@ class TopBarMenuAction extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] topbarMenuAction');
+		}
 		return false;
 	}
 }
@@ -84,6 +93,9 @@ class TopBarMenuDropdownItem extends React.Component {
 		}
 	}
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] topbarmenudropdownitem');
+		}
 		const classes = Classnames({
 			'top-bar-menu-item-dropdown-item':true,
 			'is-disabled':this.props.disabled,
@@ -103,6 +115,9 @@ class TopBarMenuDropdownCheckBox extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] topbarmenudropdowncheckbox');
+		}
 		const classes = Classnames({
 			'top-bar-menu-item-dropdown-item':true,
 			'is-checkbox': true,

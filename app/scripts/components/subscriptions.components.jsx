@@ -191,6 +191,9 @@ export default class Subscriptions extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] Subscriptions');
+		}
 		let content;
 		if (this.state.subscriptions.length) {
 
