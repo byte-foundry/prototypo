@@ -2,6 +2,7 @@ import React from 'react';
 import Glyph from './glyph.components.jsx';
 import GlyphTagList from './glyph-tag-list.components.jsx'
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import Log from '../services/log.services.js';
 
 export default class GlyphList extends React.Component {
 
@@ -15,6 +16,11 @@ export default class GlyphList extends React.Component {
 		else {
 			return true;
 		}
+	}
+
+	exportOTF() {
+		fontInstance.download();
+		Log.ui('GlyphList.exportOTF');
 	}
 
 	render() {
@@ -44,6 +50,7 @@ export default class GlyphList extends React.Component {
 						}
 					</div>
 				</ReactGeminiScrollbar>
+				<div title="Export and download your font" className="export-btn" onClick={() => { this.exportOTF() }}></div>
 			</div>
 		);
 	}
