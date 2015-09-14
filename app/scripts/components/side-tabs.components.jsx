@@ -1,17 +1,50 @@
 import React from 'react';
 import ClassNames from 'classnames';
+import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 export class SideTabs extends React.Component {
 
-	componentWillMount() {
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
+	async componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
 
 		this.changeTab = (name, disabled) => {
 			if( !disabled ) {
 				this.client.dispatchAction('/change-tab-sidebar',{name});
 			}
 		};
+
+		const commits = await this.client.fetch('/commits');
+		if (commits.head.toJS().list) {
+			this.setState({
+				latestCommit:commits.head.toJS().list[0].sha,
+				latestViewedCommit:commits.head.toJS().latest,
+			});
+		}
+
+		this.client.getStore('/commits', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					latestCommit:head.toJS().list[0].sha,
+					latestViewedCommit:head.toJS().latest,
+				});
+			})
+			.onDelete(() => {
+				this.setState({
+					latestCommit:undefined,
+					latestViewedCommit:undefined,
+				});
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 	render() {
@@ -33,7 +66,7 @@ export class SideTabs extends React.Component {
 				'side-tabs-icon':true,
 				'is-active': name === this.props.tab,
 				'is-bottom': !!bottom,
-				// 'has-news': name === 'news-feed',
+				'has-news': name === 'news-feed' && this.state.latestCommit !== this.state.latestViewedCommit,
 				'is-disabled': !!disabled,
 			});
 
