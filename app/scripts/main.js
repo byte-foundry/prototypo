@@ -287,7 +287,6 @@ if ( isSafari || isIE ) {
 			'/load-app-values': ({values}) => {
 				values.selected = values.selected || 'A'.charCodeAt(0);
 				const patchGlyph = glyphs.set('selected', values.selected).commit();
-				fontInstance.displayChar(String.fromCharCode(values.selected));
 				localServer.dispatchUpdate('/glyphs', patchGlyph);
 
 				const patchTab = fontTab.set('tab', values.tab || 'Func').commit();
@@ -405,6 +404,8 @@ if ( isSafari || isIE ) {
 				console.error(err);
 			}
 
+			localClient.dispatchAction('/load-app-values', appValues);
+
 			const typedataJSON = await Typefaces.getFont(appValues.values.template || 'venus.ptf');
 			const typedata = JSON.parse(typedataJSON);
 
@@ -441,9 +442,9 @@ if ( isSafari || isIE ) {
 			localClient.dispatchAction('/load-params', typedata);
 			localClient.dispatchAction('/load-glyphs', font.font.altMap);
 			localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
-			localClient.dispatchAction('/load-app-values', appValues);
 
 			localClient.dispatchAction('/load-commits');
+			fontInstance.displayChar(String.fromCharCode(glyphs.get('selected')));
 
 			try {
 				const fontValues = await FontValues.get({typeface: 'default'});
