@@ -10,7 +10,7 @@ export default class NewsFeed extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			// latestCommit: {},
+			latestCommit: '',
 			commits: []
 		};
 	}
@@ -19,25 +19,33 @@ export default class NewsFeed extends React.Component {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		const lastcommitsJSON = await Commits.getCommits('prototypo');
+		const repos = ['prototypo', 'john-fell.ptf', 'venus.ptf'];
+
+		const lastcommitsJSON = await Promise.all(repos.map((repo) => {
+			return Commits.getCommits(repo);
+		}));
 
 		this.setState({
-			commits: JSON.parse(lastcommitsJSON)
+			commits: lastcommitsJSON
+				.reduce((a, b) => {
+					return a.concat(JSON.parse(b));
+				}, [])
+				.sort((a, b) => {
+					if (a.commit.author.date < b.commit.author.date) {
+						return -1;
+					}
+					if (a.commit.author.date > b.commit.author.date) {
+						return 1;
+					}
+					return 0;
+				})
+				.reverse()
 		});
 
-		// this.client.getStore('/commits', this.lifespan)
-		// 	.onUpdate(() => {
-		// 		this.setState({
-		// 			commits: lastcommits
-		// 		});
-		// 	})
-		// 	.onDelete(() => {
-		// 		this.setState(undefined);
-		// 	});
-	}
+		this.setState({
+			latestCommit: this.state.commits[0].sha
+		});
 
-	componentDidMount() {
-		
 	}
 
 	componentWillUnmount() {
@@ -51,11 +59,12 @@ export default class NewsFeed extends React.Component {
 
 		const displayCommits = _.map(this.state.commits, (commit) => {
 
+			let commitRepo = commit.url.match(/(byte-foundry\/)(.*)(\/commits)/)[2];
 			let commitMessage = commit.commit.message.split(/\x0A/);
 			let commitTitle = commitMessage[0];
 			let commitContent = commitMessage.slice(1).filter(Boolean);
 
-			return <CommitsList title={commitTitle} content={commitContent} date={commit.commit.author.date} url={commit.html_url}/>
+			return <CommitsList repo={commitRepo} title={commitTitle} content={commitContent} date={commit.commit.author.date} url={commit.html_url}/>
 		});
 
 		return (
