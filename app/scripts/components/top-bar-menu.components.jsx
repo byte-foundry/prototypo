@@ -78,6 +78,14 @@ function setupKeyboardShortcut(key,modifier,cb) {
 };
 
 class TopBarMenuDropdownItem extends React.Component {
+	shouldComponentUpdate(newProps) {
+		return (
+			this.props.name !== newProps.name ||
+			this.props.shortcut !== newProps.shortcut ||
+			this.props.handler !== newProps.handler
+		);
+	}
+
 	componentWillMount() {
 		if (this.props.shortcut) {
 			let [modifier, key] = this.props.shortcut.split('+');
