@@ -92,6 +92,9 @@ export default class Topbar extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] Topbar');
+		}
 		const whereAt = this.state.to || this.state.from;
 		const undoDisabled = whereAt < 2;
 		const redoDisabled = whereAt > (this.state.eventList.length - 2);

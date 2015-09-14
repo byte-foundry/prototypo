@@ -11,7 +11,17 @@ export default class Glyph extends React.Component {
 		client.dispatchAction('/select-glyph', {unicode: this.props.unicode});
 	}
 
+	shouldComponentUpdate(newProps) {
+		return (
+			this.props.glyph !== newProps.glyph ||
+			this.props.selected !== newProps.selected
+		);
+	}
+
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] Glyph');
+		}
 		const showAlts = Array.isArray(this.props.glyph) && this.props.glyph.length > 1;
 		const glyph = showAlts ? this.props.glyph[0] : this.props.glyph;
 

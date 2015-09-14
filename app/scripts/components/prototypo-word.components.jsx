@@ -48,6 +48,17 @@ export default class PrototypoWord extends React.Component {
 		this.lifespan.release();
 	}
 
+	shouldComponentUpdate(newProps) {
+		return (
+			this.props.fontName !== newProps.fontName ||
+				this.props.field !== newProps.field ||
+				this.props.panel.invertedWordView !== newProps.panel.invertedWordView ||
+				this.props.panel.wordFontSize !== newProps.panel.wordFontSize ||
+				this.props.panel.invertedWordColors !== newProps.panel.invertedWordColors ||
+				newProps.panel[newProps.field] !== React.findDOMNode(this.refs.text).textContent
+		)
+	}
+
 	saveText() {
 		const textDiv = React.findDOMNode(this.refs.text);
 		if (textDiv && textDiv.textContent) {
@@ -84,6 +95,9 @@ export default class PrototypoWord extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] PrototypoWord');
+		}
 		const style = {
 			'fontFamily':`'${this.props.fontName || 'theyaintus'}', sans-serif`,
 			'fontSize': `${this.props.panel.wordFontSize || 1}em`,

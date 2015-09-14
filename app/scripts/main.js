@@ -287,7 +287,6 @@ if ( isSafari || isIE ) {
 			'/load-app-values': ({values}) => {
 				values.selected = values.selected || 'A'.charCodeAt(0);
 				const patchGlyph = glyphs.set('selected', values.selected).commit();
-				fontInstance.displayChar(String.fromCharCode(values.selected));
 				localServer.dispatchUpdate('/glyphs', patchGlyph);
 
 				const patchTab = fontTab.set('tab', values.tab || 'Func').commit();
@@ -335,18 +334,9 @@ if ( isSafari || isIE ) {
 				const patchEndLoading = fontTemplate.set('loadingFont',false).commit();
 				localServer.dispatchUpdate('/fontTemplate',patch);
 			},
-			'/login': ({login, password}) => {
-				HoodieApi.login(`user/${login}`,
-					password)
-					.then(async () => {
-						await loadStuff();
-						location.href = '#/dashboard';
-					})
-					.catch((err) => {
-						this.setState({
-							warningMessage: err.error === 'unauthorized' ? 'You made a mistake in your email or password' : 'An unexpected error occured please contact contact@prototypo.io and provide us with your username',
-						});
-					})
+			'/login': async () => {
+				await loadStuff();
+				location.href = '#/dashboard';
 			},
 			'/logout': async () => {
 				try {
@@ -397,7 +387,7 @@ if ( isSafari || isIE ) {
 						selected: 'A'.charCodeAt(0).toString(),
 						word: 'Hello',
 						text: 'World',
-						template: 'john-fell.ptf',
+						template: 'venus.ptf',
 						pos: ['Point', 457, -364],
 					}
 				};
@@ -405,7 +395,9 @@ if ( isSafari || isIE ) {
 				console.error(err);
 			}
 
-			const typedataJSON = await Typefaces.getFont(appValues.values.template || 'john-fell.ptf');
+			localClient.dispatchAction('/load-app-values', appValues);
+
+			const typedataJSON = await Typefaces.getFont(appValues.values.template || 'venus.ptf');
 			const typedata = JSON.parse(typedataJSON);
 
 			const initValues = {};
@@ -441,9 +433,9 @@ if ( isSafari || isIE ) {
 			localClient.dispatchAction('/load-params', typedata);
 			localClient.dispatchAction('/load-glyphs', font.font.altMap);
 			localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
-			localClient.dispatchAction('/load-app-values', appValues);
 
 			localClient.dispatchAction('/load-commits');
+			fontInstance.displayChar(String.fromCharCode(glyphs.get('selected')));
 
 			try {
 				const fontValues = await FontValues.get({typeface: 'default'});

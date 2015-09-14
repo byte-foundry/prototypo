@@ -8,6 +8,9 @@ import DOM from '../helpers/dom.helpers.js';
 export class Sliders extends React.Component {
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] sliders');
+		}
 		const sliders = _.map(this.props.params, (param,i) => {
 			const value = this.props.values ? this.props.values[param.name] : undefined;
 			return (
@@ -46,11 +49,15 @@ export class Slider extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] slider');
+		}
 		const value = this.props.value !== undefined ? this.props.value : this.props.param.init;
 
 		const classes = ClassNames({
 			'slider': true,
-			'is-disabled':this.props.param.disabled
+			'is-disabled': this.props.param.disabled,
+			'is-child': this.props.param.child
 		});
 
 		return (
@@ -65,7 +72,8 @@ export class Slider extends React.Component {
 					max={this.props.param.max}
 					minAdvised={this.props.param.minAdvised}
 					maxAdvised={this.props.param.maxAdvised}
-					disabled={this.props.param.disabled}/>
+					disabled={this.props.param.disabled}
+					child={this.props.param.child}/>
 			</div>
 		)
 	}

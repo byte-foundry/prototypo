@@ -10,75 +10,60 @@
 	height: 100%;
 
 	&-header {
-		background-color: lighten($blue, 0%);
+		background-color: $blue;
 		color: $white;
-		padding: 1em 2em 2em;
+		padding: 1.7em 2em;
+		min-height: 73px;
 		p {
-			margin-top: 12px;
-		}
-		&-slack,
-		&-uservoice {
-			float: left;
-			display: inline-block;
-		}
-		&-uservoice {
-			position: relative;
-			margin-left: 1em;
-			// Sync with slack css btn
-			padding: 3px 10px 3px 28px;
-		    font-size: 16px;
-		    line-height: 22px;
-		    border-radius: 4px;
-			background-color: #eee;
-			background-image: linear-gradient(#fcfcfc, #eee);
-			background-repeat: no-repeat;
-			border: 1px solid #d5d5d5;
-			color: #333;
-			text-decoration: none;
-			text-shadow: 0 1px 0 #fff;
-			white-space: nowrap;
-			cursor: pointer;
-			transition: background-color 200ms;
-			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-			&:hover {
-				background: #ddd;
-			}
-			// end sync
-			&:before {
-				content: "";
-				position: absolute;
-				left: 2px;
-				background-image: url('./images/uservoice.svg');
-				background-repeat: no-repeat;
-				background-position: center;
-				background-size: 90%;
-				width: 22px;
-				height: 22px;
-				margin-right: 5px;
-				display: inline-block;
-			}
+			margin: 0px;
+			font-size: 1.2em;
 		}
 	}
 
 	&-list {
 		background-color: lighten($blue, 55%);
-		// position: absolute;
 		padding: 0;
-		left: 0;
 		margin-top: 0;
+		padding-bottom: 20em;
 	}
 
 	&-article {
 		list-style: none;
-		padding: 0 1em 2em 2em;
+		padding: 2em 1em 1em 2em;
 
 		&:nth-child(even) {
 			background-color: lighten($blue, 52%);
-			padding: .5em 1em 2em 2em;
+		}
+
+		&-header {
+			span {
+				padding: 5px 8px;
+				border-radius: 5px;
+				font-size: .8em;
+			}
+			&-repo {
+				margin-bottom: 0;
+				color: $dark-grey;
+				background-color: $yellow;
+				position: relative;
+				margin-right: 10px;
+				display: inline-block;
+				text-transform: uppercase;
+				letter-spacing: .02em;
+				&.is-font {
+					color: $white;
+					background-color: $blue;
+				}
+			}
+			&-date {
+				color: $medium-grey !important;
+				background-color: $white;
+			}
 		}
 
 		&-title {
-			margin-bottom: 0;
+			position: relative;
+			margin-top: 0.2em;
 			color: $green;
 			a {
 				color: $blue !important;
@@ -100,14 +85,11 @@
 			margin-top: 15px;
 			p {
 				margin: 0 0 5px 0;
-				color: $dark-grey !important;
+				color: $medium-grey !important;
 			}
-		}
-
-		&-date {
-			color: $dark-grey !important;
-			font-size: .8em;
-			margin: 5px 0 0;
+			&:empty {
+				display: none;
+			}
 		}
 
 	}

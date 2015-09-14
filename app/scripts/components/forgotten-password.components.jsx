@@ -2,6 +2,7 @@ import React from 'react';
 import pleaseWait from 'please-wait';
 import HoodieApi from '../services/hoodie.services.js';
 import WarningMessage from './warning-message.components.jsx';
+import WaitForLoad from './wait-for-load.components.jsx';
 import Log from '../services/log.services.js';
 
 export default class ForgottenPassword extends React.Component {
@@ -10,28 +11,50 @@ export default class ForgottenPassword extends React.Component {
 
 		this.state = {};
 	}
+
 	async resetPassword() {
+		this.setState({
+			loading:true,
+		});
+
 		const email = React.findDOMNode(this.refs.email).value;
 		if (!(/.+\@.+\..+/.test(email))) {
 			this.setState({
 				notAnEmail:true,
+				loading:false,
 			});
 			return;
 		}
 
 		Log.ui('ForgottenPassword.resetPassword', email);
-
-		const result = await HoodieApi.askPasswordReset(email);
-		this.setState({
-			reset:true,
-		});
+		try {
+			const result = await HoodieApi.askPasswordReset(email);
+			this.setState({
+				reset:true,
+				loading:false,
+			});
+		}
+		catch(err) {
+			this.setState({
+				errorReset:true,
+				loading:false,
+			});
+		}
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] forgotten password');
+		}
+
 		let warning = false;
 
 		if (this.state.notAnEmail) {
 			warning = 'You must enter an email address';
+		}
+
+		if (this.state.errorReset) {
+			warning = 'This email is not in our database';
 		}
 
 		let content;
@@ -47,16 +70,18 @@ export default class ForgottenPassword extends React.Component {
 				else {
 					return false;
 				}})(warning),
-				<div className="forgotten-password-buttons">
-					<button className="forgotten-password-button"
-						onClick={() => {
-							location.href = '#/signin';
-						}}>Cancel</button>
-					<button className="forgotten-password-button"
-						onClick={() => {
-							this.resetPassword()
-						}}>Reset Password</button>
-				</div>,
+				<WaitForLoad loaded={!this.state.loading} secColor={true}>
+					<div className="forgotten-password-buttons">
+						<button className="forgotten-password-button"
+							onClick={() => {
+								location.href = '#/signin';
+							}}>Cancel</button>
+						<button className="forgotten-password-button"
+							onClick={() => {
+								this.resetPassword()
+							}}>Reset Password</button>
+					</div>
+				</WaitForLoad>,
 			]
 		}
 		else {

@@ -20,6 +20,10 @@ export default class FontSelector extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] font selector');
+		}
+
 		const family = {
 			'fontFamily': `"${this.props.font.familyName}"`,
 		};

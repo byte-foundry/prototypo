@@ -48,6 +48,17 @@ export default class PrototypoText extends React.Component {
 		this.lifespan.release();
 	}
 
+	shouldComponentUpdate(newProps) {
+		return (
+			this.props.fontName !== newProps.fontName ||
+				this.props.field !== newProps.field ||
+				this.props.panel.invertedTextView !== newProps.panel.invertedTextView ||
+				this.props.panel.textFontSize !== newProps.panel.textFontSize ||
+				this.props.panel.invertedTextColors !== newProps.panel.invertedTextColors ||
+				newProps.panel[newProps.field] !== React.findDOMNode(this.refs.text).textContent
+		)
+	}
+
 	saveText() {
 		const textDiv = React.findDOMNode(this.refs.text);
 		if (textDiv && textDiv.textContent) {
@@ -84,6 +95,9 @@ export default class PrototypoText extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] PrototypoText');
+		}
 		const style = {
 			'fontFamily':`'${this.props.fontName || 'theyaintus'}', sans-serif`,
 			'fontSize': `${this.props.panel.textFontSize || 1}em`,

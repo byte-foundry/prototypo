@@ -13,6 +13,9 @@ export default class SitePortal extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] SitePortal');
+		}
 		return (<div></div>);
 	}
 }

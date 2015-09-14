@@ -27,11 +27,20 @@ export default class Signin extends React.Component {
 
 		e.preventDefault();
 
-		this.client.dispatchAction('/login',
-		{
-			login: React.findDOMNode(this.refs.email).value,
-			password: React.findDOMNode(this.refs.password).value
-		});
+		const login = React.findDOMNode(this.refs.email).value;
+		const password = React.findDOMNode(this.refs.password).value;
+
+		HoodieApi.login(`user/${login}`,
+			password)
+			.then(() => {
+				this.client.dispatchAction('/login', { });
+			})
+			.catch((err) => {
+				this.setState({
+					warningMessage: err.error === 'unauthorized' ? 'You made a mistake in your email or password' : 'An unexpected error occured please contact contact@prototypo.io and provide us with your username',
+					loading:true,
+				});
+			})
 
 		return;
 	}
@@ -43,6 +52,9 @@ export default class Signin extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] Signin');
+		}
 		return (
 			<form className="sign-in" onSubmit={(e) => {this.signIn(e)}}>
 				<h1 className="sign-in-title">Sign in</h1>

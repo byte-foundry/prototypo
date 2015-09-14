@@ -13,6 +13,9 @@ export default class GlyphTagList extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] GlyphTagList');
+		}
 
 		const classes = ClassNames({
 			'glyph-tag-list': true,

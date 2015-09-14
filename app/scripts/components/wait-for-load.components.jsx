@@ -3,6 +3,9 @@ import Classnames from 'classnames';
 
 export default class WaitForLoad extends React.Component {
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] WaitForLoad');
+		}
 		let content;
 		if (this.props.loaded) {
 			content = this.props.children;

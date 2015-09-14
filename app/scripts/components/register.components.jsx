@@ -8,6 +8,9 @@ export default class Register extends React.Component {
 		hoodieApi.register(username, password);
 	}
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] Register');
+		}
 		return (
 			<div className="sign-in">
 				<h1 className="sign-in-title">Register</h1>

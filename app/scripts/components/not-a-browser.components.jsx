@@ -3,6 +3,9 @@ import pleaseWait from 'please-wait';
 
 export default class NotABrowser extends React.Component {
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] NotABrowser');
+		}
 		pleaseWait.instance.finish();
 		return (
 			<div id="notloggedin">

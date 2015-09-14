@@ -46,6 +46,10 @@ export default class Account extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] account');
+		}
+
 		let passwordTooShort = false;
 
 		if (this.state.passwordTooShort) {

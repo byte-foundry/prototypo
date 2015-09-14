@@ -12,6 +12,10 @@ export default class CheckBoxWithImg extends React.Component {
 	}
 
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] checkBoxWithImg');
+		}
+
 		let checkbox;
 		if (this.state.hovered) {
 			checkbox = <img src="assets/images/checkbox-hover.svg"/>;

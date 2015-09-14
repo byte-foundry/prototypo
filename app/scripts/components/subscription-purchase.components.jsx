@@ -3,6 +3,9 @@ import WaitForLoad from './wait-for-load.components.jsx';
 
 export default class SubscriptionPurchase extends React.Component {
 	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] SubscriptionPurchase');
+		}
 		return (
 			<div className="subscription-purchase">
 				<WaitForLoad loaded={this.props.loaded}>
