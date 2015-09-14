@@ -19,33 +19,27 @@ export default class NewsFeed extends React.Component {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		const repos = ['prototypo', 'john-fell.ptf', 'venus.ptf'];
-
-		const lastcommitsJSON = await Promise.all(repos.map((repo) => {
-			return Commits.getCommits(repo);
-		}));
+		const commits = await this.client.fetch('/commits');
 
 		this.setState({
-			commits: lastcommitsJSON
-				.reduce((a, b) => {
-					return a.concat(JSON.parse(b));
-				}, [])
-				.sort((a, b) => {
-					if (a.commit.author.date < b.commit.author.date) {
-						return -1;
-					}
-					if (a.commit.author.date > b.commit.author.date) {
-						return 1;
-					}
-					return 0;
-				})
-				.reverse()
+			commits: commits.head.toJS().list,
+			latestCommit: commits.head.toJS().list[0].sha,
 		});
 
-		this.setState({
-			latestCommit: this.state.commits[0].sha
-		});
+		this.client.dispatchAction('/view-commit',{latest:this.state.latestCommit});
 
+		this.client.getStore('/commits',this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					commits: head.toJS().list,
+					latestCommit: head.toJS().list[0].sha,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+
+		//const repos = ['prototypo', 'john-fell.ptf', 'venus.ptf'];
 	}
 
 	componentWillUnmount() {
