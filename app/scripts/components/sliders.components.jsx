@@ -50,7 +50,8 @@ export class Slider extends React.Component {
 
 		const classes = ClassNames({
 			'slider': true,
-			'is-disabled':this.props.param.disabled
+			'is-disabled': this.props.param.disabled,
+			'is-child': this.props.param.child
 		});
 
 		return (
@@ -65,7 +66,8 @@ export class Slider extends React.Component {
 					max={this.props.param.max}
 					minAdvised={this.props.param.minAdvised}
 					maxAdvised={this.props.param.maxAdvised}
-					disabled={this.props.param.disabled}/>
+					disabled={this.props.param.disabled}
+					child={this.props.param.child}/>
 			</div>
 		)
 	}
