@@ -441,7 +441,7 @@ if ( isSafari || isIE ) {
 			catch(err) {
 				appValues = {
 					values: {
-						mode: ['glyph'],
+						mode: ['glyph', 'word'],
 						selected: 'A'.charCodeAt(0).toString(),
 						word: 'Hello',
 						text: 'World',
