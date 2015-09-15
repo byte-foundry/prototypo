@@ -48,14 +48,16 @@ export default class PrototypoText extends React.Component {
 		this.lifespan.release();
 	}
 
-	shouldComponentUpdate(newProps) {
+	shouldComponentUpdate(newProps, newState) {
 		return (
 			this.props.fontName !== newProps.fontName ||
 				this.props.field !== newProps.field ||
 				this.props.panel.invertedTextView !== newProps.panel.invertedTextView ||
 				this.props.panel.textFontSize !== newProps.panel.textFontSize ||
 				this.props.panel.invertedTextColors !== newProps.panel.invertedTextColors ||
-				newProps.panel[newProps.field] !== React.findDOMNode(this.refs.text).textContent
+				newProps.panel[newProps.field] !== React.findDOMNode(this.refs.text).textContent ||
+				this.state.showContextMenu !== newState.showContextMenu ||
+				this.state.contextMenuPos !== newState.contextMenuPos
 		)
 	}
 

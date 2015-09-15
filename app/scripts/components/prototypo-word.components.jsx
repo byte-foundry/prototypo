@@ -48,14 +48,16 @@ export default class PrototypoWord extends React.Component {
 		this.lifespan.release();
 	}
 
-	shouldComponentUpdate(newProps) {
+	shouldComponentUpdate(newProps, newState) {
 		return (
 			this.props.fontName !== newProps.fontName ||
 				this.props.field !== newProps.field ||
 				this.props.panel.invertedWordView !== newProps.panel.invertedWordView ||
 				this.props.panel.wordFontSize !== newProps.panel.wordFontSize ||
 				this.props.panel.invertedWordColors !== newProps.panel.invertedWordColors ||
-				newProps.panel[newProps.field] !== React.findDOMNode(this.refs.text).textContent
+				newProps.panel[newProps.field] !== React.findDOMNode(this.refs.text).textContent ||
+				this.state.showContextMenu !== newState.showContextMenu ||
+				this.state.contextMenuPos !== newState.contextMenuPos
 		)
 	}
 
