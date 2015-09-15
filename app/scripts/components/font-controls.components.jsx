@@ -25,10 +25,11 @@ export default class FontControls extends React.Component {
 		const fontControls = await this.client.fetch('/fontControls');
 		const fontParameters = await this.client.fetch('/fontParameters');
 		const fontTab = await this.client.fetch('/fontTab');
+		const fontTemplate = await this.client.fetch('/fontTemplate');
 
 		const debouncedSave = _.debounce((values) => {
 			FontValues.save({
-				typeface: 'default',
+				typeface: fontTemplate.get('selected'),
 				values: values,
 			});
 		}, 300)
