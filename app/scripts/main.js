@@ -49,8 +49,7 @@ if ( isSafari || isIE ) {
 	React.render(<NotABrowser />, content);
 
 } else {
-
-	Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
+	window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
 	const stores = {};
 	const localServer = new LocalServer(stores).instance;
