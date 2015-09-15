@@ -328,6 +328,13 @@ if ( isSafari || isIE ) {
 				const typedataJSON = await Typefaces.getFont(repo);
 				const typedata = JSON.parse(typedataJSON);
 
+				const initValues = {};
+				_.each(typedata.controls ,(group) => {
+					return _.each(group.parameters, (param) => {
+						initValues[param.name] = param.init;
+					});
+				});
+
 				await fontInstance.loadFont( typedata.fontinfo.familyName, typedataJSON );
 
 				localClient.dispatchAction('/create-font', fontInstance);
@@ -337,6 +344,20 @@ if ( isSafari || isIE ) {
 				localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 				const patchEndLoading = fontTemplate.set('loadingFont',false).commit();
 				localServer.dispatchUpdate('/fontTemplate',patch);
+				
+				try {
+					const fontValues = await FontValues.get({typeface: repo});
+					localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
+				}
+				catch (err) {
+					const values =  _.extend(fontControls.get('values'),initValues)
+					localClient.dispatchAction('/load-values',values);
+					FontValues.save({
+						typeface: repo,
+						values,
+					});
+					console.error(err);
+				}
 			},
 			'/login': async () => {
 				await loadStuff();
@@ -355,31 +376,38 @@ if ( isSafari || isIE ) {
 			'/load-commits': async (repo) => {
 
 				const repos = ['prototypo', 'john-fell.ptf', 'venus.ptf'];
-				const lastcommitsJSON = await Promise.all(repos.map((repo) => {
-					return Commits.getCommits(repo);
-				}));
-				const lastCommits = lastcommitsJSON
-					.reduce((a, b) => {
-						return a.concat(JSON.parse(b));
-					}, [])
-					.filter((commit) => {
-						return commit.commit.message.indexOf('Changelog') !== -1;
-					})
-					.sort((a, b) => {
-						if (a.commit.author.date < b.commit.author.date) {
-							return -1;
-						}
-						if (a.commit.author.date > b.commit.author.date) {
-							return 1;
-						}
-						return 0;
-					})
-					.reverse();
+				try {
+					const lastcommitsJSON = await Promise.all(repos.map((repo) => {
+						return Commits.getCommits(repo);
+					}));
+					const lastCommits = lastcommitsJSON
+						.reduce((a, b) => {
+							return a.concat(JSON.parse(b));
+						}, [])
+						.filter((commit) => {
+							return commit.commit.message.indexOf('Changelog') !== -1;
+						})
+						.sort((a, b) => {
+							if (a.commit.author.date < b.commit.author.date) {
+								return -1;
+							}
+							if (a.commit.author.date > b.commit.author.date) {
+								return 1;
+							}
+							return 0;
+						})
+						.reverse();
 
-				// console.log(lastcommits);
-				const patch = commits.set('list',lastCommits).commit();
+					// console.log(lastcommits);
+					const patch = commits.set('list',lastCommits).commit();
 
-				localServer.dispatchUpdate('/commits', patch);
+					localServer.dispatchUpdate('/commits', patch);
+				}
+				catch (err) {
+					const patch = commits.set('error', 'Cannot get commit').commit();
+
+					localServer.dispatchUpdate('/commits', patch);
+				}
 			},
 			'/view-commit': ({latest}) => {
 				const patch = commits.set('latest',latest).commit();
@@ -413,7 +441,7 @@ if ( isSafari || isIE ) {
 			catch(err) {
 				appValues = {
 					values: {
-						mode: ['glyph'],
+						mode: ['glyph', 'word'],
 						selected: 'A'.charCodeAt(0).toString(),
 						word: 'Hello',
 						text: 'World',
@@ -468,14 +496,14 @@ if ( isSafari || isIE ) {
 			fontInstance.displayChar(String.fromCharCode(glyphs.get('selected')));
 
 			try {
-				const fontValues = await FontValues.get({typeface: 'default'});
+				const fontValues = await FontValues.get({typeface: appValues.values.template});
 				localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
 			}
 			catch (err) {
 				const values =  _.extend(fontControls.get('values'),initValues)
 				localClient.dispatchAction('/load-values',values);
 				FontValues.save({
-					typeface: 'default',
+					typeface: appValues.values.template,
 					values,
 				});
 				console.error(err);
