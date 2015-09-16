@@ -68,12 +68,14 @@ export default class NewsFeed extends React.Component {
 
 				<ReactGeminiScrollbar autoshow={true}>
 
+				<div className="news-feed-header">
+					<p>
+						Here are listed the last modifications in Prototypo.
+					</p>
+				</div>
+				
 				<ul className="news-feed-list">
-					<div className="news-feed-header">
-						<p>
-							Here are listed the last modifications in Prototypo.
-						</p>
-					</div>
+
 					{displayCommits}
 				</ul>
 				</ReactGeminiScrollbar>
