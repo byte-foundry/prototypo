@@ -26,16 +26,16 @@
 		display:none;
 	}
 
-	&:hover {
+	&:hover, &.is-active {
 		background-color:$dark-grey;
 		color:$white;
 	}
 		
-	&:hover &-caret-closed {
+	&:hover &-caret-closed, &.is-active &-caret-closed {
 		display:none;
 	}
 
-	&:hover &-caret-open {
+	&:hover &-caret-open, &.is-active &-caret-open {
 		display:block;
 	}
 }

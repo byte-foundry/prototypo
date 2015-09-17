@@ -13,11 +13,11 @@ export default class FontsCollection extends React.Component {
 		this.defaultText = 'Abc 123';
 		this.setState({});
 
-		const fontTemplate = await this.client.fetch('/fontTemplate');
+		const fontVariant = await this.client.fetch('/fontVariant');
 
-		this.setState(fontTemplate.head.toJS());
+		this.setState(fontVariant.head.toJS());
 
-		this.client.getStore('/fontTemplate', this.lifespan)
+		this.client.getStore('/fontVariant', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState(head.toJS());
 			})
@@ -40,7 +40,7 @@ export default class FontsCollection extends React.Component {
 				<h1 className="fonts-collection-title side-tab-h1">Your font collections</h1>
 				<AddFamily />
 				<ReactGeminiScrollbar>
-					<FamilyList />
+					<FamilyList selected={this.state.family} variantSelected={this.state.variant}/>
 				</ReactGeminiScrollbar>
 			</div>
 		)

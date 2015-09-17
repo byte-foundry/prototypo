@@ -104,9 +104,6 @@ else {
 		selected: 'A',
 	});
 
-	const fontTemplate = stores['/fontTemplate'] = new Remutable({
-	});
-
 	const templateList = stores['/templateList'] = new Remutable({
 		list: [
 			{
@@ -128,6 +125,9 @@ else {
 		fonts: [],
 	});
 
+	const fontVariant = stores['/fontVariant'] = new Remutable({
+	});
+
 	const panel = stores['/panel'] = new Remutable({
 		mode: [],
 		textFontSize: 6,
@@ -146,6 +146,30 @@ else {
 	//HoodieApi.on('connected',() => {
 	//	RemoteClient.initRemoteStore('stripe', `/stripe${uuid.v4()}$$${HoodieApi.instance.hoodieId}`,'subscription');
 	//});
+	//
+	
+	async function loadFontValues(typedata, typeface) {
+
+		const initValues = {};
+		_.each(typedata.controls ,(group) => {
+			return _.each(group.parameters, (param) => {
+				initValues[param.name] = param.init;
+			});
+		});
+
+		try {
+			const fontValues = await FontValues.get({typeface});
+			localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
+		}
+		catch (err) {
+			const values =  _.extend(fontControls.get('values'),initValues);
+			localClient.dispatchAction('/load-values',values);
+			FontValues.save({
+				typeface: typeface,
+				values,
+			});
+		}
+	}
 
 	async function createStores() {
 
@@ -162,8 +186,10 @@ else {
 			appValues.selected = glyphs.get('selected');
 			appValues.tab = fontTab.get('tab');
 			appValues.pinned = tagStore.get('pinned');
-			appValues.template = fontTemplate.get('selected');
 			appValues.latestCommit = commits.get('latest');
+			appValues.library = fontLibrary.get('fonts');
+			appValues.variantSelected = fontVariant.get('variant');
+			appValues.familySelected = fontVariant.get('family');
 
 			AppValues.save({typeface:'default', values:appValues});
 		}, 300);
@@ -339,6 +365,14 @@ else {
 				const patchCommit = commits.set('latest', values.latestCommit).commit();
 				localServer.dispatchUpdate('/commits',patchCommit);
 
+				const patchFonts = fontLibrary.set('fonts', values.library || []).commit();
+				localServer.dispatchUpdate('/fontLibrary',patchCommit);
+
+				const patchVariant = fontVariant
+					.set('variant', values.variantSelected)
+					.set('family', values.familySelected).commit();
+				localServer.dispatchUpdate('/fontVariant',patchVariant);
+
 				values.mode = values.mode || ['glyph'];
 
 				_.forEach(values, (value, name) => {
@@ -348,8 +382,6 @@ else {
 				const patchPanel = panel.commit();
 
 				localServer.dispatchUpdate('/panel', patchPanel);
-				const patchTemplate = fontTemplate.set('selected',values.template).commit();
-				localServer.dispatchUpdate('/fontTemplate', patchTemplate);
 
 				appValuesLoaded = true;
 			},
@@ -360,20 +392,9 @@ else {
 				saveAppValues();
 
 			},
-			'/change-font': async (repo) => {
-				const patch = fontTemplate.set('selected',repo)
-					.set('loadingFont',true).commit();
-				localServer.dispatchUpdate('/fontTemplate', patch);
-
-				const typedataJSON = await Typefaces.getFont(repo);
+			'/change-font': async ({template, db}) => {
+				const typedataJSON = await Typefaces.getFont(template);
 				const typedata = JSON.parse(typedataJSON);
-
-				const initValues = {};
-				_.each(typedata.controls ,(group) => {
-					return _.each(group.parameters, (param) => {
-						initValues[param.name] = param.init;
-					});
-				});
 
 				await fontInstance.loadFont( typedata.fontinfo.familyName, typedataJSON );
 
@@ -382,22 +403,8 @@ else {
 				localClient.dispatchAction('/load-params', typedata);
 				localClient.dispatchAction('/load-glyphs', fontInstance.font.altMap);
 				localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
-				const patchEndLoading = fontTemplate.set('loadingFont',false).commit();
-				localServer.dispatchUpdate('/fontTemplate',patch);
-				
-				try {
-					const fontValues = await FontValues.get({typeface: repo});
-					localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
-				}
-				catch (err) {
-					const values =  _.extend(fontControls.get('values'),initValues)
-					localClient.dispatchAction('/load-values',values);
-					FontValues.save({
-						typeface: repo,
-						values,
-					});
-					console.error(err);
-				}
+				loadFontValues(typedata, db);
+
 			},
 			'/login': async () => {
 				await loadStuff();
@@ -457,8 +464,7 @@ else {
 			},
 			'/create-family': ({name, template}) => {
 				const fonts = Array.from(fontLibrary.get('fonts'));
-
-				fonts.push({
+				const newFont = {
 					name,
 					template,
 					variants: [
@@ -467,11 +473,35 @@ else {
 							db: `${name}_regular`,
 						}
 					],
-				});
+				};
+
+				fonts.push(newFont);
 
 				const patch = fontLibrary.set('fonts', fonts).commit();
 				localServer.dispatchUpdate('/fontLibrary', patch);
-				
+				localClient.dispatchAction('/change-font', {
+					template,
+					db:newFont.variants[0].db,
+				});
+
+				const patchVariant = fontVariant
+					.set('variant', newFont.variants[0])
+					.set('family', {name: newFont.name, template: newFont.template}).commit();
+				localServer.dispatchUpdate('/fontVariant', patchVariant);
+
+				saveAppValues();
+			},
+			'/select-variant': ({variant, family}) => {
+				const patchVariant = fontVariant
+					.set('variant', variant)
+					.set('family', {name: family.name, template: family.template}).commit();
+				localServer.dispatchUpdate('/fontVariant', patchVariant);
+
+				localClient.dispatchAction('/change-font', {
+					template: family.template,
+					db: variant.db,
+				});
+				saveAppValues();
 			},
 		}
 
@@ -503,8 +533,13 @@ else {
 						selected: 'A'.charCodeAt(0).toString(),
 						word: 'Hello',
 						text: 'World',
-						template: 'venus.ptf',
 						pos: ['Point', 457, -364],
+						familySelected: {
+							template:'venus.ptf',
+						},
+						variantSelected: {
+							db:'venus.ptf'
+						}
 					}
 				};
 
@@ -512,16 +547,10 @@ else {
 			}
 
 			localClient.dispatchAction('/load-app-values', appValues);
-
-			const typedataJSON = await Typefaces.getFont(appValues.values.template || 'venus.ptf');
+			
+			const template = appValues.values.familySelected ? appValues.values.familySelected.template : undefined;
+			const typedataJSON = await Typefaces.getFont( template || 'venus.ptf');
 			const typedata = JSON.parse(typedataJSON);
-
-			const initValues = {};
-			_.each(typedata.controls ,(group) => {
-				return _.each(group.parameters, (param) => {
-					initValues[param.name] = param.init;
-				});
-			});
 
 			// const prototypoSource = await Typefaces.getPrototypo();
 			let workerDeps = document.querySelector('script[src*=prototypo\\.]').src;
@@ -552,20 +581,8 @@ else {
 
 			localClient.dispatchAction('/load-commits');
 			fontInstance.displayChar(String.fromCharCode(glyphs.get('selected')));
-
-			try {
-				const fontValues = await FontValues.get({typeface: appValues.values.template});
-				localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
-			}
-			catch (err) {
-				const values =  _.extend(fontControls.get('values'),initValues)
-				localClient.dispatchAction('/load-values',values);
-				FontValues.save({
-					typeface: appValues.values.template,
-					values,
-				});
-				console.error(err);
-			}
+			
+			loadFontValues(typedata, appValues.values.variantSelected.db);
 		}
 		catch (err) {
 			location.href = '#/signin';

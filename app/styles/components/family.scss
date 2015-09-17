@@ -5,6 +5,10 @@
 .family {
 	margin-bottom:20px;
 
+	&.is-active &-header {
+		background-color:$yellow;
+	}
+
 	&-header {
 		background-color: $white;
 		padding: 30px;

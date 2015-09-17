@@ -34,7 +34,12 @@ export class FamilyList extends React.Component {
 
 	render() {
 		const families = _.map(this.state.families, (family) => {
-			return <Family data={family}/>
+			if (this.props.selected && family.name === this.props.selected.name) {
+				return <Family data={family} selected={true} variantSelected={this.props.variantSelected}/>
+			}
+			else {
+				return <Family data={family} selected={false}/>
+			}
 		});
 		return (
 			<div className="family-list">
@@ -64,8 +69,13 @@ export class Family extends React.Component {
 			height: this.state.listOpen ? `${this.height}px` : '0px',
 		};
 
+		const classes = Classnames({
+			family: true,
+			'is-active': this.props.selected,
+		});
+
 		return (
-			<div className="family">
+			<div className={classes}>
 				<div className="family-header" onClick={() => {this.toggleList()} }>
 					<div className="family-header-left">
 						<div className="family-header-left-logo">
@@ -85,7 +95,7 @@ export class Family extends React.Component {
 					</div>
 				</div>
 				<div className="family-variant-list" style={listStyle}>
-					<VariantList variants={this.props.data.variants} ref="list"/>
+					<VariantList variants={this.props.data.variants} selected={this.props.variantSelected} family={this.props.data} ref="list"/>
 				</div>
 			</div>
 		);
