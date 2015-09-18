@@ -3,6 +3,8 @@
 .fonts-collection {
 
 	height:100%;
+	display:flex;
+	flex-flow:column nowrap;
 
 	&-selectors {
 		padding:0;
@@ -16,6 +18,7 @@
 	&-title {
 		color:$white;
 		font-size:30px;
+		flex:0 1 auto;
 	}
 }
 

@@ -58,6 +58,10 @@ export class Family extends React.Component {
 		this.height = React.findDOMNode(this.refs.list).clientHeight;
 	}
 
+	componentDidUpdate() {
+		this.height = React.findDOMNode(this.refs.list).clientHeight;
+	}
+
 	toggleList() {
 		this.setState({
 			listOpen:!this.state.listOpen

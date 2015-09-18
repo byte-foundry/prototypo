@@ -11,12 +11,13 @@
 	background-color:$white;
 	border-radius:4px;
 	margin-bottom:5px;
-	display:flex;
-	flex-flow:row nowrap;
 	padding:15px;
 	font-size:18px;
 	text-transform:uppercase;
 	cursor:pointer;
+	display:flex;
+	flex-flow:row nowrap;
+
 
 	&-caret {
 		margin-right:30px;
@@ -37,5 +38,44 @@
 
 	&:hover &-caret-open, &.is-active &-caret-open {
 		display:block;
+	}
+}
+
+.flipping-variant {
+	height:57px;
+	transform-style: preserve-3d;
+	position: relative;
+	transition:all .2s ease;
+	height: 57px;
+
+	&.is-flipped {
+		transform: rotateX(180deg);
+		background-color:$dark-grey;
+	}
+
+	&-verso, &-recto {
+		display:flex;
+		flex-flow:row nowrap;
+		backface-visibility: hidden;
+		position:absolute;
+	}
+
+	&-verso {
+		color:$white;
+		transform:rotateX(180deg);
+		width:100%;
+		padding: 0 35px 0 0;
+		display: flex;
+	}
+}
+
+.text-suggestion {
+	flex:0 1 100%;
+	display:flex;
+	flex-flow:row nowrap;
+
+	&-input {
+		width:100%;
+		color:black;
 	}
 }

@@ -503,6 +503,44 @@ else {
 				});
 				saveAppValues();
 			},
+			'/create-variant': async ({name, familyName}) => {
+				const family = _.find(Array.from(fontLibrary.get('fonts') || []), (font) => {
+					return font.name === familyName;
+				});
+
+				const variant = {
+					name,
+					db: `${familyName}_${name}`,
+				};
+				const thicknessTransform = [
+					{ string: 'THIN', thickness: 20},
+					{ string: 'LIGHT', thickness: 50},
+					{ string: 'BOOK', thickness: 70},
+					{ string: 'BOLD', thickness: 115},
+					{ string: 'SEMI-BOLD', thickness: 100},
+					{ string: 'EXTRA-BOLD', thickness: 135},
+					{ string: 'BLACK', thickness: 150},
+				]
+
+				family.variants.push(variant);
+
+				const patch = fontLibrary.set('fonts',fontLibrary.get('fonts')).commit();
+				localServer.dispatchUpdate('/fontLibrary',patch);
+				
+				const ref = await FontValues.get({typeface:family.variants[0].db});
+
+				_.each(thicknessTransform, (item) => {
+					if (name.indexOf(item.string) !== -1) {
+						ref.values.thickness = item.thickness;
+					}
+				});
+
+				if (name.indexOf('ITALIC') !== -1) {
+					ref.values.slant = 10;
+				}
+				await FontValues.save({typeface: variant.db,values:ref.values});
+				localClient.dispatchAction('/select-variant', {variant, family});
+			},
 		}
 
 		localServer.on('action',({path, params}) => {
