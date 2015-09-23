@@ -21,7 +21,10 @@
 			width:100%;
 		}
 	}
-
+	
+	&:active {
+		cursor: move;
+	}
 }
 
 .prototypo-panel-buttons-list {
