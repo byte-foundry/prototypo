@@ -3,7 +3,6 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import FontSelector from './font-selector.components.jsx';
 import {FamilyList, AddFamily} from './family.components.jsx';
-import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 
 export default class FontsCollection extends React.Component {
 
@@ -39,9 +38,7 @@ export default class FontsCollection extends React.Component {
 			<div className="fonts-collection">
 				<h1 className="fonts-collection-title side-tab-h1">Your font collections</h1>
 				<AddFamily />
-				<ReactGeminiScrollbar>
-					<FamilyList selected={this.state.family} variantSelected={this.state.variant}/>
-				</ReactGeminiScrollbar>
+				<FamilyList selected={this.state.family} variantSelected={this.state.variant}/>
 			</div>
 		)
 	}

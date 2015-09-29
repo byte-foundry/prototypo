@@ -3,6 +3,7 @@ import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import {VariantList} from './variant.components.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
+import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 
 export class FamilyList extends React.Component {
 
@@ -67,7 +68,11 @@ export class FamilyList extends React.Component {
 
 		return (
 			<div className="family-list">
-				{families}
+				<div className="family-list-scroll">
+					<ReactGeminiScrollbar>
+						{families}
+					</ReactGeminiScrollbar>
+				</div>
 				<datalist id="suggestions">
 					{suggestions}
 				</datalist>
@@ -171,7 +176,29 @@ export class AddFamily extends React.Component {
 
 	async componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
 		const templateList = await this.client.fetch('/templateList');
+
+		this.client.getStore('/fontLibrary', this.lifespan)
+		.onUpdate(({head}) => {
+				if (head.toJS().errorAddFamily != this.state.error) {
+					this.setState({
+						error: head.toJS().errorAddFamily,
+					});
+				}
+				if (head.toJS().errorAddFamily === undefined) {
+					this.setState({
+						showForm: false,
+						selectedFont: undefined,
+						reset: (new Date()).getTime(),
+					});
+				}
+			})
+			.onDelete(() => {
+				this.setState({
+					error:undefined,
+				});
+			});
 
 		this.setState({
 			fonts: templateList.get('list'),
@@ -191,10 +218,11 @@ export class AddFamily extends React.Component {
 		});
 	}
 
-	createFont() {
+	createFont(e) {
+		e.stopPropagation();
 		this.client.dispatchAction('/create-family',{
 			name:React.findDOMNode(this.refs.name).value,
-			template:this.state.selectedFont.templateName,
+			template:this.state.selectedFont ? this.state.selectedFont.templateName : undefined,
 		});
 	}
 
@@ -203,6 +231,7 @@ export class AddFamily extends React.Component {
 		const familyClass = Classnames({
 			'add-family': true,
 			'family-form-open': this.state.showForm,
+			'with-error': !!this.state.error,
 		});
 
 		const templateList = _.map(this.state.fonts,(font) => {
@@ -215,26 +244,28 @@ export class AddFamily extends React.Component {
 			);
 		})
 
+		const error = this.state.error ? <div className="add-family-form-error">{this.state.error}</div> : false;
+
 		return (
 			<div className={familyClass} onClick={(e) => {this.toggleForm(e, true)} }>
 				<div className="add-family-header">
-					<img src="/assets/images/add-icon.svg" className="add-family-header-icon"/>
-					<div className="add-family-header-label">
+					<h1 className="add-family-header-label">
 						Create a new Family
-					</div>
+					</h1>
 				</div>
 				<div className="add-family-form">
 					<div className="add-family-form-header">
-						<div className="add-family-form-header-title">Creating a new Family</div>
-						<img src="/assets/images/close-icon.svg" className="add-family-form-header-close" onClick={(e) => {this.toggleForm(e,false)} }/>
+						<h1 className="add-family-form-header-title">Creating a new Family</h1>
+						<img className="add-family-form-header-close" onClick={(e) => {this.toggleForm(e, false)}} src="/assets/images/close-icon.svg"/>
 					</div>
-					<label className="add-family-form-label">Family name</label>
-					<input ref="name" className="add-family-form-input" type="text"></input>
-					<h2>Choose a font template</h2>
+					<label className="add-family-form-label"><span className="add-family-form-label-order">1. </span>Choose a family name</label>
+					<input ref="name" className="add-family-form-input" key={this.state.reset} type="text" placeholder="My new typeface"></input>
+					<label className="add-family-form-label"><span className="add-family-form-label-order">2. </span>Choose a font template</label>
 					<div className="add-family-form-template-list">
 						{templateList}
 					</div>
-					<button onClick={() => {this.createFont()} }>Create</button>
+					{error}
+					<button className="add-family-form-button" onClick={(e) => {this.createFont(e)} }>Create</button>
 				</div>
 			</div>
 		)
@@ -255,7 +286,7 @@ export class FamilyTemplateChoice extends React.Component {
 		return (
 			<div className={classes} style={style} onClick={() => {this.props.chooseFont(this.props.font)}}>
 				<div className="family-template-choice-sample">
-					{this.props.font.sample}
+					<img src={`/assets/images/${this.props.font.sample}`} />
 				</div>
 				<div className="family-template-choice-name">
 					{this.props.font.name}

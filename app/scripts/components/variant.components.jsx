@@ -133,7 +133,7 @@ export class AddVariant extends React.Component {
 						error:head.toJS().errorAddVariant,
 					});	
 				}
-				else if (head.toJS().errorAddVariant === undefined) {
+				if (head.toJS().errorAddVariant === undefined) {
 					this.setState({
 						flipped:false,
 					});

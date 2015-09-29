@@ -1,5 +1,13 @@
 @import "../variables";
 .family-list {
+	flex-basis:100%;
+	position:relative;
+
+	&-scroll {
+		height:100%;
+		width:100%;
+		position:absolute;
+	}
 }
 
 .family {
@@ -97,14 +105,16 @@
 	background-color:$white;
 	cursor:pointer;
 	transition:all .2s ease;
-	padding:15px;
 	margin-bottom:15px;
 	border-radius:4px;
-	flex:0 1 auto;
+	flex-grow:0;
+	flex-shrink:0;
+	flex-basis:80px;
+	overflow:hidden;
 
 	&-form {
+		padding:20px;
 		display:none;
-		background-color:$yellow;
 		
 		&-header {
 			display:flex;
@@ -112,25 +122,32 @@
 			justify-content:space-between;
 
 			&-title {
-				text-transform:uppercase;
-				margin-left:32px;
+				margin:0;
 			}
 
 			&-close {
 				cursor:pointer;
+				background-color: $lightest-grey;
+				border-radius: 50%;
+				height: 30px;
+				margin-top: 10px;
+
+				&:hover {
+					background-color:$light-grey;
+				}
 			}
 		}
 
 		&-input {
 			display: block;
 			width: 100%;
-			border: 1px solid #6ceab4;
-			border-radius: 10px;
+			border:none;
 			padding: .8em;
-			background-color: #fefefe;
+			background-color: $lightest-grey;
 			color:$dark-grey;
 			font-size: 1.1em;
 			margin-bottom: 1em;
+			margin-top:20px;
 		}
 
 		&-label {
@@ -139,33 +156,57 @@
 			font-size:1.1em;
 
 			color: $dark-grey;
-		}
 
-		h2 {
-			color:$dark-grey !important;
+			&-order {
+				color:$green;
+			}
 		}
 
 		&-template-list {
 			display: flex;
 			flex-flow: row wrap;
 		}
+
+		&-button {
+			width:100%;
+			background-color:$green;
+			border:none;
+			padding:10px;
+			margin-top:20px;
+			font-size:1.5em;
+			color:$white;
+
+			&:hover {
+				background-color:darken($green, 10%);
+			}
+		}
+
+		&-error {
+			width: 100%;
+			text-align: center;
+			padding: 5px;
+			background-color: $red;
+			margin-top: 15px;
+			color: $white;
+		}
 	}
 
 	&-header {
 		display:flex;
 		flex-flow:row nowrap;
+		margin-left:20px;
 
 		&-icon {
 			margin-right:15px;
 		}
-
-		&-label {
-			text-transform:uppercase;
-		}
 	}
 
 	&.family-form-open {
-		background-color:$yellow;
+		flex-basis:554px;
+	}
+
+	&.with-error {
+		flex-basis:600px;
 	}
 
 	&.family-form-open &-header {
@@ -177,38 +218,47 @@
 	}
 
 	&:hover {
-		background-color:$yellow;
 		color:$dark-grey;
 	}
 
 }
 
 .family-template-choice {
-	background-color: $white;
 	margin-right:15px;
+	margin-top:20px;
+	width:250px;
+	text-align:center;
 
 	&.is-active &-name {
 		background-color:$yellow;
+		color:$dark-grey;
 	}
 
 	&-sample {
-		font-size: 7.4em;
-		line-height: 100px;
 		padding:15px;
+		height:200px;
+		line-height:85px;
 		transition:all .2s ease;
 		color:$dark-grey;
-		background-color:$white;
+		background-color:$lightest-grey;
+
+		img {
+			margin-top:45px;
+			vertical-align:bottom;
+		}
 	}
 
 	&:hover &-sample {
-		background-color:$dark-grey;
-		color:$white;
+		background-color:$yellow;
+		color:$dark-grey;
 	}
 	
 	&-name {
 		font-size: 1.3em;
 		text-align: center;
-		background-color: lightgrey;
+		background-color: $dark-grey;
+		color: $white;
 		padding: 10px;
+		transition:all .2s ease;
 	}
 }

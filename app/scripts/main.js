@@ -110,13 +110,13 @@ else {
 	const templateList = stores['/templateList'] = new Remutable({
 		list: [
 			{
-				sample:'Jl',
+				sample:'john-fell-preview.svg',
 				name:'John Fell',
 				familyName:'John Fell',
 				templateName:'john-fell.ptf',
 			},
 			{
-				sample:'Gs',
+				sample:'venus-preview.svg',
 				name:'Grotesk',
 				familyName:'Prototypo Grotesk',
 				templateName:'venus.ptf',
@@ -466,6 +466,13 @@ else {
 				saveAppValues();
 			},
 			'/create-family': ({name, template}) => {
+
+				if (template === undefined) {
+					const patch = fontLibrary.set('errorAddFamily', 'You must choose a base template').commit();
+					localServer.dispatchUpdate('/fontLibrary', patch);
+					return;
+				}
+
 				const fonts = Array.from(fontLibrary.get('fonts'));
 				const newFont = {
 					name,
@@ -479,10 +486,30 @@ else {
 					],
 				};
 
+				const already = _.find(fonts, (font) => {
+					return font.name === name;
+				});
+
+				if (already) {
+					const patch = fontLibrary.set('errorAddFamily', 'A Family with this name already exists').commit();
+					localServer.dispatchUpdate('/fontLibrary', patch);
+					return;
+				}
+
 				fonts.push(newFont);
 
-				const patch = fontLibrary.set('fonts', fonts).commit();
+				const patch = fontLibrary
+					.set('errorAddFamily', undefined)
+					.commit();
 				localServer.dispatchUpdate('/fontLibrary', patch);
+
+				setTimeout(() => {
+					const patch = fontLibrary
+						.set('fonts', fonts)
+						.commit();
+					localServer.dispatchUpdate('/fontLibrary', patch);
+				}, 200);
+
 				localClient.dispatchAction('/change-font', {
 					template,
 					db:newFont.variants[0].db,
