@@ -1,0 +1,214 @@
+@import "../variables";
+.family-list {
+}
+
+.family {
+	margin-bottom:20px;
+	cursor:pointer;
+
+	&.is-active &-header {
+		background-color:$yellow;
+	}
+
+	&-header {
+		background-color: $white;
+		padding: 30px;
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: space-between;
+		border-radius:4px;
+		box-shadow: 0px 7px 0px rgba($dark-grey, 0.1);
+		position:relative;
+		z-index:1;
+		
+		&-left {
+			display:flex;
+			flex-flow:row nowrap;
+
+			&-logo {
+				padding-top:8px;
+				padding-right:25px;
+			}
+
+			&-title {
+				&-name {
+					font-size: 40px;
+				}
+			}
+		}
+
+		&-delete {
+			align-self: flex-end;
+			text-align: right;
+			width: 205px;
+			display: flex;
+			flex-flow: row nowrap;
+			overflow: hidden;
+
+			&.is-confirm &-btn {
+				margin-left:-70px;
+			}
+
+			&-btn {
+				padding: 2px 5px;
+				border-radius: 4px;
+				background-color:darken($yellow, 10%);
+				transition:all .2s ease;
+				text-align: center;
+				flex: 0 0 70px;
+				margin-left:134px;
+
+				&:hover {
+					background-color: $dark-grey;
+					color: $white;
+				}
+			}
+
+			&-confirm {
+				flex: 0 0 205px;
+				display: flex;
+				flex-flow: row nowrap;
+
+				&-button {
+					border-radius:4px;
+					padding: 2px 5px;
+					background-color: darken($yellow, 10%);
+					margin-left: 5px;
+					color:$dark-grey;
+					transition: all .2s ease;
+
+					&:hover {
+						background-color: $dark-grey;
+						color: $white;
+					}
+				}
+			}
+		}
+	}
+
+	&-variant-list {
+		margin: 0 15px;
+		transition:height .2s ease;
+		overflow:hidden;
+	}
+}
+
+.add-family {
+	background-color:$white;
+	cursor:pointer;
+	transition:all .2s ease;
+	padding:15px;
+	margin-bottom:15px;
+	border-radius:4px;
+	flex:0 1 auto;
+
+	&-form {
+		display:none;
+		background-color:$yellow;
+		
+		&-header {
+			display:flex;
+			flex-flow:row nowrap;
+			justify-content:space-between;
+
+			&-title {
+				text-transform:uppercase;
+				margin-left:32px;
+			}
+
+			&-close {
+				cursor:pointer;
+			}
+		}
+
+		&-input {
+			display: block;
+			width: 100%;
+			border: 1px solid #6ceab4;
+			border-radius: 10px;
+			padding: .8em;
+			background-color: #fefefe;
+			color:$dark-grey;
+			font-size: 1.1em;
+			margin-bottom: 1em;
+		}
+
+		&-label {
+			display: inline-block;
+			margin-top: 5px;
+			font-size:1.1em;
+
+			color: $dark-grey;
+		}
+
+		h2 {
+			color:$dark-grey !important;
+		}
+
+		&-template-list {
+			display: flex;
+			flex-flow: row wrap;
+		}
+	}
+
+	&-header {
+		display:flex;
+		flex-flow:row nowrap;
+
+		&-icon {
+			margin-right:15px;
+		}
+
+		&-label {
+			text-transform:uppercase;
+		}
+	}
+
+	&.family-form-open {
+		background-color:$yellow;
+	}
+
+	&.family-form-open &-header {
+		display:none;
+	}
+
+	&.family-form-open &-form {
+		display:block;
+	}
+
+	&:hover {
+		background-color:$yellow;
+		color:$dark-grey;
+	}
+
+}
+
+.family-template-choice {
+	background-color: $white;
+	margin-right:15px;
+
+	&.is-active &-name {
+		background-color:$yellow;
+	}
+
+	&-sample {
+		font-size: 7.4em;
+		line-height: 100px;
+		padding:15px;
+		transition:all .2s ease;
+		color:$dark-grey;
+		background-color:$white;
+	}
+
+	&:hover &-sample {
+		background-color:$dark-grey;
+		color:$white;
+	}
+	
+	&-name {
+		font-size: 1.3em;
+		text-align: center;
+		background-color: lightgrey;
+		padding: 10px;
+	}
+}

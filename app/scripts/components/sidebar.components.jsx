@@ -43,19 +43,6 @@ export default class Sidebar extends React.Component {
 		}, this.lifespan);
 
 		this.client.dispatchAction('/change-tab-sidebar', {name: 'sliders'});
-
-		this.setState({
-			fonts:[{
-				name:'Prototypo John Fell',
-				familyName: 'John Fell',
-				repo: 'john-fell.ptf',
-			},
-			{
-				name:'Prototypo Grotesk',
-				familyName: 'Venus 8',
-				repo: 'venus.ptf',
-			}],
-		});
 	}
 
 	render() {
@@ -72,7 +59,7 @@ export default class Sidebar extends React.Component {
 							<FontInfos />
 						</SideTab>
 						<SideTab iconUrl="fonts-collection.svg" name="fonts-collection" big={true} legend="Collection">
-							<FontsCollection fonts={this.state.fonts}/>
+							<FontsCollection />
 						</SideTab>
 						<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} legend="Profile">
 							<Account />

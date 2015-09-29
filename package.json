@@ -26,7 +26,8 @@
     "react-gemini-scrollbar": "^1.1.1",
     "react-router": "^0.13.3",
     "remutable": "FranzPoize/remutable#master",
-    "venus.ptf": "byte-foundry/venus.ptf#master"
+    "venus.ptf": "byte-foundry/venus.ptf#master",
+    "xxhashjs": "^0.1.1"
   },
   "devDependencies": {
     "babelify": "^6.1.2",

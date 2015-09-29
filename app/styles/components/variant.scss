@@ -1,0 +1,139 @@
+@import "../variables";
+
+.variant-list {
+	background-color:$yellow;
+	padding:15px;
+	border-bottom-left-radius:4px;
+	border-bottom-right-radius:4px;
+}
+
+.variant {
+	margin-bottom:5px;
+	border-radius:4px;
+	font-size:18px;
+	background-color:$white;
+	text-transform:uppercase;
+	cursor:pointer;
+	display:flex;
+	flex-flow:row nowrap;
+	transition:background-color .2s ease, transform .2s ease;
+	transform-style: preserve-3d;
+
+	&-caret {
+		margin-right:30px;
+	}
+
+	&-name {
+		flex:1 1 100%;
+	}
+
+	&-caret-open {
+		display:none;
+	}
+
+	&-hover {
+		display:none;
+	}
+
+	&:hover &-hover {
+		display:block;
+	}
+
+	&-button {
+		background-color:darken($dark-grey, 10%);
+		padding:2px 5px;
+		border-radius:3px;
+		margin-left:5px;
+		margin-top:-2px;
+		margin-bottom:-2px;
+		transition:background-color .2s ease, color .2s ease;
+
+		&:hover {
+			background-color:$yellow;
+			color:$dark-grey;
+		}
+	}
+
+	&:hover, &.is-active {
+		background-color:$dark-grey;
+		color:$white;
+	}
+		
+	&:hover &-caret-closed, &.is-active &-caret-closed {
+		display:none;
+	}
+
+	&:hover &-caret-open, &.is-active &-caret-open {
+		display:block;
+	}
+
+	&-delete {
+		display:none;
+		flex-flow:row nowrap;
+
+		&.is-active {
+			display:flex;
+		}
+	}
+
+	&-edit {
+		width:100%;
+		display:none;
+		flex-flow:row nowrap;
+
+		&.is-active {
+			display:flex;
+		}
+	}
+}
+
+.flipping-variant {
+	height:57px;
+	transform-style: preserve-3d;
+	position: relative;
+	height: 57px;
+
+	&.is-flipped {
+		transform: rotateX(180deg);
+		background-color:$dark-grey;
+	}
+
+	&-verso, &-recto {
+		padding:14px;
+		width:100%;
+		display:flex;
+		flex-flow:row nowrap;
+		backface-visibility: hidden;
+		position:absolute;
+	}
+
+	&-verso {
+		color:$white;
+		transform:rotateX(180deg);
+		width:100%;
+		display: flex;
+	}
+}
+
+.text-suggestion {
+	flex:0 1 100%;
+	display:flex;
+	flex-flow:row nowrap;
+
+	&-input {
+		width:100%;
+		color:black;
+	}
+
+	&-button {
+		background-color: darken($dark-grey, 10%);
+		padding: 2px 5px;
+		border-top-right-radius: 4px;
+		border-bottom-right-radius: 4px;
+		transition:all .2s ease;
+		
+		&:hover {
+			background-color:$green;
+		}
+	}
+}

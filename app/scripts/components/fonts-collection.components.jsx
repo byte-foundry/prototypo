@@ -2,6 +2,8 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import FontSelector from './font-selector.components.jsx';
+import {FamilyList, AddFamily} from './family.components.jsx';
+import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 
 export default class FontsCollection extends React.Component {
 
@@ -11,11 +13,11 @@ export default class FontsCollection extends React.Component {
 		this.defaultText = 'Abc 123';
 		this.setState({});
 
-		const fontTemplate = await this.client.fetch('/fontTemplate');
+		const fontVariant = await this.client.fetch('/fontVariant');
 
-		this.setState(fontTemplate.head.toJS());
+		this.setState(fontVariant.head.toJS());
 
-		this.client.getStore('/fontTemplate', this.lifespan)
+		this.client.getStore('/fontVariant', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState(head.toJS());
 			})
@@ -33,15 +35,13 @@ export default class FontsCollection extends React.Component {
 			console.log('[RENDER] fonts collection');
 		}
 
-		const fonts = _.map(this.props.fonts, (font) => {
-			return <FontSelector font={font} text={this.defaultText} selectedRepo={this.state.selected}/>
-		});
 		return (
 			<div className="fonts-collection">
-				<h1 className="fonts-collection-title side-tab-h1">Change the font template</h1>
-				<ul className="fonts-collection-selectors">
-					{fonts}
-				</ul>
+				<h1 className="fonts-collection-title side-tab-h1">Your font collections</h1>
+				<AddFamily />
+				<ReactGeminiScrollbar>
+					<FamilyList selected={this.state.family} variantSelected={this.state.variant}/>
+				</ReactGeminiScrollbar>
 			</div>
 		)
 	}
