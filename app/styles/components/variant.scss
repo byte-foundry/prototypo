@@ -8,23 +8,50 @@
 }
 
 .variant {
-	background-color:$white;
-	border-radius:4px;
 	margin-bottom:5px;
-	padding:15px;
+	border-radius:4px;
 	font-size:18px;
+	background-color:$white;
 	text-transform:uppercase;
 	cursor:pointer;
 	display:flex;
 	flex-flow:row nowrap;
-
+	transition:background-color .2s ease, transform .2s ease;
+	transform-style: preserve-3d;
 
 	&-caret {
 		margin-right:30px;
 	}
 
+	&-name {
+		flex:1 1 100%;
+	}
+
 	&-caret-open {
 		display:none;
+	}
+
+	&-hover {
+		display:none;
+	}
+
+	&:hover &-hover {
+		display:block;
+	}
+
+	&-button {
+		background-color:darken($dark-grey, 10%);
+		padding:2px 5px;
+		border-radius:3px;
+		margin-left:5px;
+		margin-top:-2px;
+		margin-bottom:-2px;
+		transition:background-color .2s ease, color .2s ease;
+
+		&:hover {
+			background-color:$yellow;
+			color:$dark-grey;
+		}
 	}
 
 	&:hover, &.is-active {
@@ -39,13 +66,31 @@
 	&:hover &-caret-open, &.is-active &-caret-open {
 		display:block;
 	}
+
+	&-delete {
+		display:none;
+		flex-flow:row nowrap;
+
+		&.is-active {
+			display:flex;
+		}
+	}
+
+	&-edit {
+		width:100%;
+		display:none;
+		flex-flow:row nowrap;
+
+		&.is-active {
+			display:flex;
+		}
+	}
 }
 
 .flipping-variant {
 	height:57px;
 	transform-style: preserve-3d;
 	position: relative;
-	transition:all .2s ease;
 	height: 57px;
 
 	&.is-flipped {
@@ -54,6 +99,8 @@
 	}
 
 	&-verso, &-recto {
+		padding:14px;
+		width:100%;
 		display:flex;
 		flex-flow:row nowrap;
 		backface-visibility: hidden;
@@ -64,7 +111,6 @@
 		color:$white;
 		transform:rotateX(180deg);
 		width:100%;
-		padding: 0 35px 0 0;
 		display: flex;
 	}
 }
@@ -77,5 +123,17 @@
 	&-input {
 		width:100%;
 		color:black;
+	}
+
+	&-button {
+		background-color: darken($dark-grey, 10%);
+		padding: 2px 5px;
+		border-top-right-radius: 4px;
+		border-bottom-right-radius: 4px;
+		transition:all .2s ease;
+		
+		&:hover {
+			background-color:$green;
+		}
 	}
 }

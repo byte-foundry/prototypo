@@ -47,6 +47,9 @@ import HoodieApi from './services/hoodie.services.js';
 import uuid from 'node-uuid';
 import {FontValues, AppValues} from './services/values.services.js';
 import {Commits} from './services/commits.services.js';
+import XXHash from 'xxhashjs';
+
+const hasher = XXHash(0xDEADBEEF);
 
 if (mobile) {
 	const Route = Router.Route,
@@ -469,7 +472,8 @@ else {
 					template,
 					variants: [
 						{
-							name: 'Regular',
+							id: hasher.update(`REGULAR${(new Date()).getTime()}`).digest().toString(16),
+							name: 'REGULAR',
 							db: `${name}_regular`,
 						}
 					],
@@ -508,7 +512,18 @@ else {
 					return font.name === familyName;
 				});
 
+				const already = _.find(family.variants, (item) => {
+					return item.name === name;
+				});
+
+				if (already) {
+					const patch = fontLibrary.set('errorAddVariant', 'Variant with this name already exists').commit();
+					localServer.dispatchUpdate('/fontLibrary', patch);
+					return;
+				}
+
 				const variant = {
+					id: hasher.update(`${name}${(new Date()).getTime()}`).digest().toString(16),
 					name,
 					db: `${familyName}_${name}`,
 				};
@@ -524,7 +539,9 @@ else {
 
 				family.variants.push(variant);
 
-				const patch = fontLibrary.set('fonts',fontLibrary.get('fonts')).commit();
+				const patch = fontLibrary
+					.set('fonts',fontLibrary.get('fonts'))
+					.set('errorAddVariant', undefined).commit();
 				localServer.dispatchUpdate('/fontLibrary',patch);
 				
 				const ref = await FontValues.get({typeface:family.variants[0].db});
@@ -538,8 +555,43 @@ else {
 				if (name.indexOf('ITALIC') !== -1) {
 					ref.values.slant = 10;
 				}
+
 				await FontValues.save({typeface: variant.db,values:ref.values});
 				localClient.dispatchAction('/select-variant', {variant, family});
+			},
+			'/edit-variant': ({variant, family, newName}) => {
+				const found = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
+					return item.name = family.name;
+				});
+
+				const newVariant = _.find(found.variants || [], (item) => {
+					return variant.id === item.id;
+				});
+
+				newVariant.name = newName;
+
+				const patch = fontLibrary.set('fonts',fontLibrary.get('fonts')).commit();
+				localServer.dispatchUpdate('/fontLibrary',patch);
+				saveAppValues();
+			},
+			'/delete-variant': ({variant, familyName}) => {
+				const family = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
+					return item.name = familyName;
+				});
+
+				_.pull(family.variants,variant);
+
+				const patch = fontLibrary.set('fonts',fontLibrary.get('fonts')).commit();
+				localServer.dispatchUpdate('/fontLibrary',patch);
+				saveAppValues();
+
+			},
+			'/delete-family': ({family}) => {
+				const families = Array.from(fontLibrary.get('fonts'));
+				_.pull(families, family);
+				const patch = fontLibrary.set('fonts', families).commit();
+				localServer.dispatchUpdate('/fontLibrary',patch);
+				saveAppValues();
 			},
 		}
 

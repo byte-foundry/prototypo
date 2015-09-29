@@ -72,6 +72,7 @@ export default class PrototypoPanel extends React.Component {
 		let word;
 
 		textAndGlyph = [<PrototypoCanvas
+			key="canvas"
 			panel={this.state.panel}
 			glyph={this.state.glyph}
 			reset={() => { this.resetView() }}
@@ -81,13 +82,14 @@ export default class PrototypoPanel extends React.Component {
 
 		if (hasText) {
 			textAndGlyph.push(<PrototypoText
+				key="text"
 				fontName={this.props.fontName}
 				panel={this.state.panel}
 				close={(name) => { this.toggleView(name) }}
 				field="text"/>);
 		}
 		else if (hasGlyph && this.state.panel.shadow) {
-			textAndGlyph.push(<div className="shadow-of-the-colossus">{String.fromCharCode(this.state.glyph.selected)}</div>)
+			textAndGlyph.push(<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyph.selected)}</div>)
 		}
 
 		if (this.state.panel.mode.indexOf('word') != -1) {

@@ -26,6 +26,25 @@ export class FamilyList extends React.Component {
 		this.setState({
 			families:families.fonts,
 		});
+
+		this.variants = [
+			'THIN', //20
+			'THIN ITALIC',
+			'LIGHT', //50
+			'LIGHT ITALIC',
+			'BOOK', //70
+			'BOOK ITALIC',
+			'REGULAR',
+			'REGULAR ITALIC',
+			'SEMI-BOLD', //100
+			'SEMI-BOLD ITALIC',
+			'BOLD', //115
+			'BOLD ITALIC',
+			'EXTRA-BOLD', //135
+			'EXTRA-BOLD ITALIC',
+			'BLACK', //150
+			'BLACK ITALIC',
+		]
 	}
 
 	componentWillUnmount() {
@@ -35,15 +54,23 @@ export class FamilyList extends React.Component {
 	render() {
 		const families = _.map(this.state.families, (family) => {
 			if (this.props.selected && family.name === this.props.selected.name) {
-				return <Family data={family} selected={true} variantSelected={this.props.variantSelected}/>
+				return <Family key={family.name} data={family} selected={true} variantSelected={this.props.variantSelected}/>
 			}
 			else {
-				return <Family data={family} selected={false}/>
+				return <Family key={family.name} data={family} selected={false}/>
 			}
 		});
+
+		const suggestions = _.map(this.variants, (suggestion) => {
+			return <option key={suggestion} className="text-suggestion-list-item" value={suggestion}/>;
+		});
+
 		return (
 			<div className="family-list">
 				{families}
+				<datalist id="suggestions">
+					{suggestions}
+				</datalist>
 			</div>
 		);
 	}
@@ -53,6 +80,10 @@ export class Family extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
 	}
 	componentDidMount() {
 		this.height = React.findDOMNode(this.refs.list).clientHeight;
@@ -68,6 +99,18 @@ export class Family extends React.Component {
 		});
 	}
 
+	toggleConfirmDelete(e) {
+		e.stopPropagation();
+		this.setState({
+			confirmDeletion: !this.state.confirmDeletion,
+		});
+	}
+
+	deleteFamily(e) {
+		e.stopPropagation();
+		this.client.dispatchAction('/delete-family', {family: this.props.data});	
+	}
+
 	render() {
 		const listStyle = {
 			height: this.state.listOpen ? `${this.height}px` : '0px',
@@ -76,6 +119,11 @@ export class Family extends React.Component {
 		const classes = Classnames({
 			family: true,
 			'is-active': this.props.selected,
+		});
+
+		const deleteClasses = Classnames({
+			'family-header-delete': true,
+			'is-confirm': this.state.confirmDeletion,
 		});
 
 		return (
@@ -94,8 +142,15 @@ export class Family extends React.Component {
 							</div>
 						</div>
 					</div>
-					<div className="family-header-status">
-						status: offline
+					<div className={deleteClasses}>
+						<div className="family-header-delete-btn" onClick={(e) => {this.toggleConfirmDelete(e)}}>
+							DELETE
+						</div>
+						<div className="family-header-delete-confirm">
+							DELETE THIS FAMILY ?
+							<div className="family-header-delete-confirm-button" onClick={(e) => {this.deleteFamily(e)}}>YES</div>
+							<div className="family-header-delete-confirm-button" onClick={(e) => {this.toggleConfirmDelete(e)}}>NO</div>
+						</div>
 					</div>
 				</div>
 				<div className="family-variant-list" style={listStyle}>
@@ -153,6 +208,7 @@ export class AddFamily extends React.Component {
 		const templateList = _.map(this.state.fonts,(font) => {
 			return (
 				<FamilyTemplateChoice 
+					key={font.name}
 					selectedFont={this.state.selectedFont}
 					font={font}
 					chooseFont={(selectedFont) => {this.selectFont(selectedFont)}}/>

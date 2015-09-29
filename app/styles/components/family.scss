@@ -4,6 +4,7 @@
 
 .family {
 	margin-bottom:20px;
+	cursor:pointer;
 
 	&.is-active &-header {
 		background-color:$yellow;
@@ -36,9 +37,52 @@
 			}
 		}
 
-		&-status {
+		&-delete {
 			align-self: flex-end;
 			text-align: right;
+			width: 205px;
+			display: flex;
+			flex-flow: row nowrap;
+			overflow: hidden;
+
+			&.is-confirm &-btn {
+				margin-left:-70px;
+			}
+
+			&-btn {
+				padding: 2px 5px;
+				border-radius: 4px;
+				background-color:darken($yellow, 10%);
+				transition:all .2s ease;
+				text-align: center;
+				flex: 0 0 70px;
+				margin-left:134px;
+
+				&:hover {
+					background-color: $dark-grey;
+					color: $white;
+				}
+			}
+
+			&-confirm {
+				flex: 0 0 205px;
+				display: flex;
+				flex-flow: row nowrap;
+
+				&-button {
+					border-radius:4px;
+					padding: 2px 5px;
+					background-color: darken($yellow, 10%);
+					margin-left: 5px;
+					color:$dark-grey;
+					transition: all .2s ease;
+
+					&:hover {
+						background-color: $dark-grey;
+						color: $white;
+					}
+				}
+			}
 		}
 	}
 
