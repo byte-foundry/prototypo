@@ -103,8 +103,6 @@ export default class FontControls extends React.Component {
 			})
 			.onDelete(() => this.setState(undefined)).value;
 
-		this.client.dispatchAction('/change-tab-font',{name: 'Func'});
-
 		const parameters = fontParameters.get('parameters');
 		const values = fontControls.get('values');
 
