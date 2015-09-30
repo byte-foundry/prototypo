@@ -473,6 +473,12 @@ else {
 					return;
 				}
 
+				if (name === undefined || name === '') {
+					const patch = fontLibrary.set('errorAddFamily', 'You must choose a name for your family').commit();
+					localServer.dispatchUpdate('/fontLibrary', patch);
+					return;
+				}
+
 				const fonts = Array.from(fontLibrary.get('fonts'));
 				const newFont = {
 					name,
@@ -583,8 +589,10 @@ else {
 					ref.values.slant = 10;
 				}
 
-				await FontValues.save({typeface: variant.db,values:ref.values});
-				localClient.dispatchAction('/select-variant', {variant, family});
+				setTimeout(async () => {
+					await FontValues.save({typeface: variant.db,values:ref.values});
+					localClient.dispatchAction('/select-variant', {variant, family});
+				}, 200);
 			},
 			'/edit-variant': ({variant, family, newName}) => {
 				const found = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
@@ -620,6 +628,14 @@ else {
 				localServer.dispatchUpdate('/fontLibrary',patch);
 				saveAppValues();
 			},
+			'/clear-error-family': () => {
+				const patch = fontLibrary.set('errorAddFamily',undefined).commit();
+				localServer.dispatchUpdate('/fontLibrary', patch);
+			},
+			'/clear-error-variant': () => {
+				const patch = fontLibrary.set('errorAddVariant',undefined).commit();
+				localServer.dispatchUpdate('/fontLibrary', patch);
+			},
 		}
 
 		localServer.on('action',({path, params}) => {
@@ -638,13 +654,7 @@ else {
 		//Login checking and app and font values loading
 		try {
 			await HoodieApi.setup();
-
-			let appValues;
-			try {
-				appValues = await AppValues.get({typeface: 'default'});
-			}
-			catch(err) {
-				appValues = {
+			const defaultValues = {
 					values: {
 						mode: ['glyph', 'word'],
 						selected: 'A'.charCodeAt(0).toString(),
@@ -659,7 +669,13 @@ else {
 						}
 					}
 				};
-
+			let appValues;
+			try {
+				appValues = await AppValues.get({typeface: 'default'});
+				appValues = _.extend(defaultValues, appValues);
+			}
+			catch(err) {
+				appValues = defaultValues;
 				console.error(err);
 			}
 

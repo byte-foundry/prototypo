@@ -109,6 +109,10 @@
 		position:absolute;
 	}
 
+	&-recto {
+		transform:rotateX(0deg);
+	}
+
 	&-verso {
 		color:$white;
 		transform:rotateX(180deg);
