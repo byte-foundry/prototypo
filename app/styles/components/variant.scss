@@ -10,7 +10,9 @@
 .variant {
 	margin-bottom:5px;
 	border-radius:4px;
-	font-size:18px;
+	font-size:16px;
+	letter-spacing: 0.05em;
+
 	background-color:$white;
 	text-transform:uppercase;
 	cursor:pointer;
@@ -49,8 +51,8 @@
 		transition:background-color .2s ease, color .2s ease;
 
 		&:hover {
-			background-color:$yellow;
-			color:$dark-grey;
+			background-color: $green;
+			color: $white;
 		}
 	}
 
@@ -58,7 +60,7 @@
 		background-color:$dark-grey;
 		color:$white;
 	}
-		
+
 	&:hover &-caret-closed, &.is-active &-caret-closed {
 		display:none;
 	}
@@ -112,6 +114,10 @@
 		transform:rotateX(180deg);
 		width:100%;
 		display: flex;
+		img {
+			width: 20px;
+			margin-right: 20px;
+		}
 	}
 }
 
@@ -123,15 +129,16 @@
 	&-input {
 		width:100%;
 		color:black;
+		padding-left: .5em;
 	}
 
 	&-button {
 		background-color: darken($dark-grey, 10%);
-		padding: 2px 5px;
+		padding: 2px 10px;
 		border-top-right-radius: 4px;
 		border-bottom-right-radius: 4px;
 		transition:all .2s ease;
-		
+
 		&:hover {
 			background-color:$green;
 		}

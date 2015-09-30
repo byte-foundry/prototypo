@@ -23,7 +23,7 @@ export class FamilyList extends React.Component {
 					families: undefined,
 				});
 			});
-		
+
 		this.setState({
 			families:families.fonts,
 		});
@@ -113,7 +113,7 @@ export class Family extends React.Component {
 
 	deleteFamily(e) {
 		e.stopPropagation();
-		this.client.dispatchAction('/delete-family', {family: this.props.data});	
+		this.client.dispatchAction('/delete-family', {family: this.props.data});
 	}
 
 	render() {
@@ -135,9 +135,7 @@ export class Family extends React.Component {
 			<div className={classes}>
 				<div className="family-header" onClick={() => {this.toggleList()} }>
 					<div className="family-header-left">
-						<div className="family-header-left-logo">
-							<img src="/assets/images/project-icon.svg"/>	
-						</div>
+						<div className="family-header-left-logo"></div>
 						<div className="family-header-left-title">
 							<div className="family-header-left-title-name">
 								{this.props.data.name}
@@ -236,7 +234,7 @@ export class AddFamily extends React.Component {
 
 		const templateList = _.map(this.state.fonts,(font) => {
 			return (
-				<FamilyTemplateChoice 
+				<FamilyTemplateChoice
 					key={font.name}
 					selectedFont={this.state.selectedFont}
 					font={font}
