@@ -178,6 +178,7 @@ export class AddVariant extends React.Component {
 			'flipping-variant': true,
 			'is-flipped': this.state.flipped,
 		});
+
 		return (
 			<div className={classes} onClick={(e) => { this.flip(e) }} ref="container">
 				<div className="flipping-variant-recto">

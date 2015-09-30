@@ -23,7 +23,7 @@ export class FamilyList extends React.Component {
 					families: undefined,
 				});
 			});
-		
+
 		this.setState({
 			families:families.fonts,
 		});
@@ -113,7 +113,13 @@ export class Family extends React.Component {
 
 	deleteFamily(e) {
 		e.stopPropagation();
-		this.client.dispatchAction('/delete-family', {family: this.props.data});	
+		this.client.dispatchAction('/delete-family', {family: this.props.data});
+	}
+
+	resetHeader() {
+		this.setState({
+			confirmDeletion:false,
+		});
 	}
 
 	render() {
@@ -133,11 +139,9 @@ export class Family extends React.Component {
 
 		return (
 			<div className={classes}>
-				<div className="family-header" onClick={() => {this.toggleList()} }>
+				<div className="family-header" onClick={() => {this.toggleList()} } onMouseLeave={() => {this.resetHeader()}}>
 					<div className="family-header-left">
-						<div className="family-header-left-logo">
-							<img src="/assets/images/project-icon.svg"/>	
-						</div>
+						<div className="family-header-left-logo"></div>
 						<div className="family-header-left-title">
 							<div className="family-header-left-title-name">
 								{this.props.data.name}
@@ -205,11 +209,24 @@ export class AddFamily extends React.Component {
 		});
 	}
 
+	componentWillUnmount() {
+		this.client.dispatchAction('/clear-error-family');
+
+		this.lifespan.release();
+	}
+
 	toggleForm(e, state) {
 		e.stopPropagation();
 		this.setState({
+			error:undefined,
 			showForm: state,
 		});
+
+		if (state) {
+			setTimeout(() => {
+				React.findDOMNode(this.refs.name).focus();
+			}, 100);
+		}
 	}
 
 	selectFont(font) {
@@ -236,7 +253,7 @@ export class AddFamily extends React.Component {
 
 		const templateList = _.map(this.state.fonts,(font) => {
 			return (
-				<FamilyTemplateChoice 
+				<FamilyTemplateChoice
 					key={font.name}
 					selectedFont={this.state.selectedFont}
 					font={font}
@@ -275,7 +292,7 @@ export class AddFamily extends React.Component {
 export class FamilyTemplateChoice extends React.Component {
 	render() {
 		const style = {
-			'font-family': this.props.font.familyName,
+			'fontFamily': this.props.font.familyName,
 		}
 
 		const classes = Classnames({

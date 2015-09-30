@@ -72,6 +72,7 @@
 		color: $dark-grey;
 		.glyph-tag-name {
 			&:before {
+				font-family: sans-serif;
 				content: "→";
 			}
 		}
@@ -81,6 +82,7 @@
 		padding:10px;
 		text-transform: capitalize;
 		&:before {
+			font-family: sans-serif;
 			content: "⇢";
 			display: inline-block;
 			margin-right: .5em;

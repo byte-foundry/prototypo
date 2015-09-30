@@ -16,6 +16,12 @@
 
 	&.is-active &-header {
 		background-color:$yellow;
+		color: $black;
+		&-left {
+			&-logo {
+				opacity: 1;
+			}
+		}
 	}
 
 	&-header {
@@ -28,19 +34,32 @@
 		box-shadow: 0px 7px 0px rgba($dark-grey, 0.1);
 		position:relative;
 		z-index:1;
-		
+
+		transition:all .2s ease-out;
+
 		&-left {
 			display:flex;
 			flex-flow:row nowrap;
 
 			&-logo {
-				padding-top:8px;
 				padding-right:25px;
+				background-image: url("/assets/images/prototypo-icon.svg");
+				opacity: 0.3;
+				width: 65px;
+				background-repeat: no-repeat;
+				background-position: 0 15px;
 			}
 
 			&-title {
 				&-name {
 					font-size: 40px;
+				}
+				&-number-variants {
+					&:before {
+						font-family: sans-serif;
+						content: "→";
+						margin-right: .5em;
+					}
 				}
 			}
 		}
@@ -52,6 +71,7 @@
 			display: flex;
 			flex-flow: row nowrap;
 			overflow: hidden;
+			display: none;
 
 			&.is-confirm &-btn {
 				margin-left:-70px;
@@ -60,19 +80,20 @@
 			&-btn {
 				padding: 2px 5px;
 				border-radius: 4px;
-				background-color:darken($yellow, 10%);
+				background-color: $white;
 				transition:all .2s ease;
 				text-align: center;
 				flex: 0 0 70px;
 				margin-left:134px;
 
 				&:hover {
-					background-color: $dark-grey;
+					background-color: $red;
 					color: $white;
 				}
 			}
 
 			&-confirm {
+				color: $white;
 				flex: 0 0 205px;
 				display: flex;
 				flex-flow: row nowrap;
@@ -80,7 +101,7 @@
 				&-button {
 					border-radius:4px;
 					padding: 2px 5px;
-					background-color: darken($yellow, 10%);
+					background-color: $white;
 					margin-left: 5px;
 					color:$dark-grey;
 					transition: all .2s ease;
@@ -92,6 +113,28 @@
 				}
 			}
 		}
+
+		&:hover {
+			background-color: $black;
+		}
+
+		&:hover &-left {
+			&-logo {
+				background-image: url("/assets/images/prototypo-icon-white.svg");
+				opacity: 1;
+			}
+			&-title {
+				&-name,
+				&-number-variants {
+					color: $white;
+				}
+			}
+		}
+
+		&:hover &-delete {
+			display: flex;
+		}
+
 	}
 
 	&-variant-list {
@@ -115,7 +158,7 @@
 	&-form {
 		padding:20px;
 		display:none;
-		
+
 		&-header {
 			display:flex;
 			flex-flow:row nowrap;
@@ -175,9 +218,10 @@
 			margin-top:20px;
 			font-size:1.5em;
 			color:$white;
+			border-radius: 4px;
 
 			&:hover {
-				background-color:darken($green, 10%);
+				background-color:lighten($green, 10%);
 			}
 		}
 
@@ -226,7 +270,7 @@
 .family-template-choice {
 	margin-right:15px;
 	margin-top:20px;
-	width:250px;
+	width: calc(33% - 15px);
 	text-align:center;
 
 	&.is-active &-name {
@@ -252,7 +296,7 @@
 		background-color:$yellow;
 		color:$dark-grey;
 	}
-	
+
 	&-name {
 		font-size: 1.3em;
 		text-align: center;
