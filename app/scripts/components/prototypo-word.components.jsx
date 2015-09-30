@@ -55,6 +55,7 @@ export default class PrototypoWord extends React.Component {
 				this.props.panel.invertedWordView !== newProps.panel.invertedWordView ||
 				this.props.panel.wordFontSize !== newProps.panel.wordFontSize ||
 				this.props.panel.invertedWordColors !== newProps.panel.invertedWordColors ||
+				this.props.panel.mode.length !== newProps.panel.mode.length ||
 				newProps.panel[newProps.field] !== React.findDOMNode(this.refs.text).textContent ||
 				this.state.showContextMenu !== newState.showContextMenu ||
 				this.state.contextMenuPos !== newState.contextMenuPos

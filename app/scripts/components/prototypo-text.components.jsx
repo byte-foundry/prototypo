@@ -55,6 +55,7 @@ export default class PrototypoText extends React.Component {
 				this.props.panel.invertedTextView !== newProps.panel.invertedTextView ||
 				this.props.panel.textFontSize !== newProps.panel.textFontSize ||
 				this.props.panel.invertedTextColors !== newProps.panel.invertedTextColors ||
+				this.props.panel.mode.length !== newProps.panel.mode.length ||
 				newProps.panel[newProps.field] !== React.findDOMNode(this.refs.text).textContent ||
 				this.state.showContextMenu !== newState.showContextMenu ||
 				this.state.contextMenuPos !== newState.contextMenuPos
