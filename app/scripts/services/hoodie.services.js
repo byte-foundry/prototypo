@@ -1,92 +1,111 @@
+import nothing from 'whatwg-fetch';
 import PouchDB from 'pouchdb';
 import HOODIE from '../helpers/hoodie.helpers.js';
 import HoodiePouch from 'pouchdb-hoodie-api';
 PouchDB.plugin(HoodiePouch);
 
-//const backUrl = 'http://localhost:6004';
-const backUrl = 'https://prototypo.appback.com/_api';
+// const backUrl = 'http://localhost:6080';
+const backUrl = 'http://localhost:6022/_api';
+// const backUrl = 'https://prototypo.appback.com/_api';
+const jsonHeaders = {
+	'Accept': 'application/json',
+	'Content-Type': 'application/json'
+};
+
+function checkStatus(response) {
+	if (response.status >= 200 && response.status < 300) {
+		return response;
+	} else {
+		var error = new Error(response.statusText);
+		error.response = response;
+		throw error;
+	}
+}
+
+function checkUser(response) {
+	if (response.userCtx && response.userCtx.name) {
+		return response.userCtx;
+	} else {
+		var error = new Error('anonymous user');
+		error.response = response;
+		throw error;
+	}
+}
+
+function parseJson(response) {
+	return response.json();
+}
+
+function storeBearer(response) {
+	if ( response.bearerToken) {
+		localStorage.bearerToken = response.bearerToken;
+	}
+	return response;
+}
+
+function getPlan( roles ) {
+	var _roles = roles.join(',');
+
+	return _roles.indexOf('stripe:plan:') !== -1 &&
+			_roles.replace(/^.*stripe:plan:(.+?)(,.*)?$/, '$1');
+}
+
+function setupHoodie(response) {
+	const id = response.roles[0];
+	const db = PouchDB(`${backUrl}/user%2F${id}`, {
+		ajax: {
+			headers: {
+				'Authorization': `Bearer ${localStorage.bearerToken}`
+			}
+		}
+	});
+
+	HoodieApi.instance = db.hoodieApi();
+	HoodieApi.instance.hoodieId = id;
+	HoodieApi.instance.email = response.name.split('/')[1];
+	HoodieApi.instance.plan = getPlan( response.roles );
+
+	if (HoodieApi.eventSub) {
+		_.each(HoodieApi.eventSub.connected, (cb) => {
+			cb();
+		});
+	}
+}
 
 export default class HoodieApi {
 
 	static setup() {
-		return new Promise((resolve, reject) => {
-
-			const xhr = new XMLHttpRequest();
-
-			xhr.open('GET', `${backUrl}/_session`);
-			xhr.withCredentials = true;
-
-			xhr.onload = (e) => {
-				if (e.target.status !== 200) {
-					reject(JSON.parse(e.target.responseText));
-					return;
-				}
-
-				const respJSON = JSON.parse(e.target.responseText);
-				if (respJSON.userCtx.name) {
-					const id = respJSON.userCtx.roles[0];
-					const db = PouchDB(`${backUrl}/user%2F${id}`);
-					HoodieApi.instance = db.hoodieApi();
-					HoodieApi.instance.hoodieId = id;
-					HoodieApi.instance.email = respJSON.userCtx.name.split('/')[1];
-					if (HoodieApi.eventSub) {
-						_.each(HoodieApi.eventSub.connected, (cb) => {
-							cb();
-						});
-					}
-					resolve();
-				}
-				else {
-					reject();
-				}
-			};
-
-			xhr.onerror = (e) => {
-				reject();
-			};
-
-			xhr.send();
-
-		});
+		return fetch(`${backUrl}/_session`, {
+				method: 'get',
+				headers: {
+					'Authorization': `Bearer ${localStorage.bearerToken}`,
+					'Accept': 'application/json'
+				},
+				credentials: 'include'
+			})
+			.then(checkStatus)
+			.then(parseJson)
+			.then(checkUser)
+			.then(setupHoodie);
 	}
 
 	static login(user, password) {
-		return new Promise((resolve, reject) => {
-
-			const xhr = new XMLHttpRequest();
-
-			xhr.open('POST', `${backUrl}/_session`);
-			xhr.setRequestHeader('Content-type', 'application/json');
-			xhr.withCredentials = true;
-
-			xhr.onload = (e) => {
-				if (e.target.status !== 200) {
-					reject(JSON.parse(e.target.responseText));
-					return;
-				}
-
-				const respJSON = JSON.parse(e.target.responseText);
-				const id = respJSON.roles[0];
-				const db = PouchDB(`${backUrl}/user%2F${id}`);
-				HoodieApi.instance = db.hoodieApi();
-				HoodieApi.instance.hoodieId = id;
-				HoodieApi.instance.email = respJSON.name.split('/')[1];
-				if (HoodieApi.eventSub) {
-					_.each(HoodieApi.eventSub.connected, (cb) => {
-						cb();
-					});
-				}
-				resolve();
-			};
-
-			xhr.onerror = (e) => {
-				reject();
-				console.error('We not in');
-			};
-
-			xhr.send(`{"name":"${user}","password":"${password}"}`);
-
-		});
+		return fetch(`${backUrl}/_session`, {
+				method: 'post',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				credentials: 'include',
+				body: JSON.stringify({
+					name: user,
+					password: password
+				})
+			})
+			.then(checkStatus)
+			.then(parseJson)
+			.then(storeBearer)
+			.then(setupHoodie);
 	}
 
 	static logout() {
@@ -98,6 +117,7 @@ export default class HoodieApi {
 			xhr.withCredentials = true;
 
 			xhr.onload = (e) => {
+				delete localStorage.bearerToken;
 				resolve();
 			};
 
@@ -226,6 +246,29 @@ export default class HoodieApi {
 				xhr.send(JSON.stringify(user));
 			});
 		});
+	}
+
+	static stripeCreateCustomer( args, callback ) {
+		return fetch(`${backUrl}/_plugins/stripe/_api`, {
+				method: 'post',
+				headers: {
+					'Authorization': `Bearer ${localStorage.bearerToken}`,
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				credentials: localStorage.bearerToken ? 'omit' : 'include',
+				body: JSON.stringify({
+					method: 'customers.create',
+					args: [ args ]
+				})
+			})
+			.then(checkStatus)
+			.then(parseJson)
+			.then(function() {
+				console.log(arguments);
+			}).catch(function() {
+				console.error(arguments);
+			});
 	}
 
 	static startTask(type, subType, params = {}) {

@@ -494,6 +494,8 @@ if ( isSafari || isIE ) {
 			localClient.dispatchAction('/load-commits');
 			fontInstance.displayChar(String.fromCharCode(glyphs.get('selected')));
 
+			window.HoodieApi = HoodieApi;
+
 			try {
 				const fontValues = await FontValues.get({typeface: appValues.values.template});
 				localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
