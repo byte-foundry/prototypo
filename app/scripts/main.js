@@ -69,10 +69,8 @@ else if ( isSafari || isIE ) {
 
 	React.render(<NotABrowser />, content);
 
-}
-else {
-
-	Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
+} else {
+	window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
 	const stores = {};
 	const localServer = new LocalServer(stores).instance;
@@ -150,7 +148,7 @@ else {
 	//	RemoteClient.initRemoteStore('stripe', `/stripe${uuid.v4()}$$${HoodieApi.instance.hoodieId}`,'subscription');
 	//});
 	//
-	
+
 	async function loadFontValues(typedata, typeface) {
 
 		const initValues = {};
@@ -406,8 +404,8 @@ else {
 				localClient.dispatchAction('/load-params', typedata);
 				localClient.dispatchAction('/load-glyphs', fontInstance.font.altMap);
 				localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
-				loadFontValues(typedata, db);
 
+				loadFontValues(typedata, db);
 			},
 			'/login': async () => {
 				await loadStuff();
@@ -448,7 +446,6 @@ else {
 						})
 						.reverse();
 
-					// console.log(lastcommits);
 					const patch = commits.set('list',lastCommits).commit();
 
 					localServer.dispatchUpdate('/commits', patch);
@@ -576,7 +573,7 @@ else {
 					.set('fonts',fontLibrary.get('fonts'))
 					.set('errorAddVariant', undefined).commit();
 				localServer.dispatchUpdate('/fontLibrary',patch);
-				
+
 				const ref = await FontValues.get({typeface:family.variants[0].db});
 
 				_.each(thicknessTransform, (item) => {
@@ -680,7 +677,7 @@ else {
 			}
 
 			localClient.dispatchAction('/load-app-values', appValues);
-			
+
 			const template = appValues.values.familySelected ? appValues.values.familySelected.template : undefined;
 			const typedataJSON = await Typefaces.getFont( template || 'venus.ptf');
 			const typedata = JSON.parse(typedataJSON);
@@ -714,7 +711,7 @@ else {
 
 			localClient.dispatchAction('/load-commits');
 			fontInstance.displayChar(String.fromCharCode(glyphs.get('selected')));
-			
+
 			loadFontValues(typedata, appValues.values.variantSelected.db);
 		}
 		catch (err) {

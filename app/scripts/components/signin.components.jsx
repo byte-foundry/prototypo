@@ -35,7 +35,7 @@ export default class Signin extends React.Component {
 			.then(() => {
 				this.client.dispatchAction('/login', { });
 			})
-			.catch((err) => {
+			.catch((err) => {console.log(err);
 				this.setState({
 					warningMessage: err.error === 'unauthorized' ? 'You made a mistake in your email or password' : 'An unexpected error occured please contact contact@prototypo.io and provide us with your username',
 					loading:true,
