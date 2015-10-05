@@ -343,7 +343,7 @@ if ( isSafari || isIE ) {
 				localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 				const patchEndLoading = fontTemplate.set('loadingFont',false).commit();
 				localServer.dispatchUpdate('/fontTemplate',patch);
-				
+
 				try {
 					const fontValues = await FontValues.get({typeface: repo});
 					localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
@@ -397,7 +397,6 @@ if ( isSafari || isIE ) {
 						})
 						.reverse();
 
-					// console.log(lastcommits);
 					const patch = commits.set('list',lastCommits).commit();
 
 					localServer.dispatchUpdate('/commits', patch);
@@ -493,8 +492,6 @@ if ( isSafari || isIE ) {
 
 			localClient.dispatchAction('/load-commits');
 			fontInstance.displayChar(String.fromCharCode(glyphs.get('selected')));
-
-			window.HoodieApi = HoodieApi;
 
 			try {
 				const fontValues = await FontValues.get({typeface: appValues.values.template});
