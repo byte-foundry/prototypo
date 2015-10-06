@@ -4,9 +4,9 @@ import HOODIE from '../helpers/hoodie.helpers.js';
 import HoodiePouch from 'pouchdb-hoodie-api';
 PouchDB.plugin(HoodiePouch);
 
-// const backUrl = 'http://localhost:6080';
-const backUrl = 'http://localhost:6022/_api';
-// const backUrl = 'https://prototypo.appback.com/_api';
+// const backUrl = 'http://localhost:6022/_api';
+const backUrl = 'https://prototypo.appback.com/_api';
+
 const jsonHeaders = {
 	'Accept': 'application/json',
 	'Content-Type': 'application/json'
