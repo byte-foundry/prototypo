@@ -17,6 +17,18 @@
 			margin: 0px;
 			font-size: 1.2em;
 			margin-bottom: 2em;
+			a {
+				background-color: $white;
+				color: $blue;
+				border-radius: 3px;
+				padding: 0 .4em;
+				margin: 0 .1em;
+				border: 2px solid $white;
+				&:hover {
+					background-color: $blue;
+					color: $white;
+				}
+			}
 		}
 
 		&-slack,

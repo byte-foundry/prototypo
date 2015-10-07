@@ -33,7 +33,7 @@ export default class HelpPanel extends React.Component {
 
 				<div className="help-panel-header">
 					<p>
-						If you want to say Hi or report an issue, join the chat room on Slack or pick up some lines with UserVoice!
+						If you want to say Hi or report an issue, join the chat room on <a href="http://slackin.prototypo.io" target="_blank">Slack</a> or pick up some lines with UserVoice!
 					</p>
 					<div className="clearfix">
 						<div className="help-panel-header-slack" ref="slackin"></div>
