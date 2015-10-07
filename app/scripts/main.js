@@ -50,7 +50,6 @@ import {Commits} from './services/commits.services.js';
 import XXHash from 'xxhashjs';
 
 const hasher = XXHash(0xDEADBEEF);
-
 if (mobile) {
 	const Route = Router.Route,
 		RouteHandler = Router.RouteHandler,
@@ -173,6 +172,19 @@ else if ( isSafari || isIE ) {
 	}
 
 	async function createStores() {
+		try {
+			const bearer = window.location.search.replace(/.*?bt=(.*?)(&|$)/,'$1');
+
+			if (bearer) {
+				window.location.search = '';
+				localStorage.bearerToken = bearer;
+			}
+
+			await HoodieApi.setup();
+		}
+		catch(err) {
+			location.href = '#/signin';
+		}
 
 		//I know this is ugly but for now it's like this.
 		//We need some transient state to know when we loaded appValues
@@ -650,7 +662,6 @@ else if ( isSafari || isIE ) {
 	async function loadStuff() {
 		//Login checking and app and font values loading
 		try {
-			await HoodieApi.setup();
 			const defaultValues = {
 					values: {
 						mode: ['glyph', 'word'],
