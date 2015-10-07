@@ -3,6 +3,35 @@
 .slider {
 	margin-bottom:15px;
 	font-size: 0.8em;
+	position:relative;
+
+	&.is-disabled &-demo-overlay {
+		position:absolute;
+		top:0;
+		left:0;
+		width:100%;
+		height:100%;
+		background-color: rgba($dark-grey, 0.6);
+		z-index:2;
+		display:flex;
+		justify-content:center;
+		align-items:center;
+	}
+
+	&-demo-overlay {
+		&-text {
+			opacity:0;
+			color:$white;
+			text-align:center;
+			font-size:1.3em;
+			transition:opacity .2s ease;
+		}
+
+		&:hover &-text {
+			opacity:1;
+		}
+	}
+
 
 	&-title {
 		text-transform: uppercase;
@@ -75,7 +104,6 @@
 	}
 
 	&.is-disabled {
-		opacity: .4;
 		* {
 			cursor: not-allowed;
 		}
@@ -83,8 +111,8 @@
 
 	&.is-child {
 		width: 90%;
-		float: right;
 		margin-top:-1rem;
+		margin-left:10%;
 		position: relative;
 		.slider-title {
 			color: $medium-grey;
