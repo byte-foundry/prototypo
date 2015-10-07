@@ -109,13 +109,13 @@ else if ( isSafari || isIE ) {
 		list: [
 			{
 				sample:'john-fell-preview.svg',
-				name:'John Fell',
-				familyName:'John Fell',
+				name:'Prototypo Fell',
+				familyName:'Prototypo Fell',
 				templateName:'john-fell.ptf',
 			},
 			{
 				sample:'venus-preview.svg',
-				name:'Grotesk',
+				name:'Prototypo Grotesk',
 				familyName:'Prototypo Grotesk',
 				templateName:'venus.ptf',
 			}
