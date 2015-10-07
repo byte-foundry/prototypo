@@ -146,7 +146,7 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout()}}/>
 						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto()}}/>
 						<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true)}}/>
-						<TopBarMenuDropdownItem name="Export to OTF" handler={this.exportOTF}/>
+						<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false)}}/>
 						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr}/>
 						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams() }}/>
 					</TopBarMenuDropdown>

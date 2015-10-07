@@ -129,8 +129,14 @@ export default class Dashboard extends React.Component {
 							</li>
 						</ul>
 					</OnBoardingStep>
-					<OnBoardingStep name="export">export</OnBoardingStep>
-					<OnBoardingStep name="youreOnBoard">you're on board</OnBoardingStep>
+					<OnBoardingStep name="end" type="fullModal">
+						<h1>Right on !</h1>
+						<p>You just finished the tutorial. You now know the basic functionality offered by Prototypo.</p>
+						<p>If you want to go further you can subscribe to our professional plan to enjoy the full customization potential.</p>
+						<div className="onboarding-step-footer">
+							<button className="onboarding-step-footer-btn" onClick={() => {this.exitOnboarding()}}>Exit tutorial</button>
+						</div>
+					</OnBoardingStep>
 				</OnBoarding>
 		) : false;
 
