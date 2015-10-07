@@ -5,7 +5,7 @@ import HoodiePouch from 'pouchdb-hoodie-api';
 PouchDB.plugin(HoodiePouch);
 
 //const backUrl = 'http://localhost:6004';
-const backUrl = 'https://prototypo-dev.appback.com/_api';
+const backUrl = 'https://prototypo.appback.com/_api';
 
 const jsonHeaders = {
 	'Accept': 'application/json',
