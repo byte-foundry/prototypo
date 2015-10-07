@@ -225,6 +225,7 @@ export class AddFamily extends React.Component {
 		});
 
 		if (state) {
+			this.client.dispatchAction('/store-panel-param', {onboardstep: 'creatingFamily-2'});
 			setTimeout(() => {
 				React.findDOMNode(this.refs.name).focus();
 			}, 100);
@@ -245,6 +246,7 @@ export class AddFamily extends React.Component {
 			loadCurrent: this.state.selectedFont ? this.state.selectedFont.loadCurrent : false,
 		});
 		Log.ui('Collection.CreateFamily');
+		this.client.dispatchAction('/store-panel-param', {onboardstep: 'customize'});
 	}
 
 	render() {
@@ -268,7 +270,7 @@ export class AddFamily extends React.Component {
 		const error = this.state.error ? <div className="add-family-form-error">{this.state.error}</div> : false;
 
 		return (
-			<div className={familyClass} onClick={(e) => {this.toggleForm(e, true)} }>
+			<div className={familyClass} onClick={(e) => {this.toggleForm(e, true)} } id="font-create">
 				<div className="add-family-header">
 					<h1 className="add-family-header-label">
 						Create a new Family

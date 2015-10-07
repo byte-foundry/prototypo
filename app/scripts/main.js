@@ -49,6 +49,9 @@ import {Commits} from './services/commits.services.js';
 import XXHash from 'xxhashjs';
 
 const hasher = XXHash(0xDEADBEEF);
+
+import Log from './services/log.services.js';
+
 if (mobile) {
 	const Route = Router.Route,
 		RouteHandler = Router.RouteHandler,
@@ -413,6 +416,27 @@ else if ( isSafari || isIE ) {
 				fontInstance.subset = typeof subset === 'string' ? subset : '';
 				saveAppValues();
 			},
+			'/change-tab-sidebar': (params) => {
+
+				if (sideBarTab.get('tab') === 'fonts-collection' &&
+					params.name != 'font-collection' &&
+					!panel.get('onboard') &&
+					panel.get('onboardstep').indexOf('creatingFamily') !== -1) {
+
+					localClient.dispatchAction('/store-panel-param', {onboardstep: 'createFamily'});
+
+				}
+
+				if (panel.get('onboardstep') && panel.get('onboardstep') === params.from) {
+					localClient.dispatchAction('/store-panel-param', {onboardstep: params.to });
+				}
+
+				const name = params.name;
+				const patch = sideBarTab.set('tab',name).commit();
+				localServer.dispatchUpdate('/sideBarTab', patch);
+
+				Log.ui('Sidebar/change-tab-sidebar', name);
+			},
 			'/load-app-values': ({values}) => {
 				values.selected = values.selected || 'A'.charCodeAt(0);
 				const patchGlyph = glyphs.set('selected', values.selected).commit();
@@ -765,6 +789,8 @@ else if ( isSafari || isIE ) {
 					values: {
 						mode: ['glyph', 'word'],
 						selected: 'A'.charCodeAt(0).toString(),
+						onboard: false,
+						onboardstep: 'welcome',
 						word: 'Hello',
 						text: 'World',
 						pos: ['Point', 457, -364],
@@ -779,7 +805,7 @@ else if ( isSafari || isIE ) {
 			let appValues;
 			try {
 				appValues = await AppValues.get({typeface: 'default'});
-				appValues = _.extend(defaultValues, appValues);
+				appValues.values = _.extend(defaultValues.values, appValues.values);
 			}
 			catch(err) {
 				appValues = defaultValues;

@@ -95,11 +95,30 @@ export default class Topbar extends React.Component {
 		Log.ui('Topbar.logout');
 	}
 
+	startTuto() {
+		this.client.dispatchAction('/store-panel-param',{onboard:false,onboardstep:'welcome'});
+	}
+
 	toggleView(name) {
 		const newViewMode = _.xor(this.state.panel.mode,[name]);
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-panel-param',{mode:newViewMode});
 			Log.ui('Topbar.toggleView', name);
+		}
+	}
+
+	async onboardExport(step) {
+		const panel = await this.client.fetch('/panel');
+		if (panel.get('onboard')) {
+			return;
+		}
+
+		const currentStep = panel.get('onboardstep');
+		if (currentStep === 'export' && step === 'export-2') {
+			this.client.dispatchAction('/store-panel-param', {onboardstep: step});
+		}
+		else if (currentStep === 'export-2' && step === 'export') {
+			this.client.dispatchAction('/store-panel-param', {onboardstep: step});
 		}
 	}
 
@@ -123,10 +142,11 @@ export default class Topbar extends React.Component {
 		return (
 			<div id="topbar">
 				<TopBarMenu>
-					<TopBarMenuDropdown name="File">
+					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2') }} leave={() => {this.onboardExport('export')}}>
 						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout()}}/>
+						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto()}}/>
 						<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true)}}/>
-						<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false)}}/>
+						<TopBarMenuDropdownItem name="Export to OTF" handler={this.exportOTF}/>
 						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr}/>
 						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams() }}/>
 					</TopBarMenuDropdown>
