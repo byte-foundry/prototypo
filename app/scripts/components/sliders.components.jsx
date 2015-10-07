@@ -4,6 +4,7 @@ import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {registerToUndoStack} from '../helpers/undo-stack.helpers.js';
 import DOM from '../helpers/dom.helpers.js';
+import HoodieApi from '../services/hoodie.services.js';
 
 export class Sliders extends React.Component {
 
@@ -53,15 +54,26 @@ export class Slider extends React.Component {
 			console.log('[RENDER] slider');
 		}
 		const value = this.props.value !== undefined ? this.props.value : this.props.param.init;
+		const plan = HoodieApi.instance.plan || 'kickstarter';
+		this.props.param.notInDemo = (plan.indexOf('free') !== -1 && !this.props.param.demo);
 
 		const classes = ClassNames({
 			'slider': true,
-			'is-disabled': this.props.param.disabled,
+			'is-disabled': this.props.param.disabled || this.props.param.notInDemo,
 			'is-child': this.props.param.child
 		});
 
+		const demoOverlay = this.props.param.notInDemo ? (
+				<div className="slider-demo-overlay-text">
+					Available with the professional subscription
+				</div>
+			) : false;	
+
 		return (
 			<div className={classes}>
+				<div className="slider-demo-overlay">
+					{demoOverlay}
+				</div>
 				<label className="slider-title">{this.props.param.label}</label>
 				<div className="slider-reset" onClick={() => {this.resetValue()}}>reset</div>
 				<SliderTextController value={value} name={this.props.param.name} label={this.props.param.label} disabled={this.props.param.disabled}/>
