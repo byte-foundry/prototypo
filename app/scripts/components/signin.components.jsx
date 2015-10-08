@@ -76,8 +76,11 @@ export default class Signin extends React.Component {
 					type="password"
 					required
 					placeholder="Password"/>
-				<a href="#/signin/forgotten">
-					Forgotten your password ?
+				<a href="#/signin/forgotten" className="sign-in-help-needed">
+					Forgotten your password?
+				</a>
+				<a href="https://www.prototypo.io/pricing.html" className="sign-in-help-needed">
+					You don't have any account?
 				</a>
 				{((message) => {if (message) {
 					return <WarningMessage text={message}/>
