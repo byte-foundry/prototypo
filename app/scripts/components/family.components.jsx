@@ -4,6 +4,7 @@ import Lifespan from 'lifespan';
 import {VariantList} from './variant.components.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import Log from '../services/log.services.js';
 
 export class FamilyList extends React.Component {
 
@@ -114,6 +115,7 @@ export class Family extends React.Component {
 	deleteFamily(e) {
 		e.stopPropagation();
 		this.client.dispatchAction('/delete-family', {family: this.props.data});
+		Log.ui('Collection.deleteFamily');
 	}
 
 	resetHeader() {
@@ -241,6 +243,7 @@ export class AddFamily extends React.Component {
 			name:React.findDOMNode(this.refs.name).value,
 			template:this.state.selectedFont ? this.state.selectedFont.templateName : undefined,
 		});
+		Log.ui('Collection.CreateFamily');
 	}
 
 	render() {
