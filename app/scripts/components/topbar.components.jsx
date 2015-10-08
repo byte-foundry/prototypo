@@ -47,9 +47,12 @@ export default class Topbar extends React.Component {
 			})
 	}
 
-	exportOTF() {
-		fontInstance.download();
-		Log.ui('Topbar.exportOTF');
+	exportOTF(merged) {
+		this.client.dispatchAction('/store-panel-param',{export: true});
+		fontInstance.download(() => {
+			this.client.dispatchAction('/store-panel-param',{export: false, onboardstep: 'end'});
+		}, null, merged);
+		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
 	}
 
 	exportGlyphr() {
@@ -101,12 +104,18 @@ export default class Topbar extends React.Component {
 		const redoDisabled = whereAt > (this.state.eventList.length - 2);
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${!redoDisabled ? this.state.eventList[whereAt+1].label : ''}`;
+
+		const exporting = this.state.panel.export ? (
+			<TopBarMenuAction name="Exporting..." click={() => {}} action={true}/>
+			) : false;
+
 		return (
 			<div id="topbar">
 				<TopBarMenu>
 					<TopBarMenuDropdown name="File">
 						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout()}}/>
-						<TopBarMenuDropdownItem name="Export to OTF" handler={this.exportOTF}/>
+						<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true)}}/>
+						<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false)}}/>
 						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr}/>
 						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams() }}/>
 					</TopBarMenuDropdown>
@@ -121,6 +130,7 @@ export default class Topbar extends React.Component {
 						}}/>
 						<TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/>
 					</TopBarMenuDropdown>
+					{exporting}
 					<TopBarMenuAction name="Glyphs list" click={(e) => { this.toggleView('list') }} alignRight={true} action={true}>
 					</TopBarMenuAction>
 					<TopBarMenuDropdown name="Toggle views" img="assets/images/views-icon.svg" alignRight={true} small={true}>

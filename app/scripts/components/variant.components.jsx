@@ -2,6 +2,7 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
+import Log from '../services/log.services.js';
 
 export class VariantList extends React.Component {
 	render() {
@@ -62,10 +63,12 @@ export class Variant extends React.Component {
 
 	editVariant(name) {
 		this.client.dispatchAction('/edit-variant', {variant: this.props.data, family: this.props.family, newName: name}); 
+		Log.ui('Collection.editVariant');
 	}
 
 	deleteVariant() {
 		this.client.dispatchAction('/delete-variant', {variant: this.props.data, familyName: this.props.family.name});
+		Log.ui('Collection.deleteVariant');
 	}
 
 	render() {
@@ -170,6 +173,7 @@ export class AddVariant extends React.Component {
 			name,
 			familyName: this.props.familyName,
 		});
+		Log.ui('Collection.createVariant');
 	}
 
 	render() {

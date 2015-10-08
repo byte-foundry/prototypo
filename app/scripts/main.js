@@ -41,7 +41,6 @@ import RemoteClient from './stores/remote-client.stores.jsx';
 const { Patch } = Remutable;
 
 import {Typefaces} from './services/typefaces.services.js';
-// import Prototypo from '../../node_modules/prototypo.js/dist/prototypo.js';
 import PrototypoCanvas from '../../node_modules/prototypo-canvas/dist/prototypo-canvas.js';
 import HoodieApi from './services/hoodie.services.js';
 import uuid from 'node-uuid';

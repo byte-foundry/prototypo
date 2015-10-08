@@ -7,7 +7,7 @@ class TopBarMenu extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] TopBarMenu');
 		}
-		const headers = _.map(this.props.children,(child) => {
+		const headers = _.without(this.props.children, false).map((child) => {
 			const classes = Classnames({
 				'top-bar-menu-item':true,
 				'is-aligned-right':child.props.alignRight,
