@@ -44,14 +44,20 @@ export default class Topbar extends React.Component {
 			})
 			.onDelete(() => {
 				this.setState(undefined);
-			})
+			});
 	}
 
 	exportOTF(merged) {
 		this.client.dispatchAction('/store-panel-param',{export: true});
+		const name = {
+			family: `Prototypo-${this.state.panel.familySelected.name}`,
+			style: `${this.state.panel.variantSelected.name.toLowerCase()}`,
+		};
+
 		fontInstance.download(() => {
 			this.client.dispatchAction('/store-panel-param',{export: false, onboardstep: 'end'});
-		}, null, merged);
+		},name, merged);
+
 		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
 	}
 
