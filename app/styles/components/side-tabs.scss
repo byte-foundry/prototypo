@@ -125,7 +125,7 @@
 		z-index:6;
 		box-shadow: none;
 		padding: 2em;
-		&::before {
+		&-backdrop {
 			content: "";
 			position: absolute;
 			top: 0;

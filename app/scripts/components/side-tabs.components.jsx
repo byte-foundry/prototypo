@@ -10,15 +10,15 @@ export class SideTabs extends React.Component {
 		this.state = {};
 	}
 
+	changeTab(name, disabled) {
+		if( !disabled ) {
+			this.client.dispatchAction('/change-tab-sidebar',{name});
+		}
+	};
+
 	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
-
-		this.changeTab = (name, disabled) => {
-			if( !disabled ) {
-				this.client.dispatchAction('/change-tab-sidebar',{name});
-			}
-		};
 
 		const commits = await this.client.fetch('/commits');
 		if (commits.head.toJS().list) {
@@ -112,6 +112,14 @@ export class SideTabs extends React.Component {
 
 export class SideTab extends React.Component {
 
+	backToSliders() {
+		this.client.dispatchAction('/change-tab-sidebar',{name: 'sliders'});
+	};
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] side tab');
@@ -124,9 +132,14 @@ export class SideTab extends React.Component {
 			"no-padding": !!this.props.padding,
 		});
 
+		const backdrop = this.props.big ? (
+				<div className="side-tab-big-backdrop" onClick={() => {this.backToSliders()}}></div>
+			) : false;
+
 		return (
 			<div className={classes} key={`${this.props.name}SideTab`}>
 				{this.props.children}
+				{backdrop}
 			</div>
 		)
 	}
