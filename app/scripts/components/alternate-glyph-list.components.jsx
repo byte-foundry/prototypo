@@ -1,7 +1,16 @@
 import React from 'react';
 import Glyph from './glyph.components.jsx';
+import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class AlternateGlyphList extends React.Component {
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+	alternate( unicode, glyphName ) {
+		this.client.dispatchAction('/set-alternate', {unicode,glyphName});
+	}
 
 	render() {
 		if (process.env.__SHOW_RENDER__) {
@@ -11,7 +20,11 @@ export default class AlternateGlyphList extends React.Component {
 			<div className="alternate-glyph-list">
 				{
 					_.map(this.props.alts, (glyph,i) => {
-						return <Glyph glyph={glyph} unicode={this.props.unicode} key={`alt-${this.props.unicode}-${i}`} />
+						return (
+							<div onClick={() => { this.alternate( this.props.unicode, glyph.name )}}>
+								<Glyph glyph={glyph} unicode={this.props.unicode} key={`alt-${this.props.unicode}-${i}`}/>
+							</div>
+						)
 					})
 				}
 			</div>

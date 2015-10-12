@@ -34,7 +34,7 @@ export default class Glyph extends React.Component {
 			"is-parametrized": false,
 		});
 
-		const alts = showAlts ? <AlternateGlyphList alts={_.without(this.props.glyph, this.props.glyph[0])} unicode={this.props.unicode}/> : undefined;
+		const alts = showAlts ? <AlternateGlyphList alts={this.props.glyph} unicode={this.props.unicode}/> : undefined;
 
 		return (
 			<div className={classes} onClick={() => { this.selectGlyph(); } }>

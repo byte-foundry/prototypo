@@ -162,7 +162,10 @@
 		.alternate-glyph-list {
 			display:none;
 			position:absolute;
-			bottom:48px;
+			bottom:-1px;
+			right:48px;
+			flex-flow: row nowrap;
+			border: solid 1px $yellow;
 
 			.glyph-list-glyph {
 				border:none;
@@ -171,7 +174,7 @@
 
 		&:hover {
 			.alternate-glyph-list {
-				display: block;
+				display: flex;
 			}
 		}
 
