@@ -7,6 +7,7 @@ import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import Log from '../services/log.services.js';
 import JSZip from 'jszip';
 import {FontValues} from '../services/values.services.js';
+import {Typefaces} from '../services/typefaces.services.js';
 
 export class FamilyList extends React.Component {
 
@@ -107,33 +108,52 @@ export class Family extends React.Component {
 		});
 	}
 
-	async downloadFamily() {
+	async downloadFamily(e) {
+		e.stopPropagation();
 
 		const fontVariant = await this.client.fetch('/fontVariant');
 		const variant = fontVariant.get('variant');
 		const family = fontVariant.get('family');
 		
-		const typedataJSON = await Typefaces.getFont(template);
+		const typedataJSON = await Typefaces.getFont(this.props.data.template);
 		const typedata = JSON.parse(typedataJSON);
 
 		await fontInstance.loadFont( typedata.fontinfo.familyName, typedataJSON );
 
 		const zip = new JSZip();
+		const a = document.createElement('a');
+		const blobs = [];
+		for(let i = 0; i < this.props.data.variants.length; i++) {
+			const currVariant = this.props.data.variants[i];
+			blobs.push(await this.generateVariantBlob(currVariant.db, this.props.data.name, currVariant.name));
+		}
 
-		Promise.all(_.map(this.state.data.variants, (variant) => {
-				return generateVariantBlob(variant.db, this.state.data.name);
-			}))
-			.then((blobs) => {
-				_.each( blobs, ({buffer, variant}) => {
-					zip.file(`${variant}.otf`, buffer, {binary: true});
-				});
-				saveAs( zip.generate({type: "blob"}));
-			});
+		_.each( blobs, ({buffer, variant}) => {
+			zip.file(`${variant}.otf`, buffer, {binary: true});
+		});
+
+		const reader = new FileReader();
+		const _URL = window.URL || window.webkitURL;
+
+		reader.onloadend = () => {
+			a.download = this.props.data.name + '.zip';
+			a.href = reader.result;
+			a.dispatchEvent(new MouseEvent('click'));
+
+			setTimeout(() => {
+				a.href = '#';
+				_URL.revokeObjectURL( reader.result );
+			}, 100);
+		};
+
+		reader.readAsDataURL(zip.generate({type: "blob"}));
+
+		this.client.dispatchAction('/select-variant', {variant, family});
 	}
 
 	async generateVariantBlob(db, family, style) {
-		const values = FontValues.get({db});
-		return await fontInstance.getBlob(null , { family, style }, false, values);
+		const values = await FontValues.get({typeface: db});
+		return await fontInstance.getBlob(null , { family, style }, false, values.values);
 	}
 
 	toggleConfirmDelete(e) {
@@ -183,6 +203,9 @@ export class Family extends React.Component {
 								{this.props.data.variants.length} variants
 							</div>
 						</div>
+					</div>
+					<div className="family-header-delete-btn" onClick={(e) => {this.downloadFamily(e)}}>
+						DOWNLOAD
 					</div>
 					<div className={deleteClasses}>
 						<div className="family-header-delete-btn" onClick={(e) => {this.toggleConfirmDelete(e)}}>
