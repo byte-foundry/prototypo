@@ -9,6 +9,7 @@
     "del": "^1.2.0",
     "hoodie": "^2.0.4",
     "john-fell.ptf": "byte-foundry/john-fell.ptf#master",
+    "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",
     "lodash": "^3.9.3",
     "moment": "^2.10.3",

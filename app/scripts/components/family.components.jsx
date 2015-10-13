@@ -5,6 +5,8 @@ import {VariantList} from './variant.components.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import Log from '../services/log.services.js';
+import JSZip from 'jszip';
+import {FontValues} from '../services/values.services.js';
 
 export class FamilyList extends React.Component {
 
@@ -103,6 +105,35 @@ export class Family extends React.Component {
 		this.setState({
 			listOpen:!this.state.listOpen
 		});
+	}
+
+	async downloadFamily() {
+
+		const fontVariant = await this.client.fetch('/fontVariant');
+		const variant = fontVariant.get('variant');
+		const family = fontVariant.get('family');
+		
+		const typedataJSON = await Typefaces.getFont(template);
+		const typedata = JSON.parse(typedataJSON);
+
+		await fontInstance.loadFont( typedata.fontinfo.familyName, typedataJSON );
+
+		const zip = new JSZip();
+
+		Promise.all(_.map(this.state.data.variants, (variant) => {
+				return generateVariantBlob(variant.db, this.state.data.name);
+			}))
+			.then((blobs) => {
+				_.each( blobs, ({buffer, variant}) => {
+					zip.file(`${variant}.otf`, buffer, {binary: true});
+				});
+				saveAs( zip.generate({type: "blob"}));
+			});
+	}
+
+	async generateVariantBlob(db, family, style) {
+		const values = FontValues.get({db});
+		return await fontInstance.getBlob(null , { family, style }, false, values);
 	}
 
 	toggleConfirmDelete(e) {
