@@ -77,9 +77,11 @@ export class OnBoarding extends React.Component {
 }
 
 export class OnBoardingStep extends React.Component {
+
 	render() {
+
 		return (
-			<div className="onboarding-step">
+			<div className='onboarding-step' id={this.props.name}>
 				{this.props.children}
 			</div>
 		)

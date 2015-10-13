@@ -76,10 +76,10 @@ export default class Dashboard extends React.Component {
 				<OnBoarding step={this.state.step}>
 					<OnBoardingStep name="welcome" type="fullModal">
 						<h1>Welcome to Prototypo</h1>
-						<p>This little tutorial will explain the basic features of Prototypo and how to use them</p>
+						<p>This little tutorial will explain the basic features of Prototypo and how to use them.</p>
 						<div className="onboarding-step-footer">
 							<button className="onboarding-step-footer-btn" onClick={() => {this.goToNextStep('createFamily')}}>Proceed to next step</button>
-							<button className="onboarding-step-footer-btn" onClick={() => {this.exitOnboarding()}}>Exit tutorial</button>
+							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding()}}>Exit tutorial</button>
 						</div>
 					</OnBoardingStep>
 					<OnBoardingStep name="createFamily" type="indicator" target="font-collection">
@@ -98,16 +98,16 @@ export default class Dashboard extends React.Component {
 						<p className="onboarding-step-title">Customizing your font</p>
 						<p>Your font family is created you can now customize your font using the parameters</p>
 					</OnBoardingStep>
-					<OnBoardingStep name="customizing" type="indicator" target="parameters" inverseArrow={true} offset={'-40px -50px'}>
+					<OnBoardingStep name="customizing" type="indicator" target="parameters" inverseArrow={true} offset={'-80px -50px'}>
 						<p className="onboarding-step-title">Customizing your font</p>
-						<p>Adjust the different parameters to customize your. There is three differents type of parameters.</p>
+						<p>Adjust the different parameters to customize your font. There is three differents type of parameters.</p>
 						<p>From here you can explore the different component of the interface (list of glyphs, views...) or directly export your font</p>
 						<div className="onboarding-step-footer">
 							<button className="onboarding-step-footer-btn" onClick={() => {this.goToNextStep('exploreUI')}}>Explore the interface</button>
 							<button className="onboarding-step-footer-btn" onClick={() => {this.goToNextStep('export')}}>Export your font</button>
 						</div>
 					</OnBoardingStep>
-					<OnBoardingStep name="export" type="indicator" target="file-menu" arrowPos="top" inverseArrow={true} targetAlign="bottom center" elementAlign="top center" offset="-50px 0px">
+					<OnBoardingStep name="export" type="indicator" target="file-menu" arrowPos="top" inverseArrow={true} targetAlign="bottom center" elementAlign="top center" offset="-50px -18px">
 						<p className="onboarding-step-title">Export your font</p>
 						<p>Click on the file menu to export your font</p>
 					</OnBoardingStep>
@@ -121,7 +121,7 @@ export default class Dashboard extends React.Component {
 							</li>
 							<li>
 								<h2 className="onboarding-list-title">Export to otf</h2>
-								This will provide you a basic otf font. These exports may exhibit some visual glitch (especially in Windows and Mac). You can correct these problems by removing the overlaps in the font using specialized software like FontForge or Fontlab.
+								This will provide you a basic otf font. These exports may exhibit some visual glitch (especially in Windows). You can correct these problems by removing the overlaps in the font using specialized software like FontForge.
 							</li>
 							<li>
 								<h2 className="onboarding-list-title">Export to Glyphr Studio</h2>
@@ -132,9 +132,9 @@ export default class Dashboard extends React.Component {
 					<OnBoardingStep name="end" type="fullModal">
 						<h1>Right on !</h1>
 						<p>You just finished the tutorial. You now know the basic functionality offered by Prototypo.</p>
-						<p>If you want to go further you can subscribe to our professional plan to enjoy the full customization potential.</p>
+						<p>If you want to go further you can subscribe to <a href="www.prototypo.io/pricing" target="_blank">our professional plan</a> to enjoy the full customization potential.</p>
 						<div className="onboarding-step-footer">
-							<button className="onboarding-step-footer-btn" onClick={() => {this.exitOnboarding()}}>Exit tutorial</button>
+							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding()}}>Exit tutorial</button>
 						</div>
 					</OnBoardingStep>
 				</OnBoarding>
