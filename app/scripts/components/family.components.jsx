@@ -148,7 +148,7 @@ export class Family extends React.Component {
 			}, 100);
 			fontInstance.exportingZip = false;
 			this.client.dispatchAction('/change-font',{
-				template: this.props.data.template,
+				template: family.template,
 				db: variant.db,
 			});
 		};
