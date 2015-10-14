@@ -114,11 +114,13 @@ export class Family extends React.Component {
 		const fontVariant = await this.client.fetch('/fontVariant');
 		const variant = fontVariant.get('variant');
 		const family = fontVariant.get('family');
-		
-		const typedataJSON = await Typefaces.getFont(this.props.data.template);
-		const typedata = JSON.parse(typedataJSON);
+		fontInstance.exportingZip = true;
+		fontInstance._queue = [];
 
-		await fontInstance.loadFont( typedata.fontinfo.familyName, typedataJSON );
+		this.client.dispatchAction('/change-font',{
+			template: this.props.data.template,
+			db: 'default',
+		});
 
 		const zip = new JSZip();
 		const a = document.createElement('a');
@@ -144,11 +146,14 @@ export class Family extends React.Component {
 				a.href = '#';
 				_URL.revokeObjectURL( reader.result );
 			}, 100);
+			fontInstance.exportingZip = false;
+			this.client.dispatchAction('/change-font',{
+				template: this.props.data.template,
+				db: variant.db,
+			});
 		};
 
 		reader.readAsDataURL(zip.generate({type: "blob"}));
-
-		this.client.dispatchAction('/select-variant', {variant, family});
 	}
 
 	async generateVariantBlob(db, family, style) {
