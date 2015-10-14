@@ -202,6 +202,7 @@ else if ( isSafari || isIE ) {
 			appValues.library = fontLibrary.get('fonts');
 			appValues.variantSelected = fontVariant.get('variant');
 			appValues.familySelected = fontVariant.get('family');
+			appValues.tagSelected = tagStore.get('selected');
 
 			AppValues.save({typeface:'default', values:appValues});
 		}, 300);
@@ -245,6 +246,7 @@ else if ( isSafari || isIE ) {
 					.commit();
 
 				localServer.dispatchUpdate('/tagStore',patch);
+				saveAppValues();
 			},
 			'/toggle-pinned': (params) => {
 				const pinned = _.xor(tagStore.get('pinned'),[params]);
@@ -371,7 +373,10 @@ else if ( isSafari || isIE ) {
 				const patchTab = fontTab.set('tab', values.tab || 'Func').commit();
 				localServer.dispatchUpdate('/fontTab',patchTab);
 
-				const patchTag = tagStore.set('pinned', values.pinned || []).commit();
+				const patchTag = tagStore
+					.set('pinned', values.pinned || [])
+					.set('selected', values.tagSelected || 'all')
+					.commit();
 				localServer.dispatchUpdate('/tagStore',patchTag);
 
 				const patchCommit = commits.set('latest', values.latestCommit).commit();
