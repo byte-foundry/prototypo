@@ -242,6 +242,7 @@ export class AddFamily extends React.Component {
 		this.client.dispatchAction('/create-family',{
 			name:React.findDOMNode(this.refs.name).value,
 			template:this.state.selectedFont ? this.state.selectedFont.templateName : undefined,
+			loadCurrent: this.state.selectedFont ? this.state.selectedFont.loadCurrent : false,
 		});
 		Log.ui('Collection.CreateFamily');
 	}

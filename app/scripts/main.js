@@ -107,6 +107,11 @@ else if ( isSafari || isIE ) {
 		list: [
 			{
 				sample:'john-fell-preview.svg',
+				name:'Current font',
+				loadCurrent:true,
+			},
+			{
+				sample:'john-fell-preview.svg',
 				name:'Prototypo Fell',
 				familyName:'Prototypo Fell',
 				templateName:'john-fell.ptf',
@@ -168,6 +173,15 @@ else if ( isSafari || isIE ) {
 				values,
 			});
 		}
+	}
+
+	async function copyFontValues(typeface) {
+		const values = fontControls.get('values');
+
+		await FontValues.save({
+			typeface,
+			values,
+		});
 	}
 
 	async function createStores() {
@@ -478,7 +492,11 @@ else if ( isSafari || isIE ) {
 				localServer.dispatchUpdate('/commits', patch);
 				saveAppValues();
 			},
-			'/create-family': ({name, template}) => {
+			'/create-family': async ({name, template, loadCurrent}) => {
+
+				if (loadCurrent) {
+					template = fontVariant.get('family').template;
+				}
 
 				if (template === undefined) {
 					const patch = fontLibrary.set('errorAddFamily', 'You must choose a base template').commit();
@@ -529,6 +547,10 @@ else if ( isSafari || isIE ) {
 					localServer.dispatchUpdate('/fontLibrary', patch);
 				}, 200);
 
+				if (loadCurrent) {
+					await copyFontValues(newFont.variants[0].db);	
+				}
+
 				localClient.dispatchAction('/change-font', {
 					template,
 					db:newFont.variants[0].db,
@@ -538,6 +560,8 @@ else if ( isSafari || isIE ) {
 					.set('variant', newFont.variants[0])
 					.set('family', {name: newFont.name, template: newFont.template}).commit();
 				localServer.dispatchUpdate('/fontVariant', patchVariant);
+
+				
 
 				saveAppValues();
 			},
