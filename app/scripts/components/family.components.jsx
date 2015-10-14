@@ -209,8 +209,8 @@ export class Family extends React.Component {
 							</div>
 						</div>
 					</div>
-					<div className="family-header-delete-btn" onClick={(e) => {this.downloadFamily(e)}}>
-						DOWNLOAD
+					<div className="family-header-download" onClick={(e) => {this.downloadFamily(e)}}>
+						DOWNLOAD FAMILY
 					</div>
 					<div className={deleteClasses}>
 						<div className="family-header-delete-btn" onClick={(e) => {this.toggleConfirmDelete(e)}}>
