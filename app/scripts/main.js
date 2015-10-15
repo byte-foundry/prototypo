@@ -136,6 +136,11 @@ else if ( isSafari || isIE ) {
 	const commits = stores['/commits'] = new Remutable({
 	});
 
+	const exportStore = stores['/exportStore'] = new Remutable({
+		export:false,
+		errorExport:false,
+	});
+
 	const canvasEl = window.canvasElement = document.createElement('canvas');
 	canvasEl.className = "prototypo-canvas-container-canvas";
 	canvasEl.width = 0;
@@ -356,6 +361,10 @@ else if ( isSafari || isIE ) {
 				const patch = panel.commit();
 				localServer.dispatchUpdate('/panel',patch);
 				saveAppValues();
+			},
+			'/exporting': ({exporting, errorExport}) => {
+				const patch = exportStore.set('export', exporting).set('errorExport', errorExport).commit();
+				localServer.dispatchUpdate('/exportStore', patch);
 			},
 			'/store-text': ({value, propName}) => {
 				const patch = panel.set(propName,value).commit();

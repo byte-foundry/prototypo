@@ -16,6 +16,7 @@ export default class Topbar extends React.Component {
 			panel: {
 				mode:[],
 			},
+			export:{},
 		}
 	}
 
@@ -45,18 +46,35 @@ export default class Topbar extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		this.client.getStore('/exportStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					export: head.toJS(),
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 	}
 
 	exportOTF(merged) {
-		this.client.dispatchAction('/store-panel-param',{export: true});
+		this.client.dispatchAction('/exporting',{exporting: true});
 		const name = {
 			family: `Prototypo-${this.state.panel.familySelected.name}`,
 			style: `${this.state.panel.variantSelected.name.toLowerCase()}`,
 		};
 
+		const exportingError = setTimeout(() => {
+			this.client.dispatchAction('/exporting',{exporting: false, errorExport:true});
+		}, 10000);
+
 		fontInstance.download(() => {
-			this.client.dispatchAction('/store-panel-param',{export: false, onboardstep: 'end'});
+			this.client.dispatchAction('/store-panel-param',{onboardstep: 'end'});
+			this.client.dispatchAction('/exporting',{exporting: false});
+			cancelTimeout(exportingError);
 		},name, merged);
+
 
 		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
 	}
@@ -111,8 +129,11 @@ export default class Topbar extends React.Component {
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${!redoDisabled ? this.state.eventList[whereAt+1].label : ''}`;
 
-		const exporting = this.state.panel.export ? (
+		const exporting = this.state.export.export ? (
 			<TopBarMenuAction name="Exporting..." click={() => {}} action={true}/>
+			) : false;
+		const errorExporting = this.state.export.errorExport ? (
+			<TopBarMenuAction name="An error occured during exporting" click={() => {}} action={true}/>
 			) : false;
 
 		return (
@@ -137,6 +158,7 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/>
 					</TopBarMenuDropdown>
 					{exporting}
+					{errorExporting}
 					<TopBarMenuAction name="Glyphs list" click={(e) => { this.toggleView('list') }} alignRight={true} action={true}>
 					</TopBarMenuAction>
 					<TopBarMenuDropdown name="Toggle views" img="assets/images/views-icon.svg" alignRight={true} small={true}>
