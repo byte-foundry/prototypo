@@ -106,8 +106,8 @@ else if ( isSafari || isIE ) {
 	const templateList = stores['/templateList'] = new Remutable({
 		list: [
 			{
-				sample:'john-fell-preview.svg',
-				name:'Current font',
+				sample:'current-state-icon.svg',
+				name:'Current settings',
 				loadCurrent:true,
 			},
 			{
