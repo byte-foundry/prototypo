@@ -159,6 +159,17 @@
 			color:$black;
 		}
 
+		&.has-alts &-top-indicator {
+			content:'';
+			position:absolute;
+			width:5px;
+			height:5px;
+			background-color:$white;
+			border-radius:50%;
+			top:5px;
+			right:5px;
+		}
+
 		.alternate-glyph-list {
 			display:none;
 			position:absolute;

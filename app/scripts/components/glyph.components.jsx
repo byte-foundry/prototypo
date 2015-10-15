@@ -32,16 +32,15 @@ export default class Glyph extends React.Component {
 			"is-read": false,
 			"is-manually-modified": false,
 			"is-parametrized": false,
+			"has-alts": showAlts,
 		});
-
-		const alts = showAlts ? <AlternateGlyphList alts={this.props.glyph} unicode={this.props.unicode}/> : undefined;
 
 		return (
 			<div className={classes} onClick={() => { this.selectGlyph(); } }>
 				<label className="glyph-list-glyph-label">{String.fromCharCode(this.props.unicode)}</label>
 				<div className="glyph-list-glyph-right-indicator"></div>
 				<div className="glyph-list-glyph-left-indicator"></div>
-				{ alts }
+				<div className="glyph-list-glyph-top-indicator"></div>
 			</div>
 		);
 	}

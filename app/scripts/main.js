@@ -176,11 +176,11 @@ else if ( isSafari || isIE ) {
 
 		try {
 			const fontInfos = await FontInfoValues.get({typeface});
-			const alts = _.extend(typedata.fontinfo.defaultAlts, fontInfos.values.altList);
-			Object.keys(alts).forEach(function(unicode) {
-				fontInstance.setAlternateFor(unicode,alts[unicode]);
+			const altList = _.extend(typedata.fontinfo.defaultAlts, fontInfos.values.altList);
+			Object.keys(altList).forEach(function(unicode) {
+				fontInstance.setAlternateFor(unicode,altList[unicode]);
 			});
-			localClient.dispatchAction('/load-font-infos', alts);
+			localClient.dispatchAction('/load-font-infos', {altList});
 		}
 		catch (err) {
 			const values = {

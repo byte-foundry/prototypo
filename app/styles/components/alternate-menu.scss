@@ -1,0 +1,39 @@
+@import '../variables';
+
+.alternate-menu {
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	display:flex;
+	flex-flow: column nowrap;
+	cursor:pointer;
+
+	&-label {
+		    background-color: $dark-grey;
+			padding: 10px;
+			color: $white;
+			border-radius: 4px;
+	}
+
+	&-list {
+		display:none;
+	}
+
+	&:hover &-list {
+		display:flex;
+		flex-flow: column nowrap;
+	}
+}
+
+.alternate {
+	background-color: $dark-grey;
+	color:$white;
+	padding:10px;
+	text-align:center;
+	margin-bottom:5px;
+	border-radius:4px;
+
+	&:hover {
+		background-color:$green;
+	}
+}
