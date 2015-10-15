@@ -159,10 +159,24 @@
 			color:$black;
 		}
 
+		&.has-alts &-top-indicator {
+			content:'';
+			position:absolute;
+			width:5px;
+			height:5px;
+			background-color:$white;
+			border-radius:50%;
+			top:5px;
+			right:5px;
+		}
+
 		.alternate-glyph-list {
 			display:none;
 			position:absolute;
-			bottom:48px;
+			bottom:-1px;
+			right:48px;
+			flex-flow: row nowrap;
+			border: solid 1px $yellow;
 
 			.glyph-list-glyph {
 				border:none;
@@ -171,7 +185,7 @@
 
 		&:hover {
 			.alternate-glyph-list {
-				display: block;
+				display: flex;
 			}
 		}
 

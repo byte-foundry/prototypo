@@ -44,7 +44,7 @@ import {Typefaces} from './services/typefaces.services.js';
 import PrototypoCanvas from '../../node_modules/prototypo-canvas/dist/prototypo-canvas.js';
 import HoodieApi from './services/hoodie.services.js';
 import uuid from 'node-uuid';
-import {FontValues, AppValues} from './services/values.services.js';
+import {FontValues, AppValues, FontInfoValues} from './services/values.services.js';
 import {Commits} from './services/commits.services.js';
 import XXHash from 'xxhashjs';
 
@@ -132,6 +132,10 @@ else if ( isSafari || isIE ) {
 	const fontVariant = stores['/fontVariant'] = new Remutable({
 	});
 
+	const fontInfos = stores['/fontInfos'] = new Remutable({
+		altList:{},
+	});
+
 	const panel = stores['/panel'] = new Remutable({
 		mode: [],
 		textFontSize: 6,
@@ -169,6 +173,7 @@ else if ( isSafari || isIE ) {
 		try {
 			const fontValues = await FontValues.get({typeface});
 			localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
+
 		}
 		catch (err) {
 			const values =  _.extend(fontControls.get('values'),initValues);
@@ -177,6 +182,22 @@ else if ( isSafari || isIE ) {
 				typeface: typeface,
 				values,
 			});
+		}
+
+		try {
+			const fontInfos = await FontInfoValues.get({typeface});
+			const altList = _.extend(typedata.fontinfo.defaultAlts, fontInfos.values.altList);
+			Object.keys(altList).forEach(function(unicode) {
+				fontInstance.setAlternateFor(unicode,altList[unicode]);
+			});
+			localClient.dispatchAction('/load-font-infos', {altList});
+		}
+		catch (err) {
+			const values = {
+				altList: typedata.fontinfo.defaultAlts,
+			};
+
+			localClient.dispatchAction('/load-font-infos', values);
 		}
 	}
 
@@ -238,6 +259,10 @@ else if ( isSafari || isIE ) {
 					.set('presets', presets)
 					.commit();
 				localServer.dispatchUpdate('/fontParameters',patch);
+			},
+			'/load-font-infos': ({altList}) => {
+				const patch = fontInfos.set('altList', altList).commit();
+				localServer.dispatchUpdate('/fontInfos', patch);
 			},
 			'/load-values': (params) => {
 				const patch = fontControls
@@ -681,6 +706,22 @@ else if ( isSafari || isIE ) {
 			'/clear-error-variant': () => {
 				const patch = fontLibrary.set('errorAddVariant',undefined).commit();
 				localServer.dispatchUpdate('/fontLibrary', patch);
+			},
+			'/set-alternate': ({unicode, glyphName}) => {
+				fontInstance.setAlternateFor(unicode, glyphName);
+				const altList = fontInfos.get('altList');
+
+				altList[unicode] = glyphName;
+
+				const patch = fontInfos.set('altList', altList).commit();
+				localServer.dispatchUpdate('/fontInfos', patch);
+
+				FontInfoValues.save({
+					typeface: fontVariant.get('variant').db || 'default',
+					values: {
+						altList,
+					},
+				});
 			},
 		}
 
