@@ -242,6 +242,7 @@ export class AddFamily extends React.Component {
 		this.client.dispatchAction('/create-family',{
 			name:React.findDOMNode(this.refs.name).value,
 			template:this.state.selectedFont ? this.state.selectedFont.templateName : undefined,
+			loadCurrent: this.state.selectedFont ? this.state.selectedFont.loadCurrent : false,
 		});
 		Log.ui('Collection.CreateFamily');
 	}
@@ -294,17 +295,13 @@ export class AddFamily extends React.Component {
 
 export class FamilyTemplateChoice extends React.Component {
 	render() {
-		const style = {
-			'fontFamily': this.props.font.familyName,
-		}
-
 		const classes = Classnames({
 			'family-template-choice': true,
 			'is-active': this.props.selectedFont && this.props.selectedFont.name === this.props.font.name,
 		});
 
 		return (
-			<div className={classes} style={style} onClick={() => {this.props.chooseFont(this.props.font)}}>
+			<div className={classes} onClick={() => {this.props.chooseFont(this.props.font)}}>
 				<div className="family-template-choice-sample">
 					<img src={`/assets/images/${this.props.font.sample}`} />
 				</div>
