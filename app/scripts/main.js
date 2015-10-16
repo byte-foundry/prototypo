@@ -649,6 +649,18 @@ else if ( isSafari || isIE ) {
 				const patch = fontLibrary.set('errorAddVariant',undefined).commit();
 				localServer.dispatchUpdate('/fontLibrary', patch);
 			},
+			'/export-otf': ({merged}) => {
+				localClient.dispatchAction('/store-panel-param',{export: true});
+
+				const name = {
+					family: `Prototypo-${panel.get('familySelected').name}`,
+					style: `${panel.get('variantSelected').name.toLowerCase()}`,
+				};
+
+				fontInstance.download(() => {
+					localClient.dispatchAction('/store-panel-param',{export: false, onboardstep: 'end'});
+				}, name, merged);
+			},
 		}
 
 		localServer.on('action',({path, params}) => {

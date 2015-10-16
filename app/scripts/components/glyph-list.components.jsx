@@ -3,8 +3,13 @@ import Glyph from './glyph.components.jsx';
 import GlyphTagList from './glyph-tag-list.components.jsx'
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import Log from '../services/log.services.js';
+import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class GlyphList extends React.Component {
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
 
 	shouldComponentUpdate(newProps) {
 		if (this.props.selected === newProps.selected &&
@@ -19,7 +24,8 @@ export default class GlyphList extends React.Component {
 	}
 
 	exportOTF() {
-		fontInstance.download();
+		this.client.dispatchAction('/export-otf', {merged:false});
+
 		Log.ui('GlyphList.exportOTF');
 	}
 

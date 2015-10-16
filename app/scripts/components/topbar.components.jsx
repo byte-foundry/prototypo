@@ -48,16 +48,7 @@ export default class Topbar extends React.Component {
 	}
 
 	exportOTF(merged) {
-		this.client.dispatchAction('/store-panel-param',{export: true});
-		const name = {
-			family: `Prototypo-${this.state.panel.familySelected.name}`,
-			style: `${this.state.panel.variantSelected.name.toLowerCase()}`,
-		};
-
-		fontInstance.download(() => {
-			this.client.dispatchAction('/store-panel-param',{export: false, onboardstep: 'end'});
-		},name, merged);
-
+		this.client.dispatchAction('/export-otf', {merged});
 		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
 	}
 
