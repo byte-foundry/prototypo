@@ -723,6 +723,24 @@ else if ( isSafari || isIE ) {
 					},
 				});
 			},
+			'/export-otf': ({merged}) => {
+				localClient.dispatchAction('/exporting',{exporting: true});
+
+				const name = {
+					family: `Prototypo-${panel.get('familySelected').name}`,
+					style: `${panel.get('variantSelected').name.toLowerCase()}`,
+				};
+
+				const exportingError = setTimeout(() => {
+					localClient.dispatchAction('/exporting',{exporting: false, errorExport:true});
+				}, 10000);
+
+				fontInstance.download(() => {
+					localClient.dispatchAction('/store-panel-param',{onboardstep: 'end'});
+					localClient.dispatchAction('/exporting',{exporting: false});
+					cancelTimeout(exportingError);
+				},name, merged);
+			},
 		}
 
 		localServer.on('action',({path, params}) => {
