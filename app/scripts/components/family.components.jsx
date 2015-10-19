@@ -5,9 +5,6 @@ import {VariantList} from './variant.components.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import Log from '../services/log.services.js';
-import JSZip from 'jszip';
-import {FontValues} from '../services/values.services.js';
-import {Typefaces} from '../services/typefaces.services.js';
 
 export class FamilyList extends React.Component {
 
@@ -93,7 +90,29 @@ export class Family extends React.Component {
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/exportStore', this.lifespan)
+		.onUpdate(({head}) => {
+				const headJs = head.toJS();
+				if (headJs.familyExported === this.props.data.name) {
+					this.setState({
+						variantsToExport: headJs.variantToExport,
+						exportedVariant: headJs.exportedVariant,
+					});
+				}
+			})
+			.onDelete(() => {
+				this.setState({
+					exportZip: undefined,
+				});
+			});
 	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	componentDidMount() {
 		this.height = React.findDOMNode(this.refs.list).clientHeight;
 	}
@@ -110,55 +129,11 @@ export class Family extends React.Component {
 
 	async downloadFamily(e) {
 		e.stopPropagation();
-
-		const fontVariant = await this.client.fetch('/fontVariant');
-		const variant = fontVariant.get('variant');
-		const family = fontVariant.get('family');
-		fontInstance.exportingZip = true;
-		fontInstance._queue = [];
-
-		this.client.dispatchAction('/change-font',{
-			template: this.props.data.template,
-			db: 'default',
+		this.client.dispatchAction('/export-family',{
+			familyToExport: this.props.data,
+			variants: this.props.data.variants,	
 		});
-
-		const zip = new JSZip();
-		const a = document.createElement('a');
-		const blobs = [];
-		for(let i = 0; i < this.props.data.variants.length; i++) {
-			const currVariant = this.props.data.variants[i];
-			blobs.push(await this.generateVariantBlob(currVariant.db, this.props.data.name, currVariant.name));
-		}
-
-		_.each( blobs, ({buffer, variant}) => {
-			zip.file(`${variant}.otf`, buffer, {binary: true});
-		});
-
-		const reader = new FileReader();
-		const _URL = window.URL || window.webkitURL;
-
-		reader.onloadend = () => {
-			a.download = this.props.data.name + '.zip';
-			a.href = reader.result;
-			a.dispatchEvent(new MouseEvent('click'));
-
-			setTimeout(() => {
-				a.href = '#';
-				_URL.revokeObjectURL( reader.result );
-			}, 100);
-			fontInstance.exportingZip = false;
-			this.client.dispatchAction('/change-font',{
-				template: family.template,
-				db: variant.db,
-			});
-		};
-
-		reader.readAsDataURL(zip.generate({type: "blob"}));
-	}
-
-	async generateVariantBlob(db, family, style) {
-		const values = await FontValues.get({typeface: db});
-		return await fontInstance.getBlob(null , { family, style }, false, values.values);
+		Log.ui('Collection.exportFamily');
 	}
 
 	toggleConfirmDelete(e) {
@@ -195,6 +170,23 @@ export class Family extends React.Component {
 			'is-confirm': this.state.confirmDeletion,
 		});
 
+		let progress = false;
+
+		if (this.state.variantsToExport) {
+
+			const percentage = this.state.exportedVariant*100/this.state.variantsToExport;
+
+			const progressStyle = {
+				width: `${percentage}%`,
+			};
+
+			progress = (
+				<div className="progress-bar">
+					<div className="progress-bar-progress" style={progressStyle}></div>
+				</div>
+			);
+		}
+
 		return (
 			<div className={classes}>
 				<div className="family-header" onClick={() => {this.toggleList()} } onMouseLeave={() => {this.resetHeader()}}>
@@ -223,6 +215,7 @@ export class Family extends React.Component {
 						</div>
 					</div>
 				</div>
+				{progress}
 				<div className="family-variant-list" style={listStyle}>
 					<VariantList variants={this.props.data.variants} selected={this.props.variantSelected} family={this.props.data} ref="list"/>
 				</div>

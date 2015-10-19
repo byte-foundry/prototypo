@@ -47,6 +47,7 @@ import uuid from 'node-uuid';
 import {FontValues, AppValues, FontInfoValues} from './services/values.services.js';
 import {Commits} from './services/commits.services.js';
 import XXHash from 'xxhashjs';
+import JSZip from 'jszip';
 
 const hasher = XXHash(0xDEADBEEF);
 if (mobile) {
@@ -148,6 +149,8 @@ else if ( isSafari || isIE ) {
 	const exportStore = stores['/exportStore'] = new Remutable({
 		export:false,
 		errorExport:false,
+		variantToExport: undefined,
+		exportedVariant: 0,
 	});
 
 	const canvasEl = window.canvasElement = document.createElement('canvas');
@@ -743,6 +746,78 @@ else if ( isSafari || isIE ) {
 					localClient.dispatchAction('/exporting',{exporting: false});
 					cancelTimeout(exportingError);
 				},name, merged);
+			},
+			'/export-family': async ({familyToExport, variants}) => {
+				const variant = fontVariant.get('variant');
+				const family = fontVariant.get('family');
+				const zip = new JSZip();
+				const a = document.createElement('a');
+				const blobs = [];
+
+				const setupPatch = exportStore
+					.set('familyExported', familyToExport.name)
+					.set('variantToExport', variants.length)
+					.commit();
+				localServer.dispatchUpdate('/exportStore', setupPatch);
+
+				fontInstance.exportingZip = true;
+				fontInstance._queue = [];
+
+				localClient.dispatchAction('/change-font',{
+					template: familyToExport.template,
+					db: 'default',
+				});
+
+				for(let i = 0; i < variants.length; i++) {
+					const currVariant = variants[i];
+					const values = await FontValues.get({typeface: currVariant.db});
+					const blob = await fontInstance.getBlob(null , {
+						family: familyToExport.name,
+						style: currVariant.name
+				   	}, false, values.values);
+					blobs.push(blob);
+					const variantPatch = exportStore.set('exportedVariant',
+						exportStore.get('exportedVariant') + 1).commit();
+					localServer.dispatchUpdate('/exportStore', variantPatch);
+				}
+
+				_.each( blobs, ({buffer, variant}) => {
+					zip.file(`${variant}.otf`, buffer, {binary: true});
+				});
+
+				const reader = new FileReader();
+				const _URL = window.URL || window.webkitURL;
+
+				reader.onloadend = () => {
+					a.download = familyToExport.name + '.zip';
+					a.href = reader.result;
+					a.dispatchEvent(new MouseEvent('click'));
+
+					setTimeout(() => {
+						a.href = '#';
+						_URL.revokeObjectURL( reader.result );
+					}, 100);
+
+					fontInstance.exportingZip = false;
+
+					localClient.dispatchAction('/change-font',{
+						template: family.template,
+						db: variant.db,
+					});
+
+					const cleanupPatch = exportStore
+						.set('variantToExport', undefined)
+						.set('exportedVariant', 0)
+						.commit();
+					localServer.dispatchUpdate('/exportStore', cleanupPatch);
+
+					const deleteNamePatch = exportStore
+						.set('familyExported', undefined)
+						.commit();
+					localServer.dispatchUpdate('/exportStore', deleteNamePatch);
+				};
+
+				reader.readAsDataURL(zip.generate({type: "blob"}));
 			},
 		}
 
