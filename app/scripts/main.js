@@ -726,9 +726,12 @@ else if ( isSafari || isIE ) {
 			'/export-otf': ({merged}) => {
 				localClient.dispatchAction('/exporting',{exporting: true});
 
+				const family = panel.get('familySelected').name || 'Prototypo font';
+				const style = panel.get('variantSelected').name || 'regular';
+
 				const name = {
-					family: `Prototypo-${panel.get('familySelected').name}`,
-					style: `${panel.get('variantSelected').name.toLowerCase()}`,
+					family: `Prototypo-${family}`,
+					style: `${style.toLowerCase()}`,
 				};
 
 				const exportingError = setTimeout(() => {
