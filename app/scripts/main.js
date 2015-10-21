@@ -726,8 +726,8 @@ else if ( isSafari || isIE ) {
 			'/export-otf': ({merged}) => {
 				localClient.dispatchAction('/exporting',{exporting: true});
 
-				const family = panel.get('familySelected').name || 'Prototypo font';
-				const style = panel.get('variantSelected').name || 'regular';
+				const family = fontVariant.get('family').name || 'Prototypo font';
+				const style = fontVariant.get('variant').name || 'regular';
 
 				const name = {
 					family: `Prototypo-${family}`,
@@ -741,7 +741,7 @@ else if ( isSafari || isIE ) {
 				fontInstance.download(() => {
 					localClient.dispatchAction('/store-panel-param',{onboardstep: 'end'});
 					localClient.dispatchAction('/exporting',{exporting: false});
-					cancelTimeout(exportingError);
+					clearTimeout(exportingError);
 				},name, merged);
 			},
 		}
