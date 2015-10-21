@@ -171,21 +171,22 @@ export class Family extends React.Component {
 		});
 
 		let progress = false;
+		let percentage = 0;
+		let progressStyle = {};
 
 		if (this.state.variantsToExport) {
 
-			const percentage = this.state.exportedVariant*100/this.state.variantsToExport;
+			percentage = this.state.exportedVariant*100/this.state.variantsToExport;
 
-			const progressStyle = {
-				width: `${percentage}%`,
-			};
+			progressStyle.width = `${percentage}%`;
 
-			progress = (
-				<div className="progress-bar">
-					<div className="progress-bar-progress" style={progressStyle}></div>
-				</div>
-			);
+			progress = true;
 		}
+
+		const progressClass = Classnames({
+			'progress-bar': true,
+			'is-open': progress,
+		});
 
 		return (
 			<div className={classes}>
@@ -215,7 +216,9 @@ export class Family extends React.Component {
 						</div>
 					</div>
 				</div>
-				{progress}
+				<div className={progressClass}>
+					<div className="progress-bar-progress" style={progressStyle}></div>
+				</div>
 				<div className="family-variant-list" style={listStyle}>
 					<VariantList variants={this.props.data.variants} selected={this.props.variantSelected} family={this.props.data} ref="list"/>
 				</div>
