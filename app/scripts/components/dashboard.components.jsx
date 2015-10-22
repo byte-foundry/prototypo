@@ -103,7 +103,6 @@ export default class Dashboard extends React.Component {
 						<p>Adjust the different parameters to customize your font. There is three differents type of parameters.</p>
 						<p>From here you can explore the different component of the interface (list of glyphs, views...) or directly export your font</p>
 						<div className="onboarding-step-footer">
-							<button className="onboarding-step-footer-btn" onClick={() => {this.goToNextStep('exploreUI')}}>Explore the interface</button>
 							<button className="onboarding-step-footer-btn" onClick={() => {this.goToNextStep('export')}}>Export your font</button>
 						</div>
 					</OnBoardingStep>
@@ -130,9 +129,16 @@ export default class Dashboard extends React.Component {
 						</ul>
 					</OnBoardingStep>
 					<OnBoardingStep name="end" type="fullModal">
-						<h1>Right on !</h1>
+						<h1>Right on!</h1>
 						<p>You just finished the tutorial. You now know the basic functionality offered by Prototypo.</p>
 						<p>If you want to go further you can subscribe to <a href="www.prototypo.io/pricing" target="_blank">our professional plan</a> to enjoy the full customization potential.</p>
+						<div className="onboarding-step-footer">
+							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding()}}>Exit tutorial</button>
+						</div>
+					</OnBoardingStep>
+					<OnBoardingStep name="premature-end" type="indicator" target="file-menu" arrowPos="top" inverseArrow={true} targetAlign="bottom center" elementAlign="top center" offset="-50px -18px" noclose={true}>
+						<h1>Don't worry!</h1>
+						<p>You can restart the tutorial if you so desire by clicking the "Restart tutorial" button in the file menu</p>
 						<div className="onboarding-step-footer">
 							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding()}}>Exit tutorial</button>
 						</div>

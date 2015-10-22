@@ -120,6 +120,9 @@ export default class Topbar extends React.Component {
 		else if (currentStep === 'export-2' && step === 'export') {
 			this.client.dispatchAction('/store-panel-param', {onboardstep: step});
 		}
+		else if (currentStep === 'premature-end') {
+			this.client.dispatchAction('/store-panel-param', {onboard: true});
+		}
 	}
 
 	render() {

@@ -1,6 +1,7 @@
 import React from 'react';
 import Classnames from 'classnames';
 import Tether from 'tether';
+import LocalClient from '../stores/local-client.stores.jsx';
 
 export class OnBoarding extends React.Component {
 	constructor(props) {
@@ -78,10 +79,25 @@ export class OnBoarding extends React.Component {
 
 export class OnBoardingStep extends React.Component {
 
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+	endPrematurely() {
+		this.client.dispatchAction('/store-panel-param', {onboardstep: 'premature-end'});
+		this.client.dispatchAction('/change-tab-sidebar', {name: 'sliders'});
+	}
+
 	render() {
 
+		const close = this.props.type !== 'fullModal' && !this.props.noclose ? (
+			<div className="onboarding-step-close" onClick={() => {this.endPrematurely()}}><img src="assets/images/close-icon.svg"></img></div>
+			)
+			: false;
+
 		return (
-			<div className='onboarding-step' id={this.props.name}>
+			<div className="onboarding-step" id={this.props.name}>
+				{close}
 				{this.props.children}
 			</div>
 		)

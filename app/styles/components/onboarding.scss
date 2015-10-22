@@ -87,6 +87,19 @@
 			}
 		}
 	}
+
+	&-close {
+		position:absolute;
+		right:20px;
+		background-color: darken($yellow, 15%);
+		border-radius:50%;
+		height:20px;
+		cursor:pointer;
+
+		&:hover {
+			background-color: darken($yellow, 10%);
+		}
+	}
 }
 
 .indicator {
