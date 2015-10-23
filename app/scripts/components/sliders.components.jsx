@@ -225,7 +225,7 @@ export class SliderTextController extends React.Component {
 						'/change-param',
 						{
 							name:this.props.name,
-							value:e.target.value,
+							value:parseFloat(e.target.value),
 							label:this.props.label,
 							force:true,
 						});
