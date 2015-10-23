@@ -180,7 +180,7 @@ export class SliderController extends React.Component {
 	}
 
 	render() {
-		const translateX = (this.props.max - this.props.value) / (this.props.max - this.props.min) * 92.0;
+		const translateX = (this.props.max - Math.min(Math.max(this.props.value, this.props.min), this.props.max)) / (this.props.max - this.props.min) * 92.0;
 		const transform = {
 			transform: `translateX(-${translateX}%)`
 		};
