@@ -162,12 +162,13 @@
 		&.has-alts &-top-indicator {
 			content:'';
 			position:absolute;
-			width:5px;
-			height:5px;
-			background-color:$white;
-			border-radius:50%;
-			top:5px;
-			right:5px;
+			width:0px;
+			height:0px;
+			border-style: solid;
+			border-width: 0 8px 8px 0;
+			border-color: transparent $medium-grey transparent transparent;
+			top:0px;
+			right:0px;
 		}
 
 		.alternate-glyph-list {
@@ -190,6 +191,9 @@
 		}
 
 		&:hover, &.is-selected {
+			&.has-alts .glyph-list-glyph-top-indicator {
+				border-color: transparent $white transparent transparent;
+			}
 			background-color:$green;
 			color:$white;
 		}
