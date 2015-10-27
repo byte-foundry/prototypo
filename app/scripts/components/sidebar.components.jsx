@@ -18,6 +18,11 @@ import Lifespan from 'lifespan';
 
 export default class Sidebar extends React.Component {
 
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
