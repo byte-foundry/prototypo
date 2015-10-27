@@ -55,7 +55,7 @@ export class Slider extends React.Component {
 		}
 		const value = this.props.value !== undefined ? this.props.value : this.props.param.init;
 		const plan = HoodieApi.instance.plan || 'kickstarter';
-		this.props.param.notInDemo = (plan.indexOf('free') !== -1 && !this.props.param.demo);
+		this.props.param.notInDemo = (plan.indexOf('free') === 0 && !this.props.param.demo);
 
 		const classes = ClassNames({
 			'slider': true,
