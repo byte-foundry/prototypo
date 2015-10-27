@@ -27,7 +27,7 @@ export default class Signin extends React.Component {
 
 		e.preventDefault();
 
-		const login = React.findDOMNode(this.refs.email).value;
+		const login = React.findDOMNode(this.refs.email).value.toLowerCase();
 		const password = React.findDOMNode(this.refs.password).value;
 
 		HoodieApi.login(`user/${login}`,
