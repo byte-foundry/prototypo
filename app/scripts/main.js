@@ -176,10 +176,12 @@ else if ( isSafari || isIE ) {
 			});
 		});
 
+		let selectedGlyph;
+
 		try {
 			const fontValues = await FontValues.get({typeface});
 			localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
-
+			selectedGlyph = fontValues.values.selected;
 		}
 		catch (err) {
 			const values =  _.extend(fontControls.get('values'),initValues);
@@ -188,14 +190,13 @@ else if ( isSafari || isIE ) {
 				typeface: typeface,
 				values,
 			});
+			selectedGlyph = fontValues.values.selected;
 		}
 
 		try {
 			const fontInfos = await FontInfoValues.get({typeface});
 			const altList = _.extend(typedata.fontinfo.defaultAlts, fontInfos.values.altList);
-			Object.keys(altList).forEach(function(unicode) {
-				fontInstance.setAlternateFor(unicode,altList[unicode]);
-			});
+			fontInstance.setAlternateFor(altList);
 			localClient.dispatchAction('/load-font-infos', {altList});
 		}
 		catch (err) {
