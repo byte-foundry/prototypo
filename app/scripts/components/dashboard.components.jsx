@@ -118,12 +118,12 @@ export default class Dashboard extends React.Component {
 						<p>There are 3 options for exporting your new font:</p>
 						<ul>
 							<li>
-								<h2 className="onboarding-list-title">Export to merged OTF</h2>
-								This will generate a completely merged font.
+								<h2 className="onboarding-list-title">Export to merged otf</h2>
+								This will provide you with a completely merged font. We use fontforge to merge the different components of the glyphs to export a completely merged font.
 							</li>
 							<li>
-								<h2 className="onboarding-list-title">Export to OTF</h2>
-								This will generate a basic otf font. These exports may exhibit some visual glitch (especially in Windows).
+								<h2 className="onboarding-list-title">Export to otf</h2>
+								This will provide you with a basic otf font. These exports may exhibit some visual glitch (especially in Windows).
 							</li>
 							<li>
 								<h2 className="onboarding-list-title">Export to Glyphr Studio</h2>
