@@ -1,0 +1,175 @@
+@import '../variables';
+
+.full-modal-container {
+	width:100%;
+	height:100%;
+	display:flex;
+	position:absolute;
+	top: 0;
+	left: 0;
+	justify-content: center;
+	align-items: center;
+	background-color:rgba($dark-grey, 0.7);
+}
+
+.onboarding {
+	z-index:10;
+	transition: all .2s ease;
+}
+
+.onboarding-step {
+	background-color: lighten($yellow, 10%);
+	padding:20px;
+	color:$dark-grey;
+	padding: 20px 50px;
+	max-width: 450px;
+
+	&:after {
+		content: "";
+		display: block;
+		z-index: -1;
+		background-color: $yellow;
+		position: absolute;
+		top: 0.5em;
+		right: -0.5em;
+		left: 0.5em;
+		bottom: -0.5em;
+		transform: rotate(2deg)
+	}
+
+	p {
+		font-size: 1.1em;
+		a {
+			color: $red;
+		}
+	}
+
+	&-title {
+		font-size:1.4em;
+		margin:10px 0px;
+		color: $red;
+		position: relative;
+	}
+
+	ul {
+		padding-left: 0;
+		li {
+			list-style-type: none;
+			margin-top: 1em;
+		}
+	}
+
+	&-footer {
+		margin-top: 5em;
+		text-align: right;
+		padding-bottom:10px;
+
+		&-btn {
+			border:none;
+			color: $blue;
+			background-color:$white;
+			border-radius:3px;
+			margin-left:10px;
+			padding: 10px 15px;
+
+			&.exit {
+				background-color: $white;
+				color: $red;
+				&:hover {
+					color: $white;
+					background-color: $red;
+				}
+			}
+
+			&:hover {
+				background-color: $blue;
+				color:$white;
+			}
+		}
+	}
+
+	&-close {
+		position:absolute;
+		right:20px;
+		background-color: darken($yellow, 15%);
+		border-radius:50%;
+		height:20px;
+		cursor:pointer;
+
+		&:hover {
+			background-color: darken($yellow, 10%);
+		}
+	}
+}
+
+.indicator {
+	position:absolute;
+
+	&.is-inverse:before {
+		border-right-color: $yellow;
+	}
+
+	&.is-inverse.is-top:before {
+		border-right-color: transparent;
+		border-bottom-color: $yellow;
+	}
+
+	&.is-top:before {
+		border: solid 20px transparent;
+		border-bottom: solid 20px $white;
+		border-top: none;
+		left:40%;
+		top:-35px;
+		animation-name: shake-v;
+	}
+
+	&:before {
+		content: ' ';
+		border: solid 20px transparent;
+		border-right: solid 20px $yellow;
+		border-left: none;
+		width: 0;
+		display: block;
+		position: absolute;
+		left: -31px;
+		top: 44px;
+		animation-name: shake;
+		animation-duration: 5s;
+		animation-fill-mode: both;
+		animation-timing-function: ease-in-out;
+		animation-iteration-count:infinite;
+	}
+}
+
+@-webkit-keyframes shake {
+	0%, 100% {-webkit-transform: translateX(5px);}
+	10%, 30%, 50%, 70%, 90% {-webkit-transform: translateX(-10px);}
+	20%, 40%, 60%, 80% {-webkit-transform: translateX(5px);}
+}
+
+@keyframes shake {
+	0%, 100% {transform: translateX(5px);}
+	10%, 30%, 50%, 70%, 90% {transform: translateX(-10px);}
+	20%, 40%, 60%, 80% {transform: translateX(5px);}
+}
+
+
+@-webkit-keyframes shake-v {
+	0%, 100% {-webkit-transform: translateY(5px);}
+	10%, 30%, 50%, 70%, 90% {-webkit-transform: translateY(-10px);}
+	20%, 40%, 60%, 80% {-webkit-transform: translateY(5px);}
+}
+
+@keyframes shake-v {
+	0%, 100% {transform: translateY(5px);}
+	10%, 30%, 50%, 70%, 90% {transform: translateY(-10px);}
+	20%, 40%, 60%, 80% {transform: translateY(5px);}
+}
+
+.onboarding-list-title {
+	margin:0;
+}
+
+#export-2 {
+	max-width: 700px;
+}

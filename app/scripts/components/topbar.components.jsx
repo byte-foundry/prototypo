@@ -16,6 +16,7 @@ export default class Topbar extends React.Component {
 			panel: {
 				mode:[],
 			},
+			export:{},
 		}
 	}
 
@@ -40,6 +41,16 @@ export default class Topbar extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					panel: head.toJS(),
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+
+		this.client.getStore('/exportStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					export: head.toJS(),
 				});
 			})
 			.onDelete(() => {
@@ -84,11 +95,33 @@ export default class Topbar extends React.Component {
 		Log.ui('Topbar.logout');
 	}
 
+	startTuto() {
+		this.client.dispatchAction('/store-panel-param',{onboard:false,onboardstep:'welcome'});
+	}
+
 	toggleView(name) {
 		const newViewMode = _.xor(this.state.panel.mode,[name]);
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-panel-param',{mode:newViewMode});
 			Log.ui('Topbar.toggleView', name);
+		}
+	}
+
+	async onboardExport(step) {
+		const panel = await this.client.fetch('/panel');
+		if (panel.get('onboard')) {
+			return;
+		}
+
+		const currentStep = panel.get('onboardstep');
+		if (currentStep === 'export' && step === 'export-2') {
+			this.client.dispatchAction('/store-panel-param', {onboardstep: step});
+		}
+		else if (currentStep === 'export-2' && step === 'export') {
+			this.client.dispatchAction('/store-panel-param', {onboardstep: step});
+		}
+		else if (currentStep === 'premature-end') {
+			this.client.dispatchAction('/store-panel-param', {onboard: true});
 		}
 	}
 
@@ -102,15 +135,19 @@ export default class Topbar extends React.Component {
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${!redoDisabled ? this.state.eventList[whereAt+1].label : ''}`;
 
-		const exporting = this.state.panel.export ? (
+		const exporting = this.state.export.export ? (
 			<TopBarMenuAction name="Exporting..." click={() => {}} action={true}/>
+			) : false;
+		const errorExporting = this.state.export.errorExport ? (
+			<TopBarMenuAction name="An error occured during exporting" click={() => {}} action={true}/>
 			) : false;
 
 		return (
 			<div id="topbar">
 				<TopBarMenu>
-					<TopBarMenuDropdown name="File">
+					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2') }} leave={() => {this.onboardExport('export')}}>
 						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout()}}/>
+						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto()}}/>
 						<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true)}}/>
 						<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false)}}/>
 						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr}/>
@@ -128,6 +165,7 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/>
 					</TopBarMenuDropdown>
 					{exporting}
+					{errorExporting}
 					<TopBarMenuAction name="Glyphs list" click={(e) => { this.toggleView('list') }} alignRight={true} action={true}>
 					</TopBarMenuAction>
 					<TopBarMenuDropdown name="Toggle views" img="assets/images/views-icon.svg" alignRight={true} small={true}>

@@ -46,7 +46,8 @@ customBrowserifyOpts = {
 	extensions: ['.jsx'],
 	noParse: [
 		path.resolve('node_modules/prototypo.js/dist/prototypo.js'),
-		path.resolve('node_modules/prototypo-canvas/dist/prototypo-canvas.js')
+		path.resolve('node_modules/prototypo-canvas/dist/prototypo-canvas.js'),
+		'/Users/yannickmathey/Documents/prototypo-canvas/dist/prototypo-canvas.js'
 	]
 }
 

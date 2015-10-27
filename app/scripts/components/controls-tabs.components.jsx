@@ -47,7 +47,7 @@ export class ControlsTabs extends React.Component {
 					{headers}
 				</ul>
 				<GeminiScrollbar autoshow={true}>
-					<div className="controls-tabs-container">
+					<div className="controls-tabs-container" id="parameters">
 						{tab}
 					</div>
 				</GeminiScrollbar>

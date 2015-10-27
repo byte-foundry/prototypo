@@ -55,7 +55,7 @@ export class Slider extends React.Component {
 		}
 		const value = this.props.value !== undefined ? this.props.value : this.props.param.init;
 		const plan = HoodieApi.instance.plan || 'kickstarter';
-		this.props.param.notInDemo = (plan.indexOf('free') !== -1 && !this.props.param.demo);
+		this.props.param.notInDemo = (plan.indexOf('free') === 0 && !this.props.param.demo);
 
 		const classes = ClassNames({
 			'slider': true,
@@ -180,7 +180,7 @@ export class SliderController extends React.Component {
 	}
 
 	render() {
-		const translateX = (this.props.max - this.props.value) / (this.props.max - this.props.min) * 92.0;
+		const translateX = (this.props.max - Math.min(Math.max(this.props.value, this.props.min), this.props.max)) / (this.props.max - this.props.min) * 92.0;
 		const transform = {
 			transform: `translateX(-${translateX}%)`
 		};
@@ -225,7 +225,7 @@ export class SliderTextController extends React.Component {
 						'/change-param',
 						{
 							name:this.props.name,
-							value:e.target.value,
+							value:parseFloat(e.target.value),
 							label:this.props.label,
 							force:true,
 						});

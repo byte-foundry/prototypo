@@ -44,11 +44,15 @@ import {Typefaces} from './services/typefaces.services.js';
 import PrototypoCanvas from '../../node_modules/prototypo-canvas/dist/prototypo-canvas.js';
 import HoodieApi from './services/hoodie.services.js';
 import uuid from 'node-uuid';
-import {FontValues, AppValues} from './services/values.services.js';
+import {FontValues, AppValues, FontInfoValues} from './services/values.services.js';
 import {Commits} from './services/commits.services.js';
 import XXHash from 'xxhashjs';
+import JSZip from 'jszip';
 
 const hasher = XXHash(0xDEADBEEF);
+
+import Log from './services/log.services.js';
+
 if (mobile) {
 	const Route = Router.Route,
 		RouteHandler = Router.RouteHandler,
@@ -106,6 +110,11 @@ else if ( isSafari || isIE ) {
 	const templateList = stores['/templateList'] = new Remutable({
 		list: [
 			{
+				sample:'current-state-icon.svg',
+				name:'Current settings',
+				loadCurrent:true,
+			},
+			{
 				sample:'john-fell-preview.svg',
 				name:'Prototypo Fell',
 				familyName:'Prototypo Fell',
@@ -127,6 +136,10 @@ else if ( isSafari || isIE ) {
 	const fontVariant = stores['/fontVariant'] = new Remutable({
 	});
 
+	const fontInfos = stores['/fontInfos'] = new Remutable({
+		altList:{},
+	});
+
 	const panel = stores['/panel'] = new Remutable({
 		mode: [],
 		textFontSize: 6,
@@ -134,6 +147,13 @@ else if ( isSafari || isIE ) {
 	});
 
 	const commits = stores['/commits'] = new Remutable({
+	});
+
+	const exportStore = stores['/exportStore'] = new Remutable({
+		export:false,
+		errorExport:false,
+		variantToExport: undefined,
+		exportedVariant: 0,
 	});
 
 	const canvasEl = window.canvasElement = document.createElement('canvas');
@@ -156,9 +176,12 @@ else if ( isSafari || isIE ) {
 			});
 		});
 
+		let selectedGlyph;
+
 		try {
 			const fontValues = await FontValues.get({typeface});
 			localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
+			selectedGlyph = fontValues.values.selected;
 		}
 		catch (err) {
 			const values =  _.extend(fontControls.get('values'),initValues);
@@ -167,7 +190,31 @@ else if ( isSafari || isIE ) {
 				typeface: typeface,
 				values,
 			});
+			selectedGlyph = fontValues.values.selected;
 		}
+
+		try {
+			const fontInfos = await FontInfoValues.get({typeface});
+			const altList = _.extend(typedata.fontinfo.defaultAlts, fontInfos.values.altList);
+			fontInstance.setAlternateFor(altList);
+			localClient.dispatchAction('/load-font-infos', {altList});
+		}
+		catch (err) {
+			const values = {
+				altList: typedata.fontinfo.defaultAlts,
+			};
+
+			localClient.dispatchAction('/load-font-infos', values);
+		}
+	}
+
+	async function copyFontValues(typeface) {
+		const values = fontControls.get('values');
+
+		await FontValues.save({
+			typeface,
+			values,
+		});
 	}
 
 	async function createStores() {
@@ -219,6 +266,10 @@ else if ( isSafari || isIE ) {
 					.set('presets', presets)
 					.commit();
 				localServer.dispatchUpdate('/fontParameters',patch);
+			},
+			'/load-font-infos': ({altList}) => {
+				const patch = fontInfos.set('altList', altList).commit();
+				localServer.dispatchUpdate('/fontInfos', patch);
 			},
 			'/load-values': (params) => {
 				const patch = fontControls
@@ -357,6 +408,10 @@ else if ( isSafari || isIE ) {
 				localServer.dispatchUpdate('/panel',patch);
 				saveAppValues();
 			},
+			'/exporting': ({exporting, errorExport}) => {
+				const patch = exportStore.set('export', exporting).set('errorExport', errorExport).commit();
+				localServer.dispatchUpdate('/exportStore', patch);
+			},
 			'/store-text': ({value, propName}) => {
 				const patch = panel.set(propName,value).commit();
 				const subset = panel.head.toJS().text + panel.head.toJS().word;
@@ -364,6 +419,27 @@ else if ( isSafari || isIE ) {
 
 				fontInstance.subset = typeof subset === 'string' ? subset : '';
 				saveAppValues();
+			},
+			'/change-tab-sidebar': (params) => {
+
+				if (sideBarTab.get('tab') === 'fonts-collection' &&
+					params.name != 'font-collection' &&
+					!panel.get('onboard') &&
+					panel.get('onboardstep').indexOf('creatingFamily') !== -1) {
+
+					localClient.dispatchAction('/store-panel-param', {onboardstep: 'createFamily'});
+
+				}
+
+				if (panel.get('onboardstep') && panel.get('onboardstep') === params.from) {
+					localClient.dispatchAction('/store-panel-param', {onboardstep: params.to });
+				}
+
+				const name = params.name;
+				const patch = sideBarTab.set('tab',name).commit();
+				localServer.dispatchUpdate('/sideBarTab', patch);
+
+				Log.ui('Sidebar/change-tab-sidebar', name);
 			},
 			'/load-app-values': ({values}) => {
 				values.selected = values.selected || 'A'.charCodeAt(0);
@@ -478,7 +554,11 @@ else if ( isSafari || isIE ) {
 				localServer.dispatchUpdate('/commits', patch);
 				saveAppValues();
 			},
-			'/create-family': ({name, template}) => {
+			'/create-family': async ({name, template, loadCurrent}) => {
+
+				if (loadCurrent) {
+					template = fontVariant.get('family').template;
+				}
 
 				if (template === undefined) {
 					const patch = fontLibrary.set('errorAddFamily', 'You must choose a base template').commit();
@@ -529,6 +609,10 @@ else if ( isSafari || isIE ) {
 					localServer.dispatchUpdate('/fontLibrary', patch);
 				}, 200);
 
+				if (loadCurrent) {
+					await copyFontValues(newFont.variants[0].db);	
+				}
+
 				localClient.dispatchAction('/change-font', {
 					template,
 					db:newFont.variants[0].db,
@@ -538,6 +622,8 @@ else if ( isSafari || isIE ) {
 					.set('variant', newFont.variants[0])
 					.set('family', {name: newFont.name, template: newFont.template}).commit();
 				localServer.dispatchUpdate('/fontVariant', patchVariant);
+
+				
 
 				saveAppValues();
 			},
@@ -649,18 +735,114 @@ else if ( isSafari || isIE ) {
 				const patch = fontLibrary.set('errorAddVariant',undefined).commit();
 				localServer.dispatchUpdate('/fontLibrary', patch);
 			},
+			'/set-alternate': ({unicode, glyphName}) => {
+				fontInstance.setAlternateFor(unicode, glyphName);
+				const altList = fontInfos.get('altList');
+
+				altList[unicode] = glyphName;
+
+				const patch = fontInfos.set('altList', altList).commit();
+				localServer.dispatchUpdate('/fontInfos', patch);
+
+				FontInfoValues.save({
+					typeface: fontVariant.get('variant').db || 'default',
+					values: {
+						altList,
+					},
+				});
+			},
 			'/export-otf': ({merged}) => {
-				localClient.dispatchAction('/store-panel-param',{export: true});
-				const family = panel.get('familySelected').name || 'Prototypo font';
-				const style = panel.get('variantSelected').name || 'regular';
+				localClient.dispatchAction('/exporting',{exporting: true});
+
+				const family = fontVariant.get('family').name || 'font';
+				const style = fontVariant.get('variant').name || 'regular';
+
 				const name = {
 					family: `Prototypo-${family}`,
 					style: `${style.toLowerCase()}`,
 				};
 
+				const exportingError = setTimeout(() => {
+					localClient.dispatchAction('/exporting',{exporting: false, errorExport:true});
+				}, 10000);
+
 				fontInstance.download(() => {
-					localClient.dispatchAction('/store-panel-param',{export: false, onboardstep: 'end'});
-				}, name, merged);
+					localClient.dispatchAction('/store-panel-param',{onboardstep: 'end'});
+					localClient.dispatchAction('/exporting',{exporting: false});
+					clearTimeout(exportingError);
+				},name, merged);
+			},
+			'/export-family': async ({familyToExport, variants}) => {
+				const variant = fontVariant.get('variant');
+				const family = fontVariant.get('family');
+				const zip = new JSZip();
+				const a = document.createElement('a');
+				const blobs = [];
+
+				const setupPatch = exportStore
+					.set('familyExported', familyToExport.name)
+					.set('variantToExport', variants.length)
+					.commit();
+				localServer.dispatchUpdate('/exportStore', setupPatch);
+
+				fontInstance.exportingZip = true;
+				fontInstance._queue = [];
+
+				localClient.dispatchAction('/change-font',{
+					template: familyToExport.template,
+					db: 'default',
+				});
+
+				for(let i = 0; i < variants.length; i++) {
+					const currVariant = variants[i];
+					const values = await FontValues.get({typeface: currVariant.db});
+					const blob = await fontInstance.getBlob(null , {
+						family: familyToExport.name,
+						style: currVariant.name
+				   	}, false, values.values);
+					blobs.push(blob);
+					const variantPatch = exportStore.set('exportedVariant',
+						exportStore.get('exportedVariant') + 1).commit();
+					localServer.dispatchUpdate('/exportStore', variantPatch);
+				}
+
+				_.each( blobs, ({buffer, variant}) => {
+					zip.file(`${variant}.otf`, buffer, {binary: true});
+				});
+
+				const reader = new FileReader();
+				const _URL = window.URL || window.webkitURL;
+
+				reader.onloadend = () => {
+					a.download = familyToExport.name + '.zip';
+					a.href = reader.result;
+					a.dispatchEvent(new MouseEvent('click'));
+
+					setTimeout(() => {
+						a.href = '#';
+						_URL.revokeObjectURL( reader.result );
+					}, 100);
+
+					fontInstance.exportingZip = false;
+
+					localClient.dispatchAction('/change-font',{
+						template: family.template,
+						db: variant.db,
+					});
+
+					const cleanupPatch = exportStore
+						.set('variantToExport', undefined)
+						.set('exportedVariant', 0)
+						.commit();
+					localServer.dispatchUpdate('/exportStore', cleanupPatch);
+
+					const deleteNamePatch = exportStore
+						.set('familyExported', undefined)
+						.commit();
+					localServer.dispatchUpdate('/exportStore', deleteNamePatch);
+				};
+
+				reader.readAsDataURL(zip.generate({type: "blob"}));
 			},
 		}
 
@@ -683,6 +865,8 @@ else if ( isSafari || isIE ) {
 					values: {
 						mode: ['glyph', 'word'],
 						selected: 'A'.charCodeAt(0).toString(),
+						onboard: false,
+						onboardstep: 'welcome',
 						word: 'Hello',
 						text: 'World',
 						pos: ['Point', 457, -364],
@@ -697,7 +881,7 @@ else if ( isSafari || isIE ) {
 			let appValues;
 			try {
 				appValues = await AppValues.get({typeface: 'default'});
-				appValues = _.extend(defaultValues, appValues);
+				appValues.values = _.extend(defaultValues.values, appValues.values);
 			}
 			catch(err) {
 				appValues = defaultValues;

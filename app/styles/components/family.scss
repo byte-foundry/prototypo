@@ -7,6 +7,7 @@
 		height:100%;
 		width:100%;
 		position:absolute;
+		overflow:auto;
 	}
 }
 
@@ -64,6 +65,22 @@
 			}
 		}
 
+		&-download {
+			position: absolute;
+			top: 2.2em;
+			right: 2.2em;
+			border-radius: 4px;
+			background-color: $white;
+			padding: 5px 10px;
+			transition:all .2s ease;
+			display: none;
+
+			&:hover {
+				background-color: $green;
+				color: $white;
+			}
+		}
+
 		&-delete {
 			align-self: flex-end;
 			text-align: right;
@@ -78,7 +95,7 @@
 			}
 
 			&-btn {
-				padding: 2px 5px;
+				padding: 5px;
 				border-radius: 4px;
 				background-color: $white;
 				transition:all .2s ease;
@@ -98,9 +115,13 @@
 				display: flex;
 				flex-flow: row nowrap;
 
+				span {
+					padding-top: .35em;
+				}
+
 				&-button {
 					border-radius:4px;
-					padding: 2px 5px;
+					padding: 5px;
 					background-color: $white;
 					margin-left: 5px;
 					color:$dark-grey;
@@ -131,6 +152,9 @@
 			}
 		}
 
+		&:hover &-download {
+			display: block;
+		}
 		&:hover &-delete {
 			display: flex;
 		}

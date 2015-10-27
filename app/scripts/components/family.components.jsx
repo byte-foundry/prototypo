@@ -90,7 +90,29 @@ export class Family extends React.Component {
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/exportStore', this.lifespan)
+		.onUpdate(({head}) => {
+				const headJs = head.toJS();
+				if (headJs.familyExported === this.props.data.name) {
+					this.setState({
+						variantsToExport: headJs.variantToExport,
+						exportedVariant: headJs.exportedVariant,
+					});
+				}
+			})
+			.onDelete(() => {
+				this.setState({
+					exportZip: undefined,
+				});
+			});
 	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	componentDidMount() {
 		this.height = React.findDOMNode(this.refs.list).clientHeight;
 	}
@@ -103,6 +125,15 @@ export class Family extends React.Component {
 		this.setState({
 			listOpen:!this.state.listOpen
 		});
+	}
+
+	async downloadFamily(e) {
+		e.stopPropagation();
+		this.client.dispatchAction('/export-family',{
+			familyToExport: this.props.data,
+			variants: this.props.data.variants,	
+		});
+		Log.ui('Collection.exportFamily');
 	}
 
 	toggleConfirmDelete(e) {
@@ -139,6 +170,24 @@ export class Family extends React.Component {
 			'is-confirm': this.state.confirmDeletion,
 		});
 
+		let progress = false;
+		let percentage = 0;
+		let progressStyle = {};
+
+		if (this.state.variantsToExport) {
+
+			percentage = this.state.exportedVariant*100/this.state.variantsToExport;
+
+			progressStyle.width = `${percentage}%`;
+
+			progress = true;
+		}
+
+		const progressClass = Classnames({
+			'progress-bar': true,
+			'is-open': progress,
+		});
+
 		return (
 			<div className={classes}>
 				<div className="family-header" onClick={() => {this.toggleList()} } onMouseLeave={() => {this.resetHeader()}}>
@@ -153,6 +202,9 @@ export class Family extends React.Component {
 							</div>
 						</div>
 					</div>
+					<div className="family-header-download" onClick={(e) => {this.downloadFamily(e)}}>
+						DOWNLOAD FAMILY
+					</div>
 					<div className={deleteClasses}>
 						<div className="family-header-delete-btn" onClick={(e) => {this.toggleConfirmDelete(e)}}>
 							DELETE
@@ -163,6 +215,9 @@ export class Family extends React.Component {
 							<div className="family-header-delete-confirm-button" onClick={(e) => {this.toggleConfirmDelete(e)}}>NO</div>
 						</div>
 					</div>
+				</div>
+				<div className={progressClass}>
+					<div className="progress-bar-progress" style={progressStyle}></div>
 				</div>
 				<div className="family-variant-list" style={listStyle}>
 					<VariantList variants={this.props.data.variants} selected={this.props.variantSelected} family={this.props.data} ref="list"/>
@@ -225,6 +280,7 @@ export class AddFamily extends React.Component {
 		});
 
 		if (state) {
+			this.client.dispatchAction('/store-panel-param', {onboardstep: 'creatingFamily-2'});
 			setTimeout(() => {
 				React.findDOMNode(this.refs.name).focus();
 			}, 100);
@@ -242,8 +298,10 @@ export class AddFamily extends React.Component {
 		this.client.dispatchAction('/create-family',{
 			name:React.findDOMNode(this.refs.name).value,
 			template:this.state.selectedFont ? this.state.selectedFont.templateName : undefined,
+			loadCurrent: this.state.selectedFont ? this.state.selectedFont.loadCurrent : false,
 		});
 		Log.ui('Collection.CreateFamily');
+		this.client.dispatchAction('/store-panel-param', {onboardstep: 'customize'});
 	}
 
 	render() {
@@ -267,7 +325,7 @@ export class AddFamily extends React.Component {
 		const error = this.state.error ? <div className="add-family-form-error">{this.state.error}</div> : false;
 
 		return (
-			<div className={familyClass} onClick={(e) => {this.toggleForm(e, true)} }>
+			<div className={familyClass} onClick={(e) => {this.toggleForm(e, true)} } id="font-create">
 				<div className="add-family-header">
 					<h1 className="add-family-header-label">
 						Create a new Family
@@ -294,17 +352,13 @@ export class AddFamily extends React.Component {
 
 export class FamilyTemplateChoice extends React.Component {
 	render() {
-		const style = {
-			'fontFamily': this.props.font.familyName,
-		}
-
 		const classes = Classnames({
 			'family-template-choice': true,
 			'is-active': this.props.selectedFont && this.props.selectedFont.name === this.props.font.name,
 		});
 
 		return (
-			<div className={classes} style={style} onClick={() => {this.props.chooseFont(this.props.font)}}>
+			<div className={classes} onClick={() => {this.props.chooseFont(this.props.font)}}>
 				<div className="family-template-choice-sample">
 					<img src={`/assets/images/${this.props.font.sample}`} />
 				</div>

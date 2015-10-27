@@ -10,9 +10,9 @@ export class SideTabs extends React.Component {
 		this.state = {};
 	}
 
-	changeTab(name, disabled) {
+	changeTab(name, disabled, from, to) {
 		if( !disabled ) {
-			this.client.dispatchAction('/change-tab-sidebar',{name});
+			this.client.dispatchAction('/change-tab-sidebar',{name, from, to});
 		}
 	};
 
@@ -61,7 +61,7 @@ export class SideTabs extends React.Component {
 			children = this.props.children;
 		}
 
-		const tabIcons = _.map(children,({props: {bottom, iconUrl, name, disabled, legend}}) => {
+		const tabIcons = _.map(children,({props: {id, bottom, iconUrl, name, disabled, legend, from, to}}) => {
 			const classes = ClassNames({
 				'side-tabs-icon':true,
 				'is-active': name === this.props.tab,
@@ -72,8 +72,8 @@ export class SideTabs extends React.Component {
 
 			return {
 				bottom,
-				element: <div className={classes} name={name} onClick={() => {
-					this.changeTab(name, disabled);
+				element: <div className={classes} id={id} name={name} onClick={() => {
+					this.changeTab(name, disabled, from, to);
 				}} key={`${name}SideHeader`}>
 					<img src={`assets/images/${iconUrl}`}/>
 					<div className="side-tabs-legend is-legend-active">{legend}</div>

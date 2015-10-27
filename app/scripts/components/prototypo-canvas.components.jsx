@@ -6,6 +6,7 @@ import Lifespan from 'lifespan';
 
 import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
+import AlternateMenu from './alternate-menu.components.jsx';
 
 export default class PrototypoCanvas extends React.Component {
 
@@ -157,6 +158,10 @@ export default class PrototypoCanvas extends React.Component {
 				click={() => { this.client.dispatchAction('/store-panel-param',{shadow:!this.props.panel.shadow}) }}/>,
 		];
 
+		const alternateMenu = this.props.glyph && this.props.glyph.glyphs[this.props.glyph.selected].length > 1 ? (
+			<AlternateMenu alternates={this.props.glyph.glyphs[this.props.glyph.selected]} unicode={this.props.glyph.selected}/>
+		) : false;
+
 		return (
 			<div
 				className={canvasClass}
@@ -170,6 +175,7 @@ export default class PrototypoCanvas extends React.Component {
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
 					{menu}
 				</ContextualMenu>
+				{alternateMenu}
 			</div>
 		);
 	}

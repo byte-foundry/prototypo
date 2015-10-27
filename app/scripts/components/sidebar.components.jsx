@@ -9,38 +9,29 @@ import NewsFeed from './news-feed.components.jsx';
 import HelpPanel from './help-panel.components.jsx';
 
 import LocalClient from '../stores/local-client.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
 
 import {registerToUndoStack} from '../helpers/undo-stack.helpers.js';
 
-import Log from '../services/log.services.js';
 
 import Remutable from 'remutable';
 import Lifespan from 'lifespan';
 
 export default class Sidebar extends React.Component {
 
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
-		const server = new LocalServer().instance;
 
-		const sideBarTab = new Remutable(this.client.getStore('/sideBarTab', this.lifespan)
+		this.client.getStore('/sideBarTab', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({tab:head.toJS().tab});
 			})
-			.onDelete(() => this.setState(undefined)).value);
-
-		server.on('action', ({path, params}) => {
-			if (path == '/change-tab-sidebar') {
-
-				const name = params.name;
-				const patch = sideBarTab.set('tab',name).commit();
-				server.dispatchUpdate('/sideBarTab', patch);
-
-				Log.ui('Sidebar/change-tab-sidebar', name);
-			}
-		}, this.lifespan);
+			.onDelete(() => this.setState(undefined));
 
 		this.client.dispatchAction('/change-tab-sidebar', {name: 'sliders'});
 	}
@@ -52,13 +43,13 @@ export default class Sidebar extends React.Component {
 		return (
 			<div id='sidebar'>
 				<SideTabs tab={this.state.tab}>
-						<SideTab iconUrl="font-controls.svg" name="sliders" legend="Parameters">
+						<SideTab iconUrl="font-controls.svg" name="sliders" legend="Parameters" id="font-controls" from="customize" to="customizing">
 							<FontControls />
 						</SideTab>
 						<SideTab iconUrl="font-infos.svg" name="font-infos" big={true} disabled={true} legend="Settings">
 							<FontInfos />
 						</SideTab>
-						<SideTab iconUrl="fonts-collection.svg" name="fonts-collection" big={true} legend="Collection">
+						<SideTab iconUrl="fonts-collection.svg" id="font-collection" name="fonts-collection" big={true} legend="Collection" from="createFamily" to="creatingFamily">
 							<FontsCollection />
 						</SideTab>
 						<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} legend="Profile">

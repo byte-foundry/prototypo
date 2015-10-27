@@ -16,7 +16,7 @@ class TopBarMenu extends React.Component {
 			});
 
 			return (
-				<li className={classes} key={child.props.name || child.props.img}>
+				<li className={classes} key={child.props.name || child.props.img} id={child.props.id} onMouseEnter={child.props.enter} onMouseLeave={child.props.leave}>
 					{child.type.getHeader(child.props)}
 					{child}
 				</li>
@@ -49,7 +49,7 @@ class TopBarMenuDropdown extends React.Component {
 		});
 
 		return (
-			<ul className={classes}>
+			<ul className={classes} id={this.props.idMenu}>
 				{this.props.children}
 			</ul>
 		)
