@@ -1,6 +1,6 @@
 {
   "name": "prototypo",
-  "version": "0.14.1",
+  "version": "1.0.0",
   "dependencies": {
     "babel": "^5.5.8",
     "babel-runtime": "^5.5.8",
