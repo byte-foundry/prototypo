@@ -754,8 +754,8 @@ else if ( isSafari || isIE ) {
 			'/export-otf': ({merged}) => {
 				localClient.dispatchAction('/exporting',{exporting: true});
 
-				const family = fontVariant.get('family').name.replace(/\s/g,'-') || 'font';
-				const style = fontVariant.get('variant').name.replace(/\s/g,'-') || 'regular';
+				const family = fontVariant.get('family').name ? fontVariant.get('family').name.replace(/\s/g,'-') : 'font';
+				const style = fontVariant.get('variant').name ? fontVariant.get('variant').name.replace(/\s/g,'-') : 'regular';
 
 				const name = {
 					family: `Prototypo-${family}`,
