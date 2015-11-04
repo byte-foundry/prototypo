@@ -162,7 +162,7 @@ export default class Topbar extends React.Component {
 							if (!redoDisabled)
 								this.client.dispatchAction('/go-forward');
 						}}/>
-						<TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/>
+						{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
 					</TopBarMenuDropdown>
 					{exporting}
 					{errorExporting}
