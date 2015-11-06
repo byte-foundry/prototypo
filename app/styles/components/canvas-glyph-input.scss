@@ -31,6 +31,10 @@
 		position: relative;
 		background-color: lighten($yellow, 20%);
 
+		color: $black;
+		font-size: 14px;
+		line-height: 1.4em;
+
 		&::before {
 			position: absolute;
 			left: 0;
@@ -40,7 +44,7 @@
 			height: 0;
 			border-style: solid;
 			border-width: 3px 0 3px 3px;
-			border-color: transparent transparent transparent $dark-grey;
+			border-color: transparent transparent transparent $black;
 		}
 		&::after {
 			position: absolute;
@@ -51,7 +55,7 @@
 			height: 0;
 			border-style: solid;
 			border-width: 3px 3px 3px 0;
-			border-color: transparent $dark-grey transparent transparent;
+			border-color: transparent $black transparent transparent;
 		}
 		&:hover {
 			background-color: $yellow;

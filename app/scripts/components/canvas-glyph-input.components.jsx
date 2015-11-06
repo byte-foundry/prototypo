@@ -7,7 +7,7 @@ export default class CanvasGlyphInput extends React.Component {
 		return (
 			<div className="canvas-menu-item canvas-glyph-input">
 				<div className="canvas-glyph-input-label is-active">Glyph List</div>
-				<div className="canvas-glyph-input-input">i</div>
+				<div className="canvas-glyph-input-input">A</div>
 			</div>
 		)
 	}
