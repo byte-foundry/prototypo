@@ -1,0 +1,65 @@
+@import "../variables";
+
+.canvas-glyph-input {
+	height: 22px;
+	border-radius: 4px;
+	border: 2px solid $dark-grey;
+	color: $dark-grey;
+	font-size: 12px;
+
+	display:flex;
+	flex-direction:row;
+
+	&-label {
+		color: $dark-grey;
+		display: flex;
+		flex-flow: row nowrap;
+		cursor: pointer;
+		padding: 0 10px;
+		border-right: 2px solid $dark-grey;
+
+		&:hover {
+			color: $white;
+			background-color: $dark-grey;
+		}
+	}
+
+	&-input {
+		display: flex;
+		flex-flow: row nowrap;
+		padding: 0 10px;
+		position: relative;
+		background-color: lighten($yellow, 20%);
+
+		&::before {
+			position: absolute;
+			left: 0;
+			top: calc(50% - 3px);
+			content: "";
+			width: 0;
+			height: 0;
+			border-style: solid;
+			border-width: 3px 0 3px 3px;
+			border-color: transparent transparent transparent $dark-grey;
+		}
+		&::after {
+			position: absolute;
+			right: 0;
+			top: calc(50% - 3px);
+			content: "";
+			width: 0;
+			height: 0;
+			border-style: solid;
+			border-width: 3px 3px 3px 0;
+			border-color: transparent $dark-grey transparent transparent;
+		}
+		&:hover {
+			background-color: $yellow;
+			&::before,
+			&::after {
+				display: none;
+			}
+		}
+	}
+
+}
