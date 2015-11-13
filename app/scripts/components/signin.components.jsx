@@ -86,7 +86,7 @@ export default class Signin extends React.Component {
 					return <WarningMessage text={message}/>
 					}})(this.state.warningMessage)}
 				<WaitForLoad loaded={this.state.loading} secColor={true}>
-					<button className="sign-in-button">Sign in</button>
+					<input className="sign-in-button" type="submit" value="Sign in"></input>
 				</WaitForLoad>
 			</form>
 		)
