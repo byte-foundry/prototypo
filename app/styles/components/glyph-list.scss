@@ -185,11 +185,12 @@
 		}
 
 		&:hover {
+			font-size: 32px;
 			.alternate-glyph-list {
 				display: flex;
 			}
 		}
-
+		
 		&:hover, &.is-selected {
 			&.has-alts .glyph-list-glyph-top-indicator {
 				border-color: transparent $white transparent transparent;
