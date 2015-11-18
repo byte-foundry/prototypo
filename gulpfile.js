@@ -47,7 +47,7 @@ customBrowserifyOpts = {
 	noParse: [
 		path.resolve('node_modules/prototypo.js/dist/prototypo.js'),
 		path.resolve('node_modules/prototypo-canvas/dist/prototypo-canvas.js'),
-		'/Users/yannickmathey/Documents/prototypo-canvas/dist/prototypo-canvas.js'
+		'/home/franzp/prototypo-canvas/dist/prototypo-canvas.js'
 	]
 }
 
@@ -172,7 +172,7 @@ gulp.task('build', ['images','css-vendor','css-app','browserify','cp-prototypo.j
 gulp.task('serve', ['images','css-vendor','css-app', 'browserify','cp-static'], function() {
 	browserSync.init({
 		server:['./dist','./node_modules'],
-		port:9000,
+		port:80,
 		ghostMode:false
 	});
 

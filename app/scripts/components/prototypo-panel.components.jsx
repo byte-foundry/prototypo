@@ -7,6 +7,7 @@ import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
 import PrototypoWord from './prototypo-word.components.jsx';
 import HoverViewMenu from './hover-view-menu.components.jsx';
+import CreateParamGroup from './create-param-group.components.jsx';
 
 
 export default class PrototypoPanel extends React.Component {
@@ -35,6 +36,14 @@ export default class PrototypoPanel extends React.Component {
 		this.client.getStore('/glyphs',this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({glyph:head.toJS()});
+			})
+			.onDelete(() => {
+				this.setState({glyph:undefined});
+			});
+
+		this.client.getStore('/individualizeStore',this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({createParamGroup:head.toJS().indivCreate});
 			})
 			.onDelete(() => {
 				this.setState({glyph:undefined});
@@ -100,6 +109,10 @@ export default class PrototypoPanel extends React.Component {
 				field="word"/>;
 		}
 
+		const createParamGroup = this.state.createParamGroup ? (
+			<CreateParamGroup />
+		) : false;
+
 		let down;
 		if (hasGlyph || hasText) {
 			down = (
@@ -120,6 +133,7 @@ export default class PrototypoPanel extends React.Component {
 
 		return (
 			<div id="prototypopanel">
+				{createParamGroup}
 				{up}
 				{down}
 			</div>

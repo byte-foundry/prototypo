@@ -1,0 +1,167 @@
+@import '../variables';
+
+.create-param-group {
+	position:absolute;
+	z-index:12;
+	width:100%;
+
+	&-ribbon {
+		background-color:$yellow;
+		padding:10px;
+		text-transform: uppercase;
+	}
+
+	&-panel {
+		display:flex;
+	}
+
+	&-form {
+		margin-left:20px;
+		background-color:$lightest-grey;
+		width:300px;
+		padding:20px;
+		color:$medium-grey;
+
+		&-input {
+			margin-top:20px;
+			display:block;
+			width:100%;
+			border:solid 2px $yellow;
+			padding:7px;
+			border-radius:4px;
+		}
+
+		&-add-glyph {
+			width: 100%;
+			margin-top: 10px;
+			background-color: $yellow;
+			border: solid 2px $yellow;
+			color: $white;
+			border-radius: 4px;
+			padding: 7px;
+
+			&:hover {
+				color:$yellow;
+				background-color:$white;
+			}
+		}
+
+		&-buttons {
+			margin-top:20px;
+			display:flex;
+			justify-content:space-between;
+
+			&-cancel {
+				background-color: $white;
+				border: solid 2px $red;
+				color: $red;
+				border-radius: 4px;
+				padding: 7px;
+
+				&:hover {
+					color:$white;
+					background-color:$red;
+				}
+			}
+
+			&-submit {
+				background-color: $green;
+				border: solid 2px $green;
+				color: $white;
+				border-radius: 4px;
+				padding: 7px;
+
+				&:hover {
+					color:$green;
+					background-color:$white;
+				}
+			}
+		}
+	}
+}
+
+.glyphs-grid {
+	flex:0 0 324px;
+	margin-left:20px;
+	height:321px;
+	margin-top:-41px;
+	overflow:hidden;
+	background-color:$white;
+
+	&-filter {
+		background-color:$yellow;
+		height:41px;
+		padding:10px;
+
+		&-select {
+			background-color:$yellow;
+			border:none;
+			cursor:pointer;
+
+			&:hover {
+				color:$white;
+			}
+
+			&:focus {
+				border:none;
+				outline:none;
+			}
+		}
+	}
+
+	&-scroll-content {
+		display:flex;
+		flex-flow: row wrap;
+		position:relative;
+		width:320px;
+	}
+
+	&-scroll-container {
+		height:280px;
+	}
+
+	&-glyph {
+		flex: 0 0 40px;
+		margin:0;
+		padding:0;
+		height: 40px;
+		text-align:center;
+		border-bottom:solid 2px $yellow;
+		border-right:solid 2px $yellow;
+		cursor:pointer;
+		color:$light-grey;
+		padding:6px;
+		font-size:17px;
+
+		&:hover, &.is-active {
+			background-color: $yellow;
+			color: $dark-grey;
+		}
+
+		&:last-of-type:before {
+			width: 2px;
+			height: 100%;
+			content: ' ';
+			background-color: $yellow;
+			display: block;
+			position: absolute;
+			right: 0;
+			bottom: 0;
+		}
+
+		&:last-of-type:after {
+			width: 100%;
+			height: 2px;
+			content: ' ';
+			background-color: $yellow;
+			display: block;
+			position: absolute;
+			left: 0;
+			bottom: 0;
+		}
+
+		&:nth-of-type(8n+1) {
+			border-left:solid 2px $yellow;
+		}
+	}
+}

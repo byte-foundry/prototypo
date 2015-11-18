@@ -156,6 +156,11 @@ else if ( isSafari || isIE ) {
 		exportedVariant: 0,
 	});
 
+	const individualizeStore = stores['/individualizeStore'] = new Remutable({
+		selected: [],
+		tagSelected: 'all',
+	});
+
 	const canvasEl = window.canvasElement = document.createElement('canvas');
 	canvasEl.className = "prototypo-canvas-container-canvas";
 	canvasEl.width = 0;
@@ -843,6 +848,64 @@ else if ( isSafari || isIE ) {
 				};
 
 				reader.readAsDataURL(zip.generate({type: "blob"}));
+			},
+			'/toggle-individualize': () => {
+				const oldValue = individualizeStore.get('indivMode');
+				individualizeStore
+					.set('indivMode', !oldValue)
+					.set('indivCreate', !oldValue)
+				if (!oldValue) {
+					const selected = [glyphs.get('selected')];
+					individualizeStore.set('selected', selected);
+				}
+				const patch = individualizeStore.commit();
+				localServer.dispatchUpdate('/individualizeStore', patch);
+			},
+			'/toggle-glyph-param-grid': () => {
+				const oldValue = individualizeStore.get('glyphGrid');
+				const patch = individualizeStore
+					.set('glyphGrid', !oldValue)
+					.commit();
+				localServer.dispatchUpdate('/individualizeStore', patch);
+			},
+			'/add-glyph-to-indiv': ({unicode, isSelected}) => {
+				const selected = individualizeStore.get('selected');
+
+				if (!isSelected) {
+					selected.push(unicode);
+				}
+				else {
+					selected.splice(selected.indexOf(unicode), 1);
+				}
+
+				const patch = individualizeStore.set('selected', selected).commit();
+				localServer.dispatchUpdate('/individualizeStore', patch);
+			},
+			'/select-indiv-tag': (tag) => {
+				const patch = individualizeStore.set('tagSelected', tag).commit();
+				localServer.dispatchUpdate('/individualizeStore', patch);
+			},
+			'/create-param-group': ({name, selected}) => {
+				const oldValues = fontControls.get('values');
+
+				if (!oldValues.indiv_glyphs) {
+					oldValues.indiv_glyphs = {}
+				}
+
+				if (!oldValues.indiv_group_param) {
+					oldValues.indiv_group_param = {}
+				}
+
+				_.each(selected, (unicode) => {
+					oldValues.indiv_glyphs[unicode] = name;
+				});
+
+				if (!oldValues.indiv_group_param[name]) {
+					oldValues.indiv_group_param[name] = {};
+				}
+
+				const patch = fontControls.set('values', oldValues);
+				localServer.dispatchUpdate('/fontControls', patch);
 			},
 		}
 
