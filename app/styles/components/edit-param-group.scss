@@ -1,0 +1,35 @@
+@import '../variables';
+
+.edit-param-group {
+	padding:10px;
+	background-color:$yellow;
+	color:$dark-grey;
+
+	&-button {
+		margin-left: 10px;
+		background-color: lighten($white, 10%);
+		cursor:pointer;
+		padding: 5px;
+		border-radius: 3px;
+
+		&:hover {
+			background-color:$green;
+			color:$white;
+		}
+	}
+	
+	&-select {
+		background-color:$yellow;
+		border:none;
+		cursor:pointer;
+
+		&:hover {
+			color:$white;
+		}
+
+		&:focus {
+			border:none;
+			outline:none;
+		}
+	}
+}

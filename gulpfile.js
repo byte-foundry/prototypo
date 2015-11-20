@@ -125,7 +125,8 @@ var readPrelude = fs.readFileAsync('./__prelude.js');
 var bBase = readPrelude.then(function(prelude) {
 	return browserify(opts)
 		// adds __prelude.js to all files in app/scripts
-		.transform(function(file) {
+	.transform(function(file) {
+			console.log('File name: ', file);
 			if (file.indexOf('prototypo/app/scripts') != -1) {
 				var data = prelude;
 				return through(write, end);

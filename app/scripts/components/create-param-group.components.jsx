@@ -22,6 +22,8 @@ export default class CreateParamGroup extends React.Component {
 					grid: head.toJS().glyphGrid,
 					selected: head.toJS().selected,
 					tagSelected: head.toJS().tagSelected,
+					errorMessage: head.toJS().errorMessage,
+					errorGlyphs: head.toJS().errorGlyphs,
 				});
 			})
 			.onDelete(() => {
@@ -52,7 +54,8 @@ export default class CreateParamGroup extends React.Component {
 		});
 	}
 
-	toggleGlyphs() {
+	toggleGlyphs(e) {
+		e.preventDefault();
 		this.client.dispatchAction('/toggle-glyph-param-grid');
 	}
 
@@ -62,12 +65,30 @@ export default class CreateParamGroup extends React.Component {
 		});
 	}
 
+	cancelIndividualize(e) {
+		e.preventDefault();
+		this.client.dispatchAction('/cancel-indiv-mode', undefined);
+	}
+
 	render() {
 		const glyphGrid = this.state.grid ? (
 			<GlyphGrid 
 				tagSelected={this.state.tagSelected}
 				selected={this.state.selected} 
 				tags={this.state.tags}/> 
+		) : false;
+
+		const errorGlyphs = _.map(this.state.errorGlyphs, (glyph) => {
+			return <div className="create-param-group-panel-error-glyph">{String.fromCharCode(glyph)}</div>
+		});
+
+		const error = this.state.errorMessage ? (
+			<div className="create-param-group-panel-error">
+				<span className="create-param-group-panel-error-message">{this.state.errorMessage}</span>
+				<div className="create-param-group-panel-error-glyphs">
+					{errorGlyphs}
+				</div>
+			</div>
 		) : false;
 
 		return (
@@ -80,11 +101,12 @@ export default class CreateParamGroup extends React.Component {
 						<form onSubmit={(e) => { this.createGroup(e) }}>
 							Create an independant glyph or choose a parameter group
 							<input type="text" className="create-param-group-form-input" placeholder="New parameter group" onChange={(e) => { this.handleGroupNameChange(e)}}></input>
-							<button className="create-param-group-form-add-glyph" onClick={() => { this.toggleGlyphs() }}>Add multiple glyph to this group</button>
+							<button className="create-param-group-form-add-glyph" onClick={(e) => { this.toggleGlyphs(e) }}>Add multiple glyph to this group</button>
 							<div className="create-param-group-form-buttons">
-								<button className="create-param-group-form-buttons-cancel">Cancel</button>
+								<button className="create-param-group-form-buttons-cancel" onClick={(e) => { this.cancelIndividualize(e) }}>Cancel</button>
 								<button className="create-param-group-form-buttons-submit" type="submit">Create</button>
 							</div>
+							{error}
 						</form>
 					</div>
 					{glyphGrid}

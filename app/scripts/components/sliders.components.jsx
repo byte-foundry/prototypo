@@ -13,9 +13,22 @@ export class Sliders extends React.Component {
 			console.log('[RENDER] sliders');
 		}
 		const sliders = _.map(this.props.params, (param,i) => {
-			const value = this.props.values ? this.props.values[param.name] : undefined;
+			let value = this.props.values ? this.props.values[param.name] : undefined;
+			let individualized = false;
+
+			if (this.props.indivMode &&
+				this.props.indivEdit &&
+				this.props.values.indiv_group_param[this.props.currentGroup][param.name]) {
+				value = this.props.values.indiv_group_param[this.props.currentGroup][param.name];
+				individualized = true;
+			}
+
 			return (
-				<Slider param={param} key={param.name+i} value={value}/>
+				<Slider 
+					param={param}
+					key={param.name+i}
+					value={value}
+					individualized={individualized}/>
 			);
 		});
 
@@ -79,6 +92,7 @@ export class Slider extends React.Component {
 				<SliderTextController value={value} name={this.props.param.name} label={this.props.param.label} disabled={this.props.param.disabled}/>
 				<SliderController value={value}
 					name={this.props.param.name}
+					individualized={this.props.individualized}
 					label={this.props.param.label}
 					min={this.props.param.min}
 					max={this.props.param.max}
@@ -188,6 +202,7 @@ export class SliderController extends React.Component {
 		const classes = ClassNames({
 			'slider-controller-bg':true,
 			'is-not-advised':this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised,
+			'is-indiv': this.props.individualized,
 		});
 
 		return (

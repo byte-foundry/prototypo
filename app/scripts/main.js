@@ -24,6 +24,10 @@ var mobile = mobileAndTabletCheck();
 
 import React from 'react';
 import Router from 'react-router';
+import Remutable from 'remutable';
+import uuid from 'node-uuid';
+import XXHash from 'xxhashjs';
+import JSZip from 'jszip';
 
 import Dashboard from './components/dashboard.components.jsx';
 import SitePortal from './components/site-portal.components.jsx';
@@ -34,24 +38,21 @@ import ForgottenPassword from './components/forgotten-password.components.jsx';
 import NotABrowser from './components/not-a-browser.components.jsx';
 import IAmMobile from './components/i-am-mobile.components.jsx';
 
-import Remutable from 'remutable';
+import {Typefaces} from './services/typefaces.services.js';
+import HoodieApi from './services/hoodie.services.js';
+import {Commits} from './services/commits.services.js';
+import Log from './services/log.services.js';
+import {FontValues, AppValues, FontInfoValues} from './services/values.services.js';
 import LocalClient from './stores/local-client.stores.jsx';
 import LocalServer from './stores/local-server.stores.jsx';
 import RemoteClient from './stores/remote-client.stores.jsx';
+import {BatchUpdate} from './helpers/undo-stack.helpers.js';
 const { Patch } = Remutable;
 
-import {Typefaces} from './services/typefaces.services.js';
 import PrototypoCanvas from '../../node_modules/prototypo-canvas/dist/prototypo-canvas.js';
-import HoodieApi from './services/hoodie.services.js';
-import uuid from 'node-uuid';
-import {FontValues, AppValues, FontInfoValues} from './services/values.services.js';
-import {Commits} from './services/commits.services.js';
-import XXHash from 'xxhashjs';
-import JSZip from 'jszip';
 
 const hasher = XXHash(0xDEADBEEF);
 
-import Log from './services/log.services.js';
 
 if (mobile) {
 	const Route = Router.Route,
@@ -170,8 +171,7 @@ else if ( isSafari || isIE ) {
 	//HoodieApi.on('connected',() => {
 	//	RemoteClient.initRemoteStore('stripe', `/stripe${uuid.v4()}$$${HoodieApi.instance.hoodieId}`,'subscription');
 	//});
-	//
-
+	
 	async function loadFontValues(typedata, typeface) {
 
 		const initValues = {};
@@ -181,21 +181,17 @@ else if ( isSafari || isIE ) {
 			});
 		});
 
-		let selectedGlyph;
-
 		try {
 			const fontValues = await FontValues.get({typeface});
 			localClient.dispatchAction('/load-values', _.extend(initValues,fontValues.values));
-			selectedGlyph = fontValues.values.selected;
 		}
 		catch (err) {
-			const values =  _.extend(fontControls.get('values'),initValues);
+			const values =  _.extend({},initValues);
 			localClient.dispatchAction('/load-values',values);
 			FontValues.save({
 				typeface: typeface,
 				values,
 			});
-			selectedGlyph = fontValues.values.selected;
 		}
 
 		try {
@@ -561,6 +557,7 @@ else if ( isSafari || isIE ) {
 			},
 			'/create-family': async ({name, template, loadCurrent}) => {
 
+				localClient.dispatchAction('/cancel-indiv-mode');
 				if (loadCurrent) {
 					template = fontVariant.get('family').template;
 				}
@@ -628,11 +625,10 @@ else if ( isSafari || isIE ) {
 					.set('family', {name: newFont.name, template: newFont.template}).commit();
 				localServer.dispatchUpdate('/fontVariant', patchVariant);
 
-				
-
 				saveAppValues();
 			},
 			'/select-variant': ({variant, family}) => {
+				localClient.dispatchAction('/cancel-indiv-mode');
 				const patchVariant = fontVariant
 					.set('variant', variant)
 					.set('family', {name: family.name, template: family.template}).commit();
@@ -645,6 +641,7 @@ else if ( isSafari || isIE ) {
 				saveAppValues();
 			},
 			'/create-variant': async ({name, familyName}) => {
+				localClient.dispatchAction('/cancel-indiv-mode');
 				const family = _.find(Array.from(fontLibrary.get('fonts') || []), (font) => {
 					return font.name === familyName;
 				});
@@ -697,6 +694,7 @@ else if ( isSafari || isIE ) {
 					await FontValues.save({typeface: variant.db,values:ref.values});
 					localClient.dispatchAction('/select-variant', {variant, family});
 				}, 200);
+
 			},
 			'/edit-variant': ({variant, family, newName}) => {
 				const found = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
@@ -730,6 +728,11 @@ else if ( isSafari || isIE ) {
 				_.pull(families, family);
 				const patch = fontLibrary.set('fonts', families).commit();
 				localServer.dispatchUpdate('/fontLibrary',patch);
+
+				family.variants.forEach((variant) => {
+					FontValues.deleteDb({typeface: variant.db});
+				});
+
 				saveAppValues();
 			},
 			'/clear-error-family': () => {
@@ -851,9 +854,26 @@ else if ( isSafari || isIE ) {
 			},
 			'/toggle-individualize': () => {
 				const oldValue = individualizeStore.get('indivMode');
+				const currentGroup = (fontControls.get('values').indiv_glyphs || {})[glyphs.get('selected')];
+
+				if (currentGroup && !oldValue) {
+					const patchEdit = individualizeStore
+						.set('indivMode', !oldValue)
+						.set('indivCreate', false)
+						.set('indivEdit', true)
+						.set('glyphs', _.keys(fontControls.get('values').indiv_glyphs).filter((key) => {
+							return fontControls.get('values').indiv_glyphs[key] === currentGroup;
+						}))
+						.set('currentGroup', currentGroup)
+						.set('groups', Object.keys(fontControls.get('values').indiv_group_param))
+						.commit()
+
+					return localServer.dispatchUpdate('/individualizeStore', patchEdit);
+				}
 				individualizeStore
 					.set('indivMode', !oldValue)
 					.set('indivCreate', !oldValue)
+					.set('indivEdit', false)
 				if (!oldValue) {
 					const selected = [glyphs.get('selected')];
 					individualizeStore.set('selected', selected);
@@ -887,18 +907,31 @@ else if ( isSafari || isIE ) {
 			},
 			'/create-param-group': ({name, selected}) => {
 				const oldValues = fontControls.get('values');
+				const alreadyInGroup = [];
 
 				if (!oldValues.indiv_glyphs) {
-					oldValues.indiv_glyphs = {}
+					oldValues.indiv_glyphs = {};
 				}
 
 				if (!oldValues.indiv_group_param) {
-					oldValues.indiv_group_param = {}
+					oldValues.indiv_group_param = {};
 				}
 
 				_.each(selected, (unicode) => {
+					if (oldValues.indiv_glyphs[unicode] !== undefined &&
+					   oldValues.indiv_glyphs[unicode] !== name) {
+						alreadyInGroup.push(unicode);
+					}
 					oldValues.indiv_glyphs[unicode] = name;
 				});
+
+				if (alreadyInGroup.length > 0) {
+					const patchError = individualizeStore
+						.set('errorMessage', 'Some glyphs are already in a group')
+						.set('errorGlyphs', alreadyInGroup)
+						.commit();
+					return localServer.dispatchUpdate('/individualizeStore', patchError);
+				}
 
 				if (!oldValues.indiv_group_param[name]) {
 					oldValues.indiv_group_param[name] = {};
@@ -906,6 +939,42 @@ else if ( isSafari || isIE ) {
 
 				const patch = fontControls.set('values', oldValues);
 				localServer.dispatchUpdate('/fontControls', patch);
+
+				const endCreatePatch = individualizeStore
+					.set('indivCreate', false)
+					.set('indivEdit', true)
+					.set('currentGroup', name)
+					.set('errorMessage', undefined)
+					.set('errorGlyphs', [])
+					.set('groups', Object.keys(oldValues.indiv_group_param))
+					.commit();
+				localServer.dispatchUpdate('/individualizeStore', endCreatePatch);
+
+			},
+			'/cancel-indiv-mode': () => {
+				const endCreatePatch = individualizeStore
+					.set('indivCreate', false)
+					.set('indivEdit', false)
+					.set('indivMode', false)
+					.set('currentGroup', undefined)
+					.set('errorMessage', undefined)
+					.set('errorGlyphs', [])
+					.set('groups',[])
+					.commit();
+				localServer.dispatchUpdate('/individualizeStore', endCreatePatch);
+
+			},
+			'/select-indiv-group': (name) => {
+				const patch = individualizeStore
+					.set('currentGroup', name)
+					.commit();
+				localServer.dispatchUpdate('/individualizeStore', patch);
+			},
+			'/pre-delete': (state) => {
+				const patch = individualizeStore
+					.set('preDelete', state)
+					.commit();
+				localServer.dispatchUpdate('/individualizeStore', patch);
 			},
 		}
 

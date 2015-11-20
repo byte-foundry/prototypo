@@ -51,12 +51,19 @@ export default class FontControls extends React.Component {
 			if (path == '/change-param') {
 				let newParams = {};
 				Object.assign(newParams, fontControls.get('values'));
-				if (params.values) {
-					_.assign(newParams, params.values)
+
+				if (this.state.indivMode && this.state.indivEdit && !params.values) {
+					newParams.indiv_group_param[this.state.currentGroup][params.name] = params.value;
 				}
 				else {
-					newParams[params.name] = params.value;
+					if (params.values) {
+						_.assign(newParams, params.values)
+					}
+					else {
+						newParams[params.name] = params.value;
+					}
 				}
+				
 
 				const patch = fontControls.set('values',newParams).commit();
 
@@ -94,6 +101,17 @@ export default class FontControls extends React.Component {
 			})
 			.onDelete(() => this.setState(undefined)).value;
 
+		this.client.getStore('/individualizeStore', this.lifespan)
+			.onUpdate(({head}) => {
+				const headJS = head.toJS();
+				this.setState({
+					indivMode:headJS.indivMode,
+					indivEdit:headJS.indivEdit,
+					currentGroup:headJS.currentGroup,
+				});
+			})
+			.onDelete(() => this.setState(undefined)).value;
+
 		this.client.getStore('/fontParameters', this.lifespan)
 			.onUpdate(({head}) => {
 				const headJS = head.toJS();
@@ -124,7 +142,12 @@ export default class FontControls extends React.Component {
 		const tabs = _.map(this.state.parameters,(group) => {
 			return (
 				<ControlsTab iconId={group.label} name={group.label} key={group.label}>
-					<Sliders params={group.parameters} values={this.state.values}/>
+					<Sliders 
+						params={group.parameters} 
+						values={this.state.values} 
+						indivMode={this.state.indivMode}
+						indivEdit={this.state.indivEdit}
+						currentGroup={this.state.currentGroup}/>
 				</ControlsTab>
 			);
 		});
