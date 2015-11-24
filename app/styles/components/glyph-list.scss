@@ -1,7 +1,7 @@
 @import "../variables";
 
 .glyph-tag-list {
-	flex:1 0 auto;
+	flex: 0 0 inherit;
 	margin:0;
 	padding:0;
 
@@ -190,7 +190,7 @@
 				display: flex;
 			}
 		}
-		
+
 		&:hover, &.is-selected {
 			&.has-alts .glyph-list-glyph-top-indicator {
 				border-color: transparent $white transparent transparent;
