@@ -1,9 +1,23 @@
 import React from 'react';
 
+import LocalClient from '../stores/local-client.stores.jsx';
+
 export default class DeleteParamGroup extends React.Component {
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+	cancelDelete() {
+		this.client.dispatchAction('/pre-delete', false);
+	}
+
+	deleteGroup() {
+		this.client.dispatchAction('/delete-param-group', {name: this.props.groupName});
+	}
+
 	render() {
 		const glyphs = _.map(this.props.glyphs, (glyph) => {
-			return <div>{String.fromCharCode(glyph)}</div>
+			return <div className="delete-param-group-glyph">{String.fromCharCode(glyph)}</div>
 		});
 
 		return (
@@ -14,7 +28,13 @@ export default class DeleteParamGroup extends React.Component {
 				<p>
 					Glyphs in this group
 				</p>
-				{glyphs}
+				<div className="delete-param-group-glyphs">
+					{glyphs}
+				</div>
+				<div className="create-param-group-form-buttons">
+					<button className="create-param-group-form-buttons-cancel" onClick={() => { this.cancelDelete()}}>Cancel</button>
+					<button className="create-param-group-form-buttons-submit" onClick={() => { this.deleteGroup()}}>Delete</button>
+				</div>
 			</div>
 		)
 	}

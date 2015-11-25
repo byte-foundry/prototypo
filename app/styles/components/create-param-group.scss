@@ -1,9 +1,8 @@
 @import '../variables';
 
 .create-param-group {
-	position:absolute;
-	z-index:12;
 	width:100%;
+	position:relative;
 
 	&-ribbon {
 		background-color:$yellow;
@@ -39,6 +38,8 @@
 	}
 
 	&-form {
+		position:absolute;
+		z-index:5;
 		margin-left:20px;
 		background-color:$lightest-grey;
 		width:300px;
@@ -104,10 +105,12 @@
 }
 
 .glyphs-grid {
+	position:absolute;
+	z-index:5;
+	left:340px;
 	flex:0 0 324px;
-	margin-left:20px;
 	height:321px;
-	margin-top:-41px;
+	top:0px;
 	overflow:hidden;
 	background-color:$white;
 
@@ -136,11 +139,11 @@
 		display:flex;
 		flex-flow: row wrap;
 		position:relative;
-		width:320px;
 	}
 
 	&-scroll-container {
 		height:280px;
+		width:320px;
 	}
 
 	&-glyph {

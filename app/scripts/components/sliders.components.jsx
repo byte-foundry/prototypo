@@ -1,6 +1,7 @@
 import React from 'react';
 import ClassNames from 'classnames';
 import Lifespan from 'lifespan';
+
 import LocalClient from '../stores/local-client.stores.jsx';
 import {registerToUndoStack} from '../helpers/undo-stack.helpers.js';
 import DOM from '../helpers/dom.helpers.js';
@@ -13,14 +14,24 @@ export class Sliders extends React.Component {
 			console.log('[RENDER] sliders');
 		}
 		const sliders = _.map(this.props.params, (param,i) => {
-			let value = this.props.values ? this.props.values[param.name] : undefined;
-			let individualized = false;
+			let individualized = this.props.indivEdit;
+			let value;
 
 			if (this.props.indivMode &&
 				this.props.indivEdit &&
-				this.props.values.indiv_group_param[this.props.currentGroup][param.name]) {
-				value = this.props.values.indiv_group_param[this.props.currentGroup][param.name];
-				individualized = true;
+				this.props.values.indiv_group_param[this.props.currentGroup]) {
+				value = this.props.values.indiv_group_param[this.props.currentGroup][`${param.name}_rel`] || 1;
+			param = _.assign({}, param, {
+					name: `${param.name}_rel`,
+					max:1.5,
+					min:0.5,
+					maxAdvised:1.25,
+					minAdvised:0.25,
+					init:1,
+				});
+			}
+			else {
+				value = this.props.values ? this.props.values[param.name] : undefined;
 			}
 
 			return (
@@ -57,7 +68,9 @@ export class Slider extends React.Component {
 
 	shouldComponentUpdate(nextProps) {
 		if (nextProps.value && this.props.value) {
-			return nextProps.value !== this.props.value;
+			return nextProps.value !== this.props.value || 
+				nextProps.max !== this.props.max || 
+				nextProps.individualized !== this.props.individualized;
 		}
 		return true;
 	}

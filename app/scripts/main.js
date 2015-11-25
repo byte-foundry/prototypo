@@ -870,10 +870,15 @@ else if ( isSafari || isIE ) {
 
 					return localServer.dispatchUpdate('/individualizeStore', patchEdit);
 				}
+
 				individualizeStore
 					.set('indivMode', !oldValue)
 					.set('indivCreate', !oldValue)
+					.set('preDelete', false)
 					.set('indivEdit', false)
+					.set('errorMessage', undefined)
+					.set('errorGlyphs', []);
+
 				if (!oldValue) {
 					const selected = [glyphs.get('selected')];
 					individualizeStore.set('selected', selected);
@@ -908,6 +913,20 @@ else if ( isSafari || isIE ) {
 			'/create-param-group': ({name, selected}) => {
 				const oldValues = fontControls.get('values');
 				const alreadyInGroup = [];
+
+				if (!name) {
+					const patchError = individualizeStore
+						.set('errorMessage', 'You must provide a group name')
+						.commit();
+					return localServer.dispatchUpdate('/individualizeStore', patchError);
+				}
+
+				if (selected.length === 0) {
+					const patchError = individualizeStore
+						.set('errorMessage', 'You must select at least one glyph')
+						.commit();
+					return localServer.dispatchUpdate('/individualizeStore', patchError);
+				}
 
 				if (!oldValues.indiv_glyphs) {
 					oldValues.indiv_glyphs = {};
@@ -945,17 +964,25 @@ else if ( isSafari || isIE ) {
 					.set('indivEdit', true)
 					.set('currentGroup', name)
 					.set('errorMessage', undefined)
+					.set('glyphGrid', false)
+					.set('glyphs', _.keys(fontControls.get('values').indiv_glyphs).filter((key) => {
+						return fontControls.get('values').indiv_glyphs[key] === name;
+					}))
+					.set('editGroup', false)
 					.set('errorGlyphs', [])
 					.set('groups', Object.keys(oldValues.indiv_group_param))
 					.commit();
-				localServer.dispatchUpdate('/individualizeStore', endCreatePatch);
+					localServer.dispatchUpdate('/individualizeStore', endCreatePatch);
 
+				const variant = fontVariant.get('variant');
+				FontValues.save({typeface: variant.db,values: oldValues});
 			},
 			'/cancel-indiv-mode': () => {
 				const endCreatePatch = individualizeStore
 					.set('indivCreate', false)
 					.set('indivEdit', false)
 					.set('indivMode', false)
+					.set('preDelete', false)
 					.set('currentGroup', undefined)
 					.set('errorMessage', undefined)
 					.set('errorGlyphs', [])
@@ -967,12 +994,69 @@ else if ( isSafari || isIE ) {
 			'/select-indiv-group': (name) => {
 				const patch = individualizeStore
 					.set('currentGroup', name)
+					.set('glyphs', _.keys(fontControls.get('values').indiv_glyphs).filter((key) => {
+						return fontControls.get('values').indiv_glyphs[key] === name;
+					}))
+					.set('glyphGrid', false)
+					.set('editGroup', false)
+					.set('preDelete', false)
+					.commit();
+				localServer.dispatchUpdate('/individualizeStore', patch);
+			},
+			'/edit-param-group': (state) => {
+				const patch = individualizeStore
+					.set('editGroup', state)
+					.set('preDelete', false)
+					.set('glyphGrid', false)
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
 			},
 			'/pre-delete': (state) => {
 				const patch = individualizeStore
 					.set('preDelete', state)
+					.set('editGroup', false)
+					.set('glyphGrid', false)
+					.commit();
+				localServer.dispatchUpdate('/individualizeStore', patch);
+			},
+			'/delete-param-group': ({name}) => {
+				const oldValues = _.cloneDeep(fontControls.get('values'));
+
+				delete oldValues.indiv_group_param[name];
+
+				Object.keys(oldValues.indiv_glyphs).forEach((key) => {
+					if (oldValues.indiv_glyphs[key] === name) {
+						delete oldValues.indiv_glyphs[key];
+					}
+				});
+
+				const newCurrentGroup = Object.keys(oldValues.indiv_group_param).length > 0 ?
+					Object.keys(oldValues.indiv_group_param)[0] :
+					undefined;
+
+				const endDeletePatch = individualizeStore
+					.set('indivCreate', !newCurrentGroup)
+					.set('indivEdit', !!newCurrentGroup)
+					.set('preDelete', false)
+					.set('currentGroup', newCurrentGroup)
+					.set('errorMessage', undefined)
+					.set('errorGlyphs', [])
+					.set('groups', Object.keys(oldValues.indiv_group_param))
+					.commit();
+				localServer.dispatchUpdate('/individualizeStore', endDeletePatch);
+
+				const patch = fontControls.set('values', oldValues).commit();
+				localServer.dispatchUpdate('/fontControls', patch);
+
+				const variant = fontVatiant.get('variant');
+				FontValues.save({typeface: variant.db,values: oldValues});
+			},
+			'/remove-glyph': ({glyph}) => {
+				const glyphs = _.cloneDeep(individualizeStore.get('glyphs'));
+				glyphs.splice(glyphs.indexOf(glyph), 1);
+
+				const patch = individualizeStore
+					.set('glyphs', glyphs)
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
 			},

@@ -4,6 +4,7 @@
 	padding:10px;
 	background-color:$yellow;
 	color:$dark-grey;
+	position:relative;
 
 	&-button {
 		margin-left: 10px;
@@ -30,6 +31,26 @@
 		&:focus {
 			border:none;
 			outline:none;
+		}
+	}
+
+	&-panel {
+		position:absolute;
+		top:41px;
+		left:20px;
+		background-color:$lightest-grey;
+		width:300px;
+		padding:20px;
+		color:$medium-grey;
+		z-index:4;
+
+		&-input {
+			margin-top:20px;
+			display:block;
+			width:100%;
+			border:solid 2px $yellow;
+			padding:7px;
+			border-radius:4px;
 		}
 	}
 }
