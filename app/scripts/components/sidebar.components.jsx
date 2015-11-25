@@ -56,7 +56,7 @@ export default class Sidebar extends React.Component {
 							<Account />
 						</SideTab>
 						<SideTab iconUrl="help-panel.svg" name="help-panel" big={true} bottom={true} padding={true} legend="Help">
-							<HelpPanel />
+							<HelpPanel click={() => { window.Intercom('show') }}/>
 						</SideTab>
 						<SideTab iconUrl="feed-panel.svg" name="news-feed" big={true} bottom={true} padding={true} legend="News">
 							<NewsFeed />
