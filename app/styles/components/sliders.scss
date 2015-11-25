@@ -7,9 +7,9 @@
 
 	&.is-disabled &-demo-overlay {
 		position:absolute;
-		top:0;
-		left:0;
-		width:100%;
+		top: 2px;
+		left:-10px;
+		width: calc(100% + 20px);
 		height:100%;
 		background-color: rgba($dark-grey, 0.6);
 		z-index:2;
@@ -22,12 +22,52 @@
 		&-text {
 			opacity:0;
 			color:$white;
-			text-align:center;
-			font-size:1.3em;
+			font-size: 13px;
 			transition:opacity .2s ease;
+			padding: 5px 15px;
+			position: relative;
+
+			&-more {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				right: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				overflow: hidden;
+
+				width: 40px;
+				background-color: $green;
+				background-image: url('./images/add-feature.svg');
+				background-position: center;
+				background-repeat: no-repeat;
+
+				transition: all 500ms ease;
+
+				&-text {
+					opacity: 0;
+					flex-direction: column;
+					padding-left: 60px;
+					transition: all 200ms ease;
+					transition-delay: 200ms;
+				}
+
+				&:hover {
+					width: 270px;
+					background-image: url('./images/pro-version.svg');
+					background-position: 10% center;
+				}
+
+				&:hover &-text {
+					opacity: 1;
+					padding-left: 10px;
+				}
+			}
 		}
 
 		&:hover &-text {
+			background-color: darken($dark-grey, 2%);
 			opacity:1;
 		}
 	}
@@ -105,7 +145,7 @@
 
 	&.is-disabled {
 		* {
-			cursor: not-allowed;
+			// cursor: not-allowed;
 		}
 	}
 
@@ -128,6 +168,14 @@
 				top: -23px;
 				left: -15px;
 				z-index: -1;
+			}
+		}
+		.slider-demo-overlay {
+			top: 5px;
+			width: 270px;
+			left: -35px;
+			&-text {
+				padding: 2px 15px;
 			}
 		}
 	}
