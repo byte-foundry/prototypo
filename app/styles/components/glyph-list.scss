@@ -7,7 +7,7 @@
 
 
 	&-selected {
-		padding:10px 0 10px 10px;
+		padding:8px 0 8px 10px;
 		cursor:pointer;
 		background-color: $black;
 
@@ -124,7 +124,7 @@
 .glyph-list {
 	background-color: $dark-grey;
 	color: $medium-grey;
-	border-top: lighten($dark-grey, 3%) 1px solid;
+	// border-top: lighten($dark-grey, 3%) 1px solid;
 
 	display:flex;
 	flex-direction:column;
