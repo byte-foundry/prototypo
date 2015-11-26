@@ -32,12 +32,13 @@ export default class GlyphGrid extends React.Component {
 		this.lifespan.release();
 	}
 
-	selectGlyph(unicode, isSelected) {
-		this.client.dispatchAction('/add-glyph-to-indiv',{unicode, isSelected});
-	}
 
 	selectTag(e) {
 		this.client.dispatchAction('/select-indiv-tag', e.target.value);
+	}
+
+	selectGlyph(unicode, isSelected) {
+		this.client.dispatchAction('/add-glyph-to-indiv',{unicode, isSelected});
 	}
 
 	render() {

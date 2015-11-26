@@ -17,6 +17,10 @@ export default class EditParamGroupPanel extends React.Component {
 		this.client.dispatchAction('/remove-glyph',{glyph});
 	}
 
+	saveGroup() {
+		this.client.dispatchAction('/save-param-group', {name: React.findDOMNode(this.refs.name).value });
+	}
+
 	render() {
 
 		const glyphs = _.map(this.props.glyphs, (glyph) => {
@@ -26,7 +30,7 @@ export default class EditParamGroupPanel extends React.Component {
 		return (
 			<div className="edit-param-group-panel">
 				Editing group
-				<input type="text" className="edit-param-group-panel-input" defaultValue={this.props.groupName}></input>
+				<input type="text" ref="name" className="edit-param-group-panel-input" defaultValue={this.props.groupName}></input>
 				<p>
 					Glyphs in this group
 				</p>
@@ -35,8 +39,8 @@ export default class EditParamGroupPanel extends React.Component {
 				</div>
 				<button className="create-param-group-form-add-glyph" onClick={(e) => { this.toggleGlyphs(e) }}>Add multiple glyph to this group</button>
 				<div className="create-param-group-form-buttons">
-					<button className="create-param-group-form-buttons-cancel"  onClick={() => {this.client.dispatchAction('/edit-param-group', true)}}>Cancel</button>
-					<button className="create-param-group-form-buttons-submit" type="submit">Save</button>
+					<button className="create-param-group-form-buttons-cancel" onClick={() => {this.client.dispatchAction('/edit-param-group', false)}}>Cancel</button>
+					<button className="create-param-group-form-buttons-submit" onClick={() => {this.saveGroup()}}>Save</button>
 				</div>
 			</div>
 		)

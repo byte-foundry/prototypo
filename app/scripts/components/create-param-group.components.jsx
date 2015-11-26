@@ -73,6 +73,7 @@ export default class CreateParamGroup extends React.Component {
 	render() {
 		const glyphGrid = this.state.grid ? (
 			<GlyphGrid 
+				select={(unicode, isSelected) => this.selectGlyph(unicode, isSelected)}
 				tagSelected={this.state.tagSelected}
 				selected={this.state.selected} 
 				tags={this.state.tags}/> 

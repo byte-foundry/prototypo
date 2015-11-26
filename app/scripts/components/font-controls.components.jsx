@@ -53,7 +53,15 @@ export default class FontControls extends React.Component {
 				Object.assign(newParams, fontControls.get('values'));
 
 				if (this.state.indivMode && this.state.indivEdit && !params.values) {
-					newParams.indiv_group_param[this.state.currentGroup][params.name] = params.value;
+					if (newParams.indiv_group_param[this.state.currentGroup][params.name]) {
+						newParams.indiv_group_param[this.state.currentGroup][params.name].value = params.value;
+					}
+					else {
+						newParams.indiv_group_param[this.state.currentGroup][params.name] = {
+							state: 'relative',
+							value: params.value,
+						};
+					}
 				}
 				else {
 					if (params.values) {
@@ -80,6 +88,30 @@ export default class FontControls extends React.Component {
 
 				}
 
+			}
+			else if ( path == '/change-param-state') {
+				let newParams = {};
+				Object.assign(newParams, fontControls.get('values'));
+
+				newParams.indiv_group_param[this.state.currentGroup][params.name] = {
+					state: params.state,
+					value: params.state === 'relative' ? 1 : 0,
+				};
+
+				const patch = fontControls.set('values',newParams).commit();
+
+				server.dispatchUpdate('/fontControls',patch);
+
+				if (params.force) {
+
+					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+					this.undoWatcher.forceUpdate(patch, params.label);
+					debouncedSave(newParams);
+				} else {
+
+					this.undoWatcher.update(patch, params.label);
+
+				}
 			}}, this.lifespan);
 
 		this.client.getStore('/fontTab', this.lifespan)

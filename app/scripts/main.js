@@ -1008,6 +1008,7 @@ else if ( isSafari || isIE ) {
 					.set('editGroup', state)
 					.set('preDelete', false)
 					.set('glyphGrid', false)
+					.set('selected', state ? individualizeStore.get('glyphs') : [])
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
 			},
@@ -1050,6 +1051,7 @@ else if ( isSafari || isIE ) {
 
 				const variant = fontVatiant.get('variant');
 				FontValues.save({typeface: variant.db,values: oldValues});
+				localClient.dispatchAction('/update-font', oldValues);
 			},
 			'/remove-glyph': ({glyph}) => {
 				const glyphs = _.cloneDeep(individualizeStore.get('glyphs'));
@@ -1059,6 +1061,41 @@ else if ( isSafari || isIE ) {
 					.set('glyphs', glyphs)
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
+			},
+			'/save-param-group': ({name}) => {
+				const oldValues = _.cloneDeep(fontControls.get('values'));
+				const glyphs = _.cloneDeep(individualizeStore.get('glyphs'));
+				const currentGroup = individualizeStore.get('currentGroup');
+
+				Object.keys(oldValues.indiv_glyphs).forEach((glyph) => {
+					if (glyphs.indexOf(glyph) === -1) {
+						delete oldValues.indiv_glyphs[glyph];
+					}
+					else if (oldValues.indiv_glyphs[glyph] === currentGroup) {
+						oldValues.indiv_glyphs[glyph] = name;
+					}
+				});
+
+				glyphs.forEach((glyph) => {
+					oldValues.indiv_glyphs[glyph] = name;
+				});
+
+				const oldParams = _.cloneDeep(oldValues.indiv_group_param[currentGroup]);
+				delete oldValues.indiv_group_param[currentGroup];
+
+				oldValues.indiv_group_param[name] = oldParams;
+
+				const patch = fontControls.set('values', oldValues).commit();
+				localServer.dispatchUpdate('/individualizeStore', patch);
+
+				const indivPatch = individualizeStore
+					.set('currentGroup', name)
+					.set('editGroup', false)
+					.set('glyphGrid', false)
+					.set('groups', Object.keys(oldValues.indiv_group_param))
+					.commit();
+				localServer.dispatchUpdate('/individualizeStore', indivPatch);
+				localClient.dispatchAction('/update-font', oldValues);
 			},
 		}
 

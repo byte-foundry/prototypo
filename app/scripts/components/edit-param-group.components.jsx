@@ -26,7 +26,7 @@ export default class EditParamGroup extends React.Component {
 					groups: head.toJS().groups,
 					preDelete: head.toJS().preDelete,
 					editGroup: head.toJS().editGroup,
-					glyphs: head.toJS().glyphs,
+					glyphs: head.toJS().selected,
 					grid: head.toJS().glyphGrid,
 					tagSelected: head.toJS().tagSelected,
 				});

@@ -20,14 +20,18 @@ export class Sliders extends React.Component {
 			if (this.props.indivMode &&
 				this.props.indivEdit &&
 				this.props.values.indiv_group_param[this.props.currentGroup]) {
-				value = this.props.values.indiv_group_param[this.props.currentGroup][`${param.name}_rel`] || 1;
-			param = _.assign({}, param, {
+				const paramObject = this.props.values.indiv_group_param[this.props.currentGroup][`${param.name}_rel`] || {state: 'relative', value: 1};
+				
+				value = paramObject.value;
+
+				param = _.assign({}, param, {
+					state: paramObject.state,
 					name: `${param.name}_rel`,
-					max:1.5,
-					min:0.5,
-					maxAdvised:1.25,
-					minAdvised:0.25,
-					init:1,
+					max: paramObject.state === 'relative' ? 1.5 : (param.max - param.min) / 2,
+					min: paramObject.state === 'relative' ? 0.5 : - (param.max - param.min) / 2,
+					maxAdvised: paramObject.state === 'relative' ? 1.25 : (param.max - param.min) / 4,
+					minAdvised: paramObject.state === 'relative' ? 0.25 : - (param.max - param.min) / 4,
+					init: paramObject.state === 'relative' ? 1 : 0,
 				});
 			}
 			else {
@@ -95,6 +99,10 @@ export class Slider extends React.Component {
 				</div>
 			) : false;	
 
+			const indivSwitch = this.props.individualized ? (
+				<IndivSwitch name={this.props.param.name} state={this.props.param.state}/>
+			) : false;
+
 		return (
 			<div className={classes}>
 				<div className="slider-demo-overlay">
@@ -102,17 +110,20 @@ export class Slider extends React.Component {
 				</div>
 				<label className="slider-title">{this.props.param.label}</label>
 				<div className="slider-reset" onClick={() => {this.resetValue()}}>reset</div>
-				<SliderTextController value={value} name={this.props.param.name} label={this.props.param.label} disabled={this.props.param.disabled}/>
-				<SliderController value={value}
-					name={this.props.param.name}
-					individualized={this.props.individualized}
-					label={this.props.param.label}
-					min={this.props.param.min}
-					max={this.props.param.max}
-					minAdvised={this.props.param.minAdvised}
-					maxAdvised={this.props.param.maxAdvised}
-					disabled={this.props.param.disabled}
-					child={this.props.param.child}/>
+				<SliderTextController value={value} name={this.props.param.name} label={this.props.param.label} disabled={this.props.param.disabled} individualized={this.props.individualized}/>
+				<div className="slider-container">
+					<SliderController value={value}
+						name={this.props.param.name}
+						individualized={this.props.individualized}
+						label={this.props.param.label}
+						min={this.props.param.min}
+						max={this.props.param.max}
+						minAdvised={this.props.param.minAdvised}
+						maxAdvised={this.props.param.maxAdvised}
+						disabled={this.props.param.disabled}
+						child={this.props.param.child}/>
+					{indivSwitch}
+				</div>
 			</div>
 		)
 	}
@@ -243,9 +254,14 @@ export class SliderTextController extends React.Component {
 	}
 
 	render() {
+		const classes = ClassNames({
+			'slider-text-controller': true,
+			'is-indiv': this.props.individualized,
+		});
+
 		return (
 			<input
-				className="slider-text-controller"
+				className={classes}
 				type="number"
 				value={this.props.value}
 				onChange={(e) => {
@@ -260,6 +276,55 @@ export class SliderTextController extends React.Component {
 				}}
 				disabled={this.props.disabled}
 			/>
+		)
+	}
+}
+
+class IndivSwitch extends React.Component {
+	componentWillMount() {
+		this.lifespan = new Lifespan();
+		this.client = LocalClient.instance();
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	changeState(state) {
+		this.client.dispatchAction(
+			'/change-param-state',
+			{
+				name:this.props.name,
+				state:state,
+				label:this.props.label,
+				force:true,
+			}
+		);
+	}
+
+	render() {
+
+		const indivRelative = ClassNames({
+			'indiv-switch-btn': true,
+			'indiv-switch-relative': true,
+			'is-active': this.props.state === 'relative',
+		});
+
+		const indivDelta = ClassNames({
+			'indiv-switch-btn': true,
+			'indiv-switch-delta': true,
+			'is-active': this.props.state === 'delta',
+		});
+
+		return (
+			<div className="indiv-switch">
+				<div className={indivRelative} onClick={() => {this.changeState('relative')}}>
+					%
+				</div>
+				<div className={indivDelta} onClick={() => {this.changeState('delta')}}>
+					px
+				</div>
+			</div>
 		)
 	}
 }

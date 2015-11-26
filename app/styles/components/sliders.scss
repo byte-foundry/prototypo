@@ -18,6 +18,11 @@
 		align-items:center;
 	}
 
+	&-container {
+		display: flex;
+		flex-flow: row nowrap;
+	}
+
 	&-demo-overlay {
 		&-text {
 			opacity:0;
@@ -67,12 +72,17 @@
 		// we'll use textfield appearance until we've figured out sth better
 		-moz-appearance: textfield;
 		-webkit-appearance: textfield;
+
+		&.is-indiv {
+			margin-right:25px;
+		}
 	}
 
 	&-controller {
 		overflow: hidden;
 		background-color: #FFF;
 		margin-top: 2px;
+		flex:1;
 
 		&, &-bg, &-handle {
 			border-radius: 1rem;
@@ -93,12 +103,7 @@
 			}
 
 			&.is-not-advised.is-indiv {
-				background: #f5e462; /* Old browsers */
-				background: -moz-linear-gradient(-45deg,  #f5e462 0%, #f5e462 50%, #f96752 90%); /* FF3.6-15 */
-				background: -webkit-linear-gradient(-45deg,  #f5e462 0%,#f5e462 50%,#f96752 90%); /* Chrome10-25,Safari5.1-6 */
-				background: linear-gradient(135deg,  #f5e462 0%,#f5e462 50%,#f96752 90%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5e462', endColorstr='#f96752',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-
+				background-color:$red;
 			}
 		}
 
@@ -154,4 +159,55 @@
 .sliders {
 	color: $white;
 	padding:1rem;
+}
+
+.indiv-switch {
+	flex: 0 0 25px;
+	height: 19px;
+	position: relative;
+	margin-left: 5px;
+	margin-top: 2px;
+	cursor:pointer;
+
+	&-btn {
+		line-height: 17px;
+		height: 19px;
+		width: 19px;
+		text-align: center;
+		border-radius: 50%;
+		position: absolute;
+		transition: all .2s ease;
+		top: 0;
+		left: 5px;
+		z-index:1;
+
+		&:hover {
+			line-height: 23px;
+			height: 25px;
+			width: 25px;
+			left:2px;
+		}
+
+		&.is-active {
+			z-index:2;
+		}
+	}
+
+	&-relative {
+		background: $medium-grey;
+		line-height: 19px;
+	}
+
+	&-delta {
+		background: $yellow;
+		color:$dark-grey;
+	}
+
+	&:hover &-delta {
+		top:15px;
+	}
+
+	&:hover &-relative {
+		top:-15px;
+	}
 }
