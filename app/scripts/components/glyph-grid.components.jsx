@@ -50,7 +50,7 @@ export default class GlyphGrid extends React.Component {
 			if (glyph[0].src.tags.indexOf(this.props.tagSelected) === -1) {
 				return false;
 			}
-			const isSelected = this.props.selected.indexOf(unicode) !== -1
+			const isSelected = this.props.selected && this.props.selected.indexOf(unicode) !== -1
 
 			const classes = Classnames({
 				'glyphs-grid-glyph': true,

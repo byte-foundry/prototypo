@@ -82,6 +82,7 @@ export default class EditParamGroup extends React.Component {
 				</select>
 				<span className="edit-param-group-button" onClick={() => {this.client.dispatchAction('/pre-delete', true)}}>DELETE</span>
 				<span className="edit-param-group-button" onClick={() => {this.client.dispatchAction('/edit-param-group', true)}}>EDIT</span>
+				<span className="edit-param-group-button" onClick={() => {this.client.dispatchAction('/create-mode-param-group')}}>CREATE NEW GROUP</span>
 				{deletePanel}
 				{editPanel}
 				{glyphGrid}

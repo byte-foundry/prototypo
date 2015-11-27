@@ -10,6 +10,7 @@ export default class CreateParamGroup extends React.Component {
 		super(props);
 		this.state = {
 			selected: [],
+			groups: [],
 		};
 	}
 	componentWillMount() {
@@ -24,6 +25,7 @@ export default class CreateParamGroup extends React.Component {
 					tagSelected: head.toJS().tagSelected,
 					errorMessage: head.toJS().errorMessage,
 					errorGlyphs: head.toJS().errorGlyphs,
+					groups: head.toJS().groups,
 				});
 			})
 			.onDelete(() => {
@@ -92,10 +94,15 @@ export default class CreateParamGroup extends React.Component {
 			</div>
 		) : false;
 
+		const edit = this.state.groups.length > 0 ? (
+			<span className="edit-param-group-button" onClick={() => {this.client.dispatchAction('/edit-mode-param-group')}}>EDIT GROUP</span>
+		) : false;
+
 		return (
 			<div className="create-param-group">
 				<div className="create-param-group-ribbon">
 					Glyph's parameters settings
+					{edit}
 				</div>
 				<div className="create-param-group-panel">
 					<div className="create-param-group-form">
