@@ -1049,7 +1049,7 @@ else if ( isSafari || isIE ) {
 				const patch = fontControls.set('values', oldValues).commit();
 				localServer.dispatchUpdate('/fontControls', patch);
 
-				const variant = fontVatiant.get('variant');
+				const variant = fontVariant.get('variant');
 				FontValues.save({typeface: variant.db,values: oldValues});
 				localClient.dispatchAction('/update-font', oldValues);
 			},
