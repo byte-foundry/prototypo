@@ -65,6 +65,14 @@ function setupHoodie(response) {
 	HoodieApi.instance.email = response.name.split('/')[1];
 	HoodieApi.instance.plan = getPlan( response.roles );
 
+	window.Intercom('boot', {
+		app_id:'mnph1bst',
+		email: HoodieApi.instance.email,
+		widget: {
+			activator: '#intercom-button',
+		},
+	});
+
 	if (HoodieApi.eventSub) {
 		_.each(HoodieApi.eventSub.connected, (cb) => {
 			cb();
