@@ -111,12 +111,13 @@
 	flex:0 0 324px;
 	height:321px;
 	top:0px;
+	margin-top:-37px;
 	overflow:hidden;
-	background-color:$white;
+	background-color: lighten($yellow, 25%);
 
 	&-filter {
 		background-color:$yellow;
-		height:41px;
+		height:37px;
 		padding:10px;
 
 		&-select {
@@ -156,6 +157,7 @@
 		border-right:solid 2px $yellow;
 		cursor:pointer;
 		color:$light-grey;
+		background-color: $white;
 		padding:6px;
 		font-size:17px;
 
