@@ -1,7 +1,7 @@
 @import '../variables';
 
 .edit-param-group {
-	padding:10px;
+	padding:8px 19px;
 	background-color:$yellow;
 	color:$dark-grey;
 	position:relative;
@@ -10,15 +10,20 @@
 		margin-left: 10px;
 		background-color: lighten($white, 10%);
 		cursor:pointer;
-		padding: 5px;
+		padding: 3px 8px;
 		border-radius: 3px;
 
 		&:hover {
 			background-color:$green;
 			color:$white;
 		}
+
+		&.alert:hover {
+			background-color:$red;
+			color:$white;
+		}
 	}
-	
+
 	&-select {
 		background-color:$yellow;
 		border:none;

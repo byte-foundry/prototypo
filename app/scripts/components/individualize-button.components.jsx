@@ -42,7 +42,7 @@ export default class IndividualizeButton extends React.Component {
 
 		return (
 			<div className="canvas-menu-item individualize-button">
-				<div className={buttonClass} onClick={() => { this.individualize() }} ></div>
+				<div className={buttonClass} title='Individualize parameters' onClick={() => { this.individualize() }} ></div>
 			</div>
 		)
 	}

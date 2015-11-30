@@ -45,7 +45,7 @@ export default class EditParamGroup extends React.Component {
 				this.setState(undefined);
 			});
 	}
-	
+
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
@@ -68,19 +68,19 @@ export default class EditParamGroup extends React.Component {
 			false;
 
 		const glyphGrid = this.state.grid ? (
-			<GlyphGrid 
+			<GlyphGrid
 				tagSelected={this.state.tagSelected}
-				selected={this.state.glyphs} 
-				tags={this.state.tags}/> 
+				selected={this.state.glyphs}
+				tags={this.state.tags}/>
 		) : false;
 
 		return (
 			<div className="edit-param-group">
-				Editing	
+				Editing
 				<select onChange={(e) => { this.selectGroup(e) }} value={this.state.currentGroup} className="edit-param-group-select">
 					{options}
 				</select>
-				<span className="edit-param-group-button" onClick={() => {this.client.dispatchAction('/pre-delete', true)}}>DELETE</span>
+				<span className="edit-param-group-button alert" onClick={() => {this.client.dispatchAction('/pre-delete', true)}}>DELETE</span>
 				<span className="edit-param-group-button" onClick={() => {this.client.dispatchAction('/edit-param-group', true)}}>EDIT</span>
 				<span className="edit-param-group-button" onClick={() => {this.client.dispatchAction('/create-mode-param-group')}}>CREATE NEW GROUP</span>
 				{deletePanel}
