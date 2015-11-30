@@ -98,6 +98,14 @@ export default class CreateParamGroup extends React.Component {
 			<span className="edit-param-group-button" onClick={() => {this.client.dispatchAction('/edit-mode-param-group')}}>EDIT GROUP</span>
 		) : false;
 
+		const groupSuggestions = this.state.groups.length > 0 ? (
+			<datalist id="groupnames">
+				{_.map(this.state.groups, (group) => {
+					return <option key={group} value={group}/>;
+				})}
+			</datalist>
+		) : false;
+
 		return (
 			<div className="create-param-group">
 				<div className="create-param-group-ribbon">
@@ -107,8 +115,9 @@ export default class CreateParamGroup extends React.Component {
 				<div className="create-param-group-panel">
 					<div className="create-param-group-form">
 						<form onSubmit={(e) => { this.createGroup(e) }}>
+							{groupSuggestions}
 							Create an independant glyph or choose a parameter group
-							<input type="text" className="create-param-group-form-input" placeholder="New parameter group" onChange={(e) => { this.handleGroupNameChange(e)}}></input>
+							<input type="text" list="groupnames" className="create-param-group-form-input" placeholder="New parameter group" onChange={(e) => { this.handleGroupNameChange(e)}}></input>
 							<button className="create-param-group-form-add-glyph" onClick={(e) => { this.toggleGlyphs(e) }}>Add multiple glyph to this group</button>
 							<div className="create-param-group-form-buttons">
 								<button className="create-param-group-form-buttons-cancel" onClick={(e) => { this.cancelIndividualize(e) }}>Cancel</button>

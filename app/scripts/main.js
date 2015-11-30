@@ -1086,6 +1086,13 @@ else if ( isSafari || isIE ) {
 					return localServer.dispatchUpdate('/individualizeStore', patchError);
 				}
 
+				if (name !== currentGroup && Object.keys(oldValues.indiv_group_param).indexOf !== -1) {
+					const patchError = individualizeStore
+						.set('errorEdit', 'You cannot change the name to an existing group name')
+						.commit();
+					return localServer.dispatchUpdate('/individualizeStore', patchError);
+				}
+
 				Object.keys(oldValues.indiv_glyphs).forEach((glyph) => {
 					if (oldValues.indiv_glyphs[glyph] === currentGroup) {
 						if (glyphs.indexOf(glyph) === -1) {
