@@ -82,7 +82,7 @@ export default class CreateParamGroup extends React.Component {
 		) : false;
 
 		const errorGlyphs = _.map(this.state.errorGlyphs, (glyph) => {
-			return <div className="create-param-group-panel-error-glyph">{String.fromCharCode(glyph)}</div>
+			return <div key={glyph} className="create-param-group-panel-error-glyph">{String.fromCharCode(glyph)}</div>
 		});
 
 		const error = this.state.errorMessage ? (

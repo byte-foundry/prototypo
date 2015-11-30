@@ -29,6 +29,8 @@ export default class EditParamGroup extends React.Component {
 					glyphs: head.toJS().selected,
 					grid: head.toJS().glyphGrid,
 					tagSelected: head.toJS().tagSelected,
+					otherGroups: head.toJS().otherGroups,
+					errorEdit: head.toJS().errorEdit,
 				});
 			})
 			.onDelete(() => {
@@ -56,7 +58,7 @@ export default class EditParamGroup extends React.Component {
 
 	render() {
 		const options = _.map(this.state.groups, (group) => {
-				return <option value={group}>{group}</option>
+				return <option value={group} key={group}>{group}</option>
 		});
 
 		const deletePanel = this.state.preDelete ?
@@ -64,11 +66,12 @@ export default class EditParamGroup extends React.Component {
 			false;
 
 		const editPanel = this.state.editGroup ?
-			<EditParamGroupPanel glyphs={this.state.glyphs} groupName={this.state.currentGroup}/> :
+			<EditParamGroupPanel errorEdit={this.state.errorEdit} glyphsInOther={this.state.otherGroups} glyphs={this.state.glyphs} groupName={this.state.currentGroup}/> :
 			false;
 
 		const glyphGrid = this.state.grid ? (
-			<GlyphGrid
+			<GlyphGrid 
+				otherGroups={this.state.otherGroups}
 				tagSelected={this.state.tagSelected}
 				selected={this.state.glyphs}
 				tags={this.state.tags}/>

@@ -161,6 +161,11 @@
 		padding:6px;
 		font-size:17px;
 
+		&.is-disabled {
+			background-color: $orange;
+			color:$white;
+		}
+
 		&:hover, &.is-active {
 			background-color: $yellow;
 			color: $dark-grey;

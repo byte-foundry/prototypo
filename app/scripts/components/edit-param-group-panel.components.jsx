@@ -24,8 +24,14 @@ export default class EditParamGroupPanel extends React.Component {
 	render() {
 
 		const glyphs = _.map(this.props.glyphs, (glyph) => {
-			return <div onClick={() => { this.removeGlyph(glyph)}} className="delete-param-group-glyph">{String.fromCharCode(glyph)}</div>
+			return <div key={glyph} onClick={() => { this.removeGlyph(glyph)}} className="delete-param-group-glyph">{String.fromCharCode(glyph)}</div>
 		});
+
+		const error = this.props.errorEdit ? (
+			<div className="create-param-group-panel-error">
+				<span className="create-param-group-panel-error-message">{this.props.errorEdit}</span>
+			</div>
+		) : false;
 
 		return (
 			<div className="edit-param-group-panel">
@@ -38,6 +44,7 @@ export default class EditParamGroupPanel extends React.Component {
 					{glyphs}
 				</div>
 				<button className="create-param-group-form-add-glyph" onClick={(e) => { this.toggleGlyphs(e) }}>Add multiple glyph to this group</button>
+				{error}
 				<div className="create-param-group-form-buttons">
 					<button className="create-param-group-form-buttons-cancel" onClick={() => {this.client.dispatchAction('/edit-param-group', false)}}>Cancel</button>
 					<button className="create-param-group-form-buttons-submit" onClick={() => {this.saveGroup()}}>Save</button>

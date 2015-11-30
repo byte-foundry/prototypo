@@ -987,6 +987,7 @@ else if ( isSafari || isIE ) {
 					.set('glyphGrid', false)
 					.set('currentGroup', undefined)
 					.set('errorMessage', undefined)
+					.set('errorEdit', undefined)
 					.set('errorGlyphs', [])
 					.set('groups',[])
 					.commit();
@@ -1002,15 +1003,20 @@ else if ( isSafari || isIE ) {
 					.set('glyphGrid', false)
 					.set('editGroup', false)
 					.set('preDelete', false)
+					.set('errorEdit', undefined)
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
 			},
 			'/edit-param-group': (state) => {
+				const otherGroups =  _.keys(fontControls.get('values').indiv_glyphs).filter((key) => {
+						return !!fontControls.get('values').indiv_glyphs[key] && fontControls.get('values').indiv_glyphs[key] !== individualizeStore.get('currentGroup');
+					});
 				const patch = individualizeStore
 					.set('editGroup', state)
 					.set('preDelete', false)
 					.set('glyphGrid', false)
 					.set('selected', state ? individualizeStore.get('glyphs') : [])
+					.set('otherGroups', otherGroups)
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
 			},
@@ -1019,6 +1025,9 @@ else if ( isSafari || isIE ) {
 					.set('preDelete', state)
 					.set('editGroup', false)
 					.set('glyphGrid', false)
+					.set('selected', _.keys(fontControls.get('values').indiv_glyphs).filter((key) => {
+						return fontControls.get('values').indiv_glyphs[key] === individualizeStore.get('currentGroup');
+					}))
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
 			},
@@ -1043,6 +1052,7 @@ else if ( isSafari || isIE ) {
 					.set('preDelete', false)
 					.set('currentGroup', newCurrentGroup)
 					.set('errorMessage', undefined)
+					.set('errorEdit', undefined)
 					.set('errorGlyphs', [])
 					.set('groups', Object.keys(oldValues.indiv_group_param || {}))
 					.commit();
@@ -1056,25 +1066,34 @@ else if ( isSafari || isIE ) {
 				localClient.dispatchAction('/update-font', oldValues);
 			},
 			'/remove-glyph': ({glyph}) => {
-				const glyphs = _.cloneDeep(individualizeStore.get('glyphs'));
+				const glyphs = _.cloneDeep(individualizeStore.get('selected'));
 				glyphs.splice(glyphs.indexOf(glyph), 1);
 
 				const patch = individualizeStore
-					.set('glyphs', glyphs)
+					.set('selected', glyphs)
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
 			},
 			'/save-param-group': ({name}) => {
 				const oldValues = _.cloneDeep(fontControls.get('values'));
-				const glyphs = _.cloneDeep(individualizeStore.get('glyphs'));
+				const glyphs = _.cloneDeep(individualizeStore.get('selected'));
 				const currentGroup = individualizeStore.get('currentGroup');
 
+				if (!name) {
+					const patchError = individualizeStore
+						.set('errorEdit', 'You must provide a group name')
+						.commit();
+					return localServer.dispatchUpdate('/individualizeStore', patchError);
+				}
+
 				Object.keys(oldValues.indiv_glyphs).forEach((glyph) => {
-					if (glyphs.indexOf(glyph) === -1) {
-						delete oldValues.indiv_glyphs[glyph];
-					}
-					else if (oldValues.indiv_glyphs[glyph] === currentGroup) {
-						oldValues.indiv_glyphs[glyph] = name;
+					if (oldValues.indiv_glyphs[glyph] === currentGroup) {
+						if (glyphs.indexOf(glyph) === -1) {
+							delete oldValues.indiv_glyphs[glyph];
+						}
+						else {
+							oldValues.indiv_glyphs[glyph] = name;
+						}
 					}
 				});
 
@@ -1094,10 +1113,14 @@ else if ( isSafari || isIE ) {
 					.set('currentGroup', name)
 					.set('editGroup', false)
 					.set('glyphGrid', false)
+					.set('errorEdit', undefined)
 					.set('groups', Object.keys(oldValues.indiv_group_param))
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', indivPatch);
 				localClient.dispatchAction('/update-font', oldValues);
+
+				const variant = fontVariant.get('variant');
+				FontValues.save({typeface: variant.db,values: oldValues});
 			},
 			'/create-mode-param-group': () => {
 				const values = _.cloneDeep(fontControls.get('values'));
@@ -1110,6 +1133,8 @@ else if ( isSafari || isIE ) {
 					.set('glyphGrid', false)
 					.set('errorMessage', undefined)
 					.set('errorGlyphs', [])
+					.set('errorEdit', undefined)
+					.set('selected', [])
 					.set('groups', Object.keys(values.indiv_group_param))
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', indivPatch);
@@ -1125,6 +1150,7 @@ else if ( isSafari || isIE ) {
 					.set('glyphGrid', false)
 					.set('errorMessage', undefined)
 					.set('errorGlyphs', [])
+					.set('errorEdit', undefined)
 					.set('groups', Object.keys(values.indiv_group_param))
 					.set('currentGroup', groupName)
 					.commit();
