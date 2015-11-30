@@ -104,9 +104,23 @@
 		border-radius: 0;
 		color: $medium-grey;
 
+		&:focus { color: white; }
+
+		// not very UX friendly but it's a fix until we discover what happens in FF
+		// (multiple inputs are focused)
+		&::selection {
+			background-color: transparent;
+		}
+
 		// we'll use textfield appearance until we've figured out sth better
 		-moz-appearance: textfield;
 		-webkit-appearance: textfield;
+
+		&:invalid,
+		&:required,
+		&:-moz-placeholder {
+			box-shadow:none !important;
+		}
 	}
 
 	&-controller {
