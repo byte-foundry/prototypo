@@ -5,6 +5,7 @@
 	background-color:$yellow;
 	color:$dark-grey;
 	position:relative;
+	max-height: 37px;
 
 	&-button {
 		margin-left: 10px;
@@ -25,12 +26,17 @@
 	}
 
 	&-select {
-		background-color:$yellow;
+		background-color:lighten($yellow, 15%);
+		margin-left: 10px;
 		border:none;
+		border-radius: 3px;
+		max-width: 200px;
+
+		font-size: 1.1em;
 		cursor:pointer;
 
 		&:hover {
-			color:$white;
+			background-color:$white;
 		}
 
 		&:focus {

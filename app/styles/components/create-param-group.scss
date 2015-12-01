@@ -8,22 +8,25 @@
 		background-color:$yellow;
 		padding:8px 19px;
 		text-transform: uppercase;
+		max-height: 37px;
 	}
 
 	&-panel {
 		display:flex;
 
 		&-error {
-			text-align:center;
-			margin: 10px 24px;
+			margin-top: 15px;
 
 			&-message {
 				color: $red;
+				padding-bottom: 10px;
+				display: block;
 			}
 
 			&-glyphs {
 				display:flex;
 				flex-flow: row wrap;
+				text-align:center;
 			}
 
 			&-glyph {
