@@ -1,7 +1,11 @@
 import nothing from 'whatwg-fetch';
 import PouchDB from 'pouchdb';
-import HOODIE from '../helpers/hoodie.helpers.js';
 import HoodiePouch from 'pouchdb-hoodie-api';
+
+import HOODIE from '../helpers/hoodie.helpers.js';
+
+import Log from './log.services.js';
+
 PouchDB.plugin(HoodiePouch);
 
 //const backUrl = 'http://localhost:6004';
@@ -72,6 +76,8 @@ function setupHoodie(response) {
 			activator: '#intercom-button',
 		},
 	});
+
+	Log.setUserId(HoodieApi.instance.email);
 
 	if (HoodieApi.eventSub) {
 		_.each(HoodieApi.eventSub.connected, (cb) => {

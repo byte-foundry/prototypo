@@ -886,6 +886,7 @@ else if ( isSafari || isIE ) {
 				}
 				const patch = individualizeStore.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
+				Log.ui('GroupParam.showIndivMode');
 			},
 			'/toggle-glyph-param-grid': () => {
 				const oldValue = individualizeStore.get('glyphGrid');
@@ -893,6 +894,7 @@ else if ( isSafari || isIE ) {
 					.set('glyphGrid', !oldValue)
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
+				Log.ui('GroupParam.showGlyphGrid');
 			},
 			'/add-glyph-to-indiv': ({unicode, isSelected}) => {
 				const selected = individualizeStore.get('selected');
@@ -906,10 +908,12 @@ else if ( isSafari || isIE ) {
 
 				const patch = individualizeStore.set('selected', selected).commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
+				Log.ui('GroupParam.addGlyphToIndiv');
 			},
 			'/select-indiv-tag': (tag) => {
 				const patch = individualizeStore.set('tagSelected', tag).commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
+				Log.ui('GroupParam.selectIndivTag');
 			},
 			'/create-param-group': ({name, selected}) => {
 				const oldValues = fontControls.get('values');
@@ -977,6 +981,7 @@ else if ( isSafari || isIE ) {
 
 				const variant = fontVariant.get('variant');
 				FontValues.save({typeface: variant.db,values: oldValues});
+				Log.ui('GroupParam.create');
 			},
 			'/cancel-indiv-mode': () => {
 				const endCreatePatch = individualizeStore
@@ -1006,6 +1011,7 @@ else if ( isSafari || isIE ) {
 					.set('errorEdit', undefined)
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
+				Log.ui('GroupParam.selectGroupParam');
 			},
 			'/edit-param-group': (state) => {
 				const otherGroups =  _.keys(fontControls.get('values').indiv_glyphs).filter((key) => {
@@ -1019,6 +1025,7 @@ else if ( isSafari || isIE ) {
 					.set('otherGroups', otherGroups)
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
+				Log.ui('GroupParam.startEdit');
 			},
 			'/pre-delete': (state) => {
 				const patch = individualizeStore
@@ -1030,6 +1037,7 @@ else if ( isSafari || isIE ) {
 					}))
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
+				Log.ui('GroupParam.startDelete');
 			},
 			'/delete-param-group': ({name}) => {
 				const oldValues = _.cloneDeep(fontControls.get('values'));
@@ -1064,6 +1072,7 @@ else if ( isSafari || isIE ) {
 				const variant = fontVariant.get('variant');
 				FontValues.save({typeface: variant.db,values: oldValues});
 				localClient.dispatchAction('/update-font', oldValues);
+				Log.ui('GroupParam.deleteGroup');
 			},
 			'/remove-glyph': ({glyph}) => {
 				const glyphs = _.cloneDeep(individualizeStore.get('selected'));
@@ -1073,6 +1082,7 @@ else if ( isSafari || isIE ) {
 					.set('selected', glyphs)
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', patch);
+				Log.ui('GroupParam.removeGlyph');
 			},
 			'/save-param-group': ({name}) => {
 				const oldValues = _.cloneDeep(fontControls.get('values'));
@@ -1128,6 +1138,7 @@ else if ( isSafari || isIE ) {
 
 				const variant = fontVariant.get('variant');
 				FontValues.save({typeface: variant.db,values: oldValues});
+				Log.ui('GroupParam.saveEdit');
 			},
 			'/create-mode-param-group': () => {
 				const values = _.cloneDeep(fontControls.get('values'));
@@ -1145,6 +1156,7 @@ else if ( isSafari || isIE ) {
 					.set('groups', Object.keys(values.indiv_group_param))
 					.commit();
 				localServer.dispatchUpdate('/individualizeStore', indivPatch);
+				Log.ui('GroupParam.switchToCreateGroupParam');
 			},
 			'/edit-mode-param-group': () => {
 				const values = _.cloneDeep(fontControls.get('values'));
@@ -1164,6 +1176,7 @@ else if ( isSafari || isIE ) {
 				localServer.dispatchUpdate('/individualizeStore', indivPatch);
 
 				localClient.dispatchAction('/select-indiv-group', groupName);
+				Log.ui('GroupParam.switchToEditGroupParam');
 			},
 		}
 
