@@ -10,6 +10,11 @@
 	background-color:$lightest-grey;
 	width:304px;
 
+	&-question {
+		text-overflow:ellipsis;
+		overflow:hidden;
+	}
+
 	&-glyphs {
 		display:flex;
 		flex-flow: row wrap;
