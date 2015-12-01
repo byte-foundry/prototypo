@@ -55,10 +55,13 @@ export default class Account extends React.Component {
 				<h2 className="account-block-title side-tab-h2">My subscription</h2>
 				<div className="account-block-plan">
 					{(() => {
-						if ( HoodieApi.instance.plan.indexOf('annual') > -1 ) {
+						if ( HoodieApi.instance.plan.indexOf('free_') > -1 ) {
+							return 'Free plan';
+						}
+						else if ( HoodieApi.instance.plan.indexOf('annual_') > -1 ) {
 							return 'Professional annual plan';
 						}
-						else if ( HoodieApi.instance.plan.indexOf('monthly') > -1 ) {
+						else if ( HoodieApi.instance.plan.indexOf('monthly_') > -1 ) {
 							return 'Professional monthly plan';
 						}
 						else {
