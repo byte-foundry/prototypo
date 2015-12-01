@@ -21,7 +21,7 @@
 			width:100%;
 		}
 	}
-	
+
 	&:active {
 		cursor: move;
 	}
@@ -36,5 +36,19 @@
 		background-color:$green;
 		padding:10px;
 		margin-top:10px;
+	}
+}
+
+.canvas-menu {
+	position: absolute;
+	bottom: 25px;
+	left: 25px;
+	display: flex;
+	flex-flow: row nowrap;
+
+	&-item {
+		display: row nowrap;
+		align-self: flex-end;
+		margin-right: 20px;
 	}
 }

@@ -51,12 +51,27 @@ export default class FontControls extends React.Component {
 			if (path == '/change-param') {
 				let newParams = {};
 				Object.assign(newParams, fontControls.get('values'));
-				if (params.values) {
-					_.assign(newParams, params.values)
+
+				if (this.state.indivMode && this.state.indivEdit && !params.values) {
+					if (newParams.indiv_group_param[this.state.currentGroup][params.name]) {
+						newParams.indiv_group_param[this.state.currentGroup][params.name].value = params.value;
+					}
+					else {
+						newParams.indiv_group_param[this.state.currentGroup][params.name] = {
+							state: 'relative',
+							value: params.value,
+						};
+					}
 				}
 				else {
-					newParams[params.name] = params.value;
+					if (params.values) {
+						_.assign(newParams, params.values)
+					}
+					else {
+						newParams[params.name] = params.value;
+					}
 				}
+				
 
 				const patch = fontControls.set('values',newParams).commit();
 
@@ -73,6 +88,30 @@ export default class FontControls extends React.Component {
 
 				}
 
+			}
+			else if ( path == '/change-param-state') {
+				let newParams = {};
+				Object.assign(newParams, fontControls.get('values'));
+
+				newParams.indiv_group_param[this.state.currentGroup][params.name] = {
+					state: params.state,
+					value: params.state === 'relative' ? 1 : 0,
+				};
+
+				const patch = fontControls.set('values',newParams).commit();
+
+				server.dispatchUpdate('/fontControls',patch);
+
+				if (params.force) {
+
+					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+					this.undoWatcher.forceUpdate(patch, params.label);
+					debouncedSave(newParams);
+				} else {
+
+					this.undoWatcher.update(patch, params.label);
+
+				}
 			}}, this.lifespan);
 
 		this.client.getStore('/fontTab', this.lifespan)
@@ -91,6 +130,17 @@ export default class FontControls extends React.Component {
 					values:headJS.values,
 				});
 				this.client.dispatchAction('/update-font',headJS.values);
+			})
+			.onDelete(() => this.setState(undefined)).value;
+
+		this.client.getStore('/individualizeStore', this.lifespan)
+			.onUpdate(({head}) => {
+				const headJS = head.toJS();
+				this.setState({
+					indivMode:headJS.indivMode,
+					indivEdit:headJS.indivEdit,
+					currentGroup:headJS.currentGroup,
+				});
 			})
 			.onDelete(() => this.setState(undefined)).value;
 
@@ -124,7 +174,12 @@ export default class FontControls extends React.Component {
 		const tabs = _.map(this.state.parameters,(group) => {
 			return (
 				<ControlsTab iconId={group.label} name={group.label} key={group.label}>
-					<Sliders params={group.parameters} values={this.state.values}/>
+					<Sliders 
+						params={group.parameters} 
+						values={this.state.values} 
+						indivMode={this.state.indivMode}
+						indivEdit={this.state.indivEdit}
+						currentGroup={this.state.currentGroup}/>
 				</ControlsTab>
 			);
 		});

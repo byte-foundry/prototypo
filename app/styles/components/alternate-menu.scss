@@ -1,18 +1,23 @@
 @import '../variables';
 
 .alternate-menu {
-	position: absolute;
-	bottom: 25px;
-	left: 25px;
 	display:flex;
 	flex-flow: column nowrap;
 	cursor:pointer;
 
 	&-label {
-		    background-color: $dark-grey;
-			padding: 10px;
+		height: 22px;
+		border: 2px solid $dark-grey;
+		border-radius: 4px;
+		padding: 0 10px;
+		color: $dark-grey;
+		font-size: 12px;
+		transition: all 200ms ease;
+
+		&:hover {
+			background-color: $dark-grey;
 			color: $white;
-			border-radius: 4px;
+		}
 	}
 
 	&-list {

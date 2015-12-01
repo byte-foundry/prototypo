@@ -8,7 +8,7 @@ export default class AlternateMenu extends React.Component {
 			return <Alternate id={index} alt={alt} unicode={this.props.unicode}/>
 		});
 		return (
-			<div className="alternate-menu">
+			<div className="canvas-menu-item alternate-menu">
 				<div className="alternate-menu-list">
 					{alternates}
 				</div>

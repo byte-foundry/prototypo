@@ -56,7 +56,7 @@ export default class GlyphList extends React.Component {
 						}
 					</div>
 				</ReactGeminiScrollbar>
-				<div title="Export and download your font" className="export-btn" onClick={() => { this.exportOTF() }}></div>
+				<div title="Export and download your font" className="export-btn" onClick={() => { this.exportOTF() }}>Export OTF</div>
 			</div>
 		);
 	}

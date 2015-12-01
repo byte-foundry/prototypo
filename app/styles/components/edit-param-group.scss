@@ -1,0 +1,83 @@
+@import '../variables';
+
+.edit-param-group {
+	padding:8px 19px;
+	background-color:$yellow;
+	color:$dark-grey;
+	position:relative;
+	max-height: 37px;
+
+	&-button {
+		margin-left: 10px;
+		background-color: lighten($white, 10%);
+		cursor:pointer;
+		padding: 3px 8px;
+		border-radius: 3px;
+
+		&:hover {
+			background-color:$green;
+			color:$white;
+		}
+
+		&.alert:hover {
+			background-color:$red;
+			color:$white;
+		}
+	}
+
+	&-select {
+		background-color:lighten($yellow, 15%);
+		margin-left: 10px;
+		border:none;
+		border-radius: 3px;
+		width: 100px;
+
+		font-size: 1.1em;
+		cursor:pointer;
+
+		&:hover {
+			background-color:$white;
+		}
+
+		&:focus {
+			border:none;
+			outline:none;
+		}
+	}
+
+	&-panel {
+		position:absolute;
+		top:37px;
+		left:20px;
+		background-color:$lightest-grey;
+		width:304px;
+		padding:20px;
+		color:$medium-grey;
+		z-index:4;
+
+		&-input {
+			margin-top:20px;
+			display:block;
+			width:100%;
+			border:solid 2px $yellow;
+			padding:7px;
+			border-radius:4px;
+		}
+
+		&-glyph {
+			background-color:$yellow;
+			width:30px;
+			height:30px;
+			text-align:center;
+			line-height:30px;
+			margin-right:3px;
+			margin-bottom:3px;
+
+			&:hover {
+				background-color:$red;
+				color:$white;
+				cursor:pointer;
+			}
+		}
+	}
+}
