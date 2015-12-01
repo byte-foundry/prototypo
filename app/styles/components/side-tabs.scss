@@ -134,7 +134,11 @@
 			width: 300%;
 			height: 100%;
 			background-color: $dark-grey;
-			opacity: .7;
+			opacity: .9;
+			transition: opacity 800ms ease;
+			&:hover {
+				opacity: .6;
+			}
 		}
 		&.no-padding {
 			padding: 0;
@@ -145,8 +149,32 @@
 		}
 	}
 
-	h2,
+	h2 {
+		font-size: 18px;
+		padding-top: 1em;
+		margin-bottom: 1.2em;
+		color: $white;
+	}
+
 	p {
 		color: $white;
 	}
+
+	&-white {
+		background-color: $white;
+		h1, h2,
+		p {
+			color: $dark-grey;
+		}
+		.side-tab-big-backdrop {
+			background-color: $green;
+			opacity: 1;
+			left: 100%;
+			transition: opacity 800ms ease;
+			&:hover {
+				opacity: .9;
+			}
+		}
+	}
+
 }

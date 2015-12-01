@@ -133,6 +133,7 @@ export class SideTab extends React.Component {
 			"side-tab-big": !!this.props.big,
 			"is-disabled": !!this.props.disabled,
 			"no-padding": !!this.props.padding,
+			"side-tab-white": !!this.props.white
 		});
 
 		const backdrop = this.props.big ? (

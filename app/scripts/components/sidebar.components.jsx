@@ -52,7 +52,7 @@ export default class Sidebar extends React.Component {
 						<SideTab iconUrl="fonts-collection.svg" id="font-collection" name="fonts-collection" big={true} legend="Collection" from="createFamily" to="creatingFamily">
 							<FontsCollection />
 						</SideTab>
-						<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} legend="Profile">
+						<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} white={true} legend="Profile">
 							<Account />
 						</SideTab>
 						<SideTab iconUrl="help-panel.svg" name="help-panel" big={true} bottom={true} padding={true} legend="Help" click={() => { window.Intercom('show') }}>
