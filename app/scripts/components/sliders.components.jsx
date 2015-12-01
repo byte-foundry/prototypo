@@ -60,14 +60,22 @@ export class Slider extends React.Component {
 		const classes = ClassNames({
 			'slider': true,
 			'is-disabled': this.props.param.disabled || this.props.param.notInDemo,
+			'is-coming': this.props.param.disabled && this.props.param.notInDemo,
 			'is-child': this.props.param.child
 		});
 
-		const demoOverlay = this.props.param.notInDemo ? (
-				<div className="slider-demo-overlay-text">
-					Available with the professional subscription
+		const demoOverlay = this.props.param.disabled && this.props.param.notInDemo ? (
+			<div className="slider-demo-overlay-text">
+				This feature is currently in development
+			</div>
+		) : this.props.param.notInDemo ? (
+			<a href="https://www.prototypo.io/account#/account" className="slider-demo-overlay-text">
+				This feature is available with the professional subscription
+				<div className="slider-demo-overlay-text-more">
+					<div className="slider-demo-overlay-text-more-text">Uppgrade to full version</div>
 				</div>
-			) : false;	
+			</a>
+		) : false;
 
 		return (
 			<div className={classes}>

@@ -35,12 +35,14 @@ export default class Signin extends React.Component {
 			.then(() => {
 				this.client.dispatchAction('/login', { });
 			})
-			.catch((err) => {console.log(err);
+			.catch((err) => {
 				this.setState({
-					warningMessage: err.error === 'unauthorized' ? 'You made a mistake in your email or password' : 'An unexpected error occured please contact contact@prototypo.io and provide us with your username',
-					loading:true,
+					warningMessage: /unauthorized/i.test(err.message) ?
+						'Incorrect email or password' :
+						'An unexpected error occured, please contact contact@prototypo.io and mention your current email',
+					loading: true,
 				});
-			})
+			});
 
 		return;
 	}
@@ -86,7 +88,7 @@ export default class Signin extends React.Component {
 					return <WarningMessage text={message}/>
 					}})(this.state.warningMessage)}
 				<WaitForLoad loaded={this.state.loading} secColor={true}>
-					<button className="sign-in-button">Sign in</button>
+					<input className="sign-in-button" type="submit" value="Sign in"></input>
 				</WaitForLoad>
 			</form>
 		)

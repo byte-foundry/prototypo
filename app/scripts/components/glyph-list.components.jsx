@@ -24,7 +24,7 @@ export default class GlyphList extends React.Component {
 	}
 
 	exportOTF() {
-		this.client.dispatchAction('/export-otf', {merged:false});
+		this.client.dispatchAction('/export-otf', {merged:true});
 
 		Log.ui('GlyphList.exportOTF');
 	}
