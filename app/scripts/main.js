@@ -1086,7 +1086,7 @@ else if ( isSafari || isIE ) {
 					return localServer.dispatchUpdate('/individualizeStore', patchError);
 				}
 
-				if (name !== currentGroup && Object.keys(oldValues.indiv_group_param).indexOf !== -1) {
+				if (name !== currentGroup && Object.keys(oldValues.indiv_group_param).indexOf(name) !== -1) {
 					const patchError = individualizeStore
 						.set('errorEdit', 'You cannot change the name to an existing group name')
 						.commit();

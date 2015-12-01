@@ -106,6 +106,10 @@ export default class CreateParamGroup extends React.Component {
 			</datalist>
 		) : false;
 
+		const glyphs = _.map(this.state.selected, (glyph) => {
+			return <div key={glyph} onClick={() => { this.removeGlyph(glyph)}} className="delete-param-group-glyph">{String.fromCharCode(glyph)}</div>
+		});
+
 		return (
 			<div className="create-param-group">
 				<div className="create-param-group-ribbon">
@@ -118,6 +122,12 @@ export default class CreateParamGroup extends React.Component {
 							{groupSuggestions}
 							Create an independant glyph or choose a parameter group
 							<input type="text" list="groupnames" className="create-param-group-form-input" placeholder="New parameter group" onChange={(e) => { this.handleGroupNameChange(e)}}></input>
+							<p>
+								Glyphs selected
+							</p>
+							<div className="delete-param-group-glyphs">
+								{glyphs}
+							</div>
 							<button className="create-param-group-form-add-glyph" onClick={(e) => { this.toggleGlyphs(e) }}>Add multiple glyph to this group</button>
 							<div className="create-param-group-form-buttons">
 								<button className="create-param-group-form-buttons-cancel" onClick={(e) => { this.cancelIndividualize(e) }}>Cancel</button>
