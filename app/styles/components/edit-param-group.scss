@@ -63,5 +63,21 @@
 			padding:7px;
 			border-radius:4px;
 		}
+
+		&-glyph {
+			background-color:$yellow;
+			width:30px;
+			height:30px;
+			text-align:center;
+			line-height:30px;
+			margin-right:3px;
+			margin-bottom:3px;
+
+			&:hover {
+				background-color:$red;
+				color:$white;
+				cursor:pointer;
+			}
+		}
 	}
 }

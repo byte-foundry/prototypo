@@ -24,7 +24,7 @@ export default class EditParamGroupPanel extends React.Component {
 	render() {
 
 		const glyphs = _.map(this.props.glyphs, (glyph) => {
-			return <div key={glyph} onClick={() => { this.removeGlyph(glyph)}} className="delete-param-group-glyph">{String.fromCharCode(glyph)}</div>
+			return <div key={glyph} onClick={() => { this.removeGlyph(glyph)}} className="edit-param-group-panel-glyph">{String.fromCharCode(glyph)}</div>
 		});
 
 		const error = this.props.errorEdit ? (

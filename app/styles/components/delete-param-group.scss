@@ -23,11 +23,6 @@
 		line-height:30px;
 		margin-right:3px;
 		margin-bottom:3px;
-
-		&:hover {
-			background-color:$red;
-			color:$white;
-			cursor:pointer;
-		}
+		cursor: default;
 	}
 }
