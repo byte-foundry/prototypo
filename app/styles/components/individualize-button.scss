@@ -1,0 +1,40 @@
+@import "../variables";
+
+.individualize-button {
+	position: relative;
+
+	padding: 2px;
+	width: 50px;
+	height: 22px;
+	border-radius: 10px;
+	// background-color: $light-grey;
+	border: 2px solid $dark-grey;
+
+	cursor: pointer;
+
+	&-label {
+		display: block;
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		width: 60%;
+		height: 14px;
+		border-radius: 10px;
+		background-color: $dark-grey;
+		background-image: url('./images/link-icon.svg');
+		background-repeat: no-repeat;
+		background-position: center;
+		transition: left 200ms ease;
+	}
+
+	&-label.is-active,
+	&:hover &-label {
+		background-color: $yellow;
+		background-image: url('./images/link-icon-hover.svg');
+	}
+
+	&-label.is-active {
+		left: calc(40% - 2px);
+	}
+
+}

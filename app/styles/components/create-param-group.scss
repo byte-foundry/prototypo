@@ -1,0 +1,203 @@
+@import '../variables';
+
+.create-param-group {
+	width:100%;
+	position:relative;
+
+	&-ribbon {
+		background-color:$yellow;
+		padding:8px 19px;
+		text-transform: uppercase;
+		max-height: 37px;
+	}
+
+	&-panel {
+		display:flex;
+
+		&-error {
+			margin-top: 15px;
+
+			&-message {
+				color: $red;
+				padding-bottom: 10px;
+				display: block;
+			}
+
+			&-glyphs {
+				display:flex;
+				flex-flow: row wrap;
+				text-align:center;
+			}
+
+			&-glyph {
+				background-color:$yellow;
+				color:$dark-grey;
+				flex:0 0 30px;
+				height:30px;
+				padding-top:4px;
+				margin-right:3px;
+			}
+		}
+	}
+
+	&-form {
+		position:absolute;
+		z-index:4;
+		margin-left:20px;
+		background-color:$lightest-grey;
+		width:304px;
+		padding:20px;
+		color:$medium-grey;
+
+		&-input {
+			margin-top:20px;
+			display:block;
+			width:100%;
+			border:solid 2px $yellow;
+			padding:7px;
+			border-radius:4px;
+		}
+
+		&-add-glyph {
+			width: 100%;
+			margin-top: 10px;
+			background-color: $yellow;
+			border: solid 2px $yellow;
+			color: $white;
+			border-radius: 4px;
+			padding: 7px;
+
+			&:hover {
+				color:$yellow;
+				background-color:$white;
+			}
+		}
+
+		&-buttons {
+			margin-top:20px;
+			display:flex;
+			justify-content:space-between;
+
+			&-cancel {
+				background-color: $white;
+				border: solid 2px $red;
+				color: $red;
+				border-radius: 4px;
+				padding: 7px;
+
+				&:hover {
+					color:$white;
+					background-color:$red;
+				}
+			}
+
+			&-submit {
+				background-color: $green;
+				border: solid 2px $green;
+				color: $white;
+				border-radius: 4px;
+				padding: 7px;
+
+				&:hover {
+					color:$green;
+					background-color:$white;
+				}
+			}
+		}
+	}
+}
+
+.glyphs-grid {
+	position:absolute;
+	z-index:5;
+	left:450px;
+	flex:0 0 324px;
+	height:321px;
+	top:0px;
+	// margin-top:-37px;
+	overflow:hidden;
+	background-color: lighten($yellow, 25%);
+
+	&-filter {
+		background-color:$yellow;
+		height:37px;
+		padding:10px;
+
+		&-select {
+			background-color:$yellow;
+			border:none;
+			cursor:pointer;
+
+			&:hover {
+				color:$white;
+			}
+
+			&:focus {
+				border:none;
+				outline:none;
+			}
+		}
+	}
+
+	&-scroll-content {
+		display:flex;
+		flex-flow: row wrap;
+		position:relative;
+	}
+
+	&-scroll-container {
+		height:280px;
+		width:320px;
+	}
+
+	&-glyph {
+		flex: 0 0 40px;
+		margin:0;
+		padding:0;
+		height: 40px;
+		text-align:center;
+		border-bottom:solid 2px $yellow;
+		border-right:solid 2px $yellow;
+		cursor:pointer;
+		color:$light-grey;
+		background-color: $white;
+		padding:6px;
+		font-size:17px;
+
+		&.is-disabled {
+			background-color: $orange;
+			color:$white;
+		}
+
+		&:hover, &.is-active {
+			background-color: $yellow;
+			color: $dark-grey;
+		}
+
+		&:last-of-type:before {
+			width: 2px;
+			height: 100%;
+			content: ' ';
+			background-color: $yellow;
+			display: block;
+			position: absolute;
+			right: 0;
+			bottom: 0;
+		}
+
+		&:last-of-type:after {
+			width: 100%;
+			height: 2px;
+			content: ' ';
+			background-color: $yellow;
+			display: block;
+			position: absolute;
+			left: 0;
+			bottom: 0;
+		}
+
+		&:nth-of-type(8n+1) {
+			border-left:solid 2px $yellow;
+		}
+	}
+}

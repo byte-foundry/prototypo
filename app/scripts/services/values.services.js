@@ -14,6 +14,9 @@ function values(prefix) {
 		},
 		clear() {
 			return HoodieApi.instance.removeAll(`${prefix}values`);
+		},
+		deleteDb(params) {
+			return HoodieApi.instance.remove(`${prefix}values/${params.typeface}`);
 		}
 	}
 }

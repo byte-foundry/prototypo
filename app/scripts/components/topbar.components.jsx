@@ -1,10 +1,14 @@
 import React from 'react';
-import UndoRedoMenu from './undo-redo-menu.components.jsx';
-import {TopBarMenu, TopBarMenuDropdown, TopBarMenuDropdownItem, TopBarMenuDropdownCheckBox, TopBarMenuAction} from './top-bar-menu.components.jsx';
-import HoodieApi from '../services/hoodie.services.js';
-import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
+
+import UndoRedoMenu from './undo-redo-menu.components.jsx';
+
+import HoodieApi from '../services/hoodie.services.js';
 import Log from '../services/log.services.js';
+
+import LocalClient from '../stores/local-client.stores.jsx';
+
+import {TopBarMenu, TopBarMenuDropdown, TopBarMenuDropdownItem, TopBarMenuDropdownCheckBox, TopBarMenuAction} from './top-bar-menu.components.jsx';
 
 export default class Topbar extends React.Component {
 

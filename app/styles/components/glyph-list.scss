@@ -7,7 +7,7 @@
 
 
 	&-selected {
-		padding:10px 0 10px 10px;
+		padding:8px 0 8px 10px;
 		cursor:pointer;
 		background-color: $black;
 
@@ -124,7 +124,7 @@
 .glyph-list {
 	background-color: $dark-grey;
 	color: $medium-grey;
-	border-top: lighten($dark-grey, 3%) 1px solid;
+	// border-top: lighten($dark-grey, 3%) 1px solid;
 
 	display:flex;
 	flex-direction:column;
@@ -238,22 +238,21 @@
 }
 
 .export-btn {
-	background-color: $dark-grey;
-	background-image: url('./images/download.svg');
-	background-repeat: no-repeat;
-	background-position: center;
-	background-size: 20px;
+	border: 2px solid $green;
+	padding: 0 10px;
+	color: $green;
+	border-radius: 4px;
+	font-size: 12px;
+
 	position: absolute;
-	left: -72px;
+	left: -107px;
 	bottom: 25px;
-	width: 45px;
-	height: 45px;
-	color: $white;
-	border-radius: 5px;
 	z-index: -1;
 	cursor: pointer;
+
 	&:hover {
 		transition: all 200ms ease;
 		background-color: $green;
+		color: $white;
 	}
 }

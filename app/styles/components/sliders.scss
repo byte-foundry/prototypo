@@ -18,6 +18,11 @@
 		align-items:center;
 	}
 
+	&-container {
+		display: flex;
+		flex-flow: row nowrap;
+	}
+
 	&-demo-overlay {
 		&-text {
 			opacity:0;
@@ -107,12 +112,17 @@
 		// we'll use textfield appearance until we've figured out sth better
 		-moz-appearance: textfield;
 		-webkit-appearance: textfield;
+
+		&.is-indiv {
+			margin-right:25px;
+		}
 	}
 
 	&-controller {
 		overflow: hidden;
 		background-color: #FFF;
 		margin-top: 2px;
+		flex:1;
 
 		&, &-bg, &-handle {
 			border-radius: 1rem;
@@ -127,6 +137,18 @@
 			&.is-not-advised {
 				background-color:$red;
 			}
+
+			&.is-indiv {
+				background-color:$yellow;
+			}
+
+			&.is-not-advised.is-indiv {
+				background-color:$red;
+			}
+		}
+
+		&-bg.is-indiv &-handle {
+			border-color:$yellow;
 		}
 
 		&-bg.is-not-advised &-handle {
@@ -196,4 +218,56 @@
 .sliders {
 	color: $white;
 	padding:1rem;
+}
+
+.indiv-switch {
+	flex: 0 0 25px;
+	height: 19px;
+	position: relative;
+	margin-left: 5px;
+	margin-top: 2px;
+	cursor:pointer;
+
+	&-btn {
+		line-height: 17px;
+		height: 19px;
+		width: 19px;
+		text-align: center;
+		border-radius: 50%;
+		position: absolute;
+		transition: all .2s ease;
+		top: 0;
+		left: 5px;
+		z-index:1;
+
+		&:hover {
+			line-height: 23px;
+			height: 25px;
+			width: 25px;
+			left:2px;
+		}
+
+		&.is-active {
+			z-index:2;
+		}
+	}
+
+	&-relative {
+		background: $white;
+		color:$dark-grey;
+		line-height: 19px;
+	}
+
+	&-delta {
+		background: $yellow;
+		color:$dark-grey;
+	}
+
+	&:hover &-delta {
+		top:15px;
+	}
+
+	&:hover &-relative {
+		top:-15px;
+	}
 }
