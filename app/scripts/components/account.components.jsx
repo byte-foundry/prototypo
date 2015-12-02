@@ -50,6 +50,29 @@ export default class Account extends React.Component {
 			console.log('[RENDER] account');
 		}
 
+		const accountInfos = (
+			<div className="account-block">
+				<h2 className="account-block-title side-tab-h2">My subscription</h2>
+				<div className="account-block-plan">
+					{(() => {
+						if (!HoodieApi.instance.plan){
+							return 'All privileges';
+						}
+						else if ( HoodieApi.instance.plan.indexOf('free_') > -1 ) {
+							return 'Free plan';
+						}
+						else if ( HoodieApi.instance.plan.indexOf('annual_') > -1 ) {
+							return 'Professional annual plan';
+						}
+						else if ( HoodieApi.instance.plan.indexOf('monthly_') > -1 ) {
+							return 'Professional monthly plan';
+						}
+					})()}
+				</div>
+				<a className="account-block-button" href="https://www.prototypo.io/account#/account">Update my account</a>
+			</div>
+		);
+
 		let passwordTooShort = false;
 
 		if (this.state.passwordTooShort) {
@@ -64,7 +87,7 @@ export default class Account extends React.Component {
 					<h2 className="account-block-title side-tab-h2">Change password</h2>
 					<form className="account-block-form" onSubmit={(e) => { this.changePassword(e) }}>
 						<label className="account-block-form-label" htmlFor="new-password">New password (at least 6 characters)</label>
-						<input className="account-block-form-input" ref="password" type="password" id="new-password" name="new-password"/>
+						<input className="account-block-form-input" ref="password" type="password" id="new-password" placeholder="******" name="new-password"/>
 						{((message) => {if (message) {
 							return <WarningMessage text={message}/>
 						}})(passwordTooShort)}
@@ -94,6 +117,7 @@ export default class Account extends React.Component {
 						{HoodieApi.instance.email}
 					</div>
 				</h1>
+				{accountInfos}
 				{changePassContent}
 			</div>
 		)

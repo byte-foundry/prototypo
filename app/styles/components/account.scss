@@ -4,6 +4,8 @@
 
 	&-block {
 
+		margin-bottom: 50px;
+
 		&-title {
 			color:$white;
 			&-email {
@@ -26,6 +28,7 @@
 						float: right;
 						line-height: 2;
 						margin-bottom: 500px;
+						color: $white;
 					}
 					&:hover {
 						width: 85px; // #TODO: should be auto, but transition will not work
@@ -43,44 +46,80 @@
 			}
 		}
 
+		&-plan {
+			background-color: lighten($green, 45%);
+			color: $dark-grey;
+			padding: 20px;
+			border-radius: 5px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			font-style: italic;
+			cursor: default;
+			font-size: 18px;
+		}
+
+		&-button {
+			display: inline-block;
+			width: auto;
+			align-self:flex-end;
+			margin-top: 20px;
+			font-size: 1.1em;
+			font-weight: 400;
+			padding: .9em;
+			color: $white !important;
+			border: 3px solid $green;
+			background-color: $green;
+			cursor: pointer;
+			transition:all .2s ease;
+			border-radius: 5px;
+
+			&:hover {
+				background-color: $white;
+				color: $green !important;
+			}
+		}
+
 		&-form {
 
 			&-label {
 				display: block;
-				color:$white;
+				color: $medium-grey;
 				font-size:1.1em;
-				padding-bottom:10px;
+				margin-bottom: .8em;
+				padding-left: 2px;
 			}
 
 			&-input {
 				display:block;
 				width: 40%;
-				border: 1px solid #6ceab4;
-				border-radius: 10px;
+				border: 3px solid $green;
+				border-radius: 5px;
 				padding: .8em;
-				background-color: #fefefe;
-				color:$dark-grey;
+				background-color: $white !important;
+				color: $dark-grey;
 				font-size: 1.1em;
-				margin-bottom: 1em;
+				&-webkit-autofill {
+					background-color:rgba(255,255,255,0) !important;
+				}
 			}
 
 			&-button {
 				display: inline-block;
 				width: auto;
 				align-self:flex-end;
-				margin-top:auto;
+				margin-top: 20px;
 				font-size: 1.1em;
 				font-weight: 400;
 				padding: .9em;
-				color: #fefefe;
-				border: 3px solid #fefefe;
-				background-color: transparent;
+				color: $white;
+				border: 3px solid $green;
+				background-color: $green;
 				cursor: pointer;
 				transition:all .2s ease;
-				border-radius:10px;
+				border-radius: 5px;
 
 				&:hover {
-					background-color: #fefefe;
+					background-color: $white;
 					color: $green;
 				}
 			}
