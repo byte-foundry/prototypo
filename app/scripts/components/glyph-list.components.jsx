@@ -1,6 +1,7 @@
 import React from 'react';
 import Glyph from './glyph.components.jsx';
-import GlyphTagList from './glyph-tag-list.components.jsx'
+import SearchGlyphList from './search-glyph-list.components.jsx';
+import GlyphTagList from './glyph-tag-list.components.jsx';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import Log from '../services/log.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -43,6 +44,7 @@ export default class GlyphList extends React.Component {
 		return (
 			<div className="glyph-list clearfix">
 				<GlyphTagList selected={this.props.selectedTag} pinned={this.props.pinned} tags={this.props.tags}/>
+				<SearchGlyphList/>
 				<ReactGeminiScrollbar>
 					<div className="glyph-list-glyphs">
 						{

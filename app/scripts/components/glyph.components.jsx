@@ -2,6 +2,7 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import ClassNames from 'classnames';
 import AlternateGlyphList from './alternate-glyph-list.components.jsx';
+import SearchGlyphList from './search-glyph-list.components.jsx';
 
 export default class Glyph extends React.Component {
 

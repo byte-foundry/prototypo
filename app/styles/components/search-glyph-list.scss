@@ -1,0 +1,43 @@
+@import "../variables";
+
+.search-glyph-list {
+
+	display: flex;
+	flex-flow: row nowrap;
+
+	&-input {
+		width: 100%;
+		background-color: lighten($light-grey, 20%);
+		border: none;
+		border-left: 3px solid transparent;
+		height: 37px;
+		padding: 10px;
+		transition: all 200ms ease;
+
+		&::placeholder {
+			font-style: italic;
+			font-size: .9em;
+			line-height: 1.4;
+		}
+
+		&:focus {
+			outline: 0;
+			border-color: $light-grey;
+		}
+	}
+	&-submit {
+		background-color: lighten($green, 15%);
+		background-image: url('./images/search.svg');
+		background-position: center;
+		background-repeat: no-repeat;
+		min-width: 37px;
+		border: none;
+		transition: all 200ms ease;
+
+		&:focus,
+		&:hover {
+			outline: 0;
+			background-color: $green;
+		}
+	}
+}
