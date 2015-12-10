@@ -44,7 +44,6 @@ export default class GlyphList extends React.Component {
 		return (
 			<div className="glyph-list clearfix">
 				<GlyphTagList selected={this.props.selectedTag} pinned={this.props.pinned} tags={this.props.tags}/>
-				<SearchGlyphList/>
 				<ReactGeminiScrollbar>
 					<div className="glyph-list-glyphs">
 						{
@@ -58,6 +57,7 @@ export default class GlyphList extends React.Component {
 						}
 					</div>
 				</ReactGeminiScrollbar>
+				<SearchGlyphList/>
 				<div title="Export and download your font" className="export-btn" onClick={() => { this.exportOTF() }}>Export OTF</div>
 			</div>
 		);

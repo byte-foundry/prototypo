@@ -7,10 +7,10 @@
 
 	&-input {
 		width: 100%;
-		background-color: lighten($light-grey, 20%);
+		background-color: lighten($dark-grey, 10%);
 		border: none;
 		border-left: 3px solid transparent;
-		height: 37px;
+		height: 47px;
 		padding: 10px;
 		transition: all 200ms ease;
 
@@ -20,9 +20,14 @@
 			line-height: 1.4;
 		}
 
+		&:hover {
+			background-color: lighten($dark-grey, 20%);
+		}
+
 		&:focus {
 			outline: 0;
 			border-color: $light-grey;
+			background-color: lighten($light-grey, 20%);
 		}
 	}
 	&-submit {
@@ -30,7 +35,7 @@
 		background-image: url('./images/search.svg');
 		background-position: center;
 		background-repeat: no-repeat;
-		min-width: 37px;
+		min-width: 51px;
 		border: none;
 		transition: all 200ms ease;
 
