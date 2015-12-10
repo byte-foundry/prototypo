@@ -168,6 +168,7 @@ export default class Topbar extends React.Component {
 						}}/>
 						{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
 					</TopBarMenuDropdown>
+					<TopBarMenuAction name="save debug" click={(e) => { this.client.dispatchAction('/save-debug-log') }} action={true}/>
 					{exporting}
 					{errorExporting}
 					<TopBarMenuAction name="Glyphs list" click={(e) => { this.toggleView('list') }} alignRight={true} action={true}>
