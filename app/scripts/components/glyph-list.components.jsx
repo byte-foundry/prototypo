@@ -37,7 +37,14 @@ export default class GlyphList extends React.Component {
 		const selectedGlyph = this.props.selected;
 		const glyphs = _.pick(this.props.glyphs, (glyph) => {
 			if (glyph[0].src) {
-				return glyph[0].src.tags.indexOf(this.props.selectedTag) !== -1;
+				return (
+					glyph[0].src.tags.indexOf(this.props.selectedTag) !== -1 &&
+					(
+						!this.props.search || 
+						glyph[0].src.glyphName ||
+						glyph[0].src.glyphName.indexOf(this.props.search) !== -1
+					)
+				)
 			}
 			else return false;
 		});

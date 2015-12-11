@@ -162,6 +162,8 @@ else if ( isSafari || isIE ) {
 		tagSelected: 'all',
 	});
 
+	const searchStore = stores['/searchStore'] = new Remutable({});
+
 	const canvasEl = window.canvasElement = document.createElement('canvas');
 	canvasEl.className = "prototypo-canvas-container-canvas";
 	canvasEl.width = 0;
@@ -1177,6 +1179,10 @@ else if ( isSafari || isIE ) {
 
 				localClient.dispatchAction('/select-indiv-group', groupName);
 				Log.ui('GroupParam.switchToEditGroupParam');
+			},
+			'/search-glyph': ({query}) => {
+				const patch = searchStore.set('glyphSearch', query).commit();
+				localServer.dispatchUpdate('/searchStore', patch);
 			},
 		}
 

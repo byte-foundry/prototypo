@@ -64,6 +64,16 @@ export default class GlyphPanel extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		this.client.getStore('/searchStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					search:head.toJS().glyphSearch,
+				})
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 	}
 
 	componentWillUnmount() {
@@ -82,7 +92,7 @@ export default class GlyphPanel extends React.Component {
 
 		return (
 			<div id="glyphpanel" className={classes}>
-				<GlyphList tags={this.state.tags.tags} pinned={this.state.tags.pinned} glyphs={this.state.glyphs.glyphs} selected={this.state.glyphs.selected} selectedTag={this.state.tags.selected}/>
+				<GlyphList tags={this.state.tags.tags} pinned={this.state.tags.pinned} glyphs={this.state.glyphs.glyphs} selected={this.state.glyphs.selected} selectedTag={this.state.tags.selected} search={this.state.search}/>
 			</div>
 		)
 	}
