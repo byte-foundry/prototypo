@@ -75,13 +75,36 @@ else if ( isSafari || isIE ) {
 } else {
 	window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
-	const stores = {};
 	const debugStore = {
 		events: [],
 	};
+
+	function saveErrorLog(error) {
+		const debugLog = {
+			events: debugStore.events,
+			message: err.message,
+			stack: error.stack,
+			date: new Date(),
+		};
+
+		const data = JSON.stringify(debugLog);
+
+		fetch('http://localhost:9002/errors/', {
+			method: 'POST',
+			body: data,
+			headers: {  
+				"Content-type": "application/json; charset=UTF-8"  
+			}, 
+		});
+	}
+
+	const stores = {};
+
 	const localServer = new LocalServer(stores).instance;
+
 	LocalClient.setup(localServer);
 	const localClient = LocalClient.instance();
+
 	const eventBackLog = stores['/eventBackLog'] = new Remutable({
 		from: 0,
 		to: undefined,
@@ -493,7 +516,12 @@ else if ( isSafari || isIE ) {
 				const typedataJSON = await Typefaces.getFont(template);
 				const typedata = JSON.parse(typedataJSON);
 
-				await fontInstance.loadFont( typedata.fontinfo.familyName, typedataJSON );
+				try {
+					await fontInstance.loadFont( typedata.fontinfo.familyName, typedataJSON );
+				}
+				catch(err) {
+					saveErrorLog(err);
+				}
 
 				localClient.dispatchAction('/create-font', fontInstance.font.ot.familyName);
 
