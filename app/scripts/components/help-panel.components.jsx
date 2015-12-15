@@ -1,24 +1,13 @@
 import React from 'react';
 import Lifespan from 'lifespan';
+import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+
+import Tutorials from './tutorials.components.jsx';
 
 export default class HelpPanel extends React.Component {
 
 	async componentWillMount() {
 		this.lifespan = new Lifespan();
-	}
-
-	componentDidMount() {
-		let script = document.createElement("script");
-		script.src = 'http://slackin.prototypo.io/slackin.js?large';
-		React.findDOMNode(this.refs.slackin).appendChild(script);
-
-		window.UserVoice.push(['addTrigger', '#contact_us', {
-			mode: 'contact', // Modes: contact (default), smartvote, satisfaction
-			trigger_position: 'top-right',
-			trigger_color: 'white',
-			trigger_background_color: '#458dd6',
-			accent_color: '#458dd6'
-		}]);
 	}
 
 	componentWillUnmount() {
@@ -29,18 +18,18 @@ export default class HelpPanel extends React.Component {
 		return (
 
 			<div className="help-panel">
-				<h1 className="help-panel-title side-tab-h1">Help</h1>
-
-				<div className="help-panel-header">
-					<p>
-						If you want to say Hi or report an issue, join the chat room on <a href="http://slackin.prototypo.io" target="_blank">Slack</a> or pick up some lines with UserVoice!
-					</p>
-					<div className="clearfix">
-						<div className="help-panel-header-slack" ref="slackin"></div>
-						<div className="help-panel-header-uservoice" id="contact_us">UserVoice</div>
+				<ReactGeminiScrollbar>
+					<h1 className="help-panel-title side-tab-h1">Help</h1>
+					<div className="help-panel-header">
+						<div className="help-panel-button" onClick={() => { window.Intercom('show');}}>
+							If you need any help or just want to say hi, come chat with us !
+						</div>
+						<div className="help-panel-button">
+							Submit an event log
+						</div>
 					</div>
-				</div>
-
+					<Tutorials />
+				</ReactGeminiScrollbar>
 			</div>
 		)
 	}

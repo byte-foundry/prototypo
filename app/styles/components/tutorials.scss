@@ -1,0 +1,35 @@
+@import '../variables';
+
+.tutorials {
+	margin: 20px;
+
+	&-list {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-between;
+	}
+}
+
+.tutorial {
+	flex: 0 0 49%;
+	background: url('/assets/images/guidesbg.png');
+	margin-bottom: 20px;
+	height: 200px;
+	border-radius: 3px;
+	background-size:cover;
+
+	&-title {
+		background-color:$green;
+		margin:0;
+		padding:15px;
+		border-top-left-radius:3px;
+		border-top-right-radius:3px;
+	}
+
+	&-description {
+		margin: 0;
+		height: 100%;
+		background-color: rgba(0,0,0,0.6);
+		padding: 20px;
+	}
+}

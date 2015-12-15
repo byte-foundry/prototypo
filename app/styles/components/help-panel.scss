@@ -8,6 +8,20 @@
 
 	height: 100%;
 
+	&-button {
+		background: $yellow;
+		color:$dark-grey;
+		padding: 15px;
+		border-radius: 3px;
+		display:inline-block;
+		margin-right:20px;
+		cursor:pointer;
+
+		&:hover {
+			background:darken($yellow, 10%);
+		}
+	}
+
 	&-header {
 		background-color: $blue;
 		color: $white;
