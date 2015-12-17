@@ -21,6 +21,7 @@ function mobileAndTabletCheck() {
 }
 
 var mobile = mobileAndTabletCheck();
+var debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net/errors/';
 
 import React from 'react';
 import Router from 'react-router';
@@ -1233,7 +1234,7 @@ else if ( isSafari || isIE ) {
 
 				const data = JSON.stringify(debugLog);
 
-				fetch('http://localhost:9002/errors/', {
+				fetch(debugServerUrl, {
 					method: 'POST',
 					body: data,
 					headers: {  
