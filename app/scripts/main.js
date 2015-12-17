@@ -21,7 +21,7 @@ function mobileAndTabletCheck() {
 }
 
 var mobile = mobileAndTabletCheck();
-var debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net/errors/';
+var debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net';
 
 import React from 'react';
 import Router from 'react-router';
@@ -1234,7 +1234,7 @@ else if ( isSafari || isIE ) {
 
 				const data = JSON.stringify(debugLog);
 
-				fetch(debugServerUrl, {
+				fetch(`${debugServerUrl}/errors/`, {
 					method: 'POST',
 					body: data,
 					headers: {  
@@ -1258,7 +1258,7 @@ else if ( isSafari || isIE ) {
 
 		if (location.hash.indexOf('#/replay') !== -1) {
 			const hash = location.hash.split('/');
-			const result = await fetch(`http://localhost:9002/events-logs/${hash[hash.length - 1]}.json`);
+			const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);
 			const eventsToPlay = await result.json();
 
 			async function execEvent(events, i, to) {

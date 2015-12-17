@@ -17,6 +17,10 @@ export default class HelpPanel extends React.Component {
 		this.lifespan.release();
 	}
 
+	saveLog() {
+		this.client.dispatchAction('/save-debug-log');
+	}
+
 	render() {
 		return (
 
