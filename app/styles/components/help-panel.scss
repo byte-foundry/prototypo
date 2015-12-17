@@ -9,8 +9,8 @@
 	height: 100%;
 
 	&-button {
-		background: $yellow;
-		color:$dark-grey;
+		background: darken($blue, 15%);
+		color:$white;
 		padding: 15px;
 		border-radius: 3px;
 		display:inline-block;
@@ -18,8 +18,18 @@
 		cursor:pointer;
 
 		&:hover {
-			background:darken($yellow, 10%);
+			background: darken($blue, 20%);
 		}
+
+		&-intercom {
+			background:$yellow;
+			color:$dark-grey;
+
+			&:hover {
+				background:darken($yellow, 15%);
+			}
+		}
+
 	}
 
 	&-header {
