@@ -36,7 +36,7 @@ export default class ForgottenPassword extends React.Component {
 		}
 		catch(err) {
 			this.setState({
-				errorReset:true,
+				errorReset: err.message,
 				loading:false,
 			});
 		}
@@ -54,7 +54,7 @@ export default class ForgottenPassword extends React.Component {
 		}
 
 		if (this.state.errorReset) {
-			warning = 'This email is not in our database';
+			warning = this.state.errorReset;
 		}
 
 		let content;

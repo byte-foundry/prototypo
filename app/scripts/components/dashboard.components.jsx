@@ -92,11 +92,11 @@ export default class Dashboard extends React.Component {
 					</OnBoardingStep>
 					<OnBoardingStep name="creatingFamily-2" type="indicator" target="font-create" width="450px">
 						<p className="onboarding-step-title">Creating a Family</p>
-						<p>Choose a font name and a template and click on create to finish the creation</p>
+						<p>Give a name to your font, select a template, and click on Create to finish the creation</p>
 					</OnBoardingStep>
 					<OnBoardingStep name="customize" type="indicator" target="font-controls">
 						<p className="onboarding-step-title">Customizing your font</p>
-						<p>Your font family is created! You can now customize your font using the parameters in the next segment...</p>
+						<p>Your font family is created! You can now customize your font using the parameters in the next segment.</p>
 					</OnBoardingStep>
 					<OnBoardingStep name="customizing" type="indicator" target="parameters" inverseArrow={true} offset={'-80px -50px'}>
 						<p className="onboarding-step-title">Customizing your font</p>
@@ -112,15 +112,15 @@ export default class Dashboard extends React.Component {
 					</OnBoardingStep>
 					<OnBoardingStep name="export-2" type="indicator" target="file-dropdown" arrowPos="top" inverseArrow={true} targetAlign="bottom left" elementAlign="top left" offset="-50px 200px" width="700px">
 						<p className="onboarding-step-title">Export your font</p>
-						<p>There are 3 options for the export:</p>
+						<p>There are 3 options for exporting your new font:</p>
 						<ul>
 							<li>
 								<h2 className="onboarding-list-title">Export to merged OTF</h2>
-								This will provide you with a completely merged font. We use fontforge to merge the different components of the glyphs to export a completely merged font.
+								This will generate a completely merged font.
 							</li>
 							<li>
 								<h2 className="onboarding-list-title">Export to OTF</h2>
-								This will provide you with a basic otf font. These exports may exhibit some visual glitch (especially in Windows).
+								This will generate a basic otf font. These exports may exhibit some visual glitch (especially in Windows).
 							</li>
 							<li>
 								<h2 className="onboarding-list-title">Export to Glyphr Studio</h2>

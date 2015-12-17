@@ -40,6 +40,10 @@ function parseJson(response) {
 	return response.json();
 }
 
+function parseText(response) {
+	return response.text();
+}
+
 function storeBearer(response) {
 	if ( response.bearerToken) {
 		localStorage.bearerToken = response.bearerToken;
@@ -185,36 +189,43 @@ export default class HoodieApi {
 	}
 
 	static askPasswordReset(username) {
-		return new Promise((resolve, reject) => {
+		return fetch(`${backUrl}/_plugins/stripe-subscriptions/_api`, {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				method: 'usernames.exist',
+				args: [ { username } ],
+			}),
+		})
+		.then(checkStatus)
+		.then(parseText)
+		.then(function( response ) {
+			if ( response !== 'true' ) {
+				throw new Error( 'No such username, cannot reset password.' );
+			}
 
 			const resetId = `${username}/${HOODIE.generateId()}`;
-
 			const key = `org.couchdb.user:$passwordReset/${resetId}`;
-			const xhr = new XMLHttpRequest();
-			const payload = {
-				_id: key,
-				name: `$passwordReset/${resetId}`,
-				type: 'user',
-				roles: [],
-				password: resetId,
-				updatedAt: new Date(),
-				createdAt: new Date(),
-			};
 
-			xhr.open('PUT', `${backUrl}/_users/${encodeURIComponent(key)}`);
-			xhr.setRequestHeader('Content-type', 'application/json');
-			xhr.withCredentials = true;
-
-			xhr.onload = (e) => {
-				resolve();
-			};
-
-			xhr.onerror = (e) => {
-				reject();
-			};
-
-			xhr.send(JSON.stringify(payload));
-
+			return fetch(`${backUrl}/_users/${encodeURIComponent(key)}`, {
+				method: 'put',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				credentials: 'include',
+				body: JSON.stringify({
+					_id: key,
+					name: `$passwordReset/${resetId}`,
+					type: 'user',
+					roles: [],
+					password: resetId,
+					updatedAt: new Date(),
+					createdAt: new Date(),
+				})
+			});
 		});
 		//TODO(franz): Thou shall code the checkPasswordReset at a later point in time
 	}

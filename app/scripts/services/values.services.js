@@ -8,9 +8,12 @@ function values(prefix) {
 			return HoodieApi.instance.find(`${prefix}values/${params.typeface}`);
 		},
 		save(params) {
-			return HoodieApi.instance.updateOrAdd(`${prefix}values/${params.typeface}`,{
-					values: params.values
+			if (location.href !== '#/replay') {
+				return HoodieApi.instance.updateOrAdd(`${prefix}values/${params.typeface}`,{
+						values: params.values
 				});
+			}
+			return true;
 		},
 		clear() {
 			return HoodieApi.instance.removeAll(`${prefix}values`);

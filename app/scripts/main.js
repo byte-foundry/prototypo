@@ -21,6 +21,7 @@ function mobileAndTabletCheck() {
 }
 
 var mobile = mobileAndTabletCheck();
+var debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net';
 
 import React from 'react';
 import Router from 'react-router';
@@ -75,10 +76,36 @@ else if ( isSafari || isIE ) {
 } else {
 	window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
+	const debugStore = {
+		events: [],
+	};
+
+	function saveErrorLog(error) {
+		const debugLog = {
+			events: debugStore.events,
+			message: err.message,
+			stack: error.stack,
+			date: new Date(),
+		};
+
+		const data = JSON.stringify(debugLog);
+
+		fetch('http://localhost:9002/errors/', {
+			method: 'POST',
+			body: data,
+			headers: {  
+				"Content-type": "application/json; charset=UTF-8"  
+			}, 
+		});
+	}
+
 	const stores = {};
+
 	const localServer = new LocalServer(stores).instance;
+
 	LocalClient.setup(localServer);
 	const localClient = LocalClient.instance();
+
 	const eventBackLog = stores['/eventBackLog'] = new Remutable({
 		from: 0,
 		to: undefined,
@@ -309,9 +336,9 @@ else if ( isSafari || isIE ) {
 				localServer.dispatchUpdate('/tagStore',patch);
 				saveAppValues();
 			},
-			'/create-font': (params) => {
+			'/create-font': (familyName) => {
 				const patch = fontStore
-					.set('fontName', params.font.ot.familyName)
+					.set('fontName', familyName)
 					.commit();
 				localServer.dispatchUpdate('/fontStore',patch);
 			},
@@ -373,7 +400,7 @@ else if ( isSafari || isIE ) {
 
 				newEventList.push(
 					{
-						patch:patch.toJSON(),
+						patch:patch.toJSON && patch.toJSON() || patch ,
 						store:store,
 						label:label,
 					});
@@ -460,7 +487,7 @@ else if ( isSafari || isIE ) {
 				localServer.dispatchUpdate('/commits',patchCommit);
 
 				const patchFonts = fontLibrary.set('fonts', values.library || []).commit();
-				localServer.dispatchUpdate('/fontLibrary',patchCommit);
+				localServer.dispatchUpdate('/fontLibrary',patchFonts);
 
 				const patchVariant = fontVariant
 					.set('variant', values.variantSelected)
@@ -490,12 +517,31 @@ else if ( isSafari || isIE ) {
 				const typedataJSON = await Typefaces.getFont(template);
 				const typedata = JSON.parse(typedataJSON);
 
-				await fontInstance.loadFont( typedata.fontinfo.familyName, typedataJSON );
+				try {
+					await fontInstance.loadFont( typedata.fontinfo.familyName, typedataJSON );
+				}
+				catch(err) {
+					saveErrorLog(err);
+				}
 
-				localClient.dispatchAction('/create-font', fontInstance);
+				localClient.dispatchAction('/create-font', fontInstance.font.ot.familyName);
 
-				localClient.dispatchAction('/load-params', typedata);
-				localClient.dispatchAction('/load-glyphs', fontInstance.font.altMap);
+				localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
+				localClient.dispatchAction('/load-glyphs', _.mapValues(
+					fontInstance.font.altMap,
+					(glyph) => { return _.map(
+						glyph,
+						(alt) => {
+							return {
+								src: {
+									tags: alt.src && alt.src.tags || [],
+								},
+								name: alt.name,
+								altImg: alt.altImg,
+							};
+						}
+					)}
+				));
 				localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 
 				loadFontValues(typedata, db);
@@ -1178,9 +1224,31 @@ else if ( isSafari || isIE ) {
 				localClient.dispatchAction('/select-indiv-group', groupName);
 				Log.ui('GroupParam.switchToEditGroupParam');
 			},
+			'/save-debug-log': () => {
+				const debugLog = {
+					events: debugStore.events,
+					message: 'yoyoyo',
+					stack: (new Error()).stack,
+					date: new Date(),
+				};
+
+				const data = JSON.stringify(debugLog);
+
+				fetch(`${debugServerUrl}/errors/`, {
+					method: 'POST',
+					body: data,
+					headers: {  
+						"Content-type": "application/json; charset=UTF-8"  
+					}, 
+				});
+			}
 		}
 
 		localServer.on('action',({path, params}) => {
+			
+			if (path.indexOf('debug') === -1) {
+				debugStore.events.push({path, params});
+			}
 
 			if ( actions[path] !== void 0 ) {
 				actions[path](params);
@@ -1188,8 +1256,87 @@ else if ( isSafari || isIE ) {
 
 		}, localServer.lifespan);
 
+		if (location.hash.indexOf('#/replay') !== -1) {
+			const hash = location.hash.split('/');
+			const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);
+			const eventsToPlay = await result.json();
 
-		await loadStuff();
+			async function execEvent(events, i, to) {
+				if (i < events.length) {
+					if (i === 1) {
+						const familySelected = fontVariant.get('family');
+						const text = panel.get('text');
+						const word = panel.get('word');
+						const selected = glyphs.get('selected');
+						await setupFontInstance({
+							values: {
+								familySelected,
+								text,
+								word,
+								selected,
+							}
+						});
+					}
+
+					if (to && (i === to)) {
+						console.log('WAITING FOR RENDER PLZ!!');
+						pleaseWait.instance.finish();
+						return;
+					}
+
+					console.log(`replaying event at path ${events[i].path}`);
+					console.log(events[i].params);
+
+					localClient.dispatchAction(events[i].path, events[i].params);
+
+					return await new Promise((resolve, reject) => {
+						setTimeout(() => {
+							resolve(execEvent(events, i + 1, to));
+						}, 100);
+					});
+				}
+				else {
+					return;
+				}
+			}
+
+			await execEvent(eventsToPlay, 0, 6);
+			setTimeout(() => {
+				execEvent(eventsToPlay, 6);
+			}, 1500);
+		}
+		else {
+			await loadStuff();
+		}
+	}
+
+	async function setupFontInstance(appValues) {
+			const template = appValues.values.familySelected ? appValues.values.familySelected.template : undefined;
+			const typedataJSON = await Typefaces.getFont( template || 'venus.ptf');
+			const typedata = JSON.parse(typedataJSON);
+
+			// const prototypoSource = await Typefaces.getPrototypo();
+			let workerDeps = document.querySelector('script[src*=prototypo\\.]').src;
+			let workerUrl;
+
+			// The worker will be built from URL during development, and from
+			// source in production.
+			if ( process.env.NODE_ENV !== 'production' ) {
+				workerUrl = '/prototypo-canvas/src/worker.js';
+			}
+
+			const fontPromise = PrototypoCanvas.init({
+				canvas: canvasEl,
+				workerUrl,
+				workerDeps,
+			});
+
+			const font = window.fontInstance = await fontPromise;
+			const subset = appValues.values.text + appValues.values.word;
+			await font.loadFont( typedata.fontinfo.familyName, typedataJSON );
+			font.subset = typeof subset === 'string' ? subset : '';
+			font.displayChar( appValues.values.selected );
+			return {font, subset, typedata};
 	}
 
 	async function loadStuff() {
@@ -1224,35 +1371,26 @@ else if ( isSafari || isIE ) {
 
 			localClient.dispatchAction('/load-app-values', appValues);
 
-			const template = appValues.values.familySelected ? appValues.values.familySelected.template : undefined;
-			const typedataJSON = await Typefaces.getFont( template || 'venus.ptf');
-			const typedata = JSON.parse(typedataJSON);
+			const {typedata, font, subset} = await setupFontInstance(appValues);
 
-			// const prototypoSource = await Typefaces.getPrototypo();
-			let workerDeps = document.querySelector('script[src*=prototypo\\.]').src;
-			let workerUrl;
+			localClient.dispatchAction('/create-font', fontInstance.font.ot.familyName);
 
-			// The worker will be built from URL during development, and from
-			// source in production.
-			if ( process.env.NODE_ENV !== 'production' ) {
-				workerUrl = '/prototypo-canvas/src/worker.js';
-			}
-
-			const fontPromise = PrototypoCanvas.init({
-				canvas: canvasEl,
-				workerUrl,
-				workerDeps,
-			});
-
-			const font = window.fontInstance = await fontPromise;
-			const subset = appValues.values.text + appValues.values.word;
-			await font.loadFont( typedata.fontinfo.familyName, typedataJSON );
-			font.subset = typeof subset === 'string' ? subset : '';
-			font.displayChar( appValues.values.selected );
-			localClient.dispatchAction('/create-font', font);
-
-			localClient.dispatchAction('/load-params', typedata);
-			localClient.dispatchAction('/load-glyphs', font.font.altMap);
+			localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
+			localClient.dispatchAction('/load-glyphs', _.mapValues(
+				fontInstance.font.altMap,
+				(glyph) => { return _.map(
+					glyph,
+					(alt) => {
+						return {
+							src: {
+								tags: alt.src && alt.src.tags || [],
+							},
+							name: alt.name,
+							altImg: alt.altImg,
+						};
+					}
+				)}
+			));
 			localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 
 			localClient.dispatchAction('/load-commits');
@@ -1285,6 +1423,7 @@ else if ( isSafari || isIE ) {
 				<Route handler={App} name="app" path="/">
 					<DefaultRoute handler={SitePortal}/>
 					<Route name="dashboard" handler={Dashboard}/>
+					<Route name="replay" path="replay/:replayId" handler={Dashboard}/>
 					<Route name="signin" handler={NotLoggedIn}>
 						<Route name="forgotten" handler={ForgottenPassword}/>
 						<DefaultRoute handler={Signin}/>
@@ -1293,7 +1432,8 @@ else if ( isSafari || isIE ) {
 				</Route>
 			);
 
-			Router.run(Routes, function (Handler) {
+			Router.run(Routes, function (Handler, state) {
+
 				React.render(<Handler />, content);
 			});
 		});
