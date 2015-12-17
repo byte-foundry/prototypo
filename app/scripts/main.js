@@ -162,7 +162,9 @@ else if ( isSafari || isIE ) {
 		tagSelected: 'all',
 	});
 
-	const searchStore = stores['/searchStore'] = new Remutable({});
+	const searchStore = stores['/searchStore'] = new Remutable({
+		savedSearch: [],
+	});
 
 	const canvasEl = window.canvasElement = document.createElement('canvas');
 	canvasEl.className = "prototypo-canvas-container-canvas";
@@ -253,6 +255,8 @@ else if ( isSafari || isIE ) {
 			appValues.variantSelected = fontVariant.get('variant');
 			appValues.familySelected = fontVariant.get('family');
 			appValues.tagSelected = tagStore.get('selected');
+			appValues.savedSearch = searchStore.get('savedSearch');
+			appValues.pinnedSearch = searchStore.get('pinned');
 
 			AppValues.save({typeface:'default', values:appValues});
 		}, 300);
@@ -300,6 +304,8 @@ else if ( isSafari || isIE ) {
 					.commit();
 
 				localServer.dispatchUpdate('/tagStore',patch);
+				const patchSearch = searchStore.set('glyphSearch', undefined).commit();
+				localServer.dispatchUpdate('/searchStore', patchSearch);
 				saveAppValues();
 			},
 			'/toggle-pinned': (params) => {
@@ -468,6 +474,12 @@ else if ( isSafari || isIE ) {
 					.set('variant', values.variantSelected)
 					.set('family', values.familySelected).commit();
 				localServer.dispatchUpdate('/fontVariant',patchVariant);
+
+				const patchSearch = searchStore
+					.set('savedSearch', values.savedSearch)
+					.set('pinned', values.pinnedSearch)
+					.commit();
+				localServer.dispatchUpdate('/searchStore', patchSearch);
 
 				values.mode = values.mode || ['glyph'];
 
@@ -1183,6 +1195,44 @@ else if ( isSafari || isIE ) {
 			'/search-glyph': ({query}) => {
 				const patch = searchStore.set('glyphSearch', query).commit();
 				localServer.dispatchUpdate('/searchStore', patch);
+				const patchTag = tagStore.set('selected', 'all').commit();
+				localServer.dispatchUpdate('/tagStore', patchTag);
+			},
+			'/save-search-glyph': ({query}) => {
+				const searchs = _.cloneDeep(searchStore.get('savedSearch'));
+				if (searchs.indexOf(query) === -1) {
+					searchs.push(query);
+					const patch = searchStore
+						.set('savedSearch', searchs)
+						.set('savedSearchError', undefined)
+						.commit();
+					localServer.dispatchUpdate('/searchStore', patch);
+				}
+				else {
+					const patch = searchStore.set('savedSearchError', 'This search already exists');
+					localServer.dispatchUpdate('/searchStore', patch);
+				}
+				saveAppValues();
+			},
+			'/toggle-pinned-search': ({query}) => {
+				const pinned = _.xor(searchStore.get('pinned'),[query]);
+				const patch = searchStore
+					.set('pinned',pinned)
+					.commit();
+
+				localServer.dispatchUpdate('/searchStore',patch);
+				saveAppValues();
+			},
+			'/delete-search-glyph': ({query}) => {
+				const searchs = _.xor(searchStore.get('savedSearch'), [query]);
+				const pinned = _.xor(searchStore.get('pinned'), [query]);
+				const patch = searchStore
+					.set('savedSearch', searchs)
+					.set('pinned', pinned)
+					.commit();
+
+				localServer.dispatchUpdate('/searchStore',patch);
+				saveAppValues();
 			},
 		}
 
@@ -1215,7 +1265,8 @@ else if ( isSafari || isIE ) {
 						},
 						variantSelected: {
 							db:'venus.ptf'
-						}
+						},
+						savedSearch: [],
 					}
 				};
 			let appValues;

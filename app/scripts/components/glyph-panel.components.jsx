@@ -69,6 +69,8 @@ export default class GlyphPanel extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					search:head.toJS().glyphSearch,
+					savedSearch:head.toJS().savedSearch,
+					pinnedSearch:head.toJS().pinned,
 				})
 			})
 			.onDelete(() => {
@@ -92,7 +94,15 @@ export default class GlyphPanel extends React.Component {
 
 		return (
 			<div id="glyphpanel" className={classes}>
-				<GlyphList tags={this.state.tags.tags} pinned={this.state.tags.pinned} glyphs={this.state.glyphs.glyphs} selected={this.state.glyphs.selected} selectedTag={this.state.tags.selected} search={this.state.search}/>
+				<GlyphList
+					tags={this.state.tags.tags}
+					pinned={this.state.tags.pinned}
+					glyphs={this.state.glyphs.glyphs}
+					selected={this.state.glyphs.selected}
+					selectedTag={this.state.tags.selected}
+					search={this.state.search}
+					savedSearch={this.state.savedSearch}
+					pinnedSearch={this.state.pinnedSearch}/>
 			</div>
 		)
 	}

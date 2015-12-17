@@ -30,6 +30,52 @@ export default class GlyphList extends React.Component {
 		Log.ui('GlyphList.exportOTF');
 	}
 
+	isGlyphInSearch(glyph, search) {
+		const tokens = search.split(' ');
+		const fields = [
+			{
+				name:'glyphName',
+				comp: (field,srch) => {
+					return field.indexOf(srch) !== -1;
+				}
+			},
+			{
+				name:'unicode',
+				comp: (field,srch) => {
+					return field.indexOf(srch) !== -1;
+				}
+			},
+			{
+				name:'characterName',
+				comp: (field,srch) => {
+					let result = false;
+					field.split(' ').forEach((fieldToken) => {
+						result = result || fieldToken.startsWith(srch);
+					});
+					return result;
+				}
+			},
+		];
+		let isOk = true;
+		
+		tokens.forEach((token) => {
+			let tokenOk = false;
+			fields.forEach((field) => {
+				tokenOk = tokenOk ||
+				(
+					glyph[0].src[field.name] && 
+						field.comp(
+							glyph[0].src[field.name].toString().toLowerCase(),
+							token.toLowerCase()
+						)
+				)
+			});
+			isOk = isOk && tokenOk
+		});
+
+		return isOk;
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] GlyphList');
@@ -40,9 +86,7 @@ export default class GlyphList extends React.Component {
 				return (
 					glyph[0].src.tags.indexOf(this.props.selectedTag) !== -1 &&
 					(
-						!this.props.search || 
-						glyph[0].src.glyphName ||
-						glyph[0].src.glyphName.indexOf(this.props.search) !== -1
+						!this.props.search || this.isGlyphInSearch(glyph, this.props.search)
 					)
 				)
 			}
@@ -50,7 +94,13 @@ export default class GlyphList extends React.Component {
 		});
 		return (
 			<div className="glyph-list clearfix">
-				<GlyphTagList selected={this.props.selectedTag} pinned={this.props.pinned} tags={this.props.tags}/>
+				<GlyphTagList
+					selected={this.props.selectedTag}
+					pinned={this.props.pinned}
+					tags={this.props.tags}
+					savedSearch={this.props.savedSearch}
+					selectedSearch={this.props.search}
+					pinnedSearch={this.props.pinnedSearch}/>
 				<ReactGeminiScrollbar>
 					<div className="glyph-list-glyphs">
 						{

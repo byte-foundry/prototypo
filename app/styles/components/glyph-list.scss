@@ -55,9 +55,14 @@
 	}
 }
 
+.glyph-search-name {
+	&:before {
+		content: "?" !important;
+	}
+}
+
 .glyph-tag {
 	display:flex;
-	justify-content:space-between;
 	border-top:solid 1px lighten($dark-grey, 4%);
 	line-height:12px;
 	cursor:pointer;
@@ -81,6 +86,7 @@
 	&-name {
 		padding:10px;
 		text-transform: capitalize;
+		flex:1;
 		&:before {
 			font-family: sans-serif;
 			content: "⇢";
@@ -91,7 +97,7 @@
 
 	&-button {
 		align-self:stretch;
-		width:30px;
+		flex:0 0 30px;
 		background-color: darken($dark-grey, 2%);
 
 		&-icon {
@@ -102,11 +108,19 @@
 			background-image: url('./images/pin-off.svg');
 			background-position: center;
 			background-repeat: no-repeat;
+
+			&-delete {
+				background-image: url('./images/close-icon-red.svg') !important;
+			}
 		}
 
 		&:hover &-icon {
 			background-color: $black;
 			background-image: url('./images/pin-on.svg');
+		}
+
+		&:hover &-icon-delete {
+			background-image: url('./images/close-icon.svg') !important;
 		}
 
 		&.is-pinned &-icon {
