@@ -32,8 +32,9 @@
 	}
 	&-submit {
 		background-color: lighten($green, 15%);
-		background-image: url('./images/search.svg');
+		background-image: url('./images/pin-on.svg');
 		background-position: center;
+		background-size: 50%;
 		background-repeat: no-repeat;
 		min-width: 51px;
 		border: none;
@@ -43,6 +44,7 @@
 		&:hover {
 			outline: 0;
 			background-color: $green;
+			background-size: 70%;
 		}
 	}
 }

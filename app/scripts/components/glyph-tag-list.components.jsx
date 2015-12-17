@@ -246,13 +246,13 @@ class GlyphSearch extends React.Component {
 				<div className="glyph-tag-name glyph-search-name">
 					{this.props.search}
 				</div>
-				<div className={iconClasses} onClick={(e) => { this.addToPinned(this.props.search,e) }}>
-					<div className="glyph-tag-button-icon">
+				<div className={iconClasses} onClick={(e) => { this.deleteSearch(this.props.search,e) }}>
+					<div className="glyph-tag-button-icon glyph-tag-button-icon-delete">
 						&nbsp;
 					</div>
 				</div>
-				<div className={iconClasses} onClick={(e) => { this.deleteSearch(this.props.search,e) }}>
-					<div className="glyph-tag-button-icon glyph-tag-button-icon-delete">
+				<div className={iconClasses} onClick={(e) => { this.addToPinned(this.props.search,e) }}>
+					<div className="glyph-tag-button-icon">
 						&nbsp;
 					</div>
 				</div>

@@ -24,6 +24,7 @@ export default class SearchGlyphList extends React.Component {
 		this.client.dispatchAction('/save-search-glyph', {
 			query: React.findDOMNode(this.refs.search).value
 		});
+		React.findDOMNode(this.refs.search).value = '';
 	}
 
 	render() {
@@ -38,7 +39,7 @@ export default class SearchGlyphList extends React.Component {
 		return (
 			<form className={classes}>
 				<input className="search-glyph-list-input" ref="search" placeholder="Search glyph…" type="text" onChange={() => { this.changeSearch() }}/>
-				<input className="search-glyph-list-submit"type="button" onClick={() => { this.saveSearch()}}/>
+				<input className="search-glyph-list-submit" type="button" onClick={() => { this.saveSearch()}}/>
 			</form>
 		)
 	}

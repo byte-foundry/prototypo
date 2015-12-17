@@ -57,7 +57,12 @@
 
 .glyph-search-name {
 	&:before {
-		content: "?" !important;
+		content: "" !important;
+		background-image: url('./images/search.svg');
+		width: 14px;
+		height: 11px;
+		background-size: cover;
+		opacity: .4;
 	}
 }
 
@@ -79,6 +84,12 @@
 			&:before {
 				font-family: sans-serif;
 				content: "→";
+			}
+		}
+		.glyph-search-name {
+			&:before {
+				opacity: 1;
+				filter: invert(100%);
 			}
 		}
 	}
@@ -110,7 +121,10 @@
 			background-repeat: no-repeat;
 
 			&-delete {
-				background-image: url('./images/close-icon-red.svg') !important;
+				background-image: url('./images/delete.svg') !important;
+				opacity: .4;
+				background-size: 18px;
+				border-right: 1px solid darken($dark-grey, 7%);
 			}
 		}
 
@@ -120,7 +134,9 @@
 		}
 
 		&:hover &-icon-delete {
-			background-image: url('./images/close-icon.svg') !important;
+			opacity: 1;
+			background-color: $black;
+			border: none;
 		}
 
 		&.is-pinned &-icon {
