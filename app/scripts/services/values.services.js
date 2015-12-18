@@ -20,8 +20,10 @@ function values(prefix) {
 					const client = LocalClient.instance();
 					const values = await client.fetch('/debugStore');
 					
-					if (values.values[prefix][typeface]) {
-						resolve(values.values[prefix][typeface]);
+					if (values.get('values')[prefix][params.typeface]) {
+						setTimeout(() => {
+							resolve(values.get('values')[prefix][params.typeface]);
+						}, 500);
 					}
 					else {
 						reject();

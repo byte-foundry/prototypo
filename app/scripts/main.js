@@ -21,8 +21,7 @@ function mobileAndTabletCheck() {
 }
 
 var mobile = mobileAndTabletCheck();
-//var debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net';
-var debugServerUrl = 'http://localhost';
+var debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net';
 
 import React from 'react';
 import Router from 'react-router';
@@ -77,11 +76,6 @@ else if ( isSafari || isIE ) {
 } else {
 	window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
-	const debugStore = stores['/debugStore'] = new Remutable({
-		events: [],
-		values: [],
-	});
-
 	function saveErrorLog(error) {
 		const debugLog = {
 			events: debugStore.events,
@@ -102,6 +96,10 @@ else if ( isSafari || isIE ) {
 	}
 
 	const stores = {};
+	const debugStore = stores['/debugStore'] = new Remutable({
+		events: [],
+		values: {},
+	});
 
 	const localServer = new LocalServer(stores).instance;
 
@@ -233,6 +231,11 @@ else if ( isSafari || isIE ) {
 			const values = {
 				altList: typedata.fontinfo.defaultAlts,
 			};
+
+			await FontInfoValues.save({
+				typeface,
+				values,
+			});
 
 			localClient.dispatchAction('/load-font-infos', values);
 		}
@@ -744,7 +747,6 @@ else if ( isSafari || isIE ) {
 				}, 200);
 
 			},
-			'/variant-from-ref': (
 			'/edit-variant': ({variant, family, newName}) => {
 				const found = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
 					return item.name = family.name;
@@ -774,7 +776,9 @@ else if ( isSafari || isIE ) {
 			},
 			'/delete-family': ({family}) => {
 				const families = Array.from(fontLibrary.get('fonts'));
-				_.pull(families, family);
+				_.remove(families, (checkee) => {
+					return checkee.name === family.name && checkee.template === family.template
+				});
 				const patch = fontLibrary.set('fonts', families).commit();
 				localServer.dispatchUpdate('/fontLibrary',patch);
 
@@ -1230,7 +1234,7 @@ else if ( isSafari || isIE ) {
 			'/save-debug-log': () => {
 				const debugLog = {
 					events: debugStore.get('events'),
-					message: 'yoyoyo',
+					message: `voluntarily submitted by ${HoodieApi.instance.email}`,
 					stack: (new Error()).stack,
 					date: new Date(),
 					values: debugStore.get('values'),
@@ -1246,7 +1250,7 @@ else if ( isSafari || isIE ) {
 					}, 
 				});
 			},
-			'/store-in-debug-font'({prefix, typeface, data}) => {
+			'/store-in-debug-font': ({prefix, typeface, data}) => {
 				const values = debugStore.get('values');
 				if (!values[prefix]) {
 					values[prefix] = {};
