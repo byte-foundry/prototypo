@@ -21,7 +21,8 @@ function mobileAndTabletCheck() {
 }
 
 var mobile = mobileAndTabletCheck();
-var debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net';
+//var debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net';
+var debugServerUrl = 'http://localhost';
 
 import React from 'react';
 import Router from 'react-router';
@@ -76,9 +77,10 @@ else if ( isSafari || isIE ) {
 } else {
 	window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
-	const debugStore = {
+	const debugStore = stores['/debugStore'] = new Remutable({
 		events: [],
-	};
+		values: [],
+	});
 
 	function saveErrorLog(error) {
 		const debugLog = {
@@ -742,6 +744,7 @@ else if ( isSafari || isIE ) {
 				}, 200);
 
 			},
+			'/variant-from-ref': (
 			'/edit-variant': ({variant, family, newName}) => {
 				const found = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
 					return item.name = family.name;
@@ -1226,10 +1229,11 @@ else if ( isSafari || isIE ) {
 			},
 			'/save-debug-log': () => {
 				const debugLog = {
-					events: debugStore.events,
+					events: debugStore.get('events'),
 					message: 'yoyoyo',
 					stack: (new Error()).stack,
 					date: new Date(),
+					values: debugStore.get('values'),
 				};
 
 				const data = JSON.stringify(debugLog);
@@ -1241,13 +1245,24 @@ else if ( isSafari || isIE ) {
 						"Content-type": "application/json; charset=UTF-8"  
 					}, 
 				});
-			}
+			},
+			'/store-in-debug-font'({prefix, typeface, data}) => {
+				const values = debugStore.get('values');
+				if (!values[prefix]) {
+					values[prefix] = {};
+				}
+				values[prefix][typeface] = data;
+				debugStore.set('values', values).commit();;
+			},
 		}
 
 		localServer.on('action',({path, params}) => {
 			
-			if (path.indexOf('debug') === -1) {
-				debugStore.events.push({path, params});
+			if (path.indexOf('debug') === -1 &&
+				location.hash.indexOf('#/replay') === -1) {
+				const events = debugStore.get('events')
+				events.push({path, params});
+				debugStore.set('events', events).commit();
 			}
 
 			if ( actions[path] !== void 0 ) {
@@ -1259,7 +1274,11 @@ else if ( isSafari || isIE ) {
 		if (location.hash.indexOf('#/replay') !== -1) {
 			const hash = location.hash.split('/');
 			const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);
-			const eventsToPlay = await result.json();
+			const data = await result.json();
+			const eventsToPlay = data.events;
+			const values = data.values;
+
+			debugStore.set('values', values).commit();
 
 			async function execEvent(events, i, to) {
 				if (i < events.length) {
@@ -1287,7 +1306,9 @@ else if ( isSafari || isIE ) {
 					console.log(`replaying event at path ${events[i].path}`);
 					console.log(events[i].params);
 
-					localClient.dispatchAction(events[i].path, events[i].params);
+					if (events[i].path !== '/login') {
+						localClient.dispatchAction(events[i].path, events[i].params);
+					}
 
 					return await new Promise((resolve, reject) => {
 						setTimeout(() => {
