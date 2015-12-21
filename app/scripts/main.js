@@ -29,6 +29,7 @@ import Remutable from 'remutable';
 import uuid from 'node-uuid';
 import XXHash from 'xxhashjs';
 import JSZip from 'jszip';
+import PrototypoCanvas from 'prototypo-canvas';
 
 import Dashboard from './components/dashboard.components.jsx';
 import SitePortal from './components/site-portal.components.jsx';
@@ -49,8 +50,6 @@ import LocalServer from './stores/local-server.stores.jsx';
 import RemoteClient from './stores/remote-client.stores.jsx';
 import {BatchUpdate} from './helpers/undo-stack.helpers.js';
 const { Patch } = Remutable;
-
-import PrototypoCanvas from '../../node_modules/prototypo-canvas/dist/prototypo-canvas.js';
 
 const hasher = XXHash(0xDEADBEEF);
 
@@ -89,9 +88,9 @@ else if ( isSafari || isIE ) {
 		fetch('http://localhost:9002/errors/', {
 			method: 'POST',
 			body: data,
-			headers: {  
-				"Content-type": "application/json; charset=UTF-8"  
-			}, 
+			headers: {
+				"Content-type": "application/json; charset=UTF-8"
+			},
 		});
 	}
 
@@ -198,7 +197,7 @@ else if ( isSafari || isIE ) {
 	//HoodieApi.on('connected',() => {
 	//	RemoteClient.initRemoteStore('stripe', `/stripe${uuid.v4()}$$${HoodieApi.instance.hoodieId}`,'subscription');
 	//});
-	
+
 	async function loadFontValues(typedata, typeface) {
 
 		const initValues = {};
@@ -262,6 +261,7 @@ else if ( isSafari || isIE ) {
 			await HoodieApi.setup();
 		}
 		catch(err) {
+			console.error(err);
 			location.href = '#/signin';
 		}
 
@@ -343,7 +343,7 @@ else if ( isSafari || isIE ) {
 			},
 			'/create-font': (familyName) => {
 				const patch = fontStore
-					.set('fontName', familyName)
+					.set('fontName', params.font.ot.getEnglishName('fontFamily'))
 					.commit();
 				localServer.dispatchUpdate('/fontStore',patch);
 			},
@@ -561,7 +561,8 @@ else if ( isSafari || isIE ) {
 					location.href = '#/signin';
 				}
 				catch (error) {
-					console.log(`you probably don't have internet`);
+					console.warn(`You probably don't have internet`);
+					console.log(error);
 					location.href = '#/signin';
 				}
 			},
@@ -663,7 +664,7 @@ else if ( isSafari || isIE ) {
 				}, 200);
 
 				if (loadCurrent) {
-					await copyFontValues(newFont.variants[0].db);	
+					await copyFontValues(newFont.variants[0].db);
 				}
 
 				localClient.dispatchAction('/change-font', {
@@ -860,7 +861,7 @@ else if ( isSafari || isIE ) {
 					const blob = await fontInstance.getBlob(null , {
 						family: familyToExport.name,
 						style: currVariant.name
-				   	}, false, values.values);
+					}, false, values.values);
 					blobs.push(blob);
 					const variantPatch = exportStore.set('exportedVariant',
 						exportStore.get('exportedVariant') + 1).commit();
@@ -1195,7 +1196,7 @@ else if ( isSafari || isIE ) {
 			},
 			'/create-mode-param-group': () => {
 				const values = _.cloneDeep(fontControls.get('values'));
-				
+
 				const indivPatch = individualizeStore
 					.set('indivMode', true)
 					.set('indivCreate', true)
@@ -1245,9 +1246,9 @@ else if ( isSafari || isIE ) {
 				fetch(`${debugServerUrl}/errors/`, {
 					method: 'POST',
 					body: data,
-					headers: {  
-						"Content-type": "application/json; charset=UTF-8"  
-					}, 
+					headers: {
+						"Content-type": "application/json; charset=UTF-8"
+					},
 				});
 			},
 			'/store-in-debug-font': ({prefix, typeface, data}) => {
@@ -1261,7 +1262,7 @@ else if ( isSafari || isIE ) {
 		}
 
 		localServer.on('action',({path, params}) => {
-			
+
 			if (path.indexOf('debug') === -1 &&
 				location.hash.indexOf('#/replay') === -1) {
 				const events = debugStore.get('events')
@@ -1424,6 +1425,7 @@ else if ( isSafari || isIE ) {
 			loadFontValues(typedata, appValues.values.variantSelected.db);
 		}
 		catch (err) {
+			console.error(err);
 			location.href = '#/signin';
 		}
 	}

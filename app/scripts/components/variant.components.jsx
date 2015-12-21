@@ -62,7 +62,7 @@ export class Variant extends React.Component {
 	}
 
 	editVariant(name) {
-		this.client.dispatchAction('/edit-variant', {variant: this.props.data, family: this.props.family, newName: name}); 
+		this.client.dispatchAction('/edit-variant', {variant: this.props.data, family: this.props.family, newName: name});
 		Log.ui('Collection.editVariant');
 	}
 
@@ -134,7 +134,7 @@ export class AddVariant extends React.Component {
 				if (head.toJS().errorAddVariant != this.state.error) {
 					this.setState({
 						error:head.toJS().errorAddVariant,
-					});	
+					});
 				}
 				if (head.toJS().errorAddVariant === undefined) {
 					this.setState({
