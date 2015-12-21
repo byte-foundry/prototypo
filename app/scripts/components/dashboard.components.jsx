@@ -1,10 +1,13 @@
 import React from 'react';
+import pleaseWait from 'please-wait';
+import Lifespan from 'lifespan';
+
+import LocalClient from '../stores/local-client.stores.jsx';
+
 import Sidebar from './sidebar.components.jsx';
 import Workboard from './workboard.components.jsx';
-import pleaseWait from 'please-wait';
 import {OnBoarding, OnBoardingStep} from './onboarding.components.jsx';
-import LocalClient from '../stores/local-client.stores.jsx';
-import Lifespan from 'lifespan';
+import NpsMessage from './nps-message.components.jsx';
 
 export default class Dashboard extends React.Component {
 
@@ -150,6 +153,7 @@ export default class Dashboard extends React.Component {
 			<div id="dashboard">
 				<Sidebar />
 				<Workboard />
+				<NpsMessage />
 				{onboarding}
 			</div>
 		)
