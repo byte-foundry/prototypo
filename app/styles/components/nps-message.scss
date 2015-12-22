@@ -1,0 +1,77 @@
+@import "../variables";
+
+.nps-message {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 10;
+
+	&-content {
+		background: $white;
+		border-radius: 3px;
+		padding: 30px;
+		width: 700px;
+
+		&-title {
+			background: $green;
+			padding: 20px;
+			color:$white;
+			border-radius: 3px;
+		}
+
+		&-question {
+		}
+
+		&-list {
+			list-style-type: none;
+			padding: 0;
+			display: flex;
+			justify-content: space-between;
+
+			&-item {
+				border: solid 1px $green;
+				width: 40px;
+				height: 40px;
+				text-align: center;
+				line-height: 39px;
+				border-radius: 3px;
+				cursor:pointer;
+
+				&:hover {
+					background: $green;
+					color:$white;
+				}
+			}
+		}
+
+		&-text {
+			width:100%;
+		}
+
+		&-btns {
+			display:flex;
+			justify-content: space-between;
+			margin:10px 0;
+			
+			&-btn {
+				background: $green;
+				color:$white;
+				border: none;
+				outline:none;
+				border-radius: 3px;
+				padding:15px;
+			}
+
+			&-cancel {
+				background: $yellow;
+				color:$dark-grey;
+			}
+		}
+	}
+}

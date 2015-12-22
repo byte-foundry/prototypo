@@ -188,6 +188,10 @@ else if ( isSafari || isIE ) {
 		tagSelected: 'all',
 	});
 
+	const intercomStore = stores['/intercomStore'] = new Remutable({
+		tags: [],
+	});
+
 	const canvasEl = window.canvasElement = document.createElement('canvas');
 	canvasEl.className = "prototypo-canvas-container-canvas";
 	canvasEl.width = 0;
@@ -831,6 +835,7 @@ else if ( isSafari || isIE ) {
 				fontInstance.download(() => {
 					localClient.dispatchAction('/store-panel-param',{onboardstep: 'end'});
 					localClient.dispatchAction('/exporting',{exporting: false});
+					window.Intercom('trackEvent', 'export-otf');
 					clearTimeout(exportingError);
 				},name, merged);
 			},
@@ -1258,6 +1263,10 @@ else if ( isSafari || isIE ) {
 				}
 				values[prefix][typeface] = data;
 				debugStore.set('values', values).commit();;
+			},
+			'/load-intercom-info': (data) => {
+				const patch = intercomStore.set('tags', data.tags.tags).commit();
+				localServer.dispatchUpdate('/intercomStore', patch);
 			},
 		}
 
