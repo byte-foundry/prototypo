@@ -343,7 +343,7 @@ else if ( isSafari || isIE ) {
 			},
 			'/create-font': (familyName) => {
 				const patch = fontStore
-					.set('fontName', params.font.ot.getEnglishName('fontFamily'))
+					.set('fontName', familyName)
 					.commit();
 				localServer.dispatchUpdate('/fontStore',patch);
 			},
@@ -529,7 +529,7 @@ else if ( isSafari || isIE ) {
 					saveErrorLog(err);
 				}
 
-				localClient.dispatchAction('/create-font', fontInstance.font.ot.familyName);
+				localClient.dispatchAction('/create-font', fontInstance.font.ot.getEnglishName('fontFamily'));
 
 				localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
 				localClient.dispatchAction('/load-glyphs', _.mapValues(
@@ -1399,7 +1399,7 @@ else if ( isSafari || isIE ) {
 
 			const {typedata, font, subset} = await setupFontInstance(appValues);
 
-			localClient.dispatchAction('/create-font', fontInstance.font.ot.familyName);
+			localClient.dispatchAction('/create-font', fontInstance.font.ot.getEnglishName('fontFamily'));
 
 			localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
 			localClient.dispatchAction('/load-glyphs', _.mapValues(
