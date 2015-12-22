@@ -153,7 +153,6 @@ export default class Dashboard extends React.Component {
 			<div id="dashboard">
 				<Sidebar />
 				<Workboard />
-				<NpsMessage />
 				{onboarding}
 			</div>
 		)
