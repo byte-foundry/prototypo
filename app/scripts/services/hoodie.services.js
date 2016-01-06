@@ -9,8 +9,9 @@ import IntercomRest from './intercom.services.js';
 
 PouchDB.plugin(HoodiePouch);
 
-//const backUrl = 'http://localhost:6004';
-const backUrl = 'https://prototypo-dev.appback.com/_api';
+const backUrl = process.env.TRAVIS_BRANCH === 'master' ?
+	'https://prototypo.appback.com/_api' :
+	'https://prototypo-dev.appback.com/_api';
 
 const jsonHeaders = {
 	'Accept': 'application/json',

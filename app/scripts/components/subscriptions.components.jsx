@@ -64,56 +64,6 @@ export default class Subscriptions extends React.Component {
 		}
 	}
 
-	deleteCard(cardId) {
-		this.setState({
-			cardLoaded:false,
-		});
-		const data = {
-			path,
-			hoodieId:HoodieApi.instance.hoodieId,
-			cardId,
-			customerId:this.state.customerId,
-		}
-		this.client.dispatchAction('/remove-source',data);
-	}
-
-	addCard({cardNumber, year, month, cvc}) {
-		const client = this.client;
-		const storeName = this.storeName;
-		const data = {
-			path:storeName,
-			hoodieId: HoodieApi.instance.hoodieId,
-			email:HoodieApi.instance.email,
-		};
-
-		this.setState({
-			cardLoaded:false,
-		});
-
-		Stripe.card.createToken({
-			number: cardNumber,
-			cvc: cvc,
-			exp_month: month,
-			exp_year: year,
-		}, (status, response) => {
-			if (response.error) {
-				this.setState({
-					error:response.error,
-					cardLoaded:true,
-				});
-			}
-			else {
-				data.token = response.id;
-				if (this.state.customerId) {
-					data.customerId = this.state.customerId;
-					client.dispatchAction('/add-source', data);
-				} else {
-					client.dispatchAction('/add-customer', data);
-				}
-			}
-		});
-	}
-
 	subscribe(amount) {
 		const path = this.storeName;
 		this.setState({
@@ -152,42 +102,6 @@ export default class Subscriptions extends React.Component {
 		}
 
 		this.client.dispatchAction('/remove-subscription',data);
-	}
-
-	changeCard(cardId,{cardNumber, year, month, cvc}) {
-		const path = this.storeName;
-		this.setState({
-			cardLoaded:false,
-		});
-		const data = {
-			path,
-			cardId,
-			customerId: this.state.customerId,
-		};
-
-		const client = this.client;
-
-		return new Promise((resolve, reject) => {
-			Stripe.card.createToken({
-				number: cardNumber,
-				cvc: cvc,
-				exp_month: month,
-				exp_year: year,
-			}, (status, response) => {
-				if (response.error) {
-					this.setState({
-						error:response.error,
-						cardLoaded:true,
-					});
-					reject();
-				}
-				else {
-					data.token = response.id;
-					client.dispatchAction('/change-source', data);
-					resolve();
-				}
-			});
-		})
 	}
 
 	render() {

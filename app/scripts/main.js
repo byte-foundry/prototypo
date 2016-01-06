@@ -73,8 +73,6 @@ else if ( isSafari || isIE ) {
 	React.render(<NotABrowser />, content);
 
 } else {
-	window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
-
 	function saveErrorLog(error) {
 		const debugLog = {
 			events: debugStore.events,
@@ -200,11 +198,6 @@ else if ( isSafari || isIE ) {
 	canvasEl.className = "prototypo-canvas-container-canvas";
 	canvasEl.width = 0;
 	canvasEl.height = 0;
-	//RemoteClient.createClient('sub80scription','http://localhost:43430');
-
-	//HoodieApi.on('connected',() => {
-	//	RemoteClient.initRemoteStore('stripe', `/stripe${uuid.v4()}$$${HoodieApi.instance.hoodieId}`,'subscription');
-	//});
 
 	async function loadFontValues(typedata, typeface) {
 
