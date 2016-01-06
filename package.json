@@ -83,5 +83,10 @@
   "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/byte-foundry/prototypo/issues"
+  },
+  "browserify": {
+    "transform": [
+      "envify"
+    ]
   }
 }
