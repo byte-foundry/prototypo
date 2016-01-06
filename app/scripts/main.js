@@ -192,6 +192,10 @@ else if ( isSafari || isIE ) {
 		tags: [],
 	});
 
+	const searchStore = stores['/searchStore'] = new Remutable({
+		savedSearch: [],
+	});
+
 	const canvasEl = window.canvasElement = document.createElement('canvas');
 	canvasEl.className = "prototypo-canvas-container-canvas";
 	canvasEl.width = 0;
@@ -287,6 +291,8 @@ else if ( isSafari || isIE ) {
 			appValues.variantSelected = fontVariant.get('variant');
 			appValues.familySelected = fontVariant.get('family');
 			appValues.tagSelected = tagStore.get('selected');
+			appValues.savedSearch = searchStore.get('savedSearch');
+			appValues.pinnedSearch = searchStore.get('pinned');
 
 			AppValues.save({typeface:'default', values:appValues});
 		}, 300);
@@ -334,6 +340,8 @@ else if ( isSafari || isIE ) {
 					.commit();
 
 				localServer.dispatchUpdate('/tagStore',patch);
+				const patchSearch = searchStore.set('glyphSearch', undefined).commit();
+				localServer.dispatchUpdate('/searchStore', patchSearch);
 				saveAppValues();
 			},
 			'/toggle-pinned': (params) => {
@@ -503,6 +511,12 @@ else if ( isSafari || isIE ) {
 					.set('family', values.familySelected).commit();
 				localServer.dispatchUpdate('/fontVariant',patchVariant);
 
+				const patchSearch = searchStore
+					.set('savedSearch', values.savedSearch)
+					.set('pinned', values.pinnedSearch)
+					.commit();
+				localServer.dispatchUpdate('/searchStore', patchSearch);
+
 				values.mode = values.mode || ['glyph'];
 
 				_.forEach(values, (value, name) => {
@@ -544,6 +558,9 @@ else if ( isSafari || isIE ) {
 							return {
 								src: {
 									tags: alt.src && alt.src.tags || [],
+									characterName: alt.src  && alt.src.characterName || '',
+									unicode: alt.src  && alt.src.unicode	|| '',
+									glyphName: alt.src  && alt.src.glyphName || '',
 								},
 								name: alt.name,
 								altImg: alt.altImg,
@@ -1268,6 +1285,48 @@ else if ( isSafari || isIE ) {
 				const patch = intercomStore.set('tags', data.tags.tags).commit();
 				localServer.dispatchUpdate('/intercomStore', patch);
 			},
+			'/search-glyph': ({query}) => {
+				const patch = searchStore.set('glyphSearch', query).commit();
+				localServer.dispatchUpdate('/searchStore', patch);
+				const patchTag = tagStore.set('selected', 'all').commit();
+				localServer.dispatchUpdate('/tagStore', patchTag);
+			},
+			'/save-search-glyph': ({query}) => {
+				const searchs = _.cloneDeep(searchStore.get('savedSearch'));
+				if (searchs.indexOf(query) === -1) {
+					searchs.push(query);
+					const patch = searchStore
+						.set('savedSearch', searchs)
+						.set('savedSearchError', undefined)
+						.commit();
+					localServer.dispatchUpdate('/searchStore', patch);
+				}
+				else {
+					const patch = searchStore.set('savedSearchError', 'This search already exists');
+					localServer.dispatchUpdate('/searchStore', patch);
+				}
+				saveAppValues();
+			},
+			'/toggle-pinned-search': ({query}) => {
+				const pinned = _.xor(searchStore.get('pinned'),[query]);
+				const patch = searchStore
+					.set('pinned',pinned)
+					.commit();
+
+				localServer.dispatchUpdate('/searchStore',patch);
+				saveAppValues();
+			},
+			'/delete-search-glyph': ({query}) => {
+				const searchs = _.xor(searchStore.get('savedSearch'), [query]);
+				const pinned = _.xor(searchStore.get('pinned'), [query]);
+				const patch = searchStore
+					.set('savedSearch', searchs)
+					.set('pinned', pinned)
+					.commit();
+
+				localServer.dispatchUpdate('/searchStore',patch);
+				saveAppValues();
+			},
 		}
 
 		localServer.on('action',({path, params}) => {
@@ -1391,7 +1450,8 @@ else if ( isSafari || isIE ) {
 						},
 						variantSelected: {
 							db:'venus.ptf'
-						}
+						},
+						savedSearch: [],
 					}
 				};
 			let appValues;
@@ -1419,6 +1479,9 @@ else if ( isSafari || isIE ) {
 						return {
 							src: {
 								tags: alt.src && alt.src.tags || [],
+								characterName: alt.src  && alt.src.characterName || '',
+								unicode: alt.src  && alt.src.unicode	|| '',
+								glyphName: alt.src  && alt.src.glyphName || '',
 							},
 							name: alt.name,
 							altImg: alt.altImg,

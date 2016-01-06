@@ -1,0 +1,50 @@
+@import "../variables";
+
+.search-glyph-list {
+
+	display: flex;
+	flex-flow: row nowrap;
+
+	&-input {
+		width: 100%;
+		background-color: lighten($dark-grey, 10%);
+		border: none;
+		border-left: 3px solid transparent;
+		height: 47px;
+		padding: 10px;
+		transition: all 200ms ease;
+
+		&::placeholder {
+			font-style: italic;
+			font-size: .9em;
+			line-height: 1.4;
+		}
+
+		&:hover {
+			background-color: lighten($dark-grey, 20%);
+		}
+
+		&:focus {
+			outline: 0;
+			border-color: $light-grey;
+			background-color: lighten($light-grey, 20%);
+		}
+	}
+	&-submit {
+		background-color: lighten($green, 15%);
+		background-image: url('./images/pin-on.svg');
+		background-position: center;
+		background-size: 50%;
+		background-repeat: no-repeat;
+		min-width: 51px;
+		border: none;
+		transition: all 200ms ease;
+
+		&:focus,
+		&:hover {
+			outline: 0;
+			background-color: $green;
+			background-size: 70%;
+		}
+	}
+}

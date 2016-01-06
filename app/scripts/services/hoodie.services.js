@@ -82,8 +82,6 @@ function setupHoodie(response) {
 		},
 	});
 
-	IntercomRest.getTags();
-
 	Log.setUserId(HoodieApi.instance.email);
 
 	if (HoodieApi.eventSub) {
