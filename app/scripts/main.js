@@ -29,6 +29,7 @@ import Remutable from 'remutable';
 import uuid from 'node-uuid';
 import XXHash from 'xxhashjs';
 import JSZip from 'jszip';
+import PrototypoCanvas from 'prototypo-canvas';
 
 import Dashboard from './components/dashboard.components.jsx';
 import SitePortal from './components/site-portal.components.jsx';
@@ -49,8 +50,6 @@ import LocalServer from './stores/local-server.stores.jsx';
 import RemoteClient from './stores/remote-client.stores.jsx';
 import {BatchUpdate} from './helpers/undo-stack.helpers.js';
 const { Patch } = Remutable;
-
-import PrototypoCanvas from '../../node_modules/prototypo-canvas/dist/prototypo-canvas.js';
 
 const hasher = XXHash(0xDEADBEEF);
 
@@ -76,10 +75,6 @@ else if ( isSafari || isIE ) {
 } else {
 	window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
-	const debugStore = {
-		events: [],
-	};
-
 	function saveErrorLog(error) {
 		const debugLog = {
 			events: debugStore.events,
@@ -93,13 +88,17 @@ else if ( isSafari || isIE ) {
 		fetch('http://localhost:9002/errors/', {
 			method: 'POST',
 			body: data,
-			headers: {  
-				"Content-type": "application/json; charset=UTF-8"  
-			}, 
+			headers: {
+				"Content-type": "application/json; charset=UTF-8"
+			},
 		});
 	}
 
 	const stores = {};
+	const debugStore = stores['/debugStore'] = new Remutable({
+		events: [],
+		values: {},
+	});
 
 	const localServer = new LocalServer(stores).instance;
 
@@ -189,6 +188,14 @@ else if ( isSafari || isIE ) {
 		tagSelected: 'all',
 	});
 
+	const intercomStore = stores['/intercomStore'] = new Remutable({
+		tags: [],
+	});
+
+	const searchStore = stores['/searchStore'] = new Remutable({
+		savedSearch: [],
+	});
+
 	const canvasEl = window.canvasElement = document.createElement('canvas');
 	canvasEl.className = "prototypo-canvas-container-canvas";
 	canvasEl.width = 0;
@@ -198,7 +205,7 @@ else if ( isSafari || isIE ) {
 	//HoodieApi.on('connected',() => {
 	//	RemoteClient.initRemoteStore('stripe', `/stripe${uuid.v4()}$$${HoodieApi.instance.hoodieId}`,'subscription');
 	//});
-	
+
 	async function loadFontValues(typedata, typeface) {
 
 		const initValues = {};
@@ -232,6 +239,11 @@ else if ( isSafari || isIE ) {
 				altList: typedata.fontinfo.defaultAlts,
 			};
 
+			await FontInfoValues.save({
+				typeface,
+				values,
+			});
+
 			localClient.dispatchAction('/load-font-infos', values);
 		}
 	}
@@ -257,6 +269,7 @@ else if ( isSafari || isIE ) {
 			await HoodieApi.setup();
 		}
 		catch(err) {
+			console.error(err);
 			location.href = '#/signin';
 		}
 
@@ -278,6 +291,8 @@ else if ( isSafari || isIE ) {
 			appValues.variantSelected = fontVariant.get('variant');
 			appValues.familySelected = fontVariant.get('family');
 			appValues.tagSelected = tagStore.get('selected');
+			appValues.savedSearch = searchStore.get('savedSearch');
+			appValues.pinnedSearch = searchStore.get('pinned');
 
 			AppValues.save({typeface:'default', values:appValues});
 		}, 300);
@@ -325,6 +340,8 @@ else if ( isSafari || isIE ) {
 					.commit();
 
 				localServer.dispatchUpdate('/tagStore',patch);
+				const patchSearch = searchStore.set('glyphSearch', undefined).commit();
+				localServer.dispatchUpdate('/searchStore', patchSearch);
 				saveAppValues();
 			},
 			'/toggle-pinned': (params) => {
@@ -494,6 +511,12 @@ else if ( isSafari || isIE ) {
 					.set('family', values.familySelected).commit();
 				localServer.dispatchUpdate('/fontVariant',patchVariant);
 
+				const patchSearch = searchStore
+					.set('savedSearch', values.savedSearch)
+					.set('pinned', values.pinnedSearch)
+					.commit();
+				localServer.dispatchUpdate('/searchStore', patchSearch);
+
 				values.mode = values.mode || ['glyph'];
 
 				_.forEach(values, (value, name) => {
@@ -524,7 +547,7 @@ else if ( isSafari || isIE ) {
 					saveErrorLog(err);
 				}
 
-				localClient.dispatchAction('/create-font', fontInstance.font.ot.familyName);
+				localClient.dispatchAction('/create-font', fontInstance.font.ot.getEnglishName('fontFamily'));
 
 				localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
 				localClient.dispatchAction('/load-glyphs', _.mapValues(
@@ -535,6 +558,9 @@ else if ( isSafari || isIE ) {
 							return {
 								src: {
 									tags: alt.src && alt.src.tags || [],
+									characterName: alt.src  && alt.src.characterName || '',
+									unicode: alt.src  && alt.src.unicode	|| '',
+									glyphName: alt.src  && alt.src.glyphName || '',
 								},
 								name: alt.name,
 								altImg: alt.altImg,
@@ -556,7 +582,8 @@ else if ( isSafari || isIE ) {
 					location.href = '#/signin';
 				}
 				catch (error) {
-					console.log(`you probably don't have internet`);
+					console.warn(`You probably don't have internet`);
+					console.log(error);
 					location.href = '#/signin';
 				}
 			},
@@ -658,7 +685,7 @@ else if ( isSafari || isIE ) {
 				}, 200);
 
 				if (loadCurrent) {
-					await copyFontValues(newFont.variants[0].db);	
+					await copyFontValues(newFont.variants[0].db);
 				}
 
 				localClient.dispatchAction('/change-font', {
@@ -771,7 +798,9 @@ else if ( isSafari || isIE ) {
 			},
 			'/delete-family': ({family}) => {
 				const families = Array.from(fontLibrary.get('fonts'));
-				_.pull(families, family);
+				_.remove(families, (checkee) => {
+					return checkee.name === family.name && checkee.template === family.template
+				});
 				const patch = fontLibrary.set('fonts', families).commit();
 				localServer.dispatchUpdate('/fontLibrary',patch);
 
@@ -823,6 +852,7 @@ else if ( isSafari || isIE ) {
 				fontInstance.download(() => {
 					localClient.dispatchAction('/store-panel-param',{onboardstep: 'end'});
 					localClient.dispatchAction('/exporting',{exporting: false});
+					window.Intercom('trackEvent', 'export-otf');
 					clearTimeout(exportingError);
 				},name, merged);
 			},
@@ -853,7 +883,7 @@ else if ( isSafari || isIE ) {
 					const blob = await fontInstance.getBlob(null , {
 						family: familyToExport.name,
 						style: currVariant.name
-				   	}, false, values.values);
+					}, false, values.values);
 					blobs.push(blob);
 					const variantPatch = exportStore.set('exportedVariant',
 						exportStore.get('exportedVariant') + 1).commit();
@@ -1188,7 +1218,7 @@ else if ( isSafari || isIE ) {
 			},
 			'/create-mode-param-group': () => {
 				const values = _.cloneDeep(fontControls.get('values'));
-				
+
 				const indivPatch = individualizeStore
 					.set('indivMode', true)
 					.set('indivCreate', true)
@@ -1226,10 +1256,11 @@ else if ( isSafari || isIE ) {
 			},
 			'/save-debug-log': () => {
 				const debugLog = {
-					events: debugStore.events,
-					message: 'yoyoyo',
+					events: debugStore.get('events'),
+					message: `voluntarily submitted by ${HoodieApi.instance.email}`,
 					stack: (new Error()).stack,
 					date: new Date(),
+					values: debugStore.get('values'),
 				};
 
 				const data = JSON.stringify(debugLog);
@@ -1237,17 +1268,74 @@ else if ( isSafari || isIE ) {
 				fetch(`${debugServerUrl}/errors/`, {
 					method: 'POST',
 					body: data,
-					headers: {  
-						"Content-type": "application/json; charset=UTF-8"  
-					}, 
+					headers: {
+						"Content-type": "application/json; charset=UTF-8"
+					},
 				});
-			}
+			},
+			'/store-in-debug-font': ({prefix, typeface, data}) => {
+				const values = debugStore.get('values');
+				if (!values[prefix]) {
+					values[prefix] = {};
+				}
+				values[prefix][typeface] = data;
+				debugStore.set('values', values).commit();;
+			},
+			'/load-intercom-info': (data) => {
+				const patch = intercomStore.set('tags', data.tags.tags).commit();
+				localServer.dispatchUpdate('/intercomStore', patch);
+			},
+			'/search-glyph': ({query}) => {
+				const patch = searchStore.set('glyphSearch', query).commit();
+				localServer.dispatchUpdate('/searchStore', patch);
+				const patchTag = tagStore.set('selected', 'all').commit();
+				localServer.dispatchUpdate('/tagStore', patchTag);
+			},
+			'/save-search-glyph': ({query}) => {
+				const searchs = _.cloneDeep(searchStore.get('savedSearch'));
+				if (searchs.indexOf(query) === -1) {
+					searchs.push(query);
+					const patch = searchStore
+						.set('savedSearch', searchs)
+						.set('savedSearchError', undefined)
+						.commit();
+					localServer.dispatchUpdate('/searchStore', patch);
+				}
+				else {
+					const patch = searchStore.set('savedSearchError', 'This search already exists');
+					localServer.dispatchUpdate('/searchStore', patch);
+				}
+				saveAppValues();
+			},
+			'/toggle-pinned-search': ({query}) => {
+				const pinned = _.xor(searchStore.get('pinned'),[query]);
+				const patch = searchStore
+					.set('pinned',pinned)
+					.commit();
+
+				localServer.dispatchUpdate('/searchStore',patch);
+				saveAppValues();
+			},
+			'/delete-search-glyph': ({query}) => {
+				const searchs = _.xor(searchStore.get('savedSearch'), [query]);
+				const pinned = _.xor(searchStore.get('pinned'), [query]);
+				const patch = searchStore
+					.set('savedSearch', searchs)
+					.set('pinned', pinned)
+					.commit();
+
+				localServer.dispatchUpdate('/searchStore',patch);
+				saveAppValues();
+			},
 		}
 
 		localServer.on('action',({path, params}) => {
-			
-			if (path.indexOf('debug') === -1) {
-				debugStore.events.push({path, params});
+
+			if (path.indexOf('debug') === -1 &&
+				location.hash.indexOf('#/replay') === -1) {
+				const events = debugStore.get('events')
+				events.push({path, params});
+				debugStore.set('events', events).commit();
 			}
 
 			if ( actions[path] !== void 0 ) {
@@ -1259,7 +1347,11 @@ else if ( isSafari || isIE ) {
 		if (location.hash.indexOf('#/replay') !== -1) {
 			const hash = location.hash.split('/');
 			const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);
-			const eventsToPlay = await result.json();
+			const data = await result.json();
+			const eventsToPlay = data.events;
+			const values = data.values;
+
+			debugStore.set('values', values).commit();
 
 			async function execEvent(events, i, to) {
 				if (i < events.length) {
@@ -1287,7 +1379,9 @@ else if ( isSafari || isIE ) {
 					console.log(`replaying event at path ${events[i].path}`);
 					console.log(events[i].params);
 
-					localClient.dispatchAction(events[i].path, events[i].params);
+					if (events[i].path !== '/login') {
+						localClient.dispatchAction(events[i].path, events[i].params);
+					}
 
 					return await new Promise((resolve, reject) => {
 						setTimeout(() => {
@@ -1356,7 +1450,8 @@ else if ( isSafari || isIE ) {
 						},
 						variantSelected: {
 							db:'venus.ptf'
-						}
+						},
+						savedSearch: [],
 					}
 				};
 			let appValues;
@@ -1373,7 +1468,7 @@ else if ( isSafari || isIE ) {
 
 			const {typedata, font, subset} = await setupFontInstance(appValues);
 
-			localClient.dispatchAction('/create-font', fontInstance.font.ot.familyName);
+			localClient.dispatchAction('/create-font', fontInstance.font.ot.getEnglishName('fontFamily'));
 
 			localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
 			localClient.dispatchAction('/load-glyphs', _.mapValues(
@@ -1384,6 +1479,9 @@ else if ( isSafari || isIE ) {
 						return {
 							src: {
 								tags: alt.src && alt.src.tags || [],
+								characterName: alt.src  && alt.src.characterName || '',
+								unicode: alt.src  && alt.src.unicode	|| '',
+								glyphName: alt.src  && alt.src.glyphName || '',
 							},
 							name: alt.name,
 							altImg: alt.altImg,
@@ -1399,6 +1497,7 @@ else if ( isSafari || isIE ) {
 			loadFontValues(typedata, appValues.values.variantSelected.db);
 		}
 		catch (err) {
+			console.error(err);
 			location.href = '#/signin';
 		}
 	}

@@ -5,6 +5,7 @@ import HoodiePouch from 'pouchdb-hoodie-api';
 import HOODIE from '../helpers/hoodie.helpers.js';
 
 import Log from './log.services.js';
+import IntercomRest from './intercom.services.js';
 
 PouchDB.plugin(HoodiePouch);
 

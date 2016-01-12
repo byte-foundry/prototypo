@@ -1,7 +1,6 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import FontSelector from './font-selector.components.jsx';
 import {FamilyList, AddFamily} from './family.components.jsx';
 
 export default class FontsCollection extends React.Component {

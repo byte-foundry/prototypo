@@ -4,6 +4,7 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import ClassNames from 'classnames';
 import Log from '../services/log.services.js';
 
+/* Apparently this component is never used */
 export default class FontSelector extends React.Component {
 	componentWillMount() {
 		this.lifespan = new Lifespan();
