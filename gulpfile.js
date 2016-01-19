@@ -6,11 +6,10 @@ var gulp            = require('gulp');
 //webpack Dep
 var webpack			= require('webpack');
 var WebpackDevServer= require('webpack-dev-server');
-var webpackConfig	= require('./webpack.config.js');
 
 //CSS Dep
 var sass            = require('gulp-sass');
-var minifyCss       = require('gulp-minify-css');
+var cssnano       = require('gulp-cssnano');
 
 //Utils
 var del             = require('del');
@@ -19,6 +18,9 @@ var sourcemaps      = require('gulp-sourcemaps');
 var filter          = require('gulp-filter');
 var autoprefixer    = require('gulp-autoprefixer');
 var gutil			= require('gulp-util');
+
+//Tests
+var Server			= require('karma').Server;
 
 gulp.task('images', function() {
 	gulp.src('./app/images/*.*')
@@ -30,6 +32,8 @@ gulp.task('images', function() {
 gulp.task('cp-prototypo.js', function() {
 	gulp.src('./node_modules/prototypo.js/dist/prototypo.js')
 		.pipe(gulp.dest('./dist/prototypo.js/dist/'));
+	gulp.src('./node_modules/prototypo-canvas/src/worker.js')
+		.pipe(gulp.dest('./dist/prototypo-canvas/src/'));
 });
 
 gulp.task('cp-genese', function() {
@@ -69,8 +73,9 @@ gulp.task('clean',function() {
 	del.sync(['dist']);
 });
 
-gulp.task('webpack', function(callback) {
+gulp.task('build', function(callback) {
 	// run webpack
+	var webpackConfig	= require('./prod.config.js');
 	var prototypoConfig = Object.create(webpackConfig);
 	webpack(prototypoConfig,
 		function(err, stats) {
@@ -83,10 +88,27 @@ gulp.task('webpack', function(callback) {
 	);
 });
 
-gulp.task("webpack-dev-server",['clean', 'images','css-vendor','css-app','cp-prototypo.js','cp-genese','cp-static'], function(callback) {
+gulp.task('clean:dll', function(cb) {
+	del.sync(['dll']);
+});
+
+gulp.task('webpack:dll', function(callback) {
+	var dllWebpackConfig   = require('./dll.config.js');
+	var prototypoConfig = Object.create(dllWebpackConfig);
+	webpack(prototypoConfig, function(err, stats) {
+		if (err) return new gutil.PluginError("webpack", err);
+
+		gutil.log('[webpack]', stats.toString({
+		}));
+
+		callback();
+	});
+});
+
+gulp.task('serve',['clean', 'images','css-vendor','css-app','cp-prototypo.js','cp-genese','cp-static','webpack:dll'], function(callback) {
+	var webpackConfig	= require('./webpack.config.js');
 	// Start a webpack-dev-server
 	var prototypoConfig = Object.create(webpackConfig);
-	prototypoConfig.devtool = 'eval';
 	prototypoConfig.debug = true;
 	var compiler = webpack(prototypoConfig);
 
@@ -100,6 +122,20 @@ gulp.task("webpack-dev-server",['clean', 'images','css-vendor','css-app','cp-pro
 		gutil.log("[webpack-dev-server]", "http://localhost:9000/webpack-dev-server/index.html");
 
 		// keep the server alive or continue?
-		// callback();
+	});
+});
+
+gulp.task('test', ['clean', 'images','css-vendor','css-app','cp-prototypo.js','cp-genese','cp-static'], function(callback) {
+	var dllWebpackConfig   = require('./prod.config.js');
+	var prototypoConfig = Object.create(dllWebpackConfig);
+	webpack(prototypoConfig, function(err, stats) {
+		if (err) return new gutil.PluginError("webpack", err);
+
+		gutil.log('[webpack]', stats.toString({
+		}));
+
+		new Server({
+			configFile: __dirname + '/karma.conf.js',
+		}, callback()).start();
 	});
 });

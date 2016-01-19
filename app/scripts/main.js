@@ -1,4 +1,5 @@
 import pleaseWait from 'please-wait';
+debugger;
 
 pleaseWait.instance = pleaseWait.pleaseWait({
 	logo: '/assets/images/prototypo-loading.svg',
@@ -267,6 +268,7 @@ else if ( isSafari || isIE ) {
 		catch(err) {
 			console.error(err);
 			location.href = '#/signin';
+			return;
 		}
 
 		//I know this is ugly but for now it's like this.

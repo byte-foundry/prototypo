@@ -3,10 +3,7 @@ var webpack = require('webpack');
 
 module.exports = {
 	cache: true,
-	devtool: 'cheap-module-eval-source-map',
 	entry: [
-		'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
-		'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors 
 		'babel-polyfill',
 		'./app/scripts/main'
 	],
@@ -25,15 +22,9 @@ module.exports = {
 				]
 			}
 		],
-		noParse:/(dist\/prototypo-canvas)/
+		noParse:/(dist\/prototypo-canvas|levelup)/
 	},
 	plugins: [
-		new webpack.HotModuleReplacementPlugin(),
-		new webpack.DllReferencePlugin({
-			context: __dirname,
-			manifest: require('./dist/dll/libs-manifest'),
-			sourceType: 'this',
-		}),
 	],
 	resolve: {
 		extensions: ['','.js', '.jsx']
