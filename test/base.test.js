@@ -10,7 +10,4 @@ module.exports = {
 			.waitForElementVisible('#dashboard', 10000)
 			.end();
 	},
-	'this is false': function(browser) {
-		browser.assert.equal(false, true);
-	}
 };
