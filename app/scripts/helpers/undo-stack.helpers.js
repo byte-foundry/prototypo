@@ -64,7 +64,7 @@ class BatchUpdate {
 	}
 }
 
-export default {
+export {
 	registerToUndoStack,
 	BatchUpdate,
 }

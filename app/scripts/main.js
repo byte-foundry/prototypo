@@ -1,4 +1,5 @@
 import pleaseWait from 'please-wait';
+debugger;
 
 pleaseWait.instance = pleaseWait.pleaseWait({
 	logo: '/assets/images/prototypo-loading.svg',
@@ -92,7 +93,7 @@ else if ( isSafari || isIE ) {
 		});
 	}
 
-	const stores = {};
+	const stores = window.prototypoStores = {};
 	const debugStore = stores['/debugStore'] = new Remutable({
 		events: [],
 		values: {},

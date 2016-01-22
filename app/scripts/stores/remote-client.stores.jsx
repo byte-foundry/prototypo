@@ -1,5 +1,5 @@
 import React from 'react';
-import Client from 'nexus-flux-socket.io/src/client';
+import Client from 'nexus-flux-socket.io';
 import Lifespan from 'lifespan';
 import HoodieApi from '../services/hoodie.services.js';
 

@@ -48,8 +48,6 @@ function values(prefix) {
 	}
 }
 
-export default {
-	AppValues: values('newapp'),
-	FontValues: values('newfont'),
-	FontInfoValues: values('fontinfos'),
-}
+export var AppValues = values('newapp');
+export var FontValues = values('newfont');
+export var FontInfoValues = values('fontinfos');

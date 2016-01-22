@@ -19,6 +19,6 @@ Typefaces.getFont = (repo) => {
 	});
 }
 
-export default {
+export {
 	Typefaces
 }
