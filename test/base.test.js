@@ -9,5 +9,8 @@ module.exports = {
 			.pause(2000)
 			.waitForElementVisible('#dashboard', 10000)
 			.end();
+	},
+	'this is false': function(browser) {
+		browser.assert.equal(false, true);
 	}
 };
