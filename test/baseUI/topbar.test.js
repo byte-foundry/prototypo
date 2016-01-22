@@ -1,0 +1,51 @@
+module.exports = {
+	before: function(browser, done) {
+		browser
+			.init()
+			.waitForElementVisible('input#email-sign-in', 10000)
+			.setValue('input#email-sign-in',process.env.PROTOTYPO_LOGIN)
+			.setValue('input#password-sign-in', process.env.PROTOTYPO_PASS)
+			.click('input[type=submit]')
+			.pause(10000)
+			.waitForElementVisible('#dashboard', 10000, false, done);
+	},
+	after: function(browser) {
+		browser.end();
+	},
+	'Should contain File, Edit, toggle views and glyph list': function(browser) {
+		browser
+			.elements('css selector', '#topbar > ul > li', function(result) {
+				browser.assert.equal(result.value.length, 4);
+			});
+	},
+	'Should display file menu' : function (browser) {
+		browser
+			.elements('css selector', '#topbar > ul > li', function(result) {
+				browser.moveTo(result.value[0].ELEMENT)
+					.waitForElementVisible('#file-dropdown', 2000);
+			})
+	},
+	'Should display edit menu' : function (browser) {
+		browser
+			.elements('css selector', '#topbar > ul > li', function(result) {
+				browser.moveTo(result.value[1].ELEMENT)
+				.waitForElementVisible('#topbar > ul > li:nth-child(2) > ul', 2000);
+			});
+	},
+	'Should display toggle views' : function (browser) {
+		browser
+			.elements('css selector', '#topbar > ul > li', function(result) {
+				browser.moveTo(result.value[3].ELEMENT)
+				.waitForElementVisible('#topbar > ul > li:nth-child(4) > ul', 2000);
+			});
+	},
+	'Should display glyph list': function (browser) {
+		browser
+			.elements('css selector', '#topbar > ul > li', function(result) {
+				browser.elementIdClick(result.value[2].ELEMENT)
+					.waitForElementVisible('.glyph-list-glyphs', 2000)
+					.elementIdClick(result.value[2].ELEMENT)
+					.waitForElementNotVisible('.glyph-list-glyphs', 2000).end();
+			});
+	},
+};

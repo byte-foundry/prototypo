@@ -95,7 +95,7 @@ else if ( isSafari || isIE ) {
 		});
 	}
 
-	const stores = {};
+	const stores = window.prototypoStores = {};
 	const debugStore = stores['/debugStore'] = new Remutable({
 		events: [],
 		values: {},
@@ -268,7 +268,6 @@ else if ( isSafari || isIE ) {
 		catch(err) {
 			console.error(err);
 			location.href = '#/signin';
-			return;
 		}
 
 		//I know this is ugly but for now it's like this.

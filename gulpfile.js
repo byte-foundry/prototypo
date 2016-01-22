@@ -20,7 +20,7 @@ var autoprefixer    = require('gulp-autoprefixer');
 var gutil			= require('gulp-util');
 
 //Tests
-var Server			= require('karma').Server;
+var nightwatch		= require('gulp-nightwatch');
 
 gulp.task('images', function() {
 	gulp.src('./app/images/*.*')
@@ -125,17 +125,16 @@ gulp.task('serve',['clean', 'images','css-vendor','css-app','cp-prototypo.js','c
 	});
 });
 
-gulp.task('test', ['clean', 'images','css-vendor','css-app','cp-prototypo.js','cp-genese','cp-static'], function(callback) {
-	var dllWebpackConfig   = require('./prod.config.js');
-	var prototypoConfig = Object.create(dllWebpackConfig);
-	webpack(prototypoConfig, function(err, stats) {
-		if (err) return new gutil.PluginError("webpack", err);
+gulp.task('test', function(callback) {
+	return gulp.src('')
+	.pipe(nightwatch({
+		cliArgs: {
+			env: 'default,chrome_win8,chrome_win7,firefox_win7,chrome_mac,firefox_mac'
+		}
+	}));
+});
 
-		gutil.log('[webpack]', stats.toString({
-		}));
-
-		new Server({
-			configFile: __dirname + '/karma.conf.js',
-		}, callback()).start();
-	});
+gulp.task('test:basic', function(callback) {
+	return gulp.src('')
+	.pipe(nightwatch());
 });
