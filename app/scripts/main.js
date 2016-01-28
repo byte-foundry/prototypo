@@ -1,5 +1,4 @@
 import pleaseWait from 'please-wait';
-debugger;
 
 pleaseWait.instance = pleaseWait.pleaseWait({
 	logo: '/assets/images/prototypo-loading.svg',
