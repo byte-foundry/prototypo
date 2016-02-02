@@ -1,5 +1,4 @@
 import React from 'react';
-import Lifespan from 'lifespan';
 import classNames from 'classnames';
 import LocalClient from '../stores/local-client.stores.jsx';
 import GeminiScrollbar from 'react-gemini-scrollbar';
@@ -11,7 +10,7 @@ export class ControlsTabs extends React.Component {
 	}
 
 	changeTab(name) {
-		this.client.dispatchAction('/change-tab-font',{name});
+		this.client.dispatchAction('/change-tab-font', {name});
 		Log.ui('ControlsTabs.changeTab', name);
 	}
 
@@ -20,16 +19,16 @@ export class ControlsTabs extends React.Component {
 			console.log('[RENDER] controls tabs');
 		}
 
-		const headers = _.map(this.props.children,({props: {iconId, name}}) => {
+		const headers = _.map(this.props.children, ({props: {iconId, name}}) => {
 			const classes = classNames({
 				'controls-tabs-icon': true,
-				'is-active': this.props.tab == name,
+				'is-active': this.props.tab === name,
 			});
 
 			return (
 				<li className={classes} id={iconId}
 					onClick={() => {
-						this.changeTab(name)
+						this.changeTab(name);
 					}} key={`${name}ControlsHeader`}>
 					<div className="controls-tabs-icon-legend is-legend-active">{name}</div>
 				</li>
@@ -37,9 +36,10 @@ export class ControlsTabs extends React.Component {
 		});
 
 		const tab = _.map(this.props.children, (child) => {
-			if (child.props.name === this.props.tab)
+			if (child.props.name === this.props.tab) {
 				return child;
-		})
+			}
+		});
 
 		return (
 			<div className="controls-tabs">
@@ -52,7 +52,7 @@ export class ControlsTabs extends React.Component {
 					</div>
 				</GeminiScrollbar>
 			</div>
-		)
+		);
 	}
 }
 
@@ -67,7 +67,7 @@ export class ControlsTab extends React.Component {
 			<div className="controls-tab" key={`${this.props.name}ControlsTab`}>
 				{this.props.children}
 			</div>
-		)
+		);
 	}
 
 }

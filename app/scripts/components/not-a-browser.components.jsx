@@ -26,6 +26,6 @@ export default class NotABrowser extends React.Component {
 					</div>
 				</div>
 			</div>
-		)
+		);
 	}
 }

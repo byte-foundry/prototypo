@@ -31,6 +31,6 @@ export default class NpsMessage extends React.Component {
 					</div>
 				</div>
 			</div>
-		)
+		);
 	}
 }

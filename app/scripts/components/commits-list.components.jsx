@@ -1,16 +1,17 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
-import ClassNames from 'classnames';
+import Classnames from 'classnames';
 import moment from 'moment/min/moment-with-locales';
 
 export default class CommitsList extends React.Component {
 	componentWillMount() {
 		this.lifespan = new Lifespan();
-		this.client = new LocalClient.instance();
+		this.client = LocalClient.instance();
 
-		var locale = window.navigator.userLanguage || window.navigator.language;
-		moment.locale(locale)
+		const locale = window.navigator.userLanguage || window.navigator.language;
+
+		moment.locale(locale);
 	}
 
 	componentWillUnmount() {
@@ -22,12 +23,10 @@ export default class CommitsList extends React.Component {
 			console.log('[RENDER] commits list');
 		}
 
-		const classes = ClassNames({
+		const classes = Classnames({
 			"news-feed-article-header-repo": true,
-			"is-font": this.props.repo != 'prototypo',
+			"is-font": this.props.repo !== 'prototypo',
 		});
-
-		var results = this.props.content;
 
 		return (
 			<li className="news-feed-article">
@@ -52,6 +51,6 @@ export default class CommitsList extends React.Component {
 					})}
 				</div>
 			</li>
-		)
+		);
 	}
 }

@@ -5,8 +5,9 @@ export default class AlternateMenu extends React.Component {
 	render() {
 
 		const alternates = _.map(this.props.alternates, (alt, index) => {
-			return <Alternate id={index} alt={alt} unicode={this.props.unicode}/>
+			return <Alternate id={index} alt={alt} unicode={this.props.unicode}/>;
 		});
+
 		return (
 			<div className="canvas-menu-item alternate-menu">
 				<div className="alternate-menu-list">
@@ -14,7 +15,7 @@ export default class AlternateMenu extends React.Component {
 				</div>
 				<div className="alternate-menu-label">Alternates</div>
 			</div>
-		)
+		);
 	}
 }
 
@@ -25,11 +26,11 @@ class Alternate extends React.Component {
 	}
 
 	selectAlternate() {
-		this.client.dispatchAction('/set-alternate',{unicode: this.props.unicode, glyphName: this.props.alt.name});
+		this.client.dispatchAction('/set-alternate', {unicode: this.props.unicode, glyphName: this.props.alt.name});
 	}
 	render() {
 		return (
-			<div className="alternate" onClick={() => {this.selectAlternate()}}><img src={`assets/images/${this.props.alt.altImg}`}/></div>
-		)
+			<div className="alternate" onClick={() => {this.selectAlternate();}}><img src={`assets/images/${this.props.alt.altImg}`}/></div>
+		);
 	}
 }

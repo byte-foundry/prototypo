@@ -1,6 +1,5 @@
 import React from 'react';
-import {ControlsTabs,ControlsTab} from './controls-tabs.components.jsx';
-import Remutable from 'remutable';
+import {ControlsTabs, ControlsTab} from './controls-tabs.components.jsx';
 import {Sliders} from './sliders.components.jsx';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -24,16 +23,15 @@ export default class FontControls extends React.Component {
 
 		const fontControls = await this.client.fetch('/fontControls');
 		const fontParameters = await this.client.fetch('/fontParameters');
-		const fontTab = await this.client.fetch('/fontTab');
 		const fontVariant = await this.client.fetch('/fontVariant');
 		const typeface = fontVariant.get('variant') || {};
 
 		const debouncedSave = _.debounce((values) => {
 			FontValues.save({
 				typeface: typeface.db || 'default',
-				values: values,
+				values,
 			});
-		}, 300)
+		}, 300);
 
 		this.undoWatcher = new BatchUpdate(fontControls,
 			'/fontControls',
@@ -48,8 +46,9 @@ export default class FontControls extends React.Component {
 			);
 
 		server.on('action', ({path, params}) => {
-			if (path == '/change-param') {
-				let newParams = {};
+			if (path === '/change-param') {
+				const newParams = {};
+
 				Object.assign(newParams, fontControls.get('values'));
 
 				if (this.state.indivMode && this.state.indivEdit && !params.values) {
@@ -63,34 +62,34 @@ export default class FontControls extends React.Component {
 						};
 					}
 				}
-				else {
-					if (params.values) {
-						_.assign(newParams, params.values)
-					}
-					else {
-						newParams[params.name] = params.value;
-					}
+				else if (params.values) {
+					_.assign(newParams, params.values);
 				}
-				
+				else {
+						newParams[params.name] = params.value;
+				}
 
-				const patch = fontControls.set('values',newParams).commit();
 
-				server.dispatchUpdate('/fontControls',patch);
+				const patch = fontControls.set('values', newParams).commit();
+
+				server.dispatchUpdate('/fontControls', patch);
 
 				if (params.force) {
 
 					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 					this.undoWatcher.forceUpdate(patch, params.label);
 					debouncedSave(newParams);
-				} else {
+				}
+				else {
 
 					this.undoWatcher.update(patch, params.label);
 
 				}
 
 			}
-			else if ( path == '/change-param-state') {
-				let newParams = {};
+			else if (path === '/change-param-state') {
+				const newParams = {};
+
 				Object.assign(newParams, fontControls.get('values'));
 
 				newParams.indiv_group_param[this.state.currentGroup][params.name] = {
@@ -98,16 +97,17 @@ export default class FontControls extends React.Component {
 					value: params.state === 'relative' ? 1 : 0,
 				};
 
-				const patch = fontControls.set('values',newParams).commit();
+				const patch = fontControls.set('values', newParams).commit();
 
-				server.dispatchUpdate('/fontControls',patch);
+				server.dispatchUpdate('/fontControls', patch);
 
 				if (params.force) {
 
 					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 					this.undoWatcher.forceUpdate(patch, params.label);
 					debouncedSave(newParams);
-				} else {
+				}
+				else {
 
 					this.undoWatcher.update(patch, params.label);
 
@@ -117,41 +117,45 @@ export default class FontControls extends React.Component {
 		this.client.getStore('/fontTab', this.lifespan)
 			.onUpdate(({head}) => {
 				const headJS = head.toJS();
+
 				this.setState({
-					tabControls:headJS.tab,
+					tabControls: headJS.tab,
 				});
 			})
-			.onDelete(() => this.setState(undefined)).value;
+			.onDelete(() => {this.setState(undefined);});
 
 		this.client.getStore('/fontControls', this.lifespan)
 			.onUpdate(({head}) => {
 				const headJS = head.toJS();
+
 				this.setState({
-					values:headJS.values,
+					values: headJS.values,
 				});
-				this.client.dispatchAction('/update-font',headJS.values);
+				this.client.dispatchAction('/update-font', headJS.values);
 			})
-			.onDelete(() => this.setState(undefined)).value;
+			.onDelete(() => {this.setState(undefined);});
 
 		this.client.getStore('/individualizeStore', this.lifespan)
 			.onUpdate(({head}) => {
 				const headJS = head.toJS();
+
 				this.setState({
-					indivMode:headJS.indivMode,
-					indivEdit:headJS.indivEdit,
-					currentGroup:headJS.currentGroup,
+					indivMode: headJS.indivMode,
+					indivEdit: headJS.indivEdit,
+					currentGroup: headJS.currentGroup,
 				});
 			})
-			.onDelete(() => this.setState(undefined)).value;
+			.onDelete(() => {this.setState(undefined);});
 
 		this.client.getStore('/fontParameters', this.lifespan)
 			.onUpdate(({head}) => {
 				const headJS = head.toJS();
+
 				this.setState({
-					parameters:headJS.parameters,
+					parameters: headJS.parameters,
 				});
 			})
-			.onDelete(() => this.setState(undefined)).value;
+			.onDelete(() => {this.setState(undefined);});
 
 		const parameters = fontParameters.get('parameters');
 		const values = fontControls.get('values');
@@ -171,12 +175,12 @@ export default class FontControls extends React.Component {
 			console.log('[RENDER] font controls');
 		}
 
-		const tabs = _.map(this.state.parameters,(group) => {
+		const tabs = _.map(this.state.parameters, (group) => {
 			return (
 				<ControlsTab iconId={group.label} name={group.label} key={group.label}>
-					<Sliders 
-						params={group.parameters} 
-						values={this.state.values} 
+					<Sliders
+						params={group.parameters}
+						values={this.state.values}
 						indivMode={this.state.indivMode}
 						indivEdit={this.state.indivEdit}
 						currentGroup={this.state.currentGroup}/>
@@ -190,6 +194,6 @@ export default class FontControls extends React.Component {
 					{tabs}
 				</ControlsTabs>
 			</div>
-		)
+		);
 	}
 }

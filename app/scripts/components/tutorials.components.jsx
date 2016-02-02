@@ -27,7 +27,7 @@ export default class Tutorials extends React.Component {
 						subText="Discovers the power of good groups of individualized glyphs"/>
 				</div>
 			</div>
-		)
+		);
 	}
 }
 
@@ -40,6 +40,6 @@ class Tutorial extends React.Component {
 					{this.props.subText}
 				</p>
 			</div>
-		)
+		);
 	}
 }

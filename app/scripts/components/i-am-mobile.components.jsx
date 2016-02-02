@@ -13,6 +13,6 @@ export default class IAmMobile extends React.Component {
 					<h1>Sorry :( ! Prototypo is not currently available on mobile browser.</h1>
 				</div>
 			</div>
-		)
+		);
 	}
 }

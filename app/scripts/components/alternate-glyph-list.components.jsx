@@ -8,8 +8,8 @@ export default class AlternateGlyphList extends React.Component {
 		this.client = LocalClient.instance();
 	}
 
-	alternate( unicode, glyphName ) {
-		this.client.dispatchAction('/set-alternate', {unicode,glyphName});
+	alternate(unicode, glyphName) {
+		this.client.dispatchAction('/set-alternate', {unicode, glyphName});
 	}
 
 	render() {
@@ -19,15 +19,15 @@ export default class AlternateGlyphList extends React.Component {
 		return (
 			<div className="alternate-glyph-list">
 				{
-					_.map(this.props.alts, (glyph,i) => {
+					_.map(this.props.alts, (glyph, i) => {
 						return (
-							<div onClick={() => { this.alternate( this.props.unicode, glyph.name )}}>
+							<div onClick={() => { this.alternate(this.props.unicode, glyph.name);}}>
 								<Glyph glyph={glyph} unicode={this.props.unicode} key={`alt-${this.props.unicode}-${i}`}/>
 							</div>
-						)
+						);
 					})
 				}
 			</div>
-		)
+		);
 	}
 }

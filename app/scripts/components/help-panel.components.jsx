@@ -4,7 +4,7 @@ import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-import Tutorials from './tutorials.components.jsx';
+//import Tutorials from './tutorials.components.jsx';
 
 export default class HelpPanel extends React.Component {
 
@@ -31,12 +31,12 @@ export default class HelpPanel extends React.Component {
 						<div className="help-panel-button help-panel-button-intercom" onClick={() => { window.Intercom('show');}}>
 							If you need any help or just want to say hi, come chat with us !
 						</div>
-						<div className="help-panel-button" onClick={() => { this.saveLog() }}>
+						<div className="help-panel-button" onClick={() => { this.saveLog(); }}>
 							Submit an event log
 						</div>
 					</div>
 				</ReactGeminiScrollbar>
 			</div>
-		)
+		);
 	}
 }

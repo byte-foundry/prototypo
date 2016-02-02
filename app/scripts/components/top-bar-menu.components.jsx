@@ -1,6 +1,6 @@
 import React from 'react';
 import Classnames from 'classnames';
-import CheckBoxWithImg from './checkbox-with-img.components.jsx'
+import CheckBoxWithImg from './checkbox-with-img.components.jsx';
 
 class TopBarMenu extends React.Component {
 	render() {
@@ -9,8 +9,8 @@ class TopBarMenu extends React.Component {
 		}
 		const headers = _.without(this.props.children, false).map((child) => {
 			const classes = Classnames({
-				'top-bar-menu-item':true,
-				'is-aligned-right':child.props.alignRight,
+				'top-bar-menu-item': true,
+				'is-aligned-right': child.props.alignRight,
 				'is-action': child.props.action,
 				'is-icon-menu': !!child.props.img,
 			});
@@ -20,13 +20,14 @@ class TopBarMenu extends React.Component {
 					{child.type.getHeader(child.props)}
 					{child}
 				</li>
-			)
+			);
 		});
+
 		return (
 			<ul className="top-bar-menu">
 				{headers}
 			</ul>
-		)
+		);
 	}
 }
 
@@ -34,8 +35,9 @@ class TopBarMenuDropdown extends React.Component {
 	static getHeader(props) {
 		const content = ({
 			'title': props.name ? <span className="top-bar-menu-item-title">{props.name}</span> : false,
-			'img': props.img ? <img className="top-bar-menu-item-img" src={props.img}/> : false
+			'img': props.img ? <img className="top-bar-menu-item-img" src={props.img}/> : false,
 		});
+
 		return {content};
 	}
 
@@ -44,21 +46,21 @@ class TopBarMenuDropdown extends React.Component {
 			console.log('[RENDER] topbarmenudropdown');
 		}
 		const classes = Classnames({
-			'top-bar-menu-item-dropdown':true,
-			'is-small':this.props.small,
+			'top-bar-menu-item-dropdown': true,
+			'is-small': this.props.small,
 		});
 
 		return (
 			<ul className={classes} id={this.props.idMenu}>
 				{this.props.children}
 			</ul>
-		)
+		);
 	}
 }
 
 class TopBarMenuAction extends React.Component {
 	static getHeader(props) {
-		return <div className="top-bar-menu-action" onClick={(e) => props.click(e)}>{props.name}</div>;
+		return <div className="top-bar-menu-action" onClick={(e) => {props.click(e);}}>{props.name}</div>;
 	}
 
 	render() {
@@ -69,20 +71,20 @@ class TopBarMenuAction extends React.Component {
 	}
 }
 
-function setupKeyboardShortcut(key,modifier,cb) {
+function setupKeyboardShortcut(key, modifier, cb) {
 	document.addEventListener('keydown', (e) => {
 		if ((!modifier || e[`${modifier}Key`]) && e.keyCode === key.toUpperCase().charCodeAt(0)) {
 			cb();
 		}
 	});
-};
+}
 
 class TopBarMenuDropdownItem extends React.Component {
 	shouldComponentUpdate(newProps) {
 		return (
-			this.props.name !== newProps.name ||
-			this.props.shortcut !== newProps.shortcut ||
-			this.props.handler !== newProps.handler
+			this.props.name !== newProps.name
+			|| this.props.shortcut !== newProps.shortcut
+			|| this.props.handler !== newProps.handler
 		);
 	}
 
@@ -95,7 +97,7 @@ class TopBarMenuDropdownItem extends React.Component {
 				modifier = undefined;
 			}
 
-			setupKeyboardShortcut(key,modifier,() => {
+			setupKeyboardShortcut(key, modifier, () => {
 				this.props.handler();
 			});
 		}
@@ -105,15 +107,16 @@ class TopBarMenuDropdownItem extends React.Component {
 			console.log('[RENDER] topbarmenudropdownitem');
 		}
 		const classes = Classnames({
-			'top-bar-menu-item-dropdown-item':true,
-			'is-disabled':this.props.disabled,
-		})
+			'top-bar-menu-item-dropdown-item': true,
+			'is-disabled': this.props.disabled,
+		});
+
 		return (
 			<li className={classes} onClick={this.props.handler}>
 				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
 				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
 			</li>
-		)
+		);
 	}
 }
 
@@ -127,14 +130,9 @@ class TopBarMenuDropdownCheckBox extends React.Component {
 			console.log('[RENDER] topbarmenudropdowncheckbox');
 		}
 		const classes = Classnames({
-			'top-bar-menu-item-dropdown-item':true,
+			'top-bar-menu-item-dropdown-item': true,
 			'is-checkbox': true,
-			'is-disabled':this.props.disabled,
-		});
-
-		const checkboxClasses = Classnames({
-			'top-bar-menu-item-dropdown-item-checkbox':true,
-			'is-checked':this.props.checked,
+			'is-disabled': this.props.disabled,
 		});
 
 		return (
@@ -143,7 +141,7 @@ class TopBarMenuDropdownCheckBox extends React.Component {
 				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
 				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
 			</li>
-		)
+		);
 	}
 }
 
@@ -153,4 +151,4 @@ export {
 	TopBarMenuDropdownItem,
 	TopBarMenuDropdownCheckBox,
 	TopBarMenuAction,
-}
+};

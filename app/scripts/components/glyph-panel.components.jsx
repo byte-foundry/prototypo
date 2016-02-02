@@ -1,12 +1,10 @@
 import React from 'react';
 import GlyphList from './glyph-list.components.jsx';
-import Remutable from 'remutable';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 
-import ClassNames from 'classnames';
+import Classnames from 'classnames';
 
 export default class GlyphPanel extends React.Component {
 	constructor(props) {
@@ -20,7 +18,6 @@ export default class GlyphPanel extends React.Component {
 	async componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
-		const server = new LocalServer().instance;
 
 		const glyphs = await this.client.fetch('/glyphs');
 
@@ -31,14 +28,14 @@ export default class GlyphPanel extends React.Component {
 			(name) => {
 				return `selectioner ${name}`;
 			},
-			(headJS) => {
+			() => {
 				return true;
 				//TODO(franz): Here we shall save stuff to hoodie
 			});
 		this.client.getStore('/panel', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					show:head.toJS().mode.indexOf('list') !== -1,
+					show: head.toJS().mode.indexOf('list') !== -1,
 				});
 			})
 			.onDelete(() => {
@@ -48,7 +45,7 @@ export default class GlyphPanel extends React.Component {
 		this.client.getStore('/glyphs', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					glyphs:head.toJS(),
+					glyphs: head.toJS(),
 				});
 			})
 			.onDelete(() => {
@@ -58,8 +55,8 @@ export default class GlyphPanel extends React.Component {
 		this.client.getStore('/tagStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					tags:head.toJS(),
-				})
+					tags: head.toJS(),
+				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -68,10 +65,10 @@ export default class GlyphPanel extends React.Component {
 		this.client.getStore('/searchStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					search:head.toJS().glyphSearch,
-					savedSearch:head.toJS().savedSearch,
-					pinnedSearch:head.toJS().pinned,
-				})
+					search: head.toJS().glyphSearch,
+					savedSearch: head.toJS().savedSearch,
+					pinnedSearch: head.toJS().pinned,
+				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -87,10 +84,10 @@ export default class GlyphPanel extends React.Component {
 			console.log('[RENDER] GlyphPanel');
 		}
 
-		const classes = ClassNames({
+		const classes = Classnames({
 			'is-locked': this.state.glyphs.locked,
 			'is-active': this.state.show,
-		})
+		});
 
 		return (
 			<div id="glyphpanel" className={classes}>
@@ -104,6 +101,6 @@ export default class GlyphPanel extends React.Component {
 					savedSearch={this.state.savedSearch}
 					pinnedSearch={this.state.pinnedSearch}/>
 			</div>
-		)
+		);
 	}
 }

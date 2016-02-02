@@ -5,7 +5,7 @@ export default class Modal extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Modal');
 		}
-		let content;
+
 		if (this.props.show) {
 		return (
 			<div className="modal-container">
@@ -14,7 +14,7 @@ export default class Modal extends React.Component {
 					{this.props.children}
 				</div>
 			</div>
-		)
+		);
 		}
 		else {
 			return false;

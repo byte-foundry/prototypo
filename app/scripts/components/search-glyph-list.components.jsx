@@ -1,13 +1,12 @@
 import React from 'react';
-import Lifespan from 'lifespan';
-import ClassNames from 'classnames';
+import Classnames from 'classnames';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class SearchGlyphList extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {}
+		this.state = {};
 	}
 
 	componentWillMount() {
@@ -16,13 +15,13 @@ export default class SearchGlyphList extends React.Component {
 
 	changeSearch() {
 		this.client.dispatchAction('/search-glyph', {
-			query: React.findDOMNode(this.refs.search).value
+			query: React.findDOMNode(this.refs.search).value,
 		});
 	}
 
 	saveSearch() {
 		this.client.dispatchAction('/save-search-glyph', {
-			query: React.findDOMNode(this.refs.search).value
+			query: React.findDOMNode(this.refs.search).value,
 		});
 		React.findDOMNode(this.refs.search).value = '';
 	}
@@ -32,15 +31,15 @@ export default class SearchGlyphList extends React.Component {
 			console.log('[RENDER] SearchGlyphList');
 		}
 
-		const classes = ClassNames({
-			'search-glyph-list': true
+		const classes = Classnames({
+			'search-glyph-list': true,
 		});
 
 		return (
 			<form className={classes}>
-				<input className="search-glyph-list-input" ref="search" placeholder="Search glyph…" type="text" onChange={() => { this.changeSearch() }}/>
-				<input className="search-glyph-list-submit" type="button" onClick={() => { this.saveSearch()}}/>
+				<input className="search-glyph-list-input" ref="search" placeholder="Search glyph…" type="text" onChange={() => { this.changeSearch(); }}/>
+				<input className="search-glyph-list-submit" type="button" onClick={() => { this.saveSearch();}}/>
 			</form>
-		)
+		);
 	}
 }

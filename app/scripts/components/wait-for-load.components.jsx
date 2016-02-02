@@ -7,6 +7,7 @@ export default class WaitForLoad extends React.Component {
 			console.log('[RENDER] WaitForLoad');
 		}
 		let content;
+
 		if (this.props.loaded) {
 			content = this.props.children;
 		}
@@ -16,6 +17,7 @@ export default class WaitForLoad extends React.Component {
 				'sk-spinner-wave': true,
 				'sk-secondary-color': this.props.secColor,
 			});
+
 			content = (
 				<div className="wait-for-load">
 					<div className={rectClass}>
@@ -26,12 +28,12 @@ export default class WaitForLoad extends React.Component {
 						<div className="sk-rect5"></div>
 					</div>
 				</div>
-			)
+			);
 		}
 		return (
 			<div>
 				{content}
 			</div>
-		)
+		);
 	}
 }

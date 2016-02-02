@@ -1,14 +1,14 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
-import ClassNames from 'classnames';
+import Classnames from 'classnames';
 import Log from '../services/log.services.js';
 
 /* Apparently this component is never used */
 export default class FontSelector extends React.Component {
 	componentWillMount() {
 		this.lifespan = new Lifespan();
-		this.client = new LocalClient.instance();
+		this.client = LocalClient.instance();
 	}
 
 	componentWillUnmount() {
@@ -29,15 +29,15 @@ export default class FontSelector extends React.Component {
 			'fontFamily': `"${this.props.font.familyName}"`,
 		};
 
-		const classes = ClassNames({
+		const classes = Classnames({
 			'font-selector': true,
 			'is-selected': this.props.selectedRepo === this.props.font.repo,
 		});
 
 		return (
-			<li className={classes} onClick={ () => { this.changeFont() }}>
+			<li className={classes} onClick={ () => { this.changeFont(); }}>
 				<div style={family} className="font-selector-name">{`${this.props.font.name} - ${this.props.text}`}</div>
 			</li>
-		)
+		);
 	}
 }

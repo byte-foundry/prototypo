@@ -7,6 +7,6 @@ export default class WarningMessage extends React.Component {
 		}
 		return (
 			<div className="warning-message">{this.props.text}</div>
-		)
+		);
 	}
 }

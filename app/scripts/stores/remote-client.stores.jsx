@@ -1,6 +1,4 @@
-import React from 'react';
 import Client from 'nexus-flux-socket.io';
-import Lifespan from 'lifespan';
 import HoodieApi from '../services/hoodie.services.js';
 
 export default class RemoteClient {

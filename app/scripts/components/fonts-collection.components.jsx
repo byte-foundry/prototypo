@@ -39,6 +39,6 @@ export default class FontsCollection extends React.Component {
 				<AddFamily />
 				<FamilyList selected={this.state.family} variantSelected={this.state.variant}/>
 			</div>
-		)
+		);
 	}
 }
