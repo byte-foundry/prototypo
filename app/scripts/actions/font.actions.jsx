@@ -1,11 +1,15 @@
-import {fontStore} from '../stores/creation.stores.jsx';
+import XXHash from 'xxhashjs';
+
+import {fontStore, fontVariant, fontLibrary} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {Typefaces} from './services/typefaces.services.js';
-import {loadFontValues} from './helpers/loadValues.helpers.js';
+import {copyFontValues, loadFontValues, saveAppValues} from './helpers/loadValues.helpers.js';
+import {FontValues} from './services/values.services.js';
 
 const localServer = LocalServer.instance;
 const localClient = LocalClient.instance();
+const hasher = XXHash(0xDEADBEEF);
 
 export default {
 	'/create-font': (familyName) => {
@@ -60,5 +64,211 @@ export default {
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 
 		loadFontValues(typedata, db);
+	},
+	'/create-family': async ({name, template, loadCurrent}) => {
+		let templateToLoad = template;
+
+		localClient.dispatchAction('/cancel-indiv-mode');
+		if (loadCurrent) {
+			templateToLoad = fontVariant.get('family').template;
+		}
+
+		if (template === undefined) {
+			const patch = fontLibrary.set('errorAddFamily', 'You must choose a base template').commit();
+
+			localServer.dispatchUpdate('/fontLibrary', patch);
+			return;
+		}
+
+		if (name === undefined || name === '') {
+			const patch = fontLibrary.set('errorAddFamily', 'You must choose a name for your family').commit();
+
+			localServer.dispatchUpdate('/fontLibrary', patch);
+			return;
+		}
+
+		const fonts = Array.from(fontLibrary.get('fonts'));
+		const newFont = {
+			name,
+			templateToLoad,
+			variants: [
+				{
+					id: hasher.update(`REGULAR${(new Date()).getTime()}`).digest().toString(16),
+					name: 'REGULAR',
+					db: `${name}_regular`,
+				},
+			],
+		};
+
+		const already = _.find(fonts, (font) => {
+			return font.name === name;
+		});
+
+		if (already) {
+			const patch = fontLibrary.set('errorAddFamily', 'A Family with this name already exists').commit();
+
+			localServer.dispatchUpdate('/fontLibrary', patch);
+			return;
+		}
+
+		fonts.push(newFont);
+
+		const patch = fontLibrary
+			.set('errorAddFamily', undefined)
+			.commit();
+
+		localServer.dispatchUpdate('/fontLibrary', patch);
+
+		setTimeout(() => {
+			const patchLib = fontLibrary
+				.set('fonts', fonts)
+				.commit();
+
+			localServer.dispatchUpdate('/fontLibrary', patchLib);
+		}, 200);
+
+		if (loadCurrent) {
+			await copyFontValues(newFont.variants[0].db);
+		}
+
+		localClient.dispatchAction('/change-font', {
+			templateToLoad,
+			db: newFont.variants[0].db,
+		});
+
+		const patchVariant = fontVariant
+			.set('variant', newFont.variants[0])
+			.set('family', {name: newFont.name, template: newFont.template}).commit();
+
+		localServer.dispatchUpdate('/fontVariant', patchVariant);
+
+		saveAppValues(appValuesLoaded);
+	},
+	'/select-variant': ({variant, family}) => {
+		localClient.dispatchAction('/cancel-indiv-mode');
+		const patchVariant = fontVariant
+			.set('variant', variant)
+			.set('family', {name: family.name, template: family.template}).commit();
+
+		localServer.dispatchUpdate('/fontVariant', patchVariant);
+
+		localClient.dispatchAction('/change-font', {
+			template: family.template,
+			db: variant.db,
+		});
+		saveAppValues(appValuesLoaded);
+	},
+	'/create-variant': async ({name, familyName}) => {
+		localClient.dispatchAction('/cancel-indiv-mode');
+		const family = _.find(Array.from(fontLibrary.get('fonts') || []), (font) => {
+			return font.name === familyName;
+		});
+
+		const already = _.find(family.variants, (item) => {
+			return item.name === name;
+		});
+
+		if (already) {
+			const patch = fontLibrary.set('errorAddVariant', 'Variant with this name already exists').commit();
+
+			localServer.dispatchUpdate('/fontLibrary', patch);
+			return;
+		}
+
+		const variant = {
+			id: hasher.update(`${name}${(new Date()).getTime()}`).digest().toString(16),
+			name,
+			db: `${familyName}_${name}`,
+		};
+		const thicknessTransform = [
+			{string: 'THIN', thickness: 20},
+			{string: 'LIGHT', thickness: 50},
+			{string: 'BOOK', thickness: 70},
+			{string: 'BOLD', thickness: 115},
+			{string: 'SEMI-BOLD', thickness: 100},
+			{string: 'EXTRA-BOLD', thickness: 135},
+			{string: 'BLACK', thickness: 150},
+		];
+
+		family.variants.push(variant);
+
+		const patch = fontLibrary
+			.set('fonts', fontLibrary.get('fonts'))
+			.set('errorAddVariant', undefined).commit();
+
+		localServer.dispatchUpdate('/fontLibrary', patch);
+
+		const ref = await FontValues.get({typeface: family.variants[0].db});
+
+		_.each(thicknessTransform, (item) => {
+			if (name.indexOf(item.string) !== -1) {
+				ref.values.thickness = item.thickness;
+			}
+		});
+
+		if (name.indexOf('ITALIC') !== -1) {
+			ref.values.slant = 10;
+		}
+
+		setTimeout(async () => {
+			await FontValues.save({typeface: variant.db, values: ref.values});
+			localClient.dispatchAction('/select-variant', {variant, family});
+		}, 200);
+
+	},
+	'/edit-variant': ({variant, family, newName}) => {
+		const found = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
+			return item.name === family.name;
+		});
+
+		const newVariant = _.find(found.variants || [], (item) => {
+			return variant.id === item.id;
+		});
+
+		newVariant.name = newName;
+
+		const patch = fontLibrary.set('fonts', fontLibrary.get('fonts')).commit();
+
+		localServer.dispatchUpdate('/fontLibrary', patch);
+		saveAppValues(appValuesLoaded);
+	},
+	'/delete-variant': ({variant, familyName}) => {
+		const family = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
+			return item.name === familyName;
+		});
+
+		_.pull(family.variants, variant);
+
+		const patch = fontLibrary.set('fonts', fontLibrary.get('fonts')).commit();
+
+		localServer.dispatchUpdate('/fontLibrary', patch);
+		saveAppValues(appValuesLoaded);
+
+	},
+	'/delete-family': ({family}) => {
+		const families = Array.from(fontLibrary.get('fonts'));
+
+		_.remove(families, (checkee) => {
+			return checkee.name === family.name && checkee.template === family.template;
+		});
+		const patch = fontLibrary.set('fonts', families).commit();
+
+		localServer.dispatchUpdate('/fontLibrary', patch);
+
+		family.variants.forEach((variant) => {
+			FontValues.deleteDb({typeface: variant.db});
+		});
+
+		saveAppValues(appValuesLoaded);
+	},
+	'/clear-error-family': () => {
+		const patch = fontLibrary.set('errorAddFamily', undefined).commit();
+
+		localServer.dispatchUpdate('/fontLibrary', patch);
+	},
+	'/clear-error-variant': () => {
+		const patch = fontLibrary.set('errorAddVariant', undefined).commit();
+
+		localServer.dispatchUpdate('/fontLibrary', patch);
 	},
 };
