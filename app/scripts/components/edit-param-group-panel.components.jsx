@@ -1,5 +1,4 @@
 import React from 'react';
-import Lifespan from 'lifespan';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -14,17 +13,17 @@ export default class EditParamGroupPanel extends React.Component {
 	}
 
 	removeGlyph(glyph) {
-		this.client.dispatchAction('/remove-glyph',{glyph});
+		this.client.dispatchAction('/remove-glyph', {glyph});
 	}
 
 	saveGroup() {
-		this.client.dispatchAction('/save-param-group', {name: React.findDOMNode(this.refs.name).value });
+		this.client.dispatchAction('/save-param-group', {name: React.findDOMNode(this.refs.name).value});
 	}
 
 	render() {
 
 		const glyphs = _.map(this.props.glyphs, (glyph) => {
-			return <div key={glyph} onClick={() => { this.removeGlyph(glyph)}} className="edit-param-group-panel-glyph">{String.fromCharCode(glyph)}</div>
+			return <div key={glyph} onClick={() => { this.removeGlyph(glyph);}} className="edit-param-group-panel-glyph">{String.fromCharCode(glyph)}</div>;
 		});
 
 		const error = this.props.errorEdit ? (
@@ -43,13 +42,13 @@ export default class EditParamGroupPanel extends React.Component {
 				<div className="delete-param-group-glyphs">
 					{glyphs}
 				</div>
-				<button className="create-param-group-form-add-glyph" onClick={(e) => { this.toggleGlyphs(e) }}>Add multiple glyph to this group</button>
+				<button className="create-param-group-form-add-glyph" onClick={(e) => { this.toggleGlyphs(e); }}>Add multiple glyph to this group</button>
 				{error}
 				<div className="create-param-group-form-buttons">
-					<button className="create-param-group-form-buttons-cancel" onClick={() => {this.client.dispatchAction('/edit-param-group', false)}}>Cancel</button>
-					<button className="create-param-group-form-buttons-submit" onClick={() => {this.saveGroup()}}>Save</button>
+					<button className="create-param-group-form-buttons-cancel" onClick={() => {this.client.dispatchAction('/edit-param-group', false);}}>Cancel</button>
+					<button className="create-param-group-form-buttons-submit" onClick={() => {this.saveGroup();}}>Save</button>
 				</div>
 			</div>
-		)
+		);
 	}
 }

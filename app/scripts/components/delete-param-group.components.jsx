@@ -17,7 +17,7 @@ export default class DeleteParamGroup extends React.Component {
 
 	render() {
 		const glyphs = _.map(this.props.glyphs, (glyph) => {
-			return <div className="delete-param-group-glyph">{String.fromCharCode(glyph)}</div>
+			return <div className="delete-param-group-glyph">{String.fromCharCode(glyph)}</div>;
 		});
 
 		return (
@@ -32,10 +32,10 @@ export default class DeleteParamGroup extends React.Component {
 					{glyphs}
 				</div>
 				<div className="create-param-group-form-buttons">
-					<button className="create-param-group-form-buttons-cancel" onClick={() => { this.cancelDelete()}}>Cancel</button>
-					<button className="create-param-group-form-buttons-submit" onClick={() => { this.deleteGroup()}}>Delete</button>
+					<button className="create-param-group-form-buttons-cancel" onClick={() => { this.cancelDelete();}}>Cancel</button>
+					<button className="create-param-group-form-buttons-submit" onClick={() => { this.deleteGroup();}}>Delete</button>
 				</div>
 			</div>
-		)
+		);
 	}
 }

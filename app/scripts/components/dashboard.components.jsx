@@ -7,7 +7,7 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import Sidebar from './sidebar.components.jsx';
 import Workboard from './workboard.components.jsx';
 import {OnBoarding, OnBoardingStep} from './onboarding.components.jsx';
-import NpsMessage from './nps-message.components.jsx';
+//import NpsMessage from './nps-message.components.jsx';
 
 export default class Dashboard extends React.Component {
 
@@ -39,8 +39,8 @@ export default class Dashboard extends React.Component {
 
 	shouldComponentUpdate(newProps, newState) {
 		return (
-			newState.onboard !== this.state.onboard ||
-			(!newState.onboard && newState.step !== this.state.step)
+			newState.onboard !== this.state.onboard
+			|| (!newState.onboard && newState.step !== this.state.step)
 		);
 	}
 
@@ -81,8 +81,8 @@ export default class Dashboard extends React.Component {
 						<h1>Welcome to Prototypo</h1>
 						<p>This little tutorial will explain the basic features of Prototypo and how to use them.</p>
 						<div className="onboarding-step-footer">
-							<button className="onboarding-step-footer-btn" onClick={() => {this.goToNextStep('createFamily')}}>Proceed to next step</button>
-							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding()}}>Exit tutorial</button>
+							<button className="onboarding-step-footer-btn" onClick={() => {this.goToNextStep('createFamily');}}>Proceed to next step</button>
+							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding();}}>Exit tutorial</button>
 						</div>
 					</OnBoardingStep>
 					<OnBoardingStep name="createFamily" type="indicator" target="font-collection">
@@ -106,7 +106,7 @@ export default class Dashboard extends React.Component {
 						<p>Adjust the parameters to customize your font. There are three different types of parameters available in this tutorial.</p>
 						<p>From here, you can explore different components of the interface (list of glyphs, views, etc.), or you can directly export your font.</p>
 						<div className="onboarding-step-footer">
-							<button className="onboarding-step-footer-btn" onClick={() => {this.goToNextStep('export')}}>Export your font</button>
+							<button className="onboarding-step-footer-btn" onClick={() => {this.goToNextStep('export');}}>Export your font</button>
 						</div>
 					</OnBoardingStep>
 					<OnBoardingStep name="export" type="indicator" target="file-menu" arrowPos="top" inverseArrow={true} targetAlign="bottom center" elementAlign="top center" offset="-50px -18px">
@@ -136,14 +136,14 @@ export default class Dashboard extends React.Component {
 						<p>You just finished the tutorial. You now know the basic functionality offered by Prototypo.</p>
 						<p>If you want to go further you can subscribe to <a href="www.prototypo.io/pricing" target="_blank">our professional plan</a> to enjoy the full customization potential.</p>
 						<div className="onboarding-step-footer">
-							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding()}}>Exit tutorial</button>
+							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding();}}>Exit tutorial</button>
 						</div>
 					</OnBoardingStep>
 					<OnBoardingStep name="premature-end" type="indicator" target="file-menu" arrowPos="top" inverseArrow={true} targetAlign="bottom center" elementAlign="top center" offset="-50px -18px" noclose={true}>
 						<h1>Don't worry!</h1>
 						<p>You can restart the tutorial if you so desire by clicking the "Restart tutorial" button in the file menu</p>
 						<div className="onboarding-step-footer">
-							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding()}}>Exit tutorial</button>
+							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding();}}>Exit tutorial</button>
 						</div>
 					</OnBoardingStep>
 				</OnBoarding>
@@ -155,6 +155,6 @@ export default class Dashboard extends React.Component {
 				<Workboard />
 				{onboarding}
 			</div>
-		)
+		);
 	}
 }

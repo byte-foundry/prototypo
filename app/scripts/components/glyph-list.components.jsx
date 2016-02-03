@@ -13,10 +13,10 @@ export default class GlyphList extends React.Component {
 	}
 
 	shouldComponentUpdate(newProps) {
-		if (this.props.selected === newProps.selected &&
-			this.props.selectedTag === newProps.selectedTag &&
-			_.isEqual(this.props.pinned, newProps.pinned).length &&
-			this.props.glyphs === newProps.glyphs) {
+		if (this.props.selected === newProps.selected
+			&& this.props.selectedTag === newProps.selectedTag
+			&& _.isEqual(this.props.pinned, newProps.pinned).length
+			&& this.props.glyphs === newProps.glyphs) {
 			return false;
 		}
 		else {
@@ -25,7 +25,7 @@ export default class GlyphList extends React.Component {
 	}
 
 	exportOTF() {
-		this.client.dispatchAction('/export-otf', {merged:true});
+		this.client.dispatchAction('/export-otf', {merged: true});
 
 		Log.ui('GlyphList.exportOTF');
 	}
@@ -34,43 +34,45 @@ export default class GlyphList extends React.Component {
 		const tokens = search.split(' ');
 		const fields = [
 			{
-				name:'glyphName',
-				comp: (field,srch) => {
+				name: 'glyphName',
+				comp: (field, srch) => {
 					return field.indexOf(srch) !== -1;
-				}
+				},
 			},
 			{
-				name:'unicode',
-				comp: (field,srch) => {
+				name: 'unicode',
+				comp: (field, srch) => {
 					return field.indexOf(srch) !== -1;
-				}
+				},
 			},
 			{
-				name:'characterName',
-				comp: (field,srch) => {
+				name: 'characterName',
+				comp: (field, srch) => {
 					let result = false;
+
 					field.split(' ').forEach((fieldToken) => {
 						result = result || fieldToken.startsWith(srch);
 					});
 					return result;
-				}
+				},
 			},
 		];
 		let isOk = true;
-		
+
 		tokens.forEach((token) => {
 			let tokenOk = false;
+
 			fields.forEach((field) => {
-				tokenOk = tokenOk ||
-				(
-					glyph[0].src[field.name] && 
-						field.comp(
+				tokenOk = tokenOk
+				|| (
+					glyph[0].src[field.name]
+						&& field.comp(
 							glyph[0].src[field.name].toString().toLowerCase(),
 							token.toLowerCase()
 						)
-				)
+				);
 			});
-			isOk = isOk && tokenOk
+			isOk = isOk && tokenOk;
 		});
 
 		return isOk;
@@ -84,14 +86,17 @@ export default class GlyphList extends React.Component {
 		const glyphs = _.pick(this.props.glyphs, (glyph) => {
 			if (glyph[0].src) {
 				return (
-					glyph[0].src.tags.indexOf(this.props.selectedTag) !== -1 &&
-					(
+					glyph[0].src.tags.indexOf(this.props.selectedTag) !== -1
+					&& (
 						!this.props.search || this.isGlyphInSearch(glyph, this.props.search)
 					)
-				)
+				);
 			}
-			else return false;
+			else {
+				return false;
+			}
 		});
+
 		return (
 			<div className="glyph-list clearfix">
 				<GlyphTagList
@@ -105,17 +110,19 @@ export default class GlyphList extends React.Component {
 					<div className="glyph-list-glyphs">
 						{
 							_.map(glyphs, (glyph, unicode) => {
-								if (selectedGlyph === unicode)
+								if (selectedGlyph === unicode) {
 									return (<Glyph glyph={glyph} selected={true} unicode={unicode} key={unicode} />);
-								else
+								}
+								else {
 									return (<Glyph glyph={glyph} selected={false} unicode={unicode} key={unicode} />);
+								}
 
 							})
 						}
 					</div>
 				</ReactGeminiScrollbar>
 				<SearchGlyphList/>
-				<div title="Export and download your font" className="export-btn" onClick={() => { this.exportOTF() }}>Export OTF</div>
+				<div title="Export and download your font" className="export-btn" onClick={() => { this.exportOTF(); }}>Export OTF</div>
 			</div>
 		);
 	}

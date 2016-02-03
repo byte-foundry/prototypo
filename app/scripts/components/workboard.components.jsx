@@ -16,8 +16,8 @@ export default class Workboard extends React.Component {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-
 		const fontStore = this.client.fetch('/fontStore');
+
 		this.setState({
 			fontName: fontStore.get('fontName'),
 			glyphs: fontStore.get('glyphs'),
@@ -46,6 +46,6 @@ export default class Workboard extends React.Component {
 				<PrototypoPanel fontName={this.state.fontName} glyphs={this.state.glyphs}/>
 				<GlyphPanel />
 			</div>
-		)
+		);
 	}
 }

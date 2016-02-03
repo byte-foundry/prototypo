@@ -9,7 +9,7 @@ export default class Signin extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			warningMessage:undefined,
+			warningMessage: undefined,
 		};
 	}
 
@@ -37,9 +37,9 @@ export default class Signin extends React.Component {
 			})
 			.catch((err) => {
 				this.setState({
-					warningMessage: /unauthorized/i.test(err.message) ?
-						'Incorrect email or password' :
-						'An unexpected error occured, please contact contact@prototypo.io and mention your current email',
+					warningMessage: /unauthorized/i.test(err.message)
+						? 'Incorrect email or password'
+						: 'An unexpected error occured, please contact contact@prototypo.io and mention your current email',
 					loading: true,
 				});
 			});
@@ -58,7 +58,7 @@ export default class Signin extends React.Component {
 			console.log('[RENDER] Signin');
 		}
 		return (
-			<form className="sign-in" onSubmit={(e) => {this.signIn(e)}}>
+			<form className="sign-in" onSubmit={(e) => {this.signIn(e);}}>
 				<h1 className="sign-in-title">Sign in</h1>
 				<label className="sign-in-label" htmlFor="email-sign-in">Email</label>
 				<input
@@ -84,13 +84,15 @@ export default class Signin extends React.Component {
 				<a href="https://www.prototypo.io/pricing.html" className="sign-in-help-needed">
 					You don't have any account?
 				</a>
-				{((message) => {if (message) {
-					return <WarningMessage text={message}/>
-					}})(this.state.warningMessage)}
+				{((message) => {
+					if (message) {
+						return <WarningMessage text={message}/>;
+					}
+				})(this.state.warningMessage)}
 				<WaitForLoad loaded={this.state.loading} secColor={true}>
 					<input className="sign-in-button" type="submit" value="Sign in"></input>
 				</WaitForLoad>
 			</form>
-		)
+		);
 	}
 }

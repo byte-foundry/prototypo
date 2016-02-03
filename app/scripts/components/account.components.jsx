@@ -12,18 +12,19 @@ export default class Account extends React.Component {
 	async changePassword(e) {
 		e.preventDefault();
 		const password = React.findDOMNode(this.refs.password).value;
+
 		if (password.length < 6) {
 			this.setState({
-				passwordTooShort:true,
+				passwordTooShort: true,
 			});
 
 			return;
 		}
 
-		const result = await HoodieApi.changePassword(password);
+		await HoodieApi.changePassword(password);
 
 		this.setState({
-			passwordChanged:true,
+			passwordChanged: true,
 		});
 
 		return;
@@ -35,8 +36,8 @@ export default class Account extends React.Component {
 
 	componentWillUnmount() {
 		this.setState({
-			passwordChanged:false,
-			passwordTooShort:false,
+			passwordChanged: false,
+			passwordTooShort: false,
 		});
 	}
 
@@ -55,17 +56,17 @@ export default class Account extends React.Component {
 				<h2 className="account-block-title side-tab-h2">My subscription</h2>
 				<div className="account-block-plan">
 					{(() => {
-						if (!HoodieApi.instance.plan){
-							return 'All privileges';
-						}
-						else if ( HoodieApi.instance.plan.indexOf('free_') > -1 ) {
+						if (HoodieApi.instance.plan.indexOf('free_') > -1) {
 							return 'Free plan';
 						}
-						else if ( HoodieApi.instance.plan.indexOf('annual_') > -1 ) {
+						else if (HoodieApi.instance.plan.indexOf('annual_') > -1) {
 							return 'Professional annual plan';
 						}
-						else if ( HoodieApi.instance.plan.indexOf('monthly_') > -1 ) {
+						else if (HoodieApi.instance.plan.indexOf('monthly_') > -1) {
 							return 'Professional monthly plan';
+						}
+						else {
+							return 'All privileges';
 						}
 					})()}
 				</div>
@@ -76,30 +77,32 @@ export default class Account extends React.Component {
 		let passwordTooShort = false;
 
 		if (this.state.passwordTooShort) {
-			passwordTooShort = `You're password is too short (must be 6 characters long at least)`;
+			passwordTooShort = 'You\'re password is too short (must be 6 characters long at least)';
 		}
 
 		let changePassContent = false;
 
-		if (!this.state.passwordChanged) {
+		if (this.state.passwordChanged) {
 			changePassContent = (
 				<div className="account-block">
-					<h2 className="account-block-title side-tab-h2">Change password</h2>
-					<form className="account-block-form" onSubmit={(e) => { this.changePassword(e) }}>
-						<label className="account-block-form-label" htmlFor="new-password">New password (at least 6 characters)</label>
-						<input className="account-block-form-input" ref="password" type="password" id="new-password" placeholder="******" name="new-password"/>
-						{((message) => {if (message) {
-							return <WarningMessage text={message}/>
-						}})(passwordTooShort)}
-						<button className="account-block-form-button">Change password</button>
-					</form>
+					<h1 className="account-block-title">You're password has been changed !</h1>
 				</div>
 			);
 		}
 		else {
 			changePassContent = (
 				<div className="account-block">
-					<h1 className="account-block-title">You're password has been changed !</h1>
+					<h2 className="account-block-title side-tab-h2">Change password</h2>
+					<form className="account-block-form" onSubmit={(e) => { this.changePassword(e); }}>
+						<label className="account-block-form-label" htmlFor="new-password">New password (at least 6 characters)</label>
+						<input className="account-block-form-input" ref="password" type="password" id="new-password" placeholder="******" name="new-password"/>
+						{((message) => {
+							if (message) {
+								return <WarningMessage text={message}/>;
+							}
+						})(passwordTooShort)}
+						<button className="account-block-form-button">Change password</button>
+					</form>
 				</div>
 			);
 		}
@@ -109,7 +112,7 @@ export default class Account extends React.Component {
 				<h1 className="account-block-title side-tab-h1">
 					Admin panel
 					<div className="account-block-title-email">
-						<span className="account-block-title-email-icon" onClick={() => {this.logout()}}>
+						<span className="account-block-title-email-icon" onClick={() => {this.logout();}}>
 							<span className="account-block-title-email-icon-logout">
 								logout
 							</span>
@@ -120,6 +123,6 @@ export default class Account extends React.Component {
 				{accountInfos}
 				{changePassContent}
 			</div>
-		)
+		);
 	}
 }

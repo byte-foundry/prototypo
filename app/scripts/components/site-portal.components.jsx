@@ -9,7 +9,7 @@ export default class SitePortal extends React.Component {
 			})
 			.catch(() => {
 				location.href = '#/signin';
-			})
+			});
 	}
 
 	render() {

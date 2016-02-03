@@ -13,9 +13,9 @@ export default class PrototypoText extends React.Component {
 		super(props);
 
 		this.state = {
-			contextMenuPos:{x:0,y:0},
-			showContextMenu:false,
-		}
+			contextMenuPos: {x: 0, y: 0},
+			showContextMenu: false,
+		};
 	}
 
 	componentWillMount() {
@@ -24,13 +24,14 @@ export default class PrototypoText extends React.Component {
 
 		this.saveTextDebounced = _.debounce((text, prop) => {
 			//			if (text !== this.props.panel[this.props.field]) {
-				this.client.dispatchAction('/store-text',{value:text, propName:prop});
+				this.client.dispatchAction('/store-text', {value: text, propName: prop});
 				//}
 		}, 500);
 	}
 
 	setupText() {
 		const content = this.props.panel[this.props.field];
+
 		React.findDOMNode(this.refs.text).textContent = content && content.length > 0 ? content : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
 		// this.saveText();
 	}
@@ -50,20 +51,21 @@ export default class PrototypoText extends React.Component {
 
 	shouldComponentUpdate(newProps, newState) {
 		return (
-			this.props.fontName !== newProps.fontName ||
-				this.props.field !== newProps.field ||
-				this.props.panel.invertedTextView !== newProps.panel.invertedTextView ||
-				this.props.panel.textFontSize !== newProps.panel.textFontSize ||
-				this.props.panel.invertedTextColors !== newProps.panel.invertedTextColors ||
-				this.props.panel.mode.length !== newProps.panel.mode.length ||
-				newProps.panel[newProps.field] !== React.findDOMNode(this.refs.text).textContent ||
-				this.state.showContextMenu !== newState.showContextMenu ||
-				this.state.contextMenuPos !== newState.contextMenuPos
-		)
+			this.props.fontName !== newProps.fontName
+				|| this.props.field !== newProps.field
+				|| this.props.panel.invertedTextView !== newProps.panel.invertedTextView
+				|| this.props.panel.textFontSize !== newProps.panel.textFontSize
+				|| this.props.panel.invertedTextColors !== newProps.panel.invertedTextColors
+				|| this.props.panel.mode.length !== newProps.panel.mode.length
+				|| newProps.panel[newProps.field] !== React.findDOMNode(this.refs.text).textContent
+				|| this.state.showContextMenu !== newState.showContextMenu
+				|| this.state.contextMenuPos !== newState.contextMenuPos
+		);
 	}
 
 	saveText() {
 		const textDiv = React.findDOMNode(this.refs.text);
+
 		if (textDiv && textDiv.textContent) {
 			this.saveTextDebounced(textDiv.textContent, this.props.field);
 		}
@@ -72,7 +74,8 @@ export default class PrototypoText extends React.Component {
 	showContextMenu(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		const contextMenuPos = {x:e.nativeEvent.offsetX};
+		const contextMenuPos = {x: e.nativeEvent.offsetX};
+
 		if (this.props.panel.invertedTextView) {
 			contextMenuPos.y = React.findDOMNode(this.refs.text).clientHeight - e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
 		}
@@ -80,7 +83,7 @@ export default class PrototypoText extends React.Component {
 			contextMenuPos.y = e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
 		}
 		this.setState({
-			showContextMenu:true,
+			showContextMenu: true,
 			contextMenuPos,
 		});
 	}
@@ -88,7 +91,7 @@ export default class PrototypoText extends React.Component {
 	hideContextMenu() {
 		if (this.state.showContextMenu) {
 			this.setState({
-				showContextMenu:false,
+				showContextMenu: false,
 			});
 		}
 	}
@@ -102,10 +105,10 @@ export default class PrototypoText extends React.Component {
 			console.log('[RENDER] PrototypoText');
 		}
 		const style = {
-			'fontFamily':`'${this.props.fontName || 'theyaintus'}', sans-serif`,
+			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
 			'fontSize': `${this.props.panel.textFontSize || 1}em`,
 			'color': this.props.panel.invertedTextColors ? '#fefefe' : '#232323',
-			'backgroundColor': !this.props.panel.invertedTextColors ? '#fefefe' : '#232323',
+			'backgroundColor': this.props.panel.invertedTextColors ? '#232323' : '#fefefe',
 			'transform': this.props.panel.invertedTextView ? 'scaleY(-1)' : 'scaleY(1)',
 		};
 
@@ -113,19 +116,19 @@ export default class PrototypoText extends React.Component {
 			<ContextualMenuItem
 				text="Inverted view"
 				key="colors"
-				click={() => { this.client.dispatchAction('/store-panel-param',{invertedTextView:!this.props.panel.invertedTextView}) }}/>,
+				click={() => { this.client.dispatchAction('/store-panel-param', {invertedTextView: !this.props.panel.invertedTextView}); }}/>,
 			<ContextualMenuItem
 				text="Toggle colors"
 				key="view"
-				click={() => { this.client.dispatchAction('/store-panel-param',{invertedTextColors:!this.props.panel.invertedTextColors}) }}/>,
-		]
+				click={() => { this.client.dispatchAction('/store-panel-param', {invertedTextColors: !this.props.panel.invertedTextColors}); }}/>,
+		];
 
 		return (
 			<div
 				className="prototypo-text"
-				onContextMenu={(e) => { this.showContextMenu(e) }}
-				onClick={() => { this.hideContextMenu() }}
-				onMouseLeave={() => { this.hideContextMenu() }}>
+				onContextMenu={(e) => { this.showContextMenu(e); }}
+				onClick={() => { this.hideContextMenu(); }}
+				onMouseLeave={() => { this.hideContextMenu(); }}>
 				<ReactGeminiScrollbar>
 					<div
 						contentEditable="true"
@@ -133,20 +136,20 @@ export default class PrototypoText extends React.Component {
 						className="prototypo-text-string"
 						spellCheck="false"
 						style={style}
-						onInput={() => { this.saveText() }}
+						onInput={() => { this.saveText(); }}
 						></div>
 				</ReactGeminiScrollbar>
 				<div className="action-bar">
-					<CloseButton click={() => { this.props.close('text') }}/>
+					<CloseButton click={() => { this.props.close('text'); }}/>
 					<ZoomButtons
-						plus={() => { this.changeTextFontSize(this.props.panel.textFontSize + 0.3) }}
-						minus={() => { this.changeTextFontSize(this.props.panel.textFontSize - 0.3) }}
+						plus={() => { this.changeTextFontSize(this.props.panel.textFontSize + 0.3); }}
+						minus={() => { this.changeTextFontSize(this.props.panel.textFontSize - 0.3); }}
 					/>
 				</div>
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
 					{menu}
 				</ContextualMenu>
 			</div>
-		)
+		);
 	}
 }

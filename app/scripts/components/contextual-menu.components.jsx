@@ -7,8 +7,8 @@ class ContextualMenu extends React.Component {
 		}
 
 		const menuStyle = {
-			top:this.props.pos.y,
-			left:this.props.pos.x,
+			top: this.props.pos.y,
+			left: this.props.pos.x,
 		};
 
 		return this.props.show ? (
@@ -31,11 +31,11 @@ class ContextualMenuItem extends React.Component {
 			<li className="contextual-menu-list-item" onClick={this.props.click}>
 				{this.props.text}
 			</li>
-		)
+		);
 	}
 }
 
 export {
 	ContextualMenu,
 	ContextualMenuItem,
-}
+};

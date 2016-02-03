@@ -10,10 +10,6 @@ import HelpPanel from './help-panel.components.jsx';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-import {registerToUndoStack} from '../helpers/undo-stack.helpers.js';
-
-
-import Remutable from 'remutable';
 import Lifespan from 'lifespan';
 
 export default class Sidebar extends React.Component {
@@ -29,9 +25,9 @@ export default class Sidebar extends React.Component {
 
 		this.client.getStore('/sideBarTab', this.lifespan)
 			.onUpdate(({head}) => {
-				this.setState({tab:head.toJS().tab});
+				this.setState({tab: head.toJS().tab});
 			})
-			.onDelete(() => this.setState(undefined));
+			.onDelete(() => {this.setState(undefined);});
 
 		this.client.dispatchAction('/change-tab-sidebar', {name: 'sliders'});
 	}
@@ -41,7 +37,7 @@ export default class Sidebar extends React.Component {
 			console.log('[RENDER] Sidebar');
 		}
 		return (
-			<div id='sidebar'>
+			<div id="sidebar">
 				<SideTabs tab={this.state.tab}>
 						<SideTab iconUrl="font-controls.svg" name="sliders" legend="Parameters" id="font-controls" from="customize" to="customizing">
 							<FontControls />
@@ -63,6 +59,6 @@ export default class Sidebar extends React.Component {
 						</SideTab>
 					</SideTabs>
 			</div>
-		)
+		);
 	}
 }

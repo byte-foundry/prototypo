@@ -1,57 +1,26 @@
 var Promise         = require('bluebird'); //Bluebird promise are way better than native
 var fs              = Promise.promisifyAll(require('fs')); //We just want promise seriously
-var path            = require('path');
 
 var gulp            = require('gulp');
 
-// BROWSERIFY Dep
-var browserify      = require('browserify');
-var shim            = require('browserify-shim');
-var babelify        = require('babelify');
-var watchify        = require('watchify');
-var envify          = require('envify/custom');
-var source          = require('vinyl-source-stream');
-var buffer          = require('vinyl-buffer');
+//webpack Dep
+var webpack			= require('webpack');
+var WebpackDevServer= require('webpack-dev-server');
 
 //CSS Dep
 var sass            = require('gulp-sass');
-var minifyCss       = require('gulp-minify-css');
+var cssnano       = require('gulp-cssnano');
 
 //Utils
 var del             = require('del');
-var uglify          = require('gulp-uglify');
 var concat          = require('gulp-concat');
-var gutil           = require('gulp-util');
 var sourcemaps      = require('gulp-sourcemaps');
-var rev             = require('gulp-rev');
-var revReplace      = require('gulp-rev-replace');
-var useref          = require('gulp-useref');
-var gulpif          = require('gulp-if');
-var uglify          = require('gulp-uglify');
-var browserSync     = require('browser-sync').create();
-var assign          = require('lodash.assign');
 var filter          = require('gulp-filter');
 var autoprefixer    = require('gulp-autoprefixer');
-var through         = require('through');
+var gutil			= require('gulp-util');
 
-// Browserify setup
-/* What we want right now :
- * - babelify experimental
- * - watchified bundle generation
- */
-
-customBrowserifyOpts = {
-	entries: ['./app/scripts/main.js'],
-	debug: true,//gutil.env.type == 'prod' ? false : true,
-	extensions: ['.jsx'],
-	noParse: [
-		path.resolve('node_modules/prototypo.js/dist/prototypo.js'),
-		path.resolve('node_modules/prototypo-canvas/dist/prototypo-canvas.js'),
-		'/Users/yannickmathey/Documents/prototypo.js/dist/prototypo-canvas.js'
-	]
-}
-
-var opts = assign({}, watchify.args, customBrowserifyOpts);
+//Tests
+var nightwatch		= require('gulp-nightwatch');
 
 gulp.task('images', function() {
 	gulp.src('./app/images/*.*')
@@ -63,6 +32,8 @@ gulp.task('images', function() {
 gulp.task('cp-prototypo.js', function() {
 	gulp.src('./node_modules/prototypo.js/dist/prototypo.js')
 		.pipe(gulp.dest('./dist/prototypo.js/dist/'));
+	gulp.src('./node_modules/prototypo-canvas/src/worker.js')
+		.pipe(gulp.dest('./dist/prototypo-canvas/src/'));
 });
 
 gulp.task('cp-genese', function() {
@@ -76,12 +47,6 @@ gulp.task('cp-static', function() {
 	gulp.src(['./app/index.html','./app/robots.txt','./app/favicon.ico','404.html'])
 		.pipe(gulp.dest('./dist/'));
 });
-
-gulp.task('cp-scripts', function() {
-	gulp.src(['./app/scripts/**/*.*'])
-		.pipe(gulp.dest('./dist/app/scripts'));
-
-})
 
 gulp.task('css-vendor', function() {
 	//This is a bit hackish but right now i don't care
@@ -100,97 +65,76 @@ gulp.task('css-app', function() {
 		.pipe(concat('app.css'))
 		.pipe(autoprefixer())
 		.pipe(sourcemaps.write())
-		//.pipe(gutil.env.type == 'prod' ? minifyCss() : gutil.noop())
 		.pipe(gulp.dest('./dist/assets/'))
-		.pipe(filter('**/*.css'))
-		.pipe(browserSync.reload({stream:true}));
-});
-
-function bundle() {
-	return b.then(function(b) {
-
-		return b.bundle()
-			.on('error', gutil.log.bind(gutil, 'Browserify Error'))
-			.pipe(source('bundle.js'))
-			.pipe(buffer())
-			.pipe(sourcemaps.init({loadMaps:true}))
-			.pipe(sourcemaps.write('./'))
-//			.pipe(gutil.env.type == 'prod' ? uglify() :gutil.noop())
-			.pipe(gulp.dest('dist'))
-	})
-}
-
-var readPrelude = fs.readFileAsync('./__prelude.js');
-
-var bBase = readPrelude.then(function(prelude) {
-	return browserify(opts)
-		// adds __prelude.js to all files in app/scripts
-	.transform(function(file) {
-			console.log('File name: ', file);
-			if (file.indexOf('prototypo/app/scripts') != -1) {
-				var data = prelude;
-				return through(write, end);
-
-				function write(buf) { data += buf }
-
-				function end() {
-					this.queue(data);
-					this.queue(null);
-				}
-			} else {
-				return through(function write(data) {
-					this.queue(data);
-				}, function end() {
-					this.queue(null);
-				});
-			}
-		})
-		.transform(babelify.configure({
-			stage: 0, //enabling that es7 goodness
-			extensions:['.jsx','.js']
-		}))
-		.transform(envify({
-			NODE_ENV: gutil.env.type === 'prod' ? 'production' : 'development',
-			__SHOW_RENDER__: gutil.env.type === 'debug' ? true : false
-		}));
-});
-
-var b = bBase.then(function(browserify) {
-	var b = gutil.env.type == 'prod' ? browserify : watchify(browserify);
-	b.on('update',bundle);
-	b.on('log',gutil.log);
-	return b;
+		.pipe(filter('**/*.css'));
 });
 
 gulp.task('clean',function() {
 	del.sync(['dist']);
-})
-
-gulp.task('browserify', bundle);
-
-gulp.task('build', ['images','css-vendor','css-app','browserify','cp-prototypo.js','cp-genese','cp-static','cp-scripts']);
-
-gulp.task('serve', ['images','css-vendor','css-app', 'browserify','cp-static'], function() {
-	browserSync.init({
-		server:['./dist','./node_modules'],
-		port:9000,
-		ghostMode:false
-	});
-
-	gulp.watch('./app/styles/**/*.scss',['css-app']);
-	gulp.watch('./dist/bundle.js',browserSync.reload);
 });
 
-gulp.task('test-serve', function() {
-	browserSync.init({
-		server:['./dist','./node_modules'],
-		port:9000,
-		ghostMode:false
+gulp.task('build', ['clean', 'images','css-vendor','css-app','cp-prototypo.js','cp-genese','cp-static'],  function(callback) {
+	// run webpack
+	var webpackConfig	= require('./prod.config.js');
+	var prototypoConfig = Object.create(webpackConfig);
+	webpack(prototypoConfig,
+		function(err, stats) {
+			if(err) throw new gutil.PluginError("webpack", err);
+			gutil.log("[webpack]", stats.toString({
+			// output options
+			}));
+			callback();
+		}
+	);
+});
+
+gulp.task('clean:dll', function(cb) {
+	del.sync(['dll']);
+});
+
+gulp.task('webpack:dll', function(callback) {
+	var dllWebpackConfig   = require('./dll.config.js');
+	var prototypoConfig = Object.create(dllWebpackConfig);
+	webpack(prototypoConfig, function(err, stats) {
+		if (err) return new gutil.PluginError("webpack", err);
+
+		gutil.log('[webpack]', stats.toString({
+		}));
+
+		callback();
 	});
+});
 
-	gulp.watch('./app/styles/**/*.scss',['css-app']);
-	gulp.watch('./dist/bundle.js',browserSync.reload);
+gulp.task('serve',['clean', 'images','css-vendor','css-app','cp-prototypo.js','cp-genese','cp-static','webpack:dll'], function(callback) {
+	var webpackConfig	= require('./webpack.config.js');
+	// Start a webpack-dev-server
+	var prototypoConfig = Object.create(webpackConfig);
+	prototypoConfig.debug = true;
+	var compiler = webpack(prototypoConfig);
 
-})
+	new WebpackDevServer(compiler, {
+		publicPath: webpackConfig.output.publicPath,
+		hot: true,
+		contentBase: 'dist/',
+	}).listen(9000, "0.0.0.0", function(err) {
+		if(err) throw new gutil.PluginError("webpack-dev-server", err);
+		// Server listening
+		gutil.log("[webpack-dev-server]", "http://localhost:9000/webpack-dev-server/index.html");
 
-gulp.task('default',['serve']);
+		// keep the server alive or continue?
+	});
+});
+
+gulp.task('test', function(callback) {
+	return gulp.src('')
+	.pipe(nightwatch({
+		cliArgs: {
+			env: 'default,chrome_win8,chrome_win7,firefox_win7,chrome_mac,firefox_mac'
+		}
+	}));
+});
+
+gulp.task('test:basic', function(callback) {
+	return gulp.src('')
+	.pipe(nightwatch());
+});

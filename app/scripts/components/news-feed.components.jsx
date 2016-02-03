@@ -1,8 +1,6 @@
 import React from 'react';
-import {Commits} from '../services/commits.services.js';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
 import CommitsList from './commits-list.components.jsx';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 
@@ -11,7 +9,7 @@ export default class NewsFeed extends React.Component {
 		super(props);
 		this.state = {
 			latestCommit: '',
-			commits: []
+			commits: [],
 		};
 	}
 
@@ -26,9 +24,9 @@ export default class NewsFeed extends React.Component {
 			latestCommit: commits.head.toJS().list[0].sha,
 		});
 
-		this.client.dispatchAction('/view-commit',{latest:this.state.latestCommit});
+		this.client.dispatchAction('/view-commit', {latest: this.state.latestCommit});
 
-		this.client.getStore('/commits',this.lifespan)
+		this.client.getStore('/commits', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
 					commits: head.toJS().list,
@@ -53,12 +51,12 @@ export default class NewsFeed extends React.Component {
 
 		const displayCommits = _.map(this.state.commits, (commit) => {
 
-			let commitRepo = commit.url.match(/(byte-foundry\/)(.*)(\/commits)/)[2];
-			let commitMessage = commit.commit.message.split(/\x0A/);
-			let commitTitle = commitMessage[0];
-			let commitContent = commitMessage.slice(1).filter(Boolean);
+			const commitRepo = commit.url.match(/(byte-foundry\/)(.*)(\/commits)/)[2];
+			const commitMessage = commit.commit.message.split(/\x0A/);
+			const commitTitle = commitMessage[0];
+			const commitContent = commitMessage.slice(1).filter(Boolean);
 
-			return <CommitsList repo={commitRepo} title={commitTitle} content={commitContent} date={commit.commit.author.date} url={commit.html_url}/>
+			return <CommitsList repo={commitRepo} title={commitTitle} content={commitContent} date={commit.commit.author.date} url={commit.html_url}/>;
 		});
 
 		return (
@@ -73,13 +71,13 @@ export default class NewsFeed extends React.Component {
 						Here are listed the last modifications in Prototypo.
 					</p>
 				</div>
-				
+
 				<ul className="news-feed-list">
 
 					{displayCommits}
 				</ul>
 				</ReactGeminiScrollbar>
 			</div>
-		)
+		);
 	}
 }

@@ -18,7 +18,7 @@ export default class IndividualizeButton extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					individualize: head.toJS().indivMode,
-				})
+				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -42,8 +42,8 @@ export default class IndividualizeButton extends React.Component {
 
 		return (
 			<div className="canvas-menu-item individualize-button">
-				<div className={buttonClass} title='Individualize parameters' onClick={() => { this.individualize() }} ></div>
+				<div className={buttonClass} title="Individualize parameters" onClick={() => { this.individualize(); }} ></div>
 			</div>
-		)
+		);
 	}
 }

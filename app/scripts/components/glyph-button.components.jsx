@@ -1,8 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
-import ClassNames from 'classnames';
+import Classnames from 'classnames';
 import Log from '../services/log.services.js';
 
 
@@ -22,12 +21,12 @@ export default class GlyphButton extends React.Component {
 	}
 
 	selectTag(tag) {
-		this.client.dispatchAction('/select-tag',tag);
+		this.client.dispatchAction('/select-tag', tag);
 	}
 
-	addToPinned(tag,e) {
+	addToPinned(tag, e) {
 		e.stopPropagation();
-		this.client.dispatchAction('/add-pinned',tag);
+		this.client.dispatchAction('/add-pinned', tag);
 	}
 
 	render() {
@@ -35,11 +34,11 @@ export default class GlyphButton extends React.Component {
 			console.log('[RENDER] glyph button');
 		}
 
-		let pinned = [];
+		const pinned = [];
 
 		_.forEach(this.props.pinned, (tag) => {
 
-			const tagClasses = ClassNames({
+			const tagClasses = Classnames({
 				'glyph-btn-list-btn-label': true,
 				'glyph-btn-list-btn-tags': true,
 				'is-active': this.props.selected === tag,
@@ -56,16 +55,16 @@ export default class GlyphButton extends React.Component {
 					</label>
 					<div className="glyph-btn-list-btn-tag-wrapper">
 						<div className="glyph-btn-list-btn-tag-wrapper-close"
-							onClick={(e) => { this.addToPinned(tag,e) }}>
+							onClick={(e) => { this.addToPinned(tag, e); }}>
 							×
 						</div>
 					</div>
 				</div>
 			);
-		})
+		});
 
-		const lockClasses = ClassNames({
-			'glyph-btn-list-btn-lock':true,
+		const lockClasses = Classnames({
+			'glyph-btn-list-btn-lock': true,
 			'is-locked': this.props.locked,
 		});
 
@@ -75,13 +74,13 @@ export default class GlyphButton extends React.Component {
 					<label className="glyph-btn-list-btn-label">
 						Glyph list
 					</label>
-					<div className="glyph-btn-list-btn-wrapper" onClick={() => { this.toggleLockList() }}>
+					<div className="glyph-btn-list-btn-wrapper" onClick={() => { this.toggleLockList(); }}>
 						<div className={lockClasses}>
 						</div>
 					</div>
 				</div>
 				{pinned}
 			</div>
-		)
+		);
 	}
 }

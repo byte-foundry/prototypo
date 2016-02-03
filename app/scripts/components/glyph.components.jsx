@@ -1,8 +1,6 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
-import ClassNames from 'classnames';
-import AlternateGlyphList from './alternate-glyph-list.components.jsx';
-import SearchGlyphList from './search-glyph-list.components.jsx';
+import Classnames from 'classnames';
 
 export default class Glyph extends React.Component {
 
@@ -14,8 +12,8 @@ export default class Glyph extends React.Component {
 
 	shouldComponentUpdate(newProps) {
 		return (
-			this.props.glyph !== newProps.glyph ||
-			this.props.selected !== newProps.selected
+			this.props.glyph !== newProps.glyph
+			|| this.props.selected !== newProps.selected
 		);
 	}
 
@@ -24,9 +22,7 @@ export default class Glyph extends React.Component {
 			console.log('[RENDER] Glyph');
 		}
 		const showAlts = Array.isArray(this.props.glyph) && this.props.glyph.length > 1;
-		const glyph = showAlts ? this.props.glyph[0] : this.props.glyph;
-
-		const classes = ClassNames({
+		const classes = Classnames({
 			"glyph-list-glyph": true,
 			"is-selected": this.props.selected,
 			"is-commented": false,

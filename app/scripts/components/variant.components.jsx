@@ -8,12 +8,13 @@ export class VariantList extends React.Component {
 	render() {
 		const variants = _.map(this.props.variants, (variant) => {
 			if (this.props.selected && variant.name === this.props.selected.name) {
-				return <Variant key={variant.id} data={variant} family={this.props.family} selected={true}/>
+				return <Variant key={variant.id} data={variant} family={this.props.family} selected={true}/>;
 			}
 			else {
-				return <Variant key={variant.id} data={variant} family={this.props.family}/>
+				return <Variant key={variant.id} data={variant} family={this.props.family}/>;
 			}
-		})
+		});
+
 		return (
 			<div className="variant-list">
 				{variants}
@@ -35,14 +36,14 @@ export class Variant extends React.Component {
 	}
 
 	selectVariant() {
-		this.client.dispatchAction('/select-variant',{variant:this.props.data, family:this.props.family});
+		this.client.dispatchAction('/select-variant', {variant: this.props.data, family: this.props.family});
 	}
 
 	flip(e, display) {
 		e.stopPropagation();
-		if (e.target.nodeName != "INPUT") {
+		if (e.target.nodeName !== "INPUT") {
 			this.setState({
-				flipped:!this.state.flipped,
+				flipped: !this.state.flipped,
 				display,
 			});
 		}
@@ -51,8 +52,8 @@ export class Variant extends React.Component {
 	deactivate() {
 		this.deactivation = setTimeout(() => {
 			this.setState({
-				flipped:false,
-				display:undefined,
+				flipped: false,
+				display: undefined,
 			});
 		}, 1500);
 	}
@@ -89,34 +90,34 @@ export class Variant extends React.Component {
 			'is-active': this.state.display === 'delete',
 		});
 		const deleteBtn = this.props.family.variants.length > 1 ? (
-				<div className="variant-button variant-hover" onClick={(e) => { this.flip(e, "delete") }}>
+				<div className="variant-button variant-hover" onClick={(e) => { this.flip(e, "delete"); }}>
 					DELETE
 				</div>
 			) : false;
 
 		return (
-			<div className={classes} onClick={() => {this.selectVariant()} } onMouseLeave={() => {this.deactivate()}} onMouseEnter={() => {this.delayDeactivate()}}>
+			<div className={classes} onClick={() => {this.selectVariant();} } onMouseLeave={() => {this.deactivate();}} onMouseEnter={() => {this.delayDeactivate();}}>
 				<div className="flipping-variant-recto">
 					<img className="variant-caret variant-caret-closed" src="/assets/images/list-icon-closed.svg"></img>
 					<img className="variant-caret variant-caret-open" src="/assets/images/list-icon-open.svg"></img>
 					<div className="variant-name">
 						{this.props.data.name}
 					</div>
-					<div className="variant-button variant-hover" onClick={(e) => { this.flip(e, "edit") }}>
+					<div className="variant-button variant-hover" onClick={(e) => { this.flip(e, "edit"); }}>
 						EDIT
 					</div>
 					{deleteBtn}
 				</div>
-				<div className="flipping-variant-verso" onClick={(e) => { this.flip(e) }}>
+				<div className="flipping-variant-verso" onClick={(e) => { this.flip(e); }}>
 					<div className={editClasses}>
 						<img className="variant-caret" src="/assets/images/font-infos.svg"></img>
-						<TextWithSuggestion value={this.props.data.name} validate={(name) => {this.editVariant(name)}}></TextWithSuggestion>
+						<TextWithSuggestion value={this.props.data.name} validate={(name) => {this.editVariant(name);}}></TextWithSuggestion>
 					</div>
 					<div className={deleteClasses}>
 						<img className="variant-caret" src="/assets/images/font-infos.svg"></img>
 						Delete this variant
-						<div className="variant-button" onClick={() => {this.deleteVariant()}}>YES</div>
-						<div className="variant-button" onClick={(e) => { this.flip(e) }}>NO</div>
+						<div className="variant-button" onClick={() => {this.deleteVariant();}}>YES</div>
+						<div className="variant-button" onClick={(e) => { this.flip(e); }}>NO</div>
 					</div>
 				</div>
 			</div>
@@ -131,14 +132,14 @@ export class AddVariant extends React.Component {
 
 		this.client.getStore('/fontLibrary', this.lifespan)
 		.onUpdate(({head}) => {
-				if (head.toJS().errorAddVariant != this.state.error) {
+				if (head.toJS().errorAddVariant !== this.state.error) {
 					this.setState({
-						error:head.toJS().errorAddVariant,
+						error: head.toJS().errorAddVariant,
 					});
 				}
 				if (head.toJS().errorAddVariant === undefined) {
 					this.setState({
-						flipped:false,
+						flipped: false,
 					});
 				}
 			})
@@ -147,7 +148,7 @@ export class AddVariant extends React.Component {
 			});
 
 		this.setState({
-			flipped:false,
+			flipped: false,
 		});
 	}
 
@@ -156,20 +157,20 @@ export class AddVariant extends React.Component {
 	}
 
 	flip(e) {
-		if (e.target.nodeName != "INPUT") {
+		if (e.target.nodeName !== "INPUT") {
 			this.setState({
-				flipped:!this.state.flipped,
+				flipped: !this.state.flipped,
 			});
 		}
 
 		this.setState({
-			error:undefined,
+			error: undefined,
 		});
 	}
 
 	createVariant(e, name) {
 		e.stopPropagation();
-		this.client.dispatchAction('/create-variant',{
+		this.client.dispatchAction('/create-variant', {
 			name,
 			familyName: this.props.familyName,
 		});
@@ -178,13 +179,13 @@ export class AddVariant extends React.Component {
 
 	render() {
 		const classes = Classnames({
-			variant:true,
+			variant: true,
 			'flipping-variant': true,
 			'is-flipped': this.state.flipped,
 		});
 
 		return (
-			<div className={classes} onClick={(e) => { this.flip(e) }} ref="container">
+			<div className={classes} onClick={(e) => { this.flip(e); }} ref="container">
 				<div className="flipping-variant-recto">
 					<img className="variant-caret" src="/assets/images/add-icon.svg"></img>
 					<div className="variant-name">
@@ -193,7 +194,7 @@ export class AddVariant extends React.Component {
 				</div>
 				<div className="flipping-variant-verso">
 					<img className="variant-caret" src="/assets/images/font-infos.svg"></img>
-					<TextWithSuggestion suggestions={this.variants} validate={(name, e) => {this.createVariant(e, name)}}></TextWithSuggestion>
+					<TextWithSuggestion suggestions={this.variants} validate={(name, e) => {this.createVariant(e, name);}}></TextWithSuggestion>
 					<div className="variant-error">{this.state.error}</div>
 				</div>
 			</div>
@@ -206,8 +207,8 @@ class TextWithSuggestion extends React.Component {
 		return (
 			<div className="text-suggestion">
 				<input className="text-suggestion-input" list="suggestions" type="text" defaultValue={this.props.value} placeholder="Enter a variant or choose a suggestion" ref="text"></input>
-				<div className="text-suggestion-button" onClick={(e) => { this.props.validate(React.findDOMNode(this.refs.text).value, e) }}>Save</div>
+				<div className="text-suggestion-button" onClick={(e) => { this.props.validate(React.findDOMNode(this.refs.text).value, e); }}>Save</div>
 			</div>
-		)
+		);
 	}
 }

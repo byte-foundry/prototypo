@@ -6,8 +6,11 @@ before_install:
 - npm install -g uglifyjs
 after_install:
 - npm dedupe
-script: gulp build --type=prod
-after_script:
+script: 
+- gulp build --type=prod
+- 'surge --project ./dist --domain test.prototypo.io'
+- 'gulp test:basic'
+after_success:
 - 'uglifyjs dist/bundle.js -o dist/bundle.js --in-source-map dist/bundle.js.map --source-map-url bundle.js.map --source-map dist/bundle.js.map'
 - '[ $TRAVIS_BRANCH == master ] && surge --project ./dist --domain app.prototypo.io'
 - '[ $TRAVIS_BRANCH == develop ] && surge --project ./dist --domain dev.prototypo.io'

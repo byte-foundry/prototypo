@@ -1,5 +1,5 @@
 import React from 'react';
-import ClassNames from 'classnames';
+import Classnames from 'classnames';
 import WaitForLoad from './wait-for-load.components.jsx';
 import Modal from './modal.components.jsx';
 import moment from 'moment';
@@ -12,7 +12,7 @@ export default class CardsWidget extends React.Component {
 
 		let content;
 
-		if (this.props.cards.length == 0) {
+		if (this.props.cards.length === 0) {
 			content = (
 				<div>
 					<h3 className="cards-widget-add-title">
@@ -23,7 +23,7 @@ export default class CardsWidget extends React.Component {
 					</p>
 					<CardForm errors={this.props.errors} addCard={this.props.addCard} loaded={this.props.loaded}/>
 				</div>
-			)
+			);
 		}
 		else {
 			content = _.map(this.props.cards, (card) => {
@@ -39,7 +39,7 @@ export default class CardsWidget extends React.Component {
 							loaded={this.props.loaded}/>
 					</div>
 				</WaitForLoad>
-				)
+				);
 			});
 		}
 
@@ -47,19 +47,20 @@ export default class CardsWidget extends React.Component {
 			<div className="cards-widget">
 				{content}
 			</div>
-		)
+		);
 	}
 }
 
 class CardWidget extends React.Component {
 	componentWillMount() {
 		this.setState({
-			changeCard:false,
+			changeCard: false,
 		});
 	}
 	render() {
-		const warning = moment(`01/${this.props.card.exp_month}/${this.props.card.exp_year}`,'DD/MM/YYYY')
-			.endOf('month').diff(moment(),'months') < 1 ? (<div className="card-widget-info-warning">Your card expire soon you should change it</div>) : undefined;
+		const warning = moment(`01/${this.props.card.exp_month}/${this.props.card.exp_year}`, 'DD/MM/YYYY')
+			.endOf('month').diff(moment(), 'months') < 1 ? (<div className="card-widget-info-warning">Your card expire soon you should change it</div>) : undefined;
+
 		return (
 			<div className="card-widget">
 				<div className="card-widget-img">
@@ -69,8 +70,8 @@ class CardWidget extends React.Component {
 					<h3 className="card-widget-info-title">Your card info</h3>
 					<p>**** **** **** {this.props.card.last4}</p>
 					<p>expire {this.props.card.exp_month} / {this.props.card.exp_year}</p>
-					<button className="card-widget-info-button" onClick={() => { this.props.deleteCard(this.props.card.id) }}>Delete card</button>
-					<button className="card-widget-info-button" onClick={() => { this.setState({changeCard:true}); }}>Change card</button>
+					<button className="card-widget-info-button" onClick={() => { this.props.deleteCard(this.props.card.id); }}>Delete card</button>
+					<button className="card-widget-info-button" onClick={() => { this.setState({changeCard: true}); }}>Change card</button>
 					{warning}
 				</div>
 				<Modal show={this.state.changeCard}>
@@ -82,17 +83,17 @@ class CardWidget extends React.Component {
 						loaded={this.props.loaded}
 						changeTitle={true}
 						addCard={(info) => {
-						this.props.changeCard.bind(null,this.props.card.id)(info)
+						this.props.changeCard.bind(null, this.props.card.id)(info)
 							.then(() => {
 								this.setState({
-									changeCard:false,
+									changeCard: false,
 								});
 							})
-							.catch(() => { })
+							.catch(() => { return; });
 					}}/>
 				</Modal>
 			</div>
-		)
+		);
 	}
 }
 
@@ -104,32 +105,32 @@ class CardForm extends React.Component {
 			cvc: React.findDOMNode(this.refs.cvc).value,
 			month: React.findDOMNode(this.refs.month).value,
 			year: React.findDOMNode(this.refs.year).value,
-		}
+		};
 
 		this.props.addCard(info);
 	}
 
 	render() {
 
-		const numberClasses = ClassNames({
-			"is-error":this.props.errors.code === 'incorrect_number' || this.props.errors.code === 'invalid_number',
-			"cards-widget-add-number":true,
-			"cards-widget-add-input":true,
+		const numberClasses = Classnames({
+			"is-error": this.props.errors.code === 'incorrect_number' || this.props.errors.code === 'invalid_number',
+			"cards-widget-add-number": true,
+			"cards-widget-add-input": true,
 		});
-		const monthClasses = ClassNames({
+		const monthClasses = Classnames({
 			"is-error": this.props.errors.code === 'invalid_expiry_month',
-			"cards-widget-add-month":true,
-			"cards-widget-add-input":true,
+			"cards-widget-add-month": true,
+			"cards-widget-add-input": true,
 		});
-		const yearClasses = ClassNames({
+		const yearClasses = Classnames({
 			"is-error": this.props.errors.code === 'invalid_expiry_year',
-			"cards-widget-add-year":true,
-			"cards-widget-add-input":true,
+			"cards-widget-add-year": true,
+			"cards-widget-add-input": true,
 		});
-		const cvcClasses = ClassNames({
+		const cvcClasses = Classnames({
 			"is-error": this.props.errors.code === 'invalid_cvc',
-			"cards-widget-add-cvc":true,
-			"cards-widget-add-input":true,
+			"cards-widget-add-cvc": true,
+			"cards-widget-add-input": true,
 		});
 
 		return (<div className="cards-widget-add">
@@ -158,10 +159,10 @@ class CardForm extends React.Component {
 						</div>
 					</div>
 					<WaitForLoad loaded={this.props.loaded}>
-						<button className="cards-widget-add-button" onClick={() => {this.addCard()}}>Add my card</button>
+						<button className="cards-widget-add-button" onClick={() => {this.addCard();}}>Add my card</button>
 					</WaitForLoad>
 				</div>
 			</div>
-		)
+		);
 	}
 }

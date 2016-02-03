@@ -39,7 +39,7 @@ export default class GlyphGrid extends React.Component {
 
 	selectGlyph(unicode, isSelected, isInOtherGroup) {
 		if (!isInOtherGroup) {
-			this.client.dispatchAction('/add-glyph-to-indiv',{unicode, isSelected});
+			this.client.dispatchAction('/add-glyph-to-indiv', {unicode, isSelected});
 		}
 	}
 
@@ -61,18 +61,18 @@ export default class GlyphGrid extends React.Component {
 				'is-disabled': isInOtherGroup,
 			});
 
-			return <div className={classes} key={unicode} onClick={() => {this.selectGlyph(unicode, isSelected, isInOtherGroup)}}>{String.fromCharCode(unicode)}</div>
+			return <div className={classes} key={unicode} onClick={() => {this.selectGlyph(unicode, isSelected, isInOtherGroup);}}>{String.fromCharCode(unicode)}</div>;
 		});
 
 		const tags = _.map(this.props.tags, (tag) => {
-			return <option value={tag} key={tag}>{tag}</option>
+			return <option value={tag} key={tag}>{tag}</option>;
 		});
 
 		return (
 			<div className="glyphs-grid">
 				<div className="glyphs-grid-filter">
 					Filter by:
-					<select className="glyphs-grid-filter-select" onChange={(e) => { this.selectTag(e)}}>
+					<select className="glyphs-grid-filter-select" onChange={(e) => { this.selectTag(e);}}>
 						{tags}
 					</select>
 				</div>
@@ -84,6 +84,6 @@ export default class GlyphGrid extends React.Component {
 					</ReactGeminiScrollbar>
 				</div>
 			</div>
-		)
+		);
 	}
 }

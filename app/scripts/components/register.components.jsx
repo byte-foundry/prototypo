@@ -5,6 +5,7 @@ export default class Register extends React.Component {
 	register() {
 		const username = React.findDOMNode(this.refs.username).value;
 		const password = React.findDOMNode(this.refs.password).value;
+
 		hoodieApi.register(username, password);
 	}
 	render() {
@@ -32,8 +33,8 @@ export default class Register extends React.Component {
 					ref="password"
 					required
 					placeholder="Password"/>
-				<button className="sign-in-button" onClick={() => {this.register()}}>Register</button>
+				<button className="sign-in-button" onClick={() => {this.register();}}>Register</button>
 			</div>
-		)
+		);
 	}
 }
