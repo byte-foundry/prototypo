@@ -4,7 +4,6 @@ import Lifespan from 'lifespan';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import DOM from '../helpers/dom.helpers.js';
-import HoodieApi from '../services/hoodie.services.js';
 
 export class Sliders extends React.Component {
 
@@ -15,7 +14,6 @@ export class Sliders extends React.Component {
 		const sliders = _.map(this.props.params, (param, i) => {
 			const individualized = this.props.indivEdit;
 			let value;
-			let slideParam;
 
 			if (this.props.indivMode
 				&& this.props.indivEdit
@@ -24,7 +22,7 @@ export class Sliders extends React.Component {
 
 				value = paramObject.value;
 
-				slideParam = _.assign({}, param, {
+				_.assign(param, {
 					state: paramObject.state,
 					name: `${param.name}_rel`,
 					max: paramObject.state === 'relative' ? 1.5 : (param.max - param.min) / 2,
@@ -40,8 +38,8 @@ export class Sliders extends React.Component {
 
 			return (
 				<Slider
-					param={slideParam}
-					key={slideParam.name + i}
+					param={param}
+					key={param.name + i}
 					value={value}
 					individualized={individualized}/>
 			);
@@ -84,9 +82,6 @@ export class Slider extends React.Component {
 			console.log('[RENDER] slider');
 		}
 		const value = this.props.value === undefined ? this.props.param.init : this.props.value;
-		const plan = HoodieApi.instance.plan || 'kickstarter';
-
-		this.props.param.notInDemo = (plan.indexOf('free') === 0 && !this.props.param.demo);
 
 		const classes = Classnames({
 			'slider': true,
@@ -99,18 +94,11 @@ export class Slider extends React.Component {
 			<div className="slider-demo-overlay-text">
 				This feature is currently in development
 			</div>
-		) : this.props.param.notInDemo ? (
-			<a href="https://www.prototypo.io/account#/account" className="slider-demo-overlay-text">
-				This feature is available with the professional subscription
-				<div className="slider-demo-overlay-text-more">
-					<div className="slider-demo-overlay-text-more-text">Uppgrade to full version</div>
-				</div>
-			</a>
 		) : false;
 
-			const indivSwitch = this.props.individualized ? (
-				<IndivSwitch name={this.props.param.name} state={this.props.param.state}/>
-			) : false;
+		const indivSwitch = this.props.individualized ? (
+			<IndivSwitch name={this.props.param.name} state={this.props.param.state}/>
+		) : false;
 
 		return (
 			<div className={classes}>
