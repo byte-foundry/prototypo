@@ -3,7 +3,7 @@ module.exports = {
 		browser
 			.init()
 			.waitForElementVisible('input#email-sign-in', 10000)
-			.setValue('input#email-sign-in', "test@registered-free.com")
+			.setValue('input#email-sign-in',process.env.PROTOTYPO_LOGIN)
 			.setValue('input#password-sign-in', process.env.PROTOTYPO_PASS)
 			.click('input[type=submit]')
 			.pause(2000)

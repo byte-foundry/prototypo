@@ -9,3 +9,4 @@ aws.conf.json
 npm-debug.log
 dist
 *.swp
+reports/
