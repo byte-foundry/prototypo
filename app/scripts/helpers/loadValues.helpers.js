@@ -1,7 +1,16 @@
-import LocalClient from './stores/local-client.stores.jsx';
-import {FontValues, AppValues, FontInfoValues} from './services/values.services.js';
+import LocalClient from '../stores/local-client.stores.jsx';
+import {FontValues, AppValues, FontInfoValues} from '../services/values.services.js';
 
-const localClient = LocalClient.instance();
+let localClient;
+let appValuesLoaded = false;
+
+window.addEventListener('fluxServer.setup', () => {
+	localClient = LocalClient.instance();
+});
+
+window.addEventListener('appValues.loaded', () => {
+	appValuesLoaded = true;
+});
 
 export async function copyFontValues(typeface) {
 	const values = fontControls.get('values');
@@ -58,7 +67,7 @@ export async function loadFontValues(typedata, typeface) {
 	}
 }
 
-export const saveAppValues = _.debounce((appValuesLoaded) => {
+export const saveAppValues = _.debounce(() => {
 	if (!appValuesLoaded) {
 		return;
 	}

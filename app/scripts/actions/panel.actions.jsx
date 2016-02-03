@@ -1,10 +1,15 @@
 import {panel, sideBarTab, fontTab} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
-import {saveAppValues} from './helpers/loadValues.helpers.js';
+import {saveAppValues} from '../helpers/loadValues.helpers.js';
 
-const localServer = LocalServer.instance;
-const localClient = LocalClient.instance();
+let localServer;
+let localClient;
+
+window.addEventListener('fluxServer.setup', () => {
+	localClient = LocalClient.instance();
+	localServer = LocalServer.instance;
+});
 
 export default {
 	'/store-panel-param': (params) => {

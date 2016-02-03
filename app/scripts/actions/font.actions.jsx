@@ -3,12 +3,18 @@ import XXHash from 'xxhashjs';
 import {fontStore, fontVariant, fontLibrary} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
-import {Typefaces} from './services/typefaces.services.js';
-import {copyFontValues, loadFontValues, saveAppValues} from './helpers/loadValues.helpers.js';
-import {FontValues} from './services/values.services.js';
+import {Typefaces} from '../services/typefaces.services.js';
+import {copyFontValues, loadFontValues, saveAppValues} from '../helpers/loadValues.helpers.js';
+import {FontValues} from '../services/values.services.js';
 
-const localServer = LocalServer.instance;
-const localClient = LocalClient.instance();
+let localServer;
+let localClient;
+
+window.addEventListener('fluxServer.setup', () => {
+	localClient = LocalClient.instance();
+	localServer = LocalServer.instance;
+});
+
 const hasher = XXHash(0xDEADBEEF);
 
 export default {

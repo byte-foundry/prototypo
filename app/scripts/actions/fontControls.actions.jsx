@@ -2,8 +2,13 @@ import {fontControls} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 
-const localServer = LocalServer.instance;
-const localClient = LocalClient.instance();
+let localServer;
+let localClient;
+
+window.addEventListener('fluxServer.setup', () => {
+	localClient = LocalClient.instance();
+	localServer = LocalServer.instance;
+});
 
 export default {
 	'/load-values': (params) => {

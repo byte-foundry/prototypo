@@ -1,8 +1,12 @@
 import {glyphs, panel} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
-import {saveAppValues} from './helpers/loadValues.helpers.js';
+import {saveAppValues} from '../helpers/loadValues.helpers.js';
 
-const localServer = LocalServer.instance;
+let localServer;
+
+window.addEventListener('fluxServer.setup', () => {
+	localServer = LocalServer.instance;
+});
 
 export default {
 	'/load-glyphs': (params) => {

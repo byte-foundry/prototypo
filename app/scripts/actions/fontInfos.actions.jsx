@@ -1,8 +1,12 @@
 import {fontInfos} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
-import {FontInfoValues} from './services/values.services.js';
+import {FontInfoValues} from '../services/values.services.js';
 
-const localServer = LocalServer.instance;
+let localServer;
+
+window.addEventListener('fluxServer.setup', () => {
+	localServer = LocalServer.instance;
+});
 
 export default {
 	'/load-font-infos': ({altList}) => {

@@ -17,9 +17,9 @@ function mobileAndTabletCheck() {
 
 const mobile = mobileAndTabletCheck();
 
-function selectRenderOptions(
-	mobile,
-	oldBrowser,
+export default function selectRenderOptions(
+	mobileCb,
+	oldBrowserCb,
 	main
 ) {
 	if (mobile) {

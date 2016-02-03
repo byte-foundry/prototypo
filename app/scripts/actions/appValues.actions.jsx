@@ -3,7 +3,11 @@ import LocalServer from '../stores/local-server.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
 import {Commits} from '../services/commits.services.js';
 
-const localServer = LocalServer.instance;
+let localServer;
+
+window.addEventListener('fluxServer.setup', () => {
+	localServer = LocalServer.instance;
+});
 
 export default {
 	'/load-app-values': ({values}) => {
@@ -54,7 +58,8 @@ export default {
 
 		localServer.dispatchUpdate('/panel', patchPanel);
 
-		appValuesLoaded = true;
+		const valuesLoadedEvent = new Event('appValues.loaded');
+		window.dispatchEvent(valuesLoadedEvent);
 	},
 	'/load-commits': async () => {
 

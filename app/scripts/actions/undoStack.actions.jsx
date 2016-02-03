@@ -4,7 +4,11 @@ const {Patch} = Remutable;
 import {eventBackLog} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 
-const localServer = LocalServer.instance;
+let localServer;
+
+window.addEventListener('fluxServer.setup', () => {
+	localServer = LocalServer.instance;
+});
 
 export default {
 	'/go-back': () => {

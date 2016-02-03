@@ -1,9 +1,16 @@
 import {individualizeStore, fontControls, glyphs} from '../stores/creation.stores.jsx';
-import Log from './services/log.services.js';
+import Log from '../services/log.services.js';
 import LocalServer from '../stores/local-server.stores.jsx';
-import {saveAppValues} from './helpers/loadValues.helpers.js';
+import LocalClient from '../stores/local-client.stores.jsx';
+import {FontValues} from '../services/values.services.js';
 
-const localServer = LocalServer.instance;
+let localServer;
+let localClient;
+
+window.addEventListener('fluxServer.setup', () => {
+	localClient = LocalClient.instance();
+	localServer = LocalServer.instance;
+});
 
 export default {
 	'/toggle-individualize': () => {

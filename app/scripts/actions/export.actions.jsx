@@ -1,11 +1,16 @@
 import {exportStore, fontVariant} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
-import LocalClient from './stores/local-client.stores.jsx';
-import {FontValues} from './services/values.services.js';
+import LocalClient from '../stores/local-client.stores.jsx';
+import {FontValues} from '../services/values.services.js';
 import JSZip from 'jszip';
 
-const localServer = LocalServer.instance;
-const localClient = LocalClient.instance();
+let localServer;
+let localClient;
+
+window.addEventListener('fluxServer.setup', () => {
+	localClient = LocalClient.instance();
+	localServer = LocalServer.instance;
+});
 
 export default {
 	'/exporting': ({exporting, errorExport}) => {
