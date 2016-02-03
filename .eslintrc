@@ -81,7 +81,7 @@
 		"no-shadow": 2,
 		"no-undef-init": 2,
 		"no-unused-vars": 1,
-		"no-use-before-define": 2,
+		"no-use-before-define": [2, "nofunc"],
 
 		"brace-style": [2, "stroustrup", {"allowSingleLine": true}],
 		"camelcase": 1,
@@ -130,7 +130,7 @@
 		"react/jsx-uses-vars": 2,
 		"react/jsx-uses-react": 2,
 		
-		"babel/new-cap": [1, {"capIsNewExceptions": ["Intercom", "XXHash", "Classnames"]}],
+		"babel/new-cap": [1, {"capIsNewExceptions": ["Intercom", "XXHash", "Classnames", "PouchDB"]}],
 		"babel/object-curly-spacing": 2,
 		"babel/object-shorthand": 2,
 		"babel/arrow-parens": 2,
