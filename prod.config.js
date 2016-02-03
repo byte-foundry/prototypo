@@ -16,7 +16,7 @@ module.exports = {
 		loaders: [
 			{ 
 				test: /\.jsx?$/,
-				loaders: ['prelude-loader','react-hot-loader', 'babel-loader?cacheDirectory'],
+				loaders: ['transform/cacheable?envify','prelude-loader', 'babel-loader?cacheDirectory'],
 				include: [
 					path.join(__dirname, 'app')
 				]
