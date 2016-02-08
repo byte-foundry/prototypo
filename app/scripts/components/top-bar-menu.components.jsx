@@ -109,6 +109,8 @@ class TopBarMenuDropdownItem extends React.Component {
 		const classes = Classnames({
 			'top-bar-menu-item-dropdown-item': true,
 			'is-disabled': this.props.disabled,
+			'has-separator': this.props.separator,
+			'is-active': this.props.active,
 		});
 
 		return (

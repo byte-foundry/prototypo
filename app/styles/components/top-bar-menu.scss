@@ -96,8 +96,18 @@
 					color: $medium-grey;
 				}
 
+				&.is-active {
+					background-image: url('./images/checkbox-checked.svg');
+					background-repeat: no-repeat;
+					background-position: calc(100% - 10px) 50%;
+				}
+
+				&.has-separator {
+					border-bottom: 1px solid lighten($dark-grey,20%);
+				}
+
 				&:hover {
-					background:$green;
+					background-color:$green;
 				}
 
 				&-title {

@@ -83,8 +83,17 @@ export default class Topbar extends React.Component {
 		Log.ui('Topbar.logout');
 	}
 
+	newProject() {
+ 		this.client.dispatchAction('/change-tab-sidebar', {name: 'fonts-collection'});
+ 		Log.ui('Topbar.logout');
+ 	}
+
 	startTuto() {
 		this.client.dispatchAction('/store-panel-param', {onboard: false, onboardstep: 'welcome'});
+	}
+
+	individualize() {
+		this.client.dispatchAction('/toggle-individualize');
 	}
 
 	toggleView(name) {
@@ -137,14 +146,15 @@ export default class Topbar extends React.Component {
 			<div id="topbar">
 				<TopBarMenu>
 					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
-						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout();}}/>
-						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto();}}/>
+						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto();}} separator={true}/>
+						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
 						<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true);}}/>
 						<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false);}}/>
-						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr}/>
-						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams(); }}/>
+						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr} separator={true}/>
+						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout();}}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">
+						<TopBarMenuDropdownItem name="Individualize parameters" handler={() => { this.individualize(); }}/>
 						<TopBarMenuDropdownItem name={undoText} key="undo" disabled={undoDisabled} shortcut="ctrl+z" handler={() => {
 							if (!undoDisabled) {
 								this.client.dispatchAction('/go-back');
@@ -156,6 +166,16 @@ export default class Topbar extends React.Component {
 							}
 						}}/>
 						{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
+						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams(); }}/>
+					</TopBarMenuDropdown>
+					<TopBarMenuDropdown name="Window">
+						<TopBarMenuDropdownItem name="Glyphs list" active={this.state.panel.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
+						<TopBarMenuDropdownItem name="Glyph view" active={this.state.panel.mode.indexOf('glyph') !== -1} handler={() => { this.toggleView('glyph'); }}/>
+						<TopBarMenuDropdownItem name="Text view" active={this.state.panel.mode.indexOf('text') !== -1} handler={() => { this.toggleView('text'); }}/>
+						<TopBarMenuDropdownItem name="Word view" active={this.state.panel.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word'); }}/>
+					</TopBarMenuDropdown>
+					<TopBarMenuDropdown name="Help">
+						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
 					</TopBarMenuDropdown>
 					{exporting}
 					{errorExporting}
