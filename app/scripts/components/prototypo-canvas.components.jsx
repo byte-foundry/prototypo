@@ -7,7 +7,6 @@ import Lifespan from 'lifespan';
 import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import CanvasGlyphInput from './canvas-glyph-input.components.jsx';
-import IndividualizeButton from './individualize-button.components.jsx';
 import AlternateMenu from './alternate-menu.components.jsx';
 
 export default class PrototypoCanvas extends React.Component {
@@ -183,7 +182,6 @@ export default class PrototypoCanvas extends React.Component {
 				</ContextualMenu>
 				<div className="canvas-menu">
 					<CanvasGlyphInput/>
-					<IndividualizeButton/>
 					{alternateMenu}
 				</div>
 			</div>

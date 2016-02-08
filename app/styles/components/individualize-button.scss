@@ -1,23 +1,26 @@
 @import "../variables";
 
 .individualize-button {
-	position: relative;
+	position: absolute;
+	left: -207px;
+	bottom: 25px;
+	z-index: -1;
 
 	padding: 2px;
-	width: 50px;
+	width: 80px;
 	height: 22px;
 	border-radius: 10px;
-	// background-color: $light-grey;
+	background-color: $white;
 	border: 2px solid $dark-grey;
 
 	cursor: pointer;
 
-	&-label {
+	&-toggle {
 		display: block;
 		position: absolute;
 		top: 2px;
 		left: 2px;
-		width: 60%;
+		width: 40%;
 		height: 14px;
 		border-radius: 10px;
 		background-color: $dark-grey;
@@ -27,14 +30,36 @@
 		transition: left 200ms ease;
 	}
 
-	&-label.is-active,
-	&:hover &-label {
-		background-color: $yellow;
-		background-image: url('./images/link-icon-hover.svg');
+	&-label {
+		float: right;
+		margin: -2px 0px;
+		z-index: -2;
+		padding: 0 5px;
+		font-size: 12px;
+
+		&::after {
+			content: "Indiv."
+		}
 	}
 
-	&-label.is-active {
-		left: calc(40% - 2px);
+	&.is-active,
+	&:hover {
+		.individualize-button-toggle {
+			background-color: $yellow;
+			background-image: url('./images/link-icon-hover.svg');
+		}
 	}
 
+	&.is-active {
+		border-color: $yellow;
+		.individualize-button-toggle {
+			left: calc(60% - 2px);
+		}
+		.individualize-button-label{
+			float: left;
+			&::after {
+				content: "Back"
+			}
+		}
+	}
 }
