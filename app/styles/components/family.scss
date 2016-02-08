@@ -55,11 +55,13 @@
 				&-name {
 					font-size: 40px;
 				}
-				&-number-variants {
-					&:before {
-						font-family: sans-serif;
-						content: "→";
-						margin-right: .5em;
+				&-variants {
+					&-number {
+						&:before {
+							font-family: sans-serif;
+							content: "→";
+							margin: 0 .5em;
+						}
 					}
 				}
 			}
@@ -270,11 +272,11 @@
 	}
 
 	&.family-form-open {
-		flex-basis:554px;
+		flex-basis:822px;
 	}
 
 	&.with-error {
-		flex-basis:600px;
+		flex-basis:868px;
 	}
 
 	&.family-form-open &-header {

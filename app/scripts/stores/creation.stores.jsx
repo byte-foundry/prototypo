@@ -50,6 +50,11 @@ const templateList = new Remutable({
 			familyName: 'Prototypo Grotesk',
 			templateName: 'venus.ptf',
 		},
+		{
+			sample:'elzevir-preview.svg',
+			name:'Prototypo Elzevir',
+			familyName:'Prototypo Elzevir',
+		}
 	],
 });
 

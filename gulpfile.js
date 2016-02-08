@@ -18,6 +18,7 @@ var sourcemaps      = require('gulp-sourcemaps');
 var filter          = require('gulp-filter');
 var autoprefixer    = require('gulp-autoprefixer');
 var gutil			= require('gulp-util');
+var watch 			= require('gulp-watch');
 
 //Tests
 var nightwatch		= require('gulp-nightwatch');
@@ -41,6 +42,8 @@ gulp.task('cp-genese', function() {
 		.pipe(gulp.dest('./dist/john-fell.ptf/dist/'));
 	gulp.src('./node_modules/venus.ptf/dist/font.json')
 		.pipe(gulp.dest('./dist/venus.ptf/dist/'));
+	gulp.src('./node_modules/elzevir.ptf/dist/font.json')
+		.pipe(gulp.dest('./dist/elzevir.ptf/dist/'));
 });
 
 gulp.task('cp-static', function() {
@@ -104,8 +107,13 @@ gulp.task('webpack:dll', function(callback) {
 		callback();
 	});
 });
+gulp.task('watch-font', function() {
+	return gulp.watch(['./node_modules/john-fell.ptf/dist/font.json','./node_modules/venus.ptf/dist/font.json','./node_modules/elzevir.ptf/dist/font.json'], ['cp-genese']);
+})
 
-gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','webpack:dll'], function(callback) {
+
+gulp.task('serve',['clean', 'images','css-vendor','css-app','cp-prototypo.js','cp-genese','cp-static','webpack:dll', 'watch-font'], function(callback) {
+
 	var webpackConfig	= require('./webpack.config.js');
 	// Start a webpack-dev-server
 	var prototypoConfig = Object.create(webpackConfig);
