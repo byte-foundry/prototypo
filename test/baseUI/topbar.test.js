@@ -15,7 +15,7 @@ module.exports = {
 	'Should contain File, Edit, toggle views and glyph list': function(browser) {
 		browser
 			.elements('css selector', '#topbar > ul > li', function(result) {
-				browser.assert.equal(result.value.length, 4);
+				browser.assert.equal(result.value.length, 8);
 			});
 	},
 	'Should display file menu' : function (browser) {
@@ -35,16 +35,16 @@ module.exports = {
 	'Should display toggle views' : function (browser) {
 		browser
 			.elements('css selector', '#topbar > ul > li', function(result) {
-				browser.moveTo(result.value[3].ELEMENT)
-				.waitForElementVisible('#topbar > ul > li:nth-child(4) > ul', 2000);
+				browser.moveTo(result.value[2].ELEMENT)
+				.waitForElementVisible('#topbar > ul > li:nth-child(3) > ul', 2000);
 			});
 	},
 	'Should display glyph list': function (browser) {
 		browser
 			.elements('css selector', '#topbar > ul > li', function(result) {
-				browser.elementIdClick(result.value[2].ELEMENT)
+				browser.elementIdClick(result.value[4].ELEMENT)
 					.waitForElementVisible('.glyph-list-glyphs', 2000)
-					.elementIdClick(result.value[2].ELEMENT)
+					.elementIdClick(result.value[4].ELEMENT)
 					.waitForElementNotVisible('.glyph-list-glyphs', 2000).end();
 			});
 	},
