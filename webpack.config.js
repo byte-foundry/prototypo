@@ -3,7 +3,7 @@ var webpack = require('webpack');
 
 module.exports = {
 	cache: true,
-	devtool: 'cheap-module-eval-source-map',
+	devtool: 'source-map',
 	entry: [
 		'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
 		'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors 
@@ -19,7 +19,7 @@ module.exports = {
 		loaders: [
 			{ 
 				test: /\.jsx?$/,
-				loaders: ['prelude-loader','react-hot-loader', 'babel-loader?cacheDirectory'],
+				loaders: ['react-hot-loader', 'babel-loader?cacheDirectory', 'prelude-loader'],
 				include: [
 					path.join(__dirname, 'app')
 				]

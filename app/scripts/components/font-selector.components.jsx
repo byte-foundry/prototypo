@@ -16,7 +16,10 @@ export default class FontSelector extends React.Component {
 	}
 
 	changeFont() {
-		this.client.dispatchAction('/change-font', this.props.font.repo);
+		this.client.dispatchAction('/change-font',{
+			templateToLoad: this.props.font.repo.template,
+			db: this.props.font.repo.db
+		});
 		Log.ui('FontSelector.changeFont', this.props.font.repo);
 	}
 

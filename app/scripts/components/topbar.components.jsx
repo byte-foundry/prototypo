@@ -2,6 +2,7 @@ import React from 'react';
 import Lifespan from 'lifespan';
 
 import Log from '../services/log.services.js';
+import HoodieApi from '../services/hoodie.services.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -83,8 +84,17 @@ export default class Topbar extends React.Component {
 		Log.ui('Topbar.logout');
 	}
 
+	newProject() {
+ 		this.client.dispatchAction('/change-tab-sidebar', {name: 'fonts-collection'});
+ 		Log.ui('Topbar.logout');
+ 	}
+
 	startTuto() {
 		this.client.dispatchAction('/store-panel-param', {onboard: false, onboardstep: 'welcome'});
+	}
+
+	individualize() {
+		this.client.dispatchAction('/toggle-individualize');
 	}
 
 	toggleView(name) {
@@ -137,14 +147,15 @@ export default class Topbar extends React.Component {
 			<div id="topbar">
 				<TopBarMenu>
 					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
-						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout();}}/>
-						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto();}}/>
+						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto();}} separator={true}/>
+						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
 						<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true);}}/>
 						<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false);}}/>
-						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr}/>
-						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams(); }}/>
+						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr} separator={true}/>
+						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout();}}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">
+						<TopBarMenuDropdownItem name="Individualize parameters" handler={() => { this.individualize(); }}/>
 						<TopBarMenuDropdownItem name={undoText} key="undo" disabled={undoDisabled} shortcut="ctrl+z" handler={() => {
 							if (!undoDisabled) {
 								this.client.dispatchAction('/go-back');
@@ -156,16 +167,28 @@ export default class Topbar extends React.Component {
 							}
 						}}/>
 						{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
+						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams(); }}/>
+					</TopBarMenuDropdown>
+					<TopBarMenuDropdown name="Window">
+						<TopBarMenuDropdownItem name="Glyphs list" checkbox={true} active={this.state.panel.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
+						<TopBarMenuDropdownItem name="Glyph view" checkbox={true} active={this.state.panel.mode.indexOf('glyph') !== -1} handler={() => { this.toggleView('glyph'); }}/>
+						<TopBarMenuDropdownItem name="Text view" checkbox={true} active={this.state.panel.mode.indexOf('text') !== -1} handler={() => { this.toggleView('text'); }}/>
+						<TopBarMenuDropdownItem name="Word view" checkbox={true} active={this.state.panel.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word'); }}/>
+					</TopBarMenuDropdown>
+					<TopBarMenuDropdown name="Help">
+						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
+						<TopBarMenuDropdownItem name="Submit an issue on GitHub" handler={() => { window.open('https://github.com/byte-foundry/prototypo/issues','_blank'); }}/>
+						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq','_blank'); }}/>
 					</TopBarMenuDropdown>
 					{exporting}
 					{errorExporting}
-					<TopBarMenuAction name="Glyphs list" click={() => { this.toggleView('list'); }} alignRight={true} action={true}>
-					</TopBarMenuAction>
-					<TopBarMenuDropdown name="Toggle views" img="assets/images/views-icon.svg" alignRight={true} small={true}>
-						<TopBarMenuDropdownCheckBox name="Glyph" checked={this.state.panel.mode.indexOf('glyph') !== -1} handler={() => { this.toggleView('glyph'); }}/>
-						<TopBarMenuDropdownCheckBox name="Text" checked={this.state.panel.mode.indexOf('text') !== -1} handler={() => { this.toggleView('text'); }}/>
-						<TopBarMenuDropdownCheckBox name="Word" checked={this.state.panel.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word'); }}/>
-					</TopBarMenuDropdown>
+
+					<TopBarMenuAction name="Glyphs list" click={() => { this.toggleView('list'); }} alignRight={true} action={true}></TopBarMenuAction>
+
+					<TopBarMenuAction name="text" click={() => { this.toggleView('text'); }} active={this.state.panel.mode.indexOf('text') !== -1} img="view-text.svg" alignRight={true} small={true}></TopBarMenuAction>
+					<TopBarMenuAction name="word" click={() => { this.toggleView('word'); }} active={this.state.panel.mode.indexOf('word') !== -1} img="view-word.svg" alignRight={true} small={true}></TopBarMenuAction>
+					<TopBarMenuAction name="glyph" click={() => { this.toggleView('glyph'); }} active={this.state.panel.mode.indexOf('glyph') !== -1} img="view-glyph.svg" alignRight={true} small={true}></TopBarMenuAction>
+
 				</TopBarMenu>
 			</div>
 		);

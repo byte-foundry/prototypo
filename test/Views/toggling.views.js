@@ -15,19 +15,19 @@ module.exports = {
 	'Should be able to toggle views': function (browser) {
 		browser
 			.elements('css selector', '#topbar > ul > li', function(result) {
-				browser.moveTo(result.value[3].ELEMENT)
-					.waitForElementVisible('#topbar > ul > li:nth-child(4) > ul', 2000)
-					.click('.top-bar-menu-item.is-icon-menu ul li:nth-child(1)')
+				browser.moveTo(result.value[2].ELEMENT)
+					.waitForElementVisible('#topbar > ul > li:nth-child(3) > ul', 2000)
+					.click('#topbar > ul > li:nth-child(3) > ul li:nth-child(2)')
 					.waitForElementNotVisible('.prototypo-canvas', 2000)
-					.click('.top-bar-menu-item.is-icon-menu ul li:nth-child(1)')
+					.click('#topbar > ul > li:nth-child(3) > ul li:nth-child(2)')
 					.waitForElementVisible('.prototypo-canvas', 2000)
-					.click('.top-bar-menu-item.is-icon-menu ul li:nth-child(2)')
+					.click('#topbar > ul > li:nth-child(3) > ul li:nth-child(3)')
 					.waitForElementNotPresent('.prototypo-text', 2000)
-					.click('.top-bar-menu-item.is-icon-menu ul li:nth-child(2)')
+					.click('#topbar > ul > li:nth-child(3) > ul li:nth-child(3)')
 					.waitForElementVisible('.prototypo-text', 2000)
-					.click('.top-bar-menu-item.is-icon-menu ul li:nth-child(3)')
+					.click('#topbar > ul > li:nth-child(3) > ul li:nth-child(4)')
 					.waitForElementNotPresent('.prototypo-word', 2000)
-					.click('.top-bar-menu-item.is-icon-menu ul li:nth-child(3)')
+					.click('#topbar > ul > li:nth-child(3) > ul li:nth-child(4)')
 					.waitForElementVisible('.prototypo-word', 2000);
 			});
 	},
@@ -41,14 +41,14 @@ module.exports = {
 			.waitForElementVisible('.prototypo-canvas', 2000);
 		browser
 			.elements('css selector', '#topbar > ul > li', function(result) {
-				browser.moveTo(result.value[3].ELEMENT)
-					.click('.top-bar-menu-item.is-icon-menu ul li:nth-child(3)')
+				browser.moveTo(result.value[2].ELEMENT)
+					.click('#topbar > ul > li:nth-child(3) > ul li:nth-child(4)')
 					.waitForElementVisible('.prototypo-word', 2000)
 					.click('.prototypo-canvas .close-button')
 					.waitForElementNotPresent('.prototypo-canvas', 2000)
-					.moveTo(result.value[3].ELEMENT)
-					.click('.top-bar-menu-item.is-icon-menu ul li:nth-child(1)')
-					.click('.top-bar-menu-item.is-icon-menu ul li:nth-child(2)');
+					.moveTo(result.value[2].ELEMENT)
+					.click('#topbar > ul > li:nth-child(3) > ul li:nth-child(2)')
+					.click('#topbar > ul > li:nth-child(3) > ul li:nth-child(3)');
 			});
 	},
 };

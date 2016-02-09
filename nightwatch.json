@@ -29,7 +29,8 @@
 				"browserstack.user": "${BROWSERSTACK_USERNAME}",
 				"browserstack.key": "${BROWSERSTACK_KEY}",
 				"os": "WINDOWS",
-				"os_version": "8"
+				"os_version": "8",
+				"resolution": "1920x1080"
 			}
 		},
 
