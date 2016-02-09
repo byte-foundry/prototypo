@@ -59,8 +59,19 @@ class TopBarMenuDropdown extends React.Component {
 }
 
 class TopBarMenuAction extends React.Component {
+
 	static getHeader(props) {
-		return <div className="top-bar-menu-action" onClick={(e) => {props.click(e);}}>{props.name}</div>;
+
+		const classes = Classnames({
+			'top-bar-menu-item-action': true,
+			'is-active': props.active,
+		});
+
+		if ( props.img ) {
+			return <div className={classes} title={`Toggle ` + props.name + ` view`} onClick={(e) => {props.click(e);}}><img src={`assets/images/`+ props.img} /></div>;
+		} else {
+			return <div className={classes} onClick={(e) => {props.click(e);}}>{props.name}</div>;
+		}
 	}
 
 	render() {
@@ -70,6 +81,7 @@ class TopBarMenuAction extends React.Component {
 		return false;
 	}
 }
+
 
 function setupKeyboardShortcut(key, modifier, cb) {
 	document.addEventListener('keydown', (e) => {
@@ -110,6 +122,7 @@ class TopBarMenuDropdownItem extends React.Component {
 			'top-bar-menu-item-dropdown-item': true,
 			'is-disabled': this.props.disabled,
 			'has-separator': this.props.separator,
+			'is-checkbox': this.props.checkbox,
 			'is-active': this.props.active,
 		});
 

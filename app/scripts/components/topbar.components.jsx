@@ -169,23 +169,25 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams(); }}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Window">
-						<TopBarMenuDropdownItem name="Glyphs list" active={this.state.panel.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
-						<TopBarMenuDropdownItem name="Glyph view" active={this.state.panel.mode.indexOf('glyph') !== -1} handler={() => { this.toggleView('glyph'); }}/>
-						<TopBarMenuDropdownItem name="Text view" active={this.state.panel.mode.indexOf('text') !== -1} handler={() => { this.toggleView('text'); }}/>
-						<TopBarMenuDropdownItem name="Word view" active={this.state.panel.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word'); }}/>
+						<TopBarMenuDropdownItem name="Glyphs list" checkbox={true} active={this.state.panel.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
+						<TopBarMenuDropdownItem name="Glyph view" checkbox={true} active={this.state.panel.mode.indexOf('glyph') !== -1} handler={() => { this.toggleView('glyph'); }}/>
+						<TopBarMenuDropdownItem name="Text view" checkbox={true} active={this.state.panel.mode.indexOf('text') !== -1} handler={() => { this.toggleView('text'); }}/>
+						<TopBarMenuDropdownItem name="Word view" checkbox={true} active={this.state.panel.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word'); }}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Help">
 						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
+						<TopBarMenuDropdownItem name="Submit an issue on GitHub" handler={() => { window.open('https://github.com/byte-foundry/prototypo/issues','_blank'); }}/>
+						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq','_blank'); }}/>
 					</TopBarMenuDropdown>
 					{exporting}
 					{errorExporting}
-					<TopBarMenuAction name="Glyphs list" click={() => { this.toggleView('list'); }} alignRight={true} action={true}>
-					</TopBarMenuAction>
-					<TopBarMenuDropdown name="Toggle views" img="assets/images/views-icon.svg" alignRight={true} small={true}>
-						<TopBarMenuDropdownCheckBox name="Glyph" checked={this.state.panel.mode.indexOf('glyph') !== -1} handler={() => { this.toggleView('glyph'); }}/>
-						<TopBarMenuDropdownCheckBox name="Text" checked={this.state.panel.mode.indexOf('text') !== -1} handler={() => { this.toggleView('text'); }}/>
-						<TopBarMenuDropdownCheckBox name="Word" checked={this.state.panel.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word'); }}/>
-					</TopBarMenuDropdown>
+
+					<TopBarMenuAction name="Glyphs list" click={() => { this.toggleView('list'); }} alignRight={true} action={true}></TopBarMenuAction>
+
+					<TopBarMenuAction name="text" click={() => { this.toggleView('text'); }} active={this.state.panel.mode.indexOf('text') !== -1} img="view-text.svg" alignRight={true} small={true}></TopBarMenuAction>
+					<TopBarMenuAction name="word" click={() => { this.toggleView('word'); }} active={this.state.panel.mode.indexOf('word') !== -1} img="view-word.svg" alignRight={true} small={true}></TopBarMenuAction>
+					<TopBarMenuAction name="glyph" click={() => { this.toggleView('glyph'); }} active={this.state.panel.mode.indexOf('glyph') !== -1} img="view-glyph.svg" alignRight={true} small={true}></TopBarMenuAction>
+
 				</TopBarMenu>
 			</div>
 		);
