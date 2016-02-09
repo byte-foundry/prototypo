@@ -36,13 +36,14 @@ export default class IndividualizeButton extends React.Component {
 	render() {
 
 		const buttonClass = Classnames({
-			'individualize-button-label': true,
+			'individualize-button': true,
 			'is-active': this.state.individualize,
 		});
 
 		return (
-			<div className="canvas-menu-item individualize-button">
-				<div className={buttonClass} title="Individualize parameters" onClick={() => { this.individualize(); }} ></div>
+			<div className={buttonClass} onClick={() => { this.individualize(); }} >
+				<div className="individualize-button-toggle" title="Individualize parameters"></div>
+				<div className="individualize-button-label"></div>
 			</div>
 		);
 	}
