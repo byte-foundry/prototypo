@@ -24,7 +24,7 @@ export default {
 
 		localServer.dispatchUpdate('/tagStore', patch);
 		localServer.dispatchUpdate('/searchStore', patchSearch);
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 	},
 	'/toggle-pinned': (params) => {
 		const pinned = _.xor(tagStore.get('pinned'), [params]);
@@ -33,6 +33,6 @@ export default {
 			.commit();
 
 		localServer.dispatchUpdate('/tagStore', patch);
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 	},
 };

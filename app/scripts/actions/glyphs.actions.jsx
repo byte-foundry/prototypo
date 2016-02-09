@@ -30,7 +30,7 @@ export default {
 				localServer.dispatchUpdate('/panel', patchPanel);
 			}
 
-			saveAppValues(appValuesLoaded);
+			saveAppValues();
 	},
 	'/toggle-lock-list': () => {
 		const lockState = glyphs.get('locked');

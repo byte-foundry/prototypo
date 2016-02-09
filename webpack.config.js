@@ -19,7 +19,7 @@ module.exports = {
 		loaders: [
 			{ 
 				test: /\.jsx?$/,
-				loaders: ['prelude-loader','react-hot-loader', 'babel-loader?cacheDirectory'],
+				loaders: ['react-hot-loader', 'babel-loader?cacheDirectory', 'prelude-loader'],
 				include: [
 					path.join(__dirname, 'app')
 				]

@@ -35,7 +35,7 @@ export default {
 
 			localServer.dispatchUpdate('/searchStore', patch);
 		}
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 	},
 	'/toggle-pinned-search': ({query}) => {
 		const pinned = _.xor(searchStore.get('pinned'), [query]);
@@ -44,7 +44,7 @@ export default {
 			.commit();
 
 		localServer.dispatchUpdate('/searchStore', patch);
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 	},
 	'/delete-search-glyph': ({query}) => {
 		const searchs = _.xor(searchStore.get('savedSearch'), [query]);
@@ -55,6 +55,6 @@ export default {
 			.commit();
 
 		localServer.dispatchUpdate('/searchStore', patch);
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 	},
 }

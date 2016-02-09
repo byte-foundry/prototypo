@@ -92,6 +92,29 @@ const searchStore = new Remutable({
 	savedSearch: [],
 });
 
+const stores = {
+	'/debugStore': debugStore,
+	'/eventBackLog': eventBackLog,
+	'/fontTab': fontTab,
+	'/fontControls': fontControls,
+	'/fontParameters': fontParameters,
+	'/sideBarTab': sideBarTab,
+	'/fontStore': fontStore,
+	'/tagStore': tagStore,
+	'/glyphs': glyphs,
+	'/templateList': templateList,
+	'/fontLibrary': fontLibrary,
+	'/fontVariant': fontVariant,
+	'/fontInfos': fontInfos,
+	'/panel': panel,
+	'/commits': commits,
+	'/exportStore': exportStore,
+	'/individualizeStore': individualizeStore,
+	'/intercomStore': intercomStore,
+	'/searchStore': searchStore,
+};
+
+export default stores;
 export {
 	debugStore,
 	eventBackLog,

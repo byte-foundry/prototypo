@@ -22,9 +22,11 @@ import HoodieApi from './services/hoodie.services.js';
 import {FontValues, AppValues} from './services/values.services.js';
 import LocalClient from './stores/local-client.stores.jsx';
 import LocalServer from './stores/local-server.stores.jsx';
+import Stores from './stores/creation.stores.jsx';
 
-import * as Stores from './stores/creation.stores.jsx';
+import selectRenderOptions from './helpers/userAgent.helpers.js';
 import {loadFontValues, saveAppValues} from './helpers/loadValues.helpers.js';
+import {loadStuff} from './helpers/appSetup.helpers.js';
 
 import appValuesAction from './actions/appValues.actions.jsx';
 import exportAction from './actions/export.actions.jsx';
@@ -39,25 +41,17 @@ import searchAction from './actions/search.actions.jsx';
 import tagStoreAction from './actions/tagStore.actions.jsx';
 import undoStackAction from './actions/undoStack.actions.jsx';
 import userAction from './actions/user.actions.jsx';
-import EventDebugger, {debugActions} from './actions/eventLogging.debug.jsx';
+
+import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
 
 window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
+debugger;
 const stores = window.prototypoStores = Stores;
 
-const {
-	debugStore,
-	fontControls,
-	fontParameters,
-	tagStore,
-	glyphs,
-	fontVariant,
-	fontInfos,
-	panel,
-	individualizeStore,
-	intercomStore,
-	searchStore,
-} = Stores;
+const debugStore =  Stores['/debugStore'];
+const fontControls = Stores['/fontControls'];
+const intercomStore = Stores['/intercomStore'];
 
 function saveErrorLog(error) {
 	const debugLog = {
@@ -81,8 +75,11 @@ function saveErrorLog(error) {
 const localServer = new LocalServer(stores).instance;
 
 LocalClient.setup(localServer);
-const localClient = LocalClient.instance();
+const fluxEvent = new Event('fluxServer.setup');
 
+window.dispatchEvent(fluxEvent);
+
+const localClient = LocalClient.instance();
 const eventDebugger = new EventDebugger();
 
 async function createStores() {
@@ -103,10 +100,8 @@ async function createStores() {
 
 	//I know this is ugly but for now it's like this.
 	//We need some transient state to know when we loaded appValues
-	let appValuesLoaded = false;
-
 	window.addEventListener('unload', () => {
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 		FontValues.save({typeface: 'default', values: fontControls.head.toJS()});
 	});
 
@@ -132,7 +127,7 @@ async function createStores() {
 
 				localServer.dispatchUpdate('/intercomStore', patch);
 			},
-		},
+		}
 	);
 
 	localServer.on('action', ({path, params}) => {
@@ -152,130 +147,58 @@ async function createStores() {
 	}
 }
 
-async function loadStuff() {
-	//Login checking and app and font values loading
-	try {
-		const defaultValues = {
-				values: {
-					mode: ['glyph', 'word'],
-					selected: 'A'.charCodeAt(0).toString(),
-					onboard: false,
-					onboardstep: 'welcome',
-					word: 'Hello',
-					text: 'World',
-					pos: ['Point', 457, -364],
-					familySelected: {
-						template: 'venus.ptf',
-					},
-					variantSelected: {
-						db: 'venus.ptf',
-					},
-					savedSearch: [],
-				},
-			};
 
-		let appValues;
+selectRenderOptions(
+	() => {
+		const content = document.getElementById('content');
 
-		try {
-			appValues = await AppValues.get({typeface: 'default'});
-			appValues.values = _.extend(defaultValues.values, appValues.values);
-		}
-		catch (err) {
-			appValues = defaultValues;
-			console.error(err);
-		}
+		React.render(<IAmMobile />, content);
+	},
+	() => {
+		const content = document.getElementById('content');
 
-		localClient.dispatchAction('/load-app-values', appValues);
+		React.render(<NotABrowser />, content);
+	},
+	() => {
+		const canvasEl = window.canvasElement = document.createElement('canvas');
 
-		const {typedata} = await setupFontInstance(appValues);
+		canvasEl.className = 'prototypo-canvas-container-canvas';
+		canvasEl.width = 0;
+		canvasEl.height = 0;
 
-		localClient.dispatchAction('/create-font', fontInstance.font.ot.getEnglishName('fontFamily'));
+		createStores()
+			.then(() => {
+				const Route = Router.Route;
+				const RouteHandler = Router.RouteHandler;
+				const DefaultRoute = Router.DefaultRoute;
 
-		localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
-		localClient.dispatchAction('/load-glyphs', _.mapValues(
-			fontInstance.font.altMap,
-			(glyph) => {
-				return _.map(
-					glyph,
-					(alt) => {
-						return {
-							src: {
-								tags: alt.src && alt.src.tags || [],
-								characterName: alt.src && alt.src.characterName || '',
-								unicode: alt.src && alt.src.unicode	|| '',
-								glyphName: alt.src && alt.src.glyphName || '',
-							},
-							name: alt.name,
-							altImg: alt.altImg,
-						};
+				const content = document.getElementById('content');
+
+				class App extends React.Component {
+					render() {
+						return (
+							<RouteHandler />
+						);
 					}
-				);
-			}
-		));
-		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
-
-		localClient.dispatchAction('/load-commits');
-		fontInstance.displayChar(String.fromCharCode(glyphs.get('selected')));
-
-		loadFontValues(typedata, appValues.values.variantSelected.db);
-	}
-	catch (err) {
-		console.error(err);
-		location.href = '#/signin';
-	}
-}
-
-if (mobile) {
-	const content = document.getElementById('content');
-
-	React.render(<IAmMobile />, content);
-}
-else if (isSafari || isIE) {
-	const content = document.getElementById('content');
-
-	React.render(<NotABrowser />, content);
-
-}
-else {
-
-	const canvasEl = window.canvasElement = document.createElement('canvas');
-
-	canvasEl.className = 'prototypo-canvas-container-canvas';
-	canvasEl.width = 0;
-	canvasEl.height = 0;
-
-	createStores()
-		.then(() => {
-			const Route = Router.Route;
-			const RouteHandler = Router.RouteHandler;
-			const DefaultRoute = Router.DefaultRoute;
-
-			const content = document.getElementById('content');
-
-			class App extends React.Component {
-				render() {
-					return (
-						<RouteHandler />
-					);
 				}
-			}
 
-			const Routes = (
-				<Route handler={App} name="app" path="/">
-					<DefaultRoute handler={SitePortal}/>
-					<Route name="dashboard" handler={Dashboard}/>
-					<Route name="replay" path="replay/:replayId" handler={Dashboard}/>
-					<Route name="signin" handler={NotLoggedIn}>
-						<Route name="forgotten" handler={ForgottenPassword}/>
-						<DefaultRoute handler={Signin}/>
+				const Routes = (
+					<Route handler={App} name="app" path="/">
+						<DefaultRoute handler={SitePortal}/>
+						<Route name="dashboard" handler={Dashboard}/>
+						<Route name="replay" path="replay/:replayId" handler={Dashboard}/>
+						<Route name="signin" handler={NotLoggedIn}>
+							<Route name="forgotten" handler={ForgottenPassword}/>
+							<DefaultRoute handler={Signin}/>
+						</Route>
+						<Route name="subscription" handler={Subscriptions}/>
 					</Route>
-					<Route name="subscription" handler={Subscriptions}/>
-				</Route>
-			);
+				);
 
-			Router.run(Routes, function(Handler) {
+				Router.run(Routes, function(Handler) {
 
-				React.render(<Handler />, content);
+					React.render(<Handler />, content);
+				});
 			});
-		});
-}
+		}
+);

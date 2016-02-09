@@ -1,5 +1,5 @@
 import PrototypoCanvas from 'prototypo-canvas';
-import {Typefaces} from './services/typefaces.services.js';
+import {Typefaces} from '../services/typefaces.services.js';
 
 export async function setupFontInstance(appValues) {
 		const template = appValues.values.familySelected ? appValues.values.familySelected.template : undefined;

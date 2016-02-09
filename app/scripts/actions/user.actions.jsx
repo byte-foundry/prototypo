@@ -1,4 +1,5 @@
 import HoodieApi from '../services/hoodie.services.js';
+import {loadStuff} from '../helpers/appSetup.helpers.js';
 
 export default {
 	'/login': async () => {

@@ -162,7 +162,7 @@ export default {
 			template: family.template,
 			db: variant.db,
 		});
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 	},
 	'/create-variant': async ({name, familyName}) => {
 		localClient.dispatchAction('/cancel-indiv-mode');
@@ -236,7 +236,7 @@ export default {
 		const patch = fontLibrary.set('fonts', fontLibrary.get('fonts')).commit();
 
 		localServer.dispatchUpdate('/fontLibrary', patch);
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 	},
 	'/delete-variant': ({variant, familyName}) => {
 		const family = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
@@ -248,7 +248,7 @@ export default {
 		const patch = fontLibrary.set('fonts', fontLibrary.get('fonts')).commit();
 
 		localServer.dispatchUpdate('/fontLibrary', patch);
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 
 	},
 	'/delete-family': ({family}) => {
@@ -265,7 +265,7 @@ export default {
 			FontValues.deleteDb({typeface: variant.db});
 		});
 
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 	},
 	'/clear-error-family': () => {
 		const patch = fontLibrary.set('errorAddFamily', undefined).commit();

@@ -2,6 +2,7 @@ import {panel, sideBarTab, fontTab} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
+import Log from '../services/log.services.js';
 
 let localServer;
 let localClient;
@@ -19,7 +20,7 @@ export default {
 		const patch = panel.commit();
 
 		localServer.dispatchUpdate('/panel', patch);
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 	},
 	'/store-text': ({value, propName}) => {
 		const patch = panel.set(propName, value).commit();
@@ -28,7 +29,7 @@ export default {
 		localServer.dispatchUpdate('/panel', patch);
 
 		fontInstance.subset = typeof subset === 'string' ? subset : '';
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 	},
 	'/change-tab-sidebar': (params) => {
 
@@ -56,7 +57,7 @@ export default {
 		const patch = fontTab.set('tab', name).commit();
 
 		localServer.dispatchUpdate('/fontTab', patch);
-		saveAppValues(appValuesLoaded);
+		saveAppValues();
 
 	},
 };
