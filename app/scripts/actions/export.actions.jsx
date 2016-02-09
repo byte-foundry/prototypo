@@ -41,7 +41,7 @@ export default {
 		}, name, merged);
 	},
 	'/export-family': async ({familyToExport, variants}) => {
-		const variant = fontVariant.get('variant');
+		const oldVariant = fontVariant.get('variant');
 		const family = fontVariant.get('family');
 		const zip = new JSZip();
 		const a = document.createElement('a');
@@ -66,7 +66,14 @@ export default {
 		for (let i = 0; i < variants.length; i++) {
 			const currVariant = variants[i];
 
-			values.push(FontValues.get({typeface: currVariant.db}));
+			values.push(FontValues.get({typeface: currVariant.db})
+				.then((fontValues) => {
+					return {
+						currVariant,
+						fontValues,
+					};
+				})
+			);
 		}
 
 		const blobs = [];
@@ -76,56 +83,57 @@ export default {
 				const blob = fontInstance.getBlob(
 					null, {
 						family: familyToExport.name,
-						style: currVariant.name,
+						style: value.currVariant.name,
 					},
-					false,
-					value.values
+					true,
+					value.fontValues.values
 				);
 
-				blobs.push(blob);
+				blobs.push(blob.then((blob) => {
+					return blob;
+				}));
+			});
+
+			Promise.all(blobs).then((blobBuffers) => {
+				_.each(blobBuffers, ({buffer, variant}) => {
+					const variantPatch = exportStore.set('exportedVariant',
+						exportStore.get('exportedVariant') + 1).commit();
+
+					localServer.dispatchUpdate('/exportStore', variantPatch);
+					zip.file(`${variant}.otf`, buffer, {binary: true});
+
+					const reader = new FileReader();
+					const _URL = window.URL || window.webkitURL;
+
+					reader.onloadend = () => {
+						a.download = `${familyToExport.name}.zip`;
+						a.href = reader.result;
+						a.dispatchEvent(new MouseEvent('click'));
+
+						setTimeout(() => {
+							a.href = '#';
+							_URL.revokeObjectURL(reader.result);
+						}, 100);
+
+						fontInstance.exportingZip = false;
+
+						localClient.dispatchAction('/change-font', {
+							templateToLoad: family.template,
+							db: oldVariant.db,
+						});
+
+						const cleanupPatch = exportStore
+							.set('variantToExport', undefined)
+							.set('exportedVariant', 0)
+							.set('familyExported', undefined)
+							.commit();
+
+						localServer.dispatchUpdate('/exportStore', cleanupPatch);
+					};
+
+					reader.readAsDataURL(zip.generate({type: "blob"}));
+				});
 			});
 		});
-
-		Promise.all(blobs).then((blobBuffers) => {
-			_.each(blobBuffers, ({buffer, variantName}) => {
-				const variantPatch = exportStore.set('exportedVariant',
-					exportStore.get('exportedVariant') + 1).commit();
-
-				localServer.dispatchUpdate('/exportStore', variantPatch);
-				zip.file(`${variantName}.otf`, buffer, {binary: true});
-
-				const reader = new FileReader();
-				const _URL = window.URL || window.webkitURL;
-
-				reader.onloadend = () => {
-					a.download = `${familyToExport.name}.zip`;
-					a.href = reader.result;
-					a.dispatchEvent(new MouseEvent('click'));
-
-					setTimeout(() => {
-						a.href = '#';
-						_URL.revokeObjectURL(reader.result);
-					}, 100);
-
-					fontInstance.exportingZip = false;
-
-					localClient.dispatchAction('/change-font', {
-						templateToLoad: family.template,
-						db: variant.db,
-					});
-
-					const cleanupPatch = exportStore
-						.set('variantToExport', undefined)
-						.set('exportedVariant', 0)
-						.set('familyExported', undefined)
-						.commit();
-
-					localServer.dispatchUpdate('/exportStore', cleanupPatch);
-				};
-
-				reader.readAsDataURL(zip.generate({type: "blob"}));
-			});
-		});
-
 	},
 };
