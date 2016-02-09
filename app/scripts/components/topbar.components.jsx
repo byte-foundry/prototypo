@@ -2,6 +2,7 @@ import React from 'react';
 import Lifespan from 'lifespan';
 
 import Log from '../services/log.services.js';
+import HoodieApi from '../services/hoodie.services.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
