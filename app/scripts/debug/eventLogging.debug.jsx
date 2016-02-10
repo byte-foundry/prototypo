@@ -1,11 +1,16 @@
-import {debugStore} from '../stores/creation.stores.jsx';
+import {debugStore, fontVariant, panel, glyphs} from '../stores/creation.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import LocalServer from '../stores/local-server.stores.jsx';
+import LocalClient from '../stores/local-client.stores.jsx';
+import {setupFontInstance} from '../helpers/font.helpers.js';
+import pleaseWait from 'please-wait';
 
 let localServer;
+let localClient;
 
 window.addEventListener('fluxServer.setup', () => {
 	localServer = LocalServer.instance;
+	localClient = LocalClient.instance();
 });
 
 const debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net';
@@ -45,10 +50,16 @@ export default class EventDebugger {
 	storeEvent(path, params) {
 		if (path.indexOf('debug') === -1
 			&& location.hash.indexOf('#/replay') === -1) {
-			const events = debugStore.get('events');
 
-			events.push({path, params});
-			debugStore.set('events', events).commit();
+			if (path === '/login') {
+				debugStore.set('events', []);
+			}
+			else {
+				const events = debugStore.get('events');
+
+				events.push({path, params});
+				debugStore.set('events', events).commit();
+			}
 		}
 	}
 
@@ -86,7 +97,7 @@ export default class EventDebugger {
 			return await new Promise((resolve) => {
 				setTimeout(() => {
 					resolve(this.execEvent(events, i + 1, to));
-				}, 100);
+				}, 1000);
 			});
 		}
 		else {
@@ -97,9 +108,9 @@ export default class EventDebugger {
 	async replayEvents(values, events) {
 		debugStore.set('values', values).commit();
 
-		await execEvent(events, 0, 6);
+		await this.execEvent(events, 0, 6);
 		setTimeout(() => {
-			execEvent(eventsToPlay, 6);
+			this.execEvent(events, 6);
 		}, 1500);
 	}
 
@@ -110,6 +121,6 @@ export default class EventDebugger {
 		const eventsToPlay = data.events;
 		const values = data.values;
 
-		this.replayEvents(values, eventsToPlay);
+		await this.replayEvents(values, eventsToPlay);
 	}
 }

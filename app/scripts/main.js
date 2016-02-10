@@ -43,6 +43,7 @@ import undoStackAction from './actions/undoStack.actions.jsx';
 import userAction from './actions/user.actions.jsx';
 
 import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
+import ReplayViewer from './debug/replay-viewer.components.jsx';
 
 window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
@@ -185,7 +186,7 @@ selectRenderOptions(
 					<Route handler={App} name="app" path="/">
 						<DefaultRoute handler={SitePortal}/>
 						<Route name="dashboard" handler={Dashboard}/>
-						<Route name="replay" path="replay/:replayId" handler={Dashboard}/>
+						<Route name="replay" path="replay/:replayId" handler={ReplayViewer}/>
 						<Route name="signin" handler={NotLoggedIn}>
 							<Route name="forgotten" handler={ForgottenPassword}/>
 							<DefaultRoute handler={Signin}/>
