@@ -1,7 +1,8 @@
-import {exportStore, fontVariant} from '../stores/creation.stores.jsx';
+import {exportStore, fontVariant, fontControls} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {FontValues} from '../services/values.services.js';
+import HoodieApi from '../services/hoodie.services.js';
 import JSZip from 'jszip';
 
 let localServer;
@@ -38,7 +39,7 @@ export default {
 			localClient.dispatchAction('/exporting', {exporting: false});
 			window.Intercom('trackEvent', 'export-otf');
 			clearTimeout(exportingError);
-		}, name, merged);
+		}, name.family, merged, undefined, HoodieApi.instance.email);
 	},
 	'/export-family': async ({familyToExport, variants}) => {
 		const oldVariant = fontVariant.get('variant');
@@ -85,7 +86,7 @@ export default {
 						family: familyToExport.name,
 						style: value.currVariant.name,
 					},
-					true,
+					false,
 					value.fontValues.values
 				);
 
