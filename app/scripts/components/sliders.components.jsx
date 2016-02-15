@@ -3,6 +3,7 @@ import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 
 import LocalClient from '../stores/local-client.stores.jsx';
+import HoodieApi from '../services/hoodie.services.js';
 import DOM from '../helpers/dom.helpers.js';
 
 export class Sliders extends React.Component {
@@ -83,6 +84,9 @@ export class Slider extends React.Component {
 			console.log('[RENDER] slider');
 		}
 		const value = this.props.value === undefined ? this.props.param.init : this.props.value;
+		const plan = HoodieApi.instance.plan || 'kickstarter';
+
+		this.props.param.notInDemo = (plan.indexOf('free') === 0 && !this.props.param.demo);
 
 		const classes = Classnames({
 			'slider': true,
@@ -91,7 +95,14 @@ export class Slider extends React.Component {
 			'is-child': this.props.param.child,
 		});
 
-		const demoOverlay = this.props.param.disabled && this.props.param.notInDemo ? (
+		const demoOverlay = this.props.param.notInDemo && !this.props.param.disabled ? (
+			<a href="https://www.prototypo.io/account#/account" className="slider-demo-overlay-text">
+				This feature is available with the professional subscription
+				<div className="slider-demo-overlay-text-more">
+					<div className="slider-demo-overlay-text-more-text">Uppgrade to full version</div>
+				</div>
+			</a>
+		) : this.props.param.disabled ? (
 			<div className="slider-demo-overlay-text">
 				This feature is currently in development
 			</div>
