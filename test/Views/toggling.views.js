@@ -2,12 +2,12 @@ module.exports = {
 	before: function(browser, done) {
 		browser
 			.init()
-			.waitForElementVisible('input#email-sign-in', 10000)
-			.setValue('input#email-sign-in',process.env.PROTOTYPO_LOGIN)
+			.waitForElementVisible('input#email-sign-in', 20000)
+			.setValue('input#email-sign-in', 'test@registered-annual.com')
 			.setValue('input#password-sign-in', process.env.PROTOTYPO_PASS)
 			.click('input[type=submit]')
-			.pause(10000)
-			.waitForElementVisible('#dashboard', 10000, false, done);
+			.pause(20000)
+			.waitForElementVisible('#dashboard', 20000, false, done);
 	},
 	after: function(browser) {
 		browser.end();
