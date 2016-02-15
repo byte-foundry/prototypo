@@ -115,11 +115,11 @@ export class Family extends React.Component {
 	}
 
 	componentDidMount() {
-		this.height = React.findDOMNode(this.refs.list).clientHeight;
+		this.height = this.refs.list.clientHeight;
 	}
 
 	componentDidUpdate() {
-		this.height = React.findDOMNode(this.refs.list).clientHeight;
+		this.height = this.refs.list.clientHeight;
 	}
 
 	toggleList() {
@@ -283,7 +283,7 @@ export class AddFamily extends React.Component {
 		if (state) {
 			this.client.dispatchAction('/store-panel-param', {onboardstep: 'creatingFamily-2'});
 			setTimeout(() => {
-				React.findDOMNode(this.refs.name).focus();
+				this.refs.name.focus();
 			}, 100);
 		}
 	}
@@ -297,7 +297,7 @@ export class AddFamily extends React.Component {
 	createFont(e) {
 		e.stopPropagation();
 		this.client.dispatchAction('/create-family', {
-			name: React.findDOMNode(this.refs.name).value,
+			name: this.refs.name.value,
 			template: this.state.selectedFont ? this.state.selectedFont.templateName : undefined,
 			loadCurrent: this.state.selectedFont ? this.state.selectedFont.loadCurrent : false,
 		});

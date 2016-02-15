@@ -1,11 +1,46 @@
 import React from 'react';
+import Lifespan from 'lifespan';
+import Classnames from 'classnames';
+import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import JSONPretty from 'react-json-pretty';
+
+import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class ReplayPlaylist extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/debugStore', this.lifespan)
+		.onUpdate(({head}) => {
+				this.setState({
+					details: head.toJS().details,
+					showDetails: head.toJS().showDetails,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
 	render() {
+		const details = this.state.showDetails 
+			? <EventDetails details={this.state.details} />
+			: false;
+
 		return (
 			<div className="replay-playlist">
 				<ReplayPlayer/>
 				<Events/>
+				{details}
 			</div>
 		);
 	}
@@ -15,10 +50,10 @@ class ReplayPlayer extends React.Component {
 	render() {
 		return (
 			<div className="replay-player">
-				<div className="replay-play">
+				<div className="replay-player-play">
 					&lt;
 				</div>
-				<div className="replay-pause">
+				<div className="replay-player-pause">
 					{"||"}
 				</div>
 			</div>
@@ -27,42 +62,141 @@ class ReplayPlayer extends React.Component {
 }
 
 class Events extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('logStore', this.lifespan)
+		.onUpdate(({head}) => {
+				this.setState({
+					patchArray: head.toJS().patchArray,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	render() {
-		const events = [
-			<Event path="/load-app-values"/>,
-			<Event path="/load-app-values"/>,
-			<Event path="/load-app-values"/>,
-			<Event path="/load-app-values"/>,
-			<Event path="/load-app-values"/>,
-			<Event path="/load-app-values"/>,
-			<Event path="/load-app-values"/>,
-			<Event path="/load-app-values"/>,
-		];
+		let eventIndex = 0;
+		const events = _.map(this.state.patchArray, (patch, i) => {
+			if (patch.type === 'action') {
+				return <Event path={patch.path} details={patch.params} index={eventIndex++} key={i}/>;
+			}
+			else {
+				return <Patch path={patch.path} details={patch.patch} key={i}/>
+			}
+		});
 
 		return (
-			<ul>
+			<ReactGeminiScrollbar>
+			<ul className="events">
 				{events}
-			</ul>
+				</ul>
+			</ReactGeminiScrollbar>
+		);
+	}
+}
+
+class Patch extends React.Component {
+	render() {
+		const classes = Classnames({
+			event: true,
+			patch: true,
+		});
+
+		return (
+			<li className={classes}>
+				<div className="event-name patch-name">
+					{this.props.path}
+				</div>
+				<div className="event-buttons">
+					<div className="event-buttons-go-here">
+						Go here
+					</div>
+					<div className="event-buttons-details">
+						Deets
+					</div>
+				</div>
+			</li>
 		);
 	}
 }
 
 class Event extends React.Component {
-	render() {
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
+	shouldComponentUpdate(nextProps, nextState) {
 		return (
-			<li class="event">
-				<div class="event-name">
+			nextState.index !== this.state.index
+		);
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/debugStore', this.lifespan)
+		.onUpdate(({head}) => {
+				this.setState({
+					index: head.toJS().index,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	showDetails() {
+		this.client.dispatchAction('/show-details', this.props.details);
+	}
+
+	render() {
+		const classes = Classnames({
+			event: true,
+			'is-active': this.props.index === this.state.index,
+		});
+
+		return (
+			<li className={classes}>
+				<div className="event-name">
 					{this.props.path}
 				</div>
-				<div class="event-buttons">
-					<div class="event-buttons-go-here">
+				<div className="event-buttons">
+					<div className="event-buttons-go-here">
 						Go here
 					</div>
-					<div class="event-buttons-details">
+					<div className="event-buttons-details" onClick={() => {this.showDetails();}}>
 						Deets
 					</div>
 				</div>
 			</li>
+		);
+	}
+}
+
+class EventDetails extends React.Component {
+	render() {
+		return (
+			<div className="event-details">
+				<JSONPretty id="stuff" json={this.props.details}></JSONPretty>
+			</div>
 		)
 	}
 }

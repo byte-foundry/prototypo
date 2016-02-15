@@ -15,15 +15,15 @@ export default class SearchGlyphList extends React.Component {
 
 	changeSearch() {
 		this.client.dispatchAction('/search-glyph', {
-			query: React.findDOMNode(this.refs.search).value,
+			query: this.refs.search.value,
 		});
 	}
 
 	saveSearch() {
 		this.client.dispatchAction('/save-search-glyph', {
-			query: React.findDOMNode(this.refs.search).value,
+			query: this.refs.search.value,
 		});
-		React.findDOMNode(this.refs.search).value = '';
+		this.refs.search.value = '';
 	}
 
 	render() {

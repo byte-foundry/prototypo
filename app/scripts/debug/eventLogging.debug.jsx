@@ -4,6 +4,7 @@ import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {setupFontInstance} from '../helpers/font.helpers.js';
 import pleaseWait from 'please-wait';
+import {loadStuff} from '../helpers/appSetup.helpers.js';
 
 let localServer;
 let localClient;
@@ -44,6 +45,10 @@ export const debugActions = {
 		values[prefix][typeface] = data;
 		debugStore.set('values', values).commit();
 	},
+	'/show-details': (details) => {
+		const patch = debugStore.set('details', details).set('showDetails', true).commit();
+		localServer.dispatchUpdate('/debugStore', patch);
+	}
 };
 
 export default class EventDebugger {
@@ -65,6 +70,8 @@ export default class EventDebugger {
 
 	async execEvent(events, i, to) {
 		if (i < events.length) {
+			const patch = debugStore.set('index', i).commit();
+			localServer.dispatchUpdate('/debugStore', patch);
 			if (i === 1) {
 				const familySelected = fontVariant.get('family');
 				const text = panel.get('text');
@@ -106,21 +113,31 @@ export default class EventDebugger {
 	}
 
 	async replayEvents(values, events) {
-		debugStore.set('values', values).commit();
+		const patch = debugStore
+			.set('events', events)
+			.set('values', values)
+			.commit();
+
+		localServer.dispatchUpdate('/debugStore', patch);
 
 		await this.execEvent(events, 0, 6);
 		setTimeout(() => {
 			this.execEvent(events, 6);
-		}, 1500);
+		}, 6000);
 	}
 
 	async replayEventFromFile() {
 		const hash = location.hash.split('/');
-		const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);
-		const data = await result.json();
-		const eventsToPlay = data.events;
-		const values = data.values;
+		try {
+			const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);
+			const data = await result.json();
+			const eventsToPlay = data.events;
+			const values = data.values;
 
-		await this.replayEvents(values, eventsToPlay);
+			await this.replayEvents(values, eventsToPlay);
+		}
+		catch(err) {
+			await loadStuff();
+		}
 	}
 }

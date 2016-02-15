@@ -3,6 +3,7 @@ var webpack = require('webpack');
 
 module.exports = {
 	cache: true,
+	'if-loader': 'prod',
 	entry: [
 		'babel-polyfill',
 		'./app/scripts/main'
@@ -16,7 +17,7 @@ module.exports = {
 		loaders: [
 			{ 
 				test: /\.jsx?$/,
-				loaders: ['transform/cacheable?envify', 'babel-loader?cacheDirectory','prelude-loader'],
+				loaders: ['transform/cacheable?envify', 'babel-loader?cacheDirectory', 'prelude-loader', 'if-loader'],
 				include: [
 					path.join(__dirname, 'app')
 				]

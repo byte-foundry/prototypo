@@ -6,6 +6,8 @@ module.exports = {
 	entry: {
 		libs: [
 			'react',
+			'react-dom',
+			'react-addons-create-fragment',
 			'moment',
 			'babel-polyfill',
 			'lifespan',
@@ -17,11 +19,12 @@ module.exports = {
 			'xxhashjs',
 			'pouchdb',
 			'pouchdb-hoodie-api',
+			'react-json-pretty',
 		],
 	},
 	module: {
 		noParse: [
-			/(levelup|lifespan|nexus-flux|remutable)/
+			/(levelup)/
 		]
 	},
 	output: {
