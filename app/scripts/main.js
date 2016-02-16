@@ -161,20 +161,6 @@ window.dispatchEvent(fluxEvent);
 const eventDebugger = new EventDebugger();
 
 async function createStores() {
-	try {
-		const bearer = window.location.search.replace(/.*?bt=(.*?)(&|$)/, '$1');
-
-		if (bearer) {
-			window.location.search = '';
-			localStorage.bearerToken = bearer;
-		}
-
-		await HoodieApi.setup();
-	}
-	catch (err) {
-		console.error(err);
-		location.href = '#/signin';
-	}
 
 	//I know this is ugly but for now it's like this.
 	//We need some transient state to know when we loaded appValues
@@ -227,7 +213,26 @@ async function createStores() {
 	}
 	/* #end */
 	/* #if prod */
-	await loadStuff();
+	try {
+		const bearer = window.location.search.replace(/.*?bt=(.*?)(&|$)/, '$1');
+
+		if (bearer) {
+			window.location.search = '';
+			localStorage.bearerToken = bearer;
+		}
+
+		await HoodieApi.setup();
+
+		if (location.hash === '#/signin') {
+			location.href = '#/dashboard';
+		}
+
+		await loadStuff();
+	}
+	catch (err) {
+		console.error(err);
+		location.href = '#/signin';
+	}
 	/* #end */
 }
 
