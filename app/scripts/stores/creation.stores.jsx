@@ -92,6 +92,10 @@ const searchStore = new Remutable({
 	savedSearch: [],
 });
 
+const logStore = new Remutable({
+	patchArray: [],
+})
+
 const stores = {
 	'/debugStore': debugStore,
 	'/eventBackLog': eventBackLog,
@@ -112,6 +116,9 @@ const stores = {
 	'/individualizeStore': individualizeStore,
 	'/intercomStore': intercomStore,
 	'/searchStore': searchStore,
+	/* #if debug */
+	logStore,
+	/* #end */
 };
 
 export default stores;
@@ -135,4 +142,7 @@ export {
 	individualizeStore,
 	intercomStore,
 	searchStore,
+	/* #if debug */
+	logStore,
+	/* #end */
 };

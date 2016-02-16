@@ -207,7 +207,7 @@ class TextWithSuggestion extends React.Component {
 		return (
 			<div className="text-suggestion">
 				<input className="text-suggestion-input" list="suggestions" type="text" defaultValue={this.props.value} placeholder="Enter a variant or choose a suggestion" ref="text"></input>
-				<div className="text-suggestion-button" onClick={(e) => { this.props.validate(React.findDOMNode(this.refs.text).value, e); }}>Save</div>
+				<div className="text-suggestion-button" onClick={(e) => { this.props.validate(this.refs.text.value, e); }}>Save</div>
 			</div>
 		);
 	}

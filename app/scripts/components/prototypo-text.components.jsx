@@ -32,7 +32,7 @@ export default class PrototypoText extends React.Component {
 	setupText() {
 		const content = this.props.panel[this.props.field];
 
-		React.findDOMNode(this.refs.text).textContent = content && content.length > 0 ? content : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
+		this.refs.text.textContent = content && content.length > 0 ? content : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
 		// this.saveText();
 	}
 
@@ -57,14 +57,14 @@ export default class PrototypoText extends React.Component {
 				|| this.props.panel.textFontSize !== newProps.panel.textFontSize
 				|| this.props.panel.invertedTextColors !== newProps.panel.invertedTextColors
 				|| this.props.panel.mode.length !== newProps.panel.mode.length
-				|| newProps.panel[newProps.field] !== React.findDOMNode(this.refs.text).textContent
+				|| newProps.panel[newProps.field] !== this.refs.text.textContent
 				|| this.state.showContextMenu !== newState.showContextMenu
 				|| this.state.contextMenuPos !== newState.contextMenuPos
 		);
 	}
 
 	saveText() {
-		const textDiv = React.findDOMNode(this.refs.text);
+		const textDiv = this.refs.text;
 
 		if (textDiv && textDiv.textContent) {
 			this.saveTextDebounced(textDiv.textContent, this.props.field);
@@ -77,7 +77,7 @@ export default class PrototypoText extends React.Component {
 		const contextMenuPos = {x: e.nativeEvent.offsetX};
 
 		if (this.props.panel.invertedTextView) {
-			contextMenuPos.y = React.findDOMNode(this.refs.text).clientHeight - e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
+			contextMenuPos.y = this.refs.text.clientHeight - e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
 		}
 		else {
 			contextMenuPos.y = e.nativeEvent.offsetY - e.target.parentElement.scrollTop;

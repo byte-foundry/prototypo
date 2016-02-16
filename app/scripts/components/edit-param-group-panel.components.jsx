@@ -17,7 +17,7 @@ export default class EditParamGroupPanel extends React.Component {
 	}
 
 	saveGroup() {
-		this.client.dispatchAction('/save-param-group', {name: React.findDOMNode(this.refs.name).value});
+		this.client.dispatchAction('/save-param-group', {name: this.refs.name.value});
 	}
 
 	render() {

@@ -1,3 +1,66 @@
+import '../styles/main.scss';
+import '../../node_modules/normalize.css/normalize.css';
+import '../../node_modules/please-wait/build/please-wait.css';
+import '../../node_modules/react-gemini-scrollbar/node_modules/gemini-scrollbar/gemini-scrollbar.css';
+import '../styles/components/family.scss';
+import '../styles/components/edit-param-group.scss';
+import '../styles/components/input-group.scss';
+import '../styles/components/fonts-collection.scss';
+import '../styles/components/warning-message.scss';
+import '../styles/components/undo-redo-menu.scss';
+import '../styles/components/replay-playlist.scss';
+import '../styles/components/create-param-group.scss';
+import '../styles/components/nps-message.scss';
+import '../styles/components/top-bar-menu.scss';
+import '../styles/components/side-tabs.scss';
+import '../styles/components/search-glyph-list.scss';
+import '../styles/components/account.scss';
+import '../styles/components/checkbox-with-img.scss';
+import '../styles/components/forgotten-password.scss';
+import '../styles/components/prototypo-canvas.scss';
+import '../styles/components/glyph-list.scss';
+import '../styles/components/modal.scss';
+import '../styles/components/cards-widget.scss';
+import '../styles/components/prototypo-text.scss';
+import '../styles/components/sliders.scss';
+import '../styles/components/variant.scss';
+import '../styles/components/alternate-menu.scss';
+import '../styles/components/hover-view-menu.scss';
+import '../styles/components/help-panel.scss';
+import '../styles/components/subscriptions.scss';
+import '../styles/components/not-a-browser.scss';
+import '../styles/components/onboarding.scss';
+import '../styles/components/action-bar.scss';
+import '../styles/components/glyph-btn.scss';
+import '../styles/components/delete-param-group.scss';
+import '../styles/components/prototypo-word.scss';
+import '../styles/components/individualize-button.scss';
+import '../styles/components/canvas-glyph-input.scss';
+import '../styles/components/news-feed.scss';
+import '../styles/components/close-button.scss';
+import '../styles/components/progress-bar.scss';
+import '../styles/components/contextual-menu.scss';
+import '../styles/components/wait-for-load.scss';
+import '../styles/components/zoom-buttons.scss';
+import '../styles/components/controls-tabs.scss';
+import '../styles/components/tutorials.scss';
+import '../styles/lib/spinners/3-wave.scss';
+import '../styles/lib/spinkit.scss';
+import '../styles/lib/_variables.scss';
+import '../styles/layout.scss';
+import '../styles/userAdmin.scss';
+import '../styles/tracking.scss';
+import '../styles/layout/topbar.scss';
+import '../styles/layout/dashboard.scss';
+import '../styles/layout/signin.scss';
+import '../styles/layout/glyph-panel.scss';
+import '../styles/layout/replay.scss';
+import '../styles/layout/prototypopanel.scss';
+import '../styles/layout/workboard.scss';
+import '../styles/layout/sidebar.scss';
+import '../styles/main.scss';
+import '../styles/_variables.scss';
+
 import pleaseWait from 'please-wait';
 
 pleaseWait.instance = pleaseWait.pleaseWait({
@@ -7,6 +70,7 @@ pleaseWait.instance = pleaseWait.pleaseWait({
 });
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Router from 'react-router';
 
 import Dashboard from './components/dashboard.components.jsx';
@@ -19,13 +83,13 @@ import NotABrowser from './components/not-a-browser.components.jsx';
 import IAmMobile from './components/i-am-mobile.components.jsx';
 
 import HoodieApi from './services/hoodie.services.js';
-import {FontValues, AppValues} from './services/values.services.js';
+import {FontValues} from './services/values.services.js';
 import LocalClient from './stores/local-client.stores.jsx';
 import LocalServer from './stores/local-server.stores.jsx';
 import Stores from './stores/creation.stores.jsx';
 
 import selectRenderOptions from './helpers/userAgent.helpers.js';
-import {loadFontValues, saveAppValues} from './helpers/loadValues.helpers.js';
+import {saveAppValues} from './helpers/loadValues.helpers.js';
 import {loadStuff} from './helpers/appSetup.helpers.js';
 
 import appValuesAction from './actions/appValues.actions.jsx';
@@ -43,12 +107,15 @@ import undoStackAction from './actions/undoStack.actions.jsx';
 import userAction from './actions/user.actions.jsx';
 
 import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
+/* #if debug */
+import ReplayViewer from './debug/replay-viewer.components.jsx';
+/* #end */
 
 window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
 
 const stores = window.prototypoStores = Stores;
 
-const debugStore =  Stores['/debugStore'];
+const debugStore = Stores['/debugStore'];
 const fontControls = Stores['/fontControls'];
 const intercomStore = Stores['/intercomStore'];
 
@@ -71,14 +138,26 @@ function saveErrorLog(error) {
 	});
 }
 
+/* #if debug */
+const localServer = new LocalServer(stores, {
+	debugPath: [
+		'/debugStore',
+		'/save-debug-log',
+		'/store-in-debug-font',
+		'/show-details',
+	],
+	logStore: stores.logStore,
+}).instance;
+/* #end */
+/* #if prod */
 const localServer = new LocalServer(stores).instance;
+/* #end */
 
 LocalClient.setup(localServer);
 const fluxEvent = new Event('fluxServer.setup');
 
 window.dispatchEvent(fluxEvent);
 
-const localClient = LocalClient.instance();
 const eventDebugger = new EventDebugger();
 
 async function createStores() {
@@ -105,6 +184,7 @@ async function createStores() {
 	});
 
 	const actions = {};
+
 	_.assign(actions,
 		appValuesAction,
 		exportAction,
@@ -138,12 +218,17 @@ async function createStores() {
 
 	}, localServer.lifespan);
 
+	/* #if debug */
 	if (location.hash.indexOf('#/replay') === -1) {
 		await loadStuff();
 	}
 	else {
 		await eventDebugger.replayEventFromFile();
 	}
+	/* #end */
+	/* #if prod */
+	await loadStuff();
+	/* #end */
 }
 
 
@@ -151,12 +236,12 @@ selectRenderOptions(
 	() => {
 		const content = document.getElementById('content');
 
-		React.render(<IAmMobile />, content);
+		ReactDOM.render(<IAmMobile />, content);
 	},
 	() => {
 		const content = document.getElementById('content');
 
-		React.render(<NotABrowser />, content);
+		ReactDOM.render(<NotABrowser />, content);
 	},
 	() => {
 		const canvasEl = window.canvasElement = document.createElement('canvas');
@@ -185,7 +270,10 @@ selectRenderOptions(
 					<Route handler={App} name="app" path="/">
 						<DefaultRoute handler={SitePortal}/>
 						<Route name="dashboard" handler={Dashboard}/>
-						<Route name="replay" path="replay/:replayId" handler={Dashboard}/>
+						/* #if debug */
+						<Route name="replay" path="replay/:replayId" handler={ReplayViewer}/>
+						<Route name="debug" handler={ReplayViewer}/>
+						/* #end */
 						<Route name="signin" handler={NotLoggedIn}>
 							<Route name="forgotten" handler={ForgottenPassword}/>
 							<DefaultRoute handler={Signin}/>
@@ -195,8 +283,7 @@ selectRenderOptions(
 				);
 
 				Router.run(Routes, function(Handler) {
-
-					React.render(<Handler />, content);
+					ReactDOM.render(<Handler />, content);
 				});
 			});
 		}

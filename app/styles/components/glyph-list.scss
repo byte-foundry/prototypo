@@ -17,7 +17,7 @@
 			float: right;
 			padding: .7em 1.1em;
 
-			background-image: url('./images/list-icon.svg');
+			background-image: url('../../images/list-icon.svg');
 			background-position: center;
 			background-repeat: no-repeat;
 		}
@@ -30,7 +30,7 @@
 	}
 
 	&.is-active &-icon {
-		background-image: url('./images/close-icon.svg');
+		background-image: url('../../images/close-icon.svg');
 	}
 
 	&-dropdown {
@@ -46,7 +46,7 @@
 
 	&.is-active &-selected {
 		&-icon {
-			background-image: url('./images/close-icon.svg');
+			background-image: url('../../images/close-icon.svg');
 		}
 	}
 
@@ -58,7 +58,7 @@
 .glyph-search-name {
 	&:before {
 		content: "" !important;
-		background-image: url('./images/search.svg');
+		background-image: url('../../images/search.svg');
 		width: 14px;
 		height: 11px;
 		background-size: cover;
@@ -116,12 +116,12 @@
 			width:30px;
 			height:32px;
 
-			background-image: url('./images/pin-off.svg');
+			background-image: url('../../images/pin-off.svg');
 			background-position: center;
 			background-repeat: no-repeat;
 
 			&-delete {
-				background-image: url('./images/delete.svg') !important;
+				background-image: url('../../images/delete.svg') !important;
 				opacity: .4;
 				background-size: 18px;
 				border-right: 1px solid darken($dark-grey, 7%);
@@ -130,7 +130,7 @@
 
 		&:hover &-icon {
 			background-color: $black;
-			background-image: url('./images/pin-on.svg');
+			background-image: url('../../images/pin-on.svg');
 		}
 
 		&:hover &-icon-delete {
@@ -140,11 +140,11 @@
 		}
 
 		&.is-pinned &-icon {
-			background-image: url('./images/pin-on.svg');
+			background-image: url('../../images/pin-on.svg');
 			&:hover {
 				// opacity: .4;
 				background-color: $black;
-				background-image: url('./images/pin-off.svg');
+				background-image: url('../../images/pin-off.svg');
 			}
 		}
 

@@ -153,7 +153,7 @@ export class SliderController extends React.Component {
 	}
 
 	componentDidMount() {
-		const slider = React.findDOMNode(this.refs.slider);
+		const slider = this.refs.slider;
 
 		this.sliderWidth = slider.offsetWidth;
 	}
@@ -169,7 +169,7 @@ export class SliderController extends React.Component {
 
 		this.tracking = true;
 		const newX = e.pageX || e.screenX;
-		const {offsetLeft} = DOM.getAbsOffset(React.findDOMNode(this.refs.slider));
+		const {offsetLeft} = DOM.getAbsOffset(this.refs.slider);
 		let newValue = ((newX - offsetLeft) / this.sliderWidth * (this.props.max - this.props.min)) + this.props.min;
 
 		newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
@@ -197,7 +197,7 @@ export class SliderController extends React.Component {
 		}
 
 		const newX = e.pageX || e.screenX;
-		const el = React.findDOMNode(this.refs.slider);
+		const el = this.refs.slider;
 		const {offsetLeft} = DOM.getAbsOffset(el);
 		let newValue;
 

@@ -44,7 +44,7 @@
 
 				width: 40px;
 				background-color: $green;
-				background-image: url('./images/add-feature.svg');
+				background-image: url('../../images/add-feature.svg');
 				background-position: center;
 				background-repeat: no-repeat;
 
@@ -60,7 +60,7 @@
 
 				&:hover {
 					width: 270px;
-					background-image: url('./images/pro-version.svg');
+					background-image: url('../../images/pro-version.svg');
 					background-position: 10% center;
 				}
 

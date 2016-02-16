@@ -18,12 +18,12 @@ export default class SubscriptionPurchase extends React.Component {
 								<input type="text" ref="amount" />
 								<div className="input-group-suffix">$</div>
 							</div>
-						<button className="subscription-purchase-button" onClick={() => {this.props.subscribe(React.findDOMNode(this.refs.amount).value);}}>Subscribe</button>
+						<button className="subscription-purchase-button" onClick={() => {this.props.subscribe(this.refs.amount.value);}}>Subscribe</button>
 						</div>
 						<div className="subscription-purchase-block-column">
 							<p>I have a coupon from the kickstarter</p>
 							<input className="subscription-purchase-input" type="text" ref="coupon" />
-							<button className="subscription-purchase-button" onClick={() => {this.props.validate(React.findDOMNode(this.refs.coupon).value);}}>Validate my coupon</button>
+							<button className="subscription-purchase-button" onClick={() => {this.props.validate(this.refs.coupon.value);}}>Validate my coupon</button>
 						</div>
 					</div>
 				</WaitForLoad>

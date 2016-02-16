@@ -32,7 +32,7 @@ export class SideTabs extends React.Component {
 		this.client.getStore('/commits', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					latestCommit: head.toJS().list[0].sha,
+					latestCommit: head.toJS().list && head.toJS().list[0].sha,
 					latestViewedCommit: head.toJS().latest,
 				});
 			})
