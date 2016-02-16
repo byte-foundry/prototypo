@@ -146,7 +146,7 @@ export default class Topbar extends React.Component {
 		return (
 			<div id="topbar">
 				<TopBarMenu>
-					<TopBarMenuDropdown name="File 2" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
+					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
 						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto();}} separator={true}/>
 						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
 						<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true);}}/>

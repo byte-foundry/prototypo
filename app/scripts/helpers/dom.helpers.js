@@ -5,14 +5,14 @@ DOM.getAbsOffset = (element) => {
 	let offsetTop = element.offsetTop;
 	let currentElement = element;
 
-	while(currentElement.offsetParent) {
+	while (currentElement.offsetParent) {
 		currentElement = currentElement.offsetParent;
 
 		offsetLeft += currentElement.offsetLeft;
 		offsetTop += currentElement.offsetTop;
 	}
 
-	return {offsetLeft,offsetTop};
-}
+	return {offsetLeft, offsetTop};
+};
 
 export default DOM;

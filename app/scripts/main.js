@@ -83,13 +83,13 @@ import NotABrowser from './components/not-a-browser.components.jsx';
 import IAmMobile from './components/i-am-mobile.components.jsx';
 
 import HoodieApi from './services/hoodie.services.js';
-import {FontValues, AppValues} from './services/values.services.js';
+import {FontValues} from './services/values.services.js';
 import LocalClient from './stores/local-client.stores.jsx';
 import LocalServer from './stores/local-server.stores.jsx';
 import Stores from './stores/creation.stores.jsx';
 
 import selectRenderOptions from './helpers/userAgent.helpers.js';
-import {loadFontValues, saveAppValues} from './helpers/loadValues.helpers.js';
+import {saveAppValues} from './helpers/loadValues.helpers.js';
 import {loadStuff} from './helpers/appSetup.helpers.js';
 
 import appValuesAction from './actions/appValues.actions.jsx';
@@ -115,7 +115,7 @@ window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqO
 
 const stores = window.prototypoStores = Stores;
 
-const debugStore =  Stores['/debugStore'];
+const debugStore = Stores['/debugStore'];
 const fontControls = Stores['/fontControls'];
 const intercomStore = Stores['/intercomStore'];
 
@@ -158,7 +158,6 @@ const fluxEvent = new Event('fluxServer.setup');
 
 window.dispatchEvent(fluxEvent);
 
-const localClient = LocalClient.instance();
 const eventDebugger = new EventDebugger();
 
 async function createStores() {
@@ -185,6 +184,7 @@ async function createStores() {
 	});
 
 	const actions = {};
+
 	_.assign(actions,
 		appValuesAction,
 		exportAction,

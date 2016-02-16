@@ -192,10 +192,22 @@ class Event extends React.Component {
 }
 
 class EventDetails extends React.Component {
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+	closeDetails() {
+		this.client.dispatchAction('close-details');
+	}
+
 	render() {
 		return (
 			<div className="event-details">
-				<JSONPretty id="stuff" json={this.props.details}></JSONPretty>
+				<h1 className="event-details-title">Action details</h1>
+				<div className="event-details-close" onClick={() => {this.closeDetails()}}>Close</div>
+				<ReactGeminiScrollbar>
+					<JSONPretty json={this.props.details}></JSONPretty>
+				</ReactGeminiScrollbar>
 			</div>
 		)
 	}

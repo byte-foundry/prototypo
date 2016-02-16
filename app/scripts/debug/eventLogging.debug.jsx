@@ -47,8 +47,14 @@ export const debugActions = {
 	},
 	'/show-details': (details) => {
 		const patch = debugStore.set('details', details).set('showDetails', true).commit();
+
 		localServer.dispatchUpdate('/debugStore', patch);
-	}
+	},
+	'close-details': () => {
+		const patch = debugStore.set('details', '').set('showDetails', false).commit();
+
+		localServer.dispatchUpdate('/debugStore', patch);
+	},
 };
 
 export default class EventDebugger {
@@ -71,6 +77,7 @@ export default class EventDebugger {
 	async execEvent(events, i, to) {
 		if (i < events.length) {
 			const patch = debugStore.set('index', i).commit();
+
 			localServer.dispatchUpdate('/debugStore', patch);
 			if (i === 1) {
 				const familySelected = fontVariant.get('family');
@@ -128,15 +135,22 @@ export default class EventDebugger {
 
 	async replayEventFromFile() {
 		const hash = location.hash.split('/');
+
 		try {
 			const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);
 			const data = await result.json();
-			const eventsToPlay = data.events;
+			let eventsToPlay = data.events;
 			const values = data.values;
+
+			for (let i = 0; i < eventsToPlay.length; i++) {
+				if (eventsToPlay[i].path === '/login') {
+					eventsToPlay = eventsToPlay.slice(i+1);
+				}
+			}
 
 			await this.replayEvents(values, eventsToPlay);
 		}
-		catch(err) {
+		catch (err) {
 			await loadStuff();
 		}
 	}

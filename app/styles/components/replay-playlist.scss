@@ -79,4 +79,55 @@
 	&:hover &-buttons {
 		max-height:30px;
 	}
+
+	&-details {
+		position: absolute;
+		top: 0;
+		left: -700px;
+		width: 700px;
+		background: $base3;
+		height: calc(100% + 14px);
+		top: -14px;
+		color: $violet;
+		padding:10px;
+
+		&-title {
+			margin-bottom:5px;
+		}
+
+		&-params {
+			height:calc(100% - 80px);
+		}
+
+		&-close {
+			position:absolute;
+			top:30px;
+			right:10px;
+			background-color: $base03;
+			color: $base3;
+			padding:5px 10px;
+			border-radius:3px;
+			cursor:pointer;
+
+			&:hover {
+				background-color: $base02;
+			}
+		}
+	}
+}
+
+.json-pretty {
+	height:calc(100% - 80px);
+}
+
+.json-key {
+	color: $base01;
+}
+
+.json-string {
+	color: $magenta;
+}
+
+.json-value {
+	color: $blue;
 }
