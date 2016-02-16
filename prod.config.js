@@ -16,7 +16,7 @@ module.exports = {
 		loaders: [
 			{ 
 				test: /\.jsx?$/,
-				loaders: ['transform/cacheable?envify','prelude-loader', 'babel-loader?cacheDirectory'],
+				loaders: ['transform/cacheable?envify', 'babel-loader?cacheDirectory','prelude-loader'],
 				include: [
 					path.join(__dirname, 'app')
 				]
@@ -25,8 +25,14 @@ module.exports = {
 		noParse:/(dist\/prototypo-canvas|levelup)/
 	},
 	plugins: [
+		new webpack.DefinePlugin({
+			'process.env.NODE_ENV': "'production'",
+		}), 
+		new webpack.optimize.UglifyJsPlugin(),
+		new webpack.optimize.OccurenceOrderPlugin(),
+		new webpack.optimize.DedupePlugin(),
 	],
 	resolve: {
 		extensions: ['','.js', '.jsx']
 	}
-}
+};
