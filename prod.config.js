@@ -21,7 +21,22 @@ module.exports = {
 				include: [
 					path.join(__dirname, 'app')
 				]
-			}
+			},
+			{
+				test: /\.scss$/,
+				loaders: ['style', 'css', 'sass'],
+				include: [
+					path.join(__dirname, 'app/styles'),
+				],
+			},
+			{
+				test: /\.css$/,
+				loaders: ['style', 'css'],
+			},
+			{
+				test: /\.(svg|json|png|jpg|otf)$/,
+				loaders: ['file'],
+			},
 		],
 		noParse:/(dist\/prototypo-canvas|levelup)/
 	},
