@@ -1,0 +1,74 @@
+@import "../../variables";
+
+.account-title {
+	height: 100px;
+	width: 100%;
+	border-bottom: solid $orange 1px;
+	color: $medium-grey;
+	padding:20px 50px;
+	margin:0;
+	display:flex;
+	align-items: center;
+}
+
+.account-sidebar {
+	padding:40px;
+
+	&-menu {
+		list-style-type: none;
+		&-item {
+			height:40px;
+			color: $medium-grey;
+			font-size: 16px;
+			cursor: pointer;
+
+			&:hover {
+				color: $green;
+			}
+		}
+	}
+}
+
+.account-button {
+	background-color: $green;
+	color: $white;
+	font-size: 18px;
+	padding: 3px 30px;
+	border-radius: 8px;
+}
+
+.account-app {
+	height: 100%;
+	width: 100%;
+	background-color: $green;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.account-dashboard {
+	height: 700px;
+	width: 1200px;
+	background-color: $white;
+	border-radius: 8px;
+	position:relative;
+
+	&-container {
+		display:flex;
+	}
+
+	&-icon {
+		width:70px;
+		height:70px;
+		background-color: $dark-grey;
+		position:absolute;
+		z-index:2;
+		background-position: 10px 10px;
+		background-image: url("../../../images/prototypo-icon-white.svg");
+		background-repeat: no-repeat;
+		border-radius: 50%;
+		border: solid $green 10px;
+		top: -35px;
+		right: -35px;
+	}
+}

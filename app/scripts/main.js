@@ -44,6 +44,7 @@ import '../styles/components/wait-for-load.scss';
 import '../styles/components/zoom-buttons.scss';
 import '../styles/components/controls-tabs.scss';
 import '../styles/components/tutorials.scss';
+import '../styles/components/account/account-app.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';
@@ -82,6 +83,17 @@ import Register from './components/register.components.jsx';
 import ForgottenPassword from './components/forgotten-password.components.jsx';
 import NotABrowser from './components/not-a-browser.components.jsx';
 import IAmMobile from './components/i-am-mobile.components.jsx';
+
+import AccountApp from './components/account/account-app.components.jsx';
+import AccountDashboard from './components/account/account-dashboard.components.jsx';
+import AccountProfile from './components/account/account-profile-panel.components.jsx';
+import AccountChangePassword from './components/account/account-change-password.components.jsx';
+import Subscription from './components/account/subscription.components.jsx';
+import SubscriptionChoosePlan from './components/account/subscription-choose-plan.components.jsx';
+import SubscriptionAccountInfo from './components/account/subscription-account-info.components.jsx';
+import SubscriptionAddCard from './components/account/subscription-add-card.components.jsx';
+import SubscriptionBillingAddress from './components/account/subscription-billing-address.components.jsx';
+import SubscriptionConfirmation from './components/account/subscription-confirmation.components.jsx';
 
 import HoodieApi from './services/hoodie.services.js';
 import {FontValues} from './services/values.services.js';
@@ -256,21 +268,22 @@ selectRenderOptions(
 		canvasEl.width = 0;
 		canvasEl.height = 0;
 
+		const Route = Router.Route;
+		const RouteHandler = Router.RouteHandler;
+		const DefaultRoute = Router.DefaultRoute;
+
+		const content = document.getElementById('content');
+
+		class App extends React.Component {
+			render() {
+				return (
+					<RouteHandler />
+				);
+			}
+		}
+
 		createStores()
 			.then(() => {
-				const Route = Router.Route;
-				const RouteHandler = Router.RouteHandler;
-				const DefaultRoute = Router.DefaultRoute;
-
-				const content = document.getElementById('content');
-
-				class App extends React.Component {
-					render() {
-						return (
-							<RouteHandler />
-						);
-					}
-				}
 
 				const Routes = (
 					<Route handler={App} name="app" path="/">
@@ -286,12 +299,27 @@ selectRenderOptions(
 							<DefaultRoute handler={Signin}/>
 						</Route>
 						<Route name="subscription" handler={Subscriptions}/>
+						<Route handler={AccountApp} name="account">
+							<DefaultRoute handler={AccountDashboard}/>
+							<Route name="profile" handler={AccountDashboard}>
+								<DefaultRoute handler={AccountProfile}/>
+								<Route name="change-password" handler={AccountChangePassword}/>
+							</Route>
+							<Route name="create" path="create" handler={Subscription}>
+								<DefaultRoute name="signup" handler={SubscriptionAccountInfo}/>
+								<Route name="choose-a-plan" handler={SubscriptionChoosePlan}/>
+								<Route name="add-card" handler={SubscriptionAddCard}/>
+								<Route name="billing-address" handler={SubscriptionBillingAddress}/>
+								<Route name="Confirmation" handler={SubscriptionConfirmation}/>
+							</Route>
+						</Route>
 					</Route>
 				);
 
 				Router.run(Routes, function(Handler) {
 					ReactDOM.render(<Handler />, content);
 				});
-			});
-		}
+			}
+		);
+	}
 );
