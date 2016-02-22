@@ -16,15 +16,73 @@
 
 	&-menu {
 		list-style-type: none;
+
 		&-item {
-			height:40px;
 			color: $medium-grey;
 			font-size: 16px;
 			cursor: pointer;
+			padding:10px 0px 5px;
 
-			&:hover {
+			&:hover, &.is-active {
 				color: $green;
 			}
+			position:relative;
+
+			&:before {
+				content: ' ';
+				height:24px;
+				width:24px;
+				display:block;
+				position:absolute;
+				top:10px;
+				left:-39px;
+			}
+
+			&.is-active &-options {
+				max-height: 200px;
+			}
+
+			&-options {
+				margin:0;
+				padding:0;
+				list-style-type:none;
+				transition: max-height .2s ease;
+				max-height: 0px;
+				overflow: hidden;
+
+				&-item {
+					padding:10px 0px 0px;
+					color: $medium-grey;
+
+					&:hover, &.is-active {
+						color: $dark-grey;
+					}
+				}
+			}
+		}
+
+		&-profile:before {
+			background-image:url('../../../images/icon-profile.svg');
+		}
+
+		&-profile:hover:before, &-profile.is-active:before {
+			background-image:url('../../../images/icon-profile-active.svg');
+		}
+
+		&-account:before {
+			background-image:url('../../../images/icon-account.svg');
+		}
+
+		&-account:hover:before, &-account.is-active:before {
+			background-image:url('../../../images/icon-account-active.svg');
+		}
+
+		&-billing:before {
+			background-image:url('../../../images/icon-billing.svg');
+		}
+
+		&-billing:hover:before, &-billing.is-active:before {
+			background-image:url('../../../images/icon-billing-active.svg');
 		}
 	}
 }
@@ -35,6 +93,7 @@
 	font-size: 18px;
 	padding: 3px 30px;
 	border-radius: 8px;
+	margin-bottom: 40px;
 }
 
 .account-app {

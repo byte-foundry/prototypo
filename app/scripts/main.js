@@ -45,6 +45,10 @@ import '../styles/components/zoom-buttons.scss';
 import '../styles/components/controls-tabs.scss';
 import '../styles/components/tutorials.scss';
 import '../styles/components/account/account-app.scss';
+import '../styles/components/account/account-profile.scss';
+import '../styles/components/account/account-change-password.scss';
+import '../styles/components/shared/input-with-label.scss';
+import '../styles/components/shared/display-with-label.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';
@@ -72,14 +76,13 @@ pleaseWait.instance = pleaseWait.pleaseWait({
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Router from 'react-router';
+import {Router, Route, IndexRoute, hashHistory} from 'react-router';
 
 import Dashboard from './components/dashboard.components.jsx';
 import SitePortal from './components/site-portal.components.jsx';
 import NotLoggedIn from './components/not-logged-in.components.jsx';
 import Subscriptions from './components/subscriptions.components.jsx';
 import Signin from './components/signin.components.jsx';
-import Register from './components/register.components.jsx';
 import ForgottenPassword from './components/forgotten-password.components.jsx';
 import NotABrowser from './components/not-a-browser.components.jsx';
 import IAmMobile from './components/i-am-mobile.components.jsx';
@@ -88,6 +91,10 @@ import AccountApp from './components/account/account-app.components.jsx';
 import AccountDashboard from './components/account/account-dashboard.components.jsx';
 import AccountProfile from './components/account/account-profile-panel.components.jsx';
 import AccountChangePassword from './components/account/account-change-password.components.jsx';
+import AccountDetails from './components/account/account-details.components.jsx';
+import AccountBillingAddress from './components/account/account-billing-address.components.jsx';
+import AccountAddCard from './components/account/account-add-card.components.jsx';
+import AccountSubscription from './components/account/account-subscription.components.jsx';
 import Subscription from './components/account/subscription.components.jsx';
 import SubscriptionChoosePlan from './components/account/subscription-choose-plan.components.jsx';
 import SubscriptionAccountInfo from './components/account/subscription-account-info.components.jsx';
@@ -268,57 +275,52 @@ selectRenderOptions(
 		canvasEl.width = 0;
 		canvasEl.height = 0;
 
-		const Route = Router.Route;
-		const RouteHandler = Router.RouteHandler;
-		const DefaultRoute = Router.DefaultRoute;
-
 		const content = document.getElementById('content');
 
 		class App extends React.Component {
 			render() {
-				return (
-					<RouteHandler />
-				);
+				return this.props.children;
 			}
 		}
 
 		createStores()
 			.then(() => {
 
-				const Routes = (
-					<Route handler={App} name="app" path="/">
-						<DefaultRoute handler={SitePortal}/>
-						<Route name="dashboard" handler={Dashboard}/>
-						/* #if debug */
-						<Route name="replay" path="replay/:replayId" handler={ReplayViewer}/>
-						<Route name="debug" handler={ReplayViewer}/>
-						/* #end */
-						<Route name="signin" handler={NotLoggedIn}>
-							<Route name="forgotten" handler={ForgottenPassword}/>
-							<Route name="signup" handler={Register}/>
-							<DefaultRoute handler={Signin}/>
-						</Route>
-						<Route name="subscription" handler={Subscriptions}/>
-						<Route handler={AccountApp} name="account">
-							<DefaultRoute handler={AccountDashboard}/>
-							<Route name="profile" handler={AccountDashboard}>
-								<DefaultRoute handler={AccountProfile}/>
-								<Route name="change-password" handler={AccountChangePassword}/>
+				ReactDOM.render((
+					<Router history={hashHistory}>
+						<Route component={App} name="app" path="/">
+							<IndexRoute component={SitePortal}/>
+							<Route path="dashboard" component={Dashboard}/>
+							/* #if debug */
+							<Route path="replay" path="replay/:replayId" component={ReplayViewer}/>
+							<Route path="debug" component={ReplayViewer}/>
+							/* #end */
+							<Route path="signin" component={NotLoggedIn}>
+								<Route path="forgotten" component={ForgottenPassword}/>
+								<IndexRoute component={Signin}/>
 							</Route>
-							<Route name="create" path="create" handler={Subscription}>
-								<DefaultRoute name="signup" handler={SubscriptionAccountInfo}/>
-								<Route name="choose-a-plan" handler={SubscriptionChoosePlan}/>
-								<Route name="add-card" handler={SubscriptionAddCard}/>
-								<Route name="billing-address" handler={SubscriptionBillingAddress}/>
-								<Route name="Confirmation" handler={SubscriptionConfirmation}/>
+							<Route path="subscription" component={Subscriptions}/>
+							<Route component={AccountApp} path="account">
+								<Route path="(profile)" component={AccountDashboard}>
+									<IndexRoute component={AccountProfile}/>
+									<Route path="change-password" component={AccountChangePassword}/>
+								</Route>
+								<Route path="details" component={AccountDashboard}>
+									<IndexRoute component={AccountSubscription}/>
+									<Route path="billing-address" component={AccountBillingAddress}/>
+									<Route path="add-card" component={AccountAddCard}/>
+								</Route>
+								<Route path="create" component={Subscription}>
+									<IndexRoute component={SubscriptionAccountInfo}/>
+									<Route path="choose-a-plan" component={SubscriptionChoosePlan}/>
+									<Route path="add-card" component={SubscriptionAddCard}/>
+									<Route path="billing-address" component={SubscriptionBillingAddress}/>
+									<Route path="Confirmation" component={SubscriptionConfirmation}/>
+								</Route>
 							</Route>
 						</Route>
-					</Route>
-				);
-
-				Router.run(Routes, function(Handler) {
-					ReactDOM.render(<Handler />, content);
-				});
+					</Router>
+				), content);
 			}
 		);
 	}

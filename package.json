@@ -27,7 +27,7 @@
     "react-dom": "^0.14.7",
     "react-gemini-scrollbar": "^2.1.0",
     "react-json-pretty": "^1.2.0",
-    "react-router": "^0.13.3",
+    "react-router": "^2.0.0",
     "remutable": "FranzPoize/remutable#master",
     "slug": "^0.9.1",
     "tether": "^1.1.0",
