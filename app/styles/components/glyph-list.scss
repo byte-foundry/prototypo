@@ -178,6 +178,7 @@
 		cursor:pointer;
 		transition:background-color .2s ease, color .2s ease;
 		position:relative;
+		font-family: sans-serif;
 
 		&.is-commented {
 			background-color:lighten($green, 10%);
