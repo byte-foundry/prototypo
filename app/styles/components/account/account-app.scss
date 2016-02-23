@@ -138,4 +138,25 @@
 		top: -35px;
 		right: -35px;
 	}
+
+	&-home-icon {
+		background-image: url("../../../images/icon-home.svg");
+		background-repeat: no-repeat;
+		width:36px;
+		height:36px;
+		position:absolute;
+		border:solid $white 5px;
+		border-radius: 50%;
+		left:-18px;
+		top:30px;
+		background-color:$white;
+		background-size: 23px 23px;
+		background-position:2px 1px;
+		cursor:pointer;
+		display:block;
+
+		&:hover {
+			background-image: url("../../../images/icon-home-hover.svg");
+		}
+	}
 }

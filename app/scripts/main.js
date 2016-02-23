@@ -306,19 +306,19 @@ selectRenderOptions(
 							</Route>
 							<Route path="subscription" component={Subscriptions}/>
 							<Route component={AccountApp} path="account">
-								<Route component={AccountDashboard}>
+								<Route component={AccountDashboard} name="home">
 									<IndexRoute component={AccountHome}/>
 								</Route>
-								<Route path="profile" component={AccountDashboard}>
+								<Route path="profile" component={AccountDashboard} name="profile">
 									<IndexRoute component={AccountProfile}/>
 									<Route path="change-password" component={AccountChangePassword}/>
 								</Route>
-								<Route path="details" component={AccountDashboard}>
+								<Route path="details" component={AccountDashboard} name="details">
 									<IndexRoute component={AccountSubscription}/>
 									<Route path="billing-address" component={AccountBillingAddress}/>
 									<Route path="add-card" component={AccountAddCard}/>
 								</Route>
-								<Route path="create" component={Subscription}>
+								<Route path="create" component={Subscription} name="create">
 									<IndexRoute component={SubscriptionAccountInfo}/>
 									<Route path="choose-a-plan" component={SubscriptionChoosePlan}/>
 									<Route path="add-card" component={SubscriptionAddCard}/>
