@@ -111,8 +111,7 @@ gulp.task('watch-font', function() {
 	return gulp.watch(['./node_modules/john-fell.ptf/dist/font.json','./node_modules/venus.ptf/dist/font.json','./node_modules/elzevir.ptf/dist/font.json'], ['cp-genese']);
 })
 
-
-gulp.task('serve',['clean', 'images','css-vendor','css-app','cp-prototypo.js','cp-genese','cp-static','webpack:dll', 'watch-font'], function(callback) {
+gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','watch-font','webpack:dll'], function(callback) {
 
 	var webpackConfig	= require('./webpack.config.js');
 	// Start a webpack-dev-server
