@@ -6,7 +6,7 @@ import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 export default class AccountProfilePanel extends React.Component {
 	render() {
 		return (
-			<div className="account-profile-panel">
+			<div className="account-base account-profile-panel">
 				<DisplayWithLabel label="My email" data="mj@prototypo.io"/>
 				<div className="account-profile-panel-line">
 					<InputWithLabel label="First name" placeholder="MJ" required={true} store="/accountStore" model="firstName"/>

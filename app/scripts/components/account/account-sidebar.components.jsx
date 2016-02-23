@@ -1,25 +1,54 @@
 import React from 'react';
+import Classnames from 'classnames';
+import {Link} from 'react-router';
 
 export default class AccountSidebar extends React.Component {
 	render() {
+		const classProfile = Classnames({
+			"is-active": this.context.router.isActive('account/profile'),
+			"account-sidebar-menu-item": true,
+			"account-sidebar-menu-profile": true,
+		});
+		const classDetails = Classnames({
+			"is-active": this.context.router.isActive('account/details'),
+			"account-sidebar-menu-item": true,
+			"account-sidebar-menu-account": true,
+		});
+		const classChangePassword = Classnames({
+			"account-sidebar-menu-item-options-item": true,
+			"is-active": this.context.router.isActive('account/profile/change-password'),
+		});
+		const classBillingAddress = Classnames({
+			"account-sidebar-menu-item-options-item": true,
+			"is-active": this.context.router.isActive('account/details/billing-address'),
+		});
+		const classAddCard = Classnames({
+			"account-sidebar-menu-item-options-item": true,
+			"is-active": this.context.router.isActive('account/details/add-card'),
+		});
+
 		return (
 			<div className="account-sidebar">
 				<div className="account-button">Go to the app</div>
 				<ul className="account-sidebar-menu">
-					<li className="account-sidebar-menu-item account-sidebar-menu-profile">My profile
+					<li className={classProfile}><Link to="/account/profile">My profile</Link>
 						<ul className="account-sidebar-menu-item-options">
-							<li className="account-sidebar-menu-item-options-item">Change password</li>
+							<li className={classChangePassword}><Link to="/account/profile/change-password">change password</Link></li>
 						</ul>
 					</li>
-					<li className="account-sidebar-menu-item account-sidebar-menu-account">Account settings
+					<li className={classDetails}><Link to="/account/details">Account settings</Link>
 						<ul className="account-sidebar-menu-item-options">
-							<li className="account-sidebar-menu-item-options-item">Add a card</li>
-							<li className="account-sidebar-menu-item-options-item">My billing address</li>
+							<li className={classAddCard}><Link to="account/details/add-card">Add a card</Link></li>
+							<li className={classBillingAddress}><Link to="account/details/billing-address">My billing address</Link></li>
 						</ul>
 					</li>
-					<li className="account-sidebar-menu-item account-sidebar-menu-billing">Billing history</li>
+					<li className="account-sidebar-menu-item account-sidebar-menu-billing"><Link to="account/billing">Billing history</Link></li>
 				</ul>
 			</div>
 		);
 	}
 }
+
+AccountSidebar.contextTypes = {
+	router: React.PropTypes.object.isRequired,
+};

@@ -47,8 +47,12 @@ import '../styles/components/tutorials.scss';
 import '../styles/components/account/account-app.scss';
 import '../styles/components/account/account-profile.scss';
 import '../styles/components/account/account-change-password.scss';
+import '../styles/components/account/account-billing-address.scss';
+import '../styles/components/account/account-add-card.scss';
 import '../styles/components/shared/input-with-label.scss';
 import '../styles/components/shared/display-with-label.scss';
+import '../styles/components/shared/columns.scss';
+import '../styles/components/shared/billing-address.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';
@@ -89,6 +93,7 @@ import IAmMobile from './components/i-am-mobile.components.jsx';
 
 import AccountApp from './components/account/account-app.components.jsx';
 import AccountDashboard from './components/account/account-dashboard.components.jsx';
+import AccountHome from './components/account/account-home.components.jsx';
 import AccountProfile from './components/account/account-profile-panel.components.jsx';
 import AccountChangePassword from './components/account/account-change-password.components.jsx';
 import AccountDetails from './components/account/account-details.components.jsx';
@@ -301,7 +306,10 @@ selectRenderOptions(
 							</Route>
 							<Route path="subscription" component={Subscriptions}/>
 							<Route component={AccountApp} path="account">
-								<Route path="(profile)" component={AccountDashboard}>
+								<Route component={AccountDashboard}>
+									<IndexRoute component={AccountHome}/>
+								</Route>
+								<Route path="profile" component={AccountDashboard}>
 									<IndexRoute component={AccountProfile}/>
 									<Route path="change-password" component={AccountChangePassword}/>
 								</Route>

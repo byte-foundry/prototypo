@@ -7,14 +7,32 @@ export default class BillingAddress extends React.Component {
 		return (
 			<div className="billing-address">
 				<InputWithLabel required={true} label="Corporate name or Full name" />
-				<InputWithLabel required={true} label="Bldg #" />
-				<InputWithLabel required={true} label="Street name" />
+				<div className="columns">
+					<div className="third-column">
+						<InputWithLabel required={true} label="Bldg #" />
+					</div>
+					<div className="two-third-column">
+						<InputWithLabel required={true} label="Street name" />
+					</div>
+				</div>
 				<InputWithLabel required={true} label="Address details" />
-				<InputWithLabel required={true} label="City" />
-				<InputWithLabel required={true} label="Postal code" />
-				<InputWithLabel required={true} label="Region" />
-				<InputWithLabel required={true} label="69004" />
+				<div className="columns">
+					<div className="half-column">
+						<InputWithLabel required={true} label="City" />
+					</div>
+					<div className="half-column">
+						<InputWithLabel required={true} label="Postal code" />
+					</div>
+				</div>
+				<div className="columns">
+					<div className="half-column">
+						<InputWithLabel required={true} label="Region" />
+					</div>
+					<div className="half-column">
+						<InputWithLabel required={true} label="Country" />
+					</div>
+				</div>
 			</div>
-		);
+		)
 	}
 }
