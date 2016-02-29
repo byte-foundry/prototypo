@@ -2,6 +2,7 @@ import React from 'react';
 
 import InputWithLabel from '../shared/input-with-label.components.jsx'
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
+import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 
 export default class AccountProfilePanel extends React.Component {
 	render() {
@@ -17,6 +18,7 @@ export default class AccountProfilePanel extends React.Component {
 					<InputWithLabel label="My website" placeholder="www.mj.com" required={false} store="/accountStore" model="website"/>
 					<InputWithLabel label="Twitter account" placeholder="@thecat" required={false} store="/accountStore" model="twitter"/>
 				</div>
+				<AccountValidationButton label="Confirm plan change"/>
 			</div>
 		);
 	}

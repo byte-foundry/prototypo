@@ -26,6 +26,10 @@ export default class AccountSidebar extends React.Component {
 			"account-sidebar-menu-item-options-item": true,
 			"is-active": this.context.router.isActive('account/details/add-card'),
 		});
+		const classChangePlan = Classnames({
+			"account-sidebar-menu-item-options-item": true,
+			"is-active": this.context.router.isActive('account/details/change-plan'),
+		});
 
 		return (
 			<div className="account-sidebar">
@@ -40,6 +44,7 @@ export default class AccountSidebar extends React.Component {
 						<ul className="account-sidebar-menu-item-options">
 							<li className={classAddCard}><Link to="account/details/add-card">Add a card</Link></li>
 							<li className={classBillingAddress}><Link to="account/details/billing-address">My billing address</Link></li>
+							<li className={classChangePlan}><Link to="account/details/change-plan">Change plan</Link></li>
 						</ul>
 					</li>
 					<li className="account-sidebar-menu-item account-sidebar-menu-billing"><Link to="account/billing">Billing history</Link></li>

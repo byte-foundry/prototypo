@@ -11,6 +11,20 @@
 	align-items: center;
 }
 
+.account-email {
+	color: $green;
+	font-weight: 600;
+
+	&:hover {
+		color: $green;
+		text-decoration: underline;
+	}
+}
+
+.account-bold {
+	font-weight: 600;
+}
+
 .account-sidebar {
 	padding:40px;
 	flex:0 0 244px;
@@ -92,6 +106,9 @@
 	width:100%;
 	height:100%;
 	padding:40px;
+	font-weight:400;
+	display:flex;
+	flex-flow: column;
 }
 
 .account-button {
@@ -99,8 +116,13 @@
 	color: $white;
 	font-size: 18px;
 	padding: 3px 30px;
-	border-radius: 8px;
+	border-radius: 5px;
 	margin-bottom: 40px;
+	cursor:pointer;
+
+	&:hover {
+		background-color: darken($green, 5%);
+	}
 }
 
 .account-app {

@@ -6,6 +6,10 @@
 	color: $medium-grey;
 	padding-bottom:20px;
 
+	&.is-inactive {
+		opacity:0.7;
+	}
+
 	&-label {
 		display:block;
 		padding-bottom:15px;

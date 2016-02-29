@@ -1,5 +1,6 @@
 import React from 'react';
 import InputWithLabel from '../shared/input-with-label.components.jsx';
+import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 
 export default class AccountChangePassword extends React.Component {
 	render() {
@@ -10,6 +11,7 @@ export default class AccountChangePassword extends React.Component {
 					<InputWithLabel required={true} label="New password"/>
 					<InputWithLabel required={true} label="New password, again"/>
 				</div>
+				<AccountValidationButton label="Confirm plan change"/>
 			</div>
 		);
 	}
