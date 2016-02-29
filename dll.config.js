@@ -20,6 +20,7 @@ module.exports = {
 			'pouchdb',
 			'pouchdb-hoodie-api',
 			'react-json-pretty',
+			'prototypo-canvas',
 		],
 	},
 	module: {
@@ -33,6 +34,11 @@ module.exports = {
 		library: '[name]_[hash]',
 		libraryTarget: 'this'
 	},
+	externals: [{
+		'./node/window': true,
+		'./node/extend': true,
+		'prototypo.js': 'prototypo',
+	}],
 	plugins: [
 		new webpack.DllPlugin({
 			path: path.join(__dirname, 'dist/dll/', '[name]-manifest.json'),
