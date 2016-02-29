@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import {VariantList} from './variant.components.jsx';
@@ -115,11 +116,11 @@ export class Family extends React.Component {
 	}
 
 	componentDidMount() {
-		this.height = this.refs.list.clientHeight;
+		this.height = ReactDOM.findDOMNode(this.refs.list).clientHeight;
 	}
 
 	componentDidUpdate() {
-		this.height = this.refs.list.clientHeight;
+		this.height = ReactDOM.findDOMNode(this.refs.list).clientHeight;
 	}
 
 	toggleList() {
