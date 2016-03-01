@@ -116,7 +116,7 @@ export default class HoodieApi {
 			},
 			body: JSON.stringify({
 				method: 'usernames.exist',
-				args: [{username}],
+				args: [username],
 			}),
 		})
 		.then(checkStatus)
@@ -315,4 +315,3 @@ function setupHoodie(response) {
 		});
 	}
 }
-
