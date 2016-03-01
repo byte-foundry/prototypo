@@ -6,7 +6,8 @@ before_install:
 - npm install -g uglifyjs
 after_install:
 - npm dedupe
-script: 
+- cd ./node_modules/babel-core && npm install babel-generator@6.5.0
+script:
 - gulp build --type=prod
 - 'surge --project ./dist --domain test.prototypo.io'
 - 'gulp test:basic'
