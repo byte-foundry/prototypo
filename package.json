@@ -2,7 +2,7 @@
   "name": "prototypo",
   "version": "1.0.0",
   "dependencies": {
-    "babel": "6.5.0",
+    "babel": "~6.3.0",
     "bluebird": "^3.1.1",
     "classnames": "^2.1.2",
     "del": "^1.2.0",
