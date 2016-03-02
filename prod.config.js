@@ -38,8 +38,13 @@ module.exports = {
 				loaders: ['file'],
 			},
 		],
-		noParse:/(dist\/prototypo-canvas|levelup)/
+		noParse:/(levelup)/
 	},
+	externals: [{
+		'./node/window': true,
+		'./node/extend': true,
+		'prototypo.js': 'prototypo',
+	}],
 	plugins: [
 		new webpack.DefinePlugin({
 			'process.env.NODE_ENV': "'production'",
