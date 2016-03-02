@@ -79,7 +79,7 @@ export default {
 			templateToLoad = fontVariant.get('family').template;
 		}
 
-		if (template === undefined) {
+		if (templateToLoad === undefined) {
 			const patch = fontLibrary.set('errorAddFamily', 'You must choose a base template').commit();
 
 			localServer.dispatchUpdate('/fontLibrary', patch);

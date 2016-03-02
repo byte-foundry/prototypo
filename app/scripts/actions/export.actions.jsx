@@ -26,7 +26,7 @@ export default {
 		const style = fontVariant.get('variant').name ? fontVariant.get('variant').name.replace(/\s/g, '-') : 'regular';
 
 		const name = {
-			family: `Prototypo-${family}`,
+			family: family,
 			style: `${style.toLowerCase()}`,
 		};
 
@@ -39,7 +39,7 @@ export default {
 			localClient.dispatchAction('/exporting', {exporting: false});
 			window.Intercom('trackEvent', 'export-otf');
 			clearTimeout(exportingError);
-		}, name.family, merged, undefined, HoodieApi.instance.email);
+		}, name, merged, undefined, HoodieApi.instance.email);
 	},
 	'/export-family': async ({familyToExport, variants}) => {
 		const oldVariant = fontVariant.get('variant');
@@ -62,47 +62,49 @@ export default {
 			db: 'default',
 		});
 
-		const values = [];
+		fontInstance.addOnceListener('worker.fontLoaded', () => {
 
-		for (let i = 0; i < variants.length; i++) {
-			const currVariant = variants[i];
+			const values = [];
 
-			values.push(FontValues.get({typeface: currVariant.db})
-				.then((fontValues) => {
-					return {
-						currVariant,
-						fontValues,
-					};
-				})
-			);
-		}
+			for (let i = 0; i < variants.length; i++) {
+				const currVariant = variants[i];
 
-		const blobs = [];
-
-		Promise.all(values).then((valueArray) => {
-			_.each(valueArray, (value) => {
-				const blob = fontInstance.getBlob(
-					null, {
-						family: familyToExport.name,
-						style: value.currVariant.name,
-					},
-					false,
-					value.fontValues.values
+				values.push(FontValues.get({typeface: currVariant.db})
+					.then((fontValues) => {
+						return {
+							currVariant,
+							fontValues,
+						};
+					})
 				);
+			}
 
-				blobs.push(blob.then((blob) => {
-					return blob;
-				}));
-			});
+			const blobs = [];
 
-			Promise.all(blobs).then((blobBuffers) => {
-				_.each(blobBuffers, ({buffer, variant}) => {
-					const variantPatch = exportStore.set('exportedVariant',
-						exportStore.get('exportedVariant') + 1).commit();
+			Promise.all(values).then((valueArray) => {
+				_.each(valueArray, (value) => {
+					const blob = fontInstance.getBlob(
+						null, {
+							family: familyToExport.name,
+							style: value.currVariant.name,
+						},
+						false,
+						value.fontValues.values
+					);
 
-					localServer.dispatchUpdate('/exportStore', variantPatch);
-					zip.file(`${variant}.otf`, buffer, {binary: true});
+					blobs.push(blob.then((blob) => {
+						return blob;
+					}));
+				});
 
+				Promise.all(blobs).then((blobBuffers) => {
+					_.each(blobBuffers, ({buffer, variant}) => {
+						const variantPatch = exportStore.set('exportedVariant',
+							exportStore.get('exportedVariant') + 1).commit();
+
+						localServer.dispatchUpdate('/exportStore', variantPatch);
+						zip.file(`${variant}.otf`, buffer, {binary: true});
+					});
 					const reader = new FileReader();
 					const _URL = window.URL || window.webkitURL;
 
