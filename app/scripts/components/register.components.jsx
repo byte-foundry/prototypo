@@ -3,8 +3,8 @@ import hoodieApi from '../services/hoodie.services.js';
 
 export default class Register extends React.Component {
 	register() {
-		const username = React.findDOMNode(this.refs.username).value;
-		const password = React.findDOMNode(this.refs.password).value;
+		const username = this.refs.username.value;
+		const password = this.refs.password.value;
 
 		hoodieApi.register(username, password);
 	}

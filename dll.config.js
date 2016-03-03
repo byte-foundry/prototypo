@@ -6,6 +6,8 @@ module.exports = {
 	entry: {
 		libs: [
 			'react',
+			'react-dom',
+			'react-addons-create-fragment',
 			'moment',
 			'babel-polyfill',
 			'lifespan',
@@ -17,11 +19,13 @@ module.exports = {
 			'xxhashjs',
 			'pouchdb',
 			'pouchdb-hoodie-api',
+			'react-json-pretty',
+			'prototypo-canvas',
 		],
 	},
 	module: {
 		noParse: [
-			/(levelup|lifespan|nexus-flux|remutable)/
+			/(levelup)/
 		]
 	},
 	output: {
@@ -30,6 +34,11 @@ module.exports = {
 		library: '[name]_[hash]',
 		libraryTarget: 'this'
 	},
+	externals: [{
+		'./node/window': true,
+		'./node/extend': true,
+		'prototypo.js': 'prototypo',
+	}],
 	plugins: [
 		new webpack.DllPlugin({
 			path: path.join(__dirname, 'dist/dll/', '[name]-manifest.json'),

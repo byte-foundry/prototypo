@@ -1,11 +1,17 @@
-import {debugStore} from '../stores/creation.stores.jsx';
+import {debugStore, fontVariant, panel, glyphs} from '../stores/creation.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import LocalServer from '../stores/local-server.stores.jsx';
+import LocalClient from '../stores/local-client.stores.jsx';
+import {setupFontInstance} from '../helpers/font.helpers.js';
+import pleaseWait from 'please-wait';
+import {loadStuff} from '../helpers/appSetup.helpers.js';
 
 let localServer;
+let localClient;
 
 window.addEventListener('fluxServer.setup', () => {
 	localServer = LocalServer.instance;
+	localClient = LocalClient.instance();
 });
 
 const debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net';
@@ -39,21 +45,40 @@ export const debugActions = {
 		values[prefix][typeface] = data;
 		debugStore.set('values', values).commit();
 	},
+	'/show-details': (details) => {
+		const patch = debugStore.set('details', details).set('showDetails', true).commit();
+
+		localServer.dispatchUpdate('/debugStore', patch);
+	},
+	'close-details': () => {
+		const patch = debugStore.set('details', '').set('showDetails', false).commit();
+
+		localServer.dispatchUpdate('/debugStore', patch);
+	},
 };
 
 export default class EventDebugger {
 	storeEvent(path, params) {
 		if (path.indexOf('debug') === -1
 			&& location.hash.indexOf('#/replay') === -1) {
-			const events = debugStore.get('events');
 
-			events.push({path, params});
-			debugStore.set('events', events).commit();
+			if (path === '/login') {
+				debugStore.set('events', []);
+			}
+			else {
+				const events = debugStore.get('events');
+
+				events.push({path, params});
+				debugStore.set('events', events).commit();
+			}
 		}
 	}
 
 	async execEvent(events, i, to) {
 		if (i < events.length) {
+			const patch = debugStore.set('index', i).commit();
+
+			localServer.dispatchUpdate('/debugStore', patch);
 			if (i === 1) {
 				const familySelected = fontVariant.get('family');
 				const text = panel.get('text');
@@ -86,7 +111,7 @@ export default class EventDebugger {
 			return await new Promise((resolve) => {
 				setTimeout(() => {
 					resolve(this.execEvent(events, i + 1, to));
-				}, 100);
+				}, 1000);
 			});
 		}
 		else {
@@ -95,21 +120,38 @@ export default class EventDebugger {
 	}
 
 	async replayEvents(values, events) {
-		debugStore.set('values', values).commit();
+		const patch = debugStore
+			.set('events', events)
+			.set('values', values)
+			.commit();
 
-		await execEvent(events, 0, 6);
+		localServer.dispatchUpdate('/debugStore', patch);
+
+		await this.execEvent(events, 0, 6);
 		setTimeout(() => {
-			execEvent(eventsToPlay, 6);
-		}, 1500);
+			this.execEvent(events, 6);
+		}, 6000);
 	}
 
 	async replayEventFromFile() {
 		const hash = location.hash.split('/');
-		const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);
-		const data = await result.json();
-		const eventsToPlay = data.events;
-		const values = data.values;
 
-		this.replayEvents(values, eventsToPlay);
+		try {
+			const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);
+			const data = await result.json();
+			let eventsToPlay = data.events;
+			const values = data.values;
+
+			for (let i = 0; i < eventsToPlay.length; i++) {
+				if (eventsToPlay[i].path === '/login') {
+					eventsToPlay = eventsToPlay.slice(i+1);
+				}
+			}
+
+			await this.replayEvents(values, eventsToPlay);
+		}
+		catch (err) {
+			await loadStuff();
+		}
 	}
 }

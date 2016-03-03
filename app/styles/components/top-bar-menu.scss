@@ -96,13 +96,13 @@
 				border-bottom: 1px solid lighten($dark-grey,5%);
 
 				&.is-checkbox {
-					background-image: url('./images/checkbox.svg');
+					background-image: url('../../images/checkbox.svg');
 					background-repeat: no-repeat;
 					background-position: calc(100% - 10px) 50%;
 				}
 
 				&.is-checkbox:hover {
-					background-image: url('./images/checkbox-hover.svg');
+					background-image: url('../../images/checkbox-hover.svg');
 				}
 
 				&.is-disabled {
@@ -110,7 +110,7 @@
 				}
 
 				&.is-active {
-					background-image: url('./images/checkbox-checked.svg');
+					background-image: url('../../images/checkbox-checked.svg');
 					background-repeat: no-repeat;
 					background-position: calc(100% - 10px) 50%;
 				}

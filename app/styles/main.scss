@@ -13,12 +13,12 @@ html {
 
 @font-face {
 	font-family: "John Fell";
-	src: url("fonts/johnfell.otf");
+	src: url("../fonts/johnfell.otf");
 }
 
 @font-face {
 	font-family: "Venus 8";
-	src: url("fonts/venus8.otf");
+	src: url("../fonts/venus8.otf");
 }
 
 body {
@@ -140,3 +140,4 @@ textarea,
 #intercom-launcher {
 	display:none !important;
 }
+

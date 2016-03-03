@@ -14,7 +14,7 @@
 		height: 40%;
 		margin-top: 31%;
 
-		background: url('./images/close-icon-red.svg');
+		background: url('../../images/close-icon-red.svg');
 		background-position: center;
 		background-repeat: no-repeat;
 
@@ -25,7 +25,7 @@
 	}
 
 	&:hover &-icon {
-		background-image: url('./images/close-icon.svg');
+		background-image: url('../../images/close-icon.svg');
 	}
 }
 

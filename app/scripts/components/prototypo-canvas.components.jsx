@@ -41,7 +41,7 @@ export default class PrototypoCanvas extends React.Component {
 		fontInstance.showCoords = this.props.panel.coords || false;
 		fontInstance.fill = !this.props.panel.outline;
 
-		const canvasContainer = React.findDOMNode(this.refs.canvas);
+		const canvasContainer = this.refs.canvas;
 
 		if (canvasContainer.clientWidth
 			&& canvasContainer.clientHeight
@@ -101,7 +101,7 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	componentDidMount() {
-		const canvasContainer = React.findDOMNode(this.refs.canvas);
+		const canvasContainer = this.refs.canvas;
 
 		canvasContainer.appendChild(window.canvasElement);
 		canvasContainer.addEventListener('mousemove', (e) => { this.mouseMove(e); });

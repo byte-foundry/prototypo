@@ -21,7 +21,7 @@ export class OnBoarding extends React.Component {
 		if (this.step && this.step.props.target && target) {
 			this.tether = new Tether({
 				target,
-				element: React.findDOMNode(this.refs.onboarding),
+				element: this.refs.onboarding,
 				attachment: this.step.props.elementAlign || 'middle left',
 				targetAttachment: this.step.props.targetAlign || 'middle right',
 				offset: this.step.props.offset || '-10px -50px',

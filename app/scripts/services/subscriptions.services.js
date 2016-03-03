@@ -20,7 +20,7 @@ class SubscriptionService {
 	}
 
 	static mySubscription() {
-		return HoodieApi.startTask('stripe','subscriptions.list');
+		return HoodieApi.startTask('stripe', 'subscriptions.list');
 	}
 
 	static buySubscription(plan) {
@@ -40,4 +40,4 @@ class SubscriptionService {
 
 export {
 	SubscriptionService,
-}
+};

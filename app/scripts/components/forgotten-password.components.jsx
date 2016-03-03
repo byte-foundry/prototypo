@@ -16,7 +16,7 @@ export default class ForgottenPassword extends React.Component {
 			loading: true,
 		});
 
-		const email = React.findDOMNode(this.refs.email).value;
+		const email = this.refs.email.value;
 
 		if (!(/.+\@.+\..+/.test(email))) {
 			this.setState({

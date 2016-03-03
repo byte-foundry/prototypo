@@ -24,7 +24,7 @@
 		height: 14px;
 		border-radius: 10px;
 		background-color: $dark-grey;
-		background-image: url('./images/link-icon.svg');
+		background-image: url('../../images/link-icon.svg');
 		background-repeat: no-repeat;
 		background-position: center;
 		transition: left 200ms ease;
@@ -46,7 +46,7 @@
 	&:hover {
 		.individualize-button-toggle {
 			background-color: $yellow;
-			background-image: url('./images/link-icon-hover.svg');
+			background-image: url('../../images/link-icon-hover.svg');
 		}
 	}
 

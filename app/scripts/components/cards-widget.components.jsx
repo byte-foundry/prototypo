@@ -101,10 +101,10 @@ class CardForm extends React.Component {
 
 	addCard() {
 		const info = {
-			cardNumber: React.findDOMNode(this.refs.cardNumber).value,
-			cvc: React.findDOMNode(this.refs.cvc).value,
-			month: React.findDOMNode(this.refs.month).value,
-			year: React.findDOMNode(this.refs.year).value,
+			cardNumber: this.refs.cardNumber.value,
+			cvc: this.refs.cvc.value,
+			month: this.refs.month.value,
+			year: this.refs.year.value,
 		};
 
 		this.props.addCard(info);
