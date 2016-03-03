@@ -18,6 +18,11 @@
 				background-color:$green;
 			}
 
+			&.is-active &-label {
+				color:$green;
+				font-weight:600;
+			}
+
 			&-number {
 				display:flex;
 				justify-content:center;

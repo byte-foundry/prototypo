@@ -5,6 +5,7 @@ export default class AddCard extends React.Component {
 	render() {
 		return (
 			<div className="add-card">
+				<InputWithLabel label="" required={true} placeholder="Month"/>
 				<InputWithLabel label="Card number" required={true} placeholder="1111222233334444"/>
 				<div className="columns">
 					<div className="third-column">
