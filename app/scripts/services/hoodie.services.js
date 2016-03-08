@@ -9,133 +9,55 @@ import Log from './log.services.js';
 PouchDB.plugin(HoodiePouch);
 
 const backUrl = process.env.TRAVIS_BRANCH === 'master'
-	? 'https://prototypo.appback.com/_api'
-	: 'https://prototypo-dev.appback.com/_api';
+	? 'https://prototypo.appback.com'
+	: 'https://prototypo-dev.appback.com';
+
+const hoodie = new window.Hoodie(backUrl);
+
+window.hoodiecli = function() {
+	return hoodie.connectionStatus.ok;
+};
 
 export default class HoodieApi {
 
 	static setup() {
-		return fetch(`${backUrl}/_session`, {
-				method: 'get',
-				headers: {
-					'Authorization': `Bearer ${localStorage.bearerToken}`,
-					'Accept': 'application/json',
-				},
-				credentials: 'include',
-			})
-			.then(checkStatus)
-			.then(parseJson)
-			.then(checkUser)
-			.then(setupHoodie);
+		return hoodie.account.fetch().then(setupHoodie);
 	}
 
 	static login(user, password) {
-		return fetch(`${backUrl}/_session`, {
-				method: 'post',
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json',
-				},
-				credentials: 'include',
-				body: JSON.stringify({
-					name: user,
-					password,
-				}),
-			})
-			.then(checkStatus)
-			.then(parseJson)
-			.then(storeBearer)
+		return hoodie.account.signIn(user, password)
 			.then(setupHoodie);
 	}
 
 	static logout() {
-		return new Promise((resolve, reject) => {
-			const xhr = new XMLHttpRequest();
-
-			xhr.open('DELETE', `${backUrl}/_session`);
-			xhr.setRequestHeader('Content-type', 'application/json');
-			xhr.withCredentials = true;
-
-			xhr.onload = () => {
-				delete localStorage.bearerToken;
-				resolve();
-			};
-
-			xhr.onerror = () => {
-				reject();
-			};
-
-			xhr.send();
-
-		});
+		return hoodie.account.signOut();
 	}
 
 	static register(username, password) {
-		return new Promise((resolve, reject) => {
-			const xhr = new XMLHttpRequest();
-			const hoodieId = Math.random().toString().substr(2);
-			const payload = {
-				_id: `org.couchdb.user:user/${username}`,
-				name: `user/${username}`,
-				type: 'user',
-				roles: [],
-				password,
-				hoodieId,
-				database: `user/${hoodieId}`,
-				updatedAt: new Date(),
-				createdAt: new Date(),
-				signedUpAt: new Date(),
-			};
-
-			xhr.open('PUT', `${backUrl}/_users/${encodeURIComponent(payload._id)}`);
-			xhr.setRequestHeader('Content-type', 'application/json');
-			xhr.withCredentials = true;
-
-			xhr.onload = (e) => {
-				if (e.target.status !== 201) {
-					reject(JSON.parse(e.target.responseText));
-					return;
-				}
-
-				resolve(e.responseText);
-			};
-
-			xhr.reject = () => {
-				reject();
-			};
-
-			xhr.send(JSON.stringify(payload));
-		});
+		return hoodie.account.signUp(username, password)
+			.then(function(accountProperties) {
+				console.log(accountProperties);
+			}).catch(function(error) {
+				console.log(error);
+			});
 	}
 
 	static askPasswordReset(username) {
-		return fetch(`${backUrl}/_plugins/stripe-subscriptions/_api`, {
-			method: 'post',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				method: 'usernames.exist',
-				args: [username],
-			}),
-		})
-		.then(checkStatus)
-		.then(parseText)
+		hoodie.stripe.usernames.exist(username)
 		.then(function(response) {
-			if (response !== 'true') {
+			if (!response) {
 				throw new Error('No such username, cannot reset password.');
 			}
 
 			const resetId = `${username}/${HOODIE.generateId()}`;
 			const key = `org.couchdb.user:$passwordReset/${resetId}`;
 
-			return fetch(`${backUrl}/_users/${encodeURIComponent(key)}`, {
+			return fetch(`${backUrl}/_api/_users/${encodeURIComponent(key)}`, {
 				method: 'put',
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json',
 				},
-				credentials: 'include',
 				body: JSON.stringify({
 					_id: key,
 					name: `$passwordReset/${resetId}`,
@@ -194,48 +116,6 @@ export default class HoodieApi {
 			});
 		});
 	}
-
-	static stripeCreateCustomer(args) {
-		return fetch(`${backUrl}/_plugins/stripe/_api`, {
-				method: 'post',
-				headers: {
-					'Authorization': `Bearer ${localStorage.bearerToken}`,
-					'Accept': 'application/json',
-					'Content-Type': 'application/json',
-				},
-				credentials: localStorage.bearerToken ? 'omit' : 'include',
-				body: JSON.stringify({
-					method: 'customers.create',
-					args: [ args ],
-				}),
-			})
-			.then(checkStatus)
-			.then(parseJson)
-			.then(function() {
-				console.log(arguments);
-			}).catch(function() {
-				console.error(arguments);
-			});
-	}
-
-	static startTask(type, subType, params = {}) {
-		params.subType = subType;
-		params.id = `$${type}/${type}`;
-		params.type = `$${type}`;
-		return HoodieApi.instance.add(params);
-	}
-
-	static on(event, callback) {
-		if (!HoodieApi.eventSub) {
-			HoodieApi.eventSub = {};
-		}
-
-		if (!HoodieApi.eventSub[event]) {
-			HoodieApi.eventSub[event] = [];
-		}
-
-		HoodieApi.eventSub[event].push(callback);
-	}
 }
 
 function checkStatus(response) {
@@ -284,17 +164,11 @@ function getPlan(roles) {
 			&& _roles.replace(/^.*stripe:plan:(.+?)(,.*)?$/, '$1');
 }
 
-function setupHoodie(response) {
+function setupHoodie(data) {
+	const response = data.response ? data.response : data;
 	const id = response.roles[0];
-	const db = PouchDB(`${backUrl}/user%2F${id}`, {
-		ajax: {
-			headers: {
-				'Authorization': `Bearer ${localStorage.bearerToken}`,
-			},
-		},
-	});
 
-	HoodieApi.instance = db.hoodieApi();
+	HoodieApi.instance = hoodie.store;
 	HoodieApi.instance.hoodieId = id;
 	HoodieApi.instance.email = response.name.split('/')[1];
 	HoodieApi.instance.plan = getPlan(response.roles);

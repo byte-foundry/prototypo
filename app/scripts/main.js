@@ -78,6 +78,7 @@ import SitePortal from './components/site-portal.components.jsx';
 import NotLoggedIn from './components/not-logged-in.components.jsx';
 import Subscriptions from './components/subscriptions.components.jsx';
 import Signin from './components/signin.components.jsx';
+import Register from './components/register.components.jsx';
 import ForgottenPassword from './components/forgotten-password.components.jsx';
 import NotABrowser from './components/not-a-browser.components.jsx';
 import IAmMobile from './components/i-am-mobile.components.jsx';
@@ -281,6 +282,7 @@ selectRenderOptions(
 						/* #end */
 						<Route name="signin" handler={NotLoggedIn}>
 							<Route name="forgotten" handler={ForgottenPassword}/>
+							<Route name="signup" handler={Register}/>
 							<DefaultRoute handler={Signin}/>
 						</Route>
 						<Route name="subscription" handler={Subscriptions}/>

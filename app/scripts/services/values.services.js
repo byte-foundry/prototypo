@@ -7,7 +7,7 @@ function values(prefix) {
 	return {
 		get(params) {
 			if (location.hash.indexOf('#/replay') === -1) {
-				return HoodieApi.instance.find(`${prefix}values/${params.typeface}`)
+				return HoodieApi.instance.find(`${prefix}values`, `${params.typeface}`)
 					.then((data) => {
 						const client = LocalClient.instance();
 
@@ -33,7 +33,7 @@ function values(prefix) {
 		},
 		save(params) {
 			if (location.hash.indexOf('#/replay') === -1) {
-				return HoodieApi.instance.updateOrAdd(`${prefix}values/${params.typeface}`, {
+				return HoodieApi.instance.updateOrAdd(`${prefix}values`, `${params.typeface}`, {
 						values: params.values,
 				});
 			}
@@ -43,7 +43,7 @@ function values(prefix) {
 			return HoodieApi.instance.removeAll(`${prefix}values`);
 		},
 		deleteDb(params) {
-			return HoodieApi.instance.remove(`${prefix}values/${params.typeface}`);
+			return HoodieApi.instance.remove(`${prefix}values`, `${params.typeface}`);
 		},
 	};
 }

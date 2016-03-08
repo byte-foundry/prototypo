@@ -1,4 +1,5 @@
 import XXHash from 'xxhashjs';
+import slug from 'slug';
 
 import {fontStore, fontVariant, fontLibrary} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
@@ -7,6 +8,8 @@ import {Typefaces} from '../services/typefaces.services.js';
 import {copyFontValues, loadFontValues, saveAppValues} from '../helpers/loadValues.helpers.js';
 import {FontValues} from '../services/values.services.js';
 
+slug.defaults.mode = 'rfc3986';
+slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
 let localServer;
 let localClient;
 
@@ -101,7 +104,7 @@ export default {
 				{
 					id: hasher.update(`REGULAR${(new Date()).getTime()}`).digest().toString(16),
 					name: 'REGULAR',
-					db: `${name}_regular`,
+					db: `${name}regular`,
 				},
 			],
 		};
@@ -184,7 +187,7 @@ export default {
 		const variant = {
 			id: hasher.update(`${name}${(new Date()).getTime()}`).digest().toString(16),
 			name,
-			db: `${familyName}_${name}`,
+			db: slug(`${familyName}${name}`, ''),
 		};
 		const thicknessTransform = [
 			{string: 'THIN', thickness: 20},

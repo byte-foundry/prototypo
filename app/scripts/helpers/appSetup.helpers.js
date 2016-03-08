@@ -23,7 +23,7 @@ const defaultValues = {
 				template: 'venus.ptf',
 			},
 			variantSelected: {
-				db: 'venus.ptf',
+				db: 'venus',
 			},
 			savedSearch: [],
 		},
@@ -71,6 +71,7 @@ export async function loadStuff() {
 		typedata = fontResult.typedata;
 	}
 	catch (err) {
+		console.log(err);
 	}
 
 	localClient.dispatchAction('/create-font', fontInstance.font.ot.getEnglishName('fontFamily'));

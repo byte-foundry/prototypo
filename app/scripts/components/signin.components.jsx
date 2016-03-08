@@ -30,7 +30,7 @@ export default class Signin extends React.Component {
 		const login = this.refs.email.value.toLowerCase();
 		const password = this.refs.password.value;
 
-		HoodieApi.login(`user/${login}`,
+		HoodieApi.login(login,
 			password)
 			.then(() => {
 				this.client.dispatchAction('/login', { });
