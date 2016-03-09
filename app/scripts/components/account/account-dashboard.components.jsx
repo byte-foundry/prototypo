@@ -9,6 +9,8 @@ export default class AccountDashboard extends React.Component {
 			profile: "My account",
 			details: "My account",
 			create: "Subscribe to prototypo",
+			signup: "Sign up",
+			signin: "Sign in",
 		};
 		const title = titles[this.props.route.name];
 

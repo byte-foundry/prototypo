@@ -58,6 +58,7 @@ import '../styles/components/shared/display-with-label.scss';
 import '../styles/components/shared/columns.scss';
 import '../styles/components/shared/billing-address.scss';
 import '../styles/components/shared/account-validation-button.scss';
+import '../styles/components/shared/form-error.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';
@@ -89,12 +90,12 @@ import {Router, Route, IndexRoute, hashHistory} from 'react-router';
 
 import Dashboard from './components/dashboard.components.jsx';
 import SitePortal from './components/site-portal.components.jsx';
-import NotLoggedIn from './components/not-logged-in.components.jsx';
 import Subscriptions from './components/subscriptions.components.jsx';
 import Signin from './components/signin.components.jsx';
 import ForgottenPassword from './components/forgotten-password.components.jsx';
 import NotABrowser from './components/not-a-browser.components.jsx';
 import IAmMobile from './components/i-am-mobile.components.jsx';
+import Register from './components/register.components.jsx';
 
 import AccountApp from './components/account/account-app.components.jsx';
 import AccountDashboard from './components/account/account-dashboard.components.jsx';
@@ -136,6 +137,7 @@ import searchAction from './actions/search.actions.jsx';
 import tagStoreAction from './actions/tagStore.actions.jsx';
 import undoStackAction from './actions/undoStack.actions.jsx';
 import userAction from './actions/user.actions.jsx';
+import userLifecycleAction from './actions/user-lifecycle.actions.jsx';
 
 import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
 /* #if debug */
@@ -217,6 +219,7 @@ async function createStores() {
 		undoStackAction,
 		userAction,
 		debugActions,
+		userLifecycleAction,
 		{
 			'/load-intercom-info': (data) => {
 				const patch = intercomStore.set('tags', data.tags.tags).commit();
@@ -267,6 +270,24 @@ async function createStores() {
 	/* #end */
 }
 
+function redirectToLogin(nextState, replace) {
+	if (!HoodieApi.isLoggedIn()) {
+		replace({
+			pathname: '/signin',
+			state: {nextPathname: nextState.location.pathname},
+		});
+	}
+}
+
+function redirectToDashboard(nextState, replace) {
+	if(HoodieApi.isLoggedIn()) {
+		replace({
+			pathname: '/dashboard',
+			state: {nextPathname: nextState.location.pathname},
+		});
+	}
+}
+
 
 selectRenderOptions(
 	() => {
@@ -301,14 +322,17 @@ selectRenderOptions(
 					<Router history={hashHistory}>
 						<Route component={App} name="app" path="/">
 							<IndexRoute component={SitePortal}/>
-							<Route path="dashboard" component={Dashboard}/>
+							<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}/>
 							/* #if debug */
 							<Route path="replay" path="replay/:replayId" component={ReplayViewer}/>
 							<Route path="debug" component={ReplayViewer}/>
 							/* #end */
-							<Route path="signin" component={NotLoggedIn}>
+							<Route path="signin" component={AccountApp} onEnter={redirectToDashboard}>
 								<Route path="forgotten" component={ForgottenPassword}/>
 								<IndexRoute component={Signin}/>
+							</Route>
+							<Route path="signup" component={AccountApp} onEnter={redirectToDashboard}>
+								<IndexRoute component={Register}/>
 							</Route>
 							<Route path="subscription" component={Subscriptions}/>
 							<Route component={AccountApp} path="account">

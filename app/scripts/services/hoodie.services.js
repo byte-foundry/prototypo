@@ -4,7 +4,6 @@ import HoodiePouch from 'pouchdb-hoodie-api';
 import HOODIE from '../helpers/hoodie.helpers.js';
 
 import Log from './log.services.js';
-//import IntercomRest from './intercom.services.js';
 
 PouchDB.plugin(HoodiePouch);
 
@@ -33,13 +32,12 @@ export default class HoodieApi {
 		return hoodie.account.signOut();
 	}
 
-	static register(username, password) {
-		return hoodie.account.signUp(username, password)
-			.then(function(accountProperties) {
-				console.log(accountProperties);
-			}).catch(function(error) {
-				console.log(error);
-			});
+	static signUp(username, password) {
+		return hoodie.account.signUp(username, password);
+	}
+
+	static isLoggedIn() {
+		return hoodie.account.hasValidSession();
 	}
 
 	static askPasswordReset(username) {
@@ -116,6 +114,10 @@ export default class HoodieApi {
 			});
 		});
 	}
+
+	static createCustomer(options) {
+		return hoodie.stripe.customers.create(options);
+	}
 }
 
 function checkStatus(response) {
@@ -168,18 +170,10 @@ function setupHoodie(data) {
 	const response = data.response ? data.response : data;
 	const id = response.roles[0];
 
-	HoodieApi.instance = hoodie.store;
+	HoodieApi.instance = hoodie;
 	HoodieApi.instance.hoodieId = id;
 	HoodieApi.instance.email = response.name.split('/')[1];
 	HoodieApi.instance.plan = getPlan(response.roles);
-
-	window.Intercom('boot', {
-		app_id: 'mnph1bst',
-		email: HoodieApi.instance.email,
-		widget: {
-			activator: '#intercom-button',
-		},
-	});
 
 	Log.setUserId(HoodieApi.instance.email);
 

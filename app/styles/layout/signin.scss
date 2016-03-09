@@ -21,66 +21,45 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#24D390', endColorstr='#00e28b',GradientType=1 ); /* IE6-8 fallback on horizontal gradient */
 }
 
-.sign-in {
+.sign-base {
 	display:flex;
 	flex-direction:column;
 	justify-content:flex-start;
 	margin-left:20px;
+	position:relative;
+	background-color:$white;
+	border-radius:7px;
+}
+
+.sign-in {
 	height:510px;
-	width:400px;
+	width:500px;
 
-	&-input {
-		display: block;
-		width: 100%;
-		min-height: 4em;
-		border: 1px solid $green;
-		border-radius: 10px;
-		padding: .8em;
-		background-color: $white;
-		color:$dark-grey;
-		font-size: 1.1em;
-		margin-bottom: 1em;
-	}
-
-	&-label {
-		display: inline-block;
-		margin: 5px 0 10px;
-
-		color: $dark-grey;
-	}
-
-	&-button {
-		float: right;
-		display: inline-block;
-		width: auto;
-		align-self:flex-end;
-		margin-top: 20px;
-		font-size: 1.1em;
-		font-weight: 400;
-		padding: .9em;
-		color: $white;
-		border: 3px solid $white;
-		background-color: transparent;
-		cursor: pointer;
-		transition:all .2s ease;
-		border-radius:10px;
-
-		&:hover {
-			background-color: $white;
-			color: $green;
-		}
+	&-form {
+		display:flex;
+		width:100%;
+		padding:30px 30px 10px;
+		flex-direction:column;
 	}
 
 	&-help-needed {
 		padding: .5em;
 		transition: 400ms ease;
+		align-self:flex-end;
+		color:$medium-grey;
+		font-style:italic;
 
 		&:hover {
 			padding: .5em 1em;
 			background-color: $white;
 			color: $dark-grey;
+			color:$medium-grey;
 		}
 	}
+}
+
+.sign-up {
+	width:550px;
 }
 
 .wait-for-load {

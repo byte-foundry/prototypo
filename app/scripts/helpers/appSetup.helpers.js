@@ -58,7 +58,6 @@ export async function loadStuff() {
 	catch (err) {
 		appValues = defaultValues;
 		console.error(err);
-		location.href = '#/signin';
 	}
 
 	localClient.dispatchAction('/load-app-values', appValues);

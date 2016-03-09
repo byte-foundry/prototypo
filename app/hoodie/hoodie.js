@@ -6654,6 +6654,7 @@ exports.signIn = function(state, username, password, options) {
       }
     } else {
       helpers.setUsername(state, newUsername);
+	  state.authenticated = true;
 
       if (!isSilent) {
         state.events.trigger('signin', newUsername, state.newHoodieId, options);

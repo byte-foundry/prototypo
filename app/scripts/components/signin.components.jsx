@@ -1,9 +1,13 @@
 import React from 'react';
+import {Link} from 'react-router';
+
 import HoodieApi from '../services/hoodie.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import WarningMessage from './warning-message.components.jsx';
 import WaitForLoad from './wait-for-load.components.jsx';
+import InputWithLabel from './shared/input-with-label.components.jsx';
+import AccountValidationButton from './shared/account-validation-button.components.jsx';
 
 export default class Signin extends React.Component {
 	constructor(props) {
@@ -27,8 +31,8 @@ export default class Signin extends React.Component {
 
 		e.preventDefault();
 
-		const login = this.refs.email.value.toLowerCase();
-		const password = this.refs.password.value;
+		const login = this.refs.email.inputValue.toLowerCase();
+		const password = this.refs.password.inputValue;
 
 		HoodieApi.login(login,
 			password)
@@ -58,41 +62,43 @@ export default class Signin extends React.Component {
 			console.log('[RENDER] Signin');
 		}
 		return (
-			<form className="sign-in" onSubmit={(e) => {this.signIn(e);}}>
-				<h1 className="sign-in-title">Sign in</h1>
-				<label className="sign-in-label" htmlFor="email-sign-in">Email</label>
-				<input
-					className="sign-in-input"
-					id="email-sign-in"
-					name="email-sign-in"
-					required
-					type="email"
-					ref="email"
-					placeholder="Email"/>
-				<label className="sign-in-label" htmlFor="password-sign-in">Password</label>
-				<input
-					className="sign-in-input"
-					id="password-sign-in"
-					name="password-sign-in"
-					ref="password"
-					type="password"
-					required
-					placeholder="Password"/>
-				<a href="#/signin/forgotten" className="sign-in-help-needed">
-					Forgotten your password?
-				</a>
-				<a href="https://www.prototypo.io/pricing.html" className="sign-in-help-needed">
-					You don't have any account?
-				</a>
-				{((message) => {
-					if (message) {
-						return <WarningMessage text={message}/>;
-					}
-				})(this.state.warningMessage)}
-				<WaitForLoad loaded={this.state.loading} secColor={true}>
-					<input className="sign-in-button" type="submit" value="Sign in"></input>
-				</WaitForLoad>
-			</form>
+			<div className="sign-in sign-base">
+				<div className="account-dashboard-icon"/>
+				<h1 className="account-title">Sign in</h1>
+				<div className="account-dashboard-container">
+					<form className="sign-in-form" onSubmit={(e) => {this.signIn(e);}}>
+						<InputWithLabel
+							id="email-sign-in"
+							name="email-sign-in"
+							type="email"
+							ref="email"
+							placeholder="Email"
+							required={true}
+							label="Email"/>
+						<InputWithLabel
+							label="Password"
+							required={true}
+							id="password-sign-in"
+							name="password-sign-in"
+							ref="password"
+							type="password"
+							required
+							placeholder="Password"/>
+						<Link to="/signin/forgotten" className="sign-in-help-needed">
+							I forgot my password
+						</Link>
+						<Link to="/signup" className="sign-in-help-needed">
+							I don't have an account
+						</Link>
+						{((message) => {
+							if (message) {
+								return <WarningMessage text={message}/>;
+							}
+						})(this.state.warningMessage)}
+						<AccountValidationButton label="Sign in"/>
+					</form>
+				</div>
+			</div>
 		);
 	}
 }

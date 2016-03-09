@@ -12,6 +12,13 @@
 
 		&-required {
 			color: $orange;
+			margin-left: 2px;
+		}
+
+		&-info {
+			font-style: italic;
+			margin-left: 5px;
+			font-weight:200;
 		}
 	}
 
@@ -33,7 +40,11 @@
 		transition: border-color .15s linear,background .15s linear;
 
 		&:focus {
-			border-bottom: 3px solid #49e4a9!important;
+			border-bottom: 3px solid $green !important;
+		}
+
+		&.is-error {
+			border-bottom: 3px solid $red !important;
 		}
 	}
 }
