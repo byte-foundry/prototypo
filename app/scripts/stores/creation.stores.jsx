@@ -100,7 +100,14 @@ const userStore = new Remutable({
 	signupForm: {
 		errors: [],
 	},
-	signinForm: {},
+	signinForm: {
+		errors: [],
+	},
+	choosePlanForm: {
+	},
+	addcardForm: {
+		errors: [],
+	},
 });
 
 const stores = {

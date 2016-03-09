@@ -48,6 +48,7 @@ export default class Register extends React.Component {
 
 		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname});
 	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Register');

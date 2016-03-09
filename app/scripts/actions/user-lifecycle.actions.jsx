@@ -175,5 +175,50 @@ export default {
 			});
 	},
 	'/choose-plan': (plan) => {
-	}
+		const form = userStore.get('choosePlanForm');
+
+		form.error = undefined;
+		form.selected = plan;
+		const patch = userStore.set('choosePlanForm', form).commit();
+
+		return localServer.dispatchUpdate('/userStore', patch);
+	},
+	'/confirm-plan': ({plan}) => {
+		const form = userStore.get('choosePlanForm');
+
+		if (!plan) {
+			form.error = 'You must select a plan';
+			const patch = userStore.set('choosePlanForm', form).commit();
+
+			return localServer.dispatchUpdate('/userStore', patch);
+		}
+
+		hashHistory.push({
+			pathname: '/account/create/add-card',
+		});
+	},
+	'/add-card': ({card: {fullname, number, expMonth, expYear, cvc}, vat}) => {
+		const form = userStore.get('addcardForm');
+
+		form.errors = [];
+		form.inError = {};
+		form.loading = true;
+		const cleanPatch = userStore.set('addcardForm', form).commit();
+
+		localServer.dispatchUpdate('/userStore', cleanPatch);
+
+		if (!fullname || !number || !expMonth || !expYear || !cvc) {
+			form.errors.push('These fields are required');
+			form.inError = {
+				fullname: !fullname,
+				number: !number,
+				expMonth: !expMonth,
+				expYear: !expYear,
+				cvc: !cvc,
+			};
+			const patch = userStore.set('addcardForm', form).commit();
+
+			return localServer.dispatchUpdate('/userStore', patch);
+		}
+	},
 };
