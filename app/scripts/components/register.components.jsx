@@ -26,6 +26,7 @@ export default class Register extends React.Component {
 				this.setState({
 					inError: head.toJS().signupForm.inError,
 					errors: head.toJS().signupForm.errors,
+					loading: head.toJS().signupForm.loading,
 				});
 			})
 			.onDelete(() => {

@@ -118,6 +118,10 @@ export default class HoodieApi {
 	static createCustomer(options) {
 		return hoodie.stripe.customers.create(options);
 	}
+
+	static getCustomerInfo() {
+		return hoodie.stripe.customers.retrieve();
+	}
 }
 
 function checkStatus(response) {

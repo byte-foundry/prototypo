@@ -1,14 +1,19 @@
-import {glyphs} from '../stores/creation.stores.jsx';
-import {AppValues} from '../services/values.services.js';
+import {glyphs, userStore} from '../stores/creation.stores.jsx';
+import {AppValues, AccountValues} from '../services/values.services.js';
 import {loadFontValues} from './loadValues.helpers.js';
 import {setupFontInstance} from './font.helpers.js';
 import LocalClient from '../stores/local-client.stores.jsx';
+import HoodieApi from '../services/hoodie.services.js';
 
 let localClient;
 
 window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
 });
+
+const defaultAccountValues = {
+	firstname: 'there',
+};
 
 const defaultValues = {
 		values: {
@@ -59,8 +64,26 @@ export async function loadStuff() {
 		appValues = defaultValues;
 		console.error(err);
 	}
-
 	localClient.dispatchAction('/load-app-values', appValues);
+
+	let accountValues;
+	let customerValues;
+
+	try {
+		accountValues = await AccountValues.get({typeface: 'default'});
+		accountValues = _.extend(defaultAccountValues, accountValues);
+	}
+	catch (err) {
+		accountValues = defaultAccountValues;
+	}
+
+	try {
+		customerValues = await HoodieApi.getCustomerInfo();
+	}
+	catch (err) {
+		customerValues = {};
+	}
+	localClient.dispatchAction('/load-account-values', {accountValues, customerValues});
 
 	let typedata;
 

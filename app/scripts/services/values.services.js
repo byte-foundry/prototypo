@@ -49,5 +49,6 @@ function values(prefix) {
 }
 
 export const AppValues = values('newapp');
+export const AccountValues = values('account');
 export const FontValues = values('newfont');
 export const FontInfoValues = values('fontinfos');

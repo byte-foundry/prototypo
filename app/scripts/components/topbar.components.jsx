@@ -80,14 +80,14 @@ export default class Topbar extends React.Component {
 	}
 
 	logout() {
-		this.client.dispatchAction('/logout');
+		this.client.dispatchAction('/sign-out');
 		Log.ui('Topbar.logout');
 	}
 
 	newProject() {
- 		this.client.dispatchAction('/change-tab-sidebar', {name: 'fonts-collection'});
- 		Log.ui('Topbar.logout');
- 	}
+		this.client.dispatchAction('/change-tab-sidebar', {name: 'fonts-collection'});
+		Log.ui('Topbar.logout');
+	}
 
 	startTuto() {
 		this.client.dispatchAction('/store-panel-param', {onboard: false, onboardstep: 'welcome'});

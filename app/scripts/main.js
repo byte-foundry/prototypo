@@ -136,7 +136,6 @@ import panelAction from './actions/panel.actions.jsx';
 import searchAction from './actions/search.actions.jsx';
 import tagStoreAction from './actions/tagStore.actions.jsx';
 import undoStackAction from './actions/undoStack.actions.jsx';
-import userAction from './actions/user.actions.jsx';
 import userLifecycleAction from './actions/user-lifecycle.actions.jsx';
 
 import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
@@ -217,7 +216,6 @@ async function createStores() {
 		searchAction,
 		tagStoreAction,
 		undoStackAction,
-		userAction,
 		debugActions,
 		userLifecycleAction,
 		{
@@ -257,15 +255,10 @@ async function createStores() {
 
 		await HoodieApi.setup();
 
-		if (location.hash === '#/signin') {
-			location.href = '#/dashboard';
-		}
-
 		await loadStuff();
 	}
 	catch (err) {
 		console.error(err);
-		location.href = '#/signin';
 	}
 	/* #end */
 }
@@ -280,14 +273,13 @@ function redirectToLogin(nextState, replace) {
 }
 
 function redirectToDashboard(nextState, replace) {
-	if(HoodieApi.isLoggedIn()) {
+	if (HoodieApi.isLoggedIn()) {
 		replace({
 			pathname: '/dashboard',
 			state: {nextPathname: nextState.location.pathname},
 		});
 	}
 }
-
 
 selectRenderOptions(
 	() => {
