@@ -4,6 +4,19 @@
 	padding-top:30px;
 	flex:0 0 224px;
 
+	&-info {
+		padding-left: 40px;
+		margin-top:30px;
+		font-size:13px;
+		line-height:27px;
+		color:$medium-grey;
+
+		&-emphase {
+			color:$green;
+			font-weight:900;
+		}
+	}
+
 	&-steps {
 		list-style-type:none;
 		margin:0;
@@ -13,14 +26,9 @@
 			display:flex;
 			padding-top:18px;
 
-			&.is-active &-number {
+			&.is-finish &-number {
 				color:$white;
 				background-color:$green;
-			}
-
-			&.is-active &-label {
-				color:$green;
-				font-weight:600;
 			}
 
 			&-number {
@@ -36,6 +44,7 @@
 				font-size:14px;
 			}
 
+
 			&-label {
 				color: $medium-grey;
 				padding-left:10px;
@@ -44,4 +53,9 @@
 			}
 		}
 	}
+}
+
+a.subscription-sidebar-steps-step-link {
+	color:$green;
+	font-weight:600;
 }

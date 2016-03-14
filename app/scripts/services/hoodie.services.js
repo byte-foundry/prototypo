@@ -11,6 +11,13 @@ const backUrl = process.env.TRAVIS_BRANCH === 'master'
 	? 'https://prototypo.appback.com'
 	: 'https://prototypo-dev.appback.com';
 
+const bearer = window.location.search.replace(/.*?bt=(.*?)(&|$)/, '$1');
+
+if (bearer) {
+	window.location.search = '';
+	localStorage.bearerToken = bearer;
+}
+
 const hoodie = new window.Hoodie(backUrl);
 
 window.hoodiecli = function() {
@@ -20,6 +27,7 @@ window.hoodiecli = function() {
 export default class HoodieApi {
 
 	static setup() {
+		HoodieApi.instance = hoodie;
 		return hoodie.account.fetch().then(setupHoodie);
 	}
 
@@ -119,6 +127,10 @@ export default class HoodieApi {
 		return hoodie.stripe.customers.create(options);
 	}
 
+	static updateCustomer(options) {
+		return hoodie.stripe.customers.update(options);
+	}
+
 	static getCustomerInfo() {
 		return hoodie.stripe.customers.retrieve();
 	}
@@ -174,7 +186,6 @@ function setupHoodie(data) {
 	const response = data.response ? data.response : data;
 	const id = response.roles[0];
 
-	HoodieApi.instance = hoodie;
 	HoodieApi.instance.hoodieId = id;
 	HoodieApi.instance.email = response.name.split('/')[1];
 	HoodieApi.instance.plan = getPlan(response.roles);

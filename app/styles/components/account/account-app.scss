@@ -129,10 +129,8 @@
 	height: 100%;
 	width: 100%;
 	background-color: $green;
-	display:flex;
-	justify-content: center;
-	align-items: center;
 	overflow:auto;
+	padding-top:80px;
 }
 
 .account-dashboard {
@@ -141,6 +139,7 @@
 	background-color: $white;
 	border-radius: 8px;
 	position:relative;
+	margin:0 auto 50px;
 
 	&-container {
 		display:flex;

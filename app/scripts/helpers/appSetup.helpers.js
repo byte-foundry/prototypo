@@ -77,13 +77,13 @@ export async function loadStuff() {
 		accountValues = defaultAccountValues;
 	}
 
-	try {
+	/*try {
 		customerValues = await HoodieApi.getCustomerInfo();
 	}
 	catch (err) {
 		customerValues = {};
-	}
-	localClient.dispatchAction('/load-account-values', {accountValues, customerValues});
+		}*/
+	localClient.dispatchAction('/load-account-values', accountValues);
 
 	let typedata;
 

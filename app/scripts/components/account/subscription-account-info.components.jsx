@@ -24,11 +24,16 @@ export default class SubscriptionAccountInfo extends React.Component {
 				this.setState({
 					inError: head.toJS().signupForm.inError,
 					errors: head.toJS().signupForm.errors,
+					loading: head.toJS().signupForm.loading,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 	createAccount(e) {
@@ -58,7 +63,7 @@ export default class SubscriptionAccountInfo extends React.Component {
 					</div>
 				</div>
 				<InputWithLabel label="Your email" required={true} placeholder="mj@prototypo.io" ref="username"/>
-				<InputWithLabel info="(at least 8 character long)" label="Password" required={true} ref="password"/>
+				<InputWithLabel type="password" info="(at least 8 character long)" label="Password" required={true} ref="password"/>
 				{errors}
 				<AccountValidationButton label="Sign up" loading={this.state.loading}/>
 			</form>

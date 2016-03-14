@@ -97,16 +97,26 @@ const logStore = new Remutable({
 });
 
 const userStore = new Remutable({
+	infos: {
+		accountValues: {},
+	},
 	signupForm: {
 		errors: [],
+		inError: {},
 	},
 	signinForm: {
 		errors: [],
+		inError: {},
 	},
 	choosePlanForm: {
 	},
 	addcardForm: {
 		errors: [],
+		inError: {},
+	},
+	billingForm: {
+		errors: [],
+		inError: {},
 	},
 });
 

@@ -143,7 +143,7 @@ import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
 import ReplayViewer from './debug/replay-viewer.components.jsx';
 /* #end */
 
-window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
+window.Stripe && window.Stripe.setPublishableKey('pk_test_PkwKlOWOqSoimNJo2vsT21sE');
 
 const stores = window.prototypoStores = Stores;
 
@@ -246,19 +246,12 @@ async function createStores() {
 	/* #end */
 	/* #if prod */
 	try {
-		const bearer = window.location.search.replace(/.*?bt=(.*?)(&|$)/, '$1');
-
-		if (bearer) {
-			window.location.search = '';
-			localStorage.bearerToken = bearer;
-		}
-
 		await HoodieApi.setup();
 
 		await loadStuff();
 	}
 	catch (err) {
-		console.error(err);
+		console.log(err);
 	}
 	/* #end */
 }
@@ -276,6 +269,18 @@ function redirectToDashboard(nextState, replace) {
 	if (HoodieApi.isLoggedIn()) {
 		replace({
 			pathname: '/dashboard',
+			state: {nextPathname: nextState.location.pathname},
+		});
+	}
+}
+
+function chooseGoodAccountStep(nextState, replace) {
+
+	const infos = Stores['/userStore'].get('infos');
+
+	if (infos.accountValues.username && /\/account\/create\/?$/.test(nextState.location.pathname)) {
+		replace({
+			pathname: '/account/create/choose-a-plan',
 			state: {nextPathname: nextState.location.pathname},
 		});
 	}
@@ -342,7 +347,7 @@ selectRenderOptions(
 									<Route path="change-plan" component={AccountChangePlan}/>
 								</Route>
 								<Route path="create" component={Subscription} name="create">
-									<IndexRoute component={SubscriptionAccountInfo}/>
+									<IndexRoute component={SubscriptionAccountInfo} onEnter={chooseGoodAccountStep}/>
 									<Route path="choose-a-plan" component={SubscriptionChoosePlan}/>
 									<Route path="add-card" component={SubscriptionAddCard}/>
 									<Route path="billing-address" component={SubscriptionBillingAddress}/>

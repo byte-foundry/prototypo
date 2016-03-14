@@ -103,7 +103,7 @@ export default {
 		saveAppValues(appValuesLoaded);
 	},
 	'/load-account-values': (values) => {
-		const patch = userStore.set('infos', values).commit();
+		const patch = userStore.set('infos', values.values || {}).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);
 	},

@@ -22,6 +22,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 				this.setState({
 					selected: head.toJS().choosePlanForm.selected,
 					error: head.toJS().choosePlanForm.error,
+					loading: head.toJS().choosePlanForm.loading,
 				});
 			})
 			.onDelete(() => {
@@ -39,7 +40,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 
 	render() {
 		const planMonthly = {
-			id: 'personal_monthly_USD_taxfree',
+			id: 'personal_monthly',
 			name: 'Monthly billing',
 			amount: '15',
 			period: 'month',
@@ -47,7 +48,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 		};
 
 		const planYearly = {
-			id: 'personal_annual_USD_taxfree',
+			id: 'personal_annual',
 			name: 'Yearly billing',
 			amount: '12',
 			period: 'month',
@@ -69,7 +70,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 					* Taxes are offered for private individuals. Currency ultimately depends on the country where your credit card has been issued.
 				</div>
 				{error}
-				<AccountValidationButton label="Checkout" click={() => {this.confirmPlan();}}/>
+				<AccountValidationButton loading={this.state.loading} label="Checkout" click={() => {this.confirmPlan();}}/>
 			</div>
 		);
 	}

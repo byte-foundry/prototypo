@@ -1,46 +1,159 @@
 import React from 'react';
+import Lifespan from 'lifespan';
+
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 
+import LocalClient from '../../stores/local-client.stores.jsx';
+
+function getCurrency(country) {
+
+	const euCountryCode = [
+		'AT',
+		'BE',
+		'BG',
+		'CY',
+		'CZ',
+		'DE',
+		'DK',
+		'EE',
+		'EL',
+		'GR',
+		'ES',
+		'FI',
+		'FR',
+		'HR',
+		'HU',
+		'IE',
+		'IT',
+		'LT',
+		'LU',
+		'LV',
+		'MT',
+		'NL',
+		'PL',
+		'PT',
+		'RO',
+		'SE',
+		'SI',
+		'SK',
+		'UK',
+		'GB',
+	];
+
+	return euCountryCode.indexOf(country) === -1 ? 'USD' : 'EUR';
+}
+
 export default class SubscriptionConfirmation extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			card: {
+				country: 'US',
+			},
+			plan: 'personal_monthly',
+		};
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState(head.toJS().infos);
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	render() {
+		const plans = {
+			'personal_monthly': {
+				name: 'Professional monthly subscription',
+				period: 'month',
+				USD: '$15.00',
+				EUR: '15.00€',
+			},
+			'personal_annual': {
+				name: 'Professional annual subscription',
+				period: 'year',
+				USD: '$144.00',
+				EUR: '144.00€',
+			},
+		};
+
+		const currency = getCurrency(this.state.card.country);
+
+		const card = this.state.card
+			? (
+				<div>
+					<div>**** **** **** {this.state.card.last4}</div>
+					<div>{this.state.card.exp_month}/{this.state.card.exp_year}</div>
+				</div>
+			)
+			: false;
+
+		const address = this.state.address
+			? (
+				<div>
+					<div>{this.state.buyerName}</div>
+					<div>{this.state.address.building_number} {this.state.address.street_name}</div>
+					<div>{this.state.address.address_details}</div>
+					<div>{this.state.address.city} {this.state.address.postal_code}</div>
+					<div>{this.state.address.region} {this.state.address.country}</div>
+				</div>
+			)
+			: false;
+
+		const vat = this.state.vat
+			? (
+				<div className="columns">
+					<div className="third-column">
+						Your VAT number
+					</div>
+					<div className="two-third-column">
+						<DisplayWithLabel data={this.state.vat} nolabel={true}/>
+					</div>
+				</div>
+			)
+			: false;
+
 		return (
 			<div className="account-base subscription-confirmation">
 				<div className="subscription-title">
-					Great, you chose the Professional annual subscription!
+					Great, you chose the {plans[this.state.plan].name}!
 				</div>
 				<div className="columns">
 					<div className="third-column">
-						You will be charged every year the following amount
+						You will be charged every {plans[this.state.plan].period} the following amount
 					</div>
 					<div className="two-third-column">
-						<DisplayWithLabel data="$144.0" nolabel={true}/>
-					</div>
-				</div>
-				<div className="columns">
-					<div className="third-column">
-						You will be charged every year the following amount
-					</div>
-					<div className="two-third-column">
-						<DisplayWithLabel data="$144.0" nolabel={true}/>
+						<DisplayWithLabel data={plans[this.state.plan][currency]}nolabel={true}/>
 					</div>
 				</div>
 				<div className="columns">
 					<div className="third-column">
-						You will be charged every year the following amount
+						Your card number and expiration date
 					</div>
 					<div className="two-third-column">
-						<DisplayWithLabel data="$144.0" nolabel={true}/>
+						<DisplayWithLabel data={card} nolabel={true}/>
 					</div>
 				</div>
 				<div className="columns">
 					<div className="third-column">
-						You will be charged every year the following amount
+						Your billing address
 					</div>
 					<div className="two-third-column">
-						<DisplayWithLabel data="$144.0" nolabel={true}/>
+						<DisplayWithLabel data={address} nolabel={true}/>
 					</div>
 				</div>
+				{vat}
 				<AccountValidationButton label="I confirm my subscription"/>
 			</div>
 		);
