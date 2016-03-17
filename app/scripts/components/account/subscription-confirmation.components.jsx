@@ -48,9 +48,9 @@ export default class SubscriptionConfirmation extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			card: {
+			card: [{
 				country: 'US',
-			},
+			}],
 			plan: 'personal_monthly',
 		};
 	}
@@ -72,29 +72,34 @@ export default class SubscriptionConfirmation extends React.Component {
 		this.lifespan.release();
 	}
 
+	confirm() {
+		const currency = getCurrency(this.state.card[0].country);
+		this.client.dispatchAction('/confirm-buy', {plan: this.state.plan, currency});
+	}
+
 	render() {
 		const plans = {
 			'personal_monthly': {
 				name: 'Professional monthly subscription',
 				period: 'month',
-				USD: '$15.00',
-				EUR: '15.00€',
+				USD: '$15.00 — only $10.50 the first month',
+				EUR: '15.00€ — only 10.50€ the first month',
 			},
 			'personal_annual': {
 				name: 'Professional annual subscription',
 				period: 'year',
-				USD: '$144.00',
-				EUR: '144.00€',
+				USD: '$144.00 — only $100.80 the first year',
+				EUR: '144.00€ — only 100.80€ the first year',
 			},
 		};
 
-		const currency = getCurrency(this.state.card.country);
+		const currency = getCurrency(this.state.card[0].country);
 
 		const card = this.state.card
 			? (
 				<div>
-					<div>**** **** **** {this.state.card.last4}</div>
-					<div>{this.state.card.exp_month}/{this.state.card.exp_year}</div>
+					<div>**** **** **** {this.state.card[0].last4}</div>
+					<div>{this.state.card[0].exp_month}/{this.state.card[0].exp_year}</div>
 				</div>
 			)
 			: false;
@@ -134,7 +139,7 @@ export default class SubscriptionConfirmation extends React.Component {
 						You will be charged every {plans[this.state.plan].period} the following amount
 					</div>
 					<div className="two-third-column">
-						<DisplayWithLabel data={plans[this.state.plan][currency]}nolabel={true}/>
+						<DisplayWithLabel data={plans[this.state.plan][currency]} nolabel={true}/>
 					</div>
 				</div>
 				<div className="columns">
@@ -154,7 +159,7 @@ export default class SubscriptionConfirmation extends React.Component {
 					</div>
 				</div>
 				{vat}
-				<AccountValidationButton label="I confirm my subscription"/>
+				<AccountValidationButton label="I confirm my subscription" click={() => {this.confirm();}}/>
 			</div>
 		);
 	}

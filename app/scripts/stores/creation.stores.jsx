@@ -98,7 +98,6 @@ const logStore = new Remutable({
 
 const userStore = new Remutable({
 	infos: {
-		accountValues: {},
 	},
 	signupForm: {
 		errors: [],
@@ -115,6 +114,13 @@ const userStore = new Remutable({
 		inError: {},
 	},
 	billingForm: {
+		errors: [],
+		inError: {},
+	},
+	confirmation: {
+		errors: [],
+	},
+	changePasswordForm: {
 		errors: [],
 		inError: {},
 	},

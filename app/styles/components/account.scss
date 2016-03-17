@@ -1,5 +1,13 @@
 @import "../variables";
 
+a.account-link {
+	color:$green;
+
+	&:hover {
+		text-decoration:underline;
+	}
+}
+
 .account {
 
 	&-block {

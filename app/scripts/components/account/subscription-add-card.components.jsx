@@ -15,6 +15,9 @@ export default class SubscriptionAddCard extends React.Component {
 		this.state = {
 			errors: [],
 			inError: {},
+			infos: {
+				card: [],
+			},
 		};
 	}
 
@@ -37,6 +40,7 @@ export default class SubscriptionAddCard extends React.Component {
 	}
 
 	componentWillUnmount() {
+		this.client.dispatchAction('/clean-form', 'addcardForm');
 		this.lifespan.release();
 	}
 
@@ -53,11 +57,11 @@ export default class SubscriptionAddCard extends React.Component {
 		const errors = this.state.errors.map((error) => {
 			return <FormError errorText={error} />;
 		});
-		const oldCardData = this.state.infos && this.state.infos.card
+		const oldCardData = this.state.infos && this.state.infos.card[0]
 			? (
 				<div>
-					<div>**** **** **** {this.state.infos.card.last4}</div>
-					<div> {this.state.infos.card.exp_month}/{this.state.infos.card.exp_year}</div>
+					<div>**** **** **** {this.state.infos.card[0].last4}</div>
+					<div> {this.state.infos.card[0].exp_month}/{this.state.infos.card[0].exp_year}</div>
 				</div>
 			)
 			: false;

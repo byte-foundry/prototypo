@@ -1,8 +1,35 @@
 import React from 'react';
 import Classnames from 'classnames';
 import {Link} from 'react-router';
+import Lifespan from 'lifespan';
+
+import LocalClient from '../../stores/local-client.stores.jsx';
 
 export default class AccountSidebar extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					infos: head.toJS().infos,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	render() {
 		const classProfile = Classnames({
 			"is-active": this.context.router.isActive('account/profile'),
@@ -31,9 +58,23 @@ export default class AccountSidebar extends React.Component {
 			"is-active": this.context.router.isActive('account/details/change-plan'),
 		});
 
+		const detailsMenu = this.state.infos && this.state.infos.plan
+			? (
+					<ul className="account-sidebar-menu-item-options">
+						<li className={classAddCard}><Link to="account/details/add-card">Add a card</Link></li>
+						<li className={classBillingAddress}><Link to="account/details/billing-address">My billing address</Link></li>
+						<li className={classChangePlan}><Link to="account/details/change-plan">Change plan</Link></li>
+					</ul>
+			)
+			: (
+					<ul className="account-sidebar-menu-item-options">
+						<li className={classChangePlan}><Link to="account/create/choose-a-plan">Subscribe to the pro plan</Link></li>
+					</ul>
+			);
+
 		return (
 			<div className="account-sidebar">
-				<div className="account-button">Go to the app</div>
+				<Link className="account-button" to="/dashboard">Go to the app</Link>
 				<ul className="account-sidebar-menu">
 					<li className={classProfile}><Link to="/account/profile">My profile</Link>
 						<ul className="account-sidebar-menu-item-options">
@@ -41,11 +82,7 @@ export default class AccountSidebar extends React.Component {
 						</ul>
 					</li>
 					<li className={classDetails}><Link to="/account/details">Account settings</Link>
-						<ul className="account-sidebar-menu-item-options">
-							<li className={classAddCard}><Link to="account/details/add-card">Add a card</Link></li>
-							<li className={classBillingAddress}><Link to="account/details/billing-address">My billing address</Link></li>
-							<li className={classChangePlan}><Link to="account/details/change-plan">Change plan</Link></li>
-						</ul>
+						{detailsMenu}
 					</li>
 					<li className="account-sidebar-menu-item account-sidebar-menu-billing"><Link to="account/billing">Billing history</Link></li>
 				</ul>

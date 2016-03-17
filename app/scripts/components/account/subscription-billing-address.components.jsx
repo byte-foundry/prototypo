@@ -36,6 +36,7 @@ export default class SubscriptionBillingAddress extends React.Component {
 	}
 
 	componentWillUnmount() {
+		this.client.dispatchAction('/clean-form', 'billingForm');
 		this.lifespan.release();
 	}
 
@@ -78,7 +79,7 @@ export default class SubscriptionBillingAddress extends React.Component {
 		return (
 			<form onSubmit={(e) => {this.addAddress(e);}} className="account-base subscription-billing-address">
 				{oldBilling}
-				<BillingAddress inError={this.state.inError} ref="address"/>
+				<BillingAddress address={{}} inError={this.state.inError} ref="address"/>
 				{errors}
 				<AccountValidationButton label="Add my address"/>
 			</form>

@@ -27,10 +27,40 @@ window.addEventListener('fluxServer.setup', async () => {
 });
 
 function saveAccountValues(values) {
-	AccountValues.save({typeface: 'default', values});
+	if (values !== undefined && values.accountValues !== undefined) {
+		AccountValues.save({typeface: 'default', values});
+	}
 }
 
 export default {
+	'/load-customer-data': ({sources, subscriptions}) => {
+		const infos = _.cloneDeep(userStore.get('infos'));
+
+		if (sources && sources.data.length > 0) {
+			infos.card = sources.data;
+			const patch = userStore.set('infos', infos).commit();
+
+			localServer.dispatchUpdate('/userStore', patch);
+		}
+		if (subscriptions && subscriptions.data.length > 0) {
+			infos.subscriptions = subscriptions.data;
+			const patch = userStore.set('infos', infos).commit();
+
+			localServer.dispatchUpdate('/userStore', patch);
+		}
+	},
+	'/clean-form': (formName) => {
+		const form = userStore.get(formName);
+
+		form.errors = [];
+		form.inError = {};
+		form.loading = false;
+		form.success = undefined;
+
+		const patch = userStore.set(formName, form).commit();
+
+		localServer.dispatchUpdate('/userStore', patch);
+	},
 	'/sign-out': () => {
 		const signinLocation = {
 			pathname: '/signin',
@@ -39,9 +69,11 @@ export default {
 		HoodieApi.logout()
 			.then(() => {
 				hashHistory.push(signinLocation);
+				window.Intercom('shutdown');
 			})
 			.catch(() => {
 				hashHistory.push(signinLocation);
+				window.Intercom('shutdown');
 			});
 	},
 	'/sign-in': ({username, password}) => {
@@ -230,7 +262,11 @@ export default {
 			pathname: '/account/create/add-card',
 		});
 	},
-	'/add-card': ({card: {fullname, number, expMonth, expYear, cvc}, vat}) => {
+	'/add-card': ({card: {fullname, number, expMonth, expYear, cvc}, vat, pathQuery = {}}) => {
+		const toPath = {
+			pathname: pathQuery.path || '/account/create/billing-address',
+			query: pathQuery.query,
+		};
 		const form = userStore.get('addcardForm');
 
 		form.errors = [];
@@ -270,23 +306,23 @@ export default {
 				return localServer.dispatchUpdate('/userStore', patch);
 			}
 
+			const infos = userStore.get('infos');
+
 			HoodieApi.updateCustomer({
 				source: data.id,
 				buyer_credit_card_prefix: number.substr(0, 9),
+				buyer_tax_number: vat || infos.vat,
 			})
 			.then(() => {
-				const infos = userStore.get('infos');
 
-				infos.card = data.card;
-				infos.vat = vat;
+				infos.card = [data.card];
+				infos.vat = vat || infos.vat;
 				form.loading = false;
 				const patch = userStore.set('infos', infos).set('addcardForm', form).commit();
 
 				localServer.dispatchUpdate('/userSotre', patch);
 
-				hashHistory.push({
-					pathname: '/account/create/billing-address',
-				});
+				hashHistory.push(toPath);
 			})
 			.catch((err) => {
 				form.errors.push(err.message);
@@ -297,7 +333,11 @@ export default {
 			});
 		});
 	},
-	'/add-billing-address': ({buyerName, address}) => {
+	'/add-billing-address': ({buyerName, address, pathQuery = {}}) => {
+		const toPath = {
+			pathname: pathQuery.path || '/account/create/confirmation',
+			query: pathQuery.query,
+		};
 		const form = userStore.get('billingForm');
 
 		form.errors = [];
@@ -309,7 +349,7 @@ export default {
 
 		if (!buyerName || !address.building_number || !address.street_name || !address.city || !address.postal_code || !address.country) {
 			form.errors.push('These fields are required');
-			form.inError = {
+			eorm.inError = {
 				buyerName: !buyerName,
 				buildingNumber: !address.building_number,
 				streetName: !address.street_name,
@@ -335,11 +375,117 @@ export default {
 			form.loading = false;
 			const patch = userStore.set('infos', infos).set('billingForm', form).commit();
 
+
+			hashHistory.push(toPath);
+
 			localServer.dispatchUpdate('/userStore', patch);
+		})
+		.catch((err) => {
+			form.errors.push(err.message);
+			form.loading = false;
+
+			const patch = userStore.set('billingForm', form).commit();
+			localServer.dispatchUpdate('/userStore', patch);
+		});
+	},
+	'/confirm-buy': ({plan, currency}) => {
+		HoodieApi.updateSubscription({
+			plan: `${plan}_${currency}_taxfree`,
+			coupon: 'release_coupon',
+		}).then(() => {
+			const infos = userStore.get('infos');
+
+			infos.plan = `${plan}_${currency}_taxfree`;
+			const patch = userStore
+				.set('infos', infos)
+				.commit();
 
 			hashHistory.push({
-				pathname: '/account/create/confirmation',
+				pathname: '/account/success',
 			});
+
+			localServer.dispatchUpdate('/userStore', patch);
+
+			HoodieApi.getCustomerInfo()
+			.then((customer) => {
+				localClient.dispatchAction('/load-customer-data', customer);
+			});
+		}).catch((err) => {
+			const form = userStore.get('confirmation');
+
+			form.errors.push(err.message);
+			form.loading = false;
+			const patch = userStore
+				.set('confirmation', form)
+				.commit();
+
+			localServer.dispatchUpdate('/userStore', patch);
 		});
+	},
+	'/change-account-info': (data) => {
+		const infos = _.cloneDeep(userStore.get('infos'));
+
+		_.assign(infos.accountValues, data);
+		const patch = userStore.set('infos', infos).commit();
+
+		const lastname = data.lastname
+			? ` ${data.lastname}`
+			: '';
+
+		window.Intercom('update', {
+			name: `${data.firstname}${lastname}`,
+			twitter: data.twitter,
+			website: data.website,
+			occupation: data.css,
+		});
+
+		localServer.dispatchUpdate('/userStore', patch);
+	},
+	'/change-password': ({password, newPassword, confirm}) => {
+		const changePasswordForm = userStore.get('changePasswordForm');
+
+		changePasswordForm.errors = [];
+		changePasswordForm.inError = {};
+		changePasswordForm.loading = true;
+		const cleanPatch = userStore.set('changePasswordForm', changePasswordForm).commit();
+
+		localServer.dispatchUpdate('/userStore', cleanPatch);
+
+		if (!password || !newPassword || !confirm) {
+			changePasswordForm.inError = {
+				password: !password,
+				newPassword: !newPassword,
+				confirm: !confirm,
+			};
+			changePasswordForm.errors.push('Fields with a * are required');
+			changePasswordForm.loading = false;
+			const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
+
+			return localServer.dispatchUpdate('/userStore', patch);
+		}
+
+		if (newPassword !== confirm) {
+			changePasswordForm.errors.push('The confirmation does not match your new password');
+			changePasswordForm.loading = false;
+			const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
+
+			return localServer.dispatchUpdate('/userStore', patch);
+		}
+
+		HoodieApi.changePassword(password, newPassword)
+			.then(() => {
+				changePasswordForm.loading = false;
+				changePasswordForm.success = true;
+				const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
+
+				return localServer.dispatchUpdate('/userStore', patch);
+			})
+			.catch((err) => {
+				changePasswordForm.loading = false;
+				changePasswordForm.errors.push(err.message);
+				const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
+
+				return localServer.dispatchUpdate('/userStore', patch);
+			});
 	},
 };

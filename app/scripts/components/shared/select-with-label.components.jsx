@@ -1,7 +1,22 @@
 import React from 'react';
+import Select from 'react-select';
 import Classnames from 'classnames';
 
-export default class InputWithLabel extends React.Component {
+export default class SelectWithLabel extends React.Component {
+
+	constructor(props) {
+		super(props);
+		this.state = {
+			value: props.inputValue,
+		};
+	}
+
+	handleChangeValue(value) {
+		this.setState({
+			value,
+		})
+	}
+
 	render() {
 		const required = this.props.required
 			? <span className="input-with-label-label-required">*</span>
@@ -20,13 +35,13 @@ export default class InputWithLabel extends React.Component {
 		return (
 			<div className="input-with-label">
 				<label className="input-with-label-label">{this.props.label}{info}{required}</label>
-				<input {...this.props} ref="input" className={inputClass} placeholder={this.props.placeholder} defaultValue={this.props.inputValue}/>
+				<Select ref="input" className="input-with-label-input" options={this.props.options} onChange={(value) => {this.handleChangeValue(value)}} value={this.state.value}/>
 			</div>
 		);
 	}
 
 	get inputValue() {
-		return this.refs ? this.refs.input.value : undefined;
+		return this.refs ? this.refs.input.props.value : undefined;
 	}
 
 	set inputValue(value) {

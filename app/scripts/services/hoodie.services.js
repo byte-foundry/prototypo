@@ -2,6 +2,7 @@ import PouchDB from 'pouchdb';
 import HoodiePouch from 'pouchdb-hoodie-api';
 
 import HOODIE from '../helpers/hoodie.helpers.js';
+import LocalClient from '../stores/local-client.stores.jsx';
 
 import Log from './log.services.js';
 
@@ -20,9 +21,11 @@ if (bearer) {
 
 const hoodie = new window.Hoodie(backUrl);
 
-window.hoodiecli = function() {
-	return hoodie.connectionStatus.ok;
-};
+let localClient;
+
+window.addEventListener('fluxServer.setup', async () => {
+	localClient = LocalClient.instance();
+});
 
 export default class HoodieApi {
 
@@ -78,49 +81,8 @@ export default class HoodieApi {
 		//TODO(franz): Thou shall code the checkPasswordReset at a later point in time
 	}
 
-	static changePassword(password) {
-		const db = `org.couchdb.user:user/${HoodieApi.instance.email}`;
-
-		return new Promise((resolve, reject) => {
-			const xhr = new XMLHttpRequest();
-
-			xhr.open('GET', `${backUrl}/_users/${encodeURIComponent(db)}`);
-			xhr.withCredentials = true;
-
-			xhr.onload = (e) => {
-				resolve(e);
-			};
-
-			xhr.onerror = () => {
-				reject();
-			};
-
-			xhr.send();
-		})
-		.then((e) => {
-			const user = JSON.parse(e.target.responseText);
-
-			user.salt = undefined;
-			user.updatedAt = new Date();
-			user.password = password;
-
-			return new Promise((resolve, reject) => {
-				const xhr = new XMLHttpRequest();
-
-				xhr.open('PUT', `${backUrl}/_users/${encodeURIComponent(db)}`);
-				xhr.withCredentials = true;
-
-				xhr.onload = (evt) => {
-					resolve(evt);
-				};
-
-				xhr.onerror = () => {
-					reject();
-				};
-
-				xhr.send(JSON.stringify(user));
-			});
-		});
+	static changePassword(password, newPassword) {
+		return hoodie.account.changePassword(password, newPassword);
 	}
 
 	static createCustomer(options) {
@@ -129,6 +91,10 @@ export default class HoodieApi {
 
 	static updateCustomer(options) {
 		return hoodie.stripe.customers.update(options);
+	}
+
+	static updateSubscription(options) {
+		return hoodie.stripe.customers.updateSubscription(options);
 	}
 
 	static getCustomerInfo() {
@@ -189,6 +155,13 @@ function setupHoodie(data) {
 	HoodieApi.instance.hoodieId = id;
 	HoodieApi.instance.email = response.name.split('/')[1];
 	HoodieApi.instance.plan = getPlan(response.roles);
+
+	hoodie.stripe.customers.retrieve()
+		.then((customer) => {
+			localClient.dispatchAction('/load-customer-data', customer);
+		})
+		.catch((err) => {
+		});
 
 	Log.setUserId(HoodieApi.instance.email);
 

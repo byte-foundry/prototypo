@@ -2,6 +2,7 @@ import '../styles/main.scss';
 import '../../node_modules/normalize.css/normalize.css';
 import '../../node_modules/please-wait/build/please-wait.css';
 import '../../node_modules/react-gemini-scrollbar/node_modules/gemini-scrollbar/gemini-scrollbar.css';
+import '../../node_modules/react-select/dist/react-select.css';
 import '../styles/components/family.scss';
 import '../styles/components/edit-param-group.scss';
 import '../styles/components/input-group.scss';
@@ -59,6 +60,8 @@ import '../styles/components/shared/columns.scss';
 import '../styles/components/shared/billing-address.scss';
 import '../styles/components/shared/account-validation-button.scss';
 import '../styles/components/shared/form-error.scss';
+import '../styles/components/shared/form-success.scss';
+import '../styles/components/shared/select-override.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';
@@ -100,6 +103,7 @@ import Register from './components/register.components.jsx';
 import AccountApp from './components/account/account-app.components.jsx';
 import AccountDashboard from './components/account/account-dashboard.components.jsx';
 import AccountHome from './components/account/account-home.components.jsx';
+import AccountSuccess from './components/account/account-success.components.jsx';
 import AccountProfile from './components/account/account-profile-panel.components.jsx';
 import AccountChangePassword from './components/account/account-change-password.components.jsx';
 import AccountDetails from './components/account/account-details.components.jsx';
@@ -286,6 +290,10 @@ function chooseGoodAccountStep(nextState, replace) {
 	}
 }
 
+function trackUrl() {
+	ga('send', 'pageview', {page: this.state.location.pathname});
+}
+
 selectRenderOptions(
 	() => {
 		const content = document.getElementById('content');
@@ -316,7 +324,7 @@ selectRenderOptions(
 			.then(() => {
 
 				ReactDOM.render((
-					<Router history={hashHistory}>
+					<Router history={hashHistory} onUpdate={trackUrl}>
 						<Route component={App} name="app" path="/">
 							<IndexRoute component={SitePortal}/>
 							<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}/>
@@ -335,6 +343,9 @@ selectRenderOptions(
 							<Route component={AccountApp} path="account">
 								<Route component={AccountDashboard} name="home">
 									<IndexRoute component={AccountHome}/>
+								</Route>
+								<Route component={AccountDashboard} path="success" name="success">
+									<IndexRoute component={AccountSuccess}/>
 								</Route>
 								<Route path="profile" component={AccountDashboard} name="profile">
 									<IndexRoute component={AccountProfile}/>

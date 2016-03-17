@@ -113,7 +113,8 @@
 
 .account-button {
 	background-color: $green;
-	color: $white;
+	color: $white !important;
+	display:block;
 	font-size: 18px;
 	padding: 3px 30px;
 	border-radius: 5px;

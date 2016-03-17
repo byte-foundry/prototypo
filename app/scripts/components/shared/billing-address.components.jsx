@@ -22,30 +22,30 @@ export default class BillingAddress extends React.Component {
 	render() {
 		return (
 			<div className="billing-address">
-				<InputWithLabel required={true} ref="buyerName" error={this.props.inError.buyerName} label="Corporate name or Full name" />
+				<InputWithLabel required={true} ref="buyerName" inputValue={this.props.buyerName} error={this.props.inError.buyerName} label="Corporate name or Full name" />
 				<div className="columns">
 					<div className="third-column">
-						<InputWithLabel ref="buildingNumber" error={this.props.inError.buildingNumber} required={true} label="Bldg #" />
+						<InputWithLabel ref="buildingNumber" inputValue={this.props.address.building_number} error={this.props.inError.buildingNumber} required={true} label="Bldg #" />
 					</div>
 					<div className="two-third-column">
-						<InputWithLabel ref="streetName" error={this.props.inError.streetName} required={true} label="Street name" />
+						<InputWithLabel ref="streetName" inputValue={this.props.address.street_name} error={this.props.inError.streetName} required={true} label="Street name" />
 					</div>
 				</div>
-				<InputWithLabel ref="addressDetails" label="Address details" />
+				<InputWithLabel inputValue={this.props.address.address_detail} ref="addressDetails" label="Address details" />
 				<div className="columns">
 					<div className="half-column">
-						<InputWithLabel ref="city" error={this.props.inError.city} required={true} label="City" />
+						<InputWithLabel ref="city" inputValue={this.props.address.city} error={this.props.inError.city} required={true} label="City" />
 					</div>
 					<div className="half-column">
-						<InputWithLabel ref="postalCode" error={this.props.inError.postalCode} required={true} label="Postal code" />
+						<InputWithLabel ref="postalCode" inputValue={this.props.address.postal_code} error={this.props.inError.postalCode} required={true} label="Postal code" />
 					</div>
 				</div>
 				<div className="columns">
 					<div className="half-column">
-						<InputWithLabel ref="region" label="Region" />
+						<InputWithLabel ref="region" inputValue={this.props.address.region} label="Region" />
 					</div>
 					<div className="half-column">
-						<InputWithLabel ref="country" error={this.props.inError.country} required={true} label="Country" />
+						<InputWithLabel ref="country" inputValue={this.props.address.country} error={this.props.inError.country} required={true} label="Country" />
 					</div>
 				</div>
 			</div>
