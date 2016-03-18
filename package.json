@@ -6,6 +6,8 @@
     "bluebird": "^3.1.1",
     "classnames": "^2.1.2",
     "del": "^1.2.0",
+    "elzevir.ptf": "byte-foundry/elzevir.ptf#master",
+    "gulp-watch": "^4.3.5",
     "hoodie": "^2.0.4",
     "john-fell.ptf": "byte-foundry/john-fell.ptf#master",
     "jszip": "^2.5.0",
@@ -31,7 +33,6 @@
     "remutable": "FranzPoize/remutable#master",
     "tether": "^1.1.0",
     "venus.ptf": "byte-foundry/venus.ptf#master",
-    "elzevir.ptf": "byte-foundry/elzevir.ptf#master",
     "xxhashjs": "^0.1.1"
   },
   "devDependencies": {

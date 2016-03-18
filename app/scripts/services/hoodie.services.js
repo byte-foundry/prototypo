@@ -2,9 +2,6 @@ import PouchDB from 'pouchdb';
 import HoodiePouch from 'pouchdb-hoodie-api';
 PouchDB.plugin(HoodiePouch);
 
-//const backUrl = 'http://localhost:6004';
-const backUrl = 'https://prototypo-dev.appback.com/_api';
-
 import HOODIE from '../helpers/hoodie.helpers.js';
 
 import Log from './log.services.js';
