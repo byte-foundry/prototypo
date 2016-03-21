@@ -105,7 +105,7 @@ export default class Register extends React.Component {
 							I already have an account
 						</Link>
 						{errors}
-						<AccountValidationButton label="Sign up"/>
+						<AccountValidationButton loading={this.state.loading} label="Sign up"/>
 					</form>
 				</div>
 			</div>

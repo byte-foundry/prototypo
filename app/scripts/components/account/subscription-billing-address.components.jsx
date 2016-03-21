@@ -81,7 +81,7 @@ export default class SubscriptionBillingAddress extends React.Component {
 				{oldBilling}
 				<BillingAddress address={{}} inError={this.state.inError} ref="address"/>
 				{errors}
-				<AccountValidationButton label="Add my address"/>
+				<AccountValidationButton loading={this.state.loading} label="Add my address"/>
 			</form>
 		);
 	}

@@ -62,6 +62,7 @@ import '../styles/components/shared/account-validation-button.scss';
 import '../styles/components/shared/form-error.scss';
 import '../styles/components/shared/form-success.scss';
 import '../styles/components/shared/select-override.scss';
+import '../styles/components/shared/invoice.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';
@@ -111,6 +112,8 @@ import AccountBillingAddress from './components/account/account-billing-address.
 import AccountAddCard from './components/account/account-add-card.components.jsx';
 import AccountChangePlan from './components/account/account-change-plan.components.jsx';
 import AccountSubscription from './components/account/account-subscription.components.jsx';
+import AccountConfirmPlan from './components/account/account-confirm-plan.components.jsx';
+import AccountInvoiceList from './components/account/account-invoice-list.components.jsx';
 import Subscription from './components/account/subscription.components.jsx';
 import SubscriptionChoosePlan from './components/account/subscription-choose-plan.components.jsx';
 import SubscriptionAccountInfo from './components/account/subscription-account-info.components.jsx';
@@ -282,12 +285,16 @@ function chooseGoodAccountStep(nextState, replace) {
 
 	const infos = Stores['/userStore'].get('infos');
 
-	if (infos.accountValues.username && /\/account\/create\/?$/.test(nextState.location.pathname)) {
+	if (infos.accountValues && infos.accountValues.username && /\/account\/create\/?$/.test(nextState.location.pathname)) {
 		replace({
 			pathname: '/account/create/choose-a-plan',
 			state: {nextPathname: nextState.location.pathname},
 		});
 	}
+}
+
+function noConfirmBeforePlan(nextState, replace) {
+	console.log(nextState);
 }
 
 function trackUrl() {
@@ -341,6 +348,9 @@ selectRenderOptions(
 							</Route>
 							<Route path="subscription" component={Subscriptions}/>
 							<Route component={AccountApp} path="account">
+								<Route path="billing" component={AccountDashboard} name="billing">
+									<IndexRoute component={AccountInvoiceList}/>
+								</Route>
 								<Route component={AccountDashboard} name="home">
 									<IndexRoute component={AccountHome}/>
 								</Route>
@@ -356,6 +366,7 @@ selectRenderOptions(
 									<Route path="billing-address" component={AccountBillingAddress}/>
 									<Route path="add-card" component={AccountAddCard}/>
 									<Route path="change-plan" component={AccountChangePlan}/>
+									<Route path="confirm-plan" component={AccountConfirmPlan} onEnter={noConfirmBeforePlan}/>
 								</Route>
 								<Route path="create" component={Subscription} name="create">
 									<IndexRoute component={SubscriptionAccountInfo} onEnter={chooseGoodAccountStep}/>

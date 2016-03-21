@@ -1,0 +1,47 @@
+@import "../../variables";
+
+.invoice {
+	width: 100%;
+
+	thead {
+		th {
+			padding: 1em;
+			font-size: 16px;
+			background-color: $green;
+		}
+	}
+
+	&-big-head {
+		width: 75%;
+	}
+
+	&-line {
+		background-color: lighten($green, 36%);
+		td {
+			padding: 2em 1em;
+			font-size: 16px;
+		}
+	}
+
+	&-line:nth-of-type(even) {
+		background-color: lighten($green, 30%);
+	}
+
+	&-total {
+		td {
+			background-color: $white;
+			font-size: 18px;
+			color: $medium-grey;
+			padding-top: 2em;
+		}
+		&-label {
+			padding: 1em;
+			text-align: right;
+			font-weight: bold;
+		}
+		&-amount {
+			padding: 1em;
+			font-weight: bold;
+		}
+	}
+} 

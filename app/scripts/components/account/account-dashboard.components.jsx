@@ -12,6 +12,8 @@ export default class AccountDashboard extends React.Component {
 			signup: "Sign up",
 			signin: "Sign in",
 			success: "My account",
+			confirm: "My account",
+			billing: "My account",
 		};
 		const title = titles[this.props.route.name];
 

@@ -33,21 +33,21 @@ function saveAccountValues(values) {
 }
 
 export default {
-	'/load-customer-data': ({sources, subscriptions}) => {
+	'/load-customer-data': ({sources, subscriptions, charges}) => {
 		const infos = _.cloneDeep(userStore.get('infos'));
 
 		if (sources && sources.data.length > 0) {
 			infos.card = sources.data;
-			const patch = userStore.set('infos', infos).commit();
-
-			localServer.dispatchUpdate('/userStore', patch);
 		}
 		if (subscriptions && subscriptions.data.length > 0) {
 			infos.subscriptions = subscriptions.data;
-			const patch = userStore.set('infos', infos).commit();
-
-			localServer.dispatchUpdate('/userStore', patch);
 		}
+		if (charges && charges.data.length > 0) {
+			infos.charges = charges.data;
+		}
+
+		const patch = userStore.set('infos', infos).commit();
+		localServer.dispatchUpdate('/userStore', patch);
 	},
 	'/clean-form': (formName) => {
 		const form = userStore.get(formName);
@@ -233,7 +233,7 @@ export default {
 
 		return localServer.dispatchUpdate('/userStore', patch);
 	},
-	'/confirm-plan': ({plan}) => {
+	'/confirm-plan': ({plan, pathQuery = {pathname: '/account/create/add-card'}}) => {
 		const form = userStore.get('choosePlanForm');
 
 		form.error = undefined;
@@ -258,9 +258,7 @@ export default {
 
 		localServer.dispatchUpdate('/userStore', patch);
 
-		hashHistory.push({
-			pathname: '/account/create/add-card',
-		});
+		hashHistory.push(pathQuery);
 	},
 	'/add-card': ({card: {fullname, number, expMonth, expYear, cvc}, vat, pathQuery = {}}) => {
 		const toPath = {
@@ -388,10 +386,18 @@ export default {
 			localServer.dispatchUpdate('/userStore', patch);
 		});
 	},
-	'/confirm-buy': ({plan, currency}) => {
+	'/confirm-buy': ({plan, currency, coupon}) => {
+		const form = userStore.get('confirmation');
+
+		form.errors = [];
+		form.inError = {};
+		form.loading = true;
+		const cleanPatch = userStore.set('confirmation', form).commit();
+
+		localServer.dispatchUpdate('/userStore', cleanPatch);
 		HoodieApi.updateSubscription({
 			plan: `${plan}_${currency}_taxfree`,
-			coupon: 'release_coupon',
+			coupon,
 		}).then(() => {
 			const infos = userStore.get('infos');
 
@@ -411,7 +417,6 @@ export default {
 				localClient.dispatchAction('/load-customer-data', customer);
 			});
 		}).catch((err) => {
-			const form = userStore.get('confirmation');
 
 			form.errors.push(err.message);
 			form.loading = false;

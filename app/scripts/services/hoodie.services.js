@@ -97,8 +97,12 @@ export default class HoodieApi {
 		return hoodie.stripe.customers.updateSubscription(options);
 	}
 
-	static getCustomerInfo() {
-		return hoodie.stripe.customers.retrieve();
+	static getCustomerInfo(options) {
+		return hoodie.stripe.customers.retrieve(options);
+	}
+
+	static getInvoice(options) {
+		return hoodie.stripe.invoices.retrieveUpcoming(options);
 	}
 }
 
@@ -156,7 +160,7 @@ function setupHoodie(data) {
 	HoodieApi.instance.email = response.name.split('/')[1];
 	HoodieApi.instance.plan = getPlan(response.roles);
 
-	hoodie.stripe.customers.retrieve()
+	hoodie.stripe.customers.retrieve({includeCharges: true})
 		.then((customer) => {
 			localClient.dispatchAction('/load-customer-data', customer);
 		})

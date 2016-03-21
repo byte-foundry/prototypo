@@ -4,45 +4,10 @@ import Lifespan from 'lifespan';
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 
+import getCurrency from '../../helpers/currency.helpers.js';
+
 import LocalClient from '../../stores/local-client.stores.jsx';
 
-function getCurrency(country) {
-
-	const euCountryCode = [
-		'AT',
-		'BE',
-		'BG',
-		'CY',
-		'CZ',
-		'DE',
-		'DK',
-		'EE',
-		'EL',
-		'GR',
-		'ES',
-		'FI',
-		'FR',
-		'HR',
-		'HU',
-		'IE',
-		'IT',
-		'LT',
-		'LU',
-		'LV',
-		'MT',
-		'NL',
-		'PL',
-		'PT',
-		'RO',
-		'SE',
-		'SI',
-		'SK',
-		'UK',
-		'GB',
-	];
-
-	return euCountryCode.indexOf(country) === -1 ? 'USD' : 'EUR';
-}
 
 export default class SubscriptionConfirmation extends React.Component {
 	constructor(props) {
@@ -62,6 +27,9 @@ export default class SubscriptionConfirmation extends React.Component {
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState(head.toJS().infos);
+				this.setState({
+					loading: head.toJS().confirmation.loading,
+				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -74,7 +42,7 @@ export default class SubscriptionConfirmation extends React.Component {
 
 	confirm() {
 		const currency = getCurrency(this.state.card[0].country);
-		this.client.dispatchAction('/confirm-buy', {plan: this.state.plan, currency});
+		this.client.dispatchAction('/confirm-buy', {plan: this.state.plan, currency, coupon: 'release_coupon'});
 	}
 
 	render() {
@@ -159,7 +127,7 @@ export default class SubscriptionConfirmation extends React.Component {
 					</div>
 				</div>
 				{vat}
-				<AccountValidationButton label="I confirm my subscription" click={() => {this.confirm();}}/>
+				<AccountValidationButton disabled={this.state.loading} loading={this.state.loading} label="I confirm my subscription" click={() => {this.confirm();}}/>
 			</div>
 		);
 	}

@@ -5,6 +5,8 @@ import {Link} from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
+import getCurrency from '../../helpers/currency.helpers.js';
+
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import FormSuccess from '../shared/form-success.components.jsx';
 
@@ -42,6 +44,17 @@ export default class AccountSubscription extends React.Component {
 				You don't have a card right now. <Link className="account-link" to="/account/details/add-card">Add a card</Link> before subscribing.
 			</h3>
 		);
+		const currency = this.state.card[0] ? getCurrency(this.state.card[0].country) : undefined;
+		const currencySymbol = currency === 'USD'
+			? {
+				before: '$',
+				after: '',
+			}
+			: {
+				before: '',
+				after: '€',
+			};
+		const periodEnd = this.state.plan ? moment.unix(this.state.plan[0].current_period_end).format('L') : '';
 		const cardDetail = this.state.card ? this.state.card.map((card) => {
 			const cardDom = (
 				<div className="account-subscription-card">
@@ -63,7 +76,7 @@ export default class AccountSubscription extends React.Component {
 			</h3>
 		);
 
-		const plan = this.state.plan && this.state.plan.indexOf('annual') === -1
+		const plan = this.state.plan && this.state.plan[0].plan.id.indexOf('annual') === -1
 			? 'Professional monthly subscription'
 			: 'Professional annual subscription';
 
@@ -72,7 +85,7 @@ export default class AccountSubscription extends React.Component {
 				<div className="account-base account-subscription">
 					<DisplayWithLabel label="Your plan" data={plan}/>
 					<p>
-						Your subscription will automatically renew on <span className="account-emphase">03/09/2016</span> and you will be charged <span className="account-emphase">$15</span>
+						Your subscription will automatically renew on <span className="account-emphase">{periodEnd}</span> and you will be charged <span className="account-emphase">{`${currencySymbol.before}15${currencySymbol.after}`}</span>
 					</p>
 					{cardDetail}
 					{successCard}
