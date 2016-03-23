@@ -27,6 +27,7 @@
 			width: 200px;
 			border-bottom:solid 1px $light-grey;
 			cursor:pointer;
+			position:relative;
 
 			&:hover {
 				background-color:$green;
@@ -35,6 +36,26 @@
 
 			&.is-inactive {
 				color:$medium-grey;
+			}
+
+			&-dropdown {
+				display:none;
+				position:absolute;
+				list-style-type:none;
+				top:-10px;
+				left:200px;
+				padding:0;
+				border-top: solid 10px #000;
+			}
+
+			&:hover &-dropdown {
+				display:block;
+			}
+
+			&.with-dropdown:after {
+				content: "▶";
+				position:absolute;
+				right:10px;
 			}
 		}
 	}

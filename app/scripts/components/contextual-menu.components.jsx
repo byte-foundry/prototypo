@@ -35,7 +35,21 @@ class ContextualMenuItem extends React.Component {
 	}
 }
 
+class ContextualMenuDropDown extends React.Component {
+	render() {
+		return (
+			<li className="contextual-menu-list-item with-dropdown" onClick={this.props.click}>
+				{this.props.text}
+				<ul className="contextual-menu-list-item-dropdown">
+					{this.props.options}
+				</ul>
+			</li>
+		);
+	}
+}
+
 export {
 	ContextualMenu,
 	ContextualMenuItem,
+	ContextualMenuDropDown,
 };

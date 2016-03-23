@@ -163,6 +163,10 @@ function setupHoodie(data) {
 	hoodie.stripe.customers.retrieve({includeCharges: true})
 		.then((customer) => {
 			localClient.dispatchAction('/load-customer-data', customer);
+			window.Intercom('boot', {
+				app_id: 'mnph1bst',
+				email: HoodieApi.instance.email,
+			});
 		})
 		.catch((err) => {
 		});
