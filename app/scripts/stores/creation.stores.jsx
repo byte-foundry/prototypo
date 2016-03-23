@@ -66,7 +66,7 @@ const fontInfos = new Remutable({
 
 const panel = new Remutable({
 	mode: [],
-	textFontSize: 6,
+	textFontSize: 2.1,
 	wordFontSize: 4.5,
 });
 
