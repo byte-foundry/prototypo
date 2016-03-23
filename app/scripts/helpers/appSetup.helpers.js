@@ -1,9 +1,12 @@
 import {glyphs, userStore} from '../stores/creation.stores.jsx';
-import {AppValues, AccountValues} from '../services/values.services.js';
+import {AppValues, AccountValues, FontValues, FontInfoValues} from '../services/values.services.js';
 import {loadFontValues} from './loadValues.helpers.js';
 import {setupFontInstance} from './font.helpers.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
+import slug from 'slug';
+slug.defaults.mode = 'rfc3986';
+slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
 
 let localClient;
 
@@ -53,11 +56,47 @@ function mapGlyphForApp(glyph) {
 }
 
 export async function loadStuff() {
-	//Login checking and app and font values loading
+	//We need to fix database names for the change to normal hoodie api so let's go
+
+	let oldAppValues;
+	try {
+		oldAppValues = await AppValues.getWithPouch({typeface: 'default'});
+		//Login checking and app and font values loading
+
+		if (oldAppValues.values.library.length > 0 && !oldAppValues.values.switchedToHoodie) {
+			oldAppValues.values.library.forEach(({variants}) => {
+				variants.forEach(async (variant) => {
+					const newDb = slug(variant.db, '');
+					if (newDb !== variant.db) {
+						variant.db = newDb;
+
+						//Here we copy the old db to the new db with slugified name
+						const oldFontValues = await FontValues.getWithPouch({typeface: variant.db});
+						const oldFontInfosValues = await FontInfoValues.getWithPouch({typeface: variant.db});
+
+						await FontValues.save({
+							typeface: newDb,
+							values: oldFontValues.values,
+						});
+						await FontInfoValues.save({
+							typeface: newDb,
+							values: oldFontInfosValues.values,
+						});
+					}
+				});
+			});
+			oldAppValues.values.switchedToHoodie = true;
+			await AppValues.save({typeface: 'default', values: oldAppValues.values});
+		}
+	}
+	catch (err) {
+		console.log(err);
+	}
+
 	let appValues;
 
 	try {
-		appValues = await AppValues.get({typeface: 'default'});
+		appValues = oldAppValues ? oldAppValues : await AppValues.get({typeface: 'default'});
 		appValues.values = _.extend(defaultValues.values, appValues.values);
 	}
 	catch (err) {

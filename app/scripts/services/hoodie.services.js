@@ -155,7 +155,17 @@ function getPlan(roles) {
 function setupHoodie(data) {
 	const response = data.response ? data.response : data;
 	const id = response.roles[0];
+	const hoodieConfig = JSON.parse(localStorage._hoodie_config);
+	const db = PouchDB(`${backUrl}/_api/user%2F${id}`, {
+		ajax: {
+			headers: {
+				'Authorization': `Bearer ${hoodieConfig['_account.bearerToken']}`,
+			},
+			withCredentials: true,
+		},
+	});
 
+	HoodieApi.instance.pouch = db.hoodieApi();
 	HoodieApi.instance.hoodieId = id;
 	HoodieApi.instance.email = response.name.split('/')[1];
 	HoodieApi.instance.plan = getPlan(response.roles);
