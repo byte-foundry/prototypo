@@ -104,7 +104,7 @@ export default {
 				{
 					id: hasher.update(`REGULAR${(new Date()).getTime()}`).digest().toString(16),
 					name: 'REGULAR',
-					db: `${name}regular`,
+					db: slug(`${name}regular`, ''),
 				},
 			],
 		};

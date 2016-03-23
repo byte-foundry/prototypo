@@ -31,6 +31,11 @@ function values(prefix) {
 				});
 			}
 		},
+		getWithPouch(params) {
+			if (location.hash.indexOf('#/replay') === -1) {
+				return HoodieApi.instance.pouch.find(`${prefix}values/${params.typeface}`);
+			}
+		},
 		save(params) {
 			if (location.hash.indexOf('#/replay') === -1) {
 				return HoodieApi.instance.store.updateOrAdd(`${prefix}values`, `${params.typeface}`, {
