@@ -96,6 +96,10 @@ const logStore = new Remutable({
 	patchArray: [],
 });
 
+const glyphSelect = new Remutable({
+	focused: false,
+});
+
 const userStore = new Remutable({
 	infos: {
 	},
@@ -147,6 +151,7 @@ const stores = {
 	'/intercomStore': intercomStore,
 	'/searchStore': searchStore,
 	'/userStore': userStore,
+	'/glyphSelect': glyphSelect,
 	/* #if debug */
 	logStore,
 	/* #end */
@@ -174,6 +179,7 @@ export {
 	intercomStore,
 	searchStore,
 	userStore,
+	glyphSelect,
 	/* #if debug */
 	logStore,
 	/* #end */
