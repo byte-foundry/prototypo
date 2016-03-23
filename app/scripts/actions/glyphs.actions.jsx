@@ -1,4 +1,4 @@
-import {glyphs, panel} from '../stores/creation.stores.jsx';
+import {glyphs, panel, glyphSelect} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
 
@@ -37,5 +37,11 @@ export default {
 		const patch = glyphs.set('locked', !lockState).commit();
 
 		localServer.dispatchUpdate('/glyphs', patch);
+	},
+	'/toggle-focus-direct-access': () => {
+		const focused = glyphSelect.get('focused');
+		const patch = glyphSelect.set('focused', !focused).commit();
+
+		localServer.dispatchUpdate('/glyphSelect', patch);
 	},
 };
