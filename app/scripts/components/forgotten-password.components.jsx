@@ -1,17 +1,21 @@
 import React from 'react';
+import {hashHistory} from 'react-router';
+
 import HoodieApi from '../services/hoodie.services.js';
 import WarningMessage from './warning-message.components.jsx';
 import WaitForLoad from './wait-for-load.components.jsx';
 import Log from '../services/log.services.js';
+import AccountValidationButton from './shared/account-validation-button.components.jsx';
 
 export default class ForgottenPassword extends React.Component {
 	constructor(props) {
 		super(props);
-
 		this.state = {};
 	}
 
-	async resetPassword() {
+	async resetPassword(e) {
+		e.preventDefault();
+
 		this.setState({
 			loading: true,
 		});
@@ -61,31 +65,22 @@ export default class ForgottenPassword extends React.Component {
 		let content;
 
 		if (!this.state.reset) {
-			content = [
-				<p className="forgotten-password-text">Please fill the following input with the email address you've used to register.</p>,
-				<input className="forgotten-password-input" ref="email" placeholder="Email address"/>,
-				<p className="forgotten-password-text">We will send you a new password, and you will be able to change your password once connected in the profile panel.</p>,
-					((message) => {
-						if (message) {
-							return <WarningMessage text={message}/>;
-						}
-						else {
-							return false;
-						}
-					})(warning),
-				<WaitForLoad loaded={!this.state.loading} secColor={true}>
-					<div className="forgotten-password-buttons">
-						<button className="forgotten-password-button"
-							onClick={() => {
-								location.href = '#/signin';
-							}}>Cancel</button>
-						<button className="forgotten-password-button"
-							onClick={() => {
-								this.resetPassword();
-							}}>Reset Password</button>
-					</div>
-				</WaitForLoad>,
-			];
+			const message = warning
+				? <WarningMessage text={warning}/>
+				: false;
+
+			content = (
+					<form className="sign-in-form" onSubmit={(e) => {this.resetPassword(e);}}>
+						<p className="forgotten-password-text">Please fill the following input with the email address you've used to register.</p>
+						<input className="forgotten-password-input" ref="email" placeholder="Email address"/>
+						<p className="forgotten-password-text">We will send you a new password, and you will be able to change your password once connected in the profile panel.</p>
+						{message}
+						<div className="forgotten-password-buttons">
+						<AccountValidationButton label="cancel" id="cancel" click={() => {hashHistory.push({pathname: '/signin'});}}/>
+						<AccountValidationButton loading={this.state.loading} label="Reset Password"/>
+						</div>
+					</form>
+			);
 		}
 		else {
 			content = [
@@ -97,8 +92,13 @@ export default class ForgottenPassword extends React.Component {
 			];
 		}
 		return (
-			<div className="forgotten-password">
-				{content}
+			<div className="forgotten-password sign-base">
+				<div classname="account-dashboard-icon"/>
+				<h1 className="account-title">Reset my password</h1>
+				<div className="account-dashboard-container">
+						{content}
+					</form>
+				</div>
 			</div>
 		);
 	}

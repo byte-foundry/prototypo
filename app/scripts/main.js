@@ -348,20 +348,20 @@ selectRenderOptions(
 							</Route>
 							<Route path="subscription" component={Subscriptions}/>
 							<Route component={AccountApp} path="account">
-								<Route path="billing" component={AccountDashboard} name="billing">
+								<Route path="billing" component={AccountDashboard} name="billing" onEnter={redirectToLogin}>
 									<IndexRoute component={AccountInvoiceList}/>
 								</Route>
-								<Route component={AccountDashboard} name="home">
+								<Route component={AccountDashboard} name="home" onEnter={redirectToLogin}>
 									<IndexRoute component={AccountHome}/>
 								</Route>
-								<Route component={AccountDashboard} path="success" name="success">
+								<Route component={AccountDashboard} path="success" name="success" onEnter={redirectToLogin}>
 									<IndexRoute component={AccountSuccess}/>
 								</Route>
-								<Route path="profile" component={AccountDashboard} name="profile">
+								<Route path="profile" component={AccountDashboard} name="profile" onEnter={redirectToLogin}>
 									<IndexRoute component={AccountProfile}/>
 									<Route path="change-password" component={AccountChangePassword}/>
 								</Route>
-								<Route path="details" component={AccountDashboard} name="details">
+								<Route path="details" component={AccountDashboard} name="details" onEnter={redirectToLogin}>
 									<IndexRoute component={AccountSubscription}/>
 									<Route path="billing-address" component={AccountBillingAddress}/>
 									<Route path="add-card" component={AccountAddCard}/>
