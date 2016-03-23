@@ -7,7 +7,7 @@ function values(prefix) {
 	return {
 		get(params) {
 			if (location.hash.indexOf('#/replay') === -1) {
-				return HoodieApi.instance.find(`${prefix}values/${params.typeface}`)
+				return HoodieApi.instance.store.find(`${prefix}values`, `${params.typeface}`)
 					.then((data) => {
 						const client = LocalClient.instance();
 
@@ -33,21 +33,22 @@ function values(prefix) {
 		},
 		save(params) {
 			if (location.hash.indexOf('#/replay') === -1) {
-				return HoodieApi.instance.updateOrAdd(`${prefix}values/${params.typeface}`, {
+				return HoodieApi.instance.store.updateOrAdd(`${prefix}values`, `${params.typeface}`, {
 						values: params.values,
 				});
 			}
 			return true;
 		},
 		clear() {
-			return HoodieApi.instance.removeAll(`${prefix}values`);
+			return HoodieApi.instance.store.removeAll(`${prefix}values`);
 		},
 		deleteDb(params) {
-			return HoodieApi.instance.remove(`${prefix}values/${params.typeface}`);
+			return HoodieApi.instance.store.remove(`${prefix}values`, `${params.typeface}`);
 		},
 	};
 }
 
 export const AppValues = values('newapp');
+export const AccountValues = values('account');
 export const FontValues = values('newfont');
 export const FontInfoValues = values('fontinfos');

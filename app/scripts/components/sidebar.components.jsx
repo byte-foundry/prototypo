@@ -32,6 +32,10 @@ export default class Sidebar extends React.Component {
 		this.client.dispatchAction('/change-tab-sidebar', {name: 'sliders'});
 	}
 
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Sidebar');

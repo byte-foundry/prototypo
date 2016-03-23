@@ -1,0 +1,9 @@
+@import "../../variables";
+
+.account-change-plan {
+
+	&-downgrade {
+		font-size:18px;
+		color: $medium-grey;
+	}
+}

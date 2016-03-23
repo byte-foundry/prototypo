@@ -1,0 +1,12 @@
+@import "../../variables";
+
+.subscription {
+
+	&-title {
+		font-style:italic;
+		color:$green;
+		font-size:28px;
+		margin-bottom:30px;
+		font-weight:600;
+	}
+}

@@ -2,6 +2,7 @@ import '../styles/main.scss';
 import '../../node_modules/normalize.css/normalize.css';
 import '../../node_modules/please-wait/build/please-wait.css';
 import '../../node_modules/react-gemini-scrollbar/node_modules/gemini-scrollbar/gemini-scrollbar.css';
+import '../../node_modules/react-select/dist/react-select.css';
 import '../styles/components/family.scss';
 import '../styles/components/edit-param-group.scss';
 import '../styles/components/input-group.scss';
@@ -27,7 +28,6 @@ import '../styles/components/variant.scss';
 import '../styles/components/alternate-menu.scss';
 import '../styles/components/hover-view-menu.scss';
 import '../styles/components/help-panel.scss';
-import '../styles/components/subscriptions.scss';
 import '../styles/components/not-a-browser.scss';
 import '../styles/components/onboarding.scss';
 import '../styles/components/action-bar.scss';
@@ -44,6 +44,25 @@ import '../styles/components/wait-for-load.scss';
 import '../styles/components/zoom-buttons.scss';
 import '../styles/components/controls-tabs.scss';
 import '../styles/components/tutorials.scss';
+import '../styles/components/account/account-app.scss';
+import '../styles/components/account/account-profile.scss';
+import '../styles/components/account/account-change-password.scss';
+import '../styles/components/account/account-billing-address.scss';
+import '../styles/components/account/account-add-card.scss';
+import '../styles/components/account/account-subscription.scss';
+import '../styles/components/account/account-change-plan.scss';
+import '../styles/components/subscription/subscription.scss';
+import '../styles/components/subscription/subscription-sidebar.scss';
+import '../styles/components/subscription/subscription-choose-plan.scss';
+import '../styles/components/shared/input-with-label.scss';
+import '../styles/components/shared/display-with-label.scss';
+import '../styles/components/shared/columns.scss';
+import '../styles/components/shared/billing-address.scss';
+import '../styles/components/shared/account-validation-button.scss';
+import '../styles/components/shared/form-error.scss';
+import '../styles/components/shared/form-success.scss';
+import '../styles/components/shared/select-override.scss';
+import '../styles/components/shared/invoice.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';
@@ -71,16 +90,36 @@ pleaseWait.instance = pleaseWait.pleaseWait({
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Router from 'react-router';
+import {Router, Route, IndexRoute, hashHistory} from 'react-router';
 
 import Dashboard from './components/dashboard.components.jsx';
 import SitePortal from './components/site-portal.components.jsx';
-import NotLoggedIn from './components/not-logged-in.components.jsx';
 import Subscriptions from './components/subscriptions.components.jsx';
 import Signin from './components/signin.components.jsx';
 import ForgottenPassword from './components/forgotten-password.components.jsx';
 import NotABrowser from './components/not-a-browser.components.jsx';
 import IAmMobile from './components/i-am-mobile.components.jsx';
+import Register from './components/register.components.jsx';
+
+import AccountApp from './components/account/account-app.components.jsx';
+import AccountDashboard from './components/account/account-dashboard.components.jsx';
+import AccountHome from './components/account/account-home.components.jsx';
+import AccountSuccess from './components/account/account-success.components.jsx';
+import AccountProfile from './components/account/account-profile-panel.components.jsx';
+import AccountChangePassword from './components/account/account-change-password.components.jsx';
+import AccountDetails from './components/account/account-details.components.jsx';
+import AccountBillingAddress from './components/account/account-billing-address.components.jsx';
+import AccountAddCard from './components/account/account-add-card.components.jsx';
+import AccountChangePlan from './components/account/account-change-plan.components.jsx';
+import AccountSubscription from './components/account/account-subscription.components.jsx';
+import AccountConfirmPlan from './components/account/account-confirm-plan.components.jsx';
+import AccountInvoiceList from './components/account/account-invoice-list.components.jsx';
+import Subscription from './components/account/subscription.components.jsx';
+import SubscriptionChoosePlan from './components/account/subscription-choose-plan.components.jsx';
+import SubscriptionAccountInfo from './components/account/subscription-account-info.components.jsx';
+import SubscriptionAddCard from './components/account/subscription-add-card.components.jsx';
+import SubscriptionBillingAddress from './components/account/subscription-billing-address.components.jsx';
+import SubscriptionConfirmation from './components/account/subscription-confirmation.components.jsx';
 
 import HoodieApi from './services/hoodie.services.js';
 import {FontValues} from './services/values.services.js';
@@ -104,14 +143,14 @@ import panelAction from './actions/panel.actions.jsx';
 import searchAction from './actions/search.actions.jsx';
 import tagStoreAction from './actions/tagStore.actions.jsx';
 import undoStackAction from './actions/undoStack.actions.jsx';
-import userAction from './actions/user.actions.jsx';
+import userLifecycleAction from './actions/user-lifecycle.actions.jsx';
 
 import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
 /* #if debug */
 import ReplayViewer from './debug/replay-viewer.components.jsx';
 /* #end */
 
-window.Stripe && window.Stripe.setPublishableKey('pk_test_bK4DfNp7MqGoNYB3MNfYqOAi');
+window.Stripe && window.Stripe.setPublishableKey('pk_test_PkwKlOWOqSoimNJo2vsT21sE');
 
 const stores = window.prototypoStores = Stores;
 
@@ -184,8 +223,8 @@ async function createStores() {
 		searchAction,
 		tagStoreAction,
 		undoStackAction,
-		userAction,
 		debugActions,
+		userLifecycleAction,
 		{
 			'/load-intercom-info': (data) => {
 				const patch = intercomStore.set('tags', data.tags.tags).commit();
@@ -214,28 +253,53 @@ async function createStores() {
 	/* #end */
 	/* #if prod */
 	try {
-		const bearer = window.location.search.replace(/.*?bt=(.*?)(&|$)/, '$1');
-
-		if (bearer) {
-			window.location.search = '';
-			localStorage.bearerToken = bearer;
-		}
-
 		await HoodieApi.setup();
-
-		if (location.hash === '#/signin') {
-			location.href = '#/dashboard';
-		}
 
 		await loadStuff();
 	}
 	catch (err) {
-		console.error(err);
-		location.href = '#/signin';
+		console.log(err);
 	}
 	/* #end */
 }
 
+function redirectToLogin(nextState, replace) {
+	if (!HoodieApi.isLoggedIn()) {
+		replace({
+			pathname: '/signin',
+			state: {nextPathname: nextState.location.pathname},
+		});
+	}
+}
+
+function redirectToDashboard(nextState, replace) {
+	if (HoodieApi.isLoggedIn()) {
+		replace({
+			pathname: '/dashboard',
+			state: {nextPathname: nextState.location.pathname},
+		});
+	}
+}
+
+function chooseGoodAccountStep(nextState, replace) {
+
+	const infos = Stores['/userStore'].get('infos');
+
+	if (infos.accountValues && infos.accountValues.username && /\/account\/create\/?$/.test(nextState.location.pathname)) {
+		replace({
+			pathname: '/account/create/choose-a-plan',
+			state: {nextPathname: nextState.location.pathname},
+		});
+	}
+}
+
+function noConfirmBeforePlan(nextState, replace) {
+	console.log(nextState);
+}
+
+function trackUrl() {
+	ga('send', 'pageview', {page: this.state.location.pathname});
+}
 
 selectRenderOptions(
 	() => {
@@ -255,41 +319,67 @@ selectRenderOptions(
 		canvasEl.width = 0;
 		canvasEl.height = 0;
 
+		const content = document.getElementById('content');
+
+		class App extends React.Component {
+			render() {
+				return this.props.children;
+			}
+		}
+
 		createStores()
 			.then(() => {
-				const Route = Router.Route;
-				const RouteHandler = Router.RouteHandler;
-				const DefaultRoute = Router.DefaultRoute;
 
-				const content = document.getElementById('content');
-
-				class App extends React.Component {
-					render() {
-						return (
-							<RouteHandler />
-						);
-					}
-				}
-
-				const Routes = (
-					<Route handler={App} name="app" path="/">
-						<DefaultRoute handler={SitePortal}/>
-						<Route name="dashboard" handler={Dashboard}/>
-						/* #if debug */
-						<Route name="replay" path="replay/:replayId" handler={ReplayViewer}/>
-						<Route name="debug" handler={ReplayViewer}/>
-						/* #end */
-						<Route name="signin" handler={NotLoggedIn}>
-							<Route name="forgotten" handler={ForgottenPassword}/>
-							<DefaultRoute handler={Signin}/>
+				ReactDOM.render((
+					<Router history={hashHistory} onUpdate={trackUrl}>
+						<Route component={App} name="app" path="/">
+							<IndexRoute component={SitePortal}/>
+							<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}/>
+							/* #if debug */
+							<Route path="replay" path="replay/:replayId" component={ReplayViewer}/>
+							<Route path="debug" component={ReplayViewer}/>
+							/* #end */
+							<Route path="signin" component={AccountApp} onEnter={redirectToDashboard}>
+								<Route path="forgotten" component={ForgottenPassword}/>
+								<IndexRoute component={Signin}/>
+							</Route>
+							<Route path="signup" component={AccountApp} onEnter={redirectToDashboard}>
+								<IndexRoute component={Register}/>
+							</Route>
+							<Route path="subscription" component={Subscriptions}/>
+							<Route component={AccountApp} path="account">
+								<Route path="billing" component={AccountDashboard} name="billing">
+									<IndexRoute component={AccountInvoiceList}/>
+								</Route>
+								<Route component={AccountDashboard} name="home">
+									<IndexRoute component={AccountHome}/>
+								</Route>
+								<Route component={AccountDashboard} path="success" name="success">
+									<IndexRoute component={AccountSuccess}/>
+								</Route>
+								<Route path="profile" component={AccountDashboard} name="profile">
+									<IndexRoute component={AccountProfile}/>
+									<Route path="change-password" component={AccountChangePassword}/>
+								</Route>
+								<Route path="details" component={AccountDashboard} name="details">
+									<IndexRoute component={AccountSubscription}/>
+									<Route path="billing-address" component={AccountBillingAddress}/>
+									<Route path="add-card" component={AccountAddCard}/>
+									<Route path="change-plan" component={AccountChangePlan}/>
+									<Route path="confirm-plan" component={AccountConfirmPlan} onEnter={noConfirmBeforePlan}/>
+								</Route>
+								<Route path="create" component={Subscription} name="create">
+									<IndexRoute component={SubscriptionAccountInfo} onEnter={chooseGoodAccountStep}/>
+									<Route path="choose-a-plan" component={SubscriptionChoosePlan}/>
+									<Route path="add-card" component={SubscriptionAddCard}/>
+									<Route path="billing-address" component={SubscriptionBillingAddress}/>
+									<Route path="Confirmation" component={SubscriptionConfirmation}/>
+								</Route>
+							</Route>
 						</Route>
-						<Route name="subscription" handler={Subscriptions}/>
-					</Route>
-				);
-
-				Router.run(Routes, function(Handler) {
-					ReactDOM.render(<Handler />, content);
-				});
-			});
-		}
+					</Router>
+				), content);
+			}
+		);
+	}
 );

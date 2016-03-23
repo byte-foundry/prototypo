@@ -81,7 +81,7 @@ a,
 a:hover,
 a:active,
 a:visited {
-	color: inherit;
+	color:inherit;
 	text-decoration: none;
 }
 
@@ -141,3 +141,6 @@ textarea,
 	display:none !important;
 }
 
+.is-hidden {
+	opacity:0;
+}

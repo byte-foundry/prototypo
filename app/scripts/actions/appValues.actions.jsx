@@ -1,4 +1,4 @@
-import {glyphs, fontTab, tagStore, commits, fontLibrary, fontVariant, searchStore, panel} from '../stores/creation.stores.jsx';
+import {glyphs, fontTab, tagStore, commits, fontLibrary, fontVariant, searchStore, panel, userStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
 import {Commits} from '../services/commits.services.js';
@@ -102,4 +102,9 @@ export default {
 		localServer.dispatchUpdate('/commits', patch);
 		saveAppValues(appValuesLoaded);
 	},
-}
+	'/load-account-values': (values) => {
+		const patch = userStore.set('infos', values.values || {}).commit();
+
+		localServer.dispatchUpdate('/userStore', patch);
+	},
+};

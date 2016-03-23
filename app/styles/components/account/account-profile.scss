@@ -1,0 +1,10 @@
+.account-profile-panel {
+	flex:1;
+
+	&-line {
+		display:flex;
+		flex-flow: row nowrap;
+		justify-content:space-between;
+		font-weight:400;
+	}
+}

@@ -1,0 +1,26 @@
+@import '../../variables';
+
+.display-with-label {
+	width:100%;
+	flex:1;
+	color: $medium-grey;
+	padding-bottom:20px;
+
+	&.is-inactive {
+		opacity:0.7;
+	}
+
+	&-label {
+		display:block;
+		padding-bottom:15px;
+	}
+
+	&-display {
+		width:100%;
+		background-color: lighten($green, 40%);
+		font-size:18px;
+		font-style:italic;
+		padding:15px;
+		border-radius:8px;
+	}
+}

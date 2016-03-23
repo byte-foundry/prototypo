@@ -11,6 +11,10 @@
 	<body>
 		<div id="content"></div>
 		<script type="text/javascript" src="prototypo.js/dist/prototypo.js"></script>
+		<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+		<script type="text/javascript" src="jquery.js"></script>
+		<script type="text/javascript" src="hoodie.js"></script>
+		<script type="text/javascript" src="hoodie.stripe.js"></script>
 		<script type="text/javascript" src="dll/libs.dll.js"></script>
 		<script type="text/javascript" src="bundle.js"></script>
 		<script>
@@ -20,7 +24,7 @@
 			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-			ga('create', 'UA-41962243-3', 'auto');
+			ga('create', 'UA-41962243-1', 'auto');
 			ga('send', 'pageview');
 
 			// simple error logging
@@ -39,7 +43,7 @@
 
 			// WebFont loader
 			WebFontConfig = {
-				google: { families: [ 'Source+Sans+Pro:600:latin' ] },
+				google: { families: [ 'Source+Sans+Pro:400,600,700,400italic:latin' ] },
 				timeout: 2000
 			};
 			(function() {

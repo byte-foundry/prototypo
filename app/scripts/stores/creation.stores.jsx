@@ -94,7 +94,37 @@ const searchStore = new Remutable({
 
 const logStore = new Remutable({
 	patchArray: [],
-})
+});
+
+const userStore = new Remutable({
+	infos: {
+	},
+	signupForm: {
+		errors: [],
+		inError: {},
+	},
+	signinForm: {
+		errors: [],
+		inError: {},
+	},
+	choosePlanForm: {
+	},
+	addcardForm: {
+		errors: [],
+		inError: {},
+	},
+	billingForm: {
+		errors: [],
+		inError: {},
+	},
+	confirmation: {
+		errors: [],
+	},
+	changePasswordForm: {
+		errors: [],
+		inError: {},
+	},
+});
 
 const stores = {
 	'/debugStore': debugStore,
@@ -116,6 +146,7 @@ const stores = {
 	'/individualizeStore': individualizeStore,
 	'/intercomStore': intercomStore,
 	'/searchStore': searchStore,
+	'/userStore': userStore,
 	/* #if debug */
 	logStore,
 	/* #end */
@@ -142,6 +173,7 @@ export {
 	individualizeStore,
 	intercomStore,
 	searchStore,
+	userStore,
 	/* #if debug */
 	logStore,
 	/* #end */

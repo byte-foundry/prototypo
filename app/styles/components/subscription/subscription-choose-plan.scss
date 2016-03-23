@@ -1,0 +1,96 @@
+@import "../../variables";
+
+.subscription-choose-plan {
+	display:flex;
+	flex-direction: column;
+	font-weight:400;
+
+	&-plans {
+		display:flex;
+		justify-content:space-between;
+		margin-right:-30px;
+	}
+
+	&-info {
+		color:$medium-grey;
+		font-style:italic;
+		font-size:17px;
+		margin-top:30px;
+	}
+}
+
+.subscription-plan {
+	display:flex;
+	flex-direction:column;
+	flex:1;
+	margin-right:30px;
+	background-color:$lightest-grey;
+	padding:40px;
+	align-items:center;
+	cursor:pointer;
+
+	&.is-active, &:hover {
+		background-color:$green;
+	}
+
+	&-name {
+		font-size:20px;
+		color:$medium-grey;
+	}
+
+	&.is-active &-name,
+	&.is-active &-amount,
+	&.is-active &-period,
+	&.is-active &-pediod:before,
+	&.is-active &-periof:after,
+	&.is-active &-info, 
+	&:hover &-name,
+	&:hover &-amount,
+	&:hover &-period,
+	&:hover &-pediod:before,
+	&:hover &-periof:after,
+	&:hover &-info {
+		color:$white;
+	}
+
+	&-price {
+		display:flex;
+		flex-direction:row;
+	}
+
+	&-amount {
+		font-size:60px;
+		font-weight:700;
+		display:flex;
+		
+		&:before {
+			content:'$/€';
+			font-size:25px;
+			position:relative;
+			top:17px;
+		}
+
+		&:after {
+			content:'*';
+			font-size:30px;
+			position:relative;
+			top:15px;
+		}
+	}
+
+	&-period {
+		align-self:flex-end;
+		position:relative;
+		bottom:20px;
+
+		&:before {
+			content: '/';
+		}
+	}
+
+	&-info {
+		color:$light-grey;
+		font-size:17px;
+		font-style:italic;
+	}
+}
