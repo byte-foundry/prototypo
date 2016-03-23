@@ -201,12 +201,13 @@ export default {
 					'buyer_email': firstname + curedLastname,
 				});
 			})
-			.then((data) => {
+			.then(async (data) => {
 				console.log(data);
 				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname};
 				const patch = userStore.set('infos', {accountValues}).commit();
 
 				localServer.dispatchUpdate('/userStore', patch);
+				await loadStuff();
 
 				form.errors = [];
 				form.inError = {};
