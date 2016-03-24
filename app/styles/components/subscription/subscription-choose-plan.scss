@@ -28,6 +28,7 @@
 	padding:40px;
 	align-items:center;
 	cursor:pointer;
+	position:relative;
 
 	&.is-active, &:hover {
 		background-color:$green;
@@ -36,6 +37,35 @@
 	&-name {
 		font-size:20px;
 		color:$medium-grey;
+	}
+
+	&-badge {
+		position:absolute;
+		background-color:$blue;
+		font-size:14px;
+		color:$white;
+		width:76px;
+		height:76px;
+		display:flex;
+		justify-content:center;
+		align-items:center;
+		border-radius:50%;
+		top:-33px;
+		right:-33px;
+		z-index:6;
+		font-weight:900;
+		font-style:italic;
+
+		&-period {
+			font-size:10px;
+		}
+
+		&:before {
+			content:'$/€';
+			font-size:6px;
+			position:relative;
+			top:-3px;
+		}
 	}
 
 	&.is-active &-name,
@@ -62,6 +92,11 @@
 		font-size:60px;
 		font-weight:700;
 		display:flex;
+
+		&-decimal {
+			margin-top:42px;
+			font-size:20px;
+		}
 		
 		&:before {
 			content:'$/€';
@@ -82,10 +117,6 @@
 		align-self:flex-end;
 		position:relative;
 		bottom:20px;
-
-		&:before {
-			content: '/';
-		}
 	}
 
 	&-info {
