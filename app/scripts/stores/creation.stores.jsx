@@ -34,21 +34,22 @@ const glyphs = new Remutable({
 const templateList = new Remutable({
 	list: [
 		{
-			sample: 'current-state-icon.svg',
-			name: 'Current settings',
-			loadCurrent: true,
-		},
-		{
-			sample: 'john-fell-preview.svg',
-			name: 'Prototypo Fell',
-			familyName: 'Prototypo Fell',
-			templateName: 'john-fell.ptf',
+			sample: 'elzevir-preview.svg',
+			name: 'Prototypo Elzevir',
+			familyName: 'Prototypo Elzevir',
+			templateName: 'elzevir.ptf',
 		},
 		{
 			sample: 'venus-preview.svg',
 			name: 'Prototypo Grotesk',
 			familyName: 'Prototypo Grotesk',
 			templateName: 'venus.ptf',
+		},
+		{
+			sample: 'john-fell-preview.svg',
+			name: 'Prototypo Fell',
+			familyName: 'Prototypo Fell',
+			templateName: 'john-fell.ptf',
 		},
 	],
 });
@@ -66,7 +67,7 @@ const fontInfos = new Remutable({
 
 const panel = new Remutable({
 	mode: [],
-	textFontSize: 6,
+	textFontSize: 2.1,
 	wordFontSize: 4.5,
 });
 
@@ -94,7 +95,41 @@ const searchStore = new Remutable({
 
 const logStore = new Remutable({
 	patchArray: [],
-})
+});
+
+const glyphSelect = new Remutable({
+	focused: false,
+});
+
+const userStore = new Remutable({
+	infos: {
+	},
+	signupForm: {
+		errors: [],
+		inError: {},
+	},
+	signinForm: {
+		errors: [],
+		inError: {},
+	},
+	choosePlanForm: {
+	},
+	addcardForm: {
+		errors: [],
+		inError: {},
+	},
+	billingForm: {
+		errors: [],
+		inError: {},
+	},
+	confirmation: {
+		errors: [],
+	},
+	changePasswordForm: {
+		errors: [],
+		inError: {},
+	},
+});
 
 const stores = {
 	'/debugStore': debugStore,
@@ -116,6 +151,8 @@ const stores = {
 	'/individualizeStore': individualizeStore,
 	'/intercomStore': intercomStore,
 	'/searchStore': searchStore,
+	'/userStore': userStore,
+	'/glyphSelect': glyphSelect,
 	/* #if debug */
 	logStore,
 	/* #end */
@@ -142,6 +179,8 @@ export {
 	individualizeStore,
 	intercomStore,
 	searchStore,
+	userStore,
+	glyphSelect,
 	/* #if debug */
 	logStore,
 	/* #end */

@@ -1,0 +1,201 @@
+@import "../../variables";
+
+.account-title {
+}
+
+.account-header {
+	height: 100px;
+	width: 100%;
+	border-bottom: solid $orange 1px;
+	color: $medium-grey;
+	padding:20px 50px;
+	margin:0;
+	display:flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.account-intercom {
+	background-color:$green;
+	color:$white;
+	border-radius:7px;
+	padding:10px;
+	font-size:13px;
+
+	&:hover {
+		background-color:darken($green, 5%);
+		color:$white;
+	}
+}
+
+.account-email {
+	color: $green;
+	font-weight: 600;
+
+	&:hover {
+		color: $green;
+		text-decoration: underline;
+	}
+}
+
+.account-bold {
+	font-weight: 600;
+}
+
+.account-sidebar {
+	padding:40px;
+	flex:0 0 244px;
+
+	&-menu {
+		list-style-type: none;
+
+		&-item {
+			color: $medium-grey;
+			font-size: 16px;
+			cursor: pointer;
+			padding:10px 0px 5px;
+
+			&:hover, &.is-active {
+				color: $green;
+			}
+			position:relative;
+
+			&:before {
+				content: ' ';
+				height:24px;
+				width:24px;
+				display:block;
+				position:absolute;
+				top:10px;
+				left:-39px;
+			}
+
+			&.is-active &-options {
+				max-height: 200px;
+			}
+
+			&-options {
+				margin:0;
+				padding:0;
+				list-style-type:none;
+				transition: max-height .2s ease;
+				max-height: 0px;
+				overflow: hidden;
+
+				&-item {
+					padding:10px 0px 0px;
+					color: $medium-grey;
+
+					&:hover, &.is-active {
+						color: $dark-grey;
+					}
+				}
+			}
+		}
+
+		&-profile:before {
+			background-image:url('../../../images/icon-profile.svg');
+		}
+
+		&-profile:hover:before, &-profile.is-active:before {
+			background-image:url('../../../images/icon-profile-active.svg');
+		}
+
+		&-account:before {
+			background-image:url('../../../images/icon-account.svg');
+		}
+
+		&-account:hover:before, &-account.is-active:before {
+			background-image:url('../../../images/icon-account-active.svg');
+		}
+
+		&-billing:before {
+			background-image:url('../../../images/icon-billing.svg');
+		}
+
+		&-billing:hover:before, &-billing.is-active:before {
+			background-image:url('../../../images/icon-billing-active.svg');
+		}
+	}
+}
+
+.account-base {
+	width:100%;
+	height:100%;
+	padding:40px;
+	font-weight:400;
+	display:flex;
+	flex-flow: column;
+}
+
+.account-button {
+	background-color: $green;
+	color: $white !important;
+	display:block;
+	font-size: 18px;
+	padding: 3px 30px;
+	border-radius: 5px;
+	margin-bottom: 40px;
+	cursor:pointer;
+
+	&:hover {
+		background-color: darken($green, 5%);
+	}
+}
+
+.account-app {
+	height: 100%;
+	width: 100%;
+	background-color: $green;
+	overflow:auto;
+	padding-top:80px;
+}
+
+.account-dashboard {
+	min-height: 700px;
+	width: 1000px;
+	background-color: $white;
+	border-radius: 8px;
+	position:relative;
+	margin:0 auto 50px;
+
+	&-container {
+		display:flex;
+	}
+
+	&-icon {
+		width:70px;
+		height:70px;
+		background-color: $dark-grey;
+		position:absolute;
+		z-index:2;
+		background-position: 10px 10px;
+		background-image: url("../../../images/prototypo-icon-white.svg");
+		background-repeat: no-repeat;
+		border-radius: 50%;
+		border: solid $green 10px;
+		top: -35px;
+		right: -35px;
+	}
+
+	&-home-icon {
+		background-image: url("../../../images/icon-home.svg");
+		background-repeat: no-repeat;
+		width:36px;
+		height:36px;
+		position:absolute;
+		border:solid $white 5px;
+		border-radius: 50%;
+		left:-18px;
+		top:30px;
+		background-color:$white;
+		background-size: 23px 23px;
+		background-position:2px 1px;
+		cursor:pointer;
+		display:block;
+
+		&:hover {
+			background-image: url("../../../images/icon-home-hover.svg");
+		}
+	}
+}

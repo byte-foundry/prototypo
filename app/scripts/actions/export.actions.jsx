@@ -26,7 +26,7 @@ export default {
 		const style = fontVariant.get('variant').name ? fontVariant.get('variant').name.replace(/\s/g, '-') : 'regular';
 
 		const name = {
-			family: family,
+			family,
 			style: `${style.toLowerCase()}`,
 		};
 

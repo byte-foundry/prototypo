@@ -1,0 +1,32 @@
+.account-subscription-card {
+	display:flex;
+	justify-content:space-between;
+
+	&-buttons {
+		display:flex;
+		flex:0 0 55px;
+
+		&-button {
+			width: 24px;
+			height:24px;
+			cursor:pointer;
+		}
+
+		&-make-default {
+			background-image: url("../../../images/icon-checked.svg");
+			margin-right: 7px;
+
+			&:hover {
+				background-image: url("../../../images/icon-checked-active.svg");
+			}
+		}
+
+		&-delete {
+			background-image: url("../../../images/icon-delete.svg");
+
+			&:hover {
+				background-image: url("../../../images/icon-delete-hover.svg");
+			}
+		}
+	}
+}

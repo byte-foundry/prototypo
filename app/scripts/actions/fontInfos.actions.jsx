@@ -1,4 +1,4 @@
-import {fontInfos} from '../stores/creation.stores.jsx';
+import {fontInfos, fontVariant} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {FontInfoValues} from '../services/values.services.js';
 

@@ -1,0 +1,32 @@
+@import "../../variables";
+
+.Select.input-with-label-input {
+	padding:0;
+	div.Select-control {
+		height:100%;
+		background:transparent;
+		border:none;
+	}
+
+	.Select-placeholder, .Select-input, .Select-value {
+		padding-left:18px;
+		padding-top:13px;
+	}
+
+}
+
+.has-value:not(.Select--multi) > .Select-control > .Select-value .Select-value-label, .has-value.is-pseudo-focused:not(.Select--multi) > .Select-control > .Select-value .Select-value-label {
+	color: $medium-grey;
+}
+
+.is-focused:not(.is-open) > .Select-control {
+	border-color: lighten($green, 25%);
+	box-shadow: inset 0 1px 1px rgba(lighten($green, 45%), 1), 0 0 0 3px rgba(lighten($green, 45%), 1);
+}
+
+.Select-menu-outer, .Select-option {
+	background-color: $lightest-grey;
+	&.is-focused {
+		background-color:lighten($green, 45%);
+	}
+}

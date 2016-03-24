@@ -1,0 +1,19 @@
+.columns {
+	display:flex;
+	margin-right:-20px;
+}
+
+.third-column {
+	flex:4;
+	margin-right:20px;
+}
+
+.two-third-column {
+	flex:8;
+	margin-right:20px;
+}
+
+.half-column {
+	flex:6;
+	margin-right:20px;
+}

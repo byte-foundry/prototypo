@@ -57,7 +57,7 @@
 			border-width: 3px 3px 3px 0;
 			border-color: transparent $black transparent transparent;
 		}
-		&:hover {
+		&:hover, &.is-active {
 			background-color: $yellow;
 			&::before,
 			&::after {

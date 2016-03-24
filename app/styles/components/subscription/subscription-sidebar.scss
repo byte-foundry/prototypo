@@ -1,0 +1,61 @@
+@import "../../variables";
+
+.subscription-sidebar {
+	padding-top:30px;
+	flex:0 0 224px;
+
+	&-info {
+		padding-left: 40px;
+		margin-top:30px;
+		font-size:13px;
+		line-height:27px;
+		color:$medium-grey;
+
+		&-emphase {
+			color:$green;
+			font-weight:900;
+		}
+	}
+
+	&-steps {
+		list-style-type:none;
+		margin:0;
+		padding:0 0 0 40px;
+
+		&-step {
+			display:flex;
+			padding-top:18px;
+
+			&.is-finish &-number {
+				color:$white;
+				background-color:$green;
+			}
+
+			&-number {
+				display:flex;
+				justify-content:center;
+				align-items:center;
+				border-radius:50%;
+				border:solid $green 3px;
+				width: 26px;
+				height:26px;
+				color:$green;
+				font-weight:700;
+				font-size:14px;
+			}
+
+
+			&-label {
+				color: $medium-grey;
+				padding-left:10px;
+				font-size:16px;
+				font-weight:400;
+			}
+		}
+	}
+}
+
+a.subscription-sidebar-steps-step-link {
+	color:$green;
+	font-weight:600;
+}

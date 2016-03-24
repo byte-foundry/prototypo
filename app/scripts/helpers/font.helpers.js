@@ -20,6 +20,7 @@ export async function setupFontInstance(appValues) {
 			canvas: window.canvasElement,
 			workerUrl,
 			workerDeps,
+			jQueryListeners: false,
 		});
 
 		const font = window.fontInstance = await fontPromise;
