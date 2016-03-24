@@ -1,4 +1,5 @@
 import React from 'react';
+import {hashHistory} from 'react-router';
 
 import {SideTabs, SideTab} from './side-tabs.components.jsx';
 import FontControls from './font-controls.components.jsx';
@@ -52,8 +53,7 @@ export default class Sidebar extends React.Component {
 						<SideTab iconUrl="fonts-collection.svg" id="font-collection" name="fonts-collection" big={true} legend="Collection" from="createFamily" to="creatingFamily">
 							<FontsCollection />
 						</SideTab>
-						<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} white={true} legend="Profile">
-							<Account />
+						<SideTab iconUrl="admin-panel.svg" name="subscriptions" big={true} white={true} legend="Profile" click={() => {hashHistory.push({pathname: '/account'});}}>
 						</SideTab>
 						<SideTab iconUrl="help-panel.svg" name="help-panel" big={true} bottom={true} padding={true} legend="Help">
 							<HelpPanel/>

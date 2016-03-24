@@ -127,6 +127,7 @@ export default class SubscriptionConfirmation extends React.Component {
 					</div>
 				</div>
 				{vat}
+				<p>By click on "I confirm my subscription" you agree to prototypo <a className="account-email" target="_blank" href="https://prototypo.io/cgu">EULA (click here to read)</a></p>
 				<AccountValidationButton disabled={this.state.loading} loading={this.state.loading} label="I confirm my subscription" click={() => {this.confirm();}}/>
 			</div>
 		);

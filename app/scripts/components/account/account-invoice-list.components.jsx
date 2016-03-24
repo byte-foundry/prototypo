@@ -32,6 +32,7 @@ export default class AccountInvoiceList extends React.Component {
 
 		return (
 			<div className="account-base">
+				<h1>Your invoices</h1>
 				<ul className="list">
 					{invoices}
 				</ul>

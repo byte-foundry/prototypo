@@ -58,7 +58,7 @@ export default class AccountSidebar extends React.Component {
 			"is-active": this.context.router.isActive('account/details/change-plan'),
 		});
 
-		const detailsMenu = this.state.infos && this.state.infos.plan
+		const detailsMenu = this.state.infos && this.state.infos.subscriptions
 			? (
 					<ul className="account-sidebar-menu-item-options">
 						<li className={classAddCard}><Link to="account/details/add-card">Add a card</Link></li>

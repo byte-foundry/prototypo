@@ -46,8 +46,8 @@ export default class SubscriptionSidebar extends React.Component {
 		const plan = this.state.infos && this.state.infos.plan
 			? <div>and you chose the <span className="subscription-sidebar-info-emphase">{plans[this.state.infos.plan]}</span>.</div>
 			: false;
-		const card = this.state.infos.card && this.state.infos.card
-			? <div>You registered a payment card with us, its expiration date is <span className="subscription-sidebar-info-emphase">{this.state.infos.card.exp_month}/{this.state.infos.card.exp_year}</span></div>
+		const card = this.state.infos.card && this.state.infos.card[0]
+			? <div>You registered a payment card with us, its expiration date is <span className="subscription-sidebar-info-emphase">{this.state.infos.card[0].exp_month}/{this.state.infos.card[0].exp_year}</span></div>
 			: false;
 			const data = this.state.infos.accountValues && !this.context.router.isActive('/account/create/confirmation')
 			? (

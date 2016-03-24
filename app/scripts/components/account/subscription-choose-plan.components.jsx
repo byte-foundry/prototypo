@@ -42,17 +42,17 @@ export default class SubscriptionChoosePlan extends React.Component {
 		const planMonthly = {
 			id: 'personal_monthly',
 			name: 'Monthly billing',
-			amount: '15',
+			amount: '10.5',
 			period: 'month',
-			info: 'Without commitment!',
+			info: 'Without commitment! — then 15/month',
 		};
 
 		const planYearly = {
 			id: 'personal_annual',
 			name: 'Yearly billing',
-			amount: '12',
+			amount: '8.4',
 			period: 'month',
-			info: 'Pay once 144 for a whole year!',
+			info: 'Pay once 100.80 for a whole year!',
 		};
 
 		const error = this.state.error ? <FormError errorText={this.state.error}/> : false;
@@ -60,7 +60,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 		return (
 			<div className="account-base subscription-choose-plan">
 				<div className="subscription-title">
-					Get 2 months free by choosing annual billing!
+					Until April the 3rd benefit from a 30% discount on your first month or year!
 				</div>
 				<div className="subscription-choose-plan-plans">
 					<SubscriptionPlan plan={planMonthly} selected={this.state.selected}/>

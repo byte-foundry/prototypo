@@ -75,6 +75,13 @@ export default {
 				hashHistory.push(signinLocation);
 				window.Intercom('shutdown');
 			});
+
+		localClient.dispatchAction('/clean-form', 'signinForm');
+		localClient.dispatchAction('/clean-form', 'signupForm');
+		localClient.dispatchAction('/clean-form', 'choosePlanForm');
+		localClient.dispatchAction('/clean-form', 'addcardForm');
+		localClient.dispatchAction('/clean-form', 'billingForm');
+		localClient.dispatchAction('/clean-form', 'confirmation');
 	},
 	'/sign-in': ({username, password}) => {
 		const dashboardLocation = {
@@ -207,7 +214,9 @@ export default {
 				const patch = userStore.set('infos', {accountValues}).commit();
 
 				localServer.dispatchUpdate('/userStore', patch);
-				await loadStuff();
+				if (toLocation.pathname === '/dashboard') {
+					await loadStuff();
+				}
 
 				form.errors = [];
 				form.inError = {};
@@ -399,7 +408,7 @@ export default {
 		HoodieApi.updateSubscription({
 			plan: `${plan}_${currency}_taxfree`,
 			coupon,
-		}).then(() => {
+		}).then((data) => {
 			const infos = userStore.get('infos');
 
 			infos.plan = `${plan}_${currency}_taxfree`;
@@ -412,6 +421,19 @@ export default {
 			});
 
 			localServer.dispatchUpdate('/userStore', patch);
+			ga('ecommerce:addTransaction', {
+				'id': data.metadata.taxamo_transaction_key,
+				'affiliation': 'Prototypo',
+				'revenue': data.plan.indexOf('monthly') === -1 ? '100.80' : '10.50',
+			});
+
+			ga('ecommerce:addItem', {
+				'id': data.metadata.taxamo_transaction_key + data.plan,                     // Transaction ID. Required.
+				'name': data.plan,    // Product name. Required.
+				'price': data.plan.indexOf('monthly') === -1 ? '100.80' : '10.50',
+			});
+
+			ga('ecommerce:send');
 
 			HoodieApi.getCustomerInfo()
 			.then((customer) => {

@@ -37,7 +37,7 @@ function values(prefix) {
 			}
 		},
 		save(params) {
-			if (location.hash.indexOf('#/replay') === -1) {
+			if (location.hash.indexOf('#/replay') === -1 && HoodieApi.isLoggedIn()) {
 				return HoodieApi.instance.store.updateOrAdd(`${prefix}values`, `${params.typeface}`, {
 						values: params.values,
 				});
@@ -57,3 +57,4 @@ export const AppValues = values('newapp');
 export const AccountValues = values('account');
 export const FontValues = values('newfont');
 export const FontInfoValues = values('fontinfos');
+export const UserValues = values('userinfos');

@@ -1,0 +1,34 @@
+@import "../../variables";
+
+.list {
+	list-style-type:none;
+	padding:0;
+}
+
+.list-item {
+	display:flex;
+	border:solid 1px $green;
+	border-bottom:none;
+	padding:10px;
+	color:$dark-grey;
+	background-color:lighten($green, 25%);
+	justify-content:space-between;
+	
+	&:last-of-type {
+		border-bottom:solid 1px $green;
+	}
+
+	&-download {
+		background-color:$white;
+		border-radius:7px;
+
+		&:hover {
+			background-color:lighten($green, 45%);
+		}
+	}
+
+	&-date, &-text, &-download {
+		padding:5px;
+	}
+}
+

@@ -40,7 +40,11 @@ export default class HoodieApi {
 	}
 
 	static logout() {
-		return hoodie.account.signOut();
+		return hoodie.account.signOut()
+		.then((data) => {
+			localStorage.clear();
+			return data;
+		});
 	}
 
 	static signUp(username, password) {
@@ -176,6 +180,9 @@ function setupHoodie(data) {
 			window.Intercom('boot', {
 				app_id: 'mnph1bst',
 				email: HoodieApi.instance.email,
+				widget: {
+					activator: '#intercom-button',
+				},
 			});
 		})
 		.catch((err) => {

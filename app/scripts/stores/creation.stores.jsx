@@ -34,21 +34,22 @@ const glyphs = new Remutable({
 const templateList = new Remutable({
 	list: [
 		{
-			sample: 'current-state-icon.svg',
-			name: 'Current settings',
-			loadCurrent: true,
-		},
-		{
-			sample: 'john-fell-preview.svg',
-			name: 'Prototypo Fell',
-			familyName: 'Prototypo Fell',
-			templateName: 'john-fell.ptf',
+			sample: 'elzevir-preview.svg',
+			name: 'Prototypo Elzevir',
+			familyName: 'Prototypo Elzevir',
+			templateName: 'elzevir.ptf',
 		},
 		{
 			sample: 'venus-preview.svg',
 			name: 'Prototypo Grotesk',
 			familyName: 'Prototypo Grotesk',
 			templateName: 'venus.ptf',
+		},
+		{
+			sample: 'john-fell-preview.svg',
+			name: 'Prototypo Fell',
+			familyName: 'Prototypo Fell',
+			templateName: 'john-fell.ptf',
 		},
 	],
 });

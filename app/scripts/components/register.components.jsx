@@ -61,7 +61,9 @@ export default class Register extends React.Component {
 		return (
 			<div className="sign-up sign-base">
 				<div className="account-dashboard-icon"/>
-				<h1 className="account-title">Sign up</h1>
+				<div className="account-header">
+					<h1 className="account-title">Sign up</h1>
+				</div>
 				<div className="account-dashboard-container">
 					<form className="sign-in-form" onSubmit={(e) => {this.register(e);}}>
 						<div className="columns">

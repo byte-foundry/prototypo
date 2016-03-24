@@ -51,6 +51,7 @@ import '../styles/components/account/account-billing-address.scss';
 import '../styles/components/account/account-add-card.scss';
 import '../styles/components/account/account-subscription.scss';
 import '../styles/components/account/account-change-plan.scss';
+import '../styles/components/account/account-invoice-list.scss';
 import '../styles/components/subscription/subscription.scss';
 import '../styles/components/subscription/subscription-sidebar.scss';
 import '../styles/components/subscription/subscription-choose-plan.scss';
@@ -201,13 +202,6 @@ const eventDebugger = new EventDebugger();
 
 async function createStores() {
 
-	//I know this is ugly but for now it's like this.
-	//We need some transient state to know when we loaded appValues
-	window.addEventListener('unload', () => {
-		saveAppValues();
-		FontValues.save({typeface: 'default', values: fontControls.head.toJS()});
-	});
-
 	const actions = {};
 
 	_.assign(actions,
@@ -291,6 +285,14 @@ function chooseGoodAccountStep(nextState, replace) {
 			state: {nextPathname: nextState.location.pathname},
 		});
 	}
+
+	if (!infos.accountValues && nextState.location.pathname !== '/account/create') {
+		replace({
+			pathname: '/account/create',
+			state: {nextPathname: nextState.location.pathname},
+		});
+
+	}
 }
 
 function noConfirmBeforePlan(nextState, replace) {
@@ -370,10 +372,10 @@ selectRenderOptions(
 								</Route>
 								<Route path="create" component={Subscription} name="create">
 									<IndexRoute component={SubscriptionAccountInfo} onEnter={chooseGoodAccountStep}/>
-									<Route path="choose-a-plan" component={SubscriptionChoosePlan}/>
-									<Route path="add-card" component={SubscriptionAddCard}/>
-									<Route path="billing-address" component={SubscriptionBillingAddress}/>
-									<Route path="Confirmation" component={SubscriptionConfirmation}/>
+									<Route path="choose-a-plan" component={SubscriptionChoosePlan} onEnter={chooseGoodAccountStep}/>
+									<Route path="add-card" component={SubscriptionAddCard} onEnter={chooseGoodAccountStep}/>
+									<Route path="billing-address" component={SubscriptionBillingAddress} onEnter={chooseGoodAccountStep}/>
+									<Route path="Confirmation" component={SubscriptionConfirmation} onEnter={chooseGoodAccountStep}/>
 								</Route>
 							</Route>
 						</Route>
