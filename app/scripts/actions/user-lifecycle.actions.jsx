@@ -82,6 +82,9 @@ export default {
 		localClient.dispatchAction('/clean-form', 'addcardForm');
 		localClient.dispatchAction('/clean-form', 'billingForm');
 		localClient.dispatchAction('/clean-form', 'confirmation');
+
+		const patch = userStore.set('infos', {}).commit();
+		localServer.dispatchUpdate('/userStore', patch);
 	},
 	'/sign-in': ({username, password}) => {
 		const dashboardLocation = {
@@ -223,6 +226,7 @@ export default {
 				form.loading = false;
 				const endPatch = userStore.set('signupForm', form).commit();
 
+				HoodieApi.instance.plan = 'free_none';
 				hashHistory.push(toLocation);
 				return localServer.dispatchUpdate('/userStore', endPatch);
 			})
@@ -408,7 +412,7 @@ export default {
 		HoodieApi.updateSubscription({
 			plan: `${plan}_${currency}_taxfree`,
 			coupon,
-		}).then((data) => {
+		}).then(async (data) => {
 			const infos = userStore.get('infos');
 
 			infos.plan = `${plan}_${currency}_taxfree`;
@@ -416,11 +420,6 @@ export default {
 				.set('infos', infos)
 				.commit();
 
-			hashHistory.push({
-				pathname: '/account/success',
-			});
-
-			localServer.dispatchUpdate('/userStore', patch);
 			ga('ecommerce:addTransaction', {
 				'id': data.metadata.taxamo_transaction_key,
 				'affiliation': 'Prototypo',
@@ -435,6 +434,15 @@ export default {
 
 			ga('ecommerce:send');
 
+			await loadStuff();
+
+			HoodieApi.instance.plan = infos.plan;
+
+			hashHistory.push({
+				pathname: '/account/success',
+			});
+
+			localServer.dispatchUpdate('/userStore', patch);
 			HoodieApi.getCustomerInfo()
 			.then((customer) => {
 				localClient.dispatchAction('/load-customer-data', customer);
