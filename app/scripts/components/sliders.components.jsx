@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 
@@ -96,12 +97,12 @@ export class Slider extends React.Component {
 		});
 
 		const demoOverlay = this.props.param.notInDemo && !this.props.param.disabled ? (
-			<a href="https://www.prototypo.io/account#/account" className="slider-demo-overlay-text">
+			<Link to="/account/create" className="slider-demo-overlay-text">
 				This feature is available with the professional subscription
 				<div className="slider-demo-overlay-text-more">
 					<div className="slider-demo-overlay-text-more-text">Uppgrade to full version</div>
 				</div>
-			</a>
+			</Link>
 		) : this.props.param.disabled ? (
 			<div className="slider-demo-overlay-text">
 				This feature is currently in development
