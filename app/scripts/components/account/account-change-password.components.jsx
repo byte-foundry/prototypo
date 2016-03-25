@@ -64,7 +64,7 @@ export default class AccountChangePassword extends React.Component {
 					<InputWithLabel error={this.state.inError.confirm} required={true} ref="confirm" type="password" label="New password, again"/>
 				</div>
 				{errors}
-				<AccountValidationButton loading={this.state.loading} label="Confirm plan change"/>
+				<AccountValidationButton loading={this.state.loading} label="Confirm change password"/>
 			</form>
 		);
 

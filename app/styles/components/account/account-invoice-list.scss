@@ -7,23 +7,24 @@
 
 .list-item {
 	display:flex;
-	border:solid 1px $green;
-	border-bottom:none;
 	padding:10px;
+	border-left: solid 1px $green;
 	color:$dark-grey;
-	background-color:lighten($green, 25%);
+	background-color: $lightest-green;
 	justify-content:space-between;
-	
-	&:last-of-type {
-		border-bottom:solid 1px $green;
+
+	&:nth-child(even) {
+		background-color: $white;
 	}
 
 	&-download {
-		background-color:$white;
+		border: 1px solid $green;
+		color: $green !important;
 		border-radius:7px;
 
 		&:hover {
-			background-color:lighten($green, 45%);
+			background-color:$dark-green;
+			color: $white !important;
 		}
 	}
 
@@ -31,4 +32,3 @@
 		padding:5px;
 	}
 }
-

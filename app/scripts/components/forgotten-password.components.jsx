@@ -6,6 +6,7 @@ import WarningMessage from './warning-message.components.jsx';
 import WaitForLoad from './wait-for-load.components.jsx';
 import Log from '../services/log.services.js';
 import AccountValidationButton from './shared/account-validation-button.components.jsx';
+import InputWithLabel from './shared/input-with-label.components.jsx';
 
 export default class ForgottenPassword extends React.Component {
 	constructor(props) {
@@ -20,7 +21,7 @@ export default class ForgottenPassword extends React.Component {
 			loading: true,
 		});
 
-		const email = this.refs.email.value;
+		const email = this.refs.email.inputValue;
 
 		if (!(/.+\@.+\..+/.test(email))) {
 			this.setState({
@@ -72,7 +73,7 @@ export default class ForgottenPassword extends React.Component {
 			content = (
 					<form className="sign-in-form" onSubmit={(e) => {this.resetPassword(e);}}>
 						<p className="forgotten-password-text">Please fill the following input with the email address you've used to register.</p>
-						<input className="forgotten-password-input" ref="email" placeholder="Email address"/>
+						<InputWithLabel ref="email" placeholder="Email address"/>
 						<p className="forgotten-password-text">We will send you a new password, and you will be able to change your password once connected in the profile panel.</p>
 						{message}
 						<div className="forgotten-password-buttons">
@@ -83,18 +84,19 @@ export default class ForgottenPassword extends React.Component {
 			);
 		}
 		else {
-			content = [
-				<p className="forgotten-password-text">A temporary password has been sent to your email inbox</p>,
-				<button className="forgotten-password-button"
-					onClick={() => {
-						location.href = '#/signin';
-					}}>Return to signin</button>,
-			];
+			content = (
+				<div className="sign-in-form">
+					<p className="forgotten-password-text">A temporary password has been sent to your email inbox</p>
+					<AccountValidationButton label="Return to signin" click={() => {hashHistory.push({pathname: '/signin'});}}/>
+				</div>
+			);
 		}
 		return (
-			<div className="forgotten-password sign-base">
-				<div classname="account-dashboard-icon"/>
-				<h1 className="account-title">Reset my password</h1>
+			<div className="forgotten-password sign-in sign-base">
+				<div className="account-dashboard-icon"/>
+				<div className="account-header">
+					<h1 className="account-title">Reset my password</h1>
+				</div>
 				<div className="account-dashboard-container">
 						{content}
 				</div>
