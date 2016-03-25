@@ -94,14 +94,19 @@ export async function loadStuff() {
 				if (newDb !== variant.db) {
 
 					//Here we copy the old db to the new db with slugified name
-					const oldFontValues = await FontValues.getWithPouch({typeface: variant.db});
-					const oldFontInfosValues = await FontInfoValues.getWithPouch({typeface: variant.db});
-
 					try {
+						const oldFontValues = await FontValues.getWithPouch({typeface: variant.db});
 						await FontValues.save({
 							typeface: newDb,
 							values: oldFontValues.values,
 						});
+					}
+					catch (err) {
+						console.log(err);
+					}
+
+					try {
+						const oldFontInfosValues = await FontInfoValues.getWithPouch({typeface: variant.db});
 						await FontInfoValues.save({
 							typeface: newDb,
 							values: oldFontInfosValues.values,
@@ -118,11 +123,16 @@ export async function loadStuff() {
 		oldAppValues.values.switchedToHoodie = true;
 		await AppValues.save({typeface: 'default', values: oldAppValues.values});
 
-		const userInfoValues = await UserValues.get({typeface: 'default'});
+		try {
+			const userInfoValues = await UserValues.get({typeface: 'default'});
 
-		defaultAccountValues.values.accountValues.username = HoodieApi.instance.email;
-		defaultAccountValues.values.address = userInfoValues.values.invoice_address;
-		defaultAccountValues.values.buyerName = userInfoValues.values.buyer_name;
+			defaultAccountValues.values.accountValues.username = HoodieApi.instance.email;
+			defaultAccountValues.values.address = userInfoValues.values.invoice_address;
+			defaultAccountValues.values.buyerName = userInfoValues.values.buyer_name;
+		}
+		catch (err) {
+			console.log(err);
+		}
 	}
 
 	let appValues;
