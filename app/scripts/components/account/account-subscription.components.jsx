@@ -76,9 +76,11 @@ export default class AccountSubscription extends React.Component {
 			</h3>
 		);
 
-		const plan = this.state.plan && this.state.plan[0].plan.id.indexOf('annual') === -1
-			? 'Professional monthly subscription'
-			: 'Professional annual subscription';
+		const plan = this.state.plan && this.state.plan[0].plan.id.indexOf('personal') === -1
+			? 'Free subscription'
+			: this.state.plan && this.state.plan[0].plan.id.indexOf('annual') === -1
+				? 'Professional monthly subscription'
+				: 'Professional annual subscription';
 
 		const content = this.state.plan
 			? (
