@@ -91,8 +91,8 @@ export default class AccountSubscription extends React.Component {
 			},
 		};
 
-		const plan = _.find(planInfos, (planInfo) => {
-			return this.state.plan && this.state.plan[0].id.indexOf(planInfo) !== -1;
+		const plan = _.find(planInfos, (planInfo, key) => {
+			return this.state.plan && this.state.plan[0].plan.id.indexOf(key) !== -1;
 		});
 
 
@@ -101,7 +101,7 @@ export default class AccountSubscription extends React.Component {
 				<div className="account-base account-subscription">
 					<DisplayWithLabel label="Your plan" data={plan.name}/>
 					<p>
-						Your subscription will automatically renew on <span className="account-emphase">{periodEnd}</span> and you will be charged <span className="account-emphase">{`${currencySymbol.before}${plan.price}${currencySymbol.after}`}</span>
+						Your subscription will automatically renew on <span className="account-emphase">{periodEnd}</span> and you will be charged <span className="account-emphase">{`${currencySymbol.before}${plan.price.toFixed(2)}${currencySymbol.after}`}</span>
 					</p>
 					{cardDetail}
 					{successCard}
