@@ -76,18 +76,32 @@ export default class AccountSubscription extends React.Component {
 			</h3>
 		);
 
-		const plan = this.state.plan && this.state.plan[0].plan.id.indexOf('personal') === -1
-			? 'Free subscription'
-			: this.state.plan && this.state.plan[0].plan.id.indexOf('annual') === -1
-				? 'Professional monthly subscription'
-				: 'Professional annual subscription';
+		const planInfos = {
+			'free_monthly': {
+				name: 'Free subscription',
+				price: 0.00,
+			},
+			'personal_monthly': {
+				name: 'Professional monthly subscription',
+				price: 15.00,
+			},
+			'annual_monthly': {
+				name: 'Professional annual subscription',
+				price: 144.00,
+			},
+		};
+
+		const plan = _.find(planInfos, (planInfo) => {
+			return this.state.plan && this.state.plan[0].id.indexOf(planInfo) !== -1;
+		});
+
 
 		const content = this.state.plan
 			? (
 				<div className="account-base account-subscription">
-					<DisplayWithLabel label="Your plan" data={plan}/>
+					<DisplayWithLabel label="Your plan" data={plan.name}/>
 					<p>
-						Your subscription will automatically renew on <span className="account-emphase">{periodEnd}</span> and you will be charged <span className="account-emphase">{`${currencySymbol.before}15${currencySymbol.after}`}</span>
+						Your subscription will automatically renew on <span className="account-emphase">{periodEnd}</span> and you will be charged <span className="account-emphase">{`${currencySymbol.before}${plan.price}${currencySymbol.after}`}</span>
 					</p>
 					{cardDetail}
 					{successCard}
