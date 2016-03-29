@@ -83,7 +83,7 @@ export async function loadStuff() {
 		console.log(err);
 	}
 	//Login checking and app and font values loading
-	if (oldAppValues && oldAppValues.values.library.length > 0 && !oldAppValues.values.switchedToHoodie) {
+	if (oldAppValues && oldAppValues.values.library && oldAppValues.values.library.length > 0 && !oldAppValues.values.switchedToHoodie) {
 		for (let i = 0; i < oldAppValues.values.library.length; i++) {
 			const variants = oldAppValues.values.library[i].variants;
 
