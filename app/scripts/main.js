@@ -151,7 +151,12 @@ import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
 import ReplayViewer from './debug/replay-viewer.components.jsx';
 /* #end */
 
-window.Stripe && window.Stripe.setPublishableKey('pk_test_PkwKlOWOqSoimNJo2vsT21sE');
+
+const stripeKey = process.env.TRAVIS_BRANCH === 'master'
+	? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
+	: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
+
+window.Stripe && window.Stripe.setPublishableKey(stripeKey);
 
 const stores = window.prototypoStores = Stores;
 
