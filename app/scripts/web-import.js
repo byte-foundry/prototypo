@@ -16,17 +16,18 @@ const fontPromise = PrototypoCanvas.init({
 	workerUrl,
 	workerDeps,
 	jQueryListeners: false,
+	export: true,
 });
 
 fontPromise.then(function(data) {
 	const font = window.fontInstance = data;
 	data.worker.port.addEventListener('message', function(e) {
-		if (e.data instanceof ArrayBuffer) {
+		if (e.data[0] instanceof ArrayBuffer) {
 			if (window.parent) {
 				window.parent.postMessage(e.data, '*');
 			}
 			else {
-				document.fonts.add(new FontFace('Prototypo Elzevir', e.data));
+				document.fonts.add(new FontFace(e.data[1], e.data[0]));
 			}
 		}
 	});
