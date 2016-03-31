@@ -1,5 +1,11 @@
 @import "../../variables";
 
+.account-app p {
+	font-size: 16px;
+	line-height: 1.8;
+	color: $dark-grey;
+}
+
 .account-title {
 }
 
@@ -131,10 +137,12 @@
 .account-button {
 	background-color: $green;
 	color: $white !important;
+	min-width: 120px;
 	display:block;
 	font-size: 18px;
 	padding: 3px 30px;
 	border-radius: 5px;
+	margin-top: 20px;
 	margin-bottom: 40px;
 	cursor:pointer;
 
@@ -169,7 +177,8 @@
 		background-color: $dark-grey;
 		position:absolute;
 		z-index:2;
-		background-position: 10px 10px;
+		background-position: center;
+		background-size: 50%;
 		background-image: url("../../../images/prototypo-icon-white.svg");
 		background-repeat: no-repeat;
 		border-radius: 50%;
