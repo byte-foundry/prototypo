@@ -100,7 +100,7 @@ export class Slider extends React.Component {
 			<Link to="/account/create" className="slider-demo-overlay-text">
 				This feature is available with the professional subscription
 				<div className="slider-demo-overlay-text-more">
-					<div className="slider-demo-overlay-text-more-text">Uppgrade to full version</div>
+					<div className="slider-demo-overlay-text-more-text">Upgrade to full version</div>
 				</div>
 			</Link>
 		) : this.props.param.disabled ? (
