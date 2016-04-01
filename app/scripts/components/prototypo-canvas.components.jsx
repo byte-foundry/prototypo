@@ -85,6 +85,7 @@ export default class PrototypoCanvas extends React.Component {
 		fontInstance.onWheel.bind(fontInstance)(e);
 		this.client.dispatchAction('/store-panel-param', {
 			zoom: fontInstance.zoom,
+			pos: fontInstance.view.center,
 		});
 	}
 
@@ -131,6 +132,13 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
+	reset() {
+		this.props.reset({
+			x: fontInstance.currGlyph.getBounds().center.x,
+			y: -fontInstance.currGlyph.getBounds().center.y,
+		});
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] PrototypoCanvas');
@@ -156,7 +164,7 @@ export default class PrototypoCanvas extends React.Component {
 			<ContextualMenuItem
 				key="reset"
 				text="Reset view"
-				click={() => { this.props.reset(); }}/>,
+				click={() => { this.reset(); }}/>,
 			<ContextualMenuItem
 				key="shadow"
 				text={`${this.props.panel.shadow ? 'Hide' : 'Show'} shadow`}
@@ -173,7 +181,7 @@ export default class PrototypoCanvas extends React.Component {
 				onContextMenu={(e) => { this.showContextMenu(e); }}
 				onClick={() => { this.hideContextMenu(); }}
 				onMouseLeave={() => { this.hideContextMenu(); }}>
-				<div ref="canvas" className="prototypo-canvas-container" onDoubleClick={() => { this.props.reset(); }}></div>
+				<div ref="canvas" className="prototypo-canvas-container" onDoubleClick={() => { this.reset(); }}></div>
 				<div className="action-bar">
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
 				</div>
