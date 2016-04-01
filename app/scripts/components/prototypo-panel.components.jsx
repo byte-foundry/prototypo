@@ -53,9 +53,9 @@ export default class PrototypoPanel extends React.Component {
 			});
 	}
 
-	resetView() {
+	resetView({x, y}) {
 		this.client.dispatchAction('/store-panel-param', {
-			pos: new prototypo.paper.Point(0, 0),
+			pos: new prototypo.paper.Point(x, y),
 			zoom: 0.5,
 		});
 	}
@@ -88,7 +88,7 @@ export default class PrototypoPanel extends React.Component {
 			key="canvas"
 			panel={this.state.panel}
 			glyph={this.state.glyph}
-			reset={() => { this.resetView(); }}
+			reset={(pos) => { this.resetView(pos); }}
 			close={(name) => { this.toggleView(name); }}/>];
 		const hasGlyph = this.state.panel.mode.indexOf('glyph') !== -1;
 		const hasText = this.state.panel.mode.indexOf('text') !== -1;
