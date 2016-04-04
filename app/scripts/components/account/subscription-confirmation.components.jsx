@@ -42,7 +42,7 @@ export default class SubscriptionConfirmation extends React.Component {
 
 	confirm() {
 		const currency = getCurrency(this.state.card[0].country);
-		this.client.dispatchAction('/confirm-buy', {plan: this.state.plan, currency, coupon: 'release_coupon'});
+		this.client.dispatchAction('/confirm-buy', {plan: this.state.plan, currency});
 	}
 
 	render() {
@@ -50,14 +50,14 @@ export default class SubscriptionConfirmation extends React.Component {
 			'personal_monthly': {
 				name: 'Professional monthly subscription',
 				period: 'month',
-				USD: '$15.00 — only $10.50 the first month',
-				EUR: '15.00€ — only 10.50€ the first month',
+				USD: '$15.00',
+				EUR: '15.00€',
 			},
 			'personal_annual': {
 				name: 'Professional annual subscription',
 				period: 'year',
-				USD: '$144.00 — only $100.80 the first year',
-				EUR: '144.00€ — only 100.80€ the first year',
+				USD: '$144.00',
+				EUR: '144.00€',
 			},
 		};
 

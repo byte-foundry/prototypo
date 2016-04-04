@@ -413,7 +413,7 @@ export default {
 			plan: `${plan}_${currency}_taxfree`,
 			coupon,
 		}).then(async (data) => {
-			const infos = userStore.get('infos');
+			const infos = _.cloneDeep(userStore.get('infos'));
 
 			infos.plan = `${plan}_${currency}_taxfree`;
 			const patch = userStore
@@ -423,13 +423,13 @@ export default {
 			ga('ecommerce:addTransaction', {
 				'id': data.metadata.taxamo_transaction_key,
 				'affiliation': 'Prototypo',
-				'revenue': data.plan.indexOf('monthly') === -1 ? '100.80' : '10.50',
+				'revenue': data.plan.indexOf('monthly') === -1 ? '144' : '15',
 			});
 
 			ga('ecommerce:addItem', {
 				'id': data.metadata.taxamo_transaction_key + data.plan,                     // Transaction ID. Required.
 				'name': data.plan,    // Product name. Required.
-				'price': data.plan.indexOf('monthly') === -1 ? '100.80' : '10.50',
+				'price': data.plan.indexOf('monthly') === -1 ? '144' : '15',
 			});
 
 			ga('ecommerce:send');

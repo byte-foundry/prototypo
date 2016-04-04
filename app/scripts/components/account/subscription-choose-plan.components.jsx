@@ -42,23 +42,17 @@ export default class SubscriptionChoosePlan extends React.Component {
 		const planMonthly = {
 			id: 'personal_monthly',
 			name: 'Monthly billing',
-			amount: '10',
-			decimal: '50',
-			period: 'first month',
-			real: '15',
-			realPeriod: 'month',
-			info: 'Without commitment! — then 15/month',
+			amount: '15',
+			period: '/month',
+			info: 'Without commitment!',
 		};
 
 		const planYearly = {
 			id: 'personal_annual',
 			name: 'Yearly billing',
-			amount: '100',
-			decimal: '80',
-			period: 'first year',
-			real: '144',
-			realPeriod: 'year',
-			info: 'Pay once 100.80 for a whole year!',
+			amount: '144',
+			period: '/year',
+			info: 'Pay once for a whole year!',
 		};
 
 		const error = this.state.error ? <FormError errorText={this.state.error}/> : false;
@@ -104,7 +98,7 @@ class SubscriptionPlan extends React.Component {
 				</div>
 				<div className="subscription-plan-price">
 					<div className="subscription-plan-amount">
-						{this.props.plan.amount}<span className="subscription-plan-amount-decimal">.{this.props.plan.decimal}</span>
+						{this.props.plan.amount}
 					</div>
 					<div className="subscription-plan-period">
 						{this.props.plan.period}
@@ -112,9 +106,6 @@ class SubscriptionPlan extends React.Component {
 				</div>
 				<div className="subscription-plan-info">
 					{this.props.plan.info}
-				</div>
-				<div className="subscription-plan-badge">
-					{this.props.plan.real}<span className="subscription-plan-badge-period">/{this.props.plan.realPeriod}</span>
 				</div>
 			</div>
 		);
