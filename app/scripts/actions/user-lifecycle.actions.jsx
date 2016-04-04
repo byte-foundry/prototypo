@@ -420,14 +420,16 @@ export default {
 				.set('infos', infos)
 				.commit();
 
+			const customer = await HoodieApi.getCustomerInfo();
+
 			ga('ecommerce:addTransaction', {
-				'id': data.metadata.taxamo_transaction_key,
+				'id': customer.metadata.taxamo_transaction_key,
 				'affiliation': 'Prototypo',
 				'revenue': data.plan.indexOf('monthly') === -1 ? '144' : '15',
 			});
 
 			ga('ecommerce:addItem', {
-				'id': data.metadata.taxamo_transaction_key + data.plan,                     // Transaction ID. Required.
+				'id': customer.metadata.taxamo_transaction_key + data.plan,                     // Transaction ID. Required.
 				'name': data.plan,    // Product name. Required.
 				'price': data.plan.indexOf('monthly') === -1 ? '144' : '15',
 			});
