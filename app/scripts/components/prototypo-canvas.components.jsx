@@ -139,6 +139,40 @@ export default class PrototypoCanvas extends React.Component {
 		});
 	}
 
+	handleZoomShortcut(e) {
+		if (e.keyCode === 90 && !this.oldPos) {
+			e.stopPropagation();
+			this.oldPos = {
+				pos: fontInstance.view.center,
+				zoom: fontInstance.zoom,
+			};
+			this.reset();
+		}
+	}
+
+	finishZoomShortcut(e) {
+		if (e.keyCode === 90) {
+			e.stopPropagation();
+			this.client.dispatchAction('/store-panel-param', this.oldPos);
+			this.oldPos = undefined;
+		}
+	}
+
+	acceptZoomShortcut() {
+		this.handleZoomCb = (e) => {this.handleZoomShortcut(e)};
+		this.finishZoomCb = (e) => {this.finishZoomShortcut(e)};
+		window.addEventListener('keydown', this.handleZoomCb);
+		window.addEventListener('keyup', this.finishZoomCb);
+	}
+
+	rejectZoomShortcut() {
+		window.removeEventListener('keydown', this.handleZoomCb);
+		window.removeEventListener('keyup', this.finishZoomCb);
+		if (this.oldPos) {
+			this.client.dispatchAction('/store-panel-param', this.oldPos);
+		}
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] PrototypoCanvas');
@@ -181,7 +215,7 @@ export default class PrototypoCanvas extends React.Component {
 				onContextMenu={(e) => { this.showContextMenu(e); }}
 				onClick={() => { this.hideContextMenu(); }}
 				onMouseLeave={() => { this.hideContextMenu(); }}>
-				<div ref="canvas" className="prototypo-canvas-container" onDoubleClick={() => { this.reset(); }}></div>
+				<div ref="canvas" className="prototypo-canvas-container" onMouseLeave={() => {this.rejectZoomShortcut()}} onMouseEnter={() => { this.acceptZoomShortcut();}} onDoubleClick={() => { this.reset(); }}></div>
 				<div className="action-bar">
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
 				</div>
