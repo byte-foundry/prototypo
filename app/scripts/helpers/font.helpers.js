@@ -26,7 +26,7 @@ export async function setupFontInstance(appValues) {
 		const font = window.fontInstance = await fontPromise;
 		const subset = appValues.values.text + appValues.values.word;
 
-		await font.loadFont(typedata.fontinfo.familyName, typedataJSON);
+		await font.loadFont(typedata.fontinfo.familyName, typedataJSON, appValues.values.variantSelected.db);
 		font.subset = typeof subset === 'string' ? subset : '';
 		font.displayChar(appValues.values.selected);
 		return {font, subset, typedata};

@@ -18,6 +18,12 @@ HoodieApi.setup()
 
 		window.parent.postMessage(message, '*');
 	}
+})
+.catch(() => {
+	window.parent.postMessage({
+		type: 'error',
+		message: `You're not logged into Prototypo`,
+	}, '*');
 });
 
 // The worker will be built from URL during development, and from
@@ -27,6 +33,8 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const canvas = document.getElementById('prototypo-canvas');
+let worker;
+let font;
 
 const fontPromise = PrototypoCanvas.init({
 	canvas,
@@ -36,7 +44,26 @@ const fontPromise = PrototypoCanvas.init({
 	export: true,
 });
 
+window.addEventListener('message', function(e) {
+	switch (e.data.type) {
+		case 'fontData':
+			if (worker) {
+				worker.port.postMessage(e.data);
+			}
+			break;
+		case 'subset':
+			if (worker) {
+				worker.port.postMessage(e.data);
+			}
+			break;
+		default:
+			break;
+	}
+});
+
 fontPromise.then(function(data) {
+	font = data;
+	worker = data.worker;
 	data.worker.port.addEventListener('message', function(e) {
 		const message = {
 			type: 'font',
