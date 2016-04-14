@@ -303,9 +303,10 @@ function trackUrl() {
 	ga('send', 'pageview', {page: this.state.location.pathname});
 }
 
-window.unload = () => {
-	worker.close();
-};
+window.addEventListener('unload', () => {
+	worker.port.postMessage({type: 'closeAll'});
+	worker.port.close();
+});
 
 selectRenderOptions(
 	() => {

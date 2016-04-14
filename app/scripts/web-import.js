@@ -56,6 +56,11 @@ window.addEventListener('message', function(e) {
 				worker.port.postMessage(e.data);
 			}
 			break;
+		case 'close':
+			if (worker) {
+				worker.port.close();
+			}
+			break;
 		default:
 			break;
 	}
@@ -65,6 +70,10 @@ fontPromise.then(function(data) {
 	font = data;
 	worker = data.worker;
 	data.worker.port.addEventListener('message', function(e) {
+		if (e.data.action && e.data.action === 'close') {
+			return worker.port.close();
+		}
+
 		const message = {
 			type: 'font',
 			font: e.data,
