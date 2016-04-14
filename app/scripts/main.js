@@ -303,6 +303,10 @@ function trackUrl() {
 	ga('send', 'pageview', {page: this.state.location.pathname});
 }
 
+window.unload = () => {
+	worker.close();
+};
+
 selectRenderOptions(
 	() => {
 		const content = document.getElementById('content');
