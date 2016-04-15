@@ -4,14 +4,20 @@ var webpack = require('webpack');
 module.exports = {
 	cache: true,
 	'if-loader': 'prod',
-	entry: [
-		'babel-polyfill',
-		'./app/scripts/main'
-	],
+	entry: {
+		bundle: [
+			'babel-polyfill',
+			'./app/scripts/main'
+		],
+		'web-import': [
+			'babel-polyfill',
+			'./app/scripts/web-import.js'
+		]
+	},
 	output: {
 		path: path.join(__dirname, 'dist'),
 		publicPath: '',
-		filename: 'bundle.js'
+		filename: '[name].js'
 	},
 	module: {
 		loaders: [
@@ -38,7 +44,7 @@ module.exports = {
 				loaders: ['file'],
 			},
 		],
-		noParse:/(levelup)/
+		noParse:/(levelup|dist\/prototypo-canvas)/
 	},
 	externals: [{
 		'./node/window': true,

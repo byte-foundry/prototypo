@@ -28,9 +28,10 @@ HoodieApi.setup()
 
 // The worker will be built from URL during development, and from
 // source in production.
-if (process.env.NODE_ENV !== 'production') {
+//console.log(process.env.NODE_ENV);
+//if (process.env.NODE_ENV !== 'production') {
 	workerUrl = '/prototypo-canvas/src/worker.js';
-}
+	//}
 
 const canvas = document.getElementById('prototypo-canvas');
 let worker;

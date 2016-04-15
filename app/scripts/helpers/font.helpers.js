@@ -12,9 +12,9 @@ export async function setupFontInstance(appValues) {
 
 		// The worker will be built from URL during development, and from
 		// source in production.
-		if (process.env.NODE_ENV !== 'production') {
+		//if (process.env.NODE_ENV !== 'production') {
 			workerUrl = '/prototypo-canvas/src/worker.js';
-		}
+			//}
 
 		const fontPromise = PrototypoCanvas.init({
 			canvas: window.canvasElement,
