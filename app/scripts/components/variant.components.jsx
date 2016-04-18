@@ -73,10 +73,15 @@ export class Variant extends React.Component {
 	}
 
 	render() {
-		const classes = Classnames({
-			variant: true,
+		const rectoClasses = Classnames({
+			'flipping-variant-recto': true,
 			'is-active': this.props.selected,
-			'flipping-variant': true,
+			'is-flipped': this.state.flipped,
+		});
+
+		const versoClasses = Classnames({
+			'flipping-variant-verso': true,
+			'is-active': this.props.selected,
 			'is-flipped': this.state.flipped,
 		});
 
@@ -96,8 +101,8 @@ export class Variant extends React.Component {
 			) : false;
 
 		return (
-			<div className={classes} onClick={() => {this.selectVariant();} } onMouseLeave={() => {this.deactivate();}} onMouseEnter={() => {this.delayDeactivate();}}>
-				<div className="flipping-variant-recto">
+			<div className="variant flipping-variant" onClick={() => {this.selectVariant();} } onMouseLeave={() => {this.deactivate();}} onMouseEnter={() => {this.delayDeactivate();}}>
+				<div className={rectoClasses}>
 					<img className="variant-caret variant-caret-closed" src="/assets/images/list-icon-closed.svg"></img>
 					<img className="variant-caret variant-caret-open" src="/assets/images/list-icon-open.svg"></img>
 					<div className="variant-name">
@@ -108,7 +113,7 @@ export class Variant extends React.Component {
 					</div>
 					{deleteBtn}
 				</div>
-				<div className="flipping-variant-verso" onClick={(e) => { this.flip(e); }}>
+				<div className={versoClasses} onClick={(e) => { this.flip(e); }}>
 					<div className={editClasses}>
 						<img className="variant-caret" src="/assets/images/font-infos.svg"></img>
 						<TextWithSuggestion value={this.props.data.name} validate={(name) => {this.editVariant(name);}}></TextWithSuggestion>
@@ -183,16 +188,25 @@ export class AddVariant extends React.Component {
 			'flipping-variant': true,
 			'is-flipped': this.state.flipped,
 		});
+		const rectoClasses = Classnames({
+			'flipping-variant-recto': true,
+			'is-flipped': this.state.flipped,
+		});
+
+		const versoClasses = Classnames({
+			'flipping-variant-verso': true,
+			'is-flipped': this.state.flipped,
+		});
 
 		return (
-			<div className={classes} onClick={(e) => { this.flip(e); }} ref="container">
-				<div className="flipping-variant-recto">
+			<div className="variant flipping-variant" onClick={(e) => { this.flip(e); }} ref="container">
+				<div className={rectoClasses}>
 					<img className="variant-caret" src="/assets/images/add-icon.svg"></img>
 					<div className="variant-name">
 						Add a variant
 					</div>
 				</div>
-				<div className="flipping-variant-verso">
+				<div className={versoClasses}>
 					<img className="variant-caret" src="/assets/images/font-infos.svg"></img>
 					<TextWithSuggestion suggestions={this.variants} validate={(name, e) => {this.createVariant(e, name);}}></TextWithSuggestion>
 					<div className="variant-error">{this.state.error}</div>
