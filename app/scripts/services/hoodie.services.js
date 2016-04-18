@@ -8,7 +8,7 @@ import Log from './log.services.js';
 
 PouchDB.plugin(HoodiePouch);
 
-const backUrl = process.env.TRAVIS_BRANCH === 'master'
+const backUrl = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
 	? 'https://prototypo.appback.com'
 	: 'https://prototypo-dev.appback.com';
 
