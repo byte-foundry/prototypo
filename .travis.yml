@@ -13,8 +13,10 @@ script:
 after_success:
 - 'uglifyjs dist/bundle.js -o dist/bundle.js --in-source-map dist/bundle.js.map --source-map-url bundle.js.map --source-map dist/bundle.js.map'
 - '[ $TRAVIS_BRANCH == master ] && surge --project ./dist --domain app.prototypo.io'
+- '[ $TRAVIS_BRANCH == release ] && surge --project ./dist --domain beta.prototypo.io'
 - '[ $TRAVIS_BRANCH == develop ] && surge --project ./dist --domain dev.prototypo.io'
 branches:
   only:
     - master
     - develop
+    - release

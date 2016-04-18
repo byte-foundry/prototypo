@@ -152,7 +152,7 @@ import ReplayViewer from './debug/replay-viewer.components.jsx';
 /* #end */
 
 
-const stripeKey = process.env.TRAVIS_BRANCH === 'master'
+const stripeKey = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
 	? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
 	: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
 
