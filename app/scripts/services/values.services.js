@@ -9,9 +9,11 @@ function values(prefix) {
 			if (location.hash.indexOf('#/replay') === -1) {
 				return HoodieApi.instance.store.find(`${prefix}values`, `${params.typeface}`)
 					.then((data) => {
-						const client = LocalClient.instance();
+						if (LocalClient.serverInstance) {
+							const client = LocalClient.instance();
 
-						client.dispatchAction('/store-in-debug-font', {prefix, typeface: params.typeface, data});
+							client.dispatchAction('/store-in-debug-font', {prefix, typeface: params.typeface, data});
+						}
 						return data;
 					});
 			}

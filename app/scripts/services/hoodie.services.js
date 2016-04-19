@@ -174,19 +174,21 @@ function setupHoodie(data) {
 	HoodieApi.instance.email = response.name.split('/')[1];
 	HoodieApi.instance.plan = getPlan(response.roles);
 
-	hoodie.stripe.customers.retrieve({includeCharges: true})
-		.then((customer) => {
-			localClient.dispatchAction('/load-customer-data', customer);
-			window.Intercom('boot', {
-				app_id: 'mnph1bst',
-				email: HoodieApi.instance.email,
-				widget: {
-					activator: '#intercom-button',
-				},
+	if (hoodie.stripe) {
+		hoodie.stripe.customers.retrieve({includeCharges: true})
+			.then((customer) => {
+				localClient.dispatchAction('/load-customer-data', customer);
+				window.Intercom('boot', {
+					app_id: 'mnph1bst',
+					email: HoodieApi.instance.email,
+					widget: {
+						activator: '#intercom-button',
+					},
+				});
+			})
+			.catch((err) => {
 			});
-		})
-		.catch((err) => {
-		});
+	}
 
 	Log.setUserId(HoodieApi.instance.email);
 
