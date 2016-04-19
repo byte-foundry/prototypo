@@ -103,15 +103,19 @@ export default class SubscriptionAddCard extends React.Component {
 			)
 			: false;
 
+		const buyerName = this.state.infos.accountValues
+			? this.state.infos.accountValues.firstname + this.state.infos.accountValues.lastname
+			: '';
+
 		return (
 			<form method="post" onSubmit={(e) => {this.addCard(e);}} className="account-base subscription-add-card">
 				{oldBilling}
 				<h2>Billing address</h2>
-				<BillingAddress address={{}} inError={this.state.inError} ref="address"/>
+				<BillingAddress address={{}} buyerName={buyerName} inError={this.state.inError} ref="address"/>
 				{oldCard}
 				<h2>Payment card</h2>
 				<AddCard inError={this.state.inError} ref="card"/>
-				<InputWithLabel ref="vat" label="VAT number"/>
+				<InputWithLabel ref="vat" label="VAT number" info="(only necessary if you pay with a company card)"/>
 				{errors}
 				<AccountValidationButton loading={this.state.loading} label="Add my card"/>
 			</form>
