@@ -65,9 +65,8 @@ export default class SubscriptionSidebar extends React.Component {
 				<ul className="subscription-sidebar-steps">
 					<SubscriptionSidebarItem number="1" label="Sign up" done={!!username} route="/account/create" index={true} />
 					<SubscriptionSidebarItem number="2" label="Choose a plan" done={!!plan} route="/account/create/choose-a-plan"/>
-					<SubscriptionSidebarItem number="3" label="Add a card" done={!!card} route="/account/create/add-card"/>
-					<SubscriptionSidebarItem number="4" label="Billing address" done={this.state.infos.address} route="/account/create/billing-address"/>
-					<SubscriptionSidebarItem number="5" label="Confirmation" route="/account/create/confirmation"/>
+					<SubscriptionSidebarItem number="3" label="Payment details" done={!!card} route="/account/create/add-card"/>
+					<SubscriptionSidebarItem number="4" label="Confirmation" route="/account/create/confirmation"/>
 				</ul>
 				{data}
 			</div>
