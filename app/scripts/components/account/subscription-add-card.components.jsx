@@ -29,9 +29,9 @@ export default class SubscriptionAddCard extends React.Component {
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					errors: head.toJS().addcardForm.errors,
-					inError: head.toJS().addcardForm.inError,
-					loading: head.toJS().addcardForm.loading,
+					errors: [...head.toJS().addcardForm.errors, ...head.toJS().billingForm.errors],
+					inError: _.assign(head.toJS().addcardForm.inError, head.toJS().billingForm.inError),
+					loading: head.toJS().addcardForm.loading || head.toJS().billingForm.loading,
 					infos: head.toJS().infos,
 				});
 			})
@@ -46,12 +46,14 @@ export default class SubscriptionAddCard extends React.Component {
 		this.lifespan.release();
 	}
 
-	addCard(e) {
+	addDetails(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		this.client.dispatchAction('/add-card', {
+		this.client.dispatchAction('/add-card-and-billing', {
 			card: this.refs.card.data(),
 			vat: this.refs.vat.inputValue,
+			buyerName: this.refs.address.getBuyerName(),
+			address: this.refs.address.getAddress(),
 		});
 	}
 
@@ -108,7 +110,7 @@ export default class SubscriptionAddCard extends React.Component {
 			: '';
 
 		return (
-			<form method="post" onSubmit={(e) => {this.addCard(e);}} className="account-base subscription-add-card">
+			<form method="post" onSubmit={(e) => {this.addDetails(e);}} className="account-base subscription-add-card">
 				{oldBilling}
 				<h2>Billing address</h2>
 				<BillingAddress address={{}} buyerName={buyerName} inError={this.state.inError} ref="address"/>

@@ -12,7 +12,6 @@ export default class BillingAddress extends React.Component {
 		return {
 			building_number: this.refs.buildingNumber.inputValue,
 			street_name: this.refs.streetName.inputValue,
-			address_detail: this.refs.addressDetails.inputValue,
 			city: this.refs.city.inputValue,
 			postal_code: this.refs.postalCode.inputValue,
 			region: this.refs.region.inputValue,
