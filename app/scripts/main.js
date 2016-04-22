@@ -308,6 +308,11 @@ function trackUrl() {
 	ga('send', 'pageview', {page: this.state.location.pathname});
 }
 
+window.addEventListener('unload', () => {
+	worker.port.postMessage({type: 'closeAll'});
+	worker.port.close();
+});
+
 selectRenderOptions(
 	() => {
 		const content = document.getElementById('content');

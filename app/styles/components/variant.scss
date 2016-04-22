@@ -9,16 +9,13 @@
 
 .variant {
 	margin-bottom:5px;
-	border-radius:4px;
 	font-size:16px;
 	letter-spacing: 0.05em;
 
-	background-color:$white;
 	text-transform:uppercase;
 	cursor:pointer;
 	display:flex;
 	flex-flow:row nowrap;
-	transition:background-color .2s ease, transform .2s ease;
 	transform-style: preserve-3d;
 
 	&-caret {
@@ -56,11 +53,6 @@
 		}
 	}
 
-	&:hover, &.is-active {
-		background-color:$dark-grey;
-		color:$white;
-	}
-
 	&:hover &-caret-closed, &.is-active &-caret-closed {
 		display:none;
 	}
@@ -95,14 +87,10 @@
 	position: relative;
 	height: 57px;
 
-	&.is-flipped {
-		transform: rotateX(180deg);
-		background-color:$dark-grey;
-	}
-
 	&-verso, &-recto {
 		padding:14px;
 		width:100%;
+		height:100%;
 		display:flex;
 		flex-flow:row nowrap;
 		backface-visibility: hidden;
@@ -110,14 +98,40 @@
 	}
 
 	&-recto {
+		border-radius: 4px;
 		transform:rotateX(0deg);
+		transition:transform .2s ease;
+		background:$white;
+
+		&.is-flipped {
+			transform: rotateX(180deg);
+			background: $dark-grey;
+		}
+
+		&:hover, &.is-active {
+			background: $dark-grey;
+			color: $white;
+		}
 	}
 
 	&-verso {
+		border-radius: 4px;
+		height:100%;
 		color:$white;
 		transform:rotateX(180deg);
 		width:100%;
 		display: flex;
+		transition:background-color .2s ease, transform .2s ease;
+
+		&.is-flipped {
+			transform: rotateX(0deg);
+			background: $dark-grey;
+		}
+
+		&.is-active {
+			background: $dark-grey;
+		}
+
 		img {
 			width: 20px;
 			margin-right: 20px;

@@ -41,7 +41,7 @@ export default {
 		const typedata = JSON.parse(typedataJSON);
 
 		try {
-			await fontInstance.loadFont(typedata.fontinfo.familyName, typedataJSON);
+			await fontInstance.loadFont(typedata.fontinfo.familyName, typedataJSON, db);
 		}
 		catch (err) {
 			saveErrorLog(err);
