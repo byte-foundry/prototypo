@@ -145,10 +145,14 @@ export default class PrototypoCanvas extends React.Component {
 			this.oldPos = {
 				pos: fontInstance.view.center,
 				zoom: fontInstance.zoom,
+				nodes: this.props.panel.nodes,
+				outline: this.props.panel.outline,
 			};
+			this.client.dispatchAction('/store-panel-param', {nodes: false, outline: false});
 			this.reset();
 		}
 	}
+
 
 	finishZoomShortcut(e) {
 		if (e.keyCode === 90) {
