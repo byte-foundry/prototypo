@@ -87,7 +87,7 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 				const patch = userStore.set('infos', infos).set('addcardForm', form).commit();
 
 				localServer.dispatchUpdate('/userSotre', patch);
-				
+
 				resolve();
 			})
 			.catch((err) => {
@@ -333,7 +333,7 @@ export default {
 				console.log(data);
 				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname};
 				const patch = userStore.set('infos', {accountValues}).commit();
-
+				await AccountValues.save({typeface: 'default', values: {accountValues}});
 				localServer.dispatchUpdate('/userStore', patch);
 				if (toLocation.pathname === '/dashboard') {
 					await loadStuff();
