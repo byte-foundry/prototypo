@@ -12,9 +12,9 @@ export async function setupFontInstance(appValues) {
 
 		// The worker will be built from URL during development, and from
 		// source in production.
-		if (process.env.NODE_ENV !== 'production') {
+		//if (process.env.NODE_ENV !== 'production') {
 			workerUrl = '/prototypo-canvas/src/worker.js';
-		}
+			//}
 
 		const fontPromise = PrototypoCanvas.init({
 			canvas: window.canvasElement,
@@ -26,7 +26,7 @@ export async function setupFontInstance(appValues) {
 		const font = window.fontInstance = await fontPromise;
 		const subset = appValues.values.text + appValues.values.word;
 
-		await font.loadFont(typedata.fontinfo.familyName, typedataJSON);
+		await font.loadFont(typedata.fontinfo.familyName, typedataJSON, appValues.values.variantSelected.db);
 		font.subset = typeof subset === 'string' ? subset : '';
 		font.displayChar(appValues.values.selected);
 		return {font, subset, typedata};

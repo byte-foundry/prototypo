@@ -21,7 +21,7 @@
     "pouchdb": "^3.6.0",
     "pouchdb-authentication": "^0.4.0",
     "pouchdb-hoodie-api": "^1.0.3",
-    "prototypo-canvas": "~1.7.0",
+    "prototypo-canvas": "~1.8.0",
     "prototypo.js": "~1.7.0",
     "react": "^0.14.7",
     "react-addons-create-fragment": "^0.14.7",

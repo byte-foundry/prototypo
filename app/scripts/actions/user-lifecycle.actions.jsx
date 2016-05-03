@@ -32,6 +32,124 @@ function saveAccountValues(values) {
 	}
 }
 
+function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
+	const form = userStore.get('addcardForm');
+
+	form.errors = [];
+	form.inError = {};
+	form.loading = true;
+	const cleanPatch = userStore.set('addcardForm', form).commit();
+
+	localServer.dispatchUpdate('/userStore', cleanPatch);
+
+	if (!fullname || !number || !expMonth || !expYear || !cvc) {
+		form.errors.push('These fields are required');
+		form.inError = {
+			fullname: !fullname,
+			number: !number,
+			expMonth: !expMonth,
+			expYear: !expYear,
+			cvc: !cvc,
+		};
+		form.loading = false;
+		const patch = userStore.set('addcardForm', form).commit();
+
+		return localServer.dispatchUpdate('/userStore', patch);
+	}
+	return new Promise((resolve, reject) => {
+		window.Stripe.card.createToken({
+			number,
+			cvc,
+			exp_month: expMonth,
+			exp_year: expYear,
+			name: fullname,
+		}, (status, data) => {
+			if (data.error) {
+				form.errors.push(data.error.message);
+				form.loading = false;
+				const patch = userStore.set('addcardForm', form).commit();
+
+				return localServer.dispatchUpdate('/userStore', patch);
+			}
+
+			const infos = userStore.get('infos');
+
+			HoodieApi.updateCustomer({
+				source: data.id,
+				buyer_credit_card_prefix: number.substr(0, 9),
+				buyer_tax_number: vat || infos.vat,
+			})
+			.then(() => {
+
+				infos.card = [data.card];
+				infos.vat = vat || infos.vat;
+				form.loading = false;
+				const patch = userStore.set('infos', infos).set('addcardForm', form).commit();
+
+				localServer.dispatchUpdate('/userSotre', patch);
+
+				resolve();
+			})
+			.catch((err) => {
+				form.errors.push(err.message);
+				form.loading = false;
+				const patch = userStore.set('addcardForm', form).commit();
+
+				localServer.dispatchUpdate('/userStore', patch);
+			});
+		});
+	});
+}
+
+function addBillingAddress({buyerName, address}) {
+	const form = userStore.get('billingForm');
+
+	form.errors = [];
+	form.inError = {};
+	form.loading = true;
+	const cleanPatch = userStore.set('billingForm', form).commit();
+
+	localServer.dispatchUpdate('/userStore', cleanPatch);
+
+	if (!buyerName || !address.building_number || !address.street_name || !address.city || !address.postal_code || !address.country) {
+		form.errors.push('These fields are required');
+		form.inError = {
+			buyerName: !buyerName,
+			buildingNumber: !address.building_number,
+			streetName: !address.street_name,
+			city: !address.city,
+			postalCode: !address.postal_code,
+			country: !address.country,
+		};
+		form.loading = false;
+		const patch = userStore.set('billingForm', form).commit();
+
+		return localServer.dispatchUpdate('/userStore', patch);
+	}
+
+	return HoodieApi.updateCustomer({
+		invoice_address: address,
+		buyer_naME: buyerName,
+	})
+	.then(() => {
+		const infos = userStore.get('infos');
+
+		infos.address = address;
+		infos.buyerName = buyerName;
+		form.loading = false;
+		const patch = userStore.set('infos', infos).set('billingForm', form).commit();
+
+		return localServer.dispatchUpdate('/userStore', patch);
+	})
+	.catch((err) => {
+		form.errors.push(err.message);
+		form.loading = false;
+
+		const patch = userStore.set('billingForm', form).commit();
+		localServer.dispatchUpdate('/userStore', patch);
+	});
+}
+
 export default {
 	'/load-customer-data': ({sources, subscriptions, charges}) => {
 		const infos = _.cloneDeep(userStore.get('infos'));
@@ -215,7 +333,7 @@ export default {
 				console.log(data);
 				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname};
 				const patch = userStore.set('infos', {accountValues}).commit();
-
+				await AccountValues.save({typeface: 'default', values: {accountValues}});
 				localServer.dispatchUpdate('/userStore', patch);
 				if (toLocation.pathname === '/dashboard') {
 					await loadStuff();
@@ -274,130 +392,39 @@ export default {
 
 		hashHistory.push(pathQuery);
 	},
-	'/add-card': ({card: {fullname, number, expMonth, expYear, cvc}, vat, pathQuery = {}}) => {
+	'/add-card': (options) => {
 		const toPath = {
-			pathname: pathQuery.path || '/account/create/billing-address',
-			query: pathQuery.query,
+			pathname: options.pathQuery.path || '/account/profile',
+			query: options.pathQuery.query,
 		};
-		const form = userStore.get('addcardForm');
 
-		form.errors = [];
-		form.inError = {};
-		form.loading = true;
-		const cleanPatch = userStore.set('addcardForm', form).commit();
-
-		localServer.dispatchUpdate('/userStore', cleanPatch);
-
-		if (!fullname || !number || !expMonth || !expYear || !cvc) {
-			form.errors.push('These fields are required');
-			form.inError = {
-				fullname: !fullname,
-				number: !number,
-				expMonth: !expMonth,
-				expYear: !expYear,
-				cvc: !cvc,
-			};
-			form.loading = false;
-			const patch = userStore.set('addcardForm', form).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-
-		window.Stripe.card.createToken({
-			number,
-			cvc,
-			exp_month: expMonth,
-			exp_year: expYear,
-			name: fullname,
-		}, (status, data) => {
-			if (data.error) {
-				form.errors.push(data.error.message);
-				form.loading = false;
-				const patch = userStore.set('addcardForm', form).commit();
-
-				return localServer.dispatchUpdate('/userStore', patch);
-			}
-
-			const infos = userStore.get('infos');
-
-			HoodieApi.updateCustomer({
-				source: data.id,
-				buyer_credit_card_prefix: number.substr(0, 9),
-				buyer_tax_number: vat || infos.vat,
-			})
-			.then(() => {
-
-				infos.card = [data.card];
-				infos.vat = vat || infos.vat;
-				form.loading = false;
-				const patch = userStore.set('infos', infos).set('addcardForm', form).commit();
-
-				localServer.dispatchUpdate('/userSotre', patch);
-
-				hashHistory.push(toPath);
-			})
-			.catch((err) => {
-				form.errors.push(err.message);
-				form.loading = false;
-				const patch = userStore.set('addcardForm', form).commit();
-
-				localServer.dispatchUpdate('/userStore', patch);
-			});
+		addCard(options)
+		.then(() => {
+			hashHistory.push(toPath);
 		});
 	},
-	'/add-billing-address': ({buyerName, address, pathQuery = {}}) => {
+	'/add-billing-address': (options) => {
 		const toPath = {
-			pathname: pathQuery.path || '/account/create/confirmation',
-			query: pathQuery.query,
+			pathname: options.pathQuery.path || '/account/profile',
+			query: options.pathQuery.query,
 		};
-		const form = userStore.get('billingForm');
 
-		form.errors = [];
-		form.inError = {};
-		form.loading = true;
-		const cleanPatch = userStore.set('billingForm', form).commit();
+		addBillingAddress(options)
+		.then(() => {
+			hashHistory.push(toPath);
+		});
+	},
+	'/add-card-and-billing': (options) => {
+		const toPath = {
+			pathname: '/account/create/confirmation',
+		};
 
-		localServer.dispatchUpdate('/userStore', cleanPatch);
-
-		if (!buyerName || !address.building_number || !address.street_name || !address.city || !address.postal_code || !address.country) {
-			form.errors.push('These fields are required');
-			eorm.inError = {
-				buyerName: !buyerName,
-				buildingNumber: !address.building_number,
-				streetName: !address.street_name,
-				city: !address.city,
-				postalCode: !address.postal_code,
-				country: !address.country,
-			};
-			form.loading = false;
-			const patch = userStore.set('billingForm', form).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-
-		HoodieApi.updateCustomer({
-			invoice_address: address,
-			buyer_name: buyerName,
+		addCard(options)
+		.then(() => {
+			return addBillingAddress(options)
 		})
 		.then(() => {
-			const infos = userStore.get('infos');
-
-			infos.address = address;
-			infos.buyerName = buyerName;
-			form.loading = false;
-			const patch = userStore.set('infos', infos).set('billingForm', form).commit();
-
-
 			hashHistory.push(toPath);
-
-			localServer.dispatchUpdate('/userStore', patch);
-		})
-		.catch((err) => {
-			form.errors.push(err.message);
-			form.loading = false;
-
-			const patch = userStore.set('billingForm', form).commit();
-			localServer.dispatchUpdate('/userStore', patch);
 		});
 	},
 	'/confirm-buy': ({plan, currency, coupon}) => {

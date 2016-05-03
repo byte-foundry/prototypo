@@ -4,18 +4,24 @@ var webpack = require('webpack');
 module.exports = {
 	cache: true,
 	'if-loader': 'prod',
-	entry: [
-		'babel-polyfill',
-		'./app/scripts/main'
-	],
+	entry: {
+		bundle: [
+			'babel-polyfill',
+			'./app/scripts/main'
+		],
+		'web-import': [
+			'babel-polyfill',
+			'./app/scripts/web-import.js'
+		]
+	},
 	output: {
 		path: path.join(__dirname, 'dist'),
 		publicPath: '',
-		filename: 'bundle.js'
+		filename: '[name].js'
 	},
 	module: {
 		loaders: [
-			{ 
+			{
 				test: /\.jsx?$/,
 				loaders: ['transform/cacheable?envify', 'babel-loader?cacheDirectory', 'prelude-loader', 'if-loader'],
 				include: [
@@ -38,7 +44,7 @@ module.exports = {
 				loaders: ['file'],
 			},
 		],
-		noParse:/(levelup)/
+		noParse:/(levelup|dist\/prototypo-canvas)/
 	},
 	externals: [{
 		'./node/window': true,
@@ -48,8 +54,7 @@ module.exports = {
 	plugins: [
 		new webpack.DefinePlugin({
 			'process.env.NODE_ENV': "'production'",
-		}), 
-		new webpack.optimize.UglifyJsPlugin(),
+		}),
 		new webpack.optimize.OccurenceOrderPlugin(),
 		new webpack.optimize.DedupePlugin(),
 	],

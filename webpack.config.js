@@ -5,16 +5,24 @@ module.exports = {
 	cache: true,
 	devtool: 'source-map',
 	'if-loader': 'prod',
-	entry: [
-		'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
-		'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
-		'babel-polyfill',
-		'./app/scripts/main',
-	],
+	entry: {
+		bundle: [
+			'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
+			'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
+			'babel-polyfill',
+			'./app/scripts/main',
+		],
+		'web-import': [
+			'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
+			'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
+			'babel-polyfill',
+			'./app/scripts/web-import.js',
+		],
+	},
 	output: {
 		path: path.join(__dirname, 'dist'),
 		publicPath: '',
-		filename: 'bundle.js',
+		filename: '[name].js',
 	},
 	module: {
 		loaders: [

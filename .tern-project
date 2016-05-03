@@ -1,0 +1,9 @@
+{
+	"libs": [
+		"browser",
+		"ecma6"
+	],
+	"plugins": {
+		"es_modules": {}
+	}
+}

@@ -60,7 +60,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 		return (
 			<div className="account-base subscription-choose-plan">
 				<div className="subscription-title">
-					Until April the 3rd benefit from a 30% discount on your first month or year!
+					Get 2 months free by choosing annual billing!
 				</div>
 				<div className="subscription-choose-plan-plans">
 					<SubscriptionPlan plan={planMonthly} selected={this.state.selected}/>
