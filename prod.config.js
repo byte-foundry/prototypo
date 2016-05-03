@@ -21,7 +21,7 @@ module.exports = {
 	},
 	module: {
 		loaders: [
-			{ 
+			{
 				test: /\.jsx?$/,
 				loaders: ['transform/cacheable?envify', 'babel-loader?cacheDirectory', 'prelude-loader', 'if-loader'],
 				include: [
@@ -54,8 +54,7 @@ module.exports = {
 	plugins: [
 		new webpack.DefinePlugin({
 			'process.env.NODE_ENV': "'production'",
-		}), 
-		new webpack.optimize.UglifyJsPlugin(),
+		}),
 		new webpack.optimize.OccurenceOrderPlugin(),
 		new webpack.optimize.DedupePlugin(),
 	],
