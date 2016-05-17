@@ -24,11 +24,13 @@ export default class FontControls extends React.Component {
 		const fontControls = await this.client.fetch('/fontControls');
 		const fontParameters = await this.client.fetch('/fontParameters');
 		const fontVariant = await this.client.fetch('/fontVariant');
-		const typeface = fontVariant.get('variant') || {};
+		this.setState({
+			typeface: fontVariant.get('variant') || {},
+		})
 
 		const debouncedSave = _.debounce((values) => {
 			FontValues.save({
-				typeface: typeface.db || 'default',
+				typeface: this.state.typeface.db || 'default',
 				values,
 			});
 		}, 300);
@@ -153,6 +155,16 @@ export default class FontControls extends React.Component {
 
 				this.setState({
 					parameters: headJS.parameters,
+				});
+			})
+			.onDelete(() => {this.setState(undefined);});
+
+		this.client.getStore('/fontVariant', this.lifespan)
+			.onUpdate(({head}) => {
+				const headJS = head.toJS();
+
+				this.setState({
+					typeface: head.toJS().variant,
 				});
 			})
 			.onDelete(() => {this.setState(undefined);});
