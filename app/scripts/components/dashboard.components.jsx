@@ -4,7 +4,8 @@ import Lifespan from 'lifespan';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-import Sidebar from './sidebar.components.jsx';
+import Topbar from './topbar.components.jsx';
+import Toolbar from './toolbar/toolbar.components.jsx';
 import Workboard from './workboard.components.jsx';
 import {OnBoarding, OnBoardingStep} from './onboarding.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
@@ -151,7 +152,8 @@ export default class Dashboard extends React.Component {
 
 		return (
 			<div id="dashboard">
-				<Sidebar />
+				<Topbar />
+				<Toolbar />
 				<Workboard />
 				{onboarding}
 			</div>

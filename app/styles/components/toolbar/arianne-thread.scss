@@ -1,0 +1,76 @@
+@import "../../variables";
+
+.arianne-thread {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	height:35px;
+}
+
+.arianne-item {
+	display:flex;
+	height:35px;
+	flex:1;
+	align-items: center;
+	position:relative;
+	margin-left: -30px;
+
+	&.is-small {
+		margin-left:0px;
+	}
+
+	&-action {
+		flex:1;
+		height:35px;
+		padding-left: 45px;
+		display:flex;
+		align-items: center;
+		padding-right: 20px;
+
+		&.is-small {
+			padding: 0;
+		}
+
+		&-drop {
+			height:7px;
+		}
+
+		&-plus {
+			height:15px;
+		}
+
+		&-collection {
+			height: 18px;
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+
+		&-img {
+			padding-left:40px;
+		}
+	}
+
+	&:hover &-action, &:hover &-arrow:after {
+		background: $green;
+	}
+
+	&-arrow {
+		width: 30px;
+		height: 35px;
+		position: relative;
+		overflow: hidden;
+		z-index:2;
+
+		&:after {
+			background: $dark-grey;
+			content: "";
+			width: 35px;
+			height: 35px;
+			box-shadow: 4px -4px 11px 5px rgba(48,48,48, 0.7);
+			position: absolute;
+			top: 0;
+			left: -17px;
+			transform: rotateY(60deg)rotateZ(45deg);
+		}
+	}
+}

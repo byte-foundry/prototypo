@@ -6,7 +6,7 @@ before_install:
 - npm install -g uglifyjs
 after_install:
 - npm dedupe
-script: 
+script:
 - gulp build --type=prod
 - 'surge --project ./dist --domain test.prototypo.io'
 after_success:
@@ -14,8 +14,10 @@ after_success:
 - '[ $TRAVIS_BRANCH == master ] && surge --project ./dist --domain app.prototypo.io'
 - '[ $TRAVIS_BRANCH == release ] && surge --project ./dist --domain beta.prototypo.io'
 - '[ $TRAVIS_BRANCH == develop ] && surge --project ./dist --domain dev.prototypo.io'
+- '[ $TRAVIS_BRANCH == feat/new-ux ] && surge --project ./dist --domain sandbox1.prototypo.io'
 branches:
   only:
     - master
     - develop
     - release
+	- feat/new-ux

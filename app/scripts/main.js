@@ -64,6 +64,8 @@ import '../styles/components/shared/form-error.scss';
 import '../styles/components/shared/form-success.scss';
 import '../styles/components/shared/select-override.scss';
 import '../styles/components/shared/invoice.scss';
+import '../styles/components/toolbar/toolbar.scss';
+import '../styles/components/toolbar/arianne-thread.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';

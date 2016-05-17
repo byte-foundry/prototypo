@@ -1,9 +1,11 @@
 import React from 'react';
-import Topbar from './topbar.components.jsx';
+import Lifespan from 'lifespan';
+
+import LocalClient from '../stores/local-client.stores.jsx';
+
 import GlyphPanel from './glyph-panel.components.jsx';
 import PrototypoPanel from './prototypo-panel.components.jsx';
-import Lifespan from 'lifespan';
-import LocalClient from '../stores/local-client.stores.jsx';
+import FontControls from './font-controls.components.jsx';
 
 export default class Workboard extends React.Component {
 
@@ -42,7 +44,7 @@ export default class Workboard extends React.Component {
 		}
 		return (
 			<div id="workboard">
-				<Topbar />
+				<FontControls />
 				<PrototypoPanel fontName={this.state.fontName} glyphs={this.state.glyphs}/>
 				<GlyphPanel />
 			</div>

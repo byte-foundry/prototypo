@@ -1,0 +1,10 @@
+@import "../../variables";
+
+.toolbar {
+	height:35px;
+	background:$dark-grey;
+	text-transform: uppercase;
+	color: $white;
+	display:flex;
+	flex-flow: row nowrap;
+}
