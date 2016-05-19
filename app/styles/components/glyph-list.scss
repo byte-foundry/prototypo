@@ -23,9 +23,11 @@
 		}
 
 		&:hover {
-			background-color:$green;
-			color: $white;
-			border-top-color: $green;
+			@include themify() {
+				background-color: $theme-background;
+				border-top-color: $theme-background;
+				color: $theme-color;
+			}
 		}
 	}
 
@@ -73,8 +75,10 @@
 	cursor:pointer;
 
 	&:hover {
-		background-color:$green;
-		color: $white;
+		@include themify() {
+			background-color: $theme-background;
+			color: $theme-color;
+		}
 	}
 
 	&.is-active {
@@ -226,8 +230,10 @@
 			&.has-alts .glyph-list-glyph-top-indicator {
 				border-color: transparent $white transparent transparent;
 			}
-			background-color:$green;
-			color:$white;
+			@include themify() {
+				background-color: $theme-background;
+				color:$theme-color;
+			}
 		}
 
 		&-right-indicator, &-left-indicator {
@@ -270,8 +276,11 @@
 
 .export-btn {
 	border: 2px solid $green;
+	@include themify() {
+		border-color: $theme-background;
+		color: $theme-background;
+	}
 	padding: 0 10px;
-	color: $green;
 	border-radius: 4px;
 	font-size: 12px;
 	background-color: $white;

@@ -92,14 +92,18 @@
 			}
 
 			&-submit {
-				background-color: $green;
-				border: solid 2px $green;
+				@include themify() {
+					background-color: $theme-background;
+					border: solid 2px $theme-background;
+				}
 				color: $white;
 				border-radius: 4px;
 				padding: 7px;
 
 				&:hover {
-					color:$green;
+					@include themify() {
+						color: $theme-background;
+					}
 					background-color:$white;
 				}
 			}

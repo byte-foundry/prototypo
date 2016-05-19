@@ -1,11 +1,13 @@
 import React from 'react';
 import Lifespan from 'lifespan';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import GlyphPanel from './glyph-panel.components.jsx';
 import PrototypoPanel from './prototypo-panel.components.jsx';
 import FontControls from './font-controls.components.jsx';
+import LoadingOverlay from './shared/loading-overlay.components.jsx';
 
 export default class Workboard extends React.Component {
 
@@ -32,6 +34,14 @@ export default class Workboard extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		this.client.getStore('/uiStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({fontLoading: head.toJS().fontLoading});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 	}
 
 	componentWillUnmount() {
@@ -42,8 +52,16 @@ export default class Workboard extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Workboard');
 		}
+
+		const loadingOverlay = this.state.fontLoading
+			? <LoadingOverlay />
+			: false;
+
 		return (
 			<div id="workboard">
+				<ReactCSSTransitionGroup transitionName="loading-overlay" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+					{loadingOverlay}
+				</ReactCSSTransitionGroup>
 				<FontControls />
 				<PrototypoPanel fontName={this.state.fontName} glyphs={this.state.glyphs}/>
 				<GlyphPanel />

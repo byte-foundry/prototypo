@@ -1,12 +1,13 @@
 import XXHash from 'xxhashjs';
 import slug from 'slug';
 
-import {fontStore, fontVariant, fontLibrary} from '../stores/creation.stores.jsx';
+import {fontStore, fontVariant, fontLibrary, uiStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {Typefaces} from '../services/typefaces.services.js';
 import {copyFontValues, loadFontValues, saveAppValues} from '../helpers/loadValues.helpers.js';
 import {FontValues} from '../services/values.services.js';
+import {delayAfterCall} from '../helpers/animation.helpers.js';
 
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
@@ -39,6 +40,18 @@ export default {
 	'/change-font': async ({templateToLoad, db}) => {
 		const typedataJSON = await Typefaces.getFont(templateToLoad);
 		const typedata = JSON.parse(typedataJSON);
+
+		await delayAfterCall(() => {
+			const patchUi = uiStore.set('fontLoading', true).commit();
+			localServer.dispatchUpdate('/uiStore', patchUi);
+		}, 400);
+
+		fontInstance.on('worker.fontLoaded', () => {
+			setTimeout(() => {
+				const patchUiEnd = uiStore.set('fontLoading', false).commit();
+				localServer.dispatchUpdate('/uiStore', patchUiEnd);
+			}, 1000);
+		});
 
 		try {
 			await fontInstance.loadFont(typedata.fontinfo.familyName, typedataJSON, db);
@@ -73,6 +86,7 @@ export default {
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 
 		loadFontValues(typedata, db);
+
 	},
 	'/create-family': async ({name, template, loadCurrent}) => {
 		let templateToLoad = template;
@@ -154,6 +168,9 @@ export default {
 		saveAppValues();
 	},
 	'/select-variant': ({variant, family}) => {
+		if (!variant) {
+			variant = family.variants[0];
+		}
 		localClient.dispatchAction('/cancel-indiv-mode');
 		const patchVariant = fontVariant
 			.set('variant', variant)

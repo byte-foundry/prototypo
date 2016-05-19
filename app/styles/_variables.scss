@@ -53,3 +53,50 @@ $parammenu-h: 8rem;
  ----------------------------------------------------------------- */
 
 $glyphlist-h: 5.5rem;
+
+/* states
+-------------------------------------------------------------------*/
+$states: (
+	normal: (background: $green, color: $white),
+	indiv: (background: $yellow, color: $dark-grey),
+);
+
+@function map-fetch($map, $keys) {
+	$key: nth($keys, 1);
+	$length: length($keys);
+	$value: map-get($map, $key);
+
+	@if $value != null {
+		@if $length > 1 {
+			$rest: ();
+
+			@for $i from 2 through $length {
+				$rest: append($rest, nth($keys, $i))
+			}
+
+			@return map-fetch($value, $rest);
+
+		} @else {
+			@return $value;
+		}
+	} @else {
+		@return false;
+	}
+}
+
+@mixin themify ($states: $states) {
+	@each $theme, $map in $states {
+		.#{$theme} &  {
+		// Define theme color
+			$theme-background: map-fetch($states, $theme "background") !global;
+			$theme-color: map-fetch($states, $theme "color") !global;
+			// ... other vars to use
+			transition: background-color 500ms ease, color 500ms ease, border-color 500ms ease;
+
+			@content;
+
+			// Reset theme color to null
+			$theme-color: null !global;
+		}
+	}
+}

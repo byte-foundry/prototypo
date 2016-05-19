@@ -1,6 +1,7 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
+import ClassNames from 'classnames';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -36,11 +37,20 @@ export default class Dashboard extends React.Component {
 					step: undefined,
 				});
 			});
+
+		this.client.getStore('/individualizeStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({indiv: head.toJS().indivMode});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 	}
 
 	shouldComponentUpdate(newProps, newState) {
 		return (
 			newState.onboard !== this.state.onboard
+			|| newState.indiv !== this.state.indiv
 			|| (!newState.onboard && newState.step !== this.state.step)
 		);
 	}
@@ -150,8 +160,13 @@ export default class Dashboard extends React.Component {
 				</OnBoarding>
 		) : false;
 
+		const classes = ClassNames({
+			'indiv': this.state.indiv,
+			'normal': !this.state.indiv,
+		});
+
 		return (
-			<div id="dashboard">
+			<div id="dashboard" className={classes}>
 				<Topbar />
 				<Toolbar />
 				<Workboard />

@@ -1,7 +1,8 @@
 import React from 'react';
-import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import Classnames from 'classnames';
+
+import LocalClient from '../../stores/local-client.stores.jsx';
 
 export default class IndividualizeButton extends React.Component {
 	constructor(props) {
@@ -36,14 +37,17 @@ export default class IndividualizeButton extends React.Component {
 	render() {
 
 		const buttonClass = Classnames({
-			'individualize-button': true,
+			'individualize-button-switch': true,
 			'is-active': this.state.individualize,
 		});
 
 		return (
-			<div className={buttonClass} onClick={() => { this.individualize(); }} >
-				<div className="individualize-button-toggle" title="Individualize parameters"></div>
-				<div className="individualize-button-label"></div>
+			<div className="individualize-button" onClick={() => { this.individualize(); }} >
+				<div className="individualize-button-label">All glyphs</div>
+				<div className={buttonClass} onClick={() => { this.individualize(); }} >
+					<div className="individualize-button-switch-toggle" title="Individualize parameters"></div>
+				</div>
+				<div className="individualize-button-label">Groups of glyphs</div>
 			</div>
 		);
 	}

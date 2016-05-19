@@ -43,7 +43,9 @@
 				overflow: hidden;
 
 				width: 40px;
-				background-color: $green;
+				@include themify() {
+					background-color: $theme-background;
+				}
 				background-image: url('../../images/add-feature.svg');
 				background-position: center;
 				background-repeat: no-repeat;
@@ -131,18 +133,11 @@
 
 		&-bg {
 			height: 1.9rem;
-			background-color: $green;
-			transition: background-color 500ms ease;
+			@include themify() {
+				background-color: $theme-background;
+			}
 
 			&.is-not-advised {
-				background-color:$red;
-			}
-
-			&.is-indiv {
-				background-color:$yellow;
-			}
-
-			&.is-not-advised.is-indiv {
 				background-color:$red;
 			}
 		}
@@ -159,9 +154,10 @@
 			float: right;
 			width: 1.9rem;
 			height: 1.9rem;
-			border: 0.5rem solid $green;
+			@include themify() {
+				border:solid 0.5rem $theme-background;
+			}
 			background-color: #555555;
-			transition: border-color 500ms ease;
 		}
 	}
 

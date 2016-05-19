@@ -131,6 +131,9 @@ const userStore = new Remutable({
 	},
 });
 
+const uiStore = new Remutable({
+});
+
 const stores = {
 	'/debugStore': debugStore,
 	'/eventBackLog': eventBackLog,
@@ -153,6 +156,7 @@ const stores = {
 	'/searchStore': searchStore,
 	'/userStore': userStore,
 	'/glyphSelect': glyphSelect,
+	'/uiStore': uiStore,
 	/* #if debug */
 	logStore,
 	/* #end */
@@ -181,6 +185,7 @@ export {
 	searchStore,
 	userStore,
 	glyphSelect,
+	uiStore,
 	/* #if debug */
 	logStore,
 	/* #end */

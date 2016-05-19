@@ -59,7 +59,10 @@
 	}
 
 	&:hover &-action, &:hover &-arrow:after {
-		background: $green;
+		@include themify() {
+			background-color: $theme-background;
+			color: $theme-color;
+		}
 	}
 
 	&-arrow {
@@ -94,7 +97,7 @@
 	list-style-type: none;
 	margin-left: 4px;
 	z-index: 1;
-	box-shadow: 4px 3px 7px 1px rgba(0,0,0, 0.2);
+	box-shadow: 4px 6px 7px 1px rgba(0,0,0, 0.2);
 	overflow: hidden;
 	width: 250px;
 	background: $white;
@@ -108,7 +111,9 @@
 		content: "";
 		height: 100%;
 		width: 4px;
-		background: $green;
+		@include themify() {
+			background-color: $theme-background;
+		}
 		left: 0;
 	}
 
@@ -130,7 +135,10 @@
 		transition: background .2s ease;
 
 		&:hover {
-			background: $green;
+			@include themify() {
+				background-color: $theme-background;
+				color: $theme-color;
+			}
 		}
 	}
 }
