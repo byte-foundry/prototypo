@@ -44,9 +44,22 @@
 			}
 		}
 
+		&-icon {
+			width: 35px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 35px;
+
+			&-img {
+				width:25px;
+			}
+		}
+
 		&.is-icon-menu {
-			padding:0 10px;
-			min-width: 25px;
+			padding:0;
+			min-width: 35px;
+			background: $white;
 			// span {
 			// 	float: left;
 			// 	padding: 5px 0 0 10px;

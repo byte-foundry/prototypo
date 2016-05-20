@@ -160,10 +160,22 @@ class TopBarMenuDropdownCheckBox extends React.Component {
 	}
 }
 
+class TopBarMenuIcon extends React.Component {
+
+	static getHeader(props) {
+		return <div className="top-bar-menu-item-icon"><img className="top-bar-menu-item-icon-img" src={props.img} /></div>;
+	}
+
+	render() {
+		return false;
+	}
+}
+
 export {
 	TopBarMenu,
 	TopBarMenuDropdown,
 	TopBarMenuDropdownItem,
 	TopBarMenuDropdownCheckBox,
 	TopBarMenuAction,
+	TopBarMenuIcon,
 };

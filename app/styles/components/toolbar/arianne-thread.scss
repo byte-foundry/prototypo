@@ -49,8 +49,8 @@
 
 		&-collection {
 			height: 18px;
-			padding-left: 10px;
-			padding-right: 10px;
+			padding-left: 8px;
+			padding-right: 8px;
 		}
 
 		&-img {
@@ -82,7 +82,7 @@
 			position: absolute;
 			top: 0;
 			left: -17px;
-			transform: rotateY(60deg)rotateZ(45deg);
+			transform: rotateY(72deg)rotateZ(45deg);
 		}
 	}
 }
@@ -95,7 +95,7 @@
 	padding: 0;
 	margin: 0;
 	list-style-type: none;
-	margin-left: 4px;
+	margin-left: 2px;
 	z-index: 1;
 	box-shadow: 4px 6px 7px 1px rgba(0,0,0, 0.2);
 	overflow: hidden;
@@ -119,8 +119,8 @@
 
 	&:after {
 		position: absolute;
-		top: -5px;
-		left: -10px;
+		top: -3px;
+		left: -13px;
 		content: "";
 		box-shadow: 4px -4px 5px 5px rgba(48, 48, 48, 0.7);
 		width: 5px;

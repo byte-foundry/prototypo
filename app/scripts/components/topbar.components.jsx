@@ -6,7 +6,14 @@ import HoodieApi from '../services/hoodie.services.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-import {TopBarMenu, TopBarMenuDropdown, TopBarMenuDropdownItem, TopBarMenuDropdownCheckBox, TopBarMenuAction} from './top-bar-menu.components.jsx';
+import {
+	TopBarMenu,
+	TopBarMenuDropdown,
+	TopBarMenuDropdownItem,
+	TopBarMenuDropdownCheckBox,
+	TopBarMenuAction,
+	TopBarMenuIcon,
+} from './top-bar-menu.components.jsx';
 
 export default class Topbar extends React.Component {
 
@@ -146,6 +153,7 @@ export default class Topbar extends React.Component {
 		return (
 			<div id="topbar">
 				<TopBarMenu>
+					<TopBarMenuIcon className="side-tabs-icon-headers" img="assets/images/prototypo-icon.svg"/>
 					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
 						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto();}} separator={true}/>
 						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
