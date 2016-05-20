@@ -87,7 +87,7 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 				const patch = userStore.set('infos', infos).set('addcardForm', form).commit();
 
 				localServer.dispatchUpdate('/userSotre', patch);
-				
+
 				resolve();
 			})
 			.catch((err) => {
@@ -345,6 +345,7 @@ export default {
 				const endPatch = userStore.set('signupForm', form).commit();
 
 				HoodieApi.instance.plan = 'free_none';
+				HoodieApi.instance.email = username;
 				hashHistory.push(toLocation);
 				return localServer.dispatchUpdate('/userStore', endPatch);
 			})
