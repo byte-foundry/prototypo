@@ -16,14 +16,18 @@ export async function setupFontInstance(appValues) {
 			workerUrl = '/prototypo-canvas/src/worker.js';
 			//}
 
-		const fontPromise = PrototypoCanvas.init({
-			canvas: window.canvasElement,
-			workerUrl,
-			workerDeps,
-			jQueryListeners: false,
-		});
+		if (!window.fontInstance) {
+			const fontPromise = PrototypoCanvas.init({
+				canvas: window.canvasElement,
+				workerUrl,
+				workerDeps,
+				jQueryListeners: false,
+			});
 
-		const font = window.fontInstance = await fontPromise;
+			window.fontInstance = await fontPromise;
+		}
+		const font = window.fontInstance;
+
 		const subset = appValues.values.text + appValues.values.word;
 
 		await font.loadFont(typedata.fontinfo.familyName, typedataJSON, appValues.values.variantSelected.db);

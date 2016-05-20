@@ -345,6 +345,7 @@ export default {
 				const endPatch = userStore.set('signupForm', form).commit();
 
 				HoodieApi.instance.plan = 'free_none';
+				HoodieApi.instance.email = username;
 				hashHistory.push(toLocation);
 				return localServer.dispatchUpdate('/userStore', endPatch);
 			})
