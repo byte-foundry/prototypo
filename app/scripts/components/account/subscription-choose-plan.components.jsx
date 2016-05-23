@@ -48,11 +48,11 @@ export default class SubscriptionChoosePlan extends React.Component {
 		};
 
 		const planYearly = {
-			id: 'personal_annual',
+			id: 'personal_annual_99',
 			name: 'Yearly billing',
-			amount: '144',
+			amount: '99',
 			period: '/year',
-			info: 'Pay once for a whole year!',
+			info: '5 free months compared to monthly billing!',
 		};
 
 		const error = this.state.error ? <FormError errorText={this.state.error}/> : false;
