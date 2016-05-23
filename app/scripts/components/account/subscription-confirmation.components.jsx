@@ -53,11 +53,11 @@ export default class SubscriptionConfirmation extends React.Component {
 				USD: '$15.00',
 				EUR: '15.00€',
 			},
-			'personal_annual': {
+			'personal_annual_99': {
 				name: 'Professional annual subscription',
 				period: 'year',
-				USD: '$144.00',
-				EUR: '144.00€',
+				USD: '$99.00',
+				EUR: '99.00€',
 			},
 		};
 

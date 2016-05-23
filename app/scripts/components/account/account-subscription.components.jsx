@@ -85,7 +85,7 @@ export default class AccountSubscription extends React.Component {
 				name: 'Professional monthly subscription',
 				price: 15.00,
 			},
-			'annual_monthly': {
+			'personal_annual_99': {
 				name: 'Professional annual subscription',
 				price: 144.00,
 			},
