@@ -53,7 +53,7 @@ export default class AccountChangePlan extends React.Component {
 		const optionPossible = [
 			{value: 'free_monthly', label: 'Free plan'},
 			{value: 'personal_monthly', label: 'Professional monthly subscription'},
-			{value: 'personal_annual', label: 'Professional annual subscription'},
+			{value: 'personal_annual_99', label: 'Professional annual subscription'},
 		];
 
 		const options = _.reject(optionPossible, (option) => {
