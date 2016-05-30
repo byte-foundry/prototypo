@@ -24,7 +24,9 @@ export default class ExportAs extends React.Component {
 
 	render() {
 		return (
-			<div className="export-as">
+			<div className="export-as" onClick={() => {
+				this.client.dispatchAction('/set-up-export-otf', {exportAs: false});
+			}}>
 				<Modal ref="modal" click={this.exportAs.bind(this)}/>
 			</div>
 		);
@@ -40,7 +42,9 @@ class Modal extends React.Component {
 	}
 	render() {
 		return (
-			<div className="export-as-modal">
+			<div className="export-as-modal" onClick={(e) => {
+				e.stopPropagation();
+			}}>
 				<h1 className="export-as-modal-title">Export font as...</h1>
 				<div className="export-as-modal-content">
 					<InputWithLabel label="Family name" ref="family"/>
