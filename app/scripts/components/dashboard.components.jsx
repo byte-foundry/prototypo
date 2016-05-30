@@ -7,6 +7,7 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import Sidebar from './sidebar.components.jsx';
 import Workboard from './workboard.components.jsx';
 import {OnBoarding, OnBoardingStep} from './onboarding.components.jsx';
+import ExportAs from './export-as.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
 
 export default class Dashboard extends React.Component {
@@ -35,11 +36,22 @@ export default class Dashboard extends React.Component {
 					step: undefined,
 				});
 			});
+
+		this.client.getStore('/exportStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					exportAs: head.toJS().exportAs,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 	}
 
 	shouldComponentUpdate(newProps, newState) {
 		return (
-			newState.onboard !== this.state.onboard
+			newState.exportAs !== this.state.exportAs
+			|| newState.onboard !== this.state.onboard
 			|| (!newState.onboard && newState.step !== this.state.step)
 		);
 	}
@@ -149,11 +161,16 @@ export default class Dashboard extends React.Component {
 				</OnBoarding>
 		) : false;
 
+		const exportAs = this.state.exportAs
+			? <ExportAs />
+			: false;
+
 		return (
 			<div id="dashboard">
 				<Sidebar />
 				<Workboard />
 				{onboarding}
+				{exportAs}
 			</div>
 		);
 	}

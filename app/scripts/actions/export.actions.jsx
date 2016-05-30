@@ -19,11 +19,20 @@ export default {
 
 		localServer.dispatchUpdate('/exportStore', patch);
 	},
-	'/export-otf': ({merged}) => {
+	'/export-otf': ({merged, familyName = 'font', variantName = 'regular', exportAs}) => {
 		localClient.dispatchAction('/exporting', {exporting: true});
 
-		const family = fontVariant.get('family').name ? fontVariant.get('family').name.replace(/\s/g, '-') : 'font';
-		const style = fontVariant.get('variant').name ? fontVariant.get('variant').name.replace(/\s/g, '-') : 'regular';
+		let family;
+		let style;
+
+		if (exportAs) {
+			family = familyName;
+			style = variantName;
+		}
+		else {
+			family = fontVariant.get('family').name ? fontVariant.get('family').name.replace(/\s/g, '-') : familyName;
+			style = fontVariant.get('variant').name ? fontVariant.get('variant').name.replace(/\s/g, '-') : variantName;
+		}
 
 		const name = {
 			family,
@@ -40,6 +49,11 @@ export default {
 			window.Intercom('trackEvent', 'export-otf');
 			clearTimeout(exportingError);
 		}, name, merged, undefined, HoodieApi.instance.email);
+	},
+	'/set-up-export-otf': ({merged, exportAs = true}) => {
+		const patch = exportStore.set('exportAs', exportAs).set('mergedExportAs', merged).commit();
+
+		localServer.dispatchUpdate('/exportStore', patch);
 	},
 	'/export-family': async ({familyToExport, variants}) => {
 		const oldVariant = fontVariant.get('variant');
