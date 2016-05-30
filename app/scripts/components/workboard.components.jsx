@@ -1,9 +1,11 @@
 import React from 'react';
+import Lifespan from 'lifespan';
+
+import LocalClient from '../stores/local-client.stores.jsx';
+
 import Topbar from './topbar.components.jsx';
 import GlyphPanel from './glyph-panel.components.jsx';
 import PrototypoPanel from './prototypo-panel.components.jsx';
-import Lifespan from 'lifespan';
-import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class Workboard extends React.Component {
 
@@ -40,6 +42,7 @@ export default class Workboard extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Workboard');
 		}
+
 		return (
 			<div id="workboard">
 				<Topbar />

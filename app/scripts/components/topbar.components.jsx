@@ -52,6 +52,11 @@ export default class Topbar extends React.Component {
 		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
 	}
 
+	setupExportAs(merged) {
+		this.client.dispatchAction('/set-up-export-otf', {merged});
+		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
+	}
+
 	exportGlyphr() {
 		fontInstance.openInGlyphr();
 		Log.ui('Topbar.exportGlyphr');
@@ -150,6 +155,7 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto();}} separator={true}/>
 						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
 						<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true);}}/>
+						<TopBarMenuDropdownItem name="Export to merged OTF as..." handler={() => {this.setupExportAs(true);}}/>
 						<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false);}}/>
 						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr} separator={true}/>
 						<TopBarMenuDropdownItem name="Download Web Preview extension" separator={true} handler={() => { window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf','_blank'); }}/>

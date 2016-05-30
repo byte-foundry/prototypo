@@ -11,6 +11,7 @@ import '../styles/components/warning-message.scss';
 import '../styles/components/undo-redo-menu.scss';
 import '../styles/components/replay-playlist.scss';
 import '../styles/components/create-param-group.scss';
+import '../styles/components/export-as.scss';
 import '../styles/components/nps-message.scss';
 import '../styles/components/top-bar-menu.scss';
 import '../styles/components/side-tabs.scss';
