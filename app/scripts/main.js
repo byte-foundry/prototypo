@@ -67,6 +67,8 @@ import '../styles/components/shared/invoice.scss';
 import '../styles/components/shared/loading-overlay.scss';
 import '../styles/components/toolbar/toolbar.scss';
 import '../styles/components/toolbar/arianne-thread.scss';
+import '../styles/components/toolbar/view-buttons.scss';
+import '../styles/components/collection/collection.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';

@@ -1,0 +1,38 @@
+@import "../../variables";
+
+.collection {
+    position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background: $green;
+	z-index: 11;
+	display:flex;
+	justify-content:center;
+
+	&#{&}-enter {
+		top: -100%;
+		&-active {
+			top: 0%;
+			transition: top .2s ease-out;
+		}
+	}
+
+	&#{&}-leave {
+		top: 0%;
+		&-active {
+			top: -100%;
+			transition: top .2s ease-out;
+		}
+	}
+
+	&-container {
+		position:relative;
+		border-radius: 4px;
+		flex:0 0 80%;
+		padding: 10px;
+		margin: 90px;
+		background:$white;
+	}
+}

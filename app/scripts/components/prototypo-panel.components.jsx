@@ -56,7 +56,7 @@ export default class PrototypoPanel extends React.Component {
 	resetView({x, y}) {
 		this.client.dispatchAction('/store-panel-param', {
 			pos: new prototypo.paper.Point(x, y),
-			zoom: 0.5,
+			zoom: 0.5 / window.devicePixelRatio,
 		});
 	}
 

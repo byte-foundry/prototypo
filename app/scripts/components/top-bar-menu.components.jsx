@@ -67,9 +67,10 @@ class TopBarMenuAction extends React.Component {
 			'is-active': props.active,
 		});
 
-		if ( props.img ) {
-			return <div className={classes} title={`Toggle ` + props.name + ` view`} onClick={(e) => {props.click(e);}}><img src={`assets/images/`+ props.img} /></div>;
-		} else {
+		if (props.img) {
+			return <div className={classes} title={`Toggle ${props.name} view`} onClick={(e) => {props.click(e);}}><img src={`assets/images/${props.img}`} /></div>;
+		}
+		else {
 			return <div className={classes} onClick={(e) => {props.click(e);}}>{props.name}</div>;
 		}
 	}

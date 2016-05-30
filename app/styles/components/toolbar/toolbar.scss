@@ -11,4 +11,11 @@
 	z-index:10;
 	justify-content: space-between;
 	align-items: center;
+
+	&-right {
+		display:flex;
+		flex-flow: row nowrap;
+		align-items: center;
+		height:100%;
+	}
 }

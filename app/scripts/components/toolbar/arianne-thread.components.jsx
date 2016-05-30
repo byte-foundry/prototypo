@@ -62,6 +62,16 @@ export default class ArianneThread extends React.Component {
 		this.client.dispatchAction('/select-variant', {variant: undefined, family});
 	}
 
+	addFamily() {
+	}
+
+	addVariant() {
+	}
+
+	showCollection() {
+		this.client.dispatchAction('/store-panel-param', {showCollection: true});
+	}
+
 	render() {
 		const variantFamily = _.find(this.state.families, (family) => {
 			return family.name === this.state.selection.family.name;
@@ -71,18 +81,23 @@ export default class ArianneThread extends React.Component {
 			? variantFamily.variants
 			: [];
 
+		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily.bind(this)}/>
+		const addVariant = <ArianneDropMenuItem item={{name: 'Add new variant...'}} click={this.addVariant.bind(this)}/>
+
 		return (
 			<div className="arianne-thread">
-				<RootArianneItem />
+				<RootArianneItem click={this.showCollection.bind(this)}/>
 				<DropArianneItem
 					label={this.state.selection.family.name}
 					list={this.state.families}
+					add={addFamily}
 					click={this.selectFamily.bind(this)}/>
 				<DropArianneItem
 					label={this.state.selection.variant.name}
 					family={this.state.selection.family}
 					variant={this.state.selection.variant}
 					list={variants}
+					add={addVariant}
 					click={this.selectVariant.bind(this)}/>
 				<ActionArianneItem label="group" img="assets/images/arianne-plus.svg"/>
 			</div>
@@ -93,7 +108,7 @@ export default class ArianneThread extends React.Component {
 class RootArianneItem extends React.Component {
 	render() {
 		return (
-			<div className="arianne-item is-small">
+			<div className="arianne-item is-small" onClick={this.props.click}>
 				<div className="arianne-item-action is-small">
 					<img className="arianne-item-action-collection" src="assets/images/collection.svg"/>
 				</div>
@@ -117,6 +132,7 @@ class DropArianneItem extends React.Component {
 					list={this.props.list}
 					click={this.props.click}
 					family={this.props.family}
+					add={this.props.add}
 				/>
 			</div>
 		);
@@ -132,6 +148,7 @@ class ArianneDropMenu extends React.Component {
 		return (
 			<ul className="arianne-drop-menu">
 				{items}
+				{this.props.add}
 			</ul>
 		);
 	}

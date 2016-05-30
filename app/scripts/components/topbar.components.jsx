@@ -192,11 +192,6 @@ export default class Topbar extends React.Component {
 					{errorExporting}
 
 					<TopBarMenuAction name="Glyphs list" click={() => { this.toggleView('list'); }} alignRight={true} action={true}></TopBarMenuAction>
-
-					<TopBarMenuAction name="text" click={() => { this.toggleView('text'); }} active={this.state.panel.mode.indexOf('text') !== -1} img="view-text.svg" alignRight={true} small={true}></TopBarMenuAction>
-					<TopBarMenuAction name="word" click={() => { this.toggleView('word'); }} active={this.state.panel.mode.indexOf('word') !== -1} img="view-word.svg" alignRight={true} small={true}></TopBarMenuAction>
-					<TopBarMenuAction name="glyph" click={() => { this.toggleView('glyph'); }} active={this.state.panel.mode.indexOf('glyph') !== -1} img="view-glyph.svg" alignRight={true} small={true}></TopBarMenuAction>
-
 				</TopBarMenu>
 			</div>
 		);

@@ -2,12 +2,14 @@ import React from 'react';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
 import ClassNames from 'classnames';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import Topbar from './topbar.components.jsx';
 import Toolbar from './toolbar/toolbar.components.jsx';
 import Workboard from './workboard.components.jsx';
+import Collection from './collection/collection.components.jsx';
 import {OnBoarding, OnBoardingStep} from './onboarding.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
 
@@ -45,11 +47,20 @@ export default class Dashboard extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		this.client.getStore('/panel', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({collection: head.toJS().showCollection});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 	}
 
 	shouldComponentUpdate(newProps, newState) {
 		return (
-			newState.onboard !== this.state.onboard
+			newState.collection !== this.state.collection
+			|| newState.onboard !== this.state.onboard
 			|| newState.indiv !== this.state.indiv
 			|| (!newState.onboard && newState.step !== this.state.step)
 		);
@@ -165,12 +176,20 @@ export default class Dashboard extends React.Component {
 			'normal': !this.state.indiv,
 		});
 
+		const collection = this.state.collection
+			? <Collection />
+			: false;
+
 		return (
 			<div id="dashboard" className={classes}>
 				<Topbar />
 				<Toolbar />
 				<Workboard />
 				{onboarding}
+				<ReactCSSTransitionGroup transitionName="collection" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+					{collection}
+					<span>y</span>
+				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}

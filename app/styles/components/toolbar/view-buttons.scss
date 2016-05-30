@@ -1,0 +1,22 @@
+@import "../../variables";
+
+.view-buttons {
+	display:flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	height:100%;
+}
+
+.view-button {
+	background: $white;
+	width:35px;
+	height:35px;
+	padding:9px;
+	cursor:pointer;
+
+	&:hover, &.is-active {
+		@include themify() {
+			background: $theme-background;
+		}
+	}
+}
