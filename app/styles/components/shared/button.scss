@@ -1,0 +1,43 @@
+@import '../../variables';
+
+.button {
+	color: $green;
+	border: solid 2px $green;
+	padding:6px 0;
+	display:flex;
+	justify-content: center;
+	border-radius: 7px;
+	font-size: 14px;
+	font-weight: 400;
+	cursor:pointer;
+	transition: color .2s ease, background-color .2s ease;
+	margin-bottom:10px;
+
+	&.is-disable {
+		border-color: rgba($green, 0.4);
+		color: rgba($green, 0.4);
+	}
+
+	&.danger {
+		border-color: $red;
+		color: $red;
+
+		&:hover {
+			background-color: $red;
+		}
+	}
+
+	&.neutral {
+		border-color: $medium-grey;
+		color: $medium-grey;
+
+		&:hover {
+			background-color: $medium-grey;
+		}
+	}
+
+	&:hover {
+		background-color: $green;
+		color: $white;
+	}
+}

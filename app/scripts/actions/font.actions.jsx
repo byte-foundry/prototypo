@@ -297,4 +297,27 @@ export default {
 
 		localServer.dispatchUpdate('/fontLibrary', patch);
 	},
+	'/select-family-collection': (family) => {
+		const patch = fontVariant
+			.set('selectedFamily', family)
+			.set('selectedVariant', undefined)
+			.commit();
+
+		localServer.dispatchUpdate('/fontVariant', patch);
+	},
+	'/select-variant-collection': (variant) => {
+		const patch = fontVariant.set('selectedVariant', variant).commit();
+
+		localServer.dispatchUpdate('/fontVariant', patch);
+	},
+	'/open-create-family-modal': (variant) => {
+		const patch = fontVariant.set('openFamilyModal', true).commit();
+
+		localServer.dispatchUpdate('/fontVariant', patch);
+	},
+	'/close-create-family-modal': (variant) => {
+		const patch = fontVariant.set('openFamilyModal', false).commit();
+
+		localServer.dispatchUpdate('/fontVariant', patch);
+	},
 };

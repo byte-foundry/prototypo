@@ -11,6 +11,7 @@ import Toolbar from './toolbar/toolbar.components.jsx';
 import Workboard from './workboard.components.jsx';
 import Collection from './collection/collection.components.jsx';
 import {OnBoarding, OnBoardingStep} from './onboarding.components.jsx';
+import CreateFamilyModal from './creation/create-family-modal.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
 
 export default class Dashboard extends React.Component {
@@ -31,6 +32,7 @@ export default class Dashboard extends React.Component {
 				this.setState({
 					onboard: head.toJS().onboard,
 					step: head.toJS().onboardstep,
+					collection: head.toJS().showCollection
 				});
 			})
 			.onDelete(() => {
@@ -48,9 +50,11 @@ export default class Dashboard extends React.Component {
 				this.setState(undefined);
 			});
 
-		this.client.getStore('/panel', this.lifespan)
+		this.client.getStore('/fontVariant', this.lifespan)
 			.onUpdate(({head}) => {
-				this.setState({collection: head.toJS().showCollection});
+				this.setState({
+					openFamilyModal: head.toJS().openFamilyModal,
+				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -60,6 +64,7 @@ export default class Dashboard extends React.Component {
 	shouldComponentUpdate(newProps, newState) {
 		return (
 			newState.collection !== this.state.collection
+			|| newState.openFamilyModal !== this.state.openFamilyModal
 			|| newState.onboard !== this.state.onboard
 			|| newState.indiv !== this.state.indiv
 			|| (!newState.onboard && newState.step !== this.state.step)
@@ -180,6 +185,10 @@ export default class Dashboard extends React.Component {
 			? <Collection />
 			: false;
 
+		const newFamily = this.state.openFamilyModal
+			? <CreateFamilyModal />
+			: false;
+
 		return (
 			<div id="dashboard" className={classes}>
 				<Topbar />
@@ -188,8 +197,8 @@ export default class Dashboard extends React.Component {
 				{onboarding}
 				<ReactCSSTransitionGroup transitionName="collection" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
 					{collection}
-					<span>y</span>
 				</ReactCSSTransitionGroup>
+				{newFamily}
 			</div>
 		);
 	}

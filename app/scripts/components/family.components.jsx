@@ -6,228 +6,7 @@ import {VariantList} from './variant.components.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import Log from '../services/log.services.js';
-
-export class FamilyList extends React.Component {
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-		const families = this.client.fetch('/fontLibrary');
-
-		this.client.getStore('/fontLibrary', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					families: head.toJS().fonts,
-				});
-			})
-			.onDelete(() => {
-				this.setState({
-					families: undefined,
-				});
-			});
-
-		this.setState({
-			families: families.fonts,
-		});
-
-		this.variants = [
-			'THIN', //20
-			'THIN ITALIC',
-			'LIGHT', //50
-			'LIGHT ITALIC',
-			'BOOK', //70
-			'BOOK ITALIC',
-			'REGULAR',
-			'REGULAR ITALIC',
-			'SEMI-BOLD', //100
-			'SEMI-BOLD ITALIC',
-			'BOLD', //115
-			'BOLD ITALIC',
-			'EXTRA-BOLD', //135
-			'EXTRA-BOLD ITALIC',
-			'BLACK', //150
-			'BLACK ITALIC',
-		];
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
-	render() {
-		const families = _.map(this.state.families, (family) => {
-			if (this.props.selected && family.name === this.props.selected.name) {
-				return <Family key={family.name} data={family} selected={true} variantSelected={this.props.variantSelected}/>;
-			}
-			else {
-				return <Family key={family.name} data={family} selected={false}/>;
-			}
-		});
-
-		const suggestions = _.map(this.variants, (suggestion) => {
-			return <option key={suggestion} className="text-suggestion-list-item" value={suggestion}/>;
-		});
-
-		return (
-			<div className="family-list">
-				<div className="family-list-scroll">
-					<ReactGeminiScrollbar>
-						{families}
-					</ReactGeminiScrollbar>
-				</div>
-				<datalist id="suggestions">
-					{suggestions}
-				</datalist>
-			</div>
-		);
-	}
-}
-
-export class Family extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client.getStore('/exportStore', this.lifespan)
-		.onUpdate(({head}) => {
-				const headJs = head.toJS();
-
-				if (headJs.familyExported === this.props.data.name) {
-					this.setState({
-						variantsToExport: headJs.variantToExport,
-						exportedVariant: headJs.exportedVariant,
-					});
-				}
-			})
-			.onDelete(() => {
-				this.setState({
-					exportZip: undefined,
-				});
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
-	componentDidMount() {
-		this.height = ReactDOM.findDOMNode(this.refs.list).clientHeight;
-	}
-
-	componentDidUpdate() {
-		this.height = ReactDOM.findDOMNode(this.refs.list).clientHeight;
-	}
-
-	toggleList() {
-		this.setState({
-			listOpen: !this.state.listOpen,
-		});
-	}
-
-	async downloadFamily(e) {
-		e.stopPropagation();
-		this.client.dispatchAction('/export-family', {
-			familyToExport: this.props.data,
-			variants: this.props.data.variants,
-		});
-		Log.ui('Collection.exportFamily');
-	}
-
-	toggleConfirmDelete(e) {
-		e.stopPropagation();
-		this.setState({
-			confirmDeletion: !this.state.confirmDeletion,
-		});
-	}
-
-	deleteFamily(e) {
-		e.stopPropagation();
-		this.client.dispatchAction('/delete-family', {family: this.props.data});
-		Log.ui('Collection.deleteFamily');
-	}
-
-	resetHeader() {
-		this.setState({
-			confirmDeletion: false,
-		});
-	}
-
-	render() {
-		const listStyle = {
-			height: this.state.listOpen ? `${this.height}px` : '0px',
-		};
-
-		const classes = Classnames({
-			family: true,
-			'is-active': this.props.selected,
-		});
-
-		const deleteClasses = Classnames({
-			'family-header-delete': true,
-			'is-confirm': this.state.confirmDeletion,
-		});
-
-		let progress = false;
-		let percentage = 0;
-		const progressStyle = {};
-
-		if (this.state.variantsToExport) {
-
-			percentage = this.state.exportedVariant * 100 / this.state.variantsToExport;
-
-			progressStyle.width = `${percentage}%`;
-
-			progress = true;
-		}
-
-		const progressClass = Classnames({
-			'progress-bar': true,
-			'is-open': progress,
-		});
-
-		return (
-			<div className={classes}>
-				<div className="family-header" onClick={() => {this.toggleList();} } onMouseLeave={() => {this.resetHeader();}}>
-					<div className="family-header-left">
-						<div className="family-header-left-logo"></div>
-						<div className="family-header-left-title">
-							<div className="family-header-left-title-name">
-								{this.props.data.name}
-							</div>
-							<div className="family-header-left-title-number-variants">
-								{this.props.data.variants.length} variants
-							</div>
-						</div>
-					</div>
-					<div className="family-header-download" onClick={(e) => {this.downloadFamily(e);}}>
-						DOWNLOAD FAMILY
-					</div>
-					<div className={deleteClasses}>
-						<div className="family-header-delete-btn" onClick={(e) => {this.toggleConfirmDelete(e);}}>
-							DELETE
-						</div>
-						<div className="family-header-delete-confirm">
-							DELETE THIS FAMILY ?
-							<div className="family-header-delete-confirm-button" onClick={(e) => {this.deleteFamily(e);}}>YES</div>
-							<div className="family-header-delete-confirm-button" onClick={(e) => {this.toggleConfirmDelete(e);}}>NO</div>
-						</div>
-					</div>
-				</div>
-				<div className={progressClass}>
-					<div className="progress-bar-progress" style={progressStyle}></div>
-				</div>
-				<div className="family-variant-list" style={listStyle}>
-					<VariantList variants={this.props.data.variants} selected={this.props.variantSelected} family={this.props.data} ref="list"/>
-				</div>
-			</div>
-		);
-	}
-}
+import Button from './shared/button.components.jsx';
 
 export class AddFamily extends React.Component {
 	constructor(props) {
@@ -295,6 +74,10 @@ export class AddFamily extends React.Component {
 		});
 	}
 
+	exit(e) {
+		this.client.dispatchAction('/close-create-family-modal',{});
+	}
+
 	createFont(e) {
 		e.stopPropagation();
 		this.client.dispatchAction('/create-family', {
@@ -310,7 +93,6 @@ export class AddFamily extends React.Component {
 
 		const familyClass = Classnames({
 			'add-family': true,
-			'family-form-open': this.state.showForm,
 			'with-error': !!this.state.error,
 		});
 
@@ -328,24 +110,18 @@ export class AddFamily extends React.Component {
 
 		return (
 			<div className={familyClass} onClick={(e) => {this.toggleForm(e, true);} } id="font-create">
-				<div className="add-family-header">
-					<h1 className="add-family-header-label">
-						Create a new Family
-					</h1>
-				</div>
 				<div className="add-family-form">
-					<div className="add-family-form-header">
-						<h1 className="add-family-form-header-title">Creating a new Family</h1>
-						<img className="add-family-form-header-close" onClick={(e) => {this.toggleForm(e, false);}} src="/assets/images/close-icon.svg"/>
-					</div>
-					<label className="add-family-form-label"><span className="add-family-form-label-order">1. </span>Choose a family name</label>
-					<input ref="name" className="add-family-form-input" key={this.state.reset} type="text" placeholder="My new typeface"></input>
-					<label className="add-family-form-label"><span className="add-family-form-label-order">2. </span>Choose a font template</label>
+					<label className="add-family-form-label"><span className="add-family-form-label-order">1. </span>Choose a font template</label>
 					<div className="add-family-form-template-list">
 						{templateList}
 					</div>
+					<label className="add-family-form-label"><span className="add-family-form-label-order">2. </span>Choose a family name</label>
+					<input ref="name" className="add-family-form-input" key={this.state.reset} type="text" placeholder="My new typeface"></input>
 					{error}
-					<button className="add-family-form-button" onClick={(e) => {this.createFont(e);} }>Create</button>
+					<div className="add-family-form-buttons">
+						<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
+						<Button click={(e) => {this.createFont(e);} } label="Create family"/>
+					</div>
 				</div>
 			</div>
 		);

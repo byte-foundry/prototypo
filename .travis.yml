@@ -20,4 +20,4 @@ branches:
     - master
     - develop
     - release
-	- feat/new-ux
+    - feat/new-ux

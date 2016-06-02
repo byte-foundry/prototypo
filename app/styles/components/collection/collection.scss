@@ -10,6 +10,15 @@
 	z-index: 11;
 	display:flex;
 	justify-content:center;
+	font-family: 'Open Sans';
+	align-items: flex-start;
+	overflow:auto;
+
+	&-pan {
+		position:relative;
+		padding: 40px;
+		border-right: solid 1px $light-grey;
+	}
 
 	&#{&}-enter {
 		top: -100%;
@@ -31,8 +40,16 @@
 		position:relative;
 		border-radius: 4px;
 		flex:0 0 80%;
-		padding: 10px;
+		padding: 10px 0 0;
 		margin: 90px;
 		background:$white;
+		display:flex;
+		flex-flow: column nowrap;
+	}
+
+	&-content {
+		display:flex;
+		flex-flow: row nowrap;
+		flex:1;
 	}
 }

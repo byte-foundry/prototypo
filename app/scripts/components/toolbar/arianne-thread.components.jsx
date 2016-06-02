@@ -63,6 +63,7 @@ export default class ArianneThread extends React.Component {
 	}
 
 	addFamily() {
+		this.client.dispatchAction('/open-create-family-modal', {});
 	}
 
 	addVariant() {
