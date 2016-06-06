@@ -2,11 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
-import {VariantList} from './variant.components.jsx';
-import LocalClient from '../stores/local-client.stores.jsx';
-import ReactGeminiScrollbar from 'react-gemini-scrollbar';
-import Log from '../services/log.services.js';
-import Button from './shared/button.components.jsx';
+
+import LocalClient from '~/stores/local-client.stores.jsx';
+import Log from '~/services/log.services.js';
+
+import Button from '../shared/button.components.jsx';
+import SelectWithLabel from '../shared/select-with-label.components.jsx';
 
 export class AddFamily extends React.Component {
 	constructor(props) {
@@ -74,8 +75,8 @@ export class AddFamily extends React.Component {
 		});
 	}
 
-	exit(e) {
-		this.client.dispatchAction('/close-create-family-modal',{});
+	exit() {
+		this.client.dispatchAction('/close-create-family-modal', {});
 	}
 
 	createFont(e) {
@@ -87,6 +88,7 @@ export class AddFamily extends React.Component {
 		});
 		Log.ui('Collection.CreateFamily');
 		this.client.dispatchAction('/store-panel-param', {onboardstep: 'customize'});
+		this.client.dispatchAction('/close-create-family-modal', {});
 	}
 
 	render() {
@@ -142,6 +144,95 @@ export class FamilyTemplateChoice extends React.Component {
 				</div>
 				<div className="family-template-choice-name">
 					{this.props.font.name}
+				</div>
+			</div>
+		);
+	}
+}
+
+export class AddVariant extends React.Component {
+	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/fontLibrary', this.lifespan)
+		.onUpdate(({head}) => {
+				if (head.toJS().errorAddVariant !== this.state.error) {
+					this.setState({
+						error: head.toJS().errorAddVariant,
+					});
+				}
+				if (head.toJS().errorAddVariant === undefined) {
+					this.setState({
+						flipped: false,
+					});
+				}
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+
+		this.setState({
+			flipped: false,
+		});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	flip(e) {
+		if (e.target.nodeName !== "INPUT") {
+			this.setState({
+				flipped: !this.state.flipped,
+			});
+		}
+
+		this.setState({
+			error: undefined,
+		});
+	}
+
+	createVariant(e, name) {
+		e.stopPropagation();
+		this.client.dispatchAction('/create-variant', {
+			name,
+			familyName: this.props.familyName,
+		});
+		Log.ui('Collection.createVariant');
+	}
+
+	exit() {
+		this.client.dispatchAction('/close-create-variant-modal', {});
+	}
+
+	render() {
+		const classes = Classnames({
+			variant: true,
+			'flipping-variant': true,
+			'is-flipped': this.state.flipped,
+		});
+		const rectoClasses = Classnames({
+			'flipping-variant-recto': true,
+			'is-flipped': this.state.flipped,
+		});
+
+		const versoClasses = Classnames({
+			'flipping-variant-verso': true,
+			'is-flipped': this.state.flipped,
+		});
+
+		return (
+			<div className="variant" ref="container">
+				<SelectWithLabel
+					ref="country"
+					name="country"
+					placeholder="Enter a variant name or choose a suggestion with predefined settings"
+					options={[{value:'yo', label:'yo'}]}/>
+				<div className="variant-error">{this.state.error}</div>
+				<div className="add-family-form-buttons">
+					<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
+					<Button click={(e) => {this.createFont(e);} } label="Create family"/>
 				</div>
 			</div>
 		);

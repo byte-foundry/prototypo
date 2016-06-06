@@ -67,6 +67,7 @@ export default class ArianneThread extends React.Component {
 	}
 
 	addVariant() {
+		this.client.dispatchAction('/open-create-variant-modal', {});
 	}
 
 	showCollection() {

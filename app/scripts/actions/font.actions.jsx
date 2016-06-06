@@ -310,13 +310,23 @@ export default {
 
 		localServer.dispatchUpdate('/fontVariant', patch);
 	},
-	'/open-create-family-modal': (variant) => {
+	'/open-create-family-modal': () => {
 		const patch = fontVariant.set('openFamilyModal', true).commit();
 
 		localServer.dispatchUpdate('/fontVariant', patch);
 	},
-	'/close-create-family-modal': (variant) => {
+	'/open-create-variant-modal': () => {
+		const patch = fontVariant.set('openVariantModal', true).commit();
+
+		localServer.dispatchUpdate('/fontVariant', patch);
+	},
+	'/close-create-family-modal': () => {
 		const patch = fontVariant.set('openFamilyModal', false).commit();
+
+		localServer.dispatchUpdate('/fontVariant', patch);
+	},
+	'/close-create-variant-modal': () => {
+		const patch = fontVariant.set('openVariantModal', false).commit();
 
 		localServer.dispatchUpdate('/fontVariant', patch);
 	},

@@ -12,6 +12,7 @@ import Workboard from './workboard.components.jsx';
 import Collection from './collection/collection.components.jsx';
 import {OnBoarding, OnBoardingStep} from './onboarding.components.jsx';
 import CreateFamilyModal from './creation/create-family-modal.components.jsx';
+import CreateVariantModal from './creation/create-variant-modal.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
 
 export default class Dashboard extends React.Component {
@@ -32,7 +33,7 @@ export default class Dashboard extends React.Component {
 				this.setState({
 					onboard: head.toJS().onboard,
 					step: head.toJS().onboardstep,
-					collection: head.toJS().showCollection
+					collection: head.toJS().showCollection,
 				});
 			})
 			.onDelete(() => {
@@ -54,6 +55,7 @@ export default class Dashboard extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					openFamilyModal: head.toJS().openFamilyModal,
+					openVariantModal: head.toJS().openVariantModal,
 				});
 			})
 			.onDelete(() => {
@@ -65,6 +67,7 @@ export default class Dashboard extends React.Component {
 		return (
 			newState.collection !== this.state.collection
 			|| newState.openFamilyModal !== this.state.openFamilyModal
+			|| newState.openVariantModal !== this.state.openVariantModal
 			|| newState.onboard !== this.state.onboard
 			|| newState.indiv !== this.state.indiv
 			|| (!newState.onboard && newState.step !== this.state.step)
@@ -188,6 +191,9 @@ export default class Dashboard extends React.Component {
 		const newFamily = this.state.openFamilyModal
 			? <CreateFamilyModal />
 			: false;
+		const newVariant = this.state.openVariantModal
+			? <CreateVariantModal />
+			: false;
 
 		return (
 			<div id="dashboard" className={classes}>
@@ -198,7 +204,14 @@ export default class Dashboard extends React.Component {
 				<ReactCSSTransitionGroup transitionName="collection" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
 					{collection}
 				</ReactCSSTransitionGroup>
-				{newFamily}
+				<ReactCSSTransitionGroup
+					component="span"
+					transitionName="modal"
+					transitionEnterTimeout={200}
+					transitionLeaveTimeout={200}>
+					{newFamily}
+					{newVariant}
+				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}

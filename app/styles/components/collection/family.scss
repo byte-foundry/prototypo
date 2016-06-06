@@ -122,7 +122,9 @@
 			color: $dark-grey;
 
 			&-order {
-				color:$green;
+				@include themify() {
+					color:$theme-background;
+				}
 			}
 		}
 
@@ -186,8 +188,10 @@
 	flex-basis: 200px;
 
 	&:hover &-name, &.is-active &-name {
-		background-color:$green;
-		color:$white;
+		@include themify() {
+			background-color:$theme-background;
+			color:$theme-color;
+		}
 	}
 
 	&-sample {
@@ -205,8 +209,10 @@
 	}
 
 	&:hover &-sample, &.is-active &-sample {
-		background-color:$green;
-		color:$dark-grey;
+		@include themify() {
+			background-color:$theme-background;
+			color:$theme-color;
+		}
 	}
 
 	&-name {
