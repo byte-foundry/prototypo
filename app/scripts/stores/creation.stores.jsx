@@ -51,6 +51,12 @@ const templateList = new Remutable({
 			familyName: 'Prototypo Fell',
 			templateName: 'john-fell.ptf',
 		},
+		{
+			sample: 'john-fell-preview.svg',
+			name: 'Serif',
+			familyName: 'Prototypo serif',
+			templateName: 'serif.ptf',
+		},
 	],
 });
 
