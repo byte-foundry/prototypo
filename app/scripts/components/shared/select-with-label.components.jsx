@@ -8,13 +8,20 @@ export default class SelectWithLabel extends React.Component {
 		super(props);
 		this.state = {
 			value: props.inputValue,
+			inputValue: '',
 		};
 	}
 
 	handleChangeValue(value) {
 		this.setState({
 			value,
-		})
+		});
+	}
+
+	handleChangeInput(inputValue) {
+		this.setState({
+			inputValue,
+		});
 	}
 
 	render() {
@@ -37,17 +44,27 @@ export default class SelectWithLabel extends React.Component {
 				<label className="input-with-label-label">{this.props.label}{info}{required}</label>
 				<Select
 					ref="input"
-					className="input-with-label-input"
+					className={inputClass}
 					options={this.props.options}
 					placeholder={this.props.placeholder}
-					onChange={(value) => {this.handleChangeValue(value)}}
+					noResultsText={this.props.noResultsText}
+					onChange={(value) => {this.handleChangeValue(value);}}
+					onInputChange={(value) => {this.handleChangeInput(value);}}
 					value={this.state.value}/>
 			</div>
 		);
 	}
 
 	get inputValue() {
-		return this.refs ? this.refs.input.props.value : undefined;
+		const selectValue = this.refs
+			? this.refs.input.props.value
+			: undefined;
+
+		const inputValue = this.state
+			? {value: this.state.inputValue}
+			: undefined;
+
+		return selectValue || inputValue;
 	}
 
 	set inputValue(value) {

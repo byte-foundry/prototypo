@@ -72,7 +72,7 @@ export default class Collection extends React.Component {
 			return family.name === this.state.selected.name;
 		}) || {}).variants;
 		const variant = selectedFamilyVariants
-			? <VariantList variants={selectedFamilyVariants} key={this.state.selected.name}/>
+			? <VariantList variants={selectedFamilyVariants} selectedVariantId={this.state.selectedVariant.id} key={this.state.selected.name} family={this.state.selected}/>
 			: false;
 		const selectedVariant = (_.find(selectedFamilyVariants, (item) => {
 			return item.id === this.state.selectedVariant.id;
@@ -118,6 +118,14 @@ export default class Collection extends React.Component {
 
 
 class FamilyList extends React.Component {
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+	openFamilyModal() {
+		this.client.dispatchAction('/open-create-family-modal', {});
+	}
+
 	render() {
 		const families = _.map(this.props.list, (family) => {
 			const templateInfo = _.find(this.props.templateInfos, (template) => {
@@ -136,7 +144,7 @@ class FamilyList extends React.Component {
 
 		return (
 				<div className="family-list collection-pan">
-					<Button label="Create a new family"/>
+					<Button label="Create a new family" click={this.openFamilyModal.bind(this)}/>
 					{families}
 				</div>
 		);
@@ -187,10 +195,19 @@ class VariantList extends React.Component {
 		this.client.dispatchAction('/select-variant-collection', variant);
 	}
 
+	openVariantModal() {
+		this.client.dispatchAction('/open-create-variant-modal', {family: this.props.family});
+	}
+
 	render() {
 		const variants = _.map(this.props.variants, (variant, i) => {
+			const classes = ClassNames({
+				'variant-list-name': true,
+				'is-active': variant.id === this.props.selectedVariantId,
+			});
+
 			return (
-				<div className="variant-list-name" key={i} onClick={() => {this.selectVariant(variant);}}>
+				<div className={classes} key={i} onClick={() => {this.selectVariant(variant);}}>
 					{variant.name}
 				</div>
 			);
@@ -207,7 +224,7 @@ class VariantList extends React.Component {
 				<div className="variant-list-title">
 					VARIANTS
 				</div>
-				<Button label="Add variant"/>
+				<Button label="Add variant" click={this.openVariantModal.bind(this)}/>
 				{variants}
 			</div>
 		);

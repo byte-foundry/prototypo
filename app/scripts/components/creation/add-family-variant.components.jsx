@@ -175,6 +175,25 @@ export class AddVariant extends React.Component {
 		this.setState({
 			flipped: false,
 		});
+
+		this.variants = [
+			{label: 'Thin', value: 'Thin'}, //20
+			{label: 'Thin Italic', value: 'Thin Italic'},
+			{label: 'Light', value: 'Light'}, //50
+			{label: 'Light Italic', value: 'Light Italic'},
+			{label: 'Book', value: 'Book'}, //70
+			{label: 'Book Italic', value: 'Book Italic'},
+			{label: 'Regular', value: 'Regular'},
+			{label: 'Regular Italic', value: 'Regular Italic'},
+			{label: 'Semi-Bold', value: 'Semi-Bold'}, //100
+			{label: 'Semi-Bold Italic', value: 'Semi-Bold Italic'},
+			{label: 'Bold', value: 'Bold'}, //115
+			{label: 'Bold Italic', value: 'Bold Italic'},
+			{label: 'Extra-Bold', value: 'Extra-Bold'}, //135
+			{label: 'Extra-Bold Italic', value: 'Extra-Bold Italic'},
+			{label: 'Black', value: 'Black'}, //150
+			{label: 'Black Italic', value: 'Black Italic'},
+		];
 	}
 
 	componentWillUnmount() {
@@ -193,13 +212,14 @@ export class AddVariant extends React.Component {
 		});
 	}
 
-	createVariant(e, name) {
+	createVariant(e) {
 		e.stopPropagation();
 		this.client.dispatchAction('/create-variant', {
-			name,
-			familyName: this.props.familyName,
+			name: this.refs.variantName.inputValue.value,
+			familyName: this.props.family.name,
 		});
 		Log.ui('Collection.createVariant');
+		this.client.dispatchAction('/close-create-variant-modal', {});
 	}
 
 	exit() {
@@ -225,14 +245,14 @@ export class AddVariant extends React.Component {
 		return (
 			<div className="variant" ref="container">
 				<SelectWithLabel
-					ref="country"
-					name="country"
+					ref="variantName"
+					noResultsText={false}
 					placeholder="Enter a variant name or choose a suggestion with predefined settings"
-					options={[{value:'yo', label:'yo'}]}/>
+					options={this.variants}/>
 				<div className="variant-error">{this.state.error}</div>
 				<div className="add-family-form-buttons">
 					<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
-					<Button click={(e) => {this.createFont(e);} } label="Create family"/>
+					<Button click={(e) => {this.createVariant(e);} } label="Create family"/>
 				</div>
 			</div>
 		);

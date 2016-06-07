@@ -56,6 +56,7 @@ export default class Dashboard extends React.Component {
 				this.setState({
 					openFamilyModal: head.toJS().openFamilyModal,
 					openVariantModal: head.toJS().openVariantModal,
+					familySelectedVariantCreation: head.toJS().familySelectedVariantCreation,
 				});
 			})
 			.onDelete(() => {
@@ -66,6 +67,7 @@ export default class Dashboard extends React.Component {
 	shouldComponentUpdate(newProps, newState) {
 		return (
 			newState.collection !== this.state.collection
+			|| newState.familySelectedVariantCreation !== this.state.familySelectedVariantCreation
 			|| newState.openFamilyModal !== this.state.openFamilyModal
 			|| newState.openVariantModal !== this.state.openVariantModal
 			|| newState.onboard !== this.state.onboard
@@ -180,8 +182,8 @@ export default class Dashboard extends React.Component {
 		) : false;
 
 		const classes = ClassNames({
-			'indiv': this.state.indiv,
-			'normal': !this.state.indiv,
+			'indiv': this.state.indiv && !(this.state.collection),
+			'normal': !this.state.indiv || this.state.collection,
 		});
 
 		const collection = this.state.collection
@@ -192,7 +194,7 @@ export default class Dashboard extends React.Component {
 			? <CreateFamilyModal />
 			: false;
 		const newVariant = this.state.openVariantModal
-			? <CreateVariantModal />
+			? <CreateVariantModal family={this.state.familySelectedVariantCreation}/>
 			: false;
 
 		return (

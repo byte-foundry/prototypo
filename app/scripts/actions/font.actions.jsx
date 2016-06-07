@@ -207,13 +207,13 @@ export default {
 			db: slug(`${familyName}${name}`, ''),
 		};
 		const thicknessTransform = [
-			{string: 'THIN', thickness: 20},
-			{string: 'LIGHT', thickness: 50},
-			{string: 'BOOK', thickness: 70},
-			{string: 'BOLD', thickness: 115},
-			{string: 'SEMI-BOLD', thickness: 100},
-			{string: 'EXTRA-BOLD', thickness: 135},
-			{string: 'BLACK', thickness: 150},
+			{string: 'Thin', thickness: 20},
+			{string: 'Light', thickness: 50},
+			{string: 'Book', thickness: 70},
+			{string: 'Bold', thickness: 115},
+			{string: 'Semi-Bold', thickness: 100},
+			{string: 'Extra-Bold', thickness: 135},
+			{string: 'Black', thickness: 150},
 		];
 
 		family.variants.push(variant);
@@ -232,7 +232,7 @@ export default {
 			}
 		});
 
-		if (name.indexOf('ITALIC') !== -1) {
+		if (name.indexOf('Italic') !== -1) {
 			ref.values.slant = 10;
 		}
 
@@ -315,8 +315,11 @@ export default {
 
 		localServer.dispatchUpdate('/fontVariant', patch);
 	},
-	'/open-create-variant-modal': () => {
-		const patch = fontVariant.set('openVariantModal', true).commit();
+	'/open-create-variant-modal': ({family}) => {
+		const patch = fontVariant
+			.set('openVariantModal', true)
+			.set('familySelectedVariantCreation', family)
+			.commit();
 
 		localServer.dispatchUpdate('/fontVariant', patch);
 	},

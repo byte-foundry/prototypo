@@ -1,8 +1,10 @@
 @import '../../variables';
 
 .button {
-	color: $green;
-	border: solid 2px $green;
+	@include themify() {
+		border: solid 2px $theme-background;
+		color: $theme-background;
+	}
 	padding:6px 0;
 	display:flex;
 	justify-content: center;
@@ -23,7 +25,9 @@
 		color: $red;
 
 		&:hover {
-			background-color: $red;
+			@include themify() {
+				background-color: $red;
+			}
 		}
 	}
 
@@ -32,12 +36,17 @@
 		color: $medium-grey;
 
 		&:hover {
-			background-color: $medium-grey;
+			@include themify() {
+				background-color: $medium-grey;
+				color: $white
+			}
 		}
 	}
 
 	&:hover {
-		background-color: $green;
-		color: $white;
+		@include themify() {
+			background-color: $theme-background;
+			color: $theme-color;
+		}
 	}
 }

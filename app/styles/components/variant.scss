@@ -48,10 +48,10 @@
 	&-name {
 		margin-top: 7px;
 		color: $medium-grey;
+		cursor:pointer;
 
-		&:hover {
+		&:hover, &.is-active {
 			color: $green;
-			cursor:pointer;
 		}
 	}
 }
@@ -67,6 +67,7 @@
 		padding:10px 160px 40px 40px;
 		position:relative;
 		min-height: 100%;
+		border-bottom-right-radius: 7px;
 
 		&#{&}-enter {
 			margin-left: -100%;
@@ -92,4 +93,10 @@
 			}
 		}
 	}
+}
+
+.variant {
+	width:700px;
+	display:flex;
+	flex-flow: column nowrap;
 }

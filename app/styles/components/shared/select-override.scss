@@ -20,13 +20,18 @@
 }
 
 .is-focused:not(.is-open) > .Select-control {
-	border-color: lighten($green, 25%);
-	box-shadow: inset 0 1px 1px rgba(lighten($green, 45%), 1), 0 0 0 3px rgba(lighten($green, 45%), 1);
+	@include themify() {
+		border-color: lighten($theme-background, 25%);
+		box-shadow: inset 0 1px 1px rgba(lighten($theme-background, 45%), 1), 0 0 0 3px rgba(lighten($theme-background, 45%), 1);
+	}
 }
 
 .Select-menu-outer, .Select-option {
 	background-color: $lightest-grey;
 	&.is-focused {
-		background-color:lighten($green, 45%);
+		@include themify() {
+			background-color:$theme-background;
+			color:$theme-color;
+		}
 	}
 }
