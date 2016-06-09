@@ -17,7 +17,7 @@ export default class GlyphGrid extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/glyphs', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
 					glyphs: head.toJS().glyphs,

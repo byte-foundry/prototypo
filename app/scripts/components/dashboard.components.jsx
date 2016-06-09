@@ -11,8 +11,9 @@ import Toolbar from './toolbar/toolbar.components.jsx';
 import Workboard from './workboard.components.jsx';
 import Collection from './collection/collection.components.jsx';
 import {OnBoarding, OnBoardingStep} from './onboarding.components.jsx';
-import CreateFamilyModal from './creation/create-family-modal.components.jsx';
-import CreateVariantModal from './creation/create-variant-modal.components.jsx';
+import CreateFamilyModal from './familyVariant/create-family-modal.components.jsx';
+import CreateVariantModal from './familyVariant/create-variant-modal.components.jsx';
+import ChangeNameFamily from './familyVariant/change-name-family.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
 
 export default class Dashboard extends React.Component {
@@ -28,35 +29,17 @@ export default class Dashboard extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/panel', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					onboard: head.toJS().onboard,
-					step: head.toJS().onboardstep,
-					collection: head.toJS().showCollection,
-				});
-			})
-			.onDelete(() => {
-				this.setState({
-					onboard: undefined,
-					step: undefined,
-				});
-			});
-
-		this.client.getStore('/individualizeStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({indiv: head.toJS().indivMode});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client.getStore('/fontVariant', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
 					openFamilyModal: head.toJS().openFamilyModal,
 					openVariantModal: head.toJS().openVariantModal,
 					familySelectedVariantCreation: head.toJS().familySelectedVariantCreation,
+					changeNameFamily: head.toJS().changeNameFamily,
+					onboard: head.toJS().uiOnboard,
+					step: head.toJS().uiOnboardstep,
+					collection: head.toJS().uiShowCollection,
+					indiv: head.toJS().indivMode,
 				});
 			})
 			.onDelete(() => {
@@ -69,6 +52,7 @@ export default class Dashboard extends React.Component {
 			newState.collection !== this.state.collection
 			|| newState.familySelectedVariantCreation !== this.state.familySelectedVariantCreation
 			|| newState.openFamilyModal !== this.state.openFamilyModal
+			|| newState.changeNameFamily !== this.state.changeNameFamily
 			|| newState.openVariantModal !== this.state.openVariantModal
 			|| newState.onboard !== this.state.onboard
 			|| newState.indiv !== this.state.indiv
@@ -81,11 +65,11 @@ export default class Dashboard extends React.Component {
 	}
 
 	goToNextStep(step) {
-		this.client.dispatchAction('/store-panel-param', {onboardstep: step});
+		this.client.dispatchAction('/store-value', {uiOnboardstep: step});
 	}
 
 	exitOnboarding() {
-		this.client.dispatchAction('/store-panel-param', {onboard: true});
+		this.client.dispatchAction('/store-value', {uiOnboard: true});
 	}
 
 	render() {
@@ -189,12 +173,14 @@ export default class Dashboard extends React.Component {
 		const collection = this.state.collection
 			? <Collection />
 			: false;
-
 		const newFamily = this.state.openFamilyModal
 			? <CreateFamilyModal />
 			: false;
 		const newVariant = this.state.openVariantModal
 			? <CreateVariantModal family={this.state.familySelectedVariantCreation}/>
+			: false;
+		const changeNameFamily = this.state.changeNameFamily
+			? <ChangeNameFamily family={this.state.familySelectedVariantCreation}/>
 			: false;
 
 		return (
@@ -213,6 +199,7 @@ export default class Dashboard extends React.Component {
 					transitionLeaveTimeout={200}>
 					{newFamily}
 					{newVariant}
+					{changeNameFamily}
 				</ReactCSSTransitionGroup>
 			</div>
 		);

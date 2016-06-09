@@ -2,6 +2,7 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import {ContextualMenu, ContextualMenuItem, ContextualMenuDropDown} from './contextual-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
@@ -16,6 +17,8 @@ export default class PrototypoText extends React.Component {
 			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
 		};
+
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
@@ -23,14 +26,12 @@ export default class PrototypoText extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.saveTextDebounced = _.debounce((text, prop) => {
-			//			if (text !== this.props.panel[this.props.field]) {
-				this.client.dispatchAction('/store-text', {value: text, propName: prop});
-				//}
+			this.client.dispatchAction('/store-text', {value: text, propName: prop});
 		}, 500);
 	}
 
 	setupText() {
-		const content = this.props.panel[this.props.field];
+		const content = this.props[this.props.field];
 
 		this.refs.text.textContent = content && content.length > 0 ? content : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
 		// this.saveText();
@@ -49,20 +50,6 @@ export default class PrototypoText extends React.Component {
 		this.lifespan.release();
 	}
 
-	shouldComponentUpdate(newProps, newState) {
-		return (
-			this.props.fontName !== newProps.fontName
-				|| this.props.field !== newProps.field
-				|| this.props.panel.invertedTextView !== newProps.panel.invertedTextView
-				|| this.props.panel.textFontSize !== newProps.panel.textFontSize
-				|| this.props.panel.invertedTextColors !== newProps.panel.invertedTextColors
-				|| this.props.panel.mode.length !== newProps.panel.mode.length
-				|| newProps.panel[newProps.field] !== this.refs.text.textContent
-				|| this.state.showContextMenu !== newState.showContextMenu
-				|| this.state.contextMenuPos !== newState.contextMenuPos
-		);
-	}
-
 	saveText() {
 		const textDiv = this.refs.text;
 
@@ -76,7 +63,7 @@ export default class PrototypoText extends React.Component {
 		e.stopPropagation();
 		const contextMenuPos = {x: e.nativeEvent.offsetX};
 
-		if (this.props.panel.invertedTextView) {
+		if (this.props.uiInvertedTextView) {
 			contextMenuPos.y = this.refs.text.clientHeight - e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
 		}
 		else {
@@ -96,8 +83,8 @@ export default class PrototypoText extends React.Component {
 		}
 	}
 
-	changeTextFontSize(textFontSize) {
-		this.client.dispatchAction('/store-panel-param', {textFontSize});
+	changeTextFontSize(uiTextFontSize) {
+		this.client.dispatchAction('/store-value', {uiTextFontSize});
 	}
 
 	setTextToQuickBrownFox() {
@@ -126,10 +113,10 @@ export default class PrototypoText extends React.Component {
 		}
 		const style = {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
-			'fontSize': `${this.props.panel.textFontSize || 1}em`,
-			'color': this.props.panel.invertedTextColors ? '#fefefe' : '#232323',
-			'backgroundColor': this.props.panel.invertedTextColors ? '#232323' : '#fefefe',
-			'transform': this.props.panel.invertedTextView ? 'scaleY(-1)' : 'scaleY(1)',
+			'fontSize': `${this.props.uiTextFontSize || 1}em`,
+			'color': this.props.uiInvertedTextColors ? '#fefefe' : '#232323',
+			'backgroundColor': this.props.uiInvertedTextColors ? '#232323' : '#fefefe',
+			'transform': this.props.uiInvertedTextView ? 'scaleY(-1)' : 'scaleY(1)',
 		};
 
 		const pangramMenu = [
@@ -151,11 +138,11 @@ export default class PrototypoText extends React.Component {
 			<ContextualMenuItem
 				text="Inverted view"
 				key="colors"
-				click={() => { this.client.dispatchAction('/store-panel-param', {invertedTextView: !this.props.panel.invertedTextView}); }}/>,
+				click={() => { this.client.dispatchAction('/store-value', {uiInvertedTextView: !this.props.uiInvertedTextView}); }}/>,
 			<ContextualMenuItem
 				text="Toggle colors"
 				key="view"
-				click={() => { this.client.dispatchAction('/store-panel-param', {invertedTextColors: !this.props.panel.invertedTextColors}); }}/>,
+				click={() => { this.client.dispatchAction('/store-value', {invertedTextColors: !this.props.uiInvertedTextColors}); }}/>,
 			<ContextualMenuDropDown
 				options={pangramMenu}
 				text="Insert pangram"
@@ -185,8 +172,8 @@ export default class PrototypoText extends React.Component {
 				<div className="action-bar">
 					<CloseButton click={() => { this.props.close('text'); }}/>
 					<ZoomButtons
-						plus={() => { this.changeTextFontSize(this.props.panel.textFontSize + 0.3); }}
-						minus={() => { this.changeTextFontSize(this.props.panel.textFontSize - 0.3); }}
+						plus={() => { this.changeTextFontSize(this.props.uiTextFontSize + 0.3); }}
+						minus={() => { this.changeTextFontSize(this.props.uiTextFontSize - 0.3); }}
 					/>
 				</div>
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>

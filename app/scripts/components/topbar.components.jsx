@@ -22,10 +22,9 @@ export default class Topbar extends React.Component {
 		this.state = {
 			from: 0,
 			eventList: [],
-			panel: {
-				mode: [],
-			},
-			export: {},
+			mode: [],
+			export: false,
+			errorExport: false,
 		};
 	}
 
@@ -33,20 +32,12 @@ export default class Topbar extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/panel', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					panel: head.toJS(),
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client.getStore('/exportStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					export: head.toJS(),
+					mode: head.toJS().uiMode,
+					export: head.toJS().export,
+					errorExport: head.toJS().errorExport,
 				});
 			})
 			.onDelete(() => {
@@ -65,11 +56,9 @@ export default class Topbar extends React.Component {
 	}
 
 	resetAllParams() {
-		//const typedata = await this.client.fetch('/fontParameters');
-		//
-		this.client.fetch('/fontParameters')
+		this.client.fetch('/prototypoStore')
 			.then((typedata) => {
-				const params = typedata.head.toJS().parameters;
+				const params = typedata.head.toJS().fontParameters;
 				const flattenParams = _.flatten(_.map(params, (paramObject) => {
 					return paramObject.parameters;
 				}));
@@ -77,7 +66,7 @@ export default class Topbar extends React.Component {
 					result[param.name] = param.init;
 				}, {});
 
-				this.client.dispatchAction('/change-param', {values: defaultParams, force: true});
+				this.client.dispatchAction('/change-param', {values: defaultParams});
 			});
 
 	}
@@ -97,7 +86,7 @@ export default class Topbar extends React.Component {
 	}
 
 	startTuto() {
-		this.client.dispatchAction('/store-panel-param', {onboard: false, onboardstep: 'welcome'});
+		this.client.dispatchAction('/store-value', {uiOnboard: false, uiOnboardstep: 'welcome'});
 	}
 
 	individualize() {
@@ -105,31 +94,31 @@ export default class Topbar extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.xor(this.state.panel.mode, [name]);
+		const newViewMode = _.xor(this.state.mode, [name]);
 
 		if (newViewMode.length > 0) {
-			this.client.dispatchAction('/store-panel-param', {mode: newViewMode});
+			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
 			Log.ui('Topbar.toggleView', name);
 		}
 	}
 
 	async onboardExport(step) {
-		const panel = await this.client.fetch('/panel');
+		const store = await this.client.fetch('/prototypoStore');
 
-		if (panel.get('onboard')) {
+		if (store.get('uiOnboard')) {
 			return;
 		}
 
-		const currentStep = panel.get('onboardstep');
+		const currentStep = store.get('uiOnboardstep');
 
 		if (currentStep === 'export' && step === 'export-2') {
-			this.client.dispatchAction('/store-panel-param', {onboardstep: step});
+			this.client.dispatchAction('/store-value', {uiOnboardstep: step});
 		}
 		else if (currentStep === 'export-2' && step === 'export') {
-			this.client.dispatchAction('/store-panel-param', {onboardstep: step});
+			this.client.dispatchAction('/store-value', {uiOnboardstep: step});
 		}
 		else if (currentStep === 'premature-end') {
-			this.client.dispatchAction('/store-panel-param', {onboard: true});
+			this.client.dispatchAction('/store-value', {uiOnboard: true});
 		}
 	}
 
@@ -143,10 +132,10 @@ export default class Topbar extends React.Component {
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${!redoDisabled ? this.state.eventList[whereAt + 1].label : ''}`;
 
-		const exporting = this.state.export.export ? (
+		const exporting = this.state.export ? (
 			<TopBarMenuAction name="Exporting..." click={() => {return;}} action={true}/>
 			) : false;
-		const errorExporting = this.state.export.errorExport ? (
+		const errorExporting = this.state.errorExport ? (
 			<TopBarMenuAction name="An error occured during exporting" click={() => {return;}} action={true}/>
 			) : false;
 
@@ -178,15 +167,15 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams(); }}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Window">
-						<TopBarMenuDropdownItem name="Glyphs list" checkbox={true} active={this.state.panel.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
-						<TopBarMenuDropdownItem name="Glyph view" checkbox={true} active={this.state.panel.mode.indexOf('glyph') !== -1} handler={() => { this.toggleView('glyph'); }}/>
-						<TopBarMenuDropdownItem name="Text view" checkbox={true} active={this.state.panel.mode.indexOf('text') !== -1} handler={() => { this.toggleView('text'); }}/>
-						<TopBarMenuDropdownItem name="Word view" checkbox={true} active={this.state.panel.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word'); }}/>
+						<TopBarMenuDropdownItem name="Glyphs list" checkbox={true} active={this.state.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
+						<TopBarMenuDropdownItem name="Glyph view" checkbox={true} active={this.state.mode.indexOf('glyph') !== -1} handler={() => { this.toggleView('glyph'); }}/>
+						<TopBarMenuDropdownItem name="Text view" checkbox={true} active={this.state.mode.indexOf('text') !== -1} handler={() => { this.toggleView('text'); }}/>
+						<TopBarMenuDropdownItem name="Word view" checkbox={true} active={this.state.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word'); }}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Help">
 						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
-						<TopBarMenuDropdownItem name="Submit an issue on GitHub" handler={() => { window.open('https://github.com/byte-foundry/prototypo/issues','_blank'); }}/>
-						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq','_blank'); }}/>
+						<TopBarMenuDropdownItem name="Submit an issue on GitHub" handler={() => { window.open('https://github.com/byte-foundry/prototypo/issues', '_blank'); }}/>
+						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq', '_blank'); }}/>
 					</TopBarMenuDropdown>
 					{exporting}
 					{errorExporting}

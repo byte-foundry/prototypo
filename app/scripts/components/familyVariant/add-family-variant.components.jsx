@@ -20,9 +20,9 @@ export class AddFamily extends React.Component {
 	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
-		const templateList = await this.client.fetch('/templateList');
+		const templateList = await this.client.fetch('/prototypoStore');
 
-		this.client.getStore('/fontLibrary', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 		.onUpdate(({head}) => {
 				if (head.toJS().errorAddFamily !== this.state.error) {
 					this.setState({
@@ -31,7 +31,6 @@ export class AddFamily extends React.Component {
 				}
 				if (head.toJS().errorAddFamily === undefined) {
 					this.setState({
-						showForm: false,
 						selectedFont: undefined,
 						reset: (new Date()).getTime(),
 					});
@@ -44,7 +43,7 @@ export class AddFamily extends React.Component {
 			});
 
 		this.setState({
-			fonts: templateList.get('list'),
+			fonts: templateList.get('templateList'),
 		});
 	}
 
@@ -58,11 +57,10 @@ export class AddFamily extends React.Component {
 		e.stopPropagation();
 		this.setState({
 			error: undefined,
-			showForm: state,
 		});
 
 		if (state) {
-			this.client.dispatchAction('/store-panel-param', {onboardstep: 'creatingFamily-2'});
+			this.client.dispatchAction('/store-value', {uiOnboardstep: 'creatingFamily-2'});
 			setTimeout(() => {
 				this.refs.name.focus();
 			}, 100);
@@ -87,7 +85,7 @@ export class AddFamily extends React.Component {
 			loadCurrent: this.state.selectedFont ? this.state.selectedFont.loadCurrent : false,
 		});
 		Log.ui('Collection.CreateFamily');
-		this.client.dispatchAction('/store-panel-param', {onboardstep: 'customize'});
+		this.client.dispatchAction('/store-value', {uiOnboardstep: 'customize'});
 		this.client.dispatchAction('/close-create-family-modal', {});
 	}
 
@@ -155,26 +153,17 @@ export class AddVariant extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/fontLibrary', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 		.onUpdate(({head}) => {
 				if (head.toJS().errorAddVariant !== this.state.error) {
 					this.setState({
 						error: head.toJS().errorAddVariant,
 					});
 				}
-				if (head.toJS().errorAddVariant === undefined) {
-					this.setState({
-						flipped: false,
-					});
-				}
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-
-		this.setState({
-			flipped: false,
-		});
 
 		this.variants = [
 			{label: 'Thin', value: 'Thin'}, //20
@@ -200,18 +189,6 @@ export class AddVariant extends React.Component {
 		this.lifespan.release();
 	}
 
-	flip(e) {
-		if (e.target.nodeName !== "INPUT") {
-			this.setState({
-				flipped: !this.state.flipped,
-			});
-		}
-
-		this.setState({
-			error: undefined,
-		});
-	}
-
 	createVariant(e) {
 		e.stopPropagation();
 		this.client.dispatchAction('/create-variant', {
@@ -227,21 +204,6 @@ export class AddVariant extends React.Component {
 	}
 
 	render() {
-		const classes = Classnames({
-			variant: true,
-			'flipping-variant': true,
-			'is-flipped': this.state.flipped,
-		});
-		const rectoClasses = Classnames({
-			'flipping-variant-recto': true,
-			'is-flipped': this.state.flipped,
-		});
-
-		const versoClasses = Classnames({
-			'flipping-variant-verso': true,
-			'is-flipped': this.state.flipped,
-		});
-
 		return (
 			<div className="variant" ref="container">
 				<SelectWithLabel

@@ -19,10 +19,12 @@ export default class Collection extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/fontLibrary', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
 					families: head.toJS().fonts,
+					selected: head.toJS().collectionSelectedFamily || {},
+					selectedVariant: head.toJS().collectionSelectedVariant || {},
 				});
 			})
 			.onDelete(() => {
@@ -31,23 +33,10 @@ export default class Collection extends React.Component {
 				});
 			});
 
-		this.client.getStore('/fontVariant', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					selected: head.toJS().selectedFamily || {},
-					selectedVariant: head.toJS().selectedVariant || {},
-				});
-			})
-			.onDelete(() => {
-				this.setState({
-					families: undefined,
-				});
-			});
-
-		const {head} = await this.client.fetch('/templateList');
+		const {head} = await this.client.fetch('/prototypoStore');
 
 		this.setState({
-			templateInfos: head.toJS().list,
+			templateInfos: head.toJS().templateList,
 		});
 	}
 
@@ -56,12 +45,12 @@ export default class Collection extends React.Component {
 	}
 
 	returnToDashboard() {
-		this.client.dispatchAction('/store-panel-param', {showCollection: false});
+		this.client.dispatchAction('/store-value', {uiShowCollection: false});
 	}
 
 	open() {
 		this.client.dispatchAction('/select-variant', {variant: this.state.selectedVariant, family: this.state.selected});
-		this.client.dispatchAction('/store-panel-param', {showCollection: false});
+		this.client.dispatchAction('/store-value', {uiShowCollection: false});
 	}
 
 	download() {
@@ -199,6 +188,10 @@ class VariantList extends React.Component {
 		this.client.dispatchAction('/open-create-variant-modal', {family: this.props.family});
 	}
 
+	openChangeNameFamily() {
+		this.client.dispatchAction('/change-name-family', {family: this.props.family});
+	}
+
 	render() {
 		const variants = _.map(this.props.variants, (variant, i) => {
 			const classes = ClassNames({
@@ -219,7 +212,7 @@ class VariantList extends React.Component {
 					FAMILY ACTIONS
 				</div>
 				<Button label="Download family"/>
-				<Button label="Change family name"/>
+				<Button label="Change family name" click={this.openChangeNameFamily.bind(this)}/>
 				<Button label="Delete family" danger={true}/>
 				<div className="variant-list-title">
 					VARIANTS

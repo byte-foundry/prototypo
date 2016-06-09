@@ -38,10 +38,10 @@ class ViewButtons extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/panel', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					mode: head.toJS().mode,
+					mode: head.toJS().uiMode,
 				});
 			})
 			.onDelete(() => {
@@ -57,7 +57,7 @@ class ViewButtons extends React.Component {
 		const newViewMode = _.xor(this.state.mode, [name]);
 
 		if (newViewMode.length > 0) {
-			this.client.dispatchAction('/store-panel-param', {mode: newViewMode});
+			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
 			Log.ui('Topbar.toggleView', name);
 		}
 	}

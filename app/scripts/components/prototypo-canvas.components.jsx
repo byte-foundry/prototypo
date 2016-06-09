@@ -30,16 +30,16 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	setupCanvas() {
-		fontInstance.zoom = this.props.panel.zoom ? this.props.panel.zoom : 0.5;
-		fontInstance.view.center = this.props.panel.pos
-			? this.props.panel.pos instanceof prototypo.paper.Point
-				? this.props.panel.pos
-				: new prototypo.paper.Point(this.props.panel.pos[1], this.props.panel.pos[2])
+		fontInstance.zoom = this.props.uiZoom ? this.props.uiZoom : 0.5;
+		fontInstance.view.center = this.props.uiPos
+			? this.props.uiPos instanceof prototypo.paper.Point
+				? this.props.uiPos
+				: new prototypo.paper.Point(this.props.uiPos[1], this.props.uiPos[2])
 			: fontInstance.view.center;
 
-		fontInstance.showNodes = this.props.panel.nodes || false;
-		fontInstance.showCoords = this.props.panel.coords || false;
-		fontInstance.fill = !this.props.panel.outline;
+		fontInstance.showNodes = this.props.uiNodes || false;
+		fontInstance.showCoords = this.props.uiCoords || false;
+		fontInstance.fill = !this.props.uiOutline;
 
 		const canvasContainer = this.refs.canvas;
 
@@ -63,7 +63,7 @@ export default class PrototypoCanvas extends React.Component {
 				const newDistance = new prototypo.paper.Point(oldGlyphRelativePos.x * ratio.width, oldGlyphRelativePos.y * ratio.height);
 				const newCenterPos = glyphCenter.subtract(newDistance);
 
-				this.client.dispatchAction('/store-panel-param', {pos: newCenterPos});
+				this.client.dispatchAction('/store-value', {uiPos: newCenterPos});
 			}
 
 			window.canvasElement.width = canvasContainer.clientWidth;
@@ -83,9 +83,9 @@ export default class PrototypoCanvas extends React.Component {
 
 	wheel(e) {
 		fontInstance.onWheel.bind(fontInstance)(e);
-		this.client.dispatchAction('/store-panel-param', {
-			zoom: fontInstance.zoom,
-			pos: fontInstance.view.center,
+		this.client.dispatchAction('/store-value', {
+			uiZoom: fontInstance.zoom,
+			uiPos: fontInstance.view.center,
 		});
 	}
 
@@ -95,9 +95,9 @@ export default class PrototypoCanvas extends React.Component {
 
 	mouseUp(e) {
 		fontInstance.onUp.bind(fontInstance)(e);
-		this.client.dispatchAction('/store-panel-param', {
-			pos: fontInstance.view.center,
-			zoom: fontInstance.zoom,
+		this.client.dispatchAction('/store-value', {
+			uiPos: fontInstance.view.center,
+			uiZoom: fontInstance.zoom,
 		});
 	}
 
@@ -143,12 +143,12 @@ export default class PrototypoCanvas extends React.Component {
 		if (e.keyCode === 90 && !this.oldPos) {
 			e.stopPropagation();
 			this.oldPos = {
-				pos: fontInstance.view.center,
-				zoom: fontInstance.zoom,
-				nodes: this.props.panel.nodes,
-				outline: this.props.panel.outline,
+				uiPos: fontInstance.view.center,
+				uiZoom: fontInstance.zoom,
+				uiNodes: this.props.uiNodes,
+				uiOutline: this.props.uiOutline,
 			};
-			this.client.dispatchAction('/store-panel-param', {nodes: false, outline: false});
+			this.client.dispatchAction('/store-value', {uiNodes: false, uiOutline: false});
 			this.reset();
 		}
 	}
@@ -157,7 +157,7 @@ export default class PrototypoCanvas extends React.Component {
 	finishZoomShortcut(e) {
 		if (e.keyCode === 90) {
 			e.stopPropagation();
-			this.client.dispatchAction('/store-panel-param', this.oldPos);
+			this.client.dispatchAction('/store-', this.oldPos);
 			this.oldPos = undefined;
 		}
 	}
@@ -173,7 +173,7 @@ export default class PrototypoCanvas extends React.Component {
 		window.removeEventListener('keydown', this.handleZoomCb);
 		window.removeEventListener('keyup', this.finishZoomCb);
 		if (this.oldPos) {
-			this.client.dispatchAction('/store-panel-param', this.oldPos);
+			this.client.dispatchAction('/store-value', this.oldPos);
 		}
 	}
 
@@ -182,7 +182,7 @@ export default class PrototypoCanvas extends React.Component {
 			console.log('[RENDER] PrototypoCanvas');
 		}
 		const canvasClass = Classnames({
-			'is-hidden': this.props.panel.mode.indexOf('glyph') === -1,
+			'is-hidden': this.props.uiMode.indexOf('glyph') === -1,
 			'prototypo-canvas': true,
 		});
 
@@ -190,27 +190,27 @@ export default class PrototypoCanvas extends React.Component {
 			<ContextualMenuItem
 				key="nodes"
 				text={`${fontInstance.showNodes ? 'Hide' : 'Show'} nodes`}
-				click={() => { this.client.dispatchAction('/store-panel-param', {nodes: !this.props.panel.nodes}); }}/>,
+				click={() => { this.client.dispatchAction('/store-value', {uiNodes: !this.props.uiNodes}); }}/>,
 			<ContextualMenuItem
 				key="outline"
 				text={`${fontInstance.fill ? 'Show' : 'Hide'} outline`}
-				click={() => { this.client.dispatchAction('/store-panel-param', {outline: !this.props.panel.outline}); }}/>,
+				click={() => { this.client.dispatchAction('/store-value', {uiOutline: !this.props.uiOutline}); }}/>,
 			<ContextualMenuItem
 				key="coords"
 				text={`${fontInstance.showCoords ? 'Hide' : 'Show'} coords`}
-				click={() => { this.client.dispatchAction('/store-panel-param', {coords: !this.props.panel.coords}); }}/>,
+				click={() => { this.client.dispatchAction('/store-value', {coords: !this.props.uiCoords}); }}/>,
 			<ContextualMenuItem
 				key="reset"
 				text="Reset view"
 				click={() => { this.reset(); }}/>,
 			<ContextualMenuItem
 				key="shadow"
-				text={`${this.props.panel.shadow ? 'Hide' : 'Show'} shadow`}
-				click={() => { this.client.dispatchAction('/store-panel-param', {shadow: !this.props.panel.shadow}); }}/>,
+				text={`${this.props.uiShadow ? 'Hide' : 'Show'} shadow`}
+				click={() => { this.client.dispatchAction('/store-value', {shadow: !this.props.uiShadow}); }}/>,
 		];
 
-		const alternateMenu = this.props.glyph && this.props.glyph.glyphs[this.props.glyph.selected].length > 1 ? (
-			<AlternateMenu alternates={this.props.glyph.glyphs[this.props.glyph.selected]} unicode={this.props.glyph.selected}/>
+		const alternateMenu = this.props && this.props.glyphs[this.props.glyphSelected].length > 1 ? (
+			<AlternateMenu alternates={this.props.glyphs[this.props.glyphSelected]} unicode={this.props.glyphSelected}/>
 		) : false;
 
 		return (

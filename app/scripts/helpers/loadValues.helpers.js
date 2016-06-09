@@ -1,9 +1,35 @@
-import {panel, glyphs, fontTab, tagStore, fontVariant, fontLibrary, searchStore, commits} from '../stores/creation.stores.jsx';
+import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {FontValues, AppValues, FontInfoValues} from '../services/values.services.js';
 
 let localClient;
 let appValuesLoaded = false;
+
+export const valuesToLoad = [
+	{remote: 'shadow', local: 'uiShadow'},
+	{remote: 'variantSelected', local: 'variant'},
+	{remote: 'familySelected', local: 'family'},
+	{remote: 'mode', local: 'uiMode'},
+	{remote: 'switchedToHoodie', local: 'switchedToHoodie'},
+	{remote: 'onboard', local: 'uiOnboard'},
+	{remote: 'word', local: 'uiWord'},
+	{remote: 'text', local: 'uiText'},
+	{remote: 'savedSearch', local: 'savedSearch'},
+	{remote: 'nodes', local: 'uiNodes'},
+	{remote: 'onboardstep', local: 'uiOnboardstep'},
+	{remote: 'zoom', local: 'uiZoom'},
+	{remote: 'pos', local: 'uiPos'},
+	{remote: 'tagSelected', local: 'tagSelected'},
+	{remote: 'tab', local: 'fontTab'},
+	{remote: 'pinned', local: 'tagPinned'},
+	{remote: 'wordFontSize', local: 'uiWordFontSize'},
+	{remote: 'library', local: 'fonts'},
+	{remote: 'showCollection', local: 'uiShowCollection'},
+	{remote: 'selected', local: 'glyphSelected'},
+	{remote: 'textFontSize', local: 'uiTextFontSize'},
+	{remote: 'collection', local: 'uiShowCollection'},
+	{remote: 'latestCommit', local: 'latestCommit'},
+];
 
 window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
@@ -14,7 +40,7 @@ window.addEventListener('appValues.loaded', () => {
 });
 
 export async function copyFontValues(typeface) {
-	const values = fontControls.get('values');
+	const values = prototypoStore.get('controlsValues');
 
 	await FontValues.save({
 		typeface,
@@ -73,18 +99,15 @@ export const saveAppValues = _.debounce(() => {
 		return;
 	}
 
-	const appValues = panel.head.toJS();
+	//TODO(franzp): WOW BE CAREFUL
+	//debugger;
+	//qsdmjkfqsd,qsdlhvklm:({}:w
+	//const appValues = prototypoStore.head.toJS();
+	const appValues = {};
 
-	appValues.selected = glyphs.get('selected');
-	appValues.tab = fontTab.get('tab');
-	appValues.pinned = tagStore.get('pinned');
-	appValues.latestCommit = commits.get('latest');
-	appValues.library = fontLibrary.get('fonts');
-	appValues.variantSelected = fontVariant.get('variant');
-	appValues.familySelected = fontVariant.get('family');
-	appValues.tagSelected = tagStore.get('selected');
-	appValues.savedSearch = searchStore.get('savedSearch');
-	appValues.pinnedSearch = searchStore.get('pinned');
+	_.forEach(valuesToLoad, (ref) => {
+		appValues[ref.remote] = prototypoStore.get(ref.local);
+	});
 
 	AppValues.save({typeface: 'default', values: appValues});
 }, 300);

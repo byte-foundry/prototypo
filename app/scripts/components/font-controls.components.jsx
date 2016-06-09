@@ -21,11 +21,9 @@ export default class FontControls extends React.Component {
 		this.client = LocalClient.instance();
 		const server = new LocalServer().instance;
 
-		const fontControls = await this.client.fetch('/fontControls');
-		const fontParameters = await this.client.fetch('/fontParameters');
-		const fontVariant = await this.client.fetch('/fontVariant');
+		const prototypoStore = await this.client.fetch('/prototypoStore');
 		this.setState({
-			typeface: fontVariant.get('variant') || {},
+			typeface: prototypoStore.get('variant') || {},
 		})
 
 		const debouncedSave = _.debounce((values) => {
@@ -35,23 +33,23 @@ export default class FontControls extends React.Component {
 			});
 		}, 300);
 
-		this.undoWatcher = new BatchUpdate(fontControls,
-			'/fontControls',
+		/*this.undoWatcher = new BatchUpdate(prototypoStore,
+			'/prototypoStore',
 			this.client,
 			this.lifespan,
 			(name) => {
 				return `modifier ${name}`;
 			},
 			(headJS) => {
-				debouncedSave(headJS.values);
+				debouncedSave(headJS.controlsValues);
 			}
-			);
+			);*/
 
 		server.on('action', ({path, params}) => {
 			if (path === '/change-param') {
 				const newParams = {};
 
-				Object.assign(newParams, fontControls.get('values'));
+				Object.assign(newParams, prototypoStore.get('controlsValues'));
 
 				if (this.state.indivMode && this.state.indivEdit && !params.values) {
 					if (newParams.indiv_group_param[this.state.currentGroup][params.name]) {
@@ -72,11 +70,11 @@ export default class FontControls extends React.Component {
 				}
 
 
-				const patch = fontControls.set('values', newParams).commit();
+				const patch = prototypoStore.set('controlsValues', newParams).commit();
 
-				server.dispatchUpdate('/fontControls', patch);
+				server.dispatchUpdate('/prototypoStore', patch);
 
-				if (params.force) {
+				/*if (params.force) {
 
 					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 					this.undoWatcher.forceUpdate(patch, params.label);
@@ -86,24 +84,24 @@ export default class FontControls extends React.Component {
 
 					this.undoWatcher.update(patch, params.label);
 
-				}
+					}*/
 
 			}
 			else if (path === '/change-param-state') {
 				const newParams = {};
 
-				Object.assign(newParams, fontControls.get('values'));
+				Object.assign(newParams, prototypoStore.get('controlValues'));
 
 				newParams.indiv_group_param[this.state.currentGroup][params.name] = {
 					state: params.state,
 					value: params.state === 'relative' ? 1 : 0,
 				};
 
-				const patch = fontControls.set('values', newParams).commit();
+				const patch = prototypoStore.set('controlsValues', newParams).commit();
 
-				server.dispatchUpdate('/fontControls', patch);
+				server.dispatchUpdate('/prototypoStore', patch);
 
-				if (params.force) {
+				/*if (params.force) {
 
 					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 					this.undoWatcher.forceUpdate(patch, params.label);
@@ -113,64 +111,34 @@ export default class FontControls extends React.Component {
 
 					this.undoWatcher.update(patch, params.label);
 
-				}
+					}*/
 			}}, this.lifespan);
 
-		this.client.getStore('/fontTab', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				const headJS = head.toJS();
 
-				this.setState({
-					tabControls: headJS.tab,
-				});
-			})
-			.onDelete(() => {this.setState(undefined);});
-
-		this.client.getStore('/fontControls', this.lifespan)
-			.onUpdate(({head}) => {
-				const headJS = head.toJS();
+				if (this.state.values !== headJS.controlsValues) {
+					this.client.dispatchAction('/update-font', headJS.controlsValues);
+				}
 
 				this.setState({
-					values: headJS.values,
-				});
-				this.client.dispatchAction('/update-font', headJS.values);
-			})
-			.onDelete(() => {this.setState(undefined);});
-
-		this.client.getStore('/individualizeStore', this.lifespan)
-			.onUpdate(({head}) => {
-				const headJS = head.toJS();
-
-				this.setState({
+					tabControls: headJS.fontTab,
+					values: headJS.controlsValues,
+					parameters: headJS.fontParameters,
+					typeface: headJS.variant,
 					indivMode: headJS.indivMode,
 					indivEdit: headJS.indivEdit,
-					currentGroup: headJS.currentGroup,
+					currentGroup: headJS.indivCurrentGroup,
 				});
 			})
-			.onDelete(() => {this.setState(undefined);});
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 
-		this.client.getStore('/fontParameters', this.lifespan)
-			.onUpdate(({head}) => {
-				const headJS = head.toJS();
-
-				this.setState({
-					parameters: headJS.parameters,
-				});
-			})
-			.onDelete(() => {this.setState(undefined);});
-
-		this.client.getStore('/fontVariant', this.lifespan)
-			.onUpdate(({head}) => {
-				const headJS = head.toJS();
-
-				this.setState({
-					typeface: head.toJS().variant,
-				});
-			})
-			.onDelete(() => {this.setState(undefined);});
-
-		const parameters = fontParameters.get('parameters');
-		const values = fontControls.get('values');
+		const parameters = prototypoStore.get('fontParameters');
+		//TODO(franz): setup a getInitialState
+		const values = prototypoStore.get('controlsValues');
 
 		this.setState({
 			parameters,

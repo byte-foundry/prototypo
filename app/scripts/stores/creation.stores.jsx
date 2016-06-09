@@ -1,38 +1,56 @@
 import Remutable from 'remutable';
 
-const debugStore = new Remutable({
-	events: [],
-	values: {},
+const undoableStore = new Remutable({
 });
 
-const eventBackLog = new Remutable({
-	from: 0,
-	eventList: [ ],
-});
+const prototypoStore = new Remutable({
 
-const fontTab = new Remutable({});
+	//Store values for debug
+	debugEvents: [],
+	debugValues: {},
+	debugDetails: undefined,
+	debugShowDetails: false,
+	debugIndex: 0,
+	//End store values for debug
 
-const fontControls = new Remutable({
-	values: {},
-});
+	//undoStack Store values
+	undoFrom: 0,
+	undoTo: 0,
+	undoEventList: [ ],
+	//End undoStack store values
 
-const fontParameters = new Remutable({});
+	//font tab store values
+	fontTab: undefined,
+	//End font tab store values
 
-const sideBarTab = new Remutable({});
+	//font controls store values
+	controlsValues: {},
+	//end font controls store values
 
-const fontStore = new Remutable({});
+	//font parameters store values
+	fontParameters: undefined,
+	fontPresets: undefined,
+	//end font parameters store values
 
-const tagStore = new Remutable({
-	selected: 'all',
-	pinned: [],
-});
+	//fonts store values
+	fontName: undefined,
+	fontGlyphs: undefined,
+	//end fonts store values
 
-const glyphs = new Remutable({
-	selected: 'A',
-});
+	//tag store values
+	tagSelected: 'all',
+	tagPinned: [],
+	tags: undefined,
+	//end tag store values
 
-const templateList = new Remutable({
-	list: [
+	//glyphs store values
+	glyphs: undefined,
+	glyphSelected: 'A',
+	glyphLocked: false,
+	//end glyphs store values
+
+	//template list store values
+	templateList: [
 		{
 			sample: 'elzevir-preview.svg',
 			name: 'Prototypo Elzevir',
@@ -52,53 +70,102 @@ const templateList = new Remutable({
 			templateName: 'john-fell.ptf',
 		},
 	],
-});
+	//end template list store values
 
-const fontLibrary = new Remutable({
+	//font library store values
+	errorAddFamily: undefined,
+	errorAddVariant: undefined,
 	fonts: [],
-});
+	//end font library store values
 
-const fontVariant = new Remutable({
-});
+	//font variant store values
+	openFamilyModal: false,
+	openVariantModal: false,
+	familySelectedVariantCreation: false,
+	changeNameFamily: false,
+	variant: {},
+	family: {},
+	collectionSelectedFamily: undefined,
+	collectionSelectedVariant: undefined,
+	//end font
 
-const fontInfos = new Remutable({
+	//font infos store values
 	altList: {},
-});
+	//end font infos store values
 
-const panel = new Remutable({
-	mode: [],
-	textFontSize: 2.1,
-	wordFontSize: 4.5,
-});
+	//ui store values
+	uiMode: [],
+	uiTextFontSize: 2.1,
+	uiWordFontSize: 4.5,
+	uiInvertedWordColors: undefined,
+	uiInvertedWordView: undefined,
+	uiInvertedTextColors: undefined,
+	uiInvertedTextView: undefined,
+	uiOnboardstep: undefined,
+	uiOnboard: undefined,
+	uiShowCollection: undefined,
+	uiList: undefined,
+	uiPos: undefined,
+	uiZoom: undefined,
+	uiNodes: undefined,
+	uiOutline: undefined,
+	uiCoords: undefined,
+	uiShadow: undefined,
+	uiText: '',
+	uiWord: '',
+	uiFontLoading: false,
+	//end ui store values
 
-const commits = new Remutable({
-});
+	//commits store values
+	commitsList: [],
+	latestCommit: '',
+	//end commits store values
 
-const exportStore = new Remutable({
+	//export store values
 	export: false,
 	errorExport: false,
 	exportedVariant: 0,
-});
+	familyExported: undefined,
+	variantToExport: undefined,
+	//end export store values
 
-const individualizeStore = new Remutable({
-	selected: [],
-	tagSelected: 'all',
-});
+	//indiv store values
+	indivMode: false,
+	indivSelected: [],
+	indivTagSelected: 'all',
+	indivCreate: false,
+	indivEdit: false,
+	indivCurrentGroup: undefined,
+	indivGroups: undefined,
+	indivPreDelete: undefined,
+	indivEditGroup: undefined,
+	indivGlyphGrid: undefined,
+	indivOtherGroups: undefined,
+	indivErrorEdit: undefined,
+	indivErrorMessage: undefined,
+	indivErrorGlyphs: [],
+	//end indiv store values
 
-const intercomStore = new Remutable({
-	tags: [],
-});
+	//intercom store values
+	intecomTags: undefined,
+	//end intercom store values
 
-const searchStore = new Remutable({
+	//search store values
 	savedSearch: [],
-});
+	glyphSearch: undefined,
+	pinnedSearch: undefined,
+	savedSearchError: undefined,
+	//end search store values
 
-const logStore = new Remutable({
+	//log store values
+	/* #if debug */
 	patchArray: [],
-});
+	/* #end */
+	//end log store values
 
-const glyphSelect = new Remutable({
-	focused: false,
+	//glyph select store values
+	glyphFocused: false,
+	//end glyph select store values
 });
 
 const userStore = new Remutable({
@@ -131,62 +198,14 @@ const userStore = new Remutable({
 	},
 });
 
-const uiStore = new Remutable({
-});
-
 const stores = {
-	'/debugStore': debugStore,
-	'/eventBackLog': eventBackLog,
-	'/fontTab': fontTab,
-	'/fontControls': fontControls,
-	'/fontParameters': fontParameters,
-	'/sideBarTab': sideBarTab,
-	'/fontStore': fontStore,
-	'/tagStore': tagStore,
-	'/glyphs': glyphs,
-	'/templateList': templateList,
-	'/fontLibrary': fontLibrary,
-	'/fontVariant': fontVariant,
-	'/fontInfos': fontInfos,
-	'/panel': panel,
-	'/commits': commits,
-	'/exportStore': exportStore,
-	'/individualizeStore': individualizeStore,
-	'/intercomStore': intercomStore,
-	'/searchStore': searchStore,
+	'/prototypoStore': prototypoStore,
+	'/undoableStore': undoableStore,
 	'/userStore': userStore,
-	'/glyphSelect': glyphSelect,
-	'/uiStore': uiStore,
-	/* #if debug */
-	logStore,
-	/* #end */
 };
 
 export default stores;
 export {
-	debugStore,
-	eventBackLog,
-	fontTab,
-	fontControls,
-	fontParameters,
-	sideBarTab,
-	fontStore,
-	tagStore,
-	glyphs,
-	templateList,
-	fontLibrary,
-	fontVariant,
-	fontInfos,
-	panel,
-	commits,
-	exportStore,
-	individualizeStore,
-	intercomStore,
-	searchStore,
+	prototypoStore,
 	userStore,
-	glyphSelect,
-	uiStore,
-	/* #if debug */
-	logStore,
-	/* #end */
 };

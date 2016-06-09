@@ -15,7 +15,7 @@ export default class IndividualizeButton extends React.Component {
 		this.lifespan = new Lifespan();
 
 
-		this.client.getStore('/individualizeStore', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
 					individualize: head.toJS().indivMode,

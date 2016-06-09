@@ -1,4 +1,4 @@
-import {glyphs, userStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, userStore} from '../stores/creation.stores.jsx';
 import {AppValues, AccountValues, FontValues, FontInfoValues, UserValues} from '../services/values.services.js';
 import {loadFontValues} from './loadValues.helpers.js';
 import {setupFontInstance} from './font.helpers.js';
@@ -180,7 +180,7 @@ export async function loadStuff() {
 	));
 	localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 	localClient.dispatchAction('/load-commits');
-	fontInstance.displayChar(String.fromCharCode(glyphs.get('selected')));
+	fontInstance.displayChar(String.fromCharCode(prototypoStore.get('glyphSelected')));
 
 	loadFontValues(typedata, appValues.values.variantSelected.db);
 }

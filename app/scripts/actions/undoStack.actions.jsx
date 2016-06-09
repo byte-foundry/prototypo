@@ -1,7 +1,7 @@
 import Remutable from 'remutable';
 const {Patch} = Remutable;
 
-import {eventBackLog} from '../stores/creation.stores.jsx';
+import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 
 let localServer;
@@ -12,33 +12,32 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/go-back': () => {
-		const eventIndex = eventBackLog.get('to') || eventBackLog.get('from');
-		const event = eventBackLog.get('eventList')[eventIndex];
+		const eventIndex = prototypoStore.get('undoTo') || prototypoStore.get('undoFrom');
+		const event = prototypoStore.get('undoEventList')[eventIndex];
 
 		if (eventIndex > 1) {
 
 			const revert = Patch.revert(Patch.fromJSON(event.patch));
+			const patch = prototypoStore.set('undoFrom', eventIndex).set('undoTo', eventIndex - 1).commit()
 
-			localServer.dispatchUpdate('/eventBackLog',
-				eventBackLog.set('from', eventIndex)
-					.set('to', eventIndex - 1).commit());
-			localServer.dispatchUpdate(event.store, revert);
+			localServer.dispatchUpdate('/prototypoStore', patch);
+			localServer.dispatchUpdate('/undoableStore', revert);
 
 		}
 	},
 	'/go-forward': () => {
 
-		const eventIndex = eventBackLog.get('to');
+		const eventIndex = prototypoStore.get('undoTo');
 
 		if (eventIndex) {
-			const event = eventBackLog.get('eventList')[eventIndex + 1];
+			const event = prototypoStore.get('undoEventList')[eventIndex + 1];
 
 			if (event) {
 
-				localServer.dispatchUpdate('/eventBackLog',
-					eventBackLog.set('from', eventIndex)
-						.set('to', eventIndex + 1).commit());
-				localServer.dispatchUpdate(event.store, Patch.fromJSON(event.patch));
+				const patch = prototypoStore.set('undoFrom', eventIndex).set('undoTo', eventIndex + 1).commit();
+
+				localServer.dispatchUpdate('/prototypoStore', patch);
+				localServer.dispatchUpdate('/undoableStore', Patch.fromJSON(event.patch));
 
 			}
 		}
@@ -46,8 +45,8 @@ export default {
 	},
 	'/store-action': ({store, patch, label}) => {
 
-		const newEventList = Array.from(eventBackLog.get('eventList'));
-		const eventIndex = eventBackLog.get('to') || eventBackLog.get('from');
+		const newEventList = Array.from(prototypoStore.get('undoEventList'));
+		const eventIndex = prototypoStore.get('undoTo') || prototypoStore.get('undoFrom');
 
 		if (newEventList.length - 1 > eventIndex) {
 
@@ -61,10 +60,10 @@ export default {
 				store,
 				label,
 			});
-		const eventPatch = eventBackLog.set('eventList', newEventList)
-			.set('to', undefined)
-			.set('from', newEventList.length - 1).commit();
+		const eventPatch = prototypoStore.set('undoEventList', newEventList)
+			.set('undoto', undefined)
+			.set('undoFrom', newEventList.length - 1).commit();
 
-		localServer.dispatchUpdate('/eventBackLog', eventPatch);
+		localServer.dispatchUpdate('/prototypoStore', eventPatch);
 	},
 };

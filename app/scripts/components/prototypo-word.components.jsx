@@ -2,6 +2,7 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
@@ -18,6 +19,7 @@ export default class PrototypoWord extends React.Component {
 			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
@@ -30,7 +32,7 @@ export default class PrototypoWord extends React.Component {
 	}
 
 	setupText() {
-		const content = this.props.panel[this.props.field];
+		const content = this.props[this.props.field];
 
 		this.refs.text.textContent = content && content.length > 0 ? content : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
 		// this.saveText();
@@ -49,20 +51,6 @@ export default class PrototypoWord extends React.Component {
 		this.lifespan.release();
 	}
 
-	shouldComponentUpdate(newProps, newState) {
-		return (
-			this.props.fontName !== newProps.fontName
-				|| this.props.field !== newProps.field
-				|| this.props.panel.invertedWordView !== newProps.panel.invertedWordView
-				|| this.props.panel.wordFontSize !== newProps.panel.wordFontSize
-				|| this.props.panel.invertedWordColors !== newProps.panel.invertedWordColors
-				|| this.props.panel.mode.length !== newProps.panel.mode.length
-				|| newProps.panel[newProps.field] !== this.refs.text.textContent
-				|| this.state.showContextMenu !== newState.showContextMenu
-				|| this.state.contextMenuPos !== newState.contextMenuPos
-		);
-	}
-
 	saveText() {
 		const textDiv = this.refs.text;
 
@@ -76,7 +64,7 @@ export default class PrototypoWord extends React.Component {
 		e.stopPropagation();
 		const contextMenuPos = {x: e.nativeEvent.offsetX};
 
-		if (this.props.panel.invertedWordView) {
+		if (this.props.uiInvertedWordView) {
 			contextMenuPos.y = this.refs.text.clientHeight - e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
 		}
 		else {
@@ -96,8 +84,8 @@ export default class PrototypoWord extends React.Component {
 		}
 	}
 
-	changeTextFontSize(wordFontSize) {
-		this.client.dispatchAction('/store-panel-param', {wordFontSize});
+	changeTextFontSize(uiWordFontSize) {
+		this.client.dispatchAction('/store-value', {uiWordFontSize});
 	}
 
 	render() {
@@ -106,21 +94,21 @@ export default class PrototypoWord extends React.Component {
 		}
 		const style = {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
-			'fontSize': `${this.props.panel.wordFontSize || 1}em`,
-			'color': this.props.panel.invertedWordColors ? '#fefefe' : '#232323',
-			'backgroundColor': this.props.panel.invertedWordColors ? '#232323' : '#fefefe',
-			'transform': this.props.panel.invertedWordView ? 'scaleY(-1)' : 'scaleY(1)',
+			'fontSize': `${this.props.uiWordFontSize || 1}em`,
+			'color': this.props.uiInvertedWordColors ? '#fefefe' : '#232323',
+			'backgroundColor': this.props.uiInvertedWordColors ? '#232323' : '#fefefe',
+			'transform': this.props.uiInvertedWordView ? 'scaleY(-1)' : 'scaleY(1)',
 		};
 
 		const menu = [
 			<ContextualMenuItem
 				text="Inverted view"
 				key="colors"
-				click={() => { this.client.dispatchAction('/store-panel-param', {invertedWordView: !this.props.panel.invertedWordView}); }}/>,
+				click={() => { this.client.dispatchAction('/store-value', {uiInvertedWordView: !this.props.uiInvertedWordView}); }}/>,
 			<ContextualMenuItem
 				key="view"
 				text="Toggle colors"
-				click={() => { this.client.dispatchAction('/store-panel-param', {invertedWordColors: !this.props.panel.invertedWordColors}); }}/>,
+				click={() => { this.client.dispatchAction('/store-value', {uiInvertedWordColors: !this.props.uiInvertedWordColors}); }}/>,
 		];
 
 		return (
@@ -142,8 +130,8 @@ export default class PrototypoWord extends React.Component {
 				<div className="action-bar">
 					<CloseButton click={() => { this.props.close('word'); }}/>
 					<ZoomButtons
-						plus={() => { this.changeTextFontSize(this.props.panel.wordFontSize + 0.3); }}
-						minus={() => { this.changeTextFontSize(this.props.panel.wordFontSize - 0.3); }}
+						plus={() => { this.changeTextFontSize(this.props.uiWordFontSize + 0.3); }}
+						minus={() => { this.changeTextFontSize(this.props.uiWordFontSize - 0.3); }}
 					/>
 				</div>
 				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>

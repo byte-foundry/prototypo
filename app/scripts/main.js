@@ -165,13 +165,11 @@ window.Stripe && window.Stripe.setPublishableKey(stripeKey);
 
 const stores = window.prototypoStores = Stores;
 
-const debugStore = Stores['/debugStore'];
-const fontControls = Stores['/fontControls'];
-const intercomStore = Stores['/intercomStore'];
+const prototypoStore = Stores['/prototypoStore'];
 
 function saveErrorLog(error) {
 	const debugLog = {
-		events: debugStore.events,
+		events: prototypoStore.events,
 		message: err.message,
 		stack: error.stack,
 		date: new Date(),
@@ -196,7 +194,7 @@ const localServer = new LocalServer(stores, {
 		'/store-in-debug-font',
 		'/show-details',
 	],
-	logStore: stores.logStore,
+	logStore: stores.prototypoStore,
 }).instance;
 /* #end */
 /* #if prod */
@@ -231,9 +229,9 @@ async function createStores() {
 		userLifecycleAction,
 		{
 			'/load-intercom-info': (data) => {
-				const patch = intercomStore.set('tags', data.tags.tags).commit();
+				const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();
 
-				localServer.dispatchUpdate('/intercomStore', patch);
+				localServer.dispatchUpdate('/prototypoStore', patch);
 			},
 		}
 	);

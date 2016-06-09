@@ -1,7 +1,7 @@
 import XXHash from 'xxhashjs';
 import slug from 'slug';
 
-import {fontStore, fontVariant, fontLibrary, uiStore} from '../stores/creation.stores.jsx';
+import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {Typefaces} from '../services/typefaces.services.js';
@@ -23,11 +23,11 @@ const hasher = XXHash(0xDEADBEEF);
 
 export default {
 	'/create-font': (familyName) => {
-		const patch = fontStore
+		const patch = prototypoStore
 			.set('fontName', familyName)
 			.commit();
 
-		localServer.dispatchUpdate('/fontStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/update-font': (params) => {
 		// we need a non-empty params object
@@ -42,14 +42,14 @@ export default {
 		const typedata = JSON.parse(typedataJSON);
 
 		await delayAfterCall(() => {
-			const patchUi = uiStore.set('fontLoading', true).commit();
-			localServer.dispatchUpdate('/uiStore', patchUi);
+			const patchUi = prototypoStore.set('uiFontLoading', true).commit();
+			localServer.dispatchUpdate('/prototypoStore', patchUi);
 		}, 400);
 
 		fontInstance.on('worker.fontLoaded', () => {
 			setTimeout(() => {
-				const patchUiEnd = uiStore.set('fontLoading', false).commit();
-				localServer.dispatchUpdate('/uiStore', patchUiEnd);
+				const patchUiEnd = prototypoStore.set('uiFontLoading', false).commit();
+				localServer.dispatchUpdate('/prototypoStore', patchUiEnd);
 			}, 1000);
 		});
 
@@ -93,24 +93,24 @@ export default {
 
 		localClient.dispatchAction('/cancel-indiv-mode');
 		if (loadCurrent) {
-			templateToLoad = fontVariant.get('family').template;
+			templateToLoad = prototypoStore.get('family').template;
 		}
 
 		if (templateToLoad === undefined) {
-			const patch = fontLibrary.set('errorAddFamily', 'You must choose a base template').commit();
+			const patch = prototypoStore.set('errorAddFamily', 'You must choose a base template').commit();
 
-			localServer.dispatchUpdate('/fontLibrary', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 			return;
 		}
 
 		if (name === undefined || name === '') {
-			const patch = fontLibrary.set('errorAddFamily', 'You must choose a name for your family').commit();
+			const patch = prototypoStore.set('errorAddFamily', 'You must choose a name for your family').commit();
 
-			localServer.dispatchUpdate('/fontLibrary', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 			return;
 		}
 
-		const fonts = Array.from(fontLibrary.get('fonts'));
+		const fonts = Array.from(prototypoStore.get('fonts'));
 		const newFont = {
 			name,
 			template: templateToLoad,
@@ -128,26 +128,26 @@ export default {
 		});
 
 		if (already) {
-			const patch = fontLibrary.set('errorAddFamily', 'A Family with this name already exists').commit();
+			const patch = prototypoStore.set('errorAddFamily', 'A Family with this name already exists').commit();
 
-			localServer.dispatchUpdate('/fontLibrary', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 			return;
 		}
 
 		fonts.push(newFont);
 
-		const patch = fontLibrary
+		const patch = prototypoStore
 			.set('errorAddFamily', undefined)
 			.commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
 		setTimeout(() => {
-			const patchLib = fontLibrary
+			const patchLib = prototypoStore
 				.set('fonts', fonts)
 				.commit();
 
-			localServer.dispatchUpdate('/fontLibrary', patchLib);
+			localServer.dispatchUpdate('/prototypoStore', patchLib);
 		}, 200);
 
 		if (loadCurrent) {
@@ -159,11 +159,11 @@ export default {
 			db: newFont.variants[0].db,
 		});
 
-		const patchVariant = fontVariant
+		const patchVariant = prototypoStore
 			.set('variant', newFont.variants[0])
 			.set('family', {name: newFont.name, template: newFont.template}).commit();
 
-		localServer.dispatchUpdate('/fontVariant', patchVariant);
+		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 
 		saveAppValues();
 	},
@@ -172,11 +172,11 @@ export default {
 			variant = family.variants[0];
 		}
 		localClient.dispatchAction('/cancel-indiv-mode');
-		const patchVariant = fontVariant
+		const patchVariant = prototypoStore
 			.set('variant', variant)
 			.set('family', {name: family.name, template: family.template}).commit();
 
-		localServer.dispatchUpdate('/fontVariant', patchVariant);
+		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 
 		localClient.dispatchAction('/change-font', {
 			templateToLoad: family.template,
@@ -186,7 +186,7 @@ export default {
 	},
 	'/create-variant': async ({name, familyName}) => {
 		localClient.dispatchAction('/cancel-indiv-mode');
-		const family = _.find(Array.from(fontLibrary.get('fonts') || []), (font) => {
+		const family = _.find(Array.from(prototypoStore.get('fonts') || []), (font) => {
 			return font.name === familyName;
 		});
 
@@ -195,9 +195,9 @@ export default {
 		});
 
 		if (already) {
-			const patch = fontLibrary.set('errorAddVariant', 'Variant with this name already exists').commit();
+			const patch = prototypoStore.set('errorAddVariant', 'Variant with this name already exists').commit();
 
-			localServer.dispatchUpdate('/fontLibrary', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 			return;
 		}
 
@@ -218,11 +218,12 @@ export default {
 
 		family.variants.push(variant);
 
-		const patch = fontLibrary
-			.set('fonts', fontLibrary.get('fonts'))
+		//TODO(franz): this is fucked up
+		const patch = prototypoStore
+			.set('fonts', prototypoStore.get('fonts'))
 			.set('errorAddVariant', undefined).commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
 		const ref = await FontValues.get({typeface: family.variants[0].db});
 
@@ -243,7 +244,7 @@ export default {
 
 	},
 	'/edit-variant': ({variant, family, newName}) => {
-		const found = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
+		const found = _.find(Array.from(prototypoStore.get('fonts') || []), (item) => {
 			return item.name === family.name;
 		});
 
@@ -253,33 +254,35 @@ export default {
 
 		newVariant.name = newName;
 
-		const patch = fontLibrary.set('fonts', fontLibrary.get('fonts')).commit();
+		//TODO(franz): this is fucked up
+		const patch = prototypoStore.set('fonts', prototypoStore.get('fonts')).commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
 	},
 	'/delete-variant': ({variant, familyName}) => {
-		const family = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
+		const family = _.find(Array.from(prototypoStore.get('fonts') || []), (item) => {
 			return item.name === familyName;
 		});
 
 		_.pull(family.variants, variant);
 
-		const patch = fontLibrary.set('fonts', fontLibrary.get('fonts')).commit();
+		//TODO(franz): this is fucked up
+		const patch = prototypoStore.set('fonts', prototypoStore.get('fonts')).commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
 
 	},
 	'/delete-family': ({family}) => {
-		const families = Array.from(fontLibrary.get('fonts'));
+		const families = Array.from(prototypoStore.get('fonts'));
 
 		_.remove(families, (checkee) => {
 			return checkee.name === family.name && checkee.template === family.template;
 		});
-		const patch = fontLibrary.set('fonts', families).commit();
+		const patch = prototypoStore.set('fonts', families).commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
 		family.variants.forEach((variant) => {
 			FontValues.deleteDb({typeface: variant.db});
@@ -288,49 +291,57 @@ export default {
 		saveAppValues();
 	},
 	'/clear-error-family': () => {
-		const patch = fontLibrary.set('errorAddFamily', undefined).commit();
+		const patch = prototypoStore.set('errorAddFamily', undefined).commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/clear-error-variant': () => {
-		const patch = fontLibrary.set('errorAddVariant', undefined).commit();
+		const patch = prototypoStore.set('errorAddVariant', undefined).commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/select-family-collection': (family) => {
-		const patch = fontVariant
-			.set('selectedFamily', family)
-			.set('selectedVariant', undefined)
+		const patch = prototypoStore
+			.set('collectionSelectedFamily', family)
+			.set('collectionSelectedVariant', undefined)
 			.commit();
 
-		localServer.dispatchUpdate('/fontVariant', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/select-variant-collection': (variant) => {
-		const patch = fontVariant.set('selectedVariant', variant).commit();
+		const patch = prototypoStore.set('collectionSelectedVariant', variant).commit();
 
-		localServer.dispatchUpdate('/fontVariant', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/open-create-family-modal': () => {
-		const patch = fontVariant.set('openFamilyModal', true).commit();
+		const patch = prototypoStore.set('openFamilyModal', true).commit();
 
-		localServer.dispatchUpdate('/fontVariant', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/open-create-variant-modal': ({family}) => {
-		const patch = fontVariant
+		const patch = prototypoStore
 			.set('openVariantModal', true)
 			.set('familySelectedVariantCreation', family)
 			.commit();
 
-		localServer.dispatchUpdate('/fontVariant', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
+	},
+	'/change-name-family': ({family}) => {
+		const patch = prototypoStore
+			.set('changeNameFamily', true)
+			.set('familySelectedVariantCreation', family)
+			.commit();
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/close-create-family-modal': () => {
-		const patch = fontVariant.set('openFamilyModal', false).commit();
+		const patch = prototypoStore.set('openFamilyModal', false).commit();
 
-		localServer.dispatchUpdate('/fontVariant', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/close-create-variant-modal': () => {
-		const patch = fontVariant.set('openVariantModal', false).commit();
+		const patch = prototypoStore.set('openVariantModal', false).commit();
 
-		localServer.dispatchUpdate('/fontVariant', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 };

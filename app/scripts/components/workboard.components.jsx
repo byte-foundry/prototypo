@@ -20,24 +20,20 @@ export default class Workboard extends React.Component {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		const fontStore = this.client.fetch('/fontStore');
+		const prototypoStore = this.client.fetch('/prototypoStore');
 
 		this.setState({
-			fontName: fontStore.get('fontName'),
-			glyphs: fontStore.get('glyphs'),
+			fontName: prototypoStore.get('fontName'),
+			glyphs: prototypoStore.get('fontGlyphs'),
 		});
 
-		this.client.getStore('/fontStore', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
-				this.setState(head.toJS());
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client.getStore('/uiStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({fontLoading: head.toJS().fontLoading});
+				this.setState({
+					fontName: head.toJS().fontName,
+					glyphs: head.toJS().fontGlyphs,
+					fontLoading: head.toJS().uiFontLoading,
+				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);

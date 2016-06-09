@@ -19,10 +19,9 @@ export default class GlyphPanel extends React.Component {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		const glyphs = await this.client.fetch('/glyphs');
-
-		this.undoWatcher = new BatchUpdate(glyphs,
-			'/glyphs',
+		//TODO(franz): this should go to in undoableStore
+		/*this.undoWatcher = new BatchUpdate(glyphs,
+			'/prot',
 			this.client,
 			this.lifespan,
 			(name) => {
@@ -30,44 +29,19 @@ export default class GlyphPanel extends React.Component {
 			},
 			() => {
 				return true;
-				//TODO(franz): Here we shall save stuff to hoodie
-			});
-		this.client.getStore('/panel', this.lifespan)
+				});*/
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					show: head.toJS().mode.indexOf('list') !== -1,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client.getStore('/glyphs', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					glyphs: head.toJS(),
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client.getStore('/tagStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					tags: head.toJS(),
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client.getStore('/searchStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
+					show: head.toJS().uiMode.indexOf('list') !== -1,
+					tagSelected: head.toJS().tagSelected,
+					tagPinned: head.toJS().tagPinned,
+					tags: head.toJS().tags,
+					glyphs: head.toJS().glyphs,
+					glyphSelected: head.toJS().glyphSelected,
 					search: head.toJS().glyphSearch,
 					savedSearch: head.toJS().savedSearch,
-					pinnedSearch: head.toJS().pinned,
+					pinnedSearch: head.toJS().pinnedSearch,
 				});
 			})
 			.onDelete(() => {
@@ -92,11 +66,11 @@ export default class GlyphPanel extends React.Component {
 		return (
 			<div id="glyphpanel" className={classes}>
 				<GlyphList
-					tags={this.state.tags.tags}
-					pinned={this.state.tags.pinned}
-					glyphs={this.state.glyphs.glyphs}
-					selected={this.state.glyphs.selected}
-					selectedTag={this.state.tags.selected}
+					tags={this.state.tags}
+					pinned={this.state.tagPinned}
+					glyphs={this.state.glyphs}
+					selected={this.state.glyphSelected}
+					selectedTag={this.state.tagSelected}
 					search={this.state.search}
 					savedSearch={this.state.savedSearch}
 					pinnedSearch={this.state.pinnedSearch}/>

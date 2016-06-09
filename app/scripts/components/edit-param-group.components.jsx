@@ -19,28 +19,19 @@ export default class EditParamGroup extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/individualizeStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					currentGroup: head.toJS().currentGroup,
-					groups: head.toJS().groups,
-					preDelete: head.toJS().preDelete,
-					editGroup: head.toJS().editGroup,
-					glyphs: head.toJS().selected,
-					grid: head.toJS().glyphGrid,
-					tagSelected: head.toJS().tagSelected,
-					otherGroups: head.toJS().otherGroups,
-					errorEdit: head.toJS().errorEdit,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client.getStore('/tagStore', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
 					tags: head.toJS().tags,
+					currentGroup: head.toJS().indivCurrentGroup,
+					groups: head.toJS().indivGroups,
+					preDelete: head.toJS().indivPreDelete,
+					editGroup: head.toJS().indivEditGroup,
+					glyphs: head.toJS().indivSelected,
+					grid: head.toJS().indivGlyphGrid,
+					tagSelected: head.toJS().indivTagSelected,
+					otherGroups: head.toJS().indivOtherGroups,
+					errorEdit: head.toJS().indivErrorEdit,
 				});
 			})
 			.onDelete(() => {

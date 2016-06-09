@@ -68,7 +68,7 @@ export class Slider extends React.Component {
 	}
 
 	resetValue() {
-		this.client.dispatchAction('/change-param', {value: this.props.param.init, name: this.props.param.name, label: this.props.param.label, force: true});
+		this.client.dispatchAction('/change-param', {value: this.props.param.init, name: this.props.param.name, label: this.props.param.label});
 	}
 
 	shouldComponentUpdate(nextProps) {
@@ -175,7 +175,7 @@ export class SliderController extends React.Component {
 
 		newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
 
-		this.client.dispatchAction('/change-param', {value: newValue, name: this.props.name, label: this.props.label, force: true});
+		this.client.dispatchAction('/change-param', {value: newValue, name: this.props.name, label: this.props.label});
 		this.currentX = newX;
 
 		e.stopPropagation();
@@ -187,7 +187,7 @@ export class SliderController extends React.Component {
 		}
 
 		this.tracking = false;
-		this.client.dispatchAction('/change-param', {value: this.props.value, name: this.props.name, label: this.props.label, force: true});
+		this.client.dispatchAction('/change-param', {value: this.props.value, name: this.props.name, label: this.props.label});
 
 		e.stopPropagation();
 	}
@@ -282,7 +282,6 @@ export class SliderTextController extends React.Component {
 							name: this.props.name,
 							value: parseFloat(e.target.value),
 							label: this.props.label,
-							force: true,
 						});
 				}}
 				disabled={this.props.disabled}
@@ -308,7 +307,6 @@ class IndivSwitch extends React.Component {
 				name: this.props.name,
 				state,
 				label: this.props.label,
-				force: true,
 			}
 		);
 	}

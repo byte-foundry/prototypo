@@ -7,46 +7,32 @@ export default class ArianneThread extends React.Component {
 		super(props);
 		this.state = {
 			families: [],
-			selection: {
-				family: {},
-				variant: {},
-			},
+			family: {},
+			variant: {},
 		};
 	}
 
 	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
-		const families = await this.client.fetch('/fontLibrary');
-		const fontVariant = await this.client.fetch('/fontVariant');
+		const store = await this.client.fetch('/prototypoStore');
 
-		this.client.getStore('/fontLibrary', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
 					families: head.toJS().fonts,
+					family: head.toJS().family,
+					variant: head.toJS().variant,
 				});
 			})
 			.onDelete(() => {
-				this.setState({
-					families: undefined,
-				});
-			});
-
-		this.client.getStore('/fontVariant', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					selection: head.toJS(),
-				});
-			})
-			.onDelete(() => {
-				this.setState({
-					selection: undefined,
-				});
+				this.setState(undefined);
 			});
 
 		this.setState({
-			families: families.head.toJS().fonts,
-			selection: fontVariant.head.toJS(),
+			families: store.head.toJS().fonts,
+			variant: store.head.toJS().variant,
+			family: store.head.toJS().family,
 		});
 	}
 
@@ -67,16 +53,16 @@ export default class ArianneThread extends React.Component {
 	}
 
 	addVariant() {
-		this.client.dispatchAction('/open-create-variant-modal', {family: this.state.selection.family});
+		this.client.dispatchAction('/open-create-variant-modal', {family: this.state.family});
 	}
 
 	showCollection() {
-		this.client.dispatchAction('/store-panel-param', {showCollection: true});
+		this.client.dispatchAction('/store-value', {uiShowCollection: true});
 	}
 
 	render() {
 		const variantFamily = _.find(this.state.families, (family) => {
-			return family.name === this.state.selection.family.name;
+			return family.name === this.state.family.name;
 		});
 
 		const variants = variantFamily
@@ -90,14 +76,14 @@ export default class ArianneThread extends React.Component {
 			<div className="arianne-thread">
 				<RootArianneItem click={this.showCollection.bind(this)}/>
 				<DropArianneItem
-					label={this.state.selection.family.name}
+					label={this.state.family.name}
 					list={this.state.families}
 					add={addFamily}
 					click={this.selectFamily.bind(this)}/>
 				<DropArianneItem
-					label={this.state.selection.variant.name}
-					family={this.state.selection.family}
-					variant={this.state.selection.variant}
+					label={this.state.variant.name}
+					family={this.state.family}
+					variant={this.state.variant}
 					list={variants}
 					add={addVariant}
 					click={this.selectVariant.bind(this)}/>
