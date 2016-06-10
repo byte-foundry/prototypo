@@ -2,6 +2,7 @@ import React from 'react';
 import Lifespan from 'lifespan';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import Classnames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -11,6 +12,7 @@ export default class GlyphGrid extends React.Component {
 		this.state = {
 			glyphs: {},
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {

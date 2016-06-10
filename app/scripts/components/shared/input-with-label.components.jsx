@@ -2,6 +2,11 @@ import React from 'react';
 import Classnames from 'classnames';
 
 export default class InputWithLabel extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		const required = this.props.required
 			? <span className="input-with-label-label-required">*</span>

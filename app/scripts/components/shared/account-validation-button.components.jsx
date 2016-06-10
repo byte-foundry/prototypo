@@ -1,7 +1,14 @@
 import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import WaitForLoad from '../wait-for-load.components.jsx';
 
 export default class AccountValidationButton extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		const type = this.props.click ? 'button' : 'submit';
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import Classnames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Log from '~/services/log.services.js';
@@ -9,6 +10,10 @@ import ArianneThread from './arianne-thread.components.jsx';
 import IndividualizeButton from './individualize-button.components.jsx';
 
 export default class Toolbar extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
 
 	render() {
 
@@ -32,6 +37,7 @@ class ViewButtons extends React.Component {
 		this.state = {
 			mode: [],
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
@@ -74,6 +80,11 @@ class ViewButtons extends React.Component {
 }
 
 class ViewButton extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		const img = `assets/images/${this.props.name + (this.props.state ? '-hover-active' : '-base')}.svg`;
 		const classes = Classnames({

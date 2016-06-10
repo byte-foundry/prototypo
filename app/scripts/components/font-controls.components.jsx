@@ -1,11 +1,14 @@
 import React from 'react';
-import {ControlsTabs, ControlsTab} from './controls-tabs.components.jsx';
-import {Sliders} from './sliders.components.jsx';
 import Lifespan from 'lifespan';
-import LocalClient from '../stores/local-client.stores.jsx';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import LocalServer from '../stores/local-server.stores.jsx';
+import LocalClient from '../stores/local-client.stores.jsx';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
+
+import {ControlsTabs, ControlsTab} from './controls-tabs.components.jsx';
 import {FontValues} from '../services/values.services.js';
+import {Sliders} from './sliders.components.jsx';
 
 export default class FontControls extends React.Component {
 
@@ -14,6 +17,7 @@ export default class FontControls extends React.Component {
 		this.state = {
 			tabControls: 'Func',
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {

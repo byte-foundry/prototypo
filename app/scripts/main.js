@@ -238,6 +238,9 @@ async function createStores() {
 
 	localServer.on('action', ({path, params}) => {
 		eventDebugger.storeEvent(path, params);
+		if (process.env.__SHOW_ACTION__) {
+			console.log(`[ACTION] ${path}`);
+		}
 
 		if (actions[path] !== undefined) {
 			actions[path](params);

@@ -2,6 +2,7 @@ import React from 'react';
 import Lifespan from 'lifespan';
 import ClassNames from 'classnames';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
@@ -13,6 +14,7 @@ export default class Collection extends React.Component {
 		this.state = {
 			families: [],
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {
@@ -107,6 +109,11 @@ export default class Collection extends React.Component {
 
 
 class FamilyList extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	componentWillMount() {
 		this.client = LocalClient.instance();
 	}
@@ -141,6 +148,11 @@ class FamilyList extends React.Component {
 }
 
 class Family extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	componentWillMount() {
 		this.client = LocalClient.instance();
 	}
@@ -176,6 +188,11 @@ class Family extends React.Component {
 }
 
 class VariantList extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	componentWillMount() {
 		this.client = LocalClient.instance();
 	}
@@ -225,6 +242,11 @@ class VariantList extends React.Component {
 }
 
 class VariantInfo extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		const result = this.props.variant.id
 			? (

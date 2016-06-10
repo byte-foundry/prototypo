@@ -2,12 +2,18 @@ import React from 'react';
 import {Link} from 'react-router';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import DOM from '../helpers/dom.helpers.js';
 
 export class Sliders extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 
 	render() {
 		if (process.env.__SHOW_RENDER__) {
@@ -41,7 +47,17 @@ export class Sliders extends React.Component {
 
 			return (
 				<Slider
-					param={paramToUse}
+					demo={paramToUse.demo}
+					disabled={paramToUse.disabled}
+					init={paramToUse.init}
+					label={paramToUse.label}
+					max={paramToUse.max}
+					maxAdvised={paramToUse.maxAdvised}
+					min={paramToUse.min}
+					minAdvised={paramToUse.minAdvised}
+					name={paramToUse.name}
+					notInDemo={paramToUse.notInDemo}
+					child={paramToUse.child}
 					key={paramToUse.name + i}
 					value={value}
 					individualized={individualized}/>
@@ -57,6 +73,10 @@ export class Sliders extends React.Component {
 }
 
 export class Slider extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
 
 	componentWillMount() {
 		this.lifespan = new Lifespan();
@@ -68,49 +88,40 @@ export class Slider extends React.Component {
 	}
 
 	resetValue() {
-		this.client.dispatchAction('/change-param', {value: this.props.param.init, name: this.props.param.name, label: this.props.param.label});
-	}
-
-	shouldComponentUpdate(nextProps) {
-		if (nextProps.value && this.props.value) {
-			return nextProps.value !== this.props.value
-				|| nextProps.max !== this.props.max
-				|| nextProps.individualized !== this.props.individualized;
-		}
-		return true;
+		this.client.dispatchAction('/change-param', {value: this.props.init, name: this.props.name, label: this.props.label});
 	}
 
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] slider');
 		}
-		const value = this.props.value === undefined ? this.props.param.init : this.props.value;
+		const value = this.props.value === undefined ? this.props.init : this.props.value;
 		const plan = HoodieApi.instance.plan || 'kickstarter';
 
-		this.props.param.notInDemo = (plan.indexOf('free') === 0 && !this.props.param.demo);
+		const notInDemo = (plan.indexOf('free') === 0 && !this.props.demo);
 
 		const classes = Classnames({
 			'slider': true,
-			'is-disabled': this.props.param.disabled || this.props.param.notInDemo,
-			'is-coming': this.props.param.disabled,
-			'is-child': this.props.param.child,
+			'is-disabled': this.props.disabled || notInDemo,
+			'is-coming': this.props.disabled,
+			'is-child': this.props.child,
 		});
 
-		const demoOverlay = this.props.param.notInDemo && !this.props.param.disabled ? (
+		const demoOverlay = notInDemo && !this.props.disabled ? (
 			<Link to="/account/create" className="slider-demo-overlay-text">
 				This feature is available with the professional subscription
 				<div className="slider-demo-overlay-text-more">
 					<div className="slider-demo-overlay-text-more-text">Uppgrade to full version</div>
 				</div>
 			</Link>
-		) : this.props.param.disabled ? (
+		) : this.props.disabled ? (
 			<div className="slider-demo-overlay-text">
 				This feature is currently in development
 			</div>
 		) : false;
 
 		const indivSwitch = this.props.individualized ? (
-			<IndivSwitch name={this.props.param.name} state={this.props.param.state}/>
+			<IndivSwitch name={this.props.name} state={this.props.state}/>
 		) : false;
 
 		return (
@@ -118,20 +129,20 @@ export class Slider extends React.Component {
 				<div className="slider-demo-overlay">
 					{demoOverlay}
 				</div>
-				<label className="slider-title">{this.props.param.label}</label>
+				<label className="slider-title">{this.props.label}</label>
 				<div className="slider-reset" onClick={() => {this.resetValue();}}>reset</div>
-				<SliderTextController value={value} name={this.props.param.name} label={this.props.param.label} disabled={this.props.param.disabled} individualized={this.props.individualized}/>
+				<SliderTextController value={value} name={this.props.name} label={this.props.label} disabled={this.props.disabled} individualized={this.props.individualized}/>
 				<div className="slider-container">
 					<SliderController value={value}
-						name={this.props.param.name}
+						name={this.props.name}
 						individualized={this.props.individualized}
-						label={this.props.param.label}
-						min={this.props.param.min}
-						max={this.props.param.max}
-						minAdvised={this.props.param.minAdvised}
-						maxAdvised={this.props.param.maxAdvised}
-						disabled={this.props.param.disabled}
-						child={this.props.param.child}/>
+						label={this.props.label}
+						min={this.props.min}
+						max={this.props.max}
+						minAdvised={this.props.minAdvised}
+						maxAdvised={this.props.maxAdvised}
+						disabled={this.props.disabled}
+						child={this.props.child}/>
 					{indivSwitch}
 				</div>
 			</div>
@@ -140,6 +151,10 @@ export class Slider extends React.Component {
 }
 
 export class SliderController extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
 
 	componentWillMount() {
 		this.lifespan = new Lifespan();
@@ -254,6 +269,10 @@ export class SliderController extends React.Component {
 }
 
 export class SliderTextController extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
 
 	componentWillMount() {
 		this.lifespan = new Lifespan();
@@ -291,6 +310,11 @@ export class SliderTextController extends React.Component {
 }
 
 class IndivSwitch extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();

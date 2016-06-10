@@ -1,6 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import Classnames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Log from '../services/log.services.js';
 
@@ -12,6 +13,7 @@ export default class CanvasGlyphInput extends React.Component {
 		this.state = {
 			mode: [],
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {

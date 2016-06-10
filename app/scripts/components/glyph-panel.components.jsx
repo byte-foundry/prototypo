@@ -1,10 +1,12 @@
 import React from 'react';
-import GlyphList from './glyph-list.components.jsx';
 import Lifespan from 'lifespan';
+import Classnames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import LocalClient from '../stores/local-client.stores.jsx';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 
-import Classnames from 'classnames';
+import GlyphList from './glyph-list.components.jsx';
 
 export default class GlyphPanel extends React.Component {
 	constructor(props) {
@@ -13,23 +15,13 @@ export default class GlyphPanel extends React.Component {
 			glyphs: {},
 			tags: {},
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		//TODO(franz): this should go to in undoableStore
-		/*this.undoWatcher = new BatchUpdate(glyphs,
-			'/prot',
-			this.client,
-			this.lifespan,
-			(name) => {
-				return `selectioner ${name}`;
-			},
-			() => {
-				return true;
-				});*/
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({

@@ -1,7 +1,13 @@
 import React from 'react';
 import ClassNames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default class Button extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		const classes = ClassNames({
 			button: true,

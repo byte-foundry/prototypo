@@ -1,7 +1,13 @@
 import React from 'react';
 import CheckBoxWithImg from './checkbox-with-img.components.jsx';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default class HoverViewMenu extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] HoverViewMenu');
@@ -29,6 +35,10 @@ export default class HoverViewMenu extends React.Component {
 }
 
 class HoverViewMenuItem extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
 
 	render() {
 		if (process.env.__SHOW_RENDER__) {

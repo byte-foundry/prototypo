@@ -1,6 +1,7 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
@@ -19,6 +20,7 @@ export default class PrototypoPanel extends React.Component {
 		};
 
 		this.availableMode = ['glyph', 'text', 'word'];
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {

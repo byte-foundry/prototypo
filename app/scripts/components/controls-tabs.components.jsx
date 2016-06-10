@@ -1,10 +1,17 @@
 import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import classNames from 'classnames';
-import LocalClient from '../stores/local-client.stores.jsx';
 import GeminiScrollbar from 'react-gemini-scrollbar';
+
+import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
 
 export class ControlsTabs extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	componentWillMount() {
 		this.client = LocalClient.instance();
 	}
@@ -57,6 +64,10 @@ export class ControlsTabs extends React.Component {
 }
 
 export class ControlsTab extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
 
 	render() {
 		if (process.env.__SHOW_RENDER__) {

@@ -3,6 +3,7 @@ import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
 import ClassNames from 'classnames';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -21,6 +22,7 @@ export default class Dashboard extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {
@@ -45,19 +47,6 @@ export default class Dashboard extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-	}
-
-	shouldComponentUpdate(newProps, newState) {
-		return (
-			newState.collection !== this.state.collection
-			|| newState.familySelectedVariantCreation !== this.state.familySelectedVariantCreation
-			|| newState.openFamilyModal !== this.state.openFamilyModal
-			|| newState.changeNameFamily !== this.state.changeNameFamily
-			|| newState.openVariantModal !== this.state.openVariantModal
-			|| newState.onboard !== this.state.onboard
-			|| newState.indiv !== this.state.indiv
-			|| (!newState.onboard && newState.step !== this.state.step)
-		);
 	}
 
 	componentWillUnmount() {

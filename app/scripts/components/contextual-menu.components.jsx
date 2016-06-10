@@ -1,6 +1,12 @@
 import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 class ContextualMenu extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] contextual menu');
@@ -22,6 +28,11 @@ class ContextualMenu extends React.Component {
 }
 
 class ContextualMenuItem extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] contextual menu item');
@@ -36,6 +47,11 @@ class ContextualMenuItem extends React.Component {
 }
 
 class ContextualMenuDropDown extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		return (
 			<li className="contextual-menu-list-item with-dropdown" onClick={this.props.click}>

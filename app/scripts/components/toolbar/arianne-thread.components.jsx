@@ -1,5 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import LocalClient from '~/stores/local-client.stores.jsx';
 
 export default class ArianneThread extends React.Component {
@@ -10,6 +12,7 @@ export default class ArianneThread extends React.Component {
 			family: {},
 			variant: {},
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {
@@ -94,6 +97,11 @@ export default class ArianneThread extends React.Component {
 }
 
 class RootArianneItem extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		return (
 			<div className="arianne-item is-small" onClick={this.props.click}>
@@ -107,6 +115,10 @@ class RootArianneItem extends React.Component {
 }
 
 class DropArianneItem extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
 
 	render() {
 		return (
@@ -128,6 +140,11 @@ class DropArianneItem extends React.Component {
 }
 
 class ArianneDropMenu extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		const items = this.props.list.map((item) => {
 			return <ArianneDropMenuItem item={item} key={item.name} click={this.props.click} family={this.props.family}/>;
@@ -143,6 +160,11 @@ class ArianneDropMenu extends React.Component {
 }
 
 class ArianneDropMenuItem extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		return (
 			<li className="arianne-drop-menu-item" onClick={() => {
@@ -155,6 +177,11 @@ class ArianneDropMenuItem extends React.Component {
 }
 
 class ActionArianneItem extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		return (
 			<div className="arianne-item">

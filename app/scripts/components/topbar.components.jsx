@@ -1,5 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Log from '../services/log.services.js';
 import HoodieApi from '../services/hoodie.services.js';
@@ -26,6 +27,7 @@ export default class Topbar extends React.Component {
 			export: false,
 			errorExport: false,
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {

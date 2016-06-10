@@ -1,12 +1,19 @@
 import React from 'react';
-import Glyph from './glyph.components.jsx';
-import SearchGlyphList from './search-glyph-list.components.jsx';
-import GlyphTagList from './glyph-tag-list.components.jsx';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import Log from '../services/log.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 
+import Glyph from './glyph.components.jsx';
+import SearchGlyphList from './search-glyph-list.components.jsx';
+import GlyphTagList from './glyph-tag-list.components.jsx';
+
 export default class GlyphList extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();

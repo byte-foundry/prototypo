@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 import Classnames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default class SelectWithLabel extends React.Component {
 
@@ -10,6 +11,7 @@ export default class SelectWithLabel extends React.Component {
 			value: props.inputValue,
 			inputValue: '',
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	handleChangeValue(value) {

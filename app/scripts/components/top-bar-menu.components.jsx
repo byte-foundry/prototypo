@@ -1,8 +1,15 @@
 import React from 'react';
 import Classnames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import CheckBoxWithImg from './checkbox-with-img.components.jsx';
 
 class TopBarMenu extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] TopBarMenu');
