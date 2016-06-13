@@ -1,5 +1,6 @@
 import React from 'react';
 import Classnames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default class InputWithLabel extends React.Component {
 	constructor(props) {

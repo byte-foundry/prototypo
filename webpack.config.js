@@ -26,7 +26,7 @@ module.exports = {
 	},
 	module: {
 		loaders: [
-			{ 
+			{
 				test: /\.jsx?$/,
 				loaders: ['react-hot-loader', 'babel-loader?cacheDirectory', 'prelude-loader', 'if-loader'],
 				include: [
@@ -52,6 +52,10 @@ module.exports = {
 		noParse: /(dist\/prototypo-canvas)/,
 	},
 	plugins: [
+		/*new webpack.DefinePlugin({
+			'process.env.__SHOW_RENDER__': "true",
+			'process.env.__SHOW_ACTION__': "true",
+			}),*/
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.DllReferencePlugin({
 			context: __dirname,
@@ -60,6 +64,6 @@ module.exports = {
 		}),
 	],
 	resolve: {
-		extensions: ['','.js', '.jsx'],
+		extensions: ['', '.js', '.jsx'],
 	},
 };

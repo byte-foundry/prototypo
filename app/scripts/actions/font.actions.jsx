@@ -313,27 +313,6 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/open-create-family-modal': () => {
-		const patch = prototypoStore.set('openFamilyModal', true).commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patch);
-	},
-	'/open-create-variant-modal': ({family}) => {
-		const patch = prototypoStore
-			.set('openVariantModal', true)
-			.set('familySelectedVariantCreation', family)
-			.commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patch);
-	},
-	'/change-name-family': ({family}) => {
-		const patch = prototypoStore
-			.set('changeNameFamily', true)
-			.set('familySelectedVariantCreation', family)
-			.commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patch);
-	},
 	'/close-create-family-modal': () => {
 		const patch = prototypoStore.set('openFamilyModal', false).commit();
 

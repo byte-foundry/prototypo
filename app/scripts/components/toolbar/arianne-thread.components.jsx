@@ -52,11 +52,14 @@ export default class ArianneThread extends React.Component {
 	}
 
 	addFamily() {
-		this.client.dispatchAction('/open-create-family-modal', {});
+		this.client.dispatchAction('/store-value', {openFamilyModal: true});
 	}
 
 	addVariant() {
-		this.client.dispatchAction('/open-create-variant-modal', {family: this.state.family});
+		this.client.dispatchAction('/store-value', {
+			openVariantModal: true,
+			familySelectedVariantCreation: this.state.family,
+		});
 	}
 
 	showCollection() {

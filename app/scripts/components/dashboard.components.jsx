@@ -37,7 +37,7 @@ export default class Dashboard extends React.Component {
 					openFamilyModal: head.toJS().openFamilyModal,
 					openVariantModal: head.toJS().openVariantModal,
 					familySelectedVariantCreation: head.toJS().familySelectedVariantCreation,
-					changeNameFamily: head.toJS().changeNameFamily,
+					openChangeFamilyNameModal: head.toJS().openChangeFamilyNameModal,
 					onboard: head.toJS().uiOnboard,
 					step: head.toJS().uiOnboardstep,
 					collection: head.toJS().uiShowCollection,
@@ -168,7 +168,7 @@ export default class Dashboard extends React.Component {
 		const newVariant = this.state.openVariantModal
 			? <CreateVariantModal family={this.state.familySelectedVariantCreation}/>
 			: false;
-		const changeNameFamily = this.state.changeNameFamily
+		const changeNameFamily = this.state.openChangeFamilyNameModal
 			? <ChangeNameFamily family={this.state.familySelectedVariantCreation}/>
 			: false;
 

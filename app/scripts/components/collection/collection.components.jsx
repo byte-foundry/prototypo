@@ -119,7 +119,7 @@ class FamilyList extends React.Component {
 	}
 
 	openFamilyModal() {
-		this.client.dispatchAction('/open-create-family-modal', {});
+		this.client.dispatchAction('/store-value', {openFamilyModal: true});
 	}
 
 	render() {
@@ -202,11 +202,17 @@ class VariantList extends React.Component {
 	}
 
 	openVariantModal() {
-		this.client.dispatchAction('/open-create-variant-modal', {family: this.props.family});
+		this.client.dispatchAction('/store-value', {
+			openVariantModal: true,
+			familySelectedVariantCreation: this.props.family,
+		});
 	}
 
 	openChangeNameFamily() {
-		this.client.dispatchAction('/change-name-family', {family: this.props.family});
+		this.client.dispatchAction('/store-value', {
+			openChangeFamilyNameModal: true,
+			familySelectedVariantCreation: this.props.family,
+		});
 	}
 
 	render() {

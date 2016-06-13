@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Log from '~/services/log.services.js';
@@ -15,6 +16,7 @@ export class AddFamily extends React.Component {
 		this.state = {
 			fonts: [],
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {
@@ -74,7 +76,9 @@ export class AddFamily extends React.Component {
 	}
 
 	exit() {
-		this.client.dispatchAction('/close-create-family-modal', {});
+		this.client.dispatchAction('/store-value', {
+			openFamilyModal: false,
+		});
 	}
 
 	createFont(e) {
@@ -149,12 +153,20 @@ export class FamilyTemplateChoice extends React.Component {
 }
 
 export class AddVariant extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			error: undefined,
+		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-		.onUpdate(({head}) => {
+			.onUpdate(({head}) => {
 				if (head.toJS().errorAddVariant !== this.state.error) {
 					this.setState({
 						error: head.toJS().errorAddVariant,
@@ -200,7 +212,9 @@ export class AddVariant extends React.Component {
 	}
 
 	exit() {
-		this.client.dispatchAction('/close-create-variant-modal', {});
+		this.client.dispatchAction('/store-value', {
+			openVariantModal: false,
+		});
 	}
 
 	render() {
