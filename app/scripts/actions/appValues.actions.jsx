@@ -63,7 +63,7 @@ export default {
 	},
 	'/load-commits': async () => {
 
-		const repos = ['prototypo', 'john-fell.ptf', 'venus.ptf', 'elzevir.ptf'];
+		const repos = ['prototypo', 'john-fell.ptf', 'venus.ptf', 'elzevir.ptf', 'starter-kit.ptf'];
 
 		try {
 			const lastcommitsJSON = await Promise.all(repos.map((repo) => {

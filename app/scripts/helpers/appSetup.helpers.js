@@ -25,15 +25,16 @@ const defaultAccountValues = {
 const defaultValues = {
 		values: {
 			mode: ['glyph', 'word', 'text'],
-			selected: 'A'.charCodeAt(0).toString(),
-			onboard: false,
+			selected: 'a'.charCodeAt(0).toString(),
+			onboard: true,
 			onboardstep: 'welcome',
-			word: 'Hello Prototypo',
+			word: 'abcdefghijklmnopqrstuvwxyz',
 			text: 'Type any text here and preview your modifications in real time! Curabitur blandit tempus porttitor. Maecenas sed diam eget risus varius blandit sit amet non magna. Sed posuere consectetur est at lobortis. Etiam porta sem malesuada magna mollis euismod. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla vitae elit libero, a pharetra augue. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Vestibulum id ligula porta felis euismod semper. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Cras mattis consectetur purus sit amet fermentum. Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Donec sed odio dui.',
 			pos: ['Point', 457, -364],
 			familySelected: {
 				name: 'My first font',
-				template: 'elzevir.ptf',
+				// template: 'elzevir.ptf',
+				template: 'starter-kit.ptf',
 			},
 			variantSelected: {
 				id: 'deadbeef',
@@ -42,7 +43,8 @@ const defaultValues = {
 			},
 			library: [{
 				name: 'My first font',
-				template: 'elzevir.ptf',
+				// template: 'elzevir.ptf',
+				template: 'starter-kit.ptf',
 				variants: [{
 					id: 'deadbeef',
 					name: 'REGULAR',
