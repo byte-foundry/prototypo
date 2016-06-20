@@ -70,7 +70,9 @@ export default class SubscriptionBillingAddress extends React.Component {
 						You already added a billing address
 					</div>
 					<div className="two-third-column">
-						<DisplayWithLabel nolabel={true} data={oldBillingData}/>
+						<DisplayWithLabel nolabel={true}>
+							{oldBillingData}
+						</DisplayWithLabel>
 					</div>
 				</div>
 			)

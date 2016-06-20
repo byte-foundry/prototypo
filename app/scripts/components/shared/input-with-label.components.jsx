@@ -2,6 +2,18 @@ import React from 'react';
 import Classnames from 'classnames';
 
 export default class InputWithLabel extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.handleOnChange = this.handleOnChange.bind(this);
+	}
+
+	handleOnChange() {
+		if (this.props.handleOnChange) {
+			this.props.handleOnChange();
+		}
+	}
+
 	render() {
 		const required = this.props.required
 			? <span className="input-with-label-label-required">*</span>
@@ -20,7 +32,12 @@ export default class InputWithLabel extends React.Component {
 		return (
 			<div className="input-with-label">
 				<label className="input-with-label-label">{this.props.label}{info}{required}</label>
-				<input {...this.props} ref="input" className={inputClass} placeholder={this.props.placeholder} defaultValue={this.props.inputValue}/>
+				<input {...this.props}
+					ref="input"
+					className={inputClass}
+					placeholder={this.props.placeholder}
+					defaultValue={this.props.inputValue}
+					onChange={this.handleOnChange} />
 			</div>
 		);
 	}

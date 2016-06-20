@@ -76,7 +76,9 @@ export default class SubscriptionAddCard extends React.Component {
 						You already added a card
 					</div>
 					<div className="two-third-column">
-						<DisplayWithLabel nolabel={true} data={oldCardData}/>
+						<DisplayWithLabel nolabel={true}>
+							{oldCardData}
+						</DisplayWithLabel>
 					</div>
 				</div>
 			)
@@ -99,7 +101,9 @@ export default class SubscriptionAddCard extends React.Component {
 						You already added a billing address
 					</div>
 					<div className="two-third-column">
-						<DisplayWithLabel nolabel={true} data={oldBillingData}/>
+						<DisplayWithLabel nolabel={true}>
+							{oldBillingData}
+						</DisplayWithLabel>
 					</div>
 				</div>
 			)

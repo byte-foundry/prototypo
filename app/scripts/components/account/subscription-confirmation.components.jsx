@@ -17,17 +17,25 @@ export default class SubscriptionConfirmation extends React.Component {
 				country: 'US',
 			}],
 			plan: 'personal_monthly',
+			plans: {},
 		};
 	}
 
-	componentWillMount() {
+	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+
+		const plans = await this.client.fetch('/planStore');
+
+		this.setState({
+			plans: plans.head.toJS(),
+		});
 
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState(head.toJS().infos);
 				this.setState({
+					couponValue: head.toJS().choosePlanForm.couponValue,
 					loading: head.toJS().confirmation.loading,
 				});
 			})
@@ -42,56 +50,60 @@ export default class SubscriptionConfirmation extends React.Component {
 
 	confirm() {
 		const currency = getCurrency(this.state.card[0].country);
+
 		this.client.dispatchAction('/confirm-buy', {plan: this.state.plan, currency});
 	}
 
 	render() {
-		const plans = {
-			'personal_monthly': {
-				name: 'Professional monthly subscription',
-				period: 'month',
-				USD: '$15.00',
-				EUR: '15.00€',
-			},
-			'personal_annual_99': {
-				name: 'Professional annual subscription',
-				period: 'year',
-				USD: '$99.00',
-				EUR: '99.00€',
-			},
-		};
+		const {plans, plan, card, address, couponValue} = this.state;
+		const planDescription = plans[plan] || {};
+		const currency = getCurrency(card[0].country);
 
-		const currency = getCurrency(this.state.card[0].country);
+		const couponDom = couponValue
+			? (
+				<div className="columns">
+					<div className="third-column">
+						You validated the following coupon
+					</div>
+					<div className="two-third-column">
+						<DisplayWithLabel nolabel={true}>
+							{couponValue}
+						</DisplayWithLabel>
+					</div>
+				</div>
+			) : false;
 
-		const card = this.state.card
+		const cardDom = card
 			? (
 				<div>
-					<div>**** **** **** {this.state.card[0].last4}</div>
-					<div>{this.state.card[0].exp_month}/{this.state.card[0].exp_year}</div>
+					<div>**** **** **** {card[0].last4}</div>
+					<div>{card[0].exp_month}/{card[0].exp_year}</div>
 				</div>
 			)
 			: false;
 
-		const address = this.state.address
+		const addressDom = address
 			? (
 				<div>
 					<div>{this.state.buyerName}</div>
-					<div>{this.state.address.building_number} {this.state.address.street_name}</div>
-					<div>{this.state.address.address_details}</div>
-					<div>{this.state.address.city} {this.state.address.postal_code}</div>
-					<div>{this.state.address.region} {this.state.address.country}</div>
+					<div>{address.building_number} {address.street_name}</div>
+					<div>{address.address_details}</div>
+					<div>{address.city} {address.postal_code}</div>
+					<div>{address.region} {address.country}</div>
 				</div>
 			)
 			: false;
 
-		const vat = this.state.vat
+		const vatDom = this.state.vat
 			? (
 				<div className="columns">
 					<div className="third-column">
 						Your VAT number
 					</div>
 					<div className="two-third-column">
-						<DisplayWithLabel data={this.state.vat} nolabel={true}/>
+						<DisplayWithLabel nolabel={true}>
+							{this.state.vat}
+						</DisplayWithLabel>
 					</div>
 				</div>
 			)
@@ -100,22 +112,27 @@ export default class SubscriptionConfirmation extends React.Component {
 		return (
 			<div className="account-base subscription-confirmation">
 				<div className="subscription-title">
-					Great, you chose the {plans[this.state.plan].name}!
+					Great, you chose the {planDescription.name}!
 				</div>
 				<div className="columns">
 					<div className="third-column">
-						You will be charged every {plans[this.state.plan].period} the following amount
+						You will be charged every {planDescription.period} the following amount
 					</div>
 					<div className="two-third-column">
-						<DisplayWithLabel data={plans[this.state.plan][currency]} nolabel={true}/>
+						<DisplayWithLabel nolabel={true}>
+							{planDescription[currency]}
+						</DisplayWithLabel>
 					</div>
 				</div>
+				{couponDom}
 				<div className="columns">
 					<div className="third-column">
 						Your card number and expiration date
 					</div>
 					<div className="two-third-column">
-						<DisplayWithLabel data={card} nolabel={true}/>
+						<DisplayWithLabel nolabel={true}>
+							{cardDom}
+						</DisplayWithLabel>
 					</div>
 				</div>
 				<div className="columns">
@@ -123,10 +140,12 @@ export default class SubscriptionConfirmation extends React.Component {
 						Your billing address
 					</div>
 					<div className="two-third-column">
-						<DisplayWithLabel data={address} nolabel={true}/>
+						<DisplayWithLabel nolabel={true}>
+							{addressDom}
+						</DisplayWithLabel>
 					</div>
 				</div>
-				{vat}
+				{vatDom}
 				<p>By click on "I confirm my subscription" you agree to prototypo <a className="account-email" target="_blank" href="https://prototypo.io/cgu">EULA (click here to read)</a></p>
 				<AccountValidationButton disabled={this.state.loading} loading={this.state.loading} label="I confirm my subscription" click={() => {this.confirm();}}/>
 			</div>

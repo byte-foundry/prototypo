@@ -1,5 +1,6 @@
 import {hashHistory} from 'react-router';
 import Lifespan from 'lifespan';
+import md5 from 'md5';
 
 import {userStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
@@ -129,7 +130,7 @@ function addBillingAddress({buyerName, address}) {
 
 	return HoodieApi.updateCustomer({
 		invoice_address: address,
-		buyer_naME: buyerName,
+		buyer_name: buyerName,
 	})
 	.then(() => {
 		const infos = userStore.get('infos');
@@ -357,11 +358,29 @@ export default {
 				return localServer.dispatchUpdate('/userStore', patch);
 			});
 	},
-	'/choose-plan': (plan) => {
+	'/choose-plan': ({plan, coupon}) => {
 		const form = userStore.get('choosePlanForm');
 
 		form.error = undefined;
-		form.selected = plan;
+		if (plan) {
+			form.selected = plan;
+		}
+
+		if (coupon !== undefined) {
+			form.couponValue = coupon;
+		}
+
+		if (form.selected && form.couponValue) {
+			const hash = md5(`${form.selected}.${form.couponValue}`);
+
+			form.isCouponValid = {
+				'4d59832e0ae2cc5f73b952a8ff1ede16': '✓ 5$ off your first month!',
+			}[hash] || false;
+		}
+		else {
+			delete form.isCouponValid;
+		}
+
 		const patch = userStore.set('choosePlanForm', form).commit();
 
 		return localServer.dispatchUpdate('/userStore', patch);
@@ -383,9 +402,20 @@ export default {
 			return localServer.dispatchUpdate('/userStore', patch);
 		}
 
+		if (form.isCouponValid === false) {
+			form.error = 'Coupon code is invalid';
+			form.loading = false;
+			const patch = userStore.set('choosePlanForm', form).commit();
+
+			return localServer.dispatchUpdate('/userStore', patch);
+		}
+
 		const infos = userStore.get('infos');
 
 		infos.plan = plan;
+		if (form.couponValue && form.isCouponValid) {
+			infos.coupon = form.couponValue;
+		}
 		form.loading = false;
 		const patch = userStore.set('infos', infos).set('choosePlanForm', form).commit();
 
@@ -428,7 +458,7 @@ export default {
 			hashHistory.push(toPath);
 		});
 	},
-	'/confirm-buy': ({plan, currency, coupon}) => {
+	'/confirm-buy': ({plan, currency}) => {
 		const form = userStore.get('confirmation');
 
 		form.errors = [];
@@ -439,7 +469,7 @@ export default {
 		localServer.dispatchUpdate('/userStore', cleanPatch);
 		HoodieApi.updateSubscription({
 			plan: `${plan}_${currency}_taxfree`,
-			coupon,
+			coupon: userStore.get('infos').coupon,
 		}).then(async (data) => {
 			const infos = _.cloneDeep(userStore.get('infos'));
 

@@ -54,6 +54,23 @@ const templateList = new Remutable({
 	],
 });
 
+const planStore = new Remutable({
+	personal_monthly: {
+		id: 'personal_monthly',
+		name: 'Monthly billing',
+		amount: '15',
+		period: '/month',
+		info: 'Without commitment!',
+	},
+	personal_annual_99: {
+		id: 'personal_annual_99',
+		name: 'Annual billing',
+		amount: '99',
+		period: '/year',
+		info: '5 months free compared to monthly billing!',
+	},
+});
+
 const fontLibrary = new Remutable({
 	fonts: [],
 });
@@ -153,6 +170,7 @@ const stores = {
 	'/searchStore': searchStore,
 	'/userStore': userStore,
 	'/glyphSelect': glyphSelect,
+	'/planStore': planStore,
 	/* #if debug */
 	logStore,
 	/* #end */
@@ -181,6 +199,7 @@ export {
 	searchStore,
 	userStore,
 	glyphSelect,
+	planStore,
 	/* #if debug */
 	logStore,
 	/* #end */
