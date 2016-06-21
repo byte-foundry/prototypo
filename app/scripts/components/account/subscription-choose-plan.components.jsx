@@ -72,6 +72,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 				<InputWithLabel
 					ref="coupon"
 					label="Coupon code"
+					placeholder="ABC123"
 					value={this.state.couponValue}
 					handleOnChange={this.handleCouponChange} />
 				{this.state.isCouponValid}

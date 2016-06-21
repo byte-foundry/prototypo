@@ -9,13 +9,13 @@
 		display:flex;
 		justify-content:space-between;
 		margin-right:-30px;
+		margin-bottom: 20px;
 	}
 
 	&-info {
 		color:$medium-grey;
 		font-style:italic;
-		font-size:17px;
-		margin-top:30px;
+		font-size:16px;
 	}
 }
 
@@ -73,7 +73,7 @@
 	&.is-active &-period,
 	&.is-active &-pediod:before,
 	&.is-active &-periof:after,
-	&.is-active &-info, 
+	&.is-active &-info,
 	&:hover &-name,
 	&:hover &-amount,
 	&:hover &-period,
@@ -97,7 +97,7 @@
 			margin-top:42px;
 			font-size:20px;
 		}
-		
+
 		&:before {
 			content:'$/€';
 			font-size:25px;
