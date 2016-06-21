@@ -371,10 +371,10 @@ export default {
 		}
 
 		if (form.selected && form.couponValue) {
-			const hash = md5(`${form.selected}.${form.couponValue}`);
+			const hash = md5(`${form.couponValue}.${form.selected}`);
 
 			form.isCouponValid = {
-				'4d59832e0ae2cc5f73b952a8ff1ede16': '✓ 5$ off your first month!',
+				'58e088c97aa400b0498fa3d11640ada8': '✓ 5$ off your first month!',
 			}[hash] || false;
 		}
 		else {
@@ -413,9 +413,7 @@ export default {
 		const infos = userStore.get('infos');
 
 		infos.plan = plan;
-		if (form.couponValue && form.isCouponValid) {
-			infos.coupon = form.couponValue;
-		}
+		infos.coupon = form.isCouponValid && form.couponValue;
 		form.loading = false;
 		const patch = userStore.set('infos', infos).set('choosePlanForm', form).commit();
 
@@ -509,7 +507,17 @@ export default {
 			});
 		}).catch((err) => {
 
-			form.errors.push(err.message);
+			if ((/no such coupon/i).test(err.message)) {
+				form.errors.push('This coupon appears to no longer be valid, please contact us.');
+			}
+			if (/no attached payment source/i.test(err.message)) {
+				form.errors.push('Payment details appear to be invalid, please contact us.');
+			}
+			else {
+				form.errors.push('Unexpected error, please contact us.');
+				form.errors.push(err.message);
+			}
+
 			form.loading = false;
 			const patch = userStore
 				.set('confirmation', form)

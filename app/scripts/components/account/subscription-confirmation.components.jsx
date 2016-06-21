@@ -3,6 +3,7 @@ import Lifespan from 'lifespan';
 
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
+import FormError from '../shared/form-error.components.jsx';
 
 import getCurrency from '../../helpers/currency.helpers.js';
 
@@ -13,6 +14,7 @@ export default class SubscriptionConfirmation extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			errors: [],
 			card: [{
 				country: 'US',
 			}],
@@ -35,7 +37,7 @@ export default class SubscriptionConfirmation extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState(head.toJS().infos);
 				this.setState({
-					couponValue: head.toJS().choosePlanForm.couponValue,
+					errors: head.toJS().confirmation.errors,
 					loading: head.toJS().confirmation.loading,
 				});
 			})
@@ -55,19 +57,19 @@ export default class SubscriptionConfirmation extends React.Component {
 	}
 
 	render() {
-		const {plans, plan, card, address, couponValue} = this.state;
+		const {plans, plan, card, address, coupon} = this.state;
 		const planDescription = plans[plan] || {};
 		const currency = getCurrency(card[0].country);
 
-		const couponDom = couponValue
+		const couponDom = coupon
 			? (
 				<div className="columns">
 					<div className="third-column">
-						You validated the following coupon
+						Validated coupon
 					</div>
 					<div className="two-third-column">
 						<DisplayWithLabel nolabel={true}>
-							{couponValue}
+							{coupon}
 						</DisplayWithLabel>
 					</div>
 				</div>
@@ -98,7 +100,7 @@ export default class SubscriptionConfirmation extends React.Component {
 			? (
 				<div className="columns">
 					<div className="third-column">
-						Your VAT number
+						VAT number
 					</div>
 					<div className="two-third-column">
 						<DisplayWithLabel nolabel={true}>
@@ -116,18 +118,18 @@ export default class SubscriptionConfirmation extends React.Component {
 				</div>
 				<div className="columns">
 					<div className="third-column">
-						You will be charged every {planDescription.period} the following amount
+						Amount
 					</div>
 					<div className="two-third-column">
 						<DisplayWithLabel nolabel={true}>
-							{planDescription[currency]}
+							{planDescription[currency]} /{planDescription.period}
 						</DisplayWithLabel>
 					</div>
 				</div>
 				{couponDom}
 				<div className="columns">
 					<div className="third-column">
-						Your card number and expiration date
+						Payment details
 					</div>
 					<div className="two-third-column">
 						<DisplayWithLabel nolabel={true}>
@@ -137,7 +139,7 @@ export default class SubscriptionConfirmation extends React.Component {
 				</div>
 				<div className="columns">
 					<div className="third-column">
-						Your billing address
+						Billing address
 					</div>
 					<div className="two-third-column">
 						<DisplayWithLabel nolabel={true}>
@@ -146,8 +148,11 @@ export default class SubscriptionConfirmation extends React.Component {
 					</div>
 				</div>
 				{vatDom}
-				<p>By click on "I confirm my subscription" you agree to prototypo <a className="account-email" target="_blank" href="https://prototypo.io/cgu">EULA (click here to read)</a></p>
-				<AccountValidationButton disabled={this.state.loading} loading={this.state.loading} label="I confirm my subscription" click={() => {this.confirm();}}/>
+				<p>By clicking on "confirm subscription" you agree to prototypo's <a className="account-email" target="_blank" href="https://prototypo.io/cgu">EULA</a></p>
+				{this.state.errors.map((error, id) => {
+					return <FormError key={`error-${id}`} errorText={error} />;
+				})}
+				<AccountValidationButton disabled={this.state.loading} loading={this.state.loading} label="confirm subscription" click={() => {this.confirm();}}/>
 			</div>
 		);
 	}
