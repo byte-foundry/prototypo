@@ -15,6 +15,8 @@ export default class Collection extends React.Component {
 			families: [],
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.returnToDashboard = this.returnToDashboard.bind(this);
+		this.open = this.open.bind(this);
 	}
 
 	async componentWillMount() {
@@ -63,22 +65,29 @@ export default class Collection extends React.Component {
 			return family.name === this.state.selected.name;
 		}) || {}).variants;
 		const variant = selectedFamilyVariants
-			? <VariantList variants={selectedFamilyVariants} selectedVariantId={this.state.selectedVariant.id} key={this.state.selected.name} family={this.state.selected}/>
+			? <VariantList
+				variants={selectedFamilyVariants}
+				selectedVariantId={this.state.selectedVariant.id}
+				key={this.state.selected.name}
+				family={this.state.selected}/>
 			: false;
+
 		const selectedVariant = (_.find(selectedFamilyVariants, (item) => {
 			return item.id === this.state.selectedVariant.id;
 		}) || {});
+
 		const variantInfo = <VariantInfo
-			open={this.open.bind(this)}
-			download={this.download.bind(this)}
+			open={this.open}
+			download={this.download}
 			key={selectedVariant.id}
+			family={this.state.selected}
 			variant={selectedVariant}/>;
 
 		return (
 			<div className="collection">
 				<div className="collection-container">
 					<div className="account-dashboard-icon"/>
-					<div className="account-dashboard-home-icon" onClick={this.returnToDashboard.bind(this)}/>
+					<div className="account-dashboard-home-icon" onClick={this.returnToDashboard}/>
 					<div className="account-header">
 						<h1 className="account-title">My collection</h1>
 					</div>
@@ -251,6 +260,26 @@ class VariantInfo extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.edit = this.edit.bind(this);
+		this.duplicate = this.duplicate.bind(this);
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+	edit() {
+		this.client.dispatchAction('/store-value', {
+			openChangeVariantNameModal: true,
+			familySelectedVariantCreation: this.props.family,
+		});
+	}
+
+	duplicate() {
+		this.client.dispatchAction('/store-value', {
+			openDuplicateVariantModal: true,
+			familySelectedVariantCreation: this.props.family,
+		});
 	}
 
 	render() {
@@ -262,8 +291,8 @@ class VariantInfo extends React.Component {
 					</div>
 					<Button label="Open in prototypo" click={this.props.open}/>
 					<Button label="Download variant" click={this.props.download}/>
-					<Button label="Change variant name"/>
-					<Button label="Duplicate variant"/>
+					<Button label="Change variant name" click={this.edit}/>
+					<Button label="Duplicate variant" click={this.duplicate}/>
 					<Button label="Delete variant" danger={true}/>
 				</div>
 			)

@@ -31,12 +31,6 @@ export default class GlyphList extends React.Component {
 		}
 	}
 
-	exportOTF() {
-		this.client.dispatchAction('/export-otf', {merged: true});
-
-		Log.ui('GlyphList.exportOTF');
-	}
-
 	isGlyphInSearch(glyph, search) {
 		const tokens = search.split(' ');
 		const fields = [
@@ -129,7 +123,6 @@ export default class GlyphList extends React.Component {
 					</div>
 				</ReactGeminiScrollbar>
 				<SearchGlyphList/>
-				<div title="Export and download your font" className="export-btn" onClick={() => { this.exportOTF(); }}>Export OTF</div>
 			</div>
 		);
 	}

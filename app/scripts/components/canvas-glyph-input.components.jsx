@@ -34,6 +34,7 @@ export default class CanvasGlyphInput extends React.Component {
 
 		window.addEventListener('keypress', (e) => {
 			if (this.state.focused) {
+				e.preventDefault();
 				e.stopPropagation();
 
 				this.client.dispatchAction('/select-glyph', {
@@ -60,7 +61,9 @@ export default class CanvasGlyphInput extends React.Component {
 		e.stopPropagation();
 		this.client.dispatchAction('/toggle-focus-direct-access');
 
-		const cleanGlyphAccess = () => {
+		const cleanGlyphAccess = (evt) => {
+			evt.preventDefault();
+			evt.stopPropagation();
 			this.client.dispatchAction('/toggle-focus-direct-access');
 			window.removeEventListener('click', cleanGlyphAccess);
 		};

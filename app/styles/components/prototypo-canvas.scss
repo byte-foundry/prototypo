@@ -41,8 +41,8 @@
 
 .canvas-menu {
 	position: absolute;
-	bottom: 25px;
-	left: 25px;
+	bottom: 18px;
+	left: 20px;
 	display: flex;
 	flex-flow: row nowrap;
 
@@ -50,5 +50,6 @@
 		display: row nowrap;
 		align-self: flex-end;
 		margin-right: 20px;
+		border-radius:4px;
 	}
 }

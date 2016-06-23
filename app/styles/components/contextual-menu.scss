@@ -14,24 +14,69 @@
 .contextual-menu {
 	position:absolute;
 	z-index:10;
+	bottom: 15px;
+	right:0px;
+
+	&.is-aligned-left {
+		right: auto;
+		bottom: 25px;
+		left:0px;
+	}
+
+	&-enter {
+		transform: scale(0.01);
+		transform-origin: 100% 100%;
+
+		&.is-aligned-left {
+			transform-origin: 0% 100%;
+		}
+
+		&#{&}-active {
+			transform: scale(1);
+			transition: transform .2s ease-out;
+
+		}
+	}
+
+	&-leave {
+		transform: scale(0.99);
+		transform-origin: 100% 100%;
+
+		&.is-aligned-left {
+			transform-origin: 0% 100%;
+		}
+
+		&#{&}-active {
+			transform: scale(0);
+			transition: transform .2s ease-out;
+
+		}
+	}
 
 	&-list {
-		border-top:solid 10px #000;
 		list-style-type:none;
 		padding:0;
+		box-shadow: 0px 0px 18px 0px rgba($dark-grey, 0.5);
 
 		&-item {
-			padding:15px;
-			color:$white;
-			background-color:$dark-grey;
+			padding:7px 25px;
+			min-width: 250px;
+			border-bottom: solid 1px $medium-grey;
+			color: $dark-grey;
+			background: $white;
 			width: 200px;
-			border-bottom:solid 1px $light-grey;
 			cursor:pointer;
 			position:relative;
 
-			&:hover {
-				background-color:$green;
-				color:$dark-grey;
+			&:last-of-type {
+				border-bottom:none;
+			}
+
+			&:hover, &.is-active {
+				@include themify() {
+					background-color:$theme-background;
+					color:$theme-color;
+				}
 			}
 
 			&.is-inactive {

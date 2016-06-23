@@ -33,7 +33,7 @@ export class AddFamily extends React.Component {
 				}
 				if (head.toJS().errorAddFamily === undefined) {
 					this.setState({
-						selectedFont: undefined,
+						selectedFont: head.toJS().uiCreatefamilySelectedTemplate,
 						reset: (new Date()).getTime(),
 					});
 				}
@@ -69,10 +69,8 @@ export class AddFamily extends React.Component {
 		}
 	}
 
-	selectFont(font) {
-		this.setState({
-			selectedFont: font,
-		});
+	selectFont(uiCreatefamilySelectedTemplate) {
+		this.client.dispatchAction('/store-value', {uiCreatefamilySelectedTemplate});
 	}
 
 	exit() {
@@ -90,7 +88,6 @@ export class AddFamily extends React.Component {
 		});
 		Log.ui('Collection.CreateFamily');
 		this.client.dispatchAction('/store-value', {uiOnboardstep: 'customize'});
-		this.client.dispatchAction('/close-create-family-modal', {});
 	}
 
 	render() {

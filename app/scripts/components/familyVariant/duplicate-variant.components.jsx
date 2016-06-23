@@ -7,12 +7,12 @@ import Modal from '../shared/modal.components.jsx';
 import InputWithLabel from '../shared/input-with-label.components.jsx';
 import Button from '../shared/button.components.jsx';
 
-export default class ChangeNameFamily extends React.Component {
+export default class DuplicateVariant extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.exit = this.exit.bind(this);
-		this.editFamily = this.editFamily.bind(this);
+		this.duplicateVariant = this.duplicateVariant.bind(this);
 	}
 
 	componentWillMount() {
@@ -20,24 +20,26 @@ export default class ChangeNameFamily extends React.Component {
 	}
 
 	exit() {
-		this.client.dispatchAction('/store-value', {openChangeFamilyNameModal: false});
+		this.client.dispatchAction('/store-value', {openDuplicateVariantModal: false});
 	}
 
-	editFamily() {
-		this.client.dispatchAction('/edit-family-name', {
-			family: this.props.family,
-			newName: this.refs.newName.inputValue,
+	duplicateVariant() {
+		this.client.dispatchAction('/create-variant', {
+			familyName: this.props.family.name,
+			name: this.refs.newName.inputValue,
+			variantBase: this.props.variant,
+			noSwitch: true,
 		});
 	}
 
 	render() {
 		return (
 			<Modal>
-				<div className="modal-container-title">Change family name</div>
-				<InputWithLabel ref="newName" inputValue={this.props.family.name}/>
+				<div className="modal-container-title">Duplicate variant {this.props.variant.name}</div>
+				<InputWithLabel ref="newName"/>
 				<div className="add-family-form-buttons">
 					<Button click={this.exit} label="Cancel" neutral={true}/>
-					<Button click={this.editFamily} label="Change family name"/>
+					<Button click={this.duplicateVariant} label={`Duplicate ${this.props.variant.name}`}/>
 				</div>
 			</Modal>
 		);

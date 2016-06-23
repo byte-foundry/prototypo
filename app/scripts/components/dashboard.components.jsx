@@ -15,6 +15,8 @@ import {OnBoarding, OnBoardingStep} from './onboarding.components.jsx';
 import CreateFamilyModal from './familyVariant/create-family-modal.components.jsx';
 import CreateVariantModal from './familyVariant/create-variant-modal.components.jsx';
 import ChangeNameFamily from './familyVariant/change-name-family.components.jsx';
+import ChangeNameVariant from './familyVariant/change-name-variant.components.jsx';
+import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
 
 export default class Dashboard extends React.Component {
@@ -37,7 +39,10 @@ export default class Dashboard extends React.Component {
 					openFamilyModal: head.toJS().openFamilyModal,
 					openVariantModal: head.toJS().openVariantModal,
 					familySelectedVariantCreation: head.toJS().familySelectedVariantCreation,
+					collectionSelectedVariant: head.toJS().collectionSelectedVariant,
 					openChangeFamilyNameModal: head.toJS().openChangeFamilyNameModal,
+					openChangeVariantNameModal: head.toJS().openChangeVariantNameModal,
+					openDuplicateVariantModal: head.toJS().openDuplicateVariantModal,
 					onboard: head.toJS().uiOnboard,
 					step: head.toJS().uiOnboardstep,
 					collection: head.toJS().uiShowCollection,
@@ -171,6 +176,12 @@ export default class Dashboard extends React.Component {
 		const changeNameFamily = this.state.openChangeFamilyNameModal
 			? <ChangeNameFamily family={this.state.familySelectedVariantCreation}/>
 			: false;
+		const changeNameVariant = this.state.openChangeVariantNameModal
+			? <ChangeNameVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant}/>
+			: false;
+		const duplicateVariant = this.state.openDuplicateVariantModal
+			? <DuplicateVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant}/>
+			: false;
 
 		return (
 			<div id="dashboard" className={classes}>
@@ -189,6 +200,8 @@ export default class Dashboard extends React.Component {
 					{newFamily}
 					{newVariant}
 					{changeNameFamily}
+					{changeNameVariant}
+					{duplicateVariant}
 				</ReactCSSTransitionGroup>
 			</div>
 		);

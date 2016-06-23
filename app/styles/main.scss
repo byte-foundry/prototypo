@@ -5,10 +5,16 @@ html {
 }
 
 ::selection{
-	background-color: $yellow;
+	@include themify() {
+		background-color: $theme-background;
+		color: $theme-color;
+	}
 }
 ::-moz-selection {
-	background-color: $yellow;
+	@include themify() {
+		background-color: $theme-background;
+		color: $theme-color;
+	}
 }
 
 @font-face {

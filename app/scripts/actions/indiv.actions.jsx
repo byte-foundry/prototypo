@@ -12,53 +12,38 @@ window.addEventListener('fluxServer.setup', () => {
 	localServer = LocalServer.instance;
 });
 
+function getGroupsAndGlyphsFromGroups(groups) {
+	return _.map(groups, (name) => {
+		const glyphs = _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
+			return prototypoStore.get('controlsValues').indiv_glyphs[key] === name;
+		});
+
+		return {name, glyphs};
+	});
+
+}
+
 export default {
 	'/toggle-individualize': () => {
 		const oldValue = prototypoStore.get('indivMode');
-		const currentGroup = (prototypoStore.get('controlsValues').indiv_glyphs || {})[prototypoStore.get('glyphSelected')];
 
-		if (currentGroup && !oldValue) {
-			const patchEdit = prototypoStore
-				.set('indivMode', !oldValue)
-				.set('indivCreate', false)
-				.set('indivEdit', true)
-				.set('indivGlyphs', _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
-					return prototypoStore.get('controlsValues').indiv_glyphs[key] === currentGroup;
-				}))
-				.set('indivCurrentGroup', currentGroup)
-				.set('indivGroups', Object.keys(prototypoStore.get('controlsValues').indiv_group_param))
-				.commit();
-
-			return localServer.dispatchUpdate('/prototypoStore', patchEdit);
-		}
-
+		const groups = Object.keys(prototypoStore.get('controlsValues').indiv_group_param || {});
+		const groupsAndGlyphs = getGroupsAndGlyphsFromGroups(groups);
 		prototypoStore
 			.set('indivMode', !oldValue)
-			.set('indivCreate', !oldValue)
+			.set('indivCreate', false)
 			.set('indivPreDelete', false)
 			.set('indivEdit', false)
+			.set('indivGlyphs', [])
+			.set('indivCurrentGroup', undefined)
 			.set('indivErrorMessage', undefined)
 			.set('indivErrorGlyphs', [])
-			.set('indivGroups', Object.keys(prototypoStore.get('controlsValues').indiv_group_param || {}));
+			.set('indivGroups', groupsAndGlyphs);
 
-		if (!oldValue) {
-			const selected = [prototypoStore.get('glyphSelected')];
-
-			prototypoStore.set('indivSelected', selected);
-		}
 		const patch = prototypoStore.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		Log.ui('GroupParam.showIndivMode');
-	},
-	'/toggle-glyph-param-grid': () => {
-		const oldValue = prototypoStore.get('indivGlyphGrid');
-		const patch = prototypoStore
-			.set('indivGlyphGrid', !oldValue)
-			.commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patch);
-		Log.ui('GroupParam.showGlyphGrid');
 	},
 	'/add-glyph-to-indiv': ({unicode, isSelected}) => {
 		const selected = prototypoStore.get('indivSelected');
@@ -137,7 +122,7 @@ export default {
 		const endCreatePatch = prototypoStore
 			.set('indivCreate', false)
 			.set('indivEdit', true)
-			.set('indivCurrentGroup', name)
+			.set('indivCurrentGroup', {name, glyphs: selected})
 			.set('indivErrorMessage', undefined)
 			.set('indivGlyphGrid', false)
 			.set('indivGlyphs', _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
@@ -145,7 +130,7 @@ export default {
 			}))
 			.set('indivEditGroup', false)
 			.set('indivErrorGlyphs', [])
-			.set('indivGroups', Object.keys(oldValues.indiv_group_param))
+			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(oldValues.indiv_group_param)))
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', endCreatePatch);
@@ -171,21 +156,6 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', endCreatePatch);
 
-	},
-	'/select-indiv-group': (name) => {
-		const patch = prototypoStore
-			.set('indivCurrentGroup', name)
-			.set('indivGlyphs', _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
-				return prototypoStore.get('controlsValues').indiv_glyphs[key] === name;
-			}))
-			.set('indivGlyphGrid', false)
-			.set('indivEditGroup', false)
-			.set('indivPreDelete', false)
-			.set('indivErrorEdit', undefined)
-			.commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patch);
-		Log.ui('GroupParam.selectGroupParam');
 	},
 	'/edit-param-group': (state) => {
 		const otherGroups = _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
@@ -237,7 +207,7 @@ export default {
 			.set('indivErrorMessage', undefined)
 			.set('indivErrorEdit', undefined)
 			.set('indivErrorGlyphs', [])
-			.set('indivGroups', Object.keys(oldValues.indiv_group_param || {}))
+			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(oldValues.indiv_group_param || {})))
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', endDeletePatch);
@@ -315,7 +285,7 @@ export default {
 			.set('indivEditGroup', false)
 			.set('indivGlyphGrid', false)
 			.set('indivErrorEdit', undefined)
-			.set('indivGroups', Object.keys(oldValues.indiv_group_param))
+			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(oldValues.indiv_group_param)))
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', indivPatch);
@@ -334,20 +304,19 @@ export default {
 			.set('indivCreate', true)
 			.set('indivEdit', false)
 			.set('indivPreDelete', false)
-			.set('indivGlyphGrid', false)
+			.set('indivCurrentGroup', undefined)
 			.set('indivErrorMessage', undefined)
 			.set('indivErrorGlyphs', [])
 			.set('indivErrorEdit', undefined)
 			.set('indivSelected', [])
-			.set('indivGroups', Object.keys(values.indiv_group_param))
+			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(values.indiv_group_param)))
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', indivPatch);
 		Log.ui('GroupParam.switchToCreateGroupParam');
 	},
-	'/edit-mode-param-group': () => {
+	'/edit-mode-param-group': ({group}) => {
 		const values = _.cloneDeep(prototypoStore.get('controlsValues'));
-		const groupName = Object.keys(values.indiv_group_param)[0];
 		const indivPatch = prototypoStore
 			.set('indivMode', true)
 			.set('indivCreate', false)
@@ -357,13 +326,11 @@ export default {
 			.set('indivErrorMessage', undefined)
 			.set('indivErrorGlyphs', [])
 			.set('indivErrorEdit', undefined)
-			.set('indivGroups', Object.keys(values.indiv_group_param))
-			.set('indivCurrentGroup', groupName)
+			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(values.indiv_group_param)))
+			.set('indivCurrentGroup', group)
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', indivPatch);
-
-		localClient.dispatchAction('/select-indiv-group', groupName);
 		Log.ui('GroupParam.switchToEditGroupParam');
 	},
 };

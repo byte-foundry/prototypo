@@ -4,7 +4,8 @@ import Lifespan from 'lifespan';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
+import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
+import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import ZoomButtons from './zoom-buttons.components.jsx';
 
@@ -20,6 +21,13 @@ export default class PrototypoWord extends React.Component {
 			showContextMenu: false,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.setupText = this.setupText.bind(this);
+		this.saveText = this.saveText.bind(this);
+		this.toggleContextMenu = this.toggleContextMenu.bind(this);
+		this.hideContextMenu = this.hideContextMenu.bind(this);
+		this.changeTextFontSize = this.changeTextFontSize.bind(this);
+		this.toggleColors = this.toggleColors.bind(this);
+		this.invertedView = this.invertedView.bind(this);
 	}
 
 	componentWillMount() {
@@ -59,20 +67,11 @@ export default class PrototypoWord extends React.Component {
 		}
 	}
 
-	showContextMenu(e) {
+	toggleContextMenu(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		const contextMenuPos = {x: e.nativeEvent.offsetX};
-
-		if (this.props.uiInvertedWordView) {
-			contextMenuPos.y = this.refs.text.clientHeight - e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
-		}
-		else {
-			contextMenuPos.y = e.nativeEvent.offsetY - e.target.parentElement.scrollTop;
-		}
 		this.setState({
-			showContextMenu: true,
-			contextMenuPos,
+			showContextMenu: !this.state.showContextMenu,
 		});
 	}
 
@@ -86,6 +85,16 @@ export default class PrototypoWord extends React.Component {
 
 	changeTextFontSize(uiWordFontSize) {
 		this.client.dispatchAction('/store-value', {uiWordFontSize});
+	}
+
+	invertedView(e) {
+		e.stopPropagation();
+		this.client.dispatchAction('/store-value', {uiInvertedWordView: !this.props.uiInvertedWordView});
+	}
+
+	toggleColors(e) {
+		e.stopPropagation()
+		this.client.dispatchAction('/store-value', {uiInvertedWordColors: !this.props.uiInvertedWordColors});
 	}
 
 	render() {
@@ -103,20 +112,21 @@ export default class PrototypoWord extends React.Component {
 		const menu = [
 			<ContextualMenuItem
 				text="Inverted view"
-				key="colors"
-				click={() => { this.client.dispatchAction('/store-value', {uiInvertedWordView: !this.props.uiInvertedWordView}); }}/>,
-			<ContextualMenuItem
 				key="view"
-				text="Toggle colors"
-				click={() => { this.client.dispatchAction('/store-value', {uiInvertedWordColors: !this.props.uiInvertedWordColors}); }}/>,
-		];
+				active={this.props.uiInvertedWordView}
+				click={this.invertedView}/>,
+			<ContextualMenuItem
+				text={`Switch to ${this.props.uiInvertedWordColors ? 'black on white' : 'white on black'}`}
+				key="colors"
+				active={this.props.uiInvertedWordColors}
+				click={this.toggleColors}/>,
+				];
 
 		return (
 			<div
 				className="prototypo-word"
-				onContextMenu={(e) => { this.showContextMenu(e); }}
-				onClick={() => { this.hideContextMenu(); }}
-				onMouseLeave={() => { this.hideContextMenu(); }}>
+				onClick={this.hideContextMenu}
+				onMouseLeave={this.hideContextMenu}>
 				<ReactGeminiScrollbar>
 					<div
 						contentEditable="true"
@@ -124,9 +134,14 @@ export default class PrototypoWord extends React.Component {
 						className="prototypo-word-string"
 						spellCheck="false"
 						style={style}
-						onInput={() => { this.saveText(); }}
+						onInput={this.saveText}
 						></div>
 				</ReactGeminiScrollbar>
+				<ViewPanelsMenu
+					show={this.state.showContextMenu}
+					toggle={this.toggleContextMenu}>
+					{menu}
+				</ViewPanelsMenu>
 				<div className="action-bar">
 					<CloseButton click={() => { this.props.close('word'); }}/>
 					<ZoomButtons
@@ -134,9 +149,6 @@ export default class PrototypoWord extends React.Component {
 						minus={() => { this.changeTextFontSize(this.props.uiWordFontSize - 0.3); }}
 					/>
 				</div>
-				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
-					{menu}
-				</ContextualMenu>
 			</div>
 		);
 	}

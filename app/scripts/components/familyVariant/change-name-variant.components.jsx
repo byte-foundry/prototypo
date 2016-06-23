@@ -7,12 +7,12 @@ import Modal from '../shared/modal.components.jsx';
 import InputWithLabel from '../shared/input-with-label.components.jsx';
 import Button from '../shared/button.components.jsx';
 
-export default class ChangeNameFamily extends React.Component {
+export default class ChangeNameVariant extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.exit = this.exit.bind(this);
-		this.editFamily = this.editFamily.bind(this);
+		this.editVariant = this.editVariant.bind(this);
 	}
 
 	componentWillMount() {
@@ -20,11 +20,12 @@ export default class ChangeNameFamily extends React.Component {
 	}
 
 	exit() {
-		this.client.dispatchAction('/store-value', {openChangeFamilyNameModal: false});
+		this.client.dispatchAction('/store-value', {openChangeVariantNameModal: false});
 	}
 
-	editFamily() {
-		this.client.dispatchAction('/edit-family-name', {
+	editVariant() {
+		this.client.dispatchAction('/edit-variant', {
+			variant: this.props.variant,
 			family: this.props.family,
 			newName: this.refs.newName.inputValue,
 		});
@@ -33,11 +34,11 @@ export default class ChangeNameFamily extends React.Component {
 	render() {
 		return (
 			<Modal>
-				<div className="modal-container-title">Change family name</div>
-				<InputWithLabel ref="newName" inputValue={this.props.family.name}/>
+				<div className="modal-container-title">Change variant name</div>
+				<InputWithLabel ref="newName" inputValue={this.props.variant.name}/>
 				<div className="add-family-form-buttons">
 					<Button click={this.exit} label="Cancel" neutral={true}/>
-					<Button click={this.editFamily} label="Change family name"/>
+					<Button click={this.editVariant} label="Change variant name"/>
 				</div>
 			</Modal>
 		);

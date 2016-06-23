@@ -8,6 +8,7 @@ import GlyphPanel from './glyph-panel.components.jsx';
 import PrototypoPanel from './prototypo-panel.components.jsx';
 import FontControls from './font-controls.components.jsx';
 import LoadingOverlay from './shared/loading-overlay.components.jsx';
+import IndivSidebar from './indivMode/indiv-sidebar.components.jsx';
 
 export default class Workboard extends React.Component {
 
@@ -33,6 +34,7 @@ export default class Workboard extends React.Component {
 					fontName: head.toJS().fontName,
 					glyphs: head.toJS().fontGlyphs,
 					fontLoading: head.toJS().uiFontLoading,
+					indivMode: head.toJS().indivMode,
 				});
 			})
 			.onDelete(() => {
@@ -53,12 +55,21 @@ export default class Workboard extends React.Component {
 			? <LoadingOverlay />
 			: false;
 
+		let sideBar = false;
+
+		if (this.state.indivMode) {
+			sideBar = <IndivSidebar />;
+		}
+		else {
+			sideBar = <FontControls />;
+		}
+
 		return (
 			<div id="workboard">
 				<ReactCSSTransitionGroup transitionName="loading-overlay" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
 					{loadingOverlay}
 				</ReactCSSTransitionGroup>
-				<FontControls />
+				{sideBar}
 				<PrototypoPanel fontName={this.state.fontName} glyphs={this.state.glyphs}/>
 				<GlyphPanel />
 			</div>

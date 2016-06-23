@@ -5,6 +5,7 @@
 		border: solid 2px $theme-background;
 		color: $theme-background;
 	}
+
 	padding:6px 0;
 	display:flex;
 	justify-content: center;
@@ -14,6 +15,7 @@
 	cursor:pointer;
 	transition: color .2s ease, background-color .2s ease;
 	margin-bottom:10px;
+	font-style: normal;
 
 	&.is-disable {
 		border-color: rgba($green, 0.4);
@@ -34,10 +36,24 @@
 	&.neutral {
 		border-color: $medium-grey;
 		color: $medium-grey;
+		background: $white;
 
 		&:hover {
 			@include themify() {
 				background-color: $medium-grey;
+				color: $white
+			}
+		}
+	}
+
+	&.dark {
+		border-color: $dark-grey;
+		color: $dark-grey;
+		background: $white;
+
+		&:hover {
+			@include themify() {
+				background-color: $dark-grey;
 				color: $white
 			}
 		}

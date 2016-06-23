@@ -6,9 +6,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
 import PrototypoWord from './prototypo-word.components.jsx';
-import CreateParamGroup from './create-param-group.components.jsx';
-import EditParamGroup from './edit-param-group.components.jsx';
-
 
 export default class PrototypoPanel extends React.Component {
 
@@ -48,7 +45,6 @@ export default class PrototypoPanel extends React.Component {
 					uiInvertedWordView: head.toJS().uiInvertedWordView,
 					uiInvertedWordColors: head.toJS().uiInvertedWordColors,
 					uiWordFontSize: head.toJS().uiWordFontSize,
-					createParamGroup: head.toJS().indivCreate,
 					editingGroup: head.toJS().indivEdit,
 					indivMode: head.toJS().indivMode,
 				});
@@ -132,14 +128,6 @@ export default class PrototypoPanel extends React.Component {
 				field="uiWord"/>;
 		}
 
-		const createParamGroup = this.state.createParamGroup && this.state.indivMode ? (
-			<CreateParamGroup />
-		) : false;
-
-		const editParamGroup = this.state.editingGroup && this.state.indivMode ? (
-			<EditParamGroup />
-		) : false;
-
 		let down;
 
 		if (hasGlyph || hasText) {
@@ -162,8 +150,6 @@ export default class PrototypoPanel extends React.Component {
 
 		return (
 			<div id="prototypopanel">
-				{createParamGroup}
-				{editParamGroup}
 				{up}
 				{down}
 			</div>

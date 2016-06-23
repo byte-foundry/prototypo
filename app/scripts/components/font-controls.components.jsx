@@ -78,11 +78,11 @@ export default class FontControls extends React.Component {
 
 				server.dispatchUpdate('/prototypoStore', patch);
 
+				debouncedSave(newParams);
 				/*if (params.force) {
 
 					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 					this.undoWatcher.forceUpdate(patch, params.label);
-					debouncedSave(newParams);
 				}
 				else {
 
@@ -104,12 +104,12 @@ export default class FontControls extends React.Component {
 				const patch = prototypoStore.set('controlsValues', newParams).commit();
 
 				server.dispatchUpdate('/prototypoStore', patch);
+				debouncedSave(newParams);
 
 				/*if (params.force) {
 
 					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 					this.undoWatcher.forceUpdate(patch, params.label);
-					debouncedSave(newParams);
 				}
 				else {
 

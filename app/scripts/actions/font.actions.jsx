@@ -97,7 +97,9 @@ export default {
 		}
 
 		if (templateToLoad === undefined) {
-			const patch = prototypoStore.set('errorAddFamily', 'You must choose a base template').commit();
+			const patch = prototypoStore
+			.set('errorAddFamily', 'You must choose a base template')
+			.commit();
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
 			return;
@@ -161,7 +163,10 @@ export default {
 
 		const patchVariant = prototypoStore
 			.set('variant', newFont.variants[0])
-			.set('family', {name: newFont.name, template: newFont.template}).commit();
+			.set('family', {name: newFont.name, template: newFont.template})
+			.set('uiCreatefamilySelectedTemplate', undefined)
+			.set('openFamilyModal', false)
+			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 
@@ -184,7 +189,7 @@ export default {
 		});
 		saveAppValues();
 	},
-	'/create-variant': async ({name, familyName}) => {
+	'/create-variant': async ({name, familyName, variantBase, noSwitch}) => {
 		localClient.dispatchAction('/cancel-indiv-mode');
 		const family = _.find(Array.from(prototypoStore.get('fonts') || []), (font) => {
 			return font.name === familyName;
@@ -220,12 +225,14 @@ export default {
 
 		//TODO(franz): this is fucked up
 		const patch = prototypoStore
-			.set('fonts', prototypoStore.get('fonts'))
+			.set('fonts', _.cloneDeep(prototypoStore.get('fonts')))
 			.set('errorAddVariant', undefined).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		const ref = await FontValues.get({typeface: family.variants[0].db});
+		const variantBaseDb = variantBase.db || family.variants[0].db;
+
+		const ref = await FontValues.get({typeface: variantBaseDb});
 
 		_.each(thicknessTransform, (item) => {
 			if (name.indexOf(item.string) !== -1) {
@@ -239,23 +246,55 @@ export default {
 
 		setTimeout(async () => {
 			await FontValues.save({typeface: variant.db, values: ref.values});
-			localClient.dispatchAction('/select-variant', {variant, family});
+			if (!noSwitch) {
+				localClient.dispatchAction('/select-variant', {variant, family});
+			}
 		}, 200);
 
 	},
 	'/edit-variant': ({variant, family, newName}) => {
-		const found = _.find(Array.from(prototypoStore.get('fonts') || []), (item) => {
+		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
+		const found = _.find(fonts, (item) => {
 			return item.name === family.name;
 		});
-
 		const newVariant = _.find(found.variants || [], (item) => {
 			return variant.id === item.id;
 		});
 
 		newVariant.name = newName;
 
+		//If we modify selected variant patch selected variant.
+		if (variant.id === prototypoStore.get('variant').id) {
+			prototypoStore.set('variant', newVariant);
+		}
+
+		const patch = prototypoStore
+			.set('fonts', fonts)
+			.set('collectionSelectedVariant', newVariant)
+			.set('openChangeVariantNameModal', false)
+			.commit();
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
+		saveAppValues();
+	},
+	'/edit-family-name': ({family, newName}) => {
+		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
+		const newFamily = _.find(fonts, (item) => {
+			return item.name === family.name;
+		});
+
+		newFamily.name = newName;
+
+		if (family.name === prototypoStore.get('family').name) {
+			prototypoStore.set('family', newFamily);
+		}
+
 		//TODO(franz): this is fucked up
-		const patch = prototypoStore.set('fonts', prototypoStore.get('fonts')).commit();
+		const patch = prototypoStore
+			.set('fonts', fonts)
+			.set('collectionSelectedFamily', newFamily)
+			.set('openChangeFamilyNameModal', false)
+			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();

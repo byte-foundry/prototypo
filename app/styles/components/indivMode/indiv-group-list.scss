@@ -1,0 +1,91 @@
+@import "../../variables";
+
+.indiv-group-list {
+	background: $yellow;
+	flex:0 0 280px;
+	font-weight: 400;
+	position: relative;
+	z-index: 5;
+
+	&-title {
+		font-weight:600;
+		padding-left:20px;
+		padding-top:20px;
+	}
+
+	&-message {
+		padding:20px 20px 0px;
+		font-style: italic;
+	}
+}
+
+.indiv-group {
+	background: $white;
+	padding: 20px 20px;
+	margin: 20px;
+	border-radius: 5px;
+	cursor:pointer;
+	position:relative;
+	transition: background .4s ease, color .4s ease, border-top-right-radius .2s ease, border-bottom-right-radius .2s ease, margin-right .2s ease;
+
+	&:after {
+		content:'';
+		width: 12px;
+		height:20px;
+		background: url('/assets/images/indiv-group-chevron.svg');
+		display:block;
+		position:absolute;
+		right:10px;
+		top: calc(50% - 10px);
+	}
+
+	&.is-active {
+		border-top-right-radius: 0px;
+		border-bottom-right-radius: 0px;
+		margin-right:0px;
+		background: $lightest-grey;
+
+		&:after {
+			background: none;
+		}
+
+		&:hover {
+			color: $dark-grey;
+			background: $lightest-grey;
+
+			&:after {
+				background: none;
+			}
+		}
+	}
+
+	&:hover {
+		color: $white;
+		background: $dark-grey;
+
+		&:after {
+			background: url('/assets/images/indiv-group-chevron-hover.svg');
+		}
+	}
+
+	&-title {
+		font-size: 21px;
+		line-height: 23px;
+		margin-bottom: 10px;
+		font-weight: 600;
+	}
+
+	&-infos {
+		&-glyphs-number {
+			font-size: 11px;
+		}
+
+		&-glyphs-list {
+			max-width: 90px;
+			overflow: hidden;
+			vertical-align: bottom;
+			display: inline-block;
+			text-overflow: ellipsis;
+		}
+	}
+}

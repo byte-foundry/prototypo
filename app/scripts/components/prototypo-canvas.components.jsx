@@ -1,10 +1,13 @@
 import React from 'react';
 import Classnames from 'classnames';
+import Lifespan from 'lifespan';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
-import Lifespan from 'lifespan';
 
-import {ContextualMenu, ContextualMenuItem} from './contextual-menu.components.jsx';
+import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
+import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import CanvasGlyphInput from './canvas-glyph-input.components.jsx';
 import AlternateMenu from './alternate-menu.components.jsx';
@@ -15,9 +18,15 @@ export default class PrototypoCanvas extends React.Component {
 		super(props);
 
 		this.state = {
-			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.toggleContextMenu = this.toggleContextMenu.bind(this);
+		this.handleLeaveAndClick = this.handleLeaveAndClick.bind(this);
+		this.reset = this.reset.bind(this);
+		this.toggleCoords = this.toggleCoords.bind(this);
+		this.toggleNodes = this.toggleNodes.bind(this);
+		this.toggleOutline = this.toggleOutline.bind(this);
 	}
 
 	componentWillMount() {
@@ -89,8 +98,15 @@ export default class PrototypoCanvas extends React.Component {
 		});
 	}
 
+	preventSelection(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	}
+
 	mouseDown(e) {
 		fontInstance.onDown.bind(fontInstance)(e);
+		document.addEventListener('selectstart', this.preventSelection);
 	}
 
 	mouseUp(e) {
@@ -99,6 +115,7 @@ export default class PrototypoCanvas extends React.Component {
 			uiPos: fontInstance.view.center,
 			uiZoom: fontInstance.zoom,
 		});
+		document.removeEventListener('selectstart', this.preventSelection);
 	}
 
 	componentDidMount() {
@@ -113,30 +130,25 @@ export default class PrototypoCanvas extends React.Component {
 		this.setupCanvas();
 	}
 
-	showContextMenu(e) {
+	toggleContextMenu(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		this.setState({
-			showContextMenu: true,
-			contextMenuPos: {x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY},
+			showContextMenu: !this.state.showContextMenu,
 		});
 
 		Log.ui('PrototypoCanvas.showContextMenu');
 	}
 
-	hideContextMenu() {
+	handleLeaveAndClick() {
 		if (this.state.showContextMenu) {
 			this.setState({
 				showContextMenu: false,
 			});
 		}
-	}
 
-	reset() {
-		this.props.reset({
-			x: fontInstance.currGlyph.getBounds().center.x * window.devicePixelRatio,
-			y: -fontInstance.currGlyph.getBounds().center.y * window.devicePixelRatio,
-		});
+		//Need to resume selection on leave
+		document.removeEventListener('selectstart', this.preventSelection);
 	}
 
 	handleZoomShortcut(e) {
@@ -153,6 +165,12 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
+	reset() {
+		this.props.reset({
+			x: fontInstance.currGlyph.getBounds().center.x * window.devicePixelRatio,
+			y: -fontInstance.currGlyph.getBounds().center.y * window.devicePixelRatio,
+		});
+	}
 
 	finishZoomShortcut(e) {
 		if (e.keyCode === 90) {
@@ -177,6 +195,21 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
+	toggleNodes(e) {
+		e.stopPropagation();
+		this.client.dispatchAction('/store-value', {uiNodes: !this.props.uiNodes});
+	}
+
+	toggleOutline(e) {
+		e.stopPropagation()
+		this.client.dispatchAction('/store-value', {uiOutline: !this.props.uiOutline});
+	}
+
+	toggleCoords(e) {
+		e.stopPropagation();
+		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords});
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] PrototypoCanvas');
@@ -189,24 +222,23 @@ export default class PrototypoCanvas extends React.Component {
 		const menu = [
 			<ContextualMenuItem
 				key="nodes"
-				text={`${fontInstance.showNodes ? 'Hide' : 'Show'} nodes`}
-				click={() => { this.client.dispatchAction('/store-value', {uiNodes: !this.props.uiNodes}); }}/>,
+				active={this.props.uiNodes}
+				text={`${this.props.uiNodes ? 'Hide' : 'Show'} nodes`}
+				click={this.toggleNodes}/>,
 			<ContextualMenuItem
 				key="outline"
-				text={`${fontInstance.fill ? 'Show' : 'Hide'} outline`}
-				click={() => { this.client.dispatchAction('/store-value', {uiOutline: !this.props.uiOutline}); }}/>,
+				active={this.props.uiOutline}
+				text={`${this.props.uiOutline ? 'Hide' : 'Show'} outline`}
+				click={this.toggleOutline}/>,
 			<ContextualMenuItem
 				key="coords"
-				text={`${fontInstance.showCoords ? 'Hide' : 'Show'} coords`}
-				click={() => { this.client.dispatchAction('/store-value', {coords: !this.props.uiCoords}); }}/>,
+				active={this.props.uiCoords}
+				text={`${this.props.uiCoords ? 'Hide' : 'Show'} coords`}
+				click={this.toggleCoords}/>,
 			<ContextualMenuItem
 				key="reset"
 				text="Reset view"
-				click={() => { this.reset(); }}/>,
-			<ContextualMenuItem
-				key="shadow"
-				text={`${this.props.uiShadow ? 'Hide' : 'Show'} shadow`}
-				click={() => { this.client.dispatchAction('/store-value', {shadow: !this.props.uiShadow}); }}/>,
+				click={this.reset}/>,
 		];
 
 		const alternateMenu = this.props && this.props.glyphs[this.props.glyphSelected].length > 1 ? (
@@ -216,16 +248,17 @@ export default class PrototypoCanvas extends React.Component {
 		return (
 			<div
 				className={canvasClass}
-				onContextMenu={(e) => { this.showContextMenu(e); }}
-				onClick={() => { this.hideContextMenu(); }}
-				onMouseLeave={() => { this.hideContextMenu(); }}>
+				onClick={this.handleLeaveAndClick}
+				onMouseLeave={this.handleLeaveAndClick}>
 				<div ref="canvas" className="prototypo-canvas-container" onMouseLeave={() => {this.rejectZoomShortcut()}} onMouseEnter={() => { this.acceptZoomShortcut();}} onDoubleClick={() => { this.reset(); }}></div>
 				<div className="action-bar">
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
 				</div>
-				<ContextualMenu show={this.state.showContextMenu} pos={this.state.contextMenuPos}>
+				<ViewPanelsMenu
+					show={this.state.showContextMenu}
+					toggle={this.toggleContextMenu}>
 					{menu}
-				</ContextualMenu>
+				</ViewPanelsMenu>
 				<div className="canvas-menu">
 					<CanvasGlyphInput/>
 					{alternateMenu}

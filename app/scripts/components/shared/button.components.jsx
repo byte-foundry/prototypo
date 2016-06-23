@@ -13,6 +13,7 @@ export default class Button extends React.Component {
 			button: true,
 			danger: this.props.danger,
 			neutral: this.props.neutral,
+			dark: this.props.dark,
 		});
 
 		return (

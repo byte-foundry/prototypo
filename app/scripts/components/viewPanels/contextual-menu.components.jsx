@@ -1,5 +1,6 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import ClassNames from 'classnames';
 
 class ContextualMenu extends React.Component {
 	constructor(props) {
@@ -12,18 +13,18 @@ class ContextualMenu extends React.Component {
 			console.log('[RENDER] contextual menu');
 		}
 
-		const menuStyle = {
-			top: this.props.pos.y,
-			left: this.props.pos.x,
-		};
+		const classes = ClassNames({
+			'contextual-menu': true,
+			'is-aligned-left': this.props.alignLeft,
+		});
 
-		return this.props.show ? (
-			<div className="contextual-menu" style={menuStyle}>
+		return (
+			<div className={classes}>
 				<ul className="contextual-menu-list">
 					{this.props.children}
 				</ul>
 			</div>
-		) : false;
+		);
 	}
 }
 
@@ -37,9 +38,13 @@ class ContextualMenuItem extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] contextual menu item');
 		}
+		const classes = ClassNames({
+			'contextual-menu-list-item': true,
+			'is-active': this.props.active,
+		});
 
 		return (
-			<li className="contextual-menu-list-item" onClick={this.props.click}>
+			<li className={classes} onClick={this.props.click}>
 				{this.props.text}
 			</li>
 		);

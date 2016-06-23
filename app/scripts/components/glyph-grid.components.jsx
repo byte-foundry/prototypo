@@ -72,11 +72,16 @@ export default class GlyphGrid extends React.Component {
 
 		return (
 			<div className="glyphs-grid">
-				<div className="glyphs-grid-filter">
-					Filter by:
-					<select className="glyphs-grid-filter-select" onChange={(e) => { this.selectTag(e);}}>
-						{tags}
-					</select>
+				<div className="glyphs-grid-header">
+					<div className="glyphs-grid-header-title">
+						Add glyphs
+					</div>
+					<div className="glyphs-grid-filter">
+						Filter by:
+						<select className="glyphs-grid-filter-select" onChange={(e) => { this.selectTag(e);}}>
+							{tags}
+						</select>
+					</div>
 				</div>
 				<div className="glyphs-grid-scroll-container">
 					<ReactGeminiScrollbar>
