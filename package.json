@@ -26,7 +26,7 @@
     "react": "^15.0.0",
     "react-addons-create-fragment": "^15.0.0",
     "react-addons-css-transition-group": "^15.0.2",
-    "react-addons-pure-render-mixin": "^15.0.2",
+    "react-addons-pure-render-mixin": "^15.1.0",
     "react-dom": "^15.0.0",
     "react-gemini-scrollbar": "^2.1.0",
     "react-json-pretty": "^1.2.0",
