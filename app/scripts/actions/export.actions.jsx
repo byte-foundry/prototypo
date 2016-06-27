@@ -27,7 +27,7 @@ export default {
 		const style = prototypoStore.get('variant').name
 			? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
 		const template = prototypoStore.get('family').template
-			? prototypoStore.get('family').template.replace(/\s/g, '-').replace(/(\.[a-z]*|\.[A-Z]*)$/g, '') : 'tmpl';
+			? prototypoStore.get('family').template.replace(/\s/g, '-').replace(/(\.[A-z]*)$/g, '') : 'tmpl';
 
 		const name = {
 			family,
