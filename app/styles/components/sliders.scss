@@ -125,6 +125,8 @@
 		background-color: #FFF;
 		margin-top: 2px;
 		flex:1;
+		/* fix a overflow hidden and border-radius error in chrome */
+		-webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
 
 		&, &-bg, &-handle {
 			border-radius: 1rem;

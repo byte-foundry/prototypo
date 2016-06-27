@@ -1,6 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import ClassNames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -17,8 +18,12 @@ export default class CreateParamGroup extends React.Component {
 			groups: [],
 		};
 
+		//We bind member methods in the constructor to avoid
+		//triggering render on children pure render component
 		this.close = this.close.bind(this);
 		this.createGroup = this.createGroup.bind(this);
+		this.selectGlyph = this.selectGlyph.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
@@ -34,6 +39,7 @@ export default class CreateParamGroup extends React.Component {
 					errorMessage: head.toJS().indivErrorMessage,
 					errorGlyphs: head.toJS().indivErrorGlyphs,
 					groups: head.toJS().indivGroups,
+					forbiddenGlyphs: head.toJS().indivOtherGroups,
 				});
 			})
 			.onDelete(() => {
@@ -48,15 +54,17 @@ export default class CreateParamGroup extends React.Component {
 	createGroup(e) {
 		e.preventDefault();
 
-		this.client.dispatchAction('/create-param-group', {
-			name: this.refs.groupname.inputValue,
-			selected: this.state.selected,
-		});
-	}
-
-	toggleGlyphs(e) {
-		e.preventDefault();
-		this.client.dispatchAction('/toggle-glyph-param-grid');
+		if (this.props.editMode) {
+			this.client.dispatchAction('/save-param-group', {
+				newName: this.refs.groupname.inputValue,
+			});
+		}
+		else {
+			this.client.dispatchAction('/create-param-group', {
+				name: this.refs.groupname.inputValue,
+				selected: this.state.selected,
+			});
+		}
 	}
 
 	close(e) {
@@ -71,19 +79,20 @@ export default class CreateParamGroup extends React.Component {
 		});
 	}
 
+	selectGlyph(unicode, isSelected) {
+		if (this.props.editMode) {
+			this.client.dispatchAction('/add-glyph-to-indiv-edit', {unicode, isSelected});
+		}
+		else {
+			this.client.dispatchAction('/add-glyph-to-indiv-create', {unicode, isSelected});
+		}
+	}
+
 	render() {
-
-		const errorGlyphs = _.map(this.state.errorGlyphs, (glyph) => {
-
-			return <div key={glyph} className={glyphClass}>{String.fromCharCode(glyph)}</div>;
-		});
 
 		const error = this.state.errorMessage ? (
 			<div className="create-param-group-panel-error">
 				<span className="create-param-group-panel-error-message">{this.state.errorMessage}</span>
-				<div className="create-param-group-panel-error-glyphs">
-					{errorGlyphs}
-				</div>
 			</div>
 		) : false;
 
@@ -103,7 +112,8 @@ export default class CreateParamGroup extends React.Component {
 					</div>
 					<InputWithLabel ref="groupname" label="Group name" inputValue={this.props.group ? this.props.group.name : ''}/>
 					<GlyphGrid
-						select={(unicode, isSelected) => {this.selectGlyph(unicode, isSelected);}}
+						forbidden={this.state.forbiddenGlyphs}
+						select={this.selectGlyph}
 						tagSelected={this.state.tagSelected}
 						selected={this.props.group ? this.props.group.glyphs : this.state.selected}
 						tags={this.state.tags}/>

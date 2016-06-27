@@ -115,14 +115,19 @@
 		border-bottom:solid 2px $yellow;
 		border-right:solid 2px $yellow;
 		cursor:pointer;
-		color:$light-grey;
+		color:$medium-grey;
 		background-color: $white;
 		padding:6px;
 		font-size:17px;
 
 		&.is-disabled {
-			background-color: $orange;
-			color:$white;
+			color:$light-grey;
+			cursor: not-allowed;
+
+			&:hover {
+				color:$light-grey;
+				background-color: $white;
+			}
 		}
 
 		&:hover, &.is-active {

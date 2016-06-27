@@ -58,11 +58,16 @@
 		}
 	}
 
-	&:hover &-action, &:hover &-arrow:after {
+	&:hover &-action, &:hover &-arrow:after, &.is-active &-action, &.is-active &-arrow:after {
 		@include themify() {
 			background-color: $theme-background;
 			color: $theme-color;
+			transition: background-color .2s ease;
 		}
+	}
+
+	&:last-of-type &-arrow {
+		background: $dark-grey;
 	}
 
 	&-arrow {

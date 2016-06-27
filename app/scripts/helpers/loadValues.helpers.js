@@ -92,6 +92,8 @@ export async function loadFontValues(typedata, typeface) {
 
 		localClient.dispatchAction('/load-font-infos', values);
 	}
+
+	localClient.dispatchAction('/load-indiv-groups');
 }
 
 export const saveAppValues = _.debounce(() => {

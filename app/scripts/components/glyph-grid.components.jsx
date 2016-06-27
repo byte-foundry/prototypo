@@ -41,7 +41,7 @@ export default class GlyphGrid extends React.Component {
 
 	selectGlyph(unicode, isSelected, isInOtherGroup) {
 		if (!isInOtherGroup) {
-			this.client.dispatchAction('/add-glyph-to-indiv', {unicode, isSelected});
+			this.props.select(unicode, isSelected);
 		}
 	}
 
@@ -54,16 +54,17 @@ export default class GlyphGrid extends React.Component {
 			if (glyph[0].src.tags.indexOf(this.props.tagSelected) === -1) {
 				return false;
 			}
+
 			const isSelected = this.props.selected && this.props.selected.indexOf(unicode) !== -1;
-			const isInOtherGroup = this.props.otherGroups && this.props.otherGroups.indexOf(unicode) !== -1;
+			const forbidden = this.props.forbidden && this.props.forbidden.indexOf(unicode) !== -1;
 
 			const classes = Classnames({
 				'glyphs-grid-glyph': true,
 				'is-active': isSelected,
-				'is-disabled': isInOtherGroup,
+				'is-disabled': forbidden,
 			});
 
-			return <div className={classes} key={unicode} onClick={() => {this.selectGlyph(unicode, isSelected, isInOtherGroup);}}>{String.fromCharCode(unicode)}</div>;
+			return <div className={classes} key={unicode} onClick={() => {this.selectGlyph(unicode, isSelected, forbidden);}}>{String.fromCharCode(unicode)}</div>;
 		});
 
 		const tags = _.map(this.props.tags, (tag) => {
