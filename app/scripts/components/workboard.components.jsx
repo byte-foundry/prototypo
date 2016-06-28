@@ -35,6 +35,7 @@ export default class Workboard extends React.Component {
 					glyphs: head.toJS().fontGlyphs,
 					fontLoading: head.toJS().uiFontLoading,
 					indivMode: head.toJS().indivMode,
+					indivEditingParams: head.toJS().indivEditingParams,
 				});
 			})
 			.onDelete(() => {
@@ -57,7 +58,7 @@ export default class Workboard extends React.Component {
 
 		let sideBar = false;
 
-		if (this.state.indivMode) {
+		if (this.state.indivMode && !this.state.indivEditingParams) {
 			sideBar = <IndivSidebar />;
 		}
 		else {

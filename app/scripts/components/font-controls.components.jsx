@@ -56,11 +56,11 @@ export default class FontControls extends React.Component {
 				Object.assign(newParams, prototypoStore.get('controlsValues'));
 
 				if (this.state.indivMode && this.state.indivEdit && !params.values) {
-					if (newParams.indiv_group_param[this.state.currentGroup][params.name]) {
-						newParams.indiv_group_param[this.state.currentGroup][params.name].value = params.value;
+					if (newParams.indiv_group_param[this.state.currentGroup.name][params.name]) {
+						newParams.indiv_group_param[this.state.currentGroup.name][params.name].value = params.value;
 					}
 					else {
-						newParams.indiv_group_param[this.state.currentGroup][params.name] = {
+						newParams.indiv_group_param[this.state.currentGroup.name][params.name] = {
 							state: 'relative',
 							value: params.value,
 						};
@@ -94,9 +94,9 @@ export default class FontControls extends React.Component {
 			else if (path === '/change-param-state') {
 				const newParams = {};
 
-				Object.assign(newParams, prototypoStore.get('controlValues'));
+				Object.assign(newParams, prototypoStore.get('controlsValues'));
 
-				newParams.indiv_group_param[this.state.currentGroup][params.name] = {
+				newParams.indiv_group_param[this.state.currentGroup.name][params.name] = {
 					state: params.state,
 					value: params.state === 'relative' ? 1 : 0,
 				};
@@ -132,8 +132,8 @@ export default class FontControls extends React.Component {
 					parameters: headJS.fontParameters,
 					typeface: headJS.variant,
 					indivMode: headJS.indivMode,
-					indivEdit: headJS.indivEdit,
-					currentGroup: headJS.indivCurrentGroup,
+					indivEdit: headJS.indivEditingParams,
+					currentGroup: headJS.indivCurrentGroup || {},
 				});
 			})
 			.onDelete(() => {
@@ -167,7 +167,7 @@ export default class FontControls extends React.Component {
 						values={this.state.values}
 						indivMode={this.state.indivMode}
 						indivEdit={this.state.indivEdit}
-						currentGroup={this.state.currentGroup}/>
+						currentGroup={this.state.currentGroup.name}/>
 				</ControlsTab>
 			);
 		});

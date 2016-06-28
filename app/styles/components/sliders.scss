@@ -116,7 +116,8 @@
 		-webkit-appearance: textfield;
 
 		&.is-indiv {
-			margin-right:25px;
+			//Do not put more than 43px without checking that it make serif terminal curve go crazy
+			margin-right:43px;
 		}
 	}
 
@@ -219,12 +220,14 @@
 }
 
 .indiv-switch {
-	flex: 0 0 25px;
+	flex: 0 0 45px;
 	height: 19px;
 	position: relative;
 	margin-left: 5px;
 	margin-top: 2px;
 	cursor:pointer;
+	display: flex;
+	justify-content: space-between;
 
 	&-btn {
 		line-height: 17px;
@@ -232,21 +235,15 @@
 		width: 19px;
 		text-align: center;
 		border-radius: 50%;
-		position: absolute;
 		transition: all .2s ease;
-		top: 0;
-		left: 5px;
 		z-index:1;
 
 		&:hover {
-			line-height: 23px;
-			height: 25px;
-			width: 25px;
-			left:2px;
+			background: $yellow;
 		}
 
 		&.is-active {
-			z-index:2;
+			background: $yellow;
 		}
 	}
 
@@ -257,15 +254,7 @@
 	}
 
 	&-delta {
-		background: $yellow;
+		background: $white;
 		color:$dark-grey;
-	}
-
-	&:hover &-delta {
-		top:15px;
-	}
-
-	&:hover &-relative {
-		top:-15px;
 	}
 }

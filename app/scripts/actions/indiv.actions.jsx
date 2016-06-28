@@ -47,16 +47,17 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/toggle-individualize': () => {
+	'/toggle-individualize': ({targetIndivValue}) => {
 		const oldValue = prototypoStore.get('indivMode');
 
 		const groups = Object.keys(prototypoStore.get('controlsValues').indiv_group_param || {});
 		const groupsAndGlyphs = getGroupsAndGlyphsFromGroups(groups);
 		prototypoStore
-			.set('indivMode', !oldValue)
+			.set('indivMode', targetIndivValue || !oldValue)
 			.set('indivCreate', groups.length === 0 && !oldValue)
 			.set('indivPreDelete', false)
 			.set('indivEdit', false)
+			.set('indivEditingParams', false)
 			.set('indivGlyphs', [])
 			.set('indivCurrentGroup', undefined)
 			.set('indivErrorMessage', undefined)
@@ -170,6 +171,7 @@ export default {
 		const endCreatePatch = prototypoStore
 			.set('indivCreate', false)
 			.set('indivEdit', false)
+			.set('indivEditingParams', false)
 			.set('indivMode', false)
 			.set('indivPreDelete', false)
 			.set('indivGlyphGrid', false)

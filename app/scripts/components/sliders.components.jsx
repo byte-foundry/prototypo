@@ -60,6 +60,7 @@ export class Sliders extends React.Component {
 					child={paramToUse.child}
 					key={paramToUse.name + i}
 					value={value}
+					state={paramToUse.state}
 					individualized={individualized}/>
 			);
 		});

@@ -12,6 +12,7 @@ export default class ArianneThread extends React.Component {
 			families: [],
 			family: {},
 			variant: {},
+			indivCurrentGroup: {},
 		};
 		this.toggleIndividualize = this.toggleIndividualize.bind(this);
 		this.selectVariant = this.selectVariant.bind(this);
@@ -19,6 +20,9 @@ export default class ArianneThread extends React.Component {
 		this.addFamily = this.addFamily.bind(this);
 		this.addVariant = this.addVariant.bind(this);
 		this.showCollection = this.showCollection.bind(this);
+		this.selectGroup = this.selectGroup.bind(this);
+		this.addIndividualizeGroup = this.addIndividualizeGroup.bind(this);
+		this.editIndivualizeGroup = this.editIndivualizeGroup.bind(this);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
@@ -36,6 +40,7 @@ export default class ArianneThread extends React.Component {
 					groups: head.toJS().indivGroups,
 					indivCreate: head.toJS().indivCreate,
 					indivMode: head.toJS().indivMode,
+					indivCurrentGroup: head.toJS().indivCurrentGroup || {},
 				});
 			})
 			.onDelete(() => {
@@ -81,40 +86,53 @@ export default class ArianneThread extends React.Component {
 		this.client.dispatchAction('/toggle-individualize');
 	}
 
+	selectGroup(group) {
+		this.client.dispatchAction('/store-value', {indivMode: true, indivCurrentGroup: group, indivEditingParams: true});
+	}
+
+	addIndividualizeGroup() {
+		this.client.dispatchAction('/toggle-individualize', {targetIndivValue: true});
+		this.client.dispatchAction('/store-value', {
+			indivCreate: true,
+		});
+	}
+
+	editIndivualizeGroup() {
+		this.client.dispatchAction('/toggle-individualize', {targetIndivValue: true});
+		this.client.dispatchAction('/store-value', {indivCurrentGroup: this.state.indivCurrentGroup});
+		this.client.dispatchAction('/store-value', {indivEdit: true});
+	}
+
+	groupToElement(group) {
+		const glyphs = _.map(group.glyphs, (glyph) => {
+			return String.fromCharCode(glyph);
+		}).join('');
+
+		return (
+			<div>
+				<span>{group.name}</span> - <span className="indiv-group-infos-glyphs-list">{glyphs}</span>
+			</div>
+		);
+	}
+
 	render() {
 		const variantFamily = _.find(this.state.families, (family) => {
 			return family.name === this.state.family.name;
 		});
-
-		const variants = variantFamily
-			? variantFamily.variants
-			: [];
-
-		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily}/>
-		const addVariant = <ArianneDropMenuItem item={{name: 'Add new variant...'}} click={this.addVariant}/>
-
-		const groupImg = this.state.groups && this.state.groups.length > 0
-			? "assets/images/drop.svg"
-			: "assets/images/arianne-plus.svg";
-
-		const groupClasses = ClassNames({
-			'arianne-item': true,
-			'is-active': this.state.indivMode,
-			'is-creating': this.state.indivCreate,
-		});
-
-		const groupLabel = this.state.indivCreate
-			? 'Creating new group...'
-			: 'Group';
-
-		return (
-			<div className="arianne-thread">
-				<RootArianneItem click={this.showCollection}/>
+		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily}/>;
+		const familyItem = (
 				<DropArianneItem
 					label={this.state.family.name}
 					list={this.state.families}
 					add={addFamily}
 					click={this.selectFamily}/>
+		);
+
+		const variants = variantFamily
+			? variantFamily.variants
+			: [];
+		const addVariant = <ArianneDropMenuItem item={{name: 'Add new variant...'}} click={this.addVariant}/>;
+		const variantItem = (
 				<DropArianneItem
 					label={this.state.variant.name}
 					family={this.state.family}
@@ -122,7 +140,41 @@ export default class ArianneThread extends React.Component {
 					list={variants}
 					add={addVariant}
 					click={this.selectVariant}/>
-				<ActionArianneItem className={groupClasses} label={groupLabel} img={groupImg} click={this.toggleIndividualize}/>
+		);
+
+		const addGroup = [
+			<ArianneDropMenuItem item={{name: 'Edit groups...'}} click={this.editIndivualizeGroup}/>,
+			<ArianneDropMenuItem item={{name: 'Add new group...'}} click={this.addIndividualizeGroup}/>,
+		];
+		const groupClasses = ClassNames({
+			'arianne-item': true,
+			'is-active': this.state.indivMode,
+			'is-creating': this.state.indivCreate,
+		});
+		const groupLabel = this.state.indivCreate
+			? 'Creating new group...'
+			: 'All glyphs';
+		const groupName = this.state.indivCurrentGroup.name || groupLabel;
+		const group = this.state.groups && this.state.groups.length > 0
+			? <DropArianneItem
+				label={groupName}
+				list={this.state.groups}
+				itemToEl={this.groupToElement}
+				add={addGroup}
+				click={this.selectGroup}
+			/>
+			: <ActionArianneItem
+				className={groupClasses}
+				label={groupLabel}
+				img="assets/images/arianne-plus.svg"
+				click={this.toggleIndividualize}/>;
+
+		return (
+			<div className="arianne-thread">
+				<RootArianneItem click={this.showCollection}/>
+				{familyItem}
+				{variantItem}
+				{group}
 			</div>
 		);
 	}
@@ -165,6 +217,7 @@ class DropArianneItem extends React.Component {
 					click={this.props.click}
 					family={this.props.family}
 					add={this.props.add}
+					itemToEl={this.props.itemToEl}
 				/>
 			</div>
 		);
@@ -179,7 +232,12 @@ class ArianneDropMenu extends React.Component {
 
 	render() {
 		const items = this.props.list.map((item) => {
-			return <ArianneDropMenuItem item={item} key={item.name} click={this.props.click} family={this.props.family}/>;
+			return <ArianneDropMenuItem
+				item={item}
+				key={item.name}
+				click={this.props.click}
+				family={this.props.family}
+				itemToEl={this.props.itemToEl}/>;
 		});
 
 		return (
@@ -198,11 +256,15 @@ class ArianneDropMenuItem extends React.Component {
 	}
 
 	render() {
+		const item = this.props.itemToEl
+			? this.props.itemToEl(this.props.item)
+			: this.props.item.name;
+
 		return (
 			<li className="arianne-drop-menu-item" onClick={() => {
 				this.props.click(this.props.item, this.props.family);
 			}}>
-				{this.props.item.name}
+				{item}
 			</li>
 		);
 	}

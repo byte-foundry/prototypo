@@ -104,6 +104,14 @@ export default class CreateParamGroup extends React.Component {
 			return <div key={glyph} onClick={() => { this.removeGlyph(glyph);}} className="delete-param-group-glyph">{String.fromCharCode(glyph)}</div>;
 		});
 
+		const buttons = this.props.editMode
+			? [
+				<Button key="open" label="Open in prototypo" neutral={true} click={this.openGroup}/>,
+				<Button key="save" label="Save change" neutral={true} click={this.createGroup}/>,
+				<Button key="delete" label="Delete group" danger={true} click={this.preDelete}/>,
+			]
+			: <Button label="Save change" neutral={true} click={this.createGroup}/>;
+
 		return (
 			<div className="create-param-group">
 				<form className="create-param-group-form" onSubmit={this.createGroup}>
@@ -117,7 +125,7 @@ export default class CreateParamGroup extends React.Component {
 						tagSelected={this.state.tagSelected}
 						selected={this.props.group ? this.props.group.glyphs : this.state.selected}
 						tags={this.state.tags}/>
-					<Button label="Save change" neutral={true} click={this.createGroup}/>
+					{buttons}
 				</form>
 			</div>
 		);
