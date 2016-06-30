@@ -1,7 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import Log from '../services/log.services.js';
 
 /* Apparently this component is never used */
@@ -32,7 +32,7 @@ export default class FontSelector extends React.Component {
 			'fontFamily': `"${this.props.font.familyName}"`,
 		};
 
-		const classes = Classnames({
+		const classes = classNames({
 			'font-selector': true,
 			'is-selected': this.props.selectedRepo === this.props.font.repo,
 		});

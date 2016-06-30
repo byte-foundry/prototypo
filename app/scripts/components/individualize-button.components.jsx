@@ -1,7 +1,7 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 
 export default class IndividualizeButton extends React.Component {
 	constructor(props) {
@@ -35,7 +35,7 @@ export default class IndividualizeButton extends React.Component {
 
 	render() {
 
-		const buttonClass = Classnames({
+		const buttonClass = classNames({
 			'individualize-button': true,
 			'is-active': this.state.individualize,
 		});

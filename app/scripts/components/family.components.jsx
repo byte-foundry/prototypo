@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import {VariantList} from './variant.components.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -162,12 +162,12 @@ export class Family extends React.Component {
 			height: this.state.listOpen ? `${this.height}px` : '0px',
 		};
 
-		const classes = Classnames({
+		const classes = classNames({
 			family: true,
 			'is-active': this.props.selected,
 		});
 
-		const deleteClasses = Classnames({
+		const deleteClasses = classNames({
 			'family-header-delete': true,
 			'is-confirm': this.state.confirmDeletion,
 		});
@@ -185,7 +185,7 @@ export class Family extends React.Component {
 			progress = true;
 		}
 
-		const progressClass = Classnames({
+		const progressClass = classNames({
 			'progress-bar': true,
 			'is-open': progress,
 		});
@@ -308,7 +308,7 @@ export class AddFamily extends React.Component {
 
 	render() {
 
-		const familyClass = Classnames({
+		const familyClass = classNames({
 			'add-family': true,
 			'family-form-open': this.state.showForm,
 			'with-error': !!this.state.error,
@@ -354,7 +354,7 @@ export class AddFamily extends React.Component {
 
 export class FamilyTemplateChoice extends React.Component {
 	render() {
-		const classes = Classnames({
+		const classes = classNames({
 			'family-template-choice': true,
 			'is-active': this.props.selectedFont && this.props.selectedFont.name === this.props.font.name,
 		});

@@ -57,11 +57,11 @@ export default class SubscriptionConfirmation extends React.Component {
 	}
 
 	render() {
-		const {plans, plan, card, address, coupon} = this.state;
+		const {plans, plan, card, address, isCouponValid, couponValue} = this.state;
 		const planDescription = plans[plan] || {};
 		const currency = getCurrency(card[0].country);
 
-		const couponDom = coupon
+		const couponDom = isCouponValid
 			? (
 				<div className="columns">
 					<div className="third-column">
@@ -69,7 +69,7 @@ export default class SubscriptionConfirmation extends React.Component {
 					</div>
 					<div className="two-third-column">
 						<DisplayWithLabel nolabel={true}>
-							{coupon}
+							{couponValue} → {isCouponValid}
 						</DisplayWithLabel>
 					</div>
 				</div>

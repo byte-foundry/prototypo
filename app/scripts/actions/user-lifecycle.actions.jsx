@@ -2,7 +2,7 @@ import {hashHistory} from 'react-router';
 import Lifespan from 'lifespan';
 import md5 from 'md5';
 
-import {userStore} from '../stores/creation.stores.jsx';
+import {userStore, couponStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
@@ -125,7 +125,8 @@ function addBillingAddress({buyerName, address}) {
 		form.loading = false;
 		const patch = userStore.set('billingForm', form).commit();
 
-		return localServer.dispatchUpdate('/userStore', patch);
+		localServer.dispatchUpdate('/userStore', patch);
+		return Promise.reject();
 	}
 
 	return HoodieApi.updateCustomer({
@@ -373,9 +374,7 @@ export default {
 		if (form.selected && form.couponValue) {
 			const hash = md5(`${form.couponValue}.${form.selected}`);
 
-			form.isCouponValid = {
-				'58e088c97aa400b0498fa3d11640ada8': '✓ 5$ off your first month!',
-			}[hash] || false;
+			form.isCouponValid = couponStore.get(hash) || false;
 		}
 		else {
 			delete form.isCouponValid;
@@ -413,7 +412,8 @@ export default {
 		const infos = userStore.get('infos');
 
 		infos.plan = plan;
-		infos.coupon = form.isCouponValid && form.couponValue;
+		infos.isCouponValid = form.isCouponValid;
+		infos.couponValue = form.isCouponValid && form.couponValue;
 		form.loading = false;
 		const patch = userStore.set('infos', infos).set('choosePlanForm', form).commit();
 
