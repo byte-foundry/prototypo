@@ -1,6 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 
 import Log from '../services/log.services.js';
 
@@ -87,7 +87,7 @@ export default class CanvasGlyphInput extends React.Component {
 	}
 
 	render() {
-		const classes = Classnames({
+		const classes = classNames({
 			'canvas-glyph-input-input': true,
 			'is-active': this.state.focused,
 		});

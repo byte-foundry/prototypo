@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 
 export default class SelectWithLabel extends React.Component {
 
@@ -22,7 +22,7 @@ export default class SelectWithLabel extends React.Component {
 			? <span className="input-with-label-label-required">*</span>
 			: false;
 
-		const inputClass = Classnames({
+		const inputClass = classNames({
 			'input-with-label-input': true,
 			'is-error': this.props.error,
 			'is-warning': this.props.warning,
@@ -35,7 +35,7 @@ export default class SelectWithLabel extends React.Component {
 		return (
 			<div className="input-with-label">
 				<label className="input-with-label-label">{this.props.label}{info}{required}</label>
-				<Select ref="input" className="input-with-label-input" options={this.props.options} onChange={(value) => {this.handleChangeValue(value)}} value={this.state.value}/>
+				<Select ref="input" className="{inputClass}" options={this.props.options} onChange={(value) => {this.handleChangeValue(value)}} value={this.state.value}/>
 			</div>
 		);
 	}

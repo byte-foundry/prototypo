@@ -49,6 +49,7 @@ export default class SubscriptionAddCard extends React.Component {
 	addDetails(e) {
 		e.preventDefault();
 		e.stopPropagation();
+
 		this.client.dispatchAction('/add-card-and-billing', {
 			card: this.refs.card.data(),
 			vat: this.refs.vat.inputValue,

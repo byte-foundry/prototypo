@@ -1,7 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -55,7 +55,7 @@ export default class GlyphGrid extends React.Component {
 			const isSelected = this.props.selected && this.props.selected.indexOf(unicode) !== -1;
 			const isInOtherGroup = this.props.otherGroups && this.props.otherGroups.indexOf(unicode) !== -1;
 
-			const classes = Classnames({
+			const classes = classNames({
 				'glyphs-grid-glyph': true,
 				'is-active': isSelected,
 				'is-disabled': isInOtherGroup,

@@ -1,6 +1,6 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import Log from '../services/log.services.js';
 
@@ -73,24 +73,24 @@ export class Variant extends React.Component {
 	}
 
 	render() {
-		const rectoClasses = Classnames({
+		const rectoClasses = classNames({
 			'flipping-variant-recto': true,
 			'is-active': this.props.selected,
 			'is-flipped': this.state.flipped,
 		});
 
-		const versoClasses = Classnames({
+		const versoClasses = classNames({
 			'flipping-variant-verso': true,
 			'is-active': this.props.selected,
 			'is-flipped': this.state.flipped,
 		});
 
-		const editClasses = Classnames({
+		const editClasses = classNames({
 			'variant-edit': true,
 			'is-active': this.state.display === 'edit',
 		});
 
-		const deleteClasses = Classnames({
+		const deleteClasses = classNames({
 			'variant-delete': true,
 			'is-active': this.state.display === 'delete',
 		});
@@ -183,17 +183,17 @@ export class AddVariant extends React.Component {
 	}
 
 	render() {
-		const classes = Classnames({
+		const classes = classNames({
 			variant: true,
 			'flipping-variant': true,
 			'is-flipped': this.state.flipped,
 		});
-		const rectoClasses = Classnames({
+		const rectoClasses = classNames({
 			'flipping-variant-recto': true,
 			'is-flipped': this.state.flipped,
 		});
 
-		const versoClasses = Classnames({
+		const versoClasses = classNames({
 			'flipping-variant-verso': true,
 			'is-flipped': this.state.flipped,
 		});

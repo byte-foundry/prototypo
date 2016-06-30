@@ -4,7 +4,7 @@ import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 
-import Classnames from 'classnames';
+import classNames from 'classnames';
 
 export default class GlyphPanel extends React.Component {
 	constructor(props) {
@@ -84,7 +84,7 @@ export default class GlyphPanel extends React.Component {
 			console.log('[RENDER] GlyphPanel');
 		}
 
-		const classes = Classnames({
+		const classes = classNames({
 			'is-locked': this.state.glyphs.locked,
 			'is-active': this.state.show,
 		});

@@ -46,7 +46,7 @@ export default class BillingAddress extends React.Component {
 				</div>
 				<div className="columns">
 					<div className="half-column">
-						<InputWithLabel ref="region" name="region" inputValue={this.props.address.region} label="State/Region" />
+						<InputWithLabel ref="region" name="region" inputValue={this.props.address.region} label="Region" />
 					</div>
 					<div className="half-column">
 						<SelectWithLabel ref="country" name="country" inputValue={this.props.address.country} options={countryOptions} error={this.props.inError.country} required={true} label="Country" />

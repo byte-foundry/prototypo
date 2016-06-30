@@ -75,6 +75,10 @@ const planStore = new Remutable({
 	},
 });
 
+const couponStore = new Remutable({
+	'58e088c97aa400b0498fa3d11640ada8': '5$ off your first month!'
+});
+
 const fontLibrary = new Remutable({
 	fonts: [],
 });
@@ -204,6 +208,7 @@ export {
 	userStore,
 	glyphSelect,
 	planStore,
+	couponStore,
 	/* #if debug */
 	logStore,
 	/* #end */

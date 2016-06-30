@@ -1,6 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -75,7 +75,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 					placeholder="ABC123"
 					value={this.state.couponValue}
 					handleOnChange={this.handleCouponChange} />
-				{this.state.isCouponValid}
+				{this.state.isCouponValid ? `✓ ${this.state.isCouponValid}` : null }
 				<div className="subscription-choose-plan-info">
 					* Taxes are offered for private individuals. Currency ultimately depends on the country where your credit card has been issued.
 				</div>
@@ -105,7 +105,7 @@ class SubscriptionPlan extends React.Component {
 			return false;
 		}
 
-		const classes = Classnames({
+		const classes = classNames({
 			'subscription-plan': true,
 			'is-active': this.props.selected === this.props.plan.id,
 		});

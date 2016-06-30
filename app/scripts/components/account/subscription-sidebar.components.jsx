@@ -1,5 +1,5 @@
 import React from 'react';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import {Link} from 'react-router';
 
@@ -81,7 +81,7 @@ SubscriptionSidebar.contextTypes = {
 
 class SubscriptionSidebarItem extends React.Component {
 	render() {
-		const classes = Classnames({
+		const classes = classNames({
 			'subscription-sidebar-steps-step': true,
 			'is-finish': this.props.done,
 		});
