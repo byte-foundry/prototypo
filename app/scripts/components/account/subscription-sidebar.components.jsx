@@ -89,7 +89,7 @@ class SubscriptionSidebarItem extends React.Component {
 		return (
 			<li className={classes}>
 				<div className="subscription-sidebar-steps-step-number">{this.props.number}</div>
-				<div className="subscription-sidebar-steps-step-label"><Link onlyActiveOnIndex={this.props.index} activeClassName="subscription-sidebar-steps-step-link" to={this.props.route}>{this.props.label}</Link></div>
+				<div className="subscription-sidebar-steps-step-label"><span className="subscription-sidebar-steps-step-link">{this.props.label}</span></div>
 			</li>
 		);
 	}
