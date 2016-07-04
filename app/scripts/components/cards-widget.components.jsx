@@ -1,5 +1,5 @@
 import React from 'react';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import WaitForLoad from './wait-for-load.components.jsx';
 import Modal from './modal.components.jsx';
 import moment from 'moment';
@@ -112,22 +112,22 @@ class CardForm extends React.Component {
 
 	render() {
 
-		const numberClasses = Classnames({
+		const numberClasses = classNames({
 			"is-error": this.props.errors.code === 'incorrect_number' || this.props.errors.code === 'invalid_number',
 			"cards-widget-add-number": true,
 			"cards-widget-add-input": true,
 		});
-		const monthClasses = Classnames({
+		const monthClasses = classNames({
 			"is-error": this.props.errors.code === 'invalid_expiry_month',
 			"cards-widget-add-month": true,
 			"cards-widget-add-input": true,
 		});
-		const yearClasses = Classnames({
+		const yearClasses = classNames({
 			"is-error": this.props.errors.code === 'invalid_expiry_year',
 			"cards-widget-add-year": true,
 			"cards-widget-add-input": true,
 		});
-		const cvcClasses = Classnames({
+		const cvcClasses = classNames({
 			"is-error": this.props.errors.code === 'invalid_cvc',
 			"cards-widget-add-cvc": true,
 			"cards-widget-add-input": true,

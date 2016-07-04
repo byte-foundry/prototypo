@@ -1,5 +1,5 @@
 import React from 'react';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import Tether from 'tether';
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -47,7 +47,7 @@ export class OnBoarding extends React.Component {
 			return child.props.name === this.props.step;
 		});
 
-		const classes = Classnames({
+		const classes = classNames({
 			onboarding: true,
 			'full-modal-container': step && (step.props.type === 'fullModal'),
 			'indicator': step && (step.props.type === 'indicator'),

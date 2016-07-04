@@ -1,5 +1,5 @@
 import React from 'react';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
 import Lifespan from 'lifespan';
@@ -181,7 +181,7 @@ export default class PrototypoCanvas extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] PrototypoCanvas');
 		}
-		const canvasClass = Classnames({
+		const canvasClass = classNames({
 			'is-hidden': this.props.panel.mode.indexOf('glyph') === -1,
 			'prototypo-canvas': true,
 		});

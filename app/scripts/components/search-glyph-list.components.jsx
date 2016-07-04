@@ -1,5 +1,5 @@
 import React from 'react';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -31,7 +31,7 @@ export default class SearchGlyphList extends React.Component {
 			console.log('[RENDER] SearchGlyphList');
 		}
 
-		const classes = Classnames({
+		const classes = classNames({
 			'search-glyph-list': true,
 		});
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 
 export default class Glyph extends React.Component {
 
@@ -22,7 +22,7 @@ export default class Glyph extends React.Component {
 			console.log('[RENDER] Glyph');
 		}
 		const showAlts = Array.isArray(this.props.glyph) && this.props.glyph.length > 1;
-		const classes = Classnames({
+		const classes = classNames({
 			"glyph-list-glyph": true,
 			"is-selected": this.props.selected,
 			"is-commented": false,

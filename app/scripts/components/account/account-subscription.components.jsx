@@ -56,14 +56,14 @@ export default class AccountSubscription extends React.Component {
 			};
 		const periodEnd = this.state.plan ? moment.unix(this.state.plan[0].current_period_end).format('L') : '';
 		const cardDetail = this.state.card ? this.state.card.map((card) => {
-			const cardDom = (
-				<div className="account-subscription-card">
-					<div className="account-subscription-card-number">**** **** **** {card.last4}</div>
-					<div className="account-subscription-card-expiry">will expire on {card.exp_month}/{card.exp_year}</div>
-				</div>
+			return (
+				<DisplayWithLabel label="Your card" key={card.id}>
+					<div className="account-subscription-card">
+						<div className="account-subscription-card-number">**** **** **** {card.last4}</div>
+						<div className="account-subscription-card-expiry">will expire on {card.exp_month}/{card.exp_year}</div>
+					</div>
+				</DisplayWithLabel>
 			);
-
-			return <DisplayWithLabel label="Your card" data={cardDom} key={card.id}/>;
 		}) : noCard;
 
 		const successCard = this.props.location.query.newCard
@@ -99,7 +99,9 @@ export default class AccountSubscription extends React.Component {
 		const content = this.state.plan
 			? (
 				<div className="account-base account-subscription">
-					<DisplayWithLabel label="Your plan" data={plan.name}/>
+					<DisplayWithLabel label="Your plan">
+						{plan.name}
+					</DisplayWithLabel>
 					<p>
 						Your subscription will automatically renew on <span className="account-emphase">{periodEnd}</span> and you will be charged <span className="account-emphase">{`${currencySymbol.before}${plan.price.toFixed(2)}${currencySymbol.after}`}</span>
 					</p>

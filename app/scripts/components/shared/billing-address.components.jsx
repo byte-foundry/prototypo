@@ -27,7 +27,7 @@ export default class BillingAddress extends React.Component {
 
 		return (
 			<div className="billing-address">
-				<InputWithLabel required={true} ref="buyerName" name="fname" autocomplete="name" inputValue={this.props.buyerName} error={this.props.inError.buyerName} label="Corporate name or Full name" />
+				<InputWithLabel required={true} ref="buyerName" name="fname" autoComplete="name" inputValue={this.props.buyerName} error={this.props.inError.buyerName} label="Corporate name or Full name" />
 				<div className="columns">
 					<div className="third-column">
 						<InputWithLabel ref="buildingNumber" name="housenumber" inputValue={this.props.address.building_number} error={this.props.inError.buildingNumber} required={true} label="Bldg #" />

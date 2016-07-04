@@ -1,7 +1,8 @@
 import {hashHistory} from 'react-router';
 import Lifespan from 'lifespan';
+import md5 from 'md5';
 
-import {userStore} from '../stores/creation.stores.jsx';
+import {userStore, couponStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
@@ -124,12 +125,13 @@ function addBillingAddress({buyerName, address}) {
 		form.loading = false;
 		const patch = userStore.set('billingForm', form).commit();
 
-		return localServer.dispatchUpdate('/userStore', patch);
+		localServer.dispatchUpdate('/userStore', patch);
+		return Promise.reject();
 	}
 
 	return HoodieApi.updateCustomer({
 		invoice_address: address,
-		buyer_naME: buyerName,
+		buyer_name: buyerName,
 	})
 	.then(() => {
 		const infos = userStore.get('infos');
@@ -357,11 +359,27 @@ export default {
 				return localServer.dispatchUpdate('/userStore', patch);
 			});
 	},
-	'/choose-plan': (plan) => {
+	'/choose-plan': ({plan, coupon}) => {
 		const form = userStore.get('choosePlanForm');
 
 		form.error = undefined;
-		form.selected = plan;
+		if (plan) {
+			form.selected = plan;
+		}
+
+		if (coupon !== undefined) {
+			form.couponValue = coupon;
+		}
+
+		if (form.selected && form.couponValue) {
+			const hash = md5(`${form.couponValue}.${form.selected}`);
+
+			form.isCouponValid = couponStore.get(hash) || false;
+		}
+		else {
+			delete form.isCouponValid;
+		}
+
 		const patch = userStore.set('choosePlanForm', form).commit();
 
 		return localServer.dispatchUpdate('/userStore', patch);
@@ -383,9 +401,19 @@ export default {
 			return localServer.dispatchUpdate('/userStore', patch);
 		}
 
+		if (form.isCouponValid === false) {
+			form.error = 'Coupon code is invalid';
+			form.loading = false;
+			const patch = userStore.set('choosePlanForm', form).commit();
+
+			return localServer.dispatchUpdate('/userStore', patch);
+		}
+
 		const infos = userStore.get('infos');
 
 		infos.plan = plan;
+		infos.isCouponValid = form.isCouponValid;
+		infos.couponValue = form.isCouponValid && form.couponValue;
 		form.loading = false;
 		const patch = userStore.set('infos', infos).set('choosePlanForm', form).commit();
 
@@ -428,7 +456,7 @@ export default {
 			hashHistory.push(toPath);
 		});
 	},
-	'/confirm-buy': ({plan, currency, coupon}) => {
+	'/confirm-buy': ({plan, currency}) => {
 		const form = userStore.get('confirmation');
 
 		form.errors = [];
@@ -439,7 +467,7 @@ export default {
 		localServer.dispatchUpdate('/userStore', cleanPatch);
 		HoodieApi.updateSubscription({
 			plan: `${plan}_${currency}_taxfree`,
-			coupon,
+			coupon: userStore.get('infos').coupon,
 		}).then(async (data) => {
 			const infos = _.cloneDeep(userStore.get('infos'));
 
@@ -479,7 +507,17 @@ export default {
 			});
 		}).catch((err) => {
 
-			form.errors.push(err.message);
+			if ((/no such coupon/i).test(err.message)) {
+				form.errors.push('This coupon appears to no longer be valid, please contact us.');
+			}
+			if (/no attached payment source/i.test(err.message)) {
+				form.errors.push('Payment details appear to be invalid, please contact us.');
+			}
+			else {
+				form.errors.push('Unexpected error, please contact us.');
+				form.errors.push(err.message);
+			}
+
 			form.loading = false;
 			const patch = userStore
 				.set('confirmation', form)

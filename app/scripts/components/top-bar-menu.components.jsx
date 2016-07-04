@@ -1,5 +1,5 @@
 import React from 'react';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import CheckBoxWithImg from './checkbox-with-img.components.jsx';
 
 class TopBarMenu extends React.Component {
@@ -8,7 +8,7 @@ class TopBarMenu extends React.Component {
 			console.log('[RENDER] TopBarMenu');
 		}
 		const headers = _.without(this.props.children, false).map((child) => {
-			const classes = Classnames({
+			const classes = classNames({
 				'top-bar-menu-item': true,
 				'is-aligned-right': child.props.alignRight,
 				'is-action': child.props.action,
@@ -45,7 +45,7 @@ class TopBarMenuDropdown extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] topbarmenudropdown');
 		}
-		const classes = Classnames({
+		const classes = classNames({
 			'top-bar-menu-item-dropdown': true,
 			'is-small': this.props.small,
 		});
@@ -62,7 +62,7 @@ class TopBarMenuAction extends React.Component {
 
 	static getHeader(props) {
 
-		const classes = Classnames({
+		const classes = classNames({
 			'top-bar-menu-item-action': true,
 			'is-active': props.active,
 		});
@@ -118,7 +118,7 @@ class TopBarMenuDropdownItem extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] topbarmenudropdownitem');
 		}
-		const classes = Classnames({
+		const classes = classNames({
 			'top-bar-menu-item-dropdown-item': true,
 			'is-disabled': this.props.disabled,
 			'has-separator': this.props.separator,
@@ -144,7 +144,7 @@ class TopBarMenuDropdownCheckBox extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] topbarmenudropdowncheckbox');
 		}
-		const classes = Classnames({
+		const classes = classNames({
 			'top-bar-menu-item-dropdown-item': true,
 			'is-checkbox': true,
 			'is-disabled': this.props.disabled,
