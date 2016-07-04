@@ -70,6 +70,7 @@ export class AddFamily extends React.Component {
 	}
 
 	selectFont(uiCreatefamilySelectedTemplate) {
+		this.client.dispatchAction('/clear-error-family');
 		this.client.dispatchAction('/store-value', {uiCreatefamilySelectedTemplate});
 	}
 
@@ -205,7 +206,6 @@ export class AddVariant extends React.Component {
 			familyName: this.props.family.name,
 		});
 		Log.ui('Collection.createVariant');
-		this.client.dispatchAction('/close-create-variant-modal', {});
 	}
 
 	exit() {

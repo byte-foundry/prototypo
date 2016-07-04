@@ -91,7 +91,6 @@ export default {
 	'/create-family': async ({name, template, loadCurrent}) => {
 		let templateToLoad = template;
 
-		localClient.dispatchAction('/cancel-indiv-mode');
 		if (loadCurrent) {
 			templateToLoad = prototypoStore.get('family').template;
 		}
@@ -250,6 +249,8 @@ export default {
 				localClient.dispatchAction('/select-variant', {variant, family});
 			}
 		}, 200);
+
+		localClient.dispatchAction('/close-create-variant-modal', {});
 
 	},
 	'/edit-variant': ({variant, family, newName}) => {

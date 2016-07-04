@@ -83,7 +83,7 @@ export default class Topbar extends React.Component {
 	}
 
 	newProject() {
-		this.client.dispatchAction('/change-tab-sidebar', {name: 'fonts-collection'});
+		this.client.dispatchAction('/store-value', {openFamilyModal: true});
 		Log.ui('Topbar.logout');
 	}
 
