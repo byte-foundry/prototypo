@@ -16,6 +16,7 @@ export default class FontControls extends React.Component {
 		super(props);
 		this.state = {
 			tabControls: 'Func',
+			currentGroup: {},
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
@@ -28,7 +29,7 @@ export default class FontControls extends React.Component {
 		const prototypoStore = await this.client.fetch('/prototypoStore');
 		this.setState({
 			typeface: prototypoStore.get('variant') || {},
-		})
+		});
 
 		const debouncedSave = _.debounce((values) => {
 			FontValues.save({

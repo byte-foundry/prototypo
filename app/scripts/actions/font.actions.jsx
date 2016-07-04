@@ -300,14 +300,16 @@ export default {
 		saveAppValues();
 	},
 	'/delete-variant': ({variant, familyName}) => {
-		const family = _.find(Array.from(prototypoStore.get('fonts') || []), (item) => {
+		const families = _.cloneDeep(Array.from(prototypoStore.get('fonts') || []));
+		const family = _.find(families, (item) => {
 			return item.name === familyName;
 		});
 
-		_.pull(family.variants, variant);
+		_.remove(family.variants, (item) => {
+			return item.id === variant.id;
+		});
 
-		//TODO(franz): this is fucked up
-		const patch = prototypoStore.set('fonts', prototypoStore.get('fonts')).commit();
+		const patch = prototypoStore.set('fonts', families).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();

@@ -23,6 +23,12 @@ export default class Collection extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
+		const {head} = await this.client.fetch('/prototypoStore');
+
+		this.setState({
+			templateInfos: head.toJS().templateList,
+		});
+
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
@@ -30,6 +36,7 @@ export default class Collection extends React.Component {
 					selected: head.toJS().collectionSelectedFamily || {},
 					selectedVariant: head.toJS().collectionSelectedVariant || {},
 					familyDeleteSplit: head.toJS().uiFamilyDeleteSplit,
+					variantDeleteSplit: head.toJS().uiVariantDeleteSplit,
 				});
 			})
 			.onDelete(() => {
@@ -37,12 +44,6 @@ export default class Collection extends React.Component {
 					families: undefined,
 				});
 			});
-
-		const {head} = await this.client.fetch('/prototypoStore');
-
-		this.setState({
-			templateInfos: head.toJS().templateList,
-		});
 	}
 
 	componentWillUnmount() {
@@ -82,6 +83,7 @@ export default class Collection extends React.Component {
 			open={this.open}
 			download={this.download}
 			key={selectedVariant.id}
+			deleteSplit={this.state.variantDeleteSplit}
 			family={this.state.selected}
 			variant={selectedVariant}/>;
 
@@ -297,6 +299,8 @@ class VariantInfo extends React.Component {
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.edit = this.edit.bind(this);
 		this.duplicate = this.duplicate.bind(this);
+		this.cancelDelete = this.cancelDelete.bind(this);
+		this.prepareDeleteOrDelete = this.prepareDeleteOrDelete.bind(this);
 	}
 
 	componentWillMount() {
@@ -317,6 +321,29 @@ class VariantInfo extends React.Component {
 		});
 	}
 
+	prepareDeleteOrDelete() {
+		if (this.props.deleteSplit) {
+			this.client.dispatchAction('/delete-variant', {
+				variant: this.props.variant,
+				familyName: this.props.family.name,
+			});
+			this.client.dispatchAction('/store-value', {
+				uiVariantDeleteSplit: false,
+			});
+		}
+		else {
+			this.client.dispatchAction('/store-value', {
+				uiVariantDeleteSplit: true,
+			});
+		}
+	}
+
+	cancelDelete() {
+		this.client.dispatchAction('/store-value', {
+			uiVariantDeleteSplit: false,
+		});
+	}
+
 	render() {
 		const result = this.props.variant.id
 			? (
@@ -328,7 +355,15 @@ class VariantInfo extends React.Component {
 					<Button label="Download variant" click={this.props.download}/>
 					<Button label="Change variant name" click={this.edit}/>
 					<Button label="Duplicate variant" click={this.duplicate}/>
-					<Button label="Delete variant" danger={true}/>
+					<Button
+						label={this.props.deleteSplit ? 'Delete' : 'Delete variant'}
+						altLabel="Cancel"
+						danger={true}
+						splitButton={true}
+						splitted={this.props.deleteSplit}
+						click={this.prepareDeleteOrDelete}
+						altClick={this.cancelDelete}
+					/>
 				</div>
 			)
 			: (
