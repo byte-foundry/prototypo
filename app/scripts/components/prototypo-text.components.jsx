@@ -162,7 +162,6 @@ export default class PrototypoText extends React.Component {
 			'color': this.props.uiInvertedTextColors ? '#fefefe' : '#232323',
 			'backgroundColor': this.props.uiInvertedTextColors ? '#232323' : '#fefefe',
 			'transform': this.props.uiInvertedTextView ? 'scaleY(-1)' : 'scaleY(1)',
-			'-webkit-font-smoothing': 'none',
 			'fontWeight': 400,
 		};
 

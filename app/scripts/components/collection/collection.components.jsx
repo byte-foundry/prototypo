@@ -199,6 +199,7 @@ class Family extends React.Component {
 class VariantList extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
@@ -245,7 +246,7 @@ class VariantList extends React.Component {
 				</div>
 				<Button label="Download family"/>
 				<Button label="Change family name" click={this.openChangeNameFamily.bind(this)}/>
-				<Button label="Delete family" danger={true}/>
+				<Button label="Delete family" danger={true} splitted={this.state.deleteSplit} click={() => this.setState({deleteSplit: !this.state.deleteSplit}) }/>
 				<div className="variant-list-title">
 					VARIANTS
 				</div>

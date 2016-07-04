@@ -1,5 +1,11 @@
 @import '../../variables';
 
+.button-container {
+	display: flex;
+	flex-flow: nowrap;
+	justify-content: space-between;
+}
+
 .button {
 	@include themify() {
 		border: solid 2px $theme-background;
@@ -13,9 +19,10 @@
 	font-size: 14px;
 	font-weight: 400;
 	cursor:pointer;
-	transition: color .2s ease, background-color .2s ease;
+	transition: color .2s ease, background-color .2s ease, width .2s ease, border-radius .2s ease, border-color 500ms ease !important;
 	margin-bottom:10px;
 	font-style: normal;
+	width: 100%;
 
 	&.is-disable {
 		border-color: rgba($green, 0.4);
@@ -56,6 +63,34 @@
 				background-color: $dark-grey;
 				color: $white
 			}
+		}
+	}
+
+	&.split-left {
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+		width: calc(50% - 1px);
+	}
+
+	&.split-right {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+		width: calc(50% - 1px);
+	}
+
+	&#{&}-enter {
+		width:0;
+
+		&-active {
+			width:calc(50% - 1px);
+		}
+	}
+
+	&#{&}-leave {
+		width:calc(50% - 1px);
+
+		&-active {
+			width:0;
 		}
 	}
 
