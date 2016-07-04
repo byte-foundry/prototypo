@@ -224,14 +224,13 @@ export default {
 			}
 		});
 
-		const newCurrentGroup = Object.keys(oldValues.indiv_group_param).length > 0
-			? Object.keys(oldValues.indiv_group_param)[0]
-			: undefined;
+		const noGroups = Object.keys(oldValues.indiv_group_param).length === 0;
 		const endDeletePatch = prototypoStore
-			.set('indivCreate', !newCurrentGroup)
-			.set('indivEdit', !!newCurrentGroup)
+			.set('indivCreate', noGroups)
+			.set('indivEdit', false)
 			.set('indivPreDelete', false)
-			.set('indivCurrentGroup', newCurrentGroup)
+			.set('indivCurrentGroup', {})
+			.set('indivSelected', [])
 			.set('indivErrorMessage', undefined)
 			.set('indivErrorEdit', undefined)
 			.set('indivErrorGlyphs', [])

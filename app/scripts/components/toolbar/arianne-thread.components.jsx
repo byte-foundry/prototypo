@@ -100,7 +100,7 @@ export default class ArianneThread extends React.Component {
 	editIndivualizeGroup() {
 		this.client.dispatchAction('/toggle-individualize', {targetIndivValue: true});
 		this.client.dispatchAction('/store-value', {indivCurrentGroup: this.state.indivCurrentGroup});
-		this.client.dispatchAction('/store-value', {indivEdit: true});
+		this.client.dispatchAction('/store-value', {indivEdit: !!this.state.indivCurrentGroup.name});
 	}
 
 	groupToElement(group) {
@@ -143,8 +143,8 @@ export default class ArianneThread extends React.Component {
 		);
 
 		const addGroup = [
-			<ArianneDropMenuItem item={{name: 'Edit groups...'}} click={this.editIndivualizeGroup}/>,
-			<ArianneDropMenuItem item={{name: 'Add new group...'}} click={this.addIndividualizeGroup}/>,
+			<ArianneDropMenuItem key="edit" item={{name: 'Edit groups...'}} click={this.editIndivualizeGroup}/>,
+			<ArianneDropMenuItem key="add" item={{name: 'Add new group...'}} click={this.addIndividualizeGroup}/>,
 		];
 		const groupClasses = ClassNames({
 			'arianne-item': true,

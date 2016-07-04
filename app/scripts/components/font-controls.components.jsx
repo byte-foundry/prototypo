@@ -27,6 +27,7 @@ export default class FontControls extends React.Component {
 		const server = new LocalServer().instance;
 
 		const prototypoStore = await this.client.fetch('/prototypoStore');
+
 		this.setState({
 			typeface: prototypoStore.get('variant') || {},
 		});

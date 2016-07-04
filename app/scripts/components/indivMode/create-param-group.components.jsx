@@ -23,6 +23,10 @@ export default class CreateParamGroup extends React.Component {
 		this.close = this.close.bind(this);
 		this.createGroup = this.createGroup.bind(this);
 		this.selectGlyph = this.selectGlyph.bind(this);
+		this.prepareDeleteOrDelete = this.prepareDeleteOrDelete.bind(this);
+		this.cancelDelete = this.cancelDelete.bind(this);
+		this.openGroup = this.openGroup.bind(this);
+
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
@@ -40,6 +44,7 @@ export default class CreateParamGroup extends React.Component {
 					errorGlyphs: head.toJS().indivErrorGlyphs,
 					groups: head.toJS().indivGroups,
 					forbiddenGlyphs: head.toJS().indivOtherGroups,
+					glyphGroupDeleteSplit: head.toJS().uiGlyphGroupDeleteSplit,
 				});
 			})
 			.onDelete(() => {
@@ -79,6 +84,13 @@ export default class CreateParamGroup extends React.Component {
 		});
 	}
 
+	openGroup() {
+		this.client.dispatchAction('/store-value', {
+			indivEdit: false,
+			indivEditingParams: true,
+		});
+	}
+
 	selectGlyph(unicode, isSelected) {
 		if (this.props.editMode) {
 			this.client.dispatchAction('/add-glyph-to-indiv-edit', {unicode, isSelected});
@@ -86,6 +98,26 @@ export default class CreateParamGroup extends React.Component {
 		else {
 			this.client.dispatchAction('/add-glyph-to-indiv-create', {unicode, isSelected});
 		}
+	}
+
+	prepareDeleteOrDelete() {
+		if (this.state.glyphGroupDeleteSplit) {
+			this.client.dispatchAction('/delete-param-group', this.props.group);
+			this.client.dispatchAction('/store-value', {
+				uiGlyphGroupDeleteSplit: false,
+			});
+		}
+		else {
+			this.client.dispatchAction('/store-value', {
+				uiGlyphGroupDeleteSplit: true,
+			});
+		}
+	}
+
+	cancelDelete() {
+		this.client.dispatchAction('/store-value', {
+			uiGlyphGroupDeleteSplit: false,
+		});
 	}
 
 	render() {
@@ -108,7 +140,16 @@ export default class CreateParamGroup extends React.Component {
 			? [
 				<Button key="open" label="Open in prototypo" neutral={true} click={this.openGroup}/>,
 				<Button key="save" label="Save change" neutral={true} click={this.createGroup}/>,
-				<Button key="delete" label="Delete group" danger={true} click={this.preDelete}/>,
+				<Button
+					key="delete"
+					label={this.state.glyphGroupDeleteSplit ? 'Delete' : 'Delete group'}
+					altLabel="Cancel"
+					danger={true}
+					splitButton={true}
+					splitted={this.state.glyphGroupDeleteSplit}
+					click={this.prepareDeleteOrDelete}
+					altClick={this.cancelDelete}
+				/>,
 			]
 			: <Button label="Save change" neutral={true} click={this.createGroup}/>;
 
@@ -131,4 +172,3 @@ export default class CreateParamGroup extends React.Component {
 		);
 	}
 }
-
