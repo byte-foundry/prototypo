@@ -3,7 +3,6 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import Editor from 'react-medium-editor';
 
 import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
@@ -65,9 +64,11 @@ export default class PrototypoText extends React.Component {
 		this.lifespan.release();
 	}
 
-	saveText(text) {
-		if (text) {
-			this.saveTextDebounced(text, this.props.field);
+	saveText() {
+		const textDiv = this.refs.text;
+
+		if (textDiv && textDiv.textContent) {
+			this.saveTextDebounced(textDiv.textContent, this.props.field);
 		}
 	}
 
@@ -203,11 +204,14 @@ export default class PrototypoText extends React.Component {
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}>
 				<ReactGeminiScrollbar>
-					<div style={style}>
-						<Editor
-							text={this.props[this.props.field]}
-							onChnge={this.saveText}/>
-					</div>
+					<div
+						contentEditable="true"
+						ref="text"
+						className="prototypo-text-string"
+						spellCheck="false"
+						style={style}
+						onInput={this.saveText}
+						></div>
 				</ReactGeminiScrollbar>
 				<ViewPanelsMenu
 					show={this.state.showContextMenu}
