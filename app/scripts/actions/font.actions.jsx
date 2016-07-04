@@ -314,7 +314,7 @@ export default {
 
 	},
 	'/delete-family': ({family}) => {
-		const families = Array.from(prototypoStore.get('fonts'));
+		const families = _.cloneDeep(Array.from(prototypoStore.get('fonts')));
 
 		_.remove(families, (checkee) => {
 			return checkee.name === family.name && checkee.template === family.template;

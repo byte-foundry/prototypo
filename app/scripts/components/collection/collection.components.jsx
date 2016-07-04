@@ -29,6 +29,7 @@ export default class Collection extends React.Component {
 					families: head.toJS().fonts,
 					selected: head.toJS().collectionSelectedFamily || {},
 					selectedVariant: head.toJS().collectionSelectedVariant || {},
+					familyDeleteSplit: head.toJS().uiFamilyDeleteSplit,
 				});
 			})
 			.onDelete(() => {
@@ -69,6 +70,7 @@ export default class Collection extends React.Component {
 				variants={selectedFamilyVariants}
 				selectedVariantId={this.state.selectedVariant.id}
 				key={this.state.selected.name}
+				deleteSplit={this.state.familyDeleteSplit}
 				family={this.state.selected}/>
 			: false;
 
@@ -201,6 +203,8 @@ class VariantList extends React.Component {
 		super(props);
 		this.state = {};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.cancelDelete = this.cancelDelete.bind(this);
+		this.prepareDeleteOrDelete = this.prepareDeleteOrDelete.bind(this);
 	}
 
 	componentWillMount() {
@@ -225,6 +229,28 @@ class VariantList extends React.Component {
 		});
 	}
 
+	prepareDeleteOrDelete() {
+		if (this.props.deleteSplit) {
+			this.client.dispatchAction('/delete-family', {
+				family: this.props.family,
+			});
+			this.client.dispatchAction('/store-value', {
+				uiFamilyDeleteSplit: false,
+			});
+		}
+		else {
+			this.client.dispatchAction('/store-value', {
+				uiFamilyDeleteSplit: true,
+			});
+		}
+	}
+
+	cancelDelete() {
+		this.client.dispatchAction('/store-value', {
+			uiFamilyDeleteSplit: false,
+		});
+	}
+
 	render() {
 		const variants = _.map(this.props.variants, (variant, i) => {
 			const classes = ClassNames({
@@ -246,7 +272,15 @@ class VariantList extends React.Component {
 				</div>
 				<Button label="Download family"/>
 				<Button label="Change family name" click={this.openChangeNameFamily.bind(this)}/>
-				<Button label="Delete family" danger={true} splitted={this.state.deleteSplit} click={() => this.setState({deleteSplit: !this.state.deleteSplit}) }/>
+				<Button
+					label={this.props.deleteSplit ? 'Delete' : 'Delete family'}
+					altLabel="Cancel"
+					danger={true}
+					splitButton={true}
+					splitted={this.props.deleteSplit}
+					click={this.prepareDeleteOrDelete}
+					altClick={this.cancelDelete}
+				/>
 				<div className="variant-list-title">
 					VARIANTS
 				</div>

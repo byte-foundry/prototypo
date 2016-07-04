@@ -1,8 +1,8 @@
 @import '../../variables';
 
 .button-container {
-	display: flex;
-	flex-flow: nowrap;
+	display:flex;
+	flex-flow: row nowrap;
 	justify-content: space-between;
 }
 
@@ -19,10 +19,11 @@
 	font-size: 14px;
 	font-weight: 400;
 	cursor:pointer;
-	transition: color .2s ease, background-color .2s ease, width .2s ease, border-radius .2s ease, border-color 500ms ease !important;
+	transition: width .2s ease, color .2s ease, background-color .2s ease, border-radius .2s ease, border-color 500ms ease, border-width .2s cubic-bezier(1, 0, 1, -0.06) !important;
 	margin-bottom:10px;
 	font-style: normal;
-	width: 100%;
+	width:100%;
+	margin-right:0%;
 
 	&.is-disable {
 		border-color: rgba($green, 0.4);
@@ -69,28 +70,20 @@
 	&.split-left {
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
-		width: calc(50% - 1px);
+		width:49%;
 	}
 
 	&.split-right {
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
-		width: calc(50% - 1px);
-	}
+		width:0%;
+		overflow: hidden;
+		border-width:0px;
 
-	&#{&}-enter {
-		width:0;
-
-		&-active {
-			width:calc(50% - 1px);
-		}
-	}
-
-	&#{&}-leave {
-		width:calc(50% - 1px);
-
-		&-active {
-			width:0;
+		&.is-active {
+			border-width:2px;
+			transition: width .2s ease, color .2s ease, background-color .2s ease, border-radius .2s ease, border-color 500ms ease, border-width .2s cubic-bezier(0, 1.59, 0, 0.96) !important;
+			width:49%;
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
 		}
 	}
 
