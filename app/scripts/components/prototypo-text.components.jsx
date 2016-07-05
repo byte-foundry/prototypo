@@ -214,6 +214,7 @@ export default class PrototypoText extends React.Component {
 						></div>
 				</ReactGeminiScrollbar>
 				<ViewPanelsMenu
+					wideRight={true}
 					show={this.state.showContextMenu}
 					toggle={this.toggleContextMenu}>
 					{menu}

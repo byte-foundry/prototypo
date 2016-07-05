@@ -26,6 +26,7 @@ export default class ViewPanelsMenu extends React.Component {
 		const classes = ClassNames({
 			'view-panels-menu': true,
 			'is-aligned-left': this.props.alignLeft,
+			'is-wide-right': this.props.wideRight,
 		});
 
 		const menu = this.props.show
