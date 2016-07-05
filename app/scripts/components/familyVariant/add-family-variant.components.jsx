@@ -50,7 +50,9 @@ export class AddFamily extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.client.dispatchAction('/clear-error-family');
+		this.client.dispatchAction('/store-value', {
+			errorAddFamily: undefined,
+		});
 
 		this.lifespan.release();
 	}
@@ -70,7 +72,9 @@ export class AddFamily extends React.Component {
 	}
 
 	selectFont(uiCreatefamilySelectedTemplate) {
-		this.client.dispatchAction('/clear-error-family');
+		this.client.dispatchAction('/store-value', {
+			errorAddFamily: undefined,
+		});
 		this.client.dispatchAction('/store-value', {uiCreatefamilySelectedTemplate});
 	}
 
@@ -211,6 +215,7 @@ export class AddVariant extends React.Component {
 	exit() {
 		this.client.dispatchAction('/store-value', {
 			openVariantModal: false,
+			errorAddVariant: undefined,
 		});
 	}
 

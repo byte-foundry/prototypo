@@ -15,14 +15,22 @@ export default class SelectWithLabel extends React.Component {
 	}
 
 	handleChangeValue(value) {
-		this.setState({
-			value,
-		});
+		if (Array.isArray(value)) {
+			this.setState({
+				value: undefined,
+			});
+		}
+		else {
+			this.setState({
+				value,
+			});
+		}
 	}
 
 	handleChangeInput(inputValue) {
 		this.setState({
 			inputValue,
+			value: undefined,
 		});
 	}
 
@@ -51,6 +59,7 @@ export default class SelectWithLabel extends React.Component {
 					placeholder={this.props.placeholder}
 					noResultsText={this.props.noResultsText}
 					onChange={(value) => {this.handleChangeValue(value);}}
+					onBlurResetsInput={false}
 					onInputChange={(value) => {this.handleChangeInput(value);}}
 					value={this.state.value}/>
 			</div>

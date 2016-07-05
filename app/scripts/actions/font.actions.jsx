@@ -188,8 +188,14 @@ export default {
 		});
 		saveAppValues();
 	},
-	'/create-variant': async ({name, familyName, variantBase, noSwitch}) => {
-		localClient.dispatchAction('/cancel-indiv-mode');
+	'/create-variant': async ({name, familyName, noSwitch, variantBase}) => {
+		if (!name) {
+			const patch = prototypoStore.set('errorAddVariant', 'Variant name can not be empty').commit();
+
+			localServer.dispatchUpdate('/prototypoStore', patch);
+			return;
+		}
+
 		const family = _.find(Array.from(prototypoStore.get('fonts') || []), (font) => {
 			return font.name === familyName;
 		});
@@ -229,7 +235,7 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		const variantBaseDb = variantBase.db || family.variants[0].db;
+		const variantBaseDb = variantBase ? variantBase.db : family.variants[0].db;
 
 		const ref = await FontValues.get({typeface: variantBaseDb});
 
@@ -250,7 +256,10 @@ export default {
 			}
 		}, 200);
 
-		localClient.dispatchAction('/close-create-variant-modal', {});
+		localClient.dispatchAction('/store-value', {
+			openVariantModal: false,
+			errorAddVariant: undefined,
+		});
 
 	},
 	'/edit-variant': ({variant, family, newName}) => {
@@ -331,11 +340,6 @@ export default {
 		});
 
 		saveAppValues();
-	},
-	'/clear-error-family': () => {
-		const patch = prototypoStore.set('errorAddFamily', undefined).commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/clear-error-variant': () => {
 		const patch = prototypoStore.set('errorAddVariant', undefined).commit();
