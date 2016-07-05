@@ -205,8 +205,11 @@ class VariantList extends React.Component {
 		super(props);
 		this.state = {};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binging in order to avoid unnecessary re-render
 		this.cancelDelete = this.cancelDelete.bind(this);
 		this.prepareDeleteOrDelete = this.prepareDeleteOrDelete.bind(this);
+		this.openChangeNameFamily = this.openChangeNameFamily.bind(this);
 	}
 
 	componentWillMount() {
@@ -273,7 +276,7 @@ class VariantList extends React.Component {
 					FAMILY ACTIONS
 				</div>
 				<Button label="Download family"/>
-				<Button label="Change family name" click={this.openChangeNameFamily.bind(this)}/>
+				<Button label="Change family name" click={this.openChangeNameFamily}/>
 				<Button
 					label={this.props.deleteSplit ? 'Delete' : 'Delete family'}
 					altLabel="Cancel"

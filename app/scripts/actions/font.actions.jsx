@@ -175,7 +175,7 @@ export default {
 		if (!variant) {
 			variant = family.variants[0];
 		}
-		localClient.dispatchAction('/cancel-indiv-mode');
+
 		const patchVariant = prototypoStore
 			.set('variant', variant)
 			.set('family', {name: family.name, template: family.template}).commit();
@@ -190,7 +190,7 @@ export default {
 	},
 	'/create-variant': async ({name, familyName, noSwitch, variantBase}) => {
 		if (!name) {
-			const patch = prototypoStore.set('errorAddVariant', 'Variant name can not be empty').commit();
+			const patch = prototypoStore.set('errorAddVariant', 'Variant name cannot be empty').commit();
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
 			return;
@@ -263,10 +263,28 @@ export default {
 
 	},
 	'/edit-variant': ({variant, family, newName}) => {
+		if (!newName || String(newName).trim() === '') {
+			localClient.dispatchAction('/store-value', {
+				errorVariantNameChange: "The variant name cannot be empty",
+			});
+			return;
+		}
+
 		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
 		const found = _.find(fonts, (item) => {
 			return item.name === family.name;
 		});
+		const alreadyExists = _.find(found.variants || [], (item) => {
+			return item.name === newName;
+		});
+
+		if (alreadyExists) {
+			localClient.dispatchAction('/store-value', {
+				errorVariantNameChange: "You already have a variant with this name in this family",
+			});
+			return;
+		}
+
 		const newVariant = _.find(found.variants || [], (item) => {
 			return variant.id === item.id;
 		});
@@ -284,11 +302,33 @@ export default {
 			.set('openChangeVariantNameModal', false)
 			.commit();
 
+		localClient.dispatchAction('/store-value', {
+			errorVariantNameChange: undefined,
+		});
+
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
 	},
 	'/edit-family-name': ({family, newName}) => {
+		if (!newName || String(newName).trim() === '') {
+			localClient.dispatchAction('/store-value', {
+				errorFamilyNameChange: "The family name cannot be empty",
+			});
+			return;
+		}
+
 		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
+		const alreadyExists = _.find(fonts, (item) => {
+			return item.name === newName;
+		});
+
+		if (alreadyExists) {
+			localClient.dispatchAction('/store-value', {
+				errorFamilyNameChange: "You already have a font with this family name",
+			});
+			return;
+		}
+
 		const newFamily = _.find(fonts, (item) => {
 			return item.name === family.name;
 		});
@@ -305,6 +345,10 @@ export default {
 			.set('collectionSelectedFamily', newFamily)
 			.set('openChangeFamilyNameModal', false)
 			.commit();
+
+		localClient.dispatchAction('/store-value', {
+			errorFamilyNameChange: undefined,
+		});
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
