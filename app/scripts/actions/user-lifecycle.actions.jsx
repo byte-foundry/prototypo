@@ -87,7 +87,7 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 				const patch = userStore.set('infos', infos).set('addcardForm', form).commit();
 
 				localServer.dispatchUpdate('/userSotre', patch);
-				
+
 				resolve();
 			})
 			.catch((err) => {
@@ -346,6 +346,7 @@ export default {
 
 				HoodieApi.instance.plan = 'free_none';
 				hashHistory.push(toLocation);
+				fbq('track', 'Lead');
 				return localServer.dispatchUpdate('/userStore', endPatch);
 			})
 			.catch((err) => {
@@ -362,6 +363,8 @@ export default {
 		form.error = undefined;
 		form.selected = plan;
 		const patch = userStore.set('choosePlanForm', form).commit();
+
+		window.Intercom('trackEvent', `chosePlan${plan.id}`);
 
 		return localServer.dispatchUpdate('/userStore', patch);
 	},
@@ -389,6 +392,8 @@ export default {
 		const patch = userStore.set('infos', infos).set('choosePlanForm', form).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);
+
+		window.Intercom('trackEvent', `confirmedPlan${plan.id}`);
 
 		hashHistory.push(pathQuery);
 	},
@@ -424,6 +429,8 @@ export default {
 			return addBillingAddress(options)
 		})
 		.then(() => {
+			fbq('track', 'AddPaymentInfo');
+			window.Intercom('trackEvent', `addedCardAndAdress${plan.id}`);
 			hashHistory.push(toPath);
 		});
 	},
@@ -462,6 +469,7 @@ export default {
 			});
 
 			ga('ecommerce:send');
+			fbq('track', 'CompleteRegistration');
 
 			await loadStuff();
 

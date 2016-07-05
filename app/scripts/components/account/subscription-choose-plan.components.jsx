@@ -55,6 +55,8 @@ export default class SubscriptionChoosePlan extends React.Component {
 			info: 'Pay once for a whole year!',
 		};
 
+		window.Intercom('trackEvent', 'isOnChoosePlan');
+
 		const error = this.state.error ? <FormError errorText={this.state.error}/> : false;
 
 		return (
