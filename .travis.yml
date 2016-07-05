@@ -7,6 +7,8 @@ before_install:
 after_install:
 - npm dedupe
 - cd ./node_modules/babel-core && npm install babel-generator@6.5.0
+- npm shrinkwrap --dev
+- cat npm-shrinkwrap.json
 script:
 - gulp build --type=prod
 - 'surge --project ./dist --domain test.prototypo.io'

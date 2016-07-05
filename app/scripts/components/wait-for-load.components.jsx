@@ -1,5 +1,5 @@
 import React from 'react';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 
 export default class WaitForLoad extends React.Component {
 	render() {
@@ -12,7 +12,7 @@ export default class WaitForLoad extends React.Component {
 			content = this.props.children;
 		}
 		else {
-			const rectClass = Classnames({
+			const rectClass = classNames({
 				'sk-spinner': true,
 				'sk-spinner-wave': true,
 				'sk-secondary-color': this.props.secColor,

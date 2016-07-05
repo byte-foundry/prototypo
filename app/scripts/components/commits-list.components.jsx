@@ -1,7 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import moment from 'moment/min/moment-with-locales';
 
 export default class CommitsList extends React.Component {
@@ -23,7 +23,7 @@ export default class CommitsList extends React.Component {
 			console.log('[RENDER] commits list');
 		}
 
-		const classes = Classnames({
+		const classes = classNames({
 			"news-feed-article-header-repo": true,
 			"is-font": this.props.repo !== 'prototypo',
 		});

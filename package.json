@@ -12,6 +12,7 @@
     "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",
     "lodash": "^3.9.3",
+    "md5": "^2.1.0",
     "moment": "^2.10.3",
     "nexus-flux": "FranzPoize/nexus-flux#master",
     "nexus-flux-socket.io": "FranzPoize/nexus-flux-socket.io#master",

@@ -1,5 +1,5 @@
 import React from 'react';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -63,7 +63,7 @@ export class SideTabs extends React.Component {
 		}
 
 		const tabIcons = _.map(children, ({props: {id, bottom, iconUrl, name, disabled, legend, from, to, click}}) => {
-			const classes = Classnames({
+			const classes = classNames({
 				'side-tabs-icon': true,
 				'is-active': name === this.props.tab,
 				'is-bottom': !!bottom,
@@ -129,7 +129,7 @@ export class SideTab extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] side tab');
 		}
-		const classes = Classnames({
+		const classes = classNames({
 			"side-tab": true,
 			"is-active": true,
 			"side-tab-big": !!this.props.big,

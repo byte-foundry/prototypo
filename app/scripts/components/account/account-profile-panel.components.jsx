@@ -58,7 +58,9 @@ export default class AccountProfilePanel extends React.Component {
 		return this.state.infos.accountValues
 			? (
 				<form className="account-base account-profile-panel" onSubmit={(e) => {this.changeAccount(e);}}>
-					<DisplayWithLabel label="My email" data={this.state.infos.accountValues.username}/>
+					<DisplayWithLabel label="My email">
+						{this.state.infos.accountValues.username}
+					</DisplayWithLabel>
 					<div className="account-profile-panel-line">
 						<InputWithLabel ref="firstname" label="First name" required={true} inputValue={this.state.infos.accountValues.firstname}/>
 						<InputWithLabel ref="lastname" label="Last name" required={false} inputValue={this.state.infos.accountValues.lastname}/>

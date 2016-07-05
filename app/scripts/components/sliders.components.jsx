@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import Lifespan from 'lifespan';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -89,7 +89,7 @@ export class Slider extends React.Component {
 
 		this.props.param.notInDemo = (plan.indexOf('free') === 0 && !this.props.param.demo);
 
-		const classes = Classnames({
+		const classes = classNames({
 			'slider': true,
 			'is-disabled': this.props.param.disabled || this.props.param.notInDemo,
 			'is-coming': this.props.param.disabled,
@@ -234,7 +234,7 @@ export class SliderController extends React.Component {
 			transform: `translateX(-${translateX}%)`,
 		};
 
-		const classes = Classnames({
+		const classes = classNames({
 			'slider-controller-bg': true,
 			'is-not-advised': this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised,
 			'is-indiv': this.props.individualized,
@@ -265,7 +265,7 @@ export class SliderTextController extends React.Component {
 	}
 
 	render() {
-		const classes = Classnames({
+		const classes = classNames({
 			'slider-text-controller': true,
 			'is-indiv': this.props.individualized,
 		});
@@ -315,13 +315,13 @@ class IndivSwitch extends React.Component {
 
 	render() {
 
-		const indivRelative = Classnames({
+		const indivRelative = classNames({
 			'indiv-switch-btn': true,
 			'indiv-switch-relative': true,
 			'is-active': this.props.state === 'relative',
 		});
 
-		const indivDelta = Classnames({
+		const indivDelta = classNames({
 			'indiv-switch-btn': true,
 			'indiv-switch-delta': true,
 			'is-active': this.props.state === 'delta',

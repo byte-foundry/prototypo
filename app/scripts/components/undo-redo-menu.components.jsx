@@ -1,7 +1,7 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 
 export default class UndoRedoMenu extends React.Component {
 	constructor(props) {
@@ -28,11 +28,11 @@ export default class UndoRedoMenu extends React.Component {
 		const whereAt = this.state.to || this.state.from;
 		const undoDisabled = whereAt < 2;
 		const redoDisabled = whereAt > (this.state.eventList.length - 2);
-		const undoClass = Classnames({
+		const undoClass = classNames({
 			'undo-redo-menu-undo-btn': true,
 			'is-disabled': undoDisabled,
 		});
-		const redoClass = Classnames({
+		const redoClass = classNames({
 			'undo-redo-menu-redo-btn': true,
 			'is-disabled': redoDisabled,
 		});
