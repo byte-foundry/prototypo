@@ -71,7 +71,7 @@ function mapGlyphForApp(glyph) {
 	);
 }
 
-export async function loadStuff() {
+export async function loadStuff(refAccountValues) {
 	//We need to fix database names for the change to normal hoodie api so let's go
 
 	let oldAppValues;
@@ -150,13 +150,22 @@ export async function loadStuff() {
 	let accountValues;
 	let customerValues;
 
-	try {
-		accountValues = await AccountValues.get({typeface: 'default'});
-		accountValues = _.extend(defaultAccountValues, accountValues);
+	if (refAccountValues) {
+		accountValues = {
+			values: {
+				accountValues: refAccountValues,
+			},
+		};
 	}
-	catch (err) {
-		accountValues = defaultAccountValues;
-		accountValues.values.accountValues.username = HoodieApi.instance.email;
+	else {
+		try {
+			accountValues = await AccountValues.get({typeface: 'default'});
+			accountValues = _.extend(defaultAccountValues, accountValues);
+		}
+		catch (err) {
+			accountValues = defaultAccountValues;
+			accountValues.values.accountValues.username = HoodieApi.instance.email;
+		}
 	}
 
 	localClient.dispatchAction('/load-account-values', accountValues);

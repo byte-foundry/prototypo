@@ -338,7 +338,7 @@ export default {
 
 				localServer.dispatchUpdate('/userStore', patch);
 				if (toLocation.pathname === '/dashboard') {
-					await loadStuff();
+					await loadStuff(accountValues);
 				}
 
 				form.errors = [];
