@@ -174,8 +174,6 @@ export default class FontControls extends React.Component {
 			);
 		});
 
-		tabs.unshift(<ControlsTab iconId="func" name="settings" key="settings"></ControlsTab>);
-
 		return (
 			<div className="font-controls" id="sidebar">
 				<ControlsTabs tab={this.state.tabControls} >
