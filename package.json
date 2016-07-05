@@ -6,9 +6,9 @@
     "bluebird": "^3.1.1",
     "classnames": "^2.1.2",
     "del": "^1.2.0",
-    "elzevir.ptf": "byte-foundry/elzevir.ptf",
+    "elzevir.ptf": "byte-foundry/elzevir.ptf#preprod",
     "hoodie-client": "^3.4.0",
-    "john-fell.ptf": "byte-foundry/john-fell.ptf#master",
+    "john-fell.ptf": "byte-foundry/john-fell.ptf#predprod",
     "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",
     "lodash": "^3.9.3",
@@ -35,7 +35,7 @@
     "remutable": "FranzPoize/remutable#master",
     "slug": "^0.9.1",
     "tether": "^1.1.0",
-    "venus.ptf": "byte-foundry/venus.ptf#master",
+    "venus.ptf": "byte-foundry/venus.ptf#predprod",
     "xxhashjs": "^0.1.1"
   },
   "devDependencies": {
