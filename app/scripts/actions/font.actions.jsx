@@ -104,7 +104,7 @@ export default {
 			return;
 		}
 
-		if (name === undefined || name === '') {
+		if (name === undefined || name === '' || String(name).trim() === '') {
 			const patch = prototypoStore.set('errorAddFamily', 'You must choose a name for your family').commit();
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
@@ -189,7 +189,7 @@ export default {
 		saveAppValues();
 	},
 	'/create-variant': async ({name, familyName, noSwitch, variantBase}) => {
-		if (!name) {
+		if (!name || String(name).trim() === '') {
 			const patch = prototypoStore.set('errorAddVariant', 'Variant name cannot be empty').commit();
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
@@ -258,6 +258,7 @@ export default {
 
 		localClient.dispatchAction('/store-value', {
 			openVariantModal: false,
+			openDuplicateVariantModal: false,
 			errorAddVariant: undefined,
 		});
 
