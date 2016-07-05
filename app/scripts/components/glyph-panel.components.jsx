@@ -56,10 +56,16 @@ export default class GlyphPanel extends React.Component {
 		});
 
 		if (this.state.show) {
-			document.querySelector('#intercom-launcher').style.right = '220px';
+			const intercom = document.querySelector('#intercom-launcher')
+			if (intercom) {
+				intercom.style.right = '220px';
+			}
 		}
 		else {
-			document.querySelector('#intercom-launcher').style.right = '20px';
+			const intercom = document.querySelector('#intercom-launcher')
+			if (intercom) {
+				intercom.style.right = '20px';
+			}
 		}
 
 		return (
