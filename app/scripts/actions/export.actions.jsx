@@ -41,6 +41,17 @@ export default {
 			clearTimeout(exportingError);
 		}, name, merged, undefined, HoodieApi.instance.email);
 	},
+	'/export-glyphr': () => {
+		const family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : 'font';
+		const style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
+
+		const name = {
+			family,
+			style: `${style.toLowerCase()}`,
+		};
+
+		fontInstance.openInGlyphr(null, name, false, undefined, HoodieApi.instance.email);
+	},
 	'/export-family': async ({familyToExport, variants}) => {
 		const oldVariant = prototypoStore.get('variant');
 		const family = prototypoStore.get('family');

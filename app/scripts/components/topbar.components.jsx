@@ -28,6 +28,9 @@ export default class Topbar extends React.Component {
 			errorExport: false,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		//function binding to avoid unnecessary re-render
+		this.exportGlyphr = this.exportGlyphr.bind(this);
 	}
 
 	componentWillMount() {
@@ -53,7 +56,7 @@ export default class Topbar extends React.Component {
 	}
 
 	exportGlyphr() {
-		fontInstance.openInGlyphr();
+		this.client.dispatchAction('/export-glyphr');
 		Log.ui('Topbar.exportGlyphr');
 	}
 
