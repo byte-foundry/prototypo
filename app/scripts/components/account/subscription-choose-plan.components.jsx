@@ -41,6 +41,13 @@ export default class SubscriptionChoosePlan extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		if (this.props.location.query.coupon) {
+			this.client.dispatchAction('/choose-plan', {
+				coupon: this.props.location.query.coupon,
+				plan: this.props.location.query.plan
+			});
+		}
 	}
 
 	componentWillUnmount() {
