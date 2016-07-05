@@ -144,7 +144,7 @@ textarea,
 }
 
 #intercom-launcher {
-	display:none !important;
+	transition: right .2s ease;
 }
 
 .is-hidden {

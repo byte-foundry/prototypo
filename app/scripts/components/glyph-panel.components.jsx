@@ -55,6 +55,13 @@ export default class GlyphPanel extends React.Component {
 			'is-active': this.state.show,
 		});
 
+		if (this.state.show) {
+			document.querySelector('#intercom-launcher').style.right = '220px';
+		}
+		else {
+			document.querySelector('#intercom-launcher').style.right = '20px';
+		}
+
 		return (
 			<div id="glyphpanel" className={classes}>
 				<GlyphList
