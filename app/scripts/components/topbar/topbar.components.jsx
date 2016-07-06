@@ -2,10 +2,10 @@ import React from 'react';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import Log from '../services/log.services.js';
-import HoodieApi from '../services/hoodie.services.js';
+import Log from '~/services/log.services.js';
+import HoodieApi from '~/services/hoodie.services.js';
 
-import LocalClient from '../stores/local-client.stores.jsx';
+import LocalClient from '~/stores/local-client.stores.jsx';
 
 import {
 	TopBarMenu,
@@ -15,6 +15,7 @@ import {
 	TopBarMenuAction,
 	TopBarMenuIcon,
 } from './top-bar-menu.components.jsx';
+import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components.jsx';
 
 export default class Topbar extends React.Component {
 
@@ -151,9 +152,11 @@ export default class Topbar extends React.Component {
 					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
 						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto();}} separator={true}/>
 						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
-						<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true);}}/>
-						<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false);}}/>
-						<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr} separator={true}/>
+						<AllowedTopBarWithPayment>
+							<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true);}}/>
+							<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false);}}/>
+							<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr} separator={true}/>
+						</AllowedTopBarWithPayment>
 						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout();}}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">

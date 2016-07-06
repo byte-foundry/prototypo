@@ -7,7 +7,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-import Topbar from './topbar.components.jsx';
+import Topbar from './topbar/topbar.components.jsx';
 import Toolbar from './toolbar/toolbar.components.jsx';
 import Workboard from './workboard.components.jsx';
 import Collection from './collection/collection.components.jsx';

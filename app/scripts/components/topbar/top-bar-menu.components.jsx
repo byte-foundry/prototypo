@@ -2,7 +2,7 @@ import React from 'react';
 import Classnames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import CheckBoxWithImg from './checkbox-with-img.components.jsx';
+import CheckBoxWithImg from '../checkbox-with-img.components.jsx';
 
 class TopBarMenu extends React.Component {
 	constructor(props) {

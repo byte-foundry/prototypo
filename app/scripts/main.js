@@ -68,6 +68,7 @@ import '../styles/components/shared/modal.scss';
 import '../styles/components/toolbar/toolbar.scss';
 import '../styles/components/toolbar/arianne-thread.scss';
 import '../styles/components/toolbar/view-buttons.scss';
+import '../styles/components/topbar/allowed-top-bar-with-payment.scss';
 import '../styles/components/collection/collection.scss';
 import '../styles/components/collection/family.scss';
 import '../styles/components/viewPanels/view-panels-menu.scss';
