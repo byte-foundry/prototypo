@@ -71,6 +71,7 @@ class ViewButtons extends React.Component {
 	render() {
 		return (
 			<div className="view-buttons">
+				<div className="view-buttons-label">Views</div>
 				<ViewButton name="glyph" state={this.state.mode.indexOf('glyph') !== -1} click={this.toggleView.bind(this)}/>
 				<ViewButton name="word" state={this.state.mode.indexOf('word') !== -1} click={this.toggleView.bind(this)}/>
 				<ViewButton name="text" state={this.state.mode.indexOf('text') !== -1} click={this.toggleView.bind(this)}/>

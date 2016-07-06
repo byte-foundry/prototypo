@@ -5,6 +5,15 @@
 	flex-flow: row nowrap;
 	align-items: center;
 	height:100%;
+
+	&-label {
+		align-items: center;
+		border-left: 1px solid $medium-grey;
+		display: flex;
+		height: 100%;
+		padding: 0 25px;
+		text-transform: none;
+	}
 }
 
 .view-button {

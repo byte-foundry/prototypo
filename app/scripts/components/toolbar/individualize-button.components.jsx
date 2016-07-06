@@ -42,14 +42,22 @@ export default class IndividualizeButton extends React.Component {
 			'individualize-button-switch': true,
 			'is-active': this.state.individualize,
 		});
+		const activeAllClassName = Classnames({
+			'individualize-button-label': true,
+			'active-label': !this.state.individualize,
+		});
+		const activeGroupsClassName = Classnames({
+			'individualize-button-label': true,
+			'active-label': this.state.individualize,
+		});
 
 		return (
 			<div className="individualize-button" onClick={() => { this.individualize(); }} >
-				<div className="individualize-button-label">All glyphs</div>
+				<div className={activeAllClassName}>All glyphs</div>
 				<div className={buttonClass} onClick={() => { this.individualize(); }} >
 					<div className="individualize-button-switch-toggle" title="Individualize parameters"></div>
 				</div>
-				<div className="individualize-button-label">Groups of glyphs</div>
+				<div className={activeGroupsClassName}>Groups of glyphs</div>
 			</div>
 		);
 	}

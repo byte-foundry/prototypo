@@ -3,6 +3,7 @@
 .individualize-button {
 	display:flex;
 	flex-flow: row nowrap;
+	padding-right: 30px;
 
 	&-switch {
 		position:relative;
@@ -45,6 +46,10 @@
 		font-size: 14px;
 		font-weight:400;
 		text-transform:none;
+
+		&.active-label {
+			color: $white;
+		}
 	}
 
 }
