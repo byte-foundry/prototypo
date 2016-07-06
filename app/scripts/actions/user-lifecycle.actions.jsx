@@ -430,7 +430,7 @@ export default {
 		})
 		.then(() => {
 			fbq('track', 'AddPaymentInfo');
-			window.Intercom('trackEvent', `addedCardAndAdress${plan.id}`);
+			window.Intercom('trackEvent', 'addedCardAndAdress');
 			hashHistory.push(toPath);
 		});
 	},

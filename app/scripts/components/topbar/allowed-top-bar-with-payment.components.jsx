@@ -6,7 +6,7 @@ export default class AllowedTopBarWithPayment extends React.Component {
 	render() {
 		const plan = HoodieApi.instance.plan;
 
-		const overlay = plan.indexOf('free') !== -1
+		const overlay = plan.indexOf('free_') !== -1
 			? (
 				<div className="slider-demo-overlay">
 					<a className="slider-demo-overlay-text" href="#/account/create">
