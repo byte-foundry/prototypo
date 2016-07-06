@@ -4,11 +4,14 @@
 	flex:1 1 100%;
 	overflow:hidden;
 	position:relative;
-	z-index:1;
-	border-right:solid 1px $light-grey;
+	// z-index:1;
 	align-self:stretch;
 	display:flex;
 	flex-direction:row;
+
+	.has-text-panel &{
+		border-right:solid 1px $light-grey;
+	}
 
 	&-container {
 		width:100%;

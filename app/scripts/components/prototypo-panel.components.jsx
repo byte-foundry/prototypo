@@ -2,6 +2,7 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import ClassNames from 'classnames';
 
 import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
@@ -130,9 +131,14 @@ export default class PrototypoPanel extends React.Component {
 
 		let down;
 
+		const textAndGlyphClassNames = ClassNames({
+			'has-text-panel': hasText,
+			'has-glyph-panel': hasGlyph,
+		});
+
 		if (hasGlyph || hasText) {
 			down = (
-				<div id="prototypotextandglyph">
+				<div id="prototypotextandglyph" className={textAndGlyphClassNames} >
 					{textAndGlyph}
 				</div>
 			);

@@ -48,7 +48,7 @@ export default class ViewPanelsMenu extends React.Component {
 				{button}
 				<ReactCSSTransitionGroup
 					component="span"
-					className="settings-menu-opened"
+					className="settings-menu-toolbox"
 					transitionName="contextual-menu"
 					transitionEnterTimeout={200}
 					transitionLeaveTimeout={200}>
