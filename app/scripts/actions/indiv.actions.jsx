@@ -103,6 +103,14 @@ export default {
 			return localServer.dispatchUpdate('/prototypoStore', patchError);
 		}
 
+		if (Object.keys(oldValues.indiv_group_param).indexOf(name) !== -1) {
+			const patchError = prototypoStore
+				.set('indivErrorMessage', 'There is already a group with this name')
+				.commit();
+
+			return localServer.dispatchUpdate('/prototypoStore', patchError);
+		}
+
 		if (selected.length === 0) {
 			const patchError = prototypoStore
 				.set('indivErrorMessage', 'You must select at least one glyph')
@@ -271,7 +279,7 @@ export default {
 
 		if (!newName) {
 			const patchError = prototypoStore
-				.set('indivErrorEdit', 'You must provide a group name')
+				.set('indivErrorMessage', 'You must provide a group name')
 				.commit();
 
 			return localServer.dispatchUpdate('/prototypoStore', patchError);
@@ -279,7 +287,7 @@ export default {
 
 		if (newName !== currentGroupName && Object.keys(oldValues.indiv_group_param).indexOf(newName) !== -1) {
 			const patchError = prototypoStore
-				.set('indivErrorEdit', 'You cannot change the name to an existing group name')
+				.set('indivErrorMessage', 'You cannot change the name to an existing group name')
 				.commit();
 
 			return localServer.dispatchUpdate('/prototypoStore', patchError);

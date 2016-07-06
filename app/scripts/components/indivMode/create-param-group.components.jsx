@@ -123,13 +123,9 @@ export default class CreateParamGroup extends React.Component {
 	render() {
 
 		const error = this.state.errorMessage ? (
-			<div className="create-param-group-panel-error">
-				<span className="create-param-group-panel-error-message">{this.state.errorMessage}</span>
+			<div className="add-family-form-error">
+				{this.state.errorMessage}
 			</div>
-		) : false;
-
-		const edit = this.state.groups.length > 0 ? (
-			<span className="edit-param-group-button" onClick={() => {this.client.dispatchAction('/edit-mode-param-group');}}>EDIT GROUP</span>
 		) : false;
 
 		const glyphs = _.map(this.state.selected, (glyph) => {
@@ -166,6 +162,7 @@ export default class CreateParamGroup extends React.Component {
 						tagSelected={this.state.tagSelected}
 						selected={this.props.group ? this.props.group.glyphs : this.state.selected}
 						tags={this.state.tags}/>
+					{error}
 					{buttons}
 				</form>
 			</div>
