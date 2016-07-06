@@ -24,16 +24,15 @@
 	}
 
 	&-demo-overlay {
+		position: absolute;
+		width: 100%;
+
 		&-text {
-			opacity:0;
 			color:$white;
 			font-size: 13px;
-			transition:opacity .2s ease;
 			padding: 5px 15px;
-			position: relative;
 
 			&-more {
-				position: absolute;
 				top: 0;
 				bottom: 0;
 				right: 0;
@@ -71,11 +70,6 @@
 					padding-left: 10px;
 				}
 			}
-		}
-
-		&:hover &-text {
-			background-color: darken($dark-grey, 2%);
-			opacity:1;
 		}
 	}
 
@@ -167,9 +161,9 @@
 
 	&.is-coming {
 		.slider-demo-overlay {
-			background-color: rgba($dark-grey, 0.95);
+			background-color: rgba($dark-grey, 0.45);
+			z-index:1;
 			&-text {
-				position: absolute;
 				top: 0;
 				bottom: 0;
 				left: 0;

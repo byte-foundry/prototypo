@@ -97,33 +97,26 @@ export class Slider extends React.Component {
 			console.log('[RENDER] slider');
 		}
 		const value = this.props.value === undefined ? this.props.init : this.props.value;
-		const plan = HoodieApi.instance.plan || 'kickstarter';
-
-		const notInDemo = (plan.indexOf('free') === 0 && !this.props.demo);
 
 		const classes = Classnames({
 			'slider': true,
-			'is-disabled': this.props.disabled || notInDemo,
 			'is-coming': this.props.disabled,
 			'is-child': this.props.child,
 		});
 
-		const demoOverlay = notInDemo && !this.props.disabled ? (
-			<Link to="/account/create" className="slider-demo-overlay-text">
-				This feature is available with the professional subscription
-				<div className="slider-demo-overlay-text-more">
-					<div className="slider-demo-overlay-text-more-text">Uppgrade to full version</div>
+		const demoOverlay = this.props.disabled
+			? (
+				<div className="slider-demo-overlay-text">
+					This feature is currently in development
 				</div>
-			</Link>
-		) : this.props.disabled ? (
-			<div className="slider-demo-overlay-text">
-				This feature is currently in development
-			</div>
-		) : false;
+			)
+			: false;
 
-		const indivSwitch = this.props.individualized ? (
-			<IndivSwitch name={this.props.name} state={this.props.state}/>
-		) : false;
+		const indivSwitch = this.props.individualized
+			? (
+				<IndivSwitch name={this.props.name} state={this.props.state}/>
+			)
+			: false;
 
 		return (
 			<div className={classes}>
