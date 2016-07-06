@@ -145,6 +145,52 @@ textarea,
 
 #intercom-launcher {
 	transition: right .2s ease;
+	bottom: 60px !important;
+	width:28px !important;
+	height:28px !important;
+}
+
+#intercom-container .intercom-launcher-button {
+	width:28px !important;
+	height:28px !important;
+	background-size: 13px !important;
+}
+#intercom-container .intercom-launcher-with-message .intercom-launcher-button {
+	background-size: 32px !important;
+}
+
+.settings-menu-opened {
+	bottom: 0px;
+	position: absolute;
+	right: 0px;
+	z-index: 2147483001;
+}
+
+#intercom-container .intercom-launcher-preview {
+	right:40px !important;
+}
+
+#intercom-container .intercom-launcher-preview-multi-line .intercom-launcher-preview-caret:before {
+	bottom:16px !important;
+}
+
+#intercom-container .intercom-launcher-preview-multi-line .intercom-launcher-preview-caret:after {
+	bottom:17px !important;
+}
+
+#intercom-container .intercom-launcher-badge {
+	width:12px !important;
+	height:12px !important;
+	font-size: 8px !important;
+	line-height: 12px !important;
+}
+
+#intercom-container .intercom-launcher-button, #intercom-container .intercom-launcher-preview {
+	box-shadow: none !important;
+}
+
+#intercom-container .intercom-launcher-initials {
+	line-height: 28px !important;
 }
 
 .is-hidden {

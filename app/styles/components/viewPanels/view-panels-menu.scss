@@ -14,6 +14,20 @@
 		right:80px;
 	}
 
+	.prototypo-text &.is-shifted {
+		right: 220px;
+	}
+	.prototypo-word &.is-shifted {
+		right: 220px;
+	}
+	.prototypo-canvas &.textpanel-closed.is-shifted {
+		right: 218px;
+	}
+	.prototypo-canvas &.textpanel-closed {
+		right: 18px;
+	}
+	transition: right .2s ease;
+
 	&-text {
 		padding:0 5px;
 		text-transform: uppercase;

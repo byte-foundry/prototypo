@@ -8,6 +8,7 @@ import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import ZoomButtons from './zoom-buttons.components.jsx';
+import ClassNames from 'classnames';
 
 //Right now PrototypoWord is just like PrototypoText (except some css consideration)
 //However it will change at some point
@@ -19,6 +20,7 @@ export default class PrototypoWord extends React.Component {
 		this.state = {
 			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
+			glyphPanelOpened: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.setupText = this.setupText.bind(this);
@@ -33,6 +35,16 @@ export default class PrototypoWord extends React.Component {
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 
 		this.saveTextDebounced = _.debounce((text, prop) => {
 			this.client.dispatchAction('/store-text', {value: text, propName: prop});
@@ -93,7 +105,7 @@ export default class PrototypoWord extends React.Component {
 	}
 
 	toggleColors(e) {
-		e.stopPropagation()
+		e.stopPropagation();
 		this.client.dispatchAction('/store-value', {uiInvertedWordColors: !this.props.uiInvertedWordColors});
 	}
 
@@ -108,6 +120,11 @@ export default class PrototypoWord extends React.Component {
 			'backgroundColor': this.props.uiInvertedWordColors ? '#232323' : '#fefefe',
 			'transform': this.props.uiInvertedWordView ? 'scaleY(-1)' : 'scaleY(1)',
 		};
+
+		const actionBar = ClassNames({
+			'action-bar': true,
+			'is-shifted': this.state.glyphPanelOpened,
+		});
 
 		const menu = [
 			<ContextualMenuItem
@@ -139,10 +156,11 @@ export default class PrototypoWord extends React.Component {
 				</ReactGeminiScrollbar>
 				<ViewPanelsMenu
 					show={this.state.showContextMenu}
+					shifted={this.state.glyphPanelOpened}
 					toggle={this.toggleContextMenu}>
 					{menu}
 				</ViewPanelsMenu>
-				<div className="action-bar">
+				<div className={actionBar}>
 					<CloseButton click={() => { this.props.close('word'); }}/>
 					<ZoomButtons
 						plus={() => { this.changeTextFontSize(this.props.uiWordFontSize + 0.3); }}

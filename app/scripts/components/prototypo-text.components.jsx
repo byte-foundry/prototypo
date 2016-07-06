@@ -8,6 +8,7 @@ import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import ZoomButtons from './zoom-buttons.components.jsx';
+import ClassNames from 'classnames';
 
 export default class PrototypoText extends React.Component {
 
@@ -17,6 +18,7 @@ export default class PrototypoText extends React.Component {
 		this.state = {
 			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
+			glyphPanelOpened: undefined,
 		};
 
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
@@ -38,6 +40,16 @@ export default class PrototypoText extends React.Component {
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 
 		this.saveTextDebounced = _.debounce((text, prop) => {
 			this.client.dispatchAction('/store-text', {value: text, propName: prop});
@@ -166,6 +178,11 @@ export default class PrototypoText extends React.Component {
 			'fontWeight': 400,
 		};
 
+		const actionBar = ClassNames({
+			'action-bar': true,
+			'is-shifted': this.state.glyphPanelOpened,
+		});
+
 		const pangramMenu = [
 			<ContextualMenuItem
 				text="Quick fox..."
@@ -214,7 +231,7 @@ export default class PrototypoText extends React.Component {
 						></div>
 				</ReactGeminiScrollbar>
 				<ViewPanelsMenu
-					wideRight={true}
+					shifted={this.state.glyphPanelOpened}
 					show={this.state.showContextMenu}
 					toggle={this.toggleContextMenu}>
 					{menu}
@@ -226,7 +243,7 @@ export default class PrototypoText extends React.Component {
 					toggle={this.toggleInsertMenu}>
 					{pangramMenu}
 				</ViewPanelsMenu>
-				<div className="action-bar">
+				<div className={actionBar}>
 					<CloseButton click={this.close}/>
 					<ZoomButtons
 						plus={() => { this.changeTextFontSize(this.props.uiTextFontSize + 0.3); }}

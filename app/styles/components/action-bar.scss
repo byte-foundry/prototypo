@@ -2,4 +2,9 @@
 	position:absolute;
 	top:20px;
 	right:19px;
+
+	&.is-shifted{
+		right: 219px;
+	}
+	transition: right .2s ease;
 }

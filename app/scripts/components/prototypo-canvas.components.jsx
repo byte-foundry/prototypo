@@ -2,6 +2,7 @@ import React from 'react';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import ClassNames from 'classnames';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
@@ -19,6 +20,8 @@ export default class PrototypoCanvas extends React.Component {
 
 		this.state = {
 			showContextMenu: false,
+			prototypoTextPanelClosed: undefined,
+			glyphPanelOpened: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
@@ -32,6 +35,17 @@ export default class PrototypoCanvas extends React.Component {
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					prototypoTextPanelOpened: head.toJS().uiMode.indexOf('text') !== -1,
+					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 	}
 
 	componentWillUnmount() {
@@ -181,8 +195,8 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	acceptZoomShortcut() {
-		this.handleZoomCb = (e) => {this.handleZoomShortcut(e)};
-		this.finishZoomCb = (e) => {this.finishZoomShortcut(e)};
+		this.handleZoomCb = (e) => {this.handleZoomShortcut(e);};
+		this.finishZoomCb = (e) => {this.finishZoomShortcut(e);};
 		window.addEventListener('keydown', this.handleZoomCb);
 		window.addEventListener('keyup', this.finishZoomCb);
 	}
@@ -201,7 +215,7 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	toggleOutline(e) {
-		e.stopPropagation()
+		e.stopPropagation();
 		this.client.dispatchAction('/store-value', {uiOutline: !this.props.uiOutline});
 	}
 
@@ -217,6 +231,14 @@ export default class PrototypoCanvas extends React.Component {
 		const canvasClass = Classnames({
 			'is-hidden': this.props.uiMode.indexOf('glyph') === -1,
 			'prototypo-canvas': true,
+		});
+
+		const textPanelClosed = !this.state.prototypoTextPanelOpened;
+		const isShifted = textPanelClosed && this.state.glyphPanelOpened;
+
+		const actionBarClassNames = Classnames({
+			'action-bar': true,
+			'is-shifted': isShifted,
 		});
 
 		const menu = [
@@ -250,12 +272,14 @@ export default class PrototypoCanvas extends React.Component {
 				className={canvasClass}
 				onClick={this.handleLeaveAndClick}
 				onMouseLeave={this.handleLeaveAndClick}>
-				<div ref="canvas" className="prototypo-canvas-container" onMouseLeave={() => {this.rejectZoomShortcut()}} onMouseEnter={() => { this.acceptZoomShortcut();}} onDoubleClick={() => { this.reset(); }}></div>
-				<div className="action-bar">
+				<div ref="canvas" className="prototypo-canvas-container" onMouseLeave={() => {this.rejectZoomShortcut();}} onMouseEnter={() => { this.acceptZoomShortcut();}} onDoubleClick={() => { this.reset(); }}></div>
+				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
 				</div>
 				<ViewPanelsMenu
 					show={this.state.showContextMenu}
+					shifted={isShifted}
+					textPanelClosed={textPanelClosed}
 					toggle={this.toggleContextMenu}>
 					{menu}
 				</ViewPanelsMenu>

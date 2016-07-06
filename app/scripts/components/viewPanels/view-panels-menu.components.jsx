@@ -27,6 +27,8 @@ export default class ViewPanelsMenu extends React.Component {
 			'view-panels-menu': true,
 			'is-aligned-left': this.props.alignLeft,
 			'is-wide-right': this.props.wideRight,
+			'is-shifted': this.props.shifted,
+			'textpanel-closed': this.props.textPanelClosed,
 		});
 
 		const menu = this.props.show
@@ -46,6 +48,7 @@ export default class ViewPanelsMenu extends React.Component {
 				{button}
 				<ReactCSSTransitionGroup
 					component="span"
+					className="settings-menu-opened"
 					transitionName="contextual-menu"
 					transitionEnterTimeout={200}
 					transitionLeaveTimeout={200}>
