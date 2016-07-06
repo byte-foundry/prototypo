@@ -1,6 +1,7 @@
 import React from 'react';
 import Classnames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {Link} from 'react-router';
 
 import CheckBoxWithImg from '../checkbox-with-img.components.jsx';
 
@@ -20,6 +21,7 @@ class TopBarMenu extends React.Component {
 				'is-aligned-right': child.props.alignRight,
 				'is-action': child.props.action,
 				'is-icon-menu': !!child.props.img,
+				'img-dark-background': child.props.imgDarkBackground,
 			});
 
 			return (
@@ -79,6 +81,47 @@ class TopBarMenuAction extends React.Component {
 		}
 		else {
 			return <div className={classes} onClick={(e) => {props.click(e);}}>{props.name}</div>;
+		}
+	}
+
+	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] topbarMenuAction');
+		}
+		return false;
+	}
+}
+
+class TopBarMenuLink extends React.Component {
+
+	static getHeader(props) {
+
+		const classes = Classnames({
+			'top-bar-menu-item-action': true,
+			'is-active': props.active,
+			'is-image-action': !!props.img,
+		});
+		const linkClassName = Classnames({
+			'top-bar-menu-link': true,
+		});
+
+		if (props.img) {
+			return (
+				<div className={classes}>
+					<Link to="/account" className={linkClassName} >
+						<img src={`assets/images/${props.img}`} />
+					</Link>
+				</div>
+			);
+		}
+		else {
+			return (
+				<div className={classes}>
+					<Link to="/account" className={linkClassName} title={props.title}>
+						{props.name}
+					</Link>
+				</div>
+			);
 		}
 	}
 
@@ -186,4 +229,5 @@ export {
 	TopBarMenuDropdownCheckBox,
 	TopBarMenuAction,
 	TopBarMenuIcon,
+	TopBarMenuLink,
 };

@@ -37,4 +37,4 @@ export default class AccountDashboard extends React.Component {
 
 AccountDashboard.contextTypes = {
 	router: React.PropTypes.object.isRequired,
-}
+};

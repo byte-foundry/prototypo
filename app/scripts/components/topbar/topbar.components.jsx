@@ -14,6 +14,7 @@ import {
 	TopBarMenuDropdownCheckBox,
 	TopBarMenuAction,
 	TopBarMenuIcon,
+	TopBarMenuLink,
 } from './top-bar-menu.components.jsx';
 import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components.jsx';
 
@@ -32,6 +33,7 @@ export default class Topbar extends React.Component {
 
 		//function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
+		this.setAccountRoute = this.setAccountRoute.bind(this);
 	}
 
 	componentWillMount() {
@@ -106,6 +108,10 @@ export default class Topbar extends React.Component {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
 			Log.ui('Topbar.toggleView', name);
 		}
+	}
+
+	setAccountRoute() {
+
 	}
 
 	async onboardExport(step) {
@@ -188,7 +194,7 @@ export default class Topbar extends React.Component {
 					{exporting}
 					{errorExporting}
 
-					<TopBarMenuAction name="Glyphs list" click={() => { this.toggleView('list'); }} alignRight={true} action={true}></TopBarMenuAction>
+					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
 				</TopBarMenu>
 			</div>
 		);
