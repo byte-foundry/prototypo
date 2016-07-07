@@ -13,6 +13,9 @@ export default class Toolbar extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		//fonction binding to avoid unnecessary re-render
+		this.toggleView = this.toggleView.bind(this);
 	}
 
 	render() {
@@ -72,9 +75,9 @@ class ViewButtons extends React.Component {
 		return (
 			<div className="view-buttons">
 				<div className="view-buttons-label">Views</div>
-				<ViewButton name="glyph" state={this.state.mode.indexOf('glyph') !== -1} click={this.toggleView.bind(this)}/>
-				<ViewButton name="word" state={this.state.mode.indexOf('word') !== -1} click={this.toggleView.bind(this)}/>
-				<ViewButton name="text" state={this.state.mode.indexOf('text') !== -1} click={this.toggleView.bind(this)}/>
+				<ViewButton name="glyph" state={this.state.mode.indexOf('glyph') !== -1} click={this.toggleView}/>
+				<ViewButton name="word" state={this.state.mode.indexOf('word') !== -1} click={this.toggleView}/>
+				<ViewButton name="text" state={this.state.mode.indexOf('text') !== -1} click={this.toggleView}/>
 			</div>
 		);
 	}
@@ -94,7 +97,7 @@ class ViewButton extends React.Component {
 		});
 
 		return (
-			<div className={classes} onClick={() => {this.props.click(this.props.name);}}>
+			<div className={classes + ` view-button-${this.props.name}`} onClick={() => {this.props.click(this.props.name);}}>
 				<img className="view-button-img" src={img}/>
 			</div>
 		);
