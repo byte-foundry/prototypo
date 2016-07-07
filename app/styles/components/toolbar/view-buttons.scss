@@ -1,5 +1,7 @@
 @import "../../variables";
 
+$view-button-size: 35;
+
 .view-buttons {
 	display:flex;
 	flex-flow: row nowrap;
@@ -17,7 +19,9 @@
 }
 
 .view-button {
-	background: $white no-repeat center;
+	background-image: url('/assets/images/view-buttons.svg');
+	background-color: $white;
+	background-repeat: no-repeat;
 	width:35px;
 	height:35px;
 	padding:9px;
@@ -31,29 +35,26 @@
 
 	&-glyph {
 		&.is-active {
-			background-image: url('/assets/images/glyph-hover-active.svg');
+			background-position: 0px -#{$view-button-size}px;
 		}
 		&, &:hover:not(.is-active) {
-			background-image: url('/assets/images/glyph-base.svg');
+			background-position: 0px 0px;
 		}
-		background-size: 17px;
 	}
 	&-word {
 		&.is-active {
-			background-image: url('/assets/images/word-hover-active.svg');
+			background-position: -#{$view-button-size}px -#{$view-button-size}px;
 		}
 		&, &:hover:not(.is-active) {
-			background-image: url('/assets/images/word-base.svg');
+			background-position: -#{$view-button-size}px 0px;
 		}
-		background-size: 17px;
 	}
 	&-text {
 		&.is-active {
-			background-image: url('/assets/images/text-hover-active.svg');
+			background-position: -#{$view-button-size * 2}px -#{$view-button-size}px;
 		}
 		&, &:hover:not(.is-active) {
-			background-image: url('/assets/images/text-base.svg');
+			background-position: -#{$view-button-size * 2}px 0px;
 		}
-		background-size: 17px;
 	}
 }
