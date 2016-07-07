@@ -97,7 +97,7 @@ class ViewButton extends React.Component {
 		});
 
 		return (
-			<div className={classes + ` view-button-${this.props.name}`} onClick={() => {this.props.click(this.props.name);}}>
+			<div className={`${classes} view-button-${this.props.name}`} onClick={() => {this.props.click(this.props.name);}}>
 				<img className="view-button-img" src={img}/>
 			</div>
 		);
