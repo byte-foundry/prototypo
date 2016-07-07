@@ -61,7 +61,9 @@ export class Sliders extends React.Component {
 					key={paramToUse.name + i}
 					value={value}
 					state={paramToUse.state}
-					individualized={individualized}/>
+					individualized={individualized}
+					controlType={paramToUse.controlType}
+					radioValues={paramToUse.radioValues}/>
 			);
 		});
 
@@ -118,6 +120,34 @@ export class Slider extends React.Component {
 			)
 			: false;
 
+		const isRadio = this.props.controlType === 'radio';
+		const sliderController = isRadio
+			? (
+				<SliderRadioController value={value}
+					name={this.props.name}
+					individualized={this.props.individualized}
+					label={this.props.label}
+					min={this.props.min}
+					max={this.props.max}
+					minAdvised={this.props.minAdvised}
+					maxAdvised={this.props.maxAdvised}
+					disabled={this.props.disabled}
+					child={this.props.child}
+					radioValues={this.props.radioValues}/>
+				)
+			: (
+				<SliderController value={value}
+					name={this.props.name}
+					individualized={this.props.individualized}
+					label={this.props.label}
+					min={this.props.min}
+					max={this.props.max}
+					minAdvised={this.props.minAdvised}
+					maxAdvised={this.props.maxAdvised}
+					disabled={this.props.disabled}
+					child={this.props.child}/>
+			);
+
 		return (
 			<div className={classes}>
 				<div className="slider-demo-overlay">
@@ -127,16 +157,7 @@ export class Slider extends React.Component {
 				<div className="slider-reset" onClick={() => {this.resetValue();}}>reset</div>
 				<SliderTextController value={value} name={this.props.name} label={this.props.label} disabled={this.props.disabled} individualized={this.props.individualized}/>
 				<div className="slider-container">
-					<SliderController value={value}
-						name={this.props.name}
-						individualized={this.props.individualized}
-						label={this.props.label}
-						min={this.props.min}
-						max={this.props.max}
-						minAdvised={this.props.minAdvised}
-						maxAdvised={this.props.maxAdvised}
-						disabled={this.props.disabled}
-						child={this.props.child}/>
+					{sliderController}
 					{indivSwitch}
 				</div>
 			</div>
@@ -257,6 +278,66 @@ export class SliderController extends React.Component {
 						className="slider-controller-handle"
 						ref="handle" ></div>
 				</div>
+			</div>
+		);
+	}
+}
+
+export class SliderRadioController extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		//function binding to avoid unnecessery re-render
+		this.handleClick = this.handleClick.bind(this);
+	}
+
+	componentWillMount() {
+		this.lifespan = new Lifespan();
+		this.client = LocalClient.instance();
+
+	}
+
+	componentDidMount() {
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	handleClick(e) {
+		// here we are going to handle the radio click envent (e)
+		console.log(this.props);
+	}
+
+	render() {
+		const max = this.props.max;
+		const thresholds = [1, 2, 3];
+
+		const boxes = thresholds.map((thresh, index, array) => {
+			return ((max / (array.length)) * thresh);
+		});
+		const checkBoxes = boxes.map((boxValue, index) => {
+			return (
+				<div key={index}>
+					<label>
+						{boxValue}
+						<input type="radio" name={`radio-button-${String(this.props.name).trim()}`} />
+					</label>
+				</div>
+			);
+		});
+
+		/*
+		const classes = Classnames({
+			'slider-controller-bg': true,
+			'is-not-advised': this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised,
+			'is-indiv': this.props.individualized,
+		});*/
+
+		return (
+			<div onClick={this.handleClick}>
+				{checkBoxes}
 			</div>
 		);
 	}
