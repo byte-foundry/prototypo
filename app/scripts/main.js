@@ -25,7 +25,6 @@ import '../styles/components/sliders.scss';
 import '../styles/components/variant.scss';
 import '../styles/components/alternate-menu.scss';
 import '../styles/components/hover-view-menu.scss';
-import '../styles/components/help-panel.scss';
 import '../styles/components/not-a-browser.scss';
 import '../styles/components/onboarding.scss';
 import '../styles/components/action-bar.scss';
