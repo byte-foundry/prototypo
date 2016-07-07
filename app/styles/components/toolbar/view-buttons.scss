@@ -17,7 +17,7 @@
 }
 
 .view-button {
-	background: $white;
+	background: $white no-repeat center;
 	width:35px;
 	height:35px;
 	padding:9px;
@@ -25,7 +25,35 @@
 
 	&:hover, &.is-active {
 		@include themify() {
-			background: $theme-background;
+			background-color: $theme-background;
 		}
+	}
+
+	&-glyph {
+		&.is-active {
+			background-image: url('/assets/images/glyph-hover-active.svg');
+		}
+		&, &:hover:not(.is-active) {
+			background-image: url('/assets/images/glyph-base.svg');
+		}
+		background-size: 17px;
+	}
+	&-word {
+		&.is-active {
+			background-image: url('/assets/images/word-hover-active.svg');
+		}
+		&, &:hover:not(.is-active) {
+			background-image: url('/assets/images/word-base.svg');
+		}
+		background-size: 17px;
+	}
+	&-text {
+		&.is-active {
+			background-image: url('/assets/images/text-hover-active.svg');
+		}
+		&, &:hover:not(.is-active) {
+			background-image: url('/assets/images/text-base.svg');
+		}
+		background-size: 17px;
 	}
 }

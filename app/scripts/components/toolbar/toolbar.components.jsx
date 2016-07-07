@@ -13,9 +13,6 @@ export default class Toolbar extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-
-		//fonction binding to avoid unnecessary re-render
-		this.toggleView = this.toggleView.bind(this);
 	}
 
 	render() {
@@ -41,6 +38,9 @@ class ViewButtons extends React.Component {
 			mode: [],
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		//fonction binding to avoid unnecessary re-render
+		this.toggleView = this.toggleView.bind(this);
 	}
 
 	componentWillMount() {
@@ -90,16 +90,16 @@ class ViewButton extends React.Component {
 	}
 
 	render() {
-		const img = `assets/images/${this.props.name + (this.props.state ? '-hover-active' : '-base')}.svg`;
 		const classes = Classnames({
 			'view-button': true,
 			'is-active': this.props.state,
 		});
 
 		return (
-			<div className={`${classes} view-button-${this.props.name}`} onClick={() => {this.props.click(this.props.name);}}>
-				<img className="view-button-img" src={img}/>
-			</div>
+			<div
+				className={`${classes} view-button-${this.props.name}`}
+				onClick={() => {this.props.click(this.props.name);}}
+			></div>
 		);
 	}
 }
