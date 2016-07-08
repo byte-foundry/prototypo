@@ -13,6 +13,9 @@ export default class AccountAddCard extends React.Component {
 			errors: [],
 			inError: {},
 		};
+
+		//function binding
+		this.addCard = this.addCard.bind(this);
 	}
 
 	componentWillMount() {
@@ -55,7 +58,7 @@ export default class AccountAddCard extends React.Component {
 		});
 
 		return (
-			<form onSubmit={(e) => {this.addCard(e);}} className="account-base account-add-card">
+			<form onSubmit={this.addCard} className="account-base account-add-card">
 				<AddCard ref="card" inError={this.state.inError}/>
 				{errors}
 				<AccountValidationButton loading={this.state.loading} label="Change card"/>

@@ -3,7 +3,7 @@ import Lifespan from 'lifespan';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
-import InputWithLabel from '../shared/input-with-label.components.jsx'
+import InputWithLabel from '../shared/input-with-label.components.jsx';
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import SelectWithLabel from '../shared/select-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
@@ -14,6 +14,9 @@ export default class AccountProfilePanel extends React.Component {
 		this.state = {
 			infos: {},
 		};
+
+		//function binding
+		this.changeAccount = this.changeAccount.bind(this);
 	}
 
 	componentWillMount() {
@@ -54,10 +57,11 @@ export default class AccountProfilePanel extends React.Component {
 			{value: 'artistic_director', label: 'an artistic director'},
 			{value: 'web_developer', label: 'a web developer'},
 			{value: 'type_designer', label: 'a type designer'},
-		]
+		];
+
 		return this.state.infos.accountValues
 			? (
-				<form className="account-base account-profile-panel" onSubmit={(e) => {this.changeAccount(e);}}>
+				<form className="account-base account-profile-panel" onSubmit={this.changeAccount}>
 					<DisplayWithLabel label="My email" data={this.state.infos.accountValues.username}/>
 					<div className="account-profile-panel-line">
 						<InputWithLabel ref="firstname" label="First name" required={true} inputValue={this.state.infos.accountValues.firstname}/>

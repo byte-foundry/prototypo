@@ -18,6 +18,9 @@ export default class SubscriptionConfirmation extends React.Component {
 			}],
 			plan: 'personal_monthly',
 		};
+
+		//function binding
+		this.confirm = this.confirm.bind(this);
 	}
 
 	componentWillMount() {
@@ -42,6 +45,7 @@ export default class SubscriptionConfirmation extends React.Component {
 
 	confirm() {
 		const currency = getCurrency(this.state.card[0].country);
+
 		this.client.dispatchAction('/confirm-buy', {plan: this.state.plan, currency});
 	}
 
@@ -128,7 +132,11 @@ export default class SubscriptionConfirmation extends React.Component {
 				</div>
 				{vat}
 				<p>By click on "I confirm my subscription" you agree to prototypo <a className="account-email" target="_blank" href="https://prototypo.io/cgu">EULA (click here to read)</a></p>
-				<AccountValidationButton disabled={this.state.loading} loading={this.state.loading} label="I confirm my subscription" click={() => {this.confirm();}}/>
+				<AccountValidationButton
+					disabled={this.state.loading}
+					loading={this.state.loading}
+					label="I confirm my subscription"
+					click={this.confirm}/>
 			</div>
 		);
 	}

@@ -12,6 +12,9 @@ export default class AccountConfirmPlan extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+
+		//function binding
+		this.confirmPlanChange = this.confirmPlanChange.bind(this);
 	}
 
 	componentWillMount() {
@@ -64,7 +67,7 @@ export default class AccountConfirmPlan extends React.Component {
 			<div className="account-base account-confirm-plan">
 				<h1 className="subscription-title">This is what you will be charged</h1>
 				{invoice}
-				<AccountValidationButton label="Confirm plan change" click={() => {this.confirmPlanChange();}}/>
+				<AccountValidationButton label="Confirm plan change" click={this.confirmPlanChange}/>
 			</div>
 		);
 	}
@@ -112,6 +115,7 @@ class Invoice extends React.Component {
 class InvoiceLine extends React.Component {
 	render() {
 		let desc = this.props.line.description;
+
 		if (this.props.line.plan && !desc) {
 			desc = this.props.line.plan.id.indexOf('personal_monthly_') === -1
 				? 'Professional annual subscription'
@@ -127,6 +131,6 @@ class InvoiceLine extends React.Component {
 				<td>{desc}</td>
 				<td>{ this.props.symbol.before + (this.props.line.amount / 100).toFixed(2) + this.props.symbol.after}</td>
 			</tr>
-		)
+		);
 	}
 }

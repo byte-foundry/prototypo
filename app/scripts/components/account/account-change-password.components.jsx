@@ -12,6 +12,9 @@ export default class AccountChangePassword extends React.Component {
 		this.state = {
 			inError: {},
 		};
+
+		//function binding
+		this.changePassword = this.changePassword.bind(this);
 	}
 
 	componentWillMount() {
@@ -57,7 +60,7 @@ export default class AccountChangePassword extends React.Component {
 			: false;
 
 		const form = (
-			<form onSubmit={(e) => {this.changePassword(e);}} className="account-base account-change-password">
+			<form onSubmit={this.changePassword} className="account-base account-change-password">
 				<InputWithLabel error={this.state.inError.password} required={true} ref="current" type="password" label="My current password"/>
 				<div className="account-change-password-line">
 					<InputWithLabel error={this.state.inError.newPassword} required={true} ref="new" type="password" label="New password"/>
@@ -68,7 +71,7 @@ export default class AccountChangePassword extends React.Component {
 			</form>
 		);
 
-		const success = <h1 className="subscription-title">You've successfully changed your password</h1>
+		const success = <h1 className="subscription-title">You've successfully changed your password</h1>;
 
 		return this.state.success
 			? success
