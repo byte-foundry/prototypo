@@ -188,7 +188,6 @@ export default class Dashboard extends React.Component {
 				<Topbar />
 				<Toolbar />
 				<Workboard />
-				{onboarding}
 				<ReactCSSTransitionGroup transitionName="collection" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
 					{collection}
 				</ReactCSSTransitionGroup>
