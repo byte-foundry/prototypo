@@ -43,10 +43,11 @@
 	}
 
 	&-sample {
-		width:60px;
-		height:33px;
+		width:70px;
+		height:43px;
 		background-repeat: no-repeat;
-		margin: 10px 30px 0 0;
+		margin: 3px 30px 0 0;
+		background-size:contain;
 	}
 
 	&-info {
