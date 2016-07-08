@@ -264,8 +264,12 @@
 }
 
 .radio-slider {
+	.radio-buttons-wrap {
+		padding: 0 0 0 0.8em;
+	}
 	.radio-button-container{
-		margin: 0 5%;
+		color: $light-grey;
+		margin: 0 5% 0 0;
 	}
 	.slider-container {
 		margin: 10px 0 0;
@@ -273,20 +277,23 @@
 	label {
 		cursor: pointer;
 		position: relative;
+		text-transform: uppercase;
 	}
 	.box-value-label {
-		padding: 0 0 0 18px;
+		display: inline-block;
+		min-height: 16px;
+		padding: 0 0 0 25px;
 	}
 	.box-value-label::after {
 		background-image: url('/assets/images/radio-button.svg');
-		background-position: 0px -2px;
-		border-radius: 3px;
+		background-position: 0px 0px;
+		background-repeat: no-repeat;
 		content: "";
-		height: 13px;
+		height: 16px;
 		left: 0px;
 		position: absolute;
-		top: 1px;
-		width: 13px;
+		top: 0px;
+		width: 16px;
 	}
 	input[type="radio"] {
 		height: 0px;
@@ -297,9 +304,7 @@
 		background-image: url('/assets/images/radio-button-active.svg');
 	}
 	.radio-buttons-wrap {
-		align-items: center;
 		display: flex;
-		justify-content: center;
 		width: 100%;
 	}
 }
