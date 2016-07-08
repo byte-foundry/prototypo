@@ -1,11 +1,9 @@
 import React from 'react';
-import {Link} from 'react-router';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
-import HoodieApi from '../services/hoodie.services.js';
 import DOM from '../helpers/dom.helpers.js';
 
 export class Sliders extends React.Component {
@@ -45,24 +43,47 @@ export class Sliders extends React.Component {
 				value = this.props.values ? this.props.values[param.name] : undefined;
 			}
 
-			return (
-				<Slider
-					demo={paramToUse.demo}
-					disabled={paramToUse.disabled}
-					init={paramToUse.init}
-					label={paramToUse.label}
-					max={paramToUse.max}
-					maxAdvised={paramToUse.maxAdvised}
-					min={paramToUse.min}
-					minAdvised={paramToUse.minAdvised}
-					name={paramToUse.name}
-					notInDemo={paramToUse.notInDemo}
-					child={paramToUse.child}
-					key={paramToUse.name + i}
-					value={value}
-					state={paramToUse.state}
-					individualized={individualized}/>
-			);
+			const isRadio = paramToUse.controlType === 'radio';
+
+			return isRadio
+				? (
+					<RadioSlider
+						demo={paramToUse.demo}
+						disabled={paramToUse.disabled}
+						init={paramToUse.init}
+						label={paramToUse.label}
+						max={paramToUse.max}
+						maxAdvised={paramToUse.maxAdvised}
+						min={paramToUse.min}
+						minAdvised={paramToUse.minAdvised}
+						name={paramToUse.name}
+						notInDemo={paramToUse.notInDemo}
+						child={paramToUse.child}
+						key={paramToUse.name + i}
+						value={value}
+						state={paramToUse.state}
+						individualized={individualized}
+						controlType={paramToUse.controlType}
+						radioValues={paramToUse.radioValues}/>
+				)
+				: (
+					<Slider
+						demo={paramToUse.demo}
+						disabled={paramToUse.disabled}
+						init={paramToUse.init}
+						label={paramToUse.label}
+						max={paramToUse.max}
+						maxAdvised={paramToUse.maxAdvised}
+						min={paramToUse.min}
+						minAdvised={paramToUse.minAdvised}
+						name={paramToUse.name}
+						notInDemo={paramToUse.notInDemo}
+						child={paramToUse.child}
+						key={paramToUse.name + i}
+						value={value}
+						state={paramToUse.state}
+						individualized={individualized}/>
+				);
 		});
 
 		return (
@@ -137,6 +158,70 @@ export class Slider extends React.Component {
 						maxAdvised={this.props.maxAdvised}
 						disabled={this.props.disabled}
 						child={this.props.child}/>
+					{indivSwitch}
+				</div>
+			</div>
+		);
+	}
+}
+
+export class RadioSlider extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
+	componentWillMount() {
+		this.lifespan = new Lifespan();
+		this.client = LocalClient.instance();
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] slider');
+		}
+		const value = this.props.value === undefined ? this.props.init : this.props.value;
+
+		const classes = Classnames({
+			'slider': true,
+			'radio-slider': true,
+			'is-coming': this.props.disabled,
+			'is-child': this.props.child,
+		});
+
+		const demoOverlay = this.props.disabled
+			? (
+				<div className="slider-demo-overlay-text">
+					This feature is currently in development
+				</div>
+			)
+			: false;
+
+		const indivSwitch = this.props.individualized
+			? (
+				<IndivSwitch name={this.props.name} state={this.props.state}/>
+			)
+			: false;
+
+		return (
+			<div className={classes}>
+				<div className="slider-demo-overlay">
+					{demoOverlay}
+				</div>
+				<label className="slider-title">{this.props.label}</label>
+				<div className="slider-container">
+					<SliderRadioController
+						value={value}
+						name={this.props.name}
+						individualized={this.props.individualized}
+						label={this.props.label}
+						disabled={this.props.disabled}
+						child={this.props.child}
+						radioValues={this.props.radioValues}/>
 					{indivSwitch}
 				</div>
 			</div>
@@ -257,6 +342,72 @@ export class SliderController extends React.Component {
 						className="slider-controller-handle"
 						ref="handle" ></div>
 				</div>
+			</div>
+		);
+	}
+}
+
+export class SliderRadioController extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		//function binding to avoid unnecessery re-render
+		this.handleChange = this.handleChange.bind(this);
+	}
+
+	componentWillMount() {
+		this.lifespan = new Lifespan();
+		this.client = LocalClient.instance();
+
+	}
+
+	componentDidMount() {
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	handleChange(e) {
+		if (e.target) {
+			if (e.target.value !== undefined) {
+				this.client.dispatchAction('/change-param', {
+					value: e.target.value,
+					name: this.props.name,
+					label: this.props.label,
+				});
+			}
+		}
+	}
+
+	render() {
+		const boxes = this.props.radioValues.map((item) => {
+			return item.value;
+		});
+
+		const checkBoxes = boxes.map((boxValue, index) => {
+			const isSelected = boxValue === this.props.value;
+
+			return (
+				<div className="radio-button-container" key={index}>
+					<label>
+						<input
+							onChange={this.handleChange}
+							value={boxValue} checked={isSelected}
+							type="radio"
+							name={`radio-button-${String(this.props.name).trim()}`} />
+						<span className="box-value-label">
+							{boxValue}
+						</span>
+					</label>
+				</div>
+			);
+		});
+
+		return (
+			<div className="radio-buttons-wrap">
+				{checkBoxes}
 			</div>
 		);
 	}
