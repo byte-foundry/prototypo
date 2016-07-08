@@ -2,7 +2,7 @@
 
 #sidebar {
 	height:100%;
-	flex-basis: $sidebar-w;
+	flex: 0 0 $sidebar-w;
 	position: relative;
 	//TODO(franz): integrate in themified css
 	background-color: $dark-grey;

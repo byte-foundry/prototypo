@@ -1,9 +1,14 @@
 import React from 'react';
-import Topbar from './topbar.components.jsx';
+import Lifespan from 'lifespan';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
+import LocalClient from '../stores/local-client.stores.jsx';
+
 import GlyphPanel from './glyph-panel.components.jsx';
 import PrototypoPanel from './prototypo-panel.components.jsx';
-import Lifespan from 'lifespan';
-import LocalClient from '../stores/local-client.stores.jsx';
+import FontControls from './font-controls.components.jsx';
+import LoadingOverlay from './shared/loading-overlay.components.jsx';
+import IndivSidebar from './indivMode/indiv-sidebar.components.jsx';
 
 export default class Workboard extends React.Component {
 
@@ -16,16 +21,22 @@ export default class Workboard extends React.Component {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		const fontStore = this.client.fetch('/fontStore');
+		const prototypoStore = this.client.fetch('/prototypoStore');
 
 		this.setState({
-			fontName: fontStore.get('fontName'),
-			glyphs: fontStore.get('glyphs'),
+			fontName: prototypoStore.get('fontName'),
+			glyphs: prototypoStore.get('fontGlyphs'),
 		});
 
-		this.client.getStore('/fontStore', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
-				this.setState(head.toJS());
+				this.setState({
+					fontName: head.toJS().fontName,
+					glyphs: head.toJS().fontGlyphs,
+					fontLoading: head.toJS().uiFontLoading,
+					indivMode: head.toJS().indivMode,
+					indivEditingParams: head.toJS().indivEditingParams,
+				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -40,9 +51,26 @@ export default class Workboard extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Workboard');
 		}
+
+		const loadingOverlay = this.state.fontLoading
+			? <LoadingOverlay />
+			: false;
+
+		let sideBar = false;
+
+		if (this.state.indivMode && !this.state.indivEditingParams) {
+			sideBar = <IndivSidebar />;
+		}
+		else {
+			sideBar = <FontControls />;
+		}
+
 		return (
 			<div id="workboard">
-				<Topbar />
+				<ReactCSSTransitionGroup transitionName="loading-overlay" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+					{loadingOverlay}
+				</ReactCSSTransitionGroup>
+				{sideBar}
 				<PrototypoPanel fontName={this.state.fontName} glyphs={this.state.glyphs}/>
 				<GlyphPanel />
 			</div>

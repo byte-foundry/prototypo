@@ -1,11 +1,18 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import LocalClient from '../stores/local-client.stores.jsx';
 import Classnames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
+import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
 
 
 export default class GlyphButton extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();

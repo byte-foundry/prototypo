@@ -1,0 +1,65 @@
+@import "../../variables";
+
+.view-panels-menu {
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
+
+	&.is-aligned-left {
+		left:20px;
+		right:auto;
+	}
+
+	&.is-wide-right {
+		right:80px;
+	}
+
+	.prototypo-text &.is-shifted {
+		right: 220px;
+	}
+	.prototypo-word &.is-shifted {
+		right: 220px;
+	}
+	.prototypo-canvas &.textpanel-closed.is-shifted {
+		right: 220px;
+	}
+	.prototypo-canvas &.textpanel-closed {
+		right: 20px;
+	}
+	transition: right .2s ease;
+
+	&-text {
+		padding:0 5px;
+		text-transform: uppercase;
+		border-radius: 5px;
+		border: solid 2px $dark-grey;
+		background: $white;
+		cursor:pointer;
+		margin-bottom: -2px;
+
+		&:hover, &.is-active {
+			@include themify() {
+				color: $theme-color;
+				background: $theme-background;
+				border-color: $theme-background;
+			}
+		}
+	}
+
+	&-icon {
+		width: 20px;
+		height: 20px;
+		background: url('/assets/images/view-menu.svg');
+		cursor:pointer;
+		transition: transform .4s ease, background .1s ease-out .1s;
+
+		&:hover, &.is-active {
+			background: url('/assets/images/view-menu-hover.svg');
+		}
+
+		&.is-active {
+			background: url('/assets/images/view-menu-active.svg');
+			transform: rotate(1440deg);
+		}
+	}
+}

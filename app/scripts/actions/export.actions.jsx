@@ -1,4 +1,4 @@
-import {exportStore, fontVariant, fontControls} from '../stores/creation.stores.jsx';
+import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {FontValues} from '../services/values.services.js';
@@ -15,15 +15,15 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/exporting': ({exporting, errorExport}) => {
-		const patch = exportStore.set('export', exporting).set('errorExport', errorExport).commit();
+		const patch = prototypoStore.set('export', exporting).set('errorExport', errorExport).commit();
 
-		localServer.dispatchUpdate('/exportStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/export-otf': ({merged}) => {
 		localClient.dispatchAction('/exporting', {exporting: true});
 
-		const family = fontVariant.get('family').name ? fontVariant.get('family').name.replace(/\s/g, '-') : 'font';
-		const style = fontVariant.get('variant').name ? fontVariant.get('variant').name.replace(/\s/g, '-') : 'regular';
+		const family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : 'font';
+		const style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
 
 		const name = {
 			family,
@@ -35,24 +35,35 @@ export default {
 		}, 10000);
 
 		fontInstance.download(() => {
-			localClient.dispatchAction('/store-panel-param', {onboardstep: 'end'});
+			localClient.dispatchAction('/store-value', {uiOnboardstep: 'end'});
 			localClient.dispatchAction('/exporting', {exporting: false});
 			window.Intercom('trackEvent', 'export-otf');
 			clearTimeout(exportingError);
 		}, name, merged, undefined, HoodieApi.instance.email);
 	},
+	'/export-glyphr': () => {
+		const family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : 'font';
+		const style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
+
+		const name = {
+			family,
+			style: `${style.toLowerCase()}`,
+		};
+
+		fontInstance.openInGlyphr(null, name, false, undefined, HoodieApi.instance.email);
+	},
 	'/export-family': async ({familyToExport, variants}) => {
-		const oldVariant = fontVariant.get('variant');
-		const family = fontVariant.get('family');
+		const oldVariant = prototypoStore.get('variant');
+		const family = prototypoStore.get('family');
 		const zip = new JSZip();
 		const a = document.createElement('a');
 
-		const setupPatch = exportStore
+		const setupPatch = prototypoStore
 			.set('familyExported', familyToExport.name)
 			.set('variantToExport', variants.length)
 			.commit();
 
-		localServer.dispatchUpdate('/exportStore', setupPatch);
+		localServer.dispatchUpdate('/prototypoStore', setupPatch);
 
 		fontInstance.exportingZip = true;
 		fontInstance._queue = [];
@@ -99,10 +110,10 @@ export default {
 
 				Promise.all(blobs).then((blobBuffers) => {
 					_.each(blobBuffers, ({buffer, variant}) => {
-						const variantPatch = exportStore.set('exportedVariant',
-							exportStore.get('exportedVariant') + 1).commit();
+						const variantPatch = prototypoStore.set('exportedVariant',
+							prototypoStore.get('exportedVariant') + 1).commit();
 
-						localServer.dispatchUpdate('/exportStore', variantPatch);
+						localServer.dispatchUpdate('/prototypoStore', variantPatch);
 						zip.file(`${variant}.otf`, buffer, {binary: true});
 					});
 					const reader = new FileReader();
@@ -125,13 +136,13 @@ export default {
 							db: oldVariant.db,
 						});
 
-						const cleanupPatch = exportStore
+						const cleanupPatch = prototypoStore
 							.set('variantToExport', undefined)
 							.set('exportedVariant', 0)
 							.set('familyExported', undefined)
 							.commit();
 
-						localServer.dispatchUpdate('/exportStore', cleanupPatch);
+						localServer.dispatchUpdate('/prototypoStore', cleanupPatch);
 					};
 
 					reader.readAsDataURL(zip.generate({type: "blob"}));

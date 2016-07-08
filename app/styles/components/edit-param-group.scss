@@ -15,7 +15,11 @@
 		border-radius: 3px;
 
 		&:hover {
-			background-color:$green;
+			@each $state, $map in $states {
+			  .#{$state} & {
+				background-color: map-get($map, background);
+			  }
+			}
 			color:$white;
 		}
 

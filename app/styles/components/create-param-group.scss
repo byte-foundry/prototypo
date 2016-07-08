@@ -1,8 +1,12 @@
 @import '../variables';
 
 .create-param-group {
-	width:100%;
 	position:relative;
+	height:100%;
+	background: $lightest-grey;
+	flex: 0 0 280px;
+	z-index: 1;
+	box-shadow: 0px 0px 40px 0px rgba(0,0,0,.4);
 
 	&-ribbon {
 		background-color:$yellow;
@@ -11,125 +15,76 @@
 		max-height: 37px;
 	}
 
-	&-panel {
-		display:flex;
+	&-error {
+		margin-top: 15px;
 
-		&-error {
-			margin-top: 15px;
+		&-message {
+			color: $red;
+			padding-bottom: 10px;
+			display: block;
+		}
 
-			&-message {
-				color: $red;
-				padding-bottom: 10px;
-				display: block;
-			}
+		&-glyphs {
+			display:flex;
+			flex-flow: row wrap;
+			text-align:center;
+		}
 
-			&-glyphs {
-				display:flex;
-				flex-flow: row wrap;
-				text-align:center;
-			}
-
-			&-glyph {
-				background-color:$yellow;
-				color:$dark-grey;
-				flex:0 0 30px;
-				height:30px;
-				padding-top:4px;
-				margin-right:3px;
-			}
+		&-glyph {
+			background-color:$yellow;
+			color:$dark-grey;
+			flex:0 0 30px;
+			height:30px;
+			padding-top:4px;
+			margin-right:3px;
 		}
 	}
 
 	&-form {
-		position:absolute;
-		z-index:4;
-		margin-left:20px;
-		background-color:$lightest-grey;
-		width:304px;
-		padding:20px;
 		color:$medium-grey;
+		padding: 20px;
 
-		&-input {
-			margin-top:20px;
-			display:block;
-			width:100%;
-			border:solid 2px $yellow;
-			padding:7px;
-			border-radius:4px;
-		}
-
-		&-add-glyph {
-			width: 100%;
-			margin-top: 10px;
-			background-color: $yellow;
-			border: solid 2px $yellow;
-			color: $white;
-			border-radius: 4px;
-			padding: 7px;
-
-			&:hover {
-				color:$yellow;
-				background-color:$white;
-			}
-		}
-
-		&-buttons {
-			margin-top:20px;
-			display:flex;
-			justify-content:space-between;
-
-			&-cancel {
-				background-color: $white;
-				border: solid 2px $red;
-				color: $red;
-				border-radius: 4px;
-				padding: 7px;
-
-				&:hover {
-					color:$white;
-					background-color:$red;
-				}
-			}
-
-			&-submit {
-				background-color: $green;
-				border: solid 2px $green;
-				color: $white;
-				border-radius: 4px;
-				padding: 7px;
-
-				&:hover {
-					color:$green;
-					background-color:$white;
-				}
-			}
+		&-close {
+			position: absolute;
+			background: $lightest-grey;
+			padding: 8px;
+			border-radius: 50%;
+			right: -18px;
+			top: 15px;
 		}
 	}
 }
 
 .glyphs-grid {
-	position:absolute;
-	z-index:5;
-	left:450px;
-	flex:0 0 324px;
-	height:321px;
-	top:0px;
-	// margin-top:-37px;
+	position:relative;
 	overflow:hidden;
-	background-color: lighten($yellow, 25%);
+	height: 350px;
+	display: flex;
+	margin-bottom: 15px;
+	flex-flow: column nowrap;
+
+	&-header {
+		flex: 1 0 28px;
+		display:flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 10px;
+
+		&-title {
+			font-size: 15px;
+			color: $dark-grey;
+		}
+	}
 
 	&-filter {
-		background-color:$yellow;
-		height:37px;
-		padding:10px;
 
 		&-select {
-			background-color:$yellow;
+			background: $lightest-grey;
 			border:none;
 			cursor:pointer;
 
 			&:hover {
-				color:$white;
+				color:$dark-grey;
 			}
 
 			&:focus {
@@ -146,8 +101,9 @@
 	}
 
 	&-scroll-container {
-		height:280px;
-		width:320px;
+		flex: 0 1 400px;
+		overflow: hidden;
+		width:240px;
 	}
 
 	&-glyph {
@@ -159,14 +115,19 @@
 		border-bottom:solid 2px $yellow;
 		border-right:solid 2px $yellow;
 		cursor:pointer;
-		color:$light-grey;
+		color:$medium-grey;
 		background-color: $white;
 		padding:6px;
 		font-size:17px;
 
 		&.is-disabled {
-			background-color: $orange;
-			color:$white;
+			color:$light-grey;
+			cursor: not-allowed;
+
+			&:hover {
+				color:$light-grey;
+				background-color: $white;
+			}
 		}
 
 		&:hover, &.is-active {
@@ -196,7 +157,7 @@
 			bottom: 0;
 		}
 
-		&:nth-of-type(8n+1) {
+		&:nth-of-type(6n+1) {
 			border-left:solid 2px $yellow;
 		}
 	}

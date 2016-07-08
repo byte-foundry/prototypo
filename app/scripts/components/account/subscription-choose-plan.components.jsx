@@ -55,6 +55,8 @@ export default class SubscriptionChoosePlan extends React.Component {
 			info: '5 free months compared to monthly billing!',
 		};
 
+		window.Intercom('trackEvent', 'isOnChoosePlan');
+
 		const error = this.state.error ? <FormError errorText={this.state.error}/> : false;
 
 		return (

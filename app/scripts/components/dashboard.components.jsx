@@ -1,12 +1,22 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
+import ClassNames from 'classnames';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-import Sidebar from './sidebar.components.jsx';
+import Topbar from './topbar/topbar.components.jsx';
+import Toolbar from './toolbar/toolbar.components.jsx';
 import Workboard from './workboard.components.jsx';
+import Collection from './collection/collection.components.jsx';
 import {OnBoarding, OnBoardingStep} from './onboarding.components.jsx';
+import CreateFamilyModal from './familyVariant/create-family-modal.components.jsx';
+import CreateVariantModal from './familyVariant/create-variant-modal.components.jsx';
+import ChangeNameFamily from './familyVariant/change-name-family.components.jsx';
+import ChangeNameVariant from './familyVariant/change-name-variant.components.jsx';
+import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
 
 export default class Dashboard extends React.Component {
@@ -14,6 +24,7 @@ export default class Dashboard extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {
@@ -22,26 +33,25 @@ export default class Dashboard extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/panel', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					onboard: head.toJS().onboard,
-					step: head.toJS().onboardstep,
+					openFamilyModal: head.toJS().openFamilyModal,
+					openVariantModal: head.toJS().openVariantModal,
+					familySelectedVariantCreation: head.toJS().familySelectedVariantCreation,
+					collectionSelectedVariant: head.toJS().collectionSelectedVariant,
+					openChangeFamilyNameModal: head.toJS().openChangeFamilyNameModal,
+					openChangeVariantNameModal: head.toJS().openChangeVariantNameModal,
+					openDuplicateVariantModal: head.toJS().openDuplicateVariantModal,
+					onboard: head.toJS().uiOnboard,
+					step: head.toJS().uiOnboardstep,
+					collection: head.toJS().uiShowCollection,
+					indiv: head.toJS().indivMode,
 				});
 			})
 			.onDelete(() => {
-				this.setState({
-					onboard: undefined,
-					step: undefined,
-				});
+				this.setState(undefined);
 			});
-	}
-
-	shouldComponentUpdate(newProps, newState) {
-		return (
-			newState.onboard !== this.state.onboard
-			|| (!newState.onboard && newState.step !== this.state.step)
-		);
 	}
 
 	componentWillUnmount() {
@@ -49,11 +59,11 @@ export default class Dashboard extends React.Component {
 	}
 
 	goToNextStep(step) {
-		this.client.dispatchAction('/store-panel-param', {onboardstep: step});
+		this.client.dispatchAction('/store-value', {uiOnboardstep: step});
 	}
 
 	exitOnboarding() {
-		this.client.dispatchAction('/store-panel-param', {onboard: true});
+		this.client.dispatchAction('/store-value', {uiOnboard: true});
 	}
 
 	render() {
@@ -149,11 +159,50 @@ export default class Dashboard extends React.Component {
 				</OnBoarding>
 		) : false;
 
+		const classes = ClassNames({
+			'indiv': this.state.indiv && !(this.state.collection),
+			'normal': !this.state.indiv || this.state.collection,
+		});
+
+		const collection = this.state.collection
+			? <Collection />
+			: false;
+		const newFamily = this.state.openFamilyModal
+			? <CreateFamilyModal />
+			: false;
+		const newVariant = this.state.openVariantModal
+			? <CreateVariantModal family={this.state.familySelectedVariantCreation}/>
+			: false;
+		const changeNameFamily = this.state.openChangeFamilyNameModal
+			? <ChangeNameFamily family={this.state.familySelectedVariantCreation}/>
+			: false;
+		const changeNameVariant = this.state.openChangeVariantNameModal
+			? <ChangeNameVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant}/>
+			: false;
+		const duplicateVariant = this.state.openDuplicateVariantModal
+			? <DuplicateVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant}/>
+			: false;
+
 		return (
-			<div id="dashboard">
-				<Sidebar />
+			<div id="dashboard" className={classes}>
+				<Topbar />
+				<Toolbar />
 				<Workboard />
 				{onboarding}
+				<ReactCSSTransitionGroup transitionName="collection" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+					{collection}
+				</ReactCSSTransitionGroup>
+				<ReactCSSTransitionGroup
+					component="span"
+					transitionName="modal"
+					transitionEnterTimeout={200}
+					transitionLeaveTimeout={200}>
+					{newFamily}
+					{newVariant}
+					{changeNameFamily}
+					{changeNameVariant}
+					{duplicateVariant}
+				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}

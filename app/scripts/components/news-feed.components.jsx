@@ -17,20 +17,20 @@ export default class NewsFeed extends React.Component {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		const commits = await this.client.fetch('/commits');
+		const commits = await this.client.fetch('/prototypoStore');
 
 		this.setState({
-			commits: commits.head.toJS().list,
-			latestCommit: commits.head.toJS().list[0].sha,
+			commits: commits.head.toJS().commitsList,
+			latestCommit: commits.head.toJS().commitsList[0].sha,
 		});
 
 		this.client.dispatchAction('/view-commit', {latest: this.state.latestCommit});
 
-		this.client.getStore('/commits', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					commits: head.toJS().list,
-					latestCommit: head.toJS().list[0].sha,
+					commits: head.toJS().commitsList,
+					latestCommit: head.toJS().commitslist[0].sha,
 				});
 			})
 			.onDelete(() => {

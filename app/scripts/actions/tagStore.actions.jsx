@@ -1,4 +1,4 @@
-import {tagStore, searchStore} from '../stores/creation.stores.jsx';
+import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
 
@@ -10,29 +10,29 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/load-tags': (params) => {
-		const patch = tagStore
+		const patch = prototypoStore
 			.set('tags', params)
 			.commit();
 
-		localServer.dispatchUpdate('/tagStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/select-tag': (params) => {
-		const patch = tagStore
-			.set('selected', params)
+		const patch = prototypoStore
+			.set('tagSelected', params)
 			.commit();
-		const patchSearch = searchStore.set('glyphSearch', undefined).commit();
+		const patchSearch = prototypoStore.set('glyphSearch', undefined).commit();
 
-		localServer.dispatchUpdate('/tagStore', patch);
-		localServer.dispatchUpdate('/searchStore', patchSearch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patchSearch);
 		saveAppValues();
 	},
 	'/toggle-pinned': (params) => {
-		const pinned = _.xor(tagStore.get('pinned'), [params]);
-		const patch = tagStore
-			.set('pinned', pinned)
+		const pinned = _.xor(prototypoStore.get('pinned'), [params]);
+		const patch = prototypoStore
+			.set('tagPinned', pinned)
 			.commit();
 
-		localServer.dispatchUpdate('/tagStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
 	},
 };

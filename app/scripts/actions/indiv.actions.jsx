@@ -1,4 +1,4 @@
-import {individualizeStore, fontControls, glyphs, fontVariant} from '../stores/creation.stores.jsx';
+import {prototypoStore} from '../stores/creation.stores.jsx';
 import Log from '../services/log.services.js';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -12,93 +12,111 @@ window.addEventListener('fluxServer.setup', () => {
 	localServer = LocalServer.instance;
 });
 
+function getGroupsAndGlyphsFromGroups(groups) {
+	return _.sortBy(_.map(groups, (name) => {
+		const glyphs = _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
+			return prototypoStore.get('controlsValues').indiv_glyphs[key] === name;
+		});
+
+		return {name, glyphs};
+	}), ({name}) => {
+		return name;
+	});
+
+}
+
+function toggleGlyphSelection(isSelected, selected, unicode) {
+	const prevSelected = _.cloneDeep(selected);
+
+	if (isSelected) {
+		prevSelected.splice(prevSelected.indexOf(unicode), 1);
+	}
+	else {
+		prevSelected.push(unicode);
+	}
+
+	return prevSelected;
+}
+
 export default {
-	'/toggle-individualize': () => {
-		const oldValue = individualizeStore.get('indivMode');
-		const currentGroup = (fontControls.get('values').indiv_glyphs || {})[glyphs.get('selected')];
+	'/load-indiv-groups': () => {
+		const groups = Object.keys(prototypoStore.get('controlsValues').indiv_group_param || {});
+		const groupsAndGlyphs = getGroupsAndGlyphsFromGroups(groups);
+		const patch = prototypoStore
+			.set('indivGroups', groupsAndGlyphs).commit();
 
-		if (currentGroup && !oldValue) {
-			const patchEdit = individualizeStore
-				.set('indivMode', !oldValue)
-				.set('indivCreate', false)
-				.set('indivEdit', true)
-				.set('glyphs', _.keys(fontControls.get('values').indiv_glyphs).filter((key) => {
-					return fontControls.get('values').indiv_glyphs[key] === currentGroup;
-				}))
-				.set('currentGroup', currentGroup)
-				.set('groups', Object.keys(fontControls.get('values').indiv_group_param))
-				.commit();
+		localServer.dispatchUpdate('/prototypoStore', patch);
+	},
+	'/toggle-individualize': ({targetIndivValue}) => {
+		const oldValue = prototypoStore.get('indivMode');
 
-			return localServer.dispatchUpdate('/individualizeStore', patchEdit);
-		}
-
-		individualizeStore
-			.set('indivMode', !oldValue)
-			.set('indivCreate', !oldValue)
-			.set('preDelete', false)
+		const groups = Object.keys(prototypoStore.get('controlsValues').indiv_group_param || {});
+		const groupsAndGlyphs = getGroupsAndGlyphsFromGroups(groups);
+		prototypoStore
+			.set('indivMode', targetIndivValue || !oldValue)
+			.set('indivCreate', groups.length === 0 && !oldValue)
+			.set('indivPreDelete', false)
 			.set('indivEdit', false)
-			.set('errorMessage', undefined)
-			.set('errorGlyphs', [])
-			.set('groups', Object.keys(fontControls.get('values').indiv_group_param || {}));
+			.set('indivEditingParams', false)
+			.set('indivGlyphs', [])
+			.set('indivCurrentGroup', undefined)
+			.set('indivErrorMessage', undefined)
+			.set('indivErrorGlyphs', [])
+			.set('indivGroups', groupsAndGlyphs);
 
-		if (!oldValue) {
-			const selected = [glyphs.get('selected')];
+		const patch = prototypoStore.commit();
 
-			individualizeStore.set('selected', selected);
-		}
-		const patch = individualizeStore.commit();
-
-		localServer.dispatchUpdate('/individualizeStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		Log.ui('GroupParam.showIndivMode');
 	},
-	'/toggle-glyph-param-grid': () => {
-		const oldValue = individualizeStore.get('glyphGrid');
-		const patch = individualizeStore
-			.set('glyphGrid', !oldValue)
-			.commit();
+	'/add-glyph-to-indiv-create': ({unicode, isSelected}) => {
+		const selected = prototypoStore.get('indivSelected');
+		const newSelection = toggleGlyphSelection(isSelected, selected, unicode);
+		const patch = prototypoStore.set('indivSelected', newSelection).commit();
 
-		localServer.dispatchUpdate('/individualizeStore', patch);
-		Log.ui('GroupParam.showGlyphGrid');
+		localServer.dispatchUpdate('/prototypoStore', patch);
+		Log.ui('GroupParam.addGlyphToIndiv');
 	},
-	'/add-glyph-to-indiv': ({unicode, isSelected}) => {
-		const selected = individualizeStore.get('selected');
+	'/add-glyph-to-indiv-edit': ({unicode, isSelected}) => {
+		const groupSelected = prototypoStore.get('indivCurrentGroup');
+		const newSelection = toggleGlyphSelection(isSelected, groupSelected.glyphs, unicode);
+		const patch = prototypoStore.set('indivCurrentGroup', {name: groupSelected.name, glyphs: newSelection}).commit();
 
-		if (isSelected) {
-			selected.splice(selected.indexOf(unicode), 1);
-		}
-		else {
-			selected.push(unicode);
-		}
-
-		const patch = individualizeStore.set('selected', selected).commit();
-
-		localServer.dispatchUpdate('/individualizeStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		Log.ui('GroupParam.addGlyphToIndiv');
 	},
 	'/select-indiv-tag': (tag) => {
-		const patch = individualizeStore.set('tagSelected', tag).commit();
+		const patch = prototypoStore.set('indivTagSelected', tag).commit();
 
-		localServer.dispatchUpdate('/individualizeStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		Log.ui('GroupParam.selectIndivTag');
 	},
 	'/create-param-group': ({name, selected}) => {
-		const oldValues = fontControls.get('values');
+		const oldValues = prototypoStore.get('controlsValues');
 		const alreadyInGroup = [];
 
 		if (!name) {
-			const patchError = individualizeStore
-				.set('errorMessage', 'You must provide a group name')
+			const patchError = prototypoStore
+				.set('indivErrorMessage', 'You must provide a group name')
 				.commit();
 
-			return localServer.dispatchUpdate('/individualizeStore', patchError);
+			return localServer.dispatchUpdate('/prototypoStore', patchError);
+		}
+
+		if (Object.keys(oldValues.indiv_group_param).indexOf(name) !== -1) {
+			const patchError = prototypoStore
+				.set('indivErrorMessage', 'There is already a group with this name')
+				.commit();
+
+			return localServer.dispatchUpdate('/prototypoStore', patchError);
 		}
 
 		if (selected.length === 0) {
-			const patchError = individualizeStore
-				.set('errorMessage', 'You must select at least one glyph')
+			const patchError = prototypoStore
+				.set('indivErrorMessage', 'You must select at least one glyph')
 				.commit();
 
-			return localServer.dispatchUpdate('/individualizeStore', patchError);
+			return localServer.dispatchUpdate('/prototypoStore', patchError);
 		}
 
 		if (!oldValues.indiv_glyphs) {
@@ -118,105 +136,93 @@ export default {
 		});
 
 		if (alreadyInGroup.length > 0) {
-			const patchError = individualizeStore
-				.set('errorMessage', 'Some glyphs are already in a group')
-				.set('errorGlyphs', alreadyInGroup)
+			const patchError = prototypoStore
+				.set('indivErrorMessage', 'Some glyphs are already in a group')
+				.set('indivErrorGlyphs', alreadyInGroup)
 				.commit();
 
-			return localServer.dispatchUpdate('/individualizeStore', patchError);
+			return localServer.dispatchUpdate('/prototypoStore', patchError);
 		}
 
 		if (!oldValues.indiv_group_param[name]) {
 			oldValues.indiv_group_param[name] = {};
 		}
 
-		const patch = fontControls.set('values', oldValues).commit();
+		const patch = prototypoStore.set('controlsValues', oldValues).commit();
 
-		localServer.dispatchUpdate('/fontControls', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		const endCreatePatch = individualizeStore
+		const endCreatePatch = prototypoStore
 			.set('indivCreate', false)
 			.set('indivEdit', true)
-			.set('currentGroup', name)
-			.set('errorMessage', undefined)
-			.set('glyphGrid', false)
-			.set('glyphs', _.keys(fontControls.get('values').indiv_glyphs).filter((key) => {
-				return fontControls.get('values').indiv_glyphs[key] === name;
+			.set('indivCurrentGroup', {name, glyphs: selected})
+			.set('indivErrorMessage', undefined)
+			.set('indivGlyphGrid', false)
+			.set('indivGlyphs', _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
+				return prototypoStore.get('controlsValues').indiv_glyphs[key] === name;
 			}))
-			.set('editGroup', false)
-			.set('errorGlyphs', [])
-			.set('groups', Object.keys(oldValues.indiv_group_param))
+			.set('indivEditGroup', false)
+			.set('indivErrorGlyphs', [])
+			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(oldValues.indiv_group_param)))
 			.commit();
 
-		localServer.dispatchUpdate('/individualizeStore', endCreatePatch);
+		localServer.dispatchUpdate('/prototypoStore', endCreatePatch);
 
-		const variant = fontVariant.get('variant');
+		const variant = prototypoStore.get('variant');
 
 		FontValues.save({typeface: variant.db, values: oldValues});
 		Log.ui('GroupParam.create');
 	},
 	'/cancel-indiv-mode': () => {
-		const endCreatePatch = individualizeStore
+		const oldValues = _.cloneDeep(prototypoStore.get('controlsValues'));
+
+		const endCreatePatch = prototypoStore
 			.set('indivCreate', false)
 			.set('indivEdit', false)
+			.set('indivEditingParams', false)
 			.set('indivMode', false)
-			.set('preDelete', false)
-			.set('glyphGrid', false)
-			.set('currentGroup', undefined)
-			.set('errorMessage', undefined)
-			.set('errorEdit', undefined)
-			.set('errorGlyphs', [])
-			.set('groups', [])
+			.set('indivPreDelete', false)
+			.set('indivGlyphGrid', false)
+			.set('indivCurrentGroup', undefined)
+			.set('indivErrorMessage', undefined)
+			.set('indivErrorEdit', undefined)
+			.set('indivErrorGlyphs', [])
+			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(oldValues.indiv_group_param)))
 			.commit();
 
-		localServer.dispatchUpdate('/individualizeStore', endCreatePatch);
+		localServer.dispatchUpdate('/prototypoStore', endCreatePatch);
 
-	},
-	'/select-indiv-group': (name) => {
-		const patch = individualizeStore
-			.set('currentGroup', name)
-			.set('glyphs', _.keys(fontControls.get('values').indiv_glyphs).filter((key) => {
-				return fontControls.get('values').indiv_glyphs[key] === name;
-			}))
-			.set('glyphGrid', false)
-			.set('editGroup', false)
-			.set('preDelete', false)
-			.set('errorEdit', undefined)
-			.commit();
-
-		localServer.dispatchUpdate('/individualizeStore', patch);
-		Log.ui('GroupParam.selectGroupParam');
 	},
 	'/edit-param-group': (state) => {
-		const otherGroups = _.keys(fontControls.get('values').indiv_glyphs).filter((key) => {
-				return !!fontControls.get('values').indiv_glyphs[key] && fontControls.get('values').indiv_glyphs[key] !== individualizeStore.get('currentGroup');
+		const otherGroups = _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
+				return !!prototypoStore.get('controlsValues').indiv_glyphs[key] && prototypoStore.get('controlsValues').indiv_glyphs[key] !== prototypoStore.get('indivCurrentGroup');
 			});
-		const patch = individualizeStore
-			.set('editGroup', state)
-			.set('preDelete', false)
-			.set('glyphGrid', false)
-			.set('selected', state ? individualizeStore.get('glyphs') : [])
-			.set('otherGroups', otherGroups)
+		const patch = prototypoStore
+			.set('indivEditGroup', state)
+			.set('indivPreDelete', false)
+			.set('indivGlyphGrid', false)
+			.set('indivSelected', state ? prototypoStore.get('indivGlyphs') : [])
+			.set('indivOtherGroups', otherGroups)
 			.commit();
 
-		localServer.dispatchUpdate('/individualizeStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		Log.ui('GroupParam.startEdit');
 	},
 	'/pre-delete': (state) => {
-		const patch = individualizeStore
-			.set('preDelete', state)
-			.set('editGroup', false)
-			.set('glyphGrid', false)
-			.set('selected', _.keys(fontControls.get('values').indiv_glyphs).filter((key) => {
-				return fontControls.get('values').indiv_glyphs[key] === individualizeStore.get('currentGroup');
+		const patch = prototypoStore
+			.set('indivPreDelete', state)
+			.set('indivEditGroup', false)
+			.set('indivGlyphGrid', false)
+			.set('indivSelected', _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
+				return prototypoStore.get('controlsValues').indiv_glyphs[key] === prototypoStore.get('indivCurrentGroup');
 			}))
 			.commit();
 
-		localServer.dispatchUpdate('/individualizeStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		Log.ui('GroupParam.startDelete');
 	},
 	'/delete-param-group': ({name}) => {
-		const oldValues = _.cloneDeep(fontControls.get('values'));
+		const oldValues = _.cloneDeep(prototypoStore.get('controlsValues'));
 
 		delete oldValues.indiv_group_param[name];
 
@@ -226,144 +232,144 @@ export default {
 			}
 		});
 
-		const newCurrentGroup = Object.keys(oldValues.indiv_group_param).length > 0
-			? Object.keys(oldValues.indiv_group_param)[0]
-			: undefined;
-		const endDeletePatch = individualizeStore
-			.set('indivCreate', !newCurrentGroup)
-			.set('indivEdit', !!newCurrentGroup)
-			.set('preDelete', false)
-			.set('currentGroup', newCurrentGroup)
-			.set('errorMessage', undefined)
-			.set('errorEdit', undefined)
-			.set('errorGlyphs', [])
-			.set('groups', Object.keys(oldValues.indiv_group_param || {}))
+		const noGroups = Object.keys(oldValues.indiv_group_param).length === 0;
+		const endDeletePatch = prototypoStore
+			.set('indivCreate', noGroups)
+			.set('indivEdit', false)
+			.set('indivPreDelete', false)
+			.set('indivCurrentGroup', {})
+			.set('indivSelected', [])
+			.set('indivErrorMessage', undefined)
+			.set('indivErrorEdit', undefined)
+			.set('indivErrorGlyphs', [])
+			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(oldValues.indiv_group_param || {})))
 			.commit();
 
-		localServer.dispatchUpdate('/individualizeStore', endDeletePatch);
+		localServer.dispatchUpdate('/prototypoStore', endDeletePatch);
 
-		const patch = fontControls.set('values', oldValues).commit();
+		const patch = prototypoStore.set('controlsValues', oldValues).commit();
 
-		localServer.dispatchUpdate('/fontControls', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		const variant = fontVariant.get('variant');
+		const variant = prototypoStore.get('variant');
 
 		FontValues.save({typeface: variant.db, values: oldValues});
 		localClient.dispatchAction('/update-font', oldValues);
 		Log.ui('GroupParam.deleteGroup');
 	},
 	'/remove-glyph': ({glyph}) => {
-		const glyphSelected = _.cloneDeep(individualizeStore.get('selected'));
+		const glyphSelected = _.cloneDeep(prototypoStore.get('indivSelected'));
 
 		glyphSelected.splice(glyphSelected.indexOf(glyph), 1);
 
-		const patch = individualizeStore
-			.set('selected', glyphSelected)
+		const patch = prototypoStore
+			.set('indivSelected', glyphSelected)
 			.commit();
 
-		localServer.dispatchUpdate('/individualizeStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		Log.ui('GroupParam.removeGlyph');
 	},
-	'/save-param-group': ({name}) => {
-		const oldValues = _.cloneDeep(fontControls.get('values'));
-		const glyphSelected = _.cloneDeep(individualizeStore.get('selected'));
-		const currentGroup = individualizeStore.get('currentGroup');
+	'/save-param-group': ({newName}) => {
+		const oldValues = _.cloneDeep(prototypoStore.get('controlsValues'));
+		const currentGroup = prototypoStore.get('indivCurrentGroup') || {};
+		const currentGroupName = currentGroup.name;
+		const glyphSelected = currentGroupName
+			? currentGroup.glyphs
+			: _.cloneDeep(prototypoStore.get('indivSelected'));
 
-		if (!name) {
-			const patchError = individualizeStore
-				.set('errorEdit', 'You must provide a group name')
+		if (!newName) {
+			const patchError = prototypoStore
+				.set('indivErrorMessage', 'You must provide a group name')
 				.commit();
 
-			return localServer.dispatchUpdate('/individualizeStore', patchError);
+			return localServer.dispatchUpdate('/prototypoStore', patchError);
 		}
 
-		if (name !== currentGroup && Object.keys(oldValues.indiv_group_param).indexOf(name) !== -1) {
-			const patchError = individualizeStore
-				.set('errorEdit', 'You cannot change the name to an existing group name')
+		if (newName !== currentGroupName && Object.keys(oldValues.indiv_group_param).indexOf(newName) !== -1) {
+			const patchError = prototypoStore
+				.set('indivErrorMessage', 'You cannot change the name to an existing group name')
 				.commit();
 
-			return localServer.dispatchUpdate('/individualizeStore', patchError);
+			return localServer.dispatchUpdate('/prototypoStore', patchError);
 		}
 
 		Object.keys(oldValues.indiv_glyphs).forEach((glyph) => {
-			if (oldValues.indiv_glyphs[glyph] === currentGroup) {
+			if (oldValues.indiv_glyphs[glyph] === currentGroupName) {
 				if (glyphSelected.indexOf(glyph) === -1) {
 					delete oldValues.indiv_glyphs[glyph];
 				}
 				else {
-					oldValues.indiv_glyphs[glyph] = name;
+					oldValues.indiv_glyphs[glyph] = newName;
 				}
 			}
 		});
 
 		glyphSelected.forEach((glyph) => {
-			oldValues.indiv_glyphs[glyph] = name;
+			oldValues.indiv_glyphs[glyph] = newName;
 		});
 
-		const oldParams = _.cloneDeep(oldValues.indiv_group_param[currentGroup]);
+		const oldParams = _.cloneDeep(oldValues.indiv_group_param[currentGroupName]);
 
-		delete oldValues.indiv_group_param[currentGroup];
+		delete oldValues.indiv_group_param[currentGroupName];
 
-		oldValues.indiv_group_param[name] = oldParams;
+		oldValues.indiv_group_param[newName] = oldParams;
 
-		const patch = fontControls.set('values', oldValues).commit();
+		const patch = prototypoStore.set('controlsValues', oldValues).commit();
 
-		localServer.dispatchUpdate('/individualizeStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		const indivPatch = individualizeStore
-			.set('currentGroup', name)
-			.set('editGroup', false)
-			.set('glyphGrid', false)
-			.set('errorEdit', undefined)
-			.set('groups', Object.keys(oldValues.indiv_group_param))
+		const indivPatch = prototypoStore
+			.set('indivCurrentGroup', {name: newName, glyphs: currentGroup.glyphs})
+			.set('indivEdit', true)
+			.set('indivGlyphGrid', false)
+			.set('indivErrorEdit', undefined)
+			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(oldValues.indiv_group_param)))
 			.commit();
 
-		localServer.dispatchUpdate('/individualizeStore', indivPatch);
+		localServer.dispatchUpdate('/prototypoStore', indivPatch);
 		localClient.dispatchAction('/update-font', oldValues);
 
-		const variant = fontVariant.get('variant');
+		const variant = prototypoStore.get('variant');
 
 		FontValues.save({typeface: variant.db, values: oldValues});
 		Log.ui('GroupParam.saveEdit');
 	},
 	'/create-mode-param-group': () => {
-		const values = _.cloneDeep(fontControls.get('values'));
+		const values = _.cloneDeep(prototypoStore.get('controlsValues'));
 
-		const indivPatch = individualizeStore
+		const indivPatch = prototypoStore
 			.set('indivMode', true)
 			.set('indivCreate', true)
 			.set('indivEdit', false)
-			.set('preDelete', false)
-			.set('glyphGrid', false)
-			.set('errorMessage', undefined)
-			.set('errorGlyphs', [])
-			.set('errorEdit', undefined)
-			.set('selected', [])
-			.set('groups', Object.keys(values.indiv_group_param))
+			.set('indivCurrentGroup', undefined)
+			.set('indivErrorMessage', undefined)
+			.set('indivErrorGlyphs', [])
+			.set('indivErrorEdit', undefined)
+			.set('indivSelected', [])
+			.set('indivOtherGroups', Object.keys(values.indiv_glyphs))
+			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(values.indiv_group_param)))
 			.commit();
 
-		localServer.dispatchUpdate('/individualizeStore', indivPatch);
+		localServer.dispatchUpdate('/prototypoStore', indivPatch);
 		Log.ui('GroupParam.switchToCreateGroupParam');
 	},
-	'/edit-mode-param-group': () => {
-		const values = _.cloneDeep(fontControls.get('values'));
-		const groupName = Object.keys(values.indiv_group_param)[0];
-		const indivPatch = individualizeStore
+	'/edit-mode-param-group': ({group}) => {
+		const values = _.cloneDeep(prototypoStore.get('controlsValues'));
+		const indivPatch = prototypoStore
 			.set('indivMode', true)
 			.set('indivCreate', false)
 			.set('indivEdit', true)
-			.set('preDelete', false)
-			.set('glyphGrid', false)
-			.set('errorMessage', undefined)
-			.set('errorGlyphs', [])
-			.set('errorEdit', undefined)
-			.set('groups', Object.keys(values.indiv_group_param))
-			.set('currentGroup', groupName)
+			.set('indivPreDelete', false)
+			.set('indivGlyphGrid', false)
+			.set('indivErrorMessage', undefined)
+			.set('indivOtherGroups', _.filter(Object.keys(values.indiv_glyphs), (key) => {
+				return values.indiv_glyphs[key] !== group.name;
+			}))
+			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(values.indiv_group_param)))
+			.set('indivCurrentGroup', group)
 			.commit();
 
-		localServer.dispatchUpdate('/individualizeStore', indivPatch);
-
-		localClient.dispatchAction('/select-indiv-group', groupName);
+		localServer.dispatchUpdate('/prototypoStore', indivPatch);
 		Log.ui('GroupParam.switchToEditGroupParam');
 	},
-}
+};

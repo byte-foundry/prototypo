@@ -5,24 +5,24 @@
 }
 .controls-tabs {
 	height:100%;
-	display:flex;
+	width:280px;
 	flex-direction:column;
 
 	&-headers {
 		margin:0;
 		padding:0;
-		flex:0 0 72px;
+		height:52px;
 		list-style: none;
 	}
 
-	&-container {
-		flex:1 1 100%;
+	&-sliders {
+		height: calc(100% - 52px);
 	}
 
 	&-icon {
-		height:72px;
+		height:52px;
 		float:left;
-		width:90px;
+		width:70px;
 		background-color: $black;
 		background-repeat: no-repeat;
 		background-position: 50% 50%;
@@ -32,7 +32,9 @@
 		transition: background-color 300ms ease;
 
 		&.is-active, &:hover {
-			background-color: $green;
+			@include themify() {
+				background-color: $theme-background;
+			}
 			filter: contrast(100%);
 			border: none;
 			.controls-tabs-icon-legend {
@@ -59,10 +61,12 @@
 			width: 0;
 			height: 0;
 
-			transform: translate(35px, 8px);
+			transform: translate(25px, 8px);
 			border-left: 10px solid transparent;
 			border-right: 10px solid transparent;
-			border-top: 10px solid $green;
+			@include themify() {
+				border-top:10px solid $theme-background;
+			}
 		}
 	}
 }
@@ -78,4 +82,10 @@
 
 #Serif {
 	background-image: url('../../images/serif.svg');
+}
+
+#Settings {
+	background-image: url('../../images/settings.svg');
+	background-size:20px;
+	background-position-y: 15px;
 }

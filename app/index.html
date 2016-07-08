@@ -2,10 +2,18 @@
 <html>
 	<head>
 		<title>Prototypo - Official Beta</title>
-		<!-- build:css(.tmp) dist/assets/bundle.css -->
-		<link rel="stylesheet" type="text/css" href="assets/vendor.css"/>
-		<link rel="stylesheet" type="text/css" href="assets/app.css"/>
-	 	<!-- endbuild -->
+		<link rel="prefetch" href="assets/images/elzevir-sample-active.svg">
+		<link rel="prefetch" href="assets/images/glyph-hover-active.svg">
+		<link rel="prefetch" href="assets/images/grotesk-sample-active.svg">
+		<link rel="prefetch" href="assets/images/grotesk-sample-hover-active.svg">
+		<link rel="prefetch" href="assets/images/john-fell-sample-active.svg">
+		<link rel="prefetch" href="assets/images/link-icon-active.svg">
+		<link rel="prefetch" href="assets/images/text-hover-active.svg">
+		<link rel="prefetch" href="assets/images/view-menu-hover.svg">
+		<link rel="prefetch" href="assets/images/view-menu-active.svg">
+		<link rel="prefetch" href="assets/images/view-menu-hover-active-indiv.svg">
+		<link rel="prefetch" href="assets/images/view-menu-hover-active.svg">
+		<link rel="prefetch" href="assets/images/word-hover-active.svg">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 	<body>
@@ -37,7 +45,7 @@
 
 			// WebFont loader
 			WebFontConfig = {
-				google: { families: [ 'Source+Sans+Pro:400,600,700,400italic:latin' ] },
+				google: { families: [ 'Source+Sans+Pro:400,600,700,400italic:latin', 'Open+Sans:400,600,400italic,300:latin' ] },
 				timeout: 2000
 			};
 			(function() {
@@ -51,6 +59,19 @@
 			})();
 			(function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',intercomSettings);}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://widget.intercom.io/widget/mnph1bst';var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})()
 		</script>
+		<!-- Facebook Pixel Code -->
+		<script>
+			!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+				n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+			n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+			t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+					document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+			fbq('init', '234652266880500');
+			fbq('track', "PageView");
+		</script>
+		<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=234652266880500&ev=PageView&noscript=1" /></noscript>
+		<!-- End Facebook Pixel Code -->
 		<script type="text/javascript" src="prototypo.js/dist/prototypo.js"></script>
 		<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 		<script type="text/javascript" src="jquery.js"></script>

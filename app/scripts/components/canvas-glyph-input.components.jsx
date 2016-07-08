@@ -1,6 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import Classnames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Log from '../services/log.services.js';
 
@@ -10,40 +11,21 @@ export default class CanvasGlyphInput extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			panel: {
-				mode: [],
-			},
+			mode: [],
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/panel', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					panel: head.toJS(),
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client.getStore('/glyphs', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					selected: head.toJS().selected,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client.getStore('/glyphSelect', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					focused: head.toJS().focused,
+					selected: head.toJS().glyphSelected,
+					mode: head.toJS().uiMode,
+					focused: head.toJS().glyphFocused,
 				});
 			})
 			.onDelete(() => {
@@ -52,6 +34,7 @@ export default class CanvasGlyphInput extends React.Component {
 
 		window.addEventListener('keypress', (e) => {
 			if (this.state.focused) {
+				e.preventDefault();
 				e.stopPropagation();
 
 				this.client.dispatchAction('/select-glyph', {
@@ -66,10 +49,10 @@ export default class CanvasGlyphInput extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.xor(this.state.panel.mode, [name]);
+		const newViewMode = _.xor(this.state.mode, [name]);
 
 		if (newViewMode.length > 0) {
-			this.client.dispatchAction('/store-panel-param', {mode: newViewMode});
+			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
 			Log.ui('Canvas.toggleView', name);
 		}
 	}
@@ -78,7 +61,9 @@ export default class CanvasGlyphInput extends React.Component {
 		e.stopPropagation();
 		this.client.dispatchAction('/toggle-focus-direct-access');
 
-		const cleanGlyphAccess = () => {
+		const cleanGlyphAccess = (evt) => {
+			evt.preventDefault();
+			evt.stopPropagation();
 			this.client.dispatchAction('/toggle-focus-direct-access');
 			window.removeEventListener('click', cleanGlyphAccess);
 		};

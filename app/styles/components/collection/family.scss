@@ -1,0 +1,228 @@
+@import "../../variables";
+
+.family-list {
+	flex:0 0 33%;
+	background-color: $lightest-grey;
+	border-bottom-left-radius: 7px;
+}
+
+.family {
+	display:flex;
+	flex-flow: row nowrap;
+	margin-top: 20px;
+	cursor:pointer;
+	color:$dark-grey;
+	transition: color .2s ease;
+
+	&.is-active, &:hover {
+		color: $green;
+	}
+
+	&:hover &-sample.elzevir, &.is-active &-sample.elzevir {
+		background-image: url('/assets/images/elzevir-sample-active.svg') !important;
+	}
+
+	&:hover &-sample.john-fell, &.is-active &-sample.john-fell {
+		background-image: url('/assets/images/john-fell-sample-active.svg') !important;
+	}
+
+	&:hover &-sample.venus, &.is-active &-sample.venus {
+		background-image: url('/assets/images/grotesk-sample-active.svg') !important;
+	}
+
+	&-sample.elzevir {
+		background-image: url('/assets/images/elzevir-sample-hover.svg');
+	}
+
+	&-sample.john-fell {
+		background-image: url('/assets/images/john-fell-sample-hover.svg');
+	}
+
+	&-sample.venus {
+		background-image: url('/assets/images/grotesk-sample-hover.svg');
+	}
+
+	&-sample {
+		width:70px;
+		height:43px;
+		background-repeat: no-repeat;
+		margin: 3px 30px 0 0;
+		background-size:contain;
+	}
+
+	&-info {
+		display:flex;
+		font-weight:600;
+		letter-spacing:0.02em;
+		flex-flow: column nowrap;
+
+		&-name {
+			font-size:17px;
+		}
+
+		&-base {
+			font-size:10px;
+
+			&-template {
+				font-size: 17px;
+				font-weight:400;
+				font-style:italic;
+			}
+		}
+	}
+}
+
+.add-family {
+	background-color:$white;
+	cursor:pointer;
+	transition:all .2s ease;
+	margin-bottom:15px;
+	border-radius:4px;
+
+	&-form {
+		width:630px;
+
+		&-header {
+			display:flex;
+			flex-flow:row nowrap;
+			justify-content:space-between;
+
+			&-title {
+				margin:0;
+			}
+
+			&-close {
+				cursor:pointer;
+				background-color: $lightest-grey;
+				border-radius: 50%;
+				height: 30px;
+				margin-top: 10px;
+
+				&:hover {
+					background-color:$light-grey;
+				}
+			}
+		}
+
+		&-input {
+			display: block;
+			width: 100%;
+			border:none;
+			padding: .8em;
+			background-color: $lightest-grey;
+			color:$dark-grey;
+			font-size: 1.1em;
+			margin-bottom: 1em;
+			margin-top:20px;
+		}
+
+		&-label {
+			display: inline-block;
+			margin-top: 5px;
+			font-size:1.1em;
+
+			color: $dark-grey;
+
+			&-order {
+				@include themify() {
+					color:$theme-background;
+				}
+			}
+		}
+
+		&-template-list {
+			display: flex;
+			flex-flow: row wrap;
+			justify-content: space-between;
+		}
+
+		&-buttons {
+			justify-content: flex-end;
+			display:flex;
+
+			& .button {
+				padding:10px 20px;
+				margin-left:10px;
+			}
+		}
+
+		&-error {
+			width: 100%;
+			text-align: center;
+			padding: 5px;
+			background-color: $red;
+			margin-bottom: 15px;
+			color: $white;
+		}
+	}
+
+	&-header {
+		display:flex;
+		flex-flow:row nowrap;
+		margin-left:20px;
+
+		&-icon {
+			margin-right:15px;
+		}
+	}
+
+	&.with-error {
+		flex-basis:600px;
+	}
+
+	&.family-form-open &-header {
+		display:none;
+	}
+
+	&.family-form-open &-form {
+		display:block;
+	}
+
+	&:hover {
+		color:$dark-grey;
+	}
+
+}
+
+.family-template-choice {
+	margin-top:20px;
+	text-align:center;
+	flex-basis: 200px;
+
+	&:hover &-name, &.is-active &-name {
+		@include themify() {
+			background-color:$theme-background;
+			color:$theme-color;
+		}
+	}
+
+	&-sample {
+		padding:15px;
+		height:200px;
+		line-height:85px;
+		transition:all .2s ease;
+		color:$dark-grey;
+		background-color:$lightest-grey;
+
+		img {
+			margin-top:45px;
+			vertical-align:bottom;
+		}
+	}
+
+	&:hover &-sample, &.is-active &-sample {
+		@include themify() {
+			background-color:$theme-background;
+			color:$theme-color;
+		}
+	}
+
+	&-name {
+		font-size: 1.3em;
+		text-align: center;
+		background-color: $dark-grey;
+		color: $white;
+		padding: 10px;
+		transition:all .2s ease;
+	}
+}
