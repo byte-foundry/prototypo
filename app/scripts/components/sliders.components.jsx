@@ -188,6 +188,7 @@ export class RadioSlider extends React.Component {
 
 		const classes = Classnames({
 			'slider': true,
+			'radio-slider': true,
 			'is-coming': this.props.disabled,
 			'is-child': this.props.child,
 		});
@@ -212,14 +213,6 @@ export class RadioSlider extends React.Component {
 					{demoOverlay}
 				</div>
 				<label className="slider-title">{this.props.label}</label>
-				<output
-					className="slider-text-controller"
-					name={this.props.name}
-					label={this.props.label}
-					disabled={this.props.disabled}
-					individualized={this.props.individualized}>
-					{value}
-				</output>
 				<div className="slider-container">
 					<SliderRadioController
 						value={value}
@@ -394,26 +387,26 @@ export class SliderRadioController extends React.Component {
 		});
 
 		const checkBoxes = boxes.map((boxValue, index) => {
+			const isSelected = boxValue === this.props.value;
+
 			return (
-				<div key={index}>
+				<div className="radio-button-container" key={index}>
 					<label>
-						{boxValue}
-						<input onChange={this.handleChange} value={boxValue} type="radio" name={`radio-button-${String(this.props.name).trim()}`} />
+						<input
+							onChange={this.handleChange}
+							value={boxValue} checked={isSelected}
+							type="radio"
+							name={`radio-button-${String(this.props.name).trim()}`} />
+						<span className="box-value-label">
+							{boxValue}
+						</span>
 					</label>
 				</div>
 			);
 		});
 
-		/*
-		const classes = Classnames({
-			'slider-controller-bg': true,
-			'is-not-advised': this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised,
-			'is-indiv': this.props.individualized,
-		});
-		*/
-
 		return (
-			<div onClick={this.handleClick}>
+			<div className="radio-buttons-wrap">
 				{checkBoxes}
 			</div>
 		);
