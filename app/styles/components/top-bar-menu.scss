@@ -171,14 +171,14 @@
 			}
 		}
 
-		&:hover {
+		&:hover, &.topbaritem-displayed {
 			@include themify() {
 				background-color: $theme-background;
 				color: $theme-color;
 			}
 		}
 
-		&:hover &-dropdown {
+		.topbaritem-displayed &-dropdown {
 			height:auto;
 		}
 	}
