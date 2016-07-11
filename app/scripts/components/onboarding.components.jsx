@@ -82,7 +82,7 @@ export class OnBoardingStep extends React.Component {
 	}
 
 	endPrematurely() {
-		this.client.dispatchAction('/store-panel-param', {onboardstep: 'premature-end'});
+		this.client.dispatchAction('/store-value', {uiOnboardstep: 'premature-end'});
 		this.client.dispatchAction('/change-tab-sidebar', {name: 'sliders'});
 	}
 

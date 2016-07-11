@@ -1,8 +1,14 @@
 import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import Glyph from './glyph.components.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class AlternateGlyphList extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();

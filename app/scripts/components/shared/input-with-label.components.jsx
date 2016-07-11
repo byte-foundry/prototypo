@@ -1,10 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default class InputWithLabel extends React.Component {
 	constructor(props) {
 		super(props);
-
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.handleOnChange = this.handleOnChange.bind(this);
 	}
 

@@ -65,7 +65,7 @@ export default class AccountProfilePanel extends React.Component {
 						<InputWithLabel ref="firstname" label="First name" required={true} inputValue={this.state.infos.accountValues.firstname}/>
 						<InputWithLabel ref="lastname" label="Last name" required={false} inputValue={this.state.infos.accountValues.lastname}/>
 					</div>
-					<SelectWithLabel ref="css" label="I am" name="occupation" className="input-with-label-input" options={values} inputValue={this.state.infos.accountValues.css}/>
+					<SelectWithLabel ref="css" label="I am" noResultsText="No result for this search" name="occupation" className="input-with-label-input" options={values} inputValue={this.state.infos.accountValues.css}/>
 					<div className="account-profile-panel-line">
 						<InputWithLabel ref="website" label="My website" placeholder="www.mj.com" required={false} inputValue={this.state.infos.accountValues.website}/>
 						<InputWithLabel ref="twitter" label="Twitter account" placeholder="@thecat" required={false} inputValue={this.state.infos.accountValues.twitter}/>

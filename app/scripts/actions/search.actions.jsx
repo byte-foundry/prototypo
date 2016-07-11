@@ -1,4 +1,4 @@
-import {searchStore, tagStore} from '../stores/creation.stores.jsx';
+import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
 
@@ -10,51 +10,51 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/search-glyph': ({query}) => {
-		const patch = searchStore.set('glyphSearch', query).commit();
+		const patch = prototypoStore.set('glyphSearch', query).commit();
 
-		localServer.dispatchUpdate('/searchStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		const patchTag = tagStore.set('selected', 'all').commit();
+		const patchTag = prototypoStore.set('tagSelected', 'all').commit();
 
-		localServer.dispatchUpdate('/tagStore', patchTag);
+		localServer.dispatchUpdate('/prototypoStore', patchTag);
 	},
 	'/save-search-glyph': ({query}) => {
-		const searchs = _.cloneDeep(searchStore.get('savedSearch'));
+		const searchs = _.cloneDeep(prototypoStore.get('savedSearch'));
 
 		if (searchs.indexOf(query) === -1) {
 			searchs.push(query);
-			const patch = searchStore
+			const patch = prototypoStore
 				.set('savedSearch', searchs)
 				.set('savedSearchError', undefined)
 				.commit();
 
-			localServer.dispatchUpdate('/searchStore', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 		}
 		else {
-			const patch = searchStore.set('savedSearchError', 'This search already exists');
+			const patch = prototypoStore.set('savedSearchError', 'This search already exists');
 
-			localServer.dispatchUpdate('/searchStore', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 		}
 		saveAppValues();
 	},
 	'/toggle-pinned-search': ({query}) => {
-		const pinned = _.xor(searchStore.get('pinned'), [query]);
-		const patch = searchStore
-			.set('pinned', pinned)
+		const pinned = _.xor(prototypoStore.get('pinnedSearch'), [query]);
+		const patch = prototypoStore
+			.set('pinnedSearch', pinned)
 			.commit();
 
-		localServer.dispatchUpdate('/searchStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
 	},
 	'/delete-search-glyph': ({query}) => {
-		const searchs = _.xor(searchStore.get('savedSearch'), [query]);
-		const pinned = _.xor(searchStore.get('pinned'), [query]);
-		const patch = searchStore
+		const searchs = _.xor(prototypoStore.get('savedSearch'), [query]);
+		const pinned = _.xor(prototypoStore.get('pinnedSearch'), [query]);
+		const patch = prototypoStore
 			.set('savedSearch', searchs)
-			.set('pinned', pinned)
+			.set('pinnedSearch', pinned)
 			.commit();
 
-		localServer.dispatchUpdate('/searchStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
 	},
-}
+};

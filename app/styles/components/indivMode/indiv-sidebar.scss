@@ -1,0 +1,34 @@
+@import "../../variables";
+
+.indiv-sidebar {
+	display: flex;
+	flex-flow: row nowrap;
+	width: 280px;
+	position: relative;
+	z-index: 5;
+
+	&-right-panel {
+		&-enter {
+			z-index: 4;
+			position:absolute;
+			margin-left: calc(-100% - 20px);
+			width:100%;
+
+			&#{&}-active {
+				margin-left: 0%;
+				transition: margin-left .3s ease-out;
+			}
+		}
+
+		&-leave {
+			z-index:3;
+			margin-left: 0%;
+			width:100%;
+
+			&#{&}-active {
+				margin-left: calc(-100% - 20px);
+				transition: margin-left .3s ease-in;
+			}
+		}
+	}
+}

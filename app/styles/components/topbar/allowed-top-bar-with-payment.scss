@@ -1,0 +1,16 @@
+.allowed-top-bar-with-payment {
+	position:relative;
+
+	&-overlay {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+		background: rgba(59,59,59,0.75);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 19px;
+		padding: 20px;
+	}
+}

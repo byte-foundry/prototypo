@@ -5,11 +5,9 @@
 	font-size: 0.8em;
 	position:relative;
 
-	&.is-disabled &-demo-overlay {
+	.is-disabled &-demo-overlay {
 		position:absolute;
-		top: 2px;
-		left:-10px;
-		width: calc(100% + 20px);
+		width:100%;
 		height:100%;
 		background-color: rgba($dark-grey, 0.65);
 		z-index:2;
@@ -18,22 +16,32 @@
 		align-items:center;
 	}
 
+	.is-coming &-demo-overlay-text {
+		opacity:0;
+		transition: opacity .2s ease;
+	}
+
+	.is-coming:hover &-demo-overlay-text {
+		opacity:1;
+	}
+
 	&-container {
 		display: flex;
 		flex-flow: row nowrap;
 	}
 
 	&-demo-overlay {
+		position: absolute;
+		width: 100%;
+
 		&-text {
-			opacity:0;
 			color:$white;
 			font-size: 13px;
-			transition:opacity .2s ease;
 			padding: 5px 15px;
-			position: relative;
+			display: block;
+			margin-right: 30px;
 
 			&-more {
-				position: absolute;
 				top: 0;
 				bottom: 0;
 				right: 0;
@@ -41,14 +49,17 @@
 				align-items: center;
 				justify-content: center;
 				overflow: hidden;
+				position:absolute;
 
 				width: 40px;
-				background-color: $green;
+				@include themify() {
+					background-color: $theme-background;
+				}
 				background-image: url('../../images/add-feature.svg');
 				background-position: center;
 				background-repeat: no-repeat;
 
-				transition: all 500ms ease;
+				transition: all 500ms ease !important;
 
 				&-text {
 					opacity: 0;
@@ -59,7 +70,7 @@
 				}
 
 				&:hover {
-					width: 270px;
+					width: 100%;
 					background-image: url('../../images/pro-version.svg');
 					background-position: 10% center;
 				}
@@ -69,11 +80,6 @@
 					padding-left: 10px;
 				}
 			}
-		}
-
-		&:hover &-text {
-			background-color: darken($dark-grey, 2%);
-			opacity:1;
 		}
 	}
 
@@ -114,7 +120,8 @@
 		-webkit-appearance: textfield;
 
 		&.is-indiv {
-			margin-right:25px;
+			//Do not put more than 43px without checking that it make serif terminal curve go crazy
+			margin-right:43px;
 		}
 	}
 
@@ -123,6 +130,8 @@
 		background-color: #FFF;
 		margin-top: 2px;
 		flex:1;
+		/* fix a overflow hidden and border-radius error in chrome */
+		-webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
 
 		&, &-bg, &-handle {
 			border-radius: 1rem;
@@ -131,18 +140,11 @@
 
 		&-bg {
 			height: 1.9rem;
-			background-color: $green;
-			transition: background-color 500ms ease;
+			@include themify() {
+				background-color: $theme-background;
+			}
 
 			&.is-not-advised {
-				background-color:$red;
-			}
-
-			&.is-indiv {
-				background-color:$yellow;
-			}
-
-			&.is-not-advised.is-indiv {
 				background-color:$red;
 			}
 		}
@@ -159,18 +161,19 @@
 			float: right;
 			width: 1.9rem;
 			height: 1.9rem;
-			border: 0.5rem solid $green;
+			@include themify() {
+				border:solid 0.5rem $theme-background;
+			}
 			background-color: #555555;
-			transition: border-color 500ms ease;
 		}
 	}
 
 
 	&.is-coming {
 		.slider-demo-overlay {
-			background-color: rgba($dark-grey, 0.95);
+			background-color: rgba($dark-grey, 0.45);
+			z-index:1;
 			&-text {
-				position: absolute;
 				top: 0;
 				bottom: 0;
 				left: 0;
@@ -221,12 +224,14 @@
 }
 
 .indiv-switch {
-	flex: 0 0 25px;
+	flex: 0 0 45px;
 	height: 19px;
 	position: relative;
 	margin-left: 5px;
 	margin-top: 2px;
 	cursor:pointer;
+	display: flex;
+	justify-content: space-between;
 
 	&-btn {
 		line-height: 17px;
@@ -234,21 +239,15 @@
 		width: 19px;
 		text-align: center;
 		border-radius: 50%;
-		position: absolute;
 		transition: all .2s ease;
-		top: 0;
-		left: 5px;
 		z-index:1;
 
 		&:hover {
-			line-height: 23px;
-			height: 25px;
-			width: 25px;
-			left:2px;
+			background: $yellow;
 		}
 
 		&.is-active {
-			z-index:2;
+			background: $yellow;
 		}
 	}
 
@@ -259,15 +258,7 @@
 	}
 
 	&-delta {
-		background: $yellow;
+		background: $white;
 		color:$dark-grey;
-	}
-
-	&:hover &-delta {
-		top:15px;
-	}
-
-	&:hover &-relative {
-		top:-15px;
 	}
 }

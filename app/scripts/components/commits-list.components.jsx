@@ -1,21 +1,15 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import LocalClient from '../stores/local-client.stores.jsx';
 import classNames from 'classnames';
 import moment from 'moment/min/moment-with-locales';
 
+import LocalClient from '../stores/local-client.stores.jsx';
+
 export default class CommitsList extends React.Component {
 	componentWillMount() {
-		this.lifespan = new Lifespan();
-		this.client = LocalClient.instance();
-
 		const locale = window.navigator.userLanguage || window.navigator.language;
 
 		moment.locale(locale);
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
 	}
 
 	render() {

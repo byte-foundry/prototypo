@@ -1,7 +1,9 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import LocalClient from '../stores/local-client.stores.jsx';
 import classNames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
+import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class GlyphTagList extends React.Component {
 	constructor(props) {
@@ -9,6 +11,7 @@ export default class GlyphTagList extends React.Component {
 		this.state = {
 			show: false,
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	render() {
@@ -73,6 +76,11 @@ export default class GlyphTagList extends React.Component {
 }
 
 class GlyphPinnedTag extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();

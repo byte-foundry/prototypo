@@ -3,7 +3,6 @@ import '../../node_modules/normalize.css/normalize.css';
 import '../../node_modules/please-wait/build/please-wait.css';
 import '../../node_modules/react-gemini-scrollbar/node_modules/gemini-scrollbar/gemini-scrollbar.css';
 import '../../node_modules/react-select/dist/react-select.css';
-import '../styles/components/family.scss';
 import '../styles/components/edit-param-group.scss';
 import '../styles/components/input-group.scss';
 import '../styles/components/fonts-collection.scss';
@@ -21,14 +20,12 @@ import '../styles/components/checkbox-with-img.scss';
 import '../styles/components/forgotten-password.scss';
 import '../styles/components/prototypo-canvas.scss';
 import '../styles/components/glyph-list.scss';
-import '../styles/components/modal.scss';
 import '../styles/components/cards-widget.scss';
 import '../styles/components/prototypo-text.scss';
 import '../styles/components/sliders.scss';
 import '../styles/components/variant.scss';
 import '../styles/components/alternate-menu.scss';
 import '../styles/components/hover-view-menu.scss';
-import '../styles/components/help-panel.scss';
 import '../styles/components/not-a-browser.scss';
 import '../styles/components/onboarding.scss';
 import '../styles/components/action-bar.scss';
@@ -65,6 +62,18 @@ import '../styles/components/shared/form-error.scss';
 import '../styles/components/shared/form-success.scss';
 import '../styles/components/shared/select-override.scss';
 import '../styles/components/shared/invoice.scss';
+import '../styles/components/shared/loading-overlay.scss';
+import '../styles/components/shared/button.scss';
+import '../styles/components/shared/modal.scss';
+import '../styles/components/toolbar/toolbar.scss';
+import '../styles/components/toolbar/arianne-thread.scss';
+import '../styles/components/toolbar/view-buttons.scss';
+import '../styles/components/topbar/allowed-top-bar-with-payment.scss';
+import '../styles/components/collection/collection.scss';
+import '../styles/components/collection/family.scss';
+import '../styles/components/viewPanels/view-panels-menu.scss';
+import '../styles/components/indivMode/indiv-group-list.scss';
+import '../styles/components/indivMode/indiv-sidebar.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';
@@ -96,7 +105,6 @@ import {Router, Route, IndexRoute, hashHistory} from 'react-router';
 
 import Dashboard from './components/dashboard.components.jsx';
 import SitePortal from './components/site-portal.components.jsx';
-import Subscriptions from './components/subscriptions.components.jsx';
 import Signin from './components/signin.components.jsx';
 import ForgottenPassword from './components/forgotten-password.components.jsx';
 import NotABrowser from './components/not-a-browser.components.jsx';
@@ -161,13 +169,11 @@ window.Stripe && window.Stripe.setPublishableKey(stripeKey);
 
 const stores = window.prototypoStores = Stores;
 
-const debugStore = Stores['/debugStore'];
-const fontControls = Stores['/fontControls'];
-const intercomStore = Stores['/intercomStore'];
+const prototypoStore = Stores['/prototypoStore'];
 
 function saveErrorLog(error) {
 	const debugLog = {
-		events: debugStore.events,
+		events: prototypoStore.events,
 		message: err.message,
 		stack: error.stack,
 		date: new Date(),
@@ -192,7 +198,7 @@ const localServer = new LocalServer(stores, {
 		'/store-in-debug-font',
 		'/show-details',
 	],
-	logStore: stores.logStore,
+	logStore: stores.prototypoStore,
 }).instance;
 /* #end */
 /* #if prod */
@@ -227,15 +233,18 @@ async function createStores() {
 		userLifecycleAction,
 		{
 			'/load-intercom-info': (data) => {
-				const patch = intercomStore.set('tags', data.tags.tags).commit();
+				const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();
 
-				localServer.dispatchUpdate('/intercomStore', patch);
+				localServer.dispatchUpdate('/prototypoStore', patch);
 			},
 		}
 	);
 
 	localServer.on('action', ({path, params}) => {
 		eventDebugger.storeEvent(path, params);
+		if (process.env.__SHOW_ACTION__) {
+			console.log(`[ACTION] ${path}`);
+		}
 
 		if (actions[path] !== undefined) {
 			actions[path](params);
@@ -359,7 +368,6 @@ selectRenderOptions(
 							<Route path="signup" component={AccountApp} onEnter={redirectToDashboard}>
 								<IndexRoute component={Register}/>
 							</Route>
-							<Route path="subscription" component={Subscriptions}/>
 							<Route component={AccountApp} path="account">
 								<Route path="billing" component={AccountDashboard} name="billing" onEnter={redirectToLogin}>
 									<IndexRoute component={AccountInvoiceList}/>

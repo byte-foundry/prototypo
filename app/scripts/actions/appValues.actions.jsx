@@ -1,6 +1,6 @@
-import {glyphs, fontTab, tagStore, commits, fontLibrary, fontVariant, searchStore, panel, userStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, userStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
-import {saveAppValues} from '../helpers/loadValues.helpers.js';
+import {saveAppValues, valuesToLoad} from '../helpers/loadValues.helpers.js';
 import {Commits} from '../services/commits.services.js';
 
 let localServer;
@@ -11,54 +11,25 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/load-app-values': ({values}) => {
+		//TODO(franz): merge all the patch
 		values.selected = values.selected || 'A'.charCodeAt(0);
-		const patchGlyph = glyphs.set('selected', values.selected).commit();
-
-		localServer.dispatchUpdate('/glyphs', patchGlyph);
-
-		const patchTab = fontTab.set('tab', values.tab || 'Func').commit();
-
-		localServer.dispatchUpdate('/fontTab', patchTab);
-
-		const patchTag = tagStore
-			.set('pinned', values.pinned || [])
-			.set('selected', values.tagSelected || 'all')
-			.commit();
-
-		localServer.dispatchUpdate('/tagStore', patchTag);
-
-		const patchCommit = commits.set('latest', values.latestCommit).commit();
-
-		localServer.dispatchUpdate('/commits', patchCommit);
-
-		const patchFonts = fontLibrary.set('fonts', values.library || []).commit();
-
-		localServer.dispatchUpdate('/fontLibrary', patchFonts);
-
-		const patchVariant = fontVariant
-			.set('variant', values.variantSelected)
-			.set('family', values.familySelected).commit();
-
-		localServer.dispatchUpdate('/fontVariant', patchVariant);
-
-		const patchSearch = searchStore
-			.set('savedSearch', values.savedSearch)
-			.set('pinned', values.pinnedSearch)
-			.commit();
-
-		localServer.dispatchUpdate('/searchStore', patchSearch);
-
+		values.tab = values.tab || 'Func';
+		values.pinned = values.pinned || [];
+		values.tagSelected = values.tagSelected || 'all';
+		values.library = values.library || [];
 		values.mode = values.mode || ['glyph'];
+		values.wordFontSize = values.wordFontSize || 1;
+		values.textFontSize = values.textFontSize || 1;
 
-		_.forEach(values, (value, name) => {
-			panel.set(name, value);
+		_.forEach(valuesToLoad, (ref) => {
+			prototypoStore.set(ref.local, values[ref.remote]);
 		});
 
-		const patchPanel = panel.commit();
-
-		localServer.dispatchUpdate('/panel', patchPanel);
+		const patch = prototypoStore.commit();
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
 		const valuesLoadedEvent = new Event('appValues.loaded');
+
 		window.dispatchEvent(valuesLoadedEvent);
 	},
 	'/load-commits': async () => {
@@ -86,20 +57,20 @@ export default {
 					return 0;
 				})
 				.reverse();
-			const patch = commits.set('list', lastCommits).commit();
+			const patch = prototypoStore.set('commitsList', lastCommits).commit();
 
-			localServer.dispatchUpdate('/commits', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 		}
 		catch (err) {
-			const patch = commits.set('error', 'Cannot get commit').commit();
+			const patch = prototypoStore.set('error', 'Cannot get commit').commit();
 
-			localServer.dispatchUpdate('/commits', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 		}
 	},
 	'/view-commit': ({latest}) => {
-		const patch = commits.set('latest', latest).commit();
+		const patch = prototypoStore.set('latestCommit', latest).commit();
 
-		localServer.dispatchUpdate('/commits', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues(appValuesLoaded);
 	},
 	'/load-account-values': (values) => {

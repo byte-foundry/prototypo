@@ -1,22 +1,24 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import ClassNames from 'classnames';
 
 import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
 import PrototypoWord from './prototypo-word.components.jsx';
-import CreateParamGroup from './create-param-group.components.jsx';
-import EditParamGroup from './edit-param-group.components.jsx';
-
 
 export default class PrototypoPanel extends React.Component {
 
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		this.state = {
+			uiMode: [],
+		};
 
 		this.availableMode = ['glyph', 'text', 'word'];
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {
@@ -24,26 +26,26 @@ export default class PrototypoPanel extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/panel', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({panel: head.toJS()});
-			})
-			.onDelete(() => {
-				this.setState({panel: undefined});
-			});
-
-		this.client.getStore('/glyphs', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({glyph: head.toJS()});
-			})
-			.onDelete(() => {
-				this.setState({glyph: undefined});
-			});
-
-		this.client.getStore('/individualizeStore', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					createParamGroup: head.toJS().indivCreate,
+					glyphs: head.toJS().glyphs,
+					glyphSelected: head.toJS().glyphSelected,
+					uiMode: head.toJS().uiMode,
+					uiText: head.toJS().uiText,
+					uiWord: head.toJS().uiWord,
+					uiZoom: head.toJS().uiZoom,
+					uiPos: head.toJS().uiPos,
+					uiNodes: head.toJS().uiNodes,
+					uiOutline: head.toJS().uiOutline,
+					uiCoords: head.toJS().uiCoords,
+					uiShadow: head.toJS().uiShadow,
+					uiInvertedTextView: head.toJS().uiInvertedTextView,
+					uiInvertedTextColors: head.toJS().uiInvertedTextColors,
+					uiTextFontSize: head.toJS().uiTextFontSize,
+					uiInvertedWordView: head.toJS().uiInvertedWordView,
+					uiInvertedWordColors: head.toJS().uiInvertedWordColors,
+					uiWordFontSize: head.toJS().uiWordFontSize,
 					editingGroup: head.toJS().indivEdit,
 					indivMode: head.toJS().indivMode,
 				});
@@ -54,9 +56,9 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	resetView({x, y}) {
-		this.client.dispatchAction('/store-panel-param', {
-			pos: new prototypo.paper.Point(x, y),
-			zoom: 0.5,
+		this.client.dispatchAction('/store-value', {
+			uiPos: new prototypo.paper.Point(x, y),
+			uiZoom: 0.5 / window.devicePixelRatio,
 		});
 	}
 
@@ -65,10 +67,10 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.intersection(_.xor(this.state.panel.mode, [name]), this.availableMode);
+		const newViewMode = _.intersection(_.xor(this.state.uiMode, [name]), this.availableMode);
 
 		if (newViewMode.length > 0) {
-			this.client.dispatchAction('/store-panel-param', {mode: newViewMode});
+			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
 		}
 	}
 
@@ -77,55 +79,66 @@ export default class PrototypoPanel extends React.Component {
 			console.log('[RENDER] prototypopanel');
 		}
 
-		if (!this.state.panel) {
+		//TODO(franz): Why ?
+		/*if (!this.state.panel) {
 			return false;
-		}
+			}*/
 
 		let textAndGlyph;
 		let word;
 
 		textAndGlyph = [<PrototypoCanvas
 			key="canvas"
-			panel={this.state.panel}
-			glyph={this.state.glyph}
+			uiZoom={this.state.uiZoom}
+			uiMode={this.state.uiMode}
+			uiPos={this.state.uiPos}
+			uiNodes={this.state.uiNodes}
+			uiOutline={this.state.uiOutline}
+			uiCoords={this.state.uiCoords}
+			uiShadow={this.state.uiShadow}
+			glyphs={this.state.glyphs}
+			glyphSelected={this.state.glyphSelected}
 			reset={(pos) => { this.resetView(pos); }}
 			close={(name) => { this.toggleView(name); }}/>];
-		const hasGlyph = this.state.panel.mode.indexOf('glyph') !== -1;
-		const hasText = this.state.panel.mode.indexOf('text') !== -1;
+		const hasGlyph = this.state.uiMode.indexOf('glyph') !== -1;
+		const hasText = this.state.uiMode.indexOf('text') !== -1;
 
 		if (hasText) {
 			textAndGlyph.push(<PrototypoText
 				key="text"
 				fontName={this.props.fontName}
-				panel={this.state.panel}
+				uiInvertedTextView={this.state.uiInvertedTextView}
+				uiInvertedTextColors={this.state.uiInvertedTextColors}
+				uiTextFontSize={this.state.uiTextFontSize}
+				uiText={this.state.uiText}
 				close={(name) => { this.toggleView(name); }}
-				field="text"/>);
+				field="uiText"/>);
 		}
-		else if (hasGlyph && this.state.panel.shadow) {
-			textAndGlyph.push(<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyph.selected)}</div>);
+		else if (hasGlyph && this.state.uiShadow) {
+			textAndGlyph.push(<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>);
 		}
 
-		if (this.state.panel.mode.indexOf('word') !== -1) {
+		if (this.state.uiMode.indexOf('word') !== -1) {
 			word = <PrototypoWord
 				fontName={this.props.fontName}
-				panel={this.state.panel}
+				uiInvertedWordView={this.state.uiInvertedWordView}
+				uiInvertedWordColors={this.state.uiInvertedWordColors}
+				uiWordFontSize={this.state.uiWordFontSize}
+				uiWord={this.state.uiWord}
 				close={(name) => { this.toggleView(name); }}
-				field="word"/>;
+				field="uiWord"/>;
 		}
-
-		const createParamGroup = this.state.createParamGroup && this.state.indivMode ? (
-			<CreateParamGroup />
-		) : false;
-
-		const editParamGroup = this.state.editingGroup && this.state.indivMode ? (
-			<EditParamGroup />
-		) : false;
 
 		let down;
 
+		const textAndGlyphClassNames = ClassNames({
+			'has-text-panel': hasText,
+			'has-glyph-panel': hasGlyph,
+		});
+
 		if (hasGlyph || hasText) {
 			down = (
-				<div id="prototypotextandglyph">
+				<div id="prototypotextandglyph" className={textAndGlyphClassNames} >
 					{textAndGlyph}
 				</div>
 			);
@@ -143,8 +156,6 @@ export default class PrototypoPanel extends React.Component {
 
 		return (
 			<div id="prototypopanel">
-				{createParamGroup}
-				{editParamGroup}
 				{up}
 				{down}
 			</div>

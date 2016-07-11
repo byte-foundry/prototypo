@@ -6,17 +6,20 @@
 	cursor:pointer;
 
 	&-label {
-		height: 22px;
 		border: 2px solid $dark-grey;
-		border-radius: 4px;
-		padding: 0 10px;
+		border-radius:4px;
+		padding: 0 8px;
 		color: $dark-grey;
-		font-size: 12px;
 		transition: all 200ms ease;
+		text-transform: uppercase;
+		background: $white;
 
 		&:hover {
-			background-color: $dark-grey;
-			color: $white;
+			@include themify() {
+				background-color: $theme-background;
+				color: $theme-color;
+				border-color: $theme-background;
+			}
 		}
 	}
 
@@ -32,12 +35,12 @@
 
 .alternate {
 	background-color: $lightest-grey;
+	border-radius:4px;
 	color:$dark-grey;
 	padding: 5px;
 	padding-bottom: 0;
 	text-align:center;
 	margin-bottom:5px;
-	border-radius:4px;
 
 	&:hover {
 		background-color:$green;

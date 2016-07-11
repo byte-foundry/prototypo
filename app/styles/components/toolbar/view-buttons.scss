@@ -1,0 +1,60 @@
+@import "../../variables";
+
+$view-button-size: 35;
+
+.view-buttons {
+	display:flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	height:100%;
+
+	&-label {
+		align-items: center;
+		border-left: 1px solid $medium-grey;
+		display: flex;
+		height: 100%;
+		padding: 0 25px;
+		text-transform: none;
+	}
+}
+
+.view-button {
+	background-image: url('/assets/images/view-buttons.svg');
+	background-color: $white;
+	background-repeat: no-repeat;
+	width:35px;
+	height:35px;
+	padding:9px;
+	cursor:pointer;
+
+	&:hover, &.is-active {
+		@include themify() {
+			background-color: $theme-background;
+		}
+	}
+
+	&-glyph {
+		&.is-active {
+			background-position: 0px -#{$view-button-size}px;
+		}
+		&, &:hover:not(.is-active) {
+			background-position: 0px 0px;
+		}
+	}
+	&-word {
+		&.is-active {
+			background-position: -#{$view-button-size}px -#{$view-button-size}px;
+		}
+		&, &:hover:not(.is-active) {
+			background-position: -#{$view-button-size}px 0px;
+		}
+	}
+	&-text {
+		&.is-active {
+			background-position: -#{$view-button-size * 2}px -#{$view-button-size}px;
+		}
+		&, &:hover:not(.is-active) {
+			background-position: -#{$view-button-size * 2}px 0px;
+		}
+	}
+}

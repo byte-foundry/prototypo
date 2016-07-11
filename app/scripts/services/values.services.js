@@ -20,11 +20,11 @@ function values(prefix) {
 			else {
 				return new Promise(async (resolve, reject) => {
 					const client = LocalClient.instance();
-					const valuesFetched = await client.fetch('/debugStore');
+					const valuesFetched = await client.fetch('/prototypoStore');
 
-					if (valuesFetched.get('values')[prefix][params.typeface]) {
+					if (valuesFetched.get('debugValues')[prefix][params.typeface]) {
 						setTimeout(() => {
-							resolve(valuesFetched.get('values')[prefix][params.typeface]);
+							resolve(valuesFetched.get('debugValues')[prefix][params.typeface]);
 						}, 500);
 					}
 					else {

@@ -1,7 +1,7 @@
 import {Patch} from 'remutable';
 
 const registerToUndoStack = function(remut, storeName, client, lifespan, cb = () => {return;}) {
-	client.getStore('/eventBackLog', lifespan)
+	client.getStore('/prototypoStore', lifespan)
 		.onUpdate(({head}) => {
 			const jsHead = head.toJS();
 			let patch;

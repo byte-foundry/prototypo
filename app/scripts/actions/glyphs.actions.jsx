@@ -1,4 +1,4 @@
-import {glyphs, panel, glyphSelect} from '../stores/creation.stores.jsx';
+import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
 
@@ -10,38 +10,38 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/load-glyphs': (params) => {
-		const patch = glyphs
+		const patch = prototypoStore
 			.set('glyphs', params)
 			.commit();
 
-		localServer.dispatchUpdate('/glyphs', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/select-glyph': ({unicode}) => {
-			const patch = glyphs.set('selected', unicode).commit();
-			const newViewMode = _.union(panel.get('mode'), ['glyph']);
+			const patch = prototypoStore.set('glyphSelected', unicode).commit();
+			const newViewMode = _.union(prototypoStore.get('uiMode'), ['glyph']);
 
-			localServer.dispatchUpdate('/glyphs', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 
 			fontInstance.displayChar(String.fromCharCode(unicode));
 
 			if (newViewMode.length > 0) {
-				const patchPanel = panel.set('mode', newViewMode).commit();
+				const patchPanel = prototypoStore.set('uiMode', newViewMode).commit();
 
-				localServer.dispatchUpdate('/panel', patchPanel);
+				localServer.dispatchUpdate('/prototypoStore', patchPanel);
 			}
 
 			saveAppValues();
 	},
 	'/toggle-lock-list': () => {
-		const lockState = glyphs.get('locked');
-		const patch = glyphs.set('locked', !lockState).commit();
+		const lockState = prototypoStore.get('glyphLocked');
+		const patch = prototypoStore.set('glyphLocked', !lockState).commit();
 
-		localServer.dispatchUpdate('/glyphs', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/toggle-focus-direct-access': () => {
-		const focused = glyphSelect.get('focused');
-		const patch = glyphSelect.set('focused', !focused).commit();
+		const focused = prototypoStore.get('glyphFocused');
+		const patch = prototypoStore.set('glyphFocused', !focused).commit();
 
-		localServer.dispatchUpdate('/glyphSelect', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 };

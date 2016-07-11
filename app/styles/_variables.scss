@@ -5,6 +5,7 @@ $green: #24d390;
 $dark-green: #00e28b;
 $light-green: #6ceab4;
 $lightest-green: #E6FFF6;
+$darkest-grey: #303030;
 $dark-grey: #3B3B3B;
 $medium-grey: #7e7e7e;
 $light-grey: #C6C6C6;
@@ -12,7 +13,7 @@ $lightest-grey: #F6F6F6;
 $white: #fefefe;
 $yellow: #f5e462;
 $black: #303030;
-$red: #f96752;
+$red: #fc5454;
 $dark-red: #ed4837;
 $blue: #00c4d6;
 $orange: #ff931e;
@@ -39,7 +40,7 @@ $greens:     #859900;
 /* inside .main
  ----------------------------------------------------------------- */
 
-$sidebar-w: 340px;
+$sidebar-w: 280px;
 
 /* inside .sidebar
  ----------------------------------------------------------------- */
@@ -52,3 +53,50 @@ $parammenu-h: 8rem;
  ----------------------------------------------------------------- */
 
 $glyphlist-h: 5.5rem;
+
+/* states
+-------------------------------------------------------------------*/
+$states: (
+	normal: (background: $green, color: $white),
+	indiv: (background: $yellow, color: $dark-grey),
+);
+
+@function map-fetch($map, $keys) {
+	$key: nth($keys, 1);
+	$length: length($keys);
+	$value: map-get($map, $key);
+
+	@if $value != null {
+		@if $length > 1 {
+			$rest: ();
+
+			@for $i from 2 through $length {
+				$rest: append($rest, nth($keys, $i))
+			}
+
+			@return map-fetch($value, $rest);
+
+		} @else {
+			@return $value;
+		}
+	} @else {
+		@return false;
+	}
+}
+
+@mixin themify ($states: $states) {
+	@each $theme, $map in $states {
+		.#{$theme} &  {
+		// Define theme color
+			$theme-background: map-fetch($states, $theme "background") !global;
+			$theme-color: map-fetch($states, $theme "color") !global;
+			// ... other vars to use
+			transition: background-color 500ms ease, color 500ms ease, border-color 500ms ease;
+
+			@content;
+
+			// Reset theme color to null
+			$theme-color: null !global;
+		}
+	}
+}

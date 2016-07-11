@@ -65,6 +65,8 @@ export default class SubscriptionChoosePlan extends React.Component {
 	}
 
 	render() {
+		window.Intercom('trackEvent', 'isOnChoosePlan');
+
 		const error = this.state.error ? <FormError errorText={this.state.error}/> : false;
 
 		return (

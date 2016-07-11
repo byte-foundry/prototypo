@@ -1,13 +1,19 @@
 import React from 'react';
-import Glyph from './glyph.components.jsx';
-import SearchGlyphList from './search-glyph-list.components.jsx';
-import GlyphTagList from './glyph-tag-list.components.jsx';
-import IndividualizeButton from './individualize-button.components.jsx';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import Log from '../services/log.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 
+import Glyph from './glyph.components.jsx';
+import SearchGlyphList from './search-glyph-list.components.jsx';
+import GlyphTagList from './glyph-tag-list.components.jsx';
+
 export default class GlyphList extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
@@ -23,12 +29,6 @@ export default class GlyphList extends React.Component {
 		else {
 			return true;
 		}
-	}
-
-	exportOTF() {
-		this.client.dispatchAction('/export-otf', {merged: true});
-
-		Log.ui('GlyphList.exportOTF');
 	}
 
 	isGlyphInSearch(glyph, search) {
@@ -123,8 +123,6 @@ export default class GlyphList extends React.Component {
 					</div>
 				</ReactGeminiScrollbar>
 				<SearchGlyphList/>
-				<div title="Export and download your font" className="export-btn" onClick={() => { this.exportOTF(); }}>Export OTF</div>
-				<IndividualizeButton/>
 			</div>
 		);
 	}

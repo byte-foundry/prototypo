@@ -1,65 +1,55 @@
 @import "../variables";
 
 .individualize-button {
-	position: absolute;
-	left: -207px;
-	bottom: 25px;
-	z-index: -1;
+	display:flex;
+	flex-flow: row nowrap;
+	padding-right: 30px;
 
-	padding: 2px;
-	width: 80px;
-	height: 22px;
-	border-radius: 10px;
-	background-color: $white;
-	border: 2px solid $dark-grey;
-
-	cursor: pointer;
-
-	&-toggle {
-		display: block;
-		position: absolute;
-		top: 2px;
-		left: 2px;
-		width: 40%;
+	&-switch {
+		position:relative;
+		z-index: -1;
+		padding: 2px;
+		width: 40px;
 		height: 14px;
 		border-radius: 10px;
-		background-color: $dark-grey;
-		background-image: url('../../images/link-icon.svg');
-		background-repeat: no-repeat;
-		background-position: center;
-		transition: left 200ms ease;
+		background-color: $white;
+		margin: 0 10px;
+
+		cursor: pointer;
+		&-toggle {
+			display: block;
+			position: absolute;
+			top: 2px;
+			left: 2px;
+			width: 60%;
+			height: 10px;
+			border-radius: 10px;
+			background-color: $yellow;
+			background-repeat: no-repeat;
+			background-position: center;
+			transition: left 200ms ease;
+		}
+
+		&.is-active {
+			.individualize-button-switch-toggle {
+				left: calc(40% - 2px);
+			}
+		}
 	}
+
 
 	&-label {
 		float: right;
 		margin: -2px 0px;
 		z-index: -2;
 		padding: 0 5px;
-		font-size: 12px;
+		font-size: 14px;
+		font-weight:400;
+		text-transform:none;
 
-		&::after {
-			content: "Indiv."
+		&.active-label {
+			color: $white;
 		}
 	}
 
-	&.is-active,
-	&:hover {
-		.individualize-button-toggle {
-			background-color: $yellow;
-			background-image: url('../../images/link-icon-hover.svg');
-		}
-	}
-
-	&.is-active {
-		border-color: $yellow;
-		.individualize-button-toggle {
-			left: calc(60% - 2px);
-		}
-		.individualize-button-label{
-			float: left;
-			&::after {
-				content: "Back"
-			}
-		}
-	}
 }

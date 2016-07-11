@@ -72,7 +72,7 @@ export default class AccountChangePlan extends React.Component {
 			)
 			: (
 				<form onSubmit={(e) => {this.confirmPlan(e);}} className="account-base account-change-plan">
-					<SelectWithLabel ref="select" label="Your plan" options={options}/>
+					<SelectWithLabel ref="select" label="Your plan" noResultsText={"No plan with this name"} options={options}/>
 					<AccountValidationButton label="Confirm plan change" loading={this.state.loading}/>
 				</form>
 			);
