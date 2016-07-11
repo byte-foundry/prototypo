@@ -21,7 +21,6 @@ export default class Collection extends React.Component {
 		this.open = this.open.bind(this);
 		this.openFamilyModal = this.openFamilyModal.bind(this);
 		this.selectFamily = this.selectFamily.bind(this);
-		this.selectVariant = this.selectVariant.bind(this);
 		this.openVariantModal = this.openVariantModal.bind(this);
 	}
 
@@ -270,7 +269,7 @@ class VariantList extends React.Component {
 			});
 
 			return (
-				<div className={classes} key={i} onClick={this.selectVariant(variant)}>
+				<div className={classes} key={i} onClick={() => {this.selectVariant(variant);}}>
 					{variant.name}
 				</div>
 			);
