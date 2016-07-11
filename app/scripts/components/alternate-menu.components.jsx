@@ -30,6 +30,9 @@ class Alternate extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.selectAlternate = this.selectAlternate.bind(this);
 	}
 
 	componentWillMount() {
@@ -42,7 +45,7 @@ class Alternate extends React.Component {
 
 	render() {
 		return (
-			<div className="alternate" onClick={() => {this.selectAlternate();}}><img src={`assets/images/${this.props.alt.altImg}`}/></div>
+			<div className="alternate" onClick={this.selectAlternate}><img src={`assets/images/${this.props.alt.altImg}`}/></div>
 		);
 	}
 }

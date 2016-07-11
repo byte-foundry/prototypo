@@ -1,7 +1,6 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Classnames from 'classnames';
-import Lifespan from 'lifespan';
 import Log from '../services/log.services.js';
 
 export class VariantList extends React.Component {
@@ -29,6 +28,12 @@ export class Variant extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+
+		// function binding
+		this.selectVariant = this.selectVariant.bind(this);
+		this.deactivate = this.deactivate.bind(this);
+		this.delayDeactivate = this.delayDeactivate.bind(this);
+		this.deleteVariant = this.deleteVariant.bind(this);
 	}
 
 	componentWillMount() {
@@ -101,7 +106,11 @@ export class Variant extends React.Component {
 			) : false;
 
 		return (
-			<div className="variant flipping-variant" onClick={() => {this.selectVariant();} } onMouseLeave={() => {this.deactivate();}} onMouseEnter={() => {this.delayDeactivate();}}>
+			<div
+				className="variant flipping-variant"
+				onClick={this.selectVariant}
+				onMouseLeave={this.deactivate}
+				onMouseEnter={this.delayDeactivate}>
 				<div className={rectoClasses}>
 					<img className="variant-caret variant-caret-closed" src="/assets/images/list-icon-closed.svg"></img>
 					<img className="variant-caret variant-caret-open" src="/assets/images/list-icon-open.svg"></img>
@@ -121,7 +130,7 @@ export class Variant extends React.Component {
 					<div className={deleteClasses}>
 						<img className="variant-caret" src="/assets/images/font-infos.svg"></img>
 						Delete this variant
-						<div className="variant-button" onClick={() => {this.deleteVariant();}}>YES</div>
+						<div className="variant-button" onClick={this.deleteVariant}>YES</div>
 						<div className="variant-button" onClick={(e) => { this.flip(e); }}>NO</div>
 					</div>
 				</div>
@@ -129,4 +138,3 @@ export class Variant extends React.Component {
 		);
 	}
 }
-

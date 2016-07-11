@@ -13,6 +13,9 @@ export default class GlyphGrid extends React.Component {
 			glyphs: {},
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.selectTag = this.selectTag.bind(this);
 	}
 
 	componentWillMount() {
@@ -79,7 +82,7 @@ export default class GlyphGrid extends React.Component {
 					</div>
 					<div className="glyphs-grid-filter">
 						Filter by:
-						<select className="glyphs-grid-filter-select" onChange={(e) => { this.selectTag(e);}}>
+						<select className="glyphs-grid-filter-select" onChange={this.selectTag}>
 							{tags}
 						</select>
 					</div>

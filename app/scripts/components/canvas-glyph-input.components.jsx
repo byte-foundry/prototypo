@@ -14,6 +14,9 @@ export default class CanvasGlyphInput extends React.Component {
 			mode: [],
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.setupGlyphAccess = this.setupGlyphAccess.bind(this);
 	}
 
 	componentWillMount() {
@@ -76,10 +79,11 @@ export default class CanvasGlyphInput extends React.Component {
 			'canvas-glyph-input-input': true,
 			'is-active': this.state.focused,
 		});
+
 		return (
 			<div className="canvas-menu-item canvas-glyph-input">
 				<div className="canvas-glyph-input-label is-active" onClick={() => { this.toggleView('list'); }} >Glyphs List</div>
-				<div className={classes} onClick={(e) => { this.setupGlyphAccess(e);}}>{String.fromCharCode(this.state.selected)}</div>
+				<div className={classes} onClick={this.setupGlyphAccess}>{String.fromCharCode(this.state.selected)}</div>
 			</div>
 		);
 	}

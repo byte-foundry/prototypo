@@ -25,6 +25,9 @@ export default class Dashboard extends React.Component {
 		super(props);
 		this.state = {};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.exitOnboarding = this.exitOnboarding.bind(this);
 	}
 
 	async componentWillMount() {
@@ -92,7 +95,7 @@ export default class Dashboard extends React.Component {
 						<p>This little tutorial will explain the basic features of Prototypo and how to use them.</p>
 						<div className="onboarding-step-footer">
 							<button className="onboarding-step-footer-btn" onClick={() => {this.goToNextStep('createFamily');}}>Proceed to next step</button>
-							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding();}}>Exit tutorial</button>
+							<button className="onboarding-step-footer-btn exit" onClick={this.exitOnboarding}>Exit tutorial</button>
 						</div>
 					</OnBoardingStep>
 					<OnBoardingStep name="createFamily" type="indicator" target="font-collection">
@@ -146,14 +149,14 @@ export default class Dashboard extends React.Component {
 						<p>You just finished the tutorial. You now know the basic functionality offered by Prototypo.</p>
 						<p>If you want to go further you can subscribe to <a href="www.prototypo.io/pricing" target="_blank">our professional plan</a> to enjoy the full customization potential.</p>
 						<div className="onboarding-step-footer">
-							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding();}}>Exit tutorial</button>
+							<button className="onboarding-step-footer-btn exit" onClick={this.exitOnboarding}>Exit tutorial</button>
 						</div>
 					</OnBoardingStep>
 					<OnBoardingStep name="premature-end" type="indicator" target="file-menu" arrowPos="top" inverseArrow={true} targetAlign="bottom center" elementAlign="top center" offset="-50px -18px" noclose={true}>
 						<h1>Don't worry!</h1>
 						<p>You can restart the tutorial if you so desire by clicking the "Restart tutorial" button in the file menu</p>
 						<div className="onboarding-step-footer">
-							<button className="onboarding-step-footer-btn exit" onClick={() => {this.exitOnboarding();}}>Exit tutorial</button>
+							<button className="onboarding-step-footer-btn exit" onClick={this.exitOnboarding}>Exit tutorial</button>
 						</div>
 					</OnBoardingStep>
 				</OnBoarding>

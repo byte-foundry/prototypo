@@ -36,7 +36,8 @@ export class ControlsTabs extends React.Component {
 				<li className={classes} id={iconId}
 					onClick={() => {
 						this.changeTab(name);
-					}} key={`${name}ControlsHeader`}>
+					}}
+					key={`${name}ControlsHeader`}>
 					<div className="controls-tabs-icon-legend is-legend-active">{name}</div>
 				</li>
 			);

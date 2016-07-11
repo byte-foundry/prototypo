@@ -98,6 +98,9 @@ export class Slider extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.resetValue = this.resetValue.bind(this);
 	}
 
 	componentWillMount() {
@@ -145,7 +148,7 @@ export class Slider extends React.Component {
 					{demoOverlay}
 				</div>
 				<label className="slider-title">{this.props.label}</label>
-				<div className="slider-reset" onClick={() => {this.resetValue();}}>reset</div>
+				<div className="slider-reset" onClick={this.resetValue}>reset</div>
 				<SliderTextController value={value} name={this.props.name} label={this.props.label} disabled={this.props.disabled} individualized={this.props.individualized}/>
 				<div className="slider-container">
 					<SliderController value={value}
@@ -233,6 +236,9 @@ export class SliderController extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.handleDown = this.handleDown.bind(this);
 	}
 
 	componentWillMount() {
@@ -336,7 +342,7 @@ export class SliderController extends React.Component {
 
 		return (
 			<div className="slider-controller" ref="slider"
-				onMouseDown={(e) => { this.handleDown(e);}}>
+				onMouseDown={this.handleDown}>
 				<div className={classes} style={transform}>
 					<div
 						className="slider-controller-handle"
@@ -417,6 +423,9 @@ export class SliderTextController extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		//function binding
+		this.handleChange = this.handleChange.bind(this);
 	}
 
 	componentWillMount() {
@@ -426,6 +435,17 @@ export class SliderTextController extends React.Component {
 
 	componentWillUnmount() {
 		this.lifespan.release();
+	}
+
+	handleChange(e) {
+		this.client.dispatchAction(
+			'/change-param',
+			{
+				name: this.props.name,
+				value: parseFloat(e.target.value),
+				label: this.props.label,
+			}
+		);
 	}
 
 	render() {
@@ -439,15 +459,7 @@ export class SliderTextController extends React.Component {
 				className={classes}
 				type="number"
 				value={this.props.value}
-				onChange={(e) => {
-					this.client.dispatchAction(
-						'/change-param',
-						{
-							name: this.props.name,
-							value: parseFloat(e.target.value),
-							label: this.props.label,
-						});
-				}}
+				onChange={this.handleChange}
 				disabled={this.props.disabled}
 			/>
 		);

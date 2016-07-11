@@ -2,7 +2,6 @@ import React from 'react';
 import {Link} from 'react-router';
 import Lifespan from 'lifespan';
 
-import HoodieApi from '../services/hoodie.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import FormError from './shared/form-error.components.jsx';
@@ -15,6 +14,9 @@ export default class Signin extends React.Component {
 		this.state = {
 			errors: [],
 		};
+
+		// function binding
+		this.signIn = this.signIn.bind(this);
 	}
 
 	componentWillMount() {
@@ -64,7 +66,7 @@ export default class Signin extends React.Component {
 					<h1 className="account-title">Sign in</h1>
 				</div>
 				<div className="account-dashboard-container">
-					<form className="sign-in-form" onSubmit={(e) => {this.signIn(e);}}>
+					<form className="sign-in-form" onSubmit={this.signIn}>
 						<InputWithLabel
 							id="email-sign-in"
 							name="email-sign-in"

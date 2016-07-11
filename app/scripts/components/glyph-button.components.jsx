@@ -11,6 +11,9 @@ export default class GlyphButton extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.toggleLockList = this.toggleLockList.bind(this);
 	}
 
 	componentWillMount() {
@@ -81,7 +84,7 @@ export default class GlyphButton extends React.Component {
 					<label className="glyph-btn-list-btn-label">
 						Glyph list
 					</label>
-					<div className="glyph-btn-list-btn-wrapper" onClick={() => { this.toggleLockList(); }}>
+					<div className="glyph-btn-list-btn-wrapper" onClick={this.toggleLockList}>
 						<div className={lockClasses}>
 						</div>
 					</div>

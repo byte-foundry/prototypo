@@ -12,6 +12,15 @@ export default class GlyphTagList extends React.Component {
 			show: false,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.toggleDisplay = this.toggleDisplay.bind(this);
+	}
+
+	toggleDisplay() {
+		this.setState({
+			show: !this.state.show,
+		});
 	}
 
 	render() {
@@ -33,11 +42,7 @@ export default class GlyphTagList extends React.Component {
 		});
 
 		return (
-			<div className={classes} onClick={() => {
-				this.setState({
-					show: !this.state.show,
-				});
-			}}>
+			<div className={classes} onClick={this.toggleDisplay}>
 				<div className="glyph-tag-list-selected">
 					Filter by {this.props.selected}
 					<span className="glyph-tag-list-selected-icon"></span>

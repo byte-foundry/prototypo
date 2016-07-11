@@ -7,6 +7,10 @@ export default class SearchGlyphList extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+
+		// function binding
+		this.saveSearch = this.saveSearch.bind(this);
+		this.changeSearch = this.changeSearch.bind(this);
 	}
 
 	componentWillMount() {
@@ -37,8 +41,13 @@ export default class SearchGlyphList extends React.Component {
 
 		return (
 			<form className={classes}>
-				<input className="search-glyph-list-input" ref="search" placeholder="Search glyph…" type="text" onChange={() => { this.changeSearch(); }}/>
-				<input className="search-glyph-list-submit" type="button" onClick={() => { this.saveSearch();}}/>
+				<input
+					className="search-glyph-list-input"
+					ref="search"
+					placeholder="Search glyph…"
+					type="text"
+					onChange={this.changeSearch}/>
+				<input className="search-glyph-list-submit" type="button" onClick={this.saveSearch}/>
 			</form>
 		);
 	}

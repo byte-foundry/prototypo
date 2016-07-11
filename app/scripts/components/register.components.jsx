@@ -15,6 +15,9 @@ export default class Register extends React.Component {
 			inError: {},
 			errors: [],
 		};
+
+		// function binding
+		this.register = this.register.bind(this);
 	}
 
 	componentWillMount() {
@@ -65,7 +68,7 @@ export default class Register extends React.Component {
 					<h1 className="account-title">Sign up</h1>
 				</div>
 				<div className="account-dashboard-container">
-					<form className="sign-in-form" onSubmit={(e) => {this.register(e);}}>
+					<form className="sign-in-form" onSubmit={this.register}>
 						<div className="columns">
 							<div className="half-column">
 								<InputWithLabel

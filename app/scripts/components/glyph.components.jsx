@@ -8,6 +8,9 @@ export default class Glyph extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.selectGlyph = this.selectGlyph.bind(this);
 	}
 
 	selectGlyph() {
@@ -39,7 +42,7 @@ export default class Glyph extends React.Component {
 		});
 
 		return (
-			<div className={classes} onClick={() => { this.selectGlyph(); } }>
+			<div className={classes} onClick={this.selectGlyph}>
 				<label className="glyph-list-glyph-label">{String.fromCharCode(this.props.unicode)}</label>
 				<div className="glyph-list-glyph-right-indicator"></div>
 				<div className="glyph-list-glyph-left-indicator"></div>

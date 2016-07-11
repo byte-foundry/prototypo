@@ -2,7 +2,6 @@ import React from 'react';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import ClassNames from 'classnames';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
@@ -24,12 +23,16 @@ export default class PrototypoCanvas extends React.Component {
 			glyphPanelOpened: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.handleLeaveAndClick = this.handleLeaveAndClick.bind(this);
 		this.reset = this.reset.bind(this);
 		this.toggleCoords = this.toggleCoords.bind(this);
 		this.toggleNodes = this.toggleNodes.bind(this);
 		this.toggleOutline = this.toggleOutline.bind(this);
+		this.rejectZoomShortcut = this.rejectZoomShortcut.bind(this);
+		this.acceptZoomShortcut = this.acceptZoomShortcut.bind(this);
 	}
 
 	componentWillMount() {
@@ -272,7 +275,13 @@ export default class PrototypoCanvas extends React.Component {
 				className={canvasClass}
 				onClick={this.handleLeaveAndClick}
 				onMouseLeave={this.handleLeaveAndClick}>
-				<div ref="canvas" className="prototypo-canvas-container" onMouseLeave={() => {this.rejectZoomShortcut();}} onMouseEnter={() => { this.acceptZoomShortcut();}} onDoubleClick={() => { this.reset(); }}></div>
+				<div
+					ref="canvas"
+					className="prototypo-canvas-container"
+					onMouseLeave={this.rejectZoomShortcut}
+					onMouseEnter={this.acceptZoomShortcut}
+					onDoubleClick={this.reset}>
+				</div>
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
 				</div>

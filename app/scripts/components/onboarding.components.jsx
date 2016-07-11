@@ -79,6 +79,9 @@ export class OnBoardingStep extends React.Component {
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
+
+		// function binding
+		this.endPrematurely = this.endPrematurely.bind(this);
 	}
 
 	endPrematurely() {
@@ -89,7 +92,7 @@ export class OnBoardingStep extends React.Component {
 	render() {
 
 		const close = this.props.type !== 'fullModal' && !this.props.noclose ? (
-			<div className="onboarding-step-close" onClick={() => {this.endPrematurely();}}><img src="assets/images/close-icon.svg"></img></div>
+			<div className="onboarding-step-close" onClick={this.endPrematurely}><img src="assets/images/close-icon.svg"></img></div>
 			)
 			: false;
 
