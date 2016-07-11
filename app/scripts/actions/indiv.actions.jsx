@@ -103,7 +103,7 @@ export default {
 			return localServer.dispatchUpdate('/prototypoStore', patchError);
 		}
 
-		if (Object.keys(oldValues.indiv_group_param).indexOf(name) !== -1) {
+		if (oldValues.indiv_group_param && Object.keys(oldValues.indiv_group_param).indexOf(name) !== -1) {
 			const patchError = prototypoStore
 				.set('indivErrorMessage', 'There is already a group with this name')
 				.commit();
