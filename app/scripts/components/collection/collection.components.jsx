@@ -19,9 +19,6 @@ export default class Collection extends React.Component {
 		//function binding
 		this.returnToDashboard = this.returnToDashboard.bind(this);
 		this.open = this.open.bind(this);
-		this.openFamilyModal = this.openFamilyModal.bind(this);
-		this.selectFamily = this.selectFamily.bind(this);
-		this.openVariantModal = this.openVariantModal.bind(this);
 	}
 
 	async componentWillMount() {
@@ -130,6 +127,9 @@ class FamilyList extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.openFamilyModal = this.openFamilyModal.bind(this);
 	}
 
 	componentWillMount() {
@@ -169,6 +169,9 @@ class Family extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.selectFamily = this.selectFamily.bind(this);
 	}
 
 	componentWillMount() {
@@ -215,6 +218,7 @@ class VariantList extends React.Component {
 		this.cancelDelete = this.cancelDelete.bind(this);
 		this.prepareDeleteOrDelete = this.prepareDeleteOrDelete.bind(this);
 		this.openChangeNameFamily = this.openChangeNameFamily.bind(this);
+		this.openVariantModal = this.openVariantModal.bind(this);
 	}
 
 	componentWillMount() {
