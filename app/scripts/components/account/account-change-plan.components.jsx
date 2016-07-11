@@ -11,9 +11,6 @@ export default class AccountChangePlan extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
-
-		//function binding
-		this.confirmPlan = this.confirmPlan.bind(this);
 	}
 
 	componentWillMount() {
@@ -74,7 +71,7 @@ export default class AccountChangePlan extends React.Component {
 				</div>
 			)
 			: (
-				<form onSubmit={this.confirmPlan} className="account-base account-change-plan">
+				<form onSubmit={(e) => {this.confirmPlan(e);}} className="account-base account-change-plan">
 					<SelectWithLabel ref="select" label="Your plan" noResultsText={"No plan with this name"} options={options}/>
 					<AccountValidationButton label="Confirm plan change" loading={this.state.loading}/>
 				</form>

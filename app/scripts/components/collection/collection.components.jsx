@@ -15,14 +15,8 @@ export default class Collection extends React.Component {
 			families: [],
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-
-		//function binding
 		this.returnToDashboard = this.returnToDashboard.bind(this);
 		this.open = this.open.bind(this);
-		this.openFamilyModal = this.openFamilyModal.bind(this);
-		this.selectFamily = this.selectFamily.bind(this);
-		this.selectVariant = this.selectVariant.bind(this);
-		this.openVariantModal = this.openVariantModal.bind(this);
 	}
 
 	async componentWillMount() {
@@ -159,7 +153,7 @@ class FamilyList extends React.Component {
 
 		return (
 				<div className="family-list collection-pan">
-					<Button label="Create a new family" click={this.openFamilyModal}/>
+					<Button label="Create a new family" click={this.openFamilyModal.bind(this)}/>
 					{families}
 				</div>
 		);
@@ -191,7 +185,7 @@ class Family extends React.Component {
 		});
 
 		return (
-			<div className={classes} onClick={this.selectFamily}>
+			<div className={classes} onClick={this.selectFamily.bind(this)}>
 				<div className={sampleClasses}></div>
 				<div className="family-info">
 					<div className="family-info-name">
@@ -270,7 +264,7 @@ class VariantList extends React.Component {
 			});
 
 			return (
-				<div className={classes} key={i} onClick={this.selectVariant(variant)}>
+				<div className={classes} key={i} onClick={() => {this.selectVariant(variant);}}>
 					{variant.name}
 				</div>
 			);
@@ -295,7 +289,7 @@ class VariantList extends React.Component {
 				<div className="variant-list-title">
 					VARIANTS
 				</div>
-				<Button label="Add variant" click={this.openVariantModal}/>
+				<Button label="Add variant" click={this.openVariantModal.bind(this)}/>
 				{variants}
 			</div>
 		);

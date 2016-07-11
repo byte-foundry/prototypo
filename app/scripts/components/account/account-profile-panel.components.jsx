@@ -14,9 +14,6 @@ export default class AccountProfilePanel extends React.Component {
 		this.state = {
 			infos: {},
 		};
-
-		//function binding
-		this.changeAccount = this.changeAccount.bind(this);
 	}
 
 	componentWillMount() {
@@ -61,7 +58,7 @@ export default class AccountProfilePanel extends React.Component {
 
 		return this.state.infos.accountValues
 			? (
-				<form className="account-base account-profile-panel" onSubmit={this.changeAccount}>
+				<form className="account-base account-profile-panel" onSubmit={(e) => {this.changeAccount(e);}}>
 					<DisplayWithLabel label="My email" data={this.state.infos.accountValues.username}/>
 					<div className="account-profile-panel-line">
 						<InputWithLabel ref="firstname" label="First name" required={true} inputValue={this.state.infos.accountValues.firstname}/>

@@ -11,10 +11,6 @@ export default class SubscriptionChoosePlan extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
-
-		//function binding
-		this.choosePlan = this.choosePlan.bind(this);
-		this.confirmPlan = this.confirmPlan.bind(this);
 	}
 
 	componentWillMount() {
@@ -76,7 +72,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 					* Taxes are offered for private individuals. Currency ultimately depends on the country where your credit card has been issued.
 				</div>
 				{error}
-				<AccountValidationButton loading={this.state.loading} label="Checkout" click={this.confirmPlan}/>
+				<AccountValidationButton loading={this.state.loading} label="Checkout" click={() => {this.confirmPlan();}}/>
 			</div>
 		);
 	}
@@ -98,7 +94,7 @@ class SubscriptionPlan extends React.Component {
 		});
 
 		return (
-			<div className={classes} onClick={this.choosePlan}>
+			<div className={classes} onClick={() => { this.choosePlan();}}>
 				<div className="subscription-plan-name">
 					{this.props.plan.name}
 				</div>

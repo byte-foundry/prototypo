@@ -129,7 +129,6 @@
 
 		"react/jsx-uses-vars": 2,
 		"react/jsx-uses-react": 2,
-        "react/jsx-no-bind": 2,
 
 		"babel/new-cap": [1, {"capIsNewExceptions": ["Intercom", "XXHash", "Classnames", "PouchDB", "Log"]}],
 		"babel/object-curly-spacing": 2,

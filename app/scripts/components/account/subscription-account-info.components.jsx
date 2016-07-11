@@ -13,9 +13,6 @@ export default class SubscriptionAccountInfo extends React.Component {
 		this.state = {
 			errors: [],
 		};
-
-		//function binding
-		this.createAccount = this.createAccount.bind(this);
 	}
 
 	componentWillMount() {
@@ -56,7 +53,7 @@ export default class SubscriptionAccountInfo extends React.Component {
 		});
 
 		return (
-			<form onSubmit={this.createAccount} className="account-base subscription-account-info">
+			<form onSubmit={(e) => {this.createAccount(e);}} className="account-base subscription-account-info">
 				<div className="columns">
 					<div className="half-column">
 						<InputWithLabel label="First name" required={true} ref="firstname"/>

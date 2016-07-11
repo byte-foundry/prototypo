@@ -20,9 +20,6 @@ export default class SubscriptionAddCard extends React.Component {
 				card: [],
 			},
 		};
-
-		//function binding
-		this.addDetails = this.addDetails.bind(this);
 	}
 
 	componentWillMount() {
@@ -113,7 +110,7 @@ export default class SubscriptionAddCard extends React.Component {
 			: '';
 
 		return (
-			<form method="post" onSubmit={this.addDetails} className="account-base subscription-add-card">
+			<form method="post" onSubmit={(e) => {this.addDetails(e);}} className="account-base subscription-add-card">
 				{oldBilling}
 				<h2>Billing address</h2>
 				<BillingAddress address={{}} buyerName={buyerName} inError={this.state.inError} ref="address"/>

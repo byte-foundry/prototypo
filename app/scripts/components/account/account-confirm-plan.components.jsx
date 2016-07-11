@@ -12,9 +12,6 @@ export default class AccountConfirmPlan extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
-
-		//function binding
-		this.confirmPlanChange = this.confirmPlanChange.bind(this);
 	}
 
 	componentWillMount() {
@@ -67,7 +64,7 @@ export default class AccountConfirmPlan extends React.Component {
 			<div className="account-base account-confirm-plan">
 				<h1 className="subscription-title">This is what you will be charged</h1>
 				{invoice}
-				<AccountValidationButton label="Confirm plan change" click={this.confirmPlanChange}/>
+				<AccountValidationButton label="Confirm plan change" click={() => {this.confirmPlanChange();}}/>
 			</div>
 		);
 	}

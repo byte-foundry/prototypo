@@ -15,9 +15,6 @@ export default class AccountBillingAddress extends React.Component {
 			inError: {},
 			errors: [],
 		};
-
-		//function binding
-		this.addAddress = this.addAddress.bind(this);
 	}
 
 	componentWillMount() {
@@ -72,7 +69,7 @@ export default class AccountBillingAddress extends React.Component {
 			: false;
 
 		return (
-			<form onSubmit={this.addAddress} className="account-base account-billing-address">
+			<form onSubmit={(e) => {this.addAddress(e);}} className="account-base account-billing-address">
 				{billingAddress}
 				{errors}
 				{success}
