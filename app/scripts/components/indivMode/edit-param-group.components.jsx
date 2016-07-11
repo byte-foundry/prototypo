@@ -13,6 +13,12 @@ export default class EditParamGroup extends React.Component {
 		this.state = {
 			selected: [],
 		};
+
+		// function binding
+		this.selectGroup = this.selectGroup.bind(this);
+		this.deleteGroup = this.deleteGroup.bind(this);
+		this.editGroup = this.editGroup.bind(this);
+		this.createNewGroup = this.createNewGroup.bind(this);
 	}
 
 	componentWillMount() {
@@ -47,6 +53,18 @@ export default class EditParamGroup extends React.Component {
 		this.client.dispatchAction('/select-indiv-group', e.target.value);
 	}
 
+	deleteGroup() {
+		this.client.dispatchAction('/pre-delete', true);
+	}
+
+	editGroup() {
+		this.client.dispatchAction('/edit-param-group', true);
+	}
+
+	createNewGroup() {
+		this.client.dispatchAction('/create-mode-param-group');
+	}
+
 	render() {
 		const options = _.map(this.state.groups, (group) => {
 				return <option value={group} key={group}>{group}</option>;
@@ -71,12 +89,12 @@ export default class EditParamGroup extends React.Component {
 		return (
 			<div className="edit-param-group">
 				Editing
-				<select onChange={(e) => { this.selectGroup(e); }} value={this.state.currentGroup} className="edit-param-group-select">
+				<select onChange={this.selectGroup} value={this.state.currentGroup} className="edit-param-group-select">
 					{options}
 				</select>
-				<span className="edit-param-group-button alert" onClick={() => {this.client.dispatchAction('/pre-delete', true);}}>DELETE</span>
-				<span className="edit-param-group-button" onClick={() => {this.client.dispatchAction('/edit-param-group', true);}}>EDIT</span>
-				<span className="edit-param-group-button" onClick={() => {this.client.dispatchAction('/create-mode-param-group');}}>CREATE NEW GROUP</span>
+				<span className="edit-param-group-button alert" onClick={this.deleteGroup}>DELETE</span>
+				<span className="edit-param-group-button" onClick={this.editGroup}>EDIT</span>
+				<span className="edit-param-group-button" onClick={this.createNewGroup}>CREATE NEW GROUP</span>
 				{deletePanel}
 				{editPanel}
 				{glyphGrid}

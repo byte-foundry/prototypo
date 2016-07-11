@@ -87,6 +87,13 @@ class ViewButton extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.handleClick = this.handleClick.bind(this);
+	}
+
+	handleClick() {
+		this.props.click(this.props.name);
 	}
 
 	render() {
@@ -98,7 +105,7 @@ class ViewButton extends React.Component {
 		return (
 			<div
 				className={`${classes} view-button-${this.props.name}`}
-				onClick={() => {this.props.click(this.props.name);}}
+				onClick={this.handleClick}
 			></div>
 		);
 	}

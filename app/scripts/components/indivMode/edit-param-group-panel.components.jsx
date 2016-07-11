@@ -3,6 +3,13 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class EditParamGroupPanel extends React.Component {
+	constructor(props) {
+		super(props);
+
+		// function binding
+		this.saveGroup = this.saveGroup.bind(this);
+		this.cancelGroup = this.cancelGroup.bind(this);
+	}
 	componentWillMount() {
 		this.client = LocalClient.instance();
 	}
@@ -18,6 +25,10 @@ export default class EditParamGroupPanel extends React.Component {
 
 	saveGroup() {
 		this.client.dispatchAction('/save-param-group', {name: this.refs.name.value});
+	}
+
+	cancelGroup() {
+		this.client.dispatchAction('/edit-param-group', false);
 	}
 
 	render() {
@@ -45,8 +56,8 @@ export default class EditParamGroupPanel extends React.Component {
 				<button className="create-param-group-form-add-glyph" onClick={(e) => { this.toggleGlyphs(e); }}>Add multiple glyph to this group</button>
 				{error}
 				<div className="create-param-group-form-buttons">
-					<button className="create-param-group-form-buttons-cancel" onClick={() => {this.client.dispatchAction('/edit-param-group', false);}}>Cancel</button>
-					<button className="create-param-group-form-buttons-submit" onClick={() => {this.saveGroup();}}>Save</button>
+					<button className="create-param-group-form-buttons-cancel" onClick={this.cancelGroup}>Cancel</button>
+					<button className="create-param-group-form-buttons-submit" onClick={this.saveGroup}>Save</button>
 				</div>
 			</div>
 		);

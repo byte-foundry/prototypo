@@ -1,6 +1,5 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import ClassNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../../stores/local-client.stores.jsx';

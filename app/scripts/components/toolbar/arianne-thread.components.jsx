@@ -253,6 +253,13 @@ class ArianneDropMenuItem extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.handleClick = this.handleClick.bind(this);
+	}
+
+	handleClick() {
+		this.props.click(this.props.item, this.props.family);
 	}
 
 	render() {
@@ -261,9 +268,7 @@ class ArianneDropMenuItem extends React.Component {
 			: this.props.item.name;
 
 		return (
-			<li className="arianne-drop-menu-item" onClick={() => {
-				this.props.click(this.props.item, this.props.family);
-			}}>
+			<li className="arianne-drop-menu-item" onClick={this.handleClick}>
 				{item}
 			</li>
 		);
@@ -278,6 +283,7 @@ class ActionArianneItem extends React.Component {
 
 	render() {
 		const classes = this.props.className || 'arianne-item';
+
 		return (
 			<div className={classes} onClick={this.props.click}>
 				<div className="arianne-item-action">

@@ -3,7 +3,6 @@ import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Log from '~/services/log.services.js';
-import HoodieApi from '~/services/hoodie.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
@@ -11,7 +10,6 @@ import {
 	TopBarMenu,
 	TopBarMenuDropdown,
 	TopBarMenuDropdownItem,
-	TopBarMenuDropdownCheckBox,
 	TopBarMenuAction,
 	TopBarMenuIcon,
 	TopBarMenuLink,
@@ -34,6 +32,13 @@ export default class Topbar extends React.Component {
 		//function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
+		this.newProject = this.newProject.bind(this);
+		this.logout = this.logout.bind(this);
+		this.individualize = this.individualize.bind(this);
+		this.resetAllParams = this.resetAllParams.bind(this);
+		this.chatWithUs = this.chatWithUs.bind(this);
+		this.submitIssueOnGitHub = this.submitIssueOnGitHub.bind(this);
+		this.getToFAQ = this.getToFAQ.bind(this);
 	}
 
 	componentWillMount() {
@@ -110,6 +115,18 @@ export default class Topbar extends React.Component {
 		}
 	}
 
+	chatWithUs() {
+		window.Intercom('show');
+	}
+
+	submitIssueOnGitHub() {
+		window.open('https://github.com/byte-foundry/prototypo/issues', '_blank');
+	}
+
+	getToFAQ() {
+		window.open('https://www.prototypo.io/faq', '_blank');
+	}
+
 	setAccountRoute() {
 
 	}
@@ -156,16 +173,16 @@ export default class Topbar extends React.Component {
 				<TopBarMenu>
 					<TopBarMenuIcon className="side-tabs-icon-headers" img="assets/images/prototypo-icon.svg"/>
 					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
-						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
+						<TopBarMenuDropdownItem name="New project" handler={this.newProject} separator={true}/>
 						<AllowedTopBarWithPayment>
 							<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true);}}/>
 							<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false);}}/>
 							<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr} separator={true}/>
 						</AllowedTopBarWithPayment>
-						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout();}}/>
+						<TopBarMenuDropdownItem name="Logout" handler={this.logout}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">
-						<TopBarMenuDropdownItem name="Individualize parameters" handler={() => { this.individualize(); }}/>
+						<TopBarMenuDropdownItem name="Individualize parameters" handler={this.individualize}/>
 						<TopBarMenuDropdownItem name={undoText} key="undo" disabled={undoDisabled} shortcut="ctrl+z" handler={() => {
 							if (!undoDisabled) {
 								this.client.dispatchAction('/go-back');
@@ -177,7 +194,7 @@ export default class Topbar extends React.Component {
 							}
 						}}/>
 						{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
-						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams(); }}/>
+						<TopBarMenuDropdownItem name="Reset all parameters" handler={this.resetAllParams}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Window">
 						<TopBarMenuDropdownItem name="Glyphs list" checkbox={true} active={this.state.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
@@ -186,9 +203,9 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Word view" checkbox={true} active={this.state.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word'); }}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Help">
-						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
-						<TopBarMenuDropdownItem name="Submit an issue on GitHub" handler={() => { window.open('https://github.com/byte-foundry/prototypo/issues', '_blank'); }}/>
-						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq', '_blank'); }}/>
+						<TopBarMenuDropdownItem name="Chat with us!" handler={this.chatWithUs}/>
+						<TopBarMenuDropdownItem name="Submit an issue on GitHub" handler={this.submitIssueOnGitHub}/>
+						<TopBarMenuDropdownItem name="FAQ" handler={this.getToFAQ}/>
 					</TopBarMenuDropdown>
 					{exporting}
 					{errorExporting}

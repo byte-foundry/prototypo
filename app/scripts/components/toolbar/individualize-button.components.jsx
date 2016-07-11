@@ -10,6 +10,9 @@ export default class IndividualizeButton extends React.Component {
 		super(props);
 		this.state = {};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.individualize = this.individualize.bind(this);
 	}
 
 	componentWillMount() {
@@ -52,9 +55,9 @@ export default class IndividualizeButton extends React.Component {
 		});
 
 		return (
-			<div className="individualize-button" onClick={() => { this.individualize(); }} >
+			<div className="individualize-button" onClick={this.individualize} >
 				<div className={activeAllClassName}>All glyphs</div>
-				<div className={buttonClass} onClick={() => { this.individualize(); }} >
+				<div className={buttonClass} onClick={this.individualize} >
 					<div className="individualize-button-switch-toggle" title="Individualize parameters"></div>
 				</div>
 				<div className={activeGroupsClassName}>Groups of glyphs</div>

@@ -3,6 +3,13 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class DeleteParamGroup extends React.Component {
+	constructor(props) {
+		super(props);
+
+		// function binding
+		this.cancelDelete = this.cancelDelete.bind(this);
+		this.deleteGroup = this.deleteGroup.bind(this);
+	}
 	componentWillMount() {
 		this.client = LocalClient.instance();
 	}
@@ -32,8 +39,8 @@ export default class DeleteParamGroup extends React.Component {
 					{glyphs}
 				</div>
 				<div className="create-param-group-form-buttons">
-					<button className="create-param-group-form-buttons-cancel" onClick={() => { this.cancelDelete();}}>Cancel</button>
-					<button className="create-param-group-form-buttons-submit" onClick={() => { this.deleteGroup();}}>Delete</button>
+					<button className="create-param-group-form-buttons-cancel" onClick={this.cancelDelete}>Cancel</button>
+					<button className="create-param-group-form-buttons-submit" onClick={this.deleteGroup}>Delete</button>
 				</div>
 			</div>
 		);
