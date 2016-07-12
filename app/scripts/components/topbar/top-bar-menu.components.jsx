@@ -67,7 +67,7 @@ class TopBarMenuItem extends React.Component {
 		const {head} = await this.client.fetch('/prototypoStore');
 
 		this.setState({
-			topbarItemDisplayed: head.toJS().clickDisplayed,
+			topbarItemDisplayed: head.toJS().topbarItemDisplayed,
 		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
@@ -98,6 +98,19 @@ class TopBarMenuItem extends React.Component {
 				topbarItemDisplayed: this.props.count,
 			});
 		}
+
+		const outsideClick = () => {
+			this.client.dispatchAction('/store-value', {
+				topbarItemDisplayed: undefined,
+			});
+			document.querySelectorAll('*:not(.top-bar-menu-item)').forEach((item) => {
+				item.removeEventListener('click', outsideClick);
+			});
+		};
+
+		document.querySelectorAll('*:not(.top-bar-menu-item)').forEach((item) => {
+			item.addEventListener('click', outsideClick);
+		});
 	}
 
 	render() {

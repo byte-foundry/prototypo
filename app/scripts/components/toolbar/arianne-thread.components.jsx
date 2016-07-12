@@ -125,7 +125,8 @@ export default class ArianneThread extends React.Component {
 					label={this.state.family.name}
 					list={this.state.families}
 					add={addFamily}
-					click={this.selectFamily}/>
+					click={this.selectFamily}
+					toggleId="arianne-item-family"/>
 		);
 
 		const variants = variantFamily
@@ -139,7 +140,8 @@ export default class ArianneThread extends React.Component {
 					variant={this.state.variant}
 					list={variants}
 					add={addVariant}
-					click={this.selectVariant}/>
+					click={this.selectVariant}
+					toggleId="arianne-item-variant"/>
 		);
 
 		const addGroup = [
@@ -162,12 +164,14 @@ export default class ArianneThread extends React.Component {
 				itemToEl={this.groupToElement}
 				add={addGroup}
 				click={this.selectGroup}
+				toggleId="arianne-item-group"
 			/>
 			: <ActionArianneItem
 				className={groupClasses}
 				label={groupLabel}
 				img="assets/images/arianne-plus.svg"
-				click={this.toggleIndividualize}/>;
+				click={this.toggleIndividualize}
+				toggleId="arianne-item-group"/>;
 
 		return (
 			<div className="arianne-thread">
@@ -201,13 +205,77 @@ class RootArianneItem extends React.Component {
 class DropArianneItem extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			arianneItemDisplayed: undefined,
+		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.toggleDisplay = this.toggleDisplay.bind(this);
+	}
+
+	async componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		const {head} = await this.client.fetch('/prototypoStore');
+
+		this.setState({
+			arianneItemDisplayed: head.toJS().arianneItemDisplayed,
+		});
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					arianneItemDisplayed: head.toJS().arianneItemDisplayed,
+				});
+			})
+			.onDelete(() => {
+				this.setState({
+					arianneItemDisplayed: undefined,
+				});
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	toggleDisplay() {
+		const outsideClick = () => {
+			this.client.dispatchAction('/store-value', {
+				arianneItemDisplayed: undefined,
+			});
+			document.querySelectorAll('*:not(.arianne-item-action)').forEach((item) => {
+				item.removeEventListener('click', outsideClick);
+			});
+		};
+
+		document.querySelectorAll('*:not(.arianne-item-action)').forEach((item) => {
+			item.addEventListener('click', outsideClick);
+		});
+
+		if (this.state.arianneItemDisplayed === this.props.toggleId) {
+			this.client.dispatchAction('/store-value', {
+				arianneItemDisplayed: undefined,
+			});
+		}
+		else {
+			this.client.dispatchAction('/store-value', {
+				arianneItemDisplayed: this.props.toggleId,
+			});
+		}
 	}
 
 	render() {
+		const classes = ClassNames({
+			'arianne-item': true,
+			'arianne-item-displayed': this.state.arianneItemDisplayed === this.props.toggleId,
+		});
+
 		return (
-			<div className="arianne-item">
-				<div className="arianne-item-action">
+			<div className={classes}>
+				<div className="arianne-item-action" onClick={this.toggleDisplay}>
 					{this.props.label}
 					<img className="arianne-item-action-drop arianne-item-action-img" src="assets/images/drop.svg"/>
 				</div>
