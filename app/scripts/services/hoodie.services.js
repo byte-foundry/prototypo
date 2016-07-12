@@ -56,32 +56,32 @@ export default class HoodieApi {
 	}
 
 	static askPasswordReset(username) {
-		hoodie.stripe.usernames.exist(username)
-		.then(function(response) {
-			if (!response) {
-				throw new Error('No such username, cannot reset password.');
-			}
+		return hoodie.stripe.usernames.exist(username)
+			.then(function(response) {
+				if (!response) {
+					throw new Error('No such username, cannot reset password.');
+				}
 
-			const resetId = `${username}/${HOODIE.generateId()}`;
-			const key = `org.couchdb.user:$passwordReset/${resetId}`;
+				const resetId = `${username}/${HOODIE.generateId()}`;
+				const key = `org.couchdb.user:$passwordReset/${resetId}`;
 
-			return fetch(`${backUrl}/_api/_users/${encodeURIComponent(key)}`, {
-				method: 'put',
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					_id: key,
-					name: `$passwordReset/${resetId}`,
-					type: 'user',
-					roles: [],
-					password: resetId,
-					updatedAt: new Date(),
-					createdAt: new Date(),
-				}),
+				return fetch(`${backUrl}/_api/_users/${encodeURIComponent(key)}`, {
+					method: 'put',
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						_id: key,
+						name: `$passwordReset/${resetId}`,
+						type: 'user',
+						roles: [],
+						password: resetId,
+						updatedAt: new Date(),
+						createdAt: new Date(),
+					}),
+				});
 			});
-		});
 		//TODO(franz): Thou shall code the checkPasswordReset at a later point in time
 	}
 
