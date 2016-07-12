@@ -21,21 +21,18 @@ export default class CreditsExport extends React.Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		// format : freegeoip.net/{format}/{IP_or_hostname}
-		const url = 'http://freegeoip.net/json/google.com';
-		// const url = 'http://freegeoip.net/json/';
+		// const url = 'http://freegeoip.net/json/google.com';
+		const url = 'http://freegeoip.net/json/';
 
-		fetch(url)
+		this.serverRequest = fetch(url)
 			.then((response) => {
 				if (response) {
 					return response.json();
 				}
 			})
 			.then((response) => {
-				this.setState({
-					country: response.country_code,
-				});
 				if (response.country_code in vatrates) {
 					this.setState({
 						currency: 'EUR',
