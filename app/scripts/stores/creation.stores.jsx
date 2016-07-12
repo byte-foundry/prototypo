@@ -199,7 +199,8 @@ const userStore = new Remutable({
 });
 
 const couponStore = new Remutable({
-	'58e088c97aa400b0498fa3d11640ada8': '5$ off your first month!'
+	'58e088c97aa400b0498fa3d11640ada8': '$5 off your first month!',
+	'98d317f6598ce579eda20ec39e964203': '$5 off your first month to celebrate our 10.000 users!'
 });
 
 const planStore = new Remutable({
