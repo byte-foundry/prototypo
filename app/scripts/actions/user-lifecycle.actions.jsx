@@ -383,7 +383,7 @@ export default {
 
 		const patch = userStore.set('choosePlanForm', form).commit();
 
-		window.Intercom('trackEvent', `chosePlan${plan.id}`);
+		window.Intercom('trackEvent', `chosePlan${plan}`);
 
 		return localServer.dispatchUpdate('/userStore', patch);
 	},
