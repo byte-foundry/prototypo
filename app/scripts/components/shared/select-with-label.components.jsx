@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from 'react-select';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default class SelectWithLabel extends React.Component {
@@ -39,7 +39,7 @@ export default class SelectWithLabel extends React.Component {
 			? <span className="input-with-label-label-required">*</span>
 			: false;
 
-		const inputClass = Classnames({
+		const inputClass = classNames({
 			'input-with-label-input': true,
 			'is-error': this.props.error,
 			'is-warning': this.props.warning,

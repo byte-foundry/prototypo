@@ -17,7 +17,7 @@ export default class DisplayWithLabel extends React.Component {
 			<div className={classes}>
 				{label}
 				<div className="display-with-label-display">
-					{this.props.data}
+					{this.props.children}
 				</div>
 			</div>
 		);

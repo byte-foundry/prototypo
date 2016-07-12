@@ -1,6 +1,9 @@
 import React from 'react';
-import Classnames from 'classnames';
+import Lifespan from 'lifespan';
+import classNames from 'classnames';
 import moment from 'moment/min/moment-with-locales';
+
+import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class CommitsList extends React.Component {
 	componentWillMount() {
@@ -14,7 +17,7 @@ export default class CommitsList extends React.Component {
 			console.log('[RENDER] commits list');
 		}
 
-		const classes = Classnames({
+		const classes = classNames({
 			"news-feed-article-header-repo": true,
 			"is-font": this.props.repo !== 'prototypo',
 		});

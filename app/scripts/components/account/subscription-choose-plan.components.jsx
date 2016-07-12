@@ -1,21 +1,32 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
 import FormError from '../shared/form-error.components.jsx';
+import InputWithLabel from '../shared/input-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 
 export default class SubscriptionChoosePlan extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			plans: {},
+		};
+
+		this.handleCouponChange = this.handleCouponChange.bind(this);
 	}
 
-	componentWillMount() {
+	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+
+		const plans = await this.client.fetch('/planStore');
+
+		this.setState({
+			plans: plans.head.toJS(),
+		});
 
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate(({head}) => {
@@ -23,11 +34,20 @@ export default class SubscriptionChoosePlan extends React.Component {
 					selected: head.toJS().choosePlanForm.selected,
 					error: head.toJS().choosePlanForm.error,
 					loading: head.toJS().choosePlanForm.loading,
+					couponValue: head.toJS().choosePlanForm.couponValue,
+					isCouponValid: head.toJS().choosePlanForm.isCouponValid,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		if (this.props.location.query.coupon) {
+			this.client.dispatchAction('/choose-plan', {
+				coupon: this.props.location.query.coupon,
+				plan: this.props.location.query.plan
+			});
+		}
 	}
 
 	componentWillUnmount() {
@@ -38,23 +58,13 @@ export default class SubscriptionChoosePlan extends React.Component {
 		this.client.dispatchAction('/confirm-plan', {plan: this.state.selected});
 	}
 
+	handleCouponChange() {
+		this.client.dispatchAction('/choose-plan', {
+			coupon: this.refs.coupon.inputValue,
+		});
+	}
+
 	render() {
-		const planMonthly = {
-			id: 'personal_monthly',
-			name: 'Monthly billing',
-			amount: '15',
-			period: '/month',
-			info: 'Without commitment!',
-		};
-
-		const planYearly = {
-			id: 'personal_annual_99',
-			name: 'Yearly billing',
-			amount: '99',
-			period: '/year',
-			info: '5 free months compared to monthly billing!',
-		};
-
 		window.Intercom('trackEvent', 'isOnChoosePlan');
 
 		const error = this.state.error ? <FormError errorText={this.state.error}/> : false;
@@ -62,17 +72,27 @@ export default class SubscriptionChoosePlan extends React.Component {
 		return (
 			<div className="account-base subscription-choose-plan">
 				<div className="subscription-title">
-					Get 2 months free by choosing annual billing!
+					Get 5 months free by choosing annual billing!
 				</div>
 				<div className="subscription-choose-plan-plans">
-					<SubscriptionPlan plan={planMonthly} selected={this.state.selected}/>
-					<SubscriptionPlan plan={planYearly} selected={this.state.selected}/>
+					<SubscriptionPlan plan={this.state.plans.personal_monthly} selected={this.state.selected}/>
+					<SubscriptionPlan plan={this.state.plans.personal_annual_99} selected={this.state.selected}/>
 				</div>
+				<InputWithLabel
+					ref="coupon"
+					label="Coupon code"
+					placeholder="ABC123"
+					value={this.state.couponValue}
+					handleOnChange={this.handleCouponChange} />
+				{this.state.isCouponValid ? `✓ ${this.state.isCouponValid}` : null }
 				<div className="subscription-choose-plan-info">
 					* Taxes are offered for private individuals. Currency ultimately depends on the country where your credit card has been issued.
 				</div>
 				{error}
-				<AccountValidationButton loading={this.state.loading} label="Checkout" click={() => {this.confirmPlan();}}/>
+				<AccountValidationButton
+					loading={this.state.loading}
+					label="Checkout"
+					click={() => {this.confirmPlan();}} />
 			</div>
 		);
 	}
@@ -84,11 +104,17 @@ class SubscriptionPlan extends React.Component {
 	}
 
 	choosePlan() {
-		this.client.dispatchAction('/choose-plan', this.props.plan.id);
+		this.client.dispatchAction('/choose-plan', {
+			plan: this.props.plan.id,
+		});
 	}
 
 	render() {
-		const classes = Classnames({
+		if (!this.props.plan) {
+			return false;
+		}
+
+		const classes = classNames({
 			'subscription-plan': true,
 			'is-active': this.props.selected === this.props.plan.id,
 		});

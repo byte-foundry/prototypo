@@ -71,7 +71,6 @@ const prototypoStore = new Remutable({
 		},
 	],
 	//end template list store values
-
 	//font library store values
 	errorAddFamily: undefined,
 	errorAddVariant: undefined,
@@ -199,14 +198,50 @@ const userStore = new Remutable({
 	},
 });
 
+const couponStore = new Remutable({
+	'58e088c97aa400b0498fa3d11640ada8': '5$ off your first month!'
+});
+
+const planStore = new Remutable({
+	personal_monthly: {
+		id: 'personal_monthly',
+		name: 'Monthly billing',
+		amount: '15',
+		USD: '$15.00',
+		EUR: '15.00€',
+		period: 'month',
+		info: 'Without commitment!',
+	},
+	personal_annual_99: {
+		id: 'personal_annual_99',
+		name: 'Annual billing',
+		amount: '99',
+		period: 'year',
+		USD: '$99.00',
+		EUR: '99.00€',
+		info: '5 months free compared to monthly billing!',
+	},
+	personal_annual: {
+		id: 'personal_annual',
+		name: 'Annual billing',
+		amount: '144',
+		period: 'year',
+		USD: '$144.00',
+		EUR: '144.00€',
+	},
+});
+
 const stores = {
 	'/prototypoStore': prototypoStore,
 	'/undoableStore': undoableStore,
 	'/userStore': userStore,
+	'/planStore': planStore,
 };
 
 export default stores;
 export {
 	prototypoStore,
 	userStore,
+	couponStore,
+	planStore,
 };

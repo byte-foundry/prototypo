@@ -1,0 +1,50 @@
+@import '../variables';
+
+.export-as {
+	position:absolute;
+	top:0;
+	left:0;
+	background: rgba($green, 0.4);
+	height:100%;
+	width:100%;
+	z-index:11;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+
+	&-modal {
+		background: $white;
+		border-radius: 4px;
+		padding:20px 0;
+
+		&-title {
+			color:$dark-grey;
+			border-bottom: solid 1px $red;
+			padding: 0 20px 10px;
+			margin:0;
+		}
+
+		&-content {
+			padding: 20px 20px 0px;
+			display:flex;
+			justify-content:space-between;
+		}
+
+		&-button {
+			background-color: #24d390;
+			color: #fefefe !important;
+			min-width: 120px;
+			display: block;
+			font-size: 18px;
+			padding: 3px px;
+			border-radius: 5px;
+			cursor: pointer;
+			border:none;
+			float:right;
+			margin-right:20px;
+			&:hover {
+				background-color: #20bd81;
+			}
+		}
+	}
+}

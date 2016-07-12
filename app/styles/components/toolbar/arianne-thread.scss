@@ -21,7 +21,7 @@
 		flex:0;
 	}
 
-	&:hover .arianne-drop-menu {
+	&.arianne-item-displayed .arianne-drop-menu {
 		display:block;
 	}
 
@@ -58,7 +58,8 @@
 		}
 	}
 
-	&:hover &-action, &:hover &-arrow:after, &.is-active &-action, &.is-active &-arrow:after {
+	&:hover &-action, &:hover &-arrow:after, &.is-active &-action, &.is-active &-arrow:after,
+	&.arianne-item-displayed &-action, &.arianne-item-displayed &-arrow:after{
 		@include themify() {
 			background-color: $theme-background;
 			color: $theme-color;

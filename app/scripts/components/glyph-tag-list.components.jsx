@@ -1,6 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -19,7 +19,7 @@ export default class GlyphTagList extends React.Component {
 			console.log('[RENDER] GlyphTagList');
 		}
 
-		const classes = Classnames({
+		const classes = classNames({
 			'glyph-tag-list': true,
 			'is-active': this.state.show,
 		});
@@ -102,7 +102,7 @@ class GlyphPinnedTag extends React.Component {
 
 	render() {
 
-		const itemClasses = Classnames({
+		const itemClasses = classNames({
 			'glyph-tag': true,
 			'is-active': this.props.selected === this.props.tag,
 		});
@@ -144,7 +144,7 @@ class GlyphPinnedSearch extends React.Component {
 
 	render() {
 
-		const itemClasses = Classnames({
+		const itemClasses = classNames({
 			'glyph-tag': true,
 			'glyph-search': true,
 			'is-active': this.props.selected === this.props.search,
@@ -186,12 +186,12 @@ class GlyphTag extends React.Component {
 
 	render() {
 
-		const iconClasses = Classnames({
+		const iconClasses = classNames({
 			'glyph-tag-button': true,
 			'is-pinned': this.props.pinned && this.props.pinned.indexOf(this.props.tag) !== -1,
 		});
 
-		const itemClasses = Classnames({
+		const itemClasses = classNames({
 			'glyph-tag': true,
 			'is-active': this.props.selected === this.props.tag,
 		});
@@ -237,12 +237,12 @@ class GlyphSearch extends React.Component {
 
 	render() {
 
-		const iconClasses = Classnames({
+		const iconClasses = classNames({
 			'glyph-tag-button': true,
 			'is-pinned': this.props.pinned && this.props.pinned.indexOf(this.props.search) !== -1,
 		});
 
-		const itemClasses = Classnames({
+		const itemClasses = classNames({
 			'glyph-tag': true,
 			'glyph-search': true,
 			'is-active': this.props.selected === this.props.search,

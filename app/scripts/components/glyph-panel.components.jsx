@@ -1,11 +1,10 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
-
 import GlyphList from './glyph-list.components.jsx';
 
 export default class GlyphPanel extends React.Component {
@@ -50,7 +49,7 @@ export default class GlyphPanel extends React.Component {
 			console.log('[RENDER] GlyphPanel');
 		}
 
-		const classes = Classnames({
+		const classes = classNames({
 			'is-locked': this.state.glyphs.locked,
 			'is-active': this.state.show,
 		});

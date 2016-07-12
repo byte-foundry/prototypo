@@ -112,6 +112,7 @@ class Invoice extends React.Component {
 class InvoiceLine extends React.Component {
 	render() {
 		let desc = this.props.line.description;
+
 		if (this.props.line.plan && !desc) {
 			desc = this.props.line.plan.id.indexOf('personal_monthly_') === -1
 				? 'Professional annual subscription'
@@ -127,6 +128,6 @@ class InvoiceLine extends React.Component {
 				<td>{desc}</td>
 				<td>{ this.props.symbol.before + (this.props.line.amount / 100).toFixed(2) + this.props.symbol.after}</td>
 			</tr>
-		)
+		);
 	}
 }

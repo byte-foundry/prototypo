@@ -1,6 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import Classnames from 'classnames';
+import LocalClient from '../stores/local-client.stores.jsx';
+import classNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -45,7 +46,7 @@ export default class GlyphButton extends React.Component {
 
 		_.forEach(this.props.pinned, (tag) => {
 
-			const tagClasses = Classnames({
+			const tagClasses = classNames({
 				'glyph-btn-list-btn-label': true,
 				'glyph-btn-list-btn-tags': true,
 				'is-active': this.props.selected === tag,
@@ -70,7 +71,7 @@ export default class GlyphButton extends React.Component {
 			);
 		});
 
-		const lockClasses = Classnames({
+		const lockClasses = classNames({
 			'glyph-btn-list-btn-lock': true,
 			'is-locked': this.props.locked,
 		});

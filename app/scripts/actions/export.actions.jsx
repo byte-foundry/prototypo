@@ -19,11 +19,27 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/export-otf': ({merged}) => {
+	'/export-otf': ({merged, familyName = 'font', variantName = 'regular', exportAs}) => {
+		const plan = HoodieApi.instance.plan;
+
+		//forbid export without plan
+		if (plan.indexOf('free_') !== -1) {
+			return false;
+		}
+
 		localClient.dispatchAction('/exporting', {exporting: true});
 
-		const family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : 'font';
-		const style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
+		let family;
+		let style;
+
+		if (exportAs) {
+			family = familyName;
+			style = variantName;
+		}
+		else {
+			family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : familyName;
+			style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : variantName;
+		}
 
 		const name = {
 			family,
@@ -40,6 +56,18 @@ export default {
 			window.Intercom('trackEvent', 'export-otf');
 			clearTimeout(exportingError);
 		}, name, merged, undefined, HoodieApi.instance.email);
+	},
+	'/set-up-export-otf': ({merged, exportAs = true}) => {
+		const plan = HoodieApi.instance.plan;
+
+		//forbid export without plan
+		if (plan.indexOf('free_') !== -1) {
+			return false;
+		}
+
+		const patch = prototypoStore.set('exportAs', exportAs).set('mergedExportAs', merged).commit();
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/export-glyphr': () => {
 		const family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : 'font';

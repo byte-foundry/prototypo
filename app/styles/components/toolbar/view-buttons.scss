@@ -37,7 +37,7 @@ $view-button-size: 35;
 		&.is-active {
 			background-position: 0px -#{$view-button-size}px;
 		}
-		&, &:hover:not(.is-active) {
+		&, &:hover {
 			background-position: 0px 0px;
 		}
 	}
@@ -45,7 +45,7 @@ $view-button-size: 35;
 		&.is-active {
 			background-position: -#{$view-button-size}px -#{$view-button-size}px;
 		}
-		&, &:hover:not(.is-active) {
+		&, &:hover {
 			background-position: -#{$view-button-size}px 0px;
 		}
 	}
@@ -53,7 +53,7 @@ $view-button-size: 35;
 		&.is-active {
 			background-position: -#{$view-button-size * 2}px -#{$view-button-size}px;
 		}
-		&, &:hover:not(.is-active) {
+		&, &:hover {
 			background-position: -#{$view-button-size * 2}px 0px;
 		}
 	}

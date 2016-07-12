@@ -6,6 +6,8 @@ before_install:
 - npm install -g uglifyjs
 after_install:
 - npm dedupe
+- npm shrinkwrap --dev
+- cat npm-shrinkwrap.json
 script:
 - gulp build --type=prod
 - 'surge --project ./dist --domain test.prototypo.io'

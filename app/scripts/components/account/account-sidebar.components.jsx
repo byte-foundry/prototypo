@@ -1,5 +1,5 @@
 import React from 'react';
-import Classnames from 'classnames';
+import classNames from 'classnames';
 import {Link} from 'react-router';
 import Lifespan from 'lifespan';
 
@@ -31,29 +31,29 @@ export default class AccountSidebar extends React.Component {
 	}
 
 	render() {
-		const classProfile = Classnames({
+		const classProfile = classNames({
 			"is-active": this.context.router.isActive('account/profile'),
 			"account-sidebar-menu-item": true,
 			"account-sidebar-menu-profile": true,
 		});
-		const classDetails = Classnames({
+		const classDetails = classNames({
 			"is-active": this.context.router.isActive('account/details'),
 			"account-sidebar-menu-item": true,
 			"account-sidebar-menu-account": true,
 		});
-		const classChangePassword = Classnames({
+		const classChangePassword = classNames({
 			"account-sidebar-menu-item-options-item": true,
 			"is-active": this.context.router.isActive('account/profile/change-password'),
 		});
-		const classBillingAddress = Classnames({
+		const classBillingAddress = classNames({
 			"account-sidebar-menu-item-options-item": true,
 			"is-active": this.context.router.isActive('account/details/billing-address'),
 		});
-		const classAddCard = Classnames({
+		const classAddCard = classNames({
 			"account-sidebar-menu-item-options-item": true,
 			"is-active": this.context.router.isActive('account/details/add-card'),
 		});
-		const classChangePlan = Classnames({
+		const classChangePlan = classNames({
 			"account-sidebar-menu-item-options-item": true,
 			"is-active": this.context.router.isActive('account/details/change-plan'),
 		});
@@ -74,7 +74,6 @@ export default class AccountSidebar extends React.Component {
 
 		return (
 			<div className="account-sidebar">
-				<Link className="account-button" to="/dashboard">Go to the app</Link>
 				<ul className="account-sidebar-menu">
 					<li className={classProfile}><Link to="/account/profile">My profile</Link>
 						<ul className="account-sidebar-menu-item-options">

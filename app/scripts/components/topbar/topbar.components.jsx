@@ -58,6 +58,11 @@ export default class Topbar extends React.Component {
 		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
 	}
 
+	setupExportAs(merged) {
+		this.client.dispatchAction('/set-up-export-otf', {merged});
+		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
+	}
+
 	exportGlyphr() {
 		this.client.dispatchAction('/export-glyphr');
 		Log.ui('Topbar.exportGlyphr');
@@ -156,10 +161,10 @@ export default class Topbar extends React.Component {
 				<TopBarMenu>
 					<TopBarMenuIcon className="side-tabs-icon-headers" img="assets/images/prototypo-icon.svg"/>
 					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
-						<TopBarMenuDropdownItem name="Restart tutorial" handler={() => {this.startTuto();}} separator={true}/>
 						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
 						<AllowedTopBarWithPayment>
 							<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true);}}/>
+							<TopBarMenuDropdownItem name="Export to merged OTF as..." handler={() => {this.setupExportAs(true);}}/>
 							<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false);}}/>
 							<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr} separator={true}/>
 						</AllowedTopBarWithPayment>
