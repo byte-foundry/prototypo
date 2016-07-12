@@ -276,8 +276,8 @@ class DropArianneItem extends React.Component {
 		});
 
 		return (
-			<div className={classes}>
-				<div className="arianne-item-action" onClick={this.toggleDisplay}>
+			<div className={classes} onClick={this.toggleDisplay}>
+				<div className="arianne-item-action" >
 					{this.props.label}
 					<img className="arianne-item-action-drop arianne-item-action-img" src="assets/images/drop.svg"/>
 				</div>
