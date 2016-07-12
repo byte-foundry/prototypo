@@ -111,7 +111,7 @@ export default {
 			return;
 		}
 
-		const fonts = Array.from(prototypoStore.get('fonts'));
+		const fonts = _.cloneDeep(Array.from(prototypoStore.get('fonts')));
 		const newFont = {
 			name,
 			template: templateToLoad,
@@ -139,17 +139,10 @@ export default {
 
 		const patch = prototypoStore
 			.set('errorAddFamily', undefined)
+			.set('fonts', fonts)
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
-
-		setTimeout(() => {
-			const patchLib = prototypoStore
-				.set('fonts', fonts)
-				.commit();
-
-			localServer.dispatchUpdate('/prototypoStore', patchLib);
-		}, 200);
 
 		if (loadCurrent) {
 			await copyFontValues(newFont.variants[0].db);
