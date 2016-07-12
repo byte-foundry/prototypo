@@ -20,6 +20,13 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/export-otf': ({merged, familyName = 'font', variantName = 'regular', exportAs}) => {
+		const plan = HoodieApi.instance.plan;
+
+		//forbid export without plan
+		if (plan.indexOf('free_') !== -1) {
+			return false;
+		}
+
 		localClient.dispatchAction('/exporting', {exporting: true});
 
 		let family;
@@ -51,6 +58,13 @@ export default {
 		}, name, merged, undefined, HoodieApi.instance.email);
 	},
 	'/set-up-export-otf': ({merged, exportAs = true}) => {
+		const plan = HoodieApi.instance.plan;
+
+		//forbid export without plan
+		if (plan.indexOf('free_') !== -1) {
+			return false;
+		}
+
 		const patch = prototypoStore.set('exportAs', exportAs).set('mergedExportAs', merged).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
