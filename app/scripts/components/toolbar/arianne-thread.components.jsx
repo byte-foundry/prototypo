@@ -242,18 +242,6 @@ class DropArianneItem extends React.Component {
 	}
 
 	toggleDisplay() {
-		const outsideClick = () => {
-			this.client.dispatchAction('/store-value', {
-				arianneItemDisplayed: undefined,
-			});
-			document.querySelectorAll('*:not(.arianne-item-action)').forEach((item) => {
-				item.removeEventListener('click', outsideClick);
-			});
-		};
-
-		document.querySelectorAll('*:not(.arianne-item-action)').forEach((item) => {
-			item.addEventListener('click', outsideClick);
-		});
 
 		if (this.state.arianneItemDisplayed === this.props.toggleId) {
 			this.client.dispatchAction('/store-value', {
@@ -263,6 +251,20 @@ class DropArianneItem extends React.Component {
 		else {
 			this.client.dispatchAction('/store-value', {
 				arianneItemDisplayed: this.props.toggleId,
+			});
+
+			const selector = '#topbar, #workboard';
+			const outsideClick = () => {
+				this.client.dispatchAction('/store-value', {
+					arianneItemDisplayed: undefined,
+				});
+				document.querySelectorAll(selector).forEach((item) => {
+					item.removeEventListener('click', outsideClick);
+				});
+			};
+
+			document.querySelectorAll(selector).forEach((item) => {
+				item.addEventListener('click', outsideClick);
 			});
 		}
 	}

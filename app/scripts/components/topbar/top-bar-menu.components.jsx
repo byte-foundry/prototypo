@@ -97,20 +97,21 @@ class TopBarMenuItem extends React.Component {
 			this.client.dispatchAction('/store-value', {
 				topbarItemDisplayed: this.props.count,
 			});
+
+			const selector = '.toolbar, #workboard';
+			const outsideClick = () => {
+				this.client.dispatchAction('/store-value', {
+					topbarItemDisplayed: undefined,
+				});
+				document.querySelectorAll(selector).forEach((item) => {
+					item.removeEventListener('click', outsideClick);
+				});
+			};
+
+			document.querySelectorAll(selector).forEach((item) => {
+				item.addEventListener('click', outsideClick);
+			});
 		}
-
-		const outsideClick = () => {
-			this.client.dispatchAction('/store-value', {
-				topbarItemDisplayed: undefined,
-			});
-			document.querySelectorAll('*:not(.top-bar-menu-item)').forEach((item) => {
-				item.removeEventListener('click', outsideClick);
-			});
-		};
-
-		document.querySelectorAll('*:not(.top-bar-menu-item)').forEach((item) => {
-			item.addEventListener('click', outsideClick);
-		});
 	}
 
 	render() {
