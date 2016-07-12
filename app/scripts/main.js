@@ -130,6 +130,7 @@ import SubscriptionAccountInfo from './components/account/subscription-account-i
 import SubscriptionAddCard from './components/account/subscription-add-card.components.jsx';
 import SubscriptionBillingAddress from './components/account/subscription-billing-address.components.jsx';
 import SubscriptionConfirmation from './components/account/subscription-confirmation.components.jsx';
+import CreditsExport from './components/account/credits-export.components.jsx';
 
 import HoodieApi from './services/hoodie.services.js';
 import {FontValues} from './services/values.services.js';
@@ -388,6 +389,10 @@ selectRenderOptions(
 									<Route path="add-card" component={AccountAddCard}/>
 									<Route path="change-plan" component={AccountChangePlan}/>
 									<Route path="confirm-plan" component={AccountConfirmPlan} onEnter={noConfirmBeforePlan}/>
+								</Route>
+								<Route path="credits" name="credits" component={CreditsExport}>
+									<IndexRoute component={CreditsExport}/>
+									<Route path="credit-export" component={CreditsExport}/>
 								</Route>
 								<Route path="create" component={Subscription} name="create">
 									<IndexRoute component={SubscriptionAccountInfo} onEnter={chooseGoodAccountStep}/>
