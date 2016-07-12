@@ -3,7 +3,7 @@ import Lifespan from 'lifespan';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
-import InputWithLabel from '../shared/input-with-label.components.jsx'
+import InputWithLabel from '../shared/input-with-label.components.jsx';
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import SelectWithLabel from '../shared/select-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
@@ -54,7 +54,8 @@ export default class AccountProfilePanel extends React.Component {
 			{value: 'artistic_director', label: 'an artistic director'},
 			{value: 'web_developer', label: 'a web developer'},
 			{value: 'type_designer', label: 'a type designer'},
-		]
+		];
+
 		return this.state.infos.accountValues
 			? (
 				<form className="account-base account-profile-panel" onSubmit={(e) => {this.changeAccount(e);}}>

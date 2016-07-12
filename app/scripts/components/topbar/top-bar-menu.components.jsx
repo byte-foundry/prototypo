@@ -2,6 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Link} from 'react-router';
+import Lifespan from 'lifespan';
+import LocalClient from '~/stores/local-client.stores.jsx';
 
 import CheckBoxWithImg from '../checkbox-with-img.components.jsx';
 
@@ -15,8 +17,8 @@ class TopBarMenu extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] TopBarMenu');
 		}
-		const headers = _.without(this.props.children, false).map((child) => {
-			const classes = classNames({
+		const headers = _.without(this.props.children, false).map((child, index) => {
+			const classes = Classnames({
 				'top-bar-menu-item': true,
 				'is-aligned-right': child.props.alignRight,
 				'is-action': child.props.action,
@@ -25,10 +27,16 @@ class TopBarMenu extends React.Component {
 			});
 
 			return (
-				<li className={classes} key={child.props.name || child.props.img} id={child.props.id} onMouseEnter={child.props.enter} onMouseLeave={child.props.leave}>
+				<TopBarMenuItem
+					className={classes}
+					key={child.props.name || child.props.img}
+					id={child.props.id}
+					count={index}
+					onMouseEnter={child.props.enter}
+					onMouseLeave={child.props.leave}>
 					{child.type.getHeader(child.props)}
 					{child}
-				</li>
+				</TopBarMenuItem>
 			);
 		});
 
@@ -36,6 +44,88 @@ class TopBarMenu extends React.Component {
 			<ul className="top-bar-menu">
 				{headers}
 			</ul>
+		);
+	}
+}
+
+class TopBarMenuItem extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			topbarItemDisplayed: undefined,
+		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function binding
+		this.toggleDisplay = this.toggleDisplay.bind(this);
+	}
+
+	async componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		const {head} = await this.client.fetch('/prototypoStore');
+
+		this.setState({
+			topbarItemDisplayed: head.toJS().topbarItemDisplayed,
+		});
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					topbarItemDisplayed: head.toJS().topbarItemDisplayed,
+				});
+			})
+			.onDelete(() => {
+				this.setState({
+					topbarItemDisplayed: undefined,
+				});
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	toggleDisplay() {
+		if (this.state.topbarItemDisplayed === this.props.count) {
+			this.client.dispatchAction('/store-value', {
+				topbarItemDisplayed: undefined,
+			});
+		}
+		else {
+			this.client.dispatchAction('/store-value', {
+				topbarItemDisplayed: this.props.count,
+			});
+
+			const selector = '.toolbar, #workboard';
+			const outsideClick = () => {
+				this.client.dispatchAction('/store-value', {
+					topbarItemDisplayed: undefined,
+				});
+				document.querySelectorAll(selector).forEach((item) => {
+					item.removeEventListener('click', outsideClick);
+				});
+			};
+
+			document.querySelectorAll(selector).forEach((item) => {
+				item.addEventListener('click', outsideClick);
+			});
+		}
+	}
+
+	render() {
+		const classes = Classnames(this.props.className, {
+			'topbaritem-displayed': this.state.topbarItemDisplayed === this.props.count,
+		});
+
+		return (
+			<li
+				className={classes}
+				id={`topbar-menu-item-${this.props.count}`}
+				onClick={this.toggleDisplay}>
+				{this.props.children}
+			</li>
 		);
 	}
 }

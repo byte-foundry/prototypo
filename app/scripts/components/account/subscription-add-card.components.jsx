@@ -1,5 +1,5 @@
 import React from 'react';
-import Lifespan from 'lifespan'
+import Lifespan from 'lifespan';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 

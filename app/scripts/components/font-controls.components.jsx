@@ -72,7 +72,7 @@ export default class FontControls extends React.Component {
 					_.assign(newParams, params.values);
 				}
 				else {
-						newParams[params.name] = params.value;
+					newParams[params.name] = params.value;
 				}
 
 

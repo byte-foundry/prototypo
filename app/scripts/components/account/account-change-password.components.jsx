@@ -68,7 +68,7 @@ export default class AccountChangePassword extends React.Component {
 			</form>
 		);
 
-		const success = <h1 className="subscription-title">You've successfully changed your password</h1>
+		const success = <h1 className="subscription-title">You've successfully changed your password</h1>;
 
 		return this.state.success
 			? success
