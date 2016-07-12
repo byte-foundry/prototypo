@@ -221,6 +221,14 @@ const planStore = new Remutable({
 		EUR: '99.00€',
 		info: '5 months free compared to monthly billing!',
 	},
+	personal_annual: {
+		id: 'personal_annual',
+		name: 'Annual billing',
+		amount: '144',
+		period: 'year',
+		USD: '$144.00',
+		EUR: '144.00€',
+	},
 });
 
 const stores = {
@@ -235,5 +243,5 @@ export {
 	prototypoStore,
 	userStore,
 	couponStore,
-	planStore
+	planStore,
 };
