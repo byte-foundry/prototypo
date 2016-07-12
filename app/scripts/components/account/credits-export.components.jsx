@@ -1,10 +1,11 @@
 import React from 'react';
 import {Link} from 'react-router';
 
-import InputWithLabel from '../shared/input-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 import AddCard from '../shared/add-card.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
+
+import vatrates from 'vatrates';
 
 export default class CreditsExport extends React.Component {
 	constructor(props) {
@@ -12,19 +13,54 @@ export default class CreditsExport extends React.Component {
 		this.state = {
 			errors: [],
 			inError: {},
+			country: undefined,
+			currency: undefined,
 		};
 
 		// function binding
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
+	componentWillMount() {
+		// format : freegeoip.net/{format}/{IP_or_hostname}
+		const url = 'http://freegeoip.net/json/google.com';
+		// const url = 'http://freegeoip.net/json/';
+
+		fetch(url)
+			.then((response) => {
+				if (response) {
+					return response.json();
+				}
+			})
+			.then((response) => {
+				this.setState({
+					country: response.country_code,
+				});
+				if (response.country_code in vatrates) {
+					this.setState({
+						currency: 'EUR',
+					});
+				}
+				else {
+					this.setState({
+						currency: 'DOL',
+					});
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	}
+
 	handleSubmit(e) {
 		e.preventDefault();
 	}
+
 	render() {
 		const errors = this.state.errors.map((error) => {
 			return <FormError errorText={error} />;
 		});
+		const currency = this.state.currency === 'EUR' ? '€' : '$';
 
 		return (
 			<div className="sign-up sign-base">
@@ -37,7 +73,9 @@ export default class CreditsExport extends React.Component {
 					<form className="sign-in-form" onSubmit={this.handleSubmit}>
 						<AddCard ref="card" inError={this.state.inError}/>
 						{errors}
-						<AccountValidationButton loading={this.state.loading} label="Continue"/>
+						<AccountValidationButton
+							loading={this.state.loading}
+							label={`Pay in ${currency}`}/>
 					</form>
 				</div>
 			</div>
