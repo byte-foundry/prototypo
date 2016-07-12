@@ -18,7 +18,7 @@ class TopBarMenu extends React.Component {
 			console.log('[RENDER] TopBarMenu');
 		}
 		const headers = _.without(this.props.children, false).map((child, index) => {
-			const classes = Classnames({
+			const classes = classNames({
 				'top-bar-menu-item': true,
 				'is-aligned-right': child.props.alignRight,
 				'is-action': child.props.action,
@@ -115,7 +115,7 @@ class TopBarMenuItem extends React.Component {
 	}
 
 	render() {
-		const classes = Classnames(this.props.className, {
+		const classes = classNames(this.props.className, {
 			'topbaritem-displayed': this.state.topbarItemDisplayed === this.props.count,
 		});
 
