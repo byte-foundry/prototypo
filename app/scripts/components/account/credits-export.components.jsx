@@ -29,9 +29,9 @@ export default class CreditsExport extends React.Component {
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					loading: head.toJS().addcardForm.loading,
-					errors: head.toJS().addcardForm.errors,
-					inError: head.toJS().addcardForm.inError,
+					loading: head.toJS().buyCreditsForm.loading,
+					errors: head.toJS().buyCreditsForm.errors,
+					inError: head.toJS().buyCreditsForm.inError,
 				});
 			})
 			.onDelete(() => {
@@ -67,19 +67,25 @@ export default class CreditsExport extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.client.dispatchAction('/clean-form', 'buyCreditForm');
+		this.client.dispatchAction('/clean-form', 'buyCreditsForm');
 		this.lifespan.release();
 	}
 
 	handleSubmit(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		console.log(this.refs.card.data());
+		this.client.dispatchAction('/buy-credits', {
+			card: this.refs.card.data(),
+			pathQuery: {
+				path: '/account/details',
+				query: {newCredits: true},
+			},
+		});
 	}
 
 	render() {
-		const errors = this.state.errors.map((error) => {
-			return <FormError errorText={error} />;
+		const errors = this.state.errors.map((error, index) => {
+			return <FormError key={index} errorText={error} />;
 		});
 		const currency = this.state.currency === 'EUR' ? '€' : '$';
 

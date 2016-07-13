@@ -1,6 +1,7 @@
 function stripeAPI(hoodie) {
 	return hoodie.stripe = {
 		apiUrl: '/_plugins/stripe-subscriptions/_api',
+		// apiUrl: 'http://localhost:3000/fakeHoodie',
 		customers: {
 			create: requester('customers.create'),
 			update: requester('customers.update'),

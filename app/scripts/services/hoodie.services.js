@@ -108,6 +108,14 @@ export default class HoodieApi {
 	static getInvoice(options) {
 		return hoodie.stripe.invoices.retrieveUpcoming(options);
 	}
+
+	static buyCredits(options) {
+		return hoodie.stripe.credits.buy(options);
+	}
+
+	static spendCredits(options) {
+		console.log('spend credits');
+	}
 }
 
 function checkStatus(response) {

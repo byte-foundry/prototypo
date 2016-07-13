@@ -185,6 +185,10 @@ const userStore = new Remutable({
 		errors: [],
 		inError: {},
 	},
+	buyCreditsForm: {
+		errors: [],
+		inError: {},
+	},
 	billingForm: {
 		errors: [],
 		inError: {},
