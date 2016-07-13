@@ -1,11 +1,12 @@
 import React from 'react';
 import {Link} from 'react-router';
+import Lifespan from 'lifespan';
+import LocalClient from '../../stores/local-client.stores.jsx';
+import vatrates from 'vatrates';
 
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 import AddCard from '../shared/add-card.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
-
-import vatrates from 'vatrates';
 
 export default class CreditsExport extends React.Component {
 	constructor(props) {
@@ -21,9 +22,25 @@ export default class CreditsExport extends React.Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
+	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					loading: head.toJS().addcardForm.loading,
+					errors: head.toJS().addcardForm.errors,
+					inError: head.toJS().addcardForm.inError,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+	}
+
 	componentDidMount() {
 		// format : freegeoip.net/{format}/{IP_or_hostname}
-		// const url = 'http://freegeoip.net/json/google.com';
 		const url = 'http://freegeoip.net/json/';
 
 		this.serverRequest = fetch(url)
@@ -49,8 +66,15 @@ export default class CreditsExport extends React.Component {
 			});
 	}
 
+	componentWillUnmount() {
+		this.client.dispatchAction('/clean-form', 'buyCreditForm');
+		this.lifespan.release();
+	}
+
 	handleSubmit(e) {
 		e.preventDefault();
+		e.stopPropagation();
+		console.log(this.refs.card.data());
 	}
 
 	render() {
