@@ -450,7 +450,7 @@ export default {
 
 		addCard(options)
 		.then(() => {
-			return addBillingAddress(options)
+			return addBillingAddress(options);
 		})
 		.then(() => {
 			hashHistory.push(toPath);

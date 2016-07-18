@@ -1,5 +1,6 @@
 import React from 'react';
-import Lifespan from 'lifespan'
+import Lifespan from 'lifespan';
+import {hashHistory} from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -34,6 +35,14 @@ export default class SubscriptionAddCard extends React.Component {
 					loading: head.toJS().addcardForm.loading || head.toJS().billingForm.loading,
 					infos: head.toJS().infos,
 				});
+
+				// move to next step if the card and billing info are already known
+				if (
+					this.state.infos && this.state.infos.card && this.state.infos.card[0]
+					&& this.state.infos && this.state.infos.address
+				) {
+					hashHistory.push('/account/create/confirmation');
+				}
 			})
 			.onDelete(() => {
 				this.setState(undefined);
