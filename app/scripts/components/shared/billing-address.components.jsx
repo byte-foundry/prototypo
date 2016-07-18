@@ -30,7 +30,7 @@ export default class BillingAddress extends React.Component {
 				<InputWithLabel required={true} ref="buyerName" name="fname" autoComplete="name" inputValue={this.props.buyerName} error={this.props.inError.buyerName} label="Corporate name or Full name" />
 				<div className="columns">
 					<div className="third-column">
-						<InputWithLabel ref="buildingNumber" name="housenumber" inputValue={this.props.address.building_number} error={this.props.inError.buildingNumber} required={true} label="Bldg #" />
+						<InputWithLabel ref="buildingNumber" name="housenumber" inputValue={this.props.address.building_number} error={this.props.inError.buildingNumber} required={true} label="Building number" />
 					</div>
 					<div className="two-third-column">
 						<InputWithLabel ref="streetName" name="address" inputValue={this.props.address.street_name} error={this.props.inError.streetName} required={true} label="Street name" />
