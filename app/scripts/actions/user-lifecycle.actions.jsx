@@ -494,7 +494,6 @@ export default {
 
 		localServer.dispatchUpdate('/userStore', patch);
 
-		window.Intercom('trackEvent', `confirmedPlan${plan.id}`);
 
 		hashHistory.push(pathQuery);
 	},

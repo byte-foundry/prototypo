@@ -59,8 +59,8 @@ export default class SubscriptionAddCard extends React.Component {
 	}
 
 	render() {
-		const errors = this.state.errors.map((error) => {
-			return <FormError errorText={error} />;
+		const errors = this.state.errors.map((error, index) => {
+			return <FormError key={index} errorText={error} />;
 		});
 		const oldCardData = this.state.infos && this.state.infos.card && this.state.infos.card[0]
 			? (
