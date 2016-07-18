@@ -45,7 +45,12 @@ export default class SubscriptionChoosePlan extends React.Component {
 		if (this.props.location.query.coupon) {
 			this.client.dispatchAction('/choose-plan', {
 				coupon: this.props.location.query.coupon,
-				plan: this.props.location.query.plan
+				plan: this.props.location.query.plan,
+			});
+		}
+		if (this.props.location.query.plan) {
+			this.client.dispatchAction('/choose-plan', {
+				plan: this.props.location.query.plan,
 			});
 		}
 	}

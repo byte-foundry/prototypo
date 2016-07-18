@@ -163,7 +163,6 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 				resolve({credits: remainingCredits});
 			})
 			.catch((err) => {
-				console.log(err);
 				form.errors.push(err.message);
 				form.loading = false;
 				const patch = userStore.set('buyCreditsForm', form).commit();
@@ -405,8 +404,7 @@ export default {
 					'buyer_email': firstname + curedLastname,
 				});
 			})
-			.then(async (data) => {
-				console.log(data);
+			.then(async () => {
 				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname};
 				const patch = userStore.set('infos', {accountValues}).commit();
 
