@@ -54,7 +54,7 @@ export default class SubscriptionConfirmation extends React.Component {
 		const currency = getCurrency(this.state.card[0].country);
 
 		this.client.dispatchAction('/confirm-buy', {plan: this.state.plan, currency});
-		window.Intercom('trackEvent', `confirmedPlan${this.state.plan}`);
+		window.Intercom('trackEvent', `confirmedPlan.${this.state.plan}`);
 	}
 
 	render() {
@@ -70,7 +70,7 @@ export default class SubscriptionConfirmation extends React.Component {
 					</div>
 					<div className="two-third-column">
 						<DisplayWithLabel nolabel={true}>
-							{couponValue} → {isCouponValid}
+							{couponValue} → {isCouponValid.label}
 						</DisplayWithLabel>
 					</div>
 				</div>

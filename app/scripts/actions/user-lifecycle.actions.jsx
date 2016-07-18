@@ -494,8 +494,19 @@ export default {
 
 		localServer.dispatchUpdate('/userStore', patch);
 
-
-		hashHistory.push(pathQuery);
+		if (infos.isCouponValid) {
+			if (infos.isCouponValid.shouldSkipCard) {
+				hashHistory.push({
+					pathname: '/account/create/confirmation',
+				});
+			}
+			else {
+				hashHistory.push(pathQuery);
+			}
+		}
+		else {
+			hashHistory.push(pathQuery);
+		}
 	},
 	'/add-card': (options) => {
 		const toPath = {

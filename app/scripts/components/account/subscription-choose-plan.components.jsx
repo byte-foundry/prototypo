@@ -89,7 +89,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 					placeholder="ABC123"
 					value={this.state.couponValue}
 					handleOnChange={this.handleCouponChange} />
-				{this.state.isCouponValid ? `✓ ${this.state.isCouponValid}` : null }
+				{this.state.isCouponValid ? `✓ ${this.state.isCouponValid.label}` : null }
 				<div className="subscription-choose-plan-info">
 					* Taxes are offered for private individuals. Currency ultimately depends on the country where your credit card has been issued.
 				</div>

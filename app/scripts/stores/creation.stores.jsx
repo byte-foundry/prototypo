@@ -202,8 +202,21 @@ const userStore = new Remutable({
 	},
 });
 
+// how to add a coupon hash:
+// 1. open a terminal in the prototypo directory
+// 2. enter 'node' in the terminal
+// 3. enter require('md5')('<coupon name>' + '.' + '<plan name>');
+// 4. paste the resulting hash here. shouldSkipCard is true when no card is
+// required to subscribe to that plan (first month free for example).
 const couponStore = new Remutable({
-	'58e088c97aa400b0498fa3d11640ada8': '5$ off your first month!'
+	'58e088c97aa400b0498fa3d11640ada8': {
+		label: '5$ off your first month!',
+	},
+	// test_USD
+	'912b05418cd6f9d9ee6b9819e78baad0': {
+		label: 'test USD',
+		shouldSkipCard: true,
+	},
 });
 
 const planStore = new Remutable({
