@@ -102,8 +102,7 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 	});
 }
 
-function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
-	console.log(fullname, number, expMonth, expYear, cvc, vat);
+function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency, vat}) {
 	const form = userStore.get('buyCreditsForm');
 
 	form.errors = [];
@@ -129,7 +128,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 	}
 
 	return new Promise((resolve, reject) => {
-		/*window.Stripe.card.createToken({
+		window.Stripe.card.createToken({
 			number,
 			cvc,
 			exp_month: expMonth,
@@ -145,13 +144,15 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 			}
 
 			const infos = userStore.get('infos');
+			const item = `5_exports_${currency === 'EUR' ? 'EUR' : 'USD'}`;
 
-			HoodieApi.updateCustomer({
+			HoodieApi.buyCredits({
 				source: data.id,
-				buyer_credit_card_prefix: number.substr(0, 9),
-				buyer_tax_number: vat || infos.vat,
+				items: [item],
 			})
-			.then(() => {
+			.then((response) => {
+				const remainingCredits = response ? response.credits : undefined;
+
 				infos.card = [data.card];
 				infos.vat = vat || infos.vat;
 				form.loading = false;
@@ -159,43 +160,19 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 
 				localServer.dispatchUpdate('/userStore', patch);
 
-				resolve();
+				resolve({credits: remainingCredits});
 			})
 			.catch((err) => {
+				console.log(err);
 				form.errors.push(err.message);
 				form.loading = false;
 				const patch = userStore.set('buyCreditsForm', form).commit();
 
 				localServer.dispatchUpdate('/userStore', patch);
+
+				reject();
 			});
-		});*/
-
-		HoodieApi.buyCredits({})
-			.then((data) => {
-				console.log(data);
-				form.loading = false;
-				const patch = userStore.set('buyCreditsForm', form).commit();
-
-				localServer.dispatchUpdate('/userStore', patch);
-				resolve();
-			});
-		/*.then(() => {
-			infos.card = [data.card];
-			infos.vat = vat || infos.vat;
-			form.loading = false;
-			const patch = userStore.set('infos', infos).set('buyCreditsForm', form).commit();
-
-			localServer.dispatchUpdate('/userSotre', patch);
-
-			resolve();
-		})
-		.catch((err) => {
-			form.errors.push(err.message);
-			form.loading = false;
-			const patch = userStore.set('buyCreditsForm', form).commit();
-
-			localServer.dispatchUpdate('/userStore', patch);
-		});*/
+		});
 	});
 }
 
@@ -698,14 +675,12 @@ export default {
 			});
 	},
 	'/buy-credits': (options) => {
-		/*const toPath = {
-			pathname: options.pathQuery.path || '/account/profile',
-			query: options.pathQuery.query,
-		};*/
-
-		buyCredits(options);
-		/*.then(() => {
-			hashHistory.push(toPath);
-		});*/
+		buyCredits(options)
+			.then((data) => {
+				localClient.dispatchAction('/store-value', {buyCreditsNewCreditAmount: data.credits});
+				hashHistory.push({
+					pathname: options.pathQuery.path || '/account/credits',
+				});
+			});
 	},
 };

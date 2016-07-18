@@ -50,6 +50,7 @@ import '../styles/components/account/account-add-card.scss';
 import '../styles/components/account/account-subscription.scss';
 import '../styles/components/account/account-change-plan.scss';
 import '../styles/components/account/account-invoice-list.scss';
+import '../styles/components/account/credits-export.scss';
 import '../styles/components/subscription/subscription.scss';
 import '../styles/components/subscription/subscription-sidebar.scss';
 import '../styles/components/subscription/subscription-choose-plan.scss';

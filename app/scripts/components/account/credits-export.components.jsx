@@ -16,6 +16,7 @@ export default class CreditsExport extends React.Component {
 			inError: {},
 			country: undefined,
 			currency: undefined,
+			buyCreditsNewCreditAmount: undefined,
 		};
 
 		// function binding
@@ -32,6 +33,15 @@ export default class CreditsExport extends React.Component {
 					loading: head.toJS().buyCreditsForm.loading,
 					errors: head.toJS().buyCreditsForm.errors,
 					inError: head.toJS().buyCreditsForm.inError,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					buyCreditsNewCreditAmount: head.toJS().buyCreditsNewCreditAmount,
 				});
 			})
 			.onDelete(() => {
@@ -76,9 +86,9 @@ export default class CreditsExport extends React.Component {
 		e.stopPropagation();
 		this.client.dispatchAction('/buy-credits', {
 			card: this.refs.card.data(),
+			currency: this.state.currency,
 			pathQuery: {
-				path: '/account/details',
-				query: {newCredits: true},
+				path: '/account/credits',
 			},
 		});
 	}
@@ -87,7 +97,25 @@ export default class CreditsExport extends React.Component {
 		const errors = this.state.errors.map((error, index) => {
 			return <FormError key={index} errorText={error} />;
 		});
+		const newCredits = this.state.buyCreditsNewCreditAmount;
 		const currency = this.state.currency === 'EUR' ? '€' : '$';
+
+		const buyCreditsForm = newCredits
+			? (
+				<div className="credits_obtained">
+					<p>
+						You now have {newCredits} credits
+					</p>
+				</div>
+			) : (
+				<form className="sign-in-form" onSubmit={this.handleSubmit}>
+					<AddCard ref="card" inError={this.state.inError}/>
+					{errors}
+					<AccountValidationButton
+						loading={this.state.loading}
+						label={`Pay in ${currency}`}/>
+				</form>
+			);
 
 		return (
 			<div className="sign-up sign-base">
@@ -97,13 +125,7 @@ export default class CreditsExport extends React.Component {
 					<h1 className="account-title">Obtain export credits</h1>
 				</div>
 				<div className="account-dashboard-container">
-					<form className="sign-in-form" onSubmit={this.handleSubmit}>
-						<AddCard ref="card" inError={this.state.inError}/>
-						{errors}
-						<AccountValidationButton
-							loading={this.state.loading}
-							label={`Pay in ${currency}`}/>
-					</form>
+					{buyCreditsForm}
 				</div>
 			</div>
 		);
