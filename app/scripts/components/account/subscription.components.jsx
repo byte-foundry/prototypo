@@ -17,6 +17,14 @@ export default class Subscription extends React.Component {
 				plan: this.props.location.query.plan,
 			});
 		}
+
+		// a "?fromWebsite=true" parameter must be added to the link
+		// on the pricing section of prototypo.io website to track the user
+		if (this.props.location.query.fromWebsite) {
+			this.client.dispatchAction('/store-value', {
+				newUserFromWebSite: String(this.props.location.query.fromWebsite),
+			});
+		}
 	}
 
 	componentWillUnmount() {

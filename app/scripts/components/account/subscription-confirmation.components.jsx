@@ -20,6 +20,7 @@ export default class SubscriptionConfirmation extends React.Component {
 			}],
 			plan: 'personal_monthly',
 			plans: {},
+			newUserFromWebSite: undefined,
 		};
 	}
 
@@ -46,6 +47,13 @@ export default class SubscriptionConfirmation extends React.Component {
 			});
 	}
 
+	async componentDidMount() {
+		const prototypoStore = await this.client.fetch('/prototypoStore');
+		this.setState({
+			newUserFromWebSite: prototypoStore.head.toJS().newUserFromWebSite,
+		});
+	}
+
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
@@ -54,7 +62,10 @@ export default class SubscriptionConfirmation extends React.Component {
 		const currency = getCurrency(this.state.card[0].country);
 
 		this.client.dispatchAction('/confirm-buy', {plan: this.state.plan, currency});
-		window.Intercom('trackEvent', `confirmedPlan.${this.state.plan}`);
+
+		if (this.state.newUserFromWebSite) {
+			window.Intercom('trackEvent', `confirmedPlan.${this.state.plan}`);
+		}
 	}
 
 	render() {
