@@ -127,6 +127,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 		return localServer.dispatchUpdate('/userStore', patch);
 	}
 
+
 	return new Promise((resolve, reject) => {
 		window.Stripe.card.createToken({
 			number,
@@ -144,10 +145,17 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 			}
 
 			const infos = userStore.get('infos');
-			const item = `5_exports_${currency === 'EUR' ? 'EUR' : 'USD'}`;
+			const item = {
+				type: 'sku',
+				parent: `5_credits_${currency === 'EUR' ? 'EUR' : 'USD'}`,
+			};
 
 			HoodieApi.buyCredits({
-				source: data.id,
+				// we use tokens instead of source
+				// otherwise backend would attach the card to the customer
+				token: data.id,
+				email: HoodieApi.instance.email,
+				currency_code: currency === 'EUR' ? 'EUR' : 'USD',
 				items: [item],
 			})
 			.then((response) => {

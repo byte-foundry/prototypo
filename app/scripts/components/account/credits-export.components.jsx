@@ -78,6 +78,7 @@ export default class CreditsExport extends React.Component {
 
 	componentWillUnmount() {
 		this.client.dispatchAction('/clean-form', 'buyCreditsForm');
+		this.client.dispatchAction('/store-value', {buyCreditsNewCreditAmount: undefined});
 		this.lifespan.release();
 	}
 
@@ -103,9 +104,18 @@ export default class CreditsExport extends React.Component {
 		const buyCreditsForm = newCredits
 			? (
 				<div className="credits_obtained">
-					<p>
-						You now have {newCredits} credits
-					</p>
+					<div>
+						<p>
+							You now have {newCredits} credits
+						</p>
+					</div>
+					<div>
+						<Link
+							className="account-button"
+							to="/dashboard">
+							Go to the app
+						</Link>
+					</div>
 				</div>
 			) : (
 				<form className="sign-in-form" onSubmit={this.handleSubmit}>
@@ -113,7 +123,7 @@ export default class CreditsExport extends React.Component {
 					{errors}
 					<AccountValidationButton
 						loading={this.state.loading}
-						label={`Pay in ${currency}`}/>
+						label={`Buy 5 credits for 5 ${currency}`}/>
 				</form>
 			);
 
@@ -122,7 +132,7 @@ export default class CreditsExport extends React.Component {
 				<div className="account-dashboard-icon"/>
 				<Link to="/account" className="account-dashboard-home-icon"/>
 				<div className="account-header">
-					<h1 className="account-title">Obtain export credits</h1>
+					<h1 className="account-title">Buy export credits</h1>
 				</div>
 				<div className="account-dashboard-container">
 					{buyCreditsForm}
