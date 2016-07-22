@@ -44,7 +44,7 @@ export default class AccountSubscription extends React.Component {
 				You don't have a card right now. <Link className="account-link" to="/account/details/add-card">Add a card</Link> before subscribing.
 			</h3>
 		);
-		const currency = this.state.card[0] ? getCurrency(this.state.card[0].country) : undefined;
+		const currency = this.state.card && this.state.card[0] ? getCurrency(this.state.card[0].country) : undefined;
 		const currencySymbol = currency === 'USD'
 			? {
 				before: '$',

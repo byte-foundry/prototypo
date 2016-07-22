@@ -234,7 +234,7 @@ function addBillingAddress({buyerName, address}) {
 }
 
 export default {
-	'/load-customer-data': ({sources, subscriptions, charges}) => {
+	'/load-customer-data': ({sources, subscriptions, charges, metadata}) => {
 		const infos = _.cloneDeep(userStore.get('infos'));
 
 		if (sources && sources.data.length > 0) {
@@ -245,6 +245,9 @@ export default {
 		}
 		if (charges && charges.data.length > 0) {
 			infos.charges = charges.data;
+		}
+		if (metadata && metadata.credits) {
+			info.credits = parseInt(metadata.credits, 10);
 		}
 
 		const patch = userStore.set('infos', infos).commit();
@@ -599,10 +602,7 @@ export default {
 			});
 
 			localServer.dispatchUpdate('/userStore', patch);
-			HoodieApi.getCustomerInfo()
-			.then((customer) => {
-				localClient.dispatchAction('/load-customer-data', customer);
-			});
+			localClient.dispatchAction('/load-customer-data', customer);
 		}).catch((err) => {
 
 			if ((/no such coupon/i).test(err.message)) {
