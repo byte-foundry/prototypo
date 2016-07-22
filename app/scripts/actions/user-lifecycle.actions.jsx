@@ -163,6 +163,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 
 				infos.card = [data.card];
 				infos.vat = vat || infos.vat;
+				infos.credits = remainingCredits;
 				form.loading = false;
 				const patch = userStore.set('infos', infos).set('buyCreditsForm', form).commit();
 
@@ -247,7 +248,7 @@ export default {
 			infos.charges = charges.data;
 		}
 		if (metadata && metadata.credits) {
-			info.credits = parseInt(metadata.credits, 10);
+			infos.credits = parseInt(metadata.credits, 10);
 		}
 
 		const patch = userStore.set('infos', infos).commit();
