@@ -4,7 +4,6 @@ export default class AllowedTopBarWithPayment extends React.Component {
 	render() {
 		const freeAccount = this.props.freeAccount;
 		const credits = this.props.credits;
-		console.log(freeAccount, credits);
 
 		const overlay = freeAccount && (!credits || credits <= 0)
 			? (
