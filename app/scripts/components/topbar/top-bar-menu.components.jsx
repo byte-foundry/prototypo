@@ -238,6 +238,7 @@ class TopBarMenuDropdownItem extends React.Component {
 			this.props.name !== newProps.name
 			|| this.props.shortcut !== newProps.shortcut
 			|| this.props.handler !== newProps.handler
+			|| this.props.creditsAltLabel !== newProps.creditsAltLabel
 		);
 	}
 
