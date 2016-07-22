@@ -28,6 +28,7 @@ export default class Topbar extends React.Component {
 			mode: [],
 			export: false,
 			errorExport: false,
+			credits: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -46,6 +47,15 @@ export default class Topbar extends React.Component {
 					mode: head.toJS().uiMode,
 					export: head.toJS().export,
 					errorExport: head.toJS().errorExport,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					credits: head.toJS().infos.credits,
 				});
 			})
 			.onDelete(() => {
@@ -148,6 +158,9 @@ export default class Topbar extends React.Component {
 		const redoDisabled = whereAt > (this.state.eventList.length - 2);
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${!redoDisabled ? this.state.eventList[whereAt + 1].label : ''}`;
+		const credits = this.state.credits;
+		const freeAccount = HoodieApi.instance.plan.indexOf('free_') !== -1;
+		const creditsAltLabel = credits && freeAccount ? '(use 1 credit)' : '';
 
 		const exporting = this.state.export ? (
 			<TopBarMenuAction name="Exporting..." click={() => {return;}} action={true}/>
@@ -162,11 +175,24 @@ export default class Topbar extends React.Component {
 					<TopBarMenuIcon className="side-tabs-icon-headers" img="assets/images/prototypo-icon.svg"/>
 					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
 						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
-						<AllowedTopBarWithPayment>
-							<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true);}}/>
-							<TopBarMenuDropdownItem name="Export to merged OTF as..." handler={() => {this.setupExportAs(true);}}/>
-							<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false);}}/>
-							<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr} separator={true}/>
+						<AllowedTopBarWithPayment credits={credits} freeAccount={freeAccount}>
+							<TopBarMenuDropdownItem
+								name="Export to merged OTF"
+								creditsAltLabel={creditsAltLabel}
+								handler={() => {this.exportOTF(true);}}/>
+							<TopBarMenuDropdownItem
+								name="Export to merged OTF as..."
+								creditsAltLabel={creditsAltLabel}
+								handler={() => {this.setupExportAs(true);}}/>
+							<TopBarMenuDropdownItem
+								name="Export to OTF"
+								creditsAltLabel={creditsAltLabel}
+								handler={() => {this.exportOTF(false);}}/>
+							<TopBarMenuDropdownItem
+								name="Export to Glyphr Studio"
+								creditsAltLabel={creditsAltLabel}
+								handler={this.exportGlyphr}
+								separator={true}/>
 						</AllowedTopBarWithPayment>
 						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout();}}/>
 					</TopBarMenuDropdown>

@@ -256,6 +256,12 @@ class TopBarMenuDropdownItem extends React.Component {
 		}
 	}
 	render() {
+		const creditsAltLabel = this.props.creditsAltLabel
+			? (
+				<span className="credits-alt-label">{this.props.creditsAltLabel}</span>
+			)
+			: false;
+
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] topbarmenudropdownitem');
 		}
@@ -271,6 +277,7 @@ class TopBarMenuDropdownItem extends React.Component {
 			<li className={classes} onClick={this.props.handler}>
 				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
 				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
+				{creditsAltLabel}
 			</li>
 		);
 	}

@@ -1,12 +1,11 @@
 import React from 'react';
 
-import HoodieApi from '~/services/hoodie.services.js';
-
 export default class AllowedTopBarWithPayment extends React.Component {
 	render() {
-		const plan = HoodieApi.instance.plan;
+		const freeAccount = this.props.freeAccount;
+		const credits = this.props.credits;
 
-		const overlay = plan.indexOf('free_') !== -1
+		const overlay = freeAccount && credits <= 0
 			? (
 				<div className="slider-demo-overlay">
 					<a className="slider-demo-overlay-text" href="#/account/credits">
