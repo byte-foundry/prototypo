@@ -29,6 +29,7 @@ export default class Topbar extends React.Component {
 			export: false,
 			errorExport: false,
 			credits: undefined,
+			plan: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -160,7 +161,8 @@ export default class Topbar extends React.Component {
 		const redoText = `Redo ${!redoDisabled ? this.state.eventList[whereAt + 1].label : ''}`;
 		const credits = this.state.credits;
 		const freeAccount = HoodieApi.instance.plan.indexOf('free_') !== -1;
-		const creditsAltLabel = (credits && credits >= 0) && freeAccount ? '(use 1 credit)' : false;
+		const freeAccountAndHasCredits = (credits && credits >= 0) && freeAccount;
+		const creditsAltLabel = '(use 1 credit)';
 
 		const exporting = this.state.export ? (
 			<TopBarMenuAction name="Exporting..." click={() => {return;}} action={true}/>
@@ -178,18 +180,26 @@ export default class Topbar extends React.Component {
 						<AllowedTopBarWithPayment credits={credits} freeAccount={freeAccount}>
 							<TopBarMenuDropdownItem
 								name="Export to merged OTF"
+								freeAccount={freeAccount}
+								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								creditsAltLabel={creditsAltLabel}
 								handler={() => {this.exportOTF(true);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to merged OTF as..."
+								freeAccount={freeAccount}
+								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								creditsAltLabel={creditsAltLabel}
 								handler={() => {this.setupExportAs(true);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to OTF"
+								freeAccount={freeAccount}
+								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								creditsAltLabel={creditsAltLabel}
 								handler={() => {this.exportOTF(false);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to Glyphr Studio"
+								freeAccount={freeAccount}
+								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								creditsAltLabel={creditsAltLabel}
 								handler={this.exportGlyphr}
 								separator={true}/>

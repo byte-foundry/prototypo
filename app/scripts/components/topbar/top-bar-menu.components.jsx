@@ -233,16 +233,28 @@ function setupKeyboardShortcut(key, modifier, cb) {
 }
 
 class TopBarMenuDropdownItem extends React.Component {
+	constructor(props) {
+		super(props);
+
+		//function bindings
+		this.handleClick = this.handleClick.bind(this);
+	}
+
 	shouldComponentUpdate(newProps) {
 		return (
 			this.props.name !== newProps.name
 			|| this.props.shortcut !== newProps.shortcut
 			|| this.props.handler !== newProps.handler
 			|| this.props.creditsAltLabel !== newProps.creditsAltLabel
+			|| this.props.freeAccount !== newProps.freeAccount
+			|| this.props.freeAccountAndHasCredits !== newProps.freeAccountAndHasCredits
 		);
 	}
 
 	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+		// shortcut handling
 		if (this.props.shortcut) {
 			let [modifier, key] = this.props.shortcut.split('+');
 
@@ -256,8 +268,33 @@ class TopBarMenuDropdownItem extends React.Component {
 			});
 		}
 	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	handleClick() {
+		// freeAccount and freeAccountAndHasCredits props
+		// should only be set if the item is blockable
+		// for free users without credits (under the overlay)
+		if (this.props.freeAccountAndHasCredits) {
+			// here first execute handler
+			// and on callback dispatch a "spend credit" action
+			// to ensure no one will pay if something went wrong
+			// during the export
+			this.props.handler();
+			this.client.dispatchAction('/spend-credits');
+		}
+		else if (this.props.freeAccount) {
+			return;
+		}
+		else {
+			this.props.handler();
+		}
+	}
+
 	render() {
-		const creditsAltLabel = this.props.creditsAltLabel
+		const creditsAltLabel = this.props.freeAccountAndHasCredits
 			? (
 				<span className="credits-alt-label">{this.props.creditsAltLabel}</span>
 			)
@@ -275,7 +312,7 @@ class TopBarMenuDropdownItem extends React.Component {
 		});
 
 		return (
-			<li className={classes} onClick={this.props.handler}>
+			<li className={classes} onClick={this.handleClick}>
 				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
 				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
 				{creditsAltLabel}

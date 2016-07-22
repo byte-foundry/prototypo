@@ -117,11 +117,15 @@ export default class AccountSubscription extends React.Component {
 					</p>
 					{cardDetail}
 					{successCard}
-					{credits}
 				</div>
 			)
 			: noPlan;
 
-		return content;
+		return (
+			<div>
+				{content}
+				{credits}
+			</div>
+		);
 	}
 }

@@ -184,6 +184,10 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 	});
 }
 
+function spendCredits(options) {
+	console.log(options);
+}
+
 function addBillingAddress({buyerName, address}) {
 	const form = userStore.get('billingForm');
 
@@ -699,5 +703,16 @@ export default {
 					pathname: options.pathQuery.path || '/account/credits',
 				});
 			});
+	},
+	'/spend-credits': (options) => {
+		spendCredits(options);
+			/*
+			.then((data) => {
+				localClient.dispatchAction('/store-value', {buyCreditsNewCreditAmount: data.credits});
+				hashHistory.push({
+					pathname: options.pathQuery.path || '/account/credits',
+				});
+			});
+			*/
 	},
 };
