@@ -1,4 +1,4 @@
-import {prototypoStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, userStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {FontValues} from '../services/values.services.js';
@@ -13,6 +13,16 @@ window.addEventListener('fluxServer.setup', () => {
 	localServer = LocalServer.instance;
 });
 
+/**
+*	Checks for export authorization for a given (plan,credits) couple
+*	@param {string} the current user's plan
+*	@param {number} the current user's credit amount
+*	@return {boolean} wether the user is authorized to export or not
+*/
+function exportAuthorized(plan, credits) {
+	return plan.indexOf('free_') === -1 || (credits && credits > 0);
+}
+
 export default {
 	'/exporting': ({exporting, errorExport}) => {
 		const patch = prototypoStore.set('export', exporting).set('errorExport', errorExport).commit();
@@ -21,9 +31,10 @@ export default {
 	},
 	'/export-otf': ({merged, familyName = 'font', variantName = 'regular', exportAs}) => {
 		const plan = HoodieApi.instance.plan;
+		const credits = userStore.get('infos').credits;
 
 		//forbid export without plan
-		if (plan.indexOf('free_') !== -1) {
+		if (!exportAuthorized(plan, credits)) {
 			return false;
 		}
 
@@ -59,9 +70,10 @@ export default {
 	},
 	'/set-up-export-otf': ({merged, exportAs = true}) => {
 		const plan = HoodieApi.instance.plan;
+		const credits = userStore.get('infos').credits;
 
 		//forbid export without plan
-		if (plan.indexOf('free_') !== -1) {
+		if (!exportAuthorized(plan, credits)) {
 			return false;
 		}
 
@@ -70,8 +82,20 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/export-glyphr': () => {
-		const family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : 'font';
-		const style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
+		const family = prototypoStore.get('family').name
+			? prototypoStore.get('family').name.replace(/\s/g, '-')
+			: 'font';
+		const style = prototypoStore.get('variant').name
+			? prototypoStore.get('variant').name.replace(/\s/g, '-')
+			: 'regular';
+
+		const plan = HoodieApi.instance.plan;
+		const credits = userStore.get('infos').credits;
+
+		//forbid export without plan
+		if (plan.indexOf('free_') !== -1 && (!credits || credits <= 0)) {
+			return false;
+		}
 
 		const name = {
 			family,
@@ -85,6 +109,14 @@ export default {
 		const family = prototypoStore.get('family');
 		const zip = new JSZip();
 		const a = document.createElement('a');
+
+		const plan = HoodieApi.instance.plan;
+		const credits = userStore.get('infos').credits;
+
+		//forbid export without plan
+		if (!exportAuthorized(plan, credits)) {
+			return false;
+		}
 
 		const setupPatch = prototypoStore
 			.set('familyExported', familyToExport.name)

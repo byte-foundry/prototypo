@@ -161,7 +161,7 @@ export default class Topbar extends React.Component {
 		const redoText = `Redo ${!redoDisabled ? this.state.eventList[whereAt + 1].label : ''}`;
 		const credits = this.state.credits;
 		const freeAccount = HoodieApi.instance.plan.indexOf('free_') !== -1;
-		const freeAccountAndHasCredits = (credits && credits >= 0) && freeAccount;
+		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const creditsAltLabel = '(use 1 credit)';
 
 		const exporting = this.state.export ? (
