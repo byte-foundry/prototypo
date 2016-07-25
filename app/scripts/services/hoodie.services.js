@@ -114,7 +114,7 @@ export default class HoodieApi {
 	}
 
 	static spendCredits(options) {
-		console.log('spend credits');
+		return hoodie.stripe.credits.spend(options);
 	}
 }
 

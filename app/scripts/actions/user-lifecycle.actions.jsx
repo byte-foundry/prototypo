@@ -184,8 +184,36 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 	});
 }
 
-function spendCredits(options) {
-	console.log(options);
+/**
+*	Spend credits via hoodie api
+*	@param {object} options - the options of the transaction
+*	@param {number} options.amout - amount of credits to be spent
+*	@returns {promise} promise containing response from hoodie credits spending or an error
+*/
+function spendCredits({amount}) {
+	return new Promise((resolve, reject) => {
+		if (parseInt(amount) > 0) {
+			HoodieApi.spendCredits(amount)
+			.then((response) => {
+				const infos = userStore.get('infos');
+				const remainingCredits = response ? response.credits : undefined;
+
+				infos.credits = remainingCredits;
+
+				const patch = userStore.set('infos', infos).commit();
+
+				localServer.dispatchUpdate('/userStore', patch);
+
+				resolve({credits: remainingCredits});
+			})
+			.catch((err) => {
+				reject(err);
+			});
+		}
+		else {
+			reject();
+		}
+	});
 }
 
 function addBillingAddress({buyerName, address}) {
@@ -705,14 +733,9 @@ export default {
 			});
 	},
 	'/spend-credits': (options) => {
-		spendCredits(options);
-			/*
+		spendCredits(options)
 			.then((data) => {
-				localClient.dispatchAction('/store-value', {buyCreditsNewCreditAmount: data.credits});
-				hashHistory.push({
-					pathname: options.pathQuery.path || '/account/credits',
-				});
+				localClient.dispatchAction('/store-value', {spendCreditsNewCreditAmount: data.credits});
 			});
-			*/
 	},
 };
