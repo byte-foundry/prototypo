@@ -25,13 +25,14 @@ class TopBarMenu extends React.Component {
 				'is-icon-menu': !!child.props.img,
 				'img-dark-background': child.props.imgDarkBackground,
 			});
+			const count = (index > 0 && index < 5) ? index : 0;
 
 			return (
 				<TopBarMenuItem
 					className={classes}
 					key={child.props.name || child.props.img}
 					id={child.props.id}
-					count={index}
+					count={count}
 					onMouseEnter={child.props.enter}
 					onMouseLeave={child.props.leave}>
 					{child.type.getHeader(child.props)}
@@ -88,29 +89,31 @@ class TopBarMenuItem extends React.Component {
 	}
 
 	toggleDisplay() {
-		if (this.state.topbarItemDisplayed === this.props.count) {
-			this.client.dispatchAction('/store-value', {
-				topbarItemDisplayed: undefined,
-			});
-		}
-		else {
-			this.client.dispatchAction('/store-value', {
-				topbarItemDisplayed: this.props.count,
-			});
-
-			const selector = '.toolbar, #workboard';
-			const outsideClick = () => {
+		if (this.props.count) {
+			if (this.state.topbarItemDisplayed === this.props.count) {
 				this.client.dispatchAction('/store-value', {
 					topbarItemDisplayed: undefined,
 				});
-				document.querySelectorAll(selector).forEach((item) => {
-					item.removeEventListener('click', outsideClick);
+			}
+			else {
+				this.client.dispatchAction('/store-value', {
+					topbarItemDisplayed: this.props.count,
 				});
-			};
 
-			document.querySelectorAll(selector).forEach((item) => {
-				item.addEventListener('click', outsideClick);
-			});
+				const selector = '.toolbar, #workboard';
+				const outsideClick = () => {
+					this.client.dispatchAction('/store-value', {
+						topbarItemDisplayed: undefined,
+					});
+					document.querySelectorAll(selector).forEach((item) => {
+						item.removeEventListener('click', outsideClick);
+					});
+				};
+
+				document.querySelectorAll(selector).forEach((item) => {
+					item.addEventListener('click', outsideClick);
+				});
+			}
 		}
 	}
 
@@ -118,11 +121,12 @@ class TopBarMenuItem extends React.Component {
 		const classes = classNames(this.props.className, {
 			'topbaritem-displayed': this.state.topbarItemDisplayed === this.props.count,
 		});
+		const id = this.props.count ? `topbar-menu-item-${this.props.count}` : '';
 
 		return (
 			<li
 				className={classes}
-				id={`topbar-menu-item-${this.props.count}`}
+				id={id}
 				onClick={this.toggleDisplay}>
 				{this.props.children}
 			</li>
