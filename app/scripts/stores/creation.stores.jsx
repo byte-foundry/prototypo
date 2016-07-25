@@ -248,11 +248,18 @@ const planStore = new Remutable({
 	},
 });
 
+// [item]: [cost in credits]
+const creditStore = new Remutable({
+	exportOtf: 1,
+	exportGlyphr: 1,
+});
+
 const stores = {
 	'/prototypoStore': prototypoStore,
 	'/undoableStore': undoableStore,
 	'/userStore': userStore,
 	'/planStore': planStore,
+	'/creditStore': creditStore,
 };
 
 export default stores;
@@ -261,4 +268,5 @@ export {
 	userStore,
 	couponStore,
 	planStore,
+	creditStore,
 };

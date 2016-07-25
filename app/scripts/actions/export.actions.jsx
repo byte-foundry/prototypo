@@ -23,6 +23,17 @@ function exportAuthorized(plan, credits) {
 	return plan.indexOf('free_') === -1 || (credits && credits > 0);
 }
 
+/**
+*	Dispatches an event that will spend credits (to be done on export success callback)
+*/
+function spendCreditsAction() {
+	const plan = HoodieApi.instance.plan;
+
+	if (plan.indexOf('free_') !== -1) {
+		localClient.dispatchAction('/spend-credits', {amount: 1});
+	}
+}
+
 export default {
 	'/exporting': ({exporting, errorExport}) => {
 		const patch = prototypoStore.set('export', exporting).set('errorExport', errorExport).commit();
@@ -66,6 +77,7 @@ export default {
 			localClient.dispatchAction('/exporting', {exporting: false});
 			window.Intercom('trackEvent', 'export-otf');
 			clearTimeout(exportingError);
+			spendCreditsAction();
 		}, name, merged, undefined, HoodieApi.instance.email);
 	},
 	'/set-up-export-otf': ({merged, exportAs = true}) => {
@@ -98,8 +110,12 @@ export default {
 			style: `${style.toLowerCase()}`,
 		};
 
-		fontInstance.openInGlyphr(null, name, false, undefined, HoodieApi.instance.email);
+		fontInstance.openInGlyphr(() => {
+			spendCreditsAction();
+		}, name, false, undefined, HoodieApi.instance.email);
 	},
+
+	// TODO add a spend credit action
 	'/export-family': async ({familyToExport, variants}) => {
 		const oldVariant = prototypoStore.get('variant');
 		const family = prototypoStore.get('family');

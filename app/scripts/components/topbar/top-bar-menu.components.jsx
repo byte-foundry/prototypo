@@ -251,6 +251,7 @@ class TopBarMenuDropdownItem extends React.Component {
 			|| this.props.creditsAltLabel !== newProps.creditsAltLabel
 			|| this.props.freeAccount !== newProps.freeAccount
 			|| this.props.freeAccountAndHasCredits !== newProps.freeAccountAndHasCredits
+			|| this.props.cost !== newProps.cost
 			|| this.state.exporting !== newState.exporting
 		);
 	}
@@ -286,13 +287,6 @@ class TopBarMenuDropdownItem extends React.Component {
 		}
 	}
 
-	componentWillUpdate(newProps, newState) {
-		/*if (this.state.exporting === true && newState.exporting === false) {
-			console.log('export ended');
-		}*/
-		// console.log(newState.exporting, this.state.exporting);
-	}
-
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
@@ -302,12 +296,16 @@ class TopBarMenuDropdownItem extends React.Component {
 		// should only be set if the item is blockable
 		// for free users without credits (under the overlay)
 		if (this.props.freeAccountAndHasCredits) {
+			// set the export cost
+			this.client.dispatchAction('/store-value', {currentCreditCost: this.props.cost});
 			// here first execute handler
 			// and on callback dispatch a "spend credit" action
 			// to ensure no one will pay if something went wrong
 			// during the export
 			this.props.handler();
-			// this.client.dispatchAction('/spend-credits');
+			// here the "spend credit" will hapen
+			// but on parent component state change
+			// when "exporting" goes from true to false w/o errors
 		}
 		else if (this.props.freeAccount) {
 			return;
@@ -320,7 +318,7 @@ class TopBarMenuDropdownItem extends React.Component {
 	render() {
 		const creditsAltLabel = this.props.freeAccountAndHasCredits
 			? (
-				<span className="credits-alt-label">{this.props.creditsAltLabel}</span>
+				<span className="credits-alt-label">{`(use ${this.props.cost} credit)`}</span>
 			)
 			: false;
 

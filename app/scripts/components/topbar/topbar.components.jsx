@@ -30,6 +30,7 @@ export default class Topbar extends React.Component {
 			errorExport: false,
 			credits: undefined,
 			plan: undefined,
+			creditChoices: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -38,7 +39,7 @@ export default class Topbar extends React.Component {
 		this.setAccountRoute = this.setAccountRoute.bind(this);
 	}
 
-	componentWillMount() {
+	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
@@ -62,6 +63,12 @@ export default class Topbar extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		const creditChoices = await this.client.fetch('/creditStore');
+
+		this.setState({
+			creditChoices: creditChoices.head.toJS(),
+		});
 	}
 
 	exportOTF(merged) {
@@ -93,16 +100,6 @@ export default class Topbar extends React.Component {
 				this.client.dispatchAction('/change-param', {values: defaultParams});
 			});
 
-	}
-
-	componentWillUpdate(newProps, newState) {
-		if (this.state.export === true && newState.export === false && !newState.errorExport) {
-			const plan = HoodieApi.instance.plan;
-
-			if (plan.indexOf('free_') !== -1) {
-				this.client.dispatchAction('/spend-credits', {amount: 1});
-			}
-		}
 	}
 
 	componentWillUnmount() {
@@ -172,7 +169,8 @@ export default class Topbar extends React.Component {
 		const credits = this.state.credits;
 		const freeAccount = HoodieApi.instance.plan.indexOf('free_') !== -1;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
-		const creditsAltLabel = '(use 1 credit)';
+		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : false;
+		const glyphrExportCost = this.state.creditChoices ? this.state.creditChoices.exportGlyphr : false;
 
 		const exporting = this.state.export ? (
 			<TopBarMenuAction name="Exporting..." click={() => {return;}} action={true}/>
@@ -192,25 +190,25 @@ export default class Topbar extends React.Component {
 								name="Export to merged OTF"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
-								creditsAltLabel={creditsAltLabel}
+								cost={otfExportCost}
 								handler={() => {this.exportOTF(true);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to merged OTF as..."
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
-								creditsAltLabel={creditsAltLabel}
+								cost={otfExportCost}
 								handler={() => {this.setupExportAs(true);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to OTF"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
-								creditsAltLabel={creditsAltLabel}
+								cost={otfExportCost}
 								handler={() => {this.exportOTF(false);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to Glyphr Studio"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
-								creditsAltLabel={creditsAltLabel}
+								cost={glyphrExportCost}
 								handler={this.exportGlyphr}
 								separator={true}/>
 						</AllowedTopBarWithPayment>
