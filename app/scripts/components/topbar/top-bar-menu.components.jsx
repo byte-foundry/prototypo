@@ -296,16 +296,25 @@ class TopBarMenuDropdownItem extends React.Component {
 		// should only be set if the item is blockable
 		// for free users without credits (under the overlay)
 		if (this.props.freeAccountAndHasCredits) {
-			// set the export cost
-			this.client.dispatchAction('/store-value', {currentCreditCost: this.props.cost});
-			// here first execute handler
-			// and on callback dispatch a "spend credit" action
-			// to ensure no one will pay if something went wrong
-			// during the export
-			this.props.handler();
-			// here the "spend credit" will hapen
-			// but on parent component state change
-			// when "exporting" goes from true to false w/o errors
+			if (navigator.onLine) {
+				// set the export cost
+				this.client.dispatchAction('/store-value', {currentCreditCost: this.props.cost});
+				// here first execute handler
+				// and on callback dispatch a "spend credit" action
+				// to ensure no one will pay if something went wrong
+				// during the export
+				this.props.handler();
+				// here the "spend credit" will hapen
+				// but on parent component state change
+				// when "exporting" goes from true to false w/o errors
+			}
+			else {
+				this.client.dispatchAction('/store-value', {
+					errorExport: {
+						message: 'Could not export while offline',
+					}
+				});
+			}
 		}
 		else if (this.props.freeAccount) {
 			return;

@@ -176,7 +176,14 @@ export default class Topbar extends React.Component {
 			<TopBarMenuAction name="Exporting..." click={() => {return;}} action={true}/>
 			) : false;
 		const errorExporting = this.state.errorExport ? (
-			<TopBarMenuAction name="An error occured during exporting" click={() => {return;}} action={true}/>
+			<TopBarMenuAction
+				name={
+					this.state.errorExport.message
+					? this.state.errorExport.message
+					: 'An error occured during exporting'
+				}
+				click={() => {return;}}
+				action={true}/>
 			) : false;
 
 		return (
