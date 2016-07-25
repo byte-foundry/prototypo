@@ -251,7 +251,7 @@ const planStore = new Remutable({
 // [item]: [cost in credits]
 const creditStore = new Remutable({
 	exportOtf: 1,
-	exportGlyphr: 1,
+	exportGlyphr: 6,
 });
 
 const stores = {

@@ -20,7 +20,19 @@ window.addEventListener('fluxServer.setup', () => {
 *	@return {boolean} wether the user is authorized to export or not
 */
 function exportAuthorized(plan, credits) {
-	return plan.indexOf('free_') === -1 || (credits && credits > 0);
+	const currentCreditCost = prototypoStore.get('currentCreditCost');
+	const paidPlan = plan.indexOf('free_') === -1;
+	const enoughCredits = credits && credits > 0 && currentCreditCost <= credits;
+
+	if (!enoughCredits) {
+		localClient.dispatchAction('/store-value', {
+			errorExport: {
+				message: 'Not enough credits',
+			},
+		});
+	}
+
+	return paidPlan || enoughCredits;
 }
 
 /**
@@ -30,7 +42,9 @@ function spendCreditsAction() {
 	const plan = HoodieApi.instance.plan;
 
 	if (plan.indexOf('free_') !== -1) {
-		localClient.dispatchAction('/spend-credits', {amount: 1});
+		const currentCreditCost = prototypoStore.get('currentCreditCost');
+
+		localClient.dispatchAction('/spend-credits', {amount: currentCreditCost});
 	}
 }
 
@@ -94,6 +108,7 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/export-glyphr': () => {
+
 		const family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : 'font';
 		const style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
 
@@ -101,7 +116,7 @@ export default {
 		const credits = userStore.get('infos').credits;
 
 		//forbid export without plan
-		if (plan.indexOf('free_') !== -1 && (!credits || credits <= 0)) {
+		if (!exportAuthorized(plan, credits)) {
 			return false;
 		}
 
