@@ -220,7 +220,7 @@ export default class PrototypoCanvas extends React.Component {
 
 	toggleCoords(e) {
 		e.stopPropagation();
-		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords});
+		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords, uiNodes: !this.props.uiCoords ? true : this.props.uiNodes});
 	}
 
 	render() {
