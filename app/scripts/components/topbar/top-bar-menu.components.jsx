@@ -236,7 +236,7 @@ class TopBarMenuDropdownItem extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			exporting: undefined,
+			credits: undefined,
 		};
 
 		//function bindings
@@ -252,7 +252,7 @@ class TopBarMenuDropdownItem extends React.Component {
 			|| this.props.freeAccount !== newProps.freeAccount
 			|| this.props.freeAccountAndHasCredits !== newProps.freeAccountAndHasCredits
 			|| this.props.cost !== newProps.cost
-			|| this.state.exporting !== newState.exporting
+			|| this.state.credits !== newState.credits
 		);
 	}
 
@@ -260,15 +260,15 @@ class TopBarMenuDropdownItem extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					exporting: head.toJS().export,
+					credits: head.toJS().infos.credits,
 				});
 			})
 			.onDelete(() => {
 				this.setState({
-					exporting: undefined,
+					credits: undefined,
 				});
 			});
 
@@ -336,7 +336,9 @@ class TopBarMenuDropdownItem extends React.Component {
 		}
 		const classes = classNames({
 			'top-bar-menu-item-dropdown-item': true,
-			'is-disabled': this.props.disabled,
+			'is-disabled': this.props.disabled || (
+				creditsAltLabel ? this.props.cost > this.state.credits : false
+			),
 			'has-separator': this.props.separator,
 			'is-checkbox': this.props.checkbox,
 			'is-active': this.props.active,
