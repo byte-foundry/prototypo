@@ -188,7 +188,7 @@ export default class PrototypoCanvas extends React.Component {
 	finishZoomShortcut(e) {
 		if (e.keyCode === 90) {
 			e.stopPropagation();
-			this.client.dispatchAction('/store-', this.oldPos);
+			this.client.dispatchAction('/store-value', this.oldPos);
 			this.oldPos = undefined;
 		}
 	}
