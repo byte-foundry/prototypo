@@ -4,6 +4,7 @@ import ClassNames from 'classnames';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
+import HoodieApi from '~/services/hoodie.services.js';
 import LocalClient from '~/stores/local-client.stores.jsx';
 
 import Button from '../shared/button.components.jsx';
@@ -270,12 +271,29 @@ class VariantList extends React.Component {
 			);
 		});
 
+
+		const freeUser = HoodieApi.instance.plan.indexOf('free_') !== -1;
+		const exportOverlay = freeUser
+			? (
+				<a className="variant-list-download-overlay-message" href="#/account/create">
+					<div className="variant-list-download-overlay-message-half variant-list-download-overlay-message-start">
+					</div>
+					<div className="variant-list-download-overlay-message-half variant-list-download-overlay-message-end">
+						Upgrade to full version
+					</div>
+				</a>
+			)
+			: false;
+
 		return (
 			<div className="variant-list-container">
 				<div className="variant-list-title">
 					FAMILY ACTIONS
 				</div>
-				<Button label="Download family"/>
+				<div className="variant-list-download-overlay">
+					{exportOverlay}
+					<Button label="Download family"/>
+				</div>
 				<Button label="Change family name" click={this.openChangeNameFamily}/>
 				<Button
 					label={this.props.deleteSplit ? 'Delete' : 'Delete family'}
@@ -348,6 +366,19 @@ class VariantInfo extends React.Component {
 	}
 
 	render() {
+		const freeUser = HoodieApi.instance.plan.indexOf('free_') !== -1;
+		const exportOverlay = freeUser
+			? (
+				<a className="variant-list-download-overlay-message" href="#/account/create">
+					<div className="variant-list-download-overlay-message-half variant-list-download-overlay-message-start">
+					</div>
+					<div className="variant-list-download-overlay-message-half variant-list-download-overlay-message-end">
+						Upgrade to full version
+					</div>
+				</a>
+			)
+			: false;
+
 		const result = this.props.variant.id
 			? (
 				<div className="variant-info-container">
@@ -355,7 +386,10 @@ class VariantInfo extends React.Component {
 						VARIANT ACTIONS
 					</div>
 					<Button label="Open in prototypo" click={this.props.open}/>
-					<Button label="Download variant" click={this.props.download}/>
+					<div className="variant-list-download-overlay">
+						{exportOverlay}
+						<Button label="Download variant" click={this.props.download}/>
+					</div>
 					<Button label="Change variant name" click={this.edit}/>
 					<Button label="Duplicate variant" click={this.duplicate}/>
 					<Button

@@ -11,6 +11,7 @@
 		<link rel="prefetch" href="assets/images/view-menu-active.svg">
 		<link rel="prefetch" href="assets/images/view-menu-hover-active-indiv.svg">
 		<link rel="prefetch" href="assets/images/view-menu-hover-active.svg">
+		<link rel="prefetch" href="assets/images/view-buttons.svg">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 	<body>
@@ -30,15 +31,6 @@
 			window.addEventListener('error', function(e) {
 				ga( 'send', 'event', 'js-error', e.message, e.filename + ':  ' + e.lineno );
 			});
-
-			// Include the UserVoice JavaScript SDK (only needed once on a page)
-			UserVoice = window.UserVoice||[];(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/fgYcK9ccsqxuqBtQJSOrWA.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})();
-			// widget theme
-			UserVoice.push(['set', {
-				accent_color: '#49E4A9',
-				trigger_color: 'white',
-				trigger_background_color: '#49E4A9'
-			}]);
 
 			// WebFont loader
 			WebFontConfig = {

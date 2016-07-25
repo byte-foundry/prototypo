@@ -96,7 +96,7 @@ export async function loadFontValues(typedata, typeface) {
 	localClient.dispatchAction('/load-indiv-groups');
 }
 
-export const saveAppValues = _.debounce(() => {
+export const saveAppValues = _.throttle(() => {
 	if (!appValuesLoaded) {
 		return;
 	}

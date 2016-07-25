@@ -1,10 +1,51 @@
 @import "../variables";
 
 .variant-list {
-	flex:0 0 25%;
+	flex:1 0 30%;
 	padding:0px !important;
 	position:relative;
 	overflow: hidden;
+
+	&-download-overlay {
+		position:relative;
+		overflow: hidden;
+
+		&-message {
+			position:absolute;
+			width:200%;
+			height: calc(100% - 10px);
+			border-radius: 7px;
+			cursor: pointer;
+			display:block;
+
+			&-half {
+				position: relative;
+				width: 50%;
+				height: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				float: left;
+				border-radius: 7px;
+				transition: left .2s ease;
+				left:0;
+				color: $white;
+			}
+
+			&-start {
+				background: rgba($dark-grey, 0.3);
+			}
+
+			&-end {
+				background: $green;
+			}
+
+			&:hover &-start, &:hover &-end {
+				left: -50%;
+			}
+		}
+
+	}
 
 	&-container {
 		background-color: $white;
@@ -57,7 +98,7 @@
 }
 
 .variant-info {
-	flex: 0 0 42%;
+	flex: 1 0 37%;
 	border-right: none !important;
 	padding:0px !important;
 	overflow:hidden;

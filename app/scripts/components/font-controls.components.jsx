@@ -32,7 +32,7 @@ export default class FontControls extends React.Component {
 			typeface: prototypoStore.get('variant') || {},
 		});
 
-		const debouncedSave = _.debounce((values) => {
+		const debouncedSave = _.throttle((values) => {
 			FontValues.save({
 				typeface: this.state.typeface.db || 'default',
 				values,
