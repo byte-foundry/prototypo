@@ -235,12 +235,15 @@ function setupKeyboardShortcut(key, modifier, cb) {
 class TopBarMenuDropdownItem extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			exporting: undefined,
+		};
 
 		//function bindings
 		this.handleClick = this.handleClick.bind(this);
 	}
 
-	shouldComponentUpdate(newProps) {
+	shouldComponentUpdate(newProps, newState) {
 		return (
 			this.props.name !== newProps.name
 			|| this.props.shortcut !== newProps.shortcut
@@ -248,12 +251,26 @@ class TopBarMenuDropdownItem extends React.Component {
 			|| this.props.creditsAltLabel !== newProps.creditsAltLabel
 			|| this.props.freeAccount !== newProps.freeAccount
 			|| this.props.freeAccountAndHasCredits !== newProps.freeAccountAndHasCredits
+			|| this.state.exporting !== newState.exporting
 		);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					exporting: head.toJS().export,
+				});
+			})
+			.onDelete(() => {
+				this.setState({
+					exporting: undefined,
+				});
+			});
+
 		// shortcut handling
 		if (this.props.shortcut) {
 			let [modifier, key] = this.props.shortcut.split('+');
@@ -267,6 +284,13 @@ class TopBarMenuDropdownItem extends React.Component {
 				this.props.handler();
 			});
 		}
+	}
+
+	componentWillUpdate(newProps, newState) {
+		/*if (this.state.exporting === true && newState.exporting === false) {
+			console.log('export ended');
+		}*/
+		// console.log(newState.exporting, this.state.exporting);
 	}
 
 	componentWillUnmount() {
@@ -283,7 +307,7 @@ class TopBarMenuDropdownItem extends React.Component {
 			// to ensure no one will pay if something went wrong
 			// during the export
 			this.props.handler();
-			this.client.dispatchAction('/spend-credits');
+			// this.client.dispatchAction('/spend-credits');
 		}
 		else if (this.props.freeAccount) {
 			return;

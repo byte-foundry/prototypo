@@ -95,6 +95,16 @@ export default class Topbar extends React.Component {
 
 	}
 
+	componentWillUpdate(newProps, newState) {
+		if (this.state.export === true && newState.export === false && !newState.errorExport) {
+			const plan = HoodieApi.instance.plan;
+
+			if (plan.indexOf('free_') !== -1) {
+				this.client.dispatchAction('/spend-credits', {amount: 1});
+			}
+		}
+	}
+
 	componentWillUnmount() {
 		this.lifespan.release();
 	}

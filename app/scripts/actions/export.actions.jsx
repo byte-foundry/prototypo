@@ -82,12 +82,8 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/export-glyphr': () => {
-		const family = prototypoStore.get('family').name
-			? prototypoStore.get('family').name.replace(/\s/g, '-')
-			: 'font';
-		const style = prototypoStore.get('variant').name
-			? prototypoStore.get('variant').name.replace(/\s/g, '-')
-			: 'regular';
+		const family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : 'font';
+		const style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
 
 		const plan = HoodieApi.instance.plan;
 		const credits = userStore.get('infos').credits;
