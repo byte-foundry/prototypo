@@ -102,6 +102,120 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 	});
 }
 
+function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency, vat}) {
+	const form = userStore.get('buyCreditsForm');
+
+	form.errors = [];
+	form.inError = {};
+	form.loading = true;
+	const cleanPatch = userStore.set('buyCreditsForm', form).commit();
+
+	localServer.dispatchUpdate('/userStore', cleanPatch);
+
+	if (!fullname || !number || !expMonth || !expYear || !cvc) {
+		form.errors.push('These fields are required');
+		form.inError = {
+			fullname: !fullname,
+			number: !number,
+			expMonth: !expMonth,
+			expYear: !expYear,
+			cvc: !cvc,
+		};
+		form.loading = false;
+		const patch = userStore.set('buyCreditsForm', form).commit();
+
+		return localServer.dispatchUpdate('/userStore', patch);
+	}
+
+
+	return new Promise((resolve, reject) => {
+		window.Stripe.card.createToken({
+			number,
+			cvc,
+			exp_month: expMonth,
+			exp_year: expYear,
+			name: fullname,
+		}, (status, data) => {
+			if (data.error) {
+				form.errors.push(data.error.message);
+				form.loading = false;
+				const patch = userStore.set('buyCreditsForm', form).commit();
+
+				return localServer.dispatchUpdate('/userStore', patch);
+			}
+
+			const infos = userStore.get('infos');
+			const item = {
+				type: 'sku',
+				parent: `5_credits_${currency === 'EUR' ? 'EUR' : 'USD'}`,
+			};
+
+			HoodieApi.buyCredits({
+				// we use tokens instead of source
+				// otherwise backend would attach the card to the customer
+				token: data.id,
+				email: HoodieApi.instance.email,
+				currency_code: currency === 'EUR' ? 'EUR' : 'USD',
+				items: [item],
+			})
+			.then((response) => {
+				const remainingCredits = response ? response.credits : undefined;
+
+				infos.card = [data.card];
+				infos.vat = vat || infos.vat;
+				infos.credits = remainingCredits;
+				form.loading = false;
+				const patch = userStore.set('infos', infos).set('buyCreditsForm', form).commit();
+
+				localServer.dispatchUpdate('/userStore', patch);
+
+				resolve({credits: remainingCredits});
+			})
+			.catch((err) => {
+				form.errors.push(err.message);
+				form.loading = false;
+				const patch = userStore.set('buyCreditsForm', form).commit();
+
+				localServer.dispatchUpdate('/userStore', patch);
+
+				reject();
+			});
+		});
+	});
+}
+
+/**
+*	Spend credits via hoodie api
+*	@param {object} options - the options of the transaction
+*	@param {number} options.amout - amount of credits to be spent
+*	@returns {promise} promise containing response from hoodie credits spending or an error
+*/
+function spendCredits({amount}) {
+	return new Promise((resolve, reject) => {
+		if (parseInt(amount) > 0) {
+			HoodieApi.spendCredits(amount)
+			.then((response) => {
+				const infos = userStore.get('infos');
+				const remainingCredits = response ? response.credits : undefined;
+
+				infos.credits = remainingCredits;
+
+				const patch = userStore.set('infos', infos).commit();
+
+				localServer.dispatchUpdate('/userStore', patch);
+
+				resolve({credits: remainingCredits});
+			})
+			.catch((err) => {
+				reject(err);
+			});
+		}
+		else {
+			reject();
+		}
+	});
+}
+
 function addBillingAddress({buyerName, address}) {
 	const form = userStore.get('billingForm');
 
@@ -153,7 +267,7 @@ function addBillingAddress({buyerName, address}) {
 }
 
 export default {
-	'/load-customer-data': ({sources, subscriptions, charges}) => {
+	'/load-customer-data': ({sources, subscriptions, charges, metadata}) => {
 		const infos = _.cloneDeep(userStore.get('infos'));
 
 		if (sources && sources.data.length > 0) {
@@ -164,6 +278,9 @@ export default {
 		}
 		if (charges && charges.data.length > 0) {
 			infos.charges = charges.data;
+		}
+		if (metadata && metadata.credits) {
+			infos.credits = parseInt(metadata.credits, 10);
 		}
 
 		const patch = userStore.set('infos', infos).commit();
@@ -331,8 +448,7 @@ export default {
 					'buyer_email': firstname + curedLastname,
 				});
 			})
-			.then(async (data) => {
-				console.log(data);
+			.then(async () => {
 				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname};
 				const patch = userStore.set('infos', {accountValues}).commit();
 
@@ -422,9 +538,19 @@ export default {
 
 		localServer.dispatchUpdate('/userStore', patch);
 
-		window.Intercom('trackEvent', `confirmedPlan${plan.id}`);
-
-		hashHistory.push(pathQuery);
+		if (infos.isCouponValid) {
+			if (infos.isCouponValid.shouldSkipCard) {
+				hashHistory.push({
+					pathname: '/account/create/confirmation',
+				});
+			}
+			else {
+				hashHistory.push(pathQuery);
+			}
+		}
+		else {
+			hashHistory.push(pathQuery);
+		}
 	},
 	'/add-card': (options) => {
 		const toPath = {
@@ -455,7 +581,7 @@ export default {
 
 		addCard(options)
 		.then(() => {
-			return addBillingAddress(options)
+			return addBillingAddress(options);
 		})
 		.then(() => {
 			fbq('track', 'AddPaymentInfo');
@@ -509,10 +635,7 @@ export default {
 			});
 
 			localServer.dispatchUpdate('/userStore', patch);
-			HoodieApi.getCustomerInfo()
-			.then((customer) => {
-				localClient.dispatchAction('/load-customer-data', customer);
-			});
+			localClient.dispatchAction('/load-customer-data', customer);
 		}).catch((err) => {
 
 			if ((/no such coupon/i).test(err.message)) {
@@ -598,6 +721,21 @@ export default {
 				const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
 
 				return localServer.dispatchUpdate('/userStore', patch);
+			});
+	},
+	'/buy-credits': (options) => {
+		buyCredits(options)
+			.then((data) => {
+				localClient.dispatchAction('/store-value', {buyCreditsNewCreditAmount: data.credits});
+				hashHistory.push({
+					pathname: options.pathQuery.path || '/account/credits',
+				});
+			});
+	},
+	'/spend-credits': (options) => {
+		spendCredits(options)
+			.then((data) => {
+				localClient.dispatchAction('/store-value', {spendCreditsNewCreditAmount: data.credits});
 			});
 	},
 };

@@ -1,4 +1,4 @@
-import {prototypoStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, userStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {FontValues} from '../services/values.services.js';
@@ -13,6 +13,41 @@ window.addEventListener('fluxServer.setup', () => {
 	localServer = LocalServer.instance;
 });
 
+/**
+*	Checks for export authorization for a given (plan,credits) couple
+*	@param {string} the current user's plan
+*	@param {number} the current user's credit amount
+*	@return {boolean} wether the user is authorized to export or not
+*/
+function exportAuthorized(plan, credits) {
+	const currentCreditCost = prototypoStore.get('currentCreditCost');
+	const paidPlan = plan.indexOf('free_') === -1;
+	const enoughCredits = credits && credits > 0 && currentCreditCost <= credits;
+
+	if (!enoughCredits) {
+		localClient.dispatchAction('/store-value', {
+			errorExport: {
+				message: 'Not enough credits',
+			},
+		});
+	}
+
+	return paidPlan || enoughCredits;
+}
+
+/**
+*	Dispatches an event that will spend credits (to be done on export success callback)
+*/
+function spendCreditsAction() {
+	const plan = HoodieApi.instance.plan;
+
+	if (plan.indexOf('free_') !== -1) {
+		const currentCreditCost = prototypoStore.get('currentCreditCost');
+
+		localClient.dispatchAction('/spend-credits', {amount: currentCreditCost});
+	}
+}
+
 export default {
 	'/exporting': ({exporting, errorExport}) => {
 		const patch = prototypoStore.set('export', exporting).set('errorExport', errorExport).commit();
@@ -21,9 +56,10 @@ export default {
 	},
 	'/export-otf': ({merged, familyName = 'font', variantName = 'regular', exportAs}) => {
 		const plan = HoodieApi.instance.plan;
+		const credits = userStore.get('infos').credits;
 
 		//forbid export without plan
-		if (plan.indexOf('free_') !== -1) {
+		if (!exportAuthorized(plan, credits)) {
 			return false;
 		}
 
@@ -55,13 +91,15 @@ export default {
 			localClient.dispatchAction('/exporting', {exporting: false});
 			window.Intercom('trackEvent', 'export-otf');
 			clearTimeout(exportingError);
+			spendCreditsAction();
 		}, name, merged, undefined, HoodieApi.instance.email);
 	},
 	'/set-up-export-otf': ({merged, exportAs = true}) => {
 		const plan = HoodieApi.instance.plan;
+		const credits = userStore.get('infos').credits;
 
 		//forbid export without plan
-		if (plan.indexOf('free_') !== -1) {
+		if (!exportAuthorized(plan, credits)) {
 			return false;
 		}
 
@@ -70,21 +108,42 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/export-glyphr': () => {
+
 		const family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : 'font';
 		const style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
+
+		const plan = HoodieApi.instance.plan;
+		const credits = userStore.get('infos').credits;
+
+		//forbid export without plan
+		if (!exportAuthorized(plan, credits)) {
+			return false;
+		}
 
 		const name = {
 			family,
 			style: `${style.toLowerCase()}`,
 		};
 
-		fontInstance.openInGlyphr(null, name, false, undefined, HoodieApi.instance.email);
+		fontInstance.openInGlyphr(() => {
+			spendCreditsAction();
+		}, name, false, undefined, HoodieApi.instance.email);
 	},
+
+	// TODO add a spend credit action
 	'/export-family': async ({familyToExport, variants}) => {
 		const oldVariant = prototypoStore.get('variant');
 		const family = prototypoStore.get('family');
 		const zip = new JSZip();
 		const a = document.createElement('a');
+
+		const plan = HoodieApi.instance.plan;
+		const credits = userStore.get('infos').credits;
+
+		//forbid export without plan
+		if (!exportAuthorized(plan, credits)) {
+			return false;
+		}
 
 		const setupPatch = prototypoStore
 			.set('familyExported', familyToExport.name)

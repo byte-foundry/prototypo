@@ -15,6 +15,7 @@ export default class AccountSubscription extends React.Component {
 		super(props);
 		this.state = {
 			card: [],
+			credits: undefined,
 		};
 	}
 
@@ -27,6 +28,7 @@ export default class AccountSubscription extends React.Component {
 				this.setState({
 					plan: head.toJS().infos.subscriptions,
 					card: head.toJS().infos.card,
+					credits: head.toJS().infos.credits,
 				});
 			})
 			.onDelete(() => {
@@ -44,7 +46,7 @@ export default class AccountSubscription extends React.Component {
 				You don't have a card right now. <Link className="account-link" to="/account/details/add-card">Add a card</Link> before subscribing.
 			</h3>
 		);
-		const currency = this.state.card[0] ? getCurrency(this.state.card[0].country) : undefined;
+		const currency = this.state.card && this.state.card[0] ? getCurrency(this.state.card[0].country) : undefined;
 		const currencySymbol = currency === 'USD'
 			? {
 				before: '$',
@@ -95,6 +97,14 @@ export default class AccountSubscription extends React.Component {
 			return this.state.plan && this.state.plan[0].plan.id.indexOf(key) !== -1;
 		});
 
+		const credits = (
+			<div className="dislay-credits">
+				<DisplayWithLabel label="Your export credits">
+					{this.state.credits ? this.state.credits : '0' }
+				</DisplayWithLabel>
+			</div>
+		);
+
 
 		const content = this.state.plan
 			? (
@@ -111,6 +121,11 @@ export default class AccountSubscription extends React.Component {
 			)
 			: noPlan;
 
-		return content;
+		return (
+			<div>
+				{content}
+				{credits}
+			</div>
+		);
 	}
 }

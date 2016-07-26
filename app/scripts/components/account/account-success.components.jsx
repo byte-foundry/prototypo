@@ -13,8 +13,8 @@ export default class AccountSuccess extends React.Component {
 				</p>
 				<p>
 					I’ts time for you now to <Link className="account-link" to="/dashboard">go to the app</Link> and make you own fonts. We love to have a lot of
-					feedbacks from our users. Feel free to contact us or share with us your production on
-					<a className="account-link" href="https://www.twitter.com/prototypoApp">Twitter</a> or <a className="account-link" href="https://www.facebook.com/prototypoApp">Facebook</a>.
+					feedbacks from our users. Feel free to contact us or share with us your
+					production on <a className="account-link" href="https://www.twitter.com/prototypoApp">Twitter</a> or <a className="account-link" href="https://www.facebook.com/prototypoApp">Facebook</a>.
 				</p>
 				<p>
 					Have fun,<br/>The Prototypo team.

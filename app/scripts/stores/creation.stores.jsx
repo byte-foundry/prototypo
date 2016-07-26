@@ -185,6 +185,10 @@ const userStore = new Remutable({
 		errors: [],
 		inError: {},
 	},
+	buyCreditsForm: {
+		errors: [],
+		inError: {},
+	},
 	billingForm: {
 		errors: [],
 		inError: {},
@@ -198,11 +202,17 @@ const userStore = new Remutable({
 	},
 });
 
+// how to add a coupon hash:
+// 1. open a terminal in the prototypo directory
+// 2. enter 'node' in the terminal
+// 3. enter require('md5')('<coupon name>' + '.' + '<plan name>');
+// 4. paste the resulting hash here. shouldSkipCard is true when no card is
+// required to subscribe to that plan (first month free for example).
 const couponStore = new Remutable({
-	'58e088c97aa400b0498fa3d11640ada8': '$5 off your first month!',
-	'98d317f6598ce579eda20ec39e964203': '$5 off your first month to celebrate our 10.000 users!',
-	'aa5355e6d09f960bd1010de998c079b2': '50% off the annual price for schools!', // for personal_annual. We should remove this later.
-	'dfbc3313a2e4a0e1a46a96bb5e279121': '50% off the annual price for schools!'
+	'58e088c97aa400b0498fa3d11640ada8': {label: '$5 off your first month!'},
+	'98d317f6598ce579eda20ec39e964203': {label: '$5 off your first month to celebrate our 10.000 users!'},
+	'aa5355e6d09f960bd1010de998c079b2': {label: '50% off the annual price for schools!'}, // for personal_annual. We should remove this later.
+	'dfbc3313a2e4a0e1a46a96bb5e279121': {label: '50% off the annual price for schools!'},
 });
 
 const planStore = new Remutable({
@@ -234,11 +244,18 @@ const planStore = new Remutable({
 	},
 });
 
+// [item]: [cost in credits]
+const creditStore = new Remutable({
+	exportOtf: 1,
+	exportGlyphr: 1,
+});
+
 const stores = {
 	'/prototypoStore': prototypoStore,
 	'/undoableStore': undoableStore,
 	'/userStore': userStore,
 	'/planStore': planStore,
+	'/creditStore': creditStore,
 };
 
 export default stores;
@@ -247,4 +264,5 @@ export {
 	userStore,
 	couponStore,
 	planStore,
+	creditStore,
 };
