@@ -197,7 +197,7 @@ export default {
 		});
 		saveAppValues();
 	},
-	'/create-variant-from-ref': ({ref, name, variant, family}) => {
+	'/create-variant-from-ref': ({ref, name, variant, family, noSwitch}) => {
 		const thicknessTransform = [
 			{string: 'Thin', thickness: 20},
 			{string: 'Light', thickness: 50},
@@ -232,7 +232,7 @@ export default {
 		});
 
 	},
-	'/create-variant': async ({name, familyName, variantBase}) => {
+	'/create-variant': async ({name, familyName, variantBase, noSwitch}) => {
 		if (!name || String(name).trim() === '') {
 			const patch = prototypoStore.set('errorAddVariant', 'Variant name cannot be empty').commit();
 
@@ -279,6 +279,7 @@ export default {
 			ref,
 			variant,
 			family,
+			noSwitch,
 		});
 	},
 	'/edit-variant': ({variant, family, newName}) => {

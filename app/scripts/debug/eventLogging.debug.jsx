@@ -89,7 +89,7 @@ export default class EventDebugger {
 			return await new Promise((resolve) => {
 				setTimeout(() => {
 					resolve(this.execEvent(events, i + 1, to));
-				}, 1000);
+				}, 200);
 			});
 		}
 		else {

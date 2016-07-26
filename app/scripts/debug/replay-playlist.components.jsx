@@ -77,7 +77,7 @@ class Events extends React.Component {
 		this.client.getStore('/prototypoStore', this.lifespan)
 		.onUpdate(({head}) => {
 				this.setState({
-					patchArray: head.toJS().debugEvents,
+					patchArray: head.toJS().patchArray,
 				});
 			})
 			.onDelete(() => {
@@ -92,7 +92,12 @@ class Events extends React.Component {
 	render() {
 		let eventIndex = 0;
 		const events = _.map(this.state.patchArray, (patch, i) => {
-			return <Event path={patch.path} details={patch.params} index={eventIndex++} key={i}/>;
+			if (patch.type === 'action') {
+				return <Event path={patch.path} details={patch.params} index={eventIndex++} key={i}/>;
+			}
+			else {
+				return <Patch path={patch.path} details={patch.patch} key={i}/>
+			}
 		});
 
 		return (
@@ -106,6 +111,11 @@ class Events extends React.Component {
 }
 
 class Patch extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		const classes = Classnames({
 			event: true,

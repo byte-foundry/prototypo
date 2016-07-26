@@ -198,7 +198,7 @@ const localServer = new LocalServer(stores, {
 		'/store-in-debug-font',
 		'/show-details',
 	],
-	logStore: stores.prototypoStore,
+	logStore: stores['/prototypoStore'],
 }).instance;
 /* #end */
 /* #if prod */
@@ -355,8 +355,10 @@ selectRenderOptions(
 					<Route component={App} name="app" path="/">
 						<IndexRoute component={SitePortal}/>
 						<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}/>
+						/* #if debug */
 						<Route path="replay" path="replay/:replayId" component={ReplayViewer}/>
 						<Route path="debug" component={ReplayViewer}/>
+						/* #endif */
 						<Route path="signin" component={AccountApp} onEnter={redirectToDashboard}>
 							<Route path="forgotten" component={ForgottenPassword}/>
 							<IndexRoute component={Signin}/>
