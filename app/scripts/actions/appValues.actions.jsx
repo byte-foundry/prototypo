@@ -1,11 +1,14 @@
 import {prototypoStore, userStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
+import LocalClient from '../stores/local-client.stores.jsx';
 import {saveAppValues, valuesToLoad} from '../helpers/loadValues.helpers.js';
 import {Commits} from '../services/commits.services.js';
 
 let localServer;
+let localClient;
 
 window.addEventListener('fluxServer.setup', () => {
+	localClient = LocalClient.instance();
 	localServer = LocalServer.instance;
 });
 
@@ -40,32 +43,35 @@ export default {
 			const lastcommitsJSON = await Promise.all(repos.map((repo) => {
 				return Commits.getCommits(repo);
 			}));
-			const lastCommits = lastcommitsJSON
-				.reduce((a, b) => {
-					return a.concat(JSON.parse(b));
-				}, [])
-				.filter((commit) => {
-					return commit.commit.message.indexOf('Changelog') !== -1;
-				})
-				.sort((a, b) => {
-					if (a.commit.author.date < b.commit.author.date) {
-						return -1;
-					}
-					if (a.commit.author.date > b.commit.author.date) {
-						return 1;
-					}
-					return 0;
-				})
-				.reverse();
-			const patch = prototypoStore.set('commitsList', lastCommits).commit();
-
-			localServer.dispatchUpdate('/prototypoStore', patch);
+			localClient.dispatchAction('/load-commits-post', lastcommitsJSON);
 		}
 		catch (err) {
 			const patch = prototypoStore.set('error', 'Cannot get commit').commit();
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
 		}
+	},
+	'/load-commits-post': (lastcommitsJSON) => {
+		const lastCommits = lastcommitsJSON
+			.reduce((a, b) => {
+				return a.concat(JSON.parse(b));
+			}, [])
+			.filter((commit) => {
+				return commit.commit.message.indexOf('Changelog') !== -1;
+			})
+			.sort((a, b) => {
+				if (a.commit.author.date < b.commit.author.date) {
+					return -1;
+				}
+				if (a.commit.author.date > b.commit.author.date) {
+					return 1;
+				}
+				return 0;
+			})
+			.reverse();
+		const patch = prototypoStore.set('commitsList', lastCommits).commit();
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/view-commit': ({latest}) => {
 		const patch = prototypoStore.set('latestCommit', latest).commit();

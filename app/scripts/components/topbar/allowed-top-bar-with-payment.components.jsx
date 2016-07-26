@@ -4,7 +4,7 @@ import HoodieApi from '~/services/hoodie.services.js';
 
 export default class AllowedTopBarWithPayment extends React.Component {
 	render() {
-		const plan = HoodieApi.instance.plan;
+		const plan = HoodieApi.instance ? HoodieApi.instance.plan : 'free_';
 
 		const overlay = plan.indexOf('free_') !== -1
 			? (

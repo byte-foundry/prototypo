@@ -6,32 +6,15 @@ import LocalClient from '../stores/local-client.stores.jsx';
 function values(prefix) {
 	return {
 		get(params) {
-			if (location.hash.indexOf('#/replay') === -1) {
-				return HoodieApi.instance.store.find(`${prefix}values`, `${params.typeface}`)
-					.then((data) => {
-						if (LocalClient.serverInstance) {
-							const client = LocalClient.instance();
+			return HoodieApi.instance.store.find(`${prefix}values`, `${params.typeface}`)
+				.then((data) => {
+					if (LocalClient.serverInstance) {
+						const client = LocalClient.instance();
 
-							client.dispatchAction('/store-in-debug-font', {prefix, typeface: params.typeface, data});
-						}
-						return data;
-					});
-			}
-			else {
-				return new Promise(async (resolve, reject) => {
-					const client = LocalClient.instance();
-					const valuesFetched = await client.fetch('/prototypoStore');
-
-					if (valuesFetched.get('debugValues')[prefix][params.typeface]) {
-						setTimeout(() => {
-							resolve(valuesFetched.get('debugValues')[prefix][params.typeface]);
-						}, 500);
+						client.dispatchAction('/store-in-debug-font', {prefix, typeface: params.typeface, data});
 					}
-					else {
-						reject();
-					}
+					return data;
 				});
-			}
 		},
 		getWithPouch(params) {
 			if (location.hash.indexOf('#/replay') === -1) {

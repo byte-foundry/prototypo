@@ -74,10 +74,10 @@ class Events extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('prototypoStore', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 		.onUpdate(({head}) => {
 				this.setState({
-					patchArray: head.toJS().patchArray,
+					patchArray: head.toJS().debugEvents,
 				});
 			})
 			.onDelete(() => {
@@ -92,12 +92,7 @@ class Events extends React.Component {
 	render() {
 		let eventIndex = 0;
 		const events = _.map(this.state.patchArray, (patch, i) => {
-			if (patch.type === 'action') {
-				return <Event path={patch.path} details={patch.params} index={eventIndex++} key={i}/>;
-			}
-			else {
-				return <Patch path={patch.path} details={patch.patch} key={i}/>
-			}
+			return <Event path={patch.path} details={patch.params} index={eventIndex++} key={i}/>;
 		});
 
 		return (
