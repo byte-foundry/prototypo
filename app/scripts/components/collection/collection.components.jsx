@@ -38,6 +38,8 @@ export default class Collection extends React.Component {
 					selectedVariant: head.toJS().collectionSelectedVariant || {},
 					familyDeleteSplit: head.toJS().uiFamilyDeleteSplit,
 					variantDeleteSplit: head.toJS().uiVariantDeleteSplit,
+					variantToExport: head.toJS().variantToExport,
+					exportedVariant: head.toJS().exportedVariant,
 				});
 			})
 			.onDelete(() => {
@@ -73,6 +75,8 @@ export default class Collection extends React.Component {
 				selectedVariantId={this.state.selectedVariant.id}
 				key={this.state.selected.name}
 				deleteSplit={this.state.familyDeleteSplit}
+				variantToExport={this.state.variantToExport}
+				exportedVariant={this.state.exportedVariant}
 				family={this.state.selected}/>
 			: false;
 
@@ -211,6 +215,7 @@ class VariantList extends React.Component {
 		this.cancelDelete = this.cancelDelete.bind(this);
 		this.prepareDeleteOrDelete = this.prepareDeleteOrDelete.bind(this);
 		this.openChangeNameFamily = this.openChangeNameFamily.bind(this);
+		this.downloadFamily = this.downloadFamily.bind(this);
 	}
 
 	componentWillMount() {
@@ -257,6 +262,13 @@ class VariantList extends React.Component {
 		});
 	}
 
+	downloadFamily() {
+		this.client.dispatchAction('/export-family', {
+			familyToExport: this.props.family,
+			variants: this.props.variants,
+		});
+	}
+
 	render() {
 		const variants = _.map(this.props.variants, (variant, i) => {
 			const classes = ClassNames({
@@ -270,8 +282,6 @@ class VariantList extends React.Component {
 				</div>
 			);
 		});
-
-
 		const freeUser = HoodieApi.instance.plan.indexOf('free_') !== -1;
 		const exportOverlay = freeUser
 			? (
@@ -284,6 +294,9 @@ class VariantList extends React.Component {
 				</a>
 			)
 			: false;
+		const downloadLabel = this.props.variantToExport
+			? `${this.props.exportedVariant} / ${this.props.variantToExport}`
+			: 'Download family';
 
 		return (
 			<div className="variant-list-container">
@@ -292,7 +305,7 @@ class VariantList extends React.Component {
 				</div>
 				<div className="variant-list-download-overlay">
 					{exportOverlay}
-					<Button label="Download family"/>
+					<Button label={downloadLabel} click={this.downloadFamily}/>
 				</div>
 				<Button label="Change family name" click={this.openChangeNameFamily}/>
 				<Button
