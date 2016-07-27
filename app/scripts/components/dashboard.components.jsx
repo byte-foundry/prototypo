@@ -17,6 +17,7 @@ import CreateVariantModal from './familyVariant/create-variant-modal.components.
 import ChangeNameFamily from './familyVariant/change-name-family.components.jsx';
 import ChangeNameVariant from './familyVariant/change-name-variant.components.jsx';
 import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
+import CreditsExport from './credits-export.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
 
 export default class Dashboard extends React.Component {
@@ -43,6 +44,7 @@ export default class Dashboard extends React.Component {
 					openChangeFamilyNameModal: head.toJS().openChangeFamilyNameModal,
 					openChangeVariantNameModal: head.toJS().openChangeVariantNameModal,
 					openDuplicateVariantModal: head.toJS().openDuplicateVariantModal,
+					openBuyCreditsModal: head.toJS().openBuyCreditsModal,
 					step: head.toJS().uiOnboardstep,
 					collection: head.toJS().uiShowCollection,
 					indiv: head.toJS().indivMode,
@@ -109,6 +111,9 @@ export default class Dashboard extends React.Component {
 		const duplicateVariant = this.state.openDuplicateVariantModal
 			? <DuplicateVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant}/>
 			: false;
+		const buyCredits = this.state.openBuyCreditsModal
+			? <CreditsExport/>
+			: false;
 
 		const exportAs = this.state.exportAs
 			? <ExportAs />
@@ -133,6 +138,7 @@ export default class Dashboard extends React.Component {
 					{changeNameFamily}
 					{changeNameVariant}
 					{duplicateVariant}
+					{buyCredits}
 				</ReactCSSTransitionGroup>
 			</div>
 		);

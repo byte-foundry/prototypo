@@ -1,12 +1,13 @@
 import React from 'react';
 import {Link} from 'react-router';
 import Lifespan from 'lifespan';
-import LocalClient from '../../stores/local-client.stores.jsx';
+import LocalClient from '../stores/local-client.stores.jsx';
 import vatrates from 'vatrates';
 
-import AccountValidationButton from '../shared/account-validation-button.components.jsx';
-import AddCard from '../shared/add-card.components.jsx';
-import FormError from '../shared/form-error.components.jsx';
+import AccountValidationButton from './shared/account-validation-button.components.jsx';
+import Modal from './shared/modal.components.jsx';
+import AddCard from './shared/add-card.components.jsx';
+import FormError from './shared/form-error.components.jsx';
 
 export default class CreditsExport extends React.Component {
 	constructor(props) {
@@ -128,16 +129,12 @@ export default class CreditsExport extends React.Component {
 			);
 
 		return (
-			<div className="sign-up sign-base">
-				<div className="account-dashboard-icon"/>
-				<Link to="/account" className="account-dashboard-home-icon"/>
-				<div className="account-header">
-					<h1 className="account-title">Buy export credits</h1>
-				</div>
+			<Modal>
+				<div className="modal-container-title">BUY EXPORT CREDITS</div>
 				<div className="account-dashboard-container">
 					{buyCreditsForm}
 				</div>
-			</div>
+			</Modal>
 		);
 	}
 }

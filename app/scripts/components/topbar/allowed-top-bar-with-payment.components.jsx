@@ -1,7 +1,22 @@
 import React from 'react';
 import {Link} from 'react-router';
 
+import LocalClient from '~/stores/local-client.stores.jsx';
+
 export default class AllowedTopBarWithPayment extends React.Component {
+	constructor(props) {
+		super(props);
+		this.openBuyCreditsModal = this.openBuyCreditsModal.bind(this);
+	}
+
+	openBuyCreditsModal() {
+		this.client.dispatchAction('/store-value', {openBuyCreditsModal: true});
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
 	render() {
 		const freeAccount = this.props.freeAccount;
 		const credits = this.props.credits;
@@ -20,11 +35,11 @@ export default class AllowedTopBarWithPayment extends React.Component {
 								</div>
 							</Link>
 							<div className="slider-demo-overlay-text-more-text-separator"></div>
-							<Link to="/account/credits">
+							<div onClick={this.openBuyCreditsModal}>
 								<div className="slider-demo-overlay-text-more-wrap">
 									<div className="slider-demo-overlay-text-more-text">Buy export credits</div>
 								</div>
-							</Link>
+							</div>
 						</div>
 					</div>
 				</div>
