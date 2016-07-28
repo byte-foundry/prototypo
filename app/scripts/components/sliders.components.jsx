@@ -439,7 +439,7 @@ export class SliderTextController extends React.Component {
 			<input
 				className={classes}
 				type="number"
-				value={this.props.value}
+				value={this.props.value.toFixed(2)}
 				onChange={(e) => {
 					this.client.dispatchAction(
 						'/change-param',

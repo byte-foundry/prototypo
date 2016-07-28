@@ -1,8 +1,9 @@
 import React from 'react';
 import {Link} from 'react-router';
 import Lifespan from 'lifespan';
-import LocalClient from '../stores/local-client.stores.jsx';
 import vatrates from 'vatrates';
+
+import LocalClient from '../stores/local-client.stores.jsx';
 
 import Button from './shared/button.components.jsx';
 import Modal from './shared/modal.components.jsx';
@@ -55,7 +56,7 @@ export default class CreditsExport extends React.Component {
 		// format : freegeoip.net/{format}/{IP_or_hostname}
 		const url = 'http://freegeoip.net/json/';
 
-		this.serverRequest = fetch(url)
+		fetch(url)
 			.then((response) => {
 				if (response) {
 					return response.json();
