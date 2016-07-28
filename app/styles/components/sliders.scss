@@ -9,7 +9,7 @@
 		position:absolute;
 		width:100%;
 		height:100%;
-		background-color: rgba($dark-grey, 0.65);
+		background-color: rgba($dark-grey, 0.80);
 		z-index:2;
 		display:flex;
 		justify-content:center;
@@ -130,7 +130,7 @@
 
 	&.is-coming {
 		.slider-demo-overlay {
-			background-color: rgba($dark-grey, 0.45);
+			background-color: rgba($dark-grey, 0.65);
 			z-index:1;
 			&-text {
 				top: 0;
