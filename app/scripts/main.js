@@ -242,7 +242,7 @@ async function createStores() {
 	);
 
 	localServer.on('action', ({path, params}) => {
-		eventDebugger.storeEvent(path, params);
+		//eventDebugger.storeEvent(path, params);
 		if (process.env.__SHOW_ACTION__) {
 			console.log(`[ACTION] ${path}`);
 		}
@@ -269,6 +269,9 @@ async function createStores() {
 	}
 	catch (err) {
 		console.log(err);
+		const fontInstanceLoaded = new Event('fontInstance.loaded');
+
+		window.dispatchEvent(fontInstanceLoaded);
 	}
 	/* #end */
 }

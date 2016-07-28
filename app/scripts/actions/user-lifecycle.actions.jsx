@@ -198,14 +198,13 @@ function spendCredits({amount}) {
 		if (parseInt(amount) > 0) {
 			HoodieApi.spendCredits(amount)
 			.then((response) => {
-				const infos = userStore.get('infos');
 				const remainingCredits = response ? response.credits : undefined;
 
-				infos.credits = remainingCredits;
+				const credits = remainingCredits;
 
-				const patch = userStore.set('infos', infos).commit();
+				const patch = prototypoStore.set('credits', credits).commit();
 
-				localServer.dispatchUpdate('/userStore', patch);
+				localServer.dispatchUpdate('/prototypoStore', patch);
 
 				resolve({credits: remainingCredits});
 			})
@@ -356,22 +355,24 @@ export default {
 		HoodieApi.login(username, password)
 			.then(async () => {
 				await loadStuff();
-				hashHistory.push(dashboardLocation);
+				window.addEventListener('fontInstance.loaded', () => {
+					hashHistory.push(dashboardLocation);
 
-				window.Intercom('boot', {
-					app_id: 'mnph1bst',
-					email: username,
-					widget: {
-						activator: '#intercom-button',
-					},
+					window.Intercom('boot', {
+						app_id: 'mnph1bst',
+						email: username,
+						widget: {
+							activator: '#intercom-button',
+						},
+					});
+
+					form.errors = [];
+					form.inError = {};
+					form.loading = false;
+					const endPatch = userStore.set('signinForm', form).commit();
+
+					localServer.dispatchUpdate('/userStore', endPatch);
 				});
-
-				form.errors = [];
-				form.inError = {};
-				form.loading = false;
-				const endPatch = userStore.set('signinForm', form).commit();
-
-				localServer.dispatchUpdate('/userStore', endPatch);
 			})
 			.catch((err) => {
 				form.errors.push(
@@ -460,6 +461,12 @@ export default {
 				localServer.dispatchUpdate('/userStore', patch);
 				if (toLocation.pathname === '/dashboard') {
 					await loadStuff(accountValues);
+					window.addEventListener('fontInstance.loaded', () => {
+						hashHistory.push(toLocation);
+					});
+				}
+				else {
+					hashHistory.push(toLocation);
 				}
 
 				form.errors = [];
@@ -469,7 +476,6 @@ export default {
 
 				HoodieApi.instance.plan = 'free_none';
 				HoodieApi.instance.email = username;
-				hashHistory.push(toLocation);
 				fbq('track', 'Lead');
 				return localServer.dispatchUpdate('/userStore', endPatch);
 			})
