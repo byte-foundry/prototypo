@@ -1,7 +1,4 @@
-import {prototypoStore, userStore} from '../stores/creation.stores.jsx';
 import {AppValues, AccountValues, FontValues, FontInfoValues, UserValues} from '../services/values.services.js';
-import {loadFontValues} from './loadValues.helpers.js';
-import {setupFontInstance} from './font.helpers.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import slug from 'slug';
@@ -54,24 +51,6 @@ const defaultValues = {
 			savedSearch: [],
 		},
 };
-
-function mapGlyphForApp(glyph) {
-	return _.map(
-		glyph,
-		(alt) => {
-			return {
-				src: {
-					tags: alt.src && alt.src.tags || [],
-					characterName: alt.src && alt.src.characterName || '',
-					unicode: alt.src && alt.src.unicode	|| '',
-					glyphName: alt.src && alt.src.glyphName || '',
-				},
-				name: alt.name,
-				altImg: alt.altImg,
-			};
-		}
-	);
-}
 
 export async function loadStuff(refAccountValues) {
 	//We need to fix database names for the change to normal hoodie api so let's go
@@ -171,27 +150,6 @@ export async function loadStuff(refAccountValues) {
 	}
 
 	localClient.dispatchAction('/load-account-values', accountValues);
+	localClient.dispatchAction('/load-font-instance', {appValues});
 
-	let typedata;
-
-	try {
-		const fontResult = await setupFontInstance(appValues);
-
-		typedata = fontResult.typedata;
-	}
-	catch (err) {
-		console.log(err);
-	}
-
-	localClient.dispatchAction('/create-font', fontInstance.font.ot.getEnglishName('fontFamily'));
-	localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
-	localClient.dispatchAction('/load-glyphs', _.mapValues(
-		fontInstance.font.altMap,
-		mapGlyphForApp
-	));
-	localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
-	localClient.dispatchAction('/load-commits');
-	fontInstance.displayChar(String.fromCharCode(prototypoStore.get('glyphSelected')));
-
-	loadFontValues(typedata, appValues.values.variantSelected.db);
 }

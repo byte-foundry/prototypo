@@ -101,7 +101,8 @@
     "test": "test"
   },
   "scripts": {
-    "start": "gulp serve"
+    "start": "gulp serve",
+    "debug": "gulp debug"
   },
   "repository": {
     "type": "git",

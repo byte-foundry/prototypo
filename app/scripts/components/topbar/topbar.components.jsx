@@ -221,6 +221,7 @@ export default class Topbar extends React.Component {
 						</AllowedTopBarWithPayment>
 						<TopBarMenuDropdownItem name="Download Web Preview extension" separator={true} handler={() => { window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf','_blank'); }}/>
 						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout();}}/>
+						<TopBarMenuDropdownItem name="Send debug log" handler={() => {this.client.dispatchAction('/save-debug-log');}} separator={true}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">
 						<TopBarMenuDropdownItem name="Individualize parameters" handler={() => { this.individualize(); }}/>

@@ -1,6 +1,24 @@
 import PrototypoCanvas from 'prototypo-canvas';
 import {Typefaces} from '../services/typefaces.services.js';
 
+export function mapGlyphForApp(glyph) {
+	return _.map(
+		glyph,
+		(alt) => {
+			return {
+				src: {
+					tags: alt.src && alt.src.tags || [],
+					characterName: alt.src && alt.src.characterName || '',
+					unicode: alt.src && alt.src.unicode	|| '',
+					glyphName: alt.src && alt.src.glyphName || '',
+				},
+				name: alt.name,
+				altImg: alt.altImg,
+			};
+		}
+	);
+}
+
 export async function setupFontInstance(appValues) {
 		const template = appValues.values.familySelected ? appValues.values.familySelected.template : undefined;
 		const typedataJSON = await Typefaces.getFont(template || 'venus.ptf');
