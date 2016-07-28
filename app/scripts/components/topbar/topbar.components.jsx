@@ -178,6 +178,10 @@ export default class Topbar extends React.Component {
 				action={true}/>
 			) : false;
 
+		const creditExportLabel = this.state.credits
+			? <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>
+			: false;
+
 		return (
 			<div id="topbar">
 				<TopBarMenu>
@@ -269,6 +273,7 @@ export default class Topbar extends React.Component {
 					{exporting}
 					{errorExporting}
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
+					{creditExportLabel}
 				</TopBarMenu>
 			</div>
 		);

@@ -1,4 +1,4 @@
-import {prototypoStore, userStore} from '../stores/creation.stores.jsx';
+import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {FontValues} from '../services/values.services.js';
@@ -56,7 +56,7 @@ export default {
 	},
 	'/export-otf': ({merged, familyName = 'font', variantName = 'regular', exportAs}) => {
 		const plan = HoodieApi.instance.plan;
-		const credits = userStore.get('infos').credits;
+		const credits = prototypoStore.get('credits');
 
 		//forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
@@ -96,7 +96,7 @@ export default {
 	},
 	'/set-up-export-otf': ({merged, exportAs = true}) => {
 		const plan = HoodieApi.instance.plan;
-		const credits = userStore.get('infos').credits;
+		const credits = prototypoStore.get('credits');
 
 		//forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
@@ -113,7 +113,7 @@ export default {
 		const style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
 
 		const plan = HoodieApi.instance.plan;
-		const credits = userStore.get('infos').credits;
+		const credits = prototypoStore.get('credits');
 
 		//forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
@@ -239,7 +239,7 @@ export default {
 		const family = prototypoStore.get('family');
 
 		const plan = HoodieApi.instance.plan;
-		const credits = userStore.get('infos').credits;
+		const credits = prototypoStore.get('credits');
 
 		//forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
