@@ -4,6 +4,7 @@ import Lifespan from 'lifespan';
 import ClassNames from 'classnames';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import Joyride from 'react-joyride';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -24,8 +25,14 @@ export default class Dashboard extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			joyrideSteps: [],
+			uiJoyrideTutorialValue: false,
+		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function bindings
+		this.joyrideCallback = this.joyrideCallback.bind(this);
 	}
 
 	async componentWillMount() {
@@ -49,6 +56,7 @@ export default class Dashboard extends React.Component {
 					collection: head.toJS().uiShowCollection,
 					indiv: head.toJS().indivMode,
 					exportAs: head.toJS().exportAs,
+					uiJoyrideTutorialValue: head.toJS().uiJoyrideTutorialValue,
 				});
 			})
 			.onDelete(() => {
@@ -59,6 +67,104 @@ export default class Dashboard extends React.Component {
 
 	componentWillUnmount() {
 		this.lifespan.release();
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		const mainColor = '#24d390';
+		const steps = [];
+
+		if (
+			(prevState.uiJoyrideTutorialValue !== this.state.uiJoyrideTutorialValue)
+			&& this.state.uiJoyrideTutorialValue
+		) {
+			switch (this.state.uiJoyrideTutorialValue) {
+				case 'fileTutorial':
+					steps.push({
+						title: 'Merged export',
+						text: 'Will export your font without overlapping shapes',
+						selector: '#export-to-merged-otf',
+						position: 'right',
+						type: 'click',
+						style: {
+							mainColor,
+						},
+					},
+					{
+						title: 'Unmerged export',
+						text: 'Will export your font as is',
+						selector: '#export-to-otf',
+						position: 'right',
+						type: 'click',
+						style: {
+							mainColor,
+						},
+					});
+					break;
+				default:
+					break;
+			}
+			this.refs.joyride.start(true);
+		}
+
+
+		this.addSteps(steps);
+		/*this.addSteps([
+			{
+				title: 'Merged export',
+				text: 'Will export your font without overlapping shapes',
+				selector: '#export-to-merged-otf',
+				position: 'right',
+				type: 'click',
+				style: {
+					mainColor,
+				},
+			},
+			{
+				title: 'Unmerged export',
+				text: 'Will export your font as is',
+				selector: '#export-to-otf',
+				position: 'right',
+				type: 'click',
+				style: {
+					mainColor,
+				},
+			},
+		]);*/
+	}
+
+	/**
+	*	adds given steps to the state
+	*	@param {array} steps - an array containing joyride steps objects
+	*/
+	addSteps(steps) {
+		const joyride = this.refs.joyride;
+
+		if (!steps.length) {
+			return false;
+		}
+
+		this.setState((currentState) => {
+			if (currentState.joyrideSteps) {
+				currentState.joyrideSteps = currentState.joyrideSteps.concat(joyride.parseSteps(steps));
+			}
+			return currentState;
+		});
+	}
+
+	addTooltip(data) {
+		this.refs.joyride.addTooltip(data);
+	}
+
+	joyrideCallback(joyrideEvent) {
+		if (joyrideEvent) {
+			switch (joyrideEvent.action) {
+				case 'close':
+					this.refs.joyride.stop();
+					break;
+				default:
+					break;
+			}
+		}
 	}
 
 	goToNextStep(step) {
@@ -121,6 +227,12 @@ export default class Dashboard extends React.Component {
 
 		return (
 			<div id="dashboard" className={classes}>
+				<Joyride
+					ref="joyride"
+					type="continuous"
+					scrollToSteps={false}
+					steps={this.state.joyrideSteps}
+					callback={this.joyrideCallback}/>
 				<Topbar />
 				<Toolbar />
 				<Workboard />
