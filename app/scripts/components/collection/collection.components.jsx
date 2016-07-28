@@ -24,10 +24,12 @@ export default class Collection extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		const {head} = await this.client.fetch('/prototypoStore');
+		const prototypoStore = await this.client.fetch('/prototypoStore');
+		const creditStore = await this.client.fetch('/creditStore');
 
 		this.setState({
-			templateInfos: head.toJS().templateList,
+			templateInfos: prototypoStore.head.toJS().templateList,
+			otfCreditCost: creditStore.head.toJS().exportOtf,
 		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
@@ -45,6 +47,7 @@ export default class Collection extends React.Component {
 					variantDeleteSplit: head.toJS().uiVariantDeleteSplit,
 					variantToExport: head.toJS().variantToExport,
 					exportedVariant: head.toJS().exportedVariant,
+					credits: head.toJS().credits,
 				});
 			})
 			.onDelete(() => {
@@ -91,6 +94,8 @@ export default class Collection extends React.Component {
 				askSubscribe={this.state.askSubscribeFamily}
 				variantToExport={this.state.variantToExport}
 				exportedVariant={this.state.exportedVariant}
+				credits={this.state.credits}
+				otfCreditCost={this.state.otfCreditCost}
 				family={this.state.selected}/>
 			: false;
 
@@ -288,6 +293,9 @@ class VariantList extends React.Component {
 	}
 
 	downloadFamily() {
+		this.client.dispatchAction('/store-value', {
+			currentCreditCost: this.props.otfCreditCost,
+		});
 		this.client.dispatchAction('/export-family', {
 			familyToExport: this.props.family,
 			variants: this.props.variants,
@@ -325,11 +333,15 @@ class VariantList extends React.Component {
 			);
 		});
 		const freeUser = HoodieApi.instance.plan.indexOf('free_') !== -1;
+		const hasEnoughCredits = this.props.credits
+			&& this.props.credits > 0
+			&& (this.props.otfCreditCost * this.props.variants.length) < this.props.credits;
+		const canExport = !freeUser || hasEnoughCredits;
 		const downloadLabel = this.props.variantToExport
 			? `${this.props.exportedVariant} / ${this.props.variantToExport}`
-			: freeUser && this.props.askSubscribe
+			: canExport && this.props.askSubscribe
 				? 'Subscribe'
-				: 'Download family';
+				: `Download family${hasEnoughCredits ? ' (' + this.props.variants.length + ' credits)' : ''}`;
 		const buyCreditsLabel = this.props.askSubscribe
 			? 'Buy credits'
 			: '';
@@ -340,9 +352,9 @@ class VariantList extends React.Component {
 					FAMILY ACTIONS
 				</div>
 				<Button label={downloadLabel}
-					click={freeUser ? this.askSubscribe : this.downloadFamily}
+					click={!canExport ? this.askSubscribe : this.downloadFamily}
 					altLabel={buyCreditsLabel}
-					splitButton={freeUser}
+					splitButton={!canExport}
 					splitted={this.props.askSubscribe}
 					altClick={this.buyCredits}/>
 				<Button label="Change family name" click={this.openChangeNameFamily}/>
