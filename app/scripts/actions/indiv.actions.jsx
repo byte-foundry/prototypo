@@ -49,11 +49,12 @@ export default {
 	},
 	'/toggle-individualize': ({targetIndivValue}) => {
 		const oldValue = prototypoStore.get('indivMode');
-
+		const newValue = targetIndivValue || !oldValue;
 		const groups = Object.keys(prototypoStore.get('controlsValues').indiv_group_param || {});
 		const groupsAndGlyphs = getGroupsAndGlyphsFromGroups(groups);
+
 		prototypoStore
-			.set('indivMode', targetIndivValue || !oldValue)
+			.set('indivMode', newValue)
 			.set('indivCreate', groups.length === 0 && !oldValue)
 			.set('indivPreDelete', false)
 			.set('indivEdit', false)
@@ -65,6 +66,10 @@ export default {
 			.set('indivGroups', groupsAndGlyphs);
 
 		const patch = prototypoStore.commit();
+
+		if (newValue) {
+			localClient.dispatchAction('/store-value', {uiJoyrideTutorialValue: 'indivGroupsTutorial'});
+		}
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		Log.ui('GroupParam.showIndivMode');

@@ -70,66 +70,63 @@ export default class Dashboard extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		const mainColor = '#24d390';
 		const steps = [];
+		const mainColor = '#24d390';
 
 		if (
 			(prevState.uiJoyrideTutorialValue !== this.state.uiJoyrideTutorialValue)
 			&& this.state.uiJoyrideTutorialValue
 		) {
 			switch (this.state.uiJoyrideTutorialValue) {
-				case 'fileTutorial':
-					steps.push({
-						title: 'Merged export',
-						text: 'Will export your font without overlapping shapes',
-						selector: '#export-to-merged-otf',
-						position: 'right',
-						type: 'click',
-						style: {
-							mainColor,
+				case 'fileTutorial': {
+					const position = 'right';
+
+					steps.push(
+						{
+							title: 'Merged export',
+							text: 'Will export your font without overlapping shapes',
+							selector: '#export-to-merged-otf',
+							position,
+							style: {
+								mainColor,
+							},
 						},
-					},
-					{
-						title: 'Unmerged export',
-						text: 'Will export your font as is',
-						selector: '#export-to-otf',
-						position: 'right',
-						type: 'click',
-						style: {
-							mainColor,
-						},
-					});
+						{
+							title: 'Unmerged export',
+							text: 'Will export your font as is',
+							selector: '#export-to-otf',
+							position,
+							style: {
+								mainColor,
+							},
+						}
+					);
 					break;
-				default:
+				}
+				// case 'collectionsTutorial'
+				case 'indivGroupsTutorial': {
+					console.log('indiv');
+					const mainColorIndiv = '#f5e462';
+
+					steps.push(
+						{
+							title: 'Individualisation Groups',
+							text: 'You might want to create individualisation groups because reasons',
+							selector: '.create-param-group',
+							position: 'right',
+							style: {
+								mainColor: mainColorIndiv,
+							},
+						}
+					);
+				}
+				default: {
 					break;
+				}
 			}
 			this.refs.joyride.start(true);
 		}
-
-
 		this.addSteps(steps);
-		/*this.addSteps([
-			{
-				title: 'Merged export',
-				text: 'Will export your font without overlapping shapes',
-				selector: '#export-to-merged-otf',
-				position: 'right',
-				type: 'click',
-				style: {
-					mainColor,
-				},
-			},
-			{
-				title: 'Unmerged export',
-				text: 'Will export your font as is',
-				selector: '#export-to-otf',
-				position: 'right',
-				type: 'click',
-				style: {
-					mainColor,
-				},
-			},
-		]);*/
 	}
 
 	/**
