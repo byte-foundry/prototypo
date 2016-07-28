@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router';
+import vatrates from 'vatrates';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
@@ -7,6 +8,7 @@ export default class AllowedTopBarWithPayment extends React.Component {
 	constructor(props) {
 		super(props);
 		this.openBuyCreditsModal = this.openBuyCreditsModal.bind(this);
+		this.state = {};
 	}
 
 	openBuyCreditsModal() {
@@ -15,6 +17,32 @@ export default class AllowedTopBarWithPayment extends React.Component {
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
+	}
+
+	componentDidMount() {
+		const url = 'http://freegeoip.net/json/';
+
+		fetch(url)
+			.then((response) => {
+				if (response) {
+					return response.json();
+				}
+			})
+			.then((response) => {
+				if (response.country_code in vatrates) {
+					this.setState({
+						currency: '€',
+					});
+				}
+				else {
+					this.setState({
+						currency: '$',
+					});
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	}
 
 	render() {
@@ -36,8 +64,8 @@ export default class AllowedTopBarWithPayment extends React.Component {
 							</Link>
 							<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text-separator"></div>
 							<div onClick={this.openBuyCreditsModal} className="allowed-top-bar-with-payment-demo-overlay-text-more-half">
-								<div className="allowed-top-bar-with-payment-demo-overlay-text-more-wrap">
-									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">Buy export credits</div>
+								<div className="allowed-top-bar-with-payment-demo-overlay-text-more-wrap allowed-top-bar-with-payment-credits">
+									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">Buy export credits.<br/>5 credits for 5{this.state.currency}</div>
 								</div>
 							</div>
 						</div>

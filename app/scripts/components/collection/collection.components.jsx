@@ -40,6 +40,7 @@ export default class Collection extends React.Component {
 					selectedVariant: head.toJS().collectionSelectedVariant || {},
 					familyDeleteSplit: head.toJS().uiFamilyDeleteSplit,
 					askSubscribeFamily: head.toJS().uiAskSubscribeFamily,
+					askSubscribeVariant: head.toJS().uiAskSubscribeVariant,
 					variantDeleteSplit: head.toJS().uiVariantDeleteSplit,
 					variantToExport: head.toJS().variantToExport,
 					exportedVariant: head.toJS().exportedVariant,
@@ -97,6 +98,9 @@ export default class Collection extends React.Component {
 			key={selectedVariant.id}
 			deleteSplit={this.state.variantDeleteSplit}
 			family={this.state.selected}
+			askSubscribe={this.state.askSubscribeVariant}
+			credits={this.state.credits}
+			otfCreditCost={this.state.otfCreditCost}
 			variant={selectedVariant}/>;
 
 		return (
@@ -318,13 +322,13 @@ class VariantList extends React.Component {
 			);
 		});
 		const freeUser = HoodieApi.instance.plan.indexOf('free_') !== -1;
-		const hasEnoughCredits = this.props.credits
+		const hasEnoughCredits = this.props.credits !== undefined
 			&& this.props.credits > 0
 			&& (this.props.otfCreditCost * this.props.variants.length) < this.props.credits;
 		const canExport = !freeUser || hasEnoughCredits;
 		const downloadLabel = this.props.variantToExport
 			? `${this.props.exportedVariant} / ${this.props.variantToExport}`
-			: canExport && this.props.askSubscribe
+			: !canExport && this.props.askSubscribe
 				? 'Subscribe'
 				: `Download family${hasEnoughCredits ? ' (' + this.props.variants.length + ' credits)' : ''}`;
 		const buyCreditsLabel = this.props.askSubscribe
@@ -370,10 +374,18 @@ class VariantInfo extends React.Component {
 		this.duplicate = this.duplicate.bind(this);
 		this.cancelDelete = this.cancelDelete.bind(this);
 		this.prepareDeleteOrDelete = this.prepareDeleteOrDelete.bind(this);
+		this.askSubscribe = this.askSubscribe.bind(this);
+		this.buyCredits = this.buyCredits.bind(this);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
+	}
+
+	componentWillUnmount() {
+		this.client.dispatchAction('/store-value', {
+			uiAskSubscribeVariant: false,
+		});
 	}
 
 	edit() {
@@ -407,6 +419,23 @@ class VariantInfo extends React.Component {
 		}
 	}
 
+	askSubscribe() {
+		if (this.props.askSubscribe) {
+			document.location.href = '#/account/create';
+		}
+		else {
+			this.client.dispatchAction('/store-value', {
+				uiAskSubscribeVariant: true,
+			});
+		}
+	}
+
+	buyCredits() {
+		this.client.dispatchAction('/store-value', {
+			openBuyCreditsModal: true,
+		});
+	}
+
 	cancelDelete() {
 		this.client.dispatchAction('/store-value', {
 			uiVariantDeleteSplit: false,
@@ -415,17 +444,18 @@ class VariantInfo extends React.Component {
 
 	render() {
 		const freeUser = HoodieApi.instance.plan.indexOf('free_') !== -1;
-		const exportOverlay = freeUser
-			? (
-				<a className="variant-list-download-overlay-message" href="#/account/create">
-					<div className="variant-list-download-overlay-message-half variant-list-download-overlay-message-start">
-					</div>
-					<div className="variant-list-download-overlay-message-half variant-list-download-overlay-message-end">
-						Upgrade to full version
-					</div>
-				</a>
-			)
-			: false;
+		const hasEnoughCredits = this.props.credits !== undefined
+			&& this.props.credits > 0
+			&& (this.props.otfCreditCost * this.props.variants.length) < this.props.credits;
+		const canExport = !freeUser || hasEnoughCredits;
+		const downloadLabel = this.props.variantToExport
+			? `${this.props.exportedVariant} / ${this.props.variantToExport}`
+			: !canExport && this.props.askSubscribe
+				? 'Subscribe'
+				: `Download Variant${hasEnoughCredits ? ' (1 credits)' : ''}`;
+		const buyCreditsLabel = this.props.askSubscribe
+			? 'Buy credits'
+			: '';
 
 		const result = this.props.variant.id
 			? (
@@ -434,10 +464,12 @@ class VariantInfo extends React.Component {
 						VARIANT ACTIONS
 					</div>
 					<Button label="Open in prototypo" click={this.props.open}/>
-					<div className="variant-list-download-overlay">
-						{exportOverlay}
-						<Button label="Download variant" click={this.props.download}/>
-					</div>
+					<Button label={downloadLabel}
+						click={!canExport ? this.askSubscribe : this.downloadFamily}
+						altLabel={buyCreditsLabel}
+						splitButton={!canExport}
+						splitted={this.props.askSubscribe}
+						altClick={this.buyCredits}/>
 					<Button label="Change variant name" click={this.edit}/>
 					<Button label="Duplicate variant" click={this.duplicate}/>
 					<Button
