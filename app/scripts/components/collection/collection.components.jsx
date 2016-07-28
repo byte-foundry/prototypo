@@ -37,6 +37,7 @@ export default class Collection extends React.Component {
 					selected: head.toJS().collectionSelectedFamily || {},
 					selectedVariant: head.toJS().collectionSelectedVariant || {},
 					familyDeleteSplit: head.toJS().uiFamilyDeleteSplit,
+					askSubscribeFamily: head.toJS().uiAskSubscribeFamily,
 					variantDeleteSplit: head.toJS().uiVariantDeleteSplit,
 					variantToExport: head.toJS().variantToExport,
 					exportedVariant: head.toJS().exportedVariant,
@@ -75,6 +76,7 @@ export default class Collection extends React.Component {
 				selectedVariantId={this.state.selectedVariant.id}
 				key={this.state.selected.name}
 				deleteSplit={this.state.familyDeleteSplit}
+				askSubscribe={this.state.askSubscribeFamily}
 				variantToExport={this.state.variantToExport}
 				exportedVariant={this.state.exportedVariant}
 				family={this.state.selected}/>
@@ -216,10 +218,18 @@ class VariantList extends React.Component {
 		this.prepareDeleteOrDelete = this.prepareDeleteOrDelete.bind(this);
 		this.openChangeNameFamily = this.openChangeNameFamily.bind(this);
 		this.downloadFamily = this.downloadFamily.bind(this);
+		this.askSubscribe = this.askSubscribe.bind(this);
+		this.buyCredits = this.buyCredits.bind(this);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
+	}
+
+	componentWillUnmount() {
+		this.client.dispatchAction('/store-value', {
+			uiAskSubscribeFamily: false,
+		});
 	}
 
 	selectVariant(variant) {
@@ -269,6 +279,23 @@ class VariantList extends React.Component {
 		});
 	}
 
+	askSubscribe() {
+		if (this.props.askSubscribe) {
+			document.location.href = '#/account/create';
+		}
+		else {
+			this.client.dispatchAction('/store-value', {
+				uiAskSubscribeFamily: true,
+			});
+		}
+	}
+
+	buyCredits() {
+		this.client.dispatchAction('/store-value', {
+			openBuyCreditsModal: true,
+		});
+	}
+
 	render() {
 		const variants = _.map(this.props.variants, (variant, i) => {
 			const classes = ClassNames({
@@ -283,30 +310,26 @@ class VariantList extends React.Component {
 			);
 		});
 		const freeUser = HoodieApi.instance.plan.indexOf('free_') !== -1;
-		const exportOverlay = freeUser
-			? (
-				<a className="variant-list-download-overlay-message" href="#/account/create">
-					<div className="variant-list-download-overlay-message-half variant-list-download-overlay-message-start">
-					</div>
-					<div className="variant-list-download-overlay-message-half variant-list-download-overlay-message-end">
-						Upgrade to full version
-					</div>
-				</a>
-			)
-			: false;
 		const downloadLabel = this.props.variantToExport
 			? `${this.props.exportedVariant} / ${this.props.variantToExport}`
-			: 'Download family';
+			: freeUser && this.props.askSubscribe
+				? 'Subscribe'
+				: 'Download family';
+		const buyCreditsLabel = this.props.askSubscribe
+			? 'Buy credits'
+			: '';
 
 		return (
 			<div className="variant-list-container">
 				<div className="variant-list-title">
 					FAMILY ACTIONS
 				</div>
-				<div className="variant-list-download-overlay">
-					{exportOverlay}
-					<Button label={downloadLabel} click={this.downloadFamily}/>
-				</div>
+				<Button label={downloadLabel}
+					click={freeUser ? this.askSubscribe : this.downloadFamily}
+					altLabel={buyCreditsLabel}
+					splitButton={freeUser}
+					splitted={this.props.askSubscribe}
+					altClick={this.buyCredits}/>
 				<Button label="Change family name" click={this.openChangeNameFamily}/>
 				<Button
 					label={this.props.deleteSplit ? 'Delete' : 'Delete family'}

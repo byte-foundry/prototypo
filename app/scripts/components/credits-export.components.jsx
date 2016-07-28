@@ -4,7 +4,7 @@ import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import vatrates from 'vatrates';
 
-import AccountValidationButton from './shared/account-validation-button.components.jsx';
+import Button from './shared/button.components.jsx';
 import Modal from './shared/modal.components.jsx';
 import AddCard from './shared/add-card.components.jsx';
 import FormError from './shared/form-error.components.jsx';
@@ -22,6 +22,7 @@ export default class CreditsExport extends React.Component {
 
 		// function binding
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.exit = this.exit.bind(this);
 	}
 
 	componentWillMount() {
@@ -95,6 +96,10 @@ export default class CreditsExport extends React.Component {
 		});
 	}
 
+	exit() {
+		this.client.dispatchAction('/store-value', {openBuyCreditsModal: false});
+	}
+
 	render() {
 		const errors = this.state.errors.map((error, index) => {
 			return <FormError key={index} errorText={error} />;
@@ -104,34 +109,32 @@ export default class CreditsExport extends React.Component {
 
 		const buyCreditsForm = newCredits
 			? (
-				<div className="credits_obtained">
+				<div className="credits-obtained">
 					<div>
 						<p>
 							You now have {newCredits} credits
 						</p>
 					</div>
 					<div>
-						<Link
-							className="account-button"
-							to="/dashboard">
-							Go to the app
-						</Link>
+						<Button click={this.exit} label="Great let me export now!">
+						</Button>
 					</div>
 				</div>
 			) : (
 				<form className="sign-in-form" onSubmit={this.handleSubmit}>
 					<AddCard ref="card" inError={this.state.inError}/>
 					{errors}
-					<AccountValidationButton
-						loading={this.state.loading}
-						label={`Buy 5 credits for 5 ${currency}`}/>
+					<div className="add-family-form-buttons">
+						<Button click={this.exit} label="Cancel" neutral={true}/>
+						<Button click={this.handleSubmit} label={`Buy 5 credits for 5 ${currency}`} loading={this.state.loading}/>
+					</div>
 				</form>
 			);
 
 		return (
 			<Modal>
 				<div className="modal-container-title">BUY EXPORT CREDITS</div>
-				<div className="account-dashboard-container">
+				<div className="credits">
 					{buyCreditsForm}
 				</div>
 			</Modal>

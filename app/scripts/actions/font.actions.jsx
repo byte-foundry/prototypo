@@ -158,6 +158,7 @@ export default {
 			.set('family', {name: newFont.name, template: newFont.template})
 			.set('uiCreatefamilySelectedTemplate', undefined)
 			.set('openFamilyModal', false)
+			.set('indivMode', false)
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);

@@ -23,21 +23,21 @@ export default class AllowedTopBarWithPayment extends React.Component {
 
 		const overlay = freeAccount && (!credits || credits <= 0)
 			? (
-				<div className="slider-demo-overlay">
-					<div className="slider-demo-overlay-text">
+				<div className="allowed-top-bar-with-payment-demo-overlay">
+					<div className="allowed-top-bar-with-payment-demo-overlay-text">
 						<Link to="/account/create">
 							<span>This feature is available with the professional subscription</span>
 						</Link>
-						<div className="slider-demo-overlay-text-more">
-							<Link to="/account/create">
-								<div className="slider-demo-overlay-text-more-wrap">
-									<div className="slider-demo-overlay-text-more-text">Subscribe to full version</div>
+						<div className="allowed-top-bar-with-payment-demo-overlay-text-more">
+							<Link to="/account/create" className="allowed-top-bar-with-payment-demo-overlay-text-more-half">
+								<div className="allowed-top-bar-with-payment-demo-overlay-text-more-wrap allowed-top-bar-with-payment-subscribe">
+									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">Subscribe to full version</div>
 								</div>
 							</Link>
-							<div className="slider-demo-overlay-text-more-text-separator"></div>
-							<div onClick={this.openBuyCreditsModal}>
-								<div className="slider-demo-overlay-text-more-wrap">
-									<div className="slider-demo-overlay-text-more-text">Buy export credits</div>
+							<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text-separator"></div>
+							<div onClick={this.openBuyCreditsModal} className="allowed-top-bar-with-payment-demo-overlay-text-more-half">
+								<div className="allowed-top-bar-with-payment-demo-overlay-text-more-wrap">
+									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">Buy export credits</div>
 								</div>
 							</div>
 						</div>
