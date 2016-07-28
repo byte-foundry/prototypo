@@ -182,11 +182,17 @@ export default class Topbar extends React.Component {
 			<div id="topbar">
 				<TopBarMenu>
 					<TopBarMenuIcon className="side-tabs-icon-headers" img="assets/images/prototypo-icon.svg"/>
-					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
+					<TopBarMenuDropdown
+						name="File"
+						id="file-menu"
+						idMenu="file-dropdown"
+						enter={() => { this.onboardExport('export-2'); }}
+						leave={() => {this.onboardExport('export');}}>
 						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
 						<AllowedTopBarWithPayment credits={credits} freeAccount={freeAccount}>
 							<TopBarMenuDropdownItem
 								name="Export to merged OTF"
+								id="export-to-merged-otf"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={otfExportCost}
@@ -194,6 +200,7 @@ export default class Topbar extends React.Component {
 								handler={() => {this.exportOTF(true);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to merged OTF as..."
+								id="export-to-merged-otf-as"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={otfExportCost}
@@ -201,6 +208,7 @@ export default class Topbar extends React.Component {
 								handler={() => {this.setupExportAs(true);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to OTF"
+								id="export-to-otf"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={otfExportCost}
@@ -208,6 +216,7 @@ export default class Topbar extends React.Component {
 								handler={() => {this.exportOTF(false);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to Glyphr Studio"
+								id="export-to-glyphr-studio"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={glyphrExportCost}
@@ -218,7 +227,7 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem
 							name="Download Web Preview extension"
 							separator={true}
-							handler={() => { window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf','_blank'); }}/>
+							handler={() => { window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf', '_blank'); }}/>
 						<TopBarMenuDropdownItem
 							name="Logout"
 							handler={() => {this.logout();}}/>

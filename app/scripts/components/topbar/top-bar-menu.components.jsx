@@ -58,7 +58,9 @@ class TopBarMenuItem extends React.Component {
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// function binding
+		this.handleClick = this.handleClick.bind(this);
 		this.toggleDisplay = this.toggleDisplay.bind(this);
+		this.startFileTutorial = this.startFileTutorial.bind(this);
 	}
 
 	async componentWillMount() {
@@ -117,6 +119,17 @@ class TopBarMenuItem extends React.Component {
 		}
 	}
 
+	startFileTutorial() {
+		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: 'fileTutorial'});
+	}
+
+	handleClick() {
+		this.toggleDisplay();
+		if (this.props.count === 1) {
+			this.startFileTutorial();
+		}
+	}
+
 	render() {
 		const classes = classNames(this.props.className, {
 			'topbaritem-displayed': this.state.topbarItemDisplayed === this.props.count,
@@ -127,7 +140,7 @@ class TopBarMenuItem extends React.Component {
 			<li
 				className={classes}
 				id={id}
-				onClick={this.toggleDisplay}>
+				onClick={this.handleClick}>
 				{this.props.children}
 			</li>
 		);
@@ -292,7 +305,7 @@ class TopBarMenuDropdownItem extends React.Component {
 				this.client.dispatchAction('/store-value', {
 					errorExport: {
 						message: 'Could not export while offline',
-					}
+					},
 				});
 			}
 		}
@@ -325,7 +338,7 @@ class TopBarMenuDropdownItem extends React.Component {
 		});
 
 		return (
-			<li className={classes} onClick={this.handleClick}>
+			<li className={classes} onClick={this.handleClick} id={this.props.id}>
 				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
 				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
 				{creditsAltLabel}
