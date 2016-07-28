@@ -245,36 +245,12 @@ class TopBarMenuDropdownItem extends React.Component {
 
 		//function bindings
 		this.handleClick = this.handleClick.bind(this);
-	}
-
-	shouldComponentUpdate(newProps, newState) {
-		return (
-			this.props.name !== newProps.name
-			|| this.props.shortcut !== newProps.shortcut
-			|| this.props.handler !== newProps.handler
-			|| this.props.creditsAltLabel !== newProps.creditsAltLabel
-			|| this.props.freeAccount !== newProps.freeAccount
-			|| this.props.freeAccountAndHasCredits !== newProps.freeAccountAndHasCredits
-			|| this.props.cost !== newProps.cost
-			|| this.state.credits !== newState.credits
-		);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
-
-		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					credits: head.toJS().infos.credits,
-				});
-			})
-			.onDelete(() => {
-				this.setState({
-					credits: undefined,
-				});
-			});
 
 		// shortcut handling
 		if (this.props.shortcut) {
@@ -341,7 +317,7 @@ class TopBarMenuDropdownItem extends React.Component {
 		const classes = classNames({
 			'top-bar-menu-item-dropdown-item': true,
 			'is-disabled': this.props.disabled || (
-				creditsAltLabel ? this.props.cost > this.state.credits : false
+				creditsAltLabel ? this.props.cost > this.props.credits : false
 			),
 			'has-separator': this.props.separator,
 			'is-checkbox': this.props.checkbox,

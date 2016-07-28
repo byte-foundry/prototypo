@@ -2,7 +2,7 @@ import {hashHistory} from 'react-router';
 import Lifespan from 'lifespan';
 import md5 from 'md5';
 
-import {userStore, couponStore} from '../stores/creation.stores.jsx';
+import {userStore, couponStore, prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
@@ -163,11 +163,14 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 
 				infos.card = [data.card];
 				infos.vat = vat || infos.vat;
-				infos.credits = remainingCredits;
 				form.loading = false;
 				const patch = userStore.set('infos', infos).set('buyCreditsForm', form).commit();
 
 				localServer.dispatchUpdate('/userStore', patch);
+				const credits = remainingCredits;
+
+				const creditPatch = prototypoStore.set('credits', credits).commit();
+				localServer.dispatchUpdate('/prototypoStore', creditPatch);
 
 				resolve({credits: remainingCredits});
 			})
@@ -280,7 +283,9 @@ export default {
 			infos.charges = charges.data;
 		}
 		if (metadata && metadata.credits) {
-			infos.credits = parseInt(metadata.credits, 10);
+			const credits = parseInt(metadata.credits, 10);
+			const creditPatch = prototypoStore.set('credits', credits).commit();
+			localServer.dispatchUpdate('/userStore', creditPatch);
 		}
 
 		const patch = userStore.set('infos', infos).commit();
@@ -727,9 +732,6 @@ export default {
 		buyCredits(options)
 			.then((data) => {
 				localClient.dispatchAction('/store-value', {buyCreditsNewCreditAmount: data.credits});
-				hashHistory.push({
-					pathname: options.pathQuery.path || '/account/credits',
-				});
 			});
 	},
 	'/spend-credits': (options) => {

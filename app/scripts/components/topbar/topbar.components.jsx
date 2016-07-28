@@ -49,15 +49,7 @@ export default class Topbar extends React.Component {
 					mode: head.toJS().uiMode,
 					export: head.toJS().export,
 					errorExport: head.toJS().errorExport,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					credits: head.toJS().infos.credits,
+					credits: head.toJS().credits,
 				});
 			})
 			.onDelete(() => {
@@ -198,18 +190,21 @@ export default class Topbar extends React.Component {
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={otfExportCost}
+								credits={this.state.credits}
 								handler={() => {this.exportOTF(true);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to merged OTF as..."
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={otfExportCost}
+								credits={this.state.credits}
 								handler={() => {this.setupExportAs(true);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to OTF"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={otfExportCost}
+								credits={this.state.credits}
 								handler={() => {this.exportOTF(false);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to Glyphr Studio"
@@ -217,26 +212,48 @@ export default class Topbar extends React.Component {
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={glyphrExportCost}
 								handler={this.exportGlyphr}
+								credits={this.state.credits}
 								separator={true}/>
 						</AllowedTopBarWithPayment>
-						<TopBarMenuDropdownItem name="Download Web Preview extension" separator={true} handler={() => { window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf','_blank'); }}/>
-						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout();}}/>
-						<TopBarMenuDropdownItem name="Send debug log" handler={() => {this.client.dispatchAction('/save-debug-log');}} separator={true}/>
+						<TopBarMenuDropdownItem
+							name="Download Web Preview extension"
+							separator={true}
+							handler={() => { window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf','_blank'); }}/>
+						<TopBarMenuDropdownItem
+							name="Logout"
+							handler={() => {this.logout();}}/>
+						<TopBarMenuDropdownItem
+							name="Send debug log"
+							handler={() => {this.client.dispatchAction('/save-debug-log');}} separator={true}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">
-						<TopBarMenuDropdownItem name="Individualize parameters" handler={() => { this.individualize(); }}/>
-						<TopBarMenuDropdownItem name={undoText} key="undo" disabled={undoDisabled} shortcut="ctrl+z" handler={() => {
-							if (!undoDisabled) {
-								this.client.dispatchAction('/go-back');
-							}
-						}}/>
-						<TopBarMenuDropdownItem name={redoText} key="redo" disabled={redoDisabled} shortcut="ctrl+y" handler={() => {
-							if (!redoDisabled) {
-								this.client.dispatchAction('/go-forward');
-							}
-						}}/>
-						{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
-						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams(); }}/>
+						<TopBarMenuDropdownItem
+							name="Individualize parameters"
+							handler={() => { this.individualize(); }}/>
+						<TopBarMenuDropdownItem
+							name={undoText}
+							key="undo"
+							disabled={undoDisabled}
+							shortcut="ctrl+z"
+							handler={() => {
+								if (!undoDisabled) {
+									this.client.dispatchAction('/go-back');
+								}
+							}}/>
+						<TopBarMenuDropdownItem
+							name={redoText}
+							key="redo"
+							disabled={redoDisabled}
+							shortcut="ctrl+y"
+							handler={() => {
+								if (!redoDisabled) {
+									this.client.dispatchAction('/go-forward');
+								}
+							}}/>
+							{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
+						<TopBarMenuDropdownItem
+							name="Reset all parameters"
+							handler={() => { this.resetAllParams(); }}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Window">
 						<TopBarMenuDropdownItem name="Glyphs list" checkbox={true} active={this.state.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
@@ -251,7 +268,6 @@ export default class Topbar extends React.Component {
 					</TopBarMenuDropdown>
 					{exporting}
 					{errorExporting}
-
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
 				</TopBarMenu>
 			</div>

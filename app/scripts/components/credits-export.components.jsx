@@ -90,9 +90,6 @@ export default class CreditsExport extends React.Component {
 		this.client.dispatchAction('/buy-credits', {
 			card: this.refs.card.data(),
 			currency: this.state.currency,
-			pathQuery: {
-				path: '/account/credits',
-			},
 		});
 	}
 

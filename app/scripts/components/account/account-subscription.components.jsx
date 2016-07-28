@@ -28,7 +28,16 @@ export default class AccountSubscription extends React.Component {
 				this.setState({
 					plan: head.toJS().infos.subscriptions,
 					card: head.toJS().infos.card,
-					credits: head.toJS().infos.credits,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					credits: head.toJS().credits,
 				});
 			})
 			.onDelete(() => {
