@@ -28,6 +28,9 @@ export default class Topbar extends React.Component {
 			mode: [],
 			export: false,
 			errorExport: false,
+			credits: undefined,
+			plan: undefined,
+			creditChoices: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -36,7 +39,7 @@ export default class Topbar extends React.Component {
 		this.setAccountRoute = this.setAccountRoute.bind(this);
 	}
 
-	componentWillMount() {
+	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
@@ -46,11 +49,18 @@ export default class Topbar extends React.Component {
 					mode: head.toJS().uiMode,
 					export: head.toJS().export,
 					errorExport: head.toJS().errorExport,
+					credits: head.toJS().credits,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		const creditChoices = await this.client.fetch('/creditStore');
+
+		this.setState({
+			creditChoices: creditChoices.head.toJS(),
+		});
 	}
 
 	exportOTF(merged) {
@@ -148,13 +158,29 @@ export default class Topbar extends React.Component {
 		const redoDisabled = whereAt > (this.state.eventList.length - 2);
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${!redoDisabled ? this.state.eventList[whereAt + 1].label : ''}`;
+		const credits = this.state.credits;
+		const freeAccount = HoodieApi.instance.plan.indexOf('free_') !== -1;
+		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
+		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : false;
+		const glyphrExportCost = this.state.creditChoices ? this.state.creditChoices.exportGlyphr : false;
 
 		const exporting = this.state.export ? (
 			<TopBarMenuAction name="Exporting..." click={() => {return;}} action={true}/>
 			) : false;
 		const errorExporting = this.state.errorExport ? (
-			<TopBarMenuAction name="An error occured during exporting" click={() => {return;}} action={true}/>
+			<TopBarMenuAction
+				name={
+					this.state.errorExport.message
+					? this.state.errorExport.message
+					: 'An error occured during exporting'
+				}
+				click={() => {return;}}
+				action={true}/>
 			) : false;
+
+		const creditExportLabel = this.state.credits
+			? <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>
+			: false;
 
 		return (
 			<div id="topbar">
@@ -162,29 +188,76 @@ export default class Topbar extends React.Component {
 					<TopBarMenuIcon className="side-tabs-icon-headers" img="assets/images/prototypo-icon.svg"/>
 					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
 						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
-						<AllowedTopBarWithPayment>
-							<TopBarMenuDropdownItem name="Export to merged OTF" handler={() => {this.exportOTF(true);}}/>
-							<TopBarMenuDropdownItem name="Export to merged OTF as..." handler={() => {this.setupExportAs(true);}}/>
-							<TopBarMenuDropdownItem name="Export to OTF" handler={() => {this.exportOTF(false);}}/>
-							<TopBarMenuDropdownItem name="Export to Glyphr Studio" handler={this.exportGlyphr} separator={true}/>
+						<AllowedTopBarWithPayment credits={credits} freeAccount={freeAccount}>
+							<TopBarMenuDropdownItem
+								name="Export to merged OTF"
+								freeAccount={freeAccount}
+								freeAccountAndHasCredits={freeAccountAndHasCredits}
+								cost={otfExportCost}
+								credits={this.state.credits}
+								handler={() => {this.exportOTF(true);}}/>
+							<TopBarMenuDropdownItem
+								name="Export to merged OTF as..."
+								freeAccount={freeAccount}
+								freeAccountAndHasCredits={freeAccountAndHasCredits}
+								cost={otfExportCost}
+								credits={this.state.credits}
+								handler={() => {this.setupExportAs(true);}}/>
+							<TopBarMenuDropdownItem
+								name="Export to OTF"
+								freeAccount={freeAccount}
+								freeAccountAndHasCredits={freeAccountAndHasCredits}
+								cost={otfExportCost}
+								credits={this.state.credits}
+								handler={() => {this.exportOTF(false);}}/>
+							<TopBarMenuDropdownItem
+								name="Export to Glyphr Studio"
+								freeAccount={freeAccount}
+								freeAccountAndHasCredits={freeAccountAndHasCredits}
+								cost={glyphrExportCost}
+								handler={this.exportGlyphr}
+								credits={this.state.credits}
+								separator={true}/>
 						</AllowedTopBarWithPayment>
-						<TopBarMenuDropdownItem name="Download Web Preview extension" separator={true} handler={() => { window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf','_blank'); }}/>
-						<TopBarMenuDropdownItem name="Logout" handler={() => {this.logout();}}/>
+						<TopBarMenuDropdownItem
+							name="Download Web Preview extension"
+							separator={true}
+							handler={() => { window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf','_blank'); }}/>
+						<TopBarMenuDropdownItem
+							name="Logout"
+							handler={() => {this.logout();}}/>
+						<TopBarMenuDropdownItem
+							name="Send debug log"
+							handler={() => {this.client.dispatchAction('/save-debug-log');}} separator={true}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">
-						<TopBarMenuDropdownItem name="Individualize parameters" handler={() => { this.individualize(); }}/>
-						<TopBarMenuDropdownItem name={undoText} key="undo" disabled={undoDisabled} shortcut="ctrl+z" handler={() => {
-							if (!undoDisabled) {
-								this.client.dispatchAction('/go-back');
-							}
-						}}/>
-						<TopBarMenuDropdownItem name={redoText} key="redo" disabled={redoDisabled} shortcut="ctrl+y" handler={() => {
-							if (!redoDisabled) {
-								this.client.dispatchAction('/go-forward');
-							}
-						}}/>
-						{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
-						<TopBarMenuDropdownItem name="Reset all parameters" handler={() => { this.resetAllParams(); }}/>
+						<TopBarMenuDropdownItem
+							name="Individualize parameters"
+							handler={() => { this.individualize(); }}/>
+						<TopBarMenuDropdownItem
+							name={undoText}
+							key="undo"
+							disabled={undoDisabled}
+							shortcut="ctrl+z"
+							handler={() => {
+								if (!undoDisabled) {
+									this.client.dispatchAction('/go-back');
+								}
+							}}/>
+						<TopBarMenuDropdownItem
+							name={redoText}
+							key="redo"
+							disabled={redoDisabled}
+							shortcut="ctrl+y"
+							handler={() => {
+								if (!redoDisabled) {
+									this.client.dispatchAction('/go-forward');
+								}
+							}}/>
+							{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
+						<TopBarMenuDropdownItem
+							name="Reset all parameters"
+							handler={() => { this.resetAllParams(); }}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Window">
 						<TopBarMenuDropdownItem name="Glyphs list" checkbox={true} active={this.state.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
@@ -199,8 +272,8 @@ export default class Topbar extends React.Component {
 					</TopBarMenuDropdown>
 					{exporting}
 					{errorExporting}
-
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
+					{creditExportLabel}
 				</TopBarMenu>
 			</div>
 		);

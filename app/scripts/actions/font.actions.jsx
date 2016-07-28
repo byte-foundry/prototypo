@@ -6,6 +6,7 @@ import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {Typefaces} from '../services/typefaces.services.js';
 import {copyFontValues, loadFontValues, saveAppValues} from '../helpers/loadValues.helpers.js';
+import {setupFontInstance, mapGlyphForApp} from '../helpers/font.helpers.js';
 import {FontValues} from '../services/values.services.js';
 import {delayAfterCall} from '../helpers/animation.helpers.js';
 
@@ -22,6 +23,34 @@ window.addEventListener('fluxServer.setup', () => {
 const hasher = XXHash(0xDEADBEEF);
 
 export default {
+	'/load-font-instance': async ({appValues}) => {
+		let typedata;
+
+		try {
+			const fontResult = await setupFontInstance(appValues);
+
+			typedata = fontResult.typedata;
+		}
+		catch (err) {
+			console.log(err);
+		}
+
+		localClient.dispatchAction('/create-font', fontInstance.font.ot.getEnglishName('fontFamily'));
+		localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
+		localClient.dispatchAction('/load-glyphs', _.mapValues(
+			fontInstance.font.altMap,
+			mapGlyphForApp
+		));
+		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
+		localClient.dispatchAction('/load-commits');
+		fontInstance.displayChar(String.fromCharCode(prototypoStore.get('glyphSelected')));
+
+		loadFontValues(typedata, appValues.values.variantSelected.db);
+
+		const fontInstanceLoaded = new Event('fontInstance.loaded');
+
+		window.dispatchEvent(fontInstanceLoaded);
+	},
 	'/create-font': (familyName) => {
 		const patch = prototypoStore
 			.set('fontName', familyName)
@@ -37,19 +66,16 @@ export default {
 
 		fontInstance.update(params);
 	},
-	'/change-font': async ({templateToLoad, db}) => {
-		const typedataJSON = await Typefaces.getFont(templateToLoad);
+	'/change-font-from-typedata': async ({typedataJSON, db}) => {
 		const typedata = JSON.parse(typedataJSON);
 
 		await delayAfterCall(() => {
-			const patchUi = prototypoStore.set('uiFontLoading', true).commit();
-			localServer.dispatchUpdate('/prototypoStore', patchUi);
+			localClient.dispatchAction('/store-value', {uiFontLoading: true});
 		}, 400);
 
 		fontInstance.on('worker.fontLoaded', () => {
 			setTimeout(() => {
-				const patchUiEnd = prototypoStore.set('uiFontLoading', false).commit();
-				localServer.dispatchUpdate('/prototypoStore', patchUiEnd);
+				localClient.dispatchAction('/store-value', {uiFontLoading: false});
 			}, 1000);
 		});
 
@@ -65,28 +91,18 @@ export default {
 		localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
 		localClient.dispatchAction('/load-glyphs', _.mapValues(
 			fontInstance.font.altMap,
-			(glyph) => {
-				return _.map(
-					glyph,
-					(alt) => {
-						return {
-							src: {
-								tags: alt.src && alt.src.tags || [],
-								characterName: alt.src && alt.src.characterName || '',
-								unicode: alt.src && alt.src.unicode	|| '',
-								glyphName: alt.src && alt.src.glyphName || '',
-							},
-							name: alt.name,
-							altImg: alt.altImg,
-						};
-					}
-				);
-			}
+			mapGlyphForApp
 		));
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 
 		loadFontValues(typedata, db);
-
+	},
+	'/change-font': async ({templateToLoad, db}) => {
+		const typedataJSON = await Typefaces.getFont(templateToLoad);
+		localClient.dispatchAction('/change-font-from-typedata', {
+			typedataJSON,
+			db,
+		});
 	},
 	'/create-family': async ({name, template, loadCurrent}) => {
 		let templateToLoad = template;
@@ -158,6 +174,7 @@ export default {
 			.set('family', {name: newFont.name, template: newFont.template})
 			.set('uiCreatefamilySelectedTemplate', undefined)
 			.set('openFamilyModal', false)
+			.set('indivMode', false)
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);
@@ -181,7 +198,42 @@ export default {
 		});
 		saveAppValues();
 	},
-	'/create-variant': async ({name, familyName, noSwitch, variantBase}) => {
+	'/create-variant-from-ref': ({ref, name, variant, family, noSwitch}) => {
+		const thicknessTransform = [
+			{string: 'Thin', thickness: 20},
+			{string: 'Light', thickness: 50},
+			{string: 'Book', thickness: 70},
+			{string: 'Bold', thickness: 115},
+			{string: 'Semi-Bold', thickness: 100},
+			{string: 'Extra-Bold', thickness: 135},
+			{string: 'Black', thickness: 150},
+		];
+
+		_.each(thicknessTransform, (item) => {
+			if (name.indexOf(item.string) !== -1) {
+				ref.values.thickness = item.thickness;
+			}
+		});
+
+		if (name.indexOf('Italic') !== -1) {
+			ref.values.slant = 10;
+		}
+
+		setTimeout(async () => {
+			await FontValues.save({typeface: variant.db, values: ref.values});
+			if (!noSwitch) {
+				localClient.dispatchAction('/select-variant', {variant, family});
+			}
+		}, 200);
+
+		localClient.dispatchAction('/store-value', {
+			openVariantModal: false,
+			openDuplicateVariantModal: false,
+			errorAddVariant: undefined,
+		});
+
+	},
+	'/create-variant': async ({name, familyName, variantBase, noSwitch}) => {
 		if (!name || String(name).trim() === '') {
 			const patch = prototypoStore.set('errorAddVariant', 'Variant name cannot be empty').commit();
 
@@ -209,15 +261,6 @@ export default {
 			name,
 			db: slug(`${familyName}${name}`, ''),
 		};
-		const thicknessTransform = [
-			{string: 'Thin', thickness: 20},
-			{string: 'Light', thickness: 50},
-			{string: 'Book', thickness: 70},
-			{string: 'Bold', thickness: 115},
-			{string: 'Semi-Bold', thickness: 100},
-			{string: 'Extra-Bold', thickness: 135},
-			{string: 'Black', thickness: 150},
-		];
 
 		family.variants.push(variant);
 
@@ -232,29 +275,13 @@ export default {
 
 		const ref = await FontValues.get({typeface: variantBaseDb});
 
-		_.each(thicknessTransform, (item) => {
-			if (name.indexOf(item.string) !== -1) {
-				ref.values.thickness = item.thickness;
-			}
+		localClient.dispatchAction('/create-variant-from-ref', {
+			name,
+			ref,
+			variant,
+			family,
+			noSwitch,
 		});
-
-		if (name.indexOf('Italic') !== -1) {
-			ref.values.slant = 10;
-		}
-
-		setTimeout(async () => {
-			await FontValues.save({typeface: variant.db, values: ref.values});
-			if (!noSwitch) {
-				localClient.dispatchAction('/select-variant', {variant, family});
-			}
-		}, 200);
-
-		localClient.dispatchAction('/store-value', {
-			openVariantModal: false,
-			openDuplicateVariantModal: false,
-			errorAddVariant: undefined,
-		});
-
 	},
 	'/edit-variant': ({variant, family, newName}) => {
 		if (!newName || String(newName).trim() === '') {

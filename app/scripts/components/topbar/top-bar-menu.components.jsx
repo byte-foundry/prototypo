@@ -237,15 +237,22 @@ function setupKeyboardShortcut(key, modifier, cb) {
 }
 
 class TopBarMenuDropdownItem extends React.Component {
-	shouldComponentUpdate(newProps) {
-		return (
-			this.props.name !== newProps.name
-			|| this.props.shortcut !== newProps.shortcut
-			|| this.props.handler !== newProps.handler
-		);
+	constructor(props) {
+		super(props);
+		this.state = {
+			credits: undefined,
+		};
+
+		//function bindings
+		this.handleClick = this.handleClick.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		// shortcut handling
 		if (this.props.shortcut) {
 			let [modifier, key] = this.props.shortcut.split('+');
 
@@ -259,22 +266,69 @@ class TopBarMenuDropdownItem extends React.Component {
 			});
 		}
 	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	handleClick() {
+		// freeAccount and freeAccountAndHasCredits props
+		// should only be set if the item is blockable
+		// for free users without credits (under the overlay)
+		if (this.props.freeAccountAndHasCredits) {
+			if (navigator.onLine) {
+				// set the export cost
+				this.client.dispatchAction('/store-value', {currentCreditCost: this.props.cost});
+				// here first execute handler
+				// and on callback dispatch a "spend credit" action
+				// to ensure no one will pay if something went wrong
+				// during the export
+				this.props.handler();
+				// here the "spend credit" will hapen
+				// but on parent component state change
+				// when "exporting" goes from true to false w/o errors
+			}
+			else {
+				this.client.dispatchAction('/store-value', {
+					errorExport: {
+						message: 'Could not export while offline',
+					}
+				});
+			}
+		}
+		else if (this.props.freeAccount) {
+			return;
+		}
+		else {
+			this.props.handler();
+		}
+	}
+
 	render() {
+		const creditsAltLabel = this.props.freeAccountAndHasCredits
+			? (
+				<span className="credits-alt-label">{`(use ${this.props.cost} credit)`}</span>
+			)
+			: false;
+
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] topbarmenudropdownitem');
 		}
 		const classes = classNames({
 			'top-bar-menu-item-dropdown-item': true,
-			'is-disabled': this.props.disabled,
+			'is-disabled': this.props.disabled || (
+				creditsAltLabel ? this.props.cost > this.props.credits : false
+			),
 			'has-separator': this.props.separator,
 			'is-checkbox': this.props.checkbox,
 			'is-active': this.props.active,
 		});
 
 		return (
-			<li className={classes} onClick={this.props.handler}>
+			<li className={classes} onClick={this.handleClick}>
 				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
 				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
+				{creditsAltLabel}
 			</li>
 		);
 	}

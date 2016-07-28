@@ -2,6 +2,8 @@ import React from 'react';
 import ClassNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
+import WaitForLoad from '../wait-for-load.components.jsx';
+
 export default class Button extends React.Component {
 	constructor(props) {
 		super(props);
@@ -34,7 +36,9 @@ export default class Button extends React.Component {
 		return (
 			<div className="button-container">
 				<div className={classes} onClick={this.props.click} >
-					{this.props.label}
+					<WaitForLoad loaded={!this.props.loading}>
+						{this.props.label}
+					</WaitForLoad>
 				</div>
 				{splitButton}
 			</div>

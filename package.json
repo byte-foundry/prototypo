@@ -87,6 +87,7 @@
     "surge": "^0.14.2",
     "through": "^2.3.7",
     "transform-loader": "^0.2.3",
+    "vatrates": "^1.2.1",
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.14.0",
     "whatwg-fetch": "^0.9.0"
@@ -100,7 +101,8 @@
     "test": "test"
   },
   "scripts": {
-    "start": "gulp serve"
+    "start": "gulp serve",
+    "debug": "gulp debug"
   },
   "repository": {
     "type": "git",

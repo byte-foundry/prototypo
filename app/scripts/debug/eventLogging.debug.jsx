@@ -14,7 +14,7 @@ window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
 });
 
-const debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net';
+const debugServerUrl = 'http://localhost:9002';
 
 export const debugActions = {
 	'/save-debug-log': () => {
@@ -79,28 +79,6 @@ export default class EventDebugger {
 			const patch = prototypoStore.set('debugIndex', i).commit();
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
-			if (i === 1) {
-				const familySelected = prototypoStore.get('family');
-				const text = prototypoStore.get('uiText');
-				const word = prototypoStore.get('uiWord');
-				const selected = prototypoStore.get('glyphSelected');
-
-				await setupFontInstance({
-					values: {
-						familySelected,
-						text,
-						word,
-						selected,
-					},
-				});
-			}
-
-			if (to && (i === to)) {
-				console.log('WAITING FOR RENDER PLZ!!');
-				pleaseWait.instance.finish();
-				return;
-			}
-
 			console.log(`replaying event at path ${events[i].path}`);
 			console.log(events[i].params);
 
@@ -111,7 +89,7 @@ export default class EventDebugger {
 			return await new Promise((resolve) => {
 				setTimeout(() => {
 					resolve(this.execEvent(events, i + 1, to));
-				}, 1000);
+				}, 200);
 			});
 		}
 		else {
@@ -119,7 +97,7 @@ export default class EventDebugger {
 		}
 	}
 
-	async replayEvents(values, events) {
+	replayEvents(values, events) {
 		const patch = prototypoStore
 			.set('debugEvents', events)
 			.set('debugValues', values)
@@ -127,14 +105,11 @@ export default class EventDebugger {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		await this.execEvent(events, 0, 6);
-		setTimeout(() => {
-			this.execEvent(events, 6);
-		}, 6000);
+		this.execEvent(events, 0);
 	}
 
 	async replayEventFromFile() {
-		const hash = location.hash.split('/');
+		const hash = location.hash.split('?')[0].split('/');
 
 		try {
 			const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);

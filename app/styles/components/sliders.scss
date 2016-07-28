@@ -4,12 +4,13 @@
 	margin-bottom:15px;
 	font-size: 0.8em;
 	position:relative;
+	z-index:1;
 
 	.is-disabled &-demo-overlay {
 		position:absolute;
 		width:100%;
 		height:100%;
-		background-color: rgba($dark-grey, 0.65);
+		background-color: rgba($dark-grey, 0.80);
 		z-index:2;
 		display:flex;
 		justify-content:center;
@@ -29,60 +30,6 @@
 		display: flex;
 		flex-flow: row nowrap;
 	}
-
-	&-demo-overlay {
-		position: absolute;
-		width: 100%;
-
-		&-text {
-			color:$white;
-			font-size: 13px;
-			padding: 5px 15px;
-			display: block;
-			margin-right: 30px;
-
-			&-more {
-				top: 0;
-				bottom: 0;
-				right: 0;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				overflow: hidden;
-				position:absolute;
-
-				width: 40px;
-				@include themify() {
-					background-color: $theme-background;
-				}
-				background-image: url('../../images/add-feature.svg');
-				background-position: center;
-				background-repeat: no-repeat;
-
-				transition: all 500ms ease !important;
-
-				&-text {
-					opacity: 0;
-					flex-direction: column;
-					padding-left: 60px;
-					transition: all 200ms ease;
-					transition-delay: 200ms;
-				}
-
-				&:hover {
-					width: 100%;
-					background-image: url('../../images/pro-version.svg');
-					background-position: 10% center;
-				}
-
-				&:hover &-text {
-					opacity: 1;
-					padding-left: 10px;
-				}
-			}
-		}
-	}
-
 
 	&-title {
 		text-transform: uppercase;
@@ -125,6 +72,19 @@
 		}
 	}
 
+	&-demo-overlay {
+		position: absolute;
+		width: 100%;
+
+		&-text {
+			color:$white;
+			font-size: 13px;
+			padding: 5px 15px;
+			display: block;
+			margin-right: 30px;
+		}
+	}
+
 	&-controller {
 		overflow: hidden;
 		background-color: #FFF;
@@ -132,6 +92,7 @@
 		flex:1;
 		/* fix a overflow hidden and border-radius error in chrome */
 		-webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
+		-webkit-mask-repeat: repeat;
 
 		&, &-bg, &-handle {
 			border-radius: 1rem;
@@ -171,7 +132,7 @@
 
 	&.is-coming {
 		.slider-demo-overlay {
-			background-color: rgba($dark-grey, 0.45);
+			background-color: rgba($dark-grey, 0.65);
 			z-index:1;
 			&-text {
 				top: 0;
@@ -190,22 +151,26 @@
 		margin-top:-1rem;
 		margin-left:10%;
 		position: relative;
+		z-index:0;
+
 		.slider-title {
 			color: $medium-grey;
 		}
-		.slider-controller {
+
+		.slider-container {
 			&:before {
 				content: "";
 				position: absolute;
-				border-bottom: 1px solid lighten($dark-grey, 8%);
-				border-left: 1px solid lighten($dark-grey, 8%);
+				border-bottom: 1px solid lighten($dark-grey, 12%);
+				border-left: 1px solid lighten($dark-grey, 12%);
 				width: 20px;
 				height: 50px;
 				top: -23px;
 				left: -15px;
-				z-index: -1;
+				z-index: 0;
 			}
 		}
+
 		.slider-demo-overlay {
 			top: 5px;
 			width: 270px;

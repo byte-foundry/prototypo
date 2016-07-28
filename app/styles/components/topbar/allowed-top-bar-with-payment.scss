@@ -1,7 +1,23 @@
+@import "../../variables";
+
 .allowed-top-bar-with-payment {
 	position:relative;
 
-	&-overlay {
+	&-subscribe {
+		background-image: url('../../../images/pro-version.svg');
+		background-position: 50% 25%;
+		background-repeat: no-repeat;
+		padding-top: 17.5%;
+	}
+
+	&-credits {
+		background-image: url('../../../images/buy-credits.svg');
+		background-position: 50% 25%;
+		background-repeat: no-repeat;
+		padding-top: 17.5%;
+	}
+
+	&-demo-overlay {
 		position: absolute;
 		width: 100%;
 		height: 100%;
@@ -12,5 +28,103 @@
 		align-items: center;
 		font-size: 19px;
 		padding: 20px;
+	}
+
+	&-demo-overlay {
+		position: absolute;
+		width: 100%;
+		opacity: 0;
+		transition: opacity .3s ease;
+
+		&:hover {
+			opacity:1;
+		}
+
+		&-text {
+			color:$white;
+			font-size: 13px;
+			padding: 5px 15px;
+			display: block;
+			margin-right: 30px;
+
+			&-more {
+				top: 0;
+				bottom: 0;
+				right: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				overflow: hidden;
+				position:absolute;
+
+				width: 40px;
+				@include themify() {
+					background-color: $theme-background;
+				}
+
+				background-image: url('../../../images/add-feature.svg');
+				background-position: center;
+				background-repeat: no-repeat;
+
+				transition: all 500ms ease !important;
+
+				&-half {
+					height: 100%;
+					flex:1;
+				}
+
+
+				&-wrap {
+					align-items: center;
+					display: flex;
+					height: 100%;
+					justify-content: center;
+					opacity: 0;
+					transition: all 200ms ease;
+					width: 100%;
+
+					&:hover {
+						@include themify() {
+							background-color: darken($theme-background, 5%);
+							color: $theme-color;
+						}
+					}
+				}
+
+				&-text {
+					flex-direction: column;
+					opacity: 0;
+					padding-left: 60px;
+					text-align: center;
+					width: 100%;
+
+					&-separator {
+						opacity: 0;
+						border-right: 1px solid $white;
+						height: 100%;
+					}
+
+				}
+
+				&:hover {
+					background-image: none;
+					width: 100%;
+				}
+
+				&:hover &-text {
+					opacity: 1;
+					padding-left: 10px;
+					padding-right: 10px;
+
+					&-separator {
+						opacity: 1;
+					}
+				}
+
+				&:hover &-wrap {
+					opacity: 1;
+				}
+			}
+		}
 	}
 }

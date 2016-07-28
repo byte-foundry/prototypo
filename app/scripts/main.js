@@ -50,6 +50,7 @@ import '../styles/components/account/account-add-card.scss';
 import '../styles/components/account/account-subscription.scss';
 import '../styles/components/account/account-change-plan.scss';
 import '../styles/components/account/account-invoice-list.scss';
+import '../styles/components/account/credits-export.scss';
 import '../styles/components/subscription/subscription.scss';
 import '../styles/components/subscription/subscription-sidebar.scss';
 import '../styles/components/subscription/subscription-choose-plan.scss';
@@ -198,7 +199,7 @@ const localServer = new LocalServer(stores, {
 		'/store-in-debug-font',
 		'/show-details',
 	],
-	logStore: stores.prototypoStore,
+	logStore: stores['/prototypoStore'],
 }).instance;
 /* #end */
 /* #if prod */
@@ -241,7 +242,7 @@ async function createStores() {
 	);
 
 	localServer.on('action', ({path, params}) => {
-		eventDebugger.storeEvent(path, params);
+		//eventDebugger.storeEvent(path, params);
 		if (process.env.__SHOW_ACTION__) {
 			console.log(`[ACTION] ${path}`);
 		}
@@ -268,6 +269,9 @@ async function createStores() {
 	}
 	catch (err) {
 		console.log(err);
+		const fontInstanceLoaded = new Event('fontInstance.loaded');
+
+		window.dispatchEvent(fontInstanceLoaded);
 	}
 	/* #end */
 }
@@ -349,58 +353,57 @@ selectRenderOptions(
 			}
 		}
 
-		createStores()
-			.then(() => {
-
-				ReactDOM.render((
-					<Router history={hashHistory} onUpdate={trackUrl}>
-						<Route component={App} name="app" path="/">
-							<IndexRoute component={SitePortal}/>
-							<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}/>
-							/* #if debug */
-							<Route path="replay" path="replay/:replayId" component={ReplayViewer}/>
-							<Route path="debug" component={ReplayViewer}/>
-							/* #end */
-							<Route path="signin" component={AccountApp} onEnter={redirectToDashboard}>
-								<Route path="forgotten" component={ForgottenPassword}/>
-								<IndexRoute component={Signin}/>
+		window.addEventListener('fontInstance.loaded', () => {
+			ReactDOM.render((
+				<Router history={hashHistory} onUpdate={trackUrl}>
+					<Route component={App} name="app" path="/">
+						<IndexRoute component={SitePortal}/>
+						<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}/>
+						/* #if debug */
+						<Route path="replay" path="replay/:replayId" component={ReplayViewer}/>
+						<Route path="debug" component={ReplayViewer}/>
+						/* #endif */
+						<Route path="signin" component={AccountApp} onEnter={redirectToDashboard}>
+							<Route path="forgotten" component={ForgottenPassword}/>
+							<IndexRoute component={Signin}/>
+						</Route>
+						<Route path="signup" component={AccountApp} onEnter={redirectToDashboard}>
+							<IndexRoute component={Register}/>
+						</Route>
+						<Route component={AccountApp} path="account">
+							<Route path="billing" component={AccountDashboard} name="billing" onEnter={redirectToLogin}>
+								<IndexRoute component={AccountInvoiceList}/>
 							</Route>
-							<Route path="signup" component={AccountApp} onEnter={redirectToDashboard}>
-								<IndexRoute component={Register}/>
+							<Route component={AccountDashboard} name="home" onEnter={redirectToLogin}>
+								<IndexRoute component={AccountHome}/>
 							</Route>
-							<Route component={AccountApp} path="account">
-								<Route path="billing" component={AccountDashboard} name="billing" onEnter={redirectToLogin}>
-									<IndexRoute component={AccountInvoiceList}/>
-								</Route>
-								<Route component={AccountDashboard} name="home" onEnter={redirectToLogin}>
-									<IndexRoute component={AccountHome}/>
-								</Route>
-								<Route component={AccountDashboard} path="success" name="success" onEnter={redirectToLogin}>
-									<IndexRoute component={AccountSuccess}/>
-								</Route>
-								<Route path="profile" component={AccountDashboard} name="profile" onEnter={redirectToLogin}>
-									<IndexRoute component={AccountProfile}/>
-									<Route path="change-password" component={AccountChangePassword}/>
-								</Route>
-								<Route path="details" component={AccountDashboard} name="details" onEnter={redirectToLogin}>
-									<IndexRoute component={AccountSubscription}/>
-									<Route path="billing-address" component={AccountBillingAddress}/>
-									<Route path="add-card" component={AccountAddCard}/>
-									<Route path="change-plan" component={AccountChangePlan}/>
-									<Route path="confirm-plan" component={AccountConfirmPlan} onEnter={noConfirmBeforePlan}/>
-								</Route>
-								<Route path="create" component={Subscription} name="create">
-									<IndexRoute component={SubscriptionAccountInfo} onEnter={chooseGoodAccountStep}/>
-									<Route path="choose-a-plan" component={SubscriptionChoosePlan} onEnter={chooseGoodAccountStep}/>
-									<Route path="add-card" component={SubscriptionAddCard} onEnter={chooseGoodAccountStep}/>
-									<Route path="billing-address" component={SubscriptionBillingAddress} onEnter={chooseGoodAccountStep}/>
-									<Route path="Confirmation" component={SubscriptionConfirmation} onEnter={chooseGoodAccountStep}/>
-								</Route>
+							<Route component={AccountDashboard} path="success" name="success" onEnter={redirectToLogin}>
+								<IndexRoute component={AccountSuccess}/>
+							</Route>
+							<Route path="profile" component={AccountDashboard} name="profile" onEnter={redirectToLogin}>
+								<IndexRoute component={AccountProfile}/>
+								<Route path="change-password" component={AccountChangePassword}/>
+							</Route>
+							<Route path="details" component={AccountDashboard} name="details" onEnter={redirectToLogin}>
+								<IndexRoute component={AccountSubscription}/>
+								<Route path="billing-address" component={AccountBillingAddress}/>
+								<Route path="add-card" component={AccountAddCard}/>
+								<Route path="change-plan" component={AccountChangePlan}/>
+								<Route path="confirm-plan" component={AccountConfirmPlan} onEnter={noConfirmBeforePlan}/>
+							</Route>
+							<Route path="create" component={Subscription} name="create">
+								<IndexRoute component={SubscriptionAccountInfo} onEnter={chooseGoodAccountStep}/>
+								<Route path="choose-a-plan" component={SubscriptionChoosePlan} onEnter={chooseGoodAccountStep}/>
+								<Route path="add-card" component={SubscriptionAddCard} onEnter={chooseGoodAccountStep}/>
+								<Route path="billing-address" component={SubscriptionBillingAddress} onEnter={chooseGoodAccountStep}/>
+								<Route path="Confirmation" component={SubscriptionConfirmation} onEnter={chooseGoodAccountStep}/>
 							</Route>
 						</Route>
-					</Router>
-				), content);
-			}
-		);
+					</Route>
+				</Router>
+			), content);
+		});
+
+		createStores();
 	}
 );

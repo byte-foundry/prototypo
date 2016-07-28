@@ -74,7 +74,7 @@ class Events extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('prototypoStore', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 		.onUpdate(({head}) => {
 				this.setState({
 					patchArray: head.toJS().patchArray,
@@ -111,6 +111,11 @@ class Events extends React.Component {
 }
 
 class Patch extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		const classes = Classnames({
 			event: true,
