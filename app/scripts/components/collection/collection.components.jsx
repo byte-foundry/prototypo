@@ -36,8 +36,12 @@ export default class Collection extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					families: head.toJS().fonts,
-					selected: head.toJS().collectionSelectedFamily || {},
-					selectedVariant: head.toJS().collectionSelectedVariant || {},
+					selected: (
+						head.toJS().collectionSelectedFamily || head.toJS().family || {}
+					),
+					selectedVariant: (
+						head.toJS().collectionSelectedVariant || head.toJS().variant || {}
+					),
 					familyDeleteSplit: head.toJS().uiFamilyDeleteSplit,
 					askSubscribeFamily: head.toJS().uiAskSubscribeFamily,
 					askSubscribeVariant: head.toJS().uiAskSubscribeVariant,
@@ -120,7 +124,10 @@ export default class Collection extends React.Component {
 						<h1 className="account-title">My collection</h1>
 					</div>
 					<div className="collection-content">
-						<FamilyList list={this.state.families} templateInfos={this.state.templateInfos} selected={this.state.selected}/>
+						<FamilyList
+							list={this.state.families}
+							templateInfos={this.state.templateInfos}
+							selected={this.state.selected}/>
 						<ReactCSSTransitionGroup
 							component="div"
 							transitionName="variant-list-container"

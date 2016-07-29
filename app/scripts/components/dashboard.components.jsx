@@ -117,6 +117,24 @@ export default class Dashboard extends React.Component {
 							style: {
 								mainColor,
 							},
+						},
+						{
+							title: 'Variants',
+							text: 'Here you can perfom actions on the selected font family and select a variant',
+							selector: '.variant-list',
+							position: 'right',
+							style: {
+								mainColor,
+							},
+						},
+						{
+							title: 'Variant panel',
+							text: 'Here is a list of action you can perfom on the selected variant',
+							selector: '.variant-info',
+							position: 'left',
+							style: {
+								mainColor,
+							},
 						}
 					);
 				}
@@ -246,7 +264,7 @@ export default class Dashboard extends React.Component {
 					type="continuous"
 					scrollToFirstStep={false}
 					scrollToSteps={false}
-					debug={true}
+					debug={false}
 					steps={this.state.joyrideSteps}
 					callback={this.joyrideCallback}/>
 				<Topbar />
