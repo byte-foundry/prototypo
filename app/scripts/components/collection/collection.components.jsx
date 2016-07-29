@@ -50,6 +50,14 @@ export default class Collection extends React.Component {
 			});
 	}
 
+	componentDidMount() {
+		setTimeout(() => {
+			this.client.dispatchAction('/store-value', {
+				uiJoyrideTutorialValue: 'collectionsFamilyTutorial',
+			});
+		}, (this.props.collectionTransitionTimeout + 100));
+	}
+
 	componentWillUnmount() {
 		this.lifespan.release();
 	}

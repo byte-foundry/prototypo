@@ -107,7 +107,19 @@ export default class Dashboard extends React.Component {
 					);
 					break;
 				}
-				// case 'collectionsTutorial'
+				case 'collectionsFamilyTutorial': {
+					steps.push(
+						{
+							title: 'Families',
+							text: 'A list of the font families you have created',
+							selector: '.family-list',
+							position: 'right',
+							style: {
+								mainColor,
+							},
+						}
+					);
+				}
 				case 'indivGroupsTutorial': {
 					steps.push(
 						{
@@ -197,8 +209,12 @@ export default class Dashboard extends React.Component {
 			'normal': !this.state.indiv || this.state.collection,
 		});
 
+		// timeouts : they are also used for tutorial triggering
+		const collectionTransitionTimeout = 300;
+		const panelTransitionTimeout = 200;
+
 		const collection = this.state.collection
-			? <Collection />
+			? <Collection collectionTransitionTimeout={collectionTransitionTimeout} />
 			: false;
 		const newFamily = this.state.openFamilyModal
 			? <CreateFamilyModal />
@@ -228,6 +244,7 @@ export default class Dashboard extends React.Component {
 				<Joyride
 					ref="joyride"
 					type="continuous"
+					scrollToFirstStep={false}
 					scrollToSteps={false}
 					debug={true}
 					steps={this.state.joyrideSteps}
@@ -236,14 +253,17 @@ export default class Dashboard extends React.Component {
 				<Toolbar />
 				<Workboard />
 				{exportAs}
-				<ReactCSSTransitionGroup transitionName="collection" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+				<ReactCSSTransitionGroup
+					transitionName="collection"
+					transitionEnterTimeout={collectionTransitionTimeout}
+					transitionLeaveTimeout={collectionTransitionTimeout}>
 					{collection}
 				</ReactCSSTransitionGroup>
 				<ReactCSSTransitionGroup
 					component="span"
 					transitionName="modal"
-					transitionEnterTimeout={200}
-					transitionLeaveTimeout={200}>
+					transitionEnterTimeout={panelTransitionTimeout}
+					transitionLeaveTimeout={panelTransitionTimeout}>
 					{newFamily}
 					{newVariant}
 					{changeNameFamily}
