@@ -142,6 +142,8 @@ export async function loadStuff(refAccountValues) {
 		try {
 			accountValues = await AccountValues.get({typeface: 'default'});
 			accountValues = _.extend(defaultAccountValues, accountValues);
+			// deduplicate username: always use the value from HoodieApi.instance.email
+			accountValues.username = HoodieApi.instance.email;
 		}
 		catch (err) {
 			accountValues = defaultAccountValues;
