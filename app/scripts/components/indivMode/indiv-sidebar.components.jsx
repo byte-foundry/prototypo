@@ -1,6 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import ReactTransitionGroup from 'react-addons-transition-group';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -35,22 +35,23 @@ export default class IndivSidebar extends React.Component {
 	}
 
 	render() {
+		const transitionTimeout = 300;
 		const rightPanel = this.state.createParamGroup
-			? <CreateParamGroup key="create"/>
+			? <CreateParamGroup transitionTimeout={transitionTimeout} key="create"/>
 			: this.state.editParamGroup
-				? <CreateParamGroup key={this.state.selectedGroup.name} group={this.state.selectedGroup} editMode={true}/>
+				? <CreateParamGroup transitionTimeout={transitionTimeout} key={this.state.selectedGroup.name} group={this.state.selectedGroup} editMode={true}/>
 				: false;
 
 		return (
 			<div className="indiv-sidebar">
 				<IndivGroupList />
-				<ReactTransitionGroup
+				<ReactCSSTransitionGroup
 					component="div"
 					transitionName="indiv-sidebar-right-panel"
-					transitionEnterTimeout={300}
-					transitionLeaveTimeout={300}>
+					transitionEnterTimeout={transitionTimeout}
+					transitionLeaveTimeout={transitionTimeout}>
 					{rightPanel}
-				</ReactTransitionGroup>
+				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}

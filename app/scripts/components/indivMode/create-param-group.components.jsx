@@ -51,8 +51,10 @@ export default class CreateParamGroup extends React.Component {
 			});
 	}
 
-	componentDidEnter() {
-		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: 'indivGroupsTutorial'});
+	componentDidMount() {
+		setTimeout(() => {
+			this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: 'indivGroupsTutorial'});
+		}, (this.props.transitionTimeout + 100));
 	}
 
 	componentWillUnmount() {
