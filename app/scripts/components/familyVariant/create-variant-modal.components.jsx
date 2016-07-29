@@ -13,8 +13,10 @@ export default class CreateVariantModal extends React.Component {
 	render() {
 		return (
 			<Modal>
-				<div className="modal-container-title">Add variant</div>
-				<AddVariant family={this.props.family}/>
+				<div className="modal-container-title account-header">Add variant</div>
+				<div className="modal-container-content">
+					<AddVariant family={this.props.family}/>
+				</div>
 			</Modal>
 		);
 	}

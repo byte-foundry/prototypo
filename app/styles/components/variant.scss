@@ -90,6 +90,12 @@
 		margin-top: 7px;
 		color: $medium-grey;
 		cursor:pointer;
+		text-transform: capitalize;
+
+		&::before {
+			content: "⟶";
+			margin-right: 1em;
+		}
 
 		&:hover, &.is-active {
 			color: $green;

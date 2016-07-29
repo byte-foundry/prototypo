@@ -24,7 +24,7 @@ export default class AccountDashboard extends React.Component {
 				<Link to="/account" className="account-dashboard-home-icon"/>
 				<div className="account-header">
 					<h1 className="account-title">{title}</h1>
-					<a className="account-intercom" href="#/dashboard">Go to the app!</a>
+					<a className="account-back-app" href="#/dashboard">BACK TO THE APP</a>
 				</div>
 				<div className="account-dashboard-container">
 					<AccountSidebar />

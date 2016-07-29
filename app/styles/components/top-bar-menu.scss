@@ -64,6 +64,12 @@
 			align-items: center;
 			height: 35px;
 
+			// Prototypo icon is not (yet) a link
+			&:hover {
+				background-color: $white;
+				cursor: default;
+			}
+
 			&-img {
 				width:23px;
 			}

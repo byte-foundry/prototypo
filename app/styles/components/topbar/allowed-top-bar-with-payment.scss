@@ -22,7 +22,7 @@
 		width: 100%;
 		height: 100%;
 		z-index: 1;
-		background: rgba(59,59,59,0.75);
+		background: rgba(59,59,59,0.9);
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -42,8 +42,9 @@
 
 		&-text {
 			color:$white;
-			font-size: 13px;
-			padding: 5px 15px;
+			font-size: 14px;
+			line-height: 1.3;
+			padding: 5px 10px;
 			display: block;
 			margin-right: 30px;
 
@@ -94,9 +95,10 @@
 				&-text {
 					flex-direction: column;
 					opacity: 0;
-					padding-left: 60px;
+					padding: 100px 60px;
 					text-align: center;
 					width: 100%;
+					line-height: 1.2;
 
 					&-separator {
 						opacity: 0;

@@ -25,6 +25,10 @@
 	width:100%;
 	margin-right:0%;
 
+	&.important {
+		font-size: 18px;
+	}
+
 	&.is-disable {
 		border-color: rgba($green, 0.4);
 		color: rgba($green, 0.4);
