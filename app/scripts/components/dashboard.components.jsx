@@ -107,7 +107,7 @@ export default class Dashboard extends React.Component {
 					);
 					break;
 				}
-				case 'collectionsFamilyTutorial': {
+				case 'collectionsTutorial': {
 					steps.push(
 						{
 							title: 'Families',
@@ -137,8 +137,9 @@ export default class Dashboard extends React.Component {
 							},
 						}
 					);
+					break;
 				}
-				case 'indivGroupsTutorial': {
+				case 'indivGroupsCreationTutorial': {
 					steps.push(
 						{
 							title: 'Individualisation Groups',
@@ -150,6 +151,31 @@ export default class Dashboard extends React.Component {
 							},
 						}
 					);
+					break;
+				}
+				case 'indivGroupsEditionTutorial': {
+					console.log('toto');
+					steps.push(
+						{
+							title: 'Relative modifications',
+							text: 'Toggle this button to make your changes relative to the other glyphs',
+							selector: '.indiv-switch-relative',
+							position: 'bottom',
+							style: {
+								mainColor,
+							},
+						},
+						{
+							title: 'Absolute modifications',
+							text: 'Toggle this button to make your changes absolute',
+							selector: '.indiv-switch-delta',
+							position: 'bottom',
+							style: {
+								mainColor,
+							},
+						}
+					);
+					break;
 				}
 				default: {
 					break;
@@ -231,6 +257,16 @@ export default class Dashboard extends React.Component {
 		const collectionTransitionTimeout = 300;
 		const panelTransitionTimeout = 200;
 
+		// here modify ReactJoyride's labels
+
+		const joyrideLocale = {
+			back: 'Back',
+			close: 'Close',
+			last: 'OK',
+			next: 'Next',
+			skip: 'Skip',
+		};
+
 		const collection = this.state.collection
 			? <Collection collectionTransitionTimeout={collectionTransitionTimeout} />
 			: false;
@@ -265,6 +301,7 @@ export default class Dashboard extends React.Component {
 					scrollToFirstStep={false}
 					scrollToSteps={false}
 					debug={false}
+					locale={joyrideLocale}
 					steps={this.state.joyrideSteps}
 					callback={this.joyrideCallback}/>
 				<Topbar />
