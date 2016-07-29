@@ -466,6 +466,12 @@ class IndivSwitch extends React.Component {
 		this.client = LocalClient.instance();
 	}
 
+	componentDidMount() {
+		this.client.dispatchAction('/store-value', {
+			uiJoyrideTutorialValue: 'indivGroupsEditionTutorial',
+		});
+	}
+
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
