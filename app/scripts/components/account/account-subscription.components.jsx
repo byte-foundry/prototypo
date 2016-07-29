@@ -51,9 +51,14 @@ export default class AccountSubscription extends React.Component {
 
 	render() {
 		const noCard = (
-			<h3>
-				You don't have a card right now. <Link className="account-link" to="/account/details/add-card">Add a card</Link> before subscribing.
-			</h3>
+			<div>
+				<h3 className="account-dashboard-container-small-title">
+					You don't have a card right now.
+				</h3>
+				<p>
+					<Link className="account-link" to="/account/details/add-card">Add a card</Link> before subscribing.
+				</p>
+			</div>
 		);
 		const currency = this.state.card && this.state.card[0] ? getCurrency(this.state.card[0].country) : undefined;
 		const currencySymbol = currency === 'USD'
@@ -82,9 +87,14 @@ export default class AccountSubscription extends React.Component {
 			: false;
 
 		const noPlan = (
-			<h3>
-				You do not have a plan. Subscribe to our pro plan to benefit of the full power of Prototypo
-			</h3>
+			<div>
+				<h3 className="account-dashboard-container-small-title">
+					You do not have a plan.
+				</h3>
+				<p>
+					Subscribe to our pro plan to benefit of the full power of Prototypo
+				</p>
+			</div>
 		);
 
 		const planInfos = {

@@ -63,12 +63,14 @@ export default class DuplicateVariant extends React.Component {
 
 		return (
 			<Modal>
-				<div className="modal-container-title">Duplicate variant {this.props.variant.name}</div>
-				<InputWithLabel ref="newName"/>
-				{error}
-				<div className="add-family-form-buttons">
-					<Button click={this.exit} label="Cancel" neutral={true}/>
-					<Button click={this.duplicateVariant} label={`Duplicate ${this.props.variant.name}`}/>
+				<div className="modal-container-title account-header">Duplicate variant {this.props.variant.name}</div>
+				<div className="modal-container-content">
+					<InputWithLabel ref="newName"/>
+					{error}
+					<div className="add-family-form-buttons">
+						<Button click={this.exit} label="Cancel" neutral={true}/>
+						<Button click={this.duplicateVariant} label={`Duplicate ${this.props.variant.name}`}/>
+					</div>
 				</div>
 			</Modal>
 		);

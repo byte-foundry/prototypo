@@ -6,6 +6,7 @@
 	border: 2px solid $red;
 	border-radius: 50%;
 	color:$white;
+	background-color: $white;
 	font-weight:900;
 	cursor:pointer;
 	z-index:2;
@@ -21,7 +22,7 @@
 	}
 
 	&:hover {
-		background-color:$red;
+		background-color: $red;
 	}
 
 	&:hover &-icon {

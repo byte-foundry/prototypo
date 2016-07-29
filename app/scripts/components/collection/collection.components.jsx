@@ -120,7 +120,7 @@ export default class Collection extends React.Component {
 			<div className="collection">
 				<div className="collection-container">
 					<div className="account-dashboard-icon"/>
-					<div className="account-dashboard-home-icon" onClick={this.returnToDashboard}/>
+					<div className="account-dashboard-home-icon back" onClick={this.returnToDashboard}/>
 					<div className="account-header">
 						<h1 className="account-title">My collection</h1>
 					</div>
@@ -333,7 +333,7 @@ class VariantList extends React.Component {
 
 			return (
 				<div className={classes} key={i} onClick={() => {this.selectVariant(variant);}}>
-					{variant.name}
+					{this.props.family.name} {variant.name}
 				</div>
 			);
 		});
@@ -479,7 +479,7 @@ class VariantInfo extends React.Component {
 					<div className="variant-list-title">
 						VARIANT ACTIONS
 					</div>
-					<Button label="Open in prototypo" click={this.props.open}/>
+					<Button label="Open in prototypo" important={true} click={this.props.open}/>
 					<Button label={downloadLabel}
 						click={!canExport ? this.askSubscribe : this.downloadFamily}
 						altLabel={buyCreditsLabel}
