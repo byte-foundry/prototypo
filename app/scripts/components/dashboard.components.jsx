@@ -41,6 +41,10 @@ export default class Dashboard extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
+		this.setState({
+			joyrideSteps: [],
+		});
+
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
@@ -71,7 +75,7 @@ export default class Dashboard extends React.Component {
 
 	componentDidUpdate(prevProps, prevState) {
 		const steps = [];
-		const mainColor = '#24d390';
+		const mainColor = this.state.indiv ? '#f5e462' : '#24d390';
 
 		if (
 			(prevState.uiJoyrideTutorialValue !== this.state.uiJoyrideTutorialValue)
@@ -105,9 +109,6 @@ export default class Dashboard extends React.Component {
 				}
 				// case 'collectionsTutorial'
 				case 'indivGroupsTutorial': {
-					console.log('indiv');
-					const mainColorIndiv = '#f5e462';
-
 					steps.push(
 						{
 							title: 'Individualisation Groups',
@@ -115,7 +116,7 @@ export default class Dashboard extends React.Component {
 							selector: '.create-param-group',
 							position: 'right',
 							style: {
-								mainColor: mainColorIndiv,
+								mainColor,
 							},
 						}
 					);
@@ -228,6 +229,7 @@ export default class Dashboard extends React.Component {
 					ref="joyride"
 					type="continuous"
 					scrollToSteps={false}
+					debug={true}
 					steps={this.state.joyrideSteps}
 					callback={this.joyrideCallback}/>
 				<Topbar />

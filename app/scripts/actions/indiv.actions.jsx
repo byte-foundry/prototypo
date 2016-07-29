@@ -67,10 +67,6 @@ export default {
 
 		const patch = prototypoStore.commit();
 
-		if (newValue) {
-			localClient.dispatchAction('/store-value', {uiJoyrideTutorialValue: 'indivGroupsTutorial'});
-		}
-
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		Log.ui('GroupParam.showIndivMode');
 	},

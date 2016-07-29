@@ -1,6 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ReactTransitionGroup from 'react-addons-transition-group';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -44,13 +44,13 @@ export default class IndivSidebar extends React.Component {
 		return (
 			<div className="indiv-sidebar">
 				<IndivGroupList />
-				<ReactCSSTransitionGroup
+				<ReactTransitionGroup
 					component="div"
 					transitionName="indiv-sidebar-right-panel"
 					transitionEnterTimeout={300}
 					transitionLeaveTimeout={300}>
 					{rightPanel}
-				</ReactCSSTransitionGroup>
+				</ReactTransitionGroup>
 			</div>
 		);
 	}
