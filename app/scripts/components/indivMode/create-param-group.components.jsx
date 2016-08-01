@@ -77,13 +77,6 @@ export default class CreateParamGroup extends React.Component {
 				name: this.refs.groupname.inputValue,
 				selected: this.state.selected,
 			});
-			this.client.dispatchAction('/store-value', {
-				indivEdit: false,
-				indivEditingParams: true,
-				indivSelected: [],
-				indivErrorMessage: [],
-				indivErrorGlyphs: [],
-			});
 		}
 	}
 

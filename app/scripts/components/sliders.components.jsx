@@ -282,7 +282,7 @@ export class SliderController extends React.Component {
 		}
 
 		this.tracking = false;
-		this.client.dispatchAction('/change-param', {value: this.props.value, name: this.props.name, label: this.props.label});
+		this.client.dispatchAction('/change-param', {value: this.props.value, name: this.props.name, label: this.props.label, force: true});
 
 		e.stopPropagation();
 	}

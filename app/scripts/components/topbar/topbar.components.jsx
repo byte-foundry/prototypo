@@ -50,6 +50,9 @@ export default class Topbar extends React.Component {
 					export: head.toJS().export,
 					errorExport: head.toJS().errorExport,
 					credits: head.toJS().credits,
+					to: head.toJS().undoTo,
+					from: head.toJS().undoFrom,
+					eventList: head.toJS().undoEventList,
 				});
 			})
 			.onDelete(() => {
