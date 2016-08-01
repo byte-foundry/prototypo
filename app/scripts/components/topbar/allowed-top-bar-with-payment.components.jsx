@@ -20,7 +20,7 @@ export default class AllowedTopBarWithPayment extends React.Component {
 	}
 
 	componentDidMount() {
-		const url = 'http://freegeoip.net/json/';
+		const url = '//freegeoip.net/json/';
 
 		fetch(url)
 			.then((response) => {

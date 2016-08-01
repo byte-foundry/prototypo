@@ -54,7 +54,7 @@ export default class CreditsExport extends React.Component {
 
 	componentDidMount() {
 		// format : freegeoip.net/{format}/{IP_or_hostname}
-		const url = 'http://freegeoip.net/json/';
+		const url = '//freegeoip.net/json/';
 
 		fetch(url)
 			.then((response) => {
