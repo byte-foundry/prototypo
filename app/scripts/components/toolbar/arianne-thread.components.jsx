@@ -258,12 +258,12 @@ class DropArianneItem extends React.Component {
 				this.client.dispatchAction('/store-value', {
 					arianneItemDisplayed: undefined,
 				});
-				document.querySelectorAll(selector).forEach((item) => {
+				_.each(document.querySelectorAll(selector), (item) => {
 					item.removeEventListener('click', outsideClick);
 				});
 			};
 
-			document.querySelectorAll(selector).forEach((item) => {
+			_.each(document.querySelectorAll(selector), (item) => {
 				item.addEventListener('click', outsideClick);
 			});
 		}
