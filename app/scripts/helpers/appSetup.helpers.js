@@ -49,6 +49,10 @@ const defaultValues = {
 				}],
 			}],
 			savedSearch: [],
+			firstTimeFile: true,
+			firstTimeCollection: true,
+			firstTimeIndivCreate: true,
+			firstTimeIndivEdit: true,
 		},
 };
 

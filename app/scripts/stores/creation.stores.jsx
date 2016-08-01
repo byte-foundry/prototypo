@@ -166,6 +166,13 @@ const prototypoStore = new Remutable({
 	//glyph select store values
 	glyphFocused: false,
 	//end glyph select store values
+
+	// first time tutorial store values
+	firstTimeFile: true,
+	firstTimeCollection: true,
+	firstTimeIndivCreate: true,
+	firstTimeIndivEdit: true,
+	// end first time tutorial store values
 });
 
 const userStore = new Remutable({
