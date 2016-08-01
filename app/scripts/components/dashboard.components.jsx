@@ -30,6 +30,10 @@ export default class Dashboard extends React.Component {
 		this.state = {
 			joyrideSteps: [],
 			uiJoyrideTutorialValue: false,
+			firstTimeFile: undefined,
+			firstTimeCollection: undefined,
+			firstTimeIndivCreate: undefined,
+			firstTimeIndivEdit: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -43,8 +47,14 @@ export default class Dashboard extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
+		const prototypoStore = await this.client.fetch('/prototypoStore');
+
 		this.setState({
 			joyrideSteps: [],
+			firstTimeFile: prototypoStore.head.toJS().firstTimeFile,
+			firstTimeCollection: prototypoStore.head.toJS().firstTimeCollection,
+			firstTimeIndivCreate: prototypoStore.head.toJS().firstTimeIndivCreate,
+			firstTimeIndivEdit: prototypoStore.head.toJS().firstTimeIndivEdit,
 		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
@@ -63,6 +73,10 @@ export default class Dashboard extends React.Component {
 					indiv: head.toJS().indivMode,
 					exportAs: head.toJS().exportAs,
 					uiJoyrideTutorialValue: head.toJS().uiJoyrideTutorialValue,
+					firstTimeFile: head.toJS().firstTimeFile,
+					firstTimeCollection: head.toJS().firstTimeCollection,
+					firstTimeIndivCreate: head.toJS().firstTimeIndivCreate,
+					firstTimeIndivEdit: head.toJS().firstTimeIndivEdit,
 				});
 			})
 			.onDelete(() => {
@@ -76,116 +90,12 @@ export default class Dashboard extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		const steps = [];
-		const mainColor = this.state.indiv ? '#f5e462' : '#24d390';
+		const joyrideSteps = buildTutorialSteps(prevState, this.state);
 
-		if (
-			(prevState.uiJoyrideTutorialValue !== this.state.uiJoyrideTutorialValue)
-			&& this.state.uiJoyrideTutorialValue
-		) {
-			switch (this.state.uiJoyrideTutorialValue) {
-				case 'fileTutorial': {
-					const position = 'right';
-
-					steps.push(
-						{
-							title: 'Merged export',
-							text: 'Will export your font without overlapping shapes',
-							selector: '#export-to-merged-otf',
-							position,
-							style: {
-								mainColor,
-							},
-						},
-						{
-							title: 'Unmerged export',
-							text: 'Will export your font as is',
-							selector: '#export-to-otf',
-							position,
-							style: {
-								mainColor,
-							},
-						}
-					);
-					break;
-				}
-				case 'collectionsTutorial': {
-					steps.push(
-						{
-							title: 'Families',
-							text: 'A list of the font families you have created',
-							selector: '.family-list',
-							position: 'right',
-							style: {
-								mainColor,
-							},
-						},
-						{
-							title: 'Variants',
-							text: 'Here you can perfom actions on the selected font family and select a variant',
-							selector: '.variant-list',
-							position: 'right',
-							style: {
-								mainColor,
-							},
-						},
-						{
-							title: 'Variant panel',
-							text: 'Here is a list of action you can perfom on the selected variant',
-							selector: '.variant-info',
-							position: 'left',
-							style: {
-								mainColor,
-							},
-						}
-					);
-					break;
-				}
-				case 'indivGroupsCreationTutorial': {
-					steps.push(
-						{
-							title: 'Individualisation Groups',
-							text: 'You might want to create individualisation groups because reasons',
-							selector: '.create-param-group',
-							position: 'right',
-							style: {
-								mainColor,
-							},
-						}
-					);
-					break;
-				}
-				case 'indivGroupsEditionTutorial': {
-					console.log('toto');
-					steps.push(
-						{
-							title: 'Relative modifications',
-							text: 'Toggle this button to make your changes relative to the other glyphs',
-							selector: '.indiv-switch-relative',
-							position: 'bottom',
-							style: {
-								mainColor,
-							},
-						},
-						{
-							title: 'Absolute modifications',
-							text: 'Toggle this button to make your changes absolute',
-							selector: '.indiv-switch-delta',
-							position: 'bottom',
-							style: {
-								mainColor,
-							},
-						}
-					);
-					break;
-				}
-				default: {
-					break;
-				}
-			}
+		if (joyrideSteps.length) {
+			this.addSteps(joyrideSteps);
 			this.refs.joyride.start(true);
 		}
-		this.addSteps(steps);
 	}
 
 	/**
@@ -214,8 +124,6 @@ export default class Dashboard extends React.Component {
 	joyrideCallback(joyrideEvent) {
 		if (joyrideEvent) {
 			switch (joyrideEvent.action) {
-				case 'close':
-					this.refs.joyride.stop();
 				case 'next':
 					handleNextStep(this, joyrideEvent);
 					break;
