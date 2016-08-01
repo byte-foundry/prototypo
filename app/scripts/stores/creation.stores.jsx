@@ -1,6 +1,9 @@
 import Remutable from 'remutable';
 
 const undoableStore = new Remutable({
+	//font controls store values
+	controlsValues: {},
+	//end font controls store values
 });
 
 const prototypoStore = new Remutable({
@@ -22,10 +25,6 @@ const prototypoStore = new Remutable({
 	//font tab store values
 	fontTab: undefined,
 	//End font tab store values
-
-	//font controls store values
-	controlsValues: {},
-	//end font controls store values
 
 	//font parameters store values
 	fontParameters: undefined,
@@ -261,6 +260,7 @@ const stores = {
 export default stores;
 export {
 	prototypoStore,
+	undoableStore,
 	userStore,
 	couponStore,
 	planStore,
