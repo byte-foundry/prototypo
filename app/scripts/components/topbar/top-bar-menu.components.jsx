@@ -6,6 +6,7 @@ import Lifespan from 'lifespan';
 import LocalClient from '~/stores/local-client.stores.jsx';
 
 import CheckBoxWithImg from '../checkbox-with-img.components.jsx';
+import Button from '../shared/button.components.jsx';
 
 class TopBarMenu extends React.Component {
 	constructor(props) {
@@ -33,6 +34,7 @@ class TopBarMenu extends React.Component {
 					key={child.props.name || child.props.img}
 					id={child.props.id}
 					count={count}
+					noHover={child.props.noHover}
 					onMouseEnter={child.props.enter}
 					onMouseLeave={child.props.leave}>
 					{child.type.getHeader(child.props)}
@@ -120,6 +122,7 @@ class TopBarMenuItem extends React.Component {
 	render() {
 		const classes = classNames(this.props.className, {
 			'topbaritem-displayed': this.state.topbarItemDisplayed === this.props.count,
+			'no-hover': this.props.noHover,
 		});
 		const id = this.props.count ? `topbar-menu-item-${this.props.count}` : '';
 
@@ -370,6 +373,16 @@ class TopBarMenuIcon extends React.Component {
 	}
 }
 
+class TopBarMenuButton extends React.Component {
+	static getHeader({label, click}) {
+		return <Button danger small label={label} click={click} />;
+	}
+
+	render() {
+		return false;
+	}
+}
+
 export {
 	TopBarMenu,
 	TopBarMenuDropdown,
@@ -378,4 +391,5 @@ export {
 	TopBarMenuAction,
 	TopBarMenuIcon,
 	TopBarMenuLink,
+	TopBarMenuButton,
 };

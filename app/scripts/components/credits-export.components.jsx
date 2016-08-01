@@ -130,7 +130,7 @@ export default class CreditsExport extends React.Component {
 			);
 
 		return (
-			<Modal>
+			<Modal propName={this.props.propName}>
 				<div className="modal-container-title">BUY EXPORT CREDITS</div>
 				<div className="credits">
 					{buyCreditsForm}

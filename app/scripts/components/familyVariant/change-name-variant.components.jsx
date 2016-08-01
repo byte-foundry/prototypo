@@ -61,7 +61,7 @@ export default class ChangeNameVariant extends React.Component {
 			: false;
 
 		return (
-			<Modal>
+			<Modal propName={this.props.propName}>
 				<div className="modal-container-title">Change variant name</div>
 				<InputWithLabel ref="newName" inputValue={this.props.variant.name}/>
 				{error}

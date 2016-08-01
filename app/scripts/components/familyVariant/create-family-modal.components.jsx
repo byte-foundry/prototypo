@@ -12,7 +12,7 @@ export default class CreateFamilyModal extends React.Component {
 
 	render() {
 		return (
-			<Modal>
+			<Modal propName={this.props.propName}>
 				<div className="modal-container-title">CREATE NEW FAMILY</div>
 				<AddFamily />
 			</Modal>

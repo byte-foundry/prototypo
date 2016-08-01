@@ -17,6 +17,7 @@ export default class Button extends React.Component {
 			danger: this.props.danger,
 			neutral: this.props.neutral,
 			dark: this.props.dark,
+			small: this.props.small,
 			'split-left': isSplitted,
 		});
 		const splitRight = ClassNames({

@@ -2,56 +2,54 @@ import React from 'react';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
+import Modal from './shared/modal.components.jsx';
 import InputWithLabel from './shared/input-with-label.components.jsx';
+import Button from './shared/button.components.jsx';
 
 export default class ExportAs extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.exportAs = this.exportAs.bind(this);
+		this.exit = this.exit.bind(this);
+	}
+
 	componentWillMount() {
 		this.client = LocalClient.instance();
 	}
 
-	exportAs() {
-		const data = this.refs.modal.getValues();
-
-		this.client.dispatchAction('/export-otf', {
-			merged: true,
-			familyName: data.familyName,
-			variantName: data.variantName,
-			exportAs: true,
-		});
-
+	exit() {
 		this.client.dispatchAction('/set-up-export-otf', {exportAs: false});
 	}
 
-	render() {
-		return (
-			<div className="export-as" onClick={() => {
-				this.client.dispatchAction('/set-up-export-otf', {exportAs: false});
-			}}>
-				<Modal ref="modal" click={this.exportAs.bind(this)}/>
-			</div>
-		);
-	}
-}
-
-class Modal extends React.Component {
-	getValues() {
-		return {
+	exportAs() {
+		this.client.dispatchAction('/export-otf', {
+			merged: true,
 			familyName: this.refs.family.inputValue,
 			variantName: this.refs.variant.inputValue,
-		};
+			exportAs: true,
+		});
+
+		this.exit();
 	}
+
 	render() {
 		return (
-			<div className="export-as-modal" onClick={(e) => {
-				e.stopPropagation();
-			}}>
-				<h1 className="export-as-modal-title">Export font as...</h1>
-				<div className="export-as-modal-content">
-					<InputWithLabel label="Family name" ref="family"/>
-					<InputWithLabel label="Variant name" ref="variant"/>
+			<Modal propName={this.props.propName}>
+				<div className="modal-container-title">EXPORT FONT AS...</div>
+				<div className="columns">
+					<div className="half-column">
+						<InputWithLabel label="Family name" ref="family"/>
+					</div>
+					<div className="half-column">
+						<InputWithLabel label="Variant name" ref="variant"/>
+					</div>
 				</div>
-				<button className="export-as-modal-button" onClick={this.props.click}>Export</button>
-			</div>
-		)
+				<div className="add-family-form-buttons">
+					<Button click={this.exit} label="Cancel" neutral={true}/>
+					<Button click={this.exportAs} label="Export"/>
+				</div>
+			</Modal>
+		);
 	}
 }

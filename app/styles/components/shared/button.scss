@@ -67,6 +67,11 @@
 		}
 	}
 
+	&.small {
+		font-size: 12px;
+		padding: 0 4px;
+	}
+
 	&.split-left {
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;

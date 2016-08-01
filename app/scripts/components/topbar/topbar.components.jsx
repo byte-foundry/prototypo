@@ -15,6 +15,7 @@ import {
 	TopBarMenuAction,
 	TopBarMenuIcon,
 	TopBarMenuLink,
+	TopBarMenuButton,
 } from './top-bar-menu.components.jsx';
 import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components.jsx';
 
@@ -37,6 +38,7 @@ export default class Topbar extends React.Component {
 		//function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
+		this.openGoProModal = this.openGoProModal.bind(this);
 	}
 
 	async componentWillMount() {
@@ -123,6 +125,10 @@ export default class Topbar extends React.Component {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
 			Log.ui('Topbar.toggleView', name);
 		}
+	}
+
+	openGoProModal() {
+		this.client.dispatchAction('/store-value', {openGoProModal: true});
 	}
 
 	setAccountRoute() {
@@ -270,6 +276,7 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Submit an issue on GitHub" handler={() => { window.open('https://github.com/byte-foundry/prototypo/issues', '_blank'); }}/>
 						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq', '_blank'); }}/>
 					</TopBarMenuDropdown>
+					<TopBarMenuButton label="PRO VERSION?" noHover click={this.openGoProModal}/>
 					{exporting}
 					{errorExporting}
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>

@@ -178,6 +178,10 @@
 			}
 		}
 
+		&.no-hover:hover {
+			background: $darkest-grey;
+		}
+
 		.topbaritem-displayed &-dropdown {
 			height:auto;
 		}
