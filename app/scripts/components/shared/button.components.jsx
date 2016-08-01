@@ -16,6 +16,7 @@ export default class Button extends React.Component {
 			button: true,
 			danger: this.props.danger,
 			neutral: this.props.neutral,
+			important: this.props.important,
 			dark: this.props.dark,
 			'split-left': isSplitted,
 		});
