@@ -126,6 +126,8 @@ class TopBarMenuItem extends React.Component {
 
 	handleClick() {
 		this.toggleDisplay();
+
+		// send tutorial action if the click was performed on the first item (file)
 		if (this.props.count === 1) {
 			this.startFileTutorial();
 		}
