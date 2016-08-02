@@ -504,10 +504,10 @@ class IndivSwitch extends React.Component {
 		return (
 			<div className="indiv-switch">
 				<div className={indivRelative} onClick={() => {this.changeState('relative');}}>
-					%
+					&times;
 				</div>
 				<div className={indivDelta} onClick={() => {this.changeState('delta');}}>
-					px
+					+
 				</div>
 			</div>
 		);

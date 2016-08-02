@@ -200,13 +200,16 @@
 	justify-content: space-between;
 
 	&-btn {
-		line-height: 17px;
+		line-height: 19px;
 		height: 19px;
 		width: 19px;
 		text-align: center;
 		border-radius: 50%;
 		transition: all .2s ease;
 		z-index:1;
+		font-size:16px;
+		background: $white;
+		color:$dark-grey;
 
 		&:hover {
 			background: $yellow;
@@ -215,17 +218,6 @@
 		&.is-active {
 			background: $yellow;
 		}
-	}
-
-	&-relative {
-		background: $white;
-		color:$dark-grey;
-		line-height: 19px;
-	}
-
-	&-delta {
-		background: $white;
-		color:$dark-grey;
 	}
 }
 
