@@ -28,7 +28,9 @@ const buildTutorialSteps = function(previousState, currentState) {
 			|| currentState.firstTimeIndivEdit
 		)
 	) {
-		const mainColor = currentState.indiv ? '#f5e462' : '#24d390';
+		const normalColor = '#24d390';
+		const indivColor = '#f5e462';
+		const currentColor = currentState.indiv ? indivColor : normalColor;
 		const predefinedSteps = {
 			// "file" steps
 			fileStep1: {
@@ -37,7 +39,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				selector: '#export-to-merged-otf',
 				position: 'right',
 				style: {
-					mainColor,
+					mainColor: currentColor,
 				},
 			},
 			fileStep2: {
@@ -46,7 +48,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				selector: '#export-to-otf',
 				position: 'right',
 				style: {
-					mainColor,
+					mainColor: currentColor,
 				},
 			},
 
@@ -57,7 +59,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				selector: '.family-list',
 				position: 'right',
 				style: {
-					mainColor,
+					mainColor: normalColor,
 				},
 			},
 			collectionStep2: {
@@ -66,7 +68,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				selector: '.variant-list',
 				position: 'right',
 				style: {
-					mainColor,
+					mainColor: normalColor,
 				},
 			},
 			collectionStep3: {
@@ -75,7 +77,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				selector: '.variant-info',
 				position: 'left',
 				style: {
-					mainColor,
+					mainColor: normalColor,
 				},
 			},
 
@@ -86,7 +88,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				selector: '.create-param-group',
 				position: 'right',
 				style: {
-					mainColor,
+					mainColor: indivColor,
 				},
 			},
 
@@ -97,7 +99,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				selector: '.indiv-switch-relative',
 				position: 'bottom',
 				style: {
-					mainColor,
+					mainColor: indivColor,
 				},
 			},
 			indivGroupEditStep2: {
@@ -106,14 +108,14 @@ const buildTutorialSteps = function(previousState, currentState) {
 				selector: '.indiv-switch-delta',
 				position: 'bottom',
 				style: {
-					mainColor,
+					mainColor: indivColor,
 				},
 			},
 		};
 
 		// populate steps according to the new tutorial values
 		switch (currentState.uiJoyrideTutorialValue) {
-			case 'fileTutorial': {
+			case fileTutorialLabel: {
 				// only if this is the first time the user is doing the action
 				if (currentState.firstTimeFile) {
 					steps.push(
@@ -123,7 +125,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				}
 				break;
 			}
-			case 'collectionsTutorial': {
+			case collectionsTutorialLabel: {
 				if (currentState.firstTimeCollection) {
 					steps.push(
 						predefinedSteps.collectionStep1,
@@ -133,7 +135,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				}
 				break;
 			}
-			case 'indivGroupsCreationTutorial': {
+			case indivGroupsCreationTutorialLabel: {
 				if (currentState.firstTimeIndivCreate) {
 					steps.push(
 						predefinedSteps.indivGroupCreateStep1
@@ -141,7 +143,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				}
 				break;
 			}
-			case 'indivGroupsEditionTutorial': {
+			case indivGroupsEditionTutorialLabel: {
 				if (currentState.firstTimeIndivEdit) {
 					steps.push(
 						predefinedSteps.indivGroupEditStep1,
@@ -175,22 +177,30 @@ const handleNextStep = function(component, joyrideEvent) {
 };
 
 /**
+*	procedure that handles "close" step from joyride
+*	@param {object} component - "this" of the origin component
+*/
+const handleClosed = function(component) {
+	handleFinished(component);
+};
+
+/**
 *	procedure that handles "finished" type of "next" step from joyride
 *	@param {object} component - "this" of the origin component
 */
 function handleFinished(component) {
 	switch (component.state.uiJoyrideTutorialValue) {
-		case '':
+		case fileTutorialLabel:
 			component.client.dispatchAction('/store-value', {firstTimeFile: false});
 			break;
-		case '':
-			component.client.dispatchAction('/store-value', {firstTimeFile: false});
+		case collectionsTutorialLabel:
+			component.client.dispatchAction('/store-value', {firstTimeCollection: false});
 			break;
-		case '':
-			component.client.dispatchAction('/store-value', {firstTimeFile: false});
+		case indivGroupsCreationTutorialLabel:
+			component.client.dispatchAction('/store-value', {firstTimeIndivCreate: false});
 			break;
-		case '':
-			component.client.dispatchAction('/store-value', {firstTimeFile: false});
+		case indivGroupsEditionTutorialLabel:
+			component.client.dispatchAction('/store-value', {firstTimeIndivEdit: false});
 			break;
 		default:
 			break;
@@ -201,6 +211,7 @@ export {
 	// methods
 	buildTutorialSteps,
 	handleNextStep,
+	handleClosed,
 
 	//labels
 	fileTutorialLabel,
