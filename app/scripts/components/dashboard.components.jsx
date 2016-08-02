@@ -21,7 +21,7 @@ import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
 import CreditsExport from './credits-export.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
 
-import {buildTutorialSteps, handleNextStep} from '../helpers/joyride.helpers.js';
+import {buildTutorialSteps, handleNextStep, handleClosed} from '../helpers/joyride.helpers.js';
 
 export default class Dashboard extends React.Component {
 
@@ -218,6 +218,10 @@ export default class Dashboard extends React.Component {
 					this.refs.joyride.stop();
 				case 'next':
 					handleNextStep(this, joyrideEvent);
+					break;
+				case 'close':
+					handleClosed(this);
+					this.refs.joyride.stop();
 					break;
 				default:
 					break;
