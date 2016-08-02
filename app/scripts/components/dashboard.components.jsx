@@ -309,10 +309,7 @@ export default class Dashboard extends React.Component {
 					scrollToFirstStep={false}
 					scrollToSteps={false}
 					debug={false}
-<<<<<<< f6c5e992aa65ad1a67c137390d40c3564dd9defd
 					locale={joyrideLocale}
-=======
->>>>>>> add the tutorial for collections
 					steps={this.state.joyrideSteps}
 					callback={this.joyrideCallback}/>
 				<Topbar />
