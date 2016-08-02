@@ -205,6 +205,9 @@ function handleFinished(component) {
 		default:
 			break;
 	}
+
+	// reset joyride steps everytime a tutorial ends
+	component.setState({joyrideSteps: []});
 }
 
 export {
