@@ -1,6 +1,5 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import ClassNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
@@ -9,6 +8,7 @@ import InputWithLabel from '../shared/input-with-label.components.jsx';
 import Button from '../shared/button.components.jsx';
 import CloseButton from '../close-button.components.jsx';
 import GlyphGrid from '../glyph-grid.components.jsx';
+import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
 
 export default class CreateParamGroup extends React.Component {
 	constructor(props) {
@@ -50,6 +50,14 @@ export default class CreateParamGroup extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+	}
+
+	componentDidMount() {
+		setTimeout(() => {
+			this.client.dispatchAction('/store-value', {
+				uiJoyrideTutorialValue: indivGroupsCreationTutorialLabel,
+			});
+		}, (this.props.transitionTimeout + 100));
 	}
 
 	componentWillUnmount() {
