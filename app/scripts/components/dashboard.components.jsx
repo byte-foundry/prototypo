@@ -21,7 +21,7 @@ import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
 import CreditsExport from './credits-export.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
 
-import buildTutorialSteps from '../helpers/joyrideSteps.helpers.js';
+import {buildTutorialSteps, handleNextStep} from '../helpers/joyride.helpers.js';
 
 export default class Dashboard extends React.Component {
 
@@ -124,13 +124,9 @@ export default class Dashboard extends React.Component {
 	joyrideCallback(joyrideEvent) {
 		if (joyrideEvent) {
 			switch (joyrideEvent.action) {
-				case 'next': {
-					if (joyrideEvent.type === 'finished') {
-						this.refs.joyride.stop();
-						this.client.dispatchAction('/store-value', {firstTimeFile: false});
-					}
+				case 'next':
+					handleNextStep(this, joyrideEvent);
 					break;
-				}
 				default:
 					break;
 			}

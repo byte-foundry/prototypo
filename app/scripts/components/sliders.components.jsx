@@ -1,11 +1,11 @@
 import React from 'react';
-import {Link} from 'react-router';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import DOM from '../helpers/dom.helpers.js';
+import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
 
 export class Sliders extends React.Component {
 	constructor(props) {
@@ -468,7 +468,7 @@ class IndivSwitch extends React.Component {
 
 	componentDidMount() {
 		this.client.dispatchAction('/store-value', {
-			uiJoyrideTutorialValue: 'indivGroupsEditionTutorial',
+			uiJoyrideTutorialValue: indivGroupsEditionTutorialLabel,
 		});
 	}
 

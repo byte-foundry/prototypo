@@ -6,6 +6,7 @@ import Lifespan from 'lifespan';
 import LocalClient from '~/stores/local-client.stores.jsx';
 
 import CheckBoxWithImg from '../checkbox-with-img.components.jsx';
+import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 
 class TopBarMenu extends React.Component {
 	constructor(props) {
@@ -120,7 +121,7 @@ class TopBarMenuItem extends React.Component {
 	}
 
 	startFileTutorial() {
-		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: 'fileTutorial'});
+		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: fileTutorialLabel});
 	}
 
 	handleClick() {

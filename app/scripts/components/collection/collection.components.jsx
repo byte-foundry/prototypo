@@ -8,6 +8,7 @@ import HoodieApi from '~/services/hoodie.services.js';
 import LocalClient from '~/stores/local-client.stores.jsx';
 
 import Button from '../shared/button.components.jsx';
+import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
 
 export default class Collection extends React.Component {
 	constructor(props) {
@@ -61,7 +62,7 @@ export default class Collection extends React.Component {
 	componentDidMount() {
 		setTimeout(() => {
 			this.client.dispatchAction('/store-value', {
-				uiJoyrideTutorialValue: 'collectionsTutorial',
+				uiJoyrideTutorialValue: collectionsTutorialLabel,
 			});
 		}, (this.props.collectionTransitionTimeout + 100));
 	}

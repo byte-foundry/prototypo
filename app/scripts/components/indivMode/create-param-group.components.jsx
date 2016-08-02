@@ -8,6 +8,7 @@ import InputWithLabel from '../shared/input-with-label.components.jsx';
 import Button from '../shared/button.components.jsx';
 import CloseButton from '../close-button.components.jsx';
 import GlyphGrid from '../glyph-grid.components.jsx';
+import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
 
 export default class CreateParamGroup extends React.Component {
 	constructor(props) {
@@ -53,7 +54,9 @@ export default class CreateParamGroup extends React.Component {
 
 	componentDidMount() {
 		setTimeout(() => {
-			this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: 'indivGroupsCreationTutorial'});
+			this.client.dispatchAction('/store-value', {
+				uiJoyrideTutorialValue: indivGroupsCreationTutorialLabel,
+			});
 		}, (this.props.transitionTimeout + 100));
 	}
 
