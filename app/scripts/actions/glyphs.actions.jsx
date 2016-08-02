@@ -1,11 +1,14 @@
 import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
+import LocalClient from '../stores/local-client.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
 
 let localServer;
+let localClient;
 
 window.addEventListener('fluxServer.setup', () => {
 	localServer = LocalServer.instance;
+	localClient = LocalClient.instance();
 });
 
 export default {
@@ -14,6 +17,7 @@ export default {
 			.set('glyphs', params)
 			.commit();
 
+		localClient.dispatchAction('/check-glyph-valid', {glyphs: params});
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/select-glyph': ({unicode}) => {
@@ -43,5 +47,13 @@ export default {
 		const patch = prototypoStore.set('glyphFocused', !focused).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
+	},
+	'/check-glyph-valid': ({glyphs}) => {
+		const glyphSelected = prototypoStore.get('glyphSelected');
+		const unicode = "65";
+
+		if (Object.keys(glyphs).indexOf(glyphSelected) === -1) {
+			localClient.dispatchAction('/select-glyph', {unicode});
+		}
 	},
 };
