@@ -29,6 +29,7 @@ export default {
 		});
 
 		const patch = prototypoStore.commit();
+
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
 		const valuesLoadedEvent = new Event('appValues.loaded');
@@ -43,6 +44,7 @@ export default {
 			const lastcommitsJSON = await Promise.all(repos.map((repo) => {
 				return Commits.getCommits(repo);
 			}));
+
 			localClient.dispatchAction('/load-commits-post', lastcommitsJSON);
 		}
 		catch (err) {

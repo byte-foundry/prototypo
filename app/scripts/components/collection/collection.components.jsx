@@ -8,6 +8,7 @@ import HoodieApi from '~/services/hoodie.services.js';
 import LocalClient from '~/stores/local-client.stores.jsx';
 
 import Button from '../shared/button.components.jsx';
+import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
 
 export default class Collection extends React.Component {
 	constructor(props) {
@@ -36,8 +37,12 @@ export default class Collection extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					families: head.toJS().fonts,
-					selected: head.toJS().collectionSelectedFamily || {},
-					selectedVariant: head.toJS().collectionSelectedVariant || {},
+					selected: (
+						head.toJS().collectionSelectedFamily || head.toJS().family || {}
+					),
+					selectedVariant: (
+						head.toJS().collectionSelectedVariant || head.toJS().variant || {}
+					),
 					familyDeleteSplit: head.toJS().uiFamilyDeleteSplit,
 					askSubscribeFamily: head.toJS().uiAskSubscribeFamily,
 					askSubscribeVariant: head.toJS().uiAskSubscribeVariant,
@@ -52,6 +57,14 @@ export default class Collection extends React.Component {
 					families: undefined,
 				});
 			});
+	}
+
+	componentDidMount() {
+		setTimeout(() => {
+			this.client.dispatchAction('/store-value', {
+				uiJoyrideTutorialValue: collectionsTutorialLabel,
+			});
+		}, (this.props.collectionTransitionTimeout + 100));
 	}
 
 	componentWillUnmount() {
@@ -112,7 +125,10 @@ export default class Collection extends React.Component {
 						<h1 className="account-title">My collection</h1>
 					</div>
 					<div className="collection-content">
-						<FamilyList list={this.state.families} templateInfos={this.state.templateInfos} selected={this.state.selected}/>
+						<FamilyList
+							list={this.state.families}
+							templateInfos={this.state.templateInfos}
+							selected={this.state.selected}/>
 						<ReactCSSTransitionGroup
 							component="div"
 							transitionName="variant-list-container"
