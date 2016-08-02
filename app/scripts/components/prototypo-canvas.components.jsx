@@ -166,6 +166,7 @@ export default class PrototypoCanvas extends React.Component {
 
 	handleZoomShortcut(e) {
 		if (e.keyCode === 90 && !this.oldPos) {
+			e.preventDefault();
 			e.stopPropagation();
 			this.oldPos = {
 				uiPos: fontInstance.view.center,
