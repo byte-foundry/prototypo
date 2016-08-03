@@ -229,7 +229,7 @@ selectRenderOptions(
 			logStore: stores['/prototypoStore'],
 		}).instance;
 		/* #end */
-		/* #if prod */
+		/* #if prod, debug */
 		const localServer = new LocalServer(stores).instance;
 		/* #end */
 
@@ -288,9 +288,14 @@ selectRenderOptions(
 				await eventDebugger.replayEventFromFile();
 			}
 			/* #end */
-			/* #if prod */
+			/* #if prod, offline */
 			try {
+				/* #if prod */
 				await HoodieApi.setup();
+				/* #end */
+				/* #if offline */
+				await HoodieApi.offlineSetup();
+				/* #end */
 
 				await loadStuff();
 			}
