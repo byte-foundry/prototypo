@@ -1,3 +1,4 @@
+import React from 'react';
 // define possible labels for current tutorial (uiJoyrideValue)
 const fileTutorialLabel = 'fileTutorial';
 const collectionsTutorialLabel = 'collectionsTutorial';
@@ -35,7 +36,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 			// "file" steps
 			fileStep1: {
 				title: 'Merged export',
-				text: 'Will export your font without overlapping shapes',
+				text: 'Will export your font without overlapping shapes. In windows this will prevent the holes you might see in Prototypo',
 				selector: '#export-to-merged-otf',
 				position: 'right',
 				style: {
@@ -44,7 +45,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 			},
 			fileStep2: {
 				title: 'Unmerged export',
-				text: 'Will export your font as is',
+				text: 'Will export your font as you see it in Prototypo.',
 				selector: '#export-to-otf',
 				position: 'right',
 				style: {
@@ -55,7 +56,11 @@ const buildTutorialSteps = function(previousState, currentState) {
 			// "collection" steps
 			collectionStep1: {
 				title: 'Families',
-				text: 'A list of the font families you have created',
+				text: <div>
+					<p>This is your collection!</p>
+					<p>You'll be able to manage all your font projects from here.</p>
+					<p>From here you can create a new family and see all your families at a glance, their template and names.</p>
+				</div>,
 				selector: '.family-list',
 				position: 'right',
 				style: {
@@ -64,7 +69,11 @@ const buildTutorialSteps = function(previousState, currentState) {
 			},
 			collectionStep2: {
 				title: 'Variants',
-				text: 'Here you can perfom actions on the selected font family and select a variant',
+				text: <div>
+					<p>This is the family panel</p>
+					<p>Manage your families from here. Change their name, download a zip containing all the variants in the family or just delete it.</p>
+					<p>You can also add a new variants.</p>
+				</div>,
 				selector: '.variant-list',
 				position: 'right',
 				style: {
@@ -73,7 +82,11 @@ const buildTutorialSteps = function(previousState, currentState) {
 			},
 			collectionStep3: {
 				title: 'Variant panel',
-				text: 'Here is a list of action you can perfom on the selected variant',
+				text: <div>
+					<p>This is the variant panel</p>
+					<p>It allows you to open your project in prototypo, create a new variant from an existing one, change its name and download it.</p>
+					<p>Now go on and create your projects :)</p>
+				</div>,
 				selector: '.variant-info',
 				position: 'left',
 				style: {
@@ -83,8 +96,12 @@ const buildTutorialSteps = function(previousState, currentState) {
 
 			// "indiv group create" steps
 			indivGroupCreateStep1: {
-				title: 'Individualisation Groups',
-				text: 'You might want to create individualisation groups because reasons',
+				title: 'Individualization Groups',
+				text: <div>
+					<p>Individualization groups are awesome if you want to correct some shapes on a small set of glyphs.</p>
+					<p>Choose a name for your group and select the glyphs that you want to tweek.</p>
+					<p>Be careful, glyphs can only be part of only one individualization group.</p>
+				</div>,
 				selector: '.create-param-group',
 				position: 'right',
 				style: {
@@ -94,8 +111,8 @@ const buildTutorialSteps = function(previousState, currentState) {
 
 			// "indiv group edit" steps
 			indivGroupEditStep1: {
-				title: 'Relative modifications',
-				text: 'Toggle this button to make your changes relative to the other glyphs',
+				title: 'Proportional individualization',
+				text: 'There is two mode for individualization. The first one is proportional (&times;). It will multiply you current value of the parameters by your individualization value.',
 				selector: '.indiv-switch-relative',
 				position: 'bottom',
 				style: {
@@ -103,8 +120,8 @@ const buildTutorialSteps = function(previousState, currentState) {
 				},
 			},
 			indivGroupEditStep2: {
-				title: 'Absolute modifications',
-				text: 'Toggle this button to make your changes absolute',
+				title: 'Absolute individualization',
+				text: 'The second mode of individualization is absolute (+). It will add or subtract the value of your individualization parameter to your global parameter.',
 				selector: '.indiv-switch-delta',
 				position: 'bottom',
 				style: {
@@ -181,26 +198,50 @@ const handleNextStep = function(component, joyrideEvent) {
 *	@param {object} component - "this" of the origin component
 */
 const handleClosed = function(component) {
-	handleFinished(component);
+	handleFinished(component, true);
 };
 
 /**
 *	procedure that handles "finished" type of "next" step from joyride
 *	@param {object} component - "this" of the origin component
 */
-function handleFinished(component) {
+function handleFinished(component, finishEarly) {
 	switch (component.state.uiJoyrideTutorialValue) {
 		case fileTutorialLabel:
 			component.client.dispatchAction('/store-value', {firstTimeFile: false});
+			if (finishEarly) {
+				window.Intercom('trackEvent', 'endedFileTutoEarly');
+			}
+			else {
+				window.Intercom('trackEvent', 'endedFileTuto');
+			}
 			break;
 		case collectionsTutorialLabel:
 			component.client.dispatchAction('/store-value', {firstTimeCollection: false});
+			if (finishEarly) {
+				window.Intercom('trackEvent', 'endedCollectionTutoEarly');
+			}
+			else {
+				window.Intercom('trackEvent', 'endedCollectionTuto');
+			}
 			break;
 		case indivGroupsCreationTutorialLabel:
 			component.client.dispatchAction('/store-value', {firstTimeIndivCreate: false});
+			if (finishEarly) {
+				window.Intercom('trackEvent', 'endedIndivGroupTutoEarly');
+			}
+			else {
+				window.Intercom('trackEvent', 'endedIndivGroupTuto');
+			}
 			break;
 		case indivGroupsEditionTutorialLabel:
 			component.client.dispatchAction('/store-value', {firstTimeIndivEdit: false});
+			if (finishEarly) {
+				window.Intercom('trackEvent', 'endedIndivParamTutoEarly');
+			}
+			else {
+				window.Intercom('trackEvent', 'endedIndivParamTuto');
+			}
 			break;
 		default:
 			break;
