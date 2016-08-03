@@ -1,6 +1,11 @@
 import {AppValues, AccountValues, FontValues, FontInfoValues, UserValues} from '../services/values.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
+/* #if offline */
+import HoodieApi from '../services/fake-hoodie.services.js';
+/* #end*/
+/* #if prod,debug */
 import HoodieApi from '../services/hoodie.services.js';
+/* #end*/
 import slug from 'slug';
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;

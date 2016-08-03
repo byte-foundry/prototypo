@@ -54,15 +54,6 @@ export default class HoodieApi {
 				.then(setupStripe);
 	}
 
-	static offlineSetup() {
-		HoodieApi.instance = {
-			pouch: false,
-			hoodieId: false,
-			email: '',
-			plan: '',
-		};
-	}
-
 	static login(user, password) {
 		return hoodie.account.signIn(user, password)
 				.then(setupHoodie)

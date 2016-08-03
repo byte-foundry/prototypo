@@ -1,7 +1,11 @@
 import React from 'react';
 import {hashHistory} from 'react-router';
-
+/* #if offline */
+import HoodieApi from '../services/fake-hoodie.services.js';
+/* #end*/
+/* #if prod,debug */
 import HoodieApi from '../services/hoodie.services.js';
+/* #end*/
 import WarningMessage from './warning-message.components.jsx';
 import WaitForLoad from './wait-for-load.components.jsx';
 import Log from '../services/log.services.js';

@@ -3,8 +3,12 @@ import Lifespan from 'lifespan';
 import ClassNames from 'classnames';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-
+/* #if offline */
+import HoodieApi from '~/services/fake-hoodie.services.js';
+/* #end*/
+/* #if prod,debug */
 import HoodieApi from '~/services/hoodie.services.js';
+/* #end*/
 import LocalClient from '~/stores/local-client.stores.jsx';
 
 import Button from '../shared/button.components.jsx';

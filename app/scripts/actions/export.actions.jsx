@@ -2,7 +2,12 @@ import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {FontValues} from '../services/values.services.js';
+/* #if offline */
+import HoodieApi from '../services/fake-hoodie.services.js';
+/* #end*/
+/* #if prod,debug */
 import HoodieApi from '../services/hoodie.services.js';
+/* #end*/
 import JSZip from 'jszip';
 
 let localServer;

@@ -4,8 +4,12 @@ import moment from 'moment';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 import getCurrency from '../../helpers/currency.helpers.js';
-
+/* #if offline */
+import HoodieApi from '../../services/fake-hoodie.services.js';
+/* #end*/
+/* #if prod,debug */
 import HoodieApi from '../../services/hoodie.services.js';
+/* #end*/
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 import WaitForLoad from '../wait-for-load.components';
 

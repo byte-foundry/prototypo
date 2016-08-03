@@ -1,5 +1,10 @@
 import React from 'react';
+/* #if offline */
+import HoodieApi from '../services/fake-hoodie.services.js';
+/* #end*/
+/* #if prod,debug */
 import HoodieApi from '../services/hoodie.services.js';
+/* #end*/
 
 export default class SitePortal extends React.Component {
 	componentWillMount() {

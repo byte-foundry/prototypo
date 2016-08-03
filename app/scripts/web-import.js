@@ -1,5 +1,10 @@
 import {PrototypoCanvas} from 'prototypo-canvas';
+/* #if offline */
+import HoodieApi from './services/fake-hoodie.services.js';
+/* #end*/
+/* #if prod,debug */
 import HoodieApi from './services/hoodie.services.js';
+/* #end*/
 import {AppValues} from './services/values.services.js';
 
 const workerDeps = document.querySelector('script[src*=prototypo\\.]').src;
