@@ -15,6 +15,7 @@ export default class Button extends React.Component {
 		const classes = ClassNames({
 			button: true,
 			danger: this.props.danger,
+			orange: this.props.orange,
 			neutral: this.props.neutral,
 			dark: this.props.dark,
 			small: this.props.small,

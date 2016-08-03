@@ -179,7 +179,13 @@
 		}
 
 		&.no-hover:hover {
-			background: $darkest-grey;
+			background: transparent;
+		}
+
+		&.is-centered {
+			float:none;
+			width:200px;
+			margin:auto;
 		}
 
 		.topbaritem-displayed &-dropdown {

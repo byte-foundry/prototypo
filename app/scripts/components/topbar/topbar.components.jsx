@@ -169,11 +169,10 @@ export default class Topbar extends React.Component {
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : false;
 		const glyphrExportCost = this.state.creditChoices ? this.state.creditChoices.exportGlyphr : false;
-
-		const exporting = this.state.export ? (
+		const exporting = this.state.export && (
 			<TopBarMenuAction name="Exporting..." click={() => {return;}} action={true}/>
-			) : false;
-		const errorExporting = this.state.errorExport ? (
+			);
+		const errorExporting = this.state.errorExport && (
 			<TopBarMenuAction
 				name={
 					this.state.errorExport.message
@@ -182,11 +181,11 @@ export default class Topbar extends React.Component {
 				}
 				click={() => {return;}}
 				action={true}/>
-			) : false;
-
+			);
 		const creditExportLabel = this.state.credits
-			? <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>
-			: false;
+			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
+		const callToAction = !(freeAccountAndHasCredits || !freeAccount)
+			&& <TopBarMenuButton label="EXPORT YOUR FONT!" noHover centered click={this.openGoProModal} alignRight/>;
 
 		return (
 			<div id="topbar">
@@ -276,11 +275,11 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Submit an issue on GitHub" handler={() => { window.open('https://github.com/byte-foundry/prototypo/issues', '_blank'); }}/>
 						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq', '_blank'); }}/>
 					</TopBarMenuDropdown>
-					<TopBarMenuButton label="PRO VERSION?" noHover click={this.openGoProModal}/>
 					{exporting}
 					{errorExporting}
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
 					{creditExportLabel}
+					{callToAction}
 				</TopBarMenu>
 			</div>
 		);

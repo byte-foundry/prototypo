@@ -30,6 +30,17 @@
 		color: rgba($green, 0.4);
 	}
 
+	&.orange {
+		border-color: $orange;
+		color: $orange;
+
+		&:hover {
+			@include themify() {
+				background-color: $orange;
+			}
+		}
+	}
+
 	&.danger {
 		border-color: $red;
 		color: $red;

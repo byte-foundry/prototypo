@@ -18,12 +18,13 @@ class TopBarMenu extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] TopBarMenu');
 		}
-		const headers = _.without(this.props.children, false).map((child, index) => {
+		const headers = _.without(this.props.children, false, undefined).map((child, index) => {
 			const classes = classNames({
 				'top-bar-menu-item': true,
 				'is-aligned-right': child.props.alignRight,
 				'is-action': child.props.action,
 				'is-icon-menu': !!child.props.img,
+				'is-centered': child.props.centered,
 				'img-dark-background': child.props.imgDarkBackground,
 			});
 			const count = (index > 0 && index < 5) ? index : 0;
@@ -375,7 +376,7 @@ class TopBarMenuIcon extends React.Component {
 
 class TopBarMenuButton extends React.Component {
 	static getHeader({label, click}) {
-		return <Button danger small label={label} click={click} />;
+		return <Button small label={label} click={click} />;
 	}
 
 	render() {
