@@ -4,6 +4,8 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
 import Log from '../services/log.services.js';
 
+import {rawToEscapedContent} from '../helpers/input-transform.helpers';
+
 let localServer;
 let localClient;
 
@@ -24,7 +26,7 @@ export default {
 	},
 	'/store-text': ({value, propName}) => {
 		const patch = prototypoStore.set(propName, value).commit();
-		const subset = prototypoStore.head.toJS().uiText + prototypoStore.head.toJS().uiWord;
+		const subset = prototypoStore.head.toJS().uiText + rawToEscapedContent(prototypoStore.head.toJS().uiWord);
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 

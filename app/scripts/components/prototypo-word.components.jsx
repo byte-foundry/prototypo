@@ -3,15 +3,17 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import classNames from 'classnames';
+import {diffChars} from 'diff';
+
+import {contentToArray, arrayToRawContent, rawToEscapedContent} from '../helpers/input-transform.helpers.js';
 
 import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import ZoomButtons from './zoom-buttons.components.jsx';
-import ClassNames from 'classnames';
+import PrototypoWordInput from './views/prototypo-word-input.components.jsx';
 
-//Right now PrototypoWord is just like PrototypoText (except some css consideration)
-//However it will change at some point
 export default class PrototypoWord extends React.Component {
 
 	constructor(props) {
@@ -25,6 +27,7 @@ export default class PrototypoWord extends React.Component {
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.setupText = this.setupText.bind(this);
 		this.saveText = this.saveText.bind(this);
+		this.handleEscapedInput = this.handleEscapedInput.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.hideContextMenu = this.hideContextMenu.bind(this);
 		this.changeTextFontSize = this.changeTextFontSize.bind(this);
@@ -45,17 +48,18 @@ export default class PrototypoWord extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-
-		this.saveTextDebounced = _.debounce((text, prop) => {
-			this.client.dispatchAction('/store-text', {value: text, propName: prop});
-		}, 500);
 	}
 
 	setupText() {
 		const content = this.props[this.props.field];
+		const transformedContent = rawToEscapedContent(content);
 
-		this.refs.text.textContent = content && content.length > 0 ? content : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
-		// this.saveText();
+		this.refs.text.textContent = transformedContent && transformedContent.length > 0 ? transformedContent : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
+		// this.handleEscapedInput();
+	}
+
+	saveText(text) {
+		this.client.dispatchAction('/store-text', {value: text, propName: this.props.field});
 	}
 
 	componentDidUpdate() {
@@ -67,16 +71,52 @@ export default class PrototypoWord extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.saveText();
+		this.handleEscapedInput();
 		this.lifespan.release();
 	}
 
-	saveText() {
+	handleEscapedInput() {
 		const textDiv = this.refs.text;
 
 		if (textDiv && textDiv.textContent) {
-			this.saveTextDebounced(textDiv.textContent, this.props.field);
+			const newText = this.applyDiff(
+				contentToArray(this.props[this.props.field]), // array to update
+				rawToEscapedContent(this.props[this.props.field]), // text in memory
+				textDiv.textContent // text updated with user input
+			);
+
+			this.saveText(newText);
 		}
+	}
+
+	applyDiff(textArray, oldText, newText) {
+		let currentIndex = 0;
+		let buffer = textArray;
+		const diffList = diffChars(oldText, newText);
+
+		diffList.forEach(({added, removed, count, value}) => {
+		  if(removed) {
+		    buffer = [
+		      ...buffer.slice(0, currentIndex),
+		      ...buffer.slice(currentIndex + count),
+		    ];
+		    return;
+		  }
+
+		  if(added) {
+		    buffer = [
+		      ...buffer.slice(0, currentIndex),
+		      ...value.split('').map((letter) => {
+		        return letter === '/' ? '//' : letter;
+		      }),
+		      ...buffer.slice(currentIndex),
+		    ];
+		  }
+
+		  currentIndex += count;
+		});
+
+		return buffer.join('');
 	}
 
 	toggleContextMenu(e) {
@@ -121,7 +161,7 @@ export default class PrototypoWord extends React.Component {
 			'transform': this.props.uiInvertedWordView ? 'scaleY(-1)' : 'scaleY(1)',
 		};
 
-		const actionBar = ClassNames({
+		const actionBar = classNames({
 			'action-bar': true,
 			'is-shifted': this.state.glyphPanelOpened,
 		});
@@ -144,29 +184,32 @@ export default class PrototypoWord extends React.Component {
 				className="prototypo-word"
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}>
-				<ReactGeminiScrollbar>
-					<div
-						contentEditable="true"
-						ref="text"
-						className="prototypo-word-string"
-						spellCheck="false"
-						style={style}
-						onInput={this.saveText}
-						></div>
-				</ReactGeminiScrollbar>
-				<ViewPanelsMenu
-					show={this.state.showContextMenu}
-					shifted={this.state.glyphPanelOpened}
-					toggle={this.toggleContextMenu}>
-					{menu}
-				</ViewPanelsMenu>
-				<div className={actionBar}>
-					<CloseButton click={() => { this.props.close('word'); }}/>
-					<ZoomButtons
-						plus={() => { this.changeTextFontSize(this.props.uiWordFontSize + 0.3); }}
-						minus={() => { this.changeTextFontSize(this.props.uiWordFontSize - 0.3); }}
-					/>
+				<div className="prototypo-word-scrollbar-wrapper">
+					<ReactGeminiScrollbar>
+						<div
+							contentEditable="true"
+							ref="text"
+							className="prototypo-word-string"
+							spellCheck="false"
+							style={style}
+							onInput={this.handleEscapedInput}
+							></div>
+					</ReactGeminiScrollbar>
+					<ViewPanelsMenu
+						show={this.state.showContextMenu}
+						shifted={this.state.glyphPanelOpened}
+						toggle={this.toggleContextMenu}>
+						{menu}
+					</ViewPanelsMenu>
+					<div className={actionBar}>
+						<CloseButton click={() => { this.props.close('word'); }}/>
+						<ZoomButtons
+							plus={() => { this.changeTextFontSize(this.props.uiWordFontSize + 0.3); }}
+							minus={() => { this.changeTextFontSize(this.props.uiWordFontSize - 0.3); }}
+						/>
+					</div>
 				</div>
+				<PrototypoWordInput onTypedText={(rawText) => {this.saveText(rawText);}} value={arrayToRawContent(contentToArray(this.props[this.props.field]))} />
 			</div>
 		);
 	}

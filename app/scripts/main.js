@@ -73,6 +73,7 @@ import '../styles/components/topbar/allowed-top-bar-with-payment.scss';
 import '../styles/components/collection/collection.scss';
 import '../styles/components/collection/family.scss';
 import '../styles/components/viewPanels/view-panels-menu.scss';
+import '../styles/components/views/prototypo-word-input.scss';
 import '../styles/components/indivMode/indiv-group-list.scss';
 import '../styles/components/indivMode/indiv-sidebar.scss';
 import '../styles/lib/spinners/3-wave.scss';
