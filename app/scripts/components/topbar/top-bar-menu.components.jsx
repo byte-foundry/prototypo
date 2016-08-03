@@ -6,6 +6,7 @@ import Lifespan from 'lifespan';
 import LocalClient from '~/stores/local-client.stores.jsx';
 
 import CheckBoxWithImg from '../checkbox-with-img.components.jsx';
+import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 
 class TopBarMenu extends React.Component {
 	constructor(props) {
@@ -58,7 +59,9 @@ class TopBarMenuItem extends React.Component {
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// function binding
+		this.handleClick = this.handleClick.bind(this);
 		this.toggleDisplay = this.toggleDisplay.bind(this);
+		this.startFileTutorial = this.startFileTutorial.bind(this);
 	}
 
 	async componentWillMount() {
@@ -105,15 +108,28 @@ class TopBarMenuItem extends React.Component {
 					this.client.dispatchAction('/store-value', {
 						topbarItemDisplayed: undefined,
 					});
-					document.querySelectorAll(selector).forEach((item) => {
+					_.each(document.querySelectorAll(selector), (item) => {
 						item.removeEventListener('click', outsideClick);
 					});
 				};
 
-				document.querySelectorAll(selector).forEach((item) => {
+				_.each(document.querySelectorAll(selector), (item) => {
 					item.addEventListener('click', outsideClick);
 				});
 			}
+		}
+	}
+
+	startFileTutorial() {
+		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: fileTutorialLabel});
+	}
+
+	handleClick() {
+		this.toggleDisplay();
+
+		// send tutorial action if the click was performed on the first item (file)
+		if (this.props.count === 1) {
+			this.startFileTutorial();
 		}
 	}
 
@@ -127,7 +143,7 @@ class TopBarMenuItem extends React.Component {
 			<li
 				className={classes}
 				id={id}
-				onClick={this.toggleDisplay}>
+				onClick={this.handleClick}>
 				{this.props.children}
 			</li>
 		);
@@ -292,7 +308,7 @@ class TopBarMenuDropdownItem extends React.Component {
 				this.client.dispatchAction('/store-value', {
 					errorExport: {
 						message: 'Could not export while offline',
-					}
+					},
 				});
 			}
 		}
@@ -325,7 +341,7 @@ class TopBarMenuDropdownItem extends React.Component {
 		});
 
 		return (
-			<li className={classes} onClick={this.handleClick}>
+			<li className={classes} onClick={this.handleClick} id={this.props.id}>
 				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
 				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
 				{creditsAltLabel}

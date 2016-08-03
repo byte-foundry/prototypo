@@ -1,6 +1,9 @@
 import Remutable from 'remutable';
 
 const undoableStore = new Remutable({
+	//font controls store values
+	controlsValues: {},
+	//end font controls store values
 });
 
 const prototypoStore = new Remutable({
@@ -22,10 +25,6 @@ const prototypoStore = new Remutable({
 	//font tab store values
 	fontTab: undefined,
 	//End font tab store values
-
-	//font controls store values
-	controlsValues: {},
-	//end font controls store values
 
 	//font parameters store values
 	fontParameters: undefined,
@@ -166,6 +165,13 @@ const prototypoStore = new Remutable({
 	//glyph select store values
 	glyphFocused: false,
 	//end glyph select store values
+
+	// first time tutorial store values
+	firstTimeFile: true,
+	firstTimeCollection: true,
+	firstTimeIndivCreate: true,
+	firstTimeIndivEdit: true,
+	// end first time tutorial store values
 });
 
 const userStore = new Remutable({
@@ -261,6 +267,7 @@ const stores = {
 export default stores;
 export {
 	prototypoStore,
+	undoableStore,
 	userStore,
 	couponStore,
 	planStore,

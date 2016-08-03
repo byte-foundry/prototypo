@@ -1,7 +1,7 @@
 import Remutable from 'remutable';
 const {Patch} = Remutable;
 
-import {prototypoStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 
 let localServer;
@@ -61,9 +61,18 @@ export default {
 				label,
 			});
 		const eventPatch = prototypoStore.set('undoEventList', newEventList)
-			.set('undoto', undefined)
+			.set('undoTo', undefined)
 			.set('undoFrom', newEventList.length - 1).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', eventPatch);
+	},
+	'/clear-undo-stack': () => {
+		const patch = prototypoStore
+			.set('undoEventList', [])
+			.set('undoFrom', 0)
+			.set('undoTo', 0)
+			.commit();
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 };

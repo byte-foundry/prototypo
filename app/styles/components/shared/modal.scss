@@ -4,7 +4,7 @@
 	position:absolute;
 	z-index:12;
 	@include themify() {
-		background-color: rgba($theme-background, 0.6);
+		background-color: rgba($theme-background, 0.9);
 	}
 	width:100%;
 	height:100%;
@@ -53,13 +53,16 @@
 		min-width: 500px;
 		max-width: 800px;
 		box-shadow: 5px 5px 6px 1px rgba(0, 0 ,0, 0.2);
-		padding: 40px;
 
 		&-title {
-			font-size:17px;
-			text-transform: uppercase;
-			@include themify() {
-				color: $theme-background;
+			font-size: 18px;
+			padding-left: 40px;
+		}
+
+		&-content {
+			padding: 20px 40px 40px;
+			.sign-in-form {
+				padding: 0;
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
+import {hashHistory} from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 

@@ -50,6 +50,9 @@ export default class Topbar extends React.Component {
 					export: head.toJS().export,
 					errorExport: head.toJS().errorExport,
 					credits: head.toJS().credits,
+					to: head.toJS().undoTo,
+					from: head.toJS().undoFrom,
+					eventList: head.toJS().undoEventList,
 				});
 			})
 			.onDelete(() => {
@@ -159,7 +162,7 @@ export default class Topbar extends React.Component {
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${!redoDisabled ? this.state.eventList[whereAt + 1].label : ''}`;
 		const credits = this.state.credits;
-		const freeAccount = HoodieApi.instance.plan.indexOf('free_') !== -1;
+		const freeAccount = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : false;
 		const glyphrExportCost = this.state.creditChoices ? this.state.creditChoices.exportGlyphr : false;
@@ -186,11 +189,17 @@ export default class Topbar extends React.Component {
 			<div id="topbar">
 				<TopBarMenu>
 					<TopBarMenuIcon className="side-tabs-icon-headers" img="assets/images/prototypo-icon.svg"/>
-					<TopBarMenuDropdown name="File" id="file-menu" idMenu="file-dropdown" enter={() => { this.onboardExport('export-2'); }} leave={() => {this.onboardExport('export');}}>
+					<TopBarMenuDropdown
+						name="File"
+						id="file-menu"
+						idMenu="file-dropdown"
+						enter={() => { this.onboardExport('export-2'); }}
+						leave={() => {this.onboardExport('export');}}>
 						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
 						<AllowedTopBarWithPayment credits={credits} freeAccount={freeAccount}>
 							<TopBarMenuDropdownItem
 								name="Export to merged OTF"
+								id="export-to-merged-otf"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={otfExportCost}
@@ -198,6 +207,7 @@ export default class Topbar extends React.Component {
 								handler={() => {this.exportOTF(true);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to merged OTF as..."
+								id="export-to-merged-otf-as"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={otfExportCost}
@@ -205,6 +215,7 @@ export default class Topbar extends React.Component {
 								handler={() => {this.setupExportAs(true);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to OTF"
+								id="export-to-otf"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={otfExportCost}
@@ -212,6 +223,7 @@ export default class Topbar extends React.Component {
 								handler={() => {this.exportOTF(false);}}/>
 							<TopBarMenuDropdownItem
 								name="Export to Glyphr Studio"
+								id="export-to-glyphr-studio"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={glyphrExportCost}
@@ -222,7 +234,7 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem
 							name="Download Web Preview extension"
 							separator={true}
-							handler={() => { window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf','_blank'); }}/>
+							handler={() => { window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf', '_blank'); }}/>
 						<TopBarMenuDropdownItem
 							name="Logout"
 							handler={() => {this.logout();}}/>

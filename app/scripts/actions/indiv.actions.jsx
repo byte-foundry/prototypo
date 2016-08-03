@@ -1,4 +1,4 @@
-import {prototypoStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import Log from '../services/log.services.js';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -14,8 +14,8 @@ window.addEventListener('fluxServer.setup', () => {
 
 function getGroupsAndGlyphsFromGroups(groups) {
 	return _.sortBy(_.map(groups, (name) => {
-		const glyphs = _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
-			return prototypoStore.get('controlsValues').indiv_glyphs[key] === name;
+		const glyphs = _.keys(undoableStore.get('controlsValues').indiv_glyphs).filter((key) => {
+			return undoableStore.get('controlsValues').indiv_glyphs[key] === name;
 		});
 
 		return {name, glyphs};
@@ -40,7 +40,7 @@ function toggleGlyphSelection(isSelected, selected, unicode) {
 
 export default {
 	'/load-indiv-groups': () => {
-		const groups = Object.keys(prototypoStore.get('controlsValues').indiv_group_param || {});
+		const groups = Object.keys(undoableStore.get('controlsValues').indiv_group_param || {});
 		const groupsAndGlyphs = getGroupsAndGlyphsFromGroups(groups);
 		const patch = prototypoStore
 			.set('indivGroups', groupsAndGlyphs).commit();
@@ -50,10 +50,12 @@ export default {
 	'/toggle-individualize': ({targetIndivValue}) => {
 		const oldValue = prototypoStore.get('indivMode');
 
-		const groups = Object.keys(prototypoStore.get('controlsValues').indiv_group_param || {});
+		const newValue = targetIndivValue || !oldValue;
+		const groups = Object.keys(undoableStore.get('controlsValues').indiv_group_param || {});
 		const groupsAndGlyphs = getGroupsAndGlyphsFromGroups(groups);
+
 		prototypoStore
-			.set('indivMode', targetIndivValue || !oldValue)
+			.set('indivMode', newValue)
 			.set('indivCreate', groups.length === 0 && !oldValue)
 			.set('indivPreDelete', false)
 			.set('indivEdit', false)
@@ -92,7 +94,7 @@ export default {
 		Log.ui('GroupParam.selectIndivTag');
 	},
 	'/create-param-group': ({name, selected}) => {
-		const oldValues = prototypoStore.get('controlsValues');
+		const oldValues = undoableStore.get('controlsValues');
 		const alreadyInGroup = [];
 
 		if (!name) {
@@ -148,18 +150,20 @@ export default {
 			oldValues.indiv_group_param[name] = {};
 		}
 
-		const patch = prototypoStore.set('controlsValues', oldValues).commit();
+		const patch = undoableStore.set('controlsValues', oldValues).commit();
 
-		localServer.dispatchUpdate('/prototypoStore', patch);
+		localServer.dispatchUpdate('/undoableStore', patch);
 
 		const endCreatePatch = prototypoStore
 			.set('indivCreate', false)
-			.set('indivEdit', true)
+			.set('indivEdit', false)
+			.set('indivEditingParams', true)
+			.set('indivSelected', [])
 			.set('indivCurrentGroup', {name, glyphs: selected})
 			.set('indivErrorMessage', undefined)
 			.set('indivGlyphGrid', false)
-			.set('indivGlyphs', _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
-				return prototypoStore.get('controlsValues').indiv_glyphs[key] === name;
+			.set('indivGlyphs', _.keys(undoableStore.get('controlsValues').indiv_glyphs).filter((key) => {
+				return undoableStore.get('controlsValues').indiv_glyphs[key] === name;
 			}))
 			.set('indivEditGroup', false)
 			.set('indivErrorGlyphs', [])
@@ -174,7 +178,7 @@ export default {
 		Log.ui('GroupParam.create');
 	},
 	'/cancel-indiv-mode': () => {
-		const oldValues = _.cloneDeep(prototypoStore.get('controlsValues'));
+		const oldValues = _.cloneDeep(undoableStore.get('controlsValues'));
 
 		const endCreatePatch = prototypoStore
 			.set('indivCreate', false)
@@ -194,8 +198,8 @@ export default {
 
 	},
 	'/edit-param-group': (state) => {
-		const otherGroups = _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
-				return !!prototypoStore.get('controlsValues').indiv_glyphs[key] && prototypoStore.get('controlsValues').indiv_glyphs[key] !== prototypoStore.get('indivCurrentGroup');
+		const otherGroups = _.keys(undoableStore.get('controlsValues').indiv_glyphs).filter((key) => {
+				return !!undoableStore.get('controlsValues').indiv_glyphs[key] && undoableStore.get('controlsValues').indiv_glyphs[key] !== prototypoStore.get('indivCurrentGroup');
 			});
 		const patch = prototypoStore
 			.set('indivEditGroup', state)
@@ -213,8 +217,8 @@ export default {
 			.set('indivPreDelete', state)
 			.set('indivEditGroup', false)
 			.set('indivGlyphGrid', false)
-			.set('indivSelected', _.keys(prototypoStore.get('controlsValues').indiv_glyphs).filter((key) => {
-				return prototypoStore.get('controlsValues').indiv_glyphs[key] === prototypoStore.get('indivCurrentGroup');
+			.set('indivSelected', _.keys(undoableStore.get('controlsValues').indiv_glyphs).filter((key) => {
+				return undoableStore.get('controlsValues').indiv_glyphs[key] === prototypoStore.get('indivCurrentGroup');
 			}))
 			.commit();
 
@@ -222,7 +226,7 @@ export default {
 		Log.ui('GroupParam.startDelete');
 	},
 	'/delete-param-group': ({name}) => {
-		const oldValues = _.cloneDeep(prototypoStore.get('controlsValues'));
+		const oldValues = _.cloneDeep(undoableStore.get('controlsValues'));
 
 		delete oldValues.indiv_group_param[name];
 
@@ -247,9 +251,9 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', endDeletePatch);
 
-		const patch = prototypoStore.set('controlsValues', oldValues).commit();
+		const patch = undoableStore.set('controlsValues', oldValues).commit();
 
-		localServer.dispatchUpdate('/prototypoStore', patch);
+		localServer.dispatchUpdate('/undoableStore', patch);
 
 		const variant = prototypoStore.get('variant');
 
@@ -270,7 +274,7 @@ export default {
 		Log.ui('GroupParam.removeGlyph');
 	},
 	'/save-param-group': ({newName}) => {
-		const oldValues = _.cloneDeep(prototypoStore.get('controlsValues'));
+		const oldValues = _.cloneDeep(undoableStore.get('controlsValues'));
 		const currentGroup = prototypoStore.get('indivCurrentGroup') || {};
 		const currentGroupName = currentGroup.name;
 		const glyphSelected = currentGroupName
@@ -314,9 +318,9 @@ export default {
 
 		oldValues.indiv_group_param[newName] = oldParams;
 
-		const patch = prototypoStore.set('controlsValues', oldValues).commit();
+		const patch = undoableStore.set('controlsValues', oldValues).commit();
 
-		localServer.dispatchUpdate('/prototypoStore', patch);
+		localServer.dispatchUpdate('/undoableStore', patch);
 
 		const indivPatch = prototypoStore
 			.set('indivCurrentGroup', {name: newName, glyphs: currentGroup.glyphs})
@@ -335,7 +339,7 @@ export default {
 		Log.ui('GroupParam.saveEdit');
 	},
 	'/create-mode-param-group': () => {
-		const values = _.cloneDeep(prototypoStore.get('controlsValues'));
+		const values = _.cloneDeep(undoableStore.get('controlsValues'));
 
 		const indivPatch = prototypoStore
 			.set('indivMode', true)
@@ -354,7 +358,7 @@ export default {
 		Log.ui('GroupParam.switchToCreateGroupParam');
 	},
 	'/edit-mode-param-group': ({group}) => {
-		const values = _.cloneDeep(prototypoStore.get('controlsValues'));
+		const values = _.cloneDeep(undoableStore.get('controlsValues'));
 		const indivPatch = prototypoStore
 			.set('indivMode', true)
 			.set('indivCreate', false)

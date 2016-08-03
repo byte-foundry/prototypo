@@ -1,7 +1,7 @@
 import XXHash from 'xxhashjs';
 import slug from 'slug';
 
-import {prototypoStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {Typefaces} from '../services/typefaces.services.js';
@@ -9,15 +9,38 @@ import {copyFontValues, loadFontValues, saveAppValues} from '../helpers/loadValu
 import {setupFontInstance, mapGlyphForApp} from '../helpers/font.helpers.js';
 import {FontValues} from '../services/values.services.js';
 import {delayAfterCall} from '../helpers/animation.helpers.js';
+import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
 let localServer;
 let localClient;
+let undoWatcher;
+
+const debouncedSave = _.throttle((values, db) => {
+	FontValues.save({
+		typeface: db || 'default',
+		values,
+	});
+}, 300);
 
 window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
 	localServer = LocalServer.instance;
+
+	undoWatcher = new BatchUpdate(
+		undoableStore,
+		'/undoableStore',
+		'controlsValues',
+		localClient,
+		localServer.lifespan,
+		(name) => {
+			return `modifier ${name}`;
+		},
+		(headJS) => {
+			debouncedSave(headJS.controlsValues);
+		}
+	);
 });
 
 const hasher = XXHash(0xDEADBEEF);
@@ -94,6 +117,7 @@ export default {
 			mapGlyphForApp
 		));
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
+		localClient.dispatchAction('/clear-undo-stack');
 
 		loadFontValues(typedata, db);
 	},
@@ -433,5 +457,67 @@ export default {
 		const patch = prototypoStore.set('openVariantModal', false).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
+	},
+	'/change-param': ({values, value, name, force, label}) => {
+		const indivMode = prototypoStore.get('indivMode');
+		const indivEdit = prototypoStore.get('indivEditingParams');
+		const db = (prototypoStore.get('variant') || {}).db;
+		const currentGroupName = (prototypoStore.get('indivCurrentGroup') || {}).name;
+		let newParams = {...undoableStore.get('controlsValues')};
+
+		if (indivMode && indivEdit && !values) {
+			if (newParams.indiv_group_param[currentGroupName][name]) {
+				newParams.indiv_group_param[currentGroupName][name].value = value;
+			}
+			else {
+				newParams.indiv_group_param[currentGroupName][name] = {
+					state: 'relative',
+					value,
+				};
+			}
+		}
+		else if (values) {
+			newParams = {...newParams, ...values};
+		}
+		else {
+			newParams[name] = value;
+		}
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+
+		debouncedSave(newParams, db);
+		if (force) {
+			//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+			undoWatcher.forceUpdate(patch, label);
+		}
+		else {
+			undoWatcher.update(patch, label);
+		}
+
+	},
+	'/change-param-state': ({name, state, force, label}) => {
+		const db = prototypoStore.get('variant').db;
+		const currentGroupName = prototypoStore.get('indivCurrentGroup').name;
+		const newParams = {...undoableStore.get('controlsValues')};
+
+		newParams.indiv_group_param[currentGroupName][name] = {
+			state,
+			value: state === 'relative' ? 1 : 0,
+		};
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+		debouncedSave(newParams, db);
+
+		if (force) {
+			//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+			undoWatcher.forceUpdate(patch, label);
+		}
+		else {
+			undoWatcher.update(patch, label);
+		}
 	},
 };

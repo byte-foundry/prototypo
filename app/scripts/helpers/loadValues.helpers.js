@@ -29,6 +29,10 @@ export const valuesToLoad = [
 	{remote: 'textFontSize', local: 'uiTextFontSize'},
 	{remote: 'collection', local: 'uiShowCollection'},
 	{remote: 'latestCommit', local: 'latestCommit'},
+	{remote: 'firstTimeFile', local: 'firstTimeFile'},
+	{remote: 'firstTimeCollection', local: 'firstTimeCollection'},
+	{remote: 'firstTimeIndivCreate', local: 'firstTimeIndivCreate'},
+	{remote: 'firstTimeIndivEdit', local: 'firstTimeIndivEdit'},
 ];
 
 window.addEventListener('fluxServer.setup', () => {

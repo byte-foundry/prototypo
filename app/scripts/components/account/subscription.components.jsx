@@ -33,7 +33,7 @@ export default class Subscription extends React.Component {
 
 	render() {
 		const back = this.props.location.pathname !== '/account/create'
-			? <a className="account-intercom" href="#/dashboard">Go back to the app!</a>
+			? <a className="account-back-app" href="#/dashboard">BACK TO THE APP</a>
 			: false;
 
 		return (

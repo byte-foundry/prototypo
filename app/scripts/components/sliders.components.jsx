@@ -1,11 +1,11 @@
 import React from 'react';
-import {Link} from 'react-router';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import DOM from '../helpers/dom.helpers.js';
+import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
 
 export class Sliders extends React.Component {
 	constructor(props) {
@@ -282,7 +282,7 @@ export class SliderController extends React.Component {
 		}
 
 		this.tracking = false;
-		this.client.dispatchAction('/change-param', {value: this.props.value, name: this.props.name, label: this.props.label});
+		this.client.dispatchAction('/change-param', {value: this.props.value, name: this.props.name, label: this.props.label, force: true});
 
 		e.stopPropagation();
 	}
@@ -466,6 +466,12 @@ class IndivSwitch extends React.Component {
 		this.client = LocalClient.instance();
 	}
 
+	componentDidMount() {
+		this.client.dispatchAction('/store-value', {
+			uiJoyrideTutorialValue: indivGroupsEditionTutorialLabel,
+		});
+	}
+
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
@@ -498,10 +504,10 @@ class IndivSwitch extends React.Component {
 		return (
 			<div className="indiv-switch">
 				<div className={indivRelative} onClick={() => {this.changeState('relative');}}>
-					%
+					&times;
 				</div>
 				<div className={indivDelta} onClick={() => {this.changeState('delta');}}>
-					px
+					+
 				</div>
 			</div>
 		);

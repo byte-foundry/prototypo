@@ -1,5 +1,6 @@
 node_modules
 .tmp
+.tern-port
 .sass-cache
 app/components
 app/bower_components

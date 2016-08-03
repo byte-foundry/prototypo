@@ -54,7 +54,7 @@ export default class CreditsExport extends React.Component {
 
 	componentDidMount() {
 		// format : freegeoip.net/{format}/{IP_or_hostname}
-		const url = 'http://freegeoip.net/json/';
+		const url = '//freegeoip.net/json/';
 
 		fetch(url)
 			.then((response) => {
@@ -131,8 +131,8 @@ export default class CreditsExport extends React.Component {
 
 		return (
 			<Modal>
-				<div className="modal-container-title">BUY EXPORT CREDITS</div>
-				<div className="credits">
+				<div className="modal-container-title account-header">Buy export credits</div>
+				<div className="modal-container-content">
 					{buyCreditsForm}
 				</div>
 			</Modal>

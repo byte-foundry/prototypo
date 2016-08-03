@@ -35,10 +35,11 @@ export default class IndivSidebar extends React.Component {
 	}
 
 	render() {
+		const transitionTimeout = 300;
 		const rightPanel = this.state.createParamGroup
-			? <CreateParamGroup key="create"/>
+			? <CreateParamGroup transitionTimeout={transitionTimeout} key="create"/>
 			: this.state.editParamGroup
-				? <CreateParamGroup key={this.state.selectedGroup.name} group={this.state.selectedGroup} editMode={true}/>
+				? <CreateParamGroup transitionTimeout={transitionTimeout} key={this.state.selectedGroup.name} group={this.state.selectedGroup} editMode={true}/>
 				: false;
 
 		return (
@@ -47,8 +48,8 @@ export default class IndivSidebar extends React.Component {
 				<ReactCSSTransitionGroup
 					component="div"
 					transitionName="indiv-sidebar-right-panel"
-					transitionEnterTimeout={300}
-					transitionLeaveTimeout={300}>
+					transitionEnterTimeout={transitionTimeout}
+					transitionLeaveTimeout={transitionTimeout}>
 					{rightPanel}
 				</ReactCSSTransitionGroup>
 			</div>
