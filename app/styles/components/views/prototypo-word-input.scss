@@ -1,15 +1,18 @@
 @import "../../variables";
 
 .prototypo-word-input {
-	padding: 10px;
+	padding: 5px;
 	border: none;
-	background: $light-grey;
+	background: $lightest-green;
+	color: $green;
 	width: 100%;
 	display: block;
-	line-height: 26px;
 	text-align: center;
-	font-size: 20px;
+	font-size: 14px;
 	margin: 0;
+
+	position: absolute;
+	bottom: 0;
 
 	&:focus {
 		outline: none;
