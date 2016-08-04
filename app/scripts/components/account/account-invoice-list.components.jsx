@@ -25,6 +25,10 @@ export default class AccountInvoiceList extends React.Component {
 			});
 	}
 
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	render() {
 		const invoices = this.state.charges ? _.map(this.state.charges, (invoice) => {
 			return <InvoiceLink invoice={invoice} key={invoice.id}/>;
