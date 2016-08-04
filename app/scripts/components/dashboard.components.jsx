@@ -131,6 +131,10 @@ export default class Dashboard extends React.Component {
 					handleClosed(this);
 					this.refs.joyride.stop();
 					break;
+				case 'esc':
+					handleClosed(this);
+					this.refs.joyride.stop();
+					break;
 				default:
 					break;
 			}
