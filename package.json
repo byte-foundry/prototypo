@@ -110,7 +110,7 @@
     "start": "gulp serve",
     "build": "gulp build",
     "debug": "gulp debug",
-	"offline": "gulp offline"
+    "offline": "gulp offline"
   },
   "repository": {
     "type": "git",
