@@ -14,7 +14,9 @@
 	position: absolute;
 	bottom: 0;
 
-	&:focus {
+	&:focus,
+	&:hover {
 		outline: none;
+		background: darken($lightest-green, 2%);
 	}
 }
