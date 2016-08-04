@@ -27,7 +27,7 @@ DOM.getProperFontSize = (text, style, targetWidth) => {
 	span.innerText = text;
 	document.body.appendChild(span);
 
-	if (span.clientWidth > targetWidth - 40 || span.clientWidth < targetWidth - 150) {
+	if (span.clientWidth > targetWidth - 50 || span.clientWidth < targetWidth - 150) {
 		oldFontSize  = span.clientWidth < targetWidth
 			? `${parseFloat(oldFontSize) + 100}px`
 			: oldFontSize;
@@ -40,7 +40,7 @@ DOM.getProperFontSize = (text, style, targetWidth) => {
 				span.style.fontSize = `${(parseFloat(span.style.fontSize) + parseFloat(oldFontSize)) / 2}px`;
 			}
 			tries++;
-		} while((span.clientWidth > targetWidth - 40 || span.clientWidth < targetWidth - 150) && tries < 25);
+		} while((span.clientWidth > targetWidth - 50 || span.clientWidth < targetWidth - 150) && tries < 25);
 	}
 
 	const result = `${Math.min(parseFloat(span.style.fontSize), 100)}px`;

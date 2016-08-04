@@ -50,6 +50,17 @@ export default class PrototypoWord extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+			fontInstance.on('worker.fontLoaded', () => {
+				const content = this.props[this.props.field];
+				const transformedContent = rawToEscapedContent(content, this.state.glyphs);
+
+				const style = window.getComputedStyle(this.refs.text);
+
+				this.client.dispatchAction('/store-value', {
+					uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
+				});
+			});
 	}
 
 	setupText() {
@@ -58,7 +69,9 @@ export default class PrototypoWord extends React.Component {
 
 		const style = window.getComputedStyle(this.refs.text);
 
-		this.properFontSize = DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth);
+		this.client.dispatchAction('/store-value', {
+			uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
+		});
 
 		this.refs.text.textContent = transformedContent && transformedContent.length > 0 ? transformedContent : '';
 		// this.handleEscapedInput();
@@ -161,7 +174,7 @@ export default class PrototypoWord extends React.Component {
 		}
 		const style = {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
-			'fontSize': this.properFontSize || '98px',
+			'fontSize': this.props.uiWordFontSize || '98px',
 			'color': this.props.uiInvertedWordColors ? '#fefefe' : '#232323',
 			'backgroundColor': this.props.uiInvertedWordColors ? '#232323' : '#fefefe',
 			'transform': this.props.uiInvertedWordView ? 'scaleY(-1)' : 'scaleY(1)',
