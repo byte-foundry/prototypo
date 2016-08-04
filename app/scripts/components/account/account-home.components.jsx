@@ -24,6 +24,10 @@ export default class AccountHome extends React.Component {
 			});
 	}
 
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	render() {
 		return (
 			<div className="account-base account-home">
