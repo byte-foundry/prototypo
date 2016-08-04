@@ -9,6 +9,7 @@
     "elzevir.ptf": "byte-foundry/elzevir.ptf#preprod",
     "hoodie-client": "^3.4.0",
     "john-fell.ptf": "byte-foundry/john-fell.ptf#preprod",
+    "jsdiff": "^1.1.1",
     "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",
     "lodash": "~4.14.0",

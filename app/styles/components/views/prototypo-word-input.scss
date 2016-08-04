@@ -1,0 +1,20 @@
+@import "../../variables";
+
+.prototypo-word-input {
+	padding: 5px;
+	border: none;
+	background: $lightest-green;
+	color: $green;
+	width: 100%;
+	display: block;
+	text-align: center;
+	font-size: 14px;
+	margin: 0;
+
+	position: absolute;
+	bottom: 0;
+
+	&:focus {
+		outline: none;
+	}
+}
