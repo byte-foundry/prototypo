@@ -5,9 +5,10 @@ import LocalClient from '../stores/local-client.stores.jsx';
 
 PouchDB.plugin(HoodiePouch);
 
-const backUrl = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
+/*const backUrl = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
 	? 'https://prototypo.appback.com'
 	: 'https://prototypo-dev.appback.com';
+	*/
 
 const bearer = window.location.search.replace(/.*?bt=(.*?)(&|$)/, '$1');
 
@@ -16,7 +17,7 @@ if (bearer) {
 	localStorage.bearerToken = bearer;
 }
 
-const hoodie = new window.Hoodie(backUrl);
+// const hoodie = new window.Hoodie(backUrl);
 
 let localClient;
 
@@ -33,17 +34,35 @@ export default class HoodieApi {
 			email: '',
 			plan: '',
 			store: {
-				find() {
-					return {
+				find(a, b) {
+					return HoodieApi.instance.pouch.find(`${a}/${b}`)
+						.then((response) => {
+							console.log(response);
+							response.values = {};
+							return response;
+						})
+						.catch((err) => { console.log(err, 'myerr1'); });
+					/*return {
 						then() {
 							return {
 								values: {},
 							};
 						},
 						catch() { return; },
-					};
+					};*/
 				},
-				updateOrAdd() { return; },
+				updateOrAdd(a, b, c) {
+					return HoodieApi.instance.pouch.updateOrAdd(`${a}/${b}`, c)
+						// .then((response) => { return response; })
+						.then((response) => { console.log(response); return response; })
+						.catch((err) => { console.log(err, 'myerr2'); });
+				},
+				remove(a, b) {
+					return HoodieApi.instance.pouch.remove(`${a}/${b}`);
+				},
+				removeAll() {
+					return HoodieApi.instance.pouch.removeAll();
+				},
 			},
 		};
 		return new Promise((resolve) => {
@@ -153,6 +172,50 @@ function getPlan(roles) {
 }
 
 function setupHoodie(data) {
+	const hoodieConfig = JSON.parse(localStorage._hoodie_config);
+	const db = new PouchDB('prototypo-offline');
+
+	HoodieApi.instance.pouch = db.hoodieApi();
+
+	localClient.dispatchAction('/load-customer-data', {
+		account_balance: 0,
+		authorization: '',
+		charges: {
+			data: [],
+			has_more: false,
+			object: 'list',
+			url: '',
+		},
+		created: 0,
+		credits: 0,
+		currency: 'usd',
+		default_source: null,
+		delinquent: false,
+		description: '',
+		discount: null,
+		email: '',
+		id: '',
+		livemode: false,
+		metadata: {hoodieId: ''},
+		object: '',
+		plan: '',
+		shipping: null,
+		sources: {
+			data: [],
+			has_more: false,
+			object: 'list',
+			total_count: 0,
+			url: '',
+		},
+		subscriptions: {
+			data: [],
+			has_more: false,
+			object: 'list',
+			total_count: 0,
+			url: '',
+		},
+	});
+
 	if (HoodieApi.eventSub) {
 		_.each(HoodieApi.eventSub.connected, (cb) => {
 			cb();
