@@ -1,5 +1,8 @@
 import PrototypoCanvas from 'prototypo-canvas';
+
 import {Typefaces} from '../services/typefaces.services.js';
+
+import {rawToEscapedContent} from '../helpers/input-transform.helpers.js';
 
 export function mapGlyphForApp(glyph) {
 	return _.map(
@@ -46,9 +49,15 @@ export async function setupFontInstance(appValues) {
 		}
 		const font = window.fontInstance;
 
-		const subset = appValues.values.text + appValues.values.word;
 
 		await font.loadFont(typedata.fontinfo.familyName, typedataJSON, appValues.values.variantSelected.db);
+
+		const glyphs = _.mapValues(
+			font.font.altMap,
+			mapGlyphForApp
+		);
+		const subset = appValues.values.text + rawToEscapedContent(appValues.values.word, glyphs);
+
 		font.subset = typeof subset === 'string' ? subset : '';
 		font.displayChar(appValues.values.selected);
 		return {font, subset, typedata};
