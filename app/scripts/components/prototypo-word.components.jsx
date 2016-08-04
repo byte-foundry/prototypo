@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import {diffChars} from 'diff';
 
 import {contentToArray, arrayToRawContent, rawToEscapedContent} from '../helpers/input-transform.helpers.js';
+import DOM from '../helpers/dom.helpers.js';
 
 import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
@@ -54,6 +55,10 @@ export default class PrototypoWord extends React.Component {
 	setupText() {
 		const content = this.props[this.props.field];
 		const transformedContent = rawToEscapedContent(content, this.state.glyphs);
+
+		const style = window.getComputedStyle(this.refs.text);
+
+		this.properFontSize = DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth);
 
 		this.refs.text.textContent = transformedContent && transformedContent.length > 0 ? transformedContent : '';
 		// this.handleEscapedInput();
@@ -156,7 +161,7 @@ export default class PrototypoWord extends React.Component {
 		}
 		const style = {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
-			'fontSize': `${this.props.uiWordFontSize || 1}em`,
+			'fontSize': this.properFontSize || '98px',
 			'color': this.props.uiInvertedWordColors ? '#fefefe' : '#232323',
 			'backgroundColor': this.props.uiInvertedWordColors ? '#232323' : '#fefefe',
 			'transform': this.props.uiInvertedWordView ? 'scaleY(-1)' : 'scaleY(1)',
@@ -204,10 +209,6 @@ export default class PrototypoWord extends React.Component {
 					</ViewPanelsMenu>
 					<div className={actionBar}>
 						<CloseButton click={() => { this.props.close('word'); }}/>
-						<ZoomButtons
-							plus={() => { this.changeTextFontSize(this.props.uiWordFontSize + 0.3); }}
-							minus={() => { this.changeTextFontSize(this.props.uiWordFontSize - 0.3); }}
-						/>
 					</div>
 				</div>
 				<PrototypoWordInput onTypedText={(rawText) => {this.saveText(rawText);}} value={arrayToRawContent(contentToArray(this.props[this.props.field]))} />

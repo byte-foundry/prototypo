@@ -21,6 +21,8 @@ export default class PrototypoWordInput extends React.Component {
 			<input
 				ref="input"
 				className="prototypo-word-input"
+				autoCorrect="off"
+				spellCheck="false"
 				type="text"
 				onChange={(e) => {onTypedText(e.target.value);}}
 				onFocus={() => {this.setState({focus: true});}}
