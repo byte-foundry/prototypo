@@ -40,7 +40,11 @@ export default class HoodieApi {
 				},
 				updateOrAdd(a, b, c) {
 					return HoodieApi.instance.pouch.updateOrAdd(`${a}/${b}`, c)
-						.catch(() => { return; });
+						.catch((err) => {
+							if (err.name !== 'conflict') {
+								console.log(err);
+							}
+						});
 				},
 				remove(a, b) {
 					return HoodieApi.instance.pouch.remove(`${a}/${b}`);
