@@ -1,19 +1,28 @@
 // test/ampersand //see -> test&/see
-export function rawToEscapedContent(rawText) {
-	return arrayToEscapedContent(contentToArray(rawText));
+export function rawToEscapedContent(rawText, glyphs = {}) {
+	return arrayToEscapedContent(contentToArray(rawText), glyphs);
 }
 
 // ['t', 'e', 's', 't', '/ampersand ', '//', 's', 'e', 'e'] -> test&/see
-export function arrayToEscapedContent(textArray) {
-  return textArray.map((letter) => {
-    if(letter === '//') {
-      return '/';
-    }
-    if(letter.startsWith('/')) {
-      return '&';
-    }
-    return letter;
-  }).join('');
+export function arrayToEscapedContent(textArray, glyphs = {}) {
+	return textArray.map((letter) => {
+		if(letter === '//') {
+			return '/';
+		}
+		if(letter.startsWith('/')) {
+			const glyphName = letter.slice(1).trim();
+
+			const [glyph] = Object.values(glyphs).find(([g]) => {
+				return glyphName === g.src.glyphName;
+			}) || [];
+
+			if(glyph) {
+				return String.fromCharCode(glyph.src.unicode);
+			}
+			return '';
+		}
+		return letter;
+	}).join('');
 }
 
 // ['t', 'e', 's', 't', '/ampersand ', '//', 's', 'e', 'e'] -> test&//see
@@ -27,24 +36,24 @@ export function contentToArray(rawText) {
 	let slashBefore = false;
 
 	rawText.split('').forEach((letter) => {
-	  if(slashBefore) {
-	    let command = buffer.pop();
+		if(slashBefore) {
+			let command = buffer.pop();
 
-	    command += letter;
-	    buffer.push(command);
+			command += letter;
+			buffer.push(command);
 
-	    if(letter === ' ' || letter === '/') {
-	      slashBefore = false;
-	    }
+			if(letter === ' ' || letter === '/') {
+				slashBefore = false;
+			}
 
-	    return;
-	  }
+			return;
+		}
 
-	  if(letter === '/') {
-	    slashBefore = !slashBefore;
-	  }
+		if(letter === '/') {
+			slashBefore = !slashBefore;
+		}
 
-	  buffer.push(letter);
+		buffer.push(letter);
 	});
 
 	return buffer;

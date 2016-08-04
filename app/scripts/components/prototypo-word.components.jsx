@@ -43,6 +43,7 @@ export default class PrototypoWord extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
+					glyphs: head.toJS().glyphs,
 				});
 			})
 			.onDelete(() => {
@@ -52,9 +53,9 @@ export default class PrototypoWord extends React.Component {
 
 	setupText() {
 		const content = this.props[this.props.field];
-		const transformedContent = rawToEscapedContent(content);
+		const transformedContent = rawToEscapedContent(content, this.state.glyphs);
 
-		this.refs.text.textContent = transformedContent && transformedContent.length > 0 ? transformedContent : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
+		this.refs.text.textContent = transformedContent && transformedContent.length > 0 ? transformedContent : '';
 		// this.handleEscapedInput();
 	}
 
@@ -81,7 +82,7 @@ export default class PrototypoWord extends React.Component {
 		if (textDiv && textDiv.textContent) {
 			const newText = this.applyDiff(
 				contentToArray(this.props[this.props.field]), // array to update
-				rawToEscapedContent(this.props[this.props.field]), // text in memory
+				rawToEscapedContent(this.props[this.props.field], this.state.glyphs), // text in memory
 				textDiv.textContent // text updated with user input
 			);
 

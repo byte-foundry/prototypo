@@ -15,7 +15,7 @@ export default class PrototypoWordInput extends React.Component {
 	}
 
 	render() {
-		const {onTypedText} = this.props;
+		const {onTypedText, value} = this.props;
 
 		return (
 			<input
@@ -25,6 +25,7 @@ export default class PrototypoWordInput extends React.Component {
 				onChange={(e) => {onTypedText(e.target.value);}}
 				onFocus={() => {this.setState({focus: true});}}
 				onBlur={() => {this.setState({focus: false});}}
+				defaultValue={value}
 			/>
 		);
 	}
