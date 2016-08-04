@@ -5,10 +5,11 @@ import LocalClient from '../stores/local-client.stores.jsx';
 
 PouchDB.plugin(HoodiePouch);
 
-/*const backUrl = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
+/*
+const backUrl = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
 	? 'https://prototypo.appback.com'
 	: 'https://prototypo-dev.appback.com';
-	*/
+*/
 
 const bearer = window.location.search.replace(/.*?bt=(.*?)(&|$)/, '$1');
 
@@ -35,27 +36,10 @@ export default class HoodieApi {
 			plan: '',
 			store: {
 				find(a, b) {
-					return HoodieApi.instance.pouch.find(`${a}/${b}`)
-						.then((response) => {
-							console.log(response);
-							response.values = {};
-							return response;
-						})
-						.catch((err) => { console.log(err, 'myerr1'); });
-					/*return {
-						then() {
-							return {
-								values: {},
-							};
-						},
-						catch() { return; },
-					};*/
+					return HoodieApi.instance.pouch.find(`${a}/${b}`);
 				},
 				updateOrAdd(a, b, c) {
-					return HoodieApi.instance.pouch.updateOrAdd(`${a}/${b}`, c)
-						// .then((response) => { return response; })
-						.then((response) => { console.log(response); return response; })
-						.catch((err) => { console.log(err, 'myerr2'); });
+					return HoodieApi.instance.pouch.updateOrAdd(`${a}/${b}`, c);
 				},
 				remove(a, b) {
 					return HoodieApi.instance.pouch.remove(`${a}/${b}`);
