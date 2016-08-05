@@ -38,10 +38,10 @@ export default class Collection extends React.Component {
 				this.setState({
 					families: head.toJS().fonts,
 					selected: (
-						head.toJS().collectionSelectedFamily || head.toJS().family || {}
+						head.toJS().collectionSelectedFamily || {}
 					),
 					selectedVariant: (
-						head.toJS().collectionSelectedVariant || head.toJS().variant || {}
+						head.toJS().collectionSelectedVariant || {}
 					),
 					familyDeleteSplit: head.toJS().uiFamilyDeleteSplit,
 					askSubscribeFamily: head.toJS().uiAskSubscribeFamily,

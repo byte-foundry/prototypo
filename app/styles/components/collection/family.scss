@@ -4,6 +4,7 @@
 	flex:0 0 33%;
 	background-color: $lightest-grey;
 	border-bottom-left-radius: 7px;
+	overflow:hidden;
 }
 
 .family {
@@ -43,7 +44,7 @@
 	}
 
 	&-sample {
-		width:70px;
+		flex:0 0 70px;
 		height:43px;
 		background-repeat: no-repeat;
 		margin: 3px 30px 0 0;
@@ -55,9 +56,12 @@
 		font-weight:600;
 		letter-spacing:0.02em;
 		flex-flow: column nowrap;
+		width: calc(100% - 70px);
 
 		&-name {
 			font-size:17px;
+			text-overflow: ellipsis;
+			overflow:hidden;
 		}
 
 		&-base {

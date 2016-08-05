@@ -60,7 +60,7 @@ export default class ChangeNameFamily extends React.Component {
 			: false;
 
 		return (
-			<Modal>
+			<Modal propName={this.props.propName}>
 				<div className="modal-container-title account-header">Change family name</div>
 				<div className="modal-container-content">
 					<InputWithLabel ref="newName" inputValue={this.props.family.name}/>

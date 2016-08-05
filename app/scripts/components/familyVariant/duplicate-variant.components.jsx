@@ -62,7 +62,7 @@ export default class DuplicateVariant extends React.Component {
 			: false;
 
 		return (
-			<Modal>
+			<Modal propName={this.props.propName}>
 				<div className="modal-container-title account-header">Duplicate variant {this.props.variant.name}</div>
 				<div className="modal-container-content">
 					<InputWithLabel ref="newName"/>
