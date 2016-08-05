@@ -739,6 +739,9 @@ export default {
 		buyCredits(options)
 			.then((data) => {
 				localClient.dispatchAction('/store-value', {buyCreditsNewCreditAmount: data.credits});
+				window.Intercom('update', {
+					'export_credits': data.credits,
+				});
 			})
 			.catch(() => {
 				return;
@@ -748,6 +751,9 @@ export default {
 		spendCredits(options)
 			.then((data) => {
 				localClient.dispatchAction('/store-value', {spendCreditsNewCreditAmount: data.credits});
+				window.Intercom('update', {
+					'export_credits': data.credits,
+				});
 			});
 	},
 };
