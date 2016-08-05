@@ -238,9 +238,6 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem
 							name="Logout"
 							handler={() => {this.logout();}}/>
-						<TopBarMenuDropdownItem
-							name="Send debug log"
-							handler={() => {this.client.dispatchAction('/save-debug-log');}} separator={true}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">
 						<TopBarMenuDropdownItem
