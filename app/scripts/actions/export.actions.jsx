@@ -24,7 +24,7 @@ function exportAuthorized(plan, credits) {
 	const paidPlan = plan.indexOf('free_') === -1;
 	const enoughCredits = credits && credits > 0 && currentCreditCost <= credits;
 
-	if (!enoughCredits) {
+	if (!paidPlan && !enoughCredits) {
 		localClient.dispatchAction('/store-value', {
 			errorExport: {
 				message: 'Not enough credits',
