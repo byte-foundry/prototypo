@@ -55,6 +55,12 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/export-otf': ({merged, familyName = 'font', variantName = 'regular', exportAs}) => {
+		const exporting = prototypoStore.get('export');
+
+		if (exporting) {
+			return;
+		}
+
 		const plan = HoodieApi.instance.plan;
 		const credits = prototypoStore.get('credits');
 
@@ -108,6 +114,11 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/export-glyphr': () => {
+		const exporting = prototypoStore.get('export');
+
+		if (exporting) {
+			return;
+		}
 
 		const family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : 'font';
 		const style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
@@ -235,6 +246,12 @@ export default {
 		});
 	},
 	'/export-family': async ({familyToExport, variants}) => {
+		const exporting = prototypoStore.get('export');
+
+		if (exporting) {
+			return;
+		}
+
 		const oldVariant = prototypoStore.get('variant');
 		const family = prototypoStore.get('family');
 
