@@ -42,6 +42,7 @@ import '../styles/components/wait-for-load.scss';
 import '../styles/components/zoom-buttons.scss';
 import '../styles/components/controls-tabs.scss';
 import '../styles/components/tutorials.scss';
+import '../styles/components/go-pro-modal.scss';
 import '../styles/components/account/account-app.scss';
 import '../styles/components/account/account-profile.scss';
 import '../styles/components/account/account-change-password.scss';

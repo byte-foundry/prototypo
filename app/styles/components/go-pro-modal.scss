@@ -1,0 +1,44 @@
+@import "../variables";
+
+.go-pro-choices {
+	display:flex;
+	justify-content: space-between;
+}
+
+.go-pro-choice {
+	background: $lightest-grey;
+	color: $dark-grey;
+	flex: 0 0 48%;
+	padding: 0px 20px;
+	cursor:pointer;
+
+	&:hover {
+		background:$green;
+		color:$white;
+	}
+
+	&-title {
+		font-size: 24px;
+		margin-bottom: 0px;
+	}
+
+	&-subtitle {
+		font-style: italic;
+		margin-top: 2px;
+		margin-bottom: 32px;
+	}
+
+	&-plans {
+		display:flex;
+		justify-content: stretch;
+	}
+
+	&-plan {
+		flex: 0 0 50%;
+		text-align: center;
+
+		&-title {
+			font-size:18px;
+		}
+	}
+}
