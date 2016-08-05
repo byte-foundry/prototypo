@@ -23,10 +23,10 @@ export default function selectRenderOptions(
 	main
 ) {
 	if (mobile) {
-		mobile();
+		mobileCb();
 	}
 	else if (isSafari || isIE) {
-		oldBrowser();
+		oldBrowserCb();
 	}
 	else {
 		main();
