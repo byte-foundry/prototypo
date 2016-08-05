@@ -58,7 +58,7 @@ export default class AccountBillingAddress extends React.Component {
 	render() {
 		const billingAddress = this.state.address
 			? <BillingAddress ref="address" address={this.state.address} buyerName={this.state.buyerName} inError={this.state.inError}/>
-			: false;
+			: <BillingAddress ref="address" address={{}} buyerName="" inError={this.state.inError}/>;
 
 		const errors = this.state.errors.map((err) => {
 			return <FormError errorText={err}/>;
@@ -73,7 +73,7 @@ export default class AccountBillingAddress extends React.Component {
 				{billingAddress}
 				{errors}
 				{success}
-				<AccountValidationButton loading={this.state.loading} label="Confirm plan change"/>
+				<AccountValidationButton loading={this.state.loading} label="Confirm address change"/>
 			</form>
 		);
 	}
