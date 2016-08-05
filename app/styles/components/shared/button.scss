@@ -34,6 +34,17 @@
 		color: rgba($green, 0.4);
 	}
 
+	&.orange {
+		border-color: $orange;
+		color: $orange;
+
+		&:hover {
+			@include themify() {
+				background-color: $orange;
+			}
+		}
+	}
+
 	&.danger {
 		border-color: $red;
 		color: $red;
@@ -69,6 +80,11 @@
 				color: $white
 			}
 		}
+	}
+
+	&.small {
+		font-size: 12px;
+		padding: 0 4px;
 	}
 
 	&.split-left {

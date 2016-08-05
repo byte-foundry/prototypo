@@ -15,6 +15,7 @@ import {
 	TopBarMenuAction,
 	TopBarMenuIcon,
 	TopBarMenuLink,
+	TopBarMenuButton,
 } from './top-bar-menu.components.jsx';
 import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components.jsx';
 
@@ -37,6 +38,7 @@ export default class Topbar extends React.Component {
 		//function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
+		this.openGoProModal = this.openGoProModal.bind(this);
 	}
 
 	async componentWillMount() {
@@ -128,6 +130,10 @@ export default class Topbar extends React.Component {
 		}
 	}
 
+	openGoProModal() {
+		this.client.dispatchAction('/store-value', {openGoProModal: true});
+	}
+
 	setAccountRoute() {
 
 	}
@@ -166,11 +172,10 @@ export default class Topbar extends React.Component {
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : false;
 		const glyphrExportCost = this.state.creditChoices ? this.state.creditChoices.exportGlyphr : false;
-
-		const exporting = this.state.export ? (
+		const exporting = this.state.export && (
 			<TopBarMenuAction name="Exporting..." click={() => {return;}} action={true}/>
-			) : false;
-		const errorExporting = this.state.errorExport ? (
+		);
+		const errorExporting = this.state.errorExport && (
 			<TopBarMenuAction
 				name={
 					this.state.errorExport.message
@@ -179,11 +184,11 @@ export default class Topbar extends React.Component {
 				}
 				click={() => {return;}}
 				action={true}/>
-			) : false;
-
-		const creditExportLabel = this.state.credits
-			? <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>
-			: false;
+			);
+		const creditExportLabel = !!this.state.credits
+			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
+		const callToAction = !(freeAccountAndHasCredits || !freeAccount)
+			&& <TopBarMenuButton label="EXPORT YOUR FONT NOW!" noHover centered click={this.openGoProModal} alignRight/>;
 
 		return (
 			<div id="topbar">
@@ -238,9 +243,6 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem
 							name="Logout"
 							handler={() => {this.logout();}}/>
-						<TopBarMenuDropdownItem
-							name="Send debug log"
-							handler={() => {this.client.dispatchAction('/save-debug-log');}} separator={true}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">
 						<TopBarMenuDropdownItem
@@ -286,6 +288,7 @@ export default class Topbar extends React.Component {
 					{errorExporting}
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
 					{creditExportLabel}
+					{callToAction}
 				</TopBarMenu>
 			</div>
 		);

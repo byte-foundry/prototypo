@@ -3,10 +3,13 @@ import classNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Link} from 'react-router';
 import Lifespan from 'lifespan';
+
 import LocalClient from '~/stores/local-client.stores.jsx';
 
-import CheckBoxWithImg from '../checkbox-with-img.components.jsx';
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
+
+import CheckBoxWithImg from '../checkbox-with-img.components.jsx';
+import Button from '../shared/button.components.jsx';
 
 class TopBarMenu extends React.Component {
 	constructor(props) {
@@ -18,12 +21,13 @@ class TopBarMenu extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] TopBarMenu');
 		}
-		const headers = _.without(this.props.children, false).map((child, index) => {
+		const headers = _.without(this.props.children, false, undefined).map((child, index) => {
 			const classes = classNames({
 				'top-bar-menu-item': true,
 				'is-aligned-right': child.props.alignRight,
 				'is-action': child.props.action,
 				'is-icon-menu': !!child.props.img,
+				'is-centered': child.props.centered,
 				'img-dark-background': child.props.imgDarkBackground,
 			});
 			const count = (index > 0 && index < 5) ? index : 0;
@@ -34,6 +38,7 @@ class TopBarMenu extends React.Component {
 					key={child.props.name || child.props.img}
 					id={child.props.id}
 					count={count}
+					noHover={child.props.noHover}
 					onMouseEnter={child.props.enter}
 					onMouseLeave={child.props.leave}>
 					{child.type.getHeader(child.props)}
@@ -136,6 +141,7 @@ class TopBarMenuItem extends React.Component {
 	render() {
 		const classes = classNames(this.props.className, {
 			'topbaritem-displayed': this.state.topbarItemDisplayed === this.props.count,
+			'no-hover': this.props.noHover,
 		});
 		const id = this.props.count ? `topbar-menu-item-${this.props.count}` : '';
 
@@ -386,6 +392,16 @@ class TopBarMenuIcon extends React.Component {
 	}
 }
 
+class TopBarMenuButton extends React.Component {
+	static getHeader({label, click}) {
+		return <Button small label={label} click={click} />;
+	}
+
+	render() {
+		return false;
+	}
+}
+
 export {
 	TopBarMenu,
 	TopBarMenuDropdown,
@@ -394,4 +410,5 @@ export {
 	TopBarMenuAction,
 	TopBarMenuIcon,
 	TopBarMenuLink,
+	TopBarMenuButton,
 };

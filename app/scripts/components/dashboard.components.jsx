@@ -19,6 +19,7 @@ import ChangeNameFamily from './familyVariant/change-name-family.components.jsx'
 import ChangeNameVariant from './familyVariant/change-name-variant.components.jsx';
 import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
 import CreditsExport from './credits-export.components.jsx';
+import GoProModal from './go-pro-modal.components.jsx';
 //import NpsMessage from './nps-message.components.jsx';
 
 import {buildTutorialSteps, handleNextStep, handleClosed} from '../helpers/joyride.helpers.js';
@@ -68,6 +69,7 @@ export default class Dashboard extends React.Component {
 					openChangeVariantNameModal: head.toJS().openChangeVariantNameModal,
 					openDuplicateVariantModal: head.toJS().openDuplicateVariantModal,
 					openBuyCreditsModal: head.toJS().openBuyCreditsModal,
+					openGoProModal: head.toJS().openGoProModal,
 					step: head.toJS().uiOnboardstep,
 					collection: head.toJS().uiShowCollection,
 					indiv: head.toJS().indivMode,
@@ -188,30 +190,24 @@ export default class Dashboard extends React.Component {
 		};
 
 		const collection = this.state.collection
-			? <Collection collectionTransitionTimeout={collectionTransitionTimeout} />
-			: false;
+			&& <Collection collectionTransitionTimeout={collectionTransitionTimeout}/>;
 		const newFamily = this.state.openFamilyModal
-			? <CreateFamilyModal />
-			: false;
+			&& <CreateFamilyModal propName="openFamilyModal"/>;
 		const newVariant = this.state.openVariantModal
-			? <CreateVariantModal family={this.state.familySelectedVariantCreation}/>
-			: false;
+			&& <CreateVariantModal family={this.state.familySelectedVariantCreation} propName="openVariantModal"/>;
 		const changeNameFamily = this.state.openChangeFamilyNameModal
-			? <ChangeNameFamily family={this.state.familySelectedVariantCreation}/>
-			: false;
+			&& <ChangeNameFamily family={this.state.familySelectedVariantCreation} propName="openChangeFamilyNameModal"/>;
 		const changeNameVariant = this.state.openChangeVariantNameModal
-			? <ChangeNameVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant}/>
-			: false;
+			&& <ChangeNameVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant} propName="openChangeVariantNameModal"/>;
 		const duplicateVariant = this.state.openDuplicateVariantModal
-			? <DuplicateVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant}/>
-			: false;
+			&& <DuplicateVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant} propName="openDuplicateVariantModal"/>;
 		const buyCredits = this.state.openBuyCreditsModal
-			? <CreditsExport/>
-			: false;
+			&& <CreditsExport propName="openBuyCreditsModal"/>;
+		const goPro = this.state.openGoProModal
+			&& <GoProModal propName="openGoProModal"/>;
 
 		const exportAs = this.state.exportAs
-			? <ExportAs />
-			: false;
+			&& <ExportAs propName="exportAs"/>;
 
 		return (
 			<div id="dashboard" className={classes}>
@@ -227,7 +223,6 @@ export default class Dashboard extends React.Component {
 				<Topbar />
 				<Toolbar />
 				<Workboard />
-				{exportAs}
 				<ReactCSSTransitionGroup
 					transitionName="collection"
 					transitionEnterTimeout={collectionTransitionTimeout}
@@ -245,6 +240,8 @@ export default class Dashboard extends React.Component {
 					{changeNameVariant}
 					{duplicateVariant}
 					{buyCredits}
+					{goPro}
+					{exportAs}
 				</ReactCSSTransitionGroup>
 			</div>
 		);

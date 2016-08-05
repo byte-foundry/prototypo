@@ -27,7 +27,6 @@ export const valuesToLoad = [
 	{remote: 'showCollection', local: 'uiShowCollection'},
 	{remote: 'selected', local: 'glyphSelected'},
 	{remote: 'textFontSize', local: 'uiTextFontSize'},
-	{remote: 'collection', local: 'uiShowCollection'},
 	{remote: 'latestCommit', local: 'latestCommit'},
 	{remote: 'firstTimeFile', local: 'firstTimeFile'},
 	{remote: 'firstTimeCollection', local: 'firstTimeCollection'},

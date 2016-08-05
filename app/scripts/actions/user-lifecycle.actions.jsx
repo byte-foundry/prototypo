@@ -124,7 +124,8 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 		form.loading = false;
 		const patch = userStore.set('buyCreditsForm', form).commit();
 
-		return localServer.dispatchUpdate('/userStore', patch);
+		localServer.dispatchUpdate('/userStore', patch);
+		return Promise.reject('missing form values');
 	}
 
 
@@ -738,12 +739,21 @@ export default {
 		buyCredits(options)
 			.then((data) => {
 				localClient.dispatchAction('/store-value', {buyCreditsNewCreditAmount: data.credits});
+				window.Intercom('update', {
+					'export_credits': data.credits,
+				});
+			})
+			.catch(() => {
+				return;
 			});
 	},
 	'/spend-credits': (options) => {
 		spendCredits(options)
 			.then((data) => {
 				localClient.dispatchAction('/store-value', {spendCreditsNewCreditAmount: data.credits});
+				window.Intercom('update', {
+					'export_credits': data.credits,
+				});
 			});
 	},
 };

@@ -79,7 +79,11 @@ export default class ArianneThread extends React.Component {
 	}
 
 	showCollection() {
-		this.client.dispatchAction('/store-value', {uiShowCollection: true});
+		this.client.dispatchAction('/store-value', {
+			uiShowCollection: true,
+			collectionSelectedFamily: this.state.family,
+			collectionSelectedVariant: this.state.variant,
+		});
 	}
 
 	toggleIndividualize() {
@@ -278,7 +282,7 @@ class DropArianneItem extends React.Component {
 		return (
 			<div className={classes} onClick={this.toggleDisplay}>
 				<div className="arianne-item-action" >
-					{this.props.label}
+					<span className="arianne-item-action-label">{this.props.label}</span>
 					<img className="arianne-item-action-drop arianne-item-action-img" src="assets/images/drop.svg"/>
 				</div>
 				<div className="arianne-item-arrow"></div>

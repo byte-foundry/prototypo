@@ -35,6 +35,12 @@
 		padding-right: 20px;
 		transition: background .2s ease;
 
+		&-label {
+			max-width:230px;
+			overflow:hidden;
+			text-overflow: ellipsis
+		}
+
 		&.is-small {
 			padding: 0;
 		}

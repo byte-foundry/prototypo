@@ -184,6 +184,16 @@
 			}
 		}
 
+		&.no-hover:hover {
+			background: transparent;
+		}
+
+		&.is-centered {
+			float:none;
+			width:200px;
+			margin:auto;
+		}
+
 		.topbaritem-displayed &-dropdown {
 			height:auto;
 		}
