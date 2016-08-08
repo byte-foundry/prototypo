@@ -97,7 +97,7 @@ export default class PrototypoWord extends React.Component {
 	handleEscapedInput() {
 		const textDiv = this.refs.text;
 
-		if (textDiv && textDiv.textContent) {
+		if (textDiv && textDiv.textContent !== undefined) {
 			const newText = this.applyDiff(
 				contentToArray(this.props[this.props.field]), // array to update
 				rawToEscapedContent(this.props[this.props.field], this.state.glyphs), // text in memory
@@ -109,6 +109,10 @@ export default class PrototypoWord extends React.Component {
 	}
 
 	applyDiff(textArray, oldText, newText) {
+		if (newText === '') {
+			return newText;
+		}
+
 		let currentIndex = 0;
 		let buffer = textArray;
 		const diffList = diffChars(oldText, newText);
