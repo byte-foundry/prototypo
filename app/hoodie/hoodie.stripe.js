@@ -1,5 +1,5 @@
 function stripeAPI(hoodie) {
-	return hoodie.stripe = {
+	hoodie.stripe = {
 		apiUrl: '/_plugins/stripe-subscriptions/_api',
 		customers: {
 			create: requester('customers.create'),
@@ -11,18 +11,15 @@ function stripeAPI(hoodie) {
 		},
 		credits: {
 			buy: requester('credits.buy'),
-			spend: requester('credits.spend')
+			spend: requester('credits.spend'),
 		},
 		invoices: {
 			retrieveUpcoming: requester('invoices.retrieveUpcoming'),
 		},
-		usernames: {
-			exist: requester('usernames.exist'),
-		},
 	};
 
-	function requester( method ) {
-		return function() {
+	function requester(method) {
+		return (...args) => {
 			return hoodie.request('post', hoodie.stripe.apiUrl, {
 					contentType: 'application/json',
 					dataType: 'json',
@@ -30,17 +27,19 @@ function stripeAPI(hoodie) {
 						withCredentials: false,
 					},
 					data: JSON.stringify({
-						method: method,
-						args: Array.prototype.slice.call( arguments, 0 ),
+						method,
+						args,
 					}),
 				});
 		};
 	}
+
+	return hoodie.stripe;
 }
 
-if ( typeof Hoodie !== 'undefined' ) {
+if (typeof Hoodie !== 'undefined') {
 	Hoodie.extend(stripeAPI);
 }
-else if ( typeof global !== 'undefined' ) {
+else if (typeof global !== 'undefined') {
 	module.exports = global.Hoodie.extend(stripeAPI);
 }
