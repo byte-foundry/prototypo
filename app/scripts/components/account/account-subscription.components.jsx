@@ -91,10 +91,13 @@ export default class AccountSubscription extends React.Component {
 		const noPlan = (
 			<div>
 				<h3 className="account-dashboard-container-small-title">
-					You do not have a plan.
+					You do not have a plan for the moment.
 				</h3>
 				<p>
-					Subscribe to our pro plan to benefit of the full power of Prototypo or buy some credits.
+					<img style={{width: '100%'}} src="assets/images/go-pro.gif" />
+				</p>
+				<p>
+					Subscribe to our <Link className="account-link" to="account/create/choose-a-plan">pro plan</Link> to benefit of the full power of Prototypo without restrictions or buy <Link className="account-link" to="dashboard?buy_credits=true">some credits</Link> to export and use your fonts everywhere!
 				</p>
 				{credits}
 			</div>

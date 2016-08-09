@@ -40,6 +40,11 @@ body {
 	color: #111;
 }
 
+h1 ~ p,
+h2 ~ p {
+	margin-top: 0;
+}
+
 .pg-loading-screen {
 	background: $green; /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */

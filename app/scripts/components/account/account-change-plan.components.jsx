@@ -82,7 +82,6 @@ export default class AccountChangePlan extends React.Component {
 			return !(!this.state.plan || !this.state.plan[0].plan.id.startsWith(option.value));
 		});
 
-
 		const content = this.state.free
 			? (
 				<div className="account-base">
@@ -96,14 +95,13 @@ export default class AccountChangePlan extends React.Component {
 				<form onSubmit={(e) => {this.confirmPlan(e);}} className="account-base account-change-plan">
 					<div>
 						<DisplayWithLabel label="Your current plan">
-							{plan.name}
+							{ this.state.plan ? plan.name : `You do not have a plan.` }
 						</DisplayWithLabel>
 					</div>
-					<SelectWithLabel ref="select" label="Which plan do you want?" noResultsText={"No plan with this name"} options={options}/>
+					<SelectWithLabel ref="select" label="Which plan are you interested in?" noResultsText={"No plan with this name"} options={options}/>
 					<AccountValidationButton label="Confirm plan change" loading={this.state.loading}/>
 				</form>
 			);
-
 		return content;
 	}
 }
