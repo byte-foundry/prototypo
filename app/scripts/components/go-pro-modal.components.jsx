@@ -34,11 +34,12 @@ export default class GoProModal extends React.Component {
 			<Modal propName={this.props.propName}>
 				<div className="modal-container-title account-header">EXPORT YOUR FONT NOW!</div>
 				<div className="modal-container-content">
-					<p>Export your font to use it on a website or on any desktop application (Photoshop, InDesign&hellip;)</p>
+					<p>Export your font to use it on a website or on any desktop application (Adobe Illustrator, Ms Word&hellip;)</p>
 					<div className="go-pro-choices">
 						<div className="go-pro-choice go-pro-subscription" onClick={this.goSubscribe}>
+							<img src="../assets/images/pro-version-big.svg" />
 							<h2 className="go-pro-choice-title">Subscribe to a pro plan!</h2>
-							<p className="go-pro-choice-subtitle">And export as many projects as you want.</p>
+							<p className="go-pro-choice-subtitle">And export as many projects as you want, <br/>when you want.</p>
 							<div className="go-pro-choice-plans">
 								<p className="go-pro-choice-plan">
 									<span className="go-pro-choice-plan-title">Monthly plan</span>
@@ -46,14 +47,15 @@ export default class GoProModal extends React.Component {
 								</p>
 								<p className="go-pro-choice-plan">
 									<span className="go-pro-choice-plan-title">Annual plan</span>
-									<br/>99/year
+									<br/>99/year: save more than 5 months!
 								</p>
 							</div>
 						</div>
 						<div className="go-pro-choice go-pro-credits" onClick={this.goCredits}>
+							<img src="../assets/images/buy-credits-big.svg" />
 							<h2 className="go-pro-choice-title">Buy 5 export credits for 5!</h2>
-							<p className="go-pro-choice-subtitle">You are free to use these credits as you like. No time limit.</p>
-							<p style={{textAlign: 'center'}}><span className="go-pro-choice-plan-title">Exporting one font cost 1 credits.</span></p>
+							<p className="go-pro-choice-subtitle">You are free to use these credits as you like. <br/>No time limit.</p>
+							<p><span className="go-pro-choice-plan-title">Exporting one font cost 1 credits.</span></p>
 						</div>
 					</div>
 				</div>
