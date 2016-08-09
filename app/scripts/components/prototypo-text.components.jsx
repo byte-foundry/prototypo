@@ -132,7 +132,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToAlphabet() {
-		this.saveTextDebounced('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', this.props.field);
+		this.saveTextDebounced(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`, this.props.field);
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -193,11 +193,11 @@ export default class PrototypoText extends React.Component {
 				key="whisky"
 				click={this.setTextToFameuxWhisky}/>,
 			<ContextualMenuItem
-				text="Alphabet"
+				text="Latin glyph set"
 				key="alphabet"
 				click={this.setTextToAlphabet}/>,
 			<ContextualMenuItem
-				text="Insert Lorem ipsum"
+				text="Lorem ipsum"
 				key="lorem"
 				click={this.setTextToLorem}/>,
 			];

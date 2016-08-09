@@ -26,17 +26,10 @@ export class AddFamily extends React.Component {
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 		.onUpdate(({head}) => {
-				if (head.toJS().errorAddFamily !== this.state.error) {
-					this.setState({
-						error: head.toJS().errorAddFamily,
-					});
-				}
-				if (head.toJS().errorAddFamily === undefined) {
-					this.setState({
-						selectedFont: head.toJS().uiCreatefamilySelectedTemplate,
-						reset: (new Date()).getTime(),
-					});
-				}
+				this.setState({
+					selectedFont: head.toJS().uiCreatefamilySelectedTemplate,
+					error: head.toJS().errorAddFamily,
+				});
 			})
 			.onDelete(() => {
 				this.setState({
@@ -52,6 +45,7 @@ export class AddFamily extends React.Component {
 	componentWillUnmount() {
 		this.client.dispatchAction('/store-value', {
 			errorAddFamily: undefined,
+			uiCreatefamilySelectedTemplate: undefined,
 		});
 
 		this.lifespan.release();
@@ -122,7 +116,7 @@ export class AddFamily extends React.Component {
 						{templateList}
 					</div>
 					<label className="add-family-form-label"><span className="add-family-form-label-order">2. </span>Choose a family name</label>
-					<input ref="name" className="add-family-form-input" key={this.state.reset} type="text" placeholder="My new typeface"></input>
+					<input ref="name" className="add-family-form-input" type="text" placeholder="My new typeface"></input>
 					{error}
 					<div className="add-family-form-buttons">
 						<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>

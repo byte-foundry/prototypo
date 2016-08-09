@@ -53,9 +53,9 @@ export default class PrototypoWord extends React.Component {
 
 			fontInstance.on('worker.fontLoaded', () => {
 				const content = this.props[this.props.field];
-				const transformedContent = rawToEscapedContent(content, this.state.glyphs);
+				const transformedContent = this.refs.text.textContent;
 
-				const style = window.getComputedStyle(this.refs.text);
+				const style = this.refs.text.style;
 
 				this.client.dispatchAction('/store-value', {
 					uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
@@ -67,7 +67,7 @@ export default class PrototypoWord extends React.Component {
 		const content = this.props[this.props.field];
 		const transformedContent = rawToEscapedContent(content, this.state.glyphs);
 
-		const style = window.getComputedStyle(this.refs.text);
+		const style = this.refs.text.style;
 
 		this.client.dispatchAction('/store-value', {
 			uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
@@ -97,7 +97,7 @@ export default class PrototypoWord extends React.Component {
 	handleEscapedInput() {
 		const textDiv = this.refs.text;
 
-		if (textDiv && textDiv.textContent) {
+		if (textDiv && textDiv.textContent !== undefined) {
 			const newText = this.applyDiff(
 				contentToArray(this.props[this.props.field]), // array to update
 				rawToEscapedContent(this.props[this.props.field], this.state.glyphs), // text in memory
@@ -109,6 +109,10 @@ export default class PrototypoWord extends React.Component {
 	}
 
 	applyDiff(textArray, oldText, newText) {
+		if (newText === '') {
+			return newText;
+		}
+
 		let currentIndex = 0;
 		let buffer = textArray;
 		const diffList = diffChars(oldText, newText);

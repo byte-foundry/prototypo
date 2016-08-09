@@ -59,9 +59,13 @@ export default class AccountChangePassword extends React.Component {
 		const form = (
 			<form onSubmit={(e) => {this.changePassword(e);}} className="account-base account-change-password">
 				<InputWithLabel error={this.state.inError.password} required={true} ref="current" type="password" label="My current password"/>
-				<div className="account-change-password-line">
-					<InputWithLabel error={this.state.inError.newPassword} required={true} ref="new" type="password" label="New password"/>
-					<InputWithLabel error={this.state.inError.confirm} required={true} ref="confirm" type="password" label="New password, again"/>
+				<div className="account-change-password-line columns">
+					<div className="half-column">
+						<InputWithLabel error={this.state.inError.newPassword} required={true} ref="new" type="password" label="New password"/>
+					</div>
+					<div className="half-column">
+						<InputWithLabel error={this.state.inError.confirm} required={true} ref="confirm" type="password" label="New password, again"/>
+					</div>
 				</div>
 				{errors}
 				<AccountValidationButton loading={this.state.loading} label="Confirm change password"/>

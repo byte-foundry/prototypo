@@ -70,7 +70,7 @@ export default class AccountProfilePanel extends React.Component {
 							<InputWithLabel ref="lastname" label="Last name" required={false} inputValue={this.state.infos.accountValues.lastname}/>
 						</div>
 					</div>
-					<SelectWithLabel ref="css" label="I am" noResultsText="No result for this search" name="occupation" className="input-with-label-input" options={values} inputValue={this.state.infos.accountValues.css}/>
+					<SelectWithLabel ref="css" label="I am" noResultsText="No result for this search" name="occupation" className="input-with-label-input" placeholder="an architect" options={values} inputValue={this.state.infos.accountValues.css}/>
 					<div className="columns">
 						<div className="half-column">
 							<InputWithLabel ref="website" label="My website" placeholder="www.mj.com" required={false} inputValue={this.state.infos.accountValues.website}/>

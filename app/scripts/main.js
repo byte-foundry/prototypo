@@ -286,6 +286,11 @@ function redirectToLogin(nextState, replace) {
 			state: {nextPathname: nextState.location.pathname},
 		});
 	}
+	if (nextState.location.query.buy_credits) {
+		LocalClient.instance().dispatchAction('/store-value', {
+			openBuyCreditsModal: true,
+		});
+	}
 }
 
 function redirectToDashboard(nextState, replace) {

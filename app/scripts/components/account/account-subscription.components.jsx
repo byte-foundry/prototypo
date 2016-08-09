@@ -73,12 +73,14 @@ export default class AccountSubscription extends React.Component {
 		const periodEnd = this.state.plan ? moment.unix(this.state.plan[0].current_period_end).format('L') : '';
 		const cardDetail = this.state.card ? this.state.card.map((card) => {
 			return (
-				<DisplayWithLabel label="Your card" key={card.id}>
-					<div className="account-subscription-card">
-						<div className="account-subscription-card-number">**** **** **** {card.last4}</div>
-						<div className="account-subscription-card-expiry">will expire on {card.exp_month}/{card.exp_year}</div>
-					</div>
-				</DisplayWithLabel>
+				<div>
+					<DisplayWithLabel label="Your card" key={card.id}>
+						<div className="account-subscription-card">
+							<div className="account-subscription-card-number">**** **** **** {card.last4}</div>
+							<div className="account-subscription-card-expiry">will expire on {card.exp_month}/{card.exp_year}</div>
+						</div>
+					</DisplayWithLabel>
+				</div>
 			);
 		}) : noCard;
 
@@ -89,11 +91,15 @@ export default class AccountSubscription extends React.Component {
 		const noPlan = (
 			<div>
 				<h3 className="account-dashboard-container-small-title">
-					You do not have a plan.
+					You do not have a plan for the moment.
 				</h3>
 				<p>
-					Subscribe to our pro plan to benefit of the full power of Prototypo
+					<img style={{width: '100%'}} src="assets/images/go-pro.gif" />
 				</p>
+				<p>
+					Subscribe to our <Link className="account-link" to="account/create/choose-a-plan">pro plan</Link> to benefit of the full power of Prototypo without restrictions or buy <Link className="account-link" to="dashboard?buy_credits=true">some credits</Link> to export and use your fonts everywhere!
+				</p>
+				{credits}
 			</div>
 		);
 
@@ -117,10 +123,12 @@ export default class AccountSubscription extends React.Component {
 		});
 
 		const credits = (
-			<div className="dislay-credits">
-				<DisplayWithLabel label="Your export credits">
-					{this.state.credits ? this.state.credits : '0' }
-				</DisplayWithLabel>
+			<div>
+				<div className="display-credits">
+					<DisplayWithLabel label="Your export credits">
+						{this.state.credits ? this.state.credits : '0' }
+					</DisplayWithLabel>
+				</div>
 			</div>
 		);
 
@@ -128,22 +136,24 @@ export default class AccountSubscription extends React.Component {
 		const content = this.state.plan
 			? (
 				<div className="account-base account-subscription">
-					<DisplayWithLabel label="Your plan">
-						{plan.name}
-					</DisplayWithLabel>
+					<div>
+						<DisplayWithLabel label="Your plan">
+							{plan.name}
+						</DisplayWithLabel>
+					</div>
 					<p>
 						Your subscription will automatically renew on <span className="account-emphase">{periodEnd}</span> and you will be charged <span className="account-emphase">{`${currencySymbol.before}${plan.price.toFixed(2)}${currencySymbol.after}`}</span>
 					</p>
 					{cardDetail}
 					{successCard}
+					{credits}
 				</div>
 			)
 			: noPlan;
 
 		return (
-			<div>
+			<div className="account-dashboard-container-main">
 				{content}
-				{credits}
 			</div>
 		);
 	}

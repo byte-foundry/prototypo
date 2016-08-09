@@ -127,6 +127,7 @@ export default {
 			typedataJSON,
 			db,
 		});
+		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
 	},
 	'/create-family': async ({name, template, loadCurrent}) => {
 		let templateToLoad = template;
@@ -198,7 +199,6 @@ export default {
 			.set('family', {name: newFont.name, template: newFont.template})
 			.set('uiCreatefamilySelectedTemplate', undefined)
 			.set('openFamilyModal', false)
-			.set('indivMode', false)
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);
@@ -255,7 +255,6 @@ export default {
 			openDuplicateVariantModal: false,
 			errorAddVariant: undefined,
 		});
-
 	},
 	'/create-variant': async ({name, familyName, variantBase, noSwitch}) => {
 		if (!name || String(name).trim() === '') {

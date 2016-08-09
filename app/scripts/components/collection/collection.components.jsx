@@ -356,12 +356,6 @@ class VariantList extends React.Component {
 				<div className="variant-list-title">
 					FAMILY ACTIONS
 				</div>
-				<Button label={downloadLabel}
-					click={!canExport ? this.askSubscribe : this.downloadFamily}
-					altLabel={buyCreditsLabel}
-					splitButton={!canExport}
-					splitted={this.props.askSubscribe}
-					altClick={this.buyCredits}/>
 				<Button label="Change family name" click={this.openChangeNameFamily}/>
 				<Button
 					label={this.props.deleteSplit ? 'Delete' : 'Delete family'}
@@ -458,11 +452,18 @@ class VariantInfo extends React.Component {
 		});
 	}
 
+	downloadVariant() {
+		this.client.dispatchAction('/store-value', {
+			currentCreditCost: this.props.otfCreditCost,
+		});
+		this.client.dispatchAction('/export-otf', {merged});
+	}
+
 	render() {
 		const freeUser = HoodieApi.instance.plan.indexOf('free_') !== -1;
 		const hasEnoughCredits = this.props.credits !== undefined
 			&& this.props.credits > 0
-			&& (this.props.otfCreditCost * this.props.variants.length) < this.props.credits;
+			&& this.props.otfCreditCost < this.props.credits;
 		const canExport = !freeUser || hasEnoughCredits;
 		const downloadLabel = this.props.variantToExport
 			? `${this.props.exportedVariant} / ${this.props.variantToExport}`
@@ -480,12 +481,6 @@ class VariantInfo extends React.Component {
 						VARIANT ACTIONS
 					</div>
 					<Button label="Open in prototypo" important={true} click={this.props.open}/>
-					<Button label={downloadLabel}
-						click={!canExport ? this.askSubscribe : this.downloadFamily}
-						altLabel={buyCreditsLabel}
-						splitButton={!canExport}
-						splitted={this.props.askSubscribe}
-						altClick={this.buyCredits}/>
 					<Button label="Change variant name" click={this.edit}/>
 					<Button label="Duplicate variant" click={this.duplicate}/>
 					<Button

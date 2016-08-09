@@ -64,6 +64,7 @@ export default {
 			.set('indivCurrentGroup', undefined)
 			.set('indivErrorMessage', undefined)
 			.set('indivErrorGlyphs', [])
+			.set('indivTagSelected', 'all')
 			.set('indivGroups', groupsAndGlyphs);
 
 		const patch = prototypoStore.commit();
@@ -191,6 +192,7 @@ export default {
 			.set('indivErrorMessage', undefined)
 			.set('indivErrorEdit', undefined)
 			.set('indivErrorGlyphs', [])
+			.set('indivTagSelected', 'all')
 			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(oldValues.indiv_group_param)))
 			.commit();
 
@@ -349,6 +351,7 @@ export default {
 			.set('indivErrorMessage', undefined)
 			.set('indivErrorGlyphs', [])
 			.set('indivErrorEdit', undefined)
+			.set('indivTagSelected', 'all')
 			.set('indivSelected', [])
 			.set('indivOtherGroups', Object.keys(values.indiv_glyphs))
 			.set('indivGroups', getGroupsAndGlyphsFromGroups(Object.keys(values.indiv_group_param)))
@@ -363,6 +366,7 @@ export default {
 			.set('indivMode', true)
 			.set('indivCreate', false)
 			.set('indivEdit', true)
+			.set('indivTagSelected', 'all')
 			.set('indivPreDelete', false)
 			.set('indivGlyphGrid', false)
 			.set('indivErrorMessage', undefined)

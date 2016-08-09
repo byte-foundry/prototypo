@@ -7,6 +7,8 @@ import AccountValidationButton from '../shared/account-validation-button.compone
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
+import DisplayWithLabel from '../shared/display-with-label.components.jsx';
+
 export default class AccountChangePlan extends React.Component {
 	constructor(props) {
 		super(props);
@@ -50,6 +52,26 @@ export default class AccountChangePlan extends React.Component {
 	}
 
 	render() {
+
+		const planInfos = {
+			'free_monthly': {
+				name: 'Free subscription',
+				price: 0.00,
+			},
+			'personal_monthly': {
+				name: 'Professional monthly subscription',
+				price: 15.00,
+			},
+			'personal_annual_99': {
+				name: 'Professional annual subscription',
+				price: 144.00,
+			},
+		};
+
+		const plan = _.find(planInfos, (planInfo, key) => {
+			return this.state.plan && this.state.plan[0].plan.id.indexOf(key) !== -1;
+		});
+
 		const optionPossible = [
 			{value: 'free_monthly', label: 'Free plan'},
 			{value: 'personal_monthly', label: 'Professional monthly subscription'},
@@ -59,7 +81,6 @@ export default class AccountChangePlan extends React.Component {
 		const options = _.reject(optionPossible, (option) => {
 			return !(!this.state.plan || !this.state.plan[0].plan.id.startsWith(option.value));
 		});
-
 
 		const content = this.state.free
 			? (
@@ -72,11 +93,15 @@ export default class AccountChangePlan extends React.Component {
 			)
 			: (
 				<form onSubmit={(e) => {this.confirmPlan(e);}} className="account-base account-change-plan">
-					<SelectWithLabel ref="select" label="Your plan" noResultsText={"No plan with this name"} options={options}/>
+					<div>
+						<DisplayWithLabel label="Your current plan">
+							{ this.state.plan ? plan.name : `You do not have a plan.` }
+						</DisplayWithLabel>
+					</div>
+					<SelectWithLabel ref="select" label="Which plan are you interested in?" noResultsText={"No plan with this name"} options={options}/>
 					<AccountValidationButton label="Confirm plan change" loading={this.state.loading}/>
 				</form>
 			);
-
 		return content;
 	}
 }

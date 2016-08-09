@@ -71,7 +71,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				title: 'Variants',
 				text: <div>
 					<p>This is the family panel</p>
-					<p>Manage your families from here. Change their name, download a zip containing all the variants in the family or just delete it.</p>
+					<p>Manage your families from here. Change their name or delete your family.</p>
 					<p>You can also add a new variants.</p>
 				</div>,
 				selector: '.variant-list',
@@ -84,7 +84,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				title: 'Variant panel',
 				text: <div>
 					<p>This is the variant panel</p>
-					<p>It allows you to open your project in prototypo, create a new variant from an existing one, change its name and download it.</p>
+					<p>It allows you to open your project in prototypo, create a new variant from an existing one and change its name.</p>
 					<p>Now go on and create your projects :)</p>
 				</div>,
 				selector: '.variant-info',
