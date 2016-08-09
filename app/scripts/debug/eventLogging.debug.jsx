@@ -1,4 +1,4 @@
-import {debugStore, fontVariant, panel, glyphs} from '../stores/creation.stores.jsx';
+import {prototypoStore} from '../stores/creation.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -14,16 +14,16 @@ window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
 });
 
-const debugServerUrl = 'http://debugloglist-p7rs57pe.cloudapp.net';
+const debugServerUrl = 'http://localhost:9002';
 
 export const debugActions = {
 	'/save-debug-log': () => {
 		const debugLog = {
-			events: debugStore.get('events'),
+			events: prototypoStore.get('debugEvents'),
 			message: `voluntarily submitted by ${HoodieApi.instance.email}`,
 			stack: (new Error()).stack,
 			date: new Date(),
-			values: debugStore.get('values'),
+			values: prototypoStore.get('debugValues'),
 		};
 
 		const data = JSON.stringify(debugLog);
@@ -37,23 +37,23 @@ export const debugActions = {
 		});
 	},
 	'/store-in-debug-font': ({prefix, typeface, data}) => {
-		const values = debugStore.get('values');
+		const values = prototypoStore.get('debugValues');
 
 		if (!values[prefix]) {
 			values[prefix] = {};
 		}
 		values[prefix][typeface] = data;
-		debugStore.set('values', values).commit();
+		prototypoStore.set('values', values).commit();
 	},
 	'/show-details': (details) => {
-		const patch = debugStore.set('details', details).set('showDetails', true).commit();
+		const patch = prototypoStore.set('debugDetails', details).set('debugShowDetails', true).commit();
 
-		localServer.dispatchUpdate('/debugStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'close-details': () => {
-		const patch = debugStore.set('details', '').set('showDetails', false).commit();
+		const patch = prototypoStore.set('debugDetails', '').set('debugShowDetails', false).commit();
 
-		localServer.dispatchUpdate('/debugStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 };
 
@@ -63,44 +63,22 @@ export default class EventDebugger {
 			&& location.hash.indexOf('#/replay') === -1) {
 
 			if (path === '/login') {
-				debugStore.set('events', []);
+				prototypoStore.set('debugEvents', []);
 			}
 			else {
-				const events = debugStore.get('events');
+				const events = prototypoStore.get('debugEvents');
 
 				events.push({path, params});
-				debugStore.set('events', events).commit();
+				prototypoStore.set('debugEvents', events).commit();
 			}
 		}
 	}
 
 	async execEvent(events, i, to) {
 		if (i < events.length) {
-			const patch = debugStore.set('index', i).commit();
+			const patch = prototypoStore.set('debugIndex', i).commit();
 
-			localServer.dispatchUpdate('/debugStore', patch);
-			if (i === 1) {
-				const familySelected = fontVariant.get('family');
-				const text = panel.get('text');
-				const word = panel.get('word');
-				const selected = glyphs.get('selected');
-
-				await setupFontInstance({
-					values: {
-						familySelected,
-						text,
-						word,
-						selected,
-					},
-				});
-			}
-
-			if (to && (i === to)) {
-				console.log('WAITING FOR RENDER PLZ!!');
-				pleaseWait.instance.finish();
-				return;
-			}
-
+			localServer.dispatchUpdate('/prototypoStore', patch);
 			console.log(`replaying event at path ${events[i].path}`);
 			console.log(events[i].params);
 
@@ -111,7 +89,7 @@ export default class EventDebugger {
 			return await new Promise((resolve) => {
 				setTimeout(() => {
 					resolve(this.execEvent(events, i + 1, to));
-				}, 1000);
+				}, 200);
 			});
 		}
 		else {
@@ -119,22 +97,19 @@ export default class EventDebugger {
 		}
 	}
 
-	async replayEvents(values, events) {
-		const patch = debugStore
-			.set('events', events)
-			.set('values', values)
+	replayEvents(values, events) {
+		const patch = prototypoStore
+			.set('debugEvents', events)
+			.set('debugValues', values)
 			.commit();
 
-		localServer.dispatchUpdate('/debugStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		await this.execEvent(events, 0, 6);
-		setTimeout(() => {
-			this.execEvent(events, 6);
-		}, 6000);
+		this.execEvent(events, 0);
 	}
 
 	async replayEventFromFile() {
-		const hash = location.hash.split('/');
+		const hash = location.hash.split('?')[0].split('/');
 
 		try {
 			const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);

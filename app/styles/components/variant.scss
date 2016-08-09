@@ -1,164 +1,149 @@
 @import "../variables";
 
 .variant-list {
-	background-color:$yellow;
-	padding:15px;
-	border-bottom-left-radius:4px;
-	border-bottom-right-radius:4px;
-}
+	flex:1 0 30%;
+	padding:0px !important;
+	position:relative;
+	overflow: hidden;
 
-.variant {
-	margin-bottom:5px;
-	font-size:16px;
-	letter-spacing: 0.05em;
+	&-download-overlay {
+		position:relative;
+		overflow: hidden;
 
-	text-transform:uppercase;
-	cursor:pointer;
-	display:flex;
-	flex-flow:row nowrap;
-	transform-style: preserve-3d;
+		&-message {
+			position:absolute;
+			width:200%;
+			height: calc(100% - 10px);
+			border-radius: 7px;
+			cursor: pointer;
+			display:block;
 
-	&-caret {
-		margin-right:30px;
+			&-half {
+				position: relative;
+				width: 50%;
+				height: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				float: left;
+				border-radius: 7px;
+				transition: left .2s ease;
+				left:0;
+				color: $white;
+			}
+
+			&-start {
+				background: rgba($dark-grey, 0.3);
+			}
+
+			&-end {
+				background: $green;
+			}
+
+			&:hover &-start, &:hover &-end {
+				left: -50%;
+			}
+		}
+
+	}
+
+	&-container {
+		background-color: $white;
+		position: relative;
+		padding:10px 40px 40px 40px;
+		min-height:100%;
+
+		&#{&}-enter {
+			margin-left: -100%;
+			z-index:2;
+			width:100%;
+			border-right: solid 1px $light-grey;
+
+			&-active {
+				margin-left: 0%;
+				transition: margin-left .3s ease-out;
+			}
+		}
+
+		&#{&}-leave {
+			position:absolute;
+			width:100%;
+			top:0;
+			box-shadow: 0px 0px 0px 1px $light-grey inset;
+
+			&-active {
+				transition: box-shadow .3s ease-out;
+				box-shadow: 0px 0px 7px 1px $light-grey inset;
+			}
+		}
+	}
+
+	&-title {
+		color: $medium-grey;
+		border-bottom: solid 1px $medium-grey;
+		padding-bottom: 10px;
+		margin-bottom: 20px;
+		margin-top:30px;
 	}
 
 	&-name {
-		flex:1 1 100%;
-	}
+		margin-top: 7px;
+		color: $medium-grey;
+		cursor:pointer;
+		text-transform: capitalize;
 
-	&-caret-open {
-		display:none;
-	}
-
-	&-hover {
-		display:none;
-	}
-
-	&:hover &-hover {
-		display:block;
-	}
-
-	&-button {
-		background-color:darken($dark-grey, 10%);
-		padding:2px 5px;
-		border-radius:3px;
-		margin-left:5px;
-		margin-top:-2px;
-		margin-bottom:-2px;
-		transition:background-color .2s ease, color .2s ease;
-
-		&:hover {
-			background-color: $green;
-			color: $white;
-		}
-	}
-
-	&:hover &-caret-closed, &.is-active &-caret-closed {
-		display:none;
-	}
-
-	&:hover &-caret-open, &.is-active &-caret-open {
-		display:block;
-	}
-
-	&-delete {
-		display:none;
-		flex-flow:row nowrap;
-
-		&.is-active {
-			display:flex;
-		}
-	}
-
-	&-edit {
-		width:100%;
-		display:none;
-		flex-flow:row nowrap;
-
-		&.is-active {
-			display:flex;
-		}
-	}
-}
-
-.flipping-variant {
-	height:57px;
-	transform-style: preserve-3d;
-	position: relative;
-	height: 57px;
-
-	&-verso, &-recto {
-		padding:14px;
-		width:100%;
-		height:100%;
-		display:flex;
-		flex-flow:row nowrap;
-		backface-visibility: hidden;
-		position:absolute;
-	}
-
-	&-recto {
-		border-radius: 4px;
-		transform:rotateX(0deg);
-		transition:transform .2s ease;
-		background:$white;
-
-		&.is-flipped {
-			transform: rotateX(180deg);
-			background: $dark-grey;
+		&::before {
+			content: "⟶";
+			margin-right: 1em;
 		}
 
 		&:hover, &.is-active {
-			background: $dark-grey;
-			color: $white;
-		}
-	}
-
-	&-verso {
-		border-radius: 4px;
-		height:100%;
-		color:$white;
-		transform:rotateX(180deg);
-		width:100%;
-		display: flex;
-		transition:background-color .2s ease, transform .2s ease;
-
-		&.is-flipped {
-			transform: rotateX(0deg);
-			background: $dark-grey;
-		}
-
-		&.is-active {
-			background: $dark-grey;
-		}
-
-		img {
-			width: 20px;
-			margin-right: 20px;
+			color: $green;
 		}
 	}
 }
 
-.text-suggestion {
-	flex:0 1 100%;
-	display:flex;
-	flex-flow:row nowrap;
+.variant-info {
+	flex: 1 0 37%;
+	border-right: none !important;
+	padding:0px !important;
+	overflow:hidden;
 
-	&-input {
-		width:100%;
-		color:black;
-		padding-left: .5em;
-	}
+	&-container {
+		background-color: $white;
+		padding:10px 160px 40px 40px;
+		position:relative;
+		min-height: 100%;
+		border-bottom-right-radius: 7px;
 
-	&-button {
-		background-color: darken($dark-grey, 10%);
-		padding: 2px 10px;
-		border-top-right-radius: 4px;
-		border-bottom-right-radius: 4px;
-		transition:all .2s ease;
+		&#{&}-enter {
+			margin-left: -100%;
+			z-index:2;
+			width:100%;
+			border-right: solid 1px $light-grey;
 
-		&:hover {
-			background-color:$green;
+			&-active {
+				margin-left: 0%;
+				transition: margin-left .3s ease-out;
+			}
+		}
+
+		&#{&}-leave {
+			position:absolute;
+			width:100%;
+			top:0;
+			box-shadow: 0px 0px 0px 1px $light-grey inset;
+
+			&-active {
+				transition: box-shadow .3s ease-in;
+				box-shadow: 0px 0px 7px 1px $light-grey inset;
+			}
 		}
 	}
+}
+
+.variant {
+	width:700px;
+	display:flex;
+	flex-flow: column nowrap;
 }

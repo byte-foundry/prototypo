@@ -18,6 +18,10 @@
 	&-suffix {
 		display: inline;
 		padding: 7px 15px;
-		border-left: solid 1px $green;
+		@each $state, $map in $states {
+		  .#{$state} & {
+			border-left: solid 1px map-get($map, background);
+		  }
+		}
 	}
 }

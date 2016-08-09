@@ -48,8 +48,8 @@ export default class SubscriptionAccountInfo extends React.Component {
 	}
 
 	render() {
-		const errors = this.state.errors.map((error) => {
-			return <FormError errorText={error}/>;
+		const errors = this.state.errors.map((error, index) => {
+			return <FormError key={index} errorText={error}/>;
 		});
 
 		return (

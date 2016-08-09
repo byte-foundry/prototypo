@@ -1,0 +1,116 @@
+@import '../../variables';
+
+.button-container {
+	display:flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
+}
+
+.button {
+	@include themify() {
+		border: solid 2px $theme-background;
+		color: $theme-background;
+	}
+
+	padding:6px 0;
+	display:flex;
+	justify-content: center;
+	border-radius: 7px;
+	font-size: 14px;
+	font-weight: 600;
+	cursor:pointer;
+	transition: width .2s ease, color .2s ease, background-color .2s ease, border-radius .2s ease, border-color 500ms ease, border-width .2s cubic-bezier(1, 0, 1, -0.06) !important;
+	margin-bottom:10px;
+	font-style: normal;
+	width:100%;
+	margin-right:0%;
+
+	&.important {
+		font-size: 18px;
+	}
+
+	&.is-disable {
+		border-color: rgba($green, 0.4);
+		color: rgba($green, 0.4);
+	}
+
+	&.orange {
+		border-color: $orange;
+		color: $orange;
+
+		&:hover {
+			@include themify() {
+				background-color: $orange;
+			}
+		}
+	}
+
+	&.danger {
+		border-color: $red;
+		color: $red;
+
+		&:hover {
+			@include themify() {
+				background-color: $red;
+			}
+		}
+	}
+
+	&.neutral {
+		border-color: $medium-grey;
+		color: $medium-grey;
+		background: $white;
+
+		&:hover {
+			@include themify() {
+				background-color: $medium-grey;
+				color: $white
+			}
+		}
+	}
+
+	&.dark {
+		border-color: $dark-grey;
+		color: $dark-grey;
+		background: $white;
+
+		&:hover {
+			@include themify() {
+				background-color: $dark-grey;
+				color: $white
+			}
+		}
+	}
+
+	&.small {
+		font-size: 12px;
+		padding: 0 4px;
+	}
+
+	&.split-left {
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+		width:49%;
+	}
+
+	&.split-right {
+		width:0%;
+		overflow: hidden;
+		border-width:0px;
+
+		&.is-active {
+			border-width:2px;
+			transition: width .2s ease, color .2s ease, background-color .2s ease, border-radius .2s ease, border-color 500ms ease, border-width .2s cubic-bezier(0, 1.59, 0, 0.96) !important;
+			width:49%;
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+	}
+
+	&:hover {
+		@include themify() {
+			background-color: $theme-background;
+			color: $theme-color;
+		}
+	}
+}

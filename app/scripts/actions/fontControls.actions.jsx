@@ -1,4 +1,4 @@
-import {fontControls} from '../stores/creation.stores.jsx';
+import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -12,12 +12,12 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/load-values': (params) => {
-		const patch = fontControls
-			.set('values', params)
+		const patch = undoableStore
+			.set('controlsValues', params)
 			.commit();
 
-		localServer.dispatchUpdate('/fontControls', patch);
-		localClient.dispatchAction('/store-action', {store: '/fontControls', patch});
+		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/store-action', {store: '/undoableStore', patch});
 		localClient.dispatchAction('/update-font', params);
 	},
 };

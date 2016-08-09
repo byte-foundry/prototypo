@@ -1,38 +1,55 @@
 import Remutable from 'remutable';
 
-const debugStore = new Remutable({
-	events: [],
-	values: {},
+const undoableStore = new Remutable({
+	//font controls store values
+	controlsValues: {},
+	//end font controls store values
 });
 
-const eventBackLog = new Remutable({
-	from: 0,
-	eventList: [ ],
-});
+const prototypoStore = new Remutable({
 
-const fontTab = new Remutable({});
+	//Store values for debug
+	debugEvents: [],
+	debugValues: {},
+	debugDetails: undefined,
+	debugShowDetails: false,
+	debugIndex: 0,
+	//End store values for debug
 
-const fontControls = new Remutable({
-	values: {},
-});
+	//undoStack Store values
+	undoFrom: 0,
+	undoTo: 0,
+	undoEventList: [ ],
+	//End undoStack store values
 
-const fontParameters = new Remutable({});
+	//font tab store values
+	fontTab: undefined,
+	//End font tab store values
 
-const sideBarTab = new Remutable({});
+	//font parameters store values
+	fontParameters: undefined,
+	fontPresets: undefined,
+	//end font parameters store values
 
-const fontStore = new Remutable({});
+	//fonts store values
+	fontName: undefined,
+	fontGlyphs: undefined,
+	//end fonts store values
 
-const tagStore = new Remutable({
-	selected: 'all',
-	pinned: [],
-});
+	//tag store values
+	tagSelected: 'all',
+	tagPinned: [],
+	tags: undefined,
+	//end tag store values
 
-const glyphs = new Remutable({
-	selected: 'A',
-});
+	//glyphs store values
+	glyphs: undefined,
+	glyphSelected: 'A',
+	glyphLocked: false,
+	//end glyphs store values
 
-const templateList = new Remutable({
-	list: [
+	//template list store values
+	templateList: [
 		{
 			sample: 'elzevir-preview.svg',
 			name: 'Prototypo Elzevir',
@@ -52,6 +69,157 @@ const templateList = new Remutable({
 			templateName: 'john-fell.ptf',
 		},
 	],
+
+	//end template list store values
+	//font library store values
+	errorAddFamily: undefined,
+	errorAddVariant: undefined,
+	fonts: [],
+	//end font library store values
+
+	//font variant store values
+	openFamilyModal: false,
+	openVariantModal: false,
+	familySelectedVariantCreation: false,
+	changeNameFamily: false,
+	variant: {},
+	family: {},
+	collectionSelectedFamily: undefined,
+	collectionSelectedVariant: undefined,
+	//end font
+
+	//font infos store values
+	altList: {},
+	//end font infos store values
+
+	//ui store values
+	uiMode: [],
+	uiTextFontSize: 2.1,
+	uiWordFontSize: 4.5,
+	uiInvertedWordColors: undefined,
+	uiInvertedWordView: undefined,
+	uiInvertedTextColors: undefined,
+	uiInvertedTextView: undefined,
+	uiOnboardstep: undefined,
+	uiOnboard: undefined,
+	uiShowCollection: undefined,
+	uiList: undefined,
+	uiPos: undefined,
+	uiZoom: undefined,
+	uiNodes: undefined,
+	uiOutline: undefined,
+	uiCoords: undefined,
+	uiShadow: undefined,
+	uiText: '',
+	uiWord: '',
+	uiFontLoading: false,
+	uiCreatefamilySelectedTemplate: undefined,
+	//end ui store values
+
+	//commits store values
+	commitsList: [],
+	latestCommit: '',
+	//end commits store values
+
+	//export store values
+	export: false,
+	errorExport: false,
+	exportedVariant: 0,
+	familyExported: undefined,
+	variantToExport: undefined,
+	//end export store values
+
+	//indiv store values
+	indivMode: false,
+	indivSelected: [],
+	indivTagSelected: 'all',
+	indivCreate: false,
+	indivEdit: false,
+	indivCurrentGroup: undefined,
+	indivGroups: undefined,
+	indivPreDelete: undefined,
+	indivEditGroup: undefined,
+	indivGlyphGrid: undefined,
+	indivOtherGroups: undefined,
+	indivErrorEdit: undefined,
+	indivErrorMessage: undefined,
+	indivErrorGlyphs: [],
+	//end indiv store values
+
+	//intercom store values
+	intecomTags: undefined,
+	//end intercom store values
+
+	//search store values
+	savedSearch: [],
+	glyphSearch: undefined,
+	pinnedSearch: undefined,
+	savedSearchError: undefined,
+	//end search store values
+
+	//log store values
+	/* #if debug */
+	patchArray: [],
+	/* #end */
+	//end log store values
+
+	//glyph select store values
+	glyphFocused: false,
+	//end glyph select store values
+
+	// first time tutorial store values
+	firstTimeFile: true,
+	firstTimeCollection: true,
+	firstTimeIndivCreate: true,
+	firstTimeIndivEdit: true,
+	// end first time tutorial store values
+});
+
+const userStore = new Remutable({
+	infos: {
+	},
+	signupForm: {
+		errors: [],
+		inError: {},
+	},
+	signinForm: {
+		errors: [],
+		inError: {},
+	},
+	choosePlanForm: {
+	},
+	addcardForm: {
+		errors: [],
+		inError: {},
+	},
+	buyCreditsForm: {
+		errors: [],
+		inError: {},
+	},
+	billingForm: {
+		errors: [],
+		inError: {},
+	},
+	confirmation: {
+		errors: [],
+	},
+	changePasswordForm: {
+		errors: [],
+		inError: {},
+	},
+});
+
+// how to add a coupon hash:
+// 1. open a terminal in the prototypo directory
+// 2. enter 'node' in the terminal
+// 3. enter require('md5')('<coupon name>' + '.' + '<plan name>');
+// 4. paste the resulting hash here. shouldSkipCard is true when no card is
+// required to subscribe to that plan (first month free for example).
+const couponStore = new Remutable({
+	'58e088c97aa400b0498fa3d11640ada8': {label: '$5 off your first month!'},
+	'98d317f6598ce579eda20ec39e964203': {label: '$5 off your first month to celebrate our 10.000 users!'},
+	'aa5355e6d09f960bd1010de998c079b2': {label: '50% off the annual price for schools!'}, // for personal_annual. We should remove this later.
+	'dfbc3313a2e4a0e1a46a96bb5e279121': {label: '50% off the annual price for schools!'},
 });
 
 const planStore = new Remutable({
@@ -73,146 +241,36 @@ const planStore = new Remutable({
 		EUR: '99.00€',
 		info: '5 months free compared to monthly billing!',
 	},
-});
-
-const couponStore = new Remutable({
-	'58e088c97aa400b0498fa3d11640ada8': '$5 off your first month!',
-	'98d317f6598ce579eda20ec39e964203': '$5 off your first month to celebrate our 10.000 users!',
-	'aa5355e6d09f960bd1010de998c079b2': '50% off the annual price for schools!',
-	'dfbc3313a2e4a0e1a46a96bb5e279121': '50% off the annual price for schools!'
-});
-
-const fontLibrary = new Remutable({
-	fonts: [],
-});
-
-const fontVariant = new Remutable({
-});
-
-const fontInfos = new Remutable({
-	altList: {},
-});
-
-const panel = new Remutable({
-	mode: [],
-	textFontSize: 2.1,
-	wordFontSize: 4.5,
-});
-
-const commits = new Remutable({
-});
-
-const exportStore = new Remutable({
-	export: false,
-	errorExport: false,
-	exportedVariant: 0,
-});
-
-const individualizeStore = new Remutable({
-	selected: [],
-	tagSelected: 'all',
-});
-
-const intercomStore = new Remutable({
-	tags: [],
-});
-
-const searchStore = new Remutable({
-	savedSearch: [],
-});
-
-const logStore = new Remutable({
-	patchArray: [],
-});
-
-const glyphSelect = new Remutable({
-	focused: false,
-});
-
-const userStore = new Remutable({
-	infos: {
+	personal_annual: {
+		id: 'personal_annual',
+		name: 'Annual billing',
+		amount: '144',
+		period: 'year',
+		USD: '$144.00',
+		EUR: '144.00€',
 	},
-	signupForm: {
-		errors: [],
-		inError: {},
-	},
-	signinForm: {
-		errors: [],
-		inError: {},
-	},
-	choosePlanForm: {
-	},
-	addcardForm: {
-		errors: [],
-		inError: {},
-	},
-	billingForm: {
-		errors: [],
-		inError: {},
-	},
-	confirmation: {
-		errors: [],
-	},
-	changePasswordForm: {
-		errors: [],
-		inError: {},
-	},
+});
+
+// [item]: [cost in credits]
+const creditStore = new Remutable({
+	exportOtf: 1,
+	exportGlyphr: 1,
 });
 
 const stores = {
-	'/debugStore': debugStore,
-	'/eventBackLog': eventBackLog,
-	'/fontTab': fontTab,
-	'/fontControls': fontControls,
-	'/fontParameters': fontParameters,
-	'/sideBarTab': sideBarTab,
-	'/fontStore': fontStore,
-	'/tagStore': tagStore,
-	'/glyphs': glyphs,
-	'/templateList': templateList,
-	'/fontLibrary': fontLibrary,
-	'/fontVariant': fontVariant,
-	'/fontInfos': fontInfos,
-	'/panel': panel,
-	'/commits': commits,
-	'/exportStore': exportStore,
-	'/individualizeStore': individualizeStore,
-	'/intercomStore': intercomStore,
-	'/searchStore': searchStore,
+	'/prototypoStore': prototypoStore,
+	'/undoableStore': undoableStore,
 	'/userStore': userStore,
-	'/glyphSelect': glyphSelect,
 	'/planStore': planStore,
-	/* #if debug */
-	logStore,
-	/* #end */
+	'/creditStore': creditStore,
 };
 
 export default stores;
 export {
-	debugStore,
-	eventBackLog,
-	fontTab,
-	fontControls,
-	fontParameters,
-	sideBarTab,
-	fontStore,
-	tagStore,
-	glyphs,
-	templateList,
-	fontLibrary,
-	fontVariant,
-	fontInfos,
-	panel,
-	commits,
-	exportStore,
-	individualizeStore,
-	intercomStore,
-	searchStore,
+	prototypoStore,
+	undoableStore,
 	userStore,
-	glyphSelect,
-	planStore,
 	couponStore,
-	/* #if debug */
-	logStore,
-	/* #end */
+	planStore,
+	creditStore,
 };

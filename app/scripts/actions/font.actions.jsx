@@ -1,32 +1,85 @@
 import XXHash from 'xxhashjs';
 import slug from 'slug';
 
-import {fontStore, fontVariant, fontLibrary} from '../stores/creation.stores.jsx';
+import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {Typefaces} from '../services/typefaces.services.js';
 import {copyFontValues, loadFontValues, saveAppValues} from '../helpers/loadValues.helpers.js';
+import {setupFontInstance, mapGlyphForApp} from '../helpers/font.helpers.js';
 import {FontValues} from '../services/values.services.js';
+import {delayAfterCall} from '../helpers/animation.helpers.js';
+import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
 let localServer;
 let localClient;
+let undoWatcher;
+
+const debouncedSave = _.throttle((values, db) => {
+	FontValues.save({
+		typeface: db || 'default',
+		values,
+	});
+}, 300);
 
 window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
 	localServer = LocalServer.instance;
+
+	undoWatcher = new BatchUpdate(
+		undoableStore,
+		'/undoableStore',
+		'controlsValues',
+		localClient,
+		localServer.lifespan,
+		(name) => {
+			return `modifier ${name}`;
+		},
+		(headJS) => {
+			debouncedSave(headJS.controlsValues);
+		}
+	);
 });
 
 const hasher = XXHash(0xDEADBEEF);
 
 export default {
+	'/load-font-instance': async ({appValues}) => {
+		let typedata;
+
+		try {
+			const fontResult = await setupFontInstance(appValues);
+
+			typedata = fontResult.typedata;
+		}
+		catch (err) {
+			console.log(err);
+		}
+
+		localClient.dispatchAction('/create-font', fontInstance.font.ot.getEnglishName('fontFamily'));
+		localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
+		localClient.dispatchAction('/load-glyphs', _.mapValues(
+			fontInstance.font.altMap,
+			mapGlyphForApp
+		));
+		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
+		localClient.dispatchAction('/load-commits');
+		fontInstance.displayChar(String.fromCharCode(prototypoStore.get('glyphSelected')));
+
+		loadFontValues(typedata, appValues.values.variantSelected.db);
+
+		const fontInstanceLoaded = new Event('fontInstance.loaded');
+
+		window.dispatchEvent(fontInstanceLoaded);
+	},
 	'/create-font': (familyName) => {
-		const patch = fontStore
+		const patch = prototypoStore
 			.set('fontName', familyName)
 			.commit();
 
-		localServer.dispatchUpdate('/fontStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/update-font': (params) => {
 		// we need a non-empty params object
@@ -36,9 +89,18 @@ export default {
 
 		fontInstance.update(params);
 	},
-	'/change-font': async ({templateToLoad, db}) => {
-		const typedataJSON = await Typefaces.getFont(templateToLoad);
+	'/change-font-from-typedata': async ({typedataJSON, db}) => {
 		const typedata = JSON.parse(typedataJSON);
+
+		await delayAfterCall(() => {
+			localClient.dispatchAction('/store-value', {uiFontLoading: true});
+		}, 400);
+
+		fontInstance.on('worker.fontLoaded', () => {
+			setTimeout(() => {
+				localClient.dispatchAction('/store-value', {uiFontLoading: false});
+			}, 1000);
+		});
 
 		try {
 			await fontInstance.loadFont(typedata.fontinfo.familyName, typedataJSON, db);
@@ -52,51 +114,45 @@ export default {
 		localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
 		localClient.dispatchAction('/load-glyphs', _.mapValues(
 			fontInstance.font.altMap,
-			(glyph) => {
-				return _.map(
-					glyph,
-					(alt) => {
-						return {
-							src: {
-								tags: alt.src && alt.src.tags || [],
-								characterName: alt.src && alt.src.characterName || '',
-								unicode: alt.src && alt.src.unicode	|| '',
-								glyphName: alt.src && alt.src.glyphName || '',
-							},
-							name: alt.name,
-							altImg: alt.altImg,
-						};
-					}
-				);
-			}
+			mapGlyphForApp
 		));
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
+		localClient.dispatchAction('/clear-undo-stack');
 
 		loadFontValues(typedata, db);
+	},
+	'/change-font': async ({templateToLoad, db}) => {
+		const typedataJSON = await Typefaces.getFont(templateToLoad);
+		localClient.dispatchAction('/change-font-from-typedata', {
+			typedataJSON,
+			db,
+		});
+		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
 	},
 	'/create-family': async ({name, template, loadCurrent}) => {
 		let templateToLoad = template;
 
-		localClient.dispatchAction('/cancel-indiv-mode');
 		if (loadCurrent) {
-			templateToLoad = fontVariant.get('family').template;
+			templateToLoad = prototypoStore.get('family').template;
 		}
 
 		if (templateToLoad === undefined) {
-			const patch = fontLibrary.set('errorAddFamily', 'You must choose a base template').commit();
+			const patch = prototypoStore
+			.set('errorAddFamily', 'You must choose a base template')
+			.commit();
 
-			localServer.dispatchUpdate('/fontLibrary', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 			return;
 		}
 
-		if (name === undefined || name === '') {
-			const patch = fontLibrary.set('errorAddFamily', 'You must choose a name for your family').commit();
+		if (name === undefined || name === '' || String(name).trim() === '') {
+			const patch = prototypoStore.set('errorAddFamily', 'You must choose a name for your family').commit();
 
-			localServer.dispatchUpdate('/fontLibrary', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 			return;
 		}
 
-		const fonts = Array.from(fontLibrary.get('fonts'));
+		const fonts = _.cloneDeep(Array.from(prototypoStore.get('fonts')));
 		const newFont = {
 			name,
 			template: templateToLoad,
@@ -114,27 +170,20 @@ export default {
 		});
 
 		if (already) {
-			const patch = fontLibrary.set('errorAddFamily', 'A Family with this name already exists').commit();
+			const patch = prototypoStore.set('errorAddFamily', 'A Family with this name already exists').commit();
 
-			localServer.dispatchUpdate('/fontLibrary', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 			return;
 		}
 
 		fonts.push(newFont);
 
-		const patch = fontLibrary
+		const patch = prototypoStore
 			.set('errorAddFamily', undefined)
+			.set('fonts', fonts)
 			.commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
-
-		setTimeout(() => {
-			const patchLib = fontLibrary
-				.set('fonts', fonts)
-				.commit();
-
-			localServer.dispatchUpdate('/fontLibrary', patchLib);
-		}, 200);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
 		if (loadCurrent) {
 			await copyFontValues(newFont.variants[0].db);
@@ -145,21 +194,27 @@ export default {
 			db: newFont.variants[0].db,
 		});
 
-		const patchVariant = fontVariant
+		const patchVariant = prototypoStore
 			.set('variant', newFont.variants[0])
-			.set('family', {name: newFont.name, template: newFont.template}).commit();
+			.set('family', {name: newFont.name, template: newFont.template})
+			.set('uiCreatefamilySelectedTemplate', undefined)
+			.set('openFamilyModal', false)
+			.commit();
 
-		localServer.dispatchUpdate('/fontVariant', patchVariant);
+		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 
 		saveAppValues();
 	},
 	'/select-variant': ({variant, family}) => {
-		localClient.dispatchAction('/cancel-indiv-mode');
-		const patchVariant = fontVariant
+		if (!variant) {
+			variant = family.variants[0];
+		}
+
+		const patchVariant = prototypoStore
 			.set('variant', variant)
 			.set('family', {name: family.name, template: family.template}).commit();
 
-		localServer.dispatchUpdate('/fontVariant', patchVariant);
+		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 
 		localClient.dispatchAction('/change-font', {
 			templateToLoad: family.template,
@@ -167,9 +222,49 @@ export default {
 		});
 		saveAppValues();
 	},
-	'/create-variant': async ({name, familyName}) => {
-		localClient.dispatchAction('/cancel-indiv-mode');
-		const family = _.find(Array.from(fontLibrary.get('fonts') || []), (font) => {
+	'/create-variant-from-ref': ({ref, name, variant, family, noSwitch}) => {
+		const thicknessTransform = [
+			{string: 'Thin', thickness: 20},
+			{string: 'Light', thickness: 50},
+			{string: 'Book', thickness: 70},
+			{string: 'Bold', thickness: 115},
+			{string: 'Semi-Bold', thickness: 100},
+			{string: 'Extra-Bold', thickness: 135},
+			{string: 'Black', thickness: 150},
+		];
+
+		_.each(thicknessTransform, (item) => {
+			if (name.indexOf(item.string) !== -1) {
+				ref.values.thickness = item.thickness;
+			}
+		});
+
+		if (name.indexOf('Italic') !== -1) {
+			ref.values.slant = 10;
+		}
+
+		setTimeout(async () => {
+			await FontValues.save({typeface: variant.db, values: ref.values});
+			if (!noSwitch) {
+				localClient.dispatchAction('/select-variant', {variant, family});
+			}
+		}, 200);
+
+		localClient.dispatchAction('/store-value', {
+			openVariantModal: false,
+			openDuplicateVariantModal: false,
+			errorAddVariant: undefined,
+		});
+	},
+	'/create-variant': async ({name, familyName, variantBase, noSwitch}) => {
+		if (!name || String(name).trim() === '') {
+			const patch = prototypoStore.set('errorAddVariant', 'Variant name cannot be empty').commit();
+
+			localServer.dispatchUpdate('/prototypoStore', patch);
+			return;
+		}
+
+		const family = _.find(Array.from(prototypoStore.get('fonts') || []), (font) => {
 			return font.name === familyName;
 		});
 
@@ -178,9 +273,9 @@ export default {
 		});
 
 		if (already) {
-			const patch = fontLibrary.set('errorAddVariant', 'Variant with this name already exists').commit();
+			const patch = prototypoStore.set('errorAddVariant', 'Variant with this name already exists').commit();
 
-			localServer.dispatchUpdate('/fontLibrary', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 			return;
 		}
 
@@ -189,46 +284,50 @@ export default {
 			name,
 			db: slug(`${familyName}${name}`, ''),
 		};
-		const thicknessTransform = [
-			{string: 'THIN', thickness: 20},
-			{string: 'LIGHT', thickness: 50},
-			{string: 'BOOK', thickness: 70},
-			{string: 'BOLD', thickness: 115},
-			{string: 'SEMI-BOLD', thickness: 100},
-			{string: 'EXTRA-BOLD', thickness: 135},
-			{string: 'BLACK', thickness: 150},
-		];
 
 		family.variants.push(variant);
 
-		const patch = fontLibrary
-			.set('fonts', fontLibrary.get('fonts'))
+		//TODO(franz): this is fucked up
+		const patch = prototypoStore
+			.set('fonts', _.cloneDeep(prototypoStore.get('fonts')))
 			.set('errorAddVariant', undefined).commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		const ref = await FontValues.get({typeface: family.variants[0].db});
+		const variantBaseDb = variantBase ? variantBase.db : family.variants[0].db;
 
-		_.each(thicknessTransform, (item) => {
-			if (name.indexOf(item.string) !== -1) {
-				ref.values.thickness = item.thickness;
-			}
+		const ref = await FontValues.get({typeface: variantBaseDb});
+
+		localClient.dispatchAction('/create-variant-from-ref', {
+			name,
+			ref,
+			variant,
+			family,
+			noSwitch,
 		});
-
-		if (name.indexOf('ITALIC') !== -1) {
-			ref.values.slant = 10;
-		}
-
-		setTimeout(async () => {
-			await FontValues.save({typeface: variant.db, values: ref.values});
-			localClient.dispatchAction('/select-variant', {variant, family});
-		}, 200);
-
 	},
 	'/edit-variant': ({variant, family, newName}) => {
-		const found = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
+		if (!newName || String(newName).trim() === '') {
+			localClient.dispatchAction('/store-value', {
+				errorVariantNameChange: "The variant name cannot be empty",
+			});
+			return;
+		}
+
+		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
+		const found = _.find(fonts, (item) => {
 			return item.name === family.name;
 		});
+		const alreadyExists = _.find(found.variants || [], (item) => {
+			return item.name === newName;
+		});
+
+		if (alreadyExists) {
+			localClient.dispatchAction('/store-value', {
+				errorVariantNameChange: "You already have a variant with this name in this family",
+			});
+			return;
+		}
 
 		const newVariant = _.find(found.variants || [], (item) => {
 			return variant.id === item.id;
@@ -236,33 +335,93 @@ export default {
 
 		newVariant.name = newName;
 
-		const patch = fontLibrary.set('fonts', fontLibrary.get('fonts')).commit();
+		//If we modify selected variant patch selected variant.
+		if (variant.id === prototypoStore.get('variant').id) {
+			prototypoStore.set('variant', newVariant);
+		}
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		const patch = prototypoStore
+			.set('fonts', fonts)
+			.set('collectionSelectedVariant', newVariant)
+			.set('openChangeVariantNameModal', false)
+			.commit();
+
+		localClient.dispatchAction('/store-value', {
+			errorVariantNameChange: undefined,
+		});
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
+		saveAppValues();
+	},
+	'/edit-family-name': ({family, newName}) => {
+		if (!newName || String(newName).trim() === '') {
+			localClient.dispatchAction('/store-value', {
+				errorFamilyNameChange: "The family name cannot be empty",
+			});
+			return;
+		}
+
+		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
+		const alreadyExists = _.find(fonts, (item) => {
+			return item.name === newName;
+		});
+
+		if (alreadyExists) {
+			localClient.dispatchAction('/store-value', {
+				errorFamilyNameChange: "You already have a font with this family name",
+			});
+			return;
+		}
+
+		const newFamily = _.find(fonts, (item) => {
+			return item.name === family.name;
+		});
+
+		newFamily.name = newName;
+
+		if (family.name === prototypoStore.get('family').name) {
+			prototypoStore.set('family', newFamily);
+		}
+
+		//TODO(franz): this is fucked up
+		const patch = prototypoStore
+			.set('fonts', fonts)
+			.set('collectionSelectedFamily', newFamily)
+			.set('openChangeFamilyNameModal', false)
+			.commit();
+
+		localClient.dispatchAction('/store-value', {
+			errorFamilyNameChange: undefined,
+		});
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
 	},
 	'/delete-variant': ({variant, familyName}) => {
-		const family = _.find(Array.from(fontLibrary.get('fonts') || []), (item) => {
+		const families = _.cloneDeep(Array.from(prototypoStore.get('fonts') || []));
+		const family = _.find(families, (item) => {
 			return item.name === familyName;
 		});
 
-		_.pull(family.variants, variant);
+		_.remove(family.variants, (item) => {
+			return item.id === variant.id;
+		});
 
-		const patch = fontLibrary.set('fonts', fontLibrary.get('fonts')).commit();
+		const patch = prototypoStore.set('fonts', families).commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
 
 	},
 	'/delete-family': ({family}) => {
-		const families = Array.from(fontLibrary.get('fonts'));
+		const families = _.cloneDeep(Array.from(prototypoStore.get('fonts')));
 
 		_.remove(families, (checkee) => {
 			return checkee.name === family.name && checkee.template === family.template;
 		});
-		const patch = fontLibrary.set('fonts', families).commit();
+		const patch = prototypoStore.set('fonts', families).commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
 		family.variants.forEach((variant) => {
 			FontValues.deleteDb({typeface: variant.db});
@@ -270,14 +429,94 @@ export default {
 
 		saveAppValues();
 	},
-	'/clear-error-family': () => {
-		const patch = fontLibrary.set('errorAddFamily', undefined).commit();
-
-		localServer.dispatchUpdate('/fontLibrary', patch);
-	},
 	'/clear-error-variant': () => {
-		const patch = fontLibrary.set('errorAddVariant', undefined).commit();
+		const patch = prototypoStore.set('errorAddVariant', undefined).commit();
 
-		localServer.dispatchUpdate('/fontLibrary', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
+	},
+	'/select-family-collection': (family) => {
+		const patch = prototypoStore
+			.set('collectionSelectedFamily', family)
+			.set('collectionSelectedVariant', undefined)
+			.commit();
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
+	},
+	'/select-variant-collection': (variant) => {
+		const patch = prototypoStore.set('collectionSelectedVariant', variant).commit();
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
+	},
+	'/close-create-family-modal': () => {
+		const patch = prototypoStore.set('openFamilyModal', false).commit();
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
+	},
+	'/close-create-variant-modal': () => {
+		const patch = prototypoStore.set('openVariantModal', false).commit();
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
+	},
+	'/change-param': ({values, value, name, force, label}) => {
+		const indivMode = prototypoStore.get('indivMode');
+		const indivEdit = prototypoStore.get('indivEditingParams');
+		const db = (prototypoStore.get('variant') || {}).db;
+		const currentGroupName = (prototypoStore.get('indivCurrentGroup') || {}).name;
+		let newParams = {...undoableStore.get('controlsValues')};
+
+		if (indivMode && indivEdit && !values) {
+			if (newParams.indiv_group_param[currentGroupName][name]) {
+				newParams.indiv_group_param[currentGroupName][name].value = value;
+			}
+			else {
+				newParams.indiv_group_param[currentGroupName][name] = {
+					state: 'relative',
+					value,
+				};
+			}
+		}
+		else if (values) {
+			newParams = {...newParams, ...values};
+		}
+		else {
+			newParams[name] = value;
+		}
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+
+		debouncedSave(newParams, db);
+		if (force) {
+			//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+			undoWatcher.forceUpdate(patch, label);
+		}
+		else {
+			undoWatcher.update(patch, label);
+		}
+
+	},
+	'/change-param-state': ({name, state, force, label}) => {
+		const db = prototypoStore.get('variant').db;
+		const currentGroupName = prototypoStore.get('indivCurrentGroup').name;
+		const newParams = {...undoableStore.get('controlsValues')};
+
+		newParams.indiv_group_param[currentGroupName][name] = {
+			state,
+			value: state === 'relative' ? 1 : 0,
+		};
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+		debouncedSave(newParams, db);
+
+		if (force) {
+			//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+			undoWatcher.forceUpdate(patch, label);
+		}
+		else {
+			undoWatcher.update(patch, label);
+		}
 	},
 };

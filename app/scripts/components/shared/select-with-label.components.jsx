@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'react-select';
 import classNames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default class SelectWithLabel extends React.Component {
 
@@ -8,13 +9,29 @@ export default class SelectWithLabel extends React.Component {
 		super(props);
 		this.state = {
 			value: props.inputValue,
+			inputValue: '',
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	handleChangeValue(value) {
+		if (Array.isArray(value)) {
+			this.setState({
+				value: undefined,
+			});
+		}
+		else {
+			this.setState({
+				value,
+			});
+		}
+	}
+
+	handleChangeInput(inputValue) {
 		this.setState({
-			value,
-		})
+			inputValue,
+			value: undefined,
+		});
 	}
 
 	render() {
@@ -35,13 +52,30 @@ export default class SelectWithLabel extends React.Component {
 		return (
 			<div className="input-with-label">
 				<label className="input-with-label-label">{this.props.label}{info}{required}</label>
-				<Select ref="input" className={inputClass} options={this.props.options} onChange={(value) => {this.handleChangeValue(value)}} value={this.state.value}/>
+				<Select
+					ref="input"
+					className={inputClass}
+					options={this.props.options}
+					placeholder={this.props.placeholder}
+					noResultsText={this.props.noResultsText}
+					onChange={(value) => {this.handleChangeValue(value);}}
+					onBlurResetsInput={false}
+					onInputChange={(value) => {this.handleChangeInput(value);}}
+					value={this.state.value}/>
 			</div>
 		);
 	}
 
 	get inputValue() {
-		return this.refs ? this.refs.input.props.value : undefined;
+		const selectValue = this.refs
+			? this.refs.input.props.value
+			: undefined;
+
+		const inputValue = this.state
+			? {value: this.state.inputValue}
+			: undefined;
+
+		return selectValue || inputValue;
 	}
 
 	set inputValue(value) {

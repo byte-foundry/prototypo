@@ -1,0 +1,156 @@
+@import "../../variables";
+
+.arianne-thread {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	height:35px;
+}
+
+.arianne-item {
+	display:flex;
+	height:35px;
+	flex:1;
+	align-items: center;
+	position:relative;
+	margin-left: -30px;
+	cursor:pointer;
+
+	&.is-small {
+		margin-left:0px;
+		flex:0;
+	}
+
+	&.arianne-item-displayed .arianne-drop-menu {
+		display:block;
+	}
+
+	&-action {
+		white-space:nowrap;
+		flex:1;
+		height:35px;
+		padding-left: 45px;
+		display:flex;
+		align-items: center;
+		padding-right: 20px;
+		transition: background .2s ease;
+
+		&-label {
+			max-width:230px;
+			overflow:hidden;
+			text-overflow: ellipsis
+		}
+
+		&.is-small {
+			padding: 0;
+		}
+
+		&-drop {
+			height:7px;
+		}
+
+		&-plus {
+			height:15px;
+		}
+
+		&-collection {
+			height: 18px;
+			padding-left: 8px;
+			padding-right: 8px;
+		}
+
+		&-img {
+			padding-left:40px;
+		}
+	}
+
+	&:hover &-action, &:hover &-arrow:after, &.is-active &-action, &.is-active &-arrow:after,
+	&.arianne-item-displayed &-action, &.arianne-item-displayed &-arrow:after{
+		@include themify() {
+			background-color: $theme-background;
+			color: $theme-color;
+			transition: background-color .2s ease;
+		}
+	}
+
+	&:last-of-type &-arrow {
+		background: $dark-grey;
+	}
+
+	&-arrow {
+		width: 30px;
+		height: 35px;
+		position: relative;
+		overflow: hidden;
+		z-index:2;
+
+		&:after {
+			transition: background .2s ease;
+			background: $dark-grey;
+			content: "";
+			width: 35px;
+			height: 35px;
+			box-shadow: 4px -4px 11px 5px rgba(48,48,48, 0.7);
+			position: absolute;
+			top: 0;
+			left: -17px;
+			transform: rotateY(72deg)rotateZ(45deg);
+		}
+	}
+}
+
+.arianne-drop-menu {
+	display:none;
+	position: absolute;
+	left: 0;
+	top: 35px;
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+	margin-left: 2px;
+	z-index: 1;
+	box-shadow: 4px 6px 7px 1px rgba(0,0,0, 0.2);
+	overflow: hidden;
+	width: 250px;
+	background: $white;
+	color: $dark-grey;
+	text-transform: capitalize;
+	font-size: 16px;
+	font-weight: 400;
+
+	&:before {
+		position: absolute;
+		content: "";
+		height: 100%;
+		width: 4px;
+		@include themify() {
+			background-color: $theme-background;
+		}
+		left: 0;
+	}
+
+	&:after {
+		position: absolute;
+		top: -3px;
+		left: -13px;
+		content: "";
+		box-shadow: 4px -4px 5px 5px rgba(48, 48, 48, 0.7);
+		width: 5px;
+		height: 5px;
+		transform: rotate(45deg);
+	}
+
+	&-item {
+		padding: 6px;
+		padding-left: 16px;
+		border-bottom: solid 1px $medium-grey;
+		transition: background .2s ease;
+
+		&:hover {
+			@include themify() {
+				background-color: $theme-background;
+				color: $theme-color;
+			}
+		}
+	}
+}

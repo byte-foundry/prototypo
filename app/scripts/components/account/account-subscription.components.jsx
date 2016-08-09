@@ -15,6 +15,7 @@ export default class AccountSubscription extends React.Component {
 		super(props);
 		this.state = {
 			card: [],
+			credits: undefined,
 		};
 	}
 
@@ -32,6 +33,16 @@ export default class AccountSubscription extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					credits: head.toJS().credits,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 	}
 
 	componentWillUnmount() {
@@ -40,11 +51,16 @@ export default class AccountSubscription extends React.Component {
 
 	render() {
 		const noCard = (
-			<h3>
-				You don't have a card right now. <Link className="account-link" to="/account/details/add-card">Add a card</Link> before subscribing.
-			</h3>
+			<div>
+				<h3 className="account-dashboard-container-small-title">
+					You don't have a card right now.
+				</h3>
+				<p>
+					<Link className="account-link" to="/account/details/add-card">Add a card</Link> before subscribing.
+				</p>
+			</div>
 		);
-		const currency = this.state.card[0] ? getCurrency(this.state.card[0].country) : undefined;
+		const currency = this.state.card && this.state.card[0] ? getCurrency(this.state.card[0].country) : undefined;
 		const currencySymbol = currency === 'USD'
 			? {
 				before: '$',
@@ -57,12 +73,14 @@ export default class AccountSubscription extends React.Component {
 		const periodEnd = this.state.plan ? moment.unix(this.state.plan[0].current_period_end).format('L') : '';
 		const cardDetail = this.state.card ? this.state.card.map((card) => {
 			return (
-				<DisplayWithLabel label="Your card" key={card.id}>
-					<div className="account-subscription-card">
-						<div className="account-subscription-card-number">**** **** **** {card.last4}</div>
-						<div className="account-subscription-card-expiry">will expire on {card.exp_month}/{card.exp_year}</div>
-					</div>
-				</DisplayWithLabel>
+				<div>
+					<DisplayWithLabel label="Your card" key={card.id}>
+						<div className="account-subscription-card">
+							<div className="account-subscription-card-number">**** **** **** {card.last4}</div>
+							<div className="account-subscription-card-expiry">will expire on {card.exp_month}/{card.exp_year}</div>
+						</div>
+					</DisplayWithLabel>
+				</div>
 			);
 		}) : noCard;
 
@@ -71,9 +89,18 @@ export default class AccountSubscription extends React.Component {
 			: false;
 
 		const noPlan = (
-			<h3>
-				You do not have a plan. Subscribe to our pro plan to benefit of the full power of Prototypo
-			</h3>
+			<div>
+				<h3 className="account-dashboard-container-small-title">
+					You do not have a plan for the moment.
+				</h3>
+				<p>
+					<img style={{width: '100%'}} src="assets/images/go-pro.gif" />
+				</p>
+				<p>
+					Subscribe to our <Link className="account-link" to="account/create/choose-a-plan">pro plan</Link> to benefit of the full power of Prototypo without restrictions or buy <Link className="account-link" to="dashboard?buy_credits=true">some credits</Link> to export and use your fonts everywhere!
+				</p>
+				{credits}
+			</div>
 		);
 
 		const planInfos = {
@@ -95,22 +122,39 @@ export default class AccountSubscription extends React.Component {
 			return this.state.plan && this.state.plan[0].plan.id.indexOf(key) !== -1;
 		});
 
+		const credits = (
+			<div>
+				<div className="display-credits">
+					<DisplayWithLabel label="Your export credits">
+						{this.state.credits ? this.state.credits : '0' }
+					</DisplayWithLabel>
+				</div>
+			</div>
+		);
+
 
 		const content = this.state.plan
 			? (
 				<div className="account-base account-subscription">
-					<DisplayWithLabel label="Your plan">
-						{plan.name}
-					</DisplayWithLabel>
+					<div>
+						<DisplayWithLabel label="Your plan">
+							{plan.name}
+						</DisplayWithLabel>
+					</div>
 					<p>
 						Your subscription will automatically renew on <span className="account-emphase">{periodEnd}</span> and you will be charged <span className="account-emphase">{`${currencySymbol.before}${plan.price.toFixed(2)}${currencySymbol.after}`}</span>
 					</p>
 					{cardDetail}
 					{successCard}
+					{credits}
 				</div>
 			)
 			: noPlan;
 
-		return content;
+		return (
+			<div className="account-dashboard-container-main">
+				{content}
+			</div>
+		);
 	}
 }

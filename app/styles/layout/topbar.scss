@@ -1,10 +1,9 @@
 @import "../variables";
 
 #topbar {
-	position:absolute;
 	top:0;
 	width:100%;
-	background-color:$dark-grey;
+	background-color:$darkest-grey;
 	color:$white;
-	z-index:5;
+	z-index:11;
 }

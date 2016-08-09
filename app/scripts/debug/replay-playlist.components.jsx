@@ -3,6 +3,7 @@ import Lifespan from 'lifespan';
 import Classnames from 'classnames';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import JSONPretty from 'react-json-pretty';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -10,17 +11,18 @@ export default class ReplayPlaylist extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/debugStore', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 		.onUpdate(({head}) => {
 				this.setState({
-					details: head.toJS().details,
-					showDetails: head.toJS().showDetails,
+					debugDetails: head.toJS().debugDetails,
+					debugShowDetails: head.toJS().debugShowDetails,
 				});
 			})
 			.onDelete(() => {
@@ -31,9 +33,10 @@ export default class ReplayPlaylist extends React.Component {
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
+
 	render() {
-		const details = this.state.showDetails 
-			? <EventDetails details={this.state.details} />
+		const details = this.state.debugShowDetails
+			? <EventDetails details={this.state.debugDetails} />
 			: false;
 
 		return (
@@ -71,7 +74,7 @@ class Events extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('logStore', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 		.onUpdate(({head}) => {
 				this.setState({
 					patchArray: head.toJS().patchArray,
@@ -108,6 +111,11 @@ class Events extends React.Component {
 }
 
 class Patch extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	render() {
 		const classes = Classnames({
 			event: true,
@@ -136,22 +144,17 @@ class Event extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
-	}
-
-	shouldComponentUpdate(nextProps, nextState) {
-		return (
-			nextState.index !== this.state.index
-		);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/debugStore', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 		.onUpdate(({head}) => {
 				this.setState({
-					index: head.toJS().index,
+					debugIndex: head.toJS().debugIndex,
 				});
 			})
 			.onDelete(() => {
@@ -170,7 +173,7 @@ class Event extends React.Component {
 	render() {
 		const classes = Classnames({
 			event: true,
-			'is-active': this.props.index === this.state.index,
+			'is-active': this.props.index === this.state.debugIndex,
 		});
 
 		return (

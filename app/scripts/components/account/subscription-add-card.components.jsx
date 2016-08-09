@@ -68,56 +68,9 @@ export default class SubscriptionAddCard extends React.Component {
 	}
 
 	render() {
-		const errors = this.state.errors.map((error) => {
-			return <FormError errorText={error} />;
+		const errors = this.state.errors.map((error, index) => {
+			return <FormError key={index} errorText={error} />;
 		});
-		const oldCardData = this.state.infos && this.state.infos.card && this.state.infos.card[0]
-			? (
-				<div>
-					<div>**** **** **** {this.state.infos.card[0].last4}</div>
-					<div> {this.state.infos.card[0].exp_month}/{this.state.infos.card[0].exp_year}</div>
-				</div>
-			)
-			: false;
-		const oldCard = oldCardData
-			? (
-				<div className="columns">
-					<div className="third-column">
-						You already added a card
-					</div>
-					<div className="two-third-column">
-						<DisplayWithLabel nolabel={true}>
-							{oldCardData}
-						</DisplayWithLabel>
-					</div>
-				</div>
-			)
-			: false;
-		const oldBillingData = this.state.infos && this.state.infos.address
-			? (
-				<div>
-					<div>{this.state.infos.buyerName}</div>
-					<div>{this.state.infos.address.building_number} {this.state.infos.address.street_name}</div>
-					<div>{this.state.infos.address.address_details}</div>
-					<div>{this.state.infos.address.city} {this.state.infos.address.postal_code}</div>
-					<div>{this.state.infos.address.region} {this.state.infos.address.country}</div>
-				</div>
-			)
-			: false;
-		const oldBilling = oldBillingData
-			? (
-				<div className="columns">
-					<div className="third-column">
-						You already added a billing address
-					</div>
-					<div className="two-third-column">
-						<DisplayWithLabel nolabel={true}>
-							{oldBillingData}
-						</DisplayWithLabel>
-					</div>
-				</div>
-			)
-			: false;
 
 		const buyerName = this.state.infos.accountValues
 			? this.state.infos.accountValues.firstname + this.state.infos.accountValues.lastname
@@ -125,10 +78,8 @@ export default class SubscriptionAddCard extends React.Component {
 
 		return (
 			<form method="post" onSubmit={(e) => {this.addDetails(e);}} className="account-base subscription-add-card">
-				{oldBilling}
 				<h2>Billing address</h2>
 				<BillingAddress address={{}} buyerName={buyerName} inError={this.state.inError} ref="address"/>
-				{oldCard}
 				<h2>Payment card</h2>
 				<AddCard inError={this.state.inError} ref="card"/>
 				<InputWithLabel ref="vat" label="VAT number" info="(only necessary if you pay with a company card)"/>

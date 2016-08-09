@@ -4,79 +4,33 @@
 	margin-bottom:15px;
 	font-size: 0.8em;
 	position:relative;
+	z-index:1;
 
-	&.is-disabled &-demo-overlay {
+	.is-disabled &-demo-overlay {
 		position:absolute;
-		top: 2px;
-		left:-10px;
-		width: calc(100% + 20px);
+		width:100%;
 		height:100%;
-		background-color: rgba($dark-grey, 0.65);
+		background-color: rgba($dark-grey, 0.80);
 		z-index:2;
 		display:flex;
 		justify-content:center;
 		align-items:center;
 	}
 
+	.is-coming &-demo-overlay-text {
+		opacity:0;
+		transition: opacity .2s ease;
+	}
+
+	.is-coming:hover &-demo-overlay-text {
+		opacity:1;
+	}
+
 	&-container {
 		display: flex;
 		flex-flow: row nowrap;
+		width:100%;
 	}
-
-	&-demo-overlay {
-		&-text {
-			opacity:0;
-			color:$white;
-			font-size: 13px;
-			transition:opacity .2s ease;
-			padding: 5px 15px;
-			position: relative;
-
-			&-more {
-				position: absolute;
-				top: 0;
-				bottom: 0;
-				right: 0;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				overflow: hidden;
-
-				width: 40px;
-				background-color: $green;
-				background-image: url('../../images/add-feature.svg');
-				background-position: center;
-				background-repeat: no-repeat;
-
-				transition: all 500ms ease;
-
-				&-text {
-					opacity: 0;
-					flex-direction: column;
-					padding-left: 60px;
-					transition: all 200ms ease;
-					transition-delay: 200ms;
-				}
-
-				&:hover {
-					width: 270px;
-					background-image: url('../../images/pro-version.svg');
-					background-position: 10% center;
-				}
-
-				&:hover &-text {
-					opacity: 1;
-					padding-left: 10px;
-				}
-			}
-		}
-
-		&:hover &-text {
-			background-color: darken($dark-grey, 2%);
-			opacity:1;
-		}
-	}
-
 
 	&-title {
 		text-transform: uppercase;
@@ -114,7 +68,21 @@
 		-webkit-appearance: textfield;
 
 		&.is-indiv {
-			margin-right:25px;
+			//Do not put more than 43px without checking that it make serif terminal curve go crazy
+			margin-right:43px;
+		}
+	}
+
+	&-demo-overlay {
+		position: absolute;
+		width: 100%;
+
+		&-text {
+			color:$white;
+			font-size: 13px;
+			padding: 5px 15px;
+			display: block;
+			margin-right: 30px;
 		}
 	}
 
@@ -123,6 +91,9 @@
 		background-color: #FFF;
 		margin-top: 2px;
 		flex:1;
+		/* fix a overflow hidden and border-radius error in chrome */
+		-webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
+		-webkit-mask-repeat: repeat;
 
 		&, &-bg, &-handle {
 			border-radius: 1rem;
@@ -131,18 +102,11 @@
 
 		&-bg {
 			height: 1.9rem;
-			background-color: $green;
-			transition: background-color 500ms ease;
+			@include themify() {
+				background-color: $theme-background;
+			}
 
 			&.is-not-advised {
-				background-color:$red;
-			}
-
-			&.is-indiv {
-				background-color:$yellow;
-			}
-
-			&.is-not-advised.is-indiv {
 				background-color:$red;
 			}
 		}
@@ -159,18 +123,19 @@
 			float: right;
 			width: 1.9rem;
 			height: 1.9rem;
-			border: 0.5rem solid $green;
+			@include themify() {
+				border:solid 0.5rem $theme-background;
+			}
 			background-color: #555555;
-			transition: border-color 500ms ease;
 		}
 	}
 
 
 	&.is-coming {
 		.slider-demo-overlay {
-			background-color: rgba($dark-grey, 0.95);
+			background-color: rgba($dark-grey, 0.65);
+			z-index:1;
 			&-text {
-				position: absolute;
 				top: 0;
 				bottom: 0;
 				left: 0;
@@ -187,22 +152,26 @@
 		margin-top:-1rem;
 		margin-left:10%;
 		position: relative;
+		z-index:0;
+
 		.slider-title {
 			color: $medium-grey;
 		}
-		.slider-controller {
+
+		.slider-container {
 			&:before {
 				content: "";
 				position: absolute;
-				border-bottom: 1px solid lighten($dark-grey, 8%);
-				border-left: 1px solid lighten($dark-grey, 8%);
+				border-bottom: 1px solid lighten($dark-grey, 12%);
+				border-left: 1px solid lighten($dark-grey, 12%);
 				width: 20px;
 				height: 50px;
 				top: -23px;
 				left: -15px;
-				z-index: -1;
+				z-index: 0;
 			}
 		}
+
 		.slider-demo-overlay {
 			top: 5px;
 			width: 270px;
@@ -221,53 +190,82 @@
 }
 
 .indiv-switch {
-	flex: 0 0 25px;
+	flex: 0 0 45px;
 	height: 19px;
 	position: relative;
 	margin-left: 5px;
 	margin-top: 2px;
 	cursor:pointer;
+	display: flex;
+	justify-content: space-between;
 
 	&-btn {
-		line-height: 17px;
+		line-height: 19px;
 		height: 19px;
 		width: 19px;
 		text-align: center;
 		border-radius: 50%;
-		position: absolute;
 		transition: all .2s ease;
-		top: 0;
-		left: 5px;
 		z-index:1;
+		font-size:16px;
+		background: $white;
+		color:$dark-grey;
 
 		&:hover {
-			line-height: 23px;
-			height: 25px;
-			width: 25px;
-			left:2px;
+			background: $yellow;
 		}
 
 		&.is-active {
-			z-index:2;
+			background: $yellow;
 		}
 	}
+}
 
-	&-relative {
-		background: $white;
-		color:$dark-grey;
-		line-height: 19px;
+.radio-slider {
+	.radio-buttons-wrap {
+		padding: 0 0 0 0.8em;
 	}
-
-	&-delta {
-		background: $yellow;
-		color:$dark-grey;
+	.radio-button-container{
+		color: $light-grey;
+		margin: 0 8% 3% 0;
 	}
-
-	&:hover &-delta {
-		top:15px;
+	.slider-container {
+		margin: 10px 0 0;
 	}
-
-	&:hover &-relative {
-		top:-15px;
+	label {
+		cursor: pointer;
+		position: relative;
+		text-transform: uppercase;
+	}
+	.box-value-label {
+		display: inline-block;
+		padding: 0 0 0 20px;
+	}
+	.box-value-label::after {
+		background-image: url('/assets/images/radio-button.svg');
+		background-position: 0px 0px;
+		background-repeat: no-repeat;
+		content: "";
+		height: 16px;
+		left: 0px;
+		position: absolute;
+		top: -1px;
+		width: 16px;
+	}
+	input[type="radio"] {
+		height: 0px;
+		visibility: hidden;
+		width: 0px;
+	}
+	input[type="radio"]:checked + .box-value-label::after {
+		background-image: url('/assets/images/radio-button-active.svg');
+	}
+	.radio-buttons-wrap {
+		align-items: center;
+		display: flex;
+		flex-flow: row;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		width: 100%;
 	}
 }

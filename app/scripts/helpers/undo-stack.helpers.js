@@ -1,7 +1,7 @@
 import {Patch} from 'remutable';
 
 const registerToUndoStack = function(remut, storeName, client, lifespan, cb = () => {return;}) {
-	client.getStore('/eventBackLog', lifespan)
+	client.getStore('/prototypoStore', lifespan)
 		.onUpdate(({head}) => {
 			const jsHead = head.toJS();
 			let patch;
@@ -25,10 +25,11 @@ const registerToUndoStack = function(remut, storeName, client, lifespan, cb = ()
 
 //Allow to setup granularity for undo stack
 class BatchUpdate {
-	constructor(remut, storeName, client, lifespan, labelGenerator, cb, criteria = () => { return false; }) {
+	constructor(remut, storeName, propName, client, lifespan, labelGenerator, cb, criteria = () => { return false; }) {
 		registerToUndoStack(remut, storeName, client, lifespan, cb);
 
 		this.storeName = storeName;
+		this.propName = propName;
 		this.client = client;
 		this.criteria = typeof criteria === 'number' ? (newValue, oldValue) => {
 			return Math.abs(newValue - oldValue) > criteria;
@@ -44,7 +45,7 @@ class BatchUpdate {
 			newPatch = Patch.combine(this.patch, patch);
 		}
 
-		if (patch.mutations.values.f && this.criteria(patch.mutations.values.t[prop], patch.mutations.values.f[prop])) {
+		if (patch.mutations[this.propName].f && this.criteria(patch.mutations[this.propName].t[prop], patch.mutations[this.propName].f[prop])) {
 			this.client.dispatchAction('/store-action', {store: this.storeName, newPatch});
 			this.patch = undefined;
 		}

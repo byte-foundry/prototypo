@@ -1,9 +1,15 @@
 import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import InputWithLabel from './input-with-label.components.jsx';
 import SelectWithLabel from './select-with-label.components.jsx';
 
 export default class BillingAddress extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
 	getBuyerName() {
 		return this.refs.buyerName.inputValue;
 	}

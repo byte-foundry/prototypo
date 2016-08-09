@@ -14,18 +14,29 @@ export default class AccountBillingAddress extends React.Component {
 		this.state = {
 			inError: {},
 			errors: [],
+			loaded: false,
 		};
 	}
 
-	componentWillMount() {
+	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+
+		const userStore = await this.client.fetch('/userStore');
+		this.setState({
+			loaded: true,
+			address: userStore.head.toJS().infos.address || {},
+			buyerName: userStore.head.toJS().infos.buyerName || '',
+			errors: userStore.head.toJS().billingForm.errors,
+			inError: userStore.head.toJS().billingForm.inError,
+			loading: userStore.head.toJS().billingForm.loading,
+		});
 
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					address: head.toJS().infos.address,
-					buyerName: head.toJS().infos.buyerName,
+					address: head.toJS().infos.address || {},
+					buyerName: head.toJS().infos.buyerName || '',
 					errors: head.toJS().billingForm.errors,
 					inError: head.toJS().billingForm.inError,
 					loading: head.toJS().billingForm.loading,
@@ -56,7 +67,7 @@ export default class AccountBillingAddress extends React.Component {
 	}
 
 	render() {
-		const billingAddress = this.state.address
+		const billingAddress = this.state.loaded
 			? <BillingAddress ref="address" address={this.state.address} buyerName={this.state.buyerName} inError={this.state.inError}/>
 			: false;
 
@@ -73,7 +84,7 @@ export default class AccountBillingAddress extends React.Component {
 				{billingAddress}
 				{errors}
 				{success}
-				<AccountValidationButton loading={this.state.loading} label="Confirm plan change"/>
+				<AccountValidationButton loading={this.state.loading} label="Confirm address change"/>
 			</form>
 		);
 	}

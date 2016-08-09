@@ -2,7 +2,7 @@ import {hashHistory} from 'react-router';
 import Lifespan from 'lifespan';
 import md5 from 'md5';
 
-import {userStore, couponStore} from '../stores/creation.stores.jsx';
+import {userStore, couponStore, prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
@@ -102,6 +102,123 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 	});
 }
 
+function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency, vat}) {
+	const form = userStore.get('buyCreditsForm');
+
+	form.errors = [];
+	form.inError = {};
+	form.loading = true;
+	const cleanPatch = userStore.set('buyCreditsForm', form).commit();
+
+	localServer.dispatchUpdate('/userStore', cleanPatch);
+
+	if (!fullname || !number || !expMonth || !expYear || !cvc) {
+		form.errors.push('These fields are required');
+		form.inError = {
+			fullname: !fullname,
+			number: !number,
+			expMonth: !expMonth,
+			expYear: !expYear,
+			cvc: !cvc,
+		};
+		form.loading = false;
+		const patch = userStore.set('buyCreditsForm', form).commit();
+
+		localServer.dispatchUpdate('/userStore', patch);
+		return Promise.reject('missing form values');
+	}
+
+
+	return new Promise((resolve, reject) => {
+		window.Stripe.card.createToken({
+			number,
+			cvc,
+			exp_month: expMonth,
+			exp_year: expYear,
+			name: fullname,
+		}, (status, data) => {
+			if (data.error) {
+				form.errors.push(data.error.message);
+				form.loading = false;
+				const patch = userStore.set('buyCreditsForm', form).commit();
+
+				return localServer.dispatchUpdate('/userStore', patch);
+			}
+
+			const infos = userStore.get('infos');
+			const item = {
+				type: 'sku',
+				parent: `5_credits_${currency === 'EUR' ? 'EUR' : 'USD'}`,
+			};
+
+			HoodieApi.buyCredits({
+				// we use tokens instead of source
+				// otherwise backend would attach the card to the customer
+				token: data.id,
+				email: HoodieApi.instance.email,
+				currency_code: currency === 'EUR' ? 'EUR' : 'USD',
+				items: [item],
+			})
+			.then((response) => {
+				const remainingCredits = response ? response.credits : undefined;
+
+				infos.card = [data.card];
+				infos.vat = vat || infos.vat;
+				form.loading = false;
+				const patch = userStore.set('infos', infos).set('buyCreditsForm', form).commit();
+
+				localServer.dispatchUpdate('/userStore', patch);
+				const credits = remainingCredits;
+
+				const creditPatch = prototypoStore.set('credits', credits).commit();
+				localServer.dispatchUpdate('/prototypoStore', creditPatch);
+
+				resolve({credits: remainingCredits});
+			})
+			.catch((err) => {
+				form.errors.push(err.message);
+				form.loading = false;
+				const patch = userStore.set('buyCreditsForm', form).commit();
+
+				localServer.dispatchUpdate('/userStore', patch);
+
+				reject();
+			});
+		});
+	});
+}
+
+/**
+*	Spend credits via hoodie api
+*	@param {object} options - the options of the transaction
+*	@param {number} options.amout - amount of credits to be spent
+*	@returns {promise} promise containing response from hoodie credits spending or an error
+*/
+function spendCredits({amount}) {
+	return new Promise((resolve, reject) => {
+		if (parseInt(amount) > 0) {
+			HoodieApi.spendCredits(amount)
+			.then((response) => {
+				const remainingCredits = response ? response.credits : undefined;
+
+				const credits = remainingCredits;
+
+				const patch = prototypoStore.set('credits', credits).commit();
+
+				localServer.dispatchUpdate('/prototypoStore', patch);
+
+				resolve({credits: remainingCredits});
+			})
+			.catch((err) => {
+				reject(err);
+			});
+		}
+		else {
+			reject();
+		}
+	});
+}
+
 function addBillingAddress({buyerName, address}) {
 	const form = userStore.get('billingForm');
 
@@ -153,7 +270,7 @@ function addBillingAddress({buyerName, address}) {
 }
 
 export default {
-	'/load-customer-data': ({sources, subscriptions, charges}) => {
+	'/load-customer-data': ({sources, subscriptions, charges, metadata}) => {
 		const infos = _.cloneDeep(userStore.get('infos'));
 
 		if (sources && sources.data.length > 0) {
@@ -164,6 +281,11 @@ export default {
 		}
 		if (charges && charges.data.length > 0) {
 			infos.charges = charges.data;
+		}
+		if (metadata && metadata.credits) {
+			const credits = parseInt(metadata.credits, 10);
+			const creditPatch = prototypoStore.set('credits', credits).commit();
+			localServer.dispatchUpdate('/userStore', creditPatch);
 		}
 
 		const patch = userStore.set('infos', infos).commit();
@@ -234,22 +356,24 @@ export default {
 		HoodieApi.login(username, password)
 			.then(async () => {
 				await loadStuff();
-				hashHistory.push(dashboardLocation);
+				window.addEventListener('fontInstance.loaded', () => {
+					hashHistory.push(dashboardLocation);
 
-				window.Intercom('boot', {
-					app_id: 'mnph1bst',
-					email: username,
-					widget: {
-						activator: '#intercom-button',
-					},
+					window.Intercom('boot', {
+						app_id: 'mnph1bst',
+						email: username,
+						widget: {
+							activator: '#intercom-button',
+						},
+					});
+
+					form.errors = [];
+					form.inError = {};
+					form.loading = false;
+					const endPatch = userStore.set('signinForm', form).commit();
+
+					localServer.dispatchUpdate('/userStore', endPatch);
 				});
-
-				form.errors = [];
-				form.inError = {};
-				form.loading = false;
-				const endPatch = userStore.set('signinForm', form).commit();
-
-				localServer.dispatchUpdate('/userStore', endPatch);
 			})
 			.catch((err) => {
 				form.errors.push(
@@ -331,14 +455,19 @@ export default {
 					'buyer_email': firstname + curedLastname,
 				});
 			})
-			.then(async (data) => {
-				console.log(data);
+			.then(async () => {
 				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname};
 				const patch = userStore.set('infos', {accountValues}).commit();
 				await AccountValues.save({typeface: 'default', values: {accountValues}});
 				localServer.dispatchUpdate('/userStore', patch);
 				if (toLocation.pathname === '/dashboard') {
 					await loadStuff(accountValues);
+					window.addEventListener('fontInstance.loaded', () => {
+						hashHistory.push(toLocation);
+					});
+				}
+				else {
+					hashHistory.push(toLocation);
 				}
 
 				form.errors = [];
@@ -348,7 +477,7 @@ export default {
 
 				HoodieApi.instance.plan = 'free_none';
 				HoodieApi.instance.email = username;
-				hashHistory.push(toLocation);
+				fbq('track', 'Lead');
 				return localServer.dispatchUpdate('/userStore', endPatch);
 			})
 			.catch((err) => {
@@ -381,6 +510,8 @@ export default {
 		}
 
 		const patch = userStore.set('choosePlanForm', form).commit();
+
+		window.Intercom('trackEvent', `chosePlan${plan}`);
 
 		return localServer.dispatchUpdate('/userStore', patch);
 	},
@@ -419,7 +550,19 @@ export default {
 
 		localServer.dispatchUpdate('/userStore', patch);
 
-		hashHistory.push(pathQuery);
+		if (infos.isCouponValid) {
+			if (infos.isCouponValid.shouldSkipCard) {
+				hashHistory.push({
+					pathname: '/account/create/confirmation',
+				});
+			}
+			else {
+				hashHistory.push(pathQuery);
+			}
+		}
+		else {
+			hashHistory.push(pathQuery);
+		}
 	},
 	'/add-card': (options) => {
 		const toPath = {
@@ -453,6 +596,8 @@ export default {
 			return addBillingAddress(options);
 		})
 		.then(() => {
+			fbq('track', 'AddPaymentInfo');
+			window.Intercom('trackEvent', 'addedCardAndAdress');
 			hashHistory.push(toPath);
 		});
 	},
@@ -491,6 +636,7 @@ export default {
 			});
 
 			ga('ecommerce:send');
+			fbq('track', 'CompleteRegistration');
 
 			await loadStuff();
 
@@ -501,10 +647,7 @@ export default {
 			});
 
 			localServer.dispatchUpdate('/userStore', patch);
-			HoodieApi.getCustomerInfo()
-			.then((customer) => {
-				localClient.dispatchAction('/load-customer-data', customer);
-			});
+			localClient.dispatchAction('/load-customer-data', customer);
 		}).catch((err) => {
 
 			if ((/no such coupon/i).test(err.message)) {
@@ -590,6 +733,31 @@ export default {
 				const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
 
 				return localServer.dispatchUpdate('/userStore', patch);
+			});
+	},
+	'/buy-credits': (options) => {
+		buyCredits(options)
+			.then((data) => {
+				localClient.dispatchAction('/store-value', {
+					buyCreditsNewCreditAmount: data.credits,
+					uiAskSubscribeFamily: false,
+					uiAskSubscribeVariant: false,
+				});
+				window.Intercom('update', {
+					'export_credits': data.credits,
+				});
+			})
+			.catch(() => {
+				return;
+			});
+	},
+	'/spend-credits': (options) => {
+		spendCredits(options)
+			.then((data) => {
+				localClient.dispatchAction('/store-value', {spendCreditsNewCreditAmount: data.credits});
+				window.Intercom('update', {
+					'export_credits': data.credits,
+				});
 			});
 	},
 };

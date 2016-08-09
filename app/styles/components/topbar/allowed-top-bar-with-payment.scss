@@ -1,0 +1,132 @@
+@import "../../variables";
+
+.allowed-top-bar-with-payment {
+	position:relative;
+
+	&-subscribe {
+		background-image: url('../../../images/pro-version.svg');
+		background-position: 50% 25%;
+		background-repeat: no-repeat;
+		padding-top: 17.5%;
+	}
+
+	&-credits {
+		background-image: url('../../../images/buy-credits.svg');
+		background-position: 50% 25%;
+		background-repeat: no-repeat;
+		padding-top: 17.5%;
+	}
+
+	&-demo-overlay {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+		background: rgba(59,59,59,0.9);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 19px;
+		padding: 20px;
+	}
+
+	&-demo-overlay {
+		position: absolute;
+		width: 100%;
+		opacity: 0;
+		transition: opacity .3s ease;
+
+		&:hover {
+			opacity:1;
+		}
+
+		&-text {
+			color:$white;
+			font-size: 14px;
+			line-height: 1.3;
+			padding: 5px 10px;
+			display: block;
+			margin-right: 30px;
+
+			&-more {
+				top: 0;
+				bottom: 0;
+				right: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				overflow: hidden;
+				position:absolute;
+
+				width: 40px;
+				@include themify() {
+					background-color: $theme-background;
+				}
+
+				background-image: url('../../../images/add-feature.svg');
+				background-position: center;
+				background-repeat: no-repeat;
+
+				transition: all 500ms ease !important;
+
+				&-half {
+					height: 100%;
+					flex:1;
+				}
+
+
+				&-wrap {
+					align-items: center;
+					display: flex;
+					height: 100%;
+					justify-content: center;
+					opacity: 0;
+					transition: all 200ms ease;
+					width: 100%;
+
+					&:hover {
+						@include themify() {
+							background-color: darken($theme-background, 5%);
+							color: $theme-color;
+						}
+					}
+				}
+
+				&-text {
+					flex-direction: column;
+					opacity: 0;
+					padding: 100px 60px;
+					text-align: center;
+					width: 100%;
+					line-height: 1.2;
+
+					&-separator {
+						opacity: 0;
+						border-right: 1px solid $white;
+						height: 100%;
+					}
+
+				}
+
+				&:hover {
+					background-image: none;
+					width: 100%;
+				}
+
+				&:hover &-text {
+					opacity: 1;
+					padding-left: 10px;
+					padding-right: 10px;
+
+					&-separator {
+						opacity: 1;
+					}
+				}
+
+				&:hover &-wrap {
+					opacity: 1;
+				}
+			}
+		}
+	}
+}

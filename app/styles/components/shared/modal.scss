@@ -1,0 +1,69 @@
+@import "../../variables";
+
+.modal {
+	position:absolute;
+	z-index:12;
+	@include themify() {
+		background-color: rgba($theme-background, 0.9);
+	}
+	width:100%;
+	height:100%;
+	display:flex;
+	justify-content: center;
+	align-items: center;
+	top:0;
+
+	&-enter {
+		opacity:0;
+
+		&#{&}-active {
+			opacity: 1;
+			transition: opacity .2s ease-out;
+			.modal-container {
+				transform:scaleX(1) scaleY(1);
+				transition: transform .2s ease-out;
+			}
+		}
+
+		.modal-container {
+			transform:scaleX(0.3) scaleY(0.3);
+		}
+	}
+
+	&-leave {
+		opacity:1;
+
+		&#{&}-active {
+			opacity: 0;
+			transition: opacity .2s ease-out;
+			.modal-container {
+				transform:scaleX(0.3) scaleY(0.3);
+				transition: transform .2s ease-out;
+			}
+		}
+
+		.modal-container {
+			transform:scaleX(1) scaleY(1);
+		}
+	}
+
+	&-container {
+		background-color: $white;
+		border-radius: 7px;
+		min-width: 500px;
+		max-width: 800px;
+		box-shadow: 5px 5px 6px 1px rgba(0, 0 ,0, 0.2);
+
+		&-title {
+			font-size: 18px;
+			padding-left: 40px;
+		}
+
+		&-content {
+			padding: 20px 40px 40px;
+			.sign-in-form {
+				padding: 0;
+			}
+		}
+	}
+}

@@ -1,12 +1,11 @@
 sudo: false
 language: node_js
 node_js:
-- '4.2'
+- '6.3'
 before_install:
 - npm install -g uglifyjs
 after_install:
 - npm dedupe
-- cd ./node_modules/babel-core && npm install babel-generator@6.5.0
 - npm shrinkwrap --dev
 - cat npm-shrinkwrap.json
 script:
@@ -17,8 +16,10 @@ after_success:
 - '[ $TRAVIS_BRANCH == master ] && surge --project ./dist --domain app.prototypo.io'
 - '[ $TRAVIS_BRANCH == release ] && surge --project ./dist --domain beta.prototypo.io'
 - '[ $TRAVIS_BRANCH == develop ] && surge --project ./dist --domain dev.prototypo.io'
+- '[ $TRAVIS_BRANCH == feat/new-ux ] && surge --project ./dist --domain sandbox1.prototypo.io'
 branches:
   only:
     - master
     - develop
     - release
+    - feat/new-ux

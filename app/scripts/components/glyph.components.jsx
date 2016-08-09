@@ -1,8 +1,14 @@
 import React from 'react';
-import LocalClient from '../stores/local-client.stores.jsx';
 import classNames from 'classnames';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
+import LocalClient from '../stores/local-client.stores.jsx';
 
 export default class Glyph extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
 
 	selectGlyph() {
 		const client = LocalClient.instance();

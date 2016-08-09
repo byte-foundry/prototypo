@@ -45,7 +45,12 @@ export default class SubscriptionChoosePlan extends React.Component {
 		if (this.props.location.query.coupon) {
 			this.client.dispatchAction('/choose-plan', {
 				coupon: this.props.location.query.coupon,
-				plan: this.props.location.query.plan
+				plan: this.props.location.query.plan,
+			});
+		}
+		if (this.props.location.query.plan) {
+			this.client.dispatchAction('/choose-plan', {
+				plan: this.props.location.query.plan,
 			});
 		}
 	}
@@ -65,6 +70,8 @@ export default class SubscriptionChoosePlan extends React.Component {
 	}
 
 	render() {
+		window.Intercom('trackEvent', 'isOnChoosePlan');
+
 		const error = this.state.error ? <FormError errorText={this.state.error}/> : false;
 
 		return (
@@ -82,7 +89,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 					placeholder="ABC123"
 					value={this.state.couponValue}
 					handleOnChange={this.handleCouponChange} />
-				{this.state.isCouponValid ? `✓ ${this.state.isCouponValid}` : null }
+				{this.state.isCouponValid ? `✓ ${this.state.isCouponValid.label}` : null }
 				<div className="subscription-choose-plan-info">
 					* Taxes are offered for private individuals. Currency ultimately depends on the country where your credit card has been issued.
 				</div>

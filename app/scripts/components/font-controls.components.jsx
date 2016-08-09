@@ -1,11 +1,13 @@
 import React from 'react';
-import {ControlsTabs, ControlsTab} from './controls-tabs.components.jsx';
-import {Sliders} from './sliders.components.jsx';
 import Lifespan from 'lifespan';
-import LocalClient from '../stores/local-client.stores.jsx';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import LocalServer from '../stores/local-server.stores.jsx';
-import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
+import LocalClient from '../stores/local-client.stores.jsx';
+
+import {ControlsTabs, ControlsTab} from './controls-tabs.components.jsx';
 import {FontValues} from '../services/values.services.js';
+import {Sliders} from './sliders.components.jsx';
 
 export default class FontControls extends React.Component {
 
@@ -13,152 +15,59 @@ export default class FontControls extends React.Component {
 		super(props);
 		this.state = {
 			tabControls: 'Func',
+			currentGroup: {},
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
-		const server = new LocalServer().instance;
 
-		const fontControls = await this.client.fetch('/fontControls');
-		const fontParameters = await this.client.fetch('/fontParameters');
-		const fontVariant = await this.client.fetch('/fontVariant');
-		const typeface = fontVariant.get('variant') || {};
+		const prototypoStore = await this.client.fetch('/prototypoStore');
+		const undoableStore = await this.client.fetch('/undoableStore');
 
-		const debouncedSave = _.debounce((values) => {
-			FontValues.save({
-				typeface: typeface.db || 'default',
-				values,
-			});
-		}, 300);
-
-		this.undoWatcher = new BatchUpdate(fontControls,
-			'/fontControls',
-			this.client,
-			this.lifespan,
-			(name) => {
-				return `modifier ${name}`;
-			},
-			(headJS) => {
-				debouncedSave(headJS.values);
-			}
-			);
-
-		server.on('action', ({path, params}) => {
-			if (path === '/change-param') {
-				const newParams = {};
-
-				Object.assign(newParams, fontControls.get('values'));
-
-				if (this.state.indivMode && this.state.indivEdit && !params.values) {
-					if (newParams.indiv_group_param[this.state.currentGroup][params.name]) {
-						newParams.indiv_group_param[this.state.currentGroup][params.name].value = params.value;
-					}
-					else {
-						newParams.indiv_group_param[this.state.currentGroup][params.name] = {
-							state: 'relative',
-							value: params.value,
-						};
-					}
-				}
-				else if (params.values) {
-					_.assign(newParams, params.values);
-				}
-				else {
-						newParams[params.name] = params.value;
-				}
+		this.setState({
+			typeface: prototypoStore.get('variant') || {},
+		});
 
 
-				const patch = fontControls.set('values', newParams).commit();
-
-				server.dispatchUpdate('/fontControls', patch);
-
-				if (params.force) {
-
-					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
-					this.undoWatcher.forceUpdate(patch, params.label);
-					debouncedSave(newParams);
-				}
-				else {
-
-					this.undoWatcher.update(patch, params.label);
-
-				}
-
-			}
-			else if (path === '/change-param-state') {
-				const newParams = {};
-
-				Object.assign(newParams, fontControls.get('values'));
-
-				newParams.indiv_group_param[this.state.currentGroup][params.name] = {
-					state: params.state,
-					value: params.state === 'relative' ? 1 : 0,
-				};
-
-				const patch = fontControls.set('values', newParams).commit();
-
-				server.dispatchUpdate('/fontControls', patch);
-
-				if (params.force) {
-
-					//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
-					this.undoWatcher.forceUpdate(patch, params.label);
-					debouncedSave(newParams);
-				}
-				else {
-
-					this.undoWatcher.update(patch, params.label);
-
-				}
-			}}, this.lifespan);
-
-		this.client.getStore('/fontTab', this.lifespan)
+		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				const headJS = head.toJS();
 
 				this.setState({
-					tabControls: headJS.tab,
-				});
-			})
-			.onDelete(() => {this.setState(undefined);});
-
-		this.client.getStore('/fontControls', this.lifespan)
-			.onUpdate(({head}) => {
-				const headJS = head.toJS();
-
-				this.setState({
-					values: headJS.values,
-				});
-				this.client.dispatchAction('/update-font', headJS.values);
-			})
-			.onDelete(() => {this.setState(undefined);});
-
-		this.client.getStore('/individualizeStore', this.lifespan)
-			.onUpdate(({head}) => {
-				const headJS = head.toJS();
-
-				this.setState({
+					tabControls: headJS.fontTab,
+					parameters: headJS.fontParameters,
+					typeface: headJS.variant,
 					indivMode: headJS.indivMode,
-					indivEdit: headJS.indivEdit,
-					currentGroup: headJS.currentGroup,
+					indivEdit: headJS.indivEditingParams,
+					currentGroup: headJS.indivCurrentGroup || {},
 				});
 			})
-			.onDelete(() => {this.setState(undefined);});
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 
-		this.client.getStore('/fontParameters', this.lifespan)
+		this.client.getStore('/undoableStore', this.lifespan)
 			.onUpdate(({head}) => {
 				const headJS = head.toJS();
 
+				if (this.state.values !== headJS.controlsValues) {
+					this.client.dispatchAction('/update-font', headJS.controlsValues);
+				}
+
 				this.setState({
-					parameters: headJS.parameters,
+					values: headJS.controlsValues,
 				});
 			})
-			.onDelete(() => {this.setState(undefined);});
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 
-		const parameters = fontParameters.get('parameters');
-		const values = fontControls.get('values');
+		const parameters = prototypoStore.get('fontParameters');
+		//TODO(franz): setup a getInitialState
+		const values = undoableStore.get('controlsValues');
 
 		this.setState({
 			parameters,
@@ -183,13 +92,13 @@ export default class FontControls extends React.Component {
 						values={this.state.values}
 						indivMode={this.state.indivMode}
 						indivEdit={this.state.indivEdit}
-						currentGroup={this.state.currentGroup}/>
+						currentGroup={this.state.currentGroup.name}/>
 				</ControlsTab>
 			);
 		});
 
 		return (
-			<div className="font-controls">
+			<div className="font-controls" id="sidebar">
 				<ControlsTabs tab={this.state.tabControls} >
 					{tabs}
 				</ControlsTabs>

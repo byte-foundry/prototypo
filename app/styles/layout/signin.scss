@@ -40,6 +40,10 @@
 		width:100%;
 		padding:30px 30px 10px;
 		flex-direction:column;
+
+		& .input-with-label {
+			flex: auto;
+		}
 	}
 
 	&-help-needed {

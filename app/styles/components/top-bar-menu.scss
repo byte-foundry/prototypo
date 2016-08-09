@@ -18,6 +18,7 @@
 		border-right: 1px solid lighten($dark-grey, 3%);
 
 		&.is-aligned-right {
+			border-right: none;
 			float:right;
 
 			& .top-bar-menu-item-dropdown {
@@ -33,23 +34,60 @@
 					width: 4px;
 					height: 4px;
 					border-radius: 50%;
-					background-color: $green;
+					@include themify() {
+						background-color: $theme-background;
+					}
 
 					position: absolute;
 					right: 3px;
 					top: calc(50% - 2px);
 				}
 			}
+			& .top-bar-menu-link {
+				align-items: center;
+				display: flex;
+				height: 35px;
+				justify-content: center;
+				width: 35px;
+
+				& img {
+					height: 18px;
+					width: 18px;
+				}
+			}
+		}
+
+		&-icon {
+			width: 35px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 35px;
+
+			// Prototypo icon is not (yet) a link
+			&:hover {
+				background-color: $white;
+				cursor: default;
+			}
+
+			&-img {
+				width:23px;
+			}
 		}
 
 		&.is-icon-menu {
-			padding:0 10px;
-			min-width: 25px;
+			padding:0;
+			min-width: 35px;
+			background: $white;
 			// span {
 			// 	float: left;
 			// 	padding: 5px 0 0 10px;
 			// 	color: $medium-grey;
 			// }
+
+			&.img-dark-background {
+				background: $black;
+			}
 		}
 
 		&.is-icon-menu:hover {
@@ -81,7 +119,10 @@
 				bottom:0;
 				left:0;
 				width:5px;
-				background-color:$green;
+				z-index:2;
+				@include themify() {
+					background-color: $theme-background;
+				}
 			}
 
 			&-item {
@@ -93,7 +134,9 @@
 				height:35px;
 				padding-left:20px;
 				cursor:pointer;
-				border-bottom: 1px solid lighten($dark-grey,5%);
+				border-bottom: 1px solid lighten($light-grey,5%);
+				color: $dark-grey;
+				background-color: $white;
 
 				&.is-checkbox {
 					background-image: url('../../images/checkbox.svg');
@@ -120,7 +163,10 @@
 				}
 
 				&:hover {
-					background-color:$green;
+					@include themify() {
+						background-color: $theme-background;
+						color: $theme-color;
+					}
 				}
 
 				&-shortcut {
@@ -131,12 +177,28 @@
 			}
 		}
 
-		&:hover {
-			background-color:$green;
+		&:hover, &.topbaritem-displayed {
+			@include themify() {
+				background-color: $theme-background;
+				color: $theme-color;
+			}
 		}
 
-		&:hover &-dropdown {
+		&.no-hover:hover {
+			background: transparent;
+		}
+
+		&.is-centered {
+			float:none;
+			width:200px;
+			margin:auto;
+		}
+
+		.topbaritem-displayed &-dropdown {
 			height:auto;
 		}
 	}
+}
+.credits-alt-label {
+	padding: 0 10px 0 0;
 }

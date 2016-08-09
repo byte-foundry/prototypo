@@ -74,11 +74,10 @@ export default class AccountSidebar extends React.Component {
 
 		return (
 			<div className="account-sidebar">
-				<Link className="account-button" to="/dashboard">Go to the app</Link>
 				<ul className="account-sidebar-menu">
 					<li className={classProfile}><Link to="/account/profile">My profile</Link>
 						<ul className="account-sidebar-menu-item-options">
-							<li className={classChangePassword}><Link to="/account/profile/change-password">change password</Link></li>
+							<li className={classChangePassword}><Link to="/account/profile/change-password">Change password</Link></li>
 						</ul>
 					</li>
 					<li className={classDetails}><Link to="/account/details">Account settings</Link>
