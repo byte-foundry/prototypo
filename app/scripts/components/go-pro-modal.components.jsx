@@ -1,5 +1,6 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import vatrates from 'vatrates';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -8,6 +9,7 @@ import Modal from './shared/modal.components.jsx';
 export default class GoProModal extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.goSubscribe = this.goSubscribe.bind(this);
 		this.goCredits = this.goCredits.bind(this);
@@ -15,6 +17,32 @@ export default class GoProModal extends React.Component {
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
+	}
+
+	componentDidMount() {
+		const url = '//freegeoip.net/json/';
+
+		fetch(url)
+			.then((response) => {
+				if (response) {
+					return response.json();
+				}
+			})
+			.then((response) => {
+				if (response.country_code in vatrates) {
+					this.setState({
+						currency: '€',
+					});
+				}
+				else {
+					this.setState({
+						currency: '$',
+					});
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	}
 
 	goSubscribe() {
@@ -43,17 +71,17 @@ export default class GoProModal extends React.Component {
 							<div className="go-pro-choice-plans">
 								<p className="go-pro-choice-plan">
 									<span className="go-pro-choice-plan-title">Monthly plan</span>
-									<br/>15/month without commitment
+									<br/>15{this.state.currency}/month without commitment
 								</p>
 								<p className="go-pro-choice-plan">
 									<span className="go-pro-choice-plan-title">Annual plan</span>
-									<br/>99/year: save more than 5 months!
+									<br/>99{this.state.currency}/year save more than 5 months!
 								</p>
 							</div>
 						</div>
 						<div className="go-pro-choice go-pro-credits" onClick={this.goCredits}>
 							<img src="../assets/images/buy-credits-big.svg" />
-							<h2 className="go-pro-choice-title">Buy 5 export credits for 5!</h2>
+							<h2 className="go-pro-choice-title">Buy 5 export credits for 5{this.state.currency}!</h2>
 							<p className="go-pro-choice-subtitle">You are free to use these credits as you like. <br/>No time limit.</p>
 							<p><span className="go-pro-choice-plan-title">Exporting one font cost 1 credits.</span></p>
 						</div>

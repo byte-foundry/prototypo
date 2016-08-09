@@ -99,7 +99,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				title: 'Individualization Groups',
 				text: <div>
 					<p>Individualization groups are awesome if you want to correct some shapes on a small set of glyphs.</p>
-					<p>Choose a name for your group and select the glyphs that you want to tweek.</p>
+					<p>Choose a name for your group and select the glyphs that you want to tweak.</p>
 					<p>Be careful, glyphs can only be part of only one individualization group.</p>
 				</div>,
 				selector: '.create-param-group',
