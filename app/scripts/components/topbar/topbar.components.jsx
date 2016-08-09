@@ -281,7 +281,6 @@ export default class Topbar extends React.Component {
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Help">
 						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
-						<TopBarMenuDropdownItem name="Submit an issue on GitHub" handler={() => { window.open('https://github.com/byte-foundry/prototypo/issues', '_blank'); }}/>
 						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq', '_blank'); }}/>
 					</TopBarMenuDropdown>
 					{exporting}
