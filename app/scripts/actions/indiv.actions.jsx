@@ -50,7 +50,7 @@ export default {
 	'/toggle-individualize': ({targetIndivValue}) => {
 		const oldValue = prototypoStore.get('indivMode');
 
-		const newValue = targetIndivValue || !oldValue;
+		const newValue = targetIndivValue !== undefined ? targetIndivValue : !oldValue;
 		const groups = Object.keys(undoableStore.get('controlsValues').indiv_group_param || {});
 		const groupsAndGlyphs = getGroupsAndGlyphsFromGroups(groups);
 
