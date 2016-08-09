@@ -32,7 +32,11 @@ export default class AccountInvoiceList extends React.Component {
 	render() {
 		const invoices = this.state.charges ? _.map(this.state.charges, (invoice) => {
 			return <InvoiceLink invoice={invoice} key={invoice.id}/>;
-		}) : false;
+		}) : (
+			<p>
+				You haven't any invoices for the moment.
+			</p>
+		);
 
 		return (
 			<div className="account-base">
