@@ -33,7 +33,7 @@ export default class AccountHome extends React.Component {
 			<div className="account-base account-home">
 				<h1>Hi {this.state.firstname}!</h1>
 				<p>
-					Welcome to prototypo new account dashboard. You'll find all the necessary info to manage your subscription and billing here.
+					Welcome to your Prototypo account dashboard. You'll find all the necessary info to manage your subscription and billing here.
 				</p>
 			</div>
 		);
