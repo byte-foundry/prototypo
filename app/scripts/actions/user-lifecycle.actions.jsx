@@ -738,7 +738,11 @@ export default {
 	'/buy-credits': (options) => {
 		buyCredits(options)
 			.then((data) => {
-				localClient.dispatchAction('/store-value', {buyCreditsNewCreditAmount: data.credits});
+				localClient.dispatchAction('/store-value', {
+					buyCreditsNewCreditAmount: data.credits,
+					uiAskSubscribeFamily: false,
+					uiAskSubscribeVariant: false,
+				});
 				window.Intercom('update', {
 					'export_credits': data.credits,
 				});

@@ -462,7 +462,7 @@ class VariantInfo extends React.Component {
 		const freeUser = HoodieApi.instance.plan.indexOf('free_') !== -1;
 		const hasEnoughCredits = this.props.credits !== undefined
 			&& this.props.credits > 0
-			&& (this.props.otfCreditCost * this.props.variants.length) < this.props.credits;
+			&& this.props.otfCreditCost < this.props.credits;
 		const canExport = !freeUser || hasEnoughCredits;
 		const downloadLabel = this.props.variantToExport
 			? `${this.props.exportedVariant} / ${this.props.variantToExport}`
