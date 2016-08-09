@@ -105,7 +105,7 @@ pleaseWait.instance = pleaseWait.pleaseWait({
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Route, IndexRoute, hashHistory} from 'react-router';
+import {Router, Route, IndexRoute, hashHistory, IndexRedirect} from 'react-router';
 
 import Dashboard from './components/dashboard.components.jsx';
 import SitePortal from './components/site-portal.components.jsx';
@@ -379,10 +379,11 @@ selectRenderOptions(
 							<IndexRoute component={Register}/>
 						</Route>
 						<Route component={AccountApp} path="account">
+							<IndexRedirect to="home" />
 							<Route path="billing" component={AccountDashboard} name="billing" onEnter={redirectToLogin}>
 								<IndexRoute component={AccountInvoiceList}/>
 							</Route>
-							<Route component={AccountDashboard} name="home" onEnter={redirectToLogin}>
+							<Route component={AccountDashboard} path="home" name="home" onEnter={redirectToLogin}>
 								<IndexRoute component={AccountHome}/>
 							</Route>
 							<Route component={AccountDashboard} path="success" name="success" onEnter={redirectToLogin}>

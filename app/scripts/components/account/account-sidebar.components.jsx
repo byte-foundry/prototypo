@@ -31,6 +31,11 @@ export default class AccountSidebar extends React.Component {
 	}
 
 	render() {
+		const classHome = classNames({
+			"is-active": this.context.router.isActive('account/home'),
+			"account-sidebar-menu-item": true,
+			"account-sidebar-menu-home": true,
+		});
 		const classProfile = classNames({
 			"is-active": this.context.router.isActive('account/profile'),
 			"account-sidebar-menu-item": true,
@@ -44,6 +49,11 @@ export default class AccountSidebar extends React.Component {
 		const classChangePassword = classNames({
 			"account-sidebar-menu-item-options-item": true,
 			"is-active": this.context.router.isActive('account/profile/change-password'),
+		});
+		const classBilling = classNames({
+			"is-active": this.context.router.isActive('account/billing'),
+			"account-sidebar-menu-item": true,
+			"account-sidebar-menu-billing": true,
 		});
 		const classBillingAddress = classNames({
 			"account-sidebar-menu-item-options-item": true,
@@ -75,6 +85,7 @@ export default class AccountSidebar extends React.Component {
 		return (
 			<div className="account-sidebar">
 				<ul className="account-sidebar-menu">
+					<li className={classHome}><Link to="/account/home">Home</Link></li>
 					<li className={classProfile}><Link to="/account/profile">My profile</Link>
 						<ul className="account-sidebar-menu-item-options">
 							<li className={classChangePassword}><Link to="/account/profile/change-password">Change password</Link></li>
@@ -83,7 +94,7 @@ export default class AccountSidebar extends React.Component {
 					<li className={classDetails}><Link to="/account/details">Account settings</Link>
 						{detailsMenu}
 					</li>
-					<li className="account-sidebar-menu-item account-sidebar-menu-billing"><Link to="account/billing">Billing history</Link></li>
+					<li className={classBilling}><Link to="/account/billing">Billing history</Link></li>
 				</ul>
 			</div>
 		);
