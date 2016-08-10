@@ -180,7 +180,7 @@ function setupHoodie(data) {
 	HoodieApi.instance.pouch = db.hoodieApi();
 	HoodieApi.instance.hoodieId = id;
 	HoodieApi.instance.email = response.name.split('/')[1];
-	HoodieApi.instance.plan = getPlan(response.roles);
+	HoodieApi.instance.plan = getPlan(response.roles) || "kickstarter";
 
 	if (hoodie.stripe) {
 		hoodie.stripe.customers.retrieve({includeCharges: true})
