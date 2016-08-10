@@ -356,31 +356,6 @@ class TopBarMenuDropdownItem extends React.Component {
 	}
 }
 
-class TopBarMenuDropdownCheckBox extends React.Component {
-	componentWillMount() {
-
-	}
-
-	render() {
-		if (process.env.__SHOW_RENDER__) {
-			console.log('[RENDER] topbarmenudropdowncheckbox');
-		}
-		const classes = classNames({
-			'top-bar-menu-item-dropdown-item': true,
-			'is-checkbox': true,
-			'is-disabled': this.props.disabled,
-		});
-
-		return (
-			<li className={classes} onClick={this.props.handler}>
-				<CheckBoxWithImg checked={this.props.checked}/>
-				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
-				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
-			</li>
-		);
-	}
-}
-
 class TopBarMenuIcon extends React.Component {
 
 	static getHeader(props) {
@@ -406,7 +381,6 @@ export {
 	TopBarMenu,
 	TopBarMenuDropdown,
 	TopBarMenuDropdownItem,
-	TopBarMenuDropdownCheckBox,
 	TopBarMenuAction,
 	TopBarMenuIcon,
 	TopBarMenuLink,

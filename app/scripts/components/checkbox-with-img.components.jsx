@@ -1,5 +1,6 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import classNames from 'classnames';
 
 export default class CheckBoxWithImg extends React.Component {
 	constructor(props) {
@@ -24,6 +25,13 @@ export default class CheckBoxWithImg extends React.Component {
 
 		let checkbox;
 
+		const classes = classNames({
+			'checkbox-with-img': true,
+			'checkbox-hover': this.state.hovered,
+			'': this.props.checked && !this.state.hovered,
+			'checkbox-checked': !this.props.checked && !this.state.hovered,
+		});
+
 		if (this.state.hovered) {
 			checkbox = <img src="assets/images/checkbox-hover.svg"/>;
 		}
@@ -38,7 +46,7 @@ export default class CheckBoxWithImg extends React.Component {
 			<div
 				onMouseEnter={() => {this.changeHover(true);}}
 				onMouseLeave={() => {this.changeHover(false);}}
-				className="checkbox-with-img">
+				className={classes}>
 				{checkbox}
 			</div>
 		);

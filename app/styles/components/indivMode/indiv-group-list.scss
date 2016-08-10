@@ -33,7 +33,7 @@
 		content:'';
 		width: 12px;
 		height:20px;
-		background: url('/assets/images/indiv-group-chevron.svg');
+		background: url('../../../images/indiv-group-chevron.svg');
 		display:block;
 		position:absolute;
 		right:10px;
@@ -65,7 +65,7 @@
 		background: $dark-grey;
 
 		&:after {
-			background: url('/assets/images/indiv-group-chevron-hover.svg');
+			background: url('../../../images/indiv-group-chevron-hover.svg');
 		}
 	}
 

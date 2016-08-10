@@ -49,16 +49,16 @@
 	&-icon {
 		width: 20px;
 		height: 20px;
-		background: url('/assets/images/view-menu.svg');
+		background: url('../../../images/view-menu.svg');
 		cursor:pointer;
 		transition: transform .4s ease, background .1s ease-out .1s;
 
 		&:hover, &.is-active {
-			background: url('/assets/images/view-menu-hover.svg');
+			background: url('../../../images/view-menu-hover.svg');
 		}
 
 		&.is-active {
-			background: url('/assets/images/view-menu-active.svg');
+			background: url('../../../images/view-menu-active.svg');
 			transform: rotate(1440deg);
 		}
 	}
