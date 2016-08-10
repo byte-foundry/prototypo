@@ -56,9 +56,12 @@
 		}
 
 		&-collection {
+			background: url('../../../images/collection.svg') no-repeat 8px 0;
+			background-size: contain;
 			height: 18px;
 			padding-left: 8px;
 			padding-right: 8px;
+			width: 43px;
 		}
 
 		&-img{

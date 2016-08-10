@@ -198,7 +198,7 @@ class RootArianneItem extends React.Component {
 		return (
 			<div className="arianne-item is-small" onClick={this.props.click}>
 				<div className="arianne-item-action is-small">
-					<img className="arianne-item-action-collection" src="assets/images/collection.svg"/>
+					<span className="arianne-item-action-collection"></span>
 				</div>
 				<div className="arianne-item-arrow"></div>
 			</div>
