@@ -100,6 +100,14 @@
 			}
 		}
 
+		&-home:before {
+			background-image:url('../../../images/icon-home.svg');
+		}
+
+		&-home:hover:before, &-home.is-active:before {
+			background-image:url('../../../images/icon-home-active.svg');
+		}
+
 		&-profile:before {
 			background-image:url('../../../images/icon-profile-dashboard.svg');
 		}
@@ -199,8 +207,8 @@
 		right: -35px;
 	}
 
-	&-home-icon {
-		background-image: url("../../../images/icon-home.svg");
+	&-back-icon {
+		background-image: url("../../../images/icon-back.svg");
 		background-repeat: no-repeat;
 		width:36px;
 		height:36px;
@@ -210,22 +218,13 @@
 		left:-18px;
 		top:30px;
 		background-color:$white;
-		background-size: 23px 23px;
+		background-size: 25px 25px;
 		background-position:2px 1px;
 		cursor:pointer;
 		display:block;
 
 		&:hover {
-			background-image: url("../../../images/icon-home-hover.svg");
-		}
-
-		&.back {
-			background-image: url("../../../images/icon-back.svg");
-			background-size: 25px 25px;
-
-			&:hover {
-				background-image: url("../../../images/icon-back-hover.svg");
-			}
+			background-image: url("../../../images/icon-back-hover.svg");
 		}
 	}
 }

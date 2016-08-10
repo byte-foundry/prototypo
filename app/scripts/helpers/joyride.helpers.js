@@ -58,8 +58,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				title: 'Families',
 				text: <div>
 					<p>This is your collection!</p>
-					<p>You'll be able to manage all your font projects from here.</p>
-					<p>From here you can create a new family and see all your families at a glance, their template and names.</p>
+					<p>From here, you can inspect and manage your existing font families, or create a new one.</p>
 				</div>,
 				selector: '.family-list',
 				position: 'right',
@@ -71,8 +70,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				title: 'Variants',
 				text: <div>
 					<p>This is the family panel</p>
-					<p>Manage your families from here. Change their name or delete your family.</p>
-					<p>You can also add a new variants.</p>
+					<p>From here you can manage families and create new variants.</p>
 				</div>,
 				selector: '.variant-list',
 				position: 'right',
@@ -84,7 +82,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 				title: 'Variant panel',
 				text: <div>
 					<p>This is the variant panel</p>
-					<p>It allows you to open your project in prototypo, create a new variant from an existing one and change its name.</p>
+					<p>It allows you to open a variant in prototypo, create a new variant from an existing one and change its name.</p>
 					<p>Now go on and create your projects :)</p>
 				</div>,
 				selector: '.variant-info',
@@ -98,9 +96,9 @@ const buildTutorialSteps = function(previousState, currentState) {
 			indivGroupCreateStep1: {
 				title: 'Individualization Groups',
 				text: <div>
-					<p>Individualization groups are awesome if you want to correct some shapes on a small set of glyphs.</p>
-					<p>Choose a name for your group and select the glyphs that you want to tweak.</p>
-					<p>Be careful, glyphs can only be part of only one individualization group.</p>
+					<p>Individualization groups are awesome if you want to tweak the shape of a specific set of glyphs.</p>
+					<p>Name your group and select the glyphs that will be part of it.</p>
+					<p>Note that glyphs can only be part of one individualization group.</p>
 				</div>,
 				selector: '.create-param-group',
 				position: 'right',
@@ -112,7 +110,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 			// "indiv group edit" steps
 			indivGroupEditStep1: {
 				title: 'Proportional individualization',
-				text: 'There is two mode for individualization. The first one is proportional (&times;). It will multiply you current value of the parameters by your individualization value.',
+				text: 'There are two modes for individualization. The first one is proportional (&times;). It will multiply the global parameter by this individualization factor.',
 				selector: '.indiv-switch-relative',
 				position: 'bottom',
 				style: {
@@ -121,7 +119,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 			},
 			indivGroupEditStep2: {
 				title: 'Absolute individualization',
-				text: 'The second mode of individualization is absolute (+). It will add or subtract the value of your individualization parameter to your global parameter.',
+				text: 'The second mode of individualization is absolute (+). It will add or subtract this individualization value to the global parameter.',
 				selector: '.indiv-switch-delta',
 				position: 'bottom',
 				style: {

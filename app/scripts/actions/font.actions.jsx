@@ -35,7 +35,7 @@ window.addEventListener('fluxServer.setup', () => {
 		localClient,
 		localServer.lifespan,
 		(name) => {
-			return `modifier ${name}`;
+			return `${name} modification`;
 		},
 		(headJS) => {
 			debouncedSave(headJS.controlsValues);
