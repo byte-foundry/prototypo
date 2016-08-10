@@ -12,7 +12,7 @@ export default class AlternateMenu extends React.Component {
 	render() {
 
 		const alternates = _.map(this.props.alternates, (alt, index) => {
-			return <Alternate id={index} alt={alt} unicode={this.props.unicode}/>;
+			return <Alternate id={index} key={index} alt={alt} unicode={this.props.unicode}/>;
 		});
 
 		return (

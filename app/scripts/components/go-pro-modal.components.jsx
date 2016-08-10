@@ -65,6 +65,7 @@ export default class GoProModal extends React.Component {
 					<p>Export your font to use it on a website or on any desktop application (Adobe Illustrator, Ms Word&hellip;)</p>
 					<div className="go-pro-choices">
 						<div className="go-pro-choice go-pro-subscription" onClick={this.goSubscribe}>
+							<div className="pro-version-big"></div>
 							<img src="../assets/images/pro-version-big.svg" />
 							<h2 className="go-pro-choice-title">Subscribe to a pro plan!</h2>
 							<p className="go-pro-choice-subtitle">And export as many projects as you want, <br/>when you want.</p>
@@ -80,6 +81,7 @@ export default class GoProModal extends React.Component {
 							</div>
 						</div>
 						<div className="go-pro-choice go-pro-credits" onClick={this.goCredits}>
+							<div className="buy-credits-big"></div>
 							<img src="../assets/images/buy-credits-big.svg" />
 							<h2 className="go-pro-choice-title">Buy 5 export credits for 5{this.state.currency}!</h2>
 							<p className="go-pro-choice-subtitle">You are free to use these credits as you like. <br/>No time limit.</p>

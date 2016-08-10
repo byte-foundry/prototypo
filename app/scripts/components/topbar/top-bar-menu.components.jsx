@@ -8,7 +8,6 @@ import LocalClient from '~/stores/local-client.stores.jsx';
 
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 
-import CheckBoxWithImg from '../checkbox-with-img.components.jsx';
 import Button from '../shared/button.components.jsx';
 
 class TopBarMenu extends React.Component {
