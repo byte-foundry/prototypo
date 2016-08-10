@@ -46,7 +46,9 @@
 		}
 
 		&-drop {
+			background: url('../../../images/drop.svg') no-repeat 100% 0;
 			height:7px;
+			width: 52px;
 		}
 
 		&-plus {
@@ -59,7 +61,7 @@
 			padding-right: 8px;
 		}
 
-		&-img {
+		&-img{
 			padding-left:40px;
 		}
 	}
