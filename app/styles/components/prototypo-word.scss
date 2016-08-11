@@ -23,3 +23,25 @@
 		position:relative;
 	}
 }
+
+// this belongs to its own component
+// unfortunately this is impossible because of contentEditable nature of the div
+// see prototypo-word.component.jsx
+$handlegripWidth: 10px;
+$handlegripOffset: $handlegripWidth/2;
+.letter-wrap {
+	position: relative;
+}
+.handlegrip-left,.handlegrip-right {
+	background-color: $green;
+	height: 80%;
+	position: absolute;
+	top: 10%;
+	width: $handlegripWidth;
+}
+.handlegrip-left {
+	left: -$handlegripOffset;
+}
+.handlegrip-right {
+	right: -$handlegripOffset;
+}
