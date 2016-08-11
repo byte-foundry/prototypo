@@ -24,6 +24,7 @@ export default class PrototypoWord extends React.Component {
 			showContextMenu: false,
 			glyphPanelOpened: undefined,
 			uiSpacingMode: undefined,
+			uiWordString: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.setupText = this.setupText.bind(this);
@@ -55,7 +56,6 @@ export default class PrototypoWord extends React.Component {
 			});
 
 			fontInstance.on('worker.fontLoaded', () => {
-				const content = this.props[this.props.field];
 				const transformedContent = this.refs.text.textContent;
 
 				const style = this.refs.text.style;
@@ -74,6 +74,7 @@ export default class PrototypoWord extends React.Component {
 		const newString = transformedContent && transformedContent.length > 0 ? transformedContent : '';
 
 		this.client.dispatchAction('/store-value', {
+			uiWordString: newString,
 			uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
 		});
 
@@ -83,7 +84,7 @@ export default class PrototypoWord extends React.Component {
 			// we cannot afford to let react decide ...
 			const spannedTextContent = _.map(newString, (letter) => {
 				return (
-					`<span class="letter-wrap"><span class="handlegrip-left"></span>${letter}<span class="handlegrip-right"></span></span>`
+					`<span class="letter-wrap"><span class="handlegrip-left"><span class="handlegrip-border"></span></span>${letter}<span class="handlegrip-right"><span class="handlegrip-border"></span></span></span>`
 				);
 			}).join('');
 

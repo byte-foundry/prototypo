@@ -32,12 +32,22 @@ $handlegripOffset: $handlegripWidth/2;
 .letter-wrap {
 	position: relative;
 }
-.handlegrip-left,.handlegrip-right {
-	background-color: $green;
-	height: 80%;
-	position: absolute;
-	top: 10%;
-	width: $handlegripWidth;
+.handlegrip {
+	&-left, &-right {
+		cursor: pointer;
+		height: 80%;
+		position: absolute;
+		top: 10%;
+		width: $handlegripWidth;
+	}
+
+	&-border {
+		background-color: $green;
+		display: block;
+		height: 100%;
+		margin: 0 auto;
+		width: 1px;
+	}
 }
 .handlegrip-left {
 	left: -$handlegripOffset;
