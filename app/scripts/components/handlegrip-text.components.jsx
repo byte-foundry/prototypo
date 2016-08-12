@@ -100,7 +100,7 @@ class HandlegripLetter extends React.Component {
 					<span className="handlegrip-scale-left"></span>
 					<span className="handlegrip-scale-right"></span>
 				</span>
-				<span className="handlegrip-right">
+				<span className="handlegrip handlegrip-right">
 					<span className="handlegrip-border"></span>
 					<span className="handlegrip-spacing-number">
 						50

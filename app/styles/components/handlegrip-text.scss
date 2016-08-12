@@ -11,16 +11,12 @@ $spacingNumberOffset: 15px;
 	position: relative;
 }
 .handlegrip {
-	position: relative;
+	cursor: ew-resize;
+	height: 80%;
+	position: absolute;
+	top: 10%;
+	width: $handlegripWidth;
 	z-index: 10;
-
-	&-left, &-right {
-		cursor: pointer;
-		height: 80%;
-		position: absolute;
-		top: 10%;
-		width: $handlegripWidth;
-	}
 
 	&-border {
 		background-color: $green;
