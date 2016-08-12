@@ -8,6 +8,7 @@ export default class HandlegripText extends React.Component {
 		super(props);
 		this.state = {
 			uiWordSelection: 0,
+			letterSpacing: 0,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
@@ -19,8 +20,9 @@ export default class HandlegripText extends React.Component {
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					//uiWordSelection: head.toJS().uiWordSelection,
-					uiWordSelection: 0,
+					uiWordSelection: head.toJS().uiWordSelection,
+					//letterSpacing: head.toJS().letterSpacing,
+					letterSpacing: 0,
 				});
 			})
 			.onDelete(() => {
@@ -56,9 +58,7 @@ export default class HandlegripText extends React.Component {
 					<HandlegripLetter letter={letter} key={index}/>
 				)
 				: (
-					<span className="letter-wrap" key={index}>
-						{letter}
-					</span>
+					<RegularLetter letter={letter} key={index} index={index}/>
 				)
 			);
 		});
@@ -106,6 +106,37 @@ class HandlegripLetter extends React.Component {
 						50
 					</span>
 				</span>
+			</span>
+		);
+	}
+}
+
+class RegularLetter extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function bindings
+		this.selectLetter = this.selectLetter.bind(this);
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	selectLetter() {
+		this.client.dispatchAction('/store-value', {uiWordSelection: this.props.index});
+	}
+
+	render() {
+		return (
+			<span className="letter-wrap" onDoubleClick={this.selectLetter}>
+				{this.props.letter}
 			</span>
 		);
 	}
