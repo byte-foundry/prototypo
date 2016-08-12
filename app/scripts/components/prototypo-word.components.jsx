@@ -13,6 +13,7 @@ import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import PrototypoWordInput from './views/prototypo-word-input.components.jsx';
+import HandlegripText from './handlegrip-text.components.jsx';
 
 export default class PrototypoWord extends React.Component {
 
@@ -27,6 +28,8 @@ export default class PrototypoWord extends React.Component {
 			uiWordString: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function bindings
 		this.setupText = this.setupText.bind(this);
 		this.saveText = this.saveText.bind(this);
 		this.handleEscapedInput = this.handleEscapedInput.bind(this);
@@ -56,13 +59,15 @@ export default class PrototypoWord extends React.Component {
 			});
 
 			fontInstance.on('worker.fontLoaded', () => {
-				const transformedContent = this.refs.text.textContent;
+				if (this.refs.text) {
+					const transformedContent = this.refs.text.textContent;
 
-				const style = this.refs.text.style;
+					const style = this.refs.text.style;
 
-				this.client.dispatchAction('/store-value', {
-					uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
-				});
+					this.client.dispatchAction('/store-value', {
+						uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
+					});
+				}
 			});
 	}
 
@@ -70,22 +75,48 @@ export default class PrototypoWord extends React.Component {
 		const content = this.props[this.props.field];
 		const transformedContent = rawToEscapedContent(content, this.state.glyphs);
 
-		const style = this.refs.text.style;
 		const newString = transformedContent && transformedContent.length > 0 ? transformedContent : '';
+
+		if (this.refs.text) {
+			const style = this.refs.text.style;
+
+			this.client.dispatchAction('/store-value', {
+				uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
+			});
+
+			this.refs.text.textContent = newString;
+		}
+
 
 		this.client.dispatchAction('/store-value', {
 			uiWordString: newString,
-			uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
 		});
 
+		/*
 		if (this.state.uiSpacingMode) {
 			// here we should have a react component
 			// but since we are dealing w/ contentEditable content
 			// we cannot afford to let react decide ...
 			const spannedTextContent = _.map(newString, (letter) => {
-				return (
-					`<span class="letter-wrap"><span class="handlegrip-left"><span class="handlegrip-border"></span></span>${letter}<span class="handlegrip-right"><span class="handlegrip-border"></span></span></span>`
-				);
+				const templateString = `
+					<span class="letter-wrap">
+						<span class="handlegrip-left">
+							<span class="handlegrip-border"></span>
+							50
+						</span>
+						<span class="letter-wrap-letter">
+							${letter}
+						</span>
+						<span class="handlegrip-right">
+							<span class="handlegrip-border"></span>
+							50
+						</span>
+						450
+					</span>
+				`.replace(/[\n\r\t]+/g, '');
+
+				console.log(templateString);
+				return templateString;
 			}).join('');
 
 			this.refs.text.innerHTML = spannedTextContent;
@@ -93,6 +124,7 @@ export default class PrototypoWord extends React.Component {
 		else {
 			this.refs.text.textContent = newString;
 		}
+		*/
 	}
 
 	saveText(text) {
@@ -187,7 +219,7 @@ export default class PrototypoWord extends React.Component {
 
 	toggleSpacingMode(e) {
 		e.stopPropagation();
-		this.client.dispatchAction('/store-value', {uiSpacingMode: !this.props.uiSpacingMode});
+		this.client.dispatchAction('/store-value', {uiSpacingMode: !this.state.uiSpacingMode});
 	}
 
 	toggleColors(e) {
@@ -223,11 +255,30 @@ export default class PrototypoWord extends React.Component {
 				key="colors"
 				active={this.props.uiInvertedWordColors}
 				click={this.toggleColors}/>,
-				<ContextualMenuItem
-					text="Spacing mode"
-					key="spacingmode"
-					click={this.toggleSpacingMode}/>,
-				];
+			<ContextualMenuItem
+				text="Spacing mode"
+				key="spacingmode"
+				active={this.state.uiSpacingMode}
+				click={this.toggleSpacingMode}/>,
+		];
+
+		const wordContainer = this.state.uiSpacingMode
+			? (
+				<HandlegripText
+					style={style}
+					text={this.state.uiWordString}
+				/>
+			)
+			: (
+				<div
+					contentEditable="true"
+					ref="text"
+					className="prototypo-word-string"
+					spellCheck="false"
+					style={style}
+					onInput={this.handleEscapedInput}
+				></div>
+			);
 
 		return (
 			<div
@@ -236,14 +287,7 @@ export default class PrototypoWord extends React.Component {
 				onMouseLeave={this.hideContextMenu}>
 				<div className="prototypo-word-scrollbar-wrapper">
 					<ReactGeminiScrollbar>
-						<div
-							contentEditable="true"
-							ref="text"
-							className="prototypo-word-string"
-							spellCheck="false"
-							style={style}
-							onInput={this.handleEscapedInput}
-						></div>
+						{wordContainer}
 					</ReactGeminiScrollbar>
 					<ViewPanelsMenu
 						show={this.state.showContextMenu}
