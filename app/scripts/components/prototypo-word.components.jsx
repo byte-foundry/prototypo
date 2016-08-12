@@ -91,40 +91,6 @@ export default class PrototypoWord extends React.Component {
 		this.client.dispatchAction('/store-value', {
 			uiWordString: newString,
 		});
-
-		/*
-		if (this.state.uiSpacingMode) {
-			// here we should have a react component
-			// but since we are dealing w/ contentEditable content
-			// we cannot afford to let react decide ...
-			const spannedTextContent = _.map(newString, (letter) => {
-				const templateString = `
-					<span class="letter-wrap">
-						<span class="handlegrip-left">
-							<span class="handlegrip-border"></span>
-							50
-						</span>
-						<span class="letter-wrap-letter">
-							${letter}
-						</span>
-						<span class="handlegrip-right">
-							<span class="handlegrip-border"></span>
-							50
-						</span>
-						450
-					</span>
-				`.replace(/[\n\r\t]+/g, '');
-
-				console.log(templateString);
-				return templateString;
-			}).join('');
-
-			this.refs.text.innerHTML = spannedTextContent;
-		}
-		else {
-			this.refs.text.textContent = newString;
-		}
-		*/
 	}
 
 	saveText(text) {
@@ -219,7 +185,9 @@ export default class PrototypoWord extends React.Component {
 
 	toggleSpacingMode(e) {
 		e.stopPropagation();
-		this.client.dispatchAction('/store-value', {uiSpacingMode: !this.state.uiSpacingMode});
+		this.client.dispatchAction('/store-value', {
+			uiSpacingMode: !this.state.uiSpacingMode,
+		});
 	}
 
 	toggleColors(e) {

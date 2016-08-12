@@ -20,7 +20,7 @@ export default class HandlegripText extends React.Component {
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					uiWordSelection: head.toJS().uiWordSelection,
+					uiWordSelection: head.toJS().uiWordSelection || 0,
 					//letterSpacing: head.toJS().letterSpacing,
 					letterSpacing: 0,
 				});
