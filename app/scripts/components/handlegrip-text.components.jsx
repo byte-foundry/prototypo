@@ -16,6 +16,7 @@ export default class HandlegripText extends React.Component {
 		super(props);
 		this.state = {
 			uiWordSelection: 0,
+			uiWordHandleWidth: 0,
 			letterSpacingLeft: 0,
 			letterSpacingRight: 0,
 			tracking: undefined,
@@ -36,6 +37,7 @@ export default class HandlegripText extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					uiWordSelection: head.toJS().uiWordSelection || 0,
+					uiWordHandleWidth: head.toJS().uiWordHandleWidth || 0,
 					letterSpacingLeft: head.toJS().letterSpacingLeft || 0,
 					letterSpacingRight: head.toJS().letterSpacingRight || 0,
 					tracking: head.toJS().uiSpacingTracking,
@@ -45,6 +47,7 @@ export default class HandlegripText extends React.Component {
 				this.setState(undefined);
 			});
 
+		// make sure there is no selection while dragging
 		document.addEventListener('selectstart', this.handleSelectstart);
 	}
 
@@ -58,6 +61,8 @@ export default class HandlegripText extends React.Component {
 	componentWillUnmount() {
 		this.lifespan.release();
 		document.removeEventListener('selectstart', this.handleSelectstart);
+		handlegripDOM.removeEventListener('mouseup', this.handleUp);
+		handlegripDOM.removeEventListener('mousemove', this.handleMove);
 	}
 
 	handleUp(e) {
@@ -97,8 +102,9 @@ export default class HandlegripText extends React.Component {
 
 		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
 			const variation = (
-				(newX - (leftSideTracking ? this.leftCurrentX : this.rightCurrentX))
-				 /* / this.sliderWidth  * (this.props.max - this.props.min)*/
+				(
+					newX - (leftSideTracking ? this.leftCurrentX : this.rightCurrentX)
+				) /*/ this.state.uiWordHandleWidth * (this.props.max - this.props.min)*/
 			);
 
 			newValue = /*this.props.value*/ (leftSideTracking ? this.state.letterSpacingLeft : this.state.letterSpacingRight) + variation;
@@ -179,7 +185,14 @@ export default class HandlegripText extends React.Component {
 class HandlegripLetter extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			offsetWidth: undefined,
+		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
+	componentDidMount() {
+		this.setState({offsetWidth: this.refs.letterWrapWrap.offsetWidth});
 	}
 
 	render() {
@@ -189,28 +202,31 @@ class HandlegripLetter extends React.Component {
 		const styleHandlegripRight = {
 			right: -(this.props.spacingRight),
 		};
+		const spacingLeft = Math.abs(this.props.spacingLeft);
+		const spacingRight = Math.abs(this.props.spacingRight);
+		const totalWidth = this.state.offsetWidth + spacingLeft + spacingRight;
 
 		return (
 			<span className="letter-wrap">
 				<Handlegrip
 					side="left"
 					style={styleHandlegripLeft}
-					spacing={this.props.spacingLeft}
+					spacing={spacingLeft}
 					min={this.props.min}
 					max={this.props.max}
 				/>
-				<span className="letter-wrap-wrap">
+				<span ref="letterWrapWrap" className="letter-wrap-wrap">
 					<span className="letter-wrap-letter">
 						{this.props.letter}
 					</span>
 					<span className="handlegrip-spacing-number">
-						450
+						{totalWidth}
 					</span>
 				</span>
 				<Handlegrip
 					side="right"
 					style={styleHandlegripRight}
-					spacing={this.props.spacingRight}
+					spacing={spacingRight}
 					min={this.props.min}
 					max={this.props.max}
 				/>
@@ -236,6 +252,12 @@ class Handlegrip extends React.Component {
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+	}
+
+	componentDidMount() {
+		this.client.dispatchAction('/store-value', {
+			'uiWordHandleWidth': ReactDOM.findDOMNode(this).offsetWidth,
+		});
 	}
 
 	componentWillUnmount() {

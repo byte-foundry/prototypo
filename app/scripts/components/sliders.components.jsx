@@ -234,18 +234,20 @@ export class SliderController extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function bindings
+		this.handleUp = this.handleUp.bind(this);
+		this.handleMove = this.handleMove.bind(this);
+		this.handleSelectstart = this.handleSelectstart.bind(this);
 	}
 
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		document.addEventListener('mouseup',
-			this.handleUp.bind(this));
-		window.addEventListener('mousemove',
-			this.handleMove.bind(this));
-		document.addEventListener('selectstart',
-			this.handleSelectstart.bind(this));
+		document.addEventListener('mouseup', this.handleUp);
+		window.addEventListener('mousemove', this.handleMove);
+		document.addEventListener('selectstart', this.handleSelectstart);
 	}
 
 	componentDidMount() {
@@ -256,6 +258,9 @@ export class SliderController extends React.Component {
 
 	componentWillUnmount() {
 		this.lifespan.release();
+		document.removeEventListener('mouseup', this.handleUp);
+		window.removeEventListener('mousemove', this.handleMove);
+		document.removeEventListener('selectstart', this.handleSelectstart);
 	}
 
 	handleDown(e) {
