@@ -81,6 +81,7 @@ export default class HandlegripText extends React.Component {
 			return;
 		}
 
+		const leftSideTracking = this.state.tracking === 'left';
 		const newX = e.pageX || e.screenX;
 		const el = ReactDOM.findDOMNode(this);
 		const {offsetLeft} = DOM.getAbsOffset(el);
@@ -88,15 +89,27 @@ export default class HandlegripText extends React.Component {
 
 		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
 			const variation = (
-				(newX - this.currentX) /* / this.sliderWidth  * (this.props.max - this.props.min)*/
+				(newX - (leftSideTracking ? this.leftCurrentX : this.rightCurrentX))
+				 /* / this.sliderWidth  * (this.props.max - this.props.min)*/
 			);
 
-			newValue = /*this.props.value*/ this.state.letterSpacingLeft + variation;
+			newValue = /*this.props.value*/ (leftSideTracking ? this.state.letterSpacingLeft : this.state.letterSpacingRight) + variation;
 
 			// newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
 		}
 		else {
 			newValue = newX < offsetLeft ? /*this.props.min*/ 0 : /*this.props.max*/ 100;
+		}
+
+		// if we are currently tracking left side spacing
+		if (leftSideTracking) {
+			// set the new spacing value
+			this.client.dispatchAction('/store-value', {letterSpacingLeft: newValue});
+			this.leftCurrentX = newX;
+		}
+		else {
+			this.client.dispatchAction('/store-value', {letterSpacingRight: newValue});
+			this.rightCurrentX = newX;
 		}
 
 		/*
@@ -105,16 +118,6 @@ export default class HandlegripText extends React.Component {
 			name: this.props.name,
 		});
 		*/
-
-		// set the new spacing value
-		if (this.state.tracking === 'left') {
-			this.client.dispatchAction('/store-value', {letterSpacingLeft: newValue});
-		}
-		else {
-			this.client.dispatchAction('/store-value', {letterSpacingRight: newValue});
-		}
-
-		this.currentX = newX;
 	}
 
 	render() {
@@ -167,7 +170,7 @@ class HandlegripLetter extends React.Component {
 			left: this.props.spacingLeft,
 		};
 		const styleHandlegripRight = {
-			right: this.props.spacingRight,
+			right: -(this.props.spacingRight),
 		};
 
 		return (
@@ -242,8 +245,6 @@ class Handlegrip extends React.Component {
 			label: this.props.label,
 		});
 		*/
-
-		this.currentX = newX;
 
 		e.stopPropagation();
 	}
