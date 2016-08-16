@@ -25,6 +25,7 @@ export default class HandlegripText extends React.Component {
 		// function bindings
 		this.handleUp = this.handleUp.bind(this);
 		this.handleMove = this.handleMove.bind(this);
+		this.handleSelectstart = this.handleSelectstart.bind(this);
 	}
 
 	componentWillMount() {
@@ -43,6 +44,8 @@ export default class HandlegripText extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		document.addEventListener('selectstart', this.handleSelectstart);
 	}
 
 	componentDidMount() {
@@ -54,6 +57,7 @@ export default class HandlegripText extends React.Component {
 
 	componentWillUnmount() {
 		this.lifespan.release();
+		document.removeEventListener('selectstart', this.handleSelectstart);
 	}
 
 	handleUp(e) {
@@ -81,6 +85,10 @@ export default class HandlegripText extends React.Component {
 			return;
 		}
 
+		if (!e.button && !e.buttons) {
+			return;
+		}
+
 		const leftSideTracking = this.state.tracking === 'left';
 		const newX = e.pageX || e.screenX;
 		const el = ReactDOM.findDOMNode(this);
@@ -95,10 +103,12 @@ export default class HandlegripText extends React.Component {
 
 			newValue = /*this.props.value*/ (leftSideTracking ? this.state.letterSpacingLeft : this.state.letterSpacingRight) + variation;
 
-			// newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
+			newValue = leftSideTracking
+				? Math.min(Math.max(newValue, (-this.props.max)), this.props.min)
+				: Math.min(Math.max(newValue, this.props.min), this.props.max);
 		}
 		else {
-			newValue = newX < offsetLeft ? /*this.props.min*/ 0 : /*this.props.max*/ 100;
+			newValue = newX < offsetLeft ? this.props.min : this.props.max;
 		}
 
 		// if we are currently tracking left side spacing
@@ -118,6 +128,13 @@ export default class HandlegripText extends React.Component {
 			name: this.props.name,
 		});
 		*/
+	}
+
+	handleSelectstart(e) {
+		// warning : this does not seem to work on "input" tags
+		if (this.state.tracking) {
+			return e.preventDefault();
+		}
 	}
 
 	render() {

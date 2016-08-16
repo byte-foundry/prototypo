@@ -235,6 +235,8 @@ export default class PrototypoWord extends React.Component {
 				<HandlegripText
 					style={style}
 					text={this.state.uiWordString}
+					min={0}
+					max={100}
 				/>
 			)
 			: (
