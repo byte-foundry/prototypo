@@ -4,6 +4,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import DOM from '../helpers/dom.helpers.js';
+import classNames from 'classnames';
 
 /**
 *	Component : Text in prototypo-word
@@ -17,6 +18,7 @@ export default class HandlegripText extends React.Component {
 			uiWordSelection: 0,
 			letterSpacingLeft: 0,
 			letterSpacingRight: 0,
+			tracking: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -34,7 +36,8 @@ export default class HandlegripText extends React.Component {
 				this.setState({
 					uiWordSelection: head.toJS().uiWordSelection || 0,
 					letterSpacingLeft: head.toJS().letterSpacingLeft || 0,
-					letterSpacingRight: 0,
+					letterSpacingRight: head.toJS().letterSpacingRight || 0,
+					tracking: head.toJS().uiSpacingTracking,
 				});
 			})
 			.onDelete(() => {
@@ -54,11 +57,12 @@ export default class HandlegripText extends React.Component {
 	}
 
 	handleUp(e) {
-		if (!this.refs.selectedLetter.tracking) {
+		if (!this.state.tracking) {
 			return;
 		}
 
-		this.refs.selectedLetter.tracking = false;
+		// tells everyone to stop tracking
+		this.client.dispatchAction('/store-value', {uiSpacingTracking: false});
 
 		/*
 		this.client.dispatchAction('/change-param', {
@@ -73,7 +77,7 @@ export default class HandlegripText extends React.Component {
 	}
 
 	handleMove(e) {
-		if (!this.refs.selectedLetter.tracking) {
+		if (!this.state.tracking) {
 			return;
 		}
 
@@ -101,7 +105,14 @@ export default class HandlegripText extends React.Component {
 			name: this.props.name,
 		});
 		*/
-		this.client.dispatchAction('/store-value', {letterSpacingLeft: newValue});
+
+		// set the new spacing value
+		if (this.state.tracking === 'left') {
+			this.client.dispatchAction('/store-value', {letterSpacingLeft: newValue});
+		}
+		else {
+			this.client.dispatchAction('/store-value', {letterSpacingRight: newValue});
+		}
 
 		this.currentX = newX;
 	}
@@ -141,11 +152,59 @@ export default class HandlegripText extends React.Component {
 }
 
 /**
-*	Component : letter where you can set spacing
+*	Component : a letter where you can set spacing
 *	With a drag'n'dropable handlegrip
 *	@extends React.Component
 */
 class HandlegripLetter extends React.Component {
+	constructor(props) {
+		super(props);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
+	render() {
+		const styleHandlegripLeft = {
+			left: this.props.spacingLeft,
+		};
+		const styleHandlegripRight = {
+			right: this.props.spacingRight,
+		};
+
+		return (
+			<span className="letter-wrap">
+				<Handlegrip
+					side="left"
+					style={styleHandlegripLeft}
+					spacing={this.props.spacingLeft}
+					min={this.props.min}
+					max={this.props.max}
+				/>
+				<span className="letter-wrap-wrap">
+					<span className="letter-wrap-letter">
+						{this.props.letter}
+					</span>
+					<span className="handlegrip-spacing-number">
+						450
+					</span>
+				</span>
+				<Handlegrip
+					side="right"
+					style={styleHandlegripRight}
+					spacing={this.props.spacingRight}
+					min={this.props.min}
+					max={this.props.max}
+				/>
+			</span>
+		);
+	}
+}
+
+
+/**
+*	Component : the handlegrip (green bar) surrounding the letter
+*	@extends React.Component
+*/
+class Handlegrip extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
@@ -154,15 +213,21 @@ class HandlegripLetter extends React.Component {
 		this.handleDown = this.handleDown.bind(this);
 	}
 
-	handleDown(e) {
-		if (this.props.disabled) {
-			return;
-		}
+	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+	}
 
-		this.tracking = true;
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
+	handleDown(e) {
+		// tells everyone that the tacking begins
+		this.client.dispatchAction('/store-value', {uiSpacingTracking: this.props.side});
 
 		const newX = e.pageX || e.screenX;
-		const {offsetLeft} = DOM.getAbsOffset(this.refs.handlegripLeft);
+		const {offsetLeft} = DOM.getAbsOffset(ReactDOM.findDOMNode(this));
 		let newValue = (
 			((newX - offsetLeft) /* / this.sliderWidth */ * (this.props.max - this.props.min))
 			+ this.props.min
@@ -184,46 +249,27 @@ class HandlegripLetter extends React.Component {
 	}
 
 	render() {
-		const styleHandlegripLeft = {
-			left: this.props.spacingLeft,
-		};
-		const styleHandlegripRight = {
-			right: this.props.spacingRight,
-		};
+		const left = this.props.side === 'left';
+		const handleGripClasses = classNames({
+			'handlegrip': true,
+			'handlegrip-left': left,
+			'handlegrip-right': !left,
+		});
+		const scaleClasses = classNames({
+			'handlegrip-scale-left': left,
+			'handlegrip-scale-right': !left,
+		});
 
 		return (
-			<span className="letter-wrap">
-				<span
-					className="handlegrip handlegrip-left"
-					ref="handlegripLeft"
-					onMouseDown={this.handleDown}
-					style={styleHandlegripLeft}
-				>
-					<span className="handlegrip-border"></span>
-					<span className="handlegrip-scale-left"></span>
-					<span className="handlegrip-spacing-number">
-						{this.props.spacingLeft}
-					</span>
-				</span>
-				<span className="letter-wrap-wrap">
-					<span className="letter-wrap-letter">
-						{this.props.letter}
-					</span>
-					<span className="handlegrip-spacing-number">
-						450
-					</span>
-				</span>
-				<span
-					className="handlegrip handlegrip-right"
-					ref="handlegripRight"
-					onMouseDown={this.handleDown}
-					style={styleHandlegripRight}
-				>
-					<span className="handlegrip-border"></span>
-					<span className="handlegrip-scale-right"></span>
-					<span className="handlegrip-spacing-number">
-						{this.props.spacingRight}
-					</span>
+			<span
+				className={handleGripClasses}
+				onMouseDown={this.handleDown}
+				style={this.props.style}
+			>
+				<span className="handlegrip-border"></span>
+				<span className={scaleClasses}></span>
+				<span className="handlegrip-spacing-number">
+					{this.props.spacing}
 				</span>
 			</span>
 		);
