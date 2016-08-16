@@ -34,10 +34,12 @@ $spacingNumberOffset: 15px;
 		width: $scaleWidth;
 	}
 	&-scale-left {
-		left: -$scaleOffset;
+		// left: -$scaleOffset;
+		left: 0;
 	}
 	&-scale-right {
-		right: -$scaleOffset;
+		// right: -$scaleOffset;
+		right: 0;
 	}
 }
 .handlegrip-left {
