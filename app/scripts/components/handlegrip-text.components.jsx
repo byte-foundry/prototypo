@@ -107,7 +107,10 @@ export default class HandlegripText extends React.Component {
 				) /*/ this.state.uiWordHandleWidth * (this.props.max - this.props.min)*/
 			);
 
-			newValue = /*this.props.value*/ (leftSideTracking ? this.state.letterSpacingLeft : this.state.letterSpacingRight) + variation;
+			newValue = (
+				(leftSideTracking ? this.state.letterSpacingLeft : this.state.letterSpacingRight)
+				+ variation
+			);
 
 			newValue = leftSideTracking
 				? Math.min(Math.max(newValue, (-this.props.max)), this.props.min)
@@ -265,17 +268,33 @@ class Handlegrip extends React.Component {
 	}
 
 	handleDown(e) {
+		const leftSideTracking = this.props.side === 'left';
+
 		// tells everyone that the tacking begins
 		this.client.dispatchAction('/store-value', {uiSpacingTracking: this.props.side});
 
 		const newX = e.pageX || e.screenX;
 		const {offsetLeft} = DOM.getAbsOffset(ReactDOM.findDOMNode(this));
+		const variation = newX - offsetLeft;
 		let newValue = (
-			((newX - offsetLeft) /* / this.sliderWidth */ * (this.props.max - this.props.min))
-			+ this.props.min
+			this.props.min
+			+ (
+				leftSideTracking
+					? (-(this.props.spacing - variation))
+					: (this.props.spacing + variation)
+			)
 		);
 
-		newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
+		newValue = leftSideTracking
+			? Math.min(Math.max(newValue, (-this.props.max)), this.props.min)
+			: Math.min(Math.max(newValue, this.props.min), this.props.max);
+
+		if (leftSideTracking) {
+			this.client.dispatchAction('/store-value', {letterSpacingLeft: newValue});
+		}
+		else {
+			this.client.dispatchAction('/store-value', {letterSpacingRight: newValue});
+		}
 
 		/*
 		this.client.dispatchAction('/change-param', {
