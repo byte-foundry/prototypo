@@ -90,6 +90,10 @@ export default class HandlegripText extends React.Component {
 			return;
 		}
 
+		// if this expression is true, the user might have left the draggin zone while dragging
+		// and might be trying to come back without the mouse being down
+		// in that case we cancel operations because it might lead to an unclear state of dragging
+		// event.button and event.buttons work differently but both false means no button pressed
 		if (!e.button && !e.buttons) {
 			return;
 		}
@@ -102,9 +106,7 @@ export default class HandlegripText extends React.Component {
 
 		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
 			const variation = (
-				(
-					newX - (leftSideTracking ? this.leftCurrentX : this.rightCurrentX)
-				) /*/ this.state.uiWordHandleWidth * (this.props.max - this.props.min)*/
+				newX - (leftSideTracking ? this.leftCurrentX : this.rightCurrentX)
 			);
 
 			newValue = (
@@ -258,6 +260,7 @@ class Handlegrip extends React.Component {
 	}
 
 	componentDidMount() {
+		// retrieve and publicly store the width of the current element
 		this.client.dispatchAction('/store-value', {
 			'uiWordHandleWidth': ReactDOM.findDOMNode(this).offsetWidth,
 		});
@@ -270,7 +273,7 @@ class Handlegrip extends React.Component {
 	handleDown(e) {
 		const leftSideTracking = this.props.side === 'left';
 
-		// tells everyone that the tacking begins
+		// tells everyone that the tracking begins
 		this.client.dispatchAction('/store-value', {uiSpacingTracking: this.props.side});
 
 		const newX = e.pageX || e.screenX;
@@ -280,7 +283,7 @@ class Handlegrip extends React.Component {
 			this.props.min
 			+ (
 				leftSideTracking
-					? (-(this.props.spacing - variation))
+					? -(this.props.spacing - variation)
 					: (this.props.spacing + variation)
 			)
 		);
