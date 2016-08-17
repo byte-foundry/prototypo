@@ -20,6 +20,7 @@ export default class HandlegripText extends React.Component {
 			letterSpacingLeft: 0,
 			letterSpacingRight: 0,
 			tracking: undefined,
+			fontValues: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -29,9 +30,11 @@ export default class HandlegripText extends React.Component {
 		this.handleSelectstart = this.handleSelectstart.bind(this);
 	}
 
-	componentWillMount() {
+	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+
+		const undoableStore = await this.client.fetch('/undoableStore');
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
@@ -46,6 +49,10 @@ export default class HandlegripText extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		const fontValues = undoableStore.get('controlsValues');
+
+		this.setState({fontValues});
 
 		// make sure there is no selection while dragging
 		document.addEventListener('selectstart', this.handleSelectstart);
@@ -133,12 +140,26 @@ export default class HandlegripText extends React.Component {
 			this.rightCurrentX = newX;
 		}
 
-		/*
-		this.client.dispatchAction('/change-param', {
-			value: newValue,
-			name: this.props.name,
+		this.client.dispatchAction('/change-letter-spacing', {
+			value: Math.abs(newValue),
+			side: this.state.tracking,
+			letter: this.getSelectedLetter(),
 		});
-		*/
+	}
+
+	/**
+	*	returns the letter to select (text at the right index)
+	*	@return {string} the letter
+	*/
+	getSelectedLetter() {
+		const selectedIndex = this.state.uiWordSelection;
+
+		if (selectedIndex >= 0 && this.props.text && selectedIndex < this.props.text.length) {
+			return this.props.text[selectedIndex];
+		}
+		else {
+			return null;
+		}
 	}
 
 	handleSelectstart(e) {
@@ -219,6 +240,7 @@ class HandlegripLetter extends React.Component {
 					spacing={spacingLeft}
 					min={this.props.min}
 					max={this.props.max}
+					letter={this.props.letter}
 				/>
 				<span ref="letterWrapWrap" className="letter-wrap-wrap">
 					<span className="letter-wrap-letter">
@@ -234,6 +256,7 @@ class HandlegripLetter extends React.Component {
 					spacing={spacingRight}
 					min={this.props.min}
 					max={this.props.max}
+					letter={this.props.letter}
 				/>
 			</span>
 		);
@@ -299,13 +322,11 @@ class Handlegrip extends React.Component {
 			this.client.dispatchAction('/store-value', {letterSpacingRight: newValue});
 		}
 
-		/*
-		this.client.dispatchAction('/change-param', {
-			value: newValue,
-			name: this.props.name,
-			label: this.props.label,
+		this.client.dispatchAction('/change-letter-spacing', {
+			value: Math.abs(newValue),
+			side: this.props.side,
+			letter: this.props.letter,
 		});
-		*/
 
 		e.stopPropagation();
 	}

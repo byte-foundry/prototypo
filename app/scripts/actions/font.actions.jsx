@@ -519,4 +519,28 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
+	'/change-letter-spacing': ({value, side, letter, label}) => {
+		const db = (prototypoStore.get('variant') || {}).db;
+		const newParams = {...undoableStore.get('controlsValues')};
+		const unicode = letter.charCodeAt(0);
+
+		newParams.glyphSpecialProps = newParams.glyphSpecialProps || {};
+		newParams.glyphSpecialProps[unicode] = newParams.glyphSpecialProps[unicode] || {};
+
+		if (side === 'left') {
+			newParams.glyphSpecialProps[unicode].spacingLeft = value;
+		}
+		else {
+			newParams.glyphSpecialProps[unicode].spacingRight = value;
+		}
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+
+		debouncedSave(newParams, db);
+
+		undoWatcher.update(patch, label);
+
+	},
 };
