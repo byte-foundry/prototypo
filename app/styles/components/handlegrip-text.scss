@@ -4,15 +4,32 @@
 $handlegripWidth: 10px;
 $scaleWidth: 10px;
 $handlegripOffset: $handlegripWidth/2;
-$scaleOffset: $scaleWidth/2;
 $spacingNumberOffset: 15px;
+$heightPercentage: 80%;
 
 .letter-wrap {
+	align-items: center;
+	display: flex;
+	height: 100%;
 	position: relative;
+
+	&-wrap {
+		align-items: center;
+		display: flex;
+		height: $heightPercentage;
+		position: relative;
+		z-index: 0;
+
+		& .handlegrip-spacing-number {
+			text-align: center;
+			left: 0;
+			width: 100%;
+		}
+	}
 }
 .handlegrip {
 	cursor: ew-resize;
-	height: 80%;
+	height: $heightPercentage;
 	position: absolute;
 	top: 10%;
 	width: $handlegripWidth;
@@ -28,18 +45,16 @@ $spacingNumberOffset: 15px;
 
 	&-scale-left, &-scale-right {
 		background-color: $green;
-		bottom: 20%;
+		bottom: 100% - $heightPercentage;
 		height: 1px;
 		position: absolute;
 		width: $scaleWidth;
 	}
 	&-scale-left {
-		// left: -$scaleOffset;
-		left: 0;
+		left: -$handlegripOffset;
 	}
 	&-scale-right {
-		// right: -$scaleOffset;
-		right: 0;
+		right: -$handlegripOffset;
 	}
 }
 .handlegrip-left {
@@ -59,16 +74,6 @@ $spacingNumberOffset: 15px;
 .handlegrip-spacing-number {
 	bottom: 0;
 	color: $medium-grey;
-	font-size: 0.11em;
+	font-size: 11px;
 	position: absolute;
-}
-.letter-wrap-wrap {
-	position: relative;
-	z-index: 0;
-
-	& .handlegrip-spacing-number {
-		text-align: center;
-		left: 0;
-		width: 100%;
-	}
 }

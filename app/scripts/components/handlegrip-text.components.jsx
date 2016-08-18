@@ -66,7 +66,10 @@ export default class HandlegripText extends React.Component {
 	}
 
 	componentWillUnmount() {
+		const handlegripDOM = ReactDOM.findDOMNode(this);
+
 		this.lifespan.release();
+
 		document.removeEventListener('selectstart', this.handleSelectstart);
 		handlegripDOM.removeEventListener('mouseup', this.handleUp);
 		handlegripDOM.removeEventListener('mousemove', this.handleMove);
@@ -222,21 +225,18 @@ class HandlegripLetter extends React.Component {
 	}
 
 	render() {
-		const styleHandlegripLeft = {
-			left: this.props.spacingLeft,
-		};
-		const styleHandlegripRight = {
-			right: -(this.props.spacingRight),
-		};
 		const spacingLeft = Math.abs(this.props.spacingLeft);
 		const spacingRight = Math.abs(this.props.spacingRight);
 		const totalWidth = this.state.offsetWidth + spacingLeft + spacingRight;
+		const glyphSet = fontInstance.font.glyphs;
+		const currGlyph = glyphSet[this.props.letter];
+
+		console.log(currGlyph);
 
 		return (
 			<span className="letter-wrap">
 				<Handlegrip
 					side="left"
-					style={styleHandlegripLeft}
 					spacing={spacingLeft}
 					min={this.props.min}
 					max={this.props.max}
@@ -246,13 +246,16 @@ class HandlegripLetter extends React.Component {
 					<span className="letter-wrap-letter">
 						{this.props.letter}
 					</span>
+					<span className="handlegrip-scales">
+						<span className="handlegrip-scale-left"></span>
+						<span className="handlegrip-scale-right"></span>
+					</span>
 					<span className="handlegrip-spacing-number">
 						{totalWidth}
 					</span>
 				</span>
 				<Handlegrip
 					side="right"
-					style={styleHandlegripRight}
 					spacing={spacingRight}
 					min={this.props.min}
 					max={this.props.max}
@@ -338,10 +341,6 @@ class Handlegrip extends React.Component {
 			'handlegrip-left': left,
 			'handlegrip-right': !left,
 		});
-		const scaleClasses = classNames({
-			'handlegrip-scale-left': left,
-			'handlegrip-scale-right': !left,
-		});
 
 		return (
 			<span
@@ -350,7 +349,6 @@ class Handlegrip extends React.Component {
 				style={this.props.style}
 			>
 				<span className="handlegrip-border"></span>
-				<span className={scaleClasses}></span>
 				<span className="handlegrip-spacing-number">
 					{this.props.spacing}
 				</span>

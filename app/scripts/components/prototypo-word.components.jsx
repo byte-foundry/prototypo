@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
@@ -26,6 +27,8 @@ export default class PrototypoWord extends React.Component {
 			glyphPanelOpened: undefined,
 			uiSpacingMode: undefined,
 			uiWordString: undefined,
+			letterSpacingLeft: undefined,
+			letterSpacingRight: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -52,6 +55,8 @@ export default class PrototypoWord extends React.Component {
 					glyphs: head.toJS().glyphs,
 					uiSpacingMode: head.toJS().uiSpacingMode,
 					uiWordString: head.toJS().uiWordString,
+					letterSpacingLeft: head.toJS().letterSpacingLeft,
+					letterSpacingRight: head.toJS().letterSpacingRight,
 				});
 			})
 			.onDelete(() => {
@@ -78,10 +83,15 @@ export default class PrototypoWord extends React.Component {
 		const newString = transformedContent && transformedContent.length > 0 ? transformedContent : '';
 
 		if (this.refs.text) {
-			const style = this.refs.text.style;
+			const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
+			const style = refDOMElement.style;
 
 			this.client.dispatchAction('/store-value', {
-				uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
+				uiWordFontSize: DOM.getProperFontSize(
+					transformedContent,
+					style,
+					refDOMElement.clientWidth
+				),
 			});
 
 			this.refs.text.textContent = newString;
@@ -212,6 +222,9 @@ export default class PrototypoWord extends React.Component {
 			'is-shifted': this.state.glyphPanelOpened,
 		});
 
+		const whiteBlackSwitchText = this.props.uiInvertedWordColors ? 'black on white' : 'white on black';
+		const whiteBlackSwitchLabel = `Switch to ${whiteBlackSwitchText}`;
+
 		const menu = [
 			<ContextualMenuItem
 				text="Inverted view"
@@ -219,7 +232,7 @@ export default class PrototypoWord extends React.Component {
 				active={this.props.uiInvertedWordView}
 				click={this.invertedView}/>,
 			<ContextualMenuItem
-				text={`Switch to ${this.props.uiInvertedWordColors ? 'black on white' : 'white on black'}`}
+				text={whiteBlackSwitchLabel}
 				key="colors"
 				active={this.props.uiInvertedWordColors}
 				click={this.toggleColors}/>,
@@ -233,6 +246,7 @@ export default class PrototypoWord extends React.Component {
 		const wordContainer = this.state.uiSpacingMode
 			? (
 				<HandlegripText
+					ref="text"
 					style={style}
 					text={this.state.uiWordString}
 					min={0}
