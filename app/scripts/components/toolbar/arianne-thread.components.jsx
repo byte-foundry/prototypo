@@ -127,7 +127,7 @@ export default class ArianneThread extends React.Component {
 		const familyItem = (
 				<DropArianneItem
 					label={this.state.family.name}
-					list={this.state.families}
+					list={this.state.families.filter((family) => { return this.state.family.name !== family.name; })}
 					add={addFamily}
 					click={this.selectFamily}
 					toggleId="arianne-item-family"/>
@@ -142,7 +142,7 @@ export default class ArianneThread extends React.Component {
 					label={this.state.variant.name}
 					family={this.state.family}
 					variant={this.state.variant}
-					list={variants}
+					list={variants.filter((variant) => { return this.state.variant.name !== variant.name; })}
 					add={addVariant}
 					click={this.selectVariant}
 					toggleId="arianne-item-variant"/>
