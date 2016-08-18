@@ -26,10 +26,16 @@ export default class HandlegripText extends React.Component {
 		// initialise glyph advanceWidth
 		fontInstance.getGlyphProperty(
 			this.getSelectedLetter(),
-			'advanceWidth',
-			(value) => {
-				if (value && typeof value === 'number') {
-					this.state.letterAdvanceWidth = Math.round(value);
+			['advanceWidth', 'spacingLeft', 'spacingRight'],
+			({advanceWidth, spacingLeft, spacingRight}) => {
+				if (advanceWidth) {
+					this.state.letterAdvanceWidth = Math.round(advanceWidth);
+				}
+				if (spacingLeft) {
+					this.state.letterSpacingLeft = Math.round(spacingLeft);
+				}
+				if (spacingRight) {
+					this.state.letterSpacingRight = Math.round(spacingRight);
 				}
 			}
 		);
@@ -39,6 +45,7 @@ export default class HandlegripText extends React.Component {
 		this.handleUp = this.handleUp.bind(this);
 		this.handleMove = this.handleMove.bind(this);
 		this.handleSelectstart = this.handleSelectstart.bind(this);
+		this.dispatchAllFromFontinstance = this.dispatchAllFromFontinstance.bind(this);
 	}
 
 	async componentWillMount() {
@@ -52,8 +59,8 @@ export default class HandlegripText extends React.Component {
 				this.setState({
 					uiWordSelection: head.toJS().uiWordSelection || 0,
 					uiWordHandleWidth: head.toJS().uiWordHandleWidth || 0,
-					letterSpacingLeft: head.toJS().letterSpacingLeft || 0,
-					letterSpacingRight: head.toJS().letterSpacingRight || 0,
+					letterSpacingLeft: head.toJS().letterSpacingLeft || this.state.letterSpacingLeft,
+					letterSpacingRight: head.toJS().letterSpacingRight || this.state.letterSpacingRight,
 					letterAdvanceWidth: head.toJS().letterAdvanceWidth || this.state.letterAdvanceWidth,
 					tracking: head.toJS().uiSpacingTracking,
 				});
@@ -155,25 +162,16 @@ export default class HandlegripText extends React.Component {
 			this.rightCurrentX = newX;
 		}
 
-		// get the new advanceWidth of the current glyph
-		// directly from the globaly available font instance
-		fontInstance.getGlyphProperty(
-			this.getSelectedLetter(),
-			'advanceWidth',
-			(value) => {
-				if (value && typeof value === 'number') {
-					this.client.dispatchAction('/store-value', {
-						letterAdvanceWidth: Math.round(value),
-					});
-				}
-			}
-		);
+		if (newValue) {
+			this.client.dispatchAction('/change-letter-spacing', {
+				value: Math.abs(newValue),
+				side: this.state.tracking,
+				letter: this.getSelectedLetter(),
+			});
 
-		this.client.dispatchAction('/change-letter-spacing', {
-			value: Math.abs(newValue),
-			side: this.state.tracking,
-			letter: this.getSelectedLetter(),
-		});
+			this.dispatchAllFromFontinstance();
+		}
+
 	}
 
 	/**
@@ -189,6 +187,32 @@ export default class HandlegripText extends React.Component {
 		else {
 			return null;
 		}
+	}
+
+	dispatchAllFromFontinstance() {
+		// get the new advanceWidth of the current glyph
+		// directly from the globaly available font instance
+		fontInstance.getGlyphProperty(
+			this.getSelectedLetter(),
+			['advanceWidth', 'spacingLeft', 'spacingRight'],
+			({advanceWidth, spacingLeft, spacingRight}) => {
+				if (advanceWidth) {
+					this.client.dispatchAction('/store-value', {
+						letterAdvanceWidth: Math.round(advanceWidth),
+					});
+				}
+				if (spacingLeft) {
+					this.client.dispatchAction('/store-value', {
+						letterSpacingLeft: Math.round(spacingLeft),
+					});
+				}
+				if (spacingRight) {
+					this.client.dispatchAction('/store-value', {
+						letterSpacingRight: Math.round(spacingRight),
+					});
+				}
+			}
+		);
 	}
 
 	handleSelectstart(e) {
@@ -210,8 +234,9 @@ export default class HandlegripText extends React.Component {
 						spacingLeft={this.state.letterSpacingLeft}
 						spacingRight={this.state.letterSpacingRight}
 						advanceWidth={this.state.letterAdvanceWidth}
+						dispatchAll={this.dispatchAllFromFontinstance}
 						min={0}
-						max={100}
+						max={1000}
 						key={index}
 					/>
 				)
@@ -259,6 +284,7 @@ class HandlegripLetter extends React.Component {
 					min={this.props.min}
 					max={this.props.max}
 					letter={this.props.letter}
+					dispatchAll={this.props.dispatchAll}
 				/>
 				<span ref="letterWrapWrap" className="letter-wrap-wrap">
 					<span className="letter-wrap-letter">
@@ -278,6 +304,7 @@ class HandlegripLetter extends React.Component {
 					min={this.props.min}
 					max={this.props.max}
 					letter={this.props.letter}
+					dispatchAll={this.props.dispatchAll}
 				/>
 			</span>
 		);
@@ -343,25 +370,15 @@ class Handlegrip extends React.Component {
 			this.client.dispatchAction('/store-value', {letterSpacingRight: newValue});
 		}
 
-		// get the new advanceWidth of the current glyph
-		// directly from the globaly available font instance
-		fontInstance.getGlyphProperty(
-			this.props.letter,
-			'advanceWidth',
-			(value) => {
-				if (value && typeof value === 'number') {
-					this.client.dispatchAction('/store-value', {
-						letterAdvanceWidth: Math.round(value),
-					});
-				}
-			}
-		);
+		if (newValue) {
+			this.client.dispatchAction('/change-letter-spacing', {
+				value: Math.abs(newValue),
+				side: this.props.side,
+				letter: this.props.letter,
+			});
 
-		this.client.dispatchAction('/change-letter-spacing', {
-			value: Math.abs(newValue),
-			side: this.props.side,
-			letter: this.props.letter,
-		});
+			this.props.dispatchAll();
+		}
 
 		e.stopPropagation();
 	}
