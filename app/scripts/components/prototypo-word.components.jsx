@@ -250,7 +250,7 @@ export default class PrototypoWord extends React.Component {
 					style={style}
 					text={this.state.uiWordString}
 					min={0}
-					max={100}
+					max={1000}
 				/>
 			)
 			: (
