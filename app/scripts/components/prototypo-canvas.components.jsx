@@ -40,6 +40,7 @@ export default class PrototypoCanvas extends React.Component {
 				this.setState({
 					prototypoTextPanelOpened: head.toJS().uiMode.indexOf('text') !== -1,
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
+					glyph: head.toJS().glyphs
 				});
 			})
 			.onDelete(() => {
@@ -164,7 +165,8 @@ export default class PrototypoCanvas extends React.Component {
 		document.removeEventListener('selectstart', this.preventSelection);
 	}
 
-	handleZoomShortcut(e) {
+	handleShortcut(e) {
+		// Zoom out to initial view
 		if (e.keyCode === 90 && !this.oldPos) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -177,6 +179,35 @@ export default class PrototypoCanvas extends React.Component {
 			this.client.dispatchAction('/store-value', {uiNodes: false, uiOutline: false});
 			this.reset();
 		}
+
+		var unicodes = Object.keys(this.state.glyph),
+			currentUnicode = unicodes.indexOf( this.props.glyphSelected );
+
+		// navigate in glyph list: left
+		if (e.keyCode === 37) {
+			if ( currentUnicode - 1 >= 1 ) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 1] });
+			}
+		}
+		// navigate in glyph list: right
+		if (e.keyCode === 39) {
+			if ( currentUnicode + 1 <= unicodes.length - 1 ) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 1] });
+			}
+		}
+		// TODO: it only works when glyph list displays all glyphs
+		// navigate in glyph list: up
+		if (e.keyCode === 38) {
+			if ( currentUnicode - 4 >= 1 ) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 4] });
+			}
+		}
+		// navigate in glyph list: down
+		if (e.keyCode === 40) {
+			if ( currentUnicode + 4 <= unicodes.length - 1 ) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 4] });
+			}
+		}
 	}
 
 	reset() {
@@ -186,7 +217,7 @@ export default class PrototypoCanvas extends React.Component {
 		});
 	}
 
-	finishZoomShortcut(e) {
+	finishShortcut(e) {
 		if (e.keyCode === 90) {
 			e.stopPropagation();
 			this.client.dispatchAction('/store-value', this.oldPos);
@@ -194,14 +225,14 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
-	acceptZoomShortcut() {
-		this.handleZoomCb = (e) => {this.handleZoomShortcut(e);};
-		this.finishZoomCb = (e) => {this.finishZoomShortcut(e);};
+	acceptShortcut() {
+		this.handleZoomCb = (e) => {this.handleShortcut(e);};
+		this.finishZoomCb = (e) => {this.finishShortcut(e);};
 		window.addEventListener('keydown', this.handleZoomCb);
 		window.addEventListener('keyup', this.finishZoomCb);
 	}
 
-	rejectZoomShortcut() {
+	rejectShortcut() {
 		window.removeEventListener('keydown', this.handleZoomCb);
 		window.removeEventListener('keyup', this.finishZoomCb);
 		if (this.oldPos) {
@@ -272,7 +303,7 @@ export default class PrototypoCanvas extends React.Component {
 				className={canvasClass}
 				onClick={this.handleLeaveAndClick}
 				onMouseLeave={this.handleLeaveAndClick}>
-				<div ref="canvas" className="prototypo-canvas-container" onMouseLeave={() => {this.rejectZoomShortcut();}} onMouseEnter={() => { this.acceptZoomShortcut();}} onDoubleClick={() => { this.reset(); }}></div>
+				<div ref="canvas" className="prototypo-canvas-container" onMouseLeave={() => {this.rejectShortcut();}} onMouseEnter={() => { this.acceptShortcut();}} onDoubleClick={() => { this.reset(); }}></div>
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
 				</div>
