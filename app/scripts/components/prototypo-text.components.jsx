@@ -22,8 +22,8 @@ export default class PrototypoText extends React.Component {
 		};
 
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-		this.setupText = this.setupText.bind(this);
 		this.saveText = this.saveText.bind(this);
+		this.handleInputText = this.handleInputText.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.toggleInsertMenu = this.toggleInsertMenu.bind(this);
 		this.hideContextMenu = this.hideContextMenu.bind(this);
@@ -50,38 +50,18 @@ export default class PrototypoText extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-
-		this.saveTextDebounced = _.debounce((text, prop) => {
-			this.client.dispatchAction('/store-text', {value: text, propName: prop});
-		}, 500);
-	}
-
-	setupText() {
-		const content = this.props[this.props.field];
-
-		this.refs.text.textContent = content && content.length > 0 ? content : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
-		// this.saveText();
-	}
-
-	componentDidUpdate() {
-		this.setupText();
-	}
-
-	componentDidMount() {
-		this.setupText();
 	}
 
 	componentWillUnmount() {
-		this.saveText();
 		this.lifespan.release();
 	}
 
-	saveText() {
-		const textDiv = this.refs.text;
+	saveText(text) {
+		this.client.dispatchAction('/store-text', {value: text, propName: this.props.field});
+	}
 
-		if (textDiv && textDiv.textContent) {
-			this.saveTextDebounced(textDiv.textContent, this.props.field);
-		}
+	handleInputText(e) {
+		this.saveText(e.target.text);
 	}
 
 	toggleContextMenu(e) {
@@ -116,7 +96,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToQuickBrownFox() {
-		this.saveTextDebounced('The quick brown fox jumps over a lazy dog', this.props.field);
+		this.saveText('The quick brown fox jumps over a lazy dog');
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -124,7 +104,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToFameuxWhisky() {
-		this.saveTextDebounced('Buvez de ce whisky que le patron juge fameux', this.props.field);
+		this.saveText('Buvez de ce whisky que le patron juge fameux');
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -132,7 +112,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToAlphabet() {
-		this.saveTextDebounced(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`, this.props.field);
+		this.saveText(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -140,11 +120,11 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToLorem() {
-		this.saveTextDebounced(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae scelerisque urna, eget consequat lectus. Pellentesque lacus magna, tincidunt quis libero non, pellentesque sagittis libero. Nam vitae ante eu lectus sodales sagittis. Duis eget mauris aliquet, gravida quam id, sodales sem. Etiam aliquam mi nec aliquam tincidunt. Nullam mollis mi nec mi luctus faucibus. Fusce cursus massa eget dui accumsan rhoncus. Quisque consectetur libero augue, eget dictum lacus pretium ac. Praesent scelerisque ipsum at aliquam tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed porta risus at aliquam venenatis.\r\n
+		this.saveText(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae scelerisque urna, eget consequat lectus. Pellentesque lacus magna, tincidunt quis libero non, pellentesque sagittis libero. Nam vitae ante eu lectus sodales sagittis. Duis eget mauris aliquet, gravida quam id, sodales sem. Etiam aliquam mi nec aliquam tincidunt. Nullam mollis mi nec mi luctus faucibus. Fusce cursus massa eget dui accumsan rhoncus. Quisque consectetur libero augue, eget dictum lacus pretium ac. Praesent scelerisque ipsum at aliquam tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed porta risus at aliquam venenatis.\r\n
 
-							   Morbi faucibus mauris mi, sit amet laoreet sapien dapibus tristique. Suspendisse vitae molestie quam, ut cursus justo. Aenean sodales mauris vitae libero venenatis sollicitudin. Aenean condimentum nisl nec rhoncus elementum. Sed est ipsum, aliquam quis justo id, ornare tincidunt massa. Donec sit amet finibus sem. Sed euismod ex sed lorem hendrerit placerat. Praesent congue congue ultrices. Nam maximus metus rhoncus ligula porta sagittis. Maecenas pharetra placerat eleifend.\r\n
+								 Morbi faucibus mauris mi, sit amet laoreet sapien dapibus tristique. Suspendisse vitae molestie quam, ut cursus justo. Aenean sodales mauris vitae libero venenatis sollicitudin. Aenean condimentum nisl nec rhoncus elementum. Sed est ipsum, aliquam quis justo id, ornare tincidunt massa. Donec sit amet finibus sem. Sed euismod ex sed lorem hendrerit placerat. Praesent congue congue ultrices. Nam maximus metus rhoncus ligula porta sagittis. Maecenas pharetra placerat eleifend.\r\n
 
-								   Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas vulputate fermentum ullamcorper. Etiam congue nec magna sed accumsan. Aliquam erat volutpat. Proin ut sapien auctor, congue tortor et, tempor dolor. Phasellus semper ut magna nec vehicula. Phasellus ut pretium metus. Aliquam eu consectetur est, mattis laoreet massa. Nullam eu scelerisque lacus. Pellentesque imperdiet metus at malesuada accumsan. Duis rhoncus, neque sed luctus faucibus, risus mi auctor purus, sed sagittis dolor leo quis quam.`, this.props.field);
+									 Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas vulputate fermentum ullamcorper. Etiam congue nec magna sed accumsan. Aliquam erat volutpat. Proin ut sapien auctor, congue tortor et, tempor dolor. Phasellus semper ut magna nec vehicula. Phasellus ut pretium metus. Aliquam eu consectetur est, mattis laoreet massa. Nullam eu scelerisque lacus. Pellentesque imperdiet metus at malesuada accumsan. Duis rhoncus, neque sed luctus faucibus, risus mi auctor purus, sed sagittis dolor leo quis quam.`);
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -215,20 +195,24 @@ export default class PrototypoText extends React.Component {
 				click={this.toggleColors}/>,
 			];
 
+		const nl2br = (str = '') => { return str.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br/>$2'); };
+
+		const htmlContent = nl2br(this.props[this.props.field]);
+
 		return (
 			<div
 				className="prototypo-text"
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}>
 				<ReactGeminiScrollbar>
-					<div
-						contentEditable="true"
+					<ContentEditable
 						ref="text"
 						className="prototypo-text-string"
 						spellCheck="false"
 						style={style}
-						onInput={this.saveText}
-						></div>
+						onChange={this.handleInputText}
+						html={htmlContent}
+					/>
 				</ReactGeminiScrollbar>
 				<ViewPanelsMenu
 					shifted={this.state.glyphPanelOpened}
@@ -252,5 +236,65 @@ export default class PrototypoText extends React.Component {
 				</div>
 			</div>
 		);
+	}
+}
+
+class ContentEditable extends React.Component {
+	constructor() {
+		super();
+
+		this.state = {text: ''};
+
+		this.emitChange = this.emitChange.bind(this);
+	}
+
+	render() {
+		const {children, html, tagName, ...props} = this.props;
+
+		return React.createElement(
+			tagName || 'div',
+			{
+				...props,
+				ref: (e) => { this.htmlEl = e; },
+				onInput: this.emitChange,
+				onBlur: this.props.onBlur || this.emitChange,
+				contentEditable: !this.props.disabled,
+				dangerouslySetInnerHTML: {__html: html},
+			},
+			children
+		);
+	}
+
+	shouldComponentUpdate(nextProps, nextState) {
+		// We need not rerender if the change of props simply reflects the user's
+		// edits. Rerendering in this case would make the cursor/caret jump.
+		return (
+			// Rerender if there is no element yet... (somehow?)
+			!this.htmlEl
+			// ...or if html really changed... (programmatically, not by user edit)
+			|| (nextState.text !== this.htmlEl.innerText
+			&& nextState.text !== this.state.text)
+			// ...or if editing is enabled or disabled.
+			|| this.props.disabled !== nextProps.disabled
+		);
+	}
+
+	componentDidUpdate() {
+		if (this.htmlEl && this.state.text !== this.htmlEl.innerText) {
+			// Perhaps React (whose VDOM gets outdated because we often prevent
+			// rerendering) did not update the DOM. So we update it manually now.
+			this.htmlEl.innerText = this.props.html;
+		}
+	}
+
+	emitChange(evt) {
+		if (!this.htmlEl) return;
+		var text = this.htmlEl.innerText;
+		if (this.props.onChange && text !== this.lastText) {
+			evt.target = {value: this.htmlEl.innerHTML, text: this.htmlEl.innerText};
+			this.setState({text});
+			this.props.onChange(evt);
+		}
+		this.lastText = text;
 	}
 }
