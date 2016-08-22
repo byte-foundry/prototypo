@@ -10,6 +10,7 @@ import {setupFontInstance, mapGlyphForApp} from '../helpers/font.helpers.js';
 import {FontValues} from '../services/values.services.js';
 import {delayAfterCall} from '../helpers/animation.helpers.js';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
+import Log from '../services/log.services.js';
 
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
@@ -204,6 +205,12 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 
 		saveAppValues();
+		window.Intercom('update',
+			{
+				number_of_family: prototypoStore.get('fonts').length,
+			}
+		);
+		Log.ui(`createFamily.${template}`);
 	},
 	'/select-variant': ({variant, family}) => {
 		if (!variant) {
@@ -255,6 +262,13 @@ export default {
 			openDuplicateVariantModal: false,
 			errorAddVariant: undefined,
 		});
+		window.Intercom('update',
+			{
+				number_of_variants: _.reduce(prototypoStore.get('fonts'), (acc, value) => {
+					return acc + value.variants.length;
+				}, 0),
+			}
+		);
 	},
 	'/create-variant': async ({name, familyName, variantBase, noSwitch}) => {
 		if (!name || String(name).trim() === '') {

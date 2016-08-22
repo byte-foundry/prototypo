@@ -4,6 +4,7 @@ import Lifespan from 'lifespan';
 import vatrates from 'vatrates';
 
 import LocalClient from '../stores/local-client.stores.jsx';
+import Log from '../services/log.services.js';
 
 import Button from './shared/button.components.jsx';
 import Modal from './shared/modal.components.jsx';
@@ -96,7 +97,8 @@ export default class CreditsExport extends React.Component {
 
 	exit() {
 		this.client.dispatchAction('/store-value', {openBuyCreditsModal: false});
-		window.Intercom('trackEvent', 'closeBuyCredit');
+		window.Intercom('trackEvent', 'closeOpenBuyCreditsModal');
+		Log.ui('BuyCredits.close');
 	}
 
 	render() {

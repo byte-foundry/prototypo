@@ -3,6 +3,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import vatrates from 'vatrates';
 
 import LocalClient from '../stores/local-client.stores.jsx';
+import Log from '../services/log.services.js';
 
 import Modal from './shared/modal.components.jsx';
 
@@ -48,6 +49,8 @@ export default class GoProModal extends React.Component {
 	goSubscribe() {
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
 		document.location.href = '#/account/create';
+		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
+		Log.ui('Subscribe.FromFile');
 	}
 
 	goCredits() {
@@ -55,6 +58,8 @@ export default class GoProModal extends React.Component {
 			openGoProModal: false,
 			openBuyCreditsModal: true,
 		});
+		window.Intercom('trackEvent', 'openBuyCreditsModalFromGoPro');
+		Log.ui('BuyCreditsModal.FromFile');
 	}
 
 	render() {

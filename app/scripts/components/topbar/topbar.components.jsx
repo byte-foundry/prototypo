@@ -2,8 +2,8 @@ import React from 'react';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import Log from '~/services/log.services.js';
 import HoodieApi from '~/services/hoodie.services.js';
+import Log from '~/services/log.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
@@ -133,6 +133,7 @@ export default class Topbar extends React.Component {
 	openGoProModal() {
 		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
 		this.client.dispatchAction('/store-value', {openGoProModal: true});
+		Log.ui('ExportFontNow.open');
 	}
 
 	setAccountRoute() {
