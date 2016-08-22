@@ -485,6 +485,7 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', newParams);
 
 		debouncedSave(newParams, db);
 		if (force) {
@@ -509,6 +510,7 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', newParams);
 		debouncedSave(newParams, db);
 
 		if (force) {
@@ -537,10 +539,26 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', newParams);
 
 		debouncedSave(newParams, db);
 
 		undoWatcher.update(patch, label);
 
+	},
+	'/update-letter-spacing-value': ({letter, valueList}) => {
+		fontInstance.getGlyphProperty(
+			letter,
+			valueList,
+			(values) => {
+				const resultValues = {};
+
+				_.forOwn(values, (value, key) => {
+					if (value) {
+						resultValues[key] = Math.round(value);
+					}
+				});
+				localClient.dispatchAction('/store-value-undoable', resultValues);
+		});
 	},
 };

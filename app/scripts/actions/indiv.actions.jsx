@@ -154,6 +154,7 @@ export default {
 		const patch = undoableStore.set('controlsValues', oldValues).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', {params: oldValues});
 
 		const endCreatePatch = prototypoStore
 			.set('indivCreate', false)
@@ -256,6 +257,7 @@ export default {
 		const patch = undoableStore.set('controlsValues', oldValues).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', oldValues);
 
 		const variant = prototypoStore.get('variant');
 
@@ -323,6 +325,7 @@ export default {
 		const patch = undoableStore.set('controlsValues', oldValues).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', oldValues);
 
 		const indivPatch = prototypoStore
 			.set('indivCurrentGroup', {name: newName, glyphs: currentGroup.glyphs})

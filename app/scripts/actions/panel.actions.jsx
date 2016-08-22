@@ -1,8 +1,7 @@
-import {prototypoStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
-import Log from '../services/log.services.js';
 
 import {rawToEscapedContent} from '../helpers/input-transform.helpers';
 
@@ -19,9 +18,20 @@ export default {
 		_.forEach(params, (value, name) => {
 			prototypoStore.set(name, value);
 		});
+
 		const patch = prototypoStore.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
+		saveAppValues();
+	},
+	'/store-value-undoable': (params) => {
+		_.forEach(params, (value, name) => {
+			undoableStore.set(name, value);
+		});
+
+		const patch = undoableStore.commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
 		saveAppValues();
 	},
 	'/store-text': ({value, propName}) => {

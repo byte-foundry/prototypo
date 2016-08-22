@@ -17,37 +17,18 @@ export default class HandlegripText extends React.Component {
 		this.state = {
 			uiWordSelection: 0,
 			uiWordHandleWidth: 0,
-			letterSpacingLeft: 0,
-			letterSpacingRight: 0,
-			letterAdvanceWidth: 0,
+			spacingLeft: 0,
+			spacingRight: 0,
+			baseSpacingLeft: 0,
+			baseSpacingRight: 0,
+			advanceWidth: 0,
 			trackingX: 0,
+			letterFontSize: 0,
 			tracking: undefined,
 			fontValues: undefined,
 		};
 		this.leftCurrentX = 0;
 		this.rightCurrentX = 0;
-		// initialise glyph advanceWidth
-		fontInstance.getGlyphProperty(
-			this.getSelectedLetter(),
-			['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
-			({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight}) => {
-				if (advanceWidth) {
-					this.state.letterAdvanceWidth = Math.round(advanceWidth);
-				}
-				if (spacingLeft) {
-					this.state.letterSpacingLeft = Math.round(spacingLeft);
-				}
-				if (spacingRight) {
-					this.state.letterSpacingRight = Math.round(spacingRight);
-				}
-				if (baseSpacingLeft) {
-					this.state.baseSpacingLeft = Math.round(baseSpacingLeft);
-				}
-				if (baseSpacingRight) {
-					this.state.baseSpacingRight = Math.round(baseSpacingRight);
-				}
-			}
-		);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// function bindings
@@ -66,11 +47,8 @@ export default class HandlegripText extends React.Component {
 				this.setState({
 					uiWordSelection: head.toJS().uiWordSelection || 0,
 					uiWordHandleWidth: head.toJS().uiWordHandleWidth || 0,
-					letterSpacingLeft: head.toJS().letterSpacingLeft || this.state.letterSpacingLeft,
-					letterSpacingRight: head.toJS().letterSpacingRight || this.state.letterSpacingRight,
-					letterAdvanceWidth: head.toJS().letterAdvanceWidth || this.state.letterAdvanceWidth,
 					tracking: head.toJS().uiSpacingTracking,
-					trackingX: head.toJS().uiTrackingX,
+					letterFontSize: head.toJS().uiLetterSpacingLetterFontSize || this.state.letterFontSize,
 				});
 			})
 			.onDelete(() => {
@@ -81,6 +59,12 @@ export default class HandlegripText extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					fontValues: head.toJS().controlsValues,
+					trackingX: head.toJS().uiTrackingX,
+					baseSpacingLeft: head.toJS().baseSpacingLeft,
+					baseSpacingRight: head.toJS().baseSpacingRight,
+					spacingLeft: head.toJS().spacingLeft || this.state.spacingLeft,
+					spacingRight: head.toJS().spacingRight || this.state.spacingRight,
+					advanceWidth: head.toJS().advanceWidth || this.state.advanceWidth,
 				});
 			})
 			.onDelete(() => {
@@ -96,31 +80,6 @@ export default class HandlegripText extends React.Component {
 
 		handlegripDOM.addEventListener('mouseup', this.handleUp);
 		handlegripDOM.addEventListener('mousemove', this.handleMove);
-	}
-
-	componentDidUpdate() {
-		// initialise glyph advanceWidth
-		fontInstance.getGlyphProperty(
-			this.getSelectedLetter(),
-			['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
-			({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight}) => {
-				if (advanceWidth) {
-					this.setState({letterAdvanceWidth: Math.round(advanceWidth)});
-				}
-				if (spacingLeft) {
-					this.setState({letterSpacingLeft: Math.round(spacingLeft)});
-				}
-				if (spacingRight) {
-					this.setState({letterSpacingRight: Math.round(spacingRight)});
-				}
-				if (baseSpacingLeft) {
-					this.setState({baseSpacingLeft: Math.round(baseSpacingLeft)});
-				}
-				if (baseSpacingRight) {
-					this.setState({baseSpacingRight: Math.round(baseSpacingRight)});
-				}
-			}
-		);
 	}
 
 	componentWillUnmount() {
@@ -141,14 +100,6 @@ export default class HandlegripText extends React.Component {
 		// tells everyone to stop tracking
 		this.client.dispatchAction('/store-value', {uiSpacingTracking: false});
 
-		/*
-		this.client.dispatchAction('/change-param', {
-			value: this.props.value,
-			name: this.props.name,
-			label: this.props.label,
-			force: true,
-		});
-		*/
 		this.dispatchAllFromFontinstance();
 
 		e.stopPropagation();
@@ -173,14 +124,28 @@ export default class HandlegripText extends React.Component {
 		const {offsetLeft} = DOM.getAbsOffset(el);
 		let newValue;
 
+		// advanceWidth is in typographic unit
+		const advanceWidth = this.state.advanceWidth;
+		// letter offsetWidth in pixels
+		const letterOffsetWidth = this.refs.selectedLetter.getOffsetWidth();
+
+		const newSpacingValues = {};
+
+		// here we are going to find out the pixel ratio for dragging
+		const dragginRatio = parseFloat(advanceWidth) / letterOffsetWidth;
+
+		const property = leftSideTracking ? 'spacingLeft' : 'spacingRight';
+		const variation = Math.round(
+			(newX - this.state.trackingX) * dragginRatio
+		) * (leftSideTracking ? -1 : 1);
+
+		// if the new X value is in the element boundaries
 		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
-			const variation = newX - this.state.trackingX;
 			const unicode = this.getSelectedLetter().charCodeAt(0);
-			const property = leftSideTracking ? 'spacingLeft' : 'spacingRight';
 
 			newValue = (
 				this.state.fontValues.glyphSpecialProps[unicode][property]
-				+ variation * (leftSideTracking ? -1 : 1)
+				+ (variation)
 			);
 
 			newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
@@ -193,13 +158,13 @@ export default class HandlegripText extends React.Component {
 		// if we are currently tracking left side spacing
 		if (leftSideTracking) {
 			// set the new spacing value
-			this.client.dispatchAction('/store-value', {letterSpacingLeft: newValue + this.state.baseSpacingLeft});
+			newSpacingValues.spacingLeft = newValue + this.state.baseSpacingLeft;
 		}
 		else {
-			this.client.dispatchAction('/store-value', {letterSpacingRight: newValue + this.state.baseSpacingRight});
+			newSpacingValues.spacingRight = newValue + this.state.baseSpacingRight;
 		}
 
-		this.client.dispatchAction('/store-value', {uiTrackingX: newX});
+		newSpacingValues.uiTrackingX = newX;
 
 		if (newValue) {
 			this.client.dispatchAction('/change-letter-spacing', {
@@ -208,9 +173,9 @@ export default class HandlegripText extends React.Component {
 				letter: this.getSelectedLetter(),
 			});
 
-			//this.dispatchAllFromFontinstance();
-			this.client.dispatchAction('/store-value', {letterAdvanceWidth: newValue + this.state.letterAdvanceWidth});
+			newSpacingValues.advanceWidth = variation + this.state.advanceWidth;
 		}
+		this.client.dispatchAction('/store-value-undoable', newSpacingValues);
 
 	}
 
@@ -232,27 +197,10 @@ export default class HandlegripText extends React.Component {
 	dispatchAllFromFontinstance() {
 		// get the new advanceWidth of the current glyph
 		// directly from the globaly available font instance
-		fontInstance.getGlyphProperty(
-			this.getSelectedLetter(),
-			['advanceWidth', 'spacingLeft', 'spacingRight'],
-			({advanceWidth, spacingLeft, spacingRight}) => {
-				if (advanceWidth) {
-					this.client.dispatchAction('/store-value', {
-						letterAdvanceWidth: Math.round(advanceWidth),
-					});
-				}
-				if (spacingLeft) {
-					this.client.dispatchAction('/store-value', {
-						letterSpacingLeft: Math.round(spacingLeft),
-					});
-				}
-				if (spacingRight) {
-					this.client.dispatchAction('/store-value', {
-						letterSpacingRight: Math.round(spacingRight),
-					});
-				}
-			}
-		);
+		this.client.dispatchAction('/update-letter-spacing-value', {
+			letter: this.getSelectedLetter(),
+			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight'],
+		});
 	}
 
 	handleSelectstart(e) {
@@ -271,10 +219,9 @@ export default class HandlegripText extends React.Component {
 					<HandlegripLetter
 						letter={letter}
 						ref="selectedLetter"
-						spacingLeft={this.state.letterSpacingLeft}
-						spacingRight={this.state.letterSpacingRight}
-						advanceWidth={this.state.letterAdvanceWidth}
-						dispatchAll={this.dispatchAllFromFontinstance}
+						spacingLeft={this.state.spacingLeft}
+						spacingRight={this.state.spacingRight}
+						advanceWidth={this.state.advanceWidth}
 						min={this.props.min}
 						max={this.props.max}
 						key={index}
@@ -306,10 +253,11 @@ export default class HandlegripText extends React.Component {
 class HandlegripLetter extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			advanceWidth: undefined,
-		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
+	getOffsetWidth() {
+		return this.refs.letterWrapLetter.clientWidth;
 	}
 
 	render() {
@@ -324,10 +272,9 @@ class HandlegripLetter extends React.Component {
 					min={this.props.min}
 					max={this.props.max}
 					letter={this.props.letter}
-					dispatchAll={this.props.dispatchAll}
 				/>
 				<span ref="letterWrapWrap" className="letter-wrap-wrap">
-					<span className="letter-wrap-letter">
+					<span ref="letterWrapLetter" className="letter-wrap-letter">
 						{this.props.letter}
 					</span>
 					<span className="handlegrip-scales">
@@ -344,7 +291,6 @@ class HandlegripLetter extends React.Component {
 					min={this.props.min}
 					max={this.props.max}
 					letter={this.props.letter}
-					dispatchAll={this.props.dispatchAll}
 				/>
 			</span>
 		);
@@ -387,7 +333,7 @@ class Handlegrip extends React.Component {
 
 		const newX = e.pageX || e.screenX;
 
-		this.client.dispatchAction('/store-value', {uiTrackingX: newX});
+		this.client.dispatchAction('/store-value-undoable', {uiTrackingX: newX});
 
 		e.stopPropagation();
 	}
@@ -439,6 +385,10 @@ class RegularLetter extends React.Component {
 
 	selectLetter() {
 		this.client.dispatchAction('/store-value', {uiWordSelection: this.props.index});
+		this.client.dispatchAction('/update-letter-spacing-value', {
+			letter: this.props.letter.charCodeAt(0),
+			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
+		});
 	}
 
 	render() {

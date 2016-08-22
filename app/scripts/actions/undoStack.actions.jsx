@@ -18,10 +18,11 @@ export default {
 		if (eventIndex > 1) {
 
 			const revert = Patch.revert(Patch.fromJSON(event.patch));
-			const patch = prototypoStore.set('undoFrom', eventIndex).set('undoTo', eventIndex - 1).commit()
+			const patch = prototypoStore.set('undoFrom', eventIndex).set('undoTo', eventIndex - 1).commit();
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
 			localServer.dispatchUpdate('/undoableStore', revert);
+			localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
 
 		}
 	},
@@ -38,6 +39,7 @@ export default {
 
 				localServer.dispatchUpdate('/prototypoStore', patch);
 				localServer.dispatchUpdate('/undoableStore', Patch.fromJSON(event.patch));
+				localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
 
 			}
 		}
