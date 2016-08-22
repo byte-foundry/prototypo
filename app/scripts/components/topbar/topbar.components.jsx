@@ -131,6 +131,7 @@ export default class Topbar extends React.Component {
 	}
 
 	openGoProModal() {
+		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
 		this.client.dispatchAction('/store-value', {openGoProModal: true});
 	}
 

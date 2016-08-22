@@ -96,6 +96,7 @@ export default class CreditsExport extends React.Component {
 
 	exit() {
 		this.client.dispatchAction('/store-value', {openBuyCreditsModal: false});
+		window.Intercom('trackEvent', 'closeBuyCredit');
 	}
 
 	render() {
