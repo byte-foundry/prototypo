@@ -106,8 +106,18 @@ export default class HandlegripText extends React.Component {
 			return;
 		}
 
-		// tells everyone to stop tracking
-		this.client.dispatchAction('/store-value', {uiSpacingTracking: false});
+		const el = ReactDOM.findDOMNode(this);
+
+		this.client.dispatchAction('/store-value', {
+			// tells everyone to stop tracking
+			uiSpacingTracking: false,
+			// adjust font size
+			uiWordFontSize: DOM.getProperFontSize(
+				this.props.text,
+				el.style,
+				el.clientWidth
+			),
+		});
 
 		this.dispatchAllFromFontinstance();
 
