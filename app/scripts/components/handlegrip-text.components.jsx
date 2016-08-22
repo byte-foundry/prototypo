@@ -135,19 +135,18 @@ export default class HandlegripText extends React.Component {
 		const dragginRatio = parseFloat(advanceWidth) / letterOffsetWidth;
 
 		const property = leftSideTracking ? 'spacingLeft' : 'spacingRight';
+		const unicode = this.getSelectedLetter().charCodeAt(0);
 		const variation = Math.round(
 			(newX - this.state.trackingX) * dragginRatio
 		) * (leftSideTracking ? -1 : 1);
+		const updatedValue = (
+			this.state.fontValues.glyphSpecialProps[unicode][property]
+			+ (variation)
+		);
 
 		// if the new X value is in the element boundaries
 		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
-			const unicode = this.getSelectedLetter().charCodeAt(0);
-
-			newValue = (
-				this.state.fontValues.glyphSpecialProps[unicode][property]
-				+ (variation)
-			);
-
+			newValue = updatedValue;
 			newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
 
 		}
@@ -173,8 +172,12 @@ export default class HandlegripText extends React.Component {
 				letter: this.getSelectedLetter(),
 			});
 
-			newSpacingValues.advanceWidth = variation + this.state.advanceWidth;
+			// if the user went to far, no need to update the advanceWidth value
+			if (updatedValue <= this.props.max) {
+				newSpacingValues.advanceWidth = variation + advanceWidth;
+			}
 		}
+
 		this.client.dispatchAction('/store-value-undoable', newSpacingValues);
 
 	}
