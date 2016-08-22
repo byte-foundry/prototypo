@@ -180,8 +180,8 @@ export default class PrototypoCanvas extends React.Component {
 			this.reset();
 		}
 
-		var unicodes = Object.keys(this.state.glyph),
-			currentUnicode = unicodes.indexOf( this.props.glyphSelected );
+		const unicodes = Object.keys(this.state.glyph);
+		const currentUnicode = unicodes.indexOf( this.props.glyphSelected );
 
 		// navigate in glyph list: left
 		if (e.keyCode === 37) {
