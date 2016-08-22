@@ -31,6 +31,15 @@ export default class HandlegripText extends React.Component {
 		this.rightCurrentX = 0;
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
+		// retrieve the initial values, only once
+		fontInstance.getGlyphProperty(
+			this.getSelectedLetter(),
+			['advanceWidth', 'spacingLeft', 'spacingRight'],
+			({advanceWidth, spacingLeft, spacingRight}) => {
+				this.setState({advanceWidth, spacingLeft, spacingRight});
+			}
+		);
+
 		// function bindings
 		this.handleUp = this.handleUp.bind(this);
 		this.handleMove = this.handleMove.bind(this);
@@ -264,8 +273,9 @@ class HandlegripLetter extends React.Component {
 	}
 
 	render() {
-		const spacingLeft = Math.abs(this.props.spacingLeft);
-		const spacingRight = Math.abs(this.props.spacingRight);
+		const spacingLeft = Math.round(Math.abs(this.props.spacingLeft));
+		const spacingRight = Math.round(Math.abs(this.props.spacingRight));
+		const advanceWidth = Math.round(Math.abs(this.props.advanceWidth));
 
 		return (
 			<span className="letter-wrap">
@@ -285,7 +295,7 @@ class HandlegripLetter extends React.Component {
 						<span className="handlegrip-scale-right"></span>
 					</span>
 					<span className="handlegrip-spacing-number">
-						{this.props.advanceWidth}
+						{advanceWidth}
 					</span>
 				</span>
 				<Handlegrip
