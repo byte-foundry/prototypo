@@ -33,7 +33,7 @@ export default class ArianneThread extends React.Component {
 		const store = await this.client.fetch('/prototypoStore');
 		const memoizedListSelector = (list, selectedValue, oldValue) => {
 			if (selectedValue.name !== oldValue.name) {
-				return list.filter((element) => { return selectedFamily.name !== element.name; });
+				return list.filter((element) => { return selectedValue.name !== element.name; });
 			}
 			return oldValue;
 		};
@@ -56,10 +56,10 @@ export default class ArianneThread extends React.Component {
 			});
 
 		this.setState({
-			families: memoizedListSelector(head.toJS().fonts, head.toJS().family, this.state.families),
+			families: memoizedListSelector(store.head.toJS().fonts, store.head.toJS().family, this.state.families),
 			family: familySelector(store.head.toJS().fonts, store.head.toJS().family),
 			variant: store.head.toJS().variant,
-			groups: memoizedListSelector(head.toJS().indivGroups, {}, this.state.groups),
+			groups: memoizedListSelector(store.head.toJS().indivGroups, {}, this.state.groups),
 		});
 	}
 
@@ -144,7 +144,7 @@ export default class ArianneThread extends React.Component {
 					label={this.state.variant.name}
 					family={this.state.family}
 					variant={this.state.variant}
-					list={this.state.family.variants.filter(({name}) => { return name !== this.state.variant.name; }) || []}
+					list={this.state.family.variants ? this.state.family.variants.filter(({name}) => { return name !== this.state.variant.name; }) : []}
 					add={addVariant}
 					click={this.selectVariant}
 					toggleId="arianne-item-variant"/>
