@@ -22,7 +22,6 @@ export default class PrototypoWord extends React.Component {
 		super(props);
 
 		this.state = {
-			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
 			glyphPanelOpened: undefined,
 			uiSpacingMode: undefined,
@@ -53,6 +52,8 @@ export default class PrototypoWord extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
+					canvasPanelOpened: head.toJS().uiMode.indexOf('glyph') !== -1,
+					textPanelOpened: head.toJS().uiMode.indexOf('text') !== -1,
 					glyphs: head.toJS().glyphs,
 					uiSpacingMode: head.toJS().uiSpacingMode,
 					uiWordString: head.toJS().uiWordString,
@@ -89,11 +90,11 @@ export default class PrototypoWord extends React.Component {
 			const style = refDOMElement.style;
 
 			this.client.dispatchAction('/store-value', {
-				uiWordFontSize: DOM.getProperFontSize(
+				uiWordFontSize: `${Math.min(DOM.getProperFontSize(
 					transformedContent,
 					style,
 					refDOMElement.clientWidth
-				),
+				), !this.state.canvasPanelOpened && !this.state.textPanelOpened ? 500 : 100)}px`,
 			});
 
 			this.refs.text.textContent = newString;
