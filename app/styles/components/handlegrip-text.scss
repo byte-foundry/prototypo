@@ -2,10 +2,9 @@
 
 // width of the grip, larger than the grip itself
 $handlegripWidth: 10px;
-$scaleWidth: 10px;
 $handlegripOffset: $handlegripWidth/2;
 $spacingNumberOffset: 15px;
-$heightPercentage: 80%;
+$heightPercentage: 100%;
 
 .letter-wrap {
 	align-items: center;
@@ -31,7 +30,7 @@ $heightPercentage: 80%;
 	cursor: ew-resize;
 	height: $heightPercentage;
 	position: absolute;
-	top: 10%;
+	top: 0;
 	width: $handlegripWidth;
 	z-index: 10;
 
@@ -41,20 +40,6 @@ $heightPercentage: 80%;
 		height: 100%;
 		margin: 0 auto;
 		width: 1px;
-	}
-
-	&-scale-left, &-scale-right {
-		background-color: $green;
-		bottom: 100% - $heightPercentage;
-		height: 1px;
-		position: absolute;
-		width: $scaleWidth;
-	}
-	&-scale-left {
-		left: -$handlegripOffset;
-	}
-	&-scale-right {
-		right: -$handlegripOffset;
 	}
 }
 .handlegrip-left {

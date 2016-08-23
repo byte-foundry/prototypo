@@ -36,10 +36,6 @@ export default class HandlegripLetter extends React.Component {
 					<span ref="letterWrapLetter" className="letter-wrap-letter">
 						{this.props.letter}
 					</span>
-					<span className="handlegrip-scales">
-						<span className="handlegrip-scale-left"></span>
-						<span className="handlegrip-scale-right"></span>
-					</span>
 					<span className="handlegrip-spacing-number">
 						{advanceWidth}
 					</span>
