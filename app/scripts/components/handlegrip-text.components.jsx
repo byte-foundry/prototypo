@@ -153,13 +153,25 @@ export default class HandlegripText extends React.Component {
 		// here we are going to find out the pixel ratio for dragging
 		const dragginRatio = parseFloat(advanceWidth) / letterOffsetWidth;
 
+		// property to edit
 		const property = leftSideTracking ? 'spacingLeft' : 'spacingRight';
+		// current letter's unicode
 		const unicode = this.getSelectedLetter().charCodeAt(0);
+		// store the special property object for the current unicode value
+		const specialPropsObject = this.state.fontValues.glyphSpecialProps[unicode];
+
+		// obtain variation value
 		const variation = Math.round(
 			(newX - this.state.trackingX) * dragginRatio
 		) * (leftSideTracking ? -1 : 1);
+
+		// compute new value
 		const updatedValue = (
-			this.state.fontValues.glyphSpecialProps[unicode][property]
+			(
+				 specialPropsObject && specialPropsObject[property]
+					? specialPropsObject[property]
+					: 0
+			)
 			+ (variation)
 		);
 
