@@ -160,7 +160,9 @@ export default class HandlegripText extends React.Component {
 		// current letter's unicode
 		const unicode = this.getSelectedLetter().charCodeAt(0);
 		// store the special property object for the current unicode value
-		const specialPropsObject = this.state.fontValues.glyphSpecialProps[unicode];
+		const specialPropsObject = this.state.fontValues.glyphSpecialProps
+			? this.state.fontValues.glyphSpecialProps[unicode]
+			: {};
 
 		// obtain variation value
 		const variation = Math.round(
