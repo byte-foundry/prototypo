@@ -32,7 +32,7 @@ export default class HandlegripLetter extends React.Component {
 					max={this.props.max}
 					letter={this.props.letter}
 				/>
-				<span ref="letterWrapWrap" className="letter-wrap-wrap">
+				<span className="letter-wrap-wrap">
 					<span ref="letterWrapLetter" className="letter-wrap-letter">
 						{this.props.letter}
 					</span>
