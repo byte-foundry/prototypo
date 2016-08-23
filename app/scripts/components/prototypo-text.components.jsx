@@ -3,6 +3,8 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {Editor, EditorState, ContentState, CompositeDecorator} from 'draft-js';
+import escapeStringRegexp from 'escape-string-regexp';
 
 import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
@@ -10,20 +12,45 @@ import CloseButton from './close-button.components.jsx';
 import ZoomButtons from './zoom-buttons.components.jsx';
 import ClassNames from 'classnames';
 
+function createIndivStrategy(regex) {
+	return (contentBlock, callback) => {
+		const text = contentBlock.getText();
+		let matchArr = regex.exec(text);
+		let start;
+
+		while (matchArr !== null) {
+			start = matchArr.index;
+			callback(start, start + matchArr[0].length);
+			matchArr = regex.exec(text);
+		}
+	};
+}
+
+const IndivSpan = ({children}) => {
+	return <span style={{color: '#232323'}}>{children}</span>;
+};
+
 export default class PrototypoText extends React.Component {
 
 	constructor(props) {
 		super(props);
 
+		const compositeDecorator = new CompositeDecorator([{
+			strategy: createIndivStrategy(/[abc+]/g),
+			component: IndivSpan,
+		}]);
+
 		this.state = {
 			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
 			glyphPanelOpened: undefined,
+			editorState: EditorState.createEmpty(compositeDecorator),
+			indivCurrentGroup: undefined,
 		};
 
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.saveText = this.saveText.bind(this);
-		this.handleInputText = this.handleInputText.bind(this);
+		this.onEditorChange = this.onEditorChange.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.toggleInsertMenu = this.toggleInsertMenu.bind(this);
 		this.hideContextMenu = this.hideContextMenu.bind(this);
@@ -35,6 +62,7 @@ export default class PrototypoText extends React.Component {
 		this.close = this.close.bind(this);
 		this.invertedView = this.invertedView.bind(this);
 		this.toggleColors = this.toggleColors.bind(this);
+		this.updateIndivGroupDecorator = this.updateIndivGroupDecorator.bind(this);
 	}
 
 	componentWillMount() {
@@ -43,25 +71,62 @@ export default class PrototypoText extends React.Component {
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
+				this.updateIndivGroupDecorator(head.toJS().indivCurrentGroup);
+
 				this.setState({
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
+					indivCurrentGroup: head.toJS().indivCurrentGroup,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+		this.setText(this.props[this.props.field]);
 	}
 
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
 
+	updateIndivGroupDecorator(nextIndivGroup = {}) {
+		const {indivCurrentGroup = {}, editorState} = this.state;
+
+		if (nextIndivGroup.name !== indivCurrentGroup.name) {
+			let decorator = null;
+
+			if (nextIndivGroup.glyphs) {
+				const glyphsString = nextIndivGroup.glyphs
+										.map((unicode) => { return String.fromCharCode(unicode); })
+										.join('');
+
+				decorator = new CompositeDecorator([{
+					strategy: createIndivStrategy(new RegExp(`[${escapeStringRegexp(glyphsString)}]+`, 'g')),
+					component: IndivSpan,
+				}]);
+			}
+
+			this.setState({editorState: EditorState.set(editorState, {decorator})});
+		}
+	}
+
+	setText(text) {
+		this.setState({
+			editorState: EditorState.push(
+				this.state.editorState,
+				ContentState.createFromText(text),
+				'change-block-data'
+			),
+		});
+		this.saveText(text);
+	}
+
 	saveText(text) {
 		this.client.dispatchAction('/store-text', {value: text, propName: this.props.field});
 	}
 
-	handleInputText(e) {
-		this.saveText(e.target.text);
+	onEditorChange(editorState) {
+		this.saveText(editorState.getCurrentContent().getPlainText());
+		this.setState({editorState});
 	}
 
 	toggleContextMenu(e) {
@@ -96,7 +161,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToQuickBrownFox() {
-		this.saveText('The quick brown fox jumps over a lazy dog');
+		this.setText('The quick brown fox jumps over a lazy dog');
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -104,7 +169,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToFameuxWhisky() {
-		this.saveText('Buvez de ce whisky que le patron juge fameux');
+		this.setText('Buvez de ce whisky que le patron juge fameux');
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -112,7 +177,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToAlphabet() {
-		this.saveText(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
+		this.setText(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -120,11 +185,11 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToLorem() {
-		this.saveText(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae scelerisque urna, eget consequat lectus. Pellentesque lacus magna, tincidunt quis libero non, pellentesque sagittis libero. Nam vitae ante eu lectus sodales sagittis. Duis eget mauris aliquet, gravida quam id, sodales sem. Etiam aliquam mi nec aliquam tincidunt. Nullam mollis mi nec mi luctus faucibus. Fusce cursus massa eget dui accumsan rhoncus. Quisque consectetur libero augue, eget dictum lacus pretium ac. Praesent scelerisque ipsum at aliquam tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed porta risus at aliquam venenatis.\r\n
+		this.setText(`		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae scelerisque urna, eget consequat lectus. Pellentesque lacus magna, tincidunt quis libero non, pellentesque sagittis libero. Nam vitae ante eu lectus sodales sagittis. Duis eget mauris aliquet, gravida quam id, sodales sem. Etiam aliquam mi nec aliquam tincidunt. Nullam mollis mi nec mi luctus faucibus. Fusce cursus massa eget dui accumsan rhoncus. Quisque consectetur libero augue, eget dictum lacus pretium ac. Praesent scelerisque ipsum at aliquam tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed porta risus at aliquam venenatis.
 
-								 Morbi faucibus mauris mi, sit amet laoreet sapien dapibus tristique. Suspendisse vitae molestie quam, ut cursus justo. Aenean sodales mauris vitae libero venenatis sollicitudin. Aenean condimentum nisl nec rhoncus elementum. Sed est ipsum, aliquam quis justo id, ornare tincidunt massa. Donec sit amet finibus sem. Sed euismod ex sed lorem hendrerit placerat. Praesent congue congue ultrices. Nam maximus metus rhoncus ligula porta sagittis. Maecenas pharetra placerat eleifend.\r\n
+		Morbi faucibus mauris mi, sit amet laoreet sapien dapibus tristique. Suspendisse vitae molestie quam, ut cursus justo. Aenean sodales mauris vitae libero venenatis sollicitudin. Aenean condimentum nisl nec rhoncus elementum. Sed est ipsum, aliquam quis justo id, ornare tincidunt massa. Donec sit amet finibus sem. Sed euismod ex sed lorem hendrerit placerat. Praesent congue congue ultrices. Nam maximus metus rhoncus ligula porta sagittis. Maecenas pharetra placerat eleifend.
 
-									 Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas vulputate fermentum ullamcorper. Etiam congue nec magna sed accumsan. Aliquam erat volutpat. Proin ut sapien auctor, congue tortor et, tempor dolor. Phasellus semper ut magna nec vehicula. Phasellus ut pretium metus. Aliquam eu consectetur est, mattis laoreet massa. Nullam eu scelerisque lacus. Pellentesque imperdiet metus at malesuada accumsan. Duis rhoncus, neque sed luctus faucibus, risus mi auctor purus, sed sagittis dolor leo quis quam.`);
+		Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas vulputate fermentum ullamcorper. Etiam congue nec magna sed accumsan. Aliquam erat volutpat. Proin ut sapien auctor, congue tortor et, tempor dolor. Phasellus semper ut magna nec vehicula. Phasellus ut pretium metus. Aliquam eu consectetur est, mattis laoreet massa. Nullam eu scelerisque lacus. Pellentesque imperdiet metus at malesuada accumsan. Duis rhoncus, neque sed luctus faucibus, risus mi auctor purus, sed sagittis dolor leo quis quam.`);
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -149,13 +214,15 @@ export default class PrototypoText extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] PrototypoText');
 		}
-		const style = {
+		const panelStyle = {
+			'backgroundColor': this.props.uiInvertedTextColors ? '#232323' : '#fefefe',
+		};
+		const contentStyle = {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
 			'fontSize': `${this.props.uiTextFontSize || 1}em`,
-			'color': this.props.uiInvertedTextColors ? '#fefefe' : '#232323',
-			'backgroundColor': this.props.uiInvertedTextColors ? '#232323' : '#fefefe',
+			'color': this.state.indivCurrentGroup.glyphs ? '#C5C5C5' : (this.props.uiInvertedTextColors ? '#fefefe' : '#232323'),
 			'transform': this.props.uiInvertedTextView ? 'scaleY(-1)' : 'scaleY(1)',
-			'fontWeight': 400,
+			'fontWeight': '400',
 		};
 
 		const actionBar = ClassNames({
@@ -195,24 +262,20 @@ export default class PrototypoText extends React.Component {
 				click={this.toggleColors}/>,
 			];
 
-		const nl2br = (str = '') => { return str.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br/>$2'); };
-
-		const htmlContent = nl2br(this.props[this.props.field]);
-
 		return (
 			<div
 				className="prototypo-text"
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}>
-				<ReactGeminiScrollbar>
-					<ContentEditable
-						ref="text"
-						className="prototypo-text-string"
-						spellCheck="false"
-						style={style}
-						onChange={this.handleInputText}
-						html={htmlContent}
-					/>
+				<ReactGeminiScrollbar style={panelStyle}>
+					<div style={contentStyle}>
+						<Editor
+							editorState={this.state.editorState}
+							onChange={this.onEditorChange}
+							placeholder="Write some text here..."
+							ref="editor"
+						/>
+					</div>
 				</ReactGeminiScrollbar>
 				<ViewPanelsMenu
 					shifted={this.state.glyphPanelOpened}
@@ -236,65 +299,5 @@ export default class PrototypoText extends React.Component {
 				</div>
 			</div>
 		);
-	}
-}
-
-class ContentEditable extends React.Component {
-	constructor() {
-		super();
-
-		this.state = {text: ''};
-
-		this.emitChange = this.emitChange.bind(this);
-	}
-
-	render() {
-		const {children, html, tagName, ...props} = this.props;
-
-		return React.createElement(
-			tagName || 'div',
-			{
-				...props,
-				ref: (e) => { this.htmlEl = e; },
-				onInput: this.emitChange,
-				onBlur: this.props.onBlur || this.emitChange,
-				contentEditable: !this.props.disabled,
-				dangerouslySetInnerHTML: {__html: html},
-			},
-			children
-		);
-	}
-
-	shouldComponentUpdate(nextProps, nextState) {
-		// We need not rerender if the change of props simply reflects the user's
-		// edits. Rerendering in this case would make the cursor/caret jump.
-		return (
-			// Rerender if there is no element yet... (somehow?)
-			!this.htmlEl
-			// ...or if html really changed... (programmatically, not by user edit)
-			|| (nextState.text !== this.htmlEl.innerText
-			&& nextState.text !== this.state.text)
-			// ...or if editing is enabled or disabled.
-			|| this.props.disabled !== nextProps.disabled
-		);
-	}
-
-	componentDidUpdate() {
-		if (this.htmlEl && this.state.text !== this.htmlEl.innerText) {
-			// Perhaps React (whose VDOM gets outdated because we often prevent
-			// rerendering) did not update the DOM. So we update it manually now.
-			this.htmlEl.innerText = this.props.html;
-		}
-	}
-
-	emitChange(evt) {
-		if (!this.htmlEl) return;
-		var text = this.htmlEl.innerText;
-		if (this.props.onChange && text !== this.lastText) {
-			evt.target = {value: this.htmlEl.innerHTML, text: this.htmlEl.innerText};
-			this.setState({text});
-			this.props.onChange(evt);
-		}
-		this.lastText = text;
 	}
 }
