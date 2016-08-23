@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import LocalClient from '../stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import DOM from '../helpers/dom.helpers.js';
-import classNames from 'classnames';
+import DOM from '../../helpers/dom.helpers.js';
+
+import HandlegripLetter from './handlegrip-letter.components.jsx';
+import RegularLetter from './regular-letter.components.jsx';
 
 /**
 *	Component : Text in prototypo-word
@@ -275,162 +277,6 @@ export default class HandlegripText extends React.Component {
 			>
 				{letterComponents}
 			</div>
-		);
-	}
-}
-
-/**
-*	Component : a letter where you can set spacing
-*	With a drag'n'dropable handlegrip
-*	@extends React.Component
-*/
-class HandlegripLetter extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
-	getOffsetWidth() {
-		return this.refs.letterWrapLetter.clientWidth;
-	}
-
-	render() {
-		const spacingLeft = Math.round(Math.abs(this.props.spacingLeft));
-		const spacingRight = Math.round(Math.abs(this.props.spacingRight));
-		const advanceWidth = Math.round(Math.abs(this.props.advanceWidth));
-
-		return (
-			<span className="letter-wrap">
-				<Handlegrip
-					side="left"
-					spacing={spacingLeft}
-					min={this.props.min}
-					max={this.props.max}
-					letter={this.props.letter}
-				/>
-				<span ref="letterWrapWrap" className="letter-wrap-wrap">
-					<span ref="letterWrapLetter" className="letter-wrap-letter">
-						{this.props.letter}
-					</span>
-					<span className="handlegrip-scales">
-						<span className="handlegrip-scale-left"></span>
-						<span className="handlegrip-scale-right"></span>
-					</span>
-					<span className="handlegrip-spacing-number">
-						{advanceWidth}
-					</span>
-				</span>
-				<Handlegrip
-					side="right"
-					spacing={spacingRight}
-					min={this.props.min}
-					max={this.props.max}
-					letter={this.props.letter}
-				/>
-			</span>
-		);
-	}
-}
-
-
-/**
-*	Component : the handlegrip (green bar) surrounding the letter
-*	@extends React.Component
-*/
-class Handlegrip extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-
-		// function bindings
-		this.handleDown = this.handleDown.bind(this);
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-	}
-
-	componentDidMount() {
-		// retrieve and publicly store the width of the current element
-		this.client.dispatchAction('/store-value', {
-			'uiWordHandleWidth': ReactDOM.findDOMNode(this).offsetWidth,
-		});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
-	handleDown(e) {
-		// tells everyone that the tracking begins, and on which side
-		this.client.dispatchAction('/store-value', {uiSpacingTracking: this.props.side});
-
-		const newX = e.pageX || e.screenX;
-
-		this.client.dispatchAction('/store-value-undoable', {uiTrackingX: newX});
-
-		e.stopPropagation();
-	}
-
-	render() {
-		const left = this.props.side === 'left';
-		const handleGripClasses = classNames({
-			'handlegrip': true,
-			'handlegrip-left': left,
-			'handlegrip-right': !left,
-		});
-
-		return (
-			<span
-				className={handleGripClasses}
-				onMouseDown={this.handleDown}
-				style={this.props.style}
-			>
-				<span className="handlegrip-border"></span>
-				<span className="handlegrip-spacing-number">
-					{this.props.spacing}
-				</span>
-			</span>
-		);
-	}
-}
-
-/**
-*	Component : a regular letter
-*	@extends React.Component
-*/
-class RegularLetter extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-
-		// function bindings
-		this.selectLetter = this.selectLetter.bind(this);
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
-	selectLetter() {
-		this.client.dispatchAction('/store-value', {uiWordSelection: this.props.index});
-		this.client.dispatchAction('/update-letter-spacing-value', {
-			letter: this.props.letter.charCodeAt(0),
-			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
-		});
-	}
-
-	render() {
-		return (
-			<span className="letter-wrap" onDoubleClick={this.selectLetter}>
-				{this.props.letter}
-			</span>
 		);
 	}
 }

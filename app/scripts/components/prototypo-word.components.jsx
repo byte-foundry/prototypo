@@ -14,7 +14,7 @@ import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import PrototypoWordInput from './views/prototypo-word-input.components.jsx';
-import HandlegripText from './handlegrip-text.components.jsx';
+import HandlegripText from './handlegrip/handlegrip-text.components.jsx';
 
 export default class PrototypoWord extends React.Component {
 
