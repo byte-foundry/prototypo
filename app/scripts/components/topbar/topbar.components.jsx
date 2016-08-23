@@ -11,7 +11,6 @@ import {
 	TopBarMenu,
 	TopBarMenuDropdown,
 	TopBarMenuDropdownItem,
-	TopBarMenuDropdownCheckBox,
 	TopBarMenuAction,
 	TopBarMenuIcon,
 	TopBarMenuLink,

@@ -30,6 +30,12 @@
 		clear: both;
 		display: block;
 	}
+
+	& .prototypo-loading {
+		background: url('../../../images/prototypo-loading.svg') no-repeat center;
+		height: 50px;
+		width: 50px;
+	}
 }
 
 .loading-overlay-enter {

@@ -20,27 +20,27 @@
 	}
 
 	&:hover &-sample.elzevir, &.is-active &-sample.elzevir {
-		background-image: url('/assets/images/elzevir-sample-active.svg') !important;
+		background-image: url('../../../images/elzevir-sample-active.svg') !important;
 	}
 
 	&:hover &-sample.john-fell, &.is-active &-sample.john-fell {
-		background-image: url('/assets/images/john-fell-sample-active.svg') !important;
+		background-image: url('../../../images/john-fell-sample-active.svg') !important;
 	}
 
 	&:hover &-sample.venus, &.is-active &-sample.venus {
-		background-image: url('/assets/images/grotesk-sample-active.svg') !important;
+		background-image: url('../../../images/grotesk-sample-active.svg') !important;
 	}
 
 	&-sample.elzevir {
-		background-image: url('/assets/images/elzevir-sample-hover.svg');
+		background-image: url('../../../images/elzevir-sample-hover.svg');
 	}
 
 	&-sample.john-fell {
-		background-image: url('/assets/images/john-fell-sample-hover.svg');
+		background-image: url('../../../images/john-fell-sample-hover.svg');
 	}
 
 	&-sample.venus {
-		background-image: url('/assets/images/grotesk-sample-hover.svg');
+		background-image: url('../../../images/grotesk-sample-hover.svg');
 	}
 
 	&-sample {

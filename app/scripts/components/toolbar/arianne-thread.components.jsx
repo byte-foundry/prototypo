@@ -200,7 +200,7 @@ class RootArianneItem extends React.Component {
 		return (
 			<div className="arianne-item is-small" onClick={this.props.click}>
 				<div className="arianne-item-action is-small">
-					<img className="arianne-item-action-collection" src="assets/images/collection.svg"/>
+					<span className="arianne-item-action-collection"></span>
 				</div>
 				<div className="arianne-item-arrow"></div>
 			</div>
@@ -285,7 +285,7 @@ class DropArianneItem extends React.Component {
 			<div className={classes} onClick={this.toggleDisplay}>
 				<div className="arianne-item-action" >
 					<span className="arianne-item-action-label">{this.props.label}</span>
-					<img className="arianne-item-action-drop arianne-item-action-img" src="assets/images/drop.svg"/>
+					<span className="arianne-item-action-drop arianne-item-action-img"></span>
 				</div>
 				<div className="arianne-item-arrow"></div>
 				<ArianneDropMenu
