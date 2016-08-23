@@ -12,7 +12,7 @@ export default class AlternateMenu extends React.Component {
 	render() {
 
 		const alternates = _.map(this.props.alternates, (alt, index) => {
-			return <Alternate id={index} alt={alt} unicode={this.props.unicode}/>;
+			return <Alternate id={index} key={index} alt={alt} unicode={this.props.unicode}/>;
 		});
 
 		return (
@@ -42,7 +42,9 @@ class Alternate extends React.Component {
 
 	render() {
 		return (
-			<div className="alternate" onClick={() => {this.selectAlternate();}}><img src={`assets/images/${this.props.alt.altImg}`}/></div>
+			<div className="alternate" onClick={() => {this.selectAlternate();}}>
+				<img src={`assets/images/${this.props.alt.altImg}`}/>
+			</div>
 		);
 	}
 }

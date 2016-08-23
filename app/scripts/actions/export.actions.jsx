@@ -94,10 +94,10 @@ export default {
 
 		fontInstance.download(() => {
 			localClient.dispatchAction('/store-value', {uiOnboardstep: 'end'});
-			localClient.dispatchAction('/exporting', {exporting: false});
 			window.Intercom('trackEvent', 'export-otf');
 			clearTimeout(exportingError);
 			spendCreditsAction();
+			localClient.dispatchAction('/exporting', {exporting: false});
 		}, name, merged, undefined, HoodieApi.instance.email);
 	},
 	'/set-up-export-otf': ({merged, exportAs = true}) => {

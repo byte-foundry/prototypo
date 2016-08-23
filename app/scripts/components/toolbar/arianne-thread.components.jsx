@@ -13,6 +13,7 @@ export default class ArianneThread extends React.Component {
 			family: {},
 			variant: {},
 			indivCurrentGroup: {},
+			groups: [],
 		};
 		this.toggleIndividualize = this.toggleIndividualize.bind(this);
 		this.selectVariant = this.selectVariant.bind(this);
@@ -30,14 +31,21 @@ export default class ArianneThread extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 		const store = await this.client.fetch('/prototypoStore');
+		const memoizedListSelector = (list, selectedValue, oldValue) => {
+			if (selectedValue.name !== oldValue.name) {
+				return list.filter((element) => { return selectedValue.name !== element.name; });
+			}
+			return oldValue;
+		};
+		const familySelector = (families, family) => { return families.find((f) => { return f.name === family.name; }); };
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					families: head.toJS().fonts,
-					family: head.toJS().family,
+					families: memoizedListSelector(head.toJS().fonts, head.toJS().family, this.state.families),
+					family: familySelector(head.toJS().fonts, head.toJS().family),
 					variant: head.toJS().variant,
-					groups: head.toJS().indivGroups,
+					groups: memoizedListSelector(head.toJS().indivGroups, head.toJS().indivCurrentGroup || {}, this.state.groups),
 					indivCreate: head.toJS().indivCreate,
 					indivMode: head.toJS().indivMode,
 					indivCurrentGroup: head.toJS().indivCurrentGroup || {},
@@ -48,10 +56,10 @@ export default class ArianneThread extends React.Component {
 			});
 
 		this.setState({
-			families: store.head.toJS().fonts,
+			families: memoizedListSelector(store.head.toJS().fonts, store.head.toJS().family, this.state.families),
+			family: familySelector(store.head.toJS().fonts, store.head.toJS().family),
 			variant: store.head.toJS().variant,
-			family: store.head.toJS().family,
-			groups: store.head.toJS().indivGroups,
+			groups: memoizedListSelector(store.head.toJS().indivGroups, {}, this.state.groups),
 		});
 	}
 
@@ -120,9 +128,6 @@ export default class ArianneThread extends React.Component {
 	}
 
 	render() {
-		const variantFamily = _.find(this.state.families, (family) => {
-			return family.name === this.state.family.name;
-		});
 		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily}/>;
 		const familyItem = (
 				<DropArianneItem
@@ -133,16 +138,13 @@ export default class ArianneThread extends React.Component {
 					toggleId="arianne-item-family"/>
 		);
 
-		const variants = variantFamily
-			? variantFamily.variants
-			: [];
 		const addVariant = <ArianneDropMenuItem item={{name: 'Add new variant...'}} click={this.addVariant}/>;
 		const variantItem = (
 				<DropArianneItem
 					label={this.state.variant.name}
 					family={this.state.family}
 					variant={this.state.variant}
-					list={variants}
+					list={this.state.family.variants ? this.state.family.variants.filter(({name}) => { return name !== this.state.variant.name; }) : []}
 					add={addVariant}
 					click={this.selectVariant}
 					toggleId="arianne-item-variant"/>
@@ -161,7 +163,7 @@ export default class ArianneThread extends React.Component {
 			? 'Creating new group...'
 			: 'All glyphs';
 		const groupName = this.state.indivCurrentGroup.name || groupLabel;
-		const group = this.state.groups && this.state.groups.length > 0
+		const group = this.state.groups && (this.state.groups.length > 0 || this.state.indivCurrentGroup.name)
 			? <DropArianneItem
 				label={groupName}
 				list={this.state.groups}
@@ -198,7 +200,7 @@ class RootArianneItem extends React.Component {
 		return (
 			<div className="arianne-item is-small" onClick={this.props.click}>
 				<div className="arianne-item-action is-small">
-					<img className="arianne-item-action-collection" src="assets/images/collection.svg"/>
+					<span className="arianne-item-action-collection"></span>
 				</div>
 				<div className="arianne-item-arrow"></div>
 			</div>
@@ -283,7 +285,7 @@ class DropArianneItem extends React.Component {
 			<div className={classes} onClick={this.toggleDisplay}>
 				<div className="arianne-item-action" >
 					<span className="arianne-item-action-label">{this.props.label}</span>
-					<img className="arianne-item-action-drop arianne-item-action-img" src="assets/images/drop.svg"/>
+					<span className="arianne-item-action-drop arianne-item-action-img"></span>
 				</div>
 				<div className="arianne-item-arrow"></div>
 				<ArianneDropMenu

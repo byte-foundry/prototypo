@@ -10,7 +10,7 @@ export default class LoadingOverlay extends React.Component {
 	render() {
 		return (
 			<div className="loading-overlay">
-				<img src="assets/images/prototypo-loading.svg" />
+				<span className="prototypo-loading"></span>
 			</div>
 		);
 	}

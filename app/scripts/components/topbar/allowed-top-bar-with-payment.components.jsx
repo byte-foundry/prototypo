@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import vatrates from 'vatrates';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
+import Log from '~/services/log.services.js';
 
 export default class AllowedTopBarWithPayment extends React.Component {
 	constructor(props) {
@@ -13,6 +14,13 @@ export default class AllowedTopBarWithPayment extends React.Component {
 
 	openBuyCreditsModal() {
 		this.client.dispatchAction('/store-value', {openBuyCreditsModal: true});
+		window.Intercom('trackEvent', 'openBuyCreditsModalFromFile');
+		Log.ui('BuyCreditsModal.FromFile');
+	}
+
+	trackSubscriptionClick() {
+		window.Intercom('trackEvent', 'subscriptionClickfromFile');
+		Log.ui('SubscriptionClick.FromFile');
 	}
 
 	componentWillMount() {
@@ -53,11 +61,11 @@ export default class AllowedTopBarWithPayment extends React.Component {
 			? (
 				<div className="allowed-top-bar-with-payment-demo-overlay">
 					<div className="allowed-top-bar-with-payment-demo-overlay-text">
-						<Link to="/account/create">
+						<Link to="/account/create" onClick={this.trackSubscriptionClick}>
 							<span>This feature is available with the professional subscription</span>
 						</Link>
 						<div className="allowed-top-bar-with-payment-demo-overlay-text-more">
-							<Link to="/account/create" className="allowed-top-bar-with-payment-demo-overlay-text-more-half">
+							<Link to="/account/create" className="allowed-top-bar-with-payment-demo-overlay-text-more-half" onClick={this.trackSubscriptionClick}>
 								<div className="allowed-top-bar-with-payment-demo-overlay-text-more-wrap allowed-top-bar-with-payment-subscribe">
 									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">Subscribe to full version</div>
 								</div>
