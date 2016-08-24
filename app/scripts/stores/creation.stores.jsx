@@ -220,6 +220,14 @@ const couponStore = new Remutable({
 	'98d317f6598ce579eda20ec39e964203': {label: '$5 off your first month to celebrate our 10.000 users!'},
 	'aa5355e6d09f960bd1010de998c079b2': {label: '50% off the annual price for schools!'}, // for personal_annual. We should remove this later.
 	'dfbc3313a2e4a0e1a46a96bb5e279121': {label: '50% off the annual price for schools!'},
+	'97bfd3de0b6b8a38c78eaefb9f80313e': {label: 'You\'ve been referred by Dave. Enjoy your $5 discount :)'},
+	'039fb1672f2148408a38abcd458c2b97': {label: 'You\'ve been referred by Ferdie. Enjoy your $5 discount :)'},
+	'c5eeb05f4cfffc1dc8d8dba41848610e': {label: 'You\'ve been referred by Dominik. Enjoy your $5 discount :)'},
+	'd0bbbbdc70993e53a67a7702b0343592': {label: 'You\'ve been referred by Manuel. Enjoy your $5 discount :)'},
+	'3005f57f7a51ca170359a0e9e7f09668': {label: 'You\'ve been referred by Bea. Enjoy your $5 discount :)'},
+	'43747a0358db2c16489c41267f3428f1': {label: 'You\'ve been referred by Tiago. Enjoy your $5 discount :)'},
+	'cc57f5fc5ec2eec84babfe6fdf774548': {label: 'You\'ve been referred by Fraser. Enjoy your $5 discount :)'},
+	'30172db2927d6ff9666a7eecfafc006c': {label: 'You\'ve been referred by Jan. Enjoy your $5 discount :)'},
 });
 
 const planStore = new Remutable({

@@ -2,6 +2,7 @@ import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
+import Log from '~/services/log.services.js';
 
 export default class Modal extends React.Component {
 	constructor(props) {
@@ -20,6 +21,8 @@ export default class Modal extends React.Component {
 		}
 
 		this.client.dispatchAction('/store-value', {[this.props.propName]: false});
+		window.Intercom('trackEvent', `close${this.props.propName}`);
+		Log.ui(`${this.props.propName}.close`);
 	}
 
 	render() {

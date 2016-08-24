@@ -177,6 +177,8 @@ export default {
 
 		FontValues.save({typeface: variant.db, values: oldValues});
 		Log.ui('GroupParam.create');
+		window.Intercom('trackEvent', 'indivGroups');
+		Log.ui(`GroupParam.create${prototypoStore.get('family').template}`);
 	},
 	'/cancel-indiv-mode': () => {
 		const oldValues = _.cloneDeep(undoableStore.get('controlsValues'));

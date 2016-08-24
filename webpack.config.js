@@ -30,8 +30,8 @@ module.exports = {
 				test: /\.jsx?$/,
 				loaders: ['react-hot-loader', 'babel-loader?cacheDirectory', 'prelude-loader', 'if-loader'],
 				include: [
-					path.join(__dirname, 'app')
-				]
+					path.join(__dirname, 'app'),
+				],
 			},
 			{
 				test: /\.scss$/,
@@ -42,11 +42,15 @@ module.exports = {
 			},
 			{
 				test: /\.css$/,
-				loaders: ['style', 'css'],
+				loader: 'style-loader!css-loader',
 			},
 			{
-				test: /\.(svg|json|png|jpg|otf)$/,
+				test: /\.(json|otf)$/,
 				loaders: ['file'],
+			},
+			{
+				test: /\.(svg|png|jpg)$/,
+				loader: 'url-loader?limit=100000',
 			},
 		],
 		noParse: /(dist\/prototypo-canvas)/,

@@ -242,7 +242,7 @@
 		padding: 0 0 0 20px;
 	}
 	.box-value-label::after {
-		background-image: url('/assets/images/radio-button.svg');
+		background-image: url('../../images/radio-button.svg');
 		background-position: 0px 0px;
 		background-repeat: no-repeat;
 		content: "";
@@ -258,7 +258,7 @@
 		width: 0px;
 	}
 	input[type="radio"]:checked + .box-value-label::after {
-		background-image: url('/assets/images/radio-button-active.svg');
+		background-image: url('../../images/radio-button-active.svg');
 	}
 	.radio-buttons-wrap {
 		align-items: center;
