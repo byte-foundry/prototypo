@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
@@ -12,8 +13,8 @@ import DOM from '../helpers/dom.helpers.js';
 import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
-import ZoomButtons from './zoom-buttons.components.jsx';
 import PrototypoWordInput from './views/prototypo-word-input.components.jsx';
+import HandlegripText from './handlegrip/handlegrip-text.components.jsx';
 
 export default class PrototypoWord extends React.Component {
 
@@ -21,11 +22,17 @@ export default class PrototypoWord extends React.Component {
 		super(props);
 
 		this.state = {
-			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
 			glyphPanelOpened: undefined,
+			uiSpacingMode: undefined,
+			uiWordString: undefined,
+			uiWordSelection: 0,
+			letterSpacingLeft: undefined,
+			letterSpacingRight: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function bindings
 		this.setupText = this.setupText.bind(this);
 		this.saveText = this.saveText.bind(this);
 		this.handleEscapedInput = this.handleEscapedInput.bind(this);
@@ -34,6 +41,7 @@ export default class PrototypoWord extends React.Component {
 		this.changeTextFontSize = this.changeTextFontSize.bind(this);
 		this.toggleColors = this.toggleColors.bind(this);
 		this.invertedView = this.invertedView.bind(this);
+		this.toggleSpacingMode = this.toggleSpacingMode.bind(this);
 	}
 
 	componentWillMount() {
@@ -44,7 +52,14 @@ export default class PrototypoWord extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
+					canvasPanelOpened: head.toJS().uiMode.indexOf('glyph') !== -1,
+					textPanelOpened: head.toJS().uiMode.indexOf('text') !== -1,
 					glyphs: head.toJS().glyphs,
+					uiSpacingMode: head.toJS().uiSpacingMode,
+					uiWordString: head.toJS().uiWordString,
+					uiWordSelection: head.toJS().uiWordSelection || 0,
+					letterSpacingLeft: head.toJS().letterSpacingLeft,
+					letterSpacingRight: head.toJS().letterSpacingRight,
 				});
 			})
 			.onDelete(() => {
@@ -52,14 +67,15 @@ export default class PrototypoWord extends React.Component {
 			});
 
 			fontInstance.on('worker.fontLoaded', () => {
-				const content = this.props[this.props.field];
-				const transformedContent = this.refs.text.textContent;
+				if (this.refs.text) {
+					const transformedContent = this.refs.text.textContent;
 
-				const style = this.refs.text.style;
+					const style = this.refs.text.style;
 
-				this.client.dispatchAction('/store-value', {
-					uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
-				});
+					this.client.dispatchAction('/store-value', {
+						uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
+					});
+				}
 			});
 	}
 
@@ -67,14 +83,27 @@ export default class PrototypoWord extends React.Component {
 		const content = this.props[this.props.field];
 		const transformedContent = rawToEscapedContent(content, this.state.glyphs);
 
-		const style = this.refs.text.style;
+		const newString = transformedContent && transformedContent.length > 0 ? transformedContent : '';
+
+		if (this.refs.text) {
+			const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
+			const style = refDOMElement.style;
+
+			this.client.dispatchAction('/store-value', {
+				uiWordFontSize: `${Math.min(DOM.getProperFontSize(
+					transformedContent,
+					style,
+					refDOMElement.clientWidth
+				), !this.state.canvasPanelOpened && !this.state.textPanelOpened ? 500 : 100)}px`,
+			});
+
+			this.refs.text.textContent = newString;
+		}
+
 
 		this.client.dispatchAction('/store-value', {
-			uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
+			uiWordString: newString,
 		});
-
-		this.refs.text.textContent = transformedContent && transformedContent.length > 0 ? transformedContent : '';
-		// this.handleEscapedInput();
 	}
 
 	saveText(text) {
@@ -118,25 +147,25 @@ export default class PrototypoWord extends React.Component {
 		const diffList = diffChars(oldText, newText);
 
 		diffList.forEach(({added, removed, count, value}) => {
-		  if(removed) {
-		    buffer = [
-		      ...buffer.slice(0, currentIndex),
-		      ...buffer.slice(currentIndex + count),
-		    ];
-		    return;
-		  }
+			if (removed) {
+				buffer = [
+					...buffer.slice(0, currentIndex),
+					...buffer.slice(currentIndex + count),
+				];
+				return;
+			}
 
-		  if(added) {
-		    buffer = [
-		      ...buffer.slice(0, currentIndex),
-		      ...value.split('').map((letter) => {
-		        return letter === '/' ? '//' : letter;
-		      }),
-		      ...buffer.slice(currentIndex),
-		    ];
-		  }
+			if (added) {
+				buffer = [
+					...buffer.slice(0, currentIndex),
+					...value.split('').map((letter) => {
+						return letter === '/' ? '//' : letter;
+					}),
+					...buffer.slice(currentIndex),
+				];
+			}
 
-		  currentIndex += count;
+			currentIndex += count;
 		});
 
 		return buffer.join('');
@@ -167,6 +196,13 @@ export default class PrototypoWord extends React.Component {
 		this.client.dispatchAction('/store-value', {uiInvertedWordView: !this.props.uiInvertedWordView});
 	}
 
+	toggleSpacingMode(e) {
+		e.stopPropagation();
+		this.client.dispatchAction('/store-value', {
+			uiSpacingMode: !this.state.uiSpacingMode,
+		});
+	}
+
 	toggleColors(e) {
 		e.stopPropagation();
 		this.client.dispatchAction('/store-value', {uiInvertedWordColors: !this.props.uiInvertedWordColors});
@@ -189,6 +225,9 @@ export default class PrototypoWord extends React.Component {
 			'is-shifted': this.state.glyphPanelOpened,
 		});
 
+		const whiteBlackSwitchText = this.props.uiInvertedWordColors ? 'black on white' : 'white on black';
+		const whiteBlackSwitchLabel = `Switch to ${whiteBlackSwitchText}`;
+
 		const menu = [
 			<ContextualMenuItem
 				text="Inverted view"
@@ -196,11 +235,38 @@ export default class PrototypoWord extends React.Component {
 				active={this.props.uiInvertedWordView}
 				click={this.invertedView}/>,
 			<ContextualMenuItem
-				text={`Switch to ${this.props.uiInvertedWordColors ? 'black on white' : 'white on black'}`}
+				text={whiteBlackSwitchLabel}
 				key="colors"
 				active={this.props.uiInvertedWordColors}
 				click={this.toggleColors}/>,
-				];
+			<ContextualMenuItem
+				text="Spacing mode"
+				key="spacingmode"
+				active={this.state.uiSpacingMode}
+				click={this.toggleSpacingMode}/>,
+		];
+
+		const wordContainer = this.state.uiSpacingMode
+			? (
+				<HandlegripText
+					ref="text"
+					style={style}
+					text={this.state.uiWordString}
+					selectedLetter={this.state.uiWordSelection}
+					min={0}
+					max={1000}
+				/>
+			)
+			: (
+				<div
+					contentEditable="true"
+					ref="text"
+					className="prototypo-word-string"
+					spellCheck="false"
+					style={style}
+					onInput={this.handleEscapedInput}
+				></div>
+			);
 
 		return (
 			<div
@@ -209,14 +275,7 @@ export default class PrototypoWord extends React.Component {
 				onMouseLeave={this.hideContextMenu}>
 				<div className="prototypo-word-scrollbar-wrapper">
 					<ReactGeminiScrollbar>
-						<div
-							contentEditable="true"
-							ref="text"
-							className="prototypo-word-string"
-							spellCheck="false"
-							style={style}
-							onInput={this.handleEscapedInput}
-							></div>
+						{wordContainer}
 					</ReactGeminiScrollbar>
 					<ViewPanelsMenu
 						show={this.state.showContextMenu}
