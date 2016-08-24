@@ -128,6 +128,7 @@ export default {
 			db,
 		});
 		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
+		localClient.dispatchAction('/store-value', {uiSpacingMode: false});
 	},
 	'/create-family': async ({name, template, loadCurrent}) => {
 		let templateToLoad = template;
