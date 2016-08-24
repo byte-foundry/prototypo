@@ -10,7 +10,7 @@ import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import ZoomButtons from './zoom-buttons.components.jsx';
-import ClassNames from 'classnames';
+import classNames from 'classNames';
 
 function createIndivStrategy(regex) {
 	return (contentBlock, callback) => {
@@ -27,7 +27,7 @@ function createIndivStrategy(regex) {
 }
 
 const IndivSpan = ({children}) => {
-	return <span style={{color: '#232323'}}>{children}</span>;
+	return <span className="prototypo-text-editor-indiv-character">{children}</span>;
 };
 
 export default class PrototypoText extends React.Component {
@@ -217,12 +217,15 @@ export default class PrototypoText extends React.Component {
 		const contentStyle = {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
 			'fontSize': `${this.props.uiTextFontSize || 1}em`,
-			'color': this.state.indivCurrentGroup ? '#C5C5C5' : (this.props.uiInvertedTextColors ? '#fefefe' : '#232323'),
-			'transform': this.props.uiInvertedTextView ? 'scaleY(-1)' : 'scaleY(1)',
-			'fontWeight': '400',
 		};
 
-		const actionBar = ClassNames({
+		const editorClassNames = classNames('prototypo-text-editor', {
+			'negative': this.props.uiInvertedTextColors,
+			'inverted': this.props.uiInvertedTextView,
+			'indiv': this.state.indivCurrentGroup,
+		});
+
+		const actionBar = classNames({
 			'action-bar': true,
 			'is-shifted': this.state.glyphPanelOpened,
 		});
@@ -265,7 +268,7 @@ export default class PrototypoText extends React.Component {
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}>
 				<ReactGeminiScrollbar style={panelStyle}>
-					<div style={contentStyle}>
+					<div className={editorClassNames} style={contentStyle}>
 						<Editor
 							editorState={this.state.editorState}
 							onChange={this.onEditorChange}
