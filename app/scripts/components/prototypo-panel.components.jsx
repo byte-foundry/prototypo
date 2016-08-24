@@ -17,7 +17,7 @@ export default class PrototypoPanel extends React.Component {
 			uiMode: [],
 		};
 
-		this.availableMode = ['glyph', 'text', 'word'];
+		this.availableMode = ['glyph', 'text', 'word', 'list'];
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
@@ -67,7 +67,13 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.intersection(_.xor(this.state.uiMode, [name]), this.availableMode);
+		const newViewMode = _.intersection(
+			_.xor(
+				this.state.uiMode,
+				(name === 'glyph' ? [name, 'list'] : [name])
+			),
+			this.availableMode
+		);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});

@@ -37,7 +37,7 @@ class ViewButtons extends React.Component {
 		this.state = {
 			mode: [],
 		};
-		this.availableMode = ['glyph', 'text', 'word'];
+		this.availableMode = ['glyph', 'text', 'word', 'list'];
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		//fonction binding to avoid unnecessary re-render
@@ -64,7 +64,13 @@ class ViewButtons extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.intersection(_.xor(this.state.mode, [name]), this.availableMode);
+		const newViewMode = _.intersection(
+			_.xor(
+				this.state.mode,
+				(name === 'glyph' ? [name, 'list'] : [name])
+			),
+			this.availableMode
+		);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
