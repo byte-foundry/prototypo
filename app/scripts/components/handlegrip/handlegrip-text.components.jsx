@@ -17,8 +17,6 @@ export default class HandlegripText extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			uiWordSelection: 0,
-			uiWordHandleWidth: 0,
 			spacingLeft: 0,
 			spacingRight: 0,
 			baseSpacingLeft: 0,
@@ -26,11 +24,9 @@ export default class HandlegripText extends React.Component {
 			advanceWidth: 0,
 			trackingX: 0,
 			letterFontSize: 0,
-			tracking: undefined,
-			fontValues: undefined,
+			tracking: false,
+			fontValues: null,
 		};
-		this.leftCurrentX = 0;
-		this.rightCurrentX = 0;
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// retrieve the initial values, only once
@@ -62,8 +58,6 @@ export default class HandlegripText extends React.Component {
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
 				this.setState({
-					uiWordSelection: head.toJS().uiWordSelection || 0,
-					uiWordHandleWidth: head.toJS().uiWordHandleWidth || 0,
 					tracking: head.toJS().uiSpacingTracking,
 					letterFontSize: head.toJS().uiLetterSpacingLetterFontSize || this.state.letterFontSize,
 				});
@@ -77,6 +71,8 @@ export default class HandlegripText extends React.Component {
 				this.setState({
 					fontValues: head.toJS().controlsValues,
 					trackingX: head.toJS().uiTrackingX,
+					baseSpacingLeft: head.toJS().baseSpacingLeft || this.state.baseSpacingLeft,
+					baseSpacingRight: head.toJS().baseSpacingRight || this.state.baseSpacingRight,
 					spacingLeft: head.toJS().spacingLeft || 0,
 					spacingRight: head.toJS().spacingRight || 0,
 					advanceWidth: head.toJS().advanceWidth || 0,
@@ -148,7 +144,6 @@ export default class HandlegripText extends React.Component {
 		const trackingX = this.state.trackingX;
 		const el = ReactDOM.findDOMNode(this);
 		const {offsetLeft} = DOM.getAbsOffset(el);
-		// const letterAbsOffset = this.refs.selectedLetter.getAbsOffset();
 		const letterOffsetWidth = this.refs.selectedLetter.getClientWidth();
 		let newValue;
 
@@ -252,7 +247,7 @@ export default class HandlegripText extends React.Component {
 	*	@return {string} the letter
 	*/
 	getSelectedLetter() {
-		const selectedIndex = this.state.uiWordSelection;
+		const selectedIndex = this.props.selectedLetter;
 
 		if (selectedIndex >= 0 && this.props.text && selectedIndex < this.props.text.length) {
 			return this.props.text[selectedIndex];
@@ -279,7 +274,7 @@ export default class HandlegripText extends React.Component {
 	}
 
 	render() {
-		const selectedLetter = this.state.uiWordSelection;
+		const selectedLetter = this.props.selectedLetter;
 		const letterComponents = _.map(this.props.text.split(''), (letter, index) => {
 			return (
 				selectedLetter === index

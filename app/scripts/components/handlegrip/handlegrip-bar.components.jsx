@@ -23,13 +23,6 @@ export default class HandlegripBar extends React.Component {
 		this.lifespan = new Lifespan();
 	}
 
-	componentDidMount() {
-		// retrieve and publicly store the width of the current element
-		this.client.dispatchAction('/store-value', {
-			'uiWordHandleWidth': ReactDOM.findDOMNode(this).offsetWidth,
-		});
-	}
-
 	componentWillUnmount() {
 		this.lifespan.release();
 	}

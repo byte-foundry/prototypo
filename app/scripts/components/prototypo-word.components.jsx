@@ -27,6 +27,7 @@ export default class PrototypoWord extends React.Component {
 			glyphPanelOpened: undefined,
 			uiSpacingMode: undefined,
 			uiWordString: undefined,
+			uiWordSelection: 0,
 			letterSpacingLeft: undefined,
 			letterSpacingRight: undefined,
 		};
@@ -55,6 +56,7 @@ export default class PrototypoWord extends React.Component {
 					glyphs: head.toJS().glyphs,
 					uiSpacingMode: head.toJS().uiSpacingMode,
 					uiWordString: head.toJS().uiWordString,
+					uiWordSelection: head.toJS().uiWordSelection || 0,
 					letterSpacingLeft: head.toJS().letterSpacingLeft,
 					letterSpacingRight: head.toJS().letterSpacingRight,
 				});
@@ -249,6 +251,7 @@ export default class PrototypoWord extends React.Component {
 					ref="text"
 					style={style}
 					text={this.state.uiWordString}
+					selectedLetter={this.state.uiWordSelection}
 					min={0}
 					max={1000}
 				/>
