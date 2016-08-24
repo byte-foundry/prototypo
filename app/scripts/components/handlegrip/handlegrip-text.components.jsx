@@ -36,9 +36,15 @@ export default class HandlegripText extends React.Component {
 		// retrieve the initial values, only once
 		fontInstance.getGlyphProperty(
 			this.getSelectedLetter(),
-			['advanceWidth', 'spacingLeft', 'spacingRight'],
-			({advanceWidth, spacingLeft, spacingRight}) => {
-				this.setState({advanceWidth, spacingLeft, spacingRight});
+			['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
+			({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight}) => {
+				this.setState({
+					advanceWidth,
+					spacingLeft,
+					spacingRight,
+					baseSpacingLeft,
+					baseSpacingRight,
+				});
 			}
 		);
 
@@ -71,10 +77,8 @@ export default class HandlegripText extends React.Component {
 				this.setState({
 					fontValues: head.toJS().controlsValues,
 					trackingX: head.toJS().uiTrackingX,
-					baseSpacingLeft: head.toJS().baseSpacingLeft,
-					baseSpacingRight: head.toJS().baseSpacingRight,
-					spacingLeft: head.toJS().spacingLeft || this.state.spacingLeft,
-					spacingRight: head.toJS().spacingRight || this.state.spacingRight,
+					spacingLeft: head.toJS().spacingLeft || 0,
+					spacingRight: head.toJS().spacingRight || 0,
 					advanceWidth: head.toJS().advanceWidth || this.state.advanceWidth,
 				});
 			})
@@ -149,6 +153,9 @@ export default class HandlegripText extends React.Component {
 		const advanceWidth = this.state.advanceWidth;
 		// letter offsetWidth in pixels
 		const letterOffsetWidth = this.refs.selectedLetter.getOffsetWidth();
+		const letterAbsOffset = this.refs.selectedLetter.getAbsOffset();
+
+		//console.log(newX, letterAbsOffset);
 
 		const newSpacingValues = {};
 
@@ -181,8 +188,12 @@ export default class HandlegripText extends React.Component {
 
 		// if the new X value is in the element boundaries
 		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
+			const baseSpacing = leftSideTracking
+				? this.state.baseSpacingLeft
+				: this.state.baseSpacingRight;
+
 			newValue = updatedValue;
-			newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
+			newValue = Math.min(Math.max(newValue, (this.props.min - baseSpacing)), this.props.max);
 
 		}
 		else {
@@ -200,15 +211,15 @@ export default class HandlegripText extends React.Component {
 
 		newSpacingValues.uiTrackingX = newX;
 
-		if (newValue) {
+		if (!Number.isNaN(newValue)) {
 			this.client.dispatchAction('/change-letter-spacing', {
-				value: Math.abs(newValue),
+				value: newValue,
 				side: this.state.tracking,
 				letter: this.getSelectedLetter(),
 			});
 
 			// if the user went to far, no need to update the advanceWidth value
-			if (updatedValue <= this.props.max) {
+			if (updatedValue <= this.props.max && updatedValue >= this.props.min) {
 				newSpacingValues.advanceWidth = variation + advanceWidth;
 			}
 		}

@@ -1,5 +1,6 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import DOM from '../../helpers/dom.helpers.js';
 
 import HandlegripBar from './handlegrip-bar.components.jsx';
 
@@ -16,6 +17,10 @@ export default class HandlegripLetter extends React.Component {
 
 	getOffsetWidth() {
 		return this.refs.letterWrapLetter.clientWidth;
+	}
+
+	getAbsOffset() {
+		return DOM.getAbsOffset(this.refs.letterWrapLetter).offsetLeft;
 	}
 
 	render() {
