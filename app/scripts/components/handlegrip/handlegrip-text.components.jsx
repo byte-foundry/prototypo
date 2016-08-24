@@ -73,9 +73,10 @@ export default class HandlegripText extends React.Component {
 					trackingX: head.toJS().uiTrackingX,
 					baseSpacingLeft: head.toJS().baseSpacingLeft || this.state.baseSpacingLeft,
 					baseSpacingRight: head.toJS().baseSpacingRight || this.state.baseSpacingRight,
-					spacingLeft: head.toJS().spacingLeft || 0,
-					spacingRight: head.toJS().spacingRight || 0,
-					advanceWidth: head.toJS().advanceWidth || 0,
+					spacingLeft: head.toJS().spacingLeft || this.state.spacingLeft,
+					spacingRight: head.toJS().spacingRight || this.state.spacingRight,
+					unClampedOldValue: head.toJS().unClampedOldValue,
+					advanceWidth: head.toJS().advanceWidth || this.state.advanceWidth,
 				});
 			})
 			.onDelete(() => {
@@ -146,27 +147,13 @@ export default class HandlegripText extends React.Component {
 		const {offsetLeft} = DOM.getAbsOffset(el);
 		const letterOffsetWidth = this.refs.selectedLetter.getClientWidth();
 		let newValue;
+		let clampedNewValue;
 
 		// here we are going to try and avoid
 		// dragging w/o being near the handle
 		const barProps = leftSideTracking
 			? this.refs.selectedLetter.getLeftBar()
 			: this.refs.selectedLetter.getRightBar();
-
-		// we are going from left to right
-		if (newX > trackingX) {
-			// so we do not want the dragging to happen
-			// unless we are on the handlebar's left side or further
-			if (newX < barProps.offsetLeft) {
-				return;
-			}
-		}
-		// we are going from right to left
-		else if (newX > (barProps.offsetLeft + barProps.clientWidth)) {
-			// so we do not want the dragging to happen
-			// unless we are on the handlebar's right side or nearer
-			return;
-		}
 
 		// advanceWidth is in typographic unit
 		const advanceWidth = this.state.advanceWidth;
@@ -190,15 +177,24 @@ export default class HandlegripText extends React.Component {
 			(newX - trackingX) * dragginRatio
 		) * (leftSideTracking ? -1 : 1);
 
+		console.log("newX: "+ newX);
+		console.log("variation: "+ variation);
+		console.log("trackingX: "+ this.state.trackingX);
+		console.log("old value: " + this.state.unClampedOldValue);
+
 		// compute new value
-		const updatedValue = (
+		newValue = (
 			(
-				 specialPropsObject && specialPropsObject[property]
-					? specialPropsObject[property]
-					: 0
+				this.state.unClampedOldValue || (
+					specialPropsObject && specialPropsObject[property]
+						? this.state[property]
+						: 0
+				)
 			)
 			+ (variation)
 		);
+
+		console.log("unclamped spacing: "+ this.state[property]);
 
 		// if the new X value is in the element boundaries
 		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
@@ -206,37 +202,34 @@ export default class HandlegripText extends React.Component {
 				? this.state.baseSpacingLeft
 				: this.state.baseSpacingRight;
 
-			newValue = updatedValue;
-			newValue = Math.min(Math.max(newValue, (this.props.min - baseSpacing)), this.props.max);
-
+			clampedNewValue = Math.min(Math.max(newValue, (this.props.min - baseSpacing)), this.props.max);
 		}
 		else {
-			newValue = newX < offsetLeft ? this.props.min : this.props.max;
+			clampedNewValue = newX < offsetLeft ? this.props.min : this.props.max;
 		}
+		console.log("newValue: "+ newValue);
+		console.log("clampedNewValue: "+ clampedNewValue);
 
 		// if we are currently tracking left side spacing
 		if (leftSideTracking) {
 			// set the new spacing value
-			newSpacingValues.spacingLeft = newValue + this.state.baseSpacingLeft;
+			newSpacingValues.spacingLeft = clampedNewValue + this.state.baseSpacingLeft;
 		}
 		else {
-			newSpacingValues.spacingRight = newValue + this.state.baseSpacingRight;
+			newSpacingValues.spacingRight = clampedNewValue + this.state.baseSpacingRight;
 		}
 
 		if (!Number.isNaN(newValue)) {
 			this.client.dispatchAction('/change-letter-spacing', {
-				value: newValue,
+				value: clampedNewValue,
 				side: this.state.tracking,
 				letter: this.getSelectedLetter(),
 			});
 
 		}
 
-		// if the user went to far, no need to update the tracking value and advanceWidth
-		if (updatedValue <= this.props.max && updatedValue >= this.props.min) {
-			newSpacingValues.uiTrackingX = newX;
-			newSpacingValues.advanceWidth = variation + advanceWidth;
-		}
+		newSpacingValues.unClampedOldValue = newValue;
+		newSpacingValues.uiTrackingX = newX;
 
 		this.client.dispatchAction('/store-value-undoable', newSpacingValues);
 
