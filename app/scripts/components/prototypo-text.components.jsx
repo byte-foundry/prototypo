@@ -35,16 +35,11 @@ export default class PrototypoText extends React.Component {
 	constructor(props) {
 		super(props);
 
-		const compositeDecorator = new CompositeDecorator([{
-			strategy: createIndivStrategy(/[abc+]/g),
-			component: IndivSpan,
-		}]);
-
 		this.state = {
 			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
 			glyphPanelOpened: undefined,
-			editorState: EditorState.createEmpty(compositeDecorator),
+			editorState: EditorState.createEmpty(),
 			indivCurrentGroup: undefined,
 		};
 
@@ -71,8 +66,6 @@ export default class PrototypoText extends React.Component {
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
-				this.updateIndivGroupDecorator(head.toJS().indivCurrentGroup);
-
 				this.setState({
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
 					indivCurrentGroup: head.toJS().indivCurrentGroup,
@@ -88,10 +81,14 @@ export default class PrototypoText extends React.Component {
 		this.lifespan.release();
 	}
 
-	updateIndivGroupDecorator(nextIndivGroup = {}) {
-		const {indivCurrentGroup = {}, editorState} = this.state;
+	componentWillUpdate(nextProps, {indivCurrentGroup}) {
+		this.updateIndivGroupDecorator(indivCurrentGroup);
+	}
 
-		if (nextIndivGroup.name !== indivCurrentGroup.name) {
+	updateIndivGroupDecorator(nextIndivGroup) {
+		const {indivCurrentGroup, editorState} = this.state;
+
+		if (nextIndivGroup && nextIndivGroup !== indivCurrentGroup) {
 			let decorator = null;
 
 			if (nextIndivGroup.glyphs) {
@@ -220,7 +217,7 @@ export default class PrototypoText extends React.Component {
 		const contentStyle = {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
 			'fontSize': `${this.props.uiTextFontSize || 1}em`,
-			'color': this.state.indivCurrentGroup.glyphs ? '#C5C5C5' : (this.props.uiInvertedTextColors ? '#fefefe' : '#232323'),
+			'color': this.state.indivCurrentGroup ? '#C5C5C5' : (this.props.uiInvertedTextColors ? '#fefefe' : '#232323'),
 			'transform': this.props.uiInvertedTextView ? 'scaleY(-1)' : 'scaleY(1)',
 			'fontWeight': '400',
 		};
