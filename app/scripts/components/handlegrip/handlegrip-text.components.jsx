@@ -79,7 +79,7 @@ export default class HandlegripText extends React.Component {
 					trackingX: head.toJS().uiTrackingX,
 					spacingLeft: head.toJS().spacingLeft || 0,
 					spacingRight: head.toJS().spacingRight || 0,
-					advanceWidth: head.toJS().advanceWidth || this.state.advanceWidth,
+					advanceWidth: head.toJS().advanceWidth || 0,
 				});
 			})
 			.onDelete(() => {
@@ -145,18 +145,37 @@ export default class HandlegripText extends React.Component {
 
 		const leftSideTracking = this.state.tracking === 'left';
 		const newX = e.pageX || e.screenX;
+		const trackingX = this.state.trackingX;
 		const el = ReactDOM.findDOMNode(this);
 		const {offsetLeft} = DOM.getAbsOffset(el);
+		// const letterAbsOffset = this.refs.selectedLetter.getAbsOffset();
+		const letterOffsetWidth = this.refs.selectedLetter.getClientWidth();
 		let newValue;
+
+		// here we are going to try and avoid
+		// dragging w/o being near the handle
+		const barProps = leftSideTracking
+			? this.refs.selectedLetter.getLeftBar()
+			: this.refs.selectedLetter.getRightBar();
+
+		// we are going from left to right
+		if (newX > trackingX) {
+			// so we do not want the dragging to happen
+			// unless we are on the handlebar's left side or further
+			if (newX < barProps.offsetLeft) {
+				return;
+			}
+		}
+		// we are going from right to left
+		else if (newX > (barProps.offsetLeft + barProps.clientWidth)) {
+			// so we do not want the dragging to happen
+			// unless we are on the handlebar's right side or nearer
+			return;
+		}
 
 		// advanceWidth is in typographic unit
 		const advanceWidth = this.state.advanceWidth;
-		// letter offsetWidth in pixels
-		const letterOffsetWidth = this.refs.selectedLetter.getOffsetWidth();
-		const letterAbsOffset = this.refs.selectedLetter.getAbsOffset();
-
-		//console.log(newX, letterAbsOffset);
-
+		// intiate spacing value that will be set w/ dispatchAction
 		const newSpacingValues = {};
 
 		// here we are going to find out the pixel ratio for dragging
@@ -173,7 +192,7 @@ export default class HandlegripText extends React.Component {
 
 		// obtain variation value
 		const variation = Math.round(
-			(newX - this.state.trackingX) * dragginRatio
+			(newX - trackingX) * dragginRatio
 		) * (leftSideTracking ? -1 : 1);
 
 		// compute new value
@@ -209,8 +228,6 @@ export default class HandlegripText extends React.Component {
 			newSpacingValues.spacingRight = newValue + this.state.baseSpacingRight;
 		}
 
-		newSpacingValues.uiTrackingX = newX;
-
 		if (!Number.isNaN(newValue)) {
 			this.client.dispatchAction('/change-letter-spacing', {
 				value: newValue,
@@ -218,10 +235,12 @@ export default class HandlegripText extends React.Component {
 				letter: this.getSelectedLetter(),
 			});
 
-			// if the user went to far, no need to update the advanceWidth value
-			if (updatedValue <= this.props.max && updatedValue >= this.props.min) {
-				newSpacingValues.advanceWidth = variation + advanceWidth;
-			}
+		}
+
+		// if the user went to far, no need to update the tracking value and advanceWidth
+		if (updatedValue <= this.props.max && updatedValue >= this.props.min) {
+			newSpacingValues.uiTrackingX = newX;
+			newSpacingValues.advanceWidth = variation + advanceWidth;
 		}
 
 		this.client.dispatchAction('/store-value-undoable', newSpacingValues);
