@@ -2,7 +2,6 @@ import React from 'react';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import Log from '../services/log.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import Glyph from './glyph.components.jsx';
