@@ -77,8 +77,7 @@ export default class HandlegripLetter extends React.Component {
 					letter={this.props.letter}
 				/>
 				<span className="letter-wrap-wrap">
-					<span ref="letterWrapLetter" className="letter-wrap-letter">
-						{this.props.letter}
+					<span ref="letterWrapLetter" className="letter-wrap-letter" dangerouslySetInnerHTML={{__html:this.props.letter.replace(/ /g, '&nbsp;')}}>
 					</span>
 					<span className="handlegrip-spacing-number">
 						{advanceWidth}
