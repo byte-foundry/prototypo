@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
-import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 import GlyphList from './glyph-list.components.jsx';
 
 export default class GlyphPanel extends React.Component {
@@ -56,12 +55,14 @@ export default class GlyphPanel extends React.Component {
 
 		if (this.state.show) {
 			const intercom = document.querySelector('#intercom-launcher');
+
 			if (intercom) {
 				intercom.style.right = '214px';
 			}
 		}
 		else {
 			const intercom = document.querySelector('#intercom-launcher');
+
 			if (intercom) {
 				intercom.style.right = '14px';
 			}

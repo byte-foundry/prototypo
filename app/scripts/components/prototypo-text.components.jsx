@@ -20,8 +20,9 @@ export default class PrototypoText extends React.Component {
 			showContextMenu: false,
 			glyphPanelOpened: undefined,
 		};
-
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		// function bindings
 		this.setupText = this.setupText.bind(this);
 		this.saveText = this.saveText.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
