@@ -64,13 +64,12 @@ class ViewButtons extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.intersection(
-			_.xor(
-				this.state.mode,
-				(name === 'glyph' ? [name, 'list'] : [name])
-			),
-			this.availableMode
+		const modes = (
+			name === 'glyph'
+				? _.remove(this.state.mode, (item) => {return item === 'list';})
+				: this.state.mode
 		);
+		const newViewMode = _.intersection(_.xor(modes, [name]), this.availableMode);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
