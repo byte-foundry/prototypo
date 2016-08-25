@@ -119,5 +119,6 @@ export const saveAppValues = _.throttle(() => {
 		appValues[ref.remote] = prototypoStore.get(ref.local);
 	});
 
-	AppValues.save({typeface: 'default', values: appValues});
+	AppValues.save({typeface: 'default', values: appValues})
+		.catch((err) => {console.log(err);});
 }, 300);

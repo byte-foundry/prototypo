@@ -36,6 +36,7 @@ export default class Topbar extends React.Component {
 			plan: undefined,
 			creditChoices: undefined,
 			presets: null,
+			isOnline: true,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -64,6 +65,7 @@ export default class Topbar extends React.Component {
 					eventList: head.toJS().d.undoEventList,
 					presets: head.toJS().d.fontPresets,
 					indiv: head.toJS().d.indivMode,
+					isOnline: head.toJS().isOnline,
 				});
 			})
 			.onDelete(() => {
@@ -248,6 +250,16 @@ export default class Topbar extends React.Component {
 			)
 			: false;*/
 
+		const networkError = this.state.isOnline
+			? false
+			: (
+				<TopBarMenuAction
+					name="Network error detected: your work will not be saved !"
+					click={() => {return;}}
+					action={true}
+				/>
+			);
+
 		return (
 			<div id="topbar">
 				<TopBarMenu>
@@ -346,6 +358,7 @@ export default class Topbar extends React.Component {
 					</TopBarMenuDropdown>
 					{exporting}
 					{errorExporting}
+					{networkError}
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
 					{creditExportLabel}
 					{callToAction}
