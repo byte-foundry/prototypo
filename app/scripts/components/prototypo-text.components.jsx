@@ -42,8 +42,8 @@ export default class PrototypoText extends React.Component {
 			editorState: EditorState.createEmpty(),
 			indivCurrentGroup: undefined,
 		};
-
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		// function bindings
 		this.saveText = this.saveText.bind(this);
 		this.onEditorChange = this.onEditorChange.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);

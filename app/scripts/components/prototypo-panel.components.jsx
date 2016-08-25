@@ -2,7 +2,7 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import ClassNames from 'classnames';
+import classNames from 'classnames';
 
 import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
@@ -17,7 +17,6 @@ export default class PrototypoPanel extends React.Component {
 			uiMode: [],
 		};
 
-		this.availableMode = ['glyph', 'text', 'word'];
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
@@ -67,7 +66,13 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.intersection(_.xor(this.state.uiMode, [name]), this.availableMode);
+		// if we are closing glyph mode, we want glyph list to be hidden
+		const modes = (
+			name === 'glyph' && this.state.uiMode.indexOf('glyph') !== -1
+				? _.without(this.state.uiMode, 'list')
+				: this.state.uiMode
+		);
+		const newViewMode = _.xor(modes, [name]);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
@@ -131,7 +136,7 @@ export default class PrototypoPanel extends React.Component {
 
 		let down;
 
-		const textAndGlyphClassNames = ClassNames({
+		const textAndGlyphClassNames = classNames({
 			'has-text-panel': hasText,
 			'has-glyph-panel': hasGlyph,
 		});

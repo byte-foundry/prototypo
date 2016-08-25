@@ -63,7 +63,13 @@ class ViewButtons extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.xor(this.state.mode, [name]);
+		// if we are closing glyph mode, we want glyph list to be hidden
+		const modes = (
+			name === 'glyph' && this.state.mode.indexOf('glyph') !== -1
+				? _.without(this.state.mode, 'list')
+				: this.state.mode
+		);
+		const newViewMode = _.xor(modes, [name]);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});

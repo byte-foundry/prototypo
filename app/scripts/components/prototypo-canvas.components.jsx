@@ -40,7 +40,7 @@ export default class PrototypoCanvas extends React.Component {
 				this.setState({
 					prototypoTextPanelOpened: head.toJS().uiMode.indexOf('text') !== -1,
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
-					glyph: head.toJS().glyphs
+					glyph: head.toJS().glyphs,
 				});
 			})
 			.onDelete(() => {
