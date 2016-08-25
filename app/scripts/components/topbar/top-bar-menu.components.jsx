@@ -155,6 +155,10 @@ class TopBarMenuItem extends React.Component {
 	}
 }
 
+/**
+*	TopBarMenuDropdown is nestable
+*	meaning that you can put a TopBarMenuDropdown inside a TopBarMenuDropdownItem
+*/
 class TopBarMenuDropdown extends React.Component {
 	static getHeader(props) {
 		const content = {
@@ -263,10 +267,11 @@ class TopBarMenuDropdownItem extends React.Component {
 		this.state = {
 			credits: undefined,
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		//function bindings
 		this.handleClick = this.handleClick.bind(this);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.setPreset = this.setPreset.bind(this);
 	}
 
 	componentWillMount() {
@@ -320,9 +325,16 @@ class TopBarMenuDropdownItem extends React.Component {
 		else if (this.props.freeAccount) {
 			return;
 		}
-		else {
+		else if (this.props.handler && typeof this.props.handler === 'function') {
 			this.props.handler();
 		}
+		else if (this.props.preset) {
+			this.setPreset(this.props.preset);
+		}
+	}
+
+	setPreset(preset) {
+		//logic here
 	}
 
 	render() {
@@ -350,6 +362,7 @@ class TopBarMenuDropdownItem extends React.Component {
 				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
 				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
 				{creditsAltLabel}
+				{this.props.children}
 			</li>
 		);
 	}

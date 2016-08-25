@@ -196,6 +196,17 @@
 
 		.topbaritem-displayed &-dropdown {
 			height:auto;
+			overflow: visible;
+		}
+
+		// nested menu
+		.top-bar-menu-item-dropdown-item &-dropdown{
+			display: none;
+			left: 100%;
+			position: absolute;
+		}
+		.top-bar-menu-item-dropdown-item:hover &-dropdown{
+			display: block;
 		}
 	}
 }

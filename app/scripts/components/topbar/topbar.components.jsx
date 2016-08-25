@@ -31,6 +31,7 @@ export default class Topbar extends React.Component {
 			credits: undefined,
 			plan: undefined,
 			creditChoices: undefined,
+			presets: null,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -54,6 +55,7 @@ export default class Topbar extends React.Component {
 					to: head.toJS().undoTo,
 					from: head.toJS().undoFrom,
 					eventList: head.toJS().undoEventList,
+					presets: head.toJS().fontPresets,
 				});
 			})
 			.onDelete(() => {
@@ -191,6 +193,26 @@ export default class Topbar extends React.Component {
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount)
 			&& <TopBarMenuButton label="EXPORT YOUR FONT NOW!" noHover centered click={this.openGoProModal} alignRight/>;
 
+		const presetSubMenu = this.state.presets
+			? (
+				<TopBarMenuDropdownItem name="Choose a preset ...">
+					<TopBarMenuDropdown>
+						{
+							_.keys(this.state.presets).map((preset, index) => {
+								return (
+									<TopBarMenuDropdownItem
+										name={preset}
+										preset={preset}
+										key={index}
+									/>
+								);
+							})
+						}
+					</TopBarMenuDropdown>
+				</TopBarMenuDropdownItem>
+			)
+			: false;
+
 		return (
 			<div id="topbar">
 				<TopBarMenu>
@@ -249,6 +271,7 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem
 							name="Individualize parameters"
 							handler={() => { this.individualize(); }}/>
+						{presetSubMenu}
 						<TopBarMenuDropdownItem
 							name={undoText}
 							key="undo"
