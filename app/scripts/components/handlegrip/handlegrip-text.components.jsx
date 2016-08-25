@@ -71,12 +71,12 @@ export default class HandlegripText extends React.Component {
 				this.setState({
 					fontValues: head.toJS().controlsValues,
 					trackingX: head.toJS().uiTrackingX,
-					baseSpacingLeft: head.toJS().baseSpacingLeft || this.state.baseSpacingLeft,
-					baseSpacingRight: head.toJS().baseSpacingRight || this.state.baseSpacingRight,
-					spacingLeft: head.toJS().spacingLeft || this.state.spacingLeft,
-					spacingRight: head.toJS().spacingRight || this.state.spacingRight,
+					baseSpacingLeft: head.toJS().baseSpacingLeft !== undefined ? head.toJS().baseSpacingLeft : this.state.baseSpacingLeft,
+					baseSpacingRight: head.toJS().baseSpacingRight !== undefined ?head.toJS().baseSpacingRight : this.state.baseSpacingRight,
+					spacingLeft: head.toJS().spacingLeft !== undefined ? head.toJS().spacingLeft : this.state.spacingLeft,
+					spacingRight: head.toJS().spacingRight !== undefined ? head.toJS().spacingRight : this.state.spacingRight,
 					unClampedOldValue: head.toJS().unClampedOldValue,
-					advanceWidth: head.toJS().advanceWidth || this.state.advanceWidth,
+					advanceWidth: head.toJS().advanceWidth !== undefined ? head.toJS().advanceWidth : this.state.advanceWidth,
 				});
 			})
 			.onDelete(() => {
@@ -121,6 +121,8 @@ export default class HandlegripText extends React.Component {
 				el.clientWidth
 			),
 		});
+
+		this.client.dispatchAction('/store-value-undoable', {unClampedOldValue: undefined});
 
 		this.dispatchAllFromFontinstance();
 
@@ -193,8 +195,6 @@ export default class HandlegripText extends React.Component {
 			)
 			+ (variation)
 		);
-
-		console.log("unclamped spacing: "+ this.state[property]);
 
 		// if the new X value is in the element boundaries
 		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
