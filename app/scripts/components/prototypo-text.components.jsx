@@ -3,12 +3,32 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {Editor, EditorState, ContentState, CompositeDecorator} from 'draft-js';
+import escapeStringRegexp from 'escape-string-regexp';
 
 import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import ZoomButtons from './zoom-buttons.components.jsx';
-import ClassNames from 'classnames';
+import classNames from 'classnames';
+
+function createIndivStrategy(regex) {
+	return (contentBlock, callback) => {
+		const text = contentBlock.getText();
+		let matchArr = regex.exec(text);
+		let start;
+
+		while (matchArr !== null) {
+			start = matchArr.index;
+			callback(start, start + matchArr[0].length);
+			matchArr = regex.exec(text);
+		}
+	};
+}
+
+const IndivSpan = ({children}) => {
+	return <span className="prototypo-text-editor-indiv-character">{children}</span>;
+};
 
 export default class PrototypoText extends React.Component {
 
@@ -19,11 +39,13 @@ export default class PrototypoText extends React.Component {
 			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
 			glyphPanelOpened: undefined,
+			editorState: EditorState.createEmpty(),
+			indivCurrentGroup: undefined,
 		};
 
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-		this.setupText = this.setupText.bind(this);
 		this.saveText = this.saveText.bind(this);
+		this.onEditorChange = this.onEditorChange.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.toggleInsertMenu = this.toggleInsertMenu.bind(this);
 		this.hideContextMenu = this.hideContextMenu.bind(this);
@@ -35,6 +57,7 @@ export default class PrototypoText extends React.Component {
 		this.close = this.close.bind(this);
 		this.invertedView = this.invertedView.bind(this);
 		this.toggleColors = this.toggleColors.bind(this);
+		this.updateIndivGroupDecorator = this.updateIndivGroupDecorator.bind(this);
 	}
 
 	componentWillMount() {
@@ -45,43 +68,62 @@ export default class PrototypoText extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
+					indivCurrentGroup: head.toJS().indivCurrentGroup,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-
-		this.saveTextDebounced = _.debounce((text, prop) => {
-			this.client.dispatchAction('/store-text', {value: text, propName: prop});
-		}, 500);
-	}
-
-	setupText() {
-		const content = this.props[this.props.field];
-
-		this.refs.text.textContent = content && content.length > 0 ? content : 'abcdefghijklmnopqrstuvwxyz\nABCDEFGHIJKLMNOPQRSTUVWXYZ\n,;.:-!?\‘\’\“\”\'\"\«\»()[]\n0123456789\n+&\/\náàâäéèêëíìîïóòôöúùûü\nÁÀÂÄÉÈÊËÍÌÎÏÓÒÔÖÚÙÛÜ\n\nᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀsᴛᴜᴠᴡʏᴢ';
-		// this.saveText();
-	}
-
-	componentDidUpdate() {
-		this.setupText();
-	}
-
-	componentDidMount() {
-		this.setupText();
+		this.setText(this.props[this.props.field]);
 	}
 
 	componentWillUnmount() {
-		this.saveText();
 		this.lifespan.release();
 	}
 
-	saveText() {
-		const textDiv = this.refs.text;
+	componentWillUpdate(nextProps, {indivCurrentGroup}) {
+		this.updateIndivGroupDecorator(indivCurrentGroup);
+	}
 
-		if (textDiv && textDiv.textContent) {
-			this.saveTextDebounced(textDiv.textContent, this.props.field);
+	updateIndivGroupDecorator(nextIndivGroup) {
+		const {indivCurrentGroup, editorState} = this.state;
+
+		if (nextIndivGroup && nextIndivGroup !== indivCurrentGroup) {
+			let decorator = null;
+
+			if (nextIndivGroup.glyphs) {
+				const glyphsString = nextIndivGroup.glyphs
+										.map((unicode) => { return String.fromCharCode(unicode); })
+										.join('');
+
+				decorator = new CompositeDecorator([{
+					strategy: createIndivStrategy(new RegExp(`[${escapeStringRegexp(glyphsString)}]+`, 'g')),
+					component: IndivSpan,
+				}]);
+			}
+
+			this.setState({editorState: EditorState.set(editorState, {decorator})});
 		}
+	}
+
+	setText(text) {
+		this.setState({
+			editorState: EditorState.push(
+				this.state.editorState,
+				ContentState.createFromText(text),
+				'change-block-data'
+			),
+		});
+		this.saveText(text);
+	}
+
+	saveText(text) {
+		this.client.dispatchAction('/store-text', {value: text, propName: this.props.field});
+	}
+
+	onEditorChange(editorState) {
+		this.saveText(editorState.getCurrentContent().getPlainText());
+		this.setState({editorState});
 	}
 
 	toggleContextMenu(e) {
@@ -116,7 +158,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToQuickBrownFox() {
-		this.saveTextDebounced('The quick brown fox jumps over a lazy dog', this.props.field);
+		this.setText('The quick brown fox jumps over a lazy dog');
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -124,7 +166,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToFameuxWhisky() {
-		this.saveTextDebounced('Buvez de ce whisky que le patron juge fameux', this.props.field);
+		this.setText('Buvez de ce whisky que le patron juge fameux');
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -132,7 +174,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToAlphabet() {
-		this.saveTextDebounced(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`, this.props.field);
+		this.setText(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -140,11 +182,11 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToLorem() {
-		this.saveTextDebounced(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae scelerisque urna, eget consequat lectus. Pellentesque lacus magna, tincidunt quis libero non, pellentesque sagittis libero. Nam vitae ante eu lectus sodales sagittis. Duis eget mauris aliquet, gravida quam id, sodales sem. Etiam aliquam mi nec aliquam tincidunt. Nullam mollis mi nec mi luctus faucibus. Fusce cursus massa eget dui accumsan rhoncus. Quisque consectetur libero augue, eget dictum lacus pretium ac. Praesent scelerisque ipsum at aliquam tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed porta risus at aliquam venenatis.\r\n
+		this.setText(`		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae scelerisque urna, eget consequat lectus. Pellentesque lacus magna, tincidunt quis libero non, pellentesque sagittis libero. Nam vitae ante eu lectus sodales sagittis. Duis eget mauris aliquet, gravida quam id, sodales sem. Etiam aliquam mi nec aliquam tincidunt. Nullam mollis mi nec mi luctus faucibus. Fusce cursus massa eget dui accumsan rhoncus. Quisque consectetur libero augue, eget dictum lacus pretium ac. Praesent scelerisque ipsum at aliquam tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed porta risus at aliquam venenatis.
 
-							   Morbi faucibus mauris mi, sit amet laoreet sapien dapibus tristique. Suspendisse vitae molestie quam, ut cursus justo. Aenean sodales mauris vitae libero venenatis sollicitudin. Aenean condimentum nisl nec rhoncus elementum. Sed est ipsum, aliquam quis justo id, ornare tincidunt massa. Donec sit amet finibus sem. Sed euismod ex sed lorem hendrerit placerat. Praesent congue congue ultrices. Nam maximus metus rhoncus ligula porta sagittis. Maecenas pharetra placerat eleifend.\r\n
+		Morbi faucibus mauris mi, sit amet laoreet sapien dapibus tristique. Suspendisse vitae molestie quam, ut cursus justo. Aenean sodales mauris vitae libero venenatis sollicitudin. Aenean condimentum nisl nec rhoncus elementum. Sed est ipsum, aliquam quis justo id, ornare tincidunt massa. Donec sit amet finibus sem. Sed euismod ex sed lorem hendrerit placerat. Praesent congue congue ultrices. Nam maximus metus rhoncus ligula porta sagittis. Maecenas pharetra placerat eleifend.
 
-								   Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas vulputate fermentum ullamcorper. Etiam congue nec magna sed accumsan. Aliquam erat volutpat. Proin ut sapien auctor, congue tortor et, tempor dolor. Phasellus semper ut magna nec vehicula. Phasellus ut pretium metus. Aliquam eu consectetur est, mattis laoreet massa. Nullam eu scelerisque lacus. Pellentesque imperdiet metus at malesuada accumsan. Duis rhoncus, neque sed luctus faucibus, risus mi auctor purus, sed sagittis dolor leo quis quam.`, this.props.field);
+		Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas vulputate fermentum ullamcorper. Etiam congue nec magna sed accumsan. Aliquam erat volutpat. Proin ut sapien auctor, congue tortor et, tempor dolor. Phasellus semper ut magna nec vehicula. Phasellus ut pretium metus. Aliquam eu consectetur est, mattis laoreet massa. Nullam eu scelerisque lacus. Pellentesque imperdiet metus at malesuada accumsan. Duis rhoncus, neque sed luctus faucibus, risus mi auctor purus, sed sagittis dolor leo quis quam.`);
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -169,16 +211,21 @@ export default class PrototypoText extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] PrototypoText');
 		}
-		const style = {
+		const panelStyle = {
+			'backgroundColor': this.props.uiInvertedTextColors ? '#232323' : '#fefefe',
+		};
+		const contentStyle = {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
 			'fontSize': `${this.props.uiTextFontSize || 1}em`,
-			'color': this.props.uiInvertedTextColors ? '#fefefe' : '#232323',
-			'backgroundColor': this.props.uiInvertedTextColors ? '#232323' : '#fefefe',
-			'transform': this.props.uiInvertedTextView ? 'scaleY(-1)' : 'scaleY(1)',
-			'fontWeight': 400,
 		};
 
-		const actionBar = ClassNames({
+		const editorClassNames = classNames('prototypo-text-editor', {
+			'negative': this.props.uiInvertedTextColors,
+			'inverted': this.props.uiInvertedTextView,
+			'indiv': this.state.indivCurrentGroup,
+		});
+
+		const actionBar = classNames({
 			'action-bar': true,
 			'is-shifted': this.state.glyphPanelOpened,
 		});
@@ -220,15 +267,15 @@ export default class PrototypoText extends React.Component {
 				className="prototypo-text"
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}>
-				<ReactGeminiScrollbar>
-					<div
-						contentEditable="true"
-						ref="text"
-						className="prototypo-text-string"
-						spellCheck="false"
-						style={style}
-						onInput={this.saveText}
-						></div>
+				<ReactGeminiScrollbar style={panelStyle}>
+					<div className={editorClassNames} style={contentStyle}>
+						<Editor
+							editorState={this.state.editorState}
+							onChange={this.onEditorChange}
+							placeholder="Write some text here..."
+							ref="editor"
+						/>
+					</div>
 				</ReactGeminiScrollbar>
 				<ViewPanelsMenu
 					shifted={this.state.glyphPanelOpened}

@@ -4,6 +4,7 @@ import '../../node_modules/please-wait/build/please-wait.css';
 import '../../node_modules/gemini-scrollbar/gemini-scrollbar.css';
 import '../../node_modules/react-select/dist/react-select.css';
 import '../../node_modules/react-joyride/lib/styles/react-joyride-compiled.css';
+import '../../node_modules/draft-js/dist/Draft.css';
 import '../styles/components/edit-param-group.scss';
 import '../styles/components/input-group.scss';
 import '../styles/components/fonts-collection.scss';

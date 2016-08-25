@@ -6,9 +6,9 @@
     "bluebird": "^3.1.1",
     "classnames": "^2.1.2",
     "del": "^1.2.0",
-    "elzevir.ptf": "byte-foundry/elzevir.ptf#master",
+    "draft-js": "^0.8.1",
+    "escape-string-regexp": "^1.0.5",
     "hoodie-client": "^3.4.0",
-    "john-fell.ptf": "byte-foundry/john-fell.ptf#master",
     "jsdiff": "^1.1.1",
     "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",
@@ -38,8 +38,10 @@
     "remutable": "FranzPoize/remutable#master",
     "slug": "^0.9.1",
     "tether": "^1.1.0",
-    "venus.ptf": "byte-foundry/venus.ptf#master",
-    "xxhashjs": "^0.1.1"
+    "xxhashjs": "^0.1.1",
+    "venus.ptf": "byte-foundry/venus.ptf#preprod",
+    "elzevir.ptf": "byte-foundry/elzevir.ptf#preprod",
+    "john-fell.ptf": "byte-foundry/john-fell.ptf#preprod"
   },
   "devDependencies": {
     "babel-core": "^6.9.0",

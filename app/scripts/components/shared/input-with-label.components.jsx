@@ -6,39 +6,39 @@ export default class InputWithLabel extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-		this.handleOnChange = this.handleOnChange.bind(this);
 	}
 
-	handleOnChange() {
-		if (this.props.handleOnChange) {
-			this.props.handleOnChange();
-		}
+	static defaultProps = {
+		handleOnChange: () => { return; },
 	}
 
 	render() {
-		const required = this.props.required
-			? <span className="input-with-label-label-required">*</span>
-			: false;
+		const {
+			handleOnChange,
+			error, warning, info,
+			label, placeholder, inputValue, required,
+			...rest,
+		} = this.props;
 
-		const inputClass = classNames({
-			'input-with-label-input': true,
-			'is-error': this.props.error,
-			'is-warning': this.props.warning,
+		const inputClass = classNames('input-with-label-input', {
+			'is-error': error,
+			'is-warning': warning,
 		});
-
-		const info = this.props.info
-			? <span className="input-with-label-label-info">{this.props.info}</span>
-			: false;
 
 		return (
 			<div className="input-with-label">
-				<label className="input-with-label-label">{this.props.label}{info}{required}</label>
-				<input {...this.props}
+				<label className="input-with-label-label">
+					{label}
+					{info && <span className="input-with-label-label-info">{info}</span>}
+					{required && <span className="input-with-label-label-required">*</span>}
+				</label>
+				<input {...rest}
 					ref="input"
 					className={inputClass}
-					placeholder={this.props.placeholder}
-					defaultValue={this.props.inputValue}
-					onChange={this.handleOnChange} />
+					placeholder={placeholder}
+					defaultValue={inputValue}
+					onChange={handleOnChange}
+				/>
 			</div>
 		);
 	}
