@@ -10,7 +10,7 @@ import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import ZoomButtons from './zoom-buttons.components.jsx';
-import classNames from 'classNames';
+import classNames from 'classnames';
 
 function createIndivStrategy(regex) {
 	return (contentBlock, callback) => {
