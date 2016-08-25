@@ -39,6 +39,7 @@ export default class Topbar extends React.Component {
 		this.exportGlyphr = this.exportGlyphr.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
 		this.openGoProModal = this.openGoProModal.bind(this);
+		this.setPreset = this.setPreset.bind(this);
 	}
 
 	async componentWillMount() {
@@ -161,6 +162,10 @@ export default class Topbar extends React.Component {
 		}
 	}
 
+	setPreset(preset) {
+		this.client.dispatchAction('/set-preset', preset);
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Topbar');
@@ -202,7 +207,8 @@ export default class Topbar extends React.Component {
 								return (
 									<TopBarMenuDropdownItem
 										name={preset}
-										preset={preset}
+										handler={this.setPreset}
+										handlerParam={preset}
 										key={index}
 									/>
 								);

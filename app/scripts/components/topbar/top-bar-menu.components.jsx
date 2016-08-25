@@ -271,7 +271,6 @@ class TopBarMenuDropdownItem extends React.Component {
 
 		//function bindings
 		this.handleClick = this.handleClick.bind(this);
-		this.setPreset = this.setPreset.bind(this);
 	}
 
 	componentWillMount() {
@@ -309,7 +308,7 @@ class TopBarMenuDropdownItem extends React.Component {
 				// and on callback dispatch a "spend credit" action
 				// to ensure no one will pay if something went wrong
 				// during the export
-				this.props.handler();
+				this.props.handler(this.props.handlerParam);
 				// here the "spend credit" will hapen
 				// but on parent component state change
 				// when "exporting" goes from true to false w/o errors
@@ -326,16 +325,10 @@ class TopBarMenuDropdownItem extends React.Component {
 			return;
 		}
 		else if (this.props.handler && typeof this.props.handler === 'function') {
-			this.props.handler();
-		}
-		else if (this.props.preset) {
-			this.setPreset(this.props.preset);
+			this.props.handler(this.props.handlerParam);
 		}
 	}
 
-	setPreset(preset) {
-		this.client.dispatchAction('/set-preset', preset);
-	}
 
 	render() {
 		const creditsAltLabel = this.props.freeAccountAndHasCredits

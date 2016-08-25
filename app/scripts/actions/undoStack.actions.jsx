@@ -24,6 +24,7 @@ export default {
 			const patch = prototypoStore.set('undoFrom', eventIndex).set('undoTo', eventIndex - 1).commit();
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
+			undoableStore.apply(revert);
 			localServer.dispatchUpdate('/undoableStore', revert);
 			localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
 
@@ -41,6 +42,7 @@ export default {
 				const patch = prototypoStore.set('undoFrom', eventIndex).set('undoTo', eventIndex + 1).commit();
 
 				localServer.dispatchUpdate('/prototypoStore', patch);
+				undoableStore.apply(revert);
 				localServer.dispatchUpdate('/undoableStore', Patch.fromJSON(event.patch));
 				localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
 
