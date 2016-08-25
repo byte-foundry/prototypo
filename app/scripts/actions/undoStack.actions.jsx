@@ -3,11 +3,14 @@ const {Patch} = Remutable;
 
 import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
+import LocalClient from '../stores/local-client.stores.jsx';
 
 let localServer;
+let localClient;
 
 window.addEventListener('fluxServer.setup', () => {
 	localServer = LocalServer.instance;
+	localClient = LocalClient.instance();
 });
 
 export default {

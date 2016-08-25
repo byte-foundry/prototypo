@@ -334,7 +334,7 @@ class TopBarMenuDropdownItem extends React.Component {
 	}
 
 	setPreset(preset) {
-		//logic here
+		this.client.dispatchAction('/set-preset', preset);
 	}
 
 	render() {
