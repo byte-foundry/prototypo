@@ -458,7 +458,7 @@ export default {
 			.then(async () => {
 				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname};
 				const patch = userStore.set('infos', {accountValues}).commit();
-
+				await AccountValues.save({typeface: 'default', values: {accountValues}});
 				localServer.dispatchUpdate('/userStore', patch);
 				if (toLocation.pathname === '/dashboard') {
 					await loadStuff(accountValues);

@@ -69,6 +69,7 @@ const prototypoStore = new Remutable({
 			templateName: 'john-fell.ptf',
 		},
 	],
+
 	//end template list store values
 	//font library store values
 	errorAddFamily: undefined,
