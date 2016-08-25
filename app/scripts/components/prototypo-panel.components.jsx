@@ -17,7 +17,6 @@ export default class PrototypoPanel extends React.Component {
 			uiMode: [],
 		};
 
-		this.availableMode = ['glyph', 'text', 'word', 'list'];
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 

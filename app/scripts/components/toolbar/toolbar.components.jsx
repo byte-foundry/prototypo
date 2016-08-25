@@ -37,7 +37,6 @@ class ViewButtons extends React.Component {
 		this.state = {
 			mode: [],
 		};
-		this.availableMode = ['glyph', 'text', 'word', 'list'];
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		//fonction binding to avoid unnecessary re-render
