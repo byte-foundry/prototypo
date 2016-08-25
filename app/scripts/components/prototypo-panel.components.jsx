@@ -67,13 +67,13 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.intersection(
-			_.xor(
-				this.state.uiMode,
-				(name === 'glyph' ? [name, 'list'] : [name])
-			),
-			this.availableMode
+		// if we are toggling glyph mode, we want glyph list to be hidden
+		const modes = (
+			name === 'glyph'
+				? _.without(this.state.uiMode, 'list')
+				: this.state.uiMode
 		);
+		const newViewMode = _.intersection(_.xor(modes, [name]), this.availableMode);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
