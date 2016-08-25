@@ -413,6 +413,9 @@ export default {
 	},
 	'/delete-variant': ({variant, familyName}) => {
 		const families = _.cloneDeep(Array.from(prototypoStore.get('fonts') || []));
+		const currentVariant = prototypoStore.get('variant');
+		const currentFamily = prototypoStore.get('family');
+
 		const family = _.find(families, (item) => {
 			return item.name === familyName;
 		});
@@ -420,6 +423,15 @@ export default {
 		_.remove(family.variants, (item) => {
 			return item.id === variant.id;
 		});
+
+		if (family.name === currentFamily.name && family.template === currentFamily.template && variant.id === currentVariant.id) {
+			const variant =  family.variants[0]
+			prototypoStore.set('variant',variant);
+			localClient.dispatchAction('/change-font', {
+				templateToLoad: family.template,
+				db: variant.db,
+			});
+		}
 
 		const patch = prototypoStore.set('fonts', families).commit();
 
@@ -429,10 +441,23 @@ export default {
 	},
 	'/delete-family': ({family}) => {
 		const families = _.cloneDeep(Array.from(prototypoStore.get('fonts')));
+		const currentFamily = prototypoStore.get('family');
 
 		_.remove(families, (checkee) => {
 			return checkee.name === family.name && checkee.template === family.template;
 		});
+
+		if (family.name === currentFamily.name && family.template === currentFamily.template) {
+			const newFamily = families[0];
+			const newVariant = families[0].variants[0];
+			prototypoStore.set('family', newFamily);
+			prototypoStore.set('variant', newVariant);
+			localClient.dispatchAction('/change-font', {
+				templateToLoad: newFamily.template,
+				db: newVariant.db,
+			});
+		}
+
 		const patch = prototypoStore.set('fonts', families).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
