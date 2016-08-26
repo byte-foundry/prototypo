@@ -19,6 +19,12 @@ module.exports = {
 		publicPath: '',
 		filename: '[name].js'
 	},
+	resolve: {
+		root: [
+			path.resolve('./node_modules'),
+			path.resolve('./app')
+		],
+	},
 	module: {
 		loaders: [
 			{

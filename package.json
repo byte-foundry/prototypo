@@ -108,7 +108,8 @@
   },
   "scripts": {
     "start": "gulp serve",
-    "debug": "gulp debug"
+    "debug": "gulp debug",
+	"test": "NODE_PATH=$pwd/node_modules:$(pwd)/app jest"
   },
   "repository": {
     "type": "git",

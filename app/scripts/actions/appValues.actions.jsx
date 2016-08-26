@@ -1,8 +1,8 @@
-import {prototypoStore, userStore} from '../stores/creation.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
-import LocalClient from '../stores/local-client.stores.jsx';
-import {saveAppValues, valuesToLoad} from '../helpers/loadValues.helpers.js';
-import {Commits} from '../services/commits.services.js';
+import {prototypoStore, userStore} from 'scripts/stores/creation.stores.jsx';
+import LocalServer from 'scripts/stores/local-server.stores.jsx';
+import LocalClient from 'scripts/stores/local-client.stores.jsx';
+import {saveAppValues, valuesToLoad} from 'scripts/helpers/loadValues.helpers.js';
+import {Commits} from 'scripts/services/commits.services.js';
 
 let localServer;
 let localClient;
