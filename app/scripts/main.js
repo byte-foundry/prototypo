@@ -445,7 +445,7 @@ window.setInterval(isNetworkOnline, 5000);
 async function isNetworkOnline() {
 	// retrieve previous online value
 	const previouslyOnline = prototypoStore.get('isOnline');
-	// navigator.onLine simply tells us is connection is "plugged in"
+	// navigator.onLine simply tells us if connection is "plugged in"
 	const navigatorOnline = navigator.onLine;
 	// we are going to check wether network is actually online or not
 	let isOnline;
