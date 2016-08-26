@@ -10,7 +10,7 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/load-app-values': ({values}) => {
-		//TODO(franz): merge all the patch
+		// TODO(franz): merge all the patch
 		values.selected = values.selected || 'A'.charCodeAt(0);
 		values.tab = values.tab || 'Func';
 		values.pinned = values.pinned || [];
