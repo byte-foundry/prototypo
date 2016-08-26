@@ -94,6 +94,12 @@ export default class HandlegripText extends React.Component {
 		handlegripDOM.addEventListener('mousemove', this.handleMove);
 	}
 
+	componentDidUpdate(prevProps, prevState) {
+		if ((prevState.fontValues !== this.state.fontValues) && !this.state.tracking) {
+			this.dispatchAdvancewidthFromFontinstance();
+		}
+	}
+
 	componentWillUnmount() {
 		const handlegripDOM = ReactDOM.findDOMNode(this);
 
@@ -251,11 +257,20 @@ export default class HandlegripText extends React.Component {
 	}
 
 	dispatchAllFromFontinstance() {
-		// get the new advanceWidth of the current glyph
+		// get the new properties of the current glyph
 		// directly from the globaly available font instance
 		this.client.dispatchAction('/update-letter-spacing-value', {
 			letter: this.getSelectedLetter(),
 			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight'],
+		});
+	}
+
+	dispatchAdvancewidthFromFontinstance() {
+		// get the new advanceWidth of the current glyph
+		// directly from the globaly available font instance
+		this.client.dispatchAction('/update-letter-spacing-value', {
+			letter: this.getSelectedLetter(),
+			valueList: ['advanceWidth'],
 		});
 	}
 
