@@ -254,7 +254,7 @@ export default class Topbar extends React.Component {
 			? false
 			: (
 				<TopBarMenuAction
-					name="Network error detected: your work will not be saved !"
+					name="Network error detected: your work will not be saved!"
 					click={() => {return;}}
 					action={true}
 				/>
