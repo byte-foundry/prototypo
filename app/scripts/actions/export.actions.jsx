@@ -1,8 +1,8 @@
-import {prototypoStore} from '../stores/creation.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
-import LocalClient from '../stores/local-client.stores.jsx';
-import {FontValues} from '../services/values.services.js';
-import HoodieApi from '../services/hoodie.services.js';
+import {prototypoStore} from 'scripts/stores/creation.stores.jsx';
+import LocalServer from 'scripts/stores/local-server.stores.jsx';
+import LocalClient from 'scripts/stores/local-client.stores.jsx';
+import {FontValues} from 'scripts/services/values.services.js';
+import HoodieApi from 'scripts/services/hoodie.services.js';
 import JSZip from 'jszip';
 
 let localServer;
