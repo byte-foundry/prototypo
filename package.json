@@ -30,6 +30,7 @@
     "react-addons-css-transition-group": "^15.0.2",
     "react-addons-pure-render-mixin": "^15.0.2",
     "react-dom": "^15.0.0",
+    "react-draggable": "^2.2.1",
     "react-gemini-scrollbar": "^2.1.0",
     "react-joyride": "^1.4.7",
     "react-json-pretty": "^1.2.0",
