@@ -9,15 +9,58 @@
 }
 
 #prototypoword {
-	flex:1.33;
+	flex: 1 1 25%;
 	overflow:visible;
 	position:relative;
-	border-bottom:solid 1px $light-grey;
 }
 
 #prototypotextandglyph {
-	flex:4;
+	flex: 1 1 75%;
 	display:flex;
 	flex-direction:row;
 	overflow:hidden;
+}
+
+.prototypo-panel-handle {
+	position: absolute;
+	z-index: 2;
+	cursor: row-resize;
+	width: 100%;
+	height: 10px;
+
+	&.vertical {
+		cursor: col-resize;
+		width: 10px;
+		height: 100%;
+	}
+
+	&-bar {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		top: 0;
+		margin: auto;
+		background-color: $light-grey;
+		transition: all 100ms;
+		width: 100%;
+		height: 1px;
+	}
+
+	&.vertical &-bar {
+		width: 1px;
+		height: 100%;
+	}
+
+	&:hover &-bar, &.dragging &-bar {
+		background-color: $light-green;
+		width: 100%;
+		height: 8px;
+	}
+
+	&:hover.vertical &-bar, &.dragging.vertical &-bar {
+		width: 8px;
+		height: 100%;
+	}
+
 }

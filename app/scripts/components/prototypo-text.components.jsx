@@ -264,6 +264,7 @@ export default class PrototypoText extends React.Component {
 
 		return (
 			<div
+				style={this.props.style}
 				className="prototypo-text"
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}>

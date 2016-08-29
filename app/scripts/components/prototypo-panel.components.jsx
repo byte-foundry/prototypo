@@ -2,8 +2,8 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import classNames from 'classnames';
 
+import ResizablePanels from './shared/resizable-panels.components';
 import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
 import PrototypoWord from './prototypo-word.components.jsx';
@@ -136,14 +136,16 @@ export default class PrototypoPanel extends React.Component {
 
 		let down;
 
-		const textAndGlyphClassNames = classNames({
-			'has-text-panel': hasText,
-			'has-glyph-panel': hasGlyph,
-		});
-
-		if (hasGlyph || hasText) {
+		if (hasGlyph && hasText) {
 			down = (
-				<div id="prototypotextandglyph" className={textAndGlyphClassNames} >
+				<ResizablePanels property="flexBasis" id="prototypotextandglyph" direction="vertical">
+					{textAndGlyph}
+				</ResizablePanels>
+			);
+		}
+		else if (hasGlyph || hasText) {
+			down = (
+				<div id="prototypotextandglyph">
 					{textAndGlyph}
 				</div>
 			);
@@ -156,6 +158,15 @@ export default class PrototypoPanel extends React.Component {
 				<div id="prototypoword">
 					{word}
 				</div>
+			);
+		}
+
+		if (up && down) {
+			return (
+				<ResizablePanels id="prototypopanel" property="flexBasis" direction="horizontal">
+					{up}
+					{down}
+				</ResizablePanels>
 			);
 		}
 

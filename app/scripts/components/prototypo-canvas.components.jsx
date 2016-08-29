@@ -308,6 +308,7 @@ export default class PrototypoCanvas extends React.Component {
 
 		return (
 			<div
+				style={this.props.style}
 				className={canvasClass}
 				onClick={this.handleLeaveAndClick}
 				onMouseLeave={this.handleLeaveAndClick}>
