@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import ReactGeminiScrollbar from 'react-gemini-scrollbar';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import classNames from 'classnames';
 import {diffChars} from 'diff';
@@ -274,9 +273,7 @@ export default class PrototypoWord extends React.Component {
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}>
 				<div className="prototypo-word-scrollbar-wrapper">
-					<ReactGeminiScrollbar>
-						{wordContainer}
-					</ReactGeminiScrollbar>
+					{wordContainer}
 					<ViewPanelsMenu
 						show={this.state.showContextMenu}
 						shifted={this.state.glyphPanelOpened}

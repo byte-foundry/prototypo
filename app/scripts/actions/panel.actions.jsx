@@ -35,14 +35,16 @@ export default {
 		saveAppValues();
 	},
 	'/store-text': ({value, propName}) => {
-		const glyphs = prototypoStore.get('glyphs');
-		const patch = prototypoStore.set(propName, value).commit();
-		const subset = prototypoStore.head.toJS().uiText + rawToEscapedContent(prototypoStore.head.toJS().uiWord, glyphs);
+		if (prototypoStore.get(propName) !== value) {
+			const glyphs = prototypoStore.get('glyphs');
+			const patch = prototypoStore.set(propName, value).commit();
+			const subset = prototypoStore.head.toJS().uiText + rawToEscapedContent(prototypoStore.head.toJS().uiWord, glyphs);
 
-		localServer.dispatchUpdate('/prototypoStore', patch);
+			localServer.dispatchUpdate('/prototypoStore', patch);
 
-		fontInstance.subset = typeof subset === 'string' ? subset : '';
-		saveAppValues();
+			fontInstance.subset = typeof subset === 'string' ? subset : '';
+			saveAppValues();
+		}
 	},
 	'/change-tab-font': ({name}) => {
 		const patch = prototypoStore.set('fontTab', name).commit();

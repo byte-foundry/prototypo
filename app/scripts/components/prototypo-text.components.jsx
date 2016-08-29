@@ -1,7 +1,7 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import ScrollArea from 'react-scrollbar';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Editor, EditorState, ContentState, CompositeDecorator} from 'draft-js';
 import escapeStringRegexp from 'escape-string-regexp';
@@ -267,7 +267,7 @@ export default class PrototypoText extends React.Component {
 				className="prototypo-text"
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}>
-				<ReactGeminiScrollbar style={panelStyle}>
+				<ScrollArea horizontal={false} style={panelStyle}>
 					<div className={editorClassNames} style={contentStyle}>
 						<Editor
 							editorState={this.state.editorState}
@@ -276,7 +276,7 @@ export default class PrototypoText extends React.Component {
 							ref="editor"
 						/>
 					</div>
-				</ReactGeminiScrollbar>
+				</ScrollArea>
 				<ViewPanelsMenu
 					shifted={this.state.glyphPanelOpened}
 					show={this.state.showContextMenu}

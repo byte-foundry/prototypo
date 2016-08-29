@@ -1,7 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import ClassNames from 'classnames';
-import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import ScrollArea from 'react-scrollbar';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
@@ -67,11 +67,11 @@ export default class IndivGroupList extends React.Component {
 
 		return (
 			<div className="indiv-group-list">
-				<ReactGeminiScrollbar>
+				<ScrollArea horizontal={false}>
 					<div className="indiv-group-list-title">Your groups of individualization</div>
 					{noGroupMessage}
 					{groups}
-				</ReactGeminiScrollbar>
+				</ScrollArea>
 			</div>
 		);
 	}
