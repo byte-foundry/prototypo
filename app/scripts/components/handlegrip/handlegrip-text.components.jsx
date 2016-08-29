@@ -185,17 +185,12 @@ export default class HandlegripText extends React.Component {
 			(newX - trackingX) * dragginRatio
 		) * (leftSideTracking ? -1 : 1);
 
-		console.log("newX: "+ newX);
-		console.log("variation: "+ variation);
-		console.log("trackingX: "+ this.state.trackingX);
-		console.log("old value: " + this.state.unClampedOldValue);
-
 		// compute new value
 		newValue = (
 			(
 				this.state.unClampedOldValue || (
 					specialPropsObject && specialPropsObject[property]
-						? this.state[property]
+						? specialPropsObject[property]
 						: 0
 				)
 			)
@@ -213,8 +208,6 @@ export default class HandlegripText extends React.Component {
 		else {
 			clampedNewValue = newX < offsetLeft ? this.props.min : this.props.max;
 		}
-		console.log("newValue: "+ newValue);
-		console.log("clampedNewValue: "+ clampedNewValue);
 
 		// if we are currently tracking left side spacing
 		if (leftSideTracking) {
