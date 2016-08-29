@@ -6,7 +6,6 @@ import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
 
 import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix, canvasMode, specialKey} from '../toile/toile';
-import {rayRayIntersection} from '../prototypo.js/utils/updateUtils';
 
 import {changeTransformOrigin, glyphBoundingBox} from '../prototypo.js/utils/generic';
 import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D, add2D, distance2D} from '../prototypo.js/utils/linear';
@@ -297,7 +296,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				mouseClickRelease = true;
 			}
 
-			const glyph = this.state.glyph;
+			const {glyph} = this.state;
 
 
 			if (glyph) {

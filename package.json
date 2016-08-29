@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "gulpfile.js",
   "dependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.0.0-beta.39",
     "antique.ptf": "byte-foundry/antique.ptf#feat/new-rendering",
+    "babel-core": "^7.0.0-0",
     "babel-eslint": "^8.0.3",
     "babel-plugin-lodash": "lodash/babel-plugin-lodash#master",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
@@ -26,6 +28,7 @@
     "lodash": "~4.14.0",
     "memoize-immutable": "^3.0.0",
     "moment": "^2.10.3",
+    "nexus-events": "franzpoize/nexus-events#master",
     "nexus-flux": "FranzPoize/nexus-flux#master",
     "normalize.css": "^3.0.3",
     "opentype.js": "^0.6.9",
@@ -61,7 +64,7 @@
     "xxhashjs": "^0.1.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.35",
+    "@babel/core": "^7.0.0-beta.39",
     "@babel/plugin-proposal-class-properties": "^7.0.0-beta.35",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.35",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.35",
@@ -72,7 +75,10 @@
     "@babel/preset-react": "^7.0.0-beta.35",
     "@storybook/addon-storyshots": "^3.1.8",
     "@storybook/react": "^3.1.8",
+    "babel-jest": "^22.2.0",
     "babel-loader": "8.0.0-beta.0",
+    "babel-plugin-dynamic-import-node": "^1.2.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "base64-loader": "^1.0.0",
     "chai": "^3.4.1",
     "css-loader": "^0.23.1",
@@ -97,15 +103,17 @@
     "gulp-util": "^3.0.5",
     "if-loader": "^1.0.1",
     "import-glob-loader": "^1.1.0",
-    "jest": "^18.1.0",
+    "jest": "^22.2.1",
     "jshint-stylish": "~2.0.0",
     "lodash-webpack-plugin": "^0.11.4",
     "lodash.assign": "^3.2.0",
     "mocha": "^2.3.4",
     "nightwatch": "^0.8.15",
-    "node-sass": "^4.5.3",
+    "node-sass": "^3.4.2",
+    "prelude-loader": "^0.1.0",
     "prettier-eslint-cli": "^4.1.1",
-    "react-hot-loader": "next",
+    "prototypo-flux-testing": "0.0.1",
+    "react-hot-loader": "^1.3.0",
     "react-storybook-decorator-background": "^1.0.5",
     "react-test-renderer": "^15.6.2",
     "sass-loader": "^3.1.2",
@@ -137,13 +145,12 @@
     "start:merge": "MERGE=true gulp serve",
     "start:perf": "gulp serve:perf",
     "storybook": "start-storybook -p 6006",
-    "test": "jest --colors",
+    "test": "NODE_PATH=$pwd/node_modules:$(pwd)/app jest",
     "lint": "eslint app/scripts/**/*.{js,jsx}",
     "analyze": "webpack --config analyze.config.js",
     "analyze:prod": "webpack --config analyze-prod.config.js",
     "build:lib": "webpack --config library.config.js",
-    "build:precursor": "webpack --config precursor.config.js",
-	"test": "NODE_PATH=$pwd/node_modules:$(pwd)/app jest"
+    "build:precursor": "webpack --config precursor.config.js"
   },
   "repository": {
     "type": "git",
@@ -156,6 +163,15 @@
   },
   "jest": {
     "testRegex": "/__tests__/.*\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "js",
+      "jsx"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "bower_components",
+      "shared"
+    ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
       "\\.(css|scss)$": "<rootDir>/__mocks__/styleMock.js"

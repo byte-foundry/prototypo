@@ -1,10 +1,11 @@
 jest.autoMockOff();
 window.Hoodie = jest.genMockFunction();
 window._ = require('lodash');
-var Remutable = require('remutable').default;
-var prototypoStore = new Remutable({});
-var userStore = new Remutable({});
-var stores = {
+const Remutable = require('remutable').default;
+
+const prototypoStore = new Remutable({});
+const userStore = new Remutable({});
+const stores = {
 	default: {
 		'/prototypoStore': prototypoStore,
 		'/userStore': userStore,
@@ -12,30 +13,28 @@ var stores = {
 	prototypoStore,
 	userStore,
 };
-jest.setMock('scripts/stores/creation.stores.jsx', stores)
-var LocalServer = require('scripts/stores/local-server.stores.jsx').default;
-var LocalClient = require('scripts/stores/local-client.stores.jsx').default;
-var actions = require('scripts/actions/appValues.actions.jsx').default;
-var setupFluxActionTest = require('prototypo-flux-testing');
 
-describe('appValues', function() {
+jest.setMock('scripts/stores/creation.stores.jsx', stores);
+const LocalServer = require('scripts/stores/local-server.stores.jsx').default;
+const LocalClient = require('scripts/stores/local-client.stores.jsx').default;
+const actions = require('scripts/actions/appValues.actions.jsx').default;
+const setupFluxActionTest = require('prototypo-flux-testing');
 
+describe('appValues', () => {
 	setupFluxActionTest(actions, LocalServer, LocalClient, stores);
-	var appValues = require('scripts/helpers/loadValues.helpers.js').valuesToLoad;
-	var localClient = LocalClient.instance();
-	var localServer = LocalServer.instance;
+	const appValues = require('scripts/helpers/loadValues.helpers.js').valuesToLoad;
+	const localClient = LocalClient.instance();
+	const localServer = LocalServer.instance;
 
 	beforeEach(() => {
 		localServer.dispatchUpdate = jest.fn();
 		stores.prototypoStore.commit = jest.fn();
 		stores.prototypoStore.set = jest.fn();
 		stores.userStore.commit = jest.fn();
-		stores.userStore.set = jest.fn(() => {
-			return stores.userStore;
-		});
+		stores.userStore.set = jest.fn(() => stores.userStore);
 	});
 
-	it('should load values properly', function() {
+	it('should load values properly', () => {
 		localClient.dispatchAction('/load-app-values', {values: {}});
 		expect(stores.prototypoStore.commit.mock.calls.length).toBe(1);
 		expect(stores.prototypoStore.set.mock.calls.length).toBe(appValues.length);
@@ -43,26 +42,5 @@ describe('appValues', function() {
 			expect(stores.prototypoStore.set.mock.calls[i][0]).toBe(value.local);
 		});
 		expect(localServer.dispatchUpdate.mock.calls[0][0]).toBe('/prototypoStore');
-	});
-
-	it('should load account values properly', function() {
-		var values = {
-			values: {
-				'first': 'exactly',
-			}
-		};
-		localClient.dispatchAction('/load-account-values', values);
-
-		expect(stores.userStore.commit.mock.calls.length).toBe(1);
-		expect(stores.userStore.set.mock.calls.length).toBe(1);
-		expect(stores.userStore.set.mock.calls[0][0]).toBe('infos');
-		expect(stores.userStore.set.mock.calls[0][1]).toBe(values.values);
-		expect(localServer.dispatchUpdate.mock.calls[0][0]).toBe('/userStore');
-	});
-
-	it('should load an empty object account values', function() {
-		localClient.dispatchAction('/load-account-values', {values: undefined});
-		expect(stores.userStore.set.mock.calls.length).toBe(1);
-		expect(stores.userStore.set.mock.calls[0][1]).toEqual({});
 	});
 });

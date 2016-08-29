@@ -54,12 +54,12 @@ class MemberRow extends React.Component {
 						? member.email.split(new RegExp(`(${filter})`)).map(text => (
 							<span
 								className={
-										new RegExp(`(${filter})`).test(text) ? 'sortable-table-cell-filter' : ''
-									}
+									new RegExp(`(${filter})`).test(text) ? 'sortable-table-cell-filter' : ''
+								}
 							>
 								{text}
 							</span>
-							))
+						))
 						: member.email}
 				</td>
 				<td className="sortable-table-cell sortable-table-name">
@@ -281,8 +281,12 @@ export class AccountManageSubUsers extends React.Component {
 	}
 
 	render() {
-		const {loading, members, max, onAddUser} = this.props;
-		const {filter, sort, loadingCreation, loadingRemoval, error} = this.state;
+		const {
+			loading, members, max, onAddUser,
+		} = this.props;
+		const {
+			filter, sort, loadingCreation, loadingRemoval, error,
+		} = this.state;
 		const slotsLeft = max - members.length;
 
 		const sortClass = sort.asc ? 'asc' : 'desc';
@@ -318,16 +322,16 @@ export class AccountManageSubUsers extends React.Component {
 			});
 		}
 
-		const caption = <span>
+		const caption = (<span>
 			{slotsLeft} slots left on {max}
 			{slotsLeft < 4 && ' • '}
 			{
 				slotsLeft < 4
 				&& <Link to="/account/details/change-plan">
 					Update your subscription
-				</Link>
+       </Link>
 			}
-		</span>;
+                   </span>);
 
 		const tableHeaders = [
 			{
@@ -363,14 +367,14 @@ export class AccountManageSubUsers extends React.Component {
 				</header>
 				<WaitForLoad loading={loading}>
 					<FilterableTable captionCondition={max > 0} caption={caption} tableHeaders={tableHeaders}>
-							{error
+						{error
 								&& <tr key="warning">
 									<td className="sortable-table-warning-message" colSpan={4}>
 										{error}
 									</td>
 								</tr>}
-							{onAddUser && !filter && !loadingCreation && this.renderForm()}
-							{!members.length
+						{onAddUser && !filter && !loadingCreation && this.renderForm()}
+						{!members.length
 								&& <tr>
 									<td colSpan={4}>
 										<p style={{textAlign: 'center'}}>
@@ -378,7 +382,7 @@ export class AccountManageSubUsers extends React.Component {
 										</p>
 									</td>
 								</tr>}
-							{!!members.length
+						{!!members.length
 								&& !filteredMembers.length
 								&& <tr>
 									<td colSpan={4}>
@@ -387,9 +391,9 @@ export class AccountManageSubUsers extends React.Component {
 										</p>
 									</td>
 								</tr>}
-							{filteredMembers.map(member => (
-								<MemberRow member={member} filter={filter} onRemoveRow={this.handleRemoveButton} />
-							))}
+						{filteredMembers.map((member, i) => (
+							<MemberRow member={member} key={i} filter={filter} onRemoveRow={this.handleRemoveButton} />
+						))}
 					</FilterableTable>
 				</WaitForLoad>
 			</div>
@@ -398,13 +402,11 @@ export class AccountManageSubUsers extends React.Component {
 }
 
 AccountManageSubUsers.propTypes = {
-	members: PropTypes.arrayOf(
-		PropTypes.shape({
-			id: PropTypes.string,
-			email: PropTypes.string,
-			status: PropTypes.string,
-		}).isRequired,
-	).isRequired,
+	members: PropTypes.arrayOf(PropTypes.shape({
+		id: PropTypes.string,
+		email: PropTypes.string,
+		status: PropTypes.string,
+	}).isRequired).isRequired,
 	max: PropTypes.number,
 	onAddUser: PropTypes.func,
 	onRemoveUser: PropTypes.func,
