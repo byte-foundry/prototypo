@@ -60,6 +60,12 @@ const prototypoStore = new Remutable({
 			templateName: 'elzevir.ptf',
 		},
 		{
+			sample: 'elzevir-preview.svg',
+			name: 'Prototypo serif',
+			familyName: 'Prototypo Serif',
+			templateName: 'serif.ptf',
+		},
+		{
 			sample: 'venus-preview.svg',
 			name: 'Prototypo Grotesk',
 			familyName: 'Prototypo Grotesk',
