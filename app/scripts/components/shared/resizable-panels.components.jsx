@@ -10,8 +10,8 @@ export default class ResizablePanels extends React.Component {
 
 		this.state = {
 			dragging: false,
-			x: null,
-			y: null,
+			x: props.defaultX || null,
+			y: props.defaultY || null,
 		};
 
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
@@ -20,7 +20,7 @@ export default class ResizablePanels extends React.Component {
 	}
 
 	handleDrag(e, {x, y}) {
-		this.updateHandlePosition({x, y});
+		this.props.onChange(this.updateHandlePosition({x, y}));
 	}
 
 	updateHandlePosition({x, y}) {
@@ -36,6 +36,8 @@ export default class ResizablePanels extends React.Component {
 		}
 
 		this.setState(newPosition);
+
+		return newPosition;
 	}
 
 	componentDidMount() {
@@ -53,7 +55,7 @@ export default class ResizablePanels extends React.Component {
 	render() {
 		const {
 			children: [firstChild, lastChild],
-			direction = 'horizontal', property = 'width',
+			direction = 'horizontal', property = 'width', defaultX, defaultY,
 			style,
 			...rest,
 		} = this.props;

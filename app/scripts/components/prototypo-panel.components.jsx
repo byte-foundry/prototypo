@@ -47,6 +47,8 @@ export default class PrototypoPanel extends React.Component {
 					uiWordFontSize: head.toJS().uiWordFontSize,
 					editingGroup: head.toJS().indivEdit,
 					indivMode: head.toJS().indivMode,
+					wordPanelHeight: head.toJS().wordPanelHeight,
+					canvasPanelWidth: head.toJS().canvasPanelWidth,
 				});
 			})
 			.onDelete(() => {
@@ -138,7 +140,13 @@ export default class PrototypoPanel extends React.Component {
 
 		if (hasGlyph && hasText) {
 			down = (
-				<ResizablePanels property="flexBasis" id="prototypotextandglyph" direction="vertical">
+				<ResizablePanels
+					defaultX={this.state.canvasPanelWidth}
+					onChange={({x}) => {this.client.dispatchAction('/store-value', {canvasPanelWidth: x});}}
+					property="flexBasis"
+					id="prototypotextandglyph"
+					direction="vertical"
+				>
 					{textAndGlyph}
 				</ResizablePanels>
 			);
@@ -163,7 +171,13 @@ export default class PrototypoPanel extends React.Component {
 
 		if (up && down) {
 			return (
-				<ResizablePanels id="prototypopanel" property="flexBasis" direction="horizontal">
+				<ResizablePanels
+					defaultY={this.state.wordPanelHeight}
+					onChange={({y}) => {this.client.dispatchAction('/store-value', {wordPanelHeight: y});}}
+					id="prototypopanel"
+					property="flexBasis"
+					direction="horizontal"
+				>
 					{up}
 					{down}
 				</ResizablePanels>
