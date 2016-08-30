@@ -14,7 +14,10 @@ $heightPercentage: 100%;
 	position: relative;
 
 	&:hover {
-		color: $medium-grey;
+		@include themify() {
+			color: $theme-background;
+			transition: none;
+		}
 	}
 
 	&-wrap {
@@ -44,7 +47,9 @@ $heightPercentage: 100%;
 	z-index: 10;
 
 	&-border {
-		background-color: $green;
+		@include themify() {
+			background-color: $theme-background;
+		}
 		display: block;
 		height: 100%;
 		margin: 0 auto;
