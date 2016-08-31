@@ -5,6 +5,7 @@
 const ua = navigator.userAgent;
 const isSafari = ua.indexOf('Safari') !== -1 && ua.indexOf('Chrome') === -1;
 const isIE = ua.indexOf('Trident') !== -1;
+const isEdge = ua.indexOf('Edge') !== -1;
 
 function mobileAndTabletCheck() {
 	let check = false;
@@ -25,7 +26,7 @@ export default function selectRenderOptions(
 	if (mobile) {
 		mobileCb();
 	}
-	else if (isSafari || isIE) {
+	else if (isSafari || isIE || isEdge) {
 		oldBrowserCb();
 	}
 	else {
