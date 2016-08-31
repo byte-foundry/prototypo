@@ -164,164 +164,6 @@ import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
 import ReplayViewer from './debug/replay-viewer.components.jsx';
 /* #end */
 
-
-const stripeKey = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
-	? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
-	: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
-
-window.Stripe && window.Stripe.setPublishableKey(stripeKey);
-
-const stores = window.prototypoStores = Stores;
-
-const prototypoStore = Stores['/prototypoStore'];
-
-function saveErrorLog(error) {
-	const debugLog = {
-		events: prototypoStore.events,
-		message: err.message,
-		stack: error.stack,
-		date: new Date(),
-	};
-
-	const data = JSON.stringify(debugLog);
-
-	fetch('http://localhost:9002/errors/', {
-		method: 'POST',
-		body: data,
-		headers: {
-			'Content-type': 'application/json; charset=UTF-8',
-		},
-	});
-}
-
-/* #if debug */
-const localServer = new LocalServer(stores, {
-	debugPath: [
-		'/debugStore',
-		'/save-debug-log',
-		'/store-in-debug-font',
-		'/show-details',
-	],
-	logStore: stores['/prototypoStore'],
-}).instance;
-/* #end */
-/* #if prod */
-const localServer = new LocalServer(stores).instance;
-/* #end */
-
-LocalClient.setup(localServer);
-const fluxEvent = new Event('fluxServer.setup');
-
-window.dispatchEvent(fluxEvent);
-
-const eventDebugger = new EventDebugger();
-
-async function createStores() {
-
-	const actions = {};
-
-	_.assign(actions,
-		appValuesAction,
-		exportAction,
-		fontAction,
-		fontControlsAction,
-		fontInfosAction,
-		fontParametersAction,
-		glyphsAction,
-		indivAction,
-		panelAction,
-		searchAction,
-		tagStoreAction,
-		undoStackAction,
-		debugActions,
-		userLifecycleAction,
-		{
-			'/load-intercom-info': (data) => {
-				const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();
-
-				localServer.dispatchUpdate('/prototypoStore', patch);
-			},
-		}
-	);
-
-	localServer.on('action', ({path, params}) => {
-		//eventDebugger.storeEvent(path, params);
-		if (process.env.__SHOW_ACTION__) {
-			console.log(`[ACTION] ${path}`);
-		}
-
-		if (actions[path] !== undefined) {
-			actions[path](params);
-		}
-
-	}, localServer.lifespan);
-
-	/* #if debug */
-	if (location.hash.indexOf('#/replay') === -1) {
-		await loadStuff();
-	}
-	else {
-		await eventDebugger.replayEventFromFile();
-	}
-	/* #end */
-	/* #if prod */
-	try {
-		await HoodieApi.setup();
-
-		await loadStuff();
-	}
-	catch (err) {
-		console.log(err);
-		const fontInstanceLoaded = new Event('fontInstance.loaded');
-
-		window.dispatchEvent(fontInstanceLoaded);
-	}
-	/* #end */
-}
-
-function redirectToLogin(nextState, replace) {
-	if (!HoodieApi.isLoggedIn()) {
-		replace({
-			pathname: '/signin',
-			state: {nextPathname: nextState.location.pathname},
-		});
-	}
-	if (nextState.location.query.buy_credits) {
-		LocalClient.instance().dispatchAction('/store-value', {
-			openBuyCreditsModal: true,
-		});
-	}
-}
-
-function redirectToDashboard(nextState, replace) {
-	if (HoodieApi.isLoggedIn()) {
-		replace({
-			pathname: '/dashboard',
-			state: {nextPathname: nextState.location.pathname},
-		});
-	}
-}
-
-function chooseGoodAccountStep(nextState, replace) {
-
-	const infos = Stores['/userStore'].get('infos');
-
-	if (infos.accountValues && infos.accountValues.username && /\/account\/create\/?$/.test(nextState.location.pathname)) {
-		replace({
-			pathname: '/account/create/choose-a-plan',
-			state: {nextPathname: nextState.location.pathname},
-		});
-	}
-
-	if (!infos.accountValues && nextState.location.pathname !== '/account/create') {
-		replace({
-			pathname: '/account/create',
-			state: {nextPathname: nextState.location.pathname},
-		});
-
-	}
-}
-
 function noConfirmBeforePlan(nextState, replace) {
 	console.log(nextState);
 }
@@ -347,6 +189,164 @@ selectRenderOptions(
 		ReactDOM.render(<NotABrowser />, content);
 	},
 	() => {
+
+		const stripeKey = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
+			? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
+			: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
+
+		window.Stripe && window.Stripe.setPublishableKey(stripeKey);
+
+		const stores = window.prototypoStores = Stores;
+
+		const prototypoStore = Stores['/prototypoStore'];
+
+		function saveErrorLog(error) {
+			const debugLog = {
+				events: prototypoStore.events,
+				message: err.message,
+				stack: error.stack,
+				date: new Date(),
+			};
+
+			const data = JSON.stringify(debugLog);
+
+			fetch('http://localhost:9002/errors/', {
+				method: 'POST',
+				body: data,
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8',
+				},
+			});
+		}
+
+		/* #if debug */
+		const localServer = new LocalServer(stores, {
+			debugPath: [
+				'/debugStore',
+				'/save-debug-log',
+				'/store-in-debug-font',
+				'/show-details',
+			],
+			logStore: stores['/prototypoStore'],
+		}).instance;
+		/* #end */
+		/* #if prod */
+		const localServer = new LocalServer(stores).instance;
+		/* #end */
+
+		LocalClient.setup(localServer);
+		const fluxEvent = new Event('fluxServer.setup');
+
+		window.dispatchEvent(fluxEvent);
+
+		const eventDebugger = new EventDebugger();
+
+		async function createStores() {
+
+			const actions = {};
+
+			_.assign(actions,
+				appValuesAction,
+				exportAction,
+				fontAction,
+				fontControlsAction,
+				fontInfosAction,
+				fontParametersAction,
+				glyphsAction,
+				indivAction,
+				panelAction,
+				searchAction,
+				tagStoreAction,
+				undoStackAction,
+				debugActions,
+				userLifecycleAction,
+				{
+					'/load-intercom-info': (data) => {
+						const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();
+
+						localServer.dispatchUpdate('/prototypoStore', patch);
+					},
+				}
+			);
+
+			localServer.on('action', ({path, params}) => {
+				//eventDebugger.storeEvent(path, params);
+				if (process.env.__SHOW_ACTION__) {
+					console.log(`[ACTION] ${path}`);
+				}
+
+				if (actions[path] !== undefined) {
+					actions[path](params);
+				}
+
+			}, localServer.lifespan);
+
+			/* #if debug */
+			if (location.hash.indexOf('#/replay') === -1) {
+				await loadStuff();
+			}
+			else {
+				await eventDebugger.replayEventFromFile();
+			}
+			/* #end */
+			/* #if prod */
+			try {
+				await HoodieApi.setup();
+
+				await loadStuff();
+			}
+			catch (err) {
+				console.log(err);
+				const fontInstanceLoaded = new Event('fontInstance.loaded');
+
+				window.dispatchEvent(fontInstanceLoaded);
+			}
+			/* #end */
+		}
+
+		function redirectToLogin(nextState, replace) {
+			if (!HoodieApi.isLoggedIn()) {
+				replace({
+					pathname: '/signin',
+					state: {nextPathname: nextState.location.pathname},
+				});
+			}
+			if (nextState.location.query.buy_credits) {
+				LocalClient.instance().dispatchAction('/store-value', {
+					openBuyCreditsModal: true,
+				});
+			}
+		}
+
+		function redirectToDashboard(nextState, replace) {
+			if (HoodieApi.isLoggedIn()) {
+				replace({
+					pathname: '/dashboard',
+					state: {nextPathname: nextState.location.pathname},
+				});
+			}
+		}
+
+		function chooseGoodAccountStep(nextState, replace) {
+
+			const infos = Stores['/userStore'].get('infos');
+
+			if (infos.accountValues && infos.accountValues.username && /\/account\/create\/?$/.test(nextState.location.pathname)) {
+				replace({
+					pathname: '/account/create/choose-a-plan',
+					state: {nextPathname: nextState.location.pathname},
+				});
+			}
+
+			if (!infos.accountValues && nextState.location.pathname !== '/account/create') {
+				replace({
+					pathname: '/account/create',
+					state: {nextPathname: nextState.location.pathname},
+				});
+
+			}
+		}
+
 		const canvasEl = window.canvasElement = document.createElement('canvas');
 
 		canvasEl.className = 'prototypo-canvas-container-canvas';
