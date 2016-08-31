@@ -21,6 +21,10 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#24D390', endColorstr='#00e28b',GradientType=1 ); /* IE6-8 fallback on horizontal gradient */
 }
 
+_:-ms-fullscreen, #notloggedin {
+	justify-content:flex-start;
+}
+
 .sign-base {
 	display:flex;
 	flex-direction:column;
