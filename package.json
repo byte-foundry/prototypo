@@ -7,10 +7,10 @@
     "classnames": "^2.1.2",
     "del": "^1.2.0",
     "draft-js": "^0.8.1",
-    "elzevir.ptf": "byte-foundry/elzevir.ptf#preprod",
+    "elzevir.ptf": "byte-foundry/elzevir.ptf#master",
     "escape-string-regexp": "^1.0.5",
     "hoodie-client": "^3.4.0",
-    "john-fell.ptf": "byte-foundry/john-fell.ptf#preprod",
+    "john-fell.ptf": "byte-foundry/john-fell.ptf#master",
     "jsdiff": "^1.1.1",
     "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",
@@ -41,7 +41,7 @@
     "remutable": "FranzPoize/remutable#master",
     "slug": "^0.9.1",
     "tether": "^1.1.0",
-    "venus.ptf": "byte-foundry/venus.ptf#preprod",
+    "venus.ptf": "byte-foundry/venus.ptf#master",
     "xxhashjs": "^0.1.1"
   },
   "devDependencies": {
