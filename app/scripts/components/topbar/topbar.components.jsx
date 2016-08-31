@@ -93,7 +93,7 @@ export default class Topbar extends React.Component {
 					result[param.name] = param.init;
 				}, {});
 
-				this.client.dispatchAction('/change-param', {values: defaultParams});
+				this.client.dispatchAction('/change-param', {values: defaultParams, demo:true});
 			});
 
 	}
