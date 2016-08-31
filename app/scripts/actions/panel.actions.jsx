@@ -1,8 +1,7 @@
-import {prototypoStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, undoableStore, fastStuffStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
-import Log from '../services/log.services.js';
 
 import {rawToEscapedContent} from '../helpers/input-transform.helpers';
 
@@ -19,20 +18,43 @@ export default {
 		_.forEach(params, (value, name) => {
 			prototypoStore.set(name, value);
 		});
+
 		const patch = prototypoStore.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
 	},
-	'/store-text': ({value, propName}) => {
-		const glyphs = prototypoStore.get('glyphs');
-		const patch = prototypoStore.set(propName, value).commit();
-		const subset = prototypoStore.head.toJS().uiText + rawToEscapedContent(prototypoStore.head.toJS().uiWord, glyphs);
+	'/store-value-undoable': (params) => {
+		_.forEach(params, (value, name) => {
+			undoableStore.set(name, value);
+		});
 
-		localServer.dispatchUpdate('/prototypoStore', patch);
+		const patch = undoableStore.commit();
 
-		fontInstance.subset = typeof subset === 'string' ? subset : '';
+		localServer.dispatchUpdate('/undoableStore', patch);
 		saveAppValues();
+	},
+	'/store-value-fast': (params) => {
+		_.forEach(params, (value, name) => {
+			fastStuffStore.set(name, value);
+		});
+
+		const patch = fastStuffStore.commit();
+
+		localServer.dispatchUpdate('/fastStuffStore', patch);
+		saveAppValues();
+	},
+	'/store-text': ({value, propName}) => {
+		if (prototypoStore.get(propName) !== value) {
+			const glyphs = prototypoStore.get('glyphs');
+			const patch = prototypoStore.set(propName, value).commit();
+			const subset = prototypoStore.head.toJS().uiText + rawToEscapedContent(prototypoStore.head.toJS().uiWord, glyphs);
+
+			localServer.dispatchUpdate('/prototypoStore', patch);
+
+			fontInstance.subset = typeof subset === 'string' ? subset : '';
+			saveAppValues();
+		}
 	},
 	'/change-tab-font': ({name}) => {
 		const patch = prototypoStore.set('fontTab', name).commit();

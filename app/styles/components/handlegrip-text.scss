@@ -1,0 +1,79 @@
+@import '../variables';
+
+// width of the grip, larger than the grip itself
+$handlegripWidth: 10px;
+$handlegripOffset: $handlegripWidth/2;
+$spacingNumberOffset: 25px;
+$heightPercentage: 100%;
+
+.letter-wrap {
+	cursor: pointer;
+	align-items: center;
+	display: flex;
+	height: 100%;
+	position: relative;
+
+	&-regular {
+		&:hover {
+			@include themify() {
+				color: $theme-background;
+				transition: none;
+			}
+		}
+	}
+
+	&-wrap {
+		cursor: default;
+		align-items: center;
+		display: flex;
+		height: $heightPercentage;
+		position: relative;
+		z-index: 0;
+
+		& .handlegrip-spacing-number {
+			font-family: 'Source Sans Pro', sans-serif;
+			text-align: center;
+			left: 0;
+			width: 100%;
+		}
+	}
+}
+.handlegrip {
+	font-family: 'Source Sans Pro', sans-serif;
+	cursor: ew-resize;
+	height: $heightPercentage;
+	position: absolute;
+	top: 0;
+	width: $handlegripWidth;
+	z-index: 10;
+
+	&-border {
+		@include themify() {
+			background-color: $theme-background;
+		}
+		display: block;
+		height: 100%;
+		margin: 0 auto;
+		width: 1px;
+	}
+}
+.handlegrip-left {
+	left: -$handlegripOffset;
+
+	& .handlegrip-spacing-number {
+		left: -$spacingNumberOffset;
+	}
+}
+.handlegrip-right {
+	right: -$handlegripOffset;
+
+	& .handlegrip-spacing-number {
+		right: -$spacingNumberOffset;
+	}
+}
+.handlegrip-spacing-number {
+	bottom: 0;
+	color: $medium-grey;
+	font-size: 11px;
+	position: absolute;
+}

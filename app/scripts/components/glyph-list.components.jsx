@@ -1,8 +1,7 @@
 import React from 'react';
-import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import ScrollArea from 'react-scrollbar';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import Log from '../services/log.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import Glyph from './glyph.components.jsx';
@@ -107,7 +106,7 @@ export default class GlyphList extends React.Component {
 					savedSearch={this.props.savedSearch}
 					selectedSearch={this.props.search}
 					pinnedSearch={this.props.pinnedSearch}/>
-				<ReactGeminiScrollbar>
+				<ScrollArea horizontal={false}>
 					<div className="glyph-list-glyphs">
 						{
 							_.map(glyphs, (glyph, unicode) => {
@@ -121,7 +120,7 @@ export default class GlyphList extends React.Component {
 							})
 						}
 					</div>
-				</ReactGeminiScrollbar>
+				</ScrollArea>
 				<SearchGlyphList/>
 			</div>
 		);

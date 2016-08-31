@@ -11,23 +11,25 @@
 		&-enter {
 			z-index: 4;
 			position:absolute;
-			margin-left: calc(-100% - 20px);
+			transform: translateX(calc(-100% - 20px));
 			width:100%;
+			will-change: transform;
 
 			&#{&}-active {
-				margin-left: 0%;
-				transition: margin-left .3s ease-out;
+				transform: translateX(0%);
+				transition: transform .3s ease-out;
 			}
 		}
 
 		&-leave {
 			z-index:3;
-			margin-left: 0%;
+			transform: translateX(0%);
 			width:100%;
+			will-change: transform;
 
 			&#{&}-active {
-				margin-left: calc(-100% - 20px);
-				transition: margin-left .3s ease-in;
+				transform: translateX(calc(-100% - 20px));
+				transition: transform .3s ease-in;
 			}
 		}
 	}

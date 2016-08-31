@@ -27,7 +27,7 @@ export default {
 		saveAppValues();
 	},
 	'/toggle-pinned': (params) => {
-		const pinned = _.xor(prototypoStore.get('pinned'), [params]);
+		const pinned = _.xor(prototypoStore.get('tagPinned'), [params]);
 		const patch = prototypoStore
 			.set('tagPinned', pinned)
 			.commit();

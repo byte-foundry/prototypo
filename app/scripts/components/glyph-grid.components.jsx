@@ -1,6 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import ScrollArea from 'react-scrollbar';
 import classNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
@@ -85,11 +85,11 @@ export default class GlyphGrid extends React.Component {
 					</div>
 				</div>
 				<div className="glyphs-grid-scroll-container">
-					<ReactGeminiScrollbar>
+					<ScrollArea horizontal={false}>
 						<div className="glyphs-grid-scroll-content">
 							{glyphs}
 						</div>
-					</ReactGeminiScrollbar>
+					</ScrollArea>
 				</div>
 			</div>
 		);

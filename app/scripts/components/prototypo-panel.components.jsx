@@ -2,8 +2,8 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import ClassNames from 'classnames';
 
+import ResizablePanels from './shared/resizable-panels.components';
 import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
 import PrototypoWord from './prototypo-word.components.jsx';
@@ -17,7 +17,6 @@ export default class PrototypoPanel extends React.Component {
 			uiMode: [],
 		};
 
-		this.availableMode = ['glyph', 'text', 'word'];
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
@@ -48,6 +47,8 @@ export default class PrototypoPanel extends React.Component {
 					uiWordFontSize: head.toJS().uiWordFontSize,
 					editingGroup: head.toJS().indivEdit,
 					indivMode: head.toJS().indivMode,
+					wordPanelHeight: head.toJS().wordPanelHeight,
+					canvasPanelWidth: head.toJS().canvasPanelWidth,
 				});
 			})
 			.onDelete(() => {
@@ -67,7 +68,13 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.intersection(_.xor(this.state.uiMode, [name]), this.availableMode);
+		// if we are closing glyph mode, we want glyph list to be hidden
+		const modes = (
+			name === 'glyph' && this.state.uiMode.indexOf('glyph') !== -1
+				? _.without(this.state.uiMode, 'list')
+				: this.state.uiMode
+		);
+		const newViewMode = _.xor(modes, [name]);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
@@ -120,6 +127,7 @@ export default class PrototypoPanel extends React.Component {
 
 		if (this.state.uiMode.indexOf('word') !== -1) {
 			word = <PrototypoWord
+				key="word"
 				fontName={this.props.fontName}
 				uiInvertedWordView={this.state.uiInvertedWordView}
 				uiInvertedWordColors={this.state.uiInvertedWordColors}
@@ -131,14 +139,23 @@ export default class PrototypoPanel extends React.Component {
 
 		let down;
 
-		const textAndGlyphClassNames = ClassNames({
-			'has-text-panel': hasText,
-			'has-glyph-panel': hasGlyph,
-		});
-
-		if (hasGlyph || hasText) {
+		if (hasGlyph && hasText) {
 			down = (
-				<div id="prototypotextandglyph" className={textAndGlyphClassNames} >
+				<ResizablePanels
+					key="resizableText"
+					defaultX={this.state.canvasPanelWidth}
+					onChange={({x}) => {this.client.dispatchAction('/store-value', {canvasPanelWidth: x});}}
+					property="flexBasis"
+					id="prototypotextandglyph"
+					direction="vertical"
+				>
+					{textAndGlyph}
+				</ResizablePanels>
+			);
+		}
+		else if (hasGlyph || hasText) {
+			down = (
+				<div id="prototypotextandglyph" key="textAndGlyph">
 					{textAndGlyph}
 				</div>
 			);
@@ -148,14 +165,30 @@ export default class PrototypoPanel extends React.Component {
 
 		if (word) {
 			up = (
-				<div id="prototypoword">
+				<div id="prototypoword" key="wordContainer">
 					{word}
 				</div>
 			);
 		}
 
+		if (up && down) {
+			return (
+				<ResizablePanels
+					key="everythingResize"
+					defaultY={this.state.wordPanelHeight}
+					onChange={({y}) => {this.client.dispatchAction('/store-value', {wordPanelHeight: y});}}
+					id="prototypopanel"
+					property="flexBasis"
+					direction="horizontal"
+				>
+					{up}
+					{down}
+				</ResizablePanels>
+			);
+		}
+
 		return (
-			<div id="prototypopanel">
+			<div id="prototypopanel" key="justAcontainer">
 				{up}
 				{down}
 			</div>

@@ -11,6 +11,7 @@ import {FontValues} from '../services/values.services.js';
 import {delayAfterCall} from '../helpers/animation.helpers.js';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 import Log from '../services/log.services.js';
+import HoodieApi from '../services/hoodie.services.js';
 
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
@@ -24,6 +25,13 @@ const debouncedSave = _.throttle((values, db) => {
 		values,
 	});
 }, 300);
+
+function paramAuthorized(plan, credits) {
+	const paidPlan = plan.indexOf('free_') === -1;
+	const enoughCredits = credits && credits > 0;
+
+	return paidPlan || enoughCredits;
+}
 
 window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
@@ -129,6 +137,7 @@ export default {
 			db,
 		});
 		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
+		localClient.dispatchAction('/store-value', {uiSpacingMode: false});
 	},
 	'/create-family': async ({name, template, loadCurrent}) => {
 		let templateToLoad = template;
@@ -496,12 +505,19 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/change-param': ({values, value, name, force, label}) => {
+	'/change-param': ({values, value, name, force, label, demo}) => {
 		const indivMode = prototypoStore.get('indivMode');
 		const indivEdit = prototypoStore.get('indivEditingParams');
 		const db = (prototypoStore.get('variant') || {}).db;
 		const currentGroupName = (prototypoStore.get('indivCurrentGroup') || {}).name;
 		let newParams = {...undoableStore.get('controlsValues')};
+
+		const plan = HoodieApi.instance.plan;
+		const credits = prototypoStore.get('credits');
+
+		if (!demo && !paramAuthorized(plan, credits)) {
+			return;
+		}
 
 		if (indivMode && indivEdit && !values) {
 			if (newParams.indiv_group_param[currentGroupName][name]) {
@@ -524,6 +540,7 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', newParams);
 
 		debouncedSave(newParams, db);
 		if (force) {
@@ -548,6 +565,7 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', newParams);
 		debouncedSave(newParams, db);
 
 		if (force) {
@@ -557,5 +575,55 @@ export default {
 		else {
 			undoWatcher.update(patch, label);
 		}
+	},
+	'/change-letter-spacing': ({value, side, letter, label, force}) => {
+		const db = (prototypoStore.get('variant') || {}).db;
+		const oldValues = undoableStore.get('controlsValues')
+		const newParams = {
+			...oldValues,
+			glyphSpecialProps: {...oldValues.glyphSpecialProps},
+		};
+
+		const unicode = letter.charCodeAt(0);
+
+		newParams.glyphSpecialProps = newParams.glyphSpecialProps || {};
+		newParams.glyphSpecialProps[unicode] = {...newParams.glyphSpecialProps[unicode]} || {};
+
+		if (side === 'left') {
+			newParams.glyphSpecialProps[unicode].spacingLeft = value;
+		}
+		else {
+			newParams.glyphSpecialProps[unicode].spacingRight = value;
+		}
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', newParams);
+
+		debouncedSave(newParams, db);
+
+		if (force) {
+			undoWatcher.forceUpdate(patch, label);
+		}
+		else {
+			undoWatcher.update(patch, label);
+		}
+
+	},
+	'/update-letter-spacing-value': ({letter, valueList}) => {
+		fontInstance.getGlyphProperty(
+			letter,
+			valueList,
+			(values) => {
+				const resultValues = {};
+
+				_.forOwn(values, (value, key) => {
+					if (value) {
+						resultValues[key] = Math.round(value);
+					}
+				});
+				localClient.dispatchAction('/store-value-fast', resultValues);
+		});
 	},
 };
