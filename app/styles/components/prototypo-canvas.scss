@@ -9,15 +9,12 @@
 	display:flex;
 	flex-direction:row;
 
-	.has-text-panel &{
-		border-right:solid 1px $light-grey;
-	}
-
 	&-container {
 		width:100%;
 		overflow:hidden;
 		display:inline-flex;
 		align-self:stretch;
+		background-color:$white;
 
 		&-canvas {
 			height:100%;

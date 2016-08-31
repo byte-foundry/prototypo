@@ -1,0 +1,66 @@
+@import '../variables';
+
+.__slackin {
+	z-index: 10;
+}
+
+.help-panel {
+
+	height: 100%;
+
+	&-button {
+		background: darken($blue, 15%);
+		color:$white;
+		padding: 15px;
+		border-radius: 3px;
+		display:inline-block;
+		margin-right:20px;
+		cursor:pointer;
+
+		&:hover {
+			background: darken($blue, 20%);
+		}
+
+		&-intercom {
+			background:$yellow;
+			color:$dark-grey;
+
+			&:hover {
+				background:darken($yellow, 15%);
+			}
+		}
+
+	}
+
+	&-header {
+		background-color: $blue;
+		color: $white;
+		padding: 1.7em 2em;
+		min-height: 73px;
+		p {
+			margin: 0px;
+			font-size: 1.2em;
+			margin-bottom: 2em;
+			a {
+				background-color: $white;
+				color: $blue;
+				border-radius: 3px;
+				padding: 0 .4em;
+				margin: 0 .1em;
+				border: 2px solid $white;
+				&:hover {
+					background-color: $blue;
+					color: $white;
+				}
+			}
+		}
+
+		&-slack {
+
+			float: left;
+			display: inline-block;
+		}
+	}
+
+
+}

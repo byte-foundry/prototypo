@@ -2,11 +2,9 @@ import React from 'react';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import {ControlsTabs, ControlsTab} from './controls-tabs.components.jsx';
-import {FontValues} from '../services/values.services.js';
 import {Sliders} from './sliders.components.jsx';
 
 export default class FontControls extends React.Component {
@@ -38,6 +36,7 @@ export default class FontControls extends React.Component {
 
 				this.setState({
 					tabControls: headJS.fontTab,
+					credits: headJS.credits,
 					parameters: headJS.fontParameters,
 					typeface: headJS.variant,
 					indivMode: headJS.indivMode,
@@ -52,10 +51,6 @@ export default class FontControls extends React.Component {
 		this.client.getStore('/undoableStore', this.lifespan)
 			.onUpdate(({head}) => {
 				const headJS = head.toJS();
-
-				if (this.state.values !== headJS.controlsValues) {
-					this.client.dispatchAction('/update-font', headJS.controlsValues);
-				}
 
 				this.setState({
 					values: headJS.controlsValues,
@@ -90,6 +85,7 @@ export default class FontControls extends React.Component {
 					<Sliders
 						params={group.parameters}
 						values={this.state.values}
+						credits={this.state.credits}
 						indivMode={this.state.indivMode}
 						indivEdit={this.state.indivEdit}
 						currentGroup={this.state.currentGroup.name}/>

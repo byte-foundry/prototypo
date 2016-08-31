@@ -1,7 +1,7 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import classNames from 'classnames';
-import GeminiScrollbar from 'react-gemini-scrollbar';
+import ScrollArea from 'react-scrollbar';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
@@ -54,11 +54,11 @@ export class ControlsTabs extends React.Component {
 					{headers}
 				</ul>
 				<div className="controls-tabs-sliders">
-					<GeminiScrollbar autoshow={true}>
+					<ScrollArea horizontal={false}>
 						<div className="controls-tabs-container" id="parameters">
 							{tab}
 						</div>
-					</GeminiScrollbar>
+					</ScrollArea>
 				</div>
 			</div>
 		);

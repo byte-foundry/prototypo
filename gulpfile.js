@@ -53,8 +53,7 @@ gulp.task('cp-static', function() {
 gulp.task('css-vendor', function() {
 	//This is a bit hackish but right now i don't care
 	gulp.src(['./node_modules/normalize.css/normalize.css',
-		'./node_modules/please-wait/build/please-wait.css',
-		'./node_modules/react-gemini-scrollbar/node_modules/gemini-scrollbar/gemini-scrollbar.css'])
+		'./node_modules/please-wait/build/please-wait.css'])
 		.pipe(concat('vendor.css'))
 		.pipe(gulp.dest('./dist/assets/'));
 })

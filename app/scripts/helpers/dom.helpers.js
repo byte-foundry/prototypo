@@ -29,7 +29,7 @@ DOM.getProperFontSize = (text, style, targetWidth) => {
 
 	if (span.clientWidth > targetWidth - 50 || span.clientWidth < targetWidth - 150) {
 		oldFontSize  = span.clientWidth < targetWidth
-			? `${parseFloat(oldFontSize) + 100}px`
+			? `${parseFloat(oldFontSize) + 400}px`
 			: oldFontSize;
 		do {
 			if (span.clientWidth > targetWidth) {
@@ -43,7 +43,7 @@ DOM.getProperFontSize = (text, style, targetWidth) => {
 		} while((span.clientWidth > targetWidth - 50 || span.clientWidth < targetWidth - 150) && tries < 25);
 	}
 
-	const result = `${Math.min(parseFloat(span.style.fontSize), 100)}px`;
+	const result = parseFloat(span.style.fontSize);
 	document.body.removeChild(span);
 	return result;
 }

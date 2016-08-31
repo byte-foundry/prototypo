@@ -1,7 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import Classnames from 'classnames';
-import ReactGeminiScrollbar from 'react-gemini-scrollbar';
+import ScrollArea from 'react-scrollbar';
 import JSONPretty from 'react-json-pretty';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
@@ -101,11 +101,11 @@ class Events extends React.Component {
 		});
 
 		return (
-			<ReactGeminiScrollbar>
+			<ScrollArea horizontal={false}>
 			<ul className="events">
 				{events}
 				</ul>
-			</ReactGeminiScrollbar>
+			</ScrollArea>
 		);
 	}
 }
@@ -208,9 +208,9 @@ class EventDetails extends React.Component {
 			<div className="event-details">
 				<h1 className="event-details-title">Action details</h1>
 				<div className="event-details-close" onClick={() => {this.closeDetails()}}>Close</div>
-				<ReactGeminiScrollbar>
+				<ScrollArea>
 					<JSONPretty json={this.props.details}></JSONPretty>
-				</ReactGeminiScrollbar>
+				</ScrollArea>
 			</div>
 		)
 	}

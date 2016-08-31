@@ -6,6 +6,9 @@ const undoableStore = new Remutable({
 	//end font controls store values
 });
 
+const fastStuffStore = new Remutable({
+});
+
 const prototypoStore = new Remutable({
 
 	//Store values for debug
@@ -69,6 +72,7 @@ const prototypoStore = new Remutable({
 			templateName: 'john-fell.ptf',
 		},
 	],
+
 	//end template list store values
 	//font library store values
 	errorAddFamily: undefined,
@@ -267,6 +271,7 @@ const creditStore = new Remutable({
 const stores = {
 	'/prototypoStore': prototypoStore,
 	'/undoableStore': undoableStore,
+	'/fastStuffStore': fastStuffStore,
 	'/userStore': userStore,
 	'/planStore': planStore,
 	'/creditStore': creditStore,
@@ -276,6 +281,7 @@ export default stores;
 export {
 	prototypoStore,
 	undoableStore,
+	fastStuffStore,
 	userStore,
 	couponStore,
 	planStore,

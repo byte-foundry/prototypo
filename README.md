@@ -1,6 +1,8 @@
 # Prototypo, Streamlining font creation 
-[![Build Status](https://travis-ci.org/byte-foundry/prototypo.svg?branch=master)](https://travis-ci.org/byte-foundry/prototypo) [![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=BP52ZEAFR9QEL "Donate once-off to this project using Paypal") [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/byte-foundry/prototypo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) 
 =====================================
+
+[![Build Status](https://travis-ci.org/byte-foundry/prototypo.svg?branch=master)](https://travis-ci.org/byte-foundry/prototypo) [![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=BP52ZEAFR9QEL "Donate once-off to this project using Paypal")
+Tested with [BrowserStack](http://browserstack.com)
 
 BEFORE ANYTHING !
 -----------------
@@ -17,7 +19,7 @@ Before installing Prototypo
 
 In order to build Prototypo, you need to install the following software-packages on your system:
 - Git
-- Node.js
+- Node.js v4.X with npm@2 (Prototypo is currently incompatible with npm@3)
 - Gulp
 
 Installing Prototypo
@@ -80,7 +82,7 @@ Roadmap to v1.0
 - a complete alphabet with alternates (some numbers, punctuation and accents are missing) ……… ✓
 - automatic spacing ([#124](../../issues/124))
 - generating binary font-files such as .otf, see the [current workaround](#converting-an-svg-font-to-other-font-formats) ([#12](../../issues/12)) ……… ✓
-- personnal library to save and load different fonts ([#125](../../issues/125))
+- personnal library to save and load different fonts ([#125](../../issues/125)) ……… ✓
 - undo/redo history ([#94](../../issues/94)) ……… ✓
 
 Known issues

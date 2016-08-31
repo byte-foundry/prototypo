@@ -6,7 +6,7 @@
 	position:relative;
 	z-index:1;
 
-	.is-disabled &-demo-overlay {
+	.is-disabled &-demo-overlay, .is-coming &-demo-overlay {
 		position:absolute;
 		width:100%;
 		height:100%;
@@ -17,9 +17,17 @@
 		align-items:center;
 	}
 
+	.is-disabled &-demo-overlay-text {
+		padding: 3px 20px 3px 5px;
+	}
+
 	.is-coming &-demo-overlay-text {
 		opacity:0;
 		transition: opacity .2s ease;
+		position:absolute;
+		display:flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.is-coming:hover &-demo-overlay-text {
@@ -30,6 +38,71 @@
 		display: flex;
 		flex-flow: row nowrap;
 		width:100%;
+	}
+
+	&-demo-overlay {
+		position: absolute;
+		width: 100%;
+		z-index: 5;
+		display:none;
+
+		&-text {
+			opacity:0;
+			color:$white;
+			font-size: 13px;
+			display: block;
+			font-size: 13px;
+			transition:opacity .2s ease;
+			position: relative;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			cursor: default;
+
+			&-more {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				right: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				overflow: hidden;
+
+				width: 40px;
+				background-color: $green;
+				background-image: url('../../images/add-feature.svg');
+				background-position: center;
+				background-repeat: no-repeat;
+
+				transition: all 500ms ease;
+
+				&-text {
+					opacity: 0;
+					flex-direction: column;
+					padding-left: 60px;
+					transition: all 200ms ease;
+					transition-delay: 200ms;
+				}
+
+				&:hover {
+					width: 260px;
+					background-image: url('../../images/pro-version.svg');
+					background-position: 10% center;
+				}
+
+				&:hover &-text {
+					opacity: 1;
+					padding-left: 10px;
+				}
+			}
+		}
+
+		&:hover &-text {
+			background-color: darken($dark-grey, 2%);
+			opacity:1;
+		}
 	}
 
 	&-title {
@@ -70,19 +143,6 @@
 		&.is-indiv {
 			//Do not put more than 43px without checking that it make serif terminal curve go crazy
 			margin-right:43px;
-		}
-	}
-
-	&-demo-overlay {
-		position: absolute;
-		width: 100%;
-
-		&-text {
-			color:$white;
-			font-size: 13px;
-			padding: 5px 15px;
-			display: block;
-			margin-right: 30px;
 		}
 	}
 
@@ -136,13 +196,7 @@
 			background-color: rgba($dark-grey, 0.65);
 			z-index:1;
 			&-text {
-				top: 0;
-				bottom: 0;
-				left: 0;
-				right: 0;
 				text-align: center;
-				padding: 10px;
-				cursor: default;
 			}
 		}
 	}
@@ -176,8 +230,10 @@
 			top: 5px;
 			width: 270px;
 			left: -35px;
+			height:100%;
 			&-text {
-				padding: 2px 15px;
+				margin-left:9px;
+				margin-right:1px;
 			}
 		}
 	}

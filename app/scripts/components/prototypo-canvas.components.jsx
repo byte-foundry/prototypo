@@ -40,7 +40,7 @@ export default class PrototypoCanvas extends React.Component {
 				this.setState({
 					prototypoTextPanelOpened: head.toJS().uiMode.indexOf('text') !== -1,
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
-					glyph: head.toJS().glyphs
+					glyph: head.toJS().glyphs,
 				});
 			})
 			.onDelete(() => {
@@ -75,7 +75,11 @@ export default class PrototypoCanvas extends React.Component {
 				window.canvasElement.height);
 
 			if (oldSize.width && oldSize.height) {
-				const center = fontInstance.view.center.clone();
+				const centerClone = fontInstance.view.center.clone();
+				const center = new prototypo.paper.Point(
+					centerClone.x,
+					-centerClone.y
+				);
 				const glyphCenter = fontInstance.currGlyph.getPosition();
 
 				const oldGlyphRelativePos = glyphCenter.subtract(center);
@@ -84,7 +88,11 @@ export default class PrototypoCanvas extends React.Component {
 				const ratio = newSize.divide(oldSize);
 
 				const newDistance = new prototypo.paper.Point(oldGlyphRelativePos.x * ratio.width, oldGlyphRelativePos.y * ratio.height);
-				const newCenterPos = glyphCenter.subtract(newDistance);
+				const newCenterPosNotTransformed = glyphCenter.subtract(newDistance);
+				const newCenterPos = new prototypo.paper.Point(
+					newCenterPosNotTransformed.x,
+					-newCenterPosNotTransformed.y
+				);
 
 				this.client.dispatchAction('/store-value', {uiPos: newCenterPos});
 			}
@@ -300,6 +308,7 @@ export default class PrototypoCanvas extends React.Component {
 
 		return (
 			<div
+				style={this.props.style}
 				className={canvasClass}
 				onClick={this.handleLeaveAndClick}
 				onMouseLeave={this.handleLeaveAndClick}>

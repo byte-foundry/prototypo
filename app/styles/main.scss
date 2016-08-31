@@ -83,10 +83,6 @@ svg {
 		display: block;
 	}
 }
-// uservoice should never be hidden
-.uv-icon > svg {
-	display: block;
-}
 
 a,
 a:hover,
@@ -201,4 +197,8 @@ textarea,
 
 .is-hidden {
 	opacity:0;
+}
+
+.scrollarea {
+	height:100% !important;
 }
