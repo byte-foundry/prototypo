@@ -29,7 +29,7 @@ DOM.getProperFontSize = (text, style, targetWidth) => {
 
 	if (span.clientWidth > targetWidth - 50 || span.clientWidth < targetWidth - 150) {
 		oldFontSize  = span.clientWidth < targetWidth
-			? `${parseFloat(oldFontSize) + 100}px`
+			? `${parseFloat(oldFontSize) + 400}px`
 			: oldFontSize;
 		do {
 			if (span.clientWidth > targetWidth) {

@@ -30,19 +30,21 @@ export default class HandlegripText extends React.Component {
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// retrieve the initial values, only once
-		fontInstance.getGlyphProperty(
-			this.getSelectedLetter(),
-			['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
-			({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight}) => {
-				this.setState({
-					advanceWidth,
-					spacingLeft,
-					spacingRight,
-					baseSpacingLeft,
-					baseSpacingRight,
-				});
-			}
-		);
+		fontInstance.addOnceListener('worker.fontLoaded', () => {
+			fontInstance.getGlyphProperty(
+				this.getSelectedLetter(),
+				['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
+				({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight}) => {
+					this.setState({
+						advanceWidth,
+						spacingLeft,
+						spacingRight,
+						baseSpacingLeft,
+						baseSpacingRight,
+					});
+				}
+			);
+		});
 
 		// function bindings
 		this.handleUp = this.handleUp.bind(this);
@@ -51,7 +53,7 @@ export default class HandlegripText extends React.Component {
 		this.dispatchAllFromFontinstance = this.dispatchAllFromFontinstance.bind(this);
 	}
 
-	async componentWillMount() {
+	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
@@ -70,6 +72,15 @@ export default class HandlegripText extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					fontValues: head.toJS().controlsValues,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+
+		this.client.getStore('/fastStuffStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
 					trackingX: head.toJS().uiTrackingX,
 					baseSpacingLeft: head.toJS().baseSpacingLeft !== undefined ? head.toJS().baseSpacingLeft : this.state.baseSpacingLeft,
 					baseSpacingRight: head.toJS().baseSpacingRight !== undefined ?head.toJS().baseSpacingRight : this.state.baseSpacingRight,
@@ -77,6 +88,7 @@ export default class HandlegripText extends React.Component {
 					spacingRight: head.toJS().spacingRight !== undefined ? head.toJS().spacingRight : this.state.spacingRight,
 					unClampedOldValue: head.toJS().unClampedOldValue,
 					advanceWidth: head.toJS().advanceWidth !== undefined ? head.toJS().advanceWidth : this.state.advanceWidth,
+					clampedValue: head.toJS().clampedValue,
 				});
 			})
 			.onDelete(() => {
@@ -115,20 +127,15 @@ export default class HandlegripText extends React.Component {
 			return;
 		}
 
-		const el = ReactDOM.findDOMNode(this);
-
-		this.client.dispatchAction('/store-value', {
-			// tells everyone to stop tracking
-			uiSpacingTracking: false,
-			// adjust font size
-			uiWordFontSize: DOM.getProperFontSize(
-				this.props.text,
-				el.style,
-				el.clientWidth
-			),
+		this.client.dispatchAction('/change-letter-spacing', {
+			value: this.state.clampedValue,
+			side: this.state.tracking,
+			letter: this.getSelectedLetter(),
+			label: 'spacing',
+			force: true,
 		});
 
-		this.client.dispatchAction('/store-value-undoable', {unClampedOldValue: undefined});
+		this.client.dispatchAction('/store-value-fast', {unClampedOldValue: undefined});
 
 		this.dispatchAllFromFontinstance();
 
@@ -224,13 +231,13 @@ export default class HandlegripText extends React.Component {
 				side: this.state.tracking,
 				letter: this.getSelectedLetter(),
 			});
-
 		}
 
 		newSpacingValues.unClampedOldValue = newValue;
+		newSpacingValues.clampedValue = clampedNewValue;
 		newSpacingValues.uiTrackingX = newX;
 
-		this.client.dispatchAction('/store-value-undoable', newSpacingValues);
+		this.client.dispatchAction('/store-value-fast', newSpacingValues);
 
 	}
 

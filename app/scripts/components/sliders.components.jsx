@@ -2,6 +2,9 @@ import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {Link} from 'react-router';
+
+import HoodieApi from '~/services/hoodie.services.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import DOM from '../helpers/dom.helpers.js';
@@ -58,7 +61,6 @@ export class Sliders extends React.Component {
 						min={paramToUse.min}
 						minAdvised={paramToUse.minAdvised}
 						name={paramToUse.name}
-						notInDemo={paramToUse.notInDemo}
 						child={paramToUse.child}
 						key={paramToUse.name + i}
 						value={value}
@@ -70,6 +72,7 @@ export class Sliders extends React.Component {
 				: (
 					<Slider
 						demo={paramToUse.demo}
+						credits={this.props.credits}
 						disabled={paramToUse.disabled}
 						init={paramToUse.init}
 						label={paramToUse.label}
@@ -78,7 +81,6 @@ export class Sliders extends React.Component {
 						min={paramToUse.min}
 						minAdvised={paramToUse.minAdvised}
 						name={paramToUse.name}
-						notInDemo={paramToUse.notInDemo}
 						child={paramToUse.child}
 						key={paramToUse.name + i}
 						value={value}
@@ -99,6 +101,8 @@ export class Slider extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.openGoProModal = this.openGoProModal.bind(this);
+		this.changeParam = this.changeParam.bind(this);
 	}
 
 	componentWillMount() {
@@ -111,7 +115,18 @@ export class Slider extends React.Component {
 	}
 
 	resetValue() {
-		this.client.dispatchAction('/change-param', {value: this.props.init, name: this.props.name, label: this.props.label});
+		this.client.dispatchAction('/change-param', {value: this.props.init, name: this.props.name, label: this.props.label, demo: this.props.demo});
+	}
+
+	openGoProModal() {
+		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
+		this.client.dispatchAction('/store-value', {openGoProModal: true});
+		Log.ui('ExportFontNow.open');
+	}
+
+	changeParam(params) {
+		params.demo = this.props.demo;
+		this.client.dispatchAction('/change-param', params);
 	}
 
 	render() {
@@ -119,17 +134,33 @@ export class Slider extends React.Component {
 			console.log('[RENDER] slider');
 		}
 		const value = this.props.value === undefined ? this.props.init : this.props.value;
+		const freeAccount = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+		const credits = this.props.credits;
+		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
+		const disabled = !this.props.disabled && (!(freeAccountAndHasCredits || !freeAccount) && !this.props.demo);
 
 		const classes = classNames({
 			'slider': true,
 			'is-coming': this.props.disabled,
 			'is-child': this.props.child,
+			'is-disabled': disabled,
 		});
 
-		const demoOverlay = this.props.disabled
+		const devOverlay = this.props.disabled
 			? (
 				<div className="slider-demo-overlay-text">
 					This feature is currently in development
+				</div>
+			)
+			: false;
+
+		const demoOverlay = disabled
+			? (
+				<div onClick={this.openGoProModal} className="slider-demo-overlay-text">
+					This feature is available with the full version
+					<div className="slider-demo-overlay-text-more">
+						<div className="slider-demo-overlay-text-more-text">Upgrade to full version</div>
+					</div>
 				</div>
 			)
 			: false;
@@ -143,11 +174,12 @@ export class Slider extends React.Component {
 		return (
 			<div className={classes}>
 				<div className="slider-demo-overlay">
+					{devOverlay}
 					{demoOverlay}
 				</div>
 				<label className="slider-title">{this.props.label}</label>
 				<div className="slider-reset" onClick={() => {this.resetValue();}}>reset</div>
-				<SliderTextController value={value} name={this.props.name} label={this.props.label} disabled={this.props.disabled} individualized={this.props.individualized}/>
+				<SliderTextController value={value} name={this.props.name} label={this.props.label} disabled={this.props.disabled} individualized={this.props.individualized} changeParam={this.changeParam}/>
 				<div className="slider-container">
 					<SliderController value={value}
 						name={this.props.name}
@@ -158,6 +190,7 @@ export class Slider extends React.Component {
 						minAdvised={this.props.minAdvised}
 						maxAdvised={this.props.maxAdvised}
 						disabled={this.props.disabled}
+						changeParam={this.changeParam}
 						child={this.props.child}/>
 					{indivSwitch}
 				</div>
@@ -275,7 +308,7 @@ export class SliderController extends React.Component {
 
 		newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
 
-		this.client.dispatchAction('/change-param', {value: newValue, name: this.props.name, label: this.props.label});
+		this.props.changeParam({value: newValue, name: this.props.name, label: this.props.label});
 		this.currentX = newX;
 
 		e.stopPropagation();
@@ -287,7 +320,7 @@ export class SliderController extends React.Component {
 		}
 
 		this.tracking = false;
-		this.client.dispatchAction('/change-param', {value: this.props.value, name: this.props.name, label: this.props.label, force: true});
+		this.props.changeParam({value: this.props.value, name: this.props.name, label: this.props.label, force: true});
 
 		e.stopPropagation();
 	}
@@ -313,7 +346,7 @@ export class SliderController extends React.Component {
 			newValue = newX < offsetLeft ? this.props.min : this.props.max;
 		}
 
-		this.client.dispatchAction('/change-param', {value: newValue, name: this.props.name});
+		this.props.changeParam({value: newValue, name: this.props.name});
 		this.currentX = newX;
 	}
 
@@ -378,7 +411,7 @@ export class SliderRadioController extends React.Component {
 	handleChange(e) {
 		if (e.target) {
 			if (e.target.value !== undefined) {
-				this.client.dispatchAction('/change-param', {
+				this.props.changeParam({
 					value: e.target.value,
 					name: this.props.name,
 					label: this.props.label,
@@ -446,13 +479,11 @@ export class SliderTextController extends React.Component {
 				type="number"
 				value={this.props.value.toFixed(2)}
 				onChange={(e) => {
-					this.client.dispatchAction(
-						'/change-param',
-						{
+					this.props.changeParam( {
 							name: this.props.name,
 							value: parseFloat(e.target.value),
 							label: this.props.label,
-						});
+					});
 				}}
 				disabled={this.props.disabled}
 			/>
@@ -482,14 +513,11 @@ class IndivSwitch extends React.Component {
 	}
 
 	changeState(state) {
-		this.client.dispatchAction(
-			'/change-param-state',
-			{
-				name: this.props.name,
-				state,
-				label: this.props.label,
-			}
-		);
+		this.props.changeParam({
+			name: this.props.name,
+			state,
+			label: this.props.label,
+		});
 	}
 
 	render() {

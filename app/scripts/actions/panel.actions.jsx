@@ -1,4 +1,4 @@
-import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, undoableStore, fastStuffStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
@@ -32,6 +32,16 @@ export default {
 		const patch = undoableStore.commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
+		saveAppValues();
+	},
+	'/store-value-fast': (params) => {
+		_.forEach(params, (value, name) => {
+			fastStuffStore.set(name, value);
+		});
+
+		const patch = fastStuffStore.commit();
+
+		localServer.dispatchUpdate('/fastStuffStore', patch);
 		saveAppValues();
 	},
 	'/store-text': ({value, propName}) => {

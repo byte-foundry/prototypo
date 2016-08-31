@@ -65,9 +65,10 @@ export default class GoProModal extends React.Component {
 	render() {
 		return (
 			<Modal propName={this.props.propName}>
-				<div className="modal-container-title account-header">EXPORT YOUR FONT NOW!</div>
+				<div className="modal-container-title account-header">UPGRADE TO FULL VERSION!</div>
 				<div className="modal-container-content">
-					<p>Export your font to use it on a website or on any desktop application (Adobe Illustrator, Ms Word&hellip;)</p>
+					<p>With the full version you'll be able to use all the parameters and export your font to use it on a website or on any desktop application (Adobe Illustrator, Ms Word&hellip;).</p>
+					<p>You access the full version by either subscribing to a pro plan or buying credits.</p>
 					<div className="go-pro-choices">
 						<div className="go-pro-choice go-pro-subscription" onClick={this.goSubscribe}>
 							<div className="pro-version-big"></div>

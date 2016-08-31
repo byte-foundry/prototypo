@@ -36,6 +36,7 @@ export default class FontControls extends React.Component {
 
 				this.setState({
 					tabControls: headJS.fontTab,
+					credits: headJS.credits,
 					parameters: headJS.fontParameters,
 					typeface: headJS.variant,
 					indivMode: headJS.indivMode,
@@ -84,6 +85,7 @@ export default class FontControls extends React.Component {
 					<Sliders
 						params={group.parameters}
 						values={this.state.values}
+						credits={this.state.credits}
 						indivMode={this.state.indivMode}
 						indivEdit={this.state.indivEdit}
 						currentGroup={this.state.currentGroup.name}/>

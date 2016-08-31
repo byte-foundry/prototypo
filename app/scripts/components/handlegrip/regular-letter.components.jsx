@@ -35,7 +35,7 @@ export default class RegularLetter extends React.Component {
 
 	render() {
 		return (
-			<span className="letter-wrap" onDoubleClick={this.selectLetter} dangerouslySetInnerHTML={{__html:this.props.letter.replace(/ /g, '&nbsp;')}}>
+			<span className="letter-wrap letter-wrap-regular" onDoubleClick={this.selectLetter} dangerouslySetInnerHTML={{__html:this.props.letter.replace(/ /g, '&nbsp;')}}>
 			</span>
 		);
 	}

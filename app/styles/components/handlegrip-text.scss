@@ -13,12 +13,13 @@ $heightPercentage: 100%;
 	height: 100%;
 	position: relative;
 
-	&:hover {
-		color: $medium-grey;
+	&-regular {
+		&:hover {
+			color: $medium-grey;
+		}
 	}
 
 	&-wrap {
-		color: $black;
 		cursor: default;
 		align-items: center;
 		display: flex;

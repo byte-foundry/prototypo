@@ -3,11 +3,14 @@ const {Patch} = Remutable;
 
 import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
+import LocalClient from '../stores/local-client.stores.jsx';
 
 let localServer;
+let localClient;
 
 window.addEventListener('fluxServer.setup', () => {
 	localServer = LocalServer.instance;
+	localClient = LocalClient.instance();
 });
 
 export default {
@@ -20,9 +23,27 @@ export default {
 			const revert = Patch.revert(Patch.fromJSON(event.patch));
 			const patch = prototypoStore.set('undoFrom', eventIndex).set('undoTo', eventIndex - 1).commit();
 
+			undoableStore.apply(revert);
 			localServer.dispatchUpdate('/prototypoStore', patch);
 			localServer.dispatchUpdate('/undoableStore', revert);
 			localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
+
+			fontInstance.addOnceListener('worker.fontLoaded', () => {
+				const selectedLetter = prototypoStore.get('uiWordString')[prototypoStore.get('uiWordSelection')];
+				fontInstance.getGlyphProperty(
+					selectedLetter,
+					['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
+					({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight}) => {
+						localClient.dispatchAction('/store-value-fast', {
+							advanceWidth,
+							spacingLeft,
+							spacingRight,
+							baseSpacingLeft,
+							baseSpacingRight,
+						});
+					}
+				);
+			});
 
 		}
 	},
@@ -37,10 +58,27 @@ export default {
 
 				const patch = prototypoStore.set('undoFrom', eventIndex).set('undoTo', eventIndex + 1).commit();
 
+				undoableStore.apply(Patch.fromJSON(event.patch));
 				localServer.dispatchUpdate('/prototypoStore', patch);
 				localServer.dispatchUpdate('/undoableStore', Patch.fromJSON(event.patch));
 				localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
 
+				fontInstance.addOnceListener('worker.fontLoaded', () => {
+					const selectedLetter = prototypoStore.get('uiWordString')[prototypoStore.get('uiWordSelection')];
+					fontInstance.getGlyphProperty(
+						selectedLetter,
+						['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
+						({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight}) => {
+							localClient.dispatchAction('/store-value-fast', {
+								advanceWidth,
+								spacingLeft,
+								spacingRight,
+								baseSpacingLeft,
+								baseSpacingRight,
+							});
+						}
+					);
+				});
 			}
 		}
 

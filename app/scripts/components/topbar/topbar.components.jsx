@@ -189,7 +189,7 @@ export default class Topbar extends React.Component {
 		const creditExportLabel = !!this.state.credits
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount)
-			&& <TopBarMenuButton label="EXPORT YOUR FONT NOW!" noHover centered click={this.openGoProModal} alignRight/>;
+			&& <TopBarMenuButton label="UPGRADE TO FULL VERSION!" noHover centered click={this.openGoProModal} alignRight/>;
 
 		return (
 			<div id="topbar">

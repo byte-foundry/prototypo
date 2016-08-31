@@ -127,6 +127,7 @@ export default class PrototypoPanel extends React.Component {
 
 		if (this.state.uiMode.indexOf('word') !== -1) {
 			word = <PrototypoWord
+				key="word"
 				fontName={this.props.fontName}
 				uiInvertedWordView={this.state.uiInvertedWordView}
 				uiInvertedWordColors={this.state.uiInvertedWordColors}
@@ -141,6 +142,7 @@ export default class PrototypoPanel extends React.Component {
 		if (hasGlyph && hasText) {
 			down = (
 				<ResizablePanels
+					key="resizableText"
 					defaultX={this.state.canvasPanelWidth}
 					onChange={({x}) => {this.client.dispatchAction('/store-value', {canvasPanelWidth: x});}}
 					property="flexBasis"
@@ -153,7 +155,7 @@ export default class PrototypoPanel extends React.Component {
 		}
 		else if (hasGlyph || hasText) {
 			down = (
-				<div id="prototypotextandglyph">
+				<div id="prototypotextandglyph" key="textAndGlyph">
 					{textAndGlyph}
 				</div>
 			);
@@ -163,7 +165,7 @@ export default class PrototypoPanel extends React.Component {
 
 		if (word) {
 			up = (
-				<div id="prototypoword">
+				<div id="prototypoword" key="wordContainer">
 					{word}
 				</div>
 			);
@@ -172,6 +174,7 @@ export default class PrototypoPanel extends React.Component {
 		if (up && down) {
 			return (
 				<ResizablePanels
+					key="everythingResize"
 					defaultY={this.state.wordPanelHeight}
 					onChange={({y}) => {this.client.dispatchAction('/store-value', {wordPanelHeight: y});}}
 					id="prototypopanel"
@@ -185,7 +188,7 @@ export default class PrototypoPanel extends React.Component {
 		}
 
 		return (
-			<div id="prototypopanel">
+			<div id="prototypopanel" key="justAcontainer">
 				{up}
 				{down}
 			</div>

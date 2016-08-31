@@ -5,6 +5,7 @@ import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import classNames from 'classnames';
 import {diffChars} from 'diff';
+import {prototypoStore} from '../stores/creation.stores.jsx';
 
 import {contentToArray, arrayToRawContent, rawToEscapedContent} from '../helpers/input-transform.helpers.js';
 import DOM from '../helpers/dom.helpers.js';
@@ -32,7 +33,7 @@ export default class PrototypoWord extends React.Component {
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// function bindings
-		this.setupText = this.setupText.bind(this);
+		this.setupText = _.debounce(this.setupText.bind(this),500, {leading: true});
 		this.saveText = this.saveText.bind(this);
 		this.handleEscapedInput = this.handleEscapedInput.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
@@ -46,6 +47,18 @@ export default class PrototypoWord extends React.Component {
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+
+		this.setState({
+			glyphPanelOpened: prototypoStore.get('uiMode').indexOf('list') !== -1,
+			canvasPanelOpened: prototypoStore.get('uiMode').indexOf('glyph') !== -1,
+			textPanelOpened: prototypoStore.get('uiMode').indexOf('text') !== -1,
+			glyphs: prototypoStore.get('glyphs'),
+			uiSpacingMode: prototypoStore.get('uiSpacingMode'),
+			uiWordString: prototypoStore.get('uiWordString'),
+			uiWordSelection: prototypoStore.get('uiWordSelection') || 0,
+			letterSpacingLeft: prototypoStore.get('letterSpacingLeft'),
+			letterSpacingRight: prototypoStore.get('letterSpacingRight'),
+		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
@@ -67,12 +80,17 @@ export default class PrototypoWord extends React.Component {
 
 			fontInstance.on('worker.fontLoaded', () => {
 				if (this.refs.text) {
-					const transformedContent = this.refs.text.textContent;
+					const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
+					const transformedContent = this.state.uiWordString;
 
-					const style = this.refs.text.style;
+					const style = refDOMElement.style;
 
 					this.client.dispatchAction('/store-value', {
-						uiWordFontSize: DOM.getProperFontSize(transformedContent, style, this.refs.text.clientWidth),
+						uiWordFontSize: `${Math.min(DOM.getProperFontSize(
+							transformedContent,
+							style,
+							refDOMElement.clientWidth
+						), !this.state.canvasPanelOpened && !this.state.textPanelOpened ? 500 : 100)}px`,
 					});
 				}
 			});
@@ -84,22 +102,6 @@ export default class PrototypoWord extends React.Component {
 
 		const newString = transformedContent && transformedContent.length > 0 ? transformedContent : '';
 
-		if (this.refs.text) {
-			const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
-			const style = refDOMElement.style;
-
-			this.client.dispatchAction('/store-value', {
-				uiWordFontSize: `${Math.min(DOM.getProperFontSize(
-					transformedContent,
-					style,
-					refDOMElement.clientWidth
-				), !this.state.canvasPanelOpened && !this.state.textPanelOpened ? 500 : 100)}px`,
-			});
-
-			this.refs.text.textContent = newString;
-		}
-
-
 		this.client.dispatchAction('/store-value', {
 			uiWordString: newString,
 		});
@@ -109,12 +111,26 @@ export default class PrototypoWord extends React.Component {
 		this.client.dispatchAction('/store-text', {value: text, propName: this.props.field});
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate(prevProps, prevState) {
 		this.setupText();
 	}
 
 	componentDidMount() {
 		this.setupText();
+		if (this.refs.text) {
+			const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
+			const transformedContent = this.state.uiWordString;
+
+			const style = refDOMElement.style;
+
+			this.client.dispatchAction('/store-value', {
+				uiWordFontSize: `${Math.min(DOM.getProperFontSize(
+					transformedContent,
+					style,
+					refDOMElement.clientWidth
+				), !this.state.canvasPanelOpened && !this.state.textPanelOpened ? 500 : 100)}px`,
+			});
+		}
 	}
 
 	componentWillUnmount() {
@@ -238,34 +254,17 @@ export default class PrototypoWord extends React.Component {
 				key="colors"
 				active={this.props.uiInvertedWordColors}
 				click={this.toggleColors}/>,
-			<ContextualMenuItem
-				text="Spacing mode"
-				key="spacingmode"
-				active={this.state.uiSpacingMode}
-				click={this.toggleSpacingMode}/>,
 		];
 
-		const wordContainer = this.state.uiSpacingMode
-			? (
-				<HandlegripText
+		console.log(this.props.uiWordFontSize);
+
+		const wordContainer = <HandlegripText
 					ref="text"
 					style={style}
-					text={this.state.uiWordString}
+					text={this.state.uiWordString || ''}
 					selectedLetter={this.state.uiWordSelection}
 					min={0}
-					max={1000}
-				/>
-			)
-			: (
-				<div
-					contentEditable="true"
-					ref="text"
-					className="prototypo-word-string"
-					spellCheck="false"
-					style={style}
-					onInput={this.handleEscapedInput}
-				></div>
-			);
+					max={1000} />
 
 		return (
 			<div

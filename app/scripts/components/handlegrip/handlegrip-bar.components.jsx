@@ -33,7 +33,7 @@ export default class HandlegripBar extends React.Component {
 
 		const newX = e.pageX || e.screenX;
 
-		this.client.dispatchAction('/store-value-undoable', {uiTrackingX: newX});
+		this.client.dispatchAction('/store-value-fast', {uiTrackingX: newX});
 
 		e.stopPropagation();
 	}
