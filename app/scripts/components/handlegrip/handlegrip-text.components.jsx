@@ -136,6 +136,7 @@ export default class HandlegripText extends React.Component {
 		});
 
 		this.client.dispatchAction('/store-value-fast', {unClampedOldValue: undefined});
+		this.client.dispatchAction('/store-value', {uiSpacingTracking: undefined});
 
 		this.dispatchAllFromFontinstance();
 
