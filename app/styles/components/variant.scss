@@ -95,6 +95,7 @@
 		&::before {
 			content: "⟶";
 			margin-right: 1em;
+			font-family: sans-serif;
 		}
 
 		&:hover, &.is-active {
