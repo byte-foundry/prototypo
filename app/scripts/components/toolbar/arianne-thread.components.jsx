@@ -32,7 +32,7 @@ export default class ArianneThread extends React.Component {
 		this.lifespan = new Lifespan();
 		const store = await this.client.fetch('/prototypoStore');
 		const memoizedListSelector = (list, selectedValue, oldValue) => {
-			if (selectedValue.name !== oldValue.name) {
+			if (selectedValue.name !== oldValue.name || selectedValue.name === undefined) {
 				return list.filter((element) => { return selectedValue.name !== element.name; });
 			}
 			return oldValue;
