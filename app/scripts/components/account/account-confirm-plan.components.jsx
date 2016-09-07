@@ -25,7 +25,7 @@ export default class AccountConfirmPlan extends React.Component {
 					const currency = getCurrency(head.toJS().d.infos.card[0].country);
 					const planId = `${planBase}_${currency}_taxfree`;
 
-					HoodieApi.getInvoice({
+					HoodieApi.getUpcomingInvoice({
 						'subscription_plan': planId,
 					})
 					.then((data) => {

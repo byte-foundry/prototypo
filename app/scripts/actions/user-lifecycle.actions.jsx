@@ -78,11 +78,8 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 
 			HoodieApi.updateCustomer({
 				source: data.id,
-				buyer_credit_card_prefix: number.substr(0, 9),
-				buyer_tax_number: vat || infos.vat,
 			})
 			.then(() => {
-
 				infos.card = [data.card];
 				infos.vat = vat || infos.vat;
 				form.loading = false;
@@ -162,24 +159,22 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 				// otherwise backend would attach the card to the customer
 				token: data.id,
 				email: HoodieApi.instance.email,
-				currency_code: currency === 'EUR' ? 'EUR' : 'USD',
+				currency: currency === 'EUR' ? 'EUR' : 'USD',
 				items: [item],
 			})
-			.then((response) => {
-				const remainingCredits = response ? response.credits : undefined;
-
+			.then(({metadata: {credits}}) => {
 				infos.card = [data.card];
 				infos.vat = vat || infos.vat;
 				form.loading = false;
 				const patch = userStore.set('infos', infos).set('buyCreditsForm', form).commit();
 
 				localServer.dispatchUpdate('/userStore', patch);
-				const credits = remainingCredits;
 
 				const creditPatch = prototypoStore.set('credits', credits).commit();
+
 				localServer.dispatchUpdate('/prototypoStore', creditPatch);
 
-				resolve({credits: remainingCredits});
+				resolve({credits});
 			})
 			.catch((err) => {
 				trackJs.track(err);
@@ -202,28 +197,17 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 *	@returns {promise} promise containing response from hoodie credits spending or an error
 */
 function spendCredits({amount}) {
-	return new Promise((resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 		if (parseInt(amount) > 0) {
-			HoodieApi.spendCredits(amount)
-			.then((response) => {
-				const remainingCredits = response ? response.credits : undefined;
+			const {metadata: {credits}} = await HoodieApi.spendCredits({amount});
 
-				const credits = remainingCredits;
+			const patch = prototypoStore.set('credits', credits).commit();
 
-				const patch = prototypoStore.set('credits', credits).commit();
+			localServer.dispatchUpdate('/prototypoStore', patch);
 
-				localServer.dispatchUpdate('/prototypoStore', patch);
-
-				resolve({credits: remainingCredits});
-			})
-			.catch((err) => {
-				trackJs.track(err);
-				reject(err);
-			});
+			return resolve({credits});
 		}
-		else {
-			reject();
-		}
+		reject();
 	});
 }
 
@@ -255,8 +239,14 @@ function addBillingAddress({buyerName, address}) {
 	}
 
 	return HoodieApi.updateCustomer({
-		invoice_address: address,
-		buyer_name: buyerName,
+		metadata: {
+			street_line_1: address.building_number,
+			street_line_2: address.street_name,
+			city: address.city,
+			region: address.region,
+			postal_code: address.postal_code,
+			country: address.country,
+		}
 	})
 	.then(() => {
 		const infos = userStore.get('infos');
@@ -283,7 +273,7 @@ function addBillingAddress({buyerName, address}) {
 }
 
 export default {
-	'/load-customer-data': ({sources, subscriptions, charges, metadata}) => {
+	'/load-customer-data': ({sources, subscriptions, metadata}) => {
 		const infos = _.cloneDeep(userStore.get('infos'));
 
 		if (sources && sources.data.length > 0) {
@@ -292,9 +282,7 @@ export default {
 		if (subscriptions && subscriptions.data.length > 0) {
 			infos.subscriptions = subscriptions.data;
 		}
-		if (charges && charges.data.length > 0) {
-			infos.charges = charges.data;
-		}
+
 		if (metadata && metadata.credits) {
 			const credits = parseInt(metadata.credits, 10);
 			const creditPatch = prototypoStore.set('credits', credits).commit();
@@ -302,6 +290,11 @@ export default {
 		}
 
 		const patch = userStore.set('infos', infos).commit();
+		localServer.dispatchUpdate('/userStore', patch);
+	},
+	'/load-customer-invoices': (invoices) => {
+		const patch = userStore.set('invoices', invoices).commit();
+
 		localServer.dispatchUpdate('/userStore', patch);
 	},
 	'/clean-form': (formName) => {
@@ -461,7 +454,7 @@ export default {
 		const curedLastname = lastname ? ` ${lastname}` : '';
 
 		HoodieApi.signUp(username, password)
-			.then(() => {
+			.then(({response}) => {
 
 				window.Intercom('boot', {
 					app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
@@ -480,11 +473,13 @@ export default {
 				return HoodieApi.createCustomer({
 					email: username,
 					'buyer_email': firstname + curedLastname,
+					hoodieId: response.roles[0],
 				});
 			})
-			.then(async () => {
+			.then(async (customer) => {
 				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname, css, phone, skype};
 				const patch = userStore.set('infos', {accountValues}).commit();
+
 				await AccountValues.save({typeface: 'default', values: {accountValues}});
 				localServer.dispatchUpdate('/userStore', patch);
 
@@ -493,6 +488,7 @@ export default {
 				form.loading = false;
 				const endPatch = userStore.set('signupForm', form).commit();
 
+				HoodieApi.instance.customerId = customer.id;
 				HoodieApi.instance.plan = 'free_none';
 				HoodieApi.instance.email = username;
 				fbq('track', 'Lead');
@@ -652,23 +648,21 @@ export default {
 		}).then(async (data) => {
 			const infos = _.cloneDeep(userStore.get('infos'));
 
-			infos.plan = `${plan}_${currency}_taxfree`;
+			infos.plan = data.plan.id;
 			const patch = userStore
 				.set('infos', infos)
 				.commit();
 
-			const customer = await HoodieApi.getCustomerInfo();
-
 			ga('ecommerce:addTransaction', {
-				'id': customer.metadata.taxamo_transaction_key,
+				'id': data.id,
 				'affiliation': 'Prototypo',
-				'revenue': data.plan.indexOf('monthly') === -1 ? '144' : '15',
+				'revenue': data.plan.id.indexOf('monthly') === -1 ? '144' : '15',
 			});
 
 			ga('ecommerce:addItem', {
-				'id': customer.metadata.taxamo_transaction_key + data.plan,                     // Transaction ID. Required.
-				'name': data.plan,    // Product name. Required.
-				'price': data.plan.indexOf('monthly') === -1 ? '144' : '15',
+				'id': data.id + data.plan.id,
+				'name': data.plan.id,    // Product name. Required.
+				'price': data.plan.id.indexOf('monthly') === -1 ? '144' : '15',
 			});
 
 			ga('ecommerce:send');
@@ -683,6 +677,9 @@ export default {
 			});
 
 			localServer.dispatchUpdate('/userStore', patch);
+
+			const customer = await HoodieApi.getCustomerInfo();
+
 			localClient.dispatchAction('/load-customer-data', customer);
 		}).catch((err) => {
 			trackJs.track(err);
@@ -788,47 +785,42 @@ export default {
 				return localServer.dispatchUpdate('/userStore', patch);
 			});
 	},
-	'/buy-credits': (options) => {
-		buyCredits(options)
-			.then((data) => {
-				localClient.dispatchAction('/store-value', {
-					buyCreditsNewCreditAmount: data.credits,
-					uiAskSubscribeFamily: false,
-					uiAskSubscribeVariant: false,
-				});
+	'/buy-credits': async (options) => {
+		const data = await buyCredits(options);
 
-				window.Intercom('update', {
-					'export_credits': data.credits,
-				});
+		localClient.dispatchAction('/store-value', {
+			buyCreditsNewCreditAmount: data.credits,
+			uiAskSubscribeFamily: false,
+			uiAskSubscribeVariant: false,
+		});
 
-				var transacId = HoodieApi.instance.email + new Date.getTime();
-				ga('ecommerce:addTransaction', {
-					'id': transacId,
-					'affiliation': 'Prototypo',
-					'revenue': 5,
-				});
+		window.Intercom('update', {
+			'export_credits': data.credits,
+		});
 
-				ga('ecommerce:addItem', {
-					'id': transacId + 'credits',                     // Transaction ID. Required.
-					'name': 'credits',    // Product name. Required.
-					'price': 5,
-				});
+		const transacId = HoodieApi.instance.email + new Date.getTime();
 
-				ga('ecommerce:send');
-				fbq('track', 'CompleteRegistration');
-			})
-			.catch((err) => {
-				trackJs.track(err);
-				return;
-			});
+		ga('ecommerce:addTransaction', {
+			'id': transacId,
+			'affiliation': 'Prototypo',
+			'revenue': 5,
+		});
+
+		ga('ecommerce:addItem', {
+			'id': transacId + 'credits',                     // Transaction ID. Required.
+			'name': 'credits',    // Product name. Required.
+			'price': 5,
+		});
+
+		ga('ecommerce:send');
+		fbq('track', 'CompleteRegistration');
 	},
-	'/spend-credits': (options) => {
-		spendCredits(options)
-			.then((data) => {
-				localClient.dispatchAction('/store-value', {spendCreditsNewCreditAmount: data.credits});
-				window.Intercom('update', {
-					'export_credits': data.credits,
-				});
-			});
+	'/spend-credits': async (options) => {
+		const {credits} = await spendCredits(options);
+
+		localClient.dispatchAction('/store-value', {spendCreditsNewCreditAmount: credits});
+		window.Intercom('update', {
+			'export_credits': credits,
+		});
 	},
 };
