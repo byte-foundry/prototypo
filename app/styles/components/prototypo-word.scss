@@ -17,6 +17,38 @@
 		justify-content:center;
 		align-items:center;
 		overflow:hidden;
+		background: $white;
+		color: $black;
+
+		&.inverted {
+			.letter-wrap-regular, .letter-wrap-letter {
+				transform: scaleY(-1);
+			}
+		}
+
+		&.negative {
+			background: $black;
+
+			.letter-wrap-regular, .letter-wrap-letter {
+				color: $white;
+			}
+		}
+
+		&.indiv {
+			color: $medium-grey;
+		}
+
+		&.negative.indiv {
+			color: $medium-grey;
+		}
+
+		&-indiv-character {
+			color: $black;
+		}
+
+		&.negative &-indiv-character {
+			color: $white;
+		}
 	}
 
 	&-scrollbar-wrapper {

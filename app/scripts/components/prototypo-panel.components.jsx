@@ -49,6 +49,7 @@ export default class PrototypoPanel extends React.Component {
 					indivMode: head.toJS().indivMode,
 					wordPanelHeight: head.toJS().wordPanelHeight,
 					canvasPanelWidth: head.toJS().canvasPanelWidth,
+					indivCurrentGroup: head.toJS().indivCurrentGroup,
 				});
 			})
 			.onDelete(() => {
@@ -118,6 +119,7 @@ export default class PrototypoPanel extends React.Component {
 				uiInvertedTextColors={this.state.uiInvertedTextColors}
 				uiTextFontSize={this.state.uiTextFontSize}
 				uiText={this.state.uiText}
+				indivCurrentGroup={this.state.indivCurrentGroup}
 				close={(name) => { this.toggleView(name); }}
 				field="uiText"/>);
 		}
@@ -133,6 +135,7 @@ export default class PrototypoPanel extends React.Component {
 				uiInvertedWordColors={this.state.uiInvertedWordColors}
 				uiWordFontSize={this.state.uiWordFontSize}
 				uiWord={this.state.uiWord}
+				indivCurrentGroup={this.state.indivCurrentGroup}
 				close={(name) => { this.toggleView(name); }}
 				field="uiWord"/>;
 		}

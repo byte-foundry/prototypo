@@ -4,6 +4,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import DOM from '../../helpers/dom.helpers.js';
+import {diffChars} from 'diff';
 
 import HandlegripLetter from './handlegrip-letter.components.jsx';
 import RegularLetter from './regular-letter.components.jsx';
@@ -26,6 +27,8 @@ export default class HandlegripText extends React.Component {
 			letterFontSize: 0,
 			tracking: false,
 			fontValues: null,
+			textArray: [],
+			lastKey: 0,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -51,6 +54,8 @@ export default class HandlegripText extends React.Component {
 		this.handleMove = this.handleMove.bind(this);
 		this.handleSelectstart = this.handleSelectstart.bind(this);
 		this.dispatchAllFromFontinstance = this.dispatchAllFromFontinstance.bind(this);
+		this.updateCacheTextArray = this.updateCacheTextArray.bind(this);
+		this.selectLetter = this.selectLetter.bind(this);
 	}
 
 	componentWillMount() {
@@ -82,12 +87,12 @@ export default class HandlegripText extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					trackingX: head.toJS().uiTrackingX,
-					baseSpacingLeft: head.toJS().baseSpacingLeft !== undefined ? head.toJS().baseSpacingLeft : this.state.baseSpacingLeft,
-					baseSpacingRight: head.toJS().baseSpacingRight !== undefined ?head.toJS().baseSpacingRight : this.state.baseSpacingRight,
-					spacingLeft: head.toJS().spacingLeft !== undefined ? head.toJS().spacingLeft : this.state.spacingLeft,
-					spacingRight: head.toJS().spacingRight !== undefined ? head.toJS().spacingRight : this.state.spacingRight,
+					baseSpacingLeft: head.toJS().baseSpacingLeft || this.state.baseSpacingLeft,
+					baseSpacingRight: head.toJS().baseSpacingRight || this.state.baseSpacingRight,
+					spacingLeft: head.toJS().spacingLeft || this.state.spacingLeft,
+					spacingRight: head.toJS().spacingRight || this.state.spacingRight,
 					unClampedOldValue: head.toJS().unClampedOldValue,
-					advanceWidth: head.toJS().advanceWidth !== undefined ? head.toJS().advanceWidth : this.state.advanceWidth,
+					advanceWidth: head.toJS().advanceWidth || this.state.advanceWidth,
 					clampedValue: head.toJS().clampedValue,
 				});
 			})
@@ -97,6 +102,8 @@ export default class HandlegripText extends React.Component {
 
 		// make sure there is no selection while dragging
 		document.addEventListener('selectstart', this.handleSelectstart);
+
+		this.updateCacheTextArray(this.props.text);
 	}
 
 	componentDidMount() {
@@ -247,14 +254,7 @@ export default class HandlegripText extends React.Component {
 	*	@return {string} the letter
 	*/
 	getSelectedLetter() {
-		const selectedIndex = this.props.selectedLetter;
-
-		if (selectedIndex >= 0 && this.props.text && selectedIndex < this.props.text.length) {
-			return this.props.text[selectedIndex];
-		}
-		else {
-			return null;
-		}
+		return (this.state.textArray.find(([key]) => { return key === this.props.selectedLetter; }) || [])[1];
 	}
 
 	dispatchAllFromFontinstance() {
@@ -282,12 +282,55 @@ export default class HandlegripText extends React.Component {
 		}
 	}
 
+	componentWillReceiveProps({text}) {
+		if (text !== this.props.text) {
+			this.updateCacheTextArray(text);
+		}
+	}
+
+	updateCacheTextArray(newText) {
+		let {textArray, lastKey} = this.state;
+		let currentIndex = 0;
+
+		diffChars(this.props.text, newText).forEach(({added, removed, count, value}) => {
+			if (removed) {
+				textArray = count ? [
+					...textArray.slice(0, currentIndex),
+					...textArray.slice(currentIndex + count),
+				] : []; // if count is undefined, it means text is empty
+				return;
+			}
+
+			if (added) {
+				textArray = [
+					...textArray.slice(0, currentIndex),
+					...value.split('').map((letter) => {
+						lastKey++;
+						return [`${lastKey}`, letter];
+					}),
+					...textArray.slice(currentIndex),
+				];
+			}
+
+			currentIndex += count;
+		});
+
+		this.setState({textArray, lastKey});
+	}
+
+	selectLetter(letter, index) {
+		this.client.dispatchAction('/store-value', {uiWordSelection: index});
+		this.client.dispatchAction('/update-letter-spacing-value', {
+			letter: letter.charCodeAt(0),
+			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
+		});
+	}
+
 	render() {
 		const selectedLetter = this.props.selectedLetter;
-		const letterComponents = _.map(this.props.text.split(''), (letter, index) => {
-			return (
-				selectedLetter === index
-				? (
+		const letterComponents = this.state.textArray.map(([key, letter]) => {
+			if (selectedLetter === key) {
+				return (
 					<HandlegripLetter
 						letter={letter}
 						ref="selectedLetter"
@@ -296,21 +339,16 @@ export default class HandlegripText extends React.Component {
 						advanceWidth={this.state.advanceWidth}
 						min={this.props.min}
 						max={this.props.max}
-						key={index}
+						key={key}
 					/>
-				)
-				: (
-					<RegularLetter letter={letter} key={index} index={index}/>
-				)
-			);
+				);
+			}
+
+			return <RegularLetter letter={letter} identifier={key} key={key} onSelect={this.selectLetter} />;
 		});
 
 		return (
-			<div
-				className="prototypo-word-string"
-				spellCheck="false"
-				style={this.props.style}
-			>
+			<div className={this.props.className} spellCheck="false" style={this.props.style}>
 				{letterComponents}
 			</div>
 		);
