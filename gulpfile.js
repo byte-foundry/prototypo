@@ -110,7 +110,11 @@ gulp.task('watch-font', function() {
 	return gulp.watch(['./node_modules/john-fell.ptf/dist/font.json','./node_modules/venus.ptf/dist/font.json','./node_modules/elzevir.ptf/dist/font.json'], ['cp-genese']);
 });
 
-gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','watch-font','webpack:dll'], function(callback) {
+gulp.task('watch-prototypojs', function() {
+	return gulp.watch(['./node_modules/prototypo.js/dist/prototypo.js','./node_modules/prototypo-canvas/dist/prototypo-canvas.js'], ['cp-prototypo.js']);
+});
+
+gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','watch-font', 'watch-prototypojs','webpack:dll'], function(callback) {
 	var webpackConfig	= require('./webpack.config.js');
 	// Start a webpack-dev-server
 	var prototypoConfig = Object.create(webpackConfig);
