@@ -292,7 +292,7 @@ export default class HandlegripText extends React.Component {
 		let {textArray, lastKey} = this.state;
 		let currentIndex = 0;
 
-		diffChars(this.props.text, newText).forEach(({added, removed, count, value}) => {
+		diffChars(textArray.map((keyValue) => { return keyValue[1]}).join(''), newText).forEach(({added, removed, count, value}) => {
 			if (removed) {
 				textArray = count ? [
 					...textArray.slice(0, currentIndex),
