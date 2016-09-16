@@ -296,7 +296,6 @@ selectRenderOptions(
 				await loadStuff();
 			}
 			catch (err) {
-				trackJs.track(err);
 				console.log(err);
 				const fontInstanceLoaded = new Event('fontInstance.loaded');
 
