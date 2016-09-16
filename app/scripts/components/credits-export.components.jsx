@@ -76,6 +76,7 @@ export default class CreditsExport extends React.Component {
 				}
 			})
 			.catch((error) => {
+				trackJs.track(error);
 				console.log(error);
 			});
 	}

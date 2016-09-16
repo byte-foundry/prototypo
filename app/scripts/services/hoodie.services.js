@@ -195,6 +195,7 @@ function setupHoodie(data) {
 				});
 			})
 			.catch((err) => {
+				trackJs.track(err);
 			});
 	}
 

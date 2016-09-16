@@ -11,3 +11,4 @@ npm-debug.log
 dist
 *.swp
 reports/
+coverage

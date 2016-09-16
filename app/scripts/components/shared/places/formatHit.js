@@ -40,6 +40,7 @@ export default function formatHit({
 		});
 	}
 	catch (e) {
+		trackJs.track(err);
 		/* eslint-disable no-console */
 		console.error('Could not parse object', hit);
 		console.error(e);

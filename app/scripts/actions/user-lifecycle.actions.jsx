@@ -92,6 +92,7 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 				resolve();
 			})
 			.catch((err) => {
+				trackJs.track(err);
 				form.errors.push(err.message);
 				form.loading = false;
 				const patch = userStore.set('addcardForm', form).commit();
@@ -145,7 +146,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 				return localServer.dispatchUpdate('/userStore', patch);
 			}
 
-			const infos = userStore.get('infos');
+			const infos = userStore.get('infos') || {};
 			const item = {
 				type: 'sku',
 				parent: `5_credits_${currency === 'EUR' ? 'EUR' : 'USD'}`,
@@ -176,6 +177,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 				resolve({credits: remainingCredits});
 			})
 			.catch((err) => {
+				trackJs.track(err);
 				form.errors.push(err.message);
 				form.loading = false;
 				const patch = userStore.set('buyCreditsForm', form).commit();
@@ -210,6 +212,7 @@ function spendCredits({amount}) {
 				resolve({credits: remainingCredits});
 			})
 			.catch((err) => {
+				trackJs.track(err);
 				reject(err);
 			});
 		}
@@ -261,6 +264,7 @@ function addBillingAddress({buyerName, address}) {
 		return localServer.dispatchUpdate('/userStore', patch);
 	})
 	.catch((err) => {
+		trackJs.track(err);
 		form.errors.push(err.message);
 		form.loading = false;
 
@@ -313,7 +317,8 @@ export default {
 				hashHistory.push(signinLocation);
 				window.Intercom('shutdown');
 			})
-			.catch(() => {
+			.catch((e) => {
+				trackJs.track(err);
 				hashHistory.push(signinLocation);
 				window.Intercom('shutdown');
 			});
@@ -376,6 +381,7 @@ export default {
 				});
 			})
 			.catch((err) => {
+				trackJs.track(err);
 				form.errors.push(
 					/incorrect/i.test(err.message)
 						? 'Incorrect email or password'
@@ -481,6 +487,7 @@ export default {
 				return localServer.dispatchUpdate('/userStore', endPatch);
 			})
 			.catch((err) => {
+				trackJs.track(err);
 				form.errors.push(err.message);
 				form.loading = false;
 				const patch = userStore.set('signupForm', form).commit();
@@ -649,6 +656,7 @@ export default {
 			localServer.dispatchUpdate('/userStore', patch);
 			localClient.dispatchAction('/load-customer-data', customer);
 		}).catch((err) => {
+			trackJs.track(err);
 
 			if ((/no such coupon/i).test(err.message)) {
 				form.errors.push('This coupon appears to no longer be valid, please contact us.');
@@ -728,6 +736,7 @@ export default {
 				return localServer.dispatchUpdate('/userStore', patch);
 			})
 			.catch((err) => {
+				trackJs.track(err);
 				changePasswordForm.loading = false;
 				changePasswordForm.errors.push(err.message);
 				const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
@@ -747,7 +756,8 @@ export default {
 					'export_credits': data.credits,
 				});
 			})
-			.catch(() => {
+			.catch((err) => {
+				trackJs.track(err);
 				return;
 			});
 	},
