@@ -69,6 +69,7 @@ export async function loadFontValues(typedata, typeface) {
 		localClient.dispatchAction('/load-values', _.extend(initValues, fontValues.values));
 	}
 	catch (err) {
+		trackJs.track(err);
 		const values = _.extend({}, initValues);
 
 		localClient.dispatchAction('/load-values', values);
@@ -86,6 +87,7 @@ export async function loadFontValues(typedata, typeface) {
 		localClient.dispatchAction('/load-font-infos', {altList});
 	}
 	catch (err) {
+		trackJs.track(err);
 		const values = {
 			altList: typedata.fontinfo.defaultAlts,
 		};

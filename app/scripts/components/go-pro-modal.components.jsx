@@ -42,6 +42,7 @@ export default class GoProModal extends React.Component {
 				}
 			})
 			.catch((error) => {
+				trackJs.track(error);
 				console.log(error);
 			});
 	}

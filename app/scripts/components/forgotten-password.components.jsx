@@ -41,6 +41,7 @@ export default class ForgottenPassword extends React.Component {
 			});
 		}
 		catch (err) {
+			trackJs.track(err);
 			this.setState({
 				errorReset: err.message,
 				loading: false,

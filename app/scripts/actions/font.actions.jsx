@@ -64,6 +64,7 @@ export default {
 			typedata = fontResult.typedata;
 		}
 		catch (err) {
+			trackJs.track(err);
 			console.log(err);
 		}
 
@@ -115,6 +116,7 @@ export default {
 			await fontInstance.loadFont(typedata.fontinfo.familyName, typedataJSON, db);
 		}
 		catch (err) {
+			trackJs.track(err);
 			saveErrorLog(err);
 		}
 

@@ -65,6 +65,7 @@ export async function loadStuff(refAccountValues) {
 		oldAppValues = await AppValues.getWithPouch({typeface: 'default'});
 	}
 	catch (err) {
+		trackJs.track(err);
 		console.log(err);
 	}
 	//Login checking and app and font values loading
@@ -87,6 +88,7 @@ export async function loadStuff(refAccountValues) {
 						});
 					}
 					catch (err) {
+						trackJs.track(err);
 						console.log(err);
 					}
 
@@ -98,6 +100,7 @@ export async function loadStuff(refAccountValues) {
 						});
 					}
 					catch (err) {
+						trackJs.track(err);
 						console.log(err);
 					}
 					variant.db = newDb;
@@ -116,6 +119,7 @@ export async function loadStuff(refAccountValues) {
 			defaultAccountValues.values.buyerName = userInfoValues.values.buyer_name;
 		}
 		catch (err) {
+			trackJs.track(err);
 			console.log(err);
 		}
 	}
@@ -127,6 +131,7 @@ export async function loadStuff(refAccountValues) {
 		appValues.values = _.extend(defaultValues.values, appValues.values);
 	}
 	catch (err) {
+		trackJs.track(err);
 		appValues = defaultValues;
 		console.error(err);
 	}
@@ -150,6 +155,7 @@ export async function loadStuff(refAccountValues) {
 			accountValues.username = HoodieApi.instance.email;
 		}
 		catch (err) {
+			trackJs.track(err);
 			accountValues = defaultAccountValues;
 			accountValues.values.accountValues.username = HoodieApi.instance.email;
 		}
