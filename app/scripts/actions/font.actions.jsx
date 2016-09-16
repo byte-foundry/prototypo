@@ -75,7 +75,6 @@ export default {
 			mapGlyphForApp
 		));
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
-		localClient.dispatchAction('/load-commits');
 		fontInstance.displayChar(String.fromCharCode(prototypoStore.get('glyphSelected')));
 
 		loadFontValues(typedata, appValues.values.variantSelected.db);
