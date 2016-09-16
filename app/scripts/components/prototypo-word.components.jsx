@@ -256,8 +256,6 @@ export default class PrototypoWord extends React.Component {
 				click={this.toggleColors}/>,
 		];
 
-		console.log(this.props.uiWordFontSize);
-
 		const wordContainer = <HandlegripText
 					ref="text"
 					style={style}

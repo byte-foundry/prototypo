@@ -19,7 +19,8 @@ HoodieApi.setup()
 		window.parent.postMessage(message, '*');
 	}
 })
-.catch(() => {
+.catch((e) => {
+	trackJs.track(e);
 	window.parent.postMessage({
 		type: 'error',
 		message: `You're not logged into Prototypo`,

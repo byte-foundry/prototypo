@@ -48,6 +48,7 @@ export default {
 			localClient.dispatchAction('/load-commits-post', lastcommitsJSON);
 		}
 		catch (err) {
+			trackJs.track(err);
 			const patch = prototypoStore.set('error', 'Cannot get commit').commit();
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
