@@ -5,6 +5,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Link} from 'react-router';
 
 import HoodieApi from '~/services/hoodie.services.js';
+import Log from '~/services/log.services.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import DOM from '../helpers/dom.helpers.js';

@@ -333,7 +333,7 @@ export default {
 		const patch = userStore.set('infos', {}).commit();
 		localServer.dispatchUpdate('/userStore', patch);
 	},
-	'/sign-in': ({username, password}) => {
+	'/sign-in': ({username, password, retry}) => {
 		const dashboardLocation = {
 			pathname: '/dashboard',
 		};
@@ -381,16 +381,23 @@ export default {
 				});
 			})
 			.catch((err) => {
-				trackJs.track(err);
-				form.errors.push(
-					/incorrect/i.test(err.message)
-						? 'Incorrect email or password'
-						: 'An unexpected error occured, please contact contact@prototypo.io and mention your current email'
-				);
-				form.loading = false;
-				const patch = userStore.set('signinForm', form).commit();
+				if (/must sign out/i.test(err.message) && !retry) {
+					localStorage.clear();
+					HoodieApi.logout()
+						.then(localClient.dispatchAction('/sign-in', {username, password, retry: true}));
+				}
+				else {
+					trackJs.track(err);
+					form.errors.push(
+						/incorrect/i.test(err.message)
+							? 'Incorrect email or password'
+							: 'An unexpected error occured, please contact contact@prototypo.io and mention your current email'
+					);
+					form.loading = false;
+					const patch = userStore.set('signinForm', form).commit();
 
-				localServer.dispatchUpdate('/userStore', patch);
+					localServer.dispatchUpdate('/userStore', patch);
+				}
 			});
 	},
 	'/sign-up': ({username, password, firstname, lastname, to}) => {
