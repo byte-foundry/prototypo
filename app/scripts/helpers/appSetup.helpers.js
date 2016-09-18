@@ -128,10 +128,19 @@ export async function loadStuff(refAccountValues) {
 
 	try {
 		appValues = oldAppValues ? oldAppValues : await AppValues.get({typeface: 'default'});
-		appValues.values = _.extend(defaultValues.values, appValues.values);
+		appValues.values = {...defaultValues.values, ...appValues.values};
+		//This is to save old accounts
+		if (appValues.values.variantSelected.id === undefined) {
+			appValues.values.variantSelected = defaultValues.values.variantSelected;
+		}
+		if (appValues.values.familySelected.name === undefined) {
+			appValues.values.familySelected = defaultValues.values.familySelected;
+		}
+		if (appValues.values.library.length <= 0) {
+			appValues.values.library = defaultValues.values.library;
+		}
 	}
 	catch (err) {
-		trackJs.track(err);
 		appValues = defaultValues;
 		console.error(err);
 	}

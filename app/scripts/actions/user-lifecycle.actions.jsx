@@ -382,9 +382,11 @@ export default {
 			})
 			.catch((err) => {
 				if (/must sign out/i.test(err.message) && !retry) {
-					localStorage.clear();
 					HoodieApi.logout()
-						.then(localClient.dispatchAction('/sign-in', {username, password, retry: true}));
+						.then(() => {
+							localStorage.clear();
+							localClient.dispatchAction('/sign-in', {username, password, retry: true});
+						});
 				}
 				else {
 					trackJs.track(err);
@@ -400,7 +402,7 @@ export default {
 				}
 			});
 	},
-	'/sign-up': ({username, password, firstname, lastname, to}) => {
+	'/sign-up': ({username, password, firstname, lastname, to, retry}) => {
 		const toLocation = {
 			pathname: to || '/dashboard',
 		};
@@ -494,12 +496,21 @@ export default {
 				return localServer.dispatchUpdate('/userStore', endPatch);
 			})
 			.catch((err) => {
-				trackJs.track(err);
-				form.errors.push(err.message);
-				form.loading = false;
-				const patch = userStore.set('signupForm', form).commit();
+				if (/must sign out/i.test(err.message) && !retry) {
+					HoodieApi.logout()
+						.then(() => {
+							localStorage.clear();
+							localClient.dispatchAction('/sign-up',{username, password, firstname, lastname, to, retry: true});
+						});
+				}
+				else {
+					trackJs.track(err);
+					form.errors.push(err.message);
+					form.loading = false;
+					const patch = userStore.set('signupForm', form).commit();
 
-				return localServer.dispatchUpdate('/userStore', patch);
+					return localServer.dispatchUpdate('/userStore', patch);
+				}
 			});
 	},
 	'/choose-plan': ({plan, coupon}) => {
