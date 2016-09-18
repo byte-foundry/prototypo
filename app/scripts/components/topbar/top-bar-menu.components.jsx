@@ -34,7 +34,7 @@ class TopBarMenu extends React.Component {
 			return (
 				<TopBarMenuItem
 					className={classes}
-					key={child.props.name || child.props.img}
+					key={index}
 					id={child.props.id}
 					count={count}
 					noHover={child.props.noHover}

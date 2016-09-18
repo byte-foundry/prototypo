@@ -49,8 +49,9 @@ export default class AllowedTopBarWithPayment extends React.Component {
 				}
 			})
 			.catch((error) => {
-				trackJs.track(error);
-				console.log(error);
+				this.setState({
+					currency: '$',
+				});
 			});
 	}
 
