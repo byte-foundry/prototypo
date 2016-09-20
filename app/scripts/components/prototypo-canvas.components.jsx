@@ -49,6 +49,8 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	componentWillUnmount() {
+		window.removeEventListener('keydown', this.handleZoomCb);
+		window.removeEventListener('keyup', this.finishZoomCb);
 		this.lifespan.release();
 	}
 
