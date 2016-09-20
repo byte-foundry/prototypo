@@ -41,9 +41,25 @@ export default class ArianneThread extends React.Component {
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate(({head}) => {
+				var family = familySelector(head.toJS().fonts, head.toJS().family) || (
+					this.state.families.length > 0
+						? this.state.families[0]
+						: {}
+				);
+
+				//This should never happen. However for user comfort if it happens
+				//we should create a new family to avoid crashes.
+				if (!family.name) {
+					localClient.dispatchAction('/create-family', {
+						name: 'My font',
+						template: 'elzevir.ptf',
+						loadCurrent: true,
+					});
+				}
+
 				this.setState({
 					families: memoizedListSelector(head.toJS().fonts, head.toJS().family, this.state.families),
-					family: familySelector(head.toJS().fonts, head.toJS().family),
+					family,
 					variant: head.toJS().variant,
 					groups: memoizedListSelector(head.toJS().indivGroups, head.toJS().indivCurrentGroup || {}, this.state.groups),
 					indivCreate: head.toJS().indivCreate,
