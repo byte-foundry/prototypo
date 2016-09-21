@@ -770,9 +770,26 @@ export default {
 					uiAskSubscribeFamily: false,
 					uiAskSubscribeVariant: false,
 				});
+
 				window.Intercom('update', {
 					'export_credits': data.credits,
 				});
+
+				var transacId = HoodieApi.instance.email + new Date.getTime();
+				ga('ecommerce:addTransaction', {
+					'id': transacId,
+					'affiliation': 'Prototypo',
+					'revenue': 5,
+				});
+
+				ga('ecommerce:addItem', {
+					'id': transacId + 'credits',                     // Transaction ID. Required.
+					'name': 'credits',    // Product name. Required.
+					'price': 5,
+				});
+
+				ga('ecommerce:send');
+				fbq('track', 'CompleteRegistration');
 			})
 			.catch((err) => {
 				trackJs.track(err);

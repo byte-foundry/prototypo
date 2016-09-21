@@ -8,6 +8,14 @@ module.exports = {
 			'react',
 			'react-dom',
 			'react-addons-create-fragment',
+			'react-addons-css-transition-group',
+			'react-addons-pure-render-mixin',
+			'react-draggable',
+			'react-joyride',
+			'react-json-pretty',
+			'react-router',
+			'react-scrollbar',
+			'react-select',
 			'moment',
 			'babel-polyfill',
 			'lifespan',
@@ -20,7 +28,12 @@ module.exports = {
 			'pouchdb',
 			'pouchdb-hoodie-api',
 			'react-json-pretty',
-			'prototypo-canvas',
+			'slug',
+			'tether',
+			'pouchdb',
+			'md5',
+			'lodash',
+			'jsdiff'
 		],
 	},
 	module: {
@@ -34,11 +47,6 @@ module.exports = {
 		library: '[name]_[hash]',
 		libraryTarget: 'this'
 	},
-	externals: [{
-		'./node/window': true,
-		'./node/extend': true,
-		'prototypo.js': 'prototypo',
-	}],
 	plugins: [
 		new webpack.DllPlugin({
 			path: path.join(__dirname, 'dist/dll/', '[name]-manifest.json'),

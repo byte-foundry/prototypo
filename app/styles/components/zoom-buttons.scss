@@ -14,9 +14,11 @@
 	margin-left: -2px;
 
 	&:hover {
-		background-color: $green;
-		border-color: $green;
-		color: $white;
+		@include themify() {
+			background-color: $theme-background;
+			border-color: $theme-background;
+			color: $theme-color;
+		}
 	}
 }
 
