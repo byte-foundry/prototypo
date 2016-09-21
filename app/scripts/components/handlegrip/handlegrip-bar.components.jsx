@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
@@ -54,7 +53,7 @@ export default class HandlegripBar extends React.Component {
 			>
 				<span className="handlegrip-border"></span>
 				<span className="handlegrip-spacing-number">
-					{this.props.spacing}
+					{this.props.spacing || '...'}
 				</span>
 			</span>
 		);
