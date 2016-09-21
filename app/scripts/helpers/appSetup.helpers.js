@@ -61,66 +61,68 @@ export async function loadStuff(refAccountValues) {
 
 	let oldAppValues;
 
-	try {
-		oldAppValues = await AppValues.getWithPouch({typeface: 'default'});
-	}
-	catch (err) {
-		trackJs.track(err);
-		console.log(err);
-	}
-	//Login checking and app and font values loading
-	if (oldAppValues && oldAppValues.values.library && oldAppValues.values.library.length > 0 && !oldAppValues.values.switchedToHoodie) {
-		for (let i = 0; i < oldAppValues.values.library.length; i++) {
-			const variants = oldAppValues.values.library[i].variants;
-
-			for (let j = 0; j < variants.length; j++) {
-				const variant = variants[j];
-				const newDb = slug(variant.db, '');
-
-				if (newDb !== variant.db) {
-
-					//Here we copy the old db to the new db with slugified name
-					try {
-						const oldFontValues = await FontValues.getWithPouch({typeface: variant.db});
-						await FontValues.save({
-							typeface: newDb,
-							values: oldFontValues.values,
-						});
-					}
-					catch (err) {
-						trackJs.track(err);
-						console.log(err);
-					}
-
-					try {
-						const oldFontInfosValues = await FontInfoValues.getWithPouch({typeface: variant.db});
-						await FontInfoValues.save({
-							typeface: newDb,
-							values: oldFontInfosValues.values,
-						});
-					}
-					catch (err) {
-						trackJs.track(err);
-						console.log(err);
-					}
-					variant.db = newDb;
-				}
-			}
-		}
-		oldAppValues.values.variantSelected = oldAppValues.values.library[0].variants[0];
-		oldAppValues.values.switchedToHoodie = true;
-		await AppValues.save({typeface: 'default', values: oldAppValues.values});
-
+	if (HoodieApi.instance.pouch) {
 		try {
-			const userInfoValues = await UserValues.get({typeface: 'default'});
-
-			defaultAccountValues.values.accountValues.username = HoodieApi.instance.email;
-			defaultAccountValues.values.address = userInfoValues.values.invoice_address;
-			defaultAccountValues.values.buyerName = userInfoValues.values.buyer_name;
+			oldAppValues = await AppValues.getWithPouch({typeface: 'default'});
 		}
 		catch (err) {
 			trackJs.track(err);
 			console.log(err);
+		}
+		//Login checking and app and font values loading
+		if (oldAppValues && oldAppValues.values.library && oldAppValues.values.library.length > 0 && !oldAppValues.values.switchedToHoodie) {
+			for (let i = 0; i < oldAppValues.values.library.length; i++) {
+				const variants = oldAppValues.values.library[i].variants;
+
+				for (let j = 0; j < variants.length; j++) {
+					const variant = variants[j];
+					const newDb = slug(variant.db, '');
+
+					if (newDb !== variant.db) {
+
+						//Here we copy the old db to the new db with slugified name
+						try {
+							const oldFontValues = await FontValues.getWithPouch({typeface: variant.db});
+							await FontValues.save({
+								typeface: newDb,
+								values: oldFontValues.values,
+							});
+						}
+						catch (err) {
+							trackJs.track(err);
+							console.log(err);
+						}
+
+						try {
+							const oldFontInfosValues = await FontInfoValues.getWithPouch({typeface: variant.db});
+							await FontInfoValues.save({
+								typeface: newDb,
+								values: oldFontInfosValues.values,
+							});
+						}
+						catch (err) {
+							trackJs.track(err);
+							console.log(err);
+						}
+						variant.db = newDb;
+					}
+				}
+			}
+			oldAppValues.values.variantSelected = oldAppValues.values.library[0].variants[0];
+			oldAppValues.values.switchedToHoodie = true;
+			await AppValues.save({typeface: 'default', values: oldAppValues.values});
+
+			try {
+				const userInfoValues = await UserValues.get({typeface: 'default'});
+
+				defaultAccountValues.values.accountValues.username = HoodieApi.instance.email;
+				defaultAccountValues.values.address = userInfoValues.values.invoice_address;
+				defaultAccountValues.values.buyerName = userInfoValues.values.buyer_name;
+			}
+			catch (err) {
+				trackJs.track(err);
+				console.log(err);
+			}
 		}
 	}
 
@@ -128,10 +130,19 @@ export async function loadStuff(refAccountValues) {
 
 	try {
 		appValues = oldAppValues ? oldAppValues : await AppValues.get({typeface: 'default'});
-		appValues.values = _.extend(defaultValues.values, appValues.values);
+		appValues.values = {...defaultValues.values, ...appValues.values};
+		//This is to save old accounts
+		if (appValues.values.variantSelected.id === undefined) {
+			appValues.values.variantSelected = defaultValues.values.variantSelected;
+		}
+		if (appValues.values.familySelected.name === undefined) {
+			appValues.values.familySelected = defaultValues.values.familySelected;
+		}
+		if (appValues.values.library.length <= 0) {
+			appValues.values.library = defaultValues.values.library;
+		}
 	}
 	catch (err) {
-		trackJs.track(err);
 		appValues = defaultValues;
 		console.error(err);
 	}

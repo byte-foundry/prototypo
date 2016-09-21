@@ -333,7 +333,7 @@ export default {
 		const patch = userStore.set('infos', {}).commit();
 		localServer.dispatchUpdate('/userStore', patch);
 	},
-	'/sign-in': ({username, password}) => {
+	'/sign-in': ({username, password, retry}) => {
 		const dashboardLocation = {
 			pathname: '/dashboard',
 		};
@@ -381,19 +381,28 @@ export default {
 				});
 			})
 			.catch((err) => {
-				trackJs.track(err);
-				form.errors.push(
-					/incorrect/i.test(err.message)
-						? 'Incorrect email or password'
-						: 'An unexpected error occured, please contact contact@prototypo.io and mention your current email'
-				);
-				form.loading = false;
-				const patch = userStore.set('signinForm', form).commit();
+				if (/must sign out/i.test(err.message) && !retry) {
+					HoodieApi.logout()
+						.then(() => {
+							localStorage.clear();
+							localClient.dispatchAction('/sign-in', {username, password, retry: true});
+						});
+				}
+				else {
+					trackJs.track(err);
+					form.errors.push(
+						/incorrect/i.test(err.message)
+							? 'Incorrect email or password'
+							: 'An unexpected error occured, please contact contact@prototypo.io and mention your current email'
+					);
+					form.loading = false;
+					const patch = userStore.set('signinForm', form).commit();
 
-				localServer.dispatchUpdate('/userStore', patch);
+					localServer.dispatchUpdate('/userStore', patch);
+				}
 			});
 	},
-	'/sign-up': ({username, password, firstname, lastname, to}) => {
+	'/sign-up': ({username, password, firstname, lastname, to, retry}) => {
 		const toLocation = {
 			pathname: to || '/dashboard',
 		};
@@ -487,12 +496,21 @@ export default {
 				return localServer.dispatchUpdate('/userStore', endPatch);
 			})
 			.catch((err) => {
-				trackJs.track(err);
-				form.errors.push(err.message);
-				form.loading = false;
-				const patch = userStore.set('signupForm', form).commit();
+				if (/must sign out/i.test(err.message) && !retry) {
+					HoodieApi.logout()
+						.then(() => {
+							localStorage.clear();
+							localClient.dispatchAction('/sign-up',{username, password, firstname, lastname, to, retry: true});
+						});
+				}
+				else {
+					trackJs.track(err);
+					form.errors.push(err.message);
+					form.loading = false;
+					const patch = userStore.set('signupForm', form).commit();
 
-				return localServer.dispatchUpdate('/userStore', patch);
+					return localServer.dispatchUpdate('/userStore', patch);
+				}
 			});
 	},
 	'/choose-plan': ({plan, coupon}) => {
@@ -752,9 +770,26 @@ export default {
 					uiAskSubscribeFamily: false,
 					uiAskSubscribeVariant: false,
 				});
+
 				window.Intercom('update', {
 					'export_credits': data.credits,
 				});
+
+				var transacId = HoodieApi.instance.email + new Date.getTime();
+				ga('ecommerce:addTransaction', {
+					'id': transacId,
+					'affiliation': 'Prototypo',
+					'revenue': 5,
+				});
+
+				ga('ecommerce:addItem', {
+					'id': transacId + 'credits',                     // Transaction ID. Required.
+					'name': 'credits',    // Product name. Required.
+					'price': 5,
+				});
+
+				ga('ecommerce:send');
+				fbq('track', 'CompleteRegistration');
 			})
 			.catch((err) => {
 				trackJs.track(err);

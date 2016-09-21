@@ -49,6 +49,8 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	componentWillUnmount() {
+		window.removeEventListener('keydown', this.handleZoomCb);
+		window.removeEventListener('keyup', this.finishZoomCb);
 		this.lifespan.release();
 	}
 
@@ -220,8 +222,8 @@ export default class PrototypoCanvas extends React.Component {
 
 	reset() {
 		this.props.reset({
-			x: fontInstance.currGlyph.getBounds().center.x * window.devicePixelRatio,
-			y: -fontInstance.currGlyph.getBounds().center.y * window.devicePixelRatio,
+			x: fontInstance.currGlyph.getBounds().center.x,
+			y: -fontInstance.currGlyph.getBounds().center.y,
 		});
 	}
 

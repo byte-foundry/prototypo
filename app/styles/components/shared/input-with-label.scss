@@ -40,6 +40,9 @@
 
 		&:focus {
 			border-bottom: 3px solid $green !important;
+			@include themify() {
+				border-color: $theme-background !important;
+			}
 		}
 
 		&.is-error {

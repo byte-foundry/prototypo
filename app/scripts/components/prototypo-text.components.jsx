@@ -40,7 +40,6 @@ export default class PrototypoText extends React.Component {
 			showContextMenu: false,
 			glyphPanelOpened: undefined,
 			editorState: EditorState.createEmpty(),
-			indivCurrentGroup: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		// function bindings
@@ -68,7 +67,6 @@ export default class PrototypoText extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
-					indivCurrentGroup: head.toJS().indivCurrentGroup,
 				});
 			})
 			.onDelete(() => {
@@ -81,14 +79,14 @@ export default class PrototypoText extends React.Component {
 		this.lifespan.release();
 	}
 
-	componentWillUpdate(nextProps, {indivCurrentGroup}) {
+	componentWillReceiveProps({indivCurrentGroup}) {
 		this.updateIndivGroupDecorator(indivCurrentGroup);
 	}
 
 	updateIndivGroupDecorator(nextIndivGroup) {
-		const {indivCurrentGroup, editorState} = this.state;
+		const {editorState} = this.state;
 
-		if (nextIndivGroup && nextIndivGroup !== indivCurrentGroup) {
+		if (nextIndivGroup && nextIndivGroup !== this.props.indivCurrentGroup) {
 			let decorator = null;
 
 			if (nextIndivGroup.glyphs) {
@@ -222,7 +220,7 @@ export default class PrototypoText extends React.Component {
 		const editorClassNames = classNames('prototypo-text-editor', {
 			'negative': this.props.uiInvertedTextColors,
 			'inverted': this.props.uiInvertedTextView,
-			'indiv': this.state.indivCurrentGroup,
+			'indiv': this.props.indivCurrentGroup,
 		});
 
 		const actionBar = classNames({

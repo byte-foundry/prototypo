@@ -230,10 +230,13 @@ export default class PrototypoWord extends React.Component {
 		const style = {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
 			'fontSize': this.props.uiWordFontSize || '98px',
-			'color': this.props.uiInvertedWordColors ? '#fefefe' : '#232323',
-			'backgroundColor': this.props.uiInvertedWordColors ? '#232323' : '#fefefe',
-			'transform': this.props.uiInvertedWordView ? 'scaleY(-1)' : 'scaleY(1)',
 		};
+
+		const stringClasses = classNames('prototypo-word-string', {
+			'negative': this.props.uiInvertedWordColors,
+			'inverted': this.props.uiInvertedWordView,
+			'indiv': this.state.indivCurrentGroup,
+		});
 
 		const actionBar = classNames({
 			'action-bar': true,
@@ -256,21 +259,21 @@ export default class PrototypoWord extends React.Component {
 				click={this.toggleColors}/>,
 		];
 
-		const wordContainer = <HandlegripText
-					ref="text"
-					style={style}
-					text={this.state.uiWordString || ''}
-					selectedLetter={this.state.uiWordSelection}
-					min={0}
-					max={1000} />
-
 		return (
 			<div
 				className="prototypo-word"
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}>
 				<div className="prototypo-word-scrollbar-wrapper">
-					{wordContainer}
+					<HandlegripText
+						ref="text"
+						style={style}
+						className={stringClasses}
+						text={this.state.uiWordString || ''}
+						selectedLetter={this.state.uiWordSelection}
+						min={0}
+						max={1000}
+					/>
 					<ViewPanelsMenu
 						show={this.state.showContextMenu}
 						shifted={this.state.glyphPanelOpened}
