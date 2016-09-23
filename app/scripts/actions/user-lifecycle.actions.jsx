@@ -402,7 +402,7 @@ export default {
 				}
 			});
 	},
-	'/sign-up': ({username, password, firstname, lastname, to, retry}) => {
+	'/sign-up': ({username, password, firstname, lastname, phone, skype, to, retry}) => {
 		const toLocation = {
 			pathname: to || '/dashboard',
 		};
@@ -459,6 +459,8 @@ export default {
 					app_id: 'mnph1bst',
 					email: username,
 					name: firstname + curedLastname,
+					phone: phone,
+					skype: skype,
 					widget: {
 						activator: '#intercom-button',
 					},
@@ -471,7 +473,7 @@ export default {
 				});
 			})
 			.then(async () => {
-				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname};
+				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname, phone, skype};
 				const patch = userStore.set('infos', {accountValues}).commit();
 				await AccountValues.save({typeface: 'default', values: {accountValues}});
 				localServer.dispatchUpdate('/userStore', patch);
@@ -710,6 +712,8 @@ export default {
 			twitter: data.twitter,
 			website: data.website,
 			occupation: data.css,
+			phone: data.phone,
+			skype: data.skype,
 		});
 
 		localServer.dispatchUpdate('/userStore', patch);

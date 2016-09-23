@@ -45,6 +45,8 @@ export default class AccountProfilePanel extends React.Component {
 			css: this.refs.css.inputValue,
 			website: this.refs.website.inputValue,
 			twitter: this.refs.twitter.inputValue,
+			phone: this.refs.phone.inputValue,
+			skype: this.refs.skype.inputValue,
 		});
 	}
 
@@ -54,6 +56,8 @@ export default class AccountProfilePanel extends React.Component {
 			{value: 'artistic_director', label: 'an artistic director'},
 			{value: 'web_developer', label: 'a web developer'},
 			{value: 'type_designer', label: 'a type designer'},
+			{value: 'teacher', label: 'a teacher'},
+			{value: 'student', label: 'a student'},
 		];
 
 		return this.state.infos.accountValues
@@ -67,16 +71,24 @@ export default class AccountProfilePanel extends React.Component {
 							<InputWithLabel ref="firstname" label="First name" required={true} inputValue={this.state.infos.accountValues.firstname}/>
 						</div>
 						<div className="half-column">
-							<InputWithLabel ref="lastname" label="Last name" required={false} inputValue={this.state.infos.accountValues.lastname}/>
+							<InputWithLabel ref="lastname" label="Last name" placeholder="Doe" required={false} inputValue={this.state.infos.accountValues.lastname}/>
 						</div>
 					</div>
 					<SelectWithLabel ref="css" label="I am" noResultsText="No result for this search" name="occupation" className="input-with-label-input" placeholder="an architect" options={values} inputValue={this.state.infos.accountValues.css}/>
 					<div className="columns">
 						<div className="half-column">
-							<InputWithLabel ref="website" label="My website" placeholder="www.mj.com" required={false} inputValue={this.state.infos.accountValues.website}/>
+							<InputWithLabel ref="website" label="My website" placeholder="www.domain.com" required={false} inputValue={this.state.infos.accountValues.website}/>
 						</div>
 						<div className="half-column">
-							<InputWithLabel ref="twitter" label="Twitter account" placeholder="@thecat" required={false} inputValue={this.state.infos.accountValues.twitter}/>
+							<InputWithLabel ref="twitter" label="Twitter account" placeholder="@johnDoe" required={false} inputValue={this.state.infos.accountValues.twitter}/>
+						</div>
+					</div>
+					<div className="columns">
+						<div className="half-column">
+							<InputWithLabel label="Phone number" type="tel" ref="phone" inputValue={this.state.infos.accountValues.phone} />
+						</div>
+						<div className="half-column">
+							<InputWithLabel label="Skype ID" ref="skype" inputValue={this.state.infos.accountValues.skype} />
 						</div>
 					</div>
 					<AccountValidationButton label="Save infos"/>

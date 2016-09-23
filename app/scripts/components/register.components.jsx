@@ -45,8 +45,10 @@ export default class Register extends React.Component {
 		const password = this.refs.password.inputValue;
 		const firstname = this.refs.firstname.inputValue;
 		const lastname = this.refs.lastname.inputValue;
+		const phone = this.refs.phone.inputValue;
+		const skype = this.refs.skype.inputValue;
 
-		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname});
+		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname, phone, skype});
 	}
 
 	render() {
@@ -74,6 +76,7 @@ export default class Register extends React.Component {
 									name="firstname"
 									ref="firstname"
 									error={this.state.inError.firstname}
+									placeholder="John"
 									required={true} />
 							</div>
 							<div className="half-column">
@@ -82,6 +85,7 @@ export default class Register extends React.Component {
 									className="sign-in-input"
 									id="lastname"
 									name="lastname"
+									placeholder="Doe"
 									ref="lastname" />
 							</div>
 						</div>
@@ -103,6 +107,14 @@ export default class Register extends React.Component {
 							type="password"
 							ref="password"
 							required />
+						<div className="columns">
+							<div className="half-column">
+								<InputWithLabel label="Phone number" info="(optional)" type="tel" ref="phone"/>
+							</div>
+							<div className="half-column">
+								<InputWithLabel label="Skype ID" info="(optional)" ref="skype"/>
+							</div>
+						</div>
 						<Link to="/signin" className="sign-in-help-needed">
 							I already have an account
 						</Link>
