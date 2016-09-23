@@ -43,8 +43,10 @@ export default class SubscriptionAccountInfo extends React.Component {
 		const password = this.refs.password.inputValue;
 		const firstname = this.refs.firstname.inputValue;
 		const lastname = this.refs.lastname.inputValue;
+		const phone = this.refs.phone.inputValue;
+		const skype = this.refs.skype.inputValue;
 
-		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname, to: '/account/create/choose-a-plan'});
+		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname, phone, skype, to: '/account/create/choose-a-plan'});
 	}
 
 	render() {
@@ -56,14 +58,22 @@ export default class SubscriptionAccountInfo extends React.Component {
 			<form onSubmit={(e) => {this.createAccount(e);}} className="account-base subscription-account-info">
 				<div className="columns">
 					<div className="half-column">
-						<InputWithLabel label="First name" required={true} ref="firstname"/>
+						<InputWithLabel label="First name" placeholder="John" required={true} ref="firstname"/>
 					</div>
 					<div className="half-column">
-						<InputWithLabel label="Last name" required={false} ref="lastname"/>
+						<InputWithLabel label="Last name" placeholder="Doe" required={false} ref="lastname"/>
 					</div>
 				</div>
-				<InputWithLabel label="Your email" required={true} placeholder="mj@prototypo.io" ref="username"/>
+				<InputWithLabel label="Your email" required={true} placeholder="example@domain.com" ref="username"/>
 				<InputWithLabel type="password" info="(at least 8 character long)" label="Password" required={true} ref="password"/>
+				<div className="columns">
+					<div className="half-column">
+						<InputWithLabel label="Phone number" info="(optional)" type="tel" ref="phone"/>
+					</div>
+					<div className="half-column">
+						<InputWithLabel label="Skype ID" info="(optional)" ref="skype"/>
+					</div>
+				</div>
 				{errors}
 				<AccountValidationButton label="Sign up" loading={this.state.loading}/>
 			</form>
