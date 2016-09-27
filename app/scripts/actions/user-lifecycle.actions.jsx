@@ -93,7 +93,11 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 			})
 			.catch((err) => {
 				trackJs.track(err);
-				form.errors.push(err.message);
+				form.errors.push(
+					/Could not connect/i.test(err.message)
+						? 'Our server is unavailable please try again letter'
+						: err.message
+				);
 				form.loading = false;
 				const patch = userStore.set('addcardForm', form).commit();
 
@@ -265,7 +269,11 @@ function addBillingAddress({buyerName, address}) {
 	})
 	.catch((err) => {
 		trackJs.track(err);
-		form.errors.push(err.message);
+		form.errors.push(
+			/Could not connect/i.test(err.message)
+				? 'Our server is unavailable please try again letter'
+				: err.message
+		);
 		form.loading = false;
 
 		const patch = userStore.set('billingForm', form).commit();
@@ -371,6 +379,7 @@ export default {
 							activator: '#intercom-button',
 						},
 					});
+					trackJs.addMetadata('username', username);
 
 					form.errors = [];
 					form.inError = {};
@@ -465,7 +474,7 @@ export default {
 						activator: '#intercom-button',
 					},
 				});
-
+				trackJs.addMetadata('username', username);
 
 				return HoodieApi.createCustomer({
 					email: username,

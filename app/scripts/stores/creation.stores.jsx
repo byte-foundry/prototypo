@@ -232,6 +232,7 @@ const couponStore = new Remutable({
 	'cc57f5fc5ec2eec84babfe6fdf774548': {label: 'You\'ve been referred by Fraser. Enjoy your $5 discount :)'},
 	'30172db2927d6ff9666a7eecfafc006c': {label: 'You\'ve been referred by Jan. Enjoy your $5 discount :)'},
 	'8905f6bdae64fc09e14206cbc0161241': {label: '30% off your first month!'},
+	'fee64920dd5880a397e9127b85fc891b': {label: '66% off your first month!'},
 });
 
 const planStore = new Remutable({
