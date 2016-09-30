@@ -20,7 +20,6 @@ module.exports = {
 			'pouchdb',
 			'pouchdb-hoodie-api',
 			'react-json-pretty',
-			'prototypo-canvas',
 		],
 	},
 	module: {

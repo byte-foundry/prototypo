@@ -55,6 +55,11 @@ module.exports = {
 		],
 		noParse: /(dist\/prototypo-canvas)/,
 	},
+	externals: [{
+		'./node/window': true,
+		'./node/extend': true,
+		'prototypo.js': 'prototypo',
+	}],
 	plugins: [
 		/*new webpack.DefinePlugin({
 			'process.env.__SHOW_RENDER__': "true",

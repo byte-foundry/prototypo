@@ -46,6 +46,10 @@ export default class PrototypoCanvas extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		fontInstance.on('manualchange', (changes, force = false) => {
+			this.client.dispatchAction('/change-glyph-node-manually', {glyphUnicode: this.props.glyphSelected, changes, force});
+		});
 	}
 
 	componentWillUnmount() {
@@ -108,10 +112,6 @@ export default class PrototypoCanvas extends React.Component {
 		this.setupCanvas();
 	}
 
-	mouseMove(e) {
-		fontInstance.onMove.bind(fontInstance)(e);
-	}
-
 	wheel(e) {
 		fontInstance.onWheel.bind(fontInstance)(e);
 		this.client.dispatchAction('/store-value', {
@@ -126,13 +126,11 @@ export default class PrototypoCanvas extends React.Component {
 		return false;
 	}
 
-	mouseDown(e) {
-		fontInstance.onDown.bind(fontInstance)(e);
+	mouseDown() {
 		document.addEventListener('selectstart', this.preventSelection);
 	}
 
-	mouseUp(e) {
-		fontInstance.onUp.bind(fontInstance)(e);
+	mouseUp() {
 		this.client.dispatchAction('/store-value', {
 			uiPos: fontInstance.view.center,
 			uiZoom: fontInstance.zoom,
@@ -144,7 +142,6 @@ export default class PrototypoCanvas extends React.Component {
 		const canvasContainer = this.refs.canvas;
 
 		canvasContainer.appendChild(window.canvasElement);
-		canvasContainer.addEventListener('mousemove', (e) => { this.mouseMove(e); });
 		canvasContainer.addEventListener('wheel', (e) => { this.wheel(e); });
 		canvasContainer.addEventListener('mousedown', (e) => { this.mouseDown(e); });
 		canvasContainer.addEventListener('mouseup', (e) => { this.mouseUp(e); });
