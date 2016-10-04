@@ -234,6 +234,7 @@ const couponStore = new Remutable({
 	'8905f6bdae64fc09e14206cbc0161241': {label: '30% off your first month!'},
 	'fee64920dd5880a397e9127b85fc891b': {label: '66% off your first month!'},
 	'ec97fbff4acbb75abae0951d899bf580': {label: '70% off the annual price for schools!'},
+	'9840edae45eeeaefa0591cd872c583ed': {label: 'The first month for $5!'},
 });
 
 const planStore = new Remutable({
