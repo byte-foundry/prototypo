@@ -18,13 +18,13 @@ export default class AddCard extends React.Component {
 		return (
 			<div className="add-card">
 				<InputWithLabel ref="fullname" label="Full name" error={this.props.inError.fullname} info="(as it appears on the card)" required={true}/>
-				<InputWithLabel ref="number" label="Card number" error={this.props.inError.number} required={true} placeholder="1111222233334444"/>
+				<InputWithLabel ref="number" label="Card number" error={this.props.inError.number} required={true} placeholder="1111222233334444" cleaveOptions={{creditCard: true}}/>
 				<div className="columns">
 					<div className="third-column">
-						<InputWithLabel ref="expMonth" label="Expiration date" error={this.props.inError.expMonth} required={true} placeholder="Month"/>
+						<InputWithLabel ref="expMonth" label="Expiration date" error={this.props.inError.expMonth} required={true} placeholder="Month" cleaveOptions={{date: true, datePattern: ['m']}}/>
 					</div>
 					<div className="third-column">
-						<InputWithLabel ref="expYear" label="&nbsp;" error={this.props.inError.expYear} required={false} placeholder="Year"/>
+						<InputWithLabel ref="expYear" label="&nbsp;" error={this.props.inError.expYear} required={false} placeholder="Year" cleaveOptions={{date: true, datePattern: ['Y']}}/>
 					</div>
 					<div className="third-column">
 						<InputWithLabel ref="cvc" label="CVC" error={this.props.inError.cvc} required={true} placeholder="123"/>
