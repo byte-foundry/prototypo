@@ -91,10 +91,12 @@ export default class CreditsExport extends React.Component {
 	handleSubmit(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		this.client.dispatchAction('/buy-credits', {
-			card: this.refs.card.data(),
-			currency: this.state.currency,
-		});
+		if (!this.state.loading) {
+			this.client.dispatchAction('/buy-credits', {
+				card: this.refs.card.data(),
+				currency: this.state.currency,
+			});
+		}
 	}
 
 	exit() {
