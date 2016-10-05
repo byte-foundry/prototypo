@@ -470,6 +470,7 @@ export default {
 					name: firstname + curedLastname,
 					phone: phone,
 					skype: skype,
+					ABtest: Math.floor(Math.random() * 100),
 					widget: {
 						activator: '#intercom-button',
 					},
