@@ -7,10 +7,17 @@ export default class InputWithLabel extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.handleOnChange = this.handleOnChange.bind(this);
+		this.state = {
+      value: '',
+    };
 	}
 
-	static defaultProps = {
-		handleOnChange: () => { return; },
+	handleOnChange(event) {
+		this.props.cleaveOptions
+		? this.setState({value: event.target.rawValue})
+		: this.setState({value: event.target.value});
+		return;
 	}
 
 	render() {
@@ -41,14 +48,14 @@ export default class InputWithLabel extends React.Component {
 						placeholder={placeholder}
 						defaultValue={inputValue}
 						options={cleaveOptions}
-						onChange={handleOnChange}
+						onChange={this.handleOnChange}
 					/>
 					: <input {...rest}
 						ref="input"
 						className={inputClass}
 						placeholder={placeholder}
 						defaultValue={inputValue}
-						onChange={handleOnChange}
+						onChange={this.handleOnChange}
 					/>
 			}
 			</div>
@@ -57,7 +64,7 @@ export default class InputWithLabel extends React.Component {
 
 	get inputValue() {
 		// TODO: get the correct imput value
-		return this.refs ? this.refs.input.value : undefined;
+		return this.refs ? this.state.value : undefined;
 	}
 
 	set inputValue(value) {
