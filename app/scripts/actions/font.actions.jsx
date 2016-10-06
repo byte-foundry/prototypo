@@ -81,6 +81,10 @@ export default {
 
 		const fontInstanceLoaded = new Event('fontInstance.loaded');
 
+		fontInstance.addListener('component.change', function(glyph, id , name) {
+			localClient.dispatchAction('/change-component', {glyph, id, name});
+		});
+
 		window.dispatchEvent(fontInstanceLoaded);
 	},
 	'/create-font': (familyName) => {
@@ -626,5 +630,27 @@ export default {
 				});
 				localClient.dispatchAction('/store-value-fast', resultValues);
 		});
+	},
+	'/change-component': ({glyph, id, name}) => {
+		const db = (prototypoStore.get('variant') || {}).db;
+		const oldValues = undoableStore.get('controlsValues');
+		const newParams = {
+			...oldValues,
+			glyphComponentChoice: {...oldValues.glyphComponentChoice},
+		};
+
+		newParams.glyphComponentChoice[glyph.ot.unicode] = {
+			...newParams.glyphComponentChoice[glyph.ot.unicode],
+			[id]: name,
+		};
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', newParams);
+
+		debouncedSave(newParams, db);
+
+		undoWatcher.forceUpdate(patch, label);
 	},
 };

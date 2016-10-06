@@ -322,7 +322,8 @@ export default class PrototypoCanvas extends React.Component {
 					show={this.state.showContextMenu}
 					shifted={isShifted}
 					textPanelClosed={textPanelClosed}
-					toggle={this.toggleContextMenu}>
+					toggle={this.toggleContextMenu}
+					intercomShift={this.props.viewPanelRightMove}>
 					{menu}
 				</ViewPanelsMenu>
 				<div className="canvas-menu">
