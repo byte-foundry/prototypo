@@ -62,8 +62,8 @@ export default class HandlegripLetter extends React.Component {
 	}
 
 	render() {
-		const spacingLeft = Math.round(Math.abs(this.props.spacingLeft));
-		const spacingRight = Math.round(Math.abs(this.props.spacingRight));
+		const spacingLeft = Math.round(this.props.spacingLeft);
+		const spacingRight = Math.round(this.props.spacingRight);
 		const advanceWidth = Math.round(Math.abs(this.props.advanceWidth));
 
 		return (
