@@ -29,7 +29,7 @@ export default class RegularLetter extends React.Component {
 		this.client.dispatchAction('/store-value', {uiWordSelection: this.props.index});
 		this.client.dispatchAction('/update-letter-spacing-value', {
 			letter: this.props.letter.charCodeAt(0),
-			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
+			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight', 'glyphWidth'],
 		});
 	}
 

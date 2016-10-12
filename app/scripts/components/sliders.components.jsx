@@ -513,7 +513,7 @@ class IndivSwitch extends React.Component {
 	}
 
 	changeState(state) {
-		this.props.changeParam({
+		this.client.dispatchAction('/change-param-state', {
 			name: this.props.name,
 			state,
 			label: this.props.label,

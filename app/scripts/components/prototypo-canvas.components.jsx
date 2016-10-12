@@ -47,8 +47,9 @@ export default class PrototypoCanvas extends React.Component {
 				this.setState(undefined);
 			});
 
+		fontInstance.removeAllListeners('manualchange');
 		fontInstance.on('manualchange', (changes, force = false) => {
-			this.client.dispatchAction('/change-glyph-node-manually', {glyphUnicode: this.props.glyphSelected, changes, force});
+			this.client.dispatchAction('/change-glyph-node-manually', {changes, force});
 		});
 	}
 

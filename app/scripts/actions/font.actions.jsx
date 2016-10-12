@@ -629,7 +629,8 @@ export default {
 				localClient.dispatchAction('/store-value-fast', resultValues);
 		});
 	},
-	'/change-glyph-node-manually': ({glyphUnicode, changes, force, label = 'glyph node manual'}) => {
+	'/change-glyph-node-manually': ({changes, force, label = 'glyph node manual'}) => {
+		const glyphUnicode = fontInstance.currGlyph.ot.unicode;
 		const db = (prototypoStore.get('variant') || {}).db;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
@@ -675,6 +676,7 @@ export default {
 
 		localServer.dispatchUpdate('/undoableStore', patch);
 		localClient.dispatchAction('/update-font', newParams);
+		debouncedSave(newParams, db);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
