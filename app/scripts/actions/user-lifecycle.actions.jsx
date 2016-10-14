@@ -411,7 +411,7 @@ export default {
 				}
 			});
 	},
-	'/sign-up': ({username, password, firstname, lastname, phone, skype, to, retry}) => {
+	'/sign-up': ({username, password, firstname, lastname, css, phone, skype, to, retry}) => {
 		const toLocation = {
 			pathname: to || '/dashboard',
 		};
@@ -468,6 +468,7 @@ export default {
 					app_id: 'mnph1bst',
 					email: username,
 					name: firstname + curedLastname,
+					occupation: css.value,
 					phone: phone,
 					skype: skype,
 					ABtest: Math.floor(Math.random() * 100),
@@ -483,7 +484,7 @@ export default {
 				});
 			})
 			.then(async () => {
-				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname, phone, skype};
+				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname, css, phone, skype};
 				const patch = userStore.set('infos', {accountValues}).commit();
 				await AccountValues.save({typeface: 'default', values: {accountValues}});
 				localServer.dispatchUpdate('/userStore', patch);
@@ -721,7 +722,7 @@ export default {
 			name: `${data.firstname}${lastname}`,
 			twitter: data.twitter,
 			website: data.website,
-			occupation: data.css,
+			occupation: data.css.value,
 			phone: data.phone,
 			skype: data.skype,
 		});

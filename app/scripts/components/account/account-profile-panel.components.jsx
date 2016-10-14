@@ -51,13 +51,12 @@ export default class AccountProfilePanel extends React.Component {
 	}
 
 	render() {
-		const values = [
+		const jobtitles = [
 			{value: 'graphic_designer', label: 'a graphic designer'},
-			{value: 'artistic_director', label: 'an artistic director'},
-			{value: 'web_developer', label: 'a web developer'},
-			{value: 'type_designer', label: 'a type designer'},
-			{value: 'teacher', label: 'a teacher'},
 			{value: 'student', label: 'a student'},
+			{value: 'teacher', label: 'a teacher'},
+			{value: 'type_designer', label: 'a type designer'},
+			{value: 'web_developer', label: 'a web developer'},
 		];
 
 		return this.state.infos.accountValues
@@ -74,7 +73,14 @@ export default class AccountProfilePanel extends React.Component {
 							<InputWithLabel ref="lastname" label="Last name" placeholder="Doe" required={false} inputValue={this.state.infos.accountValues.lastname}/>
 						</div>
 					</div>
-					<SelectWithLabel ref="css" label="I am" noResultsText="No result for this search" name="occupation" className="input-with-label-input" placeholder="an architect" options={values} inputValue={this.state.infos.accountValues.css}/>
+					<SelectWithLabel
+						ref="css"
+						label="I am"
+						name="css"
+						className="input-with-label-input"
+						placeholder="an architect"
+						options={jobtitles}
+						inputValue={this.state.infos.accountValues.css}/>
 					<div className="columns">
 						<div className="half-column">
 							<InputWithLabel ref="website" label="My website" placeholder="www.domain.com" required={false} inputValue={this.state.infos.accountValues.website}/>
