@@ -42,7 +42,7 @@
 
 	&-form {
 		color:$medium-grey;
-		padding: 20px;
+		height:100%;
 
 		&-close {
 			position: absolute;
@@ -51,6 +51,10 @@
 			border-radius: 50%;
 			right: -18px;
 			top: 15px;
+		}
+
+		&-scroll {
+			padding:20px;
 		}
 	}
 }
