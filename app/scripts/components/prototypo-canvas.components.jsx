@@ -48,8 +48,12 @@ export default class PrototypoCanvas extends React.Component {
 			});
 
 		fontInstance.removeAllListeners('manualchange');
+		fontInstance.removeAllListeners('manualreset');
 		fontInstance.on('manualchange', (changes, force = false) => {
 			this.client.dispatchAction('/change-glyph-node-manually', {changes, force});
+		});
+		fontInstance.on('manualreset', (contourId, nodeId, force = true) => {
+			this.client.dispatchAction('/reset-glyph-node-manually', {contourId, nodeId, force});
 		});
 	}
 
@@ -189,31 +193,31 @@ export default class PrototypoCanvas extends React.Component {
 		}
 
 		const unicodes = Object.keys(this.state.glyph);
-		const currentUnicode = unicodes.indexOf( this.props.glyphSelected );
+		const currentUnicode = unicodes.indexOf(this.props.glyphSelected);
 
 		// navigate in glyph list: left
 		if (e.keyCode === 37) {
-			if ( currentUnicode - 1 >= 1 ) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 1] });
+			if (currentUnicode - 1 >= 1) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 1]});
 			}
 		}
 		// navigate in glyph list: right
 		if (e.keyCode === 39) {
-			if ( currentUnicode + 1 <= unicodes.length - 1 ) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 1] });
+			if (currentUnicode + 1 <= unicodes.length - 1) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 1]});
 			}
 		}
 		// TODO: it only works when glyph list displays all glyphs
 		// navigate in glyph list: up
 		if (e.keyCode === 38) {
-			if ( currentUnicode - 4 >= 1 ) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 4] });
+			if (currentUnicode - 4 >= 1) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 4]});
 			}
 		}
 		// navigate in glyph list: down
 		if (e.keyCode === 40) {
-			if ( currentUnicode + 4 <= unicodes.length - 1 ) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 4] });
+			if (currentUnicode + 4 <= unicodes.length - 1) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 4]});
 			}
 		}
 	}
@@ -260,7 +264,7 @@ export default class PrototypoCanvas extends React.Component {
 
 	toggleCoords(e) {
 		e.stopPropagation();
-		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords, uiNodes: !this.props.uiCoords ? true : this.props.uiNodes});
+		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords, uiNodes: this.props.uiCoords ? this.props.uiNodes : true});
 	}
 
 	render() {

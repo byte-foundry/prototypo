@@ -81,7 +81,7 @@ export default {
 
 		const fontInstanceLoaded = new Event('fontInstance.loaded');
 
-		fontInstance.addListener('component.change', function(glyph, id , name) {
+		fontInstance.addListener('component.change', function(glyph, id, name) {
 			localClient.dispatchAction('/change-component', {glyph, id, name});
 		});
 
@@ -642,7 +642,6 @@ export default {
 
 		manualChanges[glyphUnicode] = manualChanges[glyphUnicode] || {};
 		manualChanges[glyphUnicode].cursors = manualChanges[glyphUnicode].cursors || {};
-		manualChanges[glyphUnicode].dirty = 0;
 
 		// adding deltas to modified cursors
 		Object.keys(changes).forEach((cursorKey) => {
@@ -672,7 +671,6 @@ export default {
 						...manualChanges[glyphUnicode].cursors,
 						...changes,
 					},
-					dirty: _.difference(Object.keys(changes), Object.keys(manualChanges[glyphUnicode].cursors)).length,
 				},
 			},
 		};
@@ -691,7 +689,50 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/change-component': ({glyph, id, name}) => {
+	'/reset-glyph-node-manually': ({contourId, nodeId, force, label = 'reset manual changes'}) => {
+		const glyphUnicode = fontInstance.currGlyph.ot.unicode;
+		const db = (prototypoStore.get('variant') || {}).db;
+		const oldValues = undoableStore.get('controlsValues');
+		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
+
+		manualChanges[glyphUnicode] = manualChanges[glyphUnicode] || {};
+		manualChanges[glyphUnicode].cursors = manualChanges[glyphUnicode].cursors || {};
+
+		// adding deltas to modified cursors
+		Object.keys(manualChanges[glyphUnicode].cursors).forEach((cursorKey) => {
+			if (cursorKey.indexOf(`contours.${contourId}.nodes.${nodeId}`) !== -1) {
+				delete manualChanges[glyphUnicode].cursors[cursorKey];
+			}
+		});
+
+		const newParams = {
+			...oldValues,
+			manualChanges: {
+				...manualChanges,
+				[glyphUnicode]: {
+					...manualChanges[glyphUnicode],
+					cursors: {
+						...manualChanges[glyphUnicode].cursors,
+					},
+				},
+			},
+		};
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', newParams);
+
+		debouncedSave(newParams, db);
+
+		if (force) {
+			undoWatcher.forceUpdate(patch, label);
+		}
+		else {
+			undoWatcher.update(patch, label);
+		}
+	},
+	'/change-component': ({glyph, id, name, label = 'change component'}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const oldValues = undoableStore.get('controlsValues');
 		const newParams = {
