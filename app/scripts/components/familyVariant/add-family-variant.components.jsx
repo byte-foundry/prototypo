@@ -224,7 +224,7 @@ export class AddVariant extends React.Component {
 				<div className="variant-error">{this.state.error}</div>
 				<div className="action-form-buttons">
 					<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
-					<Button click={(e) => {this.createVariant(e);} } label="Create family"/>
+					<Button click={(e) => {this.createVariant(e);} } label="Create variant"/>
 				</div>
 			</div>
 		);
