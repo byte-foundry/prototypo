@@ -689,7 +689,7 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/reset-glyph-node-manually': ({contourId, nodeId, force, label = 'reset manual changes'}) => {
+	'/reset-glyph-node-manually': ({contourId, nodeId, force, label = 'reset manual'}) => {
 		const glyphUnicode = fontInstance.currGlyph.ot.unicode;
 		const db = (prototypoStore.get('variant') || {}).db;
 		const oldValues = undoableStore.get('controlsValues');
@@ -753,5 +753,9 @@ export default {
 		debouncedSave(newParams, db);
 
 		undoWatcher.forceUpdate(patch, label);
+
+		setTimeout(function() {
+			fontInstance.displayGlyph();
+		}, 100);
 	},
 };

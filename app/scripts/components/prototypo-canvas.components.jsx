@@ -41,6 +41,7 @@ export default class PrototypoCanvas extends React.Component {
 					prototypoTextPanelOpened: head.toJS().uiMode.indexOf('text') !== -1,
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
 					glyph: head.toJS().glyphs,
+					glyphFocused: head.toJS().glyphFocused,
 				});
 			})
 			.onDelete(() => {
@@ -178,18 +179,24 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	handleShortcut(e) {
+		//if the glyph selectio is focused do nothin
+		if (this.state.glyphFocused) {
+			return;
+		}
 		// Zoom out to initial view
-		if (e.keyCode === 90 && !this.oldPos) {
+		if (e.keyCode === 90) {
 			e.preventDefault();
 			e.stopPropagation();
-			this.oldPos = {
-				uiPos: fontInstance.view.center,
-				uiZoom: fontInstance.zoom,
-				uiNodes: this.props.uiNodes,
-				uiOutline: this.props.uiOutline,
-			};
-			this.client.dispatchAction('/store-value', {uiNodes: false, uiOutline: false});
-			this.reset();
+			if (!this.oldPos) {
+				this.oldPos = {
+					uiPos: fontInstance.view.center,
+					uiZoom: fontInstance.zoom,
+					uiNodes: this.props.uiNodes,
+					uiOutline: this.props.uiOutline,
+				};
+				this.client.dispatchAction('/store-value', {uiNodes: false, uiOutline: false});
+				this.reset();
+			}
 		}
 
 		const unicodes = Object.keys(this.state.glyph);

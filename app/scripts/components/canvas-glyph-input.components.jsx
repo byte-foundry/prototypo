@@ -66,6 +66,7 @@ export default class CanvasGlyphInput extends React.Component {
 			evt.stopPropagation();
 			this.client.dispatchAction('/toggle-focus-direct-access');
 			window.removeEventListener('click', cleanGlyphAccess);
+			return false;
 		};
 
 		window.addEventListener('click', cleanGlyphAccess);
@@ -76,6 +77,7 @@ export default class CanvasGlyphInput extends React.Component {
 			'canvas-glyph-input-input': true,
 			'is-active': this.state.focused,
 		});
+
 		return (
 			<div className="canvas-menu-item canvas-glyph-input">
 				<div className="canvas-glyph-input-label is-active" onClick={() => { this.toggleView('list'); }} >Glyphs List</div>
