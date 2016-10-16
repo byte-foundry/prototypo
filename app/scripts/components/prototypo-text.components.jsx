@@ -279,7 +279,8 @@ export default class PrototypoText extends React.Component {
 				<ViewPanelsMenu
 					shifted={this.state.glyphPanelOpened}
 					show={this.state.showContextMenu}
-					toggle={this.toggleContextMenu}>
+					toggle={this.toggleContextMenu}
+					intercomShift={this.props.viewPanelRightMove}>
 					{menu}
 				</ViewPanelsMenu>
 				<ViewPanelsMenu

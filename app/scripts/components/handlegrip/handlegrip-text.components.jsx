@@ -36,14 +36,15 @@ export default class HandlegripText extends React.Component {
 		fontInstance.addOnceListener('worker.fontLoaded', () => {
 			fontInstance.getGlyphProperty(
 				this.getSelectedLetter(),
-				['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
-				({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight}) => {
+				['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight', 'glyphWidth'],
+				({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight, glyphWidth}) => {
 					this.setState({
 						advanceWidth,
 						spacingLeft,
 						spacingRight,
 						baseSpacingLeft,
 						baseSpacingRight,
+						glyphWidth,
 					});
 				}
 			);
@@ -94,6 +95,7 @@ export default class HandlegripText extends React.Component {
 					unClampedOldValue: head.toJS().unClampedOldValue,
 					advanceWidth: head.toJS().advanceWidth || this.state.advanceWidth,
 					clampedValue: head.toJS().clampedValue,
+					glyphWidth: head.toJS().glyphWidth !== undefined ? head.toJS().glyphWidth : this.state.glyphWidth,
 				});
 			})
 			.onDelete(() => {
@@ -217,8 +219,11 @@ export default class HandlegripText extends React.Component {
 			const baseSpacing = leftSideTracking
 				? this.state.baseSpacingLeft
 				: this.state.baseSpacingRight;
+			const otherSpacing = leftSideTracking
+				? this.state.spacingRight
+				: this.state.spacingLeft;
 
-			clampedNewValue = Math.min(Math.max(newValue, (this.props.min - baseSpacing)), this.props.max);
+			clampedNewValue = Math.min(Math.max(newValue, -this.state.glyphWidth - otherSpacing + 100), this.props.max);
 		}
 		else {
 			clampedNewValue = newX < offsetLeft ? this.props.min : this.props.max;
@@ -262,7 +267,7 @@ export default class HandlegripText extends React.Component {
 		// directly from the globaly available font instance
 		this.client.dispatchAction('/update-letter-spacing-value', {
 			letter: this.getSelectedLetter(),
-			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight'],
+			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight', 'glyphWidth'],
 		});
 	}
 
@@ -271,7 +276,7 @@ export default class HandlegripText extends React.Component {
 		// directly from the globaly available font instance
 		this.client.dispatchAction('/update-letter-spacing-value', {
 			letter: this.getSelectedLetter(),
-			valueList: ['advanceWidth'],
+			valueList: ['advanceWidth', 'glyphWidth'],
 		});
 	}
 
@@ -322,7 +327,7 @@ export default class HandlegripText extends React.Component {
 		this.client.dispatchAction('/store-value', {uiWordSelection: index});
 		this.client.dispatchAction('/update-letter-spacing-value', {
 			letter: letter.charCodeAt(0),
-			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
+			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight', 'glyphWidth'],
 		});
 	}
 

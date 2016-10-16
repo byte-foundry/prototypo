@@ -111,7 +111,7 @@ gulp.task('watch-font', function() {
 });
 
 gulp.task('watch-prototypojs', function() {
-	return gulp.watch(['./node_modules/prototypo.js/dist/prototypo.js','./node_modules/prototypo-canvas/dist/prototypo-canvas.js'], ['cp-prototypo.js']);
+	return gulp.watch(['./node_modules/prototypo.js/dist/prototypo.js','./node_modules/prototypo-canvas/src/worker.js'], ['cp-prototypo.js']);
 });
 
 gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','watch-font', 'watch-prototypojs','webpack:dll'], function(callback) {

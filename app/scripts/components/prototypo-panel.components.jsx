@@ -95,6 +95,15 @@ export default class PrototypoPanel extends React.Component {
 		let textAndGlyph;
 		let word;
 
+		const hasGlyph = this.state.uiMode.indexOf('glyph') !== -1;
+		const hasText = this.state.uiMode.indexOf('text') !== -1;
+		const hasWord = this.state.uiMode.indexOf('word') !== -1;
+
+		//This is for moving the view panels away from the intercom launcher
+		const textIntercomDisplacement = hasText;
+		const glyphIntercomDisplacement = hasGlyph && !hasText;
+		const wordIntercomDisplacement = hasWord && !hasText && !hasGlyph;
+
 		textAndGlyph = [<PrototypoCanvas
 			key="canvas"
 			uiZoom={this.state.uiZoom}
@@ -107,9 +116,8 @@ export default class PrototypoPanel extends React.Component {
 			glyphs={this.state.glyphs}
 			glyphSelected={this.state.glyphSelected}
 			reset={(pos) => { this.resetView(pos); }}
+			viewPanelRightMove={glyphIntercomDisplacement}
 			close={(name) => { this.toggleView(name); }}/>];
-		const hasGlyph = this.state.uiMode.indexOf('glyph') !== -1;
-		const hasText = this.state.uiMode.indexOf('text') !== -1;
 
 		if (hasText) {
 			textAndGlyph.push(<PrototypoText
@@ -121,13 +129,14 @@ export default class PrototypoPanel extends React.Component {
 				uiText={this.state.uiText}
 				indivCurrentGroup={this.state.indivCurrentGroup}
 				close={(name) => { this.toggleView(name); }}
+				viewPanelRightMove={textIntercomDisplacement}
 				field="uiText"/>);
 		}
 		else if (hasGlyph && this.state.uiShadow) {
 			textAndGlyph.push(<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>);
 		}
 
-		if (this.state.uiMode.indexOf('word') !== -1) {
+		if (hasWord) {
 			word = <PrototypoWord
 				key="word"
 				fontName={this.props.fontName}
@@ -137,6 +146,8 @@ export default class PrototypoPanel extends React.Component {
 				uiWord={this.state.uiWord}
 				indivCurrentGroup={this.state.indivCurrentGroup}
 				close={(name) => { this.toggleView(name); }}
+
+				viewPanelRightMove={wordIntercomDisplacement}
 				field="uiWord"/>;
 		}
 
