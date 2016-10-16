@@ -14,6 +14,7 @@ export default class CanvasGlyphInput extends React.Component {
 			mode: [],
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.handleKeyPress = this.handleKeyPress.bind(this);
 	}
 
 	componentWillMount() {
@@ -32,20 +33,23 @@ export default class CanvasGlyphInput extends React.Component {
 				this.setState(undefined);
 			});
 
-		window.addEventListener('keypress', (e) => {
-			if (this.state.focused) {
-				e.preventDefault();
-				e.stopPropagation();
+		window.addEventListener('keypress', this.handleKeyPress);
+	}
 
-				this.client.dispatchAction('/select-glyph', {
-					unicode: `${e.charCode}`,
-				});
-			}
-		});
+	handleKeyPress(e) {
+		if (this.state.focused) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			this.client.dispatchAction('/select-glyph', {
+				unicode: `${e.charCode}`,
+			});
+		}
 	}
 
 	componentWillUnmount() {
 		this.lifespan.release();
+		window.removeEventListener('keypress', this.handleKeyPress);
 	}
 
 	toggleView(name) {
