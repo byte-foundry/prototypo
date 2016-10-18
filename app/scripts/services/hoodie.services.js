@@ -248,10 +248,6 @@ async function setupStripe(data, time = 1000) {
 
 			localClient.dispatchAction('/load-customer-data', customer);
 
-			const invoices = await HoodieApi.getInvoiceList();
-
-			localClient.dispatchAction('/load-customer-invoices', invoices);
-
 			return;
 		}
 		catch (e) { /* don't need to catch anything, just next step */ }

@@ -295,7 +295,12 @@ export default {
 		const patch = userStore.set('infos', infos).commit();
 		localServer.dispatchUpdate('/userStore', patch);
 	},
-	'/load-customer-invoices': (invoices) => {
+	'/load-customer-invoices': async () => {
+		const invoices = await HoodieApi.getInvoiceList();
+
+		localClient.dispatchAction('/set-customer-invoices', invoices);
+	},
+	'/set-customer-invoices': (invoices) => {
 		const patch = userStore.set('invoices', invoices).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);
@@ -803,7 +808,7 @@ export default {
 			'export_credits': data.credits,
 		});
 
-		const transacId = HoodieApi.instance.email + new Date.getTime();
+		const transacId = HoodieApi.instance.email + (new Date).getTime();
 
 		ga('ecommerce:addTransaction', {
 			'id': transacId,

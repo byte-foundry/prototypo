@@ -19,12 +19,14 @@ export default class AccountInvoiceList extends React.Component {
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					invoices: head.toJS().d.invoices,
+					invoices: head.toJS().d.invoices || [],
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		this.client.dispatchAction('/load-customer-invoices');
 	}
 
 	componentWillUnmount() {
@@ -32,7 +34,7 @@ export default class AccountInvoiceList extends React.Component {
 	}
 
 	render() {
-		const invoices = this.state.invoices ? this.state.invoices.map((invoice) => {
+		const invoices = this.state.invoices.length > 0 ? this.state.invoices.map((invoice) => {
 			return <InvoiceLink invoice={invoice} key={invoice.id}/>;
 		}) : (
 			<p>
