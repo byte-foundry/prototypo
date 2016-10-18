@@ -7,11 +7,14 @@ import getCurrency from '../../helpers/currency.helpers.js';
 
 import HoodieApi from '../../services/hoodie.services.js';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
+import WaitForLoad from '../wait-for-load.components';
 
 export default class AccountConfirmPlan extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+
+		this.confirmPlanChange = this.confirmPlanChange.bind(this);
 	}
 
 	componentWillMount() {
@@ -25,15 +28,20 @@ export default class AccountConfirmPlan extends React.Component {
 					const currency = getCurrency(head.toJS().d.infos.card[0].country);
 					const planId = `${planBase}_${currency}_taxfree`;
 
+					this.setState({
+						loading: !this.state.invoice, // if invoice already here, don't show we're reloading it
+						confirmationLoading: head.toJS().confirmation.loading,
+						plan: planBase,
+						currency,
+					});
+
 					HoodieApi.getUpcomingInvoice({
 						'subscription_plan': planId,
 					})
 					.then((data) => {
 						this.setState({
-							plan: planBase,
-							currency,
 							invoice: data,
-							loading: head.toJS().d.confirmation.loading,
+							loading: false,
 						});
 					});
 				}
@@ -56,15 +64,15 @@ export default class AccountConfirmPlan extends React.Component {
 	}
 
 	render() {
-		const invoice = this.state.invoice
-			? <Invoice invoice={this.state.invoice}/>
-			: false;
+		const invoice = this.state.invoice && <Invoice invoice={this.state.invoice}/>;
 
 		return (
 			<div className="account-base account-confirm-plan">
 				<h1 className="subscription-title">This is what you will be charged</h1>
-				{invoice}
-				<AccountValidationButton label="Confirm plan change" click={() => {this.confirmPlanChange();}}/>
+				<WaitForLoad loaded={!this.state.loading}>
+					{invoice}
+				</WaitForLoad>
+				<AccountValidationButton loading={this.state.confirmationLoading} label="Confirm plan change" click={this.confirmPlanChange}/>
 			</div>
 		);
 	}
@@ -72,8 +80,9 @@ export default class AccountConfirmPlan extends React.Component {
 
 class Invoice extends React.Component {
 	render() {
+		const {currency, lines} = this.props.invoice;
 
-		const currencySymbol = this.props.invoice.currency === 'usd'
+		const currencySymbol = currency === 'usd'
 			? {
 				before: '$',
 				after: '',
@@ -82,10 +91,11 @@ class Invoice extends React.Component {
 				before: '',
 				after: '€',
 			};
-		const total = _.reduce(this.props.invoice.lines.data, (sum, line) => {
+
+		const total = lines.data.reduce((sum, line) => {
 			return sum + line.amount;
 		}, 0);
-		const lines = _.map(this.props.invoice.lines.data, (line) => {
+		const invoiceLines = lines.data.map((line) => {
 			return <InvoiceLine line={line} symbol={currencySymbol}/>;
 		});
 
@@ -93,14 +103,14 @@ class Invoice extends React.Component {
 			<table className="invoice">
 				<thead>
 					<tr>
-						<th className="invoice-big-head">description</th>
-						<th>amount</th>
+						<th className="invoice-big-head">Description</th>
+						<th>Amount</th>
 					</tr>
 				</thead>
 				<tbody>
-					{lines}
+					{invoiceLines}
 					<tr className="invoice-total">
-						<td className="invoice-total-label">total</td>
+						<td className="invoice-total-label">Total</td>
 						<td className="invoice-total-amount">{currencySymbol.before + ((total / 100).toFixed(2)) + currencySymbol.after}</td>
 					</tr>
 				</tbody>

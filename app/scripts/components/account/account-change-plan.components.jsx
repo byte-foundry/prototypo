@@ -99,7 +99,7 @@ export default class AccountChangePlan extends React.Component {
 						</DisplayWithLabel>
 					</div>
 					<SelectWithLabel ref="select" label="Which plan are you interested in?" noResultsText={"No plan with this name"} options={options}/>
-					<AccountValidationButton label="Confirm plan change" loading={this.state.loading}/>
+					<AccountValidationButton label="Change plan" loading={this.state.loading}/>
 				</form>
 			);
 		return content;

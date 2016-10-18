@@ -651,9 +651,11 @@ export default {
 		}).then(async (data) => {
 			const infos = _.cloneDeep(userStore.get('infos'));
 
+			form.loading = false;
 			infos.plan = data.plan.id;
 			const patch = userStore
 				.set('infos', infos)
+				.set('confirmation', form)
 				.commit();
 
 			ga('ecommerce:addTransaction', {
