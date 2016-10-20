@@ -77,9 +77,10 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 			const infos = userStore.get('infos');
 
 			HoodieApi.updateCustomer({
+				business_vat_id: vat || info.vat, // Stripe way of storing VAT
 				source: data.id,
 				metadata: {
-					vat_number: vat || infos.vat,
+					vat_number: vat || infos.vat, // Quaderno way of reading VAT
 				},
 			})
 			.then(() => {
@@ -142,7 +143,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 			exp_month: expMonth,
 			exp_year: expYear,
 			name: fullname,
-		}, (status, data) => {
+		}, async (status, data) => {
 			if (data.error) {
 				form.errors.push(data.error.message);
 				form.loading = false;
@@ -157,17 +158,25 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 				parent: `5_credits_${currency === 'EUR' ? 'EUR' : 'USD'}`,
 			};
 
+			const vatNumber = vat || infos.vat;
+
+			await HoodieApi.updateCustomer({
+				business_vat_id: vatNumber, // Stripe way of storing VAT
+				metadata: {
+					// test if (EU) VAT number is valid with country code at the beginning
+					country: /[A-Z]{2}/.test(vatNumber) ? vatNumber.trim().slice(0, 2) : undefined,
+					vat_number: vatNumber, // Quaderno way of reading VAT
+				},
+			});
+
 			HoodieApi.buyCredits({
-				// we use tokens instead of source
-				// otherwise backend would attach the card to the customer
 				token: data.id,
-				email: HoodieApi.instance.email,
 				currency: currency === 'EUR' ? 'EUR' : 'USD',
 				items: [item],
 			})
 			.then(({metadata: {credits}}) => {
 				infos.card = [data.card];
-				infos.vat = vat || infos.vat;
+				infos.vat = vatNumber;
 				form.loading = false;
 				const patch = userStore.set('infos', infos).set('buyCreditsForm', form).commit();
 
