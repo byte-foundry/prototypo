@@ -129,7 +129,7 @@ export default class CreditsExport extends React.Component {
 				<form className="sign-in-form" onSubmit={this.handleSubmit}>
 					<AddCard ref="card" inError={this.state.inError}/>
 					{errors}
-					<div className="add-family-form-buttons">
+					<div className="action-form-buttons">
 						<Button click={this.exit} label="Cancel" neutral={true}/>
 						<Button click={this.handleSubmit} label={`Buy 5 credits for 5 ${currency}`} loading={this.state.loading}/>
 					</div>

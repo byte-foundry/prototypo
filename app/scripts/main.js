@@ -68,6 +68,7 @@ import '../styles/components/shared/invoice.scss';
 import '../styles/components/shared/loading-overlay.scss';
 import '../styles/components/shared/button.scss';
 import '../styles/components/shared/modal.scss';
+import '../styles/components/shared/action-form-buttons.scss';
 import '../styles/components/toolbar/toolbar.scss';
 import '../styles/components/toolbar/arianne-thread.scss';
 import '../styles/components/toolbar/view-buttons.scss';

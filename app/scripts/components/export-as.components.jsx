@@ -46,7 +46,7 @@ export default class ExportAs extends React.Component {
 							<InputWithLabel label="Variant name" ref="variant"/>
 						</div>
 					</div>
-					<div className="add-family-form-buttons">
+					<div className="action-form-buttons">
 						<Button click={this.exit} label="Cancel" neutral={true}/>
 						<Button click={this.exportAs} label="Export"/>
 					</div>

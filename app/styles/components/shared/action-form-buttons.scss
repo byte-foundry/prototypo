@@ -1,0 +1,14 @@
+.action-form-buttons {
+	justify-content: flex-end;
+	display:flex;
+
+	& .button {
+		padding:10px 20px;
+		margin-left:10px;
+
+		&.loading {
+			padding-top: 5px;
+			padding-bottom: 5px;
+		}
+	}
+}
