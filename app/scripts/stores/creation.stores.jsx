@@ -235,6 +235,7 @@ const couponStore = new Remutable({
 	'fee64920dd5880a397e9127b85fc891b': {label: '66% off your first month!'},
 	'ec97fbff4acbb75abae0951d899bf580': {label: '70% off the annual price for schools!'},
 	'9840edae45eeeaefa0591cd872c583ed': {label: 'The first month for $5!'},
+	'de7ce5e5ee6d2527aa5aa0d1f624e704': {label: '50% off your annual subscription - Domestika discount'},
 });
 
 const planStore = new Remutable({
