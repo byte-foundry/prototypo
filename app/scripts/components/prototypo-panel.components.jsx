@@ -132,7 +132,8 @@ export default class PrototypoPanel extends React.Component {
 				viewPanelRightMove={textIntercomDisplacement}
 				field="uiText"/>);
 		}
-		else if (hasGlyph && this.state.uiShadow) {
+		// else if (hasGlyph && this.state.uiShadow) {
+		else if (hasGlyph) {
 			textAndGlyph.push(<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>);
 		}
 
