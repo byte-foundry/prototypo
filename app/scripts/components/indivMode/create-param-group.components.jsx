@@ -1,6 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import ScrollArea from 'react-scrollbar';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -139,10 +140,6 @@ export default class CreateParamGroup extends React.Component {
 			</div>
 		) : false;
 
-		const glyphs = _.map(this.state.selected, (glyph) => {
-			return <div key={glyph} onClick={() => { this.removeGlyph(glyph);}} className="delete-param-group-glyph">{String.fromCharCode(glyph)}</div>;
-		});
-
 		const buttons = this.props.editMode
 			? [
 				<Button key="open" label="Open in prototypo" neutral={true} click={this.openGroup}/>,
@@ -166,15 +163,19 @@ export default class CreateParamGroup extends React.Component {
 					<div className="create-param-group-form-close">
 						<CloseButton click={this.close}/>
 					</div>
-					<InputWithLabel ref="groupname" label="Group name" inputValue={this.props.group ? this.props.group.name : ''}/>
-					<GlyphGrid
-						forbidden={this.state.forbiddenGlyphs}
-						select={this.selectGlyph}
-						tagSelected={this.state.tagSelected}
-						selected={this.props.group ? this.props.group.glyphs : this.state.selected}
-						tags={this.state.tags}/>
-					{error}
-					{buttons}
+					<ScrollArea horizontal={false}>
+						<div className="create-param-group-form-scroll">
+							<InputWithLabel ref="groupname" label="Group name" inputValue={this.props.group ? this.props.group.name : ''}/>
+							<GlyphGrid
+								forbidden={this.state.forbiddenGlyphs}
+								select={this.selectGlyph}
+								tagSelected={this.state.tagSelected}
+								selected={this.props.group ? this.props.group.glyphs : this.state.selected}
+								tags={this.state.tags}/>
+							{error}
+							{buttons}
+						</div>
+					</ScrollArea>
 				</form>
 			</div>
 		);

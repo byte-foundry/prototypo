@@ -29,6 +29,7 @@ export default class ViewPanelsMenu extends React.Component {
 			'is-wide-right': this.props.wideRight,
 			'is-shifted': this.props.shifted,
 			'textpanel-closed': this.props.textPanelClosed,
+			'is-intercom-shift': this.props.intercomShift,
 		});
 
 		const menu = this.props.show

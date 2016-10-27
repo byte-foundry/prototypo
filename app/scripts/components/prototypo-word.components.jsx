@@ -277,7 +277,8 @@ export default class PrototypoWord extends React.Component {
 					<ViewPanelsMenu
 						show={this.state.showContextMenu}
 						shifted={this.state.glyphPanelOpened}
-						toggle={this.toggleContextMenu}>
+						toggle={this.toggleContextMenu}
+						intercomShift={this.props.viewPanelRightMove}>
 						{menu}
 					</ViewPanelsMenu>
 					<div className={actionBar}>

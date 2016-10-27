@@ -41,11 +41,21 @@ export default class PrototypoCanvas extends React.Component {
 					prototypoTextPanelOpened: head.toJS().uiMode.indexOf('text') !== -1,
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
 					glyph: head.toJS().glyphs,
+					glyphFocused: head.toJS().glyphFocused,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		fontInstance.removeAllListeners('manualchange');
+		fontInstance.removeAllListeners('manualreset');
+		fontInstance.on('manualchange', (changes, force = false) => {
+			this.client.dispatchAction('/change-glyph-node-manually', {changes, force});
+		});
+		fontInstance.on('manualreset', (contourId, nodeId, force = true) => {
+			this.client.dispatchAction('/reset-glyph-node-manually', {contourId, nodeId, force});
+		});
 	}
 
 	componentWillUnmount() {
@@ -110,10 +120,6 @@ export default class PrototypoCanvas extends React.Component {
 		this.setupCanvas();
 	}
 
-	mouseMove(e) {
-		fontInstance.onMove.bind(fontInstance)(e);
-	}
-
 	wheel(e) {
 		fontInstance.onWheel.bind(fontInstance)(e);
 		this.client.dispatchAction('/store-value', {
@@ -128,13 +134,11 @@ export default class PrototypoCanvas extends React.Component {
 		return false;
 	}
 
-	mouseDown(e) {
-		fontInstance.onDown.bind(fontInstance)(e);
+	mouseDown() {
 		document.addEventListener('selectstart', this.preventSelection);
 	}
 
-	mouseUp(e) {
-		fontInstance.onUp.bind(fontInstance)(e);
+	mouseUp() {
 		this.client.dispatchAction('/store-value', {
 			uiPos: fontInstance.view.center,
 			uiZoom: fontInstance.zoom,
@@ -146,7 +150,6 @@ export default class PrototypoCanvas extends React.Component {
 		const canvasContainer = this.refs.canvas;
 
 		canvasContainer.appendChild(window.canvasElement);
-		canvasContainer.addEventListener('mousemove', (e) => { this.mouseMove(e); });
 		canvasContainer.addEventListener('wheel', (e) => { this.wheel(e); });
 		canvasContainer.addEventListener('mousedown', (e) => { this.mouseDown(e); });
 		canvasContainer.addEventListener('mouseup', (e) => { this.mouseUp(e); });
@@ -176,46 +179,52 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	handleShortcut(e) {
+		//if the glyph selectio is focused do nothin
+		if (this.state.glyphFocused) {
+			return;
+		}
 		// Zoom out to initial view
-		if (e.keyCode === 90 && !this.oldPos) {
+		if (e.keyCode === 90) {
 			e.preventDefault();
 			e.stopPropagation();
-			this.oldPos = {
-				uiPos: fontInstance.view.center,
-				uiZoom: fontInstance.zoom,
-				uiNodes: this.props.uiNodes,
-				uiOutline: this.props.uiOutline,
-			};
-			this.client.dispatchAction('/store-value', {uiNodes: false, uiOutline: false});
-			this.reset();
+			if (!this.oldPos) {
+				this.oldPos = {
+					uiPos: fontInstance.view.center,
+					uiZoom: fontInstance.zoom,
+					uiNodes: this.props.uiNodes,
+					uiOutline: this.props.uiOutline,
+				};
+				this.client.dispatchAction('/store-value', {uiNodes: false, uiOutline: false});
+				this.reset();
+			}
 		}
 
 		const unicodes = Object.keys(this.state.glyph);
-		const currentUnicode = unicodes.indexOf( this.props.glyphSelected );
+		const currentUnicode = unicodes.indexOf(this.props.glyphSelected);
 
 		// navigate in glyph list: left
 		if (e.keyCode === 37) {
-			if ( currentUnicode - 1 >= 1 ) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 1] });
+			if (currentUnicode - 1 >= 1) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 1]});
 			}
 		}
 		// navigate in glyph list: right
 		if (e.keyCode === 39) {
-			if ( currentUnicode + 1 <= unicodes.length - 1 ) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 1] });
+			if (currentUnicode + 1 <= unicodes.length - 1) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 1]});
 			}
 		}
 		// TODO: it only works when glyph list displays all glyphs
 		// navigate in glyph list: up
 		if (e.keyCode === 38) {
-			if ( currentUnicode - 4 >= 1 ) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 4] });
+			if (currentUnicode - 4 >= 1) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 4]});
 			}
 		}
 		// navigate in glyph list: down
 		if (e.keyCode === 40) {
-			if ( currentUnicode + 4 <= unicodes.length - 1 ) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 4] });
+			if (currentUnicode + 4 <= unicodes.length - 1) {
+				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 4]});
 			}
 		}
 	}
@@ -262,7 +271,7 @@ export default class PrototypoCanvas extends React.Component {
 
 	toggleCoords(e) {
 		e.stopPropagation();
-		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords, uiNodes: !this.props.uiCoords ? true : this.props.uiNodes});
+		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords, uiNodes: this.props.uiCoords ? this.props.uiNodes : true});
 	}
 
 	render() {
@@ -322,7 +331,8 @@ export default class PrototypoCanvas extends React.Component {
 					show={this.state.showContextMenu}
 					shifted={isShifted}
 					textPanelClosed={textPanelClosed}
-					toggle={this.toggleContextMenu}>
+					toggle={this.toggleContextMenu}
+					intercomShift={this.props.viewPanelRightMove}>
 					{menu}
 				</ViewPanelsMenu>
 				<div className="canvas-menu">
