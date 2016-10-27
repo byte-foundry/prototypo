@@ -2,7 +2,7 @@
 
 .modal {
 	position:absolute;
-	z-index:12;
+	z-index:14;
 	@include themify() {
 		background-color: rgba($theme-background, 0.9);
 	}
