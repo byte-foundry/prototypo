@@ -99,4 +99,4 @@ This operation currently requires either [Fontforge](http://fontforge.github.io/
 License
 =======
 
-[GPLv3](GPL-LICENSE.txt)
+Files with a `.js`, `.jsx` or `.json` extension in this repository are licensed under MPLv2. All other files (including `.css`, `.scss`, `.svg` and `.png` files) are the property of Prototypo SAS and cannot be redistributed outside of a Github.com repository. Prototypo and its logo are registered trademarks of Prototypo SAS.
