@@ -1,6 +1,6 @@
 import {hashHistory} from 'react-router';
 import Lifespan from 'lifespan';
-import md5 from 'md5';
+import debounce from 'lodash/debounce';
 
 import {userStore, couponStore, prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
@@ -284,6 +284,10 @@ function addBillingAddress({buyerName, address}) {
 	});
 }
 
+const validateCoupon = debounce((options) => {
+	return localClient.dispatchAction('/validate-coupon', options);
+}, 500);
+
 export default {
 	'/load-customer-data': ({sources, subscriptions, metadata}) => {
 		const infos = _.cloneDeep(userStore.get('infos'));
@@ -540,7 +544,8 @@ export default {
 	'/choose-plan': ({plan, coupon}) => {
 		const form = userStore.get('choosePlanForm');
 
-		form.error = undefined;
+		delete form.error;
+
 		if (plan) {
 			form.selected = plan;
 		}
@@ -550,17 +555,34 @@ export default {
 		}
 
 		if (form.selected && form.couponValue) {
-			const hash = md5(`${form.couponValue}.${form.selected}`);
-
-			form.isCouponValid = couponStore.get(hash) || false;
-		}
-		else {
-			delete form.isCouponValid;
+			delete form.validCoupon;
+			delete form.couponError;
+			validateCoupon({
+				plan,
+				coupon: form.couponValue,
+			});
 		}
 
 		const patch = userStore.set('choosePlanForm', form).commit();
 
 		window.Intercom('trackEvent', `chosePlan${plan}`);
+
+		return localServer.dispatchUpdate('/userStore', patch);
+	},
+	'/validate-coupon': async ({plan, coupon}) => {
+		const form = userStore.get('choosePlanForm');
+
+		try {
+			form.validCoupon = await HoodieApi.validateCoupon({
+				coupon: form.couponValue,
+				plan: form.selected,
+			});
+		}
+		catch(err) {
+			form.couponError = err.message;
+		}
+
+		const patch = userStore.set('choosePlanForm', form).commit();
 
 		return localServer.dispatchUpdate('/userStore', patch);
 	},
@@ -573,17 +595,17 @@ export default {
 
 		localServer.dispatchUpdate('/userStore', cleanPatch);
 
-		if (!plan) {
-			form.error = 'You must select a plan';
-			form.loading = false;
-			const patch = userStore.set('choosePlanForm', form).commit();
+		try {
+			if (!plan) {
+				throw new Error('You must select a plan');
+			}
 
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-
-		if (form.isCouponValid === false) {
-			form.error = 'Coupon code is invalid';
+			if (form.couponValue && !form.validCoupon) {
+				throw new Error(form.couponError || 'Coupon code is invalid');
+			}
+		} catch({message}) {
 			form.loading = false;
+			form.error = message;
 			const patch = userStore.set('choosePlanForm', form).commit();
 
 			return localServer.dispatchUpdate('/userStore', patch);
@@ -592,22 +614,16 @@ export default {
 		const infos = userStore.get('infos');
 
 		infos.plan = plan;
-		infos.isCouponValid = form.isCouponValid;
-		infos.couponValue = form.isCouponValid && form.couponValue;
+		infos.couponValue = form.couponValue;
 		form.loading = false;
 		const patch = userStore.set('infos', infos).set('choosePlanForm', form).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);
 
-		if (infos.isCouponValid) {
-			if (infos.isCouponValid.shouldSkipCard) {
-				hashHistory.push({
-					pathname: '/account/create/confirmation',
-				});
-			}
-			else {
-				hashHistory.push(pathQuery);
-			}
+		if (infos.validCoupon && infos.validCoupon.shouldSkipCard) {
+			hashHistory.push({
+				pathname: '/account/create/confirmation',
+			});
 		}
 		else {
 			hashHistory.push(pathQuery);
