@@ -79,6 +79,7 @@ import '../styles/components/viewPanels/view-panels-menu.scss';
 import '../styles/components/views/prototypo-word-input.scss';
 import '../styles/components/indivMode/indiv-group-list.scss';
 import '../styles/components/indivMode/indiv-sidebar.scss';
+import '../styles/components/canvasTools/canvas-bar.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';

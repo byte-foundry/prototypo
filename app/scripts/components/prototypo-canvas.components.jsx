@@ -11,6 +11,7 @@ import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import CanvasGlyphInput from './canvas-glyph-input.components.jsx';
 import AlternateMenu from './alternate-menu.components.jsx';
+import CanvasBar from './canvasTools/canvas-bar.components.jsx';
 
 export default class PrototypoCanvas extends React.Component {
 
@@ -72,7 +73,6 @@ export default class PrototypoCanvas extends React.Component {
 				: new prototypo.paper.Point(this.props.uiPos[1], this.props.uiPos[2])
 			: fontInstance.view.center;
 
-		fontInstance.showNodes = this.props.uiNodes || false;
 		fontInstance.showCoords = this.props.uiCoords || false;
 		fontInstance.fill = !this.props.uiOutline;
 
@@ -202,6 +202,10 @@ export default class PrototypoCanvas extends React.Component {
 		const unicodes = Object.keys(this.state.glyph);
 		const currentUnicode = unicodes.indexOf(this.props.glyphSelected);
 
+		if (e.keyCode === 32) {
+			this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
+		}
+
 		// navigate in glyph list: left
 		if (e.keyCode === 37) {
 			if (currentUnicode - 1 >= 1) {
@@ -241,6 +245,9 @@ export default class PrototypoCanvas extends React.Component {
 			e.stopPropagation();
 			this.client.dispatchAction('/store-value', this.oldPos);
 			this.oldPos = undefined;
+		}
+		if (e.keyCode === 32) {
+			this.client.dispatchAction('/toggle-canvas-mode');
 		}
 	}
 
@@ -323,6 +330,7 @@ export default class PrototypoCanvas extends React.Component {
 				className={canvasClass}
 				onClick={this.handleLeaveAndClick}
 				onMouseLeave={this.handleLeaveAndClick}>
+				<CanvasBar/>
 				<div ref="canvas" className="prototypo-canvas-container" onMouseLeave={() => {this.rejectShortcut();}} onMouseEnter={() => { this.acceptShortcut();}} onDoubleClick={() => { this.reset(); }}></div>
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
