@@ -202,7 +202,7 @@ export default class PrototypoCanvas extends React.Component {
 		const unicodes = Object.keys(this.state.glyph);
 		const currentUnicode = unicodes.indexOf(this.props.glyphSelected);
 
-		if (e.keyCode === 32) {
+		if (e.keyCode === 32 && !fontInstance.allowMove) {
 			this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
 		}
 

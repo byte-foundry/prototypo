@@ -72,6 +72,7 @@ export default {
 	},
 	'/toggle-canvas-mode': ({canvasMode = prototypoStore.get('oldCanvasMode')}) => {
 		fontInstance.showNodes = canvasMode === 'select-points';
+		fontInstance.allowMove = canvasMode === 'move';
 		const showComponent = canvasMode === 'components';
 		const oldShowComponent = fontInstance._showComponents;
 
