@@ -128,17 +128,23 @@ export default class PrototypoCanvas extends React.Component {
 		});
 	}
 
+	mouseMove(e) {
+		fontInstance.onMove.bind(fontInstance)(e);
+	}
+
 	preventSelection(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		return false;
 	}
 
-	mouseDown() {
+	mouseDown(e) {
+		fontInstance.onDown.bind(fontInstance)(e);
 		document.addEventListener('selectstart', this.preventSelection);
 	}
 
-	mouseUp() {
+	mouseUp(e) {
+		fontInstance.onUp.bind(fontInstance)(e);
 		this.client.dispatchAction('/store-value', {
 			uiPos: fontInstance.view.center,
 			uiZoom: fontInstance.zoom,
@@ -150,6 +156,7 @@ export default class PrototypoCanvas extends React.Component {
 		const canvasContainer = this.refs.canvas;
 
 		canvasContainer.appendChild(window.canvasElement);
+		canvasContainer.addEventListener('mousemove', (e) => { this.mouseMove(e); });
 		canvasContainer.addEventListener('wheel', (e) => { this.wheel(e); });
 		canvasContainer.addEventListener('mousedown', (e) => { this.mouseDown(e); });
 		canvasContainer.addEventListener('mouseup', (e) => { this.mouseUp(e); });
