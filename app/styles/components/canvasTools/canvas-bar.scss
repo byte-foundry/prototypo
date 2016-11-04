@@ -1,0 +1,45 @@
+@import "../../_variables.scss";
+
+.canvas-bar {
+	background-color: white;
+	border: solid 2px $dark-grey;
+	border-radius: 5px;
+	position: absolute;
+	top:10px;
+	display:flex;
+
+	.move#{&}-button {
+		background-image: url('../../../images/move.svg');
+	}
+
+	.components#{&}-button {
+		background-image: url('../../../images/components.svg');
+	}
+
+	.select-points#{&}-button {
+		background-image: url('../../../images/select-points.svg');
+	}
+
+	&-button {
+		width: 25px;
+		height: 25px;
+		cursor: pointer;
+		border-right: solid 2px $dark-grey;
+		box-sizing: content-box;
+
+		&:first-of-type {
+			border-top-left-radius: 3px;
+			border-bottom-left-radius: 3px;
+		}
+
+		&:last-of-type {
+			border-right: none;
+			border-top-right-radius: 3px;
+			border-bottom-right-radius: 3px;
+		}
+
+		&:hover, &.is-active {
+			background-color: $green;
+		}
+	}
+}

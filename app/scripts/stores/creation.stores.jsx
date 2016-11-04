@@ -117,6 +117,7 @@ const prototypoStore = new Remutable({
 	uiWord: '',
 	uiFontLoading: false,
 	uiCreatefamilySelectedTemplate: undefined,
+	canvasMode: 'move',
 	//end ui store values
 
 	//commits store values
