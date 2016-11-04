@@ -5,7 +5,7 @@
 	border: solid 2px $dark-grey;
 	border-radius: 5px;
 	position: absolute;
-	top:10px;
+	top:20px;
 	display:flex;
 
 	.move#{&}-button {
@@ -21,11 +21,13 @@
 	}
 
 	&-button {
-		width: 25px;
-		height: 25px;
+		width: 22px;
+		height: 22px;
 		cursor: pointer;
 		border-right: solid 2px $dark-grey;
 		box-sizing: content-box;
+		background-position: center;
+		background-repeat: no-repeat;
 
 		&:first-of-type {
 			border-top-left-radius: 3px;
