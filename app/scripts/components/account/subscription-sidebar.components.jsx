@@ -35,7 +35,7 @@ export default class SubscriptionSidebar extends React.Component {
 	render() {
 		const plans = {
 			'personal_monthly': 'Professional monthly subscription',
-			'personal_annual': 'Professional annual subscription',
+			'personal_annual_99': 'Professional annual subscription',
 		};
 		const username = this.state.infos.accountValues && this.state.infos.accountValues.username
 			? <div>You're signed in as <span className="subscription-sidebar-info-emphase">{this.state.infos.accountValues.username}</span>,</div>

@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
@@ -118,7 +117,7 @@ export class AddFamily extends React.Component {
 					<label className="add-family-form-label"><span className="add-family-form-label-order">2. </span>Choose a family name</label>
 					<input ref="name" className="add-family-form-input" type="text" placeholder="My new typeface"></input>
 					{error}
-					<div className="add-family-form-buttons">
+					<div className="action-form-buttons">
 						<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
 						<Button click={(e) => {this.createFont(e);} } label="Create family"/>
 					</div>
@@ -222,9 +221,9 @@ export class AddVariant extends React.Component {
 					placeholder="Enter a variant name or choose a suggestion with predefined settings"
 					options={this.variants}/>
 				<div className="variant-error">{this.state.error}</div>
-				<div className="add-family-form-buttons">
+				<div className="action-form-buttons">
 					<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
-					<Button click={(e) => {this.createVariant(e);} } label="Create family"/>
+					<Button click={(e) => {this.createVariant(e);} } label="Create variant"/>
 				</div>
 			</div>
 		);

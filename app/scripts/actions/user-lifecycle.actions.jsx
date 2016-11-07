@@ -57,7 +57,7 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 
 		return localServer.dispatchUpdate('/userStore', patch);
 	}
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		window.Stripe.card.createToken({
 			number,
 			cvc,
@@ -87,7 +87,7 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 				form.loading = false;
 				const patch = userStore.set('infos', infos).set('addcardForm', form).commit();
 
-				localServer.dispatchUpdate('/userSotre', patch);
+				localServer.dispatchUpdate('/userStore', patch);
 
 				resolve();
 			})
@@ -468,8 +468,8 @@ export default {
 					app_id: 'mnph1bst',
 					email: username,
 					name: firstname + curedLastname,
-					phone: phone,
-					skype: skype,
+					phone,
+					skype,
 					ABtest: Math.floor(Math.random() * 100),
 					widget: {
 						activator: '#intercom-button',
@@ -512,7 +512,7 @@ export default {
 					HoodieApi.logout()
 						.then(() => {
 							localStorage.clear();
-							localClient.dispatchAction('/sign-up',{username, password, firstname, lastname, to, retry: true});
+							localClient.dispatchAction('/sign-up', {username, password, firstname, lastname, to, retry: true});
 						});
 				}
 				else {

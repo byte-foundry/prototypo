@@ -11,6 +11,7 @@ import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
 import CloseButton from './close-button.components.jsx';
 import CanvasGlyphInput from './canvas-glyph-input.components.jsx';
 import AlternateMenu from './alternate-menu.components.jsx';
+import CanvasBar from './canvasTools/canvas-bar.components.jsx';
 
 export default class PrototypoCanvas extends React.Component {
 
@@ -42,6 +43,7 @@ export default class PrototypoCanvas extends React.Component {
 					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
 					glyph: head.toJS().glyphs,
 					glyphFocused: head.toJS().glyphFocused,
+					canvasMode: head.toJS().canvasMode,
 				});
 			})
 			.onDelete(() => {
@@ -72,7 +74,6 @@ export default class PrototypoCanvas extends React.Component {
 				: new prototypo.paper.Point(this.props.uiPos[1], this.props.uiPos[2])
 			: fontInstance.view.center;
 
-		fontInstance.showNodes = this.props.uiNodes || false;
 		fontInstance.showCoords = this.props.uiCoords || false;
 		fontInstance.fill = !this.props.uiOutline;
 
@@ -202,6 +203,14 @@ export default class PrototypoCanvas extends React.Component {
 		const unicodes = Object.keys(this.state.glyph);
 		const currentUnicode = unicodes.indexOf(this.props.glyphSelected);
 
+		if (e.keyCode === 32) {
+			e.preventDefault();
+			e.stopPropagation();
+			if (!fontInstance.allowMove) {
+				this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
+			}
+		}
+
 		// navigate in glyph list: left
 		if (e.keyCode === 37) {
 			if (currentUnicode - 1 >= 1) {
@@ -241,6 +250,9 @@ export default class PrototypoCanvas extends React.Component {
 			e.stopPropagation();
 			this.client.dispatchAction('/store-value', this.oldPos);
 			this.oldPos = undefined;
+		}
+		if (e.keyCode === 32) {
+			this.client.dispatchAction('/toggle-canvas-mode');
 		}
 	}
 
@@ -293,25 +305,24 @@ export default class PrototypoCanvas extends React.Component {
 
 		const menu = [
 			<ContextualMenuItem
-				key="nodes"
-				active={this.props.uiNodes}
-				text={`${this.props.uiNodes ? 'Hide' : 'Show'} nodes`}
-				click={this.toggleNodes}/>,
-			<ContextualMenuItem
 				key="outline"
 				active={this.props.uiOutline}
 				text={`${this.props.uiOutline ? 'Hide' : 'Show'} outline`}
 				click={this.toggleOutline}/>,
 			<ContextualMenuItem
-				key="coords"
-				active={this.props.uiCoords}
-				text={`${this.props.uiCoords ? 'Hide' : 'Show'} coords`}
-				click={this.toggleCoords}/>,
-			<ContextualMenuItem
 				key="reset"
 				text="Reset view"
 				click={this.reset}/>,
 		];
+
+		if (this.state.canvasMode === 'select-points') {
+			menu.splice(1, 0,
+				<ContextualMenuItem
+					key="coords"
+					active={this.props.uiCoords}
+					text={`${this.props.uiCoords ? 'hide' : 'show'} coords`}
+					click={this.toggleCoords}/>);
+		}
 
 		const alternateMenu = this.props && this.props.glyphs[this.props.glyphSelected].length > 1 ? (
 			<AlternateMenu alternates={this.props.glyphs[this.props.glyphSelected]} unicode={this.props.glyphSelected}/>
@@ -323,6 +334,7 @@ export default class PrototypoCanvas extends React.Component {
 				className={canvasClass}
 				onClick={this.handleLeaveAndClick}
 				onMouseLeave={this.handleLeaveAndClick}>
+				<CanvasBar/>
 				<div ref="canvas" className="prototypo-canvas-container" onMouseLeave={() => {this.rejectShortcut();}} onMouseEnter={() => { this.acceptShortcut();}} onDoubleClick={() => { this.reset(); }}></div>
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>

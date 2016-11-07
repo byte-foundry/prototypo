@@ -141,16 +141,6 @@
 			justify-content: space-between;
 		}
 
-		&-buttons {
-			justify-content: flex-end;
-			display:flex;
-
-			& .button {
-				padding:10px 20px;
-				margin-left:10px;
-			}
-		}
-
 		&-error {
 			width: 100%;
 			text-align: center;
