@@ -204,7 +204,7 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
 						<AllowedTopBarWithPayment credits={credits} freeAccount={freeAccount}>
 							<TopBarMenuDropdownItem
-								name="Export to merged OTF"
+								name="Export font"
 								id="export-to-merged-otf"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
@@ -212,7 +212,7 @@ export default class Topbar extends React.Component {
 								credits={this.state.credits}
 								handler={() => {this.exportOTF(true);}}/>
 							<TopBarMenuDropdownItem
-								name="Export to merged OTF as..."
+								name="Export font as..."
 								id="export-to-merged-otf-as"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
@@ -220,7 +220,7 @@ export default class Topbar extends React.Component {
 								credits={this.state.credits}
 								handler={() => {this.setupExportAs(true);}}/>
 							<TopBarMenuDropdownItem
-								name="Export to OTF"
+								name="Export source file"
 								id="export-to-otf"
 								freeAccount={freeAccount}
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
