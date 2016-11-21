@@ -708,8 +708,21 @@ export default {
 		});
 	},
 	'/change-account-info': (data) => {
-		const infos = _.cloneDeep(userStore.get('infos'));
+		const form = userStore.get('profileForm');
 
+		form.errors = [];
+		delete form.success;
+		if (!data.firstname) {
+			form.errors.push('First name is required.');
+			const erroredPatch = userStore.set('profileForm', form).commit();
+			localServer.dispatchUpdate('/userStore', erroredPatch);
+			return;
+		}
+		form.success = true;
+		const formPatch = userStore.set('profileForm', form).commit();
+		localServer.dispatchUpdate('/userStore', formPatch);
+
+		const infos = _.cloneDeep(userStore.get('infos'));
 		_.assign(infos.accountValues, data);
 		const patch = userStore.set('infos', infos).commit();
 
