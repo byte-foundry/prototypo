@@ -24,24 +24,33 @@
 #prototyposlidertooltip {
 	position: absolute;
 	display: block;
-	top: 0;
+	top: 52px;
 	left: 0;
 	z-index: 1;
+
+	padding: 1em;
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+	background-color: $medium-grey;
+	color: $white;
+
 	img {
 		width: 200px;
 		height: 150px;
 	}
-	p {
-		margin: 0;
-		padding: 0 10px 0 10px;
-	}
+	// p {
+	// 	margin: 0;
+	// 	padding: 0 10px 0 10px;
+	// }
 	.slider-tooltip-title {
-		text-align: center;
+		font-size: 1.3em;
+		margin-bottom: 10px;
 	}
-	.slider-tooltip-description {}
+	.slider-tooltip-description {
+	}
 	.close-button {
 		position: absolute;
-		top: 15px;
+		top: -15px;
 		right: -25px;
 	}
 }

@@ -195,8 +195,8 @@ export class Slider extends React.Component {
 					{demoOverlay}
 				</div>
 				<label className="slider-title">{this.props.label}</label>
-				<div className="slider-reset" onClick={() => {this.resetValue();}}>reset</div>
 				<div className="slider-tooltip" onClick={() => {this.showTooltip(this.props.name);}}>?</div>
+				<div className="slider-reset" onClick={() => {this.resetValue();}}>reset</div>
 				<SliderTextController value={value} name={this.props.name} label={this.props.label} disabled={this.props.disabled} individualized={this.props.individualized} changeParam={this.changeParam}/>
 				<div className="slider-container">
 					<SliderController value={value}
