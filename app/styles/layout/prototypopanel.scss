@@ -21,6 +21,31 @@
 	overflow:hidden;
 }
 
+#prototyposlidertooltip {
+	position: absolute;
+	display: block;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	img {
+		width: 200px;
+		height: 150px;
+	}
+	p {
+		margin: 0;
+		padding: 0 10px 0 10px;
+	}
+	.slider-tooltip-title {
+		text-align: center;
+	}
+	.slider-tooltip-description {}
+	.close-button {
+		position: absolute;
+		top: 15px;
+		right: -25px;
+	}
+}
+
 .prototypo-panel-handle {
 	position: absolute;
 	z-index: 2;

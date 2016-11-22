@@ -119,6 +119,22 @@ export class Slider extends React.Component {
 		this.client.dispatchAction('/change-param', {value: this.props.init, name: this.props.name, label: this.props.label, demo: this.props.demo});
 	}
 
+	showTooltip(sliderName) {
+		this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: true, sliderName}});
+
+		const selector = '#prototypopanel';
+		const outsideClick = () => {
+			this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: false}});
+			_.each(document.querySelectorAll(selector), (item) => {
+				item.removeEventListener('click', outsideClick);
+			});
+		};
+
+		_.each(document.querySelectorAll(selector), (item) => {
+			item.addEventListener('click', outsideClick);
+		});
+	}
+
 	openGoProModal() {
 		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
 		this.client.dispatchAction('/store-value', {openGoProModal: true});
@@ -180,6 +196,7 @@ export class Slider extends React.Component {
 				</div>
 				<label className="slider-title">{this.props.label}</label>
 				<div className="slider-reset" onClick={() => {this.resetValue();}}>reset</div>
+				<div className="slider-tooltip" onClick={() => {this.showTooltip(this.props.name);}}>?</div>
 				<SliderTextController value={value} name={this.props.name} label={this.props.label} disabled={this.props.disabled} individualized={this.props.individualized} changeParam={this.changeParam}/>
 				<div className="slider-container">
 					<SliderController value={value}

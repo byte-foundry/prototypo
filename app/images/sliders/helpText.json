@@ -1,0 +1,106 @@
+{
+  "aperture": {
+    "title" : "titre",
+    "description": "texte aperture"
+  },
+  "ascenderHeight": {
+    "title" : "titre",
+    "description": "texte ascenderHeight"
+  },
+  "contrastExtremity": {
+    "title" : "titre",
+    "description": "texte contrastExtremity"
+  },
+  "descenderHeight": {
+    "title" : "titre",
+    "description": "texte descenderHeight"
+  },
+  "overshoot": {
+    "title" : "titre",
+    "description": "texte overshoot"
+  },
+  "serifCurviness": {
+    "title" : "titre",
+    "description": "texte serifCurviness"
+  },
+  "serifMedian": {
+    "title" : "titre",
+    "description": "texte serifMedian"
+  },
+  "serifWidth": {
+    "title" : "titre",
+    "description": "texte serifWidth"
+  },
+  "thickness": {
+    "title" : "titre",
+    "description": "texte thickness"
+  },
+  "apertureBottom": {
+    "title" : "titre",
+    "description": "texte apertureBottom"
+  },
+  "capHeight": {
+    "title" : "titre",
+    "description": "texte capHeight"
+  },
+  "crossbar": {
+    "title" : "titre",
+    "description": "texte crossbar"
+  },
+  "serifArc": {
+    "title" : "titre",
+    "description": "texte serifArc"
+  },
+  "serifExtremity": {
+    "title" : "titre",
+    "description": "texte serifExtremity"
+  },
+  "serifRotation": {
+    "title" : "titre",
+    "description": "texte serifRotation"
+  },
+  "slant": {
+    "title" : "titre",
+    "description": "texte slant"
+  },
+  "width": {
+    "title" : "titre",
+    "description": "texte width"
+  },
+  "apertureTop": {
+    "title" : "titre",
+    "description": "texte apertureTop"
+  },
+  "contrast": {
+    "title" : "titre",
+    "description": "texte contrast"
+  },
+  "curviness": {
+    "title" : "titre",
+    "description": "texte curviness"
+  },
+  "midWidth": {
+    "title" : "titre",
+    "description": "texte midWidth"
+  },
+  "serifCurve": {
+    "title" : "titre",
+    "description": "texte serifCurve"
+  },
+  "serifHeight": {
+    "title" : "titre",
+    "description": "texte serifHeight"
+  },
+  "serifTerminalCurve": {
+    "title" : "titre",
+    "description": "texte serifTerminalCurve"
+  },
+  "spurHeight": {
+    "title" : "titre",
+    "description": "texte spurHeight"
+  },
+  "xHeight": {
+    "title" : "titre",
+    "description": "texte xHeight"
+  }
+}

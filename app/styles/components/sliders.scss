@@ -122,7 +122,20 @@
 		transition: opacity 500ms ease;
 	}
 
+	&-tooltip {
+		opacity: 0;
+		margin-left: 0.8rem;
+		display: inline-block;
+		cursor: pointer;
+		color: $medium-grey;
+		transition: opacity 500ms ease;
+	}
+
 	&:hover &-reset {
+		opacity: 1;
+	}
+
+	&:hover &-tooltip {
 		opacity: 1;
 	}
 

@@ -7,6 +7,7 @@ import ResizablePanels from './shared/resizable-panels.components';
 import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
 import PrototypoWord from './prototypo-word.components.jsx';
+import SliderTooltip from './slider-tooltip.jsx';
 
 export default class PrototypoPanel extends React.Component {
 
@@ -45,6 +46,7 @@ export default class PrototypoPanel extends React.Component {
 					uiInvertedWordView: head.toJS().uiInvertedWordView,
 					uiInvertedWordColors: head.toJS().uiInvertedWordColors,
 					uiWordFontSize: head.toJS().uiWordFontSize,
+					uiSliderTooltip: head.toJS().uiSliderTooltip,
 					editingGroup: head.toJS().indivEdit,
 					indivMode: head.toJS().indivMode,
 					wordPanelHeight: head.toJS().wordPanelHeight,
@@ -98,6 +100,7 @@ export default class PrototypoPanel extends React.Component {
 		const hasGlyph = this.state.uiMode.indexOf('glyph') !== -1;
 		const hasText = this.state.uiMode.indexOf('text') !== -1;
 		const hasWord = this.state.uiMode.indexOf('word') !== -1;
+		const hasSliderTooltip = this.state.uiSliderTooltip && this.state.uiSliderTooltip.display;
 
 		//This is for moving the view panels away from the intercom launcher
 		const textIntercomDisplacement = hasText;
@@ -149,6 +152,16 @@ export default class PrototypoPanel extends React.Component {
 
 				viewPanelRightMove={wordIntercomDisplacement}
 				field="uiWord"/>;
+		}
+
+		let sliderTooltip;
+
+		if(hasSliderTooltip) {
+			sliderTooltip = (
+				<SliderTooltip
+					sliderName={this.state.uiSliderTooltip.sliderName}
+				/>
+			);
 		}
 
 		let down;
@@ -203,6 +216,7 @@ export default class PrototypoPanel extends React.Component {
 
 		return (
 			<div id="prototypopanel" key="justAcontainer">
+				{sliderTooltip}
 				{up}
 				{down}
 			</div>

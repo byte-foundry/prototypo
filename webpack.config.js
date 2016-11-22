@@ -45,11 +45,14 @@ module.exports = {
 				loader: 'style-loader!css-loader',
 			},
 			{
-				test: /\.(json|otf)$/,
+				test: /\.json$/, loader: 'json',
+			},
+			{
+				test: /\.otf$/,
 				loaders: ['file'],
 			},
 			{
-				test: /\.(svg|png|jpg)$/,
+				test: /\.(svg|png|jpg|gif)$/,
 				loader: 'url-loader?limit=100000',
 			},
 		],
