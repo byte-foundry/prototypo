@@ -20,7 +20,6 @@ Before installing Prototypo
 In order to build Prototypo, you need to install the following software-packages on your system:
 - Git
 - Node.js v4.X with npm@2 (Prototypo is currently incompatible with npm@3)
-- Gulp
 
 Installing Prototypo
 --------------------
@@ -41,7 +40,7 @@ Running Prototypo
 -----------------
 
 ```bash
-$ gulp serve
+$ npm start
 ```
 
 You'll want the server to be running on localhost:9000 if you want to connect to our hoodie app.
