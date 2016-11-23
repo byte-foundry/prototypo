@@ -12,6 +12,8 @@ export default class SliderTooltip extends React.Component {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
     this.closeTooltip = this.closeTooltip.bind(this);
+    this.getNextTooltip = this.getNextTooltip.bind(this);
+    this.getPreviousTooltip = this.getPreviousTooltip.bind(this);
 	}
 
   componentWillMount() {
@@ -27,6 +29,26 @@ export default class SliderTooltip extends React.Component {
     e.preventDefault();
     this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: false}});
   }
+  getPreviousTooltip() {
+    let previousSliderName;
+    const HelpTextKeys = Object.keys(HelpText);
+
+    previousSliderName = HelpTextKeys[HelpTextKeys.indexOf(this.props.sliderName) - 1];
+    if (!previousSliderName) {
+      previousSliderName = HelpTextKeys[HelpTextKeys.length - 1];
+    }
+    this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: true, sliderName: previousSliderName}});
+  }
+  getNextTooltip() {
+    let nextSliderName;
+    const HelpTextKeys = Object.keys(HelpText);
+
+    nextSliderName = HelpTextKeys[HelpTextKeys.indexOf(this.props.sliderName) + 1];
+    if (!nextSliderName) {
+      nextSliderName = HelpTextKeys[0];
+    }
+    this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: true, sliderName: nextSliderName}});
+  }
 
 	render() {
     if (process.env.__SHOW_RENDER__) {
@@ -40,6 +62,7 @@ export default class SliderTooltip extends React.Component {
         <img src={sliderUrl}/>
         <p className="slider-tooltip-title">{HelpText[this.props.sliderName].title}</p>
         <p className="slider-tooltip-description">{HelpText[this.props.sliderName].description}</p>
+        <span onClick={() => {this.getPreviousTooltip(); }}>{'<'}</span><span onClick={() => {this.getNextTooltip(); }}>{'>'}</span>
         <CloseButton click={this.closeTooltip}/>
       </div>
 		);

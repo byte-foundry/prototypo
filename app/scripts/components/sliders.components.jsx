@@ -122,7 +122,7 @@ export class Slider extends React.Component {
 	showTooltip(sliderName) {
 		this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: true, sliderName}});
 
-		const selector = '#prototypopanel';
+		/*const selector = '#prototypopanel';
 		const outsideClick = () => {
 			this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: false}});
 			_.each(document.querySelectorAll(selector), (item) => {
@@ -132,7 +132,7 @@ export class Slider extends React.Component {
 
 		_.each(document.querySelectorAll(selector), (item) => {
 			item.addEventListener('click', outsideClick);
-		});
+		});*/
 	}
 
 	openGoProModal() {
