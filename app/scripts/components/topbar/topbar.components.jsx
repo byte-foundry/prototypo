@@ -7,6 +7,10 @@ import Log from '~/services/log.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
+import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
+import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
+import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
+
 import {
 	TopBarMenu,
 	TopBarMenuDropdown,
@@ -38,6 +42,9 @@ export default class Topbar extends React.Component {
 		this.exportGlyphr = this.exportGlyphr.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
 		this.openGoProModal = this.openGoProModal.bind(this);
+		this.resetFileTutorial = this.resetFileTutorial.bind(this);
+		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
+		this.resetIndivTutorial = this.resetIndivTutorial.bind(this);
 	}
 
 	async componentWillMount() {
@@ -54,6 +61,7 @@ export default class Topbar extends React.Component {
 					to: head.toJS().undoTo,
 					from: head.toJS().undoFrom,
 					eventList: head.toJS().undoEventList,
+					indiv: head.toJS().indivMode,
 				});
 			})
 			.onDelete(() => {
@@ -133,6 +141,28 @@ export default class Topbar extends React.Component {
 		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
 		this.client.dispatchAction('/store-value', {openGoProModal: true});
 		Log.ui('ExportFontNow.open');
+	}
+
+	resetFileTutorial(e) {
+		e.stopPropagation();
+		e.preventDefault();
+		this.client.dispatchAction('/store-value', {firstTimeFile: true});
+		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: fileTutorialLabel});
+		this.client.dispatchAction('/store-value', {topbarItemDisplayed: 1});
+		return false;
+	}
+
+	resetCollectionTutorial(e) {
+		this.client.dispatchAction('/store-value', {firstTimeCollection: true,uiJoyrideTutorialValue: collectionsTutorialLabel});
+		this.client.dispatchAction('/store-value', {uiShowCollection: true});
+	}
+
+	resetIndivTutorial(e) {
+		this.client.dispatchAction('/store-value', {firstTimeIndivCreate: true});
+		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: indivGroupsCreationTutorialLabel});
+		if (!this.state.indiv) {
+			this.client.dispatchAction('/toggle-individualize');
+		}
 	}
 
 	setAccountRoute() {
@@ -283,6 +313,9 @@ export default class Topbar extends React.Component {
 					<TopBarMenuDropdown name="Help">
 						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
 						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq', '_blank'); }}/>
+						<TopBarMenuDropdownItem name="Restart collection tutorial" handler={(e) => { this.resetCollectionTutorial(e); }}/>
+						<TopBarMenuDropdownItem name="Restart export tutorial" handler={(e) => { this.resetFileTutorial(e); }}/>
+						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={(e) => { this.resetIndivTutorial(e); }}/>
 					</TopBarMenuDropdown>
 					{exporting}
 					{errorExporting}

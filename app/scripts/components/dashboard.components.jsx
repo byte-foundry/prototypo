@@ -95,8 +95,10 @@ export default class Dashboard extends React.Component {
 		const joyrideSteps = buildTutorialSteps(prevState, this.state);
 
 		if (joyrideSteps.length) {
-			this.addSteps(joyrideSteps);
-			this.refs.joyride.start(true);
+			setTimeout(function() {
+				this.addSteps(joyrideSteps);
+				this.refs.joyride.start(true);
+			}.bind(this), 400);
 		}
 	}
 

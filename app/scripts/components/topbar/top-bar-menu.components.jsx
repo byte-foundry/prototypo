@@ -292,7 +292,7 @@ class TopBarMenuDropdownItem extends React.Component {
 		this.lifespan.release();
 	}
 
-	handleClick() {
+	handleClick(e) {
 		// freeAccount and freeAccountAndHasCredits props
 		// should only be set if the item is blockable
 		// for free users without credits (under the overlay)
@@ -304,7 +304,7 @@ class TopBarMenuDropdownItem extends React.Component {
 				// and on callback dispatch a "spend credit" action
 				// to ensure no one will pay if something went wrong
 				// during the export
-				this.props.handler();
+				this.props.handler(e);
 				// here the "spend credit" will hapen
 				// but on parent component state change
 				// when "exporting" goes from true to false w/o errors
@@ -321,7 +321,7 @@ class TopBarMenuDropdownItem extends React.Component {
 			return;
 		}
 		else {
-			this.props.handler();
+			this.props.handler(e);
 		}
 	}
 
