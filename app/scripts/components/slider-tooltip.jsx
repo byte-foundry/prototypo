@@ -29,6 +29,7 @@ export default class SliderTooltip extends React.Component {
     e.preventDefault();
     this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: false}});
   }
+
   getPreviousTooltip() {
     let previousSliderName;
     const HelpTextKeys = Object.keys(HelpText);
@@ -39,6 +40,7 @@ export default class SliderTooltip extends React.Component {
     }
     this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: true, sliderName: previousSliderName}});
   }
+
   getNextTooltip() {
     let nextSliderName;
     const HelpTextKeys = Object.keys(HelpText);

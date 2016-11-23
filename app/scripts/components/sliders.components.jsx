@@ -121,18 +121,15 @@ export class Slider extends React.Component {
 
 	showTooltip(sliderName) {
 		this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: true, sliderName}});
-
-		/*const selector = '#prototypopanel';
-		const outsideClick = () => {
-			this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: false}});
-			_.each(document.querySelectorAll(selector), (item) => {
-				item.removeEventListener('click', outsideClick);
-			});
+		const selector = '#prototyposlidertooltip';
+		const outsideClick = (event) => {
+			if (!event.target.closest(selector)) {
+				this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: false}});
+				document.body.removeEventListener('click', outsideClick);
+			}
 		};
 
-		_.each(document.querySelectorAll(selector), (item) => {
-			item.addEventListener('click', outsideClick);
-		});*/
+		document.body.addEventListener('click', outsideClick);
 	}
 
 	openGoProModal() {
