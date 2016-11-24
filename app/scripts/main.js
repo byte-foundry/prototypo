@@ -146,6 +146,7 @@ import Stores from './stores/creation.stores.jsx';
 import selectRenderOptions from './helpers/userAgent.helpers.js';
 import {saveAppValues} from './helpers/loadValues.helpers.js';
 import {loadStuff} from './helpers/appSetup.helpers.js';
+import isProduction from './helpers/is-production.helpers';
 
 import appValuesAction from './actions/appValues.actions.jsx';
 import exportAction from './actions/export.actions.jsx';
@@ -192,7 +193,7 @@ selectRenderOptions(
 	},
 	() => {
 
-		const stripeKey = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
+		const stripeKey = isProduction()
 			? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
 			: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
 
