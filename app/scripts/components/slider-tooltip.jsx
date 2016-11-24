@@ -64,7 +64,8 @@ export default class SliderTooltip extends React.Component {
         <img src={sliderUrl}/>
         <p className="slider-tooltip-title">{HelpText[this.props.sliderName].title}</p>
         <p className="slider-tooltip-description">{HelpText[this.props.sliderName].description}</p>
-        <span onClick={() => {this.getPreviousTooltip(); }}>{'<'}</span><span onClick={() => {this.getNextTooltip(); }}>{'>'}</span>
+        <div className="slider-tooltip-prev" onClick={() => {this.getPreviousTooltip(); }}>{'‹'}</div>
+        <div className="slider-tooltip-next" onClick={() => {this.getNextTooltip(); }}>{'›'}</div>
         <CloseButton click={this.closeTooltip}/>
       </div>
 		);

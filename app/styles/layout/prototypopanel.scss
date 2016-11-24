@@ -30,10 +30,10 @@
 	padding: 1em;
 	border-top-right-radius: 10px;
 	border-bottom-right-radius: 10px;
-	background-color: $medium-grey;
+	background-color: lighten($dark-grey, 5%);
 	color: $white;
 
-	&.slider-tooltip {
+	.slider-tooltip {
 		&-enter {
 			transform: translateX(-200px);
 			will-change: transform;
@@ -50,8 +50,37 @@
 
 			&#{&}-active {
 				transform: translateX(-200px);
-		  	transition: transform .3s ease-in;
+			transition: transform .3s ease-in;
 			}
+		}
+
+		&-title {
+			font-size: 1.3em;
+			margin-bottom: 10px;
+		}
+		&-description {
+		}
+		&-prev,
+		&-next {
+			position: absolute;
+			bottom: -30px;
+			right: 0;
+
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: $dark-grey;
+			text-align: center;
+			font-size: 1.3em;
+			line-height: 1;
+			cursor: pointer;
+
+			&:hover {
+				background-color: $green;
+			}
+		}
+		&-prev {
+			margin-right: 26px;
 		}
 	}
 
@@ -59,16 +88,7 @@
 		width: 200px;
 		height: 150px;
 	}
-	// p {
-	// 	margin: 0;
-	// 	padding: 0 10px 0 10px;
-	// }
-	.slider-tooltip-title {
-		font-size: 1.3em;
-		margin-bottom: 10px;
-	}
-	.slider-tooltip-description {
-	}
+
 	.close-button {
 		position: absolute;
 		top: -15px;
