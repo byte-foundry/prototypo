@@ -182,6 +182,9 @@ const prototypoStore = new Remutable({
 const userStore = new Remutable({
 	infos: {
 	},
+	profileForm: {
+		errors: [],
+	},
 	signupForm: {
 		errors: [],
 		inError: {},
