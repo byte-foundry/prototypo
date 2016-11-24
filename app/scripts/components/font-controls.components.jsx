@@ -1,11 +1,13 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import {ControlsTabs, ControlsTab} from './controls-tabs.components.jsx';
 import {Sliders} from './sliders.components.jsx';
+import SliderTooltip from './slider-tooltip.jsx';
 
 export default class FontControls extends React.Component {
 
@@ -42,6 +44,7 @@ export default class FontControls extends React.Component {
 					indivMode: headJS.indivMode,
 					indivEdit: headJS.indivEditingParams,
 					currentGroup: headJS.indivCurrentGroup || {},
+					uiSliderTooltip: head.toJS().uiSliderTooltip,
 				});
 			})
 			.onDelete(() => {
@@ -79,6 +82,18 @@ export default class FontControls extends React.Component {
 			console.log('[RENDER] font controls');
 		}
 
+		const hasSliderTooltip = this.state.uiSliderTooltip && this.state.uiSliderTooltip.display;
+		let sliderTooltip;
+		const transitionTimeout = 300;
+
+		if(hasSliderTooltip) {
+			sliderTooltip = (
+					<SliderTooltip key={'slider-tooltip'}
+						sliderName={this.state.uiSliderTooltip.sliderName}
+					/>
+			);
+		}
+
 		const tabs = _.map(this.state.parameters, (group) => {
 			return (
 				<ControlsTab iconId={group.label} name={group.label} key={group.label}>
@@ -95,6 +110,13 @@ export default class FontControls extends React.Component {
 
 		return (
 			<div className="font-controls" id="sidebar">
+				<ReactCSSTransitionGroup
+					component="div"
+					transitionName="slider-tooltip"
+					transitionEnterTimeout={transitionTimeout}
+					transitionLeaveTimeout={transitionTimeout}>
+					{sliderTooltip}
+				</ReactCSSTransitionGroup>
 				<ControlsTabs tab={this.state.tabControls} >
 					{tabs}
 				</ControlsTabs>

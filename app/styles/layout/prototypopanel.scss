@@ -25,14 +25,35 @@
 	position: absolute;
 	display: block;
 	top: 52px;
-	left: 0;
-	z-index: 3;
-
+	right: -228px;
+	z-index: 1;
 	padding: 1em;
 	border-top-right-radius: 10px;
 	border-bottom-right-radius: 10px;
 	background-color: $medium-grey;
 	color: $white;
+
+	&.slider-tooltip {
+		&-enter {
+			transform: translateX(-200px);
+			will-change: transform;
+
+			&#{&}-active {
+				transform: translateX(0px);
+				transition: transform .3s ease-out;
+			}
+		}
+
+		&-leave {
+			transform: translateX(0px);
+			will-change: transform;
+
+			&#{&}-active {
+				transform: translateX(-200px);
+		  	transition: transform .3s ease-in;
+			}
+		}
+	}
 
 	img {
 		width: 200px;
