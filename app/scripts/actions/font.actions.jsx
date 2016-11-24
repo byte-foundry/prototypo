@@ -758,4 +758,15 @@ export default {
 			fontInstance.displayGlyph();
 		}, 100);
 	},
+	'/set-preset': (presetName) => {
+		const presets = prototypoStore.get('fontPresets');
+
+		if (presets && presets[presetName]) {
+			localClient.dispatchAction('/change-param', {
+				values: presets[presetName],
+				force: true,
+				label: 'preset',
+			});
+		}
+	},
 };

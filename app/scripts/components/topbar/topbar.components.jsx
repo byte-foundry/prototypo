@@ -31,6 +31,7 @@ export default class Topbar extends React.Component {
 			credits: undefined,
 			plan: undefined,
 			creditChoices: undefined,
+			presets: null,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -38,6 +39,7 @@ export default class Topbar extends React.Component {
 		this.exportGlyphr = this.exportGlyphr.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
 		this.openGoProModal = this.openGoProModal.bind(this);
+		this.setPreset = this.setPreset.bind(this);
 	}
 
 	async componentWillMount() {
@@ -54,6 +56,7 @@ export default class Topbar extends React.Component {
 					to: head.toJS().undoTo,
 					from: head.toJS().undoFrom,
 					eventList: head.toJS().undoEventList,
+					presets: head.toJS().fontPresets,
 				});
 			})
 			.onDelete(() => {
@@ -159,6 +162,10 @@ export default class Topbar extends React.Component {
 		}
 	}
 
+	setPreset(preset) {
+		this.client.dispatchAction('/set-preset', preset);
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Topbar');
@@ -190,6 +197,27 @@ export default class Topbar extends React.Component {
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount)
 			&& <TopBarMenuButton label="UNLOCK ALL PARAMETERS FOR $5" noHover centered click={this.openGoProModal} alignRight/>;
+
+		const presetSubMenu = this.state.presets
+			? (
+				<TopBarMenuDropdownItem name="Choose a preset ...">
+					<TopBarMenuDropdown>
+						{
+							_.keys(this.state.presets).map((preset, index) => {
+								return (
+									<TopBarMenuDropdownItem
+										name={preset}
+										handler={this.setPreset}
+										handlerParam={preset}
+										key={index}
+									/>
+								);
+							})
+						}
+					</TopBarMenuDropdown>
+				</TopBarMenuDropdownItem>
+			)
+			: false;
 
 		return (
 			<div id="topbar">
@@ -249,6 +277,7 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem
 							name="Individualize parameters"
 							handler={() => { this.individualize(); }}/>
+						{presetSubMenu}
 						<TopBarMenuDropdownItem
 							name={undoText}
 							key="undo"
