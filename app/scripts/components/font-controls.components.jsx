@@ -112,7 +112,7 @@ export default class FontControls extends React.Component {
 			<div className="font-controls" id="sidebar">
 				<ReactCSSTransitionGroup
 					component="div"
-					transitionName="slider-tooltip"
+					transitionName="slider-tooltip-animation"
 					transitionEnterTimeout={transitionTimeout}
 					transitionLeaveTimeout={transitionTimeout}>
 					{sliderTooltip}

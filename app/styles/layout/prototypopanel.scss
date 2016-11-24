@@ -33,7 +33,7 @@
 	background-color: lighten($dark-grey, 5%);
 	color: $white;
 
-	.slider-tooltip {
+	&.slider-tooltip-animation {
 		&-enter {
 			transform: translateX(-200px);
 			will-change: transform;
@@ -53,6 +53,9 @@
 			transition: transform .3s ease-in;
 			}
 		}
+	}
+
+	.slider-tooltip {
 
 		&-title {
 			font-size: 1.3em;
