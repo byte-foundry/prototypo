@@ -10,6 +10,7 @@ import Log from '~/services/log.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 import DOM from '../helpers/dom.helpers.js';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
+import SliderHelpText from '../../images/sliders/helpText.json';
 
 export class Sliders extends React.Component {
 	constructor(props) {
@@ -189,6 +190,14 @@ export class Slider extends React.Component {
 			)
 			: false;
 
+		let sliderTooltipButton;
+
+		if (SliderHelpText[this.props.name]) {
+			sliderTooltipButton = (
+				<div className="slider-tooltip" onClick={() => {this.showTooltip(this.props.name);}}>?</div>
+			);
+		}
+
 		return (
 			<div className={classes}>
 				<div className="slider-demo-overlay">
@@ -196,7 +205,7 @@ export class Slider extends React.Component {
 					{demoOverlay}
 				</div>
 				<label className="slider-title">{this.props.label}</label>
-				<div className="slider-tooltip" onClick={() => {this.showTooltip(this.props.name);}}>?</div>
+				{sliderTooltipButton}
 				<div className="slider-reset" onClick={() => {this.resetValue();}}>reset</div>
 				<SliderTextController value={value} name={this.props.name} label={this.props.label} disabled={this.props.disabled} individualized={this.props.individualized} changeParam={this.changeParam}/>
 				<div className="slider-container">
