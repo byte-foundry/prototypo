@@ -128,13 +128,12 @@ export class Slider extends React.Component {
 				document.body.removeEventListener('click', outsideClick);
 			}
 			if (event.target.className === button) {
-				this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: true, sliderName}});
 				document.body.removeEventListener('click', outsideClick);
 			}
 		};
 
 		this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: true, sliderName}});
-		document.body.addEventListener('click', outsideClick.bind(this));
+		document.body.addEventListener('click', outsideClick);
 	}
 
 	openGoProModal() {
