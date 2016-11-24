@@ -200,17 +200,20 @@ export default class PrototypoPanel extends React.Component {
 
 		if (up && down) {
 			return (
-				<ResizablePanels
-					key="everythingResize"
-					defaultY={this.state.wordPanelHeight}
-					onChange={({y}) => {this.client.dispatchAction('/store-value', {wordPanelHeight: y});}}
-					id="prototypopanel"
-					property="flexBasis"
-					direction="horizontal"
-				>
-					{up}
-					{down}
-				</ResizablePanels>
+				<div style={{position: 'relative'}}>
+					{sliderTooltip}
+					<ResizablePanels
+						key="everythingResize"
+						defaultY={this.state.wordPanelHeight}
+						onChange={({y}) => {this.client.dispatchAction('/store-value', {wordPanelHeight: y});}}
+						id="prototypopanel"
+						property="flexBasis"
+						direction="horizontal"
+					>
+						{up}
+						{down}
+					</ResizablePanels>
+				</div>
 			);
 		}
 
