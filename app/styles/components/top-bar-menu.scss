@@ -151,6 +151,7 @@
 
 				&.is-disabled {
 					color: $medium-grey;
+					cursor: default;
 				}
 
 				&.is-active {
@@ -163,7 +164,7 @@
 					border-bottom: 1px solid lighten($dark-grey,20%);
 				}
 
-				&:hover {
+				&:hover:not(.is-disabled) {
 					@include themify() {
 						background-color: $theme-background;
 						color: $theme-color;
