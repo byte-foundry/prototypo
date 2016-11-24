@@ -18,11 +18,6 @@ export default class HandlegripText extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			spacingLeft: 0,
-			spacingRight: 0,
-			baseSpacingLeft: 0,
-			baseSpacingRight: 0,
-			advanceWidth: 0,
 			trackingX: 0,
 			letterFontSize: 0,
 			tracking: false,
@@ -32,29 +27,10 @@ export default class HandlegripText extends React.Component {
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
-		// retrieve the initial values, only once
-		fontInstance.addOnceListener('worker.fontLoaded', () => {
-			fontInstance.getGlyphProperty(
-				this.getSelectedLetter(),
-				['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight', 'glyphWidth'],
-				({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight, glyphWidth}) => {
-					this.setState({
-						advanceWidth,
-						spacingLeft,
-						spacingRight,
-						baseSpacingLeft,
-						baseSpacingRight,
-						glyphWidth,
-					});
-				}
-			);
-		});
-
 		// function bindings
 		this.handleUp = this.handleUp.bind(this);
 		this.handleMove = this.handleMove.bind(this);
 		this.handleSelectstart = this.handleSelectstart.bind(this);
-		this.dispatchAllFromFontinstance = this.dispatchAllFromFontinstance.bind(this);
 		this.updateCacheTextArray = this.updateCacheTextArray.bind(this);
 		this.selectLetter = this.selectLetter.bind(this);
 	}
@@ -88,14 +64,9 @@ export default class HandlegripText extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					trackingX: head.toJS().uiTrackingX,
-					baseSpacingLeft: head.toJS().baseSpacingLeft || this.state.baseSpacingLeft,
-					baseSpacingRight: head.toJS().baseSpacingRight || this.state.baseSpacingRight,
-					spacingLeft: head.toJS().spacingLeft || this.state.spacingLeft,
-					spacingRight: head.toJS().spacingRight || this.state.spacingRight,
+					glyphProperties: head.toJS().glyphProperties,
 					unClampedOldValue: head.toJS().unClampedOldValue,
-					advanceWidth: head.toJS().advanceWidth || this.state.advanceWidth,
 					clampedValue: head.toJS().clampedValue,
-					glyphWidth: head.toJS().glyphWidth !== undefined ? head.toJS().glyphWidth : this.state.glyphWidth,
 				});
 			})
 			.onDelete(() => {
@@ -111,13 +82,9 @@ export default class HandlegripText extends React.Component {
 	componentDidMount() {
 		const handlegripDOM = ReactDOM.findDOMNode(this);
 
-		handlegripDOM.addEventListener('mouseup', this.handleUp);
-		handlegripDOM.addEventListener('mousemove', this.handleMove);
-	}
-
-	componentDidUpdate(prevProps, prevState) {
-		if ((prevState.fontValues !== this.state.fontValues) && !this.state.tracking) {
-			this.dispatchAdvancewidthFromFontinstance();
+		if (handlegripDOM) {
+			handlegripDOM.addEventListener('mouseup', this.handleUp);
+			handlegripDOM.addEventListener('mousemove', this.handleMove);
 		}
 	}
 
@@ -125,10 +92,12 @@ export default class HandlegripText extends React.Component {
 		const handlegripDOM = ReactDOM.findDOMNode(this);
 
 		this.lifespan.release();
-
 		document.removeEventListener('selectstart', this.handleSelectstart);
-		handlegripDOM.removeEventListener('mouseup', this.handleUp);
-		handlegripDOM.removeEventListener('mousemove', this.handleMove);
+
+		if (handlegripDOM) {
+			handlegripDOM.removeEventListener('mouseup', this.handleUp);
+			handlegripDOM.removeEventListener('mousemove', this.handleMove);
+		}
 	}
 
 	handleUp(e) {
@@ -146,8 +115,6 @@ export default class HandlegripText extends React.Component {
 
 		this.client.dispatchAction('/store-value-fast', {unClampedOldValue: undefined});
 		this.client.dispatchAction('/store-value', {uiSpacingTracking: undefined});
-
-		this.dispatchAllFromFontinstance();
 
 		e.stopPropagation();
 	}
@@ -171,17 +138,10 @@ export default class HandlegripText extends React.Component {
 		const el = ReactDOM.findDOMNode(this);
 		const {offsetLeft} = DOM.getAbsOffset(el);
 		const letterOffsetWidth = this.refs.selectedLetter.getClientWidth();
-		let newValue;
 		let clampedNewValue;
 
-		// here we are going to try and avoid
-		// dragging w/o being near the handle
-		const barProps = leftSideTracking
-			? this.refs.selectedLetter.getLeftBar()
-			: this.refs.selectedLetter.getRightBar();
-
 		// advanceWidth is in typographic unit
-		const advanceWidth = this.state.advanceWidth;
+		const advanceWidth = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)].advanceWidth;
 		// intiate spacing value that will be set w/ dispatchAction
 		const newSpacingValues = {};
 
@@ -203,7 +163,7 @@ export default class HandlegripText extends React.Component {
 		) * (leftSideTracking ? -1 : 1);
 
 		// compute new value
-		newValue = (
+		const newValue = (
 			(
 				this.state.unClampedOldValue || (
 					specialPropsObject && specialPropsObject[property]
@@ -214,28 +174,32 @@ export default class HandlegripText extends React.Component {
 			+ (variation)
 		);
 
+		const spacingLeft = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)].spacingLeft;
+		const spacingRight = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)].spacingRight;
+		const glyphWidth = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)].glyphWidth;
+
 		// if the new X value is in the element boundaries
 		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
-			const baseSpacing = leftSideTracking
-				? this.state.baseSpacingLeft
-				: this.state.baseSpacingRight;
 			const otherSpacing = leftSideTracking
-				? this.state.spacingRight
-				: this.state.spacingLeft;
+				? spacingRight
+				: spacingLeft;
 
-			clampedNewValue = Math.min(Math.max(newValue, -this.state.glyphWidth - otherSpacing + 100), this.props.max);
+			clampedNewValue = Math.min(Math.max(newValue, -glyphWidth - otherSpacing + 100), this.props.max);
 		}
 		else {
 			clampedNewValue = newX < offsetLeft ? this.props.min : this.props.max;
 		}
 
+		const baseSpacingLeft = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)].baseSpacingLeft;
+		const baseSpacingRight = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)].baseSpacingRight;
+
 		// if we are currently tracking left side spacing
 		if (leftSideTracking) {
 			// set the new spacing value
-			newSpacingValues.spacingLeft = clampedNewValue + this.state.baseSpacingLeft;
+			newSpacingValues.spacingLeft = clampedNewValue + baseSpacingLeft;
 		}
 		else {
-			newSpacingValues.spacingRight = clampedNewValue + this.state.baseSpacingRight;
+			newSpacingValues.spacingRight = clampedNewValue + baseSpacingRight;
 		}
 
 		if (!Number.isNaN(newValue)) {
@@ -259,25 +223,7 @@ export default class HandlegripText extends React.Component {
 	*	@return {string} the letter
 	*/
 	getSelectedLetter() {
-		return (this.state.textArray.find(([key]) => { return key === this.props.selectedLetter; }) || [])[1];
-	}
-
-	dispatchAllFromFontinstance() {
-		// get the new properties of the current glyph
-		// directly from the globaly available font instance
-		this.client.dispatchAction('/update-letter-spacing-value', {
-			letter: this.getSelectedLetter(),
-			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight', 'glyphWidth'],
-		});
-	}
-
-	dispatchAdvancewidthFromFontinstance() {
-		// get the new advanceWidth of the current glyph
-		// directly from the globaly available font instance
-		this.client.dispatchAction('/update-letter-spacing-value', {
-			letter: this.getSelectedLetter(),
-			valueList: ['advanceWidth', 'glyphWidth'],
-		});
+		return (this.state.textArray.find(([key]) => { return key === this.props.selectedLetter; }) || [undefined, ''])[1];
 	}
 
 	handleSelectstart(e) {
@@ -297,7 +243,7 @@ export default class HandlegripText extends React.Component {
 		let {textArray, lastKey} = this.state;
 		let currentIndex = 0;
 
-		diffChars(textArray.map((keyValue) => { return keyValue[1]}).join(''), newText).forEach(({added, removed, count, value}) => {
+		diffChars(textArray.map((keyValue) => {return keyValue[1];}).join(''), newText).forEach(({added, removed, count, value}) => {
 			if (removed) {
 				textArray = count ? [
 					...textArray.slice(0, currentIndex),
@@ -325,37 +271,42 @@ export default class HandlegripText extends React.Component {
 
 	selectLetter(letter, index) {
 		this.client.dispatchAction('/store-value', {uiWordSelection: index});
-		this.client.dispatchAction('/update-letter-spacing-value', {
-			letter: letter.charCodeAt(0),
-			valueList: ['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight', 'glyphWidth'],
-		});
 	}
 
 	render() {
-		const selectedLetter = this.props.selectedLetter;
-		const letterComponents = this.state.textArray.map(([key, letter]) => {
-			if (selectedLetter === key) {
-				return (
-					<HandlegripLetter
-						letter={letter}
-						ref="selectedLetter"
-						spacingLeft={this.state.spacingLeft}
-						spacingRight={this.state.spacingRight}
-						advanceWidth={this.state.advanceWidth}
-						min={this.props.min}
-						max={this.props.max}
-						key={key}
-					/>
-				);
-			}
+		if (this.state.glyphProperties) {
+			const selectedLetter = this.props.selectedLetter;
+			const spacingLeft = (this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)] || {}).spacingLeft;
+			const spacingRight = (this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)] || {}).spacingRight;
+			const advanceWidth = (this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)] || {}).advanceWidth;
 
-			return <RegularLetter letter={letter} identifier={key} key={key} onSelect={this.selectLetter} />;
-		});
+			const letterComponents = this.state.textArray.map(([key, letter]) => {
+				if (selectedLetter === key) {
+					return (
+						<HandlegripLetter
+							letter={letter}
+							ref="selectedLetter"
+							spacingLeft={spacingLeft}
+							spacingRight={spacingRight}
+							advanceWidth={advanceWidth}
+							min={this.props.min}
+							max={this.props.max}
+							key={key}
+						/>
+					);
+				}
 
-		return (
-			<div className={this.props.className} spellCheck="false" style={this.props.style}>
-				{letterComponents}
-			</div>
-		);
+				return <RegularLetter letter={letter} identifier={key} key={key} onSelect={this.selectLetter} />;
+			});
+
+			return (
+				<div className={this.props.className} spellCheck="false" style={this.props.style}>
+					{letterComponents}
+				</div>
+			);
+		}
+		else {
+			return false;
+		}
 	}
 }

@@ -8,7 +8,6 @@ import {diffChars} from 'diff';
 import {prototypoStore} from '../stores/creation.stores.jsx';
 
 import {contentToArray, arrayToRawContent, rawToEscapedContent} from '../helpers/input-transform.helpers.js';
-import DOM from '../helpers/dom.helpers.js';
 
 import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
@@ -27,13 +26,11 @@ export default class PrototypoWord extends React.Component {
 			uiSpacingMode: undefined,
 			uiWordString: undefined,
 			uiWordSelection: 0,
-			letterSpacingLeft: undefined,
-			letterSpacingRight: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// function bindings
-		this.setupText = _.debounce(this.setupText.bind(this),500, {leading: true});
+		this.setupText = _.debounce(this.setupText.bind(this), 500, {leading: true});
 		this.saveText = this.saveText.bind(this);
 		this.handleEscapedInput = this.handleEscapedInput.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
@@ -56,8 +53,6 @@ export default class PrototypoWord extends React.Component {
 			uiSpacingMode: prototypoStore.get('uiSpacingMode'),
 			uiWordString: prototypoStore.get('uiWordString'),
 			uiWordSelection: prototypoStore.get('uiWordSelection') || 0,
-			letterSpacingLeft: prototypoStore.get('letterSpacingLeft'),
-			letterSpacingRight: prototypoStore.get('letterSpacingRight'),
 		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
@@ -70,15 +65,13 @@ export default class PrototypoWord extends React.Component {
 					uiSpacingMode: head.toJS().uiSpacingMode,
 					uiWordString: head.toJS().uiWordString,
 					uiWordSelection: head.toJS().uiWordSelection || 0,
-					letterSpacingLeft: head.toJS().letterSpacingLeft,
-					letterSpacingRight: head.toJS().letterSpacingRight,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 
-			fontInstance.on('worker.fontLoaded', () => {
+			/*fontInstance.on('worker.fontLoaded', () => {
 				if (this.refs.text) {
 					const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
 					const transformedContent = this.state.uiWordString;
@@ -93,7 +86,7 @@ export default class PrototypoWord extends React.Component {
 						), !this.state.canvasPanelOpened && !this.state.textPanelOpened ? 500 : 100)}px`,
 					});
 				}
-			});
+			});*/
 	}
 
 	setupText() {
@@ -111,15 +104,15 @@ export default class PrototypoWord extends React.Component {
 		this.client.dispatchAction('/store-text', {value: text, propName: this.props.field});
 	}
 
-	componentDidUpdate(prevProps, prevState) {
+	componentDidUpdate() {
 		this.setupText();
 	}
 
 	componentDidMount() {
 		this.setupText();
 		if (this.refs.text) {
-			const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
-			const transformedContent = this.state.uiWordString;
+			//const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
+				/*const transformedContent = this.state.uiWordString;
 
 			const style = refDOMElement.style;
 
@@ -129,7 +122,7 @@ export default class PrototypoWord extends React.Component {
 					style,
 					refDOMElement.clientWidth
 				), !this.state.canvasPanelOpened && !this.state.textPanelOpened ? 500 : 100)}px`,
-			});
+			});*/
 		}
 	}
 

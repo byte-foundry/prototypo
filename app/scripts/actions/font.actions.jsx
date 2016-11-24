@@ -6,9 +6,8 @@ import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {Typefaces} from '../services/typefaces.services.js';
 import {copyFontValues, loadFontValues, saveAppValues} from '../helpers/loadValues.helpers.js';
-import {setupFontInstance, mapGlyphForApp} from '../helpers/font.helpers.js';
+import {setupFontInstance} from '../helpers/font.helpers.js';
 import {FontValues} from '../services/values.services.js';
-import {delayAfterCall} from '../helpers/animation.helpers.js';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 import Log from '../services/log.services.js';
 import HoodieApi from '../services/hoodie.services.js';
@@ -56,36 +55,37 @@ const hasher = XXHash(0xDEADBEEF);
 
 export default {
 	'/load-font-instance': async ({appValues}) => {
-		let typedata;
-
 		try {
-			const fontResult = await setupFontInstance(appValues);
+			const {
+				typedataJSON,
+				familyName,
+				controls,
+				presets,
+				tags,
+				workerUrl,
+				workerDeps,
+				db,
+				typedata,
+			} = await setupFontInstance(appValues);
 
-			typedata = fontResult.typedata;
+			localClient.dispatchAction('/store-value-font', {
+				familyName,
+				db,
+				workerUrl,
+				workerDeps,
+				typedataJSON,
+			});
+
+			localClient.dispatchAction('/create-font', familyName);
+			localClient.dispatchAction('/load-params', {controls, presets});
+			localClient.dispatchAction('/load-tags', tags);
+			loadFontValues(typedata, db);
 		}
 		catch (err) {
 			trackJs.track(err);
 			console.log(err);
 		}
 
-		localClient.dispatchAction('/create-font', fontInstance.font.ot.getEnglishName('fontFamily'));
-		localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
-		localClient.dispatchAction('/load-glyphs', _.mapValues(
-			fontInstance.font.altMap,
-			mapGlyphForApp
-		));
-		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
-		fontInstance.displayChar(String.fromCharCode(prototypoStore.get('glyphSelected')));
-
-		loadFontValues(typedata, appValues.values.variantSelected.db);
-
-		const fontInstanceLoaded = new Event('fontInstance.loaded');
-
-		fontInstance.addListener('component.change', function(glyph, id, name) {
-			localClient.dispatchAction('/change-component', {glyph, id, name});
-		});
-
-		window.dispatchEvent(fontInstanceLoaded);
 	},
 	'/create-font': (familyName) => {
 		const patch = prototypoStore
@@ -94,42 +94,18 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/update-font': (params) => {
-		// we need a non-empty params object
-		if (!params || !Object.keys(params).length) {
-			return;
-		}
-
-		fontInstance.update(params);
-	},
 	'/change-font-from-typedata': async ({typedataJSON, db}) => {
 		const typedata = JSON.parse(typedataJSON);
 
-		await delayAfterCall(() => {
-			localClient.dispatchAction('/store-value', {uiFontLoading: true});
-		}, 400);
-
-		fontInstance.on('worker.fontLoaded', () => {
-			setTimeout(() => {
-				localClient.dispatchAction('/store-value', {uiFontLoading: false});
-			}, 1000);
+		localClient.dispatchAction('/store-value-font', {
+			familyName: typedata.fontinfo.familyName,
+			db,
+			typedataJSON,
 		});
 
-		try {
-			await fontInstance.loadFont(typedata.fontinfo.familyName, typedataJSON, db);
-		}
-		catch (err) {
-			trackJs.track(err);
-			saveErrorLog(err);
-		}
-
-		localClient.dispatchAction('/create-font', fontInstance.font.ot.getEnglishName('fontFamily'));
+		localClient.dispatchAction('/create-font', typedata.fontinfo.familyName);
 
 		localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
-		localClient.dispatchAction('/load-glyphs', _.mapValues(
-			fontInstance.font.altMap,
-			mapGlyphForApp
-		));
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 		localClient.dispatchAction('/clear-undo-stack');
 
@@ -619,33 +595,17 @@ export default {
 		}
 
 	},
-	'/update-letter-spacing-value': ({letter, valueList}) => {
-		fontInstance.getGlyphProperty(
-			letter,
-			valueList,
-			(values) => {
-				const resultValues = {};
-
-				_.forOwn(values, (value, key) => {
-					if (value) {
-						resultValues[key] = Math.round(value);
-					}
-				});
-				localClient.dispatchAction('/store-value-fast', resultValues);
-		});
-	},
-	'/change-glyph-node-manually': ({changes, force, label = 'glyph node manual'}) => {
-		const glyphUnicode = fontInstance.currGlyph.ot.unicode;
+	'/change-glyph-node-manually': ({changes, force, label = 'glyph node manual', glyphName}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
 
-		manualChanges[glyphUnicode] = manualChanges[glyphUnicode] || {};
-		manualChanges[glyphUnicode].cursors = manualChanges[glyphUnicode].cursors || {};
+		manualChanges[glyphName] = manualChanges[glyphName] || {};
+		manualChanges[glyphName].cursors = manualChanges[glyphName].cursors || {};
 
 		// adding deltas to modified cursors
 		Object.keys(changes).forEach((cursorKey) => {
-			const oldChanges = manualChanges[glyphUnicode].cursors[cursorKey];
+			const oldChanges = manualChanges[glyphName].cursors[cursorKey];
 
 			if (typeof oldChanges === 'number') {
 				changes[cursorKey] += oldChanges;
@@ -665,10 +625,10 @@ export default {
 			...oldValues,
 			manualChanges: {
 				...manualChanges,
-				[glyphUnicode]: {
-					...manualChanges[glyphUnicode],
+				[glyphName]: {
+					...manualChanges[glyphName],
 					cursors: {
-						...manualChanges[glyphUnicode].cursors,
+						...manualChanges[glyphName].cursors,
 						...changes,
 					},
 				},
@@ -689,19 +649,18 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/reset-glyph-node-manually': ({contourId, nodeId, force, label = 'reset manual'}) => {
-		const glyphUnicode = fontInstance.currGlyph.ot.unicode;
+	'/reset-glyph-node-manually': ({contourId, nodeId, force, label = 'reset manual', glyphName}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
 
-		manualChanges[glyphUnicode] = manualChanges[glyphUnicode] || {};
-		manualChanges[glyphUnicode].cursors = manualChanges[glyphUnicode].cursors || {};
+		manualChanges[glyphName] = manualChanges[glyphName] || {};
+		manualChanges[glyphName].cursors = manualChanges[glyphName].cursors || {};
 
 		// adding deltas to modified cursors
-		Object.keys(manualChanges[glyphUnicode].cursors).forEach((cursorKey) => {
+		Object.keys(manualChanges[glyphName].cursors).forEach((cursorKey) => {
 			if (cursorKey.indexOf(`contours.${contourId}.nodes.${nodeId}`) !== -1) {
-				delete manualChanges[glyphUnicode].cursors[cursorKey];
+				delete manualChanges[glyphName].cursors[cursorKey];
 			}
 		});
 
@@ -709,10 +668,10 @@ export default {
 			...oldValues,
 			manualChanges: {
 				...manualChanges,
-				[glyphUnicode]: {
-					...manualChanges[glyphUnicode],
+				[glyphName]: {
+					...manualChanges[glyphName],
 					cursors: {
-						...manualChanges[glyphUnicode].cursors,
+						...manualChanges[glyphName].cursors,
 					},
 				},
 			},
@@ -753,9 +712,5 @@ export default {
 		debouncedSave(newParams, db);
 
 		undoWatcher.forceUpdate(patch, label);
-
-		setTimeout(function() {
-			fontInstance.displayGlyph();
-		}, 100);
 	},
 };
