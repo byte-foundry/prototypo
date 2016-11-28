@@ -67,7 +67,7 @@
 		&-prev,
 		&-next {
 			position: absolute;
-			bottom: -30px;
+			top: -25px;
 			right: 0;
 
 			width: 20px;
@@ -84,7 +84,7 @@
 			}
 		}
 		&-prev {
-			margin-right: 26px;
+			margin-right: 23px;
 		}
 	}
 
@@ -95,7 +95,7 @@
 
 	.close-button {
 		position: absolute;
-		top: -15px;
+		top: -25px;
 		right: -25px;
 	}
 }
