@@ -105,6 +105,7 @@
   },
   "scripts": {
     "start": "gulp serve",
+    "build": "gulp build",
     "debug": "gulp debug"
   },
   "repository": {
