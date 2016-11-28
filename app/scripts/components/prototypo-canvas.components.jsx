@@ -36,7 +36,6 @@ export default class PrototypoCanvas extends React.Component {
 		this.toggleNodes = this.toggleNodes.bind(this);
 		this.toggleOutline = this.toggleOutline.bind(this);
 		this.setGlyphs = this.setGlyphs.bind(this);
-		this.storeProperties = this.storeProperties.bind(this);
 		this.changeComponent = this.changeComponent.bind(this);
 		this.wheel = this.wheel.bind(this);
 		this.acceptShortcut = this.acceptShortcut.bind(this);
@@ -45,6 +44,9 @@ export default class PrototypoCanvas extends React.Component {
 		this.mouseDown = this.mouseDown.bind(this);
 		this.changeManualNode = this.changeManualNode.bind(this);
 		this.resetManualNode = this.resetManualNode.bind(this);
+		this.startLoad = this.startLoad.bind(this);
+		this.endLoad = this.endLoad.bind(this);
+		this.afterFontComputation = this.afterFontComputation.bind(this);
 	}
 
 	componentWillMount() {
@@ -62,6 +64,7 @@ export default class PrototypoCanvas extends React.Component {
 					uiText: head.toJS().uiText || '',
 					uiWord: head.toJS().uiWord || '',
 					canvasMode: head.toJS().canvasMode,
+					oldCanvasMode: head.toJS().oldCanvasMode,
 					altList: head.toJS().altList,
 				});
 			})
@@ -86,7 +89,6 @@ export default class PrototypoCanvas extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-
 		//TODO(franz): this should be rewrite after it works
 			/*fontInstance.removeAllListeners('manualchange');
 		fontInstance.removeAllListeners('manualreset');
@@ -187,7 +189,7 @@ export default class PrototypoCanvas extends React.Component {
 		if (e.keyCode === 32) {
 			e.preventDefault();
 			e.stopPropagation();
-			if (!(this.state.canvasMode === 'move')) {
+			if (this.state.oldCanvasMode === undefined || this.state.oldCanvasMode === 'move') {
 				this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
 			}
 		}
@@ -274,12 +276,6 @@ export default class PrototypoCanvas extends React.Component {
 		));
 	}
 
-	storeProperties(glyphProperties) {
-		this.client.dispatchAction('/store-value-fast', {
-			glyphProperties,
-		});
-	}
-
 	changeComponent(object) {
 		this.client.dispatchAction('/change-component', object);
 	}
@@ -290,6 +286,27 @@ export default class PrototypoCanvas extends React.Component {
 
 	resetManualNode(params) {
 		this.client.dispatchAction('/reset-glyph-node-manually', params);
+	}
+
+	startLoad() {
+		this.client.dispatchAction('/store-value', {uiFontLoading: true});
+	}
+
+	endLoad() {
+
+		this.client.dispatchAction('/store-value', {
+			uiFontLoading: false,
+		});
+	}
+
+	afterFontComputation({totalHeight, glyphProperties}) {
+		this.client.dispatchAction('/store-value', {
+			totalHeight,
+		});
+
+		this.client.dispatchAction('/store-value-fast', {
+			glyphProperties,
+		});
 	}
 
 	render() {
@@ -358,7 +375,7 @@ export default class PrototypoCanvas extends React.Component {
 					values={this.state.values}
 					subset={this.state.uiText + rawToEscapedContent(this.state.uiWord, this.state.glyphs)}
 					setGlyphs={this.setGlyphs}
-					storeProperties={this.storeProperties}
+					afterFontComputation={this.afterFontComputation}
 					changeComponent={this.changeComponent}
 					canvasMode={this.state.canvasMode}
 					mouseUp={this.mouseUp}
@@ -368,6 +385,8 @@ export default class PrototypoCanvas extends React.Component {
 					wheel={this.wheel}
 					changeManualNode={this.changeManualNode}
 					resetManualNode={this.resetManualNode}
+					preLoad={this.startLoad}
+					afterLoad={this.endLoad}
 					altList={this.state.altList}
 				/>
 				<div className={actionBarClassNames}>

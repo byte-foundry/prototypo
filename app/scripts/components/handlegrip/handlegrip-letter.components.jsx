@@ -72,8 +72,14 @@ export default class HandlegripLetter extends React.Component {
 					ref="leftbar"
 					side="left"
 					spacing={spacingLeft}
+					baseSpacing={this.props.baseSpacingLeft}
 					min={this.props.min}
 					max={this.props.max}
+					clampedValue={this.props.tracking === 'left' ? this.props.clampedValue : 0}
+					style={{left: this.props.tracking === 'left'
+						? (-this.props.clampedValue - this.props.baseSpacingLeft + spacingLeft) / this.props.dragginRatio - 5
+						: -5,
+					}}
 					letter={this.props.letter}
 				/>
 				<span className="letter-wrap-wrap">
@@ -88,8 +94,14 @@ export default class HandlegripLetter extends React.Component {
 					ref="rightbar"
 					side="right"
 					spacing={spacingRight}
+					baseSpacing={this.props.baseSpacingRight}
 					min={this.props.min}
 					max={this.props.max}
+					clampedValue={this.props.tracking === 'right' ? this.props.clampedValue : 0}
+					style={{right: this.props.tracking === 'right'
+						? (-this.props.clampedValue - this.props.baseSpacingRight + spacingRight) / this.props.dragginRatio - 5
+						: -5,
+					}}
 					letter={this.props.letter}
 				/>
 			</span>

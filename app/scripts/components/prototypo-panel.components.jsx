@@ -160,7 +160,7 @@ export default class PrototypoPanel extends React.Component {
 							uiInvertedTextView={this.state.uiInvertedTextView}
 							uiInvertedTextColors={this.state.uiInvertedTextColors}
 							uiTextFontSize={this.state.uiTextFontSize}
-							uiText={this.state.uiText || ""}
+							uiText={this.state.uiText}
 							indivCurrentGroup={this.state.indivCurrentGroup}
 							close={(name) => { this.toggleView(name); }}
 							viewPanelRightMove={textIntercomDisplacement}

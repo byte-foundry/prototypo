@@ -65,28 +65,22 @@ export default class PrototypoWord extends React.Component {
 					uiSpacingMode: head.toJS().uiSpacingMode,
 					uiWordString: head.toJS().uiWordString,
 					uiWordSelection: head.toJS().uiWordSelection || 0,
+					totalHeight: head.toJS().totalHeight,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 
-			/*fontInstance.on('worker.fontLoaded', () => {
-				if (this.refs.text) {
-					const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
-					const transformedContent = this.state.uiWordString;
-
-					const style = refDOMElement.style;
-
-					this.client.dispatchAction('/store-value', {
-						uiWordFontSize: `${Math.min(DOM.getProperFontSize(
-							transformedContent,
-							style,
-							refDOMElement.clientWidth
-						), !this.state.canvasPanelOpened && !this.state.textPanelOpened ? 500 : 100)}px`,
-					});
-				}
-			});*/
+		this.client.getStore('/fastStuffStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					glyphProperties: head.toJS().glyphProperties,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 	}
 
 	setupText() {
@@ -106,24 +100,42 @@ export default class PrototypoWord extends React.Component {
 
 	componentDidUpdate() {
 		this.setupText();
+		if (this.state.glyphProperties) {
+			const refDOMElement = ReactDOM.findDOMNode(this);
+			const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
+				return sum + (
+					this.state.glyphProperties[glyph.charCodeAt(0)]
+					|| {advanceWidth: 500}
+				).advanceWidth;
+			}, 0);
+			const widthSize = 100 * refDOMElement.clientWidth / (0.1 * advanceWidthSum) * 0.95;
+			const heightSize = 100 * refDOMElement.clientHeight / (0.1 * this.state.totalHeight) * 0.8;
+			const rightSize = Math.min(widthSize, heightSize);
+
+			this.client.dispatchAction('/store-value', {
+				uiWordFontSize: rightSize,
+			});
+		}
+		else {
+			this.client.dispatchAction('/store-value', {
+				uiWordFontSize: 100,
+			});
+		}
 	}
 
 	componentDidMount() {
 		this.setupText();
-		if (this.refs.text) {
-			//const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
-				/*const transformedContent = this.state.uiWordString;
+		const refDOMElement = ReactDOM.findDOMNode(this);
+		const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
+			return sum + this.state.glyphProperties[glyph.charCodeAt(0)].advanceWidth;
+		}, 0);
+		const widthSize = 100 * refDOMElement.clientWidth / (0.1 * advanceWidthSum);
+		const heightSize = 100 * refDOMElement.clientHeight / (0.1 * this.state.totalHeight);
+		const rightSize = Math.min(widthSize, heightSize);
 
-			const style = refDOMElement.style;
-
-			this.client.dispatchAction('/store-value', {
-				uiWordFontSize: `${Math.min(DOM.getProperFontSize(
-					transformedContent,
-					style,
-					refDOMElement.clientWidth
-				), !this.state.canvasPanelOpened && !this.state.textPanelOpened ? 500 : 100)}px`,
-			});*/
-		}
+		this.client.dispatchAction('/store-value', {
+			uiWordFontSize: rightSize * 0.9,
+		});
 	}
 
 	componentWillUnmount() {

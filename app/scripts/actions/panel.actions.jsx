@@ -59,7 +59,7 @@ export default {
 		}
 	},
 	'/change-canvas-mode': ({canvasMode}) => {
-		prototypoStore.set('canvasMode', canvasMode);
+		prototypoStore.set('canvasMode', canvasMode).set('oldCanvasMode', undefined);
 
 		const patch = prototypoStore.commit();
 

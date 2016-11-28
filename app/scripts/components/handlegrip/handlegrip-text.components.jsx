@@ -67,6 +67,7 @@ export default class HandlegripText extends React.Component {
 					glyphProperties: head.toJS().glyphProperties,
 					unClampedOldValue: head.toJS().unClampedOldValue,
 					clampedValue: head.toJS().clampedValue,
+					dragginRatio: head.toJS().dragginRatio,
 				});
 			})
 			.onDelete(() => {
@@ -79,12 +80,17 @@ export default class HandlegripText extends React.Component {
 		this.updateCacheTextArray(this.props.text);
 	}
 
-	componentDidMount() {
-		const handlegripDOM = ReactDOM.findDOMNode(this);
+	componentDidUpdate() {
+		if (!this.state.loaded) {
+			const handlegripDOM = ReactDOM.findDOMNode(this);
 
-		if (handlegripDOM) {
-			handlegripDOM.addEventListener('mouseup', this.handleUp);
-			handlegripDOM.addEventListener('mousemove', this.handleMove);
+			if (handlegripDOM) {
+				handlegripDOM.addEventListener('mouseup', this.handleUp);
+				handlegripDOM.addEventListener('mousemove', this.handleMove);
+				this.setState({
+					loaded: true,
+				});
+			}
 		}
 	}
 
@@ -113,7 +119,15 @@ export default class HandlegripText extends React.Component {
 			force: true,
 		});
 
-		this.client.dispatchAction('/store-value-fast', {unClampedOldValue: undefined});
+		const letterOffsetWidth = this.refs.selectedLetter.getClientWidth();
+		const advanceWidth = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)].advanceWidth;
+		const dragginRatio = parseFloat(advanceWidth) / letterOffsetWidth;
+
+		this.client.dispatchAction('/store-value-fast', {
+			unClampedOldValue: undefined,
+			clampedValue: 0,
+			dragginRatio,
+		});
 		this.client.dispatchAction('/store-value', {uiSpacingTracking: undefined});
 
 		e.stopPropagation();
@@ -202,16 +216,17 @@ export default class HandlegripText extends React.Component {
 			newSpacingValues.spacingRight = clampedNewValue + baseSpacingRight;
 		}
 
-		if (!Number.isNaN(newValue)) {
+			/*if (!Number.isNaN(newValue)) {
 			this.client.dispatchAction('/change-letter-spacing', {
 				value: clampedNewValue,
 				side: this.state.tracking,
 				letter: this.getSelectedLetter(),
 			});
-		}
+		}*/
 
 		newSpacingValues.unClampedOldValue = newValue;
 		newSpacingValues.clampedValue = clampedNewValue;
+		newSpacingValues.dragginRatio = dragginRatio;
 		newSpacingValues.uiTrackingX = newX;
 
 		this.client.dispatchAction('/store-value-fast', newSpacingValues);
@@ -282,13 +297,20 @@ export default class HandlegripText extends React.Component {
 
 			const letterComponents = this.state.textArray.map(([key, letter]) => {
 				if (selectedLetter === key) {
+					const baseSpacing = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)];
+
 					return (
 						<HandlegripLetter
 							letter={letter}
 							ref="selectedLetter"
 							spacingLeft={spacingLeft}
 							spacingRight={spacingRight}
+							baseSpacingLeft={baseSpacing.baseSpacingLeft}
+							baseSpacingRight={baseSpacing.baseSpacingRight}
 							advanceWidth={advanceWidth}
+							clampedValue={this.state.clampedValue}
+							dragginRatio={this.state.dragginRatio}
+							tracking={this.state.tracking}
 							min={this.props.min}
 							max={this.props.max}
 							key={key}
