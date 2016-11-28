@@ -3,13 +3,14 @@
 .shadow-of-the-colossus {
 	position:absolute;
 	z-index:0;
-	top: 19.8%;
-	left: 39.55%;
-	font-family: 'Prototypo-Venus';
+	top: 31.4%;
+	left: 42.85%;
+	font-family: 'Gfntbeta-Regular', 'Comic Sans MS';
 	font-size: 501px;
 	color: rgba(255,0,123,0.3);
 	font-weight: normal;
-	display:none;
+	pointer-events: none;
+	// display:none;
 }
 
 .contextual-menu {

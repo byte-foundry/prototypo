@@ -19,6 +19,10 @@
 		color: $green;
 	}
 
+	&:hover &-sample.gfnt, &.is-active &-sample.gfnt {
+		background-image: url('../../../images/elzevir-sample-active.svg') !important;
+	}
+
 	&:hover &-sample.elzevir, &.is-active &-sample.elzevir {
 		background-image: url('../../../images/elzevir-sample-active.svg') !important;
 	}
@@ -29,6 +33,10 @@
 
 	&:hover &-sample.venus, &.is-active &-sample.venus {
 		background-image: url('../../../images/grotesk-sample-active.svg') !important;
+	}
+
+	&-sample.gfnt {
+		background-image: url('../../../images/elzevir-sample-hover.svg');
 	}
 
 	&-sample.elzevir {

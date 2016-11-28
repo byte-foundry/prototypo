@@ -8,6 +8,7 @@
     "del": "^1.2.0",
     "draft-js": "^0.8.1",
     "elzevir.ptf": "byte-foundry/elzevir.ptf#release",
+    "gnft.ptf": "byte-foundry/gnft.ptf#release",
     "escape-string-regexp": "^1.0.5",
     "hoodie-client": "^3.4.0",
     "john-fell.ptf": "byte-foundry/john-fell.ptf#release",
