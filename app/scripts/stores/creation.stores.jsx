@@ -9,6 +9,9 @@ const undoableStore = new Remutable({
 const fastStuffStore = new Remutable({
 });
 
+const fontInstanceStore = new Remutable({
+});
+
 const prototypoStore = new Remutable({
 
 	//Store values for debug
@@ -46,7 +49,7 @@ const prototypoStore = new Remutable({
 	//end tag store values
 
 	//glyphs store values
-	glyphs: undefined,
+	glyphs: {},
 	glyphSelected: 'A',
 	glyphLocked: false,
 	//end glyphs store values
@@ -280,6 +283,7 @@ const creditStore = new Remutable({
 
 const stores = {
 	'/prototypoStore': prototypoStore,
+	'/fontInstanceStore': fontInstanceStore,
 	'/undoableStore': undoableStore,
 	'/fastStuffStore': fastStuffStore,
 	'/userStore': userStore,
@@ -289,6 +293,7 @@ const stores = {
 
 export default stores;
 export {
+	fontInstanceStore,
 	prototypoStore,
 	undoableStore,
 	fastStuffStore,

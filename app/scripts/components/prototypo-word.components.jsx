@@ -8,7 +8,6 @@ import {diffChars} from 'diff';
 import {prototypoStore} from '../stores/creation.stores.jsx';
 
 import {contentToArray, arrayToRawContent, rawToEscapedContent} from '../helpers/input-transform.helpers.js';
-import DOM from '../helpers/dom.helpers.js';
 
 import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
@@ -27,13 +26,11 @@ export default class PrototypoWord extends React.Component {
 			uiSpacingMode: undefined,
 			uiWordString: undefined,
 			uiWordSelection: 0,
-			letterSpacingLeft: undefined,
-			letterSpacingRight: undefined,
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// function bindings
-		this.setupText = _.debounce(this.setupText.bind(this),500, {leading: true});
+		this.setupText = _.debounce(this.setupText.bind(this), 500, {leading: true});
 		this.saveText = this.saveText.bind(this);
 		this.handleEscapedInput = this.handleEscapedInput.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
@@ -56,8 +53,6 @@ export default class PrototypoWord extends React.Component {
 			uiSpacingMode: prototypoStore.get('uiSpacingMode'),
 			uiWordString: prototypoStore.get('uiWordString'),
 			uiWordSelection: prototypoStore.get('uiWordSelection') || 0,
-			letterSpacingLeft: prototypoStore.get('letterSpacingLeft'),
-			letterSpacingRight: prototypoStore.get('letterSpacingRight'),
 		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
@@ -70,29 +65,21 @@ export default class PrototypoWord extends React.Component {
 					uiSpacingMode: head.toJS().uiSpacingMode,
 					uiWordString: head.toJS().uiWordString,
 					uiWordSelection: head.toJS().uiWordSelection || 0,
-					letterSpacingLeft: head.toJS().letterSpacingLeft,
-					letterSpacingRight: head.toJS().letterSpacingRight,
+					totalHeight: head.toJS().totalHeight,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 
-			fontInstance.on('worker.fontLoaded', () => {
-				if (this.refs.text) {
-					const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
-					const transformedContent = this.state.uiWordString;
-
-					const style = refDOMElement.style;
-
-					this.client.dispatchAction('/store-value', {
-						uiWordFontSize: `${Math.min(DOM.getProperFontSize(
-							transformedContent,
-							style,
-							refDOMElement.clientWidth
-						), !this.state.canvasPanelOpened && !this.state.textPanelOpened ? 500 : 100)}px`,
-					});
-				}
+		this.client.getStore('/fastStuffStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					glyphProperties: head.toJS().glyphProperties,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
 			});
 	}
 
@@ -111,26 +98,44 @@ export default class PrototypoWord extends React.Component {
 		this.client.dispatchAction('/store-text', {value: text, propName: this.props.field});
 	}
 
-	componentDidUpdate(prevProps, prevState) {
+	componentDidUpdate() {
 		this.setupText();
+		if (this.state.glyphProperties) {
+			const refDOMElement = ReactDOM.findDOMNode(this);
+			const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
+				return sum + (
+					this.state.glyphProperties[glyph.charCodeAt(0)]
+					|| {advanceWidth: 500}
+				).advanceWidth;
+			}, 0);
+			const widthSize = 100 * refDOMElement.clientWidth / (0.1 * advanceWidthSum) * 0.95;
+			const heightSize = 100 * refDOMElement.clientHeight / (0.1 * this.state.totalHeight) * 0.8;
+			const rightSize = Math.min(widthSize, heightSize);
+
+			this.client.dispatchAction('/store-value', {
+				uiWordFontSize: rightSize,
+			});
+		}
+		else {
+			this.client.dispatchAction('/store-value', {
+				uiWordFontSize: 100,
+			});
+		}
 	}
 
 	componentDidMount() {
 		this.setupText();
-		if (this.refs.text) {
-			const refDOMElement = ReactDOM.findDOMNode(this.refs.text);
-			const transformedContent = this.state.uiWordString;
+		const refDOMElement = ReactDOM.findDOMNode(this);
+		const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
+			return sum + this.state.glyphProperties[glyph.charCodeAt(0)].advanceWidth;
+		}, 0);
+		const widthSize = 100 * refDOMElement.clientWidth / (0.1 * advanceWidthSum);
+		const heightSize = 100 * refDOMElement.clientHeight / (0.1 * this.state.totalHeight);
+		const rightSize = Math.min(widthSize, heightSize);
 
-			const style = refDOMElement.style;
-
-			this.client.dispatchAction('/store-value', {
-				uiWordFontSize: `${Math.min(DOM.getProperFontSize(
-					transformedContent,
-					style,
-					refDOMElement.clientWidth
-				), !this.state.canvasPanelOpened && !this.state.textPanelOpened ? 500 : 100)}px`,
-			});
-		}
+		this.client.dispatchAction('/store-value', {
+			uiWordFontSize: rightSize * 0.9,
+		});
 	}
 
 	componentWillUnmount() {

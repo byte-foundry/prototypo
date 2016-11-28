@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var fs = require('fs');
 
 module.exports = {
 	cache: true,
@@ -31,6 +32,13 @@ module.exports = {
 				loaders: ['react-hot-loader', 'babel-loader?cacheDirectory', 'prelude-loader', 'if-loader'],
 				include: [
 					path.join(__dirname, 'app'),
+				],
+			},
+			{
+				test: /prototypo\-canvas/,
+				loaders: [ 'babel-loader?cacheDirectory'],
+				include: [
+					fs.realpathSync(__dirname + '/node_modules/prototypo-canvas'),
 				],
 			},
 			{
@@ -74,5 +82,6 @@ module.exports = {
 	],
 	resolve: {
 		extensions: ['', '.js', '.jsx'],
+		fallback: path.join(__dirname, 'node_modules'),
 	},
 };

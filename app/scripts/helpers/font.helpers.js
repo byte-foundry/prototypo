@@ -1,4 +1,4 @@
-import PrototypoCanvas from 'prototypo-canvas';
+//import PrototypoCanvas from 'prototypo-canvas';
 
 import {Typefaces} from '../services/typefaces.services.js';
 
@@ -14,6 +14,7 @@ export function mapGlyphForApp(glyph) {
 					characterName: alt.src && alt.src.characterName || '',
 					unicode: alt.src && alt.src.unicode	|| '',
 					glyphName: alt.src && alt.src.glyphName || '',
+					relatedGlyphs: alt.src && alt.src.relatedGlyphs || [],
 				},
 				name: alt.name,
 				altImg: alt.altImg,
@@ -29,36 +30,29 @@ export async function setupFontInstance(appValues) {
 
 		// const prototypoSource = await Typefaces.getPrototypo();
 		const workerDeps = document.querySelector('script[src*=prototypo\\.]').src;
-		let workerUrl;
 
-		// The worker will be built from URL during development, and from
-		// source in production.
-		//if (process.env.NODE_ENV !== 'production') {
-			workerUrl = '/prototypo-canvas/src/worker.js';
-			//}
+		const workerUrl = '/prototypo-canvas/src/worker.js';
 
-		if (!window.fontInstance) {
-			const fontPromise = PrototypoCanvas.init({
-				canvas: window.canvasElement,
-				workerUrl,
-				workerDeps,
-				jQueryListeners: false,
-			});
+	//await font.loadFont(typedata.fontinfo.familyName, typedataJSON, appValues.values.variantSelected.db);
 
-			window.fontInstance = await fontPromise;
-		}
-		const font = window.fontInstance;
-
-
-		await font.loadFont(typedata.fontinfo.familyName, typedataJSON, appValues.values.variantSelected.db);
-
-		const glyphs = _.mapValues(
+		/*const glyphs = _.mapValues(
 			font.font.altMap,
 			mapGlyphForApp
 		);
-		const subset = appValues.values.text + rawToEscapedContent(appValues.values.word, glyphs);
+		const subset = appValues.values.text + rawToEscapedContent(appValues.values.word, glyphs);*/
 
-		font.subset = typeof subset === 'string' ? subset : '';
-		font.displayChar(appValues.values.selected);
-		return {font, subset, typedata};
+	//font.subset = typeof subset === 'string' ? subset : '';
+	//font.displayChar(appValues.values.selected);
+	return {
+		typedataJSON,
+		familyName: typedata.fontinfo.familyName,
+		controls: typedata.controls,
+		presets: typedata.presets,
+		tags: typedata.fontinfo.tags,
+		workerUrl,
+		workerDeps,
+		db: appValues.values.variantSelected.db,
+		//subset,
+		typedata
+	};
 }

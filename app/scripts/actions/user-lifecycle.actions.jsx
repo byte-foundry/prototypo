@@ -369,25 +369,23 @@ export default {
 		HoodieApi.login(username, password)
 			.then(async () => {
 				await loadStuff();
-				window.addEventListener('fontInstance.loaded', () => {
-					hashHistory.push(dashboardLocation);
+				hashHistory.push(dashboardLocation);
 
-					window.Intercom('boot', {
-						app_id: 'mnph1bst',
-						email: username,
-						widget: {
-							activator: '#intercom-button',
-						},
-					});
-					trackJs.addMetadata('username', username);
-
-					form.errors = [];
-					form.inError = {};
-					form.loading = false;
-					const endPatch = userStore.set('signinForm', form).commit();
-
-					localServer.dispatchUpdate('/userStore', endPatch);
+				window.Intercom('boot', {
+					app_id: 'mnph1bst',
+					email: username,
+					widget: {
+						activator: '#intercom-button',
+					},
 				});
+				trackJs.addMetadata('username', username);
+
+				form.errors = [];
+				form.inError = {};
+				form.loading = false;
+				const endPatch = userStore.set('signinForm', form).commit();
+
+				localServer.dispatchUpdate('/userStore', endPatch);
 			})
 			.catch((err) => {
 				if (/must sign out/i.test(err.message) && !retry) {
