@@ -79,7 +79,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (!this.state.editorState.currentContent && nextProps[nextProps.field] !== undefined) {
+		if (!this.state.editorState.getCurrentContent() && nextProps[nextProps.field] !== undefined) {
 			this.setText(nextProps[nextProps.field]);
 		}
 		this.updateIndivGroupDecorator(nextProps.indivCurrentGroup);
@@ -123,8 +123,8 @@ export default class PrototypoText extends React.Component {
 	}
 
 	onEditorChange(editorState) {
-		this.saveText(editorState.getCurrentContent().getPlainText());
 		this.setState({editorState});
+		this.saveText(editorState.getCurrentContent().getPlainText());
 	}
 
 	toggleContextMenu(e) {
