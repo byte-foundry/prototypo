@@ -40,10 +40,16 @@ export default class ResizablePanels extends React.Component {
 		return newPosition;
 	}
 
-	componentDidMount() {
-		const {width, height} = ReactDOM.findDOMNode(this.refs.firstChild).getBoundingClientRect();
-
-		this.updateHandlePosition(this.props.direction === 'vertical' ? {x: width} : {y: height});
+	componentWillReceiveProps(nextProps) {
+		if (
+			(!this.state.x && nextProps.defaultX)
+			|| (!this.state.y && nextProps.defaultY)
+		) {
+			this.setState({
+				x: nextProps.defaultX,
+				y: nextProps.defaultY,
+			});
+		}
 	}
 
 	preventSelection(e) {

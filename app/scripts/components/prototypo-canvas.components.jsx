@@ -173,8 +173,8 @@ export default class PrototypoCanvas extends React.Component {
 			e.stopPropagation();
 			if (!this.oldPos) {
 				this.oldPos = {
-					uiPos: fontInstance.view.center,
-					uiZoom: fontInstance.zoom,
+					uiPos: this.props.uiPos,
+					uiZoom: this.props.uiZoom,
 					uiNodes: this.props.uiNodes,
 					uiOutline: this.props.uiOutline,
 				};
@@ -221,10 +221,10 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
-	reset() {
+	reset(x, y) {
 		this.props.reset({
-			x: fontInstance.currGlyph.getBounds().center.x,
-			y: -fontInstance.currGlyph.getBounds().center.y,
+			x,
+			y,
 		});
 	}
 
@@ -351,7 +351,6 @@ export default class PrototypoCanvas extends React.Component {
 			<AlternateMenu alternates={this.props.glyphs[this.props.glyphSelected]} unicode={this.props.glyphSelected}/>
 		) : false;
 
-		//<div ref="canvas" className="prototypo-canvas-container" onMouseLeave={() => {this.rejectShortcut();}} onMouseEnter={() => { this.acceptShortcut();}} onDoubleClick={() => { this.reset(); }}></div>
 		return (
 			<div
 				style={this.props.style}
@@ -385,6 +384,7 @@ export default class PrototypoCanvas extends React.Component {
 					wheel={this.wheel}
 					changeManualNode={this.changeManualNode}
 					resetManualNode={this.resetManualNode}
+					resetView={this.reset}
 					preLoad={this.startLoad}
 					afterLoad={this.endLoad}
 					altList={this.state.altList}
