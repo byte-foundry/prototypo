@@ -346,10 +346,6 @@ export default class PrototypoCanvas extends React.Component {
 				key="reset"
 				text="Reset view"
 				click={this.reset}/>,
-			<ContextualMenuItem
-				key="resetGlyph"
-				text="Reset glyph"
-				click={this.resetGlyph}/>,
 		];
 
 		if (this.state.canvasMode === 'select-points') {
