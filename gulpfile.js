@@ -23,7 +23,7 @@ var gutil			= require('gulp-util');
 var nightwatch		= require('gulp-nightwatch');
 
 gulp.task('images', function() {
-	gulp.src('./app/images/*.*')
+	gulp.src(['./app/images/*.*', './app/images/**/*.*'])
 		.pipe(gulp.dest('./dist/assets/images/'));
 	gulp.src('./app/fonts/*.*')
 		.pipe(gulp.dest('./dist/assets/fonts/'));

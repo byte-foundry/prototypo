@@ -21,6 +21,85 @@
 	overflow:hidden;
 }
 
+#prototyposlidertooltip {
+	position: absolute;
+	display: block;
+	top: 52px;
+	right: -228px;
+	width: 228px;
+	z-index: 3;
+	padding: 1em;
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+	background-color: lighten($dark-grey, 5%);
+	color: $white;
+
+	&.slider-tooltip-animation {
+		&-enter {
+			transform: translateX(-200px);
+			will-change: transform;
+
+			&#{&}-active {
+				transform: translateX(0px);
+				transition: transform .3s ease-out;
+			}
+		}
+
+		&-leave {
+			transform: translateX(0px);
+			will-change: transform;
+
+			&#{&}-active {
+				transform: translateX(-200px);
+			transition: transform .3s ease-in;
+			}
+		}
+	}
+
+	.slider-tooltip {
+
+		&-title {
+			font-size: 1.3em;
+			margin-bottom: 10px;
+		}
+		&-description {
+		}
+		&-prev,
+		&-next {
+			position: absolute;
+			top: -25px;
+			right: 0;
+
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background-color: $dark-grey;
+			text-align: center;
+			font-size: 1.3em;
+			line-height: 1;
+			cursor: pointer;
+
+			&:hover {
+				background-color: $green;
+			}
+		}
+		&-prev {
+			margin-right: 23px;
+		}
+	}
+
+	img {
+		width: 200px;
+		height: 150px;
+	}
+
+	.close-button {
+		position: absolute;
+		top: -25px;
+		right: -25px;
+	}
+}
+
 .prototypo-panel-handle {
 	position: absolute;
 	z-index: 2;

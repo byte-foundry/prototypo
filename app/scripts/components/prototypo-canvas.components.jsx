@@ -89,15 +89,6 @@ export default class PrototypoCanvas extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-		//TODO(franz): this should be rewrite after it works
-			/*fontInstance.removeAllListeners('manualchange');
-		fontInstance.removeAllListeners('manualreset');
-		fontInstance.on('manualchange', (changes, force = false) => {
-			this.client.dispatchAction('/change-glyph-node-manually', {changes, force});
-		});
-		fontInstance.on('manualreset', (contourId, nodeId, force = true) => {
-			this.client.dispatchAction('/reset-glyph-node-manually', {contourId, nodeId, force});
-		});*/
 	}
 
 	componentWillUnmount() {
@@ -113,10 +104,6 @@ export default class PrototypoCanvas extends React.Component {
 		});
 	}
 
-	mouseMove(e) {
-		fontInstance.onMove.bind(fontInstance)(e);
-	}
-
 	preventSelection(e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -124,7 +111,6 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	mouseDown(e) {
-		fontInstance.onDown.bind(fontInstance)(e);
 		document.addEventListener('selectstart', this.preventSelection);
 	}
 
@@ -134,16 +120,6 @@ export default class PrototypoCanvas extends React.Component {
 			uiZoom: zoom,
 		});
 		document.removeEventListener('selectstart', this.preventSelection);
-	}
-
-	componentDidMount() {
-			/*const canvasContainer = this.refs.canvas;
-
-		canvasContainer.appendChild(window.canvasElement);
-		canvasContainer.addEventListener('mousedown', (e) => { this.mouseDown(e); });
-		canvasContainer.addEventListener('mouseup', (e) => { this.mouseUp(e); });
-
-		this.setupCanvas();*/
 	}
 
 	toggleContextMenu(e) {
