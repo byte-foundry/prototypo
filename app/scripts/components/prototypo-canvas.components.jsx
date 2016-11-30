@@ -370,11 +370,12 @@ export default class PrototypoCanvas extends React.Component {
 				ref="container"
 				onMouseLeave={this.handleLeaveAndClick}>
 				<CanvasBar/>
-				<div
+				<button
 					className={`prototypo-canvas-reset-glyph-button ${this.isManualEdited() ? '' : 'disabled'}`}
-					onClick={this.resetGlyph}>
+					onClick={this.resetGlyph}
+					disabled={!this.isManualEdited()}>
 					Reset glyph
-				</div>
+				</button>
 				<PrototypoCanvasContainer
 					familyName={this.state.familyName}
 					json={this.state.typedataJSON}
