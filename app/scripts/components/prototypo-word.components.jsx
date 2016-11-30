@@ -125,17 +125,19 @@ export default class PrototypoWord extends React.Component {
 
 	componentDidMount() {
 		this.setupText();
-		const refDOMElement = ReactDOM.findDOMNode(this);
-		const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
-			return sum + this.state.glyphProperties[glyph.charCodeAt(0)].advanceWidth;
-		}, 0);
-		const widthSize = 100 * refDOMElement.clientWidth / (0.1 * advanceWidthSum);
-		const heightSize = 100 * refDOMElement.clientHeight / (0.1 * this.state.totalHeight);
-		const rightSize = Math.min(widthSize, heightSize);
+		if (this.state.glyphProperties) {
+			const refDOMElement = ReactDOM.findDOMNode(this);
+			const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
+				return sum + this.state.glyphProperties[glyph.charCodeAt(0)].advanceWidth;
+			}, 0);
+			const widthSize = 100 * refDOMElement.clientWidth / (0.1 * advanceWidthSum);
+			const heightSize = 100 * refDOMElement.clientHeight / (0.1 * this.state.totalHeight);
+			const rightSize = Math.min(widthSize, heightSize);
 
-		this.client.dispatchAction('/store-value', {
-			uiWordFontSize: rightSize * 0.9,
-		});
+			this.client.dispatchAction('/store-value', {
+				uiWordFontSize: rightSize * 0.9,
+			});
+		}
 	}
 
 	componentWillUnmount() {
