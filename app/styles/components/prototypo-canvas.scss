@@ -26,26 +26,36 @@
 	&-reset-glyph-button {
 		position: absolute;
 		display: block;
-		top: 10%;
-		left: 10%;
+		top: 20px;
+		left: 20px;
 		z-index: 2;
-		cursor: pointer;
 		border: 2px solid $black;
-		padding: 5px;
-		border-radius: 8px;
+		color: $black;
+		background-color: $white;
+		cursor: pointer;
+		font-size: 14px;
+		padding: 0 15px;
+		border-radius: 3px;
+
 		transition: background-color 0.3s ease;
 
 		&:hover {
-			background-color: $light-green;
+			background-color: $green;
+		}
+
+		margin-left: -200px;
+		&.is-on-canvas {
+			margin-left: 0;
+			transition: margin 0.3s ease;
 		}
 
 		&.disabled {
-			color: $medium-grey;
-			border-color: $light-grey;
+			opacity: 0.3;
 			cursor: default;
 
 			&:hover {
-				background-color: transparent;
+				background-color: inherit;
+				border-color: inherit;
 			}
 		}
 	}
