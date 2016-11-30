@@ -39,7 +39,7 @@
     "remutable": "FranzPoize/remutable#master",
     "slug": "^0.9.1",
     "tether": "^1.1.0",
-    "venus.ptf": "byte-foundry/venus.ptf#release",
+    "venus.ptf": "byte-foundry/venus.ptf#master",
     "xxhashjs": "^0.1.1"
   },
   "devDependencies": {

@@ -113,13 +113,18 @@ export default class PrototypoCanvas extends React.Component {
 		});
 	}
 
+	mouseMove(e) {
+		fontInstance.onMove.bind(fontInstance)(e);
+	}
+
 	preventSelection(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		return false;
 	}
 
-	mouseDown() {
+	mouseDown(e) {
+		fontInstance.onDown.bind(fontInstance)(e);
 		document.addEventListener('selectstart', this.preventSelection);
 	}
 
