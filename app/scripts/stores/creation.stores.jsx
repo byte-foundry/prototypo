@@ -246,6 +246,7 @@ const couponStore = new Remutable({
 	'14a6c65efc3f285ea0b2f45d75f73bde': {label: 'The first month for $5!'},
 	'b6f30aee2d4b895d61a2f72e6901c4e0': {label: 'Birthday offer, your first month for $1!'},
 	'dc989dd83092a325586b0415ff9d0365': {label: '2 months for free offer by Production Type', shouldSkipCard: true},
+	'131c543d598049843d548a0599b65491': {label: 'V2 launch offer, your first month for $1!'},
 });
 
 const planStore = new Remutable({
