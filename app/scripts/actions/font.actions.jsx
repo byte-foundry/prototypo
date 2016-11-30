@@ -691,6 +691,32 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
+	'/reset-glyph-manually': ({glyphName, force, label = 'reset manual'}) => {
+		const db = (prototypoStore.get('variant') || {}).db;
+		const oldValues = undoableStore.get('controlsValues');
+		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
+
+		delete manualChanges[glyphName];
+
+		const newParams = {
+			...oldValues,
+			manualChanges,
+		};
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+		localClient.dispatchAction('/update-font', newParams);
+
+		debouncedSave(newParams, db);
+
+		if (force) {
+			undoWatcher.forceUpdate(patch, label);
+		}
+		else {
+			undoWatcher.update(patch, label);
+		}
+	},
 	'/change-component': ({glyph, id, name, label = 'change component'}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const oldValues = undoableStore.get('controlsValues');
