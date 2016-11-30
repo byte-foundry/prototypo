@@ -7,6 +7,7 @@ import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import {loadStuff} from '../helpers/appSetup.helpers.js';
+import isProduction from '../helpers/is-production.helpers';
 import {AccountValues} from '../services/values.services.js';
 
 let localServer;
@@ -372,7 +373,7 @@ export default {
 				hashHistory.push(dashboardLocation);
 
 				window.Intercom('boot', {
-					app_id: 'mnph1bst',
+					app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
 					email: username,
 					widget: {
 						activator: '#intercom-button',
@@ -463,7 +464,7 @@ export default {
 			.then(() => {
 
 				window.Intercom('boot', {
-					app_id: 'mnph1bst',
+					app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
 					email: username,
 					name: firstname + curedLastname,
 					occupation: css.value,
