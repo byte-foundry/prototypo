@@ -316,7 +316,14 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	isManualEdited(){
-		return (this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name] ? true : false);
+		if (this.state.values &&
+			this.props.glyphSelected &&
+			this.state.glyphs &&
+			this.state.glyphs[this.props.glyphSelected] &&
+			this.state.values.manualChanges
+		) {
+			return (this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name] ? true : false);
+		} else return false;
 	}
 
 	render() {
