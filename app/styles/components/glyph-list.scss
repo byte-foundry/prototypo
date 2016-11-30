@@ -226,8 +226,11 @@
 
 		%indicator {
 			position: absolute;
-			width: 25px;
-			height: 5px;
+			content:'';
+			width:0px;
+			height:0px;
+			border-style: solid;
+			border-color: transparent;
 		}
 
 		&-top {
@@ -257,7 +260,8 @@
 		}
 
 		&.is-manually-modified  &-top-left-indicator{
-			background-color:$red;
+			border-width: 8px 8px 0 0;
+			border-color: $red transparent transparent transparent;
 		}
 
 		&.is-parametrized &-bottom-right-indicator{
@@ -269,10 +273,6 @@
 		}
 
 		&.has-alts &-top-right-indicator {
-			content:'';
-			width:0px;
-			height:0px;
-			border-style: solid;
 			border-width: 0 8px 8px 0;
 			border-color: transparent $medium-grey transparent transparent;
 		}

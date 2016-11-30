@@ -28,6 +28,7 @@ export default class Glyph extends React.Component {
 			console.log('[RENDER] Glyph');
 		}
 		const showAlts = Array.isArray(this.props.glyph) && this.props.glyph.length > 1;
+		const showManuallyModified = true;
 		const classes = classNames({
 			"glyph-list-glyph": true,
 			"is-selected": this.props.selected,
@@ -36,6 +37,7 @@ export default class Glyph extends React.Component {
 			"is-manually-modified": false,
 			"is-parametrized": false,
 			"has-alts": showAlts,
+			"is-manually-modified": this.props.manualEdited,
 		});
 
 		return (
