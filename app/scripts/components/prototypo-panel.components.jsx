@@ -47,8 +47,8 @@ export default class PrototypoPanel extends React.Component {
 					uiWordFontSize: head.toJS().uiWordFontSize,
 					editingGroup: head.toJS().indivEdit,
 					indivMode: head.toJS().indivMode,
-					wordPanelHeight: head.toJS().wordPanelHeight,
-					canvasPanelWidth: head.toJS().canvasPanelWidth,
+					wordPanelHeight: head.toJS().wordPanelHeight || 20,
+					canvasPanelWidth: head.toJS().canvasPanelWidth || 50,
 					indivCurrentGroup: head.toJS().indivCurrentGroup,
 				});
 			})
@@ -102,9 +102,9 @@ export default class PrototypoPanel extends React.Component {
 		const glyphIntercomDisplacement = hasGlyph && !hasText;
 		const wordIntercomDisplacement = hasWord && !hasText && !hasGlyph;
 
-		if (hasGlyph && this.state.uiShadow) {
+			/*if (hasGlyph && this.state.uiShadow) {
 			textAndGlyph.push(<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>);
-		}
+		}*/
 
 		return (
 			<div id="prototypopanel" key="justAcontainer">
