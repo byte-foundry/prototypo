@@ -4,6 +4,7 @@ import Lifespan from 'lifespan';
 import LocalClient from '../../stores/local-client.stores.jsx';
 
 import InputWithLabel from '../shared/input-with-label.components.jsx';
+import SelectWithLabel from '../shared/select-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
 
