@@ -79,7 +79,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (!this.state.editorState.getCurrentContent() && nextProps[nextProps.field] !== undefined) {
+		if (!this.state.editorState.getCurrentContent().getPlainText() && nextProps[nextProps.field]) {
 			this.setText(nextProps[nextProps.field]);
 		}
 		this.updateIndivGroupDecorator(nextProps.indivCurrentGroup);
