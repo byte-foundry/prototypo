@@ -487,13 +487,6 @@ export default {
 				const patch = userStore.set('infos', {accountValues}).commit();
 				await AccountValues.save({typeface: 'default', values: {accountValues}});
 				localServer.dispatchUpdate('/userStore', patch);
-				if (toLocation.pathname === '/dashboard') {
-					await loadStuff(accountValues);
-					hashHistory.push(toLocation);
-				}
-				else {
-					hashHistory.push(toLocation);
-				}
 
 				form.errors = [];
 				form.inError = {};
@@ -503,7 +496,15 @@ export default {
 				HoodieApi.instance.plan = 'free_none';
 				HoodieApi.instance.email = username;
 				fbq('track', 'Lead');
-				return localServer.dispatchUpdate('/userStore', endPatch);
+				localServer.dispatchUpdate('/userStore', endPatch);
+
+				if (toLocation.pathname === '/dashboard') {
+					await loadStuff(accountValues);
+					hashHistory.push(toLocation);
+				}
+				else {
+					hashHistory.push(toLocation);
+				}
 			})
 			.catch((err) => {
 				if (/must sign out/i.test(err.message) && !retry) {
