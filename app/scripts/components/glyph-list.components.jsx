@@ -42,9 +42,13 @@ export default class GlyphList extends React.Component {
 		}
 	}
 
-	isManualEdited(glyph){
-		const manualChangesGlyph = this.state.values.manualChanges[glyph[0].name];
-		return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0) ? true : false;
+	isManualEdited(glyph) {
+		if (this.state.values
+			&& this.state.values.manualChanges) {
+			const manualChangesGlyph = this.state.values.manualChanges[glyph[0].name];
+
+			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0);
+		}
 	}
 
 	isGlyphInSearch(glyph, search) {
