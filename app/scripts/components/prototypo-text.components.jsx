@@ -72,15 +72,17 @@ export default class PrototypoText extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-		this.setText(this.props[this.props.field]);
 	}
 
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
 
-	componentWillReceiveProps({indivCurrentGroup}) {
-		this.updateIndivGroupDecorator(indivCurrentGroup);
+	componentWillReceiveProps(nextProps) {
+		if (!this.state.editorState.getCurrentContent().getPlainText() && nextProps[nextProps.field]) {
+			this.setText(nextProps[nextProps.field]);
+		}
+		this.updateIndivGroupDecorator(nextProps.indivCurrentGroup);
 	}
 
 	updateIndivGroupDecorator(nextIndivGroup) {
@@ -105,6 +107,7 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setText(text) {
+
 		this.setState({
 			editorState: EditorState.push(
 				this.state.editorState,
@@ -120,8 +123,8 @@ export default class PrototypoText extends React.Component {
 	}
 
 	onEditorChange(editorState) {
-		this.saveText(editorState.getCurrentContent().getPlainText());
 		this.setState({editorState});
+		this.saveText(editorState.getCurrentContent().getPlainText());
 	}
 
 	toggleContextMenu(e) {

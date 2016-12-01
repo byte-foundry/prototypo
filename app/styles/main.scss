@@ -113,6 +113,13 @@ a:visited {
 	user-select: none;
 }
 
+.DraftEditor-root * {
+	-moz-user-select: text;
+	-webkit-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
 // Everybody has border-box sizing
 * {
 	-moz-box-sizing:border-box;

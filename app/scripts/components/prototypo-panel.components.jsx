@@ -47,8 +47,8 @@ export default class PrototypoPanel extends React.Component {
 					uiWordFontSize: head.toJS().uiWordFontSize,
 					editingGroup: head.toJS().indivEdit,
 					indivMode: head.toJS().indivMode,
-					wordPanelHeight: head.toJS().wordPanelHeight,
-					canvasPanelWidth: head.toJS().canvasPanelWidth,
+					wordPanelHeight: head.toJS().wordPanelHeight || 20,
+					canvasPanelWidth: head.toJS().canvasPanelWidth || 50,
 					indivCurrentGroup: head.toJS().indivCurrentGroup,
 				});
 			})
@@ -93,8 +93,6 @@ export default class PrototypoPanel extends React.Component {
 			}*/
 
 		let textAndGlyph;
-		let word;
-
 		const hasGlyph = this.state.uiMode.indexOf('glyph') !== -1;
 		const hasText = this.state.uiMode.indexOf('text') !== -1;
 		const hasWord = this.state.uiMode.indexOf('word') !== -1;
@@ -104,89 +102,12 @@ export default class PrototypoPanel extends React.Component {
 		const glyphIntercomDisplacement = hasGlyph && !hasText;
 		const wordIntercomDisplacement = hasWord && !hasText && !hasGlyph;
 
-		textAndGlyph = [<PrototypoCanvas
-			key="canvas"
-			uiZoom={this.state.uiZoom}
-			uiMode={this.state.uiMode}
-			uiPos={this.state.uiPos}
-			uiNodes={this.state.uiNodes}
-			uiOutline={this.state.uiOutline}
-			uiCoords={this.state.uiCoords}
-			uiShadow={this.state.uiShadow}
-			glyphs={this.state.glyphs}
-			glyphSelected={this.state.glyphSelected}
-			reset={(pos) => { this.resetView(pos); }}
-			viewPanelRightMove={glyphIntercomDisplacement}
-			close={(name) => { this.toggleView(name); }}/>];
-
-		if (hasText) {
-			textAndGlyph.push(<PrototypoText
-				key="text"
-				fontName={this.props.fontName}
-				uiInvertedTextView={this.state.uiInvertedTextView}
-				uiInvertedTextColors={this.state.uiInvertedTextColors}
-				uiTextFontSize={this.state.uiTextFontSize}
-				uiText={this.state.uiText}
-				indivCurrentGroup={this.state.indivCurrentGroup}
-				close={(name) => { this.toggleView(name); }}
-				viewPanelRightMove={textIntercomDisplacement}
-				field="uiText"/>);
-		}
-		else if (hasGlyph && this.state.uiShadow) {
+			/*if (hasGlyph && this.state.uiShadow) {
 			textAndGlyph.push(<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>);
-		}
+		}*/
 
-		if (hasWord) {
-			word = <PrototypoWord
-				key="word"
-				fontName={this.props.fontName}
-				uiInvertedWordView={this.state.uiInvertedWordView}
-				uiInvertedWordColors={this.state.uiInvertedWordColors}
-				uiWordFontSize={this.state.uiWordFontSize}
-				uiWord={this.state.uiWord}
-				indivCurrentGroup={this.state.indivCurrentGroup}
-				close={(name) => { this.toggleView(name); }}
-
-				viewPanelRightMove={wordIntercomDisplacement}
-				field="uiWord"/>;
-		}
-
-		let down;
-
-		if (hasGlyph && hasText) {
-			down = (
-				<ResizablePanels
-					key="resizableText"
-					defaultX={this.state.canvasPanelWidth}
-					onChange={({x}) => {this.client.dispatchAction('/store-value', {canvasPanelWidth: x});}}
-					property="flexBasis"
-					id="prototypotextandglyph"
-					direction="vertical"
-				>
-					{textAndGlyph}
-				</ResizablePanels>
-			);
-		}
-		else if (hasGlyph || hasText) {
-			down = (
-				<div id="prototypotextandglyph" key="textAndGlyph">
-					{textAndGlyph}
-				</div>
-			);
-		}
-
-		let up;
-
-		if (word) {
-			up = (
-				<div id="prototypoword" key="wordContainer">
-					{word}
-				</div>
-			);
-		}
-
-		if (up && down) {
-			return (
+		return (
+			<div id="prototypopanel" key="justAcontainer">
 				<ResizablePanels
 					key="everythingResize"
 					defaultY={this.state.wordPanelHeight}
@@ -194,17 +115,58 @@ export default class PrototypoPanel extends React.Component {
 					id="prototypopanel"
 					property="flexBasis"
 					direction="horizontal"
-				>
-					{up}
-					{down}
+					onlyOne={hasWord && !hasText && !hasGlyph}
+					onlyTwo={!hasWord && (hasText || hasGlyph)} >
+					<div id="prototypoword" key="wordContainer">
+						<PrototypoWord
+							key="word"
+							fontName={this.props.fontName}
+							uiInvertedWordView={this.state.uiInvertedWordView}
+							uiInvertedWordColors={this.state.uiInvertedWordColors}
+							uiWordFontSize={this.state.uiWordFontSize}
+							uiWord={this.state.uiWord || ''}
+							indivCurrentGroup={this.state.indivCurrentGroup}
+							close={(name) => { this.toggleView(name); }}
+							viewPanelRightMove={wordIntercomDisplacement}
+							field="uiWord"/>
+					</div>
+					<ResizablePanels
+						key="resizableText"
+						defaultX={this.state.canvasPanelWidth}
+						onChange={({x}) => {this.client.dispatchAction('/store-value', {canvasPanelWidth: x});}}
+						property="flexBasis"
+						id="prototypotextandglyph"
+						direction="vertical"
+						onlyOne={hasGlyph && !hasText}
+						onlyTwo={!hasGlyph && hasText} >
+						<PrototypoCanvas
+							key="canvas"
+							uiZoom={this.state.uiZoom}
+							uiMode={this.state.uiMode}
+							uiPos={this.state.uiPos}
+							uiNodes={this.state.uiNodes}
+							uiOutline={this.state.uiOutline}
+							uiCoords={this.state.uiCoords}
+							uiShadow={this.state.uiShadow}
+							glyphs={this.state.glyphs}
+							glyphSelected={this.state.glyphSelected}
+							reset={(pos) => { this.resetView(pos); }}
+							viewPanelRightMove={glyphIntercomDisplacement}
+							close={(name) => { this.toggleView(name); }}/>
+						<PrototypoText
+							key="text"
+							display="block"
+							fontName={this.props.fontName}
+							uiInvertedTextView={this.state.uiInvertedTextView}
+							uiInvertedTextColors={this.state.uiInvertedTextColors}
+							uiTextFontSize={this.state.uiTextFontSize}
+							uiText={this.state.uiText}
+							indivCurrentGroup={this.state.indivCurrentGroup}
+							close={(name) => { this.toggleView(name); }}
+							viewPanelRightMove={textIntercomDisplacement}
+							field="uiText"/>
+					</ResizablePanels>
 				</ResizablePanels>
-			);
-		}
-
-		return (
-			<div id="prototypopanel" key="justAcontainer">
-				{up}
-				{down}
 			</div>
 		);
 	}

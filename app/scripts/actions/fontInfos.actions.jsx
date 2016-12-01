@@ -15,8 +15,7 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/set-alternate': ({unicode, glyphName}) => {
-		fontInstance.setAlternateFor(unicode, glyphName);
-		const altList = prototypoStore.get('altList');
+		const altList = _.cloneDeep(prototypoStore.get('altList'));
 
 		altList[unicode] = glyphName;
 

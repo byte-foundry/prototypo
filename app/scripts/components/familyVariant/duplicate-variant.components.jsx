@@ -67,7 +67,7 @@ export default class DuplicateVariant extends React.Component {
 				<div className="modal-container-content">
 					<InputWithLabel ref="newName"/>
 					{error}
-					<div className="add-family-form-buttons">
+					<div className="action-form-buttons">
 						<Button click={this.exit} label="Cancel" neutral={true}/>
 						<Button click={this.duplicateVariant} label={`Duplicate ${this.props.variant.name}`}/>
 					</div>

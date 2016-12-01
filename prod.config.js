@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var fs = require('fs');
 
 module.exports = {
 	cache: true,
@@ -7,17 +8,17 @@ module.exports = {
 	entry: {
 		bundle: [
 			'babel-polyfill',
-			'./app/scripts/main'
+			'./app/scripts/main',
 		],
 		'web-import': [
 			'babel-polyfill',
-			'./app/scripts/web-import.js'
-		]
+			'./app/scripts/web-import.js',
+		],
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),
 		publicPath: '',
-		filename: '[name].js'
+		filename: '[name].js',
 	},
 	module: {
 		loaders: [
@@ -25,8 +26,15 @@ module.exports = {
 				test: /\.jsx?$/,
 				loaders: ['transform/cacheable?envify', 'babel-loader?cacheDirectory', 'prelude-loader', 'if-loader'],
 				include: [
-					path.join(__dirname, 'app')
-				]
+					path.join(__dirname, 'app'),
+				],
+			},
+			{
+				test: /prototypo\-canvas/,
+				loaders: [ 'babel-loader?cacheDirectory'],
+				include: [
+					fs.realpathSync(__dirname + '/node_modules/prototypo-canvas'),
+				],
 			},
 			{
 				test: /\.scss$/,
@@ -40,11 +48,18 @@ module.exports = {
 				loaders: ['style', 'css'],
 			},
 			{
-				test: /\.(svg|json|png|jpg|otf)$/,
+				test: /\.json$/, loader: 'json',
+			},
+			{
+				test: /\.(jpg|otf)$/,
 				loaders: ['file'],
 			},
+			{
+				test: /\.(svg|png|jpg)$/,
+				loader: 'url-loader?limit=100000',
+			},
 		],
-		noParse:/(levelup|dist\/prototypo-canvas)/
+		noParse: /(levelup|dist\/prototypo-canvas)/,
 	},
 	externals: [{
 		'./node/window': true,
@@ -60,6 +75,6 @@ module.exports = {
 		new webpack.optimize.DedupePlugin(),
 	],
 	resolve: {
-		extensions: ['','.js', '.jsx']
-	}
+		extensions: ['', '.js', '.jsx'],
+	},
 };

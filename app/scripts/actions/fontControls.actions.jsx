@@ -25,6 +25,5 @@ export default {
 
 		localServer.dispatchUpdate('/undoableStore', patch);
 		localClient.dispatchAction('/store-action', {store: '/undoableStore', patch});
-		localClient.dispatchAction('/update-font', params);
 	},
 };
