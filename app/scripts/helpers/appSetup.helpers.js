@@ -108,7 +108,7 @@ export async function loadStuff(refAccountValues) {
 					}
 				}
 			}
-			oldAppValues.values.variantSelected = oldAppValues.values.library[0].variants[0];
+			oldAppValues.values.variantSelected = oldAppValues.values.variantSelected || oldAppValues.values.library[0].variants[0];
 			oldAppValues.values.switchedToHoodie = true;
 			await AppValues.save({typeface: 'default', values: oldAppValues.values});
 

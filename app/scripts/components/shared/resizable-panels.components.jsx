@@ -40,10 +40,16 @@ export default class ResizablePanels extends React.Component {
 		return newPosition;
 	}
 
-	componentDidMount() {
-		const {width, height} = ReactDOM.findDOMNode(this.refs.firstChild).getBoundingClientRect();
-
-		this.updateHandlePosition(this.props.direction === 'vertical' ? {x: width} : {y: height});
+	componentWillReceiveProps(nextProps) {
+		if (
+			(!this.state.x && nextProps.defaultX)
+			|| (!this.state.y && nextProps.defaultY)
+		) {
+			this.setState({
+				x: nextProps.defaultX,
+				y: nextProps.defaultY,
+			});
+		}
 	}
 
 	preventSelection(e) {
@@ -57,6 +63,8 @@ export default class ResizablePanels extends React.Component {
 			children: [firstChild, lastChild],
 			direction = 'horizontal', property = 'width', defaultX, defaultY,
 			style,
+			onlyOne,
+			onlyTwo,
 			...rest,
 		} = this.props;
 		const isVertical = direction === 'vertical';
@@ -65,17 +73,18 @@ export default class ResizablePanels extends React.Component {
 
 		if (this.state.x || this.state.y) {
 			handlePosition = isVertical ? {
-				left: `calc(${this.state.x}% - 5px)`,
+				left: `calc(${onlyOne ? 100 : onlyTwo ? 0 : this.state.x}% - 5px)`,
 				top: '0',
 			} : {
 				left: '0',
-				top: `calc(${this.state.y}% - 5px)`,
+				top: `calc(${onlyOne ? 0 : onlyTwo ? 100 : this.state.y}% - 5px)`,
 			};
 		}
 
+		//TODO(franz): Display none when onlyone or onlytwo
 		return (
 			<div {...rest} style={{...style, position: 'relative'}}>
-				{React.cloneElement(firstChild, {ref: 'firstChild', style: {...firstChild.props.style, [property]: `${this.state[axis]}%`}})}
+				{React.cloneElement(firstChild, {ref: 'firstChild', style: {...firstChild.props.style, display: onlyTwo ? 'none' : firstChild.props.display || 'flex', [property]: `${this.state[axis]}%`}})}
 				<DraggableCore
 					bounds="parent"
 					axis={axis}
@@ -93,7 +102,7 @@ export default class ResizablePanels extends React.Component {
 						<div className="prototypo-panel-handle-bar" />
 					</div>
 				</DraggableCore>
-				{React.cloneElement(lastChild, {style: {...lastChild.props.style, [property]: `${100 - this.state[axis]}%`}})}
+				{React.cloneElement(lastChild, {style: {...lastChild.props.style, display: onlyOne ? 'none' : lastChild.props.display || 'flex', [property]: `${100 - this.state[axis]}%`}})}
 			</div>
 		);
 	}

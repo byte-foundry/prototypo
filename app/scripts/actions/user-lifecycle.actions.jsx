@@ -7,6 +7,7 @@ import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import {loadStuff} from '../helpers/appSetup.helpers.js';
+import isProduction from '../helpers/is-production.helpers';
 import {AccountValues} from '../services/values.services.js';
 
 let localServer;
@@ -369,25 +370,23 @@ export default {
 		HoodieApi.login(username, password)
 			.then(async () => {
 				await loadStuff();
-				window.addEventListener('fontInstance.loaded', () => {
-					hashHistory.push(dashboardLocation);
+				hashHistory.push(dashboardLocation);
 
-					window.Intercom('boot', {
-						app_id: 'mnph1bst',
-						email: username,
-						widget: {
-							activator: '#intercom-button',
-						},
-					});
-					trackJs.addMetadata('username', username);
-
-					form.errors = [];
-					form.inError = {};
-					form.loading = false;
-					const endPatch = userStore.set('signinForm', form).commit();
-
-					localServer.dispatchUpdate('/userStore', endPatch);
+				window.Intercom('boot', {
+					app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
+					email: username,
+					widget: {
+						activator: '#intercom-button',
+					},
 				});
+				trackJs.addMetadata('username', username);
+
+				form.errors = [];
+				form.inError = {};
+				form.loading = false;
+				const endPatch = userStore.set('signinForm', form).commit();
+
+				localServer.dispatchUpdate('/userStore', endPatch);
 			})
 			.catch((err) => {
 				if (/must sign out/i.test(err.message) && !retry) {
@@ -411,7 +410,7 @@ export default {
 				}
 			});
 	},
-	'/sign-up': ({username, password, firstname, lastname, phone, skype, to, retry}) => {
+	'/sign-up': ({username, password, firstname, lastname, css, phone, skype, to, retry}) => {
 		const toLocation = {
 			pathname: to || '/dashboard',
 		};
@@ -465,11 +464,12 @@ export default {
 			.then(() => {
 
 				window.Intercom('boot', {
-					app_id: 'mnph1bst',
+					app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
 					email: username,
 					name: firstname + curedLastname,
-					phone,
-					skype,
+					occupation: css.value,
+					phone: phone,
+					skype: skype,
 					ABtest: Math.floor(Math.random() * 100),
 					widget: {
 						activator: '#intercom-button',
@@ -483,7 +483,7 @@ export default {
 				});
 			})
 			.then(async () => {
-				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname, phone, skype};
+				const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname, css, phone, skype};
 				const patch = userStore.set('infos', {accountValues}).commit();
 				await AccountValues.save({typeface: 'default', values: {accountValues}});
 				localServer.dispatchUpdate('/userStore', patch);
@@ -708,8 +708,21 @@ export default {
 		});
 	},
 	'/change-account-info': (data) => {
-		const infos = _.cloneDeep(userStore.get('infos'));
+		const form = userStore.get('profileForm');
 
+		form.errors = [];
+		delete form.success;
+		if (!data.firstname) {
+			form.errors.push('First name is required.');
+			const erroredPatch = userStore.set('profileForm', form).commit();
+			localServer.dispatchUpdate('/userStore', erroredPatch);
+			return;
+		}
+		form.success = true;
+		const formPatch = userStore.set('profileForm', form).commit();
+		localServer.dispatchUpdate('/userStore', formPatch);
+
+		const infos = _.cloneDeep(userStore.get('infos'));
 		_.assign(infos.accountValues, data);
 		const patch = userStore.set('infos', infos).commit();
 
@@ -721,7 +734,7 @@ export default {
 			name: `${data.firstname}${lastname}`,
 			twitter: data.twitter,
 			website: data.website,
-			occupation: data.css,
+			occupation: data.css.value,
 			phone: data.phone,
 			skype: data.skype,
 		});

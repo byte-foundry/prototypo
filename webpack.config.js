@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var fs = require('fs');
 
 module.exports = {
 	cache: true,
@@ -34,6 +35,13 @@ module.exports = {
 				],
 			},
 			{
+				test: /prototypo\-canvas/,
+				loaders: [ 'babel-loader?cacheDirectory'],
+				include: [
+					fs.realpathSync(__dirname + '/node_modules/prototypo-canvas'),
+				],
+			},
+			{
 				test: /\.scss$/,
 				loaders: ['style', 'css', 'sass'],
 				include: [
@@ -45,11 +53,14 @@ module.exports = {
 				loader: 'style-loader!css-loader',
 			},
 			{
-				test: /\.(json|otf)$/,
+				test: /\.json$/, loader: 'json',
+			},
+			{
+				test: /\.otf$/,
 				loaders: ['file'],
 			},
 			{
-				test: /\.(svg|png|jpg)$/,
+				test: /\.(svg|png|jpg|gif)$/,
 				loader: 'url-loader?limit=100000',
 			},
 		],
@@ -74,5 +85,6 @@ module.exports = {
 	],
 	resolve: {
 		extensions: ['', '.js', '.jsx'],
+		fallback: path.join(__dirname, 'node_modules'),
 	},
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import ScrollArea from 'react-scrollbar';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import Lifespan from 'lifespan';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -16,6 +17,17 @@ export default class GlyphList extends React.Component {
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/undoableStore', this.lifespan)
+			.onUpdate(({head}) => {
+				this.setState({
+					values: head.toJS().controlsValues,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 	}
 
 	shouldComponentUpdate(newProps) {
@@ -27,6 +39,15 @@ export default class GlyphList extends React.Component {
 		}
 		else {
 			return true;
+		}
+	}
+
+	isManualEdited(glyph) {
+		if (this.state.values
+			&& this.state.values.manualChanges) {
+			const manualChangesGlyph = this.state.values.manualChanges[glyph[0].name];
+
+			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0);
 		}
 	}
 
@@ -111,10 +132,10 @@ export default class GlyphList extends React.Component {
 						{
 							_.map(glyphs, (glyph, unicode) => {
 								if (selectedGlyph === unicode) {
-									return (<Glyph glyph={glyph} selected={true} unicode={unicode} key={unicode} />);
+									return (<Glyph glyph={glyph} selected={true} unicode={unicode} key={unicode} manualEdited={this.isManualEdited(glyph)} />);
 								}
 								else {
-									return (<Glyph glyph={glyph} selected={false} unicode={unicode} key={unicode} />);
+									return (<Glyph glyph={glyph} selected={false} unicode={unicode} key={unicode} manualEdited={this.isManualEdited(glyph)} />);
 								}
 
 							})

@@ -25,26 +25,9 @@ export default {
 
 			undoableStore.apply(revert);
 			localServer.dispatchUpdate('/prototypoStore', patch);
+			undoableStore.apply(revert);
 			localServer.dispatchUpdate('/undoableStore', revert);
 			localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
-
-			fontInstance.addOnceListener('worker.fontLoaded', () => {
-				const selectedLetter = prototypoStore.get('uiWordString')[prototypoStore.get('uiWordSelection')];
-				fontInstance.getGlyphProperty(
-					selectedLetter,
-					['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
-					({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight}) => {
-						localClient.dispatchAction('/store-value-fast', {
-							advanceWidth,
-							spacingLeft,
-							spacingRight,
-							baseSpacingLeft,
-							baseSpacingRight,
-						});
-					}
-				);
-			});
-
 		}
 	},
 	'/go-forward': () => {
@@ -60,25 +43,9 @@ export default {
 
 				undoableStore.apply(Patch.fromJSON(event.patch));
 				localServer.dispatchUpdate('/prototypoStore', patch);
+				undoableStore.apply(revert);
 				localServer.dispatchUpdate('/undoableStore', Patch.fromJSON(event.patch));
 				localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
-
-				fontInstance.addOnceListener('worker.fontLoaded', () => {
-					const selectedLetter = prototypoStore.get('uiWordString')[prototypoStore.get('uiWordSelection')];
-					fontInstance.getGlyphProperty(
-						selectedLetter,
-						['advanceWidth', 'spacingLeft', 'spacingRight', 'baseSpacingLeft', 'baseSpacingRight'],
-						({advanceWidth, spacingLeft, spacingRight, baseSpacingLeft, baseSpacingRight}) => {
-							localClient.dispatchAction('/store-value-fast', {
-								advanceWidth,
-								spacingLeft,
-								spacingRight,
-								baseSpacingLeft,
-								baseSpacingRight,
-							});
-						}
-					);
-				});
 			}
 		}
 

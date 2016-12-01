@@ -1,8 +1,6 @@
-import {prototypoStore, undoableStore, fastStuffStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, undoableStore, fastStuffStore, fontInstanceStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
-
-import {rawToEscapedContent} from '../helpers/input-transform.helpers';
 
 let localServer;
 
@@ -19,6 +17,16 @@ export default {
 		const patch = prototypoStore.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
+		saveAppValues();
+	},
+	'/store-value-font': (params) => {
+		_.forEach(params, (value, name) => {
+			fontInstanceStore.set(name, value);
+		});
+
+		const patch = fontInstanceStore.commit();
+
+		localServer.dispatchUpdate('/fontInstanceStore', patch);
 		saveAppValues();
 	},
 	'/store-value-undoable': (params) => {
@@ -43,44 +51,21 @@ export default {
 	},
 	'/store-text': ({value, propName}) => {
 		if (prototypoStore.get(propName) !== value) {
-			const glyphs = prototypoStore.get('glyphs');
 			const patch = prototypoStore.set(propName, value).commit();
-			const subset = prototypoStore.head.toJS().uiText + rawToEscapedContent(prototypoStore.head.toJS().uiWord, glyphs);
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
 
-			fontInstance.subset = typeof subset === 'string' ? subset : '';
 			saveAppValues();
 		}
 	},
 	'/change-canvas-mode': ({canvasMode}) => {
-		fontInstance.showNodes = canvasMode === 'select-points';
-		fontInstance.allowMove = canvasMode === 'move';
-		const showComponent = canvasMode === 'components';
-		const oldShowComponent = fontInstance._showComponents;
-
-		fontInstance._showComponents = showComponent;
-		if (showComponent !== oldShowComponent) {
-			fontInstance.displayGlyph();
-		}
-
-		prototypoStore.set('canvasMode', canvasMode);
+		prototypoStore.set('canvasMode', canvasMode).set('oldCanvasMode', undefined);
 
 		const patch = prototypoStore.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/toggle-canvas-mode': ({canvasMode = prototypoStore.get('oldCanvasMode')}) => {
-		fontInstance.showNodes = canvasMode === 'select-points';
-		fontInstance.allowMove = canvasMode === 'move';
-		const showComponent = canvasMode === 'components';
-		const oldShowComponent = fontInstance._showComponents;
-
-		fontInstance._showComponents = showComponent;
-		if (showComponent !== oldShowComponent) {
-			fontInstance.displayGlyph();
-		}
-
 		prototypoStore.set('oldCanvasMode', prototypoStore.get('canvasMode'));
 		prototypoStore.set('canvasMode', canvasMode);
 

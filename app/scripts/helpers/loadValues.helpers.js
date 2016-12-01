@@ -82,7 +82,6 @@ export async function loadFontValues(typedata, typeface) {
 		const fontInfosValues = await FontInfoValues.get({typeface});
 		const altList = _.extend(typedata.fontinfo.defaultAlts, fontInfosValues.values.altList);
 
-		fontInstance.setAlternateFor(altList);
 		localClient.dispatchAction('/load-font-infos', {altList});
 	}
 	catch (err) {
@@ -99,6 +98,10 @@ export async function loadFontValues(typedata, typeface) {
 	}
 
 	localClient.dispatchAction('/load-indiv-groups');
+
+	const event = new CustomEvent('values.loaded');
+
+	window.dispatchEvent(event);
 }
 
 export const saveAppValues = _.throttle(() => {

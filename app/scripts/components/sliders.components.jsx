@@ -10,6 +10,7 @@ import Log from '~/services/log.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 import DOM from '../helpers/dom.helpers.js';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
+import SliderHelpText from '../../images/sliders/helpText.json';
 
 export class Sliders extends React.Component {
 	constructor(props) {
@@ -119,6 +120,23 @@ export class Slider extends React.Component {
 		this.client.dispatchAction('/change-param', {value: this.props.init, name: this.props.name, label: this.props.label, demo: this.props.demo});
 	}
 
+	showTooltip(sliderName) {
+		const selector = '#prototyposlidertooltip';
+		const button = 'slider-tooltip';
+		const outsideClick = (event) => {
+			if (!event.target.closest(selector) && event.target.className !== button) {
+				this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: false}});
+				document.body.removeEventListener('click', outsideClick);
+			}
+			if (event.target.className === button) {
+				document.body.removeEventListener('click', outsideClick);
+			}
+		};
+
+		this.client.dispatchAction('/store-value', {uiSliderTooltip: {display: true, sliderName}});
+		document.body.addEventListener('click', outsideClick);
+	}
+
 	openGoProModal() {
 		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
 		this.client.dispatchAction('/store-value', {openGoProModal: true});
@@ -172,6 +190,14 @@ export class Slider extends React.Component {
 			)
 			: false;
 
+		let sliderTooltipButton;
+
+		if (SliderHelpText[this.props.name]) {
+			sliderTooltipButton = (
+				<div className="slider-tooltip" onClick={() => {this.showTooltip(this.props.name);}}>?</div>
+			);
+		}
+
 		return (
 			<div className={classes}>
 				<div className="slider-demo-overlay">
@@ -179,6 +205,7 @@ export class Slider extends React.Component {
 					{demoOverlay}
 				</div>
 				<label className="slider-title">{this.props.label}</label>
+				{sliderTooltipButton}
 				<div className="slider-reset" onClick={() => {this.resetValue();}}>reset</div>
 				<SliderTextController value={value} name={this.props.name} label={this.props.label} disabled={this.props.disabled} individualized={this.props.individualized} changeParam={this.changeParam}/>
 				<div className="slider-container">

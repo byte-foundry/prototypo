@@ -92,13 +92,13 @@ export default {
 			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
 		}, 10000);
 
-		fontInstance.download(() => {
+		/*fontInstance.download(() => {
 			localClient.dispatchAction('/store-value', {uiOnboardstep: 'end'});
 			window.Intercom('trackEvent', 'export-otf');
 			clearTimeout(exportingError);
 			spendCreditsAction();
 			localClient.dispatchAction('/exporting', {exporting: false});
-		}, name, merged, undefined, HoodieApi.instance.email);
+		}, name, merged, undefined, HoodieApi.instance.email);*/
 	},
 	'/set-up-export-otf': ({merged, exportAs = true}) => {
 		const plan = HoodieApi.instance.plan;

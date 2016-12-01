@@ -2,13 +2,14 @@ import PouchDB from 'pouchdb';
 import HoodiePouch from 'pouchdb-hoodie-api';
 
 import HOODIE from '../helpers/hoodie.helpers.js';
+import isProduction from '../helpers/is-production.helpers';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import Log from './log.services.js';
 
 PouchDB.plugin(HoodiePouch);
 
-const backUrl = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
+const backUrl = isProduction()
 	? 'https://prototypo.appback.com'
 	: 'https://prototypo-dev.appback.com';
 
@@ -187,7 +188,7 @@ function setupHoodie(data) {
 			.then((customer) => {
 				localClient.dispatchAction('/load-customer-data', customer);
 				window.Intercom('boot', {
-					app_id: 'mnph1bst',
+					app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
 					email: HoodieApi.instance.email,
 					widget: {
 						activator: '#intercom-button',
