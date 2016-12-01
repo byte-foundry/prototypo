@@ -13,6 +13,10 @@ export default class GlyphList extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.state = {
+			values: {},
+		};
 	}
 
 	componentWillMount() {
