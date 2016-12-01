@@ -365,7 +365,6 @@ selectRenderOptions(
 				location.href = '#/dashboard';
 			})
 			.catch(() => {
-				location.href = '#/signin';
 				const event = new CustomEvent('values.loaded');
 
 				window.dispatchEvent(event);
