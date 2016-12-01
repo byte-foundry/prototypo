@@ -489,9 +489,7 @@ export default {
 				localServer.dispatchUpdate('/userStore', patch);
 				if (toLocation.pathname === '/dashboard') {
 					await loadStuff(accountValues);
-					window.addEventListener('fontInstance.loaded', () => {
-						hashHistory.push(toLocation);
-					});
+					hashHistory.push(toLocation);
 				}
 				else {
 					hashHistory.push(toLocation);
