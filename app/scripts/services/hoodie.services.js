@@ -11,7 +11,7 @@ import Log from './log.services.js';
 PouchDB.plugin(HoodiePouch);
 
 const BACK_URL = isProduction() ? 'https://prototypo.appback.com' : 'https://prototypo-dev.appback.com';
-const AWS_URL = `https://e4jpj60rk8.execute-api.eu-west-1.amazonaws.com/${isProduction() ? 'prod' : 'dev'}`;
+const AWS_URL = `https://${isProduction() ? 'e4jpj60rk8' : 'tc1b6vq6o8'}.execute-api.eu-west-1.amazonaws.com/${isProduction() ? 'prod' : 'dev'}`;
 
 const bearer = window.location.search.replace(/.*?bt=(.*?)(&|$)/, '$1');
 
@@ -219,7 +219,7 @@ function setupHoodie(data) {
 	HoodieApi.instance.pouch = db.hoodieApi();
 	HoodieApi.instance.hoodieId = id;
 	HoodieApi.instance.email = response.name.split('/')[1];
-	HoodieApi.instance.plan = getPlan(response.roles) || "kickstarter";
+	HoodieApi.instance.plan = 'free_none';
 
 	window.Intercom('boot', {
 		app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
@@ -245,9 +245,11 @@ async function setupStripe(data, time = 1000) {
 		HoodieApi.instance.customerId = data.stripe.customerId;
 		try {
 			const customer = await HoodieApi.getCustomerInfo();
+			const [subscription] = customer.subscriptions.data;
 
-			if (customer.subscriptions.data[0]) {
-				HoodieApi.instance.subscriptionId = customer.subscriptions.data[0].id;
+			if (subscription) {
+				HoodieApi.instance.subscriptionId = subscription.id;
+				HoodieApi.instance.plan = subscription.plan.id;
 			}
 
 			localClient.dispatchAction('/load-customer-data', customer);
