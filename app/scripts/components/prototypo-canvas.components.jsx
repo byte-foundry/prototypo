@@ -32,6 +32,7 @@ export default class PrototypoCanvas extends React.Component {
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.handleLeaveAndClick = this.handleLeaveAndClick.bind(this);
 		this.reset = this.reset.bind(this);
+		this.resetGlyph = this.resetGlyph.bind(this);
 		this.toggleCoords = this.toggleCoords.bind(this);
 		this.toggleNodes = this.toggleNodes.bind(this);
 		this.toggleOutline = this.toggleOutline.bind(this);
@@ -209,6 +210,11 @@ export default class PrototypoCanvas extends React.Component {
 		});
 	}
 
+	resetGlyph() {
+		const glyphName = this.state.glyphs[this.props.glyphSelected][0].name;
+		this.client.dispatchAction('/reset-glyph-manually', {glyphName});
+	}
+
 	finishShortcut(e) {
 		if (e.keyCode === 90) {
 			e.stopPropagation();
@@ -290,6 +296,18 @@ export default class PrototypoCanvas extends React.Component {
 		});
 	}
 
+	isManualEdited(){
+		if (this.state.values &&
+			this.props.glyphSelected &&
+			this.state.glyphs &&
+			this.state.glyphs[this.props.glyphSelected] &&
+			this.state.values.manualChanges
+		) {
+			const manualChangesGlyph = this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name];
+			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0) ? true : false;
+		} else return false;
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] PrototypoCanvas');
@@ -340,6 +358,12 @@ export default class PrototypoCanvas extends React.Component {
 				ref="container"
 				onMouseLeave={this.handleLeaveAndClick}>
 				<CanvasBar/>
+				<button
+					className={`prototypo-canvas-reset-glyph-button ${this.isManualEdited() ? '' : 'disabled'} ${this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''}`}
+					onClick={this.resetGlyph}
+					disabled={!this.isManualEdited()}>
+					Reset glyph
+				</button>
 				<PrototypoCanvasContainer
 					familyName={this.state.familyName}
 					json={this.state.typedataJSON}
