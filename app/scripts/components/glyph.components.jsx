@@ -34,7 +34,6 @@ export default class Glyph extends React.Component {
 			"is-selected": this.props.selected,
 			"is-commented": false,
 			"is-read": false,
-			"is-manually-modified": false,
 			"is-parametrized": false,
 			"has-alts": showAlts,
 			"is-manually-modified": this.props.manualEdited,
