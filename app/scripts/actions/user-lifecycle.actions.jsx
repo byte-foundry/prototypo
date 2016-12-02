@@ -77,7 +77,7 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 			const infos = userStore.get('infos');
 
 			HoodieApi.updateCustomer({
-				business_vat_id: vat || info.vat, // Stripe way of storing VAT
+				business_vat_id: vat || infos.vat, // Stripe way of storing VAT
 				source: data.id,
 				metadata: {
 					vat_number: vat || infos.vat, // Quaderno way of reading VAT
