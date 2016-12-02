@@ -7,6 +7,7 @@ import JSZip from 'jszip';
 
 let localServer;
 let localClient;
+let exportingError;
 
 window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
@@ -88,17 +89,25 @@ export default {
 			style: `${style.toLowerCase()}`,
 		};
 
-		const exportingError = setTimeout(() => {
+		exportingError = setTimeout(() => {
 			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
 		}, 10000);
 
-		/*fontInstance.download(() => {
+		localClient.dispatchAction('/store-value-font', {
+			exportPlease: true,
+			exportName: name,
+			exportMerged: merged,
+			exportValues: undefined,
+			exportEmail: HoodieApi.instance.email,
+		});
+	},
+	'/end-export-otf': () => {
+			localClient.dispatchAction('/store-value-font', {exportPlease: false});
 			localClient.dispatchAction('/store-value', {uiOnboardstep: 'end'});
-			window.Intercom('trackEvent', 'export-otf');
 			clearTimeout(exportingError);
+			window.Intercom('trackEvent', 'export-otf');
 			spendCreditsAction();
 			localClient.dispatchAction('/exporting', {exporting: false});
-		}, name, merged, undefined, HoodieApi.instance.email);*/
 	},
 	'/set-up-export-otf': ({merged, exportAs = true}) => {
 		const plan = HoodieApi.instance.plan;
@@ -136,11 +145,17 @@ export default {
 			style: `${style.toLowerCase()}`,
 		};
 
-		fontInstance.openInGlyphr(() => {
-			spendCreditsAction();
-		}, name, false, undefined, HoodieApi.instance.email);
+		localClient.dispatchAction('/store-value-font', {
+			exportGlyphrTag: true,
+			exportName: name,
+			exportMerged: false,
+			exportValues: undefined,
+			exportEmail: HoodieApi.instance.email,
+		});
 	},
-
+	'/end-export-glyphr': () => {
+			spendCreditsAction();
+	},
 	// TODO add a spend credit action
 	'/export-family-from-reader': ({result, familyToExport, template, oldDb}) => {
 		const a = document.createElement('a');
@@ -195,6 +210,7 @@ export default {
 	},
 	'/export-family-from-values': ({familyToExport, valueArray, oldDb, template}) => {
 		const blobs = [];
+
 		_.each(valueArray, (value) => {
 			const blob = fontInstance.getBlob(
 				null, {

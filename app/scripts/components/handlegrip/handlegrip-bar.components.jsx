@@ -55,7 +55,7 @@ export default class HandlegripBar extends React.Component {
 			>
 				<span className="handlegrip-border"></span>
 				<span className="handlegrip-spacing-number">
-					{text.toFixed()}
+					{text instanceof Number ? text.toFixed() : text}
 				</span>
 			</span>
 		);

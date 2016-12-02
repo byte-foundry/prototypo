@@ -204,6 +204,7 @@ const handleClosed = function(component) {
 *	@param {object} component - "this" of the origin component
 */
 function handleFinished(component, finishEarly) {
+	component.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: undefined});
 	switch (component.state.uiJoyrideTutorialValue) {
 		case fileTutorialLabel:
 			component.client.dispatchAction('/store-value', {firstTimeFile: false});

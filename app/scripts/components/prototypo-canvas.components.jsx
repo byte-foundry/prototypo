@@ -48,6 +48,10 @@ export default class PrototypoCanvas extends React.Component {
 		this.startLoad = this.startLoad.bind(this);
 		this.endLoad = this.endLoad.bind(this);
 		this.afterFontComputation = this.afterFontComputation.bind(this);
+		this.preExport = this.preExport.bind(this);
+		this.afterExport = this.afterExport.bind(this);
+		this.preExportGlyphr = this.preExportGlyphr.bind(this);
+		this.afterExportGlyphr = this.afterExportGlyphr.bind(this);
 	}
 
 	componentWillMount() {
@@ -111,7 +115,7 @@ export default class PrototypoCanvas extends React.Component {
 		return false;
 	}
 
-	mouseDown(e) {
+	mouseDown() {
 		document.addEventListener('selectstart', this.preventSelection);
 	}
 
@@ -308,6 +312,22 @@ export default class PrototypoCanvas extends React.Component {
 		} else return false;
 	}
 
+	preExport() {
+		this.client.dispatchAction('/store-value-font', {exportPlease: false});
+	}
+
+	afterExport() {
+		this.client.dispatchAction('/end-export-otf');
+	}
+
+	preExportGlyphr() {
+		this.client.dispatchAction('/store-value-font', {exportGlyphrTag: false});
+	}
+
+	afterExportGlyphr() {
+		this.client.dispatchAction('/end-export-glyphr');
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] PrototypoCanvas');
@@ -390,6 +410,16 @@ export default class PrototypoCanvas extends React.Component {
 					changeManualNode={this.changeManualNode}
 					resetManualNode={this.resetManualNode}
 					resetView={this.reset}
+					exportTag={this.state.exportPlease}
+					exportGlyphrTag={this.state.exportGlyphrTag}
+					exportName={this.state.exportName}
+					exportMerged={this.state.exportMerged}
+					exportValues={this.state.exportValues}
+					exportEmail={this.state.exportEmail}
+					preExport={this.preExport}
+					afterExport={this.afterExport}
+					preExportGlyphr={this.preExportGlyphr}
+					afterExportGlyphr={this.afterExportGlyphr}
 					preLoad={this.startLoad}
 					afterLoad={this.endLoad}
 					altList={this.state.altList}
