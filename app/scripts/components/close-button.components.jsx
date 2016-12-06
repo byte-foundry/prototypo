@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class CloseButton extends React.Component {
+export default class CloseButton extends React.PureComponent {
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] close button');

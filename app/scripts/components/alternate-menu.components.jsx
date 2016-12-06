@@ -3,10 +3,9 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-export default class AlternateMenu extends React.Component {
+export default class AlternateMenu extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	render() {
@@ -26,14 +25,21 @@ export default class AlternateMenu extends React.Component {
 	}
 }
 
-class Alternate extends React.Component {
+class Alternate extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.selectAlternate = this.selectAlternate.bind(this);
+		this.img = '';
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.alt && nextProps.alt.altImg) {
+			this.img = `assets/images/${nextProps.alt.altImg}`;
+		}
 	}
 
 	selectAlternate() {
@@ -42,8 +48,8 @@ class Alternate extends React.Component {
 
 	render() {
 		return (
-			<div className="alternate" onClick={() => {this.selectAlternate();}}>
-				<img src={`assets/images/${this.props.alt.altImg}`}/>
+			<div className="alternate" onClick={this.selectAlternate()}>
+				<img src={this.img}/>
 			</div>
 		);
 	}

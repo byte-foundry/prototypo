@@ -1,15 +1,13 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import classNames from 'classnames';
 import ScrollArea from 'react-scrollbar';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
 
-export class ControlsTabs extends React.Component {
+export class ControlsTabs extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
