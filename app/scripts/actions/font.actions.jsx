@@ -505,12 +505,27 @@ export default {
 
 		if (indivMode && indivEdit && !values) {
 			if (newParams.indiv_group_param[currentGroupName][name]) {
-				newParams.indiv_group_param[currentGroupName][name].value = value;
+				newParams.indiv_group_param = {
+					...newParams.indiv_group_param,
+					[currentGroupName]: {
+						...newParams.indiv_group_param[currentGroupName],
+						[name]: {
+							...newParams.indiv_group_param[currentGroupName][name],
+							value: value,
+						},
+					},
+				};
 			}
 			else {
-				newParams.indiv_group_param[currentGroupName][name] = {
-					state: 'relative',
-					value,
+				newParams.indiv_group_param = {
+					...newParams.indiv_group_param,
+					[currentGroupName]: {
+						...newParams.indiv_group_param[currentGroupName],
+						[name]: {
+							state: 'relative',
+							value: value,
+						},
+					},
 				};
 			}
 		}
