@@ -4,6 +4,7 @@ import Lifespan from 'lifespan';
 import LocalClient from '../../stores/local-client.stores.jsx';
 
 import InputWithLabel from '../shared/input-with-label.components.jsx';
+import SelectWithLabel from '../shared/select-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
 
@@ -43,16 +44,25 @@ export default class SubscriptionAccountInfo extends React.Component {
 		const password = this.refs.password.inputValue;
 		const firstname = this.refs.firstname.inputValue;
 		const lastname = this.refs.lastname.inputValue;
+		const css = this.refs.css.inputValue;
 		const phone = this.refs.phone.inputValue;
 		const skype = this.refs.skype.inputValue;
 
-		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname, phone, skype, to: '/account/create/choose-a-plan'});
+		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname, css, phone, skype, to: '/account/create/choose-a-plan'});
 	}
 
 	render() {
 		const errors = this.state.errors.map((error, index) => {
 			return <FormError key={index} errorText={error}/>;
 		});
+
+		const jobtitles = [
+			{value: 'graphic_designer', label: 'a graphic designer'},
+			{value: 'student', label: 'a student'},
+			{value: 'teacher', label: 'a teacher'},
+			{value: 'type_designer', label: 'a type designer'},
+			{value: 'web_developer', label: 'a web developer'},
+		];
 
 		return (
 			<form onSubmit={(e) => {this.createAccount(e);}} className="account-base subscription-account-info">
@@ -66,6 +76,13 @@ export default class SubscriptionAccountInfo extends React.Component {
 				</div>
 				<InputWithLabel label="Your email" required={true} placeholder="example@domain.com" ref="username"/>
 				<InputWithLabel type="password" info="(at least 8 character long)" label="Password" required={true} ref="password"/>
+				<SelectWithLabel
+					ref="css"
+					label="I am"
+					name="css"
+					className="input-with-label-input"
+					placeholder="an architect"
+					options={jobtitles} />
 				<div className="columns">
 					<div className="half-column">
 						<InputWithLabel label="Phone number" info="(optional)" type="tel" ref="phone"/>

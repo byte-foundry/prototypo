@@ -26,8 +26,6 @@ export default {
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
 
-			fontInstance.displayChar(String.fromCharCode(unicode));
-
 			if (newViewMode.length > 0) {
 				const patchPanel = prototypoStore.set('uiMode', newViewMode).commit();
 

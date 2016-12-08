@@ -8,6 +8,7 @@
 	align-self:stretch;
 	display:flex;
 	flex-direction:row;
+	justify-content: center;
 
 	&-container {
 		width:100%;
@@ -19,6 +20,43 @@
 		&-canvas {
 			height:100%;
 			width:100%;
+		}
+	}
+
+	&-reset-glyph-button {
+		position: absolute;
+		display: block;
+		top: 20px;
+		left: 20px;
+		z-index: 2;
+		border: 2px solid $black;
+		color: $black;
+		background-color: $white;
+		cursor: pointer;
+		font-size: 14px;
+		padding: 0 15px;
+		border-radius: 3px;
+
+		transition: background-color 0.3s ease;
+
+		&:hover {
+			background-color: $green;
+		}
+
+		margin-left: -200px;
+		&.is-on-canvas {
+			margin-left: 0;
+			transition: margin 0.3s ease;
+		}
+
+		&.disabled {
+			opacity: 0.3;
+			cursor: default;
+
+			&:hover {
+				background-color: inherit;
+				border-color: inherit;
+			}
 		}
 	}
 

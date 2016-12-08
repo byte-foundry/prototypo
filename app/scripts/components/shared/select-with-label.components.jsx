@@ -1,17 +1,14 @@
 import React from 'react';
 import Select from 'react-select';
 import classNames from 'classnames';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-export default class SelectWithLabel extends React.Component {
-
+export default class SelectWithLabel extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			value: props.inputValue,
+			value: props.options.find(({value}) => {return value === props.inputValue}),
 			inputValue: '',
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	handleChangeValue(value) {
@@ -35,23 +32,19 @@ export default class SelectWithLabel extends React.Component {
 	}
 
 	render() {
-		const required = this.props.required
-			? <span className="input-with-label-label-required">*</span>
-			: false;
-
 		const inputClass = classNames({
 			'input-with-label-input': true,
 			'is-error': this.props.error,
 			'is-warning': this.props.warning,
 		});
 
-		const info = this.props.info
-			? <span className="input-with-label-label-info">{this.props.info}</span>
-			: false;
-
 		return (
 			<div className="input-with-label">
-				<label className="input-with-label-label">{this.props.label}{info}{required}</label>
+				<label className="input-with-label-label">
+					{this.props.label}
+					{this.props.info && <span className="input-with-label-label-info">{this.props.info}</span>}
+					{this.props.required && <span className="input-with-label-label-required">*</span>}
+				</label>
 				<Select
 					ref="input"
 					className={inputClass}

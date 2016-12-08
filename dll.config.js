@@ -7,7 +7,6 @@ module.exports = {
 		libs: [
 			'react',
 			'react-dom',
-			'react-addons-create-fragment',
 			'react-addons-css-transition-group',
 			'react-addons-pure-render-mixin',
 			'react-draggable',
@@ -29,11 +28,10 @@ module.exports = {
 			'pouchdb-hoodie-api',
 			'react-json-pretty',
 			'slug',
-			'tether',
 			'pouchdb',
 			'md5',
 			'lodash',
-			'jsdiff'
+			'diff'
 		],
 	},
 	module: {

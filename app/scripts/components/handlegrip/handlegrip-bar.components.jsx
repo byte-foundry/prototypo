@@ -32,7 +32,7 @@ export default class HandlegripBar extends React.Component {
 
 		const newX = e.pageX || e.screenX;
 
-		this.client.dispatchAction('/store-value-fast', {uiTrackingX: newX});
+		this.client.dispatchAction('/store-value-fast', {uiTrackingX: newX, clampedValue: this.props.spacing - this.props.baseSpacing});
 
 		e.stopPropagation();
 	}
@@ -45,6 +45,8 @@ export default class HandlegripBar extends React.Component {
 			'handlegrip-right': !left,
 		});
 
+		const text = (this.props.clampedValue ? this.props.clampedValue + this.props.baseSpacing : this.props.spacing) || '...';
+
 		return (
 			<span
 				className={handleGripClasses}
@@ -53,7 +55,7 @@ export default class HandlegripBar extends React.Component {
 			>
 				<span className="handlegrip-border"></span>
 				<span className="handlegrip-spacing-number">
-					{this.props.spacing || '...'}
+					{text instanceof Number ? text.toFixed() : text}
 				</span>
 			</span>
 		);

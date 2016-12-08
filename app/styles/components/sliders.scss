@@ -35,6 +35,7 @@
 	}
 
 	&-container {
+		margin-top: 0.1em;
 		display: flex;
 		flex-flow: row nowrap;
 		width:100%;
@@ -115,14 +116,46 @@
 
 	&-reset {
 		opacity: 0;
+		margin-left: 0.6rem;
+		display: inline-block;
+		cursor: pointer;
+		color: $white;
+		transition: opacity 500ms ease;
+		background-color: $black;
+		border-radius: 5px;
+		padding: 0 1rem;
+
+		&:hover {
+			background-color: $white;
+			color: $dark-grey;
+		}
+	}
+
+	&-tooltip {
+		opacity: 0;
 		margin-left: 0.8rem;
 		display: inline-block;
 		cursor: pointer;
-		color: $medium-grey;
+		color: $white;
+		font-weight: bold;
 		transition: opacity 500ms ease;
+		background-color: $black;
+		border-radius: 50%;
+		width: 16px;
+		height: 16px;
+		text-align: center;
+
+		&:hover {
+			background-color: $white;
+			color: $dark-grey;
+		}
 	}
 
 	&:hover &-reset {
+		opacity: 1;
+	}
+
+	&:hover &-tooltip {
 		opacity: 1;
 	}
 
@@ -242,6 +275,7 @@
 
 .sliders {
 	color: $white;
+	background-color: $dark-grey;
 	padding:1rem;
 }
 

@@ -7,12 +7,15 @@ import InputWithLabel from '../shared/input-with-label.components.jsx';
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import SelectWithLabel from '../shared/select-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
+import FormError from '../shared/form-error.components.jsx';
+import FormSuccess from '../shared/form-success.components.jsx';
 
-export default class AccountProfilePanel extends React.Component {
+export default class AccountProfilePanel extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
 			infos: {},
+			errors: [],
 		};
 	}
 
@@ -24,8 +27,8 @@ export default class AccountProfilePanel extends React.Component {
 			.onUpdate(({head}) => {
 				this.setState({
 					infos: head.toJS().infos,
-					loading: head.toJS().loading,
-					errors: head.toJS().errors,
+					errors: head.toJS().profileForm.errors,
+					success: head.toJS().profileForm.success,
 				});
 			})
 			.onDelete(() => {
@@ -51,13 +54,12 @@ export default class AccountProfilePanel extends React.Component {
 	}
 
 	render() {
-		const values = [
+		const jobtitles = [
 			{value: 'graphic_designer', label: 'a graphic designer'},
-			{value: 'artistic_director', label: 'an artistic director'},
-			{value: 'web_developer', label: 'a web developer'},
-			{value: 'type_designer', label: 'a type designer'},
-			{value: 'teacher', label: 'a teacher'},
 			{value: 'student', label: 'a student'},
+			{value: 'teacher', label: 'a teacher'},
+			{value: 'type_designer', label: 'a type designer'},
+			{value: 'web_developer', label: 'a web developer'},
 		];
 
 		return this.state.infos.accountValues
@@ -74,7 +76,14 @@ export default class AccountProfilePanel extends React.Component {
 							<InputWithLabel ref="lastname" label="Last name" placeholder="Doe" required={false} inputValue={this.state.infos.accountValues.lastname}/>
 						</div>
 					</div>
-					<SelectWithLabel ref="css" label="I am" noResultsText="No result for this search" name="occupation" className="input-with-label-input" placeholder="an architect" options={values} inputValue={this.state.infos.accountValues.css}/>
+					<SelectWithLabel
+						ref="css"
+						label="I am"
+						name="css"
+						className="input-with-label-input"
+						placeholder="an architect"
+						options={jobtitles}
+						inputValue={this.state.infos.accountValues.css}/>
 					<div className="columns">
 						<div className="half-column">
 							<InputWithLabel ref="website" label="My website" placeholder="www.domain.com" required={false} inputValue={this.state.infos.accountValues.website}/>
@@ -91,6 +100,9 @@ export default class AccountProfilePanel extends React.Component {
 							<InputWithLabel label="Skype ID" ref="skype" inputValue={this.state.infos.accountValues.skype} />
 						</div>
 					</div>
+
+					{this.state.success && <FormSuccess successText="You've successfully updated your profile."/>}
+					{this.state.errors.map((err) => {return <FormError key={err} errorText={err}/>;})}
 					<AccountValidationButton label="Save infos"/>
 				</form>
 			)

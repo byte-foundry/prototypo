@@ -155,6 +155,10 @@ class TopBarMenuItem extends React.Component {
 	}
 }
 
+/**
+*	TopBarMenuDropdown is nestable
+*	meaning that you can put a TopBarMenuDropdown inside a TopBarMenuDropdownItem
+*/
 class TopBarMenuDropdown extends React.Component {
 	static getHeader(props) {
 		const content = {
@@ -263,10 +267,10 @@ class TopBarMenuDropdownItem extends React.Component {
 		this.state = {
 			credits: undefined,
 		};
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		//function bindings
 		this.handleClick = this.handleClick.bind(this);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
@@ -292,7 +296,7 @@ class TopBarMenuDropdownItem extends React.Component {
 		this.lifespan.release();
 	}
 
-	handleClick() {
+	handleClick(e) {
 		// freeAccount and freeAccountAndHasCredits props
 		// should only be set if the item is blockable
 		// for free users without credits (under the overlay)
@@ -304,7 +308,7 @@ class TopBarMenuDropdownItem extends React.Component {
 				// and on callback dispatch a "spend credit" action
 				// to ensure no one will pay if something went wrong
 				// during the export
-				this.props.handler();
+				this.props.handler(e);
 				// here the "spend credit" will hapen
 				// but on parent component state change
 				// when "exporting" goes from true to false w/o errors
@@ -321,9 +325,10 @@ class TopBarMenuDropdownItem extends React.Component {
 			return;
 		}
 		else {
-			this.props.handler();
+			this.props.handler(e);
 		}
 	}
+
 
 	render() {
 		const creditsAltLabel = this.props.freeAccountAndHasCredits
@@ -350,6 +355,7 @@ class TopBarMenuDropdownItem extends React.Component {
 				<span className="top-bar-menu-item-dropdown-item-title">{this.props.name}</span>
 				<span className="top-bar-menu-item-dropdown-item-shortcut">{this.props.shortcut}</span>
 				{creditsAltLabel}
+				{this.props.children}
 			</li>
 		);
 	}

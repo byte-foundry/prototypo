@@ -68,6 +68,7 @@ import '../styles/components/shared/invoice.scss';
 import '../styles/components/shared/loading-overlay.scss';
 import '../styles/components/shared/button.scss';
 import '../styles/components/shared/modal.scss';
+import '../styles/components/shared/action-form-buttons.scss';
 import '../styles/components/toolbar/toolbar.scss';
 import '../styles/components/toolbar/arianne-thread.scss';
 import '../styles/components/toolbar/view-buttons.scss';
@@ -78,6 +79,7 @@ import '../styles/components/viewPanels/view-panels-menu.scss';
 import '../styles/components/views/prototypo-word-input.scss';
 import '../styles/components/indivMode/indiv-group-list.scss';
 import '../styles/components/indivMode/indiv-sidebar.scss';
+import '../styles/components/canvasTools/canvas-bar.scss';
 import '../styles/lib/spinners/3-wave.scss';
 import '../styles/lib/spinkit.scss';
 import '../styles/lib/_variables.scss';
@@ -108,7 +110,6 @@ import ReactDOM from 'react-dom';
 import {Router, Route, IndexRoute, hashHistory, IndexRedirect} from 'react-router';
 
 import Dashboard from './components/dashboard.components.jsx';
-import SitePortal from './components/site-portal.components.jsx';
 import Signin from './components/signin.components.jsx';
 import ForgottenPassword from './components/forgotten-password.components.jsx';
 import NotABrowser from './components/not-a-browser.components.jsx';
@@ -121,7 +122,6 @@ import AccountHome from './components/account/account-home.components.jsx';
 import AccountSuccess from './components/account/account-success.components.jsx';
 import AccountProfile from './components/account/account-profile-panel.components.jsx';
 import AccountChangePassword from './components/account/account-change-password.components.jsx';
-import AccountDetails from './components/account/account-details.components.jsx';
 import AccountBillingAddress from './components/account/account-billing-address.components.jsx';
 import AccountAddCard from './components/account/account-add-card.components.jsx';
 import AccountChangePlan from './components/account/account-change-plan.components.jsx';
@@ -136,14 +136,13 @@ import SubscriptionBillingAddress from './components/account/subscription-billin
 import SubscriptionConfirmation from './components/account/subscription-confirmation.components.jsx';
 
 import HoodieApi from './services/hoodie.services.js';
-import {FontValues} from './services/values.services.js';
 import LocalClient from './stores/local-client.stores.jsx';
 import LocalServer from './stores/local-server.stores.jsx';
 import Stores from './stores/creation.stores.jsx';
 
 import selectRenderOptions from './helpers/userAgent.helpers.js';
-import {saveAppValues} from './helpers/loadValues.helpers.js';
 import {loadStuff} from './helpers/appSetup.helpers.js';
+import isProduction from './helpers/is-production.helpers';
 
 import appValuesAction from './actions/appValues.actions.jsx';
 import exportAction from './actions/export.actions.jsx';
@@ -164,7 +163,7 @@ import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
 import ReplayViewer from './debug/replay-viewer.components.jsx';
 /* #end */
 
-function noConfirmBeforePlan(nextState, replace) {
+function noConfirmBeforePlan(nextState) {
 	console.log(nextState);
 }
 
@@ -190,7 +189,7 @@ selectRenderOptions(
 	},
 	() => {
 
-		const stripeKey = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
+		const stripeKey = isProduction()
 			? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
 			: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
 
@@ -200,7 +199,7 @@ selectRenderOptions(
 
 		const prototypoStore = Stores['/prototypoStore'];
 
-		function saveErrorLog(error) {
+			/*function saveErrorLog(error) {
 			const debugLog = {
 				events: prototypoStore.events,
 				message: err.message,
@@ -217,7 +216,7 @@ selectRenderOptions(
 					'Content-type': 'application/json; charset=UTF-8',
 				},
 			});
-		}
+		}*/
 
 		/* #if debug */
 		const localServer = new LocalServer(stores, {
@@ -361,11 +360,24 @@ selectRenderOptions(
 			}
 		}
 
-		window.addEventListener('fontInstance.loaded', () => {
+		HoodieApi.setup()
+			.then(() => {
+				location.href = '#/dashboard';
+			})
+			.catch(() => {
+
+				if (location.hash.indexOf('signin') === -1 && location.hash.indexOf('account') === -1 && location.hash.indexOf('signup') === -1 &&  location.hash.indexOf('dashboard') === -1) {
+					location.href = '#/dashboard';
+				}
+				const event = new CustomEvent('values.loaded');
+
+				window.dispatchEvent(event);
+			});
+
+		window.addEventListener('values.loaded', () => {
 			ReactDOM.render((
 				<Router history={hashHistory} onUpdate={trackUrl}>
 					<Route component={App} name="app" path="/">
-						<IndexRoute component={SitePortal}/>
 						<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}/>
 						/* #if debug */
 						<Route path="replay" path="replay/:replayId" component={ReplayViewer}/>
@@ -411,6 +423,7 @@ selectRenderOptions(
 					</Route>
 				</Router>
 			), content);
+
 		});
 
 		createStores();
