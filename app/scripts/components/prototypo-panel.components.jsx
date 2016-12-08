@@ -48,7 +48,6 @@ export default class PrototypoPanel extends React.Component {
 					uiTextFontSize: head.toJS().d.uiTextFontSize,
 					uiInvertedWordView: head.toJS().d.uiInvertedWordView,
 					uiInvertedWordColors: head.toJS().d.uiInvertedWordColors,
-					uiWordFontSize: head.toJS().d.uiWordFontSize,
 					editingGroup: head.toJS().d.indivEdit,
 					indivMode: head.toJS().d.indivMode,
 					wordPanelHeight: head.toJS().d.wordPanelHeight || 20,
@@ -135,7 +134,6 @@ export default class PrototypoPanel extends React.Component {
 							fontName={this.props.fontName}
 							uiInvertedWordView={this.state.uiInvertedWordView}
 							uiInvertedWordColors={this.state.uiInvertedWordColors}
-							uiWordFontSize={this.state.uiWordFontSize}
 							uiWord={this.state.uiWord || ''}
 							indivCurrentGroup={this.state.indivCurrentGroup}
 							close={this.toggleView}

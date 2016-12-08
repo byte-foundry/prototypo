@@ -64,6 +64,7 @@ export default class PrototypoWord extends React.PureComponent {
 					uiWordString: head.toJS().d.uiWordString,
 					uiWordSelection: head.toJS().d.uiWordSelection || 0,
 					totalHeight: head.toJS().d.totalHeight,
+					uiWordFontSize: head.toJS().d.uiWordFontSize,
 				});
 			})
 			.onDelete(() => {
@@ -101,29 +102,32 @@ export default class PrototypoWord extends React.PureComponent {
 		this.setupText();
 		const raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
 
-		raf(() => {
-			if (this.state.glyphProperties) {
-				const {clientWidth, clientHeight} = ReactDOM.findDOMNode(this);
-				const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
-					return sum + (
-						this.state.glyphProperties[glyph.charCodeAt(0)]
-						|| {advanceWidth: 500}
-					).advanceWidth;
-				}, 0);
-				const widthSize = 100 * clientWidth / (0.1 * advanceWidthSum) * 0.95;
-				const heightSize = 100 * clientHeight / (0.1 * this.state.totalHeight) * 0.8;
-				const rightSize = Math.min(widthSize, heightSize);
+		if (!this.alreadyRafed) {
+			this.alreadyRafed = raf(() => {
+				if (this.state.glyphProperties) {
+					const {clientWidth, clientHeight} = ReactDOM.findDOMNode(this);
+					const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
+						return sum + (
+							this.state.glyphProperties[glyph.charCodeAt(0)]
+							|| {advanceWidth: 500}
+						).advanceWidth;
+					}, 0);
+					const widthSize = 100 * clientWidth / (0.1 * advanceWidthSum) * 0.95;
+					const heightSize = 100 * clientHeight / (0.1 * this.state.totalHeight) * 0.8;
+					const rightSize = Math.min(widthSize, heightSize);
 
-				this.client.dispatchAction('/store-value', {
-					uiWordFontSize: rightSize,
-				});
-			}
-			else {
-				this.client.dispatchAction('/store-value', {
-					uiWordFontSize: 100,
-				});
-			}
-		});
+					this.client.dispatchAction('/store-value', {
+						uiWordFontSize: rightSize,
+					});
+				}
+				else {
+					this.client.dispatchAction('/store-value', {
+						uiWordFontSize: 100,
+					});
+				}
+				this.alreadyRafed = undefined;
+			});
+		}
 	}
 
 	componentDidMount() {
@@ -243,7 +247,7 @@ export default class PrototypoWord extends React.PureComponent {
 		}
 		const style = {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
-			'fontSize': this.props.uiWordFontSize || '98px',
+			'fontSize': this.state.uiWordFontSize || '98px',
 		};
 
 		const stringClasses = classNames('prototypo-word-string', {

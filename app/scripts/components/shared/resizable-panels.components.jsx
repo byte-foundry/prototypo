@@ -19,6 +19,7 @@ export default class ResizablePanels extends React.PureComponent {
 	}
 
 	handleDrag(e, {x, y}) {
+		e.stopPropagation();
 		this.props.onChange(this.updateHandlePosition({x, y}));
 	}
 
