@@ -19,12 +19,12 @@ export default class AccountChangePassword extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					loading: head.toJS().changePasswordForm.loading,
-					errors: head.toJS().changePasswordForm.errors,
-					inError: head.toJS().changePasswordForm.inError,
-					success: head.toJS().changePasswordForm.success,
+					loading: head.toJS().d.changePasswordForm.loading,
+					errors: head.toJS().d.changePasswordForm.errors,
+					inError: head.toJS().d.changePasswordForm.inError,
+					success: head.toJS().d.changePasswordForm.success,
 				});
 			})
 			.onDelete(() => {

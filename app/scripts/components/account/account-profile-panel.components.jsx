@@ -34,11 +34,11 @@ export default class AccountProfilePanel extends React.PureComponent {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					infos: head.toJS().infos,
-					errors: head.toJS().profileForm.errors,
-					success: head.toJS().profileForm.success,
+					infos: head.toJS().d.infos,
+					errors: head.toJS().d.profileForm.errors,
+					success: head.toJS().d.profileForm.success,
 				});
 			})
 			.onDelete(() => {

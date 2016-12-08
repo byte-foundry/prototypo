@@ -22,11 +22,11 @@ export default class CanvasGlyphInput extends React.PureComponent {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					selected: head.toJS().glyphSelected,
-					mode: head.toJS().uiMode,
-					focused: head.toJS().glyphFocused,
+					selected: head.toJS().d.glyphSelected,
+					mode: head.toJS().d.uiMode,
+					focused: head.toJS().d.glyphFocused,
 				});
 			})
 			.onDelete(() => {

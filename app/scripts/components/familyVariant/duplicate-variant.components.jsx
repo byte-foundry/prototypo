@@ -26,9 +26,9 @@ export default class DuplicateVariant extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					errorAddVariant: head.toJS().errorAddVariant,
+					errorAddVariant: head.toJS().d.errorAddVariant,
 				});
 			})
 			.onDelete(() => {

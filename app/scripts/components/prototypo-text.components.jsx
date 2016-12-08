@@ -64,9 +64,9 @@ export default class PrototypoText extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
+					glyphPanelOpened: head.toJS().d.uiMode.indexOf('list') !== -1,
 				});
 			})
 			.onDelete(() => {

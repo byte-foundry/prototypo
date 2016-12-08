@@ -16,9 +16,9 @@ export default class AccountSidebar extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					infos: head.toJS().infos,
+					infos: head.toJS().d.infos,
 				});
 			})
 			.onDelete(() => {

@@ -1,5 +1,4 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import vatrates from 'vatrates';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -7,11 +6,10 @@ import Log from '../services/log.services.js';
 
 import Modal from './shared/modal.components.jsx';
 
-export default class GoProModal extends React.Component {
+export default class GoProModal extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.goSubscribe = this.goSubscribe.bind(this);
 		this.goCredits = this.goCredits.bind(this);
 	}
@@ -41,7 +39,7 @@ export default class GoProModal extends React.Component {
 					});
 				}
 			})
-			.catch((error) => {
+			.catch(() => {
 				this.setState({
 					currency: '$',
 				});

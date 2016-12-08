@@ -23,11 +23,11 @@ export default class Register extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					inError: head.toJS().signupForm.inError,
-					errors: head.toJS().signupForm.errors,
-					loading: head.toJS().signupForm.loading,
+					inError: head.toJS().d.signupForm.inError,
+					errors: head.toJS().d.signupForm.errors,
+					loading: head.toJS().d.signupForm.loading,
 				});
 			})
 			.onDelete(() => {

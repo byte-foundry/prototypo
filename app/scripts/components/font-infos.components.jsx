@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class FontInfos extends React.Component {
+export default class FontInfos extends React.PureComponent {
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] font infos');

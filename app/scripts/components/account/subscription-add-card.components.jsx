@@ -7,7 +7,6 @@ import LocalClient from '../../stores/local-client.stores.jsx';
 import AddCard from '../shared/add-card.components.jsx';
 import BillingAddress from '../shared/billing-address.components.jsx';
 import InputWithLabel from '../shared/input-with-label.components.jsx';
-import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
 
@@ -28,12 +27,12 @@ export default class SubscriptionAddCard extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					errors: [...head.toJS().addcardForm.errors, ...head.toJS().billingForm.errors],
-					inError: _.assign(head.toJS().addcardForm.inError, head.toJS().billingForm.inError),
-					loading: head.toJS().addcardForm.loading || head.toJS().billingForm.loading,
-					infos: head.toJS().infos,
+					errors: [...head.toJS().d.addcardForm.errors, ...head.toJS().d.billingForm.errors],
+					inError: _.assign(head.toJS().d.addcardForm.inError, head.toJS().d.billingForm.inError),
+					loading: head.toJS().d.addcardForm.loading || head.toJS().d.billingForm.loading,
+					infos: head.toJS().d.infos,
 				});
 
 				// move to next step if the card and billing info are already known

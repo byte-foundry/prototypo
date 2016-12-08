@@ -2,7 +2,6 @@ import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import {Link} from 'react-router';
 
 import HoodieApi from '~/services/hoodie.services.js';
 import Log from '~/services/log.services.js';
@@ -12,14 +11,40 @@ import DOM from '../helpers/dom.helpers.js';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
 import SliderHelpText from '../../images/sliders/helpText.json';
 
-export class Sliders extends React.Component {
+export class Sliders extends React.PureComponent {
 	constructor(props) {
 		super(props);
+		this.state = {};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
+	componentWillMount() {
+		this.lifespan = new Lifespan();
+		this.client = LocalClient.instance();
+
+		this.client.getStore('/undoableStore', this.lifespan)
+			.onUpdate((head) => {
+				const headJS = head.toJS().d;
+
+				this.setState({
+					values: headJS.controlsValues,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 
 	render() {
+		if (!this.state.values) {
+			return false;
+		}
+
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] sliders');
 		}
@@ -30,8 +55,8 @@ export class Sliders extends React.Component {
 
 			if (this.props.indivMode
 				&& this.props.indivEdit
-				&& this.props.values.indiv_group_param[this.props.currentGroup]) {
-				const paramObject = this.props.values.indiv_group_param[this.props.currentGroup][`${param.name}_rel`] || {state: 'relative', value: 1};
+				&& this.state.values.indiv_group_param[this.props.currentGroup]) {
+				const paramObject = this.state.values.indiv_group_param[this.props.currentGroup][`${param.name}_rel`] || {state: 'relative', value: 1};
 
 				value = paramObject.value;
 					_.assign(paramToUse, param, {
@@ -46,7 +71,7 @@ export class Sliders extends React.Component {
 			}
 			else {
 				_.assign(paramToUse, param);
-				value = this.props.values ? this.props.values[param.name] : undefined;
+				value = this.state.values ? this.state.values[param.name] : undefined;
 			}
 
 			const isRadio = paramToUse.controlType === 'radio';
@@ -507,7 +532,7 @@ export class SliderTextController extends React.Component {
 				type="number"
 				value={this.props.value.toFixed(2)}
 				onChange={(e) => {
-					this.props.changeParam( {
+					this.props.changeParam({
 							name: this.props.name,
 							value: parseFloat(e.target.value),
 							label: this.props.label,

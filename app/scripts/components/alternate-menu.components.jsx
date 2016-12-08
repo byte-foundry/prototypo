@@ -48,7 +48,7 @@ class Alternate extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="alternate" onClick={this.selectAlternate()}>
+			<div className="alternate" onClick={this.selectAlternate}>
 				<img src={this.img}/>
 			</div>
 		);

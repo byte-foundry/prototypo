@@ -1,5 +1,4 @@
 import React from 'react';
-import {Link} from 'react-router';
 import Lifespan from 'lifespan';
 import vatrates from 'vatrates';
 
@@ -11,7 +10,7 @@ import Modal from './shared/modal.components.jsx';
 import AddCard from './shared/add-card.components.jsx';
 import FormError from './shared/form-error.components.jsx';
 
-export default class CreditsExport extends React.Component {
+export default class CreditsExport extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -32,20 +31,20 @@ export default class CreditsExport extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					loading: head.toJS().buyCreditsForm.loading,
-					errors: head.toJS().buyCreditsForm.errors,
-					inError: head.toJS().buyCreditsForm.inError,
+					loading: head.toJS().d.buyCreditsForm.loading,
+					errors: head.toJS().d.buyCreditsForm.errors,
+					inError: head.toJS().d.buyCreditsForm.inError,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					buyCreditsNewCreditAmount: head.toJS().buyCreditsNewCreditAmount,
+					buyCreditsNewCreditAmount: head.toJS().d.buyCreditsNewCreditAmount,
 				});
 			})
 			.onDelete(() => {
@@ -75,7 +74,7 @@ export default class CreditsExport extends React.Component {
 					});
 				}
 			})
-			.catch((error) => {
+			.catch(() => {
 				this.setState({
 					currency: 'DOL',
 				});

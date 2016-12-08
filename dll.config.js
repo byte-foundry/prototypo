@@ -46,6 +46,9 @@ module.exports = {
 		libraryTarget: 'this'
 	},
 	plugins: [
+		new webpack.DefinePlugin({
+			'process.env.NODE_ENV': "'production'",
+		}),
 		new webpack.DllPlugin({
 			path: path.join(__dirname, 'dist/dll/', '[name]-manifest.json'),
 			name: '[name]_[hash]',

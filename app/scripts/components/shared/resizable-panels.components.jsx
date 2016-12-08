@@ -4,7 +4,7 @@ import {DraggableCore} from 'react-draggable';
 import classNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-export default class ResizablePanels extends React.Component {
+export default class ResizablePanels extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
@@ -14,7 +14,6 @@ export default class ResizablePanels extends React.Component {
 			y: props.defaultY || null,
 		};
 
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.handleDrag = _.throttle(this.handleDrag.bind(this), 50);
 		this.updateHandlePosition = this.updateHandlePosition.bind(this);
 	}
@@ -34,22 +33,7 @@ export default class ResizablePanels extends React.Component {
 		if (typeof y === 'number') {
 			newPosition.y = y / height * 100;
 		}
-
-		this.setState(newPosition);
-
-		return newPosition;
-	}
-
-	componentWillReceiveProps(nextProps) {
-		if (
-			(!this.state.x && nextProps.defaultX)
-			|| (!this.state.y && nextProps.defaultY)
-		) {
-			this.setState({
-				x: nextProps.defaultX,
-				y: nextProps.defaultY,
-			});
-		}
+		return newPosition[this.props.direction === 'vertical' ? 'x' : 'y'];
 	}
 
 	preventSelection(e) {
@@ -65,26 +49,33 @@ export default class ResizablePanels extends React.Component {
 			style,
 			onlyOne,
 			onlyTwo,
+			x,
+			y,
 			...rest,
 		} = this.props;
 		const isVertical = direction === 'vertical';
 		const axis = isVertical ? 'x' : 'y';
 		let handlePosition = {};
 
-		if (this.state.x || this.state.y) {
+		const realX = x || defaultX;
+		const realY = y || defaultY;
+
+		if (realX || realY) {
 			handlePosition = isVertical ? {
-				left: `calc(${onlyOne ? 100 : onlyTwo ? 0 : this.state.x}% - 5px)`,
+				left: `calc(${onlyOne ? 100 : onlyTwo ? 0 : realX}% - 5px)`,
 				top: '0',
 			} : {
 				left: '0',
-				top: `calc(${onlyOne ? 0 : onlyTwo ? 100 : this.state.y}% - 5px)`,
+				top: `calc(${onlyOne ? 0 : onlyTwo ? 100 : realY}% - 5px)`,
 			};
 		}
+
+		const realAxis = realX ? realX : realY;
 
 		//TODO(franz): Display none when onlyone or onlytwo
 		return (
 			<div {...rest} style={{...style, position: 'relative'}}>
-				{React.cloneElement(firstChild, {ref: 'firstChild', style: {...firstChild.props.style, display: onlyTwo ? 'none' : firstChild.props.display || 'flex', [property]: `${this.state[axis]}%`}})}
+				{React.cloneElement(firstChild, {ref: 'firstChild', style: {...firstChild.props.style, display: onlyTwo ? 'none' : firstChild.props.display || 'flex', [property]: `${realAxis}%`}})}
 				<DraggableCore
 					bounds="parent"
 					axis={axis}
@@ -102,7 +93,7 @@ export default class ResizablePanels extends React.Component {
 						<div className="prototypo-panel-handle-bar" />
 					</div>
 				</DraggableCore>
-				{React.cloneElement(lastChild, {style: {...lastChild.props.style, display: onlyOne ? 'none' : lastChild.props.display || 'flex', [property]: `${100 - this.state[axis]}%`}})}
+				{React.cloneElement(lastChild, {style: {...lastChild.props.style, display: onlyOne ? 'none' : lastChild.props.display || 'flex', [property]: `${100 - realAxis}%`}})}
 			</div>
 		);
 	}
