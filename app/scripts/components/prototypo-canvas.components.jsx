@@ -314,7 +314,6 @@ export default class PrototypoCanvas extends React.Component {
 			&& this.state.glyphs[this.props.glyphSelected]
 			&& this.state.values.manualChanges
 		) {
-<<<<<<< 542f6347ff2413536079b0561c7431c8fff92a40
 			let manualChangesGlyph;
 
 			if (this.state.altList[this.props.glyphSelected]) {
@@ -323,10 +322,6 @@ export default class PrototypoCanvas extends React.Component {
 			else {
 				manualChangesGlyph = this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name];
 			}
-=======
-			const manualChangesGlyph = this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name];
-
->>>>>>> more perf optimization
 			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0);
 		}
 		else {

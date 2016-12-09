@@ -219,13 +219,11 @@ export default class PrototypoText extends React.Component {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
 			'fontSize': `${this.props.uiTextFontSize || 1}em`,
 		};
-
 		const editorClassNames = classNames('prototypo-text-editor', {
 			'negative': this.props.uiInvertedTextColors,
 			'inverted': this.props.uiInvertedTextView,
 			'indiv': this.props.indivCurrentGroup,
 		});
-
 		const actionBar = classNames({
 			'action-bar': true,
 			'is-shifted': this.state.glyphPanelOpened,
