@@ -10,7 +10,7 @@
     "draft-js": "~0.9.1",
     "elzevir.ptf": "byte-foundry/elzevir.ptf#master",
     "escape-string-regexp": "^1.0.5",
-    "hoodie-client": "^3.4.0",
+    "@hoodie/client": "^8.0.0",
     "john-fell.ptf": "byte-foundry/john-fell.ptf#master",
     "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",
