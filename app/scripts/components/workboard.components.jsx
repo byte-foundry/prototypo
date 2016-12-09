@@ -10,7 +10,7 @@ import FontControls from './font-controls.components.jsx';
 import LoadingOverlay from './shared/loading-overlay.components.jsx';
 import IndivSidebar from './indivMode/indiv-sidebar.components.jsx';
 
-export default class Workboard extends React.Component {
+export default class Workboard extends React.PureComponent {
 
 	constructor(props) {
 		super(props);
@@ -29,13 +29,13 @@ export default class Workboard extends React.Component {
 		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					fontName: head.toJS().fontName,
-					glyphs: head.toJS().fontGlyphs,
-					fontLoading: head.toJS().uiFontLoading,
-					indivMode: head.toJS().indivMode,
-					indivEditingParams: head.toJS().indivEditingParams,
+					fontName: head.toJS().d.fontName,
+					glyphs: head.toJS().d.fontGlyphs,
+					fontLoading: head.toJS().d.uiFontLoading,
+					indivMode: head.toJS().d.indivMode,
+					indivEditingParams: head.toJS().d.indivEditingParams,
 				});
 			})
 			.onDelete(() => {

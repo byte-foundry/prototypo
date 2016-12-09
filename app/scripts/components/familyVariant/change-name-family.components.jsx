@@ -26,9 +26,9 @@ export default class ChangeNameFamily extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					errorFamilyNameChange: head.toJS().errorFamilyNameChange,
+					errorFamilyNameChange: head.toJS().d.errorFamilyNameChange,
 				});
 			})
 			.onDelete(() => {

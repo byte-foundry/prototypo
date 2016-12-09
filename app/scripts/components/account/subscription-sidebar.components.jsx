@@ -1,7 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
-import {Link} from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -18,9 +17,9 @@ export default class SubscriptionSidebar extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					infos: head.toJS().infos,
+					infos: head.toJS().d.infos,
 				});
 			})
 			.onDelete(() => {

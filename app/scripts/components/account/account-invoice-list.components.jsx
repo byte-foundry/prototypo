@@ -15,9 +15,9 @@ export default class AccountInvoiceList extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					charges: head.toJS().infos.charges,
+					charges: head.toJS().d.infos.charges,
 				});
 			})
 			.onDelete(() => {

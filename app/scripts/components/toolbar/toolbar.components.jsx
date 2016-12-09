@@ -48,9 +48,9 @@ class ViewButtons extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					mode: head.toJS().uiMode,
+					mode: head.toJS().d.uiMode,
 				});
 			})
 			.onDelete(() => {

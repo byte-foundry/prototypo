@@ -40,10 +40,10 @@ export default class HandlegripText extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					tracking: head.toJS().uiSpacingTracking,
-					letterFontSize: head.toJS().uiLetterSpacingLetterFontSize || this.state.letterFontSize,
+					tracking: head.toJS().d.uiSpacingTracking,
+					letterFontSize: head.toJS().d.uiLetterSpacingLetterFontSize || this.state.letterFontSize,
 				});
 			})
 			.onDelete(() => {
@@ -51,9 +51,9 @@ export default class HandlegripText extends React.Component {
 			});
 
 		this.client.getStore('/undoableStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					fontValues: head.toJS().controlsValues,
+					fontValues: head.toJS().d.controlsValues,
 				});
 			})
 			.onDelete(() => {
@@ -61,13 +61,13 @@ export default class HandlegripText extends React.Component {
 			});
 
 		this.client.getStore('/fastStuffStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					trackingX: head.toJS().uiTrackingX,
-					glyphProperties: head.toJS().glyphProperties,
-					unClampedOldValue: head.toJS().unClampedOldValue,
-					clampedValue: head.toJS().clampedValue,
-					dragginRatio: head.toJS().dragginRatio,
+					trackingX: head.toJS().d.uiTrackingX,
+					glyphProperties: head.toJS().d.glyphProperties,
+					unClampedOldValue: head.toJS().d.unClampedOldValue,
+					clampedValue: head.toJS().d.clampedValue,
+					dragginRatio: head.toJS().d.dragginRatio,
 				});
 			})
 			.onDelete(() => {

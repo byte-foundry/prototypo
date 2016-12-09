@@ -17,6 +17,16 @@ export default class AccountProfilePanel extends React.PureComponent {
 			infos: {},
 			errors: [],
 		};
+
+		this.changeAccount = this.changeAccount.bind(this);
+		this.jobtitles = [
+			{value: 'graphic_designer', label: 'a graphic designer'},
+			{value: 'student', label: 'a student'},
+			{value: 'teacher', label: 'a teacher'},
+			{value: 'type_designer', label: 'a type designer'},
+			{value: 'web_developer', label: 'a web developer'},
+		];
+
 	}
 
 	componentWillMount() {
@@ -24,11 +34,11 @@ export default class AccountProfilePanel extends React.PureComponent {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					infos: head.toJS().infos,
-					errors: head.toJS().profileForm.errors,
-					success: head.toJS().profileForm.success,
+					infos: head.toJS().d.infos,
+					errors: head.toJS().d.profileForm.errors,
+					success: head.toJS().d.profileForm.success,
 				});
 			})
 			.onDelete(() => {
@@ -54,17 +64,9 @@ export default class AccountProfilePanel extends React.PureComponent {
 	}
 
 	render() {
-		const jobtitles = [
-			{value: 'graphic_designer', label: 'a graphic designer'},
-			{value: 'student', label: 'a student'},
-			{value: 'teacher', label: 'a teacher'},
-			{value: 'type_designer', label: 'a type designer'},
-			{value: 'web_developer', label: 'a web developer'},
-		];
-
 		return this.state.infos.accountValues
 			? (
-				<form className="account-base account-profile-panel" onSubmit={(e) => {this.changeAccount(e);}}>
+				<form className="account-base account-profile-panel" onSubmit={this.changeAccount}>
 					<DisplayWithLabel label="My email">
 						{this.state.infos.accountValues.username}
 					</DisplayWithLabel>
@@ -82,7 +84,7 @@ export default class AccountProfilePanel extends React.PureComponent {
 						name="css"
 						className="input-with-label-input"
 						placeholder="an architect"
-						options={jobtitles}
+						options={this.jobtitles}
 						inputValue={this.state.infos.accountValues.css}/>
 					<div className="columns">
 						<div className="half-column">
@@ -100,7 +102,6 @@ export default class AccountProfilePanel extends React.PureComponent {
 							<InputWithLabel label="Skype ID" ref="skype" inputValue={this.state.infos.accountValues.skype} />
 						</div>
 					</div>
-
 					{this.state.success && <FormSuccess successText="You've successfully updated your profile."/>}
 					{this.state.errors.map((err) => {return <FormError key={err} errorText={err}/>;})}
 					<AccountValidationButton label="Save infos"/>

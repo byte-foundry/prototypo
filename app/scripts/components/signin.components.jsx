@@ -2,7 +2,6 @@ import React from 'react';
 import {Link} from 'react-router';
 import Lifespan from 'lifespan';
 
-import HoodieApi from '../services/hoodie.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import FormError from './shared/form-error.components.jsx';
@@ -22,11 +21,11 @@ export default class Signin extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					inError: head.toJS().signinForm.inError,
-					errors: head.toJS().signinForm.errors,
-					loading: head.toJS().signinForm.loading,
+					inError: head.toJS().d.signinForm.inError,
+					errors: head.toJS().d.signinForm.errors,
+					loading: head.toJS().d.signinForm.loading,
 				});
 			})
 			.onDelete(() => {
