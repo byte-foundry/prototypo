@@ -1,7 +1,7 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
 
-export default class IAmMobile extends React.Component {
+export default class IAmMobile extends React.PureComponent {
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] NotABrowser');

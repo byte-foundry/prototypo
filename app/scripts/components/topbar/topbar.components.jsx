@@ -54,17 +54,17 @@ export default class Topbar extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					mode: head.toJS().uiMode,
-					export: head.toJS().export,
-					errorExport: head.toJS().errorExport,
-					credits: head.toJS().credits,
-					to: head.toJS().undoTo,
-					from: head.toJS().undoFrom,
-					eventList: head.toJS().undoEventList,
-					presets: head.toJS().fontPresets,
-					indiv: head.toJS().indivMode,
+					mode: head.toJS().d.uiMode,
+					export: head.toJS().d.export,
+					errorExport: head.toJS().d.errorExport,
+					credits: head.toJS().d.credits,
+					to: head.toJS().d.undoTo,
+					from: head.toJS().d.undoFrom,
+					eventList: head.toJS().d.undoEventList,
+					presets: head.toJS().d.fontPresets,
+					indiv: head.toJS().d.indivMode,
 				});
 			})
 			.onDelete(() => {
@@ -204,7 +204,7 @@ export default class Topbar extends React.Component {
 		const undoDisabled = whereAt < 2;
 		const redoDisabled = whereAt > (this.state.eventList.length - 2);
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
-		const redoText = `Redo ${!redoDisabled ? this.state.eventList[whereAt + 1].label : ''}`;
+		const redoText = `Redo ${redoDisabled ? '' : this.state.eventList[whereAt + 1].label}`;
 		const credits = this.state.credits;
 		const freeAccount = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
@@ -228,7 +228,7 @@ export default class Topbar extends React.Component {
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount)
 			&& <TopBarMenuButton label="UNLOCK ALL PARAMETERS FOR $5" noHover centered click={this.openGoProModal} alignRight/>;
 
-		const presetSubMenu = this.state.presets
+			/*const presetSubMenu = this.state.presets
 			? (
 				<TopBarMenuDropdownItem name="Choose a preset ...">
 					<TopBarMenuDropdown>
@@ -247,7 +247,7 @@ export default class Topbar extends React.Component {
 					</TopBarMenuDropdown>
 				</TopBarMenuDropdownItem>
 			)
-			: false;
+			: false;*/
 
 		return (
 			<div id="topbar">

@@ -24,10 +24,10 @@ export default class AccountSubscription extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					plan: head.toJS().infos.subscriptions,
-					card: head.toJS().infos.card,
+					plan: head.toJS().d.infos.subscriptions,
+					card: head.toJS().d.infos.card,
 				});
 			})
 			.onDelete(() => {
@@ -35,9 +35,9 @@ export default class AccountSubscription extends React.Component {
 			});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					credits: head.toJS().credits,
+					credits: head.toJS().d.credits,
 				});
 			})
 			.onDelete(() => {
@@ -131,7 +131,6 @@ export default class AccountSubscription extends React.Component {
 				</div>
 			</div>
 		);
-
 
 		const content = this.state.plan
 			? (

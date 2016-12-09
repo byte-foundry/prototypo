@@ -19,9 +19,9 @@ export default class CanvasBar extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					canvasMode: head.toJS().canvasMode,
+					canvasMode: head.toJS().d.canvasMode,
 				});
 			})
 			.onDelete(() => {

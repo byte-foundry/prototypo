@@ -23,6 +23,7 @@ export default class AccountBillingAddress extends React.Component {
 		this.lifespan = new Lifespan();
 
 		const userStore = await this.client.fetch('/userStore');
+
 		this.setState({
 			loaded: true,
 			address: userStore.head.toJS().infos.address || {},
@@ -33,13 +34,13 @@ export default class AccountBillingAddress extends React.Component {
 		});
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					address: head.toJS().infos.address || {},
-					buyerName: head.toJS().infos.buyerName || '',
-					errors: head.toJS().billingForm.errors,
-					inError: head.toJS().billingForm.inError,
-					loading: head.toJS().billingForm.loading,
+					address: head.toJS().d.infos.address || {},
+					buyerName: head.toJS().d.infos.buyerName || '',
+					errors: head.toJS().d.billingForm.errors,
+					inError: head.toJS().d.billingForm.inError,
+					loading: head.toJS().d.billingForm.loading,
 				});
 			})
 			.onDelete(() => {

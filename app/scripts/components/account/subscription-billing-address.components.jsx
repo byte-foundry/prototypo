@@ -22,12 +22,12 @@ export default class SubscriptionBillingAddress extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					errors: head.toJS().billingForm.errors,
-					inError: head.toJS().billingForm.inError,
-					loading: head.toJS().billingForm.loading,
-					infos: head.toJS().infos,
+					errors: head.toJS().d.billingForm.errors,
+					inError: head.toJS().d.billingForm.inError,
+					loading: head.toJS().d.billingForm.loading,
+					infos: head.toJS().d.infos,
 				});
 			})
 			.onDelete(() => {

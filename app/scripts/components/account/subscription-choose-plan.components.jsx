@@ -29,13 +29,13 @@ export default class SubscriptionChoosePlan extends React.Component {
 		});
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					selected: head.toJS().choosePlanForm.selected,
-					error: head.toJS().choosePlanForm.error,
-					loading: head.toJS().choosePlanForm.loading,
-					couponValue: head.toJS().choosePlanForm.couponValue,
-					isCouponValid: head.toJS().choosePlanForm.isCouponValid,
+					selected: head.toJS().d.choosePlanForm.selected,
+					error: head.toJS().d.choosePlanForm.error,
+					loading: head.toJS().d.choosePlanForm.loading,
+					couponValue: head.toJS().d.choosePlanForm.couponValue,
+					isCouponValid: head.toJS().d.choosePlanForm.isCouponValid,
 				});
 			})
 			.onDelete(() => {

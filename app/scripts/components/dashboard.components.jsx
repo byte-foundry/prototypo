@@ -1,9 +1,8 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
-import ClassNames from 'classnames';
+import classNames from 'classnames';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Joyride from 'react-joyride';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -24,7 +23,7 @@ import GoProModal from './go-pro-modal.components.jsx';
 
 import {buildTutorialSteps, handleNextStep, handleClosed} from '../helpers/joyride.helpers.js';
 
-export default class Dashboard extends React.Component {
+export default class Dashboard extends React.PureComponent {
 
 	constructor(props) {
 		super(props);
@@ -36,7 +35,6 @@ export default class Dashboard extends React.Component {
 			firstTimeIndivCreate: undefined,
 			firstTimeIndivEdit: undefined,
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// function bindings
 		this.joyrideCallback = this.joyrideCallback.bind(this);
@@ -59,26 +57,26 @@ export default class Dashboard extends React.Component {
 		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					openFamilyModal: head.toJS().openFamilyModal,
-					openVariantModal: head.toJS().openVariantModal,
-					familySelectedVariantCreation: head.toJS().familySelectedVariantCreation,
-					collectionSelectedVariant: head.toJS().collectionSelectedVariant,
-					openChangeFamilyNameModal: head.toJS().openChangeFamilyNameModal,
-					openChangeVariantNameModal: head.toJS().openChangeVariantNameModal,
-					openDuplicateVariantModal: head.toJS().openDuplicateVariantModal,
-					openBuyCreditsModal: head.toJS().openBuyCreditsModal,
-					openGoProModal: head.toJS().openGoProModal,
-					step: head.toJS().uiOnboardstep,
-					collection: head.toJS().uiShowCollection,
-					indiv: head.toJS().indivMode,
-					exportAs: head.toJS().exportAs,
-					uiJoyrideTutorialValue: head.toJS().uiJoyrideTutorialValue,
-					firstTimeFile: head.toJS().firstTimeFile,
-					firstTimeCollection: head.toJS().firstTimeCollection,
-					firstTimeIndivCreate: head.toJS().firstTimeIndivCreate,
-					firstTimeIndivEdit: head.toJS().firstTimeIndivEdit,
+					openFamilyModal: head.toJS().d.openFamilyModal,
+					openVariantModal: head.toJS().d.openVariantModal,
+					familySelectedVariantCreation: head.toJS().d.familySelectedVariantCreation,
+					collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
+					openChangeFamilyNameModal: head.toJS().d.openChangeFamilyNameModal,
+					openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
+					openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
+					openBuyCreditsModal: head.toJS().d.openBuyCreditsModal,
+					openGoProModal: head.toJS().d.openGoProModal,
+					step: head.toJS().d.uiOnboardstep,
+					collection: head.toJS().d.uiShowCollection,
+					indiv: head.toJS().d.indivMode,
+					exportAs: head.toJS().d.exportAs,
+					uiJoyrideTutorialValue: head.toJS().d.uiJoyrideTutorialValue,
+					firstTimeFile: head.toJS().d.firstTimeFile,
+					firstTimeCollection: head.toJS().d.firstTimeCollection,
+					firstTimeIndivCreate: head.toJS().d.firstTimeIndivCreate,
+					firstTimeIndivEdit: head.toJS().d.firstTimeIndivEdit,
 				});
 			})
 			.onDelete(() => {
@@ -172,7 +170,7 @@ export default class Dashboard extends React.Component {
 			console.log('[RENDER] dashboard');
 		}
 
-		const classes = ClassNames({
+		const classes = classNames({
 			'indiv': this.state.indiv && !(this.state.collection),
 			'normal': !this.state.indiv || this.state.collection,
 		});

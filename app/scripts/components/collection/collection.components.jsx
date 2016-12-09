@@ -34,22 +34,22 @@ export default class Collection extends React.Component {
 		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					families: head.toJS().fonts,
+					families: head.toJS().d.fonts,
 					selected: (
-						head.toJS().collectionSelectedFamily || {}
+						head.toJS().d.collectionSelectedFamily || {}
 					),
 					selectedVariant: (
-						head.toJS().collectionSelectedVariant || {}
+						head.toJS().d.collectionSelectedVariant || {}
 					),
-					familyDeleteSplit: head.toJS().uiFamilyDeleteSplit,
-					askSubscribeFamily: head.toJS().uiAskSubscribeFamily,
-					askSubscribeVariant: head.toJS().uiAskSubscribeVariant,
-					variantDeleteSplit: head.toJS().uiVariantDeleteSplit,
-					variantToExport: head.toJS().variantToExport,
-					exportedVariant: head.toJS().exportedVariant,
-					credits: head.toJS().credits,
+					familyDeleteSplit: head.toJS().d.uiFamilyDeleteSplit,
+					askSubscribeFamily: head.toJS().d.uiAskSubscribeFamily,
+					askSubscribeVariant: head.toJS().d.uiAskSubscribeVariant,
+					variantDeleteSplit: head.toJS().d.uiVariantDeleteSplit,
+					variantToExport: head.toJS().d.variantToExport,
+					exportedVariant: head.toJS().d.exportedVariant,
+					credits: head.toJS().d.credits,
 				});
 			})
 			.onDelete(() => {
