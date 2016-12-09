@@ -1,44 +1,19 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import classNames from 'classnames';
 import ScrollArea from 'react-scrollbar';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
 
-export class ControlsTabs extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-	}
-
-	changeTab(name) {
-		this.client.dispatchAction('/change-tab-font', {name});
-		Log.ui('ControlsTabs.changeTab', name);
-	}
-
+export class ControlsTabs extends React.PureComponent {
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] controls tabs');
 		}
 
 		const headers = _.map(this.props.children, ({props: {iconId, name}}) => {
-			const classes = classNames({
-				'controls-tabs-icon': true,
-				'is-active': this.props.tab === name,
-			});
-
 			return (
-				<li className={classes} id={iconId}
-					onClick={() => {
-						this.changeTab(name);
-					}} key={`${name}ControlsHeader`}>
-					<div className="controls-tabs-icon-legend is-legend-active">{name}</div>
-				</li>
+				<ControlsTabHeader iconId={iconId} tab={this.props.tab} name={name} key={`${name}ControlsHeader`}/>
 			);
 		});
 
@@ -65,10 +40,41 @@ export class ControlsTabs extends React.Component {
 	}
 }
 
-export class ControlsTab extends React.Component {
+class ControlsTabHeader extends React.PureComponent {
+
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.changeTab = this.changeTab.bind(this);
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+	changeTab() {
+		this.client.dispatchAction('/change-tab-font', {name: this.props.name});
+		Log.ui('ControlsTabs.changeTab', this.props.name);
+	}
+
+	render() {
+		const classes = classNames({
+			'controls-tabs-icon': true,
+			'is-active': this.props.tab === this.props.name,
+		});
+
+		return (
+			<li className={classes}
+				id={this.props.iconId}
+				onClick={this.changeTab}>
+				<div className="controls-tabs-icon-legend is-legend-active">{this.props.name}</div>
+			</li>
+		)
+	}
+}
+
+export class ControlsTab extends React.PureComponent {
+	constructor(props) {
+		super(props);
 	}
 
 	render() {

@@ -36,16 +36,16 @@ export default class CreateParamGroup extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					tags: head.toJS().tags,
-					selected: head.toJS().indivSelected,
-					tagSelected: head.toJS().indivTagSelected,
-					errorMessage: head.toJS().indivErrorMessage,
-					errorGlyphs: head.toJS().indivErrorGlyphs,
-					groups: head.toJS().indivGroups,
-					forbiddenGlyphs: head.toJS().indivOtherGroups,
-					glyphGroupDeleteSplit: head.toJS().uiGlyphGroupDeleteSplit,
+					tags: head.toJS().d.tags,
+					selected: head.toJS().d.indivSelected,
+					tagSelected: head.toJS().d.indivTagSelected,
+					errorMessage: head.toJS().d.indivErrorMessage,
+					errorGlyphs: head.toJS().d.indivErrorGlyphs,
+					groups: head.toJS().d.indivGroups,
+					forbiddenGlyphs: head.toJS().d.indivOtherGroups,
+					glyphGroupDeleteSplit: head.toJS().d.uiGlyphGroupDeleteSplit,
 				});
 			})
 			.onDelete(() => {

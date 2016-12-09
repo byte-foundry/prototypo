@@ -20,11 +20,11 @@ export default class AccountChangePlan extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					plan: head.toJS().infos.subscriptions,
-					card: head.toJS().infos.card,
-					loading: head.toJS().choosePlanForm.loading,
+					plan: head.toJS().d.infos.subscriptions,
+					card: head.toJS().d.infos.card,
+					loading: head.toJS().d.choosePlanForm.loading,
 				});
 			})
 			.onDelete(() => {

@@ -1,4 +1,4 @@
-import PrototypoCanvas from 'prototypo-canvas';
+import {PrototypoCanvas} from 'prototypo-canvas';
 import HoodieApi from './services/hoodie.services.js';
 import {AppValues} from './services/values.services.js';
 

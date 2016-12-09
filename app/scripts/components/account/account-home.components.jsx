@@ -14,9 +14,9 @@ export default class AccountHome extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					firstname: head.toJS().infos.accountValues.firstname,
+					firstname: head.toJS().d.infos.accountValues.firstname,
 				});
 			})
 			.onDelete(() => {

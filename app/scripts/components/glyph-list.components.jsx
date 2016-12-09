@@ -1,6 +1,5 @@
 import React from 'react';
 import ScrollArea from 'react-scrollbar';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Lifespan from 'lifespan';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -9,13 +8,12 @@ import Glyph from './glyph.components.jsx';
 import SearchGlyphList from './search-glyph-list.components.jsx';
 import GlyphTagList from './glyph-tag-list.components.jsx';
 
-export default class GlyphList extends React.Component {
+export default class GlyphList extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		this.state = {
-			values: {},
+			manualChanges: {},
 		};
 	}
 
@@ -24,9 +22,9 @@ export default class GlyphList extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/undoableStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					values: head.toJS().controlsValues,
+					manualChanges: head.toJS().d.controlsValues.manualChanges,
 				});
 			})
 			.onDelete(() => {
@@ -34,22 +32,9 @@ export default class GlyphList extends React.Component {
 			});
 	}
 
-	shouldComponentUpdate(newProps) {
-		if (this.props.selected === newProps.selected
-			&& this.props.selectedTag === newProps.selectedTag
-			&& _.isEqual(this.props.pinned, newProps.pinned).length
-			&& this.props.glyphs === newProps.glyphs) {
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
-
 	isManualEdited(glyph) {
-		if (this.state.values
-			&& this.state.values.manualChanges) {
-			const manualChangesGlyph = this.state.values.manualChanges[glyph[0].name];
+		if (this.state.manualChanges) {
+			const manualChangesGlyph = this.state.manualChanges[glyph[0].name];
 
 			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0);
 		}

@@ -59,18 +59,18 @@ export default class PrototypoCanvas extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					prototypoTextPanelOpened: head.toJS().uiMode.indexOf('text') !== -1,
-					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
-					glyphs: head.toJS().glyphs,
-					glyphFocused: head.toJS().glyphFocused,
-					glyphSelected: head.toJS().glyphSelected,
-					uiText: head.toJS().uiText || '',
-					uiWord: head.toJS().uiWord || '',
-					canvasMode: head.toJS().canvasMode,
-					oldCanvasMode: head.toJS().oldCanvasMode,
-					altList: head.toJS().altList,
+					prototypoTextPanelOpened: head.toJS().d.uiMode.indexOf('text') !== -1,
+					glyphPanelOpened: head.toJS().d.uiMode.indexOf('list') !== -1,
+					glyphs: head.toJS().d.glyphs,
+					glyphFocused: head.toJS().d.glyphFocused,
+					glyphSelected: head.toJS().d.glyphSelected,
+					uiText: head.toJS().d.uiText || '',
+					uiWord: head.toJS().d.uiWord || '',
+					canvasMode: head.toJS().d.canvasMode,
+					oldCanvasMode: head.toJS().d.oldCanvasMode,
+					altList: head.toJS().d.altList,
 				});
 			})
 			.onDelete(() => {
@@ -78,17 +78,17 @@ export default class PrototypoCanvas extends React.Component {
 			});
 
 		this.client.getStore('/fontInstanceStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState(head.toJS());
+			.onUpdate((head) => {
+				this.setState(head.toJS().d);
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 
 		this.client.getStore('/undoableStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					values: head.toJS().controlsValues,
+					values: head.toJS().d.controlsValues,
 				});
 			})
 			.onDelete(() => {
@@ -215,7 +215,14 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	resetGlyph() {
-		const glyphName = this.state.glyphs[this.props.glyphSelected][0].name;
+		let glyphName = '';
+
+		if (this.state.altList[this.props.glyphSelected]) {
+			glyphName = this.state.altList[this.props.glyphSelected];
+		}
+		else {
+			glyphName = this.state.glyphs[this.props.glyphSelected][0].name;
+		}
 		this.client.dispatchAction('/reset-glyph-manually', {glyphName});
 	}
 
@@ -300,16 +307,26 @@ export default class PrototypoCanvas extends React.Component {
 		});
 	}
 
-	isManualEdited(){
-		if (this.state.values &&
-			this.props.glyphSelected &&
-			this.state.glyphs &&
-			this.state.glyphs[this.props.glyphSelected] &&
-			this.state.values.manualChanges
+	isManualEdited() {
+		if (this.state.values
+			&& this.props.glyphSelected
+			&& this.state.glyphs
+			&& this.state.glyphs[this.props.glyphSelected]
+			&& this.state.values.manualChanges
 		) {
-			const manualChangesGlyph = this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name];
-			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0) ? true : false;
-		} else return false;
+			let manualChangesGlyph;
+
+			if (this.state.altList[this.props.glyphSelected]) {
+				manualChangesGlyph = this.state.values.manualChanges[this.state.altList[this.props.glyphSelected]];
+			}
+			else {
+				manualChangesGlyph = this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name];
+			}
+			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0);
+		}
+		else {
+			return false;
+		}
 	}
 
 	preExport() {

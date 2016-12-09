@@ -26,9 +26,9 @@ export default class ChangeNameVariant extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					errorVariantNameChange: head.toJS().errorVariantNameChange,
+					errorVariantNameChange: head.toJS().d.errorVariantNameChange,
 				});
 			})
 			.onDelete(() => {

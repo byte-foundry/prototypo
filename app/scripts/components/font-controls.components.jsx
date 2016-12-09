@@ -1,6 +1,5 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -9,7 +8,9 @@ import {ControlsTabs, ControlsTab} from './controls-tabs.components.jsx';
 import {Sliders} from './sliders.components.jsx';
 import SliderTooltip from './slider-tooltip.jsx';
 
-export default class FontControls extends React.Component {
+const voidCurrentGroup = {};
+
+export default class FontControls extends React.PureComponent {
 
 	constructor(props) {
 		super(props);
@@ -17,24 +18,15 @@ export default class FontControls extends React.Component {
 			tabControls: 'Func',
 			currentGroup: {},
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
-	async componentWillMount() {
+	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		const prototypoStore = await this.client.fetch('/prototypoStore');
-		const undoableStore = await this.client.fetch('/undoableStore');
-
-		this.setState({
-			typeface: prototypoStore.get('variant') || {},
-		});
-
-
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
-				const headJS = head.toJS();
+			.onUpdate((head) => {
+				const headJS = head.toJS().d;
 
 				this.setState({
 					tabControls: headJS.fontTab,
@@ -43,34 +35,14 @@ export default class FontControls extends React.Component {
 					typeface: headJS.variant,
 					indivMode: headJS.indivMode,
 					indivEdit: headJS.indivEditingParams,
-					currentGroup: headJS.indivCurrentGroup || {},
-					uiSliderTooltip: head.toJS().uiSliderTooltip,
+					currentGroup: headJS.indivCurrentGroup || voidCurrentGroup,
+					uiSliderTooltip: head.toJS().d.uiSliderTooltip,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 
-		this.client.getStore('/undoableStore', this.lifespan)
-			.onUpdate(({head}) => {
-				const headJS = head.toJS();
-
-				this.setState({
-					values: headJS.controlsValues,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		const parameters = prototypoStore.get('fontParameters');
-		//TODO(franz): setup a getInitialState
-		const values = undoableStore.get('controlsValues');
-
-		this.setState({
-			parameters,
-			values,
-		});
 	}
 
 	componentWillUnmount() {
@@ -86,7 +58,7 @@ export default class FontControls extends React.Component {
 		let sliderTooltip;
 		const transitionTimeout = 300;
 
-		if(hasSliderTooltip) {
+		if (hasSliderTooltip) {
 			sliderTooltip = (
 					<SliderTooltip key={'slider-tooltip'}
 						sliderName={this.state.uiSliderTooltip.sliderName}
@@ -99,7 +71,6 @@ export default class FontControls extends React.Component {
 				<ControlsTab iconId={group.label} name={group.label} key={group.label}>
 					<Sliders
 						params={group.parameters}
-						values={this.state.values}
 						credits={this.state.credits}
 						indivMode={this.state.indivMode}
 						indivEdit={this.state.indivEdit}

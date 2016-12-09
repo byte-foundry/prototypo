@@ -24,10 +24,10 @@ export class AddFamily extends React.Component {
 		const templateList = await this.client.fetch('/prototypoStore');
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-		.onUpdate(({head}) => {
+		.onUpdate((head) => {
 				this.setState({
-					selectedFont: head.toJS().uiCreatefamilySelectedTemplate,
-					error: head.toJS().errorAddFamily,
+					selectedFont: head.toJS().d.uiCreatefamilySelectedTemplate,
+					error: head.toJS().d.errorAddFamily,
 				});
 			})
 			.onDelete(() => {
@@ -161,10 +161,10 @@ export class AddVariant extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
-				if (head.toJS().errorAddVariant !== this.state.error) {
+			.onUpdate((head) => {
+				if (head.toJS().d.errorAddVariant !== this.state.error) {
 					this.setState({
-						error: head.toJS().errorAddVariant,
+						error: head.toJS().d.errorAddVariant,
 					});
 				}
 			})

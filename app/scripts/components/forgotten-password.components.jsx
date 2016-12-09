@@ -8,10 +8,11 @@ import Log from '../services/log.services.js';
 import AccountValidationButton from './shared/account-validation-button.components.jsx';
 import InputWithLabel from './shared/input-with-label.components.jsx';
 
-export default class ForgottenPassword extends React.Component {
+export default class ForgottenPassword extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {};
+		this.resetPassword = this.resetPassword.bind(this);
 	}
 
 	async resetPassword(e) {
@@ -49,6 +50,10 @@ export default class ForgottenPassword extends React.Component {
 		}
 	}
 
+	redirectToSignin() {
+		hashHistory.push({pathname: '/signin'});
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] forgotten password');
@@ -72,13 +77,13 @@ export default class ForgottenPassword extends React.Component {
 				: false;
 
 			content = (
-					<form className="sign-in-form" onSubmit={(e) => {this.resetPassword(e);}}>
+					<form className="sign-in-form" onSubmit={this.resetPassword}>
 						<p className="forgotten-password-text">Please fill the following input with the email address you've used to register.</p>
 						<InputWithLabel ref="email" placeholder="Email address"/>
 						<p className="forgotten-password-text">We will send you a new password, and you will be able to change your password once connected in the profile panel.</p>
 						{message}
 						<div className="forgotten-password-buttons">
-						<AccountValidationButton label="cancel" id="cancel" click={() => {hashHistory.push({pathname: '/signin'});}}/>
+						<AccountValidationButton label="cancel" id="cancel" click={this.redirectToSignin}/>
 						<AccountValidationButton loading={this.state.loading} label="Reset Password"/>
 						</div>
 					</form>
@@ -88,7 +93,7 @@ export default class ForgottenPassword extends React.Component {
 			content = (
 				<div className="sign-in-form">
 					<p className="forgotten-password-text">A temporary password has been sent to your email inbox</p>
-					<AccountValidationButton label="Return to signin" click={() => {hashHistory.push({pathname: '/signin'});}}/>
+					<AccountValidationButton label="Return to signin" click={this.redirectToSignin}/>
 				</div>
 			);
 		}

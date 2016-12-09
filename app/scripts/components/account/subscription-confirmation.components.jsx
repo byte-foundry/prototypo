@@ -35,11 +35,11 @@ export default class SubscriptionConfirmation extends React.Component {
 		});
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState(head.toJS().infos);
+			.onUpdate((head) => {
+				this.setState(head.toJS().d.infos);
 				this.setState({
-					errors: head.toJS().confirmation.errors,
-					loading: head.toJS().confirmation.loading,
+					errors: head.toJS().d.confirmation.errors,
+					loading: head.toJS().d.confirmation.loading,
 				});
 			})
 			.onDelete(() => {
@@ -49,6 +49,7 @@ export default class SubscriptionConfirmation extends React.Component {
 
 	async componentDidMount() {
 		const prototypoStore = await this.client.fetch('/prototypoStore');
+
 		this.setState({
 			newUserFromWebSite: prototypoStore.head.toJS().newUserFromWebSite,
 		});

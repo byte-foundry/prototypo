@@ -19,10 +19,10 @@ export default class AccountConfirmPlan extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
-				if (head.toJS().infos.plan) {
-					const planBase = head.toJS().infos.plan;
-					const currency = getCurrency(head.toJS().infos.card[0].country);
+			.onUpdate((head) => {
+				if (head.toJS().d.infos.plan) {
+					const planBase = head.toJS().d.infos.plan;
+					const currency = getCurrency(head.toJS().d.infos.card[0].country);
 					const planId = `${planBase}_${currency}_taxfree`;
 
 					HoodieApi.getInvoice({
@@ -33,7 +33,7 @@ export default class AccountConfirmPlan extends React.Component {
 							plan: planBase,
 							currency,
 							invoice: data,
-							loading: head.toJS().confirmation.loading,
+							loading: head.toJS().d.confirmation.loading,
 						});
 					});
 				}
