@@ -60,8 +60,7 @@ export default class Topbar extends React.Component {
 					export: head.toJS().d.export,
 					errorExport: head.toJS().d.errorExport,
 					credits: head.toJS().d.credits,
-					to: head.toJS().d.undoTo,
-					from: head.toJS().d.undoFrom,
+					at: head.toJS().d.undoAt,
 					eventList: head.toJS().d.undoEventList,
 					presets: head.toJS().d.fontPresets,
 					indiv: head.toJS().d.indivMode,
@@ -200,8 +199,8 @@ export default class Topbar extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Topbar');
 		}
-		const whereAt = this.state.to || this.state.from;
-		const undoDisabled = whereAt < 2;
+		const whereAt = this.state.at || 0;
+		const undoDisabled = whereAt < 1;
 		const redoDisabled = whereAt > (this.state.eventList.length - 2);
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${redoDisabled ? '' : this.state.eventList[whereAt + 1].label}`;
@@ -314,7 +313,7 @@ export default class Topbar extends React.Component {
 							shortcut="ctrl+z"
 							handler={() => {
 								if (!undoDisabled) {
-									this.client.dispatchAction('/go-back');
+									this.client.dispatchAction('/go-back', {eventIndex: this.state.at});
 								}
 							}}/>
 						<TopBarMenuDropdownItem
@@ -324,7 +323,7 @@ export default class Topbar extends React.Component {
 							shortcut="ctrl+y"
 							handler={() => {
 								if (!redoDisabled) {
-									this.client.dispatchAction('/go-forward');
+									this.client.dispatchAction('/go-forward', {eventIndex: this.state.at});
 								}
 							}}/>
 							{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
