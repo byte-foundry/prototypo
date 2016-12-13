@@ -217,7 +217,7 @@ export default class PrototypoText extends React.Component {
 			'backgroundColor': this.props.uiInvertedTextColors ? '#232323' : '#fefefe',
 		};
 		const contentStyle = {
-			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
+			'fontFamily': `'${this.state.editorState.getCurrentContent().getPlainText().length > 0 ? (this.props.fontName || 'theyaintus') : 'Source Sans Pro'}', sans-serif`,
 			'fontSize': `${this.props.uiTextFontSize || 1}em`,
 		};
 		const editorClassNames = classNames('prototypo-text-editor', {
