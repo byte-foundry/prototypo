@@ -1,5 +1,4 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -11,7 +10,9 @@ export default class AlternateMenu extends React.PureComponent {
 	render() {
 
 		const alternates = _.map(this.props.alternates, (alt, index) => {
-			return <Alternate id={index} alt={alt} key={index} unicode={this.props.unicode}/>;
+			const img = `assets/images/${alt.altImg}`;
+
+			return <Alternate id={index} alt={alt} img={img} key={index} unicode={this.props.unicode}/>;
 		});
 
 		return (
@@ -29,17 +30,10 @@ class Alternate extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.selectAlternate = this.selectAlternate.bind(this);
-		this.img = '';
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
-	}
-
-	componentWillReceiveProps(nextProps) {
-		if (nextProps.alt && nextProps.alt.altImg) {
-			this.img = `assets/images/${nextProps.alt.altImg}`;
-		}
 	}
 
 	selectAlternate() {
@@ -49,7 +43,7 @@ class Alternate extends React.PureComponent {
 	render() {
 		return (
 			<div className="alternate" onClick={this.selectAlternate}>
-				<img src={this.img}/>
+				<img src={this.props.img}/>
 			</div>
 		);
 	}

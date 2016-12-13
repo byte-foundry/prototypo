@@ -6,7 +6,7 @@ import LocalClient from '../stores/local-client.stores.jsx';
 
 import {ControlsTabs, ControlsTab} from './controls-tabs.components.jsx';
 import {Sliders} from './sliders.components.jsx';
-import SliderTooltip from './slider-tooltip.jsx';
+import SliderTooltip from './slider-tooltip.components.jsx';
 
 const voidCurrentGroup = {};
 

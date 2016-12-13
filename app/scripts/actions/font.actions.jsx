@@ -664,7 +664,7 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/reset-glyph-node-manually': ({contourId, nodeId, force, label = 'reset manual', glyphName}) => {
+	'/reset-glyph-node-manually': ({contourId, nodeId, force = true, label = 'reset manual', glyphName}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
@@ -706,7 +706,7 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/reset-glyph-manually': ({glyphName, force, label = 'reset manual'}) => {
+	'/reset-glyph-manually': ({glyphName, force = true, label = 'reset manual'}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
