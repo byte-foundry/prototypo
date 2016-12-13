@@ -154,7 +154,8 @@ export default class PrototypoText extends React.Component {
 		}
 	}
 
-	changeTextFontSize(uiTextFontSize) {
+	changeTextFontSize(uiTextFontSizeToClamp) {
+		const uiTextFontSize = Math.max(0.7, uiTextFontSizeToClamp);
 		this.client.dispatchAction('/store-value', {uiTextFontSize});
 	}
 
