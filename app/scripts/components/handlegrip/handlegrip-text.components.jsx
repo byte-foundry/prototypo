@@ -106,6 +106,11 @@ export default class HandlegripText extends React.Component {
 		}
 	}
 
+	openGlyph(code) {
+		console.log(code);
+		this.client.dispatchAction('/select-glyph', {unicode: code});
+	}
+
 	handleUp(e) {
 		if (!this.state.tracking) {
 			return;
@@ -303,6 +308,7 @@ export default class HandlegripText extends React.Component {
 						<HandlegripLetter
 							letter={letter}
 							ref="selectedLetter"
+							openGlyph={() => {this.openGlyph(letter.charCodeAt(0));}}
 							spacingLeft={spacingLeft}
 							spacingRight={spacingRight}
 							baseSpacingLeft={baseSpacing.baseSpacingLeft}
