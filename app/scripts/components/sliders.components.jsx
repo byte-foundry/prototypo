@@ -554,7 +554,7 @@ export class SliderTextController extends React.PureComponent {
 				type="number"
 				value={this.state.isTyping ? this.props.value : this.props.value.toFixed(2)}
 				onChange={this.handleChange}
-				onClick={() => this.setState({isTyping: true})}
+				onClick={this.handleClick}
 				onBlur={this.handleBlur}
 				disabled={this.props.disabled}
 			/>
