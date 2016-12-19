@@ -30,7 +30,7 @@ export default class AccountConfirmPlan extends React.Component {
 
 					this.setState({
 						loading: !this.state.invoice, // if invoice already here, don't show we're reloading it
-						confirmationLoading: head.toJS().confirmation.loading,
+						confirmationLoading: head.toJS().d.confirmation.loading,
 						plan: planBase,
 						currency,
 					});
