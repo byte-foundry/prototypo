@@ -558,7 +558,7 @@ export default {
 			delete form.validCoupon;
 			delete form.couponError;
 			validateCoupon({
-				plan,
+				plan: form.selected,
 				coupon: form.couponValue,
 			});
 		}
@@ -574,8 +574,8 @@ export default {
 
 		try {
 			form.validCoupon = await HoodieApi.validateCoupon({
-				coupon: form.couponValue,
-				plan: form.selected,
+				coupon,
+				plan,
 			});
 		}
 		catch(err) {
@@ -603,7 +603,8 @@ export default {
 			if (form.couponValue && !form.validCoupon) {
 				throw new Error(form.couponError || 'Coupon code is invalid');
 			}
-		} catch({message}) {
+		}
+		catch({message}) {
 			form.loading = false;
 			form.error = message;
 			const patch = userStore.set('choosePlanForm', form).commit();
@@ -620,7 +621,7 @@ export default {
 
 		localServer.dispatchUpdate('/userStore', patch);
 
-		if (infos.validCoupon && infos.validCoupon.shouldSkipCard) {
+		if (form.validCoupon && form.validCoupon.shouldSkipCard) {
 			hashHistory.push({
 				pathname: '/account/create/confirmation',
 			});
