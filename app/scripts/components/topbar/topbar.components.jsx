@@ -108,6 +108,12 @@ export default class Topbar extends React.Component {
 
 	}
 
+	resetAllChanges() {
+		this.resetAllParams();
+		this.client.dispatchAction('/reset-all-glyphs', {});
+
+	}
+
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
@@ -330,6 +336,9 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem
 							name="Reset all parameters"
 							handler={() => { this.resetAllParams(); }}/>
+						<TopBarMenuDropdownItem
+							name="Reset all changes"
+							handler={() => { this.resetAllChanges(); }}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Window">
 						<TopBarMenuDropdownItem name="Glyphs list" checkbox={true} active={this.state.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
