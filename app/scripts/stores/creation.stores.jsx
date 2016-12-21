@@ -219,29 +219,6 @@ const userStore = new Remutable({
 	},
 });
 
-// how to add a coupon hash:
-// 1. open a terminal in the prototypo directory
-// 2. enter 'node' in the terminal
-// 3. enter require('md5')('<coupon name>' + '.' + '<plan name>'); -> 'personal_annual_99' for example
-// 4. paste the resulting hash here. shouldSkipCard is true when no card is
-// required to subscribe to that plan (first month free for example).
-const couponStore = new Remutable({
-	'58e088c97aa400b0498fa3d11640ada8': {label: '$5 off your first month!'},
-	'98d317f6598ce579eda20ec39e964203': {label: '$5 off your first month to celebrate our 10.000 users!'},
-	'aa5355e6d09f960bd1010de998c079b2': {label: '50% off the annual price for schools!'}, // for persoNnal_annual. We should remove this later.
-	'dfbc3313a2e4a0e1a46a96bb5e279121': {label: '50% off the annual price for schools!'},
-	'8905f6bdae64fc09e14206cbc0161241': {label: '30% off your first month!'},
-	'fee64920dd5880a397e9127b85fc891b': {label: '66% off your first month!'},
-	'ec97fbff4acbb75abae0951d899bf580': {label: '70% off the annual price for schools!'},
-	'9840edae45eeeaefa0591cd872c583ed': {label: 'The first month for $5!'},
-	'de7ce5e5ee6d2527aa5aa0d1f624e704': {label: '50% off your annual subscription - Domestika discount'},
-	'14a6c65efc3f285ea0b2f45d75f73bde': {label: 'The first month for $5!'},
-	'b6f30aee2d4b895d61a2f72e6901c4e0': {label: 'Birthday offer, your first month for $1!'},
-	'dc989dd83092a325586b0415ff9d0365': {label: '2 months for free offer by Production Type', shouldSkipCard: true},
-	'131c543d598049843d548a0599b65491': {label: 'V2 launch offer, your first month for $1!'},
-	'def6a0c1ac17d37eb880f4736d63aff9': {label: 'Press offer! One month for free to test the app', shouldSkipCard: true},
-});
-
 const planStore = new Remutable({
 	personal_monthly: {
 		id: 'personal_monthly',
@@ -294,7 +271,6 @@ export {
 	undoableStore,
 	fastStuffStore,
 	userStore,
-	couponStore,
 	planStore,
 	creditStore,
 };
