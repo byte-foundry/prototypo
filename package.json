@@ -43,6 +43,8 @@
     "xxhashjs": "^0.1.1"
   },
   "devDependencies": {
+    "@kadira/storybook": "^2.21.0",
+    "@kadira/storyshots": "^2.1.0",
     "babel-core": "^6.9.0",
     "babel-eslint": "^4.1.8",
     "babel-loader": "^6.2.1",
@@ -109,7 +111,10 @@
   "scripts": {
     "start": "gulp serve",
     "build": "gulp build",
-    "debug": "gulp debug"
+    "debug": "gulp debug",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "test-storybook": "storyshots"
   },
   "repository": {
     "type": "git",

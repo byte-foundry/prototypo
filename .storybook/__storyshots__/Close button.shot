@@ -1,0 +1,8 @@
+exports[`Simple button`] = `
+<div
+  className="close-button"
+  onClick={[Function]}>
+  <div
+    className="close-button-icon" />
+</div>
+`;

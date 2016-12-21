@@ -1,0 +1,19 @@
+exports[`Buttons`] = `
+<div
+  className="zoom-buttons">
+  <div
+    className="zoom-button"
+    onClick={[Function]}>
+    <span>
+      +
+    </span>
+  </div>
+  <div
+    className="zoom-button"
+    onClick={[Function]}>
+    <span>
+      -
+    </span>
+  </div>
+</div>
+`;

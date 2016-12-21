@@ -1,0 +1,75 @@
+exports[`Single glyph`] = `
+<div
+  className="glyph-list-glyph"
+  onClick={[Function]}>
+  <label
+    className="glyph-list-glyph-label">
+    A
+  </label>
+  <div
+    className="glyph-list-glyph-top-right-indicator" />
+  <div
+    className="glyph-list-glyph-top-left-indicator" />
+  <div
+    className="glyph-list-glyph-bottom-left-indicator" />
+  <div
+    className="glyph-list-glyph-bottom-right-indicator" />
+</div>
+`;
+
+exports[`Single glyph with alternates`] = `
+<div
+  className="glyph-list-glyph has-alts"
+  onClick={[Function]}>
+  <label
+    className="glyph-list-glyph-label">
+    R
+  </label>
+  <div
+    className="glyph-list-glyph-top-right-indicator" />
+  <div
+    className="glyph-list-glyph-top-left-indicator" />
+  <div
+    className="glyph-list-glyph-bottom-left-indicator" />
+  <div
+    className="glyph-list-glyph-bottom-right-indicator" />
+</div>
+`;
+
+exports[`Single glyph with alternates and manual changes`] = `
+<div
+  className="glyph-list-glyph has-alts is-manually-modified"
+  onClick={[Function]}>
+  <label
+    className="glyph-list-glyph-label">
+    R
+  </label>
+  <div
+    className="glyph-list-glyph-top-right-indicator" />
+  <div
+    className="glyph-list-glyph-top-left-indicator" />
+  <div
+    className="glyph-list-glyph-bottom-left-indicator" />
+  <div
+    className="glyph-list-glyph-bottom-right-indicator" />
+</div>
+`;
+
+exports[`Single glyph with manual changes`] = `
+<div
+  className="glyph-list-glyph is-manually-modified"
+  onClick={[Function]}>
+  <label
+    className="glyph-list-glyph-label">
+    A
+  </label>
+  <div
+    className="glyph-list-glyph-top-right-indicator" />
+  <div
+    className="glyph-list-glyph-top-left-indicator" />
+  <div
+    className="glyph-list-glyph-bottom-left-indicator" />
+  <div
+    className="glyph-list-glyph-bottom-right-indicator" />
+</div>
+`;
