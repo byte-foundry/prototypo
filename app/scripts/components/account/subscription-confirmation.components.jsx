@@ -20,7 +20,6 @@ export default class SubscriptionConfirmation extends React.Component {
 			}],
 			plan: 'personal_monthly',
 			plans: {},
-			newUserFromWebSite: undefined,
 		};
 	}
 
@@ -36,13 +35,15 @@ export default class SubscriptionConfirmation extends React.Component {
 
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
-				this.setState(head.toJS().d.infos);
+				const {infos, confirmation, choosePlanForm} = head.toJS().d;
+
 				this.setState({
-					errors: head.toJS().d.confirmation.errors,
-					loading: head.toJS().d.confirmation.loading,
-					coupon: {
-						...head.toJS().d.choosePlanForm.validCoupon, // coupon details
-						value: head.toJS().d.choosePlanForm.couponValue || '', // coupon value
+					...infos,
+					errors: confirmation.errors,
+					loading: confirmation.loading,
+					coupon: choosePlanForm.couponValue && {
+						...choosePlanForm.validCoupon, // coupon details
+						value: choosePlanForm.couponValue, // coupon value
 					},
 				});
 			})
