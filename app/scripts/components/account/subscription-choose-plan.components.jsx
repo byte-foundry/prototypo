@@ -13,6 +13,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 		super(props);
 		this.state = {
 			plans: {},
+			couponValue: '',
 		};
 
 		this.handleCouponChange = this.handleCouponChange.bind(this);
@@ -34,22 +35,17 @@ export default class SubscriptionChoosePlan extends React.Component {
 					selected: head.toJS().d.choosePlanForm.selected,
 					error: head.toJS().d.choosePlanForm.error,
 					loading: head.toJS().d.choosePlanForm.loading,
-					couponValue: head.toJS().d.choosePlanForm.couponValue,
-					isCouponValid: head.toJS().d.choosePlanForm.isCouponValid,
+					couponValue: head.toJS().d.choosePlanForm.couponValue || '',
+					validCoupon: head.toJS().d.choosePlanForm.validCoupon,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 
-		if (this.props.location.query.coupon) {
-			this.client.dispatchAction('/choose-plan', {
-				coupon: this.props.location.query.coupon,
-				plan: this.props.location.query.plan,
-			});
-		}
 		if (this.props.location.query.plan) {
 			this.client.dispatchAction('/choose-plan', {
+				coupon: this.props.location.query.coupon,
 				plan: this.props.location.query.plan,
 			});
 		}
@@ -89,7 +85,7 @@ export default class SubscriptionChoosePlan extends React.Component {
 					placeholder="ABC123"
 					value={this.state.couponValue}
 					handleOnChange={this.handleCouponChange} />
-				{this.state.isCouponValid ? `✓ ${this.state.isCouponValid.label}` : null }
+				{this.state.validCoupon ? `✓ ${this.state.validCoupon.label}` : null}
 				<div className="subscription-choose-plan-info">
 					* Taxes are offered for private individuals. Currency ultimately depends on the country where your credit card has been issued.
 				</div>
