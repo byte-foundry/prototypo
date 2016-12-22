@@ -155,7 +155,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 			const infos = userStore.get('infos') || {};
 			const item = {
 				type: 'sku',
-				parent: `5_credits_${currency === 'EUR' ? 'EUR' : 'USD'}`,
+				parent: `3_credits_${currency === 'EUR' ? 'EUR' : 'USD'}`,
 			};
 
 			const vatNumber = vat || infos.vat;
@@ -839,13 +839,13 @@ export default {
 		ga('ecommerce:addTransaction', {
 			'id': transacId,
 			'affiliation': 'Prototypo',
-			'revenue': 5,
+			'revenue': 9,
 		});
 
 		ga('ecommerce:addItem', {
-			'id': transacId + 'credits',                     // Transaction ID. Required.
+			'id': `transacId ${credits}`,                     // Transaction ID. Required.
 			'name': 'credits',    // Product name. Required.
-			'price': 5,
+			'price': 9,
 		});
 
 		ga('ecommerce:send');
