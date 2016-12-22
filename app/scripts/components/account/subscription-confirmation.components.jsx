@@ -40,6 +40,10 @@ export default class SubscriptionConfirmation extends React.Component {
 				this.setState({
 					errors: head.toJS().d.confirmation.errors,
 					loading: head.toJS().d.confirmation.loading,
+					coupon: {
+						...head.toJS().d.choosePlanForm.validCoupon, // coupon details
+						value: head.toJS().d.choosePlanForm.couponValue || '', // coupon value
+					},
 				});
 			})
 			.onDelete(() => {
@@ -70,11 +74,11 @@ export default class SubscriptionConfirmation extends React.Component {
 	}
 
 	render() {
-		const {plans, plan, card, address, isCouponValid, couponValue} = this.state;
+		const {plans, plan, card, address, coupon} = this.state;
 		const planDescription = plans[plan] || {};
 		const currency = getCurrency(card[0].country);
 
-		const couponDom = isCouponValid
+		const couponDom = coupon
 			? (
 				<div className="columns">
 					<div className="third-column">
@@ -82,7 +86,7 @@ export default class SubscriptionConfirmation extends React.Component {
 					</div>
 					<div className="two-third-column">
 						<DisplayWithLabel nolabel={true}>
-							{couponValue} → {isCouponValid.label}
+							{coupon.value} → {coupon.label}
 						</DisplayWithLabel>
 					</div>
 				</div>
