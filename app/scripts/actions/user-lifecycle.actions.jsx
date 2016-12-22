@@ -615,7 +615,6 @@ export default {
 		const infos = userStore.get('infos');
 
 		infos.plan = plan;
-		infos.couponValue = form.couponValue;
 		form.loading = false;
 		const patch = userStore.set('infos', infos).set('choosePlanForm', form).commit();
 
