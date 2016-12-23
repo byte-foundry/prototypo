@@ -82,7 +82,7 @@ class Invoice extends React.Component {
 	render() {
 		const {currency, lines} = this.props.invoice;
 
-		const currencySymbol = currency === 'usd'
+		const currencySymbol = currency === 'USD'
 			? {
 				before: '$',
 				after: '',

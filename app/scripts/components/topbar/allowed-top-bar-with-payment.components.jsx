@@ -1,9 +1,9 @@
 import React from 'react';
 import {Link} from 'react-router';
-import vatrates from 'vatrates';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Log from '~/services/log.services.js';
+import getCurrency from '../../helpers/currency.helpers';
 
 export default class AllowedTopBarWithPayment extends React.Component {
 	constructor(props) {
@@ -37,16 +37,9 @@ export default class AllowedTopBarWithPayment extends React.Component {
 				}
 			})
 			.then((response) => {
-				if (response.country_code in vatrates) {
-					this.setState({
-						currency: '€',
-					});
-				}
-				else {
-					this.setState({
-						currency: '$',
-					});
-				}
+				this.setState({
+					currency: getCurrency(response.country_code) === 'EUR' ? '€' : '$',
+				});
 			})
 			.catch((error) => {
 				this.setState({

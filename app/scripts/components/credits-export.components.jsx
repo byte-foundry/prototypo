@@ -1,9 +1,9 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import vatrates from 'vatrates';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
+import getCurrency from '../helpers/currency.helpers';
 
 import Button from './shared/button.components.jsx';
 import Modal from './shared/modal.components.jsx';
@@ -65,12 +65,12 @@ export default class CreditsExport extends React.PureComponent {
 			})
 			.then((response) => {
 				this.setState({
-					currency: response.country_code in vatrates ? 'EUR' : 'DOL',
+					currency: getCurrency(response.country_code),
 				});
 			})
 			.catch(() => {
 				this.setState({
-					currency: 'DOL',
+					currency: 'USD',
 				});
 			});
 	}
