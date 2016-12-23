@@ -677,7 +677,7 @@ export default {
 		localServer.dispatchUpdate('/userStore', cleanPatch);
 		HoodieApi.updateSubscription({
 			plan: `${plan}_${currency}_taxfree`,
-			coupon: userStore.get('infos').couponValue,
+			coupon: userStore.get('choosePlanForm').couponValue,
 		}).then(async (data) => {
 			const infos = _.cloneDeep(userStore.get('infos'));
 
