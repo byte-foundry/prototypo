@@ -474,7 +474,7 @@ export default {
 
 		const curedLastname = lastname ? ` ${lastname}` : '';
 
-		HoodieApi.signUp(username, password)
+		HoodieApi.signUp(username.toLowerCase(), password)
 			.then(({response}) => {
 
 				window.Intercom('boot', {
