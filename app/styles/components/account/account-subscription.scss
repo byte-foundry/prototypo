@@ -1,3 +1,20 @@
+@import '../../variables.scss';
+
+.account-subscription {
+	&-plan {
+		& .badge {
+			border: 2px solid $light-grey;
+			border-radius: 5px;
+			color: $light-grey;
+			padding: 0 5px;
+			float: right;
+			font-size: 12px;
+			text-transform: uppercase;
+			margin: 3px 0;
+		}
+	}
+}
+
 .account-subscription-card {
 	display:flex;
 	justify-content:space-between;

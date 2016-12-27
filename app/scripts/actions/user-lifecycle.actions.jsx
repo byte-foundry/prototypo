@@ -84,11 +84,12 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 					vat_number: vat || infos.vat, // Quaderno way of reading VAT
 				},
 			})
-			.then(() => {
+			.then((response) => {
+				/* DEPRECATED Backward compatibility, should be removed when every component uses the cards property in userStore */
 				infos.card = [data.card];
 				infos.vat = vat || infos.vat;
 				form.loading = false;
-				const patch = userStore.set('infos', infos).set('addcardForm', form).commit();
+				const patch = userStore.set('infos', infos).set('cards', response.sources.data).set('addcardForm', form).commit();
 
 				localServer.dispatchUpdate('/userStore', patch);
 
@@ -294,20 +295,23 @@ export default {
 	'/load-customer-data': ({sources, subscriptions, metadata}) => {
 		const infos = _.cloneDeep(userStore.get('infos'));
 
+		/* DEPRECATED: Backward compatibility, should be removed when every component uses the cards property in userStore */
 		if (sources && sources.data.length > 0) {
 			infos.card = sources.data;
 		}
+		/* DEPRECATED: Backward compatibility, should be removed when every component uses the subscription property in userStore */
 		if (subscriptions && subscriptions.data.length > 0) {
 			infos.subscriptions = subscriptions.data;
 		}
 
-		if (metadata && metadata.credits) {
-			const credits = parseInt(metadata.credits, 10);
-			const creditPatch = prototypoStore.set('credits', credits).commit();
-			localServer.dispatchUpdate('/userStore', creditPatch);
-		}
-
 		const patch = userStore.set('infos', infos).commit();
+		const subscriptionPatch = userStore.set('subscription', subscriptions.data[0]).commit();
+		const cardsPatch = userStore.set('cards', sources.data).commit();
+		const creditsPatch = prototypoStore.set('credits', parseInt(metadata.credits, 10) || 0).commit();
+
+		localServer.dispatchUpdate('/userStore', subscriptionPatch);
+		localServer.dispatchUpdate('/userStore', cardsPatch);
+		localServer.dispatchUpdate('/prototypoStore', creditsPatch);
 		localServer.dispatchUpdate('/userStore', patch);
 	},
 	'/load-customer-invoices': async () => {
