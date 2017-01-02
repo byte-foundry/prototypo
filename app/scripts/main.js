@@ -134,12 +134,8 @@ import SubscriptionAccountInfo from './components/account/subscription-account-i
 import SubscriptionAddCard from './components/account/subscription-add-card.components.jsx';
 import SubscriptionBillingAddress from './components/account/subscription-billing-address.components.jsx';
 import SubscriptionConfirmation from './components/account/subscription-confirmation.components.jsx';
-/* #if offline */
-import HoodieApi from './services/fake-hoodie.services.js';
-/* #end*/
-/* #if prod,debug */
+
 import HoodieApi from './services/hoodie.services.js';
-/* #end*/
 import LocalClient from './stores/local-client.stores.jsx';
 import LocalServer from './stores/local-server.stores.jsx';
 import Stores from './stores/creation.stores.jsx';

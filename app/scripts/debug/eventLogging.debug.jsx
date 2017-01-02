@@ -1,10 +1,5 @@
 import {prototypoStore} from '../stores/creation.stores.jsx';
-/* #if offline */
-import HoodieApi from '../services/fake-hoodie.services.js';
-/* #end*/
-/* #if prod,debug */
 import HoodieApi from '../services/hoodie.services.js';
-/* #end*/
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {setupFontInstance} from '../helpers/font.helpers.js';
@@ -124,7 +119,7 @@ export default class EventDebugger {
 
 			for (let i = 0; i < eventsToPlay.length; i++) {
 				if (eventsToPlay[i].path === '/login') {
-					eventsToPlay = eventsToPlay.slice(i + 1);
+					eventsToPlay = eventsToPlay.slice(i+1);
 				}
 			}
 

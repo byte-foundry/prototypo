@@ -10,12 +10,7 @@ import {setupFontInstance} from '../helpers/font.helpers.js';
 import {FontValues} from '../services/values.services.js';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 import Log from '../services/log.services.js';
-/* #if offline */
-import HoodieApi from '../services/fake-hoodie.services.js';
-/* #end*/
-/* #if prod,debug */
 import HoodieApi from '../services/hoodie.services.js';
-/* #end*/
 
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;

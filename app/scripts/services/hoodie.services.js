@@ -1,3 +1,7 @@
+//#if offline
+export {default} from './fake-hoodie.services';
+//#end
+//#if prod,debug
 import PouchDB from 'pouchdb';
 import HoodiePouch from 'pouchdb-hoodie-api';
 import queryString from 'query-string';
@@ -266,3 +270,4 @@ async function setupStripe(data, time = 1000) {
 		setupStripe(newData, 2 * time || 1000);
 	}, time);
 }
+//#end
