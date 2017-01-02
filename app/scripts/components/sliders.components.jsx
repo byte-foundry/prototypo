@@ -3,7 +3,12 @@ import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import HoodieApi from '~/services/hoodie.services.js';
+/* #if offline */
+import HoodieApi from '../services/fake-hoodie.services.js';
+/* #end*/
+/* #if prod,debug */
+import HoodieApi from '../services/hoodie.services.js';
+/* #end*/
 import Log from '~/services/log.services.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';

@@ -162,7 +162,7 @@ gulp.task('debug', ['clean', 'images', 'cp-prototypo.js', 'cp-genese', 'cp-stati
 	});
 });
 
-gulp.task('offline', ['clean', 'images', 'cp-prototypo.js', 'cp-genese', 'cp-static', 'webpack:dll'], function(callback) {
+gulp.task('offline', ['clean', 'images', 'cp-prototypo.js', 'cp-genese', 'cp-static', 'watch-font', 'watch-prototypojs', 'webpack:dll'], function(callback) {
 	var webpackConfig	= require('./offline.config.js');
 	// Start a webpack-dev-server
 	var prototypoConfig = Object.create(webpackConfig);

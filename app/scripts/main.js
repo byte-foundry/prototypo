@@ -235,7 +235,7 @@ selectRenderOptions(
 			logStore: stores['/prototypoStore'],
 		}).instance;
 		/* #end */
-		/* #if prod, debug */
+		/* #if prod,offline */
 		const localServer = new LocalServer(stores).instance;
 		/* #end */
 
@@ -294,7 +294,7 @@ selectRenderOptions(
 				await eventDebugger.replayEventFromFile();
 			}
 			/* #end */
-			/* #if prod, offline */
+			/* #if prod,offline */
 			try {
 				await HoodieApi.setup();
 

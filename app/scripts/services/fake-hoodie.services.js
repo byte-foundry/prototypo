@@ -5,20 +5,12 @@ import LocalClient from '../stores/local-client.stores.jsx';
 
 PouchDB.plugin(HoodiePouch);
 
-/*
-const backUrl = process.env.TRAVIS_BRANCH === 'master' || process.env.TRAVIS_BRANCH === 'release'
-	? 'https://prototypo.appback.com'
-	: 'https://prototypo-dev.appback.com';
-*/
-
 const bearer = window.location.search.replace(/.*?bt=(.*?)(&|$)/, '$1');
 
 if (bearer) {
 	window.location.search = '';
 	localStorage.bearerToken = bearer;
 }
-
-// const hoodie = new window.Hoodie(backUrl);
 
 let localClient;
 
@@ -93,6 +85,10 @@ export default class HoodieApi {
 		return;
 	}
 
+	static validateCoupon() {
+		return;
+	}
+
 	static updateSubscription(options) {
 		return;
 	}
@@ -124,40 +120,6 @@ function checkStatus(response) {
 		error.response = response;
 		throw error;
 	}
-}
-
-function checkUser(response) {
-	if (response.userCtx && response.userCtx.name) {
-		return response.userCtx;
-	}
-	else {
-		const error = new Error('anonymous user');
-
-		error.response = response;
-		throw error;
-	}
-}
-
-function parseJson(response) {
-	return response.json();
-}
-
-function parseText(response) {
-	return response.text();
-}
-
-function storeBearer(response) {
-	if (response.bearerToken) {
-		localStorage.bearerToken = response.bearerToken;
-	}
-	return response;
-}
-
-function getPlan(roles) {
-	const _roles = roles.join(',');
-
-	return _roles.indexOf('stripe:plan:') !== -1
-			&& _roles.replace(/^.*stripe:plan:(.+?)(,.*)?$/, '$1');
 }
 
 function setupHoodie(data) {
