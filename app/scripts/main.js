@@ -242,9 +242,9 @@ selectRenderOptions(
 
 		async function createStores() {
 
-			const actions = {};
-
-			_.assign(actions,
+			const actions = Object.assign(
+				{},
+				actions,
 				appValuesAction,
 				exportAction,
 				fontAction,
@@ -346,6 +346,46 @@ selectRenderOptions(
 			}
 		}
 
+		/**
+		*	Checks for network availability
+		*	sets the isOnline value in prototypoStore accordingly
+		*	@returns {boolean} isOnline - true if we can trust network, false otherwise
+		*/
+		async function isNetworkOnline() {
+			// retrieve previous online value
+			const previouslyOnline = prototypoStore.get('isOnline');
+			// navigator.onLine simply tells us if connection is "plugged in"
+			const navigatorOnline = navigator.onLine;
+			// we are going to check wether network is actually online or not
+			let isOnline = false;
+
+			// if network is plugged in, check the connectivity
+			if (navigatorOnline) {
+				// make a request to Prototypo to see if it is reachable
+				try {
+					await fetch(
+						isProduction() ? 'https://prototypo.appback.com/_api' : 'https://prototypo-dev.appback.com/_api',
+						{mode: 'no-cors'}
+					);
+
+					isOnline = true;
+				}
+				catch(e) {
+					isOnline = false;
+				}
+			}
+
+			// dispatch the online value only if it has changed
+			// otherwise it might trigger many undesired updates
+			if (previouslyOnline !== isOnline) {
+				LocalClient.instance().dispatchAction('/store-value', {
+					isOnline,
+				});
+			}
+
+			return isOnline;
+		}
+
 		const canvasEl = window.canvasElement = document.createElement('canvas');
 
 		canvasEl.className = 'prototypo-canvas-container-canvas';
@@ -428,49 +468,7 @@ selectRenderOptions(
 
 		});
 
-		createStores();
+		/* this part will detect if the network is online, every X miliseconds */
+		createStores().then(() => { window.setInterval(isNetworkOnline, 5000); });
 	}
 );
-
-/* this part will detect if the network is online, every X miliseconds */
-const localClient = LocalClient.instance();
-
-window.setInterval(isNetworkOnline, 5000);
-
-/**
-*	Checks for network availability
-*	sets the isOnline value in prototypoStore accordingly
-*	@returns {boolean} isOnline - true if we can trust network, false otherwise
-*/
-async function isNetworkOnline() {
-	// retrieve previous online value
-	const previouslyOnline = prototypoStore.get('isOnline');
-	// navigator.onLine simply tells us if connection is "plugged in"
-	const navigatorOnline = navigator.onLine;
-	// we are going to check wether network is actually online or not
-	let isOnline;
-
-	// if network is plugged in, check the connectivity
-	if (navigatorOnline) {
-		// make a request to Prototypo to see if it is reachable
-		const networkOnline = await window.fetch('http://app.prototypo.io', {mode: 'no-cors'})
-			.then(() => {return true;})
-			.catch(() => {return false;});
-
-		isOnline = networkOnline;
-	}
-	// if network is unplugged, no need to check for internet connection
-	else {
-		isOnline = navigatorOnline;
-	}
-
-	// dispatch the online value only if it has changed
-	// otherwise it might trigger many undesired updates
-	if (previouslyOnline !== isOnline) {
-		localClient.dispatchAction('/store-value', {
-			isOnline,
-		});
-	}
-
-	return isOnline;
-}
