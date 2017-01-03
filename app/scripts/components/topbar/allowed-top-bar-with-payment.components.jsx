@@ -3,13 +3,17 @@ import {Link} from 'react-router';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Log from '~/services/log.services.js';
-import getCurrency from '../../helpers/currency.helpers';
+import Price from '../shared/price.components';
 
 export default class AllowedTopBarWithPayment extends React.Component {
 	constructor(props) {
 		super(props);
+
+		this.state = {
+			country: 'US',
+		};
+
 		this.openBuyCreditsModal = this.openBuyCreditsModal.bind(this);
-		this.state = {};
 	}
 
 	openBuyCreditsModal() {
@@ -27,30 +31,17 @@ export default class AllowedTopBarWithPayment extends React.Component {
 		this.client = LocalClient.instance();
 	}
 
-	componentDidMount() {
-		const url = '//freegeoip.net/json/';
+	async componentDidMount() {
+		const response = await fetch('//freegeoip.net/json/');
+		const data = await response.json();
 
-		fetch(url)
-			.then((response) => {
-				if (response) {
-					return response.json();
-				}
-			})
-			.then((response) => {
-				this.setState({
-					currency: getCurrency(response.country_code) === 'EUR' ? '€' : '$',
-				});
-			})
-			.catch((error) => {
-				this.setState({
-					currency: '$',
-				});
-			});
+		this.setState({country: data.country_code});
 	}
 
 	render() {
 		const freeAccount = this.props.freeAccount;
 		const credits = this.props.credits;
+		const {country} = this.state;
 
 		const overlay = freeAccount && (!credits || credits <= 0)
 			? (
@@ -68,7 +59,10 @@ export default class AllowedTopBarWithPayment extends React.Component {
 							<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text-separator"></div>
 							<div onClick={this.openBuyCreditsModal} className="allowed-top-bar-with-payment-demo-overlay-text-more-half">
 								<div className="allowed-top-bar-with-payment-demo-overlay-text-more-wrap allowed-top-bar-with-payment-credits">
-									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">Buy export credits.<br/>3 credits for 9{this.state.currency}</div>
+									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">
+										Buy export credits.<br/>
+										3 credits for <Price amount={9} country={country} />
+									</div>
 								</div>
 							</div>
 						</div>

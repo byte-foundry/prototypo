@@ -10,6 +10,7 @@ import Modal from './shared/modal.components.jsx';
 import AddCard from './shared/add-card.components.jsx';
 import InputWithLabel from './shared/input-with-label.components';
 import FormError from './shared/form-error.components.jsx';
+import Price from './shared/price.components.jsx';
 
 export default class CreditsExport extends React.PureComponent {
 	constructor(props) {
@@ -17,8 +18,7 @@ export default class CreditsExport extends React.PureComponent {
 		this.state = {
 			errors: [],
 			inError: {},
-			country: undefined,
-			currency: undefined,
+			country: 'US',
 			buyCreditsNewCreditAmount: undefined,
 		};
 
@@ -53,26 +53,11 @@ export default class CreditsExport extends React.PureComponent {
 			});
 	}
 
-	componentDidMount() {
-		// format : freegeoip.net/{format}/{IP_or_hostname}
-		const url = '//freegeoip.net/json/';
+	async componentDidMount() {
+		const response = await fetch('//freegeoip.net/json/');
+		const data = await response.json();
 
-		fetch(url)
-			.then((response) => {
-				if (response) {
-					return response.json();
-				}
-			})
-			.then((response) => {
-				this.setState({
-					currency: getCurrency(response.country_code),
-				});
-			})
-			.catch(() => {
-				this.setState({
-					currency: 'USD',
-				});
-			});
+		this.setState({country: data.country_code});
 	}
 
 	componentWillUnmount() {
@@ -103,7 +88,7 @@ export default class CreditsExport extends React.PureComponent {
 			return <FormError key={index} errorText={error} />;
 		});
 		const newCredits = this.state.buyCreditsNewCreditAmount;
-		const currency = this.state.currency === 'EUR' ? '€' : '$';
+		const {country} = this.state;
 
 		const buyCreditsForm = newCredits
 			? (
@@ -125,7 +110,9 @@ export default class CreditsExport extends React.PureComponent {
 					{errors}
 					<div className="action-form-buttons">
 						<Button click={this.exit} label="Cancel" neutral={true}/>
-						<Button click={this.handleSubmit} label={`Buy 3 credits for 9 ${currency}`} loading={this.state.loading}/>
+						<Button click={this.handleSubmit} label={
+							<span>Buy 3 credits for <Price amount={9} country={country} /></span>
+						} loading={this.state.loading} />
 					</div>
 				</form>
 			);
