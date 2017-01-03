@@ -88,7 +88,6 @@ export default class CreditsExport extends React.PureComponent {
 			this.client.dispatchAction('/buy-credits', {
 				card: this.refs.card.data(),
 				vat: this.refs.vat.inputValue,
-				currency: this.state.currency,
 			});
 		}
 	}

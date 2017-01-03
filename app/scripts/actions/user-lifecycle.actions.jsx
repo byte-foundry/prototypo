@@ -1,6 +1,7 @@
 import {hashHistory} from 'react-router';
 import Lifespan from 'lifespan';
 import debounce from 'lodash/debounce';
+import vatrates from 'vatrates';
 
 import {userStore, couponStore, prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
@@ -109,7 +110,7 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 	});
 }
 
-function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency, vat}) {
+function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 	const form = userStore.get('buyCreditsForm');
 
 	form.errors = [];
@@ -152,6 +153,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 				return localServer.dispatchUpdate('/userStore', patch);
 			}
 
+			const currency = data.card.country in vatrates ? 'EUR' : 'USD';
 			const infos = userStore.get('infos') || {};
 			const item = {
 				type: 'sku',
@@ -171,7 +173,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 
 			HoodieApi.buyCredits({
 				token: data.id,
-				currency: currency === 'EUR' ? 'EUR' : 'USD',
+				currency,
 				items: [item],
 			})
 			.then(({metadata: {credits}}) => {
