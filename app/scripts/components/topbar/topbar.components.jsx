@@ -108,6 +108,12 @@ export default class Topbar extends React.Component {
 
 	}
 
+	resetAllChanges() {
+		this.resetAllParams();
+		this.client.dispatchAction('/reset-all-glyphs', {});
+
+	}
+
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
@@ -225,7 +231,7 @@ export default class Topbar extends React.Component {
 		const creditExportLabel = !!this.state.credits
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount)
-			&& <TopBarMenuButton label="UNLOCK ALL PARAMETERS FOR $5" noHover centered click={this.openGoProModal} alignRight/>;
+			&& <TopBarMenuButton label="UNLOCK ALL PARAMETERS FOR $9" noHover centered click={this.openGoProModal} alignRight/>;
 
 			/*const presetSubMenu = this.state.presets
 			? (
@@ -330,6 +336,9 @@ export default class Topbar extends React.Component {
 						<TopBarMenuDropdownItem
 							name="Reset all parameters"
 							handler={() => { this.resetAllParams(); }}/>
+						<TopBarMenuDropdownItem
+							name="Reset all changes"
+							handler={() => { this.resetAllChanges(); }}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Window">
 						<TopBarMenuDropdownItem name="Glyphs list" checkbox={true} active={this.state.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
