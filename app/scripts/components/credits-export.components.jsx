@@ -3,7 +3,6 @@ import Lifespan from 'lifespan';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
-import getCurrency from '../helpers/currency.helpers';
 
 import Button from './shared/button.components.jsx';
 import Modal from './shared/modal.components.jsx';
