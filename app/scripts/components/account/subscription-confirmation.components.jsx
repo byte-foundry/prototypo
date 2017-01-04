@@ -4,9 +4,9 @@ import Lifespan from 'lifespan';
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
+import Price from '../shared/price.components';
 
 import getCurrency from '../../helpers/currency.helpers.js';
-import {formatPrice} from '../../helpers/price.helpers';
 import HoodieApi from '../../services/hoodie.services';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
@@ -91,7 +91,6 @@ export default class SubscriptionConfirmation extends React.Component {
 		const {plans, plan, card, address, coupon, totalPrice} = this.state;
 		const planDescription = plans[plan] || {};
 		const fullPrice = parseFloat(planDescription.amount);
-		const currency = getCurrency(card[0].country);
 
 		const couponDom = coupon
 			? (
@@ -117,7 +116,7 @@ export default class SubscriptionConfirmation extends React.Component {
 						<DisplayWithLabel nolabel={true}>
 							<div>
 								<div>**** **** **** {card[0].last4}</div>
-								<div>{card[0].exp_month}/{card[0].exp_year}</div>
+								<div>Expires on {String(card[0].exp_month).padStart(2, 0)}/{card[0].exp_year}</div>
 							</div>
 						</DisplayWithLabel>
 					</div>
@@ -161,15 +160,10 @@ export default class SubscriptionConfirmation extends React.Component {
 			)
 			: false;
 
-		const price = this.state.coupon && this.state.totalPrice !== undefined ? (
-			<span>
-				{formatPrice(totalPrice, currency)}
-			</span>
-		) : formatPrice(fullPrice, currency);
-
-		const originalPrice = this.state.coupon && this.state.totalPrice !== undefined && (
+		const price = coupon && totalPrice !== undefined ? totalPrice : fullPrice;
+		const originalPrice = coupon && totalPrice !== undefined && fullPrice !== price && (
 			<span className="subscription-confirmation-amount-original-price">
-				{formatPrice(fullPrice, currency)}
+				<Price amount={fullPrice} country={card[0].country} />
 			</span>
 		);
 
@@ -184,7 +178,7 @@ export default class SubscriptionConfirmation extends React.Component {
 					</div>
 					<div className="two-third-column subscription-confirmation-amount">
 						<DisplayWithLabel nolabel={true}>
-							{price} {originalPrice} / {planDescription.period}
+							<Price amount={price} country={card[0].country} /> {originalPrice} / {planDescription.period}
 						</DisplayWithLabel>
 					</div>
 				</div>
