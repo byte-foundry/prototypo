@@ -2,7 +2,7 @@ import React from 'react';
 import Lifespan from 'lifespan';
 import moment from 'moment';
 import {Link} from 'react-router';
-import {uniqWith} from 'lodash';
+import uniqWith from 'lodash/uniqWith';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -10,6 +10,7 @@ import getCurrency from '../../helpers/currency.helpers.js';
 
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import FormSuccess from '../shared/form-success.components.jsx';
+import Price from '../shared/price.components';
 
 export default class AccountSubscription extends React.PureComponent {
 	constructor(props) {
@@ -74,15 +75,7 @@ export default class AccountSubscription extends React.PureComponent {
 		else if (cards.length > 0) {
 			currency = getCurrency(cards[0].country);
 		}
-		const currencySymbol = currency === 'USD'
-			? {
-				before: '$',
-				after: '',
-			}
-			: {
-				before: '',
-				after: '€',
-			};
+
 		const cardDetail = cards.length > 0 ? (
 			<DisplayWithLabel label="Your cards">
 				{uniqWith(cards, (first, sec) => { return first.fingerprint === sec.fingerprint; }).map((card) => { // dedupe cards
@@ -90,7 +83,7 @@ export default class AccountSubscription extends React.PureComponent {
 						<div className="account-subscription-card" key={card.id}>
 							<div className="account-subscription-card-number">**** **** **** {card.last4}</div>
 							<div className="account-subscription-name">{card.name}</div>
-							<div className="account-subscription-card-expiry">Expires on {card.exp_month}/{card.exp_year}</div>
+							<div className="account-subscription-card-expiry">Expires on {String(card.exp_month).padStart(2, 0)}/{card.exp_year}</div>
 						</div>
 					);
 				})}
@@ -135,16 +128,25 @@ export default class AccountSubscription extends React.PureComponent {
 						{subscription.status === 'trialing' && (
 							<span className="badge">trial until {moment.unix(subscription.trial_end).format('L')}</span>
 						)}
+						{subscription.status !== 'trialing' && subscription.cancel_at_period_end && (
+							<span className="badge danger">cancels on {moment.unix(subscription.current_period_end).format('L')}</span>
+						)}
 					</DisplayWithLabel>
 				</div>
-				{subscription.cancel_at_period_end ? (
+				{subscription.cancel_at_period_end && (
 					<p>
 						Your subscription has been canceled and will automatically end on <strong>{moment.unix(subscription.current_period_end).format('L')}</strong>.
 					</p>
-				) : (
+				)}
+				{!subscription.cancel_at_period_end && cards.length < 1 && (
+					<p>
+						Your subscription will be canceled on <strong>{moment.unix(subscription.current_period_end).format('L')}</strong> because you don't have any card registered.
+					</p>
+				)}
+				{!subscription.cancel_at_period_end && cards.length > 1 && (
 					<p>
 						Your subscription will automatically renew on <strong>{moment.unix(subscription.current_period_end).format('L')} </strong>
-						and you will be charged <strong>{`${currencySymbol.before}${plan.amount / 100}${currencySymbol.after}`}</strong>.
+						and you will be charged <strong><Price amount={plan.amount / 100} currency={currency} /></strong>.
 					</p>
 				)}
 			</div>

@@ -3,14 +3,21 @@
 .account-subscription {
 	&-plan {
 		& .badge {
-			border: 2px solid $light-grey;
+			border: 2px solid $medium-grey;
 			border-radius: 5px;
-			color: $light-grey;
+			color: $medium-grey;
 			padding: 0 5px;
 			float: right;
 			font-size: 12px;
 			text-transform: uppercase;
 			margin: 3px 0;
+			font-weight: bold;
+			letter-spacing: 0.08em;
+
+			&.danger {
+				border-color: $red;
+				color: $red;
+			}
 		}
 	}
 }
