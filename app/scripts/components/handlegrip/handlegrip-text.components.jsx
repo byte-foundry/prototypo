@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import DOM from '../../helpers/dom.helpers.js';
@@ -14,7 +13,7 @@ import RegularLetter from './regular-letter.components.jsx';
 *	Where you can set spacing on a specific letter
 *	@extends React.Component
 */
-export default class HandlegripText extends React.Component {
+export default class HandlegripText extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -25,7 +24,6 @@ export default class HandlegripText extends React.Component {
 			textArray: [],
 			lastKey: 0,
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// function bindings
 		this.handleUp = this.handleUp.bind(this);
@@ -33,6 +31,7 @@ export default class HandlegripText extends React.Component {
 		this.handleSelectstart = this.handleSelectstart.bind(this);
 		this.updateCacheTextArray = this.updateCacheTextArray.bind(this);
 		this.selectLetter = this.selectLetter.bind(this);
+		this.getSelectedLetter = this.getSelectedLetter.bind(this);
 	}
 
 	componentWillMount() {

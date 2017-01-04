@@ -168,7 +168,9 @@ function noConfirmBeforePlan(nextState) {
 }
 
 function trackUrl() {
+	/* #if prod */
 	ga('send', 'pageview', {page: this.state.location.pathname});
+	/* #end */
 }
 
 window.addEventListener('unload', () => {
@@ -229,7 +231,7 @@ selectRenderOptions(
 			logStore: stores['/prototypoStore'],
 		}).instance;
 		/* #end */
-		/* #if prod */
+		/* #if prod,offline */
 		const localServer = new LocalServer(stores).instance;
 		/* #end */
 
@@ -288,7 +290,7 @@ selectRenderOptions(
 				await eventDebugger.replayEventFromFile();
 			}
 			/* #end */
-			/* #if prod */
+			/* #if prod,offline */
 			try {
 				await HoodieApi.setup();
 

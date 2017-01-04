@@ -162,6 +162,27 @@ gulp.task('debug', ['clean', 'images','cp-prototypo.js','cp-genese','cp-static',
 	});
 });
 
+gulp.task('offline', ['clean', 'images', 'cp-prototypo.js', 'cp-genese', 'cp-static', 'watch-font', 'watch-prototypojs', 'webpack:dll'], function(callback) {
+	var webpackConfig	= require('./offline.config.js');
+	// Start a webpack-dev-server
+	var prototypoConfig = Object.create(webpackConfig);
+	prototypoConfig.debug = true;
+	var compiler = webpack(prototypoConfig);
+
+	new WebpackDevServer(compiler, {
+		publicPath: webpackConfig.output.publicPath,
+		hot: true,
+		contentBase: 'dist/',
+		watchOptions: {
+			aggregateTimeout: 300,
+			poll: 1000,
+		},
+	}).listen(9000, "0.0.0.0", function(err) {
+		if (err) throw new gutil.PluginError("webpack-dev-server", err);
+		// Server listening
+		gutil.log("[webpack-dev-server]", "http://localhost:9000/webpack-dev-server/index.html");
+	});
+});
 
 gulp.task('test', function(callback) {
 	return gulp.src('')
