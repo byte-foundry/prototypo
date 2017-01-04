@@ -1,15 +1,19 @@
 import React from 'react';
-import vatrates from 'vatrates';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
 
 import Modal from './shared/modal.components.jsx';
+import Price from './shared/price.components.jsx';
 
 export default class GoProModal extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {};
+
+		this.state = {
+			country: 'US',
+		};
+
 		this.goSubscribe = this.goSubscribe.bind(this);
 		this.goCredits = this.goCredits.bind(this);
 	}
@@ -18,32 +22,11 @@ export default class GoProModal extends React.PureComponent {
 		this.client = LocalClient.instance();
 	}
 
-	componentDidMount() {
-		const url = '//freegeoip.net/json/';
+	async componentDidMount() {
+		const response = await fetch('//freegeoip.net/json/');
+		const data = await response.json();
 
-		fetch(url)
-			.then((response) => {
-				if (response) {
-					return response.json();
-				}
-			})
-			.then((response) => {
-				if (response.country_code in vatrates) {
-					this.setState({
-						currency: '€',
-					});
-				}
-				else {
-					this.setState({
-						currency: '$',
-					});
-				}
-			})
-			.catch(() => {
-				this.setState({
-					currency: '$',
-				});
-			});
+		this.setState({country: data.country_code});
 	}
 
 	goSubscribe() {
@@ -63,6 +46,8 @@ export default class GoProModal extends React.PureComponent {
 	}
 
 	render() {
+		const {country} = this.state;
+
 		return (
 			<Modal propName={this.props.propName}>
 				<div className="modal-container-title account-header">UPGRADE TO FULL VERSION!</div>
@@ -77,17 +62,17 @@ export default class GoProModal extends React.PureComponent {
 							<div className="go-pro-choice-plans">
 								<p className="go-pro-choice-plan">
 									<span className="go-pro-choice-plan-title">Monthly plan</span>
-									<br/>15{this.state.currency}/month without commitment
+									<br/><Price amount={15} country={country} />/month without commitment
 								</p>
 								<p className="go-pro-choice-plan">
 									<span className="go-pro-choice-plan-title">Annual plan</span>
-									<br/>99{this.state.currency}/year save more than 5 months!
+									<br/><Price amount={99} country={country} />/year save more than 5 months!
 								</p>
 							</div>
 						</div>
 						<div className="go-pro-choice go-pro-credits" onClick={this.goCredits}>
 							<div className="buy-credits-big"></div>
-							<h2 className="go-pro-choice-title">Buy 3 export credits for 9{this.state.currency}!</h2>
+							<h2 className="go-pro-choice-title">Buy 5 export credits for <Price amount={5} country={country} />!</h2>
 							<p className="go-pro-choice-subtitle">You are free to use these credits as you like. <br/>No time limit.</p>
 							<p><span className="go-pro-choice-plan-title">Exporting one font cost 1 credits.</span></p>
 						</div>
