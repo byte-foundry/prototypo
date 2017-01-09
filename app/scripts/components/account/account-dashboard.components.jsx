@@ -20,7 +20,9 @@ export default class AccountDashboard extends React.Component {
 
 		return (
 			<div className="account-dashboard">
-				<div className="account-dashboard-icon"/>
+				<Link to="/dashboard">
+					<div className="account-dashboard-icon"/>
+				</Link>
 				<Link to="/dashboard" className="account-dashboard-back-icon"/>
 				<div className="account-header">
 					<h1 className="account-title">{title}</h1>
