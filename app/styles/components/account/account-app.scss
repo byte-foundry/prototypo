@@ -205,6 +205,15 @@
 		border: solid $green 10px;
 		top: -35px;
 		right: -35px;
+		transition: 0.8s;
+		transform-style: preserve-3d;
+		cursor: pointer;
+
+		&:hover {
+			transform:rotateY(180deg);
+			background-image: url("../../../images/icon-back-hover-reversed.svg");
+			background-color:$white;
+		}
 	}
 
 	&-back-icon {
