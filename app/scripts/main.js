@@ -16,6 +16,7 @@ import '../styles/components/top-bar-menu.scss';
 import '../styles/components/side-tabs.scss';
 import '../styles/components/search-glyph-list.scss';
 import '../styles/components/account.scss';
+import '../styles/components/academy.scss';
 import '../styles/components/checkbox-with-img.scss';
 import '../styles/components/forgotten-password.scss';
 import '../styles/components/prototypo-canvas.scss';
@@ -53,6 +54,7 @@ import '../styles/components/account/account-subscription.scss';
 import '../styles/components/account/account-change-plan.scss';
 import '../styles/components/account/account-invoice-list.scss';
 import '../styles/components/account/credits-export.scss';
+import '../styles/components/academy/academy-app.scss';
 import '../styles/components/subscription/subscription.scss';
 import '../styles/components/subscription/subscription-confirmation.scss';
 import '../styles/components/subscription/subscription-sidebar.scss';
@@ -135,6 +137,11 @@ import SubscriptionAccountInfo from './components/account/subscription-account-i
 import SubscriptionAddCard from './components/account/subscription-add-card.components.jsx';
 import SubscriptionBillingAddress from './components/account/subscription-billing-address.components.jsx';
 import SubscriptionConfirmation from './components/account/subscription-confirmation.components.jsx';
+
+import AcademyApp from './components/academy/academy-app.components.jsx';
+import AcademyDashboard from './components/academy/academy-dashboard.components.jsx';
+import AcademyHome from './components/academy/academy-home.components.jsx';
+import AcademyCourse from './components/academy/academy-course.components.jsx';
 
 import HoodieApi from './services/hoodie.services.js';
 import LocalClient from './stores/local-client.stores.jsx';
@@ -421,6 +428,15 @@ selectRenderOptions(
 								<Route path="add-card" component={SubscriptionAddCard} onEnter={chooseGoodAccountStep}/>
 								<Route path="billing-address" component={SubscriptionBillingAddress} onEnter={chooseGoodAccountStep}/>
 								<Route path="Confirmation" component={SubscriptionConfirmation} onEnter={chooseGoodAccountStep}/>
+							</Route>
+						</Route>
+						<Route component={AcademyApp} path="academy">
+							<IndexRedirect to="home" />
+							<Route component={AcademyDashboard} path="home" name="home" onEnter={redirectToLogin}>
+								<IndexRoute component={AcademyHome}/>
+							</Route>
+							<Route path="course" component={AcademyDashboard} name="course" onEnter={redirectToLogin}>
+								<IndexRoute component={AcademyCourse}/>
 							</Route>
 						</Route>
 					</Route>

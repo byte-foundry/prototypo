@@ -4,6 +4,7 @@ const fileTutorialLabel = 'fileTutorial';
 const collectionsTutorialLabel = 'collectionsTutorial';
 const indivGroupsCreationTutorialLabel = 'indivGroupsCreationTutorial';
 const indivGroupsEditionTutorialLabel = 'indivGroupsEditionTutorial';
+const academyTutorialLabel = 'academyTutorial';
 
 /**
 *	build every step of a tutorial according to previous and current state
@@ -27,6 +28,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 			|| currentState.firstTimeCollection
 			|| currentState.firstTimeIndivCreate
 			|| currentState.firstTimeIndivEdit
+			|| currentState.firstTimeAcademyJoyride
 		)
 	) {
 		const normalColor = '#24d390';
@@ -126,6 +128,18 @@ const buildTutorialSteps = function(previousState, currentState) {
 					mainColor: indivColor,
 				},
 			},
+			// "academy" steps
+			academyStep1: {
+				title: 'Academy',
+				text: <div>
+					<p>You can access the academy anytime by clicking here ! </p>
+				</div>,
+				selector: '#access-academy',
+				position: 'right',
+				style: {
+					mainColor: normalColor,
+				},
+			},
 		};
 
 		// populate steps according to the new tutorial values
@@ -163,6 +177,14 @@ const buildTutorialSteps = function(previousState, currentState) {
 					steps.push(
 						predefinedSteps.indivGroupEditStep1,
 						predefinedSteps.indivGroupEditStep2
+					);
+				}
+				break;
+			}
+			case academyTutorialLabel: {
+				if (currentState.firstTimeAcademyJoyride) {
+					steps.push(
+						predefinedSteps.academyStep1
 					);
 				}
 				break;
@@ -242,6 +264,15 @@ function handleFinished(component, finishEarly) {
 				window.Intercom('trackEvent', 'endedIndivParamTuto');
 			}
 			break;
+		case academyTutorialLabel:
+			component.client.dispatchAction('/store-value', {firstTimeAcademy: false});
+			if (finishEarly) {
+				window.Intercom('trackEvent', 'endedAcademyTutoEarly');
+			}
+			else {
+				window.Intercom('trackEvent', 'endedAcademyTuto');
+			}
+			break;
 		default:
 			break;
 	}
@@ -261,4 +292,5 @@ export {
 	collectionsTutorialLabel,
 	indivGroupsCreationTutorialLabel,
 	indivGroupsEditionTutorialLabel,
+	academyTutorialLabel,
 };

@@ -179,6 +179,8 @@ const prototypoStore = new Remutable({
 	firstTimeCollection: true,
 	firstTimeIndivCreate: true,
 	firstTimeIndivEdit: true,
+	firstTimeAcademyModal: true,
+	firstTimeAcademyJoyride: true,
 	// end first time tutorial store values
 });
 

@@ -14,6 +14,7 @@ import ExportAs from './export-as.components.jsx';
 import Collection from './collection/collection.components.jsx';
 import CreateFamilyModal from './familyVariant/create-family-modal.components.jsx';
 import CreateVariantModal from './familyVariant/create-variant-modal.components.jsx';
+import CreateAcademyModal from './academy/create-academy-modal.components.jsx';
 import ChangeNameFamily from './familyVariant/change-name-family.components.jsx';
 import ChangeNameVariant from './familyVariant/change-name-variant.components.jsx';
 import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
@@ -34,6 +35,8 @@ export default class Dashboard extends React.PureComponent {
 			firstTimeCollection: undefined,
 			firstTimeIndivCreate: undefined,
 			firstTimeIndivEdit: undefined,
+			firstTimeAcademyModal: undefined,
+			firstTimeAcademyJoyride: undefined,
 		};
 
 		// function bindings
@@ -54,6 +57,8 @@ export default class Dashboard extends React.PureComponent {
 			firstTimeCollection: prototypoStore.head.toJS().firstTimeCollection,
 			firstTimeIndivCreate: prototypoStore.head.toJS().firstTimeIndivCreate,
 			firstTimeIndivEdit: prototypoStore.head.toJS().firstTimeIndivEdit,
+			firstTimeAcademyModal: prototypoStore.head.toJS().firstTimeAcademyModal,
+			firstTimeAcademyJoyride: prototypoStore.head.toJS().firstTimeAcademyJoyride,
 		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
@@ -77,6 +82,8 @@ export default class Dashboard extends React.PureComponent {
 					firstTimeCollection: head.toJS().d.firstTimeCollection,
 					firstTimeIndivCreate: head.toJS().d.firstTimeIndivCreate,
 					firstTimeIndivEdit: head.toJS().d.firstTimeIndivEdit,
+					firstTimeAcademyModal: head.toJS().d.firstTimeAcademyModal,
+					firstTimeAcademyJoyride: head.toJS().d.firstTimeAcademyJoyride,
 				});
 			})
 			.onDelete(() => {
@@ -195,6 +202,8 @@ export default class Dashboard extends React.PureComponent {
 			&& <CreateFamilyModal propName="openFamilyModal"/>;
 		const newVariant = this.state.openVariantModal
 			&& <CreateVariantModal family={this.state.familySelectedVariantCreation} propName="openVariantModal"/>;
+		const explainAcademy = this.state.firstTimeAcademyModal
+			&& <CreateAcademyModal propName="openAcademyModal"/>;
 		const changeNameFamily = this.state.openChangeFamilyNameModal
 			&& <ChangeNameFamily family={this.state.familySelectedVariantCreation} propName="openChangeFamilyNameModal"/>;
 		const changeNameVariant = this.state.openChangeVariantNameModal
@@ -242,6 +251,7 @@ export default class Dashboard extends React.PureComponent {
 					{buyCredits}
 					{goPro}
 					{exportAs}
+					{explainAcademy}
 				</ReactCSSTransitionGroup>
 			</div>
 		);

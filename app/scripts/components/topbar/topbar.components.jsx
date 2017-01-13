@@ -1,6 +1,5 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import HoodieApi from '~/services/hoodie.services.js';
 import Log from '~/services/log.services.js';
@@ -23,7 +22,7 @@ import {
 } from './top-bar-menu.components.jsx';
 import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components.jsx';
 
-export default class Topbar extends React.Component {
+export default class Topbar extends React.PureComponent {
 
 	constructor(props) {
 		super(props);
@@ -39,7 +38,6 @@ export default class Topbar extends React.Component {
 			presets: null,
 			country: 'US',
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		//function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
@@ -49,6 +47,7 @@ export default class Topbar extends React.Component {
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
 		this.setPreset = this.setPreset.bind(this);
 		this.resetIndivTutorial = this.resetIndivTutorial.bind(this);
+		this.resetFirstTimeAcademy = this.resetFirstTimeAcademy.bind(this);
 	}
 
 	async componentWillMount() {
@@ -78,6 +77,10 @@ export default class Topbar extends React.Component {
 			creditChoices: creditChoices.head.toJS(),
 		});
 	}
+
+	static contextTypes = {
+		router: React.PropTypes.object.isRequired,
+	};
 
 	exportOTF(merged) {
 		this.client.dispatchAction('/export-otf', {merged});
@@ -182,8 +185,17 @@ export default class Topbar extends React.Component {
 		}
 	}
 
+	resetFirstTimeAcademy() {
+		this.client.dispatchAction('/store-value', {firstTimeAcademyModal: true});
+		this.client.dispatchAction('/store-value', {firstTimeAcademyJoyride: true});
+	}
+
 	setAccountRoute() {
 
+	}
+
+	showAcademy() {
+		this.context.router.push('/academy');
 	}
 
 	async onboardExport(step) {
@@ -365,9 +377,11 @@ export default class Topbar extends React.Component {
 					<TopBarMenuDropdown name="Help">
 						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
 						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq', '_blank'); }}/>
+						<TopBarMenuDropdownItem name="Academy" id="access-academy" handler={(e) => { this.showAcademy(e); }}/>
 						<TopBarMenuDropdownItem name="Restart collection tutorial" handler={(e) => { this.resetCollectionTutorial(e); }}/>
 						<TopBarMenuDropdownItem name="Restart export tutorial" handler={(e) => { this.resetFileTutorial(e); }}/>
 						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={(e) => { this.resetIndivTutorial(e); }}/>
+						<TopBarMenuDropdownItem name="Reset firstTimeAcademy" handler={(e) => { this.resetFirstTimeAcademy(e); }}/>
 					</TopBarMenuDropdown>
 					{exporting}
 					{errorExporting}
