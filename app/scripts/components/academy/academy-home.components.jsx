@@ -1,12 +1,17 @@
 import React from 'react';
 import {Link} from 'react-router';
+import TutorialContent from 'tutorial-content';
+import {Parser as HtmlToReactParser} from 'html-to-react';
 
 export default class AcademyHome extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {};
+		this.tutorials = new TutorialContent();
 	}
 	render() {
+		const htmlToReactParser = new HtmlToReactParser();
+
 		return (
 			<div className="academy-base academy-home">
 				<h1>Hi there !</h1>
@@ -25,65 +30,19 @@ export default class AcademyHome extends React.PureComponent {
 
 				<h2>Course list</h2>
 
-				<div className="academy-course-list">
-					<h1 className="academy-course-title"> Course name </h1>
-					<p className="academy-course-description">
-						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-						Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-						Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-						Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-					</p>
-					<label>By completing this course you will earn</label>
-					<ul className="academy-course-reward">
-						<li>Un massage à l huile par yannick mathey</li>
-					</ul>
-					<div className="academy-button academy-validation-button"><Link to="/academy/course" > CTA </Link></div>
-				</div>
-
-				<div className="academy-course-list">
-					<h1 className="academy-course-title"> Course name </h1>
-					<p className="academy-course-description">
-						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-						Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-						Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-						Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-					</p>
-					<label>By completing this course you will earn</label>
-					<ul className="academy-course-reward">
-						<li>Un massage à l huile par yannick mathey</li>
-					</ul>
-					<div className="academy-button academy-validation-button"><Link to="/academy/course" > CTA </Link></div>
-				</div>
-
-				<div className="academy-course-list">
-					<h1 className="academy-course-title"> Course name </h1>
-					<p className="academy-course-description">
-						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-						Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-						Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-						Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-					</p>
-					<label>By completing this course you will earn</label>
-					<ul className="academy-course-reward">
-						<li>Un massage à l huile par yannick mathey</li>
-					</ul>
-					<div className="academy-button academy-validation-button"><Link to="/academy/course" > CTA </Link></div>
-				</div>
-
-				<div className="academy-course-list">
-					<h1 className="academy-course-title"> Course name </h1>
-					<p className="academy-course-description">
-						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-						Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-						Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-						Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-					</p>
-					<label>By completing this course you will earn</label>
-					<ul className="academy-course-reward">
-						<li>Un massage à l huile par yannick mathey</li>
-					</ul>
-					<div className="academy-button academy-validation-button"><Link to="/academy/course" > CTA </Link></div>
-				</div>
+				{
+					this.tutorials.content.map((tutorial) => {
+						tutorial.header = `<div>
+											${tutorial.header}
+										  </div>`;
+						return(
+							<div key={tutorial.name} className="academy-course-list">
+								{htmlToReactParser.parse(tutorial.header)}
+								<div className="academy-button academy-validation-button"><Link to={`/academy/course/${tutorial.name}`} > CTA </Link></div>
+							</div>
+						);
+					})
+				}
 			</div>
 		);
 	}

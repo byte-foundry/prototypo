@@ -2,6 +2,7 @@
   "name": "prototypo",
   "version": "1.0.0",
   "dependencies": {
+    "@hoodie/client": "^8.0.0",
     "babel": "~6.3.0",
     "bluebird": "^3.1.1",
     "classnames": "^2.1.2",
@@ -11,7 +12,7 @@
     "draft-js": "~0.9.1",
     "elzevir.ptf": "byte-foundry/elzevir.ptf#master",
     "escape-string-regexp": "^1.0.5",
-    "@hoodie/client": "^8.0.0",
+    "html-to-react": "^1.2.2",
     "john-fell.ptf": "byte-foundry/john-fell.ptf#master",
     "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",
@@ -40,6 +41,7 @@
     "remutable": "FranzPoize/remutable#master",
     "slug": "^0.9.1",
     "tether": "^1.1.0",
+    "tutorial-content": "byte-foundry/tutorial-content#master",
     "venus.ptf": "byte-foundry/venus.ptf#master",
     "xxhashjs": "^0.1.1"
   },
