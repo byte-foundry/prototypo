@@ -205,6 +205,12 @@
 		border: solid $green 10px;
 		top: -35px;
 		right: -35px;
+
+		&.is-in-subscription {
+			right:auto;
+			left:-15px;
+			top:-30px;
+		}
 	}
 
 	&-back-icon {

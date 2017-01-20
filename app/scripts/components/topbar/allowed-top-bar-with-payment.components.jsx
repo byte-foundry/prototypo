@@ -47,11 +47,11 @@ export default class AllowedTopBarWithPayment extends React.Component {
 			? (
 				<div className="allowed-top-bar-with-payment-demo-overlay">
 					<div className="allowed-top-bar-with-payment-demo-overlay-text">
-						<Link to="/account/create" onClick={this.trackSubscriptionClick}>
+						<Link to="/account/subscribe" onClick={this.trackSubscriptionClick}>
 							<span>This feature is available with the professional subscription</span>
 						</Link>
 						<div className="allowed-top-bar-with-payment-demo-overlay-text-more">
-							<Link to="/account/create" className="allowed-top-bar-with-payment-demo-overlay-text-more-half" onClick={this.trackSubscriptionClick}>
+							<Link to="/account/subscribe" className="allowed-top-bar-with-payment-demo-overlay-text-more-half" onClick={this.trackSubscriptionClick}>
 								<div className="allowed-top-bar-with-payment-demo-overlay-text-more-wrap allowed-top-bar-with-payment-subscribe">
 									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">Subscribe to full version</div>
 								</div>

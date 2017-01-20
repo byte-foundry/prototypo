@@ -45,6 +45,11 @@
 		}
 	}
 
+	&.big {
+		font-size: 24px;
+		font-family: proxima-nova;
+	}
+
 	&.danger {
 		border-color: $red;
 		color: $red;

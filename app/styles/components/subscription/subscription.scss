@@ -1,6 +1,132 @@
 @import "../../variables";
 
 .subscription {
+	min-height: 700px;
+	width: 1000px;
+	position:relative;
+	margin:0 auto 50px;
+
+	&-tick-mark {
+		color: $green;
+		margin-right:10px;
+	}
+
+	&-card-and-validation {
+		background-color: $white;
+		border-radius:8px;
+		padding:30px;
+
+		&-card {
+			font-family: 'Cutive Mono', monospace;
+			background: $medium-grey;
+			width: 530px;
+			height: 332px;
+			color: #fefefe;
+			font-size: 37px;
+			border-radius: 19.7px;
+			padding: 90px 50px 50px 50px;
+			margin-bottom: 20px;
+
+			&-chip {
+				background: #ffe86e;
+				width: 76.5px;
+				height: 60px;
+				border-radius: 6px;
+				position: relative;
+
+				&-left {
+					border-right: solid 1px rgba(51, 51, 51, 0.38);
+					width: 36%;
+					height: 100%;
+					position: absolute;
+
+					&:after {
+						content:' ';
+						border-top: solid 1px rgba(51, 51, 51, 0.38);
+						width: 100%;
+						top: calc(100% / (3 / 2));
+						position: absolute;
+					}
+
+					&:before {
+						content:' ';
+						border-top: solid 1px rgba(51, 51, 51, 0.38);
+						width: 100%;
+						top: calc(100% / 3);
+						position: absolute;
+					}
+				}
+
+				&-right {
+					border-left: solid 1px rgba(51, 51, 51, 0.38);
+					width: 36%;
+					height: 100%;
+					position: absolute;
+					right: 0;
+
+					&:after {
+						content:' ';
+						border-top: solid 1px rgba(51, 51, 51, 0.38);
+						width: 100%;
+						top: calc(100% / (3 / 2));
+						position: absolute;
+					}
+
+					&:before {
+						content:' ';
+						border-top: solid 1px rgba(51, 51, 51, 0.38);
+						width: 100%;
+						top: calc(100% / 3);
+						position: absolute;
+					}
+				}
+			}
+
+			&-date, &-name {
+				font-size:27px;
+			}
+		}
+
+		&-legal {
+			color: $medium-grey;
+			text-align:left;
+			font-size: 17px;
+			font-weight:200;
+			margin-bottom: 20px;
+		}
+
+		&-buttons {
+			margin-bottom:20px;
+		}
+
+		&-switch {
+			color: $green;
+			font-size:17px;
+			cursor:pointer;
+
+			&:hover {
+				color: #188259;
+			}
+
+			&.is-right {
+				text-align:right;
+			}
+		}
+
+		&-valid-coupon {
+			font-size:16px;
+			color:$green;
+			margin-bottom:20px;
+			font-weight:100;
+		}
+
+		&-error-coupon {
+			font-size:16px;
+			color:$red;
+			margin-bottom:20px;
+			font-weight:100;
+		}
+	}
 
 	&-title {
 		font-style:italic;

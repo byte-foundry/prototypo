@@ -488,8 +488,8 @@ export default {
 					email: username,
 					name: firstname + curedLastname,
 					occupation: css.value,
-					phone: phone,
-					skype: skype,
+					phone,
+					skype,
 					ABtest: Math.floor(Math.random() * 100),
 					widget: {
 						activator: '#intercom-button',
@@ -560,7 +560,7 @@ export default {
 			form.couponValue = coupon;
 		}
 
-		if (form.selected && form.couponValue) {
+		if (form.selected && form.couponValue !== undefined) {
 			delete form.validCoupon;
 			delete form.couponError;
 			validateCoupon({

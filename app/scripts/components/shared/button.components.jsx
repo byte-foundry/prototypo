@@ -22,6 +22,7 @@ export default class Button extends React.Component {
 			small: this.props.small,
 			'split-left': isSplitted,
 			loading: this.props.loading,
+			big: this.props.big,
 		});
 		const splitRight = ClassNames({
 			'split-right': true,

@@ -327,26 +327,6 @@ selectRenderOptions(
 			}
 		}
 
-		function chooseGoodAccountStep(nextState, replace) {
-
-			const infos = Stores['/userStore'].get('infos');
-
-			if (infos.accountValues && infos.accountValues.username && /\/account\/create\/?$/.test(nextState.location.pathname)) {
-				replace({
-					pathname: '/account/create/choose-a-plan',
-					state: {nextPathname: nextState.location.pathname},
-				});
-			}
-
-			if (!infos.accountValues && nextState.location.pathname !== '/account/create') {
-				replace({
-					pathname: '/account/create',
-					state: {nextPathname: nextState.location.pathname},
-				});
-
-			}
-		}
-
 		const canvasEl = window.canvasElement = document.createElement('canvas');
 
 		canvasEl.className = 'prototypo-canvas-container-canvas';
@@ -415,13 +395,7 @@ selectRenderOptions(
 								<Route path="change-plan" component={AccountChangePlan}/>
 								<Route path="confirm-plan" component={AccountConfirmPlan} onEnter={noConfirmBeforePlan}/>
 							</Route>
-							<Route path="create" component={Subscription} name="create">
-								<IndexRoute component={SubscriptionAccountInfo} onEnter={chooseGoodAccountStep}/>
-								<Route path="choose-a-plan" component={SubscriptionChoosePlan} onEnter={chooseGoodAccountStep}/>
-								<Route path="add-card" component={SubscriptionAddCard} onEnter={chooseGoodAccountStep}/>
-								<Route path="billing-address" component={SubscriptionBillingAddress} onEnter={chooseGoodAccountStep}/>
-								<Route path="Confirmation" component={SubscriptionConfirmation} onEnter={chooseGoodAccountStep}/>
-							</Route>
+							<Route path="subscribe" component={Subscription} name="create"></Route>
 						</Route>
 					</Route>
 				</Router>

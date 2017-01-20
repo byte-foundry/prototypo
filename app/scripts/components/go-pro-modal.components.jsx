@@ -31,7 +31,7 @@ export default class GoProModal extends React.PureComponent {
 
 	goSubscribe() {
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
-		document.location.href = '#/account/create';
+		document.location.href = '#/account/subscribe';
 		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
 		Log.ui('Subscribe.FromFile');
 	}

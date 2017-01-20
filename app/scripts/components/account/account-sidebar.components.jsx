@@ -78,7 +78,7 @@ export default class AccountSidebar extends React.Component {
 			)
 			: (
 					<ul className="account-sidebar-menu-item-options">
-						<li className={classChangePlan}><Link to="account/create/choose-a-plan">Subscribe to the pro plan</Link></li>
+						<li className={classChangePlan}><Link to="account/subscribe">Subscribe to the pro plan</Link></li>
 					</ul>
 			);
 
