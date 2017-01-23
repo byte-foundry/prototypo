@@ -130,10 +130,6 @@ import AccountSubscription from './components/account/account-subscription.compo
 import AccountConfirmPlan from './components/account/account-confirm-plan.components.jsx';
 import AccountInvoiceList from './components/account/account-invoice-list.components.jsx';
 import Subscription from './components/account/subscription.components.jsx';
-import SubscriptionChoosePlan from './components/account/subscription-choose-plan.components.jsx';
-import SubscriptionAccountInfo from './components/account/subscription-account-info.components.jsx';
-import SubscriptionAddCard from './components/account/subscription-add-card.components.jsx';
-import SubscriptionBillingAddress from './components/account/subscription-billing-address.components.jsx';
 import SubscriptionConfirmation from './components/account/subscription-confirmation.components.jsx';
 
 import HoodieApi from './services/hoodie.services.js';
@@ -304,10 +300,27 @@ selectRenderOptions(
 			/* #end */
 		}
 
+		function redirectToSignup(nextState, replace) {
+			if (!HoodieApi.isLoggedIn()) {
+				replace({
+					pathname: '/signup',
+					query: {
+						prevHash: nextState.location.pathname,
+						...nextState.location.query,
+					},
+					state: {nextPathname: nextState.location.pathname},
+				});
+			}
+		}
+
 		function redirectToLogin(nextState, replace) {
 			if (!HoodieApi.isLoggedIn()) {
 				replace({
 					pathname: '/signin',
+					query: {
+						prevHash: nextState.location.pathname,
+						...nextState.location.query,
+					},
 					state: {nextPathname: nextState.location.pathname},
 				});
 			}
@@ -395,7 +408,8 @@ selectRenderOptions(
 								<Route path="change-plan" component={AccountChangePlan}/>
 								<Route path="confirm-plan" component={AccountConfirmPlan} onEnter={noConfirmBeforePlan}/>
 							</Route>
-							<Route path="subscribe" component={Subscription} name="create"></Route>
+							<Route path="subscribe" component={Subscription} name="subscribe" onEnter={redirectToSignup}></Route>
+							<Route path="confirmation" component={SubscriptionConfirmation} name="confirmation"></Route>
 						</Route>
 					</Route>
 				</Router>

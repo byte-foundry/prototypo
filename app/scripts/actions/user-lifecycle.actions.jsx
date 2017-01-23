@@ -430,9 +430,10 @@ export default {
 				}
 			});
 	},
-	'/sign-up': ({username, password, firstname, lastname, css, phone, skype, to, retry}) => {
+	'/sign-up': ({username, password, firstname, lastname, css, phone, skype, to = '/dashboard', retry, oldQuery = {}}) => {
 		const toLocation = {
-			pathname: to || '/dashboard',
+			pathname: to,
+			query: oldQuery,
 		};
 		const form = userStore.get('signupForm');
 
@@ -672,7 +673,7 @@ export default {
 			hashHistory.push(toPath);
 		});
 	},
-	'/confirm-buy': ({plan, currency}) => {
+	'/confirm-buy': ({plan, currency, card}) => {
 		const form = userStore.get('confirmation');
 
 		form.errors = [];
@@ -681,10 +682,13 @@ export default {
 		const cleanPatch = userStore.set('confirmation', form).commit();
 
 		localServer.dispatchUpdate('/userStore', cleanPatch);
-		HoodieApi.updateSubscription({
-			plan: `${plan}_${currency}_taxfree`,
-			coupon: userStore.get('choosePlanForm').couponValue,
-		}).then(async (data) => {
+		addCard({card, vat})
+		.then(() => {
+			return HoodieApi.updateSubscription({
+				plan: `${plan}_${currency}_taxfree`,
+				coupon: userStore.get('choosePlanForm').couponValue,});
+		})
+		.then(async (data) => {
 			const infos = _.cloneDeep(userStore.get('infos'));
 
 			form.loading = false;
@@ -697,13 +701,13 @@ export default {
 			ga('ecommerce:addTransaction', {
 				'id': data.id,
 				'affiliation': 'Prototypo',
-				'revenue': data.plan.id.indexOf('monthly') === -1 ? '144' : '15',
+				'revenue': data.plan.id.indexOf('monthly') === -1 ? '99' : '15',
 			});
 
 			ga('ecommerce:addItem', {
 				'id': data.id + data.plan.id,
 				'name': data.plan.id,    // Product name. Required.
-				'price': data.plan.id.indexOf('monthly') === -1 ? '144' : '15',
+				'price': data.plan.id.indexOf('monthly') === -1 ? '99' : '15',
 			});
 
 			ga('ecommerce:send');

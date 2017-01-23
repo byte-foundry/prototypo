@@ -3,6 +3,8 @@ import {Link} from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
+import Price from '../shared/price.components.jsx';
+
 export default class SubscriptionSidebar extends React.Component {
 	constructor(props) {
 		super(props);
@@ -16,16 +18,18 @@ export default class SubscriptionSidebar extends React.Component {
 	}
 
 	render() {
+		const {country, plan} = this.props;
+
 		const plans = {
 			'personal_monthly': {
 				header: 'Monthly',
-				title: 'Try Prototypo Pro subscription for $1 only',
+				title: <span>Try Prototypo Pro subscription for <Price amount={1} country={country}/> only</span>,
 				features: [
 					'Unlimited font exports',
 					'Full ranges for all parameters',
 					'Parameter individualization for more custom fonts',
 				],
-				cta: '$15 after the first month.',
+				cta: <span><Price amount={15} country={country}/> after the first month.</span>,
 				subcta: 'No commitment!',
 				link: {
 					text: 'Want Prototypo for cheap, check out our annual offer.',
@@ -34,14 +38,23 @@ export default class SubscriptionSidebar extends React.Component {
 			},
 			'personal_annual_99': {
 				header: 'Annual',
-				title: 'Pay Prototypo Pro subscription for 1 year and get 3 free months',
+				title: 'Buy Prototypo Pro subscription for 1 year, get 4 months for free',
 				features: [
 					'Unlimited font exports',
 					'Full ranges for all parameters',
 					'Parameter individualization for more custom fonts',
 				],
-				cta: 'Less money same features',
-				subcta: 'Get 3 months free',
+				cta: (
+					<div>
+						<div>
+							<Price amount={8.25} country={country}/>/month
+						</div>
+						<div>
+							Less money same features
+						</div>
+					</div>
+				),
+				subcta: 'Get 4 months free',
 				link: {
 					text: 'Want less commitment, try our montly offer',
 					to: '/account/subscribe?plan=personal_monthly',
@@ -49,7 +62,7 @@ export default class SubscriptionSidebar extends React.Component {
 			},
 		};
 
-		if (plans[this.props.plan]) {
+		if (plans[plan]) {
 			const {
 				header,
 				title,
@@ -57,7 +70,7 @@ export default class SubscriptionSidebar extends React.Component {
 				cta,
 				subcta,
 				link,
-			} = plans[this.props.plan];
+			} = plans[plan];
 
 			return (
 				<div className="subscription-sidebar">

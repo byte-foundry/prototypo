@@ -6,12 +6,14 @@ import LocalClient from '../../stores/local-client.stores.jsx';
 import AddCard from '../shared/add-card.components.jsx';
 import Button from '../shared/button.components.jsx';
 import InputWithLabel from '../shared/input-with-label.components.jsx';
+import Price from '../shared/price.components.jsx';
 
 export default class SubscriptionCardAndValidation extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
 			card: [],
+			couponValue: undefined,
 		};
 
 		this.changeCard = this.changeCard.bind(this);
@@ -27,8 +29,8 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					card: head.toJS().d.infos.card,
-					couponValue: head.toJS().d.choosePlanForm.couponValue || '',
+					card: head.toJS().d.infos.card || [],
+					couponValue: head.toJS().d.choosePlanForm.couponValue || this.props.coupon,
 					validCoupon: head.toJS().d.choosePlanForm.validCoupon,
 					wasValidCoupon: head.toJS().d.choosePlanForm.validCoupon || this.state.wasValidCoupon,
 				});
@@ -56,7 +58,16 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 
 	addCoupon() {
 		this.setState({
-			coupon: true,
+			couponValue: '',
+		});
+	}
+
+	subscribe() {
+		this.client.dispatchAction('/confirm-buy', {
+			plan: this.props.plan,
+			vat:,
+			coupon:,
+			card:,
 		});
 	}
 
@@ -67,16 +78,21 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 	}
 
 	render() {
+		const {country, plan} = this.props;
 		const plans = {
 			'personal_monthly': {
-				blurb: {
-					__html: `By clicking on the subscribe button below you agree to and pay $1.00 for the first month of yout Prototypo. You'll also agree to be charged $9.90 every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.`,
-				},
+				blurb: (
+					<div>
+						By clicking on the subscribe button below you agree to and pay <Price amount={1} country={country}/> for the first month of yout Prototypo. You'll also agree to be charged <Price amount={15} country={country}/> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.
+					</div>
+				),
 			},
 			'personal_annual_99': {
-				blurb: {
-					__html: `By clicking on the subscribe button below you agree to pay $84.00 once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.`,
-				},
+				blurb: (
+					<div>
+						By clicking on the subscribe button below you agree to pay <Price amount={99} country={country}/> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.
+					</div>
+				),
 			},
 		};
 
@@ -118,9 +134,9 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 				</div>
 			);
 
-		const coupon = this.state.coupon && (
+		const coupon = this.state.couponValue !== undefined && (
 			<div>
-				<InputWithLabel ref="coupon" label="Coupon code" error={false} handleOnChange={this.handleCouponChange} value={this.state.couponValue}/>
+				<InputWithLabel ref="coupon" label="Coupon code" error={false} onChange={this.handleCouponChange} value={this.state.couponValue}/>
 				{this.state.validCoupon
 					? <div className="subscription-card-and-validation-valid-coupon">{`(ノ✿◕ᗜ◕)ノ━☆ﾟ.*･｡ﾟ ${this.state.validCoupon.label}`}</div>
 					: this.state.wasValidCoupon
@@ -129,17 +145,18 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			</div>
 		);
 
-		if (plans[this.props.plan]) {
+		if (plans[plan]) {
 
-			const {blurb} = plans[this.props.plan];
+			const {blurb} = plans[plan];
 
 			return (
 				<div className="subscription-card-and-validation normal">
 					{card}
 					{coupon}
-					<div className="subscription-card-and-validation-legal" dangerouslySetInnerHTML={blurb}>
+					<div className="subscription-card-and-validation-legal">
+						{blurb}
 					</div>
-					<Button big label="Subscribe to prototypo"/>
+					<Button big label="Subscribe to prototypo" click={() => {}}/>
 				</div>
 			);
 		}
