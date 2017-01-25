@@ -23,3 +23,6 @@ branches:
     - develop
     - release
     - feat/new-ux
+notifications:
+  slack:
+    secure: nROAluwgT8ytE/2dlg2wKFDp/bA3AGd2SHOAN4mKwefAAyudofWhlx85qNLcLUAjfvIVYdPBRXx6BwlF0l5pAl7WCJKEFMAfhFZeXwEVd3DTXK9SvEwMym9qEiZXI6vyZY3IHb7MFy2p6uXpFE9Ub1Vdq8AEV7OPW8UZ742PYEA=

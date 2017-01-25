@@ -83,7 +83,7 @@ export default class HandlegripLetter extends React.Component {
 					letter={this.props.letter}
 				/>
 				<span className="letter-wrap-wrap">
-					<span ref="letterWrapLetter" className="letter-wrap-letter">
+					<span ref="letterWrapLetter" className="letter-wrap-letter" onDoubleClick={this.props.openGlyph}>
 						{this.props.letter.replace(/ /g, "\u00a0")}
 					</span>
 					<span className="handlegrip-spacing-number">

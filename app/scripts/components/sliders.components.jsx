@@ -505,10 +505,16 @@ export class SliderRadioController extends React.Component {
 	}
 }
 
-export class SliderTextController extends React.Component {
+export class SliderTextController extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.handleChange = this.handleChange.bind(this);
+		this.handleClick = this.handleClick.bind(this);
+		this.handleBlur = this.handleBlur.bind(this);
+		this.state = {
+			isTyping: false,
+		};
 	}
 
 	componentWillMount() {
@@ -518,6 +524,22 @@ export class SliderTextController extends React.Component {
 
 	componentWillUnmount() {
 		this.lifespan.release();
+	}
+
+	handleChange(e) {
+		this.props.changeParam({
+			name: this.props.name,
+			value: parseFloat(e.target.value),
+			label: this.props.label,
+		});
+	}
+
+	handleClick() {
+		this.setState({isTyping: true});
+	}
+
+	handleBlur() {
+		this.setState({isTyping: false});
 	}
 
 	render() {
@@ -530,14 +552,10 @@ export class SliderTextController extends React.Component {
 			<input
 				className={classes}
 				type="number"
-				value={this.props.value.toFixed(2)}
-				onChange={(e) => {
-					this.props.changeParam({
-							name: this.props.name,
-							value: parseFloat(e.target.value),
-							label: this.props.label,
-					});
-				}}
+				value={this.state.isTyping ? this.props.value : this.props.value.toFixed(2)}
+				onChange={this.handleChange}
+				onClick={this.handleClick}
+				onBlur={this.handleBlur}
 				disabled={this.props.disabled}
 			/>
 		);

@@ -75,7 +75,7 @@ export default class AllowedTopBarWithPayment extends React.Component {
 							<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text-separator"></div>
 							<div onClick={this.openBuyCreditsModal} className="allowed-top-bar-with-payment-demo-overlay-text-more-half">
 								<div className="allowed-top-bar-with-payment-demo-overlay-text-more-wrap allowed-top-bar-with-payment-credits">
-									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">Buy export credits.<br/>5 credits for 5{this.state.currency}</div>
+									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">Buy export credits.<br/>3 credits for 9{this.state.currency}</div>
 								</div>
 							</div>
 						</div>

@@ -8,6 +8,7 @@ import Log from '../services/log.services.js';
 import Button from './shared/button.components.jsx';
 import Modal from './shared/modal.components.jsx';
 import AddCard from './shared/add-card.components.jsx';
+import InputWithLabel from './shared/input-with-label.components';
 import FormError from './shared/form-error.components.jsx';
 
 export default class CreditsExport extends React.PureComponent {
@@ -63,16 +64,9 @@ export default class CreditsExport extends React.PureComponent {
 				}
 			})
 			.then((response) => {
-				if (response.country_code in vatrates) {
-					this.setState({
-						currency: 'EUR',
-					});
-				}
-				else {
-					this.setState({
-						currency: 'DOL',
-					});
-				}
+				this.setState({
+					currency: response.country_code in vatrates ? 'EUR' : 'DOL',
+				});
 			})
 			.catch(() => {
 				this.setState({
@@ -93,6 +87,7 @@ export default class CreditsExport extends React.PureComponent {
 		if (!this.state.loading) {
 			this.client.dispatchAction('/buy-credits', {
 				card: this.refs.card.data(),
+				vat: this.refs.vat.inputValue,
 				currency: this.state.currency,
 			});
 		}
@@ -127,10 +122,11 @@ export default class CreditsExport extends React.PureComponent {
 			) : (
 				<form className="sign-in-form" onSubmit={this.handleSubmit}>
 					<AddCard ref="card" inError={this.state.inError}/>
+					<InputWithLabel ref="vat" label="VAT number" info="(only necessary if you pay with a company card)"/>
 					{errors}
 					<div className="action-form-buttons">
 						<Button click={this.exit} label="Cancel" neutral={true}/>
-						<Button click={this.handleSubmit} label={`Buy 5 credits for 5 ${currency}`} loading={this.state.loading}/>
+						<Button click={this.handleSubmit} label={`Buy 3 credits for 9 ${currency}`} loading={this.state.loading}/>
 					</div>
 				</form>
 			);

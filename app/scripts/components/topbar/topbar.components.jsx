@@ -231,7 +231,7 @@ export default class Topbar extends React.Component {
 		const creditExportLabel = !!this.state.credits
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount)
-			&& <TopBarMenuButton label="UNLOCK ALL PARAMETERS FOR $5" noHover centered click={this.openGoProModal} alignRight/>;
+			&& <TopBarMenuButton label="UNLOCK ALL PARAMETERS FOR $9" noHover centered click={this.openGoProModal} alignRight/>;
 
 			/*const presetSubMenu = this.state.presets
 			? (

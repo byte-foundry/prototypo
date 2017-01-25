@@ -29,7 +29,6 @@ module.exports = {
 			'react-json-pretty',
 			'slug',
 			'pouchdb',
-			'md5',
 			'lodash',
 			'diff'
 		],
