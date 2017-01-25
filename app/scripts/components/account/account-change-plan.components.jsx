@@ -1,6 +1,5 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import {hashHistory} from 'react-router';
 
 import SelectWithLabel from '../shared/select-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
@@ -22,8 +21,7 @@ export default class AccountChangePlan extends React.Component {
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					plan: head.toJS().d.infos.subscriptions,
-					card: head.toJS().d.infos.card,
+					plan: head.toJS().d.subscription,
 					loading: head.toJS().d.choosePlanForm.loading,
 				});
 			})
@@ -102,6 +100,7 @@ export default class AccountChangePlan extends React.Component {
 					<AccountValidationButton label="Change plan" loading={this.state.loading}/>
 				</form>
 			);
+
 		return content;
 	}
 }

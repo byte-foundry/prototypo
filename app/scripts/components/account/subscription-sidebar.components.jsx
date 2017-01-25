@@ -8,9 +8,6 @@ import Price from '../shared/price.components.jsx';
 export default class SubscriptionSidebar extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			infos: {},
-		};
 	}
 
 	componentWillMount() {

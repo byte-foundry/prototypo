@@ -18,7 +18,7 @@ export default class AccountSidebar extends React.Component {
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					infos: head.toJS().d.infos,
+					subcription: head.toJS().d.subscription,
 				});
 			})
 			.onDelete(() => {
@@ -68,7 +68,7 @@ export default class AccountSidebar extends React.Component {
 			"is-active": this.context.router.isActive('account/details/change-plan'),
 		});
 
-		const detailsMenu = this.state.infos && this.state.infos.subscriptions
+		const detailsMenu = this.state.subscription
 			? (
 					<ul className="account-sidebar-menu-item-options">
 						<li className={classAddCard}><Link to="account/details/add-card">Add a card</Link></li>

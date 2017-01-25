@@ -51,10 +51,10 @@
 
 	&-link {
 		display:block;
-		color:$green;
+		color:$green !important;
 
 		&:hover {
-			color: #188259;
+			color: #188259 !important;
 		}
 		text-align:center;
 	}

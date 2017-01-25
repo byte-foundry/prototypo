@@ -8,8 +8,8 @@ export default class AddCard extends React.PureComponent {
 		return {
 			fullname: this.fullname.value,
 			number: this.number.rawValue,
-			expMonth: parseInt(this.expiration.rawValue.slice(0, 2)),
-			expYear: parseInt(this.expiration.rawValue.slice(2)),
+			expMonth: parseInt((this.expiration.rawValue || '00/00').slice(0, 2)),
+			expYear: parseInt((this.expiration.rawValue || '00/00').slice(2)),
 			cvc: this.cvc.value,
 		};
 	}

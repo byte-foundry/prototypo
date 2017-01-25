@@ -84,7 +84,7 @@
 		"no-use-before-define": [2, "nofunc"],
 
 		"brace-style": [2, "stroustrup", {"allowSingleLine": true}],
-		"camelcase": 1,
+		"camelcase": ["error", {properties: "never"}],
 		"comma-spacing": 2,
 		"computed-property-spacing": [2, "never"],
 		"consistent-this": [2, "self"],

@@ -7,6 +7,10 @@ import AddCard from '../shared/add-card.components.jsx';
 import Button from '../shared/button.components.jsx';
 import InputWithLabel from '../shared/input-with-label.components.jsx';
 import Price from '../shared/price.components.jsx';
+import FormError from '../shared/form-error.components.jsx';
+
+const emptyArray = [];
+const emptyObject = {};
 
 export default class SubscriptionCardAndValidation extends React.PureComponent {
 	constructor(props) {
@@ -14,12 +18,15 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		this.state = {
 			card: [],
 			couponValue: undefined,
+			inError: {},
+			errors: [],
 		};
 
 		this.changeCard = this.changeCard.bind(this);
 		this.keepCard = this.keepCard.bind(this);
 		this.addCoupon = this.addCoupon.bind(this);
 		this.handleCouponChange = this.handleCouponChange.bind(this);
+		this.subscribe = this.subscribe.bind(this);
 	}
 
 	componentWillMount() {
@@ -29,10 +36,13 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					card: head.toJS().d.infos.card || [],
+					card: head.toJS().d.cards || emptyArray,
 					couponValue: head.toJS().d.choosePlanForm.couponValue || this.props.coupon,
 					validCoupon: head.toJS().d.choosePlanForm.validCoupon,
 					wasValidCoupon: head.toJS().d.choosePlanForm.validCoupon || this.state.wasValidCoupon,
+					loading: head.toJS().d.confirmation.loading,
+					inError: head.toJS().d.confirmation.inError || emptyObject,
+					errors: head.toJS().d.confirmation.errors,
 				});
 			})
 			.onDelete(() => {
@@ -65,9 +75,12 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 	subscribe() {
 		this.client.dispatchAction('/confirm-buy', {
 			plan: this.props.plan,
-			vat:,
-			coupon:,
-			card:,
+			vat: '',
+			//vat: this.refs.vat.value,
+			coupon: this.state.couponValue,
+			card: this.refs.card && this.state.card.length < 1
+				? this.refs.card.data()
+				: false,
 		});
 	}
 
@@ -122,7 +135,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			)
 			: (
 				<div>
-					<AddCard inError={false} ref="card"/>
+					<AddCard inError={this.state.inError} ref="card"/>
 					<div className="columns subscription-card-and-validation-buttons">
 						<div className="subscription-card-and-validation-switch half-column" onClick={this.addCoupon}>I have a coupon</div>
 						{(() => {
@@ -145,6 +158,10 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			</div>
 		);
 
+		const errors = this.state.errors.map((error, index) => {
+			return <FormError key={index} errorText={error} />;
+		});
+
 		if (plans[plan]) {
 
 			const {blurb} = plans[plan];
@@ -156,7 +173,8 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 					<div className="subscription-card-and-validation-legal">
 						{blurb}
 					</div>
-					<Button big label="Subscribe to prototypo" click={() => {}}/>
+					{errors}
+					<Button big label="Subscribe to prototypo" click={this.subscribe} loading={this.state.loading}/>
 				</div>
 			);
 		}
