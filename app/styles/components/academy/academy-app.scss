@@ -182,8 +182,51 @@
 }
 
 .academy-course {
+	display:flex;
+	flex-direction: row;
+
 	img {
 		max-width: 100%;
+		border-left: 8px solid $green;
+	}
+
+	h2 {
+		margin: 15px 0 0px 0;
+		padding: 15px 10px;
+		background-color: $green;
+		color: $white;
+	  	position: relative;
+		&.fixed {
+		    position: fixed;
+		    top: -15px;
+			width: 750px;
+			left: 50%;
+			transform: translateX(-50%);
+			margin-left: -23px;
+	  	}
+	}
+	&-courselist {
+		width: 250px;
+		height: 100%;
+		a {
+			display: block;
+		}
+	}
+	&-main{
+		display:flex;
+		flex-direction: row;
+		width: 950px;
+		&-content {
+			width: 750px;
+		}
+		&-basics {
+			width: 200px;
+			padding-left: 20px;
+			&.fixed {
+			    position: fixed;
+			    top: 0px;
+		  	}
+		}
 	}
 }
 

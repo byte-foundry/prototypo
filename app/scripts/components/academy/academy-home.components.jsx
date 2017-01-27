@@ -1,7 +1,8 @@
 import React from 'react';
 import {Link} from 'react-router';
+import ReactMarkdown from 'react-markdown';
 import TutorialContent from 'tutorial-content';
-import {Parser as HtmlToReactParser} from 'html-to-react';
+
 
 export default class AcademyHome extends React.PureComponent {
 	constructor(props) {
@@ -10,7 +11,6 @@ export default class AcademyHome extends React.PureComponent {
 		this.tutorials = new TutorialContent();
 	}
 	render() {
-		const htmlToReactParser = new HtmlToReactParser();
 
 		return (
 			<div className="academy-base academy-home">
@@ -32,13 +32,11 @@ export default class AcademyHome extends React.PureComponent {
 
 				{
 					this.tutorials.content.map((tutorial) => {
-						tutorial.header = `<div>
-											${tutorial.header}
-										  </div>`;
-						return(
-							<div key={tutorial.name} className="academy-course-list">
-								{htmlToReactParser.parse(tutorial.header)}
-								<div className="academy-button academy-validation-button"><Link to={`/academy/course/${tutorial.name}`} > CTA </Link></div>
+						return (
+							<div key={tutorial.title} className="academy-course-list">
+								<h2>{tutorial.title}</h2>
+								<ReactMarkdown source={tutorial.header} />
+								<div className="academy-button academy-validation-button"><Link to={`/academy/course/${tutorial.title}`} > CTA </Link></div>
 							</div>
 						);
 					})
