@@ -1,6 +1,8 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 
+import {monthlyConst, annualConst, freeConst} from '../../data/plans.data.js';
+
 import SelectWithLabel from '../shared/select-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 
@@ -52,17 +54,17 @@ export default class AccountChangePlan extends React.Component {
 	render() {
 
 		const planInfos = {
-			'free_monthly': {
-				name: 'Free subscription',
-				price: 0.00,
+			[freeConst.prefix]: {
+				name: freeConst.description,
+				price: freeConst.price,
 			},
-			'personal_monthly': {
-				name: 'Professional monthly subscription',
-				price: 15.00,
+			[monthlyConst.prefix]: {
+				name: monthlyConst.description,
+				price: monthlyConst.price,
 			},
-			'personal_annual_99': {
-				name: 'Professional annual subscription',
-				price: 144.00,
+			[annualConst.prefix]: {
+				name: annualConst.description,
+				price: annualConst.price,
 			},
 		};
 
@@ -71,9 +73,9 @@ export default class AccountChangePlan extends React.Component {
 		});
 
 		const optionPossible = [
-			{value: 'free_monthly', label: 'Free plan'},
-			{value: 'personal_monthly', label: 'Professional monthly subscription'},
-			{value: 'personal_annual_99', label: 'Professional annual subscription'},
+			{value: freeConst.prefix, label: freeConst.description},
+			{value: monthlyConst.prefix, label: monthlyConst.description},
+			{value: annualConst.prefix, label: annualConst.description},
 		];
 
 		const options = _.reject(optionPossible, (option) => {

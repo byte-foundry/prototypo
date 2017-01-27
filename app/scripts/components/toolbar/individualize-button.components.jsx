@@ -5,7 +5,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
-export default class IndividualizeButton extends React.Component {
+export default class IndividualizeButton extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -16,11 +16,21 @@ export default class IndividualizeButton extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					individualize: head.toJS().d.indivMode,
+					credits: head.toJS().d.credits,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					subscription: head.toJS().d.subscription,
 				});
 			})
 			.onDelete(() => {
@@ -33,7 +43,15 @@ export default class IndividualizeButton extends React.Component {
 	}
 
 	individualize() {
-		this.client.dispatchAction('/toggle-individualize');
+		if (this.state.credits > 0 && this.state.subscription !== undefined) {
+			this.client.dispatchAction('/toggle-individualize');
+		}
+		else {
+			window.Intercom('trackEvent', 'clickOnIndivWithoutSub');
+			this.client.dispatchAction('/store-value', {
+				openGoProModal: true,
+			});
+		}
 	}
 
 	render() {

@@ -584,7 +584,7 @@ export default {
 			});
 
 			ga('ecommerce:addItem', {
-				'id': data.id + data.plan.id,
+				'id': data.id,
 				'name': data.plan.id,    // Product name. Required.
 				'price': data.plan.id.indexOf('monthly') === -1 ? '99' : '15',
 			});

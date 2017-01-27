@@ -10,7 +10,6 @@ import LocalClient from '~/stores/local-client.stores.jsx';
 import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
-import Price from '../shared/price.components';
 
 import {
 	TopBarMenu,
@@ -44,7 +43,7 @@ export default class Topbar extends React.Component {
 		//function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
-		this.openGoProModal = this.openGoProModal.bind(this);
+		this.goToSubscribe = this.goToSubscribe.bind(this);
 		this.resetFileTutorial = this.resetFileTutorial.bind(this);
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
 		this.setPreset = this.setPreset.bind(this);
@@ -154,10 +153,12 @@ export default class Topbar extends React.Component {
 		}
 	}
 
-	openGoProModal() {
+	goToSubscribe() {
 		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
-		this.client.dispatchAction('/store-value', {openGoProModal: true});
 		Log.ui('ExportFontNow.open');
+		this.context.router.push({
+			pathname: '/account/subscribe',
+		});
 	}
 
 	resetFileTutorial(e) {
@@ -241,10 +242,10 @@ export default class Topbar extends React.Component {
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount) && (
 			<TopBarMenuButton
-				label={<span>UNLOCK ALL PARAMETERS FOR <Price amount={9} country={this.state.country} /></span>}
+				label={<span>TAKE FULL ADVANTAGE OF PROTOTYPO!</span>}
 				noHover
 				centered
-				click={this.openGoProModal}
+				click={this.goToSubscribe}
 				alignRight
 			/>
 		);
@@ -379,3 +380,7 @@ export default class Topbar extends React.Component {
 		);
 	}
 }
+
+Topbar.contextTypes = {
+	router: React.PropTypes.object.isRequired,
+};

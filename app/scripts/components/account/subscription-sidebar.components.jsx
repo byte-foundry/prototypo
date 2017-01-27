@@ -1,6 +1,8 @@
 import React from 'react';
 import {Link} from 'react-router';
 
+import {monthlyConst} from '../../data/plans.data.js';
+
 import LocalClient from '../../stores/local-client.stores.jsx';
 
 import Price from '../shared/price.components.jsx';
@@ -26,7 +28,7 @@ export default class SubscriptionSidebar extends React.Component {
 					'Full ranges for all parameters',
 					'Parameter individualization for more custom fonts',
 				],
-				cta: <span><Price amount={15} country={country}/> after the first month.</span>,
+				cta: <span><Price amount={monthlyConst.price} country={country}/> after the first month.</span>,
 				subcta: 'No commitment!',
 				link: {
 					text: 'Want Prototypo for cheap, check out our annual offer.',
