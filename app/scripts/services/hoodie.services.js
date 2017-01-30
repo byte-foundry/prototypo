@@ -196,13 +196,6 @@ export default class HoodieApi {
 	}
 }
 
-function getPlan(roles) {
-	const _roles = roles.join(',');
-
-	return _roles.indexOf('stripe:plan:') !== -1
-			&& _roles.replace(/^.*stripe:plan:(.+?)(,.*)?$/, '$1');
-}
-
 function setupHoodie(data) {
 	const response = data.response ? data.response : data;
 	const id = response.roles[0];

@@ -4,8 +4,10 @@ import Lifespan from 'lifespan';
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
+import Price from '../shared/price.components';
 
 import getCurrency from '../../helpers/currency.helpers.js';
+import HoodieApi from '../../services/hoodie.services';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -52,6 +54,17 @@ export default class SubscriptionConfirmation extends React.Component {
 			});
 	}
 
+	async componentWillUpdate(nextProps, {card, plan, coupon, totalPrice}) {
+		if (coupon && totalPrice === undefined) {
+			const invoice = await HoodieApi.getUpcomingInvoice({
+				subscription_plan: `${plan}_${getCurrency(card[0].country)}_taxfree`,
+				coupon: coupon.value,
+			});
+
+			this.setState({totalPrice: invoice.total / 100});
+		}
+	}
+
 	async componentDidMount() {
 		const prototypoStore = await this.client.fetch('/prototypoStore');
 
@@ -75,9 +88,9 @@ export default class SubscriptionConfirmation extends React.Component {
 	}
 
 	render() {
-		const {plans, plan, card, address, coupon} = this.state;
+		const {plans, plan, card, address, coupon, totalPrice} = this.state;
 		const planDescription = plans[plan] || {};
-		const currency = getCurrency(card[0].country);
+		const fullPrice = parseFloat(planDescription.amount);
 
 		const couponDom = coupon
 			? (
@@ -93,23 +106,41 @@ export default class SubscriptionConfirmation extends React.Component {
 				</div>
 			) : false;
 
-		const cardDom = card
+		const cardDom = card && card[0].last4
 			? (
-				<div>
-					<div>**** **** **** {card[0].last4}</div>
-					<div>{card[0].exp_month}/{card[0].exp_year}</div>
+				<div className="columns">
+					<div className="third-column">
+						Payment details
+					</div>
+					<div className="two-third-column">
+						<DisplayWithLabel nolabel={true}>
+							<div>
+								<div>**** **** **** {card[0].last4}</div>
+								<div>Expires on {String(card[0].exp_month).padStart(2, 0)}/{card[0].exp_year}</div>
+							</div>
+						</DisplayWithLabel>
+					</div>
 				</div>
 			)
 			: false;
 
 		const addressDom = address
 			? (
-				<div>
-					<div>{this.state.buyerName}</div>
-					<div>{address.building_number} {address.street_name}</div>
-					<div>{address.address_details}</div>
-					<div>{address.city} {address.postal_code}</div>
-					<div>{address.region} {address.country}</div>
+				<div className="columns">
+					<div className="third-column">
+						Billing address
+					</div>
+					<div className="two-third-column">
+						<DisplayWithLabel nolabel={true}>
+							<div>
+								<div>{this.state.buyerName}</div>
+								<div>{address.building_number} {address.street_name}</div>
+								<div>{address.address_details}</div>
+								<div>{address.city} {address.postal_code}</div>
+								<div>{address.region} {address.country}</div>
+							</div>
+						</DisplayWithLabel>
+					</div>
 				</div>
 			)
 			: false;
@@ -129,6 +160,13 @@ export default class SubscriptionConfirmation extends React.Component {
 			)
 			: false;
 
+		const price = coupon && totalPrice !== undefined ? totalPrice : fullPrice;
+		const originalPrice = coupon && totalPrice !== undefined && fullPrice !== price && (
+			<span className="subscription-confirmation-amount-original-price">
+				<Price amount={fullPrice} country={card[0].country} />
+			</span>
+		);
+
 		return (
 			<div className="account-base subscription-confirmation">
 				<div className="subscription-title">
@@ -138,33 +176,15 @@ export default class SubscriptionConfirmation extends React.Component {
 					<div className="third-column">
 						Amount
 					</div>
-					<div className="two-third-column">
+					<div className="two-third-column subscription-confirmation-amount">
 						<DisplayWithLabel nolabel={true}>
-							{planDescription[currency]} /{planDescription.period}
+							<Price amount={price} country={card[0].country} /> {originalPrice} / {planDescription.period}
 						</DisplayWithLabel>
 					</div>
 				</div>
 				{couponDom}
-				<div className="columns">
-					<div className="third-column">
-						Payment details
-					</div>
-					<div className="two-third-column">
-						<DisplayWithLabel nolabel={true}>
-							{cardDom}
-						</DisplayWithLabel>
-					</div>
-				</div>
-				<div className="columns">
-					<div className="third-column">
-						Billing address
-					</div>
-					<div className="two-third-column">
-						<DisplayWithLabel nolabel={true}>
-							{addressDom}
-						</DisplayWithLabel>
-					</div>
-				</div>
+				{cardDom}
+				{addressDom}
 				{vatDom}
 				<p>By clicking on "confirm subscription" you agree to prototypo's <a className="account-email" target="_blank" href="https://prototypo.io/cgu">EULA</a></p>
 				{this.state.errors.map((error, id) => {

@@ -10,6 +10,7 @@ import LocalClient from '~/stores/local-client.stores.jsx';
 import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
+import Price from '../shared/price.components';
 
 import {
 	TopBarMenu,
@@ -36,6 +37,7 @@ export default class Topbar extends React.Component {
 			plan: undefined,
 			creditChoices: undefined,
 			presets: null,
+			country: 'US',
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -116,6 +118,13 @@ export default class Topbar extends React.Component {
 
 	componentWillUnmount() {
 		this.lifespan.release();
+	}
+
+	async componentDidMount() {
+		const response = await fetch('//freegeoip.net/json/');
+		const data = await response.json();
+
+		this.setState({country: data.country_code});
 	}
 
 	logout() {
@@ -230,8 +239,15 @@ export default class Topbar extends React.Component {
 			);
 		const creditExportLabel = !!this.state.credits
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
-		const callToAction = !(freeAccountAndHasCredits || !freeAccount)
-			&& <TopBarMenuButton label="UNLOCK ALL PARAMETERS FOR $9" noHover centered click={this.openGoProModal} alignRight/>;
+		const callToAction = !(freeAccountAndHasCredits || !freeAccount) && (
+			<TopBarMenuButton
+				label={<span>UNLOCK ALL PARAMETERS FOR <Price amount={9} country={this.state.country} /></span>}
+				noHover
+				centered
+				click={this.openGoProModal}
+				alignRight
+			/>
+		);
 
 			/*const presetSubMenu = this.state.presets
 			? (
