@@ -11,6 +11,7 @@ export default class CanvasGlyphInput extends React.PureComponent {
 		super(props);
 		this.state = {
 			mode: [],
+			inputError: false,
 		};
 		this.handleKeyPress = this.handleKeyPress.bind(this);
 		this.setupGlyphAccess = this.setupGlyphAccess.bind(this);
@@ -25,6 +26,7 @@ export default class CanvasGlyphInput extends React.PureComponent {
 			.onUpdate((head) => {
 				this.setState({
 					selected: head.toJS().d.glyphSelected,
+					glyphs: head.toJS().d.glyphs,
 					mode: head.toJS().d.uiMode,
 					focused: head.toJS().d.glyphFocused,
 				});
@@ -40,10 +42,15 @@ export default class CanvasGlyphInput extends React.PureComponent {
 		if (this.state.focused) {
 			e.preventDefault();
 			e.stopPropagation();
-
-			this.client.dispatchAction('/select-glyph', {
-				unicode: `${e.charCode}`,
-			});
+			if (this.state.glyphs.hasOwnProperty(e.charCode)) {
+				this.client.dispatchAction('/select-glyph', {
+					unicode: `${e.charCode}`,
+				});
+			}
+			else {
+				this.setState({inputError: true});
+				setTimeout(() => { this.setState({inputError: false}); }, 200);
+			}
 		}
 	}
 
@@ -80,6 +87,7 @@ export default class CanvasGlyphInput extends React.PureComponent {
 		const classes = classNames({
 			'canvas-glyph-input-input': true,
 			'is-active': this.state.focused,
+			'is-error': this.state.inputError,
 		});
 
 		return (
