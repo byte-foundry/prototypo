@@ -1,6 +1,7 @@
 import {hashHistory} from 'react-router';
 import Lifespan from 'lifespan';
 import debounce from 'lodash/debounce';
+import vatrates from 'vatrates';
 
 import {userStore, couponStore, prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
@@ -83,11 +84,12 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 					vat_number: vat || infos.vat, // Quaderno way of reading VAT
 				},
 			})
-			.then(() => {
+			.then((response) => {
+				/* DEPRECATED Backward compatibility, should be removed when every component uses the cards property in userStore */
 				infos.card = [data.card];
 				infos.vat = vat || infos.vat;
 				form.loading = false;
-				const patch = userStore.set('infos', infos).set('addcardForm', form).commit();
+				const patch = userStore.set('infos', infos).set('cards', response.sources.data).set('addcardForm', form).commit();
 
 				localServer.dispatchUpdate('/userStore', patch);
 
@@ -109,7 +111,7 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 	});
 }
 
-function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency, vat}) {
+function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 	const form = userStore.get('buyCreditsForm');
 
 	form.errors = [];
@@ -152,6 +154,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 				return localServer.dispatchUpdate('/userStore', patch);
 			}
 
+			const currency = data.card.country in vatrates ? 'EUR' : 'USD';
 			const infos = userStore.get('infos') || {};
 			const item = {
 				type: 'sku',
@@ -171,7 +174,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, currency,
 
 			HoodieApi.buyCredits({
 				token: data.id,
-				currency: currency === 'EUR' ? 'EUR' : 'USD',
+				currency,
 				items: [item],
 			})
 			.then(({metadata: {credits}}) => {
@@ -292,20 +295,23 @@ export default {
 	'/load-customer-data': ({sources, subscriptions, metadata}) => {
 		const infos = _.cloneDeep(userStore.get('infos'));
 
+		/* DEPRECATED: Backward compatibility, should be removed when every component uses the cards property in userStore */
 		if (sources && sources.data.length > 0) {
 			infos.card = sources.data;
 		}
+		/* DEPRECATED: Backward compatibility, should be removed when every component uses the subscription property in userStore */
 		if (subscriptions && subscriptions.data.length > 0) {
 			infos.subscriptions = subscriptions.data;
 		}
 
-		if (metadata && metadata.credits) {
-			const credits = parseInt(metadata.credits, 10);
-			const creditPatch = prototypoStore.set('credits', credits).commit();
-			localServer.dispatchUpdate('/userStore', creditPatch);
-		}
-
 		const patch = userStore.set('infos', infos).commit();
+		const subscriptionPatch = userStore.set('subscription', subscriptions.data[0]).commit();
+		const cardsPatch = userStore.set('cards', sources.data).commit();
+		const creditsPatch = prototypoStore.set('credits', parseInt(metadata.credits, 10) || 0).commit();
+
+		localServer.dispatchUpdate('/userStore', subscriptionPatch);
+		localServer.dispatchUpdate('/userStore', cardsPatch);
+		localServer.dispatchUpdate('/prototypoStore', creditsPatch);
 		localServer.dispatchUpdate('/userStore', patch);
 	},
 	'/load-customer-invoices': async () => {
@@ -474,7 +480,7 @@ export default {
 
 		const curedLastname = lastname ? ` ${lastname}` : '';
 
-		HoodieApi.signUp(username, password)
+		HoodieApi.signUp(username.toLowerCase(), password)
 			.then(({response}) => {
 
 				window.Intercom('boot', {

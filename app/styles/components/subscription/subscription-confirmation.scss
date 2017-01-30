@@ -1,0 +1,10 @@
+@import "../../variables";
+
+.subscription-confirmation {
+	&-amount {
+		&-original-price {
+			text-decoration: line-through;
+			color: $light-grey;
+		}
+	}
+}

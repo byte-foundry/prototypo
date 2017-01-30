@@ -42,6 +42,10 @@
 				color: $theme-color;
 				background-color: $theme-background;
 				border-color: $theme-background;
+				transition-duration: .2s;
+			}
+			&.is-error {
+				background-color: $red;
 			}
 		}
 	}
