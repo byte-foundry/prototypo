@@ -36,7 +36,7 @@ export default class AcademyHome extends React.PureComponent {
 							<div key={tutorial.title} className="academy-course-list">
 								<h2>{tutorial.title}</h2>
 								<ReactMarkdown source={tutorial.header} />
-								<div className="academy-button academy-validation-button"><Link to={`/academy/course/${tutorial.title}`} > CTA </Link></div>
+								<div className="academy-button academy-validation-button"><Link to={`/academy/course/${tutorial.slug}`} > CTA </Link></div>
 							</div>
 						);
 					})

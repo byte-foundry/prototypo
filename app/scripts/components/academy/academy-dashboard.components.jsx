@@ -16,7 +16,7 @@ export default class AcademyDashboard extends React.Component {
 		};
 
 		this.tutorials.content.map((tutorial) => {
-			titles[tutorial.title] = tutorial.title;
+			titles[tutorial.slug] = tutorial.title;
 		});
 
 		const backlinks = {

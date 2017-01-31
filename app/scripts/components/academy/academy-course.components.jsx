@@ -9,22 +9,47 @@ export default class AcademyCourse extends React.PureComponent {
 		super(props);
 		this.state = {
 			headers: [],
-			basics: {},
 		};
-		this.courseName = this.props.params.courseName;
+		this.courseSlug = this.props.params.courseSlug;
 		this.tutorials = new TutorialContent();
 		this.stickyLevelTwo = this.stickyLevelTwo.bind(this);
 		this.handleScroll = this.handleScroll.bind(this);
+		this.bindData = this.bindData.bind(this);
 	}
 
 	componentDidMount() {
+		this.bindData();
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('scroll', this.handleScroll.bind(this), true);
+	}
+
+	componentDidUpdate(prevProps) {
+		if (prevProps.params.courseSlug !== this.props.params.courseSlug) {
+			window.removeEventListener('scroll', this.handleScroll.bind(this), true);
+			this.courseSlug = this.props.params.courseSlug;
+			this.bindData();
+		}
+	}
+
+	getCoreProps(props) {
+		return {
+			'key': props.nodeKey,
+			'data-sourcepos': props['data-sourcepos'],
+		};
+	}
+
+	bindData() {
 		findDOMNode(this).scrollIntoView();
 		const course = this.tutorials.content.find((tutorial) => {
-			return tutorial.title === this.courseName;
+			return tutorial.slug === this.courseSlug;
 		});
 		const parts = course.content.split("## ");
 		const headers = [];
-		const basics = {
+		let basics = {};
+
+		basics = {
 			elem: findDOMNode(this.refs.academyCourseBasics),
 			content: findDOMNode(this.refs.academyCourseContent),
 			offset: findDOMNode(this.refs.academyCourseBasics).getBoundingClientRect().top,
@@ -40,17 +65,6 @@ export default class AcademyCourse extends React.PureComponent {
 		});
 		this.setState({headers, basics});
 		window.addEventListener('scroll', this.handleScroll.bind(this), true);
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener('scroll', this.handleScroll.bind(this), true);
-	}
-
-	getCoreProps(props) {
-		return {
-			'key': props.nodeKey,
-			'data-sourcepos': props['data-sourcepos'],
-		};
 	}
 
 	handleScroll(event) {
@@ -112,7 +126,7 @@ export default class AcademyCourse extends React.PureComponent {
 			Heading: this.stickyLevelTwo,
 		};
 		const course = this.tutorials.content.find((tutorial) => {
-			return tutorial.title === this.courseName;
+			return tutorial.slug === this.courseSlug;
 		});
 		const parts = course.content.split("## ");
 
@@ -122,6 +136,19 @@ export default class AcademyCourse extends React.PureComponent {
 			}
 		});
 
+		const basics = course.basics.length > 0 ? (
+			<div>
+				<h3>Basics</h3>
+				<ul>
+					{course.basics.map((basic) => {
+						return (
+							<li><Link to={`/academy/course/${basic.slug}`} > {basic.title} </Link></li>
+						);
+					})}
+				</ul>
+			</div>
+		) : null;
+
 		return(
 			<div key={this.courseName} className="academy-base academy-course" ref="academyCoursePage">
 				<div className="academy-course-courselist">
@@ -129,7 +156,7 @@ export default class AcademyCourse extends React.PureComponent {
 					{
 						this.tutorials.content.map((tutorial) => {
 							return (
-								<Link to={`/academy/course/${tutorial.title}`} > {tutorial.title} </Link>
+								<Link to={`/academy/course/${tutorial.slug}`} > {tutorial.title} </Link>
 							);
 						})
 					}
@@ -143,15 +170,7 @@ export default class AcademyCourse extends React.PureComponent {
 						})}
 					</div>
 					<div className="academy-course-main-basics" ref="academyCourseBasics">
-						<h3>Basics</h3>
-						<ul>
-							<li>Blabla</li>
-							<li>Blabla</li>
-							<li>Blabla</li>
-							<li>Blabla</li>
-							<li>Blabla</li>
-							<li>Blabla</li>
-						</ul>
+						{basics}
 					</div>
 				</div>
 

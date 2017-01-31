@@ -435,7 +435,7 @@ selectRenderOptions(
 							<Route component={AcademyDashboard} path="home" name="home" onEnter={redirectToLogin}>
 								<IndexRoute component={AcademyHome}/>
 							</Route>
-							<Route path="course/:courseName" component={AcademyDashboard} name="course" onEnter={redirectToLogin}>
+							<Route path="course/:courseSlug" component={AcademyDashboard} name="course" onEnter={redirectToLogin}>
 								<IndexRoute component={AcademyCourse}/>
 							</Route>
 						</Route>
