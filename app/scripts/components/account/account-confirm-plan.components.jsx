@@ -57,6 +57,10 @@ export default class AccountConfirmPlan extends React.Component {
 	}
 
 	confirmPlanChange() {
+		window.Intercom('trackEvent', 'change-plan-confirm', {
+			plan: this.state.plan,
+		});
+
 		this.client.dispatchAction('/confirm-buy', {
 			plan: this.state.plan,
 			currency: this.state.currency,
