@@ -7,10 +7,12 @@ module.exports = {
 	'if-loader': 'prod',
 	entry: {
 		bundle: [
+			'whatwg-fetch',
 			'babel-polyfill',
 			'./app/scripts/main',
 		],
 		'web-import': [
+			'whatwg-fetch',
 			'babel-polyfill',
 			'./app/scripts/web-import.js',
 		],

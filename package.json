@@ -40,6 +40,7 @@
     "slug": "^0.9.1",
     "tether": "^1.1.0",
     "venus.ptf": "byte-foundry/venus.ptf#master",
+    "whatwg-fetch": "^0.9.0",
     "xxhashjs": "^0.1.1"
   },
   "devDependencies": {
