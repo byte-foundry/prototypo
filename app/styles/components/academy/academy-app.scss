@@ -149,15 +149,21 @@
 	min-width: 120px;
 	display:block;
 	font-size: 18px;
-	padding: 3px 30px;
+	padding: 15px;
+	outline: none;
+	border:none;
+	font-weight:600;
 	border-radius: 5px;
 	margin-top: 20px;
 	margin-bottom: 40px;
 	cursor:pointer;
+	float: right;
+	text-align: center;
 
 	&.inline {
 		display:inline-block;
 		margin-left: 15px;
+		float: inherit;
 	}
 
 	&:hover {

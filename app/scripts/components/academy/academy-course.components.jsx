@@ -139,13 +139,11 @@ export default class AcademyCourse extends React.PureComponent {
 		const basics = course.basics.length > 0 ? (
 			<div>
 				<h3>Basics</h3>
-				<ul>
-					{course.basics.map((basic) => {
-						return (
-							<li><Link to={`/academy/course/${basic.slug}`} > {basic.title} </Link></li>
-						);
-					})}
-				</ul>
+				{course.basics.map((basic) => {
+					return (
+						<Link className="academy-sidebar-menu-item" to={`/academy/course/${basic.slug}`} > {basic.title} </Link>
+					);
+				})}
 			</div>
 		) : null;
 
@@ -156,7 +154,8 @@ export default class AcademyCourse extends React.PureComponent {
 					{
 						this.tutorials.content.map((tutorial) => {
 							return (
-								<Link to={`/academy/course/${tutorial.slug}`} > {tutorial.title} </Link>
+								<Link className={`academy-sidebar-menu-item ${tutorial.slug === this.courseSlug ? 'is-active' : ''}`}
+									to={`/academy/course/${tutorial.slug}`} > {tutorial.title} </Link>
 							);
 						})
 					}

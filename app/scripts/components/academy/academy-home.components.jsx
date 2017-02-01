@@ -24,11 +24,11 @@ export default class AcademyHome extends React.PureComponent {
 				<p>
 					<center>
 						Just getting started with prototypo ?
-						<div className="academy-button inline academy-validation-button">Take our intro course</div>
+						<div className="academy-button inline">Take our intro course</div>
 					</center>
 				</p>
 
-				<h2>Course list</h2>
+				<h1>Course list</h1>
 
 				{
 					this.tutorials.content.map((tutorial) => {
