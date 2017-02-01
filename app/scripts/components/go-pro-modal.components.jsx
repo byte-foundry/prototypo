@@ -72,7 +72,7 @@ export default class GoProModal extends React.PureComponent {
 						</div>
 						<div className="go-pro-choice go-pro-credits" onClick={this.goCredits}>
 							<div className="buy-credits-big"></div>
-							<h2 className="go-pro-choice-title">Buy 5 export credits for <Price amount={5} country={country} />!</h2>
+							<h2 className="go-pro-choice-title">Buy 3 export credits for <Price amount={9} country={country} />!</h2>
 							<p className="go-pro-choice-subtitle">You are free to use these credits as you like. <br/>No time limit.</p>
 							<p><span className="go-pro-choice-plan-title">Exporting one font cost 1 credits.</span></p>
 						</div>

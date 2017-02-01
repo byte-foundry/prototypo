@@ -3,7 +3,7 @@ language: node_js
 node_js:
 - '6.3'
 before_install:
-- npm install -g uglifyjs
+- npm install -g netlify-cli
 after_install:
 - npm dedupe
 - npm shrinkwrap --dev
@@ -11,15 +11,12 @@ after_install:
 script:
 - gulp build --type=prod
 after_success:
-- 'uglifyjs dist/bundle.js -o dist/bundle.js --in-source-map dist/bundle.js.map --source-map-url bundle.js.map --source-map dist/bundle.js.map'
-- '[ $TRAVIS_BRANCH == master ] && surge --project ./dist --domain app.prototypo.io'
-- '[ $TRAVIS_BRANCH == release ] && surge --project ./dist --domain beta.prototypo.io'
-- '[ $TRAVIS_BRANCH == develop ] && surge --project ./dist --domain dev.prototypo.io'
+- '[ $TRAVIS_BRANCH == master ] && netlify -t $NETLIFY_TOKEN deploy -p ./dist -s 0ea6bba4-adc8-4e60-b9a3-ebd316982361'
+- '[ $TRAVIS_BRANCH == release ] && netlify -t $NETLIFY_TOKEN deploy -p ./dist -s bf5c3b47-9793-4316-b19f-4c18ef1a1e02'
 - '[ $TRAVIS_BRANCH == feat/new-ux ] && surge --project ./dist --domain sandbox1.prototypo.io'
 branches:
   only:
     - master
-    - develop
     - release
     - feat/new-ux
 notifications:
