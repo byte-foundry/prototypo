@@ -10,6 +10,14 @@ a.academy-link {
 
 .academy {
 
+	&.modal-container-title{
+		margin-top: 20px;
+		margin-bottom: 0px;
+	}
+	&.modal-container-content {
+		padding-top: 5px;
+	}
+
 	&-block {
 
 		margin-bottom: 50px;

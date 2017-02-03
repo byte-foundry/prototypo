@@ -44,7 +44,9 @@ export default class AcademyModal extends React.Component {
 
 		return (
 			<div className="container">
-				<p>Coucou</p>
+				<p>Hey there! <br/>
+				Do you want to learn how to use Prototypo? Don't worry, we've set up a serie of courses just for you.</p>
+				<br/>
 				<div className="action-form-buttons">
 					<Button click={(e) => {this.exit(e);} } label="No thanks, I know what I'm doing" neutral={true}/>
 					<Button click={(e) => {this.showAcademy(e);} } label="Sure, let's go ahead!"/>

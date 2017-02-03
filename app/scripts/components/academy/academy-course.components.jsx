@@ -3,26 +3,38 @@ import {Link} from 'react-router';
 import TutorialContent from 'tutorial-content';
 import ReactMarkdown from 'react-markdown';
 import {findDOMNode} from 'react-dom';
+import LocalClient from '../../stores/local-client.stores.jsx';
+import Lifespan from 'lifespan';
 
 export default class AcademyCourse extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {
-			headers: [],
-		};
+		this.state = {};
 		this.courseSlug = this.props.params.courseSlug;
 		this.tutorials = new TutorialContent();
-		this.stickyLevelTwo = this.stickyLevelTwo.bind(this);
+		this.headerRenderer = this.headerRenderer.bind(this);
 		this.handleScroll = this.handleScroll.bind(this);
 		this.bindData = this.bindData.bind(this);
+		this.isPartRead = this.isPartRead.bind(this);
+		this.areAllPartsRead = this.areAllPartsRead.bind(this);
+		this.createCourseProgress = this.createCourseProgress.bind(this);
+		this.getNextCourse = this.getNextCourse.bind(this);
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					academyProgress: head.toJS().d.infos.academyProgress || {},
+				});
+			});
 	}
 
 	componentDidMount() {
 		this.bindData();
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener('scroll', this.handleScroll.bind(this), true);
 	}
 
 	componentDidUpdate(prevProps) {
@@ -33,54 +45,16 @@ export default class AcademyCourse extends React.PureComponent {
 		}
 	}
 
+	componentWillUnmount() {
+		window.removeEventListener('scroll', this.handleScroll.bind(this), true);
+		this.lifespan.release();
+	}
+
 	getCoreProps(props) {
 		return {
 			'key': props.nodeKey,
 			'data-sourcepos': props['data-sourcepos'],
 		};
-	}
-
-	bindData() {
-		findDOMNode(this).scrollIntoView();
-		const course = this.tutorials.content.find((tutorial) => {
-			return tutorial.slug === this.courseSlug;
-		});
-		const parts = course.content.split("## ");
-		const headers = [];
-		let basics = {};
-
-		basics = {
-			elem: findDOMNode(this.refs.academyCourseBasics),
-			content: findDOMNode(this.refs.academyCourseContent),
-			offset: findDOMNode(this.refs.academyCourseBasics).getBoundingClientRect().top,
-		};
-
-		parts.map((part, index) => {
-			if (index !== 0) {
-				headers.push({
-					elem: findDOMNode(this.refs[`part${index + 1}`]).querySelector('h2'),
-					offset: findDOMNode(this.refs[`part${index + 1}`]).querySelector('h2').getBoundingClientRect().top,
-				});
-			}
-		});
-		this.setState({headers, basics});
-		window.addEventListener('scroll', this.handleScroll.bind(this), true);
-	}
-
-	handleScroll(event) {
-		this.state.headers.map((header) => {
-			event.target.scrollTop - 200 >= header.offset ? header.elem.classList.add('fixed')
-                              : header.elem.classList.remove('fixed');
-		});
-		if (event.target.scrollTop - 200 >= this.state.basics.offset) {
-			this.state.basics.elem.style.left = `${this.refs.academyCourseContent.getBoundingClientRect().right}px`;
-			this.state.basics.elem.classList.add('fixed');
-			this.state.basics.content.style.marginRight = '200px';
-		}
-		else {
-			this.state.basics.elem.classList.remove('fixed');
-			this.state.basics.content.style.marginRight = 'inherit';
-		}
 	}
 
 	reduceChildren(children, child) {
@@ -102,16 +76,71 @@ export default class AcademyCourse extends React.PureComponent {
 		return React.createElement(...args);
 	}
 
-	stickyLevelTwo(props) {
+	bindData() {
+		findDOMNode(this).scrollIntoView();
+		const course = this.tutorials.content.find((tutorial) => {
+			return tutorial.slug === this.courseSlug;
+		});
+		const parts = course.content.split("## ");
+		const headers = [];
+		let basics = {};
+
+		basics = {
+			elem: findDOMNode(this.refs.academyCourseBasics),
+			content: findDOMNode(this.refs.academyCourseContent),
+			offset: findDOMNode(this.refs.academyCourseBasics).getBoundingClientRect().top,
+		};
+
+		parts.map((part, index) => {
+			if (index !== 0) {
+				headers.push({
+					elem: findDOMNode(this.refs[`part${index + 1}`]).querySelector('.title'),
+					offset: findDOMNode(this.refs[`part${index + 1}`]).querySelector('.title').getBoundingClientRect().top,
+					content: findDOMNode(this.refs[`part${index + 1}`]).querySelector('.title').textContent,
+				});
+			}
+		});
+		this.setState({...this.state, headers, basics});
+		if (!this.state.academyProgress || !(this.state.academyProgress[this.courseSlug])) {
+			this.createCourseProgress(headers.length);
+		}
+		window.addEventListener('scroll', this.handleScroll.bind(this), true);
+	}
+
+	handleScroll(event) {
+		this.state.headers.map((header) => {
+			event.target.scrollTop - 200 >= header.offset ? header.elem.classList.add('fixed')
+                              : header.elem.classList.remove('fixed');
+		});
+		if (event.target.scrollTop - 200 >= this.state.basics.offset) {
+			this.state.basics.elem.style.left = `${this.refs.academyCourseContent.getBoundingClientRect().right}px`;
+			this.state.basics.elem.classList.add('fixed');
+			this.state.basics.content.style.marginRight = '200px';
+		}
+		else {
+			this.state.basics.elem.classList.remove('fixed');
+			this.state.basics.content.style.marginRight = 'inherit';
+		}
+	}
+
+	headerRenderer(props) {
 		if (props.level === 2) {
 			const levelTwoProps = {
 				'key': props.nodeKey,
 				'data-sourcepos': props['data-sourcepos'],
-				'className': '',
 			};
 
 			return(
-					<h2 {...levelTwoProps}>{props.children}</h2>
+					<div className="title" {...levelTwoProps}>
+						<input type="checkbox"
+							id={`${this.courseSlug}-${props.children}`}
+							name={`${this.courseSlug}-${props.children}`}
+							checked={this.isPartRead(props.children)}
+							key={`${this.courseSlug}-${props.children}`}
+							onChange={() => {this.markAsRead(props.children);}}
+							/>
+						<label htmlFor={`${this.courseSlug}-${props.children}`}><span></span>{props.children}</label>
+					</div>
 			);
 		}
 		else {
@@ -121,9 +150,42 @@ export default class AcademyCourse extends React.PureComponent {
 		}
 	}
 
+	createCourseProgress(courseLength) {
+		this.client.dispatchAction('/create-course-progress', {course: this.courseSlug, partCount: courseLength});
+	}
+
+	markAsRead(part) {
+		if (!this.isPartRead(part)) {
+			this.client.dispatchAction('/mark-part-as-read', {course: this.courseSlug, part: part[0]});
+		}
+	}
+
+	isPartRead(part) {
+		return (
+			this.state.academyProgress
+			&& this.state.academyProgress[this.courseSlug]
+			&& this.state.academyProgress[this.courseSlug].parts.find((coursePart) => {
+			return coursePart === part[0];
+		}));
+	}
+
+	areAllPartsRead() {
+		return (
+			this.state.academyProgress
+			&& this.state.academyProgress[this.courseSlug]
+			&& this.state.academyProgress[this.courseSlug].partCount === this.state.academyProgress[this.courseSlug].parts.length
+		);
+	}
+
+	getNextCourse() {
+		return this.tutorials.content[this.tutorials.content.findIndex((tutorial) => {
+			return tutorial.slug === this.courseSlug;
+		}) + 1];
+	}
+
 	render() {
 		const renderers = {
-			Heading: this.stickyLevelTwo,
+			Heading: this.headerRenderer,
 		};
 		const course = this.tutorials.content.find((tutorial) => {
 			return tutorial.slug === this.courseSlug;
@@ -167,6 +229,27 @@ export default class AcademyCourse extends React.PureComponent {
 									<ReactMarkdown source={part} renderers={renderers} ref={`part${index + 1}`}/>
 							);
 						})}
+						{
+							this.areAllPartsRead() && this.getNextCourse()
+							? (
+								<div>Good Job, you ve read everything here!
+								<br/>
+								The next course is : {this.getNextCourse().title}.
+								<div className="academy-button academy-validation-button"><Link to={`/academy/course/${this.getNextCourse().slug}`} > Check it out ! </Link></div>
+								</div>
+							)
+							: false
+						}
+						{
+							this.areAllPartsRead() && !this.getNextCourse()
+							? (
+								<div>Good Job, you ve read everything here!
+								<br/>
+								We don t have any more course to offer, stay tuned for more!
+								</div>
+							)
+							: false
+						}
 					</div>
 					<div className="academy-course-main-basics" ref="academyCourseBasics">
 						{basics}

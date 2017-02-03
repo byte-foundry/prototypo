@@ -10,8 +10,8 @@ export default class CreateAcademyModal extends React.PureComponent {
 	render() {
 		return (
 			<Modal propName={this.props.propName}>
-				<div className="modal-container-title academy">Add variant</div>
-				<div className="modal-container-content">
+				<div className="modal-container-title academy">Check out the academy!</div>
+				<div className="modal-container-content academy">
 					<AcademyModal/>
 				</div>
 			</Modal>

@@ -186,6 +186,8 @@ export default class Topbar extends React.PureComponent {
 	}
 
 	resetFirstTimeAcademy() {
+		//debugging purposes only, to be removed ASAP
+		this.client.dispatchAction('/remove-all-progress', {});
 		this.client.dispatchAction('/store-value', {firstTimeAcademyModal: true});
 		this.client.dispatchAction('/store-value', {firstTimeAcademyJoyride: true});
 	}
