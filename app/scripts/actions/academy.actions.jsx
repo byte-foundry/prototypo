@@ -15,6 +15,7 @@ export default {
 
 		academyProgress[course] ? academyProgress[course].parts.push(part) : academyProgress[course] = {
 			parts: [part],
+			partCount: 1,
 			rewarded: false,
 		};
 		_infos = {
@@ -41,6 +42,7 @@ export default {
 			..._infos,
 			academyProgress,
 		};
+		console.log(academyProgress);
 		const patch = userStore.set('infos', _infos).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);

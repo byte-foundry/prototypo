@@ -75,6 +75,28 @@
 			}
 		}
 
+		&-academy {
+			&-img {
+				width:23px;
+				margin-right: 10px;
+			}
+			&-part {
+				display: inline-block;
+				width: 18px;
+				height: 18px;
+				border-radius: 50%;
+				margin-left: 3px;
+				margin-right: 3px;
+				background-color: $black;
+				border: 2px solid $light-grey;
+				&.completed {
+					background-color: $white;
+					border-color: $white;
+
+				}
+			}
+		}
+
 		&.is-icon-menu {
 			padding:0;
 			min-width: 35px;
@@ -183,6 +205,16 @@
 			@include themify() {
 				background-color: $theme-background;
 				color: $theme-color;
+			}
+		}
+
+		&:hover &-academy-part {
+			@include themify() {
+				background-color: $theme-background;
+				border-color: $theme-color;
+				&.completed {
+					background-color: $theme-color;
+				}
 			}
 		}
 

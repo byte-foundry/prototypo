@@ -358,6 +358,28 @@ class TopBarMenuDropdownItem extends React.PureComponent {
 	}
 }
 
+class TopBarMenuAcademy extends React.PureComponent {
+	static getHeader(props) {
+		return (
+			<div className="top-bar-menu-item-academy">
+				<img className="top-bar-menu-item-academy-img" src="assets/images/graduate-cap.svg"/>
+				<span className="top-bar-menu-item-academy-part completed"></span>
+				<span className="top-bar-menu-item-academy-part completed"></span>
+				<span className="top-bar-menu-item-academy-part"></span>
+				<span className="top-bar-menu-item-academy-part"></span>
+				<span className="top-bar-menu-item-academy-part"></span>
+			</div>
+		);
+	}
+
+	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] topbarmenuacademy');
+		}
+		return false;
+	}
+}
+
 class TopBarMenuIcon extends React.PureComponent {
 
 	static getHeader(props) {
@@ -387,4 +409,5 @@ export {
 	TopBarMenuIcon,
 	TopBarMenuLink,
 	TopBarMenuButton,
+	TopBarMenuAcademy,
 };

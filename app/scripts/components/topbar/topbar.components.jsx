@@ -19,6 +19,7 @@ import {
 	TopBarMenuIcon,
 	TopBarMenuLink,
 	TopBarMenuButton,
+	TopBarMenuAcademy,
 } from './top-bar-menu.components.jsx';
 import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components.jsx';
 
@@ -31,6 +32,7 @@ export default class Topbar extends React.PureComponent {
 			eventList: [],
 			mode: [],
 			export: false,
+			academyProgress: {},
 			errorExport: false,
 			credits: undefined,
 			plan: undefined,
@@ -53,6 +55,13 @@ export default class Topbar extends React.PureComponent {
 	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					academyProgress: head.toJS().d.infos.academyProgress || {},
+				});
+			});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
@@ -263,6 +272,12 @@ export default class Topbar extends React.PureComponent {
 			/>
 		);
 
+		const academyProgress = Object.keys(this.state.academyProgress).length >= 1 && (
+			<TopBarMenuAcademy
+
+			/>
+		);
+
 			/*const presetSubMenu = this.state.presets
 			? (
 				<TopBarMenuDropdownItem name="Choose a preset ...">
@@ -385,6 +400,7 @@ export default class Topbar extends React.PureComponent {
 						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={(e) => { this.resetIndivTutorial(e); }}/>
 						<TopBarMenuDropdownItem name="Reset firstTimeAcademy" handler={(e) => { this.resetFirstTimeAcademy(e); }}/>
 					</TopBarMenuDropdown>
+					{academyProgress}
 					{exporting}
 					{errorExporting}
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
