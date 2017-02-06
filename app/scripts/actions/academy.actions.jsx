@@ -13,11 +13,13 @@ export default {
 		let _infos = _.cloneDeep(userStore.get('infos'));
 		const academyProgress = _infos.academyProgress || {};
 
-		academyProgress[course] ? academyProgress[course].parts.push(part) : academyProgress[course] = {
-			parts: [part],
-			partCount: 1,
-			rewarded: false,
-		};
+		const readPart = academyProgress[course].parts.find((elem) => {
+			return elem.name === part;
+		});
+
+		readPart.completed = true;
+
+		academyProgress.lastCourse = course;
 		_infos = {
 			..._infos,
 			academyProgress,
@@ -27,14 +29,13 @@ export default {
 		localServer.dispatchUpdate('/userStore', patch);
 		//saveAppValues(appValuesLoaded);
 	},
-	'/create-course-progress': ({course, partCount}) => {
+	'/create-course-progress': ({course, parts}) => {
 		let _infos = _.cloneDeep(userStore.get('infos'));
 		const academyProgress = _infos.academyProgress || {};
 
 		if (!academyProgress[course]) {
 			academyProgress[course] = {
-				parts: [],
-				partCount,
+				parts,
 				rewarded: false,
 			};
 		}
@@ -42,7 +43,6 @@ export default {
 			..._infos,
 			academyProgress,
 		};
-		console.log(academyProgress);
 		const patch = userStore.set('infos', _infos).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);

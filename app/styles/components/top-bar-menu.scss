@@ -82,11 +82,10 @@
 			}
 			&-part {
 				display: inline-block;
-				width: 18px;
-				height: 18px;
+				width: 15px;
+				height: 15px;
 				border-radius: 50%;
-				margin-left: 3px;
-				margin-right: 3px;
+				margin: 5px 3px 5px 3px;
 				background-color: $black;
 				border: 2px solid $light-grey;
 				&.completed {

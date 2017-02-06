@@ -272,9 +272,9 @@ export default class Topbar extends React.PureComponent {
 			/>
 		);
 
-		const academyProgress = Object.keys(this.state.academyProgress).length >= 1 && (
+		const academyProgress = this.state.academyProgress.lastCourse && (
 			<TopBarMenuAcademy
-
+				parts={this.state.academyProgress[this.state.academyProgress.lastCourse].parts}
 			/>
 		);
 

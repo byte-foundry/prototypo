@@ -101,8 +101,9 @@ export default class AcademyCourse extends React.PureComponent {
 			}
 		});
 		this.setState({...this.state, headers, basics});
+
 		if (!this.state.academyProgress || !(this.state.academyProgress[this.courseSlug])) {
-			this.createCourseProgress(headers.length);
+			this.createCourseProgress();
 		}
 		window.addEventListener('scroll', this.handleScroll.bind(this), true);
 	}
@@ -150,8 +151,33 @@ export default class AcademyCourse extends React.PureComponent {
 		}
 	}
 
-	createCourseProgress(courseLength) {
-		this.client.dispatchAction('/create-course-progress', {course: this.courseSlug, partCount: courseLength});
+	createCourseProgress() {
+		let academyProgress = this.state.academyProgress || {};
+
+		this.tutorials.content.map((tutorial) => {
+			const parts = [];
+
+			tutorial.content.split("## ").map((value, index) => {
+				if (index !== 0) {
+					parts.push({
+						name: value.split(/\r\n|\r|\n/g)[0],
+						completed: false,
+					});
+				}
+			});
+			this.client.dispatchAction(
+				'/create-course-progress',
+				{
+					course: tutorial.slug,
+					parts,
+				}
+			);
+			academyProgress[tutorial.slug] = {
+				parts,
+				rewarded: false,
+			};
+		});
+		this.setState({academyProgress});
 	}
 
 	markAsRead(part) {
@@ -170,10 +196,16 @@ export default class AcademyCourse extends React.PureComponent {
 	}
 
 	areAllPartsRead() {
+		if (!this.state.academyProgress) {
+			return false;
+		}
+
+		const partsDone = this.state.academyProgress[this.courseSlug].parts.find((part) => {
+			return part.completed === true;
+		}) || 0;
+
 		return (
-			this.state.academyProgress
-			&& this.state.academyProgress[this.courseSlug]
-			&& this.state.academyProgress[this.courseSlug].partCount === this.state.academyProgress[this.courseSlug].parts.length
+			partsDone === this.state.academyProgress[this.courseSlug].parts.length
 		);
 	}
 

@@ -17,7 +17,7 @@ export default class AcademyHome extends React.PureComponent {
 		this.getPartsDone = this.getPartsDone.bind(this);
 	}
 	componentWillMount() {
-		let academyProgress = {};
+		let academyProgress = this.state.academyProgress || {};
 
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
@@ -32,37 +32,48 @@ export default class AcademyHome extends React.PureComponent {
 		// Get title, header and slug
 		// Get part count from progress or init the progress
 		this.tutorials.content.map((tutorial) => {
-			let partCount = 0;
+			let parts = [];
 
 			if (academyProgress[tutorial.slug]) {
-				partCount = academyProgress[tutorial.slug].partCount;
+				parts = academyProgress[tutorial.slug].parts;
 			}
 			else {
-				partCount = tutorial.content.split("## ").length - 1;
+				tutorial.content.split("## ").map((value, index) => {
+					if (index !== 0) {
+						parts.push({
+							name: value.split(/\r\n|\r|\n/g)[0],
+							completed: false,
+						});
+					}
+				});
 				this.client.dispatchAction(
 					'/create-course-progress',
 					{
 						course: tutorial.slug,
-						partCount,
+						parts,
 					}
 				);
 				academyProgress[tutorial.slug] = {
-					parts: [],
-					partCount,
+					parts,
 					rewarded: false,
 				};
-				this.setState({academyProgress});
 			}
 			this.courses.push({
 				title: tutorial.title,
 				header: tutorial.header,
 				slug: tutorial.slug,
-				partCount,
+				partCount: parts.length,
 			});
 		});
+
+		this.setState({academyProgress});
 	}
 	getPartsDone(slug) {
-		return this.state.academyProgress[slug].parts.length;
+		const partsDone = this.state.academyProgress[slug].parts.find((part) => {
+			return part.completed === true;
+		});
+
+		return partsDone ? partsDone.length : 0;
 	}
 	render() {
 		let partsDone = false;

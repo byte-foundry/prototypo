@@ -363,11 +363,9 @@ class TopBarMenuAcademy extends React.PureComponent {
 		return (
 			<div className="top-bar-menu-item-academy">
 				<img className="top-bar-menu-item-academy-img" src="assets/images/graduate-cap.svg"/>
-				<span className="top-bar-menu-item-academy-part completed"></span>
-				<span className="top-bar-menu-item-academy-part completed"></span>
-				<span className="top-bar-menu-item-academy-part"></span>
-				<span className="top-bar-menu-item-academy-part"></span>
-				<span className="top-bar-menu-item-academy-part"></span>
+					{props.parts.map((part) => {
+						return <span className={`top-bar-menu-item-academy-part ${part.completed ? 'completed' : ''}`}></span>;
+					})}
 			</div>
 		);
 	}
