@@ -187,12 +187,15 @@ export default class AcademyCourse extends React.PureComponent {
 	}
 
 	isPartRead(part) {
-		return (
-			this.state.academyProgress
-			&& this.state.academyProgress[this.courseSlug]
-			&& this.state.academyProgress[this.courseSlug].parts.find((coursePart) => {
-			return coursePart === part[0];
-		}));
+		let coursePart = {};
+
+		if (this.state.academyProgress
+		&& this.state.academyProgress[this.courseSlug]) {
+			coursePart = this.state.academyProgress[this.courseSlug].parts.find((elem) => {
+				return elem.name === part[0];
+			});
+		}
+		return coursePart.completed;
 	}
 
 	areAllPartsRead() {

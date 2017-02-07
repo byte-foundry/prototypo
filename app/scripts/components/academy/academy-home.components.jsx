@@ -69,7 +69,7 @@ export default class AcademyHome extends React.PureComponent {
 		this.setState({academyProgress});
 	}
 	getPartsDone(slug) {
-		const partsDone = this.state.academyProgress[slug].parts.find((part) => {
+		const partsDone = this.state.academyProgress[slug].parts.filter((part) => {
 			return part.completed === true;
 		});
 
