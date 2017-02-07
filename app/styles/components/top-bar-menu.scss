@@ -76,23 +76,39 @@
 		}
 
 		&-academy {
+			display: inline-flex;
+			align-items: center;
 			&-img {
 				width:23px;
 				margin-right: 10px;
+				cursor: pointer;
 			}
 			&-part {
 				display: inline-block;
-				width: 15px;
-				height: 15px;
+				width: 12px;
+				height: 12px;
 				border-radius: 50%;
-				margin: 5px 3px 5px 3px;
+				margin-left: 3px;
+				margin-right: 3px;
 				background-color: $black;
 				border: 2px solid $light-grey;
+				cursor: pointer;
 				&.completed {
 					background-color: $white;
 					border-color: $white;
 
 				}
+				&:hover {
+					@include themify() {
+						border-color: $theme-background;
+						&.completed {
+							background-color: $theme-background;
+						}
+					}
+				}
+			}
+			&-text {
+				margin-left: 8px;
 			}
 		}
 
@@ -200,20 +216,10 @@
 			}
 		}
 
-		&:hover, &.topbaritem-displayed {
+		&:hover:not(.academy-progress-container), &.topbaritem-displayed {
 			@include themify() {
 				background-color: $theme-background;
 				color: $theme-color;
-			}
-		}
-
-		&:hover &-academy-part {
-			@include themify() {
-				background-color: $theme-background;
-				border-color: $theme-color;
-				&.completed {
-					background-color: $theme-color;
-				}
 			}
 		}
 

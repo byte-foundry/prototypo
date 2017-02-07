@@ -50,6 +50,7 @@ class TopBarMenu extends React.PureComponent {
 				'is-icon-menu': !!child.props.img,
 				'is-centered': child.props.centered,
 				'img-dark-background': child.props.imgDarkBackground,
+				'academy-progress-container': child.props.id === "progress-academy",
 			});
 			const count = (index > 0 && index < 5) ? index : 0;
 
@@ -362,10 +363,27 @@ class TopBarMenuAcademy extends React.PureComponent {
 	static getHeader(props) {
 		return (
 			<div className="top-bar-menu-item-academy">
-				<img className="top-bar-menu-item-academy-img" src="assets/images/graduate-cap.svg"/>
-					{props.parts.map((part) => {
-						return <span className={`top-bar-menu-item-academy-part ${part.completed ? 'completed' : ''}`}></span>;
-					})}
+				<Link to={`/academy/course/${props.course.slug}`}>
+					<img className="top-bar-menu-item-academy-img"
+						src={props.icon}
+						onMouseLeave={() => {props.clearText();}}
+						onMouseEnter={() => {props.setText(props.course.name, true);}}
+					/>
+				</Link>
+				{props.course.parts.map((part) => {
+					return (
+						<Link to={`/academy/course/${props.course.slug}`}>
+							<span
+								onMouseEnter={() => {props.setText(part.name);}}
+								onMouseLeave={() => {props.clearText();}}
+								className={`top-bar-menu-item-academy-part ${part.completed ? 'completed' : ''}`}
+							/>
+						</Link>
+					);
+				})}
+				<span className="top-bar-menu-item-academy-text">
+					{props.text}
+				</span>
 			</div>
 		);
 	}

@@ -152,7 +152,7 @@ export default class AcademyCourse extends React.PureComponent {
 	}
 
 	createCourseProgress() {
-		let academyProgress = this.state.academyProgress || {};
+		const academyProgress = this.state.academyProgress || {};
 
 		this.tutorials.content.map((tutorial) => {
 			const parts = [];
@@ -168,13 +168,15 @@ export default class AcademyCourse extends React.PureComponent {
 			this.client.dispatchAction(
 				'/create-course-progress',
 				{
-					course: tutorial.slug,
+					slug: tutorial.slug,
+					name: tutorial.title,
 					parts,
 				}
 			);
 			academyProgress[tutorial.slug] = {
 				parts,
 				rewarded: false,
+				name: tutorial.title,
 			};
 		});
 		this.setState({academyProgress});

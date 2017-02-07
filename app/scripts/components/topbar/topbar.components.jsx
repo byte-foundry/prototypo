@@ -39,6 +39,8 @@ export default class Topbar extends React.PureComponent {
 			creditChoices: undefined,
 			presets: null,
 			country: 'US',
+			academyText: '',
+			academyCapIconHovered: false,
 		};
 
 		//function binding to avoid unnecessary re-render
@@ -50,6 +52,9 @@ export default class Topbar extends React.PureComponent {
 		this.setPreset = this.setPreset.bind(this);
 		this.resetIndivTutorial = this.resetIndivTutorial.bind(this);
 		this.resetFirstTimeAcademy = this.resetFirstTimeAcademy.bind(this);
+		this.setAcademyText = this.setAcademyText.bind(this);
+		this.clearAcademyText = this.clearAcademyText.bind(this);
+		this.getRightAcademyIcon = this.getRightAcademyIcon.bind(this);
 	}
 
 	async componentWillMount() {
@@ -209,6 +214,22 @@ export default class Topbar extends React.PureComponent {
 		this.context.router.push('/academy');
 	}
 
+	setAcademyText(name, isIcon) {
+		this.setState({academyText: name, academyCapIconHovered: isIcon});
+	}
+
+	clearAcademyText() {
+		this.setState({academyText: '', academyCapIconHovered: false});
+	}
+	getRightAcademyIcon() {
+		if (this.state.academyCapIconHovered) {
+			return this.state.indiv ? "assets/images/graduate-cap-yellow.svg" : "assets/images/graduate-cap-green.svg";
+		}
+		else {
+			return "assets/images/graduate-cap.svg";
+		}
+	}
+
 	async onboardExport(step) {
 		const store = await this.client.fetch('/prototypoStore');
 
@@ -274,7 +295,12 @@ export default class Topbar extends React.PureComponent {
 
 		const academyProgress = this.state.academyProgress.lastCourse && (
 			<TopBarMenuAcademy
-				parts={this.state.academyProgress[this.state.academyProgress.lastCourse].parts}
+				course={this.state.academyProgress[this.state.academyProgress.lastCourse]}
+				setText={this.setAcademyText}
+				clearText={this.clearAcademyText}
+				text={this.state.academyText}
+				id="progress-academy"
+				icon={this.getRightAcademyIcon()}
 			/>
 		);
 

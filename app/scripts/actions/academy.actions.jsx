@@ -29,14 +29,16 @@ export default {
 		localServer.dispatchUpdate('/userStore', patch);
 		//saveAppValues(appValuesLoaded);
 	},
-	'/create-course-progress': ({course, parts}) => {
+	'/create-course-progress': ({slug, name, parts}) => {
 		let _infos = _.cloneDeep(userStore.get('infos'));
 		const academyProgress = _infos.academyProgress || {};
 
-		if (!academyProgress[course]) {
-			academyProgress[course] = {
+		if (!academyProgress[slug]) {
+			academyProgress[slug] = {
 				parts,
 				rewarded: false,
+				name,
+				slug,
 			};
 		}
 		_infos = {

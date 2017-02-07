@@ -29,7 +29,9 @@ export default class AcademyDashboard extends React.Component {
 
 		return (
 			<div className="academy-dashboard">
-				<div className="academy-dashboard-icon"/>
+				<Link to={backlinks.home}>
+					<div className="academy-dashboard-icon"/>
+				</Link>
 				<Link to={backlink} className="academy-dashboard-back-icon"/>
 				<div className="academy-header">
 					<h1 className="academy-title">{title}</h1>

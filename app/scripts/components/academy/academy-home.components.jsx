@@ -49,12 +49,14 @@ export default class AcademyHome extends React.PureComponent {
 				this.client.dispatchAction(
 					'/create-course-progress',
 					{
-						course: tutorial.slug,
+						slug: tutorial.slug,
+						name: tutorial.title,
 						parts,
 					}
 				);
 				academyProgress[tutorial.slug] = {
 					parts,
+					name: tutorial.title,
 					rewarded: false,
 				};
 			}
