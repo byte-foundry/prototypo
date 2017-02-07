@@ -19,7 +19,7 @@
 		color: $green;
 	}
 
-	&:hover &-sample.gfnt, &.is-active &-sample.gfnt {
+	&:hover &-sample.topo, &.is-active &-sample.topo {
 		background-image: url('../../../images/elzevir-sample-active.svg') !important;
 	}
 
@@ -35,7 +35,7 @@
 		background-image: url('../../../images/grotesk-sample-active.svg') !important;
 	}
 
-	&-sample.gfnt {
+	&-sample.topo {
 		background-image: url('../../../images/elzevir-sample-hover.svg');
 	}
 

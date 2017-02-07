@@ -76,9 +76,9 @@ const prototypoStore = new Remutable({
 		},
 		{
 			sample: 'john-fell-preview.svg',
-			name: 'Prototypo gfnt',
-			familyName: 'Prototypo gfnt',
-			templateName: 'gfnt.ptf',
+			name: 'Prototypo topo',
+			familyName: 'Prototypo topo',
+			templateName: 'topo.ptf',
 		},
 	],
 
