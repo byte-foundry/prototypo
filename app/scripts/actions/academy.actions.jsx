@@ -17,7 +17,7 @@ export default {
 			return elem.name === part;
 		});
 
-		readPart.completed = true;
+		readPart.completed = !readPart.completed;
 
 		academyProgress.lastCourse = course;
 		_infos = {

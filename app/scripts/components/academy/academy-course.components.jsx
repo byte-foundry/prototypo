@@ -183,9 +183,7 @@ export default class AcademyCourse extends React.PureComponent {
 	}
 
 	markAsRead(part) {
-		if (!this.isPartRead(part)) {
-			this.client.dispatchAction('/mark-part-as-read', {course: this.courseSlug, part: part[0]});
-		}
+		this.client.dispatchAction('/mark-part-as-read', {course: this.courseSlug, part: part[0]});
 	}
 
 	isPartRead(part) {
@@ -205,9 +203,9 @@ export default class AcademyCourse extends React.PureComponent {
 			return false;
 		}
 
-		const partsDone = this.state.academyProgress[this.courseSlug].parts.find((part) => {
+		const partsDone = this.state.academyProgress[this.courseSlug].parts.filter((part) => {
 			return part.completed === true;
-		}) || 0;
+		}).length || 0;
 
 		return (
 			partsDone === this.state.academyProgress[this.courseSlug].parts.length
