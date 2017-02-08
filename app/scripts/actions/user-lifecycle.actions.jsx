@@ -551,6 +551,8 @@ export default {
 		const form = userStore.get('choosePlanForm');
 
 		delete form.error;
+		delete form.validCoupon;
+		delete form.couponError;
 
 		if (plan) {
 			form.selected = plan;
@@ -561,8 +563,6 @@ export default {
 		}
 
 		if (form.selected && form.couponValue) {
-			delete form.validCoupon;
-			delete form.couponError;
 			validateCoupon({
 				plan: form.selected,
 				coupon: form.couponValue,
