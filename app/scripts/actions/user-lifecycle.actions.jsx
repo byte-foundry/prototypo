@@ -177,7 +177,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 				currency,
 				items: [item],
 			})
-			.then(({metadata: {credits}}) => {
+			.then(({id, metadata: {credits}}) => {
 				infos.card = [data.card];
 				infos.vat = vatNumber;
 				form.loading = false;
@@ -189,7 +189,7 @@ function buyCredits({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 
 				localServer.dispatchUpdate('/prototypoStore', creditPatch);
 
-				resolve({credits});
+				resolve({customerId: id, credits, item, currency});
 			})
 			.catch((err) => {
 				trackJs.track(err);
@@ -556,6 +556,7 @@ export default {
 
 		if (plan) {
 			form.selected = plan;
+			window.Intercom('trackEvent', `chosePlan${plan}`);
 		}
 
 		if (coupon !== undefined) {
@@ -570,8 +571,6 @@ export default {
 		}
 
 		const patch = userStore.set('choosePlanForm', form).commit();
-
-		window.Intercom('trackEvent', `chosePlan${plan}`);
 
 		return localServer.dispatchUpdate('/userStore', patch);
 	},
@@ -693,17 +692,21 @@ export default {
 				.set('infos', infos)
 				.set('confirmation', form)
 				.commit();
-
+			
+			const transacId = `${plan}_${data.id}`;
 			ga('ecommerce:addTransaction', {
-				'id': data.id,
-				'affiliation': 'Prototypo',
-				'revenue': data.plan.id.indexOf('monthly') === -1 ? '144' : '15',
+				id: transacId,
+				affiliation: 'Prototypo',
+				revenue: data.plan.amount / 100,
+				currency,
 			});
 
 			ga('ecommerce:addItem', {
-				'id': data.id + data.plan.id,
-				'name': data.plan.id,    // Product name. Required.
-				'price': data.plan.id.indexOf('monthly') === -1 ? '144' : '15',
+				id: transacId,
+				name: data.plan.id,
+				sku: `${plan}_${currency}_taxfree`,
+				category: 'Subscriptions',
+				price: data.plan.amount / 100,
 			});
 
 			ga('ecommerce:send');
@@ -839,18 +842,21 @@ export default {
 			'export_credits': data.credits,
 		});
 
-		const transacId = HoodieApi.instance.email + (new Date).getTime();
+		const transacId = `credits_${data.customerId}_${(new Date).getTime()}`;
 
 		ga('ecommerce:addTransaction', {
-			'id': transacId,
-			'affiliation': 'Prototypo',
-			'revenue': 9,
+			id: transacId,
+			affiliation: 'Prototypo',
+			revenue: 9,
+			currency: data.currency,
 		});
-
+		
 		ga('ecommerce:addItem', {
-			'id': `transacId ${credits}`,                     // Transaction ID. Required.
-			'name': 'credits',    // Product name. Required.
-			'price': 9,
+			id: transacId,
+			name: 'credits',
+			sku: data.item.parent,
+			category: 'credits',
+			price: 9,
 		});
 
 		ga('ecommerce:send');
