@@ -372,13 +372,13 @@ selectRenderOptions(
 
 		HoodieApi.setup()
 			.then(() => {
-				if (location.hash.indexOf('signin') === -1 && location.hash.indexOf('account') === -1 && location.hash.indexOf('signup') === -1 &&  location.hash.indexOf('dashboard') === -1) {
+				if (location.hash.indexOf('signin') === -1 && location.hash.indexOf('account') === -1 && location.hash.indexOf('academy') === -1 && location.hash.indexOf('signup') === -1 &&  location.hash.indexOf('dashboard') === -1) {
 					location.href = '#/dashboard';
 				}
 			})
 			.catch(() => {
 
-				if (location.hash.indexOf('signin') === -1 && location.hash.indexOf('account') === -1 && location.hash.indexOf('signup') === -1 &&  location.hash.indexOf('dashboard') === -1) {
+				if (location.hash.indexOf('signin') === -1 && location.hash.indexOf('account') === -1 && location.hash.indexOf('academy') === -1 && location.hash.indexOf('signup') === -1 &&  location.hash.indexOf('dashboard') === -1) {
 					location.href = '#/dashboard';
 				}
 				const event = new CustomEvent('values.loaded');
