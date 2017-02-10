@@ -372,7 +372,7 @@ class TopBarMenuAcademy extends React.PureComponent {
 				</Link>
 				{props.course.parts.map((part) => {
 					return (
-						<Link to={`/academy/course/${props.course.slug}`}>
+						<Link to={`/academy/course/${props.course.slug}/${part.name}`}>
 							<span
 								onMouseEnter={() => {props.setText(part.name);}}
 								onMouseLeave={() => {props.clearText();}}

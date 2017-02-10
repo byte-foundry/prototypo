@@ -16,6 +16,7 @@ export default class AcademyCourse extends React.PureComponent {
 		this.headerRenderer = this.headerRenderer.bind(this);
 		this.handleScroll = this.handleScroll.bind(this);
 		this.bindData = this.bindData.bind(this);
+		this.scrollToPart = this.scrollToPart.bind(this);
 		this.isPartRead = this.isPartRead.bind(this);
 		this.areAllPartsRead = this.areAllPartsRead.bind(this);
 		this.createCourseProgress = this.createCourseProgress.bind(this);
@@ -118,6 +119,10 @@ export default class AcademyCourse extends React.PureComponent {
 			this.createCourseProgress();
 		}
 		window.addEventListener('scroll', this.handleScroll, true);
+
+		if (this.props.params.partName) {
+			this.scrollToPart(this.props.params.partName, headers);
+		}
 	}
 
 	handleScroll(event) {
@@ -204,6 +209,16 @@ export default class AcademyCourse extends React.PureComponent {
 			};
 		});
 		this.setState({academyProgress});
+	}
+
+	scrollToPart(partName, headers) {
+		const coursePart =	headers.find((elem) => {
+			return elem.content === partName;
+		});
+
+		if (coursePart) {
+			coursePart.elem.scrollIntoView();
+		}
 	}
 
 	markAsRead(part) {
