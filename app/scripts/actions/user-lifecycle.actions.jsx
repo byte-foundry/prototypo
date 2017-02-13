@@ -430,7 +430,7 @@ export default {
 				}
 			});
 	},
-	'/sign-up': ({username, password, firstname, lastname, css, phone, skype, to, retry}) => {
+	'/sign-up': ({username, password, firstname, lastname, css = {}, phone, skype, to, retry}) => {
 		const toLocation = {
 			pathname: to || '/dashboard',
 		};
