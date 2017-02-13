@@ -53,6 +53,7 @@ export default class Topbar extends React.PureComponent {
 		this.resetIndivTutorial = this.resetIndivTutorial.bind(this);
 		this.resetFirstTimeAcademy = this.resetFirstTimeAcademy.bind(this);
 		this.setAcademyText = this.setAcademyText.bind(this);
+		this.showAcademy = this.showAcademy.bind(this);
 		this.clearAcademyText = this.clearAcademyText.bind(this);
 		this.getRightAcademyIcon = this.getRightAcademyIcon.bind(this);
 	}
@@ -420,11 +421,11 @@ export default class Topbar extends React.PureComponent {
 					<TopBarMenuDropdown name="Help">
 						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
 						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq', '_blank'); }}/>
-						<TopBarMenuDropdownItem name="Academy" id="access-academy" handler={(e) => { this.showAcademy(e); }}/>
-						<TopBarMenuDropdownItem name="Restart collection tutorial" handler={(e) => { this.resetCollectionTutorial(e); }}/>
-						<TopBarMenuDropdownItem name="Restart export tutorial" handler={(e) => { this.resetFileTutorial(e); }}/>
-						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={(e) => { this.resetIndivTutorial(e); }}/>
-						<TopBarMenuDropdownItem name="Reset firstTimeAcademy" handler={(e) => { this.resetFirstTimeAcademy(e); }}/>
+						<TopBarMenuDropdownItem name="Academy" id="access-academy" handler={this.showAcademy}/>
+						<TopBarMenuDropdownItem name="Restart collection tutorial" handler={this.resetCollectionTutorial}/>
+						<TopBarMenuDropdownItem name="Restart export tutorial" handler={this.resetFileTutorial}/>
+						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={this.resetIndivTutorial}/>
+						<TopBarMenuDropdownItem name="Reset firstTimeAcademy" handler={this.resetFirstTimeAcademy}/>
 					</TopBarMenuDropdown>
 					{academyProgress}
 					{exporting}

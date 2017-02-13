@@ -89,11 +89,9 @@ export default class AcademyHome extends React.PureComponent {
 					Texte d'intro qui montre à quel point l'academy est cool, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 				</p>
 
-				<p>
-					<center>
-						Just getting started with prototypo ?
-						<Link className="academy-button inline" to={`/academy/course/${this.courses[0].slug}`} >Take our intro course</Link>
-					</center>
+				<p className="centered">
+					Just getting started with prototypo ?
+					<Link className="academy-button inline" to={`/academy/course/${this.courses[0].slug}`} >Take our intro course</Link>
 				</p>
 
 				<h1>Course list</h1>

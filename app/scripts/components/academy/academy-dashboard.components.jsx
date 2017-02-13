@@ -23,7 +23,7 @@ export default class AcademyDashboard extends React.Component {
 			home: "/dashboard",
 			course: "/academy",
 		};
-		const curRoute = this.props.location.pathname.split('/')[this.props.location.pathname.split('/') . length - 1];
+		const curRoute = this.props.routeParams.courseSlug || this.props.route.name;
 		const title = titles[curRoute];
 		const backlink = backlinks[this.props.route.name];
 

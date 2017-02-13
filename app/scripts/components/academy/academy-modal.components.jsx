@@ -8,6 +8,8 @@ import LocalClient from '~/stores/local-client.stores.jsx';
 export default class AcademyModal extends React.Component {
 	constructor(props) {
 		super(props);
+		this.showAcademy = this.showAcademy.bind(this);
+		this.exit = this.exit.bind(this);
 	}
 
 	async componentWillMount() {
@@ -26,9 +28,9 @@ export default class AcademyModal extends React.Component {
 	};
 
 	exit() {
-		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: academyTutorialLabel});
-		this.client.dispatchAction('/store-value', {topbarItemDisplayed: 4});
 		this.client.dispatchAction('/store-value', {
+			uiJoyrideTutorialValue: academyTutorialLabel,
+			topbarItemDisplayed: 4,
 			firstTimeAcademyModal: false,
 		});
 	}
@@ -48,8 +50,8 @@ export default class AcademyModal extends React.Component {
 				Do you want to learn how to use Prototypo? Don't worry, we've set up a serie of courses just for you.</p>
 				<br/>
 				<div className="action-form-buttons">
-					<Button click={(e) => {this.exit(e);} } label="No thanks, I know what I'm doing" neutral={true}/>
-					<Button click={(e) => {this.showAcademy(e);} } label="Sure, let's go ahead!"/>
+					<Button click={this.exit} label="No thanks, I know what I'm doing" neutral={true}/>
+					<Button click={this.showAcademy} label="Sure, let's go ahead!"/>
 				</div>
 			</div>
 		);

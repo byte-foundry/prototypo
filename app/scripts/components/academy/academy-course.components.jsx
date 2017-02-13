@@ -11,6 +11,7 @@ export default class AcademyCourse extends React.PureComponent {
 		super(props);
 		this.state = {
 			stickedIndex: -1,
+			headers: [],
 		};
 		this.tutorials = new TutorialContent();
 		this.headerRenderer = this.headerRenderer.bind(this);
@@ -95,11 +96,11 @@ export default class AcademyCourse extends React.PureComponent {
 		const headers = [];
 		let sidebar = {};
 
-		findDOMNode(this.refs.academyCourseSidebar).classList.remove('fixed');
+		this.courseSidebarDom.classList.remove('fixed');
 		sidebar = {
-			elem: findDOMNode(this.refs.academyCourseSidebar),
-			content: findDOMNode(this.refs.academyCourseContent),
-			offset: findDOMNode(this.refs.academyCourseSidebar).getBoundingClientRect().top,
+			elem: this.courseSidebarDom,
+			content: this.courseContentDom,
+			offset: this.courseSidebarDom.getBoundingClientRect().top,
 		};
 
 		parts.map((part, index) => {
@@ -147,7 +148,7 @@ export default class AcademyCourse extends React.PureComponent {
 		this.setState({headers, stickedIndex});
 		//Sidebar sticky handling
 		if (event.target.scrollTop >= this.state.sidebar.offset) {
-			this.state.sidebar.elem.style.left = `${this.refs.academyCourseContent.getBoundingClientRect().right}px`;
+			this.state.sidebar.elem.style.left = `${this.courseContentDom.getBoundingClientRect().right}px`;
 			this.state.sidebar.elem.classList.add('fixed');
 			this.state.sidebar.content.style.marginRight = '200px';
 		}
@@ -166,53 +167,53 @@ export default class AcademyCourse extends React.PureComponent {
 
 			return(
 					<div className="title" {...levelTwoProps}>
-						<input type="checkbox"
+						<input type="checkbox" className="title-checkbox"
 							id={`${this.courseSlug}-${props.children}`}
 							name={`${this.courseSlug}-${props.children}`}
 							checked={this.isPartRead(props.children)}
 							key={`${this.courseSlug}-${props.children}`}
 							onChange={() => {this.markAsRead(props.children);}}
 							/>
-						<label htmlFor={`${this.courseSlug}-${props.children}`}><span></span>{props.children}</label>
+						<label htmlFor={`${this.courseSlug}-${props.children}`}><span/>{props.children}</label>
 					</div>
 			);
 		}
-		else {
-			return(
-				this.createElement(`h${props.level}`, this.getCoreProps(props), props.children)
-			);
-		}
+		return(
+			this.createElement(`h${props.level}`, this.getCoreProps(props), props.children)
+		);
 	}
 
 	createCourseProgress() {
 		const academyProgress = this.state.academyProgress || {};
+		const course = this.tutorials.content.find((tutorial) => {
+			return tutorial.slug === this.courseSlug;
+		});
 
-		this.state.headers && this.state.headers.map((header) => {
-			const parts = [];
-
-			parts.push({
-				name: header.content,
+		const parts = course.content.split("## ").slice(1).map((value) => {
+			return {
+				name: value.split(/\r\n|\r|\n/g)[0],
 				completed: false,
-			});
-			this.client.dispatchAction(
-				'/create-course-progress',
-				{
-					slug: tutorial.slug,
-					name: tutorial.title,
-					parts,
-				}
-			);
-			academyProgress[tutorial.slug] = {
-				parts,
-				rewarded: false,
-				name: tutorial.title,
 			};
 		});
+
+		this.client.dispatchAction(
+			'/create-course-progress',
+			{
+				slug: course.slug,
+				name: course.title,
+				parts,
+			}
+		);
+		academyProgress[course.slug] = {
+			parts,
+			rewarded: false,
+			name: course.title,
+		};
 		this.setState({academyProgress});
 	}
 
 	scrollToPart(partName, headers) {
-		const coursePart =	headers.find((elem) => {
+		const coursePart = headers.find((elem) => {
 			return elem.content === partName;
 		});
 
@@ -226,15 +227,14 @@ export default class AcademyCourse extends React.PureComponent {
 	}
 
 	isPartRead(part) {
-		let coursePart = {};
-
-		if (this.state.academyProgress
-		&& this.state.academyProgress[this.courseSlug]) {
-			coursePart = this.state.academyProgress[this.courseSlug].parts.find((elem) => {
+		if (this.state.academyProgress && this.state.academyProgress[this.courseSlug]) {
+			const coursePart = this.state.academyProgress[this.courseSlug].parts.find((elem) => {
 				return elem.name === part[0];
 			});
+
+			return coursePart.completed;
 		}
-		return coursePart.completed;
+		return false;
 	}
 
 	areAllPartsRead() {
@@ -246,9 +246,7 @@ export default class AcademyCourse extends React.PureComponent {
 			return part.completed === true;
 		}).length || 0;
 
-		return (
-			partsDone === this.state.academyProgress[this.courseSlug].parts.length
-		);
+		return partsDone === this.state.academyProgress[this.courseSlug].parts.length;
 	}
 
 	getNextCourse() {
@@ -287,7 +285,7 @@ export default class AcademyCourse extends React.PureComponent {
 			<div>
 				{basics}
 				<h3>Parts</h3>
-				{this.state.headers ? this.state.headers.map((header) => {
+				{this.state.headers.map((header) => {
 					return (
 						<span
 							className={`academy-sidebar-menu-item ${header.active ? 'is-active' : ''}`}
@@ -295,12 +293,12 @@ export default class AcademyCourse extends React.PureComponent {
 							{header.content}
 						</span>
 					);
-				}) : false}
+				})}
 			</div>
 		);
 
 		return(
-			<div key={this.courseName} className="academy-base academy-course" ref="academyCoursePage">
+			<div key={this.courseName} className="academy-base academy-course">
 				<div className="academy-course-courselist">
 					<h3>Course List</h3>
 					{
@@ -313,7 +311,7 @@ export default class AcademyCourse extends React.PureComponent {
 					}
 				</div>
 				<div className="academy-course-main">
-					<div className="academy-course-main-content" ref="academyCourseContent">
+					<div className="academy-course-main-content" ref={(courseContentDom) => { this.courseContentDom = courseContentDom; }}>
 						{parts.map((part, index) => {
 							return (
 									<ReactMarkdown source={part} renderers={renderers} ref={`${this.courseSlug}-part${index + 1}`}/>
@@ -341,7 +339,7 @@ export default class AcademyCourse extends React.PureComponent {
 							: false
 						}
 					</div>
-					<div className="academy-course-main-sidebar" ref="academyCourseSidebar">
+					<div className="academy-course-main-sidebar" ref={(courseSidebarDom) => { this.courseSidebarDom = courseSidebarDom; }}>
 						{sidebar}
 					</div>
 				</div>
