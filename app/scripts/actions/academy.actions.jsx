@@ -65,4 +65,18 @@ export default {
 		localServer.dispatchUpdate('/userStore', patch);
 		//saveAppValues(appValuesLoaded);
 	},
+	'/set-course-currently-reading': (course) => {
+		let _infos = _.cloneDeep(userStore.get('infos'));
+		const academyProgress = _infos.academyProgress || {};
+
+		academyProgress.lastCourse = course;
+		_infos = {
+			..._infos,
+			academyProgress,
+		};
+		const patch = userStore.set('infos', _infos).commit();
+
+		localServer.dispatchUpdate('/userStore', patch);
+		//saveAppValues(appValuesLoaded);
+	},
 };

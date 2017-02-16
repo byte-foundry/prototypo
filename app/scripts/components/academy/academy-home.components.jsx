@@ -15,6 +15,7 @@ export default class AcademyHome extends React.PureComponent {
 		this.tutorials = new TutorialContent();
 		this.courses = [];
 		this.getPartsDone = this.getPartsDone.bind(this);
+		this.isReading = this.isReading.bind(this);
 	}
 	componentWillMount() {
 		let academyProgress = this.state.academyProgress || {};
@@ -65,6 +66,9 @@ export default class AcademyHome extends React.PureComponent {
 				header: tutorial.header,
 				slug: tutorial.slug,
 				partCount: parts.length,
+				readingTime: tutorial.readingTime,
+				headerImage: tutorial.headerImage,
+				reward: tutorial.reward,
 			});
 		});
 
@@ -76,6 +80,9 @@ export default class AcademyHome extends React.PureComponent {
 		});
 
 		return partsDone ? partsDone.length : 0;
+	}
+	isReading(slug) {
+		return this.state.academyProgress.lastCourse === slug;
 	}
 	render() {
 		let partsDone = false;
@@ -95,24 +102,42 @@ export default class AcademyHome extends React.PureComponent {
 				</p>
 
 				<h1>Course list</h1>
-
-			{
-					this.courses.map((tutorial) => {
-						partsDone = this.getPartsDone(tutorial.slug);
-						return (
-							<div key={tutorial.title} className="academy-course-list">
-								<Link to={`/academy/course/${tutorial.slug}`}><h2>{tutorial.title}</h2></Link>
-								<ReactMarkdown source={tutorial.header} />
-								<Link className="academy-button academy-validation-button" to={`/academy/course/${tutorial.slug}`} >➝</Link>
-								<div className="academy-button academy-part-count">
-									{
-										partsDone === tutorial.partCount ? '✓' : `${partsDone}/${tutorial.partCount}`
-									}
-								</div>
-							</div>
-						);
-					})
-				}
+				<div className="academy-course-list">
+					{
+							this.courses.map((tutorial) => {
+								partsDone = this.getPartsDone(tutorial.slug);
+								return (
+									<div key={tutorial.title} className={`academy-course-list-elem ${this.isReading(tutorial.slug) ? 'currentlyreading' : ''} ${partsDone === tutorial.partCount ? 'done' : ''}`}>
+										<Link to={`/academy/course/${tutorial.slug}`}>
+											<h2>{tutorial.title}</h2>
+											<img className="header-image" src={tutorial.headerImage} alt={`${tutorial.title} header image`} />
+											<ReactMarkdown source={tutorial.header} />
+											{tutorial.reward
+											? (<div className="academy-reward">
+												<span className="text-italic">By completing this course you {partsDone === tutorial.partCount ? 'earned' : 'will earn'}:</span>
+												<ul>
+													<li>{tutorial.reward}</li>
+												</ul>
+											</div>) : false}
+										</Link>
+										<div className="academy-course-list-elem-bottom">
+											<div className="academy-course-list-elem-bottom-one">
+												<div className={`academy-part-count ${partsDone === tutorial.partCount ? 'done' : ''}`}>
+													{partsDone} of <strong>{tutorial.partCount} parts</strong>
+												</div>
+												<div className="academy-readingtime">
+													<img src="assets/images/icon-clock.svg" alt="readingTime icon"/> <span>{tutorial.readingTime} min</span>
+												</div>
+											</div>
+											<div className="academy-course-list-elem-bottom-two">
+												<Link className="academy-button academy-startcourse" to={`/academy/course/${tutorial.slug}`}> ▶ </Link>
+											</div>
+										</div>
+									</div>
+								);
+							})
+						}
+				</div>
 			</div>
 		);
 	}
