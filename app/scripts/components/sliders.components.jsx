@@ -164,6 +164,7 @@ export class Slider extends React.Component {
 
 	openGoProModal() {
 		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
+		window.Intercom('trackEvent', 'open-go-pro-modal-from-slider');
 		this.client.dispatchAction('/store-value', {openGoProModal: true});
 		Log.ui('ExportFontNow.open');
 	}

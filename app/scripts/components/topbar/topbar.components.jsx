@@ -156,6 +156,7 @@ export default class Topbar extends React.Component {
 
 	openGoProModal() {
 		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
+		window.Intercom('trackEvent', 'open-go-pro-modal-from-unlock-badge');
 		this.client.dispatchAction('/store-value', {openGoProModal: true});
 		Log.ui('ExportFontNow.open');
 	}

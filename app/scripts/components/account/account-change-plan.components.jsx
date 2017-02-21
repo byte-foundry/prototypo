@@ -44,6 +44,10 @@ export default class AccountChangePlan extends React.Component {
 
 		const plan = this.refs.select.inputValue.value;
 
+		window.Intercom('trackEvent', 'change-plan-select', {
+			plan,
+		});
+
 		if (plan === 'free_monthly') {
 			return this.setState({
 				free: true,
