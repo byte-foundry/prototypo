@@ -5,15 +5,15 @@ import {monthlyConst, annualConst, agencyMonthlyConst, agencyAnnualConst} from '
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
 
+import withCountry from './shared/with-country.components';
 import Modal from './shared/modal.components.jsx';
 import getCurrency from '../helpers/currency.helpers.js';
 
-export default class GoProModal extends React.PureComponent {
+class GoProModal extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			country: 'US',
 			billing: 'annually',
 			agencyCount: 4,
 		};
@@ -44,13 +44,6 @@ export default class GoProModal extends React.PureComponent {
 
 	componentWillUnmount() {
 		this.lifespan.release();
-	}
-
-	async componentDidMount() {
-		const response = await fetch('//freegeoip.net/json/');
-		const data = await response.json();
-
-		this.setState({country: data.country_code});
 	}
 
 	goSubscribe() {
@@ -89,6 +82,8 @@ export default class GoProModal extends React.PureComponent {
 	}
 
 	render() {
+		const {country} = this.props;
+
 		let agencyPrice = this.state.billing === 'annually' ? agencyAnnualConst.monthlyPrice * this.state.agencyCount : agencyMonthlyConst.monthlyPrice * this.state.agencyCount;
 
 		agencyPrice = agencyPrice.toString().split('.');
@@ -97,7 +92,7 @@ export default class GoProModal extends React.PureComponent {
 		}
 		let agencyMarkup;
 
-		if (getCurrency(this.state.country) === 'EUR') {
+		if (getCurrency(country) === 'EUR') {
 			agencyMarkup = <span>{agencyPrice}<span className="pricing-item-subtitle-price-value-currency"> €</span><span className="pricing-item-subtitle-price-value-freq">per month</span></span>;
 		}
 		else {
@@ -115,7 +110,7 @@ export default class GoProModal extends React.PureComponent {
 		}
 		let proMarkup;
 
-		if (getCurrency(this.state.country) === 'EUR') {
+		if (getCurrency(country) === 'EUR') {
 			proMarkup = <span>{proPrice}<span className="pricing-item-subtitle-price-value-currency"> €</span><span className="pricing-item-subtitle-price-value-freq">per month</span></span>;
 		}
 		else {
@@ -137,7 +132,7 @@ export default class GoProModal extends React.PureComponent {
 						<div className="pricing-item" onClick={this.goSubscribe}>
 							{this.state.billing === 'monthly'
 							? <div className="pricing-item-offerRibbon">
-								<div className="pricing-item-offerRibbon-content">1<sup>st</sup> month for {getCurrency(this.state.country) === 'EUR' ? '1€' : '$1'}</div>
+								<div className="pricing-item-offerRibbon-content">1<sup>st</sup> month for {getCurrency(country) === 'EUR' ? '1€' : '$1'}</div>
 							</div>
 							 : false}
 							<div className="pricing-item-title">
@@ -170,7 +165,7 @@ export default class GoProModal extends React.PureComponent {
 								</li>
 							</ul>
 							<div className="pricing-item-cta">
-								{this.state.billing === 'monthly' ? `Try it for ${getCurrency(this.state.country) === 'EUR' ? '1€' : '$1'}` : 'Make me pro!'}
+								{this.state.billing === 'monthly' ? `Try it for ${getCurrency(country) === 'EUR' ? '1€' : '$1'}` : 'Make me pro!'}
 							</div>
 						</div>
 						<div className="pricing-item" onClick={this.goSubscribeAgency}>
@@ -220,3 +215,5 @@ export default class GoProModal extends React.PureComponent {
 		);
 	}
 }
+
+export default withCountry(GoProModal);
