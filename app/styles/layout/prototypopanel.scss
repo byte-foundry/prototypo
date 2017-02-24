@@ -6,6 +6,71 @@
 	display:flex;
 	flex-direction:column;
 	flex: 1;
+
+	.panel-demo-overlay {
+		position:absolute;
+		width:100%;
+		height:100%;
+		background-color: rgba(#555, 0.40);
+		background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
+		background-size: 35px 35px;
+		z-index:2;
+		display:flex;
+		justify-content:center;
+		align-items:center;
+
+		&-text {
+			opacity:0;
+			color:$white;
+			font-size: 20px;
+			display: block;
+			transition:opacity .2s ease;
+			position: relative;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			cursor: default;
+			padding: 30px 60px;
+
+			&-academy-cta, &-gopro-cta {
+				font-size: 20px;
+				cursor: pointer;
+				width: 50%;
+				background-position: 20px center;
+				background-repeat: no-repeat;
+				padding: 20px 20px 20px 50px;
+			}
+
+			&-academy-cta {
+				color:$black;
+				background-color: $white;
+				background-image: url('../../images/add-feature.svg');
+				float: left;
+
+				&:hover {
+					background-color: $lightest-grey;
+				}
+			}
+
+			&-gopro-cta {
+				color:$white;
+				background-color: $green;
+				background-image: url('../../images/pro-version.svg');
+				float: right;
+
+				&:hover {
+					background-color: $dark-green;
+				}
+			}
+		}
+
+		&:hover &-text {
+			background-color: darken($dark-grey, 2%);
+			opacity:1;
+		}
+	}
+
 }
 
 #prototypoword {

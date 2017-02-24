@@ -340,7 +340,7 @@ export default {
 		const curedLastname = lastname ? ` ${lastname}` : '';
 
 		try {
-			const response = await HoodieApi.signUp(username.toLowerCase(), password);
+			const {response} = await HoodieApi.signUp(username.toLowerCase(), password);
 
 			window.Intercom('boot', {
 				app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',

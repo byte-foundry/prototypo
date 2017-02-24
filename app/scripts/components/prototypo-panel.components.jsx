@@ -53,6 +53,8 @@ export default class PrototypoPanel extends React.Component {
 					wordPanelHeight: head.toJS().d.wordPanelHeight || 20,
 					canvasPanelWidth: head.toJS().d.canvasPanelWidth || 50,
 					indivCurrentGroup: head.toJS().d.indivCurrentGroup,
+					openRestrictedFeature: head.toJS().d.openRestrictedFeature,
+					restrictedFeatureHovered: head.toJS().d.restrictedFeatureHovered,
 				});
 			})
 			.onDelete(() => {
@@ -116,8 +118,27 @@ export default class PrototypoPanel extends React.Component {
 			textAndGlyph.push(<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>);
 		}*/
 
+		const restrictedFeatureText = this.state.openRestrictedFeature
+			? (
+				<div className="panel-demo-overlay">
+				  <div className="panel-demo-overlay-text">
+				    <p>
+				      This is the BITE
+				      , an advanced feature not available to you yet.
+				    </p>
+				    <p>
+				      To unlock it, you can either:
+				    </p>
+				    <div className="panel-demo-overlay-text-academy-cta" onClick={() => {return true;}}>Read about it on the academy</div>
+				    <div className="panel-demo-overlay-text-gopro-cta" onClick={this.openGoProModal}>Upgrade to the full version</div>
+				  </div>
+				</div>
+			)
+			: false;
+
 		return (
 			<div id="prototypopanel" key="justAcontainer">
+				{restrictedFeatureText}
 				<ResizablePanels
 					key="everythingResize"
 					defaultY={this.state.wordPanelHeight}

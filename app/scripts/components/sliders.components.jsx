@@ -327,6 +327,8 @@ export class SliderController extends React.Component {
 		this.handleUp = this.handleUp.bind(this);
 		this.handleMove = this.handleMove.bind(this);
 		this.handleSelectstart = this.handleSelectstart.bind(this);
+		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
+		this.restrictedRangeLeave = this.restrictedRangeLeave.bind(this);
 	}
 
 	componentWillMount() {
@@ -376,6 +378,16 @@ export class SliderController extends React.Component {
 		e.stopPropagation();
 	}
 
+	restrictedRangeEnter() {
+		this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
+													restrictedFeatureHovered: 'slider'});
+	}
+
+	restrictedRangeLeave() {
+		this.client.dispatchAction('/store-value', {openRestrictedFeature: false,
+													restrictedFeatureHovered: ''});
+	}
+
 	handleMove(e) {
 		if (!this.tracking) {
 			return;
@@ -414,8 +426,18 @@ export class SliderController extends React.Component {
 
 	render() {
 		const translateX = (this.props.max - Math.min(Math.max(this.props.value, this.props.min), this.props.max)) / (this.props.max - this.props.min) * 92.0;
+		const translateDemoMin = (this.props.max - this.props.realMin) / (this.props.max - this.props.min) * 92.0;
+		const translateDemoMax = 100 - ((this.props.max - this.props.realMax) / (this.props.max - this.props.min) * 92.0);
 		const transform = {
 			transform: `translateX(-${translateX}%)`,
+		};
+		const transformDemoMin = {
+			transform: `translateX(-${translateDemoMin}%)`,
+			marginLeft: '-10px',
+		};
+		const transformDemoMax = {
+			transform: `translateX(${translateDemoMax}%)`,
+			marginLeft: '-10px',
 		};
 
 		const classes = classNames({
@@ -423,6 +445,25 @@ export class SliderController extends React.Component {
 			'is-not-advised': this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised,
 			'is-indiv': this.props.individualized,
 		});
+
+		const demoClassesMin = classNames({
+			'slider-range-limiter-bg': true,
+			'min': true,
+		});
+
+		const demoClassesMax = classNames({
+			'slider-range-limiter-bg': true,
+			'max': true,
+		});
+
+		const demoRangeLimiters = this.props.demo
+			? (
+				<span>
+					<div onMouseEnter={this.restrictedRangeEnter} onMouseLeave={this.restrictedRangeLeave} className={demoClassesMin} style={transformDemoMin}/>
+					<div onMouseEnter={this.restrictedRangeEnter} onMouseLeave={this.restrictedRangeLeave} className={demoClassesMax} style={transformDemoMax}/>
+				</span>
+			)
+			: false;
 
 		return (
 			<div className="slider-controller" ref="slider"
@@ -432,6 +473,7 @@ export class SliderController extends React.Component {
 						className="slider-controller-handle"
 						ref="handle" ></div>
 				</div>
+				{demoRangeLimiters}
 			</div>
 		);
 	}

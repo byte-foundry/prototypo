@@ -10,6 +10,8 @@ export default class IndividualizeButton extends React.PureComponent {
 		super(props);
 		this.state = {};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
+		this.restrictedRangeLeave = this.restrictedRangeLeave.bind(this);
 	}
 
 	componentWillMount() {
@@ -54,10 +56,23 @@ export default class IndividualizeButton extends React.PureComponent {
 		}
 	}
 
+	restrictedRangeEnter() {
+		this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
+													restrictedFeatureHovered: 'indiv'});
+	}
+
+	restrictedRangeLeave() {
+		this.client.dispatchAction('/store-value', {openRestrictedFeature: false,
+													restrictedFeatureHovered: ''});
+	}
+
 	render() {
+
+		const isFree = (!this.state.credits || this.state.credits <= 0 || !this.state.subscription);
 
 		const buttonClass = Classnames({
 			'individualize-button-switch': true,
+			'is-free' : isFree,
 			'is-active': this.state.individualize,
 		});
 		const activeAllClassName = Classnames({
@@ -70,7 +85,7 @@ export default class IndividualizeButton extends React.PureComponent {
 		});
 
 		return (
-			<div className="individualize-button" onClick={() => { this.individualize(); }} >
+			<div className="individualize-button" onClick={() => { this.individualize(); }} onMouseEnter={this.restrictedRangeEnter} onMouseLeave={this.restrictedRangeLeave}>
 				<div className={activeAllClassName}>All glyphs</div>
 				<div className={buttonClass} onClick={() => { this.individualize(); }} >
 					<div className="individualize-button-switch-toggle" title="Individualize parameters"></div>
