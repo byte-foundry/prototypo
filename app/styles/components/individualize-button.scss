@@ -18,7 +18,7 @@
 
 		&.is-free {
 			background-color: transparentize(#555, 0.4);
-			background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
+			background-image: linear-gradient(-45deg, rgba(255, 255, 255, .05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .05) 50%, rgba(255, 255, 255, .05) 75%, transparent 75%, transparent);
 			background-size: 10px 10px;
 		}
 
@@ -40,7 +40,7 @@
 		&.is-free {
 			.individualize-button-switch-toggle {
 				background-color: darken($yellow, 5%);
-				background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
+				background-image: linear-gradient(-45deg, rgba(0, 0, 0, .05) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, .05) 50%, rgba(0, 0, 0, .05) 75%, transparent 75%, transparent);
 				background-size: 10px 10px;
 			}
 		}

@@ -54,7 +54,6 @@ export default class PrototypoCanvas extends React.Component {
 		this.preExportGlyphr = this.preExportGlyphr.bind(this);
 		this.afterExportGlyphr = this.afterExportGlyphr.bind(this);
 		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
-		this.restrictedRangeLeave = this.restrictedRangeLeave.bind(this);
 	}
 
 	componentWillMount() {
@@ -273,16 +272,6 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
-	restrictedRangeLeave() {
-		const isFreeWithoutCreditsInManualEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'select-points';
-		const isFreeWithoutCreditsInComponentEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'components';
-
-		if (isFreeWithoutCreditsInComponentEditing || isFreeWithoutCreditsInManualEditing) {
-			this.client.dispatchAction('/store-value', {openRestrictedFeature: false,
-														restrictedFeatureHovered: ''});
-		}
-	}
-
 	toggleNodes(e) {
 		e.stopPropagation();
 		this.client.dispatchAction('/store-value', {uiNodes: !this.props.uiNodes});
@@ -425,9 +414,7 @@ export default class PrototypoCanvas extends React.Component {
 		}
 
 		const demoOverlay = (isFreeWithoutCreditsInManualEditing ||isFreeWithoutCreditsInComponentEditing) ? (
-			<div className="canvas-demo-overlay"
-			onMouseEnter={this.restrictedRangeEnter}
-			onMouseLeave={this.restrictedRangeLeave}/>
+			<div className="canvas-demo-overlay" onClick={this.restrictedRangeEnter}/>
 		) : false;
 
 		const alternateMenu = this.props.glyphs && this.props.glyphs[this.props.glyphSelected] && this.props.glyphs[this.props.glyphSelected].length > 1 ? (

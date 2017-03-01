@@ -9,65 +9,125 @@
 
 	.panel-demo-overlay {
 		position:absolute;
-		width:100%;
-		height:100%;
-		background-color: rgba(#555, 0.40);
-		background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
-		background-size: 35px 35px;
-		z-index:2;
-		display:flex;
-		justify-content:center;
-		align-items:center;
+		width: 100%;
+		height: 100%;
+		background-color: transparentize($green, 0.2);
+		z-index: 99;
 
 		&-text {
-			opacity:0;
-			color:$white;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			color:$dark-grey;
 			font-size: 20px;
 			display: block;
-			transition:opacity .2s ease;
-			position: relative;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
 			cursor: default;
-			padding: 30px 60px;
-
+			padding: 30px 30px;
+			background-color: $white;
+			z-index: 999;
+			text-align: center;
+			width: 760px;
+			p {
+				padding: 0px 40px;
+			}
 			&-academy-cta, &-gopro-cta {
 				font-size: 20px;
 				cursor: pointer;
-				width: 50%;
-				background-position: 20px center;
+				width: 340px;
+				background-position: 15px center;
+				background-size: 25px 25px;
 				background-repeat: no-repeat;
-				padding: 20px 20px 20px 50px;
+				padding: 15px 15px 15px 50px;
+				margin-top: 20px;
+				border-radius: 10px;
+				text-align: left;
+				transition: color 0.5s ease, background-color 0.5s ease;
 			}
 
 			&-academy-cta {
-				color:$black;
+				color:$dark-grey;
 				background-color: $white;
-				background-image: url('../../images/add-feature.svg');
+				background-image: url('../../images/graduate-cap-black.svg');
 				float: left;
+				border: 3px solid $dark-grey;
+				margin-left: auto;
 
 				&:hover {
-					background-color: $lightest-grey;
+					color: $white;
+					background-color: $dark-grey;
+					background-image: url('../../images/graduate-cap-white.svg');
 				}
 			}
 
 			&-gopro-cta {
-				color:$white;
-				background-color: $green;
-				background-image: url('../../images/pro-version.svg');
+				color:$green;
+				background-color: $white;
+				background-image: url('../../images/pro-version-green.svg');
 				float: right;
+				border: 3px solid $green;
+				margin-right: auto;
 
 				&:hover {
-					background-color: $dark-green;
+					color:$white;
+					background-color: $green;
+					background-image: url('../../images/pro-version.svg');
 				}
 			}
-		}
 
-		&:hover &-text {
-			background-color: darken($dark-grey, 2%);
-			opacity:1;
+			svg {
+			  position: relative;
+			  display: block;
+			  width: 300px;
+			  height: auto;
+			  margin: 0 auto;
+			  margin-bottom: 20px;
+
+			  .st12, .st13, .st14, .st15 {
+			    transition: transform 0.3s ease-in-out;
+			    transform: translateY(12px);
+			  }
+
+			  .st0, .st1 {
+			      transition: transform 0.3s ease-in-out;
+			      transform-origin: center;
+			  }
+
+			  .st2 {
+			    transform-origin: center;
+			    path {
+			      transform-origin: center;
+			    }
+			  }
+			  &:hover  {
+			    .st12, .st13, .st14, .st15 {
+			      transform: translateY(4px);
+			    }
+
+			    .st2 {
+			      animation: pendulum 8s linear infinite reverse;
+			      path {
+			        animation: orbit 6s linear infinite reverse;
+			      }
+			    }
+
+			    .st0, .st1 {
+			      transform: scale(1.05);
+			    }
+			  }
+			}
+
+			@keyframes orbit {
+			  0% { transform: rotate(0deg) scale(1); }
+			  33% { transform: rotate(90deg) scale(1.2); }
+			  66% { transform: rotate(270deg) scale(0.8); }
+			  100% { transform: rotate(360deg) scale(1);}
+			}
+
+			@keyframes pendulum {
+			  0% { transform: rotate(0deg); }
+			  100% { transform: rotate(360deg); }
+			}
 		}
 	}
 

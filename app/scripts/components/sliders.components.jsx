@@ -328,7 +328,6 @@ export class SliderController extends React.Component {
 		this.handleMove = this.handleMove.bind(this);
 		this.handleSelectstart = this.handleSelectstart.bind(this);
 		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
-		this.restrictedRangeLeave = this.restrictedRangeLeave.bind(this);
 	}
 
 	componentWillMount() {
@@ -378,14 +377,10 @@ export class SliderController extends React.Component {
 		e.stopPropagation();
 	}
 
-	restrictedRangeEnter() {
+	restrictedRangeEnter(e) {
 		this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
 													restrictedFeatureHovered: 'slider'});
-	}
-
-	restrictedRangeLeave() {
-		this.client.dispatchAction('/store-value', {openRestrictedFeature: false,
-													restrictedFeatureHovered: ''});
+		e.stopPropagation();
 	}
 
 	handleMove(e) {
@@ -459,8 +454,8 @@ export class SliderController extends React.Component {
 		const demoRangeLimiters = this.props.demo
 			? (
 				<span>
-					<div onMouseEnter={this.restrictedRangeEnter} onMouseLeave={this.restrictedRangeLeave} className={demoClassesMin} style={transformDemoMin}/>
-					<div onMouseEnter={this.restrictedRangeEnter} onMouseLeave={this.restrictedRangeLeave} className={demoClassesMax} style={transformDemoMax}/>
+					<div onClick={this.restrictedRangeEnter} className={demoClassesMin} style={transformDemoMin}/>
+					<div onClick={this.restrictedRangeEnter} className={demoClassesMax} style={transformDemoMax}/>
 				</span>
 			)
 			: false;

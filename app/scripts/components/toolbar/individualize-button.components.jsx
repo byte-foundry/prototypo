@@ -10,8 +10,6 @@ export default class IndividualizeButton extends React.PureComponent {
 		super(props);
 		this.state = {};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
-		this.restrictedRangeLeave = this.restrictedRangeLeave.bind(this);
 	}
 
 	componentWillMount() {
@@ -49,21 +47,10 @@ export default class IndividualizeButton extends React.PureComponent {
 			this.client.dispatchAction('/toggle-individualize');
 		}
 		else {
+			this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
+														restrictedFeatureHovered: 'indiv'});
 			window.Intercom('trackEvent', 'clickOnIndivWithoutSub');
-			this.client.dispatchAction('/store-value', {
-				openGoProModal: true,
-			});
 		}
-	}
-
-	restrictedRangeEnter() {
-		this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
-													restrictedFeatureHovered: 'indiv'});
-	}
-
-	restrictedRangeLeave() {
-		this.client.dispatchAction('/store-value', {openRestrictedFeature: false,
-													restrictedFeatureHovered: ''});
 	}
 
 	render() {
@@ -85,7 +72,7 @@ export default class IndividualizeButton extends React.PureComponent {
 		});
 
 		return (
-			<div className="individualize-button" onClick={() => { this.individualize(); }} onMouseEnter={this.restrictedRangeEnter} onMouseLeave={this.restrictedRangeLeave}>
+			<div className="individualize-button" onClick={() => { this.individualize(); }}>
 				<div className={activeAllClassName}>All glyphs</div>
 				<div className={buttonClass} onClick={() => { this.individualize(); }} >
 					<div className="individualize-button-switch-toggle" title="Individualize parameters"></div>
