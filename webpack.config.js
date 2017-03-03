@@ -29,7 +29,7 @@ module.exports = {
 		loaders: [
 			{
 				test: /\.jsx?$/,
-				loaders: ['react-hot-loader', 'babel-loader?cacheDirectory', 'prelude-loader', 'if-loader'],
+				loaders: ['react-hot-loader', 'babel-loader?cacheDirectory', 'if-loader'],
 				include: [
 					path.join(__dirname, 'app'),
 				],
@@ -82,6 +82,9 @@ module.exports = {
 			context: __dirname,
 			manifest: require('./dist/dll/libs-manifest'),
 			sourceType: 'this',
+		}),
+		new webpack.ProvidePlugin({
+			_: 'lodash',
 		}),
 	],
 	resolve: {

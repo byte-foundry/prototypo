@@ -26,7 +26,7 @@ module.exports = {
 		loaders: [
 			{
 				test: /\.jsx?$/,
-				loaders: ['transform/cacheable?envify', 'babel-loader?cacheDirectory', 'prelude-loader', 'if-loader'],
+				loaders: ['transform/cacheable?envify', 'babel-loader?cacheDirectory', 'if-loader'],
 				include: [
 					path.join(__dirname, 'app'),
 				],
@@ -79,6 +79,9 @@ module.exports = {
 		}),
 		new webpack.optimize.OccurenceOrderPlugin(),
 		new webpack.optimize.DedupePlugin(),
+		new webpack.ProvidePlugin({
+			_: 'lodash',
+		}),
 	],
 	resolve: {
 		extensions: ['', '.js', '.jsx'],
