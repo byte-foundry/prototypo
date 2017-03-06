@@ -7,7 +7,7 @@
     "classnames": "^2.1.2",
     "del": "^1.2.0",
     "draft-js": "^0.8.1",
-    "elzevir.ptf": "byte-foundry/elzevir.ptf#release",
+    "gfnt.ptf": "yannickmathey/g#master",
     "diff": "^3.0.1",
     "draft-js": "~0.9.1",
     "elzevir.ptf": "byte-foundry/elzevir.ptf#master",
