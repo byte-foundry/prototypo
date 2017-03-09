@@ -23,6 +23,7 @@
     "nexus-flux": "FranzPoize/nexus-flux#master",
     "nexus-flux-socket.io": "FranzPoize/nexus-flux-socket.io#master",
     "normalize.css": "^3.0.3",
+    "opentype.js": "^0.6.9",
     "please-wait": "0.0.5",
     "prop-types": "^15.5.8",
     "prototypo-canvas": "~1.16.0",

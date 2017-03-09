@@ -6,6 +6,7 @@
 		"transform-regenerator",
 		"transform-class-properties",
 		"transform-object-rest-spread",
+		"transform-flow-strip-types",
 		["babel-project-relative-import", {
 			"sourceDir": "app/scripts/"
 		}]
