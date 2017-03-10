@@ -119,7 +119,7 @@ export default class Collection extends React.Component {
 		return (
 			<div className="collection">
 				<div className="collection-container">
-					<div className="account-dashboard-icon"/>
+					<div className="account-dashboard-icon" onClick={this.returnToDashboard}/>
 					<div className="account-dashboard-back-icon" onClick={this.returnToDashboard}/>
 					<div className="account-header">
 						<h1 className="account-title">My collection</h1>
