@@ -56,16 +56,14 @@ export default class Glyph {
 		let result = this;
 
 		path.split('.').forEach((propName) => {
-			/* #if dev */
-			if ((!result[propName] || result[propName] === null) && result.solveOperationOrder instanceof Function) {
-				console.error(`While trying to solve ${glyph.name} operation order, couldn't find ${path} property asked by ${caller}`);
-			}
-			/* #end */
 			if (!((!result[propName] || result[propName] === null) && result.solveOperationOrder instanceof Function)) {
 				result = result[propName];
 			}
 		});
 
+		if (!(result.solveOperationOrder instanceof Function)) {
+			console.error(`While trying to solve ${this.name.value} operation order, couldn't find ${path} property asked by ${caller}`);
+		}
 		return result;
 	}
 
@@ -156,17 +154,42 @@ export default class Glyph {
 
 			}
 
-			if (
-				contour.skeleton
-				&& contour.isReadyForHandles(this.operationOrder, i)
-				&& !contour.handled
-			) {
-				contour.handled = true;
-				const results = SkeletonPath.createHandle(_.get(opDone, toLodashPath(contourPath)), contourPath);
+			if (typeof contour.isReadyForHandles === 'function') {
+				if (
+					contour.skeleton
+					&& contour.isReadyForHandles(this.operationOrder, i)
+					&& !contour.handled
+				) {
+					contour.handled = true;
+					const correctedValues = SkeletonPath.correctValues(_.get(opDone, toLodashPath(contourPath)), contourPath);
 
-				Object.keys(results).forEach((key) => {
-					_.set(opDone, key, results[key]);
-				});
+					Object.keys(correctedValues).forEach((key) => {
+						_.set(opDone, key, correctedValues[key]);
+					});
+
+					const handledValues = SkeletonPath.createHandle(_.get(opDone, toLodashPath(contourPath)), contourPath);
+
+					Object.keys(handledValues).forEach((key) => {
+						_.set(opDone, key, handledValues[key]);
+					});
+				}
+				else if (
+					contour.isReadyForHandles(this.operationOrder, i)
+					&& !contour.handled
+				) {
+					contour.handled = true;
+					const correctedValues = SimplePath.correctValues(_.get(opDone, toLodashPath(contourPath)), contourPath);
+
+					Object.keys(correctedValues).forEach((key) => {
+						_.set(opDone, key, correctedValues[key]);
+					});
+
+					const handledValues = SimplePath.createHandle(_.get(opDone, toLodashPath(contourPath)), contourPath);
+
+					Object.keys(handledValues).forEach((key) => {
+						_.set(opDone, key, handledValues[key]);
+					});
+				}
 			}
 		}
 

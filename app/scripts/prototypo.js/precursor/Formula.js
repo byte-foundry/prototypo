@@ -86,31 +86,31 @@ ${this.dependencies.map((name) => {return `${name}: ${_.get(toLodashPath(name), 
 		if (operationsToSolve.length > 0) {
 			result.push(..._.reduce(operationsToSolve, (acc, xpath) => {
 				const expandedIndex = xpath.indexOf('expandedTo');
-				const base = xpath.substr(0, expandedIndex - 1);
-				const node = glyph.getFromXPath(`${base}`);
 				const processedOps = [...operationOrder, ...result, ...acc];
 
-				if (expandedIndex !== -1 && !node.expandedTo) {
+				if (expandedIndex !== -1) {
+					const base = xpath.substr(0, expandedIndex - 1);
+					const node = glyph.getFromXPath(`${base}`);
 
-					const expandResult = glyph.getFromXPath(`${base}.expand.width`).solveOperationOrder(glyph, processedOps);
+					if (!node.expandedTo) {
+						const expandResult = glyph.getFromXPath(`${base}.expand.width`).solveOperationOrder(glyph, processedOps);
 
-					expandResult.push(...glyph.getFromXPath(`${base}.expand.distr`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
-					expandResult.push(...glyph.getFromXPath(`${base}.expand.angle`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
-					expandResult.push(...glyph.getFromXPath(`${base}.x`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
-					expandResult.push(...glyph.getFromXPath(`${base}.y`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
+						expandResult.push(...glyph.getFromXPath(`${base}.expand.distr`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
+						expandResult.push(...glyph.getFromXPath(`${base}.expand.angle`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
+						expandResult.push(...glyph.getFromXPath(`${base}.x`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
+						expandResult.push(...glyph.getFromXPath(`${base}.y`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
 
-					acc.push(...expandResult);
-					return acc;
+						acc.push(...expandResult);
+					}
 				}
 				//We don't have to compute dependcy on parentAnchors they are not
 				//our responsability and should be provided by parent
 				else if (xpath.indexOf('parentAnchors') === -1) {
 					acc.push(...glyph.getFromXPath(xpath).solveOperationOrder(glyph, processedOps));
-					return acc;
 				}
-				else {
-					return acc;
-				}
+
+				return acc;
+
 			}, []));
 		}
 
