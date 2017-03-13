@@ -125,13 +125,13 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 	}
 
 	toggleIndividualize() {
-		if (this.state.isFree && !this.state.isFreeWithCredits) {
-			this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
-														restrictedFeatureHovered: 'indiv'});
-		}
-		else {
+		// if (this.state.isFree && !this.state.isFreeWithCredits) {
+		// 	this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
+		// 												restrictedFeatureHovered: 'indiv'});
+		// }
+		// else {
 			this.client.dispatchAction('/toggle-individualize');
-		}
+		// }
 
 	}
 
@@ -196,7 +196,7 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 			'arianne-item': true,
 			'is-active': this.state.indivMode,
 			'is-creating': this.state.indivCreate,
-			'is-demo': isFreeWithoutCredits,
+			// 'is-demo': isFreeWithoutCredits,
 		});
 		const groupLabel = this.state.indivCreate
 			? 'Creating new group...'

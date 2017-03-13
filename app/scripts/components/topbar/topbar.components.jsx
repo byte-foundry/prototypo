@@ -329,13 +329,11 @@ export default class Topbar extends React.Component {
 							handler={() => {this.logout();}}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">
-						<AllowedTopBarWithPayment credits={credits} freeAccount={freeAccount}>
-							<TopBarMenuDropdownItem
-								name="Individualize parameters"
-								freeAccount={freeAccount}
-								freeAccountAndHasCredits={freeAccountAndHasCredits}
-								handler={() => { this.individualize(); }}/>
-							</AllowedTopBarWithPayment>
+						<TopBarMenuDropdownItem
+							name="Individualize parameters"
+							freeAccount={freeAccount}
+							freeAccountAndHasCredits={freeAccountAndHasCredits}
+							handler={() => { this.individualize(); }}/>
 						<TopBarMenuDropdownItem
 							name={undoText}
 							key="undo"

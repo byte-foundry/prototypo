@@ -295,15 +295,15 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	changeComponent(object) {
-		if (!this.isFree || this.isFreeWithCredits) {
+		//if (!this.isFree || this.isFreeWithCredits) {
 			this.client.dispatchAction('/change-component', object);
-		}
+		//}
 	}
 
 	changeManualNode(params) {
-		if (!this.isFree || this.isFreeWithCredits) {
+		//if (!this.isFree || this.isFreeWithCredits) {
 			this.client.dispatchAction('/change-glyph-node-manually', params);
-		}
+		//}
 	}
 
 	resetManualNode(params) {
@@ -375,13 +375,13 @@ export default class PrototypoCanvas extends React.Component {
 			console.log('[RENDER] PrototypoCanvas');
 		}
 
-		const isFreeWithoutCreditsInManualEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'select-points';
-		const isFreeWithoutCreditsInComponentEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'components';
+		// const isFreeWithoutCreditsInManualEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'select-points';
+		// const isFreeWithoutCreditsInComponentEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'components';
 
 		const canvasClass = classNames({
 			'is-hidden': this.props.uiMode.indexOf('glyph') === -1,
 			'prototypo-canvas': true,
-			'is-blocked': isFreeWithoutCreditsInManualEditing,
+			//'is-blocked': isFreeWithoutCreditsInManualEditing,
 		});
 
 		const textPanelClosed = !this.state.prototypoTextPanelOpened;
@@ -413,9 +413,10 @@ export default class PrototypoCanvas extends React.Component {
 					click={this.toggleCoords}/>);
 		}
 
-		const demoOverlay = (isFreeWithoutCreditsInManualEditing ||isFreeWithoutCreditsInComponentEditing) ? (
-			<div className="canvas-demo-overlay" onClick={this.restrictedRangeEnter}/>
-		) : false;
+		// const demoOverlay = (isFreeWithoutCreditsInManualEditing || isFreeWithoutCreditsInComponentEditing) ? (
+		// 	<div className="canvas-demo-overlay" onClick={this.restrictedRangeEnter}/>
+		// ) : false;
+		const demoOverlay = false;
 
 		const alternateMenu = this.props.glyphs && this.props.glyphs[this.props.glyphSelected] && this.props.glyphs[this.props.glyphSelected].length > 1 ? (
 			<AlternateMenu alternates={this.props.glyphs[this.props.glyphSelected]} unicode={this.props.glyphSelected}/>

@@ -64,9 +64,9 @@
 				color:$green;
 				background-color: $white;
 				background-image: url('../../images/pro-version-green.svg');
-				float: right;
 				border: 3px solid $green;
 				margin-right: auto;
+				margin-left: auto;
 
 				&:hover {
 					color:$white;
