@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {monthlyConst, annualConst} from '../data/plans.data.js';
+import {monthlyConst, annualConst, agencyMonthlyConst, agencyAnnualConst} from '../data/plans.data.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
@@ -15,9 +15,16 @@ export default class GoProModal extends React.PureComponent {
 
 		this.state = {
 			country: 'US',
+			billing: 'annually',
+			agencyCount: 5,
 		};
 
 		this.goSubscribe = this.goSubscribe.bind(this);
+		this.switchMonthlyBilling = this.switchMonthlyBilling.bind(this);
+		this.switchAnnualBilling = this.switchAnnualBilling.bind(this);
+		this.decreaseAgencyCount = this.decreaseAgencyCount.bind(this);
+		this.increaseAgencyCount = this.increaseAgencyCount.bind(this);
+		this.updateAgencyCount = this.updateAgencyCount.bind(this);
 	}
 
 	componentWillMount() {
@@ -32,10 +39,33 @@ export default class GoProModal extends React.PureComponent {
 	}
 
 	goSubscribe() {
+
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
-		document.location.href = '#/account/subscribe';
+		document.location.href = `#/account/subscribe?plan=personal_${this.state.billing === 'monthly' ? 'monthly' : 'annual_99'}`;
 		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
 		Log.ui('Subscribe.FromFile');
+	}
+
+	switchMonthlyBilling() {
+		this.setState({billing: 'monthly'});
+	}
+
+	switchAnnualBilling() {
+		this.setState({billing: 'annually'});
+	}
+
+	decreaseAgencyCount() {
+		if (this.state.agencyCount > 5) {
+			this.setState({agencyCount: this.state.agencyCount - 1});
+		}
+	}
+
+	increaseAgencyCount() {
+		this.setState({agencyCount: this.state.agencyCount + 1});
+	}
+
+	updateAgencyCount(event) {
+		this.setState({agencyCount: parseInt(event.target.value)});
 	}
 
 	render() {
@@ -47,10 +77,10 @@ export default class GoProModal extends React.PureComponent {
 				<div className="modal-container-content">
 					<h3>Start using the full potential of Prototypo and begin your journey in the typeface world.</h3>
 					<div className="pricing-switch">
-						<div className="pricing-switch-item is-active">
+						<div className={`pricing-switch-item ${this.state.billing === 'monthly' ? 'is-active' : ''}`} onClick={this.switchMonthlyBilling}>
 							Monthly
 						</div>
-						<div className="pricing-switch-item">
+						<div className={`pricing-switch-item ${this.state.billing === 'annually' ? 'is-active' : ''}`} onClick={this.switchAnnualBilling}>
 							Annual
 						</div>
 					</div>
@@ -64,8 +94,8 @@ export default class GoProModal extends React.PureComponent {
 							</div>
 							<div className="pricing-item-subtitle">
 								<div className="pricing-item-subtitle-price">
-									<div className="pricing-item-subtitle-price-value"><span className="pricing-item-subtitle-price-value-currency">$</span>{monthlyConst.price}<span className="pricing-item-subtitle-price-value-freq">per month</span></div>
-									<div className="pricing-item-subtitle-price-info">First month for $1</div>
+									<div className="pricing-item-subtitle-price-value"><span className="pricing-item-subtitle-price-value-currency">$</span>{this.state.billing === 'annually' ? annualConst.monthlyPrice : monthlyConst.price}<span className="pricing-item-subtitle-price-value-freq">per month</span></div>
+									<div className="pricing-item-subtitle-price-info">{this.state.billing === 'monthly' ? 'First month for $1' : <br/>}</div>
 								</div>
 							</div>
 							<ul className="pricing-item-features">
@@ -89,7 +119,7 @@ export default class GoProModal extends React.PureComponent {
 								Make me pro!
 							</div>
 						</div>
-						<div className="pricing-item">
+						<div className="pricing-item" onClick={this.goSubscribeAgency}>
 							<div className="pricing-item-title">
 								Agency
 								<div className="pricing-item-title-more">
@@ -98,8 +128,17 @@ export default class GoProModal extends React.PureComponent {
 							</div>
 							<div className="pricing-item-subtitle">
 								<div className="pricing-item-subtitle-price">
-									<div className="pricing-item-subtitle-price-value"><span className="pricing-item-subtitle-price-value-currency">$</span>60<span className="pricing-item-subtitle-price-value-freq">per month</span></div>
-									<div className="pricing-item-subtitle-price-info">For <span>5<span>&#x25b2;</span><span>&#x25bc;</span></span> users</div>
+									<div className="pricing-item-subtitle-price-value">
+										<span className="pricing-item-subtitle-price-value-currency">$</span>
+										{this.state.billing === 'annually' ? agencyAnnualConst.monthlyPrice * this.state.agencyCount : agencyMonthlyConst.monthlyPrice * this.state.agencyCount}
+										<span className="pricing-item-subtitle-price-value-freq">per month</span>
+									</div>
+									<div className="pricing-item-subtitle-price-info agency">
+										<span className="input-number-decrement" onClick={this.decreaseAgencyCount}>–</span>
+										<input className="input-number" type="text" value={this.state.agencyCount} min="4" max="100" onChange={this.updateAgencyCount}/>
+										<span className="input-number-text">users</span>
+										<span className="input-number-increment" onClick={this.increaseAgencyCount}>+</span>
+									</div>
 								</div>
 							</div>
 							<ul className="pricing-item-features">

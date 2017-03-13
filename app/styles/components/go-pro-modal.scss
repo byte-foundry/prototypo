@@ -57,3 +57,78 @@
 		width: 100%;
 	}
 }
+
+.pricing-item-subtitle-price-info.agency {
+  text-align: center;
+  display: inline-block;
+  margin-top: -2px;
+  margin-bottom: 2px;
+  .input-number,
+  .input-number-decrement,
+  .input-number-increment,
+  .input-number-text {
+	border: 1px solid $light-grey;
+	height: 25px;
+	user-select: none;
+	float: left;
+  }
+
+  .input-number {
+	width: 40px;
+	padding: 0 4px;
+	margin-bottom: 0;
+	vertical-align: top;
+	text-align: center;
+	outline: none;
+	border-right: none;
+	font-size: 16px;
+	line-height: 21px;
+	background: inherit;
+	box-shadow: none;
+	color: $white;
+	&:focus {
+	  outline: none;
+	  background: inherit;
+	  box-shadow: none;
+	  border-color: $light-grey;
+	}
+  }
+
+  .input-number-text {
+	font-size: 16px;
+	line-height: 21px;
+	border-left: none;
+	border-top: 1px solid $light-grey;
+	border-bottom: 1px solid $light-grey;
+	padding: 0 12px;
+	padding-left: 0;
+  }
+
+
+
+  .input-number-decrement,
+  .input-number-increment {
+	display: inline-block;
+	width: 30px;
+	line-height: 21px;
+	background: $medium-grey;
+	color: $white;
+	text-align: center;
+	font-weight: 700;
+	cursor: pointer;
+  }
+  .input-number-decrement:active,
+  .input-number-increment:active {
+	background: lighten($medium-grey, 5%);
+  }
+
+  .input-number-decrement {
+	border-right: none;
+	border-radius: 4px 0 0 4px;
+  }
+
+  .input-number-increment {
+	border-left: none;
+	border-radius: 0 4px 4px 0;
+  }
+}

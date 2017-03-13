@@ -3,6 +3,7 @@ import SubscriptionSidebar from './subscription-sidebar.components.jsx';
 import SubscriptionCardAndValidation from './subscription-card-and-validation.components.jsx';
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
+import {Link} from 'react-router';
 
 export default class Subscription extends React.Component {
 	constructor(props) {
@@ -55,7 +56,7 @@ export default class Subscription extends React.Component {
 
 		return (
 			<div className="subscription">
-				<div className="account-dashboard-icon is-in-subscription"/>
+				<Link to="/dashboard" className="account-dashboard-icon is-in-subscription"/>
 				{back}
 				<div className="account-dashboard-container">
 					<SubscriptionSidebar

@@ -13,18 +13,16 @@ export default class AllowedTopBarWithPayment extends React.Component {
 			country: 'US',
 		};
 
-		this.openBuyCreditsModal = this.openBuyCreditsModal.bind(this);
+		this.openGoProModal = this.openGoProModal.bind(this);
 	}
 
-	openBuyCreditsModal() {
-		this.client.dispatchAction('/store-value', {openBuyCreditsModal: true});
-		window.Intercom('trackEvent', 'openBuyCreditsModalFromFile');
-		Log.ui('BuyCreditsModal.FromFile');
-	}
-
-	trackSubscriptionClick() {
-		window.Intercom('trackEvent', 'subscriptionClickfromFile');
-		Log.ui('SubscriptionClick.FromFile');
+	openGoProModal() {
+		// TODO: Intercom tracking
+		window.Intercom('trackEvent', 'openGoProModalFromFile');
+		Log.ui('GoProModal.FromFile');
+		this.client.dispatchAction('/store-value', {
+			openGoProModal: true,
+		});
 	}
 
 	componentWillMount() {
@@ -51,18 +49,9 @@ export default class AllowedTopBarWithPayment extends React.Component {
 							<span>This feature is available with the professional subscription</span>
 						</Link>
 						<div className="allowed-top-bar-with-payment-demo-overlay-text-more">
-							<Link to="/account/subscribe" className="allowed-top-bar-with-payment-demo-overlay-text-more-half" onClick={this.trackSubscriptionClick}>
+							<div className="allowed-top-bar-with-payment-demo-overlay-text-more-half" onClick={this.openGoProModal}>
 								<div className="allowed-top-bar-with-payment-demo-overlay-text-more-wrap allowed-top-bar-with-payment-subscribe">
 									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">Subscribe to full version</div>
-								</div>
-							</Link>
-							<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text-separator"></div>
-							<div onClick={this.openBuyCreditsModal} className="allowed-top-bar-with-payment-demo-overlay-text-more-half">
-								<div className="allowed-top-bar-with-payment-demo-overlay-text-more-wrap allowed-top-bar-with-payment-credits">
-									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">
-										Buy export credits.<br/>
-										3 credits for <Price amount={9} country={country} />
-									</div>
 								</div>
 							</div>
 						</div>

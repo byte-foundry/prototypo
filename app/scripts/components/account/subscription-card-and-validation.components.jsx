@@ -1,7 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 
-import {monthlyConst, annualConst} from '../../data/plans.data.js';
+import {monthlyConst, annualConst, agencyMonthlyConst, agencyAnnualConst} from '../../data/plans.data.js';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -98,7 +98,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			'personal_monthly': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to and pay <Price amount={monthlyConst.firstMonthPrice} country={country}/> for the first month of yout Prototypo. You'll also agree to be charged <Price amount={monthlyConst.price} country={country}/> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to and pay <Price amount={monthlyConst.firstMonthPrice} country={country}/> for the first month of your Prototypo subscription. You'll also agree to be charged <Price amount={monthlyConst.price} country={country}/> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
@@ -106,6 +106,20 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 				blurb: (
 					<div>
 						By clicking on the subscribe button below you agree to pay <Price amount={annualConst.annualPrice} country={country}/> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.
+					</div>
+				),
+			},
+			'agency_monthly': {
+				blurb: (
+					<div>
+						By clicking on the subscribe button below you agree to pay <Price amount={agencyMonthlyConst.monthlyPrice} country={country}/> once and be subscribes to Prototypo. . You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.
+					</div>
+				),
+			},
+			'agency_annual': {
+				blurb: (
+					<div>
+						By clicking on the subscribe button below you agree to pay <Price amount={agencyAnnualConst.annualPrice} country={country}/> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
@@ -121,6 +135,9 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 						</div>
 						<div className="subscription-card-and-validation-card-number">
 							**** **** **** {this.state.card[0].last4}
+						</div>
+						<div className="input-card-subline clearfix">
+							<a href="https://stripe.com/" target="_blank"><img className="input-card-subline-poweredbystripe" src="assets/images/powered_by_stripe.svg" alt="powered by stripe"/></a>
 						</div>
 						<div className="subscription-card-and-validation-card-date">
 							{this.state.card[0].exp_month}/{this.state.card[0].exp_year}

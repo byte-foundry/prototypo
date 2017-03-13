@@ -156,7 +156,7 @@ export default class PrototypoPanel extends React.Component {
 			? (
 				<div className="panel-demo-overlay" onClick={this.closeRestrictedFeatureOverlay}>
 				  <div className="panel-demo-overlay-text">
-					  <svg xmlns="http://www.w3.org/2000/svg" id="Calque_1" viewBox="0 0 159.2 137">
+					  <svg xmlns="http://www.w3.org/2000/svg" id="Calque_1" viewBox="0 0 159.2 137" onClick={this.openGoProModal}>
     					<style>
     					  {svgStyles}
     					</style>

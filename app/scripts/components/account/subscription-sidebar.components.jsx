@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 
-import {monthlyConst} from '../../data/plans.data.js';
+import {monthlyConst, annualConst, agencyMonthlyConst, agencyAnnualConst} from '../../data/plans.data.js';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -46,7 +46,7 @@ export default class SubscriptionSidebar extends React.Component {
 				cta: (
 					<div>
 						<div>
-							<Price amount={8.25} country={country}/>/month
+							<Price amount={annualConst.monthlyPrice} country={country}/>/month
 						</div>
 						<div>
 							Less money same features
@@ -57,6 +57,45 @@ export default class SubscriptionSidebar extends React.Component {
 				link: {
 					text: 'Want less commitment, try our montly offer',
 					to: '/account/subscribe?plan=personal_monthly',
+				},
+			},
+			'agency_monthly': {
+				header: 'Agencies - Monthly subscription',
+				title: <span>Prototypo multi-user plan, designed for professionnals, billed monthly.</span>,
+				features: [
+					'All pro features',
+					'Team management and user roles',
+					'24h support',
+				],
+				cta: <span><Price amount={agencyMonthlyConst.monthlyPrice} country={country}/> per month.</span>,
+				subcta: 'No commitment!',
+				link: {
+					text: 'Want Prototypo for cheap, check out our annual offer.',
+					to: '/account/subscribe?plan=agency_annual',
+				},
+			},
+			'agency_annual': {
+				header: 'Agencies - Annual subscription',
+				title: <span>Prototypo multi-user plan, designed for professionnals, billed annually.</span>,
+				features: [
+					'All pro features',
+					'Team management and user roles',
+					'24h support',
+				],
+				cta: (
+					<div>
+						<div>
+							<Price amount={agencyAnnualConst.monthlyConst} country={country}/>/month
+						</div>
+						<div>
+							Less money same features
+						</div>
+					</div>
+				),
+				subcta: 'No commitment!',
+				link: {
+					text: 'Want less commitment, try our montly offer',
+					to: '/account/subscribe?plan=agency_monthly',
 				},
 			},
 		};

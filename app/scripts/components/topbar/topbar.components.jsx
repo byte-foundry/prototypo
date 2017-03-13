@@ -154,10 +154,13 @@ export default class Topbar extends React.Component {
 	}
 
 	goToSubscribe() {
-		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
-		Log.ui('ExportFontNow.open');
-		this.context.router.push({
+		window.Intercom('trackEvent', 'clickTakeFullAdvantageOfPrototypo');
+		Log.ui('GoPro.open');
+		/*this.context.router.push({
 			pathname: '/account/subscribe',
+		});*/
+		this.client.dispatchAction('/store-value', {
+			openGoProModal: true,
 		});
 	}
 

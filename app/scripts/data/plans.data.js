@@ -16,4 +16,18 @@ export const annualConst = {
 	annualPrice: 99,
 	prefix: 'personal_annual_99',
 	description: 'Professional annual subscription',
-}
+};
+
+export const agencyMonthlyConst = {
+	monthlyPrice: 22.5,
+	annualPrice: 270,
+	prefix: 'agency_monthly',
+	description: 'Agency monthly subscription',
+};
+
+export const agencyAnnualConst = {
+	monthlyPrice: 12.5,
+	annualPrice: 150,
+	prefix: 'agency_annual',
+	description: 'Agency annual subscription',
+};
