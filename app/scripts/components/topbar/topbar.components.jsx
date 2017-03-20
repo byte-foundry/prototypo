@@ -11,6 +11,8 @@ import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
 
+import Price from '../shared/price.components';
+
 import {
 	TopBarMenu,
 	TopBarMenuDropdown,
@@ -245,7 +247,7 @@ export default class Topbar extends React.Component {
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount) && (
 			<TopBarMenuButton
-				label={<span>TAKE FULL ADVANTAGE OF PROTOTYPO!</span>}
+				label={<span>GET THE FULL VERSION FOR <Price amount={1} country={this.state.country} /></span>}
 				noHover
 				centered
 				click={this.goToSubscribe}

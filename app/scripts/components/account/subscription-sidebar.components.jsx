@@ -24,9 +24,9 @@ export default class SubscriptionSidebar extends React.Component {
 				header: 'Monthly',
 				title: <span>Try Prototypo Pro subscription for <Price amount={1} country={country}/> only</span>,
 				features: [
-					'Unlimited font exports',
-					'Full ranges for all parameters',
-					'Parameter individualization for more custom fonts',
+					'More diverse fonts with full range on all parameters',
+					'Perfectly customized with glyph individualization groups',
+					'Tune to perfection using the manual edition and component editing',
 				],
 				cta: <span><Price amount={monthlyConst.price} country={country}/> after the first month.</span>,
 				subcta: 'No commitment!',
@@ -39,9 +39,9 @@ export default class SubscriptionSidebar extends React.Component {
 				header: 'Annual',
 				title: 'Buy Prototypo Pro subscription for 1 year, get 4 months for free',
 				features: [
-					'Unlimited font exports',
-					'Full ranges for all parameters',
-					'Parameter individualization for more custom fonts',
+					'More diverse fonts with full range on all parameters',
+					'Perfectly customized with glyph individualization groups',
+					'Tune to perfection using the manual edition and component editing',
 				],
 				cta: (
 					<div>
@@ -64,8 +64,8 @@ export default class SubscriptionSidebar extends React.Component {
 				title: <span>Prototypo multi-user plan, designed for professionnals, billed monthly.</span>,
 				features: [
 					'All pro features',
-					'Team management and user roles',
-					'24h support',
+					'Manage your team licences',
+					'Premium 24h support',
 				],
 				cta: <span><Price amount={agencyMonthlyConst.monthlyPrice} country={country}/> per month.</span>,
 				subcta: 'No commitment!',
@@ -79,8 +79,8 @@ export default class SubscriptionSidebar extends React.Component {
 				title: <span>Prototypo multi-user plan, designed for professionnals, billed annually.</span>,
 				features: [
 					'All pro features',
-					'Team management and user roles',
-					'24h support',
+					'Manage your team licences',
+					'Premium 24h support',
 				],
 				cta: (
 					<div>

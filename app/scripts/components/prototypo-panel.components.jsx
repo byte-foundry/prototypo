@@ -139,7 +139,7 @@ export default class PrototypoPanel extends React.Component {
 				featureHovered = 'This is the individualization mode, an advanced feature not available to you yet.';
 				break;
 			case 'slider':
-				featureHovered = 'The full slider range has been disabled for you beause it allows advanced modifications.';
+				featureHovered = 'To unlock the full slider range on all parameters and create more diverse font';
 				break;
 			case 'componentEditing':
 				featureHovered = 'This is the component editing view, an advanced feature not available to you yet.';
@@ -214,9 +214,7 @@ export default class PrototypoPanel extends React.Component {
 						<p>
 							{featureHovered}
 						</p>
-						<p>
-							To unlock it:
-						</p>
+
 						<div className="panel-demo-overlay-text-gopro-cta" onClick={this.openGoProModal}>Upgrade to the full version</div>
 					</div>
 				</div>

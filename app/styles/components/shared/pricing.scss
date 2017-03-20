@@ -9,56 +9,72 @@
 		justify-content:center;
 
 		&-item {
-			margin-right: 30px;
+			margin-right: 16px;
+			margin-left: -7px;
 			font-size: 17px;
-			padding: 10px;
-			border-radius: 20px;
+			padding: 10px 20px;
+			border-radius: 5px;
 			font-weight: 100;
 			cursor: pointer;
+			background: $white;
+			color: $green;
+			border: 1px solid $green;
+			transition: background 0.3s ease, color 0.3s ease;
 
 			&:last-of-type {
 				margin-right: 0;
+				margin-left: 0;
 			}
 
 			&.is-active, &:hover {
-				background-color: $dark-grey;
+				background-color: $green;
 				color: $white;
 			}
 		}
 	}
 
 	&-item {
-		border-radius: 8px;
+		border-radius: 5px;
 		overflow: hidden;
-		margin-right: 30px;
+		margin-right: 15px;
 		height:100%;
 		cursor:pointer;
+		border: 3px solid $light-grey;
+		background-color: $lightest-grey;
+		transition: transform 0.3s ease;
+
+		&:hover {
+			transform: scale(1.02);
+		}
 
 		&:last-of-type {
 			margin-right: 0;
 		}
 
 		&-title {
-			background: $dark-grey;
-			color: $white;
-			font-size: 30px;
+			background-color: #fefefe;
+			color: $green;
+			font-size: 20px;
 			font-weight: 100;
 			font-family: proxima-nova;
 			text-align: center;
+			text-transform: uppercase;
 			padding: 10px;
+			padding-top: 35px;
 
 			&-more {
 				color: $lightest-grey;
 				font-size: 16px;
+				text-transform: none;
+				color: $dark-grey;
 			}
 		}
 
 		&-subtitle {
-			border-right: solid 1px $medium-grey;
-			border-left: solid 1px $medium-grey;
-			background: $medium-grey;
-			color: $white;
+			background-color: #fefefe;
+			color: $green;
 			padding: 10px;
+			padding-top: 0;
 			text-align: center;
 			font-weight: 100;
 
@@ -92,25 +108,29 @@
 			list-style-type: none;
 			margin: 0;
 			padding: 0;
-			border-right: solid 1px $light-grey;
-			border-left: solid 1px $light-grey;
-			color: $medium-grey;
+			color: $dark-grey;
+			text-align: center;
 		}
 
 		&-feature {
 			padding: 10px 20px;
-			border-bottom: solid 1px $light-grey;
+			border-top: solid 1px $light-grey;
 			font-size: 18px;
 			font-weight: 100;
+			background-color: $lightest-grey;
 		}
 
 		&-cta {
-			background: #24D390;
+			background: $green;
 			color: #fefefe;
 			text-align: center;
-			padding: 20px;
-			font-size: 24px;
+			padding: 5px 10px;
+			font-size: 20px;
 			font-weight: 100;
+			transition: background 0.3s ease;
+			&:hover {
+				background: lighten($green, 5%);
+			}
 		}
 	}
 }

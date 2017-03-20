@@ -42,7 +42,9 @@
 		}
 
 		&:hover, &.is-active {
-			background-color: $green;
+			@include themify () {
+				background-color: $theme-background;
+			}
 		}
 	}
 }

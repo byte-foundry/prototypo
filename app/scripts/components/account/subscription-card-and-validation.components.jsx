@@ -10,6 +10,7 @@ import Button from '../shared/button.components.jsx';
 import InputWithLabel from '../shared/input-with-label.components.jsx';
 import Price from '../shared/price.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
+import getCurrency from '../../helpers/currency.helpers.js';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -28,7 +29,9 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		this.keepCard = this.keepCard.bind(this);
 		this.addCoupon = this.addCoupon.bind(this);
 		this.handleCouponChange = this.handleCouponChange.bind(this);
+		this.handleCouponSubmit = this.handleCouponSubmit.bind(this);
 		this.subscribe = this.subscribe.bind(this);
+
 	}
 
 	componentWillMount() {
@@ -50,6 +53,17 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+	}
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.plan === 'personal_monthly') {
+			this.setState({'couponValue': `base_coupon_${getCurrency(newProps.country)}`});
+			this.handleCouponChange(`base_coupon_${getCurrency(newProps.country)}`);
+		}
+		else {
+			this.setState({'couponValue': undefined});
+			this.handleCouponChange('');
+		}
 	}
 
 	componentWillUnmount() {
@@ -86,10 +100,20 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		});
 	}
 
-	handleCouponChange() {
+	handleCouponChange(coupon) {
+		this.client.dispatchAction('/choose-plan', {
+			coupon: typeof coupon === 'string' ? coupon : this.refs.coupon.inputValue,
+		});
+		this.setState({'isFormSubmitted': false});
+	}
+
+	handleCouponSubmit(e) {
 		this.client.dispatchAction('/choose-plan', {
 			coupon: this.refs.coupon.inputValue,
 		});
+		this.setState({'isFormSubmitted': true});
+		e.stopPropagation();
+		return true;
 	}
 
 	render() {
@@ -98,28 +122,28 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			'personal_monthly': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to and pay <Price amount={monthlyConst.firstMonthPrice} country={country}/> for the first month of your Prototypo subscription. You'll also agree to be charged <Price amount={monthlyConst.price} country={country}/> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to and pay <Price amount={monthlyConst.firstMonthPrice} country={country}/> for the first month of your Prototypo subscription. You'll also agree to be charged <Price amount={monthlyConst.price} country={country}/> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
 			'personal_annual_99': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <Price amount={annualConst.annualPrice} country={country}/> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <Price amount={annualConst.annualPrice} country={country}/> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
 			'agency_monthly': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <Price amount={agencyMonthlyConst.monthlyPrice} country={country}/> once and be subscribes to Prototypo. . You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <Price amount={agencyMonthlyConst.monthlyPrice} country={country}/> once and be subscribes to Prototypo. . You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
 			'agency_annual': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <Price amount={agencyAnnualConst.annualPrice} country={country}/> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <Price amount={agencyAnnualConst.annualPrice} country={country}/> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
@@ -135,9 +159,6 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 						</div>
 						<div className="subscription-card-and-validation-card-number">
 							**** **** **** {this.state.card[0].last4}
-						</div>
-						<div className="input-card-subline clearfix">
-							<a href="https://stripe.com/" target="_blank"><img className="input-card-subline-poweredbystripe" src="assets/images/powered_by_stripe.svg" alt="powered by stripe"/></a>
 						</div>
 						<div className="subscription-card-and-validation-card-date">
 							{this.state.card[0].exp_month}/{this.state.card[0].exp_year}
@@ -165,13 +186,17 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 					</div>
 				</div>
 			);
-
+		const inputStyle = {
+			display: this.state.couponValue === `base_coupon_${getCurrency(country)}` ? 'none' : 'block',
+		};
 		const coupon = this.state.couponValue !== undefined && (
 			<div>
-				<InputWithLabel ref="coupon" label="Coupon code" error={false} onChange={this.handleCouponChange} value={this.state.couponValue}/>
+				<form onSubmit={this.handleCouponSubmit} style={inputStyle}>
+					<InputWithLabel ref="coupon" label="Coupon code" error={false} onChange={this.handleCouponChange} value={this.state.couponValue}/>
+				</form>
 				{this.state.validCoupon
 					? <div className="subscription-card-and-validation-valid-coupon">{`(ノ✿◕ᗜ◕)ノ━☆ﾟ.*･｡ﾟ ${this.state.validCoupon.label}`}</div>
-					: this.state.wasValidCoupon
+					: this.state.wasValidCoupon || this.state.isFormSubmitted
 						? <div className="subscription-card-and-validation-error-coupon">ʕ ಡ╭╮ಡ ʔ This is not a valid coupon</div>
 						: null}
 			</div>

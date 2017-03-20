@@ -16,7 +16,7 @@ export default class GoProModal extends React.PureComponent {
 		this.state = {
 			country: 'US',
 			billing: 'annually',
-			agencyCount: 5,
+			agencyCount: 4,
 		};
 
 		this.goSubscribe = this.goSubscribe.bind(this);
@@ -25,6 +25,7 @@ export default class GoProModal extends React.PureComponent {
 		this.decreaseAgencyCount = this.decreaseAgencyCount.bind(this);
 		this.increaseAgencyCount = this.increaseAgencyCount.bind(this);
 		this.updateAgencyCount = this.updateAgencyCount.bind(this);
+		this.openIntercomChat = this.openIntercomChat.bind(this);
 	}
 
 	componentWillMount() {
@@ -55,7 +56,7 @@ export default class GoProModal extends React.PureComponent {
 	}
 
 	decreaseAgencyCount() {
-		if (this.state.agencyCount > 5) {
+		if (this.state.agencyCount > 1) {
 			this.setState({agencyCount: this.state.agencyCount - 1});
 		}
 	}
@@ -68,20 +69,23 @@ export default class GoProModal extends React.PureComponent {
 		this.setState({agencyCount: parseInt(event.target.value)});
 	}
 
+	openIntercomChat() {
+		window.Intercom('trackEvent', 'clickedOnContactUsFromGoProModal');
+		window.Intercom('showNewMessage', `Hi! I am interested in subscribing to a company plan for ${this.state.agencyCount} licences`);
+	}
+
 	render() {
 		const {country} = this.state;
 
 		return (
 			<Modal propName={this.props.propName}>
-				<div className="modal-container-title account-header">UPGRADE TO FULL VERSION!</div>
 				<div className="modal-container-content">
-					<h3>Start using the full potential of Prototypo and begin your journey in the typeface world.</h3>
 					<div className="pricing-switch">
 						<div className={`pricing-switch-item ${this.state.billing === 'monthly' ? 'is-active' : ''}`} onClick={this.switchMonthlyBilling}>
-							Monthly
+							Monthly billing
 						</div>
 						<div className={`pricing-switch-item ${this.state.billing === 'annually' ? 'is-active' : ''}`} onClick={this.switchAnnualBilling}>
-							Annual
+							Annual billing
 						</div>
 					</div>
 					<div className="pricing">
@@ -106,7 +110,7 @@ export default class GoProModal extends React.PureComponent {
 									Perfectly customized with glyph individualization groups
 								</li>
 								<li className="pricing-item-feature">
-									Tune to perfection using the manual edition
+									Tune to perfection using the manual edition and component editing
 								</li>
 								<li className="pricing-item-feature">
 									&nbsp;
@@ -121,9 +125,9 @@ export default class GoProModal extends React.PureComponent {
 						</div>
 						<div className="pricing-item" onClick={this.goSubscribeAgency}>
 							<div className="pricing-item-title">
-								Agency
+								Company
 								<div className="pricing-item-title-more">
-									Perfect for agencies and company of 5 or more people
+									Perfect for agencies and company
 								</div>
 							</div>
 							<div className="pricing-item-subtitle">
@@ -135,7 +139,7 @@ export default class GoProModal extends React.PureComponent {
 									</div>
 									<div className="pricing-item-subtitle-price-info agency">
 										<span className="input-number-decrement" onClick={this.decreaseAgencyCount}>–</span>
-										<input className="input-number" type="text" value={this.state.agencyCount} min="4" max="100" onChange={this.updateAgencyCount}/>
+										<input className="input-number" type="text" value={this.state.agencyCount} min="1" max="100" onChange={this.updateAgencyCount}/>
 										<span className="input-number-text">users</span>
 										<span className="input-number-increment" onClick={this.increaseAgencyCount}>+</span>
 									</div>
@@ -149,16 +153,16 @@ export default class GoProModal extends React.PureComponent {
 									Perfectly customized with glyph individualization groups
 								</li>
 								<li className="pricing-item-feature">
-									Tune to perfection using the manual edition
+									Tune to perfection using the manual edition and component editing
 								</li>
 								<li className="pricing-item-feature">
 									Manage your team licenses
 								</li>
 								<li className="pricing-item-feature">
-									Discounts on large order of licenses
+									Premium 24h support
 								</li>
 							</ul>
-							<div className="pricing-item-cta">
+							<div className="pricing-item-cta" onClick={this.openIntercomChat}>
 								Contact us
 							</div>
 						</div>

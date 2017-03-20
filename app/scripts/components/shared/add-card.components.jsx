@@ -43,7 +43,7 @@ export default class AddCard extends React.PureComponent {
 		return (
 			<div className="add-card">
 				<InputWithLabel inputRef={(ref) => { this.fullname = ref; }} label="Full name" error={inError.fullname} info="(as it appears on the card)" required={true}/>
-				<div className="input-with-subline">
+				<div className={`input-with-subline ${this.state.creditCardType === 'unknown' ? '' : this.state.creditCardType}`}>
 					<InputWithLabel label="Card number" error={inError.number} required={true}>
 						<Cleave
 							htmlRef={(ref) => { this.number = ref; }}
@@ -54,7 +54,7 @@ export default class AddCard extends React.PureComponent {
 					</InputWithLabel>
 				</div>
 				<div className="input-card-subline clearfix">
-					<div className={`input-card-subline-creditcard ${this.state.creditCardType === 'unknown' ? '' : this.state.creditCardType}`}></div> <a href="https://stripe.com/" target="_blank"><img className="input-card-subline-poweredbystripe" src="assets/images/powered_by_stripe.svg" alt="powered by stripe"/></a>
+					<a href="https://stripe.com/" target="_blank"><img className="input-card-subline-poweredbystripe" src="assets/images/powered_by_stripe.svg" alt="powered by stripe"/></a>
 				</div>
 				<div className="columns">
 					<div className="third-column">

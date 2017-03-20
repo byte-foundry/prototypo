@@ -23,7 +23,7 @@
 			font-size: 20px;
 			display: block;
 			cursor: default;
-			padding: 30px 30px;
+			padding: 60px 30px;
 			background-color: $white;
 			z-index: 999;
 			text-align: center;
@@ -34,7 +34,6 @@
 			&-academy-cta, &-gopro-cta {
 				font-size: 20px;
 				cursor: pointer;
-				width: 340px;
 				background-position: 15px center;
 				background-size: 25px 25px;
 				background-repeat: no-repeat;
@@ -67,7 +66,8 @@
 				border: 3px solid $green;
 				margin-right: auto;
 				margin-left: auto;
-
+				width: auto;
+				display: inline-block;
 				&:hover {
 					color:$white;
 					background-color: $green;
