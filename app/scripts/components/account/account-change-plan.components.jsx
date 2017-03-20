@@ -1,5 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
+import HoodieApi from '~/services/hoodie.services.js';
 
 import {monthlyConst, annualConst, freeConst} from '../../data/plans.data.js';
 
@@ -23,7 +24,7 @@ export default class AccountChangePlan extends React.Component {
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					plan: head.toJS().d.subscription,
+					plan: HoodieApi.instance.plan,
 					loading: head.toJS().d.choosePlanForm.loading,
 				});
 			})
@@ -69,7 +70,7 @@ export default class AccountChangePlan extends React.Component {
 		};
 
 		const plan = _.find(planInfos, (planInfo, key) => {
-			return this.state.plan && this.state.plan[0].plan.id.indexOf(key) !== -1;
+			return this.state.plan && this.state.plan.indexOf(key) !== -1;
 		});
 
 		const optionPossible = [
@@ -79,7 +80,7 @@ export default class AccountChangePlan extends React.Component {
 		];
 
 		const options = _.reject(optionPossible, (option) => {
-			return !(!this.state.plan || !this.state.plan[0].plan.id.startsWith(option.value));
+			return !(!this.state.plan || !this.state.plan.startsWith(option.value));
 		});
 
 		const content = this.state.free
