@@ -114,8 +114,7 @@ export default class AccountSubscription extends React.PureComponent {
 					<img style={{width: '100%'}} src="assets/images/go-pro.gif" />
 				</p>
 				<p>
-					Subscribe to our <Link className="account-link" to="account/create/choose-a-plan">pro plan</Link> to benefit of the full power of Prototypo without restrictions
-					{ !credits && <span> or buy <Link className="account-link" to="dashboard?buy_credits=true">some credits</Link> to export and use your fonts everywhere</span>}!
+					Subscribe to our <Link className="account-link" to="account/subscribe">pro plan</Link> to benefit of the full power of Prototypo without restrictions to export and use your fonts everywhere!
 				</p>
 			</div>
 		);
