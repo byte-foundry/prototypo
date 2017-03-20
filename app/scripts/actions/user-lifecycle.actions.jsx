@@ -140,6 +140,7 @@ async function addBillingAddress({buyerName, address, vat}) {
 		const infos = userStore.get('infos');
 
 		infos.address = address;
+		infos.vat = vat;
 		infos.buyerName = buyerName;
 		form.loading = false;
 		const patch = userStore.set('infos', infos).set('billingForm', form).commit();
