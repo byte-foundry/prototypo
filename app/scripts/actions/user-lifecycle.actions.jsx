@@ -36,7 +36,12 @@ function saveAccountValues(values) {
 }
 
 function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
-
+	const form = userStore.get('addcardForm');
+	form.errors = [];
+	form.inError = {};
+	form.loading = true;
+	const cleanPatch = userStore.set('addcardForm', form).commit();
+	localServer.dispatchUpdate('/userStore', cleanPatch);
 	return new Promise((resolve, reject) => {
 		window.Stripe.card.createToken({
 			number,
@@ -46,6 +51,10 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 			name: fullname,
 		}, async (status, data) => {
 			if (data.error) {
+				form.loading = false;
+				form.errors.push(data.error.message);
+				const patch = userStore.set('addcardForm', form).commit();
+				localServer.dispatchUpdate('/userStore', patch);
 				reject(data.error.message);
 			}
 
@@ -62,13 +71,22 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 
 				/* DEPRECATED Backward compatibility, should be removed when every component uses the cards property in userStore */
 				infos.vat = vat || infos.vat;
-				const patch = userStore.set('infos', infos).set('cards', response.sources.data).commit();
+				let patch = userStore.set('infos', infos).set('cards', response.sources.data).commit();
 
+				localServer.dispatchUpdate('/userStore', patch);
+
+				form.loading = false;
+				patch = userStore.set('addcardForm', form).commit();
 				localServer.dispatchUpdate('/userStore', patch);
 
 				resolve(data.card);
 			}
 			catch (err) {
+				console.log(err);
+				form.loading = false;
+				form.errors.push(err);
+				const patch = userStore.set('addcardForm', form).commit();
+				localServer.dispatchUpdate('/userStore', patch);
 				reject(err);
 			}
 		});
@@ -97,7 +115,6 @@ function spendCredits({amount}) {
 }
 
 async function addBillingAddress({buyerName, address, vat}) {
-	console.log(vat);
 	const form = userStore.get('billingForm');
 
 	form.errors = [];
@@ -506,7 +523,6 @@ export default {
 		hashHistory.push(toPath);
 	},
 	'/add-billing-address': async (options) => {
-		console.log(options);
 		const toPath = {
 			pathname: options.pathQuery.path || '/account/profile',
 			query: options.pathQuery.query,
