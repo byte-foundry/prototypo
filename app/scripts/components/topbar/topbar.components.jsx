@@ -10,6 +10,7 @@ import LocalClient from '~/stores/local-client.stores.jsx';
 import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
+
 import Price from '../shared/price.components';
 
 import {
@@ -44,7 +45,7 @@ export default class Topbar extends React.Component {
 		//function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
-		this.openGoProModal = this.openGoProModal.bind(this);
+		this.goToSubscribe = this.goToSubscribe.bind(this);
 		this.resetFileTutorial = this.resetFileTutorial.bind(this);
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
 		this.setPreset = this.setPreset.bind(this);
@@ -154,11 +155,15 @@ export default class Topbar extends React.Component {
 		}
 	}
 
-	openGoProModal() {
-		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
-		window.Intercom('trackEvent', 'open-go-pro-modal-from-unlock-badge');
-		this.client.dispatchAction('/store-value', {openGoProModal: true});
-		Log.ui('ExportFontNow.open');
+	goToSubscribe() {
+		window.Intercom('trackEvent', 'clickTakeFullAdvantageOfPrototypo');
+		Log.ui('GoPro.open');
+		/*this.context.router.push({
+			pathname: '/account/subscribe',
+		});*/
+		this.client.dispatchAction('/store-value', {
+			openGoProModal: true,
+		});
 	}
 
 	resetFileTutorial(e) {
@@ -242,10 +247,10 @@ export default class Topbar extends React.Component {
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount) && (
 			<TopBarMenuButton
-				label={<span>UNLOCK ALL PARAMETERS FOR <Price amount={9} country={this.state.country} /></span>}
+				label={<span>GET THE FULL VERSION FOR <Price amount={1} country={this.state.country} /></span>}
 				noHover
 				centered
-				click={this.openGoProModal}
+				click={this.goToSubscribe}
 				alignRight
 			/>
 		);
@@ -328,6 +333,8 @@ export default class Topbar extends React.Component {
 					<TopBarMenuDropdown name="Edit">
 						<TopBarMenuDropdownItem
 							name="Individualize parameters"
+							freeAccount={freeAccount}
+							freeAccountAndHasCredits={freeAccountAndHasCredits}
 							handler={() => { this.individualize(); }}/>
 						<TopBarMenuDropdownItem
 							name={undoText}
@@ -380,3 +387,7 @@ export default class Topbar extends React.Component {
 		);
 	}
 }
+
+Topbar.contextTypes = {
+	router: React.PropTypes.object.isRequired,
+};

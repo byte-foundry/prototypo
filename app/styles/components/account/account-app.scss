@@ -141,6 +141,16 @@
 	font-weight:400;
 	display:flex;
 	flex-flow: column;
+
+	&.account-success {
+		img {
+			width: 100%;
+			height: auto;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 0.67em;
+		}
+	}
 }
 
 .account-button {
@@ -205,6 +215,13 @@
 		border: solid $green 10px;
 		top: -35px;
 		right: -35px;
+
+		&.is-in-subscription {
+			left:auto;
+			right:-5px;
+			top:-30px;
+			cursor: pointer;
+		}
 	}
 
 	&-back-icon {

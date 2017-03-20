@@ -25,7 +25,7 @@ export default class AccountConfirmPlan extends React.Component {
 			.onUpdate((head) => {
 				if (head.toJS().d.infos.plan) {
 					const planBase = head.toJS().d.infos.plan;
-					const currency = getCurrency(head.toJS().d.infos.card[0].country);
+					const currency = getCurrency(head.toJS().d.cards[0].country);
 					const planId = `${planBase}_${currency}_taxfree`;
 
 					this.setState({

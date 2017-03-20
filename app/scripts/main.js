@@ -43,6 +43,7 @@ import '../styles/components/zoom-buttons.scss';
 import '../styles/components/controls-tabs.scss';
 import '../styles/components/tutorials.scss';
 import '../styles/components/go-pro-modal.scss';
+import '../styles/components/shared/pricing.scss';
 import '../styles/components/handlegrip-text.scss';
 import '../styles/components/account/account-app.scss';
 import '../styles/components/account/account-profile.scss';
@@ -130,10 +131,6 @@ import AccountSubscription from './components/account/account-subscription.compo
 import AccountConfirmPlan from './components/account/account-confirm-plan.components.jsx';
 import AccountInvoiceList from './components/account/account-invoice-list.components.jsx';
 import Subscription from './components/account/subscription.components.jsx';
-import SubscriptionChoosePlan from './components/account/subscription-choose-plan.components.jsx';
-import SubscriptionAccountInfo from './components/account/subscription-account-info.components.jsx';
-import SubscriptionAddCard from './components/account/subscription-add-card.components.jsx';
-import SubscriptionBillingAddress from './components/account/subscription-billing-address.components.jsx';
 import SubscriptionConfirmation from './components/account/subscription-confirmation.components.jsx';
 
 import HoodieApi from './services/hoodie.services.js';
@@ -304,10 +301,27 @@ selectRenderOptions(
 			/* #end */
 		}
 
+		function redirectToSignup(nextState, replace) {
+			if (!HoodieApi.isLoggedIn()) {
+				replace({
+					pathname: '/signup',
+					query: {
+						prevHash: nextState.location.pathname,
+						...nextState.location.query,
+					},
+					state: {nextPathname: nextState.location.pathname},
+				});
+			}
+		}
+
 		function redirectToLogin(nextState, replace) {
 			if (!HoodieApi.isLoggedIn()) {
 				replace({
 					pathname: '/signin',
+					query: {
+						prevHash: nextState.location.pathname,
+						...nextState.location.query,
+					},
 					state: {nextPathname: nextState.location.pathname},
 				});
 			}
@@ -324,26 +338,6 @@ selectRenderOptions(
 					pathname: '/dashboard',
 					state: {nextPathname: nextState.location.pathname},
 				});
-			}
-		}
-
-		function chooseGoodAccountStep(nextState, replace) {
-
-			const infos = Stores['/userStore'].get('infos');
-
-			if (infos.accountValues && infos.accountValues.username && /\/account\/create\/?$/.test(nextState.location.pathname)) {
-				replace({
-					pathname: '/account/create/choose-a-plan',
-					state: {nextPathname: nextState.location.pathname},
-				});
-			}
-
-			if (!infos.accountValues && nextState.location.pathname !== '/account/create') {
-				replace({
-					pathname: '/account/create',
-					state: {nextPathname: nextState.location.pathname},
-				});
-
 			}
 		}
 
@@ -415,13 +409,8 @@ selectRenderOptions(
 								<Route path="change-plan" component={AccountChangePlan}/>
 								<Route path="confirm-plan" component={AccountConfirmPlan} onEnter={noConfirmBeforePlan}/>
 							</Route>
-							<Route path="create" component={Subscription} name="create">
-								<IndexRoute component={SubscriptionAccountInfo} onEnter={chooseGoodAccountStep}/>
-								<Route path="choose-a-plan" component={SubscriptionChoosePlan} onEnter={chooseGoodAccountStep}/>
-								<Route path="add-card" component={SubscriptionAddCard} onEnter={chooseGoodAccountStep}/>
-								<Route path="billing-address" component={SubscriptionBillingAddress} onEnter={chooseGoodAccountStep}/>
-								<Route path="Confirmation" component={SubscriptionConfirmation} onEnter={chooseGoodAccountStep}/>
-							</Route>
+							<Route path="subscribe" component={Subscription} name="subscribe" onEnter={redirectToSignup}></Route>
+							<Route path="confirmation" component={SubscriptionConfirmation} name="confirmation"></Route>
 						</Route>
 					</Route>
 				</Router>
