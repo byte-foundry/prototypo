@@ -28,6 +28,7 @@ export default class AccountBillingAddress extends React.Component {
 			loaded: true,
 			address: userStore.head.toJS().infos.address || {},
 			buyerName: userStore.head.toJS().infos.buyerName || '',
+			vat: userStore.head.toJS().infos.vat || '',
 			errors: userStore.head.toJS().billingForm.errors,
 			inError: userStore.head.toJS().billingForm.inError,
 			loading: userStore.head.toJS().billingForm.loading,
@@ -37,6 +38,7 @@ export default class AccountBillingAddress extends React.Component {
 			.onUpdate((head) => {
 				this.setState({
 					address: head.toJS().d.infos.address || {},
+					vat: head.toJS().d.infos.vat || '',
 					buyerName: head.toJS().d.infos.buyerName || '',
 					errors: head.toJS().d.billingForm.errors,
 					inError: head.toJS().d.billingForm.inError,
@@ -58,6 +60,7 @@ export default class AccountBillingAddress extends React.Component {
 		this.client.dispatchAction('/add-billing-address', {
 			buyerName: this.refs.address.getBuyerName(),
 			address: this.refs.address.getAddress(),
+			vat: this.refs.address.getVat(),
 			pathQuery: {
 				path: '/account/details/billing-address',
 				query: {
@@ -69,7 +72,7 @@ export default class AccountBillingAddress extends React.Component {
 
 	render() {
 		const billingAddress = this.state.loaded
-			? <BillingAddress ref="address" address={this.state.address} buyerName={this.state.buyerName} inError={this.state.inError}/>
+			? <BillingAddress ref="address" address={this.state.address} vat={this.state.vat} buyerName={this.state.buyerName} inError={this.state.inError}/>
 			: false;
 
 		const errors = this.state.errors.map((err) => {

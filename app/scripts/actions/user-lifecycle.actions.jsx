@@ -96,7 +96,8 @@ function spendCredits({amount}) {
 	});
 }
 
-async function addBillingAddress({buyerName, address}) {
+async function addBillingAddress({buyerName, address, vat}) {
+	console.log(vat);
 	const form = userStore.get('billingForm');
 
 	form.errors = [];
@@ -125,6 +126,7 @@ async function addBillingAddress({buyerName, address}) {
 
 	try {
 		await HoodieApi.updateCustomer({
+			business_vat_id: vat || infos.vat, // Stripe way of storing VAT
 			metadata: {
 				street_line_1: address.building_number,
 				street_line_2: address.street_name,
@@ -132,6 +134,7 @@ async function addBillingAddress({buyerName, address}) {
 				region: address.region,
 				postal_code: address.postal_code,
 				country: address.country,
+				vat_number: vat || infos.vat, // Quaderno way of reading VAT
 			},
 		});
 		const infos = userStore.get('infos');
@@ -501,6 +504,7 @@ export default {
 		hashHistory.push(toPath);
 	},
 	'/add-billing-address': async (options) => {
+		console.log(options);
 		const toPath = {
 			pathname: options.pathQuery.path || '/account/profile',
 			query: options.pathQuery.query,

@@ -18,7 +18,7 @@ export default class AccountSuccess extends React.Component {
 					production on <a className="account-link" href="https://www.twitter.com/prototypoApp">Twitter</a> or <a className="account-link" href="https://www.facebook.com/prototypoApp">Facebook</a>.
 				</p>
 				<p>
-					One more thing: If you are (or represent) a company and you need an invoice for your purchase, please go to <Link className="account-link" to="/account/profile">your profile</Link> and fill in your VAT number.
+					One more thing: If you are (or represent) a company and you need an invoice for your purchase, please go to <Link className="account-link" to="/account/details/billing-address">your account settings</Link> and fill in your VAT number.
 				</p>
 				<p>
 					Have fun,<br/>The Prototypo team.
