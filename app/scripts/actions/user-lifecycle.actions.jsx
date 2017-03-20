@@ -526,7 +526,7 @@ export default {
 		window.Intercom('trackEvent', 'addedCardAndAdress');
 		hashHistory.push(toPath);
 	},
-	'/confirm-buy': async ({plan, card}) => {
+	'/confirm-buy': async ({plan, card, pathname}) => {
 		const form = userStore.get('confirmation');
 
 		form.errors = [];
@@ -611,7 +611,7 @@ export default {
 			HoodieApi.instance.plan = infos.plan;
 
 			hashHistory.push({
-				pathname: '/account/success',
+				pathname: pathname ? pathname : '/account/success',
 			});
 
 			localServer.dispatchUpdate('/userStore', patch);

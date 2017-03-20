@@ -64,6 +64,7 @@ export default class AccountConfirmPlan extends React.Component {
 		this.client.dispatchAction('/confirm-buy', {
 			plan: this.state.plan,
 			currency: this.state.currency,
+			pathname: '/account/details',
 		});
 	}
 
