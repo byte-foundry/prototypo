@@ -120,9 +120,11 @@ export default class GoProModal extends React.PureComponent {
 					</div>
 					<div className="pricing">
 						<div className="pricing-item" onClick={this.goSubscribe}>
-							<div className="pricing-item-offerRibbon">
+							{this.state.billing === 'monthly'
+							? <div className="pricing-item-offerRibbon">
 								<div className="pricing-item-offerRibbon-content">1<sup>st</sup> month for {getCurrency(this.state.country) === 'EUR' ? '1€' : '$1'}</div>
 							</div>
+							 : false}
 							<div className="pricing-item-title">
 								Pro
 								<div className="pricing-item-title-more">
