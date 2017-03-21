@@ -78,11 +78,12 @@
 			svg {
 			  position: relative;
 			  display: block;
-			  width: 300px;
+			  width: 325px;
 			  height: auto;
 			  margin: 0 auto;
 			  margin-bottom: 20px;
 			  cursor: pointer;
+			  overflow: visible;
 
 			  .st12, .st13, .st14, .st15 {
 			    transition: transform 0.3s ease-in-out;
