@@ -78,7 +78,7 @@ export default class AccountSubscription extends React.PureComponent {
 		}
 
 		const cardDetail = cards.length > 0 ? (
-			<DisplayWithLabel label="Your cards">
+			<DisplayWithLabel label="Your card">
 				{uniqWith(cards, (first, sec) => { return first.fingerprint === sec.fingerprint; }).map((card) => { // dedupe cards
 					return (
 						<div className="account-subscription-card" key={card.id}>

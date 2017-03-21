@@ -55,7 +55,7 @@ export default class SubscriptionSidebar extends React.Component {
 				),
 				subcta: 'Get 4 months free',
 				link: {
-					text: 'Want less commitment, try our montly offer',
+					text: 'Want less commitment, try our monthly offer',
 					to: '/account/subscribe?plan=personal_monthly',
 				},
 			},
@@ -94,7 +94,7 @@ export default class SubscriptionSidebar extends React.Component {
 				),
 				subcta: 'No commitment!',
 				link: {
-					text: 'Want less commitment, try our montly offer',
+					text: 'Want less commitment, try our monthly offer',
 					to: '/account/subscribe?plan=agency_monthly',
 				},
 			},
