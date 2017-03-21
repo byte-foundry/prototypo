@@ -34,6 +34,7 @@
 	}
 
 	&-item {
+		position: relative;
 		border-radius: 5px;
 		overflow: hidden;
 		margin-right: 15px;
@@ -83,6 +84,10 @@
 				&-value {
 					font-size: 50px;
 					font-family: 'Fira Sans', sans-serif;
+
+					&-small {
+						font-size: 30%;
+					}
 
 					&-freq {
 						font-size:13px;
