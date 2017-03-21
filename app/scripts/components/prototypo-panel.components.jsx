@@ -139,7 +139,7 @@ export default class PrototypoPanel extends React.Component {
 				featureHovered = 'This is the individualization mode, an advanced feature not available to you yet.';
 				break;
 			case 'slider':
-				featureHovered = 'To unlock the full slider range on all parameters and create more diverse font';
+				featureHovered = 'To unlock the full slider range on all parameters and design stronger identities with unique fonts.';
 				break;
 			case 'componentEditing':
 				featureHovered = 'This is the component editing view, an advanced feature not available to you yet.';
