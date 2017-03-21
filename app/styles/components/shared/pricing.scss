@@ -10,11 +10,10 @@
 
 		&-item {
 			margin-right: 16px;
-			margin-left: -7px;
 			font-size: 17px;
 			padding: 10px 20px;
 			border-radius: 5px;
-			font-weight: 100;
+			font-weight: 400;
 			cursor: pointer;
 			background: $white;
 			color: $green;
@@ -22,8 +21,7 @@
 			transition: background 0.3s ease, color 0.3s ease;
 
 			&:last-of-type {
-				margin-right: 0;
-				margin-left: 0;
+				margin-right: 8px;
 			}
 
 			&.is-active, &:hover {
@@ -36,37 +34,37 @@
 	&-item {
 		border-radius: 5px;
 		overflow: hidden;
-		margin-right: 15px;
+		margin: 0 8px;
 		height:100%;
 		cursor:pointer;
-		border: 3px solid $light-grey;
+		border: 1px solid $light-grey;
 		background-color: $lightest-grey;
 		transition: transform 0.3s ease;
+		width: calc(50% - 16px);
 
 		&:hover {
 			transform: scale(1.02);
 		}
 
-		&:last-of-type {
-			margin-right: 0;
-		}
-
 		&-title {
 			background-color: #fefefe;
 			color: $green;
-			font-size: 20px;
+			font-size: 16px;
 			font-weight: 100;
 			font-family: 'Fira Sans', sans-serif;
 			text-align: center;
 			text-transform: uppercase;
 			padding: 10px;
-			padding-top: 35px;
+			padding-top: 25px;
+			font-weight: 600;
 
 			&-more {
+				margin-top: 15px;
 				color: $lightest-grey;
-				font-size: 16px;
+				font-size: 15px;
 				text-transform: none;
-				color: $dark-grey;
+				color: $medium-grey;
+				font-weight: normal;
 			}
 		}
 
@@ -83,10 +81,13 @@
 				&-value {
 					font-size: 50px;
 					font-family: 'Fira Sans', sans-serif;
+					font-weight: 600;
+					margin-bottom: 5px;
 
 					&-freq {
 						font-size:13px;
 						margin-left:5px;
+						font-weight: normal;
 					}
 
 					&-currency {
@@ -115,7 +116,8 @@
 		&-feature {
 			padding: 10px 20px;
 			border-top: solid 1px $light-grey;
-			font-size: 18px;
+			font-size: 16px;
+			color: $medium-grey;
 			font-weight: 100;
 			background-color: $lightest-grey;
 		}
@@ -124,7 +126,7 @@
 			background: $green;
 			color: #fefefe;
 			text-align: center;
-			padding: 5px 10px;
+			padding: 10px;
 			font-size: 20px;
 			font-weight: 100;
 			transition: background 0.3s ease;
