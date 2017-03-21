@@ -176,7 +176,8 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToAlphabet() {
-		this.setText(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
+		// this.setText(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
+		this.setText(`0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -217,7 +218,7 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 			'backgroundColor': this.props.uiInvertedTextColors ? '#232323' : '#fefefe',
 		};
 		const contentStyle = {
-			'fontFamily': `'${this.state.editorState.getCurrentContent().getPlainText().length > 0 ? (this.props.fontName || 'theyaintus') : 'Source Sans Pro'}', sans-serif`,
+			'fontFamily': `'${this.state.editorState.getCurrentContent().getPlainText().length > 0 ? (this.props.fontName || 'theyaintus') : 'Fira Sans'}', sans-serif`,
 			'fontSize': `${this.props.uiTextFontSize || 1}em`,
 		};
 		const editorClassNames = classNames('prototypo-text-editor', {
@@ -240,7 +241,7 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 				key="whisky"
 				click={this.setTextToFameuxWhisky}/>,
 			<ContextualMenuItem
-				text="Latin glyph set"
+				text="Basic latin alphabet"
 				key="alphabet"
 				click={this.setTextToAlphabet}/>,
 			<ContextualMenuItem

@@ -40,6 +40,12 @@ body {
 	color: #111;
 }
 
+h1 {
+	font-family: 'Fira Sans', sans-serif;
+	font-weight: 700;
+	color: $light-grey;
+}
+
 h1 ~ p,
 h2 ~ p {
 	margin-top: 0;
