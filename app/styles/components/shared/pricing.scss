@@ -34,7 +34,6 @@
 	&-item {
 		position: relative;
 		border-radius: 5px;
-		overflow: hidden;
 		margin: 0 8px;
 		height:100%;
 		cursor:pointer;
@@ -47,25 +46,88 @@
 			transform: scale(1.02);
 		}
 
+		&:last-of-type {
+			margin-right: 0;
+		}
+
+		&-offerRibbon {
+		  width: 108px;
+		  height: 108px;
+		  overflow: hidden;
+		  position: absolute;
+		  top: -6px;
+		  right: -6px;
+		  &-content {
+		    color: $white;
+			font-size: 11px;
+		    text-align: center;
+		    text-transform: uppercase;
+		    font-weight: 600;
+		    transform: rotate(45deg);
+		    position: relative;
+		    padding: 4px 0;
+		    left: -8px;
+		    top: 32px;
+		    width: 146px;
+		    background-color: mix(white, $red, 10%);
+		    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		    letter-spacing: 0.2px;
+		    box-shadow: -3px 5px 6px -5px rgba(0, 0, 0, 0.5);
+		    sup {
+		      font-size: 0.6em;
+		    }
+		    &::before, &::after {
+		      content: "";
+		      border-top: 4px solid mix(black, $red, 30%);
+		      border-left: 4px solid transparent;
+		      border-right: 4px solid transparent;
+		      position: absolute;
+		      bottom: -4px;
+		    }
+		    &::before {
+		      content: "";
+		      position: absolute;
+		      left: 0px;
+		      top: 100%;
+		      z-index: -1;
+		      border-left: 4px solid mix(black, $red, 30%);
+		      border-right: 4px solid transparent;
+		      border-bottom: 4px solid transparent;
+		      border-top: 4px solid mix(black, $red, 30%);
+		    }
+		    &::after {
+		      content: "";
+		      position: absolute;
+		      right: 1px;
+		      top: 100%;
+		      z-index: -1;
+		      border-left: 2px solid transparent;
+		      border-right: 2px solid mix(black, $red, 30%);
+		      border-bottom: 2px solid transparent;
+		      border-top: 2px solid mix(black, $red, 30%);
+		    }
+		  }
+		}
+
 		&-title {
 			background-color: #fefefe;
 			color: $green;
 			font-size: 16px;
-			font-weight: 100;
 			font-family: 'Fira Sans', sans-serif;
 			text-align: center;
 			text-transform: uppercase;
 			padding: 10px;
-			padding-top: 25px;
 			font-weight: 600;
+			padding-top: 25px;
 
 			&-more {
 				margin-top: 15px;
 				color: $lightest-grey;
 				font-size: 15px;
-				text-transform: none;
 				color: $medium-grey;
 				font-weight: normal;
+				text-transform: none;
+				color: $dark-grey;
 			}
 		}
 
@@ -83,7 +145,7 @@
 					font-size: 50px;
 					font-family: 'Fira Sans', sans-serif;
 					font-weight: 600;
-					margin-bottom: 5px;
+ 					margin-bottom: 5px;
 
 					&-small {
 						font-size: 30%;
@@ -122,9 +184,9 @@
 			padding: 10px 20px;
 			border-top: solid 1px $light-grey;
 			font-size: 16px;
-			color: $medium-grey;
 			font-weight: 100;
 			background-color: $lightest-grey;
+			color: $medium-grey;
 		}
 
 		&-cta {
