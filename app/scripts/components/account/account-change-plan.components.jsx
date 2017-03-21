@@ -1,5 +1,8 @@
 import React from 'react';
 import Lifespan from 'lifespan';
+import HoodieApi from '~/services/hoodie.services.js';
+
+import {monthlyConst, annualConst, freeConst} from '../../data/plans.data.js';
 
 import SelectWithLabel from '../shared/select-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
@@ -24,8 +27,7 @@ export default class AccountChangePlan extends React.Component {
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					plan: head.toJS().d.infos.subscriptions,
-					card: head.toJS().d.infos.card,
+					plan: HoodieApi.instance.plan,
 					loading: head.toJS().d.choosePlanForm.loading,
 				});
 			})
@@ -44,6 +46,10 @@ export default class AccountChangePlan extends React.Component {
 
 		const plan = this.refs.select.inputValue.value;
 
+		window.Intercom('trackEvent', 'change-plan-select', {
+			plan,
+		});
+
 		if (plan === 'free_monthly') {
 			return this.setState({
 				free: true,
@@ -59,32 +65,32 @@ export default class AccountChangePlan extends React.Component {
 	render() {
 
 		const planInfos = {
-			'free_monthly': {
-				name: 'Free subscription',
-				price: 0.00,
+			[freeConst.prefix]: {
+				name: freeConst.description,
+				price: freeConst.price,
 			},
-			'personal_monthly': {
-				name: 'Professional monthly subscription',
-				price: 15.00,
+			[monthlyConst.prefix]: {
+				name: monthlyConst.description,
+				price: monthlyConst.price,
 			},
-			'personal_annual_99': {
-				name: 'Professional annual subscription',
-				price: 99.00,
+			[annualConst.prefix]: {
+				name: annualConst.description,
+				price: annualConst.price,
 			},
 		};
 
 		const plan = _.find(planInfos, (planInfo, key) => {
-			return this.state.plan && this.state.plan[0].plan.id.indexOf(key) !== -1;
+			return this.state.plan && this.state.plan.indexOf(key) !== -1;
 		});
 
 		const optionPossible = [
-			{value: 'free_monthly', label: 'Free plan'},
-			{value: 'personal_monthly', label: 'Professional monthly subscription'},
-			{value: 'personal_annual_99', label: 'Professional annual subscription'},
+			{value: freeConst.prefix, label: freeConst.description},
+			{value: monthlyConst.prefix, label: monthlyConst.description},
+			{value: annualConst.prefix, label: annualConst.description},
 		];
 
 		const options = _.reject(optionPossible, (option) => {
-			return !(!this.state.plan || !this.state.plan[0].plan.id.startsWith(option.value));
+			return !(!this.state.plan || !this.state.plan.startsWith(option.value));
 		});
 
 		return this.state.free
@@ -114,5 +120,7 @@ export default class AccountChangePlan extends React.Component {
 					<AccountValidationButton label="Change plan" loading={this.state.loading}/>
 				</form>
 			);
+
+		return content;
 	}
 }

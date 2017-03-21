@@ -4,12 +4,13 @@ import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import HoodieApi from '~/services/hoodie.services.js';
-import Log from '~/services/log.services.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import DOM from '../helpers/dom.helpers.js';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
 import SliderHelpText from '../../images/sliders/helpText.json';
+
+const demoRatio = 0.2;
 
 export class Sliders extends React.PureComponent {
 	constructor(props) {
@@ -128,7 +129,6 @@ export class Slider extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-		this.openGoProModal = this.openGoProModal.bind(this);
 		this.changeParam = this.changeParam.bind(this);
 	}
 
@@ -162,14 +162,7 @@ export class Slider extends React.Component {
 		document.body.addEventListener('click', outsideClick);
 	}
 
-	openGoProModal() {
-		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
-		this.client.dispatchAction('/store-value', {openGoProModal: true});
-		Log.ui('ExportFontNow.open');
-	}
-
 	changeParam(params) {
-		params.demo = this.props.demo;
 		this.client.dispatchAction('/change-param', params);
 	}
 
@@ -181,30 +174,18 @@ export class Slider extends React.Component {
 		const freeAccount = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 		const credits = this.props.credits;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
-		const disabled = !this.props.disabled && (!(freeAccountAndHasCredits || !freeAccount) && !this.props.demo);
+		const disabled = !this.props.disabled && !(freeAccountAndHasCredits || !freeAccount);
 
 		const classes = classNames({
 			'slider': true,
 			'is-coming': this.props.disabled,
 			'is-child': this.props.child,
-			'is-disabled': disabled,
 		});
 
 		const devOverlay = this.props.disabled
 			? (
 				<div className="slider-demo-overlay-text">
 					This feature is currently in development
-				</div>
-			)
-			: false;
-
-		const demoOverlay = disabled
-			? (
-				<div onClick={this.openGoProModal} className="slider-demo-overlay-text">
-					This feature is available with the full version
-					<div className="slider-demo-overlay-text-more">
-						<div className="slider-demo-overlay-text-more-text">Upgrade to full version</div>
-					</div>
 				</div>
 			)
 			: false;
@@ -223,23 +204,44 @@ export class Slider extends React.Component {
 			);
 		}
 
+		const max = disabled
+			? (demoRatio * this.props.max + (1 - demoRatio) * this.props.init)
+			: this.props.max;
+		const min = disabled
+			? (demoRatio * this.props.min + (1 - demoRatio) * this.props.init)
+			: this.props.min;
+
 		return (
 			<div className={classes}>
 				<div className="slider-demo-overlay">
 					{devOverlay}
-					{demoOverlay}
 				</div>
 				<label className="slider-title">{this.props.label}</label>
 				{sliderTooltipButton}
 				<div className="slider-reset" onClick={() => {this.resetValue();}}>reset</div>
-				<SliderTextController value={value} name={this.props.name} label={this.props.label} disabled={this.props.disabled} individualized={this.props.individualized} changeParam={this.changeParam}/>
+				<SliderTextController
+					demo={disabled}
+					value={value}
+					name={this.props.name}
+					label={this.props.label}
+					disabled={this.props.disabled}
+					minAdvised={this.props.minAdvised}
+					maxAdvised={this.props.maxAdvised}
+					maxDemo={max}
+					minDemo={min}
+					individualized={this.props.individualized}
+					changeParam={this.changeParam}/>
 				<div className="slider-container">
-					<SliderController value={value}
+					<SliderController
+						value={value}
+						demo={disabled}
 						name={this.props.name}
 						individualized={this.props.individualized}
 						label={this.props.label}
 						min={this.props.min}
 						max={this.props.max}
+						realMin={min}
+						realMax={max}
 						minAdvised={this.props.minAdvised}
 						maxAdvised={this.props.maxAdvised}
 						disabled={this.props.disabled}
@@ -325,6 +327,7 @@ export class SliderController extends React.Component {
 		this.handleUp = this.handleUp.bind(this);
 		this.handleMove = this.handleMove.bind(this);
 		this.handleSelectstart = this.handleSelectstart.bind(this);
+		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
 	}
 
 	componentWillMount() {
@@ -350,16 +353,12 @@ export class SliderController extends React.Component {
 	}
 
 	handleDown(e) {
-		if (this.props.disabled) {
-			return;
-		}
-
 		this.tracking = true;
 		const newX = e.pageX || e.screenX;
 		const {offsetLeft} = DOM.getAbsOffset(this.refs.slider);
 		let newValue = ((newX - offsetLeft) / this.sliderWidth * (this.props.max - this.props.min)) + this.props.min;
 
-		newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
+		newValue = Math.min(Math.max(newValue, this.props.realMin), this.props.realMax);
 
 		this.props.changeParam({value: newValue, name: this.props.name, label: this.props.label});
 		this.currentX = newX;
@@ -378,6 +377,12 @@ export class SliderController extends React.Component {
 		e.stopPropagation();
 	}
 
+	restrictedRangeEnter(e) {
+		this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
+													restrictedFeatureHovered: 'slider'});
+		e.stopPropagation();
+	}
+
 	handleMove(e) {
 		if (!this.tracking) {
 			return;
@@ -393,10 +398,10 @@ export class SliderController extends React.Component {
 
 			newValue = this.props.value + variation;
 
-			newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
+			newValue = Math.min(Math.max(newValue, this.props.realMin), this.props.realMax);
 		}
 		else {
-			newValue = newX < offsetLeft ? this.props.min : this.props.max;
+			newValue = newX < offsetLeft ? this.props.realMin : this.props.realMax;
 		}
 
 		this.props.changeParam({value: newValue, name: this.props.name});
@@ -416,8 +421,18 @@ export class SliderController extends React.Component {
 
 	render() {
 		const translateX = (this.props.max - Math.min(Math.max(this.props.value, this.props.min), this.props.max)) / (this.props.max - this.props.min) * 92.0;
+		const translateDemoMin = (this.props.max - this.props.realMin) / (this.props.max - this.props.min) * 92.0;
+		const translateDemoMax = 100 - ((this.props.max - this.props.realMax) / (this.props.max - this.props.min) * 92.0);
 		const transform = {
 			transform: `translateX(-${translateX}%)`,
+		};
+		const transformDemoMin = {
+			transform: `translateX(-${translateDemoMin}%)`,
+			marginLeft: '-10px',
+		};
+		const transformDemoMax = {
+			transform: `translateX(${translateDemoMax}%)`,
+			marginLeft: '-10px',
 		};
 
 		const classes = classNames({
@@ -425,6 +440,25 @@ export class SliderController extends React.Component {
 			'is-not-advised': this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised,
 			'is-indiv': this.props.individualized,
 		});
+
+		const demoClassesMin = classNames({
+			'slider-range-limiter-bg': true,
+			'min': true,
+		});
+
+		const demoClassesMax = classNames({
+			'slider-range-limiter-bg': true,
+			'max': true,
+		});
+
+		const demoRangeLimiters = this.props.demo
+			? (
+				<span>
+					<div onClick={this.restrictedRangeEnter} className={demoClassesMin} style={transformDemoMin}/>
+					<div onClick={this.restrictedRangeEnter} className={demoClassesMax} style={transformDemoMax}/>
+				</span>
+			)
+			: false;
 
 		return (
 			<div className="slider-controller" ref="slider"
@@ -434,6 +468,7 @@ export class SliderController extends React.Component {
 						className="slider-controller-handle"
 						ref="handle" ></div>
 				</div>
+				{demoRangeLimiters}
 			</div>
 		);
 	}
@@ -527,9 +562,13 @@ export class SliderTextController extends React.PureComponent {
 	}
 
 	handleChange(e) {
+		const value = this.props.demo
+			? Math.max(Math.min(e.target.value, this.props.maxDemo), this.props.minDemo)
+			: e.target.value;
+
 		this.props.changeParam({
 			name: this.props.name,
-			value: parseFloat(e.target.value),
+			value: parseFloat(value),
 			label: this.props.label,
 		});
 	}

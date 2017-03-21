@@ -108,7 +108,7 @@
 
 	&-title {
 		text-transform: uppercase;
-		letter-spacing: 0.1em;
+		letter-spacing: 0.05em;
 		padding-left: 0.8em;
 		display: inline-block;
 		pointer-events: none;
@@ -161,7 +161,7 @@
 
 	&-text-controller {
 		float: right;
-		width: 4rem;
+		width: 5.2rem;
 		font-size: inherit;
 		text-align: right;
 		background: none;
@@ -180,6 +180,7 @@
 	}
 
 	&-controller {
+		position: relative;
 		overflow: hidden;
 		background-color: #FFF;
 		margin-top: 2px;
@@ -220,6 +221,26 @@
 				border:solid 0.5rem $theme-background;
 			}
 			background-color: #555555;
+		}
+	}
+
+	&-range-limiter-bg {
+		border-radius: 0;
+		height: 1.9rem;
+		width: 100%;
+		background: transparentize(#555, 0.4);
+		position: absolute;
+		left: 0;
+		top: 0;
+		background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
+		background-size: 25px 25px;
+
+		&.min {
+			-webkit-mask-image: radial-gradient(circle at calc(100%) 50%, transparent 10px, #555 11px);
+		}
+
+		&.max {
+			-webkit-mask-image: radial-gradient(circle at 0px 50%, transparent 10px, #555 11px);
 		}
 	}
 

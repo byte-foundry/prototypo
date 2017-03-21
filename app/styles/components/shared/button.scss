@@ -45,6 +45,11 @@
 		}
 	}
 
+	&.big {
+		font-size: 24px;
+		font-family: 'Fira Sans', sans-serif;
+	}
+
 	&.danger {
 		border-color: $red;
 		color: $red;

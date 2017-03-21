@@ -21,6 +21,16 @@
 		flex:0;
 	}
 
+	&.is-demo {
+		background-image: linear-gradient(-45deg, rgba(255, 255, 255, .05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .05) 50%, rgba(255, 255, 255, .05) 75%, transparent 75%, transparent);
+		background-size: 25px 25px;
+	}
+
+	&.is-demo:hover &-action {
+		background-image: linear-gradient(-45deg, rgba(0, 0, 0, .05) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, .05) 50%, rgba(0, 0, 0, .05) 75%, transparent 75%, transparent);
+		background-size: 25px 25px;
+	}
+
 	&.arianne-item-displayed .arianne-drop-menu {
 		display:block;
 	}

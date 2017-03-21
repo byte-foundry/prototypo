@@ -25,7 +25,7 @@ export default class AccountConfirmPlan extends React.Component {
 			.onUpdate((head) => {
 				if (head.toJS().d.infos.plan) {
 					const planBase = head.toJS().d.infos.plan;
-					const currency = getCurrency(head.toJS().d.infos.card[0].country);
+					const currency = getCurrency(head.toJS().d.cards[0].country);
 					const planId = `${planBase}_${currency}_taxfree`;
 
 					this.setState({
@@ -57,9 +57,14 @@ export default class AccountConfirmPlan extends React.Component {
 	}
 
 	confirmPlanChange() {
+		window.Intercom('trackEvent', 'change-plan-confirm', {
+			plan: this.state.plan,
+		});
+
 		this.client.dispatchAction('/confirm-buy', {
 			plan: this.state.plan,
 			currency: this.state.currency,
+			pathname: '/account/details',
 		});
 	}
 
