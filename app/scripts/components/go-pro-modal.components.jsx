@@ -134,7 +134,7 @@ export default class GoProModal extends React.PureComponent {
 							<div className="pricing-item-subtitle">
 								<div className="pricing-item-subtitle-price">
 									<div className="pricing-item-subtitle-price-value">{proMarkup}</div>
-									<div className="pricing-item-subtitle-price-info">{this.state.billing === 'monthly' ? `Try it now, without commitment!` : <br/>}</div>
+									<div className="pricing-item-subtitle-price-info">{this.state.billing === 'monthly' ? `Try it now, without commitment!` : 'Billed annually.'}</div>
 								</div>
 							</div>
 							<ul className="pricing-item-features">
