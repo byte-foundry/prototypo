@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Lifespan from 'lifespan';
 import {monthlyConst, annualConst, agencyMonthlyConst, agencyAnnualConst} from '../data/plans.data.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -27,8 +27,23 @@ export default class GoProModal extends React.PureComponent {
 		this.openIntercomChat = this.openIntercomChat.bind(this);
 	}
 
-	componentWillMount() {
+	async componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					billing: head.toJS().d.goProModalBilling,
+				});
+			})
+			.onDelete(() => {
+				this.setState({billing: 'annually'});
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 	async componentDidMount() {
