@@ -34,7 +34,7 @@ export default class GoProModal extends React.PureComponent {
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					billing: head.toJS().d.goProModalBilling,
+					billing: head.toJS().d.goProModalBilling ? head.toJS().d.goProModalBilling : 'annually',
 				});
 			})
 			.onDelete(() => {
