@@ -223,6 +223,7 @@
 			transform:rotateY(180deg);
 			background-image: url("../../../images/icon-back-hover-reversed.svg");
 			background-color:$white;
+		}
 
 		&.is-in-subscription {
 			left:auto;
