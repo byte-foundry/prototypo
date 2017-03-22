@@ -309,7 +309,7 @@ class VariantList extends React.Component {
 
 	askSubscribe() {
 		if (this.props.askSubscribe) {
-			document.location.href = '#/account/create';
+			document.location.href = '#/account/subscribe';
 		}
 		else {
 			this.client.dispatchAction('/store-value', {
@@ -431,7 +431,7 @@ class VariantInfo extends React.Component {
 
 	askSubscribe() {
 		if (this.props.askSubscribe) {
-			document.location.href = '#/account/create';
+			document.location.href = '#/account/subscribe';
 		}
 		else {
 			this.client.dispatchAction('/store-value', {

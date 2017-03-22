@@ -32,6 +32,10 @@ export default class SelectWithLabel extends React.PureComponent {
 	}
 
 	render() {
+		const {
+			label, info, required,
+			...selectProps,
+		} = this.props;
 		const inputClass = classNames({
 			'input-with-label-input': true,
 			'is-error': this.props.error,
@@ -41,16 +45,14 @@ export default class SelectWithLabel extends React.PureComponent {
 		return (
 			<div className="input-with-label">
 				<label className="input-with-label-label">
-					{this.props.label}
-					{this.props.info && <span className="input-with-label-label-info">{this.props.info}</span>}
-					{this.props.required && <span className="input-with-label-label-required">*</span>}
+					{label}
+					{info && <span className="input-with-label-label-info">{info}</span>}
+					{required && <span className="input-with-label-label-required">*</span>}
 				</label>
 				<Select
+					{...selectProps}
 					ref="input"
 					className={inputClass}
-					options={this.props.options}
-					placeholder={this.props.placeholder}
-					noResultsText={this.props.noResultsText}
 					onChange={(value) => {this.handleChangeValue(value);}}
 					onBlurResetsInput={false}
 					onInputChange={(value) => {this.handleChangeInput(value);}}

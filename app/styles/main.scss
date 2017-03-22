@@ -32,12 +32,18 @@ body {
 	font-size:1.4em;
 	line-height:1.5;
 
-	font-family: 'Source Sans Pro', sans-serif;
-	font-weight: 600;
+	font-family: 'Fira Sans', sans-serif;
+	font-weight: normal;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
 	color: #111;
+}
+
+h1 {
+	font-family: 'Fira Sans', sans-serif;
+	font-weight: 700;
+	color: $light-grey;
 }
 
 h1 ~ p,

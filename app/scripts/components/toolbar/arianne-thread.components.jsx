@@ -3,6 +3,8 @@ import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import classNames from 'classnames';
 
+import HoodieApi from '~/services/hoodie.services.js';
+
 import LocalClient from '~/stores/local-client.stores.jsx';
 
 const voidStateObject = {};
@@ -74,6 +76,10 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 					indivMode: head.toJS().d.indivMode,
 					indivCurrentGroup: head.toJS().d.indivCurrentGroup || voidStateObject,
 				});
+				const isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+				const isFreeWithCredits = (head.toJS().d.credits && head.toJS().d.credits > 0) && isFree;
+				this.setState({isFree, isFreeWithCredits});
+
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -119,7 +125,14 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 	}
 
 	toggleIndividualize() {
-		this.client.dispatchAction('/toggle-individualize');
+		// if (this.state.isFree && !this.state.isFreeWithCredits) {
+		// 	this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
+		// 												restrictedFeatureHovered: 'indiv'});
+		// }
+		// else {
+			this.client.dispatchAction('/toggle-individualize');
+		// }
+
 	}
 
 	selectGroup(group) {
@@ -152,6 +165,7 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 	}
 
 	render() {
+		const isFreeWithoutCredits = this.state.isFree && !this.state.isFreeWithCredits;
 		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily}/>;
 		const familyItem = (
 				<DropArianneItem
@@ -182,6 +196,7 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 			'arianne-item': true,
 			'is-active': this.state.indivMode,
 			'is-creating': this.state.indivCreate,
+			// 'is-demo': isFreeWithoutCredits,
 		});
 		const groupLabel = this.state.indivCreate
 			? 'Creating new group...'
