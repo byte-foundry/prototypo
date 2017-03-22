@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Lifespan from 'lifespan';
 import {monthlyConst, annualConst, agencyMonthlyConst, agencyAnnualConst} from '../data/plans.data.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -27,8 +27,23 @@ export default class GoProModal extends React.PureComponent {
 		this.openIntercomChat = this.openIntercomChat.bind(this);
 	}
 
-	componentWillMount() {
+	async componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					billing: head.toJS().d.goProModalBilling ? head.toJS().d.goProModalBilling : 'annually',
+				});
+			})
+			.onDelete(() => {
+				this.setState({billing: 'annually'});
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 	async componentDidMount() {
@@ -120,9 +135,11 @@ export default class GoProModal extends React.PureComponent {
 					</div>
 					<div className="pricing">
 						<div className="pricing-item" onClick={this.goSubscribe}>
-							<div className="pricing-item-offerRibbon">
+							{this.state.billing === 'monthly'
+							? <div className="pricing-item-offerRibbon">
 								<div className="pricing-item-offerRibbon-content">1<sup>st</sup> month for {getCurrency(this.state.country) === 'EUR' ? '1€' : '$1'}</div>
 							</div>
+							 : false}
 							<div className="pricing-item-title">
 								Pro
 								<div className="pricing-item-title-more">
@@ -132,7 +149,7 @@ export default class GoProModal extends React.PureComponent {
 							<div className="pricing-item-subtitle">
 								<div className="pricing-item-subtitle-price">
 									<div className="pricing-item-subtitle-price-value">{proMarkup}</div>
-									<div className="pricing-item-subtitle-price-info">{this.state.billing === 'monthly' ? `Try it now, without commitment!` : <br/>}</div>
+									<div className="pricing-item-subtitle-price-info">{this.state.billing === 'monthly' ? `Try it now, without commitment!` : 'Billed annually.'}</div>
 								</div>
 							</div>
 							<ul className="pricing-item-features">

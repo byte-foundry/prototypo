@@ -214,13 +214,15 @@ function setupHoodie(data) {
 	HoodieApi.instance.email = response.name.split('/')[1];
 	HoodieApi.instance.plan = 'free_none';
 
-	window.Intercom('boot', {
-		app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
-		email: HoodieApi.instance.email,
-		widget: {
-			activator: '#intercom-button',
-		},
-	});
+	if (window.Intercom) {
+		window.Intercom('boot', {
+			app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
+			email: HoodieApi.instance.email,
+			widget: {
+				activator: '#intercom-button',
+			},
+		});
+	}
 
 	Log.setUserId(HoodieApi.instance.email);
 

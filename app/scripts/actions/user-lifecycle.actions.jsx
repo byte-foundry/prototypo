@@ -82,7 +82,6 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 				resolve(data.card);
 			}
 			catch (err) {
-				console.log(err);
 				form.loading = false;
 				form.errors.push(err);
 				const patch = userStore.set('addcardForm', form).commit();
@@ -642,11 +641,14 @@ export default {
 			if ((/no such coupon/i).test(err.message)) {
 				form.errors.push('This coupon appears to no longer be valid, please contact us.');
 			}
+			if (typeof err === 'string') {
+				form.errors.push(err);
+			}
 			if (/no attached payment source/i.test(err.message)) {
 				form.errors.push('Payment details appear to be invalid, please contact us.');
 			}
 			else {
-				form.errors.push('Unexpected error, please contact us at contact@prototypo.io');
+				form.errors.push('Unexpected error, please contact us at contact@prototypo.io if you don\'t know how to solve it');
 				form.errors.push(err.message);
 			}
 

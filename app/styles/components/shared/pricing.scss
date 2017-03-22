@@ -66,8 +66,8 @@
 		    transform: rotate(45deg);
 		    position: relative;
 		    padding: 4px 0;
-		    left: -8px;
-		    top: 32px;
+		    left: -11px;
+		    top: 31px;
 		    width: 146px;
 		    background-color: mix(white, $red, 10%);
 		    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -98,7 +98,7 @@
 		    &::after {
 		      content: "";
 		      position: absolute;
-		      right: 1px;
+		      right: 0px;
 		      top: 100%;
 		      z-index: -1;
 		      border-left: 2px solid transparent;
@@ -166,7 +166,9 @@
 				}
 
 				&-info {
-					font-size:18px;
+					font-size:14px;
+					margin-bottom: 6px;
+					color: $dark-grey;
 				}
 
 			}

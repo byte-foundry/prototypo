@@ -1,8 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-
-import HoodieApi from '~/services/hoodie.services.js';
 import Log from '~/services/log.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
@@ -72,6 +70,16 @@ export default class Topbar extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+			this.client.getStore('/userStore', this.lifespan)
+				.onUpdate((head) => {
+					this.setState({
+						subscription: head.toJS().d.subscription,
+					});
+				})
+				.onDelete(() => {
+					this.setState(undefined);
+				});
 
 		const creditChoices = await this.client.fetch('/creditStore');
 
@@ -226,7 +234,7 @@ export default class Topbar extends React.Component {
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${redoDisabled ? '' : this.state.eventList[whereAt + 1].label}`;
 		const credits = this.state.credits;
-		const freeAccount = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+		const freeAccount = !this.state.subscription;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : false;
 		const glyphrExportCost = this.state.creditChoices ? this.state.creditChoices.exportGlyphr : false;
