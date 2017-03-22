@@ -92,7 +92,10 @@ ${this.dependencies.map((name) => {return `${name}: ${_.get(toLodashPath(name), 
 					const base = xpath.substr(0, expandedIndex - 1);
 					const node = glyph.getFromXPath(`${base}`);
 
-					if (!node.expandedTo) {
+					if (node.expandedTo) {
+						acc.push(...glyph.getFromXPath(xpath).solveOperationOrder(glyph, [...processedOps]));
+					}
+					else {
 						const expandResult = glyph.getFromXPath(`${base}.expand.width`).solveOperationOrder(glyph, processedOps);
 
 						expandResult.push(...glyph.getFromXPath(`${base}.expand.distr`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));

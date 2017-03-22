@@ -47,12 +47,12 @@ export default class ExpandingNode extends Node {
 
 		return [
 			{
-				x: x + Math.cos(readAngle(angle)) * width * distr,
-				y: y + Math.sin(readAngle(angle)) * width * distr,
+				x: x - Math.cos(readAngle(angle)) * width * distr,
+				y: y - Math.sin(readAngle(angle)) * width * distr,
 			},
 			{
-				x: x - Math.cos(readAngle(angle)) * width * (1 - distr),
-				y: y - Math.sin(readAngle(angle)) * width * (1 - distr),
+				x: x + Math.cos(readAngle(angle)) * width * (1 - distr),
+				y: y + Math.sin(readAngle(angle)) * width * (1 - distr),
 			},
 		];
 	}

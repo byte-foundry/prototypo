@@ -4,7 +4,7 @@ import * as utils from '../utils/updateUtils.js';
 
 import Component from './Component.js';
 import ExpandingNode from './ExpandingNode.js';
-import {SkeletonPath} from './Path.js';
+import {SkeletonPath, SimplePath} from './Path.js';
 
 export default class Glyph {
 	constructor(glyphSrc) {
@@ -156,7 +156,7 @@ export default class Glyph {
 
 			if (typeof contour.isReadyForHandles === 'function') {
 				if (
-					contour.skeleton
+					contour.skeleton.value
 					&& contour.isReadyForHandles(this.operationOrder, i)
 					&& !contour.handled
 				) {
@@ -164,13 +164,13 @@ export default class Glyph {
 					const correctedValues = SkeletonPath.correctValues(_.get(opDone, toLodashPath(contourPath)), contourPath);
 
 					Object.keys(correctedValues).forEach((key) => {
-						_.set(opDone, key, correctedValues[key]);
+						_.set(opDone, toLodashPath(key), correctedValues[key]);
 					});
 
 					const handledValues = SkeletonPath.createHandle(_.get(opDone, toLodashPath(contourPath)), contourPath);
 
 					Object.keys(handledValues).forEach((key) => {
-						_.set(opDone, key, handledValues[key]);
+						_.set(opDone, toLodashPath(key), handledValues[key]);
 					});
 				}
 				else if (
@@ -181,13 +181,13 @@ export default class Glyph {
 					const correctedValues = SimplePath.correctValues(_.get(opDone, toLodashPath(contourPath)), contourPath);
 
 					Object.keys(correctedValues).forEach((key) => {
-						_.set(opDone, key, correctedValues[key]);
+						_.set(opDone, toLodashPath(key), correctedValues[key]);
 					});
 
 					const handledValues = SimplePath.createHandle(_.get(opDone, toLodashPath(contourPath)), contourPath);
 
 					Object.keys(handledValues).forEach((key) => {
-						_.set(opDone, key, handledValues[key]);
+						_.set(opDone, toLodashPath(key), handledValues[key]);
 					});
 				}
 			}

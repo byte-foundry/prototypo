@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 function transformCoords(coordsArray, matrix) {
 	const [a, b, c, d, tx, ty] = matrix;
 
@@ -19,6 +17,7 @@ export const mState = {
 export default class Toile {
 	constructor(canvas) {
 		this.context = canvas.getContext('2d');
+		this.mouse = {x: 0, y: 0};
 
 		//This is the view matrix schema
 		//[ a  b  tx ]   [ x ]   [ ax + by + tx ]
@@ -30,18 +29,18 @@ export default class Toile {
 		//c is x on y influence
 		//tx is x translation
 		//ty is y translation
-		this.viewMatrix = [1, 0, 0, -1, 0, 0];
+		this.viewMatrix = [1, 0, 0, -1, 0, 900];
 
 		canvas.addEventListener('mousemove', (e) => {
 
 			this.mouseDelta = {
-				x: e.screenX - this.mouse.x,
-				y: e.screenY - this.mouse.y,
+				x: e.clientX - this.mouse.x,
+				y: e.clientY - this.mouse.y,
 			};
 
 			this.mouse = {
-				x: e.screenX,
-				y: e.screenY,
+				x: e.clientX,
+				y: e.clientY,
 			};
 		});
 
@@ -54,19 +53,40 @@ export default class Toile {
 		});
 	}
 
+	clearCanvas(width, height) {
+		this.context.clearRect(0, 0, width, height);
+	}
+
 	getMouseState() {
+		const [pos, delta, state] = transformCoords(
+			[this.mouse, this.mouseDelta],
+			this.viewMatrix
+		);
 		return {
-			pos: this.mouse,
-			delta: this.mouseDelta,
+			pos,
+			delta,
 			state: this.mouseState,
 		};
+	}
+
+	drawNode(node, strokeColor = 'black', fillColor = 'transparent') {
+		this.drawCircle(node, 5, strokeColor, fillColor);
+
+		if (node.handleIn) {
+			this.drawCircle(node.handleIn, 5, strokeColor, strokeColor);
+			this.drawLine(node.handleIn, node, strokeColor, strokeColor);
+		}
+		if (node.handleOut) {
+			this.drawCircle(node.handleOut, 5, strokeColor, strokeColor);
+			this.drawLine(node.handleOut, node, strokeColor, strokeColor);
+		}
 	}
 
 	drawGlyph(glyph) {
 		const beziers = glyph.contours.map((contour) => {
 			if (!contour.skeleton) {
 				return contour.nodes.map((node, i) => {
-					const nextNode = contours[(i + 1) % contour.nodes.length];
+					const nextNode = contour.nodes[(i + 1) % contour.nodes.length];
 
 					const bezier = [
 						{
@@ -78,21 +98,101 @@ export default class Toile {
 							y: node.handleOut.y,
 						},
 						{
-							x: nextNode.x,
-							y: nextNode.y,
-						},
-						{
 							x: nextNode.handleIn.x,
 							y: nextNode.handleIn.y,
 						},
+						{
+							x: nextNode.x,
+							y: nextNode.y,
+						},
 					];
+
+					return bezier;
 				});
 			}
 			else if (!contour.closed) {
+				return contour.nodes.reduceRight((acc, node, i) => {
+
+					const bezier = [0, 1].map((index) => {
+						let secondIndex = index;
+						let firstIndex = i + 1 * (index ? -1 : 1);
+
+						if (firstIndex > contour.nodes.length - 1) {
+							firstIndex = contour.nodes.length - 1;
+							secondIndex = 1;
+						}
+						else if (firstIndex < 0) {
+							firstIndex = 0;
+							secondIndex = 0;
+						}
+
+						const nextNode = contour.nodes[firstIndex].expandedTo[secondIndex];
+
+						this.drawNode(node.expandedTo[index], '#00FF00');
+
+						return [
+							{
+								x: node.expandedTo[index].x,
+								y: node.expandedTo[index].y,
+							},
+							{
+								x: node.expandedTo[index].handleOut.x,
+								y: node.expandedTo[index].handleOut.y,
+							},
+							{
+								x: nextNode.handleIn.x,
+								y: nextNode.handleIn.y,
+							},
+							{
+								x: nextNode.x,
+								y: nextNode.y,
+							},
+						];
+					});
+
+					this.drawNode(node, '#FF00FF');
+
+					acc.push(bezier[1]);
+					acc.unshift(bezier[0]);
+
+					return acc;
+				}, []);
 			}
 			else {
+				return [0, 1].map((index) => {
+					return contour.nodes.map((node, i) => {
+						const nextNode = contour.nodes[(i + 1 * (index ? -1 : 1))  - contour.nodes.length * Math.floor((i + 1 * (index ? -1 : 1)) / contour.nodes.length)].expandedTo[index];
+
+						const bezier = [
+							{
+								x: node.expandedTo[index].x,
+								y: node.expandedTo[index].y,
+							},
+							{
+								x: node.expandedTo[index].handleOut.x,
+								y: node.expandedTo[index].handleOut.y,
+							},
+							{
+								x: nextNode.handleIn.x,
+								y: nextNode.handleIn.y,
+							},
+							{
+								x: nextNode.x,
+								y: nextNode.y,
+							},
+						];
+
+						return bezier;
+					});
+				});
 			}
 		});
+
+		this.context.globalCompositeOperation = 'destination-over';
+		beziers.forEach((bez) => {
+			this.drawContour(bez, 'black', 'black');
+		});
+		this.context.globalCompositeOperation = 'source-over';
 	}
 
 	setCamera(point, zoom, height) {
@@ -104,17 +204,17 @@ export default class Toile {
 
 		this.context.fillStyle = fillColor;
 		this.context.strokeStyle = strokeColor;
-			this.context.beginPath();
+		this.context.beginPath();
 
-		_.each(listOfBezier, (bezier) => {
-			drawBezierCurve(bezier, undefined, interactionType, true);
+		_.each(listOfBezier, (bezier, i) => {
+			this.drawBezierCurve(bezier, undefined, interactionType, true, !i);
 		});
 
 		this.context.stroke();
 		this.context.fill();
 	}
 
-	drawBezierCurve(aBezier, strokeColor, interactionType, noPathCreation) {
+	drawBezierCurve(aBezier, strokeColor, interactionType, noPathCreation, move) {
 		const bezier = transformCoords(
 			aBezier,
 			this.viewMatrix
@@ -125,9 +225,12 @@ export default class Toile {
 			this.context.strokeStyle = strokeColor;
 			this.context.beginPath();
 		}
+		if (move) {
 
-		this.context.moveTo(bezier[0].x, bezier[0].y);
-		this.bezierCurveTo(bezier[1].x, bezier[1].y, bezier[2].x, bezier[2].y, bezier[1].x, bezier[1].y);
+			this.context.moveTo(bezier[0].x, bezier[0].y);
+		}
+
+		this.context.bezierCurveTo(bezier[1].x, bezier[1].y, bezier[2].x, bezier[2].y, bezier[3].x, bezier[3].y);
 
 		if (!noPathCreation) {
 			this.context.stroke();
@@ -150,7 +253,18 @@ export default class Toile {
 	drawRectangleFromCenterSize(origin, size, strokeColor, fillColor, interactionType) {
 	}
 
-	drawCircle(center, radius, strokeColor, fillColor, interactionType) {
+	drawCircle(aCenter, radius, strokeColor = 'black', fillColor = 'transparent', interactionType) {
+		const [center] = transformCoords(
+			[aCenter],
+			this.viewMatrix
+		);
+
+		this.context.beginPath();
+		this.context.strokeStyle = strokeColor;
+		this.context.fillStyle = fillColor;
+		this.context.arc(center.x, center.y, radius, 0, Math.PI * 2);
+		this.context.stroke();
+		this.context.fill();
 	}
 
 	drawText(text, point, textSize, textColor, interactionType) {
