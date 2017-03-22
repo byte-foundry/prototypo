@@ -489,19 +489,12 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/change-param': ({values, value, name, force, label, demo}) => {
+	'/change-param': ({values, value, name, force, label}) => {
 		const indivMode = prototypoStore.get('indivMode');
 		const indivEdit = prototypoStore.get('indivEditingParams');
 		const db = (prototypoStore.get('variant') || {}).db;
 		const currentGroupName = (prototypoStore.get('indivCurrentGroup') || {}).name;
 		let newParams = {...undoableStore.get('controlsValues')};
-
-		const plan = HoodieApi.instance.plan;
-		const credits = prototypoStore.get('credits');
-
-		if (!demo && !paramAuthorized(plan, credits)) {
-			return;
-		}
 
 		if (indivMode && indivEdit && !values) {
 			if (newParams.indiv_group_param[currentGroupName][name]) {
@@ -511,7 +504,7 @@ export default {
 						...newParams.indiv_group_param[currentGroupName],
 						[name]: {
 							...newParams.indiv_group_param[currentGroupName][name],
-							value: value,
+							value,
 						},
 					},
 				};
@@ -523,7 +516,7 @@ export default {
 						...newParams.indiv_group_param[currentGroupName],
 						[name]: {
 							state: 'relative',
-							value: value,
+							value,
 						},
 					},
 				};

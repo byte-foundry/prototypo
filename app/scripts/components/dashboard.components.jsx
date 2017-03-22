@@ -218,6 +218,13 @@ export default class Dashboard extends React.PureComponent {
 		const exportAs = this.state.exportAs
 			&& <ExportAs propName="exportAs"/>;
 
+		if (this.props.location.query.showModal) {
+			this.client.dispatchAction('/store-value', {
+				openGoProModal: true,
+				goProModalBilling: this.props.location.query.showModal,
+			});
+		}
+
 		return (
 			<div id="dashboard" className={classes}>
 				<Joyride

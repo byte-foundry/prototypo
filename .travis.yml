@@ -2,8 +2,6 @@ sudo: false
 language: node_js
 node_js:
 - '6.3'
-before_install:
-- npm install -g netlify-cli
 after_install:
 - npm dedupe
 - npm shrinkwrap --dev
@@ -11,8 +9,9 @@ after_install:
 script:
 - gulp build --type=prod
 after_success:
-- '[ $TRAVIS_BRANCH == master ] && netlify deploy -t $NETLIFY_TOKEN -p ./dist -s 0ea6bba4-adc8-4e60-b9a3-ebd316982361'
-- '[ $TRAVIS_BRANCH == release ] && netlify deploy -t $NETLIFY_TOKEN -p ./dist -s bf5c3b47-9793-4316-b19f-4c18ef1a1e02'
+- 'curl -L https://github.com/netlify/netlifyctl/releases/download/v0.1.0/netlifyctl-linux-amd64-v0.1.0.tar.gz | tar zx'
+- '[ $TRAVIS_BRANCH == master ] && ./netlifyctl -y -A $NETLIFY_TOKEN -C netlify.prod.toml deploy'
+- '[ $TRAVIS_BRANCH == release ] && ./netlifyctl -y -A $NETLIFY_TOKEN -C netlify.release.toml deploy'
 - '[ $TRAVIS_BRANCH == feat/new-ux ] && surge --project ./dist --domain sandbox1.prototypo.io'
 branches:
   only:

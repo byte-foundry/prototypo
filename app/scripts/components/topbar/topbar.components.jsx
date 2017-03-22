@@ -9,6 +9,7 @@ import LocalClient from '~/stores/local-client.stores.jsx';
 import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
+
 import Price from '../shared/price.components';
 
 import {
@@ -46,7 +47,7 @@ export default class Topbar extends React.PureComponent {
 		//function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
-		this.openGoProModal = this.openGoProModal.bind(this);
+		this.goToSubscribe = this.goToSubscribe.bind(this);
 		this.resetFileTutorial = this.resetFileTutorial.bind(this);
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
 		this.setPreset = this.setPreset.bind(this);
@@ -85,6 +86,16 @@ export default class Topbar extends React.PureComponent {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+			this.client.getStore('/userStore', this.lifespan)
+				.onUpdate((head) => {
+					this.setState({
+						subscription: head.toJS().d.subscription,
+					});
+				})
+				.onDelete(() => {
+					this.setState(undefined);
+				});
 
 		const creditChoices = await this.client.fetch('/creditStore');
 
@@ -172,10 +183,15 @@ export default class Topbar extends React.PureComponent {
 		}
 	}
 
-	openGoProModal() {
-		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
-		this.client.dispatchAction('/store-value', {openGoProModal: true});
-		Log.ui('ExportFontNow.open');
+	goToSubscribe() {
+		window.Intercom('trackEvent', 'clickTakeFullAdvantageOfPrototypo');
+		Log.ui('GoPro.open');
+		/*this.context.router.push({
+			pathname: '/account/subscribe',
+		});*/
+		this.client.dispatchAction('/store-value', {
+			openGoProModal: true,
+		});
 	}
 
 	resetFileTutorial(e) {
@@ -265,7 +281,7 @@ export default class Topbar extends React.PureComponent {
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${redoDisabled ? '' : this.state.eventList[whereAt + 1].label}`;
 		const credits = this.state.credits;
-		const freeAccount = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+		const freeAccount = !this.state.subscription;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : false;
 		const glyphrExportCost = this.state.creditChoices ? this.state.creditChoices.exportGlyphr : false;
@@ -286,10 +302,10 @@ export default class Topbar extends React.PureComponent {
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount) && (
 			<TopBarMenuButton
-				label={<span>UNLOCK ALL PARAMETERS FOR <Price amount={9} country={this.state.country} /></span>}
+				label={<span>GET THE FULL VERSION FOR <Price amount={1} country={this.state.country} /></span>}
 				noHover
 				centered
-				click={this.openGoProModal}
+				click={this.goToSubscribe}
 				alignRight
 			/>
 		);
@@ -383,6 +399,8 @@ export default class Topbar extends React.PureComponent {
 					<TopBarMenuDropdown name="Edit">
 						<TopBarMenuDropdownItem
 							name="Individualize parameters"
+							freeAccount={freeAccount}
+							freeAccountAndHasCredits={freeAccountAndHasCredits}
 							handler={() => { this.individualize(); }}/>
 						<TopBarMenuDropdownItem
 							name={undoText}
@@ -438,3 +456,7 @@ export default class Topbar extends React.PureComponent {
 		);
 	}
 }
+
+Topbar.contextTypes = {
+	router: React.PropTypes.object.isRequired,
+};

@@ -45,6 +45,11 @@
 		}
 	}
 
+	&.big {
+		font-size: 24px;
+		font-family: 'Fira Sans', sans-serif;
+	}
+
 	&.danger {
 		border-color: $red;
 		color: $red;
@@ -111,6 +116,9 @@
 		@include themify() {
 			background-color: $theme-background;
 			color: $theme-color;
+		}
+		.sk-spinner-wave div {
+			background-color: $white;
 		}
 	}
 }

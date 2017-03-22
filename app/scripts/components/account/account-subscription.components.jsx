@@ -11,6 +11,7 @@ import getCurrency from '../../helpers/currency.helpers.js';
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import FormSuccess from '../shared/form-success.components.jsx';
 import Price from '../shared/price.components';
+import Button from '../shared/button.components.jsx';
 
 export default class AccountSubscription extends React.PureComponent {
 	constructor(props) {
@@ -77,7 +78,7 @@ export default class AccountSubscription extends React.PureComponent {
 		}
 
 		const cardDetail = cards.length > 0 ? (
-			<DisplayWithLabel label="Your cards">
+			<DisplayWithLabel label="Your card">
 				{uniqWith(cards, (first, sec) => { return first.fingerprint === sec.fingerprint; }).map((card) => { // dedupe cards
 					return (
 						<div className="account-subscription-card" key={card.id}>
@@ -113,8 +114,7 @@ export default class AccountSubscription extends React.PureComponent {
 					<img style={{width: '100%'}} src="assets/images/go-pro.gif" />
 				</p>
 				<p>
-					Subscribe to our <Link className="account-link" to="account/create/choose-a-plan">pro plan</Link> to benefit of the full power of Prototypo without restrictions
-					{ !credits && <span> or buy <Link className="account-link" to="dashboard?buy_credits=true">some credits</Link> to export and use your fonts everywhere</span>}!
+					Subscribe to our <Link className="account-link" to="account/subscribe">pro plan</Link> to benefit of the full power of Prototypo without restrictions to export and use your fonts everywhere!
 				</p>
 			</div>
 		);

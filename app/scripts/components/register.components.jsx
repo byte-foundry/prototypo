@@ -50,7 +50,7 @@ export default class Register extends React.Component {
 		const phone = this.refs.phone.inputValue;
 		const skype = this.refs.skype.inputValue;
 
-		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname, css, phone, skype});
+		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname, css, phone, skype, to: this.props.location.query.subscribe ? '/account/subscribe' : this.props.location.query.prevHash, oldQuery: this.props.location.query.subscribe ? {plan: this.props.location.query.subscribe} : this.props.location.query});
 	}
 
 	render() {

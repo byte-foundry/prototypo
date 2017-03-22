@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import {Link} from 'react-router';
 import Lifespan from 'lifespan';
+import HoodieApi from '~/services/hoodie.services.js';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -11,26 +12,8 @@ export default class AccountSidebar extends React.Component {
 		this.state = {};
 	}
 
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					infos: head.toJS().d.infos,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
 	render() {
+		const isPayingCustomer = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') === -1;
 		const classHome = classNames({
 			"is-active": this.context.router.isActive('account/home'),
 			"account-sidebar-menu-item": true,
@@ -68,7 +51,7 @@ export default class AccountSidebar extends React.Component {
 			"is-active": this.context.router.isActive('account/details/change-plan'),
 		});
 
-		const detailsMenu = this.state.infos && this.state.infos.subscriptions
+		const detailsMenu = isPayingCustomer
 			? (
 					<ul className="account-sidebar-menu-item-options">
 						<li className={classAddCard}><Link to="account/details/add-card">Add a card</Link></li>
@@ -78,7 +61,7 @@ export default class AccountSidebar extends React.Component {
 			)
 			: (
 					<ul className="account-sidebar-menu-item-options">
-						<li className={classChangePlan}><Link to="account/create/choose-a-plan">Subscribe to the pro plan</Link></li>
+						<li className={classChangePlan}><Link to="account/subscribe">Subscribe to the pro plan</Link></li>
 					</ul>
 			);
 
