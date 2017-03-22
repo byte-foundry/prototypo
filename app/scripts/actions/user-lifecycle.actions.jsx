@@ -36,7 +36,12 @@ function saveAccountValues(values) {
 }
 
 function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
-
+	const form = userStore.get('addcardForm');
+	form.errors = [];
+	form.inError = {};
+	form.loading = true;
+	const cleanPatch = userStore.set('addcardForm', form).commit();
+	localServer.dispatchUpdate('/userStore', cleanPatch);
 	return new Promise((resolve, reject) => {
 		window.Stripe.card.createToken({
 			number,
@@ -46,6 +51,10 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 			name: fullname,
 		}, async (status, data) => {
 			if (data.error) {
+				form.loading = false;
+				form.errors.push(data.error.message);
+				const patch = userStore.set('addcardForm', form).commit();
+				localServer.dispatchUpdate('/userStore', patch);
 				reject(data.error.message);
 			}
 
@@ -62,13 +71,21 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 
 				/* DEPRECATED Backward compatibility, should be removed when every component uses the cards property in userStore */
 				infos.vat = vat || infos.vat;
-				const patch = userStore.set('infos', infos).set('cards', response.sources.data).commit();
+				let patch = userStore.set('infos', infos).set('cards', response.sources.data).commit();
 
+				localServer.dispatchUpdate('/userStore', patch);
+
+				form.loading = false;
+				patch = userStore.set('addcardForm', form).commit();
 				localServer.dispatchUpdate('/userStore', patch);
 
 				resolve(data.card);
 			}
 			catch (err) {
+				form.loading = false;
+				form.errors.push(err);
+				const patch = userStore.set('addcardForm', form).commit();
+				localServer.dispatchUpdate('/userStore', patch);
 				reject(err);
 			}
 		});
@@ -97,7 +114,6 @@ function spendCredits({amount}) {
 }
 
 async function addBillingAddress({buyerName, address, vat}) {
-	console.log(vat);
 	const form = userStore.get('billingForm');
 
 	form.errors = [];
@@ -411,9 +427,12 @@ export default {
 		const form = userStore.get('choosePlanForm');
 
 		delete form.error;
+		delete form.validCoupon;
+		delete form.couponError;
 
 		if (plan) {
 			form.selected = plan;
+			window.Intercom('trackEvent', `chosePlan${plan}`);
 		}
 
 		if (coupon !== undefined) {
@@ -430,8 +449,6 @@ export default {
 		}
 
 		const patch = userStore.set('choosePlanForm', form).commit();
-
-		window.Intercom('trackEvent', `chosePlan${plan}`);
 
 		return localServer.dispatchUpdate('/userStore', patch);
 	},
@@ -505,7 +522,6 @@ export default {
 		hashHistory.push(toPath);
 	},
 	'/add-billing-address': async (options) => {
-		console.log(options);
 		const toPath = {
 			pathname: options.pathQuery.path || '/account/profile',
 			query: options.pathQuery.query,
@@ -525,7 +541,7 @@ export default {
 		window.Intercom('trackEvent', 'addedCardAndAdress');
 		hashHistory.push(toPath);
 	},
-	'/confirm-buy': async ({plan, card}) => {
+	'/confirm-buy': async ({plan, card, pathname}) => {
 		const form = userStore.get('confirmation');
 
 		form.errors = [];
@@ -586,16 +602,20 @@ export default {
 				.set('confirmation', form)
 				.commit();
 
+			const transacId = `${plan}_${data.id}`;
 			ga('ecommerce:addTransaction', {
-				'id': data.id,
-				'affiliation': 'Prototypo',
-				'revenue': data.plan.id.indexOf('monthly') === -1 ? '99' : '15',
+				id: transacId,
+				affiliation: 'Prototypo',
+				revenue: data.plan.amount / 100,
+				currency,
 			});
 
 			ga('ecommerce:addItem', {
-				'id': data.id,
-				'name': data.plan.id,    // Product name. Required.
-				'price': data.plan.id.indexOf('monthly') === -1 ? '99' : '15',
+				id: transacId,
+				name: data.plan.id,
+				sku: `${plan}_${currency}_taxfree`,
+				category: 'Subscriptions',
+				price: data.plan.amount / 100,
 			});
 
 			ga('ecommerce:send');
@@ -606,7 +626,7 @@ export default {
 			HoodieApi.instance.plan = infos.plan;
 
 			hashHistory.push({
-				pathname: '/account/success',
+				pathname: pathname ? pathname : '/account/success',
 			});
 
 			localServer.dispatchUpdate('/userStore', patch);
@@ -621,11 +641,14 @@ export default {
 			if ((/no such coupon/i).test(err.message)) {
 				form.errors.push('This coupon appears to no longer be valid, please contact us.');
 			}
+			if (typeof err === 'string') {
+				form.errors.push(err);
+			}
 			if (/no attached payment source/i.test(err.message)) {
 				form.errors.push('Payment details appear to be invalid, please contact us.');
 			}
 			else {
-				form.errors.push('Unexpected error, please contact us at contact@prototypo.io');
+				form.errors.push('Unexpected error, please contact us at contact@prototypo.io if you don\'t know how to solve it');
 				form.errors.push(err.message);
 			}
 

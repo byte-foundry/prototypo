@@ -3,8 +3,6 @@ import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import HoodieApi from '~/services/hoodie.services.js';
-
 import LocalClient from '../stores/local-client.stores.jsx';
 import DOM from '../helpers/dom.helpers.js';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
@@ -29,6 +27,15 @@ export class Sliders extends React.PureComponent {
 
 				this.setState({
 					values: headJS.controlsValues,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					subscription: head.toJS().d.subscription,
 				});
 			})
 			.onDelete(() => {
@@ -100,6 +107,7 @@ export class Sliders extends React.PureComponent {
 				: (
 					<Slider
 						demo={paramToUse.demo}
+						subscription={this.state.subscription}
 						credits={this.props.credits}
 						disabled={paramToUse.disabled}
 						init={paramToUse.init}
@@ -171,7 +179,7 @@ export class Slider extends React.Component {
 			console.log('[RENDER] slider');
 		}
 		const value = this.props.value === undefined ? this.props.init : this.props.value;
-		const freeAccount = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+		const freeAccount = !this.props.subscription;
 		const credits = this.props.credits;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const disabled = !this.props.disabled && !(freeAccountAndHasCredits || !freeAccount);

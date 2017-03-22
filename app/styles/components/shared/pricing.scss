@@ -10,11 +10,10 @@
 
 		&-item {
 			margin-right: 16px;
-			margin-left: -7px;
 			font-size: 17px;
 			padding: 10px 20px;
 			border-radius: 5px;
-			font-weight: 100;
+			font-weight: 400;
 			cursor: pointer;
 			background: $white;
 			color: $green;
@@ -22,8 +21,7 @@
 			transition: background 0.3s ease, color 0.3s ease;
 
 			&:last-of-type {
-				margin-right: 0;
-				margin-left: 0;
+				margin-right: 8px;
 			}
 
 			&.is-active, &:hover {
@@ -34,14 +32,15 @@
 	}
 
 	&-item {
+		position: relative;
 		border-radius: 5px;
-		overflow: hidden;
-		margin-right: 15px;
+		margin: 0 8px;
 		height:100%;
 		cursor:pointer;
-		border: 3px solid $light-grey;
+		border: 1px solid $light-grey;
 		background-color: $lightest-grey;
 		transition: transform 0.3s ease;
+		width: calc(50% - 16px);
 
 		&:hover {
 			transform: scale(1.02);
@@ -51,20 +50,82 @@
 			margin-right: 0;
 		}
 
+		&-offerRibbon {
+		  width: 108px;
+		  height: 108px;
+		  overflow: hidden;
+		  position: absolute;
+		  top: -6px;
+		  right: -6px;
+		  &-content {
+		    color: $white;
+			font-size: 11px;
+		    text-align: center;
+		    text-transform: uppercase;
+		    font-weight: 600;
+		    transform: rotate(45deg);
+		    position: relative;
+		    padding: 4px 0;
+		    left: -11px;
+		    top: 31px;
+		    width: 146px;
+		    background-color: mix(white, $red, 10%);
+		    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		    letter-spacing: 0.2px;
+		    box-shadow: -3px 5px 6px -5px rgba(0, 0, 0, 0.5);
+		    sup {
+		      font-size: 0.6em;
+		    }
+		    &::before, &::after {
+		      content: "";
+		      border-top: 4px solid mix(black, $red, 30%);
+		      border-left: 4px solid transparent;
+		      border-right: 4px solid transparent;
+		      position: absolute;
+		      bottom: -4px;
+		    }
+		    &::before {
+		      content: "";
+		      position: absolute;
+		      left: 0px;
+		      top: 100%;
+		      z-index: -1;
+		      border-left: 4px solid mix(black, $red, 30%);
+		      border-right: 4px solid transparent;
+		      border-bottom: 4px solid transparent;
+		      border-top: 4px solid mix(black, $red, 30%);
+		    }
+		    &::after {
+		      content: "";
+		      position: absolute;
+		      right: 0px;
+		      top: 100%;
+		      z-index: -1;
+		      border-left: 2px solid transparent;
+		      border-right: 2px solid mix(black, $red, 30%);
+		      border-bottom: 2px solid transparent;
+		      border-top: 2px solid mix(black, $red, 30%);
+		    }
+		  }
+		}
+
 		&-title {
 			background-color: #fefefe;
 			color: $green;
-			font-size: 20px;
-			font-weight: 100;
-			font-family: proxima-nova;
+			font-size: 16px;
+			font-family: 'Fira Sans', sans-serif;
 			text-align: center;
 			text-transform: uppercase;
 			padding: 10px;
-			padding-top: 35px;
+			font-weight: 600;
+			padding-top: 25px;
 
 			&-more {
+				margin-top: 15px;
 				color: $lightest-grey;
-				font-size: 16px;
+				font-size: 15px;
+				color: $medium-grey;
+				font-weight: normal;
 				text-transform: none;
 				color: $dark-grey;
 			}
@@ -82,11 +143,18 @@
 
 				&-value {
 					font-size: 50px;
-					font-family: proxima-nova;
+					font-family: 'Fira Sans', sans-serif;
+					font-weight: 600;
+ 					margin-bottom: 5px;
+
+					&-small {
+						font-size: 30%;
+					}
 
 					&-freq {
 						font-size:13px;
 						margin-left:5px;
+						font-weight: normal;
 					}
 
 					&-currency {
@@ -98,7 +166,9 @@
 				}
 
 				&-info {
-					font-size:18px;
+					font-size:14px;
+					margin-bottom: 6px;
+					color: $dark-grey;
 				}
 
 			}
@@ -115,16 +185,17 @@
 		&-feature {
 			padding: 10px 20px;
 			border-top: solid 1px $light-grey;
-			font-size: 18px;
+			font-size: 16px;
 			font-weight: 100;
 			background-color: $lightest-grey;
+			color: $medium-grey;
 		}
 
 		&-cta {
 			background: $green;
 			color: #fefefe;
 			text-align: center;
-			padding: 5px 10px;
+			padding: 10px;
 			font-size: 20px;
 			font-weight: 100;
 			transition: background 0.3s ease;

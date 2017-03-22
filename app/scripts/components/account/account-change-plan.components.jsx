@@ -14,7 +14,10 @@ import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 export default class AccountChangePlan extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {};
+
+		this.confirmPlan = this.confirmPlan.bind(this);
 	}
 
 	componentWillMount() {
@@ -40,14 +43,21 @@ export default class AccountChangePlan extends React.Component {
 
 	confirmPlan(e) {
 		e.preventDefault();
-		if (this.refs.select.inputValue.value === 'free_monthly') {
+
+		const plan = this.refs.select.inputValue.value;
+
+		window.Intercom('trackEvent', 'change-plan-select', {
+			plan,
+		});
+
+		if (plan === 'free_monthly') {
 			return this.setState({
 				free: true,
 			});
 		}
 
 		this.client.dispatchAction('/confirm-plan', {
-			plan: this.refs.select.inputValue.value,
+			plan,
 			pathQuery: {pathname: '/account/details/confirm-plan'},
 		});
 	}
@@ -83,7 +93,7 @@ export default class AccountChangePlan extends React.Component {
 			return !(!this.state.plan || !this.state.plan.startsWith(option.value));
 		});
 
-		const content = this.state.free
+		return this.state.free
 			? (
 				<div className="account-base">
 					<p className="account-change-plan-downgrade hidden">
@@ -93,13 +103,20 @@ export default class AccountChangePlan extends React.Component {
 				</div>
 			)
 			: (
-				<form onSubmit={(e) => {this.confirmPlan(e);}} className="account-base account-change-plan">
+				<form onSubmit={this.confirmPlan} className="account-base account-change-plan">
 					<div>
 						<DisplayWithLabel label="Your current plan">
 							{ this.state.plan ? plan.name : `You do not have a plan.` }
 						</DisplayWithLabel>
 					</div>
-					<SelectWithLabel ref="select" label="Which plan are you interested in?" noResultsText={"No plan with this name"} options={options}/>
+					<SelectWithLabel
+						clearable={false}
+						searchable={false}
+						ref="select"
+						label="Which plan are you interested in?"
+						noResultsText={"No plan with this name"}
+						options={options}
+					/>
 					<AccountValidationButton label="Change plan" loading={this.state.loading}/>
 				</form>
 			);

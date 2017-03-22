@@ -83,9 +83,20 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 	}
 
 	addCoupon() {
-		this.setState({
-			couponValue: '',
-		});
+		if (typeof this.state.couponValue === 'string' && this.state.couponValue !== `base_coupon_${getCurrency(this.props.country)}`) {
+			if (this.props.plan === 'personal_monthly') {
+				this.setState({'couponValue': `base_coupon_${getCurrency(this.props.country)}`});
+				this.client.dispatchAction('/choose-plan', {
+					coupon: `base_coupon_${getCurrency(this.props.country)}`,
+				});
+			}
+			else {
+				this.setState({couponValue: undefined});
+			}
+		}
+		else {
+			this.setState({couponValue: ''});
+		}
 	}
 
 	subscribe() {
@@ -101,18 +112,35 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 	}
 
 	handleCouponChange(coupon) {
-		this.client.dispatchAction('/choose-plan', {
-			coupon: typeof coupon === 'string' ? coupon : this.refs.coupon.inputValue,
-		});
+		if (typeof coupon !== 'string' && this.refs.coupon && this.refs.coupon.inputValue.length === 0) {
+			this.setState({'couponValue': `base_coupon_${getCurrency(this.props.country)}`});
+			this.client.dispatchAction('/choose-plan', {
+				coupon: `base_coupon_${getCurrency(this.props.country)}`,
+			});
+		}
+		else {
+			this.client.dispatchAction('/choose-plan', {
+				coupon: typeof coupon === 'string' ? coupon : this.refs.coupon.inputValue,
+			});
+		}
 		this.setState({'isFormSubmitted': false});
 	}
 
 	handleCouponSubmit(e) {
+		if (this.refs.coupon.inputValue.replace(/\s/g, '').length === 0 && this.props.plan === 'personal_monthly') {
+			this.setState({'couponValue': `base_coupon_${getCurrency(this.props.country)}`});
+			this.handleCouponChange(`base_coupon_${getCurrency(this.props.country)}`);
+			this.setState({'isFormSubmitted': true});
+			e.preventDefault();
+			e.stopPropagation();
+			return true;
+		}
 		this.client.dispatchAction('/choose-plan', {
 			coupon: this.refs.coupon.inputValue,
 		});
 		this.setState({'isFormSubmitted': true});
 		e.stopPropagation();
+		e.preventDefault();
 		return true;
 	}
 
