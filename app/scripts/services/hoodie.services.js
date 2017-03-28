@@ -1,7 +1,9 @@
 import PouchDB from 'pouchdb';
 import HoodiePouch from 'pouchdb-hoodie-api';
 import queryString from 'query-string';
+import gql from 'graphql-tag';
 
+import apolloClient from './graphcool.services';
 import HOODIE from '../helpers/hoodie.helpers.js';
 import isProduction from '../helpers/is-production.helpers';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -42,7 +44,15 @@ async function fetchAWS(endpoint, params = {}) {
 
 	const data = await response.json();
 
-	return response.ok ? data : Promise.reject(new Error(data.message));
+	if (response.ok) {
+		return data;
+	}
+
+	const error = new Error(data.message);
+
+	error.type = data.type;
+
+	return Promise.reject(error);
 }
 
 export default class HoodieApi {
@@ -54,22 +64,65 @@ export default class HoodieApi {
 				.then(setupStripe);
 	}
 
-	static login(user, password) {
-		return hoodie.account.signIn(user, password)
-				.then(setupHoodie)
-				.then(setupStripe);
+	static async login(user, password) {
+		const data = await hoodie.account.signIn(user, password);
+
+		// If the graph.cool account creation fails, it's ok for now
+		try {
+			const response = await apolloClient.mutate({
+				mutation: gql`
+					mutation login($email: String!, $password: String!) {
+						signinUser(email: {email: $email, password: $password}) {
+							token
+						}
+					}
+				`,
+				variables: {
+					email: user,
+					password,
+				},
+			});
+
+			window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
+		}
+		catch (e) { TrackJS.track(e); }
+
+		return setupStripe(setupHoodie(data));
 	}
 
-	static logout() {
-		return hoodie.account.signOut()
-		.then((data) => {
-			localStorage.clear();
-			return data;
-		});
+	static async logout() {
+		const data = await hoodie.account.signOut();
+
+		window.localStorage.removeItem('graphcoolToken');
+
+		// TMP until we kick out Hoodie
+		localStorage.clear();
+
+		return data;
 	}
 
-	static signUp(username, password) {
-		return hoodie.account.signUp(username, password);
+	static async signUp(email, password) {
+		const data = await hoodie.account.signUp(email, password);
+
+		// If the graph.cool account creation fails, it's ok for now
+		try {
+			await apolloClient.mutate({
+				mutation: gql`
+					mutation createUser($email: String!, $password: String!) {
+						signUp(authProvider: {email: {email: $email, password: $password}}) {
+							token
+						}
+					}
+				`,
+				variables: {
+					email,
+					password,
+				},
+			});
+		}
+		catch (e) { TrackJS.track(e); }
+
+		return data;
 	}
 
 	static isLoggedIn() {
@@ -193,6 +246,36 @@ export default class HoodieApi {
 		const customerId = HoodieApi.instance.customerId;
 
 		return fetchAWS(`/customers/${customerId}/invoices`);
+	}
+
+	static addManagedUser(userId, infos) {
+		return fetchAWS(`/users/${userId}/children`, {
+			method: 'POST',
+			payload: infos,
+		});
+	}
+
+	// TODO: replace this with permissions rules on graph.cool
+	static removeManagedUser(userId, id) {
+		return fetchAWS(`/users/${userId}/children/${id}`, {
+			method: 'DELETE',
+		});
+	}
+
+	// TODO: replace this lambda with permissions rules on graph.cool
+	static acceptManager(userId, managerId) {
+		return fetchAWS(`/users/${userId}/manager/${managerId}`, {
+			method: 'PUT',
+		});
+	}
+
+	// Can be used to remove the manager or decline invite
+	// since it's not possible to have invite if we are already managed
+	// TODO: replace this lambda with permissions rules on graph.cool
+	static removeManager(userId) {
+		return fetchAWS(`/users/${userId}/manager`, {
+			method: 'DELETE',
+		});
 	}
 }
 

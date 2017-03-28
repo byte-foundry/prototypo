@@ -11,6 +11,7 @@ pleaseWait.instance = pleaseWait.pleaseWait({
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router, Route, IndexRoute, hashHistory, IndexRedirect} from 'react-router';
+import {ApolloProvider} from 'react-apollo';
 
 import Dashboard from './components/dashboard.components.jsx';
 import Signin from './components/signin.components.jsx';
@@ -30,10 +31,12 @@ import AccountAddCard from './components/account/account-add-card.components.jsx
 import AccountChangePlan from './components/account/account-change-plan.components.jsx';
 import AccountSubscription from './components/account/account-subscription.components.jsx';
 import AccountConfirmPlan from './components/account/account-confirm-plan.components.jsx';
+import AccountOrganization from './components/account/account-organization.components.jsx';
 import AccountInvoiceList from './components/account/account-invoice-list.components.jsx';
 import Subscription from './components/account/subscription.components.jsx';
 import SubscriptionConfirmation from './components/account/subscription-confirmation.components.jsx';
 
+import apolloClient from './services/graphcool.services.js';
 import HoodieApi from './services/hoodie.services.js';
 import LocalClient from './stores/local-client.stores.jsx';
 import LocalServer from './stores/local-server.stores.jsx';
@@ -284,47 +287,52 @@ selectRenderOptions(
 
 		window.addEventListener('values.loaded', () => {
 			ReactDOM.render((
-				<Router history={hashHistory} onUpdate={trackUrl}>
-					<Route component={App} name="app" path="/">
-						<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}/>
-						/* #if debug */
-						<Route path="replay" path="replay/:replayId" component={ReplayViewer}/>
-						<Route path="debug" component={ReplayViewer}/>
-						/* #endif */
-						<Route path="signin" component={AccountApp} onEnter={redirectToDashboard}>
-							<Route path="forgotten" component={ForgottenPassword}/>
-							<IndexRoute component={Signin}/>
+				<ApolloProvider client={apolloClient}>
+					<Router history={hashHistory} onUpdate={trackUrl}>
+						<Route component={App} name="app" path="/">
+							<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}/>
+							/* #if debug */
+							<Route path="replay" path="replay/:replayId" component={ReplayViewer}/>
+							<Route path="debug" component={ReplayViewer}/>
+							/* #endif */
+							<Route path="signin" component={AccountApp} onEnter={redirectToDashboard}>
+								<Route path="forgotten" component={ForgottenPassword}/>
+								<IndexRoute component={Signin}/>
+							</Route>
+							<Route path="signup" component={AccountApp} onEnter={redirectToDashboard}>
+								<IndexRoute component={Register}/>
+							</Route>
+							<Route component={AccountApp} path="account">
+								<IndexRedirect to="home" />
+								<Route path="billing" component={AccountDashboard} name="billing" onEnter={redirectToLogin}>
+									<IndexRoute component={AccountInvoiceList}/>
+								</Route>
+								<Route component={AccountDashboard} path="home" name="home" onEnter={redirectToLogin}>
+									<IndexRoute component={AccountHome}/>
+								</Route>
+								<Route component={AccountDashboard} path="success" name="success" onEnter={redirectToLogin}>
+									<IndexRoute component={AccountSuccess}/>
+								</Route>
+								<Route path="profile" component={AccountDashboard} name="profile" onEnter={redirectToLogin}>
+									<IndexRoute component={AccountProfile}/>
+									<Route path="change-password" component={AccountChangePassword}/>
+								</Route>
+								<Route path="details" component={AccountDashboard} name="details" onEnter={redirectToLogin}>
+									<IndexRoute component={AccountSubscription}/>
+									<Route path="billing-address" component={AccountBillingAddress}/>
+									<Route path="add-card" component={AccountAddCard}/>
+									<Route path="change-plan" component={AccountChangePlan}/>
+									<Route path="confirm-plan" component={AccountConfirmPlan} onEnter={noConfirmBeforePlan}/>
+								</Route>
+								<Route path="organization" component={AccountDashboard} name="organization" onEnter={redirectToLogin}>
+									<IndexRoute component={AccountOrganization} />
+								</Route>
+								<Route path="subscribe" component={Subscription} name="subscribe" onEnter={redirectToSignup}></Route>
+								<Route path="confirmation" component={SubscriptionConfirmation} name="confirmation"></Route>
+							</Route>
 						</Route>
-						<Route path="signup" component={AccountApp} onEnter={redirectToDashboard}>
-							<IndexRoute component={Register}/>
-						</Route>
-						<Route component={AccountApp} path="account">
-							<IndexRedirect to="home" />
-							<Route path="billing" component={AccountDashboard} name="billing" onEnter={redirectToLogin}>
-								<IndexRoute component={AccountInvoiceList}/>
-							</Route>
-							<Route component={AccountDashboard} path="home" name="home" onEnter={redirectToLogin}>
-								<IndexRoute component={AccountHome}/>
-							</Route>
-							<Route component={AccountDashboard} path="success" name="success" onEnter={redirectToLogin}>
-								<IndexRoute component={AccountSuccess}/>
-							</Route>
-							<Route path="profile" component={AccountDashboard} name="profile" onEnter={redirectToLogin}>
-								<IndexRoute component={AccountProfile}/>
-								<Route path="change-password" component={AccountChangePassword}/>
-							</Route>
-							<Route path="details" component={AccountDashboard} name="details" onEnter={redirectToLogin}>
-								<IndexRoute component={AccountSubscription}/>
-								<Route path="billing-address" component={AccountBillingAddress}/>
-								<Route path="add-card" component={AccountAddCard}/>
-								<Route path="change-plan" component={AccountChangePlan}/>
-								<Route path="confirm-plan" component={AccountConfirmPlan} onEnter={noConfirmBeforePlan}/>
-							</Route>
-							<Route path="subscribe" component={Subscription} name="subscribe" onEnter={redirectToSignup}></Route>
-							<Route path="confirmation" component={SubscriptionConfirmation} name="confirmation"></Route>
-						</Route>
-					</Route>
-				</Router>
+					</Router>
+				</ApolloProvider>
 			), content);
 
 		});

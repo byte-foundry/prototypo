@@ -1,7 +1,9 @@
 import {hashHistory} from 'react-router';
 import Lifespan from 'lifespan';
 import debounce from 'lodash/debounce';
+import gql from 'graphql-tag';
 
+import apolloClient from '../services/graphcool.services';
 import {userStore, prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -183,13 +185,22 @@ const validateCoupon = debounce((options) => {
 }, 500);
 
 export default {
+	'/set-user-data': ({children, parent}) => {
+		/* DEPRECATED: Backward compatibility, prefer looking into the store to know what plan the user has */
+		// TODO: Find a way to make Stripe and this to coexist
+		if (parent && !children.length) {
+			HoodieApi.instance.plan = 'managed';
+		}
+	},
 	'/load-customer-data': ({sources, subscriptions, metadata}) => {
-		const subscriptionPatch = userStore.set('subscription', subscriptions.data[0]).commit();
-		const cardsPatch = userStore.set('cards', sources.data).commit();
+		const userPatch = userStore
+			.set('subscription', subscriptions.data[0])
+			.set('cards', sources.data)
+			.commit();
+
 		const creditsPatch = prototypoStore.set('credits', parseInt(metadata.credits, 10) || 0).commit();
 
-		localServer.dispatchUpdate('/userStore', subscriptionPatch);
-		localServer.dispatchUpdate('/userStore', cardsPatch);
+		localServer.dispatchUpdate('/userStore', userPatch);
 		localServer.dispatchUpdate('/prototypoStore', creditsPatch);
 	},
 	'/load-customer-invoices': async () => {
@@ -365,6 +376,40 @@ export default {
 
 		try {
 			const {response} = await HoodieApi.signUp(username.toLowerCase(), password);
+
+			apolloClient.mutate({
+				mutation: gql`
+					mutation signUp(
+						$email: String!,
+						$password: String!,
+						$firstName: String!,
+						$lastName: String,
+						$occupation: String,
+						$phone: String,
+						$skype: String,
+					) {
+						createUser(
+							authProvider: {email: {email: $email, password: $password}},
+							firstName: $firstName,
+							lastName: $lastName,
+							occupation: $occupation,
+							phone: $phone,
+							skype: $skype,
+						) {
+							email
+						}
+					}
+				`,
+				variables: {
+					email: username,
+					password,
+					firstName: firstname,
+					lastName: lastname,
+					occupation: css.value,
+					phone,
+					skype,
+				},
+			});
 
 			window.Intercom('boot', {
 				app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',

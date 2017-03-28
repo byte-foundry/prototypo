@@ -3,17 +3,20 @@ import Lifespan from 'lifespan';
 import moment from 'moment';
 import {Link} from 'react-router';
 import uniqWith from 'lodash/uniqWith';
+import {graphql} from 'react-apollo';
+import gql from 'graphql-tag';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
 import getCurrency from '../../helpers/currency.helpers.js';
+import HoodieApi from '../../services/hoodie.services';
 
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import FormSuccess from '../shared/form-success.components.jsx';
 import Price from '../shared/price.components';
 import Button from '../shared/button.components.jsx';
 
-export default class AccountSubscription extends React.PureComponent {
+export class AccountSubscription extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -55,6 +58,7 @@ export default class AccountSubscription extends React.PureComponent {
 
 	render() {
 		const {cards, subscription, credits} = this.state;
+		const {manager, acceptManager, removeManager} = this.props;
 
 		const noCard = (
 			<div>
@@ -125,6 +129,7 @@ export default class AccountSubscription extends React.PureComponent {
 				<div className="account-subscription-plan">
 					<DisplayWithLabel label="Your plan">
 						{plan.name}
+						{subscription.quantity > 1 && <span> x{subscription.quantity}</span>}
 						{subscription.status === 'trialing' && (
 							<span className="badge">trial until {moment.unix(subscription.trial_end).format('L')}</span>
 						)}
@@ -150,7 +155,27 @@ export default class AccountSubscription extends React.PureComponent {
 					</p>
 				)}
 			</div>
-		) : noPlan;
+		) : (
+			<div>
+				{manager && manager.pending && (
+					<p>
+						<b>{manager.email}</b> wants to manage your subscription
+						{' '}
+						<button onClick={acceptManager}>Accept</button>
+						{' '}
+						<button onClick={removeManager}>Decline</button>
+					</p>
+				)}
+				{manager && !manager.pending && (
+					<p>
+						Your subscription is managed by <b>{manager.email}</b>
+						{' '}
+						<button onClick={removeManager}>Revoke</button>
+					</p>
+				)}
+				{(!manager || manager && manager.pending) && noPlan}
+			</div>
+		);
 
 		return (
 			<div className="account-dashboard-container-main">
@@ -164,3 +189,45 @@ export default class AccountSubscription extends React.PureComponent {
 		);
 	}
 }
+
+const query = gql`
+	query getManager {
+		user {
+			id
+			manager {
+				id
+				email
+			}
+			pendingManager {
+				id
+				email
+			}
+		}
+	}
+`;
+
+export default graphql(query, {
+	props: ({data}) => {
+		if (data.loading) {
+			return {loading: true};
+		}
+
+		const {id, manager, pendingManager} = data.user;
+		const possibleManager = manager || pendingManager;
+
+		return {
+			manager: possibleManager && {
+				email: possibleManager.email,
+				pending: !manager && !!pendingManager,
+			},
+			acceptManager: async () => {
+				await HoodieApi.acceptManager(id, pendingManager.id);
+				return data.refetch();
+			},
+			removeManager: async () => {
+				await HoodieApi.removeManager(id);
+				return data.refetch();
+			},
+		};
+	},
+})(AccountSubscription);
