@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import TutorialContent from 'tutorial-content';
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-
+import InlineSVG from 'svg-inline-react';
 
 export default class AcademyHome extends React.PureComponent {
 	constructor(props) {
@@ -87,21 +87,28 @@ export default class AcademyHome extends React.PureComponent {
 	render() {
 		let partsDone = false;
 
+		// const tutorialReward = tutorial.reward
+		// ? (<div className="academy-reward">
+		// 	<span className="text-italic">By completing this course you {partsDone === tutorial.partCount ? 'earned' : 'will earn'}:</span>
+		// 	<ul>
+		// 		<li>{tutorial.reward}</li>
+		// 	</ul>
+		// </div>) : false;
 		return (
 			<div className="academy-base academy-home">
-				<h1>Hi there !</h1>
-
-				<p>
-					Welcome to the academy. <br/>
-					Texte d'intro qui montre à quel point l'academy est cool, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-				</p>
-
-				<p className="centered">
-					Just getting started with prototypo ?
-					<Link className="academy-button inline" to={`/academy/course/${this.courses[0].slug}`} >Take our intro course</Link>
-				</p>
-
-				<h1>Course list</h1>
+				<div className="academy-home-header">
+					<InlineSVG className="academy-home-header-icon-postit" element="div" src={require('!svg-inline?classPrefix=postit-!../../../images/academy/postit.svg')} />
+					<InlineSVG className="academy-home-header-icon-iphone" element="div" src={require('!svg-inline?classPrefix=iphone-!../../../images/academy/iphone.svg')} />
+					<InlineSVG className="academy-home-header-icon-redbook" element="div" src={require('!svg-inline?classPrefix=redbook-!../../../images/academy/redbook.svg')} />
+					<InlineSVG className="academy-home-header-icon-macbook" element="div" src={require('!svg-inline?classPrefix=macbook-!../../../images/academy/macbook.svg')} />
+					<InlineSVG className="academy-home-header-icon-pen" element="div" src={require('!svg-inline?classPrefix=pen-!../../../images/academy/pen.svg')} />
+					<InlineSVG className="academy-home-header-icon-coffee" element="div" src={require('!svg-inline?classPrefix=coffee-!../../../images/academy/coffee.svg')} />
+					<InlineSVG className="academy-home-header-icon-ruler" element="div" src={require('!svg-inline?classPrefix=ruler-!../../../images/academy/ruler.svg')} />
+					<InlineSVG className="academy-home-header-icon-bluebook" element="div" src={require('!svg-inline?classPrefix=bluebook-!../../../images/academy/bluebook.svg')} />
+					<InlineSVG className="academy-home-header-icon-paper" element="div" src={require('!svg-inline?classPrefix=paper-!../../../images/academy/paper.svg')} />
+					<InlineSVG className="academy-home-header-icon-loupe" element="div" src={require('!svg-inline?classPrefix=loupe-!../../../images/academy/loupe.svg')} />
+					<InlineSVG className="academy-home-header-icon-blackpen" element="div" src={require('!svg-inline?classPrefix=blackpen-!../../../images/academy/blackpen.svg')} />
+				</div>
 				<div className="academy-course-list">
 					{
 							this.courses.map((tutorial) => {
@@ -109,30 +116,24 @@ export default class AcademyHome extends React.PureComponent {
 								return (
 									<div key={tutorial.title} className={`academy-course-list-elem ${this.isReading(tutorial.slug) ? 'currentlyreading' : ''} ${partsDone === tutorial.partCount ? 'done' : ''}`}>
 										<Link to={`/academy/course/${tutorial.slug}`}>
-											<h2>{tutorial.title}</h2>
-											<img className="header-image" src={tutorial.headerImage} alt={`${tutorial.title} header image`} />
-											<ReactMarkdown source={tutorial.header} />
-											{tutorial.reward
-											? (<div className="academy-reward">
-												<span className="text-italic">By completing this course you {partsDone === tutorial.partCount ? 'earned' : 'will earn'}:</span>
-												<ul>
-													<li>{tutorial.reward}</li>
-												</ul>
-											</div>) : false}
-										</Link>
-										<div className="academy-course-list-elem-bottom">
-											<div className="academy-course-list-elem-bottom-one">
+											<div className="academy-course-list-elem-header">
+												<img className="header-image" src={tutorial.headerImage} alt={`${tutorial.title} header image`} />
+												<Link className={`academy-startcourse ${this.isReading(tutorial.slug) ? 'currentlyreading' : ''}`} to={`/academy/course/${tutorial.slug}`}> {this.isReading(tutorial.slug) ? 'Currently reading' : 'Start course'} </Link>
+											</div>
+											<div className="academy-course-list-elem-content">
+												<h2>{tutorial.title}</h2>
+												<ReactMarkdown source={tutorial.header} />
+											</div>
+											<div className="academy-course-list-elem-footer">
 												<div className={`academy-part-count ${partsDone === tutorial.partCount ? 'done' : ''}`}>
-													{partsDone} of <strong>{tutorial.partCount} parts</strong>
+													<span className="academy-part-count-progress" style={{'width': `${(partsDone / tutorial.partCount) * 100}%`}}></span>
+													<span className="academy-part-count-text">{partsDone === tutorial.partCount ? 'COMPLETE' : `${partsDone} of ${tutorial.partCount}`}</span>
 												</div>
 												<div className="academy-readingtime">
 													<img src="assets/images/icon-clock.svg" alt="readingTime icon"/> <span>{tutorial.readingTime} min</span>
 												</div>
 											</div>
-											<div className="academy-course-list-elem-bottom-two">
-												<Link className="academy-button academy-startcourse" to={`/academy/course/${tutorial.slug}`}> ▶ </Link>
-											</div>
-										</div>
+										</Link>
 									</div>
 								);
 							})

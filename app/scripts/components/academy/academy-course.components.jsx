@@ -24,7 +24,6 @@ export default class AcademyCourse extends React.PureComponent {
 		this.areAllPartsRead = this.areAllPartsRead.bind(this);
 		this.createCourseProgress = this.createCourseProgress.bind(this);
 		this.getNextCourse = this.getNextCourse.bind(this);
-		this.recalculateOffsets = this.recalculateOffsets.bind(this);
 	}
 
 	componentWillMount() {
@@ -106,20 +105,16 @@ export default class AcademyCourse extends React.PureComponent {
 		const parts = course.content.split("## ");
 		const headers = [];
 		let sidebar = {};
-		let courseList = {};
 
 		this.courseSidebarDom.classList.remove('fixed');
 		sidebar = {
 			elem: this.courseSidebarDom,
 			content: this.courseContentDom,
 			offset: this.courseSidebarDom.getBoundingClientRect().top,
+			width: this.courseSidebarDom.offsetWidth,
 		};
-		this.courseListDom.classList.remove('fixed');
-		courseList = {
-			elem: this.courseListDom,
-			content: this.courseListDom,
-			offset: this.courseListDom.getBoundingClientRect().top,
-		};
+		console.log(this.courseSidebarDom.offsetWidth);
+
 		parts.map((part, index) => {
 			if (index !== 0) {
 				findDOMNode(this.refs[`${this.courseSlug}-part${index + 1}`]).querySelector('.title').classList.remove('fixed');
@@ -131,7 +126,7 @@ export default class AcademyCourse extends React.PureComponent {
 				});
 			}
 		});
-		this.setState({...this.state, headers, sidebar, course, courseList, stickedIndex: -1});
+		this.setState({...this.state, headers, sidebar, course});
 
 		if (!this.state.academyProgress || !(this.state.academyProgress[this.courseSlug])) {
 			this.createCourseProgress();
@@ -144,22 +139,6 @@ export default class AcademyCourse extends React.PureComponent {
 		}
 	}
 
-	recalculateOffsets() {
-		const parts = this.state.course.content.split("## ");
-
-		parts.map((part, index) => {
-			if (index !== 0) {
-				findDOMNode(this.refs[`${this.courseSlug}-part${index + 1}`]).querySelector('.title').classList.remove('fixed');
-				headers.push({
-					elem: findDOMNode(this.refs[`${this.courseSlug}-part${index + 1}`]).querySelector('.title'),
-					offset: findDOMNode(this.refs[`${this.courseSlug}-part${index + 1}`]).querySelector('.title').getBoundingClientRect().top,
-					content: findDOMNode(this.refs[`${this.courseSlug}-part${index + 1}`]).querySelector('.title').textContent,
-					active: false,
-				});
-			}
-		});
-		this.setState({parts});
-	}
 
 	handleScroll(event) {
 		const headers = [...this.state.headers];
@@ -183,25 +162,17 @@ export default class AcademyCourse extends React.PureComponent {
 		this.setState({
 			headers,
 			stickedIndex,
-			scrollPercent: event.target.scrollTop / (document.getElementsByClassName('academy-course-main')[0].offsetHeight - 700) * 100,
+			scrollPercent: Math.round(event.target.scrollTop / (document.getElementsByClassName('academy-course-main')[0].offsetHeight - 720) * 100),
 		});
+
 		//Sidebar sticky handling
 		if (event.target.scrollTop >= this.state.sidebar.offset) {
-			this.state.sidebar.elem.style.left = `${this.courseContentDom.getBoundingClientRect().right}px`;
 			this.state.sidebar.elem.classList.add('fixed');
+			this.state.sidebar.elem.style.left = `${this.courseContentDom.getBoundingClientRect().right + 20}px`;
 		}
 		else {
 			this.state.sidebar.elem.classList.remove('fixed');
-		}
-		//Courselist sticky handling
-		if (event.target.scrollTop >= this.state.courseList.offset) {
-			this.state.courseList.elem.style.left = this.state.courseList.elem.getBoundingClientRect().left;
-			this.state.courseList.elem.classList.add('fixed');
-			this.courseContentDom.style.marginLeft = '170px';
-		}
-		else {
-			this.state.courseList.elem.classList.remove('fixed');
-			this.courseContentDom.style.marginLeft = 'inherit';
+			this.state.sidebar.elem.style.left = `inherit`;
 		}
 	}
 
@@ -277,7 +248,6 @@ export default class AcademyCourse extends React.PureComponent {
 
 	markAsRead(part) {
 		this.client.dispatchAction('/mark-part-as-read', {course: this.courseSlug, part});
-		this.recalculateOffsets();
 	}
 
 	isPartRead(part) {
@@ -356,7 +326,7 @@ export default class AcademyCourse extends React.PureComponent {
 		) : null;
 
 		const sidebar = (
-			<div>
+			<div className="academy-course-main-sidebar" ref={(courseSidebarDom) => { this.courseSidebarDom = courseSidebarDom; }}>
 				<progress
 					value={this.state.scrollPercent}
 					max="100"
@@ -373,29 +343,30 @@ export default class AcademyCourse extends React.PureComponent {
 						</span>
 					);
 				})}
+        <h3>Other courses</h3>
+          <div className="academy-course-courselist" ref={(courseListDom) => { this.courseListDom = courseListDom; }}>
+            <Link className="academy-sidebar-menu-item"
+              to={`/academy/home`} >
+              <span className="academy-sidebar-menu-item-home-icon"/>
+              Home
+            </Link>
+            {
+              this.tutorials.content.map((tutorial) => {
+                return (
+                  <Link className={`academy-sidebar-menu-item ${tutorial.slug === this.courseSlug ? 'is-active' : ''}`}
+                    to={`/academy/course/${tutorial.slug}`} >
+                    <span className={`academy-sidebar-menu-item-checkmark ${this.isCourseDone(tutorial.slug) ? 'is-done' : ''} ${tutorial.slug === this.courseSlug ? 'is-active' : ''}`}/>
+                    {tutorial.title}
+                  </Link>
+                );
+              })
+            }
+          </div>
 			</div>
 		);
 
 		return(
 			<div key={this.courseName} className="academy-base academy-course">
-				<div className="academy-course-courselist" ref={(courseListDom) => { this.courseListDom = courseListDom; }}>
-					<Link className="academy-sidebar-menu-item"
-						to={`/academy/home`} >
-						<span className="academy-sidebar-menu-item-home-icon"/>
-						Home
-					</Link>
-					{
-						this.tutorials.content.map((tutorial) => {
-							return (
-								<Link className={`academy-sidebar-menu-item ${tutorial.slug === this.courseSlug ? 'is-active' : ''}`}
-									to={`/academy/course/${tutorial.slug}`} >
-									<span className={`academy-sidebar-menu-item-checkmark ${this.isCourseDone(tutorial.slug) ? 'is-done' : ''} ${tutorial.slug === this.courseSlug ? 'is-active' : ''}`}/>
-									{tutorial.title}
-								</Link>
-							);
-						})
-					}
-				</div>
 				<div className="academy-course-main">
 					<div className="academy-course-main-content" ref={(courseContentDom) => { this.courseContentDom = courseContentDom; }}>
 						{parts.map((part, index) => {
@@ -404,11 +375,6 @@ export default class AcademyCourse extends React.PureComponent {
 										<ReactMarkdown source={part} renderers={renderers} ref={`${this.courseSlug}-part${index + 1}`}/>
 											{index === 0
 												? (<div>
-													{this.state.course
-														? (<div className="academy-course-main-content-part-readingtime">
-															<img src="assets/images/icon-clock.svg" alt="readingTime icon"/> <span>{this.state.course.readingTime} min</span>
-														</div>)
-													: false}
 												</div>)
 												: (this.isPartRead(partsName[index])
 													? false
@@ -443,9 +409,7 @@ export default class AcademyCourse extends React.PureComponent {
 							: false
 						}
 					</div>
-					<div className="academy-course-main-sidebar" ref={(courseSidebarDom) => { this.courseSidebarDom = courseSidebarDom; }}>
-						{sidebar}
-					</div>
+					{sidebar}
 				</div>
 
 			</div>
