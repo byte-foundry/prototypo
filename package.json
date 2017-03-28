@@ -50,6 +50,7 @@
   "devDependencies": {
     "@kadira/storybook": "^2.21.0",
     "babel-core": "^6.9.0",
+    "babel-jest": "^18.0.0",
     "babel-loader": "^6.2.1",
     "babel-plugin-syntax-async-functions": "^6.8.0",
     "babel-plugin-transform-class-properties": "^6.9.0",
@@ -81,6 +82,7 @@
     "gulp-util": "^3.0.5",
     "if-loader": "^1.0.1",
     "import-glob-loader": "^1.1.0",
+    "jest": "^18.1.0",
     "jshint-stylish": "~2.0.0",
     "json-loader": "^0.5.4",
     "lodash.assign": "^3.2.0",
@@ -114,7 +116,8 @@
     "build": "gulp build",
     "debug": "gulp debug",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -125,9 +128,10 @@
   "bugs": {
     "url": "https://github.com/byte-foundry/prototypo/issues"
   },
-  "browserify": {
-    "transform": [
-      "envify"
-    ]
+  "jest": {
+    "testRegex": "/__tests__/.*\\.(ts|tsx|js)$",
+    "moduleNameMapper": {
+      "\\.(css|scss)$": "<rootDir>/__mocks__/styleMock.js"
+    }
   }
 }

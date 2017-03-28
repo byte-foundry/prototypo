@@ -23,8 +23,11 @@ window.addEventListener('fluxServer.setup', async () => {
 	localClient.lifespan = new Lifespan();
 
 	localClient.getStore('/userStore', localClient.lifespan)
-		.onUpdate(({head}) => {
-			saveAccountValues(head.toJS().infos);
+		.onUpdate(({head}, patch) => {
+			// if infos is in the mutations object, it means infos has been modified
+			if (patch.toJS().m.hasOwnProperty('infos')) {
+				saveAccountValues(head.toJS().infos);
+			}
 		})
 		.onDelete(() => {
 			return;

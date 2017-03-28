@@ -66,7 +66,6 @@ module.exports = {
 	externals: [{
 		'./node/window': true,
 		'./node/extend': true,
-		'prototypo.js': 'prototypo',
 	}],
 	plugins: [
 		new webpack.DefinePlugin({

@@ -1,0 +1,522 @@
+exports[`Storyshots SliderController 50% filled 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }>
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}>
+      <div
+        className="slider-controller-bg"
+        style={
+          Object {
+            "transform": "translateX(-46%)",
+          }
+        }>
+        <div
+          className="slider-controller-handle" />
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots SliderController empty 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }>
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}>
+      <div
+        className="slider-controller-bg"
+        style={
+          Object {
+            "transform": "translateX(-92%)",
+          }
+        }>
+        <div
+          className="slider-controller-handle" />
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots SliderController full 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }>
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}>
+      <div
+        className="slider-controller-bg"
+        style={
+          Object {
+            "transform": "translateX(-0%)",
+          }
+        }>
+        <div
+          className="slider-controller-handle" />
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots SliderController unadvised state 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }>
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}>
+      <div
+        className="slider-controller-bg is-not-advised"
+        style={
+          Object {
+            "transform": "translateX(-4.6000000000000005%)",
+          }
+        }>
+        <div
+          className="slider-controller-handle" />
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageMembers empty state 1`] = `
+<div>
+  <div
+    className="display-with-label undefined">
+    <label
+      className="display-with-label-label">
+      Manage your subscriptions
+    </label>
+    <div
+      className="display-with-label-display">
+      <p>
+        You don\'t manage any user for now.
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageMembers empty state editable 1`] = `
+<div>
+  <div
+    className="display-with-label undefined">
+    <label
+      className="display-with-label-label">
+      Manage your subscriptions
+    </label>
+    <div
+      className="display-with-label-display">
+      <p>
+        You don\'t manage any user for now. Use the form below to subscribe a user.
+      </p>
+      <form
+        onSubmit={[Function]}>
+        <input
+          name="email"
+          placeholder="email@example.com"
+          type="text" />
+        <button
+          className="account-button account-validation-button"
+          disabled={undefined}
+          onClick={undefined}
+          type="submit">
+          <div>
+            Add user
+          </div>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageMembers full 1`] = `
+<div>
+  <div
+    className="display-with-label undefined">
+    <label
+      className="display-with-label-label">
+      Manage your subscriptions
+    </label>
+    <div
+      className="display-with-label-display">
+      <ul>
+        <li>
+          user@example.com
+           
+        </li>
+        <li>
+          user2@example.com
+           
+        </li>
+      </ul>
+      <p>
+        0
+         slots left.
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageMembers removable 1`] = `
+<div>
+  <div
+    className="display-with-label undefined">
+    <label
+      className="display-with-label-label">
+      Manage your subscriptions
+    </label>
+    <div
+      className="display-with-label-display">
+      <ul>
+        <li>
+          user@example.com
+           
+          <button
+            onClick={[Function]}>
+            X
+          </button>
+        </li>
+        <li>
+          user2@example.com
+           
+          <button
+            onClick={[Function]}>
+            X
+          </button>
+        </li>
+      </ul>
+      <p>
+        0
+         slots left.
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageMembers with 2 people 1`] = `
+<div>
+  <div
+    className="display-with-label undefined">
+    <label
+      className="display-with-label-label">
+      Manage your subscriptions
+    </label>
+    <div
+      className="display-with-label-display">
+      <ul>
+        <li>
+          user@example.com
+           
+        </li>
+        <li>
+          user2@example.com
+           
+        </li>
+      </ul>
+      <form
+        onSubmit={[Function]}>
+        <input
+          name="email"
+          placeholder="email@example.com"
+          type="text" />
+        <button
+          className="account-button account-validation-button"
+          disabled={undefined}
+          onClick={undefined}
+          type="submit">
+          <div>
+            Add user
+          </div>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageMembers with limited quantity 1`] = `
+<div>
+  <div
+    className="display-with-label undefined">
+    <label
+      className="display-with-label-label">
+      Manage your subscriptions
+    </label>
+    <div
+      className="display-with-label-display">
+      <ul>
+        <li>
+          user@example.com
+           
+        </li>
+        <li>
+          user2@example.com
+           
+        </li>
+      </ul>
+      <p>
+        3
+         slots left.
+      </p>
+      <form
+        onSubmit={[Function]}>
+        <input
+          name="email"
+          placeholder="email@example.com"
+          type="text" />
+        <button
+          className="account-button account-validation-button"
+          disabled={undefined}
+          onClick={undefined}
+          type="submit">
+          <div>
+            Add user
+          </div>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared.AccountValidationButton default 1`] = `
+<button
+  className="account-button account-validation-button"
+  disabled={undefined}
+  onClick={undefined}
+  type="submit">
+  <div>
+    Hit me!
+  </div>
+</button>
+`;
+
+exports[`Storyshots shared.AccountValidationButton disabled 1`] = `
+<button
+  className="account-button account-validation-button"
+  disabled={true}
+  onClick={undefined}
+  type="submit">
+  <div>
+    You can\'t hit me!
+  </div>
+</button>
+`;
+
+exports[`Storyshots shared.AccountValidationButton loading 1`] = `
+<button
+  className="account-button account-validation-button"
+  disabled={undefined}
+  onClick={undefined}
+  type="submit">
+  <div>
+    <div
+      className="wait-for-load">
+      <div
+        className="sk-spinner sk-spinner-wave sk-secondary-color">
+        <div
+          className="sk-rect1" />
+        <div
+          className="sk-rect2" />
+        <div
+          className="sk-rect3" />
+        <div
+          className="sk-rect4" />
+        <div
+          className="sk-rect5" />
+      </div>
+    </div>
+  </div>
+</button>
+`;
