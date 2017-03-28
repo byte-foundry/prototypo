@@ -585,7 +585,7 @@ export default {
 
 			const currency = getCurrency(cardCountry);
 			let coupon = userStore.get('choosePlanForm').couponValue;
-			if (coupon && coupon.includes('base_coupon')) {
+			if (plan.includes('monthly') && !coupon) {
 				coupon = `base_coupon_${currency}`;
 			}
 			const data = await HoodieApi.updateSubscription({

@@ -55,15 +55,9 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			});
 	}
 
-	componentWillReceiveProps(newProps) {
-		if (newProps.plan === 'personal_monthly') {
-			this.setState({'couponValue': `base_coupon_${getCurrency(newProps.country)}`});
-			this.handleCouponChange(`base_coupon_${getCurrency(newProps.country)}`);
-		}
-		else {
-			this.setState({'couponValue': undefined});
-			this.handleCouponChange('');
-		}
+	componentWillReceiveProps() {
+		this.setState({'couponValue': undefined});
+		this.handleCouponChange('');
 	}
 
 	componentWillUnmount() {
@@ -83,20 +77,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 	}
 
 	addCoupon() {
-		if (typeof this.state.couponValue === 'string' && this.state.couponValue !== `base_coupon_${getCurrency(this.props.country)}`) {
-			if (this.props.plan === 'personal_monthly') {
-				this.setState({'couponValue': `base_coupon_${getCurrency(this.props.country)}`});
-				this.client.dispatchAction('/choose-plan', {
-					coupon: `base_coupon_${getCurrency(this.props.country)}`,
-				});
-			}
-			else {
-				this.setState({couponValue: undefined});
-			}
-		}
-		else {
-			this.setState({couponValue: ''});
-		}
+		this.setState({couponValue: ''});
 	}
 
 	subscribe() {
@@ -111,30 +92,14 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		});
 	}
 
-	handleCouponChange(coupon) {
-		if (typeof coupon !== 'string' && this.refs.coupon && this.refs.coupon.inputValue.length === 0) {
-			this.setState({'couponValue': `base_coupon_${getCurrency(this.props.country)}`});
-			this.client.dispatchAction('/choose-plan', {
-				coupon: `base_coupon_${getCurrency(this.props.country)}`,
-			});
-		}
-		else {
-			this.client.dispatchAction('/choose-plan', {
-				coupon: typeof coupon === 'string' ? coupon : this.refs.coupon.inputValue,
-			});
-		}
+	handleCouponChange() {
+		this.client.dispatchAction('/choose-plan', {
+			coupon: typeof coupon === 'string' ? coupon : this.refs.coupon.inputValue,
+		});
 		this.setState({'isFormSubmitted': false});
 	}
 
 	handleCouponSubmit(e) {
-		if (this.refs.coupon.inputValue.replace(/\s/g, '').length === 0 && this.props.plan === 'personal_monthly') {
-			this.setState({'couponValue': `base_coupon_${getCurrency(this.props.country)}`});
-			this.handleCouponChange(`base_coupon_${getCurrency(this.props.country)}`);
-			this.setState({'isFormSubmitted': true});
-			e.preventDefault();
-			e.stopPropagation();
-			return true;
-		}
 		this.client.dispatchAction('/choose-plan', {
 			coupon: this.refs.coupon.inputValue,
 		});
@@ -214,12 +179,9 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 					</div>
 				</div>
 			);
-		const inputStyle = {
-			display: this.state.couponValue === `base_coupon_${getCurrency(country)}` ? 'none' : 'block',
-		};
 		const coupon = this.state.couponValue !== undefined && (
 			<div>
-				<form onSubmit={this.handleCouponSubmit} style={inputStyle}>
+				<form onSubmit={this.handleCouponSubmit}>
 					<InputWithLabel ref="coupon" label="Coupon code" error={false} onChange={this.handleCouponChange} value={this.state.couponValue}/>
 				</form>
 				{this.state.validCoupon
