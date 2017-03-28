@@ -96,7 +96,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		this.client.dispatchAction('/choose-plan', {
 			coupon: typeof coupon === 'string' ? coupon : this.refs.coupon.inputValue,
 		});
-		this.setState({'isFormSubmitted': false});
+		this.setState({isFormSubmitted: false});
 	}
 
 	handleCouponSubmit(e) {
