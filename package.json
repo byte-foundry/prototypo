@@ -52,6 +52,7 @@
     "tutorial-content": "byte-foundry/tutorial-content#master",
     "venus.ptf": "byte-foundry/venus.ptf#master",
     "whatwg-fetch": "^0.9.0",
+    "worker-loader": "^0.8.0",
     "xxhashjs": "^0.1.1"
   },
   "devDependencies": {

@@ -1,5 +1,4 @@
 import {constantOrFormula} from '../helpers/values.js';
-import Font from '../../plumin/Font.js';
 
 import Glyph from './Glyph.js';
 
@@ -31,7 +30,7 @@ export default class FontPrecursor {
 		});
 	}
 
-	constructFont(params) {
+	constructFont(params, subset) {
 		const localParams = {
 			...params,
 			..._.mapValues(this.parameters, (param) => {
@@ -43,7 +42,7 @@ export default class FontPrecursor {
 				return prop.getResult(localParams);
 			}
 		});
-		const {
+		/*const {
 			familyName,
 			styleName,
 			version,
@@ -77,13 +76,12 @@ export default class FontPrecursor {
 			licenseURL,
 			copyright,
 			trademark,
-		});
+		});*/
 
-		const glyphs = _.mapValues(this.glyphs, (glyph) => {
-			if (glyph.unicode) {
-				return glyph.constructGlyph(localParams);
-			}
-		});
+		const glyphs = _.reduce(subset, (result, name) => {
+			result[name] = this.glyphs[name].constructGlyph(localParams);
+			return result;
+		}, {});
 
 		return glyphs;
 	}

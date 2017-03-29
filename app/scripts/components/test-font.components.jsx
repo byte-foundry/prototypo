@@ -3,16 +3,17 @@ import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
 import ScrollArea from 'react-scrollbar';
 
-import FontPrecursor from '../prototypo.js/precursor/FontPrecursor.js';
 import Constant from '../prototypo.js/precursor/Constant.js';
 import Formula from '../prototypo.js/precursor/Formula.js';
 import ExpandingNode from '../prototypo.js/precursor/ExpandingNode.js';
 
-import Toile from '../toile/toile.js';
+import Toile, {mState} from '../toile/toile.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import {toLodashPath} from '../prototypo.js/helpers/utils.js';
+
+import WorkerPool from '../worker/worker-pool.js';
 
 class ConstOrForm extends React.PureComponent {
 	render() {
@@ -62,7 +63,9 @@ class ConstOrForm extends React.PureComponent {
 class GlyphAndData extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			glyphs: {},
+		};
 	}
 
 	render() {
@@ -132,8 +135,9 @@ class GlyphAndData extends React.PureComponent {
 export default class TestFont extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {glyph: 'A_cap'};
-		this.mouseState = this.mouseState.bind(this);
+		this.state = {glyph: 'A_cap', solved: [], glyphs: {}};
+
+		this.pool = new WorkerPool();
 	}
 
 	componentWillMount() {
@@ -160,56 +164,169 @@ export default class TestFont extends React.PureComponent {
 			});
 	}
 
-	mouseState() {
-		this.setState({
-			mouse: this.toile.getMouseState(),
-		});
-	}
-
 	componentDidMount() {
 		this.toile = new Toile(this.canvas);
+		this.toile.setCamera({x: 0, y: 0}, 1, this.canvas.height);
+
+		const raf = requestAnimationFrame || webkitRequestAnimationFrame;
+		const rafFunc = () => {
+			const {width, height} = this.canvas;
+			const mouse = this.toile.getMouseState();
+
+			this.setState({
+				mouse,
+			});
+
+			if (mouse.state === mState.DOWN && this.state.glyphs[this.state.glyph]) {
+				const [,,,, tx, ty] = this.toile.viewMatrix;
+				const newTs = {
+					x: tx + mouse.delta.x,
+					y: ty + mouse.delta.y,
+				};
+
+				this.toile.clearDelta();
+				this.toile.setCamera(newTs, 1, height);
+				this.toile.clearCanvas(width, height);
+				this.toile.drawGlyph(this.state.glyphs[this.state.glyph]);
+			}
+			raf(rafFunc);
+		};
+
+		raf(rafFunc);
 	}
 
 	componentWillUpdate(nextProps, nextState) {
 		if (this.toile) {
 			if (nextState.typedata && nextState.typedata !== this.state.typedata) {
-				this.font = new FontPrecursor(nextState.typedata);
+				this.pool.eachJob({
+					action: {
+						type: 'createFont',
+						data: nextState.typedata,
+					},
+					callback: () => {
+						this.setState({
+							workerReady: true,
+						});
+					},
+				});
 			}
-			if (this.font && nextState.values !== this.state.values) {
-				this.glyphs = this.font.constructFont(nextState.values);
-				this.toile.drawGlyph(this.glyphs[this.state.glyph]);
+			if (this.state.workerReady && nextState.values !== this.state.values) {
+				const solved = [];
+				let glyphsState = this.state.glyphs;
+
+				this.setState({
+					solved: [],
+				});
+
+				/*this.pool.doJobs([{
+					action: {
+						type: 'constructGlyphs',
+						data: {
+							subset: [nextState.glyph],
+							params: nextState.values,
+						},
+					},
+					callback: ({glyphs}) => {
+						this.setState({
+							solved: [nextState.glyph],
+							glyphs: {
+								[nextState.glyph]: glyphs[nextState.glyph],
+							},
+							glyph: nextState.glyph,
+						});
+						const {width, height} = this.canvas;
+
+						this.toile.clearCanvas(width, height);
+						this.toile.drawGlyph(glyphs[nextState.glyph]);
+					},
+				}]);*/
+				this.pool.doJobs(
+					_.chain(Object.keys(this.state.typedata.glyphs))
+					.filter((name) => {
+						return this.state.typedata.glyphs[name].unicode !== undefined;
+					})
+					.chunk(Math.ceil(Object.keys(this.state.typedata.glyphs).length / this.pool.workerArray.length))
+					.map((names) => {
+						return {
+							action: {
+								type: 'constructGlyphs',
+								data: {
+									params: nextState.values,
+									subset: names,
+								},
+							},
+							callback: ({glyphs}) => {
+								solved.push(...Object.keys(glyphs));
+								glyphsState = {
+									...glyphsState,
+									...glyphs,
+								};
+								this.setState({
+									solved,
+									glyphs: glyphsState,
+									glyph: nextState.glyph,
+								});
+							},
+						};
+					}).value()
+				);
 			}
 
-			if (nextState.glyph !== this.state.glyph) {
+			if (nextState.glyph !== this.state.glyph && this.state.glyphs[nextState.glyph]) {
 				this.toile.clearCanvas(this.canvas.width, this.canvas.height);
-				this.toile.drawGlyph(this.glyphs[nextState.glyph]);
+				this.toile.drawGlyph(this.state.glyphs[nextState.glyph]);
 			}
 		}
 	}
 
 	render() {
+		let list;
+
+		if (this.state.typedata) {
+			list = _.map(Object.keys(this.state.typedata.glyphs), (glyphName) => {
+				return (
+					<div
+						style={{
+							width: '50px',
+							height: '50px',
+							border: 'solid 1px #333333',
+							background: this.state.solved.indexOf(glyphName) === -1
+								? '#e98734'
+								: '#24d390',
+						}}
+						onClick={
+							() => {
+								this.setState({glyph: glyphName, values: {...this.state.values}});
+							}}
+					>
+						{String.fromCharCode(this.state.typedata.glyphs[glyphName].unicode)}
+					</div>
+				);
+			});
+		}
+		else {
+			list = null;
+		}
+
 		return (
 			<div style={{display: 'flex', height: '100%'}}>
 				<div style={{position: 'fixed', bottom: '10px', left: '10px', background: '#24d390', color: '#fefefe'}}>
 					{JSON.stringify(this.state.mouse)}
+					<p>{this.state.workerReady ? 'ready' : 'not ready'}</p>
 				</div>
 				<div>
-					<canvas onMouseMove={this.mouseState} id="hello" ref={(canvas) => {this.canvas = canvas;}} width="1000" height="1000"></canvas>
+					<canvas
+						id="hello"
+						ref={(canvas) => {this.canvas = canvas;}}
+						width="1000"
+						height="1000">
+					</canvas>
 				</div>
 				<div style={{height: '100%', display: 'flex', 'flex-direction': 'column'}}>
 					<div style={{'height': '200px'}}>
 						<ScrollArea horizontal={false}>
 							<div style={{display: 'flex', 'flex-flow': 'row wrap'}}>
-								{(() => {
-									if (this.state.typedata) {
-										return _.map(Object.keys(this.state.typedata.glyphs), (glyphName) => {
-											return <div style={{width: '50px', height: '50px', border: 'solid 1px #333333'}} onClick={() => {this.setState({glyph: glyphName})}}>{String.fromCharCode(this.state.typedata.glyphs[glyphName].unicode)}</div>
-										});
-									}
-									else {
-										return null;
-									}
-								})()}
+								{list}
 							</div>
 						</ScrollArea>
 					</div>

@@ -103,6 +103,15 @@ ${this.dependencies.map((name) => {return `${name}: ${_.get(toLodashPath(name), 
 						expandResult.push(...glyph.getFromXPath(`${base}.x`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
 						expandResult.push(...glyph.getFromXPath(`${base}.y`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
 
+						const opToAdd = {
+							action: 'expand',
+							cursor: base,
+						};
+
+						if (!_.find([...processedOps, ...expandResult], opToAdd)) {
+							expandResult.push(opToAdd);
+						}
+
 						acc.push(...expandResult);
 					}
 				}

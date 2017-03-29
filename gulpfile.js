@@ -31,13 +31,6 @@ gulp.task('images', function() {
 		.pipe(gulp.dest('./dist/assets/images/academy/courses/'));
 });
 
-gulp.task('cp-prototypo.js', function() {
-	gulp.src('./node_modules/prototypo.js/dist/prototypo.js')
-		.pipe(gulp.dest('./dist/prototypo.js/dist/'));
-	gulp.src('./node_modules/prototypo-canvas/src/worker.js')
-		.pipe(gulp.dest('./dist/prototypo-canvas/src/'));
-});
-
 gulp.task('cp-genese', function() {
 	gulp.src('./node_modules/antique.ptf/dist/font.json')
 		.pipe(gulp.dest('./dist/antique.ptf/dist/'));
@@ -80,7 +73,7 @@ gulp.task('clean',function() {
 	del.sync(['dist']);
 });
 
-gulp.task('build', ['clean', 'images','css-vendor','css-app','cp-prototypo.js','cp-genese','cp-static'],  function(callback) {
+gulp.task('build', ['clean', 'images','css-vendor','css-app','cp-genese','cp-static'],  function(callback) {
 	// run webpack
 	var webpackConfig = process.env.NODE_ENV === 'production' ? require('./prod.config') : require('./dev.config');
 	var prototypoConfig = Object.create(webpackConfig);
@@ -120,7 +113,7 @@ gulp.task('watch-prototypojs', function() {
 	return gulp.watch(['./node_modules/prototypo.js/dist/prototypo.js','./node_modules/prototypo-canvas/src/worker.js'], ['cp-prototypo.js']);
 });
 
-gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','watch-font', 'watch-prototypojs','webpack:dll'], function(callback) {
+gulp.task('serve',['clean', 'images', 'cp-genese', 'cp-static', 'watch-font', 'watch-prototypojs', 'webpack:dll'], function(callback) {
 	var webpackConfig	= require('./local.config.js');
 	// Start a webpack-dev-server
 	var prototypoConfig = Object.create(webpackConfig);
@@ -145,7 +138,7 @@ gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','
 	});
 });
 
-gulp.task('debug', ['clean', 'images','cp-prototypo.js','cp-genese','cp-static','webpack:dll'], function(callback) {
+gulp.task('debug', ['clean', 'images','cp-genese','cp-static','webpack:dll'], function(callback) {
 	var webpackConfig	= require('./debug.config.js');
 	// Start a webpack-dev-server
 	var prototypoConfig = Object.create(webpackConfig);

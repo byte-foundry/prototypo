@@ -7,6 +7,7 @@ export default class ExpandingNode extends Node {
 	constructor(source, i, j) {
 		super(source, i, j);
 		if (source.expand) {
+			this.expanding = true;
 			this.expand = _.mapValues(source.expand, (item, key) => {
 				let value = item;
 				if (key === 'angle') {
@@ -19,13 +20,14 @@ export default class ExpandingNode extends Node {
 			});
 		}
 		else if (source.expandedTo) {
+			this.expanding = false;
 			this.expandedTo = _.map(source.expandedTo, (point, k) => {
 				return new Node(point, undefined, undefined, `${this.cursor}expandedTo.${k}.`);
 			});
 		}
 	}
 
-	readyToExpand(ops, index) {
+	readyToExpand(ops, index = ops.length - 1) {
 		const cursorToLook = [
 			`${this.cursor}expand.width`,
 			`${this.cursor}expand.distr`,

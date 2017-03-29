@@ -123,6 +123,12 @@ class SolvablePath {
 	solveOperationOrder(glyph, operationOrder) {
 		return [`${this.cursor}closed`, `${this.cursor}skeleton`, ..._.reduce(this.nodes, (result, node) => {
 			result.push(...node.solveOperationOrder(glyph, [...operationOrder, ...result]));
+			if (this.isReadyForHandles([...operationOrder, ...result])) {
+				result.push({
+					action: 'handle',
+					cursor: this.cursor.substring(0, this.cursor.length - 1),
+				});
+			}
 			return result;
 		}, [])];
 	}
@@ -166,7 +172,7 @@ class SolvablePath {
 				if (i === 0) {
 					 results[`${cursor}.nodes.${i}.tensionIn`] = 0;
 				}
-				else if (i === nodes.length) {
+				else if (i === nodes.length - 1) {
 					 results[`${cursor}.nodes.${i}.tensionOut`] = 0;
 				}
 			}
@@ -186,21 +192,35 @@ export class SkeletonPath extends SolvablePath {
 		this.skeleton = constantOrFormula(true);
 	}
 
-	isReadyForHandles(ops, index) {
+	isReadyForHandles(ops, index = ops.length - 1) {
 		const cursorToLook = _.flatMap(this.nodes, (node) => {
-			return [
-				`${node.cursor}expand.width`,
-				`${node.cursor}expand.distr`,
-				`${node.cursor}expand.angle`,
-				`${node.cursor}typeOut`,
-				`${node.cursor}typeIn`,
-				`${node.cursor}dirIn`,
-				`${node.cursor}dirOut`,
-				`${node.cursor}tensionIn`,
-				`${node.cursor}tensionOut`,
-				`${node.cursor}x`,
-				`${node.cursor}y`,
-			];
+			if (node.expanding) {
+				return [
+					`${node.cursor}expand.width`,
+					`${node.cursor}expand.distr`,
+					`${node.cursor}expand.angle`,
+					`${node.cursor}typeOut`,
+					`${node.cursor}typeIn`,
+					`${node.cursor}dirIn`,
+					`${node.cursor}dirOut`,
+					`${node.cursor}tensionIn`,
+					`${node.cursor}tensionOut`,
+					`${node.cursor}x`,
+					`${node.cursor}y`,
+				];
+			}
+			else {
+				return [
+					`${node.cursor}expandedTo.0.x`,
+					`${node.cursor}expandedTo.0.y`,
+					`${node.cursor}expandedTo.1.x`,
+					`${node.cursor}expandedTo.1.y`,
+					`${node.cursor}dirIn`,
+					`${node.cursor}dirOut`,
+					`${node.cursor}tensionIn`,
+					`${node.cursor}tensionOut`,
+				];
+			}
 		});
 
 		const done = _.take(ops, index + 1);
@@ -268,6 +288,39 @@ export class ClosedSkeletonPath extends SkeletonPath {
 		super(source, i);
 		this.closed = constantOrFormula(true);
 	}
+
+	static createHandle({nodes, closed}, cursor) {
+		let result = {};
+
+		for (let k = 0; k < nodes.length; k++) {
+			const node = nodes[k];
+
+			for (let j = 0; j < node.expandedTo.length; j++) {
+				let nextFirstIndex = k + 1 * (j ? -1 : 1) - nodes.length * Math.floor((k + 1 * (j ? -1 : 1)) / nodes.length);
+				let prevFirstIndex = k - 1 * (j ? -1 : 1) - nodes.length * Math.floor((k - 1 * (j ? -1 : 1)) / nodes.length);
+
+				const nextExpanded = nodes[nextFirstIndex].expandedTo[j];
+				const prevExpanded = nodes[prevFirstIndex].expandedTo[j];
+				const nextNode = nodes[nextFirstIndex];
+				const prevNode = nodes[prevFirstIndex];
+				const currentExpanded = node.expandedTo[j];
+
+				result = computeHandle(
+					`${cursor}.nodes.${k}.expandedTo.${j}.`,
+					result,
+					currentExpanded,
+					prevExpanded,
+					nextExpanded,
+					node,
+					prevNode,
+					nextNode,
+					j
+				);
+			}
+		}
+
+		return result;
+	}
 }
 
 export class SimplePath extends SolvablePath {
@@ -280,7 +333,7 @@ export class SimplePath extends SolvablePath {
 		this.skeleton = constantOrFormula(false);
 	}
 
-	isReadyForHandles(ops, index) {
+	isReadyForHandles(ops, index = ops.length - 1) {
 		const cursorToLook = _.flatMap(this.nodes, (node) => {
 			return [
 				`${node.cursor}typeOut`,
@@ -310,7 +363,7 @@ export class SimplePath extends SolvablePath {
 
 
 			result = computeHandle(
-				`${cursor}.nodes.${k}`,
+				`${cursor}.nodes.${k}.`,
 				result,
 				node,
 				prevNode,

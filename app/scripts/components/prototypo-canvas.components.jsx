@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import PrototypoCanvasContainer from 'prototypo-canvas';
-import HoodieApi from '~/services/hoodie.services.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
@@ -461,8 +460,7 @@ export default class PrototypoCanvas extends React.Component {
 					disabled={!this.isManualEdited()}>
 					Reset glyph
 				</button>
-				{demoOverlay}
-				<PrototypoCanvasContainer
+				{/*<PrototypoCanvasContainer
 					familyName={this.state.familyName}
 					json={this.state.typedataJSON}
 					db={this.state.db}
@@ -500,8 +498,7 @@ export default class PrototypoCanvas extends React.Component {
 					preLoad={this.startLoad}
 					afterLoad={this.endLoad}
 					altList={this.state.altList}
-					uiMode={this.props.uiMode}
-				/>
+				/>*/}
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
 				</div>

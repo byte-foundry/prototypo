@@ -36,7 +36,7 @@ export default class Node {
 	}
 
 	solveOperationOrder(glyph, operationOrder) {
-		let result = [];
+		const result = [];
 
 		_.forOwn(this, (value, key) => {
 			if (value !== null && key !== 'cursor' && key !== 'type') {
@@ -50,8 +50,19 @@ export default class Node {
 						result.push(...item.solveOperationOrder(glyph, [...operationOrder, ...result]));
 					});
 				}
-				else {
+				else if (key !== 'expanding') {
 					result.push(...value.solveOperationOrder(glyph, [...operationOrder, ...result]));
+				}
+
+				if (typeof this.readyToExpand === 'function') {
+					const opToAdd = {
+						action: 'expand',
+						cursor: this.cursor.substring(0, this.cursor.length - 1),
+					};
+
+					if (this.readyToExpand([...operationOrder, ...result]) && !_.find([...operationOrder, ...result], opToAdd)) {
+						result.push(opToAdd);
+					}
 				}
 			}
 		});

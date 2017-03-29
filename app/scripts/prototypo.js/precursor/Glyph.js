@@ -4,7 +4,7 @@ import * as utils from '../utils/updateUtils.js';
 
 import Component from './Component.js';
 import ExpandingNode from './ExpandingNode.js';
-import {SkeletonPath, SimplePath} from './Path.js';
+import {SkeletonPath, SimplePath, ClosedSkeletonPath} from './Path.js';
 
 export default class Glyph {
 	constructor(glyphSrc) {
@@ -61,9 +61,9 @@ export default class Glyph {
 			}
 		});
 
-		if (!(result.solveOperationOrder instanceof Function)) {
+		/*if (!(result.solveOperationOrder instanceof Function)) {
 			console.error(`While trying to solve ${this.name.value} operation order, couldn't find ${path} property asked by ${caller}`);
-		}
+		}*/
 		return result;
 	}
 
@@ -99,97 +99,87 @@ export default class Glyph {
 	}
 
 	constructGlyph(params, parentAnchors) {
+		const nodeToReset = [];
+		const contourToReset = [];
+
 		const localParams = {
 			...params,
 			..._.mapValues(this.parameters, (param) => {
 				return param.getResult(params);
 			}),
 		};
-		const transformedThis = _.mapValues(this, (prop, name) => {
-			if (prop
-				&& name !== 'contours'
-				&& name !== 'anchors'
-				&& name !== 'components'
-				&& name !== 'parameters'
-				&& name !== 'transforms'
-				&& name !== 'operationOrder') {
-				return prop.getResult(localParams);
-			}
-		});
+
 		const opDone = {};
 
 		for (let i = 0; i < this.operationOrder.length; i++) {
 			const op = this.operationOrder[i];
-			const obj = this.getFromXPath(op);
 
-			_.set(
-				opDone,
-				toLodashPath(op),
-				obj.getResult(localParams,
-					opDone.contours,
-					opDone.anchors,
-					parentAnchors,
-					utils)
-			);
+			if (typeof op === 'object') {
+				const {action, cursor} = op;
 
-			const nodePath = _.take(op.split('.'), 4).join('.');
-			const contourPath = _.take(nodePath.split('.'), 2).join('.');
-			const node = this.getFromXPath(nodePath);
-			const contour = this.getFromXPath(contourPath);
+				if (action === 'handle') {
+					const contour = this.getFromXPath(cursor);
 
-			if (
-				node instanceof ExpandingNode
-				&& node.readyToExpand(this.operationOrder, i)
-				&& !node.expanded
-			) {
-				const expandedTo = ExpandingNode.expand(_.get(opDone, toLodashPath(nodePath)));
+					if (contour.skeleton.value) {
+						const correctedValues = SkeletonPath.correctValues(_.get(opDone, toLodashPath(cursor)), cursor);
 
-				node.expanded = true;
+						Object.keys(correctedValues).forEach((key) => {
+							_.set(opDone, toLodashPath(key), correctedValues[key]);
+						});
+
+						if (contour.closed.value) {
+							const handledValues = ClosedSkeletonPath.createHandle(_.get(opDone, toLodashPath(cursor)), cursor);
+
+							Object.keys(handledValues).forEach((key) => {
+								_.set(opDone, toLodashPath(key), handledValues[key]);
+							});
+						}
+						else {
+							const handledValues = SkeletonPath.createHandle(_.get(opDone, toLodashPath(cursor)), cursor);
+
+							Object.keys(handledValues).forEach((key) => {
+								_.set(opDone, toLodashPath(key), handledValues[key]);
+							});
+						}
+					}
+					else {
+						const correctedValues = SimplePath.correctValues(_.get(opDone, toLodashPath(cursor)), cursor);
+
+						Object.keys(correctedValues).forEach((key) => {
+							_.set(opDone, toLodashPath(key), correctedValues[key]);
+						});
+
+						const handledValues = SimplePath.createHandle(_.get(opDone, toLodashPath(cursor)), cursor);
+
+						Object.keys(handledValues).forEach((key) => {
+							_.set(opDone, toLodashPath(key), handledValues[key]);
+						});
+					}
+				}
+				else if (action === 'expand') {
+					const node = this.getFromXPath(cursor);
+					const expandedTo = ExpandingNode.expand(_.get(opDone, toLodashPath(cursor)));
+
+					_.set(
+						opDone,
+						toLodashPath(`${cursor}.expandedTo`),
+						expandedTo
+					);
+
+				}
+			}
+			else {
+				const obj = this.getFromXPath(op);
 
 				_.set(
 					opDone,
-					toLodashPath(`${nodePath}.expandedTo`),
-					expandedTo
+					toLodashPath(op),
+					obj.getResult(localParams,
+						opDone.contours,
+						opDone.anchors,
+						parentAnchors,
+						utils)
 				);
-
-			}
-
-			if (typeof contour.isReadyForHandles === 'function') {
-				if (
-					contour.skeleton.value
-					&& contour.isReadyForHandles(this.operationOrder, i)
-					&& !contour.handled
-				) {
-					contour.handled = true;
-					const correctedValues = SkeletonPath.correctValues(_.get(opDone, toLodashPath(contourPath)), contourPath);
-
-					Object.keys(correctedValues).forEach((key) => {
-						_.set(opDone, toLodashPath(key), correctedValues[key]);
-					});
-
-					const handledValues = SkeletonPath.createHandle(_.get(opDone, toLodashPath(contourPath)), contourPath);
-
-					Object.keys(handledValues).forEach((key) => {
-						_.set(opDone, toLodashPath(key), handledValues[key]);
-					});
-				}
-				else if (
-					contour.isReadyForHandles(this.operationOrder, i)
-					&& !contour.handled
-				) {
-					contour.handled = true;
-					const correctedValues = SimplePath.correctValues(_.get(opDone, toLodashPath(contourPath)), contourPath);
-
-					Object.keys(correctedValues).forEach((key) => {
-						_.set(opDone, toLodashPath(key), correctedValues[key]);
-					});
-
-					const handledValues = SimplePath.createHandle(_.get(opDone, toLodashPath(contourPath)), contourPath);
-
-					Object.keys(handledValues).forEach((key) => {
-						_.set(opDone, toLodashPath(key), handledValues[key]);
-					});
-				}
 			}
 		}
 
@@ -216,6 +206,14 @@ export default class Glyph {
 		});
 
 		opDone.anchors = opAnchors;
+
+		contourToReset.forEach((contour) => {
+			contour.handled = false;
+		});
+
+		nodeToReset.forEach((node) => {
+			node.expanded = false;
+		});
 
 		return opDone;
 	}
