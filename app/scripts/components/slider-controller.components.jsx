@@ -7,6 +7,10 @@ export default class SliderController extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
+		this.state = {
+			tracking: false,
+		};
+
 		// function bindings
 		this.handleDown = this.handleDown.bind(this);
 		this.handleUp = this.handleUp.bind(this);
@@ -32,12 +36,12 @@ export default class SliderController extends React.PureComponent {
 			return;
 		}
 
-		this.tracking = true;
+		this.setState({tracking: true});
 		const newX = e.pageX || e.screenX;
 		const {offsetLeft} = DOM.getAbsOffset(this.node);
 		let newValue = ((newX - offsetLeft) / this.node.offsetWidth * (this.props.max - this.props.min)) + this.props.min;
 
-		newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
+		newValue = Math.min(Math.max(newValue, this.props.realMin), this.props.realMax);
 
 		this.props.changeParam({value: newValue, name: this.props.name, label: this.props.label});
 		this.currentX = newX;
@@ -46,11 +50,11 @@ export default class SliderController extends React.PureComponent {
 	}
 
 	handleUp(e) {
-		if (!this.tracking) {
+		if (!this.state.tracking) {
 			return;
 		}
 
-		this.tracking = false;
+		this.setState({tracking: false});
 		this.props.changeParam({value: this.props.value, name: this.props.name, label: this.props.label, force: true});
 
 		e.stopPropagation();
@@ -63,7 +67,7 @@ export default class SliderController extends React.PureComponent {
     }
 
 	handleMove(e) {
-		if (!this.tracking) {
+		if (!this.state.tracking) {
 			return;
 		}
 
@@ -71,7 +75,7 @@ export default class SliderController extends React.PureComponent {
 		const {offsetLeft} = DOM.getAbsOffset(this.node);
 		let newValue;
 
-		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
+		if (newX >= offsetLeft && newX <= offsetLeft + this.node.clientWidth) {
 			const variation = (newX - this.currentX) / this.node.offsetWidth * (this.props.max - this.props.min);
 
 			newValue = this.props.value + variation;
@@ -88,7 +92,7 @@ export default class SliderController extends React.PureComponent {
 
 	// This prevents preview text to be selected whil using the sliders
 	handleSelectstart(e) {
-		if (this.tracking) {
+		if (this.state.tracking) {
 			return e.preventDefault();
 		}
 	}

@@ -85,7 +85,7 @@ export default class HoodieApi {
 
 			window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
 		}
-		catch (e) { TrackJS.track(e); }
+		catch (e) { trackJs.track(e); }
 
 		return setupStripe(setupHoodie(data));
 	}
