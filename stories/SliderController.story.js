@@ -71,4 +71,21 @@ storiesOf('SliderController', module)
 				value={95}
 			/>
 		);
+	})
+	.add('restricted', () => {
+		return (
+			<SliderController
+				demo={true}
+				changeParam={action('change-param')}
+				disabled={false}
+				label="Small Cap Thickness"
+				max={100}
+				realMax={80}
+				min={0}
+				realMin={60}
+				name="_scThickness"
+				value={70}
+				onRestrictedRangeEnter={action('enter-restricted-range')}
+			/>
+		);
 	});

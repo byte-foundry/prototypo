@@ -199,6 +199,93 @@ exports[`Storyshots SliderController full 1`] = `
 </div>
 `;
 
+exports[`Storyshots SliderController restricted 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }>
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}>
+      <div
+        className="slider-controller-bg"
+        style={
+          Object {
+            "transform": "translateX(-27.599999999999998%)",
+          }
+        }>
+        <div
+          className="slider-controller-handle" />
+      </div>
+      <span>
+        <div
+          className="slider-range-limiter-bg min"
+          onClick={[Function]}
+          style={
+            Object {
+              "marginLeft": "-10px",
+              "transform": "translateX(-36.800000000000004%)",
+            }
+          } />
+        <div
+          className="slider-range-limiter-bg max"
+          onClick={[Function]}
+          style={
+            Object {
+              "marginLeft": "-10px",
+              "transform": "translateX(81.6%)",
+            }
+          } />
+      </span>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
 exports[`Storyshots SliderController unadvised state 1`] = `
 <div
   style={
@@ -266,206 +353,187 @@ exports[`Storyshots SliderController unadvised state 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.AccountManageMembers empty state 1`] = `
-<div>
+exports[`Storyshots account.AccountManageSubUsers empty state 1`] = `
+<div
+  className="display-with-label undefined">
+  <label
+    className="display-with-label-label" />
   <div
-    className="display-with-label undefined">
-    <label
-      className="display-with-label-label">
-      Manage your subscriptions
-    </label>
-    <div
-      className="display-with-label-display">
-      <p>
-        You don\'t manage any user for now.
-      </p>
-    </div>
+    className="display-with-label-display">
+    <p>
+      You don\'t manage any user for now.
+    </p>
   </div>
 </div>
 `;
 
-exports[`Storyshots account.AccountManageMembers empty state editable 1`] = `
-<div>
+exports[`Storyshots account.AccountManageSubUsers empty state editable 1`] = `
+<div
+  className="display-with-label undefined">
+  <label
+    className="display-with-label-label" />
   <div
-    className="display-with-label undefined">
-    <label
-      className="display-with-label-label">
-      Manage your subscriptions
-    </label>
-    <div
-      className="display-with-label-display">
-      <p>
-        You don\'t manage any user for now. Use the form below to subscribe a user.
-      </p>
-      <form
-        onSubmit={[Function]}>
-        <input
-          name="email"
-          placeholder="email@example.com"
-          type="text" />
-        <button
-          className="account-button account-validation-button"
-          disabled={undefined}
-          onClick={undefined}
-          type="submit">
-          <div>
+    className="display-with-label-display">
+    <p>
+      You don\'t manage any user for now.
+    </p>
+    <ul>
+      <li
+        style={
+          Object {
+            "listStyleType": "none",
+          }
+        }>
+        <form
+          onSubmit={[Function]}>
+          <input
+            name="email"
+            placeholder="email@example.com"
+            type="text" />
+          <button>
             Add user
-          </div>
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`Storyshots account.AccountManageMembers full 1`] = `
-<div>
-  <div
-    className="display-with-label undefined">
-    <label
-      className="display-with-label-label">
-      Manage your subscriptions
-    </label>
-    <div
-      className="display-with-label-display">
-      <ul>
-        <li>
-          user@example.com
-           
-        </li>
-        <li>
-          user2@example.com
-           
-        </li>
-      </ul>
-      <p>
-        0
-         slots left.
-      </p>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`Storyshots account.AccountManageMembers removable 1`] = `
-<div>
-  <div
-    className="display-with-label undefined">
-    <label
-      className="display-with-label-label">
-      Manage your subscriptions
-    </label>
-    <div
-      className="display-with-label-display">
-      <ul>
-        <li>
-          user@example.com
-           
-          <button
-            onClick={[Function]}>
-            X
           </button>
-        </li>
-        <li>
-          user2@example.com
-           
-          <button
-            onClick={[Function]}>
-            X
+        </form>
+      </li>
+    </ul>
+  </div>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers full 1`] = `
+<div
+  className="display-with-label undefined">
+  <label
+    className="display-with-label-label" />
+  <div
+    className="display-with-label-display">
+    <ul>
+      <li>
+        user@example.com
+         
+      </li>
+      <li>
+        user2@example.com
+         
+      </li>
+    </ul>
+    <p>
+      0
+       slots left.
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers removable 1`] = `
+<div
+  className="display-with-label undefined">
+  <label
+    className="display-with-label-label" />
+  <div
+    className="display-with-label-display">
+    <ul>
+      <li>
+        user@example.com
+         
+        <button
+          onClick={[Function]}>
+          ×
+        </button>
+      </li>
+      <li>
+        user2@example.com
+         
+        <button
+          onClick={[Function]}>
+          ×
+        </button>
+      </li>
+    </ul>
+    <p>
+      0
+       slots left.
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers with 2 people 1`] = `
+<div
+  className="display-with-label undefined">
+  <label
+    className="display-with-label-label" />
+  <div
+    className="display-with-label-display">
+    <ul>
+      <li>
+        user@example.com
+         
+      </li>
+      <li>
+        user2@example.com
+         
+      </li>
+      <li
+        style={
+          Object {
+            "listStyleType": "none",
+          }
+        }>
+        <form
+          onSubmit={[Function]}>
+          <input
+            name="email"
+            placeholder="email@example.com"
+            type="text" />
+          <button>
+            Add user
           </button>
-        </li>
-      </ul>
-      <p>
-        0
-         slots left.
-      </p>
-    </div>
+        </form>
+      </li>
+    </ul>
   </div>
 </div>
 `;
 
-exports[`Storyshots account.AccountManageMembers with 2 people 1`] = `
-<div>
+exports[`Storyshots account.AccountManageSubUsers with limited quantity 1`] = `
+<div
+  className="display-with-label undefined">
+  <label
+    className="display-with-label-label" />
   <div
-    className="display-with-label undefined">
-    <label
-      className="display-with-label-label">
-      Manage your subscriptions
-    </label>
-    <div
-      className="display-with-label-display">
-      <ul>
-        <li>
-          user@example.com
-           
-        </li>
-        <li>
-          user2@example.com
-           
-        </li>
-      </ul>
-      <form
-        onSubmit={[Function]}>
-        <input
-          name="email"
-          placeholder="email@example.com"
-          type="text" />
-        <button
-          className="account-button account-validation-button"
-          disabled={undefined}
-          onClick={undefined}
-          type="submit">
-          <div>
+    className="display-with-label-display">
+    <ul>
+      <li>
+        user@example.com
+         
+      </li>
+      <li>
+        user2@example.com
+         
+      </li>
+      <li
+        style={
+          Object {
+            "listStyleType": "none",
+          }
+        }>
+        <form
+          onSubmit={[Function]}>
+          <input
+            name="email"
+            placeholder="email@example.com"
+            type="text" />
+          <button>
             Add user
-          </div>
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`Storyshots account.AccountManageMembers with limited quantity 1`] = `
-<div>
-  <div
-    className="display-with-label undefined">
-    <label
-      className="display-with-label-label">
-      Manage your subscriptions
-    </label>
-    <div
-      className="display-with-label-display">
-      <ul>
-        <li>
-          user@example.com
-           
-        </li>
-        <li>
-          user2@example.com
-           
-        </li>
-      </ul>
-      <p>
-        3
-         slots left.
-      </p>
-      <form
-        onSubmit={[Function]}>
-        <input
-          name="email"
-          placeholder="email@example.com"
-          type="text" />
-        <button
-          className="account-button account-validation-button"
-          disabled={undefined}
-          onClick={undefined}
-          type="submit">
-          <div>
-            Add user
-          </div>
-        </button>
-      </form>
-    </div>
+          </button>
+        </form>
+      </li>
+    </ul>
+    <p>
+      3
+       slots left.
+    </p>
   </div>
 </div>
 `;
@@ -497,7 +565,7 @@ exports[`Storyshots shared.AccountValidationButton disabled 1`] = `
 exports[`Storyshots shared.AccountValidationButton loading 1`] = `
 <button
   className="account-button account-validation-button"
-  disabled={undefined}
+  disabled={true}
   onClick={undefined}
   type="submit">
   <div>
