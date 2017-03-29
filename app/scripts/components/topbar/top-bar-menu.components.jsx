@@ -374,7 +374,7 @@ class TopBarMenuAcademy extends React.PureComponent {
 					return (
 						<Link to={`/academy/course/${props.course.slug}/${part.name}`}>
 							<span
-								onMouseEnter={() => {props.setText(part.name);}}
+								onMouseEnter={() => {props.setText(`${props.course.name} - ${part.name}`);}}
 								onMouseLeave={() => {props.clearText();}}
 								className={`top-bar-menu-item-academy-part ${part.completed ? 'completed' : ''}`}
 							/>

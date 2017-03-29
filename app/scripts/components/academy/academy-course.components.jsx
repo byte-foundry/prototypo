@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import {findDOMNode} from 'react-dom';
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
+import InlineSVG from 'svg-inline-react';
 
 export default class AcademyCourse extends React.PureComponent {
 	constructor(props) {
@@ -365,6 +366,42 @@ export default class AcademyCourse extends React.PureComponent {
 			</div>
 		);
 
+		let finish = false;
+
+		if (this.areAllPartsRead()) {
+			finish = (
+				<div className="academy-course-finish">
+					<InlineSVG className="academy-course-finish-icon" element="div" src={require('!svg-inline!../../../images/academy/cup.svg')} />
+					<div className="academy-course-finish-text">
+						{this.getNextCourse() ? (
+							<p>Good Job, you have learned how to <br/>
+								Do you want to ? <br/>
+							Check out our next course.
+							</p>
+						) : (
+							<p>	Good Job, you have learned how to <br/>
+								We do not have anything else to teach you yet. Stay tuned for more!
+							</p>
+						)}
+					</div>
+					<div className="academy-course-finish-validation">
+						<div className="academy-button">
+							{this.getNextCourse() ? (
+								<Link to={`/academy/course/${this.getNextCourse().slug}`}>
+									Sure !
+								</Link>
+							) : (
+								<Link to={`/academy/home`}>
+									Go back to the homepage
+								</Link>
+							)}
+
+						</div>
+					</div>
+				</div>
+			);
+		}
+
 		return(
 			<div key={this.courseName} className="academy-base academy-course">
 				<div className="academy-course-main">
@@ -387,31 +424,10 @@ export default class AcademyCourse extends React.PureComponent {
 									</div>
 							);
 						})}
-						{
-							this.areAllPartsRead() && this.getNextCourse()
-							? (
-								<div>Good Job, you ve read everything here!
-								<br/>
-								The next course is : {this.getNextCourse().title}.
-								<div className="academy-button academy-validation-button"><Link to={`/academy/course/${this.getNextCourse().slug}`} > Check it out ! </Link></div>
-								</div>
-							)
-							: false
-						}
-						{
-							this.areAllPartsRead() && !this.getNextCourse()
-							? (
-								<div>Good Job, you ve read everything here!
-								<br/>
-								We don t have any more course to offer, stay tuned for more!
-								</div>
-							)
-							: false
-						}
 					</div>
 					{sidebar}
 				</div>
-
+				{finish}
 			</div>
 		);
 	}

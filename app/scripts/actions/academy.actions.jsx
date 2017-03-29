@@ -19,7 +19,16 @@ export default {
 
 		readPart.completed = !readPart.completed;
 
-		academyProgress.lastCourse = course;
+		const partsDone = academyProgress[course].parts.filter((elem) => {
+			return elem.completed === true;
+		});
+
+		if (partsDone && partsDone.length === academyProgress[course].parts.length) {
+			academyProgress.lastCourse = undefined;
+		}
+		else {
+			academyProgress.lastCourse = course;
+		}
 		_infos = {
 			..._infos,
 			academyProgress,
