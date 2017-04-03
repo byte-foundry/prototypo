@@ -222,10 +222,14 @@
 				background-color: $theme-background;
 				color: $theme-color;
 			}
+			&.no-hover {
+				background-color: transparent;
+			}
 		}
 
 		&.no-hover:hover {
 			background: transparent;
+			background-color: transparent;
 		}
 
 		&.is-centered {

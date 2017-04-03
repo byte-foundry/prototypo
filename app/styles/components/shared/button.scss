@@ -115,7 +115,7 @@
 	&:hover {
 		@include themify() {
 			background-color: $theme-background;
-			color: $white;
+			color: $theme-color;;
 		}
 		.sk-spinner-wave div {
 			background-color: $white;
