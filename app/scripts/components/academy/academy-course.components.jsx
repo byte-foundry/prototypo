@@ -6,7 +6,6 @@ import {findDOMNode} from 'react-dom';
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import InlineSVG from 'svg-inline-react';
-
 export default class AcademyCourse extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -17,6 +16,8 @@ export default class AcademyCourse extends React.PureComponent {
 		};
 		this.tutorials = new TutorialContent();
 		this.headerRenderer = this.headerRenderer.bind(this);
+		this.imgRenderer = this.imgRenderer.bind(this);
+		this.linkRenderer = this.linkRenderer.bind(this);
 		this.handleScroll = this.handleScroll.bind(this);
 		this.bindData = this.bindData.bind(this);
 		this.scrollToPart = this.scrollToPart.bind(this);
@@ -103,7 +104,7 @@ export default class AcademyCourse extends React.PureComponent {
 			browserHistory.push('/#/academy/home');
 			return false;
 		}
-		const parts = course.content.split("## ");
+		const parts = course.content.split(/[^\#]#{2} +/g);
 		const headers = [];
 		let sidebar = {};
 
@@ -114,7 +115,6 @@ export default class AcademyCourse extends React.PureComponent {
 			offset: this.courseSidebarDom.getBoundingClientRect().top,
 			width: this.courseSidebarDom.offsetWidth,
 		};
-		console.log(this.courseSidebarDom.offsetWidth);
 
 		parts.map((part, index) => {
 			if (index !== 0) {
@@ -163,7 +163,7 @@ export default class AcademyCourse extends React.PureComponent {
 		this.setState({
 			headers,
 			stickedIndex,
-			scrollPercent: Math.round(event.target.scrollTop / (document.getElementsByClassName('academy-course-main')[0].offsetHeight - 720) * 100),
+			scrollPercent: Math.round(event.target.scrollTop / (document.getElementsByClassName('academy-course-main')[0].offsetHeight - 850) * 100),
 		});
 
 		//Sidebar sticky handling
@@ -178,7 +178,7 @@ export default class AcademyCourse extends React.PureComponent {
 	}
 
 	headerRenderer(props) {
-		if (props.level === 2) {
+		if (props.level === 2 && props.children.length > 0) {
 			const levelTwoProps = {
 				'key': props.nodeKey,
 				'data-sourcepos': props['data-sourcepos'],
@@ -202,6 +202,35 @@ export default class AcademyCourse extends React.PureComponent {
 		);
 	}
 
+	imgRenderer(props) {
+		const {src, alt} = props;
+		const urlRegexp = /([a-z]+\:\/+)([^\/\s]*)([a-z0-9\-@\^=%&;\/~\+]*)[\?]?([^ \#]*)#?([^ \#]*)/ig;
+
+		if (!src.match(urlRegexp)) {
+			const imageName = this.tutorials.getImage(this.courseSlug, src);
+
+			return(
+				<img src={imageName} alt={alt} />
+			);
+		}
+		return(
+			<img src={src} alt={alt} />
+		);
+	}
+
+	linkRenderer(props) {
+		const {href, children} = props;
+
+		if (href.includes('/academy')) {
+			return(
+				<Link to={href}>{children}</Link>
+			);
+		}
+		return(
+			<a target="_blank" href={href} className="out">{children}</a>
+		);
+	}
+
 	createCourseProgress() {
 		const academyProgress = this.state.academyProgress || {};
 		const course = this.tutorials.content.find((tutorial) => {
@@ -214,7 +243,7 @@ export default class AcademyCourse extends React.PureComponent {
 			return false;
 		}
 
-		const parts = course.content.split("## ").slice(1).map((value) => {
+		const parts = course.content.split(/[^\#]#{2} +/g).slice(1).map((value) => {
 			return {
 				name: value.split(/\r\n|\r|\n/g)[0],
 				completed: false,
@@ -294,6 +323,8 @@ export default class AcademyCourse extends React.PureComponent {
 	render() {
 		const renderers = {
 			Heading: this.headerRenderer,
+			Image: this.imgRenderer,
+			Link: this.linkRenderer,
 		};
 		const course = this.tutorials.content.find((tutorial) => {
 			return tutorial.slug === this.courseSlug;
@@ -304,7 +335,7 @@ export default class AcademyCourse extends React.PureComponent {
 			browserHistory.push('/#/academy/home');
 			return false;
 		}
-		const parts = course.content.split("## ");
+		const parts = course.content.split(/[^\#]#{2} +/g);
 		const partsName = parts.map((part) => {
 			return part.split(/\r\n|\r|\n/g)[0];
 		});
@@ -325,14 +356,8 @@ export default class AcademyCourse extends React.PureComponent {
 				})}
 			</div>
 		) : null;
-
-		const sidebar = (
-			<div className="academy-course-main-sidebar" ref={(courseSidebarDom) => { this.courseSidebarDom = courseSidebarDom; }}>
-				<progress
-					value={this.state.scrollPercent}
-					max="100"
-					></progress>
-				{basics}
+		const partsDisplay = this.state.headers.length > 0 ? (
+			<div>
 				<h3>Parts</h3>
 				{this.state.headers.map((header) => {
 					return (
@@ -344,6 +369,16 @@ export default class AcademyCourse extends React.PureComponent {
 						</span>
 					);
 				})}
+			</div>
+		) : null;
+		const sidebar = (
+			<div className="academy-course-main-sidebar" ref={(courseSidebarDom) => { this.courseSidebarDom = courseSidebarDom; }}>
+				<progress
+					value={this.state.scrollPercent}
+					max="100"
+					></progress>
+				{basics}
+				{partsDisplay}
         <h3>Other courses</h3>
           <div className="academy-course-courselist" ref={(courseListDom) => { this.courseListDom = courseListDom; }}>
             <Link className="academy-sidebar-menu-item"
@@ -367,19 +402,18 @@ export default class AcademyCourse extends React.PureComponent {
 		);
 
 		let finish = false;
-
-		if (this.areAllPartsRead()) {
+		if (this.areAllPartsRead() && this.state.headers) {
 			finish = (
 				<div className="academy-course-finish">
 					<InlineSVG className="academy-course-finish-icon" element="div" src={require('!svg-inline!../../../images/academy/cup.svg')} />
 					<div className="academy-course-finish-text">
 						{this.getNextCourse() ? (
-							<p>Good Job, you have learned how to <br/>
-								Do you want to ? <br/>
-							Check out our next course.
+							<p>Good Job, you have learned {course.objective}<br/>
+								Do you want to learn {this.getNextCourse().objective}? <br/>
+							Check out our next course: {this.getNextCourse().title}.
 							</p>
 						) : (
-							<p>	Good Job, you have learned how to <br/>
+							<p>	Good Job, you have learned {course.objective}<br/>
 								We do not have anything else to teach you yet. Stay tuned for more!
 							</p>
 						)}
@@ -403,7 +437,7 @@ export default class AcademyCourse extends React.PureComponent {
 		}
 
 		return(
-			<div key={this.courseName} className="academy-base academy-course">
+			<div key={this.courseName} className={`academy-base academy-course ${course.isVideo ? 'is-video' : ''}`}>
 				<div className="academy-course-main">
 					<div className="academy-course-main-content" ref={(courseContentDom) => { this.courseContentDom = courseContentDom; }}>
 						{parts.map((part, index) => {
@@ -413,14 +447,12 @@ export default class AcademyCourse extends React.PureComponent {
 											{index === 0
 												? (<div>
 												</div>)
-												: (this.isPartRead(partsName[index])
-													? false
-													: (<div className="part-progress-complete-button" onClick={() => {this.markAsRead(partsName[index]);}}>
+												: (<div className={`part-progress-complete-button ${this.isPartRead(partsName[index]) ? 'hidden' : ''}`} onClick={() => {this.markAsRead(partsName[index]);}}>
 													{index === parts.length - 1
 													? 'I finished the last part!'
 													: 'I finished! On to the next part'}
 												</div>)
-											)}
+											}
 									</div>
 							);
 						})}

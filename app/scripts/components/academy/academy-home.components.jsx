@@ -39,7 +39,7 @@ export default class AcademyHome extends React.PureComponent {
 				parts = academyProgress[tutorial.slug].parts;
 			}
 			else {
-				tutorial.content.split("## ").map((value, index) => {
+				tutorial.content.split(/[^\#]#{2} +/g).map((value, index) => {
 					if (index !== 0) {
 						parts.push({
 							name: value.split(/\r\n|\r|\n/g)[0],
@@ -69,6 +69,7 @@ export default class AcademyHome extends React.PureComponent {
 				readingTime: tutorial.readingTime,
 				headerImage: tutorial.headerImage,
 				reward: tutorial.reward,
+				isVideo: tutorial.isVideo,
 			});
 		});
 
@@ -86,6 +87,7 @@ export default class AcademyHome extends React.PureComponent {
 	}
 	render() {
 		let partsDone = false;
+		console.log(this.courses);
 
 		// const tutorialReward = tutorial.reward
 		// ? (<div className="academy-reward">
@@ -125,12 +127,19 @@ export default class AcademyHome extends React.PureComponent {
 												<ReactMarkdown source={tutorial.header} />
 											</div>
 											<div className="academy-course-list-elem-footer">
-												<div className={`academy-part-count ${partsDone === tutorial.partCount ? 'done' : ''}`}>
-													<span className="academy-part-count-progress" style={{'width': `${(partsDone / tutorial.partCount) * 100}%`}}></span>
-													<span className="academy-part-count-text">{partsDone === tutorial.partCount ? 'COMPLETE' : `${partsDone} of ${tutorial.partCount}`}</span>
-												</div>
+												{ tutorial.partCount
+													? (<div className={`academy-part-count ${partsDone === tutorial.partCount ? 'done' : ''}`}>
+														<div className="academy-part-count-progress-wrapper">
+															<span className="academy-part-count-progress-wrapper-progress" style={{'width': `${(partsDone / tutorial.partCount) * 100}%`}}></span>
+														</div>
+														<span className="academy-part-count-text">{partsDone === tutorial.partCount ? 'COMPLETE' : `${partsDone} of ${tutorial.partCount}`}</span>
+													</div>) : false
+												}
 												<div className="academy-readingtime">
 													<img src="assets/images/icon-clock.svg" alt="readingTime icon"/> <span>{tutorial.readingTime} min</span>
+												</div>
+												<div className="academy-coursetype">
+													<img src={`assets/images/academy/icon-course-${tutorial.isVideo ? 'video' : 'text'}.svg`} alt="courseType icon"/>
 												</div>
 											</div>
 										</Link>

@@ -553,28 +553,55 @@
 
 				.academy-part-count {
 					position: relative;
-					display: inline-block;
+					display: block;
 					float: left;
-					background-color: $light-grey;
-					border-radius: 20px;
 					width: 50%;
+					text-align: left;
+					height: 100%;
 					&-text {
-						position: relative;
+						position: absolute;
+						top: -4px;
+						left: 0;
 						display: inline-block;
 						z-index: 2;
+						font-size: 14px;
 					}
-					&-progress {
+					&-progress-wrapper {
 						position: absolute;
-						left: 0;
+						background-color: $light-grey;
+						width: 100%;
 						border-radius: 20px;
-						top: 50%;
+						left: 0;
+						top: 20px;
+						border-radius: 20px;
 						transform: translateY(-50%);
-						height: 100%;
-						background-color: $green;
+						height: 8px;
 						z-index: 1;
+						&-progress {
+							position: absolute;
+							left: 0;
+							border-radius: 20px;
+							top: 50%;
+							transform: translateY(-50%);
+							height: 8px;
+							background-color: $green;
+							z-index: 1;
+						}
 					}
 					&.done {
 						text-transform: uppercase;
+					}
+				}
+				.academy-coursetype {
+					position: relative;
+					display: block;
+					float: right;
+					margin-right: 10px;
+					img {
+						height: 20px;
+						margin-right: 5px;
+						margin-top: 4px;
+						float: left;
 					}
 				}
 				.academy-readingtime {
@@ -604,6 +631,11 @@
 
 	img {
 		max-width: 100%;
+	}
+
+	&.is-video video, &.is-video iframe {
+		padding: 0;
+		margin: 0;
 	}
 
 	.title {
@@ -666,15 +698,21 @@
 			color: $white;
 			background-color: $green;
 		}
+		&.hidden {
+			z-index: -1;
+		}
 	}
 	.title + p {
-		margin-top: 0;
-		padding-left: 0;
-		padding-right: 0;
 		img {
-			width: 100%;
+			display: block;
+			width: calc(100% + 80px);
 			height: auto;
+			margin-top: -20px;
+			margin-left: -40px;
+			margin-right: -40px;
+			max-width: inherit;
 			padding: 0;
+			object-fit: cover;
 		}
 	}
 	&-courselist {
@@ -701,20 +739,47 @@
 			}
 
 			&-part {
-				p, h3, h4, h5, img {
+				iframe, video {
+					display: block;
+					width: 100%;
+					height: auto;
+					min-height: 375px;
 					padding-left: 40px;
 					padding-right: 40px;
 				}
-				ul {
+				p, h3, h4, h5, img, pre {
+					padding-left: 40px;
+					padding-right: 40px;
+				}
+				ul, ol {
 					margin-left: 40px;
 					margin-right: 40px;
 				}
 				li {
 					padding-left: 20px;
+					p, h3, h4, h5, img, pre {
+						padding-left: 0;
+						padding-right: 0;
+					}
+					ul, ol {
+						margin-left: 0;
+						margin-right: 0;
+					}
 				}
 				p, li {
 					font-size: 18px;
 					color: $dark-grey;
+				}
+				a {
+					border-bottom: 1px solid $green;
+					&.out {
+						border-color: transparent;
+						border-bottom-color: $green;
+						border-style: dashed;
+					}
+					&:hover {
+						border-color: transparent;
+					}
 				}
 				&-readingtime {
 					position: relative;
@@ -745,10 +810,11 @@
 				width: 100%;
 				position: fixed;
 			    top: 0px;
-				width: 1200px;
+				width: 1202px;
 				left: 50%;
 				transform: translateX(-50%);
 				margin-left: -8px;
+				margin-right: -2px;
 				z-index: 2;
 				&::-webkit-progress-bar {
 				    background-color: $white;
@@ -971,12 +1037,14 @@
 			  }
 			}
 		}
-		&-content {
+		&-text {
 			line-height: 1.4;
 			letter-spacing: -0.01em;
+			max-width: 410px;
 		}
 		&-validation {
 			align-self: flex-end;
+			max-width: 180px;
 			.academy-button {
 				margin-bottom: 10px;
 			}
