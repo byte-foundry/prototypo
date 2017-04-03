@@ -73,6 +73,12 @@ const prototypoStore = new Remutable({
 			familyName: 'Prototypo Fell',
 			templateName: 'john-fell.ptf',
 		},
+		{
+			sample: 'john-fell-preview.svg',
+			name: 'Antique',
+			familyName: 'Antique',
+			templateName: 'antique.ptf',
+		},
 	],
 
 	//end template list store values
