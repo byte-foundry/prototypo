@@ -367,7 +367,7 @@ export default {
 				email: username,
 				name: firstname + curedLastname,
 				occupation: css.value,
-				phone,
+				phone: phone || undefined, // avoid empty string being recorded into Intercom
 				skype,
 				ABtest: Math.floor(Math.random() * 100),
 				widget: {
@@ -543,9 +543,9 @@ export default {
 	},
 	'/confirm-buy': async ({plan, card, pathname}) => {
 		const form = userStore.get('confirmation');
+		const { fullname, number, expMonth, expYear, cvc } = card;
 
 		form.errors = [];
-		form.inError = {};
 		form.loading = true;
 		const cleanPatch = userStore.set('confirmation', form).commit();
 
@@ -554,22 +554,12 @@ export default {
 		const cards = userStore.get('cards');
 		let cardCountry = cards[0] ? cards[0].country : undefined;
 
-		if (!cardCountry && (!card.fullname || !card.number || !card.expMonth || !card.expYear || !card.cvc)) {
-			form.inError = {
-				fullname: !card.fullname,
-				number: !card.number,
-				expMonth: !card.expMonth,
-				expYear: !card.expYear,
-				cvc: !card.cvc,
-			};
-			form.errors.push(`${
-				_.filter(Object.keys(form.inError),
-					(item) => {
-						return form.inError[item];
-					}).length > 1
-						? 'These fields are'
-						: 'This field is'
-			} required`);
+		if (!cardCountry && (!fullname || !number || !expMonth || !expYear || !cvc)) {
+			const requiredFields = [fullname, number, expMonth, expYear, cvc];
+			const errorText = requiredFields.reduce((sum, field) => {
+				return sum + !!field;
+			}).length > 1 ? 'These fields are' : 'This field is';
+			form.errors.push(`${errorText} required`);
 			form.loading = false;
 			const patch = userStore.set('confirmation', form).commit();
 
@@ -690,7 +680,7 @@ export default {
 			twitter: data.twitter,
 			website: data.website,
 			occupation: data.css.value,
-			phone: data.phone,
+			phone: data.phone || undefined, // avoid empty string being recorded into Intercom
 			skype: data.skype,
 		});
 
