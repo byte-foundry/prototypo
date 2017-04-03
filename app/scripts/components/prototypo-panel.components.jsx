@@ -128,10 +128,6 @@ export default class PrototypoPanel extends React.Component {
 		const glyphIntercomDisplacement = hasGlyph && !hasText;
 		const wordIntercomDisplacement = hasWord && !hasText && !hasGlyph;
 
-			/*if (hasGlyph && this.state.uiShadow) {
-			textAndGlyph.push(<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>);
-		}*/
-
 		let featureHovered;
 
 		switch (this.state.restrictedFeatureHovered) {
@@ -285,6 +281,7 @@ export default class PrototypoPanel extends React.Component {
 							field="uiText"/>
 					</ResizablePanels>
 				</ResizablePanels>
+				<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>
 			</div>
 		);
 	}
