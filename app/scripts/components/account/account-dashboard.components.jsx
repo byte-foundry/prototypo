@@ -26,10 +26,12 @@ export default class AccountDashboard extends React.Component {
 			createSignup: "",
 			signup: "",
 			signin: "",
-			success: "",
+			success: "Congratulations!",
 			confirm: "",
 			billing: "My billing history",
+			'billing-address': 'My billing address',
 			'add-card': "Add a card",
+			'change-plan': 'Change my plan',
 		};
 		const title = titles[this.props.route.name];
 		const subtitle = subtitles[this.props.location.pathname.split('/')[this.props.location.pathname.split('/').length - 1]];
