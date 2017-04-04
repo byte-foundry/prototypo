@@ -96,15 +96,21 @@
 }
 
 .academy-header {
-	height: 100px;
+	height: 70px;
 	width: 100%;
-	border-bottom: solid $orange 1px;
-	color: $medium-grey;
+	color: $dark-grey;
 	padding:20px 50px;
 	margin:0;
 	display:flex;
 	align-items: center;
 	justify-content: space-between;
+	background-color: $white;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+	h1 {
+		margin-left: 40px;
+		color: $dark-grey;
+	}
 }
 
 .academy-back-app {
@@ -1055,10 +1061,20 @@
 .academy-dashboard {
 	min-height: 700px;
 	width: 1200px;
-	background-color: $white;
+	background-color: $lightest-grey;
 	border-radius: 8px;
 	position:relative;
 	margin:0 auto 50px;
+
+	&-page-title {
+		text-align: center;
+		width: 100%;
+		color: $dark-grey;
+		font-size: 35px;
+		font-weight: normal;
+		margin-top: 40px;
+		margin-bottom: 0;
+	}
 
 	&-container {
 		display:flex;
@@ -1084,38 +1100,35 @@
 		background-size: 46%;
 		background-image: url("../../../images/prototypo-icon-white.svg");
 		background-repeat: no-repeat;
-		border-radius: 50%;
-		border: solid $green 10px;
-		top: -35px;
-		right: -35px;
-		transition: 0.8s;
-		transform-style: preserve-3d;
+		top: 0;
+		left: 0;
+		border-top-left-radius: 8px;
 		cursor: pointer;
-
+		transition: background-color 0.3s ease;
 		&:hover {
-			transform:rotateY(180deg);
-			background-image: url("../../../images/icon-back-hover-reversed.svg");
-			background-color:$white;
+			background-color: mix(white, $dark-grey, 10%);
 		}
 	}
 
-	&-back-icon {
+	&-back {
 		background-image: url("../../../images/icon-back.svg");
 		background-repeat: no-repeat;
-		width:36px;
 		height:36px;
+		padding-left: 30px;
 		position:absolute;
-		border:solid $white 5px;
-		border-radius: 50%;
-		left:-18px;
-		top:30px;
+		right:40px;
+		top:25px;
 		background-color:$white;
 		background-size: 25px 25px;
-		background-position:2px 1px;
+		background-position:0px -3px;
 		cursor:pointer;
 		display:block;
+		font-size: 15px;
+		color: $light-grey !important;
+		font-weight: 700;
 
 		&:hover {
+			color: $green !important;
 			background-image: url("../../../images/icon-back-hover.svg");
 		}
 	}

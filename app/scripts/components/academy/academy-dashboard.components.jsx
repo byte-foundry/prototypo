@@ -23,8 +23,13 @@ export default class AcademyDashboard extends React.Component {
 			home: "/dashboard",
 			course: "/academy",
 		};
+
+		const backlinkTitle = {
+			home: "Dashboard",
+			course: "Academy homepage",
+		};
 		const curRoute = this.props.routeParams.courseSlug || this.props.route.name;
-		const title = titles[curRoute];
+		const title = titles.home;
 		const backlink = backlinks[this.props.route.name];
 
 		return (
@@ -32,10 +37,15 @@ export default class AcademyDashboard extends React.Component {
 				<Link to={backlinks.home}>
 					<div className="academy-dashboard-icon"/>
 				</Link>
-				<Link to={backlink} className="academy-dashboard-back-icon"/>
+				<Link to={backlink} className="academy-dashboard-back">Back to the {backlinkTitle[this.props.route.name]}</Link>
 				<div className="academy-header">
 					<h1 className="academy-title">{title}</h1>
 				</div>
+				{
+					this.props.route.name === "home"
+					? false
+					: (<h1 className="academy-dashboard-page-title">{titles[curRoute]}</h1>)
+				}
 				<div className="academy-dashboard-container">
 					{this.props.children}
 				</div>
