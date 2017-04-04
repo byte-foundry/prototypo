@@ -109,7 +109,7 @@
 	border-top-right-radius: 8px;
 	h1 {
 		margin-left: 40px;
-		color: $dark-grey;
+		color: $darkest-grey;
 	}
 }
 
@@ -1093,7 +1093,7 @@
 	&-icon {
 		width:70px;
 		height:70px;
-		background-color: $dark-grey;
+		background-color: $darkest-grey;
 		position:absolute;
 		z-index:2;
 		background-position: center;
@@ -1102,11 +1102,10 @@
 		background-repeat: no-repeat;
 		top: 0;
 		left: 0;
-		border-top-left-radius: 8px;
 		cursor: pointer;
 		transition: background-color 0.3s ease;
 		&:hover {
-			background-color: mix(white, $dark-grey, 10%);
+			background-color: mix(white, $darkest-grey, 10%);
 		}
 	}
 
