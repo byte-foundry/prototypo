@@ -98,10 +98,10 @@ export default class Glyph {
 		});
 	}
 
-	constructGlyph(params, parentAnchors) {
-		const nodeToReset = [];
-		const contourToReset = [];
-
+	/* eslint-disable max-depth */
+	/* eslint-disable no-loop-func */
+	constructGlyph(params, parentAnchors, glyphs) {
+		console.log(this.name.value);
 		const localParams = {
 			...params,
 			..._.mapValues(this.parameters, (param) => {
@@ -157,7 +157,6 @@ export default class Glyph {
 					}
 				}
 				else if (action === 'expand') {
-					const node = this.getFromXPath(cursor);
 					const expandedTo = ExpandingNode.expand(_.get(opDone, toLodashPath(cursor)));
 
 					_.set(
@@ -185,36 +184,34 @@ export default class Glyph {
 
 		const opAnchors = [...(opDone.anchors || [])];
 
-		_.difference(Object.keys(this.anchors), opAnchors).map((key) => {
+		Object.keys(this.anchors).forEach((key) => {
 			const anchor = this.anchors[key];
 			const ref = opAnchors[key];
 
 			_.set(
 				opDone,
 				`anchors[${key}]`,
-				_.reduce(Object.keys(this.anchors), (acc, name) => {
-					if (opDone.anchors[name]) {
-						_.set(acc, `[${key}].${name}`, ref[name]);
+				_.reduce(Object.keys(anchor), (acc, name) => {
+					if (opDone.anchors[key][name]) {
+						acc[name] = ref[name];
 					}
 					else {
-						_.set(acc, `[${key}].${name}`, anchor[name].getResult(localParams, opDone.contours, acc));
+						acc[name] = anchor[name].getResult(localParams, opDone.contours, acc, parentAnchors, utils);
 					}
 
 					return acc;
-				}, opAnchors)
+				}, {})
 			);
 		});
 
 		opDone.anchors = opAnchors;
 
-		contourToReset.forEach((contour) => {
-			contour.handled = false;
-		});
-
-		nodeToReset.forEach((node) => {
-			node.expanded = false;
+		opDone.components = this.components.map((component) => {
+			return component.constructComponent(localParams, opDone.contours, opDone.anchors, utils, glyphs);
 		});
 
 		return opDone;
 	}
+	/* eslint-enable max-depth */
+	/* eslint-enable no-loop-func */
 }

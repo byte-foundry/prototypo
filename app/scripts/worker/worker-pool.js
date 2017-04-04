@@ -45,6 +45,8 @@ export default class WorkerPool {
 		const ProtoWorker = require(`worker-loader!./worker.js`);
 		let eachJobList = [];
 
+		let workerStatus = [];
+
 		this.workerArray = [];
 		this.jobCallback = {};
 

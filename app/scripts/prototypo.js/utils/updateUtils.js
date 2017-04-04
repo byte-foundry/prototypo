@@ -1,4 +1,4 @@
-import {add2D} from '../../plumin/util/linear.js';
+import {add2D, mulScalar2D, subtract2D} from '../../plumin/util/linear.js';
 
 // The following function should be useless, thanks to paper
 export function lineLineIntersection(p1, p2, p3, p4) {
@@ -211,13 +211,11 @@ export function split(points, t = 1, base) {
 
 		for (let i = 1; i < current.length; i++) {
 			newPoints.push(
-				current[i - 1]
-					.multiply(1 - t)
-					.add(
-						current[i]
-							.multiply(t)
-					)
-				);
+				add2D(
+					mulScalar2D(1 - t, current[i - 1]),
+					mulScalar2D(t, current[i])
+				)
+			);
 		}
 
 		result = result.concat(newPoints);
@@ -517,7 +515,7 @@ export function makeCurveInsideSerif(
 	let pointOnCurveVar;
 	let pointOnSerif;
 	let pointWithCurve = {};
-	let normalToCurve;
+	let tangentToCurve;
 
 	if (pAnchors.inverseOrder) {
 		pointWithCurve = pointOnCurve(splitCurveEnd, serifCenter, serifCurve, true, 200);
@@ -546,10 +544,14 @@ export function makeCurveInsideSerif(
 	}
 	else {
 		if (pAnchors.inverseOrder) {
-			normalToCurve = serifCenter.handleIn.angleInRadians;
+			const relHandle = subtract2D(serifCenter, serifCenter.handleIn);
+
+			tangentToCurve = Math.atan2(relHandle.y, relHandle.x);
 		}
 		else {
-			normalToCurve = serifCenter.handleOut.angleInRadians;
+			const relHandle = subtract2D(serifCenter, serifCenter.handleOut);
+
+			tangentToCurve = Math.atan2(relHandle.y, relHandle.x);
 		}
 		pointOnCurveVar = {
 			x: serifCenter.x,
@@ -616,9 +618,9 @@ export function makeCurveInsideSerif(
 	};
 
 	const lastPoint = {
-		x: pointOnCurve.x - stumpNorm / 2 * Math.sin(normalToCurve) * yDir * xDir,
-		y: pointOnCurve.y + stumpNorm / 2 * Math.cos(normalToCurve) * yDir * xDir,
-		dirIn: normalToCurve,
+		x: pointOnCurveVar.x - stumpNorm / 2 * Math.sin(tangentToCurve) * yDir * xDir,
+		y: pointOnCurveVar.y + stumpNorm / 2 * Math.cos(tangentToCurve) * yDir * xDir,
+		dirIn: tangentToCurve,
 		typeOut: 'line',
 		type: 'corner',
 	};
@@ -633,7 +635,7 @@ export function makeCurveInsideSerif(
 	}
 
 	return [
-		pointOnCurve,
+		pointOnCurveVar,
 		pointOnSerif,
 		leftEdge,
 		midPoint,

@@ -135,7 +135,10 @@ class GlyphAndData extends React.PureComponent {
 export default class TestFont extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {glyph: 'A_cap', solved: [], glyphs: {}};
+		this.state = {glyph: 'A_cap', solved: []};
+		this.glyphs = {};
+
+		this.changeThickness = this.changeThickness.bind(this);
 
 		this.pool = new WorkerPool();
 	}
@@ -177,7 +180,7 @@ export default class TestFont extends React.PureComponent {
 				mouse,
 			});
 
-			if (mouse.state === mState.DOWN && this.state.glyphs[this.state.glyph]) {
+			if (mouse.state === mState.DOWN && this.glyphs[this.state.glyph]) {
 				const [,,,, tx, ty] = this.toile.viewMatrix;
 				const newTs = {
 					x: tx + mouse.delta.x,
@@ -187,7 +190,7 @@ export default class TestFont extends React.PureComponent {
 				this.toile.clearDelta();
 				this.toile.setCamera(newTs, 1, height);
 				this.toile.clearCanvas(width, height);
-				this.toile.drawGlyph(this.state.glyphs[this.state.glyph]);
+				this.toile.drawGlyph(this.glyphs[this.state.glyph]);
 			}
 			raf(rafFunc);
 		};
@@ -212,7 +215,7 @@ export default class TestFont extends React.PureComponent {
 			}
 			if (this.state.workerReady && nextState.values !== this.state.values) {
 				const solved = [];
-				let glyphsState = this.state.glyphs;
+				let glyphsState = this.glyphs;
 
 				this.setState({
 					solved: [],
@@ -261,22 +264,41 @@ export default class TestFont extends React.PureComponent {
 									...glyphsState,
 									...glyphs,
 								};
+
 								this.setState({
 									solved,
-									glyphs: glyphsState,
 									glyph: nextState.glyph,
 								});
+
+								this.glyphs = glyphsState;
+
+								if (glyphsState[nextState.glyph]) {
+									this.toile.clearCanvas(this.canvas.width, this.canvas.height);
+									this.toile.drawGlyph(glyphsState[nextState.glyph]);
+								}
 							},
 						};
 					}).value()
 				);
 			}
 
-			if (nextState.glyph !== this.state.glyph && this.state.glyphs[nextState.glyph]) {
+			if (nextState.glyph !== this.state.glyph && this.glyphs[nextState.glyph]) {
 				this.toile.clearCanvas(this.canvas.width, this.canvas.height);
-				this.toile.drawGlyph(this.state.glyphs[nextState.glyph]);
+				this.toile.drawGlyph(this.glyphs[nextState.glyph]);
 			}
 		}
+	}
+
+	changeThickness(e) {
+		const params = {
+			values: {
+				...this.state.values,
+				thickness: parseFloat(e.target.value),
+			},
+			demo: true,
+		};
+
+		this.client.dispatchAction('/change-param', params);
 	}
 
 	render() {
@@ -330,18 +352,7 @@ export default class TestFont extends React.PureComponent {
 							</div>
 						</ScrollArea>
 					</div>
-					{(() => {
-						if (this.state.values) {
-							return (
-								<ScrollArea horizontal={false}>
-									<GlyphAndData values={this.state.values} res={this.glyphs ? this.glyphs[this.state.glyph] : {}} prec={this.font ? this.font.glyphs[this.state.glyph] : {}}/>
-								</ScrollArea>
-							);
-						}
-						else {
-							return null;
-						}
-					})()}
+					<input min="0" max="200" type="range" onChange={this.changeThickness}></input>
 				</div>
 			</div>
 		);

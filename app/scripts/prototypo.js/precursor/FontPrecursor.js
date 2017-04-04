@@ -79,7 +79,7 @@ export default class FontPrecursor {
 		});*/
 
 		const glyphs = _.reduce(subset, (result, name) => {
-			result[name] = this.glyphs[name].constructGlyph(localParams);
+			result[name] = this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs);
 			return result;
 		}, {});
 
