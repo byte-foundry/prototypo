@@ -100,7 +100,7 @@ class AccountSidebar extends React.Component {
 						<AccountSidebarSubLink to="/account/profile/change-password" label="Change password" />
 					</AccountSidebarLink>
 					<AccountSidebarLink to="/account/details" slug="account" label="Account settings">
-						{accountsLinks.length > 0 ? accountsLinks : <AccountSidebarSubLink to="/account/create/choose-a-plan" label="Subscribe to the pro plan" />}
+						{accountsLinks.length > 0 ? accountsLinks : <AccountSidebarSubLink to="/account/subscribe" label="Subscribe to the pro plan" />}
 					</AccountSidebarLink>
 					{subscription && subscription.quantity > 1 && (
 						<AccountSidebarLink to="/account/organization" slug="organization" label="Manage sub users" />
@@ -133,8 +133,12 @@ export default graphql(query, {
 			return {loading: true};
 		}
 
-		return {
-			managed: !!data.user.manager,
-		};
+		if (data.user) {
+			return {
+				managed: !!data.user.manager,
+			};
+		}
+
+		return {};
 	},
 })(AccountSidebar);
