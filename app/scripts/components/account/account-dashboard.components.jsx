@@ -1,10 +1,36 @@
 import React from 'react';
 import {Link} from 'react-router';
+import Lifespan from 'lifespan';
+
+import LocalClient from '../../stores/local-client.stores.jsx';
 import AccountSidebar from './account-sidebar.components.jsx';
 
 export default class AccountDashboard extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					firstname: head.toJS().d.infos.accountValues.firstname,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	render() {
-		console.log(this.props);
 		const titles = {
 			home: "My account",
 			profile: "My account",
@@ -18,7 +44,7 @@ export default class AccountDashboard extends React.Component {
 			billing: "My account",
 		};
 		const subtitles = {
-			home: "My account",
+			home: `Hi ${this.state.firstname}!`,
 			profile: "My profile",
 			'change-password': "Change my password",
 			details: "My account settings",
