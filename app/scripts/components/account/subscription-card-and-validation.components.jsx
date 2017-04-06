@@ -55,11 +55,6 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			});
 	}
 
-	componentWillReceiveProps() {
-		this.setState({'couponValue': undefined});
-		this.handleCouponChange('');
-	}
-
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
