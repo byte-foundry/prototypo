@@ -204,8 +204,11 @@
 		color: $dark-grey;
 		font-size: 35px;
 		font-weight: normal;
-		margin-top: 40px;
+		margin-top: 0;
 		margin-bottom: 0;
+		padding-top: 20px;
+		padding-bottom: 20px;
+		background-color: $lightest-grey;
 	}
 
 	&-container {

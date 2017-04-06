@@ -83,7 +83,7 @@ export default class ForgottenPassword extends React.PureComponent {
 						<p className="forgotten-password-text">We will send you a new password, and you will be able to change your password once connected in the profile panel.</p>
 						{message}
 						<div className="forgotten-password-buttons">
-						<AccountValidationButton label="cancel" id="cancel" click={this.redirectToSignin}/>
+						<AccountValidationButton label="Cancel" id="cancel" click={this.redirectToSignin}/>
 						<AccountValidationButton loading={this.state.loading} label="Reset Password"/>
 						</div>
 					</form>
@@ -103,6 +103,7 @@ export default class ForgottenPassword extends React.PureComponent {
 				<div className="account-header">
 					<h1 className="account-title">Reset my password</h1>
 				</div>
+				<h1 className="account-dashboard-page-title">Don't worry,<br/>we've got your back.</h1>
 				<div className="account-dashboard-container">
 						{content}
 				</div>

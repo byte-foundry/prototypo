@@ -62,6 +62,7 @@ export default class Signin extends React.Component {
 				<div className="account-header">
 					<h1 className="account-title">Sign in</h1>
 				</div>
+				<h1 className="account-dashboard-page-title">Welcome back.</h1>
 				<div className="account-dashboard-container">
 					<form className="sign-in-form" onSubmit={(e) => {this.signIn(e);}}>
 						<InputWithLabel
