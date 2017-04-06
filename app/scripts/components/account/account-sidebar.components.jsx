@@ -54,30 +54,30 @@ export default class AccountSidebar extends React.Component {
 		const detailsMenu = isPayingCustomer
 			? (
 					<ul className="account-sidebar-menu-item-options">
-						<li className={classAddCard}><Link to="account/details/add-card">Add a card</Link></li>
-						<li className={classBillingAddress}><Link to="account/details/billing-address">My billing address</Link></li>
-						<li className={classChangePlan}><Link to="account/details/change-plan">Change plan</Link></li>
+						<Link to="account/details/add-card"><li className={classAddCard}>Add a card</li></Link>
+						<Link to="account/details/billing-address"><li className={classBillingAddress}>My billing address</li></Link>
+						<Link to="account/details/change-plan"><li className={classChangePlan}>Change plan</li></Link>
 					</ul>
 			)
 			: (
 					<ul className="account-sidebar-menu-item-options">
-						<li className={classChangePlan}><Link to="account/subscribe">Subscribe to the pro plan</Link></li>
+						<Link to="account/subscribe"><li className={classChangePlan}>Subscribe to the pro plan</li></Link>
 					</ul>
 			);
 
 		return (
 			<div className="account-sidebar">
 				<ul className="account-sidebar-menu">
-					<li className={classHome}><Link to="/account/home">Home</Link></li>
-					<li className={classProfile}><Link to="/account/profile">My profile</Link>
+					<Link to="/account/home"><li className={classHome}>Home</li></Link>
+					<Link to="/account/profile"><li className={classProfile}>My profile
 						<ul className="account-sidebar-menu-item-options">
-							<li className={classChangePassword}><Link to="/account/profile/change-password">Change password</Link></li>
+							<Link to="/account/profile/change-password"><li className={classChangePassword}>Change password</li></Link>
 						</ul>
-					</li>
-					<li className={classDetails}><Link to="/account/details">Account settings</Link>
+					</li></Link>
+					<Link to="/account/details"><li className={classDetails}>Account settings
 						{detailsMenu}
-					</li>
-					<li className={classBilling}><Link to="/account/billing">Billing history</Link></li>
+					</li></Link>
+					<Link to="/account/billing"><li className={classBilling}>Billing history</li></Link>
 				</ul>
 			</div>
 		);
