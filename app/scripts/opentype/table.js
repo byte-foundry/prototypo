@@ -1,7 +1,8 @@
-import {TABLE} from './encode.js';
+import {encode} from './encode.js';
 
-export function encodeTable(tableName, fields, options) {
+export function buildTableObj(tableName, fields, options) {
 	const tableObj = {};
+
 	fields.forEach((field) => {
 		tableObj[field.name] = field.value;
 	});
