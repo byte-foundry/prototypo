@@ -1,6 +1,7 @@
 // @flow
-import os2, {getUnicodeRange} from './os2.js';
+import {checkArgument} from './check.js';
 
+import os2, {getUnicodeRange} from './os2.js';
 import check from '../check';
 import table from '../table';
 import cmap from './cmap';
