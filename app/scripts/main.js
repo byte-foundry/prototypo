@@ -333,11 +333,21 @@ selectRenderOptions(
 		}
 
 		function redirectToDashboard(nextState, replace) {
+			console.log(nextState);
 			if (HoodieApi.isLoggedIn()) {
-				replace({
-					pathname: '/dashboard',
-					state: {nextPathname: nextState.location.pathname},
-				});
+				if (nextState.location.query && nextState.location.query.subscribe) {
+					replace({
+						pathname: '/account/subscribe',
+						state: {nextPathname: nextState.location.pathname},
+						query: {plan: nextState.location.query.subscribe},
+					});
+				}
+				else {
+					replace({
+						pathname: '/dashboard',
+						state: {nextPathname: nextState.location.pathname},
+					});
+				}
 			}
 		}
 

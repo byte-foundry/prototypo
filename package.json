@@ -25,7 +25,7 @@
     "pouchdb-authentication": "^0.4.0",
     "pouchdb-hoodie-api": "^1.0.3",
     "prototypo-canvas": "~1.16.0",
-    "prototypo.js": "~1.16.0",
+    "prototypo.js": "~1.16.1",
     "query-string": "^4.2.3",
     "react": "^15.0.0",
     "react-addons-css-transition-group": "^15.0.2",
@@ -41,6 +41,7 @@
     "slug": "^0.9.1",
     "tether": "^1.1.0",
     "venus.ptf": "byte-foundry/venus.ptf#master",
+    "whatwg-fetch": "^0.9.0",
     "xxhashjs": "^0.1.1"
   },
   "devDependencies": {
