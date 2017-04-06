@@ -323,7 +323,7 @@ function makeSfntTable(tables) {
     for (let i = 0; i < tables.length; i += 1) {
         const t = tables[i];
 
-        check.argument(t.tableName.length === 4, `Table name ${t.tableName} is invalid.`);
+        checkArgument(t.tableName.length === 4, `Table name ${t.tableName} is invalid.`);
 
         const tableLength = t.sizeOf();
         const tableRecord = makeTableRecord(t.tableName, computeCheckSum(t.encode()), offset, tableLength);
@@ -331,7 +331,7 @@ function makeSfntTable(tables) {
         recordFields.push({name: `${tableRecord.tag} Table Record`, type: 'RECORD', value: tableRecord});
         tableFields.push({name: `${t.tableName} table`, type: 'RECORD', value: t});
         offset += tableLength;
-        check.argument(!isNaN(offset), 'Something went wrong calculating the offset.');
+        checkArgument(!isNaN(offset), 'Something went wrong calculating the offset.');
         while (offset % 4 !== 0) {
             offset += 1;
             tableFields.push({name: 'padding', type: 'BYTE', value: 0});
