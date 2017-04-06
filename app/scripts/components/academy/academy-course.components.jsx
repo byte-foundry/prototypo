@@ -145,9 +145,8 @@ export default class AcademyCourse extends React.PureComponent {
 		const headers = [...this.state.headers];
 		let stickedIndex = this.state.stickedIndex;
 
-		//Headers sticky handling
+		//Headers handling
 		headers.map((header, index) => {
-			header.elem.classList.remove('fixed');
 			header.active = false;
 			if (event.target.scrollTop >= header.offset) {
 				stickedIndex = index;
@@ -157,7 +156,6 @@ export default class AcademyCourse extends React.PureComponent {
 			stickedIndex = -1;
 		}
 		if (headers[stickedIndex]) {
-			headers[stickedIndex].elem.classList.add('fixed');
 			headers[stickedIndex].active = true;
 		}
 		this.setState({
@@ -166,9 +164,21 @@ export default class AcademyCourse extends React.PureComponent {
 			scrollPercent: Math.round(event.target.scrollTop / (document.getElementsByClassName('academy-course-main')[0].offsetHeight - 850) * 100),
 		});
 
+		//Logo sticky handling
+		if (event.target.scrollTop >= this.state.sidebar.offset - 130) {
+			document.getElementsByClassName('academy-dashboard-icon')[0].classList.add('fixed');
+			document.getElementsByClassName('academy-dashboard-icon')[0].style.left = `${this.courseContentDom.getBoundingClientRect().left - 75}px`;
+		}
+		else {
+			document.getElementsByClassName('academy-dashboard-icon')[0].classList.remove('fixed');
+			document.getElementsByClassName('academy-dashboard-icon')[0].style.left = `inherit`;
+		}
+
 		//Sidebar sticky handling
 		if (event.target.scrollTop >= this.state.sidebar.offset) {
 			this.state.sidebar.elem.classList.add('fixed');
+			document.getElementsByClassName('academy-dashboard-icon')[0].classList.add('fixed');
+			document.getElementsByClassName('academy-dashboard-icon')[0].style.left = `${this.courseContentDom.getBoundingClientRect().left - 75}px`;
 			this.state.sidebar.elem.style.left = `${this.courseContentDom.getBoundingClientRect().right + 20}px`;
 		}
 		else {
@@ -384,7 +394,7 @@ export default class AcademyCourse extends React.PureComponent {
             <Link className="academy-sidebar-menu-item"
               to={`/academy/home`} >
               <span className="academy-sidebar-menu-item-home-icon"/>
-              Home
+              Academy homepage
             </Link>
             {
               this.tutorials.content.map((tutorial) => {
@@ -447,10 +457,13 @@ export default class AcademyCourse extends React.PureComponent {
 											{index === 0
 												? (<div>
 												</div>)
-												: (<div className={`part-progress-complete-button ${this.isPartRead(partsName[index]) ? 'hidden' : ''}`} onClick={() => {this.markAsRead(partsName[index]);}}>
-													{index === parts.length - 1
-													? 'I finished the last part!'
-													: 'I finished! On to the next part'}
+												: (<div className={`part-progress-complete-button ${this.isPartRead(partsName[index]) ? 'finished' : ''}`} onClick={() => { return this.isPartRead(partsName[index]) ? false : this.markAsRead(partsName[index]);}}>
+													{this.isPartRead(partsName[index])
+														? 'Part finished'
+														: (index === parts.length - 1
+															? 'I finished the last part!'
+															: 'I finished! On to the next part')
+													}
 												</div>)
 											}
 									</div>

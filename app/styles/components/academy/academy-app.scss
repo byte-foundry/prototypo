@@ -699,13 +699,17 @@
 	    margin-top: 20px;
 	    margin-bottom: 40px;
 	    cursor: pointer;
-		transition: background-color .3s ease, color .3s ease;
-		&:hover {
+		user-select: none !important;
+		transition: all .3s ease;
+		&:not(.finished):hover {
 			color: $white;
 			background-color: $green;
 		}
-		&.hidden {
-			z-index: -1;
+		&.finished {
+			opacity: 0.3;
+			color: $dark-grey;
+			border-color: $dark-grey;
+			cursor: default;
 		}
 	}
 	.title + p {
@@ -739,7 +743,7 @@
 			border-radius: 5px;
 
 			* + * {
-				user-select: initial;
+				user-select: initial !important;
 				line-height: 1.4;
 				letter-spacing: -0.01em;
 			}
@@ -756,28 +760,47 @@
 				p, h3, h4, h5, img, pre {
 					padding-left: 40px;
 					padding-right: 40px;
+					user-select: initial;
+				}
+				code, strong {
+					user-select: initial;
 				}
 				ul, ol {
 					margin-left: 40px;
 					margin-right: 40px;
+					user-select: initial !important;
 				}
 				li {
-					padding-left: 20px;
-					p, h3, h4, h5, img, pre {
+					padding-left: 5px;
+					user-select: initial !important;
+					p, h3, h4, h5, img, pre, em, code {
 						padding-left: 0;
 						padding-right: 0;
+						user-select: initial;
 					}
 					ul, ol {
 						margin-left: 0;
 						margin-right: 0;
+						user-select: initial;
 					}
 				}
 				p, li {
 					font-size: 18px;
 					color: $dark-grey;
+					user-select: initial;
+					em, strong {
+						user-select: initial;
+					}
+				}
+				pre {
+					user-select: initial;
 				}
 				a {
+					user-select: initial !important;
 					border-bottom: 1px solid $green;
+					em {
+						user-select: initial !important;
+					}
 					&.out {
 						border-color: transparent;
 						border-bottom-color: $green;
@@ -809,6 +832,9 @@
 			border-radius: 5px;
 			h3 {
 				margin: 0;
+				&:not(:first-child) {
+					margin-top: 15px;
+				}
 			}
 			progress {
 				background-color: $white;
@@ -872,6 +898,9 @@
 								color: $green;
 							}
 							.academy-sidebar-menu-item-checkmark::after {
+								border-color: $light-green;
+							}
+							.academy-sidebar-menu-item-checkmark.is-active::after {
 								border-color: $green;
 							}
 						    .academy-sidebar-menu-item-home-icon::before {
@@ -885,8 +914,15 @@
 								color: $green;
 								font-weight: 600;
 							}
-							.academy-sidebar-menu-item-checkmark::after {
-								border-color: $green;
+							.academy-sidebar-menu-item-checkmark {
+								&::after {
+									border-color: $light-green;
+								}
+								&.is-active {
+									&::after {
+										border-color: $green;
+									}
+								}
 							}
 						}
 						position:relative;
@@ -899,13 +935,17 @@
 							width:20px;
 							margin-left: -5px;
 							margin-right: 10px;
-							margin-top: -2px;
+							margin-top: 1px;
 							&::before {
+								position: absolute;
+								top: 3px;
+								left: 2px;
 								content: ' ';
-								height:20px;
-								width:20px;
+								height:18px;
+								width:18px;
 								display:block;
 								background-image:url('../../../images/icon-home.svg');
+								background-size: 18px 18px;
 							}
 						}
 
@@ -914,11 +954,8 @@
 							width: 20px;
 							height: 20px;
 							margin-top: -1px;
-							display: none;
-							&.is-done, &.active {
-								display: inline-block;
-							}
-							&.active::after, &.is-done::after {
+							display: inline-block;
+							&::after {
 								content: '';
 								display: block;
 								position: absolute;
@@ -926,9 +963,13 @@
 								left: 2px;
 								width: 6px;
 								height: 10px;
-								border: solid $black;
+								border: solid $light-grey;
 								border-width: 0 3px 3px 0;
 								transform: rotate(45deg);
+							}
+							&.active::after, &.is-done::after {
+								border-color: $black;
+
 							}
 							&.is-active::after {
 								border-color: $green;
@@ -1103,9 +1144,18 @@
 		top: 0;
 		left: 0;
 		cursor: pointer;
-		transition: background-color 0.3s ease;
+		transition: all 0.3s ease;
 		&:hover {
 			background-color: mix(white, $darkest-grey, 10%);
+		}
+
+		&.fixed {
+			position: fixed;
+			top: 25px;
+			border-radius: 50%;
+			width: 70px;
+		    height: 70px;
+		    border: 10px solid #f6f6f6;
 		}
 	}
 
