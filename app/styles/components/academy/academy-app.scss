@@ -842,11 +842,11 @@
 				width: 100%;
 				position: fixed;
 			    top: 0px;
-				width: 1202px;
+				width: 1200px;
 				left: 50%;
 				transform: translateX(-50%);
-				margin-left: -8px;
-				margin-right: -2px;
+				margin-left: -7px;
+				margin-right: 1px;
 				z-index: 2;
 				&::-webkit-progress-bar {
 				    background-color: $white;
