@@ -25,7 +25,7 @@ export default class AcademyDashboard extends React.Component {
 		};
 
 		const backlinkTitle = {
-			home: "Dashboard",
+			home: "Home",
 			course: "Academy homepage",
 		};
 		const curRoute = this.props.routeParams.courseSlug || this.props.route.name;
