@@ -523,6 +523,7 @@
 					transform: translate(-50%, -85%);
 					padding: 5px 15px;
 					background-color: $white;
+					border: 3px solid $white;
 					font-size: 80%;
 					border-radius: 20px;
 					text-transform: uppercase;
@@ -531,9 +532,9 @@
 					transition: opacity 0.1s ease;
 					&.currentlyreading {
 						opacity: 1;
-						color: $green;
-						background-color: $white;
-						border: 3px solid $green;
+						color: $dark-grey;
+						background-color: $light-green;
+						border-color: $green;
 						width: 158px;
 					}
 					&:hover {
