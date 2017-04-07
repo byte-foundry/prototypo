@@ -60,6 +60,12 @@
 		}
 
 		&-content {
+			h1 {
+				width: 100%;
+				text-align: center;
+				color: $dark-grey;
+				font-weight: 500;
+			}
 			padding: 20px 40px 40px;
 			.sign-in-form {
 				padding: 0;

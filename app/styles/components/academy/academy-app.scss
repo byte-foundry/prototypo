@@ -984,6 +984,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-around;
+		flex-wrap: wrap;
 		align-items: stretch;
 		margin-bottom: 40px;
 		margin-left: 40px;
@@ -1091,7 +1092,7 @@
 		}
 		&-validation {
 			align-self: flex-end;
-			max-width: 180px;
+			max-width: 300px;
 			.academy-button {
 				margin-bottom: 10px;
 			}
@@ -1113,8 +1114,8 @@
 		color: $dark-grey;
 		font-size: 35px;
 		font-weight: normal;
-		margin-top: 20px;
-		margin-bottom: 0;
+		margin-top: 40px;
+		margin-bottom: 20px;
 	}
 
 	&-container {
