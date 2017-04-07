@@ -27,6 +27,8 @@ gulp.task('images', function() {
 		.pipe(gulp.dest('./dist/assets/images/'));
 	gulp.src('./app/fonts/*.*')
 		.pipe(gulp.dest('./dist/assets/fonts/'));
+	gulp.src('./node_modules/tutorial-content/content/**/*.{png,gif,jpg,svg}')
+		.pipe(gulp.dest('./dist/assets/images/academy/courses/'));
 });
 
 gulp.task('cp-prototypo.js', function() {
