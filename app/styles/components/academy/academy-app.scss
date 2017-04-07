@@ -208,20 +208,20 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-			    svg {
+				svg {
 					display: block;
 					position: relative;
 					width: 0.8%;
-				    transform: rotate(-30deg);
-				    transform-origin: top left;
-				    margin-top: 5.5%;
-				    margin-left:16.5%;
-				    transition: 1s;
-				    -webkit-backface-visibility: hidden;
-				    transition-delay: 0.2s;
+					transform: rotate(-30deg);
+					transform-origin: top left;
+					margin-top: 5.5%;
+					margin-left:16.5%;
+					transition: 1s;
+					-webkit-backface-visibility: hidden;
+					transition-delay: 0.2s;
 					&:hover{
-					    margin-top: 5%;
-					    margin-left:18%;
+						margin-top: 5%;
+						margin-left:18%;
 					}
 				}
 			}
@@ -231,21 +231,21 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-			    svg {
+				svg {
 					display: block;
 					position: relative;
 					width: 14%;
-				    transform: rotate(-9deg);
-				    transform-origin: top left;
-				    margin-top: 5%;
-				    margin-left:2.5%;
-				    transition: 1s;
-				    -webkit-backface-visibility: hidden;
-				    transition-delay: 0.2s;
+					transform: rotate(-9deg);
+					transform-origin: top left;
+					margin-top: 5%;
+					margin-left:2.5%;
+					transition: 1s;
+					-webkit-backface-visibility: hidden;
+					transition-delay: 0.2s;
 					&:hover{
-					    transform: rotate(-11deg);
-					    margin-top: 4.3%;
-					    margin-left:2%;
+						transform: rotate(-11deg);
+						margin-top: 4.3%;
+						margin-left:2%;
 					}
 				}
 			}
@@ -255,21 +255,21 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-			    svg{
+				svg{
 					display: block;
 					position: relative;
 					width: 5%;
-				    transform: rotate(-40deg);
-				    transform-origin: top left;
-				    margin-top: 15.5%;
-				    margin-left:11%;
-				    transition: 1s;
-				    -webkit-backface-visibility: hidden;
-				    transition-delay: 0.2s;
+					transform: rotate(-40deg);
+					transform-origin: top left;
+					margin-top: 15.5%;
+					margin-left:11%;
+					transition: 1s;
+					-webkit-backface-visibility: hidden;
+					transition-delay: 0.2s;
 					&:hover{
-					    margin-top: 13%;
-					    margin-left:9.5%;
-					    transform: rotate(-30deg);
+						margin-top: 13%;
+						margin-left:9.5%;
+						transform: rotate(-30deg);
 					}
 				}
 			}
@@ -279,14 +279,14 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-			    svg {
+				svg {
 					display: block;
 					position: relative;
 					width: 10%;
-				    transform: rotate(-10deg);
-				    transform-origin: top left;
-				    margin-top: 13%;
-				    margin-left:25%;
+					transform: rotate(-10deg);
+					transform-origin: top left;
+					margin-top: 13%;
+					margin-left:25%;
 				}
 			}
 			&-ruler{
@@ -295,19 +295,19 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-			    svg {
+				svg {
 					display: block;
 					position: relative;
 					width: 21%;
-				    transform: rotate(-19deg);
-				    transform-origin: top left;
-				    margin-top: 7%;
-				    margin-left:22%;
-				    transition: 1s;
-				    -webkit-backface-visibility: hidden;
-				    transition-delay: 0.2s;
+					transform: rotate(-19deg);
+					transform-origin: top left;
+					margin-top: 7%;
+					margin-left:22%;
+					transition: 1s;
+					-webkit-backface-visibility: hidden;
+					transition-delay: 0.2s;
 					&:hover{
-					    transform: rotate(-25deg);
+						transform: rotate(-25deg);
 					}
 				}
 			}
@@ -318,20 +318,20 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-			    svg {
+				svg {
 					display: block;
 					position: relative;
 					width: 5%;
-				    transform: rotate(20deg);
-				    transform-origin: top left;
-				    margin-top: 4%;
-				    margin-left:41%;
-				    transition: 0.5s;
-				    -webkit-backface-visibility: hidden;
-				    transition-delay: 0.2s;
+					transform: rotate(20deg);
+					transform-origin: top left;
+					margin-top: 4%;
+					margin-left:41%;
+					transition: 0.5s;
+					-webkit-backface-visibility: hidden;
+					transition-delay: 0.2s;
 					&:hover{
-					    transform: rotate(50deg);
-					    transform-origin: 30% 30%;
+						transform: rotate(50deg);
+						transform-origin: 30% 30%;
 					}
 				}
 			}
@@ -341,20 +341,20 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-			    svg {
+				svg {
 					display: block;
 					position: relative;
 					width: 0.75%;
-				    transform: rotate(20deg);
-				    transform-origin: top left;
-				    margin-top: 14%;
-				    margin-left:41%;
-				    transition: 1.4s;
-				    -webkit-backface-visibility: hidden;
-				    transition-delay: 0.2s;
+					transform: rotate(20deg);
+					transform-origin: top left;
+					margin-top: 14%;
+					margin-left:41%;
+					transition: 1.4s;
+					-webkit-backface-visibility: hidden;
+					transition-delay: 0.2s;
 					&:hover{
-					    margin-top: 15.5%;
-					    margin-left:46%;
+						margin-top: 15.5%;
+						margin-left:46%;
 					}
 				}
 			}
@@ -364,19 +364,19 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-			    svg {
+				svg {
 					display: block;
 					position: relative;
 					width: 22%;
-				    transform: rotate(16deg);
-				    transform-origin: top left;
-				    margin-top: 2%;
-				    margin-left:51%;
-				    transition: 1.4s;
-				    -webkit-backface-visibility: hidden;
-				    transition-delay: 0.2s;
+					transform: rotate(16deg);
+					transform-origin: top left;
+					margin-top: 2%;
+					margin-left:51%;
+					transition: 1.4s;
+					-webkit-backface-visibility: hidden;
+					transition-delay: 0.2s;
 					&:hover{
-					    transform: rotate(20deg);
+						transform: rotate(20deg);
 					}
 				}
 			}
@@ -386,14 +386,14 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-			    svg {
+				svg {
 					display: block;
 					position: relative;
 					width: 7%;
-				    transform: rotate(16deg);
-				    transform-origin: top left;
-				    margin-top: 1.5%;
-				    margin-left:71%;
+					transform: rotate(16deg);
+					transform-origin: top left;
+					margin-top: 1.5%;
+					margin-left:71%;
 				}
 			}
 			&-iphone{
@@ -402,14 +402,14 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-			    svg {
+				svg {
 					display: block;
 					position: relative;
 					width: 3.5%;
-				    transform: rotate(5deg);
-				    transform-origin: top left;
-				    margin-top: 14%;
-				    margin-left:70%;
+					transform: rotate(5deg);
+					transform-origin: top left;
+					margin-top: 14%;
+					margin-left:70%;
 				}
 			}
 			&-postit{
@@ -418,20 +418,20 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-			    svg {
+				svg {
 					display: block;
 					position: relative;
 					width: 4%;
-				    transform: rotate(10deg);
-				    transform-origin: top left;
-				    margin-top: 10.5%;
-				    margin-left:43%;
-				    transition: 1.4s;
-				    -webkit-backface-visibility: hidden;
-				    transition-delay: 0.2s;
+					transform: rotate(10deg);
+					transform-origin: top left;
+					margin-top: 10.5%;
+					margin-left:43%;
+					transition: 1.4s;
+					-webkit-backface-visibility: hidden;
+					transition-delay: 0.2s;
 					&:hover{
-					    margin-top: 10%;
-					    transform: rotate(3deg);
+						margin-top: 10%;
+						transform: rotate(3deg);
 					}
 				}
 			}
@@ -451,15 +451,15 @@
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
-			width: calc(33.333% - 40px);
+			width: calc(33.333% - 30px);
 			background: #fcfcfc;
 			padding: 15px;
 			padding-bottom: 60px;
-			margin-bottom: 40px;
+			margin-bottom: 30px;
 			border-radius: 10px;
-			margin-left: 20px;
-			margin-right: 20px;
-			border: 3px solid $light-grey;
+			margin-left: 15px;
+			margin-right: 15px;
+			border: 2px solid $light-grey;
 			&:hover {
 				border-color: $light-green;
 				transition: all 0.3s cubic-bezier(.25,.8,.25,1);
@@ -480,9 +480,12 @@
 				font-weight: 600;
 				cursor: pointer;
 				text-transform: uppercase;
+				color: $dark-grey;
 			}
 			p {
 				font-size: 16px;
+				line-height: 1.6;
+				color: $dark-grey;
 			}
 			p:first-child {
 				margin-top: 0;
@@ -528,8 +531,10 @@
 					transition: opacity 0.1s ease;
 					&.currentlyreading {
 						opacity: 1;
-						background-color: $light-green;
-						width: 151px;
+						color: $green;
+						background-color: $white;
+						border: 3px solid $green;
+						width: 158px;
 					}
 					&:hover {
 						opacity: 1;
@@ -547,7 +552,7 @@
 				bottom: 0px;
 				left: 50%;
 				transform: translateX(-50%);
-				background: #fff;
+				background: $lightest-grey;
 				display: inline-block;
 				width: 100%;
 				box-shadow: 0 -5px 3px -5px transparentize(#aeaeae, 0.6);
@@ -566,11 +571,12 @@
 					height: 100%;
 					&-text {
 						position: absolute;
-						top: -4px;
+						top: -6px;
 						left: 0;
 						display: inline-block;
 						z-index: 2;
-						font-size: 14px;
+						font-size: 12px;
+						color: $medium-grey;
 					}
 					&-progress-wrapper {
 						position: absolute;
@@ -602,11 +608,11 @@
 					position: relative;
 					display: block;
 					float: right;
-					margin-right: 10px;
+					margin-right: 5px;
 					img {
 						height: 20px;
-						margin-right: 5px;
-						margin-top: 4px;
+						margin-right: 4px;
+						margin-top: 2px;
 						float: left;
 					}
 				}
@@ -616,12 +622,13 @@
 					float: right;
 					img {
 						height: 20px;
-						margin-right: 5px;
-						margin-top: 4px;
+						margin-right: 6px;
+						margin-top: 2px;
 						float: left;
 					}
 					span {
 						float: right;
+						font-size: 0.8em;
 					}
 				}
 			}
@@ -658,10 +665,10 @@
 		border-top-left-radius: 5px;
 
 		&-checkbox {
-	      	display: none;
-	    }
-	    &-checkbox + label span {
-			border: 2px solid $white;
+		  	display: none;
+		}
+		&-checkbox + label span {
+			border: 3px solid $white;
 			display: inline-block;
 			width: 25px;
 			height: 25px;
@@ -669,19 +676,39 @@
 			margin-right: 15px;
 			border-radius: 2px;
 			position: relative;
-	    }
-	    &-checkbox:checked + label span::after {
+			&:hover {
+				background-color: $lightest-green;
+				cursor: pointer;
+				&::after {
+					content: '';
+					display: block;
+					position: absolute;
+					top: -2px;
+					left: 4px;
+					width: 7px;
+					height: 13px;
+					border: solid $light-grey;
+					border-width: 0 5px 5px 0;
+					transform: rotate(45deg);
+				}
+			}
+		}
+		&-checkbox:checked + label span {
+			background-color: $lightest-green;
+			border-color: $lightest-green;
+		}
+		&-checkbox:checked + label span::after {
 			content: '';
 			display: block;
 			position: absolute;
-			top: -1px;
-			left: 5px;
+			top: -2px;
+			left: 4px;
 			width: 7px;
 			height: 13px;
-			border: solid $white;
-			border-width: 0 3px 3px 0;
+			border: solid $green;
+			border-width: 0 5px 5px 0;
 			transform: rotate(45deg);
-	    }
+		}
 	}
 	.part-progress-complete-button {
 	  	position: relative;
@@ -689,16 +716,16 @@
 		float: right;
 		margin: 15px 40px 0px 0;
 		padding: 15px 20px;
-	    min-width: 120px;
-	    font-size: 18px;
-	    border: 2px solid $green;
+		min-width: 120px;
+		font-size: 18px;
+		border: 3px solid $green;
 		background-color: $white;
 		color: $green;
-	    font-weight: 600;
-	    border-radius: 5px;
-	    margin-top: 20px;
-	    margin-bottom: 40px;
-	    cursor: pointer;
+		font-weight: 600;
+		border-radius: 5px;
+		margin-top: 20px;
+		margin-bottom: 40px;
+		cursor: pointer;
 		user-select: none !important;
 		transition: all .3s ease;
 		&:not(.finished):hover {
@@ -758,6 +785,7 @@
 					padding-right: 40px;
 				}
 				p, h3, h4, h5, img, pre {
+					color: $dark-grey;
 					padding-left: 40px;
 					padding-right: 40px;
 					user-select: initial;
@@ -773,6 +801,9 @@
 				li {
 					padding-left: 5px;
 					user-select: initial !important;
+					line-height: 1.6;
+					margin-left: -20px;
+					margin-bottom: 5px;
 					p, h3, h4, h5, img, pre, em, code {
 						padding-left: 0;
 						padding-right: 0;
@@ -831,17 +862,15 @@
 			padding: 20px;
 			border-radius: 5px;
 			h3 {
+				color: $dark-grey;
 				margin: 0;
-				&:not(:first-child) {
-					margin-top: 15px;
-				}
 			}
 			progress {
 				background-color: $white;
 				height: 8px;
 				width: 100%;
 				position: fixed;
-			    top: 0px;
+				top: 0px;
 				width: 1200px;
 				left: 50%;
 				transform: translateX(-50%);
@@ -849,28 +878,28 @@
 				margin-right: 1px;
 				z-index: 2;
 				&::-webkit-progress-bar {
-				    background-color: $white;
+					background-color: $white;
 				}
 
 				&::-webkit-progress-value {
 					background-size: 30px 30px;
 					background-color: $green;
 					background-image: linear-gradient(135deg, rgba(255, 255, 255, .25) 25%, transparent 25%,
-                        transparent 50%, rgba(255, 255, 255, .25) 50%, rgba(255, 255, 255, .25) 75%,
-                        transparent 75%, transparent);
+						transparent 50%, rgba(255, 255, 255, .25) 50%, rgba(255, 255, 255, .25) 75%,
+						transparent 75%, transparent);
 				}
 
 				&::-moz-progress-bar {
 					background-size: 30px 30px;
-				    background-color: $green;
+					background-color: $green;
 					background-image: linear-gradient(135deg, rgba(255, 255, 255, .25) 25%, transparent 25%,
-                        transparent 50%, rgba(255, 255, 255, .25) 50%, rgba(255, 255, 255, .25) 75%,
-                        transparent 75%, transparent);
+						transparent 50%, rgba(255, 255, 255, .25) 50%, rgba(255, 255, 255, .25) 75%,
+						transparent 75%, transparent);
 				}
 			}
 			&.fixed {
-			    position: fixed;
-			    top: 0px;
+				position: fixed;
+				top: 0px;
 				margin-top: 0;
 			}
 			&:not(.fixed) progress {
@@ -891,6 +920,9 @@
 						span {
 							font-size: 16px;
 						}
+						&:last-child {
+							margin-bottom: 20px;
+						}
 
 						&:hover {
 							color: $green;
@@ -903,7 +935,7 @@
 							.academy-sidebar-menu-item-checkmark.is-active::after {
 								border-color: $green;
 							}
-						    .academy-sidebar-menu-item-home-icon::before {
+							.academy-sidebar-menu-item-home-icon::before {
 								background-image:url('../../../images/icon-home-active.svg');
 							}
 						}
@@ -990,7 +1022,7 @@
 		padding: 40px;
 		background-color: $white;
 		border-radius: 5px;
-	    width: 780px;
+		width: 780px;
 		&-icon {
 			position: relative;
 			display: block;
@@ -1062,25 +1094,25 @@
 			}
 			@keyframes pulse {
 			  0% {
-			    transform: scale(1);
+				transform: scale(1);
 			  }
 			  90% {
-			    transform: scale(0.1);
+				transform: scale(0.1);
 			  }
 			  100% {
-			    transform: scale(1);
+				transform: scale(1);
 			  }
 			}
 
 			@keyframes opacify {
 			  0% {
-			    opacity: 1;
+				opacity: 1;
 			  }
 			  50% {
-			    opacity: 0.1;
+				opacity: 0.1;
 			  }
 			  100% {
-			    opacity: 1;
+				opacity: 1;
 			  }
 			}
 		}
@@ -1113,8 +1145,7 @@
 		color: $dark-grey;
 		font-size: 35px;
 		font-weight: normal;
-		margin-top: 20px;
-		margin-bottom: 0;
+		margin: 50px auto 30px;
 	}
 
 	&-container {
@@ -1154,8 +1185,8 @@
 			top: 25px;
 			border-radius: 50%;
 			width: 70px;
-		    height: 70px;
-		    border: 10px solid #f6f6f6;
+			height: 70px;
+			border: 10px solid #f6f6f6;
 		}
 	}
 
@@ -1173,7 +1204,7 @@
 		cursor:pointer;
 		display:block;
 		font-size: 15px;
-		color: $light-grey !important;
+		color: $medium-grey !important;
 		font-weight: 700;
 
 		&:hover {
