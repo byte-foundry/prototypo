@@ -1,5 +1,7 @@
-import {encode} from './encode.js';
+/*global _ */
+import {encode, sizeOf} from './encode.js';
 
+/* eslint-disable babel/new-cap */
 export function buildTableObj(tableName, fields, options) {
 	const tableObj = {};
 
@@ -259,6 +261,8 @@ export class cmap {
 }
 
 const utf16 = 'utf-16';
+
+
 
 // MacOS script ID → encoding. This table stores the default case,
 // which can be overridden by macLanguageEncodings.
@@ -684,7 +688,7 @@ const windowsLanguages = {
 // done as a (pretty radical) "modification" of Ethiopic.
 //
 // http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/Readme.txt
-var macLanguageToScript = {
+const macLanguageToScript = {
 	    0: 0,  // langEnglish → smRoman
 	    1: 0,  // langFrench → smRoman
 	    2: 0,  // langGerman → smRoman
@@ -847,6 +851,71 @@ function makeNameRecord(platformID, encodingID, languageID, nameID, length, offs
     ]);
 }
 
+// NameIDs for the name table.
+const nameTableNames = [
+    'copyright',              // 0
+    'fontFamily',             // 1
+    'fontSubfamily',          // 2
+    'uniqueID',               // 3
+    'fullName',               // 4
+    'version',                // 5
+    'postScriptName',         // 6
+    'trademark',              // 7
+    'manufacturer',           // 8
+    'designer',               // 9
+    'description',            // 10
+    'manufacturerURL',        // 11
+    'designerURL',            // 12
+    'license',                // 13
+    'licenseURL',             // 14
+    'reserved',               // 15
+    'preferredFamily',        // 16
+    'preferredSubfamily',     // 17
+    'compatibleFullName',     // 18
+    'sampleText',             // 19
+    'postScriptFindFontName', // 20
+    'wwsFamily',              // 21
+    'wwsSubfamily',           // 22
+];
+
+// Finds the position of needle in haystack, or -1 if not there.
+// Like String.indexOf(), but for arrays.
+function findSubArray(needle, haystack) {
+    const needleLength = needle.length;
+    const limit = haystack.length - needleLength + 1;
+
+	/* eslint-disable no-labels */
+    loop:
+    for (let pos = 0; pos < limit; pos++) {
+        for (; pos < limit; pos++) {
+            for (let k = 0; k < needleLength; k++) {
+                if (haystack[pos + k] !== needle[k]) {
+                    continue loop;
+                }
+            }
+
+            return pos;
+        }
+    }
+	/* eslint-enable */
+
+    return -1;
+}
+
+function addStringToPool(s, pool) {
+    let offset = findSubArray(s, pool);
+
+    if (offset < 0) {
+        offset = pool.length;
+        for (let i = 0; i < s.length; i++) {
+            pool.push(s[i]);
+        }
+
+    }
+
+    return offset;
+}
+
 export class name {
 	static make(names, ltag) {
 		let nameID;
@@ -952,3 +1021,366 @@ export class name {
 		return t;
 	}
 }
+
+export class ltag {
+	static make(tags) {
+		const result = buildTableObj('ltag', [
+			{name: 'version', type: 'ULONG', value: 1},
+			{name: 'flags', type: 'ULONG', value: 0},
+			{name: 'numTags', type: 'ULONG', value: tags.length},
+		]);
+
+		let stringPool = '';
+		const stringPoolOffset = 12 + tags.length * 4;
+
+		for (let i = 0; i < tags.length; i++) {
+			let pos = stringPool.indexOf(tags[i]);
+
+			if (pos < 0) {
+				pos = stringPool.length;
+				stringPool += tags[i];
+			}
+
+			result.fields.push({name: `offset ${i}`, type: 'USHORT', value: stringPoolOffset + pos});
+			result.fields.push({name: `length ${i}`, type: 'USHORT', value: tags[i].length});
+		}
+
+		result.fields.push({name: 'stringPool', type: 'CHARARRAY', value: stringPool});
+
+		return result;
+	}
+}
+
+export class post {
+	static make() {
+		return buildTableObj('post', [
+			{name: 'version', type: 'FIXED', value: 0x00030000},
+			{name: 'italicAngle', type: 'FIXED', value: 0},
+			{name: 'underlinePosition', type: 'FWORD', value: 0},
+			{name: 'underlineThickness', type: 'FWORD', value: 0},
+			{name: 'isFixedPitch', type: 'ULONG', value: 0},
+			{name: 'minMemType42', type: 'ULONG', value: 0},
+			{name: 'maxMemType42', type: 'ULONG', value: 0},
+			{name: 'minMemType1', type: 'ULONG', value: 0},
+			{name: 'maxMemType1', type: 'ULONG', value: 0},
+		]);
+	}
+}
+
+function makeHeader() {
+	return buildTableObj('Header', [
+        {name: 'major', type: 'Card8', value: 1},
+        {name: 'minor', type: 'Card8', value: 0},
+        {name: 'hdrSize', type: 'Card8', value: 4},
+        {name: 'major', type: 'Card8', value: 1},
+    ]);
+}
+
+function makeNameIndex(fontNames) {
+    const t = buildTableObj('Name INDEX', [
+        {name: 'names', type: 'INDEX', value: []},
+    ]);
+
+    t.names = [];
+    for (let i = 0; i < fontNames.length; i++) {
+        t.names.push({name: `name_${i}`, type: 'NAME', value: fontNames[i]});
+    }
+
+    return t;
+}
+
+// Custom equals function that can also check lists.
+function equals(a, b) {
+    if (a === b) {
+        return true;
+	}
+	else if (Array.isArray(a) && Array.isArray(b)) {
+        if (a.length !== b.length) {
+            return false;
+        }
+
+        for (let i = 0; i < a.length; i++) {
+            if (!equals(a[i], b[i])) {
+                return false;
+            }
+        }
+
+        return true;
+	}
+	else {
+        return false;
+    }
+}
+
+// Convert a string to a String ID (SID).
+// The list of strings is modified in place.
+function encodeString(s, strings) {
+    let sid;
+
+    // Is the string in the CFF standard strings?
+    let i = cffStandardStrings.indexOf(s);
+    if (i >= 0) {
+        sid = i;
+    }
+
+    // Is the string already in the string index?
+    i = strings.indexOf(s);
+    if (i >= 0) {
+        sid = i + cffStandardStrings.length;
+	}
+	else {
+        sid = cffStandardStrings.length + strings.length;
+        strings.push(s);
+    }
+
+    return sid;
+}
+
+// Given a dictionary's metadata, create a DICT structure.
+function makeDict(meta, attrs, strings) {
+    const m = {};
+
+    for (let i = 0; i < meta.length; i++) {
+        const entry = meta[i];
+        let value = attrs[entry.name];
+
+        if (value !== undefined && !equals(value, entry.value)) {
+            if (entry.type === 'SID') {
+                value = encodeString(value, strings);
+            }
+
+            m[entry.op] = {name: entry.name, type: entry.type, value};
+        }
+    }
+
+    return m;
+}
+
+// The Top DICT houses the global font attributes.
+function makeTopDict(attrs, strings) {
+    const t = buildTableObj('Top DICT', [
+        {name: 'dict', type: 'DICT', value: {}},
+    ]);
+
+    t.dict = makeDict(TOP_DICT_META, attrs, strings);
+    return t;
+}
+
+function makeTopDictIndex(topDict) {
+    const t = buildTableObj('Top DICT INDEX', [
+        {name: 'topDicts', type: 'INDEX', value: []},
+    ]);
+
+    t.topDicts = [{name: 'topDict_0', type: 'TABLE', value: topDict}];
+    return t;
+}
+
+function makeStringIndex(strings) {
+    const t = buildTableObj('String INDEX', [
+        {name: 'strings', type: 'INDEX', value: []},
+    ]);
+
+    t.strings = [];
+    for (let i = 0; i < strings.length; i++) {
+        t.strings.push({name: `string_${i}`, type: 'STRING', value: strings[i]});
+    }
+
+    return t;
+}
+
+function makeGlobalSubrIndex() {
+    // Currently we don't use subroutines.
+    return buildTableObj('Global Subr INDEX', [
+        {name: 'subrs', type: 'INDEX', value: []},
+    ]);
+}
+
+function makeCharsets(glyphNames, strings) {
+    const t = buildTableObj('Charsets', [
+        {name: 'format', type: 'Card8', value: 0},
+    ]);
+
+    for (let i = 0; i < glyphNames.length; i++) {
+        const glyphName = glyphNames[i];
+        const glyphSID = encodeString(glyphName, strings);
+
+        t.fields.push({name: `glyph_${i}`, type: 'SID', value: glyphSID});
+    }
+
+    return t;
+}
+
+//TODO(franz): does not work like that anymore
+function glyphToOps(glyph) {
+    const ops = [];
+    const path = glyph.path;
+    let x = 0;
+    let y = 0;
+
+    ops.push({name: 'width', type: 'NUMBER', value: glyph.advanceWidth});
+
+    for (let i = 0; i < path.commands.length; i++) {
+        let dx;
+        let dy;
+        let cmd = path.commands[i];
+
+        if (cmd.type === 'Q') {
+            // CFF only supports bézier curves, so convert the quad to a bézier.
+            const _13 = 1 / 3;
+            const _23 = 2 / 3;
+
+            // We're going to create a new command so we don't change the original path.
+            cmd = {
+                type: 'C',
+                x: cmd.x,
+                y: cmd.y,
+                x1: _13 * x + _23 * cmd.x1,
+                y1: _13 * y + _23 * cmd.y1,
+                x2: _13 * cmd.x + _23 * cmd.x1,
+                y2: _13 * cmd.y + _23 * cmd.y1,
+            };
+        }
+
+        if (cmd.type === 'M') {
+            dx = Math.round(cmd.x - x);
+            dy = Math.round(cmd.y - y);
+            ops.push({name: 'dx', type: 'NUMBER', value: dx});
+            ops.push({name: 'dy', type: 'NUMBER', value: dy});
+            ops.push({name: 'rmoveto', type: 'OP', value: 21});
+            x = Math.round(cmd.x);
+            y = Math.round(cmd.y);
+		}
+		else if (cmd.type === 'L') {
+            dx = Math.round(cmd.x - x);
+            dy = Math.round(cmd.y - y);
+            ops.push({name: 'dx', type: 'NUMBER', value: dx});
+            ops.push({name: 'dy', type: 'NUMBER', value: dy});
+            ops.push({name: 'rlineto', type: 'OP', value: 5});
+            x = Math.round(cmd.x);
+            y = Math.round(cmd.y);
+		}
+		else if (cmd.type === 'C') {
+            const dx1 = Math.round(cmd.x1 - x);
+            const dy1 = Math.round(cmd.y1 - y);
+            const dx2 = Math.round(cmd.x2 - cmd.x1);
+            const dy2 = Math.round(cmd.y2 - cmd.y1);
+
+            dx = Math.round(cmd.x - cmd.x2);
+            dy = Math.round(cmd.y - cmd.y2);
+            ops.push({name: 'dx1', type: 'NUMBER', value: dx1});
+            ops.push({name: 'dy1', type: 'NUMBER', value: dy1});
+            ops.push({name: 'dx2', type: 'NUMBER', value: dx2});
+            ops.push({name: 'dy2', type: 'NUMBER', value: dy2});
+            ops.push({name: 'dx', type: 'NUMBER', value: dx});
+            ops.push({name: 'dy', type: 'NUMBER', value: dy});
+            ops.push({name: 'rrcurveto', type: 'OP', value: 8});
+            x = Math.round(cmd.x);
+            y = Math.round(cmd.y);
+        }
+
+        // Contours are closed automatically.
+
+    }
+
+    ops.push({name: 'endchar', type: 'OP', value: 14});
+    return ops;
+}
+
+function makeCharStringsIndex(glyphs) {
+    const t = buildTableObj('CharStrings INDEX', [
+        {name: 'charStrings', type: 'INDEX', value: []},
+    ]);
+
+    for (let i = 0; i < glyphs.length; i++) {
+        const glyph = glyphs.get(i);
+        const ops = glyphToOps(glyph);
+
+        t.charStrings.push({name: glyph.name, type: 'CHARSTRING', value: ops});
+    }
+
+    return t;
+}
+
+function makePrivateDict(attrs, strings) {
+    const t = buildTableObj('Private DICT', [
+        {name: 'dict', type: 'DICT', value: {}},
+    ]);
+
+    t.dict = makeDict(PRIVATE_DICT_META, attrs, strings);
+    return t;
+}
+
+export class cff {
+	static make(glyphs, options) {
+		const t = buildTableObj('CFF ', [
+			{name: 'header', type: 'RECORD'},
+			{name: 'nameIndex', type: 'RECORD'},
+			{name: 'topDictIndex', type: 'RECORD'},
+			{name: 'stringIndex', type: 'RECORD'},
+			{name: 'globalSubrIndex', type: 'RECORD'},
+			{name: 'charsets', type: 'RECORD'},
+			{name: 'charStringsIndex', type: 'RECORD'},
+			{name: 'privateDict', type: 'RECORD'},
+		]);
+
+		const fontScale = 1 / options.unitsPerEm;
+		// We use non-zero values for the offsets so that the DICT encodes them.
+		// This is important because the size of the Top DICT plays a role in offset calculation,
+		// and the size shouldn't change after we've written correct offsets.
+		const attrs = {
+			version: options.version,
+			fullName: options.fullName,
+			familyName: options.familyName,
+			weight: options.weightName,
+			fontBBox: options.fontBBox || [0, 0, 0, 0],
+			fontMatrix: [fontScale, 0, 0, fontScale, 0, 0],
+			charset: 999,
+			encoding: 0,
+			charStrings: 999,
+			private: [0, 999],
+		};
+		const privateAttrs = {};
+		const glyphNames = [];
+
+		// Skip first glyph (.notdef)
+		for (let i = 1; i < glyphs.length; i++) {
+			const glyph = glyphs.get(i);
+
+			glyphNames.push(glyph.name);
+		}
+
+		const strings = [];
+		let topDict = makeTopDict(attrs, strings);
+
+		t.header = makeHeader();
+		t.nameIndex = makeNameIndex([options.postScriptName]);
+		t.topDictIndex = makeTopDictIndex(topDict);
+		t.globalSubrIndex = makeGlobalSubrIndex();
+		t.charsets = makeCharsets(glyphNames, strings);
+		t.charStringsIndex = makeCharStringsIndex(glyphs);
+		t.privateDict = makePrivateDict(privateAttrs, strings);
+
+		// Needs to come at the end, to encode all custom strings used in the font.
+		t.stringIndex = makeStringIndex(strings);
+
+		const startOffset = t.header.sizeOf()
+			+ t.nameIndex.sizeOf()
+			+ t.topDictIndex.sizeOf()
+			+ t.stringIndex.sizeOf()
+			+ t.globalSubrIndex.sizeOf();
+
+		attrs.charset = startOffset;
+
+		// We use the CFF standard encoding; proper encoding will be handled in cmap.
+		attrs.encoding = 0;
+		attrs.charStrings = attrs.charset + t.charsets.sizeOf();
+		attrs.private[1] = attrs.charStrings + t.charStringsIndex.sizeOf();
+
+		// Recreate the Top DICT INDEX with the correct offsets.
+		topDict = makeTopDict(attrs, strings);
+		t.topDictIndex = makeTopDictIndex(topDict);
+
+		return t;
+	}
+}
+/* eslint-enable babel/new-cap */

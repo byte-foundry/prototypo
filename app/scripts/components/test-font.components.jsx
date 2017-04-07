@@ -1,3 +1,4 @@
+/*global _ */
 import React from 'react';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';

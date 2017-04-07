@@ -1,3 +1,4 @@
+/*global _ */
 import {checkArgument} from './check.js';
 
 const LIMIT32 = 2147483648; // The limit at which a 32-bit number switches signs == 2 ^ 31
@@ -179,7 +180,7 @@ encode.REAL = (v) => {
     nibbles += (nibbles.length & 1) ? 'f' : 'ff';
     const out = [30];
 
-    for (i = 0, ii = nibbles.length; i < ii; i += 2) {
+    for (i = 0; i < nibbles.length; i += 2) {
         out.push(parseInt(nibbles.substr(i, 2), 16));
     }
 

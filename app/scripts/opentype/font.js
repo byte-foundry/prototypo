@@ -1,20 +1,22 @@
-// @flow
+/*global _ */
 import {checkArgument} from './check.js';
-
 import os2, {getUnicodeRange} from './os2.js';
-import check from '../check';
-import table from '../table';
-import cmap from './cmap';
-import cff from './cff';
-import head from './head';
-import hhea from './hhea';
-import hmtx from './hmtx';
-import ltag from './ltag';
-import maxp from './maxp';
-import name from './name';
-import post from './post';
+import {
+	buildTableObj,
+	encodeTable,
+	sizeOfTable,
+	cff,
+	cmap,
+	head,
+	hhea,
+	hmtx,
+	ltag,
+	maxp,
+	name,
+	post,
+} from './table.js';
 
-const usWeightClasses = {
+export const usWeightClasses = {
     THIN: 100,
     EXTRA_LIGHT: 200,
     LIGHT: 300,
@@ -26,7 +28,7 @@ const usWeightClasses = {
     BLACK: 900,
 };
 
-const usWidthClasses = {
+export const usWidthClasses = {
     ULTRA_CONDENSED: 1,
     EXTRA_CONDENSED: 2,
     CONDENSED: 3,
@@ -38,54 +40,30 @@ const usWidthClasses = {
     ULTRA_EXPANDED: 9,
 };
 
-type LocalizedName = {
-    en: string,
-};
-
-type UsWeightClass = $Keys<typeof usWeightClasses>;
-type UsWidthClass = $Keys<typeof usWidthClasses>;
-
-type Os2Table = {
-    usWeightClass: UsWeightClass,
-    usWidthClass: UsWidthClass,
-};
-
-type Tables = {
-    os2: Os2Table
-};
-
-type Glyph = {
-    unicode: number,
-    advanceWidth: number,
-    name: string,
+function log2(v) {
+    return Math.log(v) / Math.log(2) | 0;
 }
 
-type Font = {
-    fontFamily: LocalizedName,
-    fontSubFamily: LocalizedName,
-    fullName?: LocalizedName,
-    postScriptName?: LocalizedName,
-    designer?: LocalizedName,
-    designerUrl?: LocalizedName,
-    manufacturer?: LocalizedName,
-    manufacturerUrl?: LocalizedName,
-    license?: LocalizedName,
-    licenseUrl?: LocalizedName,
-    version?: LocalizedName,
-    description?: LocalizedName,
-    copyright?: LocalizedName,
-    trademark?: LocalizedName,
-    unitsPerEm: number,
-    ascender: number,
-    descender: number,
-    createdTimestamp?: number,
-    usWeightClass?: UsWeightClass,
-    usWidthClass?: UsWidthClass,
-    tables?: Tables,
-    glyphs: Glyph[],
-};
+function computeCheckSum(bytes) {
+    while (bytes.length % 4 !== 0) {
+        bytes.push(0);
+    }
 
-export function funcFontToSfntTable(font: Font): ArrayBuffer {
+    let sum = 0;
+
+    for (let i = 0; i < bytes.length; i += 4) {
+		sum += (bytes[i] << 24)
+			+ (bytes[i + 1] << 16)
+			+ (bytes[i + 2] << 8)
+			+ (bytes[i + 3]);
+    }
+
+    sum %= Math.pow(2, 32);
+
+    return sum;
+}
+
+export function FontToSfntTable(font) {
     const {
         ascender,
         descender,
@@ -107,6 +85,7 @@ export function funcFontToSfntTable(font: Font): ArrayBuffer {
         trademark,
         usWeightClass,
         usWidthClass,
+		fsSelection,
     } = font;
 
     const xMins: number[] = [];
@@ -124,8 +103,8 @@ export function funcFontToSfntTable(font: Font): ArrayBuffer {
     let ulUnicodeRange4: number = 0;
 
     for (let i: number = 0; i < font.glyphs.length; i++) {
-        const glyph: Glyph = font.glyphs[i];
-        const unicode: number = glyph.unicode;
+        const glyph = font.glyphs[i];
+        const unicode = glyph.unicode;
 
         if (isNaN(glyph.advanceWidth)) {
             throw new Error(`Glyph ${glyph.name} (${i}): advanceWidth is not a number`);
@@ -161,7 +140,7 @@ export function funcFontToSfntTable(font: Font): ArrayBuffer {
             continue;
         }
 
-        const metrics: Metrics = getMetrics(glyph);
+        const metrics = getMetrics(glyph);
 
         xMins.push(metrics.xMin);
         yMins.push(metrics.yMin);
@@ -180,7 +159,7 @@ export function funcFontToSfntTable(font: Font): ArrayBuffer {
     const xMax: number = Math.max.apply(null, xMaxs);
     const yMax: number = Math.max.apply(null, yMaxs);
 
-    const headTable: HeadTable = head.make({
+    const headTable = head.make({
         flags: 3,
         unitsPerEm: font.unitsPerEm,
         xMin,
@@ -191,7 +170,7 @@ export function funcFontToSfntTable(font: Font): ArrayBuffer {
         createdTimestamp,
     });
 
-    const hheaTable: HheaTable = hhea.make({
+    const hheaTable = hhea.make({
         ascender,
         descender,
         advanceWidthMax,
@@ -273,7 +252,7 @@ export function funcFontToSfntTable(font: Font): ArrayBuffer {
     }
 
     const sfntTable = makeSfntTable(tables);
-    const bytes = sfntTable.encode();
+    const bytes = encodeTable(sfntTable);
     const checkSum = computeCheckSum(bytes);
     const tableFields = sfntTable.fields;
     let checkSumAdjusted = false;
@@ -293,8 +272,17 @@ export function funcFontToSfntTable(font: Font): ArrayBuffer {
     return sfntTable;
 }
 
+function makeTableRecord(tag, checkSum, offset, length) {
+    return buildTableObj('Table Record', [
+        {name: 'tag', type: 'TAG', value: tag === undefined ? '' : tag},
+        {name: 'checkSum', type: 'ULONG', value: checkSum === undefined ? 0 : checkSum},
+        {name: 'offset', type: 'ULONG', value: offset === undefined ? 0 : offset},
+        {name: 'length', type: 'ULONG', value: length === undefined ? 0 : length},
+    ]);
+}
+
 function makeSfntTable(tables) {
-    const sfnt = new table.Table('sfnt', [
+    const sfnt = buildTableObj('sfnt', [
         {name: 'version', type: 'TAG', value: 'OTTO'},
         {name: 'numTables', type: 'USHORT', value: 0},
         {name: 'searchRange', type: 'USHORT', value: 0},
@@ -313,7 +301,7 @@ function makeSfntTable(tables) {
     const recordFields = [];
     const tableFields = [];
 
-    let offset = sfnt.sizeOf() + (makeTableRecord().sizeOf() * sfnt.numTables);
+    let offset = sizeOfTable(sfnt) + (sizeOfTable(makeTableRecord()) * sfnt.numTables);
 
     while (offset % 4 !== 0) {
         offset += 1;
@@ -376,11 +364,11 @@ function getMetrics(glyph) {
             xCoords.push(node.x);
             yCoords.push(node.y);
 
-            xCoords.push(handleIn.x);
-            yCoords.push(handleIn.y);
+            xCoords.push(node.handleIn.x);
+            yCoords.push(node.handleIn.y);
 
-            xCoords.push(handleOut.x);
-            yCoords.push(handleOut.y);
+            xCoords.push(node.handleOut.x);
+            yCoords.push(node.handleOut.y);
         });
     });
 
