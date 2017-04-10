@@ -18,6 +18,9 @@ export default class AcademyHome extends React.PureComponent {
 		this.isReading = this.isReading.bind(this);
 	}
 	componentWillMount() {
+		document.getElementsByClassName('academy-dashboard-icon')[0].classList.remove('fixed');
+		document.getElementsByClassName('academy-dashboard-icon')[0].style.left = `inherit`;
+
 		let academyProgress = this.state.academyProgress || {};
 
 		this.client = LocalClient.instance();
