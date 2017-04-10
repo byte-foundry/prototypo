@@ -240,6 +240,10 @@ export default {
 		const patch = userStore.set('infos', {}).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);
+
+		const prototypatch = prototypoStore.set('credits', 0).commit();
+
+		localServer.dispatchUpdate('/prototypoStore', prototypatch);
 	},
 	'/sign-in': async ({username, password, retry}) => {
 		const dashboardLocation = {
