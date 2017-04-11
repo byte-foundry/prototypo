@@ -5,23 +5,26 @@ import TutorialContent from 'tutorial-content';
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import InlineSVG from 'svg-inline-react';
+import ReactMotionFlip from "react-motion-flip"
 
 export default class AcademyHome extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
 			academyProgress: {},
+			tags: [],
+			activeTag: 'all',
+			courses: [],
 		};
 		this.tutorials = new TutorialContent();
-		this.courses = [];
 		this.getPartsDone = this.getPartsDone.bind(this);
 		this.isReading = this.isReading.bind(this);
+		this.setActiveTag = this.setActiveTag.bind(this);
 	}
 	componentWillMount() {
-		document.getElementsByClassName('academy-dashboard-icon')[0].classList.remove('fixed');
-		document.getElementsByClassName('academy-dashboard-icon')[0].style.left = `inherit`;
-
 		let academyProgress = this.state.academyProgress || {};
+		const tags = [];
+		const courses = this.state.courses;
 
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
@@ -38,6 +41,11 @@ export default class AcademyHome extends React.PureComponent {
 		this.tutorials.content.map((tutorial) => {
 			let parts = [];
 
+			tutorial.tags.map((tag) => {
+				if (tags.indexOf(tag) === -1) {
+					tags.push(tag);
+				}
+			});
 			if (academyProgress[tutorial.slug]) {
 				parts = academyProgress[tutorial.slug].parts;
 			}
@@ -64,7 +72,7 @@ export default class AcademyHome extends React.PureComponent {
 					rewarded: false,
 				};
 			}
-			this.courses.push({
+			courses.push({
 				title: tutorial.title,
 				header: tutorial.header,
 				slug: tutorial.slug,
@@ -73,10 +81,13 @@ export default class AcademyHome extends React.PureComponent {
 				headerImage: tutorial.headerImage,
 				reward: tutorial.reward,
 				isVideo: tutorial.isVideo,
+				tags: tutorial.tags,
 			});
 		});
-
-		this.setState({academyProgress});
+		this.baseCourses = courses;
+		this.setState({academyProgress, tags, courses});
+		document.getElementsByClassName('academy-dashboard-icon')[0].classList.remove('fixed');
+		document.getElementsByClassName('academy-dashboard-icon')[0].style.left = `inherit`;
 	}
 	getPartsDone(slug) {
 		const partsDone = this.state.academyProgress[slug].parts.filter((part) => {
@@ -88,9 +99,18 @@ export default class AcademyHome extends React.PureComponent {
 	isReading(slug) {
 		return this.state.academyProgress.lastCourse === slug;
 	}
+	setActiveTag(tag) {
+		if (tag === 'all') {
+			return this.setState({activeTag: tag, courses: this.baseCourses});
+		}
+		const filteredCourses = this.baseCourses.filter((course) => {
+			return course.tags.indexOf(tag) >= 0;
+		});
+
+		return this.setState({activeTag: tag, courses: filteredCourses});
+	}
 	render() {
 		let partsDone = false;
-		console.log(this.courses);
 
 		// const tutorialReward = tutorial.reward
 		// ? (<div className="academy-reward">
@@ -114,12 +134,26 @@ export default class AcademyHome extends React.PureComponent {
 					<InlineSVG className="academy-home-header-icon-loupe" element="div" src={require('!svg-inline?classPrefix=loupe-!../../../images/academy/loupe.svg')} />
 					<InlineSVG className="academy-home-header-icon-blackpen" element="div" src={require('!svg-inline?classPrefix=blackpen-!../../../images/academy/blackpen.svg')} />
 				</div>
-				<div className="academy-course-list">
+				<div className="academy-home-tags">
+					<div key={`tag-all`} onClick={() => {this.setActiveTag('all');}} className={`academy-home-tags-tag ${this.state.activeTag === 'all' ? 'active' : ''}`}>
+						All courses
+					</div>
 					{
-							this.courses.map((tutorial) => {
+						this.state.tags.map((tag) => {
+							return(
+								<div key={`tag-${tag}`} className={`academy-home-tags-tag ${this.state.activeTag === tag ? 'active' : ''}`} onClick={() => {this.setActiveTag(tag);}}>
+									{tag}
+								</div>
+							);
+						})
+					}
+				</div>
+				<ReactMotionFlip className="academy-course-list" childClassName="academy-course-list-elem" springConfig={{stiffness: 220, damping: 30}}>
+					{
+							this.state.courses.map((tutorial) => {
 								partsDone = this.getPartsDone(tutorial.slug);
 								return (
-									<div key={tutorial.title} className={`academy-course-list-elem ${this.isReading(tutorial.slug) ? 'currentlyreading' : ''} ${partsDone === tutorial.partCount ? 'done' : ''}`}>
+									<div key={tutorial.title} className={`${this.isReading(tutorial.slug) ? 'currentlyreading' : ''} ${partsDone === tutorial.partCount ? 'done' : ''}`}>
 										<Link to={`/academy/course/${tutorial.slug}`}>
 											<div className="academy-course-list-elem-header">
 												<img className="header-image" src={tutorial.headerImage} alt={`${tutorial.title} header image`} />
@@ -150,7 +184,7 @@ export default class AcademyHome extends React.PureComponent {
 								);
 							})
 						}
-				</div>
+				</ReactMotionFlip>
 			</div>
 		);
 	}

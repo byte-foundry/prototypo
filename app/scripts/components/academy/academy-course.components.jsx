@@ -216,9 +216,9 @@ export default class AcademyCourse extends React.PureComponent {
 		const {src, alt} = props;
 		const urlRegexp = /([a-z]+\:\/+)([^\/\s]*)([a-z0-9\-@\^=%&;\/~\+]*)[\?]?([^ \#]*)#?([^ \#]*)/ig;
 
-		if (!src.match(urlRegexp)) {
+		if (!src.match(urlRegexp) && this.state.course) {
 			return(
-				<img src={`assets/images/academy/courses/${this.courseSlug}/${src}`} alt={alt} />
+				<img src={`assets/images/academy/courses/${this.state.course.title}/${src}`} alt={alt} />
 			);
 		}
 		return(

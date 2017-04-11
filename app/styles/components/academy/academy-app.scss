@@ -438,6 +438,42 @@
 		}
 	}
 
+	&-tags {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		font-size: 14px;
+		padding: 0 40px 0 40px;
+		&-tag {
+			position: relative;
+			display: block;
+			margin-left: 20px;
+			margin-right: 20px;
+			margin-bottom: 40px;
+			background-color: $white;
+			padding: 5px 10px;
+			border-radius: 5px;
+			text-transform: uppercase;
+			font-weight: 700;
+			letter-spacing: -0.01em;
+			transition: background-color .3s ease;
+
+			&:hover {
+				cursor: pointer;
+				background-color: mix($red, $white, 30%);
+			}
+
+			&.active {
+				color: $white;
+				background-color: $red;
+				&:hover {
+					background-color: $red;
+				}
+			}
+		}
+	}
+
 	.academy-course-list {
 		display: flex;
 		flex-direction: row;
