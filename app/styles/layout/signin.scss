@@ -33,6 +33,10 @@ _:-ms-fullscreen, #notloggedin {
 	position:relative;
 	background-color:$white;
 	border-radius:7px;
+
+	.account-dashboard-page-title {
+		padding-bottom: 40px;
+	}
 }
 
 .sign-in {
@@ -64,6 +68,8 @@ _:-ms-fullscreen, #notloggedin {
 			color:$medium-grey;
 		}
 	}
+
+
 }
 
 .sign-up {
