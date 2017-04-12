@@ -86,8 +86,11 @@ export default class AcademyHome extends React.PureComponent {
 		});
 		this.baseCourses = courses;
 		this.setState({academyProgress, tags, courses});
-		document.getElementsByClassName('academy-dashboard-icon')[0].classList.remove('fixed');
-		document.getElementsByClassName('academy-dashboard-icon')[0].style.left = `inherit`;
+		const icons = document.getElementsByClassName('academy-dashboard-icon');
+		if (icons.length > 0) {
+			icons[0].classList.remove('fixed');
+			icons[0].style.left = `inherit`;
+		}
 	}
 	getPartsDone(slug) {
 		const partsDone = this.state.academyProgress[slug].parts.filter((part) => {
