@@ -1,13 +1,20 @@
 @import "../../variables";
 
 .academy-modal {
-	p {
+	h2 {
 		font-weight: 600;
+		text-align: center;
+		color: $dark-grey;
+	}
+	p {
+		// font-weight: 600;
 		font-size: 20px;
 		text-align: center;
+		color: $dark-grey;
 	}
 	.button {
 		font-size: 20px;
+		font-weight: normal;
 	}
 	&-icon{
 		width: 100%;
