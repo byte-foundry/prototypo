@@ -226,7 +226,6 @@ export default class Topbar extends React.Component {
 	}
 
 	render() {
-		console.log(this.state.hasBeenSubscribing);
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Topbar');
 		}

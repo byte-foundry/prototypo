@@ -554,8 +554,6 @@ export default {
 		const validCoupon = userStore.get('choosePlanForm').validCoupon;
 		const { fullname, number, expMonth, expYear, cvc } = card;
 
-		console.log(hasBeenSubscribing);
-
 		form.errors = [];
 		form.loading = true;
 		const cleanPatch = userStore.set('confirmation', form).commit();
