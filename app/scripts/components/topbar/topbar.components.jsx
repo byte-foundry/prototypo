@@ -75,6 +75,7 @@ export default class Topbar extends React.Component {
 				.onUpdate((head) => {
 					this.setState({
 						subscription: head.toJS().d.subscription,
+						hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
 					});
 				})
 				.onDelete(() => {
@@ -225,6 +226,7 @@ export default class Topbar extends React.Component {
 	}
 
 	render() {
+		console.log(this.state.hasBeenSubscribing);
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Topbar');
 		}
@@ -255,7 +257,7 @@ export default class Topbar extends React.Component {
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount) && (
 			<TopBarMenuButton
-				label={<span>GET THE FULL VERSION FOR <Price amount={1} country={this.state.country} /></span>}
+				label={<span>GET THE FULL VERSION FOR <Price amount={this.state.hasBeenSubscribing ? 8.25 : 1} country={this.state.country} /></span>}
 				noHover
 				centered
 				click={this.goToSubscribe}

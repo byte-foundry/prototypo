@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router';
+import Lifespan from 'lifespan';
 
 import {monthlyConst, annualConst, agencyMonthlyConst, agencyAnnualConst} from '../../data/plans.data.js';
 
@@ -10,10 +11,25 @@ import Price from '../shared/price.components.jsx';
 export default class SubscriptionSidebar extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {};
 	}
 
-	componentWillMount() {
+	async componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
+				});
+			})
+			.onDelete(() => {
+				this.setState({hasBeenSubscribing: false});
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 	render() {
@@ -22,13 +38,13 @@ export default class SubscriptionSidebar extends React.Component {
 		const plans = {
 			'personal_monthly': {
 				header: 'Monthly',
-				title: <span>Try Prototypo Pro subscription for <Price amount={1} country={country}/> only</span>,
+				title: this.state.hasBeenSubscribing ? <span>Try Prototypo Pro without commitment</span> : <span>Try Prototypo Pro subscription for <Price amount={1} country={country}/> only</span>,
 				features: [
 					'More diverse fonts with full range on all parameters',
 					'Perfectly customized with glyph individualization groups',
 					'Tune to perfection using the manual edition and component editing',
 				],
-				cta: <span><Price amount={monthlyConst.price} country={country}/> after the first month.</span>,
+				cta: <span><Price amount={monthlyConst.price} country={country}/> {this.state.hasBeenSubscribing ? '/month.' : 'after the first month.'}</span>,
 				subcta: 'No commitment!',
 				link: {
 					text: 'Want Prototypo cheaper, check out our annual offer.',

@@ -40,6 +40,15 @@ export default class GoProModal extends React.PureComponent {
 			.onDelete(() => {
 				this.setState({billing: 'annually'});
 			});
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
+				});
+			})
+			.onDelete(() => {
+				this.setState({hasBeenSubscribing: false});
+			});
 	}
 
 	componentWillUnmount() {
@@ -137,7 +146,11 @@ export default class GoProModal extends React.PureComponent {
 						<div className="pricing-item" onClick={this.goSubscribe}>
 							{this.state.billing === 'monthly'
 							? <div className="pricing-item-offerRibbon">
-								<div className="pricing-item-offerRibbon-content">1<sup>st</sup> month for {getCurrency(this.state.country) === 'EUR' ? '1€' : '$1'}</div>
+								{
+									this.state.hasBeenSubscribing
+									? false
+									: <div className="pricing-item-offerRibbon-content">1<sup>st</sup> month for {getCurrency(this.state.country) === 'EUR' ? '1€' : '$1'}</div>
+								}
 							</div>
 							 : false}
 							<div className="pricing-item-title">
@@ -170,7 +183,7 @@ export default class GoProModal extends React.PureComponent {
 								</li>
 							</ul>
 							<div className="pricing-item-cta">
-								{this.state.billing === 'monthly' ? `Try it for ${getCurrency(this.state.country) === 'EUR' ? '1€' : '$1'}` : 'Make me pro!'}
+								{this.state.billing === 'monthly' && !this.state.hasBeenSubscribing ? `Try it for ${getCurrency(this.state.country) === 'EUR' ? '1€' : '$1'}` : 'Make me pro!'}
 							</div>
 						</div>
 						<div className="pricing-item" onClick={this.goSubscribeAgency}>
