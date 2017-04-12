@@ -163,7 +163,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			)
 			: (
 				<div>
-					<AddCard inError={this.state.inError} ref="card"/>
+					<AddCard inError={this.state.inError} ref="card" className={`${this.state.validCoupon && this.state.validCoupon.shouldSkipCard ? "disabled" : ''}`}/>
 					<div className="columns subscription-card-and-validation-buttons">
 						<div className="subscription-card-and-validation-switch half-column" onClick={this.addCoupon}>I have a coupon</div>
 						{(() => {
