@@ -14,7 +14,7 @@ export default class SubscriptionSidebar extends React.Component {
 		this.state = {};
 	}
 
-	async componentWillMount() {
+	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 		this.client.getStore('/userStore', this.lifespan)
