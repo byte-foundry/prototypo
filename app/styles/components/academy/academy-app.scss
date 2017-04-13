@@ -928,6 +928,11 @@
 			}
 
 			&-part {
+				blockquote {
+			        background-color: $light-green;
+			        margin: 0;
+			        padding: 20px 0 20px 0;
+			    }
 				iframe, video {
 					display: block;
 					width: 100%;
