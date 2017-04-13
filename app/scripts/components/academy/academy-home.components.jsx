@@ -5,7 +5,7 @@ import TutorialContent from 'tutorial-content';
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import InlineSVG from 'svg-inline-react';
-import ReactMotionFlip from "react-motion-flip"
+import ReactMotionFlip from "react-motion-flip";
 
 export default class AcademyHome extends React.PureComponent {
 	constructor(props) {

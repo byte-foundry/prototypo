@@ -5,11 +5,11 @@
 <style type="text/css">
 	.st0{fill:#FFFFFF;}
 	.st1{fill:#F9F9F9;}
-	.st2{font-family:'Gemeli-Ultralight';}
-	.st3{font-size:52.6961px;}
-	.st4{font-family:'Gemeli-Bold';}
-	.st5{font-family:'Gemeli-Light';}
-	.st6{font-family:'Gemeli-Black';}
+	.st2{font-weight:200;}
+	.st3{font-size:62px;}
+	.st4{font-weight:700;}
+	.st5{font-weight:400;}
+	.st6{font-weight:900;}
 </style>
 <path id="XMLID_47_" class="st0" d="M96.1,147.8H2.9c-1.6,0-2.9-1.3-2.9-2.9V20.4c0-1.6,1.3-2.9,2.9-2.9h93.2c1.6,0,2.9,1.3,2.9,2.9
 	v124.5C99,146.5,97.7,147.8,96.1,147.8z"/>

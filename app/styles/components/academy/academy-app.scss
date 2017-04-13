@@ -226,6 +226,7 @@
 					transition: 1s;
 					-webkit-backface-visibility: hidden;
 					transition-delay: 0.2s;
+					z-index: 5;
 					&:hover{
 						margin-top: 5%;
 						margin-left:18%;
@@ -249,6 +250,12 @@
 					transition: 1s;
 					-webkit-backface-visibility: hidden;
 					transition-delay: 0.2s;
+					z-index: 5;
+
+					.st3 {
+						font-size: 45px;
+					}
+
 					&:hover{
 						transform: rotate(-11deg);
 						margin-top: 4.3%;
@@ -273,6 +280,10 @@
 					transition: 1s;
 					-webkit-backface-visibility: hidden;
 					transition-delay: 0.2s;
+					z-index: 5;
+					.loupe-st2 {
+						opacity: 0.8;
+					}
 					&:hover{
 						margin-top: 13%;
 						margin-left:9.5%;
@@ -294,6 +305,14 @@
 					transform-origin: top left;
 					margin-top: 13%;
 					margin-left:25%;
+					z-index: 5;
+					transition: 1s;
+					-webkit-backface-visibility: hidden;
+					transition-delay: 0.2s;
+					&:hover {
+						transform: rotate(-4deg);
+						margin-top: 13.5%;
+					}
 				}
 			}
 			&-ruler{
@@ -313,6 +332,7 @@
 					transition: 1s;
 					-webkit-backface-visibility: hidden;
 					transition-delay: 0.2s;
+					z-index: 5;
 					&:hover{
 						transform: rotate(-25deg);
 					}
@@ -336,6 +356,7 @@
 					transition: 0.5s;
 					-webkit-backface-visibility: hidden;
 					transition-delay: 0.2s;
+					z-index: 5;
 					&:hover{
 						transform: rotate(50deg);
 						transform-origin: 30% 30%;
@@ -354,14 +375,15 @@
 					width: 0.75%;
 					transform: rotate(20deg);
 					transform-origin: top left;
-					margin-top: 14%;
+					margin-top: 12%;
 					margin-left:41%;
 					transition: 1.4s;
 					-webkit-backface-visibility: hidden;
 					transition-delay: 0.2s;
+					z-index: 5;
 					&:hover{
-						margin-top: 15.5%;
-						margin-left:46%;
+						margin-top: 13%;
+						margin-left:43%;
 					}
 				}
 			}
@@ -382,6 +404,7 @@
 					transition: 1.4s;
 					-webkit-backface-visibility: hidden;
 					transition-delay: 0.2s;
+					z-index: 5;
 					&:hover{
 						transform: rotate(20deg);
 					}
@@ -401,6 +424,15 @@
 					transform-origin: top left;
 					margin-top: 1.5%;
 					margin-left:71%;
+					z-index: 5;
+					transition: 1s;
+					-webkit-backface-visibility: hidden;
+					transition-delay: 0.2s;
+					&:hover {
+						margin-left: 71.5%;
+						margin-top: 3.5%;
+						transform: rotate(-10deg);
+					}
 				}
 			}
 			&-iphone{
@@ -409,6 +441,23 @@
 				position: absolute;
 				top: 0;
 				left: 0;
+				@keyframes shake {
+				  10%, 90% {
+				    transform: translate3d(-1px, 0, 0) rotate(5deg);
+				  }
+
+				  20%, 80% {
+				    transform: translate3d(1px, 0, 0) rotate(5deg);
+				  }
+
+				  30%, 50%, 70% {
+				    transform: translate3d(-1px, 0, 0) rotate(5deg);
+				  }
+
+				  40%, 60% {
+				    transform: translate3d(1px, 0, 0) rotate(5deg);
+				  }
+				}
 				svg {
 					display: block;
 					position: relative;
@@ -417,6 +466,21 @@
 					transform-origin: top left;
 					margin-top: 14%;
 					margin-left:70%;
+					z-index: 5;
+					.iphone-st1 {
+						fill: $white;
+						transition: fill .2s ease-out;
+					}
+					&:hover {
+						animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both;
+						transform: translate3d(0, 0, 0) rotate(5deg);
+						backface-visibility: hidden;
+						perspective: 1000px;
+						.iphone-st1 {
+							transition: fill 2s cubic-bezier(.5,2,.5,-1);
+							fill: $green;
+						}
+					}
 				}
 			}
 			&-postit{
@@ -436,6 +500,11 @@
 					transition: 1.4s;
 					-webkit-backface-visibility: hidden;
 					transition-delay: 0.2s;
+					z-index: 5;
+					.postit-st1 {
+						opacity:0.35;
+						stroke-width:0.75;
+					}
 					&:hover{
 						margin-top: 10%;
 						transform: rotate(3deg);
