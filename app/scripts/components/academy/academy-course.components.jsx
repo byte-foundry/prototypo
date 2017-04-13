@@ -127,6 +127,9 @@ export default class AcademyCourse extends React.PureComponent {
 				});
 			}
 		});
+		if (parts.length === 1) {
+			this.client.dispatchAction('/mark-part-as-read', {course: this.courseSlug});
+		}
 		this.setState({...this.state, headers, sidebar, course});
 
 		if (!this.state.academyProgress || !(this.state.academyProgress[this.courseSlug])) {
@@ -314,12 +317,7 @@ export default class AcademyCourse extends React.PureComponent {
 		if (!this.state.academyProgress || !this.state.academyProgress[this.courseSlug]) {
 			return false;
 		}
-
-		const partsDone = this.state.academyProgress[this.courseSlug].parts.filter((part) => {
-			return part.completed === true;
-		}).length || 0;
-
-		return partsDone === this.state.academyProgress[this.courseSlug].parts.length;
+		return this.state.academyProgress[this.courseSlug].completed;
 	}
 
 	getNextCourse() {

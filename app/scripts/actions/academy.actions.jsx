@@ -17,14 +17,17 @@ export default {
 			return elem.name === part;
 		});
 
-		readPart.completed = !readPart.completed;
+		if (readPart) {
+			readPart.completed = !readPart.completed;
+		}
 
 		const partsDone = academyProgress[course].parts.filter((elem) => {
 			return elem.completed === true;
 		});
 
-		if (partsDone && partsDone.length === academyProgress[course].parts.length) {
+		if (partsDone && partsDone.length === academyProgress[course].parts.length || !part) {
 			academyProgress.lastCourse = undefined;
+			academyProgress[course].completed = true;
 		}
 		else {
 			academyProgress.lastCourse = course;
@@ -48,6 +51,7 @@ export default {
 				rewarded: false,
 				name,
 				slug,
+				completed: false,
 			};
 		}
 		_infos = {

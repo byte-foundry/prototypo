@@ -20,6 +20,7 @@ export default class AcademyHome extends React.PureComponent {
 		this.getPartsDone = this.getPartsDone.bind(this);
 		this.isReading = this.isReading.bind(this);
 		this.setActiveTag = this.setActiveTag.bind(this);
+		this.areAllCourseRead = this.areAllCourseRead.bind(this);
 	}
 	componentWillMount() {
 		let academyProgress = this.state.academyProgress || {};
@@ -112,6 +113,15 @@ export default class AcademyHome extends React.PureComponent {
 
 		return this.setState({activeTag: tag, courses: filteredCourses});
 	}
+	areAllCourseRead() {
+		let isAllRead = true;
+		Object.keys(this.state.academyProgress).map((key) => {
+			if (!this.state.academyProgress[key].completed && key !== 'lastCourse') {
+				isAllRead = false;
+			}
+		});
+		return isAllRead;
+	}
 	render() {
 		let partsDone = false;
 
@@ -136,6 +146,7 @@ export default class AcademyHome extends React.PureComponent {
 					<InlineSVG className="academy-home-header-icon-paper" element="div" src={require('!svg-inline?classPrefix=paper-!../../../images/academy/paper.svg')} />
 					<InlineSVG className="academy-home-header-icon-loupe" element="div" src={require('!svg-inline?classPrefix=loupe-!../../../images/academy/loupe.svg')} />
 					<InlineSVG className="academy-home-header-icon-blackpen" element="div" src={require('!svg-inline?classPrefix=blackpen-!../../../images/academy/blackpen.svg')} />
+					{this.areAllCourseRead() ? <InlineSVG className="academy-home-header-icon-medal" element="div" src={require('!svg-inline?classPrefix=medal-!../../../images/academy/medal-home.svg')} /> : false}
 				</div>
 				<div className="academy-home-tags">
 					<div key={`tag-all`} onClick={() => {this.setActiveTag('all');}} className={`academy-home-tags-tag ${this.state.activeTag === 'all' ? 'active' : ''}`}>
@@ -167,12 +178,12 @@ export default class AcademyHome extends React.PureComponent {
 												<ReactMarkdown source={tutorial.header} />
 											</div>
 											<div className="academy-course-list-elem-footer">
-												{ tutorial.partCount
+												{ tutorial.partCount || this.state.academyProgress[tutorial.slug].completed
 													? (<div className={`academy-part-count ${partsDone === tutorial.partCount ? 'done' : ''}`}>
 														<div className="academy-part-count-progress-wrapper">
-															<span className="academy-part-count-progress-wrapper-progress" style={{'width': `${(partsDone / tutorial.partCount) * 100}%`}}></span>
+															<span className="academy-part-count-progress-wrapper-progress" style={{'width': `${this.state.academyProgress[tutorial.slug].completed ? 100 : (partsDone / tutorial.partCount) * 100}%`}}></span>
 														</div>
-														<span className="academy-part-count-text">{partsDone === tutorial.partCount ? 'COMPLETE' : `${partsDone} of ${tutorial.partCount}`}</span>
+														<span className="academy-part-count-text">{this.state.academyProgress[tutorial.slug].completed ? 'COMPLETE' : `${partsDone} of ${tutorial.partCount}`}</span>
 													</div>) : false
 												}
 												<div className="academy-readingtime">

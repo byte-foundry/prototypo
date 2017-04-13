@@ -407,6 +407,7 @@
 					z-index: 5;
 					&:hover{
 						transform: rotate(20deg);
+
 					}
 				}
 			}
@@ -508,6 +509,44 @@
 					&:hover{
 						margin-top: 10%;
 						transform: rotate(3deg);
+					}
+				}
+			}
+			&-medal{
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				svg {
+					display: block;
+					position: relative;
+					width: 6%;
+					transform: rotate(15deg);
+					transform-origin: top left;
+					margin-top: 14%;
+					margin-left:41%;
+					transition: 1.4s;
+					-webkit-backface-visibility: hidden;
+					transition-delay: 0.2s;
+					z-index: 5;
+					.medal-ribbon-1, .medal-ribbon-2 {
+						transform-origin: top;
+						transition: transform 0.3s ease-in-out;
+					}
+					&:hover{
+						.medal-ribbon-1 {
+							transform: rotate(5deg);
+						}
+						.medal-ribbon-2 {
+							transform: rotate(-5deg);
+						}
+						.medal-star-inner {
+							fill: $yellow;
+						}
+						.medal-star-outer {
+							stroke: $yellow;
+						}
 					}
 				}
 			}
