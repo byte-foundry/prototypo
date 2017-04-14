@@ -124,6 +124,14 @@
 			background-image:url('../../../images/icon-account-active.svg');
 		}
 
+		&-organization:before {
+			background-image:url('../../../images/icon-organization.svg');
+		}
+
+		&-organization:hover:before, &-organization.is-active:before {
+			background-image:url('../../../images/icon-organization-active.svg');
+		}
+
 		&-billing:before {
 			background-image:url('../../../images/icon-billing.svg');
 		}
