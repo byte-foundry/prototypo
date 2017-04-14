@@ -188,13 +188,6 @@ const validateCoupon = debounce((options) => {
 }, 500);
 
 export default {
-	'/set-user-data': ({children, parent}) => {
-		/* DEPRECATED: Backward compatibility, prefer looking into the store to know what plan the user has */
-		// TODO: Find a way to make Stripe and this to coexist
-		if (parent && !children.length) {
-			HoodieApi.instance.plan = 'managed';
-		}
-	},
 	'/load-customer-data': ({sources, subscriptions, metadata}) => {
 		const userPatch = userStore
 			.set('subscription', subscriptions.data[0])
@@ -593,7 +586,7 @@ export default {
 		window.Intercom('trackEvent', 'addedCardAndAdress');
 		hashHistory.push(toPath);
 	},
-	'/confirm-buy': async ({plan, card, pathname}) => {
+	'/confirm-buy': async ({plan, card, pathname, quantity}) => {
 		const form = userStore.get('confirmation');
 		const { fullname, number, expMonth, expYear, cvc } = card;
 
@@ -633,6 +626,7 @@ export default {
 			const data = await HoodieApi.updateSubscription({
 				plan: `${plan}_${currency}_taxfree`,
 				coupon,
+				quantity,
 			});
 			const infos = {...userStore.get('infos')};
 

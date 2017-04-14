@@ -2,10 +2,13 @@ import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import gql from 'graphql-tag';
+import {graphql} from 'react-apollo';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
 import SliderHelpText from '../../images/sliders/helpText.json';
+import HoodieApi from '../services/hoodie.services';
 
 import SliderController from './slider-controller.components';
 
@@ -36,20 +39,9 @@ export class Sliders extends React.PureComponent {
 
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
-				// TODO: this should be changed since subscription would not mean pro anymore
 				const {subscription} = head.toJS().d;
-
-				if (subscription) {
-					this.setState({plan: subscription.plan.id});
-				}
-			})
-			.onDelete(() => {
-				this.setState({plan: undefined});
-			});
-		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
 				this.setState({
-					subscription: head.toJS().d.subscription,
+					subscription,
 				});
 			})
 			.onDelete(() => {
@@ -147,7 +139,7 @@ export class Sliders extends React.PureComponent {
 	}
 }
 
-export class Slider extends React.Component {
+export class RawSlider extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
@@ -201,7 +193,10 @@ export class Slider extends React.Component {
 			console.log('[RENDER] slider');
 		}
 		const value = this.props.value === undefined ? this.props.init : this.props.value;
-		const freeAccount = !this.props.subscription;
+		// TODO: better way to inject subscription
+		const {subscription} = this.props;
+		const freeAccount = !this.props.isManagedAccount
+			&& !(subscription && !subscription.plan.id.includes('agency'));
 		const credits = this.props.credits;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const disabled = !this.props.disabled && !(freeAccountAndHasCredits || !freeAccount);
@@ -285,6 +280,27 @@ export class Slider extends React.Component {
 		);
 	}
 }
+
+const query = gql`
+	query {
+		user {
+			id
+			manager {
+				id
+			}
+		}
+	}
+`;
+
+export const Slider = graphql(query, {
+	props({data}) {
+		const {user} = data;
+
+		return {
+			isManagedAccount: user && user.manager,
+		};
+	},
+})(RawSlider);
 
 export class RadioSlider extends React.Component {
 	constructor(props) {

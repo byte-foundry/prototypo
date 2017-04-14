@@ -1,9 +1,14 @@
 import React from 'react';
 import {storiesOf, action} from '@kadira/storybook';
+import backgroundColor from 'react-storybook-decorator-background';
 
 import AccountManageSubUsers from '../app/scripts/components/account/account-manage-sub-users.components';
 
 storiesOf('account.AccountManageSubUsers', module)
+	.addDecorator((story) => {
+		return <div style={{width: '700px', margin: 'auto', padding: '20px'}} className="normal">{story()}</div>;
+	})
+	.addDecorator(backgroundColor(['#3b3b3b']))
 	.add('empty state', () => {
 		return (
 			<AccountManageSubUsers
@@ -50,6 +55,16 @@ storiesOf('account.AccountManageSubUsers', module)
 			<AccountManageSubUsers
 				max={2}
 				members={[{email: 'user@example.com'}, {email: 'user2@example.com'}]}
+				onAddUser={action('on-add-user')}
+				onRemoveUser={action('on-remove-user')}
+			/>
+		);
+	})
+	.add('pending', () => {
+		return (
+			<AccountManageSubUsers
+				max={2}
+				members={[{email: 'user@example.com', status: 'pending'}]}
 				onAddUser={action('on-add-user')}
 				onRemoveUser={action('on-remove-user')}
 			/>

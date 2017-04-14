@@ -24,7 +24,6 @@ networkInterface.use([{
 const apolloClient = new ApolloClient({
 	networkInterface,
 	dataIdFromObject: o => o.id,
-	queryDeduplication: true,
 	connectToDevTools: true,
 });
 

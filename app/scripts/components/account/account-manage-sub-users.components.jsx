@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import {Link} from 'react-router';
 
 import DisplayWithLabel from '../shared/display-with-label.components';
 
@@ -8,6 +9,7 @@ class AccountManageSubUsers extends React.Component {
 
 		this.state = {
 			userCreation: null,
+			loadingCreation: false,
 		};
 
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -17,19 +19,23 @@ class AccountManageSubUsers extends React.Component {
 	async handleCreate(e) {
 		e.preventDefault();
 
-		this.setState({error: null});
+		const email = e.target.email.value;
+		const firstName = e.target.firstName.value;
+		const lastName = e.target.lastName.value;
+
+		this.setState({error: null, loadingCreation: email});
 
 		try {
 			await this.props.onAddUser({
-				firstName: e.target.firstName.value,
-				lastName: e.target.lastName.value,
-				email: e.target.email.value,
+				email,
+				firstName,
+				lastName,
 			});
 
-			this.setState({userCreation: null});
+			this.setState({userCreation: null, loadingCreation: false});
 		}
 		catch (err) {
-			this.setState({error: err.message});
+			this.setState({error: err.message, loadingCreation: false});
 		}
 	}
 
@@ -38,19 +44,19 @@ class AccountManageSubUsers extends React.Component {
 
 		const email = e.target.email.value;
 
-		this.setState({error: null});
+		this.setState({error: null, loadingCreation: email});
 
 		try {
 			await this.props.onAddUser({email});
+
+			this.setState({loadingCreation: false});
 		}
 		catch (err) {
 			if (err.type === 'NotFound') {
-				this.setState({
-					userCreation: {email},
-				});
+				this.setState({userCreation: {email}, loadingCreation: false});
 			}
 			else {
-				this.setState({error: err.message});
+				this.setState({error: err.message, loadingCreation: false});
 			}
 		}
 	}
@@ -75,7 +81,7 @@ class AccountManageSubUsers extends React.Component {
 					<input type="text" name="firstName" placeholder="First Name" />
 					<input type="text" name="lastName" placeholder="Last Name" />
 					<button>Create user</button>
-					<button onClick={() => {this.setState({userCreation: null})}}>Cancel</button>
+					<button onClick={() => {this.setState({userCreation: null});}}>Cancel</button>
 				</form>
 			</li>
 		);
@@ -94,7 +100,11 @@ class AccountManageSubUsers extends React.Component {
 
 	renderForm() {
 		const {members, max} = this.props;
-		const {userCreation} = this.state;
+		const {userCreation, loadingCreation} = this.state;
+
+		if (loadingCreation) {
+			return <li style={{color: '#aaa'}}>(loading) {loadingCreation}</li>;
+		}
 
 		if (max && max - members.length <= 0) {
 			return;
@@ -138,7 +148,18 @@ class AccountManageSubUsers extends React.Component {
 			<DisplayWithLabel>
 				{content}
 				{userList}
-				{max > 0 && <p>{max - members.length} slots left.</p>}
+				{max > 0 && (
+					<p>
+						{max - members.length} slots left.
+						<span style={{fontSize: '12px', float: 'right'}}>
+							Want more slots?
+							{' '}
+							<Link style={{color: "#24d390"}} to="/account/details/change-plan">
+								Update your subscription!
+							</Link>
+						</span>
+					</p>
+				)}
 				{error && <p>{error}</p>}
 			</DisplayWithLabel>
 		);

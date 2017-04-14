@@ -34,35 +34,33 @@ const query = gql`
 
 export default graphql(query, {
 	options: {
-		forceFetch: true,
+		fetchPolicy: 'cache-and-network',
 	},
 	props: ({data}) => {
 		if (data.loading) {
 			return {loading: true};
 		}
 
-		const allSubUsers = [
+		const members = [
 			...data.user.subUsers.map((e) => {
 				return {...e, status: 'active'};
 			}),
 			...data.user.pendingSubUsers.map((e) => {
 				return {...e, status: 'pending'};
 			}),
-		];
+		].sort((a, b) => a.email > b.email);
 
 		return {
-			members: allSubUsers.sort((a, b) => {
-				return a.email > b.email;
-			}),
+			members,
 			onAddUser: async (infos) => {
 				await HoodieApi.addManagedUser(data.user.id, infos);
 
-				data.refetch();
+				await data.refetch();
 			},
 			onRemoveUser: async ({id}) => {
 				await HoodieApi.removeManagedUser(data.user.id, id);
 
-				data.refetch();
+				await data.refetch();
 			},
 		};
 	},

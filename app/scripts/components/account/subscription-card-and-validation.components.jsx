@@ -10,10 +10,6 @@ import Button from '../shared/button.components.jsx';
 import InputWithLabel from '../shared/input-with-label.components.jsx';
 import Price from '../shared/price.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
-import getCurrency from '../../helpers/currency.helpers.js';
-
-const emptyArray = [];
-const emptyObject = {};
 
 export default class SubscriptionCardAndValidation extends React.PureComponent {
 	constructor(props) {
@@ -31,7 +27,6 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		this.handleCouponChange = this.handleCouponChange.bind(this);
 		this.handleCouponSubmit = this.handleCouponSubmit.bind(this);
 		this.subscribe = this.subscribe.bind(this);
-
 	}
 
 	componentWillMount() {
@@ -40,15 +35,17 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
-				this.setState({
-					card: head.toJS().d.cards || emptyArray,
-					couponValue: head.toJS().d.choosePlanForm.couponValue || this.props.coupon,
-					validCoupon: head.toJS().d.choosePlanForm.validCoupon,
-					wasValidCoupon: head.toJS().d.choosePlanForm.validCoupon || this.state.wasValidCoupon,
-					loading: head.toJS().d.confirmation.loading,
-					inError: head.toJS().d.confirmation.inError || emptyObject,
-					errors: head.toJS().d.confirmation.errors,
-				});
+				const {cards, choosePlanForm, confirmation} = head.toJS().d;
+
+				this.setState((state) => ({
+					card: cards || [],
+					couponValue: choosePlanForm.couponValue || this.props.coupon,
+					validCoupon: choosePlanForm.validCoupon,
+					wasValidCoupon: choosePlanForm.validCoupon || state.wasValidCoupon,
+					loading: confirmation.loading,
+					inError: confirmation.inError || {},
+					errors: confirmation.errors,
+				}));
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -76,6 +73,8 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 	}
 
 	subscribe() {
+		const quantity = this.quantity.value > 1 && parseInt(this.quantity.value, 10);
+
 		this.client.dispatchAction('/confirm-buy', {
 			plan: this.props.plan,
 			vat: '',
@@ -84,6 +83,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			card: this.refs.card && this.state.card.length < 1
 				? this.refs.card.data()
 				: false,
+			quantity: quantity || undefined,
 		});
 	}
 
@@ -99,9 +99,6 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			coupon: this.refs.coupon.inputValue,
 		});
 		this.setState({'isFormSubmitted': true});
-		e.stopPropagation();
-		e.preventDefault();
-		return true;
 	}
 
 	render() {
@@ -124,7 +121,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			'agency_monthly': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <Price amount={agencyMonthlyConst.monthlyPrice} country={country}/> once and be subscribes to Prototypo. . You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <Price amount={agencyMonthlyConst.monthlyPrice} country={country}/> once and be subscribe to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
@@ -166,11 +163,8 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 					<AddCard inError={this.state.inError} ref="card"/>
 					<div className="columns subscription-card-and-validation-buttons">
 						<div className="subscription-card-and-validation-switch half-column" onClick={this.addCoupon}>I have a coupon</div>
-						{(() => {
-							return this.state.card.length > 0
-								? <div className="subscription-card-and-validation-switch is-right half-column" onClick={this.keepCard}>Keep my card</div>
-								: false;
-						})()}
+						{this.state.card.length > 0
+								&& <div className="subscription-card-and-validation-switch is-right half-column" onClick={this.keepCard}>Keep my card</div>}
 					</div>
 				</div>
 			);
@@ -197,6 +191,12 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 
 			return (
 				<div className="subscription-card-and-validation normal">
+					{plan.startsWith('agency') && (
+						<div>
+							<label for="quantity">Quantity:</label>
+							<input type="number" min={0} max={100} defaultValue={4} ref={(node) => {this.quantity = node;}} />
+						</div>
+					)}
 					{card}
 					{coupon}
 					<div className="subscription-card-and-validation-legal">
