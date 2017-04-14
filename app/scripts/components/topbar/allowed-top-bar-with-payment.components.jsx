@@ -3,15 +3,10 @@ import {Link} from 'react-router';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Log from '~/services/log.services.js';
-import Price from '../shared/price.components';
 
 export default class AllowedTopBarWithPayment extends React.Component {
 	constructor(props) {
 		super(props);
-
-		this.state = {
-			country: 'US',
-		};
 
 		this.openGoProModal = this.openGoProModal.bind(this);
 	}
@@ -39,7 +34,6 @@ export default class AllowedTopBarWithPayment extends React.Component {
 	render() {
 		const freeAccount = this.props.freeAccount;
 		const credits = this.props.credits;
-		const {country} = this.state;
 
 		const overlay = freeAccount && (!credits || credits <= 0)
 			? (

@@ -85,7 +85,7 @@ export default class SubscriptionSidebar extends React.Component {
 				cta: (
 					<div>
 						<div>
-							<Price amount={agencyAnnualConst.monthlyConst} country={country}/>/month
+							<Price amount={agencyAnnualConst.monthlyPrice} country={country}/>/month
 						</div>
 						<div>
 							Less money same features
@@ -115,15 +115,13 @@ export default class SubscriptionSidebar extends React.Component {
 					<h1 className="subscription-sidebar-header">{header}</h1>
 					<h2 className="subscription-sidebar-title">{title}</h2>
 					<ul className="subscription-sidebar-list-feat">
-						{(() => {
-							return features.map((feat) => {
-								return (
-									<li className="subscription-sidebar-list-feat-item">
-										{feat}
-									</li>
-								);
-							});
-						})()}
+						{features.map((feat) => {
+							return (
+								<li className="subscription-sidebar-list-feat-item">
+									{feat}
+								</li>
+							);
+						})}
 					</ul>
 					<div className="subscription-sidebar-separator"></div>
 					<div className="subscription-sidebar-cta">{cta}</div>
@@ -132,9 +130,8 @@ export default class SubscriptionSidebar extends React.Component {
 				</div>
 			);
 		}
-		else {
-			return false;
-		}
+
+		return null;
 	}
 }
 

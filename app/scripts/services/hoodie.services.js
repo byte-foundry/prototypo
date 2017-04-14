@@ -120,7 +120,7 @@ export default class HoodieApi {
 				},
 			});
 		}
-		catch (e) { TrackJS.track(e); }
+		catch (e) { trackJs.track(e); }
 
 		return data;
 	}
