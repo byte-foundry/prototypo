@@ -76,43 +76,28 @@ export default class HoodieApi {
 		return hoodie.account.hasValidSession();
 	}
 
-	static askPasswordReset(username) {
-		return fetch(`${BACK_URL}/_api/_plugins/stripe-link/_api`, {
-			method: 'post',
-			headers: {'Content-Type': 'application/json'},
-			body: JSON.stringify({username}),
-		})
-		.then((r) => { return r.json(); })
-		.then(({isExisting}) => {
-			if (!isExisting) {
-				throw new Error('No such username, cannot reset password.');
-			}
-
-			const resetId = `${username}/${HOODIE.generateId()}`;
-			const key = `org.couchdb.user:$passwordReset/${resetId}`;
-
-			return fetch(`${BACK_URL}/_api/_users/${encodeURIComponent(key)}`, {
-				method: 'put',
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					_id: key,
-					name: `$passwordReset/${resetId}`,
-					type: 'user',
-					roles: [],
-					password: resetId,
-					updatedAt: new Date(),
-					createdAt: new Date(),
-				}),
-			});
+	static async askPasswordReset(email) {
+		return fetchAWS(`/users/${email}/reset_password`, {
+			method: 'PUT',
 		});
-		//TODO(franz): Thou shall code the checkPasswordReset at a later point in time
 	}
 
 	static changePassword(password, newPassword) {
 		return hoodie.account.changePassword(password, newPassword);
+	}
+
+	static checkResetToken(id, resetToken) {
+		return fetchAWS(`/users/${id}/reset_password?resetToken=${resetToken}`);
+	}
+
+	static resetPassword(email, resetToken, password) {
+		return fetchAWS(`/users/${email}/password`, {
+			method: 'PUT',
+			payload: {
+				resetToken,
+				password,
+			},
+		});
 	}
 
 	static createCustomer(options) {
