@@ -18,6 +18,7 @@ export default class AcademyCourse extends React.PureComponent {
 		this.headerRenderer = this.headerRenderer.bind(this);
 		this.imgRenderer = this.imgRenderer.bind(this);
 		this.linkRenderer = this.linkRenderer.bind(this);
+		this.htmlRenderer = this.htmlRenderer.bind(this);
 		this.handleScroll = this.handleScroll.bind(this);
 		this.bindData = this.bindData.bind(this);
 		this.scrollToPart = this.scrollToPart.bind(this);
@@ -242,6 +243,39 @@ export default class AcademyCourse extends React.PureComponent {
 		);
 	}
 
+	htmlRenderer(props) {
+		let literal = props.literal;
+
+		if (literal.includes('<video') && this.state.course) {
+			const getAttributes = /(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|[>"']))+.)["']?/g;
+			const urlRegexp = /([a-z]+\:\/+)([^\/\s]*)([a-z0-9\-@\^=%&;\/~\+]*)[\?]?([^ \#]*)#?([^ \#]*)/ig;
+			let regexResult;
+			let returnstring = '<video ';
+
+			while ((regexResult = getAttributes.exec(props.literal)) !== null) {
+				if (regexResult[1] === 'src') {
+					if (regexResult[2].match(urlRegexp)) {
+						returnstring = `${returnstring} ${regexResult[0]}`;
+					}
+					else {
+						returnstring = `${returnstring} ${regexResult[1]}="assets/images/academy/courses/${this.state.course.title}/${regexResult[2]}"`;
+					}
+				}
+				else {
+					returnstring = `${returnstring} ${regexResult[0]}`;
+				}
+			}
+			literal = `${returnstring}>`;
+		}
+		const nodeProps = props.escapeHtml ? {} : {dangerouslySetInnerHTML: {__html: literal}};
+		const children = props.escapeHtml ? [props.literal] : null;
+
+		if (props.escapeHtml || !props.skipHtml) {
+			return this.createElement(props.isBlock ? 'div' : 'span', nodeProps, children);
+		}
+	}
+
+
 	createCourseProgress() {
 		const academyProgress = this.state.academyProgress || {};
 		const course = this.tutorials.content.find((tutorial) => {
@@ -331,6 +365,7 @@ export default class AcademyCourse extends React.PureComponent {
 			Heading: this.headerRenderer,
 			Image: this.imgRenderer,
 			Link: this.linkRenderer,
+			HtmlInline: this.htmlRenderer,
 		};
 		const course = this.tutorials.content.find((tutorial) => {
 			return tutorial.slug === this.courseSlug;
