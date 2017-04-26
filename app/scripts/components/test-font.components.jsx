@@ -1,147 +1,23 @@
-/*global _ */
+/*global _, webkitRequestAnimationFrame */
 import React from 'react';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
 import ScrollArea from 'react-scrollbar';
-
-import Constant from '../prototypo.js/precursor/Constant.js';
-import Formula from '../prototypo.js/precursor/Formula.js';
-import ExpandingNode from '../prototypo.js/precursor/ExpandingNode.js';
+import InputRange from 'react-input-range';
 
 import Toile, {mState} from '../toile/toile.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-import {toLodashPath} from '../prototypo.js/helpers/utils.js';
-
-import WorkerPool from '../worker/worker-pool.js';
-
-class ConstOrForm extends React.PureComponent {
-	render() {
-		if (this.props.value instanceof Constant) {
-			return (
-				<div>
-					<div style={{'background-color': '#90B9FF', padding: '10px'}}>{this.props.name}</div>
-					<div>
-						<div style={{'background-color': '#A9D9FF', padding: '10px'}}>{JSON.stringify(_.get(this.props.val, toLodashPath(this.props.value.cursor)))}</div>
-					</div>
-				</div>
-			);
-		}
-		else if (this.props.value instanceof Formula) {
-			return (
-				<div>
-					<div style={{'background-color': '#90B9FF', padding: '10px'}}>{this.props.name}</div>
-					<div style={{'background-color': '#C9B9FF', padding: '10px'}}>
-						{_.map(this.props.value.dependencies, (d) => {
-							return <div>{d}: {JSON.stringify(_.get(this.props.val, toLodashPath(d)))} </div>;
-						})}
-					</div>
-					<div style={{'background-color': '#A9E9FF', padding: '10px'}}>
-						{_.map(this.props.value.parameters, (p) => {
-							return <div>{p}: {this.props.values[p]}</div>;
-						})}
-					</div>
-					<div style={{'background-color': '#A9D9FF', padding: '10px'}}>{this.props.value.operation.toString()}</div>
-					<div style={{'background-color': '#FFC9B0', padding: '10px'}}>{JSON.stringify(_.get(this.props.val, toLodashPath(this.props.value.cursor)))}</div>
-				</div>
-			);
-		}
-		else if (this.props.cursor) {
-			return (
-				<div>
-					<div style={{'background-color': '#90B9FF', padding: '10px'}}>{this.props.name}</div>
-					<div style={{'background-color': '#FFC9B0', padding: '10px'}}>{JSON.stringify(_.get(this.props.val, toLodashPath(this.props.cursor)))}</div>
-				</div>
-			);
-		}
-		else {
-			return null;
-		}
-	}
-}
-
-class GlyphAndData extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {
-			glyphs: {},
-		};
-	}
-
-	render() {
-		const contours = _.map(this.props.prec.contours, (cont, i) => {
-			const nodes = _.map(cont.nodes, (node, j) => {
-				if (node instanceof ExpandingNode) {
-					return (
-						<div key={j}>
-							<div style={{'background-color': '#70A0EF', padding: '10px'}}>{node.cursor}</div>
-							<div style={{'margin-left': '10px'}}>
-								<ConstOrForm value={node.dirIn} name="dirIn" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.dirOut} name="dirOut" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.type} name="type" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.typeIn} name="typeIn" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.typeOut} name="typeOut" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.tensionIn} name="tensionIn" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.tensionOut} name="tensionOut" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.x} name="x" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.y} name="y" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.expand.width} name="width" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.expand.angle} name="angle" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.expand.distr} name="distr" values={this.props.values} val={this.props.res}/>
-							</div>
-						</div>
-					);
-				}
-				else {
-					return (
-						<div key={j}>
-							<div style={{'background-color': '#70A0EF', padding: '10px'}}>{node.cursor}</div>
-							<div style={{'margin-left': '10px'}}>
-								<ConstOrForm value={node.dirIn} name="dirIn" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.dirOut} name="dirOut" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.type} name="type" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.typeIn} name="typeIn" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.typeOut} name="typeOut" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.tensionIn} name="tensionIn" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.tensionOut} name="tensionOut" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.x} name="x" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm value={node.y} name="y" values={this.props.values} val={this.props.res}/>
-								<ConstOrForm name="handleIn" values={this.props.values} val={this.props.res} cursor={`${node.cursor}handleIn`}/>
-								<ConstOrForm name="handleOut" values={this.props.values} val={this.props.res} cursor={`${node.cursor}handleOut`}/>
-							</div>
-						</div>
-					);
-				}
-			});
-
-			return (
-				<div key={i}>
-					<div style={{'background-color': '#6090E0', padding: '10px'}}>{cont.cursor} - closed: {cont.closed.value.toString()} skel: {cont.skeleton.value.toString()}</div>
-					<div style={{'margin-left': '10px'}}>
-						{nodes}
-					</div>
-				</div>
-			);
-		});
-
-		return (
-			<div>
-				{contours}
-			</div>
-		);
-	}
-}
 
 export default class TestFont extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {glyph: 'A_cap', solved: []};
-		this.glyphs = {};
+		this.state = {glyph: 'A_cap', solved: [], values: {}, workers: Array(4).fill(false)};
 
-		this.changeThickness = this.changeThickness.bind(this);
+		this.changeParam = this.changeParam.bind(this);
+		this.download = this.download.bind(this);
 
-		this.pool = new WorkerPool();
 	}
 
 	componentWillMount() {
@@ -152,6 +28,16 @@ export default class TestFont extends React.PureComponent {
 		this.client.getStore('/fontInstanceStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState(head.toJS().d);
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					workers: head.toJS().d.workers,
+				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -181,7 +67,7 @@ export default class TestFont extends React.PureComponent {
 				mouse,
 			});
 
-			if (mouse.state === mState.DOWN && this.glyphs[this.state.glyph]) {
+			if (mouse.state === mState.DOWN && this.state.font.glyphs[this.state.glyph]) {
 				const [,,,, tx, ty] = this.toile.viewMatrix;
 				const newTs = {
 					x: tx + mouse.delta.x,
@@ -191,7 +77,7 @@ export default class TestFont extends React.PureComponent {
 				this.toile.clearDelta();
 				this.toile.setCamera(newTs, 1, height);
 				this.toile.clearCanvas(width, height);
-				this.toile.drawGlyph(this.glyphs[this.state.glyph]);
+				this.toile.drawGlyph(this.state.font.glyphs[this.state.glyph]);
 			}
 			raf(rafFunc);
 		};
@@ -199,102 +85,26 @@ export default class TestFont extends React.PureComponent {
 		raf(rafFunc);
 	}
 
-	componentWillUpdate(nextProps, nextState) {
-		if (this.toile) {
-			if (nextState.typedata && nextState.typedata !== this.state.typedata) {
-				this.pool.eachJob({
-					action: {
-						type: 'createFont',
-						data: nextState.typedata,
-					},
-					callback: () => {
-						this.setState({
-							workerReady: true,
-						});
-					},
-				});
-			}
-			if (this.state.workerReady && nextState.values !== this.state.values) {
-				const solved = [];
-				let glyphsState = this.glyphs;
+	changeParam(param) {
+		return (e) => {
+			const params = {
+				values: {
+					...this.state.values,
+					[param]: parseFloat(e),
+					trigger: false,
+				},
+				demo: true,
+			};
 
-				this.setState({
-					solved: [],
-				});
-
-				/*this.pool.doJobs([{
-					action: {
-						type: 'constructGlyphs',
-						data: {
-							subset: [nextState.glyph],
-							params: nextState.values,
-						},
-					},
-					callback: ({glyphs}) => {
-						this.setState({
-							solved: [nextState.glyph],
-							glyphs: {
-								[nextState.glyph]: glyphs[nextState.glyph],
-							},
-							glyph: nextState.glyph,
-						});
-						const {width, height} = this.canvas;
-
-						this.toile.clearCanvas(width, height);
-						this.toile.drawGlyph(glyphs[nextState.glyph]);
-					},
-				}]);*/
-				this.pool.doJobs(
-					_.chain(Object.keys(this.state.typedata.glyphs))
-					.filter((name) => {
-						return this.state.typedata.glyphs[name].unicode !== undefined;
-					})
-					.chunk(Math.ceil(Object.keys(this.state.typedata.glyphs).length / this.pool.workerArray.length))
-					.map((names) => {
-						return {
-							action: {
-								type: 'constructGlyphs',
-								data: {
-									params: nextState.values,
-									subset: names,
-								},
-							},
-							callback: ({glyphs}) => {
-								solved.push(...Object.keys(glyphs));
-								glyphsState = {
-									...glyphsState,
-									...glyphs,
-								};
-
-								this.setState({
-									solved,
-									glyph: nextState.glyph,
-								});
-
-								this.glyphs = glyphsState;
-
-								if (glyphsState[nextState.glyph]) {
-									this.toile.clearCanvas(this.canvas.width, this.canvas.height);
-									this.toile.drawGlyph(glyphsState[nextState.glyph]);
-								}
-							},
-						};
-					}).value()
-				);
-			}
-
-			if (nextState.glyph !== this.state.glyph && this.glyphs[nextState.glyph]) {
-				this.toile.clearCanvas(this.canvas.width, this.canvas.height);
-				this.toile.drawGlyph(this.glyphs[nextState.glyph]);
-			}
-		}
+			this.client.dispatchAction('/change-param', params);
+		};
 	}
 
-	changeThickness(e) {
+	download() {
 		const params = {
 			values: {
 				...this.state.values,
-				thickness: parseFloat(e.target.value),
+				trigger: true,
 			},
 			demo: true,
 		};
@@ -335,7 +145,13 @@ export default class TestFont extends React.PureComponent {
 			<div style={{display: 'flex', height: '100%'}}>
 				<div style={{position: 'fixed', bottom: '10px', left: '10px', background: '#24d390', color: '#fefefe'}}>
 					{JSON.stringify(this.state.mouse)}
-					<p>{this.state.workerReady ? 'ready' : 'not ready'}</p>
+					<div style={{display: 'flex', flexDirection: 'column'}}>
+						{(() => {
+							return _.map(this.state.workers, (worker) => {
+								return <div style={{width: '100%', marginBottom: '2px', height: '5px', background: worker ? 'red' : 'green'}}></div>;
+							});
+						})()}
+					</div>
 				</div>
 				<div>
 					<canvas
@@ -353,7 +169,12 @@ export default class TestFont extends React.PureComponent {
 							</div>
 						</ScrollArea>
 					</div>
-					<input min="0" max="200" type="range" onChange={this.changeThickness}></input>
+					<InputRange minValue="0" maxValue="200" value={this.state.values.thickness} onChange={this.changeParam('thickness')}/>
+					<InputRange minValue="0" maxValue="200" value={this.state.values.serifWidth} onChange={this.changeParam('serifWidth')}/>
+					<InputRange minValue="0" maxValue="200" value={this.state.values.serifHeight} onChange={this.changeParam('serifHeight')}/>
+					<InputRange minValue="0" maxValue="200" value={this.state.values.serifCurve} onChange={this.changeParam('serifCurve')}/>
+					<div style={{fontFamily: 'Prototypo web font', fontSize: '70px', wordWrap: 'break-word', width: '900px'}}>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+					<button onClick={this.download}>Download</button>
 				</div>
 			</div>
 		);

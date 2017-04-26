@@ -1,20 +1,23 @@
+/* global _ */
 import {constantOrFormula, createContour} from '../helpers/values.js';
-import {toLodashPath} from '../helpers/utils.js';
+import {toLodashPath, transformNode} from '../helpers/utils.js';
 import * as utils from '../utils/updateUtils.js';
 
 import Component from './Component.js';
 import ExpandingNode from './ExpandingNode.js';
 import {SkeletonPath, SimplePath, ClosedSkeletonPath} from './Path.js';
 
+
 export default class Glyph {
 	constructor(glyphSrc) {
-		const {unicode, name, characterName, tags, transforms, parameter, anchor, outline} = glyphSrc;
+		const {unicode, name, characterName, tags, transforms, parameter, anchor, outline, transformOrigin} = glyphSrc;
 
 		this.unicode = constantOrFormula(unicode);
 		this.name = constantOrFormula(name);
 		this.characterName = constantOrFormula(characterName);
 		this.tags = constantOrFormula(tags);
 		this.transforms = constantOrFormula(transforms);
+		this.transformOrigin = constantOrFormula(transformOrigin);
 		this.parameters = _.mapValues(parameter, (param) => {
 			return constantOrFormula(param);
 		});
@@ -33,6 +36,10 @@ export default class Glyph {
 		this.components = outline.component.map((component, i) => {
 			return new Component(component, `component.${i}`, this);
 		});
+
+		if (glyphSrc.ot) {
+			this.advanceWidth = constantOrFormula(glyphSrc.ot.advanceWidth);
+		}
 	}
 
 	solveOperationOrder() {
@@ -50,6 +57,138 @@ export default class Glyph {
 
 			return anchorOp;
 		}, contourOp);
+	}
+
+	createGlyphContour(contours) {
+		const beziers = _.flatMap(contours, (contour) => {
+			if (!contour.skeleton) {
+				const otBeziers = [contour.nodes.map((node, i) => {
+					const nextNode = contour.nodes[(i + 1) % contour.nodes.length];
+
+					const bezier = [
+						{
+							x: node.x,
+							y: node.y,
+						},
+						{
+							x: node.handleOut.x,
+							y: node.handleOut.y,
+						},
+						{
+							x: nextNode.handleIn.x,
+							y: nextNode.handleIn.y,
+						},
+						{
+							x: nextNode.x,
+							y: nextNode.y,
+						},
+					];
+
+					return bezier;
+				})];
+
+
+				otBeziers.forEach((bezier, index) => {
+					let count = 0;
+					const flatBezier = _.flatten(bezier);
+
+					flatBezier.forEach((point, i) => {
+						const next = flatBezier[(i + 1) % flatBezier.length];
+
+						count += (next.x - point.x) * (next.y + point.y);
+					});
+
+					if (count < 0) {
+						otBeziers[index] = _.chunk(_.reverse(flatBezier), 4);
+					}
+				});
+
+				return otBeziers;
+
+			}
+			else if (!contour.closed) {
+				return [contour.nodes.reduceRight((acc, node, i) => {
+
+					const bezier = [0, 1].map((index) => {
+						let secondIndex = index;
+						let firstIndex = i + 1 * (index ? -1 : 1);
+
+						if (firstIndex > contour.nodes.length - 1) {
+							firstIndex = contour.nodes.length - 1;
+							secondIndex = 1;
+						}
+						else if (firstIndex < 0) {
+							firstIndex = 0;
+							secondIndex = 0;
+						}
+
+						const nextNode = contour.nodes[firstIndex].expandedTo[secondIndex];
+
+						return [
+							{
+								x: node.expandedTo[index].x,
+								y: node.expandedTo[index].y,
+							},
+							{
+								x: node.expandedTo[index].handleOut.x,
+								y: node.expandedTo[index].handleOut.y,
+							},
+							{
+								x: nextNode.handleIn.x,
+								y: nextNode.handleIn.y,
+							},
+							{
+								x: nextNode.x,
+								y: nextNode.y,
+							},
+						];
+					});
+
+					acc.push(bezier[1]);
+					acc.unshift(bezier[0]);
+
+					return acc;
+				}, [])];
+			}
+			else {
+				return [0, 1].map((index) => {
+					const result = contour.nodes.map((node, i) => {
+						const nextNode = contour.nodes[(i + 1) - contour.nodes.length * Math.floor((i + 1) / contour.nodes.length)].expandedTo[index];
+						const handleOut = index ? node.expandedTo[index].handleIn : node.expandedTo[index].handleOut;
+						const handleIn = index ? nextNode.handleOut : nextNode.handleIn;
+
+						const bezier = [
+							{
+								x: node.expandedTo[index].x,
+								y: node.expandedTo[index].y,
+							},
+							handleOut,
+							handleIn,
+							{
+								x: nextNode.x,
+								y: nextNode.y,
+							},
+						];
+
+						if (index) {
+							return _.reverse(bezier);
+						}
+						else {
+							return bezier;
+						}
+					});
+
+					if (index) {
+						return _.reverse(result);
+					}
+					else {
+						return result;
+					}
+				});
+			}
+		});
+
+		return beziers;
 	}
 
 	getFromXPath(path, caller) {
@@ -98,10 +237,10 @@ export default class Glyph {
 		});
 	}
 
+
 	/* eslint-disable max-depth */
 	/* eslint-disable no-loop-func */
 	constructGlyph(params, parentAnchors, glyphs) {
-		console.log(this.name.value);
 		const localParams = {
 			...params,
 			..._.mapValues(this.parameters, (param) => {
@@ -143,7 +282,10 @@ export default class Glyph {
 						}
 					}
 					else {
-						const correctedValues = SimplePath.correctValues(_.get(opDone, toLodashPath(cursor)), cursor);
+						const lodashCursor = toLodashPath(cursor);
+						const correctedValues = SimplePath.correctValues(_.get(opDone, lodashCursor), cursor);
+
+						_.set(opDone, `${lodashCursor}.checkOrientation`, true);
 
 						Object.keys(correctedValues).forEach((key) => {
 							_.set(opDone, toLodashPath(key), correctedValues[key]);
@@ -210,7 +352,44 @@ export default class Glyph {
 			return component.constructComponent(localParams, opDone.contours, opDone.anchors, utils, glyphs);
 		});
 
-		return opDone;
+		const transformedThis = _.mapValues(this, (prop, name) => {
+			if (prop !== undefined
+				&& name !== 'parameters'
+				&& name !== 'contours'
+				&& name !== 'anchors'
+				&& name !== 'components'
+				&& name !== 'operationOrder') {
+				return prop.getResult(localParams, opDone.contours, opDone.anchors, utils, glyphs);
+			}
+		});
+
+		if (transformedThis.transforms) {
+			opDone.contours.forEach((contour) => {
+				contour.nodes.forEach((node) => {
+					if (node.expandedTo) {
+						transformNode(node.expandedTo[0], transformedThis.transforms, transformedThis.transformOrigin);
+						transformNode(node.expandedTo[1], transformedThis.transforms, transformedThis.transformOrigin);
+					}
+					else {
+						transformNode(node, transformedThis.transforms, transformedThis.transformOrigin);
+					}
+				});
+			});
+		}
+
+		const otContours = this.createGlyphContour(opDone.contours);
+
+		_.forEach(opDone.components, (component) => {
+			otContours.push(...this.createGlyphContour(component.contours));
+		});
+
+		return {
+			...transformedThis,
+			...opDone,
+			spacingLeft: localParams.spacingLeft,
+			spacingRight: localParams.spacingRight,
+			otContours,
+		};
 	}
 	/* eslint-enable max-depth */
 	/* eslint-enable no-loop-func */

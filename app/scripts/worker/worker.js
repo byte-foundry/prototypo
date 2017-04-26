@@ -10,9 +10,9 @@ self.onmessage = (e) => {
 			break;
 		}
 		case 'constructGlyphs': {
-			const glyphs = currentFont.constructFont(e.data.data.params, e.data.data.subset);
+			const font = currentFont.constructFont(e.data.data.params, e.data.data.subset);
 
-			self.postMessage({id: e.data.id, glyphs});
+			self.postMessage({id: e.data.id, font});
 			break;
 		}
 		default: {

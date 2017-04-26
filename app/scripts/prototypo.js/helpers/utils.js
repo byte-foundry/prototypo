@@ -1,3 +1,5 @@
+import {transform2D, matrixMul} from '../../plumin/util/linear.js';
+
 export function toLodashPath(path) {
 	return path.replace(/\.([0-9]+)\./g, '[$1].');
 }
@@ -14,4 +16,111 @@ export function readAngle(angle) {
 	}
 
 	return parseFloat(angle);
+}
+
+export const transformByName = {
+	skewX(node, deg, center = {x: 0, y:0}) {
+		const theta = readAngle(deg);
+		const preSkew = [1, 0, 0, 1, -center.x, -center.y];
+		const skew = [1, Math.tan(theta), 0, 1, 0, 0];
+		const postSkew = [1, 0, 0, 1, center.x, center.y];
+		const matrix = matrixMul(
+			matrixMul(
+				preSkew,
+				skew
+			),
+			postSkew
+		);
+
+		return transform2D(matrix, node);
+	},
+	skewY(node, deg, center = {x: 0, y:0}) {
+		const theta = readAngle(deg);
+		const preSkew = [1, 0, 0, 1, -center.x, -center.y];
+		const skew = [1, 0, Math.tan(theta), 1, 0, 0];
+		const postSkew = [1, 0, 0, 1, center.x, center.y];
+		const matrix = matrixMul(
+			matrixMul(
+				preSkew,
+				skew
+			),
+			postSkew
+		);
+
+		return transform2D(matrix, node);
+	},
+	rotate(node, deg, center = {x: 0, y:0}) {
+		const theta = readAngle(deg);
+		const phi = Math.PI * theta / 180;
+		const preRotate = [1, 0, 0, 1, -center.x, -center.y];
+		const rotate = [Math.cos(phi), -Math.sin(phi), Math.sin(phi), Math.cos(phi), 0, 0];
+		const postRotate = [1, 0, 0, 1, center.x, center.y];
+		const matrix = matrixMul(
+			matrixMul(
+				preRotate,
+				rotate
+			),
+			postRotate
+		);
+
+		return transform2D(matrix, node);
+	},
+	translateX(node, offset) {
+		const translate = [1, 0, 0, 1, offset, 0];
+
+		return transform2D(translate, node);
+	},
+	translateY(node, offset) {
+		const translate = [1, 0, 0, 1, 0, offset];
+
+		return transform2D(translate, node);
+	},
+	scaleX(node, scale, center = {x: 0, y:0}) {
+		const preScale = [1, 0, 0, 1, -center.x, -center.y];
+		const scaleMatrix = [scale, 0, 0, 1, 0, 0];
+		const postScale = [1, 0, 0, 1, center.x, center.y];
+		const matrix = matrixMul(
+			matrixMul(
+				preScale,
+				scaleMatrix
+			),
+			postScale
+		);
+
+		return transform2D(matrix, node);
+	},
+	scaleY(node, scale, center = {x: 0, y:0}) {
+		const preScale = [1, 0, 0, 1, -center.x, -center.y];
+		const scaleMatrix = [1, 0, 0, scale, 0, 0];
+		const postScale = [1, 0, 0, 1, center.x, center.y];
+		const matrix = matrixMul(
+			matrixMul(
+				preScale,
+				scaleMatrix
+			),
+			postScale
+		);
+
+		return transform2D(matrix, node);
+	},
+};
+
+export function transformNode(node, transforms, origin) {
+	transforms.forEach(([name, param]) => {
+		exeTransformOnNode(name, node, param, origin);
+		if (node.handleIn) {
+			exeTransformOnNode(name, node.handleIn, param, origin);
+		}
+
+		if (node.handleOut) {
+			exeTransformOnNode(name, node.handleOut, param, origin);
+		}
+	});
+}
+
+function exeTransformOnNode(name, node, param, origin) {
+	const {x, y} = transformByName[name](node, param, origin)
+
+	node.x = x;
+	node.y = y;
 }

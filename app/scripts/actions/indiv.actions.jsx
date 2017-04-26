@@ -1,3 +1,4 @@
+/* global _ */
 import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import Log from '../services/log.services.js';
 import LocalServer from '../stores/local-server.stores.jsx';

@@ -13,7 +13,7 @@ export function buildTableObj(tableName, fields, options) {
 	tableObj.fields = fields;
 
 	_.forOwn(options, (value, key) => {
-		if (tableObj[key] === undefined) {
+		if (tableObj[key] !== undefined) {
 			tableObj[key] = value;
 		}
 	});
@@ -151,7 +151,7 @@ export class hmtx {
 		const t = buildTableObj('hmtx', []);
 
 		for (let i = 0; i < glyphs.length; i++) {
-			const glyph = glyphs.get(i);
+			const glyph = glyphs[i];
 			const advanceWidth = glyph.advanceWidth || 0;
 			const leftSideBearing = glyph.spacingLeft || 0;
 
@@ -202,10 +202,13 @@ export class cmap {
 
 		t.segments = [];
 		for (i = 0; i < glyphs.length; i++) {
-			const glyph = glyphs.get(i);
+			const glyph = glyphs[i];
+			//WARNING: This is because we have one unicode per glyph right now
+			//But it might change.
+			const unicodes = [glyph.unicode];
 
-			for (let j = 0; j < glyph.unicodes.length; j++) {
-				addSegment(t, glyph.unicodes[j], i);
+			for (let j = 0; j < unicodes.length; j++) {
+				addSegment(t, unicodes[j], i);
 			}
 
 			t.segments = t.segments.sort((a, b) => {
@@ -261,8 +264,6 @@ export class cmap {
 }
 
 const utf16 = 'utf-16';
-
-
 
 // MacOS script ID → encoding. This table stores the default case,
 // which can be overridden by macLanguageEncodings.
@@ -924,20 +925,22 @@ export class name {
 		const nameTableIds = reverseDict(nameTableNames);
 
 		_.forOwn(names, (value, key) => {
-			let id = nameTableIds[key];
+			if (value !== undefined) {
+				let id = nameTableIds[key];
 
-			if (id === undefined) {
-				id = key;
+				if (id === undefined) {
+					id = key;
+				}
+
+				nameID = parseInt(id);
+
+				if (isNaN(nameID)) {
+					throw new Error(`Name table entry "${key}" does not exist, see nameTableNames for complete list.`);
+				}
+
+				namesWithNumericKeys[nameID] = names[key];
+				nameIDs.push(nameID);
 			}
-
-			nameID = parseInt(id);
-
-			if (isNaN(nameID)) {
-				throw new Error(`Name table entry "${key}" does not exist, see nameTableNames for complete list.`);
-			}
-
-			namesWithNumericKeys[nameID] = names[key];
-			nameIDs.push(nameID);
 		});
 
 		const macLanguageIds = reverseDict(macLanguages);
@@ -1067,6 +1070,82 @@ export class post {
 	}
 }
 
+const cffStandardStrings = [
+	    '.notdef', 'space', 'exclam', 'quotedbl', 'numbersign', 'dollar', 'percent', 'ampersand', 'quoteright',
+	    'parenleft', 'parenright', 'asterisk', 'plus', 'comma', 'hyphen', 'period', 'slash', 'zero', 'one', 'two',
+	    'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'colon', 'semicolon', 'less', 'equal', 'greater',
+	    'question', 'at', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+		'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'bracketleft', 'backslash', 'bracketright', 'asciicircum', 'underscore',
+	    'quoteleft', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+	    'u', 'v', 'w', 'x', 'y', 'z', 'braceleft', 'bar', 'braceright', 'asciitilde', 'exclamdown', 'cent', 'sterling',
+	    'fraction', 'yen', 'florin', 'section', 'currency', 'quotesingle', 'quotedblleft', 'guillemotleft',
+	    'guilsinglleft', 'guilsinglright', 'fi', 'fl', 'endash', 'dagger', 'daggerdbl', 'periodcentered', 'paragraph',
+	    'bullet', 'quotesinglbase', 'quotedblbase', 'quotedblright', 'guillemotright', 'ellipsis', 'perthousand',
+	    'questiondown', 'grave', 'acute', 'circumflex', 'tilde', 'macron', 'breve', 'dotaccent', 'dieresis', 'ring',
+	    'cedilla', 'hungarumlaut', 'ogonek', 'caron', 'emdash', 'AE', 'ordfeminine', 'Lslash', 'Oslash', 'OE',
+	    'ordmasculine', 'ae', 'dotlessi', 'lslash', 'oslash', 'oe', 'germandbls', 'onesuperior', 'logicalnot', 'mu',
+	    'trademark', 'Eth', 'onehalf', 'plusminus', 'Thorn', 'onequarter', 'divide', 'brokenbar', 'degree', 'thorn',
+	    'threequarters', 'twosuperior', 'registered', 'minus', 'eth', 'multiply', 'threesuperior', 'copyright',
+	    'Aacute', 'Acircumflex', 'Adieresis', 'Agrave', 'Aring', 'Atilde', 'Ccedilla', 'Eacute', 'Ecircumflex',
+	    'Edieresis', 'Egrave', 'Iacute', 'Icircumflex', 'Idieresis', 'Igrave', 'Ntilde', 'Oacute', 'Ocircumflex',
+	    'Odieresis', 'Ograve', 'Otilde', 'Scaron', 'Uacute', 'Ucircumflex', 'Udieresis', 'Ugrave', 'Yacute',
+	    'Ydieresis', 'Zcaron', 'aacute', 'acircumflex', 'adieresis', 'agrave', 'aring', 'atilde', 'ccedilla', 'eacute',
+	    'ecircumflex', 'edieresis', 'egrave', 'iacute', 'icircumflex', 'idieresis', 'igrave', 'ntilde', 'oacute',
+	    'ocircumflex', 'odieresis', 'ograve', 'otilde', 'scaron', 'uacute', 'ucircumflex', 'udieresis', 'ugrave',
+	    'yacute', 'ydieresis', 'zcaron', 'exclamsmall', 'Hungarumlautsmall', 'dollaroldstyle', 'dollarsuperior',
+	    'ampersandsmall', 'Acutesmall', 'parenleftsuperior', 'parenrightsuperior', '266 ff', 'onedotenleader',
+	    'zerooldstyle', 'oneoldstyle', 'twooldstyle', 'threeoldstyle', 'fouroldstyle', 'fiveoldstyle', 'sixoldstyle',
+	    'sevenoldstyle', 'eightoldstyle', 'nineoldstyle', 'commasuperior', 'threequartersemdash', 'periodsuperior',
+	    'questionsmall', 'asuperior', 'bsuperior', 'centsuperior', 'dsuperior', 'esuperior', 'isuperior', 'lsuperior',
+	    'msuperior', 'nsuperior', 'osuperior', 'rsuperior', 'ssuperior', 'tsuperior', 'ff', 'ffi', 'ffl',
+	    'parenleftinferior', 'parenrightinferior', 'Circumflexsmall', 'hyphensuperior', 'Gravesmall', 'Asmall',
+	    'Bsmall', 'Csmall', 'Dsmall', 'Esmall', 'Fsmall', 'Gsmall', 'Hsmall', 'Ismall', 'Jsmall', 'Ksmall', 'Lsmall',
+	    'Msmall', 'Nsmall', 'Osmall', 'Psmall', 'Qsmall', 'Rsmall', 'Ssmall', 'Tsmall', 'Usmall', 'Vsmall', 'Wsmall',
+	    'Xsmall', 'Ysmall', 'Zsmall', 'colonmonetary', 'onefitted', 'rupiah', 'Tildesmall', 'exclamdownsmall',
+	    'centoldstyle', 'Lslashsmall', 'Scaronsmall', 'Zcaronsmall', 'Dieresissmall', 'Brevesmall', 'Caronsmall',
+	    'Dotaccentsmall', 'Macronsmall', 'figuredash', 'hypheninferior', 'Ogoneksmall', 'Ringsmall', 'Cedillasmall',
+	    'questiondownsmall', 'oneeighth', 'threeeighths', 'fiveeighths', 'seveneighths', 'onethird', 'twothirds',
+	    'zerosuperior', 'foursuperior', 'fivesuperior', 'sixsuperior', 'sevensuperior', 'eightsuperior', 'ninesuperior',
+	    'zeroinferior', 'oneinferior', 'twoinferior', 'threeinferior', 'fourinferior', 'fiveinferior', 'sixinferior',
+	    'seveninferior', 'eightinferior', 'nineinferior', 'centinferior', 'dollarinferior', 'periodinferior',
+	    'commainferior', 'Agravesmall', 'Aacutesmall', 'Acircumflexsmall', 'Atildesmall', 'Adieresissmall',
+	    'Aringsmall', 'AEsmall', 'Ccedillasmall', 'Egravesmall', 'Eacutesmall', 'Ecircumflexsmall', 'Edieresissmall',
+	    'Igravesmall', 'Iacutesmall', 'Icircumflexsmall', 'Idieresissmall', 'Ethsmall', 'Ntildesmall', 'Ogravesmall',
+	    'Oacutesmall', 'Ocircumflexsmall', 'Otildesmall', 'Odieresissmall', 'OEsmall', 'Oslashsmall', 'Ugravesmall',
+	    'Uacutesmall', 'Ucircumflexsmall', 'Udieresissmall', 'Yacutesmall', 'Thornsmall', 'Ydieresissmall', '001.000',
+	'001.001', '001.002', '001.003', 'Black', 'Bold', 'Book', 'Light', 'Medium', 'Regular', 'Roman', 'Semibold',
+];
+
+const TOP_DICT_META = [
+	    {name: 'version', op: 0, type: 'SID'},
+	    {name: 'notice', op: 1, type: 'SID'},
+	    {name: 'copyright', op: 1200, type: 'SID'},
+	    {name: 'fullName', op: 2, type: 'SID'},
+	    {name: 'familyName', op: 3, type: 'SID'},
+	    {name: 'weight', op: 4, type: 'SID'},
+	    {name: 'isFixedPitch', op: 1201, type: 'number', value: 0},
+	    {name: 'italicAngle', op: 1202, type: 'number', value: 0},
+	    {name: 'underlinePosition', op: 1203, type: 'number', value: -100},
+	    {name: 'underlineThickness', op: 1204, type: 'number', value: 50},
+	    {name: 'paintType', op: 1205, type: 'number', value: 0},
+	    {name: 'charstringType', op: 1206, type: 'number', value: 2},
+	    {name: 'fontMatrix', op: 1207, type: ['real', 'real', 'real', 'real', 'real', 'real'], value: [0.001, 0, 0, 0.001, 0, 0]},
+	    {name: 'uniqueId', op: 13, type: 'number'},
+	    {name: 'fontBBox', op: 5, type: ['number', 'number', 'number', 'number'], value: [0, 0, 0, 0]},
+	    {name: 'strokeWidth', op: 1208, type: 'number', value: 0},
+	    {name: 'xuid', op: 14, type: [], value: null},
+	    {name: 'charset', op: 15, type: 'offset', value: 0},
+	    {name: 'encoding', op: 16, type: 'offset', value: 0},
+	    {name: 'charStrings', op: 17, type: 'offset', value: 0},
+	    {name: 'private', op: 18, type: ['number', 'offset'], value: [0, 0]},
+];
+
+const PRIVATE_DICT_META = [
+	    {name: 'subrs', op: 19, type: 'offset', value: 0},
+	    {name: 'defaultWidthX', op: 20, type: 'number', value: 0},
+	    {name: 'nominalWidthX', op: 21, type: 'number', value: 0},
+];
+
 function makeHeader() {
 	return buildTableObj('Header', [
         {name: 'major', type: 'Card8', value: 1},
@@ -1119,6 +1198,7 @@ function encodeString(s, strings) {
 
     // Is the string in the CFF standard strings?
     let i = cffStandardStrings.indexOf(s);
+
     if (i >= 0) {
         sid = i;
     }
@@ -1213,72 +1293,47 @@ function makeCharsets(glyphNames, strings) {
 //TODO(franz): does not work like that anymore
 function glyphToOps(glyph) {
     const ops = [];
-    const path = glyph.path;
     let x = 0;
     let y = 0;
 
     ops.push({name: 'width', type: 'NUMBER', value: glyph.advanceWidth});
 
-    for (let i = 0; i < path.commands.length; i++) {
+    for (let i = 0; i < glyph.otContours.length; i++) {
         let dx;
         let dy;
-        let cmd = path.commands[i];
+        const contour = glyph.otContours[i];
+		for (let j = 0; j < contour.length; j++) {
 
-        if (cmd.type === 'Q') {
-            // CFF only supports bézier curves, so convert the quad to a bézier.
-            const _13 = 1 / 3;
-            const _23 = 2 / 3;
+			const bezier = contour[j];
 
-            // We're going to create a new command so we don't change the original path.
-            cmd = {
-                type: 'C',
-                x: cmd.x,
-                y: cmd.y,
-                x1: _13 * x + _23 * cmd.x1,
-                y1: _13 * y + _23 * cmd.y1,
-                x2: _13 * cmd.x + _23 * cmd.x1,
-                y2: _13 * cmd.y + _23 * cmd.y1,
-            };
-        }
+			if (j === 0) {
+				dx = Math.round(bezier[0].x - x);
+				dy = Math.round(bezier[0].y - y);
+				ops.push({name: 'dx', type: 'NUMBER', value: dx});
+				ops.push({name: 'dy', type: 'NUMBER', value: dy});
+				ops.push({name: 'rmoveto', type: 'OP', value: 21});
+				x = Math.round(bezier[0].x);
+				y = Math.round(bezier[0].y);
+			}
 
-        if (cmd.type === 'M') {
-            dx = Math.round(cmd.x - x);
-            dy = Math.round(cmd.y - y);
-            ops.push({name: 'dx', type: 'NUMBER', value: dx});
-            ops.push({name: 'dy', type: 'NUMBER', value: dy});
-            ops.push({name: 'rmoveto', type: 'OP', value: 21});
-            x = Math.round(cmd.x);
-            y = Math.round(cmd.y);
+			const dx1 = Math.round(bezier[1].x - x);
+			const dy1 = Math.round(bezier[1].y - y);
+			const dx2 = Math.round(bezier[2].x - bezier[1].x);
+			const dy2 = Math.round(bezier[2].y - bezier[1].y);
+
+			dx = Math.round(bezier[3].x - bezier[2].x);
+			dy = Math.round(bezier[3].y - bezier[2].y);
+			ops.push({name: 'dx1', type: 'NUMBER', value: dx1});
+			ops.push({name: 'dy1', type: 'NUMBER', value: dy1});
+			ops.push({name: 'dx2', type: 'NUMBER', value: dx2});
+			ops.push({name: 'dy2', type: 'NUMBER', value: dy2});
+			ops.push({name: 'dx', type: 'NUMBER', value: dx});
+			ops.push({name: 'dy', type: 'NUMBER', value: dy});
+			ops.push({name: 'rrcurveto', type: 'OP', value: 8});
+			x = Math.round(bezier[3].x);
+			y = Math.round(bezier[3].y);
+			// Contours are closed automatically.
 		}
-		else if (cmd.type === 'L') {
-            dx = Math.round(cmd.x - x);
-            dy = Math.round(cmd.y - y);
-            ops.push({name: 'dx', type: 'NUMBER', value: dx});
-            ops.push({name: 'dy', type: 'NUMBER', value: dy});
-            ops.push({name: 'rlineto', type: 'OP', value: 5});
-            x = Math.round(cmd.x);
-            y = Math.round(cmd.y);
-		}
-		else if (cmd.type === 'C') {
-            const dx1 = Math.round(cmd.x1 - x);
-            const dy1 = Math.round(cmd.y1 - y);
-            const dx2 = Math.round(cmd.x2 - cmd.x1);
-            const dy2 = Math.round(cmd.y2 - cmd.y1);
-
-            dx = Math.round(cmd.x - cmd.x2);
-            dy = Math.round(cmd.y - cmd.y2);
-            ops.push({name: 'dx1', type: 'NUMBER', value: dx1});
-            ops.push({name: 'dy1', type: 'NUMBER', value: dy1});
-            ops.push({name: 'dx2', type: 'NUMBER', value: dx2});
-            ops.push({name: 'dy2', type: 'NUMBER', value: dy2});
-            ops.push({name: 'dx', type: 'NUMBER', value: dx});
-            ops.push({name: 'dy', type: 'NUMBER', value: dy});
-            ops.push({name: 'rrcurveto', type: 'OP', value: 8});
-            x = Math.round(cmd.x);
-            y = Math.round(cmd.y);
-        }
-
-        // Contours are closed automatically.
 
     }
 
@@ -1292,7 +1347,7 @@ function makeCharStringsIndex(glyphs) {
     ]);
 
     for (let i = 0; i < glyphs.length; i++) {
-        const glyph = glyphs.get(i);
+        const glyph = glyphs[i];
         const ops = glyphToOps(glyph);
 
         t.charStrings.push({name: glyph.name, type: 'CHARSTRING', value: ops});
@@ -1344,7 +1399,7 @@ export class cff {
 
 		// Skip first glyph (.notdef)
 		for (let i = 1; i < glyphs.length; i++) {
-			const glyph = glyphs.get(i);
+			const glyph = glyphs[i];
 
 			glyphNames.push(glyph.name);
 		}
@@ -1363,18 +1418,18 @@ export class cff {
 		// Needs to come at the end, to encode all custom strings used in the font.
 		t.stringIndex = makeStringIndex(strings);
 
-		const startOffset = t.header.sizeOf()
-			+ t.nameIndex.sizeOf()
-			+ t.topDictIndex.sizeOf()
-			+ t.stringIndex.sizeOf()
-			+ t.globalSubrIndex.sizeOf();
+		const startOffset = sizeOfTable(t.header)
+			+ sizeOfTable(t.nameIndex)
+			+ sizeOfTable(t.topDictIndex)
+			+ sizeOfTable(t.stringIndex)
+			+ sizeOfTable(t.globalSubrIndex);
 
 		attrs.charset = startOffset;
 
 		// We use the CFF standard encoding; proper encoding will be handled in cmap.
 		attrs.encoding = 0;
-		attrs.charStrings = attrs.charset + t.charsets.sizeOf();
-		attrs.private[1] = attrs.charStrings + t.charStringsIndex.sizeOf();
+		attrs.charStrings = attrs.charset + sizeOfTable(t.charsets);
+		attrs.private[1] = attrs.charStrings + sizeOfTable(t.charStringsIndex);
 
 		// Recreate the Top DICT INDEX with the correct offsets.
 		topDict = makeTopDict(attrs, strings);

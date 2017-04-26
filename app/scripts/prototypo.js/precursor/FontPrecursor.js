@@ -1,3 +1,4 @@
+/* global _ */
 import {constantOrFormula} from '../helpers/values.js';
 
 import Glyph from './Glyph.js';
@@ -17,7 +18,11 @@ export default class FontPrecursor {
 			return constantOrFormula(param);
 		});
 
+		this.unicodeToGlyphName = {};
+
 		this.glyphs = _.mapValues(fontSrc.glyphs, (glyph) => {
+			this.unicodeToGlyphName[glyph.unicode] = glyph.name;
+
 			return new Glyph(glyph);
 		});
 
@@ -38,51 +43,21 @@ export default class FontPrecursor {
 			}),
 		};
 		const transformedThis = _.mapValues(this, (prop, name) => {
-			if (name !== 'parameters' && name !== 'glyphs') {
+			if (name !== 'parameters' && name !== 'glyphs' && name !== 'unicodeToGlyphName') {
 				return prop.getResult(localParams);
 			}
 		});
-		/*const {
-			familyName,
-			styleName,
-			version,
-			description,
-			ascender,
-			descender,
-			fullName,
-			designer,
-			designerURL,
-			manufacturer,
-			manufacturerURL,
-			license,
-			licenseURL,
-			copyright,
-			trademark,
-		} = {...transformedThis, ...params.ot};
-
-		let font = new Font({
-			familyName,
-			styleName,
-			version,
-			ascender,
-			descender,
-			description,
-			fullName,
-			designer,
-			designerURL,
-			manufacturer,
-			manufacturerURL,
-			license,
-			licenseURL,
-			copyright,
-			trademark,
-		});*/
-
-		const glyphs = _.reduce(subset, (result, name) => {
-			result[name] = this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs);
+		const glyphNames = _.map(subset, (char) => {
+			return this.unicodeToGlyphName[char.charCodeAt(0)];
+		});
+		const glyphs = _.reduce(glyphNames, (result, name) => {
+			result.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));
 			return result;
-		}, {});
+		}, []);
 
-		return glyphs;
+		return {
+			...transformedThis,
+			glyphs,
+		};
 	}
 }

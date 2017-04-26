@@ -1,6 +1,6 @@
 /*global _ */
 import {checkArgument} from './check.js';
-import os2, {getUnicodeRange} from './os2.js';
+import {getUnicodeRange} from './os2.js';
 import {
 	buildTableObj,
 	encodeTable,
@@ -14,6 +14,7 @@ import {
 	maxp,
 	name,
 	post,
+	os2,
 } from './table.js';
 
 export const usWeightClasses = {
@@ -63,7 +64,7 @@ function computeCheckSum(bytes) {
     return sum;
 }
 
-export function FontToSfntTable(font) {
+export function fontToSfntTable(font) {
     const {
         ascender,
         descender,
@@ -71,14 +72,14 @@ export function FontToSfntTable(font) {
         glyphs,
         createdTimestamp,
         fontFamily,
-        fontSubFamily,
+        fontSubfamily,
         postScriptName,
         manufacturer,
-        manufacturerUrl,
+        manufacturerURL,
         designer,
-        designerUrl,
+        designerURL,
         license,
-        licenseUrl,
+        licenseURL,
         version,
         description,
         copyright,
@@ -101,6 +102,14 @@ export function FontToSfntTable(font) {
     let ulUnicodeRange2: number = 0;
     let ulUnicodeRange3: number = 0;
     let ulUnicodeRange4: number = 0;
+	font.glyphs.unshift({
+		name: '.notdef',
+		unicode: 0,
+		otContours: [],
+		advanceWidth: 100,
+		spacingLeft: 0,
+		spacingRight: 0,
+	});
 
     for (let i: number = 0; i < font.glyphs.length; i++) {
         const glyph = font.glyphs[i];
@@ -144,8 +153,8 @@ export function FontToSfntTable(font) {
 
         xMins.push(metrics.xMin);
         yMins.push(metrics.yMin);
-        xMaxs.push(metrics.xMaxs);
-        yMaxs.push(metrics.yMaxs);
+        xMaxs.push(metrics.xMax);
+        yMaxs.push(metrics.yMax);
         leftSideBearings.push(metrics.leftSideBearing);
         rightSideBearings.push(metrics.rightSideBearing);
         advanceWidths.push(glyph.advanceWidth);
@@ -161,7 +170,7 @@ export function FontToSfntTable(font) {
 
     const headTable = head.make({
         flags: 3,
-        unitsPerEm: font.unitsPerEm,
+        unitsPerEm,
         xMin,
         yMin,
         xMax,
@@ -177,14 +186,15 @@ export function FontToSfntTable(font) {
         minLeftSideBearing,
         maxLeftSideBearing,
         xMaxExtent: maxLeftSideBearing + xMax - xMin,
+		numberOfHMetrics: glyphs.length,
     });
 
-    const maxpTable = maxp.make(font.glyphs.length);
+    const maxpTable = maxp.make(glyphs.length);
 
     const os2Table = os2.make({
         xAvgCharWidth: Math.round(advanceWithAvg),
-        usWeightClass,
-        usWidthClass,
+        usWeightClass: usWeightClass || usWeightClasses.NORMAL,
+        usWidthClass: usWidthClass || usWidthClasses.MEDIUM,
         usFirstCharIndex: firstCharIndex,
         usLastCharIndex: lastCharIndex,
         ulUnicodeRange1,
@@ -206,28 +216,28 @@ export function FontToSfntTable(font) {
     const cmapTable = cmap.make(glyphs);
 
     const englishFamilyName = fontFamily.en;
-    const englishStyleName = fontSubFamily.en;
+    const englishStyleName = fontSubfamily.en;
     const englishFullName = `${englishFamilyName} ${englishStyleName}`;
     const postScriptNameString = postScriptName.en || `${englishFamilyName.replace(/\s/g, '')}-${englishStyleName}`;
 
     const names = {
         fontFamily,
-        fontSubFamily,
+        fontSubfamily,
         fullName: {en: englishFullName},
         postScriptName: {en: postScriptNameString},
         designer,
-        designerUrl,
+        designerURL,
         manufacturer,
-        manufacturerUrl,
+        manufacturerURL,
         license,
-        licenseUrl,
-        version,
-        description,
+        licenseURL,
+        version: {en: version},
+        description: {en: description},
         copyright,
         trademark,
         uniqueID: {en: `${manufacturer}:${englishFullName}`},
         preferredFamily: fontFamily,
-        preferredSubFamily: fontSubFamily,
+        preferredSubfamily: fontSubfamily,
     };
 
     const languageTags = [];
@@ -240,7 +250,7 @@ export function FontToSfntTable(font) {
         fullName: englishFullName,
         familyName: englishFamilyName,
         weightName: englishStyleName,
-        postScriptNameString,
+        postScriptName: postScriptNameString,
         unitsPerEm,
         fontBBox: [0, yMin, ascender, advanceWidthMax],
     });
@@ -259,7 +269,7 @@ export function FontToSfntTable(font) {
 
     for (let i = 0; i < tableFields.length; i++) {
         if (tableFields[i].name === 'head table') {
-            tableFields[i].value.checkSumAdjusted = 0xB1B0AFBA - checkSum;
+            tableFields[i].value.checkSumAdjustment = 0xB1B0AFBA - checkSum;
             checkSumAdjusted = true;
             break;
         }
@@ -269,7 +279,7 @@ export function FontToSfntTable(font) {
         throw new Error('Could not find head table with checkSum to adjust');
     }
 
-    return sfntTable;
+    return new Uint8Array(encodeTable(sfntTable));
 }
 
 function makeTableRecord(tag, checkSum, offset, length) {
@@ -313,8 +323,8 @@ function makeSfntTable(tables) {
 
         checkArgument(t.tableName.length === 4, `Table name ${t.tableName} is invalid.`);
 
-        const tableLength = t.sizeOf();
-        const tableRecord = makeTableRecord(t.tableName, computeCheckSum(t.encode()), offset, tableLength);
+        const tableLength = sizeOfTable(t);
+        const tableRecord = makeTableRecord(t.tableName, computeCheckSum(encodeTable(t)), offset, tableLength);
 
         recordFields.push({name: `${tableRecord.tag} Table Record`, type: 'RECORD', value: tableRecord});
         tableFields.push({name: `${t.tableName} table`, type: 'RECORD', value: t});
@@ -359,17 +369,13 @@ function getMetrics(glyph) {
     const xCoords = [];
     const yCoords = [];
 
-    glyph.contours.forEach((contour) => {
-        contour.nodes.forEach((node) => {
-            xCoords.push(node.x);
-            yCoords.push(node.y);
-
-            xCoords.push(node.handleIn.x);
-            yCoords.push(node.handleIn.y);
-
-            xCoords.push(node.handleOut.x);
-            yCoords.push(node.handleOut.y);
-        });
+    glyph.otContours.forEach((contour) => {
+        contour.forEach((curve) => {
+			curve.forEach((node) => {
+				xCoords.push(node.x);
+				yCoords.push(node.y);
+			});
+		});
     });
 
     return {

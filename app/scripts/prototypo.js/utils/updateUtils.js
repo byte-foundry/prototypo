@@ -460,7 +460,9 @@ export function makeCurveInsideSerif(
 	if (pAnchors.inverseOrder) {
 		splitBase = lineCurveIntersection(
 			pAnchors.curveEnd,
+			pAnchors.curveEnd.handleOut,
 			pAnchors.baseWidth,
+			pAnchors.baseWidth.handleIn,
 			{x: topLeft.x, y: topLeft.y},
 			{x: bottomLeft.x, y: bottomLeft.y}
 		);
@@ -468,7 +470,9 @@ export function makeCurveInsideSerif(
 	else {
 		splitBase = lineCurveIntersection(
 			pAnchors.baseWidth,
+			pAnchors.baseWidth.handleOut,
 			pAnchors.curveEnd,
+			pAnchors.curveEnd.handleIn,
 			{x: topLeft.x, y: topLeft.y},
 			{x: bottomLeft.x, y: bottomLeft.y}
 		);
@@ -515,13 +519,13 @@ export function makeCurveInsideSerif(
 	let pointOnCurveVar;
 	let pointOnSerif;
 	let pointWithCurve = {};
-	let tangentToCurve;
+	let normalToCurve;
 
 	if (pAnchors.inverseOrder) {
-		pointWithCurve = pointOnCurve(splitCurveEnd, serifCenter, serifCurve, true, 200);
+		pointWithCurve = pointOnCurve(splitCurveEnd, splitCurveEnd.handleOut, serifCenter, serifCenter.handleIn, serifCurve, true, 200);
 	}
 	else {
-		pointWithCurve = pointOnCurve(serifCenter, splitCurveEnd, serifCurve, false, 200);
+		pointWithCurve = pointOnCurve(serifCenter, serifCenter.handleOut, splitCurveEnd, splitCurveEnd.handleIn, serifCurve, false, 200);
 	}
 
 	if (serifCurve > 0) {
@@ -546,12 +550,12 @@ export function makeCurveInsideSerif(
 		if (pAnchors.inverseOrder) {
 			const relHandle = subtract2D(serifCenter, serifCenter.handleIn);
 
-			tangentToCurve = Math.atan2(relHandle.y, relHandle.x);
+			normalToCurve = Math.atan2(relHandle.y, relHandle.x);
 		}
 		else {
 			const relHandle = subtract2D(serifCenter, serifCenter.handleOut);
 
-			tangentToCurve = Math.atan2(relHandle.y, relHandle.x);
+			normalToCurve = Math.atan2(relHandle.y, relHandle.x);
 		}
 		pointOnCurveVar = {
 			x: serifCenter.x,
@@ -618,9 +622,9 @@ export function makeCurveInsideSerif(
 	};
 
 	const lastPoint = {
-		x: pointOnCurveVar.x - stumpNorm / 2 * Math.sin(tangentToCurve) * yDir * xDir,
-		y: pointOnCurveVar.y + stumpNorm / 2 * Math.cos(tangentToCurve) * yDir * xDir,
-		dirIn: tangentToCurve,
+		x: pointOnCurveVar.x - stumpNorm / 2 * Math.sin(normalToCurve) * yDir * xDir,
+		y: pointOnCurveVar.y + stumpNorm / 2 * Math.cos(normalToCurve) * yDir * xDir,
+		dirIn: normalToCurve,
 		typeOut: 'line',
 		type: 'corner',
 	};

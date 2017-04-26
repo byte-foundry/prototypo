@@ -1,3 +1,4 @@
+/* global _ */
 import {subtract2D, mulScalar2D, dot2D, add2D} from '../../plumin/util/linear.js';
 import {rayRayIntersection} from '../utils/updateUtils.js';
 import {readAngle} from '../helpers/utils.js';
@@ -73,8 +74,8 @@ function computeHandle(
 				dot2D(
 					unitDir,
 					subtract2D(
-						prev,
 						next,
+						prev,
 					)
 				),
 				unitDir
@@ -104,6 +105,10 @@ function computeHandle(
 		|| inVector.y === undefined
 		|| outVector.x === undefined
 		|| outVector.y === undefined
+		|| Number.isNaN(inVector.x)
+		|| Number.isNaN(inVector.y)
+		|| Number.isNaN(outVector.x)
+		|| Number.isNaN(outVector.y)
 	) {
 		console.error(`handle creation went south for cursor:`, cursor);
 	}
@@ -296,8 +301,8 @@ export class ClosedSkeletonPath extends SkeletonPath {
 			const node = nodes[k];
 
 			for (let j = 0; j < node.expandedTo.length; j++) {
-				let nextFirstIndex = k + 1 * (j ? -1 : 1) - nodes.length * Math.floor((k + 1 * (j ? -1 : 1)) / nodes.length);
-				let prevFirstIndex = k - 1 * (j ? -1 : 1) - nodes.length * Math.floor((k - 1 * (j ? -1 : 1)) / nodes.length);
+				const nextFirstIndex = k + 1 * (j ? -1 : 1) - nodes.length * Math.floor((k + 1 * (j ? -1 : 1)) / nodes.length);
+				const prevFirstIndex = k - 1 * (j ? -1 : 1) - nodes.length * Math.floor((k - 1 * (j ? -1 : 1)) / nodes.length);
 
 				const nextExpanded = nodes[nextFirstIndex].expandedTo[j];
 				const prevExpanded = nodes[prevFirstIndex].expandedTo[j];
@@ -331,6 +336,7 @@ export class SimplePath extends SolvablePath {
 		});
 		this.closed = constantOrFormula(true);
 		this.skeleton = constantOrFormula(false);
+		this.exportReversed = constantOrFormula(source.exportReversed);
 	}
 
 	isReadyForHandles(ops, index = ops.length - 1) {

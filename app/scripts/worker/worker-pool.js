@@ -1,3 +1,6 @@
+/* global require, _ */
+import LocalClient from '../stores/local-client.stores.jsx';
+
 const RANDOM_LENGTH = 10000;
 let randomValues = new Uint32Array(RANDOM_LENGTH);
 let randomIndex = 0;
@@ -15,6 +18,12 @@ else {
 		return 1;
 	};
 }
+
+let localClient;
+
+window.addEventListener('fluxServer.setup', () => {
+	localClient = LocalClient.instance();
+});
 
 function getRandomUuid() {
 	let uuid;
@@ -45,16 +54,24 @@ export default class WorkerPool {
 		const ProtoWorker = require(`worker-loader!./worker.js`);
 		let eachJobList = [];
 
-		let workerStatus = [];
-
 		this.workerArray = [];
 		this.jobCallback = {};
+
+		/* #if dev */
+		localClient.dispatchAction('/store-value', {
+			workers: Array(numberOfWorker).fill(false),
+		});
+		/* #end */
 
 		for (let i = 0; i < numberOfWorker; i++) {
 
 			const worker = new ProtoWorker();
 
-			this.workerArray.push(worker);
+			this.workerArray.push({
+				worker,
+				working: false,
+			});
+
 			worker.addEventListener('message', (e) => {
 				if (e.data.id.indexOf('each') === 0) {
 					//TODO(franz): think about timing out
@@ -69,8 +86,28 @@ export default class WorkerPool {
 				else {
 					this.jobCallback[e.data.id](e.data);
 				}
+
+				this.workerArray[i].working = false;
+
+				/* #if dev */
+				localClient.dispatchAction('/store-value', {
+					workers: _.map(this.workerArray, (worker) => {return worker.working}),
+				});
+				/* #end */
+
+				if (!this.areWorkerBusy() && this.jobQueue) {
+					const jobToDo = this.jobQueue;
+					this.jobQueue = undefined;
+					this.doJobs(jobToDo);
+				}
 			});
 		}
+	}
+
+	areWorkerBusy() {
+		return _.reduce(this.workerArray, (acc, worker) => {
+			return acc || worker.working;
+		}, false);
 	}
 
 	//jobs should be of this form
@@ -86,16 +123,28 @@ export default class WorkerPool {
 		const time = window.performance.now();
 		const uuid = getRandomUuid();
 
-		for (let i = 0; i < jobs.length; i++) {
-			const job = jobs[i];
+		if (this.areWorkerBusy()) {
+			this.jobQueue = jobs;
+		}
+		else {
+			for (let i = 0; i < jobs.length; i++) {
+				const job = jobs[i];
 
-			if (job) {
-			const jobId = `${time}-${uuid}-${i}`;
+				if (job) {
+					const jobId = `${time}-${uuid}-${i}`;
 
-				job.action.id = jobId;
-				this.jobCallback[jobId] = job.callback;
+					job.action.id = jobId;
+					this.jobCallback[jobId] = job.callback;
 
-				this.workerArray[Math.floor(i / jobPerWorker)].postMessage(job.action);
+					this.workerArray[Math.floor(i / jobPerWorker)].worker.postMessage(job.action);
+					this.workerArray[Math.floor(i / jobPerWorker)].working = true;
+
+					/* #if dev */
+					localClient.dispatchAction('/store-value', {
+						workers: _.map(this.workerArray, (worker) => {return worker.working}),
+					});
+					/* #end */
+				}
 			}
 		}
 	}
@@ -111,7 +160,12 @@ export default class WorkerPool {
 
 			this.jobCallback[jobId] = job.callback;
 
-			this.workerArray[i].postMessage(job.action);
+			this.workerArray[i].worker.postMessage(job.action);
+			/* #if dev */
+			localClient.dispatchAction('/store-value', {
+				workers: _.map(this.workerArray, (worker) => {return worker.working}),
+			});
+			/* #end */
 		}
 	}
 }

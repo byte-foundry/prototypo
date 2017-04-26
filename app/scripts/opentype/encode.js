@@ -1,6 +1,7 @@
 /*global _ */
 import {checkArgument} from './check.js';
 
+const LIMIT16 = 32768;
 const LIMIT32 = 2147483648; // The limit at which a 32-bit number switches signs == 2 ^ 31
 
 function constant(v) {
@@ -45,6 +46,17 @@ encode.USHORT = (v) => {
 };
 
 sizeOf.USHORT = constant(2);
+
+encode.SHORT = function(v) {
+    // Two's complement
+    if (v >= LIMIT16) {
+        v = -(2 * LIMIT16 - v);
+    }
+
+    return [(v >> 8) & 0xFF, v & 0xFF];
+};
+
+sizeOf.SHORT = constant(2);
 
 encode.UINT24 = (v) => {
     return [(v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
@@ -704,4 +716,15 @@ sizeOf.TABLE = (table) => {
 
     return numBytes;
 };
+
+encode.RECORD = encode.TABLE;
+sizeOf.RECORD = sizeOf.TABLE;
+
+encode.LITERAL = (v) => {
+	return v;
+}
+
+sizeOf.LITERAL = (v) => {
+	return v.length;
+}
 /* eslint-enable babel/new-cap */
