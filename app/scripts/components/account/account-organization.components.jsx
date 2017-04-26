@@ -3,7 +3,7 @@ import Lifespan from 'lifespan';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
-import AccountManageSubUsers from './account-manage-sub-users.containers';
+import AccountManageSubUsers from './account-manage-sub-users.components';
 
 export default class AccountOrganization extends React.Component {
 	constructor(props) {

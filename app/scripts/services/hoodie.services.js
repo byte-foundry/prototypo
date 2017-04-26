@@ -55,6 +55,34 @@ async function fetchAWS(endpoint, params = {}) {
 	return Promise.reject(error);
 }
 
+const signUpAndLoginMutation = gql`
+	mutation signUpAndLogin(
+		$email: String!,
+		$password: String!,
+		$firstName: String!,
+		$lastName: String,
+		$occupation: String,
+		$phone: String,
+		$skype: String,
+	) {
+		createUser(
+			authProvider: {email: {email: $email, password: $password}},
+			firstName: $firstName,
+			lastName: $lastName,
+			occupation: $occupation,
+			phone: $phone,
+			skype: $skype,
+		) {
+			id
+			email
+		}
+
+		signinUser(email: {email: $email, password: $password}) {
+			token
+		}
+	}
+`;
+
 export default class HoodieApi {
 
 	static setup() {
@@ -85,7 +113,25 @@ export default class HoodieApi {
 
 			window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
 		}
-		catch (e) { trackJs.track(e); }
+		catch (e) {
+			if (e.graphQLErrors.map(e => e.code).includes(3022)) {
+				try {
+					const response = await apolloClient.mutate({
+						mutation: signUpAndLoginMutation,
+						variables: {
+							email: user,
+							password,
+							firstName: 'there',
+						},
+					});
+
+					window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
+				}
+				catch (err) { trackJs.track(err); }
+			} else {
+				trackJs.track(e);
+			}
+		}
 
 		return setupStripe(setupHoodie(data));
 	}
@@ -101,24 +147,25 @@ export default class HoodieApi {
 		return data;
 	}
 
-	static async signUp(email, password) {
+	static async signUp(email, password, firstName, {lastName, occupation, phone, skype}) {
 		const data = await hoodie.account.signUp(email, password);
 
 		// If the graph.cool account creation fails, it's ok for now
 		try {
-			await apolloClient.mutate({
-				mutation: gql`
-					mutation createUser($email: String!, $password: String!) {
-						signUp(authProvider: {email: {email: $email, password: $password}}) {
-							token
-						}
-					}
-				`,
+			const response = await apolloClient.mutate({
+				mutation: signUpAndLoginMutation,
 				variables: {
 					email,
 					password,
+					firstName,
+					lastName: lastName || undefined,
+					occupation: occupation || undefined,
+					phone: phone || undefined,
+					skype: skype || undefined,
 				},
 			});
+
+			window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
 		}
 		catch (e) { trackJs.track(e); }
 
@@ -126,7 +173,7 @@ export default class HoodieApi {
 	}
 
 	static isLoggedIn() {
-		return hoodie.account.hasValidSession();
+		return /*window.localStorage.getItem('graphcoolToken') && */hoodie.account.hasValidSession();
 	}
 
 	static askPasswordReset(username) {

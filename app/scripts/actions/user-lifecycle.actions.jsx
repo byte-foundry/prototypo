@@ -3,7 +3,6 @@ import Lifespan from 'lifespan';
 import debounce from 'lodash/debounce';
 import gql from 'graphql-tag';
 
-import apolloClient from '../services/graphcool.services';
 import {userStore, prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -371,40 +370,11 @@ export default {
 		const curedLastname = lastname ? ` ${lastname}` : '';
 
 		try {
-			const {response} = await HoodieApi.signUp(username.toLowerCase(), password);
-
-			apolloClient.mutate({
-				mutation: gql`
-					mutation signUp(
-						$email: String!,
-						$password: String!,
-						$firstName: String!,
-						$lastName: String,
-						$occupation: String,
-						$phone: String,
-						$skype: String,
-					) {
-						createUser(
-							authProvider: {email: {email: $email, password: $password}},
-							firstName: $firstName,
-							lastName: $lastName,
-							occupation: $occupation,
-							phone: $phone,
-							skype: $skype,
-						) {
-							email
-						}
-					}
-				`,
-				variables: {
-					email: username,
-					password,
-					firstName: firstname,
-					lastName: lastname,
-					occupation: css.value,
-					phone,
-					skype,
-				},
+			const {response} = await HoodieApi.signUp(username.toLowerCase(), password, firstname, {
+				lastName: lastname,
+				occupation: css.value,
+				phone,
+				skype,
 			});
 
 			window.Intercom('boot', {

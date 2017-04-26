@@ -208,7 +208,7 @@ const query = gql`
 
 export default graphql(query, {
 	props: ({data}) => {
-		if (data.loading) {
+		if (data.loading || !data.user) { // TMP: don't fail if there's no graphcool account
 			return {loading: true};
 		}
 
