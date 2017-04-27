@@ -29,6 +29,7 @@ export default class PrototypoCanvas extends React.Component {
 			glyphPanelOpened: undefined,
 			uiText: '',
 			uiWord: '',
+			shadowFile: '',
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
@@ -55,6 +56,8 @@ export default class PrototypoCanvas extends React.Component {
 		this.preExportGlyphr = this.preExportGlyphr.bind(this);
 		this.afterExportGlyphr = this.afterExportGlyphr.bind(this);
 		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
+		this.onDrop = this.onDrop.bind(this);
+		this.deleteShadow = this.deleteShadow.bind(this);
 	}
 
 	componentWillMount() {
@@ -354,6 +357,21 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
+	onDrop(accepted, rejected) {
+		if (accepted.length > 0 && rejected.length === 0) {
+			const reader = new FileReader();
+
+			reader.addEventListener("load", () => {
+				this.setState({shadowFile: reader.result});
+			}, false);
+			reader.readAsDataURL(accepted[0]);
+		}
+	}
+
+	deleteShadow() {
+		this.setState({shadowFile: ''});
+	}
+
 	preExport() {
 		this.client.dispatchAction('/store-value-font', {exportPlease: false});
 	}
@@ -421,20 +439,35 @@ export default class PrototypoCanvas extends React.Component {
 
 		let shadowDropzone = false;
 
-		if (this.state.canvasMode === 'shadow') {
+		if (this.state.canvasMode === 'shadow' && this.state.shadowFile === '') {
 			shadowDropzone = (
 				<div className="prototypo-canvas-shadow-dropzone">
 					<Dropzone
 						className="prototypo-canvas-shadow-dropzone-content"
 						accept="image/jpeg, image/png"
 						multiple="false"
-						onDrop={(accepted, rejected) => { console.log(accepted); console.log(rejected); }}
+						onDrop={this.onDrop}
 						>
 					Drop an image file or a font here, or click to select files to upload.
 					</Dropzone>
 				</div>
 			);
 		}
+		let shadowFile = false;
+
+		if (this.state.canvasMode === 'shadow' && this.state.shadowFile !== '') {
+			shadowFile = (
+				<div>
+					<img className="prototypo-canvas-shadow-image" src={this.state.shadowFile} alt="shadow file"/>
+					<button
+						className={`prototypo-canvas-reset-glyph-button is-on-canvas`}
+						onClick={this.deleteShadow}>
+						Remove shadow
+					</button>
+				</div>
+			);
+		}
+
 
 		const alternateMenu = this.props.glyphs && this.props.glyphs[this.props.glyphSelected] && this.props.glyphs[this.props.glyphSelected].length > 1 ? (
 			<AlternateMenu alternates={this.props.glyphs[this.props.glyphSelected]} unicode={this.props.glyphSelected}/>
@@ -456,6 +489,7 @@ export default class PrototypoCanvas extends React.Component {
 				</button>
 				{demoOverlay}
 				{shadowDropzone}
+				{shadowFile}
 				<PrototypoCanvasContainer
 					familyName={this.state.familyName}
 					json={this.state.typedataJSON}
