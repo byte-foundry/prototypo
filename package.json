@@ -2,6 +2,7 @@
   "name": "prototypo",
   "version": "1.0.0",
   "dependencies": {
+    "@hoodie/client": "^8.0.0",
     "babel": "~6.3.0",
     "bluebird": "^3.1.1",
     "classnames": "^2.1.2",
@@ -11,7 +12,6 @@
     "draft-js": "~0.9.1",
     "elzevir.ptf": "byte-foundry/elzevir.ptf#master",
     "escape-string-regexp": "^1.0.5",
-    "@hoodie/client": "^8.0.0",
     "john-fell.ptf": "byte-foundry/john-fell.ptf#master",
     "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",
@@ -32,6 +32,7 @@
     "react-addons-pure-render-mixin": "^15.0.2",
     "react-dom": "^15.0.0",
     "react-draggable": "^2.2.1",
+    "react-dropzone": "^3.13.1",
     "react-joyride": "^1.4.7",
     "react-json-pretty": "^1.2.0",
     "react-router": "^2.0.0",

@@ -4,6 +4,7 @@ import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import PrototypoCanvasContainer from 'prototypo-canvas';
 import HoodieApi from '~/services/hoodie.services.js';
+import Dropzone from 'react-dropzone';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
@@ -418,6 +419,23 @@ export default class PrototypoCanvas extends React.Component {
 		// ) : false;
 		const demoOverlay = false;
 
+		let shadowDropzone = false;
+
+		if (this.state.canvasMode === 'shadow') {
+			shadowDropzone = (
+				<div className="prototypo-canvas-shadow-dropzone">
+					<Dropzone
+						className="prototypo-canvas-shadow-dropzone-content"
+						accept="image/jpeg, image/png"
+						multiple="false"
+						onDrop={(accepted, rejected) => { console.log(accepted); console.log(rejected); }}
+						>
+					Drop an image file or a font here, or click to select files to upload.
+					</Dropzone>
+				</div>
+			);
+		}
+
 		const alternateMenu = this.props.glyphs && this.props.glyphs[this.props.glyphSelected] && this.props.glyphs[this.props.glyphSelected].length > 1 ? (
 			<AlternateMenu alternates={this.props.glyphs[this.props.glyphSelected]} unicode={this.props.glyphSelected}/>
 		) : false;
@@ -437,6 +455,7 @@ export default class PrototypoCanvas extends React.Component {
 					Reset glyph
 				</button>
 				{demoOverlay}
+				{shadowDropzone}
 				<PrototypoCanvasContainer
 					familyName={this.state.familyName}
 					json={this.state.typedataJSON}
