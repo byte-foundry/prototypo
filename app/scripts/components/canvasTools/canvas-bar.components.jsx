@@ -40,7 +40,7 @@ export default class CanvasBar extends React.Component {
 
 	render() {
 
-		const buttons = _.map(['move', 'components', 'select-points'], (item) => {
+		const buttons = _.map(['move', 'components', 'select-points', 'shadow'], (item) => {
 			return <CanvasBarButton name={item} key={item} active={item === this.state.canvasMode} click={this.chooseMode}/>;
 		});
 
@@ -51,4 +51,3 @@ export default class CanvasBar extends React.Component {
 		);
 	}
 }
-

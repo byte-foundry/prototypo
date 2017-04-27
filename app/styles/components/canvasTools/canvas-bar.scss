@@ -21,6 +21,10 @@
 		background-image: url('../../../images/select-points.svg');
 	}
 
+	.shadow#{&}-button {
+		background-image: url('../../../images/move.svg');
+	}
+
 	&-button {
 		width: 22px;
 		height: 22px;
