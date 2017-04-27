@@ -64,10 +64,10 @@ export default class PrototypoPanel extends React.Component {
 			});
 	}
 
-	resetView({x, y}) {
+	resetView({x, y, zoom = 0.5}) {
 		this.client.dispatchAction('/store-value', {
 			uiPos: new prototypo.paper.Point(x, y),
-			uiZoom: 0.5,
+			uiZoom: zoom,
 		});
 	}
 
