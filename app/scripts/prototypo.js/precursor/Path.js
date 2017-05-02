@@ -1,5 +1,5 @@
 /* global _ */
-import {subtract2D, mulScalar2D, dot2D, add2D} from '../../plumin/util/linear.js';
+import {subtract2D, mulScalar2D, dot2D, add2D, round2D} from '../../plumin/util/linear.js';
 import {rayRayIntersection} from '../utils/updateUtils.js';
 import {readAngle} from '../helpers/utils.js';
 import {constantOrFormula} from '../helpers/values.js';
@@ -114,8 +114,8 @@ function computeHandle(
 	}
 
 
-	result[`${cursor}handleIn`] = add2D(current, inVector);
-	result[`${cursor}handleOut`] = add2D(current, outVector);
+	result[`${cursor}handleIn`] = round2D(add2D(current, inVector));
+	result[`${cursor}handleOut`] = round2D(add2D(current, outVector));
 
 	return result;
 }
@@ -161,6 +161,9 @@ class SolvablePath {
 			else {
 				results[`${cursor}.nodes.${i}.dirIn`] = readAngle(node.dirIn) || 0;
 				results[`${cursor}.nodes.${i}.dirOut`] = readAngle(node.dirOut) || 0;
+
+				results[`${cursor}.nodes.${i}.x`] = Math.round(node.x);
+				results[`${cursor}.nodes.${i}.y`] = Math.round(node.y);
 			}
 
 			if (node.typeOut === 'smooth') {

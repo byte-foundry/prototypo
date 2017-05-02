@@ -13,7 +13,15 @@ import LocalClient from '../stores/local-client.stores.jsx';
 export default class TestFont extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {glyph: 'A_cap', solved: [], values: {}, workers: Array(4).fill(false)};
+		this.state = {
+			glyph: 'A_cap',
+			solved: [],
+			values: {},
+			workers: Array(4).fill(false),
+			font: {
+				glyphs: [],
+			},
+		};
 
 		this.changeParam = this.changeParam.bind(this);
 		this.download = this.download.bind(this);
@@ -62,12 +70,12 @@ export default class TestFont extends React.PureComponent {
 		const rafFunc = () => {
 			const {width, height} = this.canvas;
 			const mouse = this.toile.getMouseState();
-
-			this.setState({
-				mouse,
+			const glyph = _.find(this.state.font.glyphs, (item) => {
+				return this.state.glyph === item.name;
 			});
 
-			if (mouse.state === mState.DOWN && this.state.font.glyphs[this.state.glyph]) {
+
+			if (mouse.state === mState.DOWN && glyph) {
 				const [,,,, tx, ty] = this.toile.viewMatrix;
 				const newTs = {
 					x: tx + mouse.delta.x,
@@ -75,9 +83,14 @@ export default class TestFont extends React.PureComponent {
 				};
 
 				this.toile.clearDelta();
-				this.toile.setCamera(newTs, 1, height);
+				this.toile.setCamera(newTs, 1, -height);
+			}
+
+			if (glyph) {
+				const hotItems = this.toile.getHotInteractiveItem();
+
 				this.toile.clearCanvas(width, height);
-				this.toile.drawGlyph(this.state.font.glyphs[this.state.glyph]);
+				this.toile.drawGlyph(glyph, items);
 			}
 			raf(rafFunc);
 		};
@@ -97,6 +110,17 @@ export default class TestFont extends React.PureComponent {
 			};
 
 			this.client.dispatchAction('/change-param', params);
+
+			const glyph = _.find(this.state.font.glyphs, (item) => {
+				return this.state.glyph === item.name;
+			});
+
+			if (glyph) {
+				const {width, height} = this.canvas;
+
+				this.toile.clearCanvas(width, height);
+				this.toile.drawGlyph(glyph);
+			}
 		};
 	}
 
@@ -144,7 +168,6 @@ export default class TestFont extends React.PureComponent {
 		return (
 			<div style={{display: 'flex', height: '100%'}}>
 				<div style={{position: 'fixed', bottom: '10px', left: '10px', background: '#24d390', color: '#fefefe'}}>
-					{JSON.stringify(this.state.mouse)}
 					<div style={{display: 'flex', flexDirection: 'column'}}>
 						{(() => {
 							return _.map(this.state.workers, (worker) => {

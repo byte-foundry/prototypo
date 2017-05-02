@@ -85,3 +85,16 @@ export function arcToCubicBezier(a: number, b: number, t1: number, t2: number): 
 		secondPoint,
 	];
 }
+
+export function round2D(a) {
+	return {
+		x: Math.round(a.x),
+		y: Math.round(a.y),
+	};
+}
+
+export function distance2D(a, b) {
+	return Math.sqrt(
+		Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2)
+	);
+}

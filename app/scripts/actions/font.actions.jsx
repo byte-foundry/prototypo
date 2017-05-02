@@ -774,7 +774,7 @@ export default {
 			document.fonts.add(fontFace);
 			oldFont = fontFace;
 
-			localClient.dispatchAction('/font-store-value', {
+			localClient.dispatchAction('/store-value-font', {
 				font: fontResult,
 			});
 		});

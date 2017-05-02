@@ -1,3 +1,5 @@
+import {round2D} from '../../plumin/util/linear.js';
+
 import {constantOrFormula} from '../helpers/values.js';
 import {readAngle} from '../helpers/utils.js';
 
@@ -48,14 +50,14 @@ export default class ExpandingNode extends Node {
 		const {x, y, expand: {width, angle, distr}} = computedNode;
 
 		return [
-			{
+			round2D({
 				x: x - Math.cos(readAngle(angle)) * width * distr,
 				y: y - Math.sin(readAngle(angle)) * width * distr,
-			},
-			{
+			}),
+			round2D({
 				x: x + Math.cos(readAngle(angle)) * width * (1 - distr),
 				y: y + Math.sin(readAngle(angle)) * width * (1 - distr),
-			},
+			}),
 		];
 	}
 }

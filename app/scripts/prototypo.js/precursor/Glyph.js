@@ -7,6 +7,26 @@ import Component from './Component.js';
 import ExpandingNode from './ExpandingNode.js';
 import {SkeletonPath, SimplePath, ClosedSkeletonPath} from './Path.js';
 
+function checkAndChangeOrient(beziers, clockwise) {
+	return beziers.map((bezier) => {
+		let count = 0;
+		const flatBezier = _.flatten(bezier);
+
+		flatBezier.forEach((point, i) => {
+			const next = flatBezier[(i + 1) % flatBezier.length];
+
+			count += (next.x - point.x) * (next.y + point.y);
+		});
+
+		if ((count > 0 && clockwise) || (count < 0 && !clockwise)) {
+			return _.chunk(_.reverse(flatBezier), 4);
+		}
+		else {
+			return bezier;
+		}
+	});
+}
+
 
 export default class Glyph {
 	constructor(glyphSrc) {
@@ -87,27 +107,11 @@ export default class Glyph {
 					return bezier;
 				})];
 
-
-				otBeziers.forEach((bezier, index) => {
-					let count = 0;
-					const flatBezier = _.flatten(bezier);
-
-					flatBezier.forEach((point, i) => {
-						const next = flatBezier[(i + 1) % flatBezier.length];
-
-						count += (next.x - point.x) * (next.y + point.y);
-					});
-
-					if (count < 0) {
-						otBeziers[index] = _.chunk(_.reverse(flatBezier), 4);
-					}
-				});
-
-				return otBeziers;
+				return checkAndChangeOrient(otBeziers, true);
 
 			}
 			else if (!contour.closed) {
-				return [contour.nodes.reduceRight((acc, node, i) => {
+				const otBeziers = [contour.nodes.reduceRight((acc, node, i) => {
 
 					const bezier = [0, 1].map((index) => {
 						let secondIndex = index;
@@ -149,9 +153,11 @@ export default class Glyph {
 
 					return acc;
 				}, [])];
+
+				return checkAndChangeOrient(otBeziers, true);
 			}
 			else {
-				return [0, 1].map((index) => {
+				const otBeziers = [0, 1].map((index) => {
 					const result = contour.nodes.map((node, i) => {
 						const nextNode = contour.nodes[(i + 1) - contour.nodes.length * Math.floor((i + 1) / contour.nodes.length)].expandedTo[index];
 						const handleOut = index ? node.expandedTo[index].handleIn : node.expandedTo[index].handleOut;
@@ -185,6 +191,11 @@ export default class Glyph {
 						return result;
 					}
 				});
+
+				return [
+					...checkAndChangeOrient([otBeziers[0]], true),
+					...checkAndChangeOrient([otBeziers[1]], false),
+				];
 			}
 		});
 
@@ -338,11 +349,11 @@ export default class Glyph {
 						acc[name] = ref[name];
 					}
 					else {
-						acc[name] = anchor[name].getResult(localParams, opDone.contours, acc, parentAnchors, utils);
+						acc[name] = anchor[name].getResult(localParams, opDone.contours, opAnchors, parentAnchors, utils);
 					}
 
 					return acc;
-				}, {})
+				}, opAnchors[key])
 			);
 		});
 
