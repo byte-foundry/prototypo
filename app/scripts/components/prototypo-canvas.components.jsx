@@ -17,6 +17,7 @@ import CloseButton from './close-button.components.jsx';
 import CanvasGlyphInput from './canvas-glyph-input.components.jsx';
 import AlternateMenu from './alternate-menu.components.jsx';
 import CanvasBar from './canvasTools/canvas-bar.components.jsx';
+import CanvasShadow from './canvasTools/canvas-shadow.components.jsx';
 
 export default class PrototypoCanvas extends React.Component {
 
@@ -458,7 +459,7 @@ export default class PrototypoCanvas extends React.Component {
 		if (this.state.canvasMode === 'shadow' && this.state.shadowFile !== '') {
 			shadowFile = (
 				<div>
-					<img className="prototypo-canvas-shadow-image" src={this.state.shadowFile} alt="shadow file"/>
+					<CanvasShadow shadowFile={this.state.shadowFile}/>
 					<button
 						className={`prototypo-canvas-reset-glyph-button is-on-canvas`}
 						onClick={this.deleteShadow}>
@@ -529,6 +530,7 @@ export default class PrototypoCanvas extends React.Component {
 					preLoad={this.startLoad}
 					afterLoad={this.endLoad}
 					altList={this.state.altList}
+					shadow={this.state.shadowFile}
 				/>
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
