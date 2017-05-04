@@ -10,6 +10,8 @@ export default class CanvasShadow extends React.PureComponent {
 			eyeY: 0,
 			imageWidth: 0,
 			imageHeight: 0,
+			imageOriginalWidth: 0,
+			imageOriginalHeight: 0,
 			image: undefined,
 			mouseDown: false,
 			lastMouseX: 0,
@@ -26,8 +28,8 @@ export default class CanvasShadow extends React.PureComponent {
 	componentDidMount() {
 		this.ctx = this.refs.canvas.getContext('2d');
 		this.canvas = this.refs.canvas;
-		this.canvasWidth = this.refs.canvas.getBoundingClientRect().width;
-		this.canvasHeight = this.refs.canvas.getBoundingClientRect().height;
+		this.canvasWidth = this.props.width;
+		this.canvasHeight = this.props.height;
 		const image = new Image();
 
 		image.src = this.props.shadowFile;
@@ -35,26 +37,30 @@ export default class CanvasShadow extends React.PureComponent {
 			this.setState({
 				imageWidth: image.width,
 				imageHeight: image.height,
-				eyeX: this.canvasWidth / 2,
-				eyeY: this.canvasHeight / 2,
+				imageOriginalWidth: image.width,
+				imageOriginalHeight: image.height,
+				eyeX: -(this.canvasWidth / 2) + (image.width / 2),
+				eyeY: -(this.canvasHeight / 2) + (image.height / 2),
+				zoom: 1,
 				image,
 			});
 		};
 	}
 
 	drawImage() {
+		const viewW = this.canvasWidth;
+		const viewH = this.canvasHeight;
+		const srcWidth = viewW / this.state.zoom;
+		const srcHeight = viewH / this.state.zoom;
+		const viewCenterX = ((this.state.eyeX + viewW / 2) - (srcWidth / 2)).toFixed(2);
+		const viewCenterY = ((this.state.eyeY + viewH / 2) - (srcHeight / 2)).toFixed(2);
+
 		this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-		this.ctx.drawImage(
-			this.state.image,
-			-this.state.eyeX * this.state.zoom + this.state.imageWidth / 2,
-			-this.state.eyeY * this.state.zoom + this.state.imageHeight / 2,
-			this.state.imageWidth * this.state.zoom,
-			this.state.imageHeight * this.state.zoom,
-		);
+		this.ctx.drawImage(this.state.image, viewCenterX, viewCenterY, srcWidth, srcHeight, 0, 0, viewW, viewH);
 	}
 
 	onMouseMove(event) {
-		if (this.state.mouseDown) {
+		if (this.state.mouseDown && (this.state.lastMouseX !== event.clientX || this.state.lastMouseY !== event.clientY)) {
 			this.setState({
 				eyeX: this.state.lastMouseX === 0 ? this.state.lastMouseX : this.state.eyeX - (event.clientX - this.state.lastMouseX),
 				eyeY: this.state.lastMouseY === 0 ? this.state.lastMouseY : this.state.eyeY - (event.clientY - this.state.lastMouseY),
@@ -79,8 +85,8 @@ export default class CanvasShadow extends React.PureComponent {
 	onDoubleClick() {
 		this.setState({
 			zoom: 1,
-			eyeX: this.canvasWidth / 2,
-			eyeY: this.canvasWidth / 2,
+			eyeX: -(this.canvasWidth / 2) + (this.state.imageOriginalWidth / 2),
+			eyeY: -(this.canvasHeight / 2) + (this.state.imageOriginalHeight / 2),
 			lastMouseX: 0,
 			lastMouseY: 0,
 		});
@@ -91,15 +97,27 @@ export default class CanvasShadow extends React.PureComponent {
 	}
 
 	render() {
-		return (
-			<canvas className="prototypo-canvas-shadow-image"
+		const canvas = this.props.canvasMode === 'shadow'
+		? (
+			<canvas className="prototypo-canvas-shadow-canvas"
 				ref="canvas"
 				onMouseMove={this.onMouseMove}
 				onMouseDown={this.onMouseDown}
 				onMouseUp={this.onMouseUp}
 				onWheel={this.onMouseWheel}
 				onDoubleClick={this.onDoubleClick}
+				width={this.props.width}
+				height={this.props.height}
+				/>
+		)
+		: (
+			<canvas className="prototypo-canvas-shadow-canvas nointeraction"
+				ref="canvas"
+				width={this.props.width}
+				height={this.props.height}
 				/>
 		);
+
+		return canvas;
 	}
 }

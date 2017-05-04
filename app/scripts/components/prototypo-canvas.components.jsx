@@ -456,10 +456,10 @@ export default class PrototypoCanvas extends React.Component {
 		}
 		let shadowFile = false;
 
-		if (this.state.canvasMode === 'shadow' && this.state.shadowFile !== '') {
+		if (this.state.shadowFile !== '') {
 			shadowFile = (
 				<div>
-					<CanvasShadow shadowFile={this.state.shadowFile}/>
+					<CanvasShadow shadowFile={this.state.shadowFile}  width={this.refs.container.clientWidth} height={this.refs.container.clientHeight} canvasMode={this.state.canvasMode}/>
 					<button
 						className={`prototypo-canvas-reset-glyph-button is-on-canvas`}
 						onClick={this.deleteShadow}>
