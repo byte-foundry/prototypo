@@ -182,11 +182,22 @@ export default class PrototypoCanvas extends React.Component {
 		const unicodes = Object.keys(this.state.glyphs);
 		const currentUnicode = unicodes.indexOf(this.props.glyphSelected);
 
+		// enter move mode : space
 		if (e.keyCode === 32) {
 			e.preventDefault();
 			e.stopPropagation();
 			if (this.state.oldCanvasMode === undefined || this.state.oldCanvasMode === 'move') {
 				this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
+			}
+		}
+
+		// enter shadow mode : s
+		if (e.keyCode === 83) {
+			console.log('coucou');
+			e.preventDefault();
+			e.stopPropagation();
+			if (this.state.oldCanvasMode === undefined || this.state.oldCanvasMode === 'shadow') {
+				this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'shadow'});
 			}
 		}
 
@@ -243,6 +254,10 @@ export default class PrototypoCanvas extends React.Component {
 			this.oldPos = undefined;
 		}
 		if (e.keyCode === 32) {
+			this.client.dispatchAction('/toggle-canvas-mode');
+		}
+		if (e.keyCode === 83) {
+			console.log('bite');
 			this.client.dispatchAction('/toggle-canvas-mode');
 		}
 	}

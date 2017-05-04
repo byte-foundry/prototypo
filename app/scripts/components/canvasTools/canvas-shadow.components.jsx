@@ -1,5 +1,4 @@
 import React from 'react';
-import {findDOMNode} from 'react-dom';
 
 export default class CanvasShadow extends React.PureComponent {
 	constructor(props) {
@@ -23,6 +22,7 @@ export default class CanvasShadow extends React.PureComponent {
 		this.onMouseDown = this.onMouseDown.bind(this);
 		this.onMouseWheel = this.onMouseWheel.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
 	}
 
 	componentDidMount() {
@@ -92,6 +92,13 @@ export default class CanvasShadow extends React.PureComponent {
 		});
 	}
 
+	onKeyUp(e) {
+		if (e.keyCode === 83) {
+			console.log('bite');
+			this.client.dispatchAction('/toggle-canvas-mode');
+		}
+	}
+
 	componentDidUpdate() {
 		this.drawImage();
 	}
@@ -106,6 +113,7 @@ export default class CanvasShadow extends React.PureComponent {
 				onMouseUp={this.onMouseUp}
 				onWheel={this.onMouseWheel}
 				onDoubleClick={this.onDoubleClick}
+				onKeyUp={this.onKeyUp}
 				width={this.props.width}
 				height={this.props.height}
 				/>
@@ -115,6 +123,7 @@ export default class CanvasShadow extends React.PureComponent {
 				ref="canvas"
 				width={this.props.width}
 				height={this.props.height}
+				onKeyUp={this.onKeyUp}
 				/>
 		);
 
