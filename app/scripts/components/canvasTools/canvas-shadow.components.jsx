@@ -60,10 +60,11 @@ export default class CanvasShadow extends React.PureComponent {
 	}
 
 	onMouseMove(event) {
+		console.log(this.sta);
 		if (this.state.mouseDown && (this.state.lastMouseX !== event.clientX || this.state.lastMouseY !== event.clientY)) {
 			this.setState({
-				eyeX: this.state.lastMouseX === 0 ? this.state.lastMouseX : this.state.eyeX - (event.clientX - this.state.lastMouseX),
-				eyeY: this.state.lastMouseY === 0 ? this.state.lastMouseY : this.state.eyeY - (event.clientY - this.state.lastMouseY),
+				eyeX: this.state.lastMouseX === 0 ? this.state.lastMouseX : this.state.eyeX  - (event.clientX - this.state.lastMouseX) / this.state.zoom,
+				eyeY: this.state.lastMouseY === 0 ? this.state.lastMouseY : this.state.eyeY  - (event.clientY - this.state.lastMouseY) / this.state.zoom,
 				lastMouseX: event.clientX,
 				lastMouseY: event.clientY,
 			});
