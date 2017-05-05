@@ -376,11 +376,10 @@ export default class PrototypoCanvas extends React.Component {
 	onDrop(accepted, rejected) {
 		if (accepted.length > 0 && rejected.length === 0) {
 			const reader = new FileReader();
-
 			reader.addEventListener("load", () => {
-				this.setState({shadowFile: reader.result});
+				this.setState({shadowFile: {elem: reader.result, type: accepted[0].type === '' ? 'font' : 'image'}});
 			}, false);
-			reader.readAsDataURL(accepted[0]);
+			accepted[0].type === '' ? reader.readAsArrayBuffer(accepted[0]) : reader.readAsDataURL(accepted[0]);
 		}
 	}
 
@@ -460,7 +459,7 @@ export default class PrototypoCanvas extends React.Component {
 				<div className="prototypo-canvas-shadow-dropzone">
 					<Dropzone
 						className="prototypo-canvas-shadow-dropzone-content"
-						accept="image/jpeg, image/png"
+						accept="image/jpeg, image/png, .ttf, .otf"
 						multiple="false"
 						onDrop={this.onDrop}
 						>
