@@ -4,6 +4,7 @@ import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
 
+import withCountry from './shared/with-country.components';
 import Button from './shared/button.components.jsx';
 import Modal from './shared/modal.components.jsx';
 import AddCard from './shared/add-card.components.jsx';
@@ -11,13 +12,12 @@ import InputWithLabel from './shared/input-with-label.components';
 import FormError from './shared/form-error.components.jsx';
 import Price from './shared/price.components.jsx';
 
-export default class CreditsExport extends React.PureComponent {
+class CreditsExport extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
 			errors: [],
 			inError: {},
-			country: 'US',
 			buyCreditsNewCreditAmount: undefined,
 		};
 
@@ -52,13 +52,6 @@ export default class CreditsExport extends React.PureComponent {
 			});
 	}
 
-	async componentDidMount() {
-		const response = await fetch('//freegeoip.net/json/');
-		const data = await response.json();
-
-		this.setState({country: data.country_code});
-	}
-
 	componentWillUnmount() {
 		this.client.dispatchAction('/clean-form', 'buyCreditsForm');
 		this.client.dispatchAction('/store-value', {buyCreditsNewCreditAmount: undefined});
@@ -83,11 +76,11 @@ export default class CreditsExport extends React.PureComponent {
 	}
 
 	render() {
+		const {country} = this.props;
 		const errors = this.state.errors.map((error, index) => {
 			return <FormError key={index} errorText={error} />;
 		});
 		const newCredits = this.state.buyCreditsNewCreditAmount;
-		const {country} = this.state;
 
 		const buyCreditsForm = newCredits
 			? (
@@ -126,3 +119,5 @@ export default class CreditsExport extends React.PureComponent {
 		);
 	}
 }
+
+export default withCountry(CreditsExport);
