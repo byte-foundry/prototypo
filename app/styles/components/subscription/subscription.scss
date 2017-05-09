@@ -128,6 +128,36 @@
 		}
 	}
 
+	.add-card {
+		position: relative;
+		transition: opacity 0.3s ease;
+		opacity: 1;
+		&.disabled {
+			opacity: 0.35;
+			input {
+				pointer-events:none;
+				cursor: default;
+				user-select: none;
+			}
+			&::after {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%) rotate(-25deg);
+				opacity: 1;
+				color: #24d390;
+				font-weight: 600;
+				z-index: 3;
+				font-size: 30px;
+				content: 'No card required with this coupon';
+				padding: 10px 5px 10px 15px;
+				border: 3px solid $green;
+				background: rgba(250,250,250,0.6);
+				border-radius: 5px;
+			}
+		}
+	}
+
 	&-title {
 		font-style:italic;
 		color:$green;
