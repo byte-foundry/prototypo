@@ -241,9 +241,10 @@ export default {
 
 		localServer.dispatchUpdate('/userStore', patch);
 	},
-	'/sign-in': async ({username, password, retry}) => {
+	'/sign-in': async ({username, password, retry, to = '/dashboard', oldQuery = {}}) => {
 		const dashboardLocation = {
-			pathname: '/dashboard',
+			pathname: to,
+			query: oldQuery,
 		};
 		const form = userStore.get('signinForm');
 
