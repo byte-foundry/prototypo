@@ -19,49 +19,25 @@ export function readAngle(angle) {
 }
 
 export const transformByName = {
-	skewX(node, deg, center = {x: 0, y:0}) {
+	skewX(node, deg, center = {x: 0, y: 0}) {
 		const theta = readAngle(deg);
-		const preSkew = [1, 0, 0, 1, -center.x, -center.y];
 		const skew = [1, Math.tan(theta), 0, 1, 0, 0];
-		const postSkew = [1, 0, 0, 1, center.x, center.y];
-		const matrix = matrixMul(
-			matrixMul(
-				preSkew,
-				skew
-			),
-			postSkew
-		);
+		const matrix = changeTransformOrigin(center, skew);
 
 		return transform2D(matrix, node);
 	},
-	skewY(node, deg, center = {x: 0, y:0}) {
+	skewY(node, deg, center = {x: 0, y: 0}) {
 		const theta = readAngle(deg);
-		const preSkew = [1, 0, 0, 1, -center.x, -center.y];
 		const skew = [1, 0, Math.tan(theta), 1, 0, 0];
-		const postSkew = [1, 0, 0, 1, center.x, center.y];
-		const matrix = matrixMul(
-			matrixMul(
-				preSkew,
-				skew
-			),
-			postSkew
-		);
+		const matrix = changeTransformOrigin(center, skew);
 
 		return transform2D(matrix, node);
 	},
-	rotate(node, deg, center = {x: 0, y:0}) {
+	rotate(node, deg, center = {x: 0, y: 0}) {
 		const theta = readAngle(deg);
 		const phi = Math.PI * theta / 180;
-		const preRotate = [1, 0, 0, 1, -center.x, -center.y];
 		const rotate = [Math.cos(phi), -Math.sin(phi), Math.sin(phi), Math.cos(phi), 0, 0];
-		const postRotate = [1, 0, 0, 1, center.x, center.y];
-		const matrix = matrixMul(
-			matrixMul(
-				preRotate,
-				rotate
-			),
-			postRotate
-		);
+		const matrix = changeTransformOrigin(center, rotate);
 
 		return transform2D(matrix, node);
 	},
@@ -75,35 +51,32 @@ export const transformByName = {
 
 		return transform2D(translate, node);
 	},
-	scaleX(node, scale, center = {x: 0, y:0}) {
-		const preScale = [1, 0, 0, 1, -center.x, -center.y];
+	scaleX(node, scale, center = {x: 0, y: 0}) {
 		const scaleMatrix = [scale, 0, 0, 1, 0, 0];
-		const postScale = [1, 0, 0, 1, center.x, center.y];
-		const matrix = matrixMul(
-			matrixMul(
-				preScale,
-				scaleMatrix
-			),
-			postScale
-		);
+		const matrix = changeTransformOrigin(center, scaleMatrix);
 
 		return transform2D(matrix, node);
 	},
-	scaleY(node, scale, center = {x: 0, y:0}) {
-		const preScale = [1, 0, 0, 1, -center.x, -center.y];
+	scaleY(node, scale, center = {x: 0, y: 0}) {
 		const scaleMatrix = [1, 0, 0, scale, 0, 0];
-		const postScale = [1, 0, 0, 1, center.x, center.y];
-		const matrix = matrixMul(
-			matrixMul(
-				preScale,
-				scaleMatrix
-			),
-			postScale
-		);
+		const matrix = changeTransformOrigin(center, scaleMatrix);
 
 		return transform2D(matrix, node);
 	},
 };
+
+export function changeTransformOrigin(origin, transform) {
+	const preTransform = [1, 0, 0, 1, -origin.x, -origin.y];
+	const postTransform = [1, 0, 0, 1, origin.x, origin.y];
+
+	return matrixMul(
+		matrixMul(
+			preTransform,
+			transform
+		),
+		postTransform
+	);
+}
 
 export function transformNode(node, transforms, origin) {
 	transforms.forEach(([name, param]) => {

@@ -1,5 +1,5 @@
 /* global _ */
-import {distance2D} from '../plumin/util/linear.js';
+import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D} from '../plumin/util/linear.js';
 
 function transformCoords(coordsArray, matrix, height) {
 	const [a, b, c, d, tx, ty] = matrix;
@@ -18,7 +18,16 @@ export const mState = {
 };
 
 export const toileType = {
-	CIRCLE: 0,
+	NODE: 0,
+	NODE_IN: 1,
+	NODE_OUT: 2,
+	NODE_SKELETON: 3,
+	POINT_MENU: 4,
+	POINT_MENU_ITEM: 5,
+};
+
+export const appState = {
+	HANDLE_MOD: 0,
 };
 
 const transparent = 'transparent';
@@ -29,12 +38,38 @@ const hotOutHandleColor = '#00a9b6';
 const onCurveColor = '#24d390';
 const hotOnCurveColor = '#12b372';
 
+const pointMenuAnimationLength = 10;
+
+const nodeDrawRadius = 3;
+const nodeHotDrawRadius = 3;
+const nodeHotRadius = 6;
+
+const labelForMenu = {
+	[toileType.NODE]: 'On curve control point',
+	[toileType.NODE_IN]: 'Handle in',
+	[toileType.NODE_OUT]: 'Handle out',
+	[toileType.NODE_SKELETON]: 'Skeleton control point',
+};
+const menuTextSize = 30;
+
+function inverseProjectionMatrix([a, b, c, d, e, f]) {
+	return [
+		1 / a,
+		b,
+		c,
+		1 / d,
+		-e / a,
+		-f / d,
+	];
+}
+
 export default class Toile {
 	constructor(canvas) {
 		this.context = canvas.getContext('2d');
 		this.mouse = {x: 0, y: 0};
 		this.mouseDelta = {x: 0, y: 0};
 		this.height = canvas.height;
+		this.mouseWheelDelta = 0;
 
 		//This is the view matrix schema
 		//[ a  b  tx ]   [ x ]   [ ax + by + tx ]
@@ -71,6 +106,10 @@ export default class Toile {
 			this.mouseState = mState.UP;
 		});
 
+		canvas.addEventListener('mousewheel', (e) => {
+			this.mouseWheelDelta += e.wheelDelta;
+		});
+
 		this.interactionList = [];
 	}
 
@@ -79,6 +118,10 @@ export default class Toile {
 			x: 0,
 			y: 0,
 		};
+	}
+
+	clearWheelDelta() {
+		this.mouseWheelDelta = 0;
 	}
 
 	clearCanvas(width, height) {
@@ -91,64 +134,81 @@ export default class Toile {
 			pos: this.mouse,
 			delta: this.mouseDelta,
 			state: this.mouseState,
+			wheel: this.mouseWheelDelta,
 		};
 	}
 
 	drawControlPoint(node, hotness, fillColor, hotFillColor) {
-		this.drawCircle(node, hotness ? 8 : 5, transparent, hotness ? hotFillColor : fillColor);
+		this.drawCircle(
+			node,
+			hotness ? nodeHotDrawRadius : nodeDrawRadius,
+			transparent,
+			hotness ? hotFillColor : fillColor
+		);
 	}
 
 	drawNode(node, id, hotItems) {
-		const hot = _.find(hotItems, (item) => {
-			return item.id === id;
-		});
-		this.drawControlPoint(node, hot, onCurveColor, hotOnCurveColor);
-
 		if (node.handleIn) {
-			this.drawControlPoint(node.handleIn, false, inHandleColor, hotInHandleColor);
+			const inHot = _.find(hotItems, (item) => {
+				return item.id === `${id}.handleIn`;
+			});
+
 			this.drawLine(node.handleIn, node, inHandleColor, inHandleColor);
+			this.drawControlPoint(node.handleIn, inHot, inHandleColor, hotInHandleColor);
 			if (id) {
 				this.interactionList.push({
-					id: `${id}_in`,
-					type: toileType.CIRCLE,
+					id: `${id}.handleIn`,
+					type: toileType.NODE_IN,
 					data: {
 						center: {
 							x: node.handleIn.x,
 							y: node.handleIn.y,
 						},
-						radius: 5,
+						radius: nodeHotRadius,
+						parentId: id,
 					},
 				});
 			}
 		}
 		if (node.handleOut) {
-			this.drawControlPoint(node.handleOut, false, outHandleColor, hotOutHandleColor);
+			const outHot = _.find(hotItems, (item) => {
+				return item.id === `${id}.handleOut`;
+			});
+
 			this.drawLine(node.handleOut, node, outHandleColor, outHandleColor);
+			this.drawControlPoint(node.handleOut, outHot, outHandleColor, hotOutHandleColor);
 			if (id) {
 				this.interactionList.push({
-					id: `${id}_out`,
-					type: toileType.CIRCLE,
+					id: `${id}.handleOut`,
+					type: toileType.NODE_OUT,
 					data: {
 						center: {
 							x: node.handleOut.x,
 							y: node.handleOut.y,
 						},
-						radius: 5,
+						radius: nodeHotRadius,
+						parentId: id,
 					},
 				});
 			}
 		}
 
+		const hot = _.find(hotItems, (item) => {
+			return item.id === id;
+		});
+
+		this.drawControlPoint(node, hot, onCurveColor, hotOnCurveColor);
+
 		if (id) {
 			this.interactionList.push({
 				id,
-				type: toileType.CIRCLE,
+				type: node.handleIn || node.handleOut ? toileType.NODE : toileType.NODE_SKELETON,
 				data: {
 					center: {
 						x: node.x,
 						y: node.y,
 					},
-					radius: 5,
+					radius: nodeHotRadius,
 				},
 			});
 		}
@@ -167,12 +227,26 @@ export default class Toile {
 		glyph.contours.forEach((contour, i) => {
 			contour.nodes.forEach((node, j) => {
 				if (node.x && node.y) {
-					this.drawNode(node, `contour[${i}].nodes[${j}]`, hotItems);
+					this.drawNode(node, `contours[${i}].nodes[${j}]`, hotItems);
 				}
 				if (node.expandedTo) {
-					this.drawNode(node.expandedTo[0], `contour[${i}].nodes[${j}].expandedTo[0]`, hotItems);
-					this.drawNode(node.expandedTo[1], `contour[${i}].nodes[${j}].expandedTo[1]`, hotItems);
+					this.drawNode(node.expandedTo[0], `contours[${i}].nodes[${j}].expandedTo[0]`, hotItems);
+					this.drawNode(node.expandedTo[1], `contours[${i}].nodes[${j}].expandedTo[1]`, hotItems);
 				}
+			});
+		});
+
+		glyph.components.forEach((component, k) => {
+			component.contours.forEach((contour, i) => {
+				contour.nodes.forEach((node, j) => {
+					if (node.x && node.y) {
+						this.drawNode(node, `component[${k}].contours[${i}].nodes[${j}]`, hotItems);
+					}
+					if (node.expandedTo) {
+						this.drawNode(node.expandedTo[0], `component[${k}].contours[${i}].nodes[${j}].expandedTo[0]`, hotItems);
+						this.drawNode(node.expandedTo[1], `component[${k}].contours[${i}].nodes[${j}].expandedTo[1]`, hotItems);
+					}
+				});
 			});
 		});
 	}
@@ -239,6 +313,20 @@ export default class Toile {
 		this.context.stroke();
 	}
 
+	drawRectangleFromCorners(aStart, aEnd, strokeColor = 'transparent', fillColor = 'transparent', id) {
+		const [start, end] = transformCoords(
+			[aStart, aEnd],
+			this.viewMatrix,
+			this.height
+		);
+		const widthHeight = subtract2D(end, start);
+
+		this.context.fillStyle = fillColor;
+		this.context.strokeStyle = fillColor;
+		this.context.fillRect(start.x, start.y, widthHeight.x, widthHeight.y);
+		this.context.strokeRect(start.x, start.y, widthHeight.x, widthHeight.y, strokeColor);
+	}
+
 	drawRectangleFromCenterSize(origin, size, strokeColor, fillColor, id) {
 	}
 
@@ -257,36 +345,227 @@ export default class Toile {
 		this.context.fill();
 	}
 
+	drawArcBetweenVector(aOrigin, startVec, endVec, strokeColor, radius = 50) {
+		const startAngle = Math.atan2(startVec.y, startVec.x);
+		const endAngle = Math.atan2(endVec.y, endVec.x);
+
+		const [origin] = transformCoords(
+			[aOrigin],
+			this.viewMatrix,
+			this.height
+		);
+
+		this.context.strokeStyle = strokeColor;
+		this.context.beginPath();
+		this.context.arc(origin.x, origin.y, radius, startAngle, endAngle, true);
+		this.context.stroke();
+	}
+
 	drawText(text, point, textSize, textColor, id) {
+		const [transformedPoint] = transformCoords(
+			[point],
+			this.viewMatrix,
+			this.height
+		);
+
+		this.context.font = `${textSize}px 'Fira sans', sans-serif`;
+		this.context.fillStyle = textColor;
+
+		this.context.fillText(text, transformedPoint.x, transformedPoint.y);
+	}
+
+	measureNodeMenuName(point) {
+		const text = labelForMenu[point.type] || 'hello';
+
+		this.context.font = `${menuTextSize}px 'Fira sans', sans-serif`;
+
+		return this.context.measureText(text);
+	}
+
+	drawNodeMenuName(point, pos, size, hotItems) {
+		const text = labelForMenu[point.type] || 'hello';
+		const hot = _.find(hotItems, (item) => {
+			return item.id === `${point.id}_menuItem`;
+		});
+
+		this.drawText(text, pos, menuTextSize, hot ? '#24d390' : '#fefefe');
+		this.interactionList.push({
+			id: `${point.id}_menuItem`,
+			type: toileType.POINT_MENU_ITEM,
+			data: {
+				point,
+				size,
+				pos,
+			},
+		});
+	}
+
+	drawMultiplePointsMenu(points, frameCounters, hotItems = []) {
+		const offset = mulScalar2D(1 / this.viewMatrix[0], {x: 20, y: 20});
+		const start = add2D(points[0].data.center, offset);
+		let textWidth = 0;
+
+
+		let textPos = add2D(points[0].data.center, add2D(offset, mulScalar2D(1 / this.viewMatrix[0], {x: 10, y: 10})));
+		const textStep = {x: 0, y: 50 / this.viewMatrix[0]};
+		const nameSizes = [];
+
+		points.forEach((point) => {
+			const size = this.measureNodeMenuName(point).width;
+
+			textWidth = Math.max(textWidth, size) / this.viewMatrix[0];
+			nameSizes.push(size);
+		});
+
+		const size = mulScalar2D(Math.min(1, frameCounters / pointMenuAnimationLength), {x: textWidth + 20, y: 40 * points.length + 10 * points.length - 10});
+		const end = add2D(start, size);
+
+		this.drawRectangleFromCorners(start, end, undefined, '#333');
+
+		points.forEach((point, i) => {
+			this.drawNodeMenuName(point, textPos, nameSizes[i], hotItems);
+			textPos = add2D(textPos, textStep);
+		});
+
+		this.interactionList.push({
+			id: 'multiple_points',
+			type: toileType.POINT_MENU,
+			data: {
+				start,
+				size,
+				points,
+			},
+		});
+	}
+
+	drawToolsLib(toolsLib) {
+		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+		const [mouseTransformed] = transformCoords(
+			[this.mouse],
+			inverseMatrix,
+			this.height / this.viewMatrix[0]
+		);
+		const offset = {x: 20, y: -20};
+		const start = add2D(mouseTransformed, offset);
+		const size = {x: 30 * toolsLib.length, y: -30};
+		const end = add2D(start, size);
+
+		this.drawRectangleFromCorners(start, end, undefined, '#24d390');
+	}
+
+	drawNodeToolsLib() {
+		this.drawToolsLib(Array(2));
+	}
+
+	drawNodeSkeletonToolsLib() {
+		this.drawToolsLib(Array(2));
+	}
+
+	drawNodeHandleToolsLib() {
+		this.drawToolsLib(Array(3));
+	}
+
+	drawAngleBetweenHandleAndMouse(node, handle) {
+		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+		const [mouseTransformed] = transformCoords(
+			[this.mouse],
+			inverseMatrix,
+			this.height / this.viewMatrix[0]
+		);
+		const [nodeTransformed, handleTransformed, mouseSuperTransformed] = transformCoords(
+			[node, handle, mouseTransformed],
+			this.viewMatrix,
+			this.height
+		);
+
+		const startVec = subtract2D(handleTransformed, nodeTransformed);
+		const endVec = subtract2D(mouseSuperTransformed, nodeTransformed);
+
+		this.drawLine(node, mouseTransformed, '#24d390');
+		this.drawLine(node, handle, '#ff00ff');
+		this.drawArcBetweenVector(node, startVec, endVec, '#24d390');
 	}
 
 	getHotInteractiveItem() {
 		const result = [];
-		let refDistance = 15;
 
 		this.interactionList.forEach((interactionItem) => {
 			switch (interactionItem.type) {
-				case toileType.CIRCLE:
-					const [a, b, c, d, e, f] = this.viewMatrix;
+				case toileType.NODE_IN:
+				case toileType.NODE_OUT:
+				case toileType.NODE_SKELETON:
+				case toileType.NODE: {
+					let refDistance = interactionItem.data.radius;
+					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 					const [mouseTransformed] = transformCoords(
 						[this.mouse],
-						[a, b, c, d, -e, f],
-						this.height
+						inverseMatrix,
+						this.height / this.viewMatrix[0]
 					);
-
 					const distance = distance2D(interactionItem.data.center, mouseTransformed);
-					let color = '#24d390';
 
 					if (distance <= refDistance) {
 						refDistance = distance;
-						color = '#d88065';
 						result.push(interactionItem);
 					}
 
 					/* #if dev */
+					//let color = '#24d390';
 					//this.drawLine(interactionItem.data.center, mouseTransformed, color);
 					/* #end */
 					break;
+				}
+				case toileType.POINT_MENU: {
+					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+					const [mouseTransformed] = transformCoords(
+						[this.mouse],
+						inverseMatrix,
+						this.height / this.viewMatrix[0]
+					);
+					const {start, size} = interactionItem.data;
+					const diffVect = subtract2D(mouseTransformed, start);
+
+					if (
+						diffVect.x <= size.x + 20
+						&& diffVect.x >= -40
+						&& diffVect.y <= size.y + 20
+						&& diffVect.y >= -40
+					) {
+						result.push(interactionItem);
+					}
+
+					/* #if dev */
+					//let color = '#24d390';
+					//this.drawLine(start, mouseTransformed, color);
+					/* #end */
+					break;
+				}
+				case toileType.POINT_MENU_ITEM: {
+					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+					const [mouseTransformed] = transformCoords(
+						[this.mouse],
+						inverseMatrix,
+						this.height / this.viewMatrix[0]
+					);
+					const {pos, size} = interactionItem.data;
+					const diffVect = subtract2D(mouseTransformed, pos);
+
+					if (
+						diffVect.x <= size + 10
+						&& diffVect.x >= -10
+						&& diffVect.y <= 35
+						&& diffVect.y >= -5
+					) {
+						result.push(interactionItem);
+					}
+
+					/* #if dev */
+					const color = '#24d390';
+
+					this.drawLine(pos, mouseTransformed, color);
+					/* #end */
+					break;
+				}
 				default:
 					break;
 			}

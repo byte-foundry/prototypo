@@ -5,10 +5,9 @@ import Lifespan from 'lifespan';
 import ScrollArea from 'react-scrollbar';
 import InputRange from 'react-input-range';
 
-import Toile, {mState} from '../toile/toile.js';
+import Toile, {mState, toileType, appState} from '../toile/toile.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
-
 
 export default class TestFont extends React.PureComponent {
 	constructor(props) {
@@ -66,31 +65,128 @@ export default class TestFont extends React.PureComponent {
 		this.toile = new Toile(this.canvas);
 		this.toile.setCamera({x: 0, y: 0}, 1, this.canvas.height);
 
+		const frameCounters = {
+			pointMenu: 0,
+		};
+		let selectedItem;
+		let mouse = this.toile.getMouseState();
+		let appStateValue;
+
 		const raf = requestAnimationFrame || webkitRequestAnimationFrame;
 		const rafFunc = () => {
 			const {width, height} = this.canvas;
-			const mouse = this.toile.getMouseState();
+			const oldMouse = mouse;
+			let mouseClickRelease = false;
+
+			mouse = this.toile.getMouseState();
+
+			if (mouse.state === mState.UP
+				&& oldMouse.state === mState.DOWN) {
+				mouseClickRelease = true;
+			}
 			const glyph = _.find(this.state.font.glyphs, (item) => {
 				return this.state.glyph === item.name;
 			});
 
-
-			if (mouse.state === mState.DOWN && glyph) {
-				const [,,,, tx, ty] = this.toile.viewMatrix;
+			if (
+				mouse.state === mState.DOWN
+				&& glyph
+				&& !selectedItem
+			) {
+				const [z,,,, tx, ty] = this.toile.viewMatrix;
 				const newTs = {
 					x: tx + mouse.delta.x,
 					y: ty + mouse.delta.y,
 				};
 
 				this.toile.clearDelta();
-				this.toile.setCamera(newTs, 1, -height);
+				this.toile.setCamera(newTs, z, -height);
+			}
+
+			if (mouse.wheel) {
+				const [z,,,, tx, ty] = this.toile.viewMatrix;
+				this.toile.clearWheelDelta();
+				this.toile.setCamera({
+					x: tx,
+					y: ty,
+				}, z + mouse.wheel / 1000, -height);
 			}
 
 			if (glyph) {
 				const hotItems = this.toile.getHotInteractiveItem();
 
 				this.toile.clearCanvas(width, height);
-				this.toile.drawGlyph(glyph, items);
+				this.toile.drawGlyph(glyph, hotItems);
+
+				const nodes = hotItems.filter((item) => {
+					return item.type <= toileType.NODE_SKELETON;
+				});
+				const pointMenu = hotItems.filter((item) => {
+					return item.type === toileType.POINT_MENU;
+				});
+				const pointMenuItems = hotItems.filter((item) => {
+					return item.type === toileType.POINT_MENU_ITEM;
+				});
+
+				if (nodes.length > 1) {
+					this.toile.drawMultiplePointsMenu(nodes, frameCounters.pointMenu);
+					frameCounters.pointMenu += 1;
+				}
+				else if (pointMenu.length > 0) {
+					this.toile.drawMultiplePointsMenu(pointMenu[0].data.points, frameCounters.pointMenu, pointMenuItems);
+					frameCounters.pointMenu += 1;
+				}
+				else {
+					frameCounters.pointMenu = 0;
+				}
+
+				if (mState.DOWN === mouse.state) {
+					this.toile.clearDelta();
+					if (hotItems.length > 0) {
+						if (pointMenuItems.length === 1) {
+							selectedItem = selectedItem || pointMenuItems[0].data.point;
+						}
+						else if (nodes.length === 1) {
+							selectedItem = selectedItem || nodes[0];
+						}
+					}
+				}
+
+				if (mState.UP === mouse.state) {
+					if (hotItems.length === 0) {
+						selectedItem = undefined;
+					}
+				}
+
+				if (selectedItem) {
+					switch (selectedItem.type) {
+						case toileType.NODE: {
+							this.toile.drawNodeToolsLib();
+							break;
+						}
+						case toileType.NODE_SKELETON: {
+							this.toile.drawNodeSkeletonToolsLib();
+							break;
+						}
+						case toileType.NODE_IN:
+						case toileType.NODE_OUT: {
+							appStateValue = appState.HANDLE_MOD;
+							const selectedNode = _.get(glyph, selectedItem.id);
+							const selectedNodeParent = _.get(glyph, selectedItem.data.parentId);
+
+							this.toile.drawAngleBetweenHandleAndMouse(selectedNodeParent, selectedNode);
+
+							this.toile.drawNodeHandleToolsLib();
+							break;
+						}
+						default:
+							break;
+					}
+				}
+
+				/* #if dev */
+				this.toile.getHotInteractiveItem();
+				/* #end */
 			}
 			raf(rafFunc);
 		};
@@ -168,7 +264,7 @@ export default class TestFont extends React.PureComponent {
 		return (
 			<div style={{display: 'flex', height: '100%'}}>
 				<div style={{position: 'fixed', bottom: '10px', left: '10px', background: '#24d390', color: '#fefefe'}}>
-					<div style={{display: 'flex', flexDirection: 'column'}}>
+					<div style={{display: 'flex', flexDirection: 'column', width: '200px'}}>
 						{(() => {
 							return _.map(this.state.workers, (worker) => {
 								return <div style={{width: '100%', marginBottom: '2px', height: '5px', background: worker ? 'red' : 'green'}}></div>;

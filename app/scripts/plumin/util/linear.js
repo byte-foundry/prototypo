@@ -98,3 +98,7 @@ export function distance2D(a, b) {
 		Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2)
 	);
 }
+
+export function normalize2D(a) {
+	return mulScalar2D(1 / distance2D({x: 0, y: 0}, a), a);
+}

@@ -534,7 +534,6 @@ export function makeCurveInsideSerif(
 			x: pointWithCurve.x,
 			y: pointWithCurve.y,
 			dirOut: pointWithCurve.normal,
-			type: 'corner',
 		};
 		const curveRatio = Math.min(serifCurve / distance(0, 0, serifDirection.x, serifDirection.y), 0.75);
 
@@ -560,7 +559,6 @@ export function makeCurveInsideSerif(
 		pointOnCurveVar = {
 			x: serifCenter.x,
 			y: serifCenter.y,
-			type: 'corner',
 		};
 		pointOnSerif = {
 			x: serifCenter.x,
