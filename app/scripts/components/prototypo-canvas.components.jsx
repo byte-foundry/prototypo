@@ -473,7 +473,13 @@ export default class PrototypoCanvas extends React.Component {
 		if (this.state.shadowFile !== '') {
 			shadowFile = (
 				<div>
-					<CanvasShadow shadowFile={this.state.shadowFile}  width={this.refs.container.clientWidth} height={this.refs.container.clientHeight} canvasMode={this.state.canvasMode}/>
+					<CanvasShadow
+						shadowFile={this.state.shadowFile}
+						width={this.refs.container.clientWidth}
+						height={this.refs.container.clientHeight}
+						canvasMode={this.state.canvasMode}
+						glyphSelected={this.state.glyphs[this.props.glyphSelected][0]}
+					/>
 					<button
 						className={`prototypo-canvas-reset-glyph-button is-on-canvas`}
 						onClick={this.deleteShadow}>
@@ -544,7 +550,6 @@ export default class PrototypoCanvas extends React.Component {
 					preLoad={this.startLoad}
 					afterLoad={this.endLoad}
 					altList={this.state.altList}
-					shadow={this.state.shadowFile}
 				/>
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
