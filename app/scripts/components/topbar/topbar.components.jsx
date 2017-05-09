@@ -9,6 +9,7 @@ import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
 
+import withCountry from '../shared/with-country.components';
 import Price from '../shared/price.components';
 
 import {
@@ -22,7 +23,7 @@ import {
 } from './top-bar-menu.components.jsx';
 import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components.jsx';
 
-export default class Topbar extends React.Component {
+class Topbar extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -36,7 +37,6 @@ export default class Topbar extends React.Component {
 			plan: undefined,
 			creditChoices: undefined,
 			presets: null,
-			country: 'US',
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
@@ -128,13 +128,6 @@ export default class Topbar extends React.Component {
 
 	componentWillUnmount() {
 		this.lifespan.release();
-	}
-
-	async componentDidMount() {
-		const response = await fetch('//freegeoip.net/json/');
-		const data = await response.json();
-
-		this.setState({country: data.country_code});
 	}
 
 	logout() {
@@ -256,7 +249,7 @@ export default class Topbar extends React.Component {
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount) && (
 			<TopBarMenuButton
-				label={<span>GET THE FULL VERSION FOR <Price amount={this.state.hasBeenSubscribing ? 8.25 : 1} country={this.state.country} /></span>}
+				label={<span>GET THE FULL VERSION FOR <Price amount={this.state.hasBeenSubscribing ? 8.25 : 1} country={this.props.country} /></span>}
 				noHover
 				centered
 				click={this.goToSubscribe}
@@ -399,4 +392,7 @@ export default class Topbar extends React.Component {
 
 Topbar.contextTypes = {
 	router: React.PropTypes.object.isRequired,
+	country: React.PropTypes.string.isRequired,
 };
+
+export default withCountry(Topbar);
