@@ -95,6 +95,8 @@ export default class CanvasShadow extends React.PureComponent {
 				break;
 			case 'font':
 				this.ctx.font = `${500 * this.state.zoom}px shadowfont`;
+				console.log(this.ctx);
+				this.ctx.fillStyle = '#fc5454';
 				this.ctx.fillText(`${this.glyph}`, viewCenterX, viewCenterY);
 				break;
 			default:
@@ -196,7 +198,7 @@ export default class CanvasShadow extends React.PureComponent {
 				/>
 		)
 		: (
-			<canvas className="prototypo-canvas-shadow-canvas nointeraction"
+			<canvas className="prototypo-canvas-shadow-canvas"
 				ref="canvas"
 				width={this.props.width}
 				height={this.props.height}
