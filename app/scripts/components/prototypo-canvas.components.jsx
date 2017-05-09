@@ -480,11 +480,16 @@ export default class PrototypoCanvas extends React.Component {
 						canvasMode={this.state.canvasMode}
 						glyphSelected={this.state.glyphs[this.props.glyphSelected][0]}
 					/>
-					<button
-						className={`prototypo-canvas-reset-glyph-button is-on-canvas`}
-						onClick={this.deleteShadow}>
-						Remove shadow
-					</button>
+					{this.state.canvasMode === 'shadow'
+						? (
+							<button
+								className={`prototypo-canvas-reset-glyph-button is-on-canvas`}
+								onClick={this.deleteShadow}>
+								Remove shadow
+							</button>
+						)
+						: false
+					}
 				</div>
 			);
 		}
