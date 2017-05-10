@@ -457,6 +457,7 @@ export default class PrototypoCanvas extends React.Component {
 						accept="image/jpeg, image/png, .ttf, .otf"
 						multiple="false"
 						onDrop={this.onDrop}
+						rejectClassName="rejected"
 						>
 					Drop an image file or a font here, or click to select files to upload.
 					</Dropzone>

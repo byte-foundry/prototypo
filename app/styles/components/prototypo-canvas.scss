@@ -87,6 +87,11 @@
 					background: transparentize($theme-background, 0.9);
 					color: $theme-background;
 				}
+				&.rejected {
+					color: $red;
+					border-color: $red;
+					background-color: transparentize($red, 0.9);
+				}
 
 			}
 		}
