@@ -1,4 +1,5 @@
 import React from 'react';
+import LocalClient from '../../stores/local-client.stores.jsx';
 
 export default class CanvasShadow extends React.PureComponent {
 	constructor(props) {
@@ -23,6 +24,11 @@ export default class CanvasShadow extends React.PureComponent {
 		this.onMouseWheel = this.onMouseWheel.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
 	}
 
 	componentDidMount() {
@@ -34,6 +40,9 @@ export default class CanvasShadow extends React.PureComponent {
 		this.elem = this.props.shadowFile.elem;
 		this.glyph = this.props.glyphSelected.src.glyphName;
 
+		window.addEventListener('keydown', this.onKeyDown);
+		window.addEventListener('keyup', this.onKeyUp);
+
 		switch (this.type) {
 			case 'image':
 				this.loadImage();
@@ -44,6 +53,11 @@ export default class CanvasShadow extends React.PureComponent {
 			default:
 				break;
 		}
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('keydown', this.onKeyDown);
+		window.removeEventListener('keyup', this.onKeyUp);
 	}
 
 	loadImage() {
@@ -95,7 +109,6 @@ export default class CanvasShadow extends React.PureComponent {
 				break;
 			case 'font':
 				this.ctx.font = `${500 * this.state.zoom}px shadowfont`;
-				console.log(this.ctx);
 				this.ctx.fillStyle = '#fc5454';
 				this.ctx.fillText(`${this.glyph}`, viewCenterX, viewCenterY);
 				break;
@@ -172,8 +185,23 @@ export default class CanvasShadow extends React.PureComponent {
 
 	onKeyUp(e) {
 		if (e.keyCode === 83) {
-			console.log('bite');
+			e.preventDefault();
+			e.stopPropagation();
 			this.client.dispatchAction('/toggle-canvas-mode');
+		}
+		if (e.keyCode === 32) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'shadow'});
+		}
+	}
+
+	onKeyDown(e) {
+		if (e.keyCode === 32) {
+			console.log('shadow onkeydown');
+			e.preventDefault();
+			e.stopPropagation();
+			this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
 		}
 	}
 
@@ -192,7 +220,6 @@ export default class CanvasShadow extends React.PureComponent {
 				onMouseUp={this.onMouseUp}
 				onWheel={this.onMouseWheel}
 				onDoubleClick={this.onDoubleClick}
-				onKeyUp={this.onKeyUp}
 				width={this.props.width}
 				height={this.props.height}
 				/>
@@ -202,7 +229,6 @@ export default class CanvasShadow extends React.PureComponent {
 				ref="canvas"
 				width={this.props.width}
 				height={this.props.height}
-				onKeyUp={this.onKeyUp}
 				/>
 		);
 
