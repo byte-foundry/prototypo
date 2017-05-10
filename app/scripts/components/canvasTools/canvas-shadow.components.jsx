@@ -198,7 +198,6 @@ export default class CanvasShadow extends React.PureComponent {
 
 	onKeyDown(e) {
 		if (e.keyCode === 32) {
-			console.log('shadow onkeydown');
 			e.preventDefault();
 			e.stopPropagation();
 			this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
@@ -206,7 +205,6 @@ export default class CanvasShadow extends React.PureComponent {
 	}
 
 	componentDidUpdate() {
-		console.log(this.props.glyphSelected);
 		this.glyph = String.fromCharCode(this.props.glyphSelected.src.unicode);
 		this.drawOnCanvas();
 	}

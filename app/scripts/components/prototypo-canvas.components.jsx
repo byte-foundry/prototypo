@@ -159,13 +159,12 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	handleShortcut(e) {
-		console.log(this.state.oldCanvasMode);
 		//if the glyph selectio is focused do nothin
 		if (this.state.glyphFocused) {
 			return;
 		}
-		// Zoom out to initial view
-		if (e.keyCode === 90) {
+		// Zoom out to initial view : Z
+		if (e.keyCode === 90 && !e.ctrlKey) {
 			e.preventDefault();
 			e.stopPropagation();
 			if (!this.oldPos) {
