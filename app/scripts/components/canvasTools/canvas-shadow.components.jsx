@@ -206,7 +206,8 @@ export default class CanvasShadow extends React.PureComponent {
 	}
 
 	componentDidUpdate() {
-		this.glyph = this.props.glyphSelected.src.glyphName;
+		console.log(this.props.glyphSelected);
+		this.glyph = String.fromCharCode(this.props.glyphSelected.src.unicode);
 		this.drawOnCanvas();
 	}
 
