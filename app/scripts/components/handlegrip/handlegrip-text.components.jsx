@@ -209,8 +209,8 @@ export default class HandlegripText extends React.Component {
 			clampedNewValue = newX < offsetLeft ? this.props.min : this.props.max;
 		}
 
-		const baseSpacingLeft = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)].baseSpacingLeft;
-		const baseSpacingRight = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)].baseSpacingRight;
+		const baseSpacingLeft = (this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)] || {}).baseSpacingLeft || 0;
+ 		const baseSpacingRight = (this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)] || {}).baseSpacingRight || 0;
 
 		// if we are currently tracking left side spacing
 		if (leftSideTracking) {
@@ -302,7 +302,7 @@ export default class HandlegripText extends React.Component {
 
 			const letterComponents = this.state.textArray.map(([key, letter]) => {
 				if (selectedLetter === key) {
-					const baseSpacing = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)];
+					const baseSpacing = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)] || {};
 
 					return (
 						<HandlegripLetter
@@ -311,8 +311,8 @@ export default class HandlegripText extends React.Component {
 							openGlyph={() => {this.openGlyph(letter.charCodeAt(0));}}
 							spacingLeft={spacingLeft}
 							spacingRight={spacingRight}
-							baseSpacingLeft={baseSpacing.baseSpacingLeft}
-							baseSpacingRight={baseSpacing.baseSpacingRight}
+							baseSpacingLeft={baseSpacing.baseSpacingLeft || 0}
+							baseSpacingRight={baseSpacing.baseSpacingRight || 0}
 							advanceWidth={advanceWidth}
 							clampedValue={this.state.clampedValue}
 							dragginRatio={this.state.dragginRatio}
