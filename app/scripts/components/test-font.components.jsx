@@ -5,7 +5,10 @@ import Lifespan from 'lifespan';
 import ScrollArea from 'react-scrollbar';
 import InputRange from 'react-input-range';
 
-import Toile, {mState, toileType, appState} from '../toile/toile.js';
+import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix} from '../toile/toile.js';
+
+import {changeTransformOrigin} from '../prototypo.js/helpers/utils.js';
+import {matrixMul} from '../plumin/util/linear.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -69,6 +72,8 @@ export default class TestFont extends React.PureComponent {
 			pointMenu: 0,
 		};
 		let selectedItem;
+		let draggedItem;
+		let moving = false;
 		let mouse = this.toile.getMouseState();
 		let appStateValue;
 
@@ -88,10 +93,26 @@ export default class TestFont extends React.PureComponent {
 				return this.state.glyph === item.name;
 			});
 
+			if (this.toile.keyboardInput) {
+				switch(appStateValue) {
+					case appState.ONCURVE_ANGLE:
+					case appState.ONCURVE_THICKNESS:
+						const {keyCode} = this.toile.keyboardInput;
+						if (keyCode == 79) {
+							appStateValue = appState.ONCURVE_THICKNESS;
+						}
+						if (keyCode == 80) {
+							appStateValue = appState.ONCURVE_ANGLE;
+						}
+						this.toile.clearKeyboardInput();
+						break;
+				}
+			}
+
 			if (
 				mouse.state === mState.DOWN
 				&& glyph
-				&& !selectedItem
+				&& !draggedItem
 			) {
 				const [z,,,, tx, ty] = this.toile.viewMatrix;
 				const newTs = {
@@ -99,17 +120,31 @@ export default class TestFont extends React.PureComponent {
 					y: ty + mouse.delta.y,
 				};
 
+				if (
+					newTs.x !== tx
+					|| newTs.y !== ty
+				) {
+					moving = true;
+				}
+
 				this.toile.clearDelta();
 				this.toile.setCamera(newTs, z, -height);
 			}
 
 			if (mouse.wheel) {
 				const [z,,,, tx, ty] = this.toile.viewMatrix;
+				const [mousePosInWorld] = transformCoords(
+					[mouse.pos],
+					inverseProjectionMatrix(this.toile.viewMatrix),
+					this.toile.height / z,
+				);
+				const transformMatrix = changeTransformOrigin(mousePosInWorld, [1 + mouse.wheel / 1000, 0, 0, 1 + mouse.wheel / 1000, 0, 0]);
+				const [zoom,,,, newTx, newTy] = matrixMul(transformMatrix, this.toile.viewMatrix);
 				this.toile.clearWheelDelta();
 				this.toile.setCamera({
-					x: tx,
-					y: ty,
-				}, z + mouse.wheel / 1000, -height);
+					x: newTx,
+					y: newTy,
+				}, zoom, -height);
 			}
 
 			if (glyph) {
@@ -128,11 +163,11 @@ export default class TestFont extends React.PureComponent {
 					return item.type === toileType.POINT_MENU_ITEM;
 				});
 
-				if (nodes.length > 1) {
+				if (nodes.length > 1 && !draggedItem) {
 					this.toile.drawMultiplePointsMenu(nodes, frameCounters.pointMenu);
 					frameCounters.pointMenu += 1;
 				}
-				else if (pointMenu.length > 0) {
+				else if (pointMenu.length > 0 && !draggedItem) {
 					this.toile.drawMultiplePointsMenu(pointMenu[0].data.points, frameCounters.pointMenu, pointMenuItems);
 					frameCounters.pointMenu += 1;
 				}
@@ -143,45 +178,89 @@ export default class TestFont extends React.PureComponent {
 				if (mState.DOWN === mouse.state) {
 					this.toile.clearDelta();
 					if (hotItems.length > 0) {
-						if (pointMenuItems.length === 1) {
-							selectedItem = selectedItem || pointMenuItems[0].data.point;
-						}
-						else if (nodes.length === 1) {
-							selectedItem = selectedItem || nodes[0];
+						if (nodes.length === 1) {
+							draggedItem = draggedItem || nodes[0];
 						}
 					}
 				}
 
-				if (mState.UP === mouse.state) {
-					if (hotItems.length === 0) {
+				if (mouseClickRelease) {
+					if (hotItems.length > 0) {
+						if (pointMenuItems.length === 1) {
+							selectedItem = pointMenuItems[0].data.point;
+						}
+						else if (nodes.length === 1) {
+							selectedItem = nodes[0];
+						}
+					}
+					else if (hotItems.length === 0 && !moving) {
 						selectedItem = undefined;
 					}
 				}
 
-				if (selectedItem) {
-					switch (selectedItem.type) {
-						case toileType.NODE: {
-							this.toile.drawNodeToolsLib();
-							break;
-						}
-						case toileType.NODE_SKELETON: {
-							this.toile.drawNodeSkeletonToolsLib();
-							break;
-						}
+				if (mState.UP === mouse.state) {
+					draggedItem = undefined;
+					moving = false;
+				}
+
+				if (draggedItem) {
+					switch (draggedItem.type) {
 						case toileType.NODE_IN:
 						case toileType.NODE_OUT: {
 							appStateValue = appState.HANDLE_MOD;
-							const selectedNode = _.get(glyph, selectedItem.id);
-							const selectedNodeParent = _.get(glyph, selectedItem.data.parentId);
+							const selectedNode = _.get(glyph, draggedItem.id);
+							const selectedNodeParent = _.get(glyph, draggedItem.data.parentId);
 
 							this.toile.drawAngleBetweenHandleAndMouse(selectedNodeParent, selectedNode);
 
-							this.toile.drawNodeHandleToolsLib();
+							this.toile.drawNodeHandleToolsLib(appStateValue);
 							break;
 						}
 						default:
 							break;
 					}
+				}
+				else if (selectedItem) {
+					switch (selectedItem.type) {
+						case toileType.NODE: {
+							this.toile.drawNodeToolsLib(appStateValue);
+							appStateValue = appStateValue <= appState.ONCURVE_ANGLE
+								&& appStateValue >= appState.ONCURVE_THICKNESS
+								? appStateValue : appState.ONCURVE_THICKNESS;
+							break;
+						}
+						case toileType.NODE_SKELETON: {
+							this.toile.drawNodeSkeletonToolsLib(appStateValue);
+							break;
+						}
+						default:
+							break;
+					}
+				}
+				else {
+					appStateValue = appState.UNSELECTED;
+				}
+
+				switch(appStateValue) {
+					case appState.ONCURVE_THICKNESS: {
+						const selectedNode = _.get(glyph, selectedItem.id);
+						const selectedNodeParent = _.get(glyph, selectedItem.data.parentId);
+
+						if (selectedNodeParent) {
+							this.toile.drawThicknessTool(selectedNode, selectedNodeParent);
+						}
+						break;
+					}
+					case appState.ONCURVE_ANGLE: {
+						const selectedNodeParent = _.get(glyph, selectedItem.data.parentId);
+
+						if (selectedNodeParent) {
+							this.toile.drawAngleTool(selectedNodeParent);
+						}
+						break;
+					}
+					default:
+						break;
 				}
 
 				/* #if dev */

@@ -65,9 +65,9 @@ export const transformByName = {
 	},
 };
 
-export function changeTransformOrigin(origin, transform) {
-	const preTransform = [1, 0, 0, 1, -origin.x, -origin.y];
-	const postTransform = [1, 0, 0, 1, origin.x, origin.y];
+export function changeTransformOrigin(origin, transform, z = 1) {
+	const preTransform = [z, 0, 0, z, -origin.x, -origin.y];
+	const postTransform = [z, 0, 0, z, origin.x, origin.y];
 
 	return matrixMul(
 		matrixMul(

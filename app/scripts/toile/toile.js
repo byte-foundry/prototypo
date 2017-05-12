@@ -1,17 +1,6 @@
 /* global _ */
 import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D} from '../plumin/util/linear.js';
 
-function transformCoords(coordsArray, matrix, height) {
-	const [a, b, c, d, tx, ty] = matrix;
-
-	return _.map(coordsArray, (coords) => {
-		return {
-			x: a * coords.x + b * coords.y + tx,
-			y: c * coords.x + d * coords.y + (ty - height),
-		};
-	});
-}
-
 export const mState = {
 	DOWN: 0,
 	UP: 1,
@@ -27,15 +16,24 @@ export const toileType = {
 };
 
 export const appState = {
+	UNSELECTED: -1,
 	HANDLE_MOD: 0,
+	ONCURVE_THICKNESS: 1,
+	ONCURVE_ANGLE: 2,
 };
 
+const green = '#24d390';
+const blue = '#00c4d6';
+const yellow = '#f5e462';
+const grey = '#333333';
+const white = '#fefefe';
+
 const transparent = 'transparent';
-const inHandleColor = '#f5e462';
+const inHandleColor = yellow;
 const hotInHandleColor = '#d5c650';
-const outHandleColor = '#00c4d6';
+const outHandleColor = blue;
 const hotOutHandleColor = '#00a9b6';
-const onCurveColor = '#24d390';
+const onCurveColor = green;
 const hotOnCurveColor = '#12b372';
 
 const pointMenuAnimationLength = 10;
@@ -52,7 +50,7 @@ const labelForMenu = {
 };
 const menuTextSize = 30;
 
-function inverseProjectionMatrix([a, b, c, d, e, f]) {
+export function inverseProjectionMatrix([a, b, c, d, e, f]) {
 	return [
 		1 / a,
 		b,
@@ -61,6 +59,17 @@ function inverseProjectionMatrix([a, b, c, d, e, f]) {
 		-e / a,
 		-f / d,
 	];
+}
+
+export function transformCoords(coordsArray, matrix, height) {
+	const [a, b, c, d, tx, ty] = matrix;
+
+	return _.map(coordsArray, (coords) => {
+		return {
+			x: a * coords.x + b * coords.y + tx,
+			y: c * coords.x + d * coords.y + (ty - height),
+		};
+	});
 }
 
 export default class Toile {
@@ -110,6 +119,24 @@ export default class Toile {
 			this.mouseWheelDelta += e.wheelDelta;
 		});
 
+		document.addEventListener('keyup', (e) => {
+			const {
+				keyCode,
+				ctrlKey,
+				shiftKey,
+				altKey,
+				metaKey,
+			} = e;
+
+			this.keyboardInput = {
+				keyCode,
+				special: (ctrlKey ? 0b1 : 0)
+					+ (shiftKey ? 0b10 : 0)
+					+ (altKey ? 0b100 : 0)
+					+ (metaKey ? 0b1000 : 0),
+			};
+		});
+
 		this.interactionList = [];
 	}
 
@@ -122,6 +149,10 @@ export default class Toile {
 
 	clearWheelDelta() {
 		this.mouseWheelDelta = 0;
+	}
+
+	clearKeyboardInput() {
+		this.keyboardInput = undefined;
 	}
 
 	clearCanvas(width, height) {
@@ -147,7 +178,7 @@ export default class Toile {
 		);
 	}
 
-	drawNode(node, id, hotItems) {
+	drawNode(node, id, parentId, hotItems) {
 		if (node.handleIn) {
 			const inHot = _.find(hotItems, (item) => {
 				return item.id === `${id}.handleIn`;
@@ -209,6 +240,7 @@ export default class Toile {
 						y: node.y,
 					},
 					radius: nodeHotRadius,
+					parentId,
 				},
 			});
 		}
@@ -226,12 +258,13 @@ export default class Toile {
 
 		glyph.contours.forEach((contour, i) => {
 			contour.nodes.forEach((node, j) => {
+				const id = `contours[${i}].nodes[${j}]`;
 				if (node.x && node.y) {
-					this.drawNode(node, `contours[${i}].nodes[${j}]`, hotItems);
+					this.drawNode(node,id, hotItems);
 				}
 				if (node.expandedTo) {
-					this.drawNode(node.expandedTo[0], `contours[${i}].nodes[${j}].expandedTo[0]`, hotItems);
-					this.drawNode(node.expandedTo[1], `contours[${i}].nodes[${j}].expandedTo[1]`, hotItems);
+					this.drawNode(node.expandedTo[0], `${id}.expandedTo[0]`, id, hotItems);
+					this.drawNode(node.expandedTo[1], `${id}.expandedTo[1]`, id, hotItems);
 				}
 			});
 		});
@@ -239,12 +272,13 @@ export default class Toile {
 		glyph.components.forEach((component, k) => {
 			component.contours.forEach((contour, i) => {
 				contour.nodes.forEach((node, j) => {
+					const id = `component[${k}].contours[${i}].nodes[${j}]`;
 					if (node.x && node.y) {
-						this.drawNode(node, `component[${k}].contours[${i}].nodes[${j}]`, hotItems);
+						this.drawNode(node,id, hotItems);
 					}
 					if (node.expandedTo) {
-						this.drawNode(node.expandedTo[0], `component[${k}].contours[${i}].nodes[${j}].expandedTo[0]`, hotItems);
-						this.drawNode(node.expandedTo[1], `component[${k}].contours[${i}].nodes[${j}].expandedTo[1]`, hotItems);
+						this.drawNode(node.expandedTo[0], `${id}.expandedTo[0]`, id, hotItems);
+						this.drawNode(node.expandedTo[1], `${id}.expandedTo[1]`, id, hotItems);
 					}
 				});
 			});
@@ -299,7 +333,7 @@ export default class Toile {
 		}
 	}
 
-	drawLine(aStart, aEnd, strokeColor = "transparent", id) {
+	drawLine(aStart, aEnd, strokeColor = "transparent", id, dash = []) {
 		const [start, end] = transformCoords(
 			[aStart, aEnd],
 			this.viewMatrix,
@@ -308,6 +342,7 @@ export default class Toile {
 
 		this.context.beginPath();
 		this.context.strokeStyle = strokeColor;
+		this.context.setLineDash(dash);
 		this.context.moveTo(start.x, start.y);
 		this.context.lineTo(end.x, end.y);
 		this.context.stroke();
@@ -361,6 +396,22 @@ export default class Toile {
 		this.context.stroke();
 	}
 
+	drawRing(aCenter, innerRadius, outerRadius, strokeColor = 'transparent', fillColor = 'transparent') {
+		const [center] = transformCoords(
+			[aCenter],
+			this.viewMatrix,
+			this.height
+		);
+
+		this.context.beginPath();
+		this.context.strokeStyle = strokeColor;
+		this.context.fillStyle = fillColor;
+		this.context.arc(center.x, center.y, innerRadius, 0, 2 * Math.PI);
+		this.context.arc(center.x, center.y, outerRadius, 0, 2 * Math.PI, true);
+		this.context.stroke();
+		this.context.fill();
+	}
+
 	drawText(text, point, textSize, textColor, id) {
 		const [transformedPoint] = transformCoords(
 			[point],
@@ -377,7 +428,11 @@ export default class Toile {
 	measureNodeMenuName(point) {
 		const text = labelForMenu[point.type] || 'hello';
 
-		this.context.font = `${menuTextSize}px 'Fira sans', sans-serif`;
+		return this.measureText(text, menuTextSize, 'Fira sans');
+	}
+
+	measureText(text, size = 20, font = 'Fira sans') {
+		this.context.font = `${size}px '${font}', sans-serif`;
 
 		return this.context.measureText(text);
 	}
@@ -413,11 +468,11 @@ export default class Toile {
 		points.forEach((point) => {
 			const size = this.measureNodeMenuName(point).width;
 
-			textWidth = Math.max(textWidth, size) / this.viewMatrix[0];
+			textWidth = Math.max(textWidth, (size + 20) / this.viewMatrix[0]);
 			nameSizes.push(size);
 		});
 
-		const size = mulScalar2D(Math.min(1, frameCounters / pointMenuAnimationLength), {x: textWidth + 20, y: 40 * points.length + 10 * points.length - 10});
+		const size = mulScalar2D(Math.min(1, frameCounters / pointMenuAnimationLength), {x: textWidth, y: (40 * points.length + 10 * points.length - 10) / this.viewMatrix[0]});
 		const end = add2D(start, size);
 
 		this.drawRectangleFromCorners(start, end, undefined, '#333');
@@ -438,31 +493,72 @@ export default class Toile {
 		});
 	}
 
-	drawToolsLib(toolsLib) {
+	drawToolsLib(toolsLib, appStateValue) {
 		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 		const [mouseTransformed] = transformCoords(
 			[this.mouse],
 			inverseMatrix,
 			this.height / this.viewMatrix[0]
 		);
-		const offset = {x: 20, y: -20};
+		const offset = mulScalar2D(1 / this.viewMatrix[0], {x: 20, y: -20});
 		const start = add2D(mouseTransformed, offset);
-		const size = {x: 30 * toolsLib.length, y: -30};
+		const size = mulScalar2D(1 / this.viewMatrix[0], {x: 30 * toolsLib.length, y: -30});
 		const end = add2D(start, size);
 
 		this.drawRectangleFromCorners(start, end, undefined, '#24d390');
+		toolsLib.forEach((tool, i) => {
+			const width = this.measureText(tool.key, 15, 'Fira sans').width;
+			const toolStart = add2D(start, mulScalar2D(i / this.viewMatrix[0], {x: 30, y: 0}));
+			const toolSize = mulScalar2D(1 / this.viewMatrix[0], {x: 30, y: -30});
+			const toolEnd = add2D(toolStart, toolSize);
+			const textPoint = add2D(
+				mulScalar2D(1 / this.viewMatrix[0],
+					{
+						x: -width / 2,
+						y: -7.5,
+					}
+				),
+				mulScalar2D(
+					1 / 2,
+					add2D(toolStart, toolEnd),
+				)
+			);
+			let color;
+
+			if (appStateValue === tool.mode) {
+				color = blue;
+			}
+			this.drawRectangleFromCorners(toolStart, toolEnd, undefined, color);
+			this.drawText(tool.key, textPoint, 15, grey);
+		});
 	}
 
-	drawNodeToolsLib() {
-		this.drawToolsLib(Array(2));
+	drawNodeToolsLib(appStateValue) {
+		this.drawToolsLib([
+			{
+				key: 'o',
+				mode: appState.ONCURVE_THICKNESS,
+			},
+			{
+				key: 'p',
+				mode: appState.ONCURVE_ANGLE,
+			}
+		], appStateValue);
 	}
 
-	drawNodeSkeletonToolsLib() {
-		this.drawToolsLib(Array(2));
+	drawNodeSkeletonToolsLib(appStateValue) {
+		this.drawToolsLib([
+			{},
+			{},
+		], appStateValue);
 	}
 
-	drawNodeHandleToolsLib() {
-		this.drawToolsLib(Array(3));
+	drawNodeHandleToolsLib(appStateValue) {
+		this.drawToolsLib([
+			{},
+			{},
+			{},
+		], appStateValue);
 	}
 
 	drawAngleBetweenHandleAndMouse(node, handle) {
@@ -484,6 +580,53 @@ export default class Toile {
 		this.drawLine(node, mouseTransformed, '#24d390');
 		this.drawLine(node, handle, '#ff00ff');
 		this.drawArcBetweenVector(node, startVec, endVec, '#24d390');
+	}
+
+	drawThicknessTool(expandedSource, parentNode) {
+		const oppositeExpanded = parentNode.expandedTo[0] === expandedSource ? parentNode.expandedTo[1] : parentNode.expandedTo[0];
+		const normalVector = normalize2D({
+			x: expandedSource.y - oppositeExpanded.y,
+			y: oppositeExpanded.x - expandedSource.x,
+		});
+		const toolPoints = [
+			add2D(expandedSource, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
+			add2D(oppositeExpanded, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
+			add2D(parentNode, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
+		];
+
+		this.drawLine(expandedSource, oppositeExpanded, blue);
+		this.drawLine(expandedSource, toolPoints[0], blue, undefined, [4, 4]);
+		this.drawLine(oppositeExpanded, toolPoints[1], blue, undefined, [4, 4]);
+		this.drawLine(toolPoints[0], toolPoints[1], blue);
+		this.drawCircle(toolPoints[0], nodeDrawRadius, blue, undefined);
+		this.drawCircle(toolPoints[1], nodeDrawRadius, blue, undefined);
+		this.drawCircle(toolPoints[2], nodeDrawRadius, undefined, yellow);
+		const text = parentNode.expand.width.toFixed(1);
+		const textSize = this.measureText(text, 20, 'Fira sans');
+		this.drawText(text,
+			add2D(
+				add2D(
+					mulScalar2D(1 / 2, add2D(expandedSource, oppositeExpanded)),
+					mulScalar2D(-30 / this.viewMatrix[0], normalVector)
+				),
+				{
+					x: -textSize.width / (2 * this.viewMatrix[0]),
+					y: 0,
+				}
+			),
+			20,
+			blue
+		);
+
+	}
+
+	drawAngleTool(selectedNodeParent) {
+		const farthestNode = selectedNodeParent.expand.distrib > 0.5
+			? selectedNodeParent.expandedTo[0]
+			: selectedNodeParent.expandedTo[1];
+		const radius = distance2D(farthestNode, selectedNodeParent);
+
+		this.drawRing(selectedNodeParent, radius - 5, radius + 5, undefined, 'black');
 	}
 
 	getHotInteractiveItem() {
@@ -526,10 +669,10 @@ export default class Toile {
 					const diffVect = subtract2D(mouseTransformed, start);
 
 					if (
-						diffVect.x <= size.x + 20
-						&& diffVect.x >= -40
-						&& diffVect.y <= size.y + 20
-						&& diffVect.y >= -40
+						diffVect.x <= size.x + 20 / this.viewMatrix[0]
+						&& diffVect.x >= -40 / this.viewMatrix[0]
+						&& diffVect.y <= size.y + 20 / this.viewMatrix[0]
+						&& diffVect.y >= -40 / this.viewMatrix[0]
 					) {
 						result.push(interactionItem);
 					}
