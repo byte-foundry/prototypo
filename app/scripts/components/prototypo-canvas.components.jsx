@@ -212,10 +212,11 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
-	reset(x, y) {
+	reset(x, y, zoom) {
 		this.props.reset({
 			x,
 			y,
+			zoom,
 		});
 	}
 
@@ -476,6 +477,7 @@ export default class PrototypoCanvas extends React.Component {
 					preLoad={this.startLoad}
 					afterLoad={this.endLoad}
 					altList={this.state.altList}
+					uiMode={this.props.uiMode}
 				/>
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
