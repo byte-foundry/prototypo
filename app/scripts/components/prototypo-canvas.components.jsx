@@ -159,11 +159,11 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	handleShortcut(e) {
-		//if the glyph selectio is focused do nothin
+		//if the glyph selection is focused do nothing
 		if (this.state.glyphFocused) {
 			return;
 		}
-		// Zoom out to initial view : Z
+		// Zoom out to initial view: Z
 		if (e.keyCode === 90 && !e.ctrlKey) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -181,7 +181,7 @@ export default class PrototypoCanvas extends React.Component {
 
 		const unicodes = Object.keys(this.state.glyphs);
 		const currentUnicode = unicodes.indexOf(this.props.glyphSelected);
-		// enter move mode : space
+		// enter move mode: space
 		if (e.keyCode === 32) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -190,7 +190,7 @@ export default class PrototypoCanvas extends React.Component {
 			}
 		}
 
-		// enter shadow mode : s
+		// enter shadow mode: s
 		if (e.keyCode === 83) {
 			e.preventDefault();
 			e.stopPropagation();
