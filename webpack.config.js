@@ -62,6 +62,12 @@ module.exports = {
 			{
 				test: /\.(svg|png|jpg|gif)$/,
 				loader: 'url-loader?limit=100000',
+				exclude: path.join(__dirname, 'app/images/icons'),
+			},
+			{
+				test: /\.svg$/,
+				loader: 'svg-sprite-loader?extract=false!svgo-loader',
+				include: path.join(__dirname, 'app/images/icons'),
 			},
 		],
 		noParse: /(dist\/prototypo-canvas)/,
@@ -72,11 +78,6 @@ module.exports = {
 		'prototypo.js': 'prototypo',
 	}],
 	plugins: [
-		new webpack.DefinePlugin({
-			//'process.env.__SHOW_RENDER__': "true",
-			//'process.env.__SHOW_ACTION__': "true",
-			'process.env.NODE_ENV': "'production'",
-		}),
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.DllReferencePlugin({
 			context: __dirname,

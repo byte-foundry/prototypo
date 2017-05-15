@@ -36,7 +36,6 @@ export default class AccountOrganization extends React.Component {
 
 		return (
 			<div className="account-base account-organization">
-				<h1>Manage Sub Users</h1>
 				<AccountManageSubUsers max={subscription && subscription.quantity} />
 			</div>
 		);
