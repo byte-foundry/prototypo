@@ -79,12 +79,15 @@ class ResetPassword extends React.PureComponent {
 		const {history, location} = this.props;
 		const {success, id, resetToken} = location.query;
 
+		// history parses query and replaces + with spaces
+		const idWithPlus = id.replace(/ /g, '+');
+
 		if (success) {
 			return;
 		}
 
 		if (id && resetToken) {
-			return this.checkResetToken(id, resetToken);
+			return this.checkResetToken(idWithPlus, resetToken);
 		}
 
 		this.setState({isTokenValid: false});
