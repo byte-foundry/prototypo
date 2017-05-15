@@ -223,14 +223,15 @@ export default class TestFont extends React.PureComponent {
 				else if (selectedItem) {
 					switch (selectedItem.type) {
 						case toileType.NODE: {
-							this.toile.drawNodeToolsLib(appStateValue);
 							appStateValue = appStateValue <= appState.ONCURVE_ANGLE
 								&& appStateValue >= appState.ONCURVE_THICKNESS
 								? appStateValue : appState.ONCURVE_THICKNESS;
 							break;
 						}
 						case toileType.NODE_SKELETON: {
-							this.toile.drawNodeSkeletonToolsLib(appStateValue);
+							appStateValue = appStateValue <= appState.SKELETON_POS
+								&& appStateValue >= appState.SKELETON_DISTR
+								? appStateValue : appState.SKELETON_POS;
 							break;
 						}
 						default:
@@ -243,6 +244,7 @@ export default class TestFont extends React.PureComponent {
 
 				switch(appStateValue) {
 					case appState.ONCURVE_THICKNESS: {
+						this.toile.drawNodeToolsLib(appStateValue);
 						const selectedNode = _.get(glyph, selectedItem.id);
 						const selectedNodeParent = _.get(glyph, selectedItem.data.parentId);
 
@@ -252,10 +254,29 @@ export default class TestFont extends React.PureComponent {
 						break;
 					}
 					case appState.ONCURVE_ANGLE: {
+						this.toile.drawNodeToolsLib(appStateValue);
 						const selectedNodeParent = _.get(glyph, selectedItem.data.parentId);
 
 						if (selectedNodeParent) {
 							this.toile.drawAngleTool(selectedNodeParent);
+						}
+						break;
+					}
+					case appState.SKELETON_POS: {
+						this.toile.drawNodeSkeletonToolsLib(appStateValue);
+						const selectedNode = _.get(glyph, selectedItem.id);
+
+						if (selectedNode) {
+							this.toile.drawSkeletonPosTool(selectedNode);
+						}
+						break;
+					}
+					case appState.SKELETON_DISTR: {
+						this.toile.drawNodeSkeletonToolsLib(appStateValue);
+						const selectedNode = _.get(glyph, selectedItem.id);
+
+						if (selectedNode) {
+							this.toile.drawSkeletonDistrTool(selectedNode);
 						}
 						break;
 					}

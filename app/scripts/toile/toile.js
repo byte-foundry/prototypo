@@ -20,6 +20,8 @@ export const appState = {
 	HANDLE_MOD: 0,
 	ONCURVE_THICKNESS: 1,
 	ONCURVE_ANGLE: 2,
+	SKELETON_POS: 3,
+	SKELETON_DISTR: 4,
 };
 
 const green = '#24d390';
@@ -27,6 +29,7 @@ const blue = '#00c4d6';
 const yellow = '#f5e462';
 const grey = '#333333';
 const white = '#fefefe';
+const red = '#ff725e';
 
 const transparent = 'transparent';
 const inHandleColor = yellow;
@@ -35,6 +38,7 @@ const outHandleColor = blue;
 const hotOutHandleColor = '#00a9b6';
 const onCurveColor = green;
 const hotOnCurveColor = '#12b372';
+const ringBackground = 'rgba(255,114,94,0.4)';
 
 const pointMenuAnimationLength = 10;
 
@@ -259,8 +263,9 @@ export default class Toile {
 		glyph.contours.forEach((contour, i) => {
 			contour.nodes.forEach((node, j) => {
 				const id = `contours[${i}].nodes[${j}]`;
+
 				if (node.x && node.y) {
-					this.drawNode(node,id, hotItems);
+					this.drawNode(node, id, hotItems);
 				}
 				if (node.expandedTo) {
 					this.drawNode(node.expandedTo[0], `${id}.expandedTo[0]`, id, hotItems);
@@ -273,8 +278,9 @@ export default class Toile {
 			component.contours.forEach((contour, i) => {
 				contour.nodes.forEach((node, j) => {
 					const id = `component[${k}].contours[${i}].nodes[${j}]`;
+
 					if (node.x && node.y) {
-						this.drawNode(node,id, hotItems);
+						this.drawNode(node, id, hotItems);
 					}
 					if (node.expandedTo) {
 						this.drawNode(node.expandedTo[0], `${id}.expandedTo[0]`, id, hotItems);
@@ -346,6 +352,7 @@ export default class Toile {
 		this.context.moveTo(start.x, start.y);
 		this.context.lineTo(end.x, end.y);
 		this.context.stroke();
+		this.context.setLineDash([]);
 	}
 
 	drawRectangleFromCorners(aStart, aEnd, strokeColor = 'transparent', fillColor = 'transparent', id) {
@@ -542,7 +549,7 @@ export default class Toile {
 			{
 				key: 'p',
 				mode: appState.ONCURVE_ANGLE,
-			}
+			},
 		], appStateValue);
 	}
 
@@ -603,6 +610,7 @@ export default class Toile {
 		this.drawCircle(toolPoints[2], nodeDrawRadius, undefined, yellow);
 		const text = parentNode.expand.width.toFixed(1);
 		const textSize = this.measureText(text, 20, 'Fira sans');
+
 		this.drawText(text,
 			add2D(
 				add2D(
@@ -621,12 +629,37 @@ export default class Toile {
 	}
 
 	drawAngleTool(selectedNodeParent) {
-		const farthestNode = selectedNodeParent.expand.distrib > 0.5
+		const farthestNode = selectedNodeParent.expand.distr > 0.5
 			? selectedNodeParent.expandedTo[0]
 			: selectedNodeParent.expandedTo[1];
-		const radius = distance2D(farthestNode, selectedNodeParent);
+		const radius = distance2D(farthestNode, selectedNodeParent) * this.viewMatrix[0];
 
-		this.drawRing(selectedNodeParent, radius - 5, radius + 5, undefined, 'black');
+		this.drawRing(selectedNodeParent, radius - 2, radius + 2, undefined, ringBackground);
+		this.drawLine(selectedNodeParent, farthestNode, green, undefined, [5, 5, 15, 5]);
+		this.drawCircle(farthestNode, 5, green, green);
+
+		const direction = subtract2D(farthestNode, selectedNodeParent);
+		const angle = `${(Math.atan2(direction.y, direction.x) * 180 / Math.PI).toFixed(1)}°`;
+		const textSize = this.measureText(angle, 20, 'Fira sans');
+		const normalVector = normalize2D({
+			x: direction.y,
+			y: -direction.x,
+		});
+
+		this.drawText(angle,
+			add2D(
+				add2D(
+					mulScalar2D(1 / 2, add2D(selectedNodeParent, farthestNode)),
+					mulScalar2D(-35 / this.viewMatrix[0], normalVector)
+				),
+				{
+					x: -textSize.width / (2 * this.viewMatrix[0]),
+					y: 0,
+				}
+			),
+			20,
+			red
+		);
 	}
 
 	getHotInteractiveItem() {
