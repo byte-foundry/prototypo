@@ -555,8 +555,14 @@ export default class Toile {
 
 	drawNodeSkeletonToolsLib(appStateValue) {
 		this.drawToolsLib([
-			{},
-			{},
+			{
+				key: 'o',
+				mode: appState.SKELETON_POS,
+			},
+			{
+				key: 'p',
+				mode: appState.SKELETON_DISTR,
+			},
 		], appStateValue);
 	}
 
@@ -654,6 +660,51 @@ export default class Toile {
 				),
 				{
 					x: -textSize.width / (2 * this.viewMatrix[0]),
+					y: 0,
+				}
+			),
+			20,
+			red
+		);
+	}
+
+	drawSkeletonPosTool(node) {
+		const [zoom] = this.viewMatrix;
+		const topLeft = add2D(mulScalar2D(1 / zoom, {x: -10, y: 10}), node);
+		const bottomLeft = add2D(mulScalar2D(1 / zoom, {x: -10, y: -10}), node);
+		const topRight = add2D(mulScalar2D(1 / zoom, {x: 10, y: 10}), node);
+		const bottomRight = add2D(mulScalar2D(1 / zoom, {x: 10, y: -10}), node);
+
+		const oldWidth = this.context.lineWidth;
+		this.context.lineWidth = 2;
+		this.drawLine(topLeft, bottomRight, red);
+		this.drawLine(bottomLeft, topRight, red);
+		this.context.lineWidth = oldWidth;
+
+		const xText = `x: ${node.x.toFixed(0)}`;
+		const yText = `y: ${node.y.toFixed(0)}`;
+		const xTextSize = this.measureText(xText, 20, 'Fira sans');
+		const yTextSize = this.measureText(yText, 20, 'Fira sans');
+		const xCoordsPos = add2D(mulScalar2D(1 / zoom, {x: 30, y: 60}), node);
+		const yCoordsPos = add2D(mulScalar2D(1 / zoom, {x: 30, y: 30}), node);
+
+		this.drawText(xText,
+			add2D(
+				xCoordsPos,
+				{
+					x: -xTextSize.width / (2 * zoom),
+					y: 0,
+				}
+			),
+			20,
+			red
+		);
+
+		this.drawText(yText,
+			add2D(
+				yCoordsPos,
+				{
+					x: -yTextSize.width / (2 * zoom),
 					y: 0,
 				}
 			),

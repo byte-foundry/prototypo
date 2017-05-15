@@ -109,6 +109,15 @@ export default {
 			},
 		});
 
+		fontWorkerPool.doFastJob({
+			action: {
+				type: 'createFont',
+				data: typedata,
+			},
+			callback: () => {
+			},
+		});
+
 		const patch = prototypoStore
 			.set('fontName', typedata.fontinfo.familyName)
 			.commit();
@@ -712,8 +721,24 @@ export default {
 	},
 	'/update-font': (params) => {
 		const pool = fontInstanceStore.get('fontWorkerPool');
-		const subset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		const subset = 'acdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		const glyph = ['b'];
 		const jobs = [];
+
+		pool.doFastJob({
+			action: {
+				type: 'constructGlyphs',
+				data: {
+					params,
+					subset: glyph,
+				},
+			},
+			callback: ({font}) => {
+				localClient.dispatchAction('/store-value-font', {
+					glyph: font.glyphs[0],
+				});
+			},
+		});
 
 		const fontPromise = _.chunk(subset.split(''), Math.ceil(subset.length / pool.workerArray.length))
 			.map((subsubset) => {

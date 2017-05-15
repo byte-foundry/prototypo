@@ -50,7 +50,8 @@ function getRandomUuid() {
 
 export default class WorkerPool {
 	constructor() {
-		const numberOfWorker = navigator.hardwareConcurrency;
+		 //Workers for every thread available including a fast lane worker for the canvas
+		const numberOfWorker = navigator.hardwareConcurrency - 1;
 		const ProtoWorker = require(`worker-loader!./worker.js`);
 		let eachJobList = [];
 
@@ -67,40 +68,66 @@ export default class WorkerPool {
 
 			const worker = new ProtoWorker();
 
-			this.workerArray.push({
-				worker,
-				working: false,
-			});
+			if (i === numberOfWorker - 1) {
+				this.workerFastLane = {
+					worker,
+					working: false,
+				};
 
-			worker.addEventListener('message', (e) => {
-				if (e.data.id.indexOf('each') === 0) {
-					//TODO(franz): think about timing out
-					if (eachJobList.length < numberOfWorker - 1) {
-						eachJobList.push(1);
+				worker.addEventListener('message', (e) => {
+					this.jobCallback[e.data.id](e.data);
+
+					this.workerFastLane.working = false;
+
+					/* #if dev */
+					localClient.dispatchAction('/store-value', {
+						workerFast: this.workerFastLane.working,
+					});
+					/* #end */
+
+					if (this.fastJobQueue) {
+						const jobToDo = this.fastJobQueue;
+						this.jobQueue = undefined;
+						this.doFastJob(jobToDo);
+					}
+				});
+			}
+			else {
+				this.workerArray.push({
+					worker,
+					working: false,
+				});
+
+				worker.addEventListener('message', (e) => {
+					if (e.data.id.indexOf('each') === 0) {
+						//TODO(franz): think about timing out
+						if (eachJobList.length < numberOfWorker - 2) {
+							eachJobList.push(1);
+						}
+						else {
+							eachJobList = [];
+							this.jobCallback[e.data.id](e.data);
+						}
 					}
 					else {
-						eachJobList = [];
 						this.jobCallback[e.data.id](e.data);
 					}
-				}
-				else {
-					this.jobCallback[e.data.id](e.data);
-				}
 
-				this.workerArray[i].working = false;
+					this.workerArray[i].working = false;
 
-				/* #if dev */
-				localClient.dispatchAction('/store-value', {
-					workers: _.map(this.workerArray, (worker) => {return worker.working}),
+					/* #if dev */
+					localClient.dispatchAction('/store-value', {
+						workers: _.map(this.workerArray, (worker) => {return worker.working}),
+					});
+					/* #end */
+
+					if (!this.areWorkerBusy() && this.jobQueue) {
+						const jobToDo = this.jobQueue;
+						this.jobQueue = undefined;
+						this.doJobs(jobToDo);
+					}
 				});
-				/* #end */
-
-				if (!this.areWorkerBusy() && this.jobQueue) {
-					const jobToDo = this.jobQueue;
-					this.jobQueue = undefined;
-					this.doJobs(jobToDo);
-				}
-			});
+			}
 		}
 	}
 
@@ -108,6 +135,30 @@ export default class WorkerPool {
 		return _.reduce(this.workerArray, (acc, worker) => {
 			return acc || worker.working;
 		}, false);
+	}
+
+	doFastJob(job) {
+		const time = window.performance.now();
+		const uuid = getRandomUuid();
+
+		if (this.workerFastLane.working) {
+			this.fastJobQueue = job;
+		}
+		else if (job) {
+			const jobId = `${time}-${uuid}`;
+
+			job.action.id = jobId;
+			this.jobCallback[jobId] = job.callback;
+
+			this.workerFastLane.worker.postMessage(job.action);
+			this.workerFastLane.working = true;
+
+			/* #if dev */
+			localClient.dispatchAction('/store-value', {
+				workerFast: this.workerFastLane.working,
+			});
+			/* #end */
+		}
 	}
 
 	//jobs should be of this form

@@ -16,7 +16,6 @@ export default class TestFont extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			glyph: 'A_cap',
 			solved: [],
 			values: {},
 			workers: Array(4).fill(false),
@@ -89,9 +88,7 @@ export default class TestFont extends React.PureComponent {
 				&& oldMouse.state === mState.DOWN) {
 				mouseClickRelease = true;
 			}
-			const glyph = _.find(this.state.font.glyphs, (item) => {
-				return this.state.glyph === item.name;
-			});
+			const glyph = this.state.glyph;
 
 			if (this.toile.keyboardInput) {
 				switch(appStateValue) {
@@ -167,7 +164,7 @@ export default class TestFont extends React.PureComponent {
 					this.toile.drawMultiplePointsMenu(nodes, frameCounters.pointMenu);
 					frameCounters.pointMenu += 1;
 				}
-				else if (pointMenu.length > 0 && !draggedItem) {
+				else if (pointMenu.length > 0 && !draggedItem && !selectedItem) {
 					this.toile.drawMultiplePointsMenu(pointMenu[0].data.points, frameCounters.pointMenu, pointMenuItems);
 					frameCounters.pointMenu += 1;
 				}
@@ -306,17 +303,6 @@ export default class TestFont extends React.PureComponent {
 			};
 
 			this.client.dispatchAction('/change-param', params);
-
-			const glyph = _.find(this.state.font.glyphs, (item) => {
-				return this.state.glyph === item.name;
-			});
-
-			if (glyph) {
-				const {width, height} = this.canvas;
-
-				this.toile.clearCanvas(width, height);
-				this.toile.drawGlyph(glyph);
-			}
 		};
 	}
 
@@ -349,7 +335,7 @@ export default class TestFont extends React.PureComponent {
 						}}
 						onClick={
 							() => {
-								this.setState({glyph: glyphName, values: {...this.state.values}});
+								this.setState({glyphName: glyphName, values: {...this.state.values}});
 							}}
 					>
 						{String.fromCharCode(this.state.typedata.glyphs[glyphName].unicode)}
