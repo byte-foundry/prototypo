@@ -22,14 +22,14 @@ class FilterInput extends React.Component {
 		const {children, onClear, ...rest} = this.props;
 
 		return (
-			<div className="search">
+			<div className="filter-input">
 				<input
 					ref={node => { if (node) this.input = node; }}
-					className="search-input"
+					className="filter-input-input"
 					type="search"
 					{...rest}
 				/>
-				<button className={classnames('search-clear', {'empty': !rest.value})} onClick={onClear}>
+				<button className={classnames('filter-input-clear', {'filter-input-clear--empty': !rest.value})} onClick={onClear}>
 					<Icon name="delete" />
 				</button>
 			</div>

@@ -49,7 +49,7 @@ class MemberRow extends React.Component {
 						member.email
 					}
 				</td>
-				<td className="sortable-table-cell sortable-table-name">{member.name}</td>
+				<td className="sortable-table-cell sortable-table-name">{[member.firstName, member.lastName].join(' ')}</td>
 				{onRemoveRow && (
 					<td className="sortable-table-cell sortable-table-actions">
 						<button
@@ -380,10 +380,14 @@ const query = gql`
 			id
 			subUsers {
 				id
+				firstName
+				lastName
 				email
 			}
 			pendingSubUsers {
 				id
+				firstName
+				lastName
 				email
 			}
 		}
