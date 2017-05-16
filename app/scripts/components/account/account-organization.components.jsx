@@ -16,7 +16,8 @@ export default class AccountOrganization extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/userStore', this.lifespan)
+		this.client
+			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					subscription: head.toJS().d.subscription,

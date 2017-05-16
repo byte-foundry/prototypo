@@ -33,25 +33,35 @@ class MemberRow extends React.Component {
 		};
 
 		return (
-			<tr key={member.email} className={classnames(
-				'sortable-table-row',
-				{ 'sortable-table-row--loading': member.status === 'loading' }
-			)}>
+			<tr
+				key={member.email}
+				className={classnames('sortable-table-row', {
+					'sortable-table-row--loading': member.status === 'loading',
+				})}
+			>
 				<td className="sortable-table-cell sortable-table-status">
 					{statusIcons[member.status]}
 				</td>
 				<td className="sortable-table-cell sortable-table-email">
-					{filter ?
-						member.email.split(new RegExp(`(${filter})`)).map(text => (
-							<span className={new RegExp(`(${filter})`).test(text) ? "sortable-table-cell-filter" : ""}>{text}</span>
-						))
-						:
-						member.email
-					}
+					{filter
+						? member.email.split(new RegExp(`(${filter})`)).map(text => (
+							<span
+								className={
+										new RegExp(`(${filter})`).test(text)
+											? 'sortable-table-cell-filter'
+											: ''
+									}
+							>
+								{text}
+							</span>
+							))
+						: member.email}
 				</td>
-				<td className="sortable-table-cell sortable-table-name">{[member.firstName, member.lastName].join(' ')}</td>
-				{onRemoveRow && (
-					<td className="sortable-table-cell sortable-table-actions">
+				<td className="sortable-table-cell sortable-table-name">
+					{[member.firstName, member.lastName].join(' ')}
+				</td>
+				{onRemoveRow
+					&& <td className="sortable-table-cell sortable-table-actions">
 						<button
 							onClick={this.handleRemoveButton}
 							style={{
@@ -62,13 +72,12 @@ class MemberRow extends React.Component {
 								outline: 'none',
 							}}
 						>
-							<Icon name="delete"  />
+							<Icon name="delete" />
 						</button>
-					</td>
-				)}
+					</td>}
 			</tr>
 		);
-	};
+	}
 }
 
 MemberRow.propTypes = {
@@ -173,10 +182,12 @@ export class AccountManageSubUsers extends React.Component {
 	}
 
 	sortBy(property) {
-		this.setState(({sort}) => ({sort: {
-			property,
-			asc: (sort.property !== property && sort.asc) || !sort.asc,
-		}}));
+		this.setState(({sort}) => ({
+			sort: {
+				property,
+				asc: (sort.property !== property && sort.asc) || !sort.asc,
+			},
+		}));
 	}
 
 	renderCreateUserForm() {
@@ -188,44 +199,56 @@ export class AccountManageSubUsers extends React.Component {
 			</tr>,
 			<tr key="create-user" className="sortable-table-create-user-form">
 				<td>
-					<button style={{
-						border: 'none',
-						background: 'none',
-						outline: 'none',
-						display: 'block',
-						margin: 'auto',
-					}} onClick={() => this.setState({userCreation: null})}>
+					<button
+						style={{
+							border: 'none',
+							background: 'none',
+							outline: 'none',
+							display: 'block',
+							margin: 'auto',
+						}}
+						onClick={() => this.setState({userCreation: null})}
+					>
 						<Icon name="delete" />
 					</button>
 				</td>
 				<td>
 					<input
 						className="sortable-table-add-user-form-email"
-						type="email" name="email"
+						type="email"
+						name="email"
 						placeholder="email@example.com"
 						defaultValue={this.state.userCreation.email}
 						disabled
-						ref={node => { if (node) this.email = node; }}
+						ref={(node) => {
+							if (node) this.email = node;
+						}}
 					/>
 				</td>
 				<td style={{display: 'flex'}}>
 					<input
 						className="sortable-table-add-user-form-name"
-						type="text" name="firstName"
+						type="text"
+						name="firstName"
 						placeholder="John"
-						ref={node => { if (node) this.firstName = node; }}
+						ref={(node) => {
+							if (node) this.firstName = node;
+						}}
 					/>
 					<input
 						className="sortable-table-add-user-form-name"
-						type="text" name="lastName"
+						type="text"
+						name="lastName"
 						placeholder="Doe"
-						ref={node => { if (node) this.lastName = node; }}
+						ref={(node) => {
+							if (node) this.lastName = node;
+						}}
 					/>
 				</td>
 				<td>
 					<Button size="small" onClick={this.handleCreate}>Create user</Button>
 				</td>
-			</tr>
+			</tr>,
 		];
 	}
 
@@ -236,9 +259,12 @@ export class AccountManageSubUsers extends React.Component {
 				<td colSpan={2}>
 					<input
 						className="sortable-table-add-user-form-email"
-						type="email" name="email"
+						type="email"
+						name="email"
 						placeholder="email@example.com"
-						ref={node => { if (node) this.email = node; }}
+						ref={(node) => {
+							if (node) this.email = node;
+						}}
 					/>
 				</td>
 				<td>
@@ -250,10 +276,10 @@ export class AccountManageSubUsers extends React.Component {
 
 	renderForm() {
 		const {members, max} = this.props;
-		const {userCreation, loadingCreation} = this.state;
+		const {userCreation} = this.state;
 
 		if (max && max - members.length <= 0) {
-			return;
+			return null;
 		}
 
 		if (userCreation) {
@@ -264,20 +290,26 @@ export class AccountManageSubUsers extends React.Component {
 	}
 
 	render() {
-		const {loading, members, max, onAddUser, onRemoveUser} = this.props;
+		const {loading, members, max, onAddUser} = this.props;
 		const {filter, sort, loadingCreation, error} = this.state;
 		const slotsLeft = max - members.length;
 		const hasActions = max > 0;
 
 		const sortClass = sort.asc ? 'asc' : 'desc';
-		const headersClasses = ['status', 'email', 'name'].reduce((obj, header) => {
-			obj[header] = classnames(
-				'sortable-table-header-cell',
-				`sortable-table-${header}`,
-				{ [`sortable-table-header-cell-sort-${sortClass}`]: sort.property === header }
-			);
-			return obj;
-		}, {});
+		const headersClasses = ['status', 'email', 'name'].reduce(
+			(obj, header) => ({
+				...obj,
+				[header]: classnames(
+					'sortable-table-header-cell',
+					`sortable-table-${header}`,
+					{
+						[`sortable-table-header-cell-sort-${sortClass}`]: sort.property
+							=== header,
+					},
+				),
+			}),
+			{},
+		);
 
 		const filteredMembers = members
 			.filter(({email}) => email.includes(filter))
@@ -289,59 +321,72 @@ export class AccountManageSubUsers extends React.Component {
 
 		if (loadingCreation) {
 			filteredMembers.unshift({email: loadingCreation, status: 'loading'});
-		};
+		}
 
 		return (
 			<div className="manage-sub-users">
 				<header className="manage-sub-users-header">
 					<h1 className="manage-sub-users-title">Manage Sub Users</h1>
 					<div className="manage-sub-users-action-bar">
-						<FilterInput placeholder="Filter" onChange={this.changeFilter} onClear={this.clearFilter} value={filter} />
+						<FilterInput
+							placeholder="Filter"
+							onChange={this.changeFilter}
+							onClear={this.clearFilter}
+							value={filter}
+						/>
 					</div>
 				</header>
 				<WaitForLoad loading={loading}>
 					<table className="sortable-table">
-						{max > 0 && (
-							<caption className="sortable-table-caption">
+						{max > 0
+							&& <caption className="sortable-table-caption">
 								{slotsLeft} slots left on {max}
 								{slotsLeft < 4 && ' • '}
-								{slotsLeft < 4 && <Link to="/account/details/change-plan">
-									Update your subscription
-								</Link>}
-							</caption>
-						)}
+								{slotsLeft < 4
+									&& <Link to="/account/details/change-plan">
+										Update your subscription
+									</Link>}
+							</caption>}
 						<thead>
 							<tr>
-								<th className={headersClasses.status} onClick={this.sortByStatus}>
+								<th
+									className={headersClasses.status}
+									onClick={this.sortByStatus}
+								>
 									Status
 								</th>
 								<th className={headersClasses.email} onClick={this.sortByEmail}>
 									Email
 								</th>
-								<th className={headersClasses.name} colSpan={hasActions ? 1 : 2} onClick={this.sortByName}>Name</th>
+								<th
+									className={headersClasses.name}
+									colSpan={hasActions ? 1 : 2}
+									onClick={this.sortByName}
+								>
+									Name
+								</th>
 							</tr>
 						</thead>
 						<tbody>
 							{onAddUser && !filter && !loadingCreation && this.renderForm()}
-							{!members.length && (
-								<tr>
+							{!members.length
+								&& <tr>
 									<td colSpan={4}>
 										<p style={{textAlign: 'center'}}>
 											You don't manage any user for now.
 										</p>
 									</td>
-								</tr>
-							)}
-							{!!members.length && !filteredMembers.length && (
-								<tr>
+								</tr>}
+							{!!members.length
+								&& !filteredMembers.length
+								&& <tr>
 									<td colSpan={4}>
 										<p style={{textAlign: 'center'}}>
 											No user match this filter
 										</p>
 									</td>
-								</tr>
-							)}
-							{filteredMembers.map((member) => (
+								</tr>}
+							{filteredMembers.map(member => (
 								<MemberRow
 									member={member}
 									filter={filter}
@@ -363,7 +408,7 @@ AccountManageSubUsers.propTypes = {
 			id: PropTypes.string,
 			email: PropTypes.string,
 			status: PropTypes.string,
-		}).isRequired
+		}).isRequired,
 	).isRequired,
 	max: PropTypes.number,
 	onAddUser: PropTypes.func,
@@ -399,17 +444,14 @@ export default graphql(query, {
 		fetchPolicy: 'cache-and-network',
 	},
 	props: ({data}) => {
-		if (data.loading || !data.user) { // TMP: don't fail if there's no graphcool account
+		// TMP: don't fail if there's no graphcool account
+		if (data.loading || !data.user) {
 			return {loading: true};
 		}
 
 		const members = [
-			...data.user.subUsers.map((e) => {
-				return {...e, status: 'active'};
-			}),
-			...data.user.pendingSubUsers.map((e) => {
-				return {...e, status: 'pending'};
-			}),
+			...data.user.subUsers.map(e => ({...e, status: 'active'})),
+			...data.user.pendingSubUsers.map(e => ({...e, status: 'pending'})),
 		].sort((a, b) => a.email > b.email);
 
 		return {
