@@ -94,14 +94,25 @@ export default class TestFont extends React.PureComponent {
 				switch(appStateValue) {
 					case appState.ONCURVE_ANGLE:
 					case appState.ONCURVE_THICKNESS:
+					case appState.SKELETON_POS:
+					case appState.SKELETON_DISTR:
 						const {keyCode} = this.toile.keyboardInput;
-						if (keyCode == 79) {
+
+						if (keyCode === 69) {
 							appStateValue = appState.ONCURVE_THICKNESS;
 						}
-						if (keyCode == 80) {
+						if (keyCode === 82) {
 							appStateValue = appState.ONCURVE_ANGLE;
 						}
+						if (keyCode === 68) {
+							appStateValue = appState.SKELETON_POS;
+						}
+						if (keyCode === 70) {
+							appStateValue = appState.SKELETON_DISTR;
+						}
 						this.toile.clearKeyboardInput();
+						break;
+					default:
 						break;
 				}
 			}
@@ -160,7 +171,7 @@ export default class TestFont extends React.PureComponent {
 					return item.type === toileType.POINT_MENU_ITEM;
 				});
 
-				if (nodes.length > 1 && !draggedItem) {
+				if (nodes.length > 1 && !draggedItem && ! selectedItem) {
 					this.toile.drawMultiplePointsMenu(nodes, frameCounters.pointMenu);
 					frameCounters.pointMenu += 1;
 				}
@@ -209,8 +220,6 @@ export default class TestFont extends React.PureComponent {
 							const selectedNodeParent = _.get(glyph, draggedItem.data.parentId);
 
 							this.toile.drawAngleBetweenHandleAndMouse(selectedNodeParent, selectedNode);
-
-							this.toile.drawNodeHandleToolsLib(appStateValue);
 							break;
 						}
 						default:
@@ -220,14 +229,14 @@ export default class TestFont extends React.PureComponent {
 				else if (selectedItem) {
 					switch (selectedItem.type) {
 						case toileType.NODE: {
-							appStateValue = appStateValue <= appState.ONCURVE_ANGLE
+							appStateValue = appStateValue <= appState.SKELETON_DISTR
 								&& appStateValue >= appState.ONCURVE_THICKNESS
 								? appStateValue : appState.ONCURVE_THICKNESS;
 							break;
 						}
 						case toileType.NODE_SKELETON: {
-							appStateValue = appStateValue <= appState.SKELETON_POS
-								&& appStateValue >= appState.SKELETON_DISTR
+							appStateValue = appStateValue <= appState.SKELETON_DISTR
+								&& appStateValue >= appState.ONCURVE_THICKNESS
 								? appStateValue : appState.SKELETON_POS;
 							break;
 						}
@@ -241,40 +250,39 @@ export default class TestFont extends React.PureComponent {
 
 				switch(appStateValue) {
 					case appState.ONCURVE_THICKNESS: {
-						this.toile.drawNodeToolsLib(appStateValue);
-						const selectedNode = _.get(glyph, selectedItem.id);
-						const selectedNodeParent = _.get(glyph, selectedItem.data.parentId);
+						const node = _.get(glyph, selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id);
 
-						if (selectedNodeParent) {
-							this.toile.drawThicknessTool(selectedNode, selectedNodeParent);
+						if (node) {
+							this.toile.drawThicknessTool(node);
 						}
+						this.toile.drawNodeToolsLib(appStateValue);
 						break;
 					}
 					case appState.ONCURVE_ANGLE: {
-						this.toile.drawNodeToolsLib(appStateValue);
-						const selectedNodeParent = _.get(glyph, selectedItem.data.parentId);
+						const node = _.get(glyph, selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id);
 
-						if (selectedNodeParent) {
-							this.toile.drawAngleTool(selectedNodeParent);
+						if (node) {
+							this.toile.drawAngleTool(node);
 						}
+						this.toile.drawNodeToolsLib(appStateValue);
 						break;
 					}
 					case appState.SKELETON_POS: {
-						this.toile.drawNodeSkeletonToolsLib(appStateValue);
-						const selectedNode = _.get(glyph, selectedItem.id);
+						const node = _.get(glyph, selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id);
 
-						if (selectedNode) {
-							this.toile.drawSkeletonPosTool(selectedNode);
+						if (node) {
+							this.toile.drawSkeletonPosTool(node);
 						}
+						this.toile.drawNodeToolsLib(appStateValue);
 						break;
 					}
 					case appState.SKELETON_DISTR: {
-						this.toile.drawNodeSkeletonToolsLib(appStateValue);
-						const selectedNode = _.get(glyph, selectedItem.id);
+						const node = _.get(glyph, selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id);
 
-						if (selectedNode) {
-							this.toile.drawSkeletonDistrTool(selectedNode);
+						if (node) {
+							this.toile.drawSkeletonDistrTool(node);
 						}
+						this.toile.drawNodeToolsLib(appStateValue);
 						break;
 					}
 					default:
@@ -378,7 +386,7 @@ export default class TestFont extends React.PureComponent {
 					<InputRange minValue="0" maxValue="200" value={this.state.values.serifWidth} onChange={this.changeParam('serifWidth')}/>
 					<InputRange minValue="0" maxValue="200" value={this.state.values.serifHeight} onChange={this.changeParam('serifHeight')}/>
 					<InputRange minValue="0" maxValue="200" value={this.state.values.serifCurve} onChange={this.changeParam('serifCurve')}/>
-					<div style={{fontFamily: 'Prototypo web font', fontSize: '70px', wordWrap: 'break-word', width: '900px'}}>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</div>
+					<div style={{fontFamily: 'Prototypo web font', fontSize: '70px', wordWrap: 'break-word', width: '900px'}}>The quick fox jump over the lazy dog</div>
 					<button onClick={this.download}>Download</button>
 				</div>
 			</div>

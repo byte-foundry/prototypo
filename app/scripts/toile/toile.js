@@ -265,7 +265,7 @@ export default class Toile {
 				const id = `contours[${i}].nodes[${j}]`;
 
 				if (node.x && node.y) {
-					this.drawNode(node, id, hotItems);
+					this.drawNode(node, id, undefined, hotItems);
 				}
 				if (node.expandedTo) {
 					this.drawNode(node.expandedTo[0], `${id}.expandedTo[0]`, id, hotItems);
@@ -280,7 +280,7 @@ export default class Toile {
 					const id = `component[${k}].contours[${i}].nodes[${j}]`;
 
 					if (node.x && node.y) {
-						this.drawNode(node, id, hotItems);
+						this.drawNode(node, id, undefined, hotItems);
 					}
 					if (node.expandedTo) {
 						this.drawNode(node.expandedTo[0], `${id}.expandedTo[0]`, id, hotItems);
@@ -507,50 +507,65 @@ export default class Toile {
 			inverseMatrix,
 			this.height / this.viewMatrix[0]
 		);
-		const offset = mulScalar2D(1 / this.viewMatrix[0], {x: 20, y: -20});
-		const start = add2D(mouseTransformed, offset);
-		const size = mulScalar2D(1 / this.viewMatrix[0], {x: 30 * toolsLib.length, y: -30});
-		const end = add2D(start, size);
+		toolsLib.forEach((tools, i) => {
+			const offset = mulScalar2D(1 / this.viewMatrix[0], {x: 20, y: -20 - 30 * i});
+			const start = add2D(mouseTransformed, offset);
+			const size = mulScalar2D(1 / this.viewMatrix[0], {x: 30 * tools.length, y: -30});
+			const end = add2D(start, size);
 
-		this.drawRectangleFromCorners(start, end, undefined, '#24d390');
-		toolsLib.forEach((tool, i) => {
-			const width = this.measureText(tool.key, 15, 'Fira sans').width;
-			const toolStart = add2D(start, mulScalar2D(i / this.viewMatrix[0], {x: 30, y: 0}));
-			const toolSize = mulScalar2D(1 / this.viewMatrix[0], {x: 30, y: -30});
-			const toolEnd = add2D(toolStart, toolSize);
-			const textPoint = add2D(
-				mulScalar2D(1 / this.viewMatrix[0],
-					{
-						x: -width / 2,
-						y: -7.5,
-					}
-				),
-				mulScalar2D(
-					1 / 2,
-					add2D(toolStart, toolEnd),
-				)
-			);
-			let color;
+			this.drawRectangleFromCorners(start, end, undefined, '#24d390');
+			tools.forEach((tool, i) => {
+				const width = this.measureText(tool.key, 15, 'Fira sans').width;
+				const toolStart = add2D(start, mulScalar2D(i / this.viewMatrix[0], {x: 30, y: 0}));
+				const toolSize = mulScalar2D(1 / this.viewMatrix[0], {x: 30, y: -30});
+				const toolEnd = add2D(toolStart, toolSize);
+				const textPoint = add2D(
+					mulScalar2D(1 / this.viewMatrix[0],
+						{
+							x: -width / 2,
+							y: -7.5,
+						}
+					),
+					mulScalar2D(
+						1 / 2,
+						add2D(toolStart, toolEnd),
+					)
+				);
+				let color;
 
-			if (appStateValue === tool.mode) {
-				color = blue;
-			}
-			this.drawRectangleFromCorners(toolStart, toolEnd, undefined, color);
-			this.drawText(tool.key, textPoint, 15, grey);
+				if (appStateValue === tool.mode) {
+					color = blue;
+				}
+				this.drawRectangleFromCorners(toolStart, toolEnd, undefined, color);
+				this.drawText(tool.key, textPoint, 15, grey);
+			});
 		});
 	}
 
 	drawNodeToolsLib(appStateValue) {
-		this.drawToolsLib([
-			{
-				key: 'o',
-				mode: appState.ONCURVE_THICKNESS,
-			},
-			{
-				key: 'p',
-				mode: appState.ONCURVE_ANGLE,
-			},
-		], appStateValue);
+		this.drawToolsLib(
+			[
+				[
+					{
+						key: 'e',
+						mode: appState.ONCURVE_THICKNESS,
+					},
+					{
+						key: 'r',
+						mode: appState.ONCURVE_ANGLE,
+					},
+					{
+						key: 'd',
+						mode: appState.SKELETON_POS,
+					},
+					{
+						key: 'f',
+						mode: appState.SKELETON_DISTR,
+					},
+				],
+			],
+			appStateValue
+		);
 	}
 
 	drawNodeSkeletonToolsLib(appStateValue) {
@@ -595,8 +610,8 @@ export default class Toile {
 		this.drawArcBetweenVector(node, startVec, endVec, '#24d390');
 	}
 
-	drawThicknessTool(expandedSource, parentNode) {
-		const oppositeExpanded = parentNode.expandedTo[0] === expandedSource ? parentNode.expandedTo[1] : parentNode.expandedTo[0];
+	drawThicknessTool(node) {
+		const [oppositeExpanded, expandedSource] = node.expandedTo;
 		const normalVector = normalize2D({
 			x: expandedSource.y - oppositeExpanded.y,
 			y: oppositeExpanded.x - expandedSource.x,
@@ -604,7 +619,7 @@ export default class Toile {
 		const toolPoints = [
 			add2D(expandedSource, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
 			add2D(oppositeExpanded, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
-			add2D(parentNode, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
+			add2D(node, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
 		];
 
 		this.drawLine(expandedSource, oppositeExpanded, blue);
@@ -614,7 +629,7 @@ export default class Toile {
 		this.drawCircle(toolPoints[0], nodeDrawRadius, blue, undefined);
 		this.drawCircle(toolPoints[1], nodeDrawRadius, blue, undefined);
 		this.drawCircle(toolPoints[2], nodeDrawRadius, undefined, yellow);
-		const text = parentNode.expand.width.toFixed(1);
+		const text = node.expand.width.toFixed(1);
 		const textSize = this.measureText(text, 20, 'Fira sans');
 
 		this.drawText(text,
@@ -634,17 +649,17 @@ export default class Toile {
 
 	}
 
-	drawAngleTool(selectedNodeParent) {
-		const farthestNode = selectedNodeParent.expand.distr > 0.5
-			? selectedNodeParent.expandedTo[0]
-			: selectedNodeParent.expandedTo[1];
-		const radius = distance2D(farthestNode, selectedNodeParent) * this.viewMatrix[0];
+	drawAngleTool(node) {
+		const [farthestNode, closestNode] = node.expand.distr > 0.5
+			? [node.expandedTo[0], node.expandedTo[1]]
+			: [node.expandedTo[1], node.expandedTo[0]];
+		const radius = distance2D(farthestNode, node) * this.viewMatrix[0];
 
-		this.drawRing(selectedNodeParent, radius - 2, radius + 2, undefined, ringBackground);
-		this.drawLine(selectedNodeParent, farthestNode, green, undefined, [5, 5, 15, 5]);
+		this.drawRing(node, radius - 2, radius + 2, undefined, ringBackground);
+		this.drawLine(closestNode, farthestNode, green, undefined, [5, 5, 15, 5]);
 		this.drawCircle(farthestNode, 5, green, green);
 
-		const direction = subtract2D(farthestNode, selectedNodeParent);
+		const direction = subtract2D(farthestNode, node);
 		const angle = `${(Math.atan2(direction.y, direction.x) * 180 / Math.PI).toFixed(1)}°`;
 		const textSize = this.measureText(angle, 20, 'Fira sans');
 		const normalVector = normalize2D({
@@ -655,7 +670,7 @@ export default class Toile {
 		this.drawText(angle,
 			add2D(
 				add2D(
-					mulScalar2D(1 / 2, add2D(selectedNodeParent, farthestNode)),
+					mulScalar2D(1 / 2, add2D(node, farthestNode)),
 					mulScalar2D(-35 / this.viewMatrix[0], normalVector)
 				),
 				{
@@ -668,14 +683,28 @@ export default class Toile {
 		);
 	}
 
+	drawSkeletonDistrTool(node) {
+		const [zoom] = this.viewMatrix;
+		const normalVector = normalize2D({
+			x: node.expandedTo[1].y - node.expandedTo[0].y,
+			y: node.expandedTo[0].x - node.expandedTo[1].x,
+		});
+		const center = add2D(node, mulScalar2D(20 / zoom, normalVector));
+
+		this.drawLine(node.expandedTo[0], node.expandedTo[1], red, undefined, [5, 5, 15, 5]);
+		this.drawLine(node, add2D(node, mulScalar2D(20 / zoom, normalVector)), red);
+		this.drawCircle(add2D(node, mulScalar2D(20 / zoom, normalVector)), 8, 'transparent', red);
+	}
+
 	drawSkeletonPosTool(node) {
 		const [zoom] = this.viewMatrix;
-		const topLeft = add2D(mulScalar2D(1 / zoom, {x: -10, y: 10}), node);
-		const bottomLeft = add2D(mulScalar2D(1 / zoom, {x: -10, y: -10}), node);
-		const topRight = add2D(mulScalar2D(1 / zoom, {x: 10, y: 10}), node);
-		const bottomRight = add2D(mulScalar2D(1 / zoom, {x: 10, y: -10}), node);
+		const topLeft = add2D(mulScalar2D(1 / zoom, {x: -6, y: 6}), node);
+		const bottomLeft = add2D(mulScalar2D(1 / zoom, {x: -6, y: -6}), node);
+		const topRight = add2D(mulScalar2D(1 / zoom, {x: 6, y: 6}), node);
+		const bottomRight = add2D(mulScalar2D(1 / zoom, {x: 6, y: -6}), node);
 
 		const oldWidth = this.context.lineWidth;
+		this.drawLine(node.expandedTo[0], node.expandedTo[1], red, undefined, [5, 5, 15, 5]);
 		this.context.lineWidth = 2;
 		this.drawLine(topLeft, bottomRight, red);
 		this.drawLine(bottomLeft, topRight, red);
@@ -683,10 +712,10 @@ export default class Toile {
 
 		const xText = `x: ${node.x.toFixed(0)}`;
 		const yText = `y: ${node.y.toFixed(0)}`;
-		const xTextSize = this.measureText(xText, 20, 'Fira sans');
-		const yTextSize = this.measureText(yText, 20, 'Fira sans');
-		const xCoordsPos = add2D(mulScalar2D(1 / zoom, {x: 30, y: 60}), node);
-		const yCoordsPos = add2D(mulScalar2D(1 / zoom, {x: 30, y: 30}), node);
+		const xTextSize = this.measureText(xText, 15, 'Fira sans');
+		const yTextSize = this.measureText(yText, 15, 'Fira sans');
+		const xCoordsPos = add2D(mulScalar2D(1 / zoom, {x: 20, y: 40}), node);
+		const yCoordsPos = add2D(mulScalar2D(1 / zoom, {x: 20, y: 20}), node);
 
 		this.drawText(xText,
 			add2D(
@@ -769,19 +798,20 @@ export default class Toile {
 				}
 				case toileType.POINT_MENU_ITEM: {
 					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+					const [zoom] = this.viewMatrix;
 					const [mouseTransformed] = transformCoords(
 						[this.mouse],
 						inverseMatrix,
-						this.height / this.viewMatrix[0]
+						this.height / zoom
 					);
 					const {pos, size} = interactionItem.data;
 					const diffVect = subtract2D(mouseTransformed, pos);
 
 					if (
-						diffVect.x <= size + 10
-						&& diffVect.x >= -10
-						&& diffVect.y <= 35
-						&& diffVect.y >= -5
+						diffVect.x <= size + 10 / zoom
+						&& diffVect.x >= -10 / zoom
+						&& diffVect.y <= 35 / zoom
+						&& diffVect.y >= -5 / zoom
 					) {
 						result.push(interactionItem);
 					}
