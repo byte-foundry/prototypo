@@ -39,7 +39,7 @@ class ResetPassword extends React.PureComponent {
 
 		try {
 			await HoodieApi.resetPassword(
-				location.query.id.replace(' ', '+'), // avoid blank
+				location.query.id.replace(/ /g, '+'), // avoid blank
 				location.query.resetToken,
 				e.target.password.value,
 			);
