@@ -4,6 +4,7 @@ import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import PrototypoCanvasContainer from 'prototypo-canvas';
 import HoodieApi from '~/services/hoodie.services.js';
+import Dropzone from 'react-dropzone';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
@@ -16,6 +17,7 @@ import CloseButton from './close-button.components.jsx';
 import CanvasGlyphInput from './canvas-glyph-input.components.jsx';
 import AlternateMenu from './alternate-menu.components.jsx';
 import CanvasBar from './canvasTools/canvas-bar.components.jsx';
+import CanvasShadow from './canvasTools/canvas-shadow.components.jsx';
 
 export default class PrototypoCanvas extends React.Component {
 
@@ -28,6 +30,7 @@ export default class PrototypoCanvas extends React.Component {
 			glyphPanelOpened: undefined,
 			uiText: '',
 			uiWord: '',
+			shadowFile: '',
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
@@ -54,6 +57,8 @@ export default class PrototypoCanvas extends React.Component {
 		this.preExportGlyphr = this.preExportGlyphr.bind(this);
 		this.afterExportGlyphr = this.afterExportGlyphr.bind(this);
 		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
+		this.onDrop = this.onDrop.bind(this);
+		this.deleteShadow = this.deleteShadow.bind(this);
 	}
 
 	componentWillMount() {
@@ -154,12 +159,12 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	handleShortcut(e) {
-		//if the glyph selectio is focused do nothin
+		//if the glyph selection is focused do nothing
 		if (this.state.glyphFocused) {
 			return;
 		}
-		// Zoom out to initial view
-		if (e.keyCode === 90) {
+		// Zoom out to initial view: Z
+		if (e.keyCode === 90 && !e.ctrlKey) {
 			e.preventDefault();
 			e.stopPropagation();
 			if (!this.oldPos) {
@@ -176,12 +181,21 @@ export default class PrototypoCanvas extends React.Component {
 
 		const unicodes = Object.keys(this.state.glyphs);
 		const currentUnicode = unicodes.indexOf(this.props.glyphSelected);
-
+		// enter move mode: space
 		if (e.keyCode === 32) {
 			e.preventDefault();
 			e.stopPropagation();
-			if (this.state.oldCanvasMode === undefined || this.state.oldCanvasMode === 'move') {
+			if (this.state.oldCanvasMode === undefined || this.state.oldCanvasMode === 'move' || this.state.oldCanvasMode === 'shadow') {
 				this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
+			}
+		}
+
+		// enter shadow mode: s
+		if (e.keyCode === 83) {
+			e.preventDefault();
+			e.stopPropagation();
+			if (this.state.oldCanvasMode === undefined || this.state.oldCanvasMode === 'shadow' || this.state.oldCanvasMode === 'move ') {
+				this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'shadow'});
 			}
 		}
 
@@ -238,7 +252,7 @@ export default class PrototypoCanvas extends React.Component {
 			this.client.dispatchAction('/store-value', this.oldPos);
 			this.oldPos = undefined;
 		}
-		if (e.keyCode === 32) {
+		if (e.keyCode === 32 || e.keyCode === 83) {
 			this.client.dispatchAction('/toggle-canvas-mode');
 		}
 	}
@@ -354,6 +368,20 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
+	onDrop(accepted, rejected) {
+		if (accepted.length > 0 && rejected.length === 0) {
+			const reader = new FileReader();
+			reader.addEventListener("load", () => {
+				this.setState({shadowFile: {elem: reader.result, type: accepted[0].type === '' ? 'font' : 'image'}});
+			}, false);
+			accepted[0].type === '' ? reader.readAsArrayBuffer(accepted[0]) : reader.readAsDataURL(accepted[0]);
+		}
+	}
+
+	deleteShadow() {
+		this.setState({shadowFile: ''});
+	}
+
 	preExport() {
 		this.client.dispatchAction('/store-value-font', {exportPlease: false});
 	}
@@ -419,6 +447,50 @@ export default class PrototypoCanvas extends React.Component {
 		// ) : false;
 		const demoOverlay = false;
 
+		let shadowDropzone = false;
+
+		if (this.state.canvasMode === 'shadow' && this.state.shadowFile === '') {
+			shadowDropzone = (
+				<div className="prototypo-canvas-shadow-dropzone">
+					<Dropzone
+						className="prototypo-canvas-shadow-dropzone-content"
+						accept="image/jpeg, image/png, .ttf, .otf"
+						multiple="false"
+						onDrop={this.onDrop}
+						rejectClassName="rejected"
+						>
+					Drop an image file or a font here, or click to select files to upload.
+					</Dropzone>
+				</div>
+			);
+		}
+		let shadowFile = false;
+
+		if (this.state.shadowFile !== '') {
+			shadowFile = (
+				<div>
+					<CanvasShadow
+						shadowFile={this.state.shadowFile}
+						width={this.refs.container.clientWidth}
+						height={this.refs.container.clientHeight}
+						canvasMode={this.state.canvasMode}
+						glyphSelected={this.state.glyphs[this.props.glyphSelected][0]}
+					/>
+					{this.state.canvasMode === 'shadow'
+						? (
+							<button
+								className={`prototypo-canvas-reset-glyph-button is-on-canvas`}
+								onClick={this.deleteShadow}>
+								Remove shadow
+							</button>
+						)
+						: false
+					}
+				</div>
+			);
+		}
+
+
 		const alternateMenu = this.props.glyphs && this.props.glyphs[this.props.glyphSelected] && this.props.glyphs[this.props.glyphSelected].length > 1 ? (
 			<AlternateMenu alternates={this.props.glyphs[this.props.glyphSelected]} unicode={this.props.glyphSelected}/>
 		) : false;
@@ -438,6 +510,8 @@ export default class PrototypoCanvas extends React.Component {
 					Reset glyph
 				</button>
 				{demoOverlay}
+				{shadowDropzone}
+				{shadowFile}
 				<PrototypoCanvasContainer
 					familyName={this.state.familyName}
 					json={this.state.typedataJSON}
