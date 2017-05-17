@@ -114,6 +114,7 @@ import {Router, Route, IndexRoute, hashHistory, IndexRedirect} from 'react-route
 import Dashboard from './components/dashboard.components.jsx';
 import Signin from './components/signin.components.jsx';
 import ForgottenPassword from './components/forgotten-password.components.jsx';
+import ResetPassword from './components/reset-password.components.jsx';
 import NotABrowser from './components/not-a-browser.components.jsx';
 import IAmMobile from './components/i-am-mobile.components.jsx';
 import Register from './components/register.components.jsx';
@@ -333,7 +334,6 @@ selectRenderOptions(
 		}
 
 		function redirectToDashboard(nextState, replace) {
-			console.log(nextState);
 			if (HoodieApi.isLoggedIn()) {
 				if (nextState.location.query && nextState.location.query.subscribe) {
 					replace({
@@ -391,6 +391,7 @@ selectRenderOptions(
 						<Route path="debug" component={ReplayViewer}/>
 						/* #endif */
 						<Route path="signin" component={AccountApp} onEnter={redirectToDashboard}>
+							<Route path="reset" component={ResetPassword}/>
 							<Route path="forgotten" component={ForgottenPassword}/>
 							<IndexRoute component={Signin}/>
 						</Route>

@@ -187,7 +187,9 @@ export default {
 		const subscriptionPatch = userStore.set('subscription', subscriptions.data[0]).commit();
 		const cardsPatch = userStore.set('cards', sources.data).commit();
 		const creditsPatch = prototypoStore.set('credits', parseInt(metadata.credits, 10) || 0).commit();
+		const hasBeenSubscribingPatch = userStore.set('hasBeenSubscribing', metadata.hasBeenSubscribing || false).commit();
 
+		localServer.dispatchUpdate('/userStore', hasBeenSubscribingPatch);
 		localServer.dispatchUpdate('/userStore', subscriptionPatch);
 		localServer.dispatchUpdate('/userStore', cardsPatch);
 		localServer.dispatchUpdate('/prototypoStore', creditsPatch);
@@ -240,6 +242,10 @@ export default {
 		const patch = userStore.set('infos', {}).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);
+
+		const prototypatch = prototypoStore.set('credits', 0).commit();
+
+		localServer.dispatchUpdate('/prototypoStore', prototypatch);
 	},
 	'/sign-in': async ({username, password, retry, to = '/dashboard', oldQuery = {}}) => {
 		const dashboardLocation = {
@@ -544,6 +550,9 @@ export default {
 	},
 	'/confirm-buy': async ({plan, card, pathname}) => {
 		const form = userStore.get('confirmation');
+		const hasBeenSubscribing = userStore.get('hasBeenSubscribing');
+		let coupon = userStore.get('choosePlanForm').couponValue;
+		const validCoupon = userStore.get('choosePlanForm').validCoupon;
 		const { fullname, number, expMonth, expYear, cvc } = card;
 
 		form.errors = [];
@@ -555,7 +564,7 @@ export default {
 		const cards = userStore.get('cards');
 		let cardCountry = cards[0] ? cards[0].country : undefined;
 
-		if (!cardCountry && (!fullname || !number || !expMonth || !expYear || !cvc)) {
+		if (!cardCountry && (validCoupon && !validCoupon.shouldSkipCard) && (!fullname || !number || !expMonth || !expYear || !cvc)) {
 			const requiredFields = [fullname, number, expMonth, expYear, cvc];
 			const errorText = requiredFields.reduce((sum, field) => {
 				return sum + !!field;
@@ -575,8 +584,7 @@ export default {
 			}
 
 			const currency = getCurrency(cardCountry);
-			let coupon = userStore.get('choosePlanForm').couponValue;
-			if (plan.includes('monthly') && !coupon) {
+			if (plan.includes('monthly') && !coupon && !hasBeenSubscribing) {
 				coupon = `base_coupon_${currency}`;
 			}
 			const data = await HoodieApi.updateSubscription({
@@ -591,6 +599,7 @@ export default {
 			const patch = userStore
 				.set('infos', infos)
 				.set('confirmation', form)
+				.set('hasBeenSubscribing', 'true')
 				.commit();
 
 			const transacId = `${plan}_${data.id}`;
