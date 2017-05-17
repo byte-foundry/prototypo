@@ -41,7 +41,7 @@ export default class AddCard extends React.PureComponent {
 		const {inError} = this.props;
 
 		return (
-			<div className="add-card">
+			<div className={`${this.props.className} add-card`}>
 				<InputWithLabel inputRef={(ref) => { this.fullname = ref; }} label="Full name" error={inError.fullname} info="(as it appears on the card)" required={true}/>
 				<div className={`input-with-subline ${this.state.creditCardType === 'unknown' ? '' : this.state.creditCardType}`}>
 					<InputWithLabel label="Card number" error={inError.number} required={true}>

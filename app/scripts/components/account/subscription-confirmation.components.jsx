@@ -5,20 +5,21 @@ import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
 import Price from '../shared/price.components';
+import withCountry from '../shared/with-country.components';
 
 import getCurrency from '../../helpers/currency.helpers.js';
 import HoodieApi from '../../services/hoodie.services';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
-
-export default class SubscriptionConfirmation extends React.Component {
+class SubscriptionConfirmation extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			errors: [],
 			card: [{
-				country: 'US',
+				country: props.country,
 			}],
 			plan: 'personal_monthly',
 			plans: {},
@@ -195,3 +196,9 @@ export default class SubscriptionConfirmation extends React.Component {
 		);
 	}
 }
+
+SubscriptionConfirmation.propTypes = {
+	country: React.PropTypes.string.isRequired,
+};
+
+export default withCountry(SubscriptionConfirmation);
