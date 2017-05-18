@@ -31,6 +31,7 @@ export default class PrototypoCanvas extends React.Component {
 			uiText: '',
 			uiWord: '',
 			shadowFile: '',
+			glyphViewMatrix: {},
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
@@ -59,6 +60,7 @@ export default class PrototypoCanvas extends React.Component {
 		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.deleteShadow = this.deleteShadow.bind(this);
+		this.getGlyphViewMatrix = this.getGlyphViewMatrix.bind(this);
 	}
 
 	componentWillMount() {
@@ -381,6 +383,10 @@ export default class PrototypoCanvas extends React.Component {
 		this.setState({shadowFile: ''});
 	}
 
+	getGlyphViewMatrix(matrix) {
+		this.setState({glyphViewMatrix: Object.assign({}, matrix)});
+	}
+
 	preExport() {
 		this.client.dispatchAction('/store-value-font', {exportPlease: false});
 	}
@@ -474,6 +480,7 @@ export default class PrototypoCanvas extends React.Component {
 						height={this.refs.container.clientHeight}
 						canvasMode={this.state.canvasMode}
 						glyphSelected={this.state.glyphs[this.props.glyphSelected][0]}
+						glyphViewMatrix={this.state.glyphViewMatrix}
 					/>
 					{this.state.canvasMode === 'shadow'
 						? (
@@ -550,6 +557,7 @@ export default class PrototypoCanvas extends React.Component {
 					preLoad={this.startLoad}
 					afterLoad={this.endLoad}
 					altList={this.state.altList}
+					getGlyphViewMatrix={this.getGlyphViewMatrix}
 				/>
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>

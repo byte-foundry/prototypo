@@ -8,12 +8,15 @@ export default class CanvasShadow extends React.PureComponent {
 			zoom: 1,
 			eyeX: 0,
 			eyeY: 0,
+			tX: 0,
+			tY: 0,
 			imageOriginalWidth: 0,
 			imageOriginalHeight: 0,
 			image: undefined,
 			mouseDown: false,
 			lastMouseX: 0,
 			lastMouseY: 0,
+			manual: true,
 		};
 		this.loadImage = this.loadImage.bind(this);
 		this.loadFont = this.loadFont.bind(this);
@@ -29,6 +32,20 @@ export default class CanvasShadow extends React.PureComponent {
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
+	}
+
+	componentWillReceiveProps(nextProps) {
+		const {glyphViewMatrix} = this.props;
+		const nextGlyphViewMatrix = nextProps.glyphViewMatrix;
+
+		if (nextProps.canvasMode === 'move' && (
+			glyphViewMatrix._tx !== nextGlyphViewMatrix._tx || glyphViewMatrix._ty !== nextGlyphViewMatrix._ty)) {
+				this.setState({
+					tx: nextGlyphViewMatrix._tx,
+					ty: nextGlyphViewMatrix._ty,
+					manual: false,
+				});
+		}
 	}
 
 	componentDidMount() {
@@ -68,10 +85,11 @@ export default class CanvasShadow extends React.PureComponent {
 			this.setState({
 				imageOriginalWidth: image.width,
 				imageOriginalHeight: image.height,
-				eyeX: -(this.canvasWidth / 2) + (image.width / 2),
-				eyeY: -(this.canvasHeight / 2) + (image.height / 2),
+				eyeX: (this.canvasWidth / 2) - (image.width / 2),
+				eyeY: (this.canvasHeight / 2) - (image.height / 2),
 				zoom: 1,
 				image,
+				manual: true,
 			});
 		};
 	}
@@ -90,6 +108,7 @@ export default class CanvasShadow extends React.PureComponent {
 					eyeY: this.canvasHeight / 2,
 					zoom: 1,
 					shadowFont,
+					manual: true,
 				});
 			});
 	}
@@ -99,13 +118,13 @@ export default class CanvasShadow extends React.PureComponent {
 		const viewH = this.canvasHeight;
 		const srcWidth = viewW / this.state.zoom;
 		const srcHeight = viewH / this.state.zoom;
-		const viewCenterX = ((this.state.eyeX + viewW / 2) - (srcWidth / 2)).toFixed(2);
-		const viewCenterY = ((this.state.eyeY + viewH / 2) - (srcHeight / 2)).toFixed(2);
+		const viewCenterX = this.state.manual ? ((this.state.eyeX + viewW / 2) - (srcWidth / 2)).toFixed(2) : this.state.tx;
+		const viewCenterY = this.state.manual ? ((this.state.eyeY + viewH / 2) - (srcHeight / 2)).toFixed(2) : this.state.ty;
 
 		this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 		switch (this.type) {
 			case 'image':
-				this.ctx.drawImage(this.state.image, viewCenterX, viewCenterY, srcWidth, srcHeight, 0, 0, viewW, viewH);
+				this.ctx.drawImage(this.state.image, viewCenterX, viewCenterY, -srcWidth, -srcHeight, 0, 0, viewW, viewH);
 				break;
 			case 'font':
 				this.ctx.font = `${500 * this.state.zoom}px shadowfont`;
@@ -119,26 +138,13 @@ export default class CanvasShadow extends React.PureComponent {
 
 	onMouseMove(event) {
 		if (this.state.mouseDown && (this.state.lastMouseX !== event.clientX || this.state.lastMouseY !== event.clientY)) {
-			switch (this.type) {
-				case 'image':
-					this.setState({
-						eyeX: this.state.lastMouseX === 0 ? this.state.lastMouseX : this.state.eyeX - (event.clientX - this.state.lastMouseX) / this.state.zoom,
-						eyeY: this.state.lastMouseY === 0 ? this.state.lastMouseY : this.state.eyeY - (event.clientY - this.state.lastMouseY) / this.state.zoom,
-						lastMouseX: event.clientX,
-						lastMouseY: event.clientY,
-					});
-					break;
-				case 'font':
-					this.setState({
-						eyeX: this.state.lastMouseX === 0 ? this.state.lastMouseX : this.state.eyeX + (event.clientX - this.state.lastMouseX) / this.state.zoom,
-						eyeY: this.state.lastMouseY === 0 ? this.state.lastMouseY : this.state.eyeY + (event.clientY - this.state.lastMouseY) / this.state.zoom,
-						lastMouseX: event.clientX,
-						lastMouseY: event.clientY,
-					});
-					break;
-				default:
-					break;
-			}
+			this.setState({
+				eyeX: this.state.lastMouseX === 0 ? this.state.lastMouseX : this.state.eyeX + (event.clientX - this.state.lastMouseX) / this.state.zoom,
+				eyeY: this.state.lastMouseY === 0 ? this.state.lastMouseY : this.state.eyeY + (event.clientY - this.state.lastMouseY) / this.state.zoom,
+				lastMouseX: event.clientX,
+				lastMouseY: event.clientY,
+				manual: true,
+			});
 		}
 	}
 
@@ -147,15 +153,16 @@ export default class CanvasShadow extends React.PureComponent {
 
 		this.setState({
 			zoom,
+			manual: true,
 		});
 	}
 
 	onMouseDown() {
-		this.setState({mouseDown: true, lastMouseX: event.clientX, lastMouseY: event.clientY});
+		this.setState({mouseDown: true, lastMouseX: event.clientX, lastMouseY: event.clientY, manual: true});
 	}
 
 	onMouseUp() {
-		this.setState({mouseDown: false, lastMouseX: 0, lastMouseY: 0});
+		this.setState({mouseDown: false, lastMouseX: 0, lastMouseY: 0, manual: true});
 	}
 
 	onDoubleClick() {
@@ -163,10 +170,11 @@ export default class CanvasShadow extends React.PureComponent {
 			case 'image':
 				this.setState({
 					zoom: 1,
-					eyeX: -(this.canvasWidth / 2) + (this.state.imageOriginalWidth / 2),
-					eyeY: -(this.canvasHeight / 2) + (this.state.imageOriginalHeight / 2),
+					eyeX: (this.canvasWidth / 2) - (this.state.imageOriginalWidth / 2),
+					eyeY: (this.canvasHeight / 2) - (this.state.imageOriginalHeight / 2),
 					lastMouseX: 0,
 					lastMouseY: 0,
+					manual: true,
 				});
 				break;
 			case 'font':
@@ -176,6 +184,7 @@ export default class CanvasShadow extends React.PureComponent {
 					eyeY: (this.canvasHeight / 2),
 					lastMouseX: 0,
 					lastMouseY: 0,
+					manual: true,
 				});
 				break;
 			default:
