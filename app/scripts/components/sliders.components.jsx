@@ -8,7 +8,7 @@ import DOM from '../helpers/dom.helpers.js';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
 import SliderHelpText from '../../images/sliders/helpText.json';
 
-const demoRatio = 0.2;
+const demoRatio = 0.4;
 
 export class Sliders extends React.PureComponent {
 	constructor(props) {
