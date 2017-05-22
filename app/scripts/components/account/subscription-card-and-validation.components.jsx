@@ -7,6 +7,7 @@ import LocalClient from '../../stores/local-client.stores.jsx';
 
 import AddCard from '../shared/add-card.components.jsx';
 import Button from '../shared/button.components.jsx';
+import InputNumber from '../shared/input-number.components.jsx';
 import InputWithLabel from '../shared/input-with-label.components.jsx';
 import Price from '../shared/price.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
@@ -16,12 +17,14 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		super(props);
 		this.state = {
 			card: [],
+			quantity: props.quantity || 1,
 			couponValue: undefined,
 			inError: {},
 			errors: [],
 		};
 
 		this.changeCard = this.changeCard.bind(this);
+		this.changeQuantity = this.changeQuantity.bind(this);
 		this.keepCard = this.keepCard.bind(this);
 		this.addCoupon = this.addCoupon.bind(this);
 		this.handleCouponChange = this.handleCouponChange.bind(this);
@@ -52,6 +55,12 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			});
 	}
 
+	componentWillReceiveProps({quantity}) {
+		if (this.props.quantity !== quantity) {
+			this.changeQuantity(quantity);
+		}
+	}
+
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
@@ -72,18 +81,22 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		this.setState({couponValue: ''});
 	}
 
+	changeQuantity(value) {
+		this.setState({quantity: parseInt(value, 10)});
+	}
+
 	subscribe() {
-		const quantity = this.quantity.value > 1 && parseInt(this.quantity.value, 10);
+		const {plan} = this.props;
+		const {couponValue, card, quantity} = this.state;
 
 		this.client.dispatchAction('/confirm-buy', {
-			plan: this.props.plan,
-			vat: '',
-			//vat: this.refs.vat.value,
-			coupon: this.state.couponValue,
-			card: this.refs.card && this.state.card.length < 1
+			plan,
+			vat: '', // this.refs.vat.value,
+			coupon: couponValue,
+			card: this.refs.card && card.length < 1
 				? this.refs.card.data()
 				: false,
-			quantity: quantity || undefined,
+			quantity: (plan.startsWith('agency') && quantity) || undefined,
 		});
 	}
 
@@ -103,6 +116,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 
 	render() {
 		const {country, plan} = this.props;
+		const {quantity} = this.state;
 		const plans = {
 			'personal_monthly': {
 				blurb: (
@@ -121,14 +135,14 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			'agency_monthly': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <Price amount={agencyMonthlyConst.monthlyPrice} country={country}/> once and be subscribe to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <Price amount={agencyMonthlyConst.monthlyPrice * quantity} country={country}/> once and be subscribe to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
 			'agency_annual': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <Price amount={agencyAnnualConst.annualPrice} country={country}/> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <Price amount={agencyAnnualConst.annualPrice * quantity} country={country}/> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
@@ -192,9 +206,15 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			return (
 				<div className="subscription-card-and-validation normal">
 					{plan.startsWith('agency') && (
-						<div>
-							<label for="quantity">Quantity:</label>
-							<input type="number" min={0} max={100} defaultValue={4} ref={(node) => {this.quantity = node;}} />
+						<div className="input-with-label">
+							<label className="input-with-label-label" htmlFor="quantity">Quantity:</label>
+							<InputNumber
+								min={2}
+								max={100}
+								value={quantity}
+								controls
+								onChange={this.changeQuantity}
+							/>
 						</div>
 					)}
 					{card}

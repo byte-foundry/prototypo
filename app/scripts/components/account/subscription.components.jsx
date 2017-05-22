@@ -64,6 +64,7 @@ export default class Subscription extends React.Component {
 						country={this.state.country}/>
 					<SubscriptionCardAndValidation
 						plan={this.props.location.query.plan}
+						quantity={this.props.location.query.quantity}
 						coupon={this.props.location.query.coupon}
 						country={this.state.country}/>
 				</div>

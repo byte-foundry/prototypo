@@ -558,7 +558,7 @@ export default {
 	},
 	'/confirm-buy': async ({plan, card, pathname, quantity}) => {
 		const form = userStore.get('confirmation');
-		const { fullname, number, expMonth, expYear, cvc } = card;
+		const { fullname, number, expMonth, expYear, cvc } = card || {};
 
 		form.errors = [];
 		form.loading = true;

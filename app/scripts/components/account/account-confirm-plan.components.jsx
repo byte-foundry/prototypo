@@ -6,13 +6,18 @@ import LocalClient from '../../stores/local-client.stores.jsx';
 import getCurrency from '../../helpers/currency.helpers.js';
 
 import HoodieApi from '../../services/hoodie.services.js';
-import AccountValidationButton from '../shared/account-validation-button.components.jsx';
+import Button from '../shared/new-button.components';
 import WaitForLoad from '../wait-for-load.components';
+
+import * as Plans from '../../data/plans.data';
 
 export default class AccountConfirmPlan extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+
+		this.state = {
+			loading: true,
+		};
 
 		this.confirmPlanChange = this.confirmPlanChange.bind(this);
 	}
@@ -23,8 +28,8 @@ export default class AccountConfirmPlan extends React.Component {
 
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
-				if (head.toJS().d.infos.plan) {
-					const planBase = head.toJS().d.infos.plan;
+				if (this.props.location.query.plan) {
+					const planBase = this.props.location.query.plan;
 					const currency = getCurrency(head.toJS().d.cards[0].country);
 					const planId = `${planBase}_${currency}_taxfree`;
 
@@ -36,7 +41,8 @@ export default class AccountConfirmPlan extends React.Component {
 					});
 
 					HoodieApi.getUpcomingInvoice({
-						'subscription_plan': planId,
+						subscription_plan: planId,
+						subscription_quantity: this.props.location.query.quantity,
 					})
 					.then((data) => {
 						this.setState({
@@ -49,7 +55,6 @@ export default class AccountConfirmPlan extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-
 	}
 
 	componentWillUnmount() {
@@ -57,27 +62,36 @@ export default class AccountConfirmPlan extends React.Component {
 	}
 
 	confirmPlanChange() {
+		const {plan, currency} = this.state;
+
 		window.Intercom('trackEvent', 'change-plan-confirm', {
-			plan: this.state.plan,
+			plan,
 		});
 
 		this.client.dispatchAction('/confirm-buy', {
-			plan: this.state.plan,
-			currency: this.state.currency,
+			plan,
+			currency,
 			pathname: '/account/details',
 		});
 	}
 
 	render() {
-		const invoice = this.state.invoice && <Invoice invoice={this.state.invoice}/>;
+		const {invoice, loading, confirmationLoading} = this.state;
 
 		return (
 			<div className="account-base account-confirm-plan">
 				<h1 className="subscription-title">This is what you will be charged</h1>
-				<WaitForLoad loaded={!this.state.loading}>
-					{invoice}
+				<WaitForLoad loaded={!loading}>
+					{invoice && <Invoice {...invoice} />}
+					<Button
+						style={{float: 'right'}}
+						onClick={this.confirmPlanChange}
+					>
+						<WaitForLoad loading={confirmationLoading} secColor>
+							Confirm change
+						</WaitForLoad>
+					</Button>
 				</WaitForLoad>
-				<AccountValidationButton loading={this.state.confirmationLoading} label="Confirm plan change" click={this.confirmPlanChange}/>
 			</div>
 		);
 	}
@@ -85,7 +99,7 @@ export default class AccountConfirmPlan extends React.Component {
 
 class Invoice extends React.Component {
 	render() {
-		const {currency, lines} = this.props.invoice;
+		const {currency, lines} = this.props;
 
 		const currencySymbol = currency === 'USD'
 			? {
@@ -126,22 +140,29 @@ class Invoice extends React.Component {
 
 class InvoiceLine extends React.Component {
 	render() {
+		const {line} = this.props;
 		let desc = this.props.line.description;
 
-		if (this.props.line.plan && !desc) {
-			desc = this.props.line.plan.id.indexOf('personal_monthly_') === -1
-				? 'Professional annual subscription'
-				: 'Professional monthly subscription';
+		if (line.plan && !desc) {
+			const plan = Object.values(Plans).filter(({prefix}) => line.plan.id.includes(prefix))[0];
+			const planName = (plan && plan.description) || 'Unknown plan';
 
 			const startDate = moment.unix(this.props.line.period.start).format('L');
 			const endDate = moment.unix(this.props.line.period.end).format('L');
 
-			desc += ` from ${startDate} to ${endDate}`;
+			const quantityDesc = line.quantity > 1 ? `${line.quantity} x ` : '';
+
+			desc = `${quantityDesc}${planName} from ${startDate} to ${endDate}`;
 		}
+
 		return (
 			<tr className="invoice-line">
 				<td>{desc}</td>
-				<td>{ this.props.symbol.before + (this.props.line.amount / 100).toFixed(2) + this.props.symbol.after}</td>
+				<td>
+					{this.props.symbol.before
+						+ (this.props.line.amount / 100).toFixed(2)
+						+ this.props.symbol.after}
+				</td>
 			</tr>
 		);
 	}
