@@ -10,7 +10,7 @@ import Icon from '../shared/icon.components';
 import Button from '../shared/new-button.components';
 import WaitForLoad from '../wait-for-load.components';
 
-import HoodieApi from '../../services/hoodie.services.js';
+import HoodieApi from '../../services/hoodie.services';
 
 class MemberRow extends React.Component {
 	constructor(props) {

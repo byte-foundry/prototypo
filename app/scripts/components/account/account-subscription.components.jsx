@@ -14,7 +14,6 @@ import HoodieApi from '../../services/hoodie.services';
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import FormSuccess from '../shared/form-success.components.jsx';
 import Price from '../shared/price.components';
-import Button from '../shared/button.components.jsx';
 
 export class AccountSubscription extends React.PureComponent {
 	constructor(props) {

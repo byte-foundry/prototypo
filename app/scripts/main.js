@@ -34,7 +34,6 @@ import AccountConfirmPlan from './components/account/account-confirm-plan.compon
 import AccountOrganization from './components/account/account-organization.components.jsx';
 import AccountInvoiceList from './components/account/account-invoice-list.components.jsx';
 import Subscription from './components/account/subscription.components.jsx';
-import SubscriptionConfirmation from './components/account/subscription-confirmation.components.jsx';
 
 import apolloClient from './services/graphcool.services.js';
 import HoodieApi from './services/hoodie.services.js';
@@ -328,7 +327,6 @@ selectRenderOptions(
 									<IndexRoute component={AccountOrganization} />
 								</Route>
 								<Route path="subscribe" component={Subscription} name="subscribe" onEnter={redirectToSignup}></Route>
-								<Route path="confirmation" component={SubscriptionConfirmation} name="confirmation"></Route>
 							</Route>
 						</Route>
 					</Router>
