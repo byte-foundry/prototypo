@@ -383,8 +383,15 @@ export default class PrototypoCanvas extends React.Component {
 		this.setState({shadowFile: ''});
 	}
 
-	getGlyphViewMatrix(matrix) {
-		this.setState({glyphViewMatrix: Object.assign({}, matrix)});
+	getGlyphViewMatrix(matrix, delta) {
+		const _matrix = Object.assign({}, matrix._matrix);
+		const _delta = Object.assign({}, delta);
+
+		this.setState({
+			glyphViewMatrix: {
+			matrix: _matrix,
+			delta: _delta,
+		}});
 	}
 
 	preExport() {

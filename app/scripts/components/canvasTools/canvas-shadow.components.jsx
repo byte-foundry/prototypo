@@ -16,7 +16,6 @@ export default class CanvasShadow extends React.PureComponent {
 			mouseDown: false,
 			lastMouseX: 0,
 			lastMouseY: 0,
-			manual: true,
 		};
 		this.loadImage = this.loadImage.bind(this);
 		this.loadFont = this.loadFont.bind(this);
@@ -39,12 +38,29 @@ export default class CanvasShadow extends React.PureComponent {
 		const nextGlyphViewMatrix = nextProps.glyphViewMatrix;
 
 		if (nextProps.canvasMode === 'move' && (
-			glyphViewMatrix._tx !== nextGlyphViewMatrix._tx || glyphViewMatrix._ty !== nextGlyphViewMatrix._ty)) {
-				this.setState({
-					tx: nextGlyphViewMatrix._tx,
-					ty: nextGlyphViewMatrix._ty,
-					manual: false,
-				});
+			glyphViewMatrix.matrix._tx !== nextGlyphViewMatrix.matrix._tx || glyphViewMatrix.matrix._ty !== nextGlyphViewMatrix.matrix._ty)) {
+			const {delta} = nextProps.glyphViewMatrix;
+
+			switch (this.type) {
+				case 'image':
+					this.setState({
+						eyeX: this.state.eyeX - delta.x / this.state.zoom,
+						eyeY: this.state.eyeY - delta.y / this.state.zoom,
+						lastMouseX: this.state.lastMouseX - delta.x,
+						lastMouseY: this.state.lastMouseY - delta.y,
+					});
+					break;
+				case 'font':
+					this.setState({
+						eyeX: this.state.eyeX + delta.x / this.state.zoom,
+						eyeY: this.state.eyeY + delta.y / this.state.zoom,
+						lastMouseX: this.state.lastMouseX + delta.x,
+						lastMouseY: this.state.lastMouseY + delta.y,
+					});
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -82,16 +98,15 @@ export default class CanvasShadow extends React.PureComponent {
 
 		image.src = this.elem;
 		image.onload = () => {
-			this.setState({
-				imageOriginalWidth: image.width,
-				imageOriginalHeight: image.height,
-				eyeX: (this.canvasWidth / 2) - (image.width / 2),
-				eyeY: (this.canvasHeight / 2) - (image.height / 2),
-				zoom: 1,
-				image,
-				manual: true,
-			});
-		};
+		    this.setState({
+		      imageOriginalWidth: image.width,
+		      imageOriginalHeight: image.height,
+		      eyeX: -(this.canvasWidth / 2) + (image.width / 2),
+		      eyeY: -(this.canvasHeight / 2) + (image.height / 2),
+		      zoom: 1,
+		      image,
+		    });
+	  };
 	}
 
 	loadFont() {
@@ -108,7 +123,6 @@ export default class CanvasShadow extends React.PureComponent {
 					eyeY: this.canvasHeight / 2,
 					zoom: 1,
 					shadowFont,
-					manual: true,
 				});
 			});
 	}
@@ -118,14 +132,17 @@ export default class CanvasShadow extends React.PureComponent {
 		const viewH = this.canvasHeight;
 		const srcWidth = viewW / this.state.zoom;
 		const srcHeight = viewH / this.state.zoom;
-		const viewCenterX = this.state.manual ? ((this.state.eyeX + viewW / 2) - (srcWidth / 2)).toFixed(2) : this.state.tx;
-		const viewCenterY = this.state.manual ? ((this.state.eyeY + viewH / 2) - (srcHeight / 2)).toFixed(2) : this.state.ty;
+		const viewCenterX = ((this.state.eyeX + viewW / 2) - (srcWidth / 2)).toFixed(2);
+		const viewCenterY = ((this.state.eyeY + viewH / 2) - (srcHeight / 2)).toFixed(2);
 
 		this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 		switch (this.type) {
 			case 'image':
-				this.ctx.drawImage(this.state.image, viewCenterX, viewCenterY, -srcWidth, -srcHeight, 0, 0, viewW, viewH);
-				break;
+				if (!this.state.image) {
+					break;
+				}
+			    this.ctx.drawImage(this.state.image, viewCenterX, viewCenterY, srcWidth, srcHeight, 0, 0, viewW, viewH);
+			    break;
 			case 'font':
 				this.ctx.font = `${500 * this.state.zoom}px shadowfont`;
 				this.ctx.fillStyle = '#fc5454';
@@ -138,13 +155,26 @@ export default class CanvasShadow extends React.PureComponent {
 
 	onMouseMove(event) {
 		if (this.state.mouseDown && (this.state.lastMouseX !== event.clientX || this.state.lastMouseY !== event.clientY)) {
-			this.setState({
-				eyeX: this.state.lastMouseX === 0 ? this.state.lastMouseX : this.state.eyeX + (event.clientX - this.state.lastMouseX) / this.state.zoom,
-				eyeY: this.state.lastMouseY === 0 ? this.state.lastMouseY : this.state.eyeY + (event.clientY - this.state.lastMouseY) / this.state.zoom,
-				lastMouseX: event.clientX,
-				lastMouseY: event.clientY,
-				manual: true,
-			});
+			switch (this.type) {
+				case 'image':
+					this.setState({
+						eyeX: this.state.lastMouseX === 0 ? this.state.lastMouseX : this.state.eyeX - (event.clientX - this.state.lastMouseX) / this.state.zoom,
+						eyeY: this.state.lastMouseY === 0 ? this.state.lastMouseY : this.state.eyeY - (event.clientY - this.state.lastMouseY) / this.state.zoom,
+						lastMouseX: event.clientX,
+						lastMouseY: event.clientY,
+					});
+					break;
+				case 'font':
+					this.setState({
+						eyeX: this.state.lastMouseX === 0 ? this.state.lastMouseX : this.state.eyeX + (event.clientX - this.state.lastMouseX) / this.state.zoom,
+						eyeY: this.state.lastMouseY === 0 ? this.state.lastMouseY : this.state.eyeY + (event.clientY - this.state.lastMouseY) / this.state.zoom,
+						lastMouseX: event.clientX,
+						lastMouseY: event.clientY,
+					});
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -153,16 +183,15 @@ export default class CanvasShadow extends React.PureComponent {
 
 		this.setState({
 			zoom,
-			manual: true,
 		});
 	}
 
 	onMouseDown() {
-		this.setState({mouseDown: true, lastMouseX: event.clientX, lastMouseY: event.clientY, manual: true});
+		this.setState({mouseDown: true, lastMouseX: event.clientX, lastMouseY: event.clientY});
 	}
 
 	onMouseUp() {
-		this.setState({mouseDown: false, lastMouseX: 0, lastMouseY: 0, manual: true});
+		this.setState({mouseDown: false, lastMouseX: 0, lastMouseY: 0});
 	}
 
 	onDoubleClick() {
@@ -174,7 +203,6 @@ export default class CanvasShadow extends React.PureComponent {
 					eyeY: (this.canvasHeight / 2) - (this.state.imageOriginalHeight / 2),
 					lastMouseX: 0,
 					lastMouseY: 0,
-					manual: true,
 				});
 				break;
 			case 'font':
@@ -184,7 +212,6 @@ export default class CanvasShadow extends React.PureComponent {
 					eyeY: (this.canvasHeight / 2),
 					lastMouseX: 0,
 					lastMouseY: 0,
-					manual: true,
 				});
 				break;
 			default:
