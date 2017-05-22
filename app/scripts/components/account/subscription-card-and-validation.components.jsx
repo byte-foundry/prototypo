@@ -21,6 +21,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			couponValue: undefined,
 			inError: {},
 			errors: [],
+			hasBeenSubscribing: false,
 		};
 
 		this.changeCard = this.changeCard.bind(this);
@@ -38,7 +39,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
-				const {cards, choosePlanForm, confirmation} = head.toJS().d;
+				const {cards, choosePlanForm, confirmation, hasBeenSubscribing} = head.toJS().d;
 
 				this.setState((state) => ({
 					card: cards || [],
@@ -48,6 +49,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 					loading: confirmation.loading,
 					inError: confirmation.inError || {},
 					errors: confirmation.errors,
+					hasBeenSubscribing,
 				}));
 			})
 			.onDelete(() => {
@@ -120,9 +122,17 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		const plans = {
 			'personal_monthly': {
 				blurb: (
-					<div>
-						By clicking on the subscribe button below you agree to and pay <Price amount={monthlyConst.firstMonthPrice} country={country}/> for the first month of your Prototypo subscription. You'll also agree to be charged <Price amount={monthlyConst.price} country={country}/> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" href="https://prototypo.io/cgu/">EULA</a>.
-					</div>
+					this.state.hasBeenSubscribing
+					? (
+						<div>
+							By clicking on the subscribe button below you agree to be charged <Price amount={monthlyConst.price} country={country}/> every month until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
+						</div>
+					)
+					: (
+						<div>
+							By clicking on the subscribe button below you agree to and pay <Price amount={monthlyConst.firstMonthPrice} country={country}/> for the first month of your Prototypo subscription. You'll also agree to be charged <Price amount={monthlyConst.price} country={country}/> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" href="https://prototypo.io/cgu/">EULA</a>.
+						</div>
+					)
 				),
 			},
 			'personal_annual_99': {
@@ -174,7 +184,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			)
 			: (
 				<div>
-					<AddCard inError={this.state.inError} ref="card"/>
+					<AddCard inError={this.state.inError} ref="card" className={`${this.state.validCoupon && this.state.validCoupon.shouldSkipCard ? "disabled" : ''}`}/>
 					<div className="columns subscription-card-and-validation-buttons">
 						<div className="subscription-card-and-validation-switch half-column" onClick={this.addCoupon}>I have a coupon</div>
 						{this.state.card.length > 0

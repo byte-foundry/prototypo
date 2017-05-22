@@ -3,8 +3,9 @@ import {Link} from 'react-router';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Log from '~/services/log.services.js';
+import withCountry from '../shared/with-country.components';
 
-export default class AllowedTopBarWithPayment extends React.Component {
+class AllowedTopBarWithPayment extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -24,16 +25,8 @@ export default class AllowedTopBarWithPayment extends React.Component {
 		this.client = LocalClient.instance();
 	}
 
-	async componentDidMount() {
-		const response = await fetch('//freegeoip.net/json/');
-		const data = await response.json();
-
-		this.setState({country: data.country_code});
-	}
-
 	render() {
-		const freeAccount = this.props.freeAccount;
-		const credits = this.props.credits;
+		const {freeAccount, credits} = this.props;
 
 		const overlay = freeAccount && (!credits || credits <= 0)
 			? (
@@ -62,3 +55,5 @@ export default class AllowedTopBarWithPayment extends React.Component {
 		);
 	}
 }
+
+export default withCountry(AllowedTopBarWithPayment);

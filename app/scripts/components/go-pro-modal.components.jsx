@@ -11,6 +11,7 @@ import PricingItem from './shared/pricing-item.components';
 import Price from './shared/price.components';
 import Modal from './shared/modal.components';
 import getCurrency from '../helpers/currency.helpers';
+import withCountry from './shared/with-country.components';
 
 const getContactMessage = count => `
 Hi! I am interested in subscribing to a company plan for ${count} licences.
@@ -22,7 +23,6 @@ class GoProModal extends React.PureComponent {
 		super(props);
 
 		this.state = {
-			country: 'US',
 			billing: 'annually',
 			agencyCount: 4,
 		};
@@ -49,13 +49,16 @@ class GoProModal extends React.PureComponent {
 			.onDelete(() => {
 				this.setState({billing: 'annually'});
 			});
-	}
-
-	async componentDidMount() {
-		const response = await fetch('//freegeoip.net/json/');
-		const data = await response.json();
-
-		this.setState({country: data.country_code});
+		this.client
+			.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
+				});
+			})
+			.onDelete(() => {
+				this.setState({hasBeenSubscribing: false});
+			});
 	}
 
 	componentWillUnmount() {
@@ -76,7 +79,11 @@ class GoProModal extends React.PureComponent {
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
 		this.props.router.push({
 			pathname: '/account/subscribe',
-			query: {plan: this.state.billing === 'monthly' ? agencyMonthlyConst.prefix : agencyAnnualConst.prefix},
+			query: {
+				plan: this.state.billing === 'monthly'
+					? agencyMonthlyConst.prefix
+					: agencyAnnualConst.prefix,
+			},
 		});
 		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
 		Log.ui('Subscribe.FromFile');
@@ -107,7 +114,7 @@ class GoProModal extends React.PureComponent {
 			? agencyAnnualConst.monthlyPrice * agencyCount
 			: agencyMonthlyConst.monthlyPrice * agencyCount;
 		const proPrice = billing === 'annually' ? annualConst.monthlyPrice : monthlyConst.price;
-		const currency = getCurrency(this.state.country);
+		const currency = getCurrency(this.props.country);
 
 		return (
 			<Modal propName={this.props.propName}>
@@ -142,14 +149,15 @@ class GoProModal extends React.PureComponent {
 						>
 							{this.state.billing === 'monthly'
 								? <div className="pricing-item-offerRibbon">
-									<div className="pricing-item-offerRibbon-content">
-											1
-											<sup>st</sup>
-										{' '}
-											month for
-											{' '}
-										<Price amount={1} currency={currency} />
-									</div>
+									{!this.state.hasBeenSubscribing
+											&& <div className="pricing-item-offerRibbon-content">
+												1
+												<sup>st</sup>
+												{' '}
+												month for
+												{' '}
+												<Price amount={1} currency={currency} />
+											</div>}
 								</div>
 								: false}
 							<ul className="pricing-item-features">
@@ -166,7 +174,7 @@ class GoProModal extends React.PureComponent {
 								<li className="pricing-item-feature">&nbsp;</li>
 							</ul>
 							<div className="pricing-item-cta" onClick={this.goSubscribe}>
-								{billing === 'monthly'
+								{billing && !hasBeenSubscribing === 'monthly'
 									? <span>Try it for <Price amount={1} currency={currency} /></span>
 									: 'Make me pro!'}
 							</div>
@@ -235,4 +243,4 @@ GoProModal.propTypes = {
 	router: PropTypes.object.isRequired,
 };
 
-export default withRouter(GoProModal);
+export default withRouter(withCountry(GoProModal));

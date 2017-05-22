@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
+import {Link} from 'react-router';
+import Lifespan from 'lifespan';
+
 import SubscriptionSidebar from './subscription-sidebar.components.jsx';
 import SubscriptionCardAndValidation from './subscription-card-and-validation.components.jsx';
 import LocalClient from '../../stores/local-client.stores.jsx';
-import Lifespan from 'lifespan';
-import {Link} from 'react-router';
+import withCountry from '../shared/with-country.components';
 
-export default class Subscription extends React.Component {
+class Subscription extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -38,19 +40,13 @@ export default class Subscription extends React.Component {
 		}
 	}
 
-	async componentDidMount() {
-		const response = await fetch('//freegeoip.net/json/');
-		const data = await response.json();
-
-		this.setState({country: data.country_code});
-	}
-
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
 
 	render() {
-		const back = this.props.location.pathname === '/account/subscribe'
+		const {country, location} = this.props;
+		const back = location.pathname === '/account/subscribe'
 			? false
 			: <a className="account-back-app" href="#/dashboard">BACK TO THE APP</a>;
 
@@ -60,15 +56,24 @@ export default class Subscription extends React.Component {
 				{back}
 				<div className="account-dashboard-container">
 					<SubscriptionSidebar
-						plan={this.props.location.query.plan}
-						country={this.state.country}/>
+						plan={location.query.plan}
+						country={country}
+					/>
 					<SubscriptionCardAndValidation
 						plan={this.props.location.query.plan}
 						quantity={this.props.location.query.quantity}
 						coupon={this.props.location.query.coupon}
-						country={this.state.country}/>
+						country={country}
+					/>
 				</div>
 			</div>
 		);
 	}
 }
+
+Subscription.propTypes = {
+	location: PropTypes.object.isRequired,
+	country: PropTypes.string.isRequired,
+};
+
+export default withCountry(Subscription);

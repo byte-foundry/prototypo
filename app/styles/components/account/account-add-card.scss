@@ -19,6 +19,7 @@
 			&::before {
 				background-color: mix(white, #424770, 40%);
 				transition-delay: 0s;
+				background-size: 50px 60px;
 			}
 			input {
 				padding-left: 60px;
@@ -32,7 +33,6 @@
 		content: '';
 		width: 45px;
 		height: 30px;
-		background-size: 100px 48px;
 		background-position: center;
 		border-radius: 5px;
 		transition: width 0.3s ease 0.3s, height 0.3s ease 0.3s;
