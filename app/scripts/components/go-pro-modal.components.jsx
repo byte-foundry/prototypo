@@ -109,7 +109,7 @@ class GoProModal extends React.PureComponent {
 	}
 
 	render() {
-		const {billing, agencyCount} = this.state;
+		const {billing, agencyCount, hasBeenSubscribing} = this.state;
 		const agencyPrice = billing === 'annually'
 			? agencyAnnualConst.monthlyPrice * agencyCount
 			: agencyMonthlyConst.monthlyPrice * agencyCount;
@@ -149,7 +149,7 @@ class GoProModal extends React.PureComponent {
 						>
 							{this.state.billing === 'monthly'
 								? <div className="pricing-item-offerRibbon">
-									{!this.state.hasBeenSubscribing
+									{!hasBeenSubscribing
 											&& <div className="pricing-item-offerRibbon-content">
 												1
 												<sup>st</sup>

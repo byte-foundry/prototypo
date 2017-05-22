@@ -299,7 +299,6 @@ selectRenderOptions(
 								<Route path="forgotten" component={ForgottenPassword}/>
 								<IndexRoute component={Signin}/>
 							</Route>
-							</Route>
 							<Route path="signup" component={AccountApp} onEnter={redirectToDashboard}>
 								<IndexRoute component={Register}/>
 							</Route>
