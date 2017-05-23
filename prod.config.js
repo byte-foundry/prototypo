@@ -57,8 +57,14 @@ module.exports = {
 				loaders: ['file'],
 			},
 			{
-				test: /\.(svg|png|jpg)$/,
+				test: /\.(svg|png|jpg|gif)$/,
 				loader: 'url-loader?limit=100000',
+				exclude: path.join(__dirname, 'app/images/icons'),
+			},
+			{
+				test: /\.svg$/,
+				loader: 'svg-sprite-loader?extract=false!svgo-loader',
+				include: path.join(__dirname, 'app/images/icons'),
 			},
 		],
 		noParse: /(levelup|dist\/prototypo-canvas)/,
