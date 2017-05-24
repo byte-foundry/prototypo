@@ -1,3 +1,4 @@
+/* globals _ */
 import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
@@ -15,6 +16,7 @@ import CloseButton from './close-button.components.jsx';
 import CanvasGlyphInput from './canvas-glyph-input.components.jsx';
 import AlternateMenu from './alternate-menu.components.jsx';
 import CanvasBar from './canvasTools/canvas-bar.components.jsx';
+import GlyphCanvas from './glyph-canvas.components.jsx';
 
 export default class PrototypoCanvas extends React.Component {
 
@@ -460,45 +462,7 @@ export default class PrototypoCanvas extends React.Component {
 					disabled={!this.isManualEdited()}>
 					Reset glyph
 				</button>
-				{/*<PrototypoCanvasContainer
-					familyName={this.state.familyName}
-					json={this.state.typedataJSON}
-					db={this.state.db}
-					workerUrl={this.state.workerUrl}
-					workerDeps={this.state.workerDeps}
-					uiZoom={this.props.uiZoom}
-					uiPos={this.props.uiPos}
-					uiCoords={this.props.uiCoords}
-					uiOutline={this.props.uiOutline}
-					selected={String.fromCharCode(this.state.glyphSelected)}
-					values={this.state.values}
-					subset={this.state.uiText + rawToEscapedContent(this.state.uiWord, this.state.glyphs)}
-					setGlyphs={this.setGlyphs}
-					afterFontComputation={this.afterFontComputation}
-					changeComponent={this.changeComponent}
-					canvasMode={this.state.canvasMode}
-					mouseUp={this.mouseUp}
-					mouseDown={this.mouseDown}
-					mouseLeave={this.rejectShortcut}
-					mouseEnter={this.acceptShortcut}
-					wheel={this.wheel}
-					changeManualNode={this.changeManualNode}
-					resetManualNode={this.resetManualNode}
-					resetView={this.reset}
-					exportTag={this.state.exportPlease}
-					exportGlyphrTag={this.state.exportGlyphrTag}
-					exportName={this.state.exportName}
-					exportMerged={this.state.exportMerged}
-					exportValues={this.state.exportValues}
-					exportEmail={this.state.exportEmail}
-					preExport={this.preExport}
-					afterExport={this.afterExport}
-					preExportGlyphr={this.preExportGlyphr}
-					afterExportGlyphr={this.afterExportGlyphr}
-					preLoad={this.startLoad}
-					afterLoad={this.endLoad}
-					altList={this.state.altList}
-				/>*/}
+				<GlyphCanvas />
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
 				</div>

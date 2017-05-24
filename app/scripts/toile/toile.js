@@ -1,5 +1,6 @@
 /* global _ */
 import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D} from '../plumin/util/linear.js';
+import DOM from '../helpers/dom.helpers.js';
 
 export const mState = {
 	DOWN: 0,
@@ -96,18 +97,22 @@ export default class Toile {
 		//ty is y translation
 		this.viewMatrix = [1, 0, 0, -1, 0, 0];
 
+
 		canvas.addEventListener('mousemove', (e) => {
+			const {offsetLeft, offsetTop} = DOM.getAbsOffset(canvas);
+			const mouseX = e.clientX - offsetLeft;
+			const mouseY = e.clientY - offsetTop;
 
 			if (this.mouseState === mState.DOWN) {
 				this.mouseDelta = {
-					x: this.mouseDelta.x + (e.clientX - this.mouse.x),
-					y: this.mouseDelta.y + (e.clientY - this.mouse.y),
+					x: this.mouseDelta.x + (mouseX - this.mouse.x),
+					y: this.mouseDelta.y + (mouseY - this.mouse.y),
 				};
 			}
 
 			this.mouse = {
-				x: e.clientX,
-				y: e.clientY,
+				x: mouseX,
+				y: mouseY,
 			};
 		});
 

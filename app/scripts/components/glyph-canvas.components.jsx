@@ -2,8 +2,6 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
-import ScrollArea from 'react-scrollbar';
-import InputRange from 'react-input-range';
 
 import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix} from '../toile/toile.js';
 
@@ -12,7 +10,7 @@ import {matrixMul} from '../plumin/util/linear.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-export default class TestFont extends React.PureComponent {
+export default class GlyphCanvas extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -78,7 +76,10 @@ export default class TestFont extends React.PureComponent {
 
 		const raf = requestAnimationFrame || webkitRequestAnimationFrame;
 		const rafFunc = () => {
-			const {width, height} = this.canvas;
+			const width = this.canvas.clientWidth;
+			const height = this.canvas.clientHeight;
+			this.canvas.height = height;
+			this.canvas.width = width;
 			const oldMouse = mouse;
 			let mouseClickRelease = false;
 
@@ -91,11 +92,11 @@ export default class TestFont extends React.PureComponent {
 			const glyph = this.state.glyph;
 
 			if (this.toile.keyboardInput) {
-				switch(appStateValue) {
+				switch (appStateValue) {
 					case appState.ONCURVE_ANGLE:
 					case appState.ONCURVE_THICKNESS:
 					case appState.SKELETON_POS:
-					case appState.SKELETON_DISTR:
+					case appState.SKELETON_DISTR: {
 						const {keyCode} = this.toile.keyboardInput;
 
 						if (keyCode === 69) {
@@ -112,6 +113,7 @@ export default class TestFont extends React.PureComponent {
 						}
 						this.toile.clearKeyboardInput();
 						break;
+					}
 					default:
 						break;
 				}
@@ -140,7 +142,7 @@ export default class TestFont extends React.PureComponent {
 			}
 
 			if (mouse.wheel) {
-				const [z,,,, tx, ty] = this.toile.viewMatrix;
+				const [z] = this.toile.viewMatrix;
 				const [mousePosInWorld] = transformCoords(
 					[mouse.pos],
 					inverseProjectionMatrix(this.toile.viewMatrix),
@@ -148,6 +150,7 @@ export default class TestFont extends React.PureComponent {
 				);
 				const transformMatrix = changeTransformOrigin(mousePosInWorld, [1 + mouse.wheel / 1000, 0, 0, 1 + mouse.wheel / 1000, 0, 0]);
 				const [zoom,,,, newTx, newTy] = matrixMul(transformMatrix, this.toile.viewMatrix);
+
 				this.toile.clearWheelDelta();
 				this.toile.setCamera({
 					x: newTx,
@@ -171,7 +174,7 @@ export default class TestFont extends React.PureComponent {
 					return item.type === toileType.POINT_MENU_ITEM;
 				});
 
-				if (nodes.length > 1 && !draggedItem && ! selectedItem) {
+				if (nodes.length > 1 && !draggedItem && !selectedItem) {
 					this.toile.drawMultiplePointsMenu(nodes, frameCounters.pointMenu);
 					frameCounters.pointMenu += 1;
 				}
@@ -248,7 +251,7 @@ export default class TestFont extends React.PureComponent {
 					appStateValue = appState.UNSELECTED;
 				}
 
-				switch(appStateValue) {
+				switch (appStateValue) {
 					case appState.ONCURVE_THICKNESS: {
 						const node = _.get(glyph, selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id);
 
@@ -327,37 +330,10 @@ export default class TestFont extends React.PureComponent {
 	}
 
 	render() {
-		let list;
-
-		if (this.state.typedata) {
-			list = _.map(Object.keys(this.state.typedata.glyphs), (glyphName) => {
-				return (
-					<div
-						style={{
-							width: '50px',
-							height: '50px',
-							border: 'solid 1px #333333',
-							background: this.state.solved.indexOf(glyphName) === -1
-								? '#e98734'
-								: '#24d390',
-						}}
-						onClick={
-							() => {
-								this.setState({glyphName: glyphName, values: {...this.state.values}});
-							}}
-					>
-						{String.fromCharCode(this.state.typedata.glyphs[glyphName].unicode)}
-					</div>
-				);
-			});
-		}
-		else {
-			list = null;
-		}
 
 		return (
-			<div style={{display: 'flex', height: '100%'}}>
-				<div style={{position: 'fixed', bottom: '10px', left: '10px', background: '#24d390', color: '#fefefe'}}>
+			<div style={{width: '100%', height: '100%', position: 'relative'}}>
+				<div style={{position: 'fixed', bottom: '10px', left: '100px', background: '#24d390', color: '#fefefe'}}>
 					<div style={{display: 'flex', flexDirection: 'column', width: '200px'}}>
 						{(() => {
 							return _.map(this.state.workers, (worker) => {
@@ -366,29 +342,12 @@ export default class TestFont extends React.PureComponent {
 						})()}
 					</div>
 				</div>
-				<div>
-					<canvas
-						id="hello"
-						ref={(canvas) => {this.canvas = canvas;}}
-						width="1000"
-						height="1000">
-					</canvas>
-				</div>
-				<div style={{height: '100%', display: 'flex', 'flex-direction': 'column'}}>
-					<div style={{'height': '200px'}}>
-						<ScrollArea horizontal={false}>
-							<div style={{display: 'flex', 'flex-flow': 'row wrap'}}>
-								{list}
-							</div>
-						</ScrollArea>
-					</div>
-					<InputRange minValue="0" maxValue="200" value={this.state.values.thickness} onChange={this.changeParam('thickness')}/>
-					<InputRange minValue="0" maxValue="200" value={this.state.values.serifWidth} onChange={this.changeParam('serifWidth')}/>
-					<InputRange minValue="0" maxValue="200" value={this.state.values.serifHeight} onChange={this.changeParam('serifHeight')}/>
-					<InputRange minValue="0" maxValue="200" value={this.state.values.serifCurve} onChange={this.changeParam('serifCurve')}/>
-					<div style={{fontFamily: 'Prototypo web font', fontSize: '70px', wordWrap: 'break-word', width: '900px'}}>The quick fox jump over the lazy dog</div>
-					<button onClick={this.download}>Download</button>
-				</div>
+				<canvas
+					id="hello"
+					ref={(canvas) => {this.canvas = canvas;}}
+					style={{width: '100%', height: '100%'}}
+					>
+				</canvas>
 			</div>
 		);
 	}
