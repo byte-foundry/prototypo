@@ -106,6 +106,7 @@ export default class Register extends React.Component {
 							name="email-register"
 							required
 							ref="username"
+							inputValue={this.props.location.query.emailSignUp}
 							type="email"
 							placeholder="example@domain.com"/>
 						<InputWithLabel
