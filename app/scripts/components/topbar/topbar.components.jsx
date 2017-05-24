@@ -392,7 +392,6 @@ class Topbar extends React.Component {
 
 Topbar.contextTypes = {
 	router: React.PropTypes.object.isRequired,
-	country: React.PropTypes.string.isRequired,
 };
 
 export default withCountry(Topbar);
