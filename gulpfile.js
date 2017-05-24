@@ -76,7 +76,7 @@ gulp.task('clean',function() {
 
 gulp.task('build', ['clean', 'images','css-vendor','css-app','cp-prototypo.js','cp-genese','cp-static'],  function(callback) {
 	// run webpack
-	var webpackConfig	= require('./prod.config.js');
+	var webpackConfig = process.env.NODE_ENV === 'production' ? require('./prod.config') : require('./dev.config');
 	var prototypoConfig = Object.create(webpackConfig);
 	webpack(prototypoConfig,
 		function(err, stats) {
@@ -115,7 +115,7 @@ gulp.task('watch-prototypojs', function() {
 });
 
 gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','watch-font', 'watch-prototypojs','webpack:dll'], function(callback) {
-	var webpackConfig	= require('./webpack.config.js');
+	var webpackConfig	= require('./local.config.js');
 	// Start a webpack-dev-server
 	var prototypoConfig = Object.create(webpackConfig);
 	prototypoConfig.debug = true;

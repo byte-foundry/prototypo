@@ -3,21 +3,15 @@ var webpack = require('webpack');
 var fs = require('fs');
 
 module.exports = {
-	cache: true,
-	devtool: 'source-map',
 	'if-loader': 'prod',
 	entry: {
 		bundle: [
-			'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
-			'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
 			'babel-polyfill',
 			'./app/scripts/main',
 		],
 		'web-import': [
-			'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
-			'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
 			'babel-polyfill',
-			'./app/scripts/web-import.js',
+			'./app/scripts/web-import',
 		],
 	},
 	output: {
@@ -29,14 +23,14 @@ module.exports = {
 		loaders: [
 			{
 				test: /\.jsx?$/,
-				loaders: ['react-hot-loader', 'babel-loader?cacheDirectory', 'if-loader'],
+				loaders: ['transform/cacheable?envify', 'babel-loader?cacheDirectory', 'if-loader'],
 				include: [
 					path.join(__dirname, 'app'),
 				],
 			},
 			{
-				test: /prototypo\-canvas/,
-				loaders: [ 'babel-loader?cacheDirectory'],
+				test: /prototypo-canvas/,
+				loaders: ['babel-loader?cacheDirectory'],
 				include: [
 					fs.realpathSync(__dirname + '/node_modules/prototypo-canvas'),
 				],
@@ -50,13 +44,13 @@ module.exports = {
 			},
 			{
 				test: /\.css$/,
-				loader: 'style-loader!css-loader',
+				loaders: ['style', 'css'],
 			},
 			{
 				test: /\.json$/, loader: 'json',
 			},
 			{
-				test: /\.otf$/,
+				test: /\.(jpg|otf)$/,
 				loaders: ['file'],
 			},
 			{
@@ -70,26 +64,18 @@ module.exports = {
 				include: path.join(__dirname, 'app/images/icons'),
 			},
 		],
-		noParse: /(dist\/prototypo-canvas)/,
+		noParse: /(levelup|dist\/prototypo-canvas)/,
 	},
 	externals: [{
 		'./node/window': true,
 		'./node/extend': true,
-		'prototypo.js': 'prototypo',
 	}],
 	plugins: [
-		new webpack.HotModuleReplacementPlugin(),
-		new webpack.DllReferencePlugin({
-			context: __dirname,
-			manifest: require('./dist/dll/libs-manifest'),
-			sourceType: 'this',
-		}),
 		new webpack.ProvidePlugin({
 			_: 'lodash',
 		}),
 	],
 	resolve: {
 		extensions: ['', '.js', '.jsx'],
-		fallback: path.join(__dirname, 'node_modules'),
 	},
 };

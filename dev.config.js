@@ -7,7 +7,7 @@ var base = require('./base.config');
 
 module.exports = merge(base, {
 	cache: true,
-	'if-loader': 'prod',
+	devtool: 'source-map',
 	entry: {
 		bundle: [
 			'whatwg-fetch',
@@ -31,16 +31,6 @@ module.exports = merge(base, {
 		'prototypo.js': 'prototypo',
 	}],
 	plugins: [
-		new webpack.DefinePlugin({
-			'process.env': {
-				NODE_ENV: JSON.stringify('production')
-			}
-		}),
-		new webpack.optimize.UglifyJsPlugin({
-			compress: {
-				conditionals: false
-			}
-		}),
 		new webpack.optimize.OccurenceOrderPlugin(),
 		new webpack.optimize.DedupePlugin(),
 	],
