@@ -25,6 +25,7 @@ if (bearer) {
 const hoodie = new window.Hoodie(BACK_URL);
 
 let localClient;
+let graphCoolUserId; // this is used temporarily to link graphcool <-> stripe
 
 window.addEventListener('fluxServer.setup', async () => {
 	localClient = LocalClient.instance();
@@ -126,6 +127,7 @@ export default class HoodieApi {
 					});
 
 					window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
+					graphCoolUserId = response.data.createUser.id;
 				}
 				catch (err) { trackJs.track(err); }
 			} else {
@@ -166,6 +168,7 @@ export default class HoodieApi {
 			});
 
 			window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
+			graphCoolUserId = response.data.createUser.id;
 		}
 		catch (e) { trackJs.track(e); }
 
@@ -309,6 +312,32 @@ export default class HoodieApi {
 			method: 'DELETE',
 		});
 	}
+
+	// temporary way of registering stripe id into graphcool
+	// this should be removed as soon as we get out of Hoodie
+	static async addStripeIdToGraphCool(id) {
+		if (graphCoolUserId) {
+			try {
+				await apolloClient.mutate({
+					mutation: gql`
+						mutation addStripeId($id: ID!, $stripeId: String!) {
+							updateUser(id: $id, stripe: $stripeId) {
+								id
+								stripe
+							}
+						}
+					`,
+					variables: {
+						id: graphCoolUserId,
+						stripeId: id,
+					},
+				});
+
+				graphCoolUserId = null;
+			}
+			catch (e) { trackJs.track(e); }
+		}
+	}
 }
 
 function setupHoodie(data) {
@@ -353,6 +382,9 @@ function setupHoodie(data) {
 async function setupStripe(data, time = 1000) {
 	if (data.stripe) {
 		HoodieApi.instance.customerId = data.stripe.customerId;
+
+		HoodieApi.addStripeIdToGraphCool(data.stripe.customerId);
+
 		try {
 			const customer = await HoodieApi.getCustomerInfo();
 			const [subscription] = customer.subscriptions.data;

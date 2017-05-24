@@ -398,6 +398,9 @@ export default {
 				'buyer_email': firstname + curedLastname,
 				hoodieId: response.roles[0],
 			});
+			// TMP
+			HoodieApi.addStripeIdToGraphCool(customer.id);
+			// TMP
 			const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname, css, phone, skype};
 			const patch = userStore.set('infos', {accountValues}).commit();
 
