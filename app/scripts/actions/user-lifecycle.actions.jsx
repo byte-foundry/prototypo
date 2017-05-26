@@ -1,7 +1,6 @@
 import {hashHistory} from 'react-router';
 import Lifespan from 'lifespan';
 import debounce from 'lodash/debounce';
-import gql from 'graphql-tag';
 
 import {userStore, prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';

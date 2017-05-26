@@ -1,10 +1,9 @@
 import PouchDB from 'pouchdb';
 import HoodiePouch from 'pouchdb-hoodie-api';
 import queryString from 'query-string';
-import gql from 'graphql-tag';
+import {gql} from 'react-apollo';
 
 import apolloClient from './graphcool.services';
-import HOODIE from '../helpers/hoodie.helpers.js';
 import isProduction from '../helpers/is-production.helpers';
 import LocalClient from '../stores/local-client.stores.jsx';
 

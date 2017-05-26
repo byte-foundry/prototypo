@@ -3,8 +3,7 @@ import Lifespan from 'lifespan';
 import moment from 'moment';
 import {Link} from 'react-router';
 import uniqWith from 'lodash/uniqWith';
-import {graphql} from 'react-apollo';
-import gql from 'graphql-tag';
+import {graphql, gql} from 'react-apollo';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -14,6 +13,7 @@ import HoodieApi from '../../services/hoodie.services';
 import DisplayWithLabel from '../shared/display-with-label.components.jsx';
 import FormSuccess from '../shared/form-success.components.jsx';
 import Price from '../shared/price.components';
+import Button from '../shared/new-button.components';
 
 export class AccountSubscription extends React.PureComponent {
 	constructor(props) {
@@ -160,16 +160,16 @@ export class AccountSubscription extends React.PureComponent {
 					<p>
 						<b>{manager.email}</b> wants to manage your subscription
 						{' '}
-						<button onClick={acceptManager}>Accept</button>
+						<Button size="small" onClick={acceptManager}>Accept</Button>
 						{' '}
-						<button onClick={removeManager}>Decline</button>
+						<Button size="small" onClick={removeManager}>Decline</Button>
 					</p>
 				)}
 				{manager && !manager.pending && (
 					<p>
 						Your subscription is managed by <b>{manager.email}</b>
 						{' '}
-						<button onClick={removeManager}>Revoke</button>
+						<Button size="small" onClick={removeManager}>Revoke</Button>
 					</p>
 				)}
 				{(!manager || manager && manager.pending) && noPlan}

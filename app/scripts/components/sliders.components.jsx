@@ -2,13 +2,11 @@ import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import gql from 'graphql-tag';
-import {graphql} from 'react-apollo';
+import {graphql, gql} from 'react-apollo';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
 import SliderHelpText from '../../images/sliders/helpText.json';
-import HoodieApi from '../services/hoodie.services';
 
 import SliderController from './slider-controller.components';
 

@@ -6,6 +6,7 @@ class Button extends React.Component {
 	render() {
 		const {
 			size,
+			disabled,
 			children,
 			className,
 			...rest
@@ -17,12 +18,13 @@ class Button extends React.Component {
 				'new-button--tiny': size === 'tiny',
 				'new-button--small': size === 'small',
 				'new-button--large': size === 'large',
+				'new-button--disabled': disabled,
 			},
 			className,
 		);
 
 		return (
-			<button className={classes} {...rest}>
+			<button className={classes} disabled={disabled} {...rest}>
 				{children}
 			</button>
 		);
@@ -31,6 +33,7 @@ class Button extends React.Component {
 
 Button.propTypes = {
 	size: PropTypes.oneOf(['tiny', 'small', 'large']),
+	disabled: PropTypes.bool,
 	className: PropTypes.string,
 };
 

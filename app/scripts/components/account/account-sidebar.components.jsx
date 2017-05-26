@@ -2,8 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import {Link} from 'react-router';
 import Lifespan from 'lifespan';
-import {graphql} from 'react-apollo';
-import gql from 'graphql-tag';
+import {graphql, gql} from 'react-apollo';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 

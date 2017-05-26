@@ -1,4 +1,4 @@
-import ApolloClient, {createBatchingNetworkInterface} from 'apollo-client';
+import {ApolloClient, createBatchingNetworkInterface} from 'react-apollo';
 
 import isProduction from '../helpers/is-production.helpers';
 
