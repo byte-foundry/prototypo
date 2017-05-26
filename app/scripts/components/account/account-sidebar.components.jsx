@@ -1,17 +1,17 @@
 import React from 'react';
 import classNames from 'classnames';
-import {Link} from 'react-router';
+import {Link, withRouter} from 'react-router';
 import Lifespan from 'lifespan';
 import {graphql, gql} from 'react-apollo';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
-class AccountSidebarLink extends React.Component {
+class AccountSidebarLinkRaw extends React.Component {
 	render() {
-		const {to, label, slug, children} = this.props;
+		const {to, label, slug, children, router} = this.props;
 
 		const classes = classNames({
-			"is-active": this.context.router.isActive(this.props.to),
+			"is-active": router.isActive(to),
 			"account-sidebar-menu-item": true,
 			[`account-sidebar-menu-${slug}`]: true,
 		});
@@ -25,28 +25,26 @@ class AccountSidebarLink extends React.Component {
 	}
 }
 
-AccountSidebarLink.contextTypes = {
-	router: React.PropTypes.object.isRequired,
-};
+const AccountSidebarLink = withRouter(AccountSidebarLinkRaw);
 
-class AccountSidebarSubLink extends React.Component {
+class AccountSidebarSubLinkRaw extends React.Component {
 	render() {
+		const {to, label, router} = this.props;
+
 		const classes = classNames({
-			"is-active": this.context.router.isActive(this.props.to),
+			"is-active": router.isActive(to),
 			"account-sidebar-menu-item-options-item": true,
 		});
 
 		return (
 			<li className={classes}>
-				<Link to={this.props.to}>{this.props.label}</Link>
+				<Link to={to}>{label}</Link>
 			</li>
 		);
 	}
 }
 
-AccountSidebarSubLink.contextTypes = {
-	router: React.PropTypes.object.isRequired,
-};
+const AccountSidebarSubLink = withRouter(AccountSidebarSubLinkRaw);
 
 class AccountSidebar extends React.Component {
 	constructor(props) {
@@ -110,10 +108,6 @@ class AccountSidebar extends React.Component {
 		);
 	}
 }
-
-AccountSidebar.contextTypes = {
-	router: React.PropTypes.object.isRequired,
-};
 
 const query = gql`
 	query {
