@@ -76,13 +76,14 @@ class GoProModal extends React.PureComponent {
 	}
 
 	goSubscribeAgency() {
+		const {billing, agencyCount} = this.state;
+
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
 		this.props.router.push({
 			pathname: '/account/subscribe',
 			query: {
-				plan: this.state.billing === 'monthly'
-					? agencyMonthlyConst.prefix
-					: agencyAnnualConst.prefix,
+				plan: billing === 'monthly' ? agencyMonthlyConst.prefix : agencyAnnualConst.prefix,
+				quantity: agencyCount,
 			},
 		});
 		window.Intercom('trackEvent', 'openSubscribeFromGoPro');

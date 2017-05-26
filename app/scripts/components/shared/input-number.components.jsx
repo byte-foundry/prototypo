@@ -6,7 +6,7 @@ class InputNumber extends React.Component {
 		super(props);
 
 		this.state = {
-			value: props.value,
+			value: parseFloat(props.value),
 			textValue: props.value,
 		};
 
@@ -19,7 +19,7 @@ class InputNumber extends React.Component {
 
 	componentWillReceiveProps({value}) {
 		if (value.toString() !== this.state.textValue) {
-			this.setState({value, textValue: value.toString()});
+			this.setState({value: parseFloat(value), textValue: value.toString()});
 		}
 	}
 

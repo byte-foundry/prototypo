@@ -62,6 +62,7 @@ export default class AccountConfirmPlan extends React.Component {
 	}
 
 	confirmPlanChange() {
+		const {location} = this.props;
 		const {plan, currency} = this.state;
 
 		window.Intercom('trackEvent', 'change-plan-confirm', {
@@ -71,6 +72,7 @@ export default class AccountConfirmPlan extends React.Component {
 		this.client.dispatchAction('/confirm-buy', {
 			plan,
 			currency,
+			quantity: parseInt(location.query.quantity, 10) || undefined,
 			pathname: '/account/details',
 		});
 	}
