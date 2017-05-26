@@ -1,6 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 var fs = require('fs');
+var SpritePlugin = require('svg-sprite-loader/plugin');
 
 module.exports = {
 	'if-loader': 'prod',
@@ -60,7 +61,7 @@ module.exports = {
 			},
 			{
 				test: /\.svg$/,
-				loader: 'svg-sprite-loader?extract=false!svgo-loader',
+				loader: 'svg-sprite-loader?extract=true!svgo-loader',
 				include: path.join(__dirname, 'app/images/icons'),
 			},
 		],
@@ -74,6 +75,7 @@ module.exports = {
 		new webpack.ProvidePlugin({
 			_: 'lodash',
 		}),
+		new SpritePlugin(),
 	],
 	resolve: {
 		extensions: ['', '.js', '.jsx'],

@@ -7,10 +7,8 @@ import '../../../images/icons/delete-circle.svg';
 
 class Icon extends React.PureComponent {
 	render() {
-		const { name, style, ...rest } = this.props;
-		const { id } = require('../../../images/icons/' + name + '.svg');
-		// if extracted then just print the link
-		const link = id.includes('.svg') ? id : '#' + id;
+		const {name, style, ...rest} = this.props;
+		const {url} = require(`../../../images/icons/${name}.svg`);
 
 		return (
 			<svg
@@ -19,11 +17,11 @@ class Icon extends React.PureComponent {
 					display: 'block',
 					height: '24px',
 					width: '24px',
-					...style
+					...style,
 				}}
 				{...rest}
 			>
-				<use xlinkHref={link} />
+				<use xlinkHref={url} />
 			</svg>
 		);
 	}
