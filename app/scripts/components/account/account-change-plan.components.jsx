@@ -56,7 +56,6 @@ export default class AccountChangePlan extends React.Component {
 					plan: subscription.plan.id,
 					numberOfUsers: parseInt((subscription && subscription.quantity) || 0, 10),
 					selection: subscription.plan.id.includes('monthly') ? 'monthly' : 'annual',
-					isAgency: subscription.plan.id.includes('agency'),
 					currency: getCurrency(cards[0].country),
 				});
 			})
@@ -71,9 +70,8 @@ export default class AccountChangePlan extends React.Component {
 	}
 
 	confirmChange() {
-		const {selection, numberOfUsers, isAgency} = this.state;
-
-		const plan = `${isAgency ? 'agency' : 'personal'}_${selection}`;
+		const {selectedPlan, numberOfUsers} = this.state;
+		const plan = selectedPlan.prefix;
 
 		Intercom('trackEvent', 'change-plan-select', {
 			plan,
