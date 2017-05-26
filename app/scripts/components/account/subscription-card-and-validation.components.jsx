@@ -145,7 +145,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			'agency_monthly': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <Price amount={agencyMonthlyConst.monthlyPrice * quantity} country={country}/> once and be subscribe to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <Price amount={agencyMonthlyConst.monthlyPrice * quantity} country={country}/> once and be subscribed to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
