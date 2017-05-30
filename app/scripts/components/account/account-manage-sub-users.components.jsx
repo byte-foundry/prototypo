@@ -6,10 +6,23 @@ import {graphql, gql} from 'react-apollo';
 
 import FilterInput from '../shared/filter-input.components';
 import Icon from '../shared/icon.components';
+import IconButton from '../shared/icon-button.components';
 import Button from '../shared/new-button.components';
 import WaitForLoad from '../wait-for-load.components';
 
-import HoodieApi from '../../services/hoodie.services';
+let HoodieApi;
+
+// Temporary catch to avoid errors in Storybook, should be removed later anyway
+try {
+	HoodieApi = require('../../services/hoodie.services').default;
+}
+catch (err) {}
+
+const STATUS_ICONS = {
+	pending: <Icon className="manage-sub-users-icon" name="sub-account-pending" />,
+	active: <Icon className="manage-sub-users-icon" name="sub-account-active" />,
+	loading: <WaitForLoad loading />,
+};
 
 class MemberRow extends React.Component {
 	constructor(props) {
@@ -25,12 +38,6 @@ class MemberRow extends React.Component {
 	render() {
 		const {member, filter, onRemoveRow} = this.props;
 
-		const statusIcons = {
-			pending: '😐', // <Icon name="status-pending" />
-			active: '😊', // <Icon name="status-active" />
-			loading: '🤔', // <Icon name="status-loading" />
-		};
-
 		return (
 			<tr
 				key={member.email}
@@ -39,16 +46,14 @@ class MemberRow extends React.Component {
 				})}
 			>
 				<td className="sortable-table-cell sortable-table-status">
-					{statusIcons[member.status]}
+					{STATUS_ICONS[member.status]}
 				</td>
 				<td className="sortable-table-cell sortable-table-email">
 					{filter
 						? member.email.split(new RegExp(`(${filter})`)).map(text => (
 							<span
 								className={
-										new RegExp(`(${filter})`).test(text)
-											? 'sortable-table-cell-filter'
-											: ''
+										new RegExp(`(${filter})`).test(text) ? 'sortable-table-cell-filter' : ''
 									}
 							>
 								{text}
@@ -61,18 +66,7 @@ class MemberRow extends React.Component {
 				</td>
 				{onRemoveRow
 					&& <td className="sortable-table-cell sortable-table-actions">
-						<button
-							onClick={this.handleRemoveButton}
-							style={{
-								display: 'block',
-								margin: 'auto',
-								background: 'none',
-								border: 'none',
-								outline: 'none',
-							}}
-						>
-							<Icon name="delete" />
-						</button>
+						<IconButton name="delete" onClick={this.handleRemoveButton} />
 					</td>}
 			</tr>
 		);
@@ -96,6 +90,7 @@ export class AccountManageSubUsers extends React.Component {
 		this.state = {
 			userCreation: null,
 			loadingCreation: false,
+			loadingRemoval: false,
 			filter: '',
 			sort: {
 				property: 'email',
@@ -107,6 +102,8 @@ export class AccountManageSubUsers extends React.Component {
 		this.clearFilter = this.clearFilter.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleCreate = this.handleCreate.bind(this);
+		this.handleRemoveButton = this.handleRemoveButton.bind(this);
+		this.cancelUserCreation = this.cancelUserCreation.bind(this);
 		this.sortByStatus = () => this.sortBy('status');
 		this.sortByEmail = () => this.sortBy('email');
 		this.sortByName = () => this.sortBy('name');
@@ -153,7 +150,11 @@ export class AccountManageSubUsers extends React.Component {
 		}
 		catch (err) {
 			if (err.type === 'NotFound') {
-				this.setState({userCreation: {email}, loadingCreation: false});
+				this.setState({
+					userCreation: {email},
+					loadingCreation: false,
+					error: "This user doesn't exist, would you like to create it?",
+				});
 			}
 			else {
 				this.setState({error: err.message, loadingCreation: false});
@@ -162,14 +163,20 @@ export class AccountManageSubUsers extends React.Component {
 	}
 
 	async handleRemoveButton(member) {
-		this.setState({error: null});
+		this.setState({error: null, loadingRemoval: member});
 
 		try {
 			await this.props.onRemoveUser(member);
+
+			this.setState({loadingRemoval: false});
 		}
 		catch (err) {
-			this.setState({error: err.message});
+			this.setState({error: err.message, loadingRemoval: false});
 		}
+	}
+
+	cancelUserCreation() {
+		this.setState({userCreation: null, error: null});
 	}
 
 	changeFilter(e) {
@@ -190,26 +197,10 @@ export class AccountManageSubUsers extends React.Component {
 	}
 
 	renderCreateUserForm() {
-		return [
-			<tr key="warning">
-				<td className="sortable-table-warning-message" colSpan={4}>
-					This user doesn't exist, would you like to create it?
-				</td>
-			</tr>,
+		return (
 			<tr key="create-user" className="sortable-table-create-user-form">
 				<td>
-					<button
-						style={{
-							border: 'none',
-							background: 'none',
-							outline: 'none',
-							display: 'block',
-							margin: 'auto',
-						}}
-						onClick={() => this.setState({userCreation: null})}
-					>
-						<Icon name="delete" />
-					</button>
+					<IconButton name="delete" onClick={this.cancelUserCreation} />
 				</td>
 				<td>
 					<input
@@ -247,8 +238,8 @@ export class AccountManageSubUsers extends React.Component {
 				<td>
 					<Button size="small" onClick={this.handleCreate}>Create user</Button>
 				</td>
-			</tr>,
-		];
+			</tr>
+		);
 	}
 
 	renderAddUserForm() {
@@ -290,27 +281,21 @@ export class AccountManageSubUsers extends React.Component {
 
 	render() {
 		const {loading, members, max, onAddUser} = this.props;
-		const {filter, sort, loadingCreation, error} = this.state;
+		const {filter, sort, loadingCreation, loadingRemoval, error} = this.state;
 		const slotsLeft = max - members.length;
-		const hasActions = max > 0;
 
 		const sortClass = sort.asc ? 'asc' : 'desc';
 		const headersClasses = ['status', 'email', 'name'].reduce(
 			(obj, header) => ({
 				...obj,
-				[header]: classnames(
-					'sortable-table-header-cell',
-					`sortable-table-${header}`,
-					{
-						[`sortable-table-header-cell-sort-${sortClass}`]: sort.property
-							=== header,
-					},
-				),
+				[header]: classnames('sortable-table-header-cell', `sortable-table-${header}`, {
+					[`sortable-table-header-cell-sort-${sortClass}`]: sort.property === header,
+				}),
 			}),
 			{},
 		);
 
-		const filteredMembers = members
+		let filteredMembers = members
 			.filter(({email}) => email.includes(filter))
 			.sort((a, b) => a[sort.property] < b[sort.property]);
 
@@ -320,6 +305,16 @@ export class AccountManageSubUsers extends React.Component {
 
 		if (loadingCreation) {
 			filteredMembers.unshift({email: loadingCreation, status: 'loading'});
+		}
+
+		if (loadingRemoval) {
+			filteredMembers = filteredMembers.map((member) => {
+				if (member.email === loadingRemoval.email) {
+					return {...loadingRemoval, status: 'loading'};
+				}
+
+				return member;
+			});
 		}
 
 		return (
@@ -348,25 +343,24 @@ export class AccountManageSubUsers extends React.Component {
 							</caption>}
 						<thead>
 							<tr>
-								<th
-									className={headersClasses.status}
-									onClick={this.sortByStatus}
-								>
+								<th className={headersClasses.status} onClick={this.sortByStatus}>
 									Status
 								</th>
 								<th className={headersClasses.email} onClick={this.sortByEmail}>
 									Email
 								</th>
-								<th
-									className={headersClasses.name}
-									colSpan={hasActions ? 1 : 2}
-									onClick={this.sortByName}
-								>
+								<th className={headersClasses.name} colSpan={1} onClick={this.sortByName}>
 									Name
 								</th>
 							</tr>
 						</thead>
 						<tbody>
+							{error
+								&& <tr key="warning">
+									<td className="sortable-table-warning-message" colSpan={4}>
+										{error}
+									</td>
+								</tr>}
 							{onAddUser && !filter && !loadingCreation && this.renderForm()}
 							{!members.length
 								&& <tr>
@@ -386,16 +380,11 @@ export class AccountManageSubUsers extends React.Component {
 									</td>
 								</tr>}
 							{filteredMembers.map(member => (
-								<MemberRow
-									member={member}
-									filter={filter}
-									onRemoveRow={this.handleRemoveButton}
-								/>
+								<MemberRow member={member} filter={filter} onRemoveRow={this.handleRemoveButton} />
 							))}
 						</tbody>
 					</table>
 				</WaitForLoad>
-				{error && <p>{error}</p>}
 			</div>
 		);
 	}

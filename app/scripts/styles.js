@@ -67,6 +67,7 @@ import '../styles/components/shared/account-validation-button.scss';
 import '../styles/components/shared/form-error.scss';
 import '../styles/components/shared/form-success.scss';
 import '../styles/components/shared/select-override.scss';
+import '../styles/components/shared/icon.scss';
 import '../styles/components/shared/invoice.scss';
 import '../styles/components/shared/loading-overlay.scss';
 import '../styles/components/shared/button.scss';
