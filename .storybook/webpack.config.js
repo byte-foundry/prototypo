@@ -7,43 +7,9 @@
 // to "React Create App". This only has babel loader to load JavaScript.
 
 const path = require('path');
+var merge = require('webpack-merge');
 
-module.exports = {
-	module: {
-		loaders: [
-			{
-				test: /\.scss$/,
-				loaders: ['style', 'css', 'sass'],
-				include: [
-					path.join(__dirname, '../app/styles'),
-				],
-			},
-			{
-				test: /\.css$/,
-				loaders: ['style', 'css'],
-			},
-			{
-				test: /\.json$/, loader: 'json',
-			},
-			{
-				test: /\.(jpg|otf)$/,
-				loaders: ['file'],
-			},
-			{
-				test: /\.(svg|png|jpg|gif)$/,
-				loader: 'url-loader?limit=100000',
-				exclude: path.join(__dirname, '../app/images/icons'),
-			},
-			{
-				test: /\.svg$/,
-				loader: 'svg-sprite-loader?extract=false!svgo-loader',
-				include: path.join(__dirname, '../app/images/icons'),
-			},
-		],
-	},
-	plugins: [
-	],
-	resolve: {
-		extensions: ['', '.js', '.jsx'],
-	},
-};
+const base = require('../base.config');
+
+module.exports = merge(base, {
+});
