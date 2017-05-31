@@ -133,17 +133,18 @@
 
 	&-tooltip {
 		opacity: 1;
-		margin-left: 0.8rem;
+		margin-left: 5px;
 		display: inline-block;
 		cursor: pointer;
-		color: $white;
+		color: darken($white, 25%);
 		font-weight: bold;
-		transition: opacity 500ms ease;
-		background-color: $black;
+		transition: background-color 200ms ease, color 200ms ease;
+		background-color: darken($dark-grey, 2%);
 		border-radius: 50%;
-		width: 16px;
-		height: 16px;
+		width: 15px;
+		height: 15px;
 		text-align: center;
+		line-height: 15px;
 
 		&:hover {
 			background-color: $white;
