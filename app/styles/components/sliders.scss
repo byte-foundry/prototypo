@@ -132,7 +132,7 @@
 	}
 
 	&-tooltip {
-		opacity: 0;
+		opacity: 1;
 		margin-left: 0.8rem;
 		display: inline-block;
 		cursor: pointer;
@@ -152,10 +152,6 @@
 	}
 
 	&:hover &-reset {
-		opacity: 1;
-	}
-
-	&:hover &-tooltip {
 		opacity: 1;
 	}
 
