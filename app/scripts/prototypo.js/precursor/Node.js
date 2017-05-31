@@ -1,3 +1,4 @@
+/* globals _ */
 import {constantOrFormula} from '../helpers/values.js';
 
 export default class Node {
@@ -20,6 +21,7 @@ export default class Node {
 
 		/* eslint-disable no-negated-condition */
 		this.cursor = cursor;
+		this.nodeAddress = constantOrFormula(cursor, `${cursor}nodeAddress`);
 		this.dirIn = dirIn !== undefined ? constantOrFormula(dirIn, `${cursor}dirIn`) : constantOrFormula(null, `${cursor}dirIn`);
 		this.dirOut = dirOut !== undefined ? constantOrFormula(dirOut, `${cursor}dirOut`) : constantOrFormula(null, `${cursor}dirOut`);
 		//simplify by having just typeIn and typeOut

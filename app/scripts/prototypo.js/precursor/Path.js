@@ -150,6 +150,8 @@ class SolvablePath {
 		for (let i = 0; i < nodes.length; i++) {
 			const node = nodes[i];
 
+			results[`${cursor}.nodes.${i}.nodeAddress`] = node.nodeAddress;
+
 			if (node.expand) {
 				const dirIn = readAngle(node.dirIn);
 				const dirOut = readAngle(node.dirOut);

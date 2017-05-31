@@ -92,7 +92,7 @@ export function transformNode(node, transforms, origin) {
 }
 
 function exeTransformOnNode(name, node, param, origin) {
-	const {x, y} = transformByName[name](node, param, origin)
+	const {x, y} = transformByName[name](node, param, origin);
 
 	node.x = x;
 	node.y = y;

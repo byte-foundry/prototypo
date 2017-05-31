@@ -544,24 +544,6 @@ export default {
 		manualChanges[glyphName] = manualChanges[glyphName] || {};
 		manualChanges[glyphName].cursors = manualChanges[glyphName].cursors || {};
 
-		// adding deltas to modified cursors
-		Object.keys(changes).forEach((cursorKey) => {
-			const oldChanges = manualChanges[glyphName].cursors[cursorKey];
-
-			if (typeof oldChanges === 'number') {
-				changes[cursorKey] += oldChanges;
-			}
-			else if (typeof oldChanges === 'object') {
-				Object.keys(changes[cursorKey]).forEach((key) => {
-					if (oldChanges[key] !== undefined) {
-						changes[cursorKey][key] += oldChanges[key];
-					}
-				});
-				// merging objects to keep other changes
-				changes[cursorKey] = {...oldChanges, ...changes[cursorKey]};
-			}
-		});
-
 		const newParams = {
 			...oldValues,
 			manualChanges: {

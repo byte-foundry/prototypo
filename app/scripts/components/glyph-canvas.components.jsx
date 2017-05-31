@@ -6,7 +6,7 @@ import Lifespan from 'lifespan';
 import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix} from '../toile/toile.js';
 
 import {changeTransformOrigin} from '../prototypo.js/helpers/utils.js';
-import {matrixMul} from '../plumin/util/linear.js';
+import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D} from '../plumin/util/linear.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -78,6 +78,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		const rafFunc = () => {
 			const width = this.canvas.clientWidth;
 			const height = this.canvas.clientHeight;
+
 			this.canvas.height = height;
 			this.canvas.width = width;
 			const oldMouse = mouse;
@@ -173,6 +174,11 @@ export default class GlyphCanvas extends React.PureComponent {
 				const pointMenuItems = hotItems.filter((item) => {
 					return item.type === toileType.POINT_MENU_ITEM;
 				});
+				const tools = hotItems.filter((item) => {
+					return item.type === toileType.THICKNESS_TOOL
+						|| item.type === toileType.THICKNESS_TOOL_CANCEL
+						|| item.type === toileType.ANGLE_TOOL;
+				});
 
 				if (nodes.length > 1 && !draggedItem && !selectedItem) {
 					this.toile.drawMultiplePointsMenu(nodes, frameCounters.pointMenu);
@@ -189,7 +195,10 @@ export default class GlyphCanvas extends React.PureComponent {
 				if (mState.DOWN === mouse.state) {
 					this.toile.clearDelta();
 					if (hotItems.length > 0) {
-						if (nodes.length === 1) {
+						if (tools.length === 1) {
+							draggedItem = draggedItem || tools[0];
+						}
+						else if (nodes.length === 1) {
 							draggedItem = draggedItem || nodes[0];
 						}
 					}
@@ -225,6 +234,45 @@ export default class GlyphCanvas extends React.PureComponent {
 							this.toile.drawAngleBetweenHandleAndMouse(selectedNodeParent, selectedNode);
 							break;
 						}
+						case toileType.THICKNESS_TOOL: {
+							const {baseWidth, opposite, center} = draggedItem.data;
+							const [mousePosInWorld] = transformCoords(
+								[mouse.pos],
+								inverseProjectionMatrix(this.toile.viewMatrix),
+								this.toile.height / this.toile.viewMatrix[0],
+							);
+
+							const factor = dot2D(subtract2D(opposite, mousePosInWorld), normalize2D(subtract2D(opposite, center))) / baseWidth;
+
+							this.client.dispatchAction('/change-glyph-node-manually', {
+								changes: {
+									[draggedItem.data.modifAddress]: factor,
+								},
+								glyphName: 'b',
+							});
+
+							break;
+						}
+						case toileType.ANGLE_TOOL: {
+							const {baseAngle, skeleton} = draggedItem.data;
+							const [mousePosInWorld] = transformCoords(
+								[mouse.pos],
+								inverseProjectionMatrix(this.toile.viewMatrix),
+								this.toile.height / this.toile.viewMatrix[0],
+							);
+
+							const mouseVec = subtract2D(mousePosInWorld, skeleton);
+							const angleDiff = Math.atan2(mouseVec.y, mouseVec.x) - baseAngle;
+
+							this.client.dispatchAction('/change-glyph-node-manually', {
+								changes: {
+									[draggedItem.data.modifAddress]: angleDiff,
+								},
+								glyphName: 'b',
+							});
+
+							break;
+						}
 						default:
 							break;
 					}
@@ -253,19 +301,21 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				switch (appStateValue) {
 					case appState.ONCURVE_THICKNESS: {
-						const node = _.get(glyph, selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id);
+						const id = selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id;
+						const node = _.get(glyph, id);
 
 						if (node) {
-							this.toile.drawThicknessTool(node);
+							this.toile.drawThicknessTool(node, `${id}.thickness`, hotItems);
 						}
 						this.toile.drawNodeToolsLib(appStateValue);
 						break;
 					}
 					case appState.ONCURVE_ANGLE: {
-						const node = _.get(glyph, selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id);
+						const id = selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id;
+						const node = _.get(glyph, id);
 
 						if (node) {
-							this.toile.drawAngleTool(node);
+							this.toile.drawAngleTool(node, `${id}.angle`, hotItems);
 						}
 						this.toile.drawNodeToolsLib(appStateValue);
 						break;

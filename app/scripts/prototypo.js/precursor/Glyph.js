@@ -310,7 +310,13 @@ export default class Glyph {
 					}
 				}
 				else if (action === 'expand') {
-					const expandedTo = ExpandingNode.expand(_.get(opDone, toLodashPath(cursor)));
+					const manualChanges = (params.manualChanges[this.name.value] || {}).cursors || {};
+					const node = ExpandingNode.applyExpandChange(
+						_.get(opDone, toLodashPath(cursor)),
+						manualChanges,
+						cursor
+					);
+					const expandedTo = ExpandingNode.expand(node);
 
 					_.set(
 						opDone,

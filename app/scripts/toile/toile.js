@@ -14,6 +14,10 @@ export const toileType = {
 	NODE_SKELETON: 3,
 	POINT_MENU: 4,
 	POINT_MENU_ITEM: 5,
+	THICKNESS_TOOL: 6,
+	THICKNESS_TOOL_CANCEL: 7,
+	ANGLE_TOOL: 8,
+	POS_TOOL:9,
 };
 
 export const appState = {
@@ -302,7 +306,7 @@ export default class Toile {
 	}
 
 	//A drawn contour must be closed
-	drawContour(listOfBezier, strokeColor = "transparent", fillColor = "transparent", noPathCreation, id) {
+	drawContour(listOfBezier, strokeColor = "transparent", fillColor = "transparent", noPathCreation) {
 
 		if (!noPathCreation) {
 			this.context.fillStyle = fillColor;
@@ -360,7 +364,7 @@ export default class Toile {
 		this.context.setLineDash([]);
 	}
 
-	drawRectangleFromCorners(aStart, aEnd, strokeColor = 'transparent', fillColor = 'transparent', id) {
+	drawRectangleFromCorners(aStart, aEnd, strokeColor = 'transparent', fillColor = 'transparent') {
 		const [start, end] = transformCoords(
 			[aStart, aEnd],
 			this.viewMatrix,
@@ -374,10 +378,10 @@ export default class Toile {
 		this.context.strokeRect(start.x, start.y, widthHeight.x, widthHeight.y, strokeColor);
 	}
 
-	drawRectangleFromCenterSize(origin, size, strokeColor, fillColor, id) {
-	}
+	/*drawRectangleFromCenterSize(origin, size, strokeColor, fillColor) {
+	}*/
 
-	drawCircle(aCenter, radius, strokeColor = 'black', fillColor = 'transparent', id) {
+	drawCircle(aCenter, radius, strokeColor = 'black', fillColor = 'transparent') {
 		const [center] = transformCoords(
 			[aCenter],
 			this.viewMatrix,
@@ -424,7 +428,7 @@ export default class Toile {
 		this.context.fill();
 	}
 
-	drawText(text, point, textSize, textColor, id) {
+	drawText(text, point, textSize, textColor) {
 		const [transformedPoint] = transformCoords(
 			[point],
 			this.viewMatrix,
@@ -512,6 +516,7 @@ export default class Toile {
 			inverseMatrix,
 			this.height / this.viewMatrix[0]
 		);
+
 		toolsLib.forEach((tools, i) => {
 			const offset = mulScalar2D(1 / this.viewMatrix[0], {x: 20, y: -20 - 30 * i});
 			const start = add2D(mouseTransformed, offset);
@@ -519,9 +524,9 @@ export default class Toile {
 			const end = add2D(start, size);
 
 			this.drawRectangleFromCorners(start, end, undefined, '#24d390');
-			tools.forEach((tool, i) => {
+			tools.forEach((tool, j) => {
 				const width = this.measureText(tool.key, 15, 'Fira sans').width;
-				const toolStart = add2D(start, mulScalar2D(i / this.viewMatrix[0], {x: 30, y: 0}));
+				const toolStart = add2D(start, mulScalar2D(j / this.viewMatrix[0], {x: 30, y: 0}));
 				const toolSize = mulScalar2D(1 / this.viewMatrix[0], {x: 30, y: -30});
 				const toolEnd = add2D(toolStart, toolSize);
 				const textPoint = add2D(
@@ -615,24 +620,30 @@ export default class Toile {
 		this.drawArcBetweenVector(node, startVec, endVec, '#24d390');
 	}
 
-	drawThicknessTool(node) {
+	drawThicknessTool(node, id, hotItems) {
 		const [oppositeExpanded, expandedSource] = node.expandedTo;
 		const normalVector = normalize2D({
 			x: expandedSource.y - oppositeExpanded.y,
 			y: oppositeExpanded.x - expandedSource.x,
+		});
+		const inHot = _.find(hotItems, (item) => {
+			return item.id === id;
 		});
 		const toolPoints = [
 			add2D(expandedSource, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
 			add2D(oppositeExpanded, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
 			add2D(node, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
 		];
+		const modifAddress = `${node.nodeAddress}expand.width`;
+
+		const color = inHot ? red : blue;
 
 		this.drawLine(expandedSource, oppositeExpanded, blue);
 		this.drawLine(expandedSource, toolPoints[0], blue, undefined, [4, 4]);
 		this.drawLine(oppositeExpanded, toolPoints[1], blue, undefined, [4, 4]);
-		this.drawLine(toolPoints[0], toolPoints[1], blue);
-		this.drawCircle(toolPoints[0], nodeDrawRadius, blue, undefined);
-		this.drawCircle(toolPoints[1], nodeDrawRadius, blue, undefined);
+		this.drawLine(toolPoints[0], toolPoints[1], color);
+		this.drawCircle(toolPoints[0], nodeDrawRadius, color, undefined);
+		this.drawCircle(toolPoints[1], nodeDrawRadius, color, undefined);
 		this.drawCircle(toolPoints[2], nodeDrawRadius, undefined, yellow);
 		const text = node.expand.width.toFixed(1);
 		const textSize = this.measureText(text, 20, 'Fira sans');
@@ -652,17 +663,62 @@ export default class Toile {
 			blue
 		);
 
+		//This point is to prevent selecting a thickness control that is too close to
+		//the skeleton node
+		this.interactionList.push({
+			id,
+			type: toileType.THICKNESS_TOOL_CANCEL,
+			data: {
+				center: {
+					x: toolPoints[2].x,
+					y: toolPoints[2].y,
+				},
+				radius: nodeHotRadius,
+			},
+		});
+		this.interactionList.push({
+			id,
+			type: toileType.THICKNESS_TOOL,
+			data: {
+				center: {
+					x: toolPoints[0].x,
+					y: toolPoints[0].y,
+				},
+				radius: nodeHotRadius,
+				opposite: toolPoints[1],
+				baseWidth: node.expand.baseWidth,
+				modifAddress,
+			},
+		});
+		this.interactionList.push({
+			id,
+			type: toileType.THICKNESS_TOOL,
+			data: {
+				center: {
+					x: toolPoints[1].x,
+					y: toolPoints[1].y,
+				},
+				radius: nodeHotRadius,
+				opposite: toolPoints[0],
+				baseWidth: node.expand.baseWidth,
+				modifAddress,
+			},
+		});
 	}
 
-	drawAngleTool(node) {
+	drawAngleTool(node, id, hotItems) {
 		const [farthestNode, closestNode] = node.expand.distr > 0.5
 			? [node.expandedTo[0], node.expandedTo[1]]
 			: [node.expandedTo[1], node.expandedTo[0]];
 		const radius = distance2D(farthestNode, node) * this.viewMatrix[0];
+		const inHot = _.find(hotItems, (item) => {
+			return item.id === id;
+		});
+		const color = inHot ? blue : green;
 
 		this.drawRing(node, radius - 2, radius + 2, undefined, ringBackground);
 		this.drawLine(closestNode, farthestNode, green, undefined, [5, 5, 15, 5]);
-		this.drawCircle(farthestNode, 5, green, green);
+		this.drawCircle(farthestNode, 5, color, color);
 
 		const direction = subtract2D(farthestNode, node);
 		const angle = `${(Math.atan2(direction.y, direction.x) * 180 / Math.PI).toFixed(1)}°`;
@@ -671,6 +727,7 @@ export default class Toile {
 			x: direction.y,
 			y: -direction.x,
 		});
+		const modifAddress = `${node.nodeAddress}expand.angle`;
 
 		this.drawText(angle,
 			add2D(
@@ -686,6 +743,20 @@ export default class Toile {
 			20,
 			red
 		);
+		this.interactionList.push({
+			id,
+			type: toileType.ANGLE_TOOL,
+			data: {
+				center: {
+					x: farthestNode.x,
+					y: farthestNode.y,
+				},
+				radius: nodeHotRadius,
+				skeleton: node,
+				baseAngle: node.expand.baseAngle,
+				modifAddress,
+			},
+		});
 	}
 
 	drawSkeletonDistrTool(node) {
@@ -709,6 +780,7 @@ export default class Toile {
 		const bottomRight = add2D(mulScalar2D(1 / zoom, {x: 6, y: -6}), node);
 
 		const oldWidth = this.context.lineWidth;
+
 		this.drawLine(node.expandedTo[0], node.expandedTo[1], red, undefined, [5, 5, 15, 5]);
 		this.context.lineWidth = 2;
 		this.drawLine(topLeft, bottomRight, red);
@@ -745,6 +817,21 @@ export default class Toile {
 			20,
 			red
 		);
+
+		this.interactionList.push({
+			id,
+			type: toileType.ANGLE_TOOL,
+			data: {
+				center: {
+					x: farthestNode.x,
+					y: farthestNode.y,
+				},
+				radius: 20,
+				skeleton: node,
+				baseAngle: node.expand.baseAngle,
+				modifAddress,
+			},
+		});
 	}
 
 	getHotInteractiveItem() {
@@ -755,8 +842,11 @@ export default class Toile {
 				case toileType.NODE_IN:
 				case toileType.NODE_OUT:
 				case toileType.NODE_SKELETON:
+				case toileType.THICKNESS_TOOL:
+				case toileType.THICKNESS_TOOL_CANCEL:
+				case toileType.ANGLE_TOOL:
 				case toileType.NODE: {
-					let refDistance = interactionItem.data.radius;
+					let refDistance = interactionItem.data.radius / this.viewMatrix[0];
 					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 					const [mouseTransformed] = transformCoords(
 						[this.mouse],
@@ -771,7 +861,8 @@ export default class Toile {
 					}
 
 					/* #if dev */
-					//let color = '#24d390';
+					//const color = '#24d390';
+
 					//this.drawLine(interactionItem.data.center, mouseTransformed, color);
 					/* #end */
 					break;

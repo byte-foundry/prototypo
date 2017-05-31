@@ -45,6 +45,14 @@ export default class ExpandingNode extends Node {
 		return _.difference(done, cursorToLook).length === done.length - cursorToLook.length;
 	}
 
+	static applyExpandChange(computedNode, changes, cursor) {
+		computedNode.expand.baseWidth = computedNode.expand.width;
+		computedNode.expand.baseAngle = readAngle(computedNode.expand.angle);
+		computedNode.expand.width = computedNode.expand.width * (changes[`${cursor}.expand.width`] || 1);
+		computedNode.expand.angle = computedNode.expand.baseAngle + (changes[`${cursor}.expand.angle`] || 0);
+		return computedNode;
+	}
+
 	static expand(computedNode) {
 		//TODO remove readAngle once we convert all the angle to rad in the ptf
 		const {x, y, expand: {width, angle, distr}} = computedNode;
