@@ -328,15 +328,31 @@ export default class Glyph {
 			}
 			else {
 				const obj = this.getFromXPath(op);
+				let result = obj.getResult(localParams,
+					opDone.contours,
+					opDone.anchors,
+					parentAnchors,
+					utils);
+				const option = op.charAt(op.length - 1);
+
+				if (option === 'x' || option === 'y') {
+					_.set(
+						opDone,
+						toLodashPath(`${op}Base`),
+						result,
+					);
+
+					const manualChanges = (
+						(params.manualChanges[this.name.value] || {}).cursors || {}
+					)[op] || 0;
+
+					result += manualChanges;
+				}
 
 				_.set(
 					opDone,
 					toLodashPath(op),
-					obj.getResult(localParams,
-						opDone.contours,
-						opDone.anchors,
-						parentAnchors,
-						utils)
+					result,
 				);
 			}
 		}

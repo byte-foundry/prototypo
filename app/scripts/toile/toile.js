@@ -18,6 +18,7 @@ export const toileType = {
 	THICKNESS_TOOL_CANCEL: 7,
 	ANGLE_TOOL: 8,
 	POS_TOOL:9,
+	DISTR_TOOL: 10,
 };
 
 export const appState = {
@@ -759,25 +760,61 @@ export default class Toile {
 		});
 	}
 
-	drawSkeletonDistrTool(node) {
+	drawSkeletonDistrTool(node, id, hotItems) {
 		const [zoom] = this.viewMatrix;
 		const normalVector = normalize2D({
 			x: node.expandedTo[1].y - node.expandedTo[0].y,
 			y: node.expandedTo[0].x - node.expandedTo[1].x,
 		});
 		const center = add2D(node, mulScalar2D(20 / zoom, normalVector));
+		const modifAddress = `${node.nodeAddress}`;
+		const toolPos = add2D(node, mulScalar2D(20 / zoom, normalVector));
 
 		this.drawLine(node.expandedTo[0], node.expandedTo[1], red, undefined, [5, 5, 15, 5]);
 		this.drawLine(node, add2D(node, mulScalar2D(20 / zoom, normalVector)), red);
-		this.drawCircle(add2D(node, mulScalar2D(20 / zoom, normalVector)), 8, 'transparent', red);
+		this.drawCircle(toolPos, 8, 'transparent', red);
+
+		const distribText = node.expand.distr.toFixed(1);
+		const distribTextSize = this.measureText(distribText, 15, 'Fira sans');
+		const distribCoordsPos = add2D(mulScalar2D(1 / zoom, {x: 20, y: 0}), node);
+
+		this.drawText(distribText,
+			add2D(
+				distribCoordsPos,
+				{
+					x: -distribTextSize.width / (2 * zoom),
+					y: 0,
+				}
+			),
+			20,
+			red
+		);
+
+		this.interactionList.push({
+			id,
+			type: toileType.DISTR_TOOL,
+			data: {
+				center: toolPos,
+				base: {
+					x: node.xBase,
+					y: node.yBase,
+				},
+				expandedTo: node.expandedTo,
+				width: node.expand.width,
+				radius: 10,
+				modifAddress,
+			},
+		});
+
 	}
 
-	drawSkeletonPosTool(node) {
+	drawSkeletonPosTool(node, id, hotItems) {
 		const [zoom] = this.viewMatrix;
 		const topLeft = add2D(mulScalar2D(1 / zoom, {x: -6, y: 6}), node);
 		const bottomLeft = add2D(mulScalar2D(1 / zoom, {x: -6, y: -6}), node);
 		const topRight = add2D(mulScalar2D(1 / zoom, {x: 6, y: 6}), node);
 		const bottomRight = add2D(mulScalar2D(1 / zoom, {x: 6, y: -6}), node);
+		const modifAddress = `${node.nodeAddress}`;
 
 		const oldWidth = this.context.lineWidth;
 
@@ -820,15 +857,17 @@ export default class Toile {
 
 		this.interactionList.push({
 			id,
-			type: toileType.ANGLE_TOOL,
+			type: toileType.POS_TOOL,
 			data: {
 				center: {
-					x: farthestNode.x,
-					y: farthestNode.y,
+					x: node.x,
+					y: node.y,
 				},
-				radius: 20,
-				skeleton: node,
-				baseAngle: node.expand.baseAngle,
+				base: {
+					x: node.xBase,
+					y: node.yBase,
+				},
+				radius: 10,
 				modifAddress,
 			},
 		});
@@ -845,6 +884,8 @@ export default class Toile {
 				case toileType.THICKNESS_TOOL:
 				case toileType.THICKNESS_TOOL_CANCEL:
 				case toileType.ANGLE_TOOL:
+				case toileType.POS_TOOL:
+				case toileType.DISTR_TOOL:
 				case toileType.NODE: {
 					let refDistance = interactionItem.data.radius / this.viewMatrix[0];
 					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);

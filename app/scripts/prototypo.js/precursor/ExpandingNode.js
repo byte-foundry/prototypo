@@ -47,9 +47,11 @@ export default class ExpandingNode extends Node {
 
 	static applyExpandChange(computedNode, changes, cursor) {
 		computedNode.expand.baseWidth = computedNode.expand.width;
+		computedNode.expand.baseDistr = computedNode.expand.distr;
 		computedNode.expand.baseAngle = readAngle(computedNode.expand.angle);
-		computedNode.expand.width = computedNode.expand.width * (changes[`${cursor}.expand.width`] || 1);
+		computedNode.expand.width = computedNode.expand.baseWidth * (changes[`${cursor}.expand.width`] || 1);
 		computedNode.expand.angle = computedNode.expand.baseAngle + (changes[`${cursor}.expand.angle`] || 0);
+		computedNode.expand.distr = computedNode.expand.baseDistr + (changes[`${cursor}.expand.distr`] || 0);
 		return computedNode;
 	}
 

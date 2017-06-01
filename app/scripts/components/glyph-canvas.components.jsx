@@ -6,7 +6,7 @@ import Lifespan from 'lifespan';
 import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix} from '../toile/toile.js';
 
 import {changeTransformOrigin} from '../prototypo.js/helpers/utils.js';
-import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D} from '../plumin/util/linear.js';
+import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D, add2D} from '../plumin/util/linear.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -177,7 +177,9 @@ export default class GlyphCanvas extends React.PureComponent {
 				const tools = hotItems.filter((item) => {
 					return item.type === toileType.THICKNESS_TOOL
 						|| item.type === toileType.THICKNESS_TOOL_CANCEL
-						|| item.type === toileType.ANGLE_TOOL;
+						|| item.type === toileType.ANGLE_TOOL
+						|| item.type === toileType.DISTR_TOOL
+						|| item.type === toileType.POS_TOOL;
 				});
 
 				if (nodes.length > 1 && !draggedItem && !selectedItem) {
@@ -248,7 +250,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								changes: {
 									[draggedItem.data.modifAddress]: factor,
 								},
-								glyphName: 'b',
+								glyphName: glyph.name,
 							});
 
 							break;
@@ -268,9 +270,54 @@ export default class GlyphCanvas extends React.PureComponent {
 								changes: {
 									[draggedItem.data.modifAddress]: angleDiff,
 								},
-								glyphName: 'b',
+								glyphName: glyph.name,
 							});
 
+							break;
+						}
+						case toileType.POS_TOOL: {
+							const {base} = draggedItem.data;
+							const [mousePosInWorld] = transformCoords(
+								[mouse.pos],
+								inverseProjectionMatrix(this.toile.viewMatrix),
+								this.toile.height / this.toile.viewMatrix[0],
+							);
+
+							const mouseVec = subtract2D(mousePosInWorld, base);
+
+							this.client.dispatchAction('/change-glyph-node-manually', {
+								changes: {
+									[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
+									[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
+								},
+								glyphName: glyph.name,
+							});
+							break;
+						}
+						case toileType.DISTR_TOOL: {
+							const {base, expandedTo, width} = draggedItem.data;
+							const [mousePosInWorld] = transformCoords(
+								[mouse.pos],
+								inverseProjectionMatrix(this.toile.viewMatrix),
+								this.toile.height / this.toile.viewMatrix[0],
+							);
+
+							const skelVec = normalize2D(subtract2D(expandedTo[1], expandedTo[0]));
+							const distProjOntoSkel = Math.min(Math.max(dot2D(
+								subtract2D(mousePosInWorld, expandedTo[0]),
+								skelVec,
+							), 0), width);
+
+							const mouseVec = subtract2D(add2D(mulScalar2D(distProjOntoSkel, skelVec), expandedTo[0]), base);
+
+							this.client.dispatchAction('/change-glyph-node-manually', {
+								changes: {
+									[`${draggedItem.data.modifAddress}expand.distr`]: distProjOntoSkel / width,
+									[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
+									[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
+								},
+								glyphName: glyph.name,
+							});
 							break;
 						}
 						default:
@@ -321,19 +368,21 @@ export default class GlyphCanvas extends React.PureComponent {
 						break;
 					}
 					case appState.SKELETON_POS: {
-						const node = _.get(glyph, selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id);
+						const id = selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id;
+						const node = _.get(glyph, id);
 
 						if (node) {
-							this.toile.drawSkeletonPosTool(node);
+							this.toile.drawSkeletonPosTool(node, `${id}.pos`, hotItems);
 						}
 						this.toile.drawNodeToolsLib(appStateValue);
 						break;
 					}
 					case appState.SKELETON_DISTR: {
-						const node = _.get(glyph, selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id);
+						const id = selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id;
+						const node = _.get(glyph, id);
 
 						if (node) {
-							this.toile.drawSkeletonDistrTool(node);
+							this.toile.drawSkeletonDistrTool(node, id, hotItems);
 						}
 						this.toile.drawNodeToolsLib(appStateValue);
 						break;
