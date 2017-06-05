@@ -87,6 +87,7 @@ export default class WorkerPool {
 
 					if (this.fastJobQueue) {
 						const jobToDo = this.fastJobQueue;
+
 						this.jobQueue = undefined;
 						this.doFastJob(jobToDo);
 					}
@@ -117,12 +118,13 @@ export default class WorkerPool {
 
 					/* #if dev */
 					localClient.dispatchAction('/store-value', {
-						workers: _.map(this.workerArray, (worker) => {return worker.working}),
+						workers: _.map(this.workerArray, (w) => {return w.working;}),
 					});
 					/* #end */
 
 					if (!this.areWorkerBusy() && this.jobQueue) {
 						const jobToDo = this.jobQueue;
+
 						this.jobQueue = undefined;
 						this.doJobs(jobToDo);
 					}
@@ -192,7 +194,7 @@ export default class WorkerPool {
 
 					/* #if dev */
 					localClient.dispatchAction('/store-value', {
-						workers: _.map(this.workerArray, (worker) => {return worker.working}),
+						workers: _.map(this.workerArray, (worker) => {return worker.working;}),
 					});
 					/* #end */
 				}
@@ -214,7 +216,7 @@ export default class WorkerPool {
 			this.workerArray[i].worker.postMessage(job.action);
 			/* #if dev */
 			localClient.dispatchAction('/store-value', {
-				workers: _.map(this.workerArray, (worker) => {return worker.working}),
+				workers: _.map(this.workerArray, (worker) => {return worker.working;}),
 			});
 			/* #end */
 		}

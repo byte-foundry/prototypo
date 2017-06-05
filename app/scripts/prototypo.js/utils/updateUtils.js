@@ -309,14 +309,7 @@ function crt(v) {
 		: Math.pow(v, 1 / 3);
 }
 
-// see https://github.com/Pomax/bezierjs/blob/gh-pages/lib/utils.js line 313
-export function lineCurveIntersection(pointHandleOut, handleOut, pointHandleIn, handleIn, lineStart = {x: 0, y: 0}, lineEnd = {x: 1, y: 0}) {
-	const points = [
-		pointHandleOut,
-		handleOut,
-		handleIn,
-		pointHandleIn,
-	];
+export function getIntersectionTValue(pointHandleOut, handleOut, pointHandleIn, handleIn, lineStart = {x: 0, y: 0}, lineEnd = {x: 1, y: 0}, points = [pointHandleOut, handleOut, handleIn, pointHandleIn]) {
 	const p = align(points, lineStart, lineEnd);
 	const reduce = function(t) { return 0 <= t && t <= 1; };
 
@@ -369,6 +362,20 @@ export function lineCurveIntersection(pointHandleOut, handleOut, pointHandleIn, 
 		v1 = crt(q2 + sd);
 		result = [u1 - v1 - a / 3].filter(reduce);
 	}
+
+	return result;
+}
+
+// see https://github.com/Pomax/bezierjs/blob/gh-pages/lib/utils.js line 313
+export function lineCurveIntersection(pointHandleOut, handleOut, pointHandleIn, handleIn, lineStart = {x: 0, y: 0}, lineEnd = {x: 1, y: 0}) {
+	const points = [
+		pointHandleOut,
+		handleOut,
+		handleIn,
+		pointHandleIn,
+	];
+
+	const result = getIntersectionTValue(pointHandleOut, handleOut, pointHandleIn, handleIn, lineStart, lineEnd, points);
 
 	return split(points, result[0], [pointHandleIn, pointHandleOut]);
 }

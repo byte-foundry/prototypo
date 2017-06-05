@@ -1,5 +1,6 @@
 /* global _ */
 import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D} from '../plumin/util/linear.js';
+import {getIntersectionTValue, getPointOnCurve} from '../prototypo.js/utils/updateUtils.js';
 import DOM from '../helpers/dom.helpers.js';
 
 export const mState = {
@@ -17,8 +18,10 @@ export const toileType = {
 	THICKNESS_TOOL: 6,
 	THICKNESS_TOOL_CANCEL: 7,
 	ANGLE_TOOL: 8,
-	POS_TOOL:9,
+	POS_TOOL: 9,
 	DISTR_TOOL: 10,
+	GLYPH_CONTOUR: 11,
+	GLYPH_COMPONENT_CONTOUR: 12,
 };
 
 export const appState = {
@@ -183,23 +186,23 @@ export default class Toile {
 		};
 	}
 
-	drawControlPoint(node, hotness, fillColor, hotFillColor) {
+	drawControlPoint(node, hotness, fillColor) {
 		this.drawCircle(
 			node,
 			hotness ? nodeHotDrawRadius : nodeDrawRadius,
-			transparent,
-			hotness ? hotFillColor : fillColor
+			fillColor,
+			hotness ? fillColor : transparent
 		);
 	}
 
-	drawNode(node, id, parentId, hotItems) {
+	drawNode(node, id, parentNode, parentId, hotItems) {
 		if (node.handleIn) {
 			const inHot = _.find(hotItems, (item) => {
 				return item.id === `${id}.handleIn`;
 			});
 
 			this.drawLine(node.handleIn, node, inHandleColor, inHandleColor);
-			this.drawControlPoint(node.handleIn, inHot, inHandleColor, hotInHandleColor);
+			this.drawControlPoint(node.handleIn, inHot, inHandleColor);
 			if (id) {
 				this.interactionList.push({
 					id: `${id}.handleIn`,
@@ -220,8 +223,8 @@ export default class Toile {
 				return item.id === `${id}.handleOut`;
 			});
 
-			this.drawLine(node.handleOut, node, outHandleColor, outHandleColor);
-			this.drawControlPoint(node.handleOut, outHot, outHandleColor, hotOutHandleColor);
+			this.drawLine(node.handleOut, node, outHandleColor);
+			this.drawControlPoint(node.handleOut, outHot, outHandleColor);
 			if (id) {
 				this.interactionList.push({
 					id: `${id}.handleOut`,
@@ -242,63 +245,159 @@ export default class Toile {
 			return item.id === id;
 		});
 
-		this.drawControlPoint(node, hot, onCurveColor, hotOnCurveColor);
+		this.drawControlPoint(node, hot, onCurveColor);
 
 		if (id) {
-			this.interactionList.push({
-				id,
-				type: node.handleIn || node.handleOut ? toileType.NODE : toileType.NODE_SKELETON,
-				data: {
-					center: {
-						x: node.x,
-						y: node.y,
+			if (node.handleIn || node.handleOut) {
+				const {oppositeId, angleOffset} = parentNode.expandedTo[0] === node
+					? {
+						oppositeId: `${parentId}.expandedTo[1]`,
+						angleOffset: Math.PI,
+					}
+					: {
+						oppositeId: `${parentId}.expandedTo[0]`,
+						angleOffset: 0,
+					};
+				const modifAddress = `${parentNode.nodeAddress}expand`;
+
+				this.interactionList.push({
+					id,
+					type: toileType.NODE,
+					data: {
+						parentId,
+						center: {
+							x: node.x,
+							y: node.y,
+						},
+						radius: nodeHotRadius,
+						oppositeId,
+						baseWidth: parentNode.expand.baseWidth,
+						modifAddress,
+						skeleton: parentNode,
+						baseAngle: parentNode.expand.baseAngle,
+						angleOffset,
 					},
-					radius: nodeHotRadius,
-					parentId,
-				},
-			});
+				});
+			}
+			else {
+				const modifAddress = `${node.nodeAddress}`;
+				this.interactionList.push({
+					id,
+					type: toileType.NODE_SKELETON,
+					data: {
+						center: {
+							x: node.x,
+							y: node.y,
+						},
+						base: {
+							x: node.xBase,
+							y: node.yBase,
+						},
+						radius: nodeHotRadius,
+						modifAddress,
+					},
+				});
+				//This point is to prevent selecting a thickness control that is too close to
+				//the skeleton node
+				this.interactionList.push({
+					id,
+					type: toileType.THICKNESS_TOOL_CANCEL,
+					data: {
+						center: {
+							x: node.x,
+							y: node.y,
+						},
+						radius: nodeHotRadius,
+					},
+				});
+			}
 		}
 	}
 
-	drawGlyph(glyph, hotItems) {
+	drawNodes(contour, contourCursor, hotItems) {
+		contour.nodes.forEach((node, j) => {
+			const id = `${contourCursor}.nodes.${j}`;
+
+			if (node.x && node.y) {
+				this.drawNode(node, id, undefined, undefined, hotItems);
+			}
+			if (node.expandedTo) {
+				this.drawNode(node.expandedTo[0], `${id}.expandedTo.0`, node, id, hotItems);
+				this.drawNode(node.expandedTo[1], `${id}.expandedTo.1`, node, id, hotItems);
+			}
+		});
+	}
+
+	drawGlyph(glyph) {
 		this.context.fillStyle = 'black';
 		this.context.strokeStyle = 'black';
 		this.context.beginPath();
 		glyph.otContours.forEach((bez) => {
 			this.drawContour(bez, undefined, undefined, true);
 		});
+
 		this.context.stroke();
 		this.context.fill();
+	}
+
+	drawSelectableContour(glyph, hotItems, parentId = '', type = toileType.GLYPH_CONTOUR) {
+		let startIndexBeziers = 0;
 
 		glyph.contours.forEach((contour, i) => {
-			contour.nodes.forEach((node, j) => {
-				const id = `contours[${i}].nodes[${j}]`;
-
-				if (node.x && node.y) {
-					this.drawNode(node, id, undefined, hotItems);
-				}
-				if (node.expandedTo) {
-					this.drawNode(node.expandedTo[0], `${id}.expandedTo[0]`, id, hotItems);
-					this.drawNode(node.expandedTo[1], `${id}.expandedTo[1]`, id, hotItems);
-				}
+			const id = `${parentId}contours.${i}`;
+			const hot = _.find(hotItems, (item) => {
+				return item.id === id;
 			});
-		});
+			let length;
 
-		glyph.components.forEach((component, k) => {
-			component.contours.forEach((contour, i) => {
-				contour.nodes.forEach((node, j) => {
-					const id = `component[${k}].contours[${i}].nodes[${j}]`;
+			if (contour.skeleton && contour.closed) {
+				length = 2;
+			}
+			else {
+				length = 1;
+			}
+			const deepListOfBeziers = _.slice(glyph.otContours, startIndexBeziers, startIndexBeziers + length);
+			const listOfBezier = _.flatten(deepListOfBeziers);
 
-					if (node.x && node.y) {
-						this.drawNode(node, id, undefined, hotItems);
-					}
-					if (node.expandedTo) {
-						this.drawNode(node.expandedTo[0], `${id}.expandedTo[0]`, id, hotItems);
-						this.drawNode(node.expandedTo[1], `${id}.expandedTo[1]`, id, hotItems);
-					}
+
+			if (hot) {
+				this.context.strokeStyle = green;
+				this.context.lineWidth = 1;
+				this.context.beginPath();
+				deepListOfBeziers.forEach((bez) => {
+					this.drawContour(bez, undefined, undefined, true);
 				});
+				this.context.stroke();
+				this.context.lineWidth = 1;
+			}
+
+			this.interactionList.push({
+				id,
+				type,
+				data: {
+					beziers: listOfBezier,
+					contour,
+					indexes: [startIndexBeziers, startIndexBeziers + length],
+				},
 			});
+
+			startIndexBeziers += length;
 		});
+
+		glyph.components.forEach((component, i) => {
+			this.drawSelectableContour(component, hotItems, `components.${i}.`, toileType.GLYPH_COMPONENT_CONTOUR);
+		});
+	}
+
+	drawSelectedContour(contour) {
+		this.context.strokeStyle = green;
+		this.context.lineWidth = 1;
+		this.context.beginPath();
+		contour.forEach((bez) => {
+			this.drawContour(bez, undefined, undefined, true);
+		});
+		this.context.stroke();
+		this.context.lineWidth = 1;
 	}
 
 	setCamera(point, zoom, height) {
@@ -635,8 +734,6 @@ export default class Toile {
 			add2D(oppositeExpanded, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
 			add2D(node, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
 		];
-		const modifAddress = `${node.nodeAddress}expand.width`;
-
 		const color = inHot ? red : blue;
 
 		this.drawLine(expandedSource, oppositeExpanded, blue);
@@ -664,47 +761,6 @@ export default class Toile {
 			blue
 		);
 
-		//This point is to prevent selecting a thickness control that is too close to
-		//the skeleton node
-		this.interactionList.push({
-			id,
-			type: toileType.THICKNESS_TOOL_CANCEL,
-			data: {
-				center: {
-					x: toolPoints[2].x,
-					y: toolPoints[2].y,
-				},
-				radius: nodeHotRadius,
-			},
-		});
-		this.interactionList.push({
-			id,
-			type: toileType.THICKNESS_TOOL,
-			data: {
-				center: {
-					x: toolPoints[0].x,
-					y: toolPoints[0].y,
-				},
-				radius: nodeHotRadius,
-				opposite: toolPoints[1],
-				baseWidth: node.expand.baseWidth,
-				modifAddress,
-			},
-		});
-		this.interactionList.push({
-			id,
-			type: toileType.THICKNESS_TOOL,
-			data: {
-				center: {
-					x: toolPoints[1].x,
-					y: toolPoints[1].y,
-				},
-				radius: nodeHotRadius,
-				opposite: toolPoints[0],
-				baseWidth: node.expand.baseWidth,
-				modifAddress,
-			},
-		});
 	}
 
 	drawAngleTool(node, id, hotItems) {
@@ -766,7 +822,6 @@ export default class Toile {
 			x: node.expandedTo[1].y - node.expandedTo[0].y,
 			y: node.expandedTo[0].x - node.expandedTo[1].x,
 		});
-		const center = add2D(node, mulScalar2D(20 / zoom, normalVector));
 		const modifAddress = `${node.nodeAddress}`;
 		const toolPos = add2D(node, mulScalar2D(20 / zoom, normalVector));
 
@@ -808,13 +863,12 @@ export default class Toile {
 
 	}
 
-	drawSkeletonPosTool(node, id, hotItems) {
+	drawSkeletonPosTool(node, id) {
 		const [zoom] = this.viewMatrix;
 		const topLeft = add2D(mulScalar2D(1 / zoom, {x: -6, y: 6}), node);
 		const bottomLeft = add2D(mulScalar2D(1 / zoom, {x: -6, y: -6}), node);
 		const topRight = add2D(mulScalar2D(1 / zoom, {x: 6, y: 6}), node);
 		const bottomRight = add2D(mulScalar2D(1 / zoom, {x: 6, y: -6}), node);
-		const modifAddress = `${node.nodeAddress}`;
 
 		const oldWidth = this.context.lineWidth;
 
@@ -854,23 +908,6 @@ export default class Toile {
 			20,
 			red
 		);
-
-		this.interactionList.push({
-			id,
-			type: toileType.POS_TOOL,
-			data: {
-				center: {
-					x: node.x,
-					y: node.y,
-				},
-				base: {
-					x: node.xBase,
-					y: node.yBase,
-				},
-				radius: 10,
-				modifAddress,
-			},
-		});
 	}
 
 	getHotInteractiveItem() {
@@ -878,6 +915,39 @@ export default class Toile {
 
 		this.interactionList.forEach((interactionItem) => {
 			switch (interactionItem.type) {
+				case toileType.GLYPH_COMPONENT_CONTOUR:
+				case toileType.GLYPH_CONTOUR: {
+					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+					const [mouseTransformed] = transformCoords(
+						[this.mouse],
+						inverseMatrix,
+						this.height / this.viewMatrix[0]
+					);
+
+					const lineEnd = add2D(mouseTransformed, {x: 1, y: 0});
+
+					let polyNumber = 0;
+
+					interactionItem.data.beziers.forEach((bezier) => {
+						const ts = getIntersectionTValue(bezier[0], bezier[1], bezier[3], bezier[2], mouseTransformed, lineEnd);
+
+						if (ts) {
+							ts.forEach((t) => {
+								const point = getPointOnCurve(bezier, t);
+
+								if (t !== undefined && point.x > mouseTransformed.x) {
+									polyNumber++;
+								}
+							});
+						}
+					});
+
+					if (polyNumber % 2) {
+						result.push(interactionItem);
+					}
+
+					break;
+				}
 				case toileType.NODE_IN:
 				case toileType.NODE_OUT:
 				case toileType.NODE_SKELETON:

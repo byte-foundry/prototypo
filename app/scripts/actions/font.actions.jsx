@@ -96,13 +96,22 @@ export default {
 	},
 	'/create-font': (typedata) => {
 		const fontWorkerPool = new WorkerPool();
+		const glyphs = {};
+		_.forIn(typedata.glyphs, (glyph) => {
+			if (!glyphs[glyph.unicode]) {
+				glyphs[glyph.unicode] = [];
+			}
+			glyphs[glyph.unicode].push(glyph);
+		});
+
+		localClient.dispatchAction('/load-glyphs', glyphs);
 
 		fontWorkerPool.eachJob({
 			action: {
 				type: 'createFont',
 				data: typedata,
 			},
-			callback: () => {
+			callback: (data) => {
 				localClient.dispatchAction('/store-value-font', {
 					fontWorkerPool,
 				});

@@ -5,8 +5,8 @@ import Lifespan from 'lifespan';
 
 import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix} from '../toile/toile.js';
 
-import {changeTransformOrigin} from '../prototypo.js/helpers/utils.js';
-import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D, add2D} from '../plumin/util/linear.js';
+import {changeTransformOrigin, toLodashPath} from '../prototypo.js/helpers/utils.js';
+import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D, add2D, distance2D} from '../plumin/util/linear.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -70,6 +70,8 @@ export default class GlyphCanvas extends React.PureComponent {
 		};
 		let selectedItem;
 		let draggedItem;
+		let contourSelectedCursor;
+		let contourIndexes;
 		let moving = false;
 		let mouse = this.toile.getMouseState();
 		let appStateValue;
@@ -164,6 +166,12 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				this.toile.clearCanvas(width, height);
 				this.toile.drawGlyph(glyph, hotItems);
+				this.toile.drawSelectableContour(glyph, hotItems);
+
+				if (contourSelectedCursor) {
+					this.toile.drawNodes(_.get(glyph, toLodashPath(contourSelectedCursor)), contourSelectedCursor, hotItems);
+					this.toile.drawSelectedContour(_.slice(glyph.otContours, contourIndexes[0], contourIndexes[1]));
+				}
 
 				const nodes = hotItems.filter((item) => {
 					return item.type <= toileType.NODE_SKELETON;
@@ -175,11 +183,11 @@ export default class GlyphCanvas extends React.PureComponent {
 					return item.type === toileType.POINT_MENU_ITEM;
 				});
 				const tools = hotItems.filter((item) => {
-					return item.type === toileType.THICKNESS_TOOL
-						|| item.type === toileType.THICKNESS_TOOL_CANCEL
-						|| item.type === toileType.ANGLE_TOOL
-						|| item.type === toileType.DISTR_TOOL
-						|| item.type === toileType.POS_TOOL;
+					return item.type === toileType.DISTR_TOOL;
+				});
+				const contours = hotItems.filter((item) => {
+					return item.type === toileType.GLYPH_CONTOUR
+						|| item.type === toileType.GLYPH_COMPONENT_CONTOUR;
 				});
 
 				if (nodes.length > 1 && !draggedItem && !selectedItem) {
@@ -214,9 +222,15 @@ export default class GlyphCanvas extends React.PureComponent {
 						else if (nodes.length === 1) {
 							selectedItem = nodes[0];
 						}
+						else if (contours.length === 1 && !moving) {
+							contourSelectedCursor = contours[0].id;
+							contourIndexes = contours[0].data.indexes;
+						}
 					}
-					else if (hotItems.length === 0 && !moving) {
+					else if (hotItems.length === 0 && !moving && !draggedItem) {
 						selectedItem = undefined;
+						contourSelectedCursor = undefined;
+						contourIndexes = undefined;
 					}
 				}
 
@@ -236,47 +250,40 @@ export default class GlyphCanvas extends React.PureComponent {
 							this.toile.drawAngleBetweenHandleAndMouse(selectedNodeParent, selectedNode);
 							break;
 						}
-						case toileType.THICKNESS_TOOL: {
-							const {baseWidth, opposite, center} = draggedItem.data;
+						case toileType.NODE: {
+							const {baseWidth, oppositeId, center, baseAngle, skeleton, angleOffset} = draggedItem.data;
 							const [mousePosInWorld] = transformCoords(
 								[mouse.pos],
 								inverseProjectionMatrix(this.toile.viewMatrix),
 								this.toile.height / this.toile.viewMatrix[0],
 							);
+							const opposite = _.get(glyph, oppositeId);
+							//width factor
+							const factor = distance2D(opposite, mousePosInWorld) / baseWidth;
 
-							const factor = dot2D(subtract2D(opposite, mousePosInWorld), normalize2D(subtract2D(opposite, center))) / baseWidth;
-
-							this.client.dispatchAction('/change-glyph-node-manually', {
-								changes: {
-									[draggedItem.data.modifAddress]: factor,
-								},
-								glyphName: glyph.name,
-							});
-
-							break;
-						}
-						case toileType.ANGLE_TOOL: {
-							const {baseAngle, skeleton} = draggedItem.data;
-							const [mousePosInWorld] = transformCoords(
-								[mouse.pos],
-								inverseProjectionMatrix(this.toile.viewMatrix),
-								this.toile.height / this.toile.viewMatrix[0],
-							);
-
+							//angle difference
 							const mouseVec = subtract2D(mousePosInWorld, skeleton);
 							const angleDiff = Math.atan2(mouseVec.y, mouseVec.x) - baseAngle;
 
 							this.client.dispatchAction('/change-glyph-node-manually', {
 								changes: {
-									[draggedItem.data.modifAddress]: angleDiff,
+									[`${draggedItem.data.modifAddress}.width`]: factor,
+									[`${draggedItem.data.modifAddress}.angle`]: angleDiff + angleOffset,
 								},
 								glyphName: glyph.name,
 							});
 
+							const id = draggedItem.data.parentId;
+							const skeletonNode = _.get(glyph, id);
+
+							if (skeleton) {
+								this.toile.drawThicknessTool(skeletonNode, `${id}.thickness`, hotItems);
+								this.toile.drawAngleTool(skeletonNode, `${id}.angle`, hotItems);
+							}
 							break;
 						}
-						case toileType.POS_TOOL: {
-							const {base} = draggedItem.data;
+						case toileType.NODE_SKELETON: {
+							const {base, center} = draggedItem.data;
 							const [mousePosInWorld] = transformCoords(
 								[mouse.pos],
 								inverseProjectionMatrix(this.toile.viewMatrix),
@@ -292,6 +299,13 @@ export default class GlyphCanvas extends React.PureComponent {
 								},
 								glyphName: glyph.name,
 							});
+
+							const id = draggedItem.id;
+							const skeletonNode = _.get(glyph, id);
+
+							if (skeletonNode) {
+								this.toile.drawSkeletonPosTool(skeletonNode, `${id}.pos`, hotItems);
+							}
 							break;
 						}
 						case toileType.DISTR_TOOL: {
@@ -332,12 +346,6 @@ export default class GlyphCanvas extends React.PureComponent {
 								? appStateValue : appState.ONCURVE_THICKNESS;
 							break;
 						}
-						case toileType.NODE_SKELETON: {
-							appStateValue = appStateValue <= appState.SKELETON_DISTR
-								&& appStateValue >= appState.ONCURVE_THICKNESS
-								? appStateValue : appState.SKELETON_POS;
-							break;
-						}
 						default:
 							break;
 					}
@@ -347,36 +355,6 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 
 				switch (appStateValue) {
-					case appState.ONCURVE_THICKNESS: {
-						const id = selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id;
-						const node = _.get(glyph, id);
-
-						if (node) {
-							this.toile.drawThicknessTool(node, `${id}.thickness`, hotItems);
-						}
-						this.toile.drawNodeToolsLib(appStateValue);
-						break;
-					}
-					case appState.ONCURVE_ANGLE: {
-						const id = selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id;
-						const node = _.get(glyph, id);
-
-						if (node) {
-							this.toile.drawAngleTool(node, `${id}.angle`, hotItems);
-						}
-						this.toile.drawNodeToolsLib(appStateValue);
-						break;
-					}
-					case appState.SKELETON_POS: {
-						const id = selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id;
-						const node = _.get(glyph, id);
-
-						if (node) {
-							this.toile.drawSkeletonPosTool(node, `${id}.pos`, hotItems);
-						}
-						this.toile.drawNodeToolsLib(appStateValue);
-						break;
-					}
 					case appState.SKELETON_DISTR: {
 						const id = selectedItem.data.parentId ? selectedItem.data.parentId : selectedItem.id;
 						const node = _.get(glyph, id);
