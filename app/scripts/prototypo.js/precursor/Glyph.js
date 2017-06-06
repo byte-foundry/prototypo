@@ -203,13 +203,24 @@ export default class Glyph {
 	}
 
 	getFromXPath(path, caller) {
-		let result = this;
+		let result;
 
-		path.split('.').forEach((propName) => {
-			if (!((!result[propName] || result[propName] === null) && result.solveOperationOrder instanceof Function)) {
-				result = result[propName];
-			}
-		});
+		const pathArray = path.split('.');
+
+		if (pathArray.length === 1) {
+			result = this[pathArray[0]];
+		}
+		else if (pathArray.length > 1) {
+			result = this[pathArray[0]];
+			pathArray.shift();
+
+			pathArray.forEach((propName) => {
+				if (!((!result[propName] || result[propName] === null) && result.solveOperationOrder instanceof Function)) {
+					result = result[propName];
+				}
+			});
+		}
+
 
 		/*if (!(result.solveOperationOrder instanceof Function)) {
 			console.error(`While trying to solve ${this.name.value} operation order, couldn't find ${path} property asked by ${caller}`);
@@ -248,9 +259,80 @@ export default class Glyph {
 		});
 	}
 
+	handleObjectOp(op, opDone, params) {
+		const {action, cursor} = op;
 
-	/* eslint-disable max-depth */
-	/* eslint-disable no-loop-func */
+		if (action === 'handle') {
+			const contour = this.getFromXPath(cursor);
+			const dest = _.get(opDone, toLodashPath(cursor));
+
+			if (contour.skeleton.value) {
+				SkeletonPath.correctValues(dest);
+
+				if (contour.closed.value) {
+					ClosedSkeletonPath.createHandle(dest);
+				}
+				else {
+					SkeletonPath.createHandle(dest);
+				}
+			}
+			else {
+				const lodashCursor = toLodashPath(cursor);
+				SimplePath.correctValues(dest);
+
+				_.set(opDone, `${lodashCursor}.checkOrientation`, true);
+
+				SimplePath.createHandle(dest);
+			}
+		}
+		else if (action === 'expand') {
+			const manualChanges = (params.manualChanges[this.name.value] || {}).cursors || {};
+			const node = ExpandingNode.applyExpandChange(
+				_.get(opDone, toLodashPath(cursor)),
+				manualChanges,
+				cursor
+			);
+			const expandedTo = ExpandingNode.expand(node);
+
+			_.set(
+				opDone,
+				toLodashPath(`${cursor}.expandedTo`),
+				expandedTo
+			);
+
+		}
+	}
+
+	handleOp(op, opDone, params, localParams, parentAnchors) {
+		const obj = this.getFromXPath(op);
+		let result = obj.getResult(localParams,
+			opDone.contours,
+			opDone.anchors,
+			parentAnchors,
+			utils);
+		const option = op.charAt(op.length - 1);
+
+		if (option === 'x' || option === 'y') {
+			_.set(
+				opDone,
+				toLodashPath(`${op}Base`),
+				result,
+			);
+
+			const manualChanges = (
+				(params.manualChanges[this.name.value] || {}).cursors || {}
+			)[op] || 0;
+
+			result += manualChanges;
+		}
+
+		_.set(
+			opDone,
+			toLodashPath(op),
+			result,
+		);
+	}
+
 	constructGlyph(params, parentAnchors, glyphs) {
 		const localParams = {
 			...params,
@@ -265,95 +347,10 @@ export default class Glyph {
 			const op = this.operationOrder[i];
 
 			if (typeof op === 'object') {
-				const {action, cursor} = op;
-
-				if (action === 'handle') {
-					const contour = this.getFromXPath(cursor);
-
-					if (contour.skeleton.value) {
-						const correctedValues = SkeletonPath.correctValues(_.get(opDone, toLodashPath(cursor)), cursor);
-
-						Object.keys(correctedValues).forEach((key) => {
-							_.set(opDone, toLodashPath(key), correctedValues[key]);
-						});
-
-						if (contour.closed.value) {
-							const handledValues = ClosedSkeletonPath.createHandle(_.get(opDone, toLodashPath(cursor)), cursor);
-
-							Object.keys(handledValues).forEach((key) => {
-								_.set(opDone, toLodashPath(key), handledValues[key]);
-							});
-						}
-						else {
-							const handledValues = SkeletonPath.createHandle(_.get(opDone, toLodashPath(cursor)), cursor);
-
-							Object.keys(handledValues).forEach((key) => {
-								_.set(opDone, toLodashPath(key), handledValues[key]);
-							});
-						}
-					}
-					else {
-						const lodashCursor = toLodashPath(cursor);
-						const correctedValues = SimplePath.correctValues(_.get(opDone, lodashCursor), cursor);
-
-						_.set(opDone, `${lodashCursor}.checkOrientation`, true);
-
-						Object.keys(correctedValues).forEach((key) => {
-							_.set(opDone, toLodashPath(key), correctedValues[key]);
-						});
-
-						const handledValues = SimplePath.createHandle(_.get(opDone, toLodashPath(cursor)), cursor);
-
-						Object.keys(handledValues).forEach((key) => {
-							_.set(opDone, toLodashPath(key), handledValues[key]);
-						});
-					}
-				}
-				else if (action === 'expand') {
-					const manualChanges = (params.manualChanges[this.name.value] || {}).cursors || {};
-					const node = ExpandingNode.applyExpandChange(
-						_.get(opDone, toLodashPath(cursor)),
-						manualChanges,
-						cursor
-					);
-					const expandedTo = ExpandingNode.expand(node);
-
-					_.set(
-						opDone,
-						toLodashPath(`${cursor}.expandedTo`),
-						expandedTo
-					);
-
-				}
+				this.handleObjectOp(op, opDone, params);
 			}
 			else {
-				const obj = this.getFromXPath(op);
-				let result = obj.getResult(localParams,
-					opDone.contours,
-					opDone.anchors,
-					parentAnchors,
-					utils);
-				const option = op.charAt(op.length - 1);
-
-				if (option === 'x' || option === 'y') {
-					_.set(
-						opDone,
-						toLodashPath(`${op}Base`),
-						result,
-					);
-
-					const manualChanges = (
-						(params.manualChanges[this.name.value] || {}).cursors || {}
-					)[op] || 0;
-
-					result += manualChanges;
-				}
-
-				_.set(
-					opDone,
-					toLodashPath(op),
-					result,
-				);
+				this.handleOp(op, opDone, params, localParams, parentAnchors);
 			}
 		}
 
@@ -363,23 +360,17 @@ export default class Glyph {
 			const anchor = this.anchors[key];
 			const ref = opAnchors[key];
 
-			_.set(
-				opDone,
-				`anchors[${key}]`,
-				_.reduce(Object.keys(anchor), (acc, name) => {
-					if (opDone.anchors[key][name]) {
-						acc[name] = ref[name];
-					}
-					else {
-						acc[name] = anchor[name].getResult(localParams, opDone.contours, opAnchors, parentAnchors, utils);
-					}
+			opDone.anchors[key] = _.reduce(Object.keys(anchor), (acc, name) => {
+				if (opDone.anchors[key][name]) {
+					acc[name] = ref[name];
+				}
+				else {
+					acc[name] = anchor[name].getResult(localParams, opDone.contours, opAnchors, parentAnchors, utils);
+				}
 
-					return acc;
-				}, opAnchors[key])
-			);
+				return acc;
+			}, opAnchors[key]);
 		});
-
-		opDone.anchors = opAnchors;
 
 		opDone.components = this.components.map((component) => {
 			return component.constructComponent(localParams, opDone.contours, opDone.anchors, utils, glyphs);
@@ -387,11 +378,7 @@ export default class Glyph {
 
 		const transformedThis = _.mapValues(this, (prop, name) => {
 			if (prop !== undefined
-				&& name !== 'parameters'
-				&& name !== 'contours'
-				&& name !== 'anchors'
-				&& name !== 'components'
-				&& name !== 'operationOrder') {
+				&& !/parameters|contours|anchors|components|operationOrder/.test(name)) {
 				return prop.getResult(localParams, opDone.contours, opDone.anchors, utils, glyphs);
 			}
 		});
@@ -424,6 +411,4 @@ export default class Glyph {
 			otContours,
 		};
 	}
-	/* eslint-enable max-depth */
-	/* eslint-enable no-loop-func */
 }

@@ -8,8 +8,7 @@ import Node from './Node.js';
 import ExpandingNode from './ExpandingNode.js';
 
 function computeHandle(
-	cursor,
-	result,
+	dest,
 	current,
 	prev,
 	next,
@@ -110,14 +109,12 @@ function computeHandle(
 		|| Number.isNaN(outVector.x)
 		|| Number.isNaN(outVector.y)
 	) {
-		console.error(`handle creation went south for cursor:`, cursor);
+		console.error(`handle creation went south for cursor:${dest.cursor}`);
 	}
 
 
-	result[`${cursor}handleIn`] = round2D(add2D(current, inVector));
-	result[`${cursor}handleOut`] = round2D(add2D(current, outVector));
-
-	return result;
+	dest.handleIn = round2D(add2D(current, inVector));
+	dest.handleOut = round2D(add2D(current, outVector));
 }
 
 class SolvablePath {
@@ -144,46 +141,46 @@ class SolvablePath {
 		});
 	}
 
-	static correctValues({nodes, closed, skeleton}, cursor) {
+	static correctValues({nodes, closed, skeleton}) {
 		const results = {};
 
 		for (let i = 0; i < nodes.length; i++) {
 			const node = nodes[i];
 
-			results[`${cursor}.nodes.${i}.nodeAddress`] = node.nodeAddress;
+			nodes[i].nodeAddress = node.nodeAddress;
 
 			if (node.expand) {
 				const dirIn = readAngle(node.dirIn);
 				const dirOut = readAngle(node.dirOut);
 
-				results[`${cursor}.nodes.${i}.expand.angle`] = readAngle(node.expand.angle);
-				results[`${cursor}.nodes.${i}.dirIn`] = dirIn !== null ? dirIn : results[`${cursor}.nodes.${i}.expand.angle`] + Math.PI / 2;
-				results[`${cursor}.nodes.${i}.dirOut`] = dirOut !== null ? dirOut : results[`${cursor}.nodes.${i}.expand.angle`] + Math.PI / 2;
+				nodes[i].expand.angle = readAngle(node.expand.angle);
+				nodes[i].dirIn = dirIn !== null ? dirIn : nodes[i].expand.angle + Math.PI / 2;
+				nodes[i].dirOut = dirOut !== null ? dirOut : nodes[i].expand.angle + Math.PI / 2;
 			}
 			else {
-				results[`${cursor}.nodes.${i}.dirIn`] = readAngle(node.dirIn) || 0;
-				results[`${cursor}.nodes.${i}.dirOut`] = readAngle(node.dirOut) || 0;
+				nodes[i].dirIn = readAngle(node.dirIn) || 0;
+				nodes[i].dirOut = readAngle(node.dirOut) || 0;
 
-				results[`${cursor}.nodes.${i}.x`] = Math.round(node.x);
-				results[`${cursor}.nodes.${i}.y`] = Math.round(node.y);
+				nodes[i].x = Math.round(node.x);
+				nodes[i].y = Math.round(node.y);
 			}
 
 			if (node.typeOut === 'smooth') {
-				results[`${cursor}.nodes.${i}.dirOut`] = results[`${cursor}.nodes.${i}.dirIn`];
+				nodes[i].dirOut = nodes[i].dirIn;
 			}
 			else if (node.typeIn === 'smooth') {
-				results[`${cursor}.nodes.${i}.dirIn`] = results[`${cursor}.nodes.${i}.dirOut`];
+				nodes[i].dirIn = nodes[i].dirOut;
 			}
 
-			results[`${cursor}.nodes.${i}.tensionIn`] = node.typeIn === 'line' ? 0 : (node.tensionIn || 1);
-			results[`${cursor}.nodes.${i}.tensionOut`] = node.typeOut === 'line' ? 0 : (node.tensionOut || 1);
+			nodes[i].tensionIn = node.typeIn === 'line' ? 0 : (node.tensionIn || 1);
+			nodes[i].tensionOut = node.typeOut === 'line' ? 0 : (node.tensionOut || 1);
 
 			if (!closed && skeleton) {
 				if (i === 0) {
-					 results[`${cursor}.nodes.${i}.tensionIn`] = 0;
+					 nodes[i].tensionIn = 0;
 				}
 				else if (i === nodes.length - 1) {
-					 results[`${cursor}.nodes.${i}.tensionOut`] = 0;
+					 nodes[i].tensionOut = 0;
 				}
 			}
 		}
@@ -239,8 +236,8 @@ export class SkeletonPath extends SolvablePath {
 
 	}
 
-	static createHandle({nodes, closed}, cursor) {
-		let result = {};
+	static createHandle(dest) {
+		const {nodes, closed} = dest;
 
 		for (let k = 0; k < nodes.length; k++) {
 			const node = nodes[k];
@@ -275,9 +272,8 @@ export class SkeletonPath extends SolvablePath {
 				const prevNode = nodes[prevFirstIndex];
 				const currentExpanded = node.expandedTo[j];
 
-				result = computeHandle(
-					`${cursor}.nodes.${k}.expandedTo.${j}.`,
-					result,
+				computeHandle(
+					dest.nodes[k].expandedTo[j],
 					currentExpanded,
 					prevExpanded,
 					nextExpanded,
@@ -288,8 +284,6 @@ export class SkeletonPath extends SolvablePath {
 				);
 			}
 		}
-
-		return result;
 	}
 }
 
@@ -299,8 +293,8 @@ export class ClosedSkeletonPath extends SkeletonPath {
 		this.closed = constantOrFormula(true);
 	}
 
-	static createHandle({nodes, closed}, cursor) {
-		let result = {};
+	static createHandle(dest) {
+		const {nodes, closed} = dest;
 
 		for (let k = 0; k < nodes.length; k++) {
 			const node = nodes[k];
@@ -315,9 +309,8 @@ export class ClosedSkeletonPath extends SkeletonPath {
 				const prevNode = nodes[prevFirstIndex];
 				const currentExpanded = node.expandedTo[j];
 
-				result = computeHandle(
-					`${cursor}.nodes.${k}.expandedTo.${j}.`,
-					result,
+				computeHandle(
+					dest.nodes[k].expandedTo[j],
 					currentExpanded,
 					prevExpanded,
 					nextExpanded,
@@ -328,8 +321,6 @@ export class ClosedSkeletonPath extends SkeletonPath {
 				);
 			}
 		}
-
-		return result;
 	}
 }
 
@@ -364,8 +355,8 @@ export class SimplePath extends SolvablePath {
 
 	}
 
-	static createHandle({nodes}, cursor) {
-		let result = {};
+	static createHandle(dest) {
+		const {nodes} = dest;
 
 		for (let k = 0; k < nodes.length; k++) {
 			const node = nodes[k];
@@ -373,9 +364,8 @@ export class SimplePath extends SolvablePath {
 			const nextNode = nodes[(k + 1) % nodes.length];
 
 
-			result = computeHandle(
-				`${cursor}.nodes.${k}.`,
-				result,
+			computeHandle(
+				dest.nodes[k],
 				node,
 				prevNode,
 				nextNode,
@@ -384,7 +374,5 @@ export class SimplePath extends SolvablePath {
 				nextNode
 			);
 		}
-
-		return result;
 	}
 }
