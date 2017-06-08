@@ -42,12 +42,9 @@ const red = '#ff725e';
 
 const transparent = 'transparent';
 const inHandleColor = yellow;
-const hotInHandleColor = '#d5c650';
 const outHandleColor = blue;
-const hotOutHandleColor = '#00a9b6';
 const onCurveColor = green;
 const skeletonColor = red;
-const hotOnCurveColor = '#12b372';
 const ringBackground = 'rgba(255,114,94,0.4)';
 
 const pointMenuAnimationLength = 10;
@@ -227,6 +224,7 @@ export default class Toile {
 						},
 						radius: nodeHotRadius,
 						parentId: id,
+						skeletonId: parentId,
 					},
 				});
 			}
@@ -259,6 +257,7 @@ export default class Toile {
 						},
 						radius: nodeHotRadius,
 						parentId: id,
+						skeletonId: parentId,
 					},
 				});
 			}
@@ -270,7 +269,7 @@ export default class Toile {
 
 		const drawNode = !(parentNode
 			&& parentNode.x === node.x
-			&& parentNode.y === node.y)
+			&& parentNode.y === node.y);
 
 		if (drawNode) {
 			this.drawControlPoint(node, hot, node.handleIn ? onCurveColor : skeletonColor);
@@ -354,8 +353,29 @@ export default class Toile {
 				this.drawNode(node, id, undefined, undefined, hotItems);
 			}
 			if (node.expandedTo) {
-				const prevNode = nodes[(j - 1) - nodes.length * Math.floor((j - 1) / nodes.length)];
-				const nextNode = nodes[(j + 1) % nodes.length];
+
+				let prevNode = nodes[(j - 1) - nodes.length * Math.floor((j - 1) / nodes.length)];
+				let nextNode = nodes[(j + 1) % nodes.length];
+
+				if (!contour.closed) {
+					if (j === nodes.length - 1) {
+						nextNode = {
+							expandedTo: [
+								nodes[j].expandedTo[1],
+								nodes[j].expandedTo[0],
+							],
+						};
+					}
+					else if (j === 0) {
+						prevNode = {
+							expandedTo: [
+								nodes[j].expandedTo[1],
+								nodes[j].expandedTo[0],
+							],
+						};
+					}
+				}
+
 				this.drawNode(node.expandedTo[0],
 					`${id}.expandedTo.0`,
 					node,

@@ -240,14 +240,45 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 
 				if (draggedItem) {
+					const mouseMoved = mouse.delta.x !== 0 || mouse.delta.y !== 0
+					this.toile.clearDelta();
 					switch (draggedItem.type) {
 						case toileType.NODE_IN:
 						case toileType.NODE_OUT: {
 							appStateValue = appState.HANDLE_MOD;
 							const selectedNode = _.get(glyph, draggedItem.id);
 							const selectedNodeParent = _.get(glyph, draggedItem.data.parentId);
+							const skeletonNode = _.get(glyph, draggedItem.data.skeletonId);
+							const [mousePosInWorld] = transformCoords(
+								[mouse.pos],
+								inverseProjectionMatrix(this.toile.viewMatrix),
+								this.toile.height / this.toile.viewMatrix[0],
+							);
+							const mouseVec = subtract2D(mousePosInWorld, selectedNodeParent);
+							const angle = Math.atan2(mouseVec.y, mouseVec.x);
+							let tension = distance2D(mousePosInWorld, selectedNodeParent);
+							let dirDiff;
 
-							this.toile.drawAngleBetweenHandleAndMouse(selectedNodeParent, selectedNode);
+							if (toileType.NODE_IN === draggedItem.type) {
+								dirDiff = angle - skeletonNode.dirIn;
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${draggedItem.data.parentId}.dirIn`]: dirDiff,
+										[`${draggedItem.data.parentId}.tensionIn`]: tension / selectedNodeParent.baseLengthIn,
+									},
+									glyphName: glyph.name,
+								});
+							}
+							else if (toileType.NODE_OUT === draggedItem.type) {
+								dirDiff = angle - skeletonNode.dirOut;
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${draggedItem.data.parentId}.dirOut`]: dirDiff,
+										[`${draggedItem.data.parentId}.tensionOut`]: tension / selectedNodeParent.baseLengthOut,
+									},
+									glyphName: glyph.name,
+								});
+							}
 							break;
 						}
 						case toileType.NODE: {
@@ -265,13 +296,15 @@ export default class GlyphCanvas extends React.PureComponent {
 							const mouseVec = subtract2D(mousePosInWorld, skeleton);
 							const angleDiff = Math.atan2(mouseVec.y, mouseVec.x) - baseAngle;
 
-							this.client.dispatchAction('/change-glyph-node-manually', {
-								changes: {
-									[`${draggedItem.data.modifAddress}.width`]: factor,
-									[`${draggedItem.data.modifAddress}.angle`]: angleDiff + angleOffset,
-								},
-								glyphName: glyph.name,
-							});
+							if (mouseMoved) {
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${draggedItem.data.modifAddress}.width`]: factor,
+										[`${draggedItem.data.modifAddress}.angle`]: angleDiff + angleOffset,
+									},
+									glyphName: glyph.name,
+								});
+							}
 
 							const id = draggedItem.data.parentId;
 							const skeletonNode = _.get(glyph, id);
@@ -292,13 +325,15 @@ export default class GlyphCanvas extends React.PureComponent {
 
 							const mouseVec = subtract2D(mousePosInWorld, base);
 
-							this.client.dispatchAction('/change-glyph-node-manually', {
-								changes: {
-									[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
-									[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
-								},
-								glyphName: glyph.name,
-							});
+							if (mouseMoved) {
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
+										[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
+									},
+									glyphName: glyph.name,
+								});
+							}
 
 							const id = draggedItem.id;
 							const skeletonNode = _.get(glyph, id);
@@ -324,14 +359,17 @@ export default class GlyphCanvas extends React.PureComponent {
 
 							const mouseVec = subtract2D(add2D(mulScalar2D(distProjOntoSkel, skelVec), expandedTo[0]), base);
 
-							this.client.dispatchAction('/change-glyph-node-manually', {
-								changes: {
-									[`${draggedItem.data.modifAddress}expand.distr`]: distProjOntoSkel / width,
-									[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
-									[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
-								},
-								glyphName: glyph.name,
-							});
+							if (mouseMoved) {
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${draggedItem.data.modifAddress}expand.distr`]: distProjOntoSkel / width,
+										[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
+										[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
+									},
+									glyphName: glyph.name,
+								});
+							}
+
 							break;
 						}
 						default:

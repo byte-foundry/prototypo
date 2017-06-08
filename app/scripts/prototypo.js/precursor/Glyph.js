@@ -270,10 +270,10 @@ export default class Glyph {
 				SkeletonPath.correctValues(dest);
 
 				if (contour.closed.value) {
-					ClosedSkeletonPath.createHandle(dest);
+					ClosedSkeletonPath.createHandle(dest, (params.manualChanges[this.name.value] || {}).cursors || {});
 				}
 				else {
-					SkeletonPath.createHandle(dest);
+					SkeletonPath.createHandle(dest, (params.manualChanges[this.name.value] || {}).cursors || {});
 				}
 			}
 			else {

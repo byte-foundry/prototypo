@@ -1,4 +1,4 @@
-/* global _, trackJs */
+/* global _, trackJs, _URL*/
 import XXHash from 'xxhashjs';
 import slug from 'slug';
 import {gql} from 'react-apollo';
@@ -8,21 +8,23 @@ import {userStore, prototypoStore, undoableStore, fontInstanceStore} from '../st
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 
+import {Typefaces} from '../services/typefaces.services.js';
+import {FontValues} from '../services/values.services.js';
+import Log from '../services/log.services.js';
+import HoodieApi from '../services/hoodie.services.js';
 import {loadStuff} from '../helpers/appSetup.helpers.js';
 import {copyFontValues, loadFontValues, saveAppValues} from '../helpers/loadValues.helpers.js';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 
-import {Typefaces} from '../services/typefaces.services.js';
-import Log from '../services/log.services.js';
-import {FontValues} from '../services/values.services.js';
-import apolloClient from '../services/graphcool.services';
+import FontPrecursor from '../prototypo.js/precursor/FontPrecursor.js';
 
 import WorkerPool from '../worker/worker-pool.js';
 
-import {fontToSfntTable} from '../opentype/font.js';
+import WorkerPool from '../worker/worker-pool.js';
 
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
+let fontMaker;
 let localServer;
 let localClient;
 let undoWatcher;
@@ -34,6 +36,36 @@ const debouncedSave = _.throttle((values, db, variantId) => {
 	});
 }, 2000);
 
+
+function paramAuthorized(plan, credits) {
+	const paidPlan = plan.indexOf('free_') === -1;
+	const enoughCredits = credits && credits > 0;
+
+	return paidPlan || enoughCredits;
+}
+
+const a = document.createElement('a');
+
+const triggerDownload = function(arrayBuffer, filename) {
+	const reader = new FileReader();
+	const enFamilyName = filename;
+
+	reader.onloadend = function() {
+		a.download = `${enFamilyName}.otf`;
+		a.href = reader.result;
+		a.dispatchEvent(new MouseEvent('click'));
+
+		setTimeout(function() {
+			a.href = '#';
+			_URL.revokeObjectURL(reader.result);
+		}, 100);
+	};
+
+	reader.readAsDataURL(new Blob(
+		[new DataView(arrayBuffer)],
+		{type: 'font/opentype'}
+	));
+};
 
 let oldFont;
 
@@ -97,6 +129,7 @@ export default {
 	'/create-font': (typedata) => {
 		const fontWorkerPool = new WorkerPool();
 		const glyphs = {};
+
 		_.forIn(typedata.glyphs, (glyph) => {
 			if (!glyphs[glyph.unicode]) {
 				glyphs[glyph.unicode] = [];
@@ -118,14 +151,7 @@ export default {
 			},
 		});
 
-		fontWorkerPool.doFastJob({
-			action: {
-				type: 'createFont',
-				data: typedata,
-			},
-			callback: () => {
-			},
-		});
+		fontMaker = new FontPrecursor(typedata);
 
 		const patch = prototypoStore
 			.set('fontName', typedata.fontinfo.familyName)
@@ -718,21 +744,6 @@ export default {
 		const glyph = altList[glyphCanvasUnicode] || String.fromCharCode(glyphCanvasUnicode);
 		const jobs = [];
 
-		pool.doFastJob({
-			action: {
-				type: 'constructGlyphs',
-				data: {
-					params,
-					subset: glyph,
-				},
-			},
-			callback: ({font}) => {
-				localClient.dispatchAction('/store-value-font', {
-					glyph: font.glyphs[0],
-				});
-			},
-		});
-
 		const subset = _.map(
 			_.uniq(subsetString.split('')),
 			(letter) => {
@@ -777,56 +788,41 @@ export default {
 				}
 			});
 
-			const arrayBuffer = fontToSfntTable({
-				...fontResult,
-				fontFamily: {en: 'Prototypo web font'},
-				fontSubfamily: {en: 'Regular'},
-				postScriptName: {},
-				unitsPerEm: 1024,
+			pool.doFastJob({
+				action: {
+					type: 'makeOtf',
+					data: {
+						fontResult,
+					},
+				},
+				callback: ({arrayBuffer}) => {
+					if (params.trigger) {
+						 triggerDownload(arrayBuffer.buffer, 'hello');
+					}
+
+					const fontFace = new FontFace(
+						prototypoStore.get('fontName'),
+						arrayBuffer.buffer,
+					);
+
+					if (oldFont) {
+						document.fonts.delete(oldFont);
+					}
+
+					document.fonts.add(fontFace);
+					oldFont = fontFace;
+				},
 			});
-
-			if (params.trigger) {
-				 triggerDownload(arrayBuffer.buffer, 'hello');
-			}
-
-			const fontFace = new FontFace(
-				prototypoStore.get('fontName'),
-				arrayBuffer.buffer,
-			);
-
-			if (oldFont) {
-				document.fonts.delete(oldFont);
-			}
-
-			document.fonts.add(fontFace);
-			oldFont = fontFace;
 
 			localClient.dispatchAction('/store-value-font', {
 				font: fontResult,
 			});
 		});
+
+		const glyphForCanvas = fontMaker.constructFont(params, glyph);
+
+		localClient.dispatchAction('/store-value-font', {
+			glyph: glyphForCanvas.glyphs[0],
+		});
 	},
-};
-
-var a = document.createElement('a');
-
-var triggerDownload = function(arrayBuffer, filename ) {
-	var reader = new FileReader();
-	var enFamilyName = filename;
-
-	reader.onloadend = function() {
-		a.download = enFamilyName + '.otf';
-		a.href = reader.result;
-		a.dispatchEvent(new MouseEvent('click'));
-
-		setTimeout(function() {
-			a.href = '#';
-			_URL.revokeObjectURL( reader.result );
-		}, 100);
-	};
-
-	reader.readAsDataURL(new Blob(
-		[ new DataView( arrayBuffer ) ],
-		{ type: 'font/opentype' }
-	));
 };

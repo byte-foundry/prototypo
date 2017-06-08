@@ -1,5 +1,6 @@
 /* globals _ */
 import FontPrecursor from '../prototypo.js/precursor/FontPrecursor.js';
+import {fontToSfntTable} from '../opentype/font.js';
 
 let currentFont;
 
@@ -24,6 +25,18 @@ self.onmessage = (e) => {
 			const font = currentFont.constructFont(e.data.data.params, e.data.data.subset);
 
 			self.postMessage({id: e.data.id, font});
+			break;
+		}
+		case 'makeOtf': {
+			const arrayBuffer = fontToSfntTable({
+				...e.data.data.fontResult,
+				fontFamily: {en: 'Prototypo web font'},
+				fontSubfamily: {en: 'Regular'},
+				postScriptName: {},
+				unitsPerEm: 1024,
+			});
+
+			self.postMessage({id: e.data.id, arrayBuffer});
 			break;
 		}
 		default: {

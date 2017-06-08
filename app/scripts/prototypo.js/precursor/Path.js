@@ -1,5 +1,5 @@
 /* global _ */
-import {subtract2D, mulScalar2D, dot2D, add2D, round2D} from '../../plumin/util/linear.js';
+import {subtract2D, mulScalar2D, dot2D, add2D, round2D, distance2D} from '../../plumin/util/linear.js';
 import {rayRayIntersection} from '../utils/updateUtils.js';
 import {readAngle} from '../helpers/utils.js';
 import {constantOrFormula} from '../helpers/values.js';
@@ -15,16 +15,20 @@ function computeHandle(
 	node,
 	prevNode,
 	nextNode,
-	invert
+	j,
+	params
 ) {
 	let inIntersection;
 	let outIntersection;
-	const prevDir = invert ? prevNode.dirIn : prevNode.dirOut;
-	const nextDir = invert ? nextNode.dirOut : nextNode.dirIn;
-	const dirToPrev = invert ? node.dirOut : node.dirIn;
-	const dirToNext = invert ? node.dirIn : node.dirOut;
-	const tensionIn = invert ? node.tensionOut : node.tensionIn;
-	const tensionOut = invert ? node.tensionIn : node.tensionOut;
+	const prevDir = j ? prevNode.dirIn : prevNode.dirOut;
+	const nextDir = j ? nextNode.dirOut : nextNode.dirIn;
+	let dirToPrev = j ? node.dirOut : node.dirIn;
+	let dirToNext = j ? node.dirIn : node.dirOut;
+	const tensionIn = j ? node.tensionOut : node.tensionIn;
+	const tensionOut = j ? node.tensionIn : node.tensionOut;
+
+	dirToNext += params[`${node.nodeAddress}expandedTo.${j}.dirOut`] || 0;
+	dirToPrev += params[`${node.nodeAddress}expandedTo.${j}.dirIn`] || 0;
 
 	if (Math.abs(prevDir % Math.PI) === Math.abs(dirToPrev % Math.PI)) {
 		const unitDir = {
@@ -96,8 +100,17 @@ function computeHandle(
 			dirToNext
 		);
 	}
-	const inVector = mulScalar2D(tensionIn * 0.6, subtract2D(inIntersection, current));
-	const outVector = mulScalar2D(tensionOut * 0.6, subtract2D(outIntersection, current));
+
+	let inVector = mulScalar2D(tensionIn * 0.6, subtract2D(inIntersection, current));
+	let outVector = mulScalar2D(tensionOut * 0.6, subtract2D(outIntersection, current));
+
+	if (node.expandedTo) {
+		node.expandedTo[j].baseLengthIn = distance2D(inVector, {x: 0, y: 0});
+		node.expandedTo[j].baseLengthOut = distance2D(outVector, {x: 0, y: 0});
+		inVector = mulScalar2D(params[`${node.nodeAddress}expandedTo.${j}.tensionIn`] || 1, inVector);
+		outVector = mulScalar2D(params[`${node.nodeAddress}expandedTo.${j}.tensionOut`] || 1, outVector);
+	}
+
 
 	if (
 		inVector.x === undefined
@@ -148,6 +161,8 @@ class SolvablePath {
 			const node = nodes[i];
 
 			nodes[i].nodeAddress = node.nodeAddress;
+			nodes[i].x = Math.round(node.x);
+			nodes[i].y = Math.round(node.y);
 
 			if (node.expand) {
 				const dirIn = readAngle(node.dirIn);
@@ -160,9 +175,6 @@ class SolvablePath {
 			else {
 				nodes[i].dirIn = readAngle(node.dirIn) || 0;
 				nodes[i].dirOut = readAngle(node.dirOut) || 0;
-
-				nodes[i].x = Math.round(node.x);
-				nodes[i].y = Math.round(node.y);
 			}
 
 			if (node.typeOut === 'smooth') {
@@ -236,7 +248,7 @@ export class SkeletonPath extends SolvablePath {
 
 	}
 
-	static createHandle(dest) {
+	static createHandle(dest, params) {
 		const {nodes, closed} = dest;
 
 		for (let k = 0; k < nodes.length; k++) {
@@ -280,7 +292,8 @@ export class SkeletonPath extends SolvablePath {
 					node,
 					prevNode,
 					nextNode,
-					j
+					j,
+					params
 				);
 			}
 		}
@@ -293,7 +306,7 @@ export class ClosedSkeletonPath extends SkeletonPath {
 		this.closed = constantOrFormula(true);
 	}
 
-	static createHandle(dest) {
+	static createHandle(dest, params) {
 		const {nodes, closed} = dest;
 
 		for (let k = 0; k < nodes.length; k++) {
@@ -317,7 +330,8 @@ export class ClosedSkeletonPath extends SkeletonPath {
 					node,
 					prevNode,
 					nextNode,
-					j
+					j,
+					params
 				);
 			}
 		}
@@ -371,7 +385,9 @@ export class SimplePath extends SolvablePath {
 				nextNode,
 				node,
 				prevNode,
-				nextNode
+				nextNode,
+				0,
+				{}
 			);
 		}
 	}
