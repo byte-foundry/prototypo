@@ -674,42 +674,6 @@ export default {
 			localServer.dispatchUpdate('/userStore', patch);
 		}
 	},
-	'/change-account-info': (data) => {
-		const form = userStore.get('profileForm');
-
-		form.errors = [];
-		delete form.success;
-		if (!data.firstname) {
-			form.errors.push('First name is required.');
-			const erroredPatch = userStore.set('profileForm', form).commit();
-
-			localServer.dispatchUpdate('/userStore', erroredPatch);
-			return;
-		}
-		form.success = true;
-		const formPatch = userStore.set('profileForm', form).commit();
-
-		localServer.dispatchUpdate('/userStore', formPatch);
-
-		const infos = {...userStore.get('infos'), ...data};
-
-		const patch = userStore.set('infos', infos).commit();
-
-		const lastname = data.lastname
-			? ` ${data.lastname}`
-			: '';
-
-		window.Intercom('update', {
-			name: `${data.firstname}${lastname}`,
-			twitter: data.twitter,
-			website: data.website,
-			occupation: data.css.value,
-			phone: data.phone || undefined, // avoid empty string being recorded into Intercom
-			skype: data.skype,
-		});
-
-		localServer.dispatchUpdate('/userStore', patch);
-	},
 	'/change-password': async ({password, newPassword, confirm}) => {
 		const changePasswordForm = userStore.get('changePasswordForm');
 
