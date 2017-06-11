@@ -132,9 +132,7 @@ export default class PrototypoCanvas extends React.Component {
 		document.removeEventListener('selectstart', this.preventSelection);
 	}
 
-	toggleContextMenu(e) {
-		e.preventDefault();
-		e.stopPropagation();
+	toggleContextMenu() {
 		this.setState({
 			showContextMenu: !this.state.showContextMenu,
 		});

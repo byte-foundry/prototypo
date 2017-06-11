@@ -32,9 +32,4 @@ export default {
 
 		window.dispatchEvent(valuesLoadedEvent);
 	},
-	'/load-account-values': (values) => {
-		const patch = userStore.set('infos', values.values || {}).commit();
-
-		localServer.dispatchUpdate('/userStore', patch);
-	},
 };

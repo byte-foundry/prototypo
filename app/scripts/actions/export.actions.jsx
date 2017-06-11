@@ -241,7 +241,7 @@ export default {
 		for (let i = 0; i < variants.length; i++) {
 			const currVariant = variants[i];
 
-			values.push(FontValues.get({typeface: currVariant.db})
+			values.push(FontValues.get({typeface: currVariant.db, variantId: currVariant.id})
 				.then((fontValues) => {
 					return {
 						currVariant,

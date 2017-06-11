@@ -195,8 +195,6 @@ const prototypoStore = new Remutable({
 });
 
 const userStore = new Remutable({
-	infos: {
-	},
 	subscription: false,
 	cards: [],
 	profileForm: {
@@ -217,10 +215,6 @@ const userStore = new Remutable({
 		inError: {},
 	},
 	buyCreditsForm: {
-		errors: [],
-		inError: {},
-	},
-	billingForm: {
 		errors: [],
 		inError: {},
 	},

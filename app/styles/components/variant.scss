@@ -1,9 +1,8 @@
 @import "../variables";
 
 .variant-list {
-	flex:0 0 55%;
-	padding:0px !important;
-	position:relative;
+	flex: 0 0 55%;
+	position: relative;
 	overflow: hidden;
 
 	&-download-overlay {
@@ -49,10 +48,7 @@
 
 	&-container {
 		background-color: $white;
-		position: relative;
-		padding: 40px;
 		flex: 0 0 55%;
-		min-height:100%;
 
 		&#{&}-enter {
 			margin-left: -100%;
@@ -92,69 +88,66 @@
 		margin-top:30px;
 	}
 
-	&-name {
+	&-item {
+		display: flex;
+		align-items: center;
 		margin-top: 7px;
 		color: $medium-grey;
-		cursor:pointer;
+		cursor: pointer;
 		text-transform: capitalize;
 		position: relative;
 		font-size: 18px;
 		background-color: $lightest-grey;
 		padding: 10px 20px;
 		transition: all .2s ease-out;
-		border: 1px solid $lightest-grey;
-		transform: perspective(1px);
+		border: 2px solid $lightest-grey;
 
 		&:hover {
 			color: $green;
-			transform: perspective(1px) scale3d(1.01, 1.01, 1.01);
+			transform: scale3d(1.01, 1.01, 1.01);
 			box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-			.button-container .button {
-				border-color: $green;
-				color: $green;
-			}
 		}
 
-		&.is-active {
+		&:focus {
+			outline: none;
+			border: 2px solid mix($green, $lightest-grey, 30%);
+		}
 
-		}
-		&:first-of-type {
-			background-color: $lightest-grey;
-		}
 		&:nth-child(2n+1) {
 			background-color: $white;
 		}
 
-		.button-container {
-			position: relative;
-			display: inline-block;
-			float: right;
-			.button {
-				padding: 2px 16px;
-				font-size: 14px;
-				line-height: 14px;
-				font-weight: 400;
-				margin-bottom: 0;
-				margin-right: 25px;
-				color: $light-grey;
-				border: 2px solid $light-grey;
-
-				&:hover {
-					border-color: $green;
-					color: $white;
-				}
-			}
+		&-name {
+			flex: 1;
 		}
 
 		.view-panels-menu {
-			position: relative;
-			display: inline-block;
-			float: right;
-			bottom: inherit;
-			right: inherit;
+			position: static;
+		}
+	}
+
+	&-add {
+		padding: 40px 40px 20px;
+	}
+
+	&-variants-content {
+		padding: 0 40px 20px;
+	}
+
+	&-open-button {
+		padding: 2px 16px;
+		font-size: 14px;
+		margin-right: 25px;
+		color: $light-grey;
+		box-shadow: 0 0 0 2px $light-grey inset;
+
+		&:hover, &:focus {
+			color: $white;
+			background-color: $light-grey;
 		}
 	}
 }
+
 .variant-info {
 	flex: 1 0 37%;
 	border-right: none !important;

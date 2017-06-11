@@ -2,8 +2,6 @@ import {prototypoStore} from '../stores/creation.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
-import {setupFontInstance} from '../helpers/font.helpers.js';
-import pleaseWait from 'please-wait';
 import {loadStuff} from '../helpers/appSetup.helpers.js';
 
 let localServer;

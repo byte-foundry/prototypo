@@ -3072,8 +3072,6 @@ elliptic@^6.0.0:
 elzevir.ptf@byte-foundry/elzevir.ptf#master:
   version "1.0.0"
   resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/cf9017a296842dd1b2b1cd93143b73d7dfb2eeae"
-  dependencies:
-    karma "^1.7.0"
 
 emoji-regex@^6.1.0:
   version "6.5.0"
@@ -6090,7 +6088,6 @@ lifespan@FranzPoize/lifespan#master, lifespan@^5.0.1:
 
 lifespan@franzpoize/lifespan:
   version "5.0.1"
-  uid a5e9c35a70c7c0ef95504d7dbbf0509d0236a418
   resolved "https://codeload.github.com/franzpoize/lifespan/tar.gz/a5e9c35a70c7c0ef95504d7dbbf0509d0236a418"
   dependencies:
     bluebird "^2.9.30"
@@ -8660,6 +8657,12 @@ react-onclickoutside@^6.1.1:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.4.0.tgz#f7552307305079bfb111783f408928abe7248a1e"
 
+react-portal@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/react-portal/-/react-portal-3.1.0.tgz#865c44fb72a1da106c649206936559ce891ee899"
+  dependencies:
+    prop-types "^15.5.8"
+
 react-proxy@^3.0.0-alpha.0:
   version "3.0.0-alpha.1"
   resolved "https://registry.yarnpkg.com/react-proxy/-/react-proxy-3.0.0-alpha.1.tgz#4400426bcfa80caa6724c7755695315209fa4b07"
@@ -9006,7 +9009,6 @@ remutable@FranzPoize/remutable#master:
 
 remutable@franzpoize/remutable:
   version "3.0.1"
-  uid "54f918c12dc9ab1ad84359837ac28398fa511529"
   resolved "https://codeload.github.com/franzpoize/remutable/tar.gz/54f918c12dc9ab1ad84359837ac28398fa511529"
   dependencies:
     bluebird "^2.9.30"

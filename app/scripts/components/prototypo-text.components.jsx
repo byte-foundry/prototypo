@@ -1,7 +1,7 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import ScrollArea from 'react-scrollbar';
+import ScrollArea from 'react-scrollbar/dist/no-css';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Editor, EditorState, ContentState, CompositeDecorator} from 'draft-js';
 import escapeStringRegexp from 'escape-string-regexp';
@@ -127,9 +127,7 @@ export default class PrototypoText extends React.Component {
 		this.saveText(editorState.getCurrentContent().getPlainText());
 	}
 
-	toggleContextMenu(e) {
-		e.preventDefault();
-		e.stopPropagation();
+	toggleContextMenu() {
 		this.setState({
 			showContextMenu: !this.state.showContextMenu,
 			showInsertMenu: false,
@@ -288,7 +286,7 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 					{menu}
 				</ViewPanelsMenu>
 				<ViewPanelsMenu
-					alignLeft={true}
+					alignLeft
 					text="Insert"
 					show={this.state.showInsertMenu}
 					toggle={this.toggleInsertMenu}>

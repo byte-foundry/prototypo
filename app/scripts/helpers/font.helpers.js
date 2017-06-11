@@ -52,6 +52,7 @@ export async function setupFontInstance(appValues) {
 		workerUrl,
 		workerDeps,
 		db: appValues.values.variantSelected.db,
+		variantId: appValues.values.variantSelected.id,
 		//subset,
 		typedata
 	};

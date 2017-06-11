@@ -1,5 +1,4 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
@@ -8,15 +7,14 @@ import Modal from '../shared/modal.components.jsx';
 import InputWithLabel from '../shared/input-with-label.components.jsx';
 import Button from '../shared/button.components.jsx';
 
-export default class DuplicateVariant extends React.Component {
+export default class DuplicateVariant extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			errorAddVariant: undefined,
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
-		// function binding to avoid unnecessary re-render
 		this.exit = this.exit.bind(this);
 		this.duplicateVariant = this.duplicateVariant.bind(this);
 	}
@@ -50,6 +48,7 @@ export default class DuplicateVariant extends React.Component {
 	duplicateVariant() {
 		this.client.dispatchAction('/create-variant', {
 			familyName: this.props.family.name,
+			familyId: this.props.family.id,
 			name: this.refs.newName.inputValue,
 			variantBase: this.props.variant,
 			noSwitch: true,

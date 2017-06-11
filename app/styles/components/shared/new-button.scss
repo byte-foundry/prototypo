@@ -45,4 +45,27 @@
 		font-size: 24px;
 		padding: 20px 30px;
 	}
+
+	&--outline {
+		background-color: transparent;
+		box-shadow: 0 0 0 2px $green inset;
+		color: $green;
+		transition: background-color 300ms ease;
+
+		&:hover, &:active, &:focus {
+			background-color: $green;
+			color: $white;
+		}
+
+		&--disabled {
+			background-color: transparent;
+			box-shadow: 0 0 0 2px $light-grey inset;
+			color: $light-grey;
+		}
+	}
+
+	&--fluid {
+		display: block;
+		width: 100%;
+	}
 }

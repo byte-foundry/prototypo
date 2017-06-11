@@ -8,7 +8,6 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import {loadStuff} from '../helpers/appSetup.helpers.js';
 import isProduction from '../helpers/is-production.helpers';
-import {AccountValues} from '../services/values.services.js';
 import getCurrency from '../helpers/currency.helpers.js';
 
 let localServer;
@@ -19,24 +18,7 @@ window.addEventListener('fluxServer.setup', async () => {
 
 	localClient = LocalClient.instance();
 	localClient.lifespan = new Lifespan();
-
-	localClient.getStore('/userStore', localClient.lifespan)
-		.onUpdate(({head}, patch) => {
-			// if infos is in the mutations object, it means infos has been modified
-			if (patch.toJS().m.hasOwnProperty('infos')) {
-				saveAccountValues(head.toJS().infos);
-			}
-		})
-		.onDelete(() => {
-			return;
-		});
 });
-
-function saveAccountValues(values) {
-	if (values !== undefined && values.accountValues !== undefined) {
-		AccountValues.save({typeface: 'default', values});
-	}
-}
 
 function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 	const form = userStore.get('addcardForm');
@@ -61,20 +43,19 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 				reject(data.error.message);
 			}
 
-			const infos = userStore.get('infos');
+			// TODO : GraphQL request to get the VAT
 
 			try {
 				const response = await HoodieApi.updateCustomer({
-					business_vat_id: vat || infos.vat, // Stripe way of storing VAT
+					business_vat_id: vat, // Stripe way of storing VAT
 					source: data.id,
 					metadata: {
-						vat_number: vat || infos.vat, // Quaderno way of reading VAT
+						vat_number: vat, // Quaderno way of reading VAT
 					},
 				});
 
 				/* DEPRECATED Backward compatibility, should be removed when every component uses the cards property in userStore */
-				infos.vat = vat || infos.vat;
-				let patch = userStore.set('infos', infos).set('cards', response.sources.data).commit();
+				let patch = userStore.set('cards', response.sources.data).commit();
 
 				localServer.dispatchUpdate('/userStore', patch);
 
@@ -330,10 +311,7 @@ export default {
 			// TMP
 			HoodieApi.addStripeIdToGraphCool(customer.id);
 			// TMP
-			const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname, css, phone, skype};
-			const patch = userStore.set('infos', {accountValues}).commit();
 
-			await AccountValues.save({typeface: 'default', values: {accountValues}});
 			localServer.dispatchUpdate('/userStore', patch);
 
 			form.errors = [];
@@ -348,7 +326,7 @@ export default {
 			localServer.dispatchUpdate('/userStore', endPatch);
 
 			if (toLocation.pathname === '/dashboard') {
-				await loadStuff(accountValues);
+				await loadStuff();
 				hashHistory.push(toLocation);
 			}
 			else {
@@ -444,11 +422,8 @@ export default {
 			return localServer.dispatchUpdate('/userStore', patch);
 		}
 
-		const infos = userStore.get('infos');
-
-		infos.plan = plan;
 		form.loading = false;
-		const patch = userStore.set('infos', infos).set('choosePlanForm', form).commit();
+		const patch = userStore.set('choosePlanForm', form).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);
 
@@ -515,13 +490,11 @@ export default {
 				coupon,
 				quantity,
 			});
-			const infos = {...userStore.get('infos')};
 
 			form.loading = false;
 			infos.plan = data.plan.id;
 
 			const patch = userStore
-				.set('infos', infos)
 				.set('confirmation', form)
 				.set('hasBeenSubscribing', 'true')
 				.commit();
@@ -547,10 +520,8 @@ export default {
 
 			await loadStuff();
 
-			HoodieApi.instance.plan = infos.plan;
-
 			hashHistory.push({
-				pathname: pathname ? pathname : '/account/success',
+				pathname: pathname || '/account/success',
 			});
 
 			localServer.dispatchUpdate('/userStore', patch);

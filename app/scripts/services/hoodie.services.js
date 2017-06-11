@@ -175,7 +175,7 @@ export default class HoodieApi {
 	}
 
 	static isLoggedIn() {
-		return /*window.localStorage.getItem('graphcoolToken') && */hoodie.account.hasValidSession();
+		return window.localStorage.getItem('graphcoolToken') && hoodie.account.hasValidSession();
 	}
 
 	static async askPasswordReset(email) {

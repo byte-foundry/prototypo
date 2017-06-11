@@ -204,9 +204,7 @@ export default class PrototypoWord extends React.PureComponent {
 		return buffer.join('');
 	}
 
-	toggleContextMenu(e) {
-		e.preventDefault();
-		e.stopPropagation();
+	toggleContextMenu() {
 		this.setState({
 			showContextMenu: !this.state.showContextMenu,
 		});

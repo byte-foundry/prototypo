@@ -13,7 +13,7 @@ module.exports = {
 			'react-joyride',
 			'react-json-pretty',
 			'react-router',
-			'react-scrollbar',
+			'react-scrollbar/dist/no-css',
 			'react-select',
 			'moment',
 			'babel-polyfill',

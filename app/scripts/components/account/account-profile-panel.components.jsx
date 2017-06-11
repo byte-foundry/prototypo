@@ -215,7 +215,7 @@ export default compose(
 		props: ({mutate, ownProps}) => ({
 			updateProfile: (values) => {
 				if (window.Intercom) {
-					const fullName = values.firstName + values.lastName ? ` ${values.lastName}` : '';
+					const fullName = values.firstName + (values.lastName ? ` ${values.lastName}` : '');
 
 					window.Intercom('update', {
 						name: fullName,

@@ -1,18 +1,20 @@
 import XXHash from 'xxhashjs';
 import slug from 'slug';
 import {hashHistory} from 'react-router';
+import {gql} from 'react-apollo';
+import cloneDeep from 'lodash/cloneDeep';
 
 import {userStore, prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {Typefaces} from '../services/typefaces.services.js';
-import {copyFontValues, loadFontValues, saveAppValues} from '../helpers/loadValues.helpers.js';
+import {loadFontValues, saveAppValues} from '../helpers/loadValues.helpers.js';
 import {setupFontInstance} from '../helpers/font.helpers.js';
 import {FontValues} from '../services/values.services.js';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 import Log from '../services/log.services.js';
-import HoodieApi from '../services/hoodie.services.js';
 import {loadStuff} from '../helpers/appSetup.helpers.js';
+import apolloClient from '../services/graphcool.services';
 
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
@@ -20,10 +22,11 @@ let localServer;
 let localClient;
 let undoWatcher;
 
-const debouncedSave = _.throttle((values, db) => {
+const debouncedSave = _.throttle((values, db, variantId) => {
 	FontValues.save({
 		typeface: db || 'default',
 		values,
+		variantId,
 	});
 }, 300);
 
@@ -68,6 +71,7 @@ export default {
 				workerDeps,
 				db,
 				typedata,
+				variantId,
 			} = await setupFontInstance(appValues);
 
 			localClient.dispatchAction('/store-value-font', {
@@ -81,7 +85,7 @@ export default {
 			localClient.dispatchAction('/create-font', familyName);
 			localClient.dispatchAction('/load-params', {controls, presets});
 			localClient.dispatchAction('/load-tags', tags);
-			loadFontValues(typedata, db);
+			loadFontValues(typedata, db, variantId);
 		}
 		catch (err) {
 			trackJs.track(err);
@@ -96,7 +100,7 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/change-font-from-typedata': async ({typedataJSON, db}) => {
+	'/change-font-from-typedata': async ({typedataJSON, db, variantId}) => {
 		const typedata = JSON.parse(typedataJSON);
 
 		localClient.dispatchAction('/store-value-font', {
@@ -111,14 +115,16 @@ export default {
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 		localClient.dispatchAction('/clear-undo-stack');
 
-		loadFontValues(typedata, db);
+		loadFontValues(typedata, db, variantId);
 	},
-	'/change-font': async ({templateToLoad, db}) => {
+	'/change-font': async ({templateToLoad, db, variantId}) => {
+		console.log('/change-font', templateToLoad, db, variantId);
 		const typedataJSON = await Typefaces.getFont(templateToLoad);
 
 		localClient.dispatchAction('/change-font-from-typedata', {
 			typedataJSON,
 			db,
+			variantId,
 		});
 		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
 		localClient.dispatchAction('/store-value', {uiSpacingMode: false});
@@ -180,9 +186,38 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		if (loadCurrent) {
-			await copyFontValues(newFont.variants[0].db);
-		}
+		const values = prototypoStore.get('controlsValues');
+
+		console.log('creating font', name, templateToLoad, values);
+
+		const query = await apolloClient.query({
+			query: gql`
+				{
+					user {
+						id
+					}
+				}
+			`,
+		});
+
+		await apolloClient.mutate({
+			mutation: gql`
+				mutation createFamilyAndRegular($name: String!, $template: String!, $values: Json, $userId: ID!) {
+					createFamily(name: $name, template: $template, ownerId: $userId, variants: {
+						name: "REGULAR",
+						values: $values,
+					}) {
+						id
+					}
+				}
+			`,
+			variables: {
+				name,
+				template: templateToLoad,
+				values,
+				userId: query.data.user.id,
+			},
+		});
 
 		localClient.dispatchAction('/change-font', {
 			templateToLoad,
@@ -214,23 +249,25 @@ export default {
 		}
 	},
 	'/select-variant': ({variant, family}) => {
+		console.log('/select-variant', variant, family);
 		if (!variant) {
 			variant = family.variants[0];
 		}
 
 		const patchVariant = prototypoStore
 			.set('variant', variant)
-			.set('family', {name: family.name, template: family.template}).commit();
+			.set('family', {id: family.id, name: family.name, template: family.template}).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 
 		localClient.dispatchAction('/change-font', {
 			templateToLoad: family.template,
 			db: variant.db,
+			variantId: variant.id,
 		});
-		saveAppValues();
 	},
 	'/create-variant-from-ref': ({ref, name, variant, family, noSwitch}) => {
+		const values = cloneDeep(ref.values);
 		const thicknessTransform = [
 			{string: 'Thin', thickness: 20},
 			{string: 'Light', thickness: 50},
@@ -241,18 +278,37 @@ export default {
 			{string: 'Black', thickness: 150},
 		];
 
-		_.each(thicknessTransform, (item) => {
-			if (name.indexOf(item.string) !== -1) {
-				ref.values.thickness = item.thickness;
+		thicknessTransform.forEach((item) => {
+			if (name.includes(item.string)) {
+				values.thickness = item.thickness;
 			}
 		});
 
-		if (name.indexOf('Italic') !== -1) {
-			ref.values.slant = 10;
+		if (name.includes('Italic')) {
+			values.slant = 10;
 		}
 
+		apolloClient.mutate({
+			mutation: gql`
+				mutation createVariant($name: String!, $familyId: ID!, $values: Json) {
+					createVariant(name: $name, familyId: $familyId, values: $values) {
+						family {
+							id
+							variants {
+								id
+							}
+						}
+					}
+				}
+			`,
+			variables: {
+				name,
+				familyId: family.id,
+				values,
+			},
+		});
+
 		setTimeout(async () => {
-			await FontValues.save({typeface: variant.db, values: ref.values});
 			if (!noSwitch) {
 				localClient.dispatchAction('/select-variant', {variant, family});
 			}
@@ -263,15 +319,13 @@ export default {
 			openDuplicateVariantModal: false,
 			errorAddVariant: undefined,
 		});
-		window.Intercom('update',
-			{
-				number_of_variants: _.reduce(prototypoStore.get('fonts'), (acc, value) => {
-					return acc + value.variants.length;
-				}, 0),
-			}
-		);
+		window.Intercom('update', {
+			number_of_variants: _.reduce(prototypoStore.get('fonts'), (acc, value) => {
+				return acc + value.variants.length;
+			}, 0),
+		});
 	},
-	'/create-variant': async ({name, familyName, variantBase, noSwitch}) => {
+	'/create-variant': async ({name, familyName, familyId, variantBase, noSwitch}) => {
 		if (!name || String(name).trim() === '') {
 			const patch = prototypoStore.set('errorAddVariant', 'Variant name cannot be empty').commit();
 
@@ -309,10 +363,15 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		const variantBaseDb = variantBase ? variantBase.db : family.variants[0].db;
+		const variantBaseHoodie = variantBase
+			? family.variants.find(f => f.name === variantBase.name) : family.variants[0];
+		const variantBaseDb = variantBaseHoodie.db;
 
-		const ref = await FontValues.get({typeface: variantBaseDb});
+		debugger;
 
+		const ref = await FontValues.get({typeface: variantBaseDb, variantId: variantBase.id});
+
+		family.id = familyId;
 		localClient.dispatchAction('/create-variant-from-ref', {
 			name,
 			ref,
@@ -328,6 +387,8 @@ export default {
 			});
 			return;
 		}
+
+		debugger;
 
 		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
 		const found = _.find(fonts, (item) => {
@@ -345,13 +406,13 @@ export default {
 		}
 
 		const newVariant = _.find(found.variants || [], (item) => {
-			return variant.id === item.id;
+			return variant.name === item.name;
 		});
 
 		newVariant.name = newName;
 
 		//If we modify selected variant patch selected variant.
-		if (variant.id === prototypoStore.get('variant').id) {
+		if (variant.name === prototypoStore.get('variant').name) {
 			prototypoStore.set('variant', newVariant);
 		}
 
@@ -367,6 +428,22 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
+
+		console.log('Variant edit name', variant, newName);
+
+		apolloClient.mutate({
+			mutation: gql`
+				mutation updateVariant($id: ID!, $name: String!) {
+					updateVariant(id: $id, name: $name) {
+						id
+					}
+				}
+			`,
+			variables: {
+				id: variant.id,
+				name: newName,
+			},
+		});
 	},
 	'/edit-family-name': ({family, newName}) => {
 		if (!newName || String(newName).trim() === '') {
@@ -411,6 +488,22 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
+
+		console.log('Family edit name', family);
+
+		apolloClient.mutate({
+			mutation: gql`
+				mutation updateFamily($id: ID!, $name: String!) {
+					updateFamily(id: $id, name: $name) {
+						id
+					}
+				}
+			`,
+			variables: {
+				id: family.id,
+				name: newName,
+			},
+		});
 	},
 	'/delete-variant': ({variant, familyName}) => {
 		const families = _.cloneDeep(Array.from(prototypoStore.get('fonts') || []));
@@ -503,6 +596,7 @@ export default {
 		const indivMode = prototypoStore.get('indivMode');
 		const indivEdit = prototypoStore.get('indivEditingParams');
 		const db = (prototypoStore.get('variant') || {}).db;
+		const variantId = (prototypoStore.get('variant') || {}).id;
 		const currentGroupName = (prototypoStore.get('indivCurrentGroup') || {}).name;
 		let newParams = {...undoableStore.get('controlsValues')};
 
@@ -544,7 +638,7 @@ export default {
 		localServer.dispatchUpdate('/undoableStore', patch);
 		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db);
+		debouncedSave(newParams, db, variantId);
 		if (force) {
 			//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 			undoWatcher.forceUpdate(patch, label);
@@ -556,6 +650,7 @@ export default {
 	},
 	'/change-param-state': ({name, state, force, label}) => {
 		const db = prototypoStore.get('variant').db;
+		const variantId = (prototypoStore.get('variant') || {}).id;
 		const currentGroupName = prototypoStore.get('indivCurrentGroup').name;
 		const newParams = {...undoableStore.get('controlsValues')};
 
@@ -568,7 +663,7 @@ export default {
 
 		localServer.dispatchUpdate('/undoableStore', patch);
 		localClient.dispatchAction('/update-font', newParams);
-		debouncedSave(newParams, db);
+		debouncedSave(newParams, db, variantId);
 
 		if (force) {
 			//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
@@ -580,6 +675,7 @@ export default {
 	},
 	'/change-letter-spacing': ({value, side, letter, label, force}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
+		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const newParams = {
 			...oldValues,
@@ -603,7 +699,7 @@ export default {
 		localServer.dispatchUpdate('/undoableStore', patch);
 		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db);
+		debouncedSave(newParams, db, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -615,6 +711,7 @@ export default {
 	},
 	'/change-glyph-node-manually': ({changes, force, label = 'glyph node manual', glyphName}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
+		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
 
@@ -658,7 +755,7 @@ export default {
 		localServer.dispatchUpdate('/undoableStore', patch);
 		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db);
+		debouncedSave(newParams, db, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -669,6 +766,7 @@ export default {
 	},
 	'/reset-glyph-node-manually': ({contourId, nodeId, force = true, label = 'reset manual', glyphName}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
+		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
 
@@ -700,7 +798,7 @@ export default {
 		localServer.dispatchUpdate('/undoableStore', patch);
 		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db);
+		debouncedSave(newParams, db, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -711,6 +809,7 @@ export default {
 	},
 	'/reset-glyph-manually': ({glyphName, force = true, label = 'reset manual'}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
+		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
 
@@ -726,7 +825,7 @@ export default {
 		localServer.dispatchUpdate('/undoableStore', patch);
 		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db);
+		debouncedSave(newParams, db, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -738,6 +837,7 @@ export default {
 
 	'/reset-all-glyphs': ({force = true, label = 'reset all glyphs'}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
+		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = {};
 		const newParams = {
@@ -749,7 +849,7 @@ export default {
 		localServer.dispatchUpdate('/undoableStore', patch);
 		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db);
+		debouncedSave(newParams, db, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -761,6 +861,7 @@ export default {
 
 	'/change-component': ({glyph, id, name, label = 'change component'}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
+		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const newParams = {
 			...oldValues,
@@ -777,7 +878,7 @@ export default {
 		localServer.dispatchUpdate('/undoableStore', patch);
 		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db);
+		debouncedSave(newParams, db, variantId);
 
 		undoWatcher.forceUpdate(patch, label);
 	},
