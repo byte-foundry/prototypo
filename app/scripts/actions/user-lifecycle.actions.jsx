@@ -490,7 +490,7 @@ export default {
 			});
 
 			form.loading = false;
-			infos.plan = data.plan.id;
+			HoodieApi.instance.plan = data.plan.id;
 
 			const patch = userStore
 				.set('confirmation', form)
