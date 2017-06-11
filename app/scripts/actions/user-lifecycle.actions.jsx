@@ -116,71 +116,6 @@ function spendCredits({amount}) {
 	});
 }
 
-async function addBillingAddress({buyerName, address, vat}) {
-	const form = userStore.get('billingForm');
-
-	form.errors = [];
-	form.inError = {};
-	form.loading = true;
-	const cleanPatch = userStore.set('billingForm', form).commit();
-
-	localServer.dispatchUpdate('/userStore', cleanPatch);
-
-	if (!buyerName || !address.building_number || !address.street_name || !address.city || !address.postal_code || !address.country) {
-		form.errors.push('These fields are required');
-		form.inError = {
-			buyerName: !buyerName,
-			buildingNumber: !address.building_number,
-			streetName: !address.street_name,
-			city: !address.city,
-			postalCode: !address.postal_code,
-			country: !address.country,
-		};
-		form.loading = false;
-		const patch = userStore.set('billingForm', form).commit();
-
-		localServer.dispatchUpdate('/userStore', patch);
-		return Promise.reject();
-	}
-
-	try {
-		await HoodieApi.updateCustomer({
-			business_vat_id: vat || infos.vat, // Stripe way of storing VAT
-			metadata: {
-				street_line_1: address.building_number,
-				street_line_2: address.street_name,
-				city: address.city,
-				region: address.region,
-				postal_code: address.postal_code,
-				country: address.country,
-				vat_number: vat || infos.vat, // Quaderno way of reading VAT
-			},
-		});
-		const infos = userStore.get('infos');
-
-		infos.address = address;
-		infos.vat = vat;
-		infos.buyerName = buyerName;
-		form.loading = false;
-		const patch = userStore.set('infos', infos).set('billingForm', form).commit();
-
-		localServer.dispatchUpdate('/userStore', patch);
-	}
-	catch (err) {
-		trackJs.track(err);
-		form.errors.push(
-			/Could not connect/i.test(err.message)
-				? 'Our server is unavailable please try again letter'
-				: err.message
-		);
-		form.loading = false;
-
-		const patch = userStore.set('billingForm', form).commit();
-
-		localServer.dispatchUpdate('/userStore', patch);
-	}
-}
-
 const validateCoupon = debounce((options) => {
 	return localClient.dispatchAction('/validate-coupon', options);
 }, 500);
@@ -240,12 +175,7 @@ export default {
 		localClient.dispatchAction('/clean-form', 'signupForm');
 		localClient.dispatchAction('/clean-form', 'choosePlanForm');
 		localClient.dispatchAction('/clean-form', 'addcardForm');
-		localClient.dispatchAction('/clean-form', 'billingForm');
 		localClient.dispatchAction('/clean-form', 'confirmation');
-
-		const patch = userStore.set('infos', {}).commit();
-
-		localServer.dispatchUpdate('/userStore', patch);
 
 		const prototypatch = prototypoStore.set('credits', 0).commit();
 
@@ -538,26 +468,6 @@ export default {
 		};
 
 		await addCard(options);
-		hashHistory.push(toPath);
-	},
-	'/add-billing-address': async (options) => {
-		const toPath = {
-			pathname: options.pathQuery.path || '/account/profile',
-			query: options.pathQuery.query,
-		};
-
-		await addBillingAddress(options);
-		hashHistory.push(toPath);
-	},
-	'/add-card-and-billing': async (options) => {
-		const toPath = {
-			pathname: '/account/create/confirmation',
-		};
-
-		await addCard(options);
-		await addBillingAddress(options);
-		fbq('track', 'AddPaymentInfo');
-		window.Intercom('trackEvent', 'addedCardAndAdress');
 		hashHistory.push(toPath);
 	},
 	'/confirm-buy': async ({plan, card, pathname, quantity}) => {
