@@ -2,7 +2,6 @@
   "name": "prototypo",
   "version": "1.0.0",
   "dependencies": {
-    "@hoodie/client": "^8.0.0",
     "bluebird": "^3.1.1",
     "classnames": "^2.1.2",
     "cleave.js": "^0.7.14",
@@ -24,9 +23,6 @@
     "nexus-flux-socket.io": "FranzPoize/nexus-flux-socket.io#master",
     "normalize.css": "^3.0.3",
     "please-wait": "0.0.5",
-    "pouchdb": "^3.6.0",
-    "pouchdb-authentication": "^0.4.0",
-    "pouchdb-hoodie-api": "^1.0.3",
     "prop-types": "^15.5.8",
     "prototypo-canvas": "~1.16.0",
     "prototypo.js": "~1.16.1",
@@ -121,7 +117,7 @@
     "webpack-merge": "^4.1.0"
   },
   "engines": {
-    "node": ">=0.12.0"
+    "node": ">=4"
   },
   "description": "Prototypo, kickstarting font creation",
   "main": "gulpfile.js",

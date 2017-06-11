@@ -282,7 +282,7 @@ export default {
 		const curedLastname = lastname ? ` ${lastname}` : '';
 
 		try {
-			const {response} = await HoodieApi.signUp(username.toLowerCase(), password, firstname, {
+			await HoodieApi.signUp(username.toLowerCase(), password, firstname, {
 				lastName: lastname,
 				occupation: css.value,
 				phone,
@@ -306,13 +306,11 @@ export default {
 			const customer = await HoodieApi.createCustomer({
 				email: username,
 				'buyer_email': firstname + curedLastname,
-				hoodieId: response.roles[0],
+				hoodieId: username,
 			});
 			// TMP
 			HoodieApi.addStripeIdToGraphCool(customer.id);
 			// TMP
-
-			localServer.dispatchUpdate('/userStore', patch);
 
 			form.errors = [];
 			form.inError = {};

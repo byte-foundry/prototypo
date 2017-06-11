@@ -23,8 +23,6 @@ module.exports = {
 			'bluebird',
 			'jszip',
 			'xxhashjs',
-			'pouchdb',
-			'pouchdb-hoodie-api',
 			'slug',
 			'lodash',
 			'diff'

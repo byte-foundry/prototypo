@@ -29,7 +29,7 @@ function values(prefix) {
 				.catch(e => console.log('oops', e));
 			}
 			if (prefix === 'newapp') {
-				apolloClient.query({
+				return apolloClient.query({
 					fetchPolicy: 'cache-first',
 					query: gql`
 						query getUserId {
@@ -46,22 +46,6 @@ function values(prefix) {
 				})
 				.catch(e => console.log('oops', e));
 			}
-			// return HoodieApi.instance.store.find(`${prefix}values`, `${params.typeface}`)
-			// 	.then((data) => {
-			// 		if (LocalClient.serverInstance) {
-			// 			const client = LocalClient.instance();
-
-			// 			client.dispatchAction('/store-in-debug-font', {prefix, typeface: params.typeface, data});
-			// 		}
-			// 		console.log('get values data', data);
-			// 		return data;
-			// 	});
-		},
-		getWithPouch(params) {
-			console.log('getWithPouch values', prefix, params);
-			// if (location.hash.indexOf('#/replay') === -1) {
-			// 	return HoodieApi.instance.pouch.find(`${prefix}values/${params.typeface}`);
-			// }
 		},
 		save(params) {
 			console.log('save values', prefix, params);

@@ -244,6 +244,7 @@ ArianneThread.defaultProps = {
 const getFontsQuery = gql`
 	query getFonts {
 		user {
+			id
 			library {
 				id
 				name
