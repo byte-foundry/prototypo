@@ -40,7 +40,12 @@ export default class Signin extends React.Component {
 		const username = this.refs.email.inputValue.toLowerCase();
 		const password = this.refs.password.inputValue;
 
-		return this.client.dispatchAction('/sign-in', {username, password});
+		return this.client.dispatchAction('/sign-in', {
+			username,
+			password,
+			to: this.props.location.query.prevHash,
+			oldQuery: this.props.location.query,
+		});
 	}
 
 	componentWillUnmount() {
