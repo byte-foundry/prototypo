@@ -79,6 +79,7 @@ export class AddFamily extends React.Component {
 
 	createFont(e) {
 		e.stopPropagation();
+		e.preventDefault();
 		this.client.dispatchAction('/create-family', {
 			name: this.refs.name.value,
 			template: this.state.selectedFont ? this.state.selectedFont.templateName : undefined,
@@ -115,7 +116,7 @@ export class AddFamily extends React.Component {
 						{templateList}
 					</div>
 					<label className="add-family-form-label"><span className="add-family-form-label-order">2. </span>Choose a family name</label>
-					<input ref="name" className="add-family-form-input" type="text" placeholder="My new typeface"></input>
+					<form onSubmit={(e) => {this.createFont(e);} }><input ref="name" className="add-family-form-input" type="text" placeholder="My new typeface"/></form>
 					{error}
 					<div className="action-form-buttons">
 						<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>

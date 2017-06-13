@@ -40,12 +40,7 @@ export default class Signin extends React.Component {
 		const username = this.refs.email.inputValue.toLowerCase();
 		const password = this.refs.password.inputValue;
 
-		return this.client.dispatchAction('/sign-in', {
-			username,
-			password,
-			to: this.props.location.query.prevHash,
-			oldQuery: this.props.location.query,
-		});
+		return this.client.dispatchAction('/sign-in', {username, password});
 	}
 
 	componentWillUnmount() {
@@ -67,6 +62,7 @@ export default class Signin extends React.Component {
 				<div className="account-header">
 					<h1 className="account-title">Sign in</h1>
 				</div>
+				<h1 className="account-dashboard-page-title">Welcome back.</h1>
 				<div className="account-dashboard-container">
 					<form className="sign-in-form" onSubmit={(e) => {this.signIn(e);}}>
 						<InputWithLabel
