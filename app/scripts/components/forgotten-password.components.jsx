@@ -94,8 +94,8 @@ class ForgottenPassword extends React.PureComponent {
 				<div className="account-dashboard-icon"/>
 				<div className="account-header">
 					<h1 className="account-title">Forgot your password?</h1>
-					<h1 className="account-dashboard-page-title">Don't worry,<br/>we've got your back.</h1>
 				</div>
+				<h1 className="account-dashboard-page-title">Don't worry,<br/>we've got your back.</h1>
 				<div className="account-dashboard-container">
 					{this.renderForm()}
 				</div>

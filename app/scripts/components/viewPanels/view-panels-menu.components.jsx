@@ -2,14 +2,20 @@ import React from 'react';
 import ClassNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-
+import onClickOutside from 'react-onclickoutside';
 import {ContextualMenu} from './contextual-menu.components.jsx';
 
-export default class ViewPanelsMenu extends React.Component {
+class ViewPanelsMenu extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { };
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+	}
+
+	handleClickOutside(evt) {
+	    if (this.props.show) {
+			this.props.toggle(evt);
+	    }
 	}
 
 	render() {
@@ -59,3 +65,5 @@ export default class ViewPanelsMenu extends React.Component {
 		);
 	}
 }
+
+export default onClickOutside(ViewPanelsMenu);

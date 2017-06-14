@@ -1,7 +1,7 @@
 @import "../../variables";
 
 .family-list {
-	flex:0 0 33%;
+	flex:0 0 45%;
 	background-color: $lightest-grey;
 	border-bottom-left-radius: 7px;
 	overflow:hidden;
@@ -14,9 +14,24 @@
 	cursor:pointer;
 	color:$dark-grey;
 	transition: color .2s ease;
+	position: relative;
+	padding: 10px 20px;
+	transition: all 250ms;
+	background-color: mix(black, $lightest-grey, 3%);
 
-	&.is-active, &:hover {
+	&:first-of-type {
+		background-color: mix(black, $lightest-grey, 3%);
+	}
+	&:nth-child(2n+1) {
+		background-color: $white;
+	}
+	&.is-active {
 		color: $green;
+	}
+	&:hover {
+		color: $green;
+		transform: scale(1.01);
+		box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 	}
 
 	&:hover &-sample.elzevir, &.is-active &-sample.elzevir {
@@ -52,11 +67,8 @@
 	}
 
 	&-info {
-		display:flex;
 		font-weight:600;
 		letter-spacing:0.02em;
-		flex-flow: column nowrap;
-		width: calc(100% - 70px);
 
 		&-name {
 			font-size:17px;
@@ -73,6 +85,13 @@
 				font-style:italic;
 			}
 		}
+	}
+
+	.view-panels-menu {
+		position: absolute;
+		top: 50%;
+		right: 20px;
+		transform: translateY(-50%);
 	}
 }
 
