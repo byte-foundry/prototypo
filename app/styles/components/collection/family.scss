@@ -5,6 +5,7 @@
 	background-color: $lightest-grey;
 	border-bottom-left-radius: 7px;
 	overflow:hidden;
+	max-height: 70vh;
 }
 
 .family {
@@ -158,6 +159,7 @@
 			display: flex;
 			flex-flow: row wrap;
 			justify-content: space-between;
+			max-height: 55vh;
 		}
 
 		&-error {
@@ -201,42 +203,62 @@
 .family-template-choice {
 	margin-top:20px;
 	text-align:center;
-	flex-basis: 200px;
+	flex-basis: 100%;
+	background-color:$white;
 
-	&:hover &-name, &.is-active &-name {
-		@include themify() {
-			background-color:$theme-background;
-			color:$theme-color;
-		}
+	&:nth-child(2n+1) {
+		background-color: $lightest-grey;
 	}
+
+	&:hover {
+		transform: scale(1.01);
+		box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+	}
+
+
 
 	&-sample {
 		padding:15px;
-		height:200px;
 		line-height:85px;
 		transition:all .2s ease;
 		color:$dark-grey;
-		background-color:$lightest-grey;
-
+		width: 70%;
+		float: right;
+		position: relative;
+		display: block;
 		img {
-			margin-top:45px;
 			vertical-align:bottom;
+			width: 100%;
+			height: auto;
 		}
 	}
 
-	&:hover &-sample, &.is-active &-sample {
-		@include themify() {
-			background-color:$theme-background;
-			color:$theme-color;
+	&-provider {
+		width: 30%;
+		height: 100%;
+		display: inline-block;
+		float: left;
+		position: relative;
+		.provider-prototypo {
+			width:70px;
+			height:70px;
+			background-color: $darkest-grey;
+			position:absolute;
+			z-index:2;
+			background-position: center;
+			background-size: 46%;
+			background-image: url("../../../images/prototypo-icon-white.svg");
+			background-repeat: no-repeat;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			transition: background-color .2s ease;
 		}
 	}
 
-	&-name {
-		font-size: 1.3em;
-		text-align: center;
-		background-color: $dark-grey;
-		color: $white;
-		padding: 10px;
-		transition:all .2s ease;
+	&.is-active &-provider div {
+		background-color: $green;
+		background-image: url("../../../images/icon-checked-flat.svg");
 	}
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import ScrollArea from 'react-scrollbar';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Log from '~/services/log.services.js';
@@ -113,7 +114,7 @@ export class AddFamily extends React.Component {
 				<div className="add-family-form">
 					<label className="add-family-form-label"><span className="add-family-form-label-order">1. </span>Choose a font template</label>
 					<div className="add-family-form-template-list">
-						{templateList}
+							{templateList}
 					</div>
 					<label className="add-family-form-label"><span className="add-family-form-label-order">2. </span>Choose a family name</label>
 					<form onSubmit={(e) => {this.createFont(e);} }><input ref="name" className="add-family-form-input" type="text" placeholder="My new typeface"/></form>
@@ -132,16 +133,17 @@ export class FamilyTemplateChoice extends React.Component {
 	render() {
 		const classes = Classnames({
 			'family-template-choice': true,
+			'clearfix': true,
 			'is-active': this.props.selectedFont && this.props.selectedFont.name === this.props.font.name,
 		});
 
 		return (
 			<div className={classes} onClick={() => {this.props.chooseFont(this.props.font);}}>
-				<div className="family-template-choice-sample">
-					<img src={`/assets/images/${this.props.font.sample}`} />
+				<div className="family-template-choice-provider">
+					<div className="provider-prototypo"></div>
 				</div>
-				<div className="family-template-choice-name">
-					{this.props.font.name}
+				<div className="family-template-choice-sample">
+					<img src={`/assets/images/${this.props.font.sampleLarge}`} />
 				</div>
 			</div>
 		);

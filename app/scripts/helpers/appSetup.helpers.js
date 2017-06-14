@@ -36,7 +36,7 @@ const defaultValues = {
 			},
 			variantSelected: {
 				id: 'deadbeef',
-				name: 'REGULAR',
+				name: 'Regular',
 				db: 'myfirstfont',
 			},
 			library: [{
@@ -44,7 +44,7 @@ const defaultValues = {
 				template: 'elzevir.ptf',
 				variants: [{
 					id: 'deadbeef',
-					name: 'REGULAR',
+					name: 'Regular',
 					db: 'myfirstfont',
 				}],
 			}],

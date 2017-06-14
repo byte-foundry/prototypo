@@ -7,6 +7,7 @@ import ViewPanelsMenu from '../viewPanels/view-panels-menu.components.jsx';
 import {ContextualMenuItem} from '../viewPanels/contextual-menu.components.jsx';
 import HoodieApi from '~/services/hoodie.services.js';
 import LocalClient from '~/stores/local-client.stores.jsx';
+import ScrollArea from 'react-scrollbar';
 
 import Button from '../shared/button.components.jsx';
 import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
@@ -174,7 +175,9 @@ class FamilyList extends React.Component {
 		return (
 				<div className="family-list collection-pan">
 					<Button label="Create a new project" click={this.openFamilyModal.bind(this)}/>
-					{families}
+					<ScrollArea horizontal={false}>
+						{families}
+					</ScrollArea>
 				</div>
 		);
 	}

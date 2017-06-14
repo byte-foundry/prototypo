@@ -150,8 +150,8 @@ export default {
 			template: templateToLoad,
 			variants: [
 				{
-					id: hasher.update(`REGULAR${(new Date()).getTime()}`).digest().toString(16),
-					name: 'REGULAR',
+					id: hasher.update(`Regular${(new Date()).getTime()}`).digest().toString(16),
+					name: 'Regular',
 					db: slug(`${name}regular`, ''),
 				},
 			],
