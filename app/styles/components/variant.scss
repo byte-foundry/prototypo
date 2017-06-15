@@ -102,6 +102,7 @@
 		background-color: $lightest-grey;
 		padding: 10px 20px;
 		transition: all 250ms;
+		border: 1px solid $lightest-grey;
 
 		&:hover {
 			color: $green;

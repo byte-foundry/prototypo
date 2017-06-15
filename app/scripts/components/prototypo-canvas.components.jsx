@@ -429,7 +429,8 @@ export default class PrototypoCanvas extends React.Component {
 				className={canvasClass}
 				onClick={this.handleLeaveAndClick}
 				ref="container"
-				onMouseLeave={this.handleLeaveAndClick}>
+				onMouseLeave={this.handleLeaveAndClick}
+				onContextMenu={this.toggleContextMenu}>
 				<CanvasBar/>
 				<button
 					className={`prototypo-canvas-reset-glyph-button ${this.isManualEdited() ? '' : 'disabled'} ${this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''}`}

@@ -114,7 +114,12 @@ export class AddFamily extends React.Component {
 				<div className="add-family-form">
 					<label className="add-family-form-label"><span className="add-family-form-label-order">1. </span>Choose a font template</label>
 					<div className="add-family-form-template-list">
+						<ScrollArea
+							horizontal={false}
+							horizontalContainerStyle={{overflowX: 'visible'}}
+							style={{overflowX: 'visible'}}>
 							{templateList}
+						</ScrollArea>
 					</div>
 					<label className="add-family-form-label"><span className="add-family-form-label-order">2. </span>Choose a family name</label>
 					<form onSubmit={(e) => {this.createFont(e);} }><input ref="name" className="add-family-form-input" type="text" placeholder="My new typeface"/></form>

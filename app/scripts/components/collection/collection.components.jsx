@@ -174,8 +174,10 @@ class FamilyList extends React.Component {
 
 		return (
 				<div className="family-list collection-pan">
+					<ScrollArea
+						horizontal={false}
+						style={{overflowX: 'visible'}}>
 					<Button label="Create a new project" click={this.openFamilyModal.bind(this)}/>
-					<ScrollArea horizontal={false}>
 						{families}
 					</ScrollArea>
 				</div>
@@ -278,7 +280,7 @@ class Family extends React.Component {
 		)
 
 		return (
-			<div className={classes} onClick={this.selectFamily.bind(this)}>
+			<div className={classes} onClick={this.selectFamily.bind(this)} onContextMenu={this.toggleContextMenu}>
 				<div className={sampleClasses}></div>
 				<div className="family-info">
 					<div className="family-info-name">
@@ -398,7 +400,7 @@ class Variant extends React.Component {
 	}
 
 	open(variant) {
-		this.client.dispatchAction('/select-variant', {variant: variant || this.state.selectedVariant, family: this.state.selected});
+		this.client.dispatchAction('/select-variant', {variant: variant || this.state.selectedVariant, family: this.props.family});
 		this.client.dispatchAction('/store-value', {uiShowCollection: false});
 	}
 
@@ -426,7 +428,10 @@ class Variant extends React.Component {
 			variant={this.props.variant}/>;
 
 		return (
-			<div className={classes} key={this.props.variant.id} onClick={() => {this.selectVariant(this.props.variant);}}>
+			<div className={classes} key={this.props.variant.id}
+				onClick={() => {this.selectVariant(this.props.variant);}}
+				onDoubleClick={() => {this.open(this.props.variant);}}
+				onContextMenu={this.toggleContextMenu}>
 				{this.props.variant.name}
 				<ViewPanelsMenu
 					show={this.state.showContextMenu}

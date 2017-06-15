@@ -237,9 +237,9 @@ class RootArianneItem extends React.Component {
 
 	render() {
 		return (
-			<div className="arianne-item is-small" onClick={this.props.click}>
-				<div className="arianne-item-action is-small">
-					<span className="arianne-item-action-collection"></span>
+			<div className="arianne-item" onClick={this.props.click}>
+				<div className="arianne-item-action">
+					<span className="arianne-item-action-collection">My projects</span>
 				</div>
 				<div className="arianne-item-arrow"></div>
 			</div>

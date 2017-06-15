@@ -6,6 +6,10 @@
 	border-bottom-left-radius: 7px;
 	overflow:hidden;
 	max-height: 70vh;
+
+	.scrollarea-content {
+		margin-right: 15px;
+	}
 }
 
 .family {
@@ -19,6 +23,9 @@
 	padding: 10px 20px;
 	transition: all 250ms;
 	background-color: mix(black, $lightest-grey, 3%);
+	margin-left: 5px;
+	margin-right: 5px;
+	border: 2px solid mix(black, $lightest-grey, 3%);
 
 	&:first-of-type {
 		background-color: mix(black, $lightest-grey, 3%);
@@ -32,7 +39,7 @@
 	&:hover {
 		color: $green;
 		transform: scale(1.01);
-		box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+		box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 	}
 
 	&:hover &-sample.elzevir, &.is-active &-sample.elzevir {
@@ -103,6 +110,10 @@
 	margin-bottom:15px;
 	border-radius:4px;
 
+	.scrollarea-content {
+		margin-right: 15px;
+	}
+
 	&-form {
 		width:630px;
 
@@ -155,11 +166,11 @@
 		}
 
 		&-template-list {
-			margin-bottom: 15px;
-			display: flex;
-			flex-flow: row wrap;
-			justify-content: space-between;
-			max-height: 55vh;
+			margin-bottom: 10px;
+			padding-bottom: 5px;
+			display: block;
+			width: 100%;
+			max-height: 60vh;
 		}
 
 		&-error {
@@ -201,10 +212,14 @@
 }
 
 .family-template-choice {
-	margin-top:20px;
+	margin-top:10px;
+	margin-bottom:10px;
 	text-align:center;
-	flex-basis: 100%;
 	background-color:$white;
+	margin-left: 10px;
+	margin-right: 10px;
+	border: 2px solid $lightest-grey;
+	transition: all 250ms;
 
 	&:nth-child(2n+1) {
 		background-color: $lightest-grey;
@@ -212,7 +227,7 @@
 
 	&:hover {
 		transform: scale(1.01);
-		box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+		box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 	}
 
 
@@ -222,27 +237,29 @@
 		line-height:85px;
 		transition:all .2s ease;
 		color:$dark-grey;
-		width: 70%;
+		width: 85%;
 		float: right;
 		position: relative;
 		display: block;
+		overflow: hidden;
 		img {
 			vertical-align:bottom;
-			width: 100%;
-			height: auto;
+			height: 100px;
+			width: auto;
 		}
 	}
 
 	&-provider {
-		width: 30%;
-		height: 100%;
+		width: 15%;
+		height: 122px;
 		display: inline-block;
 		float: left;
 		position: relative;
 		.provider-prototypo {
-			width:70px;
-			height:70px;
-			background-color: $darkest-grey;
+			width:50px;
+			height:50px;
+			background-color: $black;
+			border: 2px solid $lightest-grey;
 			position:absolute;
 			z-index:2;
 			background-position: center;
