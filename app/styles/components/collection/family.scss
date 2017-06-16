@@ -54,12 +54,20 @@
 		background-image: url('../../../images/grotesk-sample-active.svg') !important;
 	}
 
+	&:hover &-sample.gfnt, &.is-active &-sample.gfnt {
+		background-image: url('../../../images/spectral-sample-active.svg') !important;
+	}
+
 	&-sample.elzevir {
 		background-image: url('../../../images/elzevir-sample-hover.svg');
 	}
 
 	&-sample.john-fell {
 		background-image: url('../../../images/john-fell-sample-hover.svg');
+	}
+
+	&-sample.gfnt {
+		background-image: url('../../../images/spectral-sample-hover.svg');
 	}
 
 	&-sample.venus {
@@ -265,6 +273,24 @@
 			background-position: center;
 			background-size: 46%;
 			background-image: url("../../../images/prototypo-icon-white.svg");
+			background-repeat: no-repeat;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			transition: background-color .2s ease;
+		}
+
+		.provider-google {
+			width:50px;
+			height:50px;
+			background-color: $white;
+			border: 2px solid $lightest-grey;
+			position:absolute;
+			z-index:2;
+			background-position: center;
+			background-size: 65%;
+			background-image: url("../../../images/icon-google.svg");
 			background-repeat: no-repeat;
 			top: 50%;
 			left: 50%;

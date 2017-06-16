@@ -148,7 +148,7 @@ export class FamilyTemplateChoice extends React.Component {
 		return (
 			<div className={classes} onClick={() => {this.props.chooseFont(this.props.font);}}>
 				<div className="family-template-choice-provider">
-					<div className="provider-prototypo"></div>
+					<div className={`provider-${this.props.font.name === 'Spectral' ? 'google' : 'prototypo'}`}></div>
 				</div>
 				<div className="family-template-choice-sample">
 					<img src={`/assets/images/${this.props.font.sampleLarge}`} />

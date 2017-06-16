@@ -10,6 +10,7 @@
     "del": "^1.2.0",
     "diff": "^3.0.1",
     "draft-js": "~0.9.1",
+	"gfnt.ptf": "yannickmathey/g#master",
     "elzevir.ptf": "byte-foundry/elzevir.ptf#master",
     "escape-string-regexp": "^1.0.5",
     "john-fell.ptf": "byte-foundry/john-fell.ptf#master",

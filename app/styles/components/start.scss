@@ -6,7 +6,7 @@
 	width: 100%;
 	background-color: $green;
 	overflow: auto;
-	padding-top: 80px;
+	padding-top: 50px;
 
 	&.noproject {
 		.start-app-container {
@@ -128,7 +128,8 @@
 					padding-bottom: 5px;
 					display: block;
 					width: 100%;
-					max-height: 60vh;
+					max-height: 62vh;
+					overflow: hidden;
 				}
 
 				&-error {
