@@ -45,6 +45,7 @@ import '../styles/components/tutorials.scss';
 import '../styles/components/go-pro-modal.scss';
 import '../styles/components/shared/pricing.scss';
 import '../styles/components/handlegrip-text.scss';
+import '../styles/components/start.scss';
 import '../styles/components/account/account-app.scss';
 import '../styles/components/account/account-profile.scss';
 import '../styles/components/account/account-change-password.scss';
@@ -133,6 +134,8 @@ import AccountConfirmPlan from './components/account/account-confirm-plan.compon
 import AccountInvoiceList from './components/account/account-invoice-list.components.jsx';
 import Subscription from './components/account/subscription.components.jsx';
 import SubscriptionConfirmation from './components/account/subscription-confirmation.components.jsx';
+
+import StartApp from './components/start/start-app.components.jsx';
 
 import HoodieApi from './services/hoodie.services.js';
 import LocalClient from './stores/local-client.stores.jsx';
@@ -344,7 +347,7 @@ selectRenderOptions(
 				}
 				else {
 					replace({
-						pathname: '/dashboard',
+						pathname: '/start',
 						state: {nextPathname: nextState.location.pathname},
 					});
 				}
@@ -368,13 +371,13 @@ selectRenderOptions(
 		HoodieApi.setup()
 			.then(() => {
 				if (location.hash.indexOf('signin') === -1 && location.hash.indexOf('account') === -1 && location.hash.indexOf('signup') === -1 &&  location.hash.indexOf('dashboard') === -1) {
-					location.href = '#/dashboard';
+					location.href = '#/start';
 				}
 			})
 			.catch(() => {
 
 				if (location.hash.indexOf('signin') === -1 && location.hash.indexOf('account') === -1 && location.hash.indexOf('signup') === -1 &&  location.hash.indexOf('dashboard') === -1) {
-					location.href = '#/dashboard';
+					location.href = '#/start';
 				}
 				const event = new CustomEvent('values.loaded');
 
@@ -423,6 +426,7 @@ selectRenderOptions(
 							<Route path="subscribe" component={Subscription} name="subscribe" onEnter={redirectToSignup}></Route>
 							<Route path="confirmation" component={SubscriptionConfirmation} name="confirmation"></Route>
 						</Route>
+						<Route path="start" component={StartApp} onEnter={redirectToLogin}/>
 					</Route>
 				</Router>
 			), content);

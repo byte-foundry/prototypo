@@ -3,7 +3,7 @@ import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import ScrollArea from 'react-scrollbar';
-
+import {hashHistory} from 'react-router';
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Log from '~/services/log.services.js';
 
@@ -79,12 +79,15 @@ export class AddFamily extends React.Component {
 	}
 
 	createFont(e) {
+		const startApp = this.props.firstTime || false;
+
 		e.stopPropagation();
 		e.preventDefault();
 		this.client.dispatchAction('/create-family', {
 			name: this.refs.name.value,
 			template: this.state.selectedFont ? this.state.selectedFont.templateName : undefined,
 			loadCurrent: this.state.selectedFont ? this.state.selectedFont.loadCurrent : false,
+			startApp,
 		});
 		Log.ui('Collection.CreateFamily');
 		this.client.dispatchAction('/store-value', {uiOnboardstep: 'customize'});
@@ -125,8 +128,8 @@ export class AddFamily extends React.Component {
 					<form onSubmit={(e) => {this.createFont(e);} }><input ref="name" className="add-family-form-input" type="text" placeholder="My new typeface"/></form>
 					{error}
 					<div className="action-form-buttons">
-						<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
-						<Button click={(e) => {this.createFont(e);} } label="Create family"/>
+						{this.props.start ? false : <Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>}
+						<Button click={(e) => {this.createFont(e);} } label={this.props.start ? 'Create project' : 'Create family'}/>
 					</div>
 				</div>
 			</div>

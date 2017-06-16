@@ -443,7 +443,6 @@ export default class PrototypoCanvas extends React.Component {
 					familyName={this.state.familyName}
 					json={this.state.typedataJSON}
 					db={this.state.db}
-					values={this.state.values}
 					workerUrl={this.state.workerUrl}
 					workerDeps={this.state.workerDeps}
 					uiZoom={this.props.uiZoom}

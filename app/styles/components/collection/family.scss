@@ -15,13 +15,13 @@
 .family {
 	display:flex;
 	flex-flow: row nowrap;
-	margin-top: 20px;
+	margin-top: 5px;
 	cursor:pointer;
 	color:$dark-grey;
 	transition: color .2s ease;
 	position: relative;
 	padding: 10px 20px;
-	transition: all 250ms;
+	transition: all .2s ease-out;
 	background-color: mix(black, $lightest-grey, 3%);
 	margin-left: 5px;
 	margin-right: 5px;
@@ -106,7 +106,7 @@
 .add-family {
 	background-color:$white;
 	cursor:pointer;
-	transition:all .2s ease;
+	transition: all .2s ease-out;
 	margin-bottom:15px;
 	border-radius:4px;
 
@@ -219,7 +219,7 @@
 	margin-left: 10px;
 	margin-right: 10px;
 	border: 2px solid $lightest-grey;
-	transition: all 250ms;
+	transition: all .2s ease-out;
 
 	&:nth-child(2n+1) {
 		background-color: $lightest-grey;

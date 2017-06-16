@@ -101,7 +101,7 @@
 		font-size: 18px;
 		background-color: $lightest-grey;
 		padding: 10px 20px;
-		transition: all 250ms;
+		transition: all .2s ease-out;
 		border: 1px solid $lightest-grey;
 
 		&:hover {
