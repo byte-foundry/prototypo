@@ -54,6 +54,7 @@ export default class AccountChangePlan extends React.Component {
 					loading: false,
 					subscription,
 					plan: subscription.plan.id,
+					selectedPlan: subscription.plan.id.includes('monthly') ? agencyMonthlyConst : agencyAnnualConst,
 					numberOfUsers: parseInt((subscription && subscription.quantity) || 0, 10),
 					selection: subscription.plan.id.includes('monthly') ? 'monthly' : 'annual',
 					currency: getCurrency(cards[0].country),
