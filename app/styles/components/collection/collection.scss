@@ -38,12 +38,16 @@
 	&-container {
 		position:relative;
 		border-radius: 4px;
-		flex:0 0 60%;
+		flex:0 0 70%;
 		padding: 0;
 		margin: 90px;
 		background:$white;
 		display:flex;
 		flex-flow: column nowrap;
+
+		@media(min-width: 1650px) {
+			flex:0 0 60%;
+		}
 	}
 
 	&-content {
