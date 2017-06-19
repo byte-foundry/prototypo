@@ -10,15 +10,20 @@
 }
 
 .account-header {
-	height: 100px;
+	height: 70px;
 	width: 100%;
-	border-bottom: solid $orange 1px;
-	color: $medium-grey;
+	color: $dark-grey;
 	padding:20px 50px;
 	margin:0;
 	display:flex;
 	align-items: center;
 	justify-content: space-between;
+	background-color: $white;
+	border-top-right-radius: 8px;
+	h1 {
+		margin-left: 40px;
+		color: $darkest-grey;
+	}
 }
 
 .account-back-app {
@@ -51,7 +56,10 @@
 
 .account-sidebar {
 	padding:40px;
+	margin: 40px;
 	flex:0 0 244px;
+	background-color: $white;
+	border-radius: 5px;
 
 	&-menu {
 		list-style-type: none;
@@ -143,12 +151,16 @@
 }
 
 .account-base {
-	width:100%;
-	height:100%;
-	padding:40px 0;
+	width: 790px;
+	min-width: 790px;
+	height: auto;
+	padding:40px;
 	font-weight:400;
 	display:flex;
 	flex-flow: column;
+	background: $white;
+	margin: 40px 40px 40px 0;
+	border-radius: 5px;
 
 	&.account-success {
 		img {
@@ -188,18 +200,31 @@
 
 .account-dashboard {
 	min-height: 700px;
-	width: 1000px;
-	background-color: $white;
+	width: 1155px;
+	background-color: $lightest-grey;
 	border-radius: 8px;
 	position:relative;
 	margin:0 auto 50px;
 
+	&-page-title {
+		text-align: center;
+		width: 100%;
+		color: $dark-grey;
+		font-size: 35px;
+		font-weight: normal;
+		margin-top: 0;
+		margin-bottom: 0;
+		padding-top: 40px;
+		padding-bottom: 0px;
+		background-color: $lightest-grey;
+	}
+
 	&-container {
 		display:flex;
-		padding: 0 40px 0 0;
+		padding: 0;
 
 		&-main {
-			padding: 0 40px;
+			padding: 0;
 			width: 100%;
 		}
 
@@ -212,43 +237,47 @@
 	&-icon {
 		width:70px;
 		height:70px;
-		background-color: $dark-grey;
+		background-color: $darkest-grey;
 		position:absolute;
 		z-index:2;
 		background-position: center;
 		background-size: 46%;
 		background-image: url("../../../images/prototypo-icon-white.svg");
 		background-repeat: no-repeat;
-		border-radius: 50%;
-		border: solid $green 10px;
-		top: -35px;
-		right: -35px;
+		top: 0px;
+		left: 0px;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
 
 		&.is-in-subscription {
-			left:auto;
-			right:-5px;
-			top:-30px;
-			cursor: pointer;
+			left: 20px;
+			background-color: $dark-grey;
+		}
+
+		&:hover {
+			background-color: mix(white, $darkest-grey, 10%);
 		}
 	}
 
 	&-back-icon {
 		background-image: url("../../../images/icon-back.svg");
 		background-repeat: no-repeat;
-		width:36px;
 		height:36px;
+		padding-left: 30px;
 		position:absolute;
-		border:solid $white 5px;
-		border-radius: 50%;
-		left:-18px;
-		top:30px;
+		right:40px;
+		top:25px;
 		background-color:$white;
 		background-size: 25px 25px;
-		background-position:2px 1px;
+		background-position:0px -3px;
 		cursor:pointer;
 		display:block;
+		font-size: 15px;
+		color: $light-grey !important;
+		font-weight: 700;
 
 		&:hover {
+			color: $green !important;
 			background-image: url("../../../images/icon-back-hover.svg");
 		}
 	}

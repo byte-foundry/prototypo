@@ -35,6 +35,7 @@ import AccountConfirmPlan from './components/account/account-confirm-plan.compon
 import AccountOrganization from './components/account/account-organization.components.jsx';
 import AccountInvoiceList from './components/account/account-invoice-list.components.jsx';
 import Subscription from './components/account/subscription.components.jsx';
+import StartApp from './components/start/start-app.components.jsx';
 
 import apolloClient from './services/graphcool.services.js';
 import HoodieApi from './services/hoodie.services.js';
@@ -243,7 +244,7 @@ selectRenderOptions(
 				}
 				else {
 					replace({
-						pathname: '/dashboard',
+						pathname: '/start',
 						state: {nextPathname: nextState.location.pathname},
 					});
 				}
@@ -267,13 +268,13 @@ selectRenderOptions(
 		HoodieApi.setup()
 			.then(() => {
 				if (location.hash.indexOf('signin') === -1 && location.hash.indexOf('account') === -1 && location.hash.indexOf('signup') === -1 &&  location.hash.indexOf('dashboard') === -1) {
-					location.href = '#/dashboard';
+					location.href = '#/start';
 				}
 			})
 			.catch(() => {
 
 				if (location.hash.indexOf('signin') === -1 && location.hash.indexOf('account') === -1 && location.hash.indexOf('signup') === -1 &&  location.hash.indexOf('dashboard') === -1) {
-					location.href = '#/dashboard';
+					location.href = '#/start';
 				}
 				const event = new CustomEvent('values.loaded');
 
@@ -326,6 +327,7 @@ selectRenderOptions(
 								<Route path="subscribe" component={Subscription} name="subscribe" onEnter={redirectToSignup}></Route>
 							</Route>
 						</Route>
+						<Route path="start" component={StartApp} onEnter={redirectToLogin}/>
 					</Router>
 				</ApolloProvider>
 			), content);

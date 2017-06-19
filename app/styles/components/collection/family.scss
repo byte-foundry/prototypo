@@ -1,22 +1,45 @@
 @import "../../variables";
 
 .family-list {
-	flex:0 0 33%;
+	flex:0 0 45%;
 	background-color: $lightest-grey;
 	border-bottom-left-radius: 7px;
 	overflow:hidden;
+	max-height: 70vh;
+
+	.scrollarea-content {
+		margin-right: 15px;
+	}
 }
 
 .family {
 	display:flex;
 	flex-flow: row nowrap;
-	margin-top: 20px;
+	margin-top: 5px;
 	cursor:pointer;
 	color:$dark-grey;
 	transition: color .2s ease;
+	position: relative;
+	padding: 10px 20px;
+	transition: all .2s ease-out;
+	background-color: mix(black, $lightest-grey, 3%);
+	margin-left: 5px;
+	margin-right: 5px;
+	border: 2px solid mix(black, $lightest-grey, 3%);
 
-	&.is-active, &:hover {
+	&:first-of-type {
+		background-color: mix(black, $lightest-grey, 3%);
+	}
+	&:nth-child(2n+1) {
+		background-color: $white;
+	}
+	&.is-active {
 		color: $green;
+	}
+	&:hover {
+		color: $green;
+		transform: scale(1.01);
+		box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 	}
 
 	&:hover &-sample.elzevir, &.is-active &-sample.elzevir {
@@ -31,12 +54,20 @@
 		background-image: url('../../../images/grotesk-sample-active.svg') !important;
 	}
 
+	&:hover &-sample.gfnt, &.is-active &-sample.gfnt {
+		background-image: url('../../../images/spectral-sample-active.svg') !important;
+	}
+
 	&-sample.elzevir {
 		background-image: url('../../../images/elzevir-sample-hover.svg');
 	}
 
 	&-sample.john-fell {
 		background-image: url('../../../images/john-fell-sample-hover.svg');
+	}
+
+	&-sample.gfnt {
+		background-image: url('../../../images/spectral-sample-hover.svg');
 	}
 
 	&-sample.venus {
@@ -52,11 +83,8 @@
 	}
 
 	&-info {
-		display:flex;
 		font-weight:600;
 		letter-spacing:0.02em;
-		flex-flow: column nowrap;
-		width: calc(100% - 70px);
 
 		&-name {
 			font-size:17px;
@@ -74,14 +102,25 @@
 			}
 		}
 	}
+
+	.view-panels-menu {
+		position: absolute;
+		top: 50%;
+		right: 20px;
+		transform: translateY(-50%);
+	}
 }
 
 .add-family {
 	background-color:$white;
 	cursor:pointer;
-	transition:all .2s ease;
+	transition: all .2s ease-out;
 	margin-bottom:15px;
 	border-radius:4px;
+
+	.scrollarea-content {
+		margin-right: 15px;
+	}
 
 	&-form {
 		width:630px;
@@ -135,10 +174,11 @@
 		}
 
 		&-template-list {
-			margin-bottom: 15px;
-			display: flex;
-			flex-flow: row wrap;
-			justify-content: space-between;
+			margin-bottom: 10px;
+			padding-bottom: 5px;
+			display: block;
+			width: 100%;
+			height: 63vh;
 		}
 
 		&-error {
@@ -180,44 +220,88 @@
 }
 
 .family-template-choice {
-	margin-top:20px;
+	margin-top:10px;
+	margin-bottom:10px;
 	text-align:center;
-	flex-basis: 200px;
+	background-color:$white;
+	margin-left: 10px;
+	margin-right: 10px;
+	border: 2px solid $lightest-grey;
+	transition: all .2s ease-out;
 
-	&:hover &-name, &.is-active &-name {
-		@include themify() {
-			background-color:$theme-background;
-			color:$theme-color;
-		}
+	&:nth-child(2n+1) {
+		background-color: $lightest-grey;
 	}
+
+	&:hover {
+		transform: scale(1.01);
+		box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	}
+
+
 
 	&-sample {
 		padding:15px;
-		height:200px;
 		line-height:85px;
 		transition:all .2s ease;
 		color:$dark-grey;
-		background-color:$lightest-grey;
-
+		width: 85%;
+		float: right;
+		position: relative;
+		display: block;
+		overflow: hidden;
 		img {
-			margin-top:45px;
 			vertical-align:bottom;
+			height: 100px;
+			width: auto;
 		}
 	}
 
-	&:hover &-sample, &.is-active &-sample {
-		@include themify() {
-			background-color:$theme-background;
-			color:$theme-color;
+	&-provider {
+		width: 15%;
+		height: 122px;
+		display: inline-block;
+		float: left;
+		position: relative;
+		.provider-prototypo {
+			width:50px;
+			height:50px;
+			background-color: $black;
+			border: 2px solid $lightest-grey;
+			position:absolute;
+			z-index:2;
+			background-position: center;
+			background-size: 46%;
+			background-image: url("../../../images/prototypo-icon-white.svg");
+			background-repeat: no-repeat;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			transition: background-color .2s ease;
+		}
+
+		.provider-google {
+			width:50px;
+			height:50px;
+			background-color: $white;
+			border: 2px solid $lightest-grey;
+			position:absolute;
+			z-index:2;
+			background-position: center;
+			background-size: 65%;
+			background-image: url("../../../images/icon-google.svg");
+			background-repeat: no-repeat;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			transition: background-color .2s ease;
 		}
 	}
 
-	&-name {
-		font-size: 1.3em;
-		text-align: center;
-		background-color: $dark-grey;
-		color: $white;
-		padding: 10px;
-		transition:all .2s ease;
+	&.is-active &-provider div {
+		background-color: $green;
+		background-image: url("../../../images/icon-checked-flat.svg");
 	}
 }

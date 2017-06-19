@@ -76,6 +76,7 @@ class AccountSidebar extends React.Component {
 		const {subscription} = this.state;
 		const {managed} = this.props;
 
+
 		const accountsLinks = [];
 
 		if (subscription || managed) {
@@ -92,6 +93,7 @@ class AccountSidebar extends React.Component {
 		return (
 			<div className="account-sidebar">
 				<ul className="account-sidebar-menu">
+
 					<AccountSidebarLink to="/account/home" slug="home" label="Home" />
 					<AccountSidebarLink to="/account/profile" slug="profile" label="My profile">
 						<AccountSidebarSubLink to="/account/profile/change-password" label="Change password" />
