@@ -65,10 +65,6 @@ import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
 import ReplayViewer from './debug/replay-viewer.components.jsx';
 /* #end */
 
-function noConfirmBeforePlan(nextState) {
-	console.log(nextState);
-}
-
 function trackUrl() {
 	ga('send', 'pageview', {page: this.state.location.pathname});
 }
@@ -322,7 +318,7 @@ selectRenderOptions(
 									<Route path="billing-address" component={AccountBillingAddress}/>
 									<Route path="add-card" component={AccountAddCard}/>
 									<Route path="change-plan" component={AccountChangePlan}/>
-									<Route path="confirm-plan" component={AccountConfirmPlan} onEnter={noConfirmBeforePlan}/>
+									<Route path="confirm-plan" component={AccountConfirmPlan}/>
 								</Route>
 								<Route path="organization" component={AccountDashboard} name="organization" onEnter={redirectToLogin}>
 									<IndexRoute component={AccountOrganization} />
