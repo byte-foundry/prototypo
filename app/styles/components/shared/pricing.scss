@@ -2,29 +2,37 @@
 
 .pricing {
 	display: flex;
-	margin-top:20px;
+	margin: 20px 0;
+	user-select: auto !important;
 
 	&-switch {
 		display: flex;
 		justify-content:center;
 
 		&-item {
-			margin-right: 16px;
 			font-size: 17px;
 			padding: 10px 20px;
 			border-radius: 5px;
 			font-weight: 400;
-			cursor: pointer;
 			background: $white;
 			color: $green;
 			border: 1px solid $green;
 			transition: background 0.3s ease, color 0.3s ease;
 
-			&:last-of-type {
-				margin-right: 8px;
+			&:first-child {
+				border-radius: 5px 0 0 5px;
 			}
 
-			&.is-active, &:hover {
+			&:last-child {
+				border-radius: 0 5px 5px 0;
+			}
+
+			&:hover {
+				background-color: lighten($green, 20%);
+				color: $white;
+			}
+
+			&.is-active {
 				background-color: $green;
 				color: $white;
 			}
@@ -32,13 +40,11 @@
 	}
 
 	&-item {
+		cursor: pointer;
 		position: relative;
 		border-radius: 5px;
 		margin: 0 8px;
-		height:100%;
-		cursor:pointer;
 		border: 1px solid $light-grey;
-		background-color: $lightest-grey;
 		transition: transform 0.3s ease;
 		width: calc(50% - 16px);
 
@@ -46,8 +52,31 @@
 			transform: scale(1.02);
 		}
 
+		&:focus {
+			outline: none;
+		}
+
 		&:last-of-type {
 			margin-right: 0;
+		}
+
+		&--selected {
+			border: 2px solid $green;
+		}
+
+		&-selected-label {
+			color: $white !important;
+			margin: 0;
+			text-align: center;
+			padding: 5px;
+			text-transform: uppercase;
+			line-height: normal !important;
+			font-size: inherit !important;
+			position: absolute;
+			top: 0;
+			right: 0;
+			background: $green;
+			border-bottom-left-radius: inherit;
 		}
 
 		&-offerRibbon {
@@ -110,7 +139,6 @@
 		}
 
 		&-title {
-			background-color: #fefefe;
 			color: $green;
 			font-size: 16px;
 			font-family: 'Fira Sans', sans-serif;
@@ -132,7 +160,6 @@
 		}
 
 		&-subtitle {
-			background-color: #fefefe;
 			color: $green;
 			padding: 10px;
 			padding-top: 0;
@@ -175,6 +202,7 @@
 		}
 
 		&-features {
+			background-color: $lightest-grey;
 			list-style-type: none;
 			margin: 0;
 			padding: 0;
@@ -192,6 +220,7 @@
 		}
 
 		&-cta {
+			cursor: pointer;
 			background: $green;
 			color: #fefefe;
 			text-align: center;
