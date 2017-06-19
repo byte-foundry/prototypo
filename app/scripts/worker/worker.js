@@ -16,9 +16,9 @@ self.onmessage = (e) => {
 				});
 			});
 			initParam.manualChanges = {};
-			const font = currentFont.constructFont(initParam, ['a', 'b']);
+			//const font = currentFont.constructFont(initParam, ['a', 'b']);
 
-			self.postMessage({id: e.data.id, font});
+			self.postMessage({id: e.data.id});
 			break;
 		}
 		case 'constructGlyphs': {

@@ -193,75 +193,53 @@ export default class Toile {
 		);
 	}
 
-	drawNode(node, id, parentNode, parentId, hotItems, prevNode, nextNode) {
-		if (node.handleIn) {
-			let handleInNode = node.handleIn;
+	drawContourNode(node, id, prevNode, nextNode, hotItems) {
+		this.drawHandleNode({
+			node,
+			otherNode: prevNode,
+			handle: node.handleIn,
+			id,
+			handleId: `${id}.handleIn`,
+			type: toileType.NODE_IN,
+			hotItems,
+			color: inHandleColor,
+		}); //in
+		this.drawHandleNode({
+			node,
+			otherNode: nextNode,
+			handle: node.handleOut,
+			id,
+			handleId: `${id}.handleOut`,
+			type: toileType.NODE_OUT,
+			hotItems,
+			color: outHandleColor,
+		}); //out
+		this.drawControlPoint(node, false, onCurveColor);
+	}
 
-			if (node.handleIn.x === node.x && node.handleIn.y === node.y) {
-				const prevVec = subtract2D(prevNode, node.handleIn);
-				const prevDist = distance2D(prevNode, node.handleIn);
-				const normalizePrev = normalize2D(prevVec);
-				const handleInVec = add2D(mulScalar2D(prevDist / 3, normalizePrev), node.handleIn);
-
-				handleInNode = handleInVec;
-			}
-
-			const inHot = _.find(hotItems, (item) => {
-				return item.id === `${id}.handleIn`;
-			});
-
-			this.drawLine(handleInNode, node, inHandleColor, inHandleColor);
-			this.drawControlPoint(handleInNode, inHot, inHandleColor);
-
-			if (id) {
-				this.interactionList.push({
-					id: `${id}.handleIn`,
-					type: toileType.NODE_IN,
-					data: {
-						center: {
-							x: handleInNode.x,
-							y: handleInNode.y,
-						},
-						radius: nodeHotRadius,
-						parentId: id,
-						skeletonId: parentId,
-					},
-				});
-			}
-		}
-		if (node.handleOut) {
-			let handleOutNode = node.handleOut;
-
-			if (node.handleOut.x === node.x && node.handleOut.y === node.y) {
-				const nextVec = subtract2D(nextNode, node.handleOut);
-				const nextDist = distance2D(nextNode, node.handleOut);
-				const normalizeNext = normalize2D(nextVec);
-				const handleOutVec = add2D(mulScalar2D(nextDist / 3, normalizeNext), node.handleOut);
-
-				handleOutNode = handleOutVec;
-			}
-			const outHot = _.find(hotItems, (item) => {
-				return item.id === `${id}.handleOut`;
-			});
-
-			this.drawLine(handleOutNode, node, outHandleColor);
-			this.drawControlPoint(handleOutNode, outHot, outHandleColor);
-			if (id) {
-				this.interactionList.push({
-					id: `${id}.handleOut`,
-					type: toileType.NODE_OUT,
-					data: {
-						center: {
-							x: handleOutNode.x,
-							y: handleOutNode.y,
-						},
-						radius: nodeHotRadius,
-						parentId: id,
-						skeletonId: parentId,
-					},
-				});
-			}
-		}
+	drawExpandedNode(node, id, parentNode, parentId, hotItems, prevNode, nextNode) {
+		this.drawHandleNode({
+			node,
+			otherNode: prevNode,
+			handle: node.handleIn,
+			id,
+			parentId,
+			handleId: `${id}.handleIn`,
+			type: toileType.NODE_IN,
+			hotItems,
+			color: inHandleColor,
+		}); //in
+		this.drawHandleNode({
+			node,
+			otherNode: nextNode,
+			handle: node.handleOut,
+			id,
+			parentId,
+			handleId: `${id}.handleOut`,
+			type: toileType.NODE_OUT,
+			hotItems,
+			color: outHandleColor,
+		}); //out
 
 		const hot = _.find(hotItems, (item) => {
 			return item.id === id;
@@ -309,87 +287,145 @@ export default class Toile {
 					});
 				}
 			}
-			else {
-				const modifAddress = `${node.nodeAddress}`;
-				this.interactionList.push({
-					id,
-					type: toileType.NODE_SKELETON,
-					data: {
-						center: {
-							x: node.x,
-							y: node.y,
-						},
-						base: {
-							x: node.xBase,
-							y: node.yBase,
-						},
-						radius: nodeHotRadius,
-						modifAddress,
-					},
-				});
-				//This point is to prevent selecting a thickness control that is too close to
-				//the skeleton node
-				this.interactionList.push({
-					id,
-					type: toileType.THICKNESS_TOOL_CANCEL,
-					data: {
-						center: {
-							x: node.x,
-							y: node.y,
-						},
-						radius: nodeHotRadius,
-					},
-				});
-			}
 		}
 	}
 
+	drawHandleNode({
+		node,
+		otherNode,
+		handle,
+		id,
+		parentId,
+		handleId,
+		type,
+		hotItems,
+		color,
+	}) {
+		let handleNode = handle;
+
+		if (handle.x === node.x && handle.y === node.y) {
+			const prevVec = subtract2D(otherNode, handle);
+			const prevDist = distance2D(otherNode, handle);
+			const normalizePrev = normalize2D(prevVec);
+			const handleVec = add2D(mulScalar2D(prevDist / 3, normalizePrev), handle);
+
+			handleNode = handleVec;
+		}
+
+		const inHot = _.find(hotItems, (item) => {
+			return item.id === handleId;
+		});
+
+		this.drawLine(handleNode, node, color, color);
+		this.drawControlPoint(handleNode, inHot, color);
+
+		if (handleId) {
+			this.interactionList.push({
+				id: handleId,
+				type,
+				data: {
+					center: {
+						x: handleNode.x,
+						y: handleNode.y,
+					},
+					radius: nodeHotRadius,
+					parentId: id,
+					skeletonId: parentId,
+				},
+			});
+		}
+	}
+
+	drawSkeletonNode(node, id, hotItems, j, nodes, contour) {
+		const hot = _.find(hotItems, (item) => {
+			return item.id === id;
+		});
+		const modifAddress = `${node.nodeAddress}`;
+
+		this.drawControlPoint(node, hot, node.handleIn ? onCurveColor : skeletonColor);
+		this.interactionList.push({
+			id,
+			type: toileType.NODE_SKELETON,
+			data: {
+				center: {
+					x: node.x,
+					y: node.y,
+				},
+				base: {
+					x: node.xBase,
+					y: node.yBase,
+				},
+				radius: nodeHotRadius,
+				modifAddress,
+			},
+		});
+		//This point is to prevent selecting a thickness control that is too close to
+		//the skeleton node
+		this.interactionList.push({
+			id,
+			type: toileType.THICKNESS_TOOL_CANCEL,
+			data: {
+				center: {
+					x: node.x,
+					y: node.y,
+				},
+				radius: nodeHotRadius,
+			},
+		});
+
+
+		let prevNode = nodes[(j - 1) - nodes.length * Math.floor((j - 1) / nodes.length)];
+		let nextNode = nodes[(j + 1) % nodes.length];
+
+		if (!contour.closed) {
+			if (j === nodes.length - 1) {
+				nextNode = {
+					expandedTo: [
+						nodes[j].expandedTo[1],
+						nodes[j].expandedTo[0],
+					],
+				};
+			}
+			else if (j === 0) {
+				prevNode = {
+					expandedTo: [
+						nodes[j].expandedTo[1],
+						nodes[j].expandedTo[0],
+					],
+				};
+			}
+		}
+
+		this.drawExpandedNode(node.expandedTo[0],
+			`${id}.expandedTo.0`,
+			node,
+			id,
+			hotItems,
+			prevNode.expandedTo[0],
+			nextNode.expandedTo[0]);
+		this.drawExpandedNode(node.expandedTo[1],
+			`${id}.expandedTo.1`,
+			node,
+			id,
+			hotItems,
+			nextNode.expandedTo[1],
+			prevNode.expandedTo[1]);
+	}
+
+
 	drawNodes(contour, contourCursor, hotItems) {
 		const nodes = contour.nodes;
+
 		nodes.forEach((node, j) => {
 			const id = `${contourCursor}.nodes.${j}`;
 
-			if (node.x && node.y) {
-				this.drawNode(node, id, undefined, undefined, hotItems);
+			if (contour.skeleton) {
+				this.drawSkeletonNode(node, id, hotItems, j, nodes, contour);
 			}
-			if (node.expandedTo) {
-
-				let prevNode = nodes[(j - 1) - nodes.length * Math.floor((j - 1) / nodes.length)];
-				let nextNode = nodes[(j + 1) % nodes.length];
-
-				if (!contour.closed) {
-					if (j === nodes.length - 1) {
-						nextNode = {
-							expandedTo: [
-								nodes[j].expandedTo[1],
-								nodes[j].expandedTo[0],
-							],
-						};
-					}
-					else if (j === 0) {
-						prevNode = {
-							expandedTo: [
-								nodes[j].expandedTo[1],
-								nodes[j].expandedTo[0],
-							],
-						};
-					}
-				}
-
-				this.drawNode(node.expandedTo[0],
-					`${id}.expandedTo.0`,
-					node,
-					id,
-					hotItems,
-					prevNode.expandedTo[0],
-					nextNode.expandedTo[0]);
-				this.drawNode(node.expandedTo[1],
-					`${id}.expandedTo.1`,
-					node,
-					id,
-					hotItems,
-					nextNode.expandedTo[1],
-					prevNode.expandedTo[1]);
+			else {
+				const prevNode = nodes[(j - 1) - nodes.length * Math.floor((j - 1) / nodes.length)];
+				const nextNode = nodes[(j + 1) % nodes.length];
+				this.drawContourNode(node, id, prevNode, nextNode, hotItems);
 			}
 		});
 	}

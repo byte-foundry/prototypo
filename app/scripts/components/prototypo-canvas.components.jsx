@@ -50,7 +50,6 @@ export default class PrototypoCanvas extends React.Component {
 		this.resetManualNode = this.resetManualNode.bind(this);
 		this.startLoad = this.startLoad.bind(this);
 		this.endLoad = this.endLoad.bind(this);
-		this.afterFontComputation = this.afterFontComputation.bind(this);
 		this.preExport = this.preExport.bind(this);
 		this.afterExport = this.afterExport.bind(this);
 		this.preExportGlyphr = this.preExportGlyphr.bind(this);
@@ -336,16 +335,6 @@ export default class PrototypoCanvas extends React.Component {
 
 		this.client.dispatchAction('/store-value', {
 			uiFontLoading: false,
-		});
-	}
-
-	afterFontComputation({totalHeight, glyphProperties}) {
-		this.client.dispatchAction('/store-value', {
-			totalHeight,
-		});
-
-		this.client.dispatchAction('/store-value-fast', {
-			glyphProperties,
 		});
 	}
 

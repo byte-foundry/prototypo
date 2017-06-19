@@ -1,3 +1,4 @@
+/* global _ */
 import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';

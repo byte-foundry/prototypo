@@ -87,7 +87,7 @@ export default class HandlegripLetter extends React.Component {
 						{this.props.letter.replace(/ /g, "\u00a0")}
 					</span>
 					<span className="handlegrip-spacing-number">
-						{advanceWidth}
+						{advanceWidth.toFixed(0)}
 					</span>
 				</span>
 				<HandlegripBar

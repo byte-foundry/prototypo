@@ -50,7 +50,7 @@ export default class Glyph {
 			});
 		});
 
-		//this.analyzeDependency();
+		this.analyzeDependency();
 		this.operationOrder = this.solveOperationOrder();
 
 		this.components = outline.component.map((component, i) => {
@@ -341,7 +341,16 @@ export default class Glyph {
 			}),
 		};
 
-		const opDone = {};
+		const specialProps = this.unicode ? (localParams.glyphSpecialProps || {})[this.unicode.value] || {} : {};
+
+		const baseSpacingLeft = localParams.spacingLeft;
+		const baseSpacingRight = localParams.spacingRight;
+		localParams.spacingLeft += specialProps.spacingLeft || 0;
+		localParams.spacingRight += specialProps.spacingRight || 0;
+
+		const opDone = {
+			contours: [],
+		};
 
 		for (let i = 0; i < this.operationOrder.length; i++) {
 			const op = this.operationOrder[i];
@@ -408,6 +417,8 @@ export default class Glyph {
 			...opDone,
 			spacingLeft: localParams.spacingLeft,
 			spacingRight: localParams.spacingRight,
+			baseSpacingRight ,
+			baseSpacingLeft,
 			otContours,
 		};
 	}

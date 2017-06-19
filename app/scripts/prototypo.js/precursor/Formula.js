@@ -1,3 +1,4 @@
+/* global _ */
 import {toLodashPath} from '../helpers/utils.js';
 
 export default class Formula {
@@ -33,17 +34,24 @@ export default class Formula {
 	analyzeDependency(glyph, graph = []) {
 		graph.push(this.cursor);
 		if (this.analyzing) {
-			throw new Error(`There is a circular dependency following the subsequent graph:
+			throw new Error(`There is a circular dependency for glyph ${glyph.name.value} following the subsequent graph:
 ${graph.join(' => ')}
 `);
 		}
 
 		this.analyzing = true;
 		this.dependencies.forEach((dependency) => {
-			if (dependency.indexOf('parentAnchors') === -1) {
-				const formula = glyph.getFromXPath(dependency);
+			try {
+				if (dependency.indexOf('parentAnchors') === -1) {
+					const formula = glyph.getFromXPath(dependency);
 
-				formula.analyzeDependency(glyph, graph);
+					formula.analyzeDependency(glyph, graph);
+				}
+			}
+			catch (e) {
+				throw new Error(`There was an error while checking glyph ${glyph.name.value} dependencies for cursor: ${dependency}.
+					${e.message}`
+				);
 			}
 		});
 		this.analyzing = false;

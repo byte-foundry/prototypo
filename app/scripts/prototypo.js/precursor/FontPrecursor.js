@@ -48,7 +48,7 @@ export default class FontPrecursor {
 			}
 		});
 		const glyphNames = _.map(subset, (char) => {
-			return this.unicodeToGlyphName[char.charCodeAt(0)];
+			return params.altList[char] || this.unicodeToGlyphName[char];
 		});
 		const glyphs = _.reduce(glyphNames, (result, name) => {
 			result.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));

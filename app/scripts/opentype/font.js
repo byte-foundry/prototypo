@@ -191,6 +191,9 @@ export function fontToSfntTable(font) {
 
     const maxpTable = maxp.make(glyphs.length);
 
+	const hasSpace = _.find(font.glyphs, (glyph) => {
+		return glyph.unicode === 32;
+	});
     const os2Table = os2.make({
         xAvgCharWidth: Math.round(advanceWithAvg),
         usWeightClass: usWeightClass || usWeightClasses.NORMAL,
@@ -210,6 +213,8 @@ export function fontToSfntTable(font) {
         ulCodePageRange1: 1,
         sxHeight: metricsForChar(font, 'xyvw', {yMax: Math.round(ascender / 2)}).yMax,
         sCapHeight: metricsForChar(font, 'HIKLEFJMNTZBDPRAGOQSUVWXY', {yMax}).yMax,
+		usDefaultChar: hasSpace ? 32 : 0,
+		usBreakChar: hasSpace ? 32 : 0,
     });
 
     const hmtxTable = hmtx.make(glyphs);

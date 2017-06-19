@@ -106,7 +106,7 @@ export function rayRayIntersection(p1, a1, p2, a2) {
 
 // return the angle between two points
 export function lineAngle(p0, p1) {
-	return Math.atan2(p1.y - p0.y, p1.x - p0.x);
+	return Math.atan2(p1.y - p0.y, p1.x - p0.x) % (2 * Math.PI);
 }
 
 export function onLine(params) {
@@ -241,20 +241,20 @@ export function split(points, t = 1, base) {
 				x: result[0].x,
 				y: result[0].y,
 				handleOut: {
-					x: result[4].x - result[0].x,
-					y: result[4].y - result[0].y,
+					x: result[4].x,
+					y: result[4].y,
 				},
 			},
 			{
 				x: result[9].x,
 				y: result[9].y,
 				handleIn: {
-					x: result[7].x - result[9].x,
-					y: result[7].y - result[9].y,
+					x: result[7].x,
+					y: result[7].y,
 				},
 				handleOut: {
-					x: result[8].x - result[9].x,
-					y: result[8].y - result[9].y,
+					x: result[8].x,
+					y: result[8].y,
 				},
 			},
 		],
@@ -263,20 +263,20 @@ export function split(points, t = 1, base) {
 				x: result[9].x,
 				y: result[9].y,
 				handleIn: {
-					x: result[7].x - result[9].x,
-					y: result[7].y - result[9].y,
+					x: result[7].x,
+					y: result[7].y,
 				},
 				handleOut: {
-					x: result[8].x - result[9].x,
-					y: result[8].y - result[9].y,
+					x: result[8].x,
+					y: result[8].y,
 				},
 			},
 			{
 				x: result[3].x,
 				y: result[3].y,
 				handleIn: {
-					x: result[6].x - result[3].x,
-					y: result[6].y - result[3].y,
+					x: result[6].x,
+					y: result[6].y,
 				},
 			},
 		],
@@ -433,6 +433,7 @@ export function makeCurveInsideSerif(
 
 	const rotateRad = (serifRotate * pAnchors.rotationAngle || 0) * Math.PI / 180;
 	const baseWidth = pAnchors.baseWidth;
+	const baseDir = pAnchors.baseDir;
 	const baseHeight = pAnchors.baseHeight;
 	const stumpOpposite = pAnchors.opposite;
 	const stumpBase = baseHeight;
@@ -451,6 +452,7 @@ export function makeCurveInsideSerif(
 
 	stumpVector = normalize(stumpVector);
 	const rotationCenter = pAnchors.rotationCenter;
+	rotationCenter.typeIn = 'line';
 	const topLeft = {
 		x: rotationCenter.x + (baseHeight.x - rotationCenter.x - serifHeight * xDir) * Math.cos(rotateRad) - (baseWidth.y - rotationCenter.y + serifWidth * yDir) * Math.sin(rotateRad),
 		y: rotationCenter.y + (baseWidth.y - rotationCenter.y + serifWidth * yDir) * Math.cos(rotateRad) + (baseHeight.x - rotationCenter.x - serifHeight * xDir) * Math.sin(rotateRad),
@@ -541,6 +543,7 @@ export function makeCurveInsideSerif(
 			x: pointWithCurve.x,
 			y: pointWithCurve.y,
 			dirOut: pointWithCurve.normal,
+			typeIn: 'line',
 		};
 		const curveRatio = Math.min(serifCurve / distance(0, 0, serifDirection.x, serifDirection.y), 0.75);
 
@@ -549,23 +552,23 @@ export function makeCurveInsideSerif(
 			y: serifCenter.y + serifDirection.y * curveRatio,
 			dirIn: serifRadDirection,
 			dirOut: serifRadDirection,
-			type: 'corner',
 		};
 	}
 	else {
 		if (pAnchors.inverseOrder) {
 			const relHandle = subtract2D(serifCenter, serifCenter.handleIn);
 
-			normalToCurve = Math.atan2(relHandle.y, relHandle.x);
+			normalToCurve = Math.atan2(relHandle.y, relHandle.x) + Math.PI;
 		}
 		else {
 			const relHandle = subtract2D(serifCenter, serifCenter.handleOut);
 
-			normalToCurve = Math.atan2(relHandle.y, relHandle.x);
+			normalToCurve = Math.atan2(relHandle.y, relHandle.x) + Math.PI;
 		}
 		pointOnCurveVar = {
 			x: serifCenter.x,
 			y: serifCenter.y,
+			typeIn: 'line',
 		};
 		pointOnSerif = {
 			x: serifCenter.x,
@@ -588,6 +591,7 @@ export function makeCurveInsideSerif(
 	const serifRoot = {
 		x: baseHeight.x,
 		y: baseHeight.y,
+		typeIn: 'line',
 	};
 
 	const rootVector = normalize(vectorFromPoints(serifRoot, rightEdge));
@@ -621,9 +625,8 @@ export function makeCurveInsideSerif(
 	const midStump = {
 		x: serifRoot.x + stumpNorm / 2 * stumpVector.x,
 		y: serifRoot.y + stumpNorm / 2 * stumpVector.y,
-		dirOut: baseWidth.dirIn,
+		dirOut: baseDir,
 		typeIn: 'line',
-		type: 'corner',
 	};
 
 	const lastPoint = {

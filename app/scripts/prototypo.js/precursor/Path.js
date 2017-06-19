@@ -30,7 +30,7 @@ function computeHandle(
 	dirToNext += params[`${node.nodeAddress}expandedTo.${j}.dirOut`] || 0;
 	dirToPrev += params[`${node.nodeAddress}expandedTo.${j}.dirIn`] || 0;
 
-	if (Math.abs(prevDir % Math.PI) === Math.abs(dirToPrev % Math.PI)) {
+	if ((Math.PI - Math.abs(Math.abs(prevDir - dirToPrev) - Math.PI)) % Math.PI === 0) {
 		const unitDir = {
 			x: Math.cos(dirToPrev),
 			y: Math.sin(dirToPrev),
@@ -42,9 +42,9 @@ function computeHandle(
 					unitDir,
 					subtract2D(
 						prev,
-						next,
+						current,
 					)
-				),
+				) / 2,
 				unitDir
 			),
 			current
@@ -66,7 +66,7 @@ function computeHandle(
 		);
 	}
 
-	if (Math.abs(nextDir % Math.PI) === Math.abs(dirToNext % Math.PI)) {
+	if ((Math.PI - Math.abs(Math.abs(nextDir - dirToNext) - Math.PI)) % Math.PI === 0) {
 		const unitDir = {
 			x: Math.cos(dirToNext),
 			y: Math.sin(dirToNext),
@@ -78,9 +78,9 @@ function computeHandle(
 					unitDir,
 					subtract2D(
 						next,
-						prev,
+						current,
 					)
-				),
+				) / 2,
 				unitDir
 			),
 			current
@@ -169,8 +169,8 @@ class SolvablePath {
 				const dirOut = readAngle(node.dirOut);
 
 				nodes[i].expand.angle = readAngle(node.expand.angle);
-				nodes[i].dirIn = dirIn !== null ? dirIn : nodes[i].expand.angle + Math.PI / 2;
-				nodes[i].dirOut = dirOut !== null ? dirOut : nodes[i].expand.angle + Math.PI / 2;
+				nodes[i].dirIn = dirIn !== null ? dirIn : (nodes[i].expand.angle + Math.PI / 2)%(2*Math.PI);
+				nodes[i].dirOut = dirOut !== null ? dirOut : (nodes[i].expand.angle + Math.PI / 2)%(2*Math.PI);
 			}
 			else {
 				nodes[i].dirIn = readAngle(node.dirIn) || 0;

@@ -44,29 +44,6 @@ function paramAuthorized(plan, credits) {
 	return paidPlan || enoughCredits;
 }
 
-const a = document.createElement('a');
-
-const triggerDownload = function(arrayBuffer, filename) {
-	const reader = new FileReader();
-	const enFamilyName = filename;
-
-	reader.onloadend = function() {
-		a.download = `${enFamilyName}.otf`;
-		a.href = reader.result;
-		a.dispatchEvent(new MouseEvent('click'));
-
-		setTimeout(function() {
-			a.href = '#';
-			_URL.revokeObjectURL(reader.result);
-		}, 100);
-	};
-
-	reader.readAsDataURL(new Blob(
-		[new DataView(arrayBuffer)],
-		{type: 'font/opentype'}
-	));
-};
-
 let oldFont;
 
 window.addEventListener('fluxServer.setup', () => {
@@ -741,18 +718,13 @@ export default {
 		const subsetString = prototypoStore.get('uiText') + prototypoStore.get('uiWord');
 		const glyphCanvasUnicode = prototypoStore.get('glyphSelected');
 		const altList = prototypoStore.get('altList');
-		const glyph = altList[glyphCanvasUnicode] || String.fromCharCode(glyphCanvasUnicode);
 		const jobs = [];
-
 		const subset = _.map(
 			_.uniq(subsetString.split('')),
 			(letter) => {
-				const unicode = letter.charCodeAt(0);
-
-				return altList[unicode] || letter;
+				return letter.charCodeAt(0);
 			}
 		);
-
 		const fontPromise = _.chunk(subset, Math.ceil(subset.length / pool.workerArray.length))
 			.map((subsubset) => {
 				return new Promise((resolve) => {
@@ -760,7 +732,10 @@ export default {
 						action: {
 							type: 'constructGlyphs',
 							data: {
-								params,
+								params: {
+									...params,
+									altList,
+								},
 								subset: subsubset,
 							},
 						},
@@ -819,7 +794,10 @@ export default {
 			});
 		});
 
-		const glyphForCanvas = fontMaker.constructFont(params, glyph);
+		const glyphForCanvas = fontMaker.constructFont({
+			...params,
+			altList,
+		}, [glyphCanvasUnicode]);
 
 		localClient.dispatchAction('/store-value-font', {
 			glyph: glyphForCanvas.glyphs[0],

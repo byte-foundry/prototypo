@@ -1,4 +1,5 @@
-import {prototypoStore} from '../stores/creation.stores.jsx';
+/* global _ */
+import {prototypoStore, undoableStore, fontInstanceStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {FontValues} from '../services/values.services.js';
@@ -13,6 +14,29 @@ window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
 	localServer = LocalServer.instance;
 });
+
+const a = document.createElement('a');
+
+const triggerDownload = function(arrayBuffer, filename) {
+	const reader = new FileReader();
+	const enFamilyName = filename;
+
+	reader.onloadend = function() {
+		a.download = `${enFamilyName}.otf`;
+		a.href = reader.result;
+		a.dispatchEvent(new MouseEvent('click'));
+
+		setTimeout(function() {
+			a.href = '#';
+			_URL.revokeObjectURL(reader.result);
+		}, 100);
+	};
+
+	reader.readAsDataURL(new Blob(
+		[new DataView(arrayBuffer)],
+		{type: 'font/opentype'}
+	));
+};
 
 /**
 *	Checks for export authorization for a given (plan,credits) couple
@@ -93,12 +117,59 @@ export default {
 			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
 		}, 10000);
 
-		localClient.dispatchAction('/store-value-font', {
-			exportPlease: true,
-			exportName: name,
-			exportMerged: merged,
-			exportValues: undefined,
-			exportEmail: HoodieApi.instance.email,
+		const pool = fontInstanceStore.get('fontWorkerPool');
+		const altList = prototypoStore.get('altList');
+		const params = undoableStore.get('controlsValues');
+		const jobs = [];
+		const glyphs = prototypoStore.get('glyphs');
+		const subset = Object.keys(glyphs);
+		const fontPromise = _.chunk(subset, Math.ceil(subset.length / pool.workerArray.length))
+			.map((subsubset) => {
+				return new Promise((resolve) => {
+					jobs.push({
+						action: {
+							type: 'constructGlyphs',
+							data: {
+								params,
+								subset: subsubset,
+							},
+						},
+						callback: (font) => {
+							resolve(font);
+						},
+					});
+				});
+			});
+
+		pool.doJobs(jobs);
+
+		Promise.all(fontPromise).then((fonts) => {
+			let fontResult;
+
+			fonts.forEach(({font}) => {
+				if (fontResult) {
+					fontResult.glyphs = [
+						...fontResult.glyphs,
+						...font.glyphs,
+					];
+				}
+				else {
+					fontResult = font;
+				}
+			});
+
+			pool.doFastJob({
+				action: {
+					type: 'makeOtf',
+					data: {
+						fontResult,
+					},
+				},
+				callback: ({arrayBuffer}) => {
+					triggerDownload(arrayBuffer.buffer, 'hello');
+					localClient.dispatchAction('/exporting', {exporting: false});
+				},
+			});
 		});
 	},
 	'/end-export-otf': () => {

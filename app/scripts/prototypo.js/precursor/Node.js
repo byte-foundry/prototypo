@@ -1,5 +1,6 @@
 /* globals _ */
 import {constantOrFormula} from '../helpers/values.js';
+import Formula from './Formula.js';
 
 export default class Node {
 	constructor(source, i, j, expandedCursor) {
@@ -74,7 +75,7 @@ export default class Node {
 
 	analyzeDependency(glyph, graph) {
 		_.forOwn(this, (value, key) => {
-			if (value !== null && key !== 'cursor') {
+			if (value instanceof Formula && key !== 'cursor') {
 				if (key === 'expand') {
 					_.forOwn(value, (item) => {
 						item.analyzeDependency(glyph, graph);

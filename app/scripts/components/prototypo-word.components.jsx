@@ -64,7 +64,6 @@ export default class PrototypoWord extends React.PureComponent {
 					uiSpacingMode: head.toJS().d.uiSpacingMode,
 					uiWordString: head.toJS().d.uiWordString,
 					uiWordSelection: head.toJS().d.uiWordSelection || 0,
-					totalHeight: head.toJS().d.totalHeight,
 					uiWordFontSize: head.toJS().d.uiWordFontSize,
 				});
 			})
@@ -72,10 +71,21 @@ export default class PrototypoWord extends React.PureComponent {
 				this.setState(undefined);
 			});
 
-		this.client.getStore('/fastStuffStore', this.lifespan)
+		this.client.getStore('/undoableStore', this.lifespan)
+			.onUpdate((head) => {
+				const values = head.toJS().d.controlsValues;
+				this.setState({
+					totalHeight: values.xHeight + Math.max(values.capDelta, values.ascender) - values.descender,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+
+		this.client.getStore('/fontInstanceStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					glyphProperties: head.toJS().d.glyphProperties,
+					font: head.toJS().d.font,
 				});
 			})
 			.onDelete(() => {
@@ -105,11 +115,13 @@ export default class PrototypoWord extends React.PureComponent {
 
 		if (!this.alreadyRafed) {
 			this.alreadyRafed = raf(() => {
-				if (this.state.glyphProperties) {
+				if (this.state.font) {
 					const {clientWidth, clientHeight} = ReactDOM.findDOMNode(this);
 					const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
 						return sum + (
-							this.state.glyphProperties[glyph.charCodeAt(0)]
+							_.find(this.state.font.glyphs, (glyphItem) => {
+								return glyphItem.unicode === glyph.charCodeAt(0);
+							})
 							|| {advanceWidth: 500}
 						).advanceWidth;
 					}, 0);
