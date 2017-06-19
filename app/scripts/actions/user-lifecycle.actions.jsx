@@ -251,7 +251,7 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', prototypatch);
 	},
-	'/sign-in': async ({username, password, retry, to = '/dashboard', oldQuery = {}}) => {
+	'/sign-in': async ({username, password, retry, to = '/start', oldQuery = {}}) => {
 		const dashboardLocation = {
 			pathname: to,
 			query: oldQuery,
