@@ -2,8 +2,13 @@
 
 .account-change-plan {
 
-	&-downgrade {
-		font-size:18px;
-		color: $medium-grey;
+	&-number-of-users {
+		padding: 10px;
+	}
+
+	&-actions {
+		justify-content: flex-end;
+		flex-direction: row;
+		display: flex;
 	}
 }

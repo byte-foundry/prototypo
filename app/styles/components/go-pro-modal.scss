@@ -1,80 +1,23 @@
 @import "../variables";
 
-.go-pro-choices {
-	display:flex;
-	justify-content: space-between;
-}
-
-.go-pro-choice {
-	background: $lightest-grey;
-	color: $dark-grey;
-	flex: 0 0 48%;
-	padding: 30px 20px;
-	cursor:pointer;
-	text-align: center;
-	margin-top: 20px;
-
-	&:hover {
-		background:$green;
-		color:$white;
-	}
-
-	&-title {
-		font-size: 24px;
-		margin-bottom: 0px;
-	}
-
-	&-subtitle {
-		font-style: italic;
-		margin-top: 2px;
-		margin-bottom: 32px;
-	}
-
-	&-plans {
-		display:flex;
-		justify-content: stretch;
-	}
-
-	&-plan {
-		flex: 0 0 50%;
-		text-align: center;
-		margin: 0px;
-
-		&-title {
-			font-size:18px;
-		}
-	}
-
-	& .pro-version-big {
-		background: url('../../images/pro-version-big.svg') no-repeat center;
-		height: 50px;
-		width: 100%;
-	}
-
-	& .buy-credits-big {
-		background: url('../../images/buy-credits-big.svg') no-repeat center;
-		height: 50px;
-		width: 100%;
-	}
-}
-
 .pricing-item-subtitle-price-info.agency {
-  text-align: center;
-  display: inline-block;
-  margin-top: -2px;
-  margin-bottom: -1px;
-  .input-number,
-  .input-number-decrement,
-  .input-number-increment,
-  .input-number-text {
-	border: 1px solid $light-grey;
-	height: 25px;
-	user-select: none;
-	line-height: 25px;
-	float: left;
-  }
+	text-align: center;
+	display: inline-block;
+	margin: -3px 0 -2px;
 
-  .input-number {
+}
+
+.input-number {
+	&, &-decrement, &-increment, &-text {
+		border: 1px solid $light-grey;
+		height: 25px;
+		user-select: none;
+		line-height: 25px;
+		float: left;
+	}
+}
+
+.input-number {
 	width: 40px;
 	padding: 0 4px;
 	margin-bottom: 0;
@@ -87,15 +30,16 @@
 	background: inherit;
 	box-shadow: none;
 	color: $medium-grey;
-	&:focus {
-	  outline: none;
-	  background: inherit;
-	  box-shadow: none;
-	  border-color: $light-grey;
-	}
-  }
 
-  .input-number-text {
+	&:focus {
+		outline: none;
+		background: inherit;
+		box-shadow: none;
+		border-color: $light-grey;
+	}
+}
+
+.input-number-text {
 	font-size: 16px;
 	line-height: 21px;
 	border-left: none;
@@ -104,12 +48,13 @@
 	padding: 0 12px;
 	padding-left: 0;
 	color: $medium-grey;
-  }
+}
 
 
 
-  .input-number-decrement,
-  .input-number-increment {
+.input-number-decrement,
+.input-number-increment {
+	outline: none;
 	display: inline-block;
 	width: 30px;
 	line-height: 1.8;
@@ -118,19 +63,18 @@
 	text-align: center;
 	font-weight: 700;
 	cursor: pointer;
-  }
-  .input-number-decrement:active,
-  .input-number-increment:active {
+}
+.input-number-decrement:active,
+.input-number-increment:active {
 	background: lighten($light-grey, 5%);
-  }
+}
 
-  .input-number-decrement {
+.input-number-decrement {
 	border-right: none;
 	border-radius: 4px 0 0 4px;
-  }
+}
 
-  .input-number-increment {
+.input-number-increment {
 	border-left: none;
 	border-radius: 0 4px 4px 0;
-  }
 }

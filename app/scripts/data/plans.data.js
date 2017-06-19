@@ -7,6 +7,8 @@ export const freeConst = {
 export const monthlyConst = {
 	price: 15,
 	firstMonthPrice: 1,
+	monthlyPrice: 15,
+	annualPrice: 15 * 12,
 	prefix: 'personal_monthly',
 	description: 'Professional monthly subscription',
 };

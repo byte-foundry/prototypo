@@ -1,0 +1,14 @@
+.icon {
+	fill: currentColor;
+	display: block;
+	height: 24px;
+	width: 24px;
+
+	&-button {
+		display: block;
+		margin: auto;
+		background: none;
+		border: none;
+		outline: none;
+	}
+}

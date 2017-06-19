@@ -60,8 +60,9 @@ class Subscription extends React.Component {
 						country={country}
 					/>
 					<SubscriptionCardAndValidation
-						plan={location.query.plan}
-						coupon={location.query.coupon}
+						plan={this.props.location.query.plan}
+						quantity={this.props.location.query.quantity}
+						coupon={this.props.location.query.coupon}
 						country={country}
 					/>
 				</div>

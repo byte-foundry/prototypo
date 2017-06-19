@@ -21,8 +21,11 @@ window.addEventListener('fluxServer.setup', async () => {
 	localClient.lifespan = new Lifespan();
 
 	localClient.getStore('/userStore', localClient.lifespan)
-		.onUpdate(({head}) => {
-			saveAccountValues(head.toJS().infos);
+		.onUpdate(({head}, patch) => {
+			// if infos is in the mutations object, it means infos has been modified
+			if (patch.toJS().m.hasOwnProperty('infos')) {
+				saveAccountValues(head.toJS().infos);
+			}
 		})
 		.onDelete(() => {
 			return;
@@ -184,14 +187,15 @@ const validateCoupon = debounce((options) => {
 
 export default {
 	'/load-customer-data': ({sources, subscriptions, metadata}) => {
-		const subscriptionPatch = userStore.set('subscription', subscriptions.data[0]).commit();
-		const cardsPatch = userStore.set('cards', sources.data).commit();
-		const creditsPatch = prototypoStore.set('credits', parseInt(metadata.credits, 10) || 0).commit();
-		const hasBeenSubscribingPatch = userStore.set('hasBeenSubscribing', metadata.hasBeenSubscribing || false).commit();
+		const userPatch = userStore
+			.set('subscription', subscriptions.data[0])
+			.set('cards', sources.data)
+			.set('hasBeenSubscribing', metadata.hasBeenSubscribing || false)
+			.commit();
 
-		localServer.dispatchUpdate('/userStore', hasBeenSubscribingPatch);
-		localServer.dispatchUpdate('/userStore', subscriptionPatch);
-		localServer.dispatchUpdate('/userStore', cardsPatch);
+		const creditsPatch = prototypoStore.set('credits', parseInt(metadata.credits, 10) || 0).commit();
+
+		localServer.dispatchUpdate('/userStore', userPatch);
 		localServer.dispatchUpdate('/prototypoStore', creditsPatch);
 	},
 	'/load-customer-invoices': async () => {
@@ -367,7 +371,12 @@ export default {
 		const curedLastname = lastname ? ` ${lastname}` : '';
 
 		try {
-			const {response} = await HoodieApi.signUp(username.toLowerCase(), password);
+			const {response} = await HoodieApi.signUp(username.toLowerCase(), password, firstname, {
+				lastName: lastname,
+				occupation: css.value,
+				phone,
+				skype,
+			});
 
 			window.Intercom('boot', {
 				app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
@@ -388,6 +397,9 @@ export default {
 				'buyer_email': firstname + curedLastname,
 				hoodieId: response.roles[0],
 			});
+			// TMP
+			HoodieApi.addStripeIdToGraphCool(customer.id);
+			// TMP
 			const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname, css, phone, skype};
 			const patch = userStore.set('infos', {accountValues}).commit();
 
@@ -548,12 +560,13 @@ export default {
 		window.Intercom('trackEvent', 'addedCardAndAdress');
 		hashHistory.push(toPath);
 	},
-	'/confirm-buy': async ({plan, card, pathname}) => {
+	'/confirm-buy': async ({plan, card, pathname, quantity}) => {
 		const form = userStore.get('confirmation');
+
 		const hasBeenSubscribing = userStore.get('hasBeenSubscribing');
 		let coupon = userStore.get('choosePlanForm').couponValue;
 		const validCoupon = userStore.get('choosePlanForm').validCoupon;
-		const { fullname, number, expMonth, expYear, cvc } = card;
+		const { fullname, number, expMonth, expYear, cvc } = card || {};
 
 		form.errors = [];
 		form.loading = true;
@@ -590,6 +603,7 @@ export default {
 			const data = await HoodieApi.updateSubscription({
 				plan: `${plan}_${currency}_taxfree`,
 				coupon,
+				quantity,
 			});
 			const infos = {...userStore.get('infos')};
 
