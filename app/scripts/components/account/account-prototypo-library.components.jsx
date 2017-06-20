@@ -18,10 +18,16 @@ catch (err) {}
 
 class AccountPrototypoLibrary extends React.PureComponent {
 	constructor(props) {
+		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	handleSubmit() {
+	handleSubmit(e) {
+		e.preventDefault();
+
+		const newDomains = this.props.domains;
+		newDomains.push(this.url.value);
+		this.props.updateDomain(newDomains);
 	}
 
 	render() {
@@ -47,7 +53,7 @@ class AccountPrototypoLibrary extends React.PureComponent {
 								name="url"
 								placeholder="domain.com"
 								ref={(node) => {
-									if (node) this.email = node;
+									if (node) this.url = node;
 								}}
 							/>
 						</td>
