@@ -159,7 +159,7 @@ class FamilyList extends React.Component {
 		const families = _.map(this.props.list, (family) => {
 			const templateInfo = _.find(this.props.templateInfos, (template) => {
 				return template.templateName === family.template;
-			}) || {name: 'Spectral'};
+			}) || {name: 'Undefined'};
 			let selected;
 
 			if (this.props.selected) {
