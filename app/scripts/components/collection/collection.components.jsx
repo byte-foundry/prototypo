@@ -159,7 +159,7 @@ class FamilyList extends React.Component {
 		const families = _.map(this.props.list, (family) => {
 			const templateInfo = _.find(this.props.templateInfos, (template) => {
 				return template.templateName === family.template;
-			});
+			}) || {name: 'Spectral'};
 			let selected;
 
 			if (this.props.selected) {
@@ -167,11 +167,11 @@ class FamilyList extends React.Component {
 			}
 
 			return (<Family
-				key={family.name || ''}
+				key={family.name}
 				family={family}
 				selected={selected}
 				class={family.template.split('.')[0]}
-				templateName={templateInfo.name || ''}
+				templateName={templateInfo.name}
 				deleteSplit={this.props.deleteSplit}/>);
 		});
 
