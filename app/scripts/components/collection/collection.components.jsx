@@ -160,16 +160,19 @@ class FamilyList extends React.Component {
 			const templateInfo = _.find(this.props.templateInfos, (template) => {
 				return template.templateName === family.template;
 			});
+			let selected;
 
-			const selected = family.name === this.props.selected.name;
+			if (this.props.selected) {
+				selected = family.name === this.props.selected.name;
+			}
 
-			return <Family
-				key={family.name}
+			return (<Family
+				key={family.name || ''}
 				family={family}
 				selected={selected}
 				class={family.template.split('.')[0]}
-				templateName={templateInfo.name}
-				deleteSplit={this.props.deleteSplit}/>;
+				templateName={templateInfo.name || ''}
+				deleteSplit={this.props.deleteSplit}/>);
 		});
 
 		return (
