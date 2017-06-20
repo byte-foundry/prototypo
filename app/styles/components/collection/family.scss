@@ -26,6 +26,7 @@
 	margin-left: 5px;
 	margin-right: 5px;
 	border: 2px solid mix(black, $lightest-grey, 3%);
+	transform: perspective(1px);
 
 	&:first-of-type {
 		background-color: mix(black, $lightest-grey, 3%);
@@ -38,7 +39,7 @@
 	}
 	&:hover {
 		color: $green;
-		transform: scale(1.01);
+		transform: perspective(1px) scale3d(1.01, 1.01, 1.01);
 		box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 	}
 
@@ -228,13 +229,14 @@
 	margin-right: 10px;
 	border: 2px solid $lightest-grey;
 	transition: all .2s ease-out;
+	transform: perspective(1px);
 
 	&:nth-child(2n+1) {
 		background-color: $lightest-grey;
 	}
 
 	&:hover {
-		transform: scale(1.01);
+		transform: perspective(1px) scale3d(1.01, 1.01, 1.01);
 		box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 	}
 
