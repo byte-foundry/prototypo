@@ -3638,6 +3638,10 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
+gfnt.ptf@yannickmathey/g#master:
+  version "1.0.0"
+  resolved "https://codeload.github.com/yannickmathey/g/tar.gz/b60b2d3b3e22d6908ef443876243df2c52a7d9e2"
+
 ghreleases@^1.0.2:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/ghreleases/-/ghreleases-1.0.5.tgz#a20f8194074311e19d84ccba7a6e08c4b434fd80"
@@ -4348,11 +4352,11 @@ immutable-request@FranzPoize/immutable-request#master:
     sigmund "^1.0.1"
     superagent "^1.2.0"
 
-immutable@^3.7.3, immutable@^3.8.1:
+immutable@^3.7.3, immutable@^3.7.6, immutable@^3.8.1:
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.1.tgz#200807f11ab0f72710ea485542de088075f68cd2"
 
-immutable@^3.7.6, immutable@~3.7.4:
+immutable@~3.7.4:
   version "3.7.6"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.7.6.tgz#13b4d3cb12befa15482a26fe1b2ebae640071e4b"
 
@@ -7539,16 +7543,16 @@ query-string@^3.0.0:
   dependencies:
     strict-uri-encode "^1.0.0"
 
-query-string@^4.1.0, query-string@^4.2.3:
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/query-string/-/query-string-4.2.3.tgz#9f27273d207a25a8ee4c7b8c74dcd45d556db822"
+query-string@^4.1.0, query-string@^4.3.2:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-4.3.4.tgz#bbb693b9ca915c232515b228b1a02b609043dbeb"
   dependencies:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
-query-string@^4.3.2:
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/query-string/-/query-string-4.3.4.tgz#bbb693b9ca915c232515b228b1a02b609043dbeb"
+query-string@^4.2.3:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-4.2.3.tgz#9f27273d207a25a8ee4c7b8c74dcd45d556db822"
   dependencies:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
@@ -7753,6 +7757,10 @@ react-motion@^0.4.3:
   dependencies:
     performance-now "^0.2.0"
     raf "^3.1.0"
+
+react-onclickoutside@^6.1.1:
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.1.1.tgz#9e680cdebd6c21878204e8a9f19ff413f8078397"
 
 react-router@^2.0.0:
   version "2.8.1"
