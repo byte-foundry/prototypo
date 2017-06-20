@@ -281,7 +281,8 @@ export default class PrototypoWord extends React.PureComponent {
 			<div
 				className="prototypo-word"
 				onClick={this.hideContextMenu}
-				onMouseLeave={this.hideContextMenu}>
+				onMouseLeave={this.hideContextMenu}
+				onContextMenu={this.toggleContextMenu}>
 				<div className="prototypo-word-scrollbar-wrapper">
 					<HandlegripText
 						ref="text"

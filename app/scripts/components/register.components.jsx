@@ -76,6 +76,7 @@ export default class Register extends React.Component {
 				<div className="account-header">
 					<h1 className="account-title">Sign up</h1>
 				</div>
+				<h1 className="account-dashboard-page-title">Nice to meet you.</h1>
 				<div className="account-dashboard-container">
 					<form className="sign-in-form" onSubmit={(e) => {this.register(e);}}>
 						<div className="columns">
@@ -106,6 +107,7 @@ export default class Register extends React.Component {
 							name="email-register"
 							required
 							ref="username"
+							inputValue={this.props.location.query.emailSignUp}
 							type="email"
 							placeholder="example@domain.com"/>
 						<InputWithLabel

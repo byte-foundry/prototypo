@@ -12,3 +12,5 @@ dist
 *.swp
 reports/
 coverage
+.yarn.lock
+yarn-error.log

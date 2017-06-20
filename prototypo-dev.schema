@@ -1,0 +1,30 @@
+# projectId: "prototypo-dev"
+
+type File {
+  contentType: String!
+  createdAt: DateTime
+  id: ID!
+  name: String!
+  secret: String!
+  size: Int!
+  updatedAt: DateTime
+  url: String!
+}
+
+type User {
+  createdAt: DateTime
+  email: String
+  firstName: String!
+  id: ID!
+  lastName: String
+  manager: User @relation(name: "SubUsers")
+  occupation: String
+  password: String
+  pendingManager: User @relation(name: "SubUsersInvitation")
+  pendingSubUsers: [User!]! @relation(name: "SubUsersInvitation")
+  phone: String
+  skype: String
+  stripe: String
+  subUsers: [User!]! @relation(name: "SubUsers")
+  updatedAt: DateTime
+}
