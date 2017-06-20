@@ -121,6 +121,7 @@ class AccountSidebar extends React.Component {
 							slug="organization"
 							label="Manage sub users"
 						/>}
+					<AccountSidebarLink to="/account/prototypo-library" slug="account" label="Prototypo library"/>
 					<AccountSidebarLink to="/account/billing" slug="billing" label="Billing history" />
 				</ul>
 			</div>
