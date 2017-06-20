@@ -76,6 +76,43 @@
 			}
 		}
 
+		&-academy {
+			display: inline-flex;
+			align-items: center;
+			&-img {
+				width:23px;
+				margin-right: 12px;
+				cursor: pointer;
+			}
+			&-part {
+				display: inline-block;
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				margin-left: 4px;
+				margin-right: 4px;
+				margin-bottom: 2px;
+				background-color: $black;
+				border: 2px solid $light-grey;
+				cursor: pointer;
+				&.completed {
+					background-color: $white;
+					border-color: $white;
+				}
+				&:hover {
+					@include themify() {
+						border-color: $theme-background;
+						&.completed {
+							background-color: $theme-background;
+						}
+					}
+				}
+			}
+			&-text {
+				margin-left: 8px;
+			}
+		}
+
 		&.is-icon-menu {
 			padding:0;
 			min-width: 35px;
@@ -180,15 +217,19 @@
 			}
 		}
 
-		&:hover, &.topbaritem-displayed {
+		&:hover:not(.academy-progress-container), &.topbaritem-displayed {
 			@include themify() {
 				background-color: $theme-background;
 				color: $theme-color;
+			}
+			&.no-hover {
+				background-color: transparent;
 			}
 		}
 
 		&.no-hover:hover {
 			background: transparent;
+			background-color: transparent;
 		}
 
 		&.is-centered {

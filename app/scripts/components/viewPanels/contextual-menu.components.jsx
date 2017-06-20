@@ -41,13 +41,28 @@ class ContextualMenuItem extends React.Component {
 		const classes = ClassNames({
 			'contextual-menu-list-item': true,
 			'is-active': this.props.active,
+			'is-split': this.props.splitted,
+			'clearfix': this.props.splitted,
 		});
-
-		return (
-			<li className={classes} onClick={this.props.click}>
-				{this.props.text}
-			</li>
-		);
+		if (this.props.splitted) {
+			return (
+				<li className={classes}>
+					<div className="btn danger" onClick={this.props.click}>
+						<span>{this.props.text}</span>
+					</div>
+					<div className="btn" onClick={this.props.altClick}>
+						<span>{this.props.altLabel}</span>
+					</div>
+				</li>
+			);
+		}
+		else {
+			return (
+				<li className={classes} onClick={this.props.click}>
+					{this.props.text}
+				</li>
+			);
+		}
 	}
 }
 

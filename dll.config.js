@@ -26,9 +26,7 @@ module.exports = {
 			'xxhashjs',
 			'pouchdb',
 			'pouchdb-hoodie-api',
-			'react-json-pretty',
 			'slug',
-			'pouchdb',
 			'lodash',
 			'diff'
 		],

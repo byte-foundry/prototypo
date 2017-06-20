@@ -43,6 +43,8 @@ gulp.task('cp-genese', function() {
 		.pipe(gulp.dest('./dist/venus.ptf/dist/'));
 	gulp.src('./node_modules/elzevir.ptf/dist/font.json')
 		.pipe(gulp.dest('./dist/elzevir.ptf/dist/'));
+	gulp.src('./node_modules/gfnt.ptf/dist/font.json')
+		.pipe(gulp.dest('./dist/gfnt.ptf/dist/'));
 });
 
 gulp.task('cp-static', function() {
@@ -76,7 +78,7 @@ gulp.task('clean',function() {
 
 gulp.task('build', ['clean', 'images','css-vendor','css-app','cp-prototypo.js','cp-genese','cp-static'],  function(callback) {
 	// run webpack
-	var webpackConfig	= require('./prod.config.js');
+	var webpackConfig = process.env.NODE_ENV === 'production' ? require('./prod.config') : require('./dev.config');
 	var prototypoConfig = Object.create(webpackConfig);
 	webpack(prototypoConfig,
 		function(err, stats) {
@@ -107,7 +109,7 @@ gulp.task('webpack:dll', function(callback) {
 });
 
 gulp.task('watch-font', function() {
-	return gulp.watch(['./node_modules/john-fell.ptf/dist/font.json','./node_modules/venus.ptf/dist/font.json','./node_modules/elzevir.ptf/dist/font.json'], ['cp-genese']);
+	return gulp.watch(['./node_modules/john-fell.ptf/dist/font.json','./node_modules/venus.ptf/dist/font.json','./node_modules/elzevir.ptf/dist/font.json', './node_modules/gfnt.ptf/dist/font.json'], ['cp-genese']);
 });
 
 gulp.task('watch-prototypojs', function() {
@@ -115,7 +117,7 @@ gulp.task('watch-prototypojs', function() {
 });
 
 gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','watch-font', 'watch-prototypojs','webpack:dll'], function(callback) {
-	var webpackConfig	= require('./webpack.config.js');
+	var webpackConfig	= require('./local.config.js');
 	// Start a webpack-dev-server
 	var prototypoConfig = Object.create(webpackConfig);
 	prototypoConfig.debug = true;

@@ -7,31 +7,30 @@ import LocalClient from '../../stores/local-client.stores.jsx';
 
 import AddCard from '../shared/add-card.components.jsx';
 import Button from '../shared/button.components.jsx';
+import InputNumber from '../shared/input-number.components.jsx';
 import InputWithLabel from '../shared/input-with-label.components.jsx';
 import Price from '../shared/price.components.jsx';
 import FormError from '../shared/form-error.components.jsx';
-import getCurrency from '../../helpers/currency.helpers.js';
-
-const emptyArray = [];
-const emptyObject = {};
 
 export default class SubscriptionCardAndValidation extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
 			card: [],
+			quantity: props.quantity || 1,
 			couponValue: undefined,
 			inError: {},
 			errors: [],
+			hasBeenSubscribing: false,
 		};
 
 		this.changeCard = this.changeCard.bind(this);
+		this.changeQuantity = this.changeQuantity.bind(this);
 		this.keepCard = this.keepCard.bind(this);
 		this.addCoupon = this.addCoupon.bind(this);
 		this.handleCouponChange = this.handleCouponChange.bind(this);
 		this.handleCouponSubmit = this.handleCouponSubmit.bind(this);
 		this.subscribe = this.subscribe.bind(this);
-
 	}
 
 	componentWillMount() {
@@ -40,16 +39,18 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
-				this.setState({
-					card: head.toJS().d.cards || emptyArray,
-					couponValue: head.toJS().d.choosePlanForm.couponValue || this.props.coupon,
-					validCoupon: head.toJS().d.choosePlanForm.validCoupon,
-					wasValidCoupon: head.toJS().d.choosePlanForm.validCoupon || this.state.wasValidCoupon,
-					loading: head.toJS().d.confirmation.loading,
-					inError: head.toJS().d.confirmation.inError || emptyObject,
-					errors: head.toJS().d.confirmation.errors,
-					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
-				});
+				const {cards, choosePlanForm, confirmation, hasBeenSubscribing} = head.toJS().d;
+
+				this.setState((state) => ({
+					card: cards || [],
+					couponValue: choosePlanForm.couponValue || this.props.coupon,
+					validCoupon: choosePlanForm.validCoupon,
+					wasValidCoupon: choosePlanForm.validCoupon || state.wasValidCoupon,
+					loading: confirmation.loading,
+					inError: confirmation.inError || {},
+					errors: confirmation.errors,
+					hasBeenSubscribing,
+				}));
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -63,6 +64,12 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			this.client.dispatchAction('/choose-plan', {
 				coupon,
 			});
+		}
+	}
+
+	componentWillReceiveProps({quantity}) {
+		if (this.props.quantity !== quantity) {
+			this.changeQuantity(quantity);
 		}
 	}
 
@@ -86,15 +93,22 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		this.setState({couponValue: ''});
 	}
 
+	changeQuantity(value) {
+		this.setState({quantity: parseInt(value, 10)});
+	}
+
 	subscribe() {
+		const {plan} = this.props;
+		const {couponValue, card, quantity} = this.state;
+
 		this.client.dispatchAction('/confirm-buy', {
-			plan: this.props.plan,
-			vat: '',
-			//vat: this.refs.vat.value,
-			coupon: this.state.couponValue,
-			card: this.refs.card && this.state.card.length < 1
+			plan,
+			vat: '', // this.refs.vat.value,
+			coupon: couponValue,
+			card: this.refs.card && card.length < 1
 				? this.refs.card.data()
 				: false,
+			quantity: (plan.startsWith('agency') && quantity) || undefined,
 		});
 	}
 
@@ -110,13 +124,11 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			coupon: this.refs.coupon.inputValue,
 		});
 		this.setState({'isFormSubmitted': true});
-		e.stopPropagation();
-		e.preventDefault();
-		return true;
 	}
 
 	render() {
 		const {country, plan} = this.props;
+		const {quantity} = this.state;
 		const plans = {
 			'personal_monthly': {
 				blurb: (
@@ -143,14 +155,14 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			'agency_monthly': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <Price amount={agencyMonthlyConst.monthlyPrice} country={country}/> once and be subscribes to Prototypo. . You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <Price amount={agencyMonthlyConst.monthlyPrice * quantity} country={country}/> once and be subscribed to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
 			'agency_annual': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <Price amount={agencyAnnualConst.annualPrice} country={country}/> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <Price amount={agencyAnnualConst.annualPrice * quantity} country={country}/> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a targer="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
@@ -185,11 +197,8 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 					<AddCard inError={this.state.inError} ref="card" className={`${this.state.validCoupon && this.state.validCoupon.shouldSkipCard ? "disabled" : ''}`}/>
 					<div className="columns subscription-card-and-validation-buttons">
 						<div className="subscription-card-and-validation-switch half-column" onClick={this.addCoupon}>I have a coupon</div>
-						{(() => {
-							return this.state.card.length > 0
-								? <div className="subscription-card-and-validation-switch is-right half-column" onClick={this.keepCard}>Keep my card</div>
-								: false;
-						})()}
+						{this.state.card.length > 0
+								&& <div className="subscription-card-and-validation-switch is-right half-column" onClick={this.keepCard}>Keep my card</div>}
 					</div>
 				</div>
 			);
@@ -216,6 +225,18 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 
 			return (
 				<div className="subscription-card-and-validation normal">
+					{plan.startsWith('agency') && (
+						<div className="input-with-label">
+							<label className="input-with-label-label" htmlFor="quantity">Quantity:</label>
+							<InputNumber
+								min={2}
+								max={100}
+								value={quantity}
+								controls
+								onChange={this.changeQuantity}
+							/>
+						</div>
+					)}
 					{card}
 					{coupon}
 					<div className="subscription-card-and-validation-legal">

@@ -1,0 +1,63 @@
+@import "../../variables";
+
+.filter-input {
+	flex: 1;
+	background: white;
+	padding: 2px;
+	border-radius: 3px;
+	position: relative;
+	display: flex;
+	align-items: center;
+	border: 1px solid $light-grey;
+
+	&::before {
+		content: ' ';
+		pointer-events: none;
+		position: absolute;
+		height: 24px;
+		width: 24px;
+		background: $medium-grey;
+		mask: url('../../../images/icon-search.svg') no-repeat 50% 50%/24px 24px;
+		-webkit-mask: url('../../../images/icon-search.svg') no-repeat 50% 50%/24px 24px;
+		margin: 0 5px;
+	}
+
+	&-input {
+		flex: 1;
+		border: none;
+		padding: 10px 34px;
+		margin: 0;
+
+		&:focus {
+			outline: none;
+		}
+
+		&::placeholder {
+			color: $light-grey;
+		}
+	}
+
+	&-clear {
+		position: absolute;
+		right: 0;
+		background: none;
+		border: none;
+		height: 24px;
+		width: 24px;
+		padding: 0;
+		margin: 0 5px;
+		color: $medium-grey;
+
+		svg {
+			display: block;
+		}
+
+		&:focus {
+			outline: none;
+		}
+
+		&--empty {
+			display: none;
+		}
+	}
+}
