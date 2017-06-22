@@ -56,6 +56,16 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 				this.setState(undefined);
 			});
 	}
+	
+	componentDidMount() {
+		const {coupon} = this.props;
+
+		if (coupon) {
+			this.client.dispatchAction('/choose-plan', {
+				coupon,
+			});
+		}
+	}
 
 	componentWillReceiveProps({quantity}) {
 		if (this.props.quantity !== quantity) {
