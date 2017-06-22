@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import {graphql, gql} from 'react-apollo';
 
@@ -6,6 +7,7 @@ import apolloClient from '../../services/graphcool.services';
 
 import CopyPasteInput from '../shared/copy-paste-input.components.jsx';
 import FilterableTable from '../shared/filterable-table.components.jsx';
+import WaitForLoad from '../wait-for-load.components';
 import Button from '../shared/new-button.components.jsx';
 
 let HoodieApi;
@@ -26,11 +28,14 @@ class AccountPrototypoLibrary extends React.PureComponent {
 		e.preventDefault();
 
 		const newDomains = this.props.domains;
+
 		newDomains.push(this.url.value);
 		this.props.updateDomain(newDomains);
 	}
 
 	render() {
+		const {loading, domains, token} = this.props;
+
 		const tableHeaders = [
 			{
 				styleClass: classnames('sortable-table-header-cell', 'sortable-table-domain'),
@@ -38,40 +43,69 @@ class AccountPrototypoLibrary extends React.PureComponent {
 			},
 		];
 
+		const domainContent = domains.map((domain) => {
+			return (
+				<tr
+					key={domain}
+					className={classnames('sortable-table-row')}
+				>
+					<td className="sortable-table-cell">
+						{domain}
+					</td>
+				</tr>
+			);
+		});
+
 		return (
 			<div className="account-base account-prototypo-library">
 				<h1>Prototypo library script tag</h1>
-				<CopyPasteInput content={this.props.token}/>
+				<WaitForLoad loading={loading}>
+					<CopyPasteInput content={token}/>
+				</WaitForLoad>
 				<h1>Authorized domains</h1>
-				<FilterableTable tableHeaders={tableHeaders}>
-					<tr className="sortable-table-add-user-form">
-						<td />
-						<td colSpan={2}>
-							<input
-								className="sortable-table-add-user-form-email"
-								type="url"
-								name="url"
-								placeholder="domain.com"
-								ref={(node) => {
-									if (node) this.url = node;
-								}}
-							/>
-						</td>
-						<td>
-							<Button size="small" onClick={this.handleSubmit}>Add authorized domain</Button>
-						</td>
-					</tr>
-				</FilterableTable>
+				<WaitForLoad loading={loading}>
+					<FilterableTable tableHeaders={tableHeaders}>
+						<tr className="sortable-table-add-user-form">
+							<td colSpan={2}>
+								<input
+									className="sortable-table-add-user-form-email"
+									type="url"
+									name="url"
+									placeholder="domain.com"
+									ref={(node) => {
+										if (node) this.url = node;
+									}}
+								/>
+							</td>
+							<td>
+								<Button size="small" onClick={this.handleSubmit}>Add authorized domain</Button>
+							</td>
+						</tr>
+						{domainContent}
+					</FilterableTable>
+				</WaitForLoad>
 			</div>
 		);
 	}
 }
 
+AccountPrototypoLibrary.propTypes = {
+	domains: PropTypes.arrayOf(
+		PropTypes.string,
+	).isRequired,
+	token: PropTypes.string,
+};
+
+AccountPrototypoLibrary.defaultProps = {
+	domains: [],
+};
+
 const query = gql`
-	query getSubUsers {
+	query getAccessToken {
 		user {
 			id
 			accessToken {
+				id
 				domains
 				token
 			}
@@ -81,14 +115,9 @@ const query = gql`
 
 const addAccessToken = gql`
 	mutation addAccessToken($id: ID!, $domainNames: String!) {
-		updateUser(id: $id, accessToken: {
-			domains: $domainNames
-		}) {
-			id
-			accessToken {
-				domains
-				token
-			}
+		updateAccessToken(id: $id, domains: $domainNames) {
+			domains
+			token
 		}
 	}
 `;
@@ -106,6 +135,7 @@ const createAccessToken = gql`
 `;
 
 let userId;
+let accessTokenId;
 
 export default graphql(query, {
 	options: {
@@ -135,23 +165,26 @@ export default graphql(query, {
 				mutation: createAccessToken,
 				variables: {
 					id: userId,
-					domainNames: "",
-				}
+					domainNames: "localhost",
+				},
 			}).then(async () => {
 				await data.refetch();
 			}).catch((e) => {
 				console.log('hello');
 			});
 		}
+		else {
+			accessTokenId = data.user.accessToken.id;
+		}
 
 		return {
-			domains: data.user.accessToken.domains.split(','),
+			domains: data.user.accessToken.domains.split(',') || [],
 			token: data.user.accessToken.token,
 			updateDomain: async (domainNames) => {
 				await apolloClient.mutate({
 					mutation: addAccessToken,
 					variables: {
-						id: userId,
+						id: accessTokenId,
 						domainNames: domainNames.join(','),
 					}
 				});
