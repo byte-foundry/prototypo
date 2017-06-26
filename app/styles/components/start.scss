@@ -1,0 +1,257 @@
+@import "../variables";
+
+
+.start-app {
+	height: 100%;
+	width: 100%;
+	background-color: $green;
+	overflow: auto;
+	padding-top: 50px;
+
+	&.noproject {
+		.start-app-container {
+			width: 810px;
+			.start-base-create {
+				width: 100%;
+				border-radius: 8px;
+			}
+			.start-base-projects {
+				display: none;
+			}
+		}
+	}
+}
+
+
+.start-app-container {
+	min-height: 700px;
+	width: 1155px;
+	background: $lightest-grey;
+	position: relative;
+	margin: 0 auto 50px;
+	box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+	border-radius:8px;
+}
+
+.start-base {
+	display: flex;
+	padding: 0;
+	border-radius:8px;
+
+
+	&-create {
+		width: 70%;
+		min-width: 790px;
+		height: auto;
+		font-weight: 400;
+		display: flex;
+		flex-flow: column;
+		padding: 20px 40px;
+		background-color: mix(black, $white, 1%);
+		border-top-left-radius: 8px;
+		border-bottom-left-radius: 8px;
+
+		.add-family {
+			background-color: mix(black, $white, 1%);
+			cursor:pointer;
+			transition:all .2s ease;
+			margin-bottom:15px;
+			border-radius:4px;
+
+			.scrollarea-content {
+				margin-right: 15px;
+			}
+
+			&-form {
+				width:750px;
+
+				&-header {
+					display:flex;
+					flex-flow:row nowrap;
+					justify-content:space-between;
+
+					&-title {
+						margin:0;
+					}
+
+					&-close {
+						cursor:pointer;
+						background-color: $lightest-grey;
+						border-radius: 50%;
+						height: 30px;
+						margin-top: 10px;
+
+						&:hover {
+							background-color:$light-grey;
+						}
+					}
+				}
+
+				form {
+					margin-right: 20px;
+				}
+
+				&-input {
+					display: block;
+					width: 100%;
+					border:none;
+					padding: .8em;
+					background-color: $lightest-grey;
+					border: 2px solid $light-grey;
+					border-radius: 5px;
+					color:$dark-grey;
+					font-size: 1.1em;
+					margin-bottom: 1em;
+					margin-top:20px;
+
+					&:focus {
+						outline: none;
+						border-color: $green;
+					}
+				}
+
+				&-label {
+					display: inline-block;
+					margin-top: 5px;
+					font-size:1.1em;
+					font-weight: 700;
+
+					color: $dark-grey;
+
+					&-order {
+						color: $green;
+					}
+				}
+
+				&-template-list {
+					margin-bottom: 10px;
+					padding-bottom: 5px;
+					display: block;
+					width: 100%;
+					height: 63vh;
+					overflow: hidden;
+				}
+
+				&-error {
+					width: calc(100% - 20px);
+					text-align: center;
+					padding: 5px;
+					background-color: $red;
+					margin-bottom: 15px;
+					color: $white;
+				}
+			}
+
+			&-header {
+				display:flex;
+				flex-flow:row nowrap;
+				margin-left:20px;
+
+				&-icon {
+					margin-right:15px;
+				}
+			}
+
+			&.with-error {
+				flex-basis:600px;
+			}
+
+			&.family-form-open &-header {
+				display:none;
+			}
+
+			&.family-form-open &-form {
+				display:block;
+			}
+
+			&:hover {
+				color:$dark-grey;
+			}
+
+			.button {
+				border: 2px solid $green;
+				font-weight: 500;
+				color: $green;
+				transition: all .2s ease;
+				margin-right: 20px;
+				&:hover {
+					color: white;
+					background: $green;
+				}
+			}
+
+		}
+	}
+
+	&-projects {
+		flex: 0 0 30%;
+		background-color: $white;
+		border-radius: 5px;
+		padding: 20px 40px;
+		border-top-right-radius: 8px;
+		border-bottom-right-radius: 8px;
+
+		.load-project {
+			&-label {
+				display: inline-block;
+				margin-top: 5px;
+				font-size:1.1em;
+				font-weight: 700;
+
+				color: $dark-grey;
+
+				&-order {
+					color: $green;
+				}
+			}
+			&-project {
+				list-style-type: none;
+				padding-left: 0;
+				&-item{
+					font-size: 18px;
+					margin-bottom: 5px;
+					padding: 10px 20px;
+					background-color: $lightest-grey;
+					color: $medium-grey;
+					transition: all .2s ease-out;
+					cursor: pointer;
+
+					&.selected {
+						color: $green;
+					}
+
+					&:nth-child(2n+1) {
+						background-color: $white;
+						border: 2px solid $lightest-grey;
+					}
+
+					&:hover {
+						color: $green;
+						transform: scale(1.01);
+						box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+						.load-project-project-item-button {
+							border-color: $green;
+							color: $green;
+						}
+					}
+
+					&-button {
+						display: inline-block;
+						float: right;
+						border-radius: 8px;
+						border: 2px solid $light-grey;
+						font-size: 12px;
+						padding: 2px 15px;
+						transition: all .2s ease;
+						color: $medium-grey;
+
+						&:hover {
+							color: $white!important;
+							background-color: $green;
+						}
+					}
+				}
+			}
+		}
+	}
+}

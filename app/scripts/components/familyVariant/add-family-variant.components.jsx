@@ -2,7 +2,8 @@ import React from 'react';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-
+import ScrollArea from 'react-scrollbar';
+import {hashHistory} from 'react-router';
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Log from '~/services/log.services.js';
 
@@ -78,12 +79,15 @@ export class AddFamily extends React.Component {
 	}
 
 	createFont(e) {
+		const startApp = this.props.firstTime || false;
+
 		e.stopPropagation();
 		e.preventDefault();
 		this.client.dispatchAction('/create-family', {
 			name: this.refs.name.value,
 			template: this.state.selectedFont ? this.state.selectedFont.templateName : undefined,
 			loadCurrent: this.state.selectedFont ? this.state.selectedFont.loadCurrent : false,
+			startApp,
 		});
 		Log.ui('Collection.CreateFamily');
 		this.client.dispatchAction('/store-value', {uiOnboardstep: 'customize'});
@@ -113,14 +117,19 @@ export class AddFamily extends React.Component {
 				<div className="add-family-form">
 					<label className="add-family-form-label"><span className="add-family-form-label-order">1. </span>Choose a font template</label>
 					<div className="add-family-form-template-list">
-						{templateList}
+						<ScrollArea
+							horizontal={false}
+							horizontalContainerStyle={{overflowX: 'visible'}}
+							style={{overflowX: 'visible'}}>
+							{templateList}
+						</ScrollArea>
 					</div>
 					<label className="add-family-form-label"><span className="add-family-form-label-order">2. </span>Choose a family name</label>
 					<form onSubmit={(e) => {this.createFont(e);} }><input ref="name" className="add-family-form-input" type="text" placeholder="My new typeface"/></form>
 					{error}
 					<div className="action-form-buttons">
-						<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
-						<Button click={(e) => {this.createFont(e);} } label="Create family"/>
+						{this.props.start ? false : <Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>}
+						<Button click={(e) => {this.createFont(e);} } label={this.props.start ? 'Create project' : 'Create family'}/>
 					</div>
 				</div>
 			</div>
@@ -132,16 +141,17 @@ export class FamilyTemplateChoice extends React.Component {
 	render() {
 		const classes = Classnames({
 			'family-template-choice': true,
+			'clearfix': true,
 			'is-active': this.props.selectedFont && this.props.selectedFont.name === this.props.font.name,
 		});
 
 		return (
 			<div className={classes} onClick={() => {this.props.chooseFont(this.props.font);}}>
-				<div className="family-template-choice-sample">
-					<img src={`/assets/images/${this.props.font.sample}`} />
+				<div className="family-template-choice-provider">
+					<div className={`provider-${this.props.font.name === 'Spectral' ? 'google' : 'prototypo'}`}></div>
 				</div>
-				<div className="family-template-choice-name">
-					{this.props.font.name}
+				<div className="family-template-choice-sample">
+					<img src={`/assets/images/${this.props.font.sampleLarge}`} />
 				</div>
 			</div>
 		);

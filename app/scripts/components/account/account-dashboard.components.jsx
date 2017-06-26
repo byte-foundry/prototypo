@@ -40,6 +40,21 @@ export default class AccountDashboard extends React.Component {
 			success: "My account",
 			confirm: "My account",
 			billing: "My account",
+			organization: "My account",
+		};
+		const subtitles = {
+			home: `Hi ${this.state.firstname}!`,
+			profile: "My profile",
+			'change-password': "Change my password",
+			details: "My account settings",
+			create: "",
+			createSignup: "",
+			success: "Congratulations!",
+			confirm: "",
+			billing: "My billing history",
+			'billing-address': 'My billing address',
+			'add-card': "Add a card",
+			'change-plan': 'Change my plan',
 		};
 		const subtitles = {
 			home: `Hi ${this.state.firstname}!`,

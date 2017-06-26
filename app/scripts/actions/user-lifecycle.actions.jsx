@@ -21,8 +21,11 @@ window.addEventListener('fluxServer.setup', async () => {
 	localClient.lifespan = new Lifespan();
 
 	localClient.getStore('/userStore', localClient.lifespan)
-		.onUpdate(({head}) => {
-			saveAccountValues(head.toJS().infos);
+		.onUpdate(({head}, patch) => {
+			// if infos is in the mutations object, it means infos has been modified
+			if (patch.toJS().m.hasOwnProperty('infos')) {
+				saveAccountValues(head.toJS().infos);
+			}
 		})
 		.onDelete(() => {
 			return;
@@ -184,12 +187,15 @@ const validateCoupon = debounce((options) => {
 
 export default {
 	'/load-customer-data': ({sources, subscriptions, metadata}) => {
-		const subscriptionPatch = userStore.set('subscription', subscriptions.data[0]).commit();
-		const cardsPatch = userStore.set('cards', sources.data).commit();
+		const userPatch = userStore
+			.set('subscription', subscriptions.data[0])
+			.set('cards', sources.data)
+			.set('hasBeenSubscribing', metadata.hasBeenSubscribing || false)
+			.commit();
+
 		const creditsPatch = prototypoStore.set('credits', parseInt(metadata.credits, 10) || 0).commit();
 
-		localServer.dispatchUpdate('/userStore', subscriptionPatch);
-		localServer.dispatchUpdate('/userStore', cardsPatch);
+		localServer.dispatchUpdate('/userStore', userPatch);
 		localServer.dispatchUpdate('/prototypoStore', creditsPatch);
 	},
 	'/load-customer-invoices': async () => {
@@ -240,10 +246,15 @@ export default {
 		const patch = userStore.set('infos', {}).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);
+
+		const prototypatch = prototypoStore.set('credits', 0).commit();
+
+		localServer.dispatchUpdate('/prototypoStore', prototypatch);
 	},
-	'/sign-in': async ({username, password, retry}) => {
+	'/sign-in': async ({username, password, retry, to = '/start', oldQuery = {}}) => {
 		const dashboardLocation = {
-			pathname: '/dashboard',
+			pathname: to,
+			query: oldQuery,
 		};
 		const form = userStore.get('signinForm');
 
@@ -308,7 +319,7 @@ export default {
 			}
 		}
 	},
-	'/sign-up': async ({username, password, firstname, lastname, css, phone, skype, to = '/dashboard', retry, oldQuery = {}}) => {
+	'/sign-up': async ({username, password, firstname, lastname, css, phone, skype, to = '/start', retry, oldQuery = {}}) => {
 		const toLocation = {
 			pathname: to,
 			query: oldQuery,
@@ -360,14 +371,19 @@ export default {
 		const curedLastname = lastname ? ` ${lastname}` : '';
 
 		try {
-			const {response} = await HoodieApi.signUp(username.toLowerCase(), password);
+			const {response} = await HoodieApi.signUp(username.toLowerCase(), password, firstname, {
+				lastName: lastname,
+				occupation: css.value,
+				phone,
+				skype,
+			});
 
 			window.Intercom('boot', {
 				app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
 				email: username,
 				name: firstname + curedLastname,
 				occupation: css.value,
-				phone,
+				phone: phone || undefined, // avoid empty string being recorded into Intercom
 				skype,
 				ABtest: Math.floor(Math.random() * 100),
 				widget: {
@@ -381,6 +397,9 @@ export default {
 				'buyer_email': firstname + curedLastname,
 				hoodieId: response.roles[0],
 			});
+			// TMP
+			HoodieApi.addStripeIdToGraphCool(customer.id);
+			// TMP
 			const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname, css, phone, skype};
 			const patch = userStore.set('infos', {accountValues}).commit();
 
@@ -541,11 +560,15 @@ export default {
 		window.Intercom('trackEvent', 'addedCardAndAdress');
 		hashHistory.push(toPath);
 	},
-	'/confirm-buy': async ({plan, card, pathname}) => {
+	'/confirm-buy': async ({plan, card, pathname, quantity}) => {
 		const form = userStore.get('confirmation');
 
+		const hasBeenSubscribing = userStore.get('hasBeenSubscribing');
+		let coupon = userStore.get('choosePlanForm').couponValue;
+		const validCoupon = userStore.get('choosePlanForm').validCoupon;
+		const { fullname, number, expMonth, expYear, cvc } = card || {};
+
 		form.errors = [];
-		form.inError = {};
 		form.loading = true;
 		const cleanPatch = userStore.set('confirmation', form).commit();
 
@@ -554,22 +577,12 @@ export default {
 		const cards = userStore.get('cards');
 		let cardCountry = cards[0] ? cards[0].country : undefined;
 
-		if (!cardCountry && (!card.fullname || !card.number || !card.expMonth || !card.expYear || !card.cvc)) {
-			form.inError = {
-				fullname: !card.fullname,
-				number: !card.number,
-				expMonth: !card.expMonth,
-				expYear: !card.expYear,
-				cvc: !card.cvc,
-			};
-			form.errors.push(`${
-				_.filter(Object.keys(form.inError),
-					(item) => {
-						return form.inError[item];
-					}).length > 1
-						? 'These fields are'
-						: 'This field is'
-			} required`);
+		if (!cardCountry && (validCoupon && !validCoupon.shouldSkipCard) && (!fullname || !number || !expMonth || !expYear || !cvc)) {
+			const requiredFields = [fullname, number, expMonth, expYear, cvc];
+			const errorText = requiredFields.reduce((sum, field) => {
+				return sum + !!field;
+			}).length > 1 ? 'These fields are' : 'This field is';
+			form.errors.push(`${errorText} required`);
 			form.loading = false;
 			const patch = userStore.set('confirmation', form).commit();
 
@@ -584,13 +597,13 @@ export default {
 			}
 
 			const currency = getCurrency(cardCountry);
-			let coupon = userStore.get('choosePlanForm').couponValue;
-			if (coupon && coupon.includes('base_coupon')) {
+			if (plan.includes('monthly') && !coupon && !hasBeenSubscribing) {
 				coupon = `base_coupon_${currency}`;
 			}
 			const data = await HoodieApi.updateSubscription({
 				plan: `${plan}_${currency}_taxfree`,
 				coupon,
+				quantity,
 			});
 			const infos = {...userStore.get('infos')};
 
@@ -600,6 +613,7 @@ export default {
 			const patch = userStore
 				.set('infos', infos)
 				.set('confirmation', form)
+				.set('hasBeenSubscribing', 'true')
 				.commit();
 
 			const transacId = `${plan}_${data.id}`;
@@ -690,7 +704,7 @@ export default {
 			twitter: data.twitter,
 			website: data.website,
 			occupation: data.css.value,
-			phone: data.phone,
+			phone: data.phone || undefined, // avoid empty string being recorded into Intercom
 			skype: data.skype,
 		});
 

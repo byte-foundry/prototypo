@@ -212,10 +212,11 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
-	reset(x, y) {
+	reset(x, y, zoom) {
 		this.props.reset({
 			x,
 			y,
+			zoom,
 		});
 	}
 
@@ -428,7 +429,8 @@ export default class PrototypoCanvas extends React.Component {
 				className={canvasClass}
 				onClick={this.handleLeaveAndClick}
 				ref="container"
-				onMouseLeave={this.handleLeaveAndClick}>
+				onMouseLeave={this.handleLeaveAndClick}
+				onContextMenu={this.toggleContextMenu}>
 				<CanvasBar/>
 				<button
 					className={`prototypo-canvas-reset-glyph-button ${this.isManualEdited() ? '' : 'disabled'} ${this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''}`}
@@ -441,7 +443,6 @@ export default class PrototypoCanvas extends React.Component {
 					familyName={this.state.familyName}
 					json={this.state.typedataJSON}
 					db={this.state.db}
-					values={this.state.values}
 					workerUrl={this.state.workerUrl}
 					workerDeps={this.state.workerDeps}
 					uiZoom={this.props.uiZoom}
@@ -476,6 +477,7 @@ export default class PrototypoCanvas extends React.Component {
 					preLoad={this.startLoad}
 					afterLoad={this.endLoad}
 					altList={this.state.altList}
+					uiMode={this.props.uiMode}
 				/>
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>

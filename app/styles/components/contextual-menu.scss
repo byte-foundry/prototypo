@@ -84,6 +84,41 @@
 				color:$medium-grey;
 			}
 
+			&.is-split {
+				padding: 0;
+				&:hover {
+					background-color: inherit;
+				}
+				.btn {
+					display: inline-block;
+					position: relative;
+					float: left;
+					width: 50%;
+					cursor: pointer;
+					height: 100%;
+					text-align: center;
+					padding:7px 25px;
+					transition: all .2s ease;
+					background-color: $white;
+
+					&:first-child {
+						border-right: 1px solid $medium-grey;
+						color: $red;
+						&:hover {
+							background-color: $red;
+							color: $white;
+						}
+					}
+					&:last-child {
+						color: $black;
+						&:hover {
+							background-color: $green;
+							color: $white;
+						}
+					}
+				}
+			}
+
 			&-dropdown {
 				display:none;
 				position:absolute;
