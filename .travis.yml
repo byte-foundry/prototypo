@@ -2,10 +2,6 @@ sudo: false
 language: node_js
 node_js:
 - '6.3'
-after_install:
-- npm dedupe
-- npm shrinkwrap --dev
-- cat npm-shrinkwrap.json
 script:
 - NODE_ENV=production gulp build --type=prod
 after_success:
