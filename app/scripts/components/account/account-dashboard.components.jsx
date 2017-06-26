@@ -56,20 +56,6 @@ export default class AccountDashboard extends React.Component {
 			'add-card': "Add a card",
 			'change-plan': 'Change my plan',
 		};
-		const subtitles = {
-			home: `Hi ${this.state.firstname}!`,
-			profile: "My profile",
-			'change-password': "Change my password",
-			details: "My account settings",
-			create: "",
-			createSignup: "",
-			success: "Congratulations!",
-			confirm: "",
-			billing: "My billing history",
-			'billing-address': 'My billing address',
-			'add-card': "Add a card",
-			'change-plan': 'Change my plan',
-		};
 		const title = titles[this.props.route.name];
 		const subtitle = subtitles[this.props.location.pathname.split('/')[this.props.location.pathname.split('/').length - 1]];
 
