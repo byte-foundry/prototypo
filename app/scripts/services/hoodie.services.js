@@ -55,34 +55,6 @@ async function fetchAWS(endpoint, params = {}) {
 	return Promise.reject(error);
 }
 
-const signUpAndLoginMutation = gql`
-	mutation signUpAndLogin(
-		$email: String!,
-		$password: String!,
-		$firstName: String!,
-		$lastName: String,
-		$occupation: String,
-		$phone: String,
-		$skype: String,
-	) {
-		createUser(
-			authProvider: {email: {email: $email, password: $password}},
-			firstName: $firstName,
-			lastName: $lastName,
-			occupation: $occupation,
-			phone: $phone,
-			skype: $skype,
-		) {
-			id
-			email
-		}
-
-		signinUser(email: {email: $email, password: $password}) {
-			token
-		}
-	}
-`;
-
 export default class HoodieApi {
 
 	static setup() {
@@ -95,43 +67,32 @@ export default class HoodieApi {
 	static async login(user, password) {
 		const data = await hoodie.account.signIn(user, password);
 
-		// If the graph.cool account creation fails, it's ok for now
 		try {
-			const response = await apolloClient.mutate({
-				mutation: gql`
-					mutation login($email: String!, $password: String!) {
-						signinUser(email: {email: $email, password: $password}) {
-							token
-						}
-					}
-				`,
-				variables: {
-					email: user,
-					password,
-				},
+			const {token} = await fetchAWS('/login', {
+				method: 'POST',
+				body: JSON.stringify({email: user, password}),
 			});
 
-			window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
+			window.localStorage.setItem('graphcoolToken', token);
 		}
 		catch (e) {
-			if (e.graphQLErrors.map(e => e.code).includes(3022)) {
+			// account is not created? Let's create one for him
+			if (e.type === 'NotFound') {
 				try {
-					const response = await apolloClient.mutate({
-						mutation: signUpAndLoginMutation,
-						variables: {
-							email: user,
-							password,
-							firstName: 'there',
-						},
+					await fetchAWS(`/users/migrate/${user}`, {
+						method: 'POST',
 					});
 
-					window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
-					graphCoolUserId = response.data.createUser.id;
+					const {token} = await fetchAWS('/login', {
+						method: 'POST',
+						body: JSON.stringify({email: user, password}),
+					});
+
+					window.localStorage.setItem('graphcoolToken', token);
 				}
 				catch (err) { trackJs.track(err); }
-			} else {
-				trackJs.track(e);
 			}
+			else { trackJs.track(e); }
 		}
 
 		return setupStripe(setupHoodie(data));
@@ -153,9 +114,9 @@ export default class HoodieApi {
 
 		// If the graph.cool account creation fails, it's ok for now
 		try {
-			const response = await apolloClient.mutate({
-				mutation: signUpAndLoginMutation,
-				variables: {
+			await fetchAWS('/signup', {
+				method: 'POST',
+				body: JSON.stringify({
 					email,
 					password,
 					firstName,
@@ -163,11 +124,17 @@ export default class HoodieApi {
 					occupation: occupation || undefined,
 					phone: phone || undefined,
 					skype: skype || undefined,
-				},
+				}),
 			});
 
-			window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
-			graphCoolUserId = response.data.createUser.id;
+			const {id, token} = await fetchAWS('/login', {
+				method: 'POST',
+				body: JSON.stringify({email, password}),
+			});
+
+			window.localStorage.setItem('graphcoolToken', token);
+
+			graphCoolUserId = id;
 		}
 		catch (e) { trackJs.track(e); }
 
@@ -228,7 +195,7 @@ export default class HoodieApi {
 		if (!subscriptionId) {
 			const customer = HoodieApi.instance.customerId;
 
-			return fetchAWS(`/subscriptions`, {
+			return fetchAWS('/subscriptions', {
 				method: 'POST',
 				payload: {customer, ...options},
 			});
