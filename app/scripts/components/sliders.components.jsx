@@ -10,7 +10,7 @@ import SliderHelpText from '../../images/sliders/helpText.json';
 
 import SliderController from './slider-controller.components';
 
-const demoRatio = 0.6;
+const demoRatio = 0.7;
 
 export class Sliders extends React.PureComponent {
 	constructor(props) {
