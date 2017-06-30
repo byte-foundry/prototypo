@@ -209,7 +209,7 @@ export default {
 		if (startApp) {
 			const accountValues = userStore.get('infos');
 
-			await loadStuff(accountValues, newFont);
+			await loadStuff(accountValues.accountValues ? accountValues.accountValues : accountValues, newFont);
 			hashHistory.push({pathname: '/dashboard'});
 		}
 	},
