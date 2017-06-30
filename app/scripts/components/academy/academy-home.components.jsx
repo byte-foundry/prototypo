@@ -69,6 +69,13 @@ export default class AcademyHome extends React.PureComponent {
 					rewarded: false,
 				};
 			}
+			const compare = function compare(a, b) {
+				const dateA = new Date(a.date).getTime();
+			    const dateB = new Date(b.date).getTime();
+
+			    return dateA > dateB ? 1 : -1;
+			};
+
 			courses.push({
 				title: tutorial.title,
 				header: tutorial.header,
@@ -78,8 +85,11 @@ export default class AcademyHome extends React.PureComponent {
 				headerImage: tutorial.headerImage,
 				reward: tutorial.reward,
 				isVideo: tutorial.isVideo,
+				date: tutorial.date,
 				tags: tutorial.tags,
 			});
+
+			courses.sort(compare);
 		});
 		this.baseCourses = courses;
 		this.setState({academyProgress, tags, courses});
