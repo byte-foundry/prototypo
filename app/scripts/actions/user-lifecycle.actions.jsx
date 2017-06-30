@@ -319,7 +319,7 @@ export default {
 			}
 		}
 	},
-	'/sign-up': async ({username, password, firstname, lastname, css, phone, skype, to = '/start', retry, oldQuery = {}}) => {
+	'/sign-up': async ({username, password, firstname, lastname, css = {}, phone, skype, to = '/start', retry, oldQuery = {}}) => {
 		const toLocation = {
 			pathname: to,
 			query: oldQuery,
