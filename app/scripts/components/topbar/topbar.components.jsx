@@ -165,6 +165,7 @@ class Topbar extends React.Component {
 		});*/
 		this.client.dispatchAction('/store-value', {
 			openGoProModal: true,
+			goProModalBilling: 'monthly',
 		});
 	}
 
