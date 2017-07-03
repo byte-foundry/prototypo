@@ -1936,6 +1936,24 @@ commoner@^0.10.1, commoner@~0.10.3:
     q "^1.1.2"
     recast "^0.10.0"
 
+commonmark-react-renderer@^4.2.4:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/commonmark-react-renderer/-/commonmark-react-renderer-4.3.3.tgz#9c4bca138bc83287bae792ccf133738be9cbc6fa"
+  dependencies:
+    in-publish "^2.0.0"
+    lodash.assign "^4.2.0"
+    lodash.isplainobject "^4.0.6"
+    pascalcase "^0.1.1"
+    xss-filters "^1.2.6"
+
+commonmark@^0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/commonmark/-/commonmark-0.24.0.tgz#b80de0182c546355643aa15db12bfb282368278f"
+  dependencies:
+    entities "~ 1.1.1"
+    mdurl "~ 1.0.1"
+    string.prototype.repeat "^0.2.0"
+
 component-bind@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/component-bind/-/component-bind-1.0.0.tgz#00c608ab7dcd93897c0009651b1d3a8e1e73bbd1"
@@ -2714,7 +2732,7 @@ enhanced-resolve@~0.9.0:
     memory-fs "^0.2.0"
     tapable "^0.1.8"
 
-entities@^1.1.1, entities@~1.1.1:
+entities@^1.1.1, "entities@~ 1.1.1", entities@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/entities/-/entities-1.1.1.tgz#6e5c2d0a5621b5dadaecef80b90edfb5cd7772f0"
 
@@ -3485,6 +3503,12 @@ from@~0:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/from/-/from-0.1.3.tgz#ef63ac2062ac32acf7862e0d40b44b896f22f3bc"
 
+front-matter@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/front-matter/-/front-matter-2.1.2.tgz#f75983b9f2f413be658c93dfd7bd8ce4078f5cdb"
+  dependencies:
+    js-yaml "^3.4.6"
+
 fruitdown@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/fruitdown/-/fruitdown-1.0.1.tgz#822e8dd902fbea6a3544d9db061ac67adc1e7615"
@@ -3498,6 +3522,13 @@ fruitdown@1.0.1:
 fs-exists-sync@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/fs-exists-sync/-/fs-exists-sync-0.1.0.tgz#982d6893af918e72d08dec9e8673ff2b5a8d6add"
+
+fs-extra@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-2.1.2.tgz#046c70163cef9aad46b0e4a7fa467fb22d71de35"
+  dependencies:
+    graceful-fs "^4.1.2"
+    jsonfile "^2.1.0"
 
 fs.realpath@^1.0.0:
   version "1.0.0"
@@ -3638,9 +3669,9 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
-gfnt.ptf@yannickmathey/g#master:
+gfnt.ptf@byte-foundry/spectral.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/yannickmathey/g/tar.gz/b60b2d3b3e22d6908ef443876243df2c52a7d9e2"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/da2a4e573b498f24448313c84e1db7ce0628599e"
 
 ghreleases@^1.0.2:
   version "1.0.5"
@@ -5036,7 +5067,7 @@ js-tokens@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.1.tgz#08e9f132484a2c45a30907e9dc4d5567b7f114d7"
 
-js-yaml@^3.2.5, js-yaml@^3.4.3, js-yaml@^3.5.1, js-yaml@^3.7.0:
+js-yaml@^3.2.5, js-yaml@^3.4.3, js-yaml@^3.4.6, js-yaml@^3.5.1, js-yaml@^3.7.0:
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.8.1.tgz#782ba50200be7b9e5a8537001b7804db3ad02628"
   dependencies:
@@ -5130,6 +5161,12 @@ json5@0.4.0:
 json5@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/json5/-/json5-0.5.0.tgz#9b20715b026cbe3778fd769edccd822d8332a5b2"
+
+jsonfile@^2.1.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/jsonfile/-/jsonfile-2.4.0.tgz#3736a2b428b87bbda0cc83b53fa3d633a35c2ae8"
+  optionalDependencies:
+    graceful-fs "^4.1.6"
 
 jsonify@~0.0.0:
   version "0.0.0"
@@ -5656,7 +5693,7 @@ lodash.isobject@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/lodash.isobject/-/lodash.isobject-3.0.2.tgz#3c8fb8d5b5bf4bf90ae06e14f2a530a4ed935e1d"
 
-lodash.isplainobject@^4.0.4:
+lodash.isplainobject@^4.0.4, lodash.isplainobject@^4.0.6:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz#7c526a52d89b45c45cc690b88163be0497f550cb"
 
@@ -5867,6 +5904,10 @@ math-expression-evaluator@^1.2.14:
   resolved "https://registry.yarnpkg.com/math-expression-evaluator/-/math-expression-evaluator-1.2.14.tgz#39511771ed9602405fba9affff17eb4d2a3843ab"
   dependencies:
     lodash.indexof "^4.0.5"
+
+"mdurl@~ 1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/mdurl/-/mdurl-1.0.1.tgz#fe85b2ec75a59037f2adfec100fd6c601761152e"
 
 media-typer@0.3.0:
   version "0.3.0"
@@ -6604,14 +6645,14 @@ os-tmpdir@^1.0.0, os-tmpdir@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/os-tmpdir/-/os-tmpdir-1.0.2.tgz#bbe67406c79aa85c5cfec766fe5734555dfa1274"
 
-osenv@0, osenv@^0.1.0:
+osenv@0, osenv@^0.1.0, osenv@^0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/osenv/-/osenv-0.1.3.tgz#83cf05c6d6458fc4d5ac6362ea325d92f2754217"
   dependencies:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
 
-osenv@^0.1.3, osenv@^0.1.4:
+osenv@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/osenv/-/osenv-0.1.4.tgz#42fe6d5953df06c8064be6f176c3d05aaaa34644"
   dependencies:
@@ -6715,6 +6756,10 @@ parseuri@0.0.4:
 parseurl@~1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/parseurl/-/parseurl-1.3.1.tgz#c8ab8c9223ba34888aa64a297b28853bec18da56"
+
+pascalcase@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
 
 path-array@^1.0.0:
   version "1.0.1"
@@ -7412,7 +7457,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.7, prop-types@^15.5.8, prop-types@~15.5.7:
+prop-types@^15.5.1, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@~15.5.7:
   version "15.5.8"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.8.tgz#6b7b2e141083be38c8595aa51fc55775c7199394"
   dependencies:
@@ -7573,7 +7618,7 @@ quick-lru@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-1.0.0.tgz#7fa80304ab72c1f81cef738739cd47d7cc0c8bff"
 
-raf@^3.1.0:
+raf@^3.1.0, raf@^3.2.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/raf/-/raf-3.3.0.tgz#93845eeffc773f8129039f677f80a36044eee2c3"
   dependencies:
@@ -7741,6 +7786,15 @@ react-komposer@^2.0.0:
     react-stubber "^1.0.0"
     shallowequal "^0.2.2"
 
+react-markdown@^2.4.4:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/react-markdown/-/react-markdown-2.5.0.tgz#b1c61904fee5895886803bd9df7db23c3dc3a89e"
+  dependencies:
+    commonmark "^0.24.0"
+    commonmark-react-renderer "^4.2.4"
+    in-publish "^2.0.0"
+    prop-types "^15.5.1"
+
 react-modal@^1.2.0, react-modal@^1.2.1:
   version "1.7.7"
   resolved "https://registry.yarnpkg.com/react-modal/-/react-modal-1.7.7.tgz#70205f51c58708c487aff681ba3fed7946e391d9"
@@ -7750,6 +7804,13 @@ react-modal@^1.2.0, react-modal@^1.2.1:
     exenv "1.2.0"
     lodash.assign "^4.2.0"
     prop-types "^15.5.7"
+
+react-motion-flip@Aldrian/react-motion-flip#master:
+  version "1.0.2"
+  resolved "https://codeload.github.com/Aldrian/react-motion-flip/tar.gz/360bcf2830406c7ad5ea391877f639a76fa0ee09"
+  dependencies:
+    raf "^3.2.0"
+    react-motion "^0.4.3"
 
 react-motion@^0.4.3:
   version "0.4.7"
@@ -8218,11 +8279,11 @@ resolve-url@~0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/resolve-url/-/resolve-url-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
 
-resolve@1.1.7, resolve@^1.1.6:
+resolve@1.1.7, resolve@^1.1.6, resolve@^1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
 
-resolve@^1.1.7, resolve@^1.2.0:
+resolve@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.2.0.tgz#9589c3f2f6149d1417a40becc1663db6ec6bc26c"
 
@@ -8338,13 +8399,13 @@ scroll@^2.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.3.0.tgz#9b2ce5d3de02d17c6012ad326aa6b4d0cf54f94f"
 
-"semver@2.x || 3.x || 4 || 5", semver@~2.3.1:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-2.3.2.tgz#b9848f25d6cf36333073ec9ef8856d42f1233e52"
-
-semver@^4.1.0:
+"semver@2.x || 3.x || 4 || 5", semver@^4.1.0:
   version "4.3.6"
   resolved "https://registry.yarnpkg.com/semver/-/semver-4.3.6.tgz#300bc6e0e86374f7ba61068b5b1ecd57fc6532da"
+
+semver@~2.3.1:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-2.3.2.tgz#b9848f25d6cf36333073ec9ef8856d42f1233e52"
 
 semver@~5.0.1:
   version "5.0.3"
@@ -8503,6 +8564,10 @@ simple-get@^1.4.2:
     once "^1.3.1"
     unzip-response "^1.0.0"
     xtend "^4.0.0"
+
+simple-html-tokenizer@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/simple-html-tokenizer/-/simple-html-tokenizer-0.1.1.tgz#05c2eec579ffffe145a030ac26cfea61b980fabe"
 
 simple-is@~0.2.0:
   version "0.2.0"
@@ -8837,6 +8902,10 @@ string.prototype.padstart@^3.0.0:
     es-abstract "^1.4.3"
     function-bind "^1.0.2"
 
+string.prototype.repeat@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/string.prototype.repeat/-/string.prototype.repeat-0.2.0.tgz#aba36de08dcee6a5a337d49b2ea1da1b28fc0ecf"
+
 string_decoder@~0.10.25, string_decoder@~0.10.x:
   version "0.10.31"
   resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-0.10.31.tgz#62e203bc41766c6c28c9fc84301dab1c5310fa94"
@@ -8974,6 +9043,18 @@ svg-baker@^1.2.0, svg-baker@^1.2.7:
     posthtml-svg-mode "^1.0"
     query-string "^4.3.2"
     traverse "^0.6.6"
+
+svg-inline-loader@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/svg-inline-loader/-/svg-inline-loader-0.7.1.tgz#6d0e2728b7ec3414c2180b3f780bc3f7154ef226"
+  dependencies:
+    loader-utils "^0.2.11"
+    object-assign "^4.0.1"
+    simple-html-tokenizer "^0.1.1"
+
+svg-inline-react@1.x.x:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/svg-inline-react/-/svg-inline-react-1.0.3.tgz#68d15bf88f99f64daa52821ed5441612d8ad9041"
 
 svg-sprite-loader@^3.0.2:
   version "3.0.2"
@@ -9229,6 +9310,13 @@ tunnel-agent@~0.3.0:
 tunnel-agent@~0.4.1:
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/tunnel-agent/-/tunnel-agent-0.4.3.tgz#6373db76909fe570e08d73583365ed828a74eeeb"
+
+tutorial-content@byte-foundry/tutorial-content#master:
+  version "3.0.0"
+  resolved "https://codeload.github.com/byte-foundry/tutorial-content/tar.gz/539650094148015fc47d919309d767285576d149"
+  dependencies:
+    front-matter "^2.1.2"
+    fs-extra "^2.1.2"
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.3"
@@ -9822,6 +9910,10 @@ xmlhttprequest-ssl@1.5.1:
 xregexp@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/xregexp/-/xregexp-2.0.0.tgz#52a63e56ca0b84a7f3a5f3d61872f126ad7a5943"
+
+xss-filters@^1.2.6:
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/xss-filters/-/xss-filters-1.2.7.tgz#59fa1de201f36f2f3470dcac5f58ccc2830b0a9a"
 
 "xtend@>=4.0.0 <4.1.0-0", xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.0, xtend@~4.0.1:
   version "4.0.1"

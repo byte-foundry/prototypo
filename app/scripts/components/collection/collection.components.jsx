@@ -269,7 +269,7 @@ class Family extends React.Component {
 		});
 		const familyActions = (
 			<div>
-				<ContextualMenuItem text="Change family name" click={this.openChangeNameFamily}/>
+				<ContextualMenuItem text="Rename family" click={this.openChangeNameFamily}/>
 				<ContextualMenuItem
 					text={this.props.deleteSplit ? 'Delete' : 'Delete family'}
 					altLabel="Cancel"
