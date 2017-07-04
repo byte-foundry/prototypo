@@ -7,7 +7,6 @@ const base = require('./base.config');
 
 module.exports = merge(base, {
 	cache: true,
-	'if-loader': 'prod',
 	entry: {
 		bundle: ['whatwg-fetch'],
 		'web-import': ['whatwg-fetch'],
@@ -17,13 +16,13 @@ module.exports = merge(base, {
 			{
 				test: /\.jsx?$/,
 				use: [
-					{
-						loader: 'transform/cacheable-loader',
-
-						options: {
-							envify: true,
-						},
-					},
+					// {
+					// 	loader: 'transform/cacheable-loader',
+					//
+					// 	options: {
+					// 		envify: true,
+					// 	},
+					// },
 					{
 						loader: 'babel-loader',
 
@@ -46,6 +45,8 @@ module.exports = merge(base, {
 		new webpack.LoaderOptionsPlugin({
 			options: {
 				'if-loader': 'prod',
+				// TODO: deprecated option, https://webpack.js.org/guides/migrating/#uglifyjsplugin-minimize-loadersminimize: true,
+				minimize: true,
 			},
 		}),
 		new webpack.DefinePlugin({
@@ -60,13 +61,5 @@ module.exports = merge(base, {
 
 			sourceMap: true,
 		}),
-		new webpack.optimize.OccurenceOrderPlugin(),
-		// TODO: deprecated option, https://webpack.js.org/guides/migrating/#uglifyjsplugin-minimize-loaders
-		new webpack.optimize.LoaderOptionsPlugin({
-			minimize: true,
-		}),
 	],
-	resolve: {
-		fallback: path.join(__dirname, 'node_modules'),
-	},
 });

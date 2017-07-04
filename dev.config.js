@@ -17,13 +17,13 @@ module.exports = merge(base, {
 			{
 				test: /\.jsx?$/,
 				use: [
-					{
-						loader: 'transform/cacheable-loader',
-
-						options: {
-							envify: true,
-						},
-					},
+					// {
+					// 	loader: 'transform/cacheable-loader',
+					//
+					// 	options: {
+					// 		envify: true,
+					// 	},
+					// },
 					{
 						loader: 'babel-loader',
 
@@ -42,9 +42,6 @@ module.exports = merge(base, {
 			'prototypo.js': 'prototypo',
 		},
 	],
-	resolve: {
-		fallback: path.join(__dirname, 'node_modules'),
-	},
 	plugins: [
 		new webpack.LoaderOptionsPlugin({
 			options: {
