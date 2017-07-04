@@ -41,7 +41,4 @@ module.exports = merge(base, {
 			sourceType: 'this',
 		}),
 	],
-	resolve: {
-		fallback: path.join(__dirname, 'node_modules'),
-	},
 });

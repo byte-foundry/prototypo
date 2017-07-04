@@ -1,83 +1,109 @@
-var path = require('path');
-var webpack = require('webpack');
-var fs = require('fs');
-var SpritePlugin = require('svg-sprite-loader/plugin');
+const path = require('path');
+const webpack = require('webpack');
+const fs = require('fs');
+const SpritePlugin = require('svg-sprite-loader/plugin');
 
 module.exports = {
-	'if-loader': 'prod',
 	entry: {
-		bundle: [
-			'babel-polyfill',
-			'./app/scripts/main',
-		],
-		'web-import': [
-			'babel-polyfill',
-			'./app/scripts/web-import',
-		],
+		bundle: ['babel-polyfill', 'react-hot-loader/patch', './app/scripts/main'],
+		'web-import': ['babel-polyfill', 'react-hot-loader/patch', './app/scripts/web-import'],
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),
+		pathinfo: true,
 		publicPath: '',
 		filename: '[name].js',
 	},
 	module: {
-		loaders: [
+		strictExportPresence: true,
+		rules: [
 			{
 				test: /\.jsx?$/,
-				loaders: ['transform/cacheable?envify', 'babel-loader?cacheDirectory', 'if-loader'],
-				include: [
-					path.join(__dirname, 'app'),
+				use: [
+					// {
+					// 	loader: 'transform-loader/cacheable',
+					//
+					// 	options: {
+					// 		envify: true,
+					// 	},
+					// },
+					{loader: 'babel-loader', options: {cacheDirectory: true}},
+					'if-loader',
 				],
+				include: path.join(__dirname, 'app'),
 			},
 			{
 				test: /prototypo-canvas/,
-				loaders: ['babel-loader?cacheDirectory'],
-				include: [
-					fs.realpathSync(__dirname + '/node_modules/prototypo-canvas'),
-				],
+				use: [{loader: 'babel-loader', options: {cacheDirectory: true}}],
+				include: [fs.realpathSync(`${__dirname}/node_modules/prototypo-canvas`)],
 			},
 			{
 				test: /\.scss$/,
-				loaders: ['style', 'css', 'sass'],
-				include: [
-					path.join(__dirname, 'app/styles'),
-				],
+				use: ['style-loader', 'css-loader', 'sass-loader'],
+				include: [path.join(__dirname, 'app/styles')],
 			},
 			{
 				test: /\.css$/,
-				loaders: ['style', 'css'],
-			},
-			{
-				test: /\.json$/, loader: 'json',
+				use: ['style-loader', 'css-loader'],
 			},
 			{
 				test: /\.(jpg|otf)$/,
-				loaders: ['file'],
+				use: ['file-loader'],
 			},
 			{
 				test: /\.(svg|png|jpg|gif)$/,
-				loader: 'url-loader?limit=100000',
+				use: [
+					{
+						loader: 'url-loader',
+
+						options: {
+							limit: 100000,
+						},
+					},
+				],
 				exclude: path.join(__dirname, 'app/images/icons'),
 			},
 			{
 				test: /\.svg$/,
-				loader: 'svg-sprite-loader?extract=true!svgo-loader',
+				use: [
+					{
+						loader: 'svg-sprite-loader',
+
+						options: {
+							extract: true,
+						},
+					},
+					'svgo-loader',
+				],
 				include: path.join(__dirname, 'app/images/icons'),
 			},
 		],
 		noParse: /(levelup|dist\/prototypo-canvas)/,
 	},
-	externals: [{
-		'./node/window': true,
-		'./node/extend': true,
-	}],
+	externals: [
+		{
+			'./node/window': true,
+			'./node/extend': true,
+		},
+	],
 	plugins: [
+		new webpack.LoaderOptionsPlugin({
+			options: {
+				'if-loader': 'prod',
+			},
+		}),
 		new webpack.ProvidePlugin({
 			_: 'lodash',
 		}),
 		new SpritePlugin(),
+		// Moment.js is an extremely popular library that bundles large locale files
+		// by default due to how Webpack interprets its code. This is a practical
+		// solution that requires the user to opt into importing specific locales.
+		// https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
+		// You can remove this if you don't use Moment.js:
+		new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 	],
 	resolve: {
-		extensions: ['', '.js', '.jsx'],
+		extensions: ['.js', '.jsx'],
 	},
 };
