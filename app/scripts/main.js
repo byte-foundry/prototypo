@@ -14,6 +14,7 @@ import {Router, Route, IndexRoute, hashHistory, IndexRedirect} from 'react-route
 import {ApolloProvider} from 'react-apollo';
 
 import Dashboard from './components/dashboard.components.jsx';
+import Maintenance from './components/maintenance.components.jsx';
 import Signin from './components/signin.components.jsx';
 import ForgottenPassword from './components/forgotten-password.components.jsx';
 import ResetPassword from './components/reset-password.components.jsx';
@@ -265,7 +266,7 @@ selectRenderOptions(
 			}
 		}
 
-		HoodieApi.setup()
+			/*HoodieApi.setup()
 			.then(() => {
 				if (location.hash.indexOf('signin') === -1 && location.hash.indexOf('account') === -1 && location.hash.indexOf('signup') === -1 &&  location.hash.indexOf('dashboard') === -1) {
 					location.href = '#/start';
@@ -279,18 +280,24 @@ selectRenderOptions(
 				const event = new CustomEvent('values.loaded');
 
 				window.dispatchEvent(event);
-			});
+			});*/
+		ReactDOM.render((
+			<Maintenance/>
+		), content);
 
-		window.addEventListener('values.loaded', () => {
+			/*window.addEventListener('values.loaded', () => {
 			ReactDOM.render((
 				<ApolloProvider client={apolloClient}>
 					<Router history={hashHistory} onUpdate={trackUrl}>
 						<Route component={App} name="app" path="/">
+							<IndexRoute component={Maintenance}/>
+						</Route>
+						<Route component={App} name="app" path="/">
 							<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}/>
-							/* #if debug */
+							/* #if debug
 							<Route path="replay" path="replay/:replayId" component={ReplayViewer}/>
 							<Route path="debug" component={ReplayViewer}/>
-							/* #endif */
+							/* #endif
 							<Route path="signin" component={AccountApp} onEnter={redirectToDashboard}>
 								<Route path="reset" component={ResetPassword}/>
 								<Route path="forgotten" component={ForgottenPassword}/>
@@ -334,6 +341,6 @@ selectRenderOptions(
 
 		});
 
-		createStores();
+		createStores();*/
 	}
 );
