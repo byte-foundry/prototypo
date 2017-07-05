@@ -51,7 +51,6 @@ class Topbar extends React.Component {
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
 		this.setPreset = this.setPreset.bind(this);
 		this.resetIndivTutorial = this.resetIndivTutorial.bind(this);
-		this.resetFirstTimeAcademy = this.resetFirstTimeAcademy.bind(this);
 		this.setAcademyText = this.setAcademyText.bind(this);
 		this.showAcademy = this.showAcademy.bind(this);
 		this.clearAcademyText = this.clearAcademyText.bind(this);
@@ -207,13 +206,6 @@ class Topbar extends React.Component {
 		if (!this.state.indiv) {
 			this.client.dispatchAction('/toggle-individualize');
 		}
-	}
-
-	resetFirstTimeAcademy() {
-		//debugging purposes only, to be removed ASAP
-		this.client.dispatchAction('/remove-all-progress', {});
-		this.client.dispatchAction('/store-value', {firstTimeAcademyModal: true});
-		this.client.dispatchAction('/store-value', {firstTimeAcademyJoyride: true});
 	}
 
 	setAccountRoute() {
@@ -450,7 +442,6 @@ class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Restart collection tutorial" handler={this.resetCollectionTutorial}/>
 						<TopBarMenuDropdownItem name="Restart export tutorial" handler={this.resetFileTutorial}/>
 						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={this.resetIndivTutorial}/>
-						<TopBarMenuDropdownItem name="Reset firstTimeAcademy" handler={this.resetFirstTimeAcademy}/>
 					</TopBarMenuDropdown>
 					{academyIcon}
 					{academyProgress}
