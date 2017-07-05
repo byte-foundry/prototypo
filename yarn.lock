@@ -9313,7 +9313,7 @@ tunnel-agent@~0.4.1:
 
 tutorial-content@byte-foundry/tutorial-content#master:
   version "3.0.0"
-  resolved "https://codeload.github.com/byte-foundry/tutorial-content/tar.gz/539650094148015fc47d919309d767285576d149"
+  resolved "https://codeload.github.com/byte-foundry/tutorial-content/tar.gz/b78f90603c3944b25ae88925bbd0408275126704"
   dependencies:
     front-matter "^2.1.2"
     fs-extra "^2.1.2"
