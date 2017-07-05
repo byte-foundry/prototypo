@@ -396,6 +396,29 @@ class TopBarMenuAcademy extends React.PureComponent {
 	}
 }
 
+class TopBarMenuAcademyIcon extends React.PureComponent {
+	static getHeader(props) {
+		return (
+			<div className="top-bar-menu-item-academy">
+				<Link to={`/academy/home`}>
+					<img className="top-bar-menu-item-academy-img  is-alone"
+						src={props.icon}
+						onMouseLeave={() => {props.clearText();}}
+						onMouseEnter={() => {props.setText(false, true);}}
+					/>
+				</Link>
+			</div>
+		);
+	}
+
+	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] topbarmenuacademyicon');
+		}
+		return false;
+	}
+}
+
 class TopBarMenuIcon extends React.PureComponent {
 
 	static getHeader(props) {
@@ -426,4 +449,5 @@ export {
 	TopBarMenuLink,
 	TopBarMenuButton,
 	TopBarMenuAcademy,
+	TopBarMenuAcademyIcon,
 };

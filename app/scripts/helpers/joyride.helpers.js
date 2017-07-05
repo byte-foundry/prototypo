@@ -132,7 +132,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 			academyStep1: {
 				title: 'Academy',
 				text: <div>
-					<p>You can access the academy anytime by clicking here ! </p>
+					<p>You can access the academy anytime by clicking here! (or on the academy icon)</p>
 				</div>,
 				selector: '#access-academy',
 				position: 'right',

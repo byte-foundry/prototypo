@@ -22,6 +22,7 @@ import {
 	TopBarMenuLink,
 	TopBarMenuButton,
 	TopBarMenuAcademy,
+	TopBarMenuAcademyIcon,
 } from './top-bar-menu.components.jsx';
 import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components.jsx';
 
@@ -224,7 +225,12 @@ class Topbar extends React.Component {
 	}
 
 	setAcademyText(name, isIcon) {
-		this.setState({academyText: name, academyCapIconHovered: isIcon});
+		if (name) {
+			this.setState({academyText: name, academyCapIconHovered: isIcon});
+		}
+		else {
+			this.setState({academyCapIconHovered: isIcon});
+		}
 	}
 
 	clearAcademyText() {
@@ -299,6 +305,15 @@ class Topbar extends React.Component {
 				centered
 				click={this.goToSubscribe}
 				alignRight
+			/>
+		);
+
+		const academyIcon = !this.state.academyProgress.lastCourse && (
+			<TopBarMenuAcademyIcon
+				setText={this.setAcademyText}
+				clearText={this.clearAcademyText}
+				id="progress-academy"
+				icon={this.getRightAcademyIcon()}
 			/>
 		);
 
@@ -437,6 +452,7 @@ class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={this.resetIndivTutorial}/>
 						<TopBarMenuDropdownItem name="Reset firstTimeAcademy" handler={this.resetFirstTimeAcademy}/>
 					</TopBarMenuDropdown>
+					{academyIcon}
 					{academyProgress}
 					{exporting}
 					{errorExporting}
