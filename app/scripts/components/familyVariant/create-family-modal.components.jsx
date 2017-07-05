@@ -14,6 +14,7 @@ export default class CreateFamilyModal extends React.Component {
 		return (
 			<Modal propName={this.props.propName}>
 				<div className="modal-container-content">
+					<h1>Create new family</h1>
 					<AddFamily />
 				</div>
 			</Modal>
