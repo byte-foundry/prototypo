@@ -99,6 +99,8 @@ export default class AcademyHome extends React.PureComponent {
 			icons[0].classList.remove('fixed');
 			icons[0].style.left = 'inherit';
 		}
+
+		window.Intercom('trackEvent', 'openedAcademyHome');
 	}
 	getPartsDone(slug) {
 		const partsDone = this.state.academyProgress[slug].parts

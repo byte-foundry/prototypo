@@ -39,6 +39,7 @@ export default class AcademyCourse extends React.PureComponent {
 					academyProgress: head.toJS().d.infos.academyProgress || {},
 				});
 			});
+		window.Intercom('trackEvent', `openedAcademyCourse-${this.courseSlug}`);
 	}
 
 	componentDidMount() {

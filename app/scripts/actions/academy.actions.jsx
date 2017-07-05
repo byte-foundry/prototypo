@@ -28,6 +28,7 @@ export default {
 		if (partsDone && partsDone.length === academyProgress[course].parts.length || !part) {
 			academyProgress.lastCourse = undefined;
 			academyProgress[course].completed = true;
+			window.Intercom('trackEvent', `finishedAcademyCourse-${course}`);
 		}
 		else {
 			academyProgress.lastCourse = course;
