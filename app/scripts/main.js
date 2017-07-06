@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import pleaseWait from 'please-wait';
 
 import React from 'react';

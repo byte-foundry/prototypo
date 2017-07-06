@@ -5,8 +5,8 @@ const SpritePlugin = require('svg-sprite-loader/plugin');
 
 module.exports = {
 	entry: {
-		bundle: ['babel-polyfill', 'react-hot-loader/patch', './app/scripts/main'],
-		'web-import': ['babel-polyfill', 'react-hot-loader/patch', './app/scripts/web-import'],
+		bundle: ['react-hot-loader/patch', './app/scripts/main'],
+		'web-import': ['react-hot-loader/patch', './app/scripts/web-import'],
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),

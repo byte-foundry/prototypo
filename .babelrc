@@ -1,5 +1,5 @@
 {
-	"presets": ["react", ["env", {"modules": false}]],
+	"presets": ["react", ["env", {"modules": false, "useBuiltIns": true}]],
 	"plugins": [
 		"react-hot-loader/babel",
 		"syntax-async-functions",
@@ -10,5 +10,9 @@
 			"sourceDir": "app/scripts/"
 		}]
 	],
-	"sourceMaps": true
+	"env": {
+		"test": {
+			"plugins": ["transform-es2015-modules-commonjs"]
+		}
+	}
 }
