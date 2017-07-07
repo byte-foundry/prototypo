@@ -78,4 +78,21 @@ export default {
 		localServer.dispatchUpdate('/userStore', patch);
 		//saveAppValues(appValuesLoaded);
 	},
+	'/set-all-course-read': () => {
+		let _infos = _.cloneDeep(userStore.get('infos'));
+		const academyProgress = _infos.academyProgress || {};
+
+		if (!academyProgress.areAllCourseRead) {
+			window.Intercom('trackEvent', 'finishedAllCourses');
+			academyProgress.areAllCourseRead = true;
+		}
+		_infos = {
+			..._infos,
+			academyProgress,
+		};
+		const patch = userStore.set('infos', _infos).commit();
+
+		localServer.dispatchUpdate('/userStore', patch);
+		//saveAppValues(appValuesLoaded);
+	},
 };

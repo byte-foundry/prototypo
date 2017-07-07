@@ -142,7 +142,7 @@ export default class AcademyCourse extends React.PureComponent {
 		if (!this.state.academyProgress || !this.state.academyProgress[this.courseSlug]) {
 			this.createCourseProgress();
 		}
-		if (!this.state.academyProgress[this.courseSlug].completed) {
+		if (this.state.academyProgress && !this.state.academyProgress[this.courseSlug].completed) {
 			this.client.dispatchAction('/set-course-currently-reading', this.courseSlug);
 		}
 		window.addEventListener('scroll', this.handleScroll, true);
@@ -328,7 +328,9 @@ export default class AcademyCourse extends React.PureComponent {
 
 	isPartRead(part) {
 		if (this.state.academyProgress && this.state.academyProgress[this.courseSlug]) {
-			const coursePart = this.state.academyProgress[this.courseSlug].parts.find(elem => elem.name === part);
+			const coursePart = this.state.academyProgress[this.courseSlug].parts.find(
+				elem => elem.name === part,
+			);
 
 			return coursePart.completed;
 		}
@@ -337,7 +339,9 @@ export default class AcademyCourse extends React.PureComponent {
 
 	isCourseDone(slug) {
 		if (this.state.academyProgress && this.state.academyProgress[slug]) {
-			const partsDone = this.state.academyProgress[slug].parts.filter(part => part.completed === true);
+			const partsDone = this.state.academyProgress[slug].parts.filter(
+				part => part.completed === true,
+			);
 
 			return partsDone ? partsDone.length === this.state.academyProgress[slug].parts.length : false;
 		}
@@ -387,7 +391,7 @@ export default class AcademyCourse extends React.PureComponent {
 					<Link className="academy-sidebar-menu-item" to={`/academy/course/${basic.slug}`}>
 						{' '}{basic.title}{' '}
 					</Link>
-						))}
+					))}
 			</div>)
 			: null;
 		const partsDisplay = this.state.headers.length > 0
@@ -405,7 +409,7 @@ export default class AcademyCourse extends React.PureComponent {
 						/>
 						<span>{header.content}</span>
 					</span>
-						))}
+					))}
 			</div>)
 			: null;
 		const sidebar = (
@@ -446,7 +450,7 @@ export default class AcademyCourse extends React.PureComponent {
 								/>
 								{tutorial.title}
 							</Link>
-							))}
+						))}
 				</div>
 			</div>
 		);
@@ -464,12 +468,23 @@ export default class AcademyCourse extends React.PureComponent {
 					<div className="academy-course-finish-text">
 						{this.getNextCourse()
 							? <p>
-									Good Job, you have learned {course.objective}<br />
-									Do you want to learn {this.getNextCourse().objective}? <br />
-									Check out our next course: {this.getNextCourse().title}.
+									Good Job, you have learned
+									{' '}
+								{course.objective}
+									. Do you want to learn
+									{' '}
+								{this.getNextCourse().objective}
+									? Check out our next course:
+									{' '}
+								{this.getNextCourse().title}
+									.
 								</p>
 							: <p>
-								{' '}Good Job, you have learned {course.objective}<br />
+								{' '}
+									Good Job, you have learned
+									{' '}
+								{course.objective}
+								{' '}
 									We do not have anything else to teach you yet. Stay tuned for more!
 								</p>}
 					</div>
@@ -509,21 +524,22 @@ export default class AcademyCourse extends React.PureComponent {
 									ref={`${this.courseSlug}-part${index + 1}`}
 								/>
 								{index === 0
-										? <div />
-										: <div
-											className={`part-progress-complete-button ${this.isPartRead(partsName[index]) ? 'finished' : ''}`}
-											onClick={() => this.isPartRead(partsName[index])
-														? false
-														: this.markAsRead(partsName[index])}
-										>
-											{this.isPartRead(partsName[index])
-													? 'Part finished'
-													: index === parts.length - 1
-															? 'I finished the last part!'
-															: 'I finished! On to the next part'}
-										</div>}
+									? <div />
+									: <div
+										className={`part-progress-complete-button ${this.isPartRead(partsName[index]) ? 'finished' : ''}`}
+										onClick={() =>
+												this.isPartRead(partsName[index])
+													? false
+													: this.markAsRead(partsName[index])}
+									>
+										{this.isPartRead(partsName[index])
+												? 'Part finished'
+												: index === parts.length - 1
+														? 'I finished the last part!'
+														: 'I finished! On to the next part'}
+									</div>}
 							</div>
-							))}
+						))}
 					</div>
 					{sidebar}
 				</div>

@@ -121,12 +121,14 @@ export default class AcademyHome extends React.PureComponent {
 	}
 	areAllCourseRead() {
 		let isAllRead = true;
-
 		Object.keys(this.state.academyProgress).forEach((key) => {
-			if (!this.state.academyProgress[key].completed && key !== 'lastCourse') {
+			if (!this.state.academyProgress[key].completed && key !== 'lastCourse' && key !== 'areAllCourseRead') {
 				isAllRead = false;
 			}
 		});
+		if (isAllRead && !this.state.academyProgress.areAllCourseRead) {
+			this.client.dispatchAction('/set-all-course-read');
+		}
 		return isAllRead;
 	}
 	render() {
