@@ -37,6 +37,10 @@ import AccountInvoiceList from './components/account/account-invoice-list.compon
 import Subscription from './components/account/subscription.components.jsx';
 import StartApp from './components/start/start-app.components.jsx';
 
+import AcademyApp from './components/academy/academy-app.components.jsx';
+import AcademyDashboard from './components/academy/academy-dashboard.components.jsx';
+import AcademyHome from './components/academy/academy-home.components.jsx';
+import AcademyCourse from './components/academy/academy-course.components.jsx';
 import apolloClient from './services/graphcool.services.js';
 import HoodieApi from './services/hoodie.services.js';
 import LocalClient from './stores/local-client.stores.jsx';
@@ -60,6 +64,7 @@ import searchAction from './actions/search.actions.jsx';
 import tagStoreAction from './actions/tagStore.actions.jsx';
 import undoStackAction from './actions/undoStack.actions.jsx';
 import userLifecycleAction from './actions/user-lifecycle.actions.jsx';
+import academyAction from './actions/academy.actions.jsx';
 
 import EventDebugger, {debugActions} from './debug/eventLogging.debug.jsx';
 /* #if debug */
@@ -158,6 +163,7 @@ selectRenderOptions(
 				undoStackAction,
 				debugActions,
 				userLifecycleAction,
+				academyAction,
 				{
 					'/load-intercom-info': (data) => {
 						const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();
@@ -287,6 +293,7 @@ selectRenderOptions(
 					<Router history={hashHistory} onUpdate={trackUrl}>
 						<Route component={App} name="app" path="/">
 							<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}/>
+							<Route path="start" component={StartApp} onEnter={redirectToLogin}/>
 							/* #if debug */
 							<Route path="replay" path="replay/:replayId" component={ReplayViewer}/>
 							<Route path="debug" component={ReplayViewer}/>
@@ -326,8 +333,16 @@ selectRenderOptions(
 								</Route>
 								<Route path="subscribe" component={Subscription} name="subscribe" onEnter={redirectToSignup}></Route>
 							</Route>
+							<Route component={AcademyApp} path="academy">
+								<IndexRedirect to="home" />
+								<Route component={AcademyDashboard} path="home" name="home" onEnter={redirectToLogin}>
+									<IndexRoute component={AcademyHome}/>
+								</Route>
+								<Route path="course/:courseSlug(/:partName)" component={AcademyDashboard} name="course" onEnter={redirectToLogin}>
+									<IndexRoute component={AcademyCourse}/>
+								</Route>
+							</Route>
 						</Route>
-						<Route path="start" component={StartApp} onEnter={redirectToLogin}/>
 					</Router>
 				</ApolloProvider>
 			), content);

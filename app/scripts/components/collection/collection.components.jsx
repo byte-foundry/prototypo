@@ -121,7 +121,7 @@ export default class Collection extends React.Component {
 		return (
 			<div className="collection">
 				<div className="collection-container">
-					<div className="account-dashboard-icon"/>
+					<div className="account-dashboard-icon" onClick={this.returnToDashboard}/>
 					<div className="account-dashboard-back-icon" onClick={this.returnToDashboard}/>
 					<div className="account-header">
 						<h1 className="account-title">My projects</h1>
@@ -269,7 +269,7 @@ class Family extends React.Component {
 		});
 		const familyActions = (
 			<div>
-				<ContextualMenuItem text="Change family name" click={this.openChangeNameFamily}/>
+				<ContextualMenuItem text="Rename family" click={this.openChangeNameFamily}/>
 				<ContextualMenuItem
 					text={this.props.deleteSplit ? 'Delete' : 'Delete family'}
 					altLabel="Cancel"

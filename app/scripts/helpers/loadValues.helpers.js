@@ -32,6 +32,8 @@ export const valuesToLoad = [
 	{remote: 'firstTimeCollection', local: 'firstTimeCollection'},
 	{remote: 'firstTimeIndivCreate', local: 'firstTimeIndivCreate'},
 	{remote: 'firstTimeIndivEdit', local: 'firstTimeIndivEdit'},
+	{remote: 'firstTimeAcademyJoyride', local: 'firstTimeAcademyJoyride'},
+	{remote: 'firstTimeAcademyModal', local: 'firstTimeAcademyModal'},
 	{remote: 'canvasPanelWidth', local: 'canvasPanelWidth'},
 	{remote: 'wordPanelHeight', local: 'wordPanelHeight'},
 ];

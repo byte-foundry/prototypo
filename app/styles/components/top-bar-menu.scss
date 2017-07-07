@@ -83,6 +83,9 @@
 				width:23px;
 				margin-right: 12px;
 				cursor: pointer;
+				&.is-alone {
+					margin-right: 0;
+				}
 			}
 			&-part {
 				display: inline-block;

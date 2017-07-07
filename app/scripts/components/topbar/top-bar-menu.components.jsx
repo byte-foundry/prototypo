@@ -50,6 +50,7 @@ class TopBarMenu extends React.PureComponent {
 				'is-icon-menu': !!child.props.img,
 				'is-centered': child.props.centered,
 				'img-dark-background': child.props.imgDarkBackground,
+				'academy-progress-container': child.props.id === "progress-academy",
 			});
 			const count = (index > 0 && index < 5) ? index : 0;
 
@@ -358,6 +359,66 @@ class TopBarMenuDropdownItem extends React.PureComponent {
 	}
 }
 
+class TopBarMenuAcademy extends React.PureComponent {
+	static getHeader(props) {
+		return (
+			<div className="top-bar-menu-item-academy">
+				<Link to={`/academy/course/${props.course.slug}`}>
+					<img className="top-bar-menu-item-academy-img"
+						src={props.icon}
+						onMouseLeave={() => {props.clearText();}}
+						onMouseEnter={() => {props.setText(props.course.name, true);}}
+					/>
+				</Link>
+				{props.course.parts.map((part) => {
+					return (
+						<Link to={`/academy/course/${props.course.slug}/${part.name}`}>
+							<span
+								onMouseEnter={() => {props.setText(`${props.course.name} - ${part.name}`);}}
+								onMouseLeave={() => {props.clearText();}}
+								className={`top-bar-menu-item-academy-part ${part.completed ? 'completed' : ''}`}
+							/>
+						</Link>
+					);
+				})}
+				<span className="top-bar-menu-item-academy-text">
+					{props.text}
+				</span>
+			</div>
+		);
+	}
+
+	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] topbarmenuacademy');
+		}
+		return false;
+	}
+}
+
+class TopBarMenuAcademyIcon extends React.PureComponent {
+	static getHeader(props) {
+		return (
+			<div className="top-bar-menu-item-academy">
+				<Link to={`/academy/home`}>
+					<img className="top-bar-menu-item-academy-img  is-alone"
+						src={props.icon}
+						onMouseLeave={() => {props.clearText();}}
+						onMouseEnter={() => {props.setText(false, true);}}
+					/>
+				</Link>
+			</div>
+		);
+	}
+
+	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] topbarmenuacademyicon');
+		}
+		return false;
+	}
+}
+
 class TopBarMenuIcon extends React.PureComponent {
 
 	static getHeader(props) {
@@ -387,4 +448,6 @@ export {
 	TopBarMenuIcon,
 	TopBarMenuLink,
 	TopBarMenuButton,
+	TopBarMenuAcademy,
+	TopBarMenuAcademyIcon,
 };
