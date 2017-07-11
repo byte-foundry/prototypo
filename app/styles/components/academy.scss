@@ -1,0 +1,132 @@
+@import "../variables";
+
+a.academy-link {
+	color:$green;
+
+	&:hover {
+		text-decoration:underline;
+	}
+}
+
+.academy {
+
+	&.modal-container-title{
+		margin-top: 20px;
+		margin-bottom: 0px;
+	}
+	&.modal-container-content {
+		padding-top: 5px;
+	}
+
+	&-block {
+
+		margin-bottom: 50px;
+
+		&-title {
+			color:$white;
+			&-email {
+				float: right;
+				font-size: .6em;
+				&-icon {
+					width: 24px;
+					height: 24px;
+					display: inline-block;
+					margin-right: 1em;
+					border-radius: 12px;
+					background: url('../../images/admin-panel.svg') no-repeat 6px center $dark-grey;
+					background-size: 12px;
+					vertical-align: middle;
+					transition: width 400ms ease;
+					cursor: pointer;
+					overflow: hidden;
+					&-logout {
+						display: none;
+						float: right;
+						line-height: 2;
+						margin-bottom: 500px;
+						color: $white;
+					}
+					&:hover {
+						width: 85px; // #TODO: should be auto, but transition will not work
+						background-position: 12px center;
+						background-color: $red;
+						padding-right: 1em;
+					}
+
+					&:hover &-logout {
+						display: block;
+						opacity: 1;
+						margin-bottom: 0;
+					}
+				}
+			}
+		}
+
+		&-button {
+			display: inline-block;
+			width: auto;
+			align-self:flex-end;
+			margin-top: 20px;
+			font-size: 1.1em;
+			font-weight: 400;
+			padding: .9em;
+			color: $white !important;
+			border: 3px solid $green;
+			background-color: $green;
+			cursor: pointer;
+			transition:all .2s ease;
+			border-radius: 5px;
+
+			&:hover {
+				background-color: $white;
+				color: $green !important;
+			}
+		}
+
+		&-form {
+
+			&-label {
+				display: block;
+				color: $medium-grey;
+				font-size:1.1em;
+				margin-bottom: .8em;
+				padding-left: 2px;
+			}
+
+			&-input {
+				display:block;
+				width: 40%;
+				border: 3px solid $green;
+				border-radius: 5px;
+				padding: .8em;
+				background-color: $white !important;
+				color: $dark-grey;
+				font-size: 1.1em;
+				&-webkit-autofill {
+					background-color:rgba(255,255,255,0) !important;
+				}
+			}
+
+			&-button {
+				display: inline-block;
+				width: auto;
+				align-self:flex-end;
+				margin-top: 20px;
+				font-size: 1.1em;
+				font-weight: 400;
+				padding: .9em;
+				color: $white;
+				border: 3px solid $green;
+				background-color: $green;
+				cursor: pointer;
+				transition:all .2s ease;
+				border-radius: 5px;
+
+				&:hover {
+					background-color: $white;
+					color: $green;
+				}
+			}
+		}
+	}
+}

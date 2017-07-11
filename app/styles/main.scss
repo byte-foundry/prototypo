@@ -171,3 +171,9 @@ textarea,
 .scrollarea {
 	height:100% !important;
 }
+
+.clearfix:after {
+    content:" ";
+    display:block;
+    clear:both;
+}

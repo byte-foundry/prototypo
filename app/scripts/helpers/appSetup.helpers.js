@@ -53,6 +53,8 @@ const defaultValues = {
 			firstTimeCollection: true,
 			firstTimeIndivCreate: true,
 			firstTimeIndivEdit: true,
+			firstTimeAcademyModal: true,
+			firstTimeAcademyJoyride: true,
 		},
 };
 

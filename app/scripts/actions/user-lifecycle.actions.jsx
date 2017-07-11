@@ -310,7 +310,7 @@ export default {
 				form.errors.push(
 					/incorrect/i.test(err.message)
 						? 'Incorrect email or password'
-						: 'An unexpected error occured, please contact contact@prototypo.io and mention your current email'
+						: 'An unexpected error occured, please contact support@prototypo.io and mention your current email'
 				);
 				form.loading = false;
 				const patch = userStore.set('signinForm', form).commit();
@@ -662,7 +662,7 @@ export default {
 				form.errors.push('Payment details appear to be invalid, please contact us.');
 			}
 			else {
-				form.errors.push('Unexpected error, please contact us at contact@prototypo.io if you don\'t know how to solve it');
+				form.errors.push('Unexpected error, please contact us at support@prototypo.io if you don\'t know how to solve it');
 				form.errors.push(err.message);
 			}
 
