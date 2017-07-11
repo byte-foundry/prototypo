@@ -68,7 +68,7 @@ export default class AddCard extends React.PureComponent {
 						</InputWithLabel>
 					</div>
 					<div className="third-column">
-						<InputWithLabel inputRef={(ref) => { this.cvc = ref; }} label="CVC" error={inError.cvc} required={true} placeholder="123" maxLength="3" />
+						<InputWithLabel inputRef={(ref) => { this.cvc = ref; }} label="CVC" error={inError.cvc} required={true} placeholder="123" maxLength="4" />
 					</div>
 				</div>
 			</div>
