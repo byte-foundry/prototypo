@@ -40,7 +40,7 @@ export default class AccountHome extends React.Component {
 							</p>
 						</a>
 					</div>
-					<div className="account-home-resources-item">
+					<div className="account-home-resources-item account-home-resources-item--help">
 						<a
 							href="mailto:support@prototypo.io?subject=Need help/infos"
 							className="account-home-resources-item-box"
