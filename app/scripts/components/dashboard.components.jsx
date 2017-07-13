@@ -1,4 +1,5 @@
 import React from 'react';
+import {withRouter} from 'react-router';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
@@ -24,7 +25,7 @@ import GoProModal from './go-pro-modal.components.jsx';
 
 import {buildTutorialSteps, handleNextStep, handleClosed} from '../helpers/joyride.helpers.js';
 
-export default class Dashboard extends React.PureComponent {
+class Dashboard extends React.PureComponent {
 
 	constructor(props) {
 		super(props);
@@ -63,6 +64,11 @@ export default class Dashboard extends React.PureComponent {
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
+
+				if (!head.toJS().d.fonts.length) {
+					this.props.router.push('/start');
+				}
+
 				this.setState({
 					openFamilyModal: head.toJS().d.openFamilyModal,
 					openVariantModal: head.toJS().d.openVariantModal,
@@ -264,3 +270,5 @@ export default class Dashboard extends React.PureComponent {
 		);
 	}
 }
+
+export default withRouter(Dashboard);
