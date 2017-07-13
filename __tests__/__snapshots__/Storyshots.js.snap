@@ -1728,6 +1728,549 @@ exports[`Storyshots account.AccountManageSubUsers with short quantity left 1`] =
 </div>
 `;
 
+exports[`Storyshots account.SubscriptionSidebar agency_annual 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#24d390",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    style={
+      Object {
+        "margin": "20px auto",
+        "width": "350px",
+      }
+    }>
+    <div
+      className="subscription-sidebar">
+      <h1
+        className="subscription-sidebar-header">
+        <span>
+          Agencies
+          <br />
+          Annual
+        </span>
+      </h1>
+      <h2
+        className="subscription-sidebar-title">
+        <span>
+          Prototypo multi-user plan, designed for professionnals, billed annually
+        </span>
+      </h2>
+      <ul
+        className="subscription-sidebar-list-feat">
+        <li
+          className="subscription-sidebar-list-feat-item">
+          All pro features
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Manage your team licences
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Premium 24h support
+        </li>
+      </ul>
+      <div
+        className="subscription-sidebar-separator" />
+      <div
+        className="subscription-sidebar-cta">
+        <span>
+          <span>
+            US$ 25
+          </span>
+           
+          / month
+        </span>
+      </div>
+      <div
+        className="subscription-sidebar-subcta">
+        <span>
+          Less money, same features
+          <br />
+          <span>
+            US$ 12.5
+          </span>
+           
+          × 
+          2
+           per month
+        </span>
+      </div>
+      <a
+        className="subscription-sidebar-link"
+        href="/account/subscribe"
+        onClick={[Function]}>
+        Want less commitment, try our monthly offer
+      </a>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#24d390",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.SubscriptionSidebar agency_monthly 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#24d390",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    style={
+      Object {
+        "margin": "20px auto",
+        "width": "350px",
+      }
+    }>
+    <div
+      className="subscription-sidebar">
+      <h1
+        className="subscription-sidebar-header">
+        <span>
+          Agencies
+          <br />
+          Monthly
+        </span>
+      </h1>
+      <h2
+        className="subscription-sidebar-title">
+        <span>
+          Prototypo multi-user plan, designed for professionnals, billed monthly
+        </span>
+      </h2>
+      <ul
+        className="subscription-sidebar-list-feat">
+        <li
+          className="subscription-sidebar-list-feat-item">
+          All pro features
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Manage your team licences
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Premium 24h support
+        </li>
+      </ul>
+      <div
+        className="subscription-sidebar-separator" />
+      <div
+        className="subscription-sidebar-cta">
+        <span>
+          <span>
+            US$ 45
+          </span>
+           
+          / month
+        </span>
+      </div>
+      <div
+        className="subscription-sidebar-subcta">
+        <span>
+          No commitment!
+          <br />
+          <span>
+            US$ 22.5
+          </span>
+           
+          × 
+          2
+           per month
+        </span>
+      </div>
+      <a
+        className="subscription-sidebar-link"
+        href="/account/subscribe"
+        onClick={[Function]}>
+        Want Prototypo cheaper, check out our annual offer
+      </a>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#24d390",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.SubscriptionSidebar personal_annual_99 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#24d390",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    style={
+      Object {
+        "margin": "20px auto",
+        "width": "350px",
+      }
+    }>
+    <div
+      className="subscription-sidebar">
+      <h1
+        className="subscription-sidebar-header">
+        Annual
+      </h1>
+      <h2
+        className="subscription-sidebar-title">
+        Buy Prototypo Pro subscription for 1 year, get 4 months for free
+      </h2>
+      <ul
+        className="subscription-sidebar-list-feat">
+        <li
+          className="subscription-sidebar-list-feat-item">
+          More diverse fonts with full range on all parameters
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Perfectly customized with glyph individualization groups
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Tune to perfection using the manual edition and component editing
+        </li>
+      </ul>
+      <div
+        className="subscription-sidebar-separator" />
+      <div
+        className="subscription-sidebar-cta">
+        <span>
+          <span>
+            US$ 8.25
+          </span>
+           / month
+        </span>
+      </div>
+      <div
+        className="subscription-sidebar-subcta">
+        <span>
+          Less money, same features
+          <br />
+          Get 4 months free
+        </span>
+      </div>
+      <a
+        className="subscription-sidebar-link"
+        href="/account/subscribe"
+        onClick={[Function]}>
+        Want less commitment, try our monthly offer
+      </a>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#24d390",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.SubscriptionSidebar personal_monthly (no first month offer) 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#24d390",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    style={
+      Object {
+        "margin": "20px auto",
+        "width": "350px",
+      }
+    }>
+    <div
+      className="subscription-sidebar">
+      <h1
+        className="subscription-sidebar-header">
+        Monthly
+      </h1>
+      <h2
+        className="subscription-sidebar-title">
+        <span>
+          Try Prototypo Pro without commitment
+        </span>
+      </h2>
+      <ul
+        className="subscription-sidebar-list-feat">
+        <li
+          className="subscription-sidebar-list-feat-item">
+          More diverse fonts with full range on all parameters
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Perfectly customized with glyph individualization groups
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Tune to perfection using the manual edition and component editing
+        </li>
+      </ul>
+      <div
+        className="subscription-sidebar-separator" />
+      <div
+        className="subscription-sidebar-cta">
+        <span>
+          <span>
+            US$ 15
+          </span>
+           
+           / month
+        </span>
+      </div>
+      <div
+        className="subscription-sidebar-subcta">
+        No commitment!
+      </div>
+      <a
+        className="subscription-sidebar-link"
+        href="/account/subscribe"
+        onClick={[Function]}>
+        Want Prototypo cheaper, check out our annual offer
+      </a>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#24d390",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.SubscriptionSidebar personal_monthly 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#24d390",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    style={
+      Object {
+        "margin": "20px auto",
+        "width": "350px",
+      }
+    }>
+    <div
+      className="subscription-sidebar">
+      <h1
+        className="subscription-sidebar-header">
+        Monthly
+      </h1>
+      <h2
+        className="subscription-sidebar-title">
+        <span>
+          Try Prototypo Pro subscription for
+           
+          <span>
+            US$ 1
+          </span>
+           
+          only
+        </span>
+      </h2>
+      <ul
+        className="subscription-sidebar-list-feat">
+        <li
+          className="subscription-sidebar-list-feat-item">
+          More diverse fonts with full range on all parameters
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Perfectly customized with glyph individualization groups
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Tune to perfection using the manual edition and component editing
+        </li>
+      </ul>
+      <div
+        className="subscription-sidebar-separator" />
+      <div
+        className="subscription-sidebar-cta">
+        <span>
+          <span>
+            US$ 15
+          </span>
+           
+          <span>
+            <br />
+            after the first month
+          </span>
+        </span>
+      </div>
+      <div
+        className="subscription-sidebar-subcta">
+        No commitment!
+      </div>
+      <a
+        className="subscription-sidebar-link"
+        href="/account/subscribe"
+        onClick={[Function]}>
+        Want Prototypo cheaper, check out our annual offer
+      </a>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#24d390",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
 exports[`Storyshots shared.AccountValidationButton default 1`] = `
 <button
   className="account-button account-validation-button"
