@@ -41,6 +41,7 @@ class Topbar extends React.Component {
 			plan: undefined,
 			creditChoices: undefined,
 			presets: null,
+			isOnline: true,
 		};
 
 		//function binding to avoid unnecessary re-render
@@ -79,6 +80,7 @@ class Topbar extends React.Component {
 					eventList: head.toJS().d.undoEventList,
 					presets: head.toJS().d.fontPresets,
 					indiv: head.toJS().d.indivMode,
+					isOnline: head.toJS().d.isOnline,
 				});
 			})
 			.onDelete(() => {
@@ -341,6 +343,15 @@ class Topbar extends React.Component {
 			)
 			: false;*/
 
+		const networkError = !this.state.isOnline && (
+			<TopBarMenuAction
+				name="Network error detected: your work will not be saved!"
+				click={() => {return;}}
+				action={true}
+				alignRight={true}
+			/>
+		);
+
 		return (
 			<div id="topbar">
 				<TopBarMenu>
@@ -449,6 +460,7 @@ class Topbar extends React.Component {
 					{errorExporting}
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
 					{creditExportLabel}
+					{networkError}
 					{callToAction}
 				</TopBarMenu>
 			</div>
