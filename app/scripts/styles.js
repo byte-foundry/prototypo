@@ -46,6 +46,7 @@ import '../styles/components/go-pro-modal.scss';
 import '../styles/components/shared/pricing.scss';
 import '../styles/components/handlegrip-text.scss';
 import '../styles/components/account/account-app.scss';
+import '../styles/components/account/account-home.scss';
 import '../styles/components/account/account-profile.scss';
 import '../styles/components/account/account-change-password.scss';
 import '../styles/components/account/account-billing-address.scss';

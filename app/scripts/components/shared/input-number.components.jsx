@@ -5,9 +5,11 @@ class InputNumber extends React.Component {
 	constructor(props) {
 		super(props);
 
+		const value = isNaN(parseFloat(props.value)) ? props.defaultValue : parseFloat(props.value);
+
 		this.state = {
-			value: parseFloat(props.value),
-			textValue: props.value,
+			value: value || 0,
+			textValue: value,
 		};
 
 		this.increment = this.increment.bind(this);
@@ -17,10 +19,11 @@ class InputNumber extends React.Component {
 		this.changeValue = this.changeValue.bind(this);
 	}
 
-	componentWillReceiveProps({value}) {
-		if (value.toString() !== this.state.textValue) {
-			this.setState({value: parseFloat(value), textValue: value.toString()});
+	componentWillReceiveProps({value, defaultValue}) {
+		if (isNaN(value)) {
+			return this.changeValue(defaultValue);
 		}
+		return this.changeValue(value, false);
 	}
 
 	increment() {
@@ -39,7 +42,7 @@ class InputNumber extends React.Component {
 		this.setState(({value}) => ({textValue: value.toString()}));
 	}
 
-	changeValue(newValue) {
+	changeValue(newValue, notify = true) {
 		const {min, max, onChange} = this.props;
 
 		// Text field is valid
@@ -56,7 +59,9 @@ class InputNumber extends React.Component {
 		const value = Math.max(min, Math.min(parseFloat(newValue), max));
 
 		this.setState(() => {
-			onChange(value);
+			if (notify || value !== newValue) {
+				onChange(value);
+			}
 
 			if (typeof newValue === 'number') {
 				return {value, textValue: value.toString()};
@@ -96,6 +101,7 @@ class InputNumber extends React.Component {
 }
 
 InputNumber.propTypes = {
+	defaultValue: PropTypes.number,
 	value: PropTypes.number,
 	step: PropTypes.number,
 	min: PropTypes.number,

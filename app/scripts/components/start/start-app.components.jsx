@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router';
 import pleaseWait from 'please-wait';
 import {hashHistory} from 'react-router';
 import {AddFamily} from '../familyVariant/add-family-variant.components.jsx';
@@ -87,6 +88,11 @@ export default class StartApp extends React.Component {
 		// project list if any
 		return (
 			<div className={`start-app ${(families && families.length) ? '' : 'noproject'}`}>
+				<div className="go-to-account">
+					<Link className="go-to-account-link" to="/account/home">
+						Go to my account instead →
+					</Link>
+				</div>
 				<div className="start-app-container">
 					<div className="start-base">
 						<div className="start-base-create">

@@ -6,7 +6,7 @@
 	width: 100%;
 	background-color: $green;
 	overflow: auto;
-	padding-top: 50px;
+	padding-top: 20px;
 
 	&.noproject {
 		.start-app-container {
@@ -17,6 +17,19 @@
 			}
 			.start-base-projects {
 				display: none;
+			}
+		}
+	}
+
+	.go-to-account {
+		margin: 20px auto;
+		text-align: center;
+
+		&-link {
+			color: $white;
+
+			&:hover {
+				text-decoration: underline;
 			}
 		}
 	}
