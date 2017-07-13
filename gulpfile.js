@@ -122,7 +122,6 @@ gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','
 	var webpackConfig	= require('./local.config.js');
 	// Start a webpack-dev-server
 	var prototypoConfig = Object.create(webpackConfig);
-	prototypoConfig.debug = true;
 	var compiler = webpack(prototypoConfig);
 
 	new WebpackDevServer(compiler, {
@@ -131,6 +130,7 @@ gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','
 		contentBase: 'dist/',
 		watchOptions: {
 			aggregateTimeout: 300,
+			ignored: /node_modules/,
 			poll: 1000,
 		},
 	}).listen(9000, "0.0.0.0", function(err) {
@@ -139,6 +139,7 @@ gulp.task('serve',['clean', 'images','cp-prototypo.js','cp-genese','cp-static','
 		gutil.log("[webpack-dev-server]", "http://localhost:9000/webpack-dev-server/index.html");
 
 		// keep the server alive or continue?
+		callback();
 	});
 });
 

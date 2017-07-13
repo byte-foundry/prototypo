@@ -148,63 +148,63 @@ export default class AcademyHome extends React.PureComponent {
 					<InlineSVG
 						className="academy-home-header-icon-postit"
 						element="div"
-						src={require('!svg-inline?classPrefix=postit-!../../../images/academy/postit.svg')}
+						src={require('!svg-inline-loader?classPrefix=postit-!../../../images/academy/postit.svg')}
 					/>
 					<InlineSVG
 						className="academy-home-header-icon-iphone"
 						element="div"
-						src={require('!svg-inline?classPrefix=iphone-!../../../images/academy/iphone.svg')}
+						src={require('!svg-inline-loader?classPrefix=iphone-!../../../images/academy/iphone.svg')}
 					/>
 					<InlineSVG
 						className="academy-home-header-icon-redbook"
 						element="div"
-						src={require('!svg-inline?classPrefix=redbook-!../../../images/academy/redbook.svg')}
+						src={require('!svg-inline-loader?classPrefix=redbook-!../../../images/academy/redbook.svg')}
 					/>
 					<InlineSVG
 						className="academy-home-header-icon-macbook"
 						element="div"
-						src={require('!svg-inline?classPrefix=macbook-!../../../images/academy/macbook.svg')}
+						src={require('!svg-inline-loader?classPrefix=macbook-!../../../images/academy/macbook.svg')}
 					/>
 					<InlineSVG
 						className="academy-home-header-icon-pen"
 						element="div"
-						src={require('!svg-inline?classPrefix=pen-!../../../images/academy/pen.svg')}
+						src={require('!svg-inline-loader?classPrefix=pen-!../../../images/academy/pen.svg')}
 					/>
 					<InlineSVG
 						className="academy-home-header-icon-coffee"
 						element="div"
-						src={require('!svg-inline?classPrefix=coffee-!../../../images/academy/coffee.svg')}
+						src={require('!svg-inline-loader?classPrefix=coffee-!../../../images/academy/coffee.svg')}
 					/>
 					<InlineSVG
 						className="academy-home-header-icon-ruler"
 						element="div"
-						src={require('!svg-inline?classPrefix=ruler-!../../../images/academy/ruler.svg')}
+						src={require('!svg-inline-loader?classPrefix=ruler-!../../../images/academy/ruler.svg')}
 					/>
 					<InlineSVG
 						className="academy-home-header-icon-bluebook"
 						element="div"
-						src={require('!svg-inline?classPrefix=bluebook-!../../../images/academy/bluebook.svg')}
+						src={require('!svg-inline-loader?classPrefix=bluebook-!../../../images/academy/bluebook.svg')}
 					/>
 					<InlineSVG
 						className="academy-home-header-icon-paper"
 						element="div"
-						src={require('!svg-inline?classPrefix=paper-!../../../images/academy/paper.svg')}
+						src={require('!svg-inline-loader?classPrefix=paper-!../../../images/academy/paper.svg')}
 					/>
 					<InlineSVG
 						className="academy-home-header-icon-loupe"
 						element="div"
-						src={require('!svg-inline?classPrefix=loupe-!../../../images/academy/loupe.svg')}
+						src={require('!svg-inline-loader?classPrefix=loupe-!../../../images/academy/loupe.svg')}
 					/>
 					<InlineSVG
 						className="academy-home-header-icon-blackpen"
 						element="div"
-						src={require('!svg-inline?classPrefix=blackpen-!../../../images/academy/blackpen.svg')}
+						src={require('!svg-inline-loader?classPrefix=blackpen-!../../../images/academy/blackpen.svg')}
 					/>
 					{this.areAllCourseRead()
 						? <InlineSVG
 							className="academy-home-header-icon-medal"
 							element="div"
-							src={require('!svg-inline?classPrefix=medal-!../../../images/academy/medal-home.svg')}
+							src={require('!svg-inline-loader?classPrefix=medal-!../../../images/academy/medal-home.svg')}
 						/>
 						: false}
 				</div>

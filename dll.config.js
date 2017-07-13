@@ -21,7 +21,6 @@ module.exports = {
 			'nexus-flux',
 			'remutable',
 			'bluebird',
-			'react-router',
 			'jszip',
 			'xxhashjs',
 			'pouchdb',
