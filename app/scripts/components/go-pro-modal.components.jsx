@@ -150,7 +150,8 @@ class GoProModal extends React.PureComponent {
 						>
 							{this.state.billing === 'monthly'
 								? <div className="pricing-item-offerRibbon">
-									{this.state.billing === 'monthly' && !hasBeenSubscribing
+									{this.state.billing === 'monthly'
+											&& !hasBeenSubscribing
 											&& <div className="pricing-item-offerRibbon-content">
 												1
 												<sup>st</sup>
@@ -228,9 +229,13 @@ class GoProModal extends React.PureComponent {
 									Premium 24h support
 								</li>
 							</ul>
-							<div className="pricing-item-cta" onClick={this.goSubscribeAgency}>
-								Create your team
-							</div>
+							{agencyCount <= 10
+								? <div className="pricing-item-cta" onClick={this.goSubscribeAgency}>
+										Create your team
+									</div>
+								: <div className="pricing-item-cta" onClick={this.openIntercomChat}>
+										Get in touch
+									</div>}
 						</PricingItem>
 
 					</div>
