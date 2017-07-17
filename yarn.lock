@@ -2692,7 +2692,7 @@ element-class@^0.2.0:
 
 elzevir.ptf@byte-foundry/elzevir.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/9f77e5ca946a1cdd484193597aa3393e83aea571"
+  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/d281de95022d6f1cb127f17b9cea36e40f616ab4"
   dependencies:
     karma "^1.7.0"
 
@@ -5167,7 +5167,7 @@ jest@^18.1.0:
 
 john-fell.ptf@byte-foundry/john-fell.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/8bfb07c79a383e86eeb0dc26604352f726cec2e1"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/2f782283af3a9c3e12915bf171214c043a74c632"
 
 jquery.wheel.js@0.2.0:
   version "0.2.0"
