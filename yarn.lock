@@ -2692,7 +2692,7 @@ element-class@^0.2.0:
 
 elzevir.ptf@byte-foundry/elzevir.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/d281de95022d6f1cb127f17b9cea36e40f616ab4"
+  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/cf9017a296842dd1b2b1cd93143b73d7dfb2eeae"
   dependencies:
     karma "^1.7.0"
 
