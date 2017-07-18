@@ -5167,7 +5167,7 @@ jest@^18.1.0:
 
 john-fell.ptf@byte-foundry/john-fell.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/2f782283af3a9c3e12915bf171214c043a74c632"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/afb348cb8ed1169ac3f0abd3a8aa48c10b91d199"
 
 jquery.wheel.js@0.2.0:
   version "0.2.0"
