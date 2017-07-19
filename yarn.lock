@@ -9822,7 +9822,7 @@ vendors@^1.0.0:
 
 venus.ptf@byte-foundry/venus.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/7ea8f32f1a456dba60b1c6e05e7a0a8b3b6ab3b0"
+  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/22d7ce90ae71810212865cc9d0d7c8ee6d6b59d0"
 
 verror@1.3.6:
   version "1.3.6"
