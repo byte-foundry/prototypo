@@ -107,6 +107,18 @@ const prototypoStore = new Remutable({
 	altList: {},
 	//end font infos store values
 
+    //lite version store values
+    openStepModal: false,
+	openChoiceModal: false,
+	stepSelectedChoiceCreation: false,
+	changeNameStep: false,
+	choice: {},
+	step: {},
+	collectionSelectedStep: undefined,
+	collectionSelectedChoice: undefined,
+	//end lite version store values
+
+
 	//ui store values
 	uiMode: [],
 	uiTextFontSize: 2.1,

@@ -217,12 +217,28 @@ export default {
 		if (!variant) {
 			variant = family.variants[0];
 		}
+		const openedVariant = (family.variants || []).find(item => variant.id === item.id);
 
-		const patchVariant = prototypoStore
-			.set('variant', variant)
-			.set('family', {name: family.name, template: family.template}).commit();
+		if (openedVariant.ptypoLite) {
+			const step = openedVariant.ptypoLite.steps[0];
+			const choice = step[0];
+			const patchVariant = prototypoStore
+				.set('variant', variant)
+				.set('step', step)
+				.set('choice', choice)
+				.set('family', {name: family.name, template: family.template})
+				.commit();
 
-		localServer.dispatchUpdate('/prototypoStore', patchVariant);
+			localServer.dispatchUpdate('/prototypoStore', patchVariant);
+		}
+		else {
+			const patchVariant = prototypoStore
+				.set('variant', variant)
+				.set('family', {name: family.name, template: family.template})
+			.commit();
+
+			localServer.dispatchUpdate('/prototypoStore', patchVariant);
+		}
 
 		localClient.dispatchAction('/change-font', {
 			templateToLoad: family.template,
@@ -500,6 +516,7 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/change-param': ({values, value, name, force, label}) => {
+		console.log(values);
 		const indivMode = prototypoStore.get('indivMode');
 		const indivEdit = prototypoStore.get('indivEditingParams');
 		const db = (prototypoStore.get('variant') || {}).db;

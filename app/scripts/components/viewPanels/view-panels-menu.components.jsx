@@ -13,7 +13,7 @@ class ViewPanelsMenu extends React.Component {
 	}
 
 	handleClickOutside(evt) {
-	    if (this.props.show) {
+	    if (this && this.props.show) {
 			this.props.toggle(evt);
 	    }
 	}

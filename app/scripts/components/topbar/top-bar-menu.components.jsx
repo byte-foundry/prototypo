@@ -52,7 +52,7 @@ class TopBarMenu extends React.PureComponent {
 				'img-dark-background': child.props.imgDarkBackground,
 				'academy-progress-container': child.props.id === "progress-academy",
 			});
-			const count = (index > 0 && index < 5) ? index : 0;
+			const count = (index > 0 && index < 6) ? index : 0;
 
 			return (
 				<TopBarMenuItem

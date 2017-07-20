@@ -17,6 +17,9 @@ export default class ArianneThread extends React.Component {
 			families: [],
 			family: {},
 			variant: {},
+			steps: [],
+			step: {},
+			choice: {},
 			indivCurrentGroup: {},
 			groups: [],
 		};
@@ -25,6 +28,10 @@ export default class ArianneThread extends React.Component {
 		this.selectFamily = this.selectFamily.bind(this);
 		this.addFamily = this.addFamily.bind(this);
 		this.addVariant = this.addVariant.bind(this);
+		this.selectChoice = this.selectChoice.bind(this);
+		this.addChoice = this.addChoice.bind(this);
+		this.selectStep = this.selectStep.bind(this);
+		this.addStep = this.addStep.bind(this);
 		this.showCollection = this.showCollection.bind(this);
 		this.selectGroup = this.selectGroup.bind(this);
 		this.addIndividualizeGroup = this.addIndividualizeGroup.bind(this);
@@ -48,6 +55,7 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 			return oldValue || voidStateArray;
 		};
 		const familySelector = (families, family) => { return families.find((f) => { return f.name === family.name; }); };
+		const stepSelector = (steps, step) => { return steps.find((s) => { return s.name === step.name; }); };
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
@@ -56,6 +64,30 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 						? this.state.families[0]
 						: voidStateObject
 				);
+
+				let steps;
+				let step;
+				let choice;
+
+				if (head.toJS().d.variant.ptypoLite) {
+					step = stepSelector(head.toJS().d.variant.ptypoLite.steps || [], head.toJS().d.step || {}) || (
+						this.state.steps.length > 0
+							? this.state.steps[0]
+							: voidStateObject
+					);
+					steps = head.toJS().d.variant.ptypoLite.steps;
+					if (head.toJS().d.choice && head.toJS().d.choice.name) {
+					    choice = head.toJS().d.choice;
+					}
+                    else if (this.state.steps.length > 0) {
+                        choice = step.choices[0];
+                    } else choice = {};
+				}
+				else {
+					steps = [];
+					step = {};
+					choice = {};
+				}
 
 				//This should never happen. However for user comfort if it happens
 				//we should create a new family to avoid crashes.
@@ -75,6 +107,9 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 					indivCreate: head.toJS().d.indivCreate,
 					indivMode: head.toJS().d.indivMode,
 					indivCurrentGroup: head.toJS().d.indivCurrentGroup || voidStateObject,
+					steps,
+                    step,
+                    choice,
 				});
 				const isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 				const isFreeWithCredits = (head.toJS().d.credits && head.toJS().d.credits > 0) && isFree;
@@ -84,13 +119,17 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-
 		this.setState({
 			families: memoizedListSelector(store.head.toJS().fonts, store.head.toJS().family, this.state.families, voidStateObject),
 			family: familySelector(store.head.toJS().fonts, store.head.toJS().family),
 			variant: store.head.toJS().variant,
+            steps: store.head.toJS().variant.ptypoLite ? memoizedListSelector(store.head.toJS().variant.ptypoLite.steps, store.head.toJS().step, this.state.steps, voidStateObject) : [],
+			step: store.head.toJS().variant.ptypoLite && store.head.toJS().step.name ? stepSelector(store.head.toJS().variant.ptypoLite.steps, store.head.toJS().step) : {},
+			choice: store.head.toJS().variant.ptypoLite && store.head.toJS().step.name ? stepSelector(store.head.toJS().variant.ptypoLite.steps, store.head.toJS().step).choices[0] : {},
 			groups: memoizedListSelector(store.head.toJS().indivGroups, {}, this.state.groups, voidStateObject),
 		});
+
+
 	}
 
 	componentWillUnmount() {
@@ -121,6 +160,25 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 			uiShowCollection: true,
 			collectionSelectedFamily: this.state.family,
 			collectionSelectedVariant: this.state.variant,
+		});
+	}
+
+	selectStep(step) {
+		this.client.dispatchAction('/select-choice', {choice: undefined, step});
+	}
+
+	addStep() {
+		this.client.dispatchAction('/store-value', {openStepModal: true});
+	}
+
+	selectChoice(choice) {
+		this.client.dispatchAction('/select-choice', {choice, step: this.state.step});
+	}
+
+	addChoice() {
+		this.client.dispatchAction('/store-value', {
+ 			openChoiceModal: true,
+			stepSelectedChoiceCreation: this.state.step,
 		});
 	}
 
@@ -192,6 +250,27 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 			<ArianneDropMenuItem key="edit" item={{name: 'Edit groups...'}} click={this.editIndivualizeGroup}/>,
 			<ArianneDropMenuItem key="add" item={{name: 'Add new group...'}} click={this.addIndividualizeGroup}/>,
 		];
+
+		const addStep = <ArianneDropMenuItem item={{name: 'Add new step...'}} click={this.addStep}/>;
+		const stepItem = (
+				<DropArianneItem
+					label={this.state.step ? this.state.step.name : ''}
+					list={this.state.steps || []}
+					add={addStep}
+					click={this.selectStep}
+					toggleId="arianne-item-step"/>
+		);
+
+		const addChoice = <ArianneDropMenuItem item={{name: 'Add new choice...'}} click={this.addChoice}/>;
+		const choiceItem = (
+				<DropArianneItem
+					label={this.state.choice ? this.state.choice.name : ''}
+					step={this.state.step || {}}
+					list={this.state.step && this.state.step.choices ? this.state.step.choices.filter(({name}) => { return name !== this.state.choice.name; }) : []}
+					add={addChoice}
+					click={this.selectChoice}
+					toggleId="arianne-item-choice"/>
+		);
 		const groupClasses = classNames({
 			'arianne-item': true,
 			'is-active': this.state.indivMode,
@@ -224,6 +303,8 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 				{familyItem}
 				{variantItem}
 				{group}
+				{stepItem}
+				{choiceItem}
 			</div>
 		);
 	}
