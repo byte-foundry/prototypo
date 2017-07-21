@@ -1,5 +1,5 @@
 import React from 'react';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
 
 import PricingItem from '../app/scripts/components/shared/pricing-item.components';
 

@@ -460,11 +460,7 @@ export default class AcademyCourse extends React.PureComponent {
 		if (this.areAllPartsRead() && this.state.headers) {
 			finish = (
 				<div className="academy-course-finish">
-					<InlineSVG
-						className="academy-course-finish-icon"
-						element="div"
-						src={require('!svg-inline!../../../images/academy/cup.svg')}
-					/>
+					<InlineSVG className="academy-course-finish-icon" element="div" src={require('!svg-inline-loader!../../../images/academy/cup.svg')} />
 					<div className="academy-course-finish-text">
 						{this.getNextCourse()
 							? <p>

@@ -1,5 +1,6 @@
 import '../app/scripts/styles';
 
+import './SubscriptionSidebar.story';
 import './SliderController.story';
 import './AccountManageSubUsers.story';
 import './AccountValidationButton.story';

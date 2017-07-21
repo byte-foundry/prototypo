@@ -80,7 +80,7 @@ class PricingItem extends React.Component {
 PricingItem.propTypes = {
 	title: PropTypes.string,
 	description: PropTypes.string,
-	priceInfo: PropTypes.oneOf([PropTypes.string, PropTypes.node]),
+	priceInfo: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 	selected: PropTypes.bool,
 	currency: PropTypes.string.isRequired,
 	amount: PropTypes.number.isRequired,

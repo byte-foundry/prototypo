@@ -1,5 +1,5 @@
 import React from 'react';
-import {storiesOf} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
 
 import AccountValidationButton from '../app/scripts/components/shared/account-validation-button.components';
 
