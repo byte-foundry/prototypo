@@ -34,6 +34,7 @@ export default class AcademyModal extends React.Component {
 			topbarItemDisplayed: 4,
 			firstTimeAcademyModal: false,
 		});
+		window.Intercom('trackEvent', 'clicked-no-thanks-on-academy-modal');
 	}
 
 	showAcademy() {
@@ -41,6 +42,7 @@ export default class AcademyModal extends React.Component {
 			firstTimeAcademyModal: false,
 		});
 		this.context.router.push('/academy');
+		window.Intercom('trackEvent', 'clicked-yes-on-academy-modal');
 	}
 
 	render() {

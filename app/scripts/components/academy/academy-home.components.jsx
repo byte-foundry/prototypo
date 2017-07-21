@@ -263,7 +263,7 @@ export default class AcademyHome extends React.PureComponent {
 										<ReactMarkdown source={tutorial.header} />
 									</div>
 									<div className="academy-course-list-elem-footer">
-										{tutorial.partCount || this.state.academyProgress[tutorial.slug].completed
+										{tutorial.partCount || (this.state.academyProgress[tutorial.slug] && this.state.academyProgress[tutorial.slug].completed)
 											? <div
 												className={`academy-part-count ${partsDone === tutorial.partCount ? 'done' : ''}`}
 											>
@@ -276,7 +276,7 @@ export default class AcademyHome extends React.PureComponent {
 													/>
 												</div>
 												<span className="academy-part-count-text">
-													{this.state.academyProgress[tutorial.slug].completed
+													{this.state.academyProgress[tutorial.slug] && this.state.academyProgress[tutorial.slug].completed
 															? 'COMPLETE'
 															: `${partsDone} of ${tutorial.partCount}`}
 												</span>

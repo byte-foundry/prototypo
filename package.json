@@ -127,7 +127,7 @@
     "test": "test"
   },
   "scripts": {
-    "build": "gulp build",
+    "build:dist": "gulp build",
     "build:storybook": "build-storybook",
     "debug": "gulp debug",
     "start": "gulp serve",
