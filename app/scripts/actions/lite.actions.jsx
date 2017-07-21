@@ -336,6 +336,7 @@ export default {
 			.set('step', step)
 			.set('createdChoice', step)
 			.set('openChoiceModal', false)
+            .set('choiceModalEdit', false)
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
