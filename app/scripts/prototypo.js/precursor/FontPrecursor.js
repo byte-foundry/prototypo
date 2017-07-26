@@ -17,13 +17,16 @@ export default class FontPrecursor {
 		this.parameters = _.mapValues(lib.parameters, (param) => {
 			return constantOrFormula(param);
 		});
+		this.paramBase = {
+			manualChanges: {},
+		};
 
 		this.unicodeToGlyphName = {};
 
 		this.glyphs = _.mapValues(fontSrc.glyphs, (glyph) => {
 			this.unicodeToGlyphName[glyph.unicode] = glyph.name;
 
-			return new Glyph(glyph);
+			return new Glyph(glyph, this.paramBase);
 		});
 
 		//this.analyzeDependency();
@@ -41,9 +44,13 @@ export default class FontPrecursor {
 			..._.mapValues(this.parameters, (param) => {
 				return param.getResult(params);
 			}),
+			manualChanges: {
+				...this.paramBase.manualChanges,
+				...params.manualChanges,
+			}
 		};
 		const transformedThis = _.mapValues(this, (prop, name) => {
-			if (name !== 'parameters' && name !== 'glyphs' && name !== 'unicodeToGlyphName') {
+			if (name !== 'parameters' && name !== 'glyphs' && name !== 'unicodeToGlyphName' && name !== 'paramBase') {
 				return prop.getResult(localParams);
 			}
 		});

@@ -88,7 +88,7 @@ export default class WorkerPool {
 					if (this.fastJobQueue) {
 						const jobToDo = this.fastJobQueue;
 
-						this.jobQueue = undefined;
+						this.fastJobQueue = undefined;
 						this.doFastJob(jobToDo);
 					}
 				});
@@ -154,12 +154,6 @@ export default class WorkerPool {
 
 			this.workerFastLane.worker.postMessage(job.action);
 			this.workerFastLane.working = true;
-
-			/* #if dev */
-			localClient.dispatchAction('/store-value', {
-				workerFast: this.workerFastLane.working,
-			});
-			/* #end */
 		}
 	}
 
@@ -191,12 +185,6 @@ export default class WorkerPool {
 
 					this.workerArray[Math.floor(i / jobPerWorker)].worker.postMessage(job.action);
 					this.workerArray[Math.floor(i / jobPerWorker)].working = true;
-
-					/* #if dev */
-					localClient.dispatchAction('/store-value', {
-						workers: _.map(this.workerArray, (worker) => {return worker.working;}),
-					});
-					/* #end */
 				}
 			}
 		}

@@ -13,31 +13,29 @@ export const toileType = {
 	NODE_IN: 1,
 	NODE_OUT: 2,
 	NODE_SKELETON: 3,
-	POINT_MENU: 4,
-	POINT_MENU_ITEM: 5,
-	THICKNESS_TOOL: 6,
-	THICKNESS_TOOL_CANCEL: 7,
-	ANGLE_TOOL: 8,
-	POS_TOOL: 9,
-	DISTR_TOOL: 10,
-	GLYPH_CONTOUR: 11,
-	GLYPH_COMPONENT_CONTOUR: 12,
+	CONTOUR_NODE: 4,
+	CONTOUR_NODE_IN: 5,
+	CONTOUR_NODE_OUT: 6,
+	GLYPH_CONTOUR: 7,
+	GLYPH_COMPONENT_CONTOUR: 8,
 };
 
 export const appState = {
 	UNSELECTED: -1,
 	HANDLE_MOD: 0,
-	ONCURVE_THICKNESS: 1,
-	ONCURVE_ANGLE: 2,
-	SKELETON_POS: 3,
-	SKELETON_DISTR: 4,
+	ONCURVE_MOD: 1,
+	SKELETON_POS: 2,
+	SKELETON_DISTR: 3,
 };
 
 const green = '#24d390';
 const blue = '#00c4d6';
 const yellow = '#f5e462';
-const grey = '#333333';
-const white = '#fefefe';
+const grey = '#3b3b3b';
+const mediumGrey = '#7e7e7e';
+const lightGrey = '#c6c6c6';
+const lightestGrey = '#f6f6f6';
+//const white = '#fefefe';
 const red = '#ff725e';
 
 const transparent = 'transparent';
@@ -60,6 +58,8 @@ const labelForMenu = {
 	[toileType.NODE_SKELETON]: 'Skeleton control point',
 };
 const menuTextSize = 30;
+
+const infinityDistance = 10000000;
 
 export function inverseProjectionMatrix([a, b, c, d, e, f]) {
 	return [
@@ -184,6 +184,48 @@ export default class Toile {
 		};
 	}
 
+	drawTypographicFrame(glyph, values) {
+		const lowerCornerRightRectangle = {
+			x: -infinityDistance,
+			y: -infinityDistance,
+		};
+		const upperCornerRightRectangle = {
+			x: 0,
+			y: infinityDistance,
+		}
+		const bottomZeroLine = {
+			x: 0,
+			y: -infinityDistance,
+		};
+		const bottomAdvanceWidthLine = {
+			x: glyph.advanceWidth,
+			y: -infinityDistance,
+		};
+		const topAdvanceWidthLine = {
+			x: glyph.advanceWidth,
+			y: infinityDistance,
+		};
+		const lowerCornerLeftRectangle = {
+			x: glyph.advanceWidth,
+			y: -infinityDistance,
+		};
+		const upperCornerLeftRectangle = {
+			x: infinityDistance,
+			y: infinityDistance,
+		};
+
+		this.drawRectangleFromCorners(lowerCornerRightRectangle, upperCornerRightRectangle, lightestGrey, lightestGrey);
+		this.drawRectangleFromCorners(lowerCornerLeftRectangle, upperCornerLeftRectangle, lightestGrey, lightestGrey);
+		this.drawLine(bottomZeroLine, upperCornerRightRectangle, green);
+		this.drawLine(bottomAdvanceWidthLine, topAdvanceWidthLine, green);
+		this.drawLine({x: -infinityDistance, y: values.xHeight}, {x: infinityDistance, y: values.xHeight}, mediumGrey);
+		this.drawLine({x: -infinityDistance, y: values.xHeight + values.overshoot}, {x: infinityDistance, y: values.xHeight + values.overshoot}, mediumGrey);
+		this.drawLine({x: -infinityDistance, y: values.xHeight + values.capDelta}, {x: infinityDistance, y: values.xHeight + values.capDelta}, mediumGrey);
+		this.drawLine({x: -infinityDistance, y: values.xHeight + values.capDelta + values.overshoot}, {x: infinityDistance, y: values.xHeight + values.capDelta + values.overshoot}, mediumGrey);
+		this.drawLine({x: -infinityDistance, y: 0}, {x: infinityDistance, y: 0}, mediumGrey);
+		this.drawLine({x: -infinityDistance, y: -values.overshoot}, {x: infinityDistance, y: -values.overshoot}, lightGrey);
+	}
+
 	drawControlPoint(node, hotness, fillColor) {
 		this.drawCircle(
 			node,
@@ -193,34 +235,59 @@ export default class Toile {
 		);
 	}
 
-	drawContourNode(node, id, prevNode, nextNode, hotItems) {
+	drawContourNode(node, id, prevNode, nextNode, hotItems, componentPrefixAddress) {
 		this.drawHandleNode({
 			node,
 			otherNode: prevNode,
+			otherDir: prevNode.dirOut,
 			handle: node.handleIn,
 			id,
 			handleId: `${id}.handleIn`,
-			type: toileType.NODE_IN,
+			type: toileType.CONTOUR_NODE_IN,
 			hotItems,
 			color: inHandleColor,
 		}); //in
 		this.drawHandleNode({
 			node,
 			otherNode: nextNode,
+			otherDir: nextNode.dirIn,
 			handle: node.handleOut,
 			id,
 			handleId: `${id}.handleOut`,
-			type: toileType.NODE_OUT,
+			type: toileType.CONTOUR_NODE_OUT,
 			hotItems,
 			color: outHandleColor,
 		}); //out
-		this.drawControlPoint(node, false, onCurveColor);
+
+		const hot = _.find(hotItems, (item) => {
+			return item.id === id;
+		});
+		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
+
+		this.drawControlPoint(node, hot, onCurveColor);
+		this.interactionList.push({
+			id,
+			type: toileType.CONTOUR_NODE,
+			data: {
+				center: {
+					x: node.x,
+					y: node.y,
+				},
+				base: {
+					x: node.xBase,
+					y: node.yBase,
+				},
+				radius: nodeHotRadius,
+				modifAddress,
+			},
+		});
 	}
 
-	drawExpandedNode(node, id, parentNode, parentId, hotItems, prevNode, nextNode) {
+	drawExpandedNode(node, id, parentNode, parentId, hotItems, prevNode, nextNode, prevDir, nextDir, componentPrefixAddress) {
 		this.drawHandleNode({
 			node,
 			otherNode: prevNode,
+			otherDir: prevDir || 0,
 			handle: node.handleIn,
 			id,
 			parentId,
@@ -232,6 +299,7 @@ export default class Toile {
 		this.drawHandleNode({
 			node,
 			otherNode: nextNode,
+			otherDir: nextDir || 0,
 			handle: node.handleOut,
 			id,
 			parentId,
@@ -265,7 +333,7 @@ export default class Toile {
 							oppositeId: `${parentId}.expandedTo[0]`,
 							angleOffset: 0,
 						};
-					const modifAddress = `${parentNode.nodeAddress}expand`;
+					const modifAddress = `${componentPrefixAddress}${parentNode.nodeAddress}expand`;
 
 					this.interactionList.push({
 						id,
@@ -293,6 +361,7 @@ export default class Toile {
 	drawHandleNode({
 		node,
 		otherNode,
+		otherDir,
 		handle,
 		id,
 		parentId,
@@ -331,16 +400,18 @@ export default class Toile {
 					radius: nodeHotRadius,
 					parentId: id,
 					skeletonId: parentId,
+					otherNode,
+					otherDir,
 				},
 			});
 		}
 	}
 
-	drawSkeletonNode(node, id, hotItems, j, nodes, contour) {
+	drawSkeletonNode(node, id, hotItems, j, nodes, contour, componentPrefixAddress) {
 		const hot = _.find(hotItems, (item) => {
 			return item.id === id;
 		});
-		const modifAddress = `${node.nodeAddress}`;
+		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
 
 		this.drawControlPoint(node, hot, node.handleIn ? onCurveColor : skeletonColor);
 		this.interactionList.push({
@@ -355,6 +426,9 @@ export default class Toile {
 					x: node.xBase,
 					y: node.yBase,
 				},
+				expandedTo: node.expandedTo,
+				width: node.expand.width,
+				baseDistr: node.expand.baseDistr,
 				radius: nodeHotRadius,
 				modifAddress,
 			},
@@ -380,6 +454,8 @@ export default class Toile {
 		if (!contour.closed) {
 			if (j === nodes.length - 1) {
 				nextNode = {
+					dirIn: nodes[j].dirOut,
+					dirOut: nodes[j].dirOut,
 					expandedTo: [
 						nodes[j].expandedTo[1],
 						nodes[j].expandedTo[0],
@@ -388,6 +464,8 @@ export default class Toile {
 			}
 			else if (j === 0) {
 				prevNode = {
+					dirIn: nodes[j].dirIn,
+					dirOut: nodes[j].dirIn,
 					expandedTo: [
 						nodes[j].expandedTo[1],
 						nodes[j].expandedTo[0],
@@ -396,36 +474,47 @@ export default class Toile {
 			}
 		}
 
-		this.drawExpandedNode(node.expandedTo[0],
+		this.drawExpandedNode(
+			node.expandedTo[0],
 			`${id}.expandedTo.0`,
 			node,
 			id,
 			hotItems,
 			prevNode.expandedTo[0],
-			nextNode.expandedTo[0]);
-		this.drawExpandedNode(node.expandedTo[1],
+			nextNode.expandedTo[0],
+			prevNode.dirOut,
+			nextNode.dirIn,
+			componentPrefixAddress
+		);
+		this.drawExpandedNode(
+			node.expandedTo[1],
 			`${id}.expandedTo.1`,
 			node,
 			id,
 			hotItems,
 			nextNode.expandedTo[1],
-			prevNode.expandedTo[1]);
+			prevNode.expandedTo[1],
+			nextNode.dirIn,
+			prevNode.dirOut,
+			componentPrefixAddress
+		);
 	}
 
 
-	drawNodes(contour, contourCursor, hotItems) {
+	drawNodes(contour = {nodes: []}, contourCursor, hotItems, componentPrefixAddress) {
 		const nodes = contour.nodes;
 
 		nodes.forEach((node, j) => {
 			const id = `${contourCursor}.nodes.${j}`;
 
 			if (contour.skeleton) {
-				this.drawSkeletonNode(node, id, hotItems, j, nodes, contour);
+				this.drawSkeletonNode(node, id, hotItems, j, nodes, contour, componentPrefixAddress);
 			}
 			else {
 				const prevNode = nodes[(j - 1) - nodes.length * Math.floor((j - 1) / nodes.length)];
 				const nextNode = nodes[(j + 1) % nodes.length];
-				this.drawContourNode(node, id, prevNode, nextNode, hotItems);
+
+				this.drawContourNode(node, id, prevNode, nextNode, hotItems, componentPrefixAddress);
 			}
 		});
 	}
@@ -442,7 +531,7 @@ export default class Toile {
 		this.context.fill();
 	}
 
-	drawSelectableContour(glyph, hotItems, parentId = '', type = toileType.GLYPH_CONTOUR) {
+	drawSelectableContour(glyph, hotItems, parentId = '', type = toileType.GLYPH_CONTOUR, componentIdx) {
 		let startIndexBeziers = 0;
 
 		glyph.contours.forEach((contour, i) => {
@@ -477,6 +566,7 @@ export default class Toile {
 				id,
 				type,
 				data: {
+					componentIdx,
 					beziers: listOfBezier,
 					contour,
 					indexes: [startIndexBeziers, startIndexBeziers + length],
@@ -487,7 +577,7 @@ export default class Toile {
 		});
 
 		glyph.components.forEach((component, i) => {
-			this.drawSelectableContour(component, hotItems, `components.${i}.`, toileType.GLYPH_COMPONENT_CONTOUR);
+			this.drawSelectableContour(component, hotItems, `components.${i}.`, toileType.GLYPH_COMPONENT_CONTOUR, i);
 		});
 	}
 
@@ -848,24 +938,10 @@ export default class Toile {
 		const text = node.expand.width.toFixed(1);
 		const textSize = this.measureText(text, 20, 'Fira sans');
 
-		this.drawText(text,
-			add2D(
-				add2D(
-					mulScalar2D(1 / 2, add2D(expandedSource, oppositeExpanded)),
-					mulScalar2D(-30 / this.viewMatrix[0], normalVector)
-				),
-				{
-					x: -textSize.width / (2 * this.viewMatrix[0]),
-					y: 0,
-				}
-			),
-			20,
-			blue
-		);
 
 	}
 
-	drawAngleTool(node, id, hotItems) {
+	drawNodeTool(node, id, hotItems) {
 		const [farthestNode, closestNode] = node.expand.distr > 0.5
 			? [node.expandedTo[0], node.expandedTo[1]]
 			: [node.expandedTo[1], node.expandedTo[0]];
@@ -880,13 +956,14 @@ export default class Toile {
 		this.drawCircle(farthestNode, 5, color, color);
 
 		const direction = subtract2D(farthestNode, node);
-		const angle = `${(Math.atan2(direction.y, direction.x) * 180 / Math.PI).toFixed(1)}°`;
-		const textSize = this.measureText(angle, 20, 'Fira sans');
+		const angle = `θ ${(Math.atan2(direction.y, direction.x) * 180 / Math.PI).toFixed(1)}°`;
+		const width = `w ${node.expand.width.toFixed(1)}`;
+		const widthTextSize = this.measureText(width, 20, 'Fira sans');
+		const angleTextSize = this.measureText(angle, 20, 'Fira sans');
 		const normalVector = normalize2D({
 			x: direction.y,
 			y: -direction.x,
 		});
-		const modifAddress = `${node.nodeAddress}expand.angle`;
 
 		this.drawText(angle,
 			add2D(
@@ -895,30 +972,30 @@ export default class Toile {
 					mulScalar2D(-35 / this.viewMatrix[0], normalVector)
 				),
 				{
-					x: -textSize.width / (2 * this.viewMatrix[0]),
+					x: -angleTextSize.width / (2 * this.viewMatrix[0]),
 					y: 0,
 				}
 			),
 			20,
 			red
 		);
-		this.interactionList.push({
-			id,
-			type: toileType.ANGLE_TOOL,
-			data: {
-				center: {
-					x: farthestNode.x,
-					y: farthestNode.y,
-				},
-				radius: nodeHotRadius,
-				skeleton: node,
-				baseAngle: node.expand.baseAngle,
-				modifAddress,
-			},
-		});
+		this.drawText(width,
+			add2D(
+				add2D(
+					mulScalar2D(1 / 2, add2D(node, farthestNode)),
+					mulScalar2D(-30 / this.viewMatrix[0], normalVector)
+				),
+				{
+					x: -widthTextSize.width / (2 * this.viewMatrix[0]),
+					y: -30 / this.viewMatrix[0],
+				}
+			),
+			20,
+			green
+		);
 	}
 
-	drawSkeletonDistrTool(node, id, hotItems) {
+	drawSkeletonDistrTool(node, id) {
 		const [zoom] = this.viewMatrix;
 		const normalVector = normalize2D({
 			x: node.expandedTo[1].y - node.expandedTo[0].y,
@@ -946,39 +1023,25 @@ export default class Toile {
 			20,
 			red
 		);
-
-		this.interactionList.push({
-			id,
-			type: toileType.DISTR_TOOL,
-			data: {
-				center: toolPos,
-				base: {
-					x: node.xBase,
-					y: node.yBase,
-				},
-				expandedTo: node.expandedTo,
-				width: node.expand.width,
-				radius: 10,
-				modifAddress,
-			},
-		});
-
 	}
 
-	drawSkeletonPosTool(node, id) {
+	drawSkeletonPosTool(node) {
 		const [zoom] = this.viewMatrix;
 		const topLeft = add2D(mulScalar2D(1 / zoom, {x: -6, y: 6}), node);
 		const bottomLeft = add2D(mulScalar2D(1 / zoom, {x: -6, y: -6}), node);
 		const topRight = add2D(mulScalar2D(1 / zoom, {x: 6, y: 6}), node);
 		const bottomRight = add2D(mulScalar2D(1 / zoom, {x: 6, y: -6}), node);
 
-		const oldWidth = this.context.lineWidth;
 
-		this.drawLine(node.expandedTo[0], node.expandedTo[1], red, undefined, [5, 5, 15, 5]);
+		const oldWidth = this.context.lineWidth;
 		this.context.lineWidth = 2;
 		this.drawLine(topLeft, bottomRight, red);
 		this.drawLine(bottomLeft, topRight, red);
 		this.context.lineWidth = oldWidth;
+		if (node.expandedTo) {
+
+			this.drawLine(node.expandedTo[0], node.expandedTo[1], red, undefined, [5, 5, 15, 5]);
+		}
 
 		const xText = `x: ${node.x.toFixed(0)}`;
 		const yText = `y: ${node.y.toFixed(0)}`;
@@ -1053,11 +1116,9 @@ export default class Toile {
 				case toileType.NODE_IN:
 				case toileType.NODE_OUT:
 				case toileType.NODE_SKELETON:
-				case toileType.THICKNESS_TOOL:
-				case toileType.THICKNESS_TOOL_CANCEL:
-				case toileType.ANGLE_TOOL:
-				case toileType.POS_TOOL:
-				case toileType.DISTR_TOOL:
+				case toileType.CONTOUR_NODE:
+				case toileType.CONTOUR_NODE_OUT:
+				case toileType.CONTOUR_NODE_IN:
 				case toileType.NODE: {
 					let refDistance = interactionItem.data.radius / this.viewMatrix[0];
 					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
@@ -1080,58 +1141,58 @@ export default class Toile {
 					/* #end */
 					break;
 				}
-				case toileType.POINT_MENU: {
-					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
-					const [mouseTransformed] = transformCoords(
-						[this.mouse],
-						inverseMatrix,
-						this.height / this.viewMatrix[0]
-					);
-					const {start, size} = interactionItem.data;
-					const diffVect = subtract2D(mouseTransformed, start);
-
-					if (
-						diffVect.x <= size.x + 20 / this.viewMatrix[0]
-						&& diffVect.x >= -40 / this.viewMatrix[0]
-						&& diffVect.y <= size.y + 20 / this.viewMatrix[0]
-						&& diffVect.y >= -40 / this.viewMatrix[0]
-					) {
-						result.push(interactionItem);
-					}
-
-					/* #if dev */
-					//let color = '#24d390';
-					//this.drawLine(start, mouseTransformed, color);
-					/* #end */
-					break;
-				}
-				case toileType.POINT_MENU_ITEM: {
-					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
-					const [zoom] = this.viewMatrix;
-					const [mouseTransformed] = transformCoords(
-						[this.mouse],
-						inverseMatrix,
-						this.height / zoom
-					);
-					const {pos, size} = interactionItem.data;
-					const diffVect = subtract2D(mouseTransformed, pos);
-
-					if (
-						diffVect.x <= size + 10 / zoom
-						&& diffVect.x >= -10 / zoom
-						&& diffVect.y <= 35 / zoom
-						&& diffVect.y >= -5 / zoom
-					) {
-						result.push(interactionItem);
-					}
-
-					/* #if dev */
-					const color = '#24d390';
-
-					this.drawLine(pos, mouseTransformed, color);
-					/* #end */
-					break;
-				}
+					//				case toileType.POINT_MENU: {
+					//					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+					//					const [mouseTransformed] = transformCoords(
+					//						[this.mouse],
+					//						inverseMatrix,
+					//						this.height / this.viewMatrix[0]
+					//					);
+					//					const {start, size} = interactionItem.data;
+					//					const diffVect = subtract2D(mouseTransformed, start);
+					//
+					//					if (
+					//						diffVect.x <= size.x + 20 / this.viewMatrix[0]
+					//						&& diffVect.x >= -40 / this.viewMatrix[0]
+					//						&& diffVect.y <= size.y + 20 / this.viewMatrix[0]
+					//						&& diffVect.y >= -40 / this.viewMatrix[0]
+					//					) {
+					//						result.push(interactionItem);
+					//					}
+					//
+					//					/* #if dev */
+					//					//let color = '#24d390';
+					//					//this.drawLine(start, mouseTransformed, color);
+					//					/* #end */
+					//					break;
+					//				}
+					//				case toileType.POINT_MENU_ITEM: {
+					//					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+					//					const [zoom] = this.viewMatrix;
+					//					const [mouseTransformed] = transformCoords(
+					//						[this.mouse],
+					//						inverseMatrix,
+					//						this.height / zoom
+					//					);
+					//					const {pos, size} = interactionItem.data;
+					//					const diffVect = subtract2D(mouseTransformed, pos);
+					//
+					//					if (
+					//						diffVect.x <= size + 10 / zoom
+					//						&& diffVect.x >= -10 / zoom
+					//						&& diffVect.y <= 35 / zoom
+					//						&& diffVect.y >= -5 / zoom
+					//					) {
+					//						result.push(interactionItem);
+					//					}
+					//
+					//					/* #if dev */
+					//					const color = '#24d390';
+					//
+					//					this.drawLine(pos, mouseTransformed, color);
+					//					/* #end */
+					//					break;
+					//				}
 				default:
 					break;
 			}

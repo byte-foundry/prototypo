@@ -1,5 +1,7 @@
 import {add2D, mulScalar2D, subtract2D} from '../../plumin/util/linear.js';
 
+const infinityPointScale = 5000000;
+
 // The following function should be useless, thanks to paper
 export function lineLineIntersection(p1, p2, p3, p4) {
 	const x1 = p1.x;
@@ -16,12 +18,12 @@ export function lineLineIntersection(p1, p2, p3, p4) {
 		return null;
 	}
 
-	return new Float32Array([
-		((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4))
+	return {
+		x: ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4))
 		/ d,
-		((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4))
+		y: ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4))
 		/ d,
-	]);
+	};
 }
 
 // Find the intersection of two rays.
@@ -50,7 +52,10 @@ export function rayRayIntersection(p1, a1, p2, a2) {
 
 	// no intersection
 	if (a1 === a2) {
-		return null;
+		return {
+			x: p1.x + infinityPointScale * Math.cos(a1),
+			y: p1.y + infinityPointScale * Math.sin(a1),
+		};
 	}
 
 	//We want to round a1, a2 and PI to avoid problems with approximation

@@ -29,8 +29,12 @@ function checkAndChangeOrient(beziers, clockwise) {
 
 
 export default class Glyph {
-	constructor(glyphSrc) {
+	constructor(glyphSrc, paramBase) {
 		const {unicode, name, characterName, tags, transforms, parameter, anchor, outline, transformOrigin} = glyphSrc;
+
+		paramBase.manualChanges[name] = {
+			cursors: {},
+		};
 
 		this.unicode = constantOrFormula(unicode);
 		this.name = constantOrFormula(name);
@@ -270,10 +274,10 @@ export default class Glyph {
 				SkeletonPath.correctValues(dest);
 
 				if (contour.closed.value) {
-					ClosedSkeletonPath.createHandle(dest, (params.manualChanges[this.name.value] || {}).cursors || {});
+					ClosedSkeletonPath.createHandle(dest, params.manualChanges[this.name.value].cursors);
 				}
 				else {
-					SkeletonPath.createHandle(dest, (params.manualChanges[this.name.value] || {}).cursors || {});
+					SkeletonPath.createHandle(dest, params.manualChanges[this.name.value].cursors);
 				}
 			}
 			else {
@@ -282,11 +286,11 @@ export default class Glyph {
 
 				_.set(opDone, `${lodashCursor}.checkOrientation`, true);
 
-				SimplePath.createHandle(dest);
+				SimplePath.createHandle(dest, params.manualChanges[this.name.value].cursors);
 			}
 		}
 		else if (action === 'expand') {
-			const manualChanges = (params.manualChanges[this.name.value] || {}).cursors || {};
+			const manualChanges = params.manualChanges[this.name.value].cursors;
 			const node = ExpandingNode.applyExpandChange(
 				_.get(opDone, toLodashPath(cursor)),
 				manualChanges,
@@ -319,9 +323,8 @@ export default class Glyph {
 				result,
 			);
 
-			const manualChanges = (
-				(params.manualChanges[this.name.value] || {}).cursors || {}
-			)[op] || 0;
+			const manualChanges =
+				params.manualChanges[this.name.value].cursors[op] || 0;
 
 			result += manualChanges;
 		}
@@ -381,8 +384,24 @@ export default class Glyph {
 			}, opAnchors[key]);
 		});
 
-		opDone.components = this.components.map((component) => {
-			return component.constructComponent(localParams, opDone.contours, opDone.anchors, utils, glyphs);
+		opDone.components = this.components.map((component, idx) => {
+			const componentManualChanges = _.chain(localParams.manualChanges[this.name.value].cursors)
+				.pickBy((value, key) => {
+					return key.match(new RegExp(`components\.${idx}`));
+				})
+				.mapKeys((value, key) => {
+					return key.replace(/components\.\d\./g, '');
+				})
+				.value();
+			const componentParams = {
+				...localParams,
+				manualChanges: {
+					[component.base[0].value]: {
+						cursors: componentManualChanges,
+					},
+				},
+			};
+			return component.constructComponent(componentParams, opDone.contours, opDone.anchors, utils, glyphs);
 		});
 
 		const transformedThis = _.mapValues(this, (prop, name) => {

@@ -125,6 +125,16 @@ export default {
 				localClient.dispatchAction('/store-value-font', {
 					fontWorkerPool,
 				});
+
+				const initParams = {};
+
+				typedata.controls.forEach((control) => {
+					control.parameters.forEach((param) => {
+						initParams[param.name] = param.init;
+					});
+				});
+
+				localClient.dispatchAction('/change-param', initParams);
 			},
 		});
 
@@ -781,7 +791,14 @@ export default {
 					);
 
 					if (oldFont) {
-						document.fonts.delete(oldFont);
+						if (window.requestIdleCallback) {
+							window.requestIdleCallback(() => {
+								document.fonts.delete(oldFont);
+							});
+						}
+						else {
+							document.fonts.delete(oldFont);
+						}
 					}
 
 					document.fonts.add(fontFace);

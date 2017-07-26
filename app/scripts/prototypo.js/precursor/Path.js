@@ -27,8 +27,14 @@ function computeHandle(
 	const tensionIn = j ? node.tensionOut : node.tensionIn;
 	const tensionOut = j ? node.tensionIn : node.tensionOut;
 
-	dirToNext += params[`${node.nodeAddress}expandedTo.${j}.dirOut`] || 0;
-	dirToPrev += params[`${node.nodeAddress}expandedTo.${j}.dirIn`] || 0;
+	if (node.expandedTo) {
+		dirToNext += params[`${node.nodeAddress}expandedTo.${j}.dirOut`] || 0;
+		dirToPrev += params[`${node.nodeAddress}expandedTo.${j}.dirIn`] || 0;
+	}
+	else {
+		dirToNext += params[`${node.nodeAddress}dirOut`] || 0;
+		dirToPrev += params[`${node.nodeAddress}dirIn`] || 0;
+	}
 
 	if ((Math.PI - Math.abs(Math.abs(prevDir - dirToPrev) - Math.PI)) % Math.PI === 0) {
 		const unitDir = {
@@ -101,14 +107,34 @@ function computeHandle(
 		);
 	}
 
-	let inVector = mulScalar2D(tensionIn * 0.6, subtract2D(inIntersection, current));
-	let outVector = mulScalar2D(tensionOut * 0.6, subtract2D(outIntersection, current));
+	const untensionedInVector = subtract2D(inIntersection, current);
+	const untensionOutVector = subtract2D(outIntersection, current);
+	let inVector = mulScalar2D(tensionIn * 0.6, untensionedInVector);
+	let outVector = mulScalar2D(tensionOut * 0.6, untensionOutVector);
 
 	if (node.expandedTo) {
 		node.expandedTo[j].baseLengthIn = distance2D(inVector, {x: 0, y: 0});
 		node.expandedTo[j].baseLengthOut = distance2D(outVector, {x: 0, y: 0});
-		inVector = mulScalar2D(params[`${node.nodeAddress}expandedTo.${j}.tensionIn`] || 1, inVector);
-		outVector = mulScalar2D(params[`${node.nodeAddress}expandedTo.${j}.tensionOut`] || 1, outVector);
+		inVector = mulScalar2D(
+			params[`${node.nodeAddress}expandedTo.${j}.tensionIn`] || ((tensionIn === 0) ? 0 : 1),
+			tensionIn === 0 ? untensionedInVector : inVector
+		);
+		outVector = mulScalar2D(
+			params[`${node.nodeAddress}expandedTo.${j}.tensionOut`] || ((tensionOut === 0) ? 0 : 1),
+			tensionOut === 0 ? untensionOutVector : outVector
+		);
+	}
+	else {
+		node.baseLengthIn = distance2D(inVector, {x: 0, y: 0});
+		node.baseLengthOut = distance2D(outVector, {x: 0, y: 0});
+		inVector = mulScalar2D(
+			params[`${node.nodeAddress}tensionIn`] || ((tensionIn === 0) ? 0 : 1),
+			tensionIn === 0 ? untensionedInVector : inVector
+		);
+		outVector = mulScalar2D(
+			params[`${node.nodeAddress}tensionOut`] || ((tensionOut === 0) ? 0 : 1),
+			tensionOut === 0 ? untensionOutVector : outVector
+		);
 	}
 
 
@@ -126,6 +152,8 @@ function computeHandle(
 	}
 
 
+	dest.baseTensionIn = tensionIn;
+	dest.baseTensionOut = tensionOut;
 	dest.handleIn = round2D(add2D(current, inVector));
 	dest.handleOut = round2D(add2D(current, outVector));
 }
@@ -369,7 +397,7 @@ export class SimplePath extends SolvablePath {
 
 	}
 
-	static createHandle(dest) {
+	static createHandle(dest, params) {
 		const {nodes} = dest;
 
 		for (let k = 0; k < nodes.length; k++) {
@@ -387,7 +415,7 @@ export class SimplePath extends SolvablePath {
 				prevNode,
 				nextNode,
 				0,
-				{}
+				params,
 			);
 		}
 	}
