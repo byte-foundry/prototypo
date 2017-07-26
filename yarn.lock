@@ -3752,7 +3752,7 @@ getpass@^0.1.1:
 
 gfnt.ptf@byte-foundry/spectral.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/f3b5afdc549c4f910658e1d0889c0f79aa8ec5e3"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/c2f3be0317fef11999df99b6326f65eda9b5af86"
 
 ghreleases@^1.0.2:
   version "1.0.5"
