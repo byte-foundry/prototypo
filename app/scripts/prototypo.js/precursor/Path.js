@@ -1,11 +1,11 @@
 /* global _ */
-import {subtract2D, mulScalar2D, dot2D, add2D, round2D, distance2D} from '../../plumin/util/linear.js';
-import {rayRayIntersection} from '../utils/updateUtils.js';
-import {readAngle} from '../helpers/utils.js';
-import {constantOrFormula} from '../helpers/values.js';
+import {subtract2D, mulScalar2D, dot2D, add2D, round2D, distance2D} from '../../plumin/util/linear';
+import {rayRayIntersection} from '../utils/updateUtils';
+import {readAngle} from '../helpers/utils';
+import {constantOrFormula} from '../helpers/values';
 
-import Node from './Node.js';
-import ExpandingNode from './ExpandingNode.js';
+import Node from './Node';
+import ExpandingNode from './ExpandingNode';
 
 function computeHandle(
 	dest,
@@ -16,14 +16,14 @@ function computeHandle(
 	prevNode,
 	nextNode,
 	j,
-	params
+	params,
 ) {
 	let inIntersection;
 	let outIntersection;
 	const prevDir = j ? prevNode.dirIn : prevNode.dirOut;
 	const nextDir = j ? nextNode.dirOut : nextNode.dirIn;
-	let dirToPrev = j ? node.dirOut : node.dirIn;
-	let dirToNext = j ? node.dirIn : node.dirOut;
+	let dirToPrev = j ? current.dirOut || node.dirOut : current.dirIn || node.dirIn;
+	let dirToNext = j ? current.dirIn || node.dirIn : current.dirOut || node.dirOut;
 	const tensionIn = j ? node.tensionOut : node.tensionIn;
 	const tensionOut = j ? node.tensionIn : node.tensionOut;
 
@@ -49,13 +49,12 @@ function computeHandle(
 					subtract2D(
 						prev,
 						current,
-					)
+					),
 				) / 2,
-				unitDir
+				unitDir,
 			),
-			current
+			current,
 		);
-
 	}
 	else {
 		inIntersection = rayRayIntersection(
@@ -68,7 +67,7 @@ function computeHandle(
 				x: current.x,
 				y: current.y,
 			},
-			dirToPrev
+			dirToPrev,
 		);
 	}
 
@@ -85,11 +84,11 @@ function computeHandle(
 					subtract2D(
 						next,
 						current,
-					)
+					),
 				) / 2,
-				unitDir
+				unitDir,
 			),
-			current
+			current,
 		);
 	}
 	else {
@@ -103,7 +102,7 @@ function computeHandle(
 				x: current.x,
 				y: current.y,
 			},
-			dirToNext
+			dirToNext,
 		);
 	}
 
@@ -164,7 +163,7 @@ class SolvablePath {
 	}
 
 	solveOperationOrder(glyph, operationOrder) {
-		return [`${this.cursor}closed`, `${this.cursor}skeleton`, ..._.reduce(this.nodes, (result, node) => {
+		return [`${this.cursor}closed`, `${this.cursor}skeleton`, ..._.reduce([...this.nodes, this.transforms, this.transformOrigin], (result, node) => {
 			result.push(...node.solveOperationOrder(glyph, [...operationOrder, ...result]));
 			if (this.isReadyForHandles([...operationOrder, ...result])) {
 				result.push({
@@ -199,6 +198,16 @@ class SolvablePath {
 				nodes[i].expand.angle = readAngle(node.expand.angle);
 				nodes[i].dirIn = dirIn !== null ? dirIn : (nodes[i].expand.angle + Math.PI / 2)%(2*Math.PI);
 				nodes[i].dirOut = dirOut !== null ? dirOut : (nodes[i].expand.angle + Math.PI / 2)%(2*Math.PI);
+			}
+			else if (node.expandedTo) {
+				const dirIn0 = readAngle(node.expandedTo[0].dirIn);
+				const dirOut0 = readAngle(node.expandedTo[0].dirOut);
+				const dirIn1 = readAngle(node.expandedTo[1].dirIn);
+				const dirOut1 = readAngle(node.expandedTo[1].dirOut);
+				node.expandedTo[0].dirIn = dirIn0 || 0;
+				node.expandedTo[0].dirOut = dirOut0 || 0;
+				node.expandedTo[1].dirIn = dirIn1 || 0;
+				node.expandedTo[1].dirOut = dirOut1 || 0;
 			}
 			else {
 				nodes[i].dirIn = readAngle(node.dirIn) || 0;
@@ -237,6 +246,8 @@ export class SkeletonPath extends SolvablePath {
 		});
 		this.closed = constantOrFormula(false);
 		this.skeleton = constantOrFormula(true);
+		this.transforms = source.transforms !== undefined ? constantOrFormula(source.transforms, `${this.cursor}transforms`) : constantOrFormula(null, `${this.cursor}transforms`);
+		this.transformOrigin = source.transformOrigin ? constantOrFormula(source.transformOrigin, `${this.cursor}transformOrigin`) : constantOrFormula(null, `${this.cursor}transformOrigin`);
 	}
 
 	isReadyForHandles(ops, index = ops.length - 1) {
@@ -375,6 +386,8 @@ export class SimplePath extends SolvablePath {
 		this.closed = constantOrFormula(true);
 		this.skeleton = constantOrFormula(false);
 		this.exportReversed = constantOrFormula(source.exportReversed);
+		this.transforms = source.transforms !== undefined ? constantOrFormula(source.transforms, `${this.cursor}transforms`) : constantOrFormula(null, `${this.cursor}transforms`);
+		this.transformOrigin = source.transformOrigin ? constantOrFormula(source.transformOrigin, `${this.cursor}transformOrigin`) : constantOrFormula(null, `${this.cursor}transformOrigin`);
 	}
 
 	isReadyForHandles(ops, index = ops.length - 1) {

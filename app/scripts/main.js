@@ -12,6 +12,7 @@ import IAmMobile from './components/i-am-mobile.components';
 import App from './app';
 
 import HoodieApi from './services/hoodie.services';
+import {Typefaces} from './services/typefaces.services';
 import LocalClient from './stores/local-client.stores';
 import LocalServer from './stores/local-server.stores';
 import Stores from './stores/creation.stores';
@@ -19,6 +20,8 @@ import Stores from './stores/creation.stores';
 import selectRenderOptions from './helpers/userAgent.helpers';
 import {loadStuff} from './helpers/appSetup.helpers';
 import isProduction from './helpers/is-production.helpers';
+
+import FontMediator from './prototypo.js/mediator/FontMediator';
 
 import appValuesAction from './actions/appValues.actions';
 import exportAction from './actions/export.actions';
@@ -42,11 +45,6 @@ pleaseWait.instance = pleaseWait.pleaseWait({
 	loadingHtml: 'Hello Prototypo',
 });
 
-window.addEventListener('unload', () => {
-	worker.port.postMessage({type: 'closeAll'});
-	worker.port.close();
-});
-
 selectRenderOptions(
 	() => {
 		const content = document.getElementById('content');
@@ -58,7 +56,7 @@ selectRenderOptions(
 
 		ReactDOM.render(<NotABrowser />, content);
 	},
-	() => {
+	async () => {
 		const stripeKey = isProduction()
 			? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
 			: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
@@ -85,6 +83,19 @@ selectRenderOptions(
 		window.dispatchEvent(fluxEvent);
 
 		const eventDebugger = new EventDebugger();
+
+		const templates = await Promise.all(
+			prototypoStore.get('templateList').map(async ({templateName}) => {
+				const typedataJSON = await Typefaces.getFont(templateName);
+
+				return {
+					name: templateName,
+					json: JSON.parse(typedataJSON),
+				};
+			}),
+		);
+
+		await FontMediator.init(templates);
 
 		async function createStores() {
 			const actions = Object.assign(

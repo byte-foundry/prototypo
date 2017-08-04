@@ -32,11 +32,6 @@ module.exports = {
 				include: path.join(__dirname, 'app'),
 			},
 			{
-				test: /prototypo-canvas/,
-				use: [{loader: 'babel-loader', options: {cacheDirectory: true}}],
-				include: [fs.realpathSync(`${__dirname}/node_modules/prototypo-canvas`)],
-			},
-			{
 				test: /\.scss$/,
 				use: ['style-loader', 'css-loader', 'sass-loader'],
 				include: [path.join(__dirname, 'app/styles')],
@@ -77,7 +72,7 @@ module.exports = {
 				include: path.join(__dirname, 'app/images/icons'),
 			},
 		],
-		noParse: /(levelup|dist\/prototypo-canvas)/,
+		noParse: /(levelup)/,
 	},
 	externals: [
 		{

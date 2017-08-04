@@ -63,23 +63,9 @@ export default class Component {
 
 		opDone = {
 			...opDone,
-			...compGlyph.constructGlyph(localParams, opDone.anchors, glyphs),
+			...compGlyph.constructGlyph(localParams, opDone.anchors, glyphs, transformedThis.transforms, transformedThis.transformOrigin),
 			...transformedThis,
 		};
-
-		if (transformedThis.transforms) {
-			opDone.contours.forEach((contour) => {
-				contour.nodes.forEach((node) => {
-					if (node.expandedTo) {
-						transformNode(node.expandedTo[0], transformedThis.transforms, transformedThis.transformOrigin);
-						transformNode(node.expandedTo[1], transformedThis.transforms, transformedThis.transformOrigin);
-					}
-					else {
-						transformNode(node, transformedThis.transforms, transformedThis.transformOrigin);
-					}
-				});
-			});
-		}
 
 		return opDone;
 	}

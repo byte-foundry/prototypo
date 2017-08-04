@@ -79,9 +79,9 @@ export default class GlyphList extends React.PureComponent {
 			fields.forEach((field) => {
 				tokenOk = tokenOk
 				|| (
-					glyph[0].src[field.name]
+					glyph[0][field.name]
 						&& field.comp(
-							glyph[0].src[field.name].toString().toLowerCase(),
+							glyph[0][field.name].toString().toLowerCase(),
 							token.toLowerCase()
 						)
 				);
@@ -98,9 +98,9 @@ export default class GlyphList extends React.PureComponent {
 		}
 		const selectedGlyph = this.props.selected;
 		const glyphs = _.pickBy(this.props.glyphs, (glyph) => {
-			if (glyph[0].src) {
+			if (glyph[0].unicode) {
 				return (
-					glyph[0].src.tags.indexOf(this.props.selectedTag) !== -1
+					glyph[0].tags.indexOf(this.props.selectedTag) !== -1
 					&& (
 						!this.props.search || this.isGlyphInSearch(glyph, this.props.search)
 					)

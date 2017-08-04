@@ -85,7 +85,7 @@ export default class PrototypoWord extends React.PureComponent {
 		this.client.getStore('/fontInstanceStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					font: head.toJS().d.font,
+					font: window.fontResult,
 				});
 			})
 			.onDelete(() => {

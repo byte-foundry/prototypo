@@ -1,15 +1,17 @@
-/*global _, webkitRequestAnimationFrame */
+/* global _, webkitRequestAnimationFrame */
 import React from 'react';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
 
-import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix} from '../toile/toile.js';
-import {rayRayIntersection} from '../prototypo.js/utils/updateUtils.js';
+import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix, canvasMode} from '../toile/toile';
+import {rayRayIntersection} from '../prototypo.js/utils/updateUtils';
 
-import {changeTransformOrigin, toLodashPath} from '../prototypo.js/helpers/utils.js';
-import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D, add2D, distance2D} from '../plumin/util/linear.js';
+import {changeTransformOrigin, toLodashPath} from '../prototypo.js/helpers/utils';
+import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D, add2D, distance2D} from '../plumin/util/linear';
 
-import LocalClient from '../stores/local-client.stores.jsx';
+import LocalClient from '../stores/local-client.stores';
+
+import FontUpdater from './font-updater.components';
 
 export default class GlyphCanvas extends React.PureComponent {
 	constructor(props) {
@@ -25,7 +27,6 @@ export default class GlyphCanvas extends React.PureComponent {
 
 		this.changeParam = this.changeParam.bind(this);
 		this.download = this.download.bind(this);
-
 	}
 
 	componentWillMount() {
@@ -34,8 +35,10 @@ export default class GlyphCanvas extends React.PureComponent {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/fontInstanceStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState(head.toJS().d);
+			.onUpdate(() => {
+				this.setState({
+					glyph: window.glyph,
+				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -45,6 +48,7 @@ export default class GlyphCanvas extends React.PureComponent {
 			.onUpdate((head) => {
 				this.setState({
 					workers: head.toJS().d.workers,
+					canvasMode: head.toJS().d.canvasMode,
 				});
 			})
 			.onDelete(() => {
@@ -78,6 +82,8 @@ export default class GlyphCanvas extends React.PureComponent {
 		let moving = false;
 		let mouse = this.toile.getMouseState();
 		let appStateValue;
+		let appMode;
+		let oldAppMode;
 
 		const raf = requestAnimationFrame || webkitRequestAnimationFrame;
 		const rafFunc = () => {
@@ -91,6 +97,18 @@ export default class GlyphCanvas extends React.PureComponent {
 
 			mouse = this.toile.getMouseState();
 
+			switch (this.state.canvasMode) {
+			case 'components':
+				appMode = canvasMode.COMPONENTS;
+				break;
+			case 'select-points':
+				appMode = canvasMode.SELECT_POINTS;
+				break;
+			case 'move':
+			default:
+				appMode = canvasMode.MOVE;
+				break;
+			}
 
 			if (mouse.state === mState.UP
 				&& oldMouse.state === mState.DOWN) {
@@ -98,23 +116,36 @@ export default class GlyphCanvas extends React.PureComponent {
 			}
 			const glyph = this.state.glyph;
 
-			if (this.toile.keyboardInput) {
-				switch (appStateValue) {
-					case appState.SKELETON_POS:
-					case appState.SKELETON_DISTR: {
-						const {keyCode} = this.toile.keyboardInput;
+			if (this.toile.keyboardUp.keyCode) {
+				const {keyCode} = this.toile.keyboardUp;
 
-						if (keyCode === 68) {
-							appStateValue = appState.SKELETON_POS;
-						}
-						if (keyCode === 70) {
-							appStateValue = appState.SKELETON_DISTR;
-						}
-						this.toile.clearKeyboardInput();
-						break;
+				switch (appStateValue) {
+				case appState.SKELETON_POS:
+				case appState.SKELETON_DISTR: {
+					if (keyCode === 68) {
+						appStateValue = appState.SKELETON_POS;
 					}
-					default:
-						break;
+					if (keyCode === 70) {
+						appStateValue = appState.SKELETON_DISTR;
+					}
+					break;
+				}
+				default:
+					if (keyCode === 32) {
+						this.client.dispatchAction('/store-value', {canvasMode: oldAppMode});
+						oldAppMode = undefined;
+					}
+					break;
+				}
+				this.toile.clearKeyboardInput();
+			}
+
+			if (this.toile.keyboardDownRisingEdge.keyCode) {
+				const {keyCode} = this.toile.keyboardDownRisingEdge;
+
+				if (keyCode === 32) {
+					oldAppMode = this.state.canvasMode;
+					this.client.dispatchAction('/store-value', {canvasMode: 'move'});
 				}
 			}
 
@@ -123,38 +154,46 @@ export default class GlyphCanvas extends React.PureComponent {
 				&& glyph
 				&& !draggedItem
 			) {
-				const [z,,,, tx, ty] = this.toile.viewMatrix;
-				const newTs = {
-					x: tx + mouse.delta.x,
-					y: ty + mouse.delta.y,
-				};
+				if (appMode === canvasMode.MOVE) {
+					const [z,,,, tx, ty] = this.toile.viewMatrix;
+					const newTs = {
+						x: tx + mouse.delta.x,
+						y: ty + mouse.delta.y,
+					};
 
-				if (
-					newTs.x !== tx
-					|| newTs.y !== ty
-				) {
-					moving = true;
+					if (
+						newTs.x !== tx
+						|| newTs.y !== ty
+					) {
+						moving = true;
+					}
+					this.toile.setCamera(newTs, z, -height);
 				}
 
 				this.toile.clearDelta();
-				this.toile.setCamera(newTs, z, -height);
 			}
 
 			if (mouse.wheel) {
-				const [z] = this.toile.viewMatrix;
-				const [mousePosInWorld] = transformCoords(
-					[mouse.pos],
-					inverseProjectionMatrix(this.toile.viewMatrix),
-					this.toile.height / z,
-				);
-				const transformMatrix = changeTransformOrigin(mousePosInWorld, [1 + mouse.wheel / 1000, 0, 0, 1 + mouse.wheel / 1000, 0, 0]);
-				const [zoom,,,, newTx, newTy] = matrixMul(transformMatrix, this.toile.viewMatrix);
+				if (appMode === canvasMode.MOVE) {
+					const [z,,,, x, y] = this.toile.viewMatrix;
+					const [mousePosInWorld] = transformCoords(
+						[mouse.pos],
+						inverseProjectionMatrix(this.toile.viewMatrix),
+						this.toile.height / z,
+					);
+					const transformMatrix = changeTransformOrigin(
+						mousePosInWorld,
+						[1 + (mouse.wheel / 1000), 0, 0, 1 + (mouse.wheel / 1000), 0, 0],
+					);
+					const [zoom,,,, newTx, newTy] = matrixMul(transformMatrix, this.toile.viewMatrix);
+					const clampedZoom = Math.max(0.1, Math.min(10, zoom));
+					this.toile.setCamera({
+						x: z !== clampedZoom ? newTx : x,
+						y: z !== clampedZoom ? newTy : y,
+					}, clampedZoom, -height);
+				}
 
 				this.toile.clearWheelDelta();
-				this.toile.setCamera({
-					x: newTx,
-					y: newTy,
-				}, zoom, -height);
 			}
 
 			if (glyph) {
@@ -166,15 +205,37 @@ export default class GlyphCanvas extends React.PureComponent {
 					this.state.values,
 				);
 				this.toile.drawGlyph(glyph, hotItems);
-				this.toile.drawSelectableContour(glyph, hotItems);
+				this.toile.drawSelectableContour(
+					glyph,
+					appMode === canvasMode.SELECT_POINTS ? hotItems : [],
+				);
 
-				if (contourSelectedCursor) {
-					this.toile.drawNodes(_.get(glyph, toLodashPath(contourSelectedCursor)), contourSelectedCursor, hotItems, contourComponentIdx === undefined ? '' : `components.${contourComponentIdx}.`);
+				if (contourSelectedCursor && appMode === canvasMode.SELECT_POINTS) {
+					this.toile.drawNodes(
+						_.get(
+							glyph,
+							toLodashPath(contourSelectedCursor)),
+						contourSelectedCursor,
+						hotItems,
+						contourComponentIdx === undefined ? '' : `components.${contourComponentIdx}.`,
+					);
 					if (contourComponentIdx === undefined) {
-						this.toile.drawSelectedContour(_.slice(glyph.otContours, contourIndexes[0], contourIndexes[1]));
+						this.toile.drawSelectedContour(
+							_.slice(
+								glyph.otContours,
+								contourIndexes[0],
+								contourIndexes[1],
+							),
+						);
 					}
 					else {
-						this.toile.drawSelectedContour(_.slice(glyph.components[contourComponentIdx].otContours, contourIndexes[0], contourIndexes[1]));
+						this.toile.drawSelectedContour(
+							_.slice(
+								glyph.components[contourComponentIdx].otContours,
+								contourIndexes[0],
+								contourIndexes[1],
+							),
+						);
 					}
 				}
 
@@ -195,25 +256,61 @@ export default class GlyphCanvas extends React.PureComponent {
 						|| item.type === toileType.GLYPH_COMPONENT_CONTOUR;
 				});
 
-				if (nodes.length > 1 && !draggedItem && !selectedItem) {
-					this.toile.drawMultiplePointsMenu(nodes, frameCounters.pointMenu);
-					frameCounters.pointMenu += 1;
-				}
-				else if (pointMenu.length > 0 && !draggedItem && !selectedItem) {
-					this.toile.drawMultiplePointsMenu(pointMenu[0].data.points, frameCounters.pointMenu, pointMenuItems);
-					frameCounters.pointMenu += 1;
-				}
-				else {
-					frameCounters.pointMenu = 0;
+				if (nodes.length > 0) {
+					if (this.toile.keyboardDownRisingEdge.keyCode === 27) {
+						nodes.forEach((node) => {
+							switch (node.type) {
+							case toileType.NODE_IN:
+							case toileType.CONTOUR_NODE_IN:
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${node.data.parentId}.dirIn`]: undefined,
+										[`${node.data.parentId}.tensionIn`]: undefined,
+									},
+									glyphName: glyph.name,
+								});
+								break;
+							case toileType.NODE_OUT:
+							case toileType.CONTOUR_NODE_OUT:
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${node.data.parentId}.dirOut`]: undefined,
+										[`${node.data.parentId}.tensionOut`]: undefined,
+									},
+									glyphName: glyph.name,
+								});
+								break;
+							case toileType.NODE:
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${node.data.modifAddress}.width`]: undefined,
+										[`${node.data.modifAddress}.angle`]: undefined,
+									},
+									glyphName: glyph.name,
+								});
+								break;
+							case toileType.CONTOUR_NODE:
+							case toileType.NODE_SKELETON:
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${node.data.modifAddress}x`]: 0,
+										[`${node.data.modifAddress}y`]: 0,
+									},
+									glyphName: glyph.name,
+								});
+								break;
+							}
+						});
+					}
 				}
 
-				if (mState.DOWN === mouse.state) {
+				if (mState.DOWN === mouse.state && appMode === canvasMode.SELECT_POINTS) {
 					this.toile.clearDelta();
 					if (hotItems.length > 0) {
 						if (tools.length === 1) {
 							draggedItem = draggedItem || tools[0];
 						}
-						else if (nodes.length >= 1) {
+						else if (nodes.length > 0) {
 							if (draggedItem && nodes[0].id === draggedItem.id) {
 								draggedItem = nodes[0];
 							}
@@ -224,7 +321,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 
-				if (mouseClickRelease) {
+				if (mouseClickRelease && canvasMode.SELECT_POINTS) {
 					if (hotItems.length > 0) {
 						if (pointMenuItems.length === 1) {
 							selectedItem = pointMenuItems[0].data.point;
@@ -239,7 +336,8 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						else if (contours.length > 1 && !moving) {
 							contourSelectedCursor = contours[contourSelectedIndex % contours.length].id;
-							contourComponentIdx = contours[contourSelectedIndex % contours.length].data.componentIdx;
+							contourComponentIdx = contours[contourSelectedIndex
+								% contours.length].data.componentIdx;
 							contourIndexes = contours[contourSelectedIndex % contours.length].data.indexes;
 							contourSelectedIndex++;
 						}
@@ -263,197 +361,209 @@ export default class GlyphCanvas extends React.PureComponent {
 
 					this.toile.clearDelta();
 					switch (draggedItem.type) {
-						case toileType.NODE_IN:
-						case toileType.NODE_OUT: {
-							appStateValue = appState.HANDLE_MOD;
-							const {parentId, skeletonId, otherNode, otherDir} = draggedItem.data;
-							const selectedNodeParent = _.get(glyph, parentId);
-							const skeletonNode = _.get(glyph, skeletonId);
-							const [mousePosInWorld] = transformCoords(
-								[mouse.pos],
-								inverseProjectionMatrix(this.toile.viewMatrix),
-								this.toile.height / this.toile.viewMatrix[0],
-							);
-							const mouseVec = subtract2D(mousePosInWorld, selectedNodeParent);
-							const angle = Math.atan2(mouseVec.y, mouseVec.x);
-							const intersection = rayRayIntersection(selectedNodeParent, angle, otherNode, otherDir);
-							let tension = distance2D(mousePosInWorld, selectedNodeParent) / distance2D(intersection, selectedNodeParent);
-							const dotProductForOrient = dot2D(subtract2D(selectedNodeParent, intersection), subtract2D(mousePosInWorld, selectedNodeParent));
-							let dirDiff;
+					case toileType.NODE_IN:
+					case toileType.NODE_OUT: {
+						appStateValue = appState.HANDLE_MOD;
+						const {parentId, skeletonId, otherNode, otherDir} = draggedItem.data;
+						const selectedNodeParent = _.get(glyph, parentId);
+						const skeletonNode = _.get(glyph, skeletonId);
+						const [mousePosInWorld] = transformCoords(
+							[mouse.pos],
+							inverseProjectionMatrix(this.toile.viewMatrix),
+							this.toile.height / this.toile.viewMatrix[0],
+						);
+						const mouseVec = subtract2D(mousePosInWorld, selectedNodeParent);
+						const angle = Math.atan2(mouseVec.y, mouseVec.x);
+						const intersection = rayRayIntersection(selectedNodeParent, angle, otherNode, otherDir);
+						let tension = distance2D(mousePosInWorld, selectedNodeParent)
+							/ (distance2D(intersection, selectedNodeParent) || 1);
+						const dotProductForOrient = dot2D(
+							subtract2D(
+								selectedNodeParent, intersection,
+							),
+							subtract2D(
+								mousePosInWorld, selectedNodeParent,
+							),
+						);
+						let dirDiff;
 
-							if (dotProductForOrient > 0) {
-								tension *= -1;
-							}
-
-							if (toileType.NODE_IN === draggedItem.type) {
-								dirDiff = angle - skeletonNode.dirIn;
-								this.client.dispatchAction('/change-glyph-node-manually', {
-									changes: {
-										[`${draggedItem.data.parentId}.dirIn`]: dirDiff,
-										[`${draggedItem.data.parentId}.tensionIn`]: tension / (0.6 * (selectedNodeParent.baseTensionIn || (1 / 0.6))),
-									},
-									glyphName: glyph.name,
-								});
-							}
-							else if (toileType.NODE_OUT === draggedItem.type) {
-								dirDiff = angle - skeletonNode.dirOut;
-								this.client.dispatchAction('/change-glyph-node-manually', {
-									changes: {
-										[`${draggedItem.data.parentId}.dirOut`]: dirDiff,
-										[`${draggedItem.data.parentId}.tensionOut`]: tension / (0.6 * (selectedNodeParent.baseTensionOut || (1 / 0.6))),
-									},
-									glyphName: glyph.name,
-								});
-							}
-							break;
+						if (dotProductForOrient > 0) {
+							tension *= -1;
 						}
-						case toileType.CONTOUR_NODE_IN:
-						case toileType.CONTOUR_NODE_OUT: {
-							appStateValue = appState.HANDLE_MOD;
-							const {parentId, otherNode, otherDir} = draggedItem.data;
-							const selectedNodeParent = _.get(glyph, parentId);
-							const [mousePosInWorld] = transformCoords(
-								[mouse.pos],
-								inverseProjectionMatrix(this.toile.viewMatrix),
-								this.toile.height / this.toile.viewMatrix[0],
-							);
-							const mouseVec = subtract2D(mousePosInWorld, selectedNodeParent);
-							const angle = Math.atan2(mouseVec.y, mouseVec.x);
-							const intersection = rayRayIntersection(selectedNodeParent, angle, otherNode, otherDir);
-							let tension = distance2D(mousePosInWorld, selectedNodeParent) / distance2D(intersection, selectedNodeParent);
-							const dotProductForOrient = dot2D(subtract2D(selectedNodeParent, intersection), subtract2D(mousePosInWorld, selectedNodeParent));
-							let dirDiff;
 
-							if (dotProductForOrient > 0) {
-								tension *= -1;
-							}
-
-							if (toileType.CONTOUR_NODE_IN === draggedItem.type) {
-								dirDiff = angle - selectedNodeParent.dirIn;
-								this.client.dispatchAction('/change-glyph-node-manually', {
-									changes: {
-										[`${draggedItem.data.parentId}.dirIn`]: dirDiff,
-										[`${draggedItem.data.parentId}.tensionIn`]: tension / (0.6 * (selectedNodeParent.baseTensionIn || (1 / 0.6))),
-									},
-									glyphName: glyph.name,
-								});
-							}
-							else if (toileType.CONTOUR_NODE_OUT === draggedItem.type) {
-								dirDiff = angle - selectedNodeParent.dirOut;
-								this.client.dispatchAction('/change-glyph-node-manually', {
-									changes: {
-										[`${draggedItem.data.parentId}.dirOut`]: dirDiff,
-										[`${draggedItem.data.parentId}.tensionOut`]: tension / (0.6 * (selectedNodeParent.baseTensionOut || (1 / 0.6))),
-									},
-									glyphName: glyph.name,
-								});
-							}
-							break;
+						if (toileType.NODE_IN === draggedItem.type) {
+							dirDiff = angle - skeletonNode.dirIn;
+							this.client.dispatchAction('/change-glyph-node-manually', {
+								changes: {
+									[`${draggedItem.data.parentId}.dirIn`]: dirDiff,
+									[`${draggedItem.data.parentId}.tensionIn`]: tension / (0.6 * (selectedNodeParent.baseTensionIn || (1 / 0.6))),
+								},
+								glyphName: glyph.name,
+							});
 						}
-						case toileType.NODE: {
-							appStateValue = appState.ONCURVE_MOD;
-							const {baseWidth, oppositeId, baseAngle, skeleton, angleOffset} = draggedItem.data;
+						else if (toileType.NODE_OUT === draggedItem.type) {
+							dirDiff = angle - skeletonNode.dirOut;
+							this.client.dispatchAction('/change-glyph-node-manually', {
+								changes: {
+									[`${draggedItem.data.parentId}.dirOut`]: dirDiff,
+									[`${draggedItem.data.parentId}.tensionOut`]: tension / (0.6 * (selectedNodeParent.baseTensionOut || (1 / 0.6))),
+								},
+								glyphName: glyph.name,
+							});
+						}
+						break;
+					}
+					case toileType.CONTOUR_NODE_IN:
+					case toileType.CONTOUR_NODE_OUT: {
+						appStateValue = appState.HANDLE_MOD;
+						const {parentId, otherNode, otherDir} = draggedItem.data;
+						const selectedNodeParent = _.get(glyph, parentId);
+						const [mousePosInWorld] = transformCoords(
+							[mouse.pos],
+							inverseProjectionMatrix(this.toile.viewMatrix),
+							this.toile.height / this.toile.viewMatrix[0],
+						);
+						const mouseVec = subtract2D(mousePosInWorld, selectedNodeParent);
+						const angle = Math.atan2(mouseVec.y, mouseVec.x);
+						const intersection = rayRayIntersection(selectedNodeParent, angle, otherNode, otherDir);
+						let tension = distance2D(mousePosInWorld, selectedNodeParent)
+							/ distance2D(intersection, selectedNodeParent);
+						const dotProductForOrient = dot2D(
+							subtract2D(selectedNodeParent, intersection),
+							subtract2D(mousePosInWorld, selectedNodeParent),
+						);
+						let dirDiff;
+
+						if (dotProductForOrient > 0) {
+							tension *= -1;
+						}
+
+						if (toileType.CONTOUR_NODE_IN === draggedItem.type) {
+							dirDiff = angle - selectedNodeParent.dirIn;
+							this.client.dispatchAction('/change-glyph-node-manually', {
+								changes: {
+									[`${draggedItem.data.parentId}.dirIn`]: dirDiff,
+									[`${draggedItem.data.parentId}.tensionIn`]: tension / (0.6 * (selectedNodeParent.baseTensionIn || (1 / 0.6))),
+								},
+								glyphName: glyph.name,
+							});
+						}
+						else if (toileType.CONTOUR_NODE_OUT === draggedItem.type) {
+							dirDiff = angle - selectedNodeParent.dirOut;
+							this.client.dispatchAction('/change-glyph-node-manually', {
+								changes: {
+									[`${draggedItem.data.parentId}.dirOut`]: dirDiff,
+									[`${draggedItem.data.parentId}.tensionOut`]: tension / (0.6 * (selectedNodeParent.baseTensionOut || (1 / 0.6))),
+								},
+								glyphName: glyph.name,
+							});
+						}
+						break;
+					}
+					case toileType.NODE: {
+						appStateValue = appState.ONCURVE_MOD;
+						const {baseWidth, oppositeId, baseAngle, skeleton, angleOffset} = draggedItem.data;
+						const [mousePosInWorld] = transformCoords(
+							[mouse.pos],
+							inverseProjectionMatrix(this.toile.viewMatrix),
+							this.toile.height / this.toile.viewMatrix[0],
+						);
+						const opposite = _.get(glyph, oppositeId);
+						// width factor
+						const factor = distance2D(opposite, mousePosInWorld) / baseWidth;
+
+						// angle difference
+						const mouseVec = subtract2D(mousePosInWorld, skeleton);
+						const angleDiff = Math.atan2(mouseVec.y, mouseVec.x) - baseAngle;
+
+						if (mouseMoved) {
+							this.client.dispatchAction('/change-glyph-node-manually', {
+								changes: {
+									[`${draggedItem.data.modifAddress}.width`]: factor,
+									[`${draggedItem.data.modifAddress}.angle`]: angleDiff + angleOffset,
+								},
+								glyphName: glyph.name,
+							});
+						}
+
+						const id = draggedItem.data.parentId;
+						const skeletonNode = _.get(glyph, id);
+
+						if (skeleton) {
+							//this.toile.drawThicknessTool(skeletonNode, `${id}.thickness`, hotItems);
+							this.toile.drawNodeTool(skeletonNode, `${id}.angle`, hotItems);
+						}
+						break;
+					}
+					case toileType.CONTOUR_NODE:
+					case toileType.NODE_SKELETON: {
+						if (appStateValue === appState.SKELETON_DISTR) {
+							appStateValue = appState.SKELETON_DISTR;
+							const {base, expandedTo, width, baseDistr} = draggedItem.data;
 							const [mousePosInWorld] = transformCoords(
 								[mouse.pos],
 								inverseProjectionMatrix(this.toile.viewMatrix),
 								this.toile.height / this.toile.viewMatrix[0],
 							);
-							const opposite = _.get(glyph, oppositeId);
-							//width factor
-							const factor = distance2D(opposite, mousePosInWorld) / baseWidth;
 
-							//angle difference
-							const mouseVec = subtract2D(mousePosInWorld, skeleton);
-							const angleDiff = Math.atan2(mouseVec.y, mouseVec.x) - baseAngle;
+							const skelVec = normalize2D(subtract2D(expandedTo[1], expandedTo[0]));
+							const distProjOntoSkel = Math.min(Math.max(dot2D(
+								subtract2D(mousePosInWorld, expandedTo[0]),
+								skelVec,
+							), 0), width);
+
+							const mouseVec = subtract2D(add2D(mulScalar2D(distProjOntoSkel, skelVec), expandedTo[0]), base);
 
 							if (mouseMoved) {
 								this.client.dispatchAction('/change-glyph-node-manually', {
 									changes: {
-										[`${draggedItem.data.modifAddress}.width`]: factor,
-										[`${draggedItem.data.modifAddress}.angle`]: angleDiff + angleOffset,
+										[`${draggedItem.data.modifAddress}expand.distr`]: (distProjOntoSkel / width) - baseDistr,
+										[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
+										[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
 									},
 									glyphName: glyph.name,
 								});
 							}
 
-							const id = draggedItem.data.parentId;
+							const id = draggedItem.id;
 							const skeletonNode = _.get(glyph, id);
 
-							if (skeleton) {
-								//this.toile.drawThicknessTool(skeletonNode, `${id}.thickness`, hotItems);
-								this.toile.drawNodeTool(skeletonNode, `${id}.angle`, hotItems);
+							if (skeletonNode) {
+								this.toile.drawSkeletonDistrTool(skeletonNode, `${id}.distr`, hotItems);
 							}
-							break;
 						}
-						case toileType.CONTOUR_NODE:
-						case toileType.NODE_SKELETON: {
-							if (appStateValue === appState.SKELETON_DISTR) {
-								appStateValue = appState.SKELETON_DISTR;
-								const {base, expandedTo, width, baseDistr} = draggedItem.data;
-								const [mousePosInWorld] = transformCoords(
-									[mouse.pos],
-									inverseProjectionMatrix(this.toile.viewMatrix),
-									this.toile.height / this.toile.viewMatrix[0],
-								);
+						else {
+							appStateValue = appState.SKELETON_POS;
+							const {base, expandedTo} = draggedItem.data;
+							const [mousePosInWorld] = transformCoords(
+								[mouse.pos],
+								inverseProjectionMatrix(this.toile.viewMatrix),
+								this.toile.height / this.toile.viewMatrix[0],
+							);
 
-								const skelVec = normalize2D(subtract2D(expandedTo[1], expandedTo[0]));
-								const distProjOntoSkel = Math.min(Math.max(dot2D(
-									subtract2D(mousePosInWorld, expandedTo[0]),
-									skelVec,
-								), 0), width);
+							const mouseVec = subtract2D(mousePosInWorld, base);
 
-								const mouseVec = subtract2D(add2D(mulScalar2D(distProjOntoSkel, skelVec), expandedTo[0]), base);
-
-								if (mouseMoved) {
-									this.client.dispatchAction('/change-glyph-node-manually', {
-										changes: {
-											[`${draggedItem.data.modifAddress}expand.distr`]: (distProjOntoSkel / width) - baseDistr,
-											[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
-											[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
-										},
-										glyphName: glyph.name,
-									});
-								}
-
-								const id = draggedItem.id;
-								const skeletonNode = _.get(glyph, id);
-
-								if (skeletonNode) {
-									this.toile.drawSkeletonDistrTool(skeletonNode, `${id}.distr`, hotItems);
-								}
+							if (mouseMoved) {
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
+										[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
+									},
+									glyphName: glyph.name,
+								});
 							}
-							else {
-								appStateValue = appState.SKELETON_POS;
-								const {base, expandedTo} = draggedItem.data;
-								const [mousePosInWorld] = transformCoords(
-									[mouse.pos],
-									inverseProjectionMatrix(this.toile.viewMatrix),
-									this.toile.height / this.toile.viewMatrix[0],
-								);
 
-								const mouseVec = subtract2D(mousePosInWorld, base);
+							const id = draggedItem.id;
+							const skeletonNode = _.get(glyph, id);
 
-								if (mouseMoved) {
-									this.client.dispatchAction('/change-glyph-node-manually', {
-										changes: {
-											[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
-											[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
-										},
-										glyphName: glyph.name,
-									});
-								}
-
-								const id = draggedItem.id;
-								const skeletonNode = _.get(glyph, id);
-
-								if (skeletonNode) {
-									this.toile.drawSkeletonPosTool(skeletonNode, `${id}.pos`, hotItems);
-								}
+							if (skeletonNode) {
+								this.toile.drawSkeletonPosTool(skeletonNode, `${id}.pos`, hotItems);
 							}
-							break;
 						}
-						default:
-							break;
+						break;
+					}
+					default:
+						break;
 					}
 				}
 				else {
@@ -465,10 +575,8 @@ export default class GlyphCanvas extends React.PureComponent {
 						break;
 				}
 
-				/* #if dev */
-				this.toile.getHotInteractiveItem();
-				/* #end */
 			}
+			this.toile.clearKeyboardEdges();
 			raf(rafFunc);
 		};
 
@@ -512,6 +620,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					style={{width: '100%', height: '100%', '-webkit-user-drag': 'none', userSelect: 'none', '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0)'}}
 					>
 				</canvas>
+				<FontUpdater />
 			</div>
 		);
 	}

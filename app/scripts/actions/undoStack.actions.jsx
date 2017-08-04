@@ -25,7 +25,6 @@ export default {
 			undoableStore.apply(revert);
 			localServer.dispatchUpdate('/prototypoStore', patch);
 			localServer.dispatchUpdate('/undoableStore', revert);
-			localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
 		}
 	},
 	'/go-forward': ({eventIndex}) => {
@@ -40,7 +39,6 @@ export default {
 				undoableStore.apply(Patch.fromJSON(event.patch));
 				localServer.dispatchUpdate('/prototypoStore', patch);
 				localServer.dispatchUpdate('/undoableStore', Patch.fromJSON(event.patch));
-				localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
 			}
 		}
 

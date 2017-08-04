@@ -36,11 +36,6 @@ module.exports = merge(base, {
 			},
 		],
 	},
-	externals: [
-		{
-			'prototypo.js': 'prototypo',
-		},
-	],
 	plugins: [
 		new webpack.LoaderOptionsPlugin({
 			options: {

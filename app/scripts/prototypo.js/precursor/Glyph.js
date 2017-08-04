@@ -336,7 +336,7 @@ export default class Glyph {
 		);
 	}
 
-	constructGlyph(params, parentAnchors, glyphs) {
+	constructGlyph(params, parentAnchors, glyphs, parentTransform, parentTransformOrigin) {
 		const localParams = {
 			...params,
 			..._.mapValues(this.parameters, (param) => {
@@ -414,6 +414,16 @@ export default class Glyph {
 		if (transformedThis.transforms) {
 			opDone.contours.forEach((contour) => {
 				contour.nodes.forEach((node) => {
+					if (contour.transforms) {
+						if (node.expandedTo) {
+							transformNode(node.expandedTo[0], contour.transforms, contour.transformOrigin);
+							transformNode(node.expandedTo[1], contour.transforms, contour.transformOrigin);
+							transformNode(node, contour.transforms, contour.transformOrigin);
+						}
+						else {
+							transformNode(node, contour.transforms, contour.transformOrigin);
+						}
+					}
 					if (node.expandedTo) {
 						transformNode(node.expandedTo[0], transformedThis.transforms, transformedThis.transformOrigin);
 						transformNode(node.expandedTo[1], transformedThis.transforms, transformedThis.transformOrigin);
@@ -425,10 +435,24 @@ export default class Glyph {
 			});
 		}
 
+		if (parentTransform) {
+			opDone.contours.forEach((contour) => {
+				contour.nodes.forEach((node) => {
+					if (node.expandedTo) {
+						transformNode(node.expandedTo[0], parentTransform, parentTransformOrigin);
+						transformNode(node.expandedTo[1], parentTransform, parentTransformOrigin);
+					}
+					else {
+						transformNode(node, parentTransform, parentTransformOrigin);
+					}
+				});
+			});
+		}
+
 		const otContours = this.createGlyphContour(opDone.contours);
 
 		_.forEach(opDone.components, (component) => {
-			otContours.push(...this.createGlyphContour(component.contours));
+			otContours.push(...component.otContours);
 		});
 
 		return {

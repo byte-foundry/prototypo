@@ -20,6 +20,12 @@ export const toileType = {
 	GLYPH_COMPONENT_CONTOUR: 8,
 };
 
+export const canvasMode = {
+	MOVE: 0,
+	SELECT_POINTS: 1,
+	COMPONENTS: 2,
+};
+
 export const appState = {
 	UNSELECTED: -1,
 	HANDLE_MOD: 0,
@@ -90,17 +96,20 @@ export default class Toile {
 		this.mouseDelta = {x: 0, y: 0};
 		this.height = canvas.height;
 		this.mouseWheelDelta = 0;
+		this.keyboardUp = {};
+		this.keyboardDown = {};
+		this.keyboardDownRisingEdge = {};
 
-		//This is the view matrix schema
-		//[ a  b  tx ]   [ x ]   [ ax + by + tx ]
-		//[ c  d  ty ] x [ y ] = [ cx + dy + ty ]
-		//[ 0  0  1  ]   [ 1 ]   [ 0  + 0  + 1  ]
-		//a is x scaling
-		//d is y scaling
-		//b is y on x influence
-		//c is x on y influence
-		//tx is x translation
-		//ty is y translation
+		// This is the view matrix schema
+		// [ a  b  tx ]   [ x ]   [ ax + by + tx ]
+		// [ c  d  ty ] x [ y ] = [ cx + dy + ty ]
+		// [ 0  0  1  ]   [ 1 ]   [ 0  + 0  + 1  ]
+		// a is x scaling
+		// d is y scaling
+		// b is y on x influence
+		// c is x on y influence
+		// tx is x translation
+		// ty is y translation
 		this.viewMatrix = [1, 0, 0, -1, 0, 0];
 
 
@@ -130,8 +139,8 @@ export default class Toile {
 			this.mouseState = mState.UP;
 		});
 
-		canvas.addEventListener('mousewheel', (e) => {
-			this.mouseWheelDelta += e.wheelDelta;
+		canvas.addEventListener('wheel', (e) => {
+			this.mouseWheelDelta -= e.deltaY;
 		});
 
 		document.addEventListener('keyup', (e) => {
@@ -143,13 +152,36 @@ export default class Toile {
 				metaKey,
 			} = e;
 
-			this.keyboardInput = {
+			this.keyboardUp = {
 				keyCode,
 				special: (ctrlKey ? 0b1 : 0)
 					+ (shiftKey ? 0b10 : 0)
 					+ (altKey ? 0b100 : 0)
 					+ (metaKey ? 0b1000 : 0),
 			};
+		});
+
+		document.addEventListener('keydown', (e) => {
+			const {
+				keyCode,
+				ctrlKey,
+				shiftKey,
+				altKey,
+				metaKey,
+			} = e;
+			const eventData = {
+				keyCode,
+				special: (ctrlKey ? 0b1 : 0)
+					+ (shiftKey ? 0b10 : 0)
+					+ (altKey ? 0b100 : 0)
+					+ (metaKey ? 0b1000 : 0),
+			};
+
+			if (this.keyboardDown.keyCode !== keyCode) {
+				this.keyboardDownRisingEdge = eventData;
+			}
+
+			this.keyboardDown = eventData;
 		});
 
 		this.interactionList = [];
@@ -167,7 +199,13 @@ export default class Toile {
 	}
 
 	clearKeyboardInput() {
-		this.keyboardInput = undefined;
+		this.keyboardUp = {};
+		this.keyboardDown = {};
+		this.keyboardDownRisingEdge = {};
+	}
+
+	clearKeyboardEdges() {
+		this.keyboardDownRisingEdge = {};
 	}
 
 	clearCanvas(width, height) {
@@ -413,39 +451,28 @@ export default class Toile {
 		});
 		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
 
-		this.drawControlPoint(node, hot, node.handleIn ? onCurveColor : skeletonColor);
-		this.interactionList.push({
-			id,
-			type: toileType.NODE_SKELETON,
-			data: {
-				center: {
-					x: node.x,
-					y: node.y,
+		if (node.expand) {
+			this.drawControlPoint(node, hot, node.handleIn ? onCurveColor : skeletonColor);
+			this.interactionList.push({
+				id,
+				type: toileType.NODE_SKELETON,
+				data: {
+					center: {
+						x: node.x,
+						y: node.y,
+					},
+					base: {
+						x: node.xBase,
+						y: node.yBase,
+					},
+					expandedTo: node.expandedTo,
+					width: node.expand.width,
+					baseDistr: node.expand.baseDistr,
+					radius: nodeHotRadius,
+					modifAddress,
 				},
-				base: {
-					x: node.xBase,
-					y: node.yBase,
-				},
-				expandedTo: node.expandedTo,
-				width: node.expand.width,
-				baseDistr: node.expand.baseDistr,
-				radius: nodeHotRadius,
-				modifAddress,
-			},
-		});
-		//This point is to prevent selecting a thickness control that is too close to
-		//the skeleton node
-		this.interactionList.push({
-			id,
-			type: toileType.THICKNESS_TOOL_CANCEL,
-			data: {
-				center: {
-					x: node.x,
-					y: node.y,
-				},
-				radius: nodeHotRadius,
-			},
-		});
+			});
+		}
 
 
 		let prevNode = nodes[(j - 1) - nodes.length * Math.floor((j - 1) / nodes.length)];
@@ -507,8 +534,14 @@ export default class Toile {
 		nodes.forEach((node, j) => {
 			const id = `${contourCursor}.nodes.${j}`;
 
-			if (contour.skeleton) {
+			if (contour.skeleton && node.expand) {
 				this.drawSkeletonNode(node, id, hotItems, j, nodes, contour, componentPrefixAddress);
+			}
+			else if (node.expandedTo) {
+				const prevNode = nodes[(j - 1) - nodes.length * Math.floor((j - 1) / nodes.length)];
+				const nextNode = nodes[(j + 1) % nodes.length];
+				this.drawContourNode(node.expandedTo[0], `${id}.expandedTo.0`, prevNode, nextNode, hotItems, componentPrefixAddress);
+				this.drawContourNode(node.expandedTo[1], `${id}.expandedTo.1`, nextNode, prevNode, hotItems, componentPrefixAddress);
 			}
 			else {
 				const prevNode = nodes[(j - 1) - nodes.length * Math.floor((j - 1) / nodes.length)];

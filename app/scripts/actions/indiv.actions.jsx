@@ -155,7 +155,6 @@ export default {
 		const patch = undoableStore.set('controlsValues', oldValues).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/update-font', oldValues);
 
 		const endCreatePatch = prototypoStore
 			.set('indivCreate', false)
@@ -260,12 +259,10 @@ export default {
 		const patch = undoableStore.set('controlsValues', oldValues).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/update-font', oldValues);
 
 		const variant = prototypoStore.get('variant');
 
 		FontValues.save({typeface: variant.db, values: oldValues, variantId: variant.id});
-		localClient.dispatchAction('/update-font', oldValues);
 		Log.ui('GroupParam.deleteGroup');
 	},
 	'/remove-glyph': ({glyph}) => {
@@ -328,7 +325,6 @@ export default {
 		const patch = undoableStore.set('controlsValues', oldValues).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/update-font', oldValues);
 
 		const indivPatch = prototypoStore
 			.set('indivCurrentGroup', {name: newName, glyphs: currentGroup.glyphs})
@@ -339,7 +335,6 @@ export default {
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', indivPatch);
-		localClient.dispatchAction('/update-font', oldValues);
 
 		const variant = prototypoStore.get('variant');
 

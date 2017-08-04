@@ -35,8 +35,7 @@ export const transformByName = {
 	},
 	rotate(node, deg, center = {x: 0, y: 0}) {
 		const theta = readAngle(deg);
-		const phi = Math.PI * theta / 180;
-		const rotate = [Math.cos(phi), -Math.sin(phi), Math.sin(phi), Math.cos(phi), 0, 0];
+		const rotate = [Math.cos(theta), -Math.sin(theta), Math.sin(theta), Math.cos(theta), 0, 0];
 		const matrix = changeTransformOrigin(center, rotate);
 
 		return transform2D(matrix, node);
@@ -96,4 +95,6 @@ function exeTransformOnNode(name, node, param, origin) {
 
 	node.x = x;
 	node.y = y;
+	node.xBase = x;
+	node.yBase = y;
 }

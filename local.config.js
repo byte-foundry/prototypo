@@ -7,7 +7,7 @@ var base = require('./base.config');
 
 module.exports = merge(base, {
 	cache: true,
-	devtool: 'cheap-module-eval-source-map',
+	devtool: 'cheap-module-source-map',
 	entry: {
 		bundle: [
 			'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
@@ -30,9 +30,6 @@ module.exports = merge(base, {
 			},
 		],
 	},
-	externals: [{
-		'prototypo.js': 'prototypo',
-	}],
 	plugins: [
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.DllReferencePlugin({

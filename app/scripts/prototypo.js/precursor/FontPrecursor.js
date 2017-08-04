@@ -58,8 +58,10 @@ export default class FontPrecursor {
 			return params.altList[char] || this.unicodeToGlyphName[char];
 		});
 		const glyphs = _.reduce(glyphNames, (result, name) => {
-			result.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));
-			return result;
+			if (this.glyphs[name]) {
+				result.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));
+				return result;
+			}
 		}, []);
 
 		return {

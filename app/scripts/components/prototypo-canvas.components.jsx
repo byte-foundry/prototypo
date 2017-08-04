@@ -3,12 +3,12 @@ import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import PrototypoCanvasContainer from 'prototypo-canvas';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
 import {rawToEscapedContent} from '../helpers/input-transform.helpers';
 import {mapGlyphForApp} from '../helpers/font.helpers.js';
+import HoodieApi from '../services/hoodie.services.js';
 
 import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';

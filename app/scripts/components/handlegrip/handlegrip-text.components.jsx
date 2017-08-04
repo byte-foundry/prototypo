@@ -64,7 +64,7 @@ export default class HandlegripText extends React.Component {
 		this.client.getStore('/fontInstanceStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					font: head.toJS().d.font,
+					font: window.fontResult,
 				});
 			})
 			.onDelete(() => {

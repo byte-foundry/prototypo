@@ -2,27 +2,20 @@
 import FontPrecursor from '../prototypo.js/precursor/FontPrecursor.js';
 import {fontToSfntTable} from '../opentype/font.js';
 
-let currentFont;
+let fonts = {};
 
 self.onmessage = (e) => {
 	switch (e.data.type) {
 		case 'createFont': {
-			currentFont = new FontPrecursor(e.data.data);
-			const initParam = {};
-
-			_.forEach(e.data.data.controls, (control) => {
-				control.parameters.forEach((param) => {
-					initParam[param.name] = param.init;
-				});
+			e.data.data.forEach((typedata) => {
+				fonts[typedata.name] = new FontPrecursor(typedata.json);
 			});
-			initParam.manualChanges = {};
-			//const font = currentFont.constructFont(initParam, ['a', 'b']);
 
 			self.postMessage({id: e.data.id});
 			break;
 		}
 		case 'constructGlyphs': {
-			const font = currentFont.constructFont(e.data.data.params, e.data.data.subset);
+			const font = fonts[e.data.data.name].constructFont(e.data.data.params, e.data.data.subset);
 
 			self.postMessage({id: e.data.id, font});
 			break;
@@ -30,7 +23,7 @@ self.onmessage = (e) => {
 		case 'makeOtf': {
 			const arrayBuffer = fontToSfntTable({
 				...e.data.data.fontResult,
-				fontFamily: {en: 'Prototypo web font'},
+				fontFamily: {en: e.data.data.fontName || 'Prototypo web font'},
 				fontSubfamily: {en: 'Regular'},
 				postScriptName: {},
 				unitsPerEm: 1024,
@@ -44,3 +37,7 @@ self.onmessage = (e) => {
 		}
 	}
 };
+
+self.onerror = () => {
+	self.postMessage();
+}

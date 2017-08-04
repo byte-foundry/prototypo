@@ -9,7 +9,7 @@ let ric;
 
 crypto.getRandomValues(randomValues);
 
-if (requestIdleCallback) {
+if (window.requestIdleCallback) {
 	ric = requestIdleCallback;
 }
 else {
@@ -49,6 +49,7 @@ function getRandomUuid() {
 }
 
 export default class WorkerPool {
+
 	constructor() {
 		 //Workers for every thread available including a fast lane worker for the canvas
 		const numberOfWorker = navigator.hardwareConcurrency - 1;
@@ -76,6 +77,7 @@ export default class WorkerPool {
 
 				worker.addEventListener('message', (e) => {
 					this.jobCallback[e.data.id](e.data);
+					this.jobCallback[e.data.id] = undefined;
 
 					this.workerFastLane.working = false;
 
@@ -108,10 +110,12 @@ export default class WorkerPool {
 						else {
 							eachJobList = [];
 							this.jobCallback[e.data.id](e.data);
+							this.jobCallback[e.data.id] = undefined;
 						}
 					}
 					else {
 						this.jobCallback[e.data.id](e.data);
+						this.jobCallback[e.data.id] = undefined;
 					}
 
 					this.workerArray[i].working = false;
