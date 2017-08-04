@@ -3801,7 +3801,7 @@ getpass@^0.1.1:
 
 gfnt.ptf@byte-foundry/spectral.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/7a8e101244d575963f3a0bf2d5d8a20243f2cbdc"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/ece07fd081683eb7017fc2aa394d31d0d4ef9feb"
 
 glamor@^2.20.25:
   version "2.20.39"
