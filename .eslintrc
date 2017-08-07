@@ -52,6 +52,8 @@
 		"keyword-spacing": [2, {"before": true, "after": true}],
 		"space-infix-ops": [2, {"int32Hint": false}],
 		"class-methods-use-this": 0,
+		"block-spacing": ["error", "never"],
+		"no-plusplus": 0,
 
 		"indent": [2, "tab"],
         "react/jsx-indent": [2, "tab"],
