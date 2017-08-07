@@ -70,10 +70,9 @@ export default class GlyphCanvas extends React.PureComponent {
 		this.toile = new Toile(this.canvas);
 		this.toile.setCamera({x: 0, y: 0}, 1, this.canvas.clientHeight);
 
-		const frameCounters = {
-			pointMenu: 0,
-		};
-		let selectedItem;
+		// const frameCounters = {
+		//	pointMenu: 0,
+		// };
 		let draggedItem;
 		let contourSelectedCursor;
 		let contourIndexes;
@@ -187,9 +186,10 @@ export default class GlyphCanvas extends React.PureComponent {
 					);
 					const [zoom,,,, newTx, newTy] = matrixMul(transformMatrix, this.toile.viewMatrix);
 					const clampedZoom = Math.max(0.1, Math.min(10, zoom));
+
 					this.toile.setCamera({
-						x: z !== clampedZoom ? newTx : x,
-						y: z !== clampedZoom ? newTy : y,
+						x: z === clampedZoom ? x : newTx,
+						y: z === clampedZoom ? y : newTy,
 					}, clampedZoom, -height);
 				}
 
@@ -239,22 +239,11 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 
-				const nodes = hotItems.filter((item) => {
-					return item.type <= toileType.CONTOUR_NODE_OUT;
-				});
-				const pointMenu = hotItems.filter((item) => {
-					return item.type === toileType.POINT_MENU;
-				});
-				const pointMenuItems = hotItems.filter((item) => {
-					return item.type === toileType.POINT_MENU_ITEM;
-				});
-				const tools = hotItems.filter((item) => {
-					return item.type === toileType.DISTR_TOOL;
-				});
-				const contours = hotItems.filter((item) => {
-					return item.type === toileType.GLYPH_CONTOUR
-						|| item.type === toileType.GLYPH_COMPONENT_CONTOUR;
-				});
+				const nodes = hotItems.filter(item => item.type <= toileType.CONTOUR_NODE_OUT);
+				const tools = hotItems.filter(item => item.type === toileType.DISTR_TOOL);
+				const contours = hotItems.filter(item =>
+					item.type === toileType.GLYPH_CONTOUR || item.type === toileType.GLYPH_COMPONENT_CONTOUR,
+				);
 
 				if (nodes.length > 0) {
 					if (this.toile.keyboardDownRisingEdge.keyCode === 27) {
@@ -299,6 +288,8 @@ export default class GlyphCanvas extends React.PureComponent {
 									glyphName: glyph.name,
 								});
 								break;
+							default:
+								break;
 							}
 						});
 					}
@@ -323,13 +314,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				if (mouseClickRelease && canvasMode.SELECT_POINTS) {
 					if (hotItems.length > 0) {
-						if (pointMenuItems.length === 1) {
-							selectedItem = pointMenuItems[0].data.point;
-						}
-						else if (nodes.length === 1) {
-							selectedItem = nodes[0];
-						}
-						else if (contours.length === 1 && !moving) {
+						if (contours.length === 1 && !moving) {
 							contourSelectedCursor = contours[0].id;
 							contourIndexes = contours[0].data.indexes;
 							contourComponentIdx = contours[0].data.componentIdx;
@@ -343,7 +328,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 					}
 					else if (hotItems.length === 0 && !moving && !draggedItem) {
-						selectedItem = undefined;
 						contourSelectedCursor = undefined;
 						contourIndexes = undefined;
 						contourSelectedIndex = 0;
@@ -490,7 +474,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						const skeletonNode = _.get(glyph, id);
 
 						if (skeleton) {
-							//this.toile.drawThicknessTool(skeletonNode, `${id}.thickness`, hotItems);
 							this.toile.drawNodeTool(skeletonNode, `${id}.angle`, hotItems);
 						}
 						break;
@@ -512,7 +495,10 @@ export default class GlyphCanvas extends React.PureComponent {
 								skelVec,
 							), 0), width);
 
-							const mouseVec = subtract2D(add2D(mulScalar2D(distProjOntoSkel, skelVec), expandedTo[0]), base);
+							const mouseVec = subtract2D(
+								add2D(mulScalar2D(distProjOntoSkel, skelVec), expandedTo[0]),
+								base,
+							);
 
 							if (mouseMoved) {
 								this.client.dispatchAction('/change-glyph-node-manually', {
@@ -534,7 +520,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						else {
 							appStateValue = appState.SKELETON_POS;
-							const {base, expandedTo} = draggedItem.data;
+							const {base} = draggedItem.data;
 							const [mousePosInWorld] = transformCoords(
 								[mouse.pos],
 								inverseProjectionMatrix(this.toile.viewMatrix),
@@ -569,12 +555,6 @@ export default class GlyphCanvas extends React.PureComponent {
 				else {
 					appStateValue = appState.UNSELECTED;
 				}
-
-				switch (appStateValue) {
-					default:
-						break;
-				}
-
 			}
 			this.toile.clearKeyboardEdges();
 			raf(rafFunc);
@@ -611,15 +591,13 @@ export default class GlyphCanvas extends React.PureComponent {
 	}
 
 	render() {
-
 		return (
 			<div className="prototypo-canvas-container">
 				<canvas
 					id="hello"
 					ref={(canvas) => {this.canvas = canvas;}}
 					style={{width: '100%', height: '100%', '-webkit-user-drag': 'none', userSelect: 'none', '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0)'}}
-					>
-				</canvas>
+				/>
 				<FontUpdater />
 			</div>
 		);
