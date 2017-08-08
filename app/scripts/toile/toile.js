@@ -18,6 +18,7 @@ export const toileType = {
 	CONTOUR_NODE_OUT: 6,
 	GLYPH_CONTOUR: 7,
 	GLYPH_COMPONENT_CONTOUR: 8,
+	COMPONENT_CHOICE: 9,
 };
 
 export const canvasMode = {
@@ -671,6 +672,60 @@ export default class Toile {
 		this.context.lineWidth = 1;
 	}
 
+	drawComponents(components, hotItems) {
+
+		components.forEach((component, i) => {
+			let startIndexBeziers = 0;
+
+			component.contours.forEach((contour) => {
+				const id = `components.${i}`;
+				const hot = _.find(hotItems, item => item.id === id);
+				let length;
+
+				if (contour.skeleton && contour.closed) {
+					length = 2;
+				}
+				else {
+					length = 1;
+				}
+				const deepListOfBeziers = _.slice(component.otContours,
+					startIndexBeziers,
+					startIndexBeziers + length,
+				);
+				const listOfBezier = _.flatten(deepListOfBeziers);
+
+				if (hot) {
+					this.context.strokeStyle = blue;
+					this.context.fillStyle = blue;
+				}
+				else {
+					this.context.strokeStyle = green;
+					this.context.fillStyle = green;
+				}
+				this.context.lineWidth = 1;
+				this.context.beginPath();
+				deepListOfBeziers.forEach((bez) => {
+					this.drawContour(bez, undefined, undefined, true);
+				});
+				this.context.stroke();
+				this.context.fill();
+				this.context.fillStyle = transparent;
+				this.context.lineWidth = 1;
+
+				this.interactionList.push({
+					id,
+					type: toileType.COMPONENT_CHOICE,
+					data: {
+						beziers: listOfBezier,
+						id: component.id,
+					},
+				});
+
+				startIndexBeziers += length;
+			});
+		});
+	}
+
 	setCamera(point, zoom, height) {
 		this.height = height;
 		this.viewMatrix = [zoom, 0, 0, -1 * zoom, point.x, point.y];
@@ -1154,6 +1209,7 @@ export default class Toile {
 
 		this.interactionList.forEach((interactionItem) => {
 			switch (interactionItem.type) {
+			case toileType.COMPONENT_CHOICE:
 			case toileType.GLYPH_COMPONENT_CONTOUR:
 			case toileType.GLYPH_CONTOUR: {
 				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);

@@ -210,6 +210,10 @@ export default class GlyphCanvas extends React.PureComponent {
 					appMode === canvasMode.SELECT_POINTS ? hotItems : [],
 				);
 
+				if (appMode === canvasMode.COMPONENTS) {
+					this.toile.drawComponents(glyph.components, hotItems);
+				}
+
 				if (contourSelectedCursor && appMode === canvasMode.SELECT_POINTS) {
 					this.toile.drawNodes(
 						_.get(
