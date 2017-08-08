@@ -1,24 +1,22 @@
 /* global _*/
-import {transformNode} from '../helpers/utils.js';
-import {constantOrFormula} from '../helpers/values.js';
+import {constantOrFormula} from '../helpers/values';
 
 export default class Component {
-	constructor(source, cursor) {
+	constructor(source) {
 		if (Array.isArray(source.base)) {
-			this.base = _.map(source.base, (base) => {
-				return constantOrFormula(base);
-			});
+			this.base = _.map(source.base, base => constantOrFormula(base));
 		}
 		else {
 			this.base = [constantOrFormula(source.base)];
 		}
 
 		this.id = constantOrFormula(source.id);
-		this.anchors = (source.anchor || []).map((item, i) => {
-			return _.mapValues(item, (props, name) => {
-				return constantOrFormula(props, `{cursor}.anchors.${i}.${name}`);
-			});
-		});
+		this.anchors = (source.anchor || []).map(
+			(item, i) => _.mapValues(
+				item,
+				(props, name) => constantOrFormula(props, `{cursor}.anchors.${i}.${name}`),
+			),
+		);
 
 		this.transforms = constantOrFormula(source.transforms);
 		this.transformOrigin = constantOrFormula(source.transformOrigin);
@@ -27,14 +25,14 @@ export default class Component {
 	constructComponent(params, contours, parentAnchors, utils, glyphs) {
 		const localParams = {
 			...params,
-			..._.mapValues(this.parameters, (param) => {
-				return param.getResult(params);
-			}),
+			..._.mapValues(this.parameters,
+				param => param.getResult(params),
+			),
 		};
 
 		let opDone = {anchors: []};
 
-		Object.keys(this.anchors).map((key) => {
+		Object.keys(this.anchors).forEach((key) => {
 			const anchor = this.anchors[key];
 
 			_.set(
@@ -47,7 +45,13 @@ export default class Component {
 			);
 		});
 
-		const computedBase = this.base[0].getResult(localParams, contours, opDone.anchors, parentAnchors, utils);
+		const computedBase = this.base[0].getResult(
+			localParams,
+			contours,
+			opDone.anchors,
+			parentAnchors,
+			utils,
+		);
 		const compGlyph = glyphs[computedBase];
 
 		const transformedThis = _.mapValues(this, (prop, name) => {
@@ -58,12 +62,34 @@ export default class Component {
 				&& name !== 'operationOrder') {
 				return prop.getResult(localParams, contours, parentAnchors, utils, glyphs);
 			}
+			else if (name === 'base') {
+				return prop.map(
+					base => ({
+						baseId: base.getResult(localParams, contours, parentAnchors, utils, glyphs),
+						baseLabel: glyphs[base.getResult(
+							localParams,
+							contours,
+							parentAnchors,
+							utils,
+							glyphs
+						)].componentLabel,
+					}),
+				);
+			}
+
+			return undefined;
 		});
 
 
 		opDone = {
 			...opDone,
-			...compGlyph.constructGlyph(localParams, opDone.anchors, glyphs, transformedThis.transforms, transformedThis.transformOrigin),
+			...compGlyph.constructGlyph(
+				localParams,
+				opDone.anchors,
+				glyphs,
+				transformedThis.transforms,
+				transformedThis.transformOrigin,
+			),
 			...transformedThis,
 		};
 

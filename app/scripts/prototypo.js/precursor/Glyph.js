@@ -30,7 +30,7 @@ function checkAndChangeOrient(beziers, clockwise) {
 
 export default class Glyph {
 	constructor(glyphSrc, paramBase) {
-		const {unicode, name, characterName, tags, transforms, parameter, anchor, outline, transformOrigin} = glyphSrc;
+		const {unicode, name, characterName, tags, transforms, parameter, anchor, outline, transformOrigin, componentLabel} = glyphSrc;
 
 		paramBase.manualChanges[name] = {
 			cursors: {},
@@ -38,6 +38,7 @@ export default class Glyph {
 
 		this.unicode = constantOrFormula(unicode);
 		this.name = constantOrFormula(name);
+		this.componentLabel = constantOrFormula(componentLabel);
 		this.characterName = constantOrFormula(characterName);
 		this.tags = constantOrFormula(tags);
 		this.transforms = constantOrFormula(transforms);
@@ -460,7 +461,8 @@ export default class Glyph {
 			...opDone,
 			spacingLeft: localParams.spacingLeft,
 			spacingRight: localParams.spacingRight,
-			baseSpacingRight ,
+			componentLabel: this.componentLabel.value,
+			baseSpacingRight,
 			baseSpacingLeft,
 			otContours,
 		};
