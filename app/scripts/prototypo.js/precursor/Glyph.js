@@ -1,11 +1,11 @@
 /* global _ */
-import {constantOrFormula, createContour} from '../helpers/values.js';
-import {toLodashPath, transformNode} from '../helpers/utils.js';
-import * as utils from '../utils/updateUtils.js';
+import {constantOrFormula, createContour} from '../helpers/values';
+import {toLodashPath, transformNode} from '../helpers/utils';
+import * as utils from '../utils/updateUtils';
 
-import Component from './Component.js';
-import ExpandingNode from './ExpandingNode.js';
-import {SkeletonPath, SimplePath, ClosedSkeletonPath} from './Path.js';
+import Component from './Component';
+import ExpandingNode from './ExpandingNode';
+import {SkeletonPath, SimplePath, ClosedSkeletonPath} from './Path';
 
 function checkAndChangeOrient(beziers, clockwise) {
 	return beziers.map((bezier) => {
@@ -21,16 +21,25 @@ function checkAndChangeOrient(beziers, clockwise) {
 		if ((count > 0 && clockwise) || (count < 0 && !clockwise)) {
 			return _.chunk(_.reverse(flatBezier), 4);
 		}
-		else {
-			return bezier;
-		}
+		return bezier;
 	});
 }
 
 
 export default class Glyph {
 	constructor(glyphSrc, paramBase) {
-		const {unicode, name, characterName, tags, transforms, parameter, anchor, outline, transformOrigin, componentLabel} = glyphSrc;
+		const {
+			unicode,
+			name,
+			characterName,
+			tags,
+			transforms,
+			parameter,
+			anchor,
+			outline,
+			transformOrigin,
+			componentLabel,
+		} = glyphSrc;
 
 		paramBase.manualChanges[name] = {
 			cursors: {},
@@ -43,24 +52,21 @@ export default class Glyph {
 		this.tags = constantOrFormula(tags);
 		this.transforms = constantOrFormula(transforms);
 		this.transformOrigin = constantOrFormula(transformOrigin);
-		this.parameters = _.mapValues(parameter, (param) => {
-			return constantOrFormula(param);
-		});
-		this.contours = outline.contour.map((contour, i) => {
-			return createContour(contour, i);
-		});
-		this.anchors = (anchor || []).map((item, i) => {
-			return _.mapValues(item, (props, anchorName) => {
-				return constantOrFormula(props, `anchors.${i}.${anchorName}`);
-			});
-		});
+		this.parameters = _.mapValues(parameter, param => constantOrFormula(param));
+		this.contours = outline.contour.map((contour, i) => createContour(contour, i));
+		this.anchors = (anchor || []).map(
+			(item, i) => _.mapValues(
+				item,
+				(props, anchorName) => constantOrFormula(props, `anchors.${i}.${anchorName}`),
+			),
+		);
 
 		this.analyzeDependency();
 		this.operationOrder = this.solveOperationOrder();
 
-		this.components = outline.component.map((component, i) => {
-			return new Component(component, `component.${i}`, this);
-		});
+		this.components = outline.component.map(
+			(component, i) => new Component(component, `component.${i}`, this),
+		);
 
 		if (glyphSrc.ot) {
 			this.advanceWidth = constantOrFormula(glyphSrc.ot.advanceWidth);
@@ -113,14 +119,12 @@ export default class Glyph {
 				})];
 
 				return checkAndChangeOrient(otBeziers, true);
-
 			}
 			else if (!contour.closed) {
 				const otBeziers = [contour.nodes.reduceRight((acc, node, i) => {
-
 					const bezier = [0, 1].map((index) => {
 						let secondIndex = index;
-						let firstIndex = i + 1 * (index ? -1 : 1);
+						let firstIndex = i + (1 * (index ? -1 : 1));
 
 						if (firstIndex > contour.nodes.length - 1) {
 							firstIndex = contour.nodes.length - 1;
@@ -161,47 +165,44 @@ export default class Glyph {
 
 				return checkAndChangeOrient(otBeziers, true);
 			}
-			else {
-				const otBeziers = [0, 1].map((index) => {
-					const result = contour.nodes.map((node, i) => {
-						const nextNode = contour.nodes[(i + 1) - contour.nodes.length * Math.floor((i + 1) / contour.nodes.length)].expandedTo[index];
-						const handleOut = index ? node.expandedTo[index].handleIn : node.expandedTo[index].handleOut;
-						const handleIn = index ? nextNode.handleOut : nextNode.handleIn;
-
-						const bezier = [
-							{
-								x: node.expandedTo[index].x,
-								y: node.expandedTo[index].y,
-							},
-							handleOut,
-							handleIn,
-							{
-								x: nextNode.x,
-								y: nextNode.y,
-							},
-						];
-
-						if (index) {
-							return _.reverse(bezier);
-						}
-						else {
-							return bezier;
-						}
-					});
+			const otBeziers = [0, 1].map((index) => {
+				const result = contour.nodes.map((node, i) => {
+					const nextNode = contour.nodes[
+						(i + 1) - (contour.nodes.length * Math.floor((i + 1) / contour.nodes.length))
+					].expandedTo[index];
+					const handleOut = index
+						? node.expandedTo[index].handleIn
+						: node.expandedTo[index].handleOut;
+					const handleIn = index ? nextNode.handleOut : nextNode.handleIn;
+					const bezier = [
+						{
+							x: node.expandedTo[index].x,
+							y: node.expandedTo[index].y,
+						},
+						handleOut,
+						handleIn,
+						{
+							x: nextNode.x,
+							y: nextNode.y,
+						},
+					];
 
 					if (index) {
-						return _.reverse(result);
+						return _.reverse(bezier);
 					}
-					else {
-						return result;
-					}
+					return bezier;
 				});
 
-				return [
-					...checkAndChangeOrient([otBeziers[0]], true),
-					...checkAndChangeOrient([otBeziers[1]], false),
-				];
-			}
+				if (index) {
+					return _.reverse(result);
+				}
+				return result;
+			});
+
+			return [
+				...checkAndChangeOrient([otBeziers[0]], true),
+				...checkAndChangeOrient([otBeziers[1]], false),
+			];
 		});
 
 		return beziers;
@@ -220,14 +221,17 @@ export default class Glyph {
 			pathArray.shift();
 
 			pathArray.forEach((propName) => {
-				if (!((!result[propName] || result[propName] === null) && result.solveOperationOrder instanceof Function)) {
+				if (
+					!((!result[propName] || result[propName] === null)
+						&& result.solveOperationOrder instanceof Function)
+				) {
 					result = result[propName];
 				}
 			});
 		}
 
 
-		/*if (!(result.solveOperationOrder instanceof Function)) {
+		/* if (!(result.solveOperationOrder instanceof Function)) {
 			console.error(`While trying to solve ${this.name.value} operation order, couldn't find ${path} property asked by ${caller}`);
 		}*/
 		return result;
@@ -283,6 +287,7 @@ export default class Glyph {
 			}
 			else {
 				const lodashCursor = toLodashPath(cursor);
+
 				SimplePath.correctValues(dest);
 
 				_.set(opDone, `${lodashCursor}.checkOrientation`, true);
@@ -295,16 +300,15 @@ export default class Glyph {
 			const node = ExpandingNode.applyExpandChange(
 				_.get(opDone, toLodashPath(cursor)),
 				manualChanges,
-				cursor
+				cursor,
 			);
 			const expandedTo = ExpandingNode.expand(node);
 
 			_.set(
 				opDone,
 				toLodashPath(`${cursor}.expandedTo`),
-				expandedTo
+				expandedTo,
 			);
-
 		}
 	}
 
@@ -324,8 +328,8 @@ export default class Glyph {
 				result,
 			);
 
-			const manualChanges =
-				params.manualChanges[this.name.value].cursors[op] || 0;
+			const manualChanges
+				= params.manualChanges[this.name.value].cursors[op] || 0;
 
 			result += manualChanges;
 		}
@@ -340,15 +344,14 @@ export default class Glyph {
 	constructGlyph(params, parentAnchors, glyphs, parentTransform, parentTransformOrigin) {
 		const localParams = {
 			...params,
-			..._.mapValues(this.parameters, (param) => {
-				return param.getResult(params);
-			}),
+			..._.mapValues(this.parameters, param => param.getResult(params)),
 		};
-
-		const specialProps = this.unicode ? (localParams.glyphSpecialProps || {})[this.unicode.value] || {} : {};
-
+		const specialProps = this.unicode
+			? (localParams.glyphSpecialProps || {})[this.unicode.value] || {}
+			: {};
 		const baseSpacingLeft = localParams.spacingLeft;
 		const baseSpacingRight = localParams.spacingRight;
+
 		localParams.spacingLeft += specialProps.spacingLeft || 0;
 		localParams.spacingRight += specialProps.spacingRight || 0;
 
@@ -378,7 +381,13 @@ export default class Glyph {
 					acc[name] = ref[name];
 				}
 				else {
-					acc[name] = anchor[name].getResult(localParams, opDone.contours, opAnchors, parentAnchors, utils);
+					acc[name] = anchor[name].getResult(
+						localParams,
+						opDone.contours,
+						opAnchors,
+						parentAnchors,
+						utils,
+					);
 				}
 
 				return acc;
@@ -387,12 +396,8 @@ export default class Glyph {
 
 		opDone.components = this.components.map((component, idx) => {
 			const componentManualChanges = _.chain(localParams.manualChanges[this.name.value].cursors)
-				.pickBy((value, key) => {
-					return key.match(new RegExp(`components\.${idx}`));
-				})
-				.mapKeys((value, key) => {
-					return key.replace(/components\.\d\./g, '');
-				})
+				.pickBy((value, key) => key.match(new RegExp(`components\.${idx}`)))
+				.mapKeys((value, key) => key.replace(/components\.\d\./g, ''))
 				.value();
 			const componentParams = {
 				...localParams,
@@ -402,7 +407,14 @@ export default class Glyph {
 					},
 				},
 			};
-			return component.constructComponent(componentParams, opDone.contours, opDone.anchors, utils, glyphs);
+
+			return component.constructComponent(
+				componentParams,
+				opDone.contours,
+				opDone.anchors,
+				utils,
+				glyphs,
+			);
 		});
 
 		const transformedThis = _.mapValues(this, (prop, name) => {
@@ -410,6 +422,8 @@ export default class Glyph {
 				&& !/parameters|contours|anchors|components|operationOrder/.test(name)) {
 				return prop.getResult(localParams, opDone.contours, opDone.anchors, utils, glyphs);
 			}
+
+			return undefined;
 		});
 
 		if (transformedThis.transforms) {
@@ -426,8 +440,16 @@ export default class Glyph {
 						}
 					}
 					if (node.expandedTo) {
-						transformNode(node.expandedTo[0], transformedThis.transforms, transformedThis.transformOrigin);
-						transformNode(node.expandedTo[1], transformedThis.transforms, transformedThis.transformOrigin);
+						transformNode(
+							node.expandedTo[0],
+							transformedThis.transforms,
+							transformedThis.transformOrigin,
+						);
+						transformNode(
+							node.expandedTo[1],
+							transformedThis.transforms,
+							transformedThis.transformOrigin,
+						);
 					}
 					else {
 						transformNode(node, transformedThis.transforms, transformedThis.transformOrigin);
