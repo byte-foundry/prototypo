@@ -483,7 +483,7 @@ export default class Glyph {
 			...opDone,
 			spacingLeft: localParams.spacingLeft,
 			spacingRight: localParams.spacingRight,
-			componentLabel: this.componentLabel.value,
+			componentLabel: this.componentLabel ? this.componentLabel.value : undefined,
 			baseSpacingRight,
 			baseSpacingLeft,
 			otContours,

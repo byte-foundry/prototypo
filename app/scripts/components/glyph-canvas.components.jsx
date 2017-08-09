@@ -70,9 +70,10 @@ export default class GlyphCanvas extends React.PureComponent {
 		this.toile = new Toile(this.canvas);
 		this.toile.setCamera({x: 0, y: 0}, 1, this.canvas.clientHeight);
 
-		// const frameCounters = {
-		//	pointMenu: 0,
-		// };
+		const frameCounters = {
+			componentMenu: 0,
+		};
+		let componentMenuPos;
 		let draggedItem;
 		let contourSelectedCursor;
 		let contourIndexes;
@@ -245,6 +246,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				const nodes = hotItems.filter(item => item.type <= toileType.CONTOUR_NODE_OUT);
 				const tools = hotItems.filter(item => item.type === toileType.DISTR_TOOL);
+				const components = hotItems.filter(item => item.type === toileType.COMPONENT_CHOICE);
 				const contours = hotItems.filter(item =>
 					item.type === toileType.GLYPH_CONTOUR || item.type === toileType.GLYPH_COMPONENT_CONTOUR,
 				);
@@ -297,6 +299,11 @@ export default class GlyphCanvas extends React.PureComponent {
 							}
 						});
 					}
+				}
+
+				if (components.length > 0 && appMode === canvasMode.COMPONENTS) {
+					componentMenuPos = this.toile.drawComponentMenu(components[0].data, frameCounters.componentMenu, hotItems, width, componentMenuPos);
+					frameCounters.componentMenu += 1;
 				}
 
 				if (mState.DOWN === mouse.state && appMode === canvasMode.SELECT_POINTS) {

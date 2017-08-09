@@ -53,6 +53,8 @@ const skeletonColor = red;
 const ringBackground = 'rgba(255,114,94,0.4)';
 
 const pointMenuAnimationLength = 10;
+const componentMenuAnimationLength = 20;
+const menuMass = 0.01;
 
 const nodeDrawRadius = 3;
 const nodeHotDrawRadius = 3;
@@ -673,7 +675,6 @@ export default class Toile {
 	}
 
 	drawComponents(components, hotItems) {
-
 		components.forEach((component, i) => {
 			let startIndexBeziers = 0;
 
@@ -718,6 +719,7 @@ export default class Toile {
 					data: {
 						beziers: listOfBezier,
 						id: component.id,
+						bases: component.base,
 					},
 				});
 
@@ -938,6 +940,116 @@ export default class Toile {
 				size,
 				points,
 			},
+		});
+	}
+
+	drawComponentMenu(
+		{id, bases, beziers},
+		frameCounters,
+		hotItems = [],
+		width,
+		componentMenuPos = [],
+	) {
+		const t = Math.min(1, frameCounters / componentMenuAnimationLength);
+		const t2 = t ** 2;
+		const y = (3 * t * (1 - t2) * 0.1) + (3 * t2 * (1 - t) * 1) + (3 * (t ** 3) * 1);
+		const flatBezier = _.flatten(beziers);
+		const bezierCenter = _.reduce(
+			flatBezier,
+			(acc, point) => add2D(mulScalar2D(1 / flatBezier.length, point), acc),
+			{x: 0, y: 0},
+		);
+		const [tBezierCenter] = transformCoords(
+			[bezierCenter],
+			this.viewMatrix,
+			this.height,
+		);
+		const corners = [0, 1, 2, 3].map(i =>
+			({
+				x: width * (i & 0b01),
+				y: -this.height * (i > 1 & 0b01),
+			})
+		);
+		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+		const worldCorners = transformCoords(
+			corners,
+			inverseMatrix,
+			this.height / this.viewMatrix[0],
+		);
+		let menuPos = [...componentMenuPos];
+
+		if (frameCounters === 0) {
+			menuPos = bases.map(base => (
+				{
+					id: base.id,
+					x: bezierCenter.x + Math.random() - 0.5,
+					y: bezierCenter.y + Math.random() - 0.5,
+				}
+			));
+		}
+
+		return menuPos.map((menu, i) => {
+			const leftTopAttractor = mulScalar2D(
+				1 / (distance2D(worldCorners[0], menu) ** 2), normalize2D(subtract2D(worldCorners[0], menu)),
+			);
+			const rightTopAttractor = mulScalar2D(
+				1 / (distance2D(worldCorners[1], menu) ** 2), normalize2D(subtract2D(worldCorners[1], menu)),
+			);
+			const leftBottomAttractor = mulScalar2D(
+				1 / (distance2D(worldCorners[2], menu) ** 2), normalize2D(subtract2D(worldCorners[2], menu)),
+			);
+			const rightBottomAttractor = mulScalar2D(
+				1 / (distance2D(worldCorners[3], menu) ** 2), normalize2D(subtract2D(worldCorners[3], menu)),
+			);
+
+			const leftTopRepulsor = mulScalar2D(
+				-1 / distance2D(worldCorners[0], menu), normalize2D(subtract2D(worldCorners[0], menu)),
+			);
+			const rightTopRepulsor = mulScalar2D(
+				-1 / distance2D(worldCorners[1], menu), normalize2D(subtract2D(worldCorners[1], menu)),
+			);
+			const leftBottomRepulsor = mulScalar2D(
+				-1 / distance2D(worldCorners[2], menu), normalize2D(subtract2D(worldCorners[2], menu)),
+			);
+			const rightBottomRepulsor = mulScalar2D(
+				-1 / distance2D(worldCorners[3], menu), normalize2D(subtract2D(worldCorners[3], menu)),
+			);
+
+			let sumAttractorRepulsor = _.reduce(
+				[
+					leftTopAttractor,
+					leftTopRepulsor,
+					rightTopAttractor,
+					rightTopRepulsor,
+					leftBottomAttractor,
+					leftBottomRepulsor,
+					rightBottomRepulsor,
+					rightBottomAttractor,
+				],
+				(acc, force) => add2D(acc, force),
+				{x: 0, y: 0},
+			);
+
+			menuPos.forEach((menuOther, j) => {
+				if (j !== i) {
+					const factor = -100 / distance2D(menuOther, menu);
+					const vector = normalize2D(subtract2D(menuOther, menu));
+					const mutualRepulsor = mulScalar2D(
+						factor, vector,
+					);
+
+					sumAttractorRepulsor = add2D(sumAttractorRepulsor, mutualRepulsor);
+				}
+			});
+
+			menu = {
+				...menu,
+				...add2D(mulScalar2D(1 / menuMass * 60, sumAttractorRepulsor), menu),
+			};
+
+			this.drawCircle(menu, 5, '#ff00ff');
+
+			return menu;
 		});
 	}
 
