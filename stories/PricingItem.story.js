@@ -3,7 +3,7 @@ import {storiesOf} from '@storybook/react';
 
 import PricingItem from '../app/scripts/components/shared/pricing-item.components';
 
-storiesOf('shared.PricingItem', module)
+storiesOf('shared/PricingItem', module)
 	.addDecorator(story => (
 		<div style={{width: '300px', margin: 'auto', padding: '20px'}} className="normal">
 			{story()}

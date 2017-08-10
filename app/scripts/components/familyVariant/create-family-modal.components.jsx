@@ -4,10 +4,15 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Modal from '../shared/modal.components.jsx';
 import {AddFamily} from './add-family-variant.components.jsx';
 
-export default class CreateFamilyModal extends React.Component {
+export default class CreateFamilyModal extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.handleCreateFont = this.handleCreateFont.bind(this);
+	}
+
+	handleCreateFont(family) {
+
 	}
 
 	render() {
@@ -15,7 +20,7 @@ export default class CreateFamilyModal extends React.Component {
 			<Modal propName={this.props.propName}>
 				<div className="modal-container-content">
 					<h1>Create new family</h1>
-					<AddFamily />
+					<AddFamily onCreateFont={this.handleCreateFont} />
 				</div>
 			</Modal>
 		);

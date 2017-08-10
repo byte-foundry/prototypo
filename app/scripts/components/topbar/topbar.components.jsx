@@ -61,13 +61,6 @@ class Topbar extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					academyProgress: head.toJS().d.infos.academyProgress || {},
-				});
-			});
-
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
@@ -79,6 +72,7 @@ class Topbar extends React.Component {
 					eventList: head.toJS().d.undoEventList,
 					presets: head.toJS().d.fontPresets,
 					indiv: head.toJS().d.indivMode,
+					academyProgress: head.toJS().d.academyProgress || {},
 				});
 			})
 			.onDelete(() => {

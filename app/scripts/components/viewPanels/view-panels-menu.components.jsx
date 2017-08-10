@@ -2,7 +2,7 @@ import React from 'react';
 import onClickOutside from 'react-onclickoutside';
 import Portal from 'react-portal';
 import classNames from 'classnames';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import {TransitionGroup, CSSTransition} from 'react-transition-group';
 
 import {ContextualMenu} from './contextual-menu.components';
 
@@ -45,15 +45,6 @@ class ViewPanelsMenu extends React.PureComponent {
 		window.removeEventListener('keydown', this.handleClickOutside);
 	}
 
-	reposition() {
-		const rect = this.button.getBoundingClientRect();
-
-		this.setState({
-			x: rect.left + rect.width / 2,
-			y: rect.top + rect.height / 2,
-		});
-	}
-
 	handleTrigger(e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -83,8 +74,8 @@ class ViewPanelsMenu extends React.PureComponent {
 	handleClose(node, removeFromDOM) {
 		const menu = node.querySelector('.contextual-menu');
 
-		menu.classList.add('contextual-menu-leave');
-		menu.classList.add('contextual-menu-leave-active');
+		menu.classList.add('contextual-menu-exit');
+		menu.classList.add('contextual-menu-exit-active');
 
 		setTimeout(() => {
 			if (!this.props.show) {
@@ -92,17 +83,28 @@ class ViewPanelsMenu extends React.PureComponent {
 				return;
 			}
 
-			menu.classList.remove('contextual-menu-leave');
-			menu.classList.remove('contextual-menu-leave-active');
+			menu.classList.remove('contextual-menu-exit');
+			menu.classList.remove('contextual-menu-exit-active');
 			menu.classList.add('contextual-menu-appear');
 			menu.classList.add('contextual-menu-appear-active');
 		}, 200);
+	}
+
+	reposition() {
+		const rect = this.button.getBoundingClientRect();
+
+		this.setState({
+			x: rect.left + rect.width / 2,
+			y: rect.top + rect.height / 2,
+		});
 	}
 
 	render() {
 		const {
 			show,
 			alignLeft,
+			left,
+			upper,
 			wideRight,
 			shifted,
 			textPanelClosed,
@@ -145,18 +147,26 @@ class ViewPanelsMenu extends React.PureComponent {
 					},
 				})}
 				<Portal isOpened={show} beforeClose={this.handleClose}>
-					<ReactCSSTransitionGroup
+					<TransitionGroup
 						component="div"
 						style={{left: this.state.x, top: this.state.y}}
 						className="settings-menu-toolbox"
-						transitionName="contextual-menu"
-						transitionAppear
-						transitionAppearTimeout={200}
 					>
-						<ContextualMenu alignLeft={alignLeft} onClickOutside={this.handleClickOutsideMenu}>
-							{children}
-						</ContextualMenu>
-					</ReactCSSTransitionGroup>
+						<CSSTransition
+							timeout={200}
+							onBeforeEnter={this.reposition}
+							classNames="contextual-menu"
+							appear
+						>
+							<ContextualMenu
+								onClickOutside={this.handleClickOutsideMenu}
+								upper={upper}
+								left={left}
+							>
+								{children}
+							</ContextualMenu>
+						</CSSTransition>
+					</TransitionGroup>
 				</Portal>
 			</div>
 		);

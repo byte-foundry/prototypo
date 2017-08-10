@@ -1,10 +1,9 @@
 import XXHash from 'xxhashjs';
 import slug from 'slug';
-import {hashHistory} from 'react-router';
 import {gql} from 'react-apollo';
 import cloneDeep from 'lodash/cloneDeep';
 
-import {userStore, prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
+import { prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {Typefaces} from '../services/typefaces.services.js';
@@ -12,8 +11,6 @@ import {loadFontValues, saveAppValues} from '../helpers/loadValues.helpers.js';
 import {setupFontInstance} from '../helpers/font.helpers.js';
 import {FontValues} from '../services/values.services.js';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
-import Log from '../services/log.services.js';
-import {loadStuff} from '../helpers/appSetup.helpers.js';
 import apolloClient from '../services/graphcool.services';
 
 slug.defaults.mode = 'rfc3986';
@@ -29,13 +26,6 @@ const debouncedSave = _.throttle((values, db, variantId) => {
 		variantId,
 	});
 }, 300);
-
-function paramAuthorized(plan, credits) {
-	const paidPlan = plan.indexOf('free_') === -1;
-	const enoughCredits = credits && credits > 0;
-
-	return paidPlan || enoughCredits;
-}
 
 window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
@@ -239,14 +229,6 @@ export default {
 				number_of_family: prototypoStore.get('fonts').length,
 			}
 		);
-		Log.ui(`createFamily.${template}`);
-
-		if (startApp) {
-			const accountValues = userStore.get('infos');
-
-			await loadStuff(accountValues.accountValues ? accountValues.accountValues : accountValues, newFont);
-			hashHistory.push({pathname: '/dashboard'});
-		}
 	},
 	'/select-variant': ({variant, family}) => {
 		console.log('/select-variant', variant, family);
@@ -367,8 +349,6 @@ export default {
 			? family.variants.find(f => f.name === variantBase.name) : family.variants[0];
 		const variantBaseDb = variantBaseHoodie.db;
 
-		debugger;
-
 		const ref = await FontValues.get({typeface: variantBaseDb, variantId: variantBase.id});
 
 		family.id = familyId;
@@ -387,8 +367,6 @@ export default {
 			});
 			return;
 		}
-
-		debugger;
 
 		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
 		const found = _.find(fonts, (item) => {

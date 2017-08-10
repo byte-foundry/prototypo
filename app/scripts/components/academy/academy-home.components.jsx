@@ -29,10 +29,10 @@ export default class AcademyHome extends React.PureComponent {
 
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
-		this.client.getStore('/userStore', this.lifespan).onUpdate((head) => {
-			academyProgress = head.toJS().d.infos.academyProgress || {};
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
+			academyProgress = head.toJS().d.academyProgress || {};
 			this.setState({
-				academyProgress: head.toJS().d.infos.academyProgress || {},
+				academyProgress: head.toJS().d.academyProgress || {},
 			});
 		});
 		// Map through the course to :

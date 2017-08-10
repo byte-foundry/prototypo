@@ -13,41 +13,51 @@
 }
 
 .contextual-menu {
-
-	&.is-aligned-left {
-		right: auto;
-		bottom: 25px;
-		left:0px;
-	}
+	position: absolute;
+	// bottom right by default
+	left: 0;
+	top: 0;
 
 	&-appear {
 		transform: scale(0.01);
 		transform-origin: 0 0;
 
-		&.is-aligned-left {
-			transform-origin: 0% 100%;
-		}
-
 		&#{&}-active {
 			transform: scale(1);
 			transition: transform .2s ease-out;
-
 		}
 	}
 
-	&-leave {
+	&-exit {
 		transform: scale(0.99);
 		transform-origin: 0 0;
-
-		&.is-aligned-left {
-			transform-origin: 0% 100%;
-		}
 
 		&#{&}-active {
 			transform: scale(0);
 			transition: transform .2s ease-out;
-
 		}
+	}
+
+	&--left {
+		left: auto;
+		right: 0;
+	}
+
+	&--upper {
+		top: auto;
+		bottom: 0;
+	}
+
+	&--left#{&}-appear, &--left#{&}-exit {
+		transform-origin: 100% 0;
+	}
+
+	&--upper#{&}-appear, &--upper#{&}-exit {
+		transform-origin: 0 100%;
+	}
+
+	&--left#{&}--upper#{&}-appear, &--left#{&}--upper#{&}-exit {
+		transform-origin: 100% 100%;
 	}
 
 	&-list {

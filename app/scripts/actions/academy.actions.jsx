@@ -1,6 +1,7 @@
-import {prototypoStore, userStore} from '../stores/creation.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
-import {saveAppValues} from '../helpers/loadValues.helpers.js';
+import cloneDeep from 'lodash/cloneDeep';
+
+import {prototypoStore} from '../stores/creation.stores';
+import LocalServer from '../stores/local-server.stores';
 
 let localServer;
 
@@ -10,22 +11,17 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/mark-part-as-read': ({course, part}) => {
-		let _infos = _.cloneDeep(userStore.get('infos'));
-		const academyProgress = _infos.academyProgress || {};
+		const academyProgress = cloneDeep(prototypoStore.get('academyProgress')) || {};
 
-		const readPart = academyProgress[course].parts.find((elem) => {
-			return elem.name === part;
-		});
+		const readPart = academyProgress[course].parts.find(elem => elem.name === part);
 
 		if (readPart) {
 			readPart.completed = !readPart.completed;
 		}
 
-		const partsDone = academyProgress[course].parts.filter((elem) => {
-			return elem.completed === true;
-		});
+		const partsDone = academyProgress[course].parts.filter(elem => elem.completed === true);
 
-		if (partsDone && partsDone.length === academyProgress[course].parts.length || !part) {
+		if ((partsDone && partsDone.length === academyProgress[course].parts.length) || !part) {
 			academyProgress.lastCourse = undefined;
 			academyProgress[course].completed = true;
 			window.Intercom('trackEvent', `finishedAcademyCourse-${course}`);
@@ -33,18 +29,12 @@ export default {
 		else {
 			academyProgress.lastCourse = course;
 		}
-		_infos = {
-			..._infos,
-			academyProgress,
-		};
-		const patch = userStore.set('infos', _infos).commit();
+		const patch = prototypoStore.set('academyProgress', academyProgress).commit();
 
-		localServer.dispatchUpdate('/userStore', patch);
-		//saveAppValues(appValuesLoaded);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/create-course-progress': ({slug, name, parts}) => {
-		let _infos = _.cloneDeep(userStore.get('infos'));
-		const academyProgress = _infos.academyProgress || {};
+		const academyProgress = cloneDeep(prototypoStore.get('academyProgress')) || {};
 
 		if (!academyProgress[slug]) {
 			academyProgress[slug] = {
@@ -55,44 +45,27 @@ export default {
 				completed: false,
 			};
 		}
-		_infos = {
-			..._infos,
-			academyProgress,
-		};
-		const patch = userStore.set('infos', _infos).commit();
+		const patch = prototypoStore.set('academyProgress', academyProgress).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);
-		//saveAppValues(appValuesLoaded);
 	},
 	'/set-course-currently-reading': (course) => {
-		let _infos = _.cloneDeep(userStore.get('infos'));
-		const academyProgress = _infos.academyProgress || {};
+		const academyProgress = cloneDeep(prototypoStore.get('academyProgress')) || {};
 
 		academyProgress.lastCourse = course;
-		_infos = {
-			..._infos,
-			academyProgress,
-		};
-		const patch = userStore.set('infos', _infos).commit();
+		const patch = prototypoStore.set('academyProgress', academyProgress).commit();
 
-		localServer.dispatchUpdate('/userStore', patch);
-		//saveAppValues(appValuesLoaded);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/set-all-course-read': () => {
-		let _infos = _.cloneDeep(userStore.get('infos'));
-		const academyProgress = _infos.academyProgress || {};
+		const academyProgress = cloneDeep(prototypoStore.get('academyProgress')) || {};
 
 		if (!academyProgress.areAllCourseRead) {
 			window.Intercom('trackEvent', 'finishedAllCourses');
 			academyProgress.areAllCourseRead = true;
 		}
-		_infos = {
-			..._infos,
-			academyProgress,
-		};
-		const patch = userStore.set('infos', _infos).commit();
+		const patch = prototypoStore.set('academyProgress', academyProgress).commit();
 
-		localServer.dispatchUpdate('/userStore', patch);
-		//saveAppValues(appValuesLoaded);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 };

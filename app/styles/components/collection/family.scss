@@ -118,18 +118,13 @@
 }
 
 .add-family {
-	background-color:$white;
-	cursor:pointer;
-	transition: all .2s ease-out;
+	background-color: mix(black, $white, 1%);
+	transition:all .2s ease;
 	margin-bottom:15px;
 	border-radius:4px;
 
-	.scrollarea-content {
-		margin-right: 15px;
-	}
-
 	&-form {
-		width:630px;
+		width:750px;
 
 		&-header {
 			display:flex;
@@ -153,42 +148,56 @@
 			}
 		}
 
+		form {
+			margin-right: 20px;
+		}
+
 		&-input {
 			display: block;
 			width: 100%;
 			border:none;
 			padding: .8em;
 			background-color: $lightest-grey;
+			border: 2px solid $light-grey;
+			border-radius: 5px;
 			color:$dark-grey;
 			font-size: 1.1em;
 			margin-bottom: 1em;
 			margin-top:20px;
+
+			&:focus {
+				outline: none;
+				border-color: $green;
+			}
 		}
 
 		&-label {
 			display: inline-block;
 			margin-top: 5px;
 			font-size:1.1em;
+			font-weight: 700;
 
 			color: $dark-grey;
 
 			&-order {
-				@include themify() {
-					color:$theme-background;
-				}
+				color: $green;
 			}
 		}
 
 		&-template-list {
-			margin-bottom: 10px;
+			margin-left: -10px;
 			padding-bottom: 5px;
 			display: block;
-			width: 100%;
 			height: 63vh;
+			overflow: hidden;
+
+			&-content {
+				padding: 10px;
+			}
 		}
 
 		&-error {
-			width: 100%;
+			width: calc(100% - 20px);
 			text-align: center;
 			padding: 5px;
 			background-color: $red;
@@ -223,9 +232,22 @@
 		color:$dark-grey;
 	}
 
+	.button {
+		border: 2px solid $green;
+		font-weight: 500;
+		color: $green;
+		transition: all .2s ease;
+		margin-right: 20px;
+		&:hover {
+			color: white;
+			background: $green;
+		}
+	}
+
 }
 
 .family-template-choice {
+	cursor: pointer;
 	margin-top:10px;
 	margin-bottom:10px;
 	text-align:center;

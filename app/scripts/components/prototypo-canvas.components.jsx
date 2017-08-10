@@ -30,6 +30,7 @@ export default class PrototypoCanvas extends React.Component {
 			uiWord: '',
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.handleContextMenu = this.handleContextMenu.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.handleLeaveAndClick = this.handleLeaveAndClick.bind(this);
 		this.reset = this.reset.bind(this);
@@ -132,6 +133,12 @@ export default class PrototypoCanvas extends React.Component {
 		document.removeEventListener('selectstart', this.preventSelection);
 	}
 
+	handleContextMenu(e) {
+		e.preventDefault();
+
+		this.toggleContextMenu();
+	}
+
 	toggleContextMenu() {
 		this.setState({
 			showContextMenu: !this.state.showContextMenu,
@@ -140,14 +147,28 @@ export default class PrototypoCanvas extends React.Component {
 		Log.ui('PrototypoCanvas.showContextMenu');
 	}
 
-	handleLeaveAndClick() {
-		if (this.state.showContextMenu) {
+	// This is not the best solution we have
+	// but it works if the mouse moves quickly away.
+	handleLeaveAndClick(e) {
+		const rect = e.currentTarget.getBoundingClientRect();
+		const x = e.pageX;
+		const y = e.pageY;
+
+		if (
+			this.state.showContextMenu
+			&& !(
+				rect.left <= x
+				&& x <= rect.left + rect.width
+				&& rect.top <= y
+				&& y <= rect.top + rect.height
+			)
+		) {
 			this.setState({
 				showContextMenu: false,
 			});
 		}
 
-		//Need to resume selection on leave
+		// Need to resume selection on leave
 		document.removeEventListener('selectstart', this.preventSelection);
 	}
 
@@ -271,18 +292,15 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
-	toggleNodes(e) {
-		e.stopPropagation();
+	toggleNodes() {
 		this.client.dispatchAction('/store-value', {uiNodes: !this.props.uiNodes});
 	}
 
-	toggleOutline(e) {
-		e.stopPropagation();
+	toggleOutline() {
 		this.client.dispatchAction('/store-value', {uiOutline: !this.props.uiOutline});
 	}
 
-	toggleCoords(e) {
-		e.stopPropagation();
+	toggleCoords() {
 		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords, uiNodes: this.props.uiCoords ? this.props.uiNodes : true});
 	}
 
@@ -395,12 +413,16 @@ export default class PrototypoCanvas extends React.Component {
 			<ContextualMenuItem
 				key="outline"
 				active={this.props.uiOutline}
-				text={`${this.props.uiOutline ? 'Hide' : 'Show'} outline`}
-				click={this.toggleOutline}/>,
+				onClick={this.toggleOutline}
+			>
+				{this.props.uiOutline ? 'Hide' : 'Show'} outline
+			</ContextualMenuItem>,
 			<ContextualMenuItem
 				key="reset"
-				text="Reset view"
-				click={this.reset}/>,
+				onClick={this.reset}
+			>
+				Reset view
+			</ContextualMenuItem>,
 		];
 
 		if (this.state.canvasMode === 'select-points') {
@@ -408,8 +430,11 @@ export default class PrototypoCanvas extends React.Component {
 				<ContextualMenuItem
 					key="coords"
 					active={this.props.uiCoords}
-					text={`${this.props.uiCoords ? 'hide' : 'show'} coords`}
-					click={this.toggleCoords}/>);
+					click={this.toggleCoords}
+				>
+					{this.props.uiCoords ? 'hide' : 'show'} coords
+				</ContextualMenuItem>,
+			);
 		}
 
 		// const demoOverlay = (isFreeWithoutCreditsInManualEditing || isFreeWithoutCreditsInComponentEditing) ? (
@@ -428,7 +453,7 @@ export default class PrototypoCanvas extends React.Component {
 				onClick={this.handleLeaveAndClick}
 				ref="container"
 				onMouseLeave={this.handleLeaveAndClick}
-				onContextMenu={this.toggleContextMenu}>
+				onContextMenu={this.handleContextMenu}>
 				<CanvasBar/>
 				<button
 					className={`prototypo-canvas-reset-glyph-button ${this.isManualEdited() ? '' : 'disabled'} ${this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''}`}
@@ -485,7 +510,10 @@ export default class PrototypoCanvas extends React.Component {
 					shifted={isShifted}
 					textPanelClosed={textPanelClosed}
 					toggle={this.toggleContextMenu}
-					intercomShift={this.props.viewPanelRightMove}>
+					intercomShift={this.props.viewPanelRightMove}
+					upper
+					left
+				>
 					{menu}
 				</ViewPanelsMenu>
 				<div className="canvas-menu">

@@ -3,7 +3,7 @@ import {storiesOf} from '@storybook/react';
 
 import AccountValidationButton from '../app/scripts/components/shared/account-validation-button.components';
 
-storiesOf('shared.AccountValidationButton', module)
+storiesOf('shared/AccountValidationButton', module)
 	.add('default', () => {
 		return <AccountValidationButton label="Hit me!" />;
 	})

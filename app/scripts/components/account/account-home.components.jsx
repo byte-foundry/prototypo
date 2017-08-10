@@ -58,3 +58,5 @@ class AccountHome extends React.Component {
 		);
 	}
 }
+
+export default AccountHome;

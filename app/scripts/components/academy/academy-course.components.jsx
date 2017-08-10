@@ -33,9 +33,9 @@ export default class AcademyCourse extends React.PureComponent {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 		this.courseSlug = this.props.params.courseSlug;
-		this.client.getStore('/userStore', this.lifespan).onUpdate((head) => {
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
 			this.setState({
-				academyProgress: head.toJS().d.infos.academyProgress || {},
+				academyProgress: head.toJS().d.academyProgress || {},
 			});
 		});
 		window.Intercom('trackEvent', `openedAcademyCourse-${this.courseSlug}`);

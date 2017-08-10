@@ -66,6 +66,7 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	resetView({x, y, zoom = 0.5}) {
+		console.log('reset view', x, y);
 		this.client.dispatchAction('/store-value', {
 			uiPos: new prototypo.paper.Point(x, y),
 			uiZoom: zoom,

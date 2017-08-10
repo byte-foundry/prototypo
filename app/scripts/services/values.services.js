@@ -87,7 +87,7 @@ function values(prefix) {
 						`,
 						variables: {
 							id: user.id,
-							values: params.values,
+							values: JSON.parse(JSON.stringify(params.values)),
 						},
 					})
 					.then(d => console.log('save app values to gc', d))

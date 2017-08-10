@@ -11,7 +11,8 @@ class ContextualMenu extends React.PureComponent {
 	render() {
 		const classes = classNames({
 			'contextual-menu': true,
-			'is-aligned-left': this.props.alignLeft,
+			'contextual-menu--left': this.props.alignLeft || this.props.left,
+			'contextual-menu--upper': this.props.upper,
 		});
 
 		return (
@@ -23,6 +24,16 @@ class ContextualMenu extends React.PureComponent {
 		);
 	}
 }
+
+ContextualMenu.defaultProps = {
+	upper: false,
+	left: false,
+};
+
+ContextualMenu.propTypes = {
+	upper: PropTypes.bool,
+	left: PropTypes.bool,
+};
 
 ContextualMenu = onClickOutside(ContextualMenu);
 
