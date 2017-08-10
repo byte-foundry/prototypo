@@ -4,15 +4,15 @@ import {Link, withRouter} from 'react-router';
 import Lifespan from 'lifespan';
 import {graphql, gql} from 'react-apollo';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores';
 
 class AccountSidebarLinkRaw extends React.Component {
 	render() {
 		const {to, label, slug, children, router} = this.props;
 
 		const classes = classNames({
-			"is-active": router.isActive(to),
-			"account-sidebar-menu-item": true,
+			'is-active': router.isActive(to),
+			'account-sidebar-menu-item': true,
 			[`account-sidebar-menu-${slug}`]: true,
 		});
 
@@ -32,8 +32,8 @@ class AccountSidebarSubLinkRaw extends React.Component {
 		const {to, label, router} = this.props;
 
 		const classes = classNames({
-			"is-active": router.isActive(to),
-			"account-sidebar-menu-item-options-item": true,
+			'is-active': router.isActive(to),
+			'account-sidebar-menu-item-options-item': true,
 		});
 
 		return (
@@ -57,7 +57,8 @@ class AccountSidebar extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/userStore', this.lifespan)
+		this.client
+			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					subscription: head.toJS().d.subscription,
@@ -76,7 +77,6 @@ class AccountSidebar extends React.Component {
 		const {subscription} = this.state;
 		const {managed} = this.props;
 
-
 		const accountsLinks = [];
 
 		if (subscription || managed) {
@@ -87,7 +87,9 @@ class AccountSidebar extends React.Component {
 		}
 
 		if (subscription) {
-			accountsLinks.push(<AccountSidebarSubLink to="/account/details/change-plan" label="Change plan" />);
+			accountsLinks.push(
+				<AccountSidebarSubLink to="/account/details/change-plan" label="Change plan" />,
+			);
 		}
 
 		return (
@@ -99,11 +101,26 @@ class AccountSidebar extends React.Component {
 						<AccountSidebarSubLink to="/account/profile/change-password" label="Change password" />
 					</AccountSidebarLink>
 					<AccountSidebarLink to="/account/details" slug="account" label="Account settings">
-						{accountsLinks.length > 0 ? accountsLinks : <AccountSidebarSubLink to="/account/subscribe" label="Subscribe to the pro plan" />}
+						{accountsLinks.length > 0
+							? accountsLinks
+							: [
+								<AccountSidebarSubLink
+									to="/account/subscribe"
+									label="Subscribe to the pro plan"
+								/>,
+								<AccountSidebarSubLink
+									to="/account/subscribe?plan=agency"
+									label="Subscribe to the agency plan"
+								/>,
+							]}
 					</AccountSidebarLink>
-					{subscription && subscription.quantity > 1 && (
-						<AccountSidebarLink to="/account/organization" slug="organization" label="Manage sub users" />
-					)}
+					{subscription
+						&& subscription.quantity > 1
+						&& <AccountSidebarLink
+							to="/account/organization"
+							slug="organization"
+							label="Manage sub users"
+						/>}
 					<AccountSidebarLink to="/account/billing" slug="billing" label="Billing history" />
 				</ul>
 			</div>

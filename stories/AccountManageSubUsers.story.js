@@ -1,5 +1,6 @@
 import React from 'react';
-import {storiesOf, action} from '@kadira/storybook';
+import {storiesOf} from '@storybook/react';
+import {action} from '@storybook/addon-actions';
 import backgroundColor from 'react-storybook-decorator-background';
 
 import {AccountManageSubUsers} from '../app/scripts/components/account/account-manage-sub-users.components';

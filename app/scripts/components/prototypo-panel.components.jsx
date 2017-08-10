@@ -157,7 +157,7 @@ export default class PrototypoPanel extends React.Component {
 			? (
 				<div className="panel-demo-overlay" onClick={this.closeRestrictedFeatureOverlay}>
 					<div className="panel-demo-overlay-text">
-						<InlineSVG element="div" src={require('!svg-inline!../../images/academy/lock.svg')} onClick={this.openGoProModal}/>
+						<InlineSVG element="div" src={require('!svg-inline-loader!../../images/academy/lock.svg')} onClick={this.openGoProModal}/>
 						<p>
 							{featureHovered}
 						</p>

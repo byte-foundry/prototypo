@@ -89,11 +89,8 @@ export default class AccountChangePlan extends React.Component {
 	}
 
 	downgrade(e) {
-		if (Intercom) {
-			e.preventDefault();
-
-			Intercom('showNewMessage', UNSUBSCRIBE_MESSAGE);
-		}
+		e.preventDefault();
+		Intercom('showNewMessage', UNSUBSCRIBE_MESSAGE);
 	}
 
 	changeNumberOfUsers(value) {
@@ -140,7 +137,7 @@ export default class AccountChangePlan extends React.Component {
 						<p>You can update the number of users you manage:</p>
 
 						<InputNumber
-							min={1}
+							min={subscription.quantity}
 							max={100}
 							value={numberOfUsers}
 							onChange={this.changeNumberOfUsers}
@@ -151,7 +148,7 @@ export default class AccountChangePlan extends React.Component {
 				<div className="account-change-plan-actions">
 					<Button
 						onClick={this.confirmChange}
-						disabled={plan.id.includes(selection) && numberOfUsers === subscription.quantity}
+						disabled={plan.id.includes(selection) && numberOfUsers <= subscription.quantity}
 					>
 						Apply change
 					</Button>
@@ -172,6 +169,7 @@ export default class AccountChangePlan extends React.Component {
 							href={`mailto:account@prototypo.io?subject=Cancelling my subscription&body=${encodeURI(UNSUBSCRIBE_MESSAGE)}`}
 							className="account-email"
 							onClick={this.downgrade}
+							title="If this link doesn't work, you may need to turn off your privacy blocker"
 						>
 							Contact us!
 						</a>
