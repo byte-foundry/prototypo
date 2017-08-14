@@ -3064,7 +3064,7 @@ elliptic@^6.0.0:
 
 elzevir.ptf@byte-foundry/elzevir.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/18e626dd9632d6043b42cb326c8eae63e6aef1a2"
+  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/886433eb1545e30665ac7e64f08e355047fbaa33"
   dependencies:
     karma "^1.7.0"
 
