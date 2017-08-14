@@ -302,8 +302,18 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 
 				if (components.length > 0 && appMode === canvasMode.COMPONENTS) {
-					componentMenuPos = this.toile.drawComponentMenu(components[0].data, frameCounters.componentMenu, hotItems, width, componentMenuPos);
+					componentMenuPos = this.toile.drawComponentMenu(
+						components[0].data,
+						frameCounters.componentMenu,
+						hotItems,
+						width,
+						componentMenuPos,
+					);
 					frameCounters.componentMenu += 1;
+				}
+				else {
+					componentMenuPos = undefined;
+					frameCounters.componentMenu = 0;
 				}
 
 				if (mState.DOWN === mouse.state && appMode === canvasMode.SELECT_POINTS) {

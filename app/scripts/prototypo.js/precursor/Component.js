@@ -65,8 +65,8 @@ export default class Component {
 			else if (name === 'base') {
 				return prop.map(
 					base => ({
-						baseId: base.getResult(localParams, contours, parentAnchors, utils, glyphs),
-						baseLabel: glyphs[base.getResult(
+						id: base.getResult(localParams, contours, parentAnchors, utils, glyphs),
+						label: glyphs[base.getResult(
 							localParams,
 							contours,
 							parentAnchors,

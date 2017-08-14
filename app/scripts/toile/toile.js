@@ -19,6 +19,7 @@ export const toileType = {
 	GLYPH_CONTOUR: 7,
 	GLYPH_COMPONENT_CONTOUR: 8,
 	COMPONENT_CHOICE: 9,
+	COMPONENT_MENU_ITEM: 10,
 };
 
 export const canvasMode = {
@@ -42,7 +43,7 @@ const grey = '#3b3b3b';
 const mediumGrey = '#7e7e7e';
 const lightGrey = '#c6c6c6';
 const lightestGrey = '#f6f6f6';
-// const white = '#fefefe';
+const white = '#fefefe';
 const red = '#ff725e';
 
 const transparent = 'transparent';
@@ -54,7 +55,8 @@ const ringBackground = 'rgba(255,114,94,0.4)';
 
 const pointMenuAnimationLength = 10;
 const componentMenuAnimationLength = 20;
-const menuMass = 0.01;
+const menuMass = 0.5;
+const pixelPerMeter = 500;
 
 const nodeDrawRadius = 3;
 const nodeHotDrawRadius = 3;
@@ -67,6 +69,7 @@ const labelForMenu = {
 	[toileType.NODE_SKELETON]: 'Skeleton control point',
 };
 const menuTextSize = 30;
+const componentMenuTextSize = 20;
 
 const infinityDistance = 10000000;
 
@@ -952,105 +955,146 @@ export default class Toile {
 	) {
 		const t = Math.min(1, frameCounters / componentMenuAnimationLength);
 		const t2 = t ** 2;
-		const y = (3 * t * (1 - t2) * 0.1) + (3 * t2 * (1 - t) * 1) + (3 * (t ** 3) * 1);
+		const y = (3 * t * (1 - t2) * 0.1) + (3 * t2 * (1 - t) * 1) + ((t ** 3) * 1);
 		const flatBezier = _.flatten(beziers);
 		const bezierCenter = _.reduce(
 			flatBezier,
 			(acc, point) => add2D(mulScalar2D(1 / flatBezier.length, point), acc),
 			{x: 0, y: 0},
 		);
-		const [tBezierCenter] = transformCoords(
-			[bezierCenter],
-			this.viewMatrix,
-			this.height,
-		);
 		const corners = [0, 1, 2, 3].map(i =>
 			({
 				x: width * (i & 0b01),
 				y: -this.height * (i > 1 & 0b01),
-			})
+			}),
 		);
 		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
-		const worldCorners = transformCoords(
-			corners,
-			inverseMatrix,
-			this.height / this.viewMatrix[0],
+		const [viewBezierCenter] = transformCoords(
+			[bezierCenter],
+			this.viewMatrix,
+			this.height,
 		);
-		let menuPos = [...componentMenuPos];
+		let viewMenuPos = transformCoords(
+			componentMenuPos,
+			this.viewMatrix,
+			this.height,
+		);
 
 		if (frameCounters === 0) {
-			menuPos = bases.map(base => (
+			viewMenuPos = bases.map(base => (
 				{
 					id: base.id,
-					x: bezierCenter.x + Math.random() - 0.5,
-					y: bezierCenter.y + Math.random() - 0.5,
+					x: viewBezierCenter.x + (Math.random() - 0.5),
+					y: viewBezierCenter.y + (Math.random() - 0.5),
 				}
 			));
 		}
 
-		return menuPos.map((menu, i) => {
-			const leftTopAttractor = mulScalar2D(
-				1 / (distance2D(worldCorners[0], menu) ** 2), normalize2D(subtract2D(worldCorners[0], menu)),
-			);
-			const rightTopAttractor = mulScalar2D(
-				1 / (distance2D(worldCorners[1], menu) ** 2), normalize2D(subtract2D(worldCorners[1], menu)),
-			);
-			const leftBottomAttractor = mulScalar2D(
-				1 / (distance2D(worldCorners[2], menu) ** 2), normalize2D(subtract2D(worldCorners[2], menu)),
-			);
-			const rightBottomAttractor = mulScalar2D(
-				1 / (distance2D(worldCorners[3], menu) ** 2), normalize2D(subtract2D(worldCorners[3], menu)),
+		const result = viewMenuPos.map((menu, i) => {
+			const centerFactor = (distance2D(viewBezierCenter, menu) / pixelPerMeter);
+			const centerRepulsor = mulScalar2D(
+				400 / Math.max(20, centerFactor),
+				normalize2D(subtract2D(menu, viewBezierCenter)),
 			);
 
 			const leftTopRepulsor = mulScalar2D(
-				-1 / distance2D(worldCorners[0], menu), normalize2D(subtract2D(worldCorners[0], menu)),
+				300 * (distance2D(corners[0], menu) - 100) / pixelPerMeter,
+				normalize2D(subtract2D(corners[0], menu)),
 			);
 			const rightTopRepulsor = mulScalar2D(
-				-1 / distance2D(worldCorners[1], menu), normalize2D(subtract2D(worldCorners[1], menu)),
+				300 * (distance2D(corners[1], menu) - 100) / pixelPerMeter,
+				normalize2D(subtract2D(corners[1], menu)),
 			);
 			const leftBottomRepulsor = mulScalar2D(
-				-1 / distance2D(worldCorners[2], menu), normalize2D(subtract2D(worldCorners[2], menu)),
+				300 * (distance2D(corners[2], menu) - 100) / pixelPerMeter,
+				normalize2D(subtract2D(corners[2], menu)),
 			);
 			const rightBottomRepulsor = mulScalar2D(
-				-1 / distance2D(worldCorners[3], menu), normalize2D(subtract2D(worldCorners[3], menu)),
+				300 * (distance2D(corners[3], menu) - 100) / pixelPerMeter,
+				normalize2D(subtract2D(corners[3], menu)),
 			);
 
 			let sumAttractorRepulsor = _.reduce(
 				[
-					leftTopAttractor,
+					centerRepulsor,
 					leftTopRepulsor,
-					rightTopAttractor,
 					rightTopRepulsor,
-					leftBottomAttractor,
 					leftBottomRepulsor,
 					rightBottomRepulsor,
-					rightBottomAttractor,
 				],
 				(acc, force) => add2D(acc, force),
 				{x: 0, y: 0},
 			);
 
-			menuPos.forEach((menuOther, j) => {
+			viewMenuPos.forEach((menuOther, j) => {
 				if (j !== i) {
-					const factor = -100 / distance2D(menuOther, menu);
+					const factor = ((distance2D(menuOther, menu)) - 300) / pixelPerMeter;
 					const vector = normalize2D(subtract2D(menuOther, menu));
 					const mutualRepulsor = mulScalar2D(
-						factor, vector,
+						factor * 700, vector,
 					);
 
 					sumAttractorRepulsor = add2D(sumAttractorRepulsor, mutualRepulsor);
 				}
 			});
 
-			menu = {
-				...menu,
-				...add2D(mulScalar2D(1 / menuMass * 60, sumAttractorRepulsor), menu),
+			let resultMenu = {
+				...add2D(mulScalar2D(1 / (menuMass * 60), sumAttractorRepulsor), menu),
 			};
 
-			this.drawCircle(menu, 5, '#ff00ff');
+			const maxDistance = 200;
+			const distanceToBezierCenter = distance2D(resultMenu, viewBezierCenter);
 
-			return menu;
+			if (distanceToBezierCenter > maxDistance) {
+				const vectorToBezierCenter = subtract2D(resultMenu, viewBezierCenter);
+
+				resultMenu = {
+					id: menu.id,
+					...add2D(
+						viewBezierCenter,
+						mulScalar2D(maxDistance / distanceToBezierCenter, vectorToBezierCenter),
+					),
+				};
+			}
+
+			const componentCenter = transformCoords(
+				[resultMenu],
+				inverseMatrix,
+				this.height / this.viewMatrix[0],
+			)[0];
+
+			this.drawCircle(componentCenter, 50 * y, blue, blue);
+			this.context.lineWidth = 2;
+			this.drawLine(componentCenter, bezierCenter, blue);
+			this.context.lineWidth = 1;
+
+			const textWidth = this.measureText(bases[i].label.value, componentMenuTextSize);
+
+			this.drawText(
+				bases[i].label.value,
+				add2D(
+					{
+						x: -textWidth.width / 2 / this.viewMatrix[0],
+						y: -(3 * componentMenuTextSize) / (6 * this.viewMatrix[0]),
+					},
+					componentCenter,
+				),
+				componentMenuTextSize,
+				white,
+			);
+
+			this.interactionList.push({
+				id: bases[i].id,
+				type: toileType.COMPONENT_MENU_ITEM,
+				data: {
+					center: componentCenter,
+				}
+			});
+
+			return componentCenter;
 		});
+
+		return result;
 	}
 
 	drawToolsLib(toolsLib, appStateValue) {
@@ -1321,6 +1365,8 @@ export default class Toile {
 
 		this.interactionList.forEach((interactionItem) => {
 			switch (interactionItem.type) {
+			case toileType.COMPONENT_MENU_ITEM:
+				break;
 			case toileType.COMPONENT_CHOICE:
 			case toileType.GLYPH_COMPONENT_CONTOUR:
 			case toileType.GLYPH_CONTOUR: {
