@@ -4,11 +4,9 @@ import slug from 'slug';
 import {gql} from 'react-apollo';
 import cloneDeep from 'lodash/cloneDeep';
 
-import {userStore, prototypoStore, undoableStore, fontInstanceStore} from '../stores/creation.stores';
+import {userStore, prototypoStore, undoableStore} from '../stores/creation.stores';
 import LocalServer from '../stores/local-server.stores';
 import LocalClient from '../stores/local-client.stores';
-
-import FontMediator from '../prototypo.js/mediator/FontMediator';
 
 import {Typefaces} from '../services/typefaces.services';
 import {FontValues} from '../services/values.services';
@@ -24,7 +22,6 @@ import WorkerPool from '../worker/worker-pool.js';
 
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
-let fontMaker;
 let localServer;
 let localClient;
 let undoWatcher;
@@ -36,16 +33,6 @@ const debouncedSave = _.throttle((values, db, variantId) => {
 	});
 }, 2000);
 
-
-function paramAuthorized(plan, credits) {
-	const paidPlan = plan.indexOf('free_') === -1;
-	const enoughCredits = credits && credits > 0;
-
-	return paidPlan || enoughCredits;
-}
-
-let oldFont;
-
 window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
 	localServer = LocalServer.instance;
@@ -56,12 +43,10 @@ window.addEventListener('fluxServer.setup', () => {
 		'controlsValues',
 		localClient,
 		localServer.lifespan,
-		(name) => {
-			return `${name} modification`;
-		},
+		name => `${name} modification`,
 		(headJS) => {
 			debouncedSave(headJS.controlsValues);
-		}
+		},
 	);
 });
 
@@ -90,7 +75,9 @@ export default {
 	},
 	'/load-font-instance': async ({appValues}) => {
 		try {
-			const template = appValues.values.familySelected ? appValues.values.familySelected.template : undefined;
+			const template = appValues.values.familySelected
+				? appValues.values.familySelected.template
+				: undefined;
 			const typedataJSON = await Typefaces.getFont(template || 'venus.ptf');
 
 			localClient.dispatchAction('/create-font-instance', {
@@ -101,9 +88,7 @@ export default {
 		}
 		catch (err) {
 			trackJs.track(err);
-			console.log(err);
 		}
-
 	},
 	'/create-font': (typedata) => {
 		const glyphs = {};
@@ -203,6 +188,9 @@ export default {
 			{string: 'Extra-Bold', thickness: 135},
 			{string: 'Black', thickness: 150},
 		];
+		const refValues = {
+			...ref.values,
+		};
 
 		thicknessTransform.forEach((item) => {
 			if (name.includes(item.string)) {
@@ -245,13 +233,13 @@ export default {
 			errorAddVariant: undefined,
 		});
 
-		const {data: {user}} = await apolloClient.query({
+		const {data: {user}} = await apolloclient.query({
 			query: gql`
-				query getVariantsCount {
+				query getvariantscount {
 					user {
 						id
 						library {
-							variantsMeta: _variantsMeta {
+							variantsmeta: _variantsmeta {
 								count
 							}
 						}
@@ -260,26 +248,26 @@ export default {
 			`,
 		});
 
-		window.Intercom('update', {
+		window.intercom('update', {
 			number_of_variants: user.library.reduce(
-				(numberOfVariants, {variantsMeta}) => numberOfVariants + variantsMeta.count,
+				(numberofvariants, {variantsmeta}) => numberofvariants + variantsmeta.count,
 				0,
 			),
 		});
 	},
-	'/create-variant': async ({name, familyId, variantBaseId, noSwitch}) => {
-		// if (!name || String(name).trim() === '') {
-		// 	const patch = prototypoStore.set('errorAddVariant', 'Variant name cannot be empty').commit();
+	'/create-variant': async ({name, familyid, variantbaseid, noswitch}) => {
+		// if (!name || string(name).trim() === '') {
+		// 	const patch = prototypostore.set('erroraddvariant', 'variant name cannot be empty').commit();
 
-		// 	localServer.dispatchUpdate('/prototypoStore', patch);
+		// 	localserver.dispatchupdate('/prototypostore', patch);
 		// 	return;
 		// }
 
-		// const {data: {family}} = await apolloClient.query({
-		// 	fetchPolicy: 'cache-first',
+		// const {data: {family}} = await apolloclient.query({
+		// 	fetchpolicy: 'cache-first',
 		// 	query: gql`
-		// 		query getFamily($id: ID!) {
-		// 			family: Family(id: $id) {
+		// 		query getfamily($id: id!) {
+		// 			family: family(id: $id) {
 		// 				id
 		// 				name
 		// 				template
@@ -290,7 +278,7 @@ export default {
 		// 			}
 		// 		}
 		// 	`,
-		// 	variables: {id: familyId},
+		// 	variables: {id: familyid},
 		// });
 
 		// const already = family.variants.find((item) => {
@@ -298,31 +286,31 @@ export default {
 		// });
 
 		// if (already) {
-		// 	const patch = prototypoStore.set('errorAddVariant', 'Variant with this name already exists').commit();
+		// 	const patch = prototypostore.set('erroraddvariant', 'variant with this name already exists').commit();
 
-		// 	localServer.dispatchUpdate('/prototypoStore', patch);
+		// 	localserver.dispatchupdate('/prototypostore', patch);
 		// 	return;
 		// }
 
-		// const patch = prototypoStore.set('errorAddVariant', undefined).commit();
+		// const patch = prototypostore.set('erroraddvariant', undefined).commit();
 
-		// localServer.dispatchUpdate('/prototypoStore', patch);
+		// localserver.dispatchupdate('/prototypostore', patch);
 
-		// if (!variantBaseId || (variantBaseId && !family.variants.some(f => f.id === variantBaseId))) {
-		// 	variantBaseId = family.variants[0].id;
+		// if (!variantbaseid || (variantbaseid && !family.variants.some(f => f.id === variantbaseid))) {
+		// 	variantbaseid = family.variants[0].id;
 		// }
 
-		// const {data: {variantBase}} = await apolloClient.query({
-		// 	fetchPolicy: 'cache-first',
+		// const {data: {variantbase}} = await apolloclient.query({
+		// 	fetchpolicy: 'cache-first',
 		// 	query: gql`
-		// 		query getVariantBaseValues($id: ID!) {
-		// 			variantBase: Variant(id: $id) {
+		// 		query getvariantbasevalues($id: id!) {
+		// 			variantbase: variant(id: $id) {
 		// 				id
 		// 				values
 		// 			}
 		// 		}
 		// 	`,
-		// 	variables: {id: variantBaseId},
+		// 	variables: {id: variantbaseid},
 		// });
 
 		localClient.dispatchAction('/create-variant-from-ref', {
@@ -465,14 +453,13 @@ export default {
 		localServer.dispatchUpdate('/undoableStore', patch);
 
 		if (force) {
-			//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+			// TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 			undoWatcher.forceUpdate(patch, label);
 			debouncedSave(newParams, db, variantId);
 		}
 		else {
 			undoWatcher.update(patch, label);
 		}
-
 	},
 	'/change-param-state': ({name, state, force, label}) => {
 		const db = prototypoStore.get('variant').db;
@@ -491,7 +478,7 @@ export default {
 		debouncedSave(newParams, db, variantId);
 
 		if (force) {
-			//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+			// TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 			undoWatcher.forceUpdate(patch, label);
 		}
 		else {
@@ -531,7 +518,6 @@ export default {
 		else {
 			undoWatcher.update(patch, label);
 		}
-
 	},
 	'/change-glyph-node-manually': ({changes, force, label = 'glyph node manual', glyphName}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
@@ -669,8 +655,8 @@ export default {
 			glyphComponentChoice: {...oldValues.glyphComponentChoice},
 		};
 
-		newParams.glyphComponentChoice[glyph.ot.unicode] = {
-			...newParams.glyphComponentChoice[glyph.ot.unicode],
+		newParams.glyphComponentChoice[glyph.unicode] = {
+			...newParams.glyphComponentChoice[glyph.unicode],
 			[id]: name,
 		};
 
