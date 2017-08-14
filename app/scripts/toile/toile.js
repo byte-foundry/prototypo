@@ -20,6 +20,7 @@ export const toileType = {
 	GLYPH_COMPONENT_CONTOUR: 8,
 	COMPONENT_CHOICE: 9,
 	COMPONENT_MENU_ITEM: 10,
+	COMPONENT_MENU_ITEM_CENTER: 11,
 };
 
 export const canvasMode = {
@@ -38,6 +39,7 @@ export const appState = {
 
 const green = '#24d390';
 const blue = '#00c4d6';
+const darkBlue = '#00a4b2';
 const yellow = '#f5e462';
 const grey = '#3b3b3b';
 const mediumGrey = '#7e7e7e';
@@ -61,6 +63,7 @@ const pixelPerMeter = 500;
 const nodeDrawRadius = 3;
 const nodeHotDrawRadius = 3;
 const nodeHotRadius = 6;
+const componentHotRadius = 50;
 
 const labelForMenu = {
 	[toileType.NODE]: 'On curve control point',
@@ -980,6 +983,15 @@ export default class Toile {
 			this.height,
 		);
 
+		this.interactionList.push({
+			id,
+			type: toileType.COMPONENT_MENU_ITEM_CENTER,
+			data: {
+				component: {id, bases, beziers},
+				center: bezierCenter,
+			},
+		});
+
 		if (frameCounters === 0) {
 			viewMenuPos = bases.map(base => (
 				{
@@ -991,6 +1003,8 @@ export default class Toile {
 		}
 
 		const result = viewMenuPos.map((menu, i) => {
+			const {id: baseId, label} = bases[i];
+			const inHot = _.find(hotItems, item => item.id === baseId);
 			const centerFactor = (distance2D(viewBezierCenter, menu) / pixelPerMeter);
 			const centerRepulsor = mulScalar2D(
 				400 / Math.max(20, centerFactor),
@@ -1049,7 +1063,7 @@ export default class Toile {
 				const vectorToBezierCenter = subtract2D(resultMenu, viewBezierCenter);
 
 				resultMenu = {
-					id: menu.id,
+					id: baseId,
 					...add2D(
 						viewBezierCenter,
 						mulScalar2D(maxDistance / distanceToBezierCenter, vectorToBezierCenter),
@@ -1063,15 +1077,15 @@ export default class Toile {
 				this.height / this.viewMatrix[0],
 			)[0];
 
-			this.drawCircle(componentCenter, 50 * y, blue, blue);
+			this.drawCircle(componentCenter, componentHotRadius * y, inHot ? darkBlue : blue, inHot ? darkBlue : blue);
 			this.context.lineWidth = 2;
-			this.drawLine(componentCenter, bezierCenter, blue);
+			this.drawLine(componentCenter, bezierCenter, inHot ? darkBlue : blue);
 			this.context.lineWidth = 1;
 
-			const textWidth = this.measureText(bases[i].label.value, componentMenuTextSize);
+			const textWidth = this.measureText(label.value, componentMenuTextSize);
 
 			this.drawText(
-				bases[i].label.value,
+				label.value,
 				add2D(
 					{
 						x: -textWidth.width / 2 / this.viewMatrix[0],
@@ -1084,11 +1098,13 @@ export default class Toile {
 			);
 
 			this.interactionList.push({
-				id: bases[i].id,
+				id: baseId,
 				type: toileType.COMPONENT_MENU_ITEM,
 				data: {
+					componentId: id,
+					radius: componentHotRadius,
 					center: componentCenter,
-				}
+				},
 			});
 
 			return componentCenter;
@@ -1365,8 +1381,21 @@ export default class Toile {
 
 		this.interactionList.forEach((interactionItem) => {
 			switch (interactionItem.type) {
-			case toileType.COMPONENT_MENU_ITEM:
+			case toileType.COMPONENT_MENU_ITEM_CENTER: {
+				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+				const [mouseTransformed] = transformCoords(
+					[this.mouse],
+					inverseMatrix,
+					this.height / this.viewMatrix[0],
+				);
+				const {center} = interactionItem.data;
+				const distance = distance2D(mouseTransformed, center);
+
+				if (distance <= 350 / this.viewMatrix[0]) {
+					result.push(interactionItem);
+				}
 				break;
+			}
 			case toileType.COMPONENT_CHOICE:
 			case toileType.GLYPH_COMPONENT_CONTOUR:
 			case toileType.GLYPH_CONTOUR: {
@@ -1408,6 +1437,7 @@ export default class Toile {
 
 				break;
 			}
+			case toileType.COMPONENT_MENU_ITEM:
 			case toileType.NODE_IN:
 			case toileType.NODE_OUT:
 			case toileType.NODE_SKELETON:

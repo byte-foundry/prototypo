@@ -585,7 +585,7 @@ async@^1.2.1, async@^1.4.0, async@^1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@^2.0.1, async@^2.1.2, async@^2.1.4:
+async@^2.1.2, async@^2.1.4:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/async/-/async-2.5.0.tgz#843190fd6b7357a0b9e1c956edddd5ec8462b54d"
   dependencies:
@@ -2808,10 +2808,6 @@ deprecated@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/deprecated/-/deprecated-0.0.1.tgz#f9c9af5464afa1e7a971458a8bdef2aa94d5bb19"
 
-deptree@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/deptree/-/deptree-0.1.0.tgz#2475d83805bbac09b8c79b7c8102cef1c0461d2c"
-
 des.js@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/des.js/-/des.js-1.0.0.tgz#c074d2e2aa6a8a9a07dbd61f9a15c2cd83ec8ecc"
@@ -3248,10 +3244,6 @@ es6-map@^0.1.3:
     es6-symbol "~3.1.1"
     event-emitter "~0.3.5"
 
-es6-object-assign@^1.0.1:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/es6-object-assign/-/es6-object-assign-1.1.0.tgz#c2c3582656247c39ea107cb1e6652b6f9f24523c"
-
 es6-promise@^4.0.3:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-4.1.1.tgz#8811e90915d9a0dba36274f0b242dbda78f9c92a"
@@ -3673,11 +3665,7 @@ express@^4.10.4, express@^4.12.4, express@^4.13.3, express@^4.15.3:
     utils-merge "1.0.0"
     vary "~1.1.1"
 
-extend@3, extend@^3.0.0, extend@~3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.1.tgz#a755ea7bc1adfcc5a31ce7e762dbaadc5e636444"
-
-extend@3.0.0:
+extend@3, extend@3.0.0, extend@^3.0.0, extend@~3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.0.tgz#5a474353b9f3353ddd8176dfd37b91c83a46f1d4"
 
@@ -3940,7 +3928,7 @@ forever-agent@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
 
-form-data@1.0.0-rc3:
+form-data@1.0.0-rc3, form-data@~1.0.0-rc3:
   version "1.0.0-rc3"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-1.0.0-rc3.tgz#d35bc62e7fbc2937ae78f948aaa0d38d90607577"
   dependencies:
@@ -3955,14 +3943,6 @@ form-data@~0.1.0:
     async "~0.9.0"
     combined-stream "~0.0.4"
     mime "~1.2.11"
-
-form-data@~1.0.0-rc3:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/form-data/-/form-data-1.0.1.tgz#ae315db9a4907fa065502304a66d7733475ee37c"
-  dependencies:
-    async "^2.0.1"
-    combined-stream "^1.0.5"
-    mime-types "^2.1.11"
 
 form-data@~2.1.1:
   version "2.1.4"
@@ -4902,13 +4882,9 @@ iconv-lite@0.4.13:
   version "0.4.13"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.13.tgz#1f88aba4ab0b1508e8312acc39345f36e992e2f2"
 
-iconv-lite@0.4.15:
+iconv-lite@0.4.15, iconv-lite@^0.4.5, iconv-lite@~0.4.13:
   version "0.4.15"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.15.tgz#fe265a218ac6a57cfe854927e9d04c19825eddeb"
-
-iconv-lite@^0.4.5, iconv-lite@~0.4.13:
-  version "0.4.18"
-  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.18.tgz#23d8656b16aae6742ac29732ea8f0336a4789cf2"
 
 icss-replace-symbols@^1.1.0:
   version "1.1.0"
@@ -5657,14 +5633,6 @@ john-fell.ptf@byte-foundry/john-fell.ptf#master:
   version "1.0.0"
   resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/afb348cb8ed1169ac3f0abd3a8aa48c10b91d199"
 
-jquery.wheel.js@0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/jquery.wheel.js/-/jquery.wheel.js-0.2.0.tgz#0a95c835f0247959eee368e14e0f98421b0f1757"
-
-jquery@^2.2.1:
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.2.4.tgz#2c89d6889b5eac522a7eea32c14521559c6cbf02"
-
 js-base64@^2.1.8, js-base64@^2.1.9, js-base64@~2.1.8:
   version "2.1.9"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.1.9.tgz#f0e80ae039a4bd654b5f281fc93f04a914a7fcce"
@@ -6061,7 +6029,6 @@ lifespan@FranzPoize/lifespan#master, lifespan@^5.0.1:
 
 lifespan@franzpoize/lifespan:
   version "5.0.1"
-  uid a5e9c35a70c7c0ef95504d7dbbf0509d0236a418
   resolved "https://codeload.github.com/franzpoize/lifespan/tar.gz/a5e9c35a70c7c0ef95504d7dbbf0509d0236a418"
   dependencies:
     bluebird "^2.9.30"
@@ -6292,7 +6259,7 @@ lodash.clonedeep@^3.0.0:
     lodash._baseclone "^3.0.0"
     lodash._bindcallback "^3.0.0"
 
-lodash.clonedeep@^4.3.2, lodash.clonedeep@^4.5.0:
+lodash.clonedeep@^4.3.2:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
 
@@ -6447,7 +6414,7 @@ lodash@^3.3.1, lodash@^3.8.0, lodash@^3.9.3:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
-lodash@^4.0.0, lodash@^4.11.1, lodash@^4.2.0, lodash@^4.5.1, lodash@~4.14.0:
+lodash@^4.0.0, lodash@^4.11.1, lodash@^4.2.0, lodash@~4.14.0:
   version "4.14.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.14.2.tgz#bbccce6373a400fbfd0a8c67ca42f6d1ef416432"
 
@@ -6713,7 +6680,7 @@ miller-rabin@^4.0.0:
   version "1.29.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.29.0.tgz#48d26d235589651704ac5916ca06001914266878"
 
-mime-types@^2.1.11, mime-types@^2.1.12, mime-types@^2.1.3, mime-types@~2.1.11, mime-types@~2.1.15, mime-types@~2.1.7:
+mime-types@^2.1.12, mime-types@^2.1.3, mime-types@~2.1.11, mime-types@~2.1.15, mime-types@~2.1.7:
   version "2.1.16"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.16.tgz#2b858a52e5ecd516db897ac2be87487830698e23"
   dependencies:
@@ -7591,10 +7558,6 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-pepjs@^0.4.1:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/pepjs/-/pepjs-0.4.3.tgz#16080e970aae779913756c2daef88eaa7486df41"
-
 performance-now@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-0.2.0.tgz#33ef30c5c77d4ea21c5a53869d91b56d8f2555e5"
@@ -7642,10 +7605,6 @@ plexer@0.0.3:
   resolved "https://registry.yarnpkg.com/plexer/-/plexer-0.0.3.tgz#334d1d7cd6232465417e9a66364901f29230f531"
   dependencies:
     readable-stream "^1.0.26-2"
-
-plumin.js@^1.10.0:
-  version "1.10.4"
-  resolved "https://registry.yarnpkg.com/plumin.js/-/plumin.js-1.10.4.tgz#609fed12595cce203b5fdd8bab1dd468f2bffb54"
 
 plur@^1.0.0:
   version "1.0.0"
@@ -8247,40 +8206,6 @@ prop-types@^15.5.1, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6,
   dependencies:
     fbjs "^0.8.9"
     loose-envify "^1.3.1"
-
-prototypo-canvas@~1.16.0:
-  version "1.16.9"
-  resolved "https://registry.yarnpkg.com/prototypo-canvas/-/prototypo-canvas-1.16.9.tgz#151429fe7ef5a7fb3b7eae7a49b92139d3c7723f"
-  dependencies:
-    deptree "^0.1.0"
-    es6-object-assign "^1.0.1"
-    jquery "^2.2.1"
-    jquery.wheel.js "0.2.0"
-    normalize.css "^3.0.3"
-    pepjs "^0.4.1"
-    prototypo.js "~1.15.0"
-    whatwg-fetch "^0.11.0"
-    wolfy87-eventemitter "4.2.0"
-
-prototypo.js@~1.15.0:
-  version "1.15.2"
-  resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.15.2.tgz#b539537eef4dc0c0f8bb991f5d9c16d756245cb8"
-  dependencies:
-    deptree "^0.1.0"
-    lodash "^4.5.1"
-    lodash.assign "^4.2.0"
-    lodash.clonedeep "^4.5.0"
-    plumin.js "^1.10.0"
-
-prototypo.js@~1.16.1:
-  version "1.16.5"
-  resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.16.5.tgz#036a467d0ea01084ae54e68010b1637d8f29474d"
-  dependencies:
-    deptree "^0.1.0"
-    if-loader "^1.0.1"
-    lodash.assign "^4.2.0"
-    lodash.clonedeep "^4.5.0"
-    plumin.js "^1.10.0"
 
 proxy-addr@~1.1.4:
   version "1.1.5"
@@ -8980,7 +8905,6 @@ remutable@FranzPoize/remutable#master:
 
 remutable@franzpoize/remutable:
   version "3.0.1"
-  uid "54f918c12dc9ab1ad84359837ac28398fa511529"
   resolved "https://codeload.github.com/franzpoize/remutable/tar.gz/54f918c12dc9ab1ad84359837ac28398fa511529"
   dependencies:
     bluebird "^2.9.30"
@@ -9015,7 +8939,7 @@ replace-ext@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/replace-ext/-/replace-ext-1.0.0.tgz#de63128373fcbf7c3ccfa4de5a480c45a67958eb"
 
-request@2, request@^2.65.0, request@^2.79.0, request@^2.81.0:
+request@2, request@^2.61.0, request@^2.65.0, request@^2.79.0, request@^2.81.0:
   version "2.81.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.81.0.tgz#c6928946a0e06c5f8d6f8a9333469ffda46298a0"
   dependencies:
@@ -9042,7 +8966,7 @@ request@2, request@^2.65.0, request@^2.79.0, request@^2.81.0:
     tunnel-agent "^0.6.0"
     uuid "^3.0.0"
 
-request@2.67.0, request@^2.61.0:
+request@2.67.0:
   version "2.67.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.67.0.tgz#8af74780e2bf11ea0ae9aa965c11f11afd272742"
   dependencies:
@@ -10783,10 +10707,6 @@ whatwg-fetch@>=0.10.0, whatwg-fetch@^2.0.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.3.tgz#9c84ec2dcf68187ff00bc64e1274b442176e1c84"
 
-whatwg-fetch@^0.11.0:
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-0.11.1.tgz#6d3ded245fdd97cd728e0e2587b54b733949e663"
-
 whatwg-fetch@^0.9.0:
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-0.9.0.tgz#0e3684c6cb9995b43efc9df03e4c365d95fd9cc0"
@@ -10821,10 +10741,6 @@ wide-align@^1.1.0:
 window-size@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/window-size/-/window-size-0.1.0.tgz#5438cd2ea93b202efa3a19fe8887aee7c94f9c9d"
-
-wolfy87-eventemitter@4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/wolfy87-eventemitter/-/wolfy87-eventemitter-4.2.0.tgz#b83eaac1f5ca37983b8823ead4f9dec915244766"
 
 wordwrap@0.0.2:
   version "0.0.2"

@@ -247,6 +247,12 @@ export default class GlyphCanvas extends React.PureComponent {
 				const nodes = hotItems.filter(item => item.type <= toileType.CONTOUR_NODE_OUT);
 				const tools = hotItems.filter(item => item.type === toileType.DISTR_TOOL);
 				const components = hotItems.filter(item => item.type === toileType.COMPONENT_CHOICE);
+				const componentMenu = hotItems.filter(
+					item => item.type === toileType.COMPONENT_MENU_ITEM_CENTER,
+				);
+				const componentChoice = hotItems.filter(
+					item => item.type === toileType.COMPONENT_MENU_ITEM,
+				);
 				const contours = hotItems.filter(item =>
 					item.type === toileType.GLYPH_CONTOUR || item.type === toileType.GLYPH_COMPONENT_CONTOUR,
 				);
@@ -311,6 +317,16 @@ export default class GlyphCanvas extends React.PureComponent {
 					);
 					frameCounters.componentMenu += 1;
 				}
+				else if (componentMenu.length && appMode === canvasMode.COMPONENTS) {
+					componentMenuPos = this.toile.drawComponentMenu(
+						componentMenu[0].data.component,
+						frameCounters.componentMenu,
+						hotItems,
+						width,
+						componentMenuPos,
+					);
+					frameCounters.componentMenu += 1;
+				}
 				else {
 					componentMenuPos = undefined;
 					frameCounters.componentMenu = 0;
@@ -333,26 +349,39 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 
-				if (mouseClickRelease && canvasMode.SELECT_POINTS) {
-					if (hotItems.length > 0) {
-						if (contours.length === 1 && !moving) {
-							contourSelectedCursor = contours[0].id;
-							contourIndexes = contours[0].data.indexes;
-							contourComponentIdx = contours[0].data.componentIdx;
+				if (mouseClickRelease) {
+					if (canvasMode.SELECT_POINTS) {
+						if (hotItems.length > 0) {
+							if (contours.length === 1 && !moving) {
+								contourSelectedCursor = contours[0].id;
+								contourIndexes = contours[0].data.indexes;
+								contourComponentIdx = contours[0].data.componentIdx;
+							}
+							else if (contours.length > 1 && !moving) {
+								contourSelectedCursor = contours[contourSelectedIndex % contours.length].id;
+								contourComponentIdx = contours[contourSelectedIndex
+									% contours.length].data.componentIdx;
+								contourIndexes = contours[contourSelectedIndex % contours.length].data.indexes;
+								contourSelectedIndex++;
+							}
 						}
-						else if (contours.length > 1 && !moving) {
-							contourSelectedCursor = contours[contourSelectedIndex % contours.length].id;
-							contourComponentIdx = contours[contourSelectedIndex
-								% contours.length].data.componentIdx;
-							contourIndexes = contours[contourSelectedIndex % contours.length].data.indexes;
-							contourSelectedIndex++;
+						else if (hotItems.length === 0 && !moving && !draggedItem) {
+							contourSelectedCursor = undefined;
+							contourIndexes = undefined;
+							contourSelectedIndex = 0;
+							contourComponentIdx = undefined;
 						}
 					}
-					else if (hotItems.length === 0 && !moving && !draggedItem) {
-						contourSelectedCursor = undefined;
-						contourIndexes = undefined;
-						contourSelectedIndex = 0;
-						contourComponentIdx = undefined;
+					if (canvasMode.COMPONENTS) {
+						if (componentChoice.length > 0) {
+							const [choice] = componentChoice;
+
+							this.client.dispatchAction('/change-component', {
+								glyph,
+								id: choice.data.componentId,
+								name: choice.id,
+							});
+						}
 					}
 				}
 
