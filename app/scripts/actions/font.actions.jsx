@@ -655,8 +655,8 @@ export default {
 			glyphComponentChoice: {...oldValues.glyphComponentChoice},
 		};
 
-		newParams.glyphComponentChoice[glyph.unicode] = {
-			...newParams.glyphComponentChoice[glyph.unicode],
+		newParams.glyphComponentChoice[glyph.name] = {
+			...newParams.glyphComponentChoice[glyph.name],
 			[id]: name,
 		};
 

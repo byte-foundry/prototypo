@@ -45,7 +45,7 @@ export default class Component {
 			);
 		});
 
-		const computedBase = this.base[0].getResult(
+		const computedBase = params.componentChoice || this.base[0].getResult(
 			localParams,
 			contours,
 			opDone.anchors,

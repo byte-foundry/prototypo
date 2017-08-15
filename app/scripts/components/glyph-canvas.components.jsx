@@ -308,8 +308,9 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 
 				if (components.length > 0 && appMode === canvasMode.COMPONENTS) {
+					const [component] = components;
 					componentMenuPos = this.toile.drawComponentMenu(
-						components[0].data,
+						component.data,
 						frameCounters.componentMenu,
 						hotItems,
 						width,
@@ -318,8 +319,9 @@ export default class GlyphCanvas extends React.PureComponent {
 					frameCounters.componentMenu += 1;
 				}
 				else if (componentMenu.length && appMode === canvasMode.COMPONENTS) {
+					const [component] = componentMenu;
 					componentMenuPos = this.toile.drawComponentMenu(
-						componentMenu[0].data.component,
+						component.data.component,
 						frameCounters.componentMenu,
 						hotItems,
 						width,

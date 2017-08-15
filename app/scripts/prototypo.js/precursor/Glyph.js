@@ -45,6 +45,8 @@ export default class Glyph {
 			cursors: {},
 		};
 
+		paramBase.glyphComponentChoice[name] = {};
+
 		this.unicode = constantOrFormula(unicode);
 		this.name = constantOrFormula(name);
 		this.componentLabel = constantOrFormula(componentLabel);
@@ -402,10 +404,11 @@ export default class Glyph {
 			const componentParams = {
 				...localParams,
 				manualChanges: {
-					[component.base[0].value]: {
+					[localParams.glyphComponentChoice[this.name.value][component.id.value] || component.base[0].value]: {
 						cursors: componentManualChanges,
 					},
 				},
+				componentChoice: localParams.glyphComponentChoice[this.name.value][component.id.value],
 			};
 
 			return component.constructComponent(

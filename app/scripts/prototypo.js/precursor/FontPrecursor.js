@@ -14,11 +14,10 @@ export default class FontPrecursor {
 		this.descender = constantOrFormula(fontinfo.descender);
 		this['cap-height'] = constantOrFormula(fontinfo['cap-height']);
 		this['descendent-height'] = constantOrFormula(fontinfo['descendent-height']);
-		this.parameters = _.mapValues(lib.parameters, (param) => {
-			return constantOrFormula(param);
-		});
+		this.parameters = _.mapValues(lib.parameters, param => constantOrFormula(param));
 		this.paramBase = {
 			manualChanges: {},
+			glyphComponentChoice: {},
 		};
 
 		this.unicodeToGlyphName = {};
@@ -41,27 +40,31 @@ export default class FontPrecursor {
 	constructFont(params, subset) {
 		const localParams = {
 			...params,
-			..._.mapValues(this.parameters, (param) => {
-				return param.getResult(params);
-			}),
+			..._.mapValues(this.parameters, param => param.getResult(params)),
 			manualChanges: {
 				...this.paramBase.manualChanges,
 				...params.manualChanges,
-			}
+			},
+			glyphComponentChoice: {
+				...this.paramBase.glyphComponentChoice,
+				...params.glyphComponentChoice,
+			},
 		};
 		const transformedThis = _.mapValues(this, (prop, name) => {
 			if (name !== 'parameters' && name !== 'glyphs' && name !== 'unicodeToGlyphName' && name !== 'paramBase') {
 				return prop.getResult(localParams);
 			}
+
+			return undefined;
 		});
-		const glyphNames = _.map(subset, (char) => {
-			return params.altList[char] || this.unicodeToGlyphName[char];
-		});
+		const glyphNames = _.map(subset, char => params.altList[char] || this.unicodeToGlyphName[char]);
 		const glyphs = _.reduce(glyphNames, (result, name) => {
 			if (this.glyphs[name]) {
 				result.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));
 				return result;
 			}
+
+			return undefined;
 		}, []);
 
 		return {
