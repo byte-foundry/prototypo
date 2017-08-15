@@ -210,7 +210,7 @@ export default class Glyph {
 		return beziers;
 	}
 
-	getFromXPath(path, caller) {
+	getFromXPath(path) {
 		let result;
 
 		const pathArray = path.split('.');

@@ -1,3 +1,4 @@
+/* global trackJs, _ */
 import queryString from 'query-string';
 import {gql} from 'react-apollo';
 
@@ -199,7 +200,7 @@ export default class HoodieApi {
 		if (!subscriptionId) {
 			const customer = HoodieApi.instance.customerId;
 
-			return fetchAWS(`/subscriptions`, {
+			return fetchAWS('/subscriptions', {
 				method: 'POST',
 				payload: {customer, ...options},
 			});
@@ -324,7 +325,7 @@ async function setupStripe(data, time = 1000) {
 
 			return;
 		}
-		catch (e) { /* don't need to catch anything, just next step */ }
+		catch (e) {/* don't need to catch anything, just next step */}
 	}
 
 	// if error we poll customerId

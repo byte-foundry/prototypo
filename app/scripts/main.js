@@ -63,10 +63,13 @@ selectRenderOptions(
 
 		window.Stripe && window.Stripe.setPublishableKey(stripeKey);
 
-		const stores = (window.prototypoStores = Stores);
+		const stores = Stores;
+
+		window.prototypoStores = Stores;
 
 		const prototypoStore = Stores['/prototypoStore'];
 
+		/* eslint-disable no-redeclare */
 		/* #if debug */
 		const localServer = new LocalServer(stores, {
 			debugPath: ['/debugStore', '/save-debug-log', '/store-in-debug-font', '/show-details'],
@@ -76,6 +79,7 @@ selectRenderOptions(
 		/* #if prod,dev */
 		const localServer = new LocalServer(stores).instance;
 		/* #end */
+		/* eslint-enable no-redeclare */
 
 		LocalClient.setup(localServer);
 		const fluxEvent = new Event('fluxServer.setup');
@@ -164,12 +168,6 @@ selectRenderOptions(
 			}
 			/* #end */
 		}
-
-		const canvasEl = (window.canvasElement = document.createElement('canvas'));
-
-		canvasEl.className = 'prototypo-canvas-container-canvas';
-		canvasEl.width = 0;
-		canvasEl.height = 0;
 
 		const content = document.getElementById('content');
 

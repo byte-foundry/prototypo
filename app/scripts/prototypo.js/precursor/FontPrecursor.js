@@ -1,7 +1,7 @@
 /* global _ */
-import {constantOrFormula} from '../helpers/values.js';
+import {constantOrFormula} from '../helpers/values';
 
-import Glyph from './Glyph.js';
+import Glyph from './Glyph';
 
 export default class FontPrecursor {
 	constructor(fontSrc) {
@@ -28,7 +28,7 @@ export default class FontPrecursor {
 			return new Glyph(glyph, this.paramBase);
 		});
 
-		//this.analyzeDependency();
+		// this.analyzeDependency();
 	}
 
 	analyzeDependency() {
