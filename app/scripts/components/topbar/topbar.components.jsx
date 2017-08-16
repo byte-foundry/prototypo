@@ -1,6 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+
+import HoodieApi from '~/services/hoodie.services.js';
 import Log from '~/services/log.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
@@ -9,6 +10,7 @@ import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
 
+import withCountry from '../shared/with-country.components';
 import Price from '../shared/price.components';
 
 import {
@@ -19,10 +21,12 @@ import {
 	TopBarMenuIcon,
 	TopBarMenuLink,
 	TopBarMenuButton,
+	TopBarMenuAcademy,
+	TopBarMenuAcademyIcon,
 } from './top-bar-menu.components.jsx';
 import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components.jsx';
 
-export default class Topbar extends React.Component {
+class Topbar extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -31,14 +35,13 @@ export default class Topbar extends React.Component {
 			eventList: [],
 			mode: [],
 			export: false,
+			academyProgress: {},
 			errorExport: false,
 			credits: undefined,
 			plan: undefined,
 			creditChoices: undefined,
 			presets: null,
-			country: 'US',
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		//function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
@@ -48,11 +51,22 @@ export default class Topbar extends React.Component {
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
 		this.setPreset = this.setPreset.bind(this);
 		this.resetIndivTutorial = this.resetIndivTutorial.bind(this);
+		this.setAcademyText = this.setAcademyText.bind(this);
+		this.showAcademy = this.showAcademy.bind(this);
+		this.clearAcademyText = this.clearAcademyText.bind(this);
+		this.getRightAcademyIcon = this.getRightAcademyIcon.bind(this);
 	}
 
 	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
+
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					academyProgress: head.toJS().d.infos.academyProgress || {},
+				});
+			});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
@@ -75,6 +89,7 @@ export default class Topbar extends React.Component {
 				.onUpdate((head) => {
 					this.setState({
 						subscription: head.toJS().d.subscription,
+						hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
 					});
 				})
 				.onDelete(() => {
@@ -87,6 +102,10 @@ export default class Topbar extends React.Component {
 			creditChoices: creditChoices.head.toJS(),
 		});
 	}
+
+	static contextTypes = {
+		router: React.PropTypes.object.isRequired,
+	};
 
 	exportOTF(merged) {
 		this.client.dispatchAction('/export-otf', {merged});
@@ -127,13 +146,6 @@ export default class Topbar extends React.Component {
 
 	componentWillUnmount() {
 		this.lifespan.release();
-	}
-
-	async componentDidMount() {
-		const response = await fetch('//freegeoip.net/json/');
-		const data = await response.json();
-
-		this.setState({country: data.country_code});
 	}
 
 	logout() {
@@ -200,6 +212,31 @@ export default class Topbar extends React.Component {
 
 	}
 
+	showAcademy() {
+		this.context.router.push('/academy');
+	}
+
+	setAcademyText(name, isIcon) {
+		if (name) {
+			this.setState({academyText: name, academyCapIconHovered: isIcon});
+		}
+		else {
+			this.setState({academyCapIconHovered: isIcon});
+		}
+	}
+
+	clearAcademyText() {
+		this.setState({academyText: '', academyCapIconHovered: false});
+	}
+	getRightAcademyIcon() {
+		if (this.state.academyCapIconHovered) {
+			return this.state.indiv ? "assets/images/graduate-cap-yellow.svg" : "assets/images/graduate-cap-green.svg";
+		}
+		else {
+			return "assets/images/graduate-cap.svg";
+		}
+	}
+
 	async onboardExport(step) {
 		const store = await this.client.fetch('/prototypoStore');
 
@@ -255,11 +292,31 @@ export default class Topbar extends React.Component {
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount) && (
 			<TopBarMenuButton
-				label={<span>GET THE FULL VERSION FOR <Price amount={1} country={this.state.country} /></span>}
+				label={<span>GET THE FULL VERSION FOR <Price amount={this.state.hasBeenSubscribing ? 8.25 : 1} country={this.props.country} /></span>}
 				noHover
 				centered
 				click={this.goToSubscribe}
 				alignRight
+			/>
+		);
+
+		const academyIcon = !this.state.academyProgress.lastCourse && (
+			<TopBarMenuAcademyIcon
+				setText={this.setAcademyText}
+				clearText={this.clearAcademyText}
+				id="progress-academy"
+				icon={this.getRightAcademyIcon()}
+			/>
+		);
+
+		const academyProgress = this.state.academyProgress.lastCourse && (
+			<TopBarMenuAcademy
+				course={this.state.academyProgress[this.state.academyProgress.lastCourse]}
+				setText={this.setAcademyText}
+				clearText={this.clearAcademyText}
+				text={this.state.academyText}
+				id="progress-academy"
+				icon={this.getRightAcademyIcon()}
 			/>
 		);
 
@@ -381,10 +438,13 @@ export default class Topbar extends React.Component {
 					<TopBarMenuDropdown name="Help">
 						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
 						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq', '_blank'); }}/>
-						<TopBarMenuDropdownItem name="Restart collection tutorial" handler={(e) => { this.resetCollectionTutorial(e); }}/>
-						<TopBarMenuDropdownItem name="Restart export tutorial" handler={(e) => { this.resetFileTutorial(e); }}/>
-						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={(e) => { this.resetIndivTutorial(e); }}/>
+						<TopBarMenuDropdownItem name="Academy" id="access-academy" handler={this.showAcademy}/>
+						<TopBarMenuDropdownItem name="Restart collection tutorial" handler={this.resetCollectionTutorial}/>
+						<TopBarMenuDropdownItem name="Restart export tutorial" handler={this.resetFileTutorial}/>
+						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={this.resetIndivTutorial}/>
 					</TopBarMenuDropdown>
+					{academyIcon}
+					{academyProgress}
 					{exporting}
 					{errorExporting}
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
@@ -399,3 +459,5 @@ export default class Topbar extends React.Component {
 Topbar.contextTypes = {
 	router: React.PropTypes.object.isRequired,
 };
+
+export default withCountry(Topbar);

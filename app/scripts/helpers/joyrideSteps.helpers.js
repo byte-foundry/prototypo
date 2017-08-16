@@ -20,6 +20,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 			|| currentState.firstTimeCollection
 			|| currentState.firstTimeIndivCreate
 			|| currentState.firstTimeIndivEdit
+			|| currensState.firstTimeAcademyJoyride
 		)
 	) {
 		const mainColor = currentState.indiv ? '#f5e462' : '#24d390';
@@ -103,6 +104,16 @@ const buildTutorialSteps = function(previousState, currentState) {
 					mainColor,
 				},
 			},
+			// "academy" steps
+			academyStep1: {
+				title: 'Academy',
+				text: 'Here is the academy',
+				selector: '#show-academy',
+				position: 'right',
+				style: {
+					mainColor,
+				},
+			},
 		};
 
 		// populate steps according to the new tutorial values
@@ -140,6 +151,14 @@ const buildTutorialSteps = function(previousState, currentState) {
 					steps.push(
 						predefinedSteps.indivGroupEditStep1,
 						predefinedSteps.indivGroupEditStep2
+					);
+				}
+				break;
+			}
+			case 'academyTutorial': {
+				if (currentState.firstTimeAcademyJoyride) {
+					steps.push(
+						predefinedSteps.academyStep1
 					);
 				}
 				break;

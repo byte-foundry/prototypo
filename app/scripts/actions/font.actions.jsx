@@ -1,7 +1,8 @@
 import XXHash from 'xxhashjs';
 import slug from 'slug';
+import {hashHistory} from 'react-router';
 
-import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
+import {userStore, prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {Typefaces} from '../services/typefaces.services.js';
@@ -11,6 +12,7 @@ import {FontValues} from '../services/values.services.js';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 import Log from '../services/log.services.js';
 import HoodieApi from '../services/hoodie.services.js';
+import {loadStuff} from '../helpers/appSetup.helpers.js';
 
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
@@ -121,7 +123,7 @@ export default {
 		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
 		localClient.dispatchAction('/store-value', {uiSpacingMode: false});
 	},
-	'/create-family': async ({name, template, loadCurrent}) => {
+	'/create-family': async ({name, template, loadCurrent, startApp = false}) => {
 		let templateToLoad = template;
 
 		if (loadCurrent) {
@@ -150,8 +152,8 @@ export default {
 			template: templateToLoad,
 			variants: [
 				{
-					id: hasher.update(`REGULAR${(new Date()).getTime()}`).digest().toString(16),
-					name: 'REGULAR',
+					id: hasher.update(`Regular${(new Date()).getTime()}`).digest().toString(16),
+					name: 'Regular',
 					db: slug(`${name}regular`, ''),
 				},
 			],
@@ -172,6 +174,7 @@ export default {
 
 		const patch = prototypoStore
 			.set('errorAddFamily', undefined)
+			.set('createdFamily', newFont)
 			.set('fonts', fonts)
 			.commit();
 
@@ -202,6 +205,13 @@ export default {
 			}
 		);
 		Log.ui(`createFamily.${template}`);
+
+		if (startApp) {
+			const accountValues = userStore.get('infos');
+
+			await loadStuff(accountValues.accountValues ? accountValues.accountValues : accountValues, newFont);
+			hashHistory.push({pathname: '/dashboard'});
+		}
 	},
 	'/select-variant': ({variant, family}) => {
 		if (!variant) {

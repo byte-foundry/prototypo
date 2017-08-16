@@ -56,19 +56,29 @@ const prototypoStore = new Remutable({
 	//template list store values
 	templateList: [
 		{
+			sample: 'spectral-preview.svg',
+			sampleLarge: 'template-spectral.svg',
+			name: 'Spectral',
+			familyName: 'Spectral',
+			templateName: 'gfnt.ptf',
+		},
+		{
 			sample: 'elzevir-preview.svg',
+			sampleLarge: 'template-elzevir.svg',
 			name: 'Prototypo Elzevir',
 			familyName: 'Prototypo Elzevir',
 			templateName: 'elzevir.ptf',
 		},
 		{
 			sample: 'venus-preview.svg',
+			sampleLarge: 'template-grotesk.svg',
 			name: 'Prototypo Grotesk',
 			familyName: 'Prototypo Grotesk',
 			templateName: 'venus.ptf',
 		},
 		{
 			sample: 'john-fell-preview.svg',
+			sampleLarge: 'template-fell.svg',
 			name: 'Prototypo Fell',
 			familyName: 'Prototypo Fell',
 			templateName: 'john-fell.ptf',
@@ -185,6 +195,8 @@ const prototypoStore = new Remutable({
 	firstTimeCollection: true,
 	firstTimeIndivCreate: true,
 	firstTimeIndivEdit: true,
+	firstTimeAcademyModal: true,
+	firstTimeAcademyJoyride: true,
 	// end first time tutorial store values
 });
 

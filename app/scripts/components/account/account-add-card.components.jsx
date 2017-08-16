@@ -58,7 +58,7 @@ export default class AccountAddCard extends React.Component {
 			<form onSubmit={(e) => {this.addCard(e);}} className="account-base account-add-card">
 				<AddCard ref="card" inError={this.state.inError}/>
 				{errors}
-				<AccountValidationButton loading={this.state.loading} label="Change card"/>
+				<AccountValidationButton loading={this.state.loading} label="Add card"/>
 			</form>
 		);
 	}

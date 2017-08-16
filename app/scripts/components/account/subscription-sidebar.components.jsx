@@ -1,41 +1,63 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-import {Link} from 'react-router';
 
-import {monthlyConst, annualConst, agencyMonthlyConst, agencyAnnualConst} from '../../data/plans.data.js';
+import {
+	monthlyConst,
+	annualConst,
+	agencyMonthlyConst,
+	agencyAnnualConst,
+} from '../../data/plans.data';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
+import Price from '../shared/price.components';
 
-import Price from '../shared/price.components.jsx';
-
-export default class SubscriptionSidebar extends React.Component {
+export default class SubscriptionSidebar extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
+		this.handleChangePlan = this.handleChangePlan.bind(this);
 	}
 
-	componentWillMount() {
-		this.client = LocalClient.instance();
+	handleChangePlan(options) {
+		return (e) => {
+			e.preventDefault();
+			this.props.onChangePlan(options);
+		};
 	}
 
 	render() {
-		const {country, plan} = this.props;
+		const {country, plan, quantity, hasBeenSubscribing} = this.props;
 
 		const plans = {
-			'personal_monthly': {
+			[monthlyConst.prefix]: {
 				header: 'Monthly',
-				title: <span>Try Prototypo Pro subscription for <Price amount={1} country={country}/> only</span>,
+				title: hasBeenSubscribing
+					? <span>Try Prototypo Pro without commitment</span>
+					: <span>
+							Try Prototypo Pro subscription for
+							{' '}
+						<Price amount={1} country={country} />
+						{' '}
+							only
+						</span>,
 				features: [
 					'More diverse fonts with full range on all parameters',
 					'Perfectly customized with glyph individualization groups',
 					'Tune to perfection using the manual edition and component editing',
 				],
-				cta: <span><Price amount={monthlyConst.price} country={country}/> after the first month.</span>,
+				cta: (
+					<span>
+						<Price amount={monthlyConst.price} country={country} />
+						{' '}
+						{hasBeenSubscribing ? ' / month' : <span><br />after the first month</span>}
+					</span>
+				),
 				subcta: 'No commitment!',
 				link: {
-					text: 'Want Prototypo cheaper, check out our annual offer.',
-					to: '/account/subscribe?plan=personal_annual_99',
+					text: 'Want Prototypo cheaper, check out our annual offer',
+					onClick: this.handleChangePlan({plan: annualConst.prefix}),
 				},
 			},
-			'personal_annual_99': {
+			[annualConst.prefix]: {
 				header: 'Annual',
 				title: 'Buy Prototypo Pro subscription for 1 year, get 4 months for free',
 				features: [
@@ -44,100 +66,113 @@ export default class SubscriptionSidebar extends React.Component {
 					'Tune to perfection using the manual edition and component editing',
 				],
 				cta: (
-					<div>
-						<div>
-							<Price amount={annualConst.monthlyPrice} country={country}/>/month
-						</div>
-						<div>
-							Less money same features
-						</div>
-					</div>
+					<span>
+						<Price amount={annualConst.monthlyPrice} country={country} /> / month
+					</span>
 				),
-				subcta: 'Get 4 months free',
+				subcta: <span>Less money, same features<br />Get 4 months free</span>,
 				link: {
 					text: 'Want less commitment, try our monthly offer',
-					to: '/account/subscribe?plan=personal_monthly',
+					onClick: this.handleChangePlan({plan: monthlyConst.prefix}),
 				},
 			},
-			'agency_monthly': {
-				header: 'Agencies - Monthly subscription',
-				title: <span>Prototypo multi-user plan, designed for professionnals, billed monthly.</span>,
-				features: [
-					'All pro features',
-					'Manage your team licences',
-					'Premium 24h support',
-				],
-				cta: <span><Price amount={agencyMonthlyConst.monthlyPrice} country={country}/> per month.</span>,
-				subcta: 'No commitment!',
-				link: {
-					text: 'Want Prototypo cheaper, check out our annual offer.',
-					to: '/account/subscribe?plan=agency_annual',
-				},
-			},
-			'agency_annual': {
-				header: 'Agencies - Annual subscription',
-				title: <span>Prototypo multi-user plan, designed for professionnals, billed annually.</span>,
-				features: [
-					'All pro features',
-					'Manage your team licences',
-					'Premium 24h support',
-				],
+			[agencyMonthlyConst.prefix]: {
+				header: <span>Agencies<br />Monthly</span>,
+				title: (
+					<span>
+						Prototypo multi-user plan, designed for professionnals, billed monthly
+					</span>
+				),
+				features: ['All pro features', 'Manage your team licences', 'Premium 24h support'],
 				cta: (
-					<div>
-						<div>
-							<Price amount={agencyAnnualConst.monthlyConst} country={country}/>/month
-						</div>
-						<div>
-							Less money same features
-						</div>
-					</div>
+					<span>
+						<Price amount={agencyMonthlyConst.monthlyPrice * quantity} country={country} />
+						{' '}
+						/ month
+					</span>
 				),
-				subcta: 'No commitment!',
+				subcta: (
+					<span>
+						No commitment!
+						<br />
+						<Price amount={agencyMonthlyConst.monthlyPrice} country={country} />
+						{' '}
+						× {quantity} per month
+					</span>
+				),
+				link: {
+					text: 'Want Prototypo cheaper, check out our annual offer',
+					onClick: this.handleChangePlan({plan: agencyAnnualConst.prefix}),
+				},
+			},
+			[agencyAnnualConst.prefix]: {
+				header: <span>Agencies<br />Annual</span>,
+				title: (
+					<span>
+						Prototypo multi-user plan, designed for professionnals, billed annually
+					</span>
+				),
+				features: ['All pro features', 'Manage your team licences', 'Premium 24h support'],
+				cta: (
+					<span>
+						<Price amount={agencyAnnualConst.monthlyPrice * quantity} country={country} />
+						{' '}
+						/ month
+					</span>
+				),
+				subcta: (
+					<span>
+						Less money, same features
+						<br />
+						<Price amount={agencyAnnualConst.monthlyPrice} country={country} />
+						{' '}
+						× {quantity} per month
+					</span>
+				),
 				link: {
 					text: 'Want less commitment, try our monthly offer',
-					to: '/account/subscribe?plan=agency_monthly',
+					onClick: this.handleChangePlan({plan: agencyMonthlyConst.prefix}),
 				},
 			},
 		};
 
 		if (plans[plan]) {
-			const {
-				header,
-				title,
-				features,
-				cta,
-				subcta,
-				link,
-			} = plans[plan];
+			const {header, title, features, cta, subcta, link} = plans[plan];
 
 			return (
 				<div className="subscription-sidebar">
 					<h1 className="subscription-sidebar-header">{header}</h1>
 					<h2 className="subscription-sidebar-title">{title}</h2>
 					<ul className="subscription-sidebar-list-feat">
-						{(() => {
-							return features.map((feat) => {
-								return (
-									<li className="subscription-sidebar-list-feat-item">
-										{feat}
-									</li>
-								);
-							});
-						})()}
+						{features.map(feat => (
+							<li className="subscription-sidebar-list-feat-item">
+								{feat}
+							</li>
+						))}
 					</ul>
-					<div className="subscription-sidebar-separator"></div>
+					<div className="subscription-sidebar-separator" />
 					<div className="subscription-sidebar-cta">{cta}</div>
 					<div className="subscription-sidebar-subcta">{subcta}</div>
-					<Link className="subscription-sidebar-link" to={link.to}>{link.text}</Link>
+					<a href="/account/subscribe" className="subscription-sidebar-link" onClick={link.onClick}>
+						{link.text}
+					</a>
 				</div>
 			);
 		}
-		else {
-			return false;
-		}
+
+		return null;
 	}
 }
 
-SubscriptionSidebar.contextTypes = {
-	router: React.PropTypes.object.isRequired,
+SubscriptionSidebar.propTypes = {
+	plan: PropTypes.string.isRequired,
+	quantity: PropTypes.number,
+	hasBeenSubscribing: PropTypes.bool,
+	onChangePlan: PropTypes.func,
+};
+
+SubscriptionSidebar.defaultProps = {
+	quantity: 2,
+	hasBeenSubscribing: false,
+	onChangePlan: () => {},
 };

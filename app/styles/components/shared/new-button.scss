@@ -1,0 +1,48 @@
+@import '../../variables';
+
+.new-button {
+	border: none;
+	background-color: $green;
+	color: $white;
+	font-size: 18px;
+	padding: 15px 22px;
+	border-radius: 5px;
+	cursor: pointer;
+	outline: none;
+
+	&:hover {
+		background-color: darken($green, 5%);
+	}
+
+	&:active {
+		box-shadow: inset 0 .2em .1em rgba(0, 0, 0, .1);
+	}
+
+	&:focus:not(:active) {
+		box-shadow: 0 0 0 .1em rgba($green, .5);
+	}
+
+	&--disabled {
+		cursor: default;
+		background-color: $light-grey;
+
+		&:hover {
+			background-color: $light-grey;
+		}
+	}
+
+	&--tiny {
+		font-size: 11px;
+		padding: 2px 5px;
+	}
+
+	&--small {
+		font-size: 14px;
+		padding: 8px 12px;
+	}
+
+	&--large {
+		font-size: 24px;
+		padding: 20px 30px;
+	}
+}

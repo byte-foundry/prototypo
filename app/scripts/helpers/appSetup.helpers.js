@@ -36,7 +36,7 @@ const defaultValues = {
 			},
 			variantSelected: {
 				id: 'deadbeef',
-				name: 'REGULAR',
+				name: 'Regular',
 				db: 'myfirstfont',
 			},
 			library: [{
@@ -44,7 +44,7 @@ const defaultValues = {
 				template: 'elzevir.ptf',
 				variants: [{
 					id: 'deadbeef',
-					name: 'REGULAR',
+					name: 'Regular',
 					db: 'myfirstfont',
 				}],
 			}],
@@ -53,10 +53,12 @@ const defaultValues = {
 			firstTimeCollection: true,
 			firstTimeIndivCreate: true,
 			firstTimeIndivEdit: true,
+			firstTimeAcademyModal: true,
+			firstTimeAcademyJoyride: true,
 		},
 };
 
-export async function loadStuff(refAccountValues) {
+export async function loadStuff(refAccountValues, newFont) {
 	//We need to fix database names for the change to normal hoodie api so let's go
 
 	let oldAppValues;
@@ -141,9 +143,25 @@ export async function loadStuff(refAccountValues) {
 		if (appValues.values.library.length <= 0) {
 			appValues.values.library = defaultValues.values.library;
 		}
+		if (newFont) {
+			appValues.values.familySelected = {
+				name: newFont.name,
+				template: newFont.template,
+			};
+			appValues.values.variantSelected = newFont.variants[0];
+			appValues.values.library = [newFont];
+		}
 	}
 	catch (err) {
 		appValues = defaultValues;
+		if (newFont) {
+			appValues.values.familySelected = {
+				name: newFont.name,
+				template: newFont.template,
+			};
+			appValues.values.variantSelected = newFont.variants[0];
+			appValues.values.library = [newFont];
+		}
 		console.error(err);
 	}
 	localClient.dispatchAction('/load-app-values', appValues);

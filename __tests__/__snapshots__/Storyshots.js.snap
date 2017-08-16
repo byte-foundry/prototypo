@@ -1,0 +1,2693 @@
+exports[`Storyshots SliderController 50% filled 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }>
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}>
+      <div
+        className="slider-controller-bg"
+        style={
+          Object {
+            "transform": "translateX(-46%)",
+          }
+        }>
+        <div
+          className="slider-controller-handle" />
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots SliderController empty 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }>
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}>
+      <div
+        className="slider-controller-bg"
+        style={
+          Object {
+            "transform": "translateX(-92%)",
+          }
+        }>
+        <div
+          className="slider-controller-handle" />
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots SliderController full 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }>
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}>
+      <div
+        className="slider-controller-bg"
+        style={
+          Object {
+            "transform": "translateX(-0%)",
+          }
+        }>
+        <div
+          className="slider-controller-handle" />
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots SliderController restricted 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }>
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}>
+      <div
+        className="slider-controller-bg"
+        style={
+          Object {
+            "transform": "translateX(-27.599999999999998%)",
+          }
+        }>
+        <div
+          className="slider-controller-handle" />
+      </div>
+      <span>
+        <div
+          className="slider-range-limiter-bg min"
+          onClick={[Function]}
+          style={
+            Object {
+              "marginLeft": "-10px",
+              "transform": "translateX(-36.800000000000004%)",
+            }
+          } />
+        <div
+          className="slider-range-limiter-bg max"
+          onClick={[Function]}
+          style={
+            Object {
+              "marginLeft": "-10px",
+              "transform": "translateX(81.6%)",
+            }
+          } />
+      </span>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots SliderController unadvised state 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }>
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}>
+      <div
+        className="slider-controller-bg is-not-advised"
+        style={
+          Object {
+            "transform": "translateX(-4.6000000000000005%)",
+          }
+        }>
+        <div
+          className="slider-controller-handle" />
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers active 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "700px",
+      }
+    }>
+    <div
+      className="manage-sub-users">
+      <header
+        className="manage-sub-users-header">
+        <h1
+          className="manage-sub-users-title">
+          Manage Sub Users
+        </h1>
+        <div
+          className="manage-sub-users-action-bar">
+          <div
+            className="filter-input">
+            <input
+              className="filter-input-input"
+              onChange={[Function]}
+              placeholder="Filter"
+              type="search"
+              value="" />
+            <button
+              className="filter-input-clear filter-input-clear--empty"
+              onClick={[Function]}>
+              <svg
+                className="icon">
+                <use
+                  xlinkHref={undefined} />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+      <div>
+        <table
+          className="sortable-table">
+          <thead>
+            <tr>
+              <th
+                className="sortable-table-header-cell sortable-table-status"
+                onClick={[Function]}>
+                Status
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+                onClick={[Function]}>
+                Email
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-name"
+                colSpan={1}
+                onClick={[Function]}>
+                Name
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              className="sortable-table-row">
+              <td
+                className="sortable-table-cell sortable-table-status">
+                <svg
+                  className="icon manage-sub-users-icon">
+                  <use
+                    xlinkHref={undefined} />
+                </svg>
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-email">
+                user@example.com
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-name">
+                 
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-actions">
+                <button
+                  className="icon-button"
+                  name="delete"
+                  onClick={[Function]}>
+                  <svg
+                    className="icon">
+                    <use
+                      xlinkHref={undefined} />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers empty state 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "700px",
+      }
+    }>
+    <div
+      className="manage-sub-users">
+      <header
+        className="manage-sub-users-header">
+        <h1
+          className="manage-sub-users-title">
+          Manage Sub Users
+        </h1>
+        <div
+          className="manage-sub-users-action-bar">
+          <div
+            className="filter-input">
+            <input
+              className="filter-input-input"
+              onChange={[Function]}
+              placeholder="Filter"
+              type="search"
+              value="" />
+            <button
+              className="filter-input-clear filter-input-clear--empty"
+              onClick={[Function]}>
+              <svg
+                className="icon">
+                <use
+                  xlinkHref={undefined} />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+      <div>
+        <table
+          className="sortable-table">
+          <thead>
+            <tr>
+              <th
+                className="sortable-table-header-cell sortable-table-status"
+                onClick={[Function]}>
+                Status
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+                onClick={[Function]}>
+                Email
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-name"
+                colSpan={1}
+                onClick={[Function]}>
+                Name
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                colSpan={4}>
+                <p
+                  style={
+                    Object {
+                      "textAlign": "center",
+                    }
+                  }>
+                  You don\'t manage any user for now.
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers full 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "700px",
+      }
+    }>
+    <div
+      className="manage-sub-users">
+      <header
+        className="manage-sub-users-header">
+        <h1
+          className="manage-sub-users-title">
+          Manage Sub Users
+        </h1>
+        <div
+          className="manage-sub-users-action-bar">
+          <div
+            className="filter-input">
+            <input
+              className="filter-input-input"
+              onChange={[Function]}
+              placeholder="Filter"
+              type="search"
+              value="" />
+            <button
+              className="filter-input-clear filter-input-clear--empty"
+              onClick={[Function]}>
+              <svg
+                className="icon">
+                <use
+                  xlinkHref={undefined} />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+      <div>
+        <table
+          className="sortable-table">
+          <caption
+            className="sortable-table-caption">
+            0
+             slots left on 
+            2
+             • 
+            <a
+              onClick={[Function]}
+              style={Object {}}>
+              Update your subscription
+            </a>
+          </caption>
+          <thead>
+            <tr>
+              <th
+                className="sortable-table-header-cell sortable-table-status"
+                onClick={[Function]}>
+                Status
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+                onClick={[Function]}>
+                Email
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-name"
+                colSpan={1}
+                onClick={[Function]}>
+                Name
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              className="sortable-table-row">
+              <td
+                className="sortable-table-cell sortable-table-status">
+                <svg
+                  className="icon manage-sub-users-icon">
+                  <use
+                    xlinkHref={undefined} />
+                </svg>
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-email">
+                user2@example.com
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-name">
+                 
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-actions">
+                <button
+                  className="icon-button"
+                  name="delete"
+                  onClick={[Function]}>
+                  <svg
+                    className="icon">
+                    <use
+                      xlinkHref={undefined} />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="sortable-table-row">
+              <td
+                className="sortable-table-cell sortable-table-status">
+                <svg
+                  className="icon manage-sub-users-icon">
+                  <use
+                    xlinkHref={undefined} />
+                </svg>
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-email">
+                user@example.com
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-name">
+                 
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-actions">
+                <button
+                  className="icon-button"
+                  name="delete"
+                  onClick={[Function]}>
+                  <svg
+                    className="icon">
+                    <use
+                      xlinkHref={undefined} />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers loading 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "700px",
+      }
+    }>
+    <div
+      className="manage-sub-users">
+      <header
+        className="manage-sub-users-header">
+        <h1
+          className="manage-sub-users-title">
+          Manage Sub Users
+        </h1>
+        <div
+          className="manage-sub-users-action-bar">
+          <div
+            className="filter-input">
+            <input
+              className="filter-input-input"
+              onChange={[Function]}
+              placeholder="Filter"
+              type="search"
+              value="" />
+            <button
+              className="filter-input-clear filter-input-clear--empty"
+              onClick={[Function]}>
+              <svg
+                className="icon">
+                <use
+                  xlinkHref={undefined} />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+      <div>
+        <table
+          className="sortable-table">
+          <thead>
+            <tr>
+              <th
+                className="sortable-table-header-cell sortable-table-status"
+                onClick={[Function]}>
+                Status
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+                onClick={[Function]}>
+                Email
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-name"
+                colSpan={1}
+                onClick={[Function]}>
+                Name
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              className="sortable-table-row sortable-table-row--loading">
+              <td
+                className="sortable-table-cell sortable-table-status">
+                <div
+                  className="wait-for-load">
+                  <div
+                    className="sk-spinner sk-spinner-wave">
+                    <div
+                      className="sk-rect1" />
+                    <div
+                      className="sk-rect2" />
+                    <div
+                      className="sk-rect3" />
+                    <div
+                      className="sk-rect4" />
+                    <div
+                      className="sk-rect5" />
+                  </div>
+                </div>
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-email">
+                user@example.com
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-name">
+                 
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-actions">
+                <button
+                  className="icon-button"
+                  name="delete"
+                  onClick={[Function]}>
+                  <svg
+                    className="icon">
+                    <use
+                      xlinkHref={undefined} />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers pending 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "700px",
+      }
+    }>
+    <div
+      className="manage-sub-users">
+      <header
+        className="manage-sub-users-header">
+        <h1
+          className="manage-sub-users-title">
+          Manage Sub Users
+        </h1>
+        <div
+          className="manage-sub-users-action-bar">
+          <div
+            className="filter-input">
+            <input
+              className="filter-input-input"
+              onChange={[Function]}
+              placeholder="Filter"
+              type="search"
+              value="" />
+            <button
+              className="filter-input-clear filter-input-clear--empty"
+              onClick={[Function]}>
+              <svg
+                className="icon">
+                <use
+                  xlinkHref={undefined} />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+      <div>
+        <table
+          className="sortable-table">
+          <thead>
+            <tr>
+              <th
+                className="sortable-table-header-cell sortable-table-status"
+                onClick={[Function]}>
+                Status
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+                onClick={[Function]}>
+                Email
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-name"
+                colSpan={1}
+                onClick={[Function]}>
+                Name
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              className="sortable-table-row">
+              <td
+                className="sortable-table-cell sortable-table-status">
+                <svg
+                  className="icon manage-sub-users-icon">
+                  <use
+                    xlinkHref={undefined} />
+                </svg>
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-email">
+                user@example.com
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-name">
+                 
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-actions">
+                <button
+                  className="icon-button"
+                  name="delete"
+                  onClick={[Function]}>
+                  <svg
+                    className="icon">
+                    <use
+                      xlinkHref={undefined} />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers removable 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "700px",
+      }
+    }>
+    <div
+      className="manage-sub-users">
+      <header
+        className="manage-sub-users-header">
+        <h1
+          className="manage-sub-users-title">
+          Manage Sub Users
+        </h1>
+        <div
+          className="manage-sub-users-action-bar">
+          <div
+            className="filter-input">
+            <input
+              className="filter-input-input"
+              onChange={[Function]}
+              placeholder="Filter"
+              type="search"
+              value="" />
+            <button
+              className="filter-input-clear filter-input-clear--empty"
+              onClick={[Function]}>
+              <svg
+                className="icon">
+                <use
+                  xlinkHref={undefined} />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+      <div>
+        <table
+          className="sortable-table">
+          <thead>
+            <tr>
+              <th
+                className="sortable-table-header-cell sortable-table-status"
+                onClick={[Function]}>
+                Status
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+                onClick={[Function]}>
+                Email
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-name"
+                colSpan={1}
+                onClick={[Function]}>
+                Name
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              className="sortable-table-row">
+              <td
+                className="sortable-table-cell sortable-table-status">
+                <svg
+                  className="icon manage-sub-users-icon">
+                  <use
+                    xlinkHref={undefined} />
+                </svg>
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-email">
+                user@example.com
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-name">
+                 
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-actions">
+                <button
+                  className="icon-button"
+                  name="delete"
+                  onClick={[Function]}>
+                  <svg
+                    className="icon">
+                    <use
+                      xlinkHref={undefined} />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers with add user form 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "700px",
+      }
+    }>
+    <div
+      className="manage-sub-users">
+      <header
+        className="manage-sub-users-header">
+        <h1
+          className="manage-sub-users-title">
+          Manage Sub Users
+        </h1>
+        <div
+          className="manage-sub-users-action-bar">
+          <div
+            className="filter-input">
+            <input
+              className="filter-input-input"
+              onChange={[Function]}
+              placeholder="Filter"
+              type="search"
+              value="" />
+            <button
+              className="filter-input-clear filter-input-clear--empty"
+              onClick={[Function]}>
+              <svg
+                className="icon">
+                <use
+                  xlinkHref={undefined} />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+      <div>
+        <table
+          className="sortable-table">
+          <thead>
+            <tr>
+              <th
+                className="sortable-table-header-cell sortable-table-status"
+                onClick={[Function]}>
+                Status
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+                onClick={[Function]}>
+                Email
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-name"
+                colSpan={1}
+                onClick={[Function]}>
+                Name
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              className="sortable-table-add-user-form">
+              <td />
+              <td
+                colSpan={2}>
+                <input
+                  className="sortable-table-add-user-form-email"
+                  name="email"
+                  placeholder="email@example.com"
+                  type="email" />
+              </td>
+              <td>
+                <button
+                  className="new-button new-button--small"
+                  disabled={undefined}
+                  onClick={[Function]}>
+                  Add User
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td
+                colSpan={4}>
+                <p
+                  style={
+                    Object {
+                      "textAlign": "center",
+                    }
+                  }>
+                  You don\'t manage any user for now.
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers with limited quantity 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "700px",
+      }
+    }>
+    <div
+      className="manage-sub-users">
+      <header
+        className="manage-sub-users-header">
+        <h1
+          className="manage-sub-users-title">
+          Manage Sub Users
+        </h1>
+        <div
+          className="manage-sub-users-action-bar">
+          <div
+            className="filter-input">
+            <input
+              className="filter-input-input"
+              onChange={[Function]}
+              placeholder="Filter"
+              type="search"
+              value="" />
+            <button
+              className="filter-input-clear filter-input-clear--empty"
+              onClick={[Function]}>
+              <svg
+                className="icon">
+                <use
+                  xlinkHref={undefined} />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+      <div>
+        <table
+          className="sortable-table">
+          <caption
+            className="sortable-table-caption">
+            10
+             slots left on 
+            10
+          </caption>
+          <thead>
+            <tr>
+              <th
+                className="sortable-table-header-cell sortable-table-status"
+                onClick={[Function]}>
+                Status
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+                onClick={[Function]}>
+                Email
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-name"
+                colSpan={1}
+                onClick={[Function]}>
+                Name
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td
+                colSpan={4}>
+                <p
+                  style={
+                    Object {
+                      "textAlign": "center",
+                    }
+                  }>
+                  You don\'t manage any user for now.
+                </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.AccountManageSubUsers with short quantity left 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "700px",
+      }
+    }>
+    <div
+      className="manage-sub-users">
+      <header
+        className="manage-sub-users-header">
+        <h1
+          className="manage-sub-users-title">
+          Manage Sub Users
+        </h1>
+        <div
+          className="manage-sub-users-action-bar">
+          <div
+            className="filter-input">
+            <input
+              className="filter-input-input"
+              onChange={[Function]}
+              placeholder="Filter"
+              type="search"
+              value="" />
+            <button
+              className="filter-input-clear filter-input-clear--empty"
+              onClick={[Function]}>
+              <svg
+                className="icon">
+                <use
+                  xlinkHref={undefined} />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+      <div>
+        <table
+          className="sortable-table">
+          <caption
+            className="sortable-table-caption">
+            3
+             slots left on 
+            5
+             • 
+            <a
+              onClick={[Function]}
+              style={Object {}}>
+              Update your subscription
+            </a>
+          </caption>
+          <thead>
+            <tr>
+              <th
+                className="sortable-table-header-cell sortable-table-status"
+                onClick={[Function]}>
+                Status
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+                onClick={[Function]}>
+                Email
+              </th>
+              <th
+                className="sortable-table-header-cell sortable-table-name"
+                colSpan={1}
+                onClick={[Function]}>
+                Name
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              className="sortable-table-add-user-form">
+              <td />
+              <td
+                colSpan={2}>
+                <input
+                  className="sortable-table-add-user-form-email"
+                  name="email"
+                  placeholder="email@example.com"
+                  type="email" />
+              </td>
+              <td>
+                <button
+                  className="new-button new-button--small"
+                  disabled={undefined}
+                  onClick={[Function]}>
+                  Add User
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="sortable-table-row">
+              <td
+                className="sortable-table-cell sortable-table-status">
+                <svg
+                  className="icon manage-sub-users-icon">
+                  <use
+                    xlinkHref={undefined} />
+                </svg>
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-email">
+                user2@example.com
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-name">
+                 
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-actions">
+                <button
+                  className="icon-button"
+                  name="delete"
+                  onClick={[Function]}>
+                  <svg
+                    className="icon">
+                    <use
+                      xlinkHref={undefined} />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <tr
+              className="sortable-table-row">
+              <td
+                className="sortable-table-cell sortable-table-status">
+                <svg
+                  className="icon manage-sub-users-icon">
+                  <use
+                    xlinkHref={undefined} />
+                </svg>
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-email">
+                user@example.com
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-name">
+                 
+              </td>
+              <td
+                className="sortable-table-cell sortable-table-actions">
+                <button
+                  className="icon-button"
+                  name="delete"
+                  onClick={[Function]}>
+                  <svg
+                    className="icon">
+                    <use
+                      xlinkHref={undefined} />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.SubscriptionSidebar agency_annual 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#24d390",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    style={
+      Object {
+        "margin": "20px auto",
+        "width": "350px",
+      }
+    }>
+    <div
+      className="subscription-sidebar">
+      <h1
+        className="subscription-sidebar-header">
+        <span>
+          Agencies
+          <br />
+          Annual
+        </span>
+      </h1>
+      <h2
+        className="subscription-sidebar-title">
+        <span>
+          Prototypo multi-user plan, designed for professionnals, billed annually
+        </span>
+      </h2>
+      <ul
+        className="subscription-sidebar-list-feat">
+        <li
+          className="subscription-sidebar-list-feat-item">
+          All pro features
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Manage your team licences
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Premium 24h support
+        </li>
+      </ul>
+      <div
+        className="subscription-sidebar-separator" />
+      <div
+        className="subscription-sidebar-cta">
+        <span>
+          <span>
+            US$ 25
+          </span>
+           
+          / month
+        </span>
+      </div>
+      <div
+        className="subscription-sidebar-subcta">
+        <span>
+          Less money, same features
+          <br />
+          <span>
+            US$ 12.5
+          </span>
+           
+          × 
+          2
+           per month
+        </span>
+      </div>
+      <a
+        className="subscription-sidebar-link"
+        href="/account/subscribe"
+        onClick={[Function]}>
+        Want less commitment, try our monthly offer
+      </a>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#24d390",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.SubscriptionSidebar agency_monthly 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#24d390",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    style={
+      Object {
+        "margin": "20px auto",
+        "width": "350px",
+      }
+    }>
+    <div
+      className="subscription-sidebar">
+      <h1
+        className="subscription-sidebar-header">
+        <span>
+          Agencies
+          <br />
+          Monthly
+        </span>
+      </h1>
+      <h2
+        className="subscription-sidebar-title">
+        <span>
+          Prototypo multi-user plan, designed for professionnals, billed monthly
+        </span>
+      </h2>
+      <ul
+        className="subscription-sidebar-list-feat">
+        <li
+          className="subscription-sidebar-list-feat-item">
+          All pro features
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Manage your team licences
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Premium 24h support
+        </li>
+      </ul>
+      <div
+        className="subscription-sidebar-separator" />
+      <div
+        className="subscription-sidebar-cta">
+        <span>
+          <span>
+            US$ 45
+          </span>
+           
+          / month
+        </span>
+      </div>
+      <div
+        className="subscription-sidebar-subcta">
+        <span>
+          No commitment!
+          <br />
+          <span>
+            US$ 22.5
+          </span>
+           
+          × 
+          2
+           per month
+        </span>
+      </div>
+      <a
+        className="subscription-sidebar-link"
+        href="/account/subscribe"
+        onClick={[Function]}>
+        Want Prototypo cheaper, check out our annual offer
+      </a>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#24d390",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.SubscriptionSidebar personal_annual_99 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#24d390",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    style={
+      Object {
+        "margin": "20px auto",
+        "width": "350px",
+      }
+    }>
+    <div
+      className="subscription-sidebar">
+      <h1
+        className="subscription-sidebar-header">
+        Annual
+      </h1>
+      <h2
+        className="subscription-sidebar-title">
+        Buy Prototypo Pro subscription for 1 year, get 4 months for free
+      </h2>
+      <ul
+        className="subscription-sidebar-list-feat">
+        <li
+          className="subscription-sidebar-list-feat-item">
+          More diverse fonts with full range on all parameters
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Perfectly customized with glyph individualization groups
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Tune to perfection using the manual edition and component editing
+        </li>
+      </ul>
+      <div
+        className="subscription-sidebar-separator" />
+      <div
+        className="subscription-sidebar-cta">
+        <span>
+          <span>
+            US$ 8.25
+          </span>
+           / month
+        </span>
+      </div>
+      <div
+        className="subscription-sidebar-subcta">
+        <span>
+          Less money, same features
+          <br />
+          Get 4 months free
+        </span>
+      </div>
+      <a
+        className="subscription-sidebar-link"
+        href="/account/subscribe"
+        onClick={[Function]}>
+        Want less commitment, try our monthly offer
+      </a>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#24d390",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.SubscriptionSidebar personal_monthly (no first month offer) 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#24d390",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    style={
+      Object {
+        "margin": "20px auto",
+        "width": "350px",
+      }
+    }>
+    <div
+      className="subscription-sidebar">
+      <h1
+        className="subscription-sidebar-header">
+        Monthly
+      </h1>
+      <h2
+        className="subscription-sidebar-title">
+        <span>
+          Try Prototypo Pro without commitment
+        </span>
+      </h2>
+      <ul
+        className="subscription-sidebar-list-feat">
+        <li
+          className="subscription-sidebar-list-feat-item">
+          More diverse fonts with full range on all parameters
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Perfectly customized with glyph individualization groups
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Tune to perfection using the manual edition and component editing
+        </li>
+      </ul>
+      <div
+        className="subscription-sidebar-separator" />
+      <div
+        className="subscription-sidebar-cta">
+        <span>
+          <span>
+            US$ 15
+          </span>
+           
+           / month
+        </span>
+      </div>
+      <div
+        className="subscription-sidebar-subcta">
+        No commitment!
+      </div>
+      <a
+        className="subscription-sidebar-link"
+        href="/account/subscribe"
+        onClick={[Function]}>
+        Want Prototypo cheaper, check out our annual offer
+      </a>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#24d390",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots account.SubscriptionSidebar personal_monthly 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#24d390",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }>
+  <div
+    style={
+      Object {
+        "margin": "20px auto",
+        "width": "350px",
+      }
+    }>
+    <div
+      className="subscription-sidebar">
+      <h1
+        className="subscription-sidebar-header">
+        Monthly
+      </h1>
+      <h2
+        className="subscription-sidebar-title">
+        <span>
+          Try Prototypo Pro subscription for
+           
+          <span>
+            US$ 1
+          </span>
+           
+          only
+        </span>
+      </h2>
+      <ul
+        className="subscription-sidebar-list-feat">
+        <li
+          className="subscription-sidebar-list-feat-item">
+          More diverse fonts with full range on all parameters
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Perfectly customized with glyph individualization groups
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item">
+          Tune to perfection using the manual edition and component editing
+        </li>
+      </ul>
+      <div
+        className="subscription-sidebar-separator" />
+      <div
+        className="subscription-sidebar-cta">
+        <span>
+          <span>
+            US$ 15
+          </span>
+           
+          <span>
+            <br />
+            after the first month
+          </span>
+        </span>
+      </div>
+      <div
+        className="subscription-sidebar-subcta">
+        No commitment!
+      </div>
+      <a
+        className="subscription-sidebar-link"
+        href="/account/subscribe"
+        onClick={[Function]}>
+        Want Prototypo cheaper, check out our annual offer
+      </a>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }>
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#24d390",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      } />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots shared.AccountValidationButton default 1`] = `
+<button
+  className="account-button account-validation-button"
+  disabled={undefined}
+  onClick={undefined}
+  type="submit">
+  <div>
+    Hit me!
+  </div>
+</button>
+`;
+
+exports[`Storyshots shared.AccountValidationButton disabled 1`] = `
+<button
+  className="account-button account-validation-button"
+  disabled={true}
+  onClick={undefined}
+  type="submit">
+  <div>
+    You can\'t hit me!
+  </div>
+</button>
+`;
+
+exports[`Storyshots shared.AccountValidationButton loading 1`] = `
+<button
+  className="account-button account-validation-button"
+  disabled={true}
+  onClick={undefined}
+  type="submit">
+  <div
+    className="wait-for-load">
+    <div
+      className="sk-spinner sk-spinner-wave sk-secondary-color">
+      <div
+        className="sk-rect1" />
+      <div
+        className="sk-rect2" />
+      <div
+        className="sk-rect3" />
+      <div
+        className="sk-rect4" />
+      <div
+        className="sk-rect5" />
+    </div>
+  </div>
+</button>
+`;
+
+exports[`Storyshots shared.Button default 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }>
+  <button
+    className="new-button"
+    disabled={undefined}>
+    Hit me!
+  </button>
+</div>
+`;
+
+exports[`Storyshots shared.Button disabled 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }>
+  <button
+    className="new-button new-button--disabled"
+    disabled={true}>
+    You can\'t hit me!
+  </button>
+</div>
+`;
+
+exports[`Storyshots shared.Button size="large" 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }>
+  <button
+    className="new-button new-button--large"
+    disabled={undefined}>
+    Hit me!
+  </button>
+</div>
+`;
+
+exports[`Storyshots shared.Button size="small" 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }>
+  <button
+    className="new-button new-button--small"
+    disabled={undefined}>
+    Hit me!
+  </button>
+</div>
+`;
+
+exports[`Storyshots shared.Button size="tiny" 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }>
+  <button
+    className="new-button new-button--tiny"
+    disabled={undefined}>
+    Hit me!
+  </button>
+</div>
+`;
+
+exports[`Storyshots shared.PricingItem $$$ 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "width": "300px",
+    }
+  }>
+  <div
+    aria-selected={false}
+    className="pricing-item"
+    role="option"
+    tabIndex="0">
+    <div
+      className="pricing-item-title">
+      
+      
+    </div>
+    <div
+      className="pricing-item-subtitle">
+      <div
+        className="pricing-item-subtitle-price">
+        <div
+          className="pricing-item-subtitle-price-value">
+          <span>
+            <span
+              className="pricing-item-subtitle-price-value-currency">
+              $
+            </span>
+            5
+            <span
+              className="pricing-item-subtitle-price-value-freq">
+              per month
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared.PricingItem default 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "width": "300px",
+    }
+  }>
+  <div
+    aria-selected={false}
+    className="pricing-item"
+    role="option"
+    tabIndex="0">
+    <div
+      className="pricing-item-title">
+      
+      
+    </div>
+    <div
+      className="pricing-item-subtitle">
+      <div
+        className="pricing-item-subtitle-price">
+        <div
+          className="pricing-item-subtitle-price-value">
+          <span>
+            5
+            <span
+              className="pricing-item-subtitle-price-value-currency">
+               €
+            </span>
+            <span
+              className="pricing-item-subtitle-price-value-freq">
+              per month
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared.PricingItem selected 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "width": "300px",
+    }
+  }>
+  <div
+    aria-selected={true}
+    className="pricing-item pricing-item--selected"
+    role="option"
+    tabIndex="0">
+    <div
+      className="pricing-item-title">
+      
+      
+    </div>
+    <div
+      className="pricing-item-subtitle">
+      <div
+        className="pricing-item-subtitle-price">
+        <div
+          className="pricing-item-subtitle-price-value">
+          <span>
+            5
+            <span
+              className="pricing-item-subtitle-price-value-currency">
+               €
+            </span>
+            <span
+              className="pricing-item-subtitle-price-value-freq">
+              per month
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared.PricingItem with children 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "width": "300px",
+    }
+  }>
+  <div
+    aria-selected={false}
+    className="pricing-item"
+    role="option"
+    tabIndex="0">
+    <div
+      className="pricing-item-title">
+      
+      
+    </div>
+    <div
+      className="pricing-item-subtitle">
+      <div
+        className="pricing-item-subtitle-price">
+        <div
+          className="pricing-item-subtitle-price-value">
+          <span>
+            5
+            <span
+              className="pricing-item-subtitle-price-value-currency">
+               €
+            </span>
+            <span
+              className="pricing-item-subtitle-price-value-freq">
+              per month
+            </span>
+          </span>
+        </div>
+        <div
+          className="pricing-item-subtitle-price-info">
+          Billed annually
+        </div>
+      </div>
+    </div>
+    <p
+      style={
+        Object {
+          "margin": "0",
+          "padding": "10px",
+          "textAlign": "center",
+        }
+      }>
+      You can put anything you want to extend this element
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared.PricingItem with price info 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "width": "300px",
+    }
+  }>
+  <div
+    aria-selected={false}
+    className="pricing-item"
+    role="option"
+    tabIndex="0">
+    <div
+      className="pricing-item-title">
+      
+      
+    </div>
+    <div
+      className="pricing-item-subtitle">
+      <div
+        className="pricing-item-subtitle-price">
+        <div
+          className="pricing-item-subtitle-price-value">
+          <span>
+            5
+            <span
+              className="pricing-item-subtitle-price-value-currency">
+               €
+            </span>
+            <span
+              className="pricing-item-subtitle-price-value-freq">
+              per month
+            </span>
+          </span>
+        </div>
+        <div
+          className="pricing-item-subtitle-price-info">
+          Billed annually
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared.PricingItem with title 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "width": "300px",
+    }
+  }>
+  <div
+    aria-selected={false}
+    className="pricing-item"
+    role="option"
+    tabIndex="0">
+    <div
+      className="pricing-item-title">
+      Monthly
+      
+    </div>
+    <div
+      className="pricing-item-subtitle">
+      <div
+        className="pricing-item-subtitle-price">
+        <div
+          className="pricing-item-subtitle-price-value">
+          <span>
+            5
+            <span
+              className="pricing-item-subtitle-price-value-currency">
+               €
+            </span>
+            <span
+              className="pricing-item-subtitle-price-value-freq">
+              per month
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

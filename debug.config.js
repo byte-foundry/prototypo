@@ -1,4 +1,4 @@
-var config = require('./webpack.config.js');
+var config = require('./local.config.js');
 
 config['if-loader'] = 'debug';
 

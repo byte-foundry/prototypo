@@ -2,13 +2,15 @@ import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {graphql, gql} from 'react-apollo';
 
 import LocalClient from '../stores/local-client.stores.jsx';
-import DOM from '../helpers/dom.helpers.js';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
 import SliderHelpText from '../../images/sliders/helpText.json';
 
-const demoRatio = 0.2;
+import SliderController from './slider-controller.components';
+
+const demoRatio = 0.7;
 
 export class Sliders extends React.PureComponent {
 	constructor(props) {
@@ -30,12 +32,14 @@ export class Sliders extends React.PureComponent {
 				});
 			})
 			.onDelete(() => {
-				this.setState(undefined);
+				this.setState({values: undefined});
 			});
+
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
+				const {subscription} = head.toJS().d;
 				this.setState({
-					subscription: head.toJS().d.subscription,
+					subscription,
 				});
 			})
 			.onDelete(() => {
@@ -133,11 +137,12 @@ export class Sliders extends React.PureComponent {
 	}
 }
 
-export class Slider extends React.Component {
+export class RawSlider extends React.Component {
 	constructor(props) {
 		super(props);
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.changeParam = this.changeParam.bind(this);
+		this.handleRestrictedRangeEnter = this.handleRestrictedRangeEnter.bind(this);
 	}
 
 	componentWillMount() {
@@ -151,6 +156,13 @@ export class Slider extends React.Component {
 
 	resetValue() {
 		this.client.dispatchAction('/change-param', {value: this.props.init, name: this.props.name, label: this.props.label, demo: this.props.demo});
+	}
+
+	handleRestrictedRangeEnter() {
+		this.client.dispatchAction('/store-value', {
+			openRestrictedFeature: true,
+			restrictedFeatureHovered: 'slider',
+		});
 	}
 
 	showTooltip(sliderName) {
@@ -179,7 +191,10 @@ export class Slider extends React.Component {
 			console.log('[RENDER] slider');
 		}
 		const value = this.props.value === undefined ? this.props.init : this.props.value;
-		const freeAccount = !this.props.subscription;
+		// TODO: better way to inject subscription
+		const {subscription} = this.props;
+		const freeAccount = !this.props.isManagedAccount
+			&& !(subscription && !subscription.plan.id.includes('agency'));
 		const credits = this.props.credits;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const disabled = !this.props.disabled && !(freeAccountAndHasCredits || !freeAccount);
@@ -254,13 +269,36 @@ export class Slider extends React.Component {
 						maxAdvised={this.props.maxAdvised}
 						disabled={this.props.disabled}
 						changeParam={this.changeParam}
-						child={this.props.child}/>
+						child={this.props.child}
+						onRestrictedRangeEnter={this.handleRestrictedRangeEnter}
+					/>
 					{indivSwitch}
 				</div>
 			</div>
 		);
 	}
 }
+
+const query = gql`
+	query {
+		user {
+			id
+			manager {
+				id
+			}
+		}
+	}
+`;
+
+export const Slider = graphql(query, {
+	props({data}) {
+		const {user} = data;
+
+		return {
+			isManagedAccount: user && user.manager,
+		};
+	},
+})(RawSlider);
 
 export class RadioSlider extends React.Component {
 	constructor(props) {
@@ -321,162 +359,6 @@ export class RadioSlider extends React.Component {
 						radioValues={this.props.radioValues}/>
 					{indivSwitch}
 				</div>
-			</div>
-		);
-	}
-}
-
-export class SliderController extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-
-		// function bindings
-		this.handleUp = this.handleUp.bind(this);
-		this.handleMove = this.handleMove.bind(this);
-		this.handleSelectstart = this.handleSelectstart.bind(this);
-		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
-	}
-
-	componentWillMount() {
-		this.lifespan = new Lifespan();
-		this.client = LocalClient.instance();
-
-		document.addEventListener('mouseup', this.handleUp);
-		window.addEventListener('mousemove', this.handleMove);
-		document.addEventListener('selectstart', this.handleSelectstart);
-	}
-
-	componentDidMount() {
-		const slider = this.refs.slider;
-
-		this.sliderWidth = slider.offsetWidth;
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-		document.removeEventListener('mouseup', this.handleUp);
-		window.removeEventListener('mousemove', this.handleMove);
-		document.removeEventListener('selectstart', this.handleSelectstart);
-	}
-
-	handleDown(e) {
-		this.tracking = true;
-		const newX = e.pageX || e.screenX;
-		const {offsetLeft} = DOM.getAbsOffset(this.refs.slider);
-		let newValue = ((newX - offsetLeft) / this.sliderWidth * (this.props.max - this.props.min)) + this.props.min;
-
-		newValue = Math.min(Math.max(newValue, this.props.realMin), this.props.realMax);
-
-		this.props.changeParam({value: newValue, name: this.props.name, label: this.props.label});
-		this.currentX = newX;
-
-		e.stopPropagation();
-	}
-
-	handleUp(e) {
-		if (!this.tracking) {
-			return;
-		}
-
-		this.tracking = false;
-		this.props.changeParam({value: this.props.value, name: this.props.name, label: this.props.label, force: true});
-
-		e.stopPropagation();
-	}
-
-	restrictedRangeEnter(e) {
-		this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
-													restrictedFeatureHovered: 'slider'});
-		e.stopPropagation();
-	}
-
-	handleMove(e) {
-		if (!this.tracking) {
-			return;
-		}
-
-		const newX = e.pageX || e.screenX;
-		const el = this.refs.slider;
-		const {offsetLeft} = DOM.getAbsOffset(el);
-		let newValue;
-
-		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
-			const variation = (newX - this.currentX) / this.sliderWidth * (this.props.max - this.props.min);
-
-			newValue = this.props.value + variation;
-
-			newValue = Math.min(Math.max(newValue, this.props.realMin), this.props.realMax);
-		}
-		else {
-			newValue = newX < offsetLeft ? this.props.realMin : this.props.realMax;
-		}
-
-		this.props.changeParam({value: newValue, name: this.props.name});
-		this.currentX = newX;
-	}
-
-	// This prevents preview text to be selected whil using the sliders
-	handleSelectstart(e) {
-		if (this.tracking) {
-			return e.preventDefault();
-		}
-	}
-
-	handleClick() {
-
-	}
-
-	render() {
-		const translateX = (this.props.max - Math.min(Math.max(this.props.value, this.props.min), this.props.max)) / (this.props.max - this.props.min) * 92.0;
-		const translateDemoMin = (this.props.max - this.props.realMin) / (this.props.max - this.props.min) * 92.0;
-		const translateDemoMax = 100 - ((this.props.max - this.props.realMax) / (this.props.max - this.props.min) * 92.0);
-		const transform = {
-			transform: `translateX(-${translateX}%)`,
-		};
-		const transformDemoMin = {
-			transform: `translateX(-${translateDemoMin}%)`,
-			marginLeft: '-10px',
-		};
-		const transformDemoMax = {
-			transform: `translateX(${translateDemoMax}%)`,
-			marginLeft: '-10px',
-		};
-
-		const classes = classNames({
-			'slider-controller-bg': true,
-			'is-not-advised': this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised,
-			'is-indiv': this.props.individualized,
-		});
-
-		const demoClassesMin = classNames({
-			'slider-range-limiter-bg': true,
-			'min': true,
-		});
-
-		const demoClassesMax = classNames({
-			'slider-range-limiter-bg': true,
-			'max': true,
-		});
-
-		const demoRangeLimiters = this.props.demo
-			? (
-				<span>
-					<div onClick={this.restrictedRangeEnter} className={demoClassesMin} style={transformDemoMin}/>
-					<div onClick={this.restrictedRangeEnter} className={demoClassesMax} style={transformDemoMax}/>
-				</span>
-			)
-			: false;
-
-		return (
-			<div className="slider-controller" ref="slider"
-				onMouseDown={(e) => { this.handleDown(e);}}>
-				<div className={classes} style={transform}>
-					<div
-						className="slider-controller-handle"
-						ref="handle" ></div>
-				</div>
-				{demoRangeLimiters}
 			</div>
 		);
 	}

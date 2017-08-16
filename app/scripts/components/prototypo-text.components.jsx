@@ -268,7 +268,8 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 				style={this.props.style}
 				className="prototypo-text"
 				onClick={this.hideContextMenu}
-				onMouseLeave={this.hideContextMenu}>
+				onMouseLeave={this.hideContextMenu}
+				onContextMenu={this.toggleContextMenu}>
 				<ScrollArea horizontal={false} style={panelStyle}>
 					<div className={editorClassNames} style={contentStyle}>
 						<Editor

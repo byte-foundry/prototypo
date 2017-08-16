@@ -1,34 +1,63 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
-import HoodieApi from '~/services/hoodie.services.js';
 
-import {monthlyConst, annualConst, freeConst} from '../../data/plans.data.js';
+import InputNumber from '../shared/input-number.components';
+import PricingItem from '../shared/pricing-item.components';
+import Button from '../shared/new-button.components';
+import WaitForLoad from '../wait-for-load.components';
 
-import SelectWithLabel from '../shared/select-with-label.components.jsx';
-import AccountValidationButton from '../shared/account-validation-button.components.jsx';
+import LocalClient from '../../stores/local-client.stores';
+import getCurrency from '../../helpers/currency.helpers';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
+import {
+	monthlyConst,
+	annualConst,
+	agencyMonthlyConst,
+	agencyAnnualConst,
+} from '../../data/plans.data';
 
-import DisplayWithLabel from '../shared/display-with-label.components.jsx';
+const UNSUBSCRIBE_MESSAGE = `
+Hi,
+
+I would like to cancel my subscription to Prototypo.
+`.trim();
 
 export default class AccountChangePlan extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {};
+		this.state = {
+			loading: true,
+		};
 
-		this.confirmPlan = this.confirmPlan.bind(this);
+		this.confirmChange = this.confirmChange.bind(this);
+		this.downgrade = this.downgrade.bind(this);
+		this.changeNumberOfUsers = this.changeNumberOfUsers.bind(this);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/userStore', this.lifespan)
+		this.client
+			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
+				const {subscription, cards} = head.toJS().d;
+
+				if (!subscription) {
+					this.props.history.push('/account/subscribe');
+					return;
+				}
+
 				this.setState({
-					plan: HoodieApi.instance.plan,
-					loading: head.toJS().d.choosePlanForm.loading,
+					loading: false,
+					subscription,
+					plan: subscription.plan.id,
+					selectedPlan: subscription.plan.id.includes('monthly') ? agencyMonthlyConst : agencyAnnualConst,
+					numberOfUsers: parseInt((subscription && subscription.quantity) || 0, 10),
+					selection: subscription.plan.id.includes('monthly') ? 'monthly' : 'annual',
+					currency: getCurrency(cards[0].country),
 				});
 			})
 			.onDelete(() => {
@@ -41,86 +70,114 @@ export default class AccountChangePlan extends React.Component {
 		this.lifespan.release();
 	}
 
-	confirmPlan(e) {
-		e.preventDefault();
+	confirmChange() {
+		const {selectedPlan, numberOfUsers} = this.state;
+		const plan = selectedPlan.prefix;
 
-		const plan = this.refs.select.inputValue.value;
-
-		window.Intercom('trackEvent', 'change-plan-select', {
+		Intercom('trackEvent', 'change-plan-select', {
 			plan,
+			quantity: numberOfUsers,
 		});
 
-		if (plan === 'free_monthly') {
-			return this.setState({
-				free: true,
-			});
-		}
-
-		this.client.dispatchAction('/confirm-plan', {
-			plan,
-			pathQuery: {pathname: '/account/details/confirm-plan'},
+		this.props.history.push({
+			pathname: '/account/details/confirm-plan',
+			query: {
+				plan,
+				quantity: numberOfUsers,
+			},
 		});
 	}
 
-	render() {
+	downgrade(e) {
+		e.preventDefault();
+		Intercom('showNewMessage', UNSUBSCRIBE_MESSAGE);
+	}
 
-		const planInfos = {
-			[freeConst.prefix]: {
-				name: freeConst.description,
-				price: freeConst.price,
-			},
-			[monthlyConst.prefix]: {
-				name: monthlyConst.description,
-				price: monthlyConst.price,
-			},
-			[annualConst.prefix]: {
-				name: annualConst.description,
-				price: annualConst.price,
-			},
-		};
+	changeNumberOfUsers(value) {
+		this.setState({numberOfUsers: parseInt(value, 10)});
+	}
 
-		const plan = _.find(planInfos, (planInfo, key) => {
-			return this.state.plan && this.state.plan.indexOf(key) !== -1;
-		});
+	renderChoices() {
+		const {subscription, numberOfUsers, selection, currency} = this.state;
 
-		const optionPossible = [
-			{value: freeConst.prefix, label: freeConst.description},
-			{value: monthlyConst.prefix, label: monthlyConst.description},
-			{value: annualConst.prefix, label: annualConst.description},
-		];
+		const {plan} = subscription;
+		const hasAgencyPlan
+			= plan.id.includes(agencyMonthlyConst.prefix) || plan.id.includes(agencyAnnualConst.prefix);
+		const monthlyPlan = (hasAgencyPlan && agencyMonthlyConst) || monthlyConst;
+		const annualPlan = (hasAgencyPlan && agencyAnnualConst) || annualConst;
 
-		const options = _.reject(optionPossible, (option) => {
-			return !(!this.state.plan || !this.state.plan.startsWith(option.value));
-		});
+		return (
+			<div>
+				<div className="pricing">
 
-		return this.state.free
-			? (
-				<div className="account-base">
-					<p className="account-change-plan-downgrade hidden">
-						<span className="account-bold">To downgrade your account, shoot us an email at </span><a className="account-email" href="mailto:account@prototypo.io?subject=Cancelling my subscription&body=Hi,%0A%0A I would like to cancel my subscription to Prototypo.%0A">account@prototypo.io</a><span className="account-bold">, we will do the rest! :)</span>
-						<br/><br/>Cheers,<br/> The Prototypo team
-					</p>
-				</div>
-			)
-			: (
-				<form onSubmit={this.confirmPlan} className="account-base account-change-plan">
-					<div>
-						<DisplayWithLabel label="Your current plan">
-							{ this.state.plan ? plan.name : `You do not have a plan.` }
-						</DisplayWithLabel>
-					</div>
-					<SelectWithLabel
-						clearable={false}
-						searchable={false}
-						ref="select"
-						label="Which plan are you interested in?"
-						noResultsText={"No plan with this name"}
-						options={options}
+					<PricingItem
+						title="Monthly"
+						description="Flexible pricing with no commitment"
+						selected={selection === 'monthly'}
+						currency={currency}
+						amount={monthlyPlan.monthlyPrice * numberOfUsers}
+						current={plan.id.includes(monthlyPlan.prefix)}
+						onClick={() => this.setState({selection: 'monthly', selectedPlan: monthlyPlan})}
 					/>
-					<AccountValidationButton label="Change plan" loading={this.state.loading}/>
-				</form>
-			);
 
-		return content;
+					<PricingItem
+						title="Yearly"
+						description="Flexible pricing with no commitment"
+						selected={selection === 'annual'}
+						currency={currency}
+						amount={annualPlan.monthlyPrice * numberOfUsers}
+						current={plan.id.includes(annualPlan.prefix)}
+						onClick={() => this.setState({selection: 'annual', selectedPlan: annualPlan})}
+					/>
+
+				</div>
+
+				{hasAgencyPlan
+					&& <div className="account-change-plan-number-of-users">
+						<p>You can update the number of users you manage:</p>
+
+						<InputNumber
+							min={subscription.quantity}
+							max={100}
+							value={numberOfUsers}
+							onChange={this.changeNumberOfUsers}
+							controls
+						/>
+					</div>}
+
+				<div className="account-change-plan-actions">
+					<Button
+						onClick={this.confirmChange}
+						disabled={plan.id.includes(selection) && numberOfUsers <= subscription.quantity}
+					>
+						Apply change
+					</Button>
+				</div>
+			</div>
+		);
+	}
+
+	render() {
+		const {loading} = this.state;
+
+		return (
+			<div className="account-base account-change-plan">
+				<header className="manage-sub-users-header">
+					<h1 className="manage-sub-users-title">Change Plan</h1>
+					<p className="manage-sub-users-sidephrase">
+						Want to downgrade? <a
+							href={`mailto:account@prototypo.io?subject=Cancelling my subscription&body=${encodeURI(UNSUBSCRIBE_MESSAGE)}`}
+							className="account-email"
+							onClick={this.downgrade}
+							title="If this link doesn't work, you may need to turn off your privacy blocker"
+						>
+							Contact us!
+						</a>
+					</p>
+				</header>
+
+				{loading ? <WaitForLoad loading /> : this.renderChoices()}
+			</div>
+		);
 	}
 }
