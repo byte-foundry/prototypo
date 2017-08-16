@@ -15,7 +15,7 @@
     "eslint": "^3.19.0",
     "eslint-plugin-react": "^7.0.1",
     "gfnt.ptf": "byte-foundry/spectral.ptf#master",
-    "john-fell.ptf": "byte-foundry/john-fell.ptf#master",
+    "john-fell.ptf": "byte-foundry/john-fell.ptf#feat/new-core",
     "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",
     "lodash": "~4.14.0",
@@ -49,7 +49,7 @@
     "svg-inline-react": "1.x.x",
     "tether": "^1.1.0",
     "tutorial-content": "byte-foundry/tutorial-content#master",
-    "venus.ptf": "byte-foundry/venus.ptf#master",
+    "venus.ptf": "byte-foundry/venus.ptf#feat/new-engine",
     "whatwg-fetch": "^0.9.0",
     "worker-loader": "^0.8.0",
     "xxhashjs": "^0.1.1"
