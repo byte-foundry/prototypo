@@ -97,7 +97,7 @@ class StartApp extends React.PureComponent {
 								</label>
 								<ul className="load-project-project">
 									{families.map(family =>
-										<FamilyRow open={this.open} {...family} />,
+										<FamilyRow key={family.id} open={this.open} {...family} />,
 									)}
 								</ul>
 							</div>
@@ -114,10 +114,12 @@ StartApp.defaultProps = {
 };
 
 StartApp.propTypes = {
-	families: PropTypes.arrayOf({
-		id: PropTypes.string.isRequired,
-		name: PropTypes.string.isRequired,
-	}),
+	families: PropTypes.arrayOf(
+		PropTypes.shape({
+			id: PropTypes.string.isRequired,
+			name: PropTypes.string.isRequired,
+		}),
+	),
 };
 
 const getUserLibraryQuery = gql`
@@ -128,6 +130,7 @@ const getUserLibraryQuery = gql`
 			library {
 				id
 				name
+				template
 				variants {
 					id
 				}

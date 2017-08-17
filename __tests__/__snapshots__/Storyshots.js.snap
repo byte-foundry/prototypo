@@ -353,7 +353,7 @@ exports[`Storyshots SliderController unadvised state 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.AccountManageSubUsers active 1`] = `
+exports[`Storyshots account/AccountManageSubUsers active 1`] = `
 <div
   style={
     Object {
@@ -496,7 +496,7 @@ exports[`Storyshots account.AccountManageSubUsers active 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.AccountManageSubUsers empty state 1`] = `
+exports[`Storyshots account/AccountManageSubUsers empty state 1`] = `
 <div
   style={
     Object {
@@ -620,7 +620,7 @@ exports[`Storyshots account.AccountManageSubUsers empty state 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.AccountManageSubUsers full 1`] = `
+exports[`Storyshots account/AccountManageSubUsers full 1`] = `
 <div
   style={
     Object {
@@ -807,7 +807,7 @@ exports[`Storyshots account.AccountManageSubUsers full 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.AccountManageSubUsers loading 1`] = `
+exports[`Storyshots account/AccountManageSubUsers loading 1`] = `
 <div
   style={
     Object {
@@ -961,7 +961,7 @@ exports[`Storyshots account.AccountManageSubUsers loading 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.AccountManageSubUsers pending 1`] = `
+exports[`Storyshots account/AccountManageSubUsers pending 1`] = `
 <div
   style={
     Object {
@@ -1104,7 +1104,7 @@ exports[`Storyshots account.AccountManageSubUsers pending 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.AccountManageSubUsers removable 1`] = `
+exports[`Storyshots account/AccountManageSubUsers removable 1`] = `
 <div
   style={
     Object {
@@ -1247,7 +1247,7 @@ exports[`Storyshots account.AccountManageSubUsers removable 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.AccountManageSubUsers with add user form 1`] = `
+exports[`Storyshots account/AccountManageSubUsers with add user form 1`] = `
 <div
   style={
     Object {
@@ -1391,7 +1391,7 @@ exports[`Storyshots account.AccountManageSubUsers with add user form 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.AccountManageSubUsers with limited quantity 1`] = `
+exports[`Storyshots account/AccountManageSubUsers with limited quantity 1`] = `
 <div
   style={
     Object {
@@ -1521,7 +1521,7 @@ exports[`Storyshots account.AccountManageSubUsers with limited quantity 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.AccountManageSubUsers with short quantity left 1`] = `
+exports[`Storyshots account/AccountManageSubUsers with short quantity left 1`] = `
 <div
   style={
     Object {
@@ -1728,7 +1728,7 @@ exports[`Storyshots account.AccountManageSubUsers with short quantity left 1`] =
 </div>
 `;
 
-exports[`Storyshots account.SubscriptionSidebar agency_annual 1`] = `
+exports[`Storyshots account/SubscriptionSidebar agency_annual 1`] = `
 <div
   style={
     Object {
@@ -1843,7 +1843,7 @@ exports[`Storyshots account.SubscriptionSidebar agency_annual 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.SubscriptionSidebar agency_monthly 1`] = `
+exports[`Storyshots account/SubscriptionSidebar agency_monthly 1`] = `
 <div
   style={
     Object {
@@ -1958,7 +1958,7 @@ exports[`Storyshots account.SubscriptionSidebar agency_monthly 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.SubscriptionSidebar personal_annual_99 1`] = `
+exports[`Storyshots account/SubscriptionSidebar personal_annual_99 1`] = `
 <div
   style={
     Object {
@@ -2060,7 +2060,7 @@ exports[`Storyshots account.SubscriptionSidebar personal_annual_99 1`] = `
 </div>
 `;
 
-exports[`Storyshots account.SubscriptionSidebar personal_monthly (no first month offer) 1`] = `
+exports[`Storyshots account/SubscriptionSidebar personal_monthly (no first month offer) 1`] = `
 <div
   style={
     Object {
@@ -2161,7 +2161,7 @@ exports[`Storyshots account.SubscriptionSidebar personal_monthly (no first month
 </div>
 `;
 
-exports[`Storyshots account.SubscriptionSidebar personal_monthly 1`] = `
+exports[`Storyshots account/SubscriptionSidebar personal_monthly 1`] = `
 <div
   style={
     Object {
@@ -2271,7 +2271,7 @@ exports[`Storyshots account.SubscriptionSidebar personal_monthly 1`] = `
 </div>
 `;
 
-exports[`Storyshots shared.AccountValidationButton default 1`] = `
+exports[`Storyshots shared/AccountValidationButton default 1`] = `
 <button
   className="account-button account-validation-button"
   disabled={undefined}
@@ -2283,7 +2283,7 @@ exports[`Storyshots shared.AccountValidationButton default 1`] = `
 </button>
 `;
 
-exports[`Storyshots shared.AccountValidationButton disabled 1`] = `
+exports[`Storyshots shared/AccountValidationButton disabled 1`] = `
 <button
   className="account-button account-validation-button"
   disabled={true}
@@ -2295,7 +2295,7 @@ exports[`Storyshots shared.AccountValidationButton disabled 1`] = `
 </button>
 `;
 
-exports[`Storyshots shared.AccountValidationButton loading 1`] = `
+exports[`Storyshots shared/AccountValidationButton loading 1`] = `
 <button
   className="account-button account-validation-button"
   disabled={true}
@@ -2320,7 +2320,7 @@ exports[`Storyshots shared.AccountValidationButton loading 1`] = `
 </button>
 `;
 
-exports[`Storyshots shared.Button default 1`] = `
+exports[`Storyshots shared/Button default 1`] = `
 <div
   className="normal"
   style={
@@ -2338,7 +2338,7 @@ exports[`Storyshots shared.Button default 1`] = `
 </div>
 `;
 
-exports[`Storyshots shared.Button disabled 1`] = `
+exports[`Storyshots shared/Button disabled 1`] = `
 <div
   className="normal"
   style={
@@ -2356,7 +2356,43 @@ exports[`Storyshots shared.Button disabled 1`] = `
 </div>
 `;
 
-exports[`Storyshots shared.Button size="large" 1`] = `
+exports[`Storyshots shared/Button fluid 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }>
+  <button
+    className="new-button new-button--fluid"
+    disabled={undefined}>
+    Hit me!
+  </button>
+</div>
+`;
+
+exports[`Storyshots shared/Button outline 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }>
+  <button
+    className="new-button new-button--outline"
+    disabled={undefined}>
+    Hit me!
+  </button>
+</div>
+`;
+
+exports[`Storyshots shared/Button size="large" 1`] = `
 <div
   className="normal"
   style={
@@ -2374,7 +2410,7 @@ exports[`Storyshots shared.Button size="large" 1`] = `
 </div>
 `;
 
-exports[`Storyshots shared.Button size="small" 1`] = `
+exports[`Storyshots shared/Button size="small" 1`] = `
 <div
   className="normal"
   style={
@@ -2392,7 +2428,7 @@ exports[`Storyshots shared.Button size="small" 1`] = `
 </div>
 `;
 
-exports[`Storyshots shared.Button size="tiny" 1`] = `
+exports[`Storyshots shared/Button size="tiny" 1`] = `
 <div
   className="normal"
   style={
@@ -2410,7 +2446,7 @@ exports[`Storyshots shared.Button size="tiny" 1`] = `
 </div>
 `;
 
-exports[`Storyshots shared.PricingItem $$$ 1`] = `
+exports[`Storyshots shared/PricingItem $$$ 1`] = `
 <div
   className="normal"
   style={
@@ -2454,7 +2490,7 @@ exports[`Storyshots shared.PricingItem $$$ 1`] = `
 </div>
 `;
 
-exports[`Storyshots shared.PricingItem default 1`] = `
+exports[`Storyshots shared/PricingItem default 1`] = `
 <div
   className="normal"
   style={
@@ -2498,7 +2534,7 @@ exports[`Storyshots shared.PricingItem default 1`] = `
 </div>
 `;
 
-exports[`Storyshots shared.PricingItem selected 1`] = `
+exports[`Storyshots shared/PricingItem selected 1`] = `
 <div
   className="normal"
   style={
@@ -2542,7 +2578,7 @@ exports[`Storyshots shared.PricingItem selected 1`] = `
 </div>
 `;
 
-exports[`Storyshots shared.PricingItem with children 1`] = `
+exports[`Storyshots shared/PricingItem with children 1`] = `
 <div
   className="normal"
   style={
@@ -2600,7 +2636,7 @@ exports[`Storyshots shared.PricingItem with children 1`] = `
 </div>
 `;
 
-exports[`Storyshots shared.PricingItem with price info 1`] = `
+exports[`Storyshots shared/PricingItem with price info 1`] = `
 <div
   className="normal"
   style={
@@ -2648,7 +2684,7 @@ exports[`Storyshots shared.PricingItem with price info 1`] = `
 </div>
 `;
 
-exports[`Storyshots shared.PricingItem with title 1`] = `
+exports[`Storyshots shared/PricingItem with title 1`] = `
 <div
   className="normal"
   style={

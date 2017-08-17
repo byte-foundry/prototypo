@@ -7,6 +7,8 @@ import ScrollArea from 'react-scrollbar/dist/no-css';
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Log from '~/services/log.services.js';
 
+import {libraryQuery} from '../collection/collection.components';
+
 import Button from '../shared/new-button.components.jsx';
 import SelectWithLabel from '../shared/select-with-label.components.jsx';
 
@@ -20,6 +22,7 @@ export class AddFamily extends React.PureComponent {
 		};
 
 		this.exit = this.exit.bind(this);
+		this.selectFont = this.selectFont.bind(this);
 		this.createFont = this.createFont.bind(this);
 	}
 
@@ -56,25 +59,14 @@ export class AddFamily extends React.PureComponent {
 		this.lifespan.release();
 	}
 
-	toggleForm(e, state) {
-		e.stopPropagation();
-		this.setState({
-			error: undefined,
-		});
-
-		if (state) {
-			this.client.dispatchAction('/store-value', {uiOnboardstep: 'creatingFamily-2'});
-			setTimeout(() => {
-				this.refs.name.focus();
-			}, 100);
-		}
-	}
-
 	selectFont(uiCreatefamilySelectedTemplate) {
 		this.client.dispatchAction('/store-value', {
 			errorAddFamily: undefined,
 		});
 		this.client.dispatchAction('/store-value', {uiCreatefamilySelectedTemplate});
+		this.client.dispatchAction('/store-value', {uiOnboardstep: 'creatingFamily-2'});
+
+		this.name.focus();
 	}
 
 	exit() {
@@ -86,30 +78,43 @@ export class AddFamily extends React.PureComponent {
 	async createFont(e) {
 		e.preventDefault();
 
-		const startApp = this.props.firstTime || false;
-
 		const name = e.target.name.value;
 
 		if (!this.state.selectedFont) {
-			this.setState({error: 'Please select a font template.'})
+			this.setState({error: 'Please select a font template.'});
 			return;
 		}
 
-		// this.client.dispatchAction('/create-family', {
-		// 	name: this.refs.name.value,
-		// 	template: this.state.selectedFont ? this.state.selectedFont.templateName : undefined,
-		// 	loadCurrent: this.state.selectedFont ? this.state.selectedFont.loadCurrent : false,
-		// 	startApp,
-		// });
+		if (!String(name).trim()) {
+			this.setState({error: 'You must choose a name for your family'});
+			return;
+		}
+
+		// TODO: check if already existing name, or on graphcool?
 
 		// TODO: grab the default values
-		const newFont = await this.props.createFamily(name, this.state.selectedFont.templateName);
+		try {
+			const {data: {createFamily: newFont}} = await this.props.createFamily(
+				name,
+				this.state.selectedFont.templateName,
+			);
 
-		// Log.ui('Collection.CreateFamily'); // TODO: put this in the onCreateFamily in collection
-		// Log.ui(`createFamily.${this.state.selectedFont.templateName}`);
-		// this.client.dispatchAction('/store-value', {uiOnboardstep: 'customize'});
+			this.client.dispatchAction('/family-created', newFont);
 
-		this.props.onCreateFamily(newFont);
+			this.client.dispatchAction('/change-font', {
+				templateToLoad: newFont.template,
+				variantId: newFont.variants[0].id,
+			});
+
+			Log.ui('Collection.CreateFamily'); // TODO: put this in the onCreateFamily in collection
+			Log.ui(`createFamily.${this.state.selectedFont.templateName}`);
+			this.client.dispatchAction('/store-value', {uiOnboardstep: 'customize'});
+
+			this.props.onCreateFamily(newFont);
+		}
+		catch (err) {
+			this.setState({error: err.message});
+		}
 	}
 
 	render() {
@@ -120,16 +125,14 @@ export class AddFamily extends React.PureComponent {
 			'with-error': !!this.state.error,
 		});
 
-		const templateList = _.map(this.state.fonts, font => (
-			<FamilyTemplateChoice
+		const templateList = this.state.fonts.map(font =>
+			(<FamilyTemplateChoice
 				key={font.name}
 				selectedFont={this.state.selectedFont}
 				font={font}
-				chooseFont={(selectedFont) => {
-					this.selectFont(selectedFont);
-				}}
-			/>
-			));
+				chooseFont={this.selectFont}
+			/>),
+		);
 
 		const error = this.state.error
 			? (<div className="add-family-form-error">
@@ -138,22 +141,13 @@ export class AddFamily extends React.PureComponent {
 			: false;
 
 		return (
-			<div
-				className={familyClass}
-				onClick={(e) => {
-					this.toggleForm(e, true);
-				}}
-				id="font-create"
-			>
+			<div id="font-create" className={familyClass}>
 				<div className="add-family-form">
 					<label className="add-family-form-label">
 						<span className="add-family-form-label-order">1. </span>Choose a font template
 					</label>
 					<div className="add-family-form-template-list">
-						<ScrollArea
-							contentClassName="add-family-form-template-list-content"
-							horizontal={false}
-						>
+						<ScrollArea contentClassName="add-family-form-template-list-content" horizontal={false}>
 							{templateList}
 						</ScrollArea>
 					</div>
@@ -162,6 +156,7 @@ export class AddFamily extends React.PureComponent {
 							<span className="add-family-form-label-order">2. </span>Choose a family name
 						</label>
 						<input
+							ref={node => (this.name = node)}
 							id="add-family-form-name"
 							name="name"
 							className="add-family-form-input"
@@ -170,8 +165,13 @@ export class AddFamily extends React.PureComponent {
 						/>
 						{error}
 						<div className="action-form-buttons">
-							{!start && <Button onClick={this.exit}>Cancel</Button>}
-							<Button type="submit" size="small" outline>{start ? 'Create project' : 'Create family'}</Button>
+							{!start
+								&& <Button onClick={this.exit} outline>
+									Cancel
+								</Button>}
+							<Button type="submit" size="small">
+								{start ? 'Create project' : 'Create family'}
+							</Button>
 						</div>
 					</form>
 				</div>
@@ -199,12 +199,10 @@ const getUserIdQuery = gql`
 const createFamilyMutation = gql`
 	mutation createFamily($name: String!, $template: String!, $ownerId: ID!) {
 		createFamily(
-			name: $name,
-			template: $template,
-			ownerId: $ownerId,
-			variants: [{
-				name: "Regular",
-			}],
+			name: $name
+			template: $template
+			ownerId: $ownerId
+			variants: [{name: "Regular"}]
 		) {
 			id
 			name
@@ -226,19 +224,33 @@ AddFamily = compose(
 			}
 
 			return {userId: data.user.id};
-		}
+		},
 	}),
 	graphql(createFamilyMutation, {
 		props: ({mutate, ownProps}) => ({
-			createFamily: (name, template) =>
-				mutate({
+			createFamily: (name, template) => {
+				debugger;
+				return mutate({
 					variables: {
 						ownerId: ownProps.userId,
 						name,
 						template,
 					},
-				}),
+				});
+			},
 		}),
+		options: {
+			update: (store, {data: {createFamily}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library.push(createFamily);
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
 	}),
 )(AddFamily);
 
@@ -263,41 +275,21 @@ export class FamilyTemplateChoice extends React.Component {
 					/>
 				</div>
 				<div className="family-template-choice-sample">
-					<img src={`/assets/images/${this.props.font.sampleLarge}`} />
+					<img src={`/assets/images/${this.props.font.sampleLarge}`} alt="" />
 				</div>
 			</div>
 		);
 	}
 }
 
-export class AddVariant extends React.PureComponent {
+export class AddVariantRaw extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			error: undefined,
+			error: null,
+			name: '',
 		};
-
-		this.exit = this.exit.bind(this);
-		this.createVariant = this.createVariant.bind(this);
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client
-			.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				if (head.toJS().d.errorAddVariant !== this.state.error) {
-					this.setState({
-						error: head.toJS().d.errorAddVariant,
-					});
-				}
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
 
 		this.variants = [
 			{label: 'Thin', value: 'Thin'}, // 20
@@ -317,47 +309,148 @@ export class AddVariant extends React.PureComponent {
 			{label: 'Black', value: 'Black'}, // 150
 			{label: 'Black Italic', value: 'Black Italic'},
 		];
+
+		this.createVariant = this.createVariant.bind(this);
+		this.exit = this.exit.bind(this);
+		this.saveName = this.saveName.bind(this);
 	}
 
-	componentWillUnmount() {
-		this.lifespan.release();
+	componentWillMount() {
+		this.client = LocalClient.instance();
 	}
 
-	createVariant(e) {
-		e.stopPropagation();
-		this.client.dispatchAction('/create-variant', {
-			name: this.refs.variantName.inputValue.value,
-			familyName: this.props.family.name,
-			familyId: this.props.family.id,
-		});
-		Log.ui('Collection.createVariant');
+	async createVariant() {
+		// this.client.dispatchAction('/create-variant', {
+		// 	name: this.refs.variantName.inputValue.value,
+		// 	familyId: this.props.family.id,
+		// });
+		this.setState({error: null});
+
+		const name = this.name.inputValue.value;
+
+		try {
+			// TODO: check duplicates, on Graphcool ?
+
+			if (!name.trim()) {
+				throw new Error('You need to enter a name');
+			}
+
+			this.props.createVariant(name);
+
+			Log.ui('Collection.createVariant');
+
+			this.exit();
+		}
+		catch (err) {
+			this.setState({error: err.message});
+		}
 	}
 
 	exit() {
 		this.client.dispatchAction('/store-value', {
 			openVariantModal: false,
-			errorAddVariant: undefined,
 		});
 	}
 
+	saveName(value) {
+		this.setState({error: null, name: value || ''});
+	}
+
 	render() {
-		console.log('here the ', this.props.family);
+		const {error} = this.state;
+
 		return (
-			<div className="variant" ref="container">
+			<div className="variant">
 				<SelectWithLabel
-					ref="variantName"
+					ref={(node) => this.name = node}
 					noResultsText={false}
 					placeholder="Enter a variant name or choose a suggestion with predefined settings"
 					options={this.variants}
 				/>
-				<div className="variant-error">
-					{this.state.error}
-				</div>
+				{error
+					&& <div className="add-family-form-error">
+						{error}
+					</div>}
 				<div className="action-form-buttons">
-					<Button click={this.exit} label="Cancel" neutral />
-					<Button click={this.createVariant} label="Create variant" />
+					<Button onClick={this.exit} outline>
+						Cancel
+					</Button>
+					<Button onClick={this.createVariant} disabled={!!error}>
+						Create variant
+					</Button>
 				</div>
 			</div>
 		);
 	}
 }
+
+// very similar to DuplicateVariant
+// we could have only one component
+
+const getBaseValuesQuery = gql`
+	query getBaseValues($variantBaseId: ID!) {
+		variant: Variant(id: $variantBaseId) {
+			id
+			values
+		}
+	}
+`;
+
+const createVariantMutation = gql`
+	mutation createVariant($familyId: ID!, $name: String!, $baseValues: Json!) {
+		createVariant(name: $name, values: $baseValues, familyId: $familyId) {
+			id
+			name
+			values
+		}
+	}
+`;
+
+export const AddVariant = graphql(getBaseValuesQuery, {
+	options: ({family}) => ({variables: {variantBaseId: family.variants[0].id}}),
+	props({data}) {
+		if (data.loading) {
+			return {loading: true};
+		}
+
+		return {variantBase: data.variant};
+	},
+})(
+	graphql(createVariantMutation, {
+		props: ({mutate, ownProps}) => ({
+			createVariant: name =>
+				mutate({
+					variables: {
+						familyId: ownProps.family.id,
+						name,
+						baseValues: ownProps.variantBase.values,
+					},
+					update: (store, {data: {createVariant}}) => {
+						const data = store.readQuery({query: libraryQuery});
+
+						const family = data.user.library.find(family => family.id === ownProps.family.id);
+
+						family.variants.push(createVariant);
+
+						store.writeQuery({
+							query: libraryQuery,
+							data,
+						});
+					},
+				}),
+		}),
+	})(AddVariantRaw),
+);
+
+AddVariant.propTypes = {
+	family: PropTypes.shape({
+		id: PropTypes.string.isRequired,
+		name: PropTypes.string.isRequired,
+		variants: PropTypes.arrayOf(
+			PropTypes.shape({
+				id: PropTypes.string.isRequired,
+				name: PropTypes.string.isRequired,
+			}),
+		),
+	}),
+};

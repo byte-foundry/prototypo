@@ -56,12 +56,12 @@
 			background-color: $green;
 			color: $white;
 		}
+	}
 
-		&--disabled {
-			background-color: transparent;
-			box-shadow: 0 0 0 2px $light-grey inset;
-			color: $light-grey;
-		}
+	&--outline#{&}--disabled {
+		background-color: transparent;
+		box-shadow: 0 0 0 2px $light-grey inset;
+		color: $light-grey;
 	}
 
 	&--fluid {

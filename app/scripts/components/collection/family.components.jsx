@@ -121,7 +121,10 @@ Family.defaultProps = {
 };
 
 Family.propTypes = {
-	family: PropTypes.string.isRequired,
+	family: PropTypes.shape({
+		id: PropTypes.string.isRequired,
+		name: PropTypes.string.isRequired,
+	}).isRequired,
 	templateName: PropTypes.string.isRequired,
 	onSelect: PropTypes.func,
 	onDelete: PropTypes.func,

@@ -146,7 +146,7 @@ class ViewPanelsMenu extends React.PureComponent {
 						if (node) this.button = node;
 					},
 				})}
-				<Portal isOpened={show} beforeClose={this.handleClose}>
+				<Portal ref={(node) => this.portal = node} isOpened={show} beforeClose={this.handleClose}>
 					<TransitionGroup
 						component="div"
 						style={{left: this.state.x, top: this.state.y}}

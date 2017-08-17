@@ -94,10 +94,6 @@ export async function loadStuff() {
 			appValues.values.familySelected = defaultValues.values.familySelected;
 		}
 
-		if (appValues.values.library.length <= 0) {
-			appValues.values.library = defaultValues.values.library;
-		}
-
 		// tmp
 		const selectedFamily = families.find(({name}) => name === appValues.values.familySelected.name);
 		if (selectedFamily) {

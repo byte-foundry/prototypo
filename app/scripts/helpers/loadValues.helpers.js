@@ -10,7 +10,6 @@ export const valuesToLoad = [
 	{remote: 'variantSelected', local: 'variant'},
 	{remote: 'familySelected', local: 'family'},
 	{remote: 'mode', local: 'uiMode'},
-	{remote: 'switchedToHoodie', local: 'switchedToHoodie'},
 	{remote: 'onboard', local: 'uiOnboard'},
 	{remote: 'word', local: 'uiWord'},
 	{remote: 'text', local: 'uiText'},

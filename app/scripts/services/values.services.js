@@ -1,7 +1,4 @@
 import {gql} from 'react-apollo';
-import HoodieApi from './hoodie.services.js';
-
-import LocalClient from '../stores/local-client.stores.jsx';
 
 import apolloClient from './graphcool.services';
 

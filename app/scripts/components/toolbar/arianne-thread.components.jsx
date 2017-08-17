@@ -54,16 +54,6 @@ class ArianneThread extends React.PureComponent {
 						: voidStateObject
 				);
 
-				//This should never happen. However for user comfort if it happens
-				//we should create a new family to avoid crashes.
-				if (!family.name) {
-					console.log('I will create a new font, are you fckn sure?');
-					// localClient.dispatchAction('/create-family', {
-					// 	name: 'My font',
-					// 	template: 'elzevir.ptf',
-					// 	loadCurrent: true,
-					// });
-				}
 				const isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 				const isFreeWithCredits = (head.toJS().d.credits && head.toJS().d.credits > 0) && isFree;
 
@@ -164,6 +154,11 @@ class ArianneThread extends React.PureComponent {
 	render() {
 		const {selectedFamily, selectedVariant} = this.state;
 		const {families} = this.props;
+
+		if (families.length === 0) {
+			// TODO: use <Redirect /> when migrating over React Router 4
+			return <p>Loading...</p>;
+		}
 
 		const family = families.find(({name}) => name === selectedFamily.name) || families[0];
 		const variant = family.variants.find(({name}) => name === selectedVariant.name) || family.variants[0];

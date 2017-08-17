@@ -31,9 +31,7 @@ export default class AcademyHome extends React.PureComponent {
 		this.lifespan = new Lifespan();
 		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
 			academyProgress = head.toJS().d.academyProgress || {};
-			this.setState({
-				academyProgress: head.toJS().d.academyProgress || {},
-			});
+			this.setState({academyProgress});
 		});
 		// Map through the course to :
 		// Get title, header and slug
@@ -102,6 +100,11 @@ export default class AcademyHome extends React.PureComponent {
 
 		window.Intercom('trackEvent', 'openedAcademyHome');
 	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	getPartsDone(slug) {
 		const partsDone = this.state.academyProgress[slug].parts
 		.filter(part => part.completed === true);

@@ -98,7 +98,7 @@ class Collection extends React.PureComponent {
 	}
 
 	render() {
-		const {families} = this.props;
+		const {families, deleteFamily} = this.props;
 		const {
 			selected,
 			templateInfos,
@@ -117,7 +117,7 @@ class Collection extends React.PureComponent {
 				variantToExport={variantToExport}
 				exportedVariant={exportedVariant}
 				family={selected}
-				onDeleteFamily={this.handleDeleteFamily}
+				deleteVariant={this.props.deleteVariant}
 			/>)
 			: false;
 
@@ -135,6 +135,7 @@ class Collection extends React.PureComponent {
 							templateInfos={templateInfos}
 							selected={selected}
 							deleteSplit={this.state.familyDeleteSplit}
+							deleteFamily={deleteFamily}
 						/>
 						{variant}
 					</div>
@@ -162,7 +163,7 @@ Collection.defaultProps = {
 	deleteVariant: () => {},
 };
 
-const libraryQuery = gql`
+export const libraryQuery = gql`
 	query {
 		user {
 			id
@@ -219,8 +220,26 @@ export default compose(
 	}),
 	graphql(deleteVariantMutation, {
 		props: ({mutate}) => ({
-			deleteVariant: id => mutate({variables: {id}}),
+			deleteVariant: id =>
+				mutate({
+					variables: {id},
+				}),
 		}),
+		options: {
+			update: (store, {data: {deleteVariant}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library.forEach((family) => {
+					// eslint-disable-next-line
+					family.variants = family.variants.filter(variant => variant.id !== deleteVariant.id);
+				});
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
 	}),
 	graphql(deleteFamilyMutation, {
 		props: ({mutate, ownProps}) => ({
@@ -238,6 +257,18 @@ export default compose(
 				return Promise.all([...variants, mutate({variables: {id}})]);
 			},
 		}),
+		options: {
+			update: (store, {data: {deleteFamily}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library = data.user.library.filter(font => font.id !== deleteFamily.id);
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
 	}),
 )(Collection);
 
@@ -270,10 +301,18 @@ class FamilyList extends React.PureComponent {
 		});
 	}
 
-	deleteFamily(family) {
-		this.client.dispatchAction('/delete-family', {
-			family,
-		});
+	async deleteFamily(family) {
+		try {
+			await this.props.deleteFamily(family.id);
+
+			// legacy call use to change the selected family
+			this.client.dispatchAction('/delete-family', {
+				family,
+			});
+		}
+		catch (err) {
+			// TODO: Error handling
+		}
 	}
 
 	render() {
@@ -289,7 +328,7 @@ class FamilyList extends React.PureComponent {
 
 			return (
 				<Family
-					key={family.name}
+					key={family.id}
 					family={family}
 					selected={selected}
 					class={family.template.split('.')[0]}
@@ -378,22 +417,32 @@ class VariantList extends React.PureComponent {
 	openDuplicateVariant(variant) {
 		this.client.dispatchAction('/store-value', {
 			openDuplicateVariantModal: true,
+			collectionSelectedVariant: variant,
 			familySelectedVariantCreation: this.props.family,
 		});
 	}
 
-	deleteVariant(variant) {
-		this.client.dispatchAction('/delete-variant', {
-			variant,
-			familyName: this.props.family.name,
-		});
+	async deleteVariant(variant) {
+		try {
+			await this.props.deleteVariant(variant.id);
+
+			// legacy call use to change the selected variant
+			this.client.dispatchAction('/delete-variant', {
+				variant,
+				familyName: this.props.family.name,
+			});
+		}
+		catch (err) {
+			// TODO: Error handling
+		}
 	}
 
 	render() {
 		const {deleteSplit} = this.state;
 
-		const variants = this.props.variants.map(variant => (
-			<Variant
+		const variants = this.props.variants.map(variant =>
+			(<Variant
+				key={variant.id}
 				family={this.props.family}
 				variant={variant}
 				deleteSplit={deleteSplit}
@@ -401,8 +450,8 @@ class VariantList extends React.PureComponent {
 				changeName={this.openChangeVariantName}
 				duplicate={this.openDuplicateVariant}
 				delete={this.deleteVariant}
-			/>
-		));
+			/>),
+		);
 
 		return (
 			<div className="variant-list-container">

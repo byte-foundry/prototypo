@@ -50,7 +50,7 @@ gulp.task('cp-genese', function() {
 });
 
 gulp.task('cp-static', function() {
-	gulp.src(['./app/index.html', './app/iframe.html','./app/robots.txt','./app/favicon.ico','./app/404.html','./app/scripts/jquery.js'])
+	gulp.src(['./app/index.html', './app/iframe.html','./app/robots.txt','./app/favicon.ico','./app/404.html'])
 		.pipe(gulp.dest('./dist/'));
 });
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import {graphql, gql} from 'react-apollo';
 import {withRouter} from 'react-router';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
@@ -21,7 +22,6 @@ import ChangeNameVariant from './familyVariant/change-name-variant.components.js
 import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
 import CreditsExport from './credits-export.components.jsx';
 import GoProModal from './go-pro-modal.components.jsx';
-//import NpsMessage from './nps-message.components.jsx';
 
 import {buildTutorialSteps, handleNextStep, handleClosed} from '../helpers/joyride.helpers.js';
 
@@ -64,9 +64,9 @@ class Dashboard extends React.PureComponent {
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
-
-				if (!head.toJS().d.fonts.length) {
+				if (this.props.library.length <= 0) {
 					this.props.router.push('/start');
+					return;
 				}
 
 				this.setState({
@@ -271,4 +271,28 @@ class Dashboard extends React.PureComponent {
 	}
 }
 
-export default withRouter(Dashboard);
+const getUserFontsQuery = gql`
+	query getUserFonts {
+		user {
+			id
+			library {
+				id
+			}
+		}
+	}
+`;
+
+export default graphql(getUserFontsQuery, {
+	options: {
+		fetchPolicy: 'cache-first',
+	},
+	props({data}) {
+		if (data.loading) {
+			return {loading: true};
+		}
+
+		return {
+			library: data.user.library || [],
+		};
+	},
+})(withRouter(Dashboard));
