@@ -61,10 +61,8 @@ export default class FontPrecursor {
 		const glyphs = _.reduce(glyphNames, (result, name) => {
 			if (this.glyphs[name]) {
 				result.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));
-				return result;
 			}
-
-			return undefined;
+			return result;
 		}, []);
 
 		return {

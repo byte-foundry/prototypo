@@ -1,10 +1,12 @@
-/* global _ */
-import {prototypoStore, undoableStore, fontInstanceStore} from '../stores/creation.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
-import LocalClient from '../stores/local-client.stores.jsx';
-import {FontValues} from '../services/values.services.js';
-import HoodieApi from '../services/hoodie.services.js';
+/* global _, URL */
 import JSZip from 'jszip';
+
+import {prototypoStore, undoableStore, fontInstanceStore} from '../stores/creation.stores';
+import LocalServer from '../stores/local-server.stores';
+import LocalClient from '../stores/local-client.stores';
+import {FontValues} from '../services/values.services';
+import HoodieApi from '../services/hoodie.services';
+import FontMediator from '../prototypo.js/mediator/FontMediator';
 
 let localServer;
 let localClient;
@@ -17,26 +19,26 @@ window.addEventListener('fluxServer.setup', () => {
 
 const a = document.createElement('a');
 
-const triggerDownload = function(arrayBuffer, filename) {
+function triggerDownload(arrayBuffer, filename) {
 	const reader = new FileReader();
 	const enFamilyName = filename;
 
-	reader.onloadend = function() {
+	reader.onloadend = () => {
 		a.download = `${enFamilyName}.otf`;
 		a.href = reader.result;
 		a.dispatchEvent(new MouseEvent('click'));
 
-		setTimeout(function() {
+		setTimeout(() => {
 			a.href = '#';
-			_URL.revokeObjectURL(reader.result);
+			URL.revokeObjectURL(reader.result);
 		}, 100);
 	};
 
 	reader.readAsDataURL(new Blob(
 		[new DataView(arrayBuffer)],
-		{type: 'font/opentype'}
+		{type: 'font/opentype'},
 	));
-};
+}
 
 /**
 *	Checks for export authorization for a given (plan,credits) couple
@@ -79,7 +81,7 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/export-otf': ({merged, familyName = 'font', variantName = 'regular', exportAs}) => {
+	'/export-otf': async ({merged, familyName = 'font', variantName = 'regular', exportAs}) => {
 		const exporting = prototypoStore.get('export');
 
 		if (exporting) {
@@ -89,9 +91,9 @@ export default {
 		const plan = HoodieApi.instance.plan;
 		const credits = prototypoStore.get('credits');
 
-		//forbid export without plan
+		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
-			return false;
+			return;
 		}
 
 		localClient.dispatchAction('/exporting', {exporting: true});
@@ -117,74 +119,37 @@ export default {
 			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
 		}, 10000);
 
-		const pool = fontInstanceStore.get('fontWorkerPool');
+		const fontMediatorInstance = FontMediator.instance();
 		const altList = prototypoStore.get('altList');
-		const params = undoableStore.get('controlsValues');
-		const jobs = [];
+		const values = undoableStore.get('controlsValues');
+		const template = fontInstanceStore.get('templateToLoad');
 		const glyphs = prototypoStore.get('glyphs');
-		const subset = Object.keys(glyphs);
-		const fontPromise = _.chunk(subset, Math.ceil(subset.length / pool.workerArray.length))
-			.map((subsubset) => {
-				return new Promise((resolve) => {
-					jobs.push({
-						action: {
-							type: 'constructGlyphs',
-							data: {
-								params,
-								subset: subsubset,
-							},
-						},
-						callback: (font) => {
-							resolve(font);
-						},
-					});
-				});
-			});
+		const subset = Object.keys(glyphs).filter(key => glyphs[key][0].unicode !== undefined);
 
-		pool.doJobs(jobs);
+		const buffer = await fontMediatorInstance.getFontFile(
+			name,
+			template,
+			{...values, altList},
+			subset,
+			merged,
+		);
 
-		Promise.all(fontPromise).then((fonts) => {
-			let fontResult;
-
-			fonts.forEach(({font}) => {
-				if (fontResult) {
-					fontResult.glyphs = [
-						...fontResult.glyphs,
-						...font.glyphs,
-					];
-				}
-				else {
-					fontResult = font;
-				}
-			});
-
-			pool.doFastJob({
-				action: {
-					type: 'makeOtf',
-					data: {
-						fontResult,
-					},
-				},
-				callback: ({arrayBuffer}) => {
-					triggerDownload(arrayBuffer.buffer, 'hello');
-					localClient.dispatchAction('/exporting', {exporting: false});
-				},
-			});
-		});
+		triggerDownload(buffer, `${name.family} ${name.style}.otf`);
+		localClient.dispatchAction('/exporting', {exporting: false});
 	},
 	'/end-export-otf': () => {
-			localClient.dispatchAction('/store-value-font', {exportPlease: false});
-			localClient.dispatchAction('/store-value', {uiOnboardstep: 'end'});
-			clearTimeout(exportingError);
-			window.Intercom('trackEvent', 'export-otf');
-			spendCreditsAction();
-			localClient.dispatchAction('/exporting', {exporting: false});
+		localClient.dispatchAction('/store-value-font', {exportPlease: false});
+		localClient.dispatchAction('/store-value', {uiOnboardstep: 'end'});
+		clearTimeout(exportingError);
+		window.Intercom('trackEvent', 'export-otf');
+		spendCreditsAction();
+		localClient.dispatchAction('/exporting', {exporting: false});
 	},
 	'/set-up-export-otf': ({merged, exportAs = true}) => {
 		const plan = HoodieApi.instance.plan;
 		const credits = prototypoStore.get('credits');
 
-		//forbid export without plan
+		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
 			return false;
 		}
@@ -206,7 +171,7 @@ export default {
 		const plan = HoodieApi.instance.plan;
 		const credits = prototypoStore.get('credits');
 
-		//forbid export without plan
+		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
 			return false;
 		}
@@ -225,7 +190,7 @@ export default {
 		});
 	},
 	'/end-export-glyphr': () => {
-			spendCreditsAction();
+		spendCreditsAction();
 	},
 	// TODO add a spend credit action
 	'/export-family-from-reader': ({result, familyToExport, template, oldDb}) => {
@@ -277,7 +242,7 @@ export default {
 			});
 		};
 
-		reader.readAsDataURL(zip.generate({type: "blob"}));
+		reader.readAsDataURL(zip.generate({type: 'blob'}));
 	},
 	'/export-family-from-values': ({familyToExport, valueArray, oldDb, template}) => {
 		const blobs = [];
@@ -289,12 +254,10 @@ export default {
 					style: value.currVariant.name,
 				},
 				false,
-				value.fontValues.values
+				value.fontValues.values,
 			);
 
-			blobs.push(blob.then((blobContent) => {
-				return blobContent;
-			}));
+			blobs.push(blob.then(blobContent => blobContent));
 		});
 
 		Promise.all(blobs).then((blobBuffers) => {
@@ -345,7 +308,7 @@ export default {
 		const plan = HoodieApi.instance.plan;
 		const credits = prototypoStore.get('credits');
 
-		//forbid export without plan
+		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
 			return false;
 		}
@@ -372,7 +335,6 @@ export default {
 				oldDb: oldVariant.db,
 				template: family.template,
 			});
-
 		});
 	},
 };

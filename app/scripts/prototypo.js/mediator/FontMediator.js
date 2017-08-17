@@ -107,6 +107,92 @@ export default class FontMediator {
 		oldFont = fontFace;
 	}
 
+	getFontFile(fontName, template, params, subset, merge) {
+		if (!this.workerPool) {
+			return undefined;
+		}
+
+		return new Promise((resolve) => {
+			const jobs = [];
+			const fontPromise = _.chunk(
+				subset,
+				Math.ceil(subset.length / this.workerPool.workerArray.length),
+			).map((subsubset) => {
+				return new Promise((resolve) => {
+					jobs.push({
+						action: {
+							type: 'constructGlyphs',
+							data: {
+								name: template,
+								params: {
+									...params,
+								},
+								subset: subsubset,
+							},
+						},
+						callback: (font) => {
+							resolve(font);
+						},
+					});
+				});
+			});
+
+			this.workerPool.doJobs(jobs);
+
+			Promise.all(fontPromise).then((fonts) => {
+				clearTimeout(mergeTimeoutRef);
+
+				let fontResult;
+
+				fonts.forEach(({font}) => {
+					if (fontResult) {
+						fontResult.glyphs = [
+							...fontResult.glyphs,
+							...font.glyphs,
+						];
+					}
+					else {
+						fontResult = font;
+					}
+				});
+
+				this.workerPool.doFastJob({
+					action: {
+						type: 'makeOtf',
+						data: {
+							fontResult,
+						},
+					},
+					callback: async ({arrayBuffer}) => {
+						if (params.trigger) {
+							 triggerDownload(arrayBuffer.buffer, 'hello');
+						}
+
+						if (merge) {
+							const mergedFont = await mergeFont(
+								MERGE_URL,
+								{
+									style: 'forbrowserdisplay',
+									template: 'noidea',
+									family: 'forbrowserdisplay',
+								},
+								'plumin',
+								arrayBuffer.buffer,
+								true,
+							);
+
+							resolve(mergedFont);
+						}
+						else {
+
+							resolve(arrayBuffer.buffer);
+						}
+					},
+				});
+			});
+		});
+	}
+
 	getFont(fontName, template, params, subset, glyphCanvasUnicode) {
 		if (!this.workerPool) {
 			return;

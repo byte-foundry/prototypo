@@ -404,11 +404,15 @@ export default class Glyph {
 			const componentParams = {
 				...localParams,
 				manualChanges: {
-					[localParams.glyphComponentChoice[this.name.value][component.id.value] || component.base[0].value]: {
-						cursors: componentManualChanges,
-					},
+					[component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]
+						? localParams.glyphComponentChoice[this.name.value][component.id.value]
+						: component.base[0].value]: {
+							cursors: componentManualChanges,
+						},
 				},
-				componentChoice: localParams.glyphComponentChoice[this.name.value][component.id.value],
+				componentChoice: component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]
+					? localParams.glyphComponentChoice[this.name.value][component.id.value]
+					: component.base[0].value,
 			};
 
 			return component.constructComponent(
