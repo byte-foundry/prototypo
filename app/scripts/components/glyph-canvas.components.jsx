@@ -246,7 +246,10 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				const nodes = hotItems.filter(item => item.type <= toileType.CONTOUR_NODE_OUT);
 				const tools = hotItems.filter(item => item.type === toileType.DISTR_TOOL);
-				const components = hotItems.filter(item => item.type === toileType.COMPONENT_CHOICE);
+				const components = hotItems.filter(
+					item => item.type === toileType.COMPONENT_CHOICE
+						|| item.type === toileType.COMPONENT_NONE_CHOICE,
+				);
 				const componentMenu = hotItems.filter(
 					item => item.type === toileType.COMPONENT_MENU_ITEM_CENTER,
 				);

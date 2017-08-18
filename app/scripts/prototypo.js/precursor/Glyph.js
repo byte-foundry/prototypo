@@ -405,28 +405,24 @@ export default class Glyph {
 						? localParams.glyphComponentChoice[this.name.value][component.id.value]
 						: component.base[0].value;
 
-			if (componentName !== 'none') {
-				const componentParams = {
-					...localParams,
-					manualChanges: {
-						[componentName]: {
-							cursors: componentManualChanges,
-						},
+			const componentParams = {
+				...localParams,
+				manualChanges: {
+					[componentName]: {
+						cursors: componentManualChanges,
 					},
-					componentChoice: componentName,
-				};
+				},
+				componentChoice: componentName,
+			};
 
-				return component.constructComponent(
-					componentParams,
-					opDone.contours,
-					opDone.anchors,
-					utils,
-					glyphs,
-				);
-			}
-
-			return undefined;
-		}).filter(item => item);
+			return component.constructComponent(
+				componentParams,
+				opDone.contours,
+				opDone.anchors,
+				utils,
+				glyphs,
+			);
+		});
 
 		const transformedThis = _.mapValues(this, (prop, name) => {
 			if (prop !== undefined
@@ -486,7 +482,9 @@ export default class Glyph {
 		const otContours = this.createGlyphContour(opDone.contours);
 
 		_.forEach(opDone.components, (component) => {
-			otContours.push(...component.otContours);
+			if (component.name !== 'none') {
+				otContours.push(...component.otContours);
+			}
 		});
 
 		return {

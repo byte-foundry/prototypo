@@ -19,8 +19,9 @@ export const toileType = {
 	GLYPH_CONTOUR: 7,
 	GLYPH_COMPONENT_CONTOUR: 8,
 	COMPONENT_CHOICE: 9,
-	COMPONENT_MENU_ITEM: 10,
-	COMPONENT_MENU_ITEM_CENTER: 11,
+	COMPONENT_NONE_CHOICE: 10,
+	COMPONENT_MENU_ITEM: 11,
+	COMPONENT_MENU_ITEM_CENTER: 12,
 };
 
 export const canvasMode = {
@@ -74,6 +75,7 @@ const labelForMenu = {
 const menuTextSize = 30;
 const componentMenuTextSize = 20;
 const componentMenuInfluenceRadius = 150;
+const componentMenuNoneRadius = 20;
 
 const infinityDistance = 10000000;
 
@@ -684,54 +686,72 @@ export default class Toile {
 	drawComponents(components, hotItems) {
 		components.forEach((component, i) => {
 			let startIndexBeziers = 0;
+			const id = `components.${i}`;
 
-			component.contours.forEach((contour) => {
-				const id = `components.${i}`;
+			if (component.name === 'none') {
 				const hot = _.find(hotItems, item => item.id === id);
-				let length;
+				const fillColor = hot ? blue : 'transparent';
 
-				if (contour.skeleton && contour.closed) {
-					length = 2;
-				}
-				else {
-					length = 1;
-				}
-				const deepListOfBeziers = _.slice(component.otContours,
-					startIndexBeziers,
-					startIndexBeziers + length,
-				);
-				const listOfBezier = _.flatten(deepListOfBeziers);
-
-				if (hot) {
-					this.context.strokeStyle = blue;
-					this.context.fillStyle = blue;
-				}
-				else {
-					this.context.strokeStyle = green;
-					this.context.fillStyle = green;
-				}
-				this.context.lineWidth = 1;
-				this.context.beginPath();
-				deepListOfBeziers.forEach((bez) => {
-					this.drawContour(bez, undefined, undefined, true);
-				});
-				this.context.stroke();
-				this.context.fill();
-				this.context.fillStyle = transparent;
-				this.context.lineWidth = 1;
-
+				this.drawCircle(component.contours[0].nodes[0], 10, blue, fillColor);
 				this.interactionList.push({
 					id,
-					type: toileType.COMPONENT_CHOICE,
+					type: toileType.COMPONENT_NONE_CHOICE,
 					data: {
-						beziers: listOfBezier,
+						center: component.contours[0].nodes[0],
+						radius: componentMenuNoneRadius,
 						id: component.id,
 						bases: component.base,
 					},
 				});
+			}
+			else {
+				component.contours.forEach((contour) => {
+					const hot = _.find(hotItems, item => item.id === id);
+					let length;
 
-				startIndexBeziers += length;
-			});
+					if (contour.skeleton && contour.closed) {
+						length = 2;
+					}
+					else {
+						length = 1;
+					}
+					const deepListOfBeziers = _.slice(component.otContours,
+						startIndexBeziers,
+						startIndexBeziers + length,
+					);
+					const listOfBezier = _.flatten(deepListOfBeziers);
+
+					if (hot) {
+						this.context.strokeStyle = blue;
+						this.context.fillStyle = blue;
+					}
+					else {
+						this.context.strokeStyle = green;
+						this.context.fillStyle = green;
+					}
+					this.context.lineWidth = 1;
+					this.context.beginPath();
+					deepListOfBeziers.forEach((bez) => {
+						this.drawContour(bez, undefined, undefined, true);
+					});
+					this.context.stroke();
+					this.context.fill();
+					this.context.fillStyle = transparent;
+					this.context.lineWidth = 1;
+
+					this.interactionList.push({
+						id,
+						type: toileType.COMPONENT_CHOICE,
+						data: {
+							beziers: listOfBezier,
+							id: component.id,
+							bases: component.base,
+						},
+					});
+
+					startIndexBeziers += length;
+				});
+			}
 		});
 	}
 
@@ -951,21 +971,30 @@ export default class Toile {
 	}
 
 	drawComponentMenu(
-		{id, bases, beziers},
+		{id, bases, beziers, center},
 		frameCounters,
 		hotItems = [],
 		width,
 		componentMenuPos = [],
 	) {
+		let menuCenter;
 		const t = Math.min(1, frameCounters / componentMenuAnimationLength);
 		const t2 = t ** 2;
 		const y = (3 * t * (1 - t2) * 0.1) + (3 * t2 * (1 - t) * 1) + ((t ** 3) * 1);
-		const flatBezier = _.flatten(beziers);
-		const bezierCenter = _.reduce(
-			flatBezier,
-			(acc, point) => add2D(mulScalar2D(1 / flatBezier.length, point), acc),
-			{x: 0, y: 0},
-		);
+
+		if (center) {
+			menuCenter = center;
+		}
+		else {
+			const flatBezier = _.flatten(beziers);
+
+			menuCenter = _.reduce(
+				flatBezier,
+				(acc, point) => add2D(mulScalar2D(1 / flatBezier.length, point), acc),
+				{x: 0, y: 0},
+			);
+		}
+
 		const corners = [0, 1, 2, 3].map(i =>
 			({
 				x: width * (i & 0b01),
@@ -973,8 +1002,8 @@ export default class Toile {
 			}),
 		);
 		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
-		const [viewBezierCenter] = transformCoords(
-			[bezierCenter],
+		const [viewMenuCenter] = transformCoords(
+			[menuCenter],
 			this.viewMatrix,
 			this.height,
 		);
@@ -988,8 +1017,8 @@ export default class Toile {
 			viewMenuPos = bases.map(base => (
 				{
 					id: base.id,
-					x: viewBezierCenter.x + (Math.random() - 0.5),
-					y: viewBezierCenter.y + (Math.random() - 0.5),
+					x: viewMenuCenter.x + (Math.random() - 0.5),
+					y: viewMenuCenter.y + (Math.random() - 0.5),
 				}
 			));
 		}
@@ -997,10 +1026,10 @@ export default class Toile {
 		const result = viewMenuPos.map((menu, i) => {
 			const {id: baseId, label} = bases[i];
 			const inHot = _.find(hotItems, item => item.id === baseId);
-			const centerFactor = (distance2D(viewBezierCenter, menu) / pixelPerMeter);
+			const centerFactor = (distance2D(viewMenuCenter, menu) / pixelPerMeter);
 			const centerRepulsor = mulScalar2D(
 				400 / Math.max(20, centerFactor),
-				normalize2D(subtract2D(menu, viewBezierCenter)),
+				normalize2D(subtract2D(menu, viewMenuCenter)),
 			);
 
 			const leftTopRepulsor = mulScalar2D(
@@ -1049,15 +1078,15 @@ export default class Toile {
 			};
 
 			const maxDistance = 200;
-			const distanceToBezierCenter = distance2D(resultMenu, viewBezierCenter);
+			const distanceToBezierCenter = distance2D(resultMenu, viewMenuCenter);
 
 			if (distanceToBezierCenter > maxDistance) {
-				const vectorToBezierCenter = subtract2D(resultMenu, viewBezierCenter);
+				const vectorToBezierCenter = subtract2D(resultMenu, viewMenuCenter);
 
 				resultMenu = {
 					id: baseId,
 					...add2D(
-						viewBezierCenter,
+						viewMenuCenter,
 						mulScalar2D(maxDistance / distanceToBezierCenter, vectorToBezierCenter),
 					),
 				};
@@ -1069,9 +1098,14 @@ export default class Toile {
 				this.height / this.viewMatrix[0],
 			)[0];
 
-			this.drawCircle(componentCenter, componentHotRadius * y, inHot ? darkBlue : blue, inHot ? darkBlue : blue);
+			this.drawCircle(
+				componentCenter,
+				componentHotRadius * y,
+				inHot ? darkBlue : blue,
+				inHot ? darkBlue : blue,
+			);
 			this.context.lineWidth = 2;
-			this.drawLine(componentCenter, bezierCenter, inHot ? darkBlue : blue);
+			this.drawLine(componentCenter, menuCenter, inHot ? darkBlue : blue);
 			this.context.lineWidth = 1;
 
 			const textWidth = this.measureText(label.value, componentMenuTextSize);
@@ -1102,7 +1136,7 @@ export default class Toile {
 			return componentCenter;
 		});
 
-		const points = [bezierCenter, ...result];
+		const points = [menuCenter, ...result];
 		const barycenter = mulScalar2D(1 / points.length, _.reduce(
 					points,
 					(acc, point) => add2D(acc, point),
@@ -1113,7 +1147,7 @@ export default class Toile {
 			id,
 			type: toileType.COMPONENT_MENU_ITEM_CENTER,
 			data: {
-				component: {id, bases, beziers},
+				component: {id, bases, beziers, center},
 				center: barycenter,
 			},
 		});
@@ -1446,6 +1480,7 @@ export default class Toile {
 				break;
 			}
 			case toileType.COMPONENT_MENU_ITEM:
+			case toileType.COMPONENT_NONE_CHOICE:
 			case toileType.NODE_IN:
 			case toileType.NODE_OUT:
 			case toileType.NODE_SKELETON:
