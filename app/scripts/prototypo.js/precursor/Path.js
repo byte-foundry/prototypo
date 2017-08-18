@@ -221,8 +221,8 @@ class SolvablePath {
 				nodes[i].dirIn = nodes[i].dirOut;
 			}
 
-			nodes[i].tensionIn = node.typeIn === 'line' ? 0 : (node.tensionIn || 1);
-			nodes[i].tensionOut = node.typeOut === 'line' ? 0 : (node.tensionOut || 1);
+			nodes[i].tensionIn = node.typeIn === 'line' ? 0 : (node.tensionIn !== undefined ? node.tensionIn : 1);
+			nodes[i].tensionOut = node.typeOut === 'line' ? 0 : (node.tensionOut !== undefined ? node.tensionOut : 1);
 
 			if (!closed && skeleton) {
 				if (i === 0) {
