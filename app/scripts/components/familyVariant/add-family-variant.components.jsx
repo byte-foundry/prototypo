@@ -229,7 +229,6 @@ AddFamily = compose(
 	graphql(createFamilyMutation, {
 		props: ({mutate, ownProps}) => ({
 			createFamily: (name, template) => {
-				debugger;
 				return mutate({
 					variables: {
 						ownerId: ownProps.userId,
@@ -320,10 +319,6 @@ export class AddVariantRaw extends React.PureComponent {
 	}
 
 	async createVariant() {
-		// this.client.dispatchAction('/create-variant', {
-		// 	name: this.refs.variantName.inputValue.value,
-		// 	familyId: this.props.family.id,
-		// });
 		this.setState({error: null});
 
 		const name = this.name.inputValue.value;
@@ -335,11 +330,16 @@ export class AddVariantRaw extends React.PureComponent {
 				throw new Error('You need to enter a name');
 			}
 
-			this.props.createVariant(name);
+			const {data: {createVariant}} = await this.props.createVariant(name);
 
 			Log.ui('Collection.createVariant');
 
 			this.exit();
+
+			this.client.dispatchAction('/select-variant', {
+				variant: {id: createVariant.id, name: createVariant.name},
+				family: this.props.family,
+			});
 		}
 		catch (err) {
 			this.setState({error: err.message});
@@ -384,14 +384,41 @@ export class AddVariantRaw extends React.PureComponent {
 	}
 }
 
-// very similar to DuplicateVariant
-// we could have only one component
+function adaptValuesFromName(name, values) {
+	const lowName = name.toLowerCase();
+	const newValues = Object.assign({}, values);
+
+	const thicknessTransform = [
+		{string: 'thin', thickness: 20},
+		{string: 'light', thickness: 50},
+		{string: 'book', thickness: 70},
+		{string: 'bold', thickness: 115},
+		{string: 'semi-bold', thickness: 100},
+		{string: 'extra-bold', thickness: 135},
+		{string: 'black', thickness: 150},
+	];
+
+	thicknessTransform.forEach((item) => {
+		if (lowName.includes(item.string)) {
+			newValues.thickness = item.thickness;
+		}
+	});
+
+	if (lowName.includes('italic')) {
+		newValues.slant = 10;
+	}
+
+	return newValues;
+}
 
 const getBaseValuesQuery = gql`
-	query getBaseValues($variantBaseId: ID!) {
-		variant: Variant(id: $variantBaseId) {
+	query getBaseValues($familyId: ID!) {
+		family: Family(id: $familyId) {
 			id
-			values
+			variants(first: 1) {
+				id
+				values
+			}
 		}
 	}
 `;
@@ -407,13 +434,13 @@ const createVariantMutation = gql`
 `;
 
 export const AddVariant = graphql(getBaseValuesQuery, {
-	options: ({family}) => ({variables: {variantBaseId: family.variants[0].id}}),
+	options: ({family}) => ({variables: {familyId: family.id}}),
 	props({data}) {
 		if (data.loading) {
 			return {loading: true};
 		}
 
-		return {variantBase: data.variant};
+		return {variantBase: data.family.variants[0]};
 	},
 })(
 	graphql(createVariantMutation, {
@@ -423,7 +450,7 @@ export const AddVariant = graphql(getBaseValuesQuery, {
 					variables: {
 						familyId: ownProps.family.id,
 						name,
-						baseValues: ownProps.variantBase.values,
+						baseValues: adaptValuesFromName(name, ownProps.variantBase.values),
 					},
 					update: (store, {data: {createVariant}}) => {
 						const data = store.readQuery({query: libraryQuery});

@@ -35,7 +35,7 @@ class DuplicateVariant extends React.PureComponent {
 		});
 	}
 
-	duplicateVariant() {
+	async duplicateVariant() {
 		this.setState({error: null});
 
 		const {name} = this.state;
@@ -43,9 +43,14 @@ class DuplicateVariant extends React.PureComponent {
 		try {
 			// TODO: check duplicates, on Graphcool ?
 
-			this.props.duplicateVariant(name);
+			const {duplicateVariant} = await this.props.duplicateVariant(name);
 
 			this.exit();
+
+			this.client.dispatchAction('/select-variant', {
+				variant: {id: duplicateVariant.id, name: duplicateVariant.name},
+				family: this.props.family,
+			});
 		}
 		catch (err) {
 			this.setState({error: err.message});

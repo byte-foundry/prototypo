@@ -7,6 +7,8 @@ import HoodieApi from '~/services/hoodie.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
+import {libraryQuery} from '../collection/collection.components';
+
 const voidStateObject = {};
 const voidStateArray = [];
 
@@ -99,15 +101,15 @@ class ArianneThread extends React.PureComponent {
 	addVariant() {
 		this.client.dispatchAction('/store-value', {
 			openVariantModal: true,
-			familySelectedVariantCreation: this.state.family,
+			familySelectedVariantCreation: this.state.selectedFamily,
 		});
 	}
 
 	showCollection() {
 		this.client.dispatchAction('/store-value', {
 			uiShowCollection: true,
-			collectionSelectedFamily: this.state.family,
-			collectionSelectedVariant: this.state.variant,
+			collectionSelectedFamily: this.state.selectedFamily,
+			collectionSelectedVariant: this.state.selectedVariant,
 		});
 	}
 
@@ -236,24 +238,7 @@ ArianneThread.defaultProps = {
 	families: [],
 };
 
-const getFontsQuery = gql`
-	query getFonts {
-		user {
-			id
-			library {
-				id
-				name
-				template
-				variants {
-					id
-					name
-				}
-			}
-		}
-	}
-`;
-
-export default graphql(getFontsQuery, {
+export default graphql(libraryQuery, {
 	options: {
 		fetchPolicy: 'cache-first', // this prevents any empty state for now
 	},

@@ -58,13 +58,6 @@ const signUpAndLoginMutation = gql`
 			occupation: $occupation,
 			phone: $phone,
 			skype: $skype,
-			library: [{
-				name: "My first font",
-				template: "elzevir.ptf",
-				variants: {
-					name: "REGULAR",
-				},
-			}],
 		) {
 			id
 			email

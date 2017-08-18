@@ -49,6 +49,8 @@
 	&-container {
 		background-color: $white;
 		flex: 0 0 55%;
+		display: flex;
+		flex-direction: column;
 
 		&#{&}-enter {
 			margin-left: -100%;

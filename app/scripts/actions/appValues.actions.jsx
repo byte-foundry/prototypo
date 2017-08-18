@@ -15,7 +15,6 @@ export default {
 		values.tab = values.tab || 'Func';
 		values.pinned = values.pinned || [];
 		values.tagSelected = values.tagSelected || 'all';
-		values.library = values.library || [];
 		values.mode = values.mode || ['glyph'];
 		values.wordFontSize = values.wordFontSize || 1;
 		values.textFontSize = values.textFontSize || 1;

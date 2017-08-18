@@ -86,11 +86,6 @@ const prototypoStore = new Remutable({
 	],
 
 	//end template list store values
-	//font library store values
-	errorAddFamily: undefined,
-	errorAddVariant: undefined,
-	fonts: [],
-	//end font library store values
 
 	//font variant store values
 	openFamilyModal: false,
