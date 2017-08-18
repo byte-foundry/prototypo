@@ -73,6 +73,7 @@ const labelForMenu = {
 };
 const menuTextSize = 30;
 const componentMenuTextSize = 20;
+const componentMenuInfluenceRadius = 150;
 
 const infinityDistance = 10000000;
 
@@ -983,15 +984,6 @@ export default class Toile {
 			this.height,
 		);
 
-		this.interactionList.push({
-			id,
-			type: toileType.COMPONENT_MENU_ITEM_CENTER,
-			data: {
-				component: {id, bases, beziers},
-				center: bezierCenter,
-			},
-		});
-
 		if (frameCounters === 0) {
 			viewMenuPos = bases.map(base => (
 				{
@@ -1108,6 +1100,22 @@ export default class Toile {
 			});
 
 			return componentCenter;
+		});
+
+		const points = [bezierCenter, ...result];
+		const barycenter = mulScalar2D(1 / points.length, _.reduce(
+					points,
+					(acc, point) => add2D(acc, point),
+					{x: 0, y: 0},
+				));
+
+		this.interactionList.push({
+			id,
+			type: toileType.COMPONENT_MENU_ITEM_CENTER,
+			data: {
+				component: {id, bases, beziers},
+				center: barycenter,
+			},
 		});
 
 		return result;
@@ -1391,7 +1399,7 @@ export default class Toile {
 				const {center} = interactionItem.data;
 				const distance = distance2D(mouseTransformed, center);
 
-				if (distance <= 350 / this.viewMatrix[0]) {
+				if (distance <= componentMenuInfluenceRadius / this.viewMatrix[0]) {
 					result.push(interactionItem);
 				}
 				break;

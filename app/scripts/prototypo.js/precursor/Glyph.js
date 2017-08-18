@@ -401,28 +401,32 @@ export default class Glyph {
 				.pickBy((value, key) => key.match(new RegExp(`components\.${idx}`)))
 				.mapKeys((value, key) => key.replace(/components\.\d\./g, ''))
 				.value();
-			const componentParams = {
-				...localParams,
-				manualChanges: {
-					[component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]
+			const componentName = component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]
 						? localParams.glyphComponentChoice[this.name.value][component.id.value]
-						: component.base[0].value]: {
+						: component.base[0].value;
+
+			if (componentName !== 'none') {
+				const componentParams = {
+					...localParams,
+					manualChanges: {
+						[componentName]: {
 							cursors: componentManualChanges,
 						},
-				},
-				componentChoice: component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]
-					? localParams.glyphComponentChoice[this.name.value][component.id.value]
-					: component.base[0].value,
-			};
+					},
+					componentChoice: componentName,
+				};
 
-			return component.constructComponent(
-				componentParams,
-				opDone.contours,
-				opDone.anchors,
-				utils,
-				glyphs,
-			);
-		});
+				return component.constructComponent(
+					componentParams,
+					opDone.contours,
+					opDone.anchors,
+					utils,
+					glyphs,
+				);
+			}
+
+			return undefined;
+		}).filter(item => item);
 
 		const transformedThis = _.mapValues(this, (prop, name) => {
 			if (prop !== undefined
