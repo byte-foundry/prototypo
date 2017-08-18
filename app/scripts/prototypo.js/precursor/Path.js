@@ -116,11 +116,11 @@ function computeHandle(
 		node.expandedTo[j].baseLengthOut = distance2D(outVector, {x: 0, y: 0});
 		inVector = mulScalar2D(
 			params[`${node.nodeAddress}expandedTo.${j}.tensionIn`] || ((tensionIn === 0) ? 0 : 1),
-			tensionIn === 0 ? untensionedInVector : inVector
+			tensionIn === 0 ? untensionedInVector : inVector,
 		);
 		outVector = mulScalar2D(
 			params[`${node.nodeAddress}expandedTo.${j}.tensionOut`] || ((tensionOut === 0) ? 0 : 1),
-			tensionOut === 0 ? untensionOutVector : outVector
+			tensionOut === 0 ? untensionOutVector : outVector,
 		);
 	}
 	else {
@@ -128,11 +128,11 @@ function computeHandle(
 		node.baseLengthOut = distance2D(outVector, {x: 0, y: 0});
 		inVector = mulScalar2D(
 			params[`${node.nodeAddress}tensionIn`] || ((tensionIn === 0) ? 0 : 1),
-			tensionIn === 0 ? untensionedInVector : inVector
+			tensionIn === 0 ? untensionedInVector : inVector,
 		);
 		outVector = mulScalar2D(
 			params[`${node.nodeAddress}tensionOut`] || ((tensionOut === 0) ? 0 : 1),
-			tensionOut === 0 ? untensionOutVector : outVector
+			tensionOut === 0 ? untensionOutVector : outVector,
 		);
 	}
 
@@ -196,14 +196,19 @@ class SolvablePath {
 				const dirOut = readAngle(node.dirOut);
 
 				nodes[i].expand.angle = readAngle(node.expand.angle);
-				nodes[i].dirIn = dirIn !== null ? dirIn : (nodes[i].expand.angle + Math.PI / 2)%(2*Math.PI);
-				nodes[i].dirOut = dirOut !== null ? dirOut : (nodes[i].expand.angle + Math.PI / 2)%(2*Math.PI);
+				nodes[i].dirIn = dirIn === null
+					? (nodes[i].expand.angle + (Math.PI / 2)) % (2 * Math.PI)
+					: dirIn;
+				nodes[i].dirOut = dirOut === null
+					? (nodes[i].expand.angle + (Math.PI / 2)) % (2 * Math.PI)
+					: dirOut;
 			}
 			else if (node.expandedTo) {
 				const dirIn0 = readAngle(node.expandedTo[0].dirIn);
 				const dirOut0 = readAngle(node.expandedTo[0].dirOut);
 				const dirIn1 = readAngle(node.expandedTo[1].dirIn);
 				const dirOut1 = readAngle(node.expandedTo[1].dirOut);
+
 				node.expandedTo[0].dirIn = dirIn0 || 0;
 				node.expandedTo[0].dirOut = dirOut0 || 0;
 				node.expandedTo[1].dirIn = dirIn1 || 0;
