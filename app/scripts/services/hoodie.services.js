@@ -43,16 +43,17 @@ async function fetchAWS(endpoint, params = {}) {
 
 const signUpAndLoginMutation = gql`
 	mutation signUpAndLogin(
+		$firstName: String!,
 		$email: String!,
 		$password: String!,
-		$firstName: String!,
 		$lastName: String,
 		$occupation: String,
 		$phone: String,
 		$skype: String,
 	) {
-		createUser(
-			authProvider: {email: {email: $email, password: $password}},
+		signupEmailUser(
+			email: $email,
+			password: $password,
 			firstName: $firstName,
 			lastName: $lastName,
 			occupation: $occupation,
@@ -60,10 +61,9 @@ const signUpAndLoginMutation = gql`
 			skype: $skype,
 		) {
 			id
-			email
 		}
 
-		signinUser(email: {email: $email, password: $password}) {
+		auth: authenticateEmailUser(email: $email, password: $password) {
 			token
 		}
 	}
@@ -87,6 +87,10 @@ export default class HoodieApi {
 			`,
 		});
 
+		if (!response.data.user) {
+			throw new Error('Not authenticated yet');
+		}
+
 		return setupStripe(setupHoodie(response.data.user));
 	}
 
@@ -94,7 +98,7 @@ export default class HoodieApi {
 		const response = await apolloClient.mutate({
 			mutation: gql`
 				mutation login($email: String!, $password: String!) {
-					signinUser(email: {email: $email, password: $password}) {
+					auth: authenticateEmailUser(email: $email, password: $password) {
 						token
 					}
 				}
@@ -105,7 +109,7 @@ export default class HoodieApi {
 			},
 		});
 
-		window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
+		window.localStorage.setItem('graphcoolToken', response.data.auth.token);
 
 		return HoodieApi.setup();
 	}
@@ -129,12 +133,12 @@ export default class HoodieApi {
 			},
 		});
 
-		window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
-		graphCoolUserId = response.data.createUser.id;
+		window.localStorage.setItem('graphcoolToken', response.data.auth.token);
+		graphCoolUserId = response.data.signupEmailUser.id;
 	}
 
 	static isLoggedIn() {
-		return window.localStorage.getItem('graphcoolToken');
+		return !!window.localStorage.getItem('graphcoolToken');
 	}
 
 	static async askPasswordReset(email) {
@@ -159,13 +163,6 @@ export default class HoodieApi {
 				resetToken,
 				password,
 			},
-		});
-	}
-
-	static createCustomer(options) {
-		return fetchAWS('/customers', {
-			method: 'POST',
-			payload: options,
 		});
 	}
 
@@ -270,32 +267,6 @@ export default class HoodieApi {
 		return fetchAWS(`/users/${userId}/manager`, {
 			method: 'DELETE',
 		});
-	}
-
-	// temporary way of registering stripe id into graphcool
-	// this should be removed as soon as we get a server callback that does this
-	static async addStripeIdToGraphCool(id) {
-		if (graphCoolUserId) {
-			try {
-				await apolloClient.mutate({
-					mutation: gql`
-						mutation addStripeId($id: ID!, $stripeId: String!) {
-							updateUser(id: $id, stripe: $stripeId) {
-								id
-								stripe
-							}
-						}
-					`,
-					variables: {
-						id: graphCoolUserId,
-						stripeId: id,
-					},
-				});
-
-				graphCoolUserId = null;
-			}
-			catch (e) { trackJs.track(e); }
-		}
 	}
 }
 

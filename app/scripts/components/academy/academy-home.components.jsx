@@ -1,13 +1,14 @@
+import merge from 'lodash/merge';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {Link} from 'react-router';
 import ReactMarkdown from 'react-markdown';
+import {gql, graphql, compose} from 'react-apollo';
 import TutorialContent from 'tutorial-content';
-import LocalClient from '../../stores/local-client.stores.jsx';
-import Lifespan from 'lifespan';
 import InlineSVG from 'svg-inline-react';
 import ReactMotionFlip from 'react-motion-flip';
 
-export default class AcademyHome extends React.PureComponent {
+class AcademyHome extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -23,23 +24,17 @@ export default class AcademyHome extends React.PureComponent {
 		this.areAllCourseRead = this.areAllCourseRead.bind(this);
 	}
 	componentWillMount() {
-		let academyProgress = this.state.academyProgress || {};
+		const {academyProgress} = this.props;
 		const tags = [];
 		const courses = this.state.courses;
 
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
-			academyProgress = head.toJS().d.academyProgress || {};
-			this.setState({academyProgress});
-		});
 		// Map through the course to :
 		// Get title, header and slug
 		// Get part count from progress or init the progress
 		this.tutorials.content.forEach((tutorial) => {
 			let parts = [];
 
-			tutorial.tags.map((tag) => {
+			tutorial.tags.forEach((tag) => {
 				if (tags.indexOf(tag) === -1) {
 					tags.push(tag);
 				}
@@ -56,11 +51,12 @@ export default class AcademyHome extends React.PureComponent {
 						});
 					}
 				});
-				this.client.dispatchAction('/create-course-progress', {
-					slug: tutorial.slug,
-					name: tutorial.title,
-					parts,
-				});
+				console.log('create course');
+				// this.client.dispatchAction('/create-course-progress', {
+				// 	slug: tutorial.slug,
+				// 	name: tutorial.title,
+				// 	parts,
+				// });
 				academyProgress[tutorial.slug] = {
 					parts,
 					name: tutorial.title,
@@ -101,8 +97,11 @@ export default class AcademyHome extends React.PureComponent {
 		window.Intercom('trackEvent', 'openedAcademyHome');
 	}
 
-	componentWillUnmount() {
-		this.lifespan.release();
+	componentWillReceiveProps(nextProps) {
+		console.log(nextProps, this.props);
+		this.setState((state) => ({
+			academyProgress: merge(state.academyProgress, nextProps.academyProgress),
+		}));
 	}
 
 	getPartsDone(slug) {
@@ -130,7 +129,7 @@ export default class AcademyHome extends React.PureComponent {
 			}
 		});
 		if (isAllRead && !this.state.academyProgress.areAllCourseRead) {
-			this.client.dispatchAction('/set-all-course-read');
+			this.props.setCompletedAcademy();
 		}
 		return isAllRead;
 	}
@@ -306,3 +305,49 @@ export default class AcademyHome extends React.PureComponent {
 		);
 	}
 }
+
+AcademyHome.defaultProps = {
+	academyProgress: {},
+	setCompletedAcademy: () => {},
+};
+
+AcademyHome.propTypes = {
+	academyProgress: PropTypes.object.isRequired,
+	setCompletedAcademy: PropTypes.func,
+};
+
+const getAcademyProgressQuery = gql`
+	query getAcademyProgress {
+		user {
+			id
+			academyProgress
+			academyCompleted
+		}
+	}
+`;
+
+const setCompletedAcademyMutation = gql`
+	mutation setCompletedAcademy($userId: ID!) {
+		updateUser(id: $userId, academyCompleted: true) {
+			id
+			academyCompleted
+		}
+	}
+`;
+
+export default compose(
+	graphql(getAcademyProgressQuery, {
+		props({data}) {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			return data.user;
+		},
+	}),
+	graphql(setCompletedAcademyMutation, {
+		props: ({mutate, ownProps}) => ({
+			setCompletedAcademy: () => mutate({variables: {userId: ownProps.userId}}),
+		}),
+	}),
+)(AcademyHome);

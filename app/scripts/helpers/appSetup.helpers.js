@@ -81,27 +81,29 @@ export async function loadStuff() {
 			familySelected = families[0];
 		}
 
-		if (!variantSelected || variantSelected.id === undefined) {
-			variantSelected = familySelected.variants[0];
+		if (familySelected) {
+			appValues.values.familySelected = {
+				id: familySelected.id,
+				name: familySelected.name,
+				template: familySelected.template,
+			};
+
+			if (!variantSelected || variantSelected.id === undefined) {
+				variantSelected = familySelected.variants[0];
+			}
+
+			appValues.values.variantSelected = {
+				id: variantSelected.id,
+				name: variantSelected.name,
+			};
 		}
-
-		appValues.values.familySelected = {
-			id: familySelected.id,
-			name: familySelected.name,
-			template: familySelected.template,
-		};
-
-		appValues.values.variantSelected = {
-			id: variantSelected.id,
-			name: variantSelected.name,
-		};
 	}
 	catch (err) {
 		appValues = defaultValues;
 		console.error(err);
 	}
+
 	localClient.dispatchAction('/load-app-values', appValues);
 
 	localClient.dispatchAction('/load-font-instance', {appValues});
-
 }

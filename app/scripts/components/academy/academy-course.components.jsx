@@ -6,6 +6,7 @@ import {findDOMNode} from 'react-dom';
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import InlineSVG from 'svg-inline-react';
+
 export default class AcademyCourse extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -143,7 +144,13 @@ export default class AcademyCourse extends React.PureComponent {
 			this.createCourseProgress();
 		}
 		if (this.state.academyProgress && !this.state.academyProgress[this.courseSlug].completed) {
-			this.client.dispatchAction('/set-course-currently-reading', this.courseSlug);
+			const academyProgress = cloneDeep(this.state.academyProgress);
+
+			if (!academyProgress.areAllCourseRead) {
+				window.Intercom('trackEvent', 'finishedAllCourses');
+				academyProgress.areAllCourseRead = true;
+				this.props.updateAcademyProgress(academyProgress);
+			}
 		}
 		window.addEventListener('scroll', this.handleScroll, true);
 

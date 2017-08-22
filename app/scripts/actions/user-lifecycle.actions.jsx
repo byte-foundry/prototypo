@@ -289,6 +289,8 @@ export default {
 				skype,
 			});
 
+			HoodieApi.setup();
+
 			window.Intercom('boot', {
 				app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
 				email: username,
@@ -303,27 +305,17 @@ export default {
 			});
 			trackJs.addMetadata('username', username);
 
-			const customer = await HoodieApi.createCustomer({
-				email: username,
-				'buyer_email': firstname + curedLastname,
-				hoodieId: username,
-			});
-			// TMP
-			HoodieApi.addStripeIdToGraphCool(customer.id);
-			// TMP
-
 			form.errors = [];
 			form.inError = {};
 			form.loading = false;
 			const endPatch = userStore.set('signupForm', form).commit();
 
-			HoodieApi.instance.customerId = customer.id;
 			HoodieApi.instance.plan = 'free_none';
 			HoodieApi.instance.email = username;
 			fbq('track', 'Lead');
 			localServer.dispatchUpdate('/userStore', endPatch);
 
-			if (toLocation.pathname === '/dashboard') {
+			if (toLocation.pathname === '/dashboard' || toLocation.pathname === '/start') {
 				await loadStuff();
 				hashHistory.push(toLocation);
 			}

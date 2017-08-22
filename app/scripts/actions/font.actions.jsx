@@ -21,7 +21,6 @@ let undoWatcher;
 
 const debouncedSave = _.throttle((values, db, variantId) => {
 	FontValues.save({
-		typeface: db || 'default',
 		values,
 		variantId,
 	});
@@ -59,14 +58,12 @@ export default {
 				tags,
 				workerUrl,
 				workerDeps,
-				db,
 				typedata,
 				variantId,
 			} = await setupFontInstance(appValues);
 
 			localClient.dispatchAction('/store-value-font', {
 				familyName,
-				db,
 				workerUrl,
 				workerDeps,
 				typedataJSON,
@@ -75,7 +72,7 @@ export default {
 			localClient.dispatchAction('/create-font', familyName);
 			localClient.dispatchAction('/load-params', {controls, presets});
 			localClient.dispatchAction('/load-tags', tags);
-			loadFontValues(typedata, db, variantId);
+			loadFontValues(typedata, undefined, variantId);
 		}
 		catch (err) {
 			trackJs.track(err);
