@@ -246,14 +246,14 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				const nodes = hotItems.filter(item => item.type <= toileType.CONTOUR_NODE_OUT);
 				const tools = hotItems.filter(item => item.type === toileType.DISTR_TOOL);
-				const components = hotItems.filter(
+				let components = hotItems.filter(
 					item => item.type === toileType.COMPONENT_CHOICE
 						|| item.type === toileType.COMPONENT_NONE_CHOICE,
 				);
-				const componentMenu = hotItems.filter(
+				let componentMenu = hotItems.filter(
 					item => item.type === toileType.COMPONENT_MENU_ITEM_CENTER,
 				);
-				const componentChoice = hotItems.filter(
+				let componentChoice = hotItems.filter(
 					item => item.type === toileType.COMPONENT_MENU_ITEM,
 				);
 				const contours = hotItems.filter(item =>
@@ -310,33 +310,6 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 
-				if (components.length > 0 && appMode === canvasMode.COMPONENTS) {
-					const [component] = components;
-					componentMenuPos = this.toile.drawComponentMenu(
-						component.data,
-						frameCounters.componentMenu,
-						hotItems,
-						width,
-						componentMenuPos,
-					);
-					frameCounters.componentMenu += 1;
-				}
-				else if (componentMenu.length && appMode === canvasMode.COMPONENTS) {
-					const [component] = componentMenu;
-					componentMenuPos = this.toile.drawComponentMenu(
-						component.data.component,
-						frameCounters.componentMenu,
-						hotItems,
-						width,
-						componentMenuPos,
-					);
-					frameCounters.componentMenu += 1;
-				}
-				else {
-					componentMenuPos = undefined;
-					frameCounters.componentMenu = 0;
-				}
-
 				if (mState.DOWN === mouse.state && appMode === canvasMode.SELECT_POINTS) {
 					this.toile.clearDelta();
 					if (hotItems.length > 0) {
@@ -386,6 +359,10 @@ export default class GlyphCanvas extends React.PureComponent {
 								id: choice.data.componentId,
 								name: choice.id,
 							});
+
+							componentChoice = [];
+							componentMenu = [];
+							components = [];
 						}
 					}
 				}
@@ -394,6 +371,34 @@ export default class GlyphCanvas extends React.PureComponent {
 					draggedItem = undefined;
 					moving = false;
 				}
+
+				if (components.length > 0 && appMode === canvasMode.COMPONENTS) {
+					const [component] = components;
+					componentMenuPos = this.toile.drawComponentMenu(
+						component.data,
+						frameCounters.componentMenu,
+						hotItems,
+						width,
+						componentMenuPos,
+					);
+					frameCounters.componentMenu += 1;
+				}
+				else if (componentMenu.length && appMode === canvasMode.COMPONENTS) {
+					const [component] = componentMenu;
+					componentMenuPos = this.toile.drawComponentMenu(
+						component.data.component,
+						frameCounters.componentMenu,
+						hotItems,
+						width,
+						componentMenuPos,
+					);
+					frameCounters.componentMenu += 1;
+				}
+				else {
+					componentMenuPos = undefined;
+					frameCounters.componentMenu = 0;
+				}
+
 
 				if (draggedItem) {
 					const mouseMoved = mouse.delta.x !== 0 || mouse.delta.y !== 0;
