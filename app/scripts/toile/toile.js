@@ -1108,18 +1108,19 @@ export default class Toile {
 			this.drawLine(componentCenter, menuCenter, inHot ? darkBlue : blue);
 			this.context.lineWidth = 1;
 
-			const textWidth = this.measureText(label.value, componentMenuTextSize);
+			const textSize = componentMenuTextSize * y;
+			const textWidth = this.measureText(label.value, textSize);
 
 			this.drawText(
 				label.value,
 				add2D(
 					{
 						x: -textWidth.width / 2 / this.viewMatrix[0],
-						y: -(3 * componentMenuTextSize) / (6 * this.viewMatrix[0]),
+						y: -(3 * textSize) / (6 * this.viewMatrix[0]),
 					},
 					componentCenter,
 				),
-				componentMenuTextSize,
+				textSize,
 				white,
 			);
 
