@@ -73,7 +73,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		const frameCounters = {
 			componentMenu: 0,
 		};
-		let componentMenuPos;
+		let componentMenuPos = {};
 		let draggedItem;
 		let contourSelectedCursor;
 		let contourIndexes;
@@ -374,6 +374,11 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				if (components.length > 0 && appMode === canvasMode.COMPONENTS) {
 					const [component] = components;
+
+					if (componentMenuPos.id !== component.data.id) {
+						frameCounters.componentMenu = 0;
+					}
+
 					componentMenuPos = this.toile.drawComponentMenu(
 						component.data,
 						frameCounters.componentMenu,
@@ -381,10 +386,12 @@ export default class GlyphCanvas extends React.PureComponent {
 						width,
 						componentMenuPos,
 					);
+
 					frameCounters.componentMenu += 1;
 				}
 				else if (componentMenu.length && appMode === canvasMode.COMPONENTS) {
 					const [component] = componentMenu;
+
 					componentMenuPos = this.toile.drawComponentMenu(
 						component.data.component,
 						frameCounters.componentMenu,
@@ -395,7 +402,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					frameCounters.componentMenu += 1;
 				}
 				else {
-					componentMenuPos = undefined;
+					componentMenuPos = {};
 					frameCounters.componentMenu = 0;
 				}
 

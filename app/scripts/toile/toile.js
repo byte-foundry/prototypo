@@ -975,7 +975,7 @@ export default class Toile {
 		frameCounters,
 		hotItems = [],
 		width,
-		componentMenuPos = [],
+		{positions = []},
 	) {
 		let menuCenter;
 		const t = Math.min(1, frameCounters / componentMenuAnimationLength);
@@ -1008,7 +1008,7 @@ export default class Toile {
 			this.height,
 		);
 		let viewMenuPos = transformCoords(
-			componentMenuPos,
+			positions,
 			this.viewMatrix,
 			this.height,
 		);
@@ -1023,7 +1023,7 @@ export default class Toile {
 			));
 		}
 
-		const result = viewMenuPos.map((menu, i) => {
+		const newPositions = viewMenuPos.map((menu, i) => {
 			const {id: baseId, label} = bases[i];
 			const inHot = _.find(hotItems, item => item.id === baseId);
 			const centerFactor = (distance2D(viewMenuCenter, menu) / pixelPerMeter);
@@ -1137,7 +1137,7 @@ export default class Toile {
 			return componentCenter;
 		});
 
-		const points = [menuCenter, ...result];
+		const points = [menuCenter, ...newPositions];
 		const barycenter = mulScalar2D(1 / points.length, _.reduce(
 					points,
 					(acc, point) => add2D(acc, point),
@@ -1153,7 +1153,10 @@ export default class Toile {
 			},
 		});
 
-		return result;
+		return {
+			id,
+			positions: newPositions,
+		};
 	}
 
 	drawToolsLib(toolsLib, appStateValue) {
