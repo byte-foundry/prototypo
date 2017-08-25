@@ -20,6 +20,11 @@ class AllowedTopBarWithPayment extends React.Component {
 			openGoProModal: true,
 		});
 	}
+	
+	trackSubscriptionClick() {
+		window.Intercom('trackEvent', 'subscriptionClickfromFile');
+		Log.ui('SubscriptionClick.FromFile');
+	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
