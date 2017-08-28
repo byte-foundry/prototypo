@@ -164,7 +164,6 @@ selectRenderOptions(
 					location.hash.indexOf('signin') === -1
 					&& location.hash.indexOf('account') === -1
 					&& location.hash.indexOf('signup') === -1
-					&& location.hash.indexOf('dashboard') === -1
 				) {
 					location.href = '#/start';
 				}
@@ -174,7 +173,6 @@ selectRenderOptions(
 					location.hash.indexOf('signin') === -1
 					&& location.hash.indexOf('account') === -1
 					&& location.hash.indexOf('signup') === -1
-					&& location.hash.indexOf('dashboard') === -1
 				) {
 					location.href = '#/start';
 				}

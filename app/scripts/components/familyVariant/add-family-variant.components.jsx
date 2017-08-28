@@ -79,8 +79,9 @@ export class AddFamily extends React.PureComponent {
 		e.preventDefault();
 
 		const name = e.target.name.value;
+		const {selectedFont} = this.state;
 
-		if (!this.state.selectedFont) {
+		if (!selectedFont) {
 			this.setState({error: 'Please select a font template.'});
 			return;
 		}
@@ -96,7 +97,7 @@ export class AddFamily extends React.PureComponent {
 		try {
 			const {data: {createFamily: newFont}} = await this.props.createFamily(
 				name,
-				this.state.selectedFont.templateName,
+				selectedFont.templateName,
 			);
 
 			this.client.dispatchAction('/family-created', newFont);
@@ -107,7 +108,7 @@ export class AddFamily extends React.PureComponent {
 			});
 
 			Log.ui('Collection.CreateFamily'); // TODO: put this in the onCreateFamily in collection
-			Log.ui(`createFamily.${this.state.selectedFont.templateName}`);
+			Log.ui(`createFamily.${selectedFont.templateName}`);
 			this.client.dispatchAction('/store-value', {uiOnboardstep: 'customize'});
 
 			this.props.onCreateFamily(newFont);
