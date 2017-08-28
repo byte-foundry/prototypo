@@ -33,7 +33,6 @@ import searchAction from './actions/search.actions';
 import tagStoreAction from './actions/tagStore.actions';
 import undoStackAction from './actions/undoStack.actions';
 import userLifecycleAction from './actions/user-lifecycle.actions';
-import academyAction from './actions/academy.actions.jsx';
 
 import EventDebugger, {debugActions} from './debug/eventLogging.debug';
 
@@ -104,7 +103,6 @@ selectRenderOptions(
 				undoStackAction,
 				debugActions,
 				userLifecycleAction,
-				academyAction,
 				{
 					'/load-intercom-info': (data) => {
 						const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();

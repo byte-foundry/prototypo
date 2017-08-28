@@ -1,30 +1,29 @@
-import merge from 'lodash/merge';
+import cloneDeep from 'lodash/cloneDeep';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Link} from 'react-router';
-import ReactMarkdown from 'react-markdown';
-import {gql, graphql, compose} from 'react-apollo';
 import TutorialContent from 'tutorial-content';
 import InlineSVG from 'svg-inline-react';
 import ReactMotionFlip from 'react-motion-flip';
 
+import CourseCard from './academy-course-card.components';
+
 class AcademyHome extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
-			academyProgress: {},
 			tags: [],
 			activeTag: 'all',
 			courses: [],
 		};
+
 		this.tutorials = new TutorialContent();
-		this.getPartsDone = this.getPartsDone.bind(this);
-		this.isReading = this.isReading.bind(this);
 		this.setActiveTag = this.setActiveTag.bind(this);
 		this.areAllCourseRead = this.areAllCourseRead.bind(this);
 	}
+
 	componentWillMount() {
-		const {academyProgress} = this.props;
+		const academyProgress = cloneDeep(this.props.academyProgress);
 		const tags = [];
 		const courses = this.state.courses;
 
@@ -35,7 +34,7 @@ class AcademyHome extends React.PureComponent {
 			let parts = [];
 
 			tutorial.tags.forEach((tag) => {
-				if (tags.indexOf(tag) === -1) {
+				if (!tags.includes(tag)) {
 					tags.push(tag);
 				}
 			});
@@ -51,23 +50,12 @@ class AcademyHome extends React.PureComponent {
 						});
 					}
 				});
-				console.log('create course');
-				// this.client.dispatchAction('/create-course-progress', {
-				// 	slug: tutorial.slug,
-				// 	name: tutorial.title,
-				// 	parts,
-				// });
-				academyProgress[tutorial.slug] = {
-					parts,
-					name: tutorial.title,
-					rewarded: false,
-				};
 			}
 			const compare = function compare(a, b) {
 				const dateA = new Date(a.date).getTime();
-			    const dateB = new Date(b.date).getTime();
+				const dateB = new Date(b.date).getTime();
 
-			    return dateA > dateB ? 1 : -1;
+				return dateA > dateB ? 1 : -1;
 			};
 
 			courses.push({
@@ -86,7 +74,7 @@ class AcademyHome extends React.PureComponent {
 			courses.sort(compare);
 		});
 		this.baseCourses = courses;
-		this.setState({academyProgress, tags, courses});
+		this.setState({tags, courses});
 		const icons = document.getElementsByClassName('academy-dashboard-icon');
 
 		if (icons.length > 0) {
@@ -97,53 +85,33 @@ class AcademyHome extends React.PureComponent {
 		window.Intercom('trackEvent', 'openedAcademyHome');
 	}
 
-	componentWillReceiveProps(nextProps) {
-		console.log(nextProps, this.props);
-		this.setState((state) => ({
-			academyProgress: merge(state.academyProgress, nextProps.academyProgress),
-		}));
-	}
-
-	getPartsDone(slug) {
-		const partsDone = this.state.academyProgress[slug].parts
-		.filter(part => part.completed === true);
-
-		return partsDone ? partsDone.length : 0;
-	}
 	setActiveTag(tag) {
-		if (tag === 'all') {
-			return this.setState({activeTag: tag, courses: this.baseCourses});
-		}
-		const filteredCourses = this.baseCourses.filter(course => course.tags.indexOf(tag) >= 0);
+		return this.setState({activeTag: tag});
+	}
 
-		return this.setState({activeTag: tag, courses: filteredCourses});
-	}
-	isReading(slug) {
-		return this.state.academyProgress.lastCourse === slug;
-	}
 	areAllCourseRead() {
 		let isAllRead = true;
-		Object.keys(this.state.academyProgress).forEach((key) => {
-			if (!this.state.academyProgress[key].completed && key !== 'lastCourse' && key !== 'areAllCourseRead') {
+
+		Object.keys(this.props.academyProgress).forEach((key) => {
+			if (
+				typeof this.props.academyProgress[key] === 'object'
+				&& !this.props.academyProgress[key].completed
+				&& key !== 'lastCourse'
+				&& key !== 'areAllCourseRead'
+			) {
 				isAllRead = false;
 			}
 		});
-		if (isAllRead && !this.state.academyProgress.areAllCourseRead) {
+		if (isAllRead && !this.props.academyCompleted) {
 			this.props.setCompletedAcademy();
 		}
 		return isAllRead;
 	}
-	render() {
-		let partsDone = false;
 
-		// const tutorialReward = tutorial.reward
-		// ? (<div className="academy-reward">
-		// 	<span className="text-italic">By completing this course you {partsDone
-		// === tutorial.partCount ? 'earned' : 'will earn'}:</span>
-		// 	<ul>
-		// 		<li>{tutorial.reward}</li>
-		// 	</ul>
-		// </div>) : false;
+	render() {
+		const {activeTag} = this.state;
+		const {academyProgress, academyCompleted} = this.props;
+
 		return (
 			<div className="academy-base academy-home">
 				<div className="academy-home-header">
@@ -202,13 +170,12 @@ class AcademyHome extends React.PureComponent {
 						element="div"
 						src={require('!svg-inline-loader?classPrefix=blackpen-!../../../images/academy/blackpen.svg')}
 					/>
-					{this.areAllCourseRead()
-						? <InlineSVG
+					{academyCompleted
+						&& <InlineSVG
 							className="academy-home-header-icon-medal"
 							element="div"
 							src={require('!svg-inline-loader?classPrefix=medal-!../../../images/academy/medal-home.svg')}
-						/>
-						: false}
+						/>}
 				</div>
 				<div className="academy-home-tags">
 					<div
@@ -216,90 +183,44 @@ class AcademyHome extends React.PureComponent {
 						onClick={() => {
 							this.setActiveTag('all');
 						}}
-						className={`academy-home-tags-tag ${this.state.activeTag === 'all' ? 'active' : ''}`}
+						className={`academy-home-tags-tag ${activeTag === 'all' ? 'active' : ''}`}
 					>
 						All courses
 					</div>
-					{this.state.tags.map(tag => (
-						<div
+					{this.state.tags.map(tag =>
+						(<div
 							key={`tag-${tag}`}
-							className={`academy-home-tags-tag ${this.state.activeTag === tag ? 'active' : ''}`}
+							className={`academy-home-tags-tag ${activeTag === tag ? 'active' : ''}`}
 							onClick={() => {
 								this.setActiveTag(tag);
 							}}
 						>
 							{tag}
-						</div>
-						))}
+						</div>),
+					)}
 				</div>
 				<ReactMotionFlip
 					className="academy-course-list"
 					childClassName="academy-course-list-elem"
 					springConfig={{stiffness: 220, damping: 30}}
 				>
-					{this.state.courses.map((tutorial) => {
-						partsDone = this.getPartsDone(tutorial.slug);
-						return (
-							<div
-								key={tutorial.title}
-								className={`${this.isReading(tutorial.slug) ? 'currentlyreading' : ''} ${partsDone === tutorial.partCount ? 'done' : ''}`}
-							>
-								<Link to={`/academy/course/${tutorial.slug}`}>
-									<div className="academy-course-list-elem-header">
-										<img
-											className="header-image"
-											src={tutorial.headerImage}
-											alt={`${tutorial.title} header`}
-										/>
-										<Link
-											className={`academy-startcourse ${this.isReading(tutorial.slug) ? 'currentlyreading' : ''}`}
-											to={`/academy/course/${tutorial.slug}`}
-										>
-											{' '}
-											{this.isReading(tutorial.slug) ? 'Currently reading' : 'Start course'}
-											{' '}
-										</Link>
-									</div>
-									<div className="academy-course-list-elem-content">
-										<h2>{tutorial.title}</h2>
-										<ReactMarkdown source={tutorial.header} />
-									</div>
-									<div className="academy-course-list-elem-footer">
-										{tutorial.partCount || (this.state.academyProgress[tutorial.slug] && this.state.academyProgress[tutorial.slug].completed)
-											? <div
-												className={`academy-part-count ${partsDone === tutorial.partCount ? 'done' : ''}`}
-											>
-												<div className="academy-part-count-progress-wrapper">
-													<span
-														className="academy-part-count-progress-wrapper-progress"
-														style={{
-															width: `${this.state.academyProgress[tutorial.slug].completed ? 100 : partsDone / tutorial.partCount * 100}%`,
-														}}
-													/>
-												</div>
-												<span className="academy-part-count-text">
-													{this.state.academyProgress[tutorial.slug] && this.state.academyProgress[tutorial.slug].completed
-															? 'COMPLETE'
-															: `${partsDone} of ${tutorial.partCount}`}
-												</span>
-											</div>
-											: false}
-										<div className="academy-readingtime">
-											<img src="assets/images/icon-clock.svg" alt="readingTime icon" />
-											{' '}
-											<span>{tutorial.readingTime} min</span>
-										</div>
-										<div className="academy-coursetype">
-											<img
-												src={`assets/images/academy/icon-course-${tutorial.isVideo ? 'video' : 'text'}.svg`}
-												alt="courseType icon"
-											/>
-										</div>
-									</div>
-								</Link>
-							</div>
-						);
-					})}
+					{this.state.courses
+						.filter(tutorial => activeTag === 'all' || tutorial.tags.includes(activeTag))
+						.map((tutorial) => {
+							const progress = academyProgress[tutorial.slug] || {};
+							const numberOfCompletedParts = (progress.parts || [])
+								.reduce((count, {completed}) => count + (completed ? 1 : 0), 0);
+
+							return (
+								<CourseCard
+									key={tutorial.title}
+									reading={academyProgress.lastCourse === tutorial.slug}
+									done={tutorial.partCount > 0 && numberOfCompletedParts === tutorial.partCount}
+									tutorial={tutorial}
+									numberOfCompletedParts={numberOfCompletedParts}
+								/>
+							);
+						})}
 				</ReactMotionFlip>
 			</div>
 		);
@@ -316,38 +237,4 @@ AcademyHome.propTypes = {
 	setCompletedAcademy: PropTypes.func,
 };
 
-const getAcademyProgressQuery = gql`
-	query getAcademyProgress {
-		user {
-			id
-			academyProgress
-			academyCompleted
-		}
-	}
-`;
-
-const setCompletedAcademyMutation = gql`
-	mutation setCompletedAcademy($userId: ID!) {
-		updateUser(id: $userId, academyCompleted: true) {
-			id
-			academyCompleted
-		}
-	}
-`;
-
-export default compose(
-	graphql(getAcademyProgressQuery, {
-		props({data}) {
-			if (data.loading) {
-				return {loading: true};
-			}
-
-			return data.user;
-		},
-	}),
-	graphql(setCompletedAcademyMutation, {
-		props: ({mutate, ownProps}) => ({
-			setCompletedAcademy: () => mutate({variables: {userId: ownProps.userId}}),
-		}),
-	}),
-)(AcademyHome);
+export default AcademyHome;
