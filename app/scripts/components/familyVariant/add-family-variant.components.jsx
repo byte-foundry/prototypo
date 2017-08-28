@@ -170,7 +170,7 @@ export class AddFamily extends React.PureComponent {
 								&& <Button onClick={this.exit} outline>
 									Cancel
 								</Button>}
-							<Button type="submit" size="small">
+							<Button type="submit" size="small" outline>
 								{start ? 'Create project' : 'Create family'}
 							</Button>
 						</div>

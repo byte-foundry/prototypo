@@ -43,6 +43,8 @@ class ViewPanelsMenu extends React.PureComponent {
 		window.removeEventListener('resize', this.reposition);
 		window.removeEventListener('wheel', this.handleClickOutside);
 		window.removeEventListener('keydown', this.handleClickOutside);
+
+		this.unmount = true; // quickfix for react-portal
 	}
 
 	handleTrigger(e) {
@@ -78,7 +80,7 @@ class ViewPanelsMenu extends React.PureComponent {
 		menu.classList.add('contextual-menu-exit-active');
 
 		setTimeout(() => {
-			if (!this.props.show) {
+			if (!this.props.show || this.unmount) {
 				removeFromDOM();
 				return;
 			}
