@@ -216,10 +216,6 @@ const userStore = new Remutable({
 	confirmation: {
 		errors: [],
 	},
-	changePasswordForm: {
-		errors: [],
-		inError: {},
-	},
 });
 
 const planStore = new Remutable({

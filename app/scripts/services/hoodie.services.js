@@ -147,11 +147,6 @@ export default class HoodieApi {
 		});
 	}
 
-	/* For now, change password isn't possible anymore, this should be available soon */
-	static changePassword(password, newPassword) {
-		return Promise.reject();
-	}
-
 	static checkResetToken(id, resetToken) {
 		return fetchAWS(`/users/${id}/reset_password?resetToken=${resetToken}`);
 	}

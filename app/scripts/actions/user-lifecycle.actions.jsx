@@ -545,54 +545,6 @@ export default {
 			localServer.dispatchUpdate('/userStore', patch);
 		}
 	},
-	'/change-password': async ({password, newPassword, confirm}) => {
-		const changePasswordForm = userStore.get('changePasswordForm');
-
-		changePasswordForm.errors = [];
-		changePasswordForm.inError = {};
-		changePasswordForm.loading = true;
-		const cleanPatch = userStore.set('changePasswordForm', changePasswordForm).commit();
-
-		localServer.dispatchUpdate('/userStore', cleanPatch);
-
-		if (!password || !newPassword || !confirm) {
-			changePasswordForm.inError = {
-				password: !password,
-				newPassword: !newPassword,
-				confirm: !confirm,
-			};
-			changePasswordForm.errors.push('Fields with a * are required');
-			changePasswordForm.loading = false;
-			const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-
-		if (newPassword !== confirm) {
-			changePasswordForm.errors.push('The confirmation does not match your new password');
-			changePasswordForm.loading = false;
-			const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-
-		try {
-			await HoodieApi.changePassword(password, newPassword);
-			changePasswordForm.loading = false;
-			changePasswordForm.success = true;
-			const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-		catch (err) {
-			trackJs.track(err);
-			changePasswordForm.loading = false;
-			changePasswordForm.errors.push(err.message);
-			const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-	},
 	'/spend-credits': async (options) => {
 		const {credits} = await spendCredits(options);
 
