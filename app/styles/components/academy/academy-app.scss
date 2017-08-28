@@ -225,7 +225,6 @@
 					margin-left:16.5%;
 					transition: 1s;
 					-webkit-backface-visibility: hidden;
-					transition-delay: 0.2s;
 					z-index: 5;
 					&:hover{
 						margin-top: 5%;
@@ -249,7 +248,6 @@
 					margin-left:2.5%;
 					transition: 1s;
 					-webkit-backface-visibility: hidden;
-					transition-delay: 0.2s;
 					z-index: 5;
 
 					.st3 {
@@ -279,7 +277,6 @@
 					margin-left:11%;
 					transition: 1s;
 					-webkit-backface-visibility: hidden;
-					transition-delay: 0.2s;
 					z-index: 5;
 					.loupe-st2 {
 						opacity: 0.8;
@@ -308,7 +305,6 @@
 					z-index: 5;
 					transition: 1s;
 					-webkit-backface-visibility: hidden;
-					transition-delay: 0.2s;
 					&:hover {
 						transform: rotate(-4deg);
 						margin-top: 13.5%;
@@ -331,7 +327,6 @@
 					margin-left:22%;
 					transition: 1s;
 					-webkit-backface-visibility: hidden;
-					transition-delay: 0.2s;
 					z-index: 5;
 					&:hover{
 						transform: rotate(-25deg);
@@ -355,7 +350,6 @@
 					margin-left:41%;
 					transition: 0.5s;
 					-webkit-backface-visibility: hidden;
-					transition-delay: 0.2s;
 					z-index: 5;
 					&:hover{
 						transform: rotate(50deg);
@@ -379,7 +373,6 @@
 					margin-left:41%;
 					transition: 1.4s;
 					-webkit-backface-visibility: hidden;
-					transition-delay: 0.2s;
 					z-index: 5;
 					&:hover{
 						margin-top: 13%;
@@ -403,7 +396,6 @@
 					margin-left:51%;
 					transition: 1.4s;
 					-webkit-backface-visibility: hidden;
-					transition-delay: 0.2s;
 					z-index: 5;
 					&:hover{
 						transform: rotate(20deg);
@@ -428,7 +420,6 @@
 					z-index: 5;
 					transition: 1s;
 					-webkit-backface-visibility: hidden;
-					transition-delay: 0.2s;
 					&:hover {
 						margin-left: 71.5%;
 						margin-top: 3.5%;
@@ -500,7 +491,6 @@
 					margin-left:43%;
 					transition: 1.4s;
 					-webkit-backface-visibility: hidden;
-					transition-delay: 0.2s;
 					z-index: 5;
 					.postit-st1 {
 						opacity:0.35;
@@ -528,7 +518,6 @@
 					margin-left:41%;
 					transition: 1.4s;
 					-webkit-backface-visibility: hidden;
-					transition-delay: 0.2s;
 					z-index: 5;
 					.medal-ribbon-1, .medal-ribbon-2 {
 						transform-origin: top;
@@ -862,32 +851,17 @@
 		}
 	}
 	.part-progress-complete-button {
-	  	position: relative;
-		display: inline;
 		float: right;
 		margin: 15px 40px 0px 0;
 		padding: 15px 20px;
-		min-width: 120px;
 		font-size: 18px;
-		border: 3px solid $green;
-		background-color: $white;
-		color: $green;
 		font-weight: 600;
-		border-radius: 5px;
 		margin-top: 20px;
 		margin-bottom: 40px;
-		cursor: pointer;
-		user-select: none !important;
-		transition: all .3s ease;
-		&:not(.finished):hover {
-			color: $white;
-			background-color: $green;
-		}
-		&.finished {
-			opacity: 0.3;
-			color: $dark-grey;
-			border-color: $dark-grey;
-			cursor: default;
+		box-shadow: 0 0 0 3px $green inset;
+
+		&.new-button--disabled {
+			box-shadow: 0 0 0 3px $light-grey inset;
 		}
 	}
 	.title + p {

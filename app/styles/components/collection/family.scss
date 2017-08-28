@@ -1,14 +1,18 @@
 @import "../../variables";
 
 .family-list {
-	flex:0 0 45%;
+	flex: 0 0 45%;
 	background-color: $lightest-grey;
 	border-bottom-left-radius: 7px;
-	overflow:hidden;
-	max-height: 70vh;
+	display: flex;
+	flex-direction: column;
 
-	.scrollarea-content {
-		margin-right: 15px;
+	&-create {
+		padding: 40px 40px 20px;
+	}
+
+	&-families-content {
+		padding: 0 40px 20px;
 	}
 }
 
@@ -19,14 +23,13 @@
 	cursor:pointer;
 	color:$dark-grey;
 	transition: color .2s ease;
-	position: relative;
 	padding: 10px 20px;
 	transition: all .2s ease-out;
 	background-color: mix(black, $lightest-grey, 3%);
 	margin-left: 5px;
 	margin-right: 5px;
 	border: 2px solid mix(black, $lightest-grey, 3%);
-	transform: perspective(1px);
+	align-items: center;
 
 	&:first-of-type {
 		background-color: mix(black, $lightest-grey, 3%);
@@ -39,8 +42,11 @@
 	}
 	&:hover {
 		color: $green;
-		transform: perspective(1px) scale3d(1.01, 1.01, 1.01);
 		box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	}
+	&:focus {
+		outline: none;
+		border: 2px solid mix($green, $lightest-grey, 30%);
 	}
 
 	&:hover &-sample.elzevir, &.is-active &-sample.elzevir {
@@ -77,13 +83,14 @@
 
 	&-sample {
 		flex:0 0 70px;
-		height:43px;
+		height: 43px;
 		background-repeat: no-repeat;
-		margin: 3px 30px 0 0;
+		margin-right: 20px;
 		background-size:contain;
 	}
 
 	&-info {
+		flex: 1;
 		font-weight:600;
 		letter-spacing:0.02em;
 
@@ -105,26 +112,18 @@
 	}
 
 	.view-panels-menu {
-		position: absolute;
-		top: 50%;
-		right: 20px;
-		transform: translateY(-50%);
+		position: static;
 	}
 }
 
 .add-family {
-	background-color:$white;
-	cursor:pointer;
-	transition: all .2s ease-out;
+	background-color: mix(black, $white, 1%);
+	transition:all .2s ease;
 	margin-bottom:15px;
 	border-radius:4px;
 
-	.scrollarea-content {
-		margin-right: 15px;
-	}
-
 	&-form {
-		width:630px;
+		width:750px;
 
 		&-header {
 			display:flex;
@@ -148,42 +147,56 @@
 			}
 		}
 
+		form {
+			margin-right: 20px;
+		}
+
 		&-input {
 			display: block;
 			width: 100%;
 			border:none;
 			padding: .8em;
 			background-color: $lightest-grey;
+			border: 2px solid $light-grey;
+			border-radius: 5px;
 			color:$dark-grey;
 			font-size: 1.1em;
 			margin-bottom: 1em;
 			margin-top:20px;
+
+			&:focus {
+				outline: none;
+				border-color: $green;
+			}
 		}
 
 		&-label {
 			display: inline-block;
 			margin-top: 5px;
 			font-size:1.1em;
+			font-weight: 700;
 
 			color: $dark-grey;
 
 			&-order {
-				@include themify() {
-					color:$theme-background;
-				}
+				color: $green;
 			}
 		}
 
 		&-template-list {
-			margin-bottom: 10px;
+			margin-left: -10px;
 			padding-bottom: 5px;
 			display: block;
-			width: 100%;
 			height: 63vh;
+			overflow: hidden;
+
+			&-content {
+				padding: 10px;
+			}
 		}
 
 		&-error {
-			width: 100%;
+			width: calc(100% - 20px);
 			text-align: center;
 			padding: 5px;
 			background-color: $red;
@@ -218,9 +231,22 @@
 		color:$dark-grey;
 	}
 
+	.button {
+		border: 2px solid $green;
+		font-weight: 500;
+		color: $green;
+		transition: all .2s ease;
+		margin-right: 20px;
+		&:hover {
+			color: white;
+			background: $green;
+		}
+	}
+
 }
 
 .family-template-choice {
+	cursor: pointer;
 	margin-top:10px;
 	margin-bottom:10px;
 	text-align:center;

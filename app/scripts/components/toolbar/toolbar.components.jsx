@@ -1,7 +1,6 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import Classnames from 'classnames';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Log from '~/services/log.services.js';
@@ -9,12 +8,7 @@ import Log from '~/services/log.services.js';
 import ArianneThread from './arianne-thread.components.jsx';
 import IndividualizeButton from './individualize-button.components.jsx';
 
-export default class Toolbar extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
+export default class Toolbar extends React.PureComponent {
 	render() {
 
 		return (
@@ -23,7 +17,7 @@ export default class Toolbar extends React.Component {
 					<ArianneThread />
 				</div>
 				<div className="toolbar-right">
-					<IndividualizeButton/>
+					<IndividualizeButton />
 					<ViewButtons />
 				</div>
 			</div>
@@ -31,15 +25,14 @@ export default class Toolbar extends React.Component {
 	}
 }
 
-class ViewButtons extends React.Component {
+class ViewButtons extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			mode: [],
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
-		//fonction binding to avoid unnecessary re-render
 		this.toggleView = this.toggleView.bind(this);
 	}
 
@@ -89,12 +82,7 @@ class ViewButtons extends React.Component {
 	}
 }
 
-class ViewButton extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
+class ViewButton extends React.PureComponent {
 	render() {
 		const classes = Classnames({
 			'view-button': true,

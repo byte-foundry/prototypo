@@ -1,7 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
-import ScrollArea from 'react-scrollbar';
+import ScrollArea from 'react-scrollbar/dist/no-css';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 

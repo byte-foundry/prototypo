@@ -176,7 +176,7 @@ export default {
 
 		const variant = prototypoStore.get('variant');
 
-		FontValues.save({typeface: variant.db, values: oldValues});
+		FontValues.save({typeface: variant.db, values: oldValues, variantId: variant.id});
 		Log.ui('GroupParam.create');
 		window.Intercom('trackEvent', 'indivGroups');
 		Log.ui(`GroupParam.create${prototypoStore.get('family').template}`);
@@ -263,7 +263,7 @@ export default {
 
 		const variant = prototypoStore.get('variant');
 
-		FontValues.save({typeface: variant.db, values: oldValues});
+		FontValues.save({typeface: variant.db, values: oldValues, variantId: variant.id});
 		localClient.dispatchAction('/update-font', oldValues);
 		Log.ui('GroupParam.deleteGroup');
 	},
@@ -342,7 +342,7 @@ export default {
 
 		const variant = prototypoStore.get('variant');
 
-		FontValues.save({typeface: variant.db, values: oldValues});
+		FontValues.save({typeface: variant.db, values: oldValues, variantId: variant.id});
 		Log.ui('GroupParam.saveEdit');
 	},
 	'/create-mode-param-group': () => {

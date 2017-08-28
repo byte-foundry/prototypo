@@ -5,7 +5,7 @@ import backgroundColor from 'react-storybook-decorator-background';
 
 import {AccountManageSubUsers} from '../app/scripts/components/account/account-manage-sub-users.components';
 
-storiesOf('account.AccountManageSubUsers', module)
+storiesOf('account/AccountManageSubUsers', module)
 	.addDecorator((story) => {
 		return <div style={{width: '700px', margin: 'auto', padding: '20px'}} className="normal">{story()}</div>;
 	})

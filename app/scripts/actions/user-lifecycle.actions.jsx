@@ -8,7 +8,6 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import {loadStuff} from '../helpers/appSetup.helpers.js';
 import isProduction from '../helpers/is-production.helpers';
-import {AccountValues} from '../services/values.services.js';
 import getCurrency from '../helpers/currency.helpers.js';
 
 let localServer;
@@ -19,24 +18,7 @@ window.addEventListener('fluxServer.setup', async () => {
 
 	localClient = LocalClient.instance();
 	localClient.lifespan = new Lifespan();
-
-	localClient.getStore('/userStore', localClient.lifespan)
-		.onUpdate(({head}, patch) => {
-			// if infos is in the mutations object, it means infos has been modified
-			if (patch.toJS().m.hasOwnProperty('infos')) {
-				saveAccountValues(head.toJS().infos);
-			}
-		})
-		.onDelete(() => {
-			return;
-		});
 });
-
-function saveAccountValues(values) {
-	if (values !== undefined && values.accountValues !== undefined) {
-		AccountValues.save({typeface: 'default', values});
-	}
-}
 
 function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 	const form = userStore.get('addcardForm');
@@ -61,20 +43,19 @@ function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 				reject(data.error.message);
 			}
 
-			const infos = userStore.get('infos');
+			// TODO : GraphQL request to get the VAT
 
 			try {
 				const response = await HoodieApi.updateCustomer({
-					business_vat_id: vat || infos.vat, // Stripe way of storing VAT
+					business_vat_id: vat, // Stripe way of storing VAT
 					source: data.id,
 					metadata: {
-						vat_number: vat || infos.vat, // Quaderno way of reading VAT
+						vat_number: vat, // Quaderno way of reading VAT
 					},
 				});
 
 				/* DEPRECATED Backward compatibility, should be removed when every component uses the cards property in userStore */
-				infos.vat = vat || infos.vat;
-				let patch = userStore.set('infos', infos).set('cards', response.sources.data).commit();
+				let patch = userStore.set('cards', response.sources.data).commit();
 
 				localServer.dispatchUpdate('/userStore', patch);
 
@@ -114,71 +95,6 @@ function spendCredits({amount}) {
 		}
 		reject();
 	});
-}
-
-async function addBillingAddress({buyerName, address, vat}) {
-	const form = userStore.get('billingForm');
-
-	form.errors = [];
-	form.inError = {};
-	form.loading = true;
-	const cleanPatch = userStore.set('billingForm', form).commit();
-
-	localServer.dispatchUpdate('/userStore', cleanPatch);
-
-	if (!buyerName || !address.building_number || !address.street_name || !address.city || !address.postal_code || !address.country) {
-		form.errors.push('These fields are required');
-		form.inError = {
-			buyerName: !buyerName,
-			buildingNumber: !address.building_number,
-			streetName: !address.street_name,
-			city: !address.city,
-			postalCode: !address.postal_code,
-			country: !address.country,
-		};
-		form.loading = false;
-		const patch = userStore.set('billingForm', form).commit();
-
-		localServer.dispatchUpdate('/userStore', patch);
-		return Promise.reject();
-	}
-
-	try {
-		await HoodieApi.updateCustomer({
-			business_vat_id: vat || infos.vat, // Stripe way of storing VAT
-			metadata: {
-				street_line_1: address.building_number,
-				street_line_2: address.street_name,
-				city: address.city,
-				region: address.region,
-				postal_code: address.postal_code,
-				country: address.country,
-				vat_number: vat || infos.vat, // Quaderno way of reading VAT
-			},
-		});
-		const infos = userStore.get('infos');
-
-		infos.address = address;
-		infos.vat = vat;
-		infos.buyerName = buyerName;
-		form.loading = false;
-		const patch = userStore.set('infos', infos).set('billingForm', form).commit();
-
-		localServer.dispatchUpdate('/userStore', patch);
-	}
-	catch (err) {
-		trackJs.track(err);
-		form.errors.push(
-			/Could not connect/i.test(err.message)
-				? 'Our server is unavailable please try again letter'
-				: err.message
-		);
-		form.loading = false;
-
-		const patch = userStore.set('billingForm', form).commit();
-
-		localServer.dispatchUpdate('/userStore', patch);
-	}
 }
 
 const validateCoupon = debounce((options) => {
@@ -240,12 +156,7 @@ export default {
 		localClient.dispatchAction('/clean-form', 'signupForm');
 		localClient.dispatchAction('/clean-form', 'choosePlanForm');
 		localClient.dispatchAction('/clean-form', 'addcardForm');
-		localClient.dispatchAction('/clean-form', 'billingForm');
 		localClient.dispatchAction('/clean-form', 'confirmation');
-
-		const patch = userStore.set('infos', {}).commit();
-
-		localServer.dispatchUpdate('/userStore', patch);
 
 		const prototypatch = prototypoStore.set('credits', 0).commit();
 
@@ -371,12 +282,14 @@ export default {
 		const curedLastname = lastname ? ` ${lastname}` : '';
 
 		try {
-			const {response} = await HoodieApi.signUp(username.toLowerCase(), password, firstname, {
+			await HoodieApi.signUp(username.toLowerCase(), password, firstname, {
 				lastName: lastname,
 				occupation: css.value,
 				phone,
 				skype,
 			});
+
+			HoodieApi.setup();
 
 			window.Intercom('boot', {
 				app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
@@ -392,33 +305,18 @@ export default {
 			});
 			trackJs.addMetadata('username', username);
 
-			const customer = await HoodieApi.createCustomer({
-				email: username,
-				'buyer_email': firstname + curedLastname,
-				hoodieId: response.roles[0],
-			});
-			// TMP
-			HoodieApi.addStripeIdToGraphCool(customer.id);
-			// TMP
-			const accountValues = {username, firstname, lastname: curedLastname, buyerName: firstname + curedLastname, css, phone, skype};
-			const patch = userStore.set('infos', {accountValues}).commit();
-
-			await AccountValues.save({typeface: 'default', values: {accountValues}});
-			localServer.dispatchUpdate('/userStore', patch);
-
 			form.errors = [];
 			form.inError = {};
 			form.loading = false;
 			const endPatch = userStore.set('signupForm', form).commit();
 
-			HoodieApi.instance.customerId = customer.id;
 			HoodieApi.instance.plan = 'free_none';
 			HoodieApi.instance.email = username;
 			fbq('track', 'Lead');
 			localServer.dispatchUpdate('/userStore', endPatch);
 
-			if (toLocation.pathname === '/dashboard') {
-				await loadStuff(accountValues);
+			if (toLocation.pathname === '/dashboard' || toLocation.pathname === '/start') {
+				await loadStuff();
 				hashHistory.push(toLocation);
 			}
 			else {
@@ -514,11 +412,8 @@ export default {
 			return localServer.dispatchUpdate('/userStore', patch);
 		}
 
-		const infos = userStore.get('infos');
-
-		infos.plan = plan;
 		form.loading = false;
-		const patch = userStore.set('infos', infos).set('choosePlanForm', form).commit();
+		const patch = userStore.set('choosePlanForm', form).commit();
 
 		localServer.dispatchUpdate('/userStore', patch);
 
@@ -538,26 +433,6 @@ export default {
 		};
 
 		await addCard(options);
-		hashHistory.push(toPath);
-	},
-	'/add-billing-address': async (options) => {
-		const toPath = {
-			pathname: options.pathQuery.path || '/account/profile',
-			query: options.pathQuery.query,
-		};
-
-		await addBillingAddress(options);
-		hashHistory.push(toPath);
-	},
-	'/add-card-and-billing': async (options) => {
-		const toPath = {
-			pathname: '/account/create/confirmation',
-		};
-
-		await addCard(options);
-		await addBillingAddress(options);
-		fbq('track', 'AddPaymentInfo');
-		window.Intercom('trackEvent', 'addedCardAndAdress');
 		hashHistory.push(toPath);
 	},
 	'/confirm-buy': async ({plan, card, pathname, quantity}) => {
@@ -605,13 +480,11 @@ export default {
 				coupon,
 				quantity,
 			});
-			const infos = {...userStore.get('infos')};
 
 			form.loading = false;
-			infos.plan = data.plan.id;
+			HoodieApi.instance.plan = data.plan.id;
 
 			const patch = userStore
-				.set('infos', infos)
 				.set('confirmation', form)
 				.set('hasBeenSubscribing', 'true')
 				.commit();
@@ -637,10 +510,8 @@ export default {
 
 			await loadStuff();
 
-			HoodieApi.instance.plan = infos.plan;
-
 			hashHistory.push({
-				pathname: pathname ? pathname : '/account/success',
+				pathname: pathname || '/account/success',
 			});
 
 			localServer.dispatchUpdate('/userStore', patch);
@@ -672,90 +543,6 @@ export default {
 				.commit();
 
 			localServer.dispatchUpdate('/userStore', patch);
-		}
-	},
-	'/change-account-info': (data) => {
-		const form = userStore.get('profileForm');
-
-		form.errors = [];
-		delete form.success;
-		if (!data.firstname) {
-			form.errors.push('First name is required.');
-			const erroredPatch = userStore.set('profileForm', form).commit();
-
-			localServer.dispatchUpdate('/userStore', erroredPatch);
-			return;
-		}
-		form.success = true;
-		const formPatch = userStore.set('profileForm', form).commit();
-
-		localServer.dispatchUpdate('/userStore', formPatch);
-
-		const infos = {...userStore.get('infos'), ...data};
-
-		const patch = userStore.set('infos', infos).commit();
-
-		const lastname = data.lastname
-			? ` ${data.lastname}`
-			: '';
-
-		window.Intercom('update', {
-			name: `${data.firstname}${lastname}`,
-			twitter: data.twitter,
-			website: data.website,
-			occupation: data.css.value,
-			phone: data.phone || undefined, // avoid empty string being recorded into Intercom
-			skype: data.skype,
-		});
-
-		localServer.dispatchUpdate('/userStore', patch);
-	},
-	'/change-password': async ({password, newPassword, confirm}) => {
-		const changePasswordForm = userStore.get('changePasswordForm');
-
-		changePasswordForm.errors = [];
-		changePasswordForm.inError = {};
-		changePasswordForm.loading = true;
-		const cleanPatch = userStore.set('changePasswordForm', changePasswordForm).commit();
-
-		localServer.dispatchUpdate('/userStore', cleanPatch);
-
-		if (!password || !newPassword || !confirm) {
-			changePasswordForm.inError = {
-				password: !password,
-				newPassword: !newPassword,
-				confirm: !confirm,
-			};
-			changePasswordForm.errors.push('Fields with a * are required');
-			changePasswordForm.loading = false;
-			const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-
-		if (newPassword !== confirm) {
-			changePasswordForm.errors.push('The confirmation does not match your new password');
-			changePasswordForm.loading = false;
-			const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-
-		try {
-			await HoodieApi.changePassword(password, newPassword);
-			changePasswordForm.loading = false;
-			changePasswordForm.success = true;
-			const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-		catch (err) {
-			trackJs.track(err);
-			changePasswordForm.loading = false;
-			changePasswordForm.errors.push(err.message);
-			const patch = userStore.set('changePasswordForm', changePasswordForm).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
 		}
 	},
 	'/spend-credits': async (options) => {

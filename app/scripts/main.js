@@ -33,7 +33,6 @@ import searchAction from './actions/search.actions';
 import tagStoreAction from './actions/tagStore.actions';
 import undoStackAction from './actions/undoStack.actions';
 import userLifecycleAction from './actions/user-lifecycle.actions';
-import academyAction from './actions/academy.actions.jsx';
 
 import EventDebugger, {debugActions} from './debug/eventLogging.debug';
 
@@ -104,7 +103,6 @@ selectRenderOptions(
 				undoStackAction,
 				debugActions,
 				userLifecycleAction,
-				academyAction,
 				{
 					'/load-intercom-info': (data) => {
 						const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();
@@ -166,7 +164,6 @@ selectRenderOptions(
 					location.hash.indexOf('signin') === -1
 					&& location.hash.indexOf('account') === -1
 					&& location.hash.indexOf('signup') === -1
-					&& location.hash.indexOf('dashboard') === -1
 				) {
 					location.href = '#/start';
 				}
@@ -176,7 +173,6 @@ selectRenderOptions(
 					location.hash.indexOf('signin') === -1
 					&& location.hash.indexOf('account') === -1
 					&& location.hash.indexOf('signup') === -1
-					&& location.hash.indexOf('dashboard') === -1
 				) {
 					location.href = '#/start';
 				}

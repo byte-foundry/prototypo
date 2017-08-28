@@ -1,27 +1,13 @@
-import PouchDB from 'pouchdb';
-import HoodiePouch from 'pouchdb-hoodie-api';
 import queryString from 'query-string';
 import {gql} from 'react-apollo';
 
 import apolloClient from './graphcool.services';
 import isProduction from '../helpers/is-production.helpers';
-import LocalClient from '../stores/local-client.stores.jsx';
+import LocalClient from '../stores/local-client.stores';
 
-import Log from './log.services.js';
+import Log from './log.services';
 
-PouchDB.plugin(HoodiePouch);
-
-const BACK_URL = isProduction() ? 'https://db.prototypo.io' : 'https://devdb.prototypo.io';
 const AWS_URL = `https://${isProduction() ? 'e4jpj60rk8' : 'tc1b6vq6o8'}.execute-api.eu-west-1.amazonaws.com/${isProduction() ? 'prod' : 'dev'}`;
-
-const bearer = window.location.search.replace(/.*?bt=(.*?)(&|$)/, '$1');
-
-if (bearer) {
-	window.location.search = '';
-	localStorage.bearerToken = bearer;
-}
-
-const hoodie = new window.Hoodie(BACK_URL);
 
 let localClient;
 let graphCoolUserId; // this is used temporarily to link graphcool <-> stripe
@@ -57,16 +43,17 @@ async function fetchAWS(endpoint, params = {}) {
 
 const signUpAndLoginMutation = gql`
 	mutation signUpAndLogin(
+		$firstName: String!,
 		$email: String!,
 		$password: String!,
-		$firstName: String!,
 		$lastName: String,
 		$occupation: String,
 		$phone: String,
 		$skype: String,
 	) {
-		createUser(
-			authProvider: {email: {email: $email, password: $password}},
+		signupEmailUser(
+			email: $email,
+			password: $password,
 			firstName: $firstName,
 			lastName: $lastName,
 			occupation: $occupation,
@@ -74,10 +61,9 @@ const signUpAndLoginMutation = gql`
 			skype: $skype,
 		) {
 			id
-			email
 		}
 
-		signinUser(email: {email: $email, password: $password}) {
+		auth: authenticateEmailUser(email: $email, password: $password) {
 			token
 		}
 	}
@@ -85,107 +71,80 @@ const signUpAndLoginMutation = gql`
 
 export default class HoodieApi {
 
-	static setup() {
-		HoodieApi.instance = hoodie;
-		return hoodie.account.fetch()
-				.then(setupHoodie)
-				.then(setupStripe);
+	static async setup() {
+		HoodieApi.instance = {};
+
+		const response = await apolloClient.query({
+			fetchPolicy: 'network-only',
+			query: gql`
+				query setup {
+					user {
+						id
+						email
+						stripe
+					}
+				}
+			`,
+		});
+
+		if (!response.data.user) {
+			throw new Error('Not authenticated yet');
+		}
+
+		return setupStripe(setupHoodie(response.data.user));
 	}
 
 	static async login(user, password) {
-		const data = await hoodie.account.signIn(user, password);
-
-		// If the graph.cool account creation fails, it's ok for now
-		try {
-			const response = await apolloClient.mutate({
-				mutation: gql`
-					mutation login($email: String!, $password: String!) {
-						signinUser(email: {email: $email, password: $password}) {
-							token
-						}
+		const response = await apolloClient.mutate({
+			mutation: gql`
+				mutation login($email: String!, $password: String!) {
+					auth: authenticateEmailUser(email: $email, password: $password) {
+						token
 					}
-				`,
-				variables: {
-					email: user,
-					password,
-				},
-			});
-
-			window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
-		}
-		catch (e) {
-			if (e.graphQLErrors.map(e => e.code).includes(3022)) {
-				try {
-					const response = await apolloClient.mutate({
-						mutation: signUpAndLoginMutation,
-						variables: {
-							email: user,
-							password,
-							firstName: 'there',
-						},
-					});
-
-					window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
-					graphCoolUserId = response.data.createUser.id;
 				}
-				catch (err) { trackJs.track(err); }
-			} else {
-				trackJs.track(e);
-			}
-		}
+			`,
+			variables: {
+				email: user,
+				password,
+			},
+		});
 
-		return setupStripe(setupHoodie(data));
+		window.localStorage.setItem('graphcoolToken', response.data.auth.token);
+
+		return HoodieApi.setup();
 	}
 
 	static async logout() {
-		const data = await hoodie.account.signOut();
-
 		window.localStorage.removeItem('graphcoolToken');
-
-		// TMP until we kick out Hoodie
-		localStorage.clear();
-
-		return data;
+		apolloClient.resetStore();
 	}
 
 	static async signUp(email, password, firstName, {lastName, occupation, phone, skype}) {
-		const data = await hoodie.account.signUp(email, password);
+		const response = await apolloClient.mutate({
+			mutation: signUpAndLoginMutation,
+			variables: {
+				email,
+				password,
+				firstName,
+				lastName: lastName || undefined,
+				occupation: occupation || undefined,
+				phone: phone || undefined,
+				skype: skype || undefined,
+			},
+		});
 
-		// If the graph.cool account creation fails, it's ok for now
-		try {
-			const response = await apolloClient.mutate({
-				mutation: signUpAndLoginMutation,
-				variables: {
-					email,
-					password,
-					firstName,
-					lastName: lastName || undefined,
-					occupation: occupation || undefined,
-					phone: phone || undefined,
-					skype: skype || undefined,
-				},
-			});
-
-			window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
-			graphCoolUserId = response.data.createUser.id;
-		}
-		catch (e) { trackJs.track(e); }
-
-		return data;
+		window.localStorage.setItem('graphcoolToken', response.data.auth.token);
+		graphCoolUserId = response.data.signupEmailUser.id;
 	}
 
 	static isLoggedIn() {
-		return /*window.localStorage.getItem('graphcoolToken') && */hoodie.account.hasValidSession();
+		return !!window.localStorage.getItem('graphcoolToken');
 	}
 
 	static async askPasswordReset(email) {
 		return fetchAWS(`/users/${email}/reset_password`, {
 			method: 'PUT',
 		});
-	}
-
-	static changePassword(password, newPassword) {
-		return hoodie.account.changePassword(password, newPassword);
 	}
 
 	static checkResetToken(id, resetToken) {
@@ -199,13 +158,6 @@ export default class HoodieApi {
 				resetToken,
 				password,
 			},
-		});
-	}
-
-	static createCustomer(options) {
-		return fetchAWS('/customers', {
-			method: 'POST',
-			payload: options,
 		});
 	}
 
@@ -311,50 +263,11 @@ export default class HoodieApi {
 			method: 'DELETE',
 		});
 	}
-
-	// temporary way of registering stripe id into graphcool
-	// this should be removed as soon as we get out of Hoodie
-	static async addStripeIdToGraphCool(id) {
-		if (graphCoolUserId) {
-			try {
-				await apolloClient.mutate({
-					mutation: gql`
-						mutation addStripeId($id: ID!, $stripeId: String!) {
-							updateUser(id: $id, stripe: $stripeId) {
-								id
-								stripe
-							}
-						}
-					`,
-					variables: {
-						id: graphCoolUserId,
-						stripeId: id,
-					},
-				});
-
-				graphCoolUserId = null;
-			}
-			catch (e) { trackJs.track(e); }
-		}
-	}
 }
 
 function setupHoodie(data) {
-	const response = data.response ? data.response : data;
-	const id = response.roles[0];
-	const hoodieConfig = JSON.parse(localStorage._hoodie_config);
-	const db = PouchDB(`${BACK_URL}/_api/user%2F${id}`, {
-		ajax: {
-			headers: {
-				'Authorization': `Bearer ${hoodieConfig['_account.bearerToken']}`,
-			},
-			withCredentials: true,
-		},
-	});
-
-	HoodieApi.instance.pouch = db.hoodieApi();
-	HoodieApi.instance.hoodieId = id;
-	HoodieApi.instance.email = response.name.split('/')[1];
+	HoodieApi.instance.hoodieId = data.id;
+	HoodieApi.instance.email = data.email;
 	HoodieApi.instance.plan = 'free_none';
 
 	if (window.Intercom) {
@@ -368,21 +281,12 @@ function setupHoodie(data) {
 	}
 
 	Log.setUserId(HoodieApi.instance.email);
-
-	if (HoodieApi.eventSub) {
-		_.each(HoodieApi.eventSub.connected, (cb) => {
-			cb();
-		});
-	}
-
 	return data;
 }
 
 async function setupStripe(data, time = 1000) {
 	if (data.stripe) {
-		HoodieApi.instance.customerId = data.stripe.customerId;
-
-		HoodieApi.addStripeIdToGraphCool(data.stripe.customerId);
+		HoodieApi.instance.customerId = data.stripe;
 
 		try {
 			const customer = await HoodieApi.getCustomerInfo();
@@ -402,8 +306,18 @@ async function setupStripe(data, time = 1000) {
 
 	// if error we poll customerId
 	setTimeout(async () => {
-		const newData = await HoodieApi.instance.account.fetch();
+		// const newData = await HoodieApi.instance.account.fetch();
+		const response = await apolloClient.query({
+			query: gql`
+				query setupStripe {
+					user {
+						id
+						stripe
+					}
+				}
+			`,
+		});
 
-		setupStripe(newData, 2 * time || 1000);
+		setupStripe(response.data.user, 2 * time || 1000);
 	}, time);
 }

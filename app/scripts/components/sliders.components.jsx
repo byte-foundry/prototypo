@@ -1,7 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {graphql, gql} from 'react-apollo';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -15,8 +14,8 @@ const demoRatio = 0.7;
 export class Sliders extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
@@ -137,10 +136,10 @@ export class Sliders extends React.PureComponent {
 	}
 }
 
-export class RawSlider extends React.Component {
+export class RawSlider extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
 		this.changeParam = this.changeParam.bind(this);
 		this.handleRestrictedRangeEnter = this.handleRestrictedRangeEnter.bind(this);
 	}
@@ -300,12 +299,7 @@ export const Slider = graphql(query, {
 	},
 })(RawSlider);
 
-export class RadioSlider extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
+export class RadioSlider extends React.PureComponent {
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
@@ -364,12 +358,10 @@ export class RadioSlider extends React.Component {
 	}
 }
 
-export class SliderRadioController extends React.Component {
+export class SliderRadioController extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
-		//function binding to avoid unnecessery re-render
 		this.handleChange = this.handleChange.bind(this);
 	}
 
@@ -491,12 +483,7 @@ export class SliderTextController extends React.PureComponent {
 	}
 }
 
-class IndivSwitch extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
+class IndivSwitch extends React.PureComponent {
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
