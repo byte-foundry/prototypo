@@ -215,8 +215,8 @@ class SolvablePath {
 				node.expandedTo[1].dirOut = dirOut1 || 0;
 			}
 			else {
-				nodes[i].dirIn = readAngle(node.dirIn) || 0;
-				nodes[i].dirOut = readAngle(node.dirOut) || 0;
+				nodes[i].dirIn = readAngle(node.dirIn) || 0.01;
+				nodes[i].dirOut = readAngle(node.dirOut) || 0.01;
 			}
 
 			if (node.typeOut === 'smooth') {

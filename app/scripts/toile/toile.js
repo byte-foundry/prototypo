@@ -31,11 +31,23 @@ export const canvasMode = {
 };
 
 export const appState = {
-	UNSELECTED: -1,
-	HANDLE_MOD: 0,
-	ONCURVE_MOD: 1,
-	SKELETON_POS: 2,
-	SKELETON_DISTR: 3,
+	HANDLE_MOD: 0b1,
+	HANDLE_MOD_BOTH_SIDE_MODIFIER: 0b10,
+	HANDLE_MOD_SIDES: 0b100,
+	HANDLE_MOD_SMOOTH_MODIFIER: 0b1000,
+	ONCURVE_MOD: 0b10000,
+	ONCUREVE_MOD_ANGLE_MODIFIER: 0b1000000000000000,
+	ONCUREVE_MOD_WIDTH_MODIFIER: 0b10000000000000000,
+	SKELETON_POS: 0b100000,
+	SKELETON_DISTR: 0b1000000,
+	UNSELECTED: 0b10000000,
+	MOVING: 0b100000000,
+	ZOOMING: 0b1000000000,
+	CONTOUR_SWITCH: 0b10000000000,
+	CONTOUR_SELECTED: 0b100000000000,
+	COMPONENT_SELETED: 0b1000000000000,
+	COMPONENT_HOVERED: 0b10000000000000,
+	COMPONENT_MENU_HOVERED: 0b100000000000000,
 };
 
 const green = '#24d390';
@@ -145,10 +157,12 @@ export default class Toile {
 
 		canvas.addEventListener('mousedown', () => {
 			this.mouseState = mState.DOWN;
+			this.mouseStateEdge = mState.DOWN;
 		});
 
 		canvas.addEventListener('mouseup', () => {
 			this.mouseState = mState.UP;
+			this.mouseStateEdge = mState.UP;
 		});
 
 		canvas.addEventListener('wheel', (e) => {
@@ -220,6 +234,10 @@ export default class Toile {
 		this.keyboardDownRisingEdge = {};
 	}
 
+	clearMouseEdges() {
+		this.mouseStateEdge = undefined;
+	}
+
 	clearCanvas(width, height) {
 		this.context.clearRect(0, 0, width, height);
 		this.interactionList = [];
@@ -230,6 +248,7 @@ export default class Toile {
 			pos: this.mouse,
 			delta: this.mouseDelta,
 			state: this.mouseState,
+			edge: this.mouseStateEdge,
 			wheel: this.mouseWheelDelta,
 		};
 	}
