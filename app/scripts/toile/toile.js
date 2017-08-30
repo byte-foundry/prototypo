@@ -629,8 +629,8 @@ export default class Toile {
 	}
 
 	drawGlyph(glyph) {
-		this.context.fillStyle = 'black';
-		this.context.strokeStyle = 'black';
+		this.context.fillStyle = grey;
+		this.context.strokeStyle = grey;
 		this.context.beginPath();
 		glyph.otContours.forEach((bez) => {
 			this.drawContour(bez, undefined, undefined, true);
