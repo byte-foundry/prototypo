@@ -1,4 +1,4 @@
-import {transform2D, matrixMul} from '../../plumin/util/linear.js';
+import {transform2D, matrixMul} from '../../plumin/util/linear';
 
 export function toLodashPath(path) {
 	return path.replace(/\.([0-9]+)\./g, '[$1].');
@@ -92,9 +92,10 @@ export function transformNode(node, transforms, origin) {
 
 function exeTransformOnNode(name, node, param, origin) {
 	const {x, y} = transformByName[name](node, param, origin);
+	const {x: xBase, y: yBase} = transformByName[name]({x: node.xBase, y: node.yBase}, param, origin);
 
 	node.x = x;
 	node.y = y;
-	node.xBase = x;
-	node.yBase = y;
+	node.xBase = xBase;
+	node.yBase = yBase;
 }

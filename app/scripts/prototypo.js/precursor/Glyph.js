@@ -333,6 +333,10 @@ export default class Glyph {
 			const manualChanges
 				= params.manualChanges[this.name.value].cursors[op] || 0;
 
+			if (manualChanges) {
+				console.log(op, result);
+			}
+
 			result += manualChanges;
 		}
 
@@ -454,6 +458,11 @@ export default class Glyph {
 						);
 						transformNode(
 							node.expandedTo[1],
+							transformedThis.transforms,
+							transformedThis.transformOrigin,
+						);
+						transformNode(
+							node,
 							transformedThis.transforms,
 							transformedThis.transformOrigin,
 						);

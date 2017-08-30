@@ -178,14 +178,14 @@ export default class GlyphCanvas extends React.PureComponent {
 				if (appMode === canvasMode.SELECT_POINTS) {
 					if (mouse.state === mState.DOWN) {
 						if (tools.length === 1) {
-							draggedItem = draggedItem.type ? draggedItem : tools[0];
+							draggedItem = draggedItem.type !== undefined ? draggedItem : tools[0];
 						}
 						else if (nodes.length > 0) {
 							if (draggedItem && nodes[0].id === draggedItem.id) {
 								draggedItem = nodes[0];
 							}
 							else {
-								draggedItem = draggedItem.type ? draggedItem : nodes[0];
+								draggedItem = draggedItem.type !== undefined ? draggedItem : nodes[0];
 							}
 						}
 						else {
@@ -474,8 +474,6 @@ export default class GlyphCanvas extends React.PureComponent {
 					const mouseVec = subtract2D(mousePosInWorld, selectedNodeParent);
 					const angle = Math.atan2(mouseVec.y, mouseVec.x);
 					const intersection = rayRayIntersection(selectedNodeParent, angle, otherNode, otherDir);
-					this.toile.drawCircle(intersection, 5, '#ff0000');
-					this.toile.drawLine(selectedNodeParent, add2D(selectedNodeParent, mulScalar2D(100, mouseVec)), '#00ff00');
 					let tension = distance2D(mousePosInWorld, selectedNodeParent)
 						/ (distance2D(intersection, selectedNodeParent) || 1);
 					const dotProductForOrient = dot2D(
@@ -628,6 +626,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 				if (appStateValue & appState.SKELETON_POS) {
 					const {base} = draggedItem.data;
+					console.log(base);
 					const [mousePosInWorld] = transformCoords(
 						[mouse.pos],
 						inverseProjectionMatrix(this.toile.viewMatrix),
