@@ -49,6 +49,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				this.setState({
 					workers: head.toJS().d.workers,
 					canvasMode: head.toJS().d.canvasMode,
+					uiOutline: head.toJS().d.uiOutline,
 				});
 			})
 			.onDelete(() => {
@@ -163,10 +164,6 @@ export default class GlyphCanvas extends React.PureComponent {
 				const contours = hotItems.filter(item =>
 					item.type === toileType.GLYPH_CONTOUR || item.type === toileType.GLYPH_COMPONENT_CONTOUR,
 				);
-
-				if (mouse.wheel) {
-					appStateValue = appState.ZOOMING;
-				}
 
 				if (appMode === canvasMode.MOVE) {
 					if (mouse.state === mState.DOWN) {
@@ -294,12 +291,17 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 
+				if (mouse.wheel) {
+					appStateValue |= appState.ZOOMING;
+				}
+
+
 				this.toile.clearCanvas(width, height);
 				this.toile.drawTypographicFrame(
 					glyph,
 					this.state.values,
 				);
-				this.toile.drawGlyph(glyph, hotItems);
+				this.toile.drawGlyph(glyph, hotItems, this.state.uiOutline);
 				this.toile.drawSelectableContour(
 					glyph,
 					appMode === canvasMode.SELECT_POINTS ? hotItems : [],

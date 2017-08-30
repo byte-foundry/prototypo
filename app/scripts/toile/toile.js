@@ -628,8 +628,8 @@ export default class Toile {
 		});
 	}
 
-	drawGlyph(glyph) {
-		this.context.fillStyle = grey;
+	drawGlyph(glyph, hotItems, outline) {
+		this.context.fillStyle = outline ? transparent : grey;
 		this.context.strokeStyle = grey;
 		this.context.beginPath();
 		glyph.otContours.forEach((bez) => {
