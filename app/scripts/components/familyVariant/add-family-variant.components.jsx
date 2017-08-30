@@ -107,7 +107,6 @@ export class AddFamily extends React.PureComponent {
 				variantId: newFont.variants[0].id,
 			});
 
-			Log.ui('Collection.CreateFamily'); // TODO: put this in the onCreateFamily in collection
 			Log.ui(`createFamily.${selectedFont.templateName}`);
 			this.client.dispatchAction('/store-value', {uiOnboardstep: 'customize'});
 
@@ -182,10 +181,12 @@ export class AddFamily extends React.PureComponent {
 }
 
 AddFamily.defaultProps = {
+	onCreateFamily: () => {},
 	createFamily: () => {},
 };
 
 AddFamily.propTypes = {
+	onCreateFamily: PropTypes.func,
 	createFamily: PropTypes.func,
 };
 
