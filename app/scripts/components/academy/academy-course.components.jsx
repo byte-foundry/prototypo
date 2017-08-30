@@ -406,10 +406,11 @@ class AcademyCourse extends React.PureComponent {
 				<h3>Parts</h3>
 				{this.state.headers.map(header =>
 					(<a
+						href={`#/academy/${course.slug}/${header.content}`}
 						key={header.content}
-						href="#" // This should be an anchor when we switch to BrowserHistory
 						className={`academy-sidebar-menu-item ${header.active ? 'is-active' : ''}`}
-						onClick={() => {
+						onClick={(e) => {
+							e.preventDefault();
 							header.elem.scrollIntoView();
 						}}
 					>
