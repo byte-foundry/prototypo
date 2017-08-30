@@ -88,6 +88,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 		const raf = requestAnimationFrame || webkitRequestAnimationFrame;
 		const rafFunc = () => {
+			/* eslint-disable no-bitwise */
 			const width = this.canvas.clientWidth;
 			const height = this.canvas.clientHeight;
 
@@ -197,7 +198,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.HANDLE_MOD
 								| appState.CONTOUR_SWITCH
 								| appState.CONTOUR_SELECTED;
-							if (this.toile.keyboardDown.keyCode == 17) {
+							if (this.toile.keyboardDown.keyCode === 17) {
 								appStateValue |= appState.HANDLE_MOD_SMOOTH_MODIFIER;
 							}
 							break;
@@ -205,13 +206,19 @@ export default class GlyphCanvas extends React.PureComponent {
 						case toileType.NODE_IN:
 						case toileType.NODE_OUT: {
 							appStateValue = appState.HANDLE_MOD | appState.CONTOUR_SELECTED;
-							if (this.toile.keyboardDown.keyCode == 17) {
+							if (this.toile.keyboardDown.keyCode === 17) {
 								appStateValue |= appState.HANDLE_MOD_SMOOTH_MODIFIER;
 							}
 							break;
 						}
 						case toileType.NODE: {
 							appStateValue = appState.ONCURVE_MOD | appState.CONTOUR_SELECTED;
+							if (this.toile.keyboardDown.keyCode === 17) {
+								appStateValue |= appState.ONCURVE_MOD_ANGLE_MODIFIER;
+							}
+							else if (this.toile.keyboardDown.keyCode === 16) {
+								appStateValue |= appState.ONCURVE_MOD_WIDTH_MODIFIER;
+							}
 							break;
 						}
 						case toileType.NODE_SKELETON:
@@ -431,7 +438,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						moving = true;
 					}
 					this.toile.setCamera(newTs, z, -height);
-
 				}
 				else if (appStateValue & appState.ZOOMING) {
 					const [z,,,, x, y] = this.toile.viewMatrix;
@@ -456,7 +462,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					moving = false;
 				}
 
-				if(appStateValue & appState.HANDLE_MOD) {
+				if (appStateValue & appState.HANDLE_MOD) {
 					const {parentId, skeletonId, otherNode, otherDir} = draggedItem.data;
 					const selectedNodeParent = _.get(glyph, parentId);
 					const skeletonNode = _.get(glyph, skeletonId);
@@ -468,6 +474,8 @@ export default class GlyphCanvas extends React.PureComponent {
 					const mouseVec = subtract2D(mousePosInWorld, selectedNodeParent);
 					const angle = Math.atan2(mouseVec.y, mouseVec.x);
 					const intersection = rayRayIntersection(selectedNodeParent, angle, otherNode, otherDir);
+					this.toile.drawCircle(intersection, 5, '#ff0000');
+					this.toile.drawLine(selectedNodeParent, add2D(selectedNodeParent, mulScalar2D(100, mouseVec)), '#00ff00');
 					let tension = distance2D(mousePosInWorld, selectedNodeParent)
 						/ (distance2D(intersection, selectedNodeParent) || 1);
 					const dotProductForOrient = dot2D(
@@ -485,7 +493,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 
 					if (toileType.NODE_IN === draggedItem.type) {
-						dirDiff = angle - skeletonNode.dirIn;
+						dirDiff = angle - selectedNodeParent.baseDirIn;
 						const changes = {
 							[`${draggedItem.data.parentId}.dirIn`]: dirDiff,
 							[`${draggedItem.data.parentId}.tensionIn`]: tension / (0.6 * (selectedNodeParent.baseTensionIn || (1 / 0.6))),
@@ -501,14 +509,14 @@ export default class GlyphCanvas extends React.PureComponent {
 						});
 					}
 					else if (toileType.NODE_OUT === draggedItem.type) {
-						dirDiff = angle - skeletonNode.dirOut;
+						dirDiff = angle - selectedNodeParent.baseDirOut;
 						const changes = {
 							[`${draggedItem.data.parentId}.dirOut`]: dirDiff,
-							[`${draggedItem.data.parentId}.tensionOut`]: tension / (0.6 * (selectedNodeParent.baseTensionIn || (1 / 0.6))),
+							[`${draggedItem.data.parentId}.tensionOut`]: tension / (0.6 * (selectedNodeParent.baseTensionOut || (1 / 0.6))),
 						};
 
 						if (appStateValue & appState.HANDLE_MOD_SMOOTH_MODIFIER) {
-							changes[`${draggedItem.data.parentId}.dirIn`] = dirDiff;
+							changes[`${draggedItem.data.parentId}.dirIn`] = angle - skeletonNode.dirIn;
 						}
 
 						this.client.dispatchAction('/change-glyph-node-manually', {
@@ -548,7 +556,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						};
 
 						if (appStateValue & appState.HANDLE_MOD_SMOOTH_MODIFIER) {
-							changes[`${draggedItem.data.parentId}.dirOut`] = dirDiff;
+							changes[`${draggedItem.data.parentId}.dirOut`] = angle - selectedNodeParent.dirOut;
 						}
 
 						this.client.dispatchAction('/change-glyph-node-manually', {
@@ -560,11 +568,11 @@ export default class GlyphCanvas extends React.PureComponent {
 						dirDiff = angle - selectedNodeParent.dirOut;
 						const changes = {
 							[`${draggedItem.data.parentId}.dirOut`]: dirDiff,
-							[`${draggedItem.data.parentId}.tensionOut`]: tension / (0.6 * (selectedNodeParent.baseTensionIn || (1 / 0.6))),
+							[`${draggedItem.data.parentId}.tensionOut`]: tension / (0.6 * (selectedNodeParent.baseTensionOut || (1 / 0.6))),
 						};
 
 						if (appStateValue & appState.HANDLE_MOD_SMOOTH_MODIFIER) {
-							changes[`${draggedItem.data.parentId}.dirIn`] = dirDiff;
+							changes[`${draggedItem.data.parentId}.dirIn`] = angle - selectedNodeParent.dirIn;
 						}
 
 						this.client.dispatchAction('/change-glyph-node-manually', {
@@ -589,11 +597,24 @@ export default class GlyphCanvas extends React.PureComponent {
 					const angleDiff = Math.atan2(mouseVec.y, mouseVec.x) - baseAngle;
 
 					if (mouseMoved) {
+						const changes = {};
+
+						if (
+							(appStateValue ^ appState.ONCURVE_MOD_ANGLE_MODIFIER)
+							& appState.ONCURVE_MOD_ANGLE_MODIFIER
+						) {
+							changes[`${draggedItem.data.modifAddress}.width`] = factor;
+						}
+
+						if (
+							(appStateValue ^ appState.ONCURVE_MOD_WIDTH_MODIFIER)
+							& appState.ONCURVE_MOD_WIDTH_MODIFIER
+						) {
+							changes[`${draggedItem.data.modifAddress}.angle`] = angleDiff + angleOffset;
+						}
+
 						this.client.dispatchAction('/change-glyph-node-manually', {
-							changes: {
-								[`${draggedItem.data.modifAddress}.width`]: factor,
-								[`${draggedItem.data.modifAddress}.angle`]: angleDiff + angleOffset,
-							},
+							changes,
 							glyphName: glyph.name,
 						});
 					}
@@ -676,6 +697,7 @@ export default class GlyphCanvas extends React.PureComponent {
 			this.toile.clearWheelDelta();
 
 			raf(rafFunc);
+			/* eslint-enable no-bitwise */
 		};
 
 		raf(rafFunc);

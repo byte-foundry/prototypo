@@ -36,8 +36,8 @@ export const appState = {
 	HANDLE_MOD_SIDES: 0b100,
 	HANDLE_MOD_SMOOTH_MODIFIER: 0b1000,
 	ONCURVE_MOD: 0b10000,
-	ONCUREVE_MOD_ANGLE_MODIFIER: 0b1000000000000000,
-	ONCUREVE_MOD_WIDTH_MODIFIER: 0b10000000000000000,
+	ONCURVE_MOD_ANGLE_MODIFIER: 0b1000000000000000,
+	ONCURVE_MOD_WIDTH_MODIFIER: 0b10000000000000000,
 	SKELETON_POS: 0b100000,
 	SKELETON_DISTR: 0b1000000,
 	UNSELECTED: 0b10000000,
@@ -616,8 +616,8 @@ export default class Toile {
 				const prevNode = nodes[(j - 1) - (nodes.length * Math.floor((j - 1) / nodes.length))];
 				const nextNode = nodes[(j + 1) % nodes.length];
 
-				this.drawContourNode(node.expandedTo[0], `${id}.expandedTo.0`, prevNode, nextNode, hotItems, componentPrefixAddress);
-				this.drawContourNode(node.expandedTo[1], `${id}.expandedTo.1`, nextNode, prevNode, hotItems, componentPrefixAddress);
+				this.drawContourNode(node.expandedTo[0], `${id}.expandedTo.0`, prevNode.expandedTo[0], nextNode.expandedTo[0], hotItems, componentPrefixAddress);
+				this.drawContourNode(node.expandedTo[1], `${id}.expandedTo.1`, nextNode.expandedTo[1], prevNode.expandedTo[1], hotItems, componentPrefixAddress);
 			}
 			else {
 				const prevNode = nodes[(j - 1) - (nodes.length * Math.floor((j - 1) / nodes.length))];

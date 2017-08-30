@@ -27,6 +27,9 @@ function computeHandle(
 	const tensionIn = j ? node.tensionOut : node.tensionIn;
 	const tensionOut = j ? node.tensionIn : node.tensionOut;
 
+	dest.baseDirOut = dirToNext;
+	dest.baseDirIn = dirToPrev;
+
 	if (node.expandedTo) {
 		dirToNext += params[`${node.nodeAddress}expandedTo.${j}.dirOut`] || 0;
 		dirToPrev += params[`${node.nodeAddress}expandedTo.${j}.dirIn`] || 0;
@@ -197,10 +200,10 @@ class SolvablePath {
 
 				nodes[i].expand.angle = readAngle(node.expand.angle);
 				nodes[i].dirIn = dirIn === null
-					? (nodes[i].expand.angle + (Math.PI / 2)) % (2 * Math.PI)
+					? ((nodes[i].expand.angle + (Math.PI / 2)) % (2 * Math.PI)) + 0.01
 					: dirIn;
 				nodes[i].dirOut = dirOut === null
-					? (nodes[i].expand.angle + (Math.PI / 2)) % (2 * Math.PI)
+					? ((nodes[i].expand.angle + (Math.PI / 2)) % (2 * Math.PI)) + 0.01
 					: dirOut;
 			}
 			else if (node.expandedTo) {
@@ -209,10 +212,10 @@ class SolvablePath {
 				const dirIn1 = readAngle(node.expandedTo[1].dirIn);
 				const dirOut1 = readAngle(node.expandedTo[1].dirOut);
 
-				node.expandedTo[0].dirIn = dirIn0 || 0;
-				node.expandedTo[0].dirOut = dirOut0 || 0;
-				node.expandedTo[1].dirIn = dirIn1 || 0;
-				node.expandedTo[1].dirOut = dirOut1 || 0;
+				node.expandedTo[0].dirIn = dirIn0 || 0.01;
+				node.expandedTo[0].dirOut = dirOut0 || 0.01;
+				node.expandedTo[1].dirIn = dirIn1 || 0.01;
+				node.expandedTo[1].dirOut = dirOut1 || 0.01;
 			}
 			else {
 				nodes[i].dirIn = readAngle(node.dirIn) || 0.01;
