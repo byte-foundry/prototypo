@@ -164,12 +164,13 @@ export default class GlyphCanvas extends React.PureComponent {
 					item.type === toileType.GLYPH_CONTOUR || item.type === toileType.GLYPH_COMPONENT_CONTOUR,
 				);
 
+				if (mouse.wheel) {
+					appStateValue = appState.ZOOMING;
+				}
+
 				if (appMode === canvasMode.MOVE) {
 					if (mouse.state === mState.DOWN) {
 						appStateValue = appState.MOVING;
-					}
-					else if (mouse.wheel) {
-						appStateValue = appState.ZOOMING;
 					}
 					else {
 						appStateValue = undefined;
@@ -626,7 +627,6 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 				if (appStateValue & appState.SKELETON_POS) {
 					const {base} = draggedItem.data;
-					console.log(base);
 					const [mousePosInWorld] = transformCoords(
 						[mouse.pos],
 						inverseProjectionMatrix(this.toile.viewMatrix),
