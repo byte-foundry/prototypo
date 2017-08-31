@@ -55,6 +55,7 @@ const blue = '#00c4d6';
 const darkBlue = '#00a4b2';
 const yellow = '#f5e462';
 const grey = '#3b3b3b';
+const darkestGrey = '#333333';
 const mediumGrey = '#7e7e7e';
 const lightGrey = '#c6c6c6';
 const lightestGrey = '#f6f6f6';
@@ -629,8 +630,8 @@ export default class Toile {
 	}
 
 	drawGlyph(glyph, hotItems, outline) {
-		this.context.fillStyle = outline ? transparent : grey;
-		this.context.strokeStyle = grey;
+		this.context.fillStyle = outline ? transparent : darkestGrey;
+		this.context.strokeStyle = darkestGrey;
 		this.context.beginPath();
 		glyph.otContours.forEach((bez) => {
 			this.drawContour(bez, undefined, undefined, true);
@@ -777,6 +778,11 @@ export default class Toile {
 	setCamera(point, zoom, height) {
 		this.height = height;
 		this.viewMatrix = [zoom, 0, 0, -1 * zoom, point.x, point.y];
+	}
+
+	setCameraCenter(point, zoom, height, width) {
+		//this.setCamera({x: 0, y: 0}, zoom, height);
+		this.setCamera(subtract2D({x: width / 2, y: height / 2}, mulScalar2D(zoom, {x: point.x, y: -point.y})), zoom, height);
 	}
 
 	// A drawn contour must be closed

@@ -99,3 +99,32 @@ function exeTransformOnNode(name, node, param, origin) {
 	node.xBase = xBase;
 	node.yBase = yBase;
 }
+
+export function glyphBoundingBox(glyph) {
+	let minX = Infinity;
+	let maxX = -Infinity;
+	let minY = Infinity;
+	let maxY = -Infinity;
+
+	glyph.otContours.forEach((contour) => {
+		contour.forEach((bezier) => {
+			bezier.forEach((node) => {
+				minX = Math.min(node.x, minX);
+				maxX = Math.max(node.x, maxX);
+				minY = Math.min(node.y, minY);
+				maxY = Math.max(node.y, maxY);
+			});
+		});
+	});
+
+	return [
+		{
+			x: minX,
+			y: minY,
+		},
+		{
+			x: maxX,
+			y: maxY,
+		},
+	];
+}

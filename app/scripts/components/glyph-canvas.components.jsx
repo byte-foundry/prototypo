@@ -6,7 +6,7 @@ import Lifespan from 'lifespan';
 import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix, canvasMode} from '../toile/toile';
 import {rayRayIntersection} from '../prototypo.js/utils/updateUtils';
 
-import {changeTransformOrigin, toLodashPath} from '../prototypo.js/helpers/utils';
+import {changeTransformOrigin, toLodashPath, glyphBoundingBox} from '../prototypo.js/helpers/utils';
 import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D, add2D, distance2D} from '../plumin/util/linear';
 
 import LocalClient from '../stores/local-client.stores';
@@ -86,6 +86,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		let appMode;
 		let oldAppMode;
 		let oldAppState;
+		let mouseDoubleClick;
 
 		const raf = requestAnimationFrame || webkitRequestAnimationFrame;
 		const rafFunc = () => {
@@ -121,6 +122,24 @@ export default class GlyphCanvas extends React.PureComponent {
 			const glyph = this.state.glyph;
 
 			if (glyph) {
+				if (mouse.edge === mState.DOWN) {
+					if (mouseDoubleClick) {
+						const bbox = glyphBoundingBox(glyph);
+						const center = mulScalar2D(1 / 2, add2D(
+							bbox[0],
+							bbox[1],
+						));
+
+						this.toile.setCameraCenter(center, this.toile.viewMatrix[0], -height, width);
+					}
+					else {
+						mouseDoubleClick = true;
+						setTimeout(() => {
+							mouseDoubleClick = false;
+						}, 400);
+					}
+				}
+
 				if (this.toile.keyboardUp.keyCode) {
 					const {keyCode} = this.toile.keyboardUp;
 
