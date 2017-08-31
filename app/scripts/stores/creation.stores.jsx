@@ -128,6 +128,17 @@ const prototypoStore = new Remutable({
 	uiSliderTooltip: undefined,
 	//end ui store values
 
+	//lite version store values
+    openStepModal: false,
+	openChoiceModal: false,
+	stepSelectedChoiceCreation: false,
+	changeNameStep: false,
+	choice: {},
+	step: {},
+	collectionSelectedStep: undefined,
+	collectionSelectedChoice: undefined,
+	//end lite version store values
+
 	//commits store values
 	commitsList: [],
 	latestCommit: '',
@@ -246,6 +257,8 @@ const planStore = new Remutable({
 		EUR: '144.00€',
 	},
 });
+
+
 
 // [item]: [cost in credits]
 const creditStore = new Remutable({

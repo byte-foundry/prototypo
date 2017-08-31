@@ -17,6 +17,9 @@ import Collection from './collection/collection.components.jsx';
 import CreateFamilyModal from './familyVariant/create-family-modal.components.jsx';
 import CreateVariantModal from './familyVariant/create-variant-modal.components.jsx';
 import CreateAcademyModal from './academy/create-academy-modal.components.jsx';
+import CreateStepModal from './lite/create-step-modal.components.jsx';
+import CreateChoiceModal from './lite/create-choice-modal.components.jsx';
+import CreateExportLiteModal from './lite/create-export-lite-modal.components.jsx';
 import ChangeNameFamily from './familyVariant/change-name-family.components.jsx';
 import ChangeNameVariant from './familyVariant/change-name-variant.components.jsx';
 import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
@@ -72,7 +75,13 @@ class Dashboard extends React.PureComponent {
 				this.setState({
 					openFamilyModal: head.toJS().d.openFamilyModal,
 					openVariantModal: head.toJS().d.openVariantModal,
+					openStepModal: head.toJS().d.openStepModal,
+                    openChoiceModal: head.toJS().d.openChoiceModal,
+					openExportLiteModal: head.toJS().d.openExportLiteModal,
+                    stepModalEdit: head.toJS().d.stepModalEdit,
+					choiceModalEdit: head.toJS().d.choiceModalEdit,
 					familySelectedVariantCreation: head.toJS().d.familySelectedVariantCreation,
+                    stepSelectedChoiceCreation: head.toJS().d.stepSelectedChoiceCreation,
 					collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
 					openChangeFamilyNameModal: head.toJS().d.openChangeFamilyNameModal,
 					openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
@@ -208,6 +217,12 @@ class Dashboard extends React.PureComponent {
 			&& <CreateFamilyModal propName="openFamilyModal"/>;
 		const newVariant = this.state.openVariantModal
 			&& <CreateVariantModal family={this.state.familySelectedVariantCreation} propName="openVariantModal"/>;
+		const newStep = this.state.openStepModal
+		&& <CreateStepModal propName="openStepModal" edit={this.state.stepModalEdit} />;
+        const newChoice= this.state.openChoiceModal
+			&& <CreateChoiceModal step={this.state.stepSelectedChoiceCreation} propName="openChoiceModal" edit={this.state.choiceModalEdit} />;
+		const exportLite= this.state.openExportLiteModal
+			&& <CreateExportLiteModal propName="exportLiteModal" />;
 		const explainAcademy = this.state.firstTimeAcademyModal
 			&& <CreateAcademyModal propName="openAcademyModal"/>;
 		const changeNameFamily = this.state.openChangeFamilyNameModal
@@ -258,6 +273,9 @@ class Dashboard extends React.PureComponent {
 					transitionLeaveTimeout={panelTransitionTimeout}>
 					{newFamily}
 					{newVariant}
+					{newStep}
+                    {newChoice}
+					{exportLite}
 					{changeNameFamily}
 					{changeNameVariant}
 					{duplicateVariant}

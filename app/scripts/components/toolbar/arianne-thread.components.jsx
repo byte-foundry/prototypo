@@ -21,6 +21,9 @@ class ArianneThread extends React.PureComponent {
 			selectedVariant: {},
 			family: {},
 			variant: {},
+			steps: [],
+			step: {},
+			choice: {},
 			indivCurrentGroup: {},
 			groups: [],
 		};
@@ -28,6 +31,10 @@ class ArianneThread extends React.PureComponent {
 		this.toggleIndividualize = this.toggleIndividualize.bind(this);
 		this.selectVariant = this.selectVariant.bind(this);
 		this.selectFamily = this.selectFamily.bind(this);
+		this.selectChoice = this.selectChoice.bind(this);
+		this.addChoice = this.addChoice.bind(this);
+		this.selectStep = this.selectStep.bind(this);
+		this.addStep = this.addStep.bind(this);
 		this.addFamily = this.addFamily.bind(this);
 		this.addVariant = this.addVariant.bind(this);
 		this.showCollection = this.showCollection.bind(this);
@@ -47,6 +54,7 @@ class ArianneThread extends React.PureComponent {
 			return oldValue || voidStateArray;
 		};
 		const familySelector = (families, family) => { return families.find((f) => { return f.name === family.name; }); };
+		const stepSelector = (steps, step) => { return steps.find((s) => { return s.name === step.name; }); };
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
@@ -55,6 +63,30 @@ class ArianneThread extends React.PureComponent {
 						? this.props.families[0]
 						: voidStateObject
 				);
+
+				let steps;
+				let step;
+				let choice;
+
+				if (head.toJS().d.variant.ptypoLite) {
+					step = stepSelector(head.toJS().d.variant.ptypoLite.steps || [], head.toJS().d.step || {}) || (
+						this.state.steps.length > 0
+							? this.state.steps[0]
+							: voidStateObject
+					);
+					steps = head.toJS().d.variant.ptypoLite.steps;
+					if (head.toJS().d.choice && head.toJS().d.choice.name) {
+					    choice = head.toJS().d.choice;
+					}
+                    else if (this.state.steps.length > 0) {
+                        choice = step.choices[0];
+                    } else choice = {};
+				}
+				else {
+					steps = [];
+					step = {};
+					choice = {};
+				}
 
 				const isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 				const isFreeWithCredits = (head.toJS().d.credits && head.toJS().d.credits > 0) && isFree;
@@ -67,6 +99,9 @@ class ArianneThread extends React.PureComponent {
 					indivCreate: head.toJS().d.indivCreate,
 					indivMode: head.toJS().d.indivMode,
 					indivCurrentGroup: head.toJS().d.indivCurrentGroup || voidStateObject,
+					steps,
+                    step,
+                    choice,
 					isFree,
 					isFreeWithCredits,
 				});
@@ -79,6 +114,9 @@ class ArianneThread extends React.PureComponent {
 			family: familySelector(this.props.families, store.head.toJS().family),
 			variant: store.head.toJS().variant,
 			groups: memoizedListSelector(store.head.toJS().indivGroups, {}, this.state.groups, voidStateObject),
+			steps: store.head.toJS().variant.ptypoLite ? memoizedListSelector(store.head.toJS().variant.ptypoLite.steps, store.head.toJS().step, this.state.steps, voidStateObject) : [],
+			step: store.head.toJS().variant.ptypoLite && store.head.toJS().step.name ? stepSelector(store.head.toJS().variant.ptypoLite.steps, store.head.toJS().step) : {},
+			choice: store.head.toJS().variant.ptypoLite && store.head.toJS().step.name ? stepSelector(store.head.toJS().variant.ptypoLite.steps, store.head.toJS().step).choices[0] : {},
 		});
 	}
 
@@ -110,6 +148,25 @@ class ArianneThread extends React.PureComponent {
 			uiShowCollection: true,
 			collectionSelectedFamily: this.state.selectedFamily,
 			collectionSelectedVariant: this.state.selectedVariant,
+		});
+	}
+
+	selectStep(step) {
+		this.client.dispatchAction('/select-choice', {choice: undefined, step});
+	}
+
+	addStep() {
+		this.client.dispatchAction('/store-value', {openStepModal: true});
+	}
+
+	selectChoice(choice) {
+		this.client.dispatchAction('/select-choice', {choice, step: this.state.step});
+	}
+
+	addChoice() {
+		this.client.dispatchAction('/store-value', {
+ 			openChoiceModal: true,
+			stepSelectedChoiceCreation: this.state.step,
 		});
 	}
 
@@ -194,6 +251,28 @@ class ArianneThread extends React.PureComponent {
 			<ArianneDropMenuItem key="edit" item={{name: 'Edit groups...'}} click={this.editIndivualizeGroup}/>,
 			<ArianneDropMenuItem key="add" item={{name: 'Add new group...'}} click={this.addIndividualizeGroup}/>,
 		];
+
+		const addStep = <ArianneDropMenuItem item={{name: 'Add new step...'}} click={this.addStep}/>;
+		const stepItem = (
+				<DropArianneItem
+					label={this.state.step ? this.state.step.name : ''}
+					list={this.state.steps || []}
+					add={addStep}
+					click={this.selectStep}
+					toggleId="arianne-item-step"/>
+		);
+
+		const addChoice = <ArianneDropMenuItem item={{name: 'Add new choice...'}} click={this.addChoice}/>;
+		const choiceItem = (
+				<DropArianneItem
+					label={this.state.choice ? this.state.choice.name : ''}
+					step={this.state.step || {}}
+					list={this.state.step && this.state.step.choices ? this.state.step.choices.filter(({name}) => { return name !== this.state.choice.name; }) : []}
+					add={addChoice}
+					click={this.selectChoice}
+					toggleId="arianne-item-choice"/>
+		);
+
 		const groupClasses = classNames({
 			'arianne-item': true,
 			'is-active': this.state.indivMode,
@@ -225,6 +304,8 @@ class ArianneThread extends React.PureComponent {
 				<RootArianneItem click={this.showCollection}/>
 				{familyItem}
 				{variantItem}
+				{stepItem}
+				{choiceItem}
 				{group}
 			</div>
 		);
