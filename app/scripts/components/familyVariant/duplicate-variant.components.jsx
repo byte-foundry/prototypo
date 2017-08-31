@@ -85,7 +85,7 @@ class DuplicateVariant extends React.PureComponent {
 							{error}
 						</div>}
 					<div className="action-form-buttons">
-						<Button onClick={this.exit} outline>
+						<Button onClick={this.exit} outline neutral>
 							Cancel
 						</Button>
 						<Button onClick={this.duplicateVariant} disabled={isNotValid}>

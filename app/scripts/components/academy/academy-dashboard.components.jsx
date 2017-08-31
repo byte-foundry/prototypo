@@ -50,7 +50,7 @@ class AcademyDashboard extends React.Component {
 		const {academyCompleted, academyProgress} = this.props;
 		const allCoursesProgress = Object.values(academyProgress).filter(p => typeof p === 'object');
 
-		if (!academyCompleted && allCoursesProgress.every(c => c.completed)) {
+		if (!academyCompleted && allCoursesProgress.every(c => c && c.completed)) {
 			window.Intercom('trackEvent', 'finishedAllCourses');
 			this.props.setCompletedAcademy();
 		}

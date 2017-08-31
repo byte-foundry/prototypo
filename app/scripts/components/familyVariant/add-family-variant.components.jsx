@@ -166,10 +166,10 @@ export class AddFamily extends React.PureComponent {
 						{error}
 						<div className="action-form-buttons">
 							{!start
-								&& <Button onClick={this.exit} outline>
+								&& <Button onClick={this.exit} outline neutral>
 									Cancel
 								</Button>}
-							<Button type="submit" size="small" outline>
+							<Button type="submit" outline>
 								{start ? 'Create project' : 'Create family'}
 							</Button>
 						</div>
@@ -374,7 +374,7 @@ export class AddVariantRaw extends React.PureComponent {
 						{error}
 					</div>}
 				<div className="action-form-buttons">
-					<Button onClick={this.exit} outline>
+					<Button onClick={this.exit} outline neutral>
 						Cancel
 					</Button>
 					<Button onClick={this.createVariant} disabled={!!error}>

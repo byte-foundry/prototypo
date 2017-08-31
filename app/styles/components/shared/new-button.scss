@@ -4,9 +4,10 @@
 	border: none;
 	background-color: $green;
 	color: $white;
-	font-size: 18px;
-	padding: 15px 22px;
-	border-radius: 5px;
+	border-radius: 7px;
+	font-size: 14px;
+	font-weight: 600;
+	padding: 10px 20px;
 	cursor: pointer;
 	outline: none;
 
@@ -46,6 +47,8 @@
 		padding: 20px 30px;
 	}
 
+
+
 	&--outline {
 		background-color: transparent;
 		box-shadow: 0 0 0 2px $green inset;
@@ -54,6 +57,18 @@
 
 		&:hover, &:active, &:focus {
 			background-color: $green;
+			color: $white;
+		}
+	}
+
+	&--neutral {
+		box-shadow: 0 0 0 2px $medium-grey inset;
+		color: $medium-grey;
+		background: $white;
+
+		&:hover, &:active, &:focus {
+			box-shadow: 0 0 0 2px $medium-grey inset;
+			background: $medium-grey;
 			color: $white;
 		}
 	}
