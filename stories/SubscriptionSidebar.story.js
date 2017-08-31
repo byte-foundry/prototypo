@@ -4,7 +4,7 @@ import backgroundColor from 'react-storybook-decorator-background';
 
 import SubscriptionSidebar from '../app/scripts/components/account/subscription-sidebar.components';
 
-storiesOf('account.SubscriptionSidebar', module)
+storiesOf('account/SubscriptionSidebar', module)
 	.addDecorator(story => (
 		<div style={{width: '350px', margin: '20px auto'}}>
 			{story()}

@@ -13,7 +13,7 @@ module.exports = {
 			'react-joyride',
 			'react-json-pretty',
 			'react-router',
-			'react-scrollbar',
+			'react-scrollbar/dist/no-css',
 			'react-select',
 			'moment',
 			'babel-polyfill',
@@ -23,8 +23,6 @@ module.exports = {
 			'bluebird',
 			'jszip',
 			'xxhashjs',
-			'pouchdb',
-			'pouchdb-hoodie-api',
 			'slug',
 			'lodash',
 			'diff'
@@ -42,9 +40,6 @@ module.exports = {
 		libraryTarget: 'this'
 	},
 	plugins: [
-		new webpack.DefinePlugin({
-			'process.env.NODE_ENV': "'production'",
-		}),
 		new webpack.DllPlugin({
 			path: path.join(__dirname, 'dist/dll/', '[name]-manifest.json'),
 			name: '[name]_[hash]',

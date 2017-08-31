@@ -1,13 +1,25 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import Modal from '../shared/modal.components.jsx';
-import {AddFamily} from './add-family-variant.components.jsx';
+import Log from '~/services/log.services.js';
+import LocalClient from '~/stores/local-client.stores.jsx';
 
-export default class CreateFamilyModal extends React.Component {
+import Modal from '../shared/modal.components';
+import {AddFamily} from './add-family-variant.components';
+
+export default class CreateFamilyModal extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.handleCreateFamily = this.handleCreateFamily.bind(this);
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+	handleCreateFamily(family) {
+		Log.ui('Collection.CreateFamily'); // this is wrong since it's also in the top bar
+		this.client.dispatchAction('/select-variant', {variant: family.variants[0], family});
 	}
 
 	render() {
@@ -15,7 +27,7 @@ export default class CreateFamilyModal extends React.Component {
 			<Modal propName={this.props.propName}>
 				<div className="modal-container-content">
 					<h1>Create new family</h1>
-					<AddFamily />
+					<AddFamily onCreateFamily={this.handleCreateFamily} />
 				</div>
 			</Modal>
 		);

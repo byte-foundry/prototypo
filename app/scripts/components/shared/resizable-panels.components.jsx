@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {DraggableCore} from 'react-draggable';
 import classNames from 'classnames';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 export default class ResizablePanels extends React.PureComponent {
 	constructor(props) {
@@ -52,6 +51,7 @@ export default class ResizablePanels extends React.PureComponent {
 			onlyTwo,
 			x,
 			y,
+			onChange,
 			...rest,
 		} = this.props;
 		const isVertical = direction === 'vertical';

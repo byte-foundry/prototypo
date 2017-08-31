@@ -2,7 +2,6 @@
 =====================================
 
 [![Build Status](https://travis-ci.org/byte-foundry/prototypo.svg?branch=master)](https://travis-ci.org/byte-foundry/prototypo) [![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=BP52ZEAFR9QEL "Donate once-off to this project using Paypal")
-Tested with [BrowserStack](http://browserstack.com)
 
 BEFORE ANYTHING !
 -----------------
@@ -19,7 +18,7 @@ Before installing Prototypo
 
 In order to build Prototypo, you need to install the following software-packages on your system:
 - Git
-- Node.js v4.X with npm@2 (Prototypo is currently incompatible with npm@3)
+- node >= 4 with npm >= 3 or yarn
 
 Installing Prototypo
 --------------------
@@ -33,45 +32,14 @@ $ git clone git://github.com/byte-foundry/prototypo.git && cd prototypo
 Install build scripts and frontend libraries
 
 ```bash
-$ npm install
+$ yarn
 ```
 
 Running Prototypo
 -----------------
 
 ```bash
-$ npm start
-```
-
-You'll want the server to be running on localhost:9000 if you want to connect to our hoodie app.
-
-Running Prototypo with you own Hoodie app
------------------------------------------
-
-### Requirements
-* Install hoodie and its requirements by following the doc (http://docs.hood.ie/en/start/)
-* Install adhoc-cors-proxy by running `npm install -g adhoc-cors-proxy`
-
-### Creating and launching the hoodie app (http://docs.hood.ie/en/start/getting-started/getting-started-1.html)
-* Create your hoodie app `hoodie new prototypo-hoodie`
-* Launch the hoodie app
-```bash
-$ cd prototypo-hoodie
-$ hoodie start
-```
-* Set up the cors proxy (there is other to circumvent this problem using nginx as a proxy, even without cors, but this is easier)
-```bash
- corsproxy <hoodie_couchdb_address>:<hoodie_couchdb_port> --port=<port_you_want_to_access_hoodie_from> --origin=http://localhost:<port_of_prototypo> --credentials
- ```
-
-### Configuring Prototypo
-* In `app/scripts/services/hoodie.services.js` line 6 change `backUrl` to
-```js
-const backUrl = 'http://localhost:<port_you_want_to_access_hoodie_from>';
-```
-* Launch Prototypo
-```bash
-gulp serve
+$ yarn start
 ```
 
 Roadmap to v1.0

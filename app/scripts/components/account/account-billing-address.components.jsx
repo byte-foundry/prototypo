@@ -1,95 +1,218 @@
 import React from 'react';
-import Lifespan from 'lifespan';
+import {compose, graphql, gql} from 'react-apollo';
 
-import BillingAddress from '../shared/billing-address.components.jsx';
-import AccountValidationButton from '../shared/account-validation-button.components.jsx';
-import FormError from '../shared/form-error.components.jsx';
-import FormSuccess from '../shared/form-success.components.jsx';
+import HoodieApi from '../../services/hoodie.services';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
+import BillingAddress from '../shared/billing-address.components';
+import AccountValidationButton from '../shared/account-validation-button.components';
+import FormError from '../shared/form-error.components';
+import FormSuccess from '../shared/form-success.components';
+import WaitForLoad from '../wait-for-load.components';
 
-export default class AccountBillingAddress extends React.Component {
+class AccountBillingAddress extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
-			inError: {},
-			errors: [],
-			loaded: false,
+			errors: '',
+			inError: [],
 		};
+
+		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	async componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		const userStore = await this.client.fetch('/userStore');
-
-		this.setState({
-			loaded: true,
-			address: userStore.head.toJS().infos.address || {},
-			buyerName: userStore.head.toJS().infos.buyerName || '',
-			vat: userStore.head.toJS().infos.vat || '',
-			errors: userStore.head.toJS().billingForm.errors,
-			inError: userStore.head.toJS().billingForm.inError,
-			loading: userStore.head.toJS().billingForm.loading,
-		});
-
-		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					address: head.toJS().d.infos.address || {},
-					vat: head.toJS().d.infos.vat || '',
-					buyerName: head.toJS().d.infos.buyerName || '',
-					errors: head.toJS().d.billingForm.errors,
-					inError: head.toJS().d.billingForm.inError,
-					loading: head.toJS().d.billingForm.loading,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.client.dispatchAction('/clean-form', 'billingForm');
-		this.lifespan.release();
-	}
-
-	addAddress(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
-		this.client.dispatchAction('/add-billing-address', {
-			buyerName: this.refs.address.getBuyerName(),
-			address: this.refs.address.getAddress(),
-			vat: this.refs.address.getVat(),
-			pathQuery: {
-				path: '/account/details/billing-address',
-				query: {
-					newBilling: true,
+
+		this.setState({errors: '', inError: [], loadingForm: false});
+
+		const buyerName = e.target.buyer_name.value;
+		const buildingNumber = e.target.building_number.value;
+		const streetName = e.target.street_name.value;
+		const city = e.target.city.value;
+		const postalCode = e.target.postal_code.value;
+		const region = e.target.region.value;
+		const country = e.target.country.value;
+		const vat = e.target.vat.value;
+
+		try {
+			if (!buyerName || !buildingNumber || !streetName || !city || !postalCode || !country) {
+				this.setState({
+					inError: {
+						buyerName: !buyerName,
+						buildingNumber: !buildingNumber,
+						streetName: !streetName,
+						city: !city,
+						postalCode: !postalCode,
+						country: !country,
+					},
+				});
+				throw new Error('These fields are required');
+			}
+
+			this.setState({loadingForm: true});
+
+			await HoodieApi.updateCustomer({
+				business_vat_id: vat, // Stripe way of storing VAT
+				metadata: {
+					street_line_1: buildingNumber,
+					street_line_2: streetName,
+					city,
+					region,
+					postal_code: postalCode,
+					country,
+					vat_number: vat, // Quaderno way of reading VAT
 				},
-			},
-		});
+			});
+
+			await this.props.updateAddress({
+				buyerName,
+				buildingNumber,
+				streetName,
+				city,
+				postalCode,
+				region,
+				country,
+				vat,
+			});
+
+			this.setState({loadingForm: false});
+
+			this.props.history.push({
+				pathname: '/account/details/billing-address',
+				query: {success: true},
+			});
+		}
+		catch (err) {
+			this.setState({errors: err.message, loadingForm: false});
+		}
 	}
 
 	render() {
-		const billingAddress = this.state.loaded
-			? <BillingAddress ref="address" address={this.state.address} vat={this.state.vat} buyerName={this.state.buyerName} inError={this.state.inError}/>
-			: false;
+		const {
+			loading,
+			firstName,
+			lastName,
+			buyerName,
+			buildingNumber,
+			streetName,
+			city,
+			postalCode,
+			region,
+			country,
+			vat,
+			location,
+		} = this.props;
+		const {errors, inError, loadingForm} = this.state;
 
-		const errors = this.state.errors.map((err) => {
-			return <FormError errorText={err}/>;
-		});
+		if (loading) {
+			return (
+				<div className="account-base account-billing-address">
+					<WaitForLoad loading />
+				</div>
+			);
+		}
 
-		const success = this.props.location.query.newBilling
-			? <FormSuccess successText="You've successfully changed your billing address"/>
-			: false;
+		const fullName = firstName + (lastName ? ` ${lastName}` : '');
 
 		return (
-			<form onSubmit={(e) => {this.addAddress(e);}} className="account-base account-billing-address">
-				{billingAddress}
-				{errors}
-				{success}
-				<AccountValidationButton loading={this.state.loading} label="Confirm address change"/>
+			<form onSubmit={this.handleSubmit} className="account-base account-billing-address">
+				<BillingAddress
+					buyerName={buyerName || fullName}
+					address={{
+						building_number: buildingNumber,
+						street_name: streetName,
+						city,
+						postal_code: postalCode,
+						region,
+						country,
+					}}
+					vat={vat}
+					inError={inError}
+				/>
+				{errors && <FormError errorText={errors} />}
+				{location.query.success
+					&& <FormSuccess successText="You've successfully changed your billing address" />}
+				<AccountValidationButton loading={loadingForm} label="Confirm address change" />
 			</form>
 		);
 	}
 }
+
+const userAddressQuery = gql`
+	query getUserProfile {
+		user {
+			id
+			firstName
+			lastName
+			buyerName
+			buildingNumber
+			streetName
+			city
+			postalCode
+			region
+			country
+			vat
+		}
+	}
+`;
+
+const updateAddressMutation = gql`
+	mutation updateAddress(
+		$id: ID!,
+		$buyerName: String,
+		$buildingNumber: String,
+		$streetName: String,
+		$city: String,
+		$postalCode: String,
+		$region: String,
+		$country: String,
+		$vat: String,
+	) {
+		updateUser(
+			id: $id,
+			buyerName: $buyerName,
+			buildingNumber: $buildingNumber,
+			streetName: $streetName,
+			city: $city,
+			postalCode: $postalCode,
+			region: $region,
+			country: $country,
+			vat: $vat,
+		) {
+			id
+			buyerName
+			buildingNumber
+			streetName
+			city
+			postalCode
+			region
+			country
+			vat
+		}
+	}
+`;
+
+export default compose(
+	graphql(userAddressQuery, {
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			return data.user;
+		},
+	}),
+	graphql(updateAddressMutation, {
+		props: ({mutate, ownProps}) => ({
+			updateAddress: (values) => {
+				mutate({
+					variables: {
+						...values,
+						id: ownProps.id,
+					},
+				});
+			},
+		}),
+	}),
+)(AccountBillingAddress);

@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import ScrollArea from 'react-scrollbar';
+import ScrollArea from 'react-scrollbar/dist/no-css';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';

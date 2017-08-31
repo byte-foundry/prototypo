@@ -1,21 +1,18 @@
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
-import ClassNames from 'classnames';
+import onClickOutside from 'react-onclickoutside';
 
-class ContextualMenu extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+class ContextualMenu extends React.PureComponent {
+	handleClickOutside = () => {
+		this.props.onClickOutside();
 	}
 
 	render() {
-		if (process.env.__SHOW_RENDER__) {
-			console.log('[RENDER] contextual menu');
-		}
-
-		const classes = ClassNames({
+		const classes = classNames({
 			'contextual-menu': true,
-			'is-aligned-left': this.props.alignLeft,
+			'contextual-menu--left': this.props.alignLeft || this.props.left,
+			'contextual-menu--upper': this.props.upper,
 		});
 
 		return (
@@ -28,50 +25,81 @@ class ContextualMenu extends React.Component {
 	}
 }
 
-class ContextualMenuItem extends React.Component {
+ContextualMenu.defaultProps = {
+	upper: false,
+	left: false,
+};
+
+ContextualMenu.propTypes = {
+	upper: PropTypes.bool,
+	left: PropTypes.bool,
+};
+
+ContextualMenu = onClickOutside(ContextualMenu);
+
+class ContextualMenuItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.handleClick = this.handleClick.bind(this);
+	}
+
+	handleClick(e) {
+		e.preventDefault();
+
+		this.props.onClick();
 	}
 
 	render() {
-		if (process.env.__SHOW_RENDER__) {
-			console.log('[RENDER] contextual menu item');
-		}
-		const classes = ClassNames({
+		const {className, active, splitted, onClick, altClick, children, altLabel} = this.props;
+
+		const classes = classNames({
 			'contextual-menu-list-item': true,
-			'is-active': this.props.active,
-			'is-split': this.props.splitted,
-			'clearfix': this.props.splitted,
-		});
-		if (this.props.splitted) {
+			'is-active': active,
+			'is-split': splitted,
+			clearfix: splitted,
+		}, className);
+
+		if (splitted) {
 			return (
 				<li className={classes}>
-					<div className="btn danger" onClick={this.props.click}>
-						<span>{this.props.text}</span>
+					<div className="btn danger" onClick={this.handleClick}>
+						<span>
+							{children}
+						</span>
 					</div>
-					<div className="btn" onClick={this.props.altClick}>
-						<span>{this.props.altLabel}</span>
+					<div className="btn" onClick={altClick}>
+						<span>
+							{altLabel}
+						</span>
 					</div>
 				</li>
 			);
 		}
-		else {
-			return (
-				<li className={classes} onClick={this.props.click}>
-					{this.props.text}
-				</li>
-			);
-		}
+		return (
+			<li className={classes} onClick={this.handleClick}>
+				{children}
+			</li>
+		);
 	}
 }
 
-class ContextualMenuDropDown extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
+ContextualMenuItem.defaultProps = {
+	active: false,
+	splitted: false,
+	onClick: () => {},
+	onConfirm: () => {},
+	onCancel: () => {},
+};
 
+ContextualMenuItem.propTypes = {
+	active: PropTypes.bool,
+	splitted: PropTypes.bool,
+	onClick: PropTypes.func,
+	altClick: PropTypes.func,
+};
+
+class ContextualMenuDropDown extends React.Component {
 	render() {
 		return (
 			<li className="contextual-menu-list-item with-dropdown" onClick={this.props.click}>
@@ -84,8 +112,4 @@ class ContextualMenuDropDown extends React.Component {
 	}
 }
 
-export {
-	ContextualMenu,
-	ContextualMenuItem,
-	ContextualMenuDropDown,
-};
+export {ContextualMenu, ContextualMenuItem, ContextualMenuDropDown};

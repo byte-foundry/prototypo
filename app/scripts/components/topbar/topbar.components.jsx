@@ -1,7 +1,8 @@
+import PropTypes from 'prop-types';
 import React from 'react';
+import {graphql, gql} from 'react-apollo';
 import Lifespan from 'lifespan';
 
-import HoodieApi from '~/services/hoodie.services.js';
 import Log from '~/services/log.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
@@ -60,13 +61,6 @@ class Topbar extends React.Component {
 	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
-
-		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					academyProgress: head.toJS().d.infos.academyProgress || {},
-				});
-			});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
@@ -263,9 +257,8 @@ class Topbar extends React.Component {
 	}
 
 	render() {
-		if (process.env.__SHOW_RENDER__) {
-			console.log('[RENDER] Topbar');
-		}
+		const {academyProgress, loadingAcademyProgress} = this.props;
+
 		const whereAt = this.state.at || 0;
 		const undoDisabled = whereAt < 1;
 		const redoDisabled = whereAt > (this.state.eventList.length - 2);
@@ -301,7 +294,7 @@ class Topbar extends React.Component {
 			/>
 		);
 
-		const academyIcon = !this.state.academyProgress.lastCourse && (
+		const academyIcon = (loadingAcademyProgress || !academyProgress.lastCourse) && (
 			<TopBarMenuAcademyIcon
 				setText={this.setAcademyText}
 				clearText={this.clearAcademyText}
@@ -310,9 +303,9 @@ class Topbar extends React.Component {
 			/>
 		);
 
-		const academyProgress = this.state.academyProgress.lastCourse && (
+		const academyProgressItem = (!loadingAcademyProgress && academyProgress.lastCourse) && (
 			<TopBarMenuAcademy
-				course={this.state.academyProgress[this.state.academyProgress.lastCourse]}
+				course={academyProgress[academyProgress.lastCourse]}
 				setText={this.setAcademyText}
 				clearText={this.clearAcademyText}
 				text={this.state.academyText}
@@ -445,7 +438,7 @@ class Topbar extends React.Component {
 						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={this.resetIndivTutorial}/>
 					</TopBarMenuDropdown>
 					{academyIcon}
-					{academyProgress}
+					{academyProgressItem}
 					{exporting}
 					{errorExporting}
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
@@ -457,8 +450,39 @@ class Topbar extends React.Component {
 	}
 }
 
+Topbar.defaultProps = {
+	academyProgress: {
+		lastCourse: null,
+	},
+};
+
+Topbar.propTypes = {
+	academyProgress: PropTypes.shape({
+		lastCourse: PropTypes.string,
+	}),
+};
+
 Topbar.contextTypes = {
 	router: React.PropTypes.object.isRequired,
 };
 
-export default withCountry(Topbar);
+// this should later wrap an TopBarAcademy
+// instead of being on this component
+const getAcademyValuesQuery = gql`
+	query getAcademyValues {
+		user {
+			id
+			academyProgress
+		}
+	}
+`;
+
+export default graphql(getAcademyValuesQuery, {
+	props({data}) {
+		if (data.loading) {
+			return {loadingAcademyProgress: true};
+		}
+
+		return {academyProgress: data.user.academyProgress};
+	},
+})(withCountry(Topbar));

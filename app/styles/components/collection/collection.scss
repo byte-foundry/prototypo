@@ -15,7 +15,6 @@
 
 	&-pan {
 		position:relative;
-		padding: 40px;
 		border-right: solid 1px $light-grey;
 	}
 
@@ -54,5 +53,6 @@
 		display:flex;
 		flex-flow: row nowrap;
 		flex:1;
+		max-height: 70vh;
 	}
 }
