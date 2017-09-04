@@ -104,7 +104,6 @@ export default {
 		loadFontValues(typedata, undefined, variantId);
 	},
 	'/change-font': async ({templateToLoad, db, variantId}) => {
-		console.log('/change-font', templateToLoad, db, variantId);
 		const typedataJSON = await Typefaces.getFont(templateToLoad);
 
 		localClient.dispatchAction('/change-font-from-typedata', {
@@ -121,8 +120,6 @@ export default {
 			.set('uiCreatefamilySelectedTemplate', undefined)
 			.set('openFamilyModal', false)
 			.commit();
-
-		console.log('font created', name, template);
 
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 
@@ -146,8 +143,6 @@ export default {
 		});
 	},
 	'/select-variant': ({variant, family}) => {
-		console.log('/select-variant', variant, family);
-
 		const selectedVariant = variant || family.variants[0];
 		const patchVariant = prototypoStore
 			.set('variant', {id: selectedVariant.id, name: selectedVariant.name})
