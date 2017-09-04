@@ -301,8 +301,8 @@ export default class PrototypoWord extends React.PureComponent {
 						intercomShift={this.props.viewPanelRightMove}
 						upper
 						left
-						onMouseEnter={() => {console.log('on mouse menu enter'); this.setState({hoveringContextMenu: true})}}
-						onMouseLeave={() => {console.log('on mouse menu leave'); this.setState({hoveringContextMenu: false})}}
+						onMouseEnter={() => {this.setState({hoveringContextMenu: true})}}
+						onMouseLeave={() => {this.setState({hoveringContextMenu: false})}}
 					>
 						<ContextualMenuItem
 							active={this.props.uiInvertedWordView}

@@ -258,7 +258,6 @@ class Topbar extends React.Component {
 
 	render() {
 		const {academyProgress, loadingAcademyProgress} = this.props;
-
 		const whereAt = this.state.at || 0;
 		const undoDisabled = whereAt < 1;
 		const redoDisabled = whereAt > (this.state.eventList.length - 2);
@@ -303,7 +302,7 @@ class Topbar extends React.Component {
 			/>
 		);
 
-		const academyProgressItem = (!loadingAcademyProgress && academyProgress.lastCourse) && (
+		const academyProgressItem = (!loadingAcademyProgress && academyProgress.lastCourse && academyProgress[academyProgress.lastCourse]) && (
 			<TopBarMenuAcademy
 				course={academyProgress[academyProgress.lastCourse]}
 				setText={this.setAcademyText}

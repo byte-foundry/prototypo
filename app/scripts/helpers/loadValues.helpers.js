@@ -45,8 +45,6 @@ window.addEventListener('appValues.loaded', () => {
 });
 
 export async function loadFontValues(typedata, typeface, variantId) {
-	console.log('load font values', typedata, typeface, variantId);
-
 	const initValues = {};
 
 	_.each(typedata.controls, (group) => {

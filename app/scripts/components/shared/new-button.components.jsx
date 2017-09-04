@@ -11,6 +11,7 @@ class Button extends React.Component {
 			fluid,
 			children,
 			className,
+			neutral,
 			...rest
 		} = this.props;
 
@@ -23,6 +24,7 @@ class Button extends React.Component {
 				'new-button--disabled': disabled,
 				'new-button--outline': outline,
 				'new-button--fluid': fluid,
+				'new-button--neutral': neutral,
 			},
 			className,
 		);

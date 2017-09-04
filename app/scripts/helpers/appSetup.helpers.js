@@ -39,8 +39,6 @@ export async function loadStuff() {
 		return;
 	}
 
-	console.log('Loading stuff');
-
 	let appValues;
 
 	try {
@@ -69,7 +67,6 @@ export async function loadStuff() {
 		const families = response.data.user.library;
 
 		appValues = await AppValues.get({typeface: 'default'});
-		console.log('this is the app values', appValues);
 		appValues = {
 			...appValues,
 			values: {...defaultValues.values, ...appValues.values},
