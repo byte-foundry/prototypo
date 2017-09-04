@@ -302,7 +302,7 @@ class Topbar extends React.Component {
 			/>
 		);
 
-		const academyProgressItem = (!loadingAcademyProgress && academyProgress.lastCourse !== null) && (
+		const academyProgressItem = (!loadingAcademyProgress && academyProgress.lastCourse && academyProgress[academyProgress.lastCourse]) && (
 			<TopBarMenuAcademy
 				course={academyProgress[academyProgress.lastCourse]}
 				setText={this.setAcademyText}
