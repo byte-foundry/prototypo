@@ -14,6 +14,7 @@ import HoodieApi from '../services/hoodie.services.js';
 import Log from '../services/log.services';
 
 import {loadStuff} from '../helpers/appSetup.helpers';
+import {pushToPerf} from '../helpers/log-perf.helpers';
 
 import {copyFontValues, loadFontValues, saveAppValues} from '../helpers/loadValues.helpers';
 import {BatchUpdate} from '../helpers/undo-stack.helpers';
@@ -542,7 +543,9 @@ export default {
 			},
 		};
 
+		pushToPerf({time: performance.now(), label: 'commit'});
 		const patch = undoableStore.set('controlsValues', newParams).commit();
+		pushToPerf({time: performance.now(), label: 'commit'});
 
 		localServer.dispatchUpdate('/undoableStore', patch);
 

@@ -2,6 +2,7 @@
 import {constantOrFormula, createContour} from '../helpers/values';
 import {toLodashPath, transformNode} from '../helpers/utils';
 import * as utils from '../utils/updateUtils';
+import {pushToPerf} from '../../helpers/log-perf.helpers.js';
 
 import Component from './Component';
 import ExpandingNode from './ExpandingNode';
@@ -316,14 +317,17 @@ export default class Glyph {
 
 	handleOp(op, opDone, params, localParams, parentAnchors) {
 		const obj = this.getFromXPath(op);
+		pushToPerf({time: performance.now(), label: 'eval'});
 		let result = obj.getResult(localParams,
 			opDone.contours,
 			opDone.anchors,
 			parentAnchors,
 			utils);
+		pushToPerf({time: performance.now(), label: 'eval'});
 		const option = op.charAt(op.length - 1);
 
 		if (option === 'x' || option === 'y') {
+			pushToPerf({time: performance.now(), label: 'base'});
 			_.set(
 				opDone,
 				toLodashPath(`${op}Base`),
@@ -333,25 +337,27 @@ export default class Glyph {
 			const manualChanges
 				= params.manualChanges[this.name.value].cursors[op] || 0;
 
-			if (manualChanges) {
-				console.log(op, result);
-			}
-
 			result += manualChanges;
+			pushToPerf({time: performance.now(), label: 'base'});
 		}
 
+		pushToPerf({time: performance.now(), label: 'set'});
 		_.set(
 			opDone,
 			toLodashPath(op),
 			result,
 		);
+		pushToPerf({time: performance.now(), label: 'set'});
 	}
 
 	constructGlyph(params, parentAnchors, glyphs, parentTransform, parentTransformOrigin) {
+		pushToPerf({time: performance.now(), label: 'params'});
 		const localParams = {
 			...params,
 			..._.mapValues(this.parameters, param => param.getResult(params)),
 		};
+		pushToPerf({time: performance.now(), label: 'params'});
+		pushToPerf({time: performance.now(), label: 'setup'});
 		const specialProps = this.unicode
 			? (localParams.glyphSpecialProps || {})[this.unicode.value] || {}
 			: {};
@@ -364,18 +370,27 @@ export default class Glyph {
 		const opDone = {
 			contours: [],
 		};
+		pushToPerf({time: performance.now(), label: 'setup'});
+
+		pushToPerf({time: performance.now(), label: 'handleOp'});
 
 		for (let i = 0; i < this.operationOrder.length; i++) {
 			const op = this.operationOrder[i];
 
 			if (typeof op === 'object') {
+				pushToPerf({time: performance.now(), label: 'handleOp obj'});
 				this.handleObjectOp(op, opDone, params);
+				pushToPerf({time: performance.now(), label: 'handleOp obj'});
 			}
 			else {
+				pushToPerf({time: performance.now(), label: 'handleOp standard'});
 				this.handleOp(op, opDone, params, localParams, parentAnchors);
+				pushToPerf({time: performance.now(), label: 'handleOp standard'});
 			}
 		}
+		pushToPerf({time: performance.now(), label: 'handleOp'});
 
+		pushToPerf({time: performance.now(), label: 'computeAnchors'});
 		const opAnchors = [...(opDone.anchors || [])];
 
 		Object.keys(this.anchors).forEach((key) => {
@@ -399,7 +414,9 @@ export default class Glyph {
 				return acc;
 			}, opAnchors[key]);
 		});
+		pushToPerf({time: performance.now(), label: 'computeAnchors'});
 
+		pushToPerf({time: performance.now(), label: 'components'});
 		opDone.components = this.components.map((component, idx) => {
 			const componentManualChanges = _.chain(localParams.manualChanges[this.name.value].cursors)
 				.pickBy((value, key) => key.match(new RegExp(`components\.${idx}`)))
@@ -427,7 +444,9 @@ export default class Glyph {
 				glyphs,
 			);
 		});
+		pushToPerf({time: performance.now(), label: 'components'});
 
+		pushToPerf({time: performance.now(), label: 'transformation'});
 		const transformedThis = _.mapValues(this, (prop, name) => {
 			if (prop !== undefined
 				&& !/parameters|contours|anchors|components|operationOrder/.test(name)) {
@@ -487,7 +506,9 @@ export default class Glyph {
 				});
 			});
 		}
+		pushToPerf({time: performance.now(), label: 'transformation'});
 
+		pushToPerf({time: performance.now(), label: 'create ot contours'});
 		const otContours = this.createGlyphContour(opDone.contours);
 
 		_.forEach(opDone.components, (component) => {
@@ -495,6 +516,7 @@ export default class Glyph {
 				otContours.push(...component.otContours);
 			}
 		});
+		pushToPerf({time: performance.now(), label: 'create ot contours'});
 
 		return {
 			...transformedThis,

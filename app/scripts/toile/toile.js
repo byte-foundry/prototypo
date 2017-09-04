@@ -22,6 +22,7 @@ export const toileType = {
 	COMPONENT_NONE_CHOICE: 10,
 	COMPONENT_MENU_ITEM: 11,
 	COMPONENT_MENU_ITEM_CENTER: 12,
+	PERF_RECT: 13,
 };
 
 export const canvasMode = {
@@ -633,11 +634,11 @@ export default class Toile {
 		this.context.fillStyle = outline ? transparent : darkestGrey;
 		this.context.strokeStyle = darkestGrey;
 		this.context.beginPath();
-		glyph.otContours.forEach((bez) => {
-			this.drawContour(bez, undefined, undefined, true);
-		});
+		for (let i = 0; i < glyph.otContours.length; i++) {
+			this.drawContour(glyph.otContours[i], undefined, undefined, true);
+		}
 
-		this.context.stroke();
+		//this.context.stroke();
 		this.context.fill();
 	}
 
@@ -781,7 +782,6 @@ export default class Toile {
 	}
 
 	setCameraCenter(point, zoom, height, width) {
-		//this.setCamera({x: 0, y: 0}, zoom, height);
 		this.setCamera(subtract2D({x: width / 2, y: height / 2}, mulScalar2D(zoom, {x: point.x, y: -point.y})), zoom, height);
 	}
 
@@ -793,9 +793,9 @@ export default class Toile {
 			this.context.beginPath();
 		}
 
-		_.each(listOfBezier, (bezier, i) => {
-			this.drawBezierCurve(bezier, undefined, true, !i);
-		});
+		for (let i = 0; i < listOfBezier.length; i++) {
+			this.drawBezierCurve(listOfBezier[i], undefined, true, !i);
+		}
 
 		if (!noPathCreation) {
 			this.context.stroke();
@@ -858,7 +858,7 @@ export default class Toile {
 		const widthHeight = subtract2D(end, start);
 
 		this.context.fillStyle = fillColor;
-		this.context.strokeStyle = fillColor;
+		this.context.strokeStyle = strokeColor;
 		this.context.fillRect(start.x, start.y, widthHeight.x, widthHeight.y);
 		this.context.strokeRect(start.x, start.y, widthHeight.x, widthHeight.y, strokeColor);
 	}
@@ -1447,6 +1447,43 @@ export default class Toile {
 		);
 	}
 
+	drawSkeletonProperty(node) {
+		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+		const [start, end] = transformCoords(
+			[
+				{
+					x: 20,
+					y: 70,
+				},
+				{
+					x: 190,
+					y: 240,
+				}
+			],
+			inverseMatrix,
+			this.height / this.viewMatrix[0],
+		);
+		this.drawRectangleFromCorners(
+			start,
+			end,
+			undefined,
+			lightGrey,
+		);
+		this.drawText('Skeleton node props', {
+			x: start.x + 10 / this.viewMatrix[0],
+			y: start.y - 20 / this.viewMatrix[0],
+		}, 14, darkestGrey);
+		this.drawText(`x: ${node.data.center.x}`, {
+			x: start.x + 10 / this.viewMatrix[0],
+			y: start.y - 41 / this.viewMatrix[0],
+		}, 12, darkestGrey);
+
+		this.drawText(`y: ${node.data.center.y}`, {
+			x: start.x + 10 / this.viewMatrix[0],
+			y: start.y - 62 / this.viewMatrix[0],
+		}, 12, darkestGrey);
+	}
+
 	getHotInteractiveItem() {
 		const result = [];
 
@@ -1533,6 +1570,25 @@ export default class Toile {
 
 				break;
 			}
+			case toileType.PERF_RECT: {
+				const {rectStart, rectEnd} = interactionItem.data;
+				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+				const [mouseTransformed] = transformCoords(
+					[this.mouse],
+					inverseMatrix,
+					this.height / this.viewMatrix[0],
+				);
+
+				if (
+					mouseTransformed.x >= rectStart.x
+					&& mouseTransformed.x <= rectEnd.x
+					&& mouseTransformed.y >= rectStart.y
+					&& mouseTransformed.y <= rectEnd.y
+				) {
+					result.push(interactionItem);
+				}
+				break;
+			}
 				//				case toileType.POINT_MENU: {
 				//					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 				//					const [mouseTransformed] = transformCoords(
@@ -1591,5 +1647,70 @@ export default class Toile {
 		});
 
 		return result;
+	}
+
+	drawPerf(logPerf, origin, hotItems, index = 0, offsetX = 0, offsetY = 0) {
+		let internalYOffset = offsetY;
+		const start = logPerf[index];
+
+		for (let j = index + 1; j < logPerf.length; j++) {
+			const item = logPerf[j];
+
+			if (item.label !== start.label) {
+				const {ySize, k} = this.drawPerf(logPerf, origin, hotItems, j, offsetX + 20, internalYOffset);
+				j = k;
+				internalYOffset += ySize;
+			}
+			else {
+				const ySize = 20 * (item.time - start.time);
+				const rectStart = add2D(
+					origin,
+					{
+						x: offsetX,
+						y: offsetY,
+					},
+				);
+				const rectEnd = add2D(
+					rectStart,
+					{
+						x: 10,
+						y: ySize,
+					},
+				);
+				const inHot = _.find(hotItems, hItem => hItem.id === item.label);
+
+				this.drawRectangleFromCorners(
+					rectStart,
+					rectEnd,
+					grey,
+					inHot ? blue : red,
+				);
+
+				if (inHot) {
+					this.drawText(
+						`${item.label} ${item.time - start.time}`,
+						add2D(rectStart,
+							{
+								x: 15,
+								y: 0,
+							}
+						),
+						20,
+						darkestGrey,
+					)
+				}
+
+				this.interactionList.push({
+					id: item.label,
+					type: toileType.PERF_RECT,
+					data: {
+						time: item.time - start.time,
+						rectStart,
+						rectEnd,
+					},
+				});
+				return {ySize, k: j};
+			}
+		}
 	}
 }
