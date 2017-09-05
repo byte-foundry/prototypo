@@ -161,6 +161,15 @@ export default {
 		const prototypatch = prototypoStore.set('credits', 0).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', prototypatch);
+
+		const userPatch = userStore
+			.set('subscription', undefined)
+			.set('cards', undefined)
+			.set('hasBeenSubscribing', undefined)
+			.commit();
+
+		localServer.dispatchUpdate('/userStore', userPatch);
+
 	},
 	'/sign-in': async ({username, password, retry, to = '/start', oldQuery = {}}) => {
 		const dashboardLocation = {

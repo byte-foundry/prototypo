@@ -5,7 +5,6 @@ import apolloClient from './graphcool.services';
 function values(prefix) {
 	return {
 		get(params) {
-			console.log('get values', prefix, params);
 			if (prefix === 'newfont' || params.variantId) {
 				return apolloClient.query({
 					fetchPolicy: 'network-only',
@@ -20,7 +19,6 @@ function values(prefix) {
 					variables: {id: params.variantId},
 				})
 				.then(({data}) => {
-					console.log('get values from gc', data);
 					return data.Variant;
 				})
 				.catch(e => console.log('oops', e));
@@ -38,14 +36,12 @@ function values(prefix) {
 					`,
 				})
 				.then(({data}) => {
-					console.log('get app values from gc', data);
 					return data.user;
 				})
 				.catch(e => console.log('oops', e));
 			}
 		},
 		save(params) {
-			console.log('save values', prefix, params);
 			if (prefix === 'newfont' && params.variantId) {
 				apolloClient.mutate({
 					mutation: gql`
@@ -60,7 +56,6 @@ function values(prefix) {
 						values: params.values,
 					},
 				})
-				.then(d => console.log('save font values to gc', d))
 				.catch(e => console.log('oops', e))
 			}
 			if (prefix === 'newapp') {
@@ -87,7 +82,6 @@ function values(prefix) {
 							values: JSON.parse(JSON.stringify(params.values)),
 						},
 					})
-					.then(d => console.log('save app values to gc', d))
 					.catch(e => console.log('oops', e))
 				});
 			}

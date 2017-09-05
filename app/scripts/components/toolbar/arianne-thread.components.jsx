@@ -165,8 +165,6 @@ class ArianneThread extends React.PureComponent {
 		const family = families.find(({name}) => name === selectedFamily.name) || families[0];
 		const variant = family.variants.find(({name}) => name === selectedVariant.name) || family.variants[0];
 
-		console.log('arianne thread current font', family, variant);
-
 		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily}/>;
 		const familyItem = (
 			<DropArianneItem
@@ -246,8 +244,6 @@ export default graphql(libraryQuery, {
 		if (data.loading) {
 			return {loading: true};
 		}
-
-		console.log('Arianne Thread library', data);
 
 		return {
 			families: data.user.library,
