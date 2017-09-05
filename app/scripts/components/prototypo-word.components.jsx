@@ -31,6 +31,7 @@ export default class PrototypoWord extends React.PureComponent {
 		this.setupText = _.debounce(this.setupText.bind(this), 500, {leading: true});
 		this.saveText = this.saveText.bind(this);
 		this.handleEscapedInput = this.handleEscapedInput.bind(this);
+		this.handleContextMenu = this.handleContextMenu.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.hideContextMenu = this.hideContextMenu.bind(this);
 		this.changeTextFontSize = this.changeTextFontSize.bind(this);
@@ -204,16 +205,32 @@ export default class PrototypoWord extends React.PureComponent {
 		return buffer.join('');
 	}
 
-	toggleContextMenu(e) {
+	handleContextMenu(e) {
 		e.preventDefault();
-		e.stopPropagation();
+
+		this.toggleContextMenu();
+	}
+
+	toggleContextMenu() {
 		this.setState({
 			showContextMenu: !this.state.showContextMenu,
 		});
 	}
 
-	hideContextMenu() {
-		if (this.state.showContextMenu) {
+	hideContextMenu(e) {
+		const rect = e.currentTarget.getBoundingClientRect();
+		const x = e.pageX;
+		const y = e.pageY;
+
+		if (
+			this.state.showContextMenu
+			&& !(
+				rect.left <= x
+				&& x <= rect.left + rect.width
+				&& rect.top <= y
+				&& y <= rect.top + rect.height
+			)
+		) {
 			this.setState({
 				showContextMenu: false,
 			});
@@ -224,20 +241,17 @@ export default class PrototypoWord extends React.PureComponent {
 		this.client.dispatchAction('/store-value', {uiWordFontSize});
 	}
 
-	invertedView(e) {
-		e.stopPropagation();
+	invertedView() {
 		this.client.dispatchAction('/store-value', {uiInvertedWordView: !this.props.uiInvertedWordView});
 	}
 
-	toggleSpacingMode(e) {
-		e.stopPropagation();
+	toggleSpacingMode() {
 		this.client.dispatchAction('/store-value', {
 			uiSpacingMode: !this.state.uiSpacingMode,
 		});
 	}
 
-	toggleColors(e) {
-		e.stopPropagation();
+	toggleColors() {
 		this.client.dispatchAction('/store-value', {uiInvertedWordColors: !this.props.uiInvertedWordColors});
 	}
 
@@ -262,27 +276,14 @@ export default class PrototypoWord extends React.PureComponent {
 		});
 
 		const whiteBlackSwitchText = this.props.uiInvertedWordColors ? 'black on white' : 'white on black';
-		const whiteBlackSwitchLabel = `Switch to ${whiteBlackSwitchText}`;
-
-		const menu = [
-			<ContextualMenuItem
-				text="Inverted view"
-				key="view"
-				active={this.props.uiInvertedWordView}
-				click={this.invertedView}/>,
-			<ContextualMenuItem
-				text={whiteBlackSwitchLabel}
-				key="colors"
-				active={this.props.uiInvertedWordColors}
-				click={this.toggleColors}/>,
-		];
 
 		return (
 			<div
 				className="prototypo-word"
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}
-				onContextMenu={this.toggleContextMenu}>
+				onContextMenu={this.handleContextMenu}
+			>
 				<div className="prototypo-word-scrollbar-wrapper">
 					<HandlegripText
 						ref="text"
@@ -297,8 +298,24 @@ export default class PrototypoWord extends React.PureComponent {
 						show={this.state.showContextMenu}
 						shifted={this.state.glyphPanelOpened}
 						toggle={this.toggleContextMenu}
-						intercomShift={this.props.viewPanelRightMove}>
-						{menu}
+						intercomShift={this.props.viewPanelRightMove}
+						upper
+						left
+						onMouseEnter={() => {this.setState({hoveringContextMenu: true})}}
+						onMouseLeave={() => {this.setState({hoveringContextMenu: false})}}
+					>
+						<ContextualMenuItem
+							active={this.props.uiInvertedWordView}
+							onClick={this.invertedView}
+						>
+							Inverted view
+						</ContextualMenuItem>
+						<ContextualMenuItem
+							active={this.props.uiInvertedWordColors}
+							onClick={this.toggleColors}
+						>
+							Switch to {whiteBlackSwitchText}
+						</ContextualMenuItem>
 					</ViewPanelsMenu>
 					<div className={actionBar}>
 						<CloseButton click={() => { this.props.close('word'); }}/>

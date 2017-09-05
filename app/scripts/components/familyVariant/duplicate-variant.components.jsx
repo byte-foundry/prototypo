@@ -1,78 +1,167 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {graphql, gql} from 'react-apollo';
 
-import LocalClient from '~/stores/local-client.stores.jsx';
-import Lifespan from 'lifespan';
+import LocalClient from '~/stores/local-client.stores';
 
-import Modal from '../shared/modal.components.jsx';
-import InputWithLabel from '../shared/input-with-label.components.jsx';
-import Button from '../shared/button.components.jsx';
+import Modal from '../shared/modal.components';
+import InputWithLabel from '../shared/input-with-label.components';
+import Button from '../shared/new-button.components';
 
-export default class DuplicateVariant extends React.Component {
+// TODO: we should externalize queries
+import {libraryQuery} from '../collection/collection.components';
+
+class DuplicateVariant extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {
-			errorAddVariant: undefined,
-		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
-		// function binding to avoid unnecessary re-render
+		this.state = {
+			error: null,
+			name: '',
+		};
+
 		this.exit = this.exit.bind(this);
 		this.duplicateVariant = this.duplicateVariant.bind(this);
+		this.saveName = this.saveName.bind(this);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					errorAddVariant: head.toJS().d.errorAddVariant,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
 	}
 
 	exit() {
 		this.client.dispatchAction('/store-value', {
 			openDuplicateVariantModal: false,
-			errorAddVariant: undefined,
 		});
 	}
 
-	duplicateVariant() {
-		this.client.dispatchAction('/create-variant', {
-			familyName: this.props.family.name,
-			name: this.refs.newName.inputValue,
-			variantBase: this.props.variant,
-			noSwitch: true,
-		});
+	async duplicateVariant() {
+		this.setState({error: null});
+
+		const {name} = this.state;
+
+		try {
+			// TODO: check duplicates, on Graphcool ?
+
+			const {duplicateVariant} = await this.props.duplicateVariant(name);
+
+			this.exit();
+
+			this.client.dispatchAction('/select-variant', {
+				variant: {id: duplicateVariant.id, name: duplicateVariant.name},
+				family: this.props.family,
+			});
+		}
+		catch (err) {
+			this.setState({error: err.message});
+		}
+		// this.client.dispatchAction('/create-variant', {
+		// 	name: this.refs.newName.inputValue,
+		// 	familyId: this.props.family.id,
+		// 	variantBaseId: this.props.variant.id,
+		// 	noSwitch: true,
+		// });
+	}
+
+	saveName(e) {
+		this.setState({error: null, name: e.target.value});
 	}
 
 	render() {
-		const error = this.state.errorAddVariant
-			? <div className="add-family-form-error">{this.state.errorAddVariant.toString()}</div>
-			: false;
+		const {variant, propName} = this.props;
+		const {error, name} = this.state;
+
+		const isNotValid = !name.trim() || name.trim() === variant.name;
 
 		return (
-			<Modal propName={this.props.propName}>
-				<div className="modal-container-title account-header">Duplicate variant {this.props.variant.name}</div>
+			<Modal propName={propName}>
+				<div className="modal-container-title account-header">
+					Duplicate variant {this.props.variant.name}
+				</div>
 				<div className="modal-container-content">
-					<InputWithLabel ref="newName"/>
-					{error}
+					<InputWithLabel onChange={this.saveName} inputValue={variant.name} />
+					{error
+						&& <div className="add-family-form-error">
+							{error}
+						</div>}
 					<div className="action-form-buttons">
-						<Button click={this.exit} label="Cancel" neutral={true}/>
-						<Button click={this.duplicateVariant} label={`Duplicate ${this.props.variant.name}`}/>
+						<Button onClick={this.exit} outline neutral>
+							Cancel
+						</Button>
+						<Button onClick={this.duplicateVariant} disabled={isNotValid}>
+							Duplicate "{variant.name}"
+						</Button>
 					</div>
 				</div>
 			</Modal>
 		);
 	}
 }
+
+DuplicateVariant.propTypes = {
+	variant: PropTypes.shape({
+		id: PropTypes.string.isRequired,
+		name: PropTypes.string.isRequired,
+		values: PropTypes.object.isRequired,
+	}),
+	propName: PropTypes.string.isRequired,
+};
+
+const getBaseValuesQuery = gql`
+	query getBaseValues($variantBaseId: ID!) {
+		variant: Variant(id: $variantBaseId) {
+			id
+			name
+			family {
+				id
+			}
+			values
+		}
+	}
+`;
+
+const duplicateVariantMutation = gql`
+	mutation duplicateVariant($familyId: ID!, $name: String!, $baseValues: Json!) {
+		createVariant(name: $name, values: $baseValues, familyId: $familyId) {
+			id
+			name
+			values
+		}
+	}
+`;
+
+export default graphql(getBaseValuesQuery, {
+	options: ({variant}) => ({variables: {variantBaseId: variant.id}}),
+	props({data, ownProps}) {
+		if (data.loading) {
+			return {loading: true, variant: ownProps.variant};
+		}
+
+		return {variant: data.variant};
+	},
+})(
+	graphql(duplicateVariantMutation, {
+		props: ({mutate, ownProps}) => ({
+			duplicateVariant: name =>
+				mutate({
+					variables: {
+						familyId: ownProps.variant.family.id,
+						name,
+						baseValues: ownProps.variant.values,
+					},
+					update: (store, {data: {createVariant}}) => {
+						const data = store.readQuery({query: libraryQuery});
+
+						const family = data.user.library.find(family => family.id === ownProps.family.id);
+
+						family.variants.push(createVariant);
+
+						store.writeQuery({
+							query: libraryQuery,
+							data,
+						});
+					},
+				}),
+		}),
+	})(DuplicateVariant),
+);

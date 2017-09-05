@@ -158,10 +158,8 @@ textarea,
 }
 
 .settings-menu-toolbox {
-	bottom: 0px;
 	position: absolute;
-	right: 0px;
-	z-index: 2147483001;
+	z-index: 10000; // react-scrollbar has a z-index at 9999
 }
 
 .is-hidden {
@@ -169,7 +167,7 @@ textarea,
 }
 
 .scrollarea {
-	height:100% !important;
+	height: 100% !important;
 }
 
 .clearfix:after {

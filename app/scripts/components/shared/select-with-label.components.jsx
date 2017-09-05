@@ -34,8 +34,11 @@ export default class SelectWithLabel extends React.PureComponent {
 	render() {
 		const {
 			label, info, required,
+			name,
 			...selectProps,
 		} = this.props;
+		const {value} = this.state;
+
 		const inputClass = classNames({
 			'input-with-label-input': true,
 			'is-error': this.props.error,
@@ -56,7 +59,8 @@ export default class SelectWithLabel extends React.PureComponent {
 					onChange={(value) => {this.handleChangeValue(value);}}
 					onBlurResetsInput={false}
 					onInputChange={(value) => {this.handleChangeInput(value);}}
-					value={this.state.value}/>
+					value={value}/>
+				<input type="hidden" name={name} value={value && value.value || ''} />
 			</div>
 		);
 	}

@@ -1,6 +1,6 @@
-import {prototypoStore} from '../stores/creation.stores.jsx';
+import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
-import {FontInfoValues} from '../services/values.services.js';
+import {FontValues} from '../services/values.services.js';
 
 let localServer;
 
@@ -23,9 +23,13 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		FontInfoValues.save({
+		const values = undoableStore.get('controlsValues');
+
+		FontValues.save({
+			variantId: prototypoStore.get('variant').id,
 			typeface: prototypoStore.get('variant').db || 'default',
 			values: {
+				...values,
 				altList,
 			},
 		});

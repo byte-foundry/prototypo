@@ -1,4 +1,5 @@
 import React from 'react';
+import {graphql, gql, compose} from 'react-apollo';
 import {withRouter} from 'react-router';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
@@ -21,7 +22,6 @@ import ChangeNameVariant from './familyVariant/change-name-variant.components.js
 import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
 import CreditsExport from './credits-export.components.jsx';
 import GoProModal from './go-pro-modal.components.jsx';
-//import NpsMessage from './nps-message.components.jsx';
 
 import {buildTutorialSteps, handleNextStep, handleClosed} from '../helpers/joyride.helpers.js';
 
@@ -62,11 +62,23 @@ class Dashboard extends React.PureComponent {
 			firstTimeAcademyJoyride: prototypoStore.head.toJS().firstTimeAcademyJoyride,
 		});
 
+		let firstContactTimeoutMade = false;
+
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
-
-				if (!head.toJS().d.fonts.length) {
+				if (this.props.library.length <= 0) {
 					this.props.router.push('/start');
+					return;
+				}
+
+				if (!firstContactTimeoutMade && !this.props.firstContactMade) {
+					firstContactTimeoutMade = true;
+					setTimeout(() => {
+						window.Intercom('update', {
+							first_session_at: new Date(),
+						});
+						this.props.setFirstContact();
+					}, 300000);
 				}
 
 				this.setState({
@@ -271,4 +283,53 @@ class Dashboard extends React.PureComponent {
 	}
 }
 
-export default withRouter(Dashboard);
+const getUserFontsAndFirstContactMadeQuery = gql`
+	query getUserFonts {
+		user {
+			id
+			firstContactMade
+			library {
+				id
+			}
+		}
+	}
+`;
+
+const setFirstContactMadeMutation = gql`
+	mutation setFirstContact($id: ID!) {
+		updateUser(
+			id: $id,
+			firstContactMade: true
+		) {
+		id
+		}
+	}
+`;
+
+export default compose(
+	graphql(getUserFontsAndFirstContactMadeQuery, {
+		options: {
+			fetchPolicy: 'cache-first',
+		},
+		props({data}) {
+			if (data.loading) {
+				return {loading: true};
+			}
+			return {
+				library: data.user.library || [],
+				firstContactMade: data.user.firstContactMade,
+				userID: data.user.id,
+			};
+		},
+	}),
+	graphql(setFirstContactMadeMutation, {
+		props: ({mutate, ownProps}) => ({
+			setFirstContact: () =>
+				mutate({
+					variables: {
+						id: ownProps.userID,
+					},
+				}),
+		}),
+	}),
+)(withRouter(Dashboard));

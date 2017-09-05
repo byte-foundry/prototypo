@@ -1,86 +1,84 @@
 import React from 'react';
-import {Link} from 'react-router';
-import Lifespan from 'lifespan';
+import {Link, withRouter} from 'react-router';
+import {graphql, gql} from 'react-apollo';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
-import AccountSidebar from './account-sidebar.components.jsx';
+import AccountSidebar from './account-sidebar.components';
 
-export default class AccountDashboard extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					firstname: head.toJS().d.infos.accountValues.firstname,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
+export class AccountDashboard extends React.Component {
 	render() {
+		const {firstName, location, route, children} = this.props;
+
 		const titles = {
-			home: "My account",
-			profile: "My account",
-			details: "My account",
-			create: "Subscribe to prototypo",
-			createSignup: "Subscribe to prototypo",
-			success: "My account",
-			confirm: "My account",
-			billing: "My account",
-			organization: "My account",
+			home: 'My account',
+			profile: 'My account',
+			details: 'My account',
+			create: 'Subscribe to prototypo',
+			createSignup: 'Subscribe to prototypo',
+			success: 'My account',
+			confirm: 'My account',
+			billing: 'My account',
+			organization: 'My account',
 		};
 		const subtitles = {
-			home: `Hi ${this.state.firstname}!`,
-			profile: "My profile",
-			'change-password': "Change my password",
-			details: "My account settings",
-			create: "",
-			createSignup: "",
-			success: "Congratulations!",
-			confirm: "",
-			billing: "My billing history",
+			home: `Hi ${firstName}!`,
+			profile: 'My profile',
+			'change-password': 'Change my password',
+			details: 'My account settings',
+			create: '',
+			createSignup: '',
+			success: 'Congratulations!',
+			confirm: '',
+			billing: 'My billing history',
 			'billing-address': 'My billing address',
-			'add-card': "Add a card",
+			'add-card': 'Add a card',
 			'change-plan': 'Change my plan',
 		};
-		const title = titles[this.props.route.name];
-		const subtitle = subtitles[this.props.location.pathname.split('/')[this.props.location.pathname.split('/').length - 1]];
+		const title = titles[route.name];
+		const subtitle
+			= subtitles[location.pathname.split('/')[location.pathname.split('/').length - 1]];
 
 		return (
 			<div className="account-dashboard">
 				<Link to="/dashboard">
-					<div className="account-dashboard-icon"/>
+					<div className="account-dashboard-icon" />
 				</Link>
 				<div className="account-header">
-					<h1 className="account-title">{title}</h1>
+					<h1 className="account-title">
+						{title}
+					</h1>
 				</div>
-				{
-					subtitle === ""
+				{subtitle === ''
 					? false
-					: (<h1 className="account-dashboard-page-title">{subtitle}</h1>)
-				}
+					: <h1 className="account-dashboard-page-title">
+						{subtitle}
+					</h1>}
 				<div className="account-dashboard-container">
 					<AccountSidebar />
-					{this.props.children}
+					{children}
 				</div>
 			</div>
 		);
 	}
 }
 
-AccountDashboard.contextTypes = {
-	router: React.PropTypes.object.isRequired,
-};
+const getFirstNameQuery = gql`
+	query getFirstName {
+		user {
+			id
+			firstName
+		}
+	}
+`;
+
+export default graphql(getFirstNameQuery, {
+	options: {
+		fetchPolicy: 'cache-first',
+	},
+	props: ({data}) => {
+		if (data.loading) {
+			return {loading: true, firstName: ''};
+		}
+
+		return data.user;
+	},
+})(withRouter(AccountDashboard));

@@ -1,21 +1,17 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import Modal from '../shared/modal.components.jsx';
-import {AddVariant} from './add-family-variant.components.jsx';
+import Modal from '../shared/modal.components';
+import {AddVariant} from './add-family-variant.components';
 
-export default class CreateVariantModal extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
+export default class CreateVariantModal extends React.PureComponent {
 	render() {
+		const {family, propName} = this.props;
+
 		return (
-			<Modal propName={this.props.propName}>
+			<Modal propName={propName}>
 				<div className="modal-container-title account-header">Add variant</div>
 				<div className="modal-container-content">
-					<AddVariant family={this.props.family}/>
+					<AddVariant family={family} />
 				</div>
 			</Modal>
 		);

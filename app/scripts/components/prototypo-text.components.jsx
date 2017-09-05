@@ -1,7 +1,7 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import ScrollArea from 'react-scrollbar';
+import ScrollArea from 'react-scrollbar/dist/no-css';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Editor, EditorState, ContentState, CompositeDecorator} from 'draft-js';
 import escapeStringRegexp from 'escape-string-regexp';
@@ -36,7 +36,6 @@ export default class PrototypoText extends React.Component {
 		super(props);
 
 		this.state = {
-			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
 			glyphPanelOpened: undefined,
 			editorState: EditorState.createEmpty(),
@@ -127,26 +126,34 @@ export default class PrototypoText extends React.Component {
 		this.saveText(editorState.getCurrentContent().getPlainText());
 	}
 
-	toggleContextMenu(e) {
-		e.preventDefault();
-		e.stopPropagation();
+	toggleContextMenu() {
 		this.setState({
 			showContextMenu: !this.state.showContextMenu,
 			showInsertMenu: false,
 		});
 	}
 
-	toggleInsertMenu(e) {
-		e.preventDefault();
-		e.stopPropagation();
+	toggleInsertMenu() {
 		this.setState({
 			showInsertMenu: !this.state.showInsertMenu,
 			showContextMenu: false,
 		});
 	}
 
-	hideContextMenu() {
-		if (this.state.showContextMenu || this.state.showInsertMenu) {
+	hideContextMenu(e) {
+		const rect = e.currentTarget.getBoundingClientRect();
+		const x = e.pageX;
+		const y = e.pageY;
+
+		if (
+			(this.state.showContextMenu || this.state.showInsertMenu)
+			&& !(
+				rect.left <= x
+				&& x <= rect.left + rect.width
+				&& rect.top <= y
+				&& y <= rect.top + rect.height
+			)
+		) {
 			this.setState({
 				showContextMenu: false,
 				showInsertMenu: false,
@@ -196,13 +203,11 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 		});
 	}
 
-	invertedView(e) {
-		e.stopPropagation();
+	invertedView() {
 		this.client.dispatchAction('/store-value', {uiInvertedTextView: !this.props.uiInvertedTextView});
 	}
 
-	toggleColors(e) {
-		e.stopPropagation();
+	toggleColors() {
 		this.client.dispatchAction('/store-value', {uiInvertedTextColors: !this.props.uiInvertedTextColors});
 	}
 
@@ -231,45 +236,13 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 			'is-shifted': this.state.glyphPanelOpened,
 		});
 
-		const pangramMenu = [
-			<ContextualMenuItem
-				text="Quick fox..."
-				key="fox"
-				click={this.setTextToQuickBrownFox}/>,
-			<ContextualMenuItem
-				text="Fameux whisky..."
-				key="whisky"
-				click={this.setTextToFameuxWhisky}/>,
-			<ContextualMenuItem
-				text="Basic latin alphabet"
-				key="alphabet"
-				click={this.setTextToAlphabet}/>,
-			<ContextualMenuItem
-				text="Lorem ipsum"
-				key="lorem"
-				click={this.setTextToLorem}/>,
-			];
-
-		const menu = [
-			<ContextualMenuItem
-				text="Inverted view"
-				key="view"
-				active={this.props.uiInvertedTextView}
-				click={this.invertedView}/>,
-			<ContextualMenuItem
-				text={`Switch to ${this.props.uiInvertedTextColors ? 'black on white' : 'white on black'}`}
-				key="colors"
-				active={this.props.uiInvertedTextColors}
-				click={this.toggleColors}/>,
-			];
-
 		return (
 			<div
 				style={this.props.style}
 				className="prototypo-text"
 				onClick={this.hideContextMenu}
 				onMouseLeave={this.hideContextMenu}
-				onContextMenu={this.toggleContextMenu}>
+			>
 				<ScrollArea horizontal={false} style={panelStyle}>
 					<div className={editorClassNames} style={contentStyle}>
 						<Editor
@@ -284,15 +257,42 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 					shifted={this.state.glyphPanelOpened}
 					show={this.state.showContextMenu}
 					toggle={this.toggleContextMenu}
-					intercomShift={this.props.viewPanelRightMove}>
-					{menu}
+					intercomShift={this.props.viewPanelRightMove}
+					upper
+					left
+				>
+					<ContextualMenuItem
+						active={this.props.uiInvertedTextView}
+						onClick={this.invertedView}
+					>
+						Inverted view
+					</ContextualMenuItem>
+					<ContextualMenuItem
+						active={this.props.uiInvertedTextColors}
+						onClick={this.toggleColors}
+					>
+						Switch to {this.props.uiInvertedTextColors ? 'black on white' : 'white on black'}
+					</ContextualMenuItem>
 				</ViewPanelsMenu>
 				<ViewPanelsMenu
-					alignLeft={true}
 					text="Insert"
 					show={this.state.showInsertMenu}
-					toggle={this.toggleInsertMenu}>
-					{pangramMenu}
+					toggle={this.toggleInsertMenu}
+					alignLeft
+					upper
+				>
+					<ContextualMenuItem onClick={this.setTextToQuickBrownFox}>
+						Quick fox...
+					</ContextualMenuItem>
+					<ContextualMenuItem onClick={this.setTextToFameuxWhisky}>
+						Fameux whisky...
+					</ContextualMenuItem>
+					<ContextualMenuItem onClick={this.setTextToAlphabet}>
+						Basic latin alphabet
+					</ContextualMenuItem>
+					<ContextualMenuItem onClick={this.setTextToLorem}>
+						Lorem ipsum
+					</ContextualMenuItem>
 				</ViewPanelsMenu>
 				<div className={actionBar}>
 					<CloseButton click={this.close}/>

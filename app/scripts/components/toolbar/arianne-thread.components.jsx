@@ -1,25 +1,30 @@
 import React from 'react';
+import {graphql, gql} from 'react-apollo';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import classNames from 'classnames';
 
 import HoodieApi from '~/services/hoodie.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
+import {libraryQuery} from '../collection/collection.components';
+
 const voidStateObject = {};
 const voidStateArray = [];
 
-export default class ArianneThread extends React.Component {
+class ArianneThread extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
-			families: [],
+			selectedFamily: {},
+			selectedVariant: {},
 			family: {},
 			variant: {},
 			indivCurrentGroup: {},
 			groups: [],
 		};
+
 		this.toggleIndividualize = this.toggleIndividualize.bind(this);
 		this.selectVariant = this.selectVariant.bind(this);
 		this.selectFamily = this.selectFamily.bind(this);
@@ -29,12 +34,6 @@ export default class ArianneThread extends React.Component {
 		this.selectGroup = this.selectGroup.bind(this);
 		this.addIndividualizeGroup = this.addIndividualizeGroup.bind(this);
 		this.editIndivualizeGroup = this.editIndivualizeGroup.bind(this);
-	}
-
-	shouldComponentUpdate(nextProps, nextState) {
-		var i = 0;
-		i = i + 1;
-return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 	}
 
 	async componentWillMount() {
@@ -51,43 +50,33 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
-				const family = familySelector(head.toJS().d.fonts, head.toJS().d.family) || (
-					this.state.families.length > 0
-						? this.state.families[0]
+				const family = familySelector(this.props.families, head.toJS().d.family) || (
+					this.props.families.length > 0
+						? this.props.families[0]
 						: voidStateObject
 				);
 
-				//This should never happen. However for user comfort if it happens
-				//we should create a new family to avoid crashes.
-				if (!family.name) {
-					localClient.dispatchAction('/create-family', {
-						name: 'My font',
-						template: 'elzevir.ptf',
-						loadCurrent: true,
-					});
-				}
+				const isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+				const isFreeWithCredits = (head.toJS().d.credits && head.toJS().d.credits > 0) && isFree;
 
 				this.setState({
-					families: memoizedListSelector(head.toJS().d.fonts, head.toJS().d.family, this.state.families, this.state.family || voidStateObject),
-					family,
+					selectedFamily: head.toJS().d.family,
+					selectedVariant: head.toJS().d.variant,
 					variant: head.toJS().d.variant,
 					groups: memoizedListSelector(head.toJS().d.indivGroups, head.toJS().d.indivCurrentGroup || voidStateObject, this.state.groups, this.state.indivCurrentGroup || voidStateObject),
 					indivCreate: head.toJS().d.indivCreate,
 					indivMode: head.toJS().d.indivMode,
 					indivCurrentGroup: head.toJS().d.indivCurrentGroup || voidStateObject,
+					isFree,
+					isFreeWithCredits,
 				});
-				const isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
-				const isFreeWithCredits = (head.toJS().d.credits && head.toJS().d.credits > 0) && isFree;
-				this.setState({isFree, isFreeWithCredits});
-
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 
 		this.setState({
-			families: memoizedListSelector(store.head.toJS().fonts, store.head.toJS().family, this.state.families, voidStateObject),
-			family: familySelector(store.head.toJS().fonts, store.head.toJS().family),
+			family: familySelector(this.props.families, store.head.toJS().family),
 			variant: store.head.toJS().variant,
 			groups: memoizedListSelector(store.head.toJS().indivGroups, {}, this.state.groups, voidStateObject),
 		});
@@ -112,15 +101,15 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 	addVariant() {
 		this.client.dispatchAction('/store-value', {
 			openVariantModal: true,
-			familySelectedVariantCreation: this.state.family,
+			familySelectedVariantCreation: this.state.selectedFamily,
 		});
 	}
 
 	showCollection() {
 		this.client.dispatchAction('/store-value', {
 			uiShowCollection: true,
-			collectionSelectedFamily: this.state.family,
-			collectionSelectedVariant: this.state.variant,
+			collectionSelectedFamily: this.state.selectedFamily,
+			collectionSelectedVariant: this.state.selectedVariant,
 		});
 	}
 
@@ -165,24 +154,35 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 	}
 
 	render() {
-		const isFreeWithoutCredits = this.state.isFree && !this.state.isFreeWithCredits;
+		const {selectedFamily, selectedVariant} = this.state;
+		const {families} = this.props;
+
+		if (families.length === 0) {
+			// TODO: use <Redirect /> when migrating over React Router 4
+			return <p>Loading...</p>;
+		}
+
+		const family = families.find(({name}) => name === selectedFamily.name) || families[0];
+		const variant = family.variants.find(({name}) => name === selectedVariant.name) || family.variants[0];
+
 		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily}/>;
 		const familyItem = (
-				<DropArianneItem
-					label={this.state.family.name}
-					list={this.state.families}
-					add={addFamily}
-					click={this.selectFamily}
-					toggleId="arianne-item-family"/>
+			<DropArianneItem
+				label={family.name}
+				list={families}
+				add={addFamily}
+				click={this.selectFamily}
+				toggleId="arianne-item-family"
+			/>
 		);
 
 		const addVariant = <ArianneDropMenuItem item={{name: 'Add new variant...'}} click={this.addVariant}/>;
 		const variantItem = (
 				<DropArianneItem
-					label={this.state.variant.name}
-					family={this.state.family}
-					variant={this.state.variant}
-					list={this.state.family.variants ? this.state.family.variants.filter(({name}) => { return name !== this.state.variant.name; }) : []}
+					label={variant.name}
+					family={family}
+					variant={variant}
+					list={family.variants ? family.variants.filter(({name}) => { return name !== this.state.variant.name; }) : []}
 					add={addVariant}
 					click={this.selectVariant}
 					toggleId="arianne-item-variant"/>
@@ -229,12 +229,29 @@ return PureRenderMixin.shouldComponentUpdate.bind(this)(nextProps, nextState);
 	}
 }
 
-class RootArianneItem extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
+ArianneThread.propTypes = {
+};
 
+ArianneThread.defaultProps = {
+	families: [],
+};
+
+export default graphql(libraryQuery, {
+	options: {
+		fetchPolicy: 'cache-first', // this prevents any empty state for now
+	},
+	props: ({data}) => {
+		if (data.loading) {
+			return {loading: true};
+		}
+
+		return {
+			families: data.user.library,
+		};
+	},
+})(ArianneThread);
+
+class RootArianneItem extends React.Component {
 	render() {
 		return (
 			<div className="arianne-item" onClick={this.props.click}>
@@ -247,15 +264,14 @@ class RootArianneItem extends React.Component {
 	}
 }
 
-class DropArianneItem extends React.Component {
+class DropArianneItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			arianneItemDisplayed: undefined,
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
-		// function binding
 		this.toggleDisplay = this.toggleDisplay.bind(this);
 	}
 
@@ -339,12 +355,7 @@ class DropArianneItem extends React.Component {
 	}
 }
 
-class ArianneDropMenu extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
+class ArianneDropMenu extends React.PureComponent {
 	render() {
 		const items = this.props.list.map((item) => {
 			return <ArianneDropMenuItem
@@ -364,10 +375,15 @@ class ArianneDropMenu extends React.Component {
 	}
 }
 
-class ArianneDropMenuItem extends React.Component {
+class ArianneDropMenuItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.handleClick = this.handleClick.bind(this);
+	}
+
+	handleClick() {
+		this.props.click(this.props.item, this.props.family);
 	}
 
 	render() {
@@ -376,9 +392,7 @@ class ArianneDropMenuItem extends React.Component {
 			: this.props.item.name;
 
 		return (
-			<li className="arianne-drop-menu-item" onClick={() => {
-				this.props.click(this.props.item, this.props.family);
-			}}>
+			<li className="arianne-drop-menu-item" onClick={this.handleClick}>
 				{item}
 			</li>
 		);
@@ -386,11 +400,6 @@ class ArianneDropMenuItem extends React.Component {
 }
 
 class ActionArianneItem extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
 	render() {
 		const classes = this.props.className || 'arianne-item';
 

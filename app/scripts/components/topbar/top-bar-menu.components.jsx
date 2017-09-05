@@ -45,12 +45,12 @@ class TopBarMenu extends React.PureComponent {
 		const headers = _.without(this.props.children, false, undefined).map((child, index) => {
 			const classes = classNames({
 				'top-bar-menu-item': true,
-				'is-aligned-right': child.props.alignRight,
-				'is-action': child.props.action,
-				'is-icon-menu': !!child.props.img,
-				'is-centered': child.props.centered,
-				'img-dark-background': child.props.imgDarkBackground,
-				'academy-progress-container': child.props.id === "progress-academy",
+				'is-aligned-right': child && child.props.alignRight,
+				'is-action': child && child.props.action,
+				'is-icon-menu': child && !!child.props.img,
+				'is-centered': child &&child.props.centered,
+				'img-dark-background': child && child.props.imgDarkBackground,
+				'academy-progress-container': child && child.props.id === "progress-academy",
 			});
 			const count = (index > 0 && index < 5) ? index : 0;
 
@@ -58,13 +58,13 @@ class TopBarMenu extends React.PureComponent {
 				<TopBarMenuItem
 					className={classes}
 					key={index}
-					id={child.props.id}
+					id={child && child.props.id}
 					count={count}
-					noHover={child.props.noHover}
-					onMouseEnter={child.props.enter}
+					noHover={child && child.props.noHover}
+					onMouseEnter={child && child.props.enter}
 					topbarItemDisplayed={this.state.topbarItemDisplayed}
-					onMouseLeave={child.props.leave}>
-					{child.type.getHeader(child.props)}
+					onMouseLeave={child && child.props.leave}>
+					{child && child.type.getHeader(child.props)}
 					{child}
 				</TopBarMenuItem>
 			);
@@ -146,7 +146,7 @@ class TopBarMenuItem extends React.PureComponent {
 			<li
 				className={classes}
 				id={id}
-				onClick={this.handleClick}>
+				onClick={() => { this.handleClick(); }}>
 				{this.props.children}
 			</li>
 		);

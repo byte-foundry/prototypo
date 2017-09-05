@@ -7,8 +7,11 @@ class Button extends React.Component {
 		const {
 			size,
 			disabled,
+			outline,
+			fluid,
 			children,
 			className,
+			neutral,
 			...rest
 		} = this.props;
 
@@ -19,6 +22,9 @@ class Button extends React.Component {
 				'new-button--small': size === 'small',
 				'new-button--large': size === 'large',
 				'new-button--disabled': disabled,
+				'new-button--outline': outline,
+				'new-button--fluid': fluid,
+				'new-button--neutral': neutral,
 			},
 			className,
 		);
@@ -34,6 +40,8 @@ class Button extends React.Component {
 Button.propTypes = {
 	size: PropTypes.oneOf(['tiny', 'small', 'large']),
 	disabled: PropTypes.bool,
+	outline: PropTypes.bool,
+	fluid: PropTypes.bool,
 	className: PropTypes.string,
 };
 

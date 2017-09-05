@@ -1,77 +1,112 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {graphql, gql} from 'react-apollo';
 
-import LocalClient from '~/stores/local-client.stores.jsx';
-import Lifespan from 'lifespan';
+import LocalClient from '~/stores/local-client.stores';
 
-import Modal from '../shared/modal.components.jsx';
-import InputWithLabel from '../shared/input-with-label.components.jsx';
-import Button from '../shared/button.components.jsx';
+import Modal from '../shared/modal.components';
+import InputWithLabel from '../shared/input-with-label.components';
+import Button from '../shared/new-button.components';
 
-export default class ChangeNameVariant extends React.Component {
+class ChangeNameVariant extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {
-			errorVariantNameChange: undefined,
-		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
-		// function binding to avoid unnecessary re-render
+		this.state = {
+			error: null,
+			newName: '',
+		};
+
 		this.exit = this.exit.bind(this);
 		this.editVariant = this.editVariant.bind(this);
+		this.saveNewName = this.saveNewName.bind(this);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					errorVariantNameChange: head.toJS().d.errorVariantNameChange,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
 	}
 
 	exit() {
 		this.client.dispatchAction('/store-value', {
 			openChangeVariantNameModal: false,
-			errorVariantNameChange: undefined,
 		});
 	}
 
-	editVariant() {
-		this.client.dispatchAction('/edit-variant', {
-			variant: this.props.variant,
-			family: this.props.family,
-			newName: this.refs.newName.inputValue,
-		});
+	async editVariant() {
+		this.setState({error: null});
+
+		const newName = this.state.newName;
+
+		try {
+			// TODO: check duplicates, on Graphcool ?
+
+			this.props.rename(newName);
+
+			this.exit();
+		}
+		catch (e) {
+			this.setState({error: e.message});
+		}
+	}
+
+	saveNewName(e) {
+		this.setState({error: null, newName: e.target.value});
 	}
 
 	render() {
-		const error = this.state.errorVariantNameChange
-			? <div className="add-family-form-error">{this.state.errorVariantNameChange.toString()}</div>
-			: false;
+		const {variant, propName} = this.props;
+		const {error, newName} = this.state;
+
+		const isNotValid = !newName.trim() || newName.trim() === variant.name;
 
 		return (
-			<Modal propName={this.props.propName}>
+			<Modal propName={propName}>
 				<div className="modal-container-title account-header">Change variant name</div>
 				<div className="modal-container-content">
-					<InputWithLabel ref="newName" inputValue={this.props.variant.name}/>
-					{error}
+					<InputWithLabel onChange={this.saveNewName} inputValue={variant.name} />
+					{error
+						&& <div className="add-family-form-error">
+							{error}
+						</div>}
 					<div className="action-form-buttons">
-						<Button click={this.exit} label="Cancel" neutral={true}/>
-						<Button click={this.editVariant} label="Change variant name"/>
+						<Button onClick={this.exit} outline neutral>
+							Cancel
+						</Button>
+						<Button onClick={this.editVariant} disabled={isNotValid}>
+							Change variant name
+						</Button>
 					</div>
 				</div>
 			</Modal>
 		);
 	}
 }
+
+ChangeNameVariant.propTypes = {
+	variant: PropTypes.shape({
+		id: PropTypes.string.isRequired,
+		name: PropTypes.string.isRequired,
+	}),
+	propName: PropTypes.string.isRequired,
+};
+
+const renameVariantMutation = gql`
+	mutation renameVariant($id: ID!, $newName: String!) {
+		updateVariant(id: $id, name: $newName) {
+			id
+			name
+		}
+	}
+`;
+
+export default graphql(renameVariantMutation, {
+	props: ({mutate, ownProps}) => ({
+		rename: newName =>
+			mutate({
+				variables: {
+					id: ownProps.variant.id,
+					newName,
+				},
+			}),
+	}),
+})(ChangeNameVariant);

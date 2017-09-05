@@ -15,7 +15,6 @@ export default {
 		values.tab = values.tab || 'Func';
 		values.pinned = values.pinned || [];
 		values.tagSelected = values.tagSelected || 'all';
-		values.library = values.library || [];
 		values.mode = values.mode || ['glyph'];
 		values.wordFontSize = values.wordFontSize || 1;
 		values.textFontSize = values.textFontSize || 1;
@@ -31,10 +30,5 @@ export default {
 		const valuesLoadedEvent = new Event('appValues.loaded');
 
 		window.dispatchEvent(valuesLoadedEvent);
-	},
-	'/load-account-values': (values) => {
-		const patch = userStore.set('infos', values.values || {}).commit();
-
-		localServer.dispatchUpdate('/userStore', patch);
 	},
 };

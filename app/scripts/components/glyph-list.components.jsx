@@ -1,5 +1,5 @@
 import React from 'react';
-import ScrollArea from 'react-scrollbar';
+import ScrollArea from 'react-scrollbar/dist/no-css';
 import Lifespan from 'lifespan';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -22,14 +22,18 @@ export default class GlyphList extends React.PureComponent {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/undoableStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					manualChanges: head.toJS().d.controlsValues.manualChanges,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
+		.onUpdate((head) => {
+			this.setState({
+				manualChanges: head.toJS().d.controlsValues.manualChanges,
 			});
+		})
+		.onDelete(() => {
+			this.setState(undefined);
+		});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 	isManualEdited(glyph) {

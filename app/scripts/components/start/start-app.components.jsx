@@ -1,55 +1,59 @@
-import React from 'react';
-import {Link} from 'react-router';
-import pleaseWait from 'please-wait';
-import {hashHistory} from 'react-router';
-import {AddFamily} from '../familyVariant/add-family-variant.components.jsx';
 import Lifespan from 'lifespan';
-import LocalClient from '~/stores/local-client.stores.jsx';
+import pleaseWait from 'please-wait';
+import PropTypes from 'prop-types';
+import React from 'react';
+import {compose, gql, graphql} from 'react-apollo';
+import {Link, withRouter} from 'react-router';
 
-export default class StartApp extends React.Component {
+import LocalClient from '~/stores/local-client.stores';
+import {AddFamily} from '../familyVariant/add-family-variant.components';
+import Button from '../shared/new-button.components';
+
+const FamilyRow = ({open, selected, ...family}) => {
+	const openFamily = () => open(family);
+
+	return (
+		<li
+			onDoubleClick={openFamily}
+			className={`load-project-project-item ${selected ? 'selected' : ''}`}
+		>
+			<span className="load-project-project-item-name">
+				{family.name}
+			</span>
+			<Button
+				className="load-project-project-item-button"
+				onClick={openFamily}
+				outline
+				size="small"
+			>
+				Open
+			</Button>
+		</li>
+	);
+};
+
+class StartApp extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {
-			families: [],
-		};
+
 		this.returnToDashboard = this.returnToDashboard.bind(this);
 		this.open = this.open.bind(this);
 	}
+
 	async componentWillMount() {
 		pleaseWait.instance.finish();
 
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				let selectedFamily = false;
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
+			const {fonts, collectionSelectedFamily} = head.toJS().d;
 
-				if (head.toJS().d.collectionSelectedFamily !== {}) {
-					selectedFamily = true;
-				}
-				this.setState({
-					families: head.toJS().d.fonts,
-					selected: (
-						head.toJS().d.collectionSelectedFamily || {}
-					),
-					selectedVariant: (
-						head.toJS().d.collectionSelectedVariant || {}
-					),
-					createdFamily: (
-						head.toJS().d.createdFamily
-					),
-				});
-				if (!selectedFamily && head.toJS().d.fonts[0]) {
-					this.client.dispatchAction('/select-family-collection', head.toJS().d.fonts[0]);
-					this.client.dispatchAction('/select-variant-collection', head.toJS().d.fonts[0].variants[0]);
-				}
-			})
-			.onDelete(() => {
-				this.setState({
-					families: undefined,
-				});
-			});
+			if (collectionSelectedFamily === {} && fonts[0]) {
+				this.client.dispatchAction('/select-family-collection', fonts[0]);
+				this.client.dispatchAction('/select-variant-collection', fonts[0].variants[0]);
+			}
+		});
 	}
 
 	componentWillUnmount() {
@@ -62,32 +66,19 @@ export default class StartApp extends React.Component {
 
 	open(family) {
 		this.client.dispatchAction('/select-variant', {variant: family.variants[0], family});
-		const dashboardLocation = {
-			pathname: '/dashboard',
-		};
 
-		hashHistory.push(dashboardLocation);
+		this.props.router.push('/dashboard');
 	}
 
 	render() {
-		// create font
-		const families = _.map(this.state.families, (family) => {
-			const selected = family.name === this.state.selected.name;
+		const {loading, families} = this.props;
 
-			return {
-				name: family.name,
-				family,
-				selected,
-			};
-		});
-
-		if (this.state.createdFamily) {
-			this.open(this.state.createdFamily);
+		if (loading) {
+			return <p>yoloading</p>;
 		}
 
-		// project list if any
 		return (
-			<div className={`start-app ${(families && families.length) ? '' : 'noproject'}`}>
+			<div className={`start-app ${families && families.length ? '' : 'noproject'}`}>
 				<div className="go-to-account">
 					<Link className="go-to-account-link" to="/account/home">
 						Go to my account instead →
@@ -96,7 +87,7 @@ export default class StartApp extends React.Component {
 				<div className="start-app-container">
 					<div className="start-base">
 						<div className="start-base-create">
-							<AddFamily start="true" firstTime={!families.length}/>
+							<AddFamily start="true" firstTime={!families.length} onCreateFamily={this.open} />
 						</div>
 						<div className="start-base-projects">
 							<div className="load-project">
@@ -105,14 +96,9 @@ export default class StartApp extends React.Component {
 									Continue recent project
 								</label>
 								<ul className="load-project-project">
-									{families.map((family) => {
-										return (
-											<li onDoubleClick={() => {this.open(family.family);}} className={`load-project-project-item clearfix ${family.selected ? 'selected' : ''}`}>
-												<span>{family.name}</span>
-												<span className="load-project-project-item-button" onClick={() => {this.open(family.family);}}>Open</span>
-											</li>
-										);
-									})}
+									{families.map(family =>
+										<FamilyRow key={family.id} open={this.open} {...family} />,
+									)}
 								</ul>
 							</div>
 						</div>
@@ -122,3 +108,58 @@ export default class StartApp extends React.Component {
 		);
 	}
 }
+
+StartApp.defaultProps = {
+	families: [],
+};
+
+StartApp.propTypes = {
+	families: PropTypes.arrayOf(
+		PropTypes.shape({
+			id: PropTypes.string.isRequired,
+			name: PropTypes.string.isRequired,
+		}),
+	),
+};
+
+const getUserLibraryQuery = gql`
+	query {
+		user {
+			id
+			appValues
+			library {
+				id
+				name
+				template
+				variants {
+					id
+				}
+			}
+		}
+	}
+`;
+
+export default compose(
+	graphql(getUserLibraryQuery, {
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			const {library, appValues} = data.user;
+
+			return {
+				families: library.map((family) => {
+					const selected
+						= appValues.familySelected && family.name === appValues.familySelected.name;
+
+					return {
+						...family,
+						selected,
+					};
+				}),
+			};
+		},
+	}),
+	withRouter,
+)(StartApp);

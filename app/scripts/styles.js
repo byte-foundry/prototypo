@@ -4,6 +4,10 @@ import 'please-wait/build/please-wait.css';
 import 'react-select/dist/react-select.css';
 import 'react-joyride/lib/react-joyride-compiled.css';
 import 'draft-js/dist/Draft.css';
+import 'react-scrollbar/dist/css/scrollArea.css';
+
+import '../styles/components/shared/new-button.scss';
+
 import '../styles/components/edit-param-group.scss';
 import '../styles/components/input-group.scss';
 import '../styles/components/fonts-collection.scss';
@@ -72,7 +76,6 @@ import '../styles/components/shared/icon.scss';
 import '../styles/components/shared/invoice.scss';
 import '../styles/components/shared/loading-overlay.scss';
 import '../styles/components/shared/button.scss';
-import '../styles/components/shared/new-button.scss';
 import '../styles/components/shared/modal.scss';
 import '../styles/components/shared/action-form-buttons.scss';
 import '../styles/components/shared/filter-input.scss';

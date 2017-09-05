@@ -1,6 +1,8 @@
-import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
-import LocalClient from '../stores/local-client.stores.jsx';
+import cloneDeep from 'lodash/cloneDeep';
+
+import {undoableStore} from '../stores/creation.stores';
+import LocalServer from '../stores/local-server.stores';
+import LocalClient from '../stores/local-client.stores';
 
 let localServer;
 let localClient;
@@ -11,7 +13,9 @@ window.addEventListener('fluxServer.setup', () => {
 });
 
 export default {
-	'/load-values': (params) => {
+	'/load-values': (p) => {
+		const params = cloneDeep(p);
+
 		if (params.manualChanges && Object.keys(params.manualChanges).length > 0) {
 			_.forEach(params.manualChanges, function(value, key) {
 				if (params.manualChanges[key] instanceof Object) {

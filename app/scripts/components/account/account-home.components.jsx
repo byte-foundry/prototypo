@@ -4,7 +4,7 @@ import {Link} from 'react-router';
 import youtube from '../../../images/academy/icon-course-video.svg';
 import cup from '../../../images/academy/cup.svg';
 
-export default class AccountHome extends React.Component {
+class AccountHome extends React.Component {
 	openIntercom(e) {
 		e.preventDefault();
 		Intercom('showNewMessage');
@@ -58,3 +58,5 @@ export default class AccountHome extends React.Component {
 		);
 	}
 }
+
+export default AccountHome;

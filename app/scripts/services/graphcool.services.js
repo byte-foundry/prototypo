@@ -3,7 +3,7 @@ import {ApolloClient, createBatchingNetworkInterface} from 'react-apollo';
 import isProduction from '../helpers/is-production.helpers';
 
 const networkInterface = createBatchingNetworkInterface({
-	uri: `https://api.graph.cool/simple/v1/${isProduction() ? 'prototypo-prod' : 'prototypo-dev'}`,
+	uri: `https://api.graph.cool/simple/v1/prototypo${isProduction() ? '' : '-new-dev'}`,
 	batchInterval: 10,
 });
 

@@ -1,6 +1,6 @@
 import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
-import {FontValues, AppValues, FontInfoValues} from '../services/values.services.js';
+import {FontValues, AppValues} from '../services/values.services.js';
 
 let localClient;
 let appValuesLoaded = false;
@@ -10,7 +10,6 @@ export const valuesToLoad = [
 	{remote: 'variantSelected', local: 'variant'},
 	{remote: 'familySelected', local: 'family'},
 	{remote: 'mode', local: 'uiMode'},
-	{remote: 'switchedToHoodie', local: 'switchedToHoodie'},
 	{remote: 'onboard', local: 'uiOnboard'},
 	{remote: 'word', local: 'uiWord'},
 	{remote: 'text', local: 'uiText'},
@@ -23,7 +22,6 @@ export const valuesToLoad = [
 	{remote: 'tab', local: 'fontTab'},
 	{remote: 'pinned', local: 'tagPinned'},
 	{remote: 'wordFontSize', local: 'uiWordFontSize'},
-	{remote: 'library', local: 'fonts'},
 	{remote: 'showCollection', local: 'uiShowCollection'},
 	{remote: 'selected', local: 'glyphSelected'},
 	{remote: 'textFontSize', local: 'uiTextFontSize'},
@@ -46,17 +44,7 @@ window.addEventListener('appValues.loaded', () => {
 	appValuesLoaded = true;
 });
 
-export async function copyFontValues(typeface) {
-	const values = prototypoStore.get('controlsValues');
-
-	await FontValues.save({
-		typeface,
-		values,
-	});
-}
-
-export async function loadFontValues(typedata, typeface) {
-
+export async function loadFontValues(typedata, typeface, variantId) {
 	const initValues = {};
 
 	_.each(typedata.controls, (group) => {
@@ -66,37 +54,22 @@ export async function loadFontValues(typedata, typeface) {
 	});
 
 	try {
-		const fontValues = await FontValues.get({typeface});
+		const fontValues = await FontValues.get({typeface, variantId});
+		const altList = _.extend(typedata.fontinfo.defaultAlts, fontValues.values.altList);
 
 		localClient.dispatchAction('/load-values', _.extend(initValues, fontValues.values));
+		localClient.dispatchAction('/load-font-infos', {altList});
 	}
 	catch (err) {
-		const values = _.extend({}, initValues);
+		const values = _.extend({}, {altList: typedata.fontinfo.defaultAlts}, initValues);
 
 		localClient.dispatchAction('/load-values', values);
 		FontValues.save({
 			typeface,
 			values,
+			variantId,
 		});
-	}
-
-	try {
-		const fontInfosValues = await FontInfoValues.get({typeface});
-		const altList = _.extend(typedata.fontinfo.defaultAlts, fontInfosValues.values.altList);
-
-		localClient.dispatchAction('/load-font-infos', {altList});
-	}
-	catch (err) {
-		const values = {
-			altList: typedata.fontinfo.defaultAlts,
-		};
-
-		await FontInfoValues.save({
-			typeface,
-			values,
-		});
-
-		localClient.dispatchAction('/load-font-infos', values);
+		localClient.dispatchAction('/load-font-infos', {altList: values.altList});
 	}
 
 	localClient.dispatchAction('/load-indiv-groups');
