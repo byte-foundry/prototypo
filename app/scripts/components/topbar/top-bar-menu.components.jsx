@@ -146,7 +146,7 @@ class TopBarMenuItem extends React.PureComponent {
 			<li
 				className={classes}
 				id={id}
-				onClick={this.handleClick}>
+				onClick={() => { this.handleClick(); }}>
 				{this.props.children}
 			</li>
 		);
