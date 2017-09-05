@@ -74,7 +74,9 @@ class Dashboard extends React.PureComponent {
 				if (!firstContactTimeoutMade && !this.props.firstContactMade) {
 					firstContactTimeoutMade = true;
 					setTimeout(() => {
-						window.Intercom('trackEvent', 'first-session');
+						window.Intercom('update', {
+							first_session_at: new Date(),
+						});
 						this.props.setFirstContact();
 					}, 300000);
 				}
