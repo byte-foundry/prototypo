@@ -80,6 +80,7 @@ class Dashboard extends React.PureComponent {
 					openExportLiteModal: head.toJS().d.openExportLiteModal,
                     stepModalEdit: head.toJS().d.stepModalEdit,
 					choiceModalEdit: head.toJS().d.choiceModalEdit,
+					variant: head.toJS().d.variant,
 					familySelectedVariantCreation: head.toJS().d.familySelectedVariantCreation,
                     stepSelectedChoiceCreation: head.toJS().d.stepSelectedChoiceCreation,
 					collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
@@ -218,7 +219,7 @@ class Dashboard extends React.PureComponent {
 		const newVariant = this.state.openVariantModal
 			&& <CreateVariantModal family={this.state.familySelectedVariantCreation} propName="openVariantModal"/>;
 		const newStep = this.state.openStepModal
-		&& <CreateStepModal propName="openStepModal" edit={this.state.stepModalEdit} />;
+		&& <CreateStepModal propName="openStepModal" variant={this.state.variant} edit={this.state.stepModalEdit} />;
         const newChoice= this.state.openChoiceModal
 			&& <CreateChoiceModal step={this.state.stepSelectedChoiceCreation} propName="openChoiceModal" edit={this.state.choiceModalEdit} />;
 		const exportLite= this.state.openExportLiteModal

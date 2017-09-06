@@ -2,12 +2,111 @@ import React from 'react';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import ScrollArea from 'react-scrollbar';
-import {hashHistory} from 'react-router';
+import {compose, graphql, gql} from 'react-apollo';
 import LocalClient from '~/stores/local-client.stores.jsx';
-import Log from '~/services/log.services.js';
-
 import Button from '../shared/button.components.jsx';
+import {libraryQuery} from '../collection/collection.components';
+
+const getVariantQuery = gql`
+query getVariantQuery($variantId: ID!) {
+	variant: Variant(id: $variantId) {
+		id
+		name
+		values
+		family {
+		  name
+		  template
+		}
+	}
+}
+`;
+
+const createPresetMutation = gql`
+mutation createPreset($name: String!, $template: String!, $variantId: ID!, $baseValues: JSON!, ) {
+	createPreset(
+		name: $name
+		template: $template
+		variant: {
+			id: $variantId
+		}
+		baseValues: $baseValues
+	) {
+		id
+		name
+	}
+}
+`;
+
+const createStepMutation = gql`
+mutation createStep($name: String!, $description: String!, $presetId: ID!, $choiceName: String! ) {
+	createStep(
+		name: $name
+		description: $description
+		preset: {
+			id: $presetId
+		}
+		choices:[{name: $choiceName}]
+		baseValues: $baseValues
+	) {
+		id
+		name
+	}
+}
+`;
+
+const createChoiceMutation = gql`
+mutation createChoice($name: String!, $stepId: ID! ) {
+	createChoice(
+		name: $name
+		step: {
+			id: $stepId
+		}
+	) {
+		id
+		name
+	}
+}
+`;
+
+
+const updateChoiceValues = gql`
+mutation updateChoiceValues($id: ID!, $newValues: JSON!) {
+	updateChoice(id: $id, values: $newValues) {
+		id
+		values
+	}
+}
+`;
+
+const updatePresetBaseValues = gql`
+mutation updatePresetBaseValues($id: ID!, $newValues: JSON!) {
+	updatePreset(id: $id, baseValues: $newValues) {
+		id
+		baseValues
+	}
+}
+`;
+
+
+const renameStepMutation = gql`
+mutation renameStep($id: ID!, $newName: String!, $newDescription: String!) {
+	updateStep(id: $id, name: $newName, description: $newDescription) {
+		id
+		name
+		description
+	}
+}
+`;
+
+
+const renameChoiceMutation = gql`
+mutation renameChoice($id: ID!, $newName: String!) {
+	updateChoice(id: $id, name: $newName) {
+		id
+		name
+	}
+}
+`;
 
 export class AddStep extends React.Component {
 	constructor(props) {
@@ -18,6 +117,9 @@ export class AddStep extends React.Component {
 	}
 
 	async componentWillMount() {
+		console.log('============AddStep Props=================');
+		console.log(this.props);
+		console.log('==========================================');
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 		this.client.getStore('/prototypoStore', this.lifespan)
@@ -50,9 +152,25 @@ export class AddStep extends React.Component {
 		});
 	}
 
-	createStep(e) {
+	async createStep(e) {
 		e.stopPropagation();
 		e.preventDefault();
+
+		const name = this.refs.name.value;
+		const description = this.refs.description.value;
+		const choice = this.refs.choice.value;
+
+
+		if (!selectedFont) {
+			this.setState({error: 'Please select a font template.'});
+			return;
+		}
+
+		if (!String(name).trim()) {
+			this.setState({error: 'You must choose a name for your family'});
+			return;
+		}
+
 		if (this.props.edit) {
 			this.client.dispatchAction('/edit-step', {
 				baseName: this.state.step.name,
@@ -114,6 +232,67 @@ export class AddStep extends React.Component {
 		);
 	}
 }
+
+AddStep = compose(
+	graphql(getVariantQuery, {
+		options: ({variant}) => ({variables: {variantId: variant.id}}),
+		props({data}) {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			console.log('=========getVariantQuery============');
+			console.log(data.variant);
+			console.log('====================================');
+
+			return {variant: {
+				id: data.variant.id,
+				name: data.variant.name,
+				values: data.variant.values,
+				family: data.variant.family.name,
+				template: data.variant.family.template,
+			}};
+		},
+	}),
+	graphql(createStepMutation, {
+		props: ({mutate, ownProps}) => ({
+			createStep: (name, description, choiceName) => {
+				return mutate({
+					variables: {
+						presetId: ownProps.preset.id,
+						name,
+						description,
+						choiceName,
+					},
+				});
+			},
+		}),
+		options: {
+			update: (store, {data: {createStep}}) => {
+				console.log('=======createStepMutation===========');
+				console.log(data);
+				console.log('====================================');
+				const data = store.readQuery({query: libraryQuery});
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	}),
+	graphql(renameStepMutation, {
+		props: ({mutate, ownProps}) => ({
+			rename: (newName, newDescription) =>
+				mutate({
+					variables: {
+						id: ownProps.step.id,
+						newName,
+						newDescription
+					},
+				}),
+		}),
+	})
+) (AddStep);
 
 export class AddChoice extends React.Component {
 	constructor(props) {
@@ -202,6 +381,45 @@ export class AddChoice extends React.Component {
 		);
 	}
 }
+
+
+AddChoice = compose(
+	graphql(createChoiceMutation, {
+		props: ({mutate, ownProps}) => ({
+			createChoice: (name) => {
+				return mutate({
+					variables: {
+						stepId: ownProps.preset.id,
+						name,
+					},
+				});
+			},
+		}),
+		options: {
+			update: (store, {data: {createChoice}}) => {
+				console.log('=======createChoiceMutation===========');
+				console.log(data);
+				console.log('====================================');
+				const data = store.readQuery({query: libraryQuery});
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	}),
+	graphql(renameChoiceMutation, {
+		props: ({mutate, ownProps}) => ({
+			rename: newName =>
+				mutate({
+					variables: {
+						id: ownProps.choice.id,
+						newName,
+					},
+				}),
+		}),
+	})
+) (AddStep);
 
 
 export class ExportLite extends React.Component {
