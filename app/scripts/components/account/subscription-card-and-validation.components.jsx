@@ -142,7 +142,6 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 	}
 
 	handleCouponSubmit(e) {
-		e.preventDefault();
 		this.client.dispatchAction('/choose-plan', {
 			coupon: this.refs.coupon.inputValue,
 		});
