@@ -35,8 +35,8 @@ class AccountPrototypoLibrary extends React.PureComponent {
 			},
 		];
 
-		const domainContent = domains.map((domain) => {
-			return (
+		const domainContent = domains.map(domain =>
+			(
 				<tr
 					key={domain}
 					className={classnames('sortable-table-row')}
@@ -45,14 +45,18 @@ class AccountPrototypoLibrary extends React.PureComponent {
 						{domain}
 					</td>
 				</tr>
-			);
-		});
+			),
+		);
 
 		return (
 			<div className="account-base account-prototypo-library">
+				<h1>Documentation</h1>
+				<div>
+					Check out the <a href="https://doc.prototypo.io" target="_blank" rel="noopener noreferrer">documentation</a> to learn how to use the prototypo library.<br />To use the library you will need the script tags under here and you'll also need to add the domain name where you'll want to use the library.
+				</div>
 				<h1>Prototypo library script tag</h1>
 				<WaitForLoad loading={loading}>
-					<CopyPasteInput content={token}/>
+					<CopyPasteInput content={token} />
 				</WaitForLoad>
 				<h1>Authorized domains</h1>
 				<WaitForLoad loading={loading}>
@@ -139,34 +143,23 @@ export default graphql(query, {
 			return {loading: true};
 		}
 
-		if (!data.user) {
-			return {
-				noUser: true,
-				createUser: async (user, password) => {
-					await Hoodie.createGraphCoolUser(user, password);
-
-					await data.refetch();
-				}
-			}
-		}
-
 		userId = data.user.id;
 
-		if (!data.user.accessToken) {
+		if (data.user.accessToken) {
+			accessTokenId = data.user.accessToken.id;
+		}
+		else {
 			return apolloClient.mutate({
 				mutation: createAccessToken,
 				variables: {
 					id: userId,
-					domainNames: "localhost",
+					domainNames: 'localhost',
 				},
 			}).then(async () => {
 				await data.refetch();
 			}).catch((e) => {
-				console.log('hello');
+				console.log(e);
 			});
-		}
-		else {
-			accessTokenId = data.user.accessToken.id;
 		}
 
 		return {
@@ -178,11 +171,11 @@ export default graphql(query, {
 					variables: {
 						id: accessTokenId,
 						domainNames: domainNames.join(','),
-					}
+					},
 				});
 
 				await data.refetch();
-			}
+			},
 		};
 	},
 })(AccountPrototypoLibrary);
