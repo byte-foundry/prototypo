@@ -23,6 +23,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			errors: [],
 			hasBeenSubscribing: false,
 			isFormSubmitted: false,
+			firstTimeCheck: false,
 		};
 
 		this.changeCard = this.changeCard.bind(this);
@@ -70,12 +71,13 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 	}
 
 	checkPlan(plan, quantity, coupon) {
-		if (this.props.coupon !== coupon) {
+		if (this.props.coupon !== coupon || !this.state.firstTimeCheck) {
 			this.client.dispatchAction('/choose-plan', {
 				plan,
 				quantity,
 				coupon,
 			});
+			this.setState({firstTimeCheck: true});
 		}
 
 		if (!coupon || coupon === '') {
