@@ -143,7 +143,7 @@ selectRenderOptions(
 			}
 			catch (err) {
 				if (err.message.includes('Not authenticated')) {
-					localServer.dispatchAction('/sign-out');
+					localServer.dispatchAction('/clean-data');
 				}
 
 				console.log(err);
