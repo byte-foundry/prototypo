@@ -22,6 +22,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			inError: {},
 			errors: [],
 			hasBeenSubscribing: false,
+			isFormSubmitted: false,
 		};
 
 		this.changeCard = this.changeCard.bind(this);
@@ -75,6 +76,10 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 				quantity,
 				coupon,
 			});
+		}
+
+		if (!coupon || coupon === '') {
+			this.setState({couponValue: undefined});
 		}
 
 		if (plan !== 'personal_monthly' && plan !== 'personal_annual_99' && plan !== 'agency_monthly' && plan !== 'agency_annual') {
@@ -135,6 +140,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 	}
 
 	handleCouponSubmit(e) {
+		e.preventDefault();
 		this.client.dispatchAction('/choose-plan', {
 			coupon: this.refs.coupon.inputValue,
 		});
