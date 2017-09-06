@@ -50,8 +50,10 @@ class Subscription extends React.Component {
 
 		if (plan) query.plan = plan;
 		if (quantity) query.quantity = (quantity && quantity.toString()) || undefined;
-		if (coupon) query.coupon = coupon || undefined;
-
+		if (coupon) {
+			query.coupon = coupon;
+		}
+		else delete query.coupon;
 		router.replace({
 			...location,
 			query,
