@@ -29,6 +29,7 @@ export class AccountDashboard extends React.Component {
 			createSignup: '',
 			success: 'Congratulations!',
 			confirm: '',
+			'prototypo-library': 'Welcome developers!',
 			billing: 'My billing history',
 			'billing-address': 'My billing address',
 			'add-card': 'Add a card',
