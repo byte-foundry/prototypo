@@ -9,16 +9,16 @@ export class AccountDashboard extends React.Component {
 		const {firstName, location, route, children} = this.props;
 
 		const titles = {
-			home: "My account",
-			profile: "My account",
-			details: "My account",
-			create: "Subscribe to prototypo",
-			createSignup: "Subscribe to prototypo",
-			success: "My account",
-			confirm: "My account",
-			billing: "My account",
-			organization: "My account",
-			library: "My account",
+			home: 'My account',
+			profile: 'My account',
+			details: 'My account',
+			create: 'Subscribe to prototypo',
+			createSignup: 'Subscribe to prototypo',
+			success: 'My account',
+			confirm: 'My account',
+			billing: 'My account',
+			organization: 'My account',
+			library: 'My account',
 		};
 		const subtitles = {
 			home: `Hi ${firstName}!`,
