@@ -5,18 +5,10 @@ import {graphql, gql} from 'react-apollo';
 
 import apolloClient from '../../services/graphcool.services';
 
-import CopyPasteInput from '../shared/copy-paste-input.components.jsx';
-import FilterableTable from '../shared/filterable-table.components.jsx';
+import CopyPasteInput from '../shared/copy-paste-input.components';
+import FilterableTable from '../shared/filterable-table.components';
 import WaitForLoad from '../wait-for-load.components';
-import Button from '../shared/new-button.components.jsx';
-
-let HoodieApi;
-
-// Temporary catch to avoid errors in Storybook, should be removed later anyway
-try {
-	HoodieApi = require('../../services/hoodie.services').default;
-}
-catch (err) {}
+import Button from '../shared/new-button.components';
 
 class AccountPrototypoLibrary extends React.PureComponent {
 	constructor(props) {
