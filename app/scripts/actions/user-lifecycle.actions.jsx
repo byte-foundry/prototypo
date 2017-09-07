@@ -152,6 +152,10 @@ export default {
 			window.Intercom('shutdown');
 		}
 
+		localClient.dispatchAction('/clean-data');
+
+	},
+	'/clean-data': () => {
 		localClient.dispatchAction('/clean-form', 'signinForm');
 		localClient.dispatchAction('/clean-form', 'signupForm');
 		localClient.dispatchAction('/clean-form', 'choosePlanForm');
