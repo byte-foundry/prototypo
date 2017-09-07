@@ -264,7 +264,7 @@ class Topbar extends React.Component {
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${redoDisabled ? '' : this.state.eventList[whereAt + 1].label}`;
 		const credits = this.state.credits;
-		const freeAccount = !this.state.subscription;
+		const freeAccount = !this.props.manager && !this.state.subscription;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : false;
 		const glyphrExportCost = this.state.creditChoices ? this.state.creditChoices.exportGlyphr : false;
@@ -472,6 +472,9 @@ const getAcademyValuesQuery = gql`
 		user {
 			id
 			academyProgress
+			manager {
+				id
+			}
 		}
 	}
 `;
@@ -482,6 +485,9 @@ export default graphql(getAcademyValuesQuery, {
 			return {loadingAcademyProgress: true};
 		}
 
-		return {academyProgress: data.user.academyProgress};
+		return {
+			academyProgress: data.user.academyProgress,
+			manager: data.user.manager,
+		};
 	},
 })(withCountry(Topbar));
