@@ -203,7 +203,6 @@ export default compose(
 			fetchPolicy: 'network-only',
 		},
 		props: ({data}) => {
-			console.log('Collection libraryQuery', data);
 			if (data.loading) {
 				return {loading: true};
 			}

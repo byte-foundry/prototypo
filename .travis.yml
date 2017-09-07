@@ -1,8 +1,9 @@
 sudo: false
 language: node_js
 node_js:
-- '6.3'
+- '6.11'
 script:
+- npm rebuild node-sass
 - NODE_ENV=production yarn build:dist -- --type=prod
 after_success:
 - 'curl -L https://github.com/netlify/netlifyctl/releases/download/v0.1.0/netlifyctl-linux-amd64-v0.1.0.tar.gz | tar zx'

@@ -10,7 +10,7 @@ export default class NotABrowser extends React.Component {
 		return (
 			<div id="notloggedin">
 				<div className="sign-in">
-					<h1>Prototypo uses features that are not available in Safari and IE</h1>
+					<h1 className="sign-in-h1">Prototypo uses features that are not yet available in Safari and IE</h1>
 					If you want to use Prototypo, you will have to install Chrome (recommended), Firefox or Opera.
 					<div className="not-a-browser-logos">
 						<a className="not-a-browser-logos-link" href="https://www.google.fr/chrome/browser/desktop/index.html">

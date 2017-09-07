@@ -107,7 +107,6 @@ export class AddFamily extends React.PureComponent {
 				variantId: newFont.variants[0].id,
 			});
 
-			Log.ui('Collection.CreateFamily'); // TODO: put this in the onCreateFamily in collection
 			Log.ui(`createFamily.${selectedFont.templateName}`);
 			this.client.dispatchAction('/store-value', {uiOnboardstep: 'customize'});
 
@@ -167,10 +166,10 @@ export class AddFamily extends React.PureComponent {
 						{error}
 						<div className="action-form-buttons">
 							{!start
-								&& <Button onClick={this.exit} outline>
+								&& <Button onClick={this.exit} outline neutral>
 									Cancel
 								</Button>}
-							<Button type="submit" size="small" outline>
+							<Button type="submit" outline>
 								{start ? 'Create project' : 'Create family'}
 							</Button>
 						</div>
@@ -182,10 +181,12 @@ export class AddFamily extends React.PureComponent {
 }
 
 AddFamily.defaultProps = {
+	onCreateFamily: () => {},
 	createFamily: () => {},
 };
 
 AddFamily.propTypes = {
+	onCreateFamily: PropTypes.func,
 	createFamily: PropTypes.func,
 };
 
@@ -373,7 +374,7 @@ export class AddVariantRaw extends React.PureComponent {
 						{error}
 					</div>}
 				<div className="action-form-buttons">
-					<Button onClick={this.exit} outline>
+					<Button onClick={this.exit} outline neutral>
 						Cancel
 					</Button>
 					<Button onClick={this.createVariant} disabled={!!error}>

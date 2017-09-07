@@ -134,7 +134,7 @@ export default class Register extends React.Component {
 								<InputWithLabel label="Skype ID" info="(optional)" ref="skype"/>
 							</div>
 						</div>
-						<Link to="/signin" className="sign-in-help-needed">
+						<Link to={{pathname: '/signin', query: this.props.location.query}} className="sign-in-help-needed">
 							I already have an account
 						</Link>
 						{errors}

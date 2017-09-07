@@ -99,7 +99,7 @@
     "lodash.assign": "^3.2.0",
     "mocha": "^2.3.4",
     "nightwatch": "^0.8.15",
-    "node-sass": "^3.4.2",
+    "node-sass": "^4.5.3",
     "prettier-eslint-cli": "^4.1.1",
     "react-hot-loader": "next",
     "react-storybook-decorator-background": "^1.0.5",

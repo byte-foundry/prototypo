@@ -144,6 +144,10 @@ selectRenderOptions(
 				await loadStuff();
 			}
 			catch (err) {
+				if (err.message.includes('Not authenticated')) {
+					localServer.dispatchAction('/clean-data');
+				}
+
 				console.log(err);
 				const fontInstanceLoaded = new Event('fontInstance.loaded');
 
