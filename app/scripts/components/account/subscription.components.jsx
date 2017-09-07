@@ -25,6 +25,7 @@ class Subscription extends React.Component {
 			.onUpdate((head) => {
 				this.setState({
 					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
+					validCoupon: head.toJS().d.choosePlanForm.validCoupon,
 				});
 			})
 			.onDelete(() => {
@@ -69,6 +70,10 @@ class Subscription extends React.Component {
 			this.props.router.replace({...this.props.location, query: {plan: 'personal_annual_99'}});
 			return null;
 		}
+		let percentPrice = 1;
+		if (this.state.validCoupon && this.state.validCoupon.percent_off) {
+			percentPrice = (100 - this.state.validCoupon.percent_off) / 100;
+		}
 
 		return (
 			<div className="subscription">
@@ -80,6 +85,7 @@ class Subscription extends React.Component {
 						country={country}
 						onChangePlan={this.handleChangePlan}
 						hasBeenSubscribing={hasBeenSubscribing}
+						percentPrice={percentPrice}
 					/>
 					<SubscriptionCardAndValidation
 						plan={plan}
