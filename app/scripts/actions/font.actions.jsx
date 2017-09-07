@@ -166,7 +166,7 @@ export default {
 			number_of_family: user.libraryMeta.count,
 		});
 	},
-	'/select-variant': ({family, variant = family.variants[0]}) => {
+	'/select-variant': ({family, selectedVariant = family.variants[0]}) => {
 		const patchVariant = prototypoStore
 			.set('variant', {id: selectedVariant.id, name: selectedVariant.name})
 			.set('family', {id: family.id, name: family.name, template: family.template}).commit();
