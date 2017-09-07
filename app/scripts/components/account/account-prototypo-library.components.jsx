@@ -52,9 +52,9 @@ class AccountPrototypoLibrary extends React.PureComponent {
 			<div className="account-base account-prototypo-library">
 				<h1>Documentation</h1>
 				<div>
-					Check out the <a href="https://doc.prototypo.io" target="_blank" rel="noopener noreferrer">documentation</a> to learn how to use the prototypo library.<br />To use the library you will need the script tags under here and you'll also need to add the domain name where you'll want to use the library.
+					Check out the <a href="https://doc.prototypo.io" target="_blank" rel="noopener noreferrer">documentation</a> to learn how to use the prototypo library.<br />To use the library you will need the token under here and you'll also need to add the domain name where you'll want to use the library.
 				</div>
-				<h1>Prototypo library script tag</h1>
+				<h1>Prototypo library token</h1>
 				<WaitForLoad loading={loading}>
 					<CopyPasteInput content={token} />
 				</WaitForLoad>
