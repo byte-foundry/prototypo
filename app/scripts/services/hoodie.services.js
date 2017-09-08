@@ -88,6 +88,7 @@ export default class HoodieApi {
 		});
 
 		if (!response.data.user) {
+			window.localStorage.removeItem('graphcoolToken');
 			throw new Error('Not authenticated yet');
 		}
 
