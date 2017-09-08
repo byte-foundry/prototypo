@@ -5,6 +5,9 @@ import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
+import {graphql, gql} from 'react-apollo';
+
+import apolloClient from '../services/graphcool.services';
 
 let localServer;
 let localClient;
@@ -31,82 +34,94 @@ window.addEventListener('fluxServer.setup', () => {
 const hasher = XXHash(0xdeadbeef);
 
 export default {
-	'/create-step': async ({name, description, choice}) => {
-		// check if everything correct with the form
-		if (name === undefined || name === '' || String(name).trim() === '') {
-			const patch = prototypoStore
-				.set('errorAddStep', 'You must choose a name for your step')
-				.commit();
+	'/fetch-preset': async (variantId) => {
+		const {data: {Variant}} = await apolloClient.query({
+			query: gql`
+				query {
+					Variant(id: "${variantId}") {
+						id
+						preset {
+							baseValues
+							id
+							steps {
+								id
+								name
+								description
+								choices {
+									name
+									id
+									values
+								}
+							}
+						}
+					}
+				}
+			`,
+		});
+		const patch = prototypoStore
+		.set('preset', Variant.preset || {})
+		.set('choice', Variant.preset.steps ? Variant.preset.steps[0].choices[0] : {})
+		.set('step', Variant.preset.steps ? Variant.preset.steps[0] : {})
+		.commit();
 
-			localServer.dispatchUpdate('/prototypoStore', patch);
-			return;
-		}
-		// done checking if everything is correct with the form
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		// create new step
-		const newStep = {
-			name,
-			description,
-			choices: [
-				{
-					id: hasher.update(`${choice}${new Date().getTime()}`).digest().toString(16),
-					name: choice,
-					db: slug(`${name}${choice}`, ''),
-					values: {},
-				},
-			],
+		saveAppValues();
+	},
+	'/created-preset': async ({id, steps, baseValues}) => {
+		const step = {
+			id: steps[0].id,
+			name: steps[0].name,
+			description: steps[0].description,
 		};
-		// done creating new step
 
-		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
-		const currentVariant = prototypoStore.get('variant');
-		const currentFamily = prototypoStore.get('family');
-		const family = _.find(fonts, item => item.name === currentFamily.name);
-		const patchedVariant = _.find(family.variants || [], item => currentVariant.id === item.id);
+		const choice = {
+			id: steps[0].choices[0].id,
+			name: steps[0].choices[0].name,
+		};
 
-		// check if there is a ptypoLite object stored in the variant
-		if (!patchedVariant.ptypoLite) {
-			// if there is no such object, create it and populate it
-			const baseValues = _.cloneDeep(undoableStore.get('controlsValues'));
-			const ptypoLite = {
-				baseValues,
-				steps: [newStep],
-			};
-
-			patchedVariant.ptypoLite = ptypoLite;
-		}
-		else {
-			// end if no ptypolite object
-			// else patch the variant with new step
-			const already = _.find(patchedVariant.ptypoLite.steps, step => step.name === name);
-
-			if (already) {
-				const patch = prototypoStore
-					.set('errorAddStep', 'A Step with this name already exists')
-					.commit();
-
-				localServer.dispatchUpdate('/prototypoStore', patch);
-				return;
-			}
-			patchedVariant.ptypoLite.steps.push(newStep);
-		}
+		const preset = {
+			id,
+			baseValues,
+			steps,
+		};
 
 		const patch = prototypoStore
-			.set('errorAddStep', undefined)
-			.set('fonts', fonts)
-			.set('variant', patchedVariant)
-			.set('choice', newStep.choices[0])
-			.set('step', {name: newStep.name})
-			.set('createdStep', newStep)
-			.set('openStepModal', false)
-			.commit();
+		.set('preset', preset)
+		.set('choice', choice)
+		.set('step', step)
+		.set('createdStep', step)
+		.set('openStepModal', false)
+		.commit();
 
-		// Load base values
-		localClient.dispatchAction('/change-param', {
-			values: patchedVariant.ptypoLite.baseValues,
-			force: true,
-			label: 'lite',
-		});
+		localServer.dispatchUpdate('/prototypoStore', patch);
+
+		saveAppValues();
+	},
+	'/created-step': async (step) => {
+		const newStep = {
+			id: step.id,
+			name: step.name,
+			description: step.description,
+		};
+
+		const newChoice = {
+			id: step.choices[0].id,
+			name: step.choices[0].name,
+		};
+
+
+		const currentPreset = _.cloneDeep(prototypoStore.get('preset'));
+		const fullStep = {...newStep, choices: [newChoice]};
+		currentPreset.steps.push(fullStep);
+
+		const patch = prototypoStore
+		.set('choice', newChoice)
+		.set('preset', currentPreset)
+		.set('step', newStep)
+		.set('createdStep', newStep)
+		.set('openStepModal', false)
+		.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
@@ -169,61 +184,58 @@ export default {
 		saveAppValues();
 	},
 	'/select-choice': ({choice, step}) => {
-		const fonts = prototypoStore.get('fonts');
-		const currentFamily = prototypoStore.get('family');
-		const currentVariant = prototypoStore.get('variant');
-		const family = fonts.find(item => item.name === currentFamily.name);
-		const variant = (family.variants || []).find(item => currentVariant.id === item.id);
-		const steps = variant.ptypoLite.steps;
+		const preset = prototypoStore.get('preset');
+		const steps = preset.steps;
 		// check if values key in choice
 		// if values load values
 		// if no values load prototypoLite > default values
 		let newChoice = choice;
-		const newStep = Array.from(steps).find(s => s.name === step.name);
 
 		if (!newChoice) {
-			newChoice = newStep.choices[0] || undefined;
+			newChoice = step.choices[0] || undefined;
 		}
+		let newChoiceValues = {};
+		if (typeof newChoice.values !== 'string') {
+			newChoiceValues = newChoice && newChoice.values ? newChoice.values : {};
+		}
+		else {
+			newChoiceValues = newChoice && newChoice.values ? JSON.parse(newChoice.values) : {};
+		}
+		const baseValues = preset.baseValues ? JSON.parse(preset.baseValues) : {};
 
-		const patchChoice = prototypoStore.set('choice', newChoice).set('step', newStep).commit();
+		const patchChoice = prototypoStore.set('choice', newChoice).set('step', step).commit();
 		if (choice) {
 			console.log('New choice values : ');
 			console.log(newChoice);
 
 			// change choice : load choice values and if none : load base values
-			if (Object.keys(newChoice.values).length > 0) {
+			if (Object.keys(newChoiceValues).length > 0) {
 				localClient.dispatchAction('/change-param', {
-					values: _.extend({}, variant.ptypoLite.baseValues, newChoice.values),
+					values: _.extend({}, baseValues, newChoiceValues),
 					force: true,
 					label: 'lite',
 				});
 			}
 			else {
 				localClient.dispatchAction('/change-param', {
-					values: variant.ptypoLite.baseValues,
+					values: baseValues,
 					force: true,
 					label: 'lite',
 				});
 			}
 		}
+
+
 		else {
 			console.log('New step values : ');
-			console.log(newStep);
+			console.log(step);
 
 			// change step : load first choice values if any and if none : load base values
-			if (Object.keys(newChoice.values).length > 0) {
-				localClient.dispatchAction('/change-param', {
-					values: _.extend({}, variant.ptypoLite.baseValues, newChoice.values),
-					force: true,
-					label: 'lite',
-				});
+			if (newChoiceValues && Object.keys(newChoiceValues).length > 0) {
+				localClient.dispatchAction('/change-param', {values: _.extend({}, baseValues, newChoiceValues)});
 			}
 			else {
-				localClient.dispatchAction('/change-param', {
-					values: variant.ptypoLite.baseValues,
-					force: true,
-					label: 'lite',
-				});
+				localClient.dispatchAction('/change-param', {values: baseValues});
 			}
 		}
 		localServer.dispatchUpdate('/prototypoStore', patchChoice);

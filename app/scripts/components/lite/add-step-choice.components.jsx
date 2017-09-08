@@ -14,6 +14,9 @@ query getVariantQuery($variantId: ID!) {
 		name
 		values
 		family {
+		  owner {
+			  id
+		  }
 		  name
 		  template
 		}
@@ -21,18 +24,31 @@ query getVariantQuery($variantId: ID!) {
 }
 `;
 
-const createPresetMutation = gql`
-mutation createPreset($name: String!, $template: String!, $variantId: ID!, $baseValues: JSON!, ) {
+const createPresetWithValuesMutation = gql`
+mutation createPresetWithValues($stepName: String!, $stepDescription: String!, $choiceName: String!, $template: String!, $variantId: ID!, $baseValues: Json! ) {
 	createPreset(
-		name: $name
 		template: $template
-		variant: {
-			id: $variantId
-		}
+		needs: ["logo"]
 		baseValues: $baseValues
+		steps: [{
+		  name: $stepName
+		  description: $stepDescription
+		  choices: [{
+			name: $choiceName
+		  }]
+		}]
+		variantId: $variantId
 	) {
 		id
-		name
+		steps {
+			id
+			name
+			description
+			choices {
+				id
+				name
+			}
+		}
 	}
 }
 `;
@@ -42,14 +58,16 @@ mutation createStep($name: String!, $description: String!, $presetId: ID!, $choi
 	createStep(
 		name: $name
 		description: $description
-		preset: {
-			id: $presetId
-		}
+		presetId: $presetId
 		choices:[{name: $choiceName}]
-		baseValues: $baseValues
 	) {
 		id
 		name
+		description
+		choices {
+			id
+			name
+		}
 	}
 }
 `;
@@ -114,17 +132,16 @@ export class AddStep extends React.Component {
 		this.state = {
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.createStep = this.createStep.bind(this);
 	}
 
 	async componentWillMount() {
-		console.log('============AddStep Props=================');
-		console.log(this.props);
-		console.log('==========================================');
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 		this.client.getStore('/prototypoStore', this.lifespan)
 		.onUpdate((head) => {
 				this.setState({
+					preset: head.toJS().d.preset,
 					error: head.toJS().d.errorAddStep,
 					step: head.toJS().d.step.name ? head.toJS().d.step : head.toJS().d.variant.ptypoLite.steps[0],
 				});
@@ -156,18 +173,27 @@ export class AddStep extends React.Component {
 		e.stopPropagation();
 		e.preventDefault();
 
+		console.log('=========CREATE STEP=========');
+		console.log(this.props);
+		console.log('====================================');
+
 		const name = this.refs.name.value;
 		const description = this.refs.description.value;
 		const choice = this.refs.choice.value;
 
 
-		if (!selectedFont) {
-			this.setState({error: 'Please select a font template.'});
+		if (!String(name).trim()) {
+			this.setState({error: 'You must choose a name for your step.'});
 			return;
 		}
 
-		if (!String(name).trim()) {
-			this.setState({error: 'You must choose a name for your family'});
+		if (!String(description).trim()) {
+			this.setState({error: 'You must choose a name for your step description.'});
+			return;
+		}
+
+		if (!String(choice).trim()) {
+			this.setState({error: 'You must choose a name for your first choice.'});
 			return;
 		}
 
@@ -179,11 +205,38 @@ export class AddStep extends React.Component {
 			});
 		}
 		else {
-			this.client.dispatchAction('/create-step', {
-				name: this.refs.name.value,
-				description: this.refs.description.value,
-				choice: this.refs.choice.value,
-			});
+			try {
+				if (this.state.preset) {
+					const {data: {createStep: newStep}} = await this.props.createStep(
+						name,
+						description,
+						this.props.preset.id,
+						choice,
+					);
+					this.client.dispatchAction('/created-step', newStep);
+				}
+				else {
+					const {data: {createPreset: newPreset}} = await this.props.createPresetWithValues(
+						name,
+						description,
+						choice,
+					);
+					this.client.dispatchAction('/created-preset', {...newPreset, baseValues: this.props.variant.values});
+				}
+
+				// this.client.dispatchAction('/change-font', {
+				// 	templateToLoad: newFont.template,
+				// 	variantId: newFont.variants[0].id,
+				// });
+
+				// Log.ui(`createFamily.${selectedFont.templateName}`);
+				// this.client.dispatchAction('/store-value', {uiOnboardstep: 'customize'});
+
+				// this.props.onCreateFamily(newFont);
+			}
+			catch (err) {
+				this.setState({error: err.message});
+			}
 		}
 	}
 
@@ -241,25 +294,24 @@ AddStep = compose(
 				return {loading: true};
 			}
 
-			console.log('=========getVariantQuery============');
-			console.log(data.variant);
-			console.log('====================================');
-
-			return {variant: {
-				id: data.variant.id,
-				name: data.variant.name,
-				values: data.variant.values,
-				family: data.variant.family.name,
-				template: data.variant.family.template,
-			}};
+			return {
+				userId: data.variant.family.owner.id,
+				variant: {
+					id: data.variant.id,
+					name: data.variant.name,
+					values: data.variant.values,
+					family: data.variant.family.name,
+					template: data.variant.family.template,
+				},
+			};
 		},
 	}),
 	graphql(createStepMutation, {
-		props: ({mutate, ownProps}) => ({
-			createStep: (name, description, choiceName) => {
+		props: ({mutate}) => ({
+			createStep: (name, description, presetId, choiceName) => {
 				return mutate({
 					variables: {
-						presetId: ownProps.preset.id,
+						presetId,
 						name,
 						description,
 						choiceName,
@@ -267,18 +319,22 @@ AddStep = compose(
 				});
 			},
 		}),
-		options: {
-			update: (store, {data: {createStep}}) => {
-				console.log('=======createStepMutation===========');
-				console.log(data);
-				console.log('====================================');
-				const data = store.readQuery({query: libraryQuery});
-				store.writeQuery({
-					query: libraryQuery,
-					data,
+	}),
+	graphql(createPresetWithValuesMutation, {
+		props: ({mutate, ownProps}) => ({
+			createPresetWithValues: (name, description, choiceName) => {
+				return mutate({
+					variables: {
+						stepName: name,
+						stepDescription: description,
+						choiceName,
+						template: ownProps.variant.template,
+						variantId: ownProps.variant.id,
+						baseValues: `"${JSON.stringify(ownProps.variant.values).replace(/"/g, "\\\"")}"`,
+					},
 				});
 			},
-		},
+		}),
 	}),
 	graphql(renameStepMutation, {
 		props: ({mutate, ownProps}) => ({

@@ -370,7 +370,7 @@ class Topbar extends React.Component {
 				clearText={this.clearAcademyText}
 				id="progress-academy"
 				icon={this.getRightAcademyIcon()}
-			/>;
+		/>);
 
 		const academyProgressItem = (!loadingAcademyProgress && academyProgress.lastCourse && academyProgress[academyProgress.lastCourse]) && (
 			<TopBarMenuAcademy
@@ -380,7 +380,7 @@ class Topbar extends React.Component {
 				text={this.state.academyText}
 				id="progress-academy"
 				icon={this.getRightAcademyIcon()}
-			/>;
+		/>);
 
 		/* const presetSubMenu = this.state.presets
 			? (

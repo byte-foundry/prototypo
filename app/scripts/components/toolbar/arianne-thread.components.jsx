@@ -7,6 +7,7 @@ import HoodieApi from '~/services/hoodie.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
+
 import {libraryQuery} from '../collection/collection.components';
 
 const voidStateObject = {};
@@ -54,7 +55,6 @@ class ArianneThread extends React.PureComponent {
 			return oldValue || voidStateArray;
 		};
 		const familySelector = (families, family) => { return families.find((f) => { return f.name === family.name; }); };
-		const stepSelector = (steps, step) => { return steps.find((s) => { return s.name === step.name; }); };
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
@@ -64,32 +64,12 @@ class ArianneThread extends React.PureComponent {
 						: voidStateObject
 				);
 
-				let steps;
-				let step;
-				let choice;
-
-				if (head.toJS().d.variant.ptypoLite) {
-					step = stepSelector(head.toJS().d.variant.ptypoLite.steps || [], head.toJS().d.step || {}) || (
-						this.state.steps.length > 0
-							? this.state.steps[0]
-							: voidStateObject
-					);
-					steps = head.toJS().d.variant.ptypoLite.steps;
-					if (head.toJS().d.choice && head.toJS().d.choice.name) {
-					    choice = head.toJS().d.choice;
-					}
-                    else if (this.state.steps.length > 0) {
-                        choice = step.choices[0];
-                    } else choice = {};
-				}
-				else {
-					steps = [];
-					step = {};
-					choice = {};
-				}
-
 				const isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 				const isFreeWithCredits = (head.toJS().d.credits && head.toJS().d.credits > 0) && isFree;
+
+				if (!head.toJS().d.preset) {
+					this.client.dispatchAction('/fetch-preset', store.head.toJS().variant.id);
+				}
 
 				this.setState({
 					selectedFamily: head.toJS().d.family,
@@ -99,9 +79,9 @@ class ArianneThread extends React.PureComponent {
 					indivCreate: head.toJS().d.indivCreate,
 					indivMode: head.toJS().d.indivMode,
 					indivCurrentGroup: head.toJS().d.indivCurrentGroup || voidStateObject,
-					steps,
-                    step,
-                    choice,
+					steps: head.toJS().d.preset ? head.toJS().d.preset.steps : [],
+                    step: head.toJS().d.step || {},
+                    choice: head.toJS().d.choice || {},
 					isFree,
 					isFreeWithCredits,
 				});
@@ -114,9 +94,6 @@ class ArianneThread extends React.PureComponent {
 			family: familySelector(this.props.families, store.head.toJS().family),
 			variant: store.head.toJS().variant,
 			groups: memoizedListSelector(store.head.toJS().indivGroups, {}, this.state.groups, voidStateObject),
-			steps: store.head.toJS().variant.ptypoLite ? memoizedListSelector(store.head.toJS().variant.ptypoLite.steps, store.head.toJS().step, this.state.steps, voidStateObject) : [],
-			step: store.head.toJS().variant.ptypoLite && store.head.toJS().step.name ? stepSelector(store.head.toJS().variant.ptypoLite.steps, store.head.toJS().step) : {},
-			choice: store.head.toJS().variant.ptypoLite && store.head.toJS().step.name ? stepSelector(store.head.toJS().variant.ptypoLite.steps, store.head.toJS().step).choices[0] : {},
 		});
 	}
 
