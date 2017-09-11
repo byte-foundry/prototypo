@@ -37,7 +37,7 @@ class Alternate extends React.PureComponent {
 	}
 
 	selectAlternate() {
-		this.client.dispatchAction('/set-alternate', {unicode: this.props.unicode, glyphName: this.props.alt.name, relatedGlyphs: this.props.alt.src.relatedGlyphs});
+		this.client.dispatchAction('/set-alternate', {unicode: this.props.unicode, glyphName: this.props.alt.name, relatedGlyphs: this.props.alt.relatedGlyphs});
 	}
 
 	render() {

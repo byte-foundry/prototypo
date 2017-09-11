@@ -20,7 +20,6 @@ import Stores from './stores/creation.stores';
 import selectRenderOptions from './helpers/userAgent.helpers';
 import {loadStuff} from './helpers/appSetup.helpers';
 import isProduction from './helpers/is-production.helpers';
-import {setupPerf} from './helpers/log-perf.helpers.js';
 
 import FontMediator from './prototypo.js/mediator/FontMediator';
 
@@ -194,8 +193,6 @@ selectRenderOptions(
 
 				window.dispatchEvent(event);
 			});
-
-		setupPerf();
 
 		window.addEventListener('values.loaded', () => {
 			const render = (Component) => {

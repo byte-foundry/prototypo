@@ -1,6 +1,5 @@
 /* global _ */
 import {constantOrFormula} from '../helpers/values';
-import {pushToPerf} from '../../helpers/log-perf.helpers.js';
 
 import Glyph from './Glyph';
 
@@ -39,8 +38,6 @@ export default class FontPrecursor {
 	}
 
 	constructFont(params, subset) {
-		pushToPerf({time: performance.now(), label: 'font'});
-		pushToPerf({time: performance.now(), label: 'params'});
 		const localParams = {
 			...params,
 			..._.mapValues(this.parameters, param => param.getResult(params)),
@@ -53,8 +50,6 @@ export default class FontPrecursor {
 				...params.glyphComponentChoice,
 			},
 		};
-		pushToPerf({time: performance.now(), label: 'params'});
-		pushToPerf({time: performance.now(), label: 'get font results'});
 		const transformedThis = _.mapValues(this, (prop, name) => {
 			if (name !== 'parameters' && name !== 'glyphs' && name !== 'unicodeToGlyphName' && name !== 'paramBase') {
 				return prop.getResult(localParams);
@@ -62,8 +57,6 @@ export default class FontPrecursor {
 
 			return undefined;
 		});
-		pushToPerf({time: performance.now(), label: 'get font results'});
-		pushToPerf({time: performance.now(), label: 'glyphs'});
 		const glyphNames = _.map(subset, char => params.altList[char] || this.unicodeToGlyphName[char]);
 		const glyphs = _.reduce(glyphNames, (result, name) => {
 			if (this.glyphs[name]) {
@@ -71,9 +64,7 @@ export default class FontPrecursor {
 			}
 			return result;
 		}, []);
-		pushToPerf({time: performance.now(), label: 'glyphs'});
 
-		pushToPerf({time: performance.now(), label: 'font'});
 		return {
 			...transformedThis,
 			glyphs,

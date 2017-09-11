@@ -6,8 +6,6 @@ import FontMediator from '../prototypo.js/mediator/FontMediator';
 
 import LocalClient from '../stores/local-client.stores';
 
-import {pushToPerf} from '../helpers/log-perf.helpers.js';
-
 export default class FontUpdater extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -58,7 +56,7 @@ export default class FontUpdater extends React.PureComponent {
 		this.lifespan.release();
 	}
 
-	render() {
+	componentDidUpdate() {
 		if (
 			this.state.template !== undefined
 			&& this.state.name !== undefined
@@ -74,7 +72,6 @@ export default class FontUpdater extends React.PureComponent {
 				},
 			);
 
-			pushToPerf({time: performance.now(), label: 'create glyph'});
 			this.fontMediatorInstance.getFont(
 				this.state.name,
 				this.state.template,
@@ -82,9 +79,12 @@ export default class FontUpdater extends React.PureComponent {
 				subset,
 				this.state.glyph,
 			);
-			pushToPerf({time: performance.now(), label: 'create glyph'});
 		}
 
+		return false;
+	}
+
+	render() {
 		return false;
 	}
 }

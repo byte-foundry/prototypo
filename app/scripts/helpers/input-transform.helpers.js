@@ -13,11 +13,11 @@ export function arrayToEscapedContent(textArray, glyphs = {}) {
 			const glyphName = letter.slice(1).trim();
 
 			const [glyph] = Object.values(glyphs).find(([g]) => {
-				return glyphName === g.src.glyphName;
+				return glyphName === g.glyphName;
 			}) || [];
 
 			if (glyph) {
-				return String.fromCharCode(glyph.src.unicode);
+				return String.fromCharCode(glyph.unicode);
 			}
 			return '';
 		}
