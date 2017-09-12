@@ -74,7 +74,7 @@ class StartApp extends React.PureComponent {
 		const {loading, families} = this.props;
 
 		if (loading) {
-			return <p>yoloading</p>;
+			return <p>loading</p>;
 		}
 
 		return (

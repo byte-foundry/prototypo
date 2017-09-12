@@ -46,7 +46,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				],
 				cta: (
 					<span>
-						<Price amount={monthlyConst.price} country={country} />
+						<Price amount={monthlyConst.price * this.props.percentPrice} country={country} />
 						{' '}
 						{hasBeenSubscribing ? ' / month' : <span><br />after the first month</span>}
 					</span>
@@ -67,7 +67,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				],
 				cta: (
 					<span>
-						<Price amount={annualConst.monthlyPrice} country={country} /> / month
+						<Price amount={annualConst.monthlyPrice * this.props.percentPrice} country={country} /> / month
 					</span>
 				),
 				subcta: <span>Less money, same features<br />Get 4 months free</span>,
@@ -86,7 +86,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				features: ['All pro features', 'Manage your team licences', 'Premium 24h support'],
 				cta: (
 					<span>
-						<Price amount={agencyMonthlyConst.monthlyPrice * quantity} country={country} />
+						<Price amount={agencyMonthlyConst.monthlyPrice * quantity * this.props.percentPrice} country={country} />
 						{' '}
 						/ month
 					</span>
@@ -95,7 +95,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					<span>
 						No commitment!
 						<br />
-						<Price amount={agencyMonthlyConst.monthlyPrice} country={country} />
+						<Price amount={agencyMonthlyConst.monthlyPrice * this.props.percentPrice} country={country} />
 						{' '}
 						× {quantity} per month
 					</span>
@@ -115,7 +115,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				features: ['All pro features', 'Manage your team licences', 'Premium 24h support'],
 				cta: (
 					<span>
-						<Price amount={agencyAnnualConst.monthlyPrice * quantity} country={country} />
+						<Price amount={agencyAnnualConst.monthlyPrice * quantity * this.props.percentPrice} country={country} />
 						{' '}
 						/ month
 					</span>
@@ -124,7 +124,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					<span>
 						Less money, same features
 						<br />
-						<Price amount={agencyAnnualConst.monthlyPrice} country={country} />
+						<Price amount={agencyAnnualConst.monthlyPrice * this.props.percentPrice} country={country} />
 						{' '}
 						× {quantity} per month
 					</span>
