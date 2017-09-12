@@ -22,6 +22,8 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			inError: {},
 			errors: [],
 			hasBeenSubscribing: false,
+			isFormSubmitted: false,
+			firstTimeCheck: false,
 		};
 
 		this.changeCard = this.changeCard.bind(this);
@@ -69,12 +71,17 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 	}
 
 	checkPlan(plan, quantity, coupon) {
-		if (this.props.coupon !== coupon) {
+		if (this.props.coupon !== coupon || !this.state.firstTimeCheck) {
 			this.client.dispatchAction('/choose-plan', {
 				plan,
 				quantity,
 				coupon,
 			});
+			this.setState({firstTimeCheck: true});
+		}
+
+		if (!coupon || coupon === '') {
+			this.setState({couponValue: undefined});
 		}
 
 		if (plan !== 'personal_monthly' && plan !== 'personal_annual_99' && plan !== 'agency_monthly' && plan !== 'agency_annual') {
@@ -145,6 +152,11 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		const {couponValue} = this.state;
 		const {country, plan, quantity} = this.props;
 
+		let percentPrice = 1;
+		if (this.state.validCoupon && this.state.validCoupon.percent_off) {
+			percentPrice = (100 - this.state.validCoupon.percent_off) / 100;
+		}
+
 		if (!plan) {
 			return null;
 		}
@@ -154,35 +166,51 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 				blurb: (
 					this.state.hasBeenSubscribing
 					? (
-						<div>
-							By clicking on the subscribe button below you agree to be charged <strong><Price amount={monthlyConst.price} country={country}/></strong> every month until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
-						</div>
+						percentPrice === 1
+						? (
+							<div>
+								By clicking on the subscribe button below you agree to be charged <strong><Price amount={monthlyConst.price * percentPrice} country={country}/></strong> every month until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+							</div>
+						)
+						: (
+							<div>
+								By clicking on the subscribe button below you agree to be charged <strong><Price amount={monthlyConst.price * percentPrice} country={country}/></strong> for the first month of your Prototypo subscription. You'll also agree to be charged <strong><Price amount={monthlyConst.price} country={country}/></strong> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+							</div>
+						)
 					)
 					: (
 						<div>
-							By clicking on the subscribe button below you agree to and pay <strong><Price amount={monthlyConst.firstMonthPrice} country={country}/></strong> for the first month of your Prototypo subscription. You'll also agree to be charged <strong><Price amount={monthlyConst.price} country={country}/></strong> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+							By clicking on the subscribe button below you agree to and pay <strong><Price amount={monthlyConst.firstMonthPrice * percentPrice} country={country}/></strong> for the first month of your Prototypo subscription. You'll also agree to be charged <strong><Price amount={monthlyConst.price} country={country}/></strong> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
 						</div>
 					)
 				),
 			},
 			'personal_annual_99': {
 				blurb: (
-					<div>
-						By clicking on the subscribe button below you agree to pay <strong><Price amount={annualConst.annualPrice} country={country}/></strong> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
-					</div>
+					percentPrice === 1
+					? (
+						<div>
+							By clicking on the subscribe button below you agree to pay <strong><Price amount={annualConst.annualPrice * percentPrice} country={country}/></strong> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+						</div>
+					)
+					: (
+						<div>
+							By clicking on the subscribe button below you agree to pay <strong><Price amount={annualConst.annualPrice * percentPrice} country={country}/></strong> once and subscribe to Prototypo for a full year. You'll also agree to be charged <strong><Price amount={annualConst.annualPrice} country={country}/></strong> every year after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+						</div>
+					)
 				),
 			},
 			'agency_monthly': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <strong><Price amount={agencyMonthlyConst.monthlyPrice * quantity} country={country}/></strong> once and be subscribed to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <strong><Price amount={(agencyMonthlyConst.monthlyPrice * quantity) * percentPrice} country={country}/></strong> once and be subscribed to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
 			'agency_annual': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <strong><Price amount={agencyAnnualConst.annualPrice * quantity} country={country}/></strong> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <strong><Price amount={(agencyAnnualConst.annualPrice * quantity * percentPrice)} country={country}/></strong> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
