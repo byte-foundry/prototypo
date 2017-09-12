@@ -72,7 +72,13 @@ export default {
 			localClient.dispatchAction('/create-font', familyName);
 			localClient.dispatchAction('/load-params', {controls, presets});
 			localClient.dispatchAction('/load-tags', tags);
-			loadFontValues(typedata, undefined, variantId);
+
+			if (variantId) {
+				await loadFontValues(typedata, undefined, variantId);
+			}
+
+			const event = new CustomEvent('values.loaded');
+			window.dispatchEvent(event);
 		}
 		catch (err) {
 			trackJs.track(err);
