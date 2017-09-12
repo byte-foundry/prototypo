@@ -4,6 +4,8 @@ import Lifespan from 'lifespan';
 
 import FontMediator from '../prototypo.js/mediator/FontMediator';
 
+import {rawToEscapedContent} from '../helpers/input-transform.helpers.js';
+
 import LocalClient from '../stores/local-client.stores';
 
 export default class FontUpdater extends React.PureComponent {
@@ -35,6 +37,7 @@ export default class FontUpdater extends React.PureComponent {
 					uiWord: head.toJS().d.uiWord,
 					glyph: head.toJS().d.glyphSelected,
 					name: head.toJS().d.fontName,
+					glyphs: head.toJS().d.glyphs,
 				});
 			})
 			.onDelete(() => {
@@ -64,7 +67,7 @@ export default class FontUpdater extends React.PureComponent {
 			&& this.state.uiWord !== undefined
 			&& this.state.glyph !== undefined
 		) {
-			const subsetString = this.state.uiText + this.state.uiWord;
+			const subsetString = this.state.uiText + rawToEscapedContent(this.state.uiWord, this.state.glyphs);
 			const subset = _.map(
 				_.uniq(subsetString.split('')),
 				(letter) => {
