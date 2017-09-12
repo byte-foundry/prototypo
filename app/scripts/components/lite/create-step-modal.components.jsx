@@ -15,7 +15,7 @@ export default class CreateStepModal extends React.Component {
 			<Modal propName={this.props.propName}>
 				<div className="modal-container-content">
 					<h1>{this.props.edit ? 'Edit step' : 'Add step'}</h1>
-					<AddStep edit={this.props.edit} variant={this.props.variant} preset={this.props.preset}/>
+					<AddStep edit={this.props.edit} variant={this.props.variant} preset={this.props.preset} step={this.props.step} />
 				</div>
 			</Modal>
 		);

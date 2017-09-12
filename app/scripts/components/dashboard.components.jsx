@@ -113,6 +113,8 @@ class Dashboard extends React.PureComponent {
 					firstTimeAcademyModal: head.toJS().d.firstTimeAcademyModal,
 					firstTimeAcademyJoyride: head.toJS().d.firstTimeAcademyJoyride,
 					preset: head.toJS().d.preset,
+					liteStep: head.toJS().d.step,
+					liteChoice: head.toJS().d.choice,
 				});
 			})
 			.onDelete(() => {
@@ -232,9 +234,9 @@ class Dashboard extends React.PureComponent {
 		const newVariant = this.state.openVariantModal
 			&& <CreateVariantModal family={this.state.familySelectedVariantCreation} propName="openVariantModal"/>;
 		const newStep = this.state.openStepModal
-		&& <CreateStepModal propName="openStepModal" variant={this.state.variant} preset={this.state.preset} edit={this.state.stepModalEdit} />;
+		&& <CreateStepModal propName="openStepModal" step={this.state.liteStep} variant={this.state.variant} preset={this.state.preset} edit={this.state.stepModalEdit} />;
         const newChoice= this.state.openChoiceModal
-			&& <CreateChoiceModal step={this.state.stepSelectedChoiceCreation} preset={this.state.preset} propName="openChoiceModal" edit={this.state.choiceModalEdit} />;
+			&& <CreateChoiceModal step={this.state.liteStep} choice={this.state.liteChoice} preset={this.state.preset} propName="openChoiceModal" edit={this.state.choiceModalEdit} />;
 		const exportLite= this.state.openExportLiteModal
 			&& <CreateExportLiteModal propName="exportLiteModal" />;
 		const explainAcademy = this.state.firstTimeAcademyModal

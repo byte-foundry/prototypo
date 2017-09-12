@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {graphql, gql} from 'react-apollo';
+import {graphql, gql, compose} from 'react-apollo';
 import Lifespan from 'lifespan';
 
 import Log from '~/services/log.services.js';
@@ -86,6 +86,9 @@ class Topbar extends React.Component {
 					eventList: head.toJS().d.undoEventList,
 					presets: head.toJS().d.fontPresets,
 					indiv: head.toJS().d.indivMode,
+					step: head.toJS().d.step,
+					choice: head.toJS().d.choice,
+					preset: head.toJS().d.preset,
 				});
 			})
 			.onDelete(() => {
@@ -281,12 +284,28 @@ class Topbar extends React.Component {
 		this.client.dispatchAction('/update-base-font-values');
 	}
 
-	deleteCurrentStep() {
-		this.client.dispatchAction('/delete-current-step');
+	async deleteCurrentStep() {
+		try {
+			const {data: {deleteStep: deletedStep}} = await this.props.deleteStep(
+				this.state.step.id,
+			);
+			this.client.dispatchAction('/deleted-current-step', deletedStep);
+		}
+		catch (err) {
+			this.setState({error: err.message});
+		}
 	}
 
-	deleteCurrentChoice() {
-		this.client.dispatchAction('/delete-current-choice');
+	async deleteCurrentChoice() {
+		try {
+			const {data: {deleteChoice: deletedChoice}} = await this.props.deleteChoice(
+				this.state.choice.id,
+			);
+			this.client.dispatchAction('/deleted-current-choice', deletedChoice);
+		}
+		catch (err) {
+			this.setState({error: err.message});
+		}
 	}
 
 	editCurrentStep() {
@@ -653,12 +672,59 @@ const getAcademyValuesQuery = gql`
 	}
 `;
 
-export default graphql(getAcademyValuesQuery, {
-	props({data}) {
-		if (data.loading) {
-			return {loadingAcademyProgress: true};
-		}
+const updatePresetBaseValues = gql`
+mutation updatePresetBaseValues($id: ID!, $newValues: JSON!) {
+	updatePreset(id: $id, baseValues: $newValues) {
+		id
+		baseValues
+	}
+}
+`;
 
-		return {academyProgress: data.user.academyProgress};
-	},
-})(withCountry(Topbar));
+const deleteChoiceMutation = gql`
+mutation deleteChoice($id: ID!) {
+	deleteChoice(id: $id) {
+		id
+	}
+}
+`;
+
+
+const deleteStepMutation = gql`
+mutation deleteStep($id: ID!) {
+	deleteStep(id: $id) {
+		id
+	}
+}
+`;
+
+export default compose(
+	graphql(getAcademyValuesQuery, {
+		props({data}) {
+			if (data.loading) {
+				return {loadingAcademyProgress: true};
+			}
+			return {academyProgress: data.user.academyProgress};
+		},
+	}),
+	graphql(deleteStepMutation, {
+		props: ({mutate}) => ({
+			deleteStep: id =>
+				mutate({
+					variables: {
+						id,
+					},
+				}),
+		}),
+	}),
+	graphql(deleteChoiceMutation, {
+		props: ({mutate}) => ({
+			deleteChoice: id =>
+				mutate({
+					variables: {
+						id,
+					},
+				}),
+		}),
+	}),
+)(withCountry(Topbar));

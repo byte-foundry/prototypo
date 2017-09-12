@@ -115,6 +115,8 @@ export default {
 		const fullStep = {...newStep, choices: [newChoice]};
 		currentPreset.steps.push(fullStep);
 
+		localClient.dispatchAction('/change-param', {values: currentPreset.baseValues});
+
 		const patch = prototypoStore
 		.set('choice', newChoice)
 		.set('preset', currentPreset)
@@ -127,57 +129,57 @@ export default {
 
 		saveAppValues();
 	},
-	'/edit-step': async ({baseName, name, description}) => {
-		// check if everything correct with the form
-		if (name === undefined || name === '' || String(name).trim() === '') {
-			const patch = prototypoStore
-				.set('errorAddStep', 'You must choose a name for your step')
-				.commit();
+	'/created-choice': async (choice) => {
+		const newChoice = {
+			id: choice.id,
+			name: choice.name,
+		};
 
-			localServer.dispatchUpdate('/prototypoStore', patch);
-			return;
-		}
-		// done checking if everything is correct with the form
 
-		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
-		const currentVariant = prototypoStore.get('variant');
-		const currentFamily = prototypoStore.get('family');
-		const family = _.find(fonts, item => item.name === currentFamily.name);
-		const patchedVariant = _.find(family.variants || [], item => currentVariant.id === item.id);
-		const already = _.find(patchedVariant.ptypoLite.steps, step => step.name === name);
+		const currentPreset = _.cloneDeep(prototypoStore.get('preset'));
+		const currentStep = _.cloneDeep(prototypoStore.get('step'));
+		const presetStep = currentPreset.steps.find(i => i.id === currentStep.id);
 
-		if (already) {
-			const patch = prototypoStore
-				.set('errorAddStep', 'A Step with this name already exists')
-				.commit();
-
-			localServer.dispatchUpdate('/prototypoStore', patch);
-			return;
-		}
-
-		const updatedStep = patchedVariant.ptypoLite.steps.find(step => step.name === baseName);
-		let choice;
-
-		if (prototypoStore.get('choice').name) {
-			choice = prototypoStore.get('choice');
-		}
-		else {
-			choice = updatedStep.choices[0] || {};
-		}
-
-		updatedStep.name = name;
-		updatedStep.description = description;
+		currentStep.choices.push(newChoice);
+		presetStep.choices.push(newChoice);
 
 		const patch = prototypoStore
-			.set('errorAddStep', undefined)
-			.set('fonts', fonts)
-			.set('variant', patchedVariant)
-			.set('choice', choice)
-			.set('step', updatedStep)
-			.set('createdStep', updatedStep)
-			.set('openStepModal', false)
-			.set('stepModalEdit', false)
-			.commit();
+		.set('preset', currentPreset)
+		.set('step', currentStep)
+		.set('choice', newChoice)
+		.set('createdChoice', newChoice)
+		.set('openChoiceModal', false)
+		.commit();
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
+
+		localClient.dispatchAction('/change-param', {values: currentPreset.baseValues});
+
+		saveAppValues();
+	},
+	'/edit-step': async (step) => {
+		const newStep = {
+			id: step.id,
+			name: step.name,
+			decription: step.description,
+		};
+
+
+		const currentPreset = _.cloneDeep(prototypoStore.get('preset'));
+		const currentStep = _.cloneDeep(prototypoStore.get('step'));
+		const presetStep = currentPreset.steps.find(i => i.id === currentStep.id);
+
+		currentStep.name = newStep.name;
+		currentStep.description = newStep.description;
+		presetStep.name = newStep.name;
+		presetStep.description = newStep.description;
+
+		const patch = prototypoStore
+		.set('preset', currentPreset)
+		.set('step', currentStep)
+		.set('createdStep', newStep)
+		.set('openStepModal', false)
+		.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
@@ -194,14 +196,8 @@ export default {
 		if (!newChoice) {
 			newChoice = step.choices[0] || undefined;
 		}
-		let newChoiceValues = {};
-		if (typeof newChoice.values !== 'string') {
-			newChoiceValues = newChoice && newChoice.values ? newChoice.values : {};
-		}
-		else {
-			newChoiceValues = newChoice && newChoice.values ? JSON.parse(newChoice.values) : {};
-		}
-		const baseValues = preset.baseValues ? JSON.parse(preset.baseValues) : {};
+		const newChoiceValues = newChoice.values || {}
+		const baseValues = preset.baseValues || {};
 
 		const patchChoice = prototypoStore.set('choice', newChoice).set('step', step).commit();
 		if (choice) {
@@ -210,18 +206,10 @@ export default {
 
 			// change choice : load choice values and if none : load base values
 			if (Object.keys(newChoiceValues).length > 0) {
-				localClient.dispatchAction('/change-param', {
-					values: _.extend({}, baseValues, newChoiceValues),
-					force: true,
-					label: 'lite',
-				});
+				localClient.dispatchAction('/change-param', {values: _.extend({}, baseValues, newChoiceValues)});
 			}
 			else {
-				localClient.dispatchAction('/change-param', {
-					values: baseValues,
-					force: true,
-					label: 'lite',
-				});
+				localClient.dispatchAction('/change-param', {values: baseValues});
 			}
 		}
 
@@ -241,140 +229,52 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patchChoice);
 		saveAppValues();
 	},
-	'/create-choice': async ({name, stepName}) => {
-		// check if everything correct with the form
-		if (name === undefined || name === '' || String(name).trim() === '') {
-			const patch = prototypoStore
-				.set('errorAddChoice', 'You must choose a name for your step')
-				.commit();
-
-			localServer.dispatchUpdate('/prototypoStore', patch);
-			return;
-		}
-		// done checking if everything is correct with the form
-
-		// create new choice
+	'/edit-choice': async (choice) => {
 		const newChoice = {
-			id: hasher.update(`${name}${new Date().getTime()}`).digest().toString(16),
-			name,
-			db: slug(`${stepName}${name}`, ''),
-			values: {},
+			id: choice.id,
+			name: choice.name,
 		};
-		// done creating new step
 
-		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
-		const currentVariant = prototypoStore.get('variant');
-		const currentFamily = prototypoStore.get('family');
-		const family = fonts.find(item => item.name === currentFamily.name);
-		const patchedVariant = (family.variants || []).find(item => currentVariant.id === item.id);
-		const step = patchedVariant.ptypoLite.steps.find(i => i.name === stepName);
-		const already = step.choices.find(choice => choice.name === name);
 
-		if (already) {
-			const patch = prototypoStore
-				.set('errorAddChoice', 'A Choice with this name already exists')
-				.commit();
+		const currentPreset = _.cloneDeep(prototypoStore.get('preset'));
+		const currentStep = _.cloneDeep(prototypoStore.get('step'));
+		const presetStep = currentPreset.steps.find(i => i.id === currentStep.id);
+		const presetChoice = presetStep.choices.find(i => i.id === newChoice.id);
 
-			localServer.dispatchUpdate('/prototypoStore', patch);
-			return;
-		}
-
-		step.choices.push(newChoice);
+		currentStep.name = newChoice.name;
+		presetChoice.name = newChoice.name;
 
 		const patch = prototypoStore
-			.set('errorAddChoice', undefined)
-			.set('fonts', fonts)
-			.set('variant', patchedVariant)
-			.set('choice', newChoice)
-			.set('step', step)
-			.set('createdChoice', step)
-			.set('openChoiceModal', false)
-			.commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patch);
-
-		// Load base values
-		localClient.dispatchAction('/change-param', {
-			values: patchedVariant.ptypoLite.baseValues,
-			force: true,
-			label: 'lite',
-		});
-
-		saveAppValues();
-	},
-	'/edit-choice': async ({baseName, name}) => {
-		// check if everything correct with the form
-		if (name === undefined || name === '' || String(name).trim() === '') {
-			const patch = prototypoStore
-				.set('errorAddChoice', 'You must choose a name for your step')
-				.commit();
-
-			localServer.dispatchUpdate('/prototypoStore', patch);
-			return;
-		}
-		// done checking if everything is correct with the form
-
-		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
-		const currentVariant = prototypoStore.get('variant');
-		const currentFamily = prototypoStore.get('family');
-		const family = fonts.find(item => item.name === currentFamily.name);
-		const patchedVariant = (family.variants || []).find(item => currentVariant.id === item.id);
-		let currentStep = prototypoStore.get('step');
-
-		if (!currentStep.name) {
-			currentStep = patchedVariant.ptypoLite.steps[0];
-		}
-		const step = patchedVariant.ptypoLite.steps.find(i => i.name === currentStep.name);
-		const already = step.choices.find(choice => choice.name === name);
-
-		if (already) {
-			const patch = prototypoStore
-				.set('errorAddChoice', 'A Choice with this name already exists')
-				.commit();
-
-			localServer.dispatchUpdate('/prototypoStore', patch);
-			return;
-		}
-
-		const updatedChoice = step.choices.find(choice => choice.name === baseName);
-
-		updatedChoice.name = name;
-
-		const patch = prototypoStore
-			.set('errorAddChoice', undefined)
-			.set('fonts', fonts)
-			.set('variant', patchedVariant)
-			.set('choice', updatedChoice)
-			.set('step', step)
-			.set('createdChoice', step)
-			.set('openChoiceModal', false)
-			.commit();
+		.set('preset', currentPreset)
+		.set('choice', presetChoice)
+		.set('createdChoice', presetChoice)
+		.set('openChoiceModal', false)
+		.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
 		saveAppValues();
 	},
 	'/save-choice-values': async () => {
-		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
-		const currentVariant = prototypoStore.get('variant');
-		const currentFamily = prototypoStore.get('family');
-		const family = fonts.find(item => item.name === currentFamily.name);
-		const variant = (family.variants || []).find(item => currentVariant.id === item.id);
+		const currentPreset = prototypoStore.get('preset');
 		let currentStep = prototypoStore.get('step');
 
 		if (!currentStep.name) {
-			currentStep = variant.ptypoLite.steps[0];
+			currentStep = currentPreset.steps[0];
 		}
-		const step = variant.ptypoLite.steps.find(elem => elem.name === currentStep.name);
-		let currentChoice = prototypoStore.get('choice');
+		const step = currentPreset.steps.find(elem => elem.id === currentStep.id);
+		let currentChoice = _.cloneDeep(prototypoStore.get('choice'));
 
 		if (!currentChoice.name) {
-			currentChoice = variant.ptypoLite.steps[0].choices[0];
+			currentChoice = currentPreset.steps[0].choices[0];
 		}
-		const choice = step.choices.find(elem => elem.id === currentChoice.id);
 
-		const baseValues = variant.ptypoLite.baseValues;
+		const baseValues = currentPreset.baseValues;
 		const currentValues = _.cloneDeep(undoableStore.get('controlsValues'));
+
+		console.log('==========Current font values===========');
+		console.log(currentValues);
+		console.log('====================================');
 
 		// Get differences between base and current values
 		const allkeys = _.union(_.keys(baseValues), _.keys(currentValues));
@@ -394,173 +294,183 @@ export default {
 		Object.keys(difference).map(key => newValues[key] = difference[key].currentValues);
 		console.log('Saved changes : ');
 		console.log(newValues);
-		choice.values = newValues;
+		currentChoice.values = newValues;
 
-		const patch = prototypoStore
-			.set('fonts', fonts)
-			.set('variant', variant)
-			.set('choice', choice)
-			.set('step', step)
-			.commit();
 
-		localServer.dispatchUpdate('/prototypoStore', patch);
+		console.log('==========Values to save===========');
+		console.log(newValues);
+		console.log('====================================');
+		try {
+			const {data: {updateChoice}} = await apolloClient.mutate({
+				mutation: gql`
+					mutation updateChoice($id: ID!, $values: Json!) {
+						updateChoice(id: $id, values: $values) {
+							id
+						}
+					}
+				`,
+				variables: {
+					id: currentChoice.id,
+					values: JSON.parse(JSON.stringify(newValues)),
+				},
+			});
 
-		saveAppValues();
+			console.log('==========Query result===========');
+			console.log(updateChoice);
+			console.log('====================================');
+
+			const patch = prototypoStore
+				.set('preset', currentPreset)
+				.set('choice', currentChoice)
+				.set('step', step)
+				.commit();
+
+			localServer.dispatchUpdate('/prototypoStore', patch);
+
+			saveAppValues();
+		}
+		catch (err) {
+			console.log('============SAVING ERROR==========');
+			console.log(err.message);
+			console.log('====================================');
+		}
 	},
 	'/update-base-font-values': async () => {
-		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
-		const currentVariant = prototypoStore.get('variant');
-		const currentFamily = prototypoStore.get('family');
-		const family = fonts.find(item => item.name === currentFamily.name);
-		const variant = (family.variants || []).find(item => currentVariant.id === item.id);
+		const currentPreset = _.cloneDeep(prototypoStore.get('preset'));
 		const currentValues = _.cloneDeep(undoableStore.get('controlsValues'));
 
-		variant.ptypoLite.baseValues = currentValues;
+		currentPreset.baseValues = currentValues;
 
-		const patch = prototypoStore
-			.set('fonts', fonts)
-			.set('variant', variant)
-			.commit();
+		console.log('=========Values to update==========');
+		console.log(currentValues);
+		console.log('====================================');
 
-		localServer.dispatchUpdate('/prototypoStore', patch);
+		try {
+			const {data: {updatePreset}} = await apolloClient.mutate({
+				mutation: gql`
+					mutation updatePreset($id: ID!, $values: Json!) {
+						updatePreset(id: $id, baseValues: $values) {
+							id
+						}
+					}
+				`,
+				variables: {
+					id: currentPreset.id,
+					values: JSON.parse(JSON.stringify(currentValues)),
+				},
+			});
 
-		console.log('base font values updated!');
+			console.log('==========Query result===========');
+			console.log(updatePreset);
+			console.log('====================================');
 
-		saveAppValues();
+			const patch = prototypoStore
+				.set('preset', currentPreset)
+				.commit();
+
+			localServer.dispatchUpdate('/prototypoStore', patch);
+
+			saveAppValues();
+		}
+		catch (err) {
+			console.log('============SAVING ERROR==========');
+			console.log(err.message);
+			console.log('====================================');
+		}
 	},
-	'/delete-current-step': async () => {
-		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
-		const currentVariant = prototypoStore.get('variant');
-		const currentFamily = prototypoStore.get('family');
-		const family = fonts.find(item => item.name === currentFamily.name);
-		const variant = (family.variants || []).find(item => currentVariant.id === item.id);
+	'/deleted-current-step': async (deletedStep) => {
+		const currentPreset = _.cloneDeep(prototypoStore.get('preset'));
 		let currentStep = prototypoStore.get('step');
 
 		// failsafe if deleting at app start
 		if (!currentStep.name) {
-			currentStep = variant.ptypoLite.steps[0];
+			currentStep = currentPreset.steps[0];
 		}
 
-		const stepIndex = variant.ptypoLite.steps.findIndex(elem => elem.name === currentStep.name);
-		console.log(`deleting ${currentStep.name} at index ${stepIndex}`);
-		variant.ptypoLite.steps.splice(stepIndex, 1);
-
-		let newStep;
-		let newChoice;
+		const stepIndex = currentPreset.steps.findIndex(elem => elem.id === deletedStep.id);
 
 		if (stepIndex === -1) {
 			return;
 		}
+
+		currentPreset.steps.splice(stepIndex, 1);
+
+		let newStep;
+		let newChoice;
+
 
 		if (stepIndex === 0) {
 			newStep = {};
 			newChoice = {};
 
 			// Load base values
-			localClient.dispatchAction('/change-param', {
-				values: variant.ptypoLite.baseValues,
-				force: true,
-				label: 'lite',
-			});
+			localClient.dispatchAction('/change-param', {values: currentPreset.baseValues});
 		}
 		else {
-			newStep = variant.ptypoLite.steps[stepIndex - 1];
-			newChoice = variant.ptypoLite.steps[stepIndex - 1].choices[0];
+			newStep = currentPreset.steps[stepIndex - 1];
+			newChoice = currentPreset.steps[stepIndex - 1].choices[0];
 			// Load choice values
 			if (Object.keys(newChoice.values).length > 0) {
-				localClient.dispatchAction('/change-param', {
-					values: _.extend({}, variant.ptypoLite.baseValues, newChoice.values),
-					force: true,
-					label: 'lite',
-				});
+				localClient.dispatchAction('/change-param', {values: _.extend({}, currentPreset.baseValues, newChoice.values)});
 			}
 			else {
-				localClient.dispatchAction('/change-param', {
-					values: variant.ptypoLite.baseValues,
-					force: true,
-					label: 'lite',
-				});
+				localClient.dispatchAction('/change-param', {values: currentPreset.baseValues});
 			}
 		}
 
 		const patch = prototypoStore
-			.set('fonts', fonts)
-			.set('variant', variant)
+			.set('preset', currentPreset)
 			.set('choice', newChoice)
 			.set('step', newStep)
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 
-		console.log('current step deleted');
-
 		saveAppValues();
 	},
-	'/delete-current-choice': async () => {
-		const fonts = _.cloneDeep(prototypoStore.get('fonts') || []);
-		const currentVariant = prototypoStore.get('variant');
-		const currentFamily = prototypoStore.get('family');
-		const family = fonts.find(item => item.name === currentFamily.name);
-		const variant = (family.variants || []).find(item => currentVariant.id === item.id);
+	'/deleted-current-choice': async (deletedChoice) => {
+		const currentPreset = _.cloneDeep(prototypoStore.get('preset'));
 		let currentStep = prototypoStore.get('step');
 
 		// failsafe if deleting at app start
 		if (!currentStep.name) {
-			currentStep = variant.ptypoLite.steps[0];
+			currentStep = currentPreset.steps[0];
 		}
-		const step = variant.ptypoLite.steps.find(elem => elem.name === currentStep.name);
+		const step = currentPreset.steps.find(elem => elem.id === currentStep.id);
 		let currentChoice = prototypoStore.get('choice');
 
 		// failsafe if deleting at app start
 		if (!currentChoice.name) {
-			currentChoice = variant.ptypoLite.steps[0].choices[0];
+			currentChoice = currentPreset.steps[0].choices[0];
 		}
 		const choiceIndex = step.choices.findIndex(elem => elem.id === currentChoice.id);
-		console.log(`deleting ${currentChoice.name} from ${currentStep.name} at index ${choiceIndex}`);
-		step.choices.splice(choiceIndex, 1);
-		let newChoice;
-
 		if (choiceIndex === -1) {
 			return;
 		}
+		step.choices.splice(choiceIndex, 1);
+		let newChoice;
 
 		if (choiceIndex === 0) {
 			newChoice = {};
-			localClient.dispatchAction('/change-param', {
-				values: variant.ptypoLite.baseValues,
-				force: true,
-				label: 'lite',
-			});
+			localClient.dispatchAction('/change-param', {values: currentPreset.baseValues});
 		}
 		else {
 			newChoice = step.choices[choiceIndex - 1];
 			if (Object.keys(newChoice.values).length > 0) {
-				localClient.dispatchAction('/change-param', {
-					values: _.extend({}, variant.ptypoLite.baseValues, newChoice.values),
-					force: true,
-					label: 'lite',
-				});
+				localClient.dispatchAction('/change-param', {values: _.extend({}, currentPreset.baseValues, newChoice.values)});
 			}
 			else {
-				localClient.dispatchAction('/change-param', {
-					values: variant.ptypoLite.baseValues,
-					force: true,
-					label: 'lite',
-				});
+				localClient.dispatchAction('/change-param', {values: currentPreset.baseValues});
 			}
 		}
 
 		const patch = prototypoStore
-			.set('fonts', fonts)
-			.set('variant', variant)
+			.set('preset', currentPreset)
 			.set('choice', newChoice)
 			.set('step', step)
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
-
-		console.log('current choice deleted');
-
 		saveAppValues();
 	},
 };

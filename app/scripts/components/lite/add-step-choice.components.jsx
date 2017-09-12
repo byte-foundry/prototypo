@@ -6,6 +6,7 @@ import {compose, graphql, gql} from 'react-apollo';
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Button from '../shared/button.components.jsx';
 import {libraryQuery} from '../collection/collection.components';
+import { request } from 'graphql-request';
 
 const getVariantQuery = gql`
 query getVariantQuery($variantId: ID!) {
@@ -76,35 +77,13 @@ const createChoiceMutation = gql`
 mutation createChoice($name: String!, $stepId: ID! ) {
 	createChoice(
 		name: $name
-		step: {
-			id: $stepId
-		}
+		stepId: $stepId
 	) {
 		id
 		name
 	}
 }
 `;
-
-
-const updateChoiceValues = gql`
-mutation updateChoiceValues($id: ID!, $newValues: JSON!) {
-	updateChoice(id: $id, values: $newValues) {
-		id
-		values
-	}
-}
-`;
-
-const updatePresetBaseValues = gql`
-mutation updatePresetBaseValues($id: ID!, $newValues: JSON!) {
-	updatePreset(id: $id, baseValues: $newValues) {
-		id
-		baseValues
-	}
-}
-`;
-
 
 const renameStepMutation = gql`
 mutation renameStep($id: ID!, $newName: String!, $newDescription: String!) {
@@ -173,13 +152,9 @@ export class AddStep extends React.Component {
 		e.stopPropagation();
 		e.preventDefault();
 
-		console.log('=========CREATE STEP=========');
-		console.log(this.props);
-		console.log('====================================');
-
 		const name = this.refs.name.value;
 		const description = this.refs.description.value;
-		const choice = this.refs.choice.value;
+		const choice = this.props.edit ? '' : this.refs.choice.value;
 
 
 		if (!String(name).trim()) {
@@ -192,17 +167,18 @@ export class AddStep extends React.Component {
 			return;
 		}
 
-		if (!String(choice).trim()) {
+		if (!String(choice).trim() && !this.props.edit) {
 			this.setState({error: 'You must choose a name for your first choice.'});
 			return;
 		}
 
 		if (this.props.edit) {
-			this.client.dispatchAction('/edit-step', {
-				baseName: this.state.step.name,
-				name: this.refs.name.value,
-				description: this.refs.description.value,
-			});
+			console.log('====================================');
+			const {data: {updateStep: newStep}} = await this.props.renameStep(
+				name,
+				description,
+			);
+			this.client.dispatchAction('/edit-step', newStep);
 		}
 		else {
 			try {
@@ -330,7 +306,7 @@ AddStep = compose(
 						choiceName,
 						template: ownProps.variant.template,
 						variantId: ownProps.variant.id,
-						baseValues: `"${JSON.stringify(ownProps.variant.values).replace(/"/g, "\\\"")}"`,
+						baseValues: JSON.parse(JSON.stringify(ownProps.variant.values)),
 					},
 				});
 			},
@@ -338,12 +314,12 @@ AddStep = compose(
 	}),
 	graphql(renameStepMutation, {
 		props: ({mutate, ownProps}) => ({
-			rename: (newName, newDescription) =>
+			renameStep: (newName, newDescription) =>
 				mutate({
 					variables: {
 						id: ownProps.step.id,
 						newName,
-						newDescription
+						newDescription,
 					},
 				}),
 		}),
@@ -379,23 +355,36 @@ export class AddChoice extends React.Component {
 		this.lifespan.release();
 	}
 
-	createChoice(e) {
+	async createChoice(e) {
 		e.stopPropagation();
 		e.preventDefault();
-		if (this.props.edit) {
-			this.client.dispatchAction('/edit-choice', {
-				baseName: this.state.choice.name,
-				name: this.refs.name.value,
-				stepName: this.props.step.name,
-			});
-		}
-		else {
-			this.client.dispatchAction('/create-choice', {
-				name: this.refs.name.value,
-				stepName: this.props.step.name,
-			});
+
+		const name = this.refs.name.value;
+
+
+		if (!String(name).trim()) {
+			this.setState({error: 'You must choose a name for your choice.'});
+			return;
 		}
 
+		if (this.props.edit) {
+			const {data: {updateChoice: newChoice}} = await this.props.renameChoice(
+				name,
+			);
+			this.client.dispatchAction('/edit-choice', newChoice);
+		}
+		else {
+			try {
+				const {data: {createChoice: newChoice}} = await this.props.createChoice(
+					name,
+					this.props.step.id,
+				);
+				this.client.dispatchAction('/created-choice', newChoice);
+			}
+			catch (err) {
+				this.setState({error: err.message});
+			}
+		}
 	}
 
 	exit() {
@@ -445,7 +434,7 @@ AddChoice = compose(
 			createChoice: (name) => {
 				return mutate({
 					variables: {
-						stepId: ownProps.preset.id,
+						stepId: ownProps.step.id,
 						name,
 					},
 				});
@@ -453,9 +442,6 @@ AddChoice = compose(
 		}),
 		options: {
 			update: (store, {data: {createChoice}}) => {
-				console.log('=======createChoiceMutation===========');
-				console.log(data);
-				console.log('====================================');
 				const data = store.readQuery({query: libraryQuery});
 				store.writeQuery({
 					query: libraryQuery,
@@ -466,7 +452,7 @@ AddChoice = compose(
 	}),
 	graphql(renameChoiceMutation, {
 		props: ({mutate, ownProps}) => ({
-			rename: newName =>
+			renameChoice: newName =>
 				mutate({
 					variables: {
 						id: ownProps.choice.id,
@@ -475,7 +461,7 @@ AddChoice = compose(
 				}),
 		}),
 	})
-) (AddStep);
+) (AddChoice);
 
 
 export class ExportLite extends React.Component {
@@ -492,9 +478,13 @@ export class ExportLite extends React.Component {
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
+					preset: head.toJS().d.preset,
 					variant: head.toJS().d.variant,
+					family: head.toJS().d.family,
 				});
+				console.log(head.toJS().d.preset);
 				console.log(head.toJS().d.variant);
+				console.log(head.toJS().d.family);
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -503,6 +493,47 @@ export class ExportLite extends React.Component {
 
 	componentWillUnmount() {
 		this.lifespan.release();
+	}
+
+	sendToLite() {
+
+		const template = this.state.family.template;
+		const variant = this.state.variant.name || 'regular';
+		const familyName = this.state.family.name;
+
+		// import { request } from 'graphql-request'
+
+		// const query = `query getMovie($title: String!) {
+		//   Movie(title: $title) {
+		// 	releaseDate
+		// 	actors {
+		// 	  name
+		// 	}
+		//   }
+		// }`
+
+		// const variables = {
+		//   title: 'Inception',
+		// }
+
+		// request('my-endpoint', query, variables).then(data => console.log(data))
+
+		const createNewPreset = (type, id) => `
+			mutation {
+				${type} (id: "${id}") {
+					selected
+				}
+			}
+		`;
+		const GRAPHQL_API = 'https://api.graph.cool/simple/v1/cj6maa0ib2tud01656t4tp4ej';
+
+		request(GRAPHQL_API, getSelectedCount('Step', font.steps[0].id))
+			.then(
+				this.client.dispatchAction('/store-value', {
+					openExportLiteModal: false,
+				}),
+			)
+			.catch(error => console.log(error));
 	}
 
 	exit() {
@@ -516,8 +547,8 @@ export class ExportLite extends React.Component {
 			'add-family': true,
 		});
 		let data;
-		if (this.state.variant) {
-			data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state.variant.ptypoLite));
+		if (this.state.preset) {
+			data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state.preset));
 		}
 		const download = this.state.variant && (
 			<a href={`data:${data}`} download={`${this.state.variant.db}.json`}>Download JSON</a>
@@ -529,6 +560,7 @@ export class ExportLite extends React.Component {
 					{download}
 					<div className="action-form-buttons">
 						<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
+						<Button click={(e) => {this.sendToLite();} } label="Send to Unique staging"/>
 					</div>
 				</div>
 			</div>

@@ -142,7 +142,7 @@ class ArianneThread extends React.PureComponent {
 
 	addChoice() {
 		this.client.dispatchAction('/store-value', {
- 			openChoiceModal: true,
+			openChoiceModal: true,
 			stepSelectedChoiceCreation: this.state.step,
 		});
 	}

@@ -14,6 +14,7 @@
     "eslint": "^3.19.0",
     "eslint-plugin-react": "^7.0.1",
     "gfnt.ptf": "byte-foundry/spectral.ptf#master",
+    "graphql-request": "^1.3.6",
     "john-fell.ptf": "byte-foundry/john-fell.ptf#master",
     "jszip": "^2.5.0",
     "lifespan": "FranzPoize/lifespan#master",

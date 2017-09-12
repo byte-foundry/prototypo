@@ -15,7 +15,7 @@ export default class CreateChoiceModal extends React.Component {
 			<Modal propName={this.props.propName}>
 				<div className="modal-container-content">
 					<h1>{this.props.edit ? 'Edit choice' : 'Add choice'}</h1>
-					<AddChoice step={this.props.step} edit={this.props.edit} />
+					<AddChoice step={this.props.step} edit={this.props.edit} choice={this.props.choice} />
 				</div>
 			</Modal>
 		);
