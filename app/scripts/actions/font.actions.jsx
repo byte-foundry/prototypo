@@ -1,24 +1,18 @@
 /* global _, trackJs */
-import XXHash from 'xxhashjs';
 import slug from 'slug';
 import {gql} from 'react-apollo';
 import cloneDeep from 'lodash/cloneDeep';
 
-import {userStore, prototypoStore, undoableStore} from '../stores/creation.stores';
+import {prototypoStore, undoableStore} from '../stores/creation.stores';
 import LocalServer from '../stores/local-server.stores';
 import LocalClient from '../stores/local-client.stores';
 
 import {Typefaces} from '../services/typefaces.services';
 import {FontValues} from '../services/values.services';
-import HoodieApi from '../services/hoodie.services.js';
-import Log from '../services/log.services';
+import apolloClient from '../services/graphcool.services';
 
-import {loadStuff} from '../helpers/appSetup.helpers';
-
-import {copyFontValues, loadFontValues, saveAppValues} from '../helpers/loadValues.helpers';
+import {loadFontValues, saveAppValues} from '../helpers/loadValues.helpers';
 import {BatchUpdate} from '../helpers/undo-stack.helpers';
-
-import WorkerPool from '../worker/worker-pool.js';
 
 slug.defaults.mode = 'rfc3986';
 slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
@@ -49,8 +43,6 @@ window.addEventListener('fluxServer.setup', () => {
 		},
 	);
 });
-
-const hasher = XXHash(0xDEADBEEF);
 
 export default {
 	'/create-font-instance': ({typedataJSON, appValues, templateToLoad}) => {
@@ -125,7 +117,7 @@ export default {
 
 		loadFontValues(typedata, undefined, variantId);
 	},
-	'/change-font': async ({templateToLoad, db, variantId}) => {
+	'/change-font': async ({templateToLoad, variantId}) => {
 		const typedataJSON = await Typefaces.getFont(templateToLoad);
 
 		localClient.dispatchAction('/change-font-from-typedata', {
@@ -188,9 +180,6 @@ export default {
 			{string: 'Extra-Bold', thickness: 135},
 			{string: 'Black', thickness: 150},
 		];
-		const refValues = {
-			...ref.values,
-		};
 
 		thicknessTransform.forEach((item) => {
 			if (name.includes(item.string)) {
@@ -233,7 +222,7 @@ export default {
 			errorAddVariant: undefined,
 		});
 
-		const {data: {user}} = await apolloclient.query({
+		const {data: {user}} = await apolloClient.query({
 			query: gql`
 				query getvariantscount {
 					user {
@@ -253,72 +242,6 @@ export default {
 				(numberofvariants, {variantsmeta}) => numberofvariants + variantsmeta.count,
 				0,
 			),
-		});
-	},
-	'/create-variant': async ({name, familyid, variantbaseid, noswitch}) => {
-		// if (!name || string(name).trim() === '') {
-		// 	const patch = prototypostore.set('erroraddvariant', 'variant name cannot be empty').commit();
-
-		// 	localserver.dispatchupdate('/prototypostore', patch);
-		// 	return;
-		// }
-
-		// const {data: {family}} = await apolloclient.query({
-		// 	fetchpolicy: 'cache-first',
-		// 	query: gql`
-		// 		query getfamily($id: id!) {
-		// 			family: family(id: $id) {
-		// 				id
-		// 				name
-		// 				template
-		// 				variants {
-		// 					id
-		// 					name
-		// 				}
-		// 			}
-		// 		}
-		// 	`,
-		// 	variables: {id: familyid},
-		// });
-
-		// const already = family.variants.find((item) => {
-		// 	return item.name === name;
-		// });
-
-		// if (already) {
-		// 	const patch = prototypostore.set('erroraddvariant', 'variant with this name already exists').commit();
-
-		// 	localserver.dispatchupdate('/prototypostore', patch);
-		// 	return;
-		// }
-
-		// const patch = prototypostore.set('erroraddvariant', undefined).commit();
-
-		// localserver.dispatchupdate('/prototypostore', patch);
-
-		// if (!variantbaseid || (variantbaseid && !family.variants.some(f => f.id === variantbaseid))) {
-		// 	variantbaseid = family.variants[0].id;
-		// }
-
-		// const {data: {variantbase}} = await apolloclient.query({
-		// 	fetchpolicy: 'cache-first',
-		// 	query: gql`
-		// 		query getvariantbasevalues($id: id!) {
-		// 			variantbase: variant(id: $id) {
-		// 				id
-		// 				values
-		// 			}
-		// 		}
-		// 	`,
-		// 	variables: {id: variantbaseid},
-		// });
-
-		localClient.dispatchAction('/create-variant-from-ref', {
-			name,
-			ref: variantBase,
-			variantId: variantBase.id,
-			family,
-			noSwitch,
 		});
 	},
 	'/delete-variant': ({variant}) => {
