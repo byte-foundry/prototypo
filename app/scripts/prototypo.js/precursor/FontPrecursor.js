@@ -17,6 +17,7 @@ export default class FontPrecursor {
 		this.parameters = _.mapValues(lib.parameters, param => constantOrFormula(param));
 		this.paramBase = {
 			manualChanges: {},
+			altList: {},
 			glyphComponentChoice: {},
 		};
 
@@ -49,6 +50,10 @@ export default class FontPrecursor {
 				...this.paramBase.glyphComponentChoice,
 				...params.glyphComponentChoice,
 			},
+			altList: {
+				...this.paramBase.altList,
+				...params.altList,
+			},
 		};
 		const transformedThis = _.mapValues(this, (prop, name) => {
 			if (name !== 'parameters' && name !== 'glyphs' && name !== 'unicodeToGlyphName' && name !== 'paramBase') {
@@ -57,7 +62,7 @@ export default class FontPrecursor {
 
 			return undefined;
 		});
-		const glyphNames = _.map(subset, char => params.altList[char] || this.unicodeToGlyphName[char]);
+		const glyphNames = _.map(subset, char => localParams.altList[char] || this.unicodeToGlyphName[char]);
 		const glyphs = _.reduce(glyphNames, (result, name) => {
 			if (this.glyphs[name]) {
 				result.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));
