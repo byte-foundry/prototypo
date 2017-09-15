@@ -91,4 +91,4 @@ export const saveAppValues = _.throttle(() => {
 	});
 
 	AppValues.save({typeface: 'default', values: appValues});
-}, 1000);
+}, 2000);
