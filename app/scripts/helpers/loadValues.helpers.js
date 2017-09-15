@@ -73,10 +73,6 @@ export async function loadFontValues(typedata, typeface, variantId) {
 	}
 
 	localClient.dispatchAction('/load-indiv-groups');
-
-	const event = new CustomEvent('values.loaded');
-
-	window.dispatchEvent(event);
 }
 
 export const saveAppValues = _.throttle(() => {
@@ -95,4 +91,4 @@ export const saveAppValues = _.throttle(() => {
 	});
 
 	AppValues.save({typeface: 'default', values: appValues});
-}, 300);
+}, 2000);
