@@ -1,7 +1,18 @@
 const path = require('path');
 const webpack = require('webpack');
 const fs = require('fs');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const SpritePlugin = require('svg-sprite-loader/plugin');
+
+const extractSass = new ExtractTextPlugin({
+	filename: 'styles.css',
+	disable: process.env.NODE_ENV !== 'production',
+});
+
+const extractCss = new ExtractTextPlugin({
+	filename: 'vendors.css',
+	disable: process.env.NODE_ENV !== 'production',
+});
 
 module.exports = {
 	entry: {
@@ -20,13 +31,6 @@ module.exports = {
 			{
 				test: /\.jsx?$/,
 				use: [
-					// {
-					// 	loader: 'transform-loader/cacheable',
-					//
-					// 	options: {
-					// 		envify: true,
-					// 	},
-					// },
 					{loader: 'babel-loader', options: {cacheDirectory: true}},
 					'if-loader',
 				],
@@ -39,12 +43,18 @@ module.exports = {
 			},
 			{
 				test: /\.scss$/,
-				use: ['style-loader', 'css-loader', 'sass-loader'],
+				use: extractSass.extract({
+					use: ['css-loader', 'sass-loader'],
+					fallback: 'style-loader',
+				}),
 				include: [path.join(__dirname, 'app/styles')],
 			},
 			{
 				test: /\.css$/,
-				use: ['style-loader', 'css-loader'],
+				use: extractCss.extract({
+					use: 'css-loader',
+					fallback: 'style-loader',
+				}),
 			},
 			{
 				test: /\.(jpg|otf)$/,
@@ -95,6 +105,8 @@ module.exports = {
 		new webpack.ProvidePlugin({
 			_: 'lodash',
 		}),
+		extractCss,
+		extractSass,
 		new SpritePlugin(),
 		// Moment.js is an extremely popular library that bundles large locale files
 		// by default due to how Webpack interprets its code. This is a practical
