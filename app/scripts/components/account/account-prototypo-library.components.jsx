@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import Lifespan from 'lifespan';
+import {Link} from 'react-router';
 import {graphql, gql} from 'react-apollo';
 
 import apolloClient from '../../services/graphcool.services';
+import LocalClient from '../../stores/local-client.stores.jsx';
 
 import CopyPasteInput from '../shared/copy-paste-input.components';
 import FilterableTable from '../shared/filterable-table.components';
@@ -14,6 +17,38 @@ class AccountPrototypoLibrary extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.state = {};
+	}
+
+	componentWillMount() {
+		this.lifespan = new Lifespan();
+		this.client = LocalClient.instance();
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate((head) => {
+				const {credits} = head.toJS().d;
+				this.setState({
+					credits,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				const {subscription} = head.toJS().d;
+				this.setState({
+					subscription,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 	handleSubmit(e) {
@@ -26,6 +61,10 @@ class AccountPrototypoLibrary extends React.PureComponent {
 	}
 
 	render() {
+		const {subscription, credits} = this.state;
+		const freeAccount = !this.props.isManagedAccount
+			&& !(subscription && !subscription.plan.id.includes('agency'));
+		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const {loading, domains, token} = this.props;
 
 		const tableHeaders = [
@@ -48,12 +87,8 @@ class AccountPrototypoLibrary extends React.PureComponent {
 			),
 		);
 
-		return (
-			<div className="account-base account-prototypo-library">
-				<h1>Documentation</h1>
-				<div>
-					Check out the <a href="https://doc.prototypo.io" target="_blank" rel="noopener noreferrer">documentation</a> to learn how to use the prototypo library.<br />To use the library you will need the token under here and you'll also need to add the domain name where you'll want to use the library.
-				</div>
+		const payingContent = (
+			<div>
 				<h1>Prototypo library token</h1>
 				<WaitForLoad loading={loading}>
 					<CopyPasteInput content={token} />
@@ -80,6 +115,30 @@ class AccountPrototypoLibrary extends React.PureComponent {
 						{domainContent}
 					</FilterableTable>
 				</WaitForLoad>
+			</div>
+		);
+
+		const freeContent = (
+			<div>
+				<h3 className="account-dashboard-container-small-title">
+					You do not have a plan for the moment. To take full advantage of the library you'll need to subscribe to Prototypo.
+				</h3>
+				<p>
+					<img style={{width: '100%'}} src="assets/images/go-pro.gif" />
+				</p>
+				<p>
+					Subscribe to our <Link className="account-link" to="account/subscribe">pro plan</Link> to benefit of the full power of Prototypo's library without restrictions!
+				</p>
+			</div>
+		)
+
+		return (
+			<div className="account-base account-prototypo-library">
+				<h1>Documentation</h1>
+				<div>
+					Check out the <a href="https://doc.prototypo.io" target="_blank" rel="noopener noreferrer">documentation</a> to learn how to use the prototypo library.<br />To use the library you will need the token under here and you'll also need to add the domain name where you'll want to use the library.
+				</div>
+				{freeAccountAndHasCredits || !freeAccount ? payingContent : freeContent}
 			</div>
 		);
 	}
@@ -132,6 +191,7 @@ const createAccessToken = gql`
 
 let userId;
 let accessTokenId;
+let isManagedAccount;
 
 export default graphql(query, {
 	options: {
@@ -144,6 +204,7 @@ export default graphql(query, {
 		}
 
 		userId = data.user.id;
+		isManagedAccount = data.user && data.user.manager
 
 		if (data.user.accessToken) {
 			accessTokenId = data.user.accessToken.id;
@@ -164,6 +225,7 @@ export default graphql(query, {
 
 		return {
 			domains: data.user.accessToken.domains.split(',') || [],
+			isManagedAccount,
 			token: data.user.accessToken.token,
 			updateDomain: async (domainNames) => {
 				await apolloClient.mutate({
