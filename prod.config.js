@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const fs = require('fs');
 const merge = require('webpack-merge');
 
 const base = require('./base.config');
@@ -16,13 +15,6 @@ module.exports = merge(base, {
 			{
 				test: /\.jsx?$/,
 				use: [
-					// {
-					// 	loader: 'transform/cacheable-loader',
-					//
-					// 	options: {
-					// 		envify: true,
-					// 	},
-					// },
 					{
 						loader: 'babel-loader',
 
