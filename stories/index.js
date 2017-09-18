@@ -6,3 +6,4 @@ import './AccountManageSubUsers.story';
 import './AccountValidationButton.story';
 import './Button.story';
 import './PricingItem.story';
+import './CopyPasteInput.story';

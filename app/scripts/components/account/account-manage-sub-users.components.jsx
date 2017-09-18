@@ -5,6 +5,7 @@ import {Link} from 'react-router';
 import {graphql, gql} from 'react-apollo';
 
 import FilterInput from '../shared/filter-input.components';
+import FilterableTable from '../shared/filterable-table.components';
 import Icon from '../shared/icon.components';
 import IconButton from '../shared/icon-button.components';
 import Button from '../shared/new-button.components';
@@ -317,6 +318,36 @@ export class AccountManageSubUsers extends React.Component {
 			});
 		}
 
+		const caption = <span>
+			{slotsLeft} slots left on {max}
+			{slotsLeft < 4 && ' • '}
+			{
+				slotsLeft < 4
+				&& <Link to="/account/details/change-plan">
+					Update your subscription
+				</Link>
+			}
+		</span>;
+
+		const tableHeaders = [
+			{
+				styleClass: headersClasses.status,
+				label: 'Status',
+				onClick: this.sortByStatus,
+			},
+			{
+				styleClass: headersClasses.email,
+				label: 'Email',
+				onClick: this.sortByEmail,
+			},
+			{
+				styleClass: headersClasses.name,
+				label: 'Name',
+				onClick: this.sortByName,
+				colSpan: 1,
+			},
+		];
+
 		return (
 			<div className="manage-sub-users">
 				<header className="manage-sub-users-header">
@@ -331,30 +362,7 @@ export class AccountManageSubUsers extends React.Component {
 					</div>
 				</header>
 				<WaitForLoad loading={loading}>
-					<table className="sortable-table">
-						{max > 0
-							&& <caption className="sortable-table-caption">
-								{slotsLeft} slots left on {max}
-								{slotsLeft < 4 && ' • '}
-								{slotsLeft < 4
-									&& <Link to="/account/details/change-plan">
-										Update your subscription
-									</Link>}
-							</caption>}
-						<thead>
-							<tr>
-								<th className={headersClasses.status} onClick={this.sortByStatus}>
-									Status
-								</th>
-								<th className={headersClasses.email} onClick={this.sortByEmail}>
-									Email
-								</th>
-								<th className={headersClasses.name} colSpan={1} onClick={this.sortByName}>
-									Name
-								</th>
-							</tr>
-						</thead>
-						<tbody>
+					<FilterableTable captionCondition={max > 0} caption={caption} tableHeaders={tableHeaders}>
 							{error
 								&& <tr key="warning">
 									<td className="sortable-table-warning-message" colSpan={4}>
@@ -382,8 +390,7 @@ export class AccountManageSubUsers extends React.Component {
 							{filteredMembers.map(member => (
 								<MemberRow member={member} filter={filter} onRemoveRow={this.handleRemoveButton} />
 							))}
-						</tbody>
-					</table>
+					</FilterableTable>
 				</WaitForLoad>
 			</div>
 		);
