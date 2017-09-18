@@ -2,6 +2,7 @@
   "name": "prototypo",
   "version": "1.0.0",
   "dependencies": {
+    "antique.ptf": "byte-foundry/antique.ptf",
     "bluebird": "^3.1.1",
     "classnames": "^2.1.2",
     "cleave.js": "^0.7.14",
