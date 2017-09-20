@@ -322,7 +322,9 @@ ansicolors@~0.2.1:
 
 antique.ptf@byte-foundry/antique.ptf:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/2c33312409c9481f8df8b6c9465710a19c80e65f"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/bd37cf610d603cf97c4a931da74d5f520b34f665"
+  dependencies:
+    karma "^1.7.1"
 
 anymatch@^1.3.0:
   version "1.3.2"
@@ -5726,7 +5728,7 @@ jszip@^2.5.0:
   dependencies:
     pako "~1.0.2"
 
-karma@^1.7.0:
+karma@^1.7.0, karma@^1.7.1:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/karma/-/karma-1.7.1.tgz#85cc08e9e0a22d7ce9cca37c4a1be824f6a2b1ae"
   dependencies:
