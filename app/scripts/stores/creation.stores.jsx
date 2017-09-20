@@ -64,6 +64,14 @@ const prototypoStore = new Remutable({
 			provider: 'google',
 		},
 		{
+			sample: 'antique-sample.svg',
+			sampleLarge: 'template-antique.svg',
+			name: 'Prototypo Antique Gothic',
+			familyName: 'Prototypo Antique Gothic',
+			templateName: 'antique.ptf',
+			provider: 'production',
+		},
+		{
 			sample: 'elzevir-preview.svg',
 			sampleLarge: 'template-elzevir.svg',
 			name: 'Prototypo Elzevir',
@@ -86,14 +94,6 @@ const prototypoStore = new Remutable({
 			familyName: 'Prototypo Fell',
 			templateName: 'john-fell.ptf',
 			provider: 'prototypo',
-		},
-		{
-			sample: 'antique-sample.svg',
-			sampleLarge: 'template-antique.svg',
-			name: 'Prototypo Antique Gothic',
-			familyName: 'Prototypo Antique Gothic',
-			templateName: 'antique.ptf',
-			provider: 'production',
 		},
 	],
 

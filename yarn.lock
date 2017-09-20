@@ -7830,22 +7830,22 @@ prototypo-canvas@~1.16.0:
     whatwg-fetch "^0.11.0"
     wolfy87-eventemitter "4.2.0"
 
+prototypo.js@^1.16.6:
+  version "1.16.6"
+  resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.16.6.tgz#6460ddd48caa814e8b25669050a42386d512fd50"
+  dependencies:
+    deptree "^0.1.0"
+    if-loader "^1.0.1"
+    lodash.assign "^4.2.0"
+    lodash.clonedeep "^4.5.0"
+    plumin.js "^1.10.0"
+
 prototypo.js@~1.15.0:
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.15.2.tgz#b539537eef4dc0c0f8bb991f5d9c16d756245cb8"
   dependencies:
     deptree "^0.1.0"
     lodash "^4.5.1"
-    lodash.assign "^4.2.0"
-    lodash.clonedeep "^4.5.0"
-    plumin.js "^1.10.0"
-
-prototypo.js@~1.16.1:
-  version "1.16.5"
-  resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.16.5.tgz#036a467d0ea01084ae54e68010b1637d8f29474d"
-  dependencies:
-    deptree "^0.1.0"
-    if-loader "^1.0.1"
     lodash.assign "^4.2.0"
     lodash.clonedeep "^4.5.0"
     plumin.js "^1.10.0"
