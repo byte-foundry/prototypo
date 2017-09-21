@@ -65,6 +65,10 @@
 		background-image: url('../../../images/spectral-sample-active.svg') !important;
 	}
 
+	&:hover &-sample.antique, &.is-active &-sample.antique {
+		background-image: url('../../../images/antique-sample-active.svg') !important;
+	}
+
 	&-sample.elzevir {
 		background-image: url('../../../images/elzevir-sample-hover.svg');
 	}
@@ -79,6 +83,10 @@
 
 	&-sample.venus {
 		background-image: url('../../../images/grotesk-sample-hover.svg');
+	}
+
+	&-sample.antique {
+		background-image: url('../../../images/antique-sample-hover.svg');
 	}
 
 	&-sample {
@@ -335,7 +343,7 @@
 			position:absolute;
 			z-index:2;
 			background-position: center;
-			background-size: 65%;
+			background-size: 85%;
 			background-image: url("../../../images/icon-ProductionType.svg");
 			background-repeat: no-repeat;
 			top: 50%;
