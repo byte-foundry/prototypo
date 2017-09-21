@@ -127,7 +127,7 @@ class Topbar extends React.Component {
 					result[param.name] = param.init;
 				}, {});
 
-				this.client.dispatchAction('/change-param', {values: defaultParams, demo: true});
+				this.client.dispatchAction('/change-param', {values: defaultParams, demo: true, force: true});
 			});
 
 	}

@@ -2,6 +2,7 @@
   "name": "prototypo",
   "version": "1.0.0",
   "dependencies": {
+    "antique.ptf": "byte-foundry/antique.ptf",
     "bluebird": "^3.1.1",
     "classnames": "^2.1.2",
     "cleave.js": "^0.7.14",
@@ -25,7 +26,7 @@
     "please-wait": "0.0.5",
     "prop-types": "^15.5.8",
     "prototypo-canvas": "~1.16.0",
-    "prototypo.js": "~1.16.1",
+    "prototypo.js": "^1.16.8",
     "query-string": "^4.2.3",
     "react": "~15.3.0",
     "react-addons-css-transition-group": "^15.0.2",

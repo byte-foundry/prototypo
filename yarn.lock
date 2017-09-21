@@ -320,6 +320,12 @@ ansicolors@~0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/ansicolors/-/ansicolors-0.2.1.tgz#be089599097b74a5c9c4a84a0cdbcdb62bd87aef"
 
+antique.ptf@byte-foundry/antique.ptf:
+  version "1.0.0"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/a751c822cec02436c60f4f7e012444d1ad48188f"
+  dependencies:
+    karma "^1.7.1"
+
 anymatch@^1.3.0:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/anymatch/-/anymatch-1.3.2.tgz#553dcb8f91e3c889845dfdba34c77721b90b9d7a"
@@ -5722,7 +5728,7 @@ jszip@^2.5.0:
   dependencies:
     pako "~1.0.2"
 
-karma@^1.7.0:
+karma@^1.7.0, karma@^1.7.1:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/karma/-/karma-1.7.1.tgz#85cc08e9e0a22d7ce9cca37c4a1be824f6a2b1ae"
   dependencies:
@@ -7321,9 +7327,9 @@ plexer@0.0.3:
   dependencies:
     readable-stream "^1.0.26-2"
 
-plumin.js@^1.10.0:
-  version "1.10.4"
-  resolved "https://registry.yarnpkg.com/plumin.js/-/plumin.js-1.10.4.tgz#609fed12595cce203b5fdd8bab1dd468f2bffb54"
+plumin.js@^1.10.0, plumin.js@^1.10.6:
+  version "1.10.6"
+  resolved "https://registry.yarnpkg.com/plumin.js/-/plumin.js-1.10.6.tgz#280b3d0c017d3d47d4de2a577063ecf22a947173"
 
 plur@^1.0.0:
   version "1.0.0"
@@ -7826,22 +7832,23 @@ prototypo-canvas@~1.16.0:
     whatwg-fetch "^0.11.0"
     wolfy87-eventemitter "4.2.0"
 
+prototypo.js@^1.16.8:
+  version "1.16.8"
+  resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.16.8.tgz#121210601f7091e736efee51e56193b221bfa3f6"
+  dependencies:
+    babel-plugin-transform-flow-strip-types "^6.22.0"
+    deptree "^0.1.0"
+    if-loader "^1.0.1"
+    lodash.assign "^4.2.0"
+    lodash.clonedeep "^4.5.0"
+    plumin.js "^1.10.6"
+
 prototypo.js@~1.15.0:
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.15.2.tgz#b539537eef4dc0c0f8bb991f5d9c16d756245cb8"
   dependencies:
     deptree "^0.1.0"
     lodash "^4.5.1"
-    lodash.assign "^4.2.0"
-    lodash.clonedeep "^4.5.0"
-    plumin.js "^1.10.0"
-
-prototypo.js@~1.16.1:
-  version "1.16.5"
-  resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.16.5.tgz#036a467d0ea01084ae54e68010b1637d8f29474d"
-  dependencies:
-    deptree "^0.1.0"
-    if-loader "^1.0.1"
     lodash.assign "^4.2.0"
     lodash.clonedeep "^4.5.0"
     plumin.js "^1.10.0"
