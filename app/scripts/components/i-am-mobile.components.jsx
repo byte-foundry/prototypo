@@ -10,7 +10,9 @@ export default class IAmMobile extends React.PureComponent {
 		return (
 			<div id="notloggedin">
 				<div className="sign-in">
-					<h1>Sorry :( ! Prototypo is not currently available on mobile browser.</h1>
+					<div className="sign-in-sorry-logo"></div>
+					<h1 className="sign-in-sorry-message">Sorry :(</h1>
+					<div className="sign-in-sorry-text"> Prototypo is not currently available on mobile browser.</div>
 				</div>
 			</div>
 		);
