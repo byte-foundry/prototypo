@@ -430,7 +430,7 @@ export default class PrototypoCanvas extends React.Component {
 				<ContextualMenuItem
 					key="coords"
 					active={this.props.uiCoords}
-					click={this.toggleCoords}
+					onClick={this.toggleCoords}
 				>
 					{this.props.uiCoords ? 'hide' : 'show'} coords
 				</ContextualMenuItem>,
