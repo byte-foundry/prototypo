@@ -8,7 +8,7 @@ export default class IAmMobile extends React.PureComponent {
 		}
 		pleaseWait.instance.finish();
 		return (
-			<div id="notloggedin">
+			<div id="notloggedin" className="iammobile">
 				<div className="sign-in">
 					<h1>Sorry :( ! Prototypo is not currently available on mobile browser.</h1>
 				</div>

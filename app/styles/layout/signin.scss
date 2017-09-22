@@ -19,7 +19,20 @@
 	background: -ms-linear-gradient(-45deg, $green 0%,#00e28b 70%); /* IE10+ */
 	background: linear-gradient(135deg, $green 0%,#00e28b 70%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#24D390', endColorstr='#00e28b',GradientType=1 ); /* IE6-8 fallback on horizontal gradient */
+
+	&.iammobile {
+		.sign-in {
+			width: inherit;
+			h1 {
+				color: white;
+				margin-left: 2rem;
+				margin-right: 1rem;
+			}
+		}
+	}
+
 }
+
 
 _:-ms-fullscreen, #notloggedin {
 	justify-content:flex-start;
