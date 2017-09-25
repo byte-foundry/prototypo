@@ -58,14 +58,22 @@ export default {
 				}
 			`,
 		});
-		const patch = prototypoStore
-		.set('preset', Variant.preset || {})
-		.set('choice', Variant.preset.steps ? Variant.preset.steps[0].choices[0] : {})
-		.set('step', Variant.preset.steps ? Variant.preset.steps[0] : {})
-		.commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patch);
-
+		if (Variant.preset) {
+			const patch = prototypoStore
+			.set('preset', Variant.preset)
+			.set('choice', Variant.preset.steps[0].choices[0])
+			.set('step', Variant.preset.steps[0])
+			.commit();
+			localServer.dispatchUpdate('/prototypoStore', patch);
+		}
+		else {
+			const patch = prototypoStore
+			.set('preset', {})
+			.set('choice', {})
+			.set('step', {})
+			.commit();
+			localServer.dispatchUpdate('/prototypoStore', patch);
+		}
 		saveAppValues();
 	},
 	'/created-preset': async ({id, steps, baseValues}) => {
