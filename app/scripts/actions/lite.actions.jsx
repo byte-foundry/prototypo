@@ -203,6 +203,9 @@ export default {
 		if (choice) {
 			console.log('New choice values : ');
 			console.log(newChoice);
+			console.log('====================================');
+			console.log(newChoiceValues);
+			console.log('====================================');
 
 			// change choice : load choice values and if none : load base values
 			if (Object.keys(newChoiceValues).length > 0) {
@@ -295,6 +298,8 @@ export default {
 		console.log('Saved changes : ');
 		console.log(newValues);
 		currentChoice.values = newValues;
+		const stepChoice = step.choices.find(elem => elem.id === currentChoice.id);
+		stepChoice.values = newValues;
 
 
 		console.log('==========Values to save===========');

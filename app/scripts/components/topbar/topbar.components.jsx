@@ -147,10 +147,7 @@ class Topbar extends React.Component {
 
 				this.client.dispatchAction('/change-param', {values: defaultParams, demo: true, force: true});
 			});
-
-			this.client.dispatchAction('/change-param', {values: defaultParams, demo: true});
-		});
-	}
+	};
 
 	resetAllChanges() {
 		this.resetAllParams();
@@ -714,10 +711,7 @@ export default compose(
 			};
 		},
 	}),
-	graphql(deleteStepMutation, {return {
-			academyProgress: data.user.academyProgress,
-			manager: data.user.manager,
-		};
+	graphql(deleteStepMutation, {
 
 		props: ({mutate}) => ({
 			deleteStep: id =>
