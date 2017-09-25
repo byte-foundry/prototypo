@@ -125,6 +125,9 @@ export default {
 			.set('family', {name, template})
 			.set('uiCreatefamilySelectedTemplate', undefined)
 			.set('openFamilyModal', false)
+			.set('preset', {})
+			.set('choice', {})
+			.set('step', {})
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);
@@ -160,6 +163,7 @@ export default {
 			templateToLoad: family.template,
 			variantId: selectedVariant.id,
 		});
+		localClient.dispatchAction('/fetch-preset', selectedVariant.id);
 	},
 	'/create-variant-from-ref': async ({ref, name, family, noSwitch}) => {
 		const values = cloneDeep(ref.values);
