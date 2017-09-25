@@ -5,6 +5,7 @@
 	color: $medium-grey;
 	padding-bottom:20px;
 
+
 	&-label {
 		display:block;
 		padding-bottom:15px;
@@ -42,6 +43,10 @@
 			@include themify() {
 				border-color: $theme-background !important;
 			}
+		}
+
+		&.is-small {
+			height: 2.6em;
 		}
 
 		&.is-error {

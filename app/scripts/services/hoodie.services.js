@@ -88,10 +88,26 @@ export default class HoodieApi {
 		});
 
 		if (!response.data.user) {
+			window.localStorage.removeItem('graphcoolToken');
 			throw new Error('Not authenticated yet');
 		}
 
 		return setupStripe(setupHoodie(response.data.user));
+	}
+
+	static async createGraphCoolUser(email, password, firstName = 'there', lastName) {
+		const response = await apolloClient.mutate({
+			mutation: signUpAndLoginMutation,
+			variables: {
+				email,
+				password,
+				lastName,
+				firstName,
+			},
+		});
+
+		window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
+		graphCoolUserId = response.data.createUser.id;
 	}
 
 	static async login(user, password) {

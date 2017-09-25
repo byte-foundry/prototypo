@@ -24,7 +24,7 @@ const debouncedSave = _.throttle((values, db, variantId) => {
 		values,
 		variantId,
 	});
-}, 300);
+}, 2000);
 
 window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
@@ -72,7 +72,13 @@ export default {
 			localClient.dispatchAction('/create-font', familyName);
 			localClient.dispatchAction('/load-params', {controls, presets});
 			localClient.dispatchAction('/load-tags', tags);
-			loadFontValues(typedata, undefined, variantId);
+
+			if (variantId) {
+				await loadFontValues(typedata, undefined, variantId);
+			}
+
+			const event = new CustomEvent('values.loaded');
+			window.dispatchEvent(event);
 		}
 		catch (err) {
 			trackJs.track(err);
@@ -428,10 +434,10 @@ export default {
 		localServer.dispatchUpdate('/undoableStore', patch);
 		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db, variantId);
 		if (force) {
 			//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 			undoWatcher.forceUpdate(patch, label);
+			debouncedSave(newParams, db, variantId);
 		}
 		else {
 			undoWatcher.update(patch, label);

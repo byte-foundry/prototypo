@@ -19,12 +19,14 @@ export default class InputWithLabel extends React.PureComponent {
 			error, warning, info,
 			label, placeholder, inputValue, required,
 			inputRef, children,
+			size,
 			...rest,
 		} = this.props;
 
 		const inputClass = classNames('input-with-label-input', {
 			'is-error': error,
 			'is-warning': warning,
+			'is-small': size === 'small',
 		});
 
 		const child = children || (
@@ -35,13 +37,17 @@ export default class InputWithLabel extends React.PureComponent {
 			/>
 		);
 
-		return (
-			<div className="input-with-label">
-				<label className="input-with-label-label">
+		const labelContent = label
+			?  <label className="input-with-label-label">
 					{label}
 					{info && <span className="input-with-label-label-info">{info}</span>}
 					{required && <span className="input-with-label-label-required">*</span>}
 				</label>
+			: false
+
+		return (
+			<div className="input-with-label">
+				{labelContent}
 				{React.cloneElement(child, {
 					className: inputClass,
 					defaultValue: inputValue,

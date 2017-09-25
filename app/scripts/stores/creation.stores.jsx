@@ -61,6 +61,15 @@ const prototypoStore = new Remutable({
 			name: 'Spectral',
 			familyName: 'Spectral',
 			templateName: 'gfnt.ptf',
+			provider: 'google',
+		},
+		{
+			sample: 'antique-sample.svg',
+			sampleLarge: 'template-antique.svg',
+			name: 'Prototypo Antique Gothic',
+			familyName: 'Prototypo Antique Gothic',
+			templateName: 'antique.ptf',
+			provider: 'production',
 		},
 		{
 			sample: 'elzevir-preview.svg',
@@ -68,6 +77,7 @@ const prototypoStore = new Remutable({
 			name: 'Prototypo Elzevir',
 			familyName: 'Prototypo Elzevir',
 			templateName: 'elzevir.ptf',
+			provider: 'prototypo',
 		},
 		{
 			sample: 'venus-preview.svg',
@@ -75,6 +85,7 @@ const prototypoStore = new Remutable({
 			name: 'Prototypo Grotesk',
 			familyName: 'Prototypo Grotesk',
 			templateName: 'venus.ptf',
+			provider: 'prototypo',
 		},
 		{
 			sample: 'john-fell-preview.svg',
@@ -82,6 +93,7 @@ const prototypoStore = new Remutable({
 			name: 'Prototypo Fell',
 			familyName: 'Prototypo Fell',
 			templateName: 'john-fell.ptf',
+			provider: 'prototypo',
 		},
 	],
 

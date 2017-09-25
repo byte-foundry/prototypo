@@ -140,6 +140,14 @@
 			background-image:url('../../../images/icon-organization-active.svg');
 		}
 
+		&-developers:before {
+			background-image:url('../../../images/icon-developer.svg');
+		}
+
+		&-developers:hover:before, &-developers.is-active:before {
+			background-image:url('../../../images/icon-developer-active.svg');
+		}
+
 		&-billing:before {
 			background-image:url('../../../images/icon-billing.svg');
 		}

@@ -143,9 +143,10 @@ class Topbar extends React.Component {
 				flattenParams,
 				(result, param) => {
 					result[param.name] = param.init;
-				},
-				{},
-			);
+				}, {});
+
+				this.client.dispatchAction('/change-param', {values: defaultParams, demo: true, force: true});
+			});
 
 			this.client.dispatchAction('/change-param', {values: defaultParams, demo: true});
 		});
@@ -330,8 +331,8 @@ class Topbar extends React.Component {
 			: ''}`;
 		const redoText = `Redo ${redoDisabled ? '' : this.state.eventList[whereAt + 1].label}`;
 		const credits = this.state.credits;
-		const freeAccount = !this.state.subscription;
-		const freeAccountAndHasCredits = credits && credits > 0 && freeAccount;
+		const freeAccount = !this.props.manager && !this.state.subscription;
+		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : false;
 		const glyphrExportCost = this.state.creditChoices
 			? this.state.creditChoices.exportGlyphr
@@ -668,6 +669,9 @@ const getAcademyValuesQuery = gql`
 		user {
 			id
 			academyProgress
+			manager {
+				id
+			}
 		}
 	}
 `;
@@ -704,10 +708,17 @@ export default compose(
 			if (data.loading) {
 				return {loadingAcademyProgress: true};
 			}
-			return {academyProgress: data.user.academyProgress};
+			return {
+				academyProgress: data.user.academyProgress,
+				manager: data.user.manager,
+			};
 		},
 	}),
-	graphql(deleteStepMutation, {
+	graphql(deleteStepMutation, {return {
+			academyProgress: data.user.academyProgress,
+			manager: data.user.manager,
+		};
+
 		props: ({mutate}) => ({
 			deleteStep: id =>
 				mutate({

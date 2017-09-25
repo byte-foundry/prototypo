@@ -27,6 +27,7 @@ import AccountSubscription from './components/account/account-subscription.compo
 import AccountConfirmPlan from './components/account/account-confirm-plan.components';
 import AccountOrganization from './components/account/account-organization.components';
 import AccountInvoiceList from './components/account/account-invoice-list.components';
+import AccountPrototypoLibrary from './components/account/account-prototypo-library.components.jsx';
 import Subscription from './components/account/subscription.components';
 import StartApp from './components/start/start-app.components';
 /* #if debug */
@@ -184,6 +185,14 @@ export default class AppRoutes extends React.PureComponent {
 								onEnter={redirectToLogin}
 							>
 								<IndexRoute component={AccountOrganization} />
+							</Route>
+							<Route
+								path="prototypo-library"
+								component={AccountDashboard}
+								name="library"
+								onEnter={redirectToLogin}
+							>
+								<IndexRoute component={AccountPrototypoLibrary} />
 							</Route>
 							<Route
 								path="subscribe"

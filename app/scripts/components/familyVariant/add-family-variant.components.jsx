@@ -272,7 +272,7 @@ export class FamilyTemplateChoice extends React.Component {
 			>
 				<div className="family-template-choice-provider">
 					<div
-						className={`provider-${this.props.font.name === 'Spectral' ? 'google' : 'prototypo'}`}
+						className={`provider-${this.props.font.provider}`}
 					/>
 				</div>
 				<div className="family-template-choice-sample">

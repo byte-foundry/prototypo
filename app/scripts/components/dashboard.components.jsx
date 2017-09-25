@@ -69,7 +69,7 @@ class Dashboard extends React.PureComponent {
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
-				if (this.props.library.length <= 0) {
+				if (this.props.library && this.props.library.length <= 0) {
 					this.props.router.push('/start');
 					return;
 				}

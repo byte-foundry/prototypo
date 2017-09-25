@@ -154,7 +154,7 @@ export class RawSlider extends React.PureComponent {
 	}
 
 	resetValue() {
-		this.client.dispatchAction('/change-param', {value: this.props.init, name: this.props.name, label: this.props.label, demo: this.props.demo});
+		this.client.dispatchAction('/change-param', {value: this.props.init, name: this.props.name, label: this.props.label, demo: this.props.demo, force: true});
 	}
 
 	handleRestrictedRangeEnter() {
