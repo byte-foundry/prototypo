@@ -6,42 +6,63 @@ import {compose, graphql, gql} from 'react-apollo';
 import LocalClient from '~/stores/local-client.stores.jsx';
 import Button from '../shared/button.components.jsx';
 import {libraryQuery} from '../collection/collection.components';
-import { request } from 'graphql-request';
+import {request} from 'graphql-request';
 
 const getVariantQuery = gql`
-query getVariantQuery($variantId: ID!) {
-	variant: Variant(id: $variantId) {
-		id
-		name
-		values
-		family {
-		  owner {
-			  id
-		  }
-		  name
-		  template
+	query getVariantQuery($variantId: ID!) {
+		variant: Variant(id: $variantId) {
+			id
+			name
+			values
+			family {
+				owner {
+					id
+				}
+				name
+				template
+			}
 		}
 	}
-}
 `;
 
 const createPresetWithValuesMutation = gql`
-mutation createPresetWithValues($stepName: String!, $stepDescription: String!, $choiceName: String!, $template: String!, $variantId: ID!, $baseValues: Json! ) {
-	createPreset(
-		template: $template
-		needs: ["logo"]
-		baseValues: $baseValues
-		steps: [{
-		  name: $stepName
-		  description: $stepDescription
-		  choices: [{
-			name: $choiceName
-		  }]
-		}]
-		variantId: $variantId
+	mutation createPresetWithValues(
+		$stepName: String!
+		$stepDescription: String!
+		$choiceName: String!
+		$template: String!
+		$variantId: ID!
+		$baseValues: Json!
 	) {
-		id
-		steps {
+		createPreset(
+			template: $template
+			needs: ["logo"]
+			baseValues: $baseValues
+			steps: [{name: $stepName, description: $stepDescription, choices: [{name: $choiceName}]}]
+			variantId: $variantId
+		) {
+			id
+			steps {
+				id
+				name
+				description
+				choices {
+					id
+					name
+				}
+			}
+		}
+	}
+`;
+
+const createStepMutation = gql`
+	mutation createStep($name: String!, $description: String!, $presetId: ID!, $choiceName: String!) {
+		createStep(
+			name: $name
+			description: $description
+			presetId: $presetId
+			choices: [{name: $choiceName}]
+		) {
 			id
 			name
 			description
@@ -51,65 +72,40 @@ mutation createPresetWithValues($stepName: String!, $stepDescription: String!, $
 			}
 		}
 	}
-}
 `;
 
-const createStepMutation = gql`
-mutation createStep($name: String!, $description: String!, $presetId: ID!, $choiceName: String! ) {
-	createStep(
-		name: $name
-		description: $description
-		presetId: $presetId
-		choices:[{name: $choiceName}]
-	) {
-		id
-		name
-		description
-		choices {
+const createChoiceMutation = gql`
+	mutation createChoice($name: String!, $stepId: ID!) {
+		createChoice(name: $name, stepId: $stepId) {
 			id
 			name
 		}
 	}
-}
-`;
-
-const createChoiceMutation = gql`
-mutation createChoice($name: String!, $stepId: ID! ) {
-	createChoice(
-		name: $name
-		stepId: $stepId
-	) {
-		id
-		name
-	}
-}
 `;
 
 const renameStepMutation = gql`
-mutation renameStep($id: ID!, $newName: String!, $newDescription: String!) {
-	updateStep(id: $id, name: $newName, description: $newDescription) {
-		id
-		name
-		description
+	mutation renameStep($id: ID!, $newName: String!, $newDescription: String!) {
+		updateStep(id: $id, name: $newName, description: $newDescription) {
+			id
+			name
+			description
+		}
 	}
-}
 `;
 
-
 const renameChoiceMutation = gql`
-mutation renameChoice($id: ID!, $newName: String!) {
-	updateChoice(id: $id, name: $newName) {
-		id
-		name
+	mutation renameChoice($id: ID!, $newName: String!) {
+		updateChoice(id: $id, name: $newName) {
+			id
+			name
+		}
 	}
-}
 `;
 
 export class AddStep extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-		};
+		this.state = {};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.createStep = this.createStep.bind(this);
 	}
@@ -117,12 +113,15 @@ export class AddStep extends React.Component {
 	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
-		this.client.getStore('/prototypoStore', this.lifespan)
-		.onUpdate((head) => {
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
+			.onUpdate((head) => {
 				this.setState({
 					preset: head.toJS().d.preset,
 					error: head.toJS().d.errorAddStep,
-					step: head.toJS().d.step.name ? head.toJS().d.step : head.toJS().d.variant.ptypoLite.steps[0],
+					step: head.toJS().d.step.name
+						? head.toJS().d.step
+						: head.toJS().d.variant.ptypoLite.steps[0],
 				});
 			})
 			.onDelete(() => {
@@ -156,7 +155,6 @@ export class AddStep extends React.Component {
 		const description = this.refs.description.value;
 		const choice = this.props.edit ? '' : this.refs.choice.value;
 
-
 		if (!String(name).trim()) {
 			this.setState({error: 'You must choose a name for your step.'});
 			return;
@@ -174,10 +172,8 @@ export class AddStep extends React.Component {
 
 		if (this.props.edit) {
 			console.log('====================================');
-			const {data: {updateStep: newStep}} = await this.props.renameStep(
-				name,
-				description,
-			);
+			const {data: {updateStep: newStep}} = await this.props.renameStep(name, description);
+
 			this.client.dispatchAction('/edit-step', newStep);
 		}
 		else {
@@ -189,6 +185,7 @@ export class AddStep extends React.Component {
 						this.props.preset.id,
 						choice,
 					);
+
 					this.client.dispatchAction('/created-step', newStep);
 				}
 				else {
@@ -197,7 +194,11 @@ export class AddStep extends React.Component {
 						description,
 						choice,
 					);
-					this.client.dispatchAction('/created-preset', {...newPreset, baseValues: this.props.variant.values});
+
+					this.client.dispatchAction('/created-preset', {
+						...newPreset,
+						baseValues: this.props.variant.values,
+					});
 				}
 
 				// this.client.dispatchAction('/change-font', {
@@ -221,40 +222,84 @@ export class AddStep extends React.Component {
 			'add-family': true,
 			'with-error': !!this.state.error,
 		});
-		const error = this.state.error ? <div className="add-family-form-error">{this.state.error}</div> : false;
-		const nameInput = (this.props.edit && this.state.step)
-			? (
-				<input ref="name" key={this.state.step.name} className="add-family-form-input" type="text" placeholder="Step 1" defaultValue={this.state.step.name}/>
-			)
-			: (
+		const error = this.state.error ? (
+			<div className="add-family-form-error">{this.state.error}</div>
+		) : (
+			false
+		);
+		const nameInput
+			= this.props.edit && this.state.step ? (
+				<input
+					ref="name"
+					key={this.state.step.name}
+					className="add-family-form-input"
+					type="text"
+					placeholder="Step 1"
+					defaultValue={this.state.step.name}
+				/>
+			) : (
 				<input ref="name" className="add-family-form-input" type="text" placeholder="Step 1" />
 			);
-		const descriptionInput = (this.props.edit && this.state.step)
-			? (
-				<input ref="description" key={this.state.step.description} className="add-family-form-input" type="text" placeholder="Step description" defaultValue={this.state.step.description}/>
-			)
-			: (
-				<input ref="description" className="add-family-form-input" type="text" placeholder="Step description"/>
+		const descriptionInput
+			= this.props.edit && this.state.step ? (
+				<input
+					ref="description"
+					key={this.state.step.description}
+					className="add-family-form-input"
+					type="text"
+					placeholder="Step description"
+					defaultValue={this.state.step.description}
+				/>
+			) : (
+				<input
+					ref="description"
+					className="add-family-form-input"
+					type="text"
+					placeholder="Step description"
+				/>
 			);
+
 		return (
 			<div className={stepClass} id="step-create">
 				<div className="add-family-form">
-					<form onSubmit={(e) => {this.createStep(e);} }>
+					<form
+						onSubmit={(e) => {
+							this.createStep(e);
+						}}
+					>
 						<label className="add-family-form-label">Step name</label>
 						{nameInput}
 						<label className="add-family-form-label">Step description</label>
 						{descriptionInput}
-						{this.props.edit ? false : (
+						{this.props.edit ? (
+							false
+						) : (
 							<span>
 								<label className="add-family-form-label">Name of your first choice</label>
-								<input ref="choice" className="add-family-form-input" type="text" placeholder="Choice name"/>
+								<input
+									ref="choice"
+									className="add-family-form-input"
+									type="text"
+									placeholder="Choice name"
+								/>
 							</span>
 						)}
 					</form>
 					{error}
 					<div className="action-form-buttons">
-						<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
-						<Button click={(e) => {this.createStep(e);} } label={this.props.edit ? 'Edit step' : 'Create step'} />
+						<Button
+							click={(e) => {
+								this.exit(e);
+							}}
+							label="Cancel"
+							neutral
+						/>
+						<Button
+							click={(e) => {
+								this.createStep(e);
+							}}
+							label={this.props.edit ? 'Edit step' : 'Create step'}
+						/>
 					</div>
 				</div>
 			</div>
@@ -284,32 +329,28 @@ AddStep = compose(
 	}),
 	graphql(createStepMutation, {
 		props: ({mutate}) => ({
-			createStep: (name, description, presetId, choiceName) => {
-				return mutate({
-					variables: {
-						presetId,
-						name,
-						description,
-						choiceName,
-					},
-				});
-			},
+			createStep: (name, description, presetId, choiceName) => mutate({
+				variables: {
+					presetId,
+					name,
+					description,
+					choiceName,
+				},
+			}),
 		}),
 	}),
 	graphql(createPresetWithValuesMutation, {
 		props: ({mutate, ownProps}) => ({
-			createPresetWithValues: (name, description, choiceName) => {
-				return mutate({
-					variables: {
-						stepName: name,
-						stepDescription: description,
-						choiceName,
-						template: ownProps.variant.template,
-						variantId: ownProps.variant.id,
-						baseValues: JSON.parse(JSON.stringify(ownProps.variant.values)),
-					},
-				});
-			},
+			createPresetWithValues: (name, description, choiceName) => mutate({
+				variables: {
+					stepName: name,
+					stepDescription: description,
+					choiceName,
+					template: ownProps.variant.template,
+					variantId: ownProps.variant.id,
+					baseValues: JSON.parse(JSON.stringify(ownProps.variant.values)),
+				},
+			}),
 		}),
 	}),
 	graphql(renameStepMutation, {
@@ -323,8 +364,8 @@ AddStep = compose(
 					},
 				}),
 		}),
-	})
-) (AddStep);
+	}),
+)(AddStep);
 
 export class AddChoice extends React.Component {
 	constructor(props) {
@@ -339,11 +380,14 @@ export class AddChoice extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					error: head.toJS().d.errorAddChoice,
-					choice: head.toJS().d.choice.name ? head.toJS().d.choice : head.toJS().d.variant.ptypoLite.steps[0].choices[0],
+					choice: head.toJS().d.choice.name
+						? head.toJS().d.choice
+						: head.toJS().d.variant.ptypoLite.steps[0].choices[0],
 				});
 			})
 			.onDelete(() => {
@@ -361,16 +405,14 @@ export class AddChoice extends React.Component {
 
 		const name = this.refs.name.value;
 
-
 		if (!String(name).trim()) {
 			this.setState({error: 'You must choose a name for your choice.'});
 			return;
 		}
 
 		if (this.props.edit) {
-			const {data: {updateChoice: newChoice}} = await this.props.renameChoice(
-				name,
-			);
+			const {data: {updateChoice: newChoice}} = await this.props.renameChoice(name);
+
 			this.client.dispatchAction('/edit-choice', newChoice);
 		}
 		else {
@@ -379,6 +421,7 @@ export class AddChoice extends React.Component {
 					name,
 					this.props.step.id,
 				);
+
 				this.client.dispatchAction('/created-choice', newChoice);
 			}
 			catch (err) {
@@ -400,26 +443,51 @@ export class AddChoice extends React.Component {
 			'add-family': true,
 			'with-error': !!this.state.error,
 		});
-		const error = this.state.error ? <div className="add-family-form-error">{this.state.error}</div> : false;
-		const nameInput = (this.props.edit && this.state.choice)
-			? (
-				<input ref="name" key={this.state.choice.name} className="add-family-form-input" type="text" placeholder="Choice 1" defaultValue={this.state.choice.name}/>
-			)
-			: (
-				<input ref="name" className="add-family-form-input" type="text" placeholder="Choice 1"/>
+		const error = this.state.error ? (
+			<div className="add-family-form-error">{this.state.error}</div>
+		) : (
+			false
+		);
+		const nameInput
+			= this.props.edit && this.state.choice ? (
+				<input
+					ref="name"
+					key={this.state.choice.name}
+					className="add-family-form-input"
+					type="text"
+					placeholder="Choice 1"
+					defaultValue={this.state.choice.name}
+				/>
+			) : (
+				<input ref="name" className="add-family-form-input" type="text" placeholder="Choice 1" />
 			);
 
 		return (
 			<div className={choiceClass} id="step-create">
 				<div className="add-family-form">
 					<label className="add-family-form-label">Choose a choice name</label>
-					<form onSubmit={(e) => {this.createChoice(e);} }>
-					{nameInput}
+					<form
+						onSubmit={(e) => {
+							this.createChoice(e);
+						}}
+					>
+						{nameInput}
 					</form>
 					{error}
 					<div className="action-form-buttons">
-						<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
-						<Button click={(e) => {this.createChoice(e);} } label={this.props.edit ? 'Edit choice' : 'Create choice'}/>
+						<Button
+							click={(e) => {
+								this.exit(e);
+							}}
+							label="Cancel"
+							neutral
+						/>
+						<Button
+							click={(e) => {
+								this.createChoice(e);
+							}}
+							label={this.props.edit ? 'Edit choice' : 'Create choice'}
+						/>
 					</div>
 				</div>
 			</div>
@@ -427,22 +495,20 @@ export class AddChoice extends React.Component {
 	}
 }
 
-
 AddChoice = compose(
 	graphql(createChoiceMutation, {
 		props: ({mutate, ownProps}) => ({
-			createChoice: (name) => {
-				return mutate({
-					variables: {
-						stepId: ownProps.step.id,
-						name,
-					},
-				});
-			},
+			createChoice: name => mutate({
+				variables: {
+					stepId: ownProps.step.id,
+					name,
+				},
+			}),
 		}),
 		options: {
 			update: (store, {data: {createChoice}}) => {
 				const data = store.readQuery({query: libraryQuery});
+
 				store.writeQuery({
 					query: libraryQuery,
 					data,
@@ -460,21 +526,24 @@ AddChoice = compose(
 					},
 				}),
 		}),
-	})
-) (AddChoice);
-
+	}),
+)(AddChoice);
 
 export class ExportLite extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.needs = ['logo', 'text', 'website'];
+		this.toggleCheckbox = this.toggleCheckbox.bind(this);
 	}
 
 	componentWillMount() {
+		this.selectedCheckboxes = new Set();
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					preset: head.toJS().d.preset,
@@ -494,12 +563,29 @@ export class ExportLite extends React.Component {
 		this.lifespan.release();
 	}
 
+	toggleCheckbox(label) {
+		if (this.selectedCheckboxes.has(label)) {
+			return this.selectedCheckboxes.delete(label);
+		}
+		return this.selectedCheckboxes.add(label);
+	}
+
+	createCheckbox(label) {
+		return (
+			<Checkbox label={label} handleCheckboxChange={this.toggleCheckbox} key={label} />
+		)
+	}
+
 	sendToLite() {
-		const template = this.state.family.template;
+		const template = this.state.family.template.split('.').slice(0, -1).join();
 		const preset = this.state.preset;
 		const variant = this.state.variant.name || 'regular';
 		const familyName = this.state.family.name;
 
+		const needs = [];
+		for (const checkbox of this.selectedCheckboxes) {
+			needs.push(checkbox.replace(/"/g, '\\"'));
+		}
 
 		const createPreset = `
 		mutation {
@@ -507,24 +593,29 @@ export class ExportLite extends React.Component {
 				preset: "${familyName}"
 				variant: "${variant}"
 				template: "${template}"
-				baseValues : "${JSON.stringify(preset.baseValues).replace(/"/g, "\\\"")}"
+				needs: [${needs.map(need => `"${need}"`)}]
+				baseValues : "${JSON.stringify(preset.baseValues).replace(/"/g, '\\"')}"
 				steps: [
-					${preset.steps.map(step => `
+					${preset.steps.map(
+						step => `
 						{
 							name: "${step.name}"
 							description: "${step.description}"
 							choices:
 							[
-								${step.choices.map(choice => `
+								${step.choices.map(
+									choice => `
 									{
 										name: "${choice.name}"
 										db: "${choice.db}"
-										values: "${JSON.stringify(choice.values).replace(/"/g, "\\\"")}"
+										values: "${JSON.stringify(choice.values).replace(/"/g, '\\"')}"
 									}
-								`)}
+								`,
+								)}
 							]
 						}
-					`)}
+					`,
+					)}
 				]
 			) { id }
 		}
@@ -532,10 +623,12 @@ export class ExportLite extends React.Component {
 		const GRAPHQL_API = 'https://api.graph.cool/simple/v1/cj6maa0ib2tud01656t4tp4ej';
 
 		request(GRAPHQL_API, createPreset)
-		.then(data => this.client.dispatchAction('/store-value', {
-			openExportLiteModal: false,
-			 }))
-		.catch(error => console.log(error));
+			.then(data =>
+				this.client.dispatchAction('/store-value', {
+					openExportLiteModal: false,
+				}),
+			)
+			.catch(error => console.log(error));
 	}
 
 	exit() {
@@ -553,24 +646,87 @@ export class ExportLite extends React.Component {
 			'add-family': true,
 		});
 		let data;
+
 		if (this.state.preset) {
-			data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state.preset));
+			data = `text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(this.state.preset))}`;
 		}
 		const download = this.state.variant && (
-			<a href={`data:${data}`} download={`${this.state.variant.db}.json`}>Download JSON</a>
+			<a href={`data:${data}`} download={`${this.state.variant.db}.json`}>
+				Download JSON
+			</a>
 		);
 
 		return (
 			<div className={choiceClass} id="step-create">
 				<div className="add-family-form">
 					{download}
-					<Button click={() => {this.fetchData();}} label="Fetch recent data"/>
+					<hr/>
+					<p> Preset suitable for </p>
+					<form action="">
+						{this.needs.map(need => this.createCheckbox(need))}
+					</form>
+					<hr/>
+					<Button
+						click={() => {
+							this.fetchData();
+						}}
+						label="Fetch recent data"
+					/>
 					<div className="action-form-buttons">
-						<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
-						<Button click={(e) => {this.sendToLite();} } label="Send to Unique staging"/>
+						<Button
+							click={(e) => {
+								this.exit(e);
+							}}
+							label="Cancel"
+							neutral
+						/>
+						<Button
+							click={(e) => {
+								this.sendToLite();
+							}}
+							label="Send to Unique staging"
+						/>
 					</div>
 				</div>
 			</div>
 		);
 	}
 }
+
+class Checkbox extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			isChecked: false,
+		};
+	}
+	toggleCheckboxChange() {
+		const {handleCheckboxChange, label} = this.props;
+
+		this.setState(({isChecked}) => ({
+			isChecked: !isChecked,
+		}));
+		handleCheckboxChange(label);
+	}
+
+	render() {
+		const {label} = this.props;
+		const {isChecked} = this.state;
+
+		return (
+			<div className="checkbox">
+				<label>
+					<input
+						type="checkbox"
+						value={label}
+						checked={isChecked}
+						onChange={() => this.toggleCheckboxChange()}
+					/>
+
+					{label}
+				</label>
+			</div>
+		);
+	}
+}
+export default Checkbox;
