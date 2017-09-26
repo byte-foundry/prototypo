@@ -474,7 +474,6 @@ export class ExportLite extends React.Component {
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
-
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
@@ -496,50 +495,57 @@ export class ExportLite extends React.Component {
 	}
 
 	sendToLite() {
-
 		const template = this.state.family.template;
+		const preset = this.state.preset;
 		const variant = this.state.variant.name || 'regular';
 		const familyName = this.state.family.name;
 
-		// import { request } from 'graphql-request'
 
-		// const query = `query getMovie($title: String!) {
-		//   Movie(title: $title) {
-		// 	releaseDate
-		// 	actors {
-		// 	  name
-		// 	}
-		//   }
-		// }`
-
-		// const variables = {
-		//   title: 'Inception',
-		// }
-
-		// request('my-endpoint', query, variables).then(data => console.log(data))
-
-		const createNewPreset = (type, id) => `
-			mutation {
-				${type} (id: "${id}") {
-					selected
-				}
-			}
+		const createPreset = `
+		mutation {
+			createPreset(
+				preset: "${familyName}"
+				variant: "${variant}"
+				template: "${template}"
+				baseValues : "${JSON.stringify(preset.baseValues).replace(/"/g, "\\\"")}"
+				steps: [
+					${preset.steps.map(step => `
+						{
+							name: "${step.name}"
+							description: "${step.description}"
+							choices:
+							[
+								${step.choices.map(choice => `
+									{
+										name: "${choice.name}"
+										db: "${choice.db}"
+										values: "${JSON.stringify(choice.values).replace(/"/g, "\\\"")}"
+									}
+								`)}
+							]
+						}
+					`)}
+				]
+			) { id }
+		}
 		`;
 		const GRAPHQL_API = 'https://api.graph.cool/simple/v1/cj6maa0ib2tud01656t4tp4ej';
 
-		request(GRAPHQL_API, getSelectedCount('Step', font.steps[0].id))
-			.then(
-				this.client.dispatchAction('/store-value', {
-					openExportLiteModal: false,
-				}),
-			)
-			.catch(error => console.log(error));
+		request(GRAPHQL_API, createPreset)
+		.then(data => this.client.dispatchAction('/store-value', {
+			openExportLiteModal: false,
+			 }))
+		.catch(error => console.log(error));
 	}
 
 	exit() {
 		this.client.dispatchAction('/store-value', {
 			openExportLiteModal: false,
 		});
+	}
+
+	fetchData() {
+		this.client.dispatchAction('/fetch-preset', this.state.variant.id);
 	}
 
 	render() {
@@ -558,6 +564,7 @@ export class ExportLite extends React.Component {
 			<div className={choiceClass} id="step-create">
 				<div className="add-family-form">
 					{download}
+					<Button click={() => {this.fetchData();}} label="Fetch recent data"/>
 					<div className="action-form-buttons">
 						<Button click={(e) => {this.exit(e);} } label="Cancel" neutral={true}/>
 						<Button click={(e) => {this.sendToLite();} } label="Send to Unique staging"/>
