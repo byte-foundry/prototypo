@@ -129,6 +129,15 @@ export class AddStep extends React.Component {
 					error: undefined,
 				});
 			});
+		this.client.getStore('/undoableStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					fontValues: head.toJS().d.controlsValues,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 	}
 
 	componentWillUnmount() {
@@ -193,6 +202,7 @@ export class AddStep extends React.Component {
 						name,
 						description,
 						choice,
+						this.state.fontValues,
 					);
 
 					this.client.dispatchAction('/created-preset', {
@@ -341,14 +351,14 @@ AddStep = compose(
 	}),
 	graphql(createPresetWithValuesMutation, {
 		props: ({mutate, ownProps}) => ({
-			createPresetWithValues: (name, description, choiceName) => mutate({
+			createPresetWithValues: (name, description, choiceName, fontValues) => mutate({
 				variables: {
 					stepName: name,
 					stepDescription: description,
 					choiceName,
 					template: ownProps.variant.template,
 					variantId: ownProps.variant.id,
-					baseValues: JSON.parse(JSON.stringify(ownProps.variant.values)),
+					baseValues: JSON.parse(JSON.stringify(fontValues)),
 				},
 			}),
 		}),
