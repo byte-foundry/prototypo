@@ -76,7 +76,7 @@ export default {
 		}
 		saveAppValues();
 	},
-	'/created-preset': async ({id, steps, baseValues}) => {
+	'/created-preset': async ({id, steps}) => {
 		const step = {
 			id: steps[0].id,
 			name: steps[0].name,
@@ -90,9 +90,14 @@ export default {
 
 		const preset = {
 			id,
-			baseValues,
+			baseValues: _.cloneDeep(undoableStore.get('controlsValues')),
 			steps,
 		};
+
+		console.log('====================================');
+		console.log('Created preset');
+		console.log(preset);
+		console.log('====================================');
 
 		const patch = prototypoStore
 		.set('preset', preset)
@@ -118,10 +123,18 @@ export default {
 			name: step.choices[0].name,
 		};
 
-
 		const currentPreset = _.cloneDeep(prototypoStore.get('preset'));
 		const fullStep = {...newStep, choices: [newChoice]};
 		currentPreset.steps.push(fullStep);
+
+		console.log('====================================');
+		console.log('New step:');
+		console.log(newStep);
+		console.log('New choice');
+		console.log(newChoice);
+		console.log('Preset base values');
+		console.log(currentPreset.baseValues);
+		console.log('====================================');
 
 		localClient.dispatchAction('/change-param', {values: currentPreset.baseValues});
 
@@ -147,6 +160,13 @@ export default {
 		const currentPreset = _.cloneDeep(prototypoStore.get('preset'));
 		const currentStep = _.cloneDeep(prototypoStore.get('step'));
 		const presetStep = currentPreset.steps.find(i => i.id === currentStep.id);
+
+		console.log('====================================');
+		console.log('New choice');
+		console.log(newChoice);
+		console.log('Preset base values');
+		console.log(currentPreset.baseValues);
+		console.log('====================================');
 
 		currentStep.choices.push(newChoice);
 		presetStep.choices.push(newChoice);
