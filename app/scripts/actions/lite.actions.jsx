@@ -287,7 +287,7 @@ export default {
 		saveAppValues();
 	},
 	'/save-choice-values': async () => {
-		const currentPreset = prototypoStore.get('preset');
+		const currentPreset = _.cloneDeep(prototypoStore.get('preset'));
 		let currentStep = prototypoStore.get('step');
 
 		if (!currentStep.name) {
@@ -299,6 +299,8 @@ export default {
 		if (!currentChoice.name) {
 			currentChoice = currentPreset.steps[0].choices[0];
 		}
+
+		const choice = step.choices.find(elem => elem.id === currentChoice.id);
 
 		const baseValues = currentPreset.baseValues;
 		const currentValues = _.cloneDeep(undoableStore.get('controlsValues'));
@@ -325,10 +327,7 @@ export default {
 		Object.keys(difference).map(key => newValues[key] = difference[key].currentValues);
 		console.log('Saved changes : ');
 		console.log(newValues);
-		currentChoice.values = newValues;
-		const stepChoice = step.choices.find(elem => elem.id === currentChoice.id);
-		stepChoice.values = newValues;
-
+		choice.values = newValues;
 
 		console.log('==========Values to save===========');
 		console.log(newValues);
@@ -343,7 +342,7 @@ export default {
 					}
 				`,
 				variables: {
-					id: currentChoice.id,
+					id: choice.id,
 					values: JSON.parse(JSON.stringify(newValues)),
 				},
 			});
@@ -354,7 +353,7 @@ export default {
 
 			const patch = prototypoStore
 				.set('preset', currentPreset)
-				.set('choice', currentChoice)
+				.set('choice', choice)
 				.set('step', step)
 				.commit();
 
