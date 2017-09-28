@@ -591,15 +591,56 @@ export class ExportLite extends React.Component {
 		const preset = this.state.preset;
 		const variant = this.state.variant.name || 'regular';
 		const familyName = this.state.family.name;
-
 		const needs = [];
+
 		for (const checkbox of this.selectedCheckboxes) {
 			needs.push(checkbox.replace(/"/g, '\\"'));
 		}
 
+		const findPreset = `
+			query {
+				Preset(ptypoPresetId:"${preset.id}") {id}
+			}
+		`;
+
 		const createPreset = `
 		mutation {
 			createPreset(
+				preset: "${familyName}"
+				variant: "${variant}"
+				template: "${template}"
+				needs: [${needs.map(need => `"${need}"`)}]
+				baseValues : "${JSON.stringify(preset.baseValues).replace(/"/g, '\\"')}"
+				ptypoPresetId: "${preset.id}"
+				steps: [
+					${preset.steps.map(
+						step => `
+						{
+							name: "${step.name}"
+							description: "${step.description}"
+							choices:
+							[
+								${step.choices.map(
+									choice => `
+									{
+										name: "${choice.name}"
+										values: "${JSON.stringify(choice.values).replace(/"/g, '\\"')}"
+									}
+								`,
+								)}
+							]
+						}
+					`,
+					)}
+				]
+			) { id }
+		}
+		`;
+
+		const updatePreset = presetId => `
+		mutation {
+			updatePreset(
+				id: "${presetId}"
 				preset: "${familyName}"
 				variant: "${variant}"
 				template: "${template}"
@@ -617,7 +658,6 @@ export class ExportLite extends React.Component {
 									choice => `
 									{
 										name: "${choice.name}"
-										db: "${choice.db}"
 										values: "${JSON.stringify(choice.values).replace(/"/g, '\\"')}"
 									}
 								`,
@@ -632,12 +672,27 @@ export class ExportLite extends React.Component {
 		`;
 		const GRAPHQL_API = 'https://api.graph.cool/simple/v1/cj6maa0ib2tud01656t4tp4ej';
 
-		request(GRAPHQL_API, createPreset)
-			.then(data =>
-				this.client.dispatchAction('/store-value', {
-					openExportLiteModal: false,
-				}),
-			)
+		request(GRAPHQL_API, findPreset)
+			.then((data) =>	{
+				if (data.Preset) {
+					request(GRAPHQL_API, updatePreset(data.Preset.id))
+					.then(res =>
+						this.client.dispatchAction('/store-value', {
+							openExportLiteModal: false,
+						}),
+					)
+					.catch(error => console.log(error));
+				}
+				else {
+					request(GRAPHQL_API, createPreset)
+					.then(res =>
+						this.client.dispatchAction('/store-value', {
+							openExportLiteModal: false,
+						}),
+					)
+					.catch(error => console.log(error));
+				}
+			})
 			.catch(error => console.log(error));
 	}
 
@@ -645,10 +700,6 @@ export class ExportLite extends React.Component {
 		this.client.dispatchAction('/store-value', {
 			openExportLiteModal: false,
 		});
-	}
-
-	fetchData() {
-		this.client.dispatchAction('/fetch-preset', this.state.variant.id);
 	}
 
 	render() {
@@ -676,12 +727,6 @@ export class ExportLite extends React.Component {
 						{this.needs.map(need => this.createCheckbox(need))}
 					</form>
 					<hr/>
-					<Button
-						click={() => {
-							this.fetchData();
-						}}
-						label="Fetch recent data"
-					/>
 					<div className="action-form-buttons">
 						<Button
 							click={(e) => {
