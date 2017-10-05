@@ -82,6 +82,9 @@ export default class HoodieApi {
 						id
 						email
 						stripe
+						manager {
+							id
+						}
 					}
 				}
 			`,
@@ -285,6 +288,10 @@ function setupHoodie(data) {
 	HoodieApi.instance.hoodieId = data.id;
 	HoodieApi.instance.email = data.email;
 	HoodieApi.instance.plan = 'free_none';
+
+	if (data.manager) {
+		HoodieApi.instance.plan = 'managed';
+	}
 
 	if (window.Intercom) {
 		window.Intercom('boot', {
