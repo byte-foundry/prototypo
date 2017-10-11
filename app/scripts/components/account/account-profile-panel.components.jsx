@@ -1,60 +1,24 @@
 import React from 'react';
-import Lifespan from 'lifespan';
+import {graphql, gql, compose} from 'react-apollo';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
+import InputWithLabel from '../shared/input-with-label.components';
+import DisplayWithLabel from '../shared/display-with-label.components';
+import SelectWithLabel from '../shared/select-with-label.components';
+import AccountValidationButton from '../shared/account-validation-button.components';
+import FormError from '../shared/form-error.components';
+import FormSuccess from '../shared/form-success.components';
+import WaitForLoad from '../wait-for-load.components';
 
-import InputWithLabel from '../shared/input-with-label.components.jsx';
-import DisplayWithLabel from '../shared/display-with-label.components.jsx';
-import SelectWithLabel from '../shared/select-with-label.components.jsx';
-import AccountValidationButton from '../shared/account-validation-button.components.jsx';
-import FormError from '../shared/form-error.components.jsx';
-import FormSuccess from '../shared/form-success.components.jsx';
-
-export default class AccountProfilePanel extends React.PureComponent {
+class AccountProfilePanel extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
-			infos: {},
-			errors: [],
+			success: false,
+			errors: '',
 		};
-	}
 
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					infos: head.toJS().infos,
-					errors: head.toJS().profileForm.errors,
-					success: head.toJS().profileForm.success,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
-	changeAccount(e) {
-		e.preventDefault();
-		this.client.dispatchAction('/change-account-info', {
-			firstname: this.refs.firstname.inputValue,
-			lastname: this.refs.lastname.inputValue,
-			css: this.refs.css.inputValue,
-			website: this.refs.website.inputValue,
-			twitter: this.refs.twitter.inputValue,
-			phone: this.refs.phone.inputValue,
-			skype: this.refs.skype.inputValue,
-		});
-	}
-
-	render() {
-		const jobtitles = [
+		this.jobtitles = [
 			{value: 'graphic_designer', label: 'a graphic designer'},
 			{value: 'student', label: 'a student'},
 			{value: 'teacher', label: 'a teacher'},
@@ -62,50 +26,214 @@ export default class AccountProfilePanel extends React.PureComponent {
 			{value: 'web_developer', label: 'a web developer'},
 		];
 
-		return this.state.infos.accountValues
-			? (
-				<form className="account-base account-profile-panel" onSubmit={(e) => {this.changeAccount(e);}}>
-					<DisplayWithLabel label="My email">
-						{this.state.infos.accountValues.username}
-					</DisplayWithLabel>
-					<div className="columns">
-						<div className="half-column">
-							<InputWithLabel ref="firstname" label="First name" required={true} inputValue={this.state.infos.accountValues.firstname}/>
-						</div>
-						<div className="half-column">
-							<InputWithLabel ref="lastname" label="Last name" placeholder="Doe" required={false} inputValue={this.state.infos.accountValues.lastname}/>
-						</div>
-					</div>
-					<SelectWithLabel
-						ref="css"
-						label="I am"
-						name="css"
-						className="input-with-label-input"
-						placeholder="an architect"
-						options={jobtitles}
-						inputValue={this.state.infos.accountValues.css}/>
-					<div className="columns">
-						<div className="half-column">
-							<InputWithLabel ref="website" label="My website" placeholder="www.domain.com" required={false} inputValue={this.state.infos.accountValues.website}/>
-						</div>
-						<div className="half-column">
-							<InputWithLabel ref="twitter" label="Twitter account" placeholder="@johnDoe" required={false} inputValue={this.state.infos.accountValues.twitter}/>
-						</div>
-					</div>
-					<div className="columns">
-						<div className="half-column">
-							<InputWithLabel label="Phone number" type="tel" ref="phone" inputValue={this.state.infos.accountValues.phone} />
-						</div>
-						<div className="half-column">
-							<InputWithLabel label="Skype ID" ref="skype" inputValue={this.state.infos.accountValues.skype} />
-						</div>
-					</div>
+		this.changeAccount = this.changeAccount.bind(this);
+	}
 
-					{this.state.success && <FormSuccess successText="You've successfully updated your profile."/>}
-					{this.state.errors.map((err) => {return <FormError key={err} errorText={err}/>;})}
-					<AccountValidationButton label="Save infos"/>
-				</form>
-			)
-			: false;
+	async changeAccount(e) {
+		e.preventDefault();
+
+		this.setState({success: false, errors: ''});
+
+		try {
+			const firstName = this.refs.firstName.inputValue;
+			const lastName = this.refs.lastName.inputValue;
+			const occupation = this.refs.occupation.inputValue.value;
+			const website = this.refs.website.inputValue;
+			const twitter = this.refs.twitter.inputValue;
+			// avoid empty string being recorded into Intercom
+			const phone = this.refs.phone.inputValue || undefined;
+			const skype = this.refs.skype.inputValue;
+
+			if (!firstName) {
+				throw new Error('First name is required.');
+			}
+
+			await this.props.updateProfile({
+				firstName,
+				lastName,
+				occupation,
+				website,
+				twitter,
+				phone,
+				skype,
+			});
+
+			this.setState({success: true});
+		}
+		catch (err) {
+			this.setState({errors: err.message});
+		}
+	}
+
+	render() {
+		const {
+			loading,
+			email,
+			firstName,
+			lastName,
+			occupation,
+			website,
+			twitter,
+			phone,
+			skype,
+		} = this.props;
+		const {success, errors} = this.state;
+
+		if (loading) {
+			return (
+				<div className="account-base account-profile-panel">
+					<WaitForLoad loading />
+				</div>
+			);
+		}
+
+		return (
+			<form className="account-base account-profile-panel" onSubmit={this.changeAccount}>
+				<DisplayWithLabel label="My email">
+					{email}
+				</DisplayWithLabel>
+				<div className="columns">
+					<div className="half-column">
+						<InputWithLabel ref="firstName" label="First name" required inputValue={firstName} />
+					</div>
+					<div className="half-column">
+						<InputWithLabel
+							ref="lastName"
+							label="Last name"
+							placeholder="Doe"
+							required={false}
+							inputValue={lastName}
+						/>
+					</div>
+				</div>
+				<SelectWithLabel
+					ref="occupation"
+					label="I am"
+					name="occupation"
+					className="input-with-label-input"
+					placeholder="an architect"
+					options={this.jobtitles}
+					inputValue={occupation}
+				/>
+				<div className="columns">
+					<div className="half-column">
+						<InputWithLabel
+							ref="website"
+							label="My website"
+							placeholder="www.domain.com"
+							required={false}
+							inputValue={website}
+						/>
+					</div>
+					<div className="half-column">
+						<InputWithLabel
+							ref="twitter"
+							label="Twitter account"
+							placeholder="@johnDoe"
+							required={false}
+							inputValue={twitter}
+						/>
+					</div>
+				</div>
+				<div className="columns">
+					<div className="half-column">
+						<InputWithLabel label="Phone number" type="tel" ref="phone" inputValue={phone} />
+					</div>
+					<div className="half-column">
+						<InputWithLabel label="Skype ID" ref="skype" inputValue={skype} />
+					</div>
+				</div>
+				{success && <FormSuccess successText="You've successfully updated your profile." />}
+				{errors && <FormError errorText={errors} />}
+				<AccountValidationButton label="Save infos" />
+			</form>
+		);
 	}
 }
+
+const userProfileQuery = gql`
+	query getUserProfile {
+		user {
+			id
+			email
+			firstName
+			lastName
+			occupation
+			website
+			twitter
+			phone
+			skype
+		}
+	}
+`;
+
+const updateProfileMutation = gql`
+	mutation updateProfile(
+		$id: ID!,
+		$firstName: String,
+		$lastName: String,
+		$occupation: String,
+		$website: String,
+		$twitter: String,
+		$phone: String,
+		$skype: String,
+	) {
+		updateUser(
+			id: $id,
+			firstName: $firstName,
+			lastName: $lastName,
+			occupation: $occupation,
+			website: $website,
+			twitter: $twitter,
+			phone: $phone,
+			skype: $skype,
+		) {
+			id
+			email
+			firstName
+			lastName
+			occupation
+			website
+			twitter
+			phone
+			skype
+		}
+	}
+`;
+
+export default compose(
+	graphql(userProfileQuery, {
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			return data.user;
+		},
+	}),
+	graphql(updateProfileMutation, {
+		props: ({mutate, ownProps}) => ({
+			updateProfile: (values) => {
+				if (window.Intercom) {
+					const fullName = values.firstName + (values.lastName ? ` ${values.lastName}` : '');
+
+					window.Intercom('update', {
+						name: fullName,
+						twitter: values.twitter,
+						website: values.website,
+						occupation: values.occupation,
+						phone: values.phone,
+						skype: values.skype,
+					})
+				}
+
+				mutate({
+					variables: {
+						...values,
+						id: ownProps.id,
+					},
+				});
+			}
+		}),
+	}),
+)(AccountProfilePanel);

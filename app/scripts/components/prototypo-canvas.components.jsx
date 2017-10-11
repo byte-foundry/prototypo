@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import PrototypoCanvasContainer from 'prototypo-canvas';
+import HoodieApi from '~/services/hoodie.services.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
@@ -29,6 +30,7 @@ export default class PrototypoCanvas extends React.Component {
 			uiWord: '',
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.handleContextMenu = this.handleContextMenu.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.handleLeaveAndClick = this.handleLeaveAndClick.bind(this);
 		this.reset = this.reset.bind(this);
@@ -52,6 +54,7 @@ export default class PrototypoCanvas extends React.Component {
 		this.afterExport = this.afterExport.bind(this);
 		this.preExportGlyphr = this.preExportGlyphr.bind(this);
 		this.afterExportGlyphr = this.afterExportGlyphr.bind(this);
+		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
 	}
 
 	componentWillMount() {
@@ -59,36 +62,39 @@ export default class PrototypoCanvas extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					prototypoTextPanelOpened: head.toJS().uiMode.indexOf('text') !== -1,
-					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
-					glyphs: head.toJS().glyphs,
-					glyphFocused: head.toJS().glyphFocused,
-					glyphSelected: head.toJS().glyphSelected,
-					uiText: head.toJS().uiText || '',
-					uiWord: head.toJS().uiWord || '',
-					canvasMode: head.toJS().canvasMode,
-					oldCanvasMode: head.toJS().oldCanvasMode,
-					altList: head.toJS().altList,
+					prototypoTextPanelOpened: head.toJS().d.uiMode.indexOf('text') !== -1,
+					glyphPanelOpened: head.toJS().d.uiMode.indexOf('list') !== -1,
+					glyphs: head.toJS().d.glyphs,
+					glyphFocused: head.toJS().d.glyphFocused,
+					glyphSelected: head.toJS().d.glyphSelected,
+					uiText: head.toJS().d.uiText || '',
+					uiWord: head.toJS().d.uiWord || '',
+					canvasMode: head.toJS().d.canvasMode,
+					oldCanvasMode: head.toJS().d.oldCanvasMode,
+					altList: head.toJS().d.altList,
+					credits: head.toJS().d.credits,
 				});
+				this.isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+				this.isFreeWithCredits = (head.toJS().d.credits && head.toJS().d.credits > 0) && this.isFree;
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 
 		this.client.getStore('/fontInstanceStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState(head.toJS());
+			.onUpdate((head) => {
+				this.setState(head.toJS().d);
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 
 		this.client.getStore('/undoableStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					values: head.toJS().controlsValues,
+					values: head.toJS().d.controlsValues,
 				});
 			})
 			.onDelete(() => {
@@ -127,9 +133,13 @@ export default class PrototypoCanvas extends React.Component {
 		document.removeEventListener('selectstart', this.preventSelection);
 	}
 
-	toggleContextMenu(e) {
+	handleContextMenu(e) {
 		e.preventDefault();
-		e.stopPropagation();
+
+		this.toggleContextMenu();
+	}
+
+	toggleContextMenu() {
 		this.setState({
 			showContextMenu: !this.state.showContextMenu,
 		});
@@ -137,14 +147,28 @@ export default class PrototypoCanvas extends React.Component {
 		Log.ui('PrototypoCanvas.showContextMenu');
 	}
 
-	handleLeaveAndClick() {
-		if (this.state.showContextMenu) {
+	// This is not the best solution we have
+	// but it works if the mouse moves quickly away.
+	handleLeaveAndClick(e) {
+		const rect = e.currentTarget.getBoundingClientRect();
+		const x = e.pageX;
+		const y = e.pageY;
+
+		if (
+			this.state.showContextMenu
+			&& !(
+				rect.left <= x
+				&& x <= rect.left + rect.width
+				&& rect.top <= y
+				&& y <= rect.top + rect.height
+			)
+		) {
 			this.setState({
 				showContextMenu: false,
 			});
 		}
 
-		//Need to resume selection on leave
+		// Need to resume selection on leave
 		document.removeEventListener('selectstart', this.preventSelection);
 	}
 
@@ -207,15 +231,23 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
-	reset(x, y) {
+	reset(x, y, zoom) {
 		this.props.reset({
 			x,
 			y,
+			zoom,
 		});
 	}
 
 	resetGlyph() {
-		const glyphName = this.state.glyphs[this.props.glyphSelected][0].name;
+		let glyphName = '';
+
+		if (this.state.altList[this.props.glyphSelected]) {
+			glyphName = this.state.altList[this.props.glyphSelected];
+		}
+		else {
+			glyphName = this.state.glyphs[this.props.glyphSelected][0].name;
+		}
 		this.client.dispatchAction('/reset-glyph-manually', {glyphName});
 	}
 
@@ -245,18 +277,30 @@ export default class PrototypoCanvas extends React.Component {
 		}
 	}
 
-	toggleNodes(e) {
-		e.stopPropagation();
+	restrictedRangeEnter() {
+		const isFreeWithoutCreditsInManualEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'select-points';
+		const isFreeWithoutCreditsInComponentEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'components';
+
+		if (isFreeWithoutCreditsInComponentEditing) {
+			this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
+														restrictedFeatureHovered: 'componentEditing'});
+		}
+
+		if (isFreeWithoutCreditsInManualEditing) {
+			this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
+														restrictedFeatureHovered: 'manualEditing'});
+		}
+	}
+
+	toggleNodes() {
 		this.client.dispatchAction('/store-value', {uiNodes: !this.props.uiNodes});
 	}
 
-	toggleOutline(e) {
-		e.stopPropagation();
+	toggleOutline() {
 		this.client.dispatchAction('/store-value', {uiOutline: !this.props.uiOutline});
 	}
 
-	toggleCoords(e) {
-		e.stopPropagation();
+	toggleCoords() {
 		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords, uiNodes: this.props.uiCoords ? this.props.uiNodes : true});
 	}
 
@@ -268,11 +312,15 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	changeComponent(object) {
-		this.client.dispatchAction('/change-component', object);
+		//if (!this.isFree || this.isFreeWithCredits) {
+			this.client.dispatchAction('/change-component', object);
+		//}
 	}
 
 	changeManualNode(params) {
-		this.client.dispatchAction('/change-glyph-node-manually', params);
+		//if (!this.isFree || this.isFreeWithCredits) {
+			this.client.dispatchAction('/change-glyph-node-manually', params);
+		//}
 	}
 
 	resetManualNode(params) {
@@ -300,16 +348,26 @@ export default class PrototypoCanvas extends React.Component {
 		});
 	}
 
-	isManualEdited(){
-		if (this.state.values &&
-			this.props.glyphSelected &&
-			this.state.glyphs &&
-			this.state.glyphs[this.props.glyphSelected] &&
-			this.state.values.manualChanges
+	isManualEdited() {
+		if (this.state.values
+			&& this.props.glyphSelected
+			&& this.state.glyphs
+			&& this.state.glyphs[this.props.glyphSelected]
+			&& this.state.values.manualChanges
 		) {
-			const manualChangesGlyph = this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name];
-			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0) ? true : false;
-		} else return false;
+			let manualChangesGlyph;
+
+			if (this.state.altList[this.props.glyphSelected]) {
+				manualChangesGlyph = this.state.values.manualChanges[this.state.altList[this.props.glyphSelected]];
+			}
+			else {
+				manualChangesGlyph = this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name];
+			}
+			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0);
+		}
+		else {
+			return false;
+		}
 	}
 
 	preExport() {
@@ -328,13 +386,19 @@ export default class PrototypoCanvas extends React.Component {
 		this.client.dispatchAction('/end-export-glyphr');
 	}
 
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] PrototypoCanvas');
 		}
+
+		// const isFreeWithoutCreditsInManualEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'select-points';
+		// const isFreeWithoutCreditsInComponentEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'components';
+
 		const canvasClass = classNames({
 			'is-hidden': this.props.uiMode.indexOf('glyph') === -1,
 			'prototypo-canvas': true,
+			//'is-blocked': isFreeWithoutCreditsInManualEditing,
 		});
 
 		const textPanelClosed = !this.state.prototypoTextPanelOpened;
@@ -349,12 +413,16 @@ export default class PrototypoCanvas extends React.Component {
 			<ContextualMenuItem
 				key="outline"
 				active={this.props.uiOutline}
-				text={`${this.props.uiOutline ? 'Hide' : 'Show'} outline`}
-				click={this.toggleOutline}/>,
+				onClick={this.toggleOutline}
+			>
+				{this.props.uiOutline ? 'Hide' : 'Show'} outline
+			</ContextualMenuItem>,
 			<ContextualMenuItem
 				key="reset"
-				text="Reset view"
-				click={this.reset}/>,
+				onClick={this.reset}
+			>
+				Reset view
+			</ContextualMenuItem>,
 		];
 
 		if (this.state.canvasMode === 'select-points') {
@@ -362,9 +430,17 @@ export default class PrototypoCanvas extends React.Component {
 				<ContextualMenuItem
 					key="coords"
 					active={this.props.uiCoords}
-					text={`${this.props.uiCoords ? 'hide' : 'show'} coords`}
-					click={this.toggleCoords}/>);
+					onClick={this.toggleCoords}
+				>
+					{this.props.uiCoords ? 'hide' : 'show'} coords
+				</ContextualMenuItem>,
+			);
 		}
+
+		// const demoOverlay = (isFreeWithoutCreditsInManualEditing || isFreeWithoutCreditsInComponentEditing) ? (
+		// 	<div className="canvas-demo-overlay" onClick={this.restrictedRangeEnter}/>
+		// ) : false;
+		const demoOverlay = false;
 
 		const alternateMenu = this.props.glyphs && this.props.glyphs[this.props.glyphSelected] && this.props.glyphs[this.props.glyphSelected].length > 1 ? (
 			<AlternateMenu alternates={this.props.glyphs[this.props.glyphSelected]} unicode={this.props.glyphSelected}/>
@@ -376,7 +452,8 @@ export default class PrototypoCanvas extends React.Component {
 				className={canvasClass}
 				onClick={this.handleLeaveAndClick}
 				ref="container"
-				onMouseLeave={this.handleLeaveAndClick}>
+				onMouseLeave={this.handleLeaveAndClick}
+				onContextMenu={this.handleContextMenu}>
 				<CanvasBar/>
 				<button
 					className={`prototypo-canvas-reset-glyph-button ${this.isManualEdited() ? '' : 'disabled'} ${this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''}`}
@@ -384,11 +461,11 @@ export default class PrototypoCanvas extends React.Component {
 					disabled={!this.isManualEdited()}>
 					Reset glyph
 				</button>
+				{demoOverlay}
 				<PrototypoCanvasContainer
 					familyName={this.state.familyName}
 					json={this.state.typedataJSON}
 					db={this.state.db}
-					values={this.state.values}
 					workerUrl={this.state.workerUrl}
 					workerDeps={this.state.workerDeps}
 					uiZoom={this.props.uiZoom}
@@ -423,6 +500,7 @@ export default class PrototypoCanvas extends React.Component {
 					preLoad={this.startLoad}
 					afterLoad={this.endLoad}
 					altList={this.state.altList}
+					uiMode={this.props.uiMode}
 				/>
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => { this.props.close('glyph'); }}/>
@@ -432,7 +510,10 @@ export default class PrototypoCanvas extends React.Component {
 					shifted={isShifted}
 					textPanelClosed={textPanelClosed}
 					toggle={this.toggleContextMenu}
-					intercomShift={this.props.viewPanelRightMove}>
+					intercomShift={this.props.viewPanelRightMove}
+					upper
+					left
+				>
 					{menu}
 				</ViewPanelsMenu>
 				<div className="canvas-menu">

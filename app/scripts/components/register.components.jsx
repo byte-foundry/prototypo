@@ -23,11 +23,11 @@ export default class Register extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					inError: head.toJS().signupForm.inError,
-					errors: head.toJS().signupForm.errors,
-					loading: head.toJS().signupForm.loading,
+					inError: head.toJS().d.signupForm.inError,
+					errors: head.toJS().d.signupForm.errors,
+					loading: head.toJS().d.signupForm.loading,
 				});
 			})
 			.onDelete(() => {
@@ -50,7 +50,7 @@ export default class Register extends React.Component {
 		const phone = this.refs.phone.inputValue;
 		const skype = this.refs.skype.inputValue;
 
-		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname, css, phone, skype});
+		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname, css, phone, skype, to: this.props.location.query.subscribe ? '/account/subscribe' : this.props.location.query.prevHash, oldQuery: this.props.location.query.subscribe ? {plan: this.props.location.query.subscribe, quantity: this.props.location.query.quantity} : this.props.location.query});
 	}
 
 	render() {
@@ -76,6 +76,7 @@ export default class Register extends React.Component {
 				<div className="account-header">
 					<h1 className="account-title">Sign up</h1>
 				</div>
+				<h1 className="account-dashboard-page-title">Nice to meet you.</h1>
 				<div className="account-dashboard-container">
 					<form className="sign-in-form" onSubmit={(e) => {this.register(e);}}>
 						<div className="columns">
@@ -106,6 +107,7 @@ export default class Register extends React.Component {
 							name="email-register"
 							required
 							ref="username"
+							inputValue={this.props.location.query.emailSignUp}
 							type="email"
 							placeholder="example@domain.com"/>
 						<InputWithLabel
@@ -132,7 +134,7 @@ export default class Register extends React.Component {
 								<InputWithLabel label="Skype ID" info="(optional)" ref="skype"/>
 							</div>
 						</div>
-						<Link to="/signin" className="sign-in-help-needed">
+						<Link to={{pathname: '/signin', query: this.props.location.query}} className="sign-in-help-needed">
 							I already have an account
 						</Link>
 						{errors}

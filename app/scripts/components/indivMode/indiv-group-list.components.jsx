@@ -1,7 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import ClassNames from 'classnames';
-import ScrollArea from 'react-scrollbar';
+import classNames from 'classnames';
+import ScrollArea from 'react-scrollbar/dist/no-css';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
@@ -22,10 +22,10 @@ export default class IndivGroupList extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					groups: head.toJS().indivGroups,
-					selected: head.toJS().indivCurrentGroup,
+					groups: head.toJS().d.indivGroups,
+					selected: head.toJS().d.indivCurrentGroup,
 				});
 			})
 			.onDelete(() => {
@@ -91,7 +91,7 @@ class IndivGroup extends React.Component {
 	}
 
 	render() {
-		const classes = ClassNames({
+		const classes = classNames({
 			'indiv-group': true,
 			'is-active': this.props.selected,
 		});

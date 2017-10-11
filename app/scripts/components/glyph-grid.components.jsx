@@ -1,18 +1,16 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import ScrollArea from 'react-scrollbar';
+import ScrollArea from 'react-scrollbar/dist/no-css';
 import classNames from 'classnames';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-export default class GlyphGrid extends React.Component {
+export default class GlyphGrid extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
 			glyphs: {},
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
@@ -20,9 +18,9 @@ export default class GlyphGrid extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					glyphs: head.toJS().glyphs,
+					glyphs: head.toJS().d.glyphs,
 				});
 			})
 			.onDelete(() => {

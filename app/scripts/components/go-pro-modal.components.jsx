@@ -1,101 +1,252 @@
-import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
-import vatrates from 'vatrates';
+import React, {PropTypes} from 'react';
+import {withRouter} from 'react-router';
+import Lifespan from 'lifespan';
+import {monthlyConst, annualConst, agencyMonthlyConst, agencyAnnualConst} from '../data/plans.data';
 
-import LocalClient from '../stores/local-client.stores.jsx';
-import Log from '../services/log.services.js';
+import LocalClient from '../stores/local-client.stores';
+import Log from '../services/log.services';
 
-import Modal from './shared/modal.components.jsx';
+import InputNumber from './shared/input-number.components';
+import PricingItem from './shared/pricing-item.components';
+import Price from './shared/price.components';
+import Modal from './shared/modal.components';
+import getCurrency from '../helpers/currency.helpers';
+import withCountry from './shared/with-country.components';
 
-export default class GoProModal extends React.Component {
+const getContactMessage = count => `
+Hi! I am interested in subscribing to a company plan for ${count} licences.
+I would like more informations before subscribing.
+`;
+
+class GoProModal extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.state = {
+			billing: 'annually',
+			agencyCount: 4,
+		};
+
 		this.goSubscribe = this.goSubscribe.bind(this);
-		this.goCredits = this.goCredits.bind(this);
+		this.goSubscribeAgency = this.goSubscribeAgency.bind(this);
+		this.switchMonthlyBilling = this.switchMonthlyBilling.bind(this);
+		this.switchAnnualBilling = this.switchAnnualBilling.bind(this);
+		this.updateAgencyCount = this.updateAgencyCount.bind(this);
+		this.openIntercomChat = this.openIntercomChat.bind(this);
 	}
 
-	componentWillMount() {
+	async componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					billing: head.toJS().d.goProModalBilling ? head.toJS().d.goProModalBilling : 'annually',
+				});
+			})
+			.onDelete(() => {
+				this.setState({billing: 'annually'});
+			});
+		this.client
+			.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
+				});
+			})
+			.onDelete(() => {
+				this.setState({hasBeenSubscribing: false});
+			});
 	}
 
-	componentDidMount() {
-		const url = '//freegeoip.net/json/';
-
-		fetch(url)
-			.then((response) => {
-				if (response) {
-					return response.json();
-				}
-			})
-			.then((response) => {
-				if (response.country_code in vatrates) {
-					this.setState({
-						currency: '€',
-					});
-				}
-				else {
-					this.setState({
-						currency: '$',
-					});
-				}
-			})
-			.catch((error) => {
-				this.setState({
-					currency: '$',
-				});
-			});
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 	goSubscribe() {
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
-		document.location.href = '#/account/create';
+		this.props.router.push({
+			pathname: '/account/subscribe',
+			query: {plan: this.state.billing === 'monthly' ? monthlyConst.prefix : annualConst.prefix},
+		});
 		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
 		Log.ui('Subscribe.FromFile');
 	}
 
-	goCredits() {
-		this.client.dispatchAction('/store-value', {
-			openGoProModal: false,
-			openBuyCreditsModal: true,
+	goSubscribeAgency() {
+		const {billing, agencyCount} = this.state;
+
+		this.client.dispatchAction('/store-value', {openGoProModal: false});
+		this.props.router.push({
+			pathname: '/account/subscribe',
+			query: {
+				plan: billing === 'monthly' ? agencyMonthlyConst.prefix : agencyAnnualConst.prefix,
+				quantity: agencyCount,
+			},
 		});
-		window.Intercom('trackEvent', 'openBuyCreditsModalFromGoPro');
-		Log.ui('BuyCreditsModal.FromFile');
+		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
+		Log.ui('Subscribe.FromFile');
+	}
+
+	switchMonthlyBilling() {
+		this.setState({billing: 'monthly'});
+	}
+
+	switchAnnualBilling() {
+		this.setState({billing: 'annually'});
+	}
+
+	updateAgencyCount(value) {
+		this.setState({agencyCount: parseInt(value, 10)});
+	}
+
+	openIntercomChat(e) {
+		e.preventDefault();
+
+		window.Intercom('trackEvent', 'clickedOnContactUsFromGoProModal');
+		window.Intercom('showNewMessage', getContactMessage(this.state.agencyCount));
 	}
 
 	render() {
+		const {billing, agencyCount, hasBeenSubscribing} = this.state;
+		const agencyPrice = billing === 'annually'
+			? agencyAnnualConst.monthlyPrice * agencyCount
+			: agencyMonthlyConst.monthlyPrice * agencyCount;
+		const proPrice = billing === 'annually' ? annualConst.monthlyPrice : monthlyConst.price;
+		const currency = getCurrency(this.props.country);
+
 		return (
 			<Modal propName={this.props.propName}>
-				<div className="modal-container-title account-header">UPGRADE TO FULL VERSION!</div>
 				<div className="modal-container-content">
-					<p>With the full version you'll be able to use all the parameters and export your font to use it on a website or on any desktop application (Adobe Illustrator, Ms Word&hellip;).</p>
-					<p>You access the full version by either subscribing to a pro plan or buying credits.</p>
-					<div className="go-pro-choices">
-						<div className="go-pro-choice go-pro-subscription" onClick={this.goSubscribe}>
-							<div className="pro-version-big"></div>
-							<h2 className="go-pro-choice-title">Subscribe to a pro plan!</h2>
-							<p className="go-pro-choice-subtitle">And export as many projects as you want, <br/>when you want.</p>
-							<div className="go-pro-choice-plans">
-								<p className="go-pro-choice-plan">
-									<span className="go-pro-choice-plan-title">Monthly plan</span>
-									<br/>15{this.state.currency}/month without commitment
-								</p>
-								<p className="go-pro-choice-plan">
-									<span className="go-pro-choice-plan-title">Annual plan</span>
-									<br/>99{this.state.currency}/year save more than 5 months!
-								</p>
+
+					<div className="pricing-switch">
+						<div
+							className={`pricing-switch-item ${this.state.billing === 'monthly' ? 'is-active' : ''}`}
+							onClick={this.switchMonthlyBilling}
+						>
+							Monthly billing
+						</div>
+						<div
+							className={`pricing-switch-item ${this.state.billing === 'annually' ? 'is-active' : ''}`}
+							onClick={this.switchAnnualBilling}
+						>
+							Annual billing
+						</div>
+					</div>
+
+					<div className="pricing">
+						<PricingItem
+							title="Pro"
+							description="Just right for freelancer and independant graphic designer"
+							priceInfo={
+								this.state.billing === 'monthly'
+									? 'Try it now, without commitment!'
+									: 'Billed annually.'
+							}
+							currency={currency}
+							amount={proPrice}
+						>
+							{this.state.billing === 'monthly'
+								? <div className="pricing-item-offerRibbon">
+									{this.state.billing === 'monthly'
+											&& !hasBeenSubscribing
+											&& <div className="pricing-item-offerRibbon-content">
+												1
+												<sup>st</sup>
+												{' '}
+												month for
+												{' '}
+												<Price amount={1} currency={currency} />
+											</div>}
+								</div>
+								: false}
+							<ul className="pricing-item-features">
+								<li className="pricing-item-feature">
+									More diverse fonts with full range on all parameters
+								</li>
+								<li className="pricing-item-feature">
+									Perfectly customized with glyph individualization groups
+								</li>
+								<li className="pricing-item-feature">
+									Tune to perfection using the manual edition and component editing
+								</li>
+								<li className="pricing-item-feature">&nbsp;</li>
+								<li className="pricing-item-feature">&nbsp;</li>
+							</ul>
+							<div className="pricing-item-cta" onClick={this.goSubscribe}>
+								{this.state.billing === 'monthly' && !hasBeenSubscribing
+									? <span>Try it for <Price amount={1} currency={currency} /></span>
+									: 'Go pro'}
 							</div>
-						</div>
-						<div className="go-pro-choice go-pro-credits" onClick={this.goCredits}>
-							<div className="buy-credits-big"></div>
-							<h2 className="go-pro-choice-title">Buy 5 export credits for 5{this.state.currency}!</h2>
-							<p className="go-pro-choice-subtitle">You are free to use these credits as you like. <br/>No time limit.</p>
-							<p><span className="go-pro-choice-plan-title">Exporting one font cost 1 credits.</span></p>
-						</div>
+						</PricingItem>
+
+						<PricingItem
+							title="Company"
+							description={
+								<div className="pricing-item-subtitle-price-info">
+									Great for teams and growing businesses.<br />
+									<a
+										href={`mailto:account@prototypo.io?subject=Company plan&body=${encodeURI(getContactMessage(agencyCount))}`}
+										className="account-email"
+										onClick={this.openIntercomChat}
+									>
+										Contact us
+									</a>
+									{' '}
+									for more informations!
+								</div>
+							}
+							priceInfo={
+								<div className="pricing-item-subtitle-price-info agency">
+									<InputNumber
+										min={2}
+										max={100}
+										value={agencyCount}
+										onChange={this.updateAgencyCount}
+										controls
+									/>
+								</div>
+							}
+							currency={currency}
+							amount={agencyPrice}
+						>
+							<ul className="pricing-item-features">
+								<li className="pricing-item-feature">
+									More diverse fonts with full range on all parameters
+								</li>
+								<li className="pricing-item-feature">
+									Perfectly customized with glyph individualization groups
+								</li>
+								<li className="pricing-item-feature">
+									Tune to perfection using the manual edition and component editing
+								</li>
+								<li className="pricing-item-feature">
+									Manage your team licenses
+								</li>
+								<li className="pricing-item-feature">
+									Premium 24h support
+								</li>
+							</ul>
+							{agencyCount <= 10
+								? <div className="pricing-item-cta" onClick={this.goSubscribeAgency}>
+										Create your team
+									</div>
+								: <div className="pricing-item-cta" onClick={this.openIntercomChat}>
+										Get in touch
+									</div>}
+						</PricingItem>
+
 					</div>
 				</div>
 			</Modal>
 		);
 	}
 }
+
+GoProModal.propTypes = {
+	router: PropTypes.object.isRequired,
+};
+
+export default withRouter(withCountry(GoProModal));

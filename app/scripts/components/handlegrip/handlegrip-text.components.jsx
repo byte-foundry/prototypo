@@ -40,10 +40,10 @@ export default class HandlegripText extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					tracking: head.toJS().uiSpacingTracking,
-					letterFontSize: head.toJS().uiLetterSpacingLetterFontSize || this.state.letterFontSize,
+					tracking: head.toJS().d.uiSpacingTracking,
+					letterFontSize: head.toJS().d.uiLetterSpacingLetterFontSize || this.state.letterFontSize,
 				});
 			})
 			.onDelete(() => {
@@ -51,9 +51,9 @@ export default class HandlegripText extends React.Component {
 			});
 
 		this.client.getStore('/undoableStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					fontValues: head.toJS().controlsValues,
+					fontValues: head.toJS().d.controlsValues,
 				});
 			})
 			.onDelete(() => {
@@ -61,13 +61,13 @@ export default class HandlegripText extends React.Component {
 			});
 
 		this.client.getStore('/fastStuffStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					trackingX: head.toJS().uiTrackingX,
-					glyphProperties: head.toJS().glyphProperties,
-					unClampedOldValue: head.toJS().unClampedOldValue,
-					clampedValue: head.toJS().clampedValue,
-					dragginRatio: head.toJS().dragginRatio,
+					trackingX: head.toJS().d.uiTrackingX,
+					glyphProperties: head.toJS().d.glyphProperties,
+					unClampedOldValue: head.toJS().d.unClampedOldValue,
+					clampedValue: head.toJS().d.clampedValue,
+					dragginRatio: head.toJS().d.dragginRatio,
 				});
 			})
 			.onDelete(() => {
@@ -104,6 +104,11 @@ export default class HandlegripText extends React.Component {
 			handlegripDOM.removeEventListener('mouseup', this.handleUp);
 			handlegripDOM.removeEventListener('mousemove', this.handleMove);
 		}
+	}
+
+	openGlyph(code) {
+		console.log(code);
+		this.client.dispatchAction('/select-glyph', {unicode: code});
 	}
 
 	handleUp(e) {
@@ -204,8 +209,8 @@ export default class HandlegripText extends React.Component {
 			clampedNewValue = newX < offsetLeft ? this.props.min : this.props.max;
 		}
 
-		const baseSpacingLeft = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)].baseSpacingLeft;
-		const baseSpacingRight = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)].baseSpacingRight;
+		const baseSpacingLeft = (this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)] || {}).baseSpacingLeft || 0;
+ 		const baseSpacingRight = (this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)] || {}).baseSpacingRight || 0;
 
 		// if we are currently tracking left side spacing
 		if (leftSideTracking) {
@@ -297,16 +302,17 @@ export default class HandlegripText extends React.Component {
 
 			const letterComponents = this.state.textArray.map(([key, letter]) => {
 				if (selectedLetter === key) {
-					const baseSpacing = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)];
+					const baseSpacing = this.state.glyphProperties[this.getSelectedLetter().charCodeAt(0)] || {};
 
 					return (
 						<HandlegripLetter
 							letter={letter}
 							ref="selectedLetter"
+							openGlyph={() => {this.openGlyph(letter.charCodeAt(0));}}
 							spacingLeft={spacingLeft}
 							spacingRight={spacingRight}
-							baseSpacingLeft={baseSpacing.baseSpacingLeft}
-							baseSpacingRight={baseSpacing.baseSpacingRight}
+							baseSpacingLeft={baseSpacing.baseSpacingLeft || 0}
+							baseSpacingRight={baseSpacing.baseSpacingRight || 0}
 							advanceWidth={advanceWidth}
 							clampedValue={this.state.clampedValue}
 							dragginRatio={this.state.dragginRatio}

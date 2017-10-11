@@ -1,8 +1,8 @@
+import PropTypes from 'prop-types';
 import React from 'react';
+import {graphql, gql} from 'react-apollo';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import HoodieApi from '~/services/hoodie.services.js';
 import Log from '~/services/log.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
@@ -10,6 +10,9 @@ import LocalClient from '~/stores/local-client.stores.jsx';
 import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
+
+import withCountry from '../shared/with-country.components';
+import Price from '../shared/price.components';
 
 import {
 	TopBarMenu,
@@ -19,10 +22,12 @@ import {
 	TopBarMenuIcon,
 	TopBarMenuLink,
 	TopBarMenuButton,
+	TopBarMenuAcademy,
+	TopBarMenuAcademyIcon,
 } from './top-bar-menu.components.jsx';
 import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components.jsx';
 
-export default class Topbar extends React.Component {
+class Topbar extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -31,22 +36,26 @@ export default class Topbar extends React.Component {
 			eventList: [],
 			mode: [],
 			export: false,
+			academyProgress: {},
 			errorExport: false,
 			credits: undefined,
 			plan: undefined,
 			creditChoices: undefined,
 			presets: null,
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		//function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
-		this.openGoProModal = this.openGoProModal.bind(this);
+		this.goToSubscribe = this.goToSubscribe.bind(this);
 		this.resetFileTutorial = this.resetFileTutorial.bind(this);
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
 		this.setPreset = this.setPreset.bind(this);
 		this.resetIndivTutorial = this.resetIndivTutorial.bind(this);
+		this.setAcademyText = this.setAcademyText.bind(this);
+		this.showAcademy = this.showAcademy.bind(this);
+		this.clearAcademyText = this.clearAcademyText.bind(this);
+		this.getRightAcademyIcon = this.getRightAcademyIcon.bind(this);
 	}
 
 	async componentWillMount() {
@@ -54,22 +63,32 @@ export default class Topbar extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					mode: head.toJS().uiMode,
-					export: head.toJS().export,
-					errorExport: head.toJS().errorExport,
-					credits: head.toJS().credits,
-					to: head.toJS().undoTo,
-					from: head.toJS().undoFrom,
-					eventList: head.toJS().undoEventList,
-					presets: head.toJS().fontPresets,
-					indiv: head.toJS().indivMode,
+					mode: head.toJS().d.uiMode,
+					export: head.toJS().d.export,
+					errorExport: head.toJS().d.errorExport,
+					credits: head.toJS().d.credits,
+					at: head.toJS().d.undoAt,
+					eventList: head.toJS().d.undoEventList,
+					presets: head.toJS().d.fontPresets,
+					indiv: head.toJS().d.indivMode,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+			this.client.getStore('/userStore', this.lifespan)
+				.onUpdate((head) => {
+					this.setState({
+						subscription: head.toJS().d.subscription,
+						hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
+					});
+				})
+				.onDelete(() => {
+					this.setState(undefined);
+				});
 
 		const creditChoices = await this.client.fetch('/creditStore');
 
@@ -77,6 +96,10 @@ export default class Topbar extends React.Component {
 			creditChoices: creditChoices.head.toJS(),
 		});
 	}
+
+	static contextTypes = {
+		router: React.PropTypes.object.isRequired,
+	};
 
 	exportOTF(merged) {
 		this.client.dispatchAction('/export-otf', {merged});
@@ -104,8 +127,14 @@ export default class Topbar extends React.Component {
 					result[param.name] = param.init;
 				}, {});
 
-				this.client.dispatchAction('/change-param', {values: defaultParams, demo: true});
+				this.client.dispatchAction('/change-param', {values: defaultParams, demo: true, force: true});
 			});
+
+	}
+
+	resetAllChanges() {
+		this.resetAllParams();
+		this.client.dispatchAction('/reset-all-glyphs', {});
 
 	}
 
@@ -140,10 +169,16 @@ export default class Topbar extends React.Component {
 		}
 	}
 
-	openGoProModal() {
-		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
-		this.client.dispatchAction('/store-value', {openGoProModal: true});
-		Log.ui('ExportFontNow.open');
+	goToSubscribe() {
+		window.Intercom('trackEvent', 'clickTakeFullAdvantageOfPrototypo');
+		Log.ui('GoPro.open');
+		/*this.context.router.push({
+			pathname: '/account/subscribe',
+		});*/
+		this.client.dispatchAction('/store-value', {
+			openGoProModal: true,
+			goProModalBilling: 'monthly',
+		});
 	}
 
 	resetFileTutorial(e) {
@@ -172,6 +207,31 @@ export default class Topbar extends React.Component {
 
 	}
 
+	showAcademy() {
+		this.context.router.push('/academy');
+	}
+
+	setAcademyText(name, isIcon) {
+		if (name) {
+			this.setState({academyText: name, academyCapIconHovered: isIcon});
+		}
+		else {
+			this.setState({academyCapIconHovered: isIcon});
+		}
+	}
+
+	clearAcademyText() {
+		this.setState({academyText: '', academyCapIconHovered: false});
+	}
+	getRightAcademyIcon() {
+		if (this.state.academyCapIconHovered) {
+			return this.state.indiv ? "assets/images/graduate-cap-yellow.svg" : "assets/images/graduate-cap-green.svg";
+		}
+		else {
+			return "assets/images/graduate-cap.svg";
+		}
+	}
+
 	async onboardExport(step) {
 		const store = await this.client.fetch('/prototypoStore');
 
@@ -197,16 +257,14 @@ export default class Topbar extends React.Component {
 	}
 
 	render() {
-		if (process.env.__SHOW_RENDER__) {
-			console.log('[RENDER] Topbar');
-		}
-		const whereAt = this.state.to || this.state.from;
-		const undoDisabled = whereAt < 2;
+		const {academyProgress, loadingAcademyProgress} = this.props;
+		const whereAt = this.state.at || 0;
+		const undoDisabled = whereAt < 1;
 		const redoDisabled = whereAt > (this.state.eventList.length - 2);
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
-		const redoText = `Redo ${!redoDisabled ? this.state.eventList[whereAt + 1].label : ''}`;
+		const redoText = `Redo ${redoDisabled ? '' : this.state.eventList[whereAt + 1].label}`;
 		const credits = this.state.credits;
-		const freeAccount = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+		const freeAccount = !this.props.manager && !this.state.subscription;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : false;
 		const glyphrExportCost = this.state.creditChoices ? this.state.creditChoices.exportGlyphr : false;
@@ -225,10 +283,37 @@ export default class Topbar extends React.Component {
 			);
 		const creditExportLabel = !!this.state.credits
 			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
-		const callToAction = !(freeAccountAndHasCredits || !freeAccount)
-			&& <TopBarMenuButton label="UNLOCK ALL PARAMETERS FOR $5" noHover centered click={this.openGoProModal} alignRight/>;
+		const callToAction = !(freeAccountAndHasCredits || !freeAccount) && (
+			<TopBarMenuButton
+				label={<span>GET THE FULL VERSION FOR <Price amount={this.state.hasBeenSubscribing ? 8.25 : 1} country={this.props.country} /></span>}
+				noHover
+				centered
+				click={this.goToSubscribe}
+				alignRight
+			/>
+		);
 
-		const presetSubMenu = this.state.presets
+		const academyIcon = (loadingAcademyProgress || !academyProgress.lastCourse) && (
+			<TopBarMenuAcademyIcon
+				setText={this.setAcademyText}
+				clearText={this.clearAcademyText}
+				id="progress-academy"
+				icon={this.getRightAcademyIcon()}
+			/>
+		);
+
+		const academyProgressItem = (!loadingAcademyProgress && academyProgress.lastCourse && academyProgress[academyProgress.lastCourse]) && (
+			<TopBarMenuAcademy
+				course={academyProgress[academyProgress.lastCourse]}
+				setText={this.setAcademyText}
+				clearText={this.clearAcademyText}
+				text={this.state.academyText}
+				id="progress-academy"
+				icon={this.getRightAcademyIcon()}
+			/>
+		);
+
+			/*const presetSubMenu = this.state.presets
 			? (
 				<TopBarMenuDropdownItem name="Choose a preset ...">
 					<TopBarMenuDropdown>
@@ -247,7 +332,7 @@ export default class Topbar extends React.Component {
 					</TopBarMenuDropdown>
 				</TopBarMenuDropdownItem>
 			)
-			: false;
+			: false;*/
 
 		return (
 			<div id="topbar">
@@ -306,6 +391,8 @@ export default class Topbar extends React.Component {
 					<TopBarMenuDropdown name="Edit">
 						<TopBarMenuDropdownItem
 							name="Individualize parameters"
+							freeAccount={freeAccount}
+							freeAccountAndHasCredits={freeAccountAndHasCredits}
 							handler={() => { this.individualize(); }}/>
 						<TopBarMenuDropdownItem
 							name={undoText}
@@ -314,7 +401,7 @@ export default class Topbar extends React.Component {
 							shortcut="ctrl+z"
 							handler={() => {
 								if (!undoDisabled) {
-									this.client.dispatchAction('/go-back');
+									this.client.dispatchAction('/go-back', {eventIndex: this.state.at});
 								}
 							}}/>
 						<TopBarMenuDropdownItem
@@ -324,13 +411,16 @@ export default class Topbar extends React.Component {
 							shortcut="ctrl+y"
 							handler={() => {
 								if (!redoDisabled) {
-									this.client.dispatchAction('/go-forward');
+									this.client.dispatchAction('/go-forward', {eventIndex: this.state.at});
 								}
 							}}/>
 							{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
 						<TopBarMenuDropdownItem
 							name="Reset all parameters"
 							handler={() => { this.resetAllParams(); }}/>
+						<TopBarMenuDropdownItem
+							name="Reset all changes"
+							handler={() => { this.resetAllChanges(); }}/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Window">
 						<TopBarMenuDropdownItem name="Glyphs list" checkbox={true} active={this.state.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
@@ -341,10 +431,13 @@ export default class Topbar extends React.Component {
 					<TopBarMenuDropdown name="Help">
 						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
 						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq', '_blank'); }}/>
-						<TopBarMenuDropdownItem name="Restart collection tutorial" handler={(e) => { this.resetCollectionTutorial(e); }}/>
-						<TopBarMenuDropdownItem name="Restart export tutorial" handler={(e) => { this.resetFileTutorial(e); }}/>
-						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={(e) => { this.resetIndivTutorial(e); }}/>
+						<TopBarMenuDropdownItem name="Academy" id="access-academy" handler={this.showAcademy}/>
+						<TopBarMenuDropdownItem name="Restart collection tutorial" handler={this.resetCollectionTutorial}/>
+						<TopBarMenuDropdownItem name="Restart export tutorial" handler={this.resetFileTutorial}/>
+						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={this.resetIndivTutorial}/>
 					</TopBarMenuDropdown>
+					{academyIcon}
+					{academyProgressItem}
 					{exporting}
 					{errorExporting}
 					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
@@ -355,3 +448,46 @@ export default class Topbar extends React.Component {
 		);
 	}
 }
+
+Topbar.defaultProps = {
+	academyProgress: {
+		lastCourse: null,
+	},
+};
+
+Topbar.propTypes = {
+	academyProgress: PropTypes.shape({
+		lastCourse: PropTypes.string,
+	}),
+};
+
+Topbar.contextTypes = {
+	router: React.PropTypes.object.isRequired,
+};
+
+// this should later wrap an TopBarAcademy
+// instead of being on this component
+const getAcademyValuesQuery = gql`
+	query getAcademyValues {
+		user {
+			id
+			academyProgress
+			manager {
+				id
+			}
+		}
+	}
+`;
+
+export default graphql(getAcademyValuesQuery, {
+	props({data}) {
+		if (data.loading) {
+			return {loadingAcademyProgress: true};
+		}
+
+		return {
+			academyProgress: data.user.academyProgress,
+			manager: data.user.manager,
+		};
+	},
+})(withCountry(Topbar));

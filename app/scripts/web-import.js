@@ -1,19 +1,37 @@
-import PrototypoCanvas from 'prototypo-canvas';
-import HoodieApi from './services/hoodie.services.js';
-import {AppValues} from './services/values.services.js';
+import {PrototypoCanvas} from 'prototypo-canvas';
+import {gql} from 'react-apollo';
+
+import apolloClient from './services/graphcool.services';
 
 const workerDeps = document.querySelector('script[src*=prototypo\\.]').src;
 let workerUrl;
 
-HoodieApi.setup()
-.then(() => {
-	return AppValues.get({typeface: 'default'});
+apolloClient.query({
+	query: gql`
+		query getUserLibrary {
+			user {
+				library {
+					id
+					name
+					template
+					variants {
+						id
+						name
+					}
+				}
+			}
+		}
+	`,
 })
-.then((values) => {
+.then(({data}) => {
+	if (!data.user) {
+		Promise.reject(new Error("You're not logged into Prototypo"));
+	}
+
 	if (window.parent) {
 		const message = {
 			type: 'library',
-			values: values.values.library,
+			values: data.user.library,
 		};
 
 		window.parent.postMessage(message, '*');
@@ -23,7 +41,7 @@ HoodieApi.setup()
 	trackJs.track(e);
 	window.parent.postMessage({
 		type: 'error',
-		message: `You're not logged into Prototypo`,
+		message: e.message,
 	}, '*');
 });
 

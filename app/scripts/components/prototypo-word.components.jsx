@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import classNames from 'classnames';
 import {diffChars} from 'diff';
 import {prototypoStore} from '../stores/creation.stores.jsx';
@@ -15,7 +14,7 @@ import CloseButton from './close-button.components.jsx';
 import PrototypoWordInput from './views/prototypo-word-input.components.jsx';
 import HandlegripText from './handlegrip/handlegrip-text.components.jsx';
 
-export default class PrototypoWord extends React.Component {
+export default class PrototypoWord extends React.PureComponent {
 
 	constructor(props) {
 		super(props);
@@ -27,12 +26,12 @@ export default class PrototypoWord extends React.Component {
 			uiWordString: undefined,
 			uiWordSelection: 0,
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// function bindings
 		this.setupText = _.debounce(this.setupText.bind(this), 500, {leading: true});
 		this.saveText = this.saveText.bind(this);
 		this.handleEscapedInput = this.handleEscapedInput.bind(this);
+		this.handleContextMenu = this.handleContextMenu.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.hideContextMenu = this.hideContextMenu.bind(this);
 		this.changeTextFontSize = this.changeTextFontSize.bind(this);
@@ -56,16 +55,17 @@ export default class PrototypoWord extends React.Component {
 		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
-					canvasPanelOpened: head.toJS().uiMode.indexOf('glyph') !== -1,
-					textPanelOpened: head.toJS().uiMode.indexOf('text') !== -1,
-					glyphs: head.toJS().glyphs,
-					uiSpacingMode: head.toJS().uiSpacingMode,
-					uiWordString: head.toJS().uiWordString,
-					uiWordSelection: head.toJS().uiWordSelection || 0,
-					totalHeight: head.toJS().totalHeight,
+					glyphPanelOpened: head.toJS().d.uiMode.indexOf('list') !== -1,
+					canvasPanelOpened: head.toJS().d.uiMode.indexOf('glyph') !== -1,
+					textPanelOpened: head.toJS().d.uiMode.indexOf('text') !== -1,
+					glyphs: head.toJS().d.glyphs,
+					uiSpacingMode: head.toJS().d.uiSpacingMode,
+					uiWordString: head.toJS().d.uiWordString,
+					uiWordSelection: head.toJS().d.uiWordSelection || 0,
+					totalHeight: head.toJS().d.totalHeight,
+					uiWordFontSize: head.toJS().d.uiWordFontSize,
 				});
 			})
 			.onDelete(() => {
@@ -73,9 +73,9 @@ export default class PrototypoWord extends React.Component {
 			});
 
 		this.client.getStore('/fastStuffStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					glyphProperties: head.toJS().glyphProperties,
+					glyphProperties: head.toJS().d.glyphProperties,
 				});
 			})
 			.onDelete(() => {
@@ -86,12 +86,13 @@ export default class PrototypoWord extends React.Component {
 	setupText() {
 		const content = this.props[this.props.field];
 		const transformedContent = rawToEscapedContent(content, this.state.glyphs);
-
 		const newString = transformedContent && transformedContent.length > 0 ? transformedContent : '';
 
-		this.client.dispatchAction('/store-value', {
-			uiWordString: newString,
-		});
+		if (newString !== this.state.uiWordString) {
+			this.client.dispatchAction('/store-value', {
+				uiWordString: newString,
+			});
+		}
 	}
 
 	saveText(text) {
@@ -100,44 +101,55 @@ export default class PrototypoWord extends React.Component {
 
 	componentDidUpdate() {
 		this.setupText();
-		if (this.state.glyphProperties) {
-			const refDOMElement = ReactDOM.findDOMNode(this);
-			const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
-				return sum + (
-					this.state.glyphProperties[glyph.charCodeAt(0)]
-					|| {advanceWidth: 500}
-				).advanceWidth;
-			}, 0);
-			const widthSize = 100 * refDOMElement.clientWidth / (0.1 * advanceWidthSum) * 0.95;
-			const heightSize = 100 * refDOMElement.clientHeight / (0.1 * this.state.totalHeight) * 0.8;
-			const rightSize = Math.min(widthSize, heightSize);
+		const raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
 
-			this.client.dispatchAction('/store-value', {
-				uiWordFontSize: rightSize,
-			});
-		}
-		else {
-			this.client.dispatchAction('/store-value', {
-				uiWordFontSize: 100,
+		if (!this.alreadyRafed) {
+			this.alreadyRafed = raf(() => {
+				if (this.state.glyphProperties) {
+					const {clientWidth, clientHeight} = ReactDOM.findDOMNode(this);
+					const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
+						return sum + (
+							this.state.glyphProperties[glyph.charCodeAt(0)]
+							|| {advanceWidth: 500}
+						).advanceWidth;
+					}, 0);
+					const widthSize = 100 * clientWidth / (0.1 * advanceWidthSum) * 0.95;
+					const heightSize = 100 * clientHeight / (0.1 * this.state.totalHeight) * 0.8;
+					const rightSize = Math.min(widthSize, heightSize);
+
+					this.client.dispatchAction('/store-value', {
+						uiWordFontSize: rightSize,
+					});
+				}
+				else {
+					this.client.dispatchAction('/store-value', {
+						uiWordFontSize: 100,
+					});
+				}
+				this.alreadyRafed = undefined;
 			});
 		}
 	}
 
 	componentDidMount() {
 		this.setupText();
-		if (this.state.glyphProperties) {
-			const refDOMElement = ReactDOM.findDOMNode(this);
-			const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
-				return sum + this.state.glyphProperties[glyph.charCodeAt(0)].advanceWidth;
-			}, 0);
-			const widthSize = 100 * refDOMElement.clientWidth / (0.1 * advanceWidthSum);
-			const heightSize = 100 * refDOMElement.clientHeight / (0.1 * this.state.totalHeight);
-			const rightSize = Math.min(widthSize, heightSize);
+		const raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
 
-			this.client.dispatchAction('/store-value', {
-				uiWordFontSize: rightSize * 0.9,
-			});
-		}
+		raf(() => {
+			if (this.state.glyphProperties) {
+				const {clientWidth, clientHeight} = ReactDOM.findDOMNode(this);
+				const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
+					return sum + this.state.glyphProperties[glyph.charCodeAt(0)].advanceWidth;
+				}, 0);
+				const widthSize = 100 * clientWidth / (0.1 * advanceWidthSum);
+				const heightSize = 100 * clientHeight / (0.1 * this.state.totalHeight);
+				const rightSize = Math.min(widthSize, heightSize);
+
+				this.client.dispatchAction('/store-value', {
+					uiWordFontSize: rightSize * 0.9,
+				});
+			}
+		});
 	}
 
 	componentWillUnmount() {
@@ -193,16 +205,32 @@ export default class PrototypoWord extends React.Component {
 		return buffer.join('');
 	}
 
-	toggleContextMenu(e) {
+	handleContextMenu(e) {
 		e.preventDefault();
-		e.stopPropagation();
+
+		this.toggleContextMenu();
+	}
+
+	toggleContextMenu() {
 		this.setState({
 			showContextMenu: !this.state.showContextMenu,
 		});
 	}
 
-	hideContextMenu() {
-		if (this.state.showContextMenu) {
+	hideContextMenu(e) {
+		const rect = e.currentTarget.getBoundingClientRect();
+		const x = e.pageX;
+		const y = e.pageY;
+
+		if (
+			this.state.showContextMenu
+			&& !(
+				rect.left <= x
+				&& x <= rect.left + rect.width
+				&& rect.top <= y
+				&& y <= rect.top + rect.height
+			)
+		) {
 			this.setState({
 				showContextMenu: false,
 			});
@@ -213,20 +241,17 @@ export default class PrototypoWord extends React.Component {
 		this.client.dispatchAction('/store-value', {uiWordFontSize});
 	}
 
-	invertedView(e) {
-		e.stopPropagation();
+	invertedView() {
 		this.client.dispatchAction('/store-value', {uiInvertedWordView: !this.props.uiInvertedWordView});
 	}
 
-	toggleSpacingMode(e) {
-		e.stopPropagation();
+	toggleSpacingMode() {
 		this.client.dispatchAction('/store-value', {
 			uiSpacingMode: !this.state.uiSpacingMode,
 		});
 	}
 
-	toggleColors(e) {
-		e.stopPropagation();
+	toggleColors() {
 		this.client.dispatchAction('/store-value', {uiInvertedWordColors: !this.props.uiInvertedWordColors});
 	}
 
@@ -236,7 +261,7 @@ export default class PrototypoWord extends React.Component {
 		}
 		const style = {
 			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
-			'fontSize': this.props.uiWordFontSize || '98px',
+			'fontSize': this.state.uiWordFontSize || '98px',
 		};
 
 		const stringClasses = classNames('prototypo-word-string', {
@@ -251,26 +276,14 @@ export default class PrototypoWord extends React.Component {
 		});
 
 		const whiteBlackSwitchText = this.props.uiInvertedWordColors ? 'black on white' : 'white on black';
-		const whiteBlackSwitchLabel = `Switch to ${whiteBlackSwitchText}`;
-
-		const menu = [
-			<ContextualMenuItem
-				text="Inverted view"
-				key="view"
-				active={this.props.uiInvertedWordView}
-				click={this.invertedView}/>,
-			<ContextualMenuItem
-				text={whiteBlackSwitchLabel}
-				key="colors"
-				active={this.props.uiInvertedWordColors}
-				click={this.toggleColors}/>,
-		];
 
 		return (
 			<div
 				className="prototypo-word"
 				onClick={this.hideContextMenu}
-				onMouseLeave={this.hideContextMenu}>
+				onMouseLeave={this.hideContextMenu}
+				onContextMenu={this.handleContextMenu}
+			>
 				<div className="prototypo-word-scrollbar-wrapper">
 					<HandlegripText
 						ref="text"
@@ -285,8 +298,24 @@ export default class PrototypoWord extends React.Component {
 						show={this.state.showContextMenu}
 						shifted={this.state.glyphPanelOpened}
 						toggle={this.toggleContextMenu}
-						intercomShift={this.props.viewPanelRightMove}>
-						{menu}
+						intercomShift={this.props.viewPanelRightMove}
+						upper
+						left
+						onMouseEnter={() => {this.setState({hoveringContextMenu: true})}}
+						onMouseLeave={() => {this.setState({hoveringContextMenu: false})}}
+					>
+						<ContextualMenuItem
+							active={this.props.uiInvertedWordView}
+							onClick={this.invertedView}
+						>
+							Inverted view
+						</ContextualMenuItem>
+						<ContextualMenuItem
+							active={this.props.uiInvertedWordColors}
+							onClick={this.toggleColors}
+						>
+							Switch to {whiteBlackSwitchText}
+						</ContextualMenuItem>
 					</ViewPanelsMenu>
 					<div className={actionBar}>
 						<CloseButton click={() => { this.props.close('word'); }}/>

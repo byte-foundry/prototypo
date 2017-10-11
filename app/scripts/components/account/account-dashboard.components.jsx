@@ -1,39 +1,86 @@
 import React from 'react';
-import {Link} from 'react-router';
-import AccountSidebar from './account-sidebar.components.jsx';
+import {Link, withRouter} from 'react-router';
+import {graphql, gql} from 'react-apollo';
 
-export default class AccountDashboard extends React.Component {
+import AccountSidebar from './account-sidebar.components';
+
+export class AccountDashboard extends React.Component {
 	render() {
+		const {firstName, location, route, children} = this.props;
+
 		const titles = {
-			home: "My account",
-			profile: "My account",
-			details: "My account",
-			create: "Subscribe to prototypo",
-			createSignup: "Subscribe to prototypo",
-			signup: "Sign up",
-			signin: "Sign in",
-			success: "My account",
-			confirm: "My account",
-			billing: "My account",
+			home: 'My account',
+			profile: 'My account',
+			details: 'My account',
+			create: 'Subscribe to prototypo',
+			createSignup: 'Subscribe to prototypo',
+			success: 'My account',
+			confirm: 'My account',
+			billing: 'My account',
+			organization: 'My account',
+			library: 'My account',
 		};
-		const title = titles[this.props.route.name];
+		const subtitles = {
+			home: `Hi ${firstName}!`,
+			profile: 'My profile',
+			'change-password': 'Change my password',
+			details: 'My account settings',
+			create: '',
+			createSignup: '',
+			success: 'Congratulations!',
+			confirm: '',
+			'prototypo-library': 'Welcome developers!',
+			billing: 'My billing history',
+			'billing-address': 'My billing address',
+			'add-card': 'Add a card',
+			'change-plan': 'Change my plan',
+		};
+		const title = titles[route.name];
+		const subtitle
+			= subtitles[location.pathname.split('/')[location.pathname.split('/').length - 1]];
 
 		return (
 			<div className="account-dashboard">
-				<div className="account-dashboard-icon"/>
-				<Link to="/dashboard" className="account-dashboard-back-icon"/>
+				<Link to="/dashboard">
+					<div className="account-dashboard-icon" />
+				</Link>
 				<div className="account-header">
-					<h1 className="account-title">{title}</h1>
+					<h1 className="account-title">
+						{title}
+					</h1>
 				</div>
+				{subtitle === ''
+					? false
+					: <h1 className="account-dashboard-page-title">
+						{subtitle}
+					</h1>}
 				<div className="account-dashboard-container">
 					<AccountSidebar />
-					{this.props.children}
+					{children}
 				</div>
 			</div>
 		);
 	}
 }
 
-AccountDashboard.contextTypes = {
-	router: React.PropTypes.object.isRequired,
-};
+const getFirstNameQuery = gql`
+	query getFirstName {
+		user {
+			id
+			firstName
+		}
+	}
+`;
+
+export default graphql(getFirstNameQuery, {
+	options: {
+		fetchPolicy: 'cache-first',
+	},
+	props: ({data}) => {
+		if (data.loading) {
+			return {loading: true, firstName: ''};
+		}
+
+		return data.user;
+	},
+})(withRouter(AccountDashboard));

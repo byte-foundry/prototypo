@@ -7,7 +7,9 @@ import LocalClient from '../../stores/local-client.stores.jsx';
 export default class AccountInvoiceList extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			invoices: [],
+		};
 	}
 
 	componentWillMount() {
@@ -15,14 +17,16 @@ export default class AccountInvoiceList extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					charges: head.toJS().infos.charges,
+					invoices: head.toJS().d.invoices || [],
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+
+		this.client.dispatchAction('/load-customer-invoices');
 	}
 
 	componentWillUnmount() {
@@ -30,7 +34,7 @@ export default class AccountInvoiceList extends React.Component {
 	}
 
 	render() {
-		const invoices = this.state.charges ? _.map(this.state.charges, (invoice) => {
+		const invoices = this.state.invoices.length > 0 ? this.state.invoices.map((invoice) => {
 			return <InvoiceLink invoice={invoice} key={invoice.id}/>;
 		}) : (
 			<p>
@@ -51,11 +55,14 @@ export default class AccountInvoiceList extends React.Component {
 
 class InvoiceLink extends React.Component {
 	render() {
+		const {created_at, currency, permalink, secure_id, total_cents} = this.props.invoice;
+
 		return (
 			<li className="list-item">
-				<span className="list-item-date">{moment.unix(this.props.invoice.created).format('L')}</span>
-				<span className="list-item-text">{this.props.invoice.invoice}</span>
-				<a className="list-item-download" target="_blank" href={`https://invoicestaxamo.s3.amazonaws.com/${this.props.invoice.metadata.taxamo_key}/invoice.html`}>Download</a>
+				<span className="list-item-date">{moment.unix(created_at).format('L')}</span>
+				<span className="list-item-text">{secure_id}</span>
+				<span className="list-item-text">{currency === 'USD' && '$'}{total_cents / 100}{currency === 'EUR' && '€'}</span>
+				<a className="list-item-download" target="_blank" href={permalink}>Download</a>
 			</li>
 		);
 	}

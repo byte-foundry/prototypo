@@ -1,22 +1,52 @@
 @import "../../variables";
 
 .family-list {
-	flex:0 0 33%;
+	flex: 0 0 45%;
 	background-color: $lightest-grey;
 	border-bottom-left-radius: 7px;
-	overflow:hidden;
+	display: flex;
+	flex-direction: column;
+
+	&-create {
+		padding: 40px 40px 20px;
+	}
+
+	&-families-content {
+		padding: 0 40px 20px;
+	}
 }
 
 .family {
 	display:flex;
 	flex-flow: row nowrap;
-	margin-top: 20px;
+	margin-top: 5px;
 	cursor:pointer;
 	color:$dark-grey;
 	transition: color .2s ease;
+	padding: 10px 20px;
+	transition: all .2s ease-out;
+	background-color: mix(black, $lightest-grey, 3%);
+	margin-left: 5px;
+	margin-right: 5px;
+	border: 2px solid mix(black, $lightest-grey, 3%);
+	align-items: center;
 
-	&.is-active, &:hover {
+	&:first-of-type {
+		background-color: mix(black, $lightest-grey, 3%);
+	}
+	&:nth-child(2n+1) {
+		background-color: $white;
+	}
+	&.is-active {
 		color: $green;
+	}
+	&:hover {
+		color: $green;
+		box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	}
+	&:focus {
+		outline: none;
+		border: 2px solid mix($green, $lightest-grey, 30%);
 	}
 
 	&:hover &-sample.topo, &.is-active &-sample.topo {
@@ -35,8 +65,12 @@
 		background-image: url('../../../images/grotesk-sample-active.svg') !important;
 	}
 
-	&-sample.topo {
-		background-image: url('../../../images/elzevir-sample-hover.svg');
+	&:hover &-sample.gfnt, &.is-active &-sample.gfnt {
+		background-image: url('../../../images/spectral-sample-active.svg') !important;
+	}
+
+	&:hover &-sample.antique, &.is-active &-sample.antique {
+		background-image: url('../../../images/antique-sample-active.svg') !important;
 	}
 
 	&-sample.elzevir {
@@ -47,24 +81,30 @@
 		background-image: url('../../../images/john-fell-sample-hover.svg');
 	}
 
+	&-sample.gfnt {
+		background-image: url('../../../images/spectral-sample-hover.svg');
+	}
+
 	&-sample.venus {
 		background-image: url('../../../images/grotesk-sample-hover.svg');
 	}
 
+	&-sample.antique {
+		background-image: url('../../../images/antique-sample-hover.svg');
+	}
+
 	&-sample {
 		flex:0 0 70px;
-		height:43px;
+		height: 43px;
 		background-repeat: no-repeat;
-		margin: 3px 30px 0 0;
+		margin-right: 20px;
 		background-size:contain;
 	}
 
 	&-info {
-		display:flex;
+		flex: 1;
 		font-weight:600;
 		letter-spacing:0.02em;
-		flex-flow: column nowrap;
-		width: calc(100% - 70px);
 
 		&-name {
 			font-size:17px;
@@ -82,17 +122,20 @@
 			}
 		}
 	}
+
+	.view-panels-menu {
+		position: static;
+	}
 }
 
 .add-family {
-	background-color:$white;
-	cursor:pointer;
+	background-color: mix(black, $white, 1%);
 	transition:all .2s ease;
 	margin-bottom:15px;
 	border-radius:4px;
 
 	&-form {
-		width:630px;
+		width:750px;
 
 		&-header {
 			display:flex;
@@ -116,41 +159,56 @@
 			}
 		}
 
+		form {
+			margin-right: 20px;
+		}
+
 		&-input {
 			display: block;
 			width: 100%;
 			border:none;
 			padding: .8em;
 			background-color: $lightest-grey;
+			border: 2px solid $light-grey;
+			border-radius: 5px;
 			color:$dark-grey;
 			font-size: 1.1em;
 			margin-bottom: 1em;
 			margin-top:20px;
+
+			&:focus {
+				outline: none;
+				border-color: $green;
+			}
 		}
 
 		&-label {
 			display: inline-block;
 			margin-top: 5px;
 			font-size:1.1em;
+			font-weight: 700;
 
 			color: $dark-grey;
 
 			&-order {
-				@include themify() {
-					color:$theme-background;
-				}
+				color: $green;
 			}
 		}
 
 		&-template-list {
-			margin-bottom: 15px;
-			display: flex;
-			flex-flow: row wrap;
-			justify-content: space-between;
+			margin-left: -10px;
+			padding-bottom: 5px;
+			display: block;
+			height: 63vh;
+			overflow: hidden;
+
+			&-content {
+				padding: 10px;
+			}
 		}
 
 		&-error {
-			width: 100%;
+			width: calc(100% - 20px);
 			text-align: center;
 			padding: 5px;
 			background-color: $red;
@@ -185,47 +243,123 @@
 		color:$dark-grey;
 	}
 
+	.button {
+		border: 2px solid $green;
+		font-weight: 500;
+		color: $green;
+		transition: all .2s ease;
+		margin-right: 20px;
+		&:hover {
+			color: white;
+			background: $green;
+		}
+	}
+
 }
 
 .family-template-choice {
-	margin-top:20px;
+	cursor: pointer;
+	margin-top:10px;
+	margin-bottom:10px;
 	text-align:center;
-	flex-basis: 200px;
+	background-color:$white;
+	margin-left: 0;
+	margin-right: 10px;
+	border: 2px solid $lightest-grey;
+	transition: all .2s ease-out;
+	transform: perspective(1px);
 
-	&:hover &-name, &.is-active &-name {
-		@include themify() {
-			background-color:$theme-background;
-			color:$theme-color;
-		}
+	&:nth-child(2n+1) {
+		background-color: $lightest-grey;
 	}
+
+	&:hover {
+		transform: perspective(1px) scale3d(1.01, 1.01, 1.01);
+		box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	}
+
+
 
 	&-sample {
 		padding:15px;
-		height:200px;
 		line-height:85px;
 		transition:all .2s ease;
 		color:$dark-grey;
-		background-color:$lightest-grey;
-
+		width: 85%;
+		float: right;
+		position: relative;
+		display: block;
+		overflow: hidden;
 		img {
-			margin-top:45px;
 			vertical-align:bottom;
+			height: 100px;
+			width: auto;
 		}
 	}
 
-	&:hover &-sample, &.is-active &-sample {
-		@include themify() {
-			background-color:$theme-background;
-			color:$theme-color;
+	&-provider {
+		width: 15%;
+		height: 122px;
+		display: inline-block;
+		float: left;
+		position: relative;
+		.provider-prototypo {
+			width:50px;
+			height:50px;
+			background-color: $black;
+			border: 2px solid $lightest-grey;
+			position:absolute;
+			z-index:2;
+			background-position: center;
+			background-size: 46%;
+			background-image: url("../../../images/prototypo-icon-white.svg");
+			background-repeat: no-repeat;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			transition: background-color .2s ease;
+		}
+
+		.provider-google {
+			width:50px;
+			height:50px;
+			background-color: $white;
+			border: 2px solid $lightest-grey;
+			position:absolute;
+			z-index:2;
+			background-position: center;
+			background-size: 65%;
+			background-image: url("../../../images/icon-google.svg");
+			background-repeat: no-repeat;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			transition: background-color .2s ease;
+		}
+
+		.provider-production {
+			width:50px;
+			height:50px;
+			background-color: $white;
+			border: 2px solid $lightest-grey;
+			position:absolute;
+			z-index:2;
+			background-position: center;
+			background-size: 85%;
+			background-image: url("../../../images/icon-ProductionType.svg");
+			background-repeat: no-repeat;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			transition: background-color .2s ease;
 		}
 	}
 
-	&-name {
-		font-size: 1.3em;
-		text-align: center;
-		background-color: $dark-grey;
-		color: $white;
-		padding: 10px;
-		transition:all .2s ease;
+	&.is-active &-provider div {
+		background-color: $green;
+		background-image: url("../../../images/icon-checked-flat.svg");
 	}
 }

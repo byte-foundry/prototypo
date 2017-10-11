@@ -1,25 +1,61 @@
 import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
-import {Link} from 'react-router';
-
-import HoodieApi from '~/services/hoodie.services.js';
-import Log from '~/services/log.services.js';
+import {graphql, gql} from 'react-apollo';
 
 import LocalClient from '../stores/local-client.stores.jsx';
-import DOM from '../helpers/dom.helpers.js';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
 import SliderHelpText from '../../images/sliders/helpText.json';
 
-export class Sliders extends React.Component {
+import SliderController from './slider-controller.components';
+
+const demoRatio = 0.7;
+
+export class Sliders extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.state = {};
+	}
+
+	componentWillMount() {
+		this.lifespan = new Lifespan();
+		this.client = LocalClient.instance();
+
+		this.client.getStore('/undoableStore', this.lifespan)
+			.onUpdate((head) => {
+				const headJS = head.toJS().d;
+
+				this.setState({
+					values: headJS.controlsValues,
+				});
+			})
+			.onDelete(() => {
+				this.setState({values: undefined});
+			});
+
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				const {subscription} = head.toJS().d;
+				this.setState({
+					subscription,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 
 	render() {
+		if (!this.state.values) {
+			return false;
+		}
+
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] sliders');
 		}
@@ -30,8 +66,8 @@ export class Sliders extends React.Component {
 
 			if (this.props.indivMode
 				&& this.props.indivEdit
-				&& this.props.values.indiv_group_param[this.props.currentGroup]) {
-				const paramObject = this.props.values.indiv_group_param[this.props.currentGroup][`${param.name}_rel`] || {state: 'relative', value: 1};
+				&& this.state.values.indiv_group_param[this.props.currentGroup]) {
+				const paramObject = this.state.values.indiv_group_param[this.props.currentGroup][`${param.name}_rel`] || {state: 'relative', value: 1};
 
 				value = paramObject.value;
 					_.assign(paramToUse, param, {
@@ -46,7 +82,7 @@ export class Sliders extends React.Component {
 			}
 			else {
 				_.assign(paramToUse, param);
-				value = this.props.values ? this.props.values[param.name] : undefined;
+				value = this.state.values ? this.state.values[param.name] : undefined;
 			}
 
 			const isRadio = paramToUse.controlType === 'radio';
@@ -74,6 +110,7 @@ export class Sliders extends React.Component {
 				: (
 					<Slider
 						demo={paramToUse.demo}
+						subscription={this.state.subscription}
 						credits={this.props.credits}
 						disabled={paramToUse.disabled}
 						init={paramToUse.init}
@@ -99,12 +136,12 @@ export class Sliders extends React.Component {
 	}
 }
 
-export class Slider extends React.Component {
+export class RawSlider extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-		this.openGoProModal = this.openGoProModal.bind(this);
+
 		this.changeParam = this.changeParam.bind(this);
+		this.handleRestrictedRangeEnter = this.handleRestrictedRangeEnter.bind(this);
 	}
 
 	componentWillMount() {
@@ -117,7 +154,14 @@ export class Slider extends React.Component {
 	}
 
 	resetValue() {
-		this.client.dispatchAction('/change-param', {value: this.props.init, name: this.props.name, label: this.props.label, demo: this.props.demo});
+		this.client.dispatchAction('/change-param', {value: this.props.init, name: this.props.name, label: this.props.label, demo: this.props.demo, force: true});
+	}
+
+	handleRestrictedRangeEnter() {
+		this.client.dispatchAction('/store-value', {
+			openRestrictedFeature: true,
+			restrictedFeatureHovered: 'slider',
+		});
 	}
 
 	showTooltip(sliderName) {
@@ -137,14 +181,7 @@ export class Slider extends React.Component {
 		document.body.addEventListener('click', outsideClick);
 	}
 
-	openGoProModal() {
-		window.Intercom('trackEvent', 'clickOnExportYourFontNow');
-		this.client.dispatchAction('/store-value', {openGoProModal: true});
-		Log.ui('ExportFontNow.open');
-	}
-
 	changeParam(params) {
-		params.demo = this.props.demo;
 		this.client.dispatchAction('/change-param', params);
 	}
 
@@ -153,33 +190,24 @@ export class Slider extends React.Component {
 			console.log('[RENDER] slider');
 		}
 		const value = this.props.value === undefined ? this.props.init : this.props.value;
-		const freeAccount = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+		// TODO: better way to inject subscription
+		const {subscription} = this.props;
+		const freeAccount = !this.props.isManagedAccount
+			&& !(subscription && !subscription.plan.id.includes('agency'));
 		const credits = this.props.credits;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
-		const disabled = !this.props.disabled && (!(freeAccountAndHasCredits || !freeAccount) && !this.props.demo);
+		const disabled = !this.props.disabled && !(freeAccountAndHasCredits || !freeAccount);
 
 		const classes = classNames({
 			'slider': true,
 			'is-coming': this.props.disabled,
 			'is-child': this.props.child,
-			'is-disabled': disabled,
 		});
 
 		const devOverlay = this.props.disabled
 			? (
 				<div className="slider-demo-overlay-text">
 					This feature is currently in development
-				</div>
-			)
-			: false;
-
-		const demoOverlay = disabled
-			? (
-				<div onClick={this.openGoProModal} className="slider-demo-overlay-text">
-					This feature is available with the full version
-					<div className="slider-demo-overlay-text-more">
-						<div className="slider-demo-overlay-text-more-text">Upgrade to full version</div>
-					</div>
 				</div>
 			)
 			: false;
@@ -198,28 +226,51 @@ export class Slider extends React.Component {
 			);
 		}
 
+		const max = disabled
+			? (demoRatio * this.props.max + (1 - demoRatio) * this.props.init)
+			: this.props.max;
+		const min = disabled
+			? (demoRatio * this.props.min + (1 - demoRatio) * this.props.init)
+			: this.props.min;
+
 		return (
 			<div className={classes}>
 				<div className="slider-demo-overlay">
 					{devOverlay}
-					{demoOverlay}
 				</div>
 				<label className="slider-title">{this.props.label}</label>
 				{sliderTooltipButton}
 				<div className="slider-reset" onClick={() => {this.resetValue();}}>reset</div>
-				<SliderTextController value={value} name={this.props.name} label={this.props.label} disabled={this.props.disabled} individualized={this.props.individualized} changeParam={this.changeParam}/>
+				<SliderTextController
+					demo={disabled}
+					value={value}
+					name={this.props.name}
+					label={this.props.label}
+					disabled={this.props.disabled}
+					minAdvised={this.props.minAdvised}
+					maxAdvised={this.props.maxAdvised}
+					maxDemo={max}
+					minDemo={min}
+					individualized={this.props.individualized}
+					changeParam={this.changeParam}/>
 				<div className="slider-container">
-					<SliderController value={value}
+					<SliderController
+						value={value}
+						demo={disabled}
 						name={this.props.name}
 						individualized={this.props.individualized}
 						label={this.props.label}
 						min={this.props.min}
 						max={this.props.max}
+						realMin={min}
+						realMax={max}
 						minAdvised={this.props.minAdvised}
 						maxAdvised={this.props.maxAdvised}
 						disabled={this.props.disabled}
 						changeParam={this.changeParam}
-						child={this.props.child}/>
+						child={this.props.child}
+						onRestrictedRangeEnter={this.handleRestrictedRangeEnter}
+					/>
 					{indivSwitch}
 				</div>
 			</div>
@@ -227,12 +278,28 @@ export class Slider extends React.Component {
 	}
 }
 
-export class RadioSlider extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+const query = gql`
+	query {
+		user {
+			id
+			manager {
+				id
+			}
+		}
 	}
+`;
 
+export const Slider = graphql(query, {
+	props({data}) {
+		const {user} = data;
+
+		return {
+			isManagedAccount: user && user.manager,
+		};
+	},
+})(RawSlider);
+
+export class RadioSlider extends React.PureComponent {
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
@@ -291,135 +358,10 @@ export class RadioSlider extends React.Component {
 	}
 }
 
-export class SliderController extends React.Component {
+export class SliderRadioController extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
-		// function bindings
-		this.handleUp = this.handleUp.bind(this);
-		this.handleMove = this.handleMove.bind(this);
-		this.handleSelectstart = this.handleSelectstart.bind(this);
-	}
-
-	componentWillMount() {
-		this.lifespan = new Lifespan();
-		this.client = LocalClient.instance();
-
-		document.addEventListener('mouseup', this.handleUp);
-		window.addEventListener('mousemove', this.handleMove);
-		document.addEventListener('selectstart', this.handleSelectstart);
-	}
-
-	componentDidMount() {
-		const slider = this.refs.slider;
-
-		this.sliderWidth = slider.offsetWidth;
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-		document.removeEventListener('mouseup', this.handleUp);
-		window.removeEventListener('mousemove', this.handleMove);
-		document.removeEventListener('selectstart', this.handleSelectstart);
-	}
-
-	handleDown(e) {
-		if (this.props.disabled) {
-			return;
-		}
-
-		this.tracking = true;
-		const newX = e.pageX || e.screenX;
-		const {offsetLeft} = DOM.getAbsOffset(this.refs.slider);
-		let newValue = ((newX - offsetLeft) / this.sliderWidth * (this.props.max - this.props.min)) + this.props.min;
-
-		newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
-
-		this.props.changeParam({value: newValue, name: this.props.name, label: this.props.label});
-		this.currentX = newX;
-
-		e.stopPropagation();
-	}
-
-	handleUp(e) {
-		if (!this.tracking) {
-			return;
-		}
-
-		this.tracking = false;
-		this.props.changeParam({value: this.props.value, name: this.props.name, label: this.props.label, force: true});
-
-		e.stopPropagation();
-	}
-
-	handleMove(e) {
-		if (!this.tracking) {
-			return;
-		}
-
-		const newX = e.pageX || e.screenX;
-		const el = this.refs.slider;
-		const {offsetLeft} = DOM.getAbsOffset(el);
-		let newValue;
-
-		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
-			const variation = (newX - this.currentX) / this.sliderWidth * (this.props.max - this.props.min);
-
-			newValue = this.props.value + variation;
-
-			newValue = Math.min(Math.max(newValue, this.props.min), this.props.max);
-		}
-		else {
-			newValue = newX < offsetLeft ? this.props.min : this.props.max;
-		}
-
-		this.props.changeParam({value: newValue, name: this.props.name});
-		this.currentX = newX;
-	}
-
-	// This prevents preview text to be selected whil using the sliders
-	handleSelectstart(e) {
-		if (this.tracking) {
-			return e.preventDefault();
-		}
-	}
-
-	handleClick() {
-
-	}
-
-	render() {
-		const translateX = (this.props.max - Math.min(Math.max(this.props.value, this.props.min), this.props.max)) / (this.props.max - this.props.min) * 92.0;
-		const transform = {
-			transform: `translateX(-${translateX}%)`,
-		};
-
-		const classes = classNames({
-			'slider-controller-bg': true,
-			'is-not-advised': this.props.value < this.props.minAdvised || this.props.value > this.props.maxAdvised,
-			'is-indiv': this.props.individualized,
-		});
-
-		return (
-			<div className="slider-controller" ref="slider"
-				onMouseDown={(e) => { this.handleDown(e);}}>
-				<div className={classes} style={transform}>
-					<div
-						className="slider-controller-handle"
-						ref="handle" ></div>
-				</div>
-			</div>
-		);
-	}
-}
-
-export class SliderRadioController extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-
-		//function binding to avoid unnecessery re-render
 		this.handleChange = this.handleChange.bind(this);
 	}
 
@@ -480,10 +422,16 @@ export class SliderRadioController extends React.Component {
 	}
 }
 
-export class SliderTextController extends React.Component {
+export class SliderTextController extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.handleChange = this.handleChange.bind(this);
+		this.handleClick = this.handleClick.bind(this);
+		this.handleBlur = this.handleBlur.bind(this);
+		this.state = {
+			isTyping: false,
+		};
 	}
 
 	componentWillMount() {
@@ -493,6 +441,26 @@ export class SliderTextController extends React.Component {
 
 	componentWillUnmount() {
 		this.lifespan.release();
+	}
+
+	handleChange(e) {
+		const value = this.props.demo
+			? Math.max(Math.min(e.target.value, this.props.maxDemo), this.props.minDemo)
+			: e.target.value;
+
+		this.props.changeParam({
+			name: this.props.name,
+			value: parseFloat(value),
+			label: this.props.label,
+		});
+	}
+
+	handleClick() {
+		this.setState({isTyping: true});
+	}
+
+	handleBlur() {
+		this.setState({isTyping: false});
 	}
 
 	render() {
@@ -505,26 +473,17 @@ export class SliderTextController extends React.Component {
 			<input
 				className={classes}
 				type="number"
-				value={this.props.value.toFixed(2)}
-				onChange={(e) => {
-					this.props.changeParam( {
-							name: this.props.name,
-							value: parseFloat(e.target.value),
-							label: this.props.label,
-					});
-				}}
+				value={this.state.isTyping ? this.props.value : this.props.value.toFixed(2)}
+				onChange={this.handleChange}
+				onClick={this.handleClick}
+				onBlur={this.handleBlur}
 				disabled={this.props.disabled}
 			/>
 		);
 	}
 }
 
-class IndivSwitch extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
+class IndivSwitch extends React.PureComponent {
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();

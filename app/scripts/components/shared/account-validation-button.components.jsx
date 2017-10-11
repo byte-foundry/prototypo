@@ -13,7 +13,7 @@ export default class AccountValidationButton extends React.Component {
 		const type = this.props.click ? 'button' : 'submit';
 
 		return (
-			<button type={type} disabled={this.props.loading} className="account-button account-validation-button" disabled={this.props.disabled} onClick={this.props.click}>
+			<button type={type} className="account-button account-validation-button" disabled={this.props.disabled || this.props.loading} onClick={this.props.click}>
 				<WaitForLoad loaded={!this.props.loading} secColor={true}>
 					{this.props.label}
 				</WaitForLoad>

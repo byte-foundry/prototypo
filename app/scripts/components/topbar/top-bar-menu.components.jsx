@@ -10,78 +10,20 @@ import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 
 import Button from '../shared/button.components.jsx';
 
-class TopBarMenu extends React.Component {
+class TopBarMenu extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.state = {};
 	}
 
-	render() {
-		if (process.env.__SHOW_RENDER__) {
-			console.log('[RENDER] TopBarMenu');
-		}
-		const headers = _.without(this.props.children, false, undefined).map((child, index) => {
-			const classes = classNames({
-				'top-bar-menu-item': true,
-				'is-aligned-right': child.props.alignRight,
-				'is-action': child.props.action,
-				'is-icon-menu': !!child.props.img,
-				'is-centered': child.props.centered,
-				'img-dark-background': child.props.imgDarkBackground,
-			});
-			const count = (index > 0 && index < 5) ? index : 0;
-
-			return (
-				<TopBarMenuItem
-					className={classes}
-					key={index}
-					id={child.props.id}
-					count={count}
-					noHover={child.props.noHover}
-					onMouseEnter={child.props.enter}
-					onMouseLeave={child.props.leave}>
-					{child.type.getHeader(child.props)}
-					{child}
-				</TopBarMenuItem>
-			);
-		});
-
-		return (
-			<ul className="top-bar-menu">
-				{headers}
-			</ul>
-		);
-	}
-}
-
-class TopBarMenuItem extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			topbarItemDisplayed: undefined,
-		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-
-		// function binding
-		this.handleClick = this.handleClick.bind(this);
-		this.toggleDisplay = this.toggleDisplay.bind(this);
-		this.startFileTutorial = this.startFileTutorial.bind(this);
-	}
-
-	async componentWillMount() {
+	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		const {head} = await this.client.fetch('/prototypoStore');
-
-		this.setState({
-			topbarItemDisplayed: head.toJS().topbarItemDisplayed,
-		});
-
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((store) => {
 				this.setState({
-					topbarItemDisplayed: head.toJS().topbarItemDisplayed,
+					topbarItemDisplayed: store.toJS().d.topbarItemDisplayed,
 				});
 			})
 			.onDelete(() => {
@@ -95,9 +37,65 @@ class TopBarMenuItem extends React.Component {
 		this.lifespan.release();
 	}
 
+
+	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] TopBarMenu');
+		}
+		const headers = _.without(this.props.children, false, undefined).map((child, index) => {
+			const classes = classNames({
+				'top-bar-menu-item': true,
+				'is-aligned-right': child && child.props.alignRight,
+				'is-action': child && child.props.action,
+				'is-icon-menu': child && !!child.props.img,
+				'is-centered': child &&child.props.centered,
+				'img-dark-background': child && child.props.imgDarkBackground,
+				'academy-progress-container': child && child.props.id === "progress-academy",
+			});
+			const count = (index > 0 && index < 5) ? index : 0;
+
+			return (
+				<TopBarMenuItem
+					className={classes}
+					key={index}
+					id={child && child.props.id}
+					count={count}
+					noHover={child && child.props.noHover}
+					onMouseEnter={child && child.props.enter}
+					topbarItemDisplayed={this.state.topbarItemDisplayed}
+					onMouseLeave={child && child.props.leave}>
+					{child && child.type.getHeader(child.props)}
+					{child}
+				</TopBarMenuItem>
+			);
+		});
+
+		return (
+			<ul className="top-bar-menu">
+				{headers}
+			</ul>
+		);
+	}
+}
+
+class TopBarMenuItem extends React.PureComponent {
+	constructor(props) {
+		super(props);
+
+		// function binding
+		this.handleClick = this.handleClick.bind(this);
+		this.toggleDisplay = this.toggleDisplay.bind(this);
+		this.startFileTutorial = this.startFileTutorial.bind(this);
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+
 	toggleDisplay() {
 		if (this.props.count) {
-			if (this.state.topbarItemDisplayed === this.props.count) {
+			if (this.props.topbarItemDisplayed === this.props.count) {
 				this.client.dispatchAction('/store-value', {
 					topbarItemDisplayed: undefined,
 				});
@@ -139,7 +137,7 @@ class TopBarMenuItem extends React.Component {
 
 	render() {
 		const classes = classNames(this.props.className, {
-			'topbaritem-displayed': this.state.topbarItemDisplayed === this.props.count,
+			'topbaritem-displayed': this.props.topbarItemDisplayed === this.props.count,
 			'no-hover': this.props.noHover,
 		});
 		const id = this.props.count ? `topbar-menu-item-${this.props.count}` : '';
@@ -148,7 +146,7 @@ class TopBarMenuItem extends React.Component {
 			<li
 				className={classes}
 				id={id}
-				onClick={this.handleClick}>
+				onClick={() => { this.handleClick(); }}>
 				{this.props.children}
 			</li>
 		);
@@ -159,7 +157,7 @@ class TopBarMenuItem extends React.Component {
 *	TopBarMenuDropdown is nestable
 *	meaning that you can put a TopBarMenuDropdown inside a TopBarMenuDropdownItem
 */
-class TopBarMenuDropdown extends React.Component {
+class TopBarMenuDropdown extends React.PureComponent {
 	static getHeader(props) {
 		const content = {
 			'title': props.name ? <span className="top-bar-menu-item-title" key={`titleheader${props.name}`}>{props.name}</span> : false,
@@ -186,7 +184,7 @@ class TopBarMenuDropdown extends React.Component {
 	}
 }
 
-class TopBarMenuAction extends React.Component {
+class TopBarMenuAction extends React.PureComponent {
 
 	static getHeader(props) {
 
@@ -211,7 +209,7 @@ class TopBarMenuAction extends React.Component {
 	}
 }
 
-class TopBarMenuLink extends React.Component {
+class TopBarMenuLink extends React.PureComponent {
 
 	static getHeader(props) {
 
@@ -261,7 +259,7 @@ function setupKeyboardShortcut(key, modifier, cb) {
 	});
 }
 
-class TopBarMenuDropdownItem extends React.Component {
+class TopBarMenuDropdownItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -361,7 +359,67 @@ class TopBarMenuDropdownItem extends React.Component {
 	}
 }
 
-class TopBarMenuIcon extends React.Component {
+class TopBarMenuAcademy extends React.PureComponent {
+	static getHeader(props) {
+		return (
+			<div className="top-bar-menu-item-academy">
+				<Link to={`/academy/course/${props.course.slug}`}>
+					<img className="top-bar-menu-item-academy-img"
+						src={props.icon}
+						onMouseLeave={() => {props.clearText();}}
+						onMouseEnter={() => {props.setText(props.course.name, true);}}
+					/>
+				</Link>
+				{props.course.parts.map((part) => {
+					return (
+						<Link to={`/academy/course/${props.course.slug}/${part.name}`}>
+							<span
+								onMouseEnter={() => {props.setText(`${props.course.name} - ${part.name}`);}}
+								onMouseLeave={() => {props.clearText();}}
+								className={`top-bar-menu-item-academy-part ${part.completed ? 'completed' : ''}`}
+							/>
+						</Link>
+					);
+				})}
+				<span className="top-bar-menu-item-academy-text">
+					{props.text}
+				</span>
+			</div>
+		);
+	}
+
+	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] topbarmenuacademy');
+		}
+		return false;
+	}
+}
+
+class TopBarMenuAcademyIcon extends React.PureComponent {
+	static getHeader(props) {
+		return (
+			<div className="top-bar-menu-item-academy">
+				<Link to={`/academy/home`}>
+					<img className="top-bar-menu-item-academy-img  is-alone"
+						src={props.icon}
+						onMouseLeave={() => {props.clearText();}}
+						onMouseEnter={() => {props.setText(false, true);}}
+					/>
+				</Link>
+			</div>
+		);
+	}
+
+	render() {
+		if (process.env.__SHOW_RENDER__) {
+			console.log('[RENDER] topbarmenuacademyicon');
+		}
+		return false;
+	}
+}
+
+class TopBarMenuIcon extends React.PureComponent {
 
 	static getHeader(props) {
 		return <div className="top-bar-menu-item-icon"><img className="top-bar-menu-item-icon-img" src={props.img} /></div>;
@@ -372,7 +430,7 @@ class TopBarMenuIcon extends React.Component {
 	}
 }
 
-class TopBarMenuButton extends React.Component {
+class TopBarMenuButton extends React.PureComponent {
 	static getHeader({label, click}) {
 		return <Button small label={label} click={click} />;
 	}
@@ -390,4 +448,6 @@ export {
 	TopBarMenuIcon,
 	TopBarMenuLink,
 	TopBarMenuButton,
+	TopBarMenuAcademy,
+	TopBarMenuAcademyIcon,
 };

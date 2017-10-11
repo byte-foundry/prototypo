@@ -11,4 +11,8 @@
 			padding-bottom: 5px;
 		}
 	}
+
+	& .new-button:not(:first-child) {
+		margin-left: 10px;
+	}
 }

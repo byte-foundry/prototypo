@@ -10,13 +10,11 @@
 	z-index: 13;
 	display:flex;
 	justify-content:center;
-	font-family: 'Open Sans';
 	align-items: flex-start;
 	overflow:auto;
 
 	&-pan {
 		position:relative;
-		padding: 40px;
 		border-right: solid 1px $light-grey;
 	}
 
@@ -39,17 +37,22 @@
 	&-container {
 		position:relative;
 		border-radius: 4px;
-		flex:0 0 80%;
-		padding: 10px 0 0;
+		flex:0 0 70%;
+		padding: 0;
 		margin: 90px;
 		background:$white;
 		display:flex;
 		flex-flow: column nowrap;
+
+		@media(min-width: 1650px) {
+			flex:0 0 60%;
+		}
 	}
 
 	&-content {
 		display:flex;
 		flex-flow: row nowrap;
 		flex:1;
+		max-height: 70vh;
 	}
 }

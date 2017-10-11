@@ -1,0 +1,146 @@
+@import "../variables";
+
+
+.start-app {
+	height: 100%;
+	width: 100%;
+	background-color: $green;
+	overflow: auto;
+	padding-top: 20px;
+
+	&.noproject {
+		.start-app-container {
+			width: 810px;
+			.start-base-create {
+				width: 100%;
+				border-radius: 8px;
+			}
+			.start-base-projects {
+				display: none;
+			}
+		}
+	}
+
+	.go-to-account {
+		margin: 20px auto;
+		text-align: center;
+
+		&-link {
+			color: $white;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+}
+
+
+.start-app-container {
+	min-height: 700px;
+	width: 1155px;
+	background: $lightest-grey;
+	position: relative;
+	margin: 0 auto 50px;
+	box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+	border-radius:8px;
+}
+
+.start-base {
+	display: flex;
+	padding: 0;
+	border-radius:8px;
+
+
+	&-create {
+		width: 70%;
+		min-width: 790px;
+		height: auto;
+		font-weight: 400;
+		display: flex;
+		flex-flow: column;
+		padding: 20px 40px;
+		background-color: mix(black, $white, 1%);
+		border-top-left-radius: 8px;
+		border-bottom-left-radius: 8px;
+	}
+
+	&-projects {
+		flex: 0 0 30%;
+		background-color: $white;
+		border-radius: 5px;
+		padding: 20px 40px;
+		border-top-right-radius: 8px;
+		border-bottom-right-radius: 8px;
+
+		.load-project {
+			&-label {
+				display: inline-block;
+				margin-top: 5px;
+				font-size:1.1em;
+				font-weight: 700;
+
+				color: $dark-grey;
+
+				&-order {
+					color: $green;
+				}
+			}
+			&-project {
+				list-style-type: none;
+				padding-left: 0;
+				&-item{
+					display: flex;
+					font-size: 18px;
+					margin-bottom: 5px;
+					padding: 10px 20px;
+					background-color: $lightest-grey;
+					color: $medium-grey;
+					transition: all .2s ease-out;
+					cursor: pointer;
+
+					&.selected {
+						color: $green;
+					}
+
+					&:nth-child(2n+1) {
+						background-color: $white;
+						border: 2px solid $lightest-grey;
+					}
+
+					&:hover {
+						color: $green;
+						transform: scale(1.01);
+						box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+
+						.load-project-project-item-button {
+							box-shadow: 0 0 0 2px $green inset;
+							color: $green;
+
+							&:hover, &:focus {
+								color: $white;
+								background: $green;
+							}
+						}
+					}
+
+					&-name {
+						flex: 1;
+					}
+
+					&-button {
+						font-size: 12px;
+						padding: 2px 15px;
+						box-shadow: 0 0 0 2px $light-grey inset;
+						color: $light-grey;
+
+						&:focus {
+							box-shadow: 0 0 2px $green, 0 0 0 2px $green inset;
+							color: $white;
+						}
+					}
+				}
+			}
+		}
+	}
+}

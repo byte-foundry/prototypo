@@ -1,20 +1,21 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Log from '../services/log.services.js';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-export default class CanvasGlyphInput extends React.Component {
+export default class CanvasGlyphInput extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
 			mode: [],
+			inputError: false,
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.handleKeyPress = this.handleKeyPress.bind(this);
+		this.setupGlyphAccess = this.setupGlyphAccess.bind(this);
+		this.toggleView = this.toggleView.bind(this);
 	}
 
 	componentWillMount() {
@@ -22,11 +23,12 @@ export default class CanvasGlyphInput extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					selected: head.toJS().glyphSelected,
-					mode: head.toJS().uiMode,
-					focused: head.toJS().glyphFocused,
+					selected: head.toJS().d.glyphSelected,
+					glyphs: head.toJS().d.glyphs,
+					mode: head.toJS().d.uiMode,
+					focused: head.toJS().d.glyphFocused,
 				});
 			})
 			.onDelete(() => {
@@ -40,10 +42,15 @@ export default class CanvasGlyphInput extends React.Component {
 		if (this.state.focused) {
 			e.preventDefault();
 			e.stopPropagation();
-
-			this.client.dispatchAction('/select-glyph', {
-				unicode: `${e.charCode}`,
-			});
+			if (this.state.glyphs.hasOwnProperty(e.charCode)) {
+				this.client.dispatchAction('/select-glyph', {
+					unicode: `${e.charCode}`,
+				});
+			}
+			else {
+				this.setState({inputError: true});
+				setTimeout(() => { this.setState({inputError: false}); }, 200);
+			}
 		}
 	}
 
@@ -52,8 +59,8 @@ export default class CanvasGlyphInput extends React.Component {
 		window.removeEventListener('keypress', this.handleKeyPress);
 	}
 
-	toggleView(name) {
-		const newViewMode = _.xor(this.state.mode, [name]);
+	toggleView() {
+		const newViewMode = _.xor(this.state.mode, ['list']);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});
@@ -80,12 +87,13 @@ export default class CanvasGlyphInput extends React.Component {
 		const classes = classNames({
 			'canvas-glyph-input-input': true,
 			'is-active': this.state.focused,
+			'is-error': this.state.inputError,
 		});
 
 		return (
 			<div className="canvas-menu-item canvas-glyph-input">
-				<div className="canvas-glyph-input-label is-active" onClick={() => { this.toggleView('list'); }} >Glyphs List</div>
-				<div className={classes} onClick={(e) => { this.setupGlyphAccess(e);}}>{String.fromCharCode(this.state.selected)}</div>
+				<div className="canvas-glyph-input-label is-active" onClick={this.toggleView}>Glyphs List</div>
+				<div className={classes} onClick={this.setupGlyphAccess}>{String.fromCharCode(this.state.selected)}</div>
 			</div>
 		);
 	}

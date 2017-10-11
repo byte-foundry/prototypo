@@ -18,11 +18,11 @@ export default class IndivSidebar extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					createParamGroup: head.toJS().indivCreate,
-					editParamGroup: head.toJS().indivEdit,
-					selectedGroup: head.toJS().indivCurrentGroup,
+					createParamGroup: head.toJS().d.indivCreate,
+					editParamGroup: head.toJS().d.indivEdit,
+					selectedGroup: head.toJS().d.indivCurrentGroup,
 				});
 			})
 			.onDelete(() => {

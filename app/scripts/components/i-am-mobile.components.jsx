@@ -1,7 +1,7 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
 
-export default class IAmMobile extends React.Component {
+export default class IAmMobile extends React.PureComponent {
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] NotABrowser');
@@ -10,7 +10,9 @@ export default class IAmMobile extends React.Component {
 		return (
 			<div id="notloggedin">
 				<div className="sign-in">
-					<h1>Sorry :( ! Prototypo is not currently available on mobile browser.</h1>
+					<div className="sign-in-sorry-logo"></div>
+					<h1 className="sign-in-sorry-message">Sorry :(</h1>
+					<div className="sign-in-sorry-text"> Prototypo is not currently available on mobile browser.</div>
 				</div>
 			</div>
 		);

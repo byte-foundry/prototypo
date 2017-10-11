@@ -1,24 +1,25 @@
-import React from 'react';
 import Lifespan from 'lifespan';
-import ClassNames from 'classnames';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ScrollArea from 'react-scrollbar/dist/no-css';
+import {graphql, gql, compose} from 'react-apollo';
 
-import HoodieApi from '~/services/hoodie.services.js';
-import LocalClient from '~/stores/local-client.stores.jsx';
+import Family from './family.components';
+import Variant from './variant.components';
+import LocalClient from '~/stores/local-client.stores';
+import Button from '../shared/new-button.components';
+import {collectionsTutorialLabel} from '../../helpers/joyride.helpers';
 
-import Button from '../shared/button.components.jsx';
-import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
-
-export default class Collection extends React.Component {
+class Collection extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {
-			families: [],
-		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.state = {};
+
 		this.returnToDashboard = this.returnToDashboard.bind(this);
 		this.open = this.open.bind(this);
+		this.handleDeleteFamily = this.handleDeleteFamily.bind(this);
+		this.handleDeleteVariant = this.handleDeleteVariant.bind(this);
 	}
 
 	async componentWillMount() {
@@ -26,37 +27,40 @@ export default class Collection extends React.Component {
 		this.lifespan = new Lifespan();
 
 		const prototypoStore = await this.client.fetch('/prototypoStore');
-		const creditStore = await this.client.fetch('/creditStore');
 
 		this.setState({
 			templateInfos: prototypoStore.head.toJS().templateList,
-			otfCreditCost: creditStore.head.toJS().exportOtf,
 		});
 
-		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
-				this.setState({
-					families: head.toJS().fonts,
-					selected: (
-						head.toJS().collectionSelectedFamily || {}
-					),
-					selectedVariant: (
-						head.toJS().collectionSelectedVariant || {}
-					),
-					familyDeleteSplit: head.toJS().uiFamilyDeleteSplit,
-					askSubscribeFamily: head.toJS().uiAskSubscribeFamily,
-					askSubscribeVariant: head.toJS().uiAskSubscribeVariant,
-					variantDeleteSplit: head.toJS().uiVariantDeleteSplit,
-					variantToExport: head.toJS().variantToExport,
-					exportedVariant: head.toJS().exportedVariant,
-					credits: head.toJS().credits,
-				});
-			})
-			.onDelete(() => {
-				this.setState({
-					families: undefined,
-				});
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
+			const {
+				collectionSelectedFamily,
+				collectionSelectedVariant,
+				uiAskSubscribeFamily,
+				uiAskSubscribeVariant,
+				variantToExport,
+				exportedVariant,
+			} = head.toJS().d;
+
+			this.setState({
+				selected: collectionSelectedFamily || this.props.families[0],
+				selectedVariant:
+					collectionSelectedVariant
+					|| (this.props.families[0] && this.props.families[0].variants[0]),
+				askSubscribeFamily: uiAskSubscribeFamily,
+				askSubscribeVariant: uiAskSubscribeVariant,
+				variantToExport,
+				exportedVariant,
 			});
+
+			if (!collectionSelectedFamily) {
+				this.client.dispatchAction('/select-family-collection', this.props.families[0]);
+				this.client.dispatchAction(
+					'/select-variant-collection',
+					this.props.families[0].variants[0],
+				);
+			}
+		});
 	}
 
 	componentDidMount() {
@@ -64,7 +68,7 @@ export default class Collection extends React.Component {
 			this.client.dispatchAction('/store-value', {
 				uiJoyrideTutorialValue: collectionsTutorialLabel,
 			});
-		}, (this.props.collectionTransitionTimeout + 100));
+		}, this.props.collectionTransitionTimeout + 100);
 	}
 
 	componentWillUnmount() {
@@ -75,76 +79,65 @@ export default class Collection extends React.Component {
 		this.client.dispatchAction('/store-value', {uiShowCollection: false});
 	}
 
-	open() {
-		this.client.dispatchAction('/select-variant', {variant: this.state.selectedVariant, family: this.state.selected});
+	open(variant) {
+		this.client.dispatchAction('/select-variant', {
+			variant: variant || this.state.selectedVariant,
+			family: this.state.selected,
+		});
 		this.client.dispatchAction('/store-value', {uiShowCollection: false});
 	}
 
-	download() {
+	async handleDeleteFamily() {
+		await this.props.deleteFamily(this.state.selected.id);
+		await this.props.refetch(); // ugly TMP
+	}
+
+	async handleDeleteVariant() {
+		await this.props.deleteVariant(this.state.selectedVariant.id);
+		await this.props.refetch(); // ugly TMP
 	}
 
 	render() {
-		const selectedFamilyVariants = (_.find(this.state.families, (family) => {
-			return family.name === this.state.selected.name;
-		}) || {}).variants;
+		const {families, deleteFamily} = this.props;
+		const {
+			selected,
+			templateInfos,
+			askSubscribeFamily,
+			variantToExport,
+			exportedVariant,
+		} = this.state;
+
+		const selectedFamilyVariants = (families.find(family => family.name === selected.name) || {})
+			.variants;
 		const variant = selectedFamilyVariants
-			? <VariantList
+			? (<VariantList
 				variants={selectedFamilyVariants}
 				selectedVariantId={this.state.selectedVariant.id}
-				key={this.state.selected.name}
-				deleteSplit={this.state.familyDeleteSplit}
-				askSubscribe={this.state.askSubscribeFamily}
-				variantToExport={this.state.variantToExport}
-				exportedVariant={this.state.exportedVariant}
-				credits={this.state.credits}
-				otfCreditCost={this.state.otfCreditCost}
-				family={this.state.selected}/>
+				askSubscribe={askSubscribeFamily}
+				variantToExport={variantToExport}
+				exportedVariant={exportedVariant}
+				family={selected}
+				deleteVariant={this.props.deleteVariant}
+			/>)
 			: false;
-
-		const selectedVariant = (_.find(selectedFamilyVariants, (item) => {
-			return item.id === this.state.selectedVariant.id;
-		}) || {});
-
-		const variantInfo = <VariantInfo
-			open={this.open}
-			download={this.download}
-			key={selectedVariant.id}
-			deleteSplit={this.state.variantDeleteSplit}
-			family={this.state.selected}
-			askSubscribe={this.state.askSubscribeVariant}
-			credits={this.state.credits}
-			otfCreditCost={this.state.otfCreditCost}
-			variant={selectedVariant}/>;
 
 		return (
 			<div className="collection">
 				<div className="collection-container">
-					<div className="account-dashboard-icon"/>
-					<div className="account-dashboard-back-icon" onClick={this.returnToDashboard}/>
+					<div className="account-dashboard-icon" onClick={this.returnToDashboard} />
+					<div className="account-dashboard-back-icon" onClick={this.returnToDashboard} />
 					<div className="account-header">
-						<h1 className="account-title">My collection</h1>
+						<h1 className="account-title">My projects</h1>
 					</div>
 					<div className="collection-content">
 						<FamilyList
-							list={this.state.families}
-							templateInfos={this.state.templateInfos}
-							selected={this.state.selected}/>
-						<ReactCSSTransitionGroup
-							component="div"
-							transitionName="variant-list-container"
-							transitionEnterTimeout={300}
-							transitionLeaveTimeout={300}
-							className="variant-list collection-pan">
-							{variant}
-						</ReactCSSTransitionGroup>
-						<ReactCSSTransitionGroup
-							component="div"
-							transitionName="variant-info-container"
-							transitionEnterTimeout={300}
-							transitionLeaveTimeout={300}
-							className="variant-info collection-pan">
-							{variantInfo}
-						</ReactCSSTransitionGroup>
+							list={families}
+							templateInfos={templateInfos}
+							selected={selected}
+							deleteSplit={this.state.familyDeleteSplit}
+							deleteFamily={deleteFamily}
+						/>
+						{variant}
 					</div>
 				</div>
 			</div>
@@ -152,11 +145,140 @@ export default class Collection extends React.Component {
 	}
 }
 
+Collection.propTypes = {
+	families: PropTypes.arrayOf(
+		PropTypes.shape({
+			id: PropTypes.string,
+			name: PropTypes.string,
+			template: PropTypes.string,
+		}),
+	).isRequired,
+	deleteFamily: PropTypes.func,
+	deleteVariant: PropTypes.func,
+};
 
-class FamilyList extends React.Component {
+Collection.defaultProps = {
+	families: [],
+	deleteFamily: () => {},
+	deleteVariant: () => {},
+};
+
+export const libraryQuery = gql`
+	query {
+		user {
+			id
+			library {
+				id
+				name
+				template
+				variants {
+					id
+					name
+					values
+				}
+			}
+		}
+	}
+`;
+
+const deleteVariantMutation = gql`
+	mutation deleteVariant($id: ID!) {
+		deleteVariant(id: $id) {
+			id
+		}
+	}
+`;
+
+const deleteFamilyMutation = gql`
+	mutation deleteFamily($id: ID!) {
+		deleteFamily(id: $id) {
+			id
+		}
+	}
+`;
+
+export default compose(
+	graphql(libraryQuery, {
+		options: {
+			fetchPolicy: 'network-only',
+		},
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			if (data.user) {
+				return {
+					families: data.user.library,
+					refetch: data.refetch,
+				};
+			}
+
+			return {refetch: data.refetch};
+		},
+	}),
+	graphql(deleteVariantMutation, {
+		props: ({mutate}) => ({
+			deleteVariant: id =>
+				mutate({
+					variables: {id},
+				}),
+		}),
+		options: {
+			update: (store, {data: {deleteVariant}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library.forEach((family) => {
+					// eslint-disable-next-line
+					family.variants = family.variants.filter(variant => variant.id !== deleteVariant.id);
+				});
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	}),
+	graphql(deleteFamilyMutation, {
+		props: ({mutate, ownProps}) => ({
+			deleteFamily: (id) => {
+				const family = ownProps.families.find(f => f.id === id);
+
+				if (!family) {
+					return Promise.reject();
+				}
+
+				// don't worry, mutations are batched, so we're only sending one or two requests
+				// in the future, cascade operations should be available on graphcool
+				const variants = family.variants.map(variant => ownProps.deleteVariant(variant.id));
+
+				return Promise.all([...variants, mutate({variables: {id}})]);
+			},
+		}),
+		options: {
+			update: (store, {data: {deleteFamily}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library = data.user.library.filter(font => font.id !== deleteFamily.id);
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	}),
+)(Collection);
+
+class FamilyList extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.openFamilyModal = this.openFamilyModal.bind(this);
+		this.selectFamily = this.selectFamily.bind(this);
+		this.openChangeFamilyName = this.openChangeFamilyName.bind(this);
+		this.deleteFamily = this.deleteFamily.bind(this);
 	}
 
 	componentWillMount() {
@@ -167,84 +289,95 @@ class FamilyList extends React.Component {
 		this.client.dispatchAction('/store-value', {openFamilyModal: true});
 	}
 
-	render() {
-		const families = _.map(this.props.list, (family) => {
-			const templateInfo = _.find(this.props.templateInfos, (template) => {
-				return template.templateName === family.template;
+	selectFamily(family) {
+		this.client.dispatchAction('/select-family-collection', family);
+	}
+
+	openChangeFamilyName(family) {
+		this.client.dispatchAction('/store-value', {
+			openChangeFamilyNameModal: true,
+			familySelectedVariantCreation: family,
+		});
+	}
+
+	async deleteFamily(family) {
+		try {
+			await this.props.deleteFamily(family.id);
+
+			// legacy call use to change the selected family
+			this.client.dispatchAction('/delete-family', {
+				family,
 			});
-
-			const selected = family.name === this.props.selected.name;
-
-			return <Family
-				key={family.name}
-				family={family}
-				selected={selected}
-				class={family.template.split('.')[0]}
-				templateName={templateInfo.name}/>;
-		});
-
-		return (
-				<div className="family-list collection-pan">
-					<Button label="Create a new family" click={this.openFamilyModal.bind(this)}/>
-					{families}
-				</div>
-		);
-	}
-}
-
-class Family extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-	}
-
-	selectFamily() {
-		this.client.dispatchAction('/select-family-collection', this.props.family);
+		}
+		catch (err) {
+			// TODO: Error handling
+		}
 	}
 
 	render() {
-		const classes = ClassNames({
-			family: true,
-			'is-active': this.props.selected,
-		});
-		const sampleClasses = ClassNames({
-			'family-sample': true,
-			[this.props.class]: true,
+		const families = this.props.list.map((family) => {
+			const templateInfo = this.props.templateInfos.find(
+				template => template.templateName === family.template,
+			) || {name: 'Undefined'};
+			let selected;
+
+			if (this.props.selected) {
+				selected = family.name === this.props.selected.name;
+			}
+
+			return (
+				<Family
+					key={family.id}
+					family={family}
+					selected={selected}
+					class={family.template.split('.')[0]}
+					templateName={templateInfo.name}
+					onSelect={this.selectFamily}
+					onDelete={this.deleteFamily}
+					askChangeName={this.openChangeFamilyName}
+				/>
+			);
 		});
 
 		return (
-			<div className={classes} onClick={this.selectFamily.bind(this)}>
-				<div className={sampleClasses}></div>
-				<div className="family-info">
-					<div className="family-info-name">
-						{this.props.family.name}
-					</div>
-					<div className="family-info-base">
-						FROM<span className="family-info-base-template"> {this.props.templateName}</span>
-					</div>
+			<div className="family-list collection-pan">
+				<div className="family-list-create">
+					<Button
+						className="family-list-create-button"
+						onClick={this.openFamilyModal}
+						size="small"
+						outline
+						fluid
+					>
+						Create a new project
+					</Button>
 				</div>
+				<ScrollArea
+					className="family-list-families"
+					contentClassName="family-list-families-content"
+					horizontal={false}
+					style={{overflowX: 'visible'}}
+				>
+					{families}
+				</ScrollArea>
 			</div>
 		);
 	}
 }
 
-class VariantList extends React.Component {
+class VariantList extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
-		// function binging in order to avoid unnecessary re-render
-		this.cancelDelete = this.cancelDelete.bind(this);
-		this.prepareDeleteOrDelete = this.prepareDeleteOrDelete.bind(this);
-		this.openChangeNameFamily = this.openChangeNameFamily.bind(this);
-		this.downloadFamily = this.downloadFamily.bind(this);
-		this.askSubscribe = this.askSubscribe.bind(this);
-		this.buyCredits = this.buyCredits.bind(this);
+		this.state = {
+			deleteSplit: false,
+		};
+
+		this.openCreateVariant = this.openCreateVariant.bind(this);
+		this.openVariant = this.openVariant.bind(this);
+		this.openChangeVariantName = this.openChangeVariantName.bind(this);
+		this.openDuplicateVariant = this.openDuplicateVariant.bind(this);
+		this.deleteVariant = this.deleteVariant.bind(this);
 	}
 
 	componentWillMount() {
@@ -257,248 +390,84 @@ class VariantList extends React.Component {
 		});
 	}
 
-	selectVariant(variant) {
-		this.client.dispatchAction('/select-variant-collection', variant);
-	}
-
-	openVariantModal() {
+	openCreateVariant() {
 		this.client.dispatchAction('/store-value', {
 			openVariantModal: true,
 			familySelectedVariantCreation: this.props.family,
 		});
 	}
 
-	openChangeNameFamily() {
+	openVariant(variant) {
+		this.client.dispatchAction('/select-variant', {
+			variant,
+			family: this.props.family,
+		});
+		this.client.dispatchAction('/store-value', {uiShowCollection: false});
+	}
+
+	openChangeVariantName(variant) {
 		this.client.dispatchAction('/store-value', {
-			openChangeFamilyNameModal: true,
+			openChangeVariantNameModal: true,
+			collectionSelectedVariant: variant,
 			familySelectedVariantCreation: this.props.family,
 		});
 	}
 
-	prepareDeleteOrDelete() {
-		if (this.props.deleteSplit) {
-			this.client.dispatchAction('/delete-family', {
-				family: this.props.family,
-			});
-			this.client.dispatchAction('/store-value', {
-				uiFamilyDeleteSplit: false,
-			});
-		}
-		else {
-			this.client.dispatchAction('/store-value', {
-				uiFamilyDeleteSplit: true,
-			});
-		}
-	}
-
-	cancelDelete() {
+	openDuplicateVariant(variant) {
 		this.client.dispatchAction('/store-value', {
-			uiFamilyDeleteSplit: false,
+			openDuplicateVariantModal: true,
+			collectionSelectedVariant: variant,
+			familySelectedVariantCreation: this.props.family,
 		});
 	}
 
-	downloadFamily() {
-		this.client.dispatchAction('/store-value', {
-			currentCreditCost: this.props.otfCreditCost,
-		});
-		this.client.dispatchAction('/export-family', {
-			familyToExport: this.props.family,
-			variants: this.props.variants,
-		});
-	}
+	async deleteVariant(variant) {
+		try {
+			await this.props.deleteVariant(variant.id);
 
-	askSubscribe() {
-		if (this.props.askSubscribe) {
-			document.location.href = '#/account/create';
-		}
-		else {
-			this.client.dispatchAction('/store-value', {
-				uiAskSubscribeFamily: true,
+			// legacy call use to change the selected variant
+			this.client.dispatchAction('/delete-variant', {
+				variant,
+				familyName: this.props.family.name,
 			});
 		}
-	}
-
-	buyCredits() {
-		this.client.dispatchAction('/store-value', {
-			openBuyCreditsModal: true,
-		});
+		catch (err) {
+			// TODO: Error handling
+		}
 	}
 
 	render() {
-		const variants = _.map(this.props.variants, (variant, i) => {
-			const classes = ClassNames({
-				'variant-list-name': true,
-				'is-active': variant.id === this.props.selectedVariantId,
-			});
+		const {deleteSplit} = this.state;
 
-			return (
-				<div className={classes} key={i} onClick={() => {this.selectVariant(variant);}}>
-					{this.props.family.name} {variant.name}
-				</div>
-			);
-		});
-		const freeUser = HoodieApi.instance.plan.indexOf('free_') !== -1;
-		const hasEnoughCredits = this.props.credits !== undefined
-			&& this.props.credits > 0
-			&& (this.props.otfCreditCost * this.props.variants.length) < this.props.credits;
-		const canExport = !freeUser || hasEnoughCredits;
-		const downloadLabel = this.props.variantToExport
-			? `${this.props.exportedVariant} / ${this.props.variantToExport}`
-			: !canExport && this.props.askSubscribe
-				? 'Subscribe'
-				: `Download family${hasEnoughCredits ? ' (' + this.props.variants.length + ' credits)' : ''}`;
-		const buyCreditsLabel = this.props.askSubscribe
-			? 'Buy credits'
-			: '';
+		const variants = this.props.variants.map(variant =>
+			(<Variant
+				key={variant.id}
+				family={this.props.family}
+				variant={variant}
+				deleteSplit={deleteSplit}
+				open={this.openVariant}
+				changeName={this.openChangeVariantName}
+				duplicate={this.openDuplicateVariant}
+				delete={this.deleteVariant}
+			/>),
+		);
 
 		return (
 			<div className="variant-list-container">
-				<div className="variant-list-title">
-					FAMILY ACTIONS
+				<div className="variant-list-add">
+					<Button onClick={this.openCreateVariant} size="small" outline>
+						Add a new variant
+					</Button>
 				</div>
-				<Button label="Change family name" click={this.openChangeNameFamily}/>
-				<Button
-					label={this.props.deleteSplit ? 'Delete' : 'Delete family'}
-					altLabel="Cancel"
-					danger={true}
-					splitButton={true}
-					splitted={this.props.deleteSplit}
-					click={this.prepareDeleteOrDelete}
-					altClick={this.cancelDelete}
-				/>
-				<div className="variant-list-title">
-					VARIANTS
-				</div>
-				<Button label="Add variant" click={this.openVariantModal.bind(this)}/>
-				{variants}
+				<ScrollArea
+					className="variant-list-variants"
+					contentClassName="variant-list-variants-content"
+					horizontal={false}
+					style={{overflowX: 'visible'}}
+				>
+					{variants}
+				</ScrollArea>
 			</div>
 		);
-	}
-}
-
-class VariantInfo extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-		this.edit = this.edit.bind(this);
-		this.duplicate = this.duplicate.bind(this);
-		this.cancelDelete = this.cancelDelete.bind(this);
-		this.prepareDeleteOrDelete = this.prepareDeleteOrDelete.bind(this);
-		this.askSubscribe = this.askSubscribe.bind(this);
-		this.buyCredits = this.buyCredits.bind(this);
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-	}
-
-	componentWillUnmount() {
-		this.client.dispatchAction('/store-value', {
-			uiAskSubscribeVariant: false,
-		});
-	}
-
-	edit() {
-		this.client.dispatchAction('/store-value', {
-			openChangeVariantNameModal: true,
-			familySelectedVariantCreation: this.props.family,
-		});
-	}
-
-	duplicate() {
-		this.client.dispatchAction('/store-value', {
-			openDuplicateVariantModal: true,
-			familySelectedVariantCreation: this.props.family,
-		});
-	}
-
-	prepareDeleteOrDelete() {
-		if (this.props.deleteSplit) {
-			this.client.dispatchAction('/delete-variant', {
-				variant: this.props.variant,
-				familyName: this.props.family.name,
-			});
-			this.client.dispatchAction('/store-value', {
-				uiVariantDeleteSplit: false,
-			});
-		}
-		else {
-			this.client.dispatchAction('/store-value', {
-				uiVariantDeleteSplit: true,
-			});
-		}
-	}
-
-	askSubscribe() {
-		if (this.props.askSubscribe) {
-			document.location.href = '#/account/create';
-		}
-		else {
-			this.client.dispatchAction('/store-value', {
-				uiAskSubscribeVariant: true,
-			});
-		}
-	}
-
-	buyCredits() {
-		this.client.dispatchAction('/store-value', {
-			openBuyCreditsModal: true,
-		});
-	}
-
-	cancelDelete() {
-		this.client.dispatchAction('/store-value', {
-			uiVariantDeleteSplit: false,
-		});
-	}
-
-	downloadVariant() {
-		this.client.dispatchAction('/store-value', {
-			currentCreditCost: this.props.otfCreditCost,
-		});
-		this.client.dispatchAction('/export-otf', {merged});
-	}
-
-	render() {
-		const freeUser = HoodieApi.instance.plan.indexOf('free_') !== -1;
-		const hasEnoughCredits = this.props.credits !== undefined
-			&& this.props.credits > 0
-			&& this.props.otfCreditCost < this.props.credits;
-		const canExport = !freeUser || hasEnoughCredits;
-		const downloadLabel = this.props.variantToExport
-			? `${this.props.exportedVariant} / ${this.props.variantToExport}`
-			: !canExport && this.props.askSubscribe
-				? 'Subscribe'
-				: `Download Variant${hasEnoughCredits ? ' (1 credits)' : ''}`;
-		const buyCreditsLabel = this.props.askSubscribe
-			? 'Buy credits'
-			: '';
-
-		const result = this.props.variant.id
-			? (
-				<div className="variant-info-container">
-					<div className="variant-list-title">
-						VARIANT ACTIONS
-					</div>
-					<Button label="Open in prototypo" important={true} click={this.props.open}/>
-					<Button label="Change variant name" click={this.edit}/>
-					<Button label="Duplicate variant" click={this.duplicate}/>
-					<Button
-						label={this.props.deleteSplit ? 'Delete' : 'Delete variant'}
-						altLabel="Cancel"
-						danger={true}
-						splitButton={true}
-						splitted={this.props.deleteSplit}
-						click={this.prepareDeleteOrDelete}
-						altClick={this.cancelDelete}
-					/>
-				</div>
-			)
-			: (
-				<div className="variant-info-container">
-				</div>
-			);
-
-		return result;
 	}
 }

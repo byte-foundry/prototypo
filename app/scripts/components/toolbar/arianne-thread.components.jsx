@@ -1,20 +1,30 @@
 import React from 'react';
+import {graphql, gql} from 'react-apollo';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
-import ClassNames from 'classnames';
+import classNames from 'classnames';
+
+import HoodieApi from '~/services/hoodie.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
-export default class ArianneThread extends React.Component {
+import {libraryQuery} from '../collection/collection.components';
+
+const voidStateObject = {};
+const voidStateArray = [];
+
+class ArianneThread extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
-			families: [],
+			selectedFamily: {},
+			selectedVariant: {},
 			family: {},
 			variant: {},
 			indivCurrentGroup: {},
 			groups: [],
 		};
+
 		this.toggleIndividualize = this.toggleIndividualize.bind(this);
 		this.selectVariant = this.selectVariant.bind(this);
 		this.selectFamily = this.selectFamily.bind(this);
@@ -24,47 +34,41 @@ export default class ArianneThread extends React.Component {
 		this.selectGroup = this.selectGroup.bind(this);
 		this.addIndividualizeGroup = this.addIndividualizeGroup.bind(this);
 		this.editIndivualizeGroup = this.editIndivualizeGroup.bind(this);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 		const store = await this.client.fetch('/prototypoStore');
-		const memoizedListSelector = (list=[], selectedValue, oldValue) => {
-			if (selectedValue.name !== oldValue.name || selectedValue.name === undefined) {
+		const memoizedListSelector = (list = [], selectedValue, oldValue, oldCriteria) => {
+			if (list.length > 0 && (selectedValue.name !== oldCriteria.name || selectedValue.name === undefined)) {
 				return list.filter((element) => { return selectedValue.name !== element.name; });
 			}
-			return oldValue;
+			return oldValue || voidStateArray;
 		};
 		const familySelector = (families, family) => { return families.find((f) => { return f.name === family.name; }); };
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
-				var family = familySelector(head.toJS().fonts, head.toJS().family) || (
-					this.state.families.length > 0
-						? this.state.families[0]
-						: {}
+			.onUpdate((head) => {
+				const family = familySelector(this.props.families, head.toJS().d.family) || (
+					this.props.families.length > 0
+						? this.props.families[0]
+						: voidStateObject
 				);
 
-				//This should never happen. However for user comfort if it happens
-				//we should create a new family to avoid crashes.
-				if (!family.name) {
-					localClient.dispatchAction('/create-family', {
-						name: 'My font',
-						template: 'elzevir.ptf',
-						loadCurrent: true,
-					});
-				}
+				const isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+				const isFreeWithCredits = (head.toJS().d.credits && head.toJS().d.credits > 0) && isFree;
 
 				this.setState({
-					families: memoizedListSelector(head.toJS().fonts, head.toJS().family, this.state.families),
-					family,
-					variant: head.toJS().variant,
-					groups: memoizedListSelector(head.toJS().indivGroups, head.toJS().indivCurrentGroup || {}, this.state.groups),
-					indivCreate: head.toJS().indivCreate,
-					indivMode: head.toJS().indivMode,
-					indivCurrentGroup: head.toJS().indivCurrentGroup || {},
+					selectedFamily: head.toJS().d.family,
+					selectedVariant: head.toJS().d.variant,
+					variant: head.toJS().d.variant,
+					groups: memoizedListSelector(head.toJS().d.indivGroups, head.toJS().d.indivCurrentGroup || voidStateObject, this.state.groups, this.state.indivCurrentGroup || voidStateObject),
+					indivCreate: head.toJS().d.indivCreate,
+					indivMode: head.toJS().d.indivMode,
+					indivCurrentGroup: head.toJS().d.indivCurrentGroup || voidStateObject,
+					isFree,
+					isFreeWithCredits,
 				});
 			})
 			.onDelete(() => {
@@ -72,10 +76,9 @@ export default class ArianneThread extends React.Component {
 			});
 
 		this.setState({
-			families: memoizedListSelector(store.head.toJS().fonts, store.head.toJS().family, this.state.families),
-			family: familySelector(store.head.toJS().fonts, store.head.toJS().family),
+			family: familySelector(this.props.families, store.head.toJS().family),
 			variant: store.head.toJS().variant,
-			groups: memoizedListSelector(store.head.toJS().indivGroups, {}, this.state.groups),
+			groups: memoizedListSelector(store.head.toJS().indivGroups, {}, this.state.groups, voidStateObject),
 		});
 	}
 
@@ -98,20 +101,27 @@ export default class ArianneThread extends React.Component {
 	addVariant() {
 		this.client.dispatchAction('/store-value', {
 			openVariantModal: true,
-			familySelectedVariantCreation: this.state.family,
+			familySelectedVariantCreation: this.state.selectedFamily,
 		});
 	}
 
 	showCollection() {
 		this.client.dispatchAction('/store-value', {
 			uiShowCollection: true,
-			collectionSelectedFamily: this.state.family,
-			collectionSelectedVariant: this.state.variant,
+			collectionSelectedFamily: this.state.selectedFamily,
+			collectionSelectedVariant: this.state.selectedVariant,
 		});
 	}
 
 	toggleIndividualize() {
-		this.client.dispatchAction('/toggle-individualize');
+		// if (this.state.isFree && !this.state.isFreeWithCredits) {
+		// 	this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
+		// 												restrictedFeatureHovered: 'indiv'});
+		// }
+		// else {
+			this.client.dispatchAction('/toggle-individualize');
+		// }
+
 	}
 
 	selectGroup(group) {
@@ -144,23 +154,35 @@ export default class ArianneThread extends React.Component {
 	}
 
 	render() {
+		const {selectedFamily, selectedVariant} = this.state;
+		const {families} = this.props;
+
+		if (families.length === 0) {
+			// TODO: use <Redirect /> when migrating over React Router 4
+			return <p>Loading...</p>;
+		}
+
+		const family = families.find(({name}) => name === selectedFamily.name) || families[0];
+		const variant = family.variants.find(({name}) => name === selectedVariant.name) || family.variants[0];
+
 		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily}/>;
 		const familyItem = (
-				<DropArianneItem
-					label={this.state.family.name}
-					list={this.state.families}
-					add={addFamily}
-					click={this.selectFamily}
-					toggleId="arianne-item-family"/>
+			<DropArianneItem
+				label={family.name}
+				list={families}
+				add={addFamily}
+				click={this.selectFamily}
+				toggleId="arianne-item-family"
+			/>
 		);
 
 		const addVariant = <ArianneDropMenuItem item={{name: 'Add new variant...'}} click={this.addVariant}/>;
 		const variantItem = (
 				<DropArianneItem
-					label={this.state.variant.name}
-					family={this.state.family}
-					variant={this.state.variant}
-					list={this.state.family.variants ? this.state.family.variants.filter(({name}) => { return name !== this.state.variant.name; }) : []}
+					label={variant.name}
+					family={family}
+					variant={variant}
+					list={family.variants ? family.variants.filter(({name}) => { return name !== this.state.variant.name; }) : []}
 					add={addVariant}
 					click={this.selectVariant}
 					toggleId="arianne-item-variant"/>
@@ -170,10 +192,11 @@ export default class ArianneThread extends React.Component {
 			<ArianneDropMenuItem key="edit" item={{name: 'Edit groups...'}} click={this.editIndivualizeGroup}/>,
 			<ArianneDropMenuItem key="add" item={{name: 'Add new group...'}} click={this.addIndividualizeGroup}/>,
 		];
-		const groupClasses = ClassNames({
+		const groupClasses = classNames({
 			'arianne-item': true,
 			'is-active': this.state.indivMode,
 			'is-creating': this.state.indivCreate,
+			// 'is-demo': isFreeWithoutCredits,
 		});
 		const groupLabel = this.state.indivCreate
 			? 'Creating new group...'
@@ -206,17 +229,34 @@ export default class ArianneThread extends React.Component {
 	}
 }
 
-class RootArianneItem extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
+ArianneThread.propTypes = {
+};
 
+ArianneThread.defaultProps = {
+	families: [],
+};
+
+export default graphql(libraryQuery, {
+	options: {
+		fetchPolicy: 'cache-first', // this prevents any empty state for now
+	},
+	props: ({data}) => {
+		if (data.loading) {
+			return {loading: true};
+		}
+
+		return {
+			families: data.user.library,
+		};
+	},
+})(ArianneThread);
+
+class RootArianneItem extends React.Component {
 	render() {
 		return (
-			<div className="arianne-item is-small" onClick={this.props.click}>
-				<div className="arianne-item-action is-small">
-					<span className="arianne-item-action-collection"></span>
+			<div className="arianne-item" onClick={this.props.click}>
+				<div className="arianne-item-action">
+					<span className="arianne-item-action-collection">My projects</span>
 				</div>
 				<div className="arianne-item-arrow"></div>
 			</div>
@@ -224,15 +264,14 @@ class RootArianneItem extends React.Component {
 	}
 }
 
-class DropArianneItem extends React.Component {
+class DropArianneItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			arianneItemDisplayed: undefined,
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
-		// function binding
 		this.toggleDisplay = this.toggleDisplay.bind(this);
 	}
 
@@ -247,9 +286,9 @@ class DropArianneItem extends React.Component {
 		});
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((store) => {
 				this.setState({
-					arianneItemDisplayed: head.toJS().arianneItemDisplayed,
+					arianneItemDisplayed: store.toJS().d.arianneItemDisplayed,
 				});
 			})
 			.onDelete(() => {
@@ -292,7 +331,7 @@ class DropArianneItem extends React.Component {
 	}
 
 	render() {
-		const classes = ClassNames({
+		const classes = classNames({
 			'arianne-item': true,
 			'arianne-item-displayed': this.state.arianneItemDisplayed === this.props.toggleId,
 		});
@@ -316,12 +355,7 @@ class DropArianneItem extends React.Component {
 	}
 }
 
-class ArianneDropMenu extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
+class ArianneDropMenu extends React.PureComponent {
 	render() {
 		const items = this.props.list.map((item) => {
 			return <ArianneDropMenuItem
@@ -341,10 +375,15 @@ class ArianneDropMenu extends React.Component {
 	}
 }
 
-class ArianneDropMenuItem extends React.Component {
+class ArianneDropMenuItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+
+		this.handleClick = this.handleClick.bind(this);
+	}
+
+	handleClick() {
+		this.props.click(this.props.item, this.props.family);
 	}
 
 	render() {
@@ -353,9 +392,7 @@ class ArianneDropMenuItem extends React.Component {
 			: this.props.item.name;
 
 		return (
-			<li className="arianne-drop-menu-item" onClick={() => {
-				this.props.click(this.props.item, this.props.family);
-			}}>
+			<li className="arianne-drop-menu-item" onClick={this.handleClick}>
 				{item}
 			</li>
 		);
@@ -363,13 +400,9 @@ class ArianneDropMenuItem extends React.Component {
 }
 
 class ActionArianneItem extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
 	render() {
 		const classes = this.props.className || 'arianne-item';
+
 		return (
 			<div className={classes} onClick={this.props.click}>
 				<div className="arianne-item-action">

@@ -14,36 +14,31 @@ window.addEventListener('fluxServer.setup', () => {
 });
 
 export default {
-	'/go-back': () => {
-		const eventIndex = prototypoStore.get('undoTo') || prototypoStore.get('undoFrom');
+	'/go-back': ({eventIndex}) => {
 		const event = prototypoStore.get('undoEventList')[eventIndex];
 
-		if (eventIndex > 1) {
+		if (eventIndex > 0) {
 
 			const revert = Patch.revert(Patch.fromJSON(event.patch));
-			const patch = prototypoStore.set('undoFrom', eventIndex).set('undoTo', eventIndex - 1).commit();
+			const patch = prototypoStore.set('undoAt', eventIndex - 1).commit();
 
 			undoableStore.apply(revert);
 			localServer.dispatchUpdate('/prototypoStore', patch);
-			undoableStore.apply(revert);
 			localServer.dispatchUpdate('/undoableStore', revert);
 			localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
 		}
 	},
-	'/go-forward': () => {
+	'/go-forward': ({eventIndex}) => {
 
-		const eventIndex = prototypoStore.get('undoTo');
-
-		if (eventIndex) {
+		if (eventIndex !== undefined) {
 			const event = prototypoStore.get('undoEventList')[eventIndex + 1];
 
 			if (event) {
 
-				const patch = prototypoStore.set('undoFrom', eventIndex).set('undoTo', eventIndex + 1).commit();
+				const patch = prototypoStore.set('undoAt', eventIndex + 1).commit();
 
 				undoableStore.apply(Patch.fromJSON(event.patch));
 				localServer.dispatchUpdate('/prototypoStore', patch);
-				undoableStore.apply(revert);
 				localServer.dispatchUpdate('/undoableStore', Patch.fromJSON(event.patch));
 				localClient.dispatchAction('/update-font', undoableStore.get('controlsValues'));
 			}
@@ -53,7 +48,7 @@ export default {
 	'/store-action': ({store, patch, label}) => {
 
 		const newEventList = Array.from(prototypoStore.get('undoEventList'));
-		const eventIndex = prototypoStore.get('undoTo') || prototypoStore.get('undoFrom');
+		const eventIndex = prototypoStore.get('undoAt');
 
 		if (newEventList.length - 1 > eventIndex) {
 
@@ -68,16 +63,14 @@ export default {
 				label,
 			});
 		const eventPatch = prototypoStore.set('undoEventList', newEventList)
-			.set('undoTo', undefined)
-			.set('undoFrom', newEventList.length - 1).commit();
+			.set('undoAt', newEventList.length - 1).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', eventPatch);
 	},
 	'/clear-undo-stack': () => {
 		const patch = prototypoStore
 			.set('undoEventList', [])
-			.set('undoFrom', 0)
-			.set('undoTo', 0)
+			.set('undoAt', 0)
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);

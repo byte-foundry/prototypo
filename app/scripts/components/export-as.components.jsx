@@ -6,7 +6,7 @@ import Modal from './shared/modal.components.jsx';
 import InputWithLabel from './shared/input-with-label.components.jsx';
 import Button from './shared/button.components.jsx';
 
-export default class ExportAs extends React.Component {
+export default class ExportAs extends React.PureComponent {
 	constructor(props) {
 		super(props);
 

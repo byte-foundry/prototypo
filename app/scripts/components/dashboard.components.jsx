@@ -1,9 +1,10 @@
 import React from 'react';
+import {graphql, gql, compose} from 'react-apollo';
+import {withRouter} from 'react-router';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
-import ClassNames from 'classnames';
+import classNames from 'classnames';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Joyride from 'react-joyride';
 
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -15,16 +16,16 @@ import ExportAs from './export-as.components.jsx';
 import Collection from './collection/collection.components.jsx';
 import CreateFamilyModal from './familyVariant/create-family-modal.components.jsx';
 import CreateVariantModal from './familyVariant/create-variant-modal.components.jsx';
+import CreateAcademyModal from './academy/create-academy-modal.components.jsx';
 import ChangeNameFamily from './familyVariant/change-name-family.components.jsx';
 import ChangeNameVariant from './familyVariant/change-name-variant.components.jsx';
 import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
 import CreditsExport from './credits-export.components.jsx';
 import GoProModal from './go-pro-modal.components.jsx';
-//import NpsMessage from './nps-message.components.jsx';
 
 import {buildTutorialSteps, handleNextStep, handleClosed} from '../helpers/joyride.helpers.js';
 
-export default class Dashboard extends React.Component {
+class Dashboard extends React.PureComponent {
 
 	constructor(props) {
 		super(props);
@@ -35,8 +36,9 @@ export default class Dashboard extends React.Component {
 			firstTimeCollection: undefined,
 			firstTimeIndivCreate: undefined,
 			firstTimeIndivEdit: undefined,
+			firstTimeAcademyModal: undefined,
+			firstTimeAcademyJoyride: undefined,
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// function bindings
 		this.joyrideCallback = this.joyrideCallback.bind(this);
@@ -56,29 +58,50 @@ export default class Dashboard extends React.Component {
 			firstTimeCollection: prototypoStore.head.toJS().firstTimeCollection,
 			firstTimeIndivCreate: prototypoStore.head.toJS().firstTimeIndivCreate,
 			firstTimeIndivEdit: prototypoStore.head.toJS().firstTimeIndivEdit,
+			firstTimeAcademyModal: prototypoStore.head.toJS().firstTimeAcademyModal,
+			firstTimeAcademyJoyride: prototypoStore.head.toJS().firstTimeAcademyJoyride,
 		});
 
+		let firstContactTimeoutMade = false;
+
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
+				if (this.props.library && this.props.library.length <= 0) {
+					this.props.router.push('/start');
+					return;
+				}
+
+				if (!firstContactTimeoutMade && !this.props.firstContactMade) {
+					firstContactTimeoutMade = true;
+					setTimeout(() => {
+						window.Intercom('update', {
+							first_session_at: new Date(),
+						});
+						this.props.setFirstContact();
+					}, 300000);
+				}
+
 				this.setState({
-					openFamilyModal: head.toJS().openFamilyModal,
-					openVariantModal: head.toJS().openVariantModal,
-					familySelectedVariantCreation: head.toJS().familySelectedVariantCreation,
-					collectionSelectedVariant: head.toJS().collectionSelectedVariant,
-					openChangeFamilyNameModal: head.toJS().openChangeFamilyNameModal,
-					openChangeVariantNameModal: head.toJS().openChangeVariantNameModal,
-					openDuplicateVariantModal: head.toJS().openDuplicateVariantModal,
-					openBuyCreditsModal: head.toJS().openBuyCreditsModal,
-					openGoProModal: head.toJS().openGoProModal,
-					step: head.toJS().uiOnboardstep,
-					collection: head.toJS().uiShowCollection,
-					indiv: head.toJS().indivMode,
-					exportAs: head.toJS().exportAs,
-					uiJoyrideTutorialValue: head.toJS().uiJoyrideTutorialValue,
-					firstTimeFile: head.toJS().firstTimeFile,
-					firstTimeCollection: head.toJS().firstTimeCollection,
-					firstTimeIndivCreate: head.toJS().firstTimeIndivCreate,
-					firstTimeIndivEdit: head.toJS().firstTimeIndivEdit,
+					openFamilyModal: head.toJS().d.openFamilyModal,
+					openVariantModal: head.toJS().d.openVariantModal,
+					familySelectedVariantCreation: head.toJS().d.familySelectedVariantCreation,
+					collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
+					openChangeFamilyNameModal: head.toJS().d.openChangeFamilyNameModal,
+					openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
+					openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
+					openBuyCreditsModal: head.toJS().d.openBuyCreditsModal,
+					openGoProModal: head.toJS().d.openGoProModal,
+					step: head.toJS().d.uiOnboardstep,
+					collection: head.toJS().d.uiShowCollection,
+					indiv: head.toJS().d.indivMode,
+					exportAs: head.toJS().d.exportAs,
+					uiJoyrideTutorialValue: head.toJS().d.uiJoyrideTutorialValue,
+					firstTimeFile: head.toJS().d.firstTimeFile,
+					firstTimeCollection: head.toJS().d.firstTimeCollection,
+					firstTimeIndivCreate: head.toJS().d.firstTimeIndivCreate,
+					firstTimeIndivEdit: head.toJS().d.firstTimeIndivEdit,
+					firstTimeAcademyModal: head.toJS().d.firstTimeAcademyModal,
+					firstTimeAcademyJoyride: head.toJS().d.firstTimeAcademyJoyride,
 				});
 			})
 			.onDelete(() => {
@@ -172,7 +195,7 @@ export default class Dashboard extends React.Component {
 			console.log('[RENDER] dashboard');
 		}
 
-		const classes = ClassNames({
+		const classes = classNames({
 			'indiv': this.state.indiv && !(this.state.collection),
 			'normal': !this.state.indiv || this.state.collection,
 		});
@@ -197,6 +220,8 @@ export default class Dashboard extends React.Component {
 			&& <CreateFamilyModal propName="openFamilyModal"/>;
 		const newVariant = this.state.openVariantModal
 			&& <CreateVariantModal family={this.state.familySelectedVariantCreation} propName="openVariantModal"/>;
+		const explainAcademy = this.state.firstTimeAcademyModal
+			&& <CreateAcademyModal propName="openAcademyModal"/>;
 		const changeNameFamily = this.state.openChangeFamilyNameModal
 			&& <ChangeNameFamily family={this.state.familySelectedVariantCreation} propName="openChangeFamilyNameModal"/>;
 		const changeNameVariant = this.state.openChangeVariantNameModal
@@ -210,6 +235,13 @@ export default class Dashboard extends React.Component {
 
 		const exportAs = this.state.exportAs
 			&& <ExportAs propName="exportAs"/>;
+
+		if (this.props.location.query.showModal) {
+			this.client.dispatchAction('/store-value', {
+				openGoProModal: true,
+				goProModalBilling: this.props.location.query.showModal,
+			});
+		}
 
 		return (
 			<div id="dashboard" className={classes}>
@@ -244,8 +276,60 @@ export default class Dashboard extends React.Component {
 					{buyCredits}
 					{goPro}
 					{exportAs}
+					{explainAcademy}
 				</ReactCSSTransitionGroup>
 			</div>
 		);
 	}
 }
+
+const getUserFontsAndFirstContactMadeQuery = gql`
+	query getUserFonts {
+		user {
+			id
+			firstContactMade
+			library {
+				id
+			}
+		}
+	}
+`;
+
+const setFirstContactMadeMutation = gql`
+	mutation setFirstContact($id: ID!) {
+		updateUser(
+			id: $id,
+			firstContactMade: true
+		) {
+		id
+		}
+	}
+`;
+
+export default compose(
+	graphql(getUserFontsAndFirstContactMadeQuery, {
+		options: {
+			fetchPolicy: 'cache-first',
+		},
+		props({data}) {
+			if (data.loading) {
+				return {loading: true};
+			}
+			return {
+				library: data.user.library || [],
+				firstContactMade: data.user.firstContactMade,
+				userID: data.user.id,
+			};
+		},
+	}),
+	graphql(setFirstContactMadeMutation, {
+		props: ({mutate, ownProps}) => ({
+			setFirstContact: () =>
+				mutate({
+					variables: {
+						id: ownProps.userID,
+					},
+				}),
+		}),
+	}),
+)(withRouter(Dashboard));

@@ -1,9 +1,8 @@
 @import "../variables";
 
 .variant-list {
-	flex:1 0 30%;
-	padding:0px !important;
-	position:relative;
+	flex: 0 0 55%;
+	position: relative;
 	overflow: hidden;
 
 	&-download-overlay {
@@ -49,9 +48,9 @@
 
 	&-container {
 		background-color: $white;
-		position: relative;
-		padding:10px 40px 40px 40px;
-		min-height:100%;
+		flex: 0 0 55%;
+		display: flex;
+		flex-direction: column;
 
 		&#{&}-enter {
 			margin-left: -100%;
@@ -76,6 +75,11 @@
 				box-shadow: 0px 0px 7px 1px $light-grey inset;
 			}
 		}
+		.button {
+			width: inherit;
+			padding-left: 20px;
+			padding-right: 20px;
+		}
 	}
 
 	&-title {
@@ -86,20 +90,62 @@
 		margin-top:30px;
 	}
 
-	&-name {
+	&-item {
+		display: flex;
+		align-items: center;
 		margin-top: 7px;
 		color: $medium-grey;
-		cursor:pointer;
+		cursor: pointer;
 		text-transform: capitalize;
+		position: relative;
+		font-size: 18px;
+		background-color: $lightest-grey;
+		padding: 10px 20px;
+		transition: all .2s ease-out;
+		border: 2px solid $lightest-grey;
 
-		&::before {
-			content: "⟶";
-			margin-right: 1em;
-			font-family: sans-serif;
+		&:hover {
+			color: $green;
+			transform: scale3d(1.01, 1.01, 1.01);
+			box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 		}
 
-		&:hover, &.is-active {
-			color: $green;
+		&:focus {
+			outline: none;
+			border: 2px solid mix($green, $lightest-grey, 30%);
+		}
+
+		&:nth-child(2n+1) {
+			background-color: $white;
+		}
+
+		&-name {
+			flex: 1;
+		}
+
+		.view-panels-menu {
+			position: static;
+		}
+	}
+
+	&-add {
+		padding: 40px 40px 20px;
+	}
+
+	&-variants-content {
+		padding: 0 40px 20px;
+	}
+
+	&-open-button {
+		padding: 2px 16px;
+		font-size: 14px;
+		margin-right: 25px;
+		color: $light-grey;
+		box-shadow: 0 0 0 2px $light-grey inset;
+
+		&:hover, &:focus {
+			color: $white;
+			background-color: $light-grey;
 		}
 	}
 }
@@ -111,35 +157,9 @@
 	overflow:hidden;
 
 	&-container {
-		background-color: $white;
-		padding:10px 160px 40px 40px;
 		position:relative;
 		min-height: 100%;
-		border-bottom-right-radius: 7px;
-
-		&#{&}-enter {
-			margin-left: -100%;
-			z-index:2;
-			width:100%;
-			border-right: solid 1px $light-grey;
-
-			&-active {
-				margin-left: 0%;
-				transition: margin-left .3s ease-out;
-			}
-		}
-
-		&#{&}-leave {
-			position:absolute;
-			width:100%;
-			top:0;
-			box-shadow: 0px 0px 0px 1px $light-grey inset;
-
-			&-active {
-				transition: box-shadow .3s ease-in;
-				box-shadow: 0px 0px 7px 1px $light-grey inset;
-			}
-		}
+		font-size: 14px;
 	}
 }
 

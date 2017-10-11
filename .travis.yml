@@ -1,25 +1,18 @@
 sudo: false
 language: node_js
 node_js:
-- '6.3'
-before_install:
-- npm install -g uglifyjs
-after_install:
-- npm dedupe
-- npm shrinkwrap --dev
-- cat npm-shrinkwrap.json
+- '6.11'
 script:
-- gulp build --type=prod
-- 'surge --project ./dist --domain test.prototypo.io'
+- npm rebuild node-sass
+- NODE_ENV=production yarn build:dist -- --type=prod
 after_success:
-- 'uglifyjs dist/bundle.js -o dist/bundle.js --in-source-map dist/bundle.js.map --source-map-url bundle.js.map --source-map dist/bundle.js.map'
-- '[ $TRAVIS_BRANCH == master ] && surge --project ./dist --domain app.prototypo.io'
-- '[ $TRAVIS_BRANCH == release ] && surge --project ./dist --domain beta.prototypo.io'
-- '[ $TRAVIS_BRANCH == develop ] && surge --project ./dist --domain dev.prototypo.io'
-- '[ $TRAVIS_BRANCH == feat/new-ux ] && surge --project ./dist --domain sandbox1.prototypo.io'
+- 'curl -L https://github.com/netlify/netlifyctl/releases/download/v0.1.0/netlifyctl-linux-amd64-v0.1.0.tar.gz | tar zx'
+- '[ $TRAVIS_BRANCH == master ] && ./netlifyctl -y -A $NETLIFY_TOKEN -C netlify.prod.toml deploy'
+- '[ $TRAVIS_BRANCH == release ] && ./netlifyctl -y -A $NETLIFY_TOKEN -C netlify.release.toml deploy'
 branches:
   only:
     - master
-    - develop
     - release
-    - feat/new-ux
+notifications:
+  slack:
+    secure: nROAluwgT8ytE/2dlg2wKFDp/bA3AGd2SHOAN4mKwefAAyudofWhlx85qNLcLUAjfvIVYdPBRXx6BwlF0l5pAl7WCJKEFMAfhFZeXwEVd3DTXK9SvEwMym9qEiZXI6vyZY3IHb7MFy2p6uXpFE9Ub1Vdq8AEV7OPW8UZ742PYEA=

@@ -33,16 +33,48 @@ _:-ms-fullscreen, #notloggedin {
 	position:relative;
 	background-color:$white;
 	border-radius:7px;
+
+	.account-dashboard-page-title {
+		padding-bottom: 40px;
+	}
 }
 
 .sign-in {
 	width:500px;
 	margin:auto;
 
+	&-sorry-logo {
+		width:50px;
+		height:50px;
+		background-color: $black;
+		position:relative;
+		background-position: center;
+		background-size: 46%;
+		background-image: url("../../images/prototypo-icon-white.svg");
+		background-repeat: no-repeat;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		border-radius: 50%;
+		transition: background-color .2s ease;
+	}
+
+	&-sorry-message {
+		color: $dark-grey;
+		text-align: center;
+	}
+
+	&-sorry-text {
+		font-size: 20px;
+		padding: 10px;
+		color: $dark-grey;
+		text-align: center;
+	}
+
 	&-form {
 		display:flex;
 		width:100%;
-		padding:30px 0px 10px 40px;
+		padding:30px 40px 10px 40px;
 		flex-direction:column;
 
 		& .input-with-label {
@@ -64,6 +96,12 @@ _:-ms-fullscreen, #notloggedin {
 			color:$medium-grey;
 		}
 	}
+
+	&-h1 {
+		color: white;
+	}
+
+
 }
 
 .sign-up {

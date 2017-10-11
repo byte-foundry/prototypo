@@ -1,0 +1,31 @@
+.account-home {
+
+	&-resources {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+
+		&-item {
+			width: 48%;
+			margin-bottom: 2em;
+
+			&-box {
+				display: block;
+				border-radius: 3px;
+				box-shadow: 0px 0px 5px 0px #afafaf;
+				text-align: center;
+				padding: 20px;
+				transition: all 200ms;
+
+				&:hover {
+					box-shadow: 0px 0px 15px 0px #afafaf;
+				}
+			}
+
+			&--help {
+				width: 100%;
+			}
+		}
+	}
+
+}

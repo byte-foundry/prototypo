@@ -24,14 +24,14 @@ export function mapGlyphForApp(glyph) {
 }
 
 export async function setupFontInstance(appValues) {
-		const template = appValues.values.familySelected ? appValues.values.familySelected.template : undefined;
-		const typedataJSON = await Typefaces.getFont(template || 'venus.ptf');
-		const typedata = JSON.parse(typedataJSON);
+	const template = appValues.values.familySelected ? appValues.values.familySelected.template : 'venus.ptf';
+	const typedataJSON = await Typefaces.getFont(template);
+	const typedata = JSON.parse(typedataJSON);
 
-		// const prototypoSource = await Typefaces.getPrototypo();
-		const workerDeps = document.querySelector('script[src*=prototypo\\.]').src;
+	// const prototypoSource = await Typefaces.getPrototypo();
+	const workerDeps = document.querySelector('script[src*=prototypo\\.]').src;
 
-		const workerUrl = '/prototypo-canvas/src/worker.js';
+	const workerUrl = '/prototypo-canvas/src/worker.js';
 
 	//await font.loadFont(typedata.fontinfo.familyName, typedataJSON, appValues.values.variantSelected.db);
 
@@ -51,7 +51,7 @@ export async function setupFontInstance(appValues) {
 		tags: typedata.fontinfo.tags,
 		workerUrl,
 		workerDeps,
-		db: appValues.values.variantSelected.db,
+		variantId: appValues.values.variantSelected && appValues.values.variantSelected.id || null,
 		//subset,
 		typedata
 	};

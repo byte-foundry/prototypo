@@ -14,45 +14,51 @@
 }
 
 .contextual-menu {
-	position:absolute;
-	z-index:10;
-	bottom: 15px;
-	right:0px;
+	position: absolute;
+	// bottom right by default
+	left: 0;
+	top: 0;
 
-	&.is-aligned-left {
-		right: auto;
-		bottom: 25px;
-		left:0px;
-	}
-
-	&-enter {
+	&-appear {
 		transform: scale(0.01);
-		transform-origin: 100% 100%;
-
-		&.is-aligned-left {
-			transform-origin: 0% 100%;
-		}
+		transform-origin: 0 0;
 
 		&#{&}-active {
 			transform: scale(1);
 			transition: transform .2s ease-out;
-
 		}
 	}
 
-	&-leave {
+	&-exit {
 		transform: scale(0.99);
-		transform-origin: 100% 100%;
-
-		&.is-aligned-left {
-			transform-origin: 0% 100%;
-		}
+		transform-origin: 0 0;
 
 		&#{&}-active {
 			transform: scale(0);
 			transition: transform .2s ease-out;
-
 		}
+	}
+
+	&--left {
+		left: auto;
+		right: 0;
+	}
+
+	&--upper {
+		top: auto;
+		bottom: 0;
+	}
+
+	&--left#{&}-appear, &--left#{&}-exit {
+		transform-origin: 100% 0;
+	}
+
+	&--upper#{&}-appear, &--upper#{&}-exit {
+		transform-origin: 0 100%;
+	}
+
+	&--left#{&}--upper#{&}-appear, &--left#{&}--upper#{&}-exit {
+		transform-origin: 100% 100%;
 	}
 
 	&-list {
@@ -83,6 +89,41 @@
 
 			&.is-inactive {
 				color:$medium-grey;
+			}
+
+			&.is-split {
+				padding: 0;
+				&:hover {
+					background-color: inherit;
+				}
+				.btn {
+					display: inline-block;
+					position: relative;
+					float: left;
+					width: 50%;
+					cursor: pointer;
+					height: 100%;
+					text-align: center;
+					padding:7px 25px;
+					transition: all .2s ease;
+					background-color: $white;
+
+					&:first-child {
+						border-right: 1px solid $medium-grey;
+						color: $red;
+						&:hover {
+							background-color: $red;
+							color: $white;
+						}
+					}
+					&:last-child {
+						color: $black;
+						&:hover {
+							background-color: $green;
+							color: $white;
+						}
+					}
+				}
 			}
 
 			&-dropdown {

@@ -4,6 +4,7 @@ const fileTutorialLabel = 'fileTutorial';
 const collectionsTutorialLabel = 'collectionsTutorial';
 const indivGroupsCreationTutorialLabel = 'indivGroupsCreationTutorial';
 const indivGroupsEditionTutorialLabel = 'indivGroupsEditionTutorial';
+const academyTutorialLabel = 'academyTutorial';
 
 /**
 *	build every step of a tutorial according to previous and current state
@@ -27,6 +28,7 @@ const buildTutorialSteps = function(previousState, currentState) {
 			|| currentState.firstTimeCollection
 			|| currentState.firstTimeIndivCreate
 			|| currentState.firstTimeIndivEdit
+			|| currentState.firstTimeAcademyJoyride
 		)
 	) {
 		const normalColor = '#24d390';
@@ -57,10 +59,10 @@ const buildTutorialSteps = function(previousState, currentState) {
 			collectionStep1: {
 				title: 'Families',
 				text: <div>
-					<p>This is your collection!</p>
+					<p>This is your project list!</p>
 					<p>From here, you can inspect and manage your existing font families, or create a new one.</p>
 				</div>,
-				selector: '.family-list',
+				selector: '.collection-content',
 				position: 'right',
 				style: {
 					mainColor: normalColor,
@@ -69,11 +71,11 @@ const buildTutorialSteps = function(previousState, currentState) {
 			collectionStep2: {
 				title: 'Variants',
 				text: <div>
-					<p>This is the family panel</p>
-					<p>From here you can manage families and create new variants.</p>
+					<p>This is the project column</p>
+					<p>From here you can manage your projects. Click on one to select it</p>
 				</div>,
-				selector: '.variant-list',
-				position: 'right',
+				selector: '.family-list',
+				position: 'left',
 				style: {
 					mainColor: normalColor,
 				},
@@ -81,12 +83,12 @@ const buildTutorialSteps = function(previousState, currentState) {
 			collectionStep3: {
 				title: 'Variant panel',
 				text: <div>
-					<p>This is the variant panel</p>
-					<p>It allows you to open a variant in prototypo, create a new variant from an existing one and change its name.</p>
-					<p>Now go on and create your projects :)</p>
+					<p>This is the variant column</p>
+					<p>These are all the fonts variants for your project. You can add choose to open one in Prototypo, create a new one or edit one by clicking on the wheel icon.</p>
+					<p>Now go on and manage your projects :)</p>
 				</div>,
-				selector: '.variant-info',
-				position: 'left',
+				selector: '.variant-list-container',
+				position: 'right',
 				style: {
 					mainColor: normalColor,
 				},
@@ -126,6 +128,18 @@ const buildTutorialSteps = function(previousState, currentState) {
 					mainColor: indivColor,
 				},
 			},
+			// "academy" steps
+			academyStep1: {
+				title: 'Academy',
+				text: <div>
+					<p>You can access the academy anytime by clicking here! (or on the academy icon)</p>
+				</div>,
+				selector: '#access-academy',
+				position: 'right',
+				style: {
+					mainColor: normalColor,
+				},
+			},
 		};
 
 		// populate steps according to the new tutorial values
@@ -163,6 +177,14 @@ const buildTutorialSteps = function(previousState, currentState) {
 					steps.push(
 						predefinedSteps.indivGroupEditStep1,
 						predefinedSteps.indivGroupEditStep2
+					);
+				}
+				break;
+			}
+			case academyTutorialLabel: {
+				if (currentState.firstTimeAcademyJoyride) {
+					steps.push(
+						predefinedSteps.academyStep1
 					);
 				}
 				break;
@@ -242,6 +264,15 @@ function handleFinished(component, finishEarly) {
 				window.Intercom('trackEvent', 'endedIndivParamTuto');
 			}
 			break;
+		case academyTutorialLabel:
+			component.client.dispatchAction('/store-value', {firstTimeAcademy: false});
+			if (finishEarly) {
+				window.Intercom('trackEvent', 'endedAcademyTutoEarly');
+			}
+			else {
+				window.Intercom('trackEvent', 'endedAcademyTuto');
+			}
+			break;
 		default:
 			break;
 	}
@@ -261,4 +292,5 @@ export {
 	collectionsTutorialLabel,
 	indivGroupsCreationTutorialLabel,
 	indivGroupsEditionTutorialLabel,
+	academyTutorialLabel,
 };

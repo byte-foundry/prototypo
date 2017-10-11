@@ -1,24 +1,23 @@
 import React from 'react';
-import {Link} from 'react-router';
 import Lifespan from 'lifespan';
-import vatrates from 'vatrates';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
 
+import withCountry from './shared/with-country.components';
 import Button from './shared/button.components.jsx';
 import Modal from './shared/modal.components.jsx';
 import AddCard from './shared/add-card.components.jsx';
+import InputWithLabel from './shared/input-with-label.components';
 import FormError from './shared/form-error.components.jsx';
+import Price from './shared/price.components.jsx';
 
-export default class CreditsExport extends React.Component {
+class CreditsExport extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
 			errors: [],
 			inError: {},
-			country: undefined,
-			currency: undefined,
 			buyCreditsNewCreditAmount: undefined,
 		};
 
@@ -32,53 +31,24 @@ export default class CreditsExport extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/userStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					loading: head.toJS().buyCreditsForm.loading,
-					errors: head.toJS().buyCreditsForm.errors,
-					inError: head.toJS().buyCreditsForm.inError,
+					loading: head.toJS().d.buyCreditsForm.loading,
+					errors: head.toJS().d.buyCreditsForm.errors,
+					inError: head.toJS().d.buyCreditsForm.inError,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					buyCreditsNewCreditAmount: head.toJS().buyCreditsNewCreditAmount,
+					buyCreditsNewCreditAmount: head.toJS().d.buyCreditsNewCreditAmount,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
-			});
-	}
-
-	componentDidMount() {
-		// format : freegeoip.net/{format}/{IP_or_hostname}
-		const url = '//freegeoip.net/json/';
-
-		fetch(url)
-			.then((response) => {
-				if (response) {
-					return response.json();
-				}
-			})
-			.then((response) => {
-				if (response.country_code in vatrates) {
-					this.setState({
-						currency: 'EUR',
-					});
-				}
-				else {
-					this.setState({
-						currency: 'DOL',
-					});
-				}
-			})
-			.catch((error) => {
-				this.setState({
-					currency: 'DOL',
-				});
 			});
 	}
 
@@ -94,7 +64,7 @@ export default class CreditsExport extends React.Component {
 		if (!this.state.loading) {
 			this.client.dispatchAction('/buy-credits', {
 				card: this.refs.card.data(),
-				currency: this.state.currency,
+				vat: this.refs.vat.inputValue,
 			});
 		}
 	}
@@ -106,11 +76,11 @@ export default class CreditsExport extends React.Component {
 	}
 
 	render() {
+		const {country} = this.props;
 		const errors = this.state.errors.map((error, index) => {
 			return <FormError key={index} errorText={error} />;
 		});
 		const newCredits = this.state.buyCreditsNewCreditAmount;
-		const currency = this.state.currency === 'EUR' ? '€' : '$';
 
 		const buyCreditsForm = newCredits
 			? (
@@ -128,10 +98,13 @@ export default class CreditsExport extends React.Component {
 			) : (
 				<form className="sign-in-form" onSubmit={this.handleSubmit}>
 					<AddCard ref="card" inError={this.state.inError}/>
+					<InputWithLabel ref="vat" label="VAT number" info="(only necessary if you pay with a company card)"/>
 					{errors}
 					<div className="action-form-buttons">
 						<Button click={this.exit} label="Cancel" neutral={true}/>
-						<Button click={this.handleSubmit} label={`Buy 5 credits for 5 ${currency}`} loading={this.state.loading}/>
+						<Button click={this.handleSubmit} label={
+							<span>Buy 3 credits for <Price amount={9} country={country} /></span>
+						} loading={this.state.loading} />
 					</div>
 				</form>
 			);
@@ -146,3 +119,5 @@ export default class CreditsExport extends React.Component {
 		);
 	}
 }
+
+export default withCountry(CreditsExport);

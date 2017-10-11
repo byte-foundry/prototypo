@@ -2,16 +2,14 @@ import React from 'react';
 import Lifespan from 'lifespan';
 import LocalClient from '../stores/local-client.stores.jsx';
 import classNames from 'classnames';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import Log from '../services/log.services.js';
 
-
-export default class GlyphButton extends React.Component {
+export default class GlyphButton extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.toggleLockList = this.toggleLockList.bind(this);
 	}
 
 	componentWillMount() {
@@ -28,15 +26,6 @@ export default class GlyphButton extends React.Component {
 		Log.ui('GlyphButton.toggleLockList');
 	}
 
-	selectTag(tag) {
-		this.client.dispatchAction('/select-tag', tag);
-	}
-
-	addToPinned(tag, e) {
-		e.stopPropagation();
-		this.client.dispatchAction('/add-pinned', tag);
-	}
-
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] glyph button');
@@ -46,28 +35,12 @@ export default class GlyphButton extends React.Component {
 
 		_.forEach(this.props.pinned, (tag) => {
 
-			const tagClasses = classNames({
-				'glyph-btn-list-btn-label': true,
-				'glyph-btn-list-btn-tags': true,
-				'is-active': this.props.selected === tag,
-			});
-
 			pinned.push(
-				<div className="glyph-btn-list-btn clearfix"
-					key={`button${tag}`}
-					onClick={() => {
-						this.selectTag(tag);
-					}}>
-					<label className={tagClasses}>
-						{tag}
-					</label>
-					<div className="glyph-btn-list-btn-tag-wrapper">
-						<div className="glyph-btn-list-btn-tag-wrapper-close"
-							onClick={(e) => { this.addToPinned(tag, e); }}>
-							×
-						</div>
-					</div>
-				</div>
+				<Pinned
+					tag={tag}
+					selected={this.props.selected}
+					key={`button${tag}`}/>
+
 			);
 		});
 
@@ -82,12 +55,56 @@ export default class GlyphButton extends React.Component {
 					<label className="glyph-btn-list-btn-label">
 						Glyph list
 					</label>
-					<div className="glyph-btn-list-btn-wrapper" onClick={() => { this.toggleLockList(); }}>
+					<div className="glyph-btn-list-btn-wrapper" onClick={this.toggleLockList}>
 						<div className={lockClasses}>
 						</div>
 					</div>
 				</div>
 				{pinned}
+			</div>
+		);
+	}
+}
+
+class Pinned extends React.PureComponent {
+	constructor(props) {
+		super(props);
+		this.selectTag = this.selectTag.bind(this);
+		this.addToPinned = this.addToPinned.bind(this);
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+	selectTag() {
+		this.client.dispatchAction('/select-tag', this.props.tag);
+	}
+
+	addToPinned(e) {
+		e.stopPropagation();
+		this.client.dispatchAction('/add-pinned', this.props.tag);
+	}
+
+	render() {
+		const tagClasses = classNames({
+			'glyph-btn-list-btn-label': true,
+			'glyph-btn-list-btn-tags': true,
+			'is-active': this.props.selected === this.props.tag,
+		});
+
+		return (
+			<div className="glyph-btn-list-btn clearfix"
+				onClick={this.selectTag}>
+				<label className={tagClasses}>
+					{this.props.tag}
+				</label>
+				<div className="glyph-btn-list-btn-tag-wrapper">
+					<div className="glyph-btn-list-btn-tag-wrapper-close"
+						onClick={this.addToPinned}>
+						×
+					</div>
+				</div>
 			</div>
 		);
 	}

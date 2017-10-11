@@ -1,80 +1,65 @@
-var path = require('path');
-var webpack = require('webpack');
-var fs = require('fs');
+const path = require('path');
+const webpack = require('webpack');
+const fs = require('fs');
+const merge = require('webpack-merge');
 
-module.exports = {
+const base = require('./base.config');
+
+module.exports = merge(base, {
 	cache: true,
-	'if-loader': 'prod',
 	entry: {
-		bundle: [
-			'babel-polyfill',
-			'./app/scripts/main',
-		],
-		'web-import': [
-			'babel-polyfill',
-			'./app/scripts/web-import.js',
-		],
-	},
-	output: {
-		path: path.join(__dirname, 'dist'),
-		publicPath: '',
-		filename: '[name].js',
+		bundle: ['whatwg-fetch'],
+		'web-import': ['whatwg-fetch'],
 	},
 	module: {
-		loaders: [
+		rules: [
 			{
 				test: /\.jsx?$/,
-				loaders: ['transform/cacheable?envify', 'babel-loader?cacheDirectory', 'prelude-loader', 'if-loader'],
-				include: [
-					path.join(__dirname, 'app'),
+				use: [
+					// {
+					// 	loader: 'transform/cacheable-loader',
+					//
+					// 	options: {
+					// 		envify: true,
+					// 	},
+					// },
+					{
+						loader: 'babel-loader',
+
+						options: {
+							cacheDirectory: true,
+						},
+					},
+					'if-loader',
 				],
-			},
-			{
-				test: /prototypo\-canvas/,
-				loaders: [ 'babel-loader?cacheDirectory'],
-				include: [
-					fs.realpathSync(__dirname + '/node_modules/prototypo-canvas'),
-				],
-			},
-			{
-				test: /\.scss$/,
-				loaders: ['style', 'css', 'sass'],
-				include: [
-					path.join(__dirname, 'app/styles'),
-				],
-			},
-			{
-				test: /\.css$/,
-				loaders: ['style', 'css'],
-			},
-			{
-				test: /\.json$/, loader: 'json',
-			},
-			{
-				test: /\.(jpg|otf)$/,
-				loaders: ['file'],
-			},
-			{
-				test: /\.(svg|png|jpg)$/,
-				loader: 'url-loader?limit=100000',
+				include: [path.join(__dirname, 'app')],
 			},
 		],
-		noParse: /(levelup|dist\/prototypo-canvas)/,
 	},
-	externals: [{
-		'./node/window': true,
-		'./node/extend': true,
-		'prototypo.js': 'prototypo',
-	}],
-	plugins: [
-		new webpack.DefinePlugin({
-			'process.env.NODE_ENV': "'production'",
-		}),
-		new webpack.optimize.UglifyJsPlugin(),
-		new webpack.optimize.OccurenceOrderPlugin(),
-		new webpack.optimize.DedupePlugin(),
+	externals: [
+		{
+			'prototypo.js': 'prototypo',
+		},
 	],
-	resolve: {
-		extensions: ['', '.js', '.jsx'],
-	},
-};
+	plugins: [
+		new webpack.LoaderOptionsPlugin({
+			options: {
+				'if-loader': 'prod',
+				// TODO: deprecated option, https://webpack.js.org/guides/migrating/#uglifyjsplugin-minimize-loadersminimize: true,
+				minimize: true,
+			},
+		}),
+		new webpack.DefinePlugin({
+			'process.env': {
+				NODE_ENV: JSON.stringify('production'),
+			},
+		}),
+		new webpack.optimize.UglifyJsPlugin({
+			compress: {
+				conditionals: false,
+			},
+
+			sourceMap: true,
+		}),
+	],
+});

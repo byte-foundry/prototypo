@@ -1,7 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import Classnames from 'classnames';
-import ScrollArea from 'react-scrollbar';
+import ScrollArea from 'react-scrollbar/dist/no-css';
 import JSONPretty from 'react-json-pretty';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 

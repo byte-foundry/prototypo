@@ -1,19 +1,17 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import GlyphList from './glyph-list.components.jsx';
 
-export default class GlyphPanel extends React.Component {
+export default class GlyphPanel extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
 			glyphs: {},
 			tags: {},
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	async componentWillMount() {
@@ -21,17 +19,17 @@ export default class GlyphPanel extends React.Component {
 		this.client = LocalClient.instance();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					show: head.toJS().uiMode.indexOf('list') !== -1,
-					tagSelected: head.toJS().tagSelected,
-					tagPinned: head.toJS().tagPinned,
-					tags: head.toJS().tags,
-					glyphs: head.toJS().glyphs,
-					glyphSelected: head.toJS().glyphSelected,
-					search: head.toJS().glyphSearch,
-					savedSearch: head.toJS().savedSearch,
-					pinnedSearch: head.toJS().pinnedSearch,
+					show: head.toJS().d.uiMode.indexOf('list') !== -1,
+					tagSelected: head.toJS().d.tagSelected,
+					tagPinned: head.toJS().d.tagPinned,
+					tags: head.toJS().d.tags,
+					glyphs: head.toJS().d.glyphs,
+					glyphSelected: head.toJS().d.glyphSelected,
+					search: head.toJS().d.glyphSearch,
+					savedSearch: head.toJS().d.savedSearch,
+					pinnedSearch: head.toJS().d.pinnedSearch,
 				});
 			})
 			.onDelete(() => {

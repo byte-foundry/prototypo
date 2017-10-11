@@ -1,7 +1,7 @@
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import ScrollArea from 'react-scrollbar';
+import ScrollArea from 'react-scrollbar/dist/no-css';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Editor, EditorState, ContentState, CompositeDecorator} from 'draft-js';
 import escapeStringRegexp from 'escape-string-regexp';
@@ -36,7 +36,6 @@ export default class PrototypoText extends React.Component {
 		super(props);
 
 		this.state = {
-			contextMenuPos: {x: 0, y: 0},
 			showContextMenu: false,
 			glyphPanelOpened: undefined,
 			editorState: EditorState.createEmpty(),
@@ -64,9 +63,9 @@ export default class PrototypoText extends React.Component {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/prototypoStore', this.lifespan)
-			.onUpdate(({head}) => {
+			.onUpdate((head) => {
 				this.setState({
-					glyphPanelOpened: head.toJS().uiMode.indexOf('list') !== -1,
+					glyphPanelOpened: head.toJS().d.uiMode.indexOf('list') !== -1,
 				});
 			})
 			.onDelete(() => {
@@ -127,26 +126,34 @@ export default class PrototypoText extends React.Component {
 		this.saveText(editorState.getCurrentContent().getPlainText());
 	}
 
-	toggleContextMenu(e) {
-		e.preventDefault();
-		e.stopPropagation();
+	toggleContextMenu() {
 		this.setState({
 			showContextMenu: !this.state.showContextMenu,
 			showInsertMenu: false,
 		});
 	}
 
-	toggleInsertMenu(e) {
-		e.preventDefault();
-		e.stopPropagation();
+	toggleInsertMenu() {
 		this.setState({
 			showInsertMenu: !this.state.showInsertMenu,
 			showContextMenu: false,
 		});
 	}
 
-	hideContextMenu() {
-		if (this.state.showContextMenu || this.state.showInsertMenu) {
+	hideContextMenu(e) {
+		const rect = e.currentTarget.getBoundingClientRect();
+		const x = e.pageX;
+		const y = e.pageY;
+
+		if (
+			(this.state.showContextMenu || this.state.showInsertMenu)
+			&& !(
+				rect.left <= x
+				&& x <= rect.left + rect.width
+				&& rect.top <= y
+				&& y <= rect.top + rect.height
+			)
+		) {
 			this.setState({
 				showContextMenu: false,
 				showInsertMenu: false,
@@ -154,7 +161,8 @@ export default class PrototypoText extends React.Component {
 		}
 	}
 
-	changeTextFontSize(uiTextFontSize) {
+	changeTextFontSize(uiTextFontSizeToClamp) {
+		const uiTextFontSize = Math.max(0.7, uiTextFontSizeToClamp);
 		this.client.dispatchAction('/store-value', {uiTextFontSize});
 	}
 
@@ -175,7 +183,8 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToAlphabet() {
-		this.setText(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
+		// this.setText(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
+		this.setText(`0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -183,24 +192,22 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToLorem() {
-		this.setText(`		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae scelerisque urna, eget consequat lectus. Pellentesque lacus magna, tincidunt quis libero non, pellentesque sagittis libero. Nam vitae ante eu lectus sodales sagittis. Duis eget mauris aliquet, gravida quam id, sodales sem. Etiam aliquam mi nec aliquam tincidunt. Nullam mollis mi nec mi luctus faucibus. Fusce cursus massa eget dui accumsan rhoncus. Quisque consectetur libero augue, eget dictum lacus pretium ac. Praesent scelerisque ipsum at aliquam tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed porta risus at aliquam venenatis.
+		this.setText(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae scelerisque urna, eget consequat lectus. Pellentesque lacus magna, tincidunt quis libero non, pellentesque sagittis libero. Nam vitae ante eu lectus sodales sagittis. Duis eget mauris aliquet, gravida quam id, sodales sem. Etiam aliquam mi nec aliquam tincidunt. Nullam mollis mi nec mi luctus faucibus. Fusce cursus massa eget dui accumsan rhoncus. Quisque consectetur libero augue, eget dictum lacus pretium ac. Praesent scelerisque ipsum at aliquam tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed porta risus at aliquam venenatis.
 
-		Morbi faucibus mauris mi, sit amet laoreet sapien dapibus tristique. Suspendisse vitae molestie quam, ut cursus justo. Aenean sodales mauris vitae libero venenatis sollicitudin. Aenean condimentum nisl nec rhoncus elementum. Sed est ipsum, aliquam quis justo id, ornare tincidunt massa. Donec sit amet finibus sem. Sed euismod ex sed lorem hendrerit placerat. Praesent congue congue ultrices. Nam maximus metus rhoncus ligula porta sagittis. Maecenas pharetra placerat eleifend.
+Morbi faucibus mauris mi, sit amet laoreet sapien dapibus tristique. Suspendisse vitae molestie quam, ut cursus justo. Aenean sodales mauris vitae libero venenatis sollicitudin. Aenean condimentum nisl nec rhoncus elementum. Sed est ipsum, aliquam quis justo id, ornare tincidunt massa. Donec sit amet finibus sem. Sed euismod ex sed lorem hendrerit placerat. Praesent congue congue ultrices. Nam maximus metus rhoncus ligula porta sagittis. Maecenas pharetra placerat eleifend.
 
-		Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas vulputate fermentum ullamcorper. Etiam congue nec magna sed accumsan. Aliquam erat volutpat. Proin ut sapien auctor, congue tortor et, tempor dolor. Phasellus semper ut magna nec vehicula. Phasellus ut pretium metus. Aliquam eu consectetur est, mattis laoreet massa. Nullam eu scelerisque lacus. Pellentesque imperdiet metus at malesuada accumsan. Duis rhoncus, neque sed luctus faucibus, risus mi auctor purus, sed sagittis dolor leo quis quam.`);
+Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas vulputate fermentum ullamcorper. Etiam congue nec magna sed accumsan. Aliquam erat volutpat. Proin ut sapien auctor, congue tortor et, tempor dolor. Phasellus semper ut magna nec vehicula. Phasellus ut pretium metus. Aliquam eu consectetur est, mattis laoreet massa. Nullam eu scelerisque lacus. Pellentesque imperdiet metus at malesuada accumsan. Duis rhoncus, neque sed luctus faucibus, risus mi auctor purus, sed sagittis dolor leo quis quam.`);
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
 		});
 	}
 
-	invertedView(e) {
-		e.stopPropagation();
+	invertedView() {
 		this.client.dispatchAction('/store-value', {uiInvertedTextView: !this.props.uiInvertedTextView});
 	}
 
-	toggleColors(e) {
-		e.stopPropagation();
+	toggleColors() {
 		this.client.dispatchAction('/store-value', {uiInvertedTextColors: !this.props.uiInvertedTextColors});
 	}
 
@@ -216,59 +223,26 @@ export default class PrototypoText extends React.Component {
 			'backgroundColor': this.props.uiInvertedTextColors ? '#232323' : '#fefefe',
 		};
 		const contentStyle = {
-			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
+			'fontFamily': `'${this.state.editorState.getCurrentContent().getPlainText().length > 0 ? (this.props.fontName || 'theyaintus') : 'Fira Sans'}', sans-serif`,
 			'fontSize': `${this.props.uiTextFontSize || 1}em`,
 		};
-
 		const editorClassNames = classNames('prototypo-text-editor', {
 			'negative': this.props.uiInvertedTextColors,
 			'inverted': this.props.uiInvertedTextView,
 			'indiv': this.props.indivCurrentGroup,
 		});
-
 		const actionBar = classNames({
 			'action-bar': true,
 			'is-shifted': this.state.glyphPanelOpened,
 		});
-
-		const pangramMenu = [
-			<ContextualMenuItem
-				text="Quick fox..."
-				key="fox"
-				click={this.setTextToQuickBrownFox}/>,
-			<ContextualMenuItem
-				text="Fameux whisky..."
-				key="whisky"
-				click={this.setTextToFameuxWhisky}/>,
-			<ContextualMenuItem
-				text="Latin glyph set"
-				key="alphabet"
-				click={this.setTextToAlphabet}/>,
-			<ContextualMenuItem
-				text="Lorem ipsum"
-				key="lorem"
-				click={this.setTextToLorem}/>,
-			];
-
-		const menu = [
-			<ContextualMenuItem
-				text="Inverted view"
-				key="view"
-				active={this.props.uiInvertedTextView}
-				click={this.invertedView}/>,
-			<ContextualMenuItem
-				text={`Switch to ${this.props.uiInvertedTextColors ? 'black on white' : 'white on black'}`}
-				key="colors"
-				active={this.props.uiInvertedTextColors}
-				click={this.toggleColors}/>,
-			];
 
 		return (
 			<div
 				style={this.props.style}
 				className="prototypo-text"
 				onClick={this.hideContextMenu}
-				onMouseLeave={this.hideContextMenu}>
+				onMouseLeave={this.hideContextMenu}
+			>
 				<ScrollArea horizontal={false} style={panelStyle}>
 					<div className={editorClassNames} style={contentStyle}>
 						<Editor
@@ -283,15 +257,42 @@ export default class PrototypoText extends React.Component {
 					shifted={this.state.glyphPanelOpened}
 					show={this.state.showContextMenu}
 					toggle={this.toggleContextMenu}
-					intercomShift={this.props.viewPanelRightMove}>
-					{menu}
+					intercomShift={this.props.viewPanelRightMove}
+					upper
+					left
+				>
+					<ContextualMenuItem
+						active={this.props.uiInvertedTextView}
+						onClick={this.invertedView}
+					>
+						Inverted view
+					</ContextualMenuItem>
+					<ContextualMenuItem
+						active={this.props.uiInvertedTextColors}
+						onClick={this.toggleColors}
+					>
+						Switch to {this.props.uiInvertedTextColors ? 'black on white' : 'white on black'}
+					</ContextualMenuItem>
 				</ViewPanelsMenu>
 				<ViewPanelsMenu
-					alignLeft={true}
 					text="Insert"
 					show={this.state.showInsertMenu}
-					toggle={this.toggleInsertMenu}>
-					{pangramMenu}
+					toggle={this.toggleInsertMenu}
+					alignLeft
+					upper
+				>
+					<ContextualMenuItem onClick={this.setTextToQuickBrownFox}>
+						Quick fox...
+					</ContextualMenuItem>
+					<ContextualMenuItem onClick={this.setTextToFameuxWhisky}>
+						Fameux whisky...
+					</ContextualMenuItem>
+					<ContextualMenuItem onClick={this.setTextToAlphabet}>
+						Basic latin alphabet
+					</ContextualMenuItem>
+					<ContextualMenuItem onClick={this.setTextToLorem}>
+						Lorem ipsum
+					</ContextualMenuItem>
 				</ViewPanelsMenu>
 				<div className={actionBar}>
 					<CloseButton click={this.close}/>
