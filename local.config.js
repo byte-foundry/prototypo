@@ -9,7 +9,7 @@ module.exports = merge(base, {
 	cache: true,
 	devtool: 'cheap-module-source-map',
 	entry: {
-		bundle: [
+		index: [
 			'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
 			'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
 		],
@@ -37,5 +37,15 @@ module.exports = merge(base, {
 			manifest: require('./dist/dll/libs-manifest'),
 			sourceType: 'this',
 		}),
+		new webpack.DefinePlugin({
+			'process.env': {
+				TESTING_FONT: JSON.stringify('yes'),
+			},
+		}),
 	],
+	output: merge(base.output, {
+		filename: '[name].bundle.js',
+		chunkFilename: '[name].bundle.js',
+		path: path.resolve(__dirname, 'dist'),
+	})
 });

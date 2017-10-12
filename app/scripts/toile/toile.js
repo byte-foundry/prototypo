@@ -1,4 +1,5 @@
 /* global _ */
+/* eslint-disable no-param-reassign, no-bitwise */
 import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D} from '../plumin/util/linear';
 import {getIntersectionTValue, getPointOnCurve} from '../prototypo.js/utils/updateUtils';
 import DOM from '../helpers/dom.helpers';
@@ -117,14 +118,90 @@ export function transformCoords(coordsArray, matrix, height) {
 
 export default class Toile {
 	constructor(canvas) {
-		this.context = canvas.getContext('2d');
-		this.mouse = {x: 0, y: 0};
-		this.mouseDelta = {x: 0, y: 0};
-		this.height = canvas.height;
-		this.mouseWheelDelta = 0;
-		this.keyboardUp = {};
-		this.keyboardDown = {};
-		this.keyboardDownRisingEdge = {};
+		if (canvas) {
+			this.context = canvas.getContext('2d');
+			this.mouse = {x: 0, y: 0};
+			this.mouseDelta = {x: 0, y: 0};
+			this.height = canvas.height;
+			this.mouseWheelDelta = 0;
+			this.keyboardUp = {};
+			this.keyboardDown = {};
+			this.keyboardDownRisingEdge = {};
+
+			canvas.addEventListener('mousemove', (e) => {
+				const {offsetLeft, offsetTop} = DOM.getAbsOffset(canvas);
+				const mouseX = e.clientX - offsetLeft;
+				const mouseY = e.clientY - offsetTop;
+
+				if (this.mouseState === mState.DOWN) {
+					this.mouseDelta = {
+						x: this.mouseDelta.x + (mouseX - this.mouse.x),
+						y: this.mouseDelta.y + (mouseY - this.mouse.y),
+					};
+				}
+
+				this.mouse = {
+					x: mouseX,
+					y: mouseY,
+				};
+			});
+
+			canvas.addEventListener('mousedown', () => {
+				this.mouseState = mState.DOWN;
+				this.mouseStateEdge = mState.DOWN;
+			});
+
+			canvas.addEventListener('mouseup', () => {
+				this.mouseState = mState.UP;
+				this.mouseStateEdge = mState.UP;
+			});
+
+			canvas.addEventListener('wheel', (e) => {
+				this.mouseWheelDelta -= e.deltaY;
+			});
+
+			document.addEventListener('keyup', (e) => {
+				const {
+					keyCode,
+					ctrlKey,
+					shiftKey,
+					altKey,
+					metaKey,
+				} = e;
+
+				this.keyboardUp = {
+					keyCode,
+					special: (ctrlKey ? 0b1 : 0)
+						+ (shiftKey ? 0b10 : 0)
+						+ (altKey ? 0b100 : 0)
+						+ (metaKey ? 0b1000 : 0),
+				};
+			});
+
+			document.addEventListener('keydown', (e) => {
+				const {
+					keyCode,
+					ctrlKey,
+					shiftKey,
+					altKey,
+					metaKey,
+				} = e;
+				const eventData = {
+					keyCode,
+					special: (ctrlKey ? 0b1 : 0)
+						+ (shiftKey ? 0b10 : 0)
+						+ (altKey ? 0b100 : 0)
+						+ (metaKey ? 0b1000 : 0),
+				};
+
+				if (this.keyboardDown.keyCode !== keyCode) {
+					this.keyboardDownRisingEdge = eventData;
+				}
+
+				this.keyboardDown = eventData;
+			});
+		}
+
 
 		// This is the view matrix schema
 		// [ a  b  tx ]   [ x ]   [ ax + by + tx ]
@@ -137,81 +214,6 @@ export default class Toile {
 		// tx is x translation
 		// ty is y translation
 		this.viewMatrix = [1, 0, 0, -1, 0, 0];
-
-
-		canvas.addEventListener('mousemove', (e) => {
-			const {offsetLeft, offsetTop} = DOM.getAbsOffset(canvas);
-			const mouseX = e.clientX - offsetLeft;
-			const mouseY = e.clientY - offsetTop;
-
-			if (this.mouseState === mState.DOWN) {
-				this.mouseDelta = {
-					x: this.mouseDelta.x + (mouseX - this.mouse.x),
-					y: this.mouseDelta.y + (mouseY - this.mouse.y),
-				};
-			}
-
-			this.mouse = {
-				x: mouseX,
-				y: mouseY,
-			};
-		});
-
-		canvas.addEventListener('mousedown', () => {
-			this.mouseState = mState.DOWN;
-			this.mouseStateEdge = mState.DOWN;
-		});
-
-		canvas.addEventListener('mouseup', () => {
-			this.mouseState = mState.UP;
-			this.mouseStateEdge = mState.UP;
-		});
-
-		canvas.addEventListener('wheel', (e) => {
-			this.mouseWheelDelta -= e.deltaY;
-		});
-
-		document.addEventListener('keyup', (e) => {
-			const {
-				keyCode,
-				ctrlKey,
-				shiftKey,
-				altKey,
-				metaKey,
-			} = e;
-
-			this.keyboardUp = {
-				keyCode,
-				special: (ctrlKey ? 0b1 : 0)
-					+ (shiftKey ? 0b10 : 0)
-					+ (altKey ? 0b100 : 0)
-					+ (metaKey ? 0b1000 : 0),
-			};
-		});
-
-		document.addEventListener('keydown', (e) => {
-			const {
-				keyCode,
-				ctrlKey,
-				shiftKey,
-				altKey,
-				metaKey,
-			} = e;
-			const eventData = {
-				keyCode,
-				special: (ctrlKey ? 0b1 : 0)
-					+ (shiftKey ? 0b10 : 0)
-					+ (altKey ? 0b100 : 0)
-					+ (metaKey ? 0b1000 : 0),
-			};
-
-			if (this.keyboardDown.keyCode !== keyCode) {
-				this.keyboardDownRisingEdge = eventData;
-			}
-
-			this.keyboardDown = eventData;
-		});
-
 		this.interactionList = [];
 	}
 
@@ -240,8 +242,8 @@ export default class Toile {
 		this.mouseStateEdge = undefined;
 	}
 
-	clearCanvas(width, height) {
-		this.context.clearRect(0, 0, width, height);
+	clearCanvas(width, height, context = this.context) {
+		context.clearRect(0, 0, width, height);
 		this.interactionList = [];
 	}
 
@@ -630,16 +632,15 @@ export default class Toile {
 		});
 	}
 
-	drawGlyph(glyph, hotItems, outline) {
-		this.context.fillStyle = outline ? transparent : darkestGrey;
-		this.context.strokeStyle = darkestGrey;
-		this.context.beginPath();
+	drawGlyph(glyph, hotItems, outline, context = this.context) {
+		context.fillStyle = outline ? transparent : darkestGrey;
+		context.strokeStyle = darkestGrey;
+		context.beginPath();
 		for (let i = 0; i < glyph.otContours.length; i++) {
-			this.drawContour(glyph.otContours[i], undefined, undefined, true);
+			this.drawContour(glyph.otContours[i], undefined, undefined, true, context);
 		}
 
-		//this.context.stroke();
-		this.context.fill();
+		context.fill();
 	}
 
 	drawSelectableContour(glyph, hotItems, parentId = '', type = toileType.GLYPH_CONTOUR, componentIdx) {
@@ -782,28 +783,32 @@ export default class Toile {
 	}
 
 	setCameraCenter(point, zoom, height, width) {
-		this.setCamera(subtract2D({x: width / 2, y: height / 2}, mulScalar2D(zoom, {x: point.x, y: -point.y})), zoom, height);
+		this.setCamera(
+			subtract2D({x: width / 2, y: height / 2}, mulScalar2D(zoom, {x: point.x, y: -point.y})),
+			zoom,
+			height,
+		);
 	}
 
 	// A drawn contour must be closed
-	drawContour(listOfBezier, strokeColor = 'transparent', fillColor = 'transparent', noPathCreation) {
+	drawContour(listOfBezier, strokeColor = 'transparent', fillColor = 'transparent', noPathCreation, context = this.context) {
 		if (!noPathCreation) {
-			this.context.fillStyle = fillColor;
-			this.context.strokeStyle = strokeColor;
-			this.context.beginPath();
+			context.fillStyle = fillColor;
+			context.strokeStyle = strokeColor;
+			context.beginPath();
 		}
 
 		for (let i = 0; i < listOfBezier.length; i++) {
-			this.drawBezierCurve(listOfBezier[i], undefined, true, !i);
+			this.drawBezierCurve(listOfBezier[i], undefined, true, !i, context);
 		}
 
 		if (!noPathCreation) {
-			this.context.stroke();
-			this.context.fill();
+			context.stroke();
+			context.fill();
 		}
 	}
 
-	drawBezierCurve(aBezier, strokeColor, noPathCreation, move) {
+	drawBezierCurve(aBezier, strokeColor, noPathCreation, move, context = this.context) {
 		const bezier = transformCoords(
 			aBezier,
 			this.viewMatrix,
@@ -811,15 +816,15 @@ export default class Toile {
 		);
 
 		if (!noPathCreation) {
-			this.context.fillStyle = 'transparent';
-			this.context.strokeStyle = strokeColor;
-			this.context.beginPath();
+			context.fillStyle = 'transparent';
+			context.strokeStyle = strokeColor;
+			context.beginPath();
 		}
 		if (move) {
-			this.context.moveTo(bezier[0].x, bezier[0].y);
+			context.moveTo(bezier[0].x, bezier[0].y);
 		}
 
-		this.context.bezierCurveTo(
+		context.bezierCurveTo(
 			bezier[1].x,
 			bezier[1].y,
 			bezier[2].x,
@@ -829,7 +834,7 @@ export default class Toile {
 		);
 
 		if (!noPathCreation) {
-			this.context.stroke();
+			context.stroke();
 		}
 	}
 
@@ -1458,11 +1463,12 @@ export default class Toile {
 				{
 					x: 190,
 					y: 240,
-				}
+				},
 			],
 			inverseMatrix,
 			this.height / this.viewMatrix[0],
 		);
+
 		this.drawRectangleFromCorners(
 			start,
 			end,
@@ -1470,17 +1476,17 @@ export default class Toile {
 			lightGrey,
 		);
 		this.drawText('Skeleton node props', {
-			x: start.x + 10 / this.viewMatrix[0],
-			y: start.y - 20 / this.viewMatrix[0],
+			x: start.x + (10 / this.viewMatrix[0]),
+			y: start.y - (20 / this.viewMatrix[0]),
 		}, 14, darkestGrey);
 		this.drawText(`x: ${node.data.center.x}`, {
-			x: start.x + 10 / this.viewMatrix[0],
-			y: start.y - 41 / this.viewMatrix[0],
+			x: start.x + (10 / this.viewMatrix[0]),
+			y: start.y - (41 / this.viewMatrix[0]),
 		}, 12, darkestGrey);
 
 		this.drawText(`y: ${node.data.center.y}`, {
-			x: start.x + 10 / this.viewMatrix[0],
-			y: start.y - 62 / this.viewMatrix[0],
+			x: start.x + (10 / this.viewMatrix[0]),
+			y: start.y - (62 / this.viewMatrix[0]),
 		}, 12, darkestGrey);
 	}
 
@@ -1656,12 +1662,7 @@ export default class Toile {
 		for (let j = index + 1; j < logPerf.length; j++) {
 			const item = logPerf[j];
 
-			if (item.label !== start.label) {
-				const {ySize, k} = this.drawPerf(logPerf, origin, hotItems, j, offsetX + 20, internalYOffset);
-				j = k;
-				internalYOffset += ySize;
-			}
-			else {
+			if (item.label === start.label) {
 				const ySize = 20 * (item.time - start.time);
 				const rectStart = add2D(
 					origin,
@@ -1693,11 +1694,11 @@ export default class Toile {
 							{
 								x: 15,
 								y: 0,
-							}
+							},
 						),
 						20,
 						darkestGrey,
-					)
+					);
 				}
 
 				this.interactionList.push({
@@ -1711,6 +1712,14 @@ export default class Toile {
 				});
 				return {ySize, k: j};
 			}
+
+			const {ySize, k} = this.drawPerf(logPerf, origin, hotItems, j, offsetX + 20, internalYOffset);
+
+			j = k;
+			internalYOffset += ySize;
 		}
+
+		return undefined;
 	}
 }
+/* eslint-enable no-param-reassign, no-bitwise */

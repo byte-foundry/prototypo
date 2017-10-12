@@ -12,7 +12,6 @@ import IAmMobile from './components/i-am-mobile.components';
 import App from './app';
 
 import HoodieApi from './services/hoodie.services';
-import {Typefaces} from './services/typefaces.services';
 import LocalClient from './stores/local-client.stores';
 import LocalServer from './stores/local-server.stores';
 import Stores from './stores/creation.stores';
@@ -90,11 +89,11 @@ selectRenderOptions(
 
 		const templates = await Promise.all(
 			prototypoStore.get('templateList').map(async ({templateName}) => {
-				const typedataJSON = await Typefaces.getFont(templateName);
+				const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../dist/templates/${templateName}/font.json`);
 
 				return {
 					name: templateName,
-					json: JSON.parse(typedataJSON),
+					json: typedataJSON,
 				};
 			}),
 		);
@@ -177,6 +176,7 @@ selectRenderOptions(
 					location.hash.indexOf('signin') === -1
 					&& location.hash.indexOf('account') === -1
 					&& location.hash.indexOf('signup') === -1
+					&& location.hash.indexOf('testfont') === -1
 				) {
 					location.href = '#/start';
 				}
@@ -197,9 +197,7 @@ selectRenderOptions(
 		window.addEventListener('values.loaded', () => {
 			const render = (Component) => {
 				ReactDOM.render(
-					<AppContainer>
-						<Component />
-					</AppContainer>,
+					<Component />,
 					content,
 				);
 			};

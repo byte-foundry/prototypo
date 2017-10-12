@@ -101,9 +101,25 @@ ${this.dependencies.map((name) => {return `${name}: ${_.get(toLodashPath(name), 
 					const node = glyph.getFromXPath(`${base}`);
 
 					if (node.expandedTo) {
+						if(process.env.TESTING_FONT === 'yes') {
+							if (!glyph.getFromXPath(xpath)) {
+								console.log(`${glyph.name.value} on cursor ${xpath}`);
+							}
+						}
 						acc.push(...glyph.getFromXPath(xpath).solveOperationOrder(glyph, [...processedOps]));
 					}
 					else {
+						if(process.env.TESTING_FONT === 'yes') {
+							if (
+								!glyph.getFromXPath(`${base}.expand.width`)
+								|| !glyph.getFromXPath(`${base}.expand.distr`)
+								|| !glyph.getFromXPath(`${base}.expand.angle`)
+								|| !glyph.getFromXPath(`${base}.x`)
+								|| !glyph.getFromXPath(`${base}.y`)
+							) {
+								console.log(`${glyph.name.value} on cursor ${base}`);
+							}
+						}
 						const expandResult = glyph.getFromXPath(`${base}.expand.width`).solveOperationOrder(glyph, processedOps);
 
 						expandResult.push(...glyph.getFromXPath(`${base}.expand.distr`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));

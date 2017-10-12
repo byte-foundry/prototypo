@@ -1,6 +1,6 @@
 /* global _ */
 import {subtract2D, mulScalar2D, dot2D, add2D, round2D, distance2D} from '../../plumin/util/linear';
-import {rayRayIntersection} from '../utils/updateUtils';
+import {rayRayIntersection, lineAngle} from '../utils/updateUtils';
 import {readAngle} from '../helpers/utils';
 import {constantOrFormula} from '../helpers/values';
 
@@ -26,6 +26,25 @@ function computeHandle(
 	let dirToNext = j ? current.dirIn || node.dirIn : current.dirOut || node.dirOut;
 	const tensionIn = j ? node.tensionOut : node.tensionIn;
 	const tensionOut = j ? node.tensionIn : node.tensionOut;
+	const typeIn = j ? node.typeOut : node.typeIn;
+	const typeOut = j ? node.typeIn : node.typeOut;
+
+	if (typeIn === 'smooth' && typeOut === 'line') {
+		if (nextNode.expandedTo) {
+			dirToPrev = lineAngle(current, nextNode.expandedTo[j]);
+		}
+		else {
+			dirToPrev = lineAngle(current, nextNode);
+		}
+	}
+	else if (typeOut === 'smooth' && typeIn === 'line') {
+		if (prevNode.expandedTo) {
+			dirToNext = lineAngle(current, prevNode.expandedTo[j]);
+		}
+		else {
+			dirToNext = lineAngle(current, prevNode);
+		}
+	}
 
 	dest.baseDirOut = dirToNext;
 	dest.baseDirIn = dirToPrev;
@@ -118,11 +137,11 @@ function computeHandle(
 		node.expandedTo[j].baseLengthIn = distance2D(inVector, {x: 0, y: 0});
 		node.expandedTo[j].baseLengthOut = distance2D(outVector, {x: 0, y: 0});
 		inVector = mulScalar2D(
-			params[`${node.nodeAddress}expandedTo.${j}.tensionIn`] || ((tensionIn === 0) ? 0 : 1),
+			params[`${node.nodeAddress}expandedTo.${j}.tensionIn`] || ((typeIn === 'line') ? 0 : 1),
 			tensionIn === 0 ? untensionedInVector : inVector,
 		);
 		outVector = mulScalar2D(
-			params[`${node.nodeAddress}expandedTo.${j}.tensionOut`] || ((tensionOut === 0) ? 0 : 1),
+			params[`${node.nodeAddress}expandedTo.${j}.tensionOut`] || ((typeOut === 'line') ? 0 : 1),
 			tensionOut === 0 ? untensionOutVector : outVector,
 		);
 	}
@@ -130,12 +149,12 @@ function computeHandle(
 		node.baseLengthIn = distance2D(inVector, {x: 0, y: 0});
 		node.baseLengthOut = distance2D(outVector, {x: 0, y: 0});
 		inVector = mulScalar2D(
-			params[`${node.nodeAddress}tensionIn`] || ((tensionIn === 0) ? 0 : 1),
-			tensionIn === 0 ? untensionedInVector : inVector,
+			params[`${node.nodeAddress}tensionIn`] || ((typeIn === 'line') ? 0 : 1),
+			inVector,
 		);
 		outVector = mulScalar2D(
-			params[`${node.nodeAddress}tensionOut`] || ((tensionOut === 0) ? 0 : 1),
-			tensionOut === 0 ? untensionOutVector : outVector,
+			params[`${node.nodeAddress}tensionOut`] || ((typeOut === 'line') ? 0 : 1),
+			outVector,
 		);
 	}
 
@@ -156,6 +175,8 @@ function computeHandle(
 
 	dest.baseTensionIn = tensionIn;
 	dest.baseTensionOut = tensionOut;
+	dest.baseTypeIn = node.typeIn;
+	dest.baseTypeOut = node.typeOut;
 	dest.handleIn = round2D(add2D(current, inVector));
 	dest.handleOut = round2D(add2D(current, outVector));
 }
@@ -229,15 +250,17 @@ class SolvablePath {
 				nodes[i].dirIn = nodes[i].dirOut;
 			}
 
-			nodes[i].tensionIn = node.typeIn === 'line' ? 0 : (node.tensionIn !== undefined ? node.tensionIn : 1);
-			nodes[i].tensionOut = node.typeOut === 'line' ? 0 : (node.tensionOut !== undefined ? node.tensionOut : 1);
+			nodes[i].typeIn = node.typeIn || node.type;
+			nodes[i].typeOut = node.typeOut || node.type;
+			nodes[i].tensionIn = node.tensionIn !== undefined ? node.tensionIn : 1;
+			nodes[i].tensionOut = node.tensionOut !== undefined ? node.tensionOut : 1;
 
 			if (!closed && skeleton) {
 				if (i === 0) {
-					 nodes[i].tensionIn = 0;
+					 nodes[i].typeIn = 'line';
 				}
 				else if (i === nodes.length - 1) {
-					 nodes[i].tensionOut = 0;
+					 nodes[i].typeOut = 'line';
 				}
 			}
 		}

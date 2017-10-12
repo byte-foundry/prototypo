@@ -35,13 +35,13 @@ gulp.task('cp-genese', function() {
 	gulp.src('./node_modules/antique.ptf/dist/font.json')
 		.pipe(gulp.dest('./dist/antique.ptf/dist/'));
 	gulp.src('./node_modules/john-fell.ptf/dist/font.json')
-		.pipe(gulp.dest('./dist/john-fell.ptf/dist/'));
+		.pipe(gulp.dest('./dist/templates/john-fell.ptf'));
 	gulp.src('./node_modules/venus.ptf/dist/font.json')
-		.pipe(gulp.dest('./dist/venus.ptf/dist/'));
+		.pipe(gulp.dest('./dist/templates/venus.ptf'));
 	gulp.src('./node_modules/elzevir.ptf/dist/font.json')
-		.pipe(gulp.dest('./dist/elzevir.ptf/dist/'));
+		.pipe(gulp.dest('./dist/templates/elzevir.ptf'));
 	gulp.src('./node_modules/gfnt.ptf/dist/font.json')
-		.pipe(gulp.dest('./dist/gfnt.ptf/dist/'));
+		.pipe(gulp.dest('./dist/templates/gfnt.ptf'));
 });
 
 gulp.task('cp-static', function() {

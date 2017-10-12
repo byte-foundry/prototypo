@@ -10,6 +10,7 @@ export default class Component {
 			this.base = [constantOrFormula(source.base)];
 		}
 
+		this.parameters = _.mapValues(source.parameters, param => constantOrFormula(param));
 		this.id = constantOrFormula(source.id);
 		this.anchors = (source.anchor || []).map(
 			(item, i) => _.mapValues(
@@ -59,6 +60,7 @@ export default class Component {
 				&& name !== 'anchors'
 				&& name !== 'base'
 				&& name !== 'components'
+				&& name !== 'parameters'
 				&& name !== 'operationOrder') {
 				return prop.getResult(localParams, contours, parentAnchors, utils, glyphs);
 			}

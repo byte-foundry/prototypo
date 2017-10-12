@@ -1,4 +1,3 @@
-import {Typefaces} from '../services/typefaces.services.js';
 
 import {rawToEscapedContent} from '../helpers/input-transform.helpers.js';
 import FontPrecursor from '../prototypo.js/precursor/FontPrecursor.js';
@@ -20,22 +19,4 @@ export function mapGlyphForApp(glyph) {
 			};
 		}
 	);
-}
-
-export async function setupFontInstance(appValues) {
-	const template = appValues.values.familySelected ? appValues.values.familySelected.template : undefined;
-	const typedataJSON = await Typefaces.getFont(template || 'venus.ptf');
-	const typedata = JSON.parse(typedataJSON);
-
-	const font = new FontPrecursor(typedata);
-
-	return {
-		typedataJSON,
-		familyName: typedata.fontinfo.familyName,
-		controls: typedata.controls,
-		presets: typedata.presets,
-		tags: typedata.fontinfo.tags,
-		db: appValues.values.variantSelected.db,
-		typedata,
-	};
 }

@@ -7,7 +7,6 @@ import {prototypoStore, undoableStore} from '../stores/creation.stores';
 import LocalServer from '../stores/local-server.stores';
 import LocalClient from '../stores/local-client.stores';
 
-import {Typefaces} from '../services/typefaces.services';
 import {FontValues} from '../services/values.services';
 import apolloClient from '../services/graphcool.services';
 
@@ -46,7 +45,7 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/create-font-instance': ({typedataJSON, appValues, templateToLoad}) => {
-		const typedata = JSON.parse(typedataJSON);
+		const typedata = typedataJSON;
 		const familyName = typedata.fontinfo.familyName;
 		const controls = typedata.controls;
 		const presets = typedata.presets;
@@ -69,13 +68,13 @@ export default {
 		try {
 			const template = appValues.values.familySelected
 				? appValues.values.familySelected.template
-				: undefined;
-			const typedataJSON = await Typefaces.getFont(template || 'venus.ptf');
+				: 'venus.ptf';
+			const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../dist/templates/${template}/font.json`);
 
 			localClient.dispatchAction('/create-font-instance', {
 				typedataJSON,
 				appValues,
-				templateToLoad: template || 'venus.ptf',
+				templateToLoad: template,
 			});
 		}
 		catch (err) {
@@ -101,7 +100,7 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/change-font-from-typedata': async ({typedataJSON, variantId, templateToLoad}) => {
-		const typedata = JSON.parse(typedataJSON);
+		const typedata = typedataJSON;
 
 		localClient.dispatchAction('/store-value-font', {
 			familyName: typedata.fontinfo.familyName,
@@ -118,7 +117,7 @@ export default {
 		loadFontValues(typedata, undefined, variantId);
 	},
 	'/change-font': async ({templateToLoad, variantId}) => {
-		const typedataJSON = await Typefaces.getFont(templateToLoad);
+		const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../dist/templates/${templateToLoad}/font.json`);
 
 		localClient.dispatchAction('/change-font-from-typedata', {
 			typedataJSON,
