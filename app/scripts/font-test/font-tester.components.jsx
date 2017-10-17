@@ -61,10 +61,10 @@ export default class FontTester extends React.Component {
 	componentDidUpdate() {
 		const glyphs = window.glyphArray || [];
 
-		glyphs.forEach((glyph) => {
+		glyphs.forEach((glyph, index) => {
 			if (!glyph.error) {
-				this.toile.clearCanvas(300, 300, this[glyph.unicode].getContext('2d'));
-				this.toile.drawGlyph(glyph, [], false, this[glyph.unicode].getContext('2d'));
+				this.toile.clearCanvas(300, 300, this[glyph.name + index].getContext('2d'));
+				this.toile.drawGlyph(glyph, [], false, this[glyph.name + index].getContext('2d'));
 			}
 		});
 	}
@@ -96,15 +96,15 @@ export default class FontTester extends React.Component {
 	render() {
 		const glyphs = window.glyphArray || [];
 
-		const glyphsCanvas = glyphs.map((glyph) => {
+		const glyphsCanvas = glyphs.map((glyph, index) => {
 			if (glyph.error) {
 				return <GlyphError glyph={glyph} />;
 			}
 			return (
 				<GlyphTest
 					unicode={glyph.unicode}
-					canvasRef={(el) => {this[glyph.unicode] = el;}}
-					key={glyph.unicode}
+					canvasRef={(el) => {this[glyph.name + index] = el;}}
+					key={glyph.name + index}
 				/>
 			);
 		}).filter(el => el);

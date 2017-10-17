@@ -20,8 +20,8 @@ function computeHandle(
 ) {
 	let inIntersection;
 	let outIntersection;
-	const prevDir = j ? prevNode.dirIn : prevNode.dirOut;
-	const nextDir = j ? nextNode.dirOut : nextNode.dirIn;
+	const prevDir = j ? (prevNode.dirIn === null ? prev.dirIn : prevNode.dirIn) : (prevNode.dirOut === null ? prev.dirOut : prevNode.dirOut);
+	const nextDir = j ? (nextNode.dirOut === null ? next.dirOut : nextNode.dirOut) : (nextNode.dirIn === null ? next.dirIn : nextNode.dirIn);
 	let dirToPrev = j ? current.dirOut || node.dirOut : current.dirIn || node.dirIn;
 	let dirToNext = j ? current.dirIn || node.dirIn : current.dirOut || node.dirOut;
 	const tensionIn = j ? node.tensionOut : node.tensionIn;
@@ -189,7 +189,9 @@ class SolvablePath {
 	solveOperationOrder(glyph, operationOrder) {
 		return [`${this.cursor}closed`, `${this.cursor}skeleton`, ..._.reduce([...this.nodes, this.transforms, this.transformOrigin], (result, node) => {
 			result.push(...node.solveOperationOrder(glyph, [...operationOrder, ...result]));
-			if (this.isReadyForHandles([...operationOrder, ...result])) {
+			const allOperation = [...operationOrder, ...result];
+
+			if (this.isReadyForHandles(allOperation) && !_.find(allOperation, op => op.action === 'handle' && op.cursor === this.cursor.substring(0, this.cursor.length - 1))) {
 				result.push({
 					action: 'handle',
 					cursor: this.cursor.substring(0, this.cursor.length - 1),
