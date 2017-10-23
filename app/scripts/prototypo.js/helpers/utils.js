@@ -71,9 +71,9 @@ export function changeTransformOrigin(origin, transform, z = 1) {
 	return matrixMul(
 		matrixMul(
 			preTransform,
-			transform
+			transform,
 		),
-		postTransform
+		postTransform,
 	);
 }
 
@@ -90,14 +90,31 @@ export function transformNode(node, transforms, origin) {
 	});
 }
 
+export function transformGlyph(opDone, transformTuples) {
+	opDone.contours.forEach((contour) => {
+		contour.nodes.forEach((node) => {
+			[...transformTuples, [contour.transforms || [], contour.transformOrigin]].forEach(([transform, origin]) => {
+				if (node.expandedTo) {
+					transformNode(node.expandedTo[0], transform, origin);
+					transformNode(node.expandedTo[1], transform, origin);
+					transformNode(node, transform, origin);
+				}
+				else {
+					transformNode(node, transform, origin);
+				}
+			});
+		});
+	});
+}
+
 function exeTransformOnNode(name, node, param, origin) {
 	const {x, y} = transformByName[name](node, param, origin);
 	const {x: xBase, y: yBase} = transformByName[name]({x: node.xBase, y: node.yBase}, param, origin);
 
-	node.x = x;
-	node.y = y;
-	node.xBase = xBase;
-	node.yBase = yBase;
+	node.x = x; // eslint-disable-line no-param-reassign
+	node.y = y; // eslint-disable-line no-param-reassign
+	node.xBase = xBase; // eslint-disable-line no-param-reassign
+	node.yBase = yBase; // eslint-disable-line no-param-reassign
 }
 
 export function glyphBoundingBox(glyph) {

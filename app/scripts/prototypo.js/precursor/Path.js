@@ -217,6 +217,16 @@ class SolvablePath {
 			nodes[i].x = Math.round(node.x);
 			nodes[i].y = Math.round(node.y);
 
+			nodes[i].typeIn = node.typeIn || node.type;
+			nodes[i].typeOut = node.typeOut || node.type;
+
+			if (node.typeOut === 'smooth' && node.dirOut === null) {
+				nodes[i].dirOut = nodes[i].dirIn;
+			}
+			else if (node.typeIn === 'smooth' && node.dirIn === null) {
+				nodes[i].dirIn = nodes[i].dirOut;
+			}
+
 			if (node.expand) {
 				const dirIn = readAngle(node.dirIn);
 				const dirOut = readAngle(node.dirOut);
@@ -245,15 +255,6 @@ class SolvablePath {
 				nodes[i].dirOut = readAngle(node.dirOut) || 0.01;
 			}
 
-			if (node.typeOut === 'smooth') {
-				nodes[i].dirOut = nodes[i].dirIn;
-			}
-			else if (node.typeIn === 'smooth') {
-				nodes[i].dirIn = nodes[i].dirOut;
-			}
-
-			nodes[i].typeIn = node.typeIn || node.type;
-			nodes[i].typeOut = node.typeOut || node.type;
 			nodes[i].tensionIn = node.tensionIn !== undefined ? node.tensionIn : 1;
 			nodes[i].tensionOut = node.tensionOut !== undefined ? node.tensionOut : 1;
 

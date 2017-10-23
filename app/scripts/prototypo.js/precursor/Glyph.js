@@ -1,6 +1,6 @@
 /* global _ */
 import {constantOrFormula, createContour} from '../helpers/values';
-import {toLodashPath, transformNode} from '../helpers/utils';
+import {toLodashPath, transformNode, transformGlyph} from '../helpers/utils';
 import * as utils from '../utils/updateUtils';
 
 import Component from './Component';
@@ -343,7 +343,7 @@ export default class Glyph {
 		);
 	}
 
-	constructGlyph(params, parentAnchors, glyphs, parentTransform, parentTransformOrigin) {
+	constructGlyph(params, parentAnchors, glyphs, parentTransformTuple = [[[], undefined]]) {
 		const localParams = {
 			...params,
 			..._.mapValues(this.parameters, param => param.getResult(params)),
@@ -397,6 +397,21 @@ export default class Glyph {
 			}, opAnchors[key]);
 		});
 
+
+		const transformedThis = _.mapValues(this, (prop, name) => {
+			if (prop !== undefined
+				&& !/parameters|contours|anchors|components|operationOrder/.test(name)) {
+				return prop.getResult(localParams, opDone.contours, opDone.anchors, utils, glyphs);
+			}
+
+			return undefined;
+		});
+
+		const transforms = [
+			[transformedThis.transforms || [], transformedThis.origin],
+			...parentTransformTuple,
+		];
+
 		opDone.components = this.components.map((component, idx) => {
 			const componentManualChanges = _.chain(localParams.manualChanges[this.name.value].cursors)
 				.pickBy((value, key) => key.match(new RegExp(`components\.${idx}`)))
@@ -422,68 +437,14 @@ export default class Glyph {
 				opDone.anchors,
 				utils,
 				glyphs,
+				transforms
 			);
 		});
 
-		const transformedThis = _.mapValues(this, (prop, name) => {
-			if (prop !== undefined
-				&& !/parameters|contours|anchors|components|operationOrder/.test(name)) {
-				return prop.getResult(localParams, opDone.contours, opDone.anchors, utils, glyphs);
-			}
-
-			return undefined;
-		});
-
-		if (transformedThis.transforms) {
-			opDone.contours.forEach((contour) => {
-				contour.nodes.forEach((node) => {
-					if (contour.transforms) {
-						if (node.expandedTo) {
-							transformNode(node.expandedTo[0], contour.transforms, contour.transformOrigin);
-							transformNode(node.expandedTo[1], contour.transforms, contour.transformOrigin);
-							transformNode(node, contour.transforms, contour.transformOrigin);
-						}
-						else {
-							transformNode(node, contour.transforms, contour.transformOrigin);
-						}
-					}
-					if (node.expandedTo) {
-						transformNode(
-							node.expandedTo[0],
-							transformedThis.transforms,
-							transformedThis.transformOrigin,
-						);
-						transformNode(
-							node.expandedTo[1],
-							transformedThis.transforms,
-							transformedThis.transformOrigin,
-						);
-						transformNode(
-							node,
-							transformedThis.transforms,
-							transformedThis.transformOrigin,
-						);
-					}
-					else {
-						transformNode(node, transformedThis.transforms, transformedThis.transformOrigin);
-					}
-				});
-			});
-		}
-
-		if (parentTransform) {
-			opDone.contours.forEach((contour) => {
-				contour.nodes.forEach((node) => {
-					if (node.expandedTo) {
-						transformNode(node.expandedTo[0], parentTransform, parentTransformOrigin);
-						transformNode(node.expandedTo[1], parentTransform, parentTransformOrigin);
-					}
-					else {
-						transformNode(node, parentTransform, parentTransformOrigin);
-					}
-				});
-			});
-		}
+		transformGlyph(
+			opDone,
+			transforms,
+		);
 
 		const otContours = this.createGlyphContour(opDone.contours);
 

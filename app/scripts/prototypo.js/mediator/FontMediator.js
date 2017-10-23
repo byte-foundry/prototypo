@@ -2,6 +2,7 @@
 import johnfell from 'john-fell.ptf';
 import venus from 'venus.ptf';
 import elzevir from 'elzevir.ptf';
+import spectral from 'gfnt.ptf';
 
 import LocalClient from '../../stores/local-client.stores';
 
@@ -360,6 +361,14 @@ if (process.env.TESTING_FONT === 'yes') {
 
 				await FontMediator.instance().reloadFont('elzevir.ptf', fontJson);
 				FontMediator.instance().getAllGlyphForCanvas('elzevir.ptf');
+			},
+		);
+		module.hot.accept('gfnt.ptf',
+			async () => {
+				const fontJson = require('gfnt.ptf');
+
+				await FontMediator.instance().reloadFont('gfnt.ptf', fontJson);
+				FontMediator.instance().getAllGlyphForCanvas('gfnt.ptf');
 			},
 		);
 		module.hot.accept('../precursor/FontPrecursor.js',

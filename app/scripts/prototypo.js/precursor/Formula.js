@@ -53,6 +53,7 @@ ${graph.join(' => ')}
 					${e.message}`
 				);
 			}
+			graph.pop();
 		});
 		this.analyzing = false;
 	}
@@ -96,7 +97,19 @@ ${this.dependencies.map((name) => {return `${name}: ${_.get(toLodashPath(name), 
 				const expandedIndex = xpath.indexOf('expandedTo');
 				const processedOps = [...operationOrder, ...result, ...acc];
 
-				if (expandedIndex !== -1) {
+				//We don't have to compute dependcy on parentAnchors they are not
+				//our responsability and should be provided by parent
+				if (xpath.indexOf('parentAnchors') !== -1) {
+					return acc;
+				}
+
+				if (xpath.match(/handle(Out|In)/)) {
+					const contourPath = xpath.split('.').slice(0,2).join('.');
+					const contour = glyph.getFromXPath(contourPath);
+
+					acc.push(...contour.solveOperationOrder(glyph, [...processedOps]));
+				}
+				else if (expandedIndex !== -1) {
 					const base = xpath.substr(0, expandedIndex - 1);
 					const node = glyph.getFromXPath(`${base}`);
 
@@ -139,9 +152,7 @@ ${this.dependencies.map((name) => {return `${name}: ${_.get(toLodashPath(name), 
 						acc.push(...expandResult);
 					}
 				}
-				//We don't have to compute dependcy on parentAnchors they are not
-				//our responsability and should be provided by parent
-				else if (xpath.indexOf('parentAnchors') === -1) {
+				else {
 					acc.push(...glyph.getFromXPath(xpath).solveOperationOrder(glyph, processedOps));
 				}
 

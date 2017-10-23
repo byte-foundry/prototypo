@@ -23,7 +23,7 @@ export default class Component {
 		this.transformOrigin = constantOrFormula(source.transformOrigin);
 	}
 
-	constructComponent(params, contours, parentAnchors, utils, glyphs) {
+	constructComponent(params, contours, parentAnchors, utils, glyphs, parentTransformTuple) {
 		const localParams = {
 			...params,
 			..._.mapValues(this.parameters,
@@ -89,8 +89,10 @@ export default class Component {
 				localParams,
 				opDone.anchors,
 				glyphs,
-				transformedThis.transforms,
-				transformedThis.transformOrigin,
+				[
+					[transformedThis.transforms || [], transformedThis.transformOrigin],
+					...parentTransformTuple,
+				]
 			),
 			...transformedThis,
 		};

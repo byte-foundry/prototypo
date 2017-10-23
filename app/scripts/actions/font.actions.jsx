@@ -79,6 +79,7 @@ export default {
 		}
 		catch (err) {
 			trackJs.track(err);
+			console.error(err);
 		}
 	},
 	'/create-font': (typedata) => {
