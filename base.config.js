@@ -6,7 +6,6 @@ const SpritePlugin = require('svg-sprite-loader/plugin');
 module.exports = {
 	entry: {
 		bundle: ['react-hot-loader/patch', './app/scripts/main'],
-		'web-import': ['react-hot-loader/patch', './app/scripts/web-import'],
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),
