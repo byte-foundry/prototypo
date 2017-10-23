@@ -7868,9 +7868,9 @@ prototypo-canvas@~1.16.0:
     whatwg-fetch "^0.11.0"
     wolfy87-eventemitter "4.2.0"
 
-prototypo.js@^1.16.10:
-  version "1.16.10"
-  resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.16.10.tgz#b38920505b57be6aa2268788acadccc35eae0494"
+prototypo.js@^1.16.11:
+  version "1.16.11"
+  resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.16.11.tgz#92862584eb0623174d5c28efe725bd40430bcd47"
   dependencies:
     antique.ptf byte-foundry/antique.ptf
     babel-plugin-transform-flow-strip-types "^6.22.0"
