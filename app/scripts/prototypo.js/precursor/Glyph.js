@@ -76,6 +76,7 @@ export default class Glyph {
 	}
 
 	solveOperationOrder() {
+		console.log(this.name.value);
 		const contourOp = _.reduce(this.contours, (result, contour) => {
 			result.push(...contour.solveOperationOrder(this, result));
 			return result;
@@ -321,9 +322,9 @@ export default class Glyph {
 			opDone.anchors,
 			parentAnchors,
 			utils);
-		const option = op.charAt(op.length - 1);
+		const option = op.substr(op.length - 2);
 
-		if (option === 'x' || option === 'y') {
+		if (option === '.x' || option === '.y') {
 			_.set(
 				opDone,
 				toLodashPath(`${op}Base`),
@@ -408,7 +409,7 @@ export default class Glyph {
 		});
 
 		const transforms = [
-			[transformedThis.transforms || [], transformedThis.origin],
+			[transformedThis.transforms || [], transformedThis.transformOrigin],
 			...parentTransformTuple,
 		];
 
