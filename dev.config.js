@@ -10,7 +10,6 @@ module.exports = merge(base, {
 	devtool: 'source-map',
 	entry: {
 		bundle: ['whatwg-fetch'],
-		'web-import': ['whatwg-fetch'],
 	},
 	module: {
 		rules: [
