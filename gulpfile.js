@@ -42,6 +42,8 @@ gulp.task('cp-genese', function() {
 		.pipe(gulp.dest('./dist/templates/elzevir.ptf'));
 	gulp.src('./node_modules/gfnt.ptf/dist/font.json')
 		.pipe(gulp.dest('./dist/templates/gfnt.ptf'));
+	gulp.src('./node_modules/antique.ptf/dist/font.json')
+		.pipe(gulp.dest('./dist/templates/antique.ptf'));
 });
 
 gulp.task('cp-static', function() {
@@ -106,7 +108,7 @@ gulp.task('webpack:dll', function(callback) {
 });
 
 gulp.task('watch-font', function() {
-	return gulp.watch(['./node_modules/antique.ptf/dist/font.json','./node_modules/john-fell.ptf/dist/font.json','./node_modules/venus.ptf/dist/font.json','./node_modules/elzevir.ptf/dist/font.json', './node_modules/gfnt.ptf/dist/font.json'], ['cp-genese']);
+	return gulp.watch(['./node_modules/john-fell.ptf/dist/font.json','./node_modules/venus.ptf/dist/font.json','./node_modules/elzevir.ptf/dist/font.json', './node_modules/gfnt.ptf/dist/font.json', './node_modules/antique.ptf/dist/font.json'], ['cp-genese']);
 });
 
 gulp.task('watch-prototypojs', function() {
