@@ -1,14 +1,23 @@
-<!doctype html>
-<html>
-	<head>
-	</head>
-	<body>
-		<canvas id="prototypo-canvas"></canvas>
-		<script>
-			window.ga = function() {};
-		</script>
-		<script type="text/javascript" src="prototypo.js/dist/prototypo.js"></script>
-		<script src="dll/libs.dll.js"></script>
-		<script src='web-import.js'></script>
-	</body>
-</html>
+<script src="https://library.prototypo.io/ptypo.js"></script>
+<script>
+  const ptypoFactory = new Ptypo.default();
+  const fonts = {};
+
+  window.addEventListener('message', async (event) => {
+    const font = event.data;
+    // Receiving message from the background script
+    // we have to cache the font or reuse it otherwise
+
+    if (!fonts[font.id]) {
+      fonts[font.id] = await ptypoFactory.createFont(font.name, font.template);
+    }
+
+    // waiting for the font to be built
+    await fonts[font.id].changeParams(font.values);
+
+    event.source.postMessage({
+      ...font,
+      source: fonts[font.id].otfSource,
+    }, event.origin);
+  });
+</script>
