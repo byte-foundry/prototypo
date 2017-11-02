@@ -24,7 +24,9 @@ export default class FontPrecursor {
 		this.unicodeToGlyphName = {};
 
 		this.glyphs = _.mapValues(fontSrc.glyphs, (glyph) => {
-			this.unicodeToGlyphName[glyph.unicode] = glyph.name;
+			if (glyph.name.indexOf('alt') === -1) {
+				this.unicodeToGlyphName[glyph.unicode] = glyph.name;
+			}
 
 			return new Glyph(glyph, this.paramBase);
 		});

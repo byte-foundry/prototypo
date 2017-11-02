@@ -1005,7 +1005,7 @@ export default class Toile {
 		frameCounters,
 		hotItems = [],
 		width,
-		{positions = []},
+		{position = {}},
 	) {
 		let menuCenter;
 		const t = Math.min(1, frameCounters / componentMenuAnimationLength);
@@ -1037,121 +1037,119 @@ export default class Toile {
 			this.viewMatrix,
 			this.height,
 		);
-		let viewMenuPos = transformCoords(
-			positions,
+		let [viewMenuPos] = transformCoords(
+			[position],
 			this.viewMatrix,
 			this.height,
 		);
 
 		if (frameCounters === 0) {
-			viewMenuPos = bases.map(base => (
-				{
-					id: base.id,
-					x: viewMenuCenter.x + (Math.random() - 0.5),
-					y: viewMenuCenter.y + (Math.random() - 0.5),
-				}
-			));
+			viewMenuPos = {
+				x: viewMenuCenter.x + (Math.random() - 0.5),
+				y: viewMenuCenter.y + (Math.random() - 0.5),
+			};
 		}
 
-		const newPositions = viewMenuPos.map((menu, i) => {
-			const {id: baseId, label} = bases[i];
-			const inHot = _.find(hotItems, item => item.id === baseId);
-			const centerFactor = (distance2D(viewMenuCenter, menu) / pixelPerMeter);
-			const centerRepulsor = mulScalar2D(
-				400 / Math.max(20, centerFactor),
-				normalize2D(subtract2D(menu, viewMenuCenter)),
-			);
+		const centerFactor = (distance2D(viewMenuCenter, viewMenuPos) / pixelPerMeter);
+		const centerRepulsor = mulScalar2D(
+			400 / Math.max(20, centerFactor),
+			normalize2D(subtract2D(viewMenuPos, viewMenuCenter)),
+		);
 
-			const leftTopRepulsor = mulScalar2D(
-				300 * (distance2D(corners[0], menu) - 100) / pixelPerMeter,
-				normalize2D(subtract2D(corners[0], menu)),
-			);
-			const rightTopRepulsor = mulScalar2D(
-				300 * (distance2D(corners[1], menu) - 100) / pixelPerMeter,
-				normalize2D(subtract2D(corners[1], menu)),
-			);
-			const leftBottomRepulsor = mulScalar2D(
-				300 * (distance2D(corners[2], menu) - 100) / pixelPerMeter,
-				normalize2D(subtract2D(corners[2], menu)),
-			);
-			const rightBottomRepulsor = mulScalar2D(
-				300 * (distance2D(corners[3], menu) - 100) / pixelPerMeter,
-				normalize2D(subtract2D(corners[3], menu)),
-			);
+		const leftTopRepulsor = mulScalar2D(
+			300 * (distance2D(corners[0], viewMenuPos) - 100) / pixelPerMeter,
+			normalize2D(subtract2D(corners[0], viewMenuPos)),
+		);
+		const rightTopRepulsor = mulScalar2D(
+			300 * (distance2D(corners[1], viewMenuPos) - 100) / pixelPerMeter,
+			normalize2D(subtract2D(corners[1], viewMenuPos)),
+		);
+		const leftBottomRepulsor = mulScalar2D(
+			300 * (distance2D(corners[2], viewMenuPos) - 100) / pixelPerMeter,
+			normalize2D(subtract2D(corners[2], viewMenuPos)),
+		);
+		const rightBottomRepulsor = mulScalar2D(
+			300 * (distance2D(corners[3], viewMenuPos) - 100) / pixelPerMeter,
+			normalize2D(subtract2D(corners[3], viewMenuPos)),
+		);
 
-			let sumAttractorRepulsor = _.reduce(
-				[
-					centerRepulsor,
-					leftTopRepulsor,
-					rightTopRepulsor,
-					leftBottomRepulsor,
-					rightBottomRepulsor,
-				],
-				(acc, force) => add2D(acc, force),
-				{x: 0, y: 0},
-			);
+		const sumAttractorRepulsor = _.reduce(
+			[
+				centerRepulsor,
+				leftTopRepulsor,
+				rightTopRepulsor,
+				leftBottomRepulsor,
+				rightBottomRepulsor,
+			],
+			(acc, force) => add2D(acc, force),
+			{x: 0, y: 0},
+		);
 
-			viewMenuPos.forEach((menuOther, j) => {
-				if (j !== i) {
-					const factor = ((distance2D(menuOther, menu)) - 300) / pixelPerMeter;
-					const vector = normalize2D(subtract2D(menuOther, menu));
-					const mutualRepulsor = mulScalar2D(
-						factor * 700, vector,
-					);
+		let resultMenu = {
+			...add2D(mulScalar2D(1 / (menuMass * 60), sumAttractorRepulsor), viewMenuPos),
+		};
 
-					sumAttractorRepulsor = add2D(sumAttractorRepulsor, mutualRepulsor);
-				}
-			});
+		const maxDistance = 100;
+		const distanceToBezierCenter = distance2D(resultMenu, viewMenuCenter);
 
-			let resultMenu = {
-				...add2D(mulScalar2D(1 / (menuMass * 60), sumAttractorRepulsor), menu),
+		if (distanceToBezierCenter > maxDistance) {
+			const vectorToBezierCenter = subtract2D(resultMenu, viewMenuCenter);
+
+			resultMenu = {
+				...add2D(
+					viewMenuCenter,
+					mulScalar2D(maxDistance / distanceToBezierCenter, vectorToBezierCenter),
+				),
 			};
+		}
 
-			const maxDistance = 200;
-			const distanceToBezierCenter = distance2D(resultMenu, viewMenuCenter);
+		const [componentCenter] = transformCoords(
+			[resultMenu],
+			inverseMatrix,
+			this.height / this.viewMatrix[0],
+		);
 
-			if (distanceToBezierCenter > maxDistance) {
-				const vectorToBezierCenter = subtract2D(resultMenu, viewMenuCenter);
-
-				resultMenu = {
-					id: baseId,
-					...add2D(
-						viewMenuCenter,
-						mulScalar2D(maxDistance / distanceToBezierCenter, vectorToBezierCenter),
-					),
-				};
-			}
-
-			const componentCenter = transformCoords(
-				[resultMenu],
-				inverseMatrix,
-				this.height / this.viewMatrix[0],
-			)[0];
-
-			this.drawCircle(
-				componentCenter,
-				componentHotRadius * y,
-				inHot ? darkBlue : blue,
-				inHot ? darkBlue : blue,
-			);
-			this.context.lineWidth = 2;
-			this.drawLine(componentCenter, menuCenter, inHot ? darkBlue : blue);
-			this.context.lineWidth = 1;
-
+		bases.forEach(({id: baseId, label}, i) => {
+			const inHot = _.find(hotItems, item => item.id === baseId);
 			const textSize = componentMenuTextSize * y;
 			const textWidth = this.measureText(label.value, textSize);
+
+			const boxHeight = 40 * y;
+			const yOffset = ((i - (bases.length / 2)) * boxHeight);
+			const boxWidth = 100 * y;
+			const rectStart = add2D(
+				{
+					x: -boxWidth / this.viewMatrix[0],
+					y: yOffset / this.viewMatrix[0],
+				},
+				componentCenter,
+			);
+			const rectEnd = add2D(
+				{
+					x: boxWidth / this.viewMatrix[0],
+					y: (yOffset + boxHeight) / this.viewMatrix[0],
+				},
+				componentCenter,
+			);
+
+			this.drawRectangleFromCorners(
+				rectStart,
+				rectEnd,
+				darkestGrey,
+				inHot ? darkestGrey : white,
+			);
 
 			this.drawText(
 				label.value,
 				add2D(
 					{
-						x: -textWidth.width / 2 / this.viewMatrix[0],
-						y: -(3 * textSize) / (6 * this.viewMatrix[0]),
+						x: (10 - boxWidth) / this.viewMatrix[0],
+						y: (yOffset + textSize / 2) / this.viewMatrix[0],
 					},
 					componentCenter,
 				),
 				textSize,
-				white,
+				inHot ? white : darkestGrey,
 			);
 
 			this.interactionList.push({
@@ -1159,15 +1157,15 @@ export default class Toile {
 				type: toileType.COMPONENT_MENU_ITEM,
 				data: {
 					componentId: id,
-					radius: componentHotRadius,
-					center: componentCenter,
+					rectStart,
+					rectEnd,
 				},
 			});
-
-			return componentCenter;
 		});
 
-		const points = [menuCenter, ...newPositions];
+		const newPosition = componentCenter;
+
+		const points = [menuCenter, newPosition];
 		const barycenter = mulScalar2D(1 / points.length, _.reduce(
 					points,
 					(acc, point) => add2D(acc, point),
@@ -1179,13 +1177,13 @@ export default class Toile {
 			type: toileType.COMPONENT_MENU_ITEM_CENTER,
 			data: {
 				component: {id, bases, beziers, center},
-				center: barycenter,
+				center: componentCenter,
 			},
 		});
 
 		return {
 			id,
-			positions: newPositions,
+			position: newPosition,
 		};
 	}
 
@@ -1452,7 +1450,7 @@ export default class Toile {
 		);
 	}
 
-	drawSkeletonProperty(node) {
+	drawNodeProperty(node, manualChanges) {
 		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 		const [start, end] = transformCoords(
 			[
@@ -1468,6 +1466,7 @@ export default class Toile {
 			inverseMatrix,
 			this.height / this.viewMatrix[0],
 		);
+		const textHeight = 21;
 
 		this.drawRectangleFromCorners(
 			start,
@@ -1477,17 +1476,38 @@ export default class Toile {
 		);
 		this.drawText('Skeleton node props', {
 			x: start.x + (10 / this.viewMatrix[0]),
-			y: start.y - (20 / this.viewMatrix[0]),
+			y: start.y - (textHeight * 1 / this.viewMatrix[0]),
 		}, 14, darkestGrey);
-		this.drawText(`x: ${node.data.center.x}`, {
+		this.drawText(`x: ${node.x} (${Math.round(node.x - node.xBase)})`, {
 			x: start.x + (10 / this.viewMatrix[0]),
-			y: start.y - (41 / this.viewMatrix[0]),
+			y: start.y - (textHeight * 2 / this.viewMatrix[0]),
 		}, 12, darkestGrey);
 
-		this.drawText(`y: ${node.data.center.y}`, {
+		this.drawText(`y: ${node.y} (${Math.round(node.y - node.yBase)})`, {
 			x: start.x + (10 / this.viewMatrix[0]),
-			y: start.y - (62 / this.viewMatrix[0]),
+			y: start.y - (textHeight * 3 / this.viewMatrix[0]),
 		}, 12, darkestGrey);
+
+		if (node.expand) {
+			this.drawText('Skeleton expand props', {
+				x: start.x + (10 / this.viewMatrix[0]),
+				y: start.y - (textHeight * 4 / this.viewMatrix[0]),
+			}, 14, darkestGrey);
+			this.drawText(`width: ${node.expand.width.toFixed(1)} (${Math.round(node.expand.width - node.expand.baseWidth)})`, {
+				x: start.x + (10 / this.viewMatrix[0]),
+				y: start.y - (textHeight * 5 / this.viewMatrix[0]),
+			}, 12, darkestGrey);
+
+			this.drawText(`angle: ${node.expand.angle.toFixed(2)} (${(node.expand.angle - node.expand.baseAngle).toFixed(2)})`, {
+				x: start.x + (10 / this.viewMatrix[0]),
+				y: start.y - (textHeight * 6 / this.viewMatrix[0]),
+			}, 12, darkestGrey);
+
+			this.drawText(`distr: ${node.expand.distr.toFixed(2)} (${Math.round(node.expand.distr - node.expand.baseDistr)})`, {
+				x: start.x + (10 / this.viewMatrix[0]),
+				y: start.y - (textHeight * 7 / this.viewMatrix[0]),
+			}, 12, darkestGrey);
+		}
 	}
 
 	getHotInteractiveItem() {
@@ -1551,7 +1571,6 @@ export default class Toile {
 
 				break;
 			}
-			case toileType.COMPONENT_MENU_ITEM:
 			case toileType.COMPONENT_NONE_CHOICE:
 			case toileType.NODE_IN:
 			case toileType.NODE_OUT:
@@ -1576,6 +1595,7 @@ export default class Toile {
 
 				break;
 			}
+			case toileType.COMPONENT_MENU_ITEM:
 			case toileType.PERF_RECT: {
 				const {rectStart, rectEnd} = interactionItem.data;
 				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);

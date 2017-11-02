@@ -367,9 +367,9 @@ ansicolors@~0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/ansicolors/-/ansicolors-0.2.1.tgz#be089599097b74a5c9c4a84a0cdbcdb62bd87aef"
 
-antique.ptf@byte-foundry/antique.ptf:
+antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/5990bde258e2beead8520403a1545e58113213f8"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/cc17b02aad75189719d27721886f989f8699f5ca"
   dependencies:
     karma "^1.7.1"
 
@@ -3119,9 +3119,9 @@ elliptic@^6.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
 
-elzevir.ptf@byte-foundry/elzevir.ptf#master:
+elzevir.ptf@byte-foundry/elzevir.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/886433eb1545e30665ac7e64f08e355047fbaa33"
+  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/4120d4d03d690806387f40719812628d2a68f0e3"
   dependencies:
     karma "^1.7.0"
 
@@ -4206,9 +4206,9 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
-gfnt.ptf@byte-foundry/spectral.ptf#master:
+gfnt.ptf@byte-foundry/spectral.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/ece07fd081683eb7017fc2aa394d31d0d4ef9feb"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/fd9b21be170e20cf5e1c195e67c0c00d1d0bb5d7"
 
 glamor@^2.20.40:
   version "2.20.40"
@@ -5645,7 +5645,7 @@ jest@^18.1.0:
 
 john-fell.ptf@byte-foundry/john-fell.ptf#feat/new-core:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/ad59842b6593177c6bf2d4106f46678b764ecf7f"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/8135b214d9ea56f593ff51107e6130664e02566f"
 
 js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.3.2"
@@ -10117,7 +10117,7 @@ vendors@^1.0.0:
 
 venus.ptf@byte-foundry/venus.ptf#feat/new-engine:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/40b2117cf052199f7f609aa2155f35e8e9ce1ac8"
+  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/29a703e3a47783461c9620ecd29aae939ad6dcbd"
 
 verror@1.10.0:
   version "1.10.0"

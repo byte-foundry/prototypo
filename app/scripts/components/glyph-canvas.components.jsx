@@ -71,6 +71,21 @@ export default class GlyphCanvas extends React.PureComponent {
 		this.toile = new Toile(this.canvas);
 		this.toile.setCamera({x: 0, y: 0}, 1, this.canvas.clientHeight);
 
+		if (module.hot) {
+			module.hot.accept('../toile/toile', () => {
+				const ToileConstructor = require('../toile/toile').default; // eslint-disable-line global-require
+				const [z,,,, tx, ty] = this.toile.viewMatrix;
+				const newTs = {
+					x: tx,
+					y: ty,
+				};
+
+				this.toile = new ToileConstructor(this.canvas);
+
+				this.toile.setCameraCenter(newTs, z, -this.canvas.clientHeight, this.canvas.clientWidth);
+			});
+		}
+
 		const frameCounters = {
 			componentMenu: 0,
 		};
@@ -82,6 +97,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		let contourComponentIdx;
 		let contourSelectedIndex = 0;
 		let moving = false;
+		let dragging = true;
 		let mouse = this.toile.getMouseState();
 		let appStateValue;
 		let appMode;
@@ -220,12 +236,18 @@ export default class GlyphCanvas extends React.PureComponent {
 
 							appStateValue = appState.CONTOUR_SELECTED;
 						}
-						else if (hotItems.length === 0 && !moving && draggedItem !== {}) {
-							contourSelectedCursor = undefined;
-							contourIndexes = undefined;
-							contourSelectedIndex = 0;
-							contourComponentIdx = undefined;
-							selectedItem = undefined;
+						else if (hotItems.length === 0 && !moving) {
+							if (draggedItem.id) {
+								appStateValue = appState.CONTOUR_SELECTED;
+							}
+							else {
+								contourSelectedCursor = undefined;
+								contourIndexes = undefined;
+								contourSelectedIndex = 0;
+								contourComponentIdx = undefined;
+								selectedItem = undefined;
+								appStateValue = undefined;
+							}
 						}
 						else {
 							appStateValue = undefined;
@@ -235,14 +257,14 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 					else if (mouse.state === mState.DOWN) {
 						if (tools.length === 1) {
-							draggedItem = draggedItem.type !== undefined ? draggedItem : tools[0];
+							draggedItem = draggedItem.type === undefined ? tools[0] : draggedItem;
 						}
 						else if (nodes.length > 0) {
 							if (draggedItem && nodes[0].id === draggedItem.id) {
 								draggedItem = nodes[0];
 							}
 							else {
-								draggedItem = draggedItem.type !== undefined ? draggedItem : nodes[0];
+								draggedItem = draggedItem.type === undefined ? nodes[0] : draggedItem;
 							}
 						}
 						else {
@@ -685,19 +707,22 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 				if (appStateValue & appState.SKELETON_DISTR) {
-					const {base, expandedTo, width, baseDistr} = draggedItem.data;
+					const {
+						base,
+						expandedTo,
+						width, // eslint-disable-line no-shadow
+						baseDistr,
+					} = draggedItem.data;
 					const [mousePosInWorld] = transformCoords(
 						[mouse.pos],
 						inverseProjectionMatrix(this.toile.viewMatrix),
 						this.toile.height / this.toile.viewMatrix[0],
 					);
-
 					const skelVec = normalize2D(subtract2D(expandedTo[1], expandedTo[0]));
 					const distProjOntoSkel = Math.min(Math.max(dot2D(
 						subtract2D(mousePosInWorld, expandedTo[0]),
 						skelVec,
 					), 0), width);
-
 					const mouseVec = subtract2D(
 						add2D(mulScalar2D(distProjOntoSkel, skelVec), expandedTo[0]),
 						base,
@@ -724,7 +749,9 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				if (selectedItem) {
 					if (selectedItem.type === toileType.NODE_SKELETON) {
-						this.toile.drawSkeletonProperty(selectedItem);
+						const item = _.get(glyph, selectedItem.id);
+
+						this.toile.drawNodeProperty(item);
 					}
 				}
 			}
