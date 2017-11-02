@@ -2,8 +2,9 @@
   "name": "prototypo",
   "version": "1.0.0",
   "dependencies": {
-    "antique.ptf": "byte-foundry/antique.ptf",
+    "antique.ptf": "byte-foundry/antique.ptf#feat/new-rendering",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-polyfill": "^6.26.0",
     "bluebird": "^3.1.1",
     "classnames": "^2.1.2",
     "cleave.js": "^0.7.14",

@@ -50,7 +50,7 @@ export default {
 		const controls = typedata.controls;
 		const presets = typedata.presets;
 		const tags = typedata.fontinfo.tags;
-		const db = appValues.values.variantSelected.db;
+		const db = appValues.values.variantSelected.id;
 
 		localClient.dispatchAction('/store-value-font', {
 			familyName,
@@ -62,7 +62,7 @@ export default {
 		localClient.dispatchAction('/create-font', typedata);
 		localClient.dispatchAction('/load-params', {controls, presets});
 		localClient.dispatchAction('/load-tags', tags);
-		loadFontValues(typedata, db);
+		loadFontValues(typedata, templateToLoad, db);
 	},
 	'/load-font-instance': async ({appValues}) => {
 		try {

@@ -1,10 +1,4 @@
 /* global _ */
-import johnfell from 'john-fell.ptf';
-import venus from 'venus.ptf';
-import elzevir from 'elzevir.ptf';
-import spectral from 'gfnt.ptf';
-import antique from 'antique.ptf';
-
 import LocalClient from '../../stores/local-client.stores';
 
 import FontPrecursor from '../precursor/FontPrecursor';
@@ -61,7 +55,6 @@ export default class FontMediator {
 	}
 
 	constructor(typedatas) {
-
 		this.workerPool = new WorkerPool();
 
 		return new Promise((resolve) => {

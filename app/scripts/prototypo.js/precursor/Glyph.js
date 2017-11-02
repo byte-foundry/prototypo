@@ -76,7 +76,6 @@ export default class Glyph {
 	}
 
 	solveOperationOrder() {
-		console.log(this.name.value);
 		const contourOp = _.reduce(this.contours, (result, contour) => {
 			result.push(...contour.solveOperationOrder(this, result));
 			return result;

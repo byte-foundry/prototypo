@@ -72,13 +72,6 @@ const prototypoStore = new Remutable({
 			provider: 'production',
 		},
 		{
-			sample: 'spectral-preview.svg',
-			sampleLarge: 'template-spectral.svg',
-			name: 'Antique',
-			familyName: 'Antique',
-			templateName: 'antique.ptf',
-		},
-		{
 			sample: 'elzevir-preview.svg',
 			sampleLarge: 'template-elzevir.svg',
 			name: 'Prototypo Elzevir',

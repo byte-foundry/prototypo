@@ -12,11 +12,7 @@ module.exports = merge(base, {
 		index: [
 			'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
 			'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
-		],
-		'web-import': [
-			'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
-			'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
-		],
+		]
 	},
 	module: {
 		loaders: [

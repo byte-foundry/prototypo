@@ -8,7 +8,7 @@ const base = require('./base.config');
 module.exports = merge(base, {
 	cache: true,
 	entry: {
-		bundle: ['whatwg-fetch'],
+		'index': ['whatwg-fetch'],
 	},
 	module: {
 		rules: [
@@ -35,11 +35,6 @@ module.exports = merge(base, {
 			},
 		],
 	},
-	externals: [
-		{
-			'prototypo.js': 'prototypo',
-		},
-	],
 	plugins: [
 		new webpack.LoaderOptionsPlugin({
 			options: {
