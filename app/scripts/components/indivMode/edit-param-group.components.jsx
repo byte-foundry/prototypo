@@ -48,7 +48,7 @@ export default class EditParamGroup extends React.Component {
 	}
 
 	render() {
-		const options = _.map(this.state.groups, (group) => {
+		const options = this.state.groups.map((group) => {
 				return <option value={group} key={group}>{group}</option>;
 		});
 

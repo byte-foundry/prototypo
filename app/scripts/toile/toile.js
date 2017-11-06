@@ -1,5 +1,9 @@
-/* global _ */
 /* eslint-disable no-param-reassign, no-bitwise */
+import _find from 'lodash/find';
+import _slice from 'lodash/slice';
+import _flatten from 'lodash/flatten';
+import _reduce from 'lodash/reduce';
+
 import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D} from '../plumin/util/linear';
 import {getIntersectionTValue, getPointOnCurve} from '../prototypo.js/utils/updateUtils';
 import DOM from '../helpers/dom.helpers';
@@ -108,7 +112,7 @@ export function inverseProjectionMatrix([a, b, c, d, e, f]) {
 export function transformCoords(coordsArray, matrix, height) {
 	const [a, b, c, d, tx, ty] = matrix;
 
-	return _.map(coordsArray, coords =>
+	return coordsArray.map(coords =>
 		({
 			x: (a * coords.x) + (b * coords.y) + tx,
 			y: (c * coords.x) + (d * coords.y) + (ty - height),
@@ -374,7 +378,7 @@ export default class Toile {
 			color: outHandleColor,
 		}); // out
 
-		const hot = _.find(hotItems, item => item.id === id);
+		const hot = _find(hotItems, item => item.id === id);
 		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
 
 		this.drawControlPoint(node, hot, onCurveColor);
@@ -432,7 +436,7 @@ export default class Toile {
 			color: outHandleColor,
 		}); // out
 
-		const hot = _.find(hotItems, item => item.id === id);
+		const hot = _find(hotItems, item => item.id === id);
 
 		const drawNode = !(parentNode
 			&& parentNode.x === node.x
@@ -502,7 +506,7 @@ export default class Toile {
 			handleNode = handleVec;
 		}
 
-		const inHot = _.find(hotItems, item => item.id === handleId);
+		const inHot = _find(hotItems, item => item.id === handleId);
 
 		this.drawLine(handleNode, node, color, color);
 		this.drawControlPoint(handleNode, inHot, color);
@@ -527,7 +531,7 @@ export default class Toile {
 	}
 
 	drawSkeletonNode(node, id, hotItems, j, nodes, contour, componentPrefixAddress) {
-		const hot = _.find(hotItems, item => item.id === id);
+		const hot = _find(hotItems, item => item.id === id);
 		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
 
 		if (node.expand) {
@@ -648,7 +652,7 @@ export default class Toile {
 
 		glyph.contours.forEach((contour, i) => {
 			const id = `${parentId}contours.${i}`;
-			const hot = _.find(hotItems, item => item.id === id);
+			const hot = _find(hotItems, item => item.id === id);
 			let length;
 
 			if (contour.skeleton && contour.closed) {
@@ -657,11 +661,11 @@ export default class Toile {
 			else {
 				length = 1;
 			}
-			const deepListOfBeziers = _.slice(glyph.otContours,
+			const deepListOfBeziers = _slice(glyph.otContours,
 				startIndexBeziers,
 				startIndexBeziers + length,
 			);
-			const listOfBezier = _.flatten(deepListOfBeziers);
+			const listOfBezier = _flatten(deepListOfBeziers);
 
 
 			if (hot) {
@@ -711,7 +715,7 @@ export default class Toile {
 			const id = `components.${i}`;
 
 			if (component.name === 'none') {
-				const hot = _.find(hotItems, item => item.id === id);
+				const hot = _find(hotItems, item => item.id === id);
 				const fillColor = hot ? blue : 'transparent';
 
 				this.drawCircle(component.contours[0].nodes[0], 10, blue, fillColor);
@@ -728,7 +732,7 @@ export default class Toile {
 			}
 			else {
 				component.contours.forEach((contour) => {
-					const hot = _.find(hotItems, item => item.id === id);
+					const hot = _find(hotItems, item => item.id === id);
 					let length;
 
 					if (contour.skeleton && contour.closed) {
@@ -737,11 +741,11 @@ export default class Toile {
 					else {
 						length = 1;
 					}
-					const deepListOfBeziers = _.slice(component.otContours,
+					const deepListOfBeziers = _slice(component.otContours,
 						startIndexBeziers,
 						startIndexBeziers + length,
 					);
-					const listOfBezier = _.flatten(deepListOfBeziers);
+					const listOfBezier = _flatten(deepListOfBeziers);
 
 					if (hot) {
 						this.context.strokeStyle = blue;
@@ -942,7 +946,7 @@ export default class Toile {
 
 	drawNodeMenuName(point, pos, size, hotItems) {
 		const text = labelForMenu[point.type] || 'hello';
-		const hot = _.find(hotItems, item => item.id === `${point.id}_menuItem`);
+		const hot = _find(hotItems, item => item.id === `${point.id}_menuItem`);
 
 		this.drawText(text, pos, menuTextSize, hot ? '#24d390' : '#fefefe');
 		this.interactionList.push({
@@ -1016,9 +1020,9 @@ export default class Toile {
 			menuCenter = center;
 		}
 		else {
-			const flatBezier = _.flatten(beziers);
+			const flatBezier = _flatten(beziers);
 
-			menuCenter = _.reduce(
+			menuCenter = _reduce(
 				flatBezier,
 				(acc, point) => add2D(mulScalar2D(1 / flatBezier.length, point), acc),
 				{x: 0, y: 0},
@@ -1073,7 +1077,7 @@ export default class Toile {
 			normalize2D(subtract2D(corners[3], viewMenuPos)),
 		);
 
-		const sumAttractorRepulsor = _.reduce(
+		const sumAttractorRepulsor = _reduce(
 			[
 				centerRepulsor,
 				leftTopRepulsor,
@@ -1110,7 +1114,7 @@ export default class Toile {
 		);
 
 		bases.forEach(({id: baseId, label}, i) => {
-			const inHot = _.find(hotItems, item => item.id === baseId);
+			const inHot = _find(hotItems, item => item.id === baseId);
 			const textSize = componentMenuTextSize * y;
 			const textWidth = this.measureText(label.value, textSize);
 
@@ -1166,7 +1170,7 @@ export default class Toile {
 		const newPosition = componentCenter;
 
 		const points = [menuCenter, newPosition];
-		const barycenter = mulScalar2D(1 / points.length, _.reduce(
+		const barycenter = mulScalar2D(1 / points.length, _reduce(
 					points,
 					(acc, point) => add2D(acc, point),
 					{x: 0, y: 0},
@@ -1304,7 +1308,7 @@ export default class Toile {
 			x: expandedSource.y - oppositeExpanded.y,
 			y: oppositeExpanded.x - expandedSource.x,
 		});
-		const inHot = _.find(hotItems, item => item.id === id);
+		const inHot = _find(hotItems, item => item.id === id);
 		const toolPoints = [
 			add2D(expandedSource, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
 			add2D(oppositeExpanded, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
@@ -1326,7 +1330,7 @@ export default class Toile {
 			? [node.expandedTo[0], node.expandedTo[1]]
 			: [node.expandedTo[1], node.expandedTo[0]];
 		const radius = distance2D(farthestNode, node) * this.viewMatrix[0];
-		const inHot = _.find(hotItems, item => item.id === id);
+		const inHot = _find(hotItems, item => item.id === id);
 		const color = inHot ? blue : green;
 
 		this.drawRing(node, radius - 2, radius + 2, undefined, ringBackground);
@@ -1698,7 +1702,7 @@ export default class Toile {
 						y: ySize,
 					},
 				);
-				const inHot = _.find(hotItems, hItem => hItem.id === item.label);
+				const inHot = _find(hotItems, hItem => hItem.id === item.label);
 
 				this.drawRectangleFromCorners(
 					rectStart,

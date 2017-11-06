@@ -5,7 +5,7 @@ import React from 'react';
 import {compose, gql, graphql} from 'react-apollo';
 import {Link, withRouter} from 'react-router';
 
-import LocalClient from '~/stores/local-client.stores';
+import LocalClient from '../../stores/local-client.stores';
 import {AddFamily} from '../familyVariant/add-family-variant.components';
 import Button from '../shared/new-button.components';
 

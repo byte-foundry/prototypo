@@ -1,31 +1,28 @@
-import {round2D} from '../../plumin/util/linear.js';
+import _mapValues from 'lodash/mapValues';
+import _take from 'lodash/take';
+import _difference from 'lodash/difference';
 
-import {constantOrFormula} from '../helpers/values.js';
-import {readAngle} from '../helpers/utils.js';
+import {round2D} from '../../plumin/util/linear';
 
-import Node from './Node.js';
+import {constantOrFormula} from '../helpers/values';
+import {readAngle} from '../helpers/utils';
+
+import Node from './Node';
 
 export default class ExpandingNode extends Node {
 	constructor(source, i, j) {
 		super(source, i, j);
 		if (source.expand) {
 			this.expanding = true;
-			this.expand = _.mapValues(source.expand, (item, key) => {
-				let value = item;
-				if (key === 'angle') {
-					value = value || 0;
-				}
-				else if (key === 'distr') {
-					value = value || 0.5;
-				}
-				return constantOrFormula(item, `${this.cursor}expand.${key}`);
-			});
+			this.expand = _mapValues(source.expand, (item, key) =>
+				constantOrFormula(item, `${this.cursor}expand.${key}`),
+			);
 		}
 		else if (source.expandedTo) {
 			this.expanding = false;
-			this.expandedTo = _.map(source.expandedTo, (point, k) => {
-				return new Node(point, undefined, undefined, `${this.cursor}expandedTo.${k}.`);
-			});
+			this.expandedTo = source.expandedTo.map((point, k) =>
+				new Node(point, undefined, undefined, `${this.cursor}expandedTo.${k}.`),
+			);
 		}
 	}
 
@@ -38,14 +35,15 @@ export default class ExpandingNode extends Node {
 			`${this.cursor}y`,
 		];
 
-		const done = _.take(ops, index + 1);
+		const done = _take(ops, index + 1);
 
-		//if all the op are done we should have a length 5 short because
-		//we removed the 5 necessary cursor
-		return _.difference(done, cursorToLook).length === done.length - cursorToLook.length;
+		// if all the op are done we should have a length 5 short because
+		// we removed the 5 necessary cursor
+		return _difference(done, cursorToLook).length === done.length - cursorToLook.length;
 	}
 
 	static applyExpandChange(computedNode, changes, cursor) {
+		/* eslint-disable no-param-reassign */
 		computedNode.expand.baseWidth = computedNode.expand.width;
 		computedNode.expand.baseDistr = computedNode.expand.distr;
 		computedNode.expand.baseAngle = readAngle(computedNode.expand.angle);
@@ -53,20 +51,21 @@ export default class ExpandingNode extends Node {
 		computedNode.expand.angle = computedNode.expand.baseAngle + (changes[`${cursor}.expand.angle`] || 0);
 		computedNode.expand.distr = computedNode.expand.baseDistr + (changes[`${cursor}.expand.distr`] || 0);
 		return computedNode;
+		/* eslint-disable no-param-reassign */
 	}
 
 	static expand(computedNode) {
-		//TODO remove readAngle once we convert all the angle to rad in the ptf
+		// TODO remove readAngle once we convert all the angle to rad in the ptf
 		const {x, y, expand: {width, angle, distr}} = computedNode;
 
 		return [
 			round2D({
-				x: x - Math.cos(readAngle(angle)) * width * distr,
-				y: y - Math.sin(readAngle(angle)) * width * distr,
+				x: x - (Math.cos(readAngle(angle)) * width * distr),
+				y: y - (Math.sin(readAngle(angle)) * width * distr),
 			}),
 			round2D({
-				x: x + Math.cos(readAngle(angle)) * width * (1 - distr),
-				y: y + Math.sin(readAngle(angle)) * width * (1 - distr),
+				x: x + (Math.cos(readAngle(angle)) * width * (1 - distr)),
+				y: y + (Math.sin(readAngle(angle)) * width * (1 - distr)),
 			}),
 		];
 	}

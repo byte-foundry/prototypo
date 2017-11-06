@@ -1,4 +1,5 @@
-/* global _*/
+import _cloneDeep from 'lodash/cloneDeep';
+import _forOwn from 'lodash/forOwn';
 import {prototypoStore, undoableStore} from '../stores/creation.stores';
 import LocalServer from '../stores/local-server.stores';
 import {FontValues} from '../services/values.services';
@@ -16,11 +17,11 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/set-alternate': ({unicode, glyphName, relatedGlyphs = {}}) => {
-		const altList = _.cloneDeep(prototypoStore.get('altList'));
+		const altList = _cloneDeep(prototypoStore.get('altList'));
 
 		altList[unicode] = glyphName;
 
-		_.forOwn(relatedGlyphs, (alternate, relatedUnicode) => {
+		_forOwn(relatedGlyphs, (alternate, relatedUnicode) => {
 			altList[relatedUnicode] = alternate;
 		});
 

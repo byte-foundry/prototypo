@@ -1,4 +1,5 @@
-/*global _ */
+import _reduce from 'lodash/reduce';
+import _find from 'lodash/find';
 import {checkArgument} from './check.js';
 import {getUnicodeRange} from './os2.js';
 import {
@@ -160,7 +161,7 @@ export function fontToSfntTable(font) {
         advanceWidths.push(glyph.advanceWidth);
     }
     const advanceWidthMax: number = Math.max.apply(null, advanceWidths);
-	const advanceWithAvg: number = _.reduce(advanceWidths, (acc, item) => { return acc + item; }, 0) / advanceWidths.length;
+	const advanceWithAvg: number = _reduce(advanceWidths, (acc, item) => { return acc + item; }, 0) / advanceWidths.length;
     const minLeftSideBearing: number = Math.min.apply(null, leftSideBearings);
     const maxLeftSideBearing: number = Math.min.apply(null, leftSideBearings);
     const xMin: number = Math.min.apply(null, xMins);
@@ -191,7 +192,7 @@ export function fontToSfntTable(font) {
 
     const maxpTable = maxp.make(glyphs.length);
 
-	const hasSpace = _.find(font.glyphs, (glyph) => {
+	const hasSpace = _find(font.glyphs, (glyph) => {
 		return glyph.unicode === 32;
 	});
     const os2Table = os2.make({
@@ -358,7 +359,7 @@ function makeSfntTable(tables) {
 
 function metricsForChar(glyphs, chars, notFoundMetrics) {
     for (let i = 0; i < chars.length; i++) {
-        const glyph = _.find(glyphs, {
+        const glyph = _find(glyphs, {
             unicode: chars[i].charCodeAt(0),
         });
 

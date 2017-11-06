@@ -3,9 +3,9 @@ import {graphql, gql} from 'react-apollo';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
 
-import HoodieApi from '~/services/hoodie.services.js';
+import HoodieApi from '../../services/hoodie.services.js';
 
-import LocalClient from '~/stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores.jsx';
 
 import {libraryQuery} from '../collection/collection.components';
 
@@ -142,7 +142,7 @@ class ArianneThread extends React.PureComponent {
 	}
 
 	groupToElement(group) {
-		const glyphs = _.map(group.glyphs, (glyph) => {
+		const glyphs = group.glyphs.map((glyph) => {
 			return String.fromCharCode(glyph);
 		}).join('');
 
@@ -319,12 +319,12 @@ class DropArianneItem extends React.PureComponent {
 				this.client.dispatchAction('/store-value', {
 					arianneItemDisplayed: undefined,
 				});
-				_.each(document.querySelectorAll(selector), (item) => {
+				Array.prototype.forEach.call(document.querySelectorAll(selector), (item) => {
 					item.removeEventListener('click', outsideClick);
 				});
 			};
 
-			_.each(document.querySelectorAll(selector), (item) => {
+			Array.prototype.forEach.call(document.querySelectorAll(selector), (item) => {
 				item.addEventListener('click', outsideClick);
 			});
 		}

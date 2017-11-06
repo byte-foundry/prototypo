@@ -1,9 +1,11 @@
+import _without from 'lodash/without';
+import _xor from 'lodash/xor';
 import React from 'react';
 import Lifespan from 'lifespan';
 import Classnames from 'classnames';
 
-import LocalClient from '~/stores/local-client.stores.jsx';
-import Log from '~/services/log.services.js';
+import LocalClient from '../../stores/local-client.stores.jsx';
+import Log from '../../services/log.services.js';
 
 import ArianneThread from './arianne-thread.components.jsx';
 import IndividualizeButton from './individualize-button.components.jsx';
@@ -59,10 +61,10 @@ class ViewButtons extends React.PureComponent {
 		// if we are closing glyph mode, we want glyph list to be hidden
 		const modes = (
 			name === 'glyph' && this.state.mode.indexOf('glyph') !== -1
-				? _.without(this.state.mode, 'list')
+				? _without(this.state.mode, 'list')
 				: this.state.mode
 		);
-		const newViewMode = _.xor(modes, [name]);
+		const newViewMode = _xor(modes, [name]);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});

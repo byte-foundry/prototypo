@@ -1,4 +1,9 @@
-/* global _ */
+import _reduce from 'lodash/reduce';
+import _find from 'lodash/find';
+import _flatMap from 'lodash/flatMap';
+import _take from 'lodash/take';
+import _difference from 'lodash/difference';
+
 import {subtract2D, mulScalar2D, dot2D, add2D, round2D, distance2D} from '../../plumin/util/linear';
 import {rayRayIntersection, lineAngle} from '../utils/updateUtils';
 import {readAngle} from '../helpers/utils';
@@ -187,11 +192,11 @@ class SolvablePath {
 	}
 
 	solveOperationOrder(glyph, operationOrder) {
-		return [`${this.cursor}closed`, `${this.cursor}skeleton`, ..._.reduce([...this.nodes, this.transforms, this.transformOrigin], (result, node) => {
+		return [`${this.cursor}closed`, `${this.cursor}skeleton`, ..._reduce([...this.nodes, this.transforms, this.transformOrigin], (result, node) => {
 			result.push(...node.solveOperationOrder(glyph, [...operationOrder, ...result]));
 			const allOperation = [...operationOrder, ...result];
 
-			if (this.isReadyForHandles(allOperation) && !_.find(allOperation, op => op.action === 'handle' && op.cursor === this.cursor.substring(0, this.cursor.length - 1))) {
+			if (this.isReadyForHandles(allOperation) && !_find(allOperation, op => op.action === 'handle' && op.cursor === this.cursor.substring(0, this.cursor.length - 1))) {
 				result.push({
 					action: 'handle',
 					cursor: this.cursor.substring(0, this.cursor.length - 1),
@@ -285,7 +290,7 @@ export class SkeletonPath extends SolvablePath {
 	}
 
 	isReadyForHandles(ops, index = ops.length - 1) {
-		const cursorToLook = _.flatMap(this.nodes, (node) => {
+		const cursorToLook = _flatMap(this.nodes, (node) => {
 			if (node.expanding) {
 				return [
 					`${node.cursor}expand.width`,
@@ -315,9 +320,9 @@ export class SkeletonPath extends SolvablePath {
 			}
 		});
 
-		const done = _.take(ops, index + 1);
+		const done = _take(ops, index + 1);
 
-		return _.difference(done, cursorToLook).length === done.length - cursorToLook.length;
+		return _difference(done, cursorToLook).length === done.length - cursorToLook.length;
 
 	}
 
@@ -425,7 +430,7 @@ export class SimplePath extends SolvablePath {
 	}
 
 	isReadyForHandles(ops, index = ops.length - 1) {
-		const cursorToLook = _.flatMap(this.nodes, (node) => {
+		const cursorToLook = _flatMap(this.nodes, (node) => {
 			return [
 				`${node.cursor}typeOut`,
 				`${node.cursor}typeIn`,
@@ -438,9 +443,9 @@ export class SimplePath extends SolvablePath {
 			];
 		});
 
-		const done = _.take(ops, index + 1);
+		const done = _take(ops, index + 1);
 
-		return _.difference(done, cursorToLook).length === done.length - cursorToLook.length;
+		return _difference(done, cursorToLook).length === done.length - cursorToLook.length;
 
 	}
 

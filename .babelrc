@@ -1,16 +1,10 @@
 {
-	"presets": ["react", ["env", {"modules": false, "useBuiltIns": true}]],
+	"presets": ["@babel/react", ["@babel/env", {"modules": false, "useBuiltIns": "entry", "targets": { "browsers": ["last 2 versions", "safari > 8", "not ie < 11"]}}]],
 	"plugins": [
-		"react-hot-loader/babel",
-		"syntax-async-functions",
-		"transform-regenerator",
-		"transform-class-properties",
-		"transform-object-rest-spread",
-		"transform-flow-strip-types",
-		"syntax-dynamic-import",
-		["babel-project-relative-import", {
-			"sourceDir": "app/scripts/"
-		}]
+		"@babel/proposal-object-rest-spread",
+		"@babel/syntax-dynamic-import",
+		"@babel/proposal-class-properties",
+		"@babel/transform-flow-strip-types",
 	],
 	"env": {
 		"test": {

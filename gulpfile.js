@@ -1,4 +1,4 @@
-var Promise         = require('bluebird'); //Bluebird promise are way better than native
+var Promise         = require('bluebird'); //Bluebird promise are way better than native,
 var fs              = Promise.promisifyAll(require('fs')); //We just want promise seriously
 
 var gulp            = require('gulp');

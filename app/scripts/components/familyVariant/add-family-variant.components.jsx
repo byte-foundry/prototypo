@@ -4,8 +4,8 @@ import {compose, graphql, gql} from 'react-apollo';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import ScrollArea from 'react-scrollbar/dist/no-css';
-import LocalClient from '~/stores/local-client.stores.jsx';
-import Log from '~/services/log.services.js';
+import LocalClient from '../../stores/local-client.stores.jsx';
+import Log from '../../services/log.services.js';
 
 import {libraryQuery} from '../collection/collection.components';
 

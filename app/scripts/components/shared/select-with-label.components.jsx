@@ -35,7 +35,7 @@ export default class SelectWithLabel extends React.PureComponent {
 		const {
 			label, info, required,
 			name,
-			...selectProps,
+			...selectProps
 		} = this.props;
 		const {value} = this.state;
 

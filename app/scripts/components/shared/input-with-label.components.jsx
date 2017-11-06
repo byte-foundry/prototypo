@@ -20,7 +20,7 @@ export default class InputWithLabel extends React.PureComponent {
 			label, placeholder, inputValue, required,
 			inputRef, children,
 			size,
-			...rest,
+			...rest
 		} = this.props;
 
 		const inputClass = classNames('input-with-label-input', {

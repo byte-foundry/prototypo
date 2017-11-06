@@ -224,7 +224,7 @@ export default {
 	'/export-family-from-blob': ({familyToExport, oldDb, blobBuffers, template}) => {
 		const zip = new JSZip();
 
-		_.each(blobBuffers, ({buffer, variant}) => {
+		blobBuffers.forEach(({buffer, variant}) => {
 			const variantPatch = prototypoStore.set('exportedVariant',
 				prototypoStore.get('exportedVariant') + 1).commit();
 
@@ -247,7 +247,7 @@ export default {
 	'/export-family-from-values': ({familyToExport, valueArray, oldDb, template}) => {
 		const blobs = [];
 
-		_.each(valueArray, (value) => {
+		valueArray.forEach((value) => {
 			const blob = fontInstance.getBlob(
 				null, {
 					family: familyToExport.name,

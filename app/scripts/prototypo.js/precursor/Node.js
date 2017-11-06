@@ -1,6 +1,8 @@
-/* globals _ */
-import {constantOrFormula} from '../helpers/values.js';
-import Formula from './Formula.js';
+import _forOwn from 'lodash/forOwn';
+import _find from 'lodash/find';
+
+import {constantOrFormula} from '../helpers/values';
+import Formula from './Formula';
 
 export default class Node {
 	constructor(source, i, j, expandedCursor) {
@@ -25,7 +27,7 @@ export default class Node {
 		this.nodeAddress = constantOrFormula(cursor, `${cursor}nodeAddress`);
 		this.dirIn = dirIn !== undefined ? constantOrFormula(dirIn, `${cursor}dirIn`) : constantOrFormula(null, `${cursor}dirIn`);
 		this.dirOut = dirOut !== undefined ? constantOrFormula(dirOut, `${cursor}dirOut`) : constantOrFormula(null, `${cursor}dirOut`);
-		//simplify by having just typeIn and typeOut
+		// simplify by having just typeIn and typeOut
 		this.type = type || null;
 		this.typeIn = typeIn !== undefined ? constantOrFormula(typeIn, `${cursor}typeIn`) : constantOrFormula(this.type, `${cursor}typeIn`);
 		this.typeOut = typeOut !== undefined ? constantOrFormula(typeOut, `${cursor}typeOut`) : constantOrFormula(this.type, `${cursor}typeOut`);
@@ -41,15 +43,15 @@ export default class Node {
 	solveOperationOrder(glyph, operationOrder) {
 		const result = [];
 
-		_.forOwn(this, (value, key) => {
+		_forOwn(this, (value, key) => {
 			if (value !== null && key !== 'cursor' && key !== 'type') {
 				if (key === 'expand') {
-					_.forOwn(value, (item) => {
+					_forOwn(value, (item) => {
 						result.push(...item.solveOperationOrder(glyph, [...operationOrder, ...result]));
 					});
 				}
 				else if (key === 'expandedTo') {
-					_.forEach(value, (item) => {
+					value.forEach((item) => {
 						result.push(...item.solveOperationOrder(glyph, [...operationOrder, ...result]));
 					});
 				}
@@ -63,7 +65,10 @@ export default class Node {
 						cursor: this.cursor.substring(0, this.cursor.length - 1),
 					};
 
-					if (this.readyToExpand([...operationOrder, ...result]) && !_.find([...operationOrder, ...result], opToAdd)) {
+					if (
+						this.readyToExpand([...operationOrder, ...result])
+						&& !_find([...operationOrder, ...result], opToAdd)
+					) {
 						result.push(opToAdd);
 					}
 				}
@@ -74,15 +79,15 @@ export default class Node {
 	}
 
 	analyzeDependency(glyph, graph) {
-		_.forOwn(this, (value, key) => {
+		_forOwn(this, (value, key) => {
 			if (value instanceof Formula && key !== 'cursor') {
 				if (key === 'expand') {
-					_.forOwn(value, (item) => {
+					_forOwn(value, (item) => {
 						item.analyzeDependency(glyph, graph);
 					});
 				}
 				else if (key === 'expandedTo') {
-					_.forEach(value, (item) => {
+					value.forEach((item) => {
 						item.analyzeDependency(glyph, graph);
 					});
 				}

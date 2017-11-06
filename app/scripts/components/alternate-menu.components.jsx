@@ -9,7 +9,7 @@ export default class AlternateMenu extends React.PureComponent {
 
 	render() {
 
-		const alternates = _.map(this.props.alternates, (alt, index) => {
+		const alternates = this.props.alternates.map((alt, index) => {
 			const img = `assets/images/${alt.altImg}`;
 
 			return <Alternate id={index} alt={alt} img={img} key={index} unicode={this.props.unicode}/>;

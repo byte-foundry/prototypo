@@ -1,4 +1,7 @@
-/* global _ */
+import _mapValues from 'lodash/mapValues';
+import _forOwn from 'lodash/forOwn';
+import _reduce from 'lodash/reduce';
+
 import {constantOrFormula} from '../helpers/values';
 
 import Glyph from './Glyph';
@@ -14,7 +17,7 @@ export default class FontPrecursor {
 		this.descender = constantOrFormula(fontinfo.descender);
 		this['cap-height'] = constantOrFormula(fontinfo['cap-height']);
 		this['descendent-height'] = constantOrFormula(fontinfo['descendent-height']);
-		this.parameters = _.mapValues(lib.parameters, param => constantOrFormula(param));
+		this.parameters = _mapValues(lib.parameters, param => constantOrFormula(param));
 		this.paramBase = {
 			manualChanges: {},
 			altList: {},
@@ -23,7 +26,7 @@ export default class FontPrecursor {
 
 		this.unicodeToGlyphName = {};
 
-		this.glyphs = _.mapValues(fontSrc.glyphs, (glyph) => {
+		this.glyphs = _mapValues(fontSrc.glyphs, (glyph) => {
 			if (glyph.name.indexOf('alt') === -1) {
 				this.unicodeToGlyphName[glyph.unicode] = glyph.name;
 			}
@@ -35,7 +38,7 @@ export default class FontPrecursor {
 	}
 
 	analyzeDependency() {
-		_.forOwn(this.glyphs, (glyph) => {
+		_forOwn(this.glyphs, (glyph) => {
 			glyph.analyzeDependency();
 		});
 	}
@@ -43,7 +46,7 @@ export default class FontPrecursor {
 	constructFont(params, subset) {
 		const localParams = {
 			...params,
-			..._.mapValues(this.parameters, param => param.getResult(params)),
+			..._mapValues(this.parameters, param => param.getResult(params)),
 			manualChanges: {
 				...this.paramBase.manualChanges,
 				...params.manualChanges,
@@ -57,15 +60,17 @@ export default class FontPrecursor {
 				...params.altList,
 			},
 		};
-		const transformedThis = _.mapValues(this, (prop, name) => {
+		const transformedThis = _mapValues(this, (prop, name) => {
 			if (name !== 'parameters' && name !== 'glyphs' && name !== 'unicodeToGlyphName' && name !== 'paramBase') {
 				return prop.getResult(localParams);
 			}
 
 			return undefined;
 		});
-		const glyphNames = _.map(subset, char => localParams.altList[char] || this.unicodeToGlyphName[char]);
-		const glyphs = _.reduce(glyphNames, (result, name) => {
+		const glyphNames = subset.map(
+			char => localParams.altList[char] || this.unicodeToGlyphName[char],
+		);
+		const glyphs = _reduce(glyphNames, (result, name) => {
 			if (this.glyphs[name]) {
 				result.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));
 			}

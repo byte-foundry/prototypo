@@ -1,3 +1,5 @@
+import _union from 'lodash/union';
+
 import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -22,7 +24,7 @@ export default {
 	},
 	'/select-glyph': ({unicode}) => {
 			const patch = prototypoStore.set('glyphSelected', unicode).commit();
-			const newViewMode = _.union(prototypoStore.get('uiMode'), ['glyph']);
+			const newViewMode = _union(prototypoStore.get('uiMode'), ['glyph']);
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
 

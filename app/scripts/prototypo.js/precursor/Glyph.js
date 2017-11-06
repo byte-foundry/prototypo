@@ -1,6 +1,17 @@
-/* global _ */
+import _flatten from 'lodash/flatten';
+import _chunk from 'lodash/chunk';
+import _mapValues from 'lodash/mapValues';
+import _reduce from 'lodash/reduce';
+import _forOwn from 'lodash/forOwn';
+import _flatMap from 'lodash/flatMap';
+import _reverse from 'lodash/reverse';
+import _get from 'lodash/get';
+import _set from 'lodash/set';
+import _pickBy from 'lodash/pickBy';
+import _mapKeys from 'lodash/pickBy';
+
 import {constantOrFormula, createContour} from '../helpers/values';
-import {toLodashPath, transformNode, transformGlyph} from '../helpers/utils';
+import {toLodashPath, transformGlyph} from '../helpers/utils';
 import * as utils from '../utils/updateUtils';
 
 import Component from './Component';
@@ -10,7 +21,7 @@ import {SkeletonPath, SimplePath, ClosedSkeletonPath} from './Path';
 function checkAndChangeOrient(beziers, clockwise) {
 	return beziers.map((bezier) => {
 		let count = 0;
-		const flatBezier = _.flatten(bezier);
+		const flatBezier = _flatten(bezier);
 
 		flatBezier.forEach((point, i) => {
 			const next = flatBezier[(i + 1) % flatBezier.length];
@@ -19,7 +30,7 @@ function checkAndChangeOrient(beziers, clockwise) {
 		});
 
 		if ((count > 0 && clockwise) || (count < 0 && !clockwise)) {
-			return _.chunk(_.reverse(flatBezier), 4);
+			return _chunk(_reverse(flatBezier), 4);
 		}
 		return bezier;
 	});
@@ -54,10 +65,10 @@ export default class Glyph {
 		this.tags = constantOrFormula(tags);
 		this.transforms = constantOrFormula(transforms);
 		this.transformOrigin = constantOrFormula(transformOrigin);
-		this.parameters = _.mapValues(parameter, param => constantOrFormula(param));
+		this.parameters = _mapValues(parameter, param => constantOrFormula(param));
 		this.contours = outline.contour.map((contour, i) => createContour(contour, i));
 		this.anchors = (anchor || []).map(
-			(item, i) => _.mapValues(
+			(item, i) => _mapValues(
 				item,
 				(props, anchorName) => constantOrFormula(props, `anchors.${i}.${anchorName}`),
 			),
@@ -76,15 +87,15 @@ export default class Glyph {
 	}
 
 	solveOperationOrder() {
-		const contourOp = _.reduce(this.contours, (result, contour) => {
+		const contourOp = _reduce(this.contours, (result, contour) => {
 			result.push(...contour.solveOperationOrder(this, result));
 			return result;
 		}, []);
 
-		return _.reduce(this.anchors, (acc, anchor) => {
+		return _reduce(this.anchors, (acc, anchor) => {
 			const anchorOp = [...acc];
 
-			_.forOwn(anchor, (prop) => {
+			_forOwn(anchor, (prop) => {
 				anchorOp.push(...prop.solveOperationOrder(this, anchorOp));
 			});
 
@@ -93,7 +104,7 @@ export default class Glyph {
 	}
 
 	createGlyphContour(contours) {
-		const beziers = _.flatMap(contours, (contour) => {
+		const beziers = _flatMap(contours, (contour) => {
 			if (!contour.skeleton) {
 				const otBeziers = [contour.nodes.map((node, i) => {
 					const nextNode = contour.nodes[(i + 1) % contour.nodes.length];
@@ -190,13 +201,13 @@ export default class Glyph {
 					];
 
 					if (index) {
-						return _.reverse(bezier);
+						return _reverse(bezier);
 					}
 					return bezier;
 				});
 
 				if (index) {
-					return _.reverse(result);
+					return _reverse(result);
 				}
 				return result;
 			});
@@ -240,7 +251,7 @@ export default class Glyph {
 	}
 
 	analyzeDependency(graph) {
-		_.forOwn(this, (value) => {
+		_forOwn(this, (value) => {
 			if (value !== undefined) {
 				if (typeof value.analyzeDependency === 'function') {
 					value.analyzeDependency(this, graph);
@@ -251,7 +262,7 @@ export default class Glyph {
 							item.analyzeDependency(this, graph);
 						}
 						else if (typeof item === 'object' && item !== null) {
-							_.forOwn(item, (prop) => {
+							_forOwn(item, (prop) => {
 								if (typeof prop.analyzeDependency === 'function') {
 									prop.analyzeDependency(this, graph);
 								}
@@ -260,7 +271,7 @@ export default class Glyph {
 					});
 				}
 				else if (typeof value === 'object' && value !== null) {
-					_.forOwn(value, (val) => {
+					_forOwn(value, (val) => {
 						if (typeof val.analyzeDependency === 'function') {
 							val.analyzeDependency(this, graph);
 						}
@@ -275,7 +286,7 @@ export default class Glyph {
 
 		if (action === 'handle') {
 			const contour = this.getFromXPath(cursor);
-			const dest = _.get(opDone, toLodashPath(cursor));
+			const dest = _get(opDone, toLodashPath(cursor));
 
 			if (contour.skeleton.value) {
 				SkeletonPath.correctValues(dest);
@@ -292,7 +303,7 @@ export default class Glyph {
 
 				SimplePath.correctValues(dest);
 
-				_.set(opDone, `${lodashCursor}.checkOrientation`, true);
+				_set(opDone, `${lodashCursor}.checkOrientation`, true);
 
 				SimplePath.createHandle(dest, params.manualChanges[this.name.value].cursors);
 			}
@@ -300,13 +311,13 @@ export default class Glyph {
 		else if (action === 'expand') {
 			const manualChanges = params.manualChanges[this.name.value].cursors;
 			const node = ExpandingNode.applyExpandChange(
-				_.get(opDone, toLodashPath(cursor)),
+				_get(opDone, toLodashPath(cursor)),
 				manualChanges,
 				cursor,
 			);
 			const expandedTo = ExpandingNode.expand(node);
 
-			_.set(
+			_set(
 				opDone,
 				toLodashPath(`${cursor}.expandedTo`),
 				expandedTo,
@@ -324,7 +335,7 @@ export default class Glyph {
 		const option = op.substr(op.length - 2);
 
 		if (option === '.x' || option === '.y') {
-			_.set(
+			_set(
 				opDone,
 				toLodashPath(`${op}Base`),
 				result,
@@ -336,7 +347,7 @@ export default class Glyph {
 			result += manualChanges;
 		}
 
-		_.set(
+		_set(
 			opDone,
 			toLodashPath(op),
 			result,
@@ -346,7 +357,7 @@ export default class Glyph {
 	constructGlyph(params, parentAnchors, glyphs, parentTransformTuple = [[[], undefined]]) {
 		const localParams = {
 			...params,
-			..._.mapValues(this.parameters, param => param.getResult(params)),
+			..._mapValues(this.parameters, param => param.getResult(params)),
 		};
 		const specialProps = this.unicode
 			? (localParams.glyphSpecialProps || {})[this.unicode.value] || {}
@@ -379,7 +390,7 @@ export default class Glyph {
 			const anchor = this.anchors[key];
 			const ref = opAnchors[key];
 
-			opDone.anchors[key] = _.reduce(Object.keys(anchor), (acc, name) => {
+			opDone.anchors[key] = _reduce(Object.keys(anchor), (acc, name) => {
 				if (opDone.anchors[key][name]) {
 					acc[name] = ref[name];
 				}
@@ -398,7 +409,7 @@ export default class Glyph {
 		});
 
 
-		const transformedThis = _.mapValues(this, (prop, name) => {
+		const transformedThis = _mapValues(this, (prop, name) => {
 			if (prop !== undefined
 				&& !/parameters|contours|anchors|components|operationOrder/.test(name)) {
 				return prop.getResult(localParams, opDone.contours, opDone.anchors, utils, glyphs);
@@ -413,10 +424,8 @@ export default class Glyph {
 		];
 
 		opDone.components = this.components.map((component, idx) => {
-			const componentManualChanges = _.chain(localParams.manualChanges[this.name.value].cursors)
-				.pickBy((value, key) => key.match(new RegExp(`components\.${idx}`)))
-				.mapKeys((value, key) => key.replace(/components\.\d\./g, ''))
-				.value();
+			const pickedChanges = _pickBy(localParams.manualChanges[this.name.value].cursors, (value, key) => key.match(new RegExp(`components\.${idx}`)));
+			const componentManualChanges = _mapKeys(pickedChanges, (value, key) => key.replace(/components\.\d\./g, ''));
 			const componentName = component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]
 						? localParams.glyphComponentChoice[this.name.value][component.id.value]
 						: component.base[0].value;
@@ -448,7 +457,7 @@ export default class Glyph {
 
 		const otContours = this.createGlyphContour(opDone.contours);
 
-		_.forEach(opDone.components, (component) => {
+		opDone.components.forEach((component) => {
 			if (component.name !== 'none') {
 				otContours.push(...component.otContours);
 			}

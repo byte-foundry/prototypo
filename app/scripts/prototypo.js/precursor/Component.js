@@ -1,19 +1,22 @@
-/* global _*/
+import _mapValues from 'lodash/mapValues';
+import _set from 'lodash/set';
+import _reduce from 'lodash/reduce';
+
 import {constantOrFormula} from '../helpers/values';
 
 export default class Component {
 	constructor(source) {
 		if (Array.isArray(source.base)) {
-			this.base = _.map(source.base, base => constantOrFormula(base));
+			this.base = source.base.map(base => constantOrFormula(base));
 		}
 		else {
 			this.base = [constantOrFormula(source.base)];
 		}
 
-		this.parameters = _.mapValues(source.parameters, param => constantOrFormula(param));
+		this.parameters = _mapValues(source.parameters, param => constantOrFormula(param));
 		this.id = constantOrFormula(source.id);
 		this.anchors = (source.anchor || []).map(
-			(item, i) => _.mapValues(
+			(item, i) => _mapValues(
 				item,
 				(props, name) => constantOrFormula(props, `{cursor}.anchors.${i}.${name}`),
 			),
@@ -26,7 +29,7 @@ export default class Component {
 	constructComponent(params, contours, parentAnchors, utils, glyphs, parentTransformTuple) {
 		const localParams = {
 			...params,
-			..._.mapValues(this.parameters,
+			..._mapValues(this.parameters,
 				param => param.getResult(params),
 			),
 		};
@@ -36,10 +39,10 @@ export default class Component {
 		Object.keys(this.anchors).forEach((key) => {
 			const anchor = this.anchors[key];
 
-			_.set(
+			_set(
 				opDone,
 				`anchors[${key}]`,
-				_.reduce(Object.keys(anchor), (acc, name) => {
+				_reduce(Object.keys(anchor), (acc, name) => {
 					acc[name] = anchor[name].getResult(localParams, contours, acc, parentAnchors, utils);
 					return acc;
 				}, {}),
@@ -55,7 +58,7 @@ export default class Component {
 		);
 		const compGlyph = glyphs[computedBase];
 
-		const transformedThis = _.mapValues(this, (prop, name) => {
+		const transformedThis = _mapValues(this, (prop, name) => {
 			if (prop !== undefined
 				&& name !== 'anchors'
 				&& name !== 'base'
@@ -73,7 +76,7 @@ export default class Component {
 							contours,
 							parentAnchors,
 							utils,
-							glyphs
+							glyphs,
 						)].componentLabel,
 					}),
 				);
@@ -92,7 +95,7 @@ export default class Component {
 				[
 					[transformedThis.transforms || [], transformedThis.transformOrigin],
 					...parentTransformTuple,
-				]
+				],
 			),
 			...transformedThis,
 		};

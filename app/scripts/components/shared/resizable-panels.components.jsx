@@ -1,3 +1,4 @@
+import _throttle from 'lodash/throttle';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {DraggableCore} from 'react-draggable';
@@ -13,7 +14,7 @@ export default class ResizablePanels extends React.PureComponent {
 			y: props.defaultY || null,
 		};
 
-		this.handleDrag = _.throttle(this.handleDrag.bind(this), 50);
+		this.handleDrag = _throttle(this.handleDrag.bind(this), 50);
 		this.updateHandlePosition = this.updateHandlePosition.bind(this);
 	}
 
@@ -52,7 +53,7 @@ export default class ResizablePanels extends React.PureComponent {
 			x,
 			y,
 			onChange,
-			...rest,
+			...rest
 		} = this.props;
 		const isVertical = direction === 'vertical';
 		const axis = isVertical ? 'x' : 'y';

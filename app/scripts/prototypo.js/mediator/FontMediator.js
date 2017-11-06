@@ -1,4 +1,6 @@
-/* global _ */
+import _chunk from 'lodash/chunk';
+import _forOwn from 'lodash/forOwn';
+
 import LocalClient from '../../stores/local-client.stores';
 
 import FontPrecursor from '../precursor/FontPrecursor';
@@ -132,7 +134,7 @@ export default class FontMediator {
 
 		return new Promise((resolve) => {
 			const jobs = [];
-			const fontPromise = _.chunk(
+			const fontPromise = _chunk(
 				subset,
 				Math.ceil(subset.length / this.workerPool.workerArray.length),
 			).map(subsubset =>
@@ -216,7 +218,7 @@ export default class FontMediator {
 		}
 
 		const jobs = [];
-		const fontPromise = _.chunk(
+		const fontPromise = _chunk(
 			subset,
 			Math.ceil(subset.length / this.workerPool.workerArray.length),
 		).map(subsubset =>
@@ -272,6 +274,7 @@ export default class FontMediator {
 
 					this.addToFont(arrayBuffer.buffer, fontName);
 
+					// eslint-disable-next-line no-multi-assign
 					const timeout = mergeTimeoutRef = setTimeout(async () => {
 						const buffer = await mergeFont(
 							MERGE_URL,
@@ -311,7 +314,7 @@ export default class FontMediator {
 	getAllGlyphForCanvas(template, params = this.initValues[template]) {
 		const glyphArray = [];
 
-		_.forOwn(this.glyphList[template], (glyph) => {
+		_forOwn(this.glyphList[template], (glyph) => {
 			if (glyph.unicode) {
 				try {
 					glyphArray.push(this.fontMakers[template].constructFont({
@@ -331,6 +334,7 @@ export default class FontMediator {
 	}
 }
 
+/* eslint-disable global-require */
 if (process.env.TESTING_FONT === 'yes') {
 	if (module.hot) {
 		module.hot.accept('john-fell.ptf',
@@ -392,3 +396,4 @@ if (process.env.TESTING_FONT === 'yes') {
 		});
 	}
 }
+/* eslint-enable global-require */

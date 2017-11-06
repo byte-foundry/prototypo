@@ -4,9 +4,11 @@ const fs = require('fs');
 const merge = require('webpack-merge');
 
 const base = require('./base.config');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = merge(base, {
 	cache: true,
+	devtool: 'source-map',
 	entry: {
 		'index': ['whatwg-fetch'],
 	},
@@ -39,21 +41,13 @@ module.exports = merge(base, {
 		new webpack.LoaderOptionsPlugin({
 			options: {
 				'if-loader': 'prod',
-				// TODO: deprecated option, https://webpack.js.org/guides/migrating/#uglifyjsplugin-minimize-loadersminimize: true,
-				minimize: true,
 			},
 		}),
-		new webpack.DefinePlugin({
-			'process.env': {
-				NODE_ENV: JSON.stringify('production'),
-			},
-		}),
-		new webpack.optimize.UglifyJsPlugin({
-			compress: {
-				conditionals: false,
-			},
-			exclude: /\/tutorial/,
-			sourceMap: true,
+		new BundleAnalyzerPlugin({
+			analyzerHost:'0.0.0.0',
+			analyzerPort:8000,
+			defaultSizes: 'gzip',
+			generateStatsFile: false,
 		}),
 	],
 });

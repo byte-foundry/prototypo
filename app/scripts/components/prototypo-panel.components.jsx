@@ -1,3 +1,5 @@
+import _without from 'lodash/without';
+import _xor from 'lodash/xor';
 import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
@@ -80,10 +82,10 @@ export default class PrototypoPanel extends React.Component {
 		// if we are closing glyph mode, we want glyph list to be hidden
 		const modes = (
 			name === 'glyph' && this.state.uiMode.indexOf('glyph') !== -1
-				? _.without(this.state.uiMode, 'list')
+				? _without(this.state.uiMode, 'list')
 				: this.state.uiMode
 		);
-		const newViewMode = _.xor(modes, [name]);
+		const newViewMode = _xor(modes, [name]);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});

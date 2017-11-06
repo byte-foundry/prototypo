@@ -1,4 +1,6 @@
-/* global _, webkitRequestAnimationFrame */
+/* global webkitRequestAnimationFrame */
+import _get from 'lodash/get';
+import _slice from 'lodash/slice';
 import React from 'react';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
@@ -365,7 +367,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				if (appStateValue & appState.CONTOUR_SELECTED) {
 					this.toile.drawNodes(
-						_.get(
+						_get(
 							glyph,
 							toLodashPath(contourSelectedCursor)),
 						contourSelectedCursor,
@@ -374,7 +376,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					);
 					if (contourComponentIdx === undefined) {
 						this.toile.drawSelectedContour(
-							_.slice(
+							_slice(
 								glyph.otContours,
 								contourIndexes[0],
 								contourIndexes[1],
@@ -383,7 +385,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 					else {
 						this.toile.drawSelectedContour(
-							_.slice(
+							_slice(
 								glyph.components[contourComponentIdx].otContours,
 								contourIndexes[0],
 								contourIndexes[1],
@@ -519,8 +521,8 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				if (appStateValue & appState.HANDLE_MOD) {
 					const {parentId, skeletonId, otherNode, otherDir} = draggedItem.data;
-					const selectedNodeParent = _.get(glyph, parentId);
-					const skeletonNode = _.get(glyph, skeletonId);
+					const selectedNodeParent = _get(glyph, parentId);
+					const skeletonNode = _get(glyph, skeletonId);
 					const [mousePosInWorld] = transformCoords(
 						[mouse.pos],
 						inverseProjectionMatrix(this.toile.viewMatrix),
@@ -580,7 +582,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 				if (appStateValue & (appState.HANDLE_MOD | appState.CONTOUR_SWITCH)) {
 					const {parentId, otherNode, otherDir} = draggedItem.data;
-					const selectedNodeParent = _.get(glyph, parentId);
+					const selectedNodeParent = _get(glyph, parentId);
 					const [mousePosInWorld] = transformCoords(
 						[mouse.pos],
 						inverseProjectionMatrix(this.toile.viewMatrix),
@@ -641,7 +643,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						inverseProjectionMatrix(this.toile.viewMatrix),
 						this.toile.height / this.toile.viewMatrix[0],
 					);
-					const opposite = _.get(glyph, oppositeId);
+					const opposite = _get(glyph, oppositeId);
 					// width factor
 					const factor = distance2D(opposite, mousePosInWorld) / baseWidth;
 
@@ -673,7 +675,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 
 					const id = draggedItem.data.parentId;
-					const skeletonNode = _.get(glyph, id);
+					const skeletonNode = _get(glyph, id);
 
 					if (skeleton) {
 						this.toile.drawNodeTool(skeletonNode, `${id}.angle`, hotItems);
@@ -700,7 +702,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 
 					const id = draggedItem.id;
-					const skeletonNode = _.get(glyph, id);
+					const skeletonNode = _get(glyph, id);
 
 					if (skeletonNode) {
 						this.toile.drawSkeletonPosTool(skeletonNode, `${id}.pos`, hotItems);
@@ -740,7 +742,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 
 					const id = draggedItem.id;
-					const skeletonNode = _.get(glyph, id);
+					const skeletonNode = _get(glyph, id);
 
 					if (skeletonNode) {
 						this.toile.drawSkeletonDistrTool(skeletonNode, `${id}.distr`, hotItems);
@@ -749,7 +751,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				if (selectedItem) {
 					if (selectedItem.type === toileType.NODE_SKELETON) {
-						const item = _.get(glyph, selectedItem.id);
+						const item = _get(glyph, selectedItem.id);
 
 						this.toile.drawNodeProperty(item);
 					}

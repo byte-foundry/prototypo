@@ -44,7 +44,7 @@ export default class GlyphGrid extends React.PureComponent {
 	}
 
 	render() {
-		const glyphs = _.map(this.state.glyphs, (glyph, unicode) => {
+		const glyphs = this.state.glyphs.map((glyph, unicode) => {
 			if (!glyph[0].src) {
 				return false;
 			}
@@ -65,7 +65,7 @@ export default class GlyphGrid extends React.PureComponent {
 			return <div className={classes} key={unicode} onClick={() => {this.selectGlyph(unicode, isSelected, forbidden);}}>{String.fromCharCode(unicode)}</div>;
 		});
 
-		const tags = _.map(this.props.tags, (tag) => {
+		const tags = this.props.tags.map((tag) => {
 			return <option value={tag} key={tag}>{tag}</option>;
 		});
 

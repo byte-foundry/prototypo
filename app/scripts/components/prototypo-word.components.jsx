@@ -1,3 +1,6 @@
+import _debounce from 'lodash/debounce';
+import _reduce from 'lodash/reduce';
+import _find from 'lodash/find';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -28,7 +31,7 @@ export default class PrototypoWord extends React.PureComponent {
 		};
 
 		// function bindings
-		this.setupText = _.debounce(this.setupText.bind(this), 500, {leading: true});
+		this.setupText = _debounce(this.setupText.bind(this), 500, {leading: true});
 		this.saveText = this.saveText.bind(this);
 		this.handleEscapedInput = this.handleEscapedInput.bind(this);
 		this.handleContextMenu = this.handleContextMenu.bind(this);
@@ -117,9 +120,9 @@ export default class PrototypoWord extends React.PureComponent {
 			this.alreadyRafed = raf(() => {
 				if (this.state.font) {
 					const {clientWidth, clientHeight} = ReactDOM.findDOMNode(this);
-					const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
+					const advanceWidthSum = _reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
 						return sum + (
-							_.find(this.state.font.glyphs, (glyphItem) => {
+							_find(this.state.font.glyphs, (glyphItem) => {
 								return glyphItem.unicode === glyph.charCodeAt(0);
 							})
 							|| {advanceWidth: 500}
@@ -150,7 +153,7 @@ export default class PrototypoWord extends React.PureComponent {
 		raf(() => {
 			if (this.state.glyphProperties) {
 				const {clientWidth, clientHeight} = ReactDOM.findDOMNode(this);
-				const advanceWidthSum = _.reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
+				const advanceWidthSum = _reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
 					return sum + this.state.glyphProperties[glyph.charCodeAt(0)].advanceWidth;
 				}, 0);
 				const widthSize = 100 * clientWidth / (0.1 * advanceWidthSum);

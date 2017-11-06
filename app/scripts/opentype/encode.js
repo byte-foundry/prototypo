@@ -1,4 +1,4 @@
-/*global _ */
+import _forOwn from 'lodash/forOwn';
 import {checkArgument} from './check.js';
 
 const LIMIT16 = 32768;
@@ -274,7 +274,7 @@ const getMacEncodingTable = (encoding) => {
     if (!macEncodingCacheKeys) {
         macEncodingCacheKeys = {};
 
-		_.forOwn(eightBitMacEncodings, (value, key) => {
+		_forOwn(eightBitMacEncodings, (value, key) => {
 			/* eslint-disable no-new-wrappers */
             macEncodingCacheKeys[key] = new String(key);
 			/* eslint-enable no-new-wrappers */

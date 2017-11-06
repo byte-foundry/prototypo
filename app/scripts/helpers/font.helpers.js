@@ -1,10 +1,8 @@
-
 import {rawToEscapedContent} from '../helpers/input-transform.helpers.js';
 import FontPrecursor from '../prototypo.js/precursor/FontPrecursor.js';
 
 export function mapGlyphForApp(glyph) {
-	return _.map(
-		glyph,
+	return glyph.map(
 		(alt) => {
 			return {
 				src: {

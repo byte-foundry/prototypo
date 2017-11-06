@@ -1,7 +1,8 @@
-/* global _, trackJs */
-import slug from 'slug';
+/* global trackJs */
+import _throttle from 'lodash/throttle';
+import _forOwn from 'lodash/forOwn';
+import _cloneDeep from 'lodash/cloneDeep';
 import {gql} from 'react-apollo';
-import cloneDeep from 'lodash/cloneDeep';
 
 import {prototypoStore, undoableStore} from '../stores/creation.stores';
 import LocalServer from '../stores/local-server.stores';
@@ -13,13 +14,11 @@ import apolloClient from '../services/graphcool.services';
 import {loadFontValues, saveAppValues} from '../helpers/loadValues.helpers';
 import {BatchUpdate} from '../helpers/undo-stack.helpers';
 
-slug.defaults.mode = 'rfc3986';
-slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
 let localServer;
 let localClient;
 let undoWatcher;
 
-const debouncedSave = _.throttle((values, db, variantId) => {
+const debouncedSave = _throttle((values, db, variantId) => {
 	FontValues.save({
 		values,
 		variantId,
@@ -85,7 +84,7 @@ export default {
 	'/create-font': (typedata) => {
 		const glyphs = {};
 
-		_.forIn(typedata.glyphs, (glyph) => {
+		_forOwn(typedata.glyphs, (glyph) => {
 			if (!glyphs[glyph.unicode]) {
 				glyphs[glyph.unicode] = [];
 			}
@@ -170,7 +169,7 @@ export default {
 		});
 	},
 	'/create-variant-from-ref': async ({ref, name, family, noSwitch}) => {
-		const values = cloneDeep(ref.values);
+		const values = _cloneDeep(ref.values);
 		const thicknessTransform = [
 			{string: 'Thin', thickness: 20},
 			{string: 'Light', thickness: 50},
@@ -446,7 +445,7 @@ export default {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
+		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
 
 		manualChanges[glyphName] = manualChanges[glyphName] || {};
 		manualChanges[glyphName].cursors = manualChanges[glyphName].cursors || {};
@@ -482,7 +481,7 @@ export default {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
+		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
 
 		manualChanges[glyphName] = manualChanges[glyphName] || {};
 		manualChanges[glyphName].cursors = manualChanges[glyphName].cursors || {};
@@ -524,7 +523,7 @@ export default {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
+		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
 
 		delete manualChanges[glyphName];
 

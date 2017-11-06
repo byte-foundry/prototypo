@@ -1,4 +1,5 @@
-/* global require, _ */
+/* global require*/
+import _reduce from 'lodash/reduce';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 const RANDOM_LENGTH = 10000;
@@ -122,7 +123,7 @@ export default class WorkerPool {
 
 					/* #if dev */
 					localClient.dispatchAction('/store-value', {
-						workers: _.map(this.workerArray, (w) => {return w.working;}),
+						workers: this.workerArray.map((w) => {return w.working;}),
 					});
 					/* #end */
 
@@ -138,7 +139,7 @@ export default class WorkerPool {
 	}
 
 	areWorkerBusy() {
-		return _.reduce(this.workerArray, (acc, worker) => {
+		return _reduce(this.workerArray, (acc, worker) => {
 			return acc || worker.working;
 		}, false);
 	}
@@ -208,7 +209,7 @@ export default class WorkerPool {
 			this.workerArray[i].worker.postMessage(job.action);
 			/* #if dev */
 			localClient.dispatchAction('/store-value', {
-				workers: _.map(this.workerArray, (worker) => {return worker.working;}),
+				workers: this.workerArray.map((worker) => {return worker.working;}),
 			});
 			/* #end */
 		}

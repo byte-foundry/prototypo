@@ -17,7 +17,7 @@ export default {
 		const params = cloneDeep(p);
 
 		if (params.manualChanges && Object.keys(params.manualChanges).length > 0) {
-			_.forEach(params.manualChanges, function(value, key) {
+			params.manualChanges.forEach((value, key) => {
 				if (params.manualChanges[key] instanceof Object) {
 					params.manualChanges[key].dirty = Object.keys(value.cursors).length;
 				}

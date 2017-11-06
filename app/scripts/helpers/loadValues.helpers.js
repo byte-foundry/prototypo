@@ -1,3 +1,4 @@
+import _throttle from 'lodash/throttle';
 import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {FontValues, AppValues} from '../services/values.services.js';
@@ -47,21 +48,24 @@ window.addEventListener('appValues.loaded', () => {
 export async function loadFontValues(typedata, typeface, variantId) {
 	const initValues = {};
 
-	_.each(typedata.controls, (group) => {
-		return _.each(group.parameters, (param) => {
+	typedata.controls.forEach((group) => {
+		return group.parameters.forEach((param) => {
 			initValues[param.name] = param.init;
 		});
 	});
 
 	try {
 		const fontValues = await FontValues.get({typeface, variantId});
-		const altList = _.extend(typedata.fontinfo.defaultAlts, fontValues.values.altList);
+		const altList = {
+			...typedata.fontinfo.defaultAlts,
+			...fontValues.values.altList,
+		};
 
-		localClient.dispatchAction('/load-values', _.extend(initValues, fontValues.values));
+		localClient.dispatchAction('/load-values', {...initValues, ...fontValues.values});
 		localClient.dispatchAction('/load-font-infos', {altList});
 	}
 	catch (err) {
-		const values = _.extend({}, {altList: typedata.fontinfo.defaultAlts}, initValues);
+		const values = {altList: typedata.fontinfo.defaultAlts, ...initValues};
 
 		localClient.dispatchAction('/load-values', values);
 		FontValues.save({
@@ -79,7 +83,7 @@ export async function loadFontValues(typedata, typeface, variantId) {
 	window.dispatchEvent(event);
 }
 
-export const saveAppValues = _.throttle(() => {
+export const saveAppValues = _throttle(() => {
 	if (!appValuesLoaded) {
 		return;
 	}
@@ -90,7 +94,7 @@ export const saveAppValues = _.throttle(() => {
 	//const appValues = prototypoStore.head.toJS();
 	const appValues = {};
 
-	_.forEach(valuesToLoad, (ref) => {
+	valuesToLoad.forEach((ref) => {
 		appValues[ref.remote] = prototypoStore.get(ref.local);
 	});
 

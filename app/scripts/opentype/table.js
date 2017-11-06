@@ -1,5 +1,5 @@
-/*global _ */
-import {encode, sizeOf} from './encode.js';
+import _forOwn from 'lodash/forOwn';
+import {encode, sizeOf} from './encode';
 
 /* eslint-disable babel/new-cap */
 export function buildTableObj(tableName, fields, options) {
@@ -12,7 +12,7 @@ export function buildTableObj(tableName, fields, options) {
 	tableObj.tableName = tableName;
 	tableObj.fields = fields;
 
-	_.forOwn(options, (value, key) => {
+	_forOwn(options, (value, key) => {
 		if (tableObj[key] !== undefined) {
 			tableObj[key] = value;
 		}
@@ -834,7 +834,7 @@ function getEncoding(platformID, encodingID, languageID) {
 function reverseDict(dict) {
     const result = {};
 
-	_.forOwn(dict, (value, key) => {
+	_forOwn(dict, (value, key) => {
         result[value] = parseInt(key);
 	});
 
@@ -924,7 +924,7 @@ export class name {
 		const namesWithNumericKeys = {};
 		const nameTableIds = reverseDict(nameTableNames);
 
-		_.forOwn(names, (value, key) => {
+		_forOwn(names, (value, key) => {
 			if (value !== undefined) {
 				let id = nameTableIds[key];
 
@@ -952,7 +952,7 @@ export class name {
 			nameID = nameIDs[i];
 			const translations = namesWithNumericKeys[nameID];
 
-			_.forOwn(translations, (text, lang) => {
+			_forOwn(translations, (text, lang) => {
 				// For MacOS, we try to emit the name in the form that was introduced
 				// in the initial version of the TrueType spec (in the late 1980s).
 				// However, this can fail for various reasons: the requested BCP 47

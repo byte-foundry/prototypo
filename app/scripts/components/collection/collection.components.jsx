@@ -6,7 +6,7 @@ import {graphql, gql, compose} from 'react-apollo';
 
 import Family from './family.components';
 import Variant from './variant.components';
-import LocalClient from '~/stores/local-client.stores';
+import LocalClient from '../../stores/local-client.stores';
 import Button from '../shared/new-button.components';
 import {collectionsTutorialLabel} from '../../helpers/joyride.helpers';
 

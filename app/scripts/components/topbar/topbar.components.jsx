@@ -1,11 +1,14 @@
+import _flatten from 'lodash/flatten';
+import _transform from 'lodash/transform';
+import _xor from 'lodash/xor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {graphql, gql} from 'react-apollo';
 import Lifespan from 'lifespan';
 
-import Log from '~/services/log.services.js';
+import Log from '../../services/log.services.js';
 
-import LocalClient from '~/stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores.jsx';
 
 import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
@@ -120,10 +123,10 @@ class Topbar extends React.Component {
 		this.client.fetch('/prototypoStore')
 			.then((typedata) => {
 				const params = typedata.head.toJS().fontParameters;
-				const flattenParams = _.flatten(_.map(params, (paramObject) => {
+				const flattenParams = _flatten(params.map((paramObject) => {
 					return paramObject.parameters;
 				}));
-				const defaultParams = _.transform(flattenParams, (result, param) => {
+				const defaultParams = _transform(flattenParams, (result, param) => {
 					result[param.name] = param.init;
 				}, {});
 
@@ -161,7 +164,7 @@ class Topbar extends React.Component {
 	}
 
 	toggleView(name) {
-		const newViewMode = _.xor(this.state.mode, [name]);
+		const newViewMode = _xor(this.state.mode, [name]);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});

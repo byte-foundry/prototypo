@@ -1,4 +1,4 @@
-/* global _ */
+import _find from 'lodash/find';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
@@ -135,7 +135,7 @@ export default class HandlegripText extends React.Component {
 		});
 
 		const letterOffsetWidth = this.refs.selectedLetter.getClientWidth();
-		const glyph = _.find(this.state.font.glyphs, (glyphItem) => {
+		const glyph = _find(this.state.font.glyphs, (glyphItem) => {
 			return glyphItem.unicode === this.getSelectedLetter().charCodeAt(0);
 		});
 		const advanceWidth = glyph.advanceWidth;
@@ -173,7 +173,7 @@ export default class HandlegripText extends React.Component {
 		let clampedNewValue;
 
 		// advanceWidth is in typographic unit
-		const glyph = _.find(this.state.font.glyphs, (glyphItem) => {
+		const glyph = _find(this.state.font.glyphs, (glyphItem) => {
 			return glyphItem.unicode === this.getSelectedLetter().charCodeAt(0);
 		});
 		const advanceWidth = glyph.advanceWidth;
@@ -312,7 +312,7 @@ export default class HandlegripText extends React.Component {
 	render() {
 		if (this.state.font) {
 			const selectedLetter = this.props.selectedLetter;
-			const glyph = _.find(this.state.font.glyphs, (glyphItem) => {
+			const glyph = _find(this.state.font.glyphs, (glyphItem) => {
 				return glyphItem.unicode === this.getSelectedLetter().charCodeAt(0);
 			});
 			const spacingLeft = (glyph || {}).spacingLeft;

@@ -1,4 +1,4 @@
-/* global _ */
+import _uniq from 'lodash/uniq';
 import React from 'react';
 import Lifespan from 'lifespan';
 
@@ -68,11 +68,8 @@ export default class FontUpdater extends React.PureComponent {
 			&& this.state.glyph !== undefined
 		) {
 			const subsetString = this.state.uiText + rawToEscapedContent(this.state.uiWord, this.state.glyphs);
-			const subset = _.map(
-				_.uniq(subsetString.split('')),
-				(letter) => {
-					return letter.charCodeAt(0);
-				},
+			const subset = _uniq(subsetString.split('')).map(
+				letter => letter.charCodeAt(0),
 			);
 
 			this.fontMediatorInstance.getFont(

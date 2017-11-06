@@ -1,10 +1,11 @@
+import _without from 'lodash/without';
 import React from 'react';
 import classNames from 'classnames';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Link} from 'react-router';
 import Lifespan from 'lifespan';
 
-import LocalClient from '~/stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores.jsx';
 
 import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
 
@@ -42,7 +43,7 @@ class TopBarMenu extends React.PureComponent {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] TopBarMenu');
 		}
-		const headers = _.without(this.props.children, false, undefined).map((child, index) => {
+		const headers = _without(this.props.children, false, undefined).map((child, index) => {
 			const classes = classNames({
 				'top-bar-menu-item': true,
 				'is-aligned-right': child && child.props.alignRight,
@@ -110,12 +111,12 @@ class TopBarMenuItem extends React.PureComponent {
 					this.client.dispatchAction('/store-value', {
 						topbarItemDisplayed: undefined,
 					});
-					_.each(document.querySelectorAll(selector), (item) => {
+					Array.prototype.forEach.call(document.querySelectorAll(selector), (item) => {
 						item.removeEventListener('click', outsideClick);
 					});
 				};
 
-				_.each(document.querySelectorAll(selector), (item) => {
+				Array.prototype.forEach.call(document.querySelectorAll(selector), (item) => {
 					item.addEventListener('click', outsideClick);
 				});
 			}

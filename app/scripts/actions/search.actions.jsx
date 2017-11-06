@@ -1,3 +1,5 @@
+import _cloneDeep from 'lodash/cloneDeep';
+import _xor from 'lodash/xor';
 import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
@@ -19,7 +21,7 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patchTag);
 	},
 	'/save-search-glyph': ({query}) => {
-		const searchs = _.cloneDeep(prototypoStore.get('savedSearch'));
+		const searchs = _cloneDeep(prototypoStore.get('savedSearch'));
 
 		if (searchs.indexOf(query) === -1) {
 			searchs.push(query);
@@ -38,7 +40,7 @@ export default {
 		saveAppValues();
 	},
 	'/toggle-pinned-search': ({query}) => {
-		const pinned = _.xor(prototypoStore.get('pinnedSearch'), [query]);
+		const pinned = _xor(prototypoStore.get('pinnedSearch'), [query]);
 		const patch = prototypoStore
 			.set('pinnedSearch', pinned)
 			.commit();
@@ -47,8 +49,8 @@ export default {
 		saveAppValues();
 	},
 	'/delete-search-glyph': ({query}) => {
-		const searchs = _.xor(prototypoStore.get('savedSearch'), [query]);
-		const pinned = _.xor(prototypoStore.get('pinnedSearch'), [query]);
+		const searchs = _xor(prototypoStore.get('savedSearch'), [query]);
+		const pinned = _xor(prototypoStore.get('pinnedSearch'), [query]);
 		const patch = prototypoStore
 			.set('savedSearch', searchs)
 			.set('pinnedSearch', pinned)

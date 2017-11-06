@@ -1,4 +1,4 @@
-/* globals _ */
+import _mapValues from 'lodash/mapValues';
 import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
@@ -305,7 +305,7 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	setGlyphs(glyphs) {
-		this.client.dispatchAction('/load-glyphs', _.mapValues(
+		this.client.dispatchAction('/load-glyphs', _mapValues(
 			glyphs,
 			mapGlyphForApp
 		));
