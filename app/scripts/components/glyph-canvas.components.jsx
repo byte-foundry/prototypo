@@ -15,6 +15,10 @@ import LocalClient from '../stores/local-client.stores';
 
 import FontUpdater from './font-updater.components';
 
+const raf = requestAnimationFrame || webkitRequestAnimationFrame;
+const rafCancel = cancelAnimationFrame || webkitCancelAnimationFrame;
+let rafId = undefined;
+
 export default class GlyphCanvas extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -108,7 +112,6 @@ export default class GlyphCanvas extends React.PureComponent {
 		let mouseDoubleClick;
 		let pause = false;
 
-		const raf = requestAnimationFrame || webkitRequestAnimationFrame;
 		const rafFunc = () => {
 			if (this.toile.keyboardDownRisingEdge.keyCode === 80) {
 				pause = !pause;
@@ -762,11 +765,16 @@ export default class GlyphCanvas extends React.PureComponent {
 			this.toile.clearDelta();
 			this.toile.clearWheelDelta();
 
-			raf(rafFunc);
+			rafId = raf(rafFunc);
 			/* eslint-enable no-bitwise, max-depth */
 		};
 
-		raf(rafFunc);
+		rafId = raf(rafFunc);
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+		rafCancel(rafId);
 	}
 
 	changeParam(param) {

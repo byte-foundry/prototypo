@@ -507,7 +507,7 @@
     "@babel/plugin-transform-typeof-symbol" "7.0.0-beta.31"
     "@babel/plugin-transform-unicode-regex" "7.0.0-beta.31"
 
-"@babel/preset-react@^7.0.0-beta.4":
+"@babel/preset-react@^7.0.0-beta.31", "@babel/preset-react@^7.0.0-beta.4":
   version "7.0.0-beta.31"
   resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.0.0-beta.31.tgz#1ee40f8e85b8cf1493414e6a4b407178708f8f15"
   dependencies:
@@ -1106,8 +1106,8 @@ async@^1.2.1, async@^1.4.0, async@^1.5.2:
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
 async@^2.1.2, async@^2.1.4:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/async/-/async-2.5.0.tgz#843190fd6b7357a0b9e1c956edddd5ec8462b54d"
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/async/-/async-2.6.0.tgz#61a29abb6fcc026fea77e56d1c6ec53a795951f4"
   dependencies:
     lodash "^4.14.0"
 
@@ -1176,14 +1176,6 @@ axobject-query@^0.1.0:
   dependencies:
     ast-types-flow "0.0.7"
 
-babel-code-frame@7.0.0-beta.3:
-  version "7.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/babel-code-frame/-/babel-code-frame-7.0.0-beta.3.tgz#1614a91b2ba0e3848559f410bbacd030726899c9"
-  dependencies:
-    chalk "^2.0.0"
-    esutils "^2.0.2"
-    js-tokens "^3.0.0"
-
 babel-code-frame@^6.11.0, babel-code-frame@^6.16.0, babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-code-frame/-/babel-code-frame-6.26.0.tgz#63fd43f7dc1e3bb7ce35947db8fe369a3f58c74b"
@@ -1215,35 +1207,6 @@ babel-core@^6.0.0, babel-core@^6.26.0:
     private "^0.1.7"
     slash "^1.0.0"
     source-map "^0.5.6"
-
-babel-core@^7.0.0-beta.3:
-  version "7.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-7.0.0-beta.3.tgz#3777e45c802e7f6c13c5c3a01c618a388fb0e252"
-  dependencies:
-    babel-code-frame "7.0.0-beta.3"
-    babel-generator "7.0.0-beta.3"
-    babel-helpers "7.0.0-beta.3"
-    babel-template "7.0.0-beta.3"
-    babel-traverse "7.0.0-beta.3"
-    babel-types "7.0.0-beta.3"
-    babylon "7.0.0-beta.27"
-    convert-source-map "^1.1.0"
-    debug "^3.0.1"
-    json5 "^0.5.0"
-    lodash "^4.2.0"
-    micromatch "^2.3.11"
-    resolve "^1.3.2"
-    source-map "^0.5.0"
-
-babel-generator@7.0.0-beta.3:
-  version "7.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/babel-generator/-/babel-generator-7.0.0-beta.3.tgz#afa85e34c50ef52ccd0ef37f4c4b5e1df65cac04"
-  dependencies:
-    babel-types "7.0.0-beta.3"
-    jsesc "^2.5.1"
-    lodash "^4.2.0"
-    source-map "^0.5.0"
-    trim-right "^1.0.1"
 
 babel-generator@^6.18.0, babel-generator@^6.26.0:
   version "6.26.0"
@@ -1325,15 +1288,6 @@ babel-helper-flip-expressions@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/babel-helper-flip-expressions/-/babel-helper-flip-expressions-0.2.0.tgz#160d2090a3d9f9c64a750905321a0bc218f884ec"
 
-babel-helper-function-name@7.0.0-beta.3:
-  version "7.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/babel-helper-function-name/-/babel-helper-function-name-7.0.0-beta.3.tgz#e86dd2eb2c09e06e392e79e203fc02427b24c871"
-  dependencies:
-    babel-helper-get-function-arity "7.0.0-beta.3"
-    babel-template "7.0.0-beta.3"
-    babel-traverse "7.0.0-beta.3"
-    babel-types "7.0.0-beta.3"
-
 babel-helper-function-name@^6.24.1:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-helper-function-name/-/babel-helper-function-name-6.24.1.tgz#d3475b8c03ed98242a25b48351ab18399d3580a9"
@@ -1343,12 +1297,6 @@ babel-helper-function-name@^6.24.1:
     babel-template "^6.24.1"
     babel-traverse "^6.24.1"
     babel-types "^6.24.1"
-
-babel-helper-get-function-arity@7.0.0-beta.3:
-  version "7.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/babel-helper-get-function-arity/-/babel-helper-get-function-arity-7.0.0-beta.3.tgz#61a47709318a31bc2db872f4be9b4c8447198be8"
-  dependencies:
-    babel-types "7.0.0-beta.3"
 
 babel-helper-get-function-arity@^6.24.1:
   version "6.24.1"
@@ -1420,14 +1368,6 @@ babel-helper-to-multiple-sequence-expressions@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/babel-helper-to-multiple-sequence-expressions/-/babel-helper-to-multiple-sequence-expressions-0.2.0.tgz#d1a419634c6cb301f27858c659167cfee0a9d318"
 
-babel-helpers@7.0.0-beta.3:
-  version "7.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/babel-helpers/-/babel-helpers-7.0.0-beta.3.tgz#1758004cb44f6e4d9b7a3adfaeaa82acfddc0c4c"
-  dependencies:
-    babel-template "7.0.0-beta.3"
-    babel-traverse "7.0.0-beta.3"
-    babel-types "7.0.0-beta.3"
-
 babel-helpers@^6.24.1:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-helpers/-/babel-helpers-6.24.1.tgz#3471de9caec388e5c850e597e58a26ddf37602b2"
@@ -1464,6 +1404,10 @@ babel-messages@^6.23.0:
   resolved "https://registry.yarnpkg.com/babel-messages/-/babel-messages-6.23.0.tgz#f3cdf4703858035b2a2951c6ec5edf6c62f2630e"
   dependencies:
     babel-runtime "^6.22.0"
+
+babel-plugin-add-module-exports@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-add-module-exports/-/babel-plugin-add-module-exports-0.2.1.tgz#9ae9a1f4a8dc67f0cdec4f4aeda1e43a5ff65e25"
 
 babel-plugin-check-es2015-constants@^6.22.0:
   version "6.22.0"
@@ -1892,6 +1836,10 @@ babel-plugin-transform-minify-booleans@^6.8.3:
   version "6.8.3"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-minify-booleans/-/babel-plugin-transform-minify-booleans-6.8.3.tgz#5906ed776d3718250519abf1bace44b0b613ddf9"
 
+babel-plugin-transform-node-env-inline@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-node-env-inline/-/babel-plugin-transform-node-env-inline-0.2.0.tgz#b13c2aafd4a7cbefeba07091a1134d402147d192"
+
 babel-plugin-transform-object-rest-spread@6.26.0, babel-plugin-transform-object-rest-spread@^6.22.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-object-rest-spread/-/babel-plugin-transform-object-rest-spread-6.26.0.tgz#0f36692d50fef6b7e2d4b3ac1478137a963b7b06"
@@ -1983,6 +1931,12 @@ babel-plugin-transform-strict-mode@^6.24.1:
 babel-plugin-transform-undefined-to-void@^6.8.3:
   version "6.8.3"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-undefined-to-void/-/babel-plugin-transform-undefined-to-void-6.8.3.tgz#fc52707f6ee1ddc71bb91b0d314fbefdeef9beb4"
+
+babel-plugin-uglify@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/babel-plugin-uglify/-/babel-plugin-uglify-1.0.2.tgz#d7bcdab132afbadb0bf3479a5666eb8de082610f"
+  dependencies:
+    uglify-js "^2.4.24"
 
 babel-polyfill@next:
   version "7.0.0-beta.3"
@@ -2148,16 +2102,6 @@ babel-runtime@6.x.x, babel-runtime@^6.11.6, babel-runtime@^6.18.0, babel-runtime
     core-js "^2.4.0"
     regenerator-runtime "^0.11.0"
 
-babel-template@7.0.0-beta.3:
-  version "7.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/babel-template/-/babel-template-7.0.0-beta.3.tgz#ebb877b6070ce9912b0d0c22fcad3372165913a8"
-  dependencies:
-    babel-code-frame "7.0.0-beta.3"
-    babel-traverse "7.0.0-beta.3"
-    babel-types "7.0.0-beta.3"
-    babylon "7.0.0-beta.27"
-    lodash "^4.2.0"
-
 babel-template@^6.16.0, babel-template@^6.24.1, babel-template@^6.26.0, babel-template@^6.7.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-template/-/babel-template-6.26.0.tgz#de03e2d16396b069f46dd9fff8521fb1a0e35e02"
@@ -2167,19 +2111,6 @@ babel-template@^6.16.0, babel-template@^6.24.1, babel-template@^6.26.0, babel-te
     babel-types "^6.26.0"
     babylon "^6.18.0"
     lodash "^4.17.4"
-
-babel-traverse@7.0.0-beta.3:
-  version "7.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/babel-traverse/-/babel-traverse-7.0.0-beta.3.tgz#3cf0a45d53d934d85275d8770775d7944fc7c199"
-  dependencies:
-    babel-code-frame "7.0.0-beta.3"
-    babel-helper-function-name "7.0.0-beta.3"
-    babel-types "7.0.0-beta.3"
-    babylon "7.0.0-beta.27"
-    debug "^3.0.1"
-    globals "^10.0.0"
-    invariant "^2.2.0"
-    lodash "^4.2.0"
 
 babel-traverse@^6.18.0, babel-traverse@^6.24.1, babel-traverse@^6.26.0:
   version "6.26.0"
@@ -2195,14 +2126,6 @@ babel-traverse@^6.18.0, babel-traverse@^6.24.1, babel-traverse@^6.26.0:
     invariant "^2.2.2"
     lodash "^4.17.4"
 
-babel-types@7.0.0-beta.3:
-  version "7.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/babel-types/-/babel-types-7.0.0-beta.3.tgz#cd927ca70e0ae8ab05f4aab83778cfb3e6eb20b4"
-  dependencies:
-    esutils "^2.0.2"
-    lodash "^4.2.0"
-    to-fast-properties "^2.0.0"
-
 babel-types@^6.18.0, babel-types@^6.19.0, babel-types@^6.24.1, babel-types@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-types/-/babel-types-6.26.0.tgz#a3b073f94ab49eb6fa55cd65227a334380632497"
@@ -2211,10 +2134,6 @@ babel-types@^6.18.0, babel-types@^6.19.0, babel-types@^6.24.1, babel-types@^6.26
     esutils "^2.0.2"
     lodash "^4.17.4"
     to-fast-properties "^1.0.3"
-
-babylon@7.0.0-beta.27:
-  version "7.0.0-beta.27"
-  resolved "https://registry.yarnpkg.com/babylon/-/babylon-7.0.0-beta.27.tgz#b6edd30ef30619e2f630eb52585fdda84e6542cd"
 
 babylon@7.0.0-beta.31:
   version "7.0.0-beta.31"
@@ -6641,15 +6560,15 @@ levn@~0.2.5:
 
 lifespan@FranzPoize/lifespan#master, lifespan@^5.0.1:
   version "5.0.1"
-  resolved "https://codeload.github.com/FranzPoize/lifespan/tar.gz/8993fca1c85ece57c788dd81ab394bbda4d3d9df"
+  resolved "https://codeload.github.com/FranzPoize/lifespan/tar.gz/5a9471d668c1213518be5197d1e5f64937dd699f"
   dependencies:
     lodash "~4.14.0"
     should "^13.1.3"
 
 lifespan@franzpoize/lifespan#master:
   version "5.0.1"
-  uid "8993fca1c85ece57c788dd81ab394bbda4d3d9df"
-  resolved "https://codeload.github.com/franzpoize/lifespan/tar.gz/8993fca1c85ece57c788dd81ab394bbda4d3d9df"
+  uid "5a9471d668c1213518be5197d1e5f64937dd699f"
+  resolved "https://codeload.github.com/franzpoize/lifespan/tar.gz/5a9471d668c1213518be5197d1e5f64937dd699f"
   dependencies:
     lodash "~4.14.0"
     should "^13.1.3"
@@ -7509,7 +7428,7 @@ netmask@^1.0.6:
 
 nexus-events@franzpoize/nexus-events#master:
   version "4.0.2"
-  resolved "https://codeload.github.com/franzpoize/nexus-events/tar.gz/64a935826c5c522bc9eb9c15401cad85c57cf47f"
+  resolved "https://codeload.github.com/franzpoize/nexus-events/tar.gz/26dfa76e048400a739731fe17f2c047ac3c86a12"
   dependencies:
     lifespan "^5.0.1"
     lodash "^4.14.0"
@@ -7517,10 +7436,12 @@ nexus-events@franzpoize/nexus-events#master:
 
 nexus-flux@FranzPoize/nexus-flux#master:
   version "4.0.2"
-  resolved "https://codeload.github.com/FranzPoize/nexus-flux/tar.gz/aeadb661a6d86971060bdac52e7df0b928af354a"
+  resolved "https://codeload.github.com/FranzPoize/nexus-flux/tar.gz/59567283c589705fcd210341cdbd1cccbfa5c3aa"
   dependencies:
+    "@babel/preset-react" "^7.0.0-beta.31"
     asap "^2.0.3"
-    babel-core "^7.0.0-beta.3"
+    babel-plugin-transform-node-env-inline "^0.2.0"
+    babel-plugin-uglify "^1.0.2"
     immutable "^3.7.3"
     lifespan franzpoize/lifespan#master
     lodash "^4.14.0"
@@ -8652,8 +8573,8 @@ prettier-eslint@^8.0.0:
     typescript-eslint-parser "^8.0.0"
 
 prettier@^1.7.1:
-  version "1.7.4"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.7.4.tgz#5e8624ae9363c80f95ec644584ecdf55d74f93fa"
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.8.0.tgz#d9dc68277cf1ded816c8e8863ab47889c29ce9a6"
 
 pretty-format@^18.1.0:
   version "18.1.0"
@@ -9426,8 +9347,8 @@ remove-trailing-separator@^1.0.1:
 
 remutable@FranzPoize/remutable#master:
   version "3.0.1"
-  uid e1bca3be149ce2b2ca7b3bf8bfcb9a2232a6dd86
-  resolved "https://codeload.github.com/FranzPoize/remutable/tar.gz/e1bca3be149ce2b2ca7b3bf8bfcb9a2232a6dd86"
+  uid "5f125df8c80e59faefb69402aa575950c323e8cf"
+  resolved "https://codeload.github.com/FranzPoize/remutable/tar.gz/5f125df8c80e59faefb69402aa575950c323e8cf"
   dependencies:
     crc-32 "^0.3.0"
     immutable "^3.7.3"
@@ -9436,7 +9357,7 @@ remutable@FranzPoize/remutable#master:
 
 remutable@franzpoize/remutable#master:
   version "3.0.1"
-  resolved "https://codeload.github.com/franzpoize/remutable/tar.gz/e1bca3be149ce2b2ca7b3bf8bfcb9a2232a6dd86"
+  resolved "https://codeload.github.com/franzpoize/remutable/tar.gz/5f125df8c80e59faefb69402aa575950c323e8cf"
   dependencies:
     crc-32 "^0.3.0"
     immutable "^3.7.3"
@@ -10788,8 +10709,9 @@ tunnel-agent@^0.6.0:
 
 tutorial-content@byte-foundry/tutorial-content#master:
   version "3.1.2"
-  resolved "https://codeload.github.com/byte-foundry/tutorial-content/tar.gz/c17e17a23bd7b3721be4c7e8f61a02cc778950fa"
+  resolved "https://codeload.github.com/byte-foundry/tutorial-content/tar.gz/9c486afd6d4ed4ce5d31f78df4abb3cd69023d79"
   dependencies:
+    babel-plugin-add-module-exports "^0.2.1"
     front-matter "^2.1.2"
     fs-extra "^2.1.2"
     speakingurl "^14.0.1"
@@ -10847,7 +10769,7 @@ uglify-js@2.6.4:
     uglify-to-browserify "~1.0.0"
     yargs "~3.10.0"
 
-uglify-js@^2.6, uglify-js@^2.8.29:
+uglify-js@^2.4.24, uglify-js@^2.6, uglify-js@^2.8.29:
   version "2.8.29"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.29.tgz#29c5733148057bb4e1f75df35b7a9cb72e6a59dd"
   dependencies:
