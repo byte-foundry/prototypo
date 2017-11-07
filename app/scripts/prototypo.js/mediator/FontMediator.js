@@ -378,22 +378,23 @@ if (process.env.TESTING_FONT === 'yes') {
 			},
 		);
 		module.hot.accept('../precursor/FontPrecursor.js',
-		async () => {
-			const prototypoStore = window.prototypoStores['/prototypoStore'];
-			const templates = await Promise.all(
-				prototypoStore.get('templateList').map(async ({templateName}) => {
-					const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/${templateName}/font.json`);
+			async () => {
+				const prototypoStore = window.prototypoStores['/prototypoStore'];
+				const templates = await Promise.all(
+					prototypoStore.get('templateList').map(async ({templateName}) => {
+						const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/${templateName}/font.json`);
 
-					return {
-						name: templateName,
-						json: typedataJSON,
-					};
-				}),
-			);
+						return {
+							name: templateName,
+							json: typedataJSON,
+						};
+					}),
+				);
 
-			await FontMediator.init(templates);
-			FontMediator.instance().getAllGlyphForCanvas('john-fell.ptf');
-		});
+				await FontMediator.init(templates);
+				FontMediator.instance().getAllGlyphForCanvas('john-fell.ptf');
+			}
+		);
 	}
 }
 /* eslint-enable global-require */

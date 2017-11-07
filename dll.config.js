@@ -23,7 +23,6 @@ module.exports = {
 			'bluebird',
 			'jszip',
 			'xxhashjs',
-			'slug',
 			'lodash',
 			'diff'
 		],

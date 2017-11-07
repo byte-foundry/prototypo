@@ -1,9 +1,8 @@
-var path = require('path');
-var webpack = require('webpack');
-var fs = require('fs');
-var merge = require('webpack-merge');
+const path = require('path');
+const webpack = require('webpack');
+const merge = require('webpack-merge');
 
-var base = require('./base.config');
+const base = require('./base.config');
 
 module.exports = merge(base, {
 	cache: true,
@@ -12,7 +11,7 @@ module.exports = merge(base, {
 		index: [
 			'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
 			'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
-		]
+		],
 	},
 	module: {
 		loaders: [

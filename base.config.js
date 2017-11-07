@@ -23,8 +23,6 @@ module.exports = {
 				],
 				include: [
 					path.join(__dirname, 'app'),
-					path.join(__dirname, 'node_modules/remutable'),
-					path.join(__dirname, 'node_modules/lifespan'),
 				],
 			},
 			{

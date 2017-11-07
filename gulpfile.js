@@ -75,7 +75,7 @@ gulp.task('clean',function() {
 	del.sync(['dist']);
 });
 
-gulp.task('build', ['clean', 'images','css-vendor','css-app','cp-genese','cp-static'],  function(callback) {
+gulp.task('build', ['clean', 'images','cp-genese','cp-static'],  function(callback) {
 	// run webpack
 	var webpackConfig = process.env.NODE_ENV === 'production' ? require('./prod.config') : require('./dev.config');
 	var prototypoConfig = Object.create(webpackConfig);
