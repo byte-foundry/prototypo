@@ -4,12 +4,14 @@ import Formula from '../precursor/Formula';
 import Constant from '../precursor/Constant';
 
 export function constantOrFormula(source, cursor) {
-	if (typeof source === 'object' && source !== null && source._operation) {
+	if (typeof source === 'object' && source !== null && source._operation) { // eslint-disable-line no-underscore-dangle, max-len
 		return new Formula(source, cursor);
 	}
 	else if (source !== undefined) {
 		return new Constant(source, cursor);
 	}
+
+	return undefined;
 }
 
 export function createContour(source, i) {
@@ -19,9 +21,8 @@ export function createContour(source, i) {
 	else if (source.skeleton) {
 		return new SkeletonPath(source, i);
 	}
-	else {
-		return new SimplePath(source, i);
-	}
+
+	return new SimplePath(source, i);
 }
 
 export function toLodashPath(path) {
@@ -104,6 +105,7 @@ export function changeTransformOrigin(origin, transform, z = 1) {
 export function transformNode(node, transforms, origin) {
 	transforms.forEach(([name, param]) => {
 		exeTransformOnNode(name, node, param, origin);
+		node.addedTransform.push(name);
 		if (node.handleIn) {
 			exeTransformOnNode(name, node.handleIn, param, origin);
 		}
@@ -117,7 +119,15 @@ export function transformNode(node, transforms, origin) {
 export function transformGlyph(opDone, transformTuples) {
 	opDone.contours.forEach((contour) => {
 		contour.nodes.forEach((node) => {
-			[...transformTuples, [contour.transforms || [], contour.transformOrigin]].forEach(([transform, origin]) => {
+			node.addedTransform = []; // eslint-disable-line no-param-reassign
+			if (node.expandedTo) {
+				node.expandedTo[0].addedTransform = []; // eslint-disable-line no-param-reassign
+				node.expandedTo[1].addedTransform = []; // eslint-disable-line no-param-reassign
+			}
+			[
+				...transformTuples,
+				[contour.transforms || [], contour.transformOrigin],
+			].forEach(([transform, origin]) => {
 				if (node.expandedTo) {
 					transformNode(node.expandedTo[0], transform, origin);
 					transformNode(node.expandedTo[1], transform, origin);

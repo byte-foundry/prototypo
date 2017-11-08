@@ -9478,7 +9478,7 @@ remove-trailing-separator@^1.0.1:
 
 remutable@FranzPoize/remutable#master:
   version "3.0.1"
-  resolved "https://codeload.github.com/FranzPoize/remutable/tar.gz/5f125df8c80e59faefb69402aa575950c323e8cf"
+  resolved "https://codeload.github.com/FranzPoize/remutable/tar.gz/b3672c0ead0ae6443bb85703daa9bb914b3fb3ce"
   dependencies:
     crc-32 "^0.3.0"
     immutable "^3.7.3"

@@ -42,6 +42,9 @@ export default class GlyphCanvas extends React.PureComponent {
 
 		this.client.getStore('/fontInstanceStore', this.lifespan)
 			.onUpdate(() => {
+				if (this.state.glyph !== window.glyph) {
+					this.resetAppMode = true;
+				}
 				this.setState({
 					glyph: window.glyph,
 				});
@@ -151,6 +154,11 @@ export default class GlyphCanvas extends React.PureComponent {
 
 
 			if (glyph) {
+				if (this.resetAppMode) {
+					appStateValue = undefined;
+					this.resetAppMode = false;
+				}
+
 				if (mouse.edge === mState.DOWN) {
 					if (mouseDoubleClick) {
 						const bbox = glyphBoundingBox(glyph);
@@ -159,7 +167,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							bbox[1],
 						));
 
-						this.toile.setCameraCenter(center, this.toile.viewMatrix[0], -height, width);
+						this.toile.setCameraCenter(center, 0.5, -height, width);
 					}
 					else {
 						mouseDoubleClick = true;
@@ -685,7 +693,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 				if (appStateValue & appState.SKELETON_POS) {
-					const {base} = draggedItem.data;
+					const {base, transforms} = draggedItem.data;
 					const [mousePosInWorld] = transformCoords(
 						[mouse.pos],
 						inverseProjectionMatrix(this.toile.viewMatrix),
@@ -693,12 +701,14 @@ export default class GlyphCanvas extends React.PureComponent {
 					);
 
 					const mouseVec = subtract2D(mousePosInWorld, base);
+					const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
+					const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
 
 					if (mouseMoved) {
 						this.client.dispatchAction('/change-glyph-node-manually', {
 							changes: {
-								[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
-								[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
+								[`${draggedItem.data.modifAddress}x`]: mouseVec.x * xTransform,
+								[`${draggedItem.data.modifAddress}y`]: mouseVec.y * yTransform,
 							},
 							glyphName: glyph.name,
 						});
