@@ -2,10 +2,9 @@ import _mapValues from 'lodash/mapValues';
 import _take from 'lodash/take';
 import _difference from 'lodash/difference';
 
-import {round2D} from '../../plumin/util/linear';
+import {round2D} from '../utils/linear';
 
-import {constantOrFormula} from '../helpers/values';
-import {readAngle} from '../helpers/utils';
+import {constantOrFormula, readAngle} from '../utils/generic';
 
 import Node from './Node';
 

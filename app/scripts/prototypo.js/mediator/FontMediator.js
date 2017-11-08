@@ -393,7 +393,7 @@ if (process.env.TESTING_FONT === 'yes') {
 
 				await FontMediator.init(templates);
 				FontMediator.instance().getAllGlyphForCanvas('john-fell.ptf');
-			}
+			},
 		);
 	}
 }

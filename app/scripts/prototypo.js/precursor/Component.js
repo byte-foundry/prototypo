@@ -2,7 +2,7 @@ import _mapValues from 'lodash/mapValues';
 import _set from 'lodash/set';
 import _reduce from 'lodash/reduce';
 
-import {constantOrFormula} from '../helpers/values';
+import {constantOrFormula} from '../utils/generic';
 
 export default class Component {
 	constructor(source) {

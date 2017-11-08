@@ -2,7 +2,7 @@ import _mapValues from 'lodash/mapValues';
 import _forOwn from 'lodash/forOwn';
 import _reduce from 'lodash/reduce';
 
-import {constantOrFormula} from '../helpers/values';
+import {constantOrFormula} from '../utils/generic';
 
 import Glyph from './Glyph';
 

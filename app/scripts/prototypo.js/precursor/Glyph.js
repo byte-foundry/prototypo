@@ -8,10 +8,9 @@ import _reverse from 'lodash/reverse';
 import _get from 'lodash/get';
 import _set from 'lodash/set';
 import _pickBy from 'lodash/pickBy';
-import _mapKeys from 'lodash/pickBy';
+import _mapKeys from 'lodash/mapKeys';
 
-import {constantOrFormula, createContour} from '../helpers/values';
-import {toLodashPath, transformGlyph} from '../helpers/utils';
+import {constantOrFormula, createContour, toLodashPath, transformGlyph} from '../utils/generic';
 import * as utils from '../utils/updateUtils';
 
 import Component from './Component';
@@ -52,11 +51,11 @@ export default class Glyph {
 			componentLabel,
 		} = glyphSrc;
 
-		paramBase.manualChanges[name] = {
+		paramBase.manualChanges[name] = { // eslint-disable-line no-param-reassign
 			cursors: {},
 		};
 
-		paramBase.glyphComponentChoice[name] = {};
+		paramBase.glyphComponentChoice[name] = {}; // eslint-disable-line no-param-reassign
 
 		this.unicode = constantOrFormula(unicode);
 		this.name = constantOrFormula(name);
@@ -244,9 +243,9 @@ export default class Glyph {
 		}
 
 
-		/* if (!(result.solveOperationOrder instanceof Function)) {
-			console.error(`While trying to solve ${this.name.value} operation order, couldn't find ${path} property asked by ${caller}`);
-		}*/
+		if (!(result.solveOperationOrder instanceof Function)) {
+			console.error(`While trying to solve ${this.name.value} operation order, couldn't find ${path}`); // eslint-disable-line no-console, max-len
+		}
 		return result;
 	}
 
@@ -424,11 +423,12 @@ export default class Glyph {
 		];
 
 		opDone.components = this.components.map((component, idx) => {
-			const pickedChanges = _pickBy(localParams.manualChanges[this.name.value].cursors, (value, key) => key.match(new RegExp(`components\.${idx}`)));
+			const pickedChanges = _pickBy(localParams.manualChanges[this.name.value].cursors, (value, key) => key.match(new RegExp(`components\.${idx}`))); // eslint-disable-line no-useless-escape
 			const componentManualChanges = _mapKeys(pickedChanges, (value, key) => key.replace(/components\.\d\./g, ''));
-			const componentName = component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]
-						? localParams.glyphComponentChoice[this.name.value][component.id.value]
-						: component.base[0].value;
+			const componentName = component.id
+				&& localParams.glyphComponentChoice[this.name.value][component.id.value]
+					? localParams.glyphComponentChoice[this.name.value][component.id.value]
+					: component.base[0].value;
 
 			const componentParams = {
 				...localParams,
@@ -446,7 +446,7 @@ export default class Glyph {
 				opDone.anchors,
 				utils,
 				glyphs,
-				transforms
+				transforms,
 			);
 		});
 

@@ -5,7 +5,7 @@ export default class Constant {
 	}
 
 	analyzeDependency() {
-		return;
+		return undefined;
 	}
 
 	getResult() {
@@ -17,9 +17,9 @@ export default class Constant {
 	}
 
 	solveOperationOrder(glyph, operationOrder) {
-		let result = [];
+		const result = [];
 
-		if(operationOrder.indexOf(this.cursor) === -1) {
+		if (operationOrder.indexOf(this.cursor) === -1) {
 			result.push(this.cursor);
 		}
 

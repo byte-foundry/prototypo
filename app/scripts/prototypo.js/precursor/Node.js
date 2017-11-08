@@ -1,7 +1,7 @@
 import _forOwn from 'lodash/forOwn';
 import _find from 'lodash/find';
 
-import {constantOrFormula} from '../helpers/values';
+import {constantOrFormula} from '../utils/generic';
 import Formula from './Formula';
 
 export default class Node {

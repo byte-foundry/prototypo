@@ -1,4 +1,28 @@
-import {transform2D, matrixMul} from '../../plumin/util/linear';
+import {transform2D, matrixMul} from './linear';
+import {SimplePath, ClosedSkeletonPath, SkeletonPath} from '../precursor/Path';
+import Formula from '../precursor/Formula';
+import Constant from '../precursor/Constant';
+
+export function constantOrFormula(source, cursor) {
+	if (typeof source === 'object' && source !== null && source._operation) {
+		return new Formula(source, cursor);
+	}
+	else if (source !== undefined) {
+		return new Constant(source, cursor);
+	}
+}
+
+export function createContour(source, i) {
+	if (source.skeleton && source.closed) {
+		return new ClosedSkeletonPath(source, i);
+	}
+	else if (source.skeleton) {
+		return new SkeletonPath(source, i);
+	}
+	else {
+		return new SimplePath(source, i);
+	}
+}
 
 export function toLodashPath(path) {
 	return path.replace(/\.([0-9]+)\./g, '[$1].');
@@ -12,7 +36,7 @@ export function readAngle(angle) {
 	}
 
 	if (typeof angle === 'string' && rdeg.test(angle)) {
-		return parseFloat(angle) * (Math.PI * 2 / 360);
+		return parseFloat(angle) * (Math.PI / 180);
 	}
 
 	return parseFloat(angle);

@@ -1,4 +1,4 @@
-import {add2D, mulScalar2D, subtract2D} from '../../plumin/util/linear.js';
+import {add2D, mulScalar2D, subtract2D} from '../utils/linear';
 
 const infinityPointScale = 5000000;
 
@@ -12,16 +12,16 @@ export function lineLineIntersection(p1, p2, p3, p4) {
 	const y3 = p3.y;
 	const x4 = p4.x;
 	const y4 = p4.y;
-	const d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+	const d = ((x1 - x2) * (y3 - y4)) - ((y1 - y2) * (x3 - x4));
 
 	if (d === 0) {
 		return null;
 	}
 
 	return {
-		x: ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4))
+		x: ((((x1 * y2) - (y1 * x2)) * (x3 - x4)) - ((x1 - x2) * ((x3 * y4) - (y3 * x4))))
 		/ d,
-		y: ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4))
+		y: (((((x1 * y2) - (y1 * x2))) * (y3 - y4)) - ((y1 - y2) * ((x3 * y4) - (y3 * x4))))
 		/ d,
 	};
 }
@@ -32,8 +32,8 @@ export function rayRayIntersection(p1, a1, p2, a2) {
 	// line equations
 	const a = Math.tan(a1);
 	const b = Math.tan(a2);
-	const c = p1.y - a * p1.x;
-	const d = p2.y - b * p2.x;
+	const c = p1.y - (a * p1.x);
+	const d = p2.y - (b * p2.x);
 	let x;
 	let y;
 
@@ -41,11 +41,11 @@ export function rayRayIntersection(p1, a1, p2, a2) {
 	// angles can be normalized to 0 < a < PI
 	// This will be helpful in detecting special cases below.
 	/* eslint-disable no-param-reassign */
-	a1 = a1 % Math.PI;
+	a1 %= Math.PI;
 	if (a1 < 0) {
 		a1 += Math.PI;
 	}
-	a2 = a2 % Math.PI;
+	a2 %= Math.PI;
 	if (a2 < 0) {
 		a2 += Math.PI;
 	}
@@ -53,12 +53,12 @@ export function rayRayIntersection(p1, a1, p2, a2) {
 	// no intersection
 	if (a1 === a2) {
 		return {
-			x: p1.x + infinityPointScale * Math.cos(a1),
-			y: p1.y + infinityPointScale * Math.sin(a1),
+			x: p1.x + (infinityPointScale * Math.cos(a1)),
+			y: p1.y + (infinityPointScale * Math.sin(a1)),
 		};
 	}
 
-	//We want to round a1, a2 and PI to avoid problems with approximation
+	// We want to round a1, a2 and PI to avoid problems with approximation
 	a1 = a1.toFixed(6);
 	a2 = a2.toFixed(6);
 	/* eslint-enable no-param-reassign */
@@ -89,13 +89,13 @@ export function rayRayIntersection(p1, a1, p2, a2) {
 		return {x: (y - d) / b, y};
 	}
 	if (a1 === piOver2) {
-		return {x, y: b * x + d};
+		return {x, y: (b * x) + d};
 	}
 	if (a2 === 0) {
 		return {x: (y - c) / a, y};
 	}
 	if (a2 === piOver2) {
-		return {x, y: a * x + c};
+		return {x, y: (a * x) + c};
 	}
 
 	// intersection from two line equations
@@ -105,7 +105,7 @@ export function rayRayIntersection(p1, a1, p2, a2) {
 	return {
 		x: newX,
 		// this should work equally well with ax+c or bx+d
-		y: a * newX + c,
+		y: (a * newX) + c,
 	};
 }
 
@@ -124,13 +124,13 @@ export function onLine(params) {
 
 	const origin = params.on[0];
 	const vector = [
-			params.on[1].x - params.on[0].x,
-			params.on[1].y - params.on[0].y,
-		];
+		params.on[1].x - params.on[0].x,
+		params.on[1].y - params.on[0].y,
+	];
 
 	return 'x' in params
-		? (params.x - origin.x) / vector[0] * vector[1] + origin.y
-		: (params.y - origin.y) / vector[1] * vector[0] + origin.x;
+		? ((params.x - origin.x) / vector[0] * vector[1]) + origin.y
+		: ((params.y - origin.y) / vector[1] * vector[0]) + origin.x;
 }
 
 export function pointOnCurve(pointHandleOut,
@@ -139,7 +139,7 @@ export function pointOnCurve(pointHandleOut,
 	handleIn,
 	distanceFromOut,
 	inverseOrientation,
-	linePrecision = 3
+	linePrecision = 3,
 ) {
 	let length = 0;
 	let previousPoint;
@@ -171,7 +171,6 @@ export function pointOnCurve(pointHandleOut,
 				previousPoint.y,
 				point.x,
 				point.y);
-
 		}
 
 		previousPoint = point;
@@ -181,7 +180,7 @@ export function pointOnCurve(pointHandleOut,
 
 	t = Math.max(0.001, Math.min(1, t));
 
-    return getPointOnCurve(points, t);
+	return getPointOnCurve(points, t);
 }
 
 export function getPointOnCurve(points, t) {
@@ -192,17 +191,21 @@ export function getPointOnCurve(points, t) {
 	const d = t * t * t;
 
 	return {
-		x: a * points[0].x + b * points[1].x + c * points[2].x + d * points[3].x,
-		y: a * points[0].y + b * points[1].y + c * points[2].y + d * points[3].y,
+		x: (a * points[0].x) + (b * points[1].x) + (c * points[2].x) + (d * points[3].x),
+		y: (a * points[0].y) + (b * points[1].y) + (c * points[2].y) + (d * points[3].y),
 		normal: lineAngle(
 			{
 				x: 0,
 				y: 0,
 			},
 			{
-				x: (points[1].x - points[0].x) * inverseT * inverseT + 2 * (points[2].x - points[1].x) * t * inverseT + (points[3].x - points[2].x) * t * t,
-				y: (points[1].y - points[0].y) * inverseT * inverseT + 2 * (points[2].y - points[1].y) * t * inverseT + (points[3].y - points[2].y) * t * t,
-			}
+				x: ((points[1].x - points[0].x) * inverseT * inverseT)
+				+ (2 * (points[2].x - points[1].x) * t * inverseT)
+				+ ((points[3].x - points[2].x) * t * t),
+				y: ((points[1].y - points[0].y) * inverseT * inverseT)
+				+ (2 * (points[2].y - points[1].y) * t * inverseT)
+				+ ((points[3].y - points[2].y) * t * t),
+			},
 		),
 	};
 }
@@ -218,8 +221,8 @@ export function split(points, t = 1, base) {
 			newPoints.push(
 				add2D(
 					mulScalar2D(1 - t, current[i - 1]),
-					mulScalar2D(t, current[i])
-				)
+					mulScalar2D(t, current[i]),
+				),
 			);
 		}
 
@@ -291,46 +294,54 @@ export function split(points, t = 1, base) {
 }
 
 export function distance(x1, y1, x2, y2) {
-	return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y1 - y2, 2));
+	return Math.sqrt(((x2 - x1) ** 2) + ((y1 - y2) ** 2));
 }
 
 export function align(points, lineStart, lineEnd) {
 	const tx = lineStart.x;
 	const ty = lineStart.y;
 	const a = -Math.atan2(lineEnd.y - ty, lineEnd.x - tx);
-	const d = function(v) {
-		return {
-			x: (v.x - tx) * Math.cos(a) - (v.y - ty) * Math.sin(a),
-			y: (v.x - tx) * Math.sin(a) + (v.y - ty) * Math.cos(a),
-		};
-	};
 
-	return points.map(d);
+	return points.map(v =>
+		({
+			x: ((v.x - tx) * Math.cos(a)) - ((v.y - ty) * Math.sin(a)),
+			y: ((v.x - tx) * Math.sin(a)) + ((v.y - ty) * Math.cos(a)),
+		}),
+	);
 }
 
 function crt(v) {
 	return v < 0
-		? -Math.pow(-v, 1 / 3)
-		: Math.pow(v, 1 / 3);
+		? -((-v) ** (1 / 3))
+		: (v) ** (1 / 3);
 }
 
-export function getIntersectionTValue(pointHandleOut, handleOut, pointHandleIn, handleIn, lineStart = {x: 0, y: 0}, lineEnd = {x: 1, y: 0}, points = [pointHandleOut, handleOut, handleIn, pointHandleIn]) {
+export function getIntersectionTValue(
+	pointHandleOut,
+	handleOut,
+	pointHandleIn,
+	handleIn,
+	lineStart = {x: 0, y: 0},
+	lineEnd = {x: 1, y: 0},
+	points = [pointHandleOut, handleOut, handleIn, pointHandleIn],
+) {
 	const p = align(points, lineStart, lineEnd);
-	const reduce = function(t) { return 0 <= t && t <= 1; };
+
+	function reduce(t) {return 0 <= t && t <= 1;} // eslint-disable-line yoda
 
 	// see http://www.trans4mind.com/personal_development/mathematics/polynomials/cubicAlgebra.htm
 	const pa = p[0].y;
 	const pb = p[1].y;
 	const pc = p[2].y;
 	const pd = p[3].y;
-	const d = (-pa + 3 * pb - 3 * pc + pd);
-	const a = (3 * pa - 6 * pb + 3 * pc) / d;
-	const b = (-3 * pa + 3 * pb) / d;
+	const d = (-pa + (3 * pb) - (3 * pc) + pd);
+	const a = ((3 * pa) - (6 * pb) + (3 * pc)) / d;
+	const b = ((-3 * pa) + (3 * pb)) / d;
 	const c = pa / d;
-	const p3 = ((3 * b - a * a) / 3) / 3;
-	const q = (2 * a * a * a - 9 * a * b + 27 * c) / 27;
+	const p3 = (((3 * b) - (a * a)) / 3) / 3;
+	const q = ((2 * (a ** 3)) - (9 * a * b) + (27 * c)) / 27;
 	const q2 = q / 2;
-	const discriminant = q2 * q2 + p3 * p3 * p3;
+	const discriminant = (q2 ** 2) + (p3 ** 3);
 	let u1;
 	let v1;
 	let x1;
@@ -344,20 +355,24 @@ export function getIntersectionTValue(pointHandleOut, handleOut, pointHandleIn, 
 		const mp33 = mp3 * mp3 * mp3;
 		const r = Math.sqrt(mp33);
 		const t = -q / (2 * r);
-		const cosphi = t < -1 ? -1 : t > 1 ? 1 : t;
+		const cosphi = t < -1 // eslint-disable-line no-nested-ternary
+			? -1
+			: t > 1
+				? 1
+				: t;
 		const phi = Math.acos(cosphi);
 		const crtr = crt(r);
 		const t1 = 2 * crtr;
 
-		x1 = t1 * Math.cos(phi / 3) - a / 3;
-		x2 = t1 * Math.cos((phi + Math.PI * 2) / 3) - a / 3;
-		x3 = t1 * Math.cos((phi + 4 * Math.PI) / 3) - a / 3;
+		x1 = (t1 * Math.cos(phi / 3)) - (a / 3);
+		x2 = (t1 * Math.cos((phi + (Math.PI * 2)) / 3)) - (a / 3);
+		x3 = (t1 * Math.cos((phi + (4 * Math.PI)) / 3)) - (a / 3);
 		result = [x1, x2, x3].filter(reduce);
 	}
 	 else if (discriminant === 0) {
 		u1 = q2 < 0 ? crt(-q2) : -crt(q2);
-		x1 = 2 * u1 - a / 3;
-		x2 = -u1 - a / 3;
+		x1 = (2 * u1) - (a / 3);
+		x2 = -u1 - (a / 3);
 		result = [x1, x2].filter(reduce);
 	}
 	 else {
@@ -365,14 +380,20 @@ export function getIntersectionTValue(pointHandleOut, handleOut, pointHandleIn, 
 
 		u1 = crt(-q2 + sd);
 		v1 = crt(q2 + sd);
-		result = [u1 - v1 - a / 3].filter(reduce);
+		result = [u1 - v1 - (a / 3)].filter(reduce);
 	}
 
 	return result;
 }
 
 // see https://github.com/Pomax/bezierjs/blob/gh-pages/lib/utils.js line 313
-export function lineCurveIntersection(pointHandleOut, handleOut, pointHandleIn, handleIn, lineStart = {x: 0, y: 0}, lineEnd = {x: 1, y: 0}) {
+export function lineCurveIntersection(pointHandleOut,
+	handleOut,
+	pointHandleIn,
+	handleIn,
+	lineStart = {x: 0, y: 0},
+	lineEnd = {x: 1, y: 0},
+) {
 	const points = [
 		pointHandleOut,
 		handleOut,
@@ -380,16 +401,24 @@ export function lineCurveIntersection(pointHandleOut, handleOut, pointHandleIn, 
 		pointHandleIn,
 	];
 
-	const result = getIntersectionTValue(pointHandleOut, handleOut, pointHandleIn, handleIn, lineStart, lineEnd, points);
+	const result = getIntersectionTValue(
+		pointHandleOut,
+		handleOut,
+		pointHandleIn,
+		handleIn,
+		lineStart,
+		lineEnd,
+		points,
+	);
 
 	return split(points, result[0], [pointHandleIn, pointHandleOut]);
 }
 
-export function log() {
-	/*eslint-disable no-console */
-	console.log(...arguments);
-	/*eslint-enable no-console */
-	return arguments[0];
+export function log(...rest) {
+	/* eslint-disable no-console */
+	console.log(rest);
+	/* eslint-enable no-console */
+	return rest[0];
 }
 
 export function normalize(vector) {
@@ -431,7 +460,7 @@ export function makeCurveInsideSerif(
 	serifTerminal,
 	thickness,
 	midWidth,
-	serifRotate
+	serifRotate,
 ) {
 	const yDir = pAnchors.down ? -1 : 1;
 	const xDir = pAnchors.left ? -1 : 1;
@@ -454,21 +483,30 @@ export function makeCurveInsideSerif(
 		};
 	}
 	const stumpNorm = distance(0, 0, stumpVector.x, stumpVector.y);
+	const rotationCenter = pAnchors.rotationCenter;
 
 	stumpVector = normalize(stumpVector);
-	const rotationCenter = pAnchors.rotationCenter;
 	rotationCenter.typeIn = 'line';
+
 	const topLeft = {
-		x: rotationCenter.x + (baseHeight.x - rotationCenter.x - serifHeight * xDir) * Math.cos(rotateRad) - (baseWidth.y - rotationCenter.y + serifWidth * yDir) * Math.sin(rotateRad),
-		y: rotationCenter.y + (baseWidth.y - rotationCenter.y + serifWidth * yDir) * Math.cos(rotateRad) + (baseHeight.x - rotationCenter.x - serifHeight * xDir) * Math.sin(rotateRad),
+		x: rotationCenter.x
+			+ ((baseHeight.x - rotationCenter.x - (serifHeight * xDir)) * Math.cos(rotateRad))
+			- ((baseWidth.y - rotationCenter.y + (serifWidth * yDir)) * Math.sin(rotateRad)),
+		y: rotationCenter.y
+			+ ((baseWidth.y - rotationCenter.y + (serifWidth * yDir)) * Math.cos(rotateRad))
+			+ ((baseHeight.x - rotationCenter.x - (serifHeight * xDir)) * Math.sin(rotateRad)),
 	};
 	const bottomLeft = {
-		x: rotationCenter.x + (baseHeight.x - rotationCenter.x - serifHeight * xDir) * Math.cos(rotateRad) - (baseHeight.y - rotationCenter.y) * Math.sin(rotateRad),
-		y: rotationCenter.y + (baseHeight.y - rotationCenter.y) * Math.cos(rotateRad) + (baseHeight.x - rotationCenter.x - serifHeight * xDir) * Math.sin(rotateRad),
+		x: rotationCenter.x
+			+ ((baseHeight.x - rotationCenter.x - (serifHeight * xDir)) * Math.cos(rotateRad))
+			- ((baseHeight.y - rotationCenter.y) * Math.sin(rotateRad)),
+		y: rotationCenter.y
+			+ ((baseHeight.y - rotationCenter.y) * Math.cos(rotateRad))
+			+ ((baseHeight.x - rotationCenter.x - (serifHeight * xDir)) * Math.sin(rotateRad)),
 	};
 
-	//We get the intersection with the left edge of the serif and the curve support
-	//this operation is direction dependent
+	// We get the intersection with the left edge of the serif and the curve support
+	// this operation is direction dependent
 	let splitBase;
 
 	if (pAnchors.inverseOrder) {
@@ -478,7 +516,7 @@ export function makeCurveInsideSerif(
 			pAnchors.baseWidth,
 			pAnchors.baseWidth.handleIn,
 			{x: topLeft.x, y: topLeft.y},
-			{x: bottomLeft.x, y: bottomLeft.y}
+			{x: bottomLeft.x, y: bottomLeft.y},
 		);
 	}
 	else {
@@ -488,7 +526,7 @@ export function makeCurveInsideSerif(
 			pAnchors.curveEnd,
 			pAnchors.curveEnd.handleIn,
 			{x: topLeft.x, y: topLeft.y},
-			{x: bottomLeft.x, y: bottomLeft.y}
+			{x: bottomLeft.x, y: bottomLeft.y},
 		);
 	}
 
@@ -499,7 +537,10 @@ export function makeCurveInsideSerif(
 	let splitCurveEnd;
 
 	if (!pAnchors.inverseOrder) {
-		if (splitBase.right[0].x !== splitBase.right[1].x || splitBase.right[0].y !== splitBase.right[1].y) {
+		if (
+			splitBase.right[0].x !== splitBase.right[1].x
+			|| splitBase.right[0].y !== splitBase.right[1].y
+		) {
 			serifCenter = splitBase.right[0];
 			splitCurveEnd = splitBase.right[1];
 		}
@@ -508,23 +549,32 @@ export function makeCurveInsideSerif(
 			splitCurveEnd = splitBase.left[1];
 		}
 	}
-	else if (splitBase.left[0].x !== splitBase.left[1].x || splitBase.left[0].y !== splitBase.left[1].y) {
-			serifCenter = splitBase.left[1];
-			splitCurveEnd = splitBase.left[0];
-		}
-		else {
-			serifCenter = splitBase.right[1];
-			splitCurveEnd = splitBase.right[0];
-		}
+	else if (
+		splitBase.left[0].x !== splitBase.left[1].x
+		|| splitBase.left[0].y !== splitBase.left[1].y
+	) {
+		serifCenter = splitBase.left[1];
+		splitCurveEnd = splitBase.left[0];
+	}
+	else {
+		serifCenter = splitBase.right[1];
+		splitCurveEnd = splitBase.right[0];
+	}
 
 	// The serif direction is the line from the serif center
 	// to the serif left edge
 	const serifDirection = vectorFromPoints(
 		serifCenter,
 		{
-			x: rotationCenter.x + (baseHeight.x - rotationCenter.x - serifHeight * xDir) * serifMedian * Math.cos(rotateRad) - (baseWidth.y - rotationCenter.y + serifWidth * yDir) * Math.sin(rotateRad),
-			y: rotationCenter.y + (baseWidth.y - rotationCenter.y + serifWidth * yDir) * Math.cos(rotateRad) + (baseHeight.x - rotationCenter.x - serifHeight * xDir) * serifMedian * Math.sin(rotateRad),
-		}
+			x: rotationCenter.x
+				+ ((baseHeight.x - rotationCenter.x - (serifHeight * xDir))
+				* serifMedian * Math.cos(rotateRad))
+				- ((baseWidth.y - rotationCenter.y + (serifWidth * yDir)) * Math.sin(rotateRad)),
+			y: rotationCenter.y
+				+ ((baseWidth.y - rotationCenter.y + (serifWidth * yDir)) * Math.cos(rotateRad))
+				+ ((baseHeight.x - rotationCenter.x - (serifHeight * xDir))
+				* serifMedian * Math.sin(rotateRad)),
+		},
 	);
 
 	const serifBasis = normalize(serifDirection);
@@ -536,10 +586,26 @@ export function makeCurveInsideSerif(
 	let normalToCurve;
 
 	if (pAnchors.inverseOrder) {
-		pointWithCurve = pointOnCurve(splitCurveEnd, splitCurveEnd.handleOut, serifCenter, serifCenter.handleIn, serifCurve, true, 200);
+		pointWithCurve = pointOnCurve(
+			splitCurveEnd,
+			splitCurveEnd.handleOut,
+			serifCenter,
+			serifCenter.handleIn,
+			serifCurve,
+			true,
+			200,
+		);
 	}
 	else {
-		pointWithCurve = pointOnCurve(serifCenter, serifCenter.handleOut, splitCurveEnd, splitCurveEnd.handleIn, serifCurve, false, 200);
+		pointWithCurve = pointOnCurve(
+			serifCenter,
+			serifCenter.handleOut,
+			splitCurveEnd,
+			splitCurveEnd.handleIn,
+			serifCurve,
+			false,
+			200,
+		);
 	}
 
 	if (serifCurve > 0) {
@@ -550,11 +616,14 @@ export function makeCurveInsideSerif(
 			dirOut: pointWithCurve.normal,
 			typeIn: 'line',
 		};
-		const curveRatio = Math.min(serifCurve / distance(0, 0, serifDirection.x, serifDirection.y), 0.75);
+		const curveRatio = Math.min(
+			serifCurve / distance(0, 0, serifDirection.x, serifDirection.y),
+			0.75,
+		);
 
 		pointOnSerif = {
-			x: serifCenter.x + serifDirection.x * curveRatio,
-			y: serifCenter.y + serifDirection.y * curveRatio,
+			x: serifCenter.x + (serifDirection.x * curveRatio),
+			y: serifCenter.y + (serifDirection.y * curveRatio),
 			dirIn: serifRadDirection,
 			dirOut: serifRadDirection,
 		};
@@ -588,8 +657,12 @@ export function makeCurveInsideSerif(
 		dirOut: rotateRad,
 	};
 	const rightEdge = {
-		x: rotationCenter.x - (baseWidth.y - rotationCenter.y + serifWidth * midWidth * yDir) * Math.sin(rotateRad),
-		y: rotationCenter.y + (baseWidth.y - rotationCenter.y + serifWidth * midWidth * yDir) * Math.cos(rotateRad),
+		x: rotationCenter.x
+			- ((baseWidth.y - rotationCenter.y + (serifWidth * midWidth * yDir))
+			* Math.sin(rotateRad)),
+		y: rotationCenter.y
+			+ ((baseWidth.y - rotationCenter.y + (serifWidth * midWidth * yDir))
+			* Math.cos(rotateRad)),
 		dirIn: rotateRad,
 		typeOut: 'line',
 	};
@@ -608,8 +681,8 @@ export function makeCurveInsideSerif(
 	});
 
 	const midPoint = {
-		x: (leftEdge.x + rightEdge.x) / 2 + serifTerminal * serifHeight * terminalVector.x * xDir,
-		y: (leftEdge.y + rightEdge.y) / 2 + serifTerminal * serifHeight * terminalVector.y * xDir,
+		x: ((leftEdge.x + rightEdge.x) / 2) + (serifTerminal * serifHeight * terminalVector.x * xDir),
+		y: ((leftEdge.y + rightEdge.y) / 2) + (serifTerminal * serifHeight * terminalVector.y * xDir),
 		dirIn: rotateRad,
 		dirOut: rotateRad,
 	};
@@ -628,15 +701,15 @@ export function makeCurveInsideSerif(
 	}
 
 	const midStump = {
-		x: serifRoot.x + stumpNorm / 2 * stumpVector.x,
-		y: serifRoot.y + stumpNorm / 2 * stumpVector.y,
+		x: serifRoot.x + (stumpNorm / 2 * stumpVector.x),
+		y: serifRoot.y + (stumpNorm / 2 * stumpVector.y),
 		dirOut: baseDir,
 		typeIn: 'line',
 	};
 
 	const lastPoint = {
-		x: pointOnCurveVar.x - stumpNorm / 2 * Math.sin(normalToCurve) * yDir * xDir,
-		y: pointOnCurveVar.y + stumpNorm / 2 * Math.cos(normalToCurve) * yDir * xDir,
+		x: pointOnCurveVar.x - (stumpNorm / 2 * Math.sin(normalToCurve) * yDir * xDir),
+		y: pointOnCurveVar.y + (stumpNorm / 2 * Math.cos(normalToCurve) * yDir * xDir),
 		dirIn: normalToCurve,
 		typeOut: 'line',
 		type: 'corner',

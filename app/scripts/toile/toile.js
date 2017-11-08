@@ -4,7 +4,7 @@ import _slice from 'lodash/slice';
 import _flatten from 'lodash/flatten';
 import _reduce from 'lodash/reduce';
 
-import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D} from '../plumin/util/linear';
+import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D} from '../prototypo.js/utils/linear';
 import {getIntersectionTValue, getPointOnCurve} from '../prototypo.js/utils/updateUtils';
 import DOM from '../helpers/dom.helpers';
 
@@ -58,7 +58,7 @@ export const appState = {
 
 const green = '#24d390';
 const blue = '#00c4d6';
-const darkBlue = '#00a4b2';
+const darkBlue = '#00a4b2'; // eslint-disable-line no-unused-vars
 const yellow = '#f5e462';
 const grey = '#3b3b3b';
 const darkestGrey = '#333333';
@@ -83,7 +83,7 @@ const pixelPerMeter = 500;
 const nodeDrawRadius = 3;
 const nodeHotDrawRadius = 3;
 const nodeHotRadius = 6;
-const componentHotRadius = 50;
+const componentHotRadius = 50; // eslint-disable-line no-unused-vars
 
 const labelForMenu = {
 	[toileType.NODE]: 'On curve control point',
@@ -1116,7 +1116,7 @@ export default class Toile {
 		bases.forEach(({id: baseId, label}, i) => {
 			const inHot = _find(hotItems, item => item.id === baseId);
 			const textSize = componentMenuTextSize * y;
-			const textWidth = this.measureText(label.value, textSize);
+			const textWidth = this.measureText(label.value, textSize); // eslint-disable-line no-unused-vars, max-len
 
 			const boxHeight = 40 * y;
 			const yOffset = ((i - (bases.length / 2)) * boxHeight);
@@ -1148,7 +1148,7 @@ export default class Toile {
 				add2D(
 					{
 						x: (10 - boxWidth) / this.viewMatrix[0],
-						y: (yOffset + textSize / 2) / this.viewMatrix[0],
+						y: (yOffset + (textSize / 2)) / this.viewMatrix[0],
 					},
 					componentCenter,
 				),
@@ -1170,7 +1170,7 @@ export default class Toile {
 		const newPosition = componentCenter;
 
 		const points = [menuCenter, newPosition];
-		const barycenter = mulScalar2D(1 / points.length, _reduce(
+		const barycenter = mulScalar2D(1 / points.length, _reduce( // eslint-disable-line no-unused-vars
 					points,
 					(acc, point) => add2D(acc, point),
 					{x: 0, y: 0},
@@ -1454,7 +1454,7 @@ export default class Toile {
 		);
 	}
 
-	drawNodeProperty(node, manualChanges) {
+	drawNodeProperty(node) {
 		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 		const [start, end] = transformCoords(
 			[

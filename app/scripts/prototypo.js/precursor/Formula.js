@@ -5,7 +5,7 @@ import _reduce from 'lodash/reduce';
 import _find from 'lodash/find';
 import _keys from 'lodash/keys';
 
-import {toLodashPath} from '../helpers/utils';
+import {toLodashPath} from '../utils/generic';
 
 export default class Formula {
 	constructor(formula, cursor) {

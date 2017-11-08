@@ -4,10 +4,9 @@ import _flatMap from 'lodash/flatMap';
 import _take from 'lodash/take';
 import _difference from 'lodash/difference';
 
-import {subtract2D, mulScalar2D, dot2D, add2D, round2D, distance2D} from '../../plumin/util/linear';
+import {subtract2D, mulScalar2D, dot2D, add2D, round2D, distance2D} from '../utils/linear';
 import {rayRayIntersection, lineAngle} from '../utils/updateUtils';
-import {readAngle} from '../helpers/utils';
-import {constantOrFormula} from '../helpers/values';
+import {readAngle, constantOrFormula} from '../utils/generic';
 
 import Node from './Node';
 import ExpandingNode from './ExpandingNode';
@@ -25,8 +24,20 @@ function computeHandle(
 ) {
 	let inIntersection;
 	let outIntersection;
-	const prevDir = j ? (prevNode.dirIn === null ? prev.dirIn : prevNode.dirIn) : (prevNode.dirOut === null ? prev.dirOut : prevNode.dirOut);
-	const nextDir = j ? (nextNode.dirOut === null ? next.dirOut : nextNode.dirOut) : (nextNode.dirIn === null ? next.dirIn : nextNode.dirIn);
+	const prevDir = j // eslint-disable-line no-nested-ternary
+		? (prevNode.dirIn === null
+			? prev.dirIn
+			: prevNode.dirIn)
+		: (prevNode.dirOut === null
+			? prev.dirOut
+			: prevNode.dirOut);
+	const nextDir = j // eslint-disable-line no-nested-ternary
+		? (nextNode.dirOut === null
+			? next.dirOut
+			: nextNode.dirOut)
+		: (nextNode.dirIn === null
+			? next.dirIn
+			: nextNode.dirIn);
 	let dirToPrev = j ? current.dirOut || node.dirOut : current.dirIn || node.dirIn;
 	let dirToNext = j ? current.dirIn || node.dirIn : current.dirOut || node.dirOut;
 	const tensionIn = j ? node.tensionOut : node.tensionIn;
@@ -51,8 +62,10 @@ function computeHandle(
 		}
 	}
 
+	/* eslint-disable no-param-reassign */
 	dest.baseDirOut = dirToNext;
 	dest.baseDirIn = dirToPrev;
+	/* eslint-enable no-param-reassign */
 
 	if (node.expandedTo) {
 		dirToNext += params[`${node.nodeAddress}expandedTo.${j}.dirOut`] || 0;
@@ -139,8 +152,10 @@ function computeHandle(
 	let outVector = mulScalar2D(tensionOut * 0.6, untensionOutVector);
 
 	if (node.expandedTo) {
+		/* eslint-disable no-param-reassign */
 		node.expandedTo[j].baseLengthIn = distance2D(inVector, {x: 0, y: 0});
 		node.expandedTo[j].baseLengthOut = distance2D(outVector, {x: 0, y: 0});
+		/* eslint-enable no-param-reassign */
 		inVector = mulScalar2D(
 			params[`${node.nodeAddress}expandedTo.${j}.tensionIn`] || ((typeIn === 'line') ? 0 : 1),
 			tensionIn === 0 ? untensionedInVector : inVector,
@@ -151,8 +166,10 @@ function computeHandle(
 		);
 	}
 	else {
+		/* eslint-disable no-param-reassign */
 		node.baseLengthIn = distance2D(inVector, {x: 0, y: 0});
 		node.baseLengthOut = distance2D(outVector, {x: 0, y: 0});
+		/* eslint-enable no-param-reassign */
 		inVector = mulScalar2D(
 			params[`${node.nodeAddress}tensionIn`] || ((typeIn === 'line') ? 0 : 1),
 			inVector,
@@ -174,16 +191,18 @@ function computeHandle(
 		|| Number.isNaN(outVector.x)
 		|| Number.isNaN(outVector.y)
 	) {
-		console.error(`handle creation went south for cursor:${dest.cursor}`);
+		console.error(`handle creation went south for cursor:${dest.cursor}`); // eslint-disable-line no-console
 	}
 
 
+	/* eslint-disable no-param-reassign */
 	dest.baseTensionIn = tensionIn;
 	dest.baseTensionOut = tensionOut;
 	dest.baseTypeIn = node.typeIn;
 	dest.baseTypeOut = node.typeOut;
 	dest.handleIn = round2D(add2D(current, inVector));
 	dest.handleOut = round2D(add2D(current, outVector));
+	/* eslint-enable no-param-reassign */
 }
 
 class SolvablePath {
@@ -213,6 +232,7 @@ class SolvablePath {
 	}
 
 	static correctValues({nodes, closed, skeleton}) {
+		/* eslint-disable no-param-reassign */
 		const results = {};
 
 		for (let i = 0; i < nodes.length; i++) {
@@ -260,8 +280,12 @@ class SolvablePath {
 				nodes[i].dirOut = readAngle(node.dirOut) || 0.01;
 			}
 
-			nodes[i].tensionIn = node.tensionIn !== undefined ? node.tensionIn : 1;
-			nodes[i].tensionOut = node.tensionOut !== undefined ? node.tensionOut : 1;
+			nodes[i].tensionIn = node.tensionIn === undefined
+				? 1
+				: node.tensionIn;
+			nodes[i].tensionOut = node.tensionOut === undefined
+				? 1
+				: node.tensionOut;
 
 			if (!closed && skeleton) {
 				if (i === 0) {
@@ -272,6 +296,7 @@ class SolvablePath {
 				}
 			}
 		}
+		/* eslint-enable no-param-reassign */
 
 		return results;
 	}
@@ -280,13 +305,15 @@ class SolvablePath {
 export class SkeletonPath extends SolvablePath {
 	constructor(source, i) {
 		super(i);
-		this.nodes = source.point.map((point, j) => {
-			return new ExpandingNode(point, i, j);
-		});
+		this.nodes = source.point.map((point, j) => new ExpandingNode(point, i, j));
 		this.closed = constantOrFormula(false);
 		this.skeleton = constantOrFormula(true);
-		this.transforms = source.transforms !== undefined ? constantOrFormula(source.transforms, `${this.cursor}transforms`) : constantOrFormula(null, `${this.cursor}transforms`);
-		this.transformOrigin = source.transformOrigin ? constantOrFormula(source.transformOrigin, `${this.cursor}transformOrigin`) : constantOrFormula(null, `${this.cursor}transformOrigin`);
+		this.transforms = source.transforms === undefined
+			? constantOrFormula(null, `${this.cursor}transforms`)
+			: constantOrFormula(source.transforms, `${this.cursor}transforms`);
+		this.transformOrigin = source.transformOrigin
+			? constantOrFormula(source.transformOrigin, `${this.cursor}transformOrigin`)
+			: constantOrFormula(null, `${this.cursor}transformOrigin`);
 	}
 
 	isReadyForHandles(ops, index = ops.length - 1) {
@@ -306,36 +333,33 @@ export class SkeletonPath extends SolvablePath {
 					`${node.cursor}y`,
 				];
 			}
-			else {
-				return [
-					`${node.cursor}expandedTo.0.x`,
-					`${node.cursor}expandedTo.0.y`,
-					`${node.cursor}expandedTo.1.x`,
-					`${node.cursor}expandedTo.1.y`,
-					`${node.cursor}dirIn`,
-					`${node.cursor}dirOut`,
-					`${node.cursor}tensionIn`,
-					`${node.cursor}tensionOut`,
-				];
-			}
+			return [
+				`${node.cursor}expandedTo.0.x`,
+				`${node.cursor}expandedTo.0.y`,
+				`${node.cursor}expandedTo.1.x`,
+				`${node.cursor}expandedTo.1.y`,
+				`${node.cursor}dirIn`,
+				`${node.cursor}dirOut`,
+				`${node.cursor}tensionIn`,
+				`${node.cursor}tensionOut`,
+			];
 		});
 
 		const done = _take(ops, index + 1);
 
 		return _difference(done, cursorToLook).length === done.length - cursorToLook.length;
-
 	}
 
 	static createHandle(dest, params) {
-		const {nodes, closed} = dest;
+		const {nodes} = dest;
 
 		for (let k = 0; k < nodes.length; k++) {
 			const node = nodes[k];
 
 			for (let j = 0; j < node.expandedTo.length; j++) {
 				let nextSecondIndex = j;
-				let nextFirstIndex = k + 1 * (j ? -1 : 1);
-				let prevFirstIndex = k - 1 * (j ? -1 : 1);
+				let nextFirstIndex = k + (1 * (j ? -1 : 1));
+				let prevFirstIndex = k - (1 * (j ? -1 : 1));
 				let prevSecondIndex = j;
 
 				if (nextFirstIndex > nodes.length - 1) {
@@ -371,7 +395,7 @@ export class SkeletonPath extends SolvablePath {
 					prevNode,
 					nextNode,
 					j,
-					params
+					params,
 				);
 			}
 		}
@@ -385,14 +409,16 @@ export class ClosedSkeletonPath extends SkeletonPath {
 	}
 
 	static createHandle(dest, params) {
-		const {nodes, closed} = dest;
+		const {nodes} = dest;
 
 		for (let k = 0; k < nodes.length; k++) {
 			const node = nodes[k];
 
 			for (let j = 0; j < node.expandedTo.length; j++) {
-				const nextFirstIndex = k + 1 * (j ? -1 : 1) - nodes.length * Math.floor((k + 1 * (j ? -1 : 1)) / nodes.length);
-				const prevFirstIndex = k - 1 * (j ? -1 : 1) - nodes.length * Math.floor((k - 1 * (j ? -1 : 1)) / nodes.length);
+				const nextFirstIndex = k + (1 * (j ? -1 : 1))
+					- (nodes.length * Math.floor((k + (1 * (j ? -1 : 1))) / nodes.length));
+				const prevFirstIndex = k - (1 * (j ? -1 : 1))
+					- (nodes.length * Math.floor((k - (1 * (j ? -1 : 1))) / nodes.length));
 
 				const nextExpanded = nodes[nextFirstIndex].expandedTo[j];
 				const prevExpanded = nodes[prevFirstIndex].expandedTo[j];
@@ -409,7 +435,7 @@ export class ClosedSkeletonPath extends SkeletonPath {
 					prevNode,
 					nextNode,
 					j,
-					params
+					params,
 				);
 			}
 		}
@@ -419,19 +445,21 @@ export class ClosedSkeletonPath extends SkeletonPath {
 export class SimplePath extends SolvablePath {
 	constructor(source, i) {
 		super(i);
-		this.nodes = source.point.map((point, j) => {
-			return new Node(point, i, j);
-		});
+		this.nodes = source.point.map((point, j) => new Node(point, i, j));
 		this.closed = constantOrFormula(true);
 		this.skeleton = constantOrFormula(false);
 		this.exportReversed = constantOrFormula(source.exportReversed);
-		this.transforms = source.transforms !== undefined ? constantOrFormula(source.transforms, `${this.cursor}transforms`) : constantOrFormula(null, `${this.cursor}transforms`);
-		this.transformOrigin = source.transformOrigin ? constantOrFormula(source.transformOrigin, `${this.cursor}transformOrigin`) : constantOrFormula(null, `${this.cursor}transformOrigin`);
+		this.transforms = source.transforms === undefined
+			? constantOrFormula(null, `${this.cursor}transforms`)
+			: constantOrFormula(source.transforms, `${this.cursor}transforms`);
+		this.transformOrigin = source.transformOrigin
+			? constantOrFormula(source.transformOrigin, `${this.cursor}transformOrigin`)
+			: constantOrFormula(null, `${this.cursor}transformOrigin`);
 	}
 
 	isReadyForHandles(ops, index = ops.length - 1) {
-		const cursorToLook = _flatMap(this.nodes, (node) => {
-			return [
+		const cursorToLook = _flatMap(this.nodes, node =>
+			[
 				`${node.cursor}typeOut`,
 				`${node.cursor}typeIn`,
 				`${node.cursor}dirIn`,
@@ -440,13 +468,12 @@ export class SimplePath extends SolvablePath {
 				`${node.cursor}tensionOut`,
 				`${node.cursor}x`,
 				`${node.cursor}y`,
-			];
-		});
+			],
+		);
 
 		const done = _take(ops, index + 1);
 
 		return _difference(done, cursorToLook).length === done.length - cursorToLook.length;
-
 	}
 
 	static createHandle(dest, params) {
@@ -454,7 +481,7 @@ export class SimplePath extends SolvablePath {
 
 		for (let k = 0; k < nodes.length; k++) {
 			const node = nodes[k];
-			const prevNode = nodes[(k - 1) - nodes.length * Math.floor((k - 1) / nodes.length)];
+			const prevNode = nodes[(k - 1) - (nodes.length * Math.floor((k - 1) / nodes.length))];
 			const nextNode = nodes[(k + 1) % nodes.length];
 
 

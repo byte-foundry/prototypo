@@ -1,4 +1,4 @@
-/* global webkitRequestAnimationFrame */
+/* global webkitRequestAnimationFrame, webkitCancelAnimationFrame */
 import _get from 'lodash/get';
 import _slice from 'lodash/slice';
 import React from 'react';
@@ -8,8 +8,8 @@ import Lifespan from 'lifespan';
 import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix, canvasMode} from '../toile/toile';
 import {rayRayIntersection} from '../prototypo.js/utils/updateUtils';
 
-import {changeTransformOrigin, toLodashPath, glyphBoundingBox} from '../prototypo.js/helpers/utils';
-import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D, add2D, distance2D} from '../plumin/util/linear';
+import {changeTransformOrigin, toLodashPath, glyphBoundingBox} from '../prototypo.js/utils/generic';
+import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D, add2D, distance2D} from '../prototypo.js/utils/linear';
 
 import LocalClient from '../stores/local-client.stores';
 
@@ -17,7 +17,7 @@ import FontUpdater from './font-updater.components';
 
 const raf = requestAnimationFrame || webkitRequestAnimationFrame;
 const rafCancel = cancelAnimationFrame || webkitCancelAnimationFrame;
-let rafId = undefined;
+let rafId;
 
 export default class GlyphCanvas extends React.PureComponent {
 	constructor(props) {
@@ -103,7 +103,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		let contourComponentIdx;
 		let contourSelectedIndex = 0;
 		let moving = false;
-		let dragging = true;
+		// let dragging = true;
 		let mouse = this.toile.getMouseState();
 		let appStateValue;
 		let appMode;
