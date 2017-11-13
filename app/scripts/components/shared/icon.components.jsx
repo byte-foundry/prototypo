@@ -5,7 +5,7 @@ import classnames from 'classnames';
 class Icon extends React.PureComponent {
 	render() {
 		const {name, className, ...rest} = this.props;
-		const {url} = require(`../../../images/icons/${name}.svg`).default;
+		const url = require(`../../../images/icons/${name}.svg`).default;
 
 		const classes = classnames('icon', className);
 
