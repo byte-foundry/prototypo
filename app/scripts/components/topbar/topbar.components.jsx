@@ -563,7 +563,6 @@ class Topbar extends React.Component {
 							name="Restart individualization tutorial"
 							handler={this.resetIndivTutorial}
 						/>
-						<TopBarMenuDropdownProItem name="Yolo" cost={1} credits={5} freeAccount />
 					</TopBarMenuDropdown>
 					{academyIcon}
 					{academyProgressItem}
