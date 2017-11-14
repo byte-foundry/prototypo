@@ -424,32 +424,39 @@ class Topbar extends React.Component {
 								freeAccount={freeAccount}
 								cost={otfExportCost}
 								credits={this.state.credits}
-								handler={() => {
-									this.setupExportAs(true);
-								}}
-							/>
-							<TopBarMenuDropdownProItem
-								name="Export source file"
-								id="export-to-otf"
-								freeAccount={freeAccount}
-								cost={otfExportCost}
-								credits={this.state.credits}
-								handler={this.exportOTF}
+								handler={this.exportAs}
 							/>
 							<TopBarMenuDropdownProItem
 								name="Export to Glyphr Studio"
 								id="export-to-glyphr-studio"
 								freeAccount={freeAccount}
-								cost={glyphrExportCost}
+								cost={otfExportCost}
 								handler={this.exportGlyphr}
 								credits={this.state.credits}
 								separator
 							/>
+							{/* <TopBarMenuDropdownProItem
+								name="Export family"
+								id="export-family"
+								freeAccount={freeAccount}
+								cost={otfExportCost} // TODO: multiply
+								handler={this.exportFamily}
+								credits={this.state.credits}
+								separator
+							/> */}
 						</AllowedTopBarWithPayment>
 						<TopBarMenuDropdownItem
 							name="Download Web Preview extension"
 							separator
 							handler={() => {
+								if (navigator.userAgent.toLowerCase().includes('firefox')) {
+									window.open(
+										'https://addons.mozilla.org/fr/firefox/addon/prototypo-web-preview/',
+										'web-extension',
+									);
+									return;
+								}
+
 								window.open(
 									'https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf',
 									'web-extension',
