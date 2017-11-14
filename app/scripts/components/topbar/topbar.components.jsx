@@ -44,8 +44,9 @@ class Topbar extends React.Component {
 
 		// function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
-		this.exportOTF = this.exportOTF.bind(this);
+		this.exportAs = this.exportAs.bind(this);
 		this.exportMergedOTF = this.exportMergedOTF.bind(this);
+		this.exportFamily = this.exportFamily.bind(this);
 		this.logout = this.logout.bind(this);
 		this.individualize = this.individualize.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
@@ -105,24 +106,24 @@ class Topbar extends React.Component {
 		router: React.PropTypes.object.isRequired,
 	};
 
-	exportOTF() {
-		this.client.dispatchAction('/export-otf');
-		Log.ui('Topbar.exportOTF', 'not merged');
-	}
-
 	exportMergedOTF() {
 		this.client.dispatchAction('/export-otf', {merged: true});
 		Log.ui('Topbar.exportOTF', 'merged');
 	}
 
-	setupExportAs(merged) {
-		this.client.dispatchAction('/set-up-export-otf', {merged});
-		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
+	exportAs() {
+		this.client.dispatchAction('/set-up-export-otf', {merged: true});
+		Log.ui('Topbar.exportOTF', 'merged');
 	}
 
 	exportGlyphr() {
 		this.client.dispatchAction('/export-glyphr');
 		Log.ui('Topbar.exportGlyphr');
+	}
+
+	exportFamily() {
+		this.client.dispatchAction('/export-family');
+		Log.ui('Topbar.exportFamily');
 	}
 
 	resetAllParams() {

@@ -303,7 +303,7 @@ function setupHoodie(data) {
 		});
 	}
 
-	Log.setUserId(HoodieApi.instance.email);
+	window.ga('set', 'userId', HoodieApi.instance.email);
 	return data;
 }
 
