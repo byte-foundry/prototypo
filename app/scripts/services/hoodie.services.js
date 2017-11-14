@@ -5,12 +5,10 @@ import apolloClient from './graphcool.services';
 import isProduction from '../helpers/is-production.helpers';
 import LocalClient from '../stores/local-client.stores';
 
-import Log from './log.services';
 
 const AWS_URL = `https://${isProduction() ? 'e4jpj60rk8' : 'tc1b6vq6o8'}.execute-api.eu-west-1.amazonaws.com/${isProduction() ? 'prod' : 'dev'}`;
 
 let localClient;
-let graphCoolUserId; // this is used temporarily to link graphcool <-> stripe
 
 window.addEventListener('fluxServer.setup', async () => {
 	localClient = LocalClient.instance();
@@ -110,7 +108,6 @@ export default class HoodieApi {
 		});
 
 		window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
-		graphCoolUserId = response.data.createUser.id;
 	}
 
 	static async login(user, password) {
@@ -153,7 +150,6 @@ export default class HoodieApi {
 		});
 
 		window.localStorage.setItem('graphcoolToken', response.data.auth.token);
-		graphCoolUserId = response.data.signupEmailUser.id;
 	}
 
 	static isLoggedIn() {
