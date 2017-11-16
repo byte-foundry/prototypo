@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {graphql, gql} from 'react-apollo';
 
@@ -25,9 +26,9 @@ class AccountChangePassword extends React.Component {
 		this.setState({loading: true, success: false, errors: ''});
 
 		try {
-			const password = this.password.value;
-			const newPassword = this.newPassword.value;
-			const confirm = this.newPasswordConfirm.value;
+			const password = this.password.input.value;
+			const newPassword = this.newPassword.input.value;
+			const confirm = this.newPasswordConfirm.input.value;
 
 			if (newPassword !== confirm) {
 				throw new Error("The new password and the confirmation doesn't match");
@@ -38,6 +39,10 @@ class AccountChangePassword extends React.Component {
 			this.setState({loading: false, success: true});
 		}
 		catch (err) {
+			if (err.graphQLErrors && err.graphQLErrors[0].code === 5001) {
+				this.setState({loading: false, errors: err.graphQLErrors[0].functionError});
+				return;
+			}
 			this.setState({loading: false, errors: err.message});
 		}
 	}
@@ -85,24 +90,46 @@ class AccountChangePassword extends React.Component {
 	}
 }
 
+AccountChangePassword.propTypes = {
+	updatePassword: PropTypes.func.isRequired,
+};
+
+const currentEmailQuery = gql`
+	query {
+		user {
+			email
+		}
+	}
+`;
+
 const updatePasswordMutation = gql`
 	mutation updateProfile($email: String!, $password: String!, $newPassword: String!) {
-		updatePasword(email: $email, password: $password, newPassword: $newPassword) {
+		updatePassword(email: $email, password: $password, newPassword: $newPassword) {
 			id
 		}
 	}
 `;
 
-export default graphql(updatePasswordMutation, {
-	props: ({mutate, ownProps}) => ({
-		updatePassword: (password, newPassword) => {
-			mutate({
-				variables: {
-					id: ownProps.id,
-					password,
-					newPassword,
-				},
-			});
-		},
-	}),
-})(AccountChangePassword);
+export default graphql(currentEmailQuery, {
+	props({data}) {
+		if (data.user) {
+			return {email: data.user.email};
+		}
+
+		return {loading: data.loading};
+	},
+})(
+	graphql(updatePasswordMutation, {
+		props: ({mutate, ownProps}) => ({
+			updatePassword: (password, newPassword) =>
+				mutate({
+					variables: {
+						id: ownProps.id,
+						email: ownProps.email,
+						password,
+						newPassword,
+					},
+				}),
+		}),
+	})(AccountChangePassword),
+);
