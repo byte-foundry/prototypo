@@ -1,17 +1,9 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-export default class FormError extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
+export default class FormError extends React.PureComponent {
 	render() {
-		return (
-			<div className="form-error">
-				{this.props.errorText}
-			</div>
-		);
+		const {children, errorText} = this.props;
+
+		return <div className="form-error">{children || errorText}</div>;
 	}
 }
