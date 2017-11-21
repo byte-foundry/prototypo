@@ -357,5 +357,6 @@
 	&.is-active &-provider div {
 		background-color: $green;
 		background-image: url("../../../images/icon-checked-flat.svg");
+		background-size: 46%;
 	}
 }
