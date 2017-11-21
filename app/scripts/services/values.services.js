@@ -18,9 +18,7 @@ function values(prefix) {
 					`,
 					variables: {id: params.variantId},
 				})
-				.then(({data}) => {
-					return data.Variant;
-				})
+				.then(({data}) => data.Variant)
 				.catch(e => console.log('oops', e));
 			}
 			if (prefix === 'newapp') {
@@ -35,9 +33,7 @@ function values(prefix) {
 						}
 					`,
 				})
-				.then(({data}) => {
-					return data.user;
-				})
+				.then(({data}) => data.user)
 				.catch(e => console.log('oops', e));
 			}
 		},
@@ -56,7 +52,7 @@ function values(prefix) {
 						values: params.values,
 					},
 				})
-				.catch(e => console.log('oops', e))
+				.catch(e => console.log('oops', e));
 			}
 			if (prefix === 'newapp') {
 				apolloClient.query({
@@ -82,7 +78,7 @@ function values(prefix) {
 							values: JSON.parse(JSON.stringify(params.values)),
 						},
 					})
-					.catch(e => console.log('oops', e))
+					.catch(e => console.log('oops', e));
 				});
 			}
 			// if (location.hash.indexOf('#/replay') === -1 && HoodieApi.isLoggedIn()) {

@@ -48,11 +48,9 @@ window.addEventListener('appValues.loaded', () => {
 export async function loadFontValues(typedata, typeface, variantId) {
 	const initValues = {};
 
-	typedata.controls.forEach((group) => {
-		return group.parameters.forEach((param) => {
-			initValues[param.name] = param.init;
-		});
-	});
+	typedata.controls.forEach(group => group.parameters.forEach((param) => {
+		initValues[param.name] = param.init;
+	}));
 
 	try {
 		const fontValues = await FontValues.get({typeface, variantId});
@@ -88,10 +86,10 @@ export const saveAppValues = _throttle(() => {
 		return;
 	}
 
-	//TODO(franzp): WOW BE CAREFUL
-	//debugger;
-	//qsdmjkfqsd,qsdlhvklm:({}:w
-	//const appValues = prototypoStore.head.toJS();
+	// TODO(franzp): WOW BE CAREFUL
+	// debugger;
+	// qsdmjkfqsd,qsdlhvklm:({}:w
+	// const appValues = prototypoStore.head.toJS();
 	const appValues = {};
 
 	valuesToLoad.forEach((ref) => {

@@ -132,13 +132,13 @@ const unicodeRanges: UnicodeRange[] = [
 ];
 
 export function getUnicodeRange(unicode: number): number {
-    for (let i: number = 0; i < unicodeRanges.length; i++) {
-        const range: UnicodeRange = unicodeRanges[i];
+	for (let i: number = 0; i < unicodeRanges.length; i++) {
+		const range: UnicodeRange = unicodeRanges[i];
 
-        if (unicode >= range.begin && unicode < range.end) {
-            return i;
-        }
-    }
+		if (unicode >= range.begin && unicode < range.end) {
+			return i;
+		}
+	}
 
-    return -1;
+	return -1;
 }

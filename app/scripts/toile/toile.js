@@ -92,6 +92,7 @@ const labelForMenu = {
 	[toileType.NODE_SKELETON]: 'Skeleton control point',
 };
 const menuTextSize = 30;
+const propsTextSize = 21;
 const componentMenuTextSize = 20;
 const componentMenuInfluenceRadius = 150;
 const componentMenuNoneRadius = 20;
@@ -522,6 +523,7 @@ export default class Toile {
 						y: handleNode.y,
 					},
 					radius: nodeHotRadius,
+					transforms: node.addedTransform,
 					parentId: id,
 					skeletonId: parentId,
 					otherNode,
@@ -1304,29 +1306,6 @@ export default class Toile {
 		this.drawArcBetweenVector(node, startVec, endVec, '#24d390');
 	}
 
-	drawThicknessTool(node, id, hotItems) {
-		const [oppositeExpanded, expandedSource] = node.expandedTo;
-		const normalVector = normalize2D({
-			x: expandedSource.y - oppositeExpanded.y,
-			y: oppositeExpanded.x - expandedSource.x,
-		});
-		const inHot = _find(hotItems, item => item.id === id);
-		const toolPoints = [
-			add2D(expandedSource, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
-			add2D(oppositeExpanded, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
-			add2D(node, mulScalar2D(50 / this.viewMatrix[0], normalVector)),
-		];
-		const color = inHot ? red : blue;
-
-		this.drawLine(expandedSource, oppositeExpanded, blue);
-		this.drawLine(expandedSource, toolPoints[0], blue, undefined, [4, 4]);
-		this.drawLine(oppositeExpanded, toolPoints[1], blue, undefined, [4, 4]);
-		this.drawLine(toolPoints[0], toolPoints[1], color);
-		this.drawCircle(toolPoints[0], nodeDrawRadius, color, undefined);
-		this.drawCircle(toolPoints[1], nodeDrawRadius, color, undefined);
-		this.drawCircle(toolPoints[2], nodeDrawRadius, undefined, yellow);
-	}
-
 	drawNodeTool(node, id, hotItems) {
 		const [farthestNode, closestNode] = node.expand.distr > 0.5
 			? [node.expandedTo[0], node.expandedTo[1]]
@@ -1338,45 +1317,6 @@ export default class Toile {
 		this.drawRing(node, radius - 2, radius + 2, undefined, ringBackground);
 		this.drawLine(closestNode, farthestNode, green, undefined, [5, 5, 15, 5]);
 		this.drawCircle(farthestNode, 5, color, color);
-
-		const direction = subtract2D(farthestNode, node);
-		const angle = `θ ${(Math.atan2(direction.y, direction.x) * 180 / Math.PI).toFixed(1)}°`;
-		const width = `w ${node.expand.width.toFixed(1)}`;
-		const widthTextSize = this.measureText(width, 20, 'Fira sans');
-		const angleTextSize = this.measureText(angle, 20, 'Fira sans');
-		const normalVector = normalize2D({
-			x: direction.y,
-			y: -direction.x,
-		});
-
-		this.drawText(angle,
-			add2D(
-				add2D(
-					mulScalar2D(1 / 2, add2D(node, farthestNode)),
-					mulScalar2D(-35 / this.viewMatrix[0], normalVector),
-				),
-				{
-					x: -angleTextSize.width / (2 * this.viewMatrix[0]),
-					y: 0,
-				},
-			),
-			20,
-			red,
-		);
-		this.drawText(width,
-			add2D(
-				add2D(
-					mulScalar2D(1 / 2, add2D(node, farthestNode)),
-					mulScalar2D(-30 / this.viewMatrix[0], normalVector),
-				),
-				{
-					x: -widthTextSize.width / (2 * this.viewMatrix[0]),
-					y: -30 / this.viewMatrix[0],
-				},
-			),
-			20,
-			green,
-		);
 	}
 
 	drawSkeletonDistrTool(node) {
@@ -1409,55 +1349,89 @@ export default class Toile {
 	}
 
 	drawSkeletonPosTool(node) {
-		const [zoom] = this.viewMatrix;
-		const topLeft = add2D(mulScalar2D(1 / zoom, {x: -6, y: 6}), node);
-		const bottomLeft = add2D(mulScalar2D(1 / zoom, {x: -6, y: -6}), node);
-		const topRight = add2D(mulScalar2D(1 / zoom, {x: 6, y: 6}), node);
-		const bottomRight = add2D(mulScalar2D(1 / zoom, {x: 6, y: -6}), node);
-		const oldWidth = this.context.lineWidth;
-
-		this.context.lineWidth = 2;
-		this.drawLine(topLeft, bottomRight, red);
-		this.drawLine(bottomLeft, topRight, red);
-		this.context.lineWidth = oldWidth;
 		if (node.expandedTo) {
 			this.drawLine(node.expandedTo[0], node.expandedTo[1], red, undefined, [5, 5, 15, 5]);
 		}
-
-		const xText = `x: ${node.x.toFixed(0)}`;
-		const yText = `y: ${node.y.toFixed(0)}`;
-		const xTextSize = this.measureText(xText, 15, 'Fira sans');
-		const yTextSize = this.measureText(yText, 15, 'Fira sans');
-		const xCoordsPos = add2D(mulScalar2D(1 / zoom, {x: 20, y: 40}), node);
-		const yCoordsPos = add2D(mulScalar2D(1 / zoom, {x: 20, y: 20}), node);
-
-		this.drawText(xText,
-			add2D(
-				xCoordsPos,
-				{
-					x: -xTextSize.width / (2 * zoom),
-					y: 0,
-				},
-			),
-			20,
-			red,
-		);
-
-		this.drawText(yText,
-			add2D(
-				yCoordsPos,
-				{
-					x: -yTextSize.width / (2 * zoom),
-					y: 0,
-				},
-			),
-			20,
-			red,
-		);
 	}
 
-	drawNodeProperty(node) {
+	drawSkeletonProps(node, start, end, zoom, index) {
+		this.drawText('Skeleton node props', {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * index / zoom),
+		}, 14, darkestGrey);
+		this.drawText(`x: ${node.x} (${Math.round(node.x - node.xBase)})`, {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * (index + 1) / zoom),
+		}, 12, darkestGrey);
+
+		this.drawText(`y: ${node.y} (${Math.round(node.y - node.yBase)})`, {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * (index + 2) / zoom),
+		}, 12, darkestGrey);
+	}
+
+	drawExpandProps(node, start, end, zoom, index) {
+		this.drawText('Skeleton expand props', {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * index / zoom),
+		}, 14, darkestGrey);
+		this.drawText(`width: ${node.expand.width.toFixed(1)} (${(node.expand.width - node.expand.baseWidth).toFixed(1)})`, {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * (index + 1) / zoom),
+		}, 12, darkestGrey);
+
+		this.drawText(`angle: ${node.expand.angle.toFixed(2)} (${(node.expand.angle - node.expand.baseAngle).toFixed(2)})`, {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * (index + 2) / zoom),
+		}, 12, darkestGrey);
+
+		this.drawText(`distr: ${node.expand.distr.toFixed(2)} (${(node.expand.distr - node.expand.baseDistr).toFixed(2)})`, {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * (index + 3) / zoom),
+		}, 12, darkestGrey);
+	}
+
+	drawExpandedNodeProps(node, start, end, zoom, index) {
+		this.drawText('Node props', {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * index / zoom),
+		}, 14, darkestGrey);
+		this.drawText(`x: ${node.x}`, {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * (index + 1) / zoom),
+		}, 12, darkestGrey);
+		this.drawText(`y: ${node.y}`, {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * (index + 2) / zoom),
+		}, 12, darkestGrey);
+	}
+
+	drawHandleProps(node, start, end, zoom, index) {
+		this.drawText('Handle props', {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * index / zoom),
+		}, 14, darkestGrey);
+		this.drawText(`direction in: ${node.dirIn.toFixed(2)} (${(node.dirIn - node.baseDirIn).toFixed(2)})`, {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * (index + 1) / zoom),
+		}, 14, darkestGrey);
+		this.drawText(`tension in: ${(node.tensionIn + node.baseTensionIn).toFixed(2)} (${node.tensionIn.toFixed(2)})`, {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * (index + 2) / zoom),
+		}, 14, darkestGrey);
+		this.drawText(`direction out: ${node.dirOut.toFixed(2)} (${(node.dirOut - node.baseDirOut).toFixed(2)})`, {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * (index + 3) / zoom),
+		}, 14, darkestGrey);
+		this.drawText(`tension in: ${(node.tensionOut + node.baseTensionOut).toFixed(2)} (${node.tensionOut.toFixed(2)})`, {
+			x: start.x + (10 / zoom),
+			y: start.y - (propsTextSize * (index + 4) / zoom),
+		}, 14, darkestGrey);
+	}
+
+	drawNodeProperty(type, node, parent) {
 		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+		const [zoom] = this.viewMatrix;
 		const [start, end] = transformCoords(
 			[
 				{
@@ -1470,9 +1444,8 @@ export default class Toile {
 				},
 			],
 			inverseMatrix,
-			this.height / this.viewMatrix[0],
+			this.height / zoom,
 		);
-		const textHeight = 21;
 
 		this.drawRectangleFromCorners(
 			start,
@@ -1480,39 +1453,25 @@ export default class Toile {
 			undefined,
 			lightGrey,
 		);
-		this.drawText('Skeleton node props', {
-			x: start.x + (10 / this.viewMatrix[0]),
-			y: start.y - (textHeight * 1 / this.viewMatrix[0]),
-		}, 14, darkestGrey);
-		this.drawText(`x: ${node.x} (${Math.round(node.x - node.xBase)})`, {
-			x: start.x + (10 / this.viewMatrix[0]),
-			y: start.y - (textHeight * 2 / this.viewMatrix[0]),
-		}, 12, darkestGrey);
 
-		this.drawText(`y: ${node.y} (${Math.round(node.y - node.yBase)})`, {
-			x: start.x + (10 / this.viewMatrix[0]),
-			y: start.y - (textHeight * 3 / this.viewMatrix[0]),
-		}, 12, darkestGrey);
-
-		if (node.expand) {
-			this.drawText('Skeleton expand props', {
-				x: start.x + (10 / this.viewMatrix[0]),
-				y: start.y - (textHeight * 4 / this.viewMatrix[0]),
-			}, 14, darkestGrey);
-			this.drawText(`width: ${node.expand.width.toFixed(1)} (${Math.round(node.expand.width - node.expand.baseWidth)})`, {
-				x: start.x + (10 / this.viewMatrix[0]),
-				y: start.y - (textHeight * 5 / this.viewMatrix[0]),
-			}, 12, darkestGrey);
-
-			this.drawText(`angle: ${node.expand.angle.toFixed(2)} (${(node.expand.angle - node.expand.baseAngle).toFixed(2)})`, {
-				x: start.x + (10 / this.viewMatrix[0]),
-				y: start.y - (textHeight * 6 / this.viewMatrix[0]),
-			}, 12, darkestGrey);
-
-			this.drawText(`distr: ${node.expand.distr.toFixed(2)} (${Math.round(node.expand.distr - node.expand.baseDistr)})`, {
-				x: start.x + (10 / this.viewMatrix[0]),
-				y: start.y - (textHeight * 7 / this.viewMatrix[0]),
-			}, 12, darkestGrey);
+		if (type === toileType.NODE_SKELETON) {
+			this.drawSkeletonProps(node, start, end, zoom, 1);
+			this.drawExpandProps(node, start, end, zoom, 4);
+		}
+		else if (type === toileType.CONTOUR_NODE) {
+			this.drawSkeletonProps(node, start, end, zoom, 1);
+		}
+		else if (
+			type === toileType.NODE_OUT
+			|| type === toileType.NODE_IN
+			|| type === toileType.CONTOUR_NODE_OUT
+			|| type === toileType.CONTOUR_NODE_IN
+		) {
+			this.drawHandleProps(parent, start, end, zoom, 1);
+		}
+		else {
+			this.drawExpandedNodeProps(node, start, end, zoom, 1);
+			this.drawExpandProps(parent, start, end, zoom, 4);
 		}
 	}
 

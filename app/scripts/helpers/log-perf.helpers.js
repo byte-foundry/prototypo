@@ -22,11 +22,13 @@ export function setupPerf() {
 
 	const raf = requestAnimationFrame || webkitRequestAnimationFrame;
 	const height = canvas.clientHeight;
+
 	toile.setCamera({x: 40, y: -40}, 1, -height);
 
 	function rafFunc() {
 		const width = canvas.clientWidth;
 		const height = canvas.clientHeight;
+
 		canvas.width = width;
 		canvas.height = height;
 		const hotItems = toile.getHotInteractiveItem();

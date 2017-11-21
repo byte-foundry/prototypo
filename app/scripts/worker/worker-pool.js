@@ -52,9 +52,9 @@ function getRandomUuid() {
 export default class WorkerPool {
 
 	constructor() {
-		 //Workers for every thread available including a fast lane worker for the canvas
+		 // Workers for every thread available including a fast lane worker for the canvas
 		const numberOfWorker = navigator.hardwareConcurrency - 1;
-		const ProtoWorker = require(`worker-loader!./worker.js`);
+		const ProtoWorker = require('worker-loader!./worker.js');
 		let eachJobList = [];
 
 		this.workerArray = [];
@@ -67,7 +67,6 @@ export default class WorkerPool {
 		/* #end */
 
 		for (let i = 0; i < numberOfWorker; i++) {
-
 			const worker = new ProtoWorker();
 
 			if (i === numberOfWorker - 1) {
@@ -104,7 +103,7 @@ export default class WorkerPool {
 
 				worker.addEventListener('message', (e) => {
 					if (e.data.id.indexOf('each') === 0) {
-						//TODO(franz): think about timing out
+						// TODO(franz): think about timing out
 						if (eachJobList.length < numberOfWorker - 2) {
 							eachJobList.push(1);
 						}
@@ -123,7 +122,7 @@ export default class WorkerPool {
 
 					/* #if dev */
 					localClient.dispatchAction('/store-value', {
-						workers: this.workerArray.map((w) => {return w.working;}),
+						workers: this.workerArray.map(w => w.working),
 					});
 					/* #end */
 
@@ -139,9 +138,7 @@ export default class WorkerPool {
 	}
 
 	areWorkerBusy() {
-		return _reduce(this.workerArray, (acc, worker) => {
-			return acc || worker.working;
-		}, false);
+		return _reduce(this.workerArray, (acc, worker) => acc || worker.working, false);
 	}
 
 	doFastJob(job) {
@@ -162,14 +159,14 @@ export default class WorkerPool {
 		}
 	}
 
-	//jobs should be of this form
-	//{
+	// jobs should be of this form
+	// {
 	//	action: {
 	//		type: 'computeWhatever',
 	//		data: data,
 	//	},
 	//	callback: Function,
-	//}
+	// }
 	doJobs(jobs) {
 		const jobPerWorker = Math.ceil(jobs.length / this.workerArray.length);
 		const time = window.performance.now();
@@ -209,7 +206,7 @@ export default class WorkerPool {
 			this.workerArray[i].worker.postMessage(job.action);
 			/* #if dev */
 			localClient.dispatchAction('/store-value', {
-				workers: this.workerArray.map((worker) => {return worker.working;}),
+				workers: this.workerArray.map(worker => worker.working),
 			});
 			/* #end */
 		}

@@ -164,21 +164,21 @@ export class hmtx {
 }
 
 function addSegment(t, code, glyphIndex) {
-    t.segments.push({
-        end: code,
-        start: code,
-        delta: -(code - glyphIndex),
-        offset: 0,
-    });
+	t.segments.push({
+		end: code,
+		start: code,
+		delta: -(code - glyphIndex),
+		offset: 0,
+	});
 }
 
 function addTerminatorSegment(t) {
-    t.segments.push({
-        end: 0xFFFF,
-        start: 0xFFFF,
-        delta: 1,
-        offset: 0,
-    });
+	t.segments.push({
+		end: 0xFFFF,
+		start: 0xFFFF,
+		delta: 1,
+		offset: 0,
+	});
 }
 
 export class cmap {
@@ -203,17 +203,15 @@ export class cmap {
 		t.segments = [];
 		for (i = 0; i < glyphs.length; i++) {
 			const glyph = glyphs[i];
-			//WARNING: This is because we have one unicode per glyph right now
-			//But it might change.
+			// WARNING: This is because we have one unicode per glyph right now
+			// But it might change.
 			const unicodes = [glyph.unicode];
 
 			for (let j = 0; j < unicodes.length; j++) {
 				addSegment(t, unicodes[j], i);
 			}
 
-			t.segments = t.segments.sort((a, b) => {
-				return a.start - b.start;
-			});
+			t.segments = t.segments.sort((a, b) => a.start - b.start);
 		}
 
 		addTerminatorSegment(t);
@@ -268,35 +266,35 @@ const utf16 = 'utf-16';
 // MacOS script ID → encoding. This table stores the default case,
 // which can be overridden by macLanguageEncodings.
 const macScriptEncodings = {
-    0: 'macintosh',           // smRoman
-    1: 'x-mac-japanese',      // smJapanese
-    2: 'x-mac-chinesetrad',   // smTradChinese
-    3: 'x-mac-korean',        // smKorean
-    6: 'x-mac-greek',         // smGreek
-    7: 'x-mac-cyrillic',      // smCyrillic
-    9: 'x-mac-devanagai',     // smDevanagari
-    10: 'x-mac-gurmukhi',     // smGurmukhi
-    11: 'x-mac-gujarati',     // smGujarati
-    12: 'x-mac-oriya',        // smOriya
-    13: 'x-mac-bengali',      // smBengali
-    14: 'x-mac-tamil',        // smTamil
-    15: 'x-mac-telugu',       // smTelugu
-    16: 'x-mac-kannada',      // smKannada
-    17: 'x-mac-malayalam',    // smMalayalam
-    18: 'x-mac-sinhalese',    // smSinhalese
-    19: 'x-mac-burmese',      // smBurmese
-    20: 'x-mac-khmer',        // smKhmer
-    21: 'x-mac-thai',         // smThai
-    22: 'x-mac-lao',          // smLao
-    23: 'x-mac-georgian',     // smGeorgian
-    24: 'x-mac-armenian',     // smArmenian
-    25: 'x-mac-chinesesimp',  // smSimpChinese
-    26: 'x-mac-tibetan',      // smTibetan
-    27: 'x-mac-mongolian',    // smMongolian
-    28: 'x-mac-ethiopic',     // smEthiopic
-    29: 'x-mac-ce',           // smCentralEuroRoman
-    30: 'x-mac-vietnamese',   // smVietnamese
-    31: 'x-mac-extarabic',    // smExtArabic
+	0: 'macintosh',           // smRoman
+	1: 'x-mac-japanese',      // smJapanese
+	2: 'x-mac-chinesetrad',   // smTradChinese
+	3: 'x-mac-korean',        // smKorean
+	6: 'x-mac-greek',         // smGreek
+	7: 'x-mac-cyrillic',      // smCyrillic
+	9: 'x-mac-devanagai',     // smDevanagari
+	10: 'x-mac-gurmukhi',     // smGurmukhi
+	11: 'x-mac-gujarati',     // smGujarati
+	12: 'x-mac-oriya',        // smOriya
+	13: 'x-mac-bengali',      // smBengali
+	14: 'x-mac-tamil',        // smTamil
+	15: 'x-mac-telugu',       // smTelugu
+	16: 'x-mac-kannada',      // smKannada
+	17: 'x-mac-malayalam',    // smMalayalam
+	18: 'x-mac-sinhalese',    // smSinhalese
+	19: 'x-mac-burmese',      // smBurmese
+	20: 'x-mac-khmer',        // smKhmer
+	21: 'x-mac-thai',         // smThai
+	22: 'x-mac-lao',          // smLao
+	23: 'x-mac-georgian',     // smGeorgian
+	24: 'x-mac-armenian',     // smArmenian
+	25: 'x-mac-chinesesimp',  // smSimpChinese
+	26: 'x-mac-tibetan',      // smTibetan
+	27: 'x-mac-mongolian',    // smMongolian
+	28: 'x-mac-ethiopic',     // smEthiopic
+	29: 'x-mac-ce',           // smCentralEuroRoman
+	30: 'x-mac-vietnamese',   // smVietnamese
+	31: 'x-mac-extarabic',    // smExtArabic
 };
 
 // MacOS language ID → encoding. This table stores the exceptional
@@ -306,143 +304,143 @@ const macScriptEncodings = {
 //
 // http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/Readme.txt
 const macLanguageEncodings = {
-    15: 'x-mac-icelandic',    // langIcelandic
-    17: 'x-mac-turkish',      // langTurkish
-    18: 'x-mac-croatian',     // langCroatian
-    24: 'x-mac-ce',           // langLithuanian
-    25: 'x-mac-ce',           // langPolish
-    26: 'x-mac-ce',           // langHungarian
-    27: 'x-mac-ce',           // langEstonian
-    28: 'x-mac-ce',           // langLatvian
-    30: 'x-mac-icelandic',    // langFaroese
-    37: 'x-mac-romanian',     // langRomanian
-    38: 'x-mac-ce',           // langCzech
-    39: 'x-mac-ce',           // langSlovak
-    40: 'x-mac-ce',           // langSlovenian
-    143: 'x-mac-inuit',       // langInuktitut
-    146: 'x-mac-gaelic',      // langIrishGaelicScript
+	15: 'x-mac-icelandic',    // langIcelandic
+	17: 'x-mac-turkish',      // langTurkish
+	18: 'x-mac-croatian',     // langCroatian
+	24: 'x-mac-ce',           // langLithuanian
+	25: 'x-mac-ce',           // langPolish
+	26: 'x-mac-ce',           // langHungarian
+	27: 'x-mac-ce',           // langEstonian
+	28: 'x-mac-ce',           // langLatvian
+	30: 'x-mac-icelandic',    // langFaroese
+	37: 'x-mac-romanian',     // langRomanian
+	38: 'x-mac-ce',           // langCzech
+	39: 'x-mac-ce',           // langSlovak
+	40: 'x-mac-ce',           // langSlovenian
+	143: 'x-mac-inuit',       // langInuktitut
+	146: 'x-mac-gaelic',      // langIrishGaelicScript
 };
 
 const macLanguages = {
-    0: 'en',
-    1: 'fr',
-    2: 'de',
-    3: 'it',
-    4: 'nl',
-    5: 'sv',
-    6: 'es',
-    7: 'da',
-    8: 'pt',
-    9: 'no',
-    10: 'he',
-    11: 'ja',
-    12: 'ar',
-    13: 'fi',
-    14: 'el',
-    15: 'is',
-    16: 'mt',
-    17: 'tr',
-    18: 'hr',
-    19: 'zh-Hant',
-    20: 'ur',
-    21: 'hi',
-    22: 'th',
-    23: 'ko',
-    24: 'lt',
-    25: 'pl',
-    26: 'hu',
-    27: 'es',
-    28: 'lv',
-    29: 'se',
-    30: 'fo',
-    31: 'fa',
-    32: 'ru',
-    33: 'zh',
-    34: 'nl-BE',
-    35: 'ga',
-    36: 'sq',
-    37: 'ro',
-    38: 'cz',
-    39: 'sk',
-    40: 'si',
-    41: 'yi',
-    42: 'sr',
-    43: 'mk',
-    44: 'bg',
-    45: 'uk',
-    46: 'be',
-    47: 'uz',
-    48: 'kk',
-    49: 'az-Cyrl',
-    50: 'az-Arab',
-    51: 'hy',
-    52: 'ka',
-    53: 'mo',
-    54: 'ky',
-    55: 'tg',
-    56: 'tk',
-    57: 'mn-CN',
-    58: 'mn',
-    59: 'ps',
-    60: 'ks',
-    61: 'ku',
-    62: 'sd',
-    63: 'bo',
-    64: 'ne',
-    65: 'sa',
-    66: 'mr',
-    67: 'bn',
-    68: 'as',
-    69: 'gu',
-    70: 'pa',
-    71: 'or',
-    72: 'ml',
-    73: 'kn',
-    74: 'ta',
-    75: 'te',
-    76: 'si',
-    77: 'my',
-    78: 'km',
-    79: 'lo',
-    80: 'vi',
-    81: 'id',
-    82: 'tl',
-    83: 'ms',
-    84: 'ms-Arab',
-    85: 'am',
-    86: 'ti',
-    87: 'om',
-    88: 'so',
-    89: 'sw',
-    90: 'rw',
-    91: 'rn',
-    92: 'ny',
-    93: 'mg',
-    94: 'eo',
-    128: 'cy',
-    129: 'eu',
-    130: 'ca',
-    131: 'la',
-    132: 'qu',
-    133: 'gn',
-    134: 'ay',
-    135: 'tt',
-    136: 'ug',
-    137: 'dz',
-    138: 'jv',
-    139: 'su',
-    140: 'gl',
-    141: 'af',
-    142: 'br',
-    143: 'iu',
-    144: 'gd',
-    145: 'gv',
-    146: 'ga',
-    147: 'to',
-    148: 'el-polyton',
-    149: 'kl',
-    150: 'az',
-    151: 'nn',
+	0: 'en',
+	1: 'fr',
+	2: 'de',
+	3: 'it',
+	4: 'nl',
+	5: 'sv',
+	6: 'es',
+	7: 'da',
+	8: 'pt',
+	9: 'no',
+	10: 'he',
+	11: 'ja',
+	12: 'ar',
+	13: 'fi',
+	14: 'el',
+	15: 'is',
+	16: 'mt',
+	17: 'tr',
+	18: 'hr',
+	19: 'zh-Hant',
+	20: 'ur',
+	21: 'hi',
+	22: 'th',
+	23: 'ko',
+	24: 'lt',
+	25: 'pl',
+	26: 'hu',
+	27: 'es',
+	28: 'lv',
+	29: 'se',
+	30: 'fo',
+	31: 'fa',
+	32: 'ru',
+	33: 'zh',
+	34: 'nl-BE',
+	35: 'ga',
+	36: 'sq',
+	37: 'ro',
+	38: 'cz',
+	39: 'sk',
+	40: 'si',
+	41: 'yi',
+	42: 'sr',
+	43: 'mk',
+	44: 'bg',
+	45: 'uk',
+	46: 'be',
+	47: 'uz',
+	48: 'kk',
+	49: 'az-Cyrl',
+	50: 'az-Arab',
+	51: 'hy',
+	52: 'ka',
+	53: 'mo',
+	54: 'ky',
+	55: 'tg',
+	56: 'tk',
+	57: 'mn-CN',
+	58: 'mn',
+	59: 'ps',
+	60: 'ks',
+	61: 'ku',
+	62: 'sd',
+	63: 'bo',
+	64: 'ne',
+	65: 'sa',
+	66: 'mr',
+	67: 'bn',
+	68: 'as',
+	69: 'gu',
+	70: 'pa',
+	71: 'or',
+	72: 'ml',
+	73: 'kn',
+	74: 'ta',
+	75: 'te',
+	76: 'si',
+	77: 'my',
+	78: 'km',
+	79: 'lo',
+	80: 'vi',
+	81: 'id',
+	82: 'tl',
+	83: 'ms',
+	84: 'ms-Arab',
+	85: 'am',
+	86: 'ti',
+	87: 'om',
+	88: 'so',
+	89: 'sw',
+	90: 'rw',
+	91: 'rn',
+	92: 'ny',
+	93: 'mg',
+	94: 'eo',
+	128: 'cy',
+	129: 'eu',
+	130: 'ca',
+	131: 'la',
+	132: 'qu',
+	133: 'gn',
+	134: 'ay',
+	135: 'tt',
+	136: 'ug',
+	137: 'dz',
+	138: 'jv',
+	139: 'su',
+	140: 'gl',
+	141: 'af',
+	142: 'br',
+	143: 'iu',
+	144: 'gd',
+	145: 'gv',
+	146: 'ga',
+	147: 'to',
+	148: 'el-polyton',
+	149: 'kl',
+	150: 'az',
+	151: 'nn',
 };
 
 // While Microsoft indicates a region/country for all its language
@@ -812,109 +810,108 @@ const macLanguageToScript = {
 };
 
 function getEncoding(platformID, encodingID, languageID) {
-    switch (platformID) {
-        case 0:  // Unicode
-            return utf16;
+	switch (platformID) {
+	case 0:  // Unicode
+		return utf16;
 
-        case 1:  // Apple Macintosh
-            return macLanguageEncodings[languageID] || macScriptEncodings[encodingID];
+	case 1:  // Apple Macintosh
+		return macLanguageEncodings[languageID] || macScriptEncodings[encodingID];
 
-        case 3:  // Microsoft Windows
-            if (encodingID === 1 || encodingID === 10) {
-                return utf16;
-            }
-            break;
-		default:
-			break;
-    }
+	case 3:  // Microsoft Windows
+		if (encodingID === 1 || encodingID === 10) {
+			return utf16;
+		}
+		break;
+	default:
+		break;
+	}
 
-    return undefined;
+	return undefined;
 }
 
 function reverseDict(dict) {
-    const result = {};
+	const result = {};
 
 	_forOwn(dict, (value, key) => {
-        result[value] = parseInt(key);
+		result[value] = parseInt(key);
 	});
 
-    return result;
+	return result;
 }
 
 function makeNameRecord(platformID, encodingID, languageID, nameID, length, offset) {
-    return buildTableObj('NameRecord', [
+	return buildTableObj('NameRecord', [
         {name: 'platformID', type: 'USHORT', value: platformID},
         {name: 'encodingID', type: 'USHORT', value: encodingID},
         {name: 'languageID', type: 'USHORT', value: languageID},
         {name: 'nameID', type: 'USHORT', value: nameID},
         {name: 'length', type: 'USHORT', value: length},
         {name: 'offset', type: 'USHORT', value: offset},
-    ]);
+	]);
 }
 
 // NameIDs for the name table.
 const nameTableNames = [
-    'copyright',              // 0
-    'fontFamily',             // 1
-    'fontSubfamily',          // 2
-    'uniqueID',               // 3
-    'fullName',               // 4
-    'version',                // 5
-    'postScriptName',         // 6
-    'trademark',              // 7
-    'manufacturer',           // 8
-    'designer',               // 9
-    'description',            // 10
-    'manufacturerURL',        // 11
-    'designerURL',            // 12
-    'license',                // 13
-    'licenseURL',             // 14
-    'reserved',               // 15
-    'preferredFamily',        // 16
-    'preferredSubfamily',     // 17
-    'compatibleFullName',     // 18
-    'sampleText',             // 19
-    'postScriptFindFontName', // 20
-    'wwsFamily',              // 21
-    'wwsSubfamily',           // 22
+	'copyright',              // 0
+	'fontFamily',             // 1
+	'fontSubfamily',          // 2
+	'uniqueID',               // 3
+	'fullName',               // 4
+	'version',                // 5
+	'postScriptName',         // 6
+	'trademark',              // 7
+	'manufacturer',           // 8
+	'designer',               // 9
+	'description',            // 10
+	'manufacturerURL',        // 11
+	'designerURL',            // 12
+	'license',                // 13
+	'licenseURL',             // 14
+	'reserved',               // 15
+	'preferredFamily',        // 16
+	'preferredSubfamily',     // 17
+	'compatibleFullName',     // 18
+	'sampleText',             // 19
+	'postScriptFindFontName', // 20
+	'wwsFamily',              // 21
+	'wwsSubfamily',           // 22
 ];
 
 // Finds the position of needle in haystack, or -1 if not there.
 // Like String.indexOf(), but for arrays.
 function findSubArray(needle, haystack) {
-    const needleLength = needle.length;
-    const limit = haystack.length - needleLength + 1;
+	const needleLength = needle.length;
+	const limit = haystack.length - needleLength + 1;
 
 	/* eslint-disable no-labels */
-    loop:
+	loop:
     for (let pos = 0; pos < limit; pos++) {
-        for (; pos < limit; pos++) {
-            for (let k = 0; k < needleLength; k++) {
-                if (haystack[pos + k] !== needle[k]) {
-                    continue loop;
-                }
-            }
+	for (; pos < limit; pos++) {
+		for (let k = 0; k < needleLength; k++) {
+			if (haystack[pos + k] !== needle[k]) {
+				continue loop;
+			}
+		}
 
-            return pos;
-        }
-    }
+		return pos;
+	}
+}
 	/* eslint-enable */
 
-    return -1;
+	return -1;
 }
 
 function addStringToPool(s, pool) {
-    let offset = findSubArray(s, pool);
+	let offset = findSubArray(s, pool);
 
-    if (offset < 0) {
-        offset = pool.length;
-        for (let i = 0; i < s.length; i++) {
-            pool.push(s[i]);
-        }
+	if (offset < 0) {
+		offset = pool.length;
+		for (let i = 0; i < s.length; i++) {
+			pool.push(s[i]);
+		}
+	}
 
-    }
-
-    return offset;
+	return offset;
 }
 
 export class name {
@@ -1000,15 +997,12 @@ export class name {
 													nameID, winName.length, winNameOffset));
 				}
 			});
-
 		}
 
-		nameRecords.sort((a, b) => {
-			return ((a.platformID - b.platformID)
+		nameRecords.sort((a, b) => ((a.platformID - b.platformID)
 				|| (a.encodingID - b.encodingID)
 				|| (a.languageID - b.languageID)
-				|| (a.nameID - b.nameID));
-		});
+				|| (a.nameID - b.nameID)));
 
 		const t = buildTableObj('name', [
 			{name: 'format', type: 'USHORT', value: 0},
@@ -1075,7 +1069,7 @@ const cffStandardStrings = [
 	    'parenleft', 'parenright', 'asterisk', 'plus', 'comma', 'hyphen', 'period', 'slash', 'zero', 'one', 'two',
 	    'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'colon', 'semicolon', 'less', 'equal', 'greater',
 	    'question', 'at', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-		'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'bracketleft', 'backslash', 'bracketright', 'asciicircum', 'underscore',
+	'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'bracketleft', 'backslash', 'bracketright', 'asciicircum', 'underscore',
 	    'quoteleft', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
 	    'u', 'v', 'w', 'x', 'y', 'z', 'braceleft', 'bar', 'braceright', 'asciitilde', 'exclamdown', 'cent', 'sterling',
 	    'fraction', 'yen', 'florin', 'section', 'currency', 'quotesingle', 'quotedblleft', 'guillemotleft',
@@ -1152,158 +1146,157 @@ function makeHeader() {
         {name: 'minor', type: 'Card8', value: 0},
         {name: 'hdrSize', type: 'Card8', value: 4},
         {name: 'major', type: 'Card8', value: 1},
-    ]);
+	]);
 }
 
 function makeNameIndex(fontNames) {
-    const t = buildTableObj('Name INDEX', [
+	const t = buildTableObj('Name INDEX', [
         {name: 'names', type: 'INDEX', value: []},
-    ]);
+	]);
 
-    t.names = [];
-    for (let i = 0; i < fontNames.length; i++) {
-        t.names.push({name: `name_${i}`, type: 'NAME', value: fontNames[i]});
-    }
+	t.names = [];
+	for (let i = 0; i < fontNames.length; i++) {
+		t.names.push({name: `name_${i}`, type: 'NAME', value: fontNames[i]});
+	}
 
-    return t;
+	return t;
 }
 
 // Custom equals function that can also check lists.
 function equals(a, b) {
-    if (a === b) {
-        return true;
+	if (a === b) {
+		return true;
 	}
 	else if (Array.isArray(a) && Array.isArray(b)) {
-        if (a.length !== b.length) {
-            return false;
-        }
+		if (a.length !== b.length) {
+			return false;
+		}
 
-        for (let i = 0; i < a.length; i++) {
-            if (!equals(a[i], b[i])) {
-                return false;
-            }
-        }
+		for (let i = 0; i < a.length; i++) {
+			if (!equals(a[i], b[i])) {
+				return false;
+			}
+		}
 
-        return true;
+		return true;
 	}
-	else {
-        return false;
-    }
+
+	return false;
 }
 
 // Convert a string to a String ID (SID).
 // The list of strings is modified in place.
 function encodeString(s, strings) {
-    let sid;
+	let sid;
 
     // Is the string in the CFF standard strings?
-    let i = cffStandardStrings.indexOf(s);
+	let i = cffStandardStrings.indexOf(s);
 
-    if (i >= 0) {
-        sid = i;
-    }
+	if (i >= 0) {
+		sid = i;
+	}
 
     // Is the string already in the string index?
-    i = strings.indexOf(s);
-    if (i >= 0) {
-        sid = i + cffStandardStrings.length;
+	i = strings.indexOf(s);
+	if (i >= 0) {
+		sid = i + cffStandardStrings.length;
 	}
 	else {
-        sid = cffStandardStrings.length + strings.length;
-        strings.push(s);
-    }
+		sid = cffStandardStrings.length + strings.length;
+		strings.push(s);
+	}
 
-    return sid;
+	return sid;
 }
 
 // Given a dictionary's metadata, create a DICT structure.
 function makeDict(meta, attrs, strings) {
-    const m = {};
+	const m = {};
 
-    for (let i = 0; i < meta.length; i++) {
-        const entry = meta[i];
-        let value = attrs[entry.name];
+	for (let i = 0; i < meta.length; i++) {
+		const entry = meta[i];
+		let value = attrs[entry.name];
 
-        if (value !== undefined && !equals(value, entry.value)) {
-            if (entry.type === 'SID') {
-                value = encodeString(value, strings);
-            }
+		if (value !== undefined && !equals(value, entry.value)) {
+			if (entry.type === 'SID') {
+				value = encodeString(value, strings);
+			}
 
-            m[entry.op] = {name: entry.name, type: entry.type, value};
-        }
-    }
+			m[entry.op] = {name: entry.name, type: entry.type, value};
+		}
+	}
 
-    return m;
+	return m;
 }
 
 // The Top DICT houses the global font attributes.
 function makeTopDict(attrs, strings) {
-    const t = buildTableObj('Top DICT', [
+	const t = buildTableObj('Top DICT', [
         {name: 'dict', type: 'DICT', value: {}},
-    ]);
+	]);
 
-    t.dict = makeDict(TOP_DICT_META, attrs, strings);
-    return t;
+	t.dict = makeDict(TOP_DICT_META, attrs, strings);
+	return t;
 }
 
 function makeTopDictIndex(topDict) {
-    const t = buildTableObj('Top DICT INDEX', [
+	const t = buildTableObj('Top DICT INDEX', [
         {name: 'topDicts', type: 'INDEX', value: []},
-    ]);
+	]);
 
-    t.topDicts = [{name: 'topDict_0', type: 'TABLE', value: topDict}];
-    return t;
+	t.topDicts = [{name: 'topDict_0', type: 'TABLE', value: topDict}];
+	return t;
 }
 
 function makeStringIndex(strings) {
-    const t = buildTableObj('String INDEX', [
+	const t = buildTableObj('String INDEX', [
         {name: 'strings', type: 'INDEX', value: []},
-    ]);
+	]);
 
-    t.strings = [];
-    for (let i = 0; i < strings.length; i++) {
-        t.strings.push({name: `string_${i}`, type: 'STRING', value: strings[i]});
-    }
+	t.strings = [];
+	for (let i = 0; i < strings.length; i++) {
+		t.strings.push({name: `string_${i}`, type: 'STRING', value: strings[i]});
+	}
 
-    return t;
+	return t;
 }
 
 function makeGlobalSubrIndex() {
     // Currently we don't use subroutines.
-    return buildTableObj('Global Subr INDEX', [
+	return buildTableObj('Global Subr INDEX', [
         {name: 'subrs', type: 'INDEX', value: []},
-    ]);
+	]);
 }
 
 function makeCharsets(glyphNames, strings) {
-    const t = buildTableObj('Charsets', [
+	const t = buildTableObj('Charsets', [
         {name: 'format', type: 'Card8', value: 0},
-    ]);
+	]);
 
-    for (let i = 0; i < glyphNames.length; i++) {
-        const glyphName = glyphNames[i];
-        const glyphSID = encodeString(glyphName, strings);
+	for (let i = 0; i < glyphNames.length; i++) {
+		const glyphName = glyphNames[i];
+		const glyphSID = encodeString(glyphName, strings);
 
-        t.fields.push({name: `glyph_${i}`, type: 'SID', value: glyphSID});
-    }
+		t.fields.push({name: `glyph_${i}`, type: 'SID', value: glyphSID});
+	}
 
-    return t;
+	return t;
 }
 
-//TODO(franz): does not work like that anymore
+// TODO(franz): does not work like that anymore
 function glyphToOps(glyph) {
-    const ops = [];
-    let x = 0;
-    let y = 0;
+	const ops = [];
+	let x = 0;
+	let y = 0;
 
-    ops.push({name: 'width', type: 'NUMBER', value: glyph.advanceWidth});
+	ops.push({name: 'width', type: 'NUMBER', value: glyph.advanceWidth});
 
-    for (let i = 0; i < glyph.otContours.length; i++) {
-        let dx;
-        let dy;
-        const contour = glyph.otContours[i];
+	for (let i = 0; i < glyph.otContours.length; i++) {
+		let dx;
+		let dy;
+		const contour = glyph.otContours[i];
+
 		for (let j = 0; j < contour.length; j++) {
-
 			const bezier = contour[j];
 
 			if (j === 0) {
@@ -1334,35 +1327,34 @@ function glyphToOps(glyph) {
 			y = Math.round(bezier[3].y);
 			// Contours are closed automatically.
 		}
+	}
 
-    }
-
-    ops.push({name: 'endchar', type: 'OP', value: 14});
-    return ops;
+	ops.push({name: 'endchar', type: 'OP', value: 14});
+	return ops;
 }
 
 function makeCharStringsIndex(glyphs) {
-    const t = buildTableObj('CharStrings INDEX', [
+	const t = buildTableObj('CharStrings INDEX', [
         {name: 'charStrings', type: 'INDEX', value: []},
-    ]);
+	]);
 
-    for (let i = 0; i < glyphs.length; i++) {
-        const glyph = glyphs[i];
-        const ops = glyphToOps(glyph);
+	for (let i = 0; i < glyphs.length; i++) {
+		const glyph = glyphs[i];
+		const ops = glyphToOps(glyph);
 
-        t.charStrings.push({name: glyph.name, type: 'CHARSTRING', value: ops});
-    }
+		t.charStrings.push({name: glyph.name, type: 'CHARSTRING', value: ops});
+	}
 
-    return t;
+	return t;
 }
 
 function makePrivateDict(attrs, strings) {
-    const t = buildTableObj('Private DICT', [
+	const t = buildTableObj('Private DICT', [
         {name: 'dict', type: 'DICT', value: {}},
-    ]);
+	]);
 
-    t.dict = makeDict(PRIVATE_DICT_META, attrs, strings);
-    return t;
+	t.dict = makeDict(PRIVATE_DICT_META, attrs, strings);
+	return t;
 }
 
 export class cff {

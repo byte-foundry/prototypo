@@ -70,10 +70,10 @@ selectRenderOptions(
 
 		/* eslint-disable no-redeclare */
 		/* #if debug */
-		//const localServer = new LocalServer(stores, {
+		// const localServer = new LocalServer(stores, {
 		//	debugPath: ['/debugStore', '/save-debug-log', '/store-in-debug-font', '/show-details'],
 		//	logStore: stores['/prototypoStore'],
-		//}).instance;
+		// }).instance;
 		/* #end */
 		/* #if prod,dev */
 		const localServer = new LocalServer(stores).instance;

@@ -5,7 +5,7 @@ const LIMIT16 = 32768;
 const LIMIT32 = 2147483648; // The limit at which a 32-bit number switches signs == 2 ^ 31
 
 function constant(v) {
-	return function() {
+	return function () {
 		return v;
 	};
 }
@@ -16,67 +16,57 @@ export const sizeOf = {};
 /* eslint-disable babel/new-cap */
 encode.BYTE = (v) => {
 	checkArgument(v >= 0 && v <= 255, 'Byte value should be between 0 and 255.');
-    return [v];
+	return [v];
 };
 
 sizeOf.BYTE = constant(1);
 
-encode.CHAR = (v) => {
-    return [v.charCodeAt(0)];
-};
+encode.CHAR = v => [v.charCodeAt(0)];
 
 sizeOf.CHAR = constant(1);
 
 encode.CHARARRAY = (v) => {
-    const b = [];
+	const b = [];
 
-    for (let i = 0; i < v.length; i += 1) {
-        b[i] = v.charCodeAt(i);
-    }
+	for (let i = 0; i < v.length; i += 1) {
+		b[i] = v.charCodeAt(i);
+	}
 
-    return b;
+	return b;
 };
 
-sizeOf.CHARARRAY = (v) => {
-	return v.length;
-};
+sizeOf.CHARARRAY = v => v.length;
 
-encode.USHORT = (v) => {
-    return [(v >> 8) & 0xFF, v & 0xFF];
-};
+encode.USHORT = v => [(v >> 8) & 0xFF, v & 0xFF];
 
 sizeOf.USHORT = constant(2);
 
-encode.SHORT = function(v) {
+encode.SHORT = function (v) {
     // Two's complement
-    if (v >= LIMIT16) {
-        v = -(2 * LIMIT16 - v);
-    }
+	if (v >= LIMIT16) {
+		v = -(2 * LIMIT16 - v);
+	}
 
-    return [(v >> 8) & 0xFF, v & 0xFF];
+	return [(v >> 8) & 0xFF, v & 0xFF];
 };
 
 sizeOf.SHORT = constant(2);
 
-encode.UINT24 = (v) => {
-    return [(v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
-};
+encode.UINT24 = v => [(v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
 
 sizeOf.UINT24 = constant(3);
 
-encode.ULONG = (v) => {
-    return [(v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
-};
+encode.ULONG = v => [(v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
 
 sizeOf.ULONG = constant(4);
 
 encode.LONG = (v) => {
     // Two's complement
-    if (v >= LIMIT32) {
-        v = -(2 * LIMIT32 - v);
-    }
+	if (v >= LIMIT32) {
+		v = -(2 * LIMIT32 - v);
+	}
 
-    return [(v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
+	return [(v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
 };
 
 sizeOf.LONG = constant(4);
@@ -90,18 +80,16 @@ sizeOf.FWORD = sizeOf.SHORT;
 encode.UFWORD = encode.USHORT;
 sizeOf.UFWORD = sizeOf.USHORT;
 
-encode.LONGDATETIME = (v) => {
-    return [0, 0, 0, 0, (v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
-};
+encode.LONGDATETIME = v => [0, 0, 0, 0, (v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
 
 sizeOf.LONGDATETIME = constant(8);
 
 encode.TAG = (v) => {
-    checkArgument(v.length === 4, 'Tag should be exactly 4 ASCII characters.');
-    return [v.charCodeAt(0),
-            v.charCodeAt(1),
-            v.charCodeAt(2),
-            v.charCodeAt(3)];
+	checkArgument(v.length === 4, 'Tag should be exactly 4 ASCII characters.');
+	return [v.charCodeAt(0),
+		v.charCodeAt(1),
+		v.charCodeAt(2),
+		v.charCodeAt(3)];
 };
 
 sizeOf.TAG = constant(4);
@@ -119,89 +107,80 @@ encode.SID = encode.USHORT;
 sizeOf.SID = sizeOf.USHORT;
 
 encode.NUMBER = (v) => {
-    if (v >= -107 && v <= 107) {
-        return [v + 139];
+	if (v >= -107 && v <= 107) {
+		return [v + 139];
 	}
 	else if (v >= 108 && v <= 1131) {
-        const val = v - 108;
+		const val = v - 108;
 
-        return [(val >> 8) + 247, val & 0xFF];
+		return [(val >> 8) + 247, val & 0xFF];
 	}
 	else if (v >= -1131 && v <= -108) {
-        const val = -v - 108;
+		const val = -v - 108;
 
-        return [(val >> 8) + 251, val & 0xFF];
+		return [(val >> 8) + 251, val & 0xFF];
 	}
 	else if (v >= -32768 && v <= 32767) {
-        return encode.NUMBER16(v);
+		return encode.NUMBER16(v);
 	}
-	else {
-        return encode.NUMBER32(v);
-    }
+
+	return encode.NUMBER32(v);
 };
 
-sizeOf.NUMBER = (v) => {
-    return encode.NUMBER(v).length;
-};
+sizeOf.NUMBER = v => encode.NUMBER(v).length;
 
-encode.NUMBER16 = (v) => {
-    return [28, (v >> 8) & 0xFF, v & 0xFF];
-};
+encode.NUMBER16 = v => [28, (v >> 8) & 0xFF, v & 0xFF];
 
 sizeOf.NUMBER16 = constant(3);
 
-encode.NUMBER32 = (v) => {
-    return [29, (v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
-};
+encode.NUMBER32 = v => [29, (v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
 
 sizeOf.NUMBER32 = constant(4);
 
 encode.REAL = (v) => {
-    let value = v.toString();
+	let value = v.toString();
 
     // Some numbers use an epsilon to encode the value. (e.g. JavaScript will store 0.0000001 as 1e-7)
     // This code converts it back to a number without the epsilon.
-    const m = /\.(\d*?)(?:9{5,20}|0{5,20})\d{0,2}(?:e(.+)|$)/.exec(value);
+	const m = /\.(\d*?)(?:9{5,20}|0{5,20})\d{0,2}(?:e(.+)|$)/.exec(value);
 
-    if (m) {
-        const epsilon = parseFloat(`1e${((m[2] ? +m[2] : 0) + m[1].length)}`);
+	if (m) {
+		const epsilon = parseFloat(`1e${((m[2] ? +m[2] : 0) + m[1].length)}`);
 
-        value = (Math.round(v * epsilon) / epsilon).toString();
-    }
+		value = (Math.round(v * epsilon) / epsilon).toString();
+	}
 
-    let nibbles = '';
-    let i;
+	let nibbles = '';
+	let i;
 
-    for (i = 0; i < value.length; i++) {
-        const c = value[i];
+	for (i = 0; i < value.length; i++) {
+		const c = value[i];
 
-        if (c === 'e') {
-            nibbles += value[++i] === '-' ? 'c' : 'b';
+		if (c === 'e') {
+			nibbles += value[++i] === '-' ? 'c' : 'b';
 		}
 		else if (c === '.') {
-            nibbles += 'a';
+			nibbles += 'a';
 		}
 		else if (c === '-') {
-            nibbles += 'e';
+			nibbles += 'e';
 		}
 		else {
-            nibbles += c;
-        }
-    }
+			nibbles += c;
+		}
+	}
 
-    nibbles += (nibbles.length & 1) ? 'f' : 'ff';
-    const out = [30];
+	nibbles += (nibbles.length & 1) ? 'f' : 'ff';
+	const out = [30];
 
-    for (i = 0; i < nibbles.length; i += 2) {
-        out.push(parseInt(nibbles.substr(i, 2), 16));
-    }
+	for (i = 0; i < nibbles.length; i += 2) {
+		out.push(parseInt(nibbles.substr(i, 2), 16));
+	}
 
-    return out;
+	return out;
 };
 
-sizeOf.REAL = (v) => {
-	return encode.REAL(v).length;
-};
+sizeOf.REAL = v => encode.REAL(v).length;
 
 encode.NAME = encode.CHARARRAY;
 sizeOf.NAME = sizeOf.CHARARRAY;
@@ -210,57 +189,55 @@ encode.STRING = encode.CHARARRAY;
 sizeOf.STRING = sizeOf.CHARARRAY;
 
 encode.UTF16 = (v) => {
-    const b = [];
+	const b = [];
 
-    for (let i = 0; i < v.length; i++) {
-        const codepoint = v.charCodeAt(i);
+	for (let i = 0; i < v.length; i++) {
+		const codepoint = v.charCodeAt(i);
 
-        b[b.length] = (codepoint >> 8) & 0xFF;
-        b[b.length] = codepoint & 0xFF;
-    }
+		b[b.length] = (codepoint >> 8) & 0xFF;
+		b[b.length] = codepoint & 0xFF;
+	}
 
-    return b;
+	return b;
 };
 
 /**
  * @param {string}
  * @returns {number}
  */
-sizeOf.UTF16 = (v) => {
-    return v.length * 2;
-};
+sizeOf.UTF16 = v => v.length * 2;
 
 const eightBitMacEncodings = {
 	'x-mac-croatian': // Python: 'mac_croatian'
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§¶ß®Š™´¨≠ŽØ∞±≤≥∆µ∂∑∏š∫ªºΩžø'
 		+ '¿¡¬√≈Ć«Č… ÀÃÕŒœĐ“”‘’÷◊©⁄€Æ»·„‰ÂćÁčÈÍÎÏÌÓÔđÒÚÛÙı¯πË˚¸Êæˇ',
-    'x-mac-cyrillic': // Python: 'mac_cyrillic'
+	'x-mac-cyrillic': // Python: 'mac_cyrillic'
 		'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ†°£§¶І®©™Ђђ≠Ѓѓ∞±≤≥іµЈЄєЇїЉљЊњ'
 		+ 'јЅ¬√≈∆«»… ЋћЌќѕ“”‘’÷„ЎўЏџ№Ёёяабвгдежзийклмнопрстуфхцчшщъыьэю',
-    'x-mac-gaelic':
+	'x-mac-gaelic':
         // http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/GAELIC.TXT
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§¶ß®©™´¨≠ÆØḂ±≤≥ḃĊċḊḋḞḟĠġṀæø'
 		+ 'ṁṖṗɼſṠ«»… ÀÃÕŒœ“”‘’ṡẛÿŸṪ€Ŷŷṫ·Ỳỳ⁊ÂÊÁËÈÍÎÏÌÓÔ♣ÒÚÛÙıÝýŴŵẄẅẀẁẂẃ',
-    'x-mac-greek': // Python: 'mac_greek'
+	'x-mac-greek': // Python: 'mac_greek'
 		'Ä¹²É³ÖÜ΅àâä΄¨çéèêë£™îï½‰ôö¦€ùûü†ΓΔΘΛΞΠß®©ΣΪ§≠°·Α±≤≥¥ΒΕΖΗΙΚΜΦΫΨΩ'
 		+ 'άΝ¬ΟΡ≈Τ«»… ΥΧΆΈœ―“”‘’÷ΉΊΌΎέήίόΏύαβψδεφγηιξκλμνοπώρστθωςχυζϊϋΐΰ\u00AD',
-    'x-mac-icelandic': // Python: 'mac_iceland'
+	'x-mac-icelandic': // Python: 'mac_iceland'
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûüÝ°¢£§¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø'
 		+ '¿¡¬√≈∆«»… ÀÃÕŒœ“”‘’÷◊ÿŸ⁄€ÐðÞþý·„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙı¯˘˙˚¸˝˛ˇ',
-    'x-mac-inuit':
+	'x-mac-inuit':
         // http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/INUIT.TXT
 		'ᐃᐄᐅᐆᐊᐋᐱᐲᐳᐴᐸᐹᑉᑎᑏᑐᑑᑕᑖᑦᑭᑮᑯᑰᑲᑳᒃᒋᒌᒍᒎᒐᒑ°ᒡᒥᒦ¶ᒧ®©™ᒨᒪᒫᒻᓂᓃᓄᓅᓇᓈᓐᓯᓰᓱᓲᓴᓵᔅᓕᓖᓗ'
 		+ 'ᓘᓚᓛᓪᔨᔩᔪᔫᔭ… ᔮᔾᕕᕖᕗ“”‘’ᕘᕙᕚᕝᕆᕇᕈᕉᕋᕌᕐᕿᖀᖁᖂᖃᖄᖅᖏᖐᖑᖒᖓᖔᖕᙱᙲᙳᙴᙵᙶᖖᖠᖡᖢᖣᖤᖥᖦᕼŁł',
-    'x-mac-ce': // Python: 'mac_latin2'
+	'x-mac-ce': // Python: 'mac_latin2'
 		'ÄĀāÉĄÖÜáąČäčĆćéŹźĎíďĒēĖóėôöõúĚěü†°Ę£§¶ß®©™ę¨≠ģĮįĪ≤≥īĶ∂∑łĻļĽľĹĺŅ'
 		+ 'ņŃ¬√ńŇ∆«»… ňŐÕőŌ“”‘’÷◊ōŔŕŘřŖŗŠ„šŚśÁŤťÍŽžŪÓÔūŮÚůŰűŲųÝýķŻŁżĢˇ',
-    macintosh: // Python: 'mac_roman'
+	macintosh: // Python: 'mac_roman'
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø'
 		+ '¿¡¬√≈∆«»… ÀÃÕŒœ“”‘’÷◊ÿŸ⁄€ﬁﬂ‡·„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙı¯˘˙˚¸˝˛ˇ',
-    'x-mac-romanian': // Python: 'mac_romanian'
+	'x-mac-romanian': // Python: 'mac_romanian'
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§¶ß®©™´¨≠ĂȘ∞±≤≥¥µ∂∑∏π∫ªºΩăș'
 		+ '¿¡¬√≈∆«»… ÀÃÕŒœ“”‘’÷◊ÿŸ⁄€Țț‡·„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙı¯˘˙˚¸˝˛ˇ',
-    'x-mac-turkish': // Python: 'mac_turkish'
+	'x-mac-turkish': // Python: 'mac_turkish'
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø'
 		+ '¿¡¬√≈∆«»… ÀÃÕŒœ“”‘’÷◊ÿŸĞğİıŞş‡·„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙ¯˘˙˚¸˝˛ˇ',
 };
@@ -271,124 +248,123 @@ const getMacEncodingTable = (encoding) => {
     // Since we use encoding as a cache key for WeakMap, it has to be
     // a String object and not a literal. And at least on NodeJS 2.10.1,
     // WeakMap requires that the same String instance is passed for cache hits.
-    if (!macEncodingCacheKeys) {
-        macEncodingCacheKeys = {};
+	if (!macEncodingCacheKeys) {
+		macEncodingCacheKeys = {};
 
 		_forOwn(eightBitMacEncodings, (value, key) => {
 			/* eslint-disable no-new-wrappers */
-            macEncodingCacheKeys[key] = new String(key);
+			macEncodingCacheKeys[key] = new String(key);
 			/* eslint-enable no-new-wrappers */
 		});
-    }
+	}
 
-    const cacheKey = macEncodingCacheKeys[encoding];
+	const cacheKey = macEncodingCacheKeys[encoding];
 
-    if (cacheKey === undefined) {
-        return undefined;
-    }
+	if (cacheKey === undefined) {
+		return undefined;
+	}
 
     // We can't do "if (cache.has(key)) {return cache.get(key)}" here:
     // since garbage collection may run at any time, it could also kick in
     // between the calls to cache.has() and cache.get(). In that case,
     // we would return 'undefined' even though we do support the encoding.
-    if (macEncodingTableCache) {
-        const cachedTable = macEncodingTableCache.get(cacheKey);
+	if (macEncodingTableCache) {
+		const cachedTable = macEncodingTableCache.get(cacheKey);
 
-        if (cachedTable !== undefined) {
-            return cachedTable;
-        }
-    }
+		if (cachedTable !== undefined) {
+			return cachedTable;
+		}
+	}
 
-    const decodingTable = eightBitMacEncodings[encoding];
+	const decodingTable = eightBitMacEncodings[encoding];
 
-    if (decodingTable === undefined) {
-        return undefined;
-    }
+	if (decodingTable === undefined) {
+		return undefined;
+	}
 
-    const encodingTable = {};
+	const encodingTable = {};
 
-    for (let i = 0; i < decodingTable.length; i++) {
-        encodingTable[decodingTable.charCodeAt(i)] = i + 0x80;
-    }
+	for (let i = 0; i < decodingTable.length; i++) {
+		encodingTable[decodingTable.charCodeAt(i)] = i + 0x80;
+	}
 
-    if (macEncodingTableCache) {
-        macEncodingTableCache.set(cacheKey, encodingTable);
-    }
+	if (macEncodingTableCache) {
+		macEncodingTableCache.set(cacheKey, encodingTable);
+	}
 
-    return encodingTable;
+	return encodingTable;
 };
 
 encode.MACSTRING = (str, encoding) => {
-    const table = getMacEncodingTable(encoding);
+	const table = getMacEncodingTable(encoding);
 
-    if (table === undefined) {
-        return undefined;
-    }
+	if (table === undefined) {
+		return undefined;
+	}
 
-    const result = [];
+	const result = [];
 
-    for (let i = 0; i < str.length; i++) {
-        let c = str.charCodeAt(i);
+	for (let i = 0; i < str.length; i++) {
+		let c = str.charCodeAt(i);
 
         // In all eight-bit Mac encodings, the characters 0x00..0x7F are
         // mapped to U+0000..U+007F; we only need to look up the others.
-        if (c >= 0x80) {
-            c = table[c];
-            if (c === undefined) {
+		if (c >= 0x80) {
+			c = table[c];
+			if (c === undefined) {
                 // str contains a Unicode character that cannot be encoded
                 // in the requested encoding.
-                return undefined;
-            }
-        }
-        result[i] = c;
+				return undefined;
+			}
+		}
+		result[i] = c;
         // result.push(c);
-    }
+	}
 
-    return result;
+	return result;
 };
 
 sizeOf.MACSTRING = (str, encoding) => {
-    const b = encode.MACSTRING(str, encoding);
+	const b = encode.MACSTRING(str, encoding);
 
-    if (b === undefined) {
-        return 0;
+	if (b === undefined) {
+		return 0;
 	}
-	else {
-        return b.length;
-    }
+
+	return b.length;
 };
 
 // Helper for encode.VARDELTAS
 function isByteEncodable(value) {
-    return value >= -128 && value <= 127;
+	return value >= -128 && value <= 127;
 }
 
 // Helper for encode.VARDELTAS
 function encodeVarDeltaRunAsZeroes(deltas, pos, result) {
-    let runLength = 0;
-    const numDeltas = deltas.length;
+	let runLength = 0;
+	const numDeltas = deltas.length;
 	let position = pos;
 
-    while (position < numDeltas && runLength < 64 && deltas[position] === 0) {
-        ++position;
-        ++runLength;
-    }
-    result.push(0x80 | (runLength - 1));
-    return position;
+	while (position < numDeltas && runLength < 64 && deltas[position] === 0) {
+		++position;
+		++runLength;
+	}
+	result.push(0x80 | (runLength - 1));
+	return position;
 }
 
 // Helper for encode.VARDELTAS
 function encodeVarDeltaRunAsBytes(deltas, offset, result) {
-    let runLength = 0;
-    const numDeltas = deltas.length;
-    let pos = offset;
+	let runLength = 0;
+	const numDeltas = deltas.length;
+	let pos = offset;
 
-    while (pos < numDeltas && runLength < 64) {
-        const value = deltas[pos];
+	while (pos < numDeltas && runLength < 64) {
+		const value = deltas[pos];
 
-        if (!isByteEncodable(value)) {
-            break;
-        }
+		if (!isByteEncodable(value)) {
+			break;
+		}
 
         // Within a byte-encoded run of deltas, a single zero is best
         // stored literally as 0x00 value. However, if we have two or
@@ -397,31 +373,31 @@ function encodeVarDeltaRunAsBytes(deltas, offset, result) {
         // becomes 6 bytes (04 0F 0F 00 0F 0F) when storing the zero
         // within the current run, but 7 bytes (01 0F 0F 80 01 0F 0F)
         // when starting a new run.
-        if (value === 0 && pos + 1 < numDeltas && deltas[pos + 1] === 0) {
-            break;
-        }
+		if (value === 0 && pos + 1 < numDeltas && deltas[pos + 1] === 0) {
+			break;
+		}
 
-        ++pos;
-        ++runLength;
-    }
+		++pos;
+		++runLength;
+	}
 
-    result.push(runLength - 1);
+	result.push(runLength - 1);
 
-    for (let i = offset; i < pos; i++) {
-        result.push((deltas[i] + 256) & 0xff);
-    }
+	for (let i = offset; i < pos; i++) {
+		result.push((deltas[i] + 256) & 0xff);
+	}
 
-    return pos;
+	return pos;
 }
 
 // Helper for encode.VARDELTAS
 function encodeVarDeltaRunAsWords(deltas, offset, result) {
-    let runLength = 0;
-    const numDeltas = deltas.length;
-    let pos = offset;
+	let runLength = 0;
+	const numDeltas = deltas.length;
+	let pos = offset;
 
-    while (pos < numDeltas && runLength < 64) {
-        const value = deltas[pos];
+	while (pos < numDeltas && runLength < 64) {
+		const value = deltas[pos];
 
         // Within a word-encoded run of deltas, it is easiest to start
         // a new run (with a different encoding) whenever we encounter
@@ -429,9 +405,9 @@ function encodeVarDeltaRunAsWords(deltas, offset, result) {
         // needs 7 bytes when storing the zero inside the current run
         // (42 66 66 00 00 77 77), and equally 7 bytes when starting a
         // new run (40 66 66 80 40 77 77).
-        if (value === 0) {
-            break;
-        }
+		if (value === 0) {
+			break;
+		}
 
         // Within a word-encoded run of deltas, a single value in the
         // range (-128..127) should be encoded within the current run
@@ -439,23 +415,23 @@ function encodeVarDeltaRunAsWords(deltas, offset, result) {
         // [0x6666, 2, 0x7777] becomes 7 bytes when storing the value
         // literally (42 66 66 00 02 77 77), but 8 bytes when starting
         // a new run (40 66 66 00 02 40 77 77).
-        if (isByteEncodable(value) && pos + 1 < numDeltas && isByteEncodable(deltas[pos + 1])) {
-            break;
-        }
+		if (isByteEncodable(value) && pos + 1 < numDeltas && isByteEncodable(deltas[pos + 1])) {
+			break;
+		}
 
-        ++pos;
-        ++runLength;
-    }
+		++pos;
+		++runLength;
+	}
 
-    result.push(0x40 | (runLength - 1));
+	result.push(0x40 | (runLength - 1));
 
-    for (let i = offset; i < pos; i++) {
-        const val = deltas[i];
+	for (let i = offset; i < pos; i++) {
+		const val = deltas[i];
 
-        result.push(((val + 0x10000) >> 8) & 0xff, (val + 0x100) & 0xff);
-    }
+		result.push(((val + 0x10000) >> 8) & 0xff, (val + 0x100) & 0xff);
+	}
 
-    return pos;
+	return pos;
 }
 
 /**
@@ -471,112 +447,107 @@ function encodeVarDeltaRunAsWords(deltas, offset, result) {
  * @return {Array}
  */
 encode.VARDELTAS = (deltas) => {
-    let pos = 0;
-    const result = [];
+	let pos = 0;
+	const result = [];
 
-    while (pos < deltas.length) {
-        const value = deltas[pos];
+	while (pos < deltas.length) {
+		const value = deltas[pos];
 
-        if (value === 0) {
-            pos = encodeVarDeltaRunAsZeroes(deltas, pos, result);
+		if (value === 0) {
+			pos = encodeVarDeltaRunAsZeroes(deltas, pos, result);
 		}
 		else if (value >= -128 && value <= 127) {
-            pos = encodeVarDeltaRunAsBytes(deltas, pos, result);
+			pos = encodeVarDeltaRunAsBytes(deltas, pos, result);
 		}
 		else {
-            pos = encodeVarDeltaRunAsWords(deltas, pos, result);
-        }
-    }
+			pos = encodeVarDeltaRunAsWords(deltas, pos, result);
+		}
+	}
 
-    return result;
+	return result;
 };
 
 encode.INDEX = (l) => {
-    let i;
-    //var offset, offsets, offsetEncoder, encodedOffsets, encodedOffset, data,
+	let i;
+    // var offset, offsets, offsetEncoder, encodedOffsets, encodedOffset, data,
     //    i, v;
     // Because we have to know which data type to use to encode the offsets,
     // we have to go through the values twice: once to encode the data and
     // calculate the offets, then again to encode the offsets using the fitting data type.
-    let offset = 1; // First offset is always 1.
-    const offsets = [offset];
-    const data = [];
+	let offset = 1; // First offset is always 1.
+	const offsets = [offset];
+	const data = [];
 
-    for (i = 0; i < l.length; i++) {
-        const v = encode.OBJECT(l[i]);
+	for (i = 0; i < l.length; i++) {
+		const v = encode.OBJECT(l[i]);
 
-        data.push(...v);
-        offset += v.length;
-        offsets.push(offset);
-    }
+		data.push(...v);
+		offset += v.length;
+		offsets.push(offset);
+	}
 
-    if (data.length === 0) {
-        return [0, 0];
-    }
+	if (data.length === 0) {
+		return [0, 0];
+	}
 
-    const encodedOffsets = [];
-    const offSize = (1 + Math.floor(Math.log(offset) / Math.log(2)) / 8) | 0;
-    const offsetEncoder = [undefined, encode.BYTE, encode.USHORT, encode.UINT24, encode.ULONG][offSize];
+	const encodedOffsets = [];
+	const offSize = (1 + Math.floor(Math.log(offset) / Math.log(2)) / 8) | 0;
+	const offsetEncoder = [undefined, encode.BYTE, encode.USHORT, encode.UINT24, encode.ULONG][offSize];
 
-    for (i = 0; i < offsets.length; i += 1) {
-        const encodedOffset = offsetEncoder(offsets[i]);
+	for (i = 0; i < offsets.length; i += 1) {
+		const encodedOffset = offsetEncoder(offsets[i]);
 
-        encodedOffsets.push(...encodedOffset);
-    }
+		encodedOffsets.push(...encodedOffset);
+	}
 
-    return Array.prototype.concat(encode.Card16(l.length),
+	return Array.prototype.concat(encode.Card16(l.length),
                            encode.OffSize(offSize),
                            encodedOffsets,
                            data);
 };
 
-sizeOf.INDEX = (v) => {
-    return encode.INDEX(v).length;
-};
+sizeOf.INDEX = v => encode.INDEX(v).length;
 
 encode.DICT = (m) => {
-    let d = [];
-    const keys = Object.keys(m);
-    const length = keys.length;
+	let d = [];
+	const keys = Object.keys(m);
+	const length = keys.length;
 
-    for (let i = 0; i < length; i++) {
+	for (let i = 0; i < length; i++) {
         // Object.keys() return string keys, but our keys are always numeric.
-        const k = parseInt(keys[i], 0);
-        const v = m[k];
+		const k = parseInt(keys[i], 0);
+		const v = m[k];
 
         // Value comes before the key.
-        d = d.concat(encode.OPERAND(v.value, v.type));
-        d = d.concat(encode.OPERATOR(k));
-    }
+		d = d.concat(encode.OPERAND(v.value, v.type));
+		d = d.concat(encode.OPERATOR(k));
+	}
 
-    return d;
+	return d;
 };
 
-sizeOf.DICT = (m) => {
-    return encode.DICT(m).length;
-};
+sizeOf.DICT = m => encode.DICT(m).length;
 
 /**
  * @param {number}
  * @returns {Array}
  */
 encode.OPERATOR = (v) => {
-    if (v < 1200) {
-        return [v];
+	if (v < 1200) {
+		return [v];
 	}
-	else {
-        return [12, v - 1200];
-    }
+
+	return [12, v - 1200];
 };
 
 encode.OPERAND = (v, type) => {
-    let d = [];
+	let d = [];
 
-    if (Array.isArray(type)) {
-        for (let i = 0; i < type.length; i++) {
-            checkArgument(v.length === type.length, `Not enough arguments given for type ${type}`);
-            d = d.concat(encode.OPERAND(v[i], type[i]));
-        }
+	if (Array.isArray(type)) {
+		for (let i = 0; i < type.length; i++) {
+			checkArgument(v.length === type.length, `Not enough arguments given for type ${type}`);
+			d = d.concat(encode.OPERAND(v[i], type[i]));
+		}
 	}
 	else if (type === 'SID') {
 		d = d.concat(encode.NUMBER(v));
@@ -597,7 +568,7 @@ encode.OPERAND = (v, type) => {
 		// FIXME Add support for booleans
 	}
 
-    return d;
+	return d;
 };
 
 encode.OP = encode.BYTE;
@@ -607,46 +578,44 @@ const charStringCache = typeof WeakMap === 'function' && new WeakMap();
 
 encode.CHARSTRING = (ops) => {
     // See encode.MACSTRING for why we don't do "if (wmm && wmm.has(ops))".
-    if (charStringCache) {
-        const cachedValue = charStringCache.get(ops);
+	if (charStringCache) {
+		const cachedValue = charStringCache.get(ops);
 
-        if (cachedValue !== undefined) {
-            return cachedValue;
-        }
-    }
+		if (cachedValue !== undefined) {
+			return cachedValue;
+		}
+	}
 
-    let d = [];
-    const length = ops.length;
+	let d = [];
+	const length = ops.length;
 
-    for (let i = 0; i < length; i++) {
-        const op = ops[i];
+	for (let i = 0; i < length; i++) {
+		const op = ops[i];
 
-        d = d.concat(encode[op.type](op.value));
-    }
+		d = d.concat(encode[op.type](op.value));
+	}
 
-    if (charStringCache) {
-        charStringCache.set(ops, d);
-    }
+	if (charStringCache) {
+		charStringCache.set(ops, d);
+	}
 
-    return d;
+	return d;
 };
 
-sizeOf.CHARSTRING = (ops) => {
-    return encode.CHARSTRING(ops).length;
-};
+sizeOf.CHARSTRING = ops => encode.CHARSTRING(ops).length;
 
 encode.OBJECT = (v) => {
-    const encodingFunction = encode[v.type];
+	const encodingFunction = encode[v.type];
 
-    checkArgument(encodingFunction !== undefined, `No encoding function for type ${v.type}`);
-    return encodingFunction(v.value);
+	checkArgument(encodingFunction !== undefined, `No encoding function for type ${v.type}`);
+	return encodingFunction(v.value);
 };
 
 sizeOf.OBJECT = (v) => {
-    const sizeOfFunction = sizeOf[v.type];
+	const sizeOfFunction = sizeOf[v.type];
 
-    checkArgument(sizeOfFunction !== undefined, `No sizeOf function for type ${v.type}`);
-    return sizeOfFunction(v.value);
+	checkArgument(sizeOfFunction !== undefined, `No sizeOf function for type ${v.type}`);
+	return sizeOfFunction(v.value);
 };
 
 encode.TABLE = (table) => {
@@ -693,38 +662,34 @@ encode.TABLE = (table) => {
 
 sizeOf.TABLE = (table) => {
 	let numBytes = 0;
-    const length = table.fields.length;
+	const length = table.fields.length;
 
-    for (let i = 0; i < length; i++) {
-        const field = table.fields[i];
-        const sizeOfFunction = sizeOf[field.type];
-        let value = table[field.name];
+	for (let i = 0; i < length; i++) {
+		const field = table.fields[i];
+		const sizeOfFunction = sizeOf[field.type];
+		let value = table[field.name];
 
-        checkArgument(sizeOfFunction !== undefined, `No sizeOf function for field type ${field.type} (${field.name})`);
+		checkArgument(sizeOfFunction !== undefined, `No sizeOf function for field type ${field.type} (${field.name})`);
 
-        if (value === undefined) {
-            value = field.value;
-        }
+		if (value === undefined) {
+			value = field.value;
+		}
 
-        numBytes += sizeOfFunction(value);
+		numBytes += sizeOfFunction(value);
 
         // Subtables take 2 more bytes for offsets.
-        if (field.type === 'TABLE') {
-            numBytes += 2;
-        }
-    }
+		if (field.type === 'TABLE') {
+			numBytes += 2;
+		}
+	}
 
-    return numBytes;
+	return numBytes;
 };
 
 encode.RECORD = encode.TABLE;
 sizeOf.RECORD = sizeOf.TABLE;
 
-encode.LITERAL = (v) => {
-	return v;
-}
+encode.LITERAL = v => v;
 
-sizeOf.LITERAL = (v) => {
-	return v.length;
-}
+sizeOf.LITERAL = v => v.length;
 /* eslint-enable babel/new-cap */

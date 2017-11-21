@@ -200,6 +200,14 @@ function computeHandle(
 	dest.baseTensionOut = tensionOut;
 	dest.baseTypeIn = node.typeIn;
 	dest.baseTypeOut = node.typeOut;
+	dest.dirOut = dirToNext;
+	dest.dirIn = dirToPrev;
+	dest.tensionIn = distance2D(
+		inVector, {x: 0, y: 0},
+	) / (distance2D(untensionedInVector, {x: 0, y: 0}) * 0.6);
+	dest.tensionOut = distance2D(
+		outVector, {x: 0, y: 0},
+	) / (distance2D(untensionOutVector, {x: 0, y: 0}) * 0.6);
 	dest.handleIn = round2D(add2D(current, inVector));
 	dest.handleOut = round2D(add2D(current, outVector));
 	/* eslint-enable no-param-reassign */

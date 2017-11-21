@@ -12,9 +12,7 @@ export function arrayToEscapedContent(textArray, glyphs = {}) {
 		if (letter.startsWith('/')) {
 			const glyphName = letter.slice(1).trim();
 
-			const [glyph] = Object.values(glyphs).find(([g]) => {
-				return glyphName === g.glyphName;
-			}) || [];
+			const [glyph] = Object.values(glyphs).find(([g]) => glyphName === g.glyphName) || [];
 
 			if (glyph) {
 				return String.fromCharCode(glyph.unicode);

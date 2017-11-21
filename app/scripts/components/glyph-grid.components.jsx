@@ -65,9 +65,7 @@ export default class GlyphGrid extends React.PureComponent {
 			return <div className={classes} key={unicode} onClick={() => {this.selectGlyph(unicode, isSelected, forbidden);}}>{String.fromCharCode(unicode)}</div>;
 		});
 
-		const tags = this.props.tags.map((tag) => {
-			return <option value={tag} key={tag}>{tag}</option>;
-		});
+		const tags = this.props.tags.map(tag => <option value={tag} key={tag}>{tag}</option>);
 
 		return (
 			<div className="glyphs-grid">
@@ -77,7 +75,7 @@ export default class GlyphGrid extends React.PureComponent {
 					</div>
 					<div className="glyphs-grid-filter">
 						Filter by:
-						<select className="glyphs-grid-filter-select" onChange={(e) => { this.selectTag(e);}}>
+						<select className="glyphs-grid-filter-select" onChange={(e) => {this.selectTag(e);}}>
 							{tags}
 						</select>
 					</div>
