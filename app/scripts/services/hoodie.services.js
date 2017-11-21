@@ -225,15 +225,6 @@ export default class HoodieApi {
 		return fetchAWS(`/invoices/upcoming?${query}`);
 	}
 
-	static buyCredits(options) {
-		const customerId = HoodieApi.instance.customerId;
-
-		return fetchAWS(`/customers/${customerId}/credits`, {
-			method: 'PUT',
-			payload: options,
-		});
-	}
-
 	static spendCredits(options) {
 		const customerId = HoodieApi.instance.customerId;
 
