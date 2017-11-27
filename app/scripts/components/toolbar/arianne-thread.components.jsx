@@ -114,14 +114,7 @@ class ArianneThread extends React.PureComponent {
 	}
 
 	toggleIndividualize() {
-		// if (this.state.isFree && !this.state.isFreeWithCredits) {
-		// 	this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
-		// 												restrictedFeatureHovered: 'indiv'});
-		// }
-		// else {
-			this.client.dispatchAction('/toggle-individualize');
-		// }
-
+		this.client.dispatchAction('/toggle-individualize');
 	}
 
 	selectGroup(group) {

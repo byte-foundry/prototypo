@@ -22,7 +22,7 @@ import ChangeNameVariant from './familyVariant/change-name-variant.components.js
 import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
 import GoProModal from './go-pro-modal.components.jsx';
 
-import {buildTutorialSteps, handleNextStep, handleClosed} from '../helpers/joyride.helpers.js';
+import {getSteps, getTutoEndLabels} from '../helpers/joyride.helpers.js';
 
 class Dashboard extends React.PureComponent {
 
@@ -52,7 +52,6 @@ class Dashboard extends React.PureComponent {
 		const prototypoStore = await this.client.fetch('/prototypoStore');
 
 		this.setState({
-			joyrideSteps: [],
 			firstTimeFile: prototypoStore.head.toJS().firstTimeFile,
 			firstTimeCollection: prototypoStore.head.toJS().firstTimeCollection,
 			firstTimeIndivCreate: prototypoStore.head.toJS().firstTimeIndivCreate,
@@ -105,73 +104,57 @@ class Dashboard extends React.PureComponent {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+	}
 
+	componentWillUpdate(nextProps, nextState) {
+		// a tutorial has been selected and joyride isn't active yet
+		if (this.state.joyrideSteps.length === 0 && nextState.uiJoyrideTutorialValue) {
+			this.joyride.reset();
+			// what tutorial should we trigger
+			const steps = getSteps(nextState.uiJoyrideTutorialValue);
+			// TODO: indiv color
+
+			// the value was not correct, disabling joyride
+			if (!steps.length) {
+				// eslint-disable-next-line
+				this.setState({joyrideSteps: []});
+				return;
+			}
+
+			// eslint-disable-next-line
+			setTimeout(() => {
+				this.setState({joyrideSteps: steps});
+			}, nextState.uiJoyrideTutorialValue === 'collectionsTutorial' ? 1000 : 0);
+			// little hack to avoid error in the collections
+		}
 	}
 
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
 
-	componentDidUpdate(prevProps, prevState) {
-		const joyrideSteps = buildTutorialSteps(prevState, this.state);
+	joyrideCallback(event) {
+		if (
+			event.action === 'close'
+			|| event.action === 'esc'
+			|| (event.action === 'next' && event.type === 'finished')
+		) {
+			const labels = getTutoEndLabels(this.state.uiJoyrideTutorialValue);
 
-		if (joyrideSteps.length) {
-			setTimeout(function() {
-				this.addSteps(joyrideSteps);
-				this.refs.joyride.start(true);
-			}.bind(this), 400);
-		}
-	}
-
-	/**
-	*	adds given steps to the state
-	*	@param {array} steps - an array containing joyride steps objects
-	*/
-	addSteps(steps) {
-		const joyride = this.refs.joyride;
-
-		if (!steps.length) {
-			return false;
-		}
-
-		this.setState((currentState) => {
-			if (currentState.joyrideSteps) {
-				currentState.joyrideSteps = currentState.joyrideSteps.concat(joyride.parseSteps(steps));
+			if (event.type === 'finished') {
+				labels.intercom += 'Early';
 			}
-			return currentState;
-		});
-	}
 
-	addTooltip(data) {
-		this.refs.joyride.addTooltip(data);
-	}
-
-	joyrideCallback(joyrideEvent) {
-		if (joyrideEvent) {
-			switch (joyrideEvent.action) {
-				case 'next':
-					handleNextStep(this, joyrideEvent);
-					break;
-				case 'close':
-					handleClosed(this);
-					this.refs.joyride.stop();
-					break;
-				case 'esc':
-					handleClosed(this);
-					this.refs.joyride.stop();
-					break;
-				default:
-					break;
-			}
+			window.Intercom('trackEvent', labels.intercom);
+			this.client.dispatchAction('/store-value', {[labels.store]: false});
+			this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: null});
+			this.setState({joyrideSteps: []});
 		}
-	}
 
-	goToNextStep(step) {
-		this.client.dispatchAction('/store-value', {uiOnboardstep: step});
-	}
-
-	exitOnboarding() {
-		this.client.dispatchAction('/store-value', {uiOnboard: true});
+		if (event.type.includes('error')) {
+			this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: null});
+			this.setState({joyrideSteps: []});
+		}
 	}
 
 	render() {
@@ -242,15 +225,18 @@ class Dashboard extends React.PureComponent {
 		return (
 			<div id="dashboard" className={classes}>
 				<Joyride
-					ref="joyride"
+					ref={node => { this.joyride = node; }}
 					type="continuous"
 					scrollToFirstStep={false}
 					scrollToSteps={false}
-					debug={false}
+					debug
+					run={!!this.state.uiJoyrideTutorialValue && this.state.joyrideSteps.length > 0}
+					autoStart
 					locale={joyrideLocale}
 					steps={this.state.joyrideSteps}
-					callback={this.joyrideCallback}/>
-				<Topbar />
+					callback={this.joyrideCallback}
+				/>
+				<Topbar blocked={!!this.state.uiJoyrideTutorialValue && this.state.joyrideSteps.length > 0} />
 				<Toolbar />
 				<Workboard />
 				<ReactCSSTransitionGroup

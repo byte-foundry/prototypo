@@ -33,7 +33,8 @@ class TopBarMenuDropdownItem extends React.PureComponent {
 		}
 	}
 
-	handleClick() {
+	handleClick(e) {
+		e.stopPropagation(); // TMP until the menu item selection in only on the button
 		this.props.handler();
 	}
 

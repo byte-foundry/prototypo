@@ -1,20 +1,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {graphql, gql} from 'react-apollo';
+import {withRouter} from 'react-router';
 import Lifespan from 'lifespan';
 
 import Log from '~/services/log.services.js';
 
 import LocalClient from '~/stores/local-client.stores.jsx';
 
-import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
-import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
-import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
+import {
+	collectionsTutorialLabel,
+	fileTutorialLabel,
+	indivGroupsCreationTutorialLabel,
+	academyTutorialLabel,
+} from '../../helpers/joyride.helpers';
 
 import withCountry from '../shared/with-country.components';
 import Price from '../shared/price.components';
 
-import TopBarMenu from './top-bar-menu.components.jsx';
+import TopBarMenu from './top-bar-menu.components';
 import TopBarMenuAction from './top-bar-menu-action.components';
 import TopBarMenuIcon from './top-bar-menu-icon.components';
 import TopBarMenuLink from './top-bar-menu-link.components';
@@ -49,7 +53,6 @@ class Topbar extends React.Component {
 		this.exportFamily = this.exportFamily.bind(this);
 		this.logout = this.logout.bind(this);
 		this.individualize = this.individualize.bind(this);
-		this.setAccountRoute = this.setAccountRoute.bind(this);
 		this.goToSubscribe = this.goToSubscribe.bind(this);
 		this.resetFileTutorial = this.resetFileTutorial.bind(this);
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
@@ -59,6 +62,7 @@ class Topbar extends React.Component {
 		this.showAcademy = this.showAcademy.bind(this);
 		this.clearAcademyText = this.clearAcademyText.bind(this);
 		this.getRightAcademyIcon = this.getRightAcademyIcon.bind(this);
+		this.startFileTutorial = this.startFileTutorial.bind(this);
 	}
 
 	async componentWillMount() {
@@ -68,7 +72,18 @@ class Topbar extends React.Component {
 		this.client
 			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
+				const {
+					firstTimeAcademyJoyride,
+					firstTimeIndivCreate,
+					uiJoyrideTutorialValue,
+					indivMode,
+				} = head.toJS().d;
+
 				this.setState({
+					firstTimeFile: head.toJS().d.firstTimeFile,
+					firstTimeAcademyJoyride,
+					firstTimeIndivCreate,
+					joyrideValue: uiJoyrideTutorialValue,
 					mode: head.toJS().d.uiMode,
 					export: head.toJS().d.export,
 					errorExport: head.toJS().d.errorExport,
@@ -76,8 +91,20 @@ class Topbar extends React.Component {
 					at: head.toJS().d.undoAt,
 					eventList: head.toJS().d.undoEventList,
 					presets: head.toJS().d.fontPresets,
-					indiv: head.toJS().d.indivMode,
+					indiv: indivMode,
 				});
+
+				// no tutorial has already started
+				if (!uiJoyrideTutorialValue) {
+					if (firstTimeAcademyJoyride) {
+						this.setState({itemDisplayed: 4}, () => {
+							this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: academyTutorialLabel});
+						});
+					}
+					else if (indivMode && firstTimeIndivCreate) {
+						this.setState({itemDisplayed: null});
+					}
+				}
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -192,34 +219,32 @@ class Topbar extends React.Component {
 		});
 	}
 
-	resetFileTutorial(e) {
-		e.stopPropagation();
-		e.preventDefault();
-		this.client.dispatchAction('/store-value', {firstTimeFile: true});
-		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: fileTutorialLabel});
-		this.client.dispatchAction('/store-value', {topbarItemDisplayed: 1});
-		return false;
+	resetFileTutorial() {
+		this.setState({itemDisplayed: 1}, () => {
+			this.client.dispatchAction('/store-value', {
+				firstTimeFile: true,
+				uiJoyrideTutorialValue: fileTutorialLabel,
+			});
+		});
 	}
 
 	resetCollectionTutorial() {
 		this.client.dispatchAction('/store-value', {
 			firstTimeCollection: true,
-			uiJoyrideTutorialValue: collectionsTutorialLabel,
 		});
-		this.client.dispatchAction('/store-value', {uiShowCollection: true});
+		this.props.router.push('/dashboard/collection');
 	}
 
 	resetIndivTutorial() {
-		this.client.dispatchAction('/store-value', {firstTimeIndivCreate: true});
 		this.client.dispatchAction('/store-value', {
-			uiJoyrideTutorialValue: indivGroupsCreationTutorialLabel,
+			firstTimeIndivCreate: true,
+			firstTimeIndivEdit: true,
 		});
 		if (!this.state.indiv) {
 			this.client.dispatchAction('/toggle-individualize');
+			this.client.dispatchAction('/create-mode-param-group');
 		}
 	}
-
-	setAccountRoute() {}
 
 	showAcademy() {
 		this.context.router.push('/academy');

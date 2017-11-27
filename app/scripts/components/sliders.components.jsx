@@ -34,15 +34,41 @@ export class Sliders extends React.PureComponent {
 				this.setState({values: undefined});
 			});
 
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate((head) => {
+				const {
+					firstTimeIndivEdit,
+					uiJoyrideTutorialValue,
+				} = head.toJS().d;
+
+				this.setState({
+					isJoyrideActivated: uiJoyrideTutorialValue,
+					firstTimeIndivEdit,
+				});
+
+				if (this.props.indivEdit && !uiJoyrideTutorialValue && firstTimeIndivEdit) {
+					this.client.dispatchAction('/store-value', {
+						uiJoyrideTutorialValue: indivGroupsEditionTutorialLabel,
+					});
+				}
+			})
+			.onDelete(() => {
+				this.setState({
+					isJoyrideActivated: false,
+					firstTimeIndivEdit: false,
+				});
+			});
+
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				const {subscription} = head.toJS().d;
+
 				this.setState({
 					subscription,
 				});
 			})
 			.onDelete(() => {
-				this.setState(undefined);
+				this.setState({subscription: null});
 			});
 	}
 
@@ -487,12 +513,6 @@ class IndivSwitch extends React.PureComponent {
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
-	}
-
-	componentDidMount() {
-		this.client.dispatchAction('/store-value', {
-			uiJoyrideTutorialValue: indivGroupsEditionTutorialLabel,
-		});
 	}
 
 	componentWillUnmount() {

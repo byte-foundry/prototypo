@@ -46,6 +46,8 @@ export default class CreateParamGroup extends React.Component {
 					groups: head.toJS().d.indivGroups,
 					forbiddenGlyphs: head.toJS().d.indivOtherGroups,
 					glyphGroupDeleteSplit: head.toJS().d.uiGlyphGroupDeleteSplit,
+					isJoyrideActivated: head.toJS().d.uiJoyrideTutorialValue,
+					firstTimeIndivCreate: head.toJS().d.firstTimeIndivCreate,
 				});
 			})
 			.onDelete(() => {
@@ -55,9 +57,12 @@ export default class CreateParamGroup extends React.Component {
 
 	componentDidMount() {
 		setTimeout(() => {
-			this.client.dispatchAction('/store-value', {
-				uiJoyrideTutorialValue: indivGroupsCreationTutorialLabel,
-			});
+			if (!this.state.isJoyrideActivated && this.state.firstTimeIndivCreate) {
+				this.client.dispatchAction('/create-mode-param-group');
+				this.client.dispatchAction('/store-value', {
+					uiJoyrideTutorialValue: indivGroupsCreationTutorialLabel,
+				});
+			}
 		}, (this.props.transitionTimeout + 100));
 	}
 
