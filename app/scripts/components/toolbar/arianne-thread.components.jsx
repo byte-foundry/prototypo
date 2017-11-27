@@ -1,5 +1,6 @@
 import React from 'react';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
+import {Link} from 'react-router';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
 
@@ -107,7 +108,6 @@ class ArianneThread extends React.PureComponent {
 
 	showCollection() {
 		this.client.dispatchAction('/store-value', {
-			uiShowCollection: true,
 			collectionSelectedFamily: this.state.selectedFamily,
 			collectionSelectedVariant: this.state.selectedVariant,
 		});
@@ -152,7 +152,11 @@ class ArianneThread extends React.PureComponent {
 
 		if (families.length === 0) {
 			// TODO: use <Redirect /> when migrating over React Router 4
-			return <p>Loading...</p>;
+			return (
+				<div className="arianne-thread">
+					<RootArianneItem />
+				</div>
+			);
 		}
 
 		const family = families.find(({name}) => name === selectedFamily.name) || families[0];
@@ -213,7 +217,7 @@ class ArianneThread extends React.PureComponent {
 
 		return (
 			<div className="arianne-thread">
-				<RootArianneItem click={this.showCollection}/>
+				<RootArianneItem click={this.showCollection} />
 				{familyItem}
 				{variantItem}
 				{group}
@@ -248,9 +252,11 @@ class RootArianneItem extends React.Component {
 	render() {
 		return (
 			<div className="arianne-item" onClick={this.props.click}>
-				<div className="arianne-item-action">
-					<span className="arianne-item-action-collection">My projects</span>
-				</div>
+				<Link to="/dashboard/collection">
+					<div className="arianne-item-action">
+							<span className="arianne-item-action-collection">My projects</span>
+					</div>
+				</Link>
 				<div className="arianne-item-arrow"></div>
 			</div>
 		);

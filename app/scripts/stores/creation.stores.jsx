@@ -124,7 +124,6 @@ const prototypoStore = new Remutable({
 	uiInvertedTextView: undefined,
 	uiOnboardstep: undefined,
 	uiOnboard: undefined,
-	uiShowCollection: undefined,
 	uiList: undefined,
 	uiPos: undefined,
 	uiZoom: undefined,

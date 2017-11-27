@@ -44,6 +44,7 @@ class Topbar extends React.Component {
 			plan: undefined,
 			creditChoices: undefined,
 			presets: null,
+			itemDisplayed: null,
 		};
 
 		// function binding to avoid unnecessary re-render
@@ -62,6 +63,7 @@ class Topbar extends React.Component {
 		this.showAcademy = this.showAcademy.bind(this);
 		this.clearAcademyText = this.clearAcademyText.bind(this);
 		this.getRightAcademyIcon = this.getRightAcademyIcon.bind(this);
+		this.handleSelectedItem = this.handleSelectedItem.bind(this);
 		this.startFileTutorial = this.startFileTutorial.bind(this);
 	}
 
@@ -296,10 +298,19 @@ class Topbar extends React.Component {
 	}
 
 	startFileTutorial() {
-		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: fileTutorialLabel});
+		if (this.state.firstTimeFile) {
+			this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: fileTutorialLabel});
+		}
+	}
+
+	handleSelectedItem(selectedItem) {
+		if (!this.props.blocked) {
+			this.setState({itemDisplayed: selectedItem});
+		}
 	}
 
 	render() {
+		const {itemDisplayed} = this.state;
 		const {academyProgress, loadingAcademyProgress} = this.props;
 		const whereAt = this.state.at || 0;
 		const undoDisabled = whereAt < 1;
@@ -409,12 +420,11 @@ class Topbar extends React.Component {
 			: false; */
 
 		return (
-				<TopBarMenu id="topbar">
+				<TopBarMenu id="topbar" onSelectedItem={this.handleSelectedItem} itemDisplayed={itemDisplayed}>
 					<TopBarMenuIcon
 						className="side-tabs-icon-headers"
 						img="assets/images/prototypo-icon.svg"
 					/>
-					{/* TODO: pass down props to TopBarMenuItem to get the onSelect callback */}
 					<TopBarMenuDropdown
 						name="File"
 						id="file-menu"
@@ -455,7 +465,7 @@ class Topbar extends React.Component {
 								name="Export to Glyphr Studio"
 								id="export-to-glyphr-studio"
 								freeAccount={freeAccount}
-								cost={otfExportCost}
+								cost={glyphrExportCost}
 								handler={this.exportGlyphr}
 								credits={this.state.credits}
 								separator
@@ -657,4 +667,4 @@ export default graphql(getAcademyValuesQuery, {
 			manager: data.user.manager,
 		};
 	},
-})(withCountry(Topbar));
+})(withCountry(withRouter(Topbar)));

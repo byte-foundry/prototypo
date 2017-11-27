@@ -14,6 +14,7 @@ import ForgottenPassword from './components/forgotten-password.components';
 import ResetPassword from './components/reset-password.components';
 import Register from './components/register.components';
 
+import Collection from './components/collection/collection.components.jsx';
 import AccountApp from './components/account/account-app.components';
 import AccountDashboard from './components/account/account-dashboard.components';
 import AccountHome from './components/account/account-home.components';
@@ -118,7 +119,9 @@ export default class AppRoutes extends React.PureComponent {
 			<ApolloProvider client={apolloClient}>
 				<Router history={hashHistory} onUpdate={trackUrl}>
 					<Route component={App} name="app" path="/">
-						<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin} />
+						<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin}>
+							<Route component={Collection} path="collection" name="collection" />
+						</Route>
 						/* #if debug */
 						<Route path="replay" path="replay/:replayId" component={ReplayViewer} />
 						<Route path="debug" component={ReplayViewer} />

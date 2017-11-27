@@ -22,7 +22,6 @@ export const valuesToLoad = [
 	{remote: 'tab', local: 'fontTab'},
 	{remote: 'pinned', local: 'tagPinned'},
 	{remote: 'wordFontSize', local: 'uiWordFontSize'},
-	{remote: 'showCollection', local: 'uiShowCollection'},
 	{remote: 'selected', local: 'glyphSelected'},
 	{remote: 'textFontSize', local: 'uiTextFontSize'},
 	{remote: 'latestCommit', local: 'latestCommit'},

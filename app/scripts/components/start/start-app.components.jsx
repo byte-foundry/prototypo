@@ -61,7 +61,7 @@ class StartApp extends React.PureComponent {
 	}
 
 	returnToDashboard() {
-		this.client.dispatchAction('/store-value', {uiShowCollection: false});
+		this.props.router.push('/dashboard');
 	}
 
 	open(family) {

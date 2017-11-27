@@ -7,30 +7,23 @@ class TopBarMenu extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			itemDisplayed: null,
-		};
-
 		this.handleClickOutside = this.handleClickOutside.bind(this);
 		this.onSelectItem = this.onSelectItem.bind(this);
 	}
 
 	onSelectItem(itemIndex) {
-		this.setState(state => ({itemDisplayed: state.itemDisplayed === itemIndex ? null : itemIndex}));
-
-		// TODO: notify composed item
+		this.props.onSelectedItem(itemIndex);
 	}
 
 	handleClickOutside() {
-		this.setState({itemDisplayed: null});
+		this.props.onSelectedItem(null);
 	}
 
 	render() {
-		const {itemDisplayed} = this.state;
-		const {children, ...rest} = this.props;
+		const {itemDisplayed, children} = this.props;
 
 		return (
-			<ul {...rest} className="top-bar-menu">
+			<ul className="top-bar-menu">
 				{React.Children.map(children, (child, index) => {
 					if (!child || !child.props) {
 						return child;
@@ -46,6 +39,7 @@ class TopBarMenu extends React.PureComponent {
 						id,
 						noHover,
 						enter,
+						onSelect,
 					} = child.props;
 
 					const classes = classNames(
@@ -72,6 +66,7 @@ class TopBarMenu extends React.PureComponent {
 							selected={itemDisplayed === index}
 							onMouseLeave={child && child.props.leave}
 							onSelectItem={this.onSelectItem}
+							onSelect={onSelect}
 						>
 							{child && child.type.getHeader && child.type.getHeader(child.props)}
 							{child}
@@ -85,16 +80,18 @@ class TopBarMenu extends React.PureComponent {
 
 TopBarMenu.defaultProps = {
 	className: '',
-	topbarItemDisplayed: -1,
+	itemDisplayed: null,
 	noHover: false,
 	count: 0,
+	onSelectedItem: () => {},
 };
 
 TopBarMenu.propTypes = {
 	className: PropTypes.string,
-	topbarItemDisplayed: PropTypes.number,
+	itemDisplayed: PropTypes.number,
 	noHover: PropTypes.bool,
 	count: PropTypes.number,
+	onSelectedItem: PropTypes.func,
 };
 
 export const TopBarMenuRaw = TopBarMenu;
@@ -105,6 +102,12 @@ class TopBarMenuItem extends React.PureComponent {
 		super(props);
 
 		this.handleClick = this.handleClick.bind(this);
+	}
+
+	componentWillReceiveProps({selected, onSelect}) {
+		if (!this.props.selected && selected) {
+			onSelect();
+		}
 	}
 
 	handleClick() {
@@ -133,6 +136,7 @@ TopBarMenuItem.defaultProps = {
 	noHover: false,
 	count: 0,
 	selected: false,
+	onSelect: () => {},
 };
 
 TopBarMenuItem.propTypes = {
@@ -140,4 +144,5 @@ TopBarMenuItem.propTypes = {
 	noHover: PropTypes.bool,
 	count: PropTypes.number,
 	selected: PropTypes.bool,
+	onSelect: PropTypes.func,
 };

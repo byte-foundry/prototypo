@@ -13,7 +13,6 @@ import Topbar from './topbar/topbar.components.jsx';
 import Toolbar from './toolbar/toolbar.components.jsx';
 import Workboard from './workboard.components.jsx';
 import ExportAs from './export-as.components.jsx';
-import Collection from './collection/collection.components.jsx';
 import CreateFamilyModal from './familyVariant/create-family-modal.components.jsx';
 import CreateVariantModal from './familyVariant/create-variant-modal.components.jsx';
 import CreateAcademyModal from './academy/create-academy-modal.components.jsx';
@@ -89,7 +88,6 @@ class Dashboard extends React.PureComponent {
 					openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
 					openGoProModal: head.toJS().d.openGoProModal,
 					step: head.toJS().d.uiOnboardstep,
-					collection: head.toJS().d.uiShowCollection,
 					indiv: head.toJS().d.indivMode,
 					exportAs: head.toJS().d.exportAs,
 					uiJoyrideTutorialValue: head.toJS().d.uiJoyrideTutorialValue,
@@ -195,8 +193,6 @@ class Dashboard extends React.PureComponent {
 			skip: 'Skip',
 		};
 
-		const collection = this.state.collection
-			&& <Collection collectionTransitionTimeout={collectionTransitionTimeout}/>;
 		const newFamily = this.state.openFamilyModal
 			&& <CreateFamilyModal propName="openFamilyModal"/>;
 		const newVariant = this.state.openVariantModal
@@ -243,7 +239,7 @@ class Dashboard extends React.PureComponent {
 					transitionName="collection"
 					transitionEnterTimeout={collectionTransitionTimeout}
 					transitionLeaveTimeout={collectionTransitionTimeout}>
-					{collection}
+					{this.props.children && React.cloneElement(this.props.children, {collectionTransitionTimeout})}
 				</ReactCSSTransitionGroup>
 				<ReactCSSTransitionGroup
 					component="span"

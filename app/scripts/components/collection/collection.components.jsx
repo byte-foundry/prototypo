@@ -1,6 +1,7 @@
 import Lifespan from 'lifespan';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {Link} from 'react-router';
 import ScrollArea from 'react-scrollbar/dist/no-css';
 import {graphql, gql, compose} from 'react-apollo';
 
@@ -16,7 +17,6 @@ class Collection extends React.PureComponent {
 
 		this.state = {};
 
-		this.returnToDashboard = this.returnToDashboard.bind(this);
 		this.open = this.open.bind(this);
 		this.handleDeleteFamily = this.handleDeleteFamily.bind(this);
 		this.handleDeleteVariant = this.handleDeleteVariant.bind(this);
@@ -40,6 +40,8 @@ class Collection extends React.PureComponent {
 				uiAskSubscribeVariant,
 				variantToExport,
 				exportedVariant,
+				uiJoyrideTutorialValue,
+				firstTimeCollection,
 			} = head.toJS().d;
 
 			this.setState({
@@ -51,13 +53,15 @@ class Collection extends React.PureComponent {
 				askSubscribeVariant: uiAskSubscribeVariant,
 				variantToExport,
 				exportedVariant,
+				isJoyrideActivated: uiJoyrideTutorialValue,
+				firstTimeCollection,
 			});
 
 			if (!collectionSelectedFamily) {
 				this.client.dispatchAction('/select-family-collection', this.props.families[0]);
 				this.client.dispatchAction(
 					'/select-variant-collection',
-					this.props.families[0].variants[0],
+					this.props.families[0] && this.props.families[0].variants[0],
 				);
 			}
 		});
@@ -65,9 +69,11 @@ class Collection extends React.PureComponent {
 
 	componentDidMount() {
 		setTimeout(() => {
-			this.client.dispatchAction('/store-value', {
-				uiJoyrideTutorialValue: collectionsTutorialLabel,
-			});
+			if (!this.state.isJoyrideActivated && this.state.firstTimeCollection) {
+				this.client.dispatchAction('/store-value', {
+					uiJoyrideTutorialValue: collectionsTutorialLabel,
+				});
+			}
 		}, this.props.collectionTransitionTimeout + 100);
 	}
 
@@ -75,16 +81,12 @@ class Collection extends React.PureComponent {
 		this.lifespan.release();
 	}
 
-	returnToDashboard() {
-		this.client.dispatchAction('/store-value', {uiShowCollection: false});
-	}
-
 	open(variant) {
 		this.client.dispatchAction('/select-variant', {
 			variant: variant || this.state.selectedVariant,
 			family: this.state.selected,
 		});
-		this.client.dispatchAction('/store-value', {uiShowCollection: false});
+		this.props.router.push('/dashboard');
 	}
 
 	async handleDeleteFamily() {
@@ -98,7 +100,7 @@ class Collection extends React.PureComponent {
 	}
 
 	render() {
-		const {families, deleteFamily} = this.props;
+		const {families, deleteFamily, loading} = this.props;
 		const {
 			selected,
 			templateInfos,
@@ -107,10 +109,31 @@ class Collection extends React.PureComponent {
 			exportedVariant,
 		} = this.state;
 
+		if (loading) {
+			return (
+				<div className="collection">
+					<div className="collection-container">
+						<Link to="/dashboard">
+							<div className="account-dashboard-icon" />
+						</Link>
+						<Link to="/dashboard">
+							<div className="account-back-icon" />
+						</Link>
+						<div className="account-header">
+							<h1 className="account-title">My projects</h1>
+						</div>
+						<div className="collection-content">
+							<p>Loading...</p>
+						</div>
+					</div>
+				</div>
+			);
+		}
+
 		const selectedFamilyVariants = (families.find(family => family.name === selected.name) || {})
 			.variants;
-		const variant = selectedFamilyVariants
-			? (<VariantList
+		const variant = selectedFamilyVariants && (
+			<VariantList
 				variants={selectedFamilyVariants}
 				selectedVariantId={this.state.selectedVariant.id}
 				askSubscribe={askSubscribeFamily}
@@ -118,14 +141,18 @@ class Collection extends React.PureComponent {
 				exportedVariant={exportedVariant}
 				family={selected}
 				deleteVariant={this.props.deleteVariant}
-			/>)
-			: false;
+			/>
+		);
 
 		return (
 			<div className="collection">
 				<div className="collection-container">
-					<div className="account-dashboard-icon" onClick={this.returnToDashboard} />
-					<div className="account-dashboard-back-icon" onClick={this.returnToDashboard} />
+					<Link to="/dashboard">
+						<div className="account-dashboard-icon" />
+					</Link>
+					<Link to="/dashboard">
+						<div className="account-back-icon" />
+					</Link>
 					<div className="account-header">
 						<h1 className="account-title">My projects</h1>
 					</div>
@@ -402,7 +429,7 @@ class VariantList extends React.PureComponent {
 			variant,
 			family: this.props.family,
 		});
-		this.client.dispatchAction('/store-value', {uiShowCollection: false});
+		this.props.router.push('/dashboard');
 	}
 
 	openChangeVariantName(variant) {
@@ -439,8 +466,8 @@ class VariantList extends React.PureComponent {
 	render() {
 		const {deleteSplit} = this.state;
 
-		const variants = this.props.variants.map(variant =>
-			(<Variant
+		const variants = this.props.variants.map(variant => (
+			<Variant
 				key={variant.id}
 				family={this.props.family}
 				variant={variant}
@@ -449,8 +476,8 @@ class VariantList extends React.PureComponent {
 				changeName={this.openChangeVariantName}
 				duplicate={this.openDuplicateVariant}
 				delete={this.deleteVariant}
-			/>),
-		);
+			/>
+		));
 
 		return (
 			<div className="variant-list-container">
