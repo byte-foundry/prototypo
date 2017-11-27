@@ -14,3 +14,4 @@ import './TopBarMenuDropdown.story';
 import './TopBarMenuDropdownItem.story';
 import './TopBarAcademy.story';
 import './TopBarAcademyIcon.story';
+import './AccountPage.story';

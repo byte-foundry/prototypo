@@ -1,7 +1,8 @@
 import React from 'react';
-import {Link, withRouter} from 'react-router';
+import {withRouter} from 'react-router';
 import {graphql, gql} from 'react-apollo';
 
+import AccountPage from './account-page.components';
 import AccountSidebar from './account-sidebar.components';
 
 export class AccountDashboard extends React.Component {
@@ -34,31 +35,19 @@ export class AccountDashboard extends React.Component {
 			'billing-address': 'My billing address',
 			'add-card': 'Add a card',
 			'change-plan': 'Change my plan',
+			organization: 'Organization',
 		};
 		const title = titles[route.name];
 		const subtitle
 			= subtitles[location.pathname.split('/')[location.pathname.split('/').length - 1]];
 
 		return (
-			<div className="account-dashboard">
-				<Link to="/dashboard">
-					<div className="account-dashboard-icon" />
-				</Link>
-				<div className="account-header">
-					<h1 className="account-title">
-						{title}
-					</h1>
-				</div>
-				{subtitle === ''
-					? false
-					: <h1 className="account-dashboard-page-title">
-						{subtitle}
-					</h1>}
+			<AccountPage title={title} subtitle={subtitle}>
 				<div className="account-dashboard-container">
 					<AccountSidebar />
 					{children}
 				</div>
-			</div>
+			</AccountPage>
 		);
 	}
 }

@@ -1,10 +1,10 @@
 import Lifespan from 'lifespan';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Link} from 'react-router';
 import ScrollArea from 'react-scrollbar/dist/no-css';
 import {graphql, gql, compose} from 'react-apollo';
 
+import AccountPage from '../account/account-page.components';
 import Family from './family.components';
 import Variant from './variant.components';
 import LocalClient from '~/stores/local-client.stores';
@@ -112,20 +112,9 @@ class Collection extends React.PureComponent {
 		if (loading) {
 			return (
 				<div className="collection">
-					<div className="collection-container">
-						<Link to="/dashboard">
-							<div className="account-dashboard-icon" />
-						</Link>
-						<Link to="/dashboard">
-							<div className="account-back-icon" />
-						</Link>
-						<div className="account-header">
-							<h1 className="account-title">My projects</h1>
-						</div>
-						<div className="collection-content">
-							<p>Loading...</p>
-						</div>
-					</div>
+					<AccountPage title="My projects" className="collection-container">
+						<p>Loading...</p>
+					</AccountPage>
 				</div>
 			);
 		}
@@ -146,16 +135,7 @@ class Collection extends React.PureComponent {
 
 		return (
 			<div className="collection">
-				<div className="collection-container">
-					<Link to="/dashboard">
-						<div className="account-dashboard-icon" />
-					</Link>
-					<Link to="/dashboard">
-						<div className="account-back-icon" />
-					</Link>
-					<div className="account-header">
-						<h1 className="account-title">My projects</h1>
-					</div>
+				<AccountPage title="My projects" className="collection-container">
 					<div className="collection-content">
 						<FamilyList
 							list={families}
@@ -166,7 +146,7 @@ class Collection extends React.PureComponent {
 						/>
 						{variant}
 					</div>
-				</div>
+				</AccountPage>
 			</div>
 		);
 	}
