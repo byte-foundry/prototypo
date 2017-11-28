@@ -1,19 +1,18 @@
 import _forOwn from 'lodash/forOwn';
-import {checkArgument} from './check.js';
+import {checkArgument} from './check';
 
 const LIMIT16 = 32768;
 const LIMIT32 = 2147483648; // The limit at which a 32-bit number switches signs == 2 ^ 31
 
 function constant(v) {
-	return function () {
-		return v;
-	};
+	return () => v;
 }
 
 export const encode = {};
 export const sizeOf = {};
+export const print = {};
 
-/* eslint-disable babel/new-cap */
+/* eslint-disable babel/new-cap, no-bitwise, no-param-reassign*/
 encode.BYTE = (v) => {
 	checkArgument(v >= 0 && v <= 255, 'Byte value should be between 0 and 255.');
 	return [v];
@@ -41,16 +40,22 @@ encode.USHORT = v => [(v >> 8) & 0xFF, v & 0xFF];
 
 sizeOf.USHORT = constant(2);
 
-encode.SHORT = function (v) {
+encode.SHORT = (v) => {
     // Two's complement
 	if (v >= LIMIT16) {
-		v = -(2 * LIMIT16 - v);
+		v = -((2 * LIMIT16) - v);
 	}
 
 	return [(v >> 8) & 0xFF, v & 0xFF];
 };
 
 sizeOf.SHORT = constant(2);
+
+encode.UINT16 = encode.SHORT;
+sizeOf.UINT16 = sizeOf.SHORT;
+
+encode.Offset16 = encode.SHORT;
+sizeOf.Offset16 = sizeOf.SHORT;
 
 encode.UINT24 = v => [(v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
 
@@ -63,7 +68,7 @@ sizeOf.ULONG = constant(4);
 encode.LONG = (v) => {
     // Two's complement
 	if (v >= LIMIT32) {
-		v = -(2 * LIMIT32 - v);
+		v = -((2 * LIMIT32) - v);
 	}
 
 	return [(v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
@@ -80,7 +85,7 @@ sizeOf.FWORD = sizeOf.SHORT;
 encode.UFWORD = encode.USHORT;
 sizeOf.UFWORD = sizeOf.USHORT;
 
-encode.LONGDATETIME = v => [0, 0, 0, 0, (v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
+encode.LONGDATETIME = v => [0, 0, 0, 0, (v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF]; // eslint-disable-line max-len
 
 sizeOf.LONGDATETIME = constant(8);
 
@@ -140,7 +145,8 @@ sizeOf.NUMBER32 = constant(4);
 encode.REAL = (v) => {
 	let value = v.toString();
 
-    // Some numbers use an epsilon to encode the value. (e.g. JavaScript will store 0.0000001 as 1e-7)
+	// Some numbers use an epsilon to encode the value.
+	// (e.g. JavaScript will store 0.0000001 as 1e-7)
     // This code converts it back to a number without the epsilon.
 	const m = /\.(\d*?)(?:9{5,20}|0{5,20})\d{0,2}(?:e(.+)|$)/.exec(value);
 
@@ -491,8 +497,14 @@ encode.INDEX = (l) => {
 	}
 
 	const encodedOffsets = [];
-	const offSize = (1 + Math.floor(Math.log(offset) / Math.log(2)) / 8) | 0;
-	const offsetEncoder = [undefined, encode.BYTE, encode.USHORT, encode.UINT24, encode.ULONG][offSize];
+	const offSize = (1 + (Math.floor(Math.log(offset) / Math.log(2)) / 8)) | 0;
+	const offsetEncoder = [
+		undefined,
+		encode.BYTE,
+		encode.USHORT,
+		encode.UINT24,
+		encode.ULONG,
+	][offSize];
 
 	for (i = 0; i < offsets.length; i += 1) {
 		const encodedOffset = offsetEncoder(offsets[i]);
@@ -507,6 +519,55 @@ encode.INDEX = (l) => {
 };
 
 sizeOf.INDEX = v => encode.INDEX(v).length;
+
+print.INDEX = (l) => {
+	let i;
+    // var offset, offsets, offsetEncoder, encodedOffsets, encodedOffset, data,
+    //    i, v;
+    // Because we have to know which data type to use to encode the offsets,
+    // we have to go through the values twice: once to encode the data and
+    // calculate the offets, then again to encode the offsets using the fitting data type.
+	let offset = 1; // First offset is always 1.
+	const offsets = [offset];
+	const data = [];
+
+	for (i = 0; i < l.length; i++) {
+		const v = encode.OBJECT(l[i]);
+
+		data.push(...v);
+		offset += v.length;
+		offsets.push(offset);
+	}
+
+	if (data.length === 0) {
+		return [0, 0];
+	}
+
+	const encodedOffsets = [];
+	const offSize = (1 + (Math.floor(Math.log(offset) / Math.log(2)) / 8)) | 0;
+	const offsetEncoder = [
+		undefined,
+		encode.BYTE,
+		encode.USHORT,
+		encode.UINT24,
+		encode.ULONG,
+	][offSize];
+
+	for (i = 0; i < offsets.length; i += 1) {
+		const encodedOffset = offsetEncoder(offsets[i]);
+
+		encodedOffsets.push(...encodedOffset);
+	}
+	console.log('Index');
+	console.log(`${encode.Card16(l.length)}	index	length`);
+	console.log(`${encode.OffSize(offSize)}	offSize`);
+	encodedOffsets.forEach((off) => {
+		console.log(off);
+	});
+	for (i = 0; i < l.length; i++) {
+		console.log(`${data[i]}	${l.type}	${l.name}`);
+	}
+};
 
 encode.DICT = (m) => {
 	let d = [];
@@ -527,6 +588,21 @@ encode.DICT = (m) => {
 };
 
 sizeOf.DICT = m => encode.DICT(m).length;
+
+print.DICT = (m) => {
+	console.log('Dict');
+	const keys = Object.keys(m);
+	const length = keys.length;
+
+	for (let i = 0; i < length; i++) {
+        // Object.keys() return string keys, but our keys are always numeric.
+		const k = parseInt(keys[i], 0);
+		const v = m[k];
+
+        // Value comes before the key.
+		console.log(`${encode.OPERAND(v.value, v.type)}${encode.OPERATOR(k)}	${v.type}	${v.name}`);
+	}
+};
 
 /**
  * @param {number}
@@ -618,6 +694,13 @@ sizeOf.OBJECT = (v) => {
 	return sizeOfFunction(v.value);
 };
 
+print.OBJECT = (v) => {
+	const printFunction = print[v.type];
+
+	checkArgument(printFunction !== undefined, `No print function for type ${v.type}`);
+	printFunction(v.value);
+};
+
 encode.TABLE = (table) => {
 	let d = [];
 	const length = table.fields.length;
@@ -692,4 +775,73 @@ sizeOf.RECORD = sizeOf.TABLE;
 encode.LITERAL = v => v;
 
 sizeOf.LITERAL = v => v.length;
+
+encode.ARRAY = (array) => {
+	const result = [];
+
+	if (array.length > 0) {
+		const type = array[0].type;
+
+		for (let i = 0; i < length; i++) {
+			const item = array[i];
+
+			checkArgument(type === item.type, `Item must be of type ${type} but is of type ${item.type}`);
+
+			const encodingFunction = encode[item.type || 'TABLE'];
+
+			checkArgument(encodingFunction !== undefined, `No encoding function for field type ${item.type} (${item.name})`);
+
+			result.push(encodingFunction(item));
+		}
+	}
+
+	return result;
+};
+
+sizeOf.ARRAY = (array) => {
+	if (array.length > 0) {
+		const sizeOfFunction = sizeOf[array[0].type || 'TABLE'];
+
+		// we can use a trick like this because items in an array should always
+		// have the same size (even if they are records)
+		return array.length * sizeOfFunction(array[0]);
+	}
+
+	return 0;
+};
+[
+	'BYTE',
+	'CHAR',
+	'CHARARRAY',
+	'USHORT',
+	'SHORT',
+	'UINT16',
+	'Offset16',
+	'UINT24',
+	'ULONG',
+	'LONG',
+	'FIXED',
+	'FWORD',
+	'UFWORD',
+	'LONGDATETIME',
+	'TAG',
+	'Card8',
+	'Card16',
+	'OffSize',
+	'SID',
+	'NUMBER',
+	'NUMBER16',
+	'NUMBER32',
+	'REAL',
+	'NAME',
+	'STRING',
+	'UTF16',
+	'MACSTRING',
+	'OPERATOR',
+	'OPERAND',
+].forEach((name) => {
+	print[name] = (v) => {
+		console.log(`${encode[name](v).join('')}	${v.type}	${v.name}`);
+	};
+});
 /* eslint-enable babel/new-cap */

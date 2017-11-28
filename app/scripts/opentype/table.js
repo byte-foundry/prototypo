@@ -219,7 +219,7 @@ export class cmap {
 		const segCount = t.segments.length;
 
 		t.segCountX2 = segCount * 2;
-		t.searchRange = Math.pow(2, Math.floor(Math.log(segCount) / Math.log(2))) * 2;
+		t.searchRange = (2 ** Math.floor(Math.log(segCount) / Math.log(2))) * 2;
 		t.entrySelector = Math.log(t.searchRange / 2) / Math.log(2);
 		t.rangeShift = t.segCountX2 - t.searchRange;
 
@@ -250,12 +250,12 @@ export class cmap {
 		t.fields = t.fields.concat(glyphIds);
 
 		t.length = 14 // Subtable header
-			+ endCounts.length * 2
+			+ (endCounts.length * 2)
 			+ 2 // reservedPad
-			+ startCounts.length * 2
-			+ idDeltas.length * 2
-			+ idRangeOffsets.length * 2
-			+ glyphIds.length * 2;
+			+ (startCounts.length * 2)
+			+ (idDeltas.length * 2)
+			+ (idRangeOffsets.length * 2)
+			+ (glyphIds.length * 2);
 
 		return t;
 	}
@@ -833,7 +833,7 @@ function reverseDict(dict) {
 	const result = {};
 
 	_forOwn(dict, (value, key) => {
-		result[value] = parseInt(key);
+		result[value] = parseInt(key, 10);
 	});
 
 	return result;
@@ -883,7 +883,7 @@ function findSubArray(needle, haystack) {
 	const needleLength = needle.length;
 	const limit = haystack.length - needleLength + 1;
 
-	/* eslint-disable no-labels */
+	/* eslint-disable no-restricted-syntax, max-depth, no-continue, no-labels */
 	loop:
     for (let pos = 0; pos < limit; pos++) {
 	for (; pos < limit; pos++) {
@@ -929,7 +929,7 @@ export class name {
 					id = key;
 				}
 
-				nameID = parseInt(id);
+				nameID = parseInt(id, 10);
 
 				if (isNaN(nameID)) {
 					throw new Error(`Name table entry "${key}" does not exist, see nameTableNames for complete list.`);
@@ -949,7 +949,7 @@ export class name {
 			nameID = nameIDs[i];
 			const translations = namesWithNumericKeys[nameID];
 
-			_forOwn(translations, (text, lang) => {
+			_forOwn(translations, (text, lang) => { // eslint-disable-line no-loop-func
 				// For MacOS, we try to emit the name in the form that was introduced
 				// in the initial version of the TrueType spec (in the late 1980s).
 				// However, this can fail for various reasons: the requested BCP 47
@@ -1007,7 +1007,7 @@ export class name {
 		const t = buildTableObj('name', [
 			{name: 'format', type: 'USHORT', value: 0},
 			{name: 'count', type: 'USHORT', value: nameRecords.length},
-			{name: 'stringOffset', type: 'USHORT', value: 6 + nameRecords.length * 12},
+			{name: 'stringOffset', type: 'USHORT', value: 6 + (nameRecords.length * 12)},
 		]);
 
 		for (let r = 0; r < nameRecords.length; r++) {
@@ -1028,7 +1028,7 @@ export class ltag {
 		]);
 
 		let stringPool = '';
-		const stringPoolOffset = 12 + tags.length * 4;
+		const stringPoolOffset = 12 + (tags.length * 4);
 
 		for (let i = 0; i < tags.length; i++) {
 			let pos = stringPool.indexOf(tags[i]);
@@ -1140,7 +1140,7 @@ const PRIVATE_DICT_META = [
 	    {name: 'nominalWidthX', op: 21, type: 'number', value: 0},
 ];
 
-function makeHeader() {
+function makeCffHeader() {
 	return buildTableObj('Header', [
         {name: 'major', type: 'Card8', value: 1},
         {name: 'minor', type: 'Card8', value: 0},
@@ -1399,7 +1399,7 @@ export class cff {
 		const strings = [];
 		let topDict = makeTopDict(attrs, strings);
 
-		t.header = makeHeader();
+		t.header = makeCffHeader();
 		t.nameIndex = makeNameIndex([options.postScriptName]);
 		t.topDictIndex = makeTopDictIndex(topDict);
 		t.globalSubrIndex = makeGlobalSubrIndex();
@@ -1428,6 +1428,135 @@ export class cff {
 		t.topDictIndex = makeTopDictIndex(topDict);
 
 		return t;
+	}
+}
+
+function makeGposHeader() {
+	return buildTableObj('Header', [
+        {name: 'majorVersion', type: 'UINT16', value: 1},
+        {name: 'minorersion', type: 'UINT16', value: 1},
+        {name: 'scriptListOffset', type: 'Offset16', value: 10},
+        {name: 'featureListOffset', type: 'Offset16', value: undefined},
+        {name: 'lookupListOffset', type: 'Offset16', value: undefined},
+        {name: 'featureVariations', type: 'Offset32', value: 0},
+	]);
+}
+
+function makeLanguageSystemTable(lang) {
+	const t = buildTableObj('langSysTable', [
+		{name: 'lookupOrder', type: 'Offset16', value: 0},
+		{name: 'requiredFeatureIndex', type: 'UINT16', value: lang.requiredFeatureIndex},
+		{name: 'featureIndexCount', type: 'UINT16', value: lang.featIndexes.length},
+		{name: 'featureIndices', type: 'ARRAY'},
+	]);
+
+	lang.featIndexes.forEach((feat, i) => {
+		t.featureIndices.push({name: `featureIndex[${i}]`, type: 'UINT16', value: feat});
+	});
+}
+
+function makeLangSysRecords(lang, idx, offset) {
+	const t = buildTableObj(`langSysRecord[${idx}]`, [
+		{name: 'langSysTag', type: 'Tag', value: lang.id},
+		{name: 'langSysOffset', type: 'Offset16', value: offset},
+	]);
+
+	return t;
+}
+
+function makeScriptTable({defaultLang, all}) {
+	let offset = 4 + (all.length * 6);
+
+	const t = buildTableObj('scriptTable', [
+		{name: 'defaultLangSys', type: 'Offset16', value: offset},
+		{name: 'langSysCount', type: 'UINT16', value: all.length},
+		{name: 'langSysRecords', type: 'ARRAY'},
+		{name: 'languageSystemTables', type: 'ARRAY'},
+	]);
+
+	t.langSysRecords = [];
+	t.langSystemTables = [];
+
+	const defaultLangSys = makeLanguageSystemTable(defaultLang, offset);
+
+	offset += sizeOf.TABLE(defaultLangSys);
+	t.langSystemTables.push(defaultLangSys);
+
+	all.forEach((language) => {
+		t.langSysRecords.push(makeLangSysRecords(language, offset));
+		const langSysTable = makeLanguageSystemTable(language);
+
+		offset += sizeOf.TABLE(langSysTable);
+		t.languageSystemTables.push(langSysTable);
+	});
+
+	return t;
+}
+
+function makeScriptRecord(tag, idx = 0, offset) {
+	const t = buildTableObj(`scriptRecords[${idx}]`, [
+		{name: 'scriptTag', type: 'Tag', value: tag},
+		{name: 'scriptOffset', type: 'Offset16'},
+	]);
+
+	t.scriptOffset = offset;
+
+	return t;
+}
+
+/* Options layout
+ * {
+ *	scriptList: [
+ *		{
+ *			tag: 'latn',
+ *			languages: {
+ *				defaultLang:{
+ *					id: 'DFLT', Default Language is required !!!!
+ *					requiredFeatureIndex: 0,
+ *					featureIndexes: [1, 2, 3...]
+ *				},
+ *				all: [
+ *					{
+ *						id: 'ROM',
+ *						requiredFeatureIndex: 0xFFFF, //no required feat
+ *						featureIndexes: [1, 2, 3...]
+ *					},
+ *				]
+ *			],
+ *		}
+ *	]
+ * }
+ */
+
+export class gpos {
+	static make(options = {}) {
+		const scripts = options.scripts || ['latn'];
+		const t = buildTableObj('GPOS ', [
+			{name: 'header', type: 'RECORD'},
+			{name: 'scriptList', type: 'RECORD'},
+			{name: 'featureList', type: 'RECORD'},
+			{name: 'lookupList', type: 'RECORD'},
+			{name: 'featureVariations', type: 'RECORD'},
+		]);
+
+		t.header = makeGposHeader();
+		t.scriptList = buildTableObj('ScriptListTable', [
+			{name: 'scriptCount', type: 'UINT16', value: scriptList.length},
+			{name: 'scriptRecords', type: 'ARRAY'},
+			{name: 'scriptTables', type: 'ARRAY'},
+		]);
+
+		t.scriptList.scriptRecords = [];
+		t.scriptList.scriptTables = [];
+		let offset = options.scriptList.length * 6 + 2;
+
+		options.scriptList.forEach((script, i) => {
+			t.scriptRecords.push(makeScriptRecord(script.tag, i, offset));
+			const scriptTable = makeScriptTable(script.languages);
+
+			offset += sizeOf.TABLE(scriptTable);
+			t.scriptList.scriptTables.push(scriptTable);
+		});
 	}
 }
 /* eslint-enable babel/new-cap */
