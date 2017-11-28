@@ -1,17 +1,9 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-export default class FormSuccess extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
-	}
-
+export default class FormSuccess extends React.PureComponent {
 	render() {
-		return (
-			<div className="form-success">
-				{this.props.successText}
-			</div>
-		);
+		const {children, successText} = this.props;
+
+		return <div className="form-success">{children || successText}</div>;
 	}
 }

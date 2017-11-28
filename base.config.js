@@ -76,6 +76,10 @@ module.exports = {
 				],
 				include: path.join(__dirname, 'app/images/icons'),
 			},
+			{
+				test: /\.md$/,
+				loader: 'raw-loader',
+			},
 		],
 		noParse: /(levelup|dist\/prototypo-canvas)/,
 	},
