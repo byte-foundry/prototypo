@@ -22,8 +22,6 @@ module.exports = {
 			'remutable',
 			'bluebird',
 			'jszip',
-			'xxhashjs',
-			'slug',
 			'lodash',
 			'diff'
 		],
