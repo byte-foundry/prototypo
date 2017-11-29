@@ -3,11 +3,13 @@ import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import InlineSVG from 'svg-inline-react';
+import Draggable from 'react-draggable';
 
 import ResizablePanels from './shared/resizable-panels.components';
 import PrototypoText from './prototypo-text.components.jsx';
 import PrototypoCanvas from './prototypo-canvas.components.jsx';
 import PrototypoWord from './prototypo-word.components.jsx';
+import StepChoiceDisplay from './lite/step-choice-display.components.jsx';
 
 export default class PrototypoPanel extends React.Component {
 
@@ -171,6 +173,9 @@ export default class PrototypoPanel extends React.Component {
 		return (
 			<div id="prototypopanel" key="justAcontainer">
 				{restrictedFeatureText}
+				<Draggable bounds="parent">
+					<StepChoiceDisplay />
+				</Draggable>
 				<ResizablePanels
 					key="everythingResize"
 					defaultY={this.state.wordPanelHeight}

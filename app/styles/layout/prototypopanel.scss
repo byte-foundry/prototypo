@@ -133,6 +133,34 @@
 		}
 	}
 
+	.react-draggable, .cursor {
+		cursor: move;
+	}
+	.no-cursor {
+		cursor: auto;
+	}
+
+	.StepChoiceDisplay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		padding: 0;
+		background-color: white;		
+		border: 1px solid black;
+		z-index: 10000;
+		h3 {
+			margin-top: -1px;
+			padding: .5rem 2rem .5rem 2rem;
+			margin-bottom: 5px;			
+			border-top: 1px solid black;
+			border-bottom: 1px solid black;
+			display: block;
+		}
+		li {
+			cursor: pointer;
+		}
+	}
+
 }
 
 #prototypoword {
