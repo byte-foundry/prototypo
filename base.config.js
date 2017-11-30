@@ -6,7 +6,6 @@ const SpritePlugin = require('svg-sprite-loader/plugin');
 module.exports = {
 	entry: {
 		bundle: ['react-hot-loader/patch', './app/scripts/main'],
-		'web-import': ['react-hot-loader/patch', './app/scripts/web-import'],
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),
@@ -76,6 +75,10 @@ module.exports = {
 					'svgo-loader',
 				],
 				include: path.join(__dirname, 'app/images/icons'),
+			},
+			{
+				test: /\.md$/,
+				loader: 'raw-loader',
 			},
 		],
 		noParse: /(levelup|dist\/prototypo-canvas)/,

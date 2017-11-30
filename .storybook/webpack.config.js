@@ -14,27 +14,32 @@ const base = require('../base.config');
 const genDefaultConfig = require('@storybook/react/dist/server/config/defaults/webpack.config.js');
 
 module.exports = (baseConfig, env) => {
-  const config = genDefaultConfig(baseConfig, env);
+	const config = genDefaultConfig(baseConfig, env);
 
-  config.entry.manager.unshift('babel-polyfill');
-  config.entry.preview.unshift('babel-polyfill');
+	config.entry.manager.unshift('babel-polyfill');
+	config.entry.preview.unshift('babel-polyfill');
 
-  config.module.rules.push({
-	  test: /\.scss$/,
-	  use: ['style-loader', 'css-loader', 'sass-loader'],
-	  include: [path.join(__dirname, '../app/styles')],
-  });
-  config.module.rules.push({
-	  test: /\.svg$/,
-	  use: [
-		  {
-			  loader: 'svg-sprite-loader',
-		  },
-		  'svgo-loader',
-	  ],
-	  include: path.join(__dirname, '../app/images/icons'),
-  });
-  config.plugins = config.plugins.concat(base.plugins);
+	config.module.rules[3].exclude = path.join(__dirname, '../app/images/icons');
 
-  return config;
+	config.module.rules.push({
+		test: /\.scss$/,
+		use: ['style-loader', 'css-loader', 'sass-loader'],
+		include: [path.join(__dirname, '../app/styles')],
+	});
+	config.module.rules.push({
+		test: /\.svg$/,
+		use: [
+			{
+				loader: 'svg-sprite-loader',
+				options: {
+					extract: true,
+				},
+			},
+			'svgo-loader',
+		],
+		include: path.join(__dirname, '../app/images/icons'),
+	});
+	config.plugins = config.plugins.concat(base.plugins);
+
+	return config;
 };

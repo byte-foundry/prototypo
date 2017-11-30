@@ -175,7 +175,7 @@ export default {
 		localServer.dispatchUpdate('/userStore', userPatch);
 
 	},
-	'/sign-in': async ({username, password, retry, to = '/start', oldQuery = {}}) => {
+	'/sign-in': async ({username, password, to = '/start', oldQuery = {}}) => {
 		const dashboardLocation = {
 			pathname: to,
 			query: oldQuery,
@@ -223,24 +223,20 @@ export default {
 			localServer.dispatchUpdate('/userStore', endPatch);
 		}
 		catch (err) {
-			if (/must sign out/i.test(err.message) && !retry) {
-				await HoodieApi.logout();
-				localStorage.clear();
-				window.Intercom('shutdown');
-				localClient.dispatchAction('/sign-in', {username, password, retry: true});
+			if (err.graphQLErrors[0].code === 5001) {
+				form.errors.push(err.graphQLErrors[0].functionError);
 			}
 			else {
 				trackJs.track(err);
 				form.errors.push(
-					/incorrect/i.test(err.message)
-						? 'Incorrect email or password'
-						: 'An unexpected error occured, please contact support@prototypo.io and mention your current email'
+					'An unexpected error occured, please contact support@prototypo.io and mention your current email',
 				);
-				form.loading = false;
-				const patch = userStore.set('signinForm', form).commit();
-
-				localServer.dispatchUpdate('/userStore', patch);
 			}
+
+			form.loading = false;
+			const patch = userStore.set('signinForm', form).commit();
+
+			localServer.dispatchUpdate('/userStore', patch);
 		}
 	},
 	'/sign-up': async ({username, password, firstname, lastname, css = {}, phone, skype, to = '/start', retry, oldQuery = {}}) => {

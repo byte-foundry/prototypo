@@ -9,7 +9,6 @@ module.exports = merge(base, {
 	cache: true,
 	entry: {
 		bundle: ['whatwg-fetch'],
-		'web-import': ['whatwg-fetch'],
 	},
 	module: {
 		rules: [

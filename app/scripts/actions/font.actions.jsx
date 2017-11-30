@@ -1,5 +1,3 @@
-import XXHash from 'xxhashjs';
-import slug from 'slug';
 import {gql} from 'react-apollo';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -13,8 +11,6 @@ import {FontValues} from '../services/values.services.js';
 import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
 import apolloClient from '../services/graphcool.services';
 
-slug.defaults.mode = 'rfc3986';
-slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
 let localServer;
 let localClient;
 let undoWatcher;
@@ -44,8 +40,6 @@ window.addEventListener('fluxServer.setup', () => {
 		}
 	);
 });
-
-const hasher = XXHash(0xDEADBEEF);
 
 export default {
 	'/load-font-instance': async ({appValues}) => {

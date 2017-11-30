@@ -53,7 +53,7 @@ export default class AcademyModal extends React.Component {
 				<h2>Hey there!</h2>
 				<p>
 					Do you want to learn how to use Prototypo?<br/>
-					Don't worry, we've set up a serie of courses just for you.
+					Don't worry, we've set up a series of courses just for you.
 				</p>
 				<br/>
 				<div className="action-form-buttons">

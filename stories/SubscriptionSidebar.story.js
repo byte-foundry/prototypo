@@ -17,4 +17,5 @@ storiesOf('account/SubscriptionSidebar', module)
 	))
 	.add('personal_annual_99', () => <SubscriptionSidebar plan="personal_annual_99" />)
 	.add('agency_monthly', () => <SubscriptionSidebar plan="agency_monthly" />)
-	.add('agency_annual', () => <SubscriptionSidebar plan="agency_annual" />);
+	.add('agency_annual', () => <SubscriptionSidebar plan="agency_annual" />)
+	.add('personal_annual_99 50% off', () => <SubscriptionSidebar plan="personal_annual_99" percentPrice={0.5} />);

@@ -54,8 +54,8 @@ export default class StepChoiceDisplay extends React.Component {
 	}
 
 	render() {
-		return (
-            <div
+		return this.state.choices
+            ? (<div
                 className={`StepChoiceDisplay ${this.props.className}`}
                 style={this.props.style}
                 onMouseDown={this.props.onMouseDown}
@@ -73,7 +73,7 @@ export default class StepChoiceDisplay extends React.Component {
                         </ul>
                     </div>
                 ))}
-            </div>
-		);
+            </div>)
+            : false;
 	}
 }

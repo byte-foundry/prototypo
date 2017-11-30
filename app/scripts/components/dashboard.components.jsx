@@ -23,7 +23,6 @@ import CreateExportLiteModal from './lite/create-export-lite-modal.components.js
 import ChangeNameFamily from './familyVariant/change-name-family.components.jsx';
 import ChangeNameVariant from './familyVariant/change-name-variant.components.jsx';
 import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
-import CreditsExport from './credits-export.components.jsx';
 import GoProModal from './go-pro-modal.components.jsx';
 
 import {buildTutorialSteps, handleNextStep, handleClosed} from '../helpers/joyride.helpers.js';
@@ -99,7 +98,6 @@ class Dashboard extends React.PureComponent {
 					openChangeFamilyNameModal: head.toJS().d.openChangeFamilyNameModal,
 					openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
 					openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
-					openBuyCreditsModal: head.toJS().d.openBuyCreditsModal,
 					openGoProModal: head.toJS().d.openGoProModal,
 					step: head.toJS().d.uiOnboardstep,
 					collection: head.toJS().d.uiShowCollection,
@@ -247,8 +245,6 @@ class Dashboard extends React.PureComponent {
 			&& <ChangeNameVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant} propName="openChangeVariantNameModal"/>;
 		const duplicateVariant = this.state.openDuplicateVariantModal
 			&& <DuplicateVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant} propName="openDuplicateVariantModal"/>;
-		const buyCredits = this.state.openBuyCreditsModal
-			&& <CreditsExport propName="openBuyCreditsModal"/>;
 		const goPro = this.state.openGoProModal
 			&& <GoProModal propName="openGoProModal"/>;
 
@@ -295,7 +291,6 @@ class Dashboard extends React.PureComponent {
 					{changeNameFamily}
 					{changeNameVariant}
 					{duplicateVariant}
-					{buyCredits}
 					{goPro}
 					{exportAs}
 					{explainAcademy}
