@@ -159,6 +159,11 @@
 		}
 		li {
 			cursor: pointer;
+			padding-right: 2rem;
+			&.active {
+				color: red;
+				font-weight: bold;
+			}
 		}
 	}
 

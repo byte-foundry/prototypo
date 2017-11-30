@@ -1,5 +1,3 @@
-import XXHash from 'xxhashjs';
-import slug from 'slug';
 import {prototypoStore, userStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
@@ -13,8 +11,6 @@ let localServer;
 let localClient;
 let undoWatcher;
 
-slug.defaults.mode = 'rfc3986';
-slug.defaults.modes.rfc3986.remove = /[-_\/\\\.]/g;
 window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
 	localServer = LocalServer.instance;
@@ -30,8 +26,6 @@ window.addEventListener('fluxServer.setup', () => {
 		},
 	);
 });
-
-const hasher = XXHash(0xdeadbeef);
 
 export default {
 	'/fetch-preset': async (variantId) => {
@@ -151,6 +145,7 @@ export default {
 		saveAppValues();
 	},
 	'/created-choice': async (choice) => {
+
 		const newChoice = {
 			id: choice.id,
 			name: choice.name,

@@ -425,7 +425,9 @@ export class AddChoice extends React.Component {
 
 			this.client.dispatchAction('/edit-choice', newChoice);
 		}
-		else {
+		else {			
+			// Save old choice
+			this.client.dispatchAction('/save-choice-values');
 			try {
 				const {data: {createChoice: newChoice}} = await this.props.createChoice(
 					name,

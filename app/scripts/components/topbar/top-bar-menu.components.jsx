@@ -59,7 +59,7 @@ class TopBarMenu extends React.PureComponent {
 						},
 						headerClassName,
 					);
-					const count = index > 0 && index < 5 ? index : 0;
+					const count = index > 0 && index < 6 ? index : 0;
 
 					return (
 						<TopBarMenuItem

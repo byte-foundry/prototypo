@@ -54,7 +54,7 @@ export default class StepChoiceDisplay extends React.Component {
 	}
 
 	render() {
-		return this.state.choices
+		return this.state.steps
             ? (<div
                 className={`StepChoiceDisplay ${this.props.className}`}
                 style={this.props.style}
@@ -74,6 +74,6 @@ export default class StepChoiceDisplay extends React.Component {
                     </div>
                 ))}
             </div>)
-            : false;
+            : (<div />);
 	}
 }

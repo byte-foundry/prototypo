@@ -65,7 +65,16 @@ class Topbar extends React.Component {
 		this.deleteCurrentChoice = this.deleteCurrentChoice.bind(this);
 		this.editCurrentChoice = this.editCurrentChoice.bind(this);
 		this.editCurrentStep = this.editCurrentStep.bind(this);
-        this.openExportLiteModal = this.openExportLiteModal.bind(this);
+		this.openExportLiteModal = this.openExportLiteModal.bind(this);
+		this.setPreset = this.setPreset.bind(this);
+		this.startFileTutorial = this.startFileTutorial.bind(this);
+		this.saveChoiceValues = this.saveChoiceValues.bind(this);
+		this.updateBaseFontValues = this.updateBaseFontValues.bind(this);
+		this.deleteCurrentStep = this.deleteCurrentStep.bind(this);
+		this.deleteCurrentChoice = this.deleteCurrentChoice.bind(this);
+		this.editCurrentStep = this.editCurrentStep.bind(this);
+		this.editCurrentChoice = this.editCurrentChoice.bind(this);
+		this.openExportLiteModal = this.openExportLiteModal.bind(this);
 	}
 
 	async componentWillMount() {
@@ -389,7 +398,7 @@ class Topbar extends React.Component {
 				centered
 				click={this.goToSubscribe}
 				alignRight
-			/>;
+		/>);
 
 		const academyIcon = (loadingAcademyProgress || !academyProgress.lastCourse) && (
 			<TopBarMenuAcademyIcon
@@ -624,13 +633,13 @@ class Topbar extends React.Component {
 						/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Lite">
-                        <TopBarMenuDropdownItem name="Export data" handler={() => {this.openExportLiteModal}} />
-						<TopBarMenuDropdownItem name="Rename step" handler={() => {this.editCurrentStep}} />
-						<TopBarMenuDropdownItem name="Delete step" handler={() => {this.deleteCurrentStep}} />
-						<TopBarMenuDropdownItem name="Rename choice" handler={() => {this.editCurrentChoice}} />
-						<TopBarMenuDropdownItem name="Delete choice" handler={() => {this.deleteCurrentChoice}} />
-						<TopBarMenuDropdownItem name="Update base font values" handler={() => {this.updateBaseFontValues}} />
-						<TopBarMenuDropdownItem name="Save choice values" handler={() => {this.saveChoiceValues}} />
+                        <TopBarMenuDropdownItem name="Export data" handler={this.openExportLiteModal} />
+						<TopBarMenuDropdownItem name="Rename step" handler={this.editCurrentStep} />
+						<TopBarMenuDropdownItem name="Delete step" handler={this.deleteCurrentStep} />
+						<TopBarMenuDropdownItem name="Rename choice" handler={this.editCurrentChoice} />
+						<TopBarMenuDropdownItem name="Delete choice" handler={this.deleteCurrentChoice} />
+						<TopBarMenuDropdownItem name="Update base font values" handler={this.updateBaseFontValues} />
+						<TopBarMenuDropdownItem name="Save choice values" handler={this.saveChoiceValues} />
 					</TopBarMenuDropdown>
 					{academyIcon}
 					{academyProgressItem}
