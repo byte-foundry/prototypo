@@ -2,58 +2,6 @@
 # yarn lockfile v1
 
 
-"@babel/helper-builder-react-jsx@7.0.0-beta.32":
-  version "7.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@babel/helper-builder-react-jsx/-/helper-builder-react-jsx-7.0.0-beta.32.tgz#947e568c33294b2247b69f8bba1fca54e6082145"
-  dependencies:
-    "@babel/types" "7.0.0-beta.32"
-    esutils "^2.0.0"
-
-"@babel/plugin-syntax-jsx@7.0.0-beta.32":
-  version "7.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-jsx/-/plugin-syntax-jsx-7.0.0-beta.32.tgz#ef395991c8fc7ec1bd4678c386635f754b9792e9"
-
-"@babel/plugin-transform-react-display-name@7.0.0-beta.32":
-  version "7.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-display-name/-/plugin-transform-react-display-name-7.0.0-beta.32.tgz#31cc0fd7a7772e2118bb787fae06914d5dd497f1"
-
-"@babel/plugin-transform-react-jsx-self@7.0.0-beta.32":
-  version "7.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.0.0-beta.32.tgz#4826b0fc7763db645fa8535d9cbd927fcbb717e1"
-  dependencies:
-    "@babel/plugin-syntax-jsx" "7.0.0-beta.32"
-
-"@babel/plugin-transform-react-jsx-source@7.0.0-beta.32":
-  version "7.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.0.0-beta.32.tgz#95f3e1199cd128d4bed0cb6d8bc3b85d130ec3a3"
-  dependencies:
-    "@babel/plugin-syntax-jsx" "7.0.0-beta.32"
-
-"@babel/plugin-transform-react-jsx@7.0.0-beta.32":
-  version "7.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.0.0-beta.32.tgz#bc0042ef4d51d94ef6faa04b055190075f1c325e"
-  dependencies:
-    "@babel/helper-builder-react-jsx" "7.0.0-beta.32"
-    "@babel/plugin-syntax-jsx" "7.0.0-beta.32"
-
-"@babel/preset-react@^7.0.0-beta.31":
-  version "7.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.0.0-beta.32.tgz#16fb4f376da3f620f53f19d061b1569fd08a0519"
-  dependencies:
-    "@babel/plugin-syntax-jsx" "7.0.0-beta.32"
-    "@babel/plugin-transform-react-display-name" "7.0.0-beta.32"
-    "@babel/plugin-transform-react-jsx" "7.0.0-beta.32"
-    "@babel/plugin-transform-react-jsx-self" "7.0.0-beta.32"
-    "@babel/plugin-transform-react-jsx-source" "7.0.0-beta.32"
-
-"@babel/types@7.0.0-beta.32":
-  version "7.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.0.0-beta.32.tgz#c317d0ecc89297b80bbcb2f50608e31f6452a5ff"
-  dependencies:
-    esutils "^2.0.2"
-    lodash "^4.2.0"
-    to-fast-properties "^2.0.0"
-
 "@gulp-sourcemaps/map-sources@1.X":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@gulp-sourcemaps/map-sources/-/map-sources-1.0.0.tgz#890ae7c5d8c877f6d384860215ace9d7ec945bda"
@@ -413,7 +361,7 @@ ansicolors@~0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/ansicolors/-/ansicolors-0.2.1.tgz#be089599097b74a5c9c4a84a0cdbcdb62bd87aef"
 
-antique.ptf@byte-foundry/antique.ptf, "antique.ptf@github:byte-foundry/antique.ptf":
+antique.ptf@byte-foundry/antique.ptf:
   version "1.0.0"
   resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/c6ddf6adce4a508194e202d5d81b0780561c3693"
   dependencies:
@@ -951,10 +899,6 @@ babel-messages@^6.23.0:
   dependencies:
     babel-runtime "^6.22.0"
 
-babel-plugin-add-module-exports@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/babel-plugin-add-module-exports/-/babel-plugin-add-module-exports-0.2.1.tgz#9ae9a1f4a8dc67f0cdec4f4aeda1e43a5ff65e25"
-
 babel-plugin-check-es2015-constants@^6.22.0:
   version "6.22.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-check-es2015-constants/-/babel-plugin-check-es2015-constants-6.22.0.tgz#35157b101426fd2ffd3da3f75c7d1e91835bbf8a"
@@ -1374,10 +1318,6 @@ babel-plugin-transform-minify-booleans@^6.8.3:
   version "6.8.3"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-minify-booleans/-/babel-plugin-transform-minify-booleans-6.8.3.tgz#5906ed776d3718250519abf1bace44b0b613ddf9"
 
-babel-plugin-transform-node-env-inline@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/babel-plugin-transform-node-env-inline/-/babel-plugin-transform-node-env-inline-0.2.0.tgz#b13c2aafd4a7cbefeba07091a1134d402147d192"
-
 babel-plugin-transform-object-rest-spread@6.26.0, babel-plugin-transform-object-rest-spread@^6.22.0, babel-plugin-transform-object-rest-spread@^6.23.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-object-rest-spread/-/babel-plugin-transform-object-rest-spread-6.26.0.tgz#0f36692d50fef6b7e2d4b3ac1478137a963b7b06"
@@ -1469,12 +1409,6 @@ babel-plugin-transform-strict-mode@^6.24.1:
 babel-plugin-transform-undefined-to-void@^6.8.3:
   version "6.8.3"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-undefined-to-void/-/babel-plugin-transform-undefined-to-void-6.8.3.tgz#fc52707f6ee1ddc71bb91b0d314fbefdeef9beb4"
-
-babel-plugin-uglify@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/babel-plugin-uglify/-/babel-plugin-uglify-1.0.2.tgz#d7bcdab132afbadb0bf3479a5666eb8de082610f"
-  dependencies:
-    uglify-js "^2.4.24"
 
 babel-polyfill@^6.23.0:
   version "6.26.0"
@@ -3794,7 +3728,7 @@ esutils@^1.1.6:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/esutils/-/esutils-1.1.6.tgz#c01ccaa9ae4b897c6d0c3e210ae52f3c7a844375"
 
-esutils@^2.0.0, esutils@^2.0.2:
+esutils@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/esutils/-/esutils-2.0.2.tgz#0abf4f1caa5bcb1f7a9d8acc6dea4faaa04bac9b"
 
@@ -4455,7 +4389,7 @@ getpass@^0.1.1:
 
 gfnt.ptf@byte-foundry/spectral.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/ece07fd081683eb7017fc2aa394d31d0d4ef9feb"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/9d42f23543a91f493ed2618258a72c3208e8cd67"
 
 glamor@^2.20.40:
   version "2.20.40"
@@ -6256,12 +6190,12 @@ lifespan@FranzPoize/lifespan#master, lifespan@^5.0.1:
   version "5.0.1"
   resolved "https://codeload.github.com/FranzPoize/lifespan/tar.gz/5a9471d668c1213518be5197d1e5f64937dd699f"
   dependencies:
-    lodash "~4.14.0"
-    should "^13.1.3"
+    bluebird "^2.9.30"
+    lodash "^3.9.3"
+    should "^6.0.3"
 
-lifespan@franzpoize/lifespan#master:
+lifespan@franzpoize/lifespan:
   version "5.0.1"
-  uid "5a9471d668c1213518be5197d1e5f64937dd699f"
   resolved "https://codeload.github.com/franzpoize/lifespan/tar.gz/5a9471d668c1213518be5197d1e5f64937dd699f"
   dependencies:
     lodash "~4.14.0"
@@ -6612,7 +6546,7 @@ lodash.words@^3.0.0:
   dependencies:
     lodash._root "^3.0.0"
 
-lodash@4.x.x, lodash@^4.0.0, lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.5.0, lodash@^4.5.1, lodash@^4.6.1, lodash@~4.17.4:
+lodash@4.x.x, lodash@^4.0.0, lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.5.0, lodash@^4.5.1, lodash@^4.6.1, lodash@~4.17.4:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -7123,7 +7057,7 @@ netmask@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-1.0.6.tgz#20297e89d86f6f6400f250d9f4f6b4c1945fcd35"
 
-nexus-events@franzpoize/nexus-events#master:
+nexus-events@franzpoize/nexus-events:
   version "4.0.2"
   resolved "https://codeload.github.com/franzpoize/nexus-events/tar.gz/26dfa76e048400a739731fe17f2c047ac3c86a12"
   dependencies:
@@ -7153,15 +7087,13 @@ nexus-flux@FranzPoize/nexus-flux#master:
   version "4.0.2"
   resolved "https://codeload.github.com/FranzPoize/nexus-flux/tar.gz/59567283c589705fcd210341cdbd1cccbfa5c3aa"
   dependencies:
-    "@babel/preset-react" "^7.0.0-beta.31"
     asap "^2.0.3"
-    babel-plugin-transform-node-env-inline "^0.2.0"
-    babel-plugin-uglify "^1.0.2"
+    bluebird "^3.1.1"
     immutable "^3.7.3"
-    lifespan franzpoize/lifespan#master
-    lodash "^4.14.0"
-    nexus-events franzpoize/nexus-events#master
-    remutable franzpoize/remutable#master
+    lifespan franzpoize/lifespan
+    lodash "^3.9.3"
+    nexus-events franzpoize/nexus-events
+    remutable franzpoize/remutable
     sha256 "^0.2.0"
     should "^6.0.3"
 
@@ -8377,8 +8309,8 @@ prototypo-canvas@~1.16.0:
     wolfy87-eventemitter "4.2.0"
 
 prototypo.js@^1.16.11:
-  version "1.16.11"
-  resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.16.11.tgz#92862584eb0623174d5c28efe725bd40430bcd47"
+  version "1.16.12"
+  resolved "https://registry.yarnpkg.com/prototypo.js/-/prototypo.js-1.16.12.tgz#a80bc35940e4546c0c0cdd40a9291d22cb7e06c2"
   dependencies:
     antique.ptf byte-foundry/antique.ptf
     babel-plugin-transform-flow-strip-types "^6.22.0"
@@ -9084,7 +9016,6 @@ remove-trailing-separator@^1.0.1:
 
 remutable@FranzPoize/remutable#master:
   version "3.0.1"
-  uid b3672c0ead0ae6443bb85703daa9bb914b3fb3ce
   resolved "https://codeload.github.com/FranzPoize/remutable/tar.gz/b3672c0ead0ae6443bb85703daa9bb914b3fb3ce"
   dependencies:
     crc-32 "^0.3.0"
@@ -9092,7 +9023,7 @@ remutable@FranzPoize/remutable#master:
     lodash "~4.14.0"
     should "^6.0.3"
 
-remutable@franzpoize/remutable#master:
+remutable@franzpoize/remutable:
   version "3.0.1"
   resolved "https://codeload.github.com/franzpoize/remutable/tar.gz/b3672c0ead0ae6443bb85703daa9bb914b3fb3ce"
   dependencies:
@@ -9945,10 +9876,6 @@ spdy@^3.4.1:
     select-hose "^2.0.0"
     spdy-transport "^2.0.18"
 
-speakingurl@^14.0.1:
-  version "14.0.1"
-  resolved "https://registry.yarnpkg.com/speakingurl/-/speakingurl-14.0.1.tgz#f37ec8ddc4ab98e9600c1c9ec324a8c48d772a53"
-
 split-string@^3.0.1, split-string@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/split-string/-/split-string-3.1.0.tgz#7cb09dda3a86585705c64b39a6466038682e8fe2"
@@ -10430,10 +10357,6 @@ to-fast-properties@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-1.0.3.tgz#b83571fa4d8c25b82e231b06e3a3055de4ca1a47"
 
-to-fast-properties@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-2.0.0.tgz#dc5e698cbd079265bc73e0377681a4e4e83f616e"
-
 to-iso-string@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/to-iso-string/-/to-iso-string-0.0.2.tgz#4dc19e664dfccbe25bd8db508b00c6da158255d1"
@@ -10515,10 +10438,8 @@ tutorial-content@byte-foundry/tutorial-content#master:
   version "3.1.2"
   resolved "https://codeload.github.com/byte-foundry/tutorial-content/tar.gz/9c486afd6d4ed4ce5d31f78df4abb3cd69023d79"
   dependencies:
-    babel-plugin-add-module-exports "^0.2.1"
     front-matter "^2.1.2"
     fs-extra "^2.1.2"
-    speakingurl "^14.0.1"
 
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
@@ -10573,7 +10494,7 @@ uglify-js@2.6.4:
     uglify-to-browserify "~1.0.0"
     yargs "~3.10.0"
 
-uglify-js@^2.4.24, uglify-js@^2.6, uglify-js@^2.8.29:
+uglify-js@^2.6, uglify-js@^2.8.29:
   version "2.8.29"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.29.tgz#29c5733148057bb4e1f75df35b7a9cb72e6a59dd"
   dependencies:
