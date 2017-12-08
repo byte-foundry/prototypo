@@ -1,5 +1,12 @@
 import _chunk from 'lodash/chunk';
 import _forOwn from 'lodash/forOwn';
+/* eslint-disable no-unused-vars, import/extensions */
+import johnfell from 'john-fell.ptf';
+import venus from 'venus.ptf';
+import elzevir from 'elzevir.ptf';
+import spectral from 'gfnt.ptf';
+import antique from 'antique.ptf';
+/* eslint-enable no-unused-vars, import/extensions */
 
 import LocalClient from '../../stores/local-client.stores';
 

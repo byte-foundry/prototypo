@@ -1,15 +1,16 @@
 import _without from 'lodash/without';
 import _xor from 'lodash/xor';
 import React from 'react';
-import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import InlineSVG from 'svg-inline-react';
 
+import LocalClient from '../stores/local-client.stores';
+
 import ResizablePanels from './shared/resizable-panels.components';
-import PrototypoText from './prototypo-text.components.jsx';
-import PrototypoCanvas from './prototypo-canvas.components.jsx';
-import PrototypoWord from './prototypo-word.components.jsx';
+import PrototypoText from './prototypo-text.components';
+import PrototypoCanvas from './prototypo-canvas.components';
+import PrototypoWord from './prototypo-word.components';
 
 export default class PrototypoPanel extends React.Component {
 
@@ -30,7 +31,6 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	async componentWillMount() {
-
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
@@ -53,6 +53,7 @@ export default class PrototypoPanel extends React.Component {
 					uiTextFontSize: head.toJS().d.uiTextFontSize,
 					uiInvertedWordView: head.toJS().d.uiInvertedWordView,
 					uiInvertedWordColors: head.toJS().d.uiInvertedWordColors,
+					uiDependencies: head.toJS().d.uiDependencies,
 					editingGroup: head.toJS().d.indivEdit,
 					indivMode: head.toJS().d.indivMode,
 					wordPanelHeight: head.toJS().d.wordPanelHeight || 20,
@@ -67,16 +68,17 @@ export default class PrototypoPanel extends React.Component {
 			});
 	}
 
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	resetView({x, y, zoom = 0.5}) {
 		this.client.dispatchAction('/store-value', {
-			uiPos: new prototypo.paper.Point(x, y),
+			uiPos: {x, y},
 			uiZoom: zoom,
 		});
 	}
 
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
 
 	toggleView(name) {
 		// if we are closing glyph mode, we want glyph list to be hidden
@@ -102,7 +104,7 @@ export default class PrototypoPanel extends React.Component {
 
 	closeRestrictedFeatureOverlay() {
 		this.client.dispatchAction('/store-value', {openRestrictedFeature: false,
-													restrictedFeatureHovered: ''});
+			restrictedFeatureHovered: ''});
 	}
 
 	openGoProModal() {
@@ -117,8 +119,8 @@ export default class PrototypoPanel extends React.Component {
 			console.log('[RENDER] prototypopanel');
 		}
 
-		//TODO(franz): Why ?
-		/*if (!this.state.panel) {
+		// TODO(franz): Why ?
+		/* if (!this.state.panel) {
 			return false;
 			}*/
 
@@ -126,32 +128,32 @@ export default class PrototypoPanel extends React.Component {
 		const hasText = this.state.uiMode.indexOf('text') !== -1;
 		const hasWord = this.state.uiMode.indexOf('word') !== -1;
 
-		//This is for moving the view panels away from the intercom launcher
+		// This is for moving the view panels away from the intercom launcher
 		const textIntercomDisplacement = hasText;
 		const glyphIntercomDisplacement = hasGlyph && !hasText;
 		const wordIntercomDisplacement = hasWord && !hasText && !hasGlyph;
 
-			/*if (hasGlyph && this.state.uiShadow) {
+			/* if (hasGlyph && this.state.uiShadow) {
 			textAndGlyph.push(<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>);
 		}*/
 
 		let featureHovered;
 
 		switch (this.state.restrictedFeatureHovered) {
-			case 'indiv':
-				featureHovered = 'This is the individualization mode, an advanced feature not available to you yet.';
-				break;
-			case 'slider':
-				featureHovered = 'To unlock the full slider range on all parameters and design stronger identities with unique fonts.';
-				break;
-			case 'componentEditing':
-				featureHovered = 'This is the component editing view, an advanced feature not available to you yet.';
-				break;
-			case 'manualEditing':
-				featureHovered = 'This is the manual editing view, an advanced feature not available to you yet.';
-				break;
-			default:
-				featureHovered = 'This feature is not available to you yet.';
+		case 'indiv':
+			featureHovered = 'This is the individualization mode, an advanced feature not available to you yet.';
+			break;
+		case 'slider':
+			featureHovered = 'To unlock the full slider range on all parameters and design stronger identities with unique fonts.';
+			break;
+		case 'componentEditing':
+			featureHovered = 'This is the component editing view, an advanced feature not available to you yet.';
+			break;
+		case 'manualEditing':
+			featureHovered = 'This is the manual editing view, an advanced feature not available to you yet.';
+			break;
+		default:
+			featureHovered = 'This feature is not available to you yet.';
 
 		}
 
@@ -159,7 +161,7 @@ export default class PrototypoPanel extends React.Component {
 			? (
 				<div className="panel-demo-overlay" onClick={this.closeRestrictedFeatureOverlay}>
 					<div className="panel-demo-overlay-text">
-						<InlineSVG element="div" src={require('!svg-inline-loader!../../images/academy/lock.svg')} onClick={this.openGoProModal}/>
+						<InlineSVG element="div" src={require('!svg-inline-loader!../../images/academy/lock.svg')} onClick={this.openGoProModal} />
 						<p>
 							{featureHovered}
 						</p>
@@ -182,7 +184,8 @@ export default class PrototypoPanel extends React.Component {
 					direction="horizontal"
 					onlyOne={hasWord && !hasText && !hasGlyph}
 					onlyTwo={!hasWord && (hasText || hasGlyph)}
-					y={this.state.wordPanelHeight}>
+					y={this.state.wordPanelHeight}
+				>
 					<div id="prototypoword" key="wordContainer">
 						<PrototypoWord
 							key="word"
@@ -194,7 +197,8 @@ export default class PrototypoPanel extends React.Component {
 							close={this.toggleView}
 							viewPanelRightMove={wordIntercomDisplacement}
 							wordPanelHeight={this.state.wordPanelHeight}
-							field="uiWord"/>
+							field="uiWord"
+						/>
 					</div>
 					<ResizablePanels
 						key="resizableText"
@@ -205,7 +209,8 @@ export default class PrototypoPanel extends React.Component {
 						direction="vertical"
 						onlyOne={hasGlyph && !hasText}
 						onlyTwo={!hasGlyph && hasText}
-						x={this.state.canvasPanelWidth}>
+						x={this.state.canvasPanelWidth}
+					>
 						<PrototypoCanvas
 							key="canvas"
 							uiZoom={this.state.uiZoom}
@@ -214,12 +219,14 @@ export default class PrototypoPanel extends React.Component {
 							uiNodes={this.state.uiNodes}
 							uiOutline={this.state.uiOutline}
 							uiCoords={this.state.uiCoords}
+							uiDependencies={this.state.uiDependencies}
 							uiShadow={this.state.uiShadow}
 							glyphs={this.state.glyphs}
 							glyphSelected={this.state.glyphSelected}
 							reset={this.resetView}
 							viewPanelRightMove={glyphIntercomDisplacement}
-							close={this.toggleView}/>
+							close={this.toggleView}
+						/>
 						<PrototypoText
 							key="text"
 							display="block"
@@ -231,7 +238,8 @@ export default class PrototypoPanel extends React.Component {
 							close={this.toggleView}
 							indivCurrentGroup={this.state.indivCurrentGroup}
 							viewPanelRightMove={textIntercomDisplacement}
-							field="uiText"/>
+							field="uiText"
+						/>
 					</ResizablePanels>
 				</ResizablePanels>
 			</div>

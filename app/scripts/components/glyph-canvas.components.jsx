@@ -19,6 +19,11 @@ const raf = requestAnimationFrame || webkitRequestAnimationFrame;
 const rafCancel = cancelAnimationFrame || webkitCancelAnimationFrame;
 let rafId;
 
+const onCurveModMode = {
+	WIDTH_MOD: 0b1,
+	ANGLE_MOD: 0b10,
+};
+
 function handleModification(client, glyph, draggedItem, newPos, smoothMod, contour) {
 	const {parentId, skeletonId, otherNode, otherDir, transforms} = draggedItem.data;
 	const selectedNodeParent = _get(glyph, parentId);
@@ -100,39 +105,31 @@ function onCurveModification(
 	newPos,
 	appStateValue,
 	hotItems,
-	moved,
+	modToApply,
 ) {
-	if (moved) {
-		const {baseWidth, oppositeId, baseAngle, skeleton, angleOffset} = draggedItem.data;
-		const opposite = _get(glyph, oppositeId);
-		// width factor
-		const factor = distance2D(opposite, newPos) / baseWidth;
+	const {baseWidth, oppositeId, baseAngle, skeleton, angleOffset} = draggedItem.data;
+	const opposite = _get(glyph, oppositeId);
+	// width factor
+	const factor = distance2D(opposite, newPos) / baseWidth;
 
-		// angle difference
-		const newVec = subtract2D(newPos, skeleton);
-		const angleDiff = Math.atan2(newVec.y, newVec.x) - baseAngle;
+	// angle difference
+	const newVec = subtract2D(newPos, skeleton);
+	const angleDiff = Math.atan2(newVec.y, newVec.x) - baseAngle;
 
-		const changes = {};
+	const changes = {};
 
-		if (
-			(appStateValue ^ appState.ONCURVE_MOD_ANGLE_MODIFIER) // eslint-disable-line no-bitwise
-			& appState.ONCURVE_MOD_ANGLE_MODIFIER
-		) {
-			changes[`${draggedItem.data.modifAddress}.width`] = factor;
-		}
-
-		if (
-			(appStateValue ^ appState.ONCURVE_MOD_WIDTH_MODIFIER) // eslint-disable-line no-bitwise
-			& appState.ONCURVE_MOD_WIDTH_MODIFIER
-		) {
-			changes[`${draggedItem.data.modifAddress}.angle`] = angleDiff + angleOffset;
-		}
-
-		client.dispatchAction('/change-glyph-node-manually', {
-			changes,
-			glyphName: glyph.name,
-		});
+	if (modToApply & onCurveModMode.WIDTH_MOD) { // eslint-disable-line no-bitwise
+		changes[`${draggedItem.data.modifAddress}.width`] = factor;
 	}
+
+	if (modToApply & onCurveModMode.ANGLE_MOD) { // eslint-disable-line no-bitwise
+		changes[`${draggedItem.data.modifAddress}.angle`] = angleDiff + angleOffset;
+	}
+
+	client.dispatchAction('/change-glyph-node-manually', {
+		changes,
+		glyphName: glyph.name,
+	});
 
 	const id = draggedItem.data.parentId;
 	const skeletonNode = _get(glyph, id);
@@ -142,22 +139,21 @@ function onCurveModification(
 	}
 }
 
-function skeletonPosModification(toile, client, glyph, draggedItem, newPos, hotItems, moved) {
-	if (moved) {
-		const {base, transforms} = draggedItem.data;
+function skeletonPosModification(toile, client, glyph, draggedItem, diffVector, hotItems) {
+	const {base, transforms} = draggedItem.data;
+	const pointPos = _get(glyph, toLodashPath(draggedItem.id));
+	const posVector = subtract2D(add2D(pointPos, diffVector), base);
 
-		const mouseVec = subtract2D(newPos, base);
-		const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
-		const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
+	const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
+	const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
 
-		client.dispatchAction('/change-glyph-node-manually', {
-			changes: {
-				[`${draggedItem.data.modifAddress}x`]: mouseVec.x * xTransform,
-				[`${draggedItem.data.modifAddress}y`]: mouseVec.y * yTransform,
-			},
-			glyphName: glyph.name,
-		});
-	}
+	client.dispatchAction('/change-glyph-node-manually', {
+		changes: {
+			[`${draggedItem.data.modifAddress}x`]: posVector.x * xTransform,
+			[`${draggedItem.data.modifAddress}y`]: posVector.y * yTransform,
+		},
+		glyphName: glyph.name,
+	});
 
 	const id = draggedItem.id;
 	const skeletonNode = _get(glyph, id);
@@ -167,33 +163,31 @@ function skeletonPosModification(toile, client, glyph, draggedItem, newPos, hotI
 	}
 }
 
-function skeletonDistrModification(toile, client, glyph, draggedItem, newPos, hotItems, moved) {
-	if (moved) {
-		const {
-			base,
-			expandedTo,
-			width,
-			baseDistr,
-		} = draggedItem.data;
-		const skelVec = normalize2D(subtract2D(expandedTo[1], expandedTo[0]));
-		const distProjOntoSkel = Math.min(Math.max(dot2D(
-			subtract2D(newPos, expandedTo[0]),
-			skelVec,
-		), 0), width);
-		const mouseVec = subtract2D(
-			add2D(mulScalar2D(distProjOntoSkel, skelVec), expandedTo[0]),
-			base,
-		);
+function skeletonDistrModification(toile, client, glyph, draggedItem, newPos, hotItems) {
+	const {
+		base,
+		expandedTo,
+		width,
+		baseDistr,
+	} = draggedItem.data;
+	const skelVec = normalize2D(subtract2D(expandedTo[1], expandedTo[0]));
+	const distProjOntoSkel = Math.min(Math.max(dot2D(
+		subtract2D(newPos, expandedTo[0]),
+		skelVec,
+	), 0), width);
+	const mouseVec = subtract2D(
+		add2D(mulScalar2D(distProjOntoSkel, skelVec), expandedTo[0]),
+		base,
+	);
 
-		client.dispatchAction('/change-glyph-node-manually', {
-			changes: {
-				[`${draggedItem.data.modifAddress}expand.distr`]: (distProjOntoSkel / width) - baseDistr,
-				[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
-				[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
-			},
-			glyphName: glyph.name,
-		});
-	}
+	client.dispatchAction('/change-glyph-node-manually', {
+		changes: {
+			[`${draggedItem.data.modifAddress}expand.distr`]: (distProjOntoSkel / width) - baseDistr,
+			[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
+			[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
+		},
+		glyphName: glyph.name,
+	});
 
 	const id = draggedItem.id;
 	const skeletonNode = _get(glyph, id);
@@ -247,6 +241,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					workers: head.toJS().d.workers,
 					canvasMode: head.toJS().d.canvasMode,
 					uiOutline: head.toJS().d.uiOutline,
+					uiDependencies: head.toJS().d.uiDependencies,
 				});
 			})
 			.onDelete(() => {
@@ -287,19 +282,21 @@ export default class GlyphCanvas extends React.PureComponent {
 			componentMenu: 0,
 		};
 		let componentMenuPos = {};
-		let draggedItem = null;
-		let selectedItem = null;
+		const draggedItems = [];
+		let selectedItems = [];
 		let contourSelected;
 		let contourSelectedIndex = 0;
-		let moving = false;
 		// let dragging = true;
 		let mouse = this.toile.getMouseState();
-		let appStateValue = 0;
+		let appStateValue = appState.DEFAULT;
 		let appMode;
 		let oldAppMode;
 		let oldAppState;
 		let mouseDoubleClick;
 		let pause = false;
+
+		// Box select variables
+		let mouseBoxStart;
 
 		const rafFunc = () => {
 			if (this.toile.keyboardDownRisingEdge.keyCode === 80) {
@@ -308,6 +305,12 @@ export default class GlyphCanvas extends React.PureComponent {
 
 			/* eslint-disable no-bitwise, max-depth */
 			const hotItems = this.toile.getHotInteractiveItem();
+
+			let boxedItems = [];
+
+			if (mouseBoxStart) {
+				boxedItems = this.toile.getBoxHotInteractiveItem(mouseBoxStart);
+			}
 			const width = this.canvas.clientWidth;
 			const height = this.canvas.clientHeight;
 
@@ -340,11 +343,14 @@ export default class GlyphCanvas extends React.PureComponent {
 
 
 			if (glyph) {
+				// This is used to detect a glyph change event that
+				// makes it necessary to stop all active mode
 				if (this.resetAppMode) {
-					appStateValue = 0;
+					appStateValue = appState.DEFAULT;
 					this.resetAppMode = false;
 				}
 
+				// Detection of double click in any mode
 				if (mouse.edge === mState.DOWN) {
 					if (mouseDoubleClick) {
 						const bbox = glyphBoundingBox(glyph);
@@ -366,6 +372,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				if (this.toile.keyboardUp.keyCode) {
 					const {keyCode} = this.toile.keyboardUp;
 
+					// Detect space keyboard up event to reset mode to the previous mode
 					if (keyCode === 32) {
 						appMode = oldAppMode;
 						this.client.dispatchAction('/store-value', {canvasMode: oldAppMode});
@@ -382,6 +389,8 @@ export default class GlyphCanvas extends React.PureComponent {
 				if (this.toile.keyboardDownRisingEdge.keyCode) {
 					const {keyCode} = this.toile.keyboardDownRisingEdge;
 
+					// On space edge down keyboard event switch to move mode
+					// whatever the previous mode is
 					if (keyCode === 32) {
 						oldAppMode = this.state.canvasMode;
 						oldAppState = appStateValue;
@@ -393,11 +402,13 @@ export default class GlyphCanvas extends React.PureComponent {
 				// This is the state machine state changing part
 				// There is 3 first level state
 				if (appMode === canvasMode.MOVE) {
+					// when in move mode the only action possible is to move
+					// this happen if mouse is in down state
 					if (mouse.state === mState.DOWN) {
 						appStateValue = appState.MOVING;
 					}
 					else {
-						appStateValue = 0;
+						appStateValue = appState.DEFAULT;
 					}
 				}
 				if (appMode === canvasMode.COMPONENTS) {
@@ -412,6 +423,8 @@ export default class GlyphCanvas extends React.PureComponent {
 							|| item.type === toileType.COMPONENT_NONE_CHOICE,
 					);
 
+					// On mouse release with look for any hot menu item
+					// and change component accordingly
 					if (mouseClickRelease) {
 						if (componentChoice.length > 0) {
 							const [choice] = componentChoice;
@@ -428,6 +441,8 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 					}
 
+					// If a component geometry is hovered
+					// We set the correct mode to draw it
 					if (components.length > 0) {
 						appStateValue = appState.COMPONENT_HOVERED;
 					}
@@ -435,7 +450,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						appStateValue = appState.COMPONENT_MENU_HOVERED;
 					}
 					else {
-						appStateValue = 0;
+						appStateValue = appState.DEFAULT;
 					}
 
 					if (appStateValue === appState.COMPONENT_HOVERED) {
@@ -473,140 +488,144 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 				if (appMode === canvasMode.SELECT_POINTS) {
+					// Manual edition mode
 					const nodes = hotItems.filter(item => item.type <= toileType.CONTOUR_NODE_OUT);
 					const contours = hotItems.filter(item =>
 						item.type === toileType.GLYPH_CONTOUR
 						|| item.type === toileType.GLYPH_COMPONENT_CONTOUR,
 					);
 
-					if (appStateValue === 0) {
-						if (mouseClickRelease) {
-							if (contours.length > 0) {
-								if (contours.length >= 1 && !moving) {
-									contourSelected = contours[contourSelectedIndex % contours.length];
-									contourSelectedIndex++;
-								}
-
-								appStateValue = appState.CONTOUR_SELECTED;
-							}
-						}
-						selectedItem = null;
-						draggedItem = null;
+					if ((appStateValue === appState.DEFAULT) && mouse.edge === mState.DOWN) {
+						appStateValue = appState.BOX_SELECTING;
+						mouseBoxStart = mouse.pos;
 					}
-					else if (
-						appStateValue & appState.HANDLE_MOD
-						|| appStateValue & appState.ONCURVE_MOD
-						|| appStateValue & appState.SKELETON_POS
-						|| appStateValue & appState.SKELETON_DISTR
-					) {
-						if (mouseClickRelease) {
-							if (contours.length > 0 && draggedItem === null) {
-								if (contours.length >= 1) {
-									contourSelected = contours[contourSelectedIndex % contours.length];
-									contourSelectedIndex++;
-								}
-
-								appStateValue = appState.CONTOUR_SELECTED;
-								selectedItem = null;
-								draggedItem = null;
-							}
-							else {
-								selectedItem = draggedItem;
-								draggedItem = null;
-								appStateValue = appState.CONTOUR_SELECTED;
-							}
+					else if ((appStateValue & appState.BOX_SELECTING) && mouseClickRelease) {
+						if (boxedItems.length > 0) {
+							selectedItems = boxedItems;
+							appStateValue = appState.POINTS_SELECTED;
+							mouseBoxStart = undefined;
+						}
+						else if (contours.length > 0) {
+							contourSelected = contours[contourSelectedIndex % contours.length];
+							contourSelectedIndex++;
+							appStateValue = appState.CONTOUR_SELECTED;
+						}
+						else {
+							appStateValue = appState.DEFAULT;
+							mouseBoxStart = undefined;
 						}
 					}
-					else if (appStateValue | appState.CONTOUR_SELECTED) {
-						if (mouseClickRelease) {
-							if (nodes.length > 0) {
-								selectedItem = nodes[0];
-							}
-							else if (draggedItem !== null) { // eslint-disable-line no-negated-condition
-								selectedItem = draggedItem;
-							}
-							else if (contours.length > 0) {
-								if (contours.length >= 1 && !moving) {
-									contourSelected = contours[contourSelectedIndex % contours.length];
-									contourSelectedIndex++;
-								}
-
-								appStateValue = appState.CONTOUR_SELECTED;
-								selectedItem = null;
-								draggedItem = null;
+					else if ((appStateValue & appState.CONTOUR_SELECTED) && mouse.edge === mState.DOWN) {
+						if (nodes.length > 0) {
+							selectedItems = [nodes[0]];
+							appStateValue = appState.DRAGGING_CONTOUR_POINT;
+						}
+						else if (contours.length > 0) {
+							if (contours.find(c => c.id === contourSelected.id)) {
+								appStateValue = appState.DRAGGING_CONTOUR;
 							}
 							else {
-								selectedItem = null;
+								appStateValue = appState.BOX_SELECTING;
+								mouseBoxStart = mouse.pos;
 								contourSelected = undefined;
 								contourSelectedIndex = 0;
-								appStateValue = 0;
 							}
 						}
-						else if (mouse.state === mState.DOWN) {
-							if (nodes.length > 0) {
-								if (draggedItem !== null && nodes[0].id === draggedItem.id) {
-									draggedItem = nodes[0];
-								}
-								else {
-									draggedItem = draggedItem === null ? nodes[0] : draggedItem;
-								}
-							}
-							else {
-								draggedItem = null;
-							}
-
-							selectedItem = null;
-						}
-
-						if (draggedItem !== null || selectedItem !== null) {
-							const interactedItem = draggedItem || selectedItem;
-
-							appStateValue |= appState.CONTOUR_SELECTED;
-
-							switch (interactedItem.type) {
-							case toileType.CONTOUR_NODE_IN:
-							case toileType.CONTOUR_NODE_OUT: {
-								appStateValue = appState.HANDLE_MOD
-									| appState.CONTOUR_SWITCH
-									| appState.CONTOUR_SELECTED;
-								if (this.toile.keyboardDown.keyCode === 17) {
-									appStateValue |= appState.HANDLE_MOD_SMOOTH_MODIFIER;
-								}
-								break;
-							}
-							case toileType.NODE_IN:
-							case toileType.NODE_OUT: {
-								appStateValue = appState.HANDLE_MOD | appState.CONTOUR_SELECTED;
-								if (this.toile.keyboardDown.keyCode === 17) {
-									appStateValue |= appState.HANDLE_MOD_SMOOTH_MODIFIER;
-								}
-								break;
-							}
-							case toileType.NODE: {
-								appStateValue = appState.ONCURVE_MOD | appState.CONTOUR_SELECTED;
-								if (this.toile.keyboardDown.keyCode === 17) {
-									appStateValue |= appState.ONCURVE_MOD_ANGLE_MODIFIER;
-								}
-								else if (this.toile.keyboardDown.keyCode === 16) {
-									appStateValue |= appState.ONCURVE_MOD_WIDTH_MODIFIER;
-								}
-								break;
-							}
-							case toileType.NODE_SKELETON:
-							case toileType.CONTOUR_NODE: {
-								if (this.toile.keyboardDown.keyCode === 17) {
-									appStateValue = appState.SKELETON_DISTR | appState.CONTOUR_SELECTED;
-								}
-								else {
-									appStateValue = appState.SKELETON_POS | appState.CONTOUR_SELECTED;
-								}
-								break;
-							}
-							default:
-							}
+						else {
+							appStateValue = appState.BOX_SELECTING;
+							mouseBoxStart = mouse.pos;
+							contourSelected = undefined;
+							contourSelectedIndex = 0;
 						}
 					}
+					else if ((appStateValue & appState.DRAGGING_CONTOUR_POINT) && mouseClickRelease) {
+						if (selectedItems[0].type === toileType.NODE_SKELETON) {
+							appStateValue = appState.SKELETON_POINT_SELECTED;
+						}
+						else {
+							appStateValue = appState.CONTOUR_POINT_SELECTED;
+						}
+					}
+					else if (
+						(appStateValue & appState.SKELETON_POINT_SELECTED)
+						&& mouse.edge === mState.DOWN
+					) {
+						// TODO: shift behavior
+						if (nodes.length > 0) {
+							selectedItems = [nodes[0]];
+							appStateValue = appState.DRAGGING_CONTOUR_POINT;
+						}
+						else if (contours.length > 0) {
+							if (contours.find(c => c.id === contourSelected.id)) {
+								appStateValue = appState.DRAGGING_CONTOUR;
+							}
+							else {
+								selectedItems = [];
+								appStateValue = appState.BOX_SELECTING;
+								mouseBoxStart = mouse.pos;
+							}
+						}
+						else {
+							selectedItems = [];
+							appStateValue = appState.BOX_SELECTING;
+							mouseBoxStart = mouse.pos;
+						}
+					}
+					else if ((appStateValue & appState.DRAGGING_CONTOUR) && mouseClickRelease) {
+						appStateValue = appState.CONTOUR_SELECTED;
+					}
+					else if (
+						(appStateValue & appState.CONTOUR_POINT_SELECTED)
+						&& mouse.edge === mState.DOWN
+					) {
+						if (nodes.length > 0) {
+							selectedItems = [nodes[0]];
+							appStateValue = appState.DRAGGING_CONTOUR_POINT;
+						}
+						else if (contours.length > 0) {
+							if (contours.find(c => c.id === contourSelected.id)) {
+								appStateValue = appState.DRAGGING_CONTOUR;
+							}
+							else {
+								appStateValue = appState.BOX_SELECTING;
+								mouseBoxStart = mouse.pos;
+							}
+						}
+						else {
+							selectedItems = [];
+							appStateValue = appState.BOX_SELECTING;
+							mouseBoxStart = mouse.pos;
+						}
+					}
+					else if ((appStateValue & appState.POINTS_SELECTED) && mouse.edge === mState.DOWN) {
+						// TODO: shift behavior
+						if (nodes.length > 0) {
+							let validPoint = false;
+
+							nodes.forEach((node) => {
+								validPoint = selectedItems.find(s => s.id === node.id);
+							});
+
+							if (validPoint) {
+								appStateValue = appState.DRAGGING_POINTS;
+							}
+							else {
+								selectedItems = [];
+								appStateValue = appState.BOX_SELECTING;
+								mouseBoxStart = mouse.pos;
+							}
+						}
+						else {
+							selectedItems = [];
+							appStateValue = appState.BOX_SELECTING;
+							mouseBoxStart = mouse.pos;
+						}
+					}
+					else if ((appStateValue & appState.DRAGGING_POINTS) && mouseClickRelease) {
+						appStateValue = appState.POINTS_SELECTED;
+					}
 				}
+
 
 				if (mouse.wheel) {
 					appStateValue |= appState.ZOOMING;
@@ -631,13 +650,21 @@ export default class GlyphCanvas extends React.PureComponent {
 					this.toile.drawComponents(glyph.components, hotItems);
 				}
 
-				if (appStateValue & appState.CONTOUR_SELECTED) {
+				if (
+					appStateValue & (
+						appState.CONTOUR_SELECTED
+						| appState.DRAGGING_CONTOUR_POINT
+						| appState.CONTOUR_POINT_SELECTED
+						| appState.DRAGGING_CONTOUR
+						| appState.SKELETON_POINT_SELECTED
+					)
+				) {
 					this.toile.drawNodes(
 						_get(
 							glyph,
 							toLodashPath(contourSelected.id)),
 						contourSelected.id,
-						[...hotItems, draggedItem || {}, selectedItem || {}],
+						[...hotItems, ...draggedItems, ...selectedItems],
 						contourSelected.data.componentIdx === undefined ? '' : `components.${contourSelected.data.componentIdx}.`,
 					);
 					if (contourSelected.data.componentIdx === undefined) {
@@ -660,55 +687,94 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 
-				if (selectedItem) {
-					if (this.toile.keyboardDownRisingEdge.keyCode === 27) {
-						switch (selectedItem.type) {
-						case toileType.NODE_IN:
-						case toileType.CONTOUR_NODE_IN:
-							this.client.dispatchAction('/change-glyph-node-manually', {
-								changes: {
-									[`${selectedItem.data.parentId}.dirIn`]: undefined,
-									[`${selectedItem.data.parentId}.tensionIn`]: undefined,
-								},
-								glyphName: glyph.name,
-							});
-							break;
-						case toileType.NODE_OUT:
-						case toileType.CONTOUR_NODE_OUT:
-							this.client.dispatchAction('/change-glyph-node-manually', {
-								changes: {
-									[`${selectedItem.data.parentId}.dirOut`]: undefined,
-									[`${selectedItem.data.parentId}.tensionOut`]: undefined,
-								},
-								glyphName: glyph.name,
-							});
-							break;
-						case toileType.NODE:
-							this.client.dispatchAction('/change-glyph-node-manually', {
-								changes: {
-									[`${selectedItem.data.modifAddress}.width`]: undefined,
-									[`${selectedItem.data.modifAddress}.angle`]: undefined,
-								},
-								glyphName: glyph.name,
-							});
-							break;
-						case toileType.CONTOUR_NODE:
-						case toileType.NODE_SKELETON:
-							this.client.dispatchAction('/change-glyph-node-manually', {
-								changes: {
-									[`${selectedItem.data.modifAddress}x`]: 0,
-									[`${selectedItem.data.modifAddress}y`]: 0,
-								},
-								glyphName: glyph.name,
-							});
-							break;
-						default:
-							break;
-						}
-					}
+				if (appStateValue & appState.BOX_SELECTING) {
+					const [mousePosInWorld, boxStartPosInWorld] = transformCoords(
+						[mouse.pos, mouseBoxStart],
+						inverseProjectionMatrix(this.toile.viewMatrix),
+						this.toile.height / this.toile.viewMatrix[0],
+					);
+
+					this.toile.drawRectangleFromCorners(mousePosInWorld, boxStartPosInWorld, 'black');
+					this.toile.drawAllSkeletonNodes(glyph.contours, boxedItems);
+				}
+				if (
+					appStateValue & (
+						appState.POINTS_SELECTED
+						| appState.DRAGGING_POINTS
+					)
+				) {
+					this.toile.drawAllSkeletonNodes(glyph.contours, selectedItems);
 				}
 
-				let moved = mouse.delta.x !== 0 || mouse.delta.y !== 0;
+				if (
+					this.props.dependencies
+					&&					(
+						appStateValue & (
+							appState.CONTOUR_POINT_SELECTED
+							| appState.SKELETON_POINT_SELECTED
+						)
+					)
+					&& selectedItems.length === 1
+				) {
+					const selectedPoint = _get(glyph, selectedItems[0].id);
+				}
+
+
+				if (
+					appStateValue & (
+						appState.POINTS_SELECTED
+						| appState.CONTOUR_POINT_SELECTED
+						| appState.SKELETON_POINT_SELECTED
+					)
+				) {
+					if (this.toile.keyboardDownRisingEdge.keyCode === 27) {
+						selectedItems.forEach((item) => {
+							switch (item.type) {
+							case toileType.NODE_IN:
+							case toileType.CONTOUR_NODE_IN:
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${item.data.parentId}.dirIn`]: undefined,
+										[`${item.data.parentId}.tensionIn`]: undefined,
+									},
+									glyphName: glyph.name,
+								});
+								break;
+							case toileType.NODE_OUT:
+							case toileType.CONTOUR_NODE_OUT:
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${item.data.parentId}.dirOut`]: undefined,
+										[`${item.data.parentId}.tensionOut`]: undefined,
+									},
+									glyphName: glyph.name,
+								});
+								break;
+							case toileType.NODE:
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${item.data.modifAddress}.width`]: undefined,
+										[`${item.data.modifAddress}.angle`]: undefined,
+									},
+									glyphName: glyph.name,
+								});
+								break;
+							case toileType.CONTOUR_NODE:
+							case toileType.NODE_SKELETON:
+								this.client.dispatchAction('/change-glyph-node-manually', {
+									changes: {
+										[`${item.data.modifAddress}x`]: 0,
+										[`${item.data.modifAddress}y`]: 0,
+									},
+									glyphName: glyph.name,
+								});
+								break;
+							default:
+								break;
+							}
+						});
+					}
+				}
 
 				if (appStateValue & appState.MOVING) {
 					const [z,,,, tx, ty] = this.toile.viewMatrix;
@@ -717,12 +783,12 @@ export default class GlyphCanvas extends React.PureComponent {
 						y: ty + mouse.delta.y,
 					};
 
-					if (
+					/* if (
 						newTs.x !== tx
 						|| newTs.y !== ty
 					) {
 						moving = true;
-					}
+					} */
 					this.toile.setCamera(newTs, z, -height);
 				}
 				else if (appStateValue & appState.ZOOMING) {
@@ -744,104 +810,170 @@ export default class GlyphCanvas extends React.PureComponent {
 						y: z === clampedZoom ? y : newTy,
 					}, clampedZoom, -height);
 				}
-				else {
+					/* else {
 					moving = false;
+				}*/
+
+				let interactions = [];
+
+				if (
+					appStateValue & (
+						appState.DRAGGING_CONTOUR_POINT
+						| appState.DRAGGING_POINTS
+						| appState.DRAGGING_CONTOUR
+					)
+				) {
+					interactions = selectedItems.map((item) => {
+						const [mousePosInWorld, mouseBeforeDelta] = transformCoords(
+							[mouse.pos, add2D(mouse.pos, mulScalar2D(-1, mouse.delta))],
+							inverseProjectionMatrix(this.toile.viewMatrix),
+							this.toile.height / this.toile.viewMatrix[0],
+						);
+						const mouseDelta = subtract2D(mousePosInWorld, mouseBeforeDelta);
+
+						switch (item.type) {
+						case toileType.NODE_SKELETON: {
+							const posVector = mouseDelta;
+
+							return {
+								item,
+								modData: posVector,
+							};
+						}
+						default:
+							return {
+								item,
+								modData: mousePosInWorld,
+							};
+						}
+					});
+				}
+				else if (
+					appStateValue & (
+						appState.POINTS_SELECTED
+						| appState.CONTOUR_POINT_SELECTED
+						| appState.SKELETON_POINT_SELECTED
+					)
+					&& this.toile.keyboardDownRisingEdge.keyCode <= 40
+					&& this.toile.keyboardDownRisingEdge.keyCode >= 37
+				) {
+					interactions = selectedItems.map((item) => {
+						let posVector;
+
+						if (this.toile.keyboardDownRisingEdge.keyCode === 40) {
+							posVector = {x: 0, y: -1};
+						}
+						if (this.toile.keyboardDownRisingEdge.keyCode === 38) {
+							posVector = {x: 0, y: 1};
+						}
+						if (this.toile.keyboardDownRisingEdge.keyCode === 37) {
+							posVector = {x: -1, y: 0};
+						}
+						if (this.toile.keyboardDownRisingEdge.keyCode === 39) {
+							posVector = {x: 1, y: 0};
+						}
+
+						switch (item.type) {
+						case toileType.NODE_SKELETON: {
+							return {
+								item,
+								modData: posVector,
+							};
+						}
+						default:
+							return {
+								item,
+								modData: add2D(_get(glyph, toLodashPath(item.id)), posVector),
+							};
+						}
+					});
 				}
 
-				let newPos;
-				let interactedItem;
+				if (
+					appStateValue & (
+						appState.DRAGGING_POINTS
+						| appState.DRAGGING_CONTOUR_POINT
+						| appState.DRAGGING_CONTOUR
+						| appState.CONTOUR_POINT_SELECTED
+						| appState.SKELETON_POINT_SELECTED
+						| appState.POINTS_SELECTED
+					)
+				) {
+					interactions.forEach((interaction) => {
+						const {item, modData} = interaction;
 
-				if (draggedItem !== null) {
-					const [mousePosInWorld] = transformCoords(
-						[mouse.pos],
-						inverseProjectionMatrix(this.toile.viewMatrix),
-						this.toile.height / this.toile.viewMatrix[0],
-					);
+						switch (item.type) {
+						case toileType.NODE_OUT:
+						case toileType.NODE_IN: {
+							const smoothMod = appStateValue & appState.HANDLE_MOD_SMOOTH_MODIFIER;
 
-					newPos = mousePosInWorld;
-					interactedItem = draggedItem;
-				}
-				else if (selectedItem !== null) {
-					if (this.toile.keyboardDownRisingEdge.keyCode === 40) {
-						newPos = add2D(_get(glyph, selectedItem.id), {x: 0, y: -1});
-						moved = true;
-					}
-					if (this.toile.keyboardDownRisingEdge.keyCode === 38) {
-						newPos = add2D(_get(glyph, selectedItem.id), {x: 0, y: 1});
-						moved = true;
-					}
-					if (this.toile.keyboardDownRisingEdge.keyCode === 37) {
-						newPos = add2D(_get(glyph, selectedItem.id), {x: -1, y: 0});
-						moved = true;
-					}
-					if (this.toile.keyboardDownRisingEdge.keyCode === 39) {
-						newPos = add2D(_get(glyph, selectedItem.id), {x: 1, y: 0});
-						moved = true;
-					}
-					interactedItem = selectedItem;
-				}
+							handleModification(
+								this.client,
+								glyph,
+								item,
+								modData,
+								smoothMod,
+							);
+							break;
+						}
+						case toileType.CONTOUR_NODE_OUT:
+						case toileType.CONTOUR_NODE_IN: {
+							const smoothMod = appStateValue & appState.HANDLE_MOD_SMOOTH_MODIFIER;
 
-				if (interactedItem && newPos) {
-					if (appStateValue & appState.HANDLE_MOD) {
-						const smoothMod = appStateValue & appState.HANDLE_MOD_SMOOTH_MODIFIER;
-
-						handleModification(
-							this.client,
-							glyph,
-							interactedItem,
-							newPos,
-							smoothMod,
-						);
-					}
-					if (appStateValue & (appState.HANDLE_MOD | appState.CONTOUR_SWITCH)) {
-						const smoothMod = appStateValue & appState.HANDLE_MOD_SMOOTH_MODIFIER;
-
-						handleModification(
-							this.client,
-							glyph,
-							interactedItem,
-							newPos,
-							smoothMod,
-							true,
-						);
-					}
-					if (appStateValue & appState.ONCURVE_MOD) {
-						onCurveModification(
-							this.toile,
-							this.client,
-							glyph,
-							interactedItem,
-							newPos,
-							appStateValue,
-							hotItems,
-							moved,
-						);
-					}
-					if (appStateValue & appState.SKELETON_POS) {
-						skeletonPosModification(
-							this.toile,
-							this.client,
-							glyph,
-							interactedItem,
-							newPos,
-							hotItems,
-							moved,
-						);
-					}
-					if (appStateValue & appState.SKELETON_DISTR) {
-						skeletonDistrModification(
-							this.toile,
-							this.client,
-							glyph,
-							interactedItem,
-							newPos,
-							hotItems,
-							moved,
-						);
-					}
+							handleModification(
+								this.client,
+								glyph,
+								item,
+								modData,
+								smoothMod,
+								true,
+							);
+							break;
+						}
+						case toileType.NODE: {
+							onCurveModification(
+								this.toile,
+								this.client,
+								glyph,
+								item,
+								modData,
+								appStateValue,
+								hotItems,
+								onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD,
+							);
+							break;
+						}
+						case toileType.NODE_SKELETON:
+						case toileType.CONTOUR_NODE: {
+							skeletonPosModification(
+								this.toile,
+								this.client,
+								glyph,
+								item,
+								modData,
+								hotItems,
+							);
+							break;
+						}
+						default:
+							break;
+						}
+						if (appStateValue & appState.SKELETON_DISTR) {
+							skeletonDistrModification(
+								this.toile,
+								this.client,
+								glyph,
+								item,
+								modData,
+								hotItems,
+							);
+						}
+					});
 				}
 
-				if (interactedItem) {
+				if (selectedItems.length === 1) {
+					const interactedItem = selectedItems[0];
+
 					if (interactedItem.type === toileType.NODE_SKELETON) {
 						const item = _get(glyph, interactedItem.id);
 

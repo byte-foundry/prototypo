@@ -37,23 +37,19 @@ export const canvasMode = {
 };
 
 export const appState = {
-	HANDLE_MOD: 0b1,
-	HANDLE_MOD_BOTH_SIDE_MODIFIER: 0b10,
-	HANDLE_MOD_SIDES: 0b100,
-	HANDLE_MOD_SMOOTH_MODIFIER: 0b1000,
-	ONCURVE_MOD: 0b10000,
-	ONCURVE_MOD_ANGLE_MODIFIER: 0b1000000000000000,
-	ONCURVE_MOD_WIDTH_MODIFIER: 0b10000000000000000,
-	SKELETON_POS: 0b100000,
-	SKELETON_DISTR: 0b1000000,
-	UNSELECTED: 0b10000000,
-	MOVING: 0b100000000,
-	ZOOMING: 0b1000000000,
-	CONTOUR_SWITCH: 0b10000000000,
-	CONTOUR_SELECTED: 0b100000000000,
-	COMPONENT_SELETED: 0b1000000000000,
-	COMPONENT_HOVERED: 0b10000000000000,
-	COMPONENT_MENU_HOVERED: 0b100000000000000,
+	DEFAULT:	0,
+	BOX_SELECTING:	0b1,
+	POINTS_SELECTED:	0b10,
+	DRAGGING_POINTS:	0b100,
+	POINTS_SELECTED_SHIFT:	0b1000,
+	CONTOUR_SELECTED:	0b10000,
+	DRAGGING_CONTOUR_POINT:	0b100000,
+	CONTOUR_POINT_SELECTED:	0b1000000,
+	DRAGGING_CONTOUR:	0b10000000,
+	SKELETON_POINT_SELECTED:	0b100000000,
+	SKELETON_POINT_SELECTED_SHIFT:	0b1000000000,
+	ZOOMING:	0b10000000000,
+	MOVING:	0b100000000000,
 };
 
 const green = '#24d390';
@@ -637,6 +633,43 @@ export default class Toile {
 
 				this.drawContourNode(node, id, prevNode, nextNode, hotItems, componentPrefixAddress);
 			}
+		});
+	}
+
+	drawAllSkeletonNodes(contours, hotItems) {
+		contours.forEach((contour, i) => {
+			contour.nodes.forEach((node, j) => {
+				const id = `contours.${i}.nodes.${j}`;
+
+				if (contour.skeleton && node.expand) {
+					const hot = _find(hotItems, item => item.id === id);
+					const modifAddress = `${node.nodeAddress}`;
+
+					if (node.expand) {
+						this.drawControlPoint(node, hot, skeletonColor);
+						this.interactionList.push({
+							id,
+							type: toileType.NODE_SKELETON,
+							data: {
+								center: {
+									x: node.x,
+									y: node.y,
+								},
+								base: {
+									x: node.xBase,
+									y: node.yBase,
+								},
+								transforms: node.addedTransform,
+								expandedTo: node.expandedTo,
+								width: node.expand.width,
+								baseDistr: node.expand.baseDistr,
+								radius: nodeHotRadius,
+								modifAddress,
+							},
+						});
+					}
+				}
+			});
 		});
 	}
 
@@ -1473,6 +1506,39 @@ export default class Toile {
 			this.drawExpandedNodeProps(node, start, end, zoom, 1);
 			this.drawExpandProps(parent, start, end, zoom, 4);
 		}
+	}
+
+	getBoxHotInteractiveItem(mouseBoxStart) {
+		const [mousePosInWorld, boxStartPosInWorld] = transformCoords(
+			[this.mouse, mouseBoxStart],
+			inverseProjectionMatrix(this.viewMatrix),
+			this.height / this.viewMatrix[0],
+		);
+		const result = [];
+		const minX = Math.min(mousePosInWorld.x, boxStartPosInWorld.x);
+		const maxX = Math.max(mousePosInWorld.x, boxStartPosInWorld.x);
+		const minY = Math.min(mousePosInWorld.y, boxStartPosInWorld.y);
+		const maxY = Math.max(mousePosInWorld.y, boxStartPosInWorld.y);
+
+		this.interactionList.forEach((interactionItem) => {
+			switch (interactionItem.type) {
+			case toileType.NODE_SKELETON: {
+				const {center} = interactionItem.data;
+
+				if (center.x < maxX
+						&& center.x > minX
+						&& center.y < maxY
+						&& center.y > minY) {
+					result.push(interactionItem);
+				}
+				break;
+			}
+			default:
+				break;
+			}
+		});
+
+		return result;
 	}
 
 	getHotInteractiveItem() {

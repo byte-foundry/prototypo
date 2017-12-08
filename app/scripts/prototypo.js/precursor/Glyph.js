@@ -10,7 +10,7 @@ import _set from 'lodash/set';
 import _pickBy from 'lodash/pickBy';
 import _mapKeys from 'lodash/mapKeys';
 
-import {constantOrFormula, createContour, toLodashPath, transformGlyph} from '../utils/generic';
+import {constantOrFormula, createContour, transformGlyph} from '../utils/generic';
 import * as utils from '../utils/updateUtils';
 
 import Component from './Component';
@@ -285,7 +285,7 @@ export default class Glyph {
 
 		if (action === 'handle') {
 			const contour = this.getFromXPath(cursor);
-			const dest = _get(opDone, toLodashPath(cursor));
+			const dest = _get(opDone, cursor);
 
 			if (contour.skeleton.value) {
 				SkeletonPath.correctValues(dest);
@@ -298,11 +298,9 @@ export default class Glyph {
 				}
 			}
 			else {
-				const lodashCursor = toLodashPath(cursor);
-
 				SimplePath.correctValues(dest);
 
-				_set(opDone, `${lodashCursor}.checkOrientation`, true);
+				_set(opDone, `${cursor}.checkOrientation`, true);
 
 				SimplePath.createHandle(dest, params.manualChanges[this.name.value].cursors);
 			}
@@ -310,7 +308,7 @@ export default class Glyph {
 		else if (action === 'expand') {
 			const manualChanges = params.manualChanges[this.name.value].cursors;
 			const node = ExpandingNode.applyExpandChange(
-				_get(opDone, toLodashPath(cursor)),
+				_get(opDone, cursor),
 				manualChanges,
 				cursor,
 			);
@@ -318,7 +316,7 @@ export default class Glyph {
 
 			_set(
 				opDone,
-				toLodashPath(`${cursor}.expandedTo`),
+				`${cursor}.expandedTo`,
 				expandedTo,
 			);
 		}
@@ -336,7 +334,7 @@ export default class Glyph {
 		if (option === '.x' || option === '.y') {
 			_set(
 				opDone,
-				toLodashPath(`${op}Base`),
+				`${op}Base`,
 				result,
 			);
 
@@ -348,7 +346,7 @@ export default class Glyph {
 
 		_set(
 			opDone,
-			toLodashPath(op),
+			op,
 			result,
 		);
 	}
