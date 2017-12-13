@@ -6637,14 +6637,7 @@ levn@~0.2.5:
     prelude-ls "~1.1.0"
     type-check "~0.3.1"
 
-lifespan@FranzPoize/lifespan#master, lifespan@^5.0.1:
-  version "5.0.1"
-  resolved "https://codeload.github.com/FranzPoize/lifespan/tar.gz/5a9471d668c1213518be5197d1e5f64937dd699f"
-  dependencies:
-    lodash "~4.14.0"
-    should "^13.1.3"
-
-lifespan@franzpoize/lifespan#master:
+lifespan@FranzPoize/lifespan#master, lifespan@^5.0.1, lifespan@franzpoize/lifespan#master:
   version "5.0.1"
   resolved "https://codeload.github.com/franzpoize/lifespan/tar.gz/5a9471d668c1213518be5197d1e5f64937dd699f"
   dependencies:
@@ -6989,7 +6982,7 @@ lodash.words@^3.0.0:
   dependencies:
     lodash._root "^3.0.0"
 
-lodash@4.x.x, lodash@^4.0.0, lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.5.0, lodash@^4.6.1, lodash@~4.17.4:
+lodash@4.x.x, lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.5.0, lodash@^4.6.1, lodash@~4.17.4:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -6997,13 +6990,13 @@ lodash@^3.10.1, lodash@^3.3.1, lodash@^3.8.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
+lodash@^4.0.0, lodash@^4.2.0, lodash@~4.14.0:
+  version "4.14.2"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.14.2.tgz#bbccce6373a400fbfd0a8c67ca42f6d1ef416432"
+
 lodash@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-1.0.2.tgz#8f57560c83b59fc270bd3d561b690043430e2551"
-
-lodash@~4.14.0:
-  version "4.14.2"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.14.2.tgz#bbccce6373a400fbfd0a8c67ca42f6d1ef416432"
 
 log-symbols@^1.0.0:
   version "1.0.2"
@@ -7064,6 +7057,10 @@ lru-cache@^4.0.1, lru-cache@^4.1.1:
 lru-cache@~2.6.5:
   version "2.6.5"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-2.6.5.tgz#e56d6354148ede8d7707b58d143220fd08df0fd5"
+
+lrumap@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/lrumap/-/lrumap-1.0.0.tgz#9af73069c064db9314bb480dbd6cb3fa5b706e64"
 
 macaddress@^0.2.8:
   version "0.2.8"
@@ -7155,6 +7152,17 @@ mem@^1.1.0:
   resolved "https://registry.yarnpkg.com/mem/-/mem-1.1.0.tgz#5edd52b485ca1d900fe64895505399a0dfa45f76"
   dependencies:
     mimic-fn "^1.0.0"
+
+memoize-immutable@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/memoize-immutable/-/memoize-immutable-3.0.0.tgz#5959ee50a4f11d7be45b1afc8b2c6daa7c6d2e1e"
+  dependencies:
+    tuplemap "^1.0.2"
+  optionalDependencies:
+    lrumap "^1.0.0"
+    mixedtuplemap "^1.0.0"
+    namedtuplemap "^1.0.0"
+    weaktuplemap "^1.0.0"
 
 memory-fs@^0.4.0, memory-fs@~0.4.1:
   version "0.4.1"
@@ -7259,11 +7267,7 @@ miller-rabin@^4.0.0:
     bn.js "^4.0.0"
     brorand "^1.0.1"
 
-"mime-db@>= 1.30.0 < 2":
-  version "1.31.0"
-  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.31.0.tgz#a49cd8f3ebf3ed1a482b60561d9105ad40ca74cb"
-
-mime-db@~1.30.0:
+"mime-db@>= 1.30.0 < 2", mime-db@~1.30.0:
   version "1.30.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.30.0.tgz#74c643da2dd9d6a45399963465b26d5ca7d71f01"
 
@@ -7325,17 +7329,13 @@ minimatch@~0.2.11, minimatch@~0.2.14:
     lru-cache "2"
     sigmund "~1.0.0"
 
-minimist@0.0.8:
+minimist@0.0.8, minimist@~0.0.1:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
 
 minimist@^1.1.0, minimist@^1.1.1, minimist@^1.1.3, minimist@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
-
-minimist@~0.0.1:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.10.tgz#de3f98543dbf96082be48ad1a0c7cda836301dcf"
 
 mississippi@^1.3.0:
   version "1.3.0"
@@ -7355,6 +7355,10 @@ mississippi@^1.3.0:
 mitt@1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/mitt/-/mitt-1.1.2.tgz#380e61480d6a615b660f07abb60d51e0a4e4bed6"
+
+mixedtuplemap@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/mixedtuplemap/-/mixedtuplemap-1.0.0.tgz#3bdad4a14a5478b9a3972aae56092772a759cfc4"
 
 mixin-deep@^1.2.0:
   version "1.2.0"
@@ -7489,6 +7493,10 @@ mute-stream@0.0.5:
 mute-stream@0.0.7:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
+
+namedtuplemap@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/namedtuplemap/-/namedtuplemap-1.0.0.tgz#c231789c5b7b47b4b3a3e73317f03ddde1ebcb34"
 
 nan@^2.3.0, nan@^2.3.2:
   version "2.7.0"
@@ -9272,7 +9280,7 @@ read-pkg@^2.0.0:
     string_decoder "~1.0.3"
     util-deprecate "~1.0.1"
 
-readable-stream@1.1.x, readable-stream@^1.0.26-2, readable-stream@^1.0.33, readable-stream@~1.1.9:
+readable-stream@1.1.x, readable-stream@~1.1.9:
   version "1.1.14"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-1.1.14.tgz#7cf4c54ef648e3813084c636dd2079e166c081d9"
   dependencies:
@@ -9281,7 +9289,7 @@ readable-stream@1.1.x, readable-stream@^1.0.26-2, readable-stream@^1.0.33, reada
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
-"readable-stream@>=1.0.33-1 <1.1.0-0", readable-stream@~1.0.2:
+"readable-stream@>=1.0.33-1 <1.1.0-0", readable-stream@^1.0.26-2, readable-stream@^1.0.33, readable-stream@~1.0.2:
   version "1.0.34"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-1.0.34.tgz#125820e34bc842d2f2aaafafe4c2916ee32c157c"
   dependencies:
@@ -9476,16 +9484,7 @@ remove-trailing-separator@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/remove-trailing-separator/-/remove-trailing-separator-1.1.0.tgz#c24bce2a283adad5bc3f58e0d48249b92379d8ef"
 
-remutable@FranzPoize/remutable#master:
-  version "3.0.1"
-  resolved "https://codeload.github.com/FranzPoize/remutable/tar.gz/b3672c0ead0ae6443bb85703daa9bb914b3fb3ce"
-  dependencies:
-    crc-32 "^0.3.0"
-    immutable "^3.7.3"
-    lodash "~4.14.0"
-    should "^6.0.3"
-
-remutable@franzpoize/remutable#master:
+remutable@FranzPoize/remutable#master, remutable@franzpoize/remutable#master:
   version "3.0.1"
   resolved "https://codeload.github.com/franzpoize/remutable/tar.gz/5f125df8c80e59faefb69402aa575950c323e8cf"
   dependencies:
@@ -10350,11 +10349,7 @@ static-extend@^0.1.1:
     define-property "^0.2.5"
     object-copy "^0.1.0"
 
-"statuses@>= 1.3.1 < 2":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.4.0.tgz#bb73d446da2796106efcc1b601a253d6c46bd087"
-
-statuses@~1.3.1:
+"statuses@>= 1.3.1 < 2", statuses@~1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.3.1.tgz#faf51b9eb74aaef3b3acf4ad5f61abf24cb7b93e"
 
@@ -10860,6 +10855,10 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
+tuplemap@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/tuplemap/-/tuplemap-1.0.2.tgz#d95695820988f124d80a3680f65f0e63292a673d"
+
 tutorial-content@byte-foundry/tutorial-content#master:
   version "3.1.2"
   resolved "https://codeload.github.com/byte-foundry/tutorial-content/tar.gz/9c486afd6d4ed4ce5d31f78df4abb3cd69023d79"
@@ -11321,6 +11320,10 @@ wbuf@^1.1.0, wbuf@^1.7.2:
   resolved "https://registry.yarnpkg.com/wbuf/-/wbuf-1.7.2.tgz#d697b99f1f59512df2751be42769c1580b5801fe"
   dependencies:
     minimalistic-assert "^1.0.0"
+
+weaktuplemap@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/weaktuplemap/-/weaktuplemap-1.0.0.tgz#fcdb27e395c3054bce3a4f3518d61a4ab8168d3b"
 
 webidl-conversions@^3.0.0:
   version "3.0.1"

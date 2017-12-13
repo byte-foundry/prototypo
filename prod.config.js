@@ -9,7 +9,7 @@ const base = require('./base.config');
 module.exports = merge(base, {
 	cache: true,
 	entry: {
-		'index': ['whatwg-fetch'],
+		index: ['whatwg-fetch'],
 	},
 	module: {
 		rules: [
@@ -46,6 +46,11 @@ module.exports = merge(base, {
 			sourceMap: true,
 			include: __dirname,
 			extractComments: true,
+		}),
+		new webpack.DllReferencePlugin({
+			context: __dirname,
+			manifest: require('./dist/dll/libs-manifest'),
+			sourceType: 'this',
 		}),
 	],
 	output: merge(base.output, {

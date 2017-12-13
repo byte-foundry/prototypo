@@ -1,28 +1,28 @@
-var Promise         = require('bluebird'); //Bluebird promise are way better than native,
-var fs              = Promise.promisifyAll(require('fs')); //We just want promise seriously
+const Promise = require('bluebird'); // Bluebird promise are way better than native,
+const fs = Promise.promisifyAll(require('fs')); // We just want promise seriously
 
-var gulp            = require('gulp');
+const gulp = require('gulp');
 
-//webpack Dep
-var webpack			= require('webpack');
-var WebpackDevServer= require('webpack-dev-server');
+// webpack Dep
+const webpack			= require('webpack');
+const WebpackDevServer = require('webpack-dev-server');
 
-//CSS Dep
-var sass            = require('gulp-sass');
-var cssnano       = require('gulp-cssnano');
+// CSS Dep
+const sass = require('gulp-sass');
+const cssnano = require('gulp-cssnano');
 
-//Utils
-var del             = require('del');
-var concat          = require('gulp-concat');
-var sourcemaps      = require('gulp-sourcemaps');
-var filter          = require('gulp-filter');
-var autoprefixer    = require('gulp-autoprefixer');
-var gutil			= require('gulp-util');
+// Utils
+const del = require('del');
+const concat = require('gulp-concat');
+const sourcemaps = require('gulp-sourcemaps');
+const filter = require('gulp-filter');
+const autoprefixer = require('gulp-autoprefixer');
+const gutil			= require('gulp-util');
 
-//Tests
-var nightwatch		= require('gulp-nightwatch');
+// Tests
+const nightwatch		= require('gulp-nightwatch');
 
-gulp.task('images', function() {
+gulp.task('images', () => {
 	gulp.src(['./app/images/*.*', './app/images/**/*.*'])
 		.pipe(gulp.dest('./dist/assets/images/'));
 	gulp.src('./app/fonts/*.*')
@@ -31,7 +31,7 @@ gulp.task('images', function() {
 		.pipe(gulp.dest('./dist/assets/images/academy/courses/'));
 });
 
-gulp.task('cp-genese', function() {
+gulp.task('cp-genese', () => {
 	gulp.src('./node_modules/antique.ptf/dist/font.json')
 		.pipe(gulp.dest('./dist/antique.ptf/dist/'));
 	gulp.src('./node_modules/john-fell.ptf/dist/font.json')
@@ -46,21 +46,21 @@ gulp.task('cp-genese', function() {
 		.pipe(gulp.dest('./dist/templates/antique.ptf'));
 });
 
-gulp.task('cp-static', function() {
-	gulp.src(['./app/index.html', './app/iframe.html','./app/robots.txt','./app/favicon.ico','./app/404.html'])
+gulp.task('cp-static', () => {
+	gulp.src(['./app/index.html', './app/iframe.html', './app/robots.txt', './app/favicon.ico', './app/404.html'])
 		.pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('css-vendor', function() {
-	//This is a bit hackish but right now i don't care
+gulp.task('css-vendor', () => {
+	// This is a bit hackish but right now i don't care
 	gulp.src(['./node_modules/normalize.css/normalize.css',
 		'./node_modules/please-wait/build/please-wait.css'])
 		.pipe(concat('vendor.css'))
 		.pipe(gulp.dest('./dist/assets/'));
-})
+});
 
 
-gulp.task('css-app', function() {
+gulp.task('css-app', () => {
 	gulp.src('./app/styles/**/*.scss')
 		.pipe(sourcemaps.init())
 		.pipe(sass())
@@ -71,34 +71,36 @@ gulp.task('css-app', function() {
 		.pipe(filter('**/*.css'));
 });
 
-gulp.task('clean',function() {
+gulp.task('clean', () => {
 	del.sync(['dist']);
 });
 
-gulp.task('build', ['clean', 'images','cp-genese','cp-static'],  function(callback) {
+gulp.task('build', ['clean', 'images', 'cp-genese', 'cp-static', 'prod:dll'], (callback) => {
 	// run webpack
-	var webpackConfig = process.env.NODE_ENV === 'production' ? require('./prod.config') : require('./dev.config');
-	var prototypoConfig = Object.create(webpackConfig);
+	const webpackConfig = process.env.NODE_ENV === 'production' ? require('./prod.config') : require('./dev.config');
+	const prototypoConfig = Object.create(webpackConfig);
+
 	webpack(prototypoConfig,
-		function(err, stats) {
-			if(err) throw new gutil.PluginError("webpack", err);
-			gutil.log("[webpack]", stats.toString({
+		(err, stats) => {
+			if (err) throw new gutil.PluginError('webpack', err);
+			gutil.log('[webpack]', stats.toString({
 			// output options
 			}));
 			callback();
-		}
+		},
 	);
 });
 
-gulp.task('clean:dll', function(cb) {
+gulp.task('clean:dll', (cb) => {
 	del.sync(['dll']);
 });
 
-gulp.task('webpack:dll', function(callback) {
-	var dllWebpackConfig   = require('./dll.config.js');
-	var prototypoConfig = Object.create(dllWebpackConfig);
-	webpack(prototypoConfig, function(err, stats) {
-		if (err) return new gutil.PluginError("webpack", err);
+gulp.task('webpack:dll', (callback) => {
+	const dllWebpackConfig = require('./dll.config.js');
+	const prototypoConfig = Object.create(dllWebpackConfig);
+
+	webpack(prototypoConfig, (err, stats) => {
+		if (err) return new gutil.PluginError('webpack', err);
 
 		gutil.log('[webpack]', stats.toString({
 		}));
@@ -107,19 +109,29 @@ gulp.task('webpack:dll', function(callback) {
 	});
 });
 
-gulp.task('watch-font', function() {
-	return gulp.watch(['./node_modules/john-fell.ptf/dist/font.json','./node_modules/venus.ptf/dist/font.json','./node_modules/elzevir.ptf/dist/font.json', './node_modules/gfnt.ptf/dist/font.json', './node_modules/antique.ptf/dist/font.json'], ['cp-genese']);
+gulp.task('prod:dll', (callback) => {
+	const dllWebpackConfig = require('./dll-prod.config.js');
+	const prototypoConfig = Object.create(dllWebpackConfig);
+
+	webpack(prototypoConfig, (err, stats) => {
+		if (err) return new gutil.PluginError('webpack', err);
+
+		gutil.log('[webpack]', stats.toString({
+		}));
+
+		callback();
+	});
 });
 
-gulp.task('watch-prototypojs', function() {
-	return gulp.watch(['./node_modules/prototypo.js/dist/prototypo.js','./node_modules/prototypo-canvas/src/worker.js'], ['cp-prototypo.js']);
-});
+gulp.task('watch-font', () => gulp.watch(['./node_modules/john-fell.ptf/dist/font.json', './node_modules/venus.ptf/dist/font.json', './node_modules/elzevir.ptf/dist/font.json', './node_modules/gfnt.ptf/dist/font.json', './node_modules/antique.ptf/dist/font.json'], ['cp-genese']));
 
-gulp.task('serve',['clean', 'images', 'cp-genese', 'cp-static', 'watch-font', 'watch-prototypojs', 'webpack:dll'], function(callback) {
-	var webpackConfig	= require('./local.config.js');
+gulp.task('watch-prototypojs', () => gulp.watch(['./node_modules/prototypo.js/dist/prototypo.js', './node_modules/prototypo-canvas/src/worker.js'], ['cp-prototypo.js']));
+
+gulp.task('serve', ['clean', 'images', 'cp-genese', 'cp-static', 'watch-font', 'watch-prototypojs', 'webpack:dll'], (callback) => {
+	const webpackConfig	= require('./local.config.js');
 	// Start a webpack-dev-server
-	var prototypoConfig = Object.create(webpackConfig);
-	var compiler = webpack(prototypoConfig);
+	const prototypoConfig = Object.create(webpackConfig);
+	const compiler = webpack(prototypoConfig);
 
 	new WebpackDevServer(compiler, {
 		publicPath: webpackConfig.output.publicPath,
@@ -130,21 +142,21 @@ gulp.task('serve',['clean', 'images', 'cp-genese', 'cp-static', 'watch-font', 'w
 			ignored: /node_modules/,
 			poll: 1000,
 		},
-	}).listen(9000, "0.0.0.0", function(err) {
-		if(err) throw new gutil.PluginError("webpack-dev-server", err);
+	}).listen(9000, '0.0.0.0', (err) => {
+		if (err) throw new gutil.PluginError('webpack-dev-server', err);
 		// Server listening
-		gutil.log("[webpack-dev-server]", "http://localhost:9000/webpack-dev-server/index.html");
+		gutil.log('[webpack-dev-server]', 'http://localhost:9000/webpack-dev-server/index.html');
 
 		// keep the server alive or continue?
 		callback();
 	});
 });
 
-gulp.task('serve:perf',['clean', 'images', 'cp-genese', 'cp-static', 'watch-font', 'watch-prototypojs', 'webpack:dll'], function(callback) {
-	var webpackConfig	= require('./prod.config.js');
+gulp.task('serve:perf', ['clean', 'images', 'cp-genese', 'cp-static', 'watch-font', 'watch-prototypojs', 'webpack:dll'], (callback) => {
+	const webpackConfig	= require('./prod.config.js');
 	// Start a webpack-dev-server
-	var prototypoConfig = Object.create(webpackConfig);
-	var compiler = webpack(prototypoConfig);
+	const prototypoConfig = Object.create(webpackConfig);
+	const compiler = webpack(prototypoConfig);
 
 	new WebpackDevServer(compiler, {
 		publicPath: webpackConfig.output.publicPath,
@@ -155,22 +167,23 @@ gulp.task('serve:perf',['clean', 'images', 'cp-genese', 'cp-static', 'watch-font
 			ignored: /node_modules/,
 			poll: 1000,
 		},
-	}).listen(9000, "0.0.0.0", function(err) {
-		if(err) throw new gutil.PluginError("webpack-dev-server", err);
+	}).listen(9000, '0.0.0.0', (err) => {
+		if (err) throw new gutil.PluginError('webpack-dev-server', err);
 		// Server listening
-		gutil.log("[webpack-dev-server]", "http://localhost:9000/webpack-dev-server/index.html");
+		gutil.log('[webpack-dev-server]', 'http://localhost:9000/webpack-dev-server/index.html');
 
 		// keep the server alive or continue?
 		callback();
 	});
 });
 
-gulp.task('debug', ['clean', 'images','cp-genese','cp-static','webpack:dll'], function(callback) {
-	var webpackConfig	= require('./debug.config.js');
+gulp.task('debug', ['clean', 'images', 'cp-genese', 'cp-static', 'webpack:dll'], (callback) => {
+	const webpackConfig	= require('./debug.config.js');
 	// Start a webpack-dev-server
-	var prototypoConfig = Object.create(webpackConfig);
+	const prototypoConfig = Object.create(webpackConfig);
+
 	prototypoConfig.debug = true;
-	var compiler = webpack(prototypoConfig);
+	const compiler = webpack(prototypoConfig);
 
 	new WebpackDevServer(compiler, {
 		publicPath: webpackConfig.output.publicPath,
@@ -180,26 +193,22 @@ gulp.task('debug', ['clean', 'images','cp-genese','cp-static','webpack:dll'], fu
 			aggregateTimeout: 300,
 			poll: 1000,
 		},
-	}).listen(9000, "0.0.0.0", function(err) {
-		if(err) throw new gutil.PluginError("webpack-dev-server", err);
+	}).listen(9000, '0.0.0.0', (err) => {
+		if (err) throw new gutil.PluginError('webpack-dev-server', err);
 		// Server listening
-		gutil.log("[webpack-dev-server]", "http://localhost:9000/webpack-dev-server/index.html");
+		gutil.log('[webpack-dev-server]', 'http://localhost:9000/webpack-dev-server/index.html');
 
 		// keep the server alive or continue?
 	});
 });
 
 
-gulp.task('test', function(callback) {
-	return gulp.src('')
+gulp.task('test', callback => gulp.src('')
 	.pipe(nightwatch({
 		cliArgs: {
-			env: 'default,chrome_win8,chrome_win7,firefox_win7,chrome_mac,firefox_mac'
-		}
-	}));
-});
+			env: 'default,chrome_win8,chrome_win7,firefox_win7,chrome_mac,firefox_mac',
+		},
+	})));
 
-gulp.task('test:basic', function(callback) {
-	return gulp.src('')
-	.pipe(nightwatch());
-});
+gulp.task('test:basic', callback => gulp.src('')
+	.pipe(nightwatch()));

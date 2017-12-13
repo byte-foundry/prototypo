@@ -8,7 +8,7 @@ import Lifespan from 'lifespan';
 import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix, canvasMode} from '../toile/toile';
 import {rayRayIntersection} from '../prototypo.js/utils/updateUtils';
 
-import {changeTransformOrigin, toLodashPath, glyphBoundingBox} from '../prototypo.js/utils/generic';
+import {changeTransformOrigin, glyphBoundingBox} from '../prototypo.js/utils/generic';
 import {matrixMul, dot2D, mulScalar2D, subtract2D, normalize2D, add2D, distance2D} from '../prototypo.js/utils/linear';
 
 import LocalClient from '../stores/local-client.stores';
@@ -141,7 +141,7 @@ function onCurveModification(
 
 function skeletonPosModification(toile, client, glyph, draggedItem, diffVector, hotItems) {
 	const {base, transforms} = draggedItem.data;
-	const pointPos = _get(glyph, toLodashPath(draggedItem.id));
+	const pointPos = _get(glyph, draggedItem.id);
 	const posVector = subtract2D(add2D(pointPos, diffVector), base);
 
 	const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
@@ -347,6 +347,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				// makes it necessary to stop all active mode
 				if (this.resetAppMode) {
 					appStateValue = appState.DEFAULT;
+					selectedItems = [];
 					this.resetAppMode = false;
 				}
 
@@ -662,7 +663,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					this.toile.drawNodes(
 						_get(
 							glyph,
-							toLodashPath(contourSelected.id)),
+							contourSelected.id),
 						contourSelected.id,
 						[...hotItems, ...draggedItems, ...selectedItems],
 						contourSelected.data.componentIdx === undefined ? '' : `components.${contourSelected.data.componentIdx}.`,
@@ -708,7 +709,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				if (
 					this.props.dependencies
-					&&					(
+					&& (
 						appStateValue & (
 							appState.CONTOUR_POINT_SELECTED
 							| appState.SKELETON_POINT_SELECTED
@@ -716,7 +717,25 @@ export default class GlyphCanvas extends React.PureComponent {
 					)
 					&& selectedItems.length === 1
 				) {
+					const selectedPointDeps = _get(glyph.dependencyTree, selectedItems[0].id);
 					const selectedPoint = _get(glyph, selectedItems[0].id);
+
+					if (selectedPointDeps) {
+						Object.keys(selectedPointDeps).forEach((key) => {
+							const deps = selectedPointDeps[key];
+
+							if (deps instanceof Array) {
+								deps.forEach((dep) => {
+									if (dep.indexOf('anchor') === -1) {
+										const pointAddress = dep.split('.').slice(0, 4).join('.');
+										const dependerPoint = _get(glyph, pointAddress);
+
+										this.toile.drawDependencies(dependerPoint, selectedPoint);
+									}
+								});
+							}
+						});
+					}
 				}
 
 
@@ -883,7 +902,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						default:
 							return {
 								item,
-								modData: add2D(_get(glyph, toLodashPath(item.id)), posVector),
+								modData: add2D(_get(glyph, item.id), posVector),
 							};
 						}
 					});

@@ -1508,6 +1508,11 @@ export default class Toile {
 		}
 	}
 
+	drawDependencies(depender, dependee) {
+		this.drawLine(depender, dependee, 'orange');
+		this.drawCircle(depender, nodeDrawRadius, skeletonColor);
+	}
+
 	getBoxHotInteractiveItem(mouseBoxStart) {
 		const [mousePosInWorld, boxStartPosInWorld] = transformCoords(
 			[this.mouse, mouseBoxStart],
@@ -1646,58 +1651,6 @@ export default class Toile {
 				}
 				break;
 			}
-				//				case toileType.POINT_MENU: {
-				//					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
-				//					const [mouseTransformed] = transformCoords(
-				//						[this.mouse],
-				//						inverseMatrix,
-				//						this.height / this.viewMatrix[0]
-				//					);
-				//					const {start, size} = interactionItem.data;
-				//					const diffVect = subtract2D(mouseTransformed, start);
-				//
-				//					if (
-				//						diffVect.x <= size.x + 20 / this.viewMatrix[0]
-				//						&& diffVect.x >= -40 / this.viewMatrix[0]
-				//						&& diffVect.y <= size.y + 20 / this.viewMatrix[0]
-				//						&& diffVect.y >= -40 / this.viewMatrix[0]
-				//					) {
-				//						result.push(interactionItem);
-				//					}
-				//
-				//					/* #if dev */
-				//					//let color = '#24d390';
-				//					//this.drawLine(start, mouseTransformed, color);
-				//					/* #end */
-				//					break;
-				//				}
-				//				case toileType.POINT_MENU_ITEM: {
-				//					const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
-				//					const [zoom] = this.viewMatrix;
-				//					const [mouseTransformed] = transformCoords(
-				//						[this.mouse],
-				//						inverseMatrix,
-				//						this.height / zoom
-				//					);
-				//					const {pos, size} = interactionItem.data;
-				//					const diffVect = subtract2D(mouseTransformed, pos);
-				//
-				//					if (
-				//						diffVect.x <= size + 10 / zoom
-				//						&& diffVect.x >= -10 / zoom
-				//						&& diffVect.y <= 35 / zoom
-				//						&& diffVect.y >= -5 / zoom
-				//					) {
-				//						result.push(interactionItem);
-				//					}
-				//
-				//					/* #if dev */
-				//					const color = '#24d390';
-				//
-				//					this.drawLine(pos, mouseTransformed, color);
-				//					/* #end */
-				//					break;
-				//				}
 			default:
 				break;
 			}

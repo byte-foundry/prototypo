@@ -80,6 +80,22 @@ export default class Glyph {
 			(component, i) => new Component(component, `component.${i}`, this),
 		);
 
+		for (let i = 0; i < this.operationOrder.length; i++) {
+			const op = this.operationOrder[i];
+
+			if (typeof op !== 'object') {
+				const obj = this.getFromXPath(op);
+
+				if (obj.dependencies) {
+					_set(
+						this.dependencyTree,
+						op,
+						obj.dependencies,
+					);
+				}
+			}
+		}
+
 		if (glyphSrc.ot) {
 			this.advanceWidth = constantOrFormula(glyphSrc.ot.advanceWidth);
 		}
@@ -469,6 +485,7 @@ export default class Glyph {
 			componentLabel: this.componentLabel ? this.componentLabel.value : undefined,
 			baseSpacingRight,
 			baseSpacingLeft,
+			dependencyTree: this.dependencyTree,
 			otContours,
 		};
 	}

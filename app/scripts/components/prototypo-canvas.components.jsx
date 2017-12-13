@@ -478,7 +478,7 @@ export default class PrototypoCanvas extends React.Component {
 				>
 					Reset glyph
 				</button>
-				<GlyphCanvas dependencies={this.props.dependencies} />
+				<GlyphCanvas dependencies={this.props.uiDependencies} />
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => {this.props.close('glyph');}} />
 				</div>

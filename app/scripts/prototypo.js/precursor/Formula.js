@@ -5,8 +5,6 @@ import _reduce from 'lodash/reduce';
 import _find from 'lodash/find';
 import _keys from 'lodash/keys';
 
-import {toLodashPath} from '../utils/generic';
-
 export default class Formula {
 	constructor(formula, cursor) {
 		this.cursor = cursor;
@@ -88,7 +86,7 @@ ${this.operation.toString()}
 parameters value are:
 ${this.parameters.map(name => `${name}: ${parameters[name]}`)}
 cursor used are:
-${this.dependencies.map(name => `${name}: ${_get(toLodashPath(name), contours)}`)}`);
+${this.dependencies.map(name => `${name}: ${_get(contours, name)}`)}`);
 			/* eslint-enable no-console */
 		}
 

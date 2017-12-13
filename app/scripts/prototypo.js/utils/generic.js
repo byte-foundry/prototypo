@@ -25,10 +25,6 @@ export function createContour(source, i) {
 	return new SimplePath(source, i);
 }
 
-export function toLodashPath(path) {
-	return path.replace(/\.([0-9]+)\./g, '[$1].');
-}
-
 const rdeg = /deg$/;
 
 export function readAngle(angle) {
