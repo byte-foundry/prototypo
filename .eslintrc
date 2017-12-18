@@ -13,17 +13,6 @@
 			"experimentalObjectRestSpread": true
         }
     },
-	"fallbackPrettierOptions": {
-		"printWidth": 80,
-		"tabWidth": 4,
-		"singleQuote": true,
-		"trailingComma": "all",
-		"bracketSpacing": false,
-		"semi": true,
-		"useTabs": true,
-		"parser": "babylon",
-		"jsxBracketSameLine": true
-	},
     "rules": {
 		"strict": 0,
 		"no-constant-condition": 2,

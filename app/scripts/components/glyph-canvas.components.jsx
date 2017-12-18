@@ -25,7 +25,9 @@ const onCurveModMode = {
 };
 
 function handleModification(client, glyph, draggedItem, newPos, smoothMod, contour) {
-	const {parentId, skeletonId, otherNode, otherDir, transforms} = draggedItem.data;
+	const {
+		parentId, skeletonId, otherNode, otherDir, transforms,
+	} = draggedItem.data;
 	const selectedNodeParent = _get(glyph, parentId);
 	const skeletonNode = contour ? _get(glyph, parentId) : _get(glyph, skeletonId);
 	const newVectorPreTransform = subtract2D(newPos, selectedNodeParent);
@@ -40,12 +42,8 @@ function handleModification(client, glyph, draggedItem, newPos, smoothMod, conto
 	let tension = distance2D(newPos, selectedNodeParent)
 		/ (distance2D(intersection, selectedNodeParent) || 1);
 	const dotProductForOrient = dot2D(
-		subtract2D(
-			selectedNodeParent, intersection,
-		),
-		subtract2D(
-			newPos, selectedNodeParent,
-		),
+		subtract2D(selectedNodeParent, intersection),
+		subtract2D(newPos, selectedNodeParent),
 	);
 
 	if (dotProductForOrient > 0) {
@@ -107,7 +105,9 @@ function onCurveModification(
 	hotItems,
 	modToApply,
 ) {
-	const {baseWidth, oppositeId, baseAngle, skeleton, angleOffset} = draggedItem.data;
+	const {
+		baseWidth, oppositeId, baseAngle, skeleton, angleOffset,
+	} = draggedItem.data;
 	const opposite = _get(glyph, oppositeId);
 	// width factor
 	const factor = distance2D(opposite, newPos) / baseWidth;
@@ -413,16 +413,11 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 				if (appMode === canvasMode.COMPONENTS) {
-					let componentMenu = hotItems.filter(
-						item => item.type === toileType.COMPONENT_MENU_ITEM_CENTER,
-					);
-					let componentChoice = hotItems.filter(
-						item => item.type === toileType.COMPONENT_MENU_ITEM,
-					);
-					let components = hotItems.filter(
-						item => item.type === toileType.COMPONENT_CHOICE
-							|| item.type === toileType.COMPONENT_NONE_CHOICE,
-					);
+					let componentMenu = hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM_CENTER);
+					let componentChoice = hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM);
+					const componentChoiceClass = hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM_CLASS);
+					let components = hotItems.filter(item => item.type === toileType.COMPONENT_CHOICE
+							|| item.type === toileType.COMPONENT_NONE_CHOICE);
 
 					// On mouse release with look for any hot menu item
 					// and change component accordingly
@@ -433,7 +428,19 @@ export default class GlyphCanvas extends React.PureComponent {
 							this.client.dispatchAction('/change-component', {
 								glyph,
 								id: choice.data.componentId,
-								name: choice.id,
+								name: choice.data.baseId,
+							});
+
+							componentChoice = [];
+							componentMenu = [];
+							components = [];
+						}
+						if (componentChoiceClass.length > 0) {
+							const [choice] = componentChoiceClass;
+
+							this.client.dispatchAction('/change-component-class', {
+								componentClass: choice.data.componentClass,
+								name: choice.data.baseId,
 							});
 
 							componentChoice = [];
@@ -453,48 +460,13 @@ export default class GlyphCanvas extends React.PureComponent {
 					else {
 						appStateValue = appState.DEFAULT;
 					}
-
-					if (appStateValue === appState.COMPONENT_HOVERED) {
-						const [component] = components;
-
-						if (componentMenuPos.id !== component.data.id) {
-							frameCounters.componentMenu = 0;
-						}
-
-						componentMenuPos = this.toile.drawComponentMenu(
-							component.data,
-							frameCounters.componentMenu,
-							hotItems,
-							width,
-							componentMenuPos,
-						);
-
-						frameCounters.componentMenu += 1;
-					}
-					else if (appStateValue === appState.COMPONENT_MENU_HOVERED) {
-						const [component] = componentMenu;
-
-						componentMenuPos = this.toile.drawComponentMenu(
-							component.data.component,
-							frameCounters.componentMenu,
-							hotItems,
-							width,
-							componentMenuPos,
-						);
-						frameCounters.componentMenu += 1;
-					}
-					else {
-						componentMenuPos = {};
-						frameCounters.componentMenu = 0;
-					}
 				}
 				if (appMode === canvasMode.SELECT_POINTS) {
 					// Manual edition mode
 					const nodes = hotItems.filter(item => item.type <= toileType.CONTOUR_NODE_OUT);
 					const contours = hotItems.filter(item =>
 						item.type === toileType.GLYPH_CONTOUR
-						|| item.type === toileType.GLYPH_COMPONENT_CONTOUR,
-					);
+						|| item.type === toileType.GLYPH_COMPONENT_CONTOUR);
 
 					if ((appStateValue === appState.DEFAULT) && mouse.edge === mState.DOWN) {
 						appStateValue = appState.BOX_SELECTING;
@@ -648,7 +620,46 @@ export default class GlyphCanvas extends React.PureComponent {
 				);
 
 				if (appMode === canvasMode.COMPONENTS) {
+					const componentMenu = hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM_CENTER);
+					const componentChoice = hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM);
+					const components = hotItems.filter(item => item.type === toileType.COMPONENT_CHOICE
+							|| item.type === toileType.COMPONENT_NONE_CHOICE);
+
 					this.toile.drawComponents(glyph.components, hotItems);
+
+					if (appStateValue === appState.COMPONENT_HOVERED) {
+						const [component] = components;
+
+						if (componentMenuPos.id !== component.data.id) {
+							frameCounters.componentMenu = 0;
+						}
+
+						componentMenuPos = this.toile.drawComponentMenu(
+							component.data,
+							frameCounters.componentMenu,
+							hotItems,
+							width,
+							componentMenuPos,
+						);
+
+						frameCounters.componentMenu += 1;
+					}
+					else if (appStateValue === appState.COMPONENT_MENU_HOVERED) {
+						const [component] = componentMenu;
+
+						componentMenuPos = this.toile.drawComponentMenu(
+							component.data.component,
+							frameCounters.componentMenu,
+							hotItems,
+							width,
+							componentMenuPos,
+						);
+						frameCounters.componentMenu += 1;
+					}
+					else {
+						componentMenuPos = {};
+						frameCounters.componentMenu = 0;
+					}
 				}
 
 				if (
@@ -663,28 +674,25 @@ export default class GlyphCanvas extends React.PureComponent {
 					this.toile.drawNodes(
 						_get(
 							glyph,
-							contourSelected.id),
+							contourSelected.id,
+						),
 						contourSelected.id,
 						[...hotItems, ...draggedItems, ...selectedItems],
 						contourSelected.data.componentIdx === undefined ? '' : `components.${contourSelected.data.componentIdx}.`,
 					);
 					if (contourSelected.data.componentIdx === undefined) {
-						this.toile.drawSelectedContour(
-							_slice(
-								glyph.otContours,
-								contourSelected.data.indexes[0],
-								contourSelected.data.indexes[1],
-							),
-						);
+						this.toile.drawSelectedContour(_slice(
+							glyph.otContours,
+							contourSelected.data.indexes[0],
+							contourSelected.data.indexes[1],
+						));
 					}
 					else {
-						this.toile.drawSelectedContour(
-							_slice(
-								glyph.components[contourSelected.data.componentIdx].otContours,
-								contourSelected.data.indexes[0],
-								contourSelected.data.indexes[1],
-							),
-						);
+						this.toile.drawSelectedContour(_slice(
+							glyph.components[contourSelected.data.componentIdx].otContours,
+							contourSelected.data.indexes[0],
+							contourSelected.data.indexes[1],
+						));
 					}
 				}
 
@@ -829,9 +837,9 @@ export default class GlyphCanvas extends React.PureComponent {
 						y: z === clampedZoom ? y : newTy,
 					}, clampedZoom, -height);
 				}
-					/* else {
+				/* else {
 					moving = false;
-				}*/
+				} */
 
 				let interactions = [];
 
@@ -1072,7 +1080,9 @@ export default class GlyphCanvas extends React.PureComponent {
 				<canvas
 					id="hello"
 					ref={(canvas) => {this.canvas = canvas;}}
-					style={{width: '100%', height: '100%', '-webkit-user-drag': 'none', userSelect: 'none', '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0)'}}
+					style={{
+						width: '100%', height: '100%', '-webkit-user-drag': 'none', userSelect: 'none', '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0)',
+					}}
 				/>
 				<FontUpdater />
 			</div>

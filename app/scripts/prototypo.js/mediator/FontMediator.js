@@ -29,20 +29,18 @@ window.fontResult = undefined;
 window.glyph = undefined;
 
 async function mergeFont(url, name, user, arrayBuffer, merged) {
-	const response = await fetch(
-		[
-			url,
-			name.family,
-			name.style,
-			user,
-			name.template || 'unknown',
-		].join('/')
+	const response = await fetch([
+		url,
+		name.family,
+		name.style,
+		user,
+		name.template || 'unknown',
+	].join('/')
 		+ (merged ? '/overlap' : ''), {
-			method: 'POST',
-			headers: {'Content-Type': 'application/otf'},
-			body: arrayBuffer,
-		},
-	);
+		method: 'POST',
+		headers: {'Content-Type': 'application/otf'},
+		body: arrayBuffer,
+	});
 
 	return response.arrayBuffer();
 }
@@ -76,10 +74,32 @@ export default class FontMediator {
 					this.initValues = {};
 					this.glyphList = {};
 					this.fontMakers = {};
+					const componentIdAndGlyphPerClass = {};
 
 					typedatas.forEach((typedata) => {
-						this.fontMakers[typedata.name] = new FontPrecursor(typedata.json);
+						const font = new FontPrecursor(typedata.json);
+
 						this.glyphList[typedata.name] = typedata.json.glyphs;
+						this.fontMakers[typedata.name] = font;
+
+						const fontComponentIdAndGlyphPerClass = {};
+
+						Object.keys(typedata.json.glyphs).forEach((key) => {
+							const glyph = typedata.json.glyphs[key];
+
+							if (glyph.outline.component) {
+								glyph.outline.component.forEach((component) => {
+									if (component.class) {
+										fontComponentIdAndGlyphPerClass[component.class] = [
+											...(fontComponentIdAndGlyphPerClass[component.class] || []),
+											[glyph.name, component.id],
+										];
+									}
+								});
+							}
+						});
+
+						componentIdAndGlyphPerClass[typedata.name] = fontComponentIdAndGlyphPerClass;
 
 						const initValues = {};
 
@@ -90,6 +110,10 @@ export default class FontMediator {
 						});
 
 						this.initValues[typedata.name] = initValues;
+					});
+
+					localClient.dispatchAction('/store-value-font', {
+						componentIdAndGlyphPerClass,
 					});
 
 					resolve(this);
@@ -161,8 +185,7 @@ export default class FontMediator {
 							resolveFont(font);
 						},
 					});
-				}),
-			);
+				}));
 
 			this.workerPool.doJobs(jobs);
 
@@ -245,8 +268,7 @@ export default class FontMediator {
 						resolve(font);
 					},
 				});
-			}),
-		);
+			}));
 
 		this.workerPool.doJobs(jobs);
 
@@ -312,7 +334,7 @@ export default class FontMediator {
 			...params,
 		}, [glyphCanvasUnicode]);
 
-		window.glyph = glyphForCanvas.glyphs[0];
+		[window.glyph] = glyphForCanvas.glyphs;
 		localClient.dispatchAction('/store-value-font', {
 			glyph: Math.random(),
 		});
@@ -344,7 +366,8 @@ export default class FontMediator {
 /* eslint-disable global-require */
 if (process.env.TESTING_FONT === 'yes') {
 	if (module.hot) {
-		module.hot.accept('john-fell.ptf',
+		module.hot.accept(
+			'john-fell.ptf',
 			async () => {
 				const fontJson = require('john-fell.ptf');
 
@@ -352,7 +375,8 @@ if (process.env.TESTING_FONT === 'yes') {
 				FontMediator.instance().getAllGlyphForCanvas('john-fell.ptf');
 			},
 		);
-		module.hot.accept('venus.ptf',
+		module.hot.accept(
+			'venus.ptf',
 			async () => {
 				const fontJson = require('venus.ptf');
 
@@ -360,7 +384,8 @@ if (process.env.TESTING_FONT === 'yes') {
 				FontMediator.instance().getAllGlyphForCanvas('venus.ptf');
 			},
 		);
-		module.hot.accept('elzevir.ptf',
+		module.hot.accept(
+			'elzevir.ptf',
 			async () => {
 				const fontJson = require('elzevir.ptf');
 
@@ -368,7 +393,8 @@ if (process.env.TESTING_FONT === 'yes') {
 				FontMediator.instance().getAllGlyphForCanvas('elzevir.ptf');
 			},
 		);
-		module.hot.accept('gfnt.ptf',
+		module.hot.accept(
+			'gfnt.ptf',
 			async () => {
 				const fontJson = require('gfnt.ptf');
 
@@ -376,7 +402,8 @@ if (process.env.TESTING_FONT === 'yes') {
 				FontMediator.instance().getAllGlyphForCanvas('gfnt.ptf');
 			},
 		);
-		module.hot.accept('antique.ptf',
+		module.hot.accept(
+			'antique.ptf',
 			async () => {
 				const fontJson = require('antique.ptf');
 
@@ -384,19 +411,18 @@ if (process.env.TESTING_FONT === 'yes') {
 				FontMediator.instance().getAllGlyphForCanvas('antique.ptf');
 			},
 		);
-		module.hot.accept('../precursor/FontPrecursor.js',
+		module.hot.accept(
+			'../precursor/FontPrecursor.js',
 			async () => {
 				const prototypoStore = window.prototypoStores['/prototypoStore'];
-				const templates = await Promise.all(
-					prototypoStore.get('templateList').map(async ({templateName}) => {
-						const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/${templateName}/font.json`);
+				const templates = await Promise.all(prototypoStore.get('templateList').map(async ({templateName}) => {
+					const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/${templateName}/font.json`);
 
-						return {
-							name: templateName,
-							json: typedataJSON,
-						};
-					}),
-				);
+					return {
+						name: templateName,
+						json: typedataJSON,
+					};
+				}));
 
 				await FontMediator.init(templates);
 				FontMediator.instance().getAllGlyphForCanvas('john-fell.ptf');

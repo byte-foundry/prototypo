@@ -265,10 +265,10 @@ class SolvablePath {
 				const dirOut = readAngle(node.dirOut);
 
 				nodes[i].expand.angle = readAngle(node.expand.angle);
-				nodes[i].dirIn = dirIn === null
+				nodes[i].dirIn = dirIn === null || dirIn === undefined
 					? ((nodes[i].expand.angle + (Math.PI / 2)) % (2 * Math.PI))
 					: dirIn;
-				nodes[i].dirOut = dirOut === null
+				nodes[i].dirOut = dirOut === null || dirOut === undefined
 					? ((nodes[i].expand.angle + (Math.PI / 2)) % (2 * Math.PI))
 					: dirOut;
 			}
@@ -284,8 +284,8 @@ class SolvablePath {
 				node.expandedTo[1].dirOut = dirOut1;
 			}
 			else {
-				nodes[i].dirIn = readAngle(node.dirIn);
-				nodes[i].dirOut = readAngle(node.dirOut);
+				nodes[i].dirIn = readAngle(node.dirIn) || 0;
+				nodes[i].dirOut = readAngle(node.dirOut) || 0;
 			}
 
 			nodes[i].tensionIn = node.tensionIn === undefined

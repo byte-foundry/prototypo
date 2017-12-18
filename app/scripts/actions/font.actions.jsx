@@ -4,7 +4,7 @@ import _forOwn from 'lodash/forOwn';
 import _cloneDeep from 'lodash/cloneDeep';
 import {gql} from 'react-apollo';
 
-import {prototypoStore, undoableStore} from '../stores/creation.stores';
+import {prototypoStore, undoableStore, fontInstanceStore} from '../stores/creation.stores';
 import LocalServer from '../stores/local-server.stores';
 import LocalClient from '../stores/local-client.stores';
 
@@ -168,7 +168,9 @@ export default {
 			variantId: selectedVariant.id,
 		});
 	},
-	'/create-variant-from-ref': async ({ref, name, family, noSwitch}) => {
+	'/create-variant-from-ref': async ({
+		ref, name, family, noSwitch,
+	}) => {
 		const values = _cloneDeep(ref.values);
 		const thicknessTransform = [
 			{string: 'Thin', thickness: 20},
@@ -329,7 +331,9 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/change-param': ({values, value, name, force, label}) => {
+	'/change-param': ({
+		values, value, name, force, label,
+	}) => {
 		const indivMode = prototypoStore.get('indivMode');
 		const indivEdit = prototypoStore.get('indivEditingParams');
 		const db = (prototypoStore.get('variant') || {}).db;
@@ -383,7 +387,9 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/change-param-state': ({name, state, force, label}) => {
+	'/change-param-state': ({
+		name, state, force, label,
+	}) => {
 		const db = prototypoStore.get('variant').db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const currentGroupName = prototypoStore.get('indivCurrentGroup').name;
@@ -407,7 +413,9 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/change-letter-spacing': ({value, side, letter, label, force}) => {
+	'/change-letter-spacing': ({
+		value, side, letter, label, force,
+	}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
@@ -441,7 +449,9 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/change-glyph-node-manually': ({changes, force, label = 'glyph node manual', glyphName}) => {
+	'/change-glyph-node-manually': ({
+		changes, force, label = 'glyph node manual', glyphName,
+	}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
@@ -477,7 +487,9 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/reset-glyph-node-manually': ({contourId, nodeId, force = true, label = 'reset manual', glyphName}) => {
+	'/reset-glyph-node-manually': ({
+		contourId, nodeId, force = true, label = 'reset manual', glyphName,
+	}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
@@ -567,8 +579,9 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-
-	'/change-component': ({glyph, id, name, label = 'change component'}) => {
+	'/change-component': ({
+		glyph, id, name, label = 'change component',
+	}) => {
 		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
@@ -581,6 +594,33 @@ export default {
 			...newParams.glyphComponentChoice[glyph.name],
 			[id]: name,
 		};
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+
+		debouncedSave(newParams, db, variantId);
+
+		undoWatcher.forceUpdate(patch, label);
+	},
+	'/change-component-class': ({componentClass, name, label = 'change component'}) => {
+		const db = (prototypoStore.get('variant') || {}).db;
+		const variantId = (prototypoStore.get('variant') || {}).id;
+		const oldValues = undoableStore.get('controlsValues');
+		const template = fontInstanceStore.get('templateToLoad');
+		const componentIdAndGlyphPerClass = fontInstanceStore.get('componentIdAndGlyphPerClass');
+
+		const newParams = {
+			...oldValues,
+			glyphComponentChoice: {...oldValues.glyphComponentChoice},
+		};
+
+		componentIdAndGlyphPerClass[template][componentClass].forEach(([glyphName, id]) => {
+			newParams.glyphComponentChoice[glyphName] = {
+				...newParams.glyphComponentChoice[glyphName],
+				[id]: name,
+			};
+		});
 
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 

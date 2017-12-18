@@ -81,92 +81,64 @@ selectRenderOptions(
 		/* eslint-enable no-redeclare */
 
 		LocalClient.setup(localServer);
+
+		const actions = Object.assign(
+			{},
+			appValuesAction,
+			exportAction,
+			fontAction,
+			fontControlsAction,
+			fontInfosAction,
+			fontParametersAction,
+			glyphsAction,
+			indivAction,
+			panelAction,
+			searchAction,
+			tagStoreAction,
+			undoStackAction,
+			debugActions,
+			userLifecycleAction,
+			{
+				'/load-intercom-info': (data) => {
+					const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();
+
+					localServer.dispatchUpdate('/prototypoStore', patch);
+				},
+			},
+		);
+
+		localServer.on(
+			'action',
+			({path, params}) => {
+				// eventDebugger.storeEvent(path, params);
+				if (process.env.__SHOW_ACTION__) { // eslint-disable-line
+					console.log(`[ACTION] ${path}`);
+				}
+
+				if (actions[path] !== undefined) {
+					actions[path](params);
+				}
+			},
+			localServer.lifespan,
+		);
+
 		const fluxEvent = new Event('fluxServer.setup');
 
 		window.dispatchEvent(fluxEvent);
 
 		const eventDebugger = new EventDebugger();
 
-		const templates = await Promise.all(
-			prototypoStore.get('templateList').map(async ({templateName}) => {
-				const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../dist/templates/${templateName}/font.json`);
+		const templates = await Promise.all(prototypoStore.get('templateList').map(async ({templateName}) => {
+			const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../dist/templates/${templateName}/font.json`);
 
-				return {
-					name: templateName,
-					json: typedataJSON,
-				};
-			}),
-		);
+			return {
+				name: templateName,
+				json: typedataJSON,
+			};
+		}));
 
 		await FontMediator.init(templates);
 
-		async function createStores() {
-			const actions = Object.assign(
-				{},
-				appValuesAction,
-				exportAction,
-				fontAction,
-				fontControlsAction,
-				fontInfosAction,
-				fontParametersAction,
-				glyphsAction,
-				indivAction,
-				panelAction,
-				searchAction,
-				tagStoreAction,
-				undoStackAction,
-				debugActions,
-				userLifecycleAction,
-				{
-					'/load-intercom-info': (data) => {
-						const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();
-
-						localServer.dispatchUpdate('/prototypoStore', patch);
-					},
-				},
-			);
-
-			localServer.on(
-				'action',
-				({path, params}) => {
-					// eventDebugger.storeEvent(path, params);
-					if (process.env.__SHOW_ACTION__) { // eslint-disable-line
-						console.log(`[ACTION] ${path}`);
-					}
-
-					if (actions[path] !== undefined) {
-						actions[path](params);
-					}
-				},
-				localServer.lifespan,
-			);
-
-			/* #if debug */
-			if (location.hash.indexOf('#/replay') === -1) {
-				await loadStuff();
-			}
-			else {
-				await eventDebugger.replayEventFromFile();
-			}
-			/* #end */
-			/* #if prod,dev */
-			try {
-				await HoodieApi.setup();
-
-				await loadStuff();
-			}
-			catch (err) {
-				if (err.message.includes('Not authenticated')) {
-					localServer.dispatchAction('/clean-data');
-				}
-
-				console.log(err);
-				const fontInstanceLoaded = new Event('fontInstance.loaded');
-
-				window.dispatchEvent(fontInstanceLoaded);
-			}
-			/* #end */
-		}
 
 		const content = document.getElementById('content');
 
@@ -215,6 +187,30 @@ selectRenderOptions(
 			}
 		});
 
-		createStores();
+		/* #if debug */
+		if (location.hash.indexOf('#/replay') === -1) {
+			await loadStuff();
+		}
+		else {
+			await eventDebugger.replayEventFromFile();
+		}
+		/* #end */
+		/* #if prod,dev */
+		try {
+			await HoodieApi.setup();
+
+			await loadStuff();
+		}
+		catch (err) {
+			if (err.message.includes('Not authenticated')) {
+				localServer.dispatchAction('/clean-data');
+			}
+
+			console.log(err);
+			const fontInstanceLoaded = new Event('fontInstance.loaded');
+
+			window.dispatchEvent(fontInstanceLoaded);
+		}
+		/* #end */
 	},
 );

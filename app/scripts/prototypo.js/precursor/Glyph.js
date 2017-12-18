@@ -439,10 +439,13 @@ export default class Glyph {
 		opDone.components = this.components.map((component, idx) => {
 			const pickedChanges = _pickBy(localParams.manualChanges[this.name.value].cursors, (value, key) => key.match(new RegExp(`components\.${idx}`))); // eslint-disable-line no-useless-escape
 			const componentManualChanges = _mapKeys(pickedChanges, (value, key) => key.replace(/components\.\d\./g, ''));
-			const componentName = component.id
-				&& localParams.glyphComponentChoice[this.name.value][component.id.value]
-					? localParams.glyphComponentChoice[this.name.value][component.id.value]
-					: component.base[0].value;
+			let componentName = component.base[0].value;
+			if (component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]) {
+				componentName = localParams.glyphComponentChoice[this.name.value][component.id.value];
+			}
+			else if (component.componentClass && localParams.glyphComponentChoice[component.componentClass.value]) {
+				componentName = localParams.glyphComponentChoice[component.componentClass.value];
+			}
 
 			const componentParams = {
 				...localParams,

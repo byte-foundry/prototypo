@@ -26,8 +26,9 @@ export const toileType = {
 	COMPONENT_CHOICE: 9,
 	COMPONENT_NONE_CHOICE: 10,
 	COMPONENT_MENU_ITEM: 11,
-	COMPONENT_MENU_ITEM_CENTER: 12,
-	PERF_RECT: 13,
+	COMPONENT_MENU_ITEM_CLASS: 12,
+	COMPONENT_MENU_ITEM_CENTER: 13,
+	PERF_RECT: 14,
 };
 
 export const canvasMode = {
@@ -50,6 +51,8 @@ export const appState = {
 	SKELETON_POINT_SELECTED_SHIFT:	0b1000000000,
 	ZOOMING:	0b10000000000,
 	MOVING:	0b100000000000,
+	COMPONENT_HOVERED:	0b1000000000000,
+	COMPONENT_MENU_HOVERED:	0b10000000000000,
 };
 
 const green = '#24d390';
@@ -1150,24 +1153,38 @@ export default class Toile {
 			this.height / this.viewMatrix[0],
 		);
 
-		bases.forEach(({id: baseId, label}, i) => {
+		bases.forEach(({id: baseId, label, componentClass}, i) => {
 			const inHot = _find(hotItems, item => item.id === baseId);
+			const magicHot = _find(hotItems, item => item.id === `${baseId}magic`);
 			const textSize = componentMenuTextSize * y;
-			const textWidth = this.measureText(label.value, textSize); // eslint-disable-line no-unused-vars, max-len
 
 			const boxHeight = 40 * y;
 			const yOffset = ((i - (bases.length / 2)) * boxHeight);
 			const boxWidth = 100 * y;
 			const rectStart = add2D(
 				{
-					x: -boxWidth / this.viewMatrix[0],
+					x: -1.5 * boxWidth / this.viewMatrix[0],
 					y: yOffset / this.viewMatrix[0],
 				},
 				componentCenter,
 			);
 			const rectEnd = add2D(
 				{
-					x: boxWidth / this.viewMatrix[0],
+					x: 0.2 * boxWidth / this.viewMatrix[0],
+					y: (yOffset + boxHeight) / this.viewMatrix[0],
+				},
+				componentCenter,
+			);
+			const magicStart = add2D(
+				{
+					x: 0.2 * boxWidth / this.viewMatrix[0],
+					y: yOffset / this.viewMatrix[0],
+				},
+				componentCenter,
+			);
+			const magicEnd = add2D(
+				{
+					x: 1.5 * boxWidth / this.viewMatrix[0],
 					y: (yOffset + boxHeight) / this.viewMatrix[0],
 				},
 				componentCenter,
@@ -1177,20 +1194,39 @@ export default class Toile {
 				rectStart,
 				rectEnd,
 				darkestGrey,
-				inHot ? darkestGrey : white,
+				inHot ? green : white,
+			);
+			this.drawRectangleFromCorners(
+				magicStart,
+				magicEnd,
+				darkestGrey,
+				magicHot ? green : white,
 			);
 
 			this.drawText(
 				label.value,
 				add2D(
 					{
-						x: (10 - boxWidth) / this.viewMatrix[0],
-						y: (yOffset + (textSize / 2)) / this.viewMatrix[0],
+						x: 10 / this.viewMatrix[0],
+						y: textSize / 2 / this.viewMatrix[0],
 					},
-					componentCenter,
+					rectStart
 				),
 				textSize,
 				inHot ? white : darkestGrey,
+			);
+
+			this.drawText(
+				'Change All',
+				add2D(
+					{
+						x: 10 / this.viewMatrix[0],
+						y: textSize / 2 / this.viewMatrix[0],
+					},
+					magicStart
+				),
+				textSize,
+				magicHot ? white : darkestGrey,
 			);
 
 			this.interactionList.push({
@@ -1198,8 +1234,19 @@ export default class Toile {
 				type: toileType.COMPONENT_MENU_ITEM,
 				data: {
 					componentId: id,
+					baseId,
 					rectStart,
 					rectEnd,
+				},
+			});
+			this.interactionList.push({
+				id: `${baseId}magic`,
+				type: toileType.COMPONENT_MENU_ITEM_CLASS,
+				data: {
+					componentClass: componentClass,
+					baseId,
+					rectStart: magicStart,
+					rectEnd: magicEnd,
 				},
 			});
 		});
@@ -1632,6 +1679,7 @@ export default class Toile {
 				break;
 			}
 			case toileType.COMPONENT_MENU_ITEM:
+			case toileType.COMPONENT_MENU_ITEM_CLASS:
 			case toileType.PERF_RECT: {
 				const {rectStart, rectEnd} = interactionItem.data;
 				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);

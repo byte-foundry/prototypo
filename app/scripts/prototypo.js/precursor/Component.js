@@ -15,6 +15,7 @@ export default class Component {
 
 		this.parameters = _mapValues(source.parameters, param => constantOrFormula(param));
 		this.id = constantOrFormula(source.id);
+		this.componentClass = constantOrFormula(source.class);
 		this.anchors = (source.anchor || []).map(
 			(item, i) => _mapValues(
 				item,
@@ -78,6 +79,7 @@ export default class Component {
 							utils,
 							glyphs,
 						)].componentLabel,
+						componentClass: this.componentClass ? this.componentClass.value : undefined,
 					}),
 				);
 			}
