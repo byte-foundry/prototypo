@@ -92,9 +92,11 @@ const labelForMenu = {
 };
 const menuTextSize = 30;
 const propsTextSize = 21;
-const componentMenuTextSize = 20;
+const componentMenuTextSize = 12;
+const componentMenuWidth = 70;
 const componentMenuInfluenceRadius = 150;
 const componentMenuNoneRadius = 20;
+const componentLeashDistance = 50;
 
 const infinityDistance = 10000000;
 
@@ -116,8 +118,7 @@ export function transformCoords(coordsArray, matrix, height) {
 		({
 			x: (a * coords.x) + (b * coords.y) + tx,
 			y: (c * coords.x) + (d * coords.y) + (ty - height),
-		}),
-	);
+		}));
 }
 
 export default class Toile {
@@ -401,7 +402,8 @@ export default class Toile {
 		});
 	}
 
-	drawExpandedNode(node,
+	drawExpandedNode(
+		node,
 		id,
 		parentNode,
 		parentId,
@@ -701,7 +703,8 @@ export default class Toile {
 			else {
 				length = 1;
 			}
-			const deepListOfBeziers = _slice(glyph.otContours,
+			const deepListOfBeziers = _slice(
+				glyph.otContours,
 				startIndexBeziers,
 				startIndexBeziers + length,
 			);
@@ -781,7 +784,8 @@ export default class Toile {
 					else {
 						length = 1;
 					}
-					const deepListOfBeziers = _slice(component.otContours,
+					const deepListOfBeziers = _slice(
+						component.otContours,
 						startIndexBeziers,
 						startIndexBeziers + length,
 					);
@@ -1045,7 +1049,9 @@ export default class Toile {
 	}
 
 	drawComponentMenu(
-		{id, bases, beziers, center},
+		{
+			id, bases, beziers, center,
+		},
 		frameCounters,
 		hotItems = [],
 		width,
@@ -1073,8 +1079,7 @@ export default class Toile {
 			({
 				x: width * (i & 0b01),
 				y: -this.height * (i > 1 & 0b01),
-			}),
-		);
+			}));
 		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 		const [viewMenuCenter] = transformCoords(
 			[menuCenter],
@@ -1133,7 +1138,7 @@ export default class Toile {
 			...add2D(mulScalar2D(1 / (menuMass * 60), sumAttractorRepulsor), viewMenuPos),
 		};
 
-		const maxDistance = 100;
+		const maxDistance = componentLeashDistance;
 		const distanceToBezierCenter = distance2D(resultMenu, viewMenuCenter);
 
 		if (distanceToBezierCenter > maxDistance) {
@@ -1158,9 +1163,9 @@ export default class Toile {
 			const magicHot = _find(hotItems, item => item.id === `${baseId}magic`);
 			const textSize = componentMenuTextSize * y;
 
-			const boxHeight = 40 * y;
+			const boxHeight = componentMenuTextSize * 2 * y;
 			const yOffset = ((i - (bases.length / 2)) * boxHeight);
-			const boxWidth = 100 * y;
+			const boxWidth = componentMenuWidth * y;
 			const rectStart = add2D(
 				{
 					x: -1.5 * boxWidth / this.viewMatrix[0],
@@ -1170,21 +1175,21 @@ export default class Toile {
 			);
 			const rectEnd = add2D(
 				{
-					x: 0.2 * boxWidth / this.viewMatrix[0],
+					x: -0.2 * boxWidth / this.viewMatrix[0],
 					y: (yOffset + boxHeight) / this.viewMatrix[0],
 				},
 				componentCenter,
 			);
 			const magicStart = add2D(
 				{
-					x: 0.2 * boxWidth / this.viewMatrix[0],
+					x: -0.2 * boxWidth / this.viewMatrix[0],
 					y: yOffset / this.viewMatrix[0],
 				},
 				componentCenter,
 			);
 			const magicEnd = add2D(
 				{
-					x: 1.5 * boxWidth / this.viewMatrix[0],
+					x: 1.7 * boxWidth / this.viewMatrix[0],
 					y: (yOffset + boxHeight) / this.viewMatrix[0],
 				},
 				componentCenter,
@@ -1196,13 +1201,6 @@ export default class Toile {
 				darkestGrey,
 				inHot ? green : white,
 			);
-			this.drawRectangleFromCorners(
-				magicStart,
-				magicEnd,
-				darkestGrey,
-				magicHot ? green : white,
-			);
-
 			this.drawText(
 				label.value,
 				add2D(
@@ -1210,23 +1208,10 @@ export default class Toile {
 						x: 10 / this.viewMatrix[0],
 						y: textSize / 2 / this.viewMatrix[0],
 					},
-					rectStart
+					rectStart,
 				),
 				textSize,
 				inHot ? white : darkestGrey,
-			);
-
-			this.drawText(
-				'Change All',
-				add2D(
-					{
-						x: 10 / this.viewMatrix[0],
-						y: textSize / 2 / this.viewMatrix[0],
-					},
-					magicStart
-				),
-				textSize,
-				magicHot ? white : darkestGrey,
 			);
 
 			this.interactionList.push({
@@ -1239,32 +1224,57 @@ export default class Toile {
 					rectEnd,
 				},
 			});
-			this.interactionList.push({
-				id: `${baseId}magic`,
-				type: toileType.COMPONENT_MENU_ITEM_CLASS,
-				data: {
-					componentClass: componentClass,
-					baseId,
-					rectStart: magicStart,
-					rectEnd: magicEnd,
-				},
-			});
+
+			if (componentClass) {
+				this.drawRectangleFromCorners(
+					magicStart,
+					magicEnd,
+					darkestGrey,
+					magicHot ? green : white,
+				);
+
+				this.drawText(
+					'Change All similar',
+					add2D(
+						{
+							x: 10 / this.viewMatrix[0],
+							y: textSize / 2 / this.viewMatrix[0],
+						},
+						magicStart,
+					),
+					textSize,
+					magicHot ? white : darkestGrey,
+				);
+
+				this.interactionList.push({
+					id: `${baseId}magic`,
+					type: toileType.COMPONENT_MENU_ITEM_CLASS,
+					data: {
+						componentClass,
+						baseId,
+						rectStart: magicStart,
+						rectEnd: magicEnd,
+					},
+				});
+			}
 		});
 
 		const newPosition = componentCenter;
 
 		const points = [menuCenter, newPosition];
 		const barycenter = mulScalar2D(1 / points.length, _reduce( // eslint-disable-line no-unused-vars
-					points,
-					(acc, point) => add2D(acc, point),
-					{x: 0, y: 0},
-				));
+			points,
+			(acc, point) => add2D(acc, point),
+			{x: 0, y: 0},
+		));
 
 		this.interactionList.push({
 			id,
 			type: toileType.COMPONENT_MENU_ITEM_CENTER,
 			data: {
-				component: {id, bases, beziers, center},
+				component: {
+					id, bases, beziers, center,
+				},
 				center: componentCenter,
 			},
 		});
@@ -1296,7 +1306,8 @@ export default class Toile {
 				const toolSize = mulScalar2D(1 / this.viewMatrix[0], {x: 30, y: -30});
 				const toolEnd = add2D(toolStart, toolSize);
 				const textPoint = add2D(
-					mulScalar2D(1 / this.viewMatrix[0],
+					mulScalar2D(
+						1 / this.viewMatrix[0],
 						{
 							x: -width / 2,
 							y: -7.5,
@@ -1415,7 +1426,8 @@ export default class Toile {
 		const distribTextSize = this.measureText(distribText, 15, 'Fira sans');
 		const distribCoordsPos = add2D(mulScalar2D(1 / zoom, {x: 20, y: 0}), node);
 
-		this.drawText(distribText,
+		this.drawText(
+			distribText,
 			add2D(
 				distribCoordsPos,
 				{
@@ -1742,7 +1754,8 @@ export default class Toile {
 				if (inHot) {
 					this.drawText(
 						`${item.label} ${item.time - start.time}`,
-						add2D(rectStart,
+						add2D(
+							rectStart,
 							{
 								x: 15,
 								y: 0,
