@@ -96,13 +96,11 @@ function changesDirOfHandle(
 }
 
 function onCurveModification(
-	toile,
 	client,
 	glyph,
 	draggedItem,
 	newPos,
 	appStateValue,
-	hotItems,
 	modToApply,
 ) {
 	const {
@@ -130,40 +128,25 @@ function onCurveModification(
 		changes,
 		glyphName: glyph.name,
 	});
-
-	const id = draggedItem.data.parentId;
-	const skeletonNode = _get(glyph, id);
-
-	if (skeletonNode) {
-		toile.drawNodeTool(skeletonNode, `${id}.angle`, hotItems);
-	}
 }
 
-function skeletonPosModification(toile, client, glyph, draggedItem, diffVector, hotItems) {
+function skeletonPosModification(client, glyph, draggedItem, newPos) {
 	const {base, transforms} = draggedItem.data;
-	const pointPos = _get(glyph, draggedItem.id);
-	const posVector = subtract2D(add2D(pointPos, diffVector), base);
 
+	const mouseVec = subtract2D(newPos, base);
 	const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
 	const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
 
 	client.dispatchAction('/change-glyph-node-manually', {
 		changes: {
-			[`${draggedItem.data.modifAddress}x`]: posVector.x * xTransform,
-			[`${draggedItem.data.modifAddress}y`]: posVector.y * yTransform,
+			[`${draggedItem.data.modifAddress}x`]: mouseVec.x * xTransform,
+			[`${draggedItem.data.modifAddress}y`]: mouseVec.y * yTransform,
 		},
 		glyphName: glyph.name,
 	});
-
-	const id = draggedItem.id;
-	const skeletonNode = _get(glyph, id);
-
-	if (skeletonNode) {
-		toile.drawSkeletonPosTool(skeletonNode, `${id}.pos`, hotItems);
-	}
 }
 
-function skeletonDistrModification(toile, client, glyph, draggedItem, newPos, hotItems) {
+function skeletonDistrModification(client, glyph, draggedItem, newPos) {
 	const {
 		base,
 		expandedTo,
@@ -188,25 +171,13 @@ function skeletonDistrModification(toile, client, glyph, draggedItem, newPos, ho
 		},
 		glyphName: glyph.name,
 	});
-
-	const id = draggedItem.id;
-	const skeletonNode = _get(glyph, id);
-
-	if (skeletonNode) {
-		toile.drawSkeletonDistrTool(skeletonNode, `${id}.distr`, hotItems);
-	}
 }
 
 export default class GlyphCanvas extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			solved: [],
 			values: {},
-			workers: Array(4).fill(false),
-			font: {
-				glyphs: [],
-			},
 		};
 
 		this.changeParam = this.changeParam.bind(this);
@@ -238,10 +209,8 @@ export default class GlyphCanvas extends React.PureComponent {
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					workers: head.toJS().d.workers,
 					canvasMode: head.toJS().d.canvasMode,
 					uiOutline: head.toJS().d.uiOutline,
-					uiDependencies: head.toJS().d.uiDependencies,
 				});
 			})
 			.onDelete(() => {
@@ -856,23 +825,11 @@ export default class GlyphCanvas extends React.PureComponent {
 							inverseProjectionMatrix(this.toile.viewMatrix),
 							this.toile.height / this.toile.viewMatrix[0],
 						);
-						const mouseDelta = subtract2D(mousePosInWorld, mouseBeforeDelta);
 
-						switch (item.type) {
-						case toileType.NODE_SKELETON: {
-							const posVector = mouseDelta;
-
-							return {
-								item,
-								modData: posVector,
-							};
-						}
-						default:
-							return {
-								item,
-								modData: mousePosInWorld,
-							};
-						}
+						return {
+							item,
+							modData: mousePosInWorld,
+						};
 					});
 				}
 				else if (
@@ -900,19 +857,10 @@ export default class GlyphCanvas extends React.PureComponent {
 							posVector = {x: 1, y: 0};
 						}
 
-						switch (item.type) {
-						case toileType.NODE_SKELETON: {
-							return {
-								item,
-								modData: posVector,
-							};
-						}
-						default:
-							return {
-								item,
-								modData: add2D(_get(glyph, item.id), posVector),
-							};
-						}
+						return {
+							item,
+							modData: add2D(_get(glyph, item.id), posVector),
+						};
 					});
 				}
 
@@ -959,27 +907,37 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						case toileType.NODE: {
 							onCurveModification(
-								this.toile,
 								this.client,
 								glyph,
 								item,
 								modData,
 								appStateValue,
-								hotItems,
 								onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD,
 							);
+
+							const id = item.data.parentId;
+							const skeletonNode = _get(glyph, id);
+
+							if (skeletonNode) {
+								this.toile.drawNodeTool(skeletonNode, `${id}.angle`, hotItems);
+							}
 							break;
 						}
 						case toileType.NODE_SKELETON:
 						case toileType.CONTOUR_NODE: {
 							skeletonPosModification(
-								this.toile,
 								this.client,
 								glyph,
 								item,
 								modData,
-								hotItems,
 							);
+
+							const id = item.id;
+							const skeletonNode = _get(glyph, id);
+
+							if (skeletonNode) {
+								this.toile.drawSkeletonPosTool(skeletonNode, `${id}.pos`, hotItems);
+							}
 							break;
 						}
 						default:
@@ -987,13 +945,18 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						if (appStateValue & appState.SKELETON_DISTR) {
 							skeletonDistrModification(
-								this.toile,
 								this.client,
 								glyph,
 								item,
 								modData,
-								hotItems,
 							);
+
+							const id = item.id;
+							const skeletonNode = _get(glyph, id);
+
+							if (skeletonNode) {
+								this.toile.drawSkeletonPosTool(skeletonNode, `${id}.pos`, hotItems);
+							}
 						}
 					});
 				}
