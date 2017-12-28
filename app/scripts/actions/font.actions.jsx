@@ -18,7 +18,7 @@ let localServer;
 let localClient;
 let undoWatcher;
 
-const debouncedSave = _throttle((values, db, variantId) => {
+const debouncedSave = _throttle((values, variantId) => {
 	FontValues.save({
 		values,
 		variantId,
@@ -45,10 +45,8 @@ window.addEventListener('fluxServer.setup', () => {
 export default {
 	'/create-font-instance': ({typedataJSON, appValues, templateToLoad}) => {
 		const typedata = typedataJSON;
-		const familyName = typedata.fontinfo.familyName;
-		const controls = typedata.controls;
-		const presets = typedata.presets;
-		const tags = typedata.fontinfo.tags;
+		const {tags, familyName} = typedata.fontinfo;
+		const {controls, presets} = typedata;
 		const db = appValues.values.variantSelected.id;
 
 		localClient.dispatchAction('/store-value-font', {
@@ -78,7 +76,6 @@ export default {
 		}
 		catch (err) {
 			trackJs.track(err);
-			console.error(err);
 		}
 	},
 	'/create-font': (typedata) => {
@@ -99,12 +96,10 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/change-font-from-typedata': async ({typedataJSON, variantId, templateToLoad}) => {
-		const typedata = typedataJSON;
-
+	'/change-font-from-typedata': async ({typedataJSON: typedata, variantId, templateToLoad}) => {
 		localClient.dispatchAction('/store-value-font', {
 			familyName: typedata.fontinfo.familyName,
-			typedataJSON,
+			typedata,
 			templateToLoad,
 		});
 
@@ -112,20 +107,40 @@ export default {
 
 		localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
-		localClient.dispatchAction('/clear-undo-stack');
-
-		loadFontValues(typedata, undefined, variantId);
 	},
 	'/change-font': async ({templateToLoad, variantId}) => {
 		const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../dist/templates/${templateToLoad}/font.json`);
 
+		localClient.dispatchAction('/store-value-font', {
+			changingFont: true,
+		});
 		localClient.dispatchAction('/change-font-from-typedata', {
 			typedataJSON,
 			variantId,
 			templateToLoad,
 		});
+
+		const initValues = {};
+
+		typedataJSON.controls.forEach(group => group.parameters.forEach((param) => {
+			initValues[param.name] = param.init;
+		}));
+
+		const fontValues = await FontValues.get({variantId});
+		const altList = {
+			...typedataJSON.fontinfo.defaultAlts,
+			...fontValues.values.altList,
+		};
+
+		localClient.dispatchAction('/load-values', {...initValues, ...fontValues.values});
+		localClient.dispatchAction('/load-font-infos', {altList});
+
+		localClient.dispatchAction('/clear-undo-stack');
 		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
 		localClient.dispatchAction('/store-value', {uiSpacingMode: false});
+		localClient.dispatchAction('/store-value-font', {
+			changingFont: false,
+		});
 	},
 	'/family-created': async ({name, variants, template}) => {
 		const patchVariant = prototypoStore
@@ -336,7 +351,6 @@ export default {
 	}) => {
 		const indivMode = prototypoStore.get('indivMode');
 		const indivEdit = prototypoStore.get('indivEditingParams');
-		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const currentGroupName = (prototypoStore.get('indivCurrentGroup') || {}).name;
 		let newParams = {...undoableStore.get('controlsValues')};
@@ -381,7 +395,7 @@ export default {
 		if (force) {
 			// TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 			undoWatcher.forceUpdate(patch, label);
-			debouncedSave(newParams, db, variantId);
+			debouncedSave(newParams, variantId);
 		}
 		else {
 			undoWatcher.update(patch, label);
@@ -390,7 +404,6 @@ export default {
 	'/change-param-state': ({
 		name, state, force, label,
 	}) => {
-		const db = prototypoStore.get('variant').db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const currentGroupName = prototypoStore.get('indivCurrentGroup').name;
 		const newParams = {...undoableStore.get('controlsValues')};
@@ -403,7 +416,7 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		if (force) {
 			// TODO(franz): This SHOULD totally end up being in a flux store on hoodie
@@ -416,7 +429,6 @@ export default {
 	'/change-letter-spacing': ({
 		value, side, letter, label, force,
 	}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const newParams = {
@@ -440,7 +452,7 @@ export default {
 
 		localServer.dispatchUpdate('/undoableStore', patch);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -452,7 +464,6 @@ export default {
 	'/change-glyph-node-manually': ({
 		changes, force, label = 'glyph node manual', glyphName,
 	}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
@@ -478,7 +489,7 @@ export default {
 
 		localServer.dispatchUpdate('/undoableStore', patch);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -490,7 +501,6 @@ export default {
 	'/reset-glyph-node-manually': ({
 		contourId, nodeId, force = true, label = 'reset manual', glyphName,
 	}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
@@ -522,7 +532,7 @@ export default {
 
 		localServer.dispatchUpdate('/undoableStore', patch);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -532,7 +542,6 @@ export default {
 		}
 	},
 	'/reset-glyph-manually': ({glyphName, force = true, label = 'reset manual'}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
@@ -548,7 +557,7 @@ export default {
 
 		localServer.dispatchUpdate('/undoableStore', patch);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -558,7 +567,6 @@ export default {
 		}
 	},
 	'/reset-all-glyphs': ({force = true, label = 'reset all glyphs'}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = {};
@@ -570,7 +578,7 @@ export default {
 
 		localServer.dispatchUpdate('/undoableStore', patch);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -582,7 +590,6 @@ export default {
 	'/change-component': ({
 		glyph, id, name, label = 'change component',
 	}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const newParams = {
@@ -599,12 +606,11 @@ export default {
 
 		localServer.dispatchUpdate('/undoableStore', patch);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		undoWatcher.forceUpdate(patch, label);
 	},
 	'/change-component-class': ({componentClass, name, label = 'change component'}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const template = fontInstanceStore.get('templateToLoad');
@@ -626,7 +632,7 @@ export default {
 
 		localServer.dispatchUpdate('/undoableStore', patch);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		undoWatcher.forceUpdate(patch, label);
 	},

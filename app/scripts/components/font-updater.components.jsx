@@ -53,6 +53,7 @@ class FontUpdater extends React.PureComponent {
 		this.client.getStore('/fontInstanceStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
+					changingFont: head.toJS().d.changingFont,
 					template: head.toJS().d.templateToLoad,
 				});
 			})
@@ -68,6 +69,7 @@ class FontUpdater extends React.PureComponent {
 			&& this.state.uiText !== undefined
 			&& this.state.uiWord !== undefined
 			&& this.state.glyph !== undefined
+			&& !this.state.changingFont
 		) {
 			const subsetString = this.state.uiText
 				+ rawToEscapedContent(this.state.uiWord, this.state.glyphs);

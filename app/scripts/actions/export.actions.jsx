@@ -139,6 +139,7 @@ export default {
 
 			triggerDownload(buffer, `${name.family} ${name.style}.otf`);
 			localClient.dispatchAction('/exporting', {exporting: false});
+			localClient.dispatchAction('/end-export-otf');
 		}
 		catch (e) {
 			localClient.dispatchAction('/end-export-otf');

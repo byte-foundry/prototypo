@@ -79,6 +79,5 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
-
 	},
 };

@@ -1,9 +1,9 @@
 import _union from 'lodash/union';
 
-import {prototypoStore} from '../stores/creation.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
-import LocalClient from '../stores/local-client.stores.jsx';
-import {saveAppValues} from '../helpers/loadValues.helpers.js';
+import {prototypoStore} from '../stores/creation.stores';
+import LocalServer from '../stores/local-server.stores';
+import LocalClient from '../stores/local-client.stores';
+import {saveAppValues} from '../helpers/loadValues.helpers';
 
 let localServer;
 let localClient;
@@ -23,18 +23,18 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/select-glyph': ({unicode}) => {
-			const patch = prototypoStore.set('glyphSelected', unicode).commit();
-			const newViewMode = _union(prototypoStore.get('uiMode'), ['glyph']);
+		const patch = prototypoStore.set('glyphSelected', unicode).commit();
+		const newViewMode = _union(prototypoStore.get('uiMode'), ['glyph']);
 
-			localServer.dispatchUpdate('/prototypoStore', patch);
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
-			if (newViewMode.length > 0) {
-				const patchPanel = prototypoStore.set('uiMode', newViewMode).commit();
+		if (newViewMode.length > 0) {
+			const patchPanel = prototypoStore.set('uiMode', newViewMode).commit();
 
-				localServer.dispatchUpdate('/prototypoStore', patchPanel);
-			}
+			localServer.dispatchUpdate('/prototypoStore', patchPanel);
+		}
 
-			saveAppValues();
+		saveAppValues();
 	},
 	'/toggle-lock-list': () => {
 		const lockState = prototypoStore.get('glyphLocked');
@@ -50,7 +50,7 @@ export default {
 	},
 	'/check-glyph-valid': ({glyphs}) => {
 		const glyphSelected = prototypoStore.get('glyphSelected');
-		const unicode = "65";
+		const unicode = '65';
 
 		if (Object.keys(glyphs).indexOf(glyphSelected) === -1) {
 			localClient.dispatchAction('/select-glyph', {unicode});

@@ -1,4 +1,5 @@
 import Remutable from 'remutable';
+
 const {Patch} = Remutable;
 
 import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
@@ -18,7 +19,6 @@ export default {
 		const event = prototypoStore.get('undoEventList')[eventIndex];
 
 		if (eventIndex > 0) {
-
 			const revert = Patch.revert(Patch.fromJSON(event.patch));
 			const patch = prototypoStore.set('undoAt', eventIndex - 1).commit();
 
@@ -28,12 +28,10 @@ export default {
 		}
 	},
 	'/go-forward': ({eventIndex}) => {
-
 		if (eventIndex !== undefined) {
 			const event = prototypoStore.get('undoEventList')[eventIndex + 1];
 
 			if (event) {
-
 				const patch = prototypoStore.set('undoAt', eventIndex + 1).commit();
 
 				undoableStore.apply(Patch.fromJSON(event.patch));
@@ -41,25 +39,20 @@ export default {
 				localServer.dispatchUpdate('/undoableStore', Patch.fromJSON(event.patch));
 			}
 		}
-
 	},
 	'/store-action': ({store, patch, label}) => {
-
 		const newEventList = Array.from(prototypoStore.get('undoEventList'));
 		const eventIndex = prototypoStore.get('undoAt');
 
 		if (newEventList.length - 1 > eventIndex) {
-
 			newEventList.splice(eventIndex + 1, newEventList.length);
-
 		}
 
-		newEventList.push(
-			{
-				patch: patch.toJSON && patch.toJSON() || patch,
-				store,
-				label,
-			});
+		newEventList.push({
+			patch: patch.toJSON && patch.toJSON() || patch,
+			store,
+			label,
+		});
 		const eventPatch = prototypoStore.set('undoEventList', newEventList)
 			.set('undoAt', newEventList.length - 1).commit();
 
