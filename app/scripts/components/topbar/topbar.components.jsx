@@ -6,13 +6,11 @@ import React from 'react';
 import {graphql, gql} from 'react-apollo';
 import Lifespan from 'lifespan';
 
-import Log from '../../services/log.services.js';
+import Log from '../../services/log.services';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores';
 
-import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
-import {fileTutorialLabel} from '../../helpers/joyride.helpers.js';
-import {collectionsTutorialLabel} from '../../helpers/joyride.helpers.js';
+import {indivGroupsCreationTutorialLabel, fileTutorialLabel, collectionsTutorialLabel} from '../../helpers/joyride.helpers';
 
 import withCountry from '../shared/with-country.components';
 import Price from '../shared/price.components';
@@ -27,29 +25,28 @@ import {
 	TopBarMenuButton,
 	TopBarMenuAcademy,
 	TopBarMenuAcademyIcon,
-} from './top-bar-menu.components.jsx';
-import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components.jsx';
+} from './top-bar-menu.components';
+import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components';
 
 class Topbar extends React.Component {
+	static contextTypes = {
+		router: React.PropTypes.object.isRequired,
+	};
 
 	constructor(props) {
 		super(props);
 		this.state = {
-			from: 0,
 			eventList: [],
 			mode: [],
 			export: false,
-			academyProgress: {},
 			errorExport: false,
 			credits: undefined,
-			plan: undefined,
 			creditChoices: undefined,
 			presets: null,
 		};
 
-		//function binding to avoid unnecessary re-render
+		// function binding to avoid unnecessary re-render
 		this.exportGlyphr = this.exportGlyphr.bind(this);
-		this.setAccountRoute = this.setAccountRoute.bind(this);
 		this.goToSubscribe = this.goToSubscribe.bind(this);
 		this.resetFileTutorial = this.resetFileTutorial.bind(this);
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
@@ -82,16 +79,16 @@ class Topbar extends React.Component {
 				this.setState(undefined);
 			});
 
-			this.client.getStore('/userStore', this.lifespan)
-				.onUpdate((head) => {
-					this.setState({
-						subscription: head.toJS().d.subscription,
-						hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
-					});
-				})
-				.onDelete(() => {
-					this.setState(undefined);
+		this.client.getStore('/userStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					subscription: head.toJS().d.subscription,
+					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
 				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
+			});
 
 		const creditChoices = await this.client.fetch('/creditStore');
 
@@ -100,18 +97,54 @@ class Topbar extends React.Component {
 		});
 	}
 
-	static contextTypes = {
-		router: React.PropTypes.object.isRequired,
-	};
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
 
-	exportOTF(merged) {
-		this.client.dispatchAction('/export-otf', {merged});
-		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
+	async onboardExport(step) {
+		const store = await this.client.fetch('/prototypoStore');
+
+		if (store.get('uiOnboard')) {
+			return;
+		}
+
+		const currentStep = store.get('uiOnboardstep');
+
+		if (currentStep === 'export' && step === 'export-2') {
+			this.client.dispatchAction('/store-value', {uiOnboardstep: step});
+		}
+		else if (currentStep === 'export-2' && step === 'export') {
+			this.client.dispatchAction('/store-value', {uiOnboardstep: step});
+		}
+		else if (currentStep === 'premature-end') {
+			this.client.dispatchAction('/store-value', {uiOnboard: true});
+		}
+	}
+
+	getRightAcademyIcon() {
+		if (this.state.academyCapIconHovered) {
+			return this.state.indiv ? 'assets/images/graduate-cap-yellow.svg' : 'assets/images/graduate-cap-green.svg';
+		}
+
+		return 'assets/images/graduate-cap.svg';
+	}
+
+	setPreset(preset) {
+		this.client.dispatchAction('/set-preset', preset);
 	}
 
 	setupExportAs(merged) {
 		this.client.dispatchAction('/set-up-export-otf', {merged});
 		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
+	}
+
+	setAcademyText(name, isIcon) {
+		if (name) {
+			this.setState({academyText: name, academyCapIconHovered: isIcon});
+		}
+		else {
+			this.setState({academyCapIconHovered: isIcon});
+		}
 	}
 
 	exportGlyphr() {
@@ -123,26 +156,18 @@ class Topbar extends React.Component {
 		this.client.fetch('/prototypoStore')
 			.then((typedata) => {
 				const params = typedata.head.toJS().fontParameters;
-				const flattenParams = _flatten(params.map((paramObject) => {
-					return paramObject.parameters;
-				}));
+				const flattenParams = _flatten(params.map(paramObject => paramObject.parameters));
 				const defaultParams = _transform(flattenParams, (result, param) => {
 					result[param.name] = param.init;
 				}, {});
 
 				this.client.dispatchAction('/change-param', {values: defaultParams, demo: true, force: true});
 			});
-
 	}
 
 	resetAllChanges() {
 		this.resetAllParams();
 		this.client.dispatchAction('/reset-all-glyphs', {});
-
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
 	}
 
 	logout() {
@@ -175,9 +200,9 @@ class Topbar extends React.Component {
 	goToSubscribe() {
 		window.Intercom('trackEvent', 'clickTakeFullAdvantageOfPrototypo');
 		Log.ui('GoPro.open');
-		/*this.context.router.push({
+		/* this.context.router.push({
 			pathname: '/account/subscribe',
-		});*/
+		}); */
 		this.client.dispatchAction('/store-value', {
 			openGoProModal: true,
 			goProModalBilling: 'monthly',
@@ -206,58 +231,19 @@ class Topbar extends React.Component {
 		}
 	}
 
-	setAccountRoute() {
-
-	}
-
 	showAcademy() {
 		this.context.router.push('/academy');
-	}
-
-	setAcademyText(name, isIcon) {
-		if (name) {
-			this.setState({academyText: name, academyCapIconHovered: isIcon});
-		}
-		else {
-			this.setState({academyCapIconHovered: isIcon});
-		}
 	}
 
 	clearAcademyText() {
 		this.setState({academyText: '', academyCapIconHovered: false});
 	}
-	getRightAcademyIcon() {
-		if (this.state.academyCapIconHovered) {
-			return this.state.indiv ? "assets/images/graduate-cap-yellow.svg" : "assets/images/graduate-cap-green.svg";
-		}
-		else {
-			return "assets/images/graduate-cap.svg";
-		}
+
+	exportOTF(merged) {
+		this.client.dispatchAction('/export-otf', {merged});
+		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
 	}
 
-	async onboardExport(step) {
-		const store = await this.client.fetch('/prototypoStore');
-
-		if (store.get('uiOnboard')) {
-			return;
-		}
-
-		const currentStep = store.get('uiOnboardstep');
-
-		if (currentStep === 'export' && step === 'export-2') {
-			this.client.dispatchAction('/store-value', {uiOnboardstep: step});
-		}
-		else if (currentStep === 'export-2' && step === 'export') {
-			this.client.dispatchAction('/store-value', {uiOnboardstep: step});
-		}
-		else if (currentStep === 'premature-end') {
-			this.client.dispatchAction('/store-value', {uiOnboard: true});
-		}
-	}
-
-	setPreset(preset) {
-		this.client.dispatchAction('/set-preset', preset);
-	}
 
 	render() {
 		const {academyProgress, loadingAcademyProgress} = this.props;
@@ -266,29 +252,39 @@ class Topbar extends React.Component {
 		const redoDisabled = whereAt > (this.state.eventList.length - 2);
 		const undoText = `Undo ${this.state.eventList.length && !undoDisabled ? this.state.eventList[whereAt].label : ''}`;
 		const redoText = `Redo ${redoDisabled ? '' : this.state.eventList[whereAt + 1].label}`;
-		const credits = this.state.credits;
+		const credits = this.state.credits; // eslint-disable-line prefer-destructuring
 		const freeAccount = !this.props.manager && !this.state.subscription;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : false;
-		const glyphrExportCost = this.state.creditChoices ? this.state.creditChoices.exportGlyphr : false;
+		const glyphrExportCost = this.state.creditChoices
+			? this.state.creditChoices.exportGlyphr
+			: false;
 		const exporting = this.state.export && (
-			<TopBarMenuAction name="Exporting..." click={() => {return;}} action={true}/>
+			<TopBarMenuAction name="Exporting..." click={() => {}} action />
 		);
 		const errorExporting = this.state.errorExport && (
 			<TopBarMenuAction
 				name={
 					this.state.errorExport.message
-					? this.state.errorExport.message
-					: 'An error occured during exporting'
+						? this.state.errorExport.message
+						: 'An error occured during exporting'
 				}
-				click={() => {return;}}
-				action={true}/>
-			);
+				click={() => {}}
+				action
+			/>
+		);
 		const creditExportLabel = !!this.state.credits
-			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {return;}} action={true} alignRight={true}/>;
+			&& <TopBarMenuAction name={`${this.state.credits} credits`} click={() => {}} action alignRight />;
 		const callToAction = !(freeAccountAndHasCredits || !freeAccount) && (
 			<TopBarMenuButton
-				label={<span>GET THE FULL VERSION FOR <Price amount={this.state.hasBeenSubscribing ? 8.25 : 1} country={this.props.country} /></span>}
+				label={
+					<span>
+						GET THE FULL VERSION FOR <Price
+							amount={this.state.hasBeenSubscribing ? 8.25 : 1}
+							country={this.props.country}
+						/>
+					</span>
+				}
 				noHover
 				centered
 				click={this.goToSubscribe}
@@ -305,18 +301,24 @@ class Topbar extends React.Component {
 			/>
 		);
 
-		const academyProgressItem = (!loadingAcademyProgress && academyProgress.lastCourse && academyProgress[academyProgress.lastCourse]) && (
-			<TopBarMenuAcademy
-				course={academyProgress[academyProgress.lastCourse]}
-				setText={this.setAcademyText}
-				clearText={this.clearAcademyText}
-				text={this.state.academyText}
-				id="progress-academy"
-				icon={this.getRightAcademyIcon()}
-			/>
-		);
+		const academyProgressItem
+			= (
+				!loadingAcademyProgress
+				&& academyProgress.lastCourse
+				&& academyProgress[academyProgress.lastCourse]
+			)
+			&& (
+				<TopBarMenuAcademy
+					course={academyProgress[academyProgress.lastCourse]}
+					setText={this.setAcademyText}
+					clearText={this.clearAcademyText}
+					text={this.state.academyText}
+					id="progress-academy"
+					icon={this.getRightAcademyIcon()}
+				/>
+			);
 
-			/*const presetSubMenu = this.state.presets
+			/* const presetSubMenu = this.state.presets
 			? (
 				<TopBarMenuDropdownItem name="Choose a preset ...">
 					<TopBarMenuDropdown>
@@ -335,19 +337,20 @@ class Topbar extends React.Component {
 					</TopBarMenuDropdown>
 				</TopBarMenuDropdownItem>
 			)
-			: false;*/
+			: false; */
 
 		return (
 			<div id="topbar">
 				<TopBarMenu>
-					<TopBarMenuIcon className="side-tabs-icon-headers" img="assets/images/prototypo-icon.svg"/>
+					<TopBarMenuIcon className="side-tabs-icon-headers" img="assets/images/prototypo-icon.svg" />
 					<TopBarMenuDropdown
 						name="File"
 						id="file-menu"
 						idMenu="file-dropdown"
-						enter={() => { this.onboardExport('export-2'); }}
-						leave={() => {this.onboardExport('export');}}>
-						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator={true}/>
+						enter={() => {this.onboardExport('export-2');}}
+						leave={() => {this.onboardExport('export');}}
+					>
+						<TopBarMenuDropdownItem name="New project" handler={() => {this.newProject();}} separator />
 						<AllowedTopBarWithPayment credits={credits} freeAccount={freeAccount}>
 							<TopBarMenuDropdownItem
 								name="Export font"
@@ -356,23 +359,8 @@ class Topbar extends React.Component {
 								freeAccountAndHasCredits={freeAccountAndHasCredits}
 								cost={otfExportCost}
 								credits={this.state.credits}
-								handler={() => {this.exportOTF(true);}}/>
-							<TopBarMenuDropdownItem
-								name="Export font as..."
-								id="export-to-merged-otf-as"
-								freeAccount={freeAccount}
-								freeAccountAndHasCredits={freeAccountAndHasCredits}
-								cost={otfExportCost}
-								credits={this.state.credits}
-								handler={() => {this.setupExportAs(true);}}/>
-							<TopBarMenuDropdownItem
-								name="Export source file"
-								id="export-to-otf"
-								freeAccount={freeAccount}
-								freeAccountAndHasCredits={freeAccountAndHasCredits}
-								cost={otfExportCost}
-								credits={this.state.credits}
-								handler={() => {this.exportOTF(false);}}/>
+								handler={() => {this.exportOTF(true);}}
+							/>
 							<TopBarMenuDropdownItem
 								name="Export to Glyphr Studio"
 								id="export-to-glyphr-studio"
@@ -381,22 +369,26 @@ class Topbar extends React.Component {
 								cost={glyphrExportCost}
 								handler={this.exportGlyphr}
 								credits={this.state.credits}
-								separator={true}/>
+								separator
+							/>
 						</AllowedTopBarWithPayment>
 						<TopBarMenuDropdownItem
 							name="Download Web Preview extension"
-							separator={true}
-							handler={() => { window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf', '_blank'); }}/>
+							separator
+							handler={() => {window.open('https://chrome.google.com/webstore/detail/prototypo-web-preview/jglgljnhjnblboeonagfmfgglfdeakkf', '_blank');}}
+						/>
 						<TopBarMenuDropdownItem
 							name="Logout"
-							handler={() => {this.logout();}}/>
+							handler={() => {this.logout();}}
+						/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Edit">
 						<TopBarMenuDropdownItem
 							name="Individualize parameters"
 							freeAccount={freeAccount}
 							freeAccountAndHasCredits={freeAccountAndHasCredits}
-							handler={() => { this.individualize(); }}/>
+							handler={() => {this.individualize();}}
+						/>
 						<TopBarMenuDropdownItem
 							name={undoText}
 							key="undo"
@@ -406,7 +398,8 @@ class Topbar extends React.Component {
 								if (!undoDisabled) {
 									this.client.dispatchAction('/go-back', {eventIndex: this.state.at});
 								}
-							}}/>
+							}}
+						/>
 						<TopBarMenuDropdownItem
 							name={redoText}
 							key="redo"
@@ -416,34 +409,37 @@ class Topbar extends React.Component {
 								if (!redoDisabled) {
 									this.client.dispatchAction('/go-forward', {eventIndex: this.state.at});
 								}
-							}}/>
-							{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
+							}}
+						/>
+						{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
 						<TopBarMenuDropdownItem
 							name="Reset all parameters"
-							handler={() => { this.resetAllParams(); }}/>
+							handler={() => {this.resetAllParams();}}
+						/>
 						<TopBarMenuDropdownItem
 							name="Reset all changes"
-							handler={() => { this.resetAllChanges(); }}/>
+							handler={() => {this.resetAllChanges();}}
+						/>
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Window">
-						<TopBarMenuDropdownItem name="Glyphs list" checkbox={true} active={this.state.mode.indexOf('list') !== -1} handler={() => { this.toggleView('list'); }} separator={true}/>
-						<TopBarMenuDropdownItem name="Glyph view" checkbox={true} active={this.state.mode.indexOf('glyph') !== -1} handler={() => { this.toggleView('glyph'); }}/>
-						<TopBarMenuDropdownItem name="Text view" checkbox={true} active={this.state.mode.indexOf('text') !== -1} handler={() => { this.toggleView('text'); }}/>
-						<TopBarMenuDropdownItem name="Word view" checkbox={true} active={this.state.mode.indexOf('word') !== -1} handler={() => { this.toggleView('word'); }}/>
+						<TopBarMenuDropdownItem name="Glyphs list" checkbox active={this.state.mode.indexOf('list') !== -1} handler={() => {this.toggleView('list');}} separator />
+						<TopBarMenuDropdownItem name="Glyph view" checkbox active={this.state.mode.indexOf('glyph') !== -1} handler={() => {this.toggleView('glyph');}} />
+						<TopBarMenuDropdownItem name="Text view" checkbox active={this.state.mode.indexOf('text') !== -1} handler={() => {this.toggleView('text');}} />
+						<TopBarMenuDropdownItem name="Word view" checkbox active={this.state.mode.indexOf('word') !== -1} handler={() => {this.toggleView('word');}} />
 					</TopBarMenuDropdown>
 					<TopBarMenuDropdown name="Help">
-						<TopBarMenuDropdownItem name="Chat with us!" handler={() => { window.Intercom('show');}}/>
-						<TopBarMenuDropdownItem name="FAQ" handler={() => { window.open('https://www.prototypo.io/faq', '_blank'); }}/>
-						<TopBarMenuDropdownItem name="Academy" id="access-academy" handler={this.showAcademy}/>
-						<TopBarMenuDropdownItem name="Restart collection tutorial" handler={this.resetCollectionTutorial}/>
-						<TopBarMenuDropdownItem name="Restart export tutorial" handler={this.resetFileTutorial}/>
-						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={this.resetIndivTutorial}/>
+						<TopBarMenuDropdownItem name="Chat with us!" handler={() => {window.Intercom('show');}} />
+						<TopBarMenuDropdownItem name="FAQ" handler={() => {window.open('https://www.prototypo.io/faq', '_blank');}} />
+						<TopBarMenuDropdownItem name="Academy" id="access-academy" handler={this.showAcademy} />
+						<TopBarMenuDropdownItem name="Restart collection tutorial" handler={this.resetCollectionTutorial} />
+						<TopBarMenuDropdownItem name="Restart export tutorial" handler={this.resetFileTutorial} />
+						<TopBarMenuDropdownItem name="Restart individualization tutorial" handler={this.resetIndivTutorial} />
 					</TopBarMenuDropdown>
 					{academyIcon}
 					{academyProgressItem}
 					{exporting}
 					{errorExporting}
-					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground={true} alignRight={true} action={true}></TopBarMenuLink>
+					<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" imgDarkBackground alignRight action />
 					{creditExportLabel}
 					{callToAction}
 				</TopBarMenu>

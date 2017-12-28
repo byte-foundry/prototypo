@@ -134,6 +134,7 @@
     "build:storybook": "build-storybook",
     "debug": "gulp debug",
     "start": "gulp serve",
+    "start:merge": "MERGE=true gulp serve",
     "start:perf": "gulp serve:perf",
     "storybook": "start-storybook -p 6006",
     "test": "jest --colors",

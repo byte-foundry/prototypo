@@ -67,28 +67,28 @@ function computeCheckSum(bytes) {
 
 export function fontToSfntTable(font) {
 	const {
-        ascender,
-        descender,
-        unitsPerEm,
-        glyphs,
-        createdTimestamp,
-        fontFamily,
-        fontSubfamily,
-        postScriptName,
-        manufacturer,
-        manufacturerURL,
-        designer,
-        designerURL,
-        license,
-        licenseURL,
-        version,
-        description,
-        copyright,
-        trademark,
-        usWeightClass,
-        usWidthClass,
+		ascender,
+		descender,
+		unitsPerEm,
+		glyphs,
+		createdTimestamp,
+		fontFamily,
+		fontSubfamily,
+		postScriptName,
+		manufacturer,
+		manufacturerURL,
+		designer,
+		designerURL,
+		license,
+		licenseURL,
+		version,
+		description,
+		copyright,
+		trademark,
+		usWeightClass,
+		usWidthClass,
 		fsSelection,
-    } = font;
+	} = font;
 
 	const xMins: number[] = [];
 	const yMins: number[] = [];
@@ -289,20 +289,20 @@ export function fontToSfntTable(font) {
 
 function makeTableRecord(tag, checkSum, offset, length) {
 	return buildTableObj('Table Record', [
-        {name: 'tag', type: 'TAG', value: tag === undefined ? '' : tag},
-        {name: 'checkSum', type: 'ULONG', value: checkSum === undefined ? 0 : checkSum},
-        {name: 'offset', type: 'ULONG', value: offset === undefined ? 0 : offset},
-        {name: 'length', type: 'ULONG', value: length === undefined ? 0 : length},
+		{name: 'tag', type: 'TAG', value: tag === undefined ? '' : tag},
+		{name: 'checkSum', type: 'ULONG', value: checkSum === undefined ? 0 : checkSum},
+		{name: 'offset', type: 'ULONG', value: offset === undefined ? 0 : offset},
+		{name: 'length', type: 'ULONG', value: length === undefined ? 0 : length},
 	]);
 }
 
 function makeSfntTable(tables) {
 	const sfnt = buildTableObj('sfnt', [
-        {name: 'version', type: 'TAG', value: 'OTTO'},
-        {name: 'numTables', type: 'USHORT', value: 0},
-        {name: 'searchRange', type: 'USHORT', value: 0},
-        {name: 'entrySelector', type: 'USHORT', value: 0},
-        {name: 'rangeShift', type: 'USHORT', value: 0},
+		{name: 'version', type: 'TAG', value: 'OTTO'},
+		{name: 'numTables', type: 'USHORT', value: 0},
+		{name: 'searchRange', type: 'USHORT', value: 0},
+		{name: 'entrySelector', type: 'USHORT', value: 0},
+		{name: 'rangeShift', type: 'USHORT', value: 0},
 	]);
 
 	sfnt.tables = tables;
@@ -341,7 +341,7 @@ function makeSfntTable(tables) {
 		}
 	}
 
-    // Table records need to be sorted alphabetically.
+	// Table records need to be sorted alphabetically.
 	recordFields.sort((r1, r2) => {
 		if (r1.value.tag > r2.value.tag) {
 			return 1;

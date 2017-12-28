@@ -80,7 +80,8 @@ gulp.task('build', ['clean', 'images', 'cp-genese', 'cp-static', 'prod:dll'], (c
 	const webpackConfig = process.env.NODE_ENV === 'production' ? require('./prod.config') : require('./dev.config');
 	const prototypoConfig = Object.create(webpackConfig);
 
-	webpack(prototypoConfig,
+	webpack(
+		prototypoConfig,
 		(err, stats) => {
 			if (err) throw new gutil.PluginError('webpack', err);
 			gutil.log('[webpack]', stats.toString({

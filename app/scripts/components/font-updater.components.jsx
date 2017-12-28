@@ -1,14 +1,15 @@
 import _uniq from 'lodash/uniq';
 import React from 'react';
 import Lifespan from 'lifespan';
+import {graphql, gql, compose} from 'react-apollo';
 
 import FontMediator from '../prototypo.js/mediator/FontMediator';
 
-import {rawToEscapedContent} from '../helpers/input-transform.helpers.js';
+import {rawToEscapedContent} from '../helpers/input-transform.helpers';
 
 import LocalClient from '../stores/local-client.stores';
 
-export default class FontUpdater extends React.PureComponent {
+class FontUpdater extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -18,6 +19,9 @@ export default class FontUpdater extends React.PureComponent {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 		this.fontMediatorInstance = FontMediator.instance();
+		this.fontMediatorInstance.setupInfo({
+			email: this.props.email,
+		});
 
 		this.client.getStore('/undoableStore', this.lifespan)
 			.onUpdate((head) => {
@@ -32,6 +36,8 @@ export default class FontUpdater extends React.PureComponent {
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
+					family: head.toJS().d.family,
+					variant: head.toJS().d.variant,
 					altList: head.toJS().d.altList,
 					uiText: head.toJS().d.uiText,
 					uiWord: head.toJS().d.uiWord,
@@ -55,10 +61,6 @@ export default class FontUpdater extends React.PureComponent {
 			});
 	}
 
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
 	componentDidUpdate() {
 		if (
 			this.state.template !== undefined
@@ -67,10 +69,9 @@ export default class FontUpdater extends React.PureComponent {
 			&& this.state.uiWord !== undefined
 			&& this.state.glyph !== undefined
 		) {
-			const subsetString = this.state.uiText + rawToEscapedContent(this.state.uiWord, this.state.glyphs);
-			const subset = _uniq(subsetString.split('')).map(
-				letter => letter.charCodeAt(0),
-			);
+			const subsetString = this.state.uiText
+				+ rawToEscapedContent(this.state.uiWord, this.state.glyphs);
+			const subset = _uniq(subsetString.split('')).map(letter => letter.charCodeAt(0));
 
 			this.fontMediatorInstance.getFont(
 				this.state.name,
@@ -81,10 +82,39 @@ export default class FontUpdater extends React.PureComponent {
 			);
 		}
 
+		this.fontMediatorInstance.setupInfo({
+			family: this.state.family,
+			style: this.state.variant,
+			template: this.state.template,
+		});
+
 		return false;
 	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 
 	render() {
 		return false;
 	}
 }
+
+const userProfileQuery = gql`
+	query getUserProfile {
+		user {
+			email
+		}
+	}
+`;
+
+export default compose(graphql(userProfileQuery, {
+	props: ({data}) => {
+		if (data.loading) {
+			return {loading: true};
+		}
+
+		return data.user;
+	},
+}))(FontUpdater);

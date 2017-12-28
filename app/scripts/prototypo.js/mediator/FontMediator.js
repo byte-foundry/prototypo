@@ -14,7 +14,7 @@ import FontPrecursor from '../precursor/FontPrecursor';
 
 import WorkerPool from '../../worker/worker-pool';
 
-const MERGE_URL = 'https://merge.prototypo.io';
+const MERGE_URL = process.env.MERGE ? 'http://localhost:3000' : 'https://merge.prototypo.io';
 
 let oldFont;
 let localClient;
@@ -28,17 +28,14 @@ window.addEventListener('fluxServer.setup', () => {
 window.fontResult = undefined;
 window.glyph = undefined;
 
-async function mergeFont(url, name, user, arrayBuffer, merged) {
+async function mergeFont(url, action, params, arrayBuffer, mime = 'otf') {
 	const response = await fetch([
 		url,
-		name.family,
-		name.style,
-		user,
-		name.template || 'unknown',
-	].join('/')
-		+ (merged ? '/overlap' : ''), {
+		action,
+		...params,
+	].join('/'), {
 		method: 'POST',
-		headers: {'Content-Type': 'application/otf'},
+		headers: {'Content-Type': `application/${mime}`},
 		body: arrayBuffer,
 	});
 
@@ -122,6 +119,19 @@ export default class FontMediator {
 		});
 	}
 
+	setupInfo({
+		family, style, email, template,
+	}) {
+		if (!instance) {
+			throw new Error('cannot return an instance before init');
+		}
+
+		this.family = family || this.family;
+		this.style = style || this.style;
+		this.email = email || this.email;
+		this.template = template || this.template;
+	}
+
 	reset(fontName, template, subset, glyphCanvasUnicode) {
 		return this.getFont(fontName, template, this.initValues[template], subset, glyphCanvasUnicode);
 	}
@@ -158,7 +168,7 @@ export default class FontMediator {
 		oldFont = fontFace;
 	}
 
-	getFontFile(fontName, template, params, subset, merge) {
+	getFontFile(fontName, template, params, subset) {
 		if (!this.workerPool) {
 			return undefined;
 		}
@@ -214,28 +224,52 @@ export default class FontMediator {
 						},
 					},
 					callback: async ({arrayBuffer}) => {
-						if (params.trigger) {
-							 triggerDownload(arrayBuffer.buffer, 'hello');
+						const familyName = this.family.name;
+						const styleName = this.style.name || 'REGULAR';
+						const stringForId = `${new Date().getTime()}${familyName}${this.email}${styleName || 'REGULAR'}`;
+						let id = '';
+
+						for (let i = 0; i < 16; i++) {
+							if (i < stringForId.length) {
+								id += (stringForId.charCodeAt(i) * Math.random() * 32).toFixed(0).toString(16).padStart(2, '0');
+							}
+							else {
+								id += (Math.random() * 100).toFixed(0).toString(16).padStart(2, '0');
+							}
+
+							if (i === 3 || i === 5 || i === 7 || i === 9) {
+								id += '-';
+							}
 						}
 
-						if (merge) {
-							const mergedFont = await mergeFont(
-								MERGE_URL,
-								{
-									style: 'forbrowserdisplay',
-									template: 'noidea',
-									family: 'forbrowserdisplay',
-								},
-								'plumin',
-								arrayBuffer.buffer,
+						const mergedFont = await mergeFont(
+							MERGE_URL,
+							'fontfile',
+							[
+								id,
+								familyName,
+								styleName,
 								true,
-							);
+							],
+							arrayBuffer.buffer,
+						);
 
-							resolve(mergedFont);
-						}
-						else {
-							resolve(arrayBuffer.buffer);
-						}
+						await mergeFont(
+							MERGE_URL,
+							'fontinfo',
+							[id],
+							JSON.stringify({
+								template: this.template,
+								family: familyName,
+								style: styleName,
+								date: new Date().getTime(),
+								email: this.email,
+								params,
+							}),
+							'json',
+						);
+
+						resolve(mergedFont);
 					},
 				});
 			});
@@ -307,14 +341,11 @@ export default class FontMediator {
 					const timeout = mergeTimeoutRef = setTimeout(async () => {
 						const buffer = await mergeFont(
 							MERGE_URL,
-							{
-								style: 'forbrowserdisplay',
-								template: 'noidea',
-								family: 'forbrowserdisplay',
-							},
-							'plumin',
+							'mergefont',
+							[
+								this.email,
+							],
 							arrayBuffer.buffer,
-							true,
 						);
 
 						if (timeout === mergeTimeoutRef) {

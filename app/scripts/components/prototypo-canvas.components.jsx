@@ -18,7 +18,6 @@ import CanvasBar from './canvasTools/canvas-bar.components';
 import GlyphCanvas from './glyph-canvas.components';
 
 export default class PrototypoCanvas extends React.Component {
-
 	constructor(props) {
 		super(props);
 
@@ -274,13 +273,17 @@ export default class PrototypoCanvas extends React.Component {
 		const isFreeWithoutCreditsInComponentEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'components';
 
 		if (isFreeWithoutCreditsInComponentEditing) {
-			this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
-				restrictedFeatureHovered: 'componentEditing'});
+			this.client.dispatchAction('/store-value', {
+				openRestrictedFeature: true,
+				restrictedFeatureHovered: 'componentEditing',
+			});
 		}
 
 		if (isFreeWithoutCreditsInManualEditing) {
-			this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
-				restrictedFeatureHovered: 'manualEditing'});
+			this.client.dispatchAction('/store-value', {
+				openRestrictedFeature: true,
+				restrictedFeatureHovered: 'manualEditing',
+			});
 		}
 	}
 
@@ -400,7 +403,7 @@ export default class PrototypoCanvas extends React.Component {
 		const canvasClass = classNames({
 			'is-hidden': this.props.uiMode.indexOf('glyph') === -1,
 			'prototypo-canvas': true,
-			//'is-blocked': isFreeWithoutCreditsInManualEditing,
+			// 'is-blocked': isFreeWithoutCreditsInManualEditing,
 		});
 
 		const textPanelClosed = !this.state.prototypoTextPanelOpened;
@@ -428,7 +431,8 @@ export default class PrototypoCanvas extends React.Component {
 		];
 
 		if (this.state.canvasMode === 'select-points') {
-			menu.splice(1, 0,
+			menu.splice(
+				1, 0,
 				<ContextualMenuItem
 					key="coords"
 					active={this.props.uiCoords}

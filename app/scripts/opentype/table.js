@@ -266,35 +266,35 @@ const utf16 = 'utf-16';
 // MacOS script ID → encoding. This table stores the default case,
 // which can be overridden by macLanguageEncodings.
 const macScriptEncodings = {
-	0: 'macintosh',           // smRoman
-	1: 'x-mac-japanese',      // smJapanese
-	2: 'x-mac-chinesetrad',   // smTradChinese
-	3: 'x-mac-korean',        // smKorean
-	6: 'x-mac-greek',         // smGreek
-	7: 'x-mac-cyrillic',      // smCyrillic
-	9: 'x-mac-devanagai',     // smDevanagari
-	10: 'x-mac-gurmukhi',     // smGurmukhi
-	11: 'x-mac-gujarati',     // smGujarati
-	12: 'x-mac-oriya',        // smOriya
-	13: 'x-mac-bengali',      // smBengali
-	14: 'x-mac-tamil',        // smTamil
-	15: 'x-mac-telugu',       // smTelugu
-	16: 'x-mac-kannada',      // smKannada
-	17: 'x-mac-malayalam',    // smMalayalam
-	18: 'x-mac-sinhalese',    // smSinhalese
-	19: 'x-mac-burmese',      // smBurmese
-	20: 'x-mac-khmer',        // smKhmer
-	21: 'x-mac-thai',         // smThai
-	22: 'x-mac-lao',          // smLao
-	23: 'x-mac-georgian',     // smGeorgian
-	24: 'x-mac-armenian',     // smArmenian
-	25: 'x-mac-chinesesimp',  // smSimpChinese
-	26: 'x-mac-tibetan',      // smTibetan
-	27: 'x-mac-mongolian',    // smMongolian
-	28: 'x-mac-ethiopic',     // smEthiopic
-	29: 'x-mac-ce',           // smCentralEuroRoman
-	30: 'x-mac-vietnamese',   // smVietnamese
-	31: 'x-mac-extarabic',    // smExtArabic
+	0: 'macintosh', // smRoman
+	1: 'x-mac-japanese', // smJapanese
+	2: 'x-mac-chinesetrad', // smTradChinese
+	3: 'x-mac-korean', // smKorean
+	6: 'x-mac-greek', // smGreek
+	7: 'x-mac-cyrillic', // smCyrillic
+	9: 'x-mac-devanagai', // smDevanagari
+	10: 'x-mac-gurmukhi', // smGurmukhi
+	11: 'x-mac-gujarati', // smGujarati
+	12: 'x-mac-oriya', // smOriya
+	13: 'x-mac-bengali', // smBengali
+	14: 'x-mac-tamil', // smTamil
+	15: 'x-mac-telugu', // smTelugu
+	16: 'x-mac-kannada', // smKannada
+	17: 'x-mac-malayalam', // smMalayalam
+	18: 'x-mac-sinhalese', // smSinhalese
+	19: 'x-mac-burmese', // smBurmese
+	20: 'x-mac-khmer', // smKhmer
+	21: 'x-mac-thai', // smThai
+	22: 'x-mac-lao', // smLao
+	23: 'x-mac-georgian', // smGeorgian
+	24: 'x-mac-armenian', // smArmenian
+	25: 'x-mac-chinesesimp', // smSimpChinese
+	26: 'x-mac-tibetan', // smTibetan
+	27: 'x-mac-mongolian', // smMongolian
+	28: 'x-mac-ethiopic', // smEthiopic
+	29: 'x-mac-ce', // smCentralEuroRoman
+	30: 'x-mac-vietnamese', // smVietnamese
+	31: 'x-mac-extarabic', // smExtArabic
 };
 
 // MacOS language ID → encoding. This table stores the exceptional
@@ -304,21 +304,21 @@ const macScriptEncodings = {
 //
 // http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/Readme.txt
 const macLanguageEncodings = {
-	15: 'x-mac-icelandic',    // langIcelandic
-	17: 'x-mac-turkish',      // langTurkish
-	18: 'x-mac-croatian',     // langCroatian
-	24: 'x-mac-ce',           // langLithuanian
-	25: 'x-mac-ce',           // langPolish
-	26: 'x-mac-ce',           // langHungarian
-	27: 'x-mac-ce',           // langEstonian
-	28: 'x-mac-ce',           // langLatvian
-	30: 'x-mac-icelandic',    // langFaroese
-	37: 'x-mac-romanian',     // langRomanian
-	38: 'x-mac-ce',           // langCzech
-	39: 'x-mac-ce',           // langSlovak
-	40: 'x-mac-ce',           // langSlovenian
-	143: 'x-mac-inuit',       // langInuktitut
-	146: 'x-mac-gaelic',      // langIrishGaelicScript
+	15: 'x-mac-icelandic', // langIcelandic
+	17: 'x-mac-turkish', // langTurkish
+	18: 'x-mac-croatian', // langCroatian
+	24: 'x-mac-ce', // langLithuanian
+	25: 'x-mac-ce', // langPolish
+	26: 'x-mac-ce', // langHungarian
+	27: 'x-mac-ce', // langEstonian
+	28: 'x-mac-ce', // langLatvian
+	30: 'x-mac-icelandic', // langFaroese
+	37: 'x-mac-romanian', // langRomanian
+	38: 'x-mac-ce', // langCzech
+	39: 'x-mac-ce', // langSlovak
+	40: 'x-mac-ce', // langSlovenian
+	143: 'x-mac-inuit', // langInuktitut
+	146: 'x-mac-gaelic', // langIrishGaelicScript
 };
 
 const macLanguages = {
@@ -688,136 +688,136 @@ const windowsLanguages = {
 //
 // http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/Readme.txt
 const macLanguageToScript = {
-	    0: 0,  // langEnglish → smRoman
-	    1: 0,  // langFrench → smRoman
-	    2: 0,  // langGerman → smRoman
-	    3: 0,  // langItalian → smRoman
-	    4: 0,  // langDutch → smRoman
-	    5: 0,  // langSwedish → smRoman
-	    6: 0,  // langSpanish → smRoman
-	    7: 0,  // langDanish → smRoman
-	    8: 0,  // langPortuguese → smRoman
-	    9: 0,  // langNorwegian → smRoman
-	    10: 5,  // langHebrew → smHebrew
-	    11: 1,  // langJapanese → smJapanese
-	    12: 4,  // langArabic → smArabic
-	    13: 0,  // langFinnish → smRoman
-	    14: 6,  // langGreek → smGreek
-	    15: 0,  // langIcelandic → smRoman (modified)
-	    16: 0,  // langMaltese → smRoman
-	    17: 0,  // langTurkish → smRoman (modified)
-	    18: 0,  // langCroatian → smRoman (modified)
-	    19: 2,  // langTradChinese → smTradChinese
-	    20: 4,  // langUrdu → smArabic
-	    21: 9,  // langHindi → smDevanagari
-	    22: 21,  // langThai → smThai
-	    23: 3,  // langKorean → smKorean
-	    24: 29,  // langLithuanian → smCentralEuroRoman
-	    25: 29,  // langPolish → smCentralEuroRoman
-	    26: 29,  // langHungarian → smCentralEuroRoman
-	    27: 29,  // langEstonian → smCentralEuroRoman
-	    28: 29,  // langLatvian → smCentralEuroRoman
-	    29: 0,  // langSami → smRoman
-	    30: 0,  // langFaroese → smRoman (modified)
-	    31: 4,  // langFarsi → smArabic (modified)
-	    32: 7,  // langRussian → smCyrillic
-	    33: 25,  // langSimpChinese → smSimpChinese
-	    34: 0,  // langFlemish → smRoman
-	    35: 0,  // langIrishGaelic → smRoman (modified)
-	    36: 0,  // langAlbanian → smRoman
-	    37: 0,  // langRomanian → smRoman (modified)
-	    38: 29,  // langCzech → smCentralEuroRoman
-	    39: 29,  // langSlovak → smCentralEuroRoman
-	    40: 0,  // langSlovenian → smRoman (modified)
-	    41: 5,  // langYiddish → smHebrew
-	    42: 7,  // langSerbian → smCyrillic
-	    43: 7,  // langMacedonian → smCyrillic
-	    44: 7,  // langBulgarian → smCyrillic
-	    45: 7,  // langUkrainian → smCyrillic (modified)
-	    46: 7,  // langByelorussian → smCyrillic
-	    47: 7,  // langUzbek → smCyrillic
-	    48: 7,  // langKazakh → smCyrillic
-	    49: 7,  // langAzerbaijani → smCyrillic
-	    50: 4,  // langAzerbaijanAr → smArabic
-	    51: 24,  // langArmenian → smArmenian
-	    52: 23,  // langGeorgian → smGeorgian
-	    53: 7,  // langMoldavian → smCyrillic
-	    54: 7,  // langKirghiz → smCyrillic
-	    55: 7,  // langTajiki → smCyrillic
-	    56: 7,  // langTurkmen → smCyrillic
-	    57: 27,  // langMongolian → smMongolian
-	    58: 7,  // langMongolianCyr → smCyrillic
-	    59: 4,  // langPashto → smArabic
-	    60: 4,  // langKurdish → smArabic
-	    61: 4,  // langKashmiri → smArabic
-	    62: 4,  // langSindhi → smArabic
-	    63: 26,  // langTibetan → smTibetan
-	    64: 9,  // langNepali → smDevanagari
-	    65: 9,  // langSanskrit → smDevanagari
-	    66: 9,  // langMarathi → smDevanagari
-	    67: 13,  // langBengali → smBengali
-	    68: 13,  // langAssamese → smBengali
-	    69: 11,  // langGujarati → smGujarati
-	    70: 10,  // langPunjabi → smGurmukhi
-	    71: 12,  // langOriya → smOriya
-	    72: 17,  // langMalayalam → smMalayalam
-	    73: 16,  // langKannada → smKannada
-	    74: 14,  // langTamil → smTamil
-	    75: 15,  // langTelugu → smTelugu
-	    76: 18,  // langSinhalese → smSinhalese
-	    77: 19,  // langBurmese → smBurmese
-	    78: 20,  // langKhmer → smKhmer
-	    79: 22,  // langLao → smLao
-	    80: 30,  // langVietnamese → smVietnamese
-	    81: 0,  // langIndonesian → smRoman
-	    82: 0,  // langTagalog → smRoman
-	    83: 0,  // langMalayRoman → smRoman
-	    84: 4,  // langMalayArabic → smArabic
-	    85: 28,  // langAmharic → smEthiopic
-	    86: 28,  // langTigrinya → smEthiopic
-	    87: 28,  // langOromo → smEthiopic
-	    88: 0,  // langSomali → smRoman
-	    89: 0,  // langSwahili → smRoman
-	    90: 0,  // langKinyarwanda → smRoman
-	    91: 0,  // langRundi → smRoman
-	    92: 0,  // langNyanja → smRoman
-	    93: 0,  // langMalagasy → smRoman
-	    94: 0,  // langEsperanto → smRoman
-	    128: 0,  // langWelsh → smRoman (modified)
-	    129: 0,  // langBasque → smRoman
-	    130: 0,  // langCatalan → smRoman
-	    131: 0,  // langLatin → smRoman
-	    132: 0,  // langQuechua → smRoman
-	    133: 0,  // langGuarani → smRoman
-	    134: 0,  // langAymara → smRoman
-	    135: 7,  // langTatar → smCyrillic
-	    136: 4,  // langUighur → smArabic
-	    137: 26,  // langDzongkha → smTibetan
-	    138: 0,  // langJavaneseRom → smRoman
-	    139: 0,  // langSundaneseRom → smRoman
-	    140: 0,  // langGalician → smRoman
-	    141: 0,  // langAfrikaans → smRoman
-	    142: 0,  // langBreton → smRoman (modified)
-	    143: 28,  // langInuktitut → smEthiopic (modified)
-	    144: 0,  // langScottishGaelic → smRoman (modified)
-	    145: 0,  // langManxGaelic → smRoman (modified)
-	    146: 0,  // langIrishGaelicScript → smRoman (modified)
-	    147: 0,  // langTongan → smRoman
-	    148: 6,  // langGreekAncient → smRoman
-	    149: 0,  // langGreenlandic → smRoman
-	    150: 0,  // langAzerbaijanRoman → smRoman
-	    151: 0,  // langNynorsk → smRoman
+	    0: 0, // langEnglish → smRoman
+	    1: 0, // langFrench → smRoman
+	    2: 0, // langGerman → smRoman
+	    3: 0, // langItalian → smRoman
+	    4: 0, // langDutch → smRoman
+	    5: 0, // langSwedish → smRoman
+	    6: 0, // langSpanish → smRoman
+	    7: 0, // langDanish → smRoman
+	    8: 0, // langPortuguese → smRoman
+	    9: 0, // langNorwegian → smRoman
+	    10: 5, // langHebrew → smHebrew
+	    11: 1, // langJapanese → smJapanese
+	    12: 4, // langArabic → smArabic
+	    13: 0, // langFinnish → smRoman
+	    14: 6, // langGreek → smGreek
+	    15: 0, // langIcelandic → smRoman (modified)
+	    16: 0, // langMaltese → smRoman
+	    17: 0, // langTurkish → smRoman (modified)
+	    18: 0, // langCroatian → smRoman (modified)
+	    19: 2, // langTradChinese → smTradChinese
+	    20: 4, // langUrdu → smArabic
+	    21: 9, // langHindi → smDevanagari
+	    22: 21, // langThai → smThai
+	    23: 3, // langKorean → smKorean
+	    24: 29, // langLithuanian → smCentralEuroRoman
+	    25: 29, // langPolish → smCentralEuroRoman
+	    26: 29, // langHungarian → smCentralEuroRoman
+	    27: 29, // langEstonian → smCentralEuroRoman
+	    28: 29, // langLatvian → smCentralEuroRoman
+	    29: 0, // langSami → smRoman
+	    30: 0, // langFaroese → smRoman (modified)
+	    31: 4, // langFarsi → smArabic (modified)
+	    32: 7, // langRussian → smCyrillic
+	    33: 25, // langSimpChinese → smSimpChinese
+	    34: 0, // langFlemish → smRoman
+	    35: 0, // langIrishGaelic → smRoman (modified)
+	    36: 0, // langAlbanian → smRoman
+	    37: 0, // langRomanian → smRoman (modified)
+	    38: 29, // langCzech → smCentralEuroRoman
+	    39: 29, // langSlovak → smCentralEuroRoman
+	    40: 0, // langSlovenian → smRoman (modified)
+	    41: 5, // langYiddish → smHebrew
+	    42: 7, // langSerbian → smCyrillic
+	    43: 7, // langMacedonian → smCyrillic
+	    44: 7, // langBulgarian → smCyrillic
+	    45: 7, // langUkrainian → smCyrillic (modified)
+	    46: 7, // langByelorussian → smCyrillic
+	    47: 7, // langUzbek → smCyrillic
+	    48: 7, // langKazakh → smCyrillic
+	    49: 7, // langAzerbaijani → smCyrillic
+	    50: 4, // langAzerbaijanAr → smArabic
+	    51: 24, // langArmenian → smArmenian
+	    52: 23, // langGeorgian → smGeorgian
+	    53: 7, // langMoldavian → smCyrillic
+	    54: 7, // langKirghiz → smCyrillic
+	    55: 7, // langTajiki → smCyrillic
+	    56: 7, // langTurkmen → smCyrillic
+	    57: 27, // langMongolian → smMongolian
+	    58: 7, // langMongolianCyr → smCyrillic
+	    59: 4, // langPashto → smArabic
+	    60: 4, // langKurdish → smArabic
+	    61: 4, // langKashmiri → smArabic
+	    62: 4, // langSindhi → smArabic
+	    63: 26, // langTibetan → smTibetan
+	    64: 9, // langNepali → smDevanagari
+	    65: 9, // langSanskrit → smDevanagari
+	    66: 9, // langMarathi → smDevanagari
+	    67: 13, // langBengali → smBengali
+	    68: 13, // langAssamese → smBengali
+	    69: 11, // langGujarati → smGujarati
+	    70: 10, // langPunjabi → smGurmukhi
+	    71: 12, // langOriya → smOriya
+	    72: 17, // langMalayalam → smMalayalam
+	    73: 16, // langKannada → smKannada
+	    74: 14, // langTamil → smTamil
+	    75: 15, // langTelugu → smTelugu
+	    76: 18, // langSinhalese → smSinhalese
+	    77: 19, // langBurmese → smBurmese
+	    78: 20, // langKhmer → smKhmer
+	    79: 22, // langLao → smLao
+	    80: 30, // langVietnamese → smVietnamese
+	    81: 0, // langIndonesian → smRoman
+	    82: 0, // langTagalog → smRoman
+	    83: 0, // langMalayRoman → smRoman
+	    84: 4, // langMalayArabic → smArabic
+	    85: 28, // langAmharic → smEthiopic
+	    86: 28, // langTigrinya → smEthiopic
+	    87: 28, // langOromo → smEthiopic
+	    88: 0, // langSomali → smRoman
+	    89: 0, // langSwahili → smRoman
+	    90: 0, // langKinyarwanda → smRoman
+	    91: 0, // langRundi → smRoman
+	    92: 0, // langNyanja → smRoman
+	    93: 0, // langMalagasy → smRoman
+	    94: 0, // langEsperanto → smRoman
+	    128: 0, // langWelsh → smRoman (modified)
+	    129: 0, // langBasque → smRoman
+	    130: 0, // langCatalan → smRoman
+	    131: 0, // langLatin → smRoman
+	    132: 0, // langQuechua → smRoman
+	    133: 0, // langGuarani → smRoman
+	    134: 0, // langAymara → smRoman
+	    135: 7, // langTatar → smCyrillic
+	    136: 4, // langUighur → smArabic
+	    137: 26, // langDzongkha → smTibetan
+	    138: 0, // langJavaneseRom → smRoman
+	    139: 0, // langSundaneseRom → smRoman
+	    140: 0, // langGalician → smRoman
+	    141: 0, // langAfrikaans → smRoman
+	    142: 0, // langBreton → smRoman (modified)
+	    143: 28, // langInuktitut → smEthiopic (modified)
+	    144: 0, // langScottishGaelic → smRoman (modified)
+	    145: 0, // langManxGaelic → smRoman (modified)
+	    146: 0, // langIrishGaelicScript → smRoman (modified)
+	    147: 0, // langTongan → smRoman
+	    148: 6, // langGreekAncient → smRoman
+	    149: 0, // langGreenlandic → smRoman
+	    150: 0, // langAzerbaijanRoman → smRoman
+	    151: 0, // langNynorsk → smRoman
 };
 
 function getEncoding(platformID, encodingID, languageID) {
 	switch (platformID) {
-	case 0:  // Unicode
+	case 0: // Unicode
 		return utf16;
 
-	case 1:  // Apple Macintosh
+	case 1: // Apple Macintosh
 		return macLanguageEncodings[languageID] || macScriptEncodings[encodingID];
 
-	case 3:  // Microsoft Windows
+	case 3: // Microsoft Windows
 		if (encodingID === 1 || encodingID === 10) {
 			return utf16;
 		}
@@ -841,40 +841,40 @@ function reverseDict(dict) {
 
 function makeNameRecord(platformID, encodingID, languageID, nameID, length, offset) {
 	return buildTableObj('NameRecord', [
-        {name: 'platformID', type: 'USHORT', value: platformID},
-        {name: 'encodingID', type: 'USHORT', value: encodingID},
-        {name: 'languageID', type: 'USHORT', value: languageID},
-        {name: 'nameID', type: 'USHORT', value: nameID},
-        {name: 'length', type: 'USHORT', value: length},
-        {name: 'offset', type: 'USHORT', value: offset},
+		{name: 'platformID', type: 'USHORT', value: platformID},
+		{name: 'encodingID', type: 'USHORT', value: encodingID},
+		{name: 'languageID', type: 'USHORT', value: languageID},
+		{name: 'nameID', type: 'USHORT', value: nameID},
+		{name: 'length', type: 'USHORT', value: length},
+		{name: 'offset', type: 'USHORT', value: offset},
 	]);
 }
 
 // NameIDs for the name table.
 const nameTableNames = [
-	'copyright',              // 0
-	'fontFamily',             // 1
-	'fontSubfamily',          // 2
-	'uniqueID',               // 3
-	'fullName',               // 4
-	'version',                // 5
-	'postScriptName',         // 6
-	'trademark',              // 7
-	'manufacturer',           // 8
-	'designer',               // 9
-	'description',            // 10
-	'manufacturerURL',        // 11
-	'designerURL',            // 12
-	'license',                // 13
-	'licenseURL',             // 14
-	'reserved',               // 15
-	'preferredFamily',        // 16
-	'preferredSubfamily',     // 17
-	'compatibleFullName',     // 18
-	'sampleText',             // 19
+	'copyright', // 0
+	'fontFamily', // 1
+	'fontSubfamily', // 2
+	'uniqueID', // 3
+	'fullName', // 4
+	'version', // 5
+	'postScriptName', // 6
+	'trademark', // 7
+	'manufacturer', // 8
+	'designer', // 9
+	'description', // 10
+	'manufacturerURL', // 11
+	'designerURL', // 12
+	'license', // 13
+	'licenseURL', // 14
+	'reserved', // 15
+	'preferredFamily', // 16
+	'preferredSubfamily', // 17
+	'compatibleFullName', // 18
+	'sampleText', // 19
 	'postScriptFindFontName', // 20
-	'wwsFamily',              // 21
-	'wwsSubfamily',           // 22
+	'wwsFamily', // 21
+	'wwsSubfamily', // 22
 ];
 
 // Finds the position of needle in haystack, or -1 if not there.
@@ -885,17 +885,17 @@ function findSubArray(needle, haystack) {
 
 	/* eslint-disable no-restricted-syntax, max-depth, no-continue, no-labels */
 	loop:
-    for (let pos = 0; pos < limit; pos++) {
-	for (; pos < limit; pos++) {
-		for (let k = 0; k < needleLength; k++) {
-			if (haystack[pos + k] !== needle[k]) {
-				continue loop;
+	for (let pos = 0; pos < limit; pos++) {
+		for (; pos < limit; pos++) {
+			for (let k = 0; k < needleLength; k++) {
+				if (haystack[pos + k] !== needle[k]) {
+					continue loop;
+				}
 			}
-		}
 
-		return pos;
+			return pos;
+		}
 	}
-}
 	/* eslint-enable */
 
 	return -1;
@@ -964,28 +964,30 @@ export class name {
 				// However, there are many applications and libraries that read
 				// 'name' tables directly, and these will usually only recognize
 				// the ancient form (silently skipping the unrecognized names).
-				let macPlatform = 1;  // Macintosh
+				let macPlatform = 1; // Macintosh
 				let macLanguage = macLanguageIds[lang];
 				let macScript = macLanguageToScript[macLanguage];
 				const macEncoding = getEncoding(macPlatform, macScript, macLanguage);
 				let macName = encode.MACSTRING(text, macEncoding);
 
 				if (macName === undefined) {
-					macPlatform = 0;  // Unicode
+					macPlatform = 0; // Unicode
 					macLanguage = ltag.indexOf(lang);
 					if (macLanguage < 0) {
 						macLanguage = ltag.length;
 						ltag.push(lang);
 					}
 
-					macScript = 4;  // Unicode 2.0 and later
+					macScript = 4; // Unicode 2.0 and later
 					macName = encode.UTF16(text);
 				}
 
 				const macNameOffset = addStringToPool(macName, stringPool);
 
-				nameRecords.push(makeNameRecord(macPlatform, macScript, macLanguage,
-												nameID, macName.length, macNameOffset));
+				nameRecords.push(makeNameRecord(
+					macPlatform, macScript, macLanguage,
+					nameID, macName.length, macNameOffset,
+				));
 
 				const winLanguage = windowsLanguageIds[lang];
 
@@ -993,8 +995,10 @@ export class name {
 					const winName = encode.UTF16(text);
 					const winNameOffset = addStringToPool(winName, stringPool);
 
-					nameRecords.push(makeNameRecord(3, 1, winLanguage,
-													nameID, winName.length, winNameOffset));
+					nameRecords.push(makeNameRecord(
+						3, 1, winLanguage,
+						nameID, winName.length, winNameOffset,
+					));
 				}
 			});
 		}
@@ -1117,41 +1121,75 @@ const TOP_DICT_META = [
 	    {name: 'fullName', op: 2, type: 'SID'},
 	    {name: 'familyName', op: 3, type: 'SID'},
 	    {name: 'weight', op: 4, type: 'SID'},
-	    {name: 'isFixedPitch', op: 1201, type: 'number', value: 0},
-	    {name: 'italicAngle', op: 1202, type: 'number', value: 0},
-	    {name: 'underlinePosition', op: 1203, type: 'number', value: -100},
-	    {name: 'underlineThickness', op: 1204, type: 'number', value: 50},
-	    {name: 'paintType', op: 1205, type: 'number', value: 0},
-	    {name: 'charstringType', op: 1206, type: 'number', value: 2},
-	    {name: 'fontMatrix', op: 1207, type: ['real', 'real', 'real', 'real', 'real', 'real'], value: [0.001, 0, 0, 0.001, 0, 0]},
+	    {
+		name: 'isFixedPitch', op: 1201, type: 'number', value: 0,
+	},
+	    {
+		name: 'italicAngle', op: 1202, type: 'number', value: 0,
+	},
+	    {
+		name: 'underlinePosition', op: 1203, type: 'number', value: -100,
+	},
+	    {
+		name: 'underlineThickness', op: 1204, type: 'number', value: 50,
+	},
+	    {
+		name: 'paintType', op: 1205, type: 'number', value: 0,
+	},
+	    {
+		name: 'charstringType', op: 1206, type: 'number', value: 2,
+	},
+	    {
+		name: 'fontMatrix', op: 1207, type: ['real', 'real', 'real', 'real', 'real', 'real'], value: [0.001, 0, 0, 0.001, 0, 0],
+	},
 	    {name: 'uniqueId', op: 13, type: 'number'},
-	    {name: 'fontBBox', op: 5, type: ['number', 'number', 'number', 'number'], value: [0, 0, 0, 0]},
-	    {name: 'strokeWidth', op: 1208, type: 'number', value: 0},
-	    {name: 'xuid', op: 14, type: [], value: null},
-	    {name: 'charset', op: 15, type: 'offset', value: 0},
-	    {name: 'encoding', op: 16, type: 'offset', value: 0},
-	    {name: 'charStrings', op: 17, type: 'offset', value: 0},
-	    {name: 'private', op: 18, type: ['number', 'offset'], value: [0, 0]},
+	    {
+		name: 'fontBBox', op: 5, type: ['number', 'number', 'number', 'number'], value: [0, 0, 0, 0],
+	},
+	    {
+		name: 'strokeWidth', op: 1208, type: 'number', value: 0,
+	},
+	    {
+		name: 'xuid', op: 14, type: [], value: null,
+	},
+	    {
+		name: 'charset', op: 15, type: 'offset', value: 0,
+	},
+	    {
+		name: 'encoding', op: 16, type: 'offset', value: 0,
+	},
+	    {
+		name: 'charStrings', op: 17, type: 'offset', value: 0,
+	},
+	    {
+		name: 'private', op: 18, type: ['number', 'offset'], value: [0, 0],
+	},
 ];
 
 const PRIVATE_DICT_META = [
-	    {name: 'subrs', op: 19, type: 'offset', value: 0},
-	    {name: 'defaultWidthX', op: 20, type: 'number', value: 0},
-	    {name: 'nominalWidthX', op: 21, type: 'number', value: 0},
+	    {
+		name: 'subrs', op: 19, type: 'offset', value: 0,
+	},
+	    {
+		name: 'defaultWidthX', op: 20, type: 'number', value: 0,
+	},
+	    {
+		name: 'nominalWidthX', op: 21, type: 'number', value: 0,
+	},
 ];
 
 function makeCffHeader() {
 	return buildTableObj('Header', [
-        {name: 'major', type: 'Card8', value: 1},
-        {name: 'minor', type: 'Card8', value: 0},
-        {name: 'hdrSize', type: 'Card8', value: 4},
-        {name: 'major', type: 'Card8', value: 1},
+		{name: 'major', type: 'Card8', value: 1},
+		{name: 'minor', type: 'Card8', value: 0},
+		{name: 'hdrSize', type: 'Card8', value: 4},
+		{name: 'major', type: 'Card8', value: 1},
 	]);
 }
 
 function makeNameIndex(fontNames) {
 	const t = buildTableObj('Name INDEX', [
-        {name: 'names', type: 'INDEX', value: []},
+		{name: 'names', type: 'INDEX', value: []},
 	]);
 
 	t.names = [];
@@ -1189,14 +1227,14 @@ function equals(a, b) {
 function encodeString(s, strings) {
 	let sid;
 
-    // Is the string in the CFF standard strings?
+	// Is the string in the CFF standard strings?
 	let i = cffStandardStrings.indexOf(s);
 
 	if (i >= 0) {
 		sid = i;
 	}
 
-    // Is the string already in the string index?
+	// Is the string already in the string index?
 	i = strings.indexOf(s);
 	if (i >= 0) {
 		sid = i + cffStandardStrings.length;
@@ -1232,7 +1270,7 @@ function makeDict(meta, attrs, strings) {
 // The Top DICT houses the global font attributes.
 function makeTopDict(attrs, strings) {
 	const t = buildTableObj('Top DICT', [
-        {name: 'dict', type: 'DICT', value: {}},
+		{name: 'dict', type: 'DICT', value: {}},
 	]);
 
 	t.dict = makeDict(TOP_DICT_META, attrs, strings);
@@ -1241,7 +1279,7 @@ function makeTopDict(attrs, strings) {
 
 function makeTopDictIndex(topDict) {
 	const t = buildTableObj('Top DICT INDEX', [
-        {name: 'topDicts', type: 'INDEX', value: []},
+		{name: 'topDicts', type: 'INDEX', value: []},
 	]);
 
 	t.topDicts = [{name: 'topDict_0', type: 'TABLE', value: topDict}];
@@ -1250,7 +1288,7 @@ function makeTopDictIndex(topDict) {
 
 function makeStringIndex(strings) {
 	const t = buildTableObj('String INDEX', [
-        {name: 'strings', type: 'INDEX', value: []},
+		{name: 'strings', type: 'INDEX', value: []},
 	]);
 
 	t.strings = [];
@@ -1262,15 +1300,15 @@ function makeStringIndex(strings) {
 }
 
 function makeGlobalSubrIndex() {
-    // Currently we don't use subroutines.
+	// Currently we don't use subroutines.
 	return buildTableObj('Global Subr INDEX', [
-        {name: 'subrs', type: 'INDEX', value: []},
+		{name: 'subrs', type: 'INDEX', value: []},
 	]);
 }
 
 function makeCharsets(glyphNames, strings) {
 	const t = buildTableObj('Charsets', [
-        {name: 'format', type: 'Card8', value: 0},
+		{name: 'format', type: 'Card8', value: 0},
 	]);
 
 	for (let i = 0; i < glyphNames.length; i++) {
@@ -1335,7 +1373,7 @@ function glyphToOps(glyph) {
 
 function makeCharStringsIndex(glyphs) {
 	const t = buildTableObj('CharStrings INDEX', [
-        {name: 'charStrings', type: 'INDEX', value: []},
+		{name: 'charStrings', type: 'INDEX', value: []},
 	]);
 
 	for (let i = 0; i < glyphs.length; i++) {
@@ -1350,7 +1388,7 @@ function makeCharStringsIndex(glyphs) {
 
 function makePrivateDict(attrs, strings) {
 	const t = buildTableObj('Private DICT', [
-        {name: 'dict', type: 'DICT', value: {}},
+		{name: 'dict', type: 'DICT', value: {}},
 	]);
 
 	t.dict = makeDict(PRIVATE_DICT_META, attrs, strings);
@@ -1433,12 +1471,12 @@ export class cff {
 
 function makeGposHeader() {
 	return buildTableObj('Header', [
-        {name: 'majorVersion', type: 'UINT16', value: 1},
-        {name: 'minorersion', type: 'UINT16', value: 1},
-        {name: 'scriptListOffset', type: 'Offset16', value: 10},
-        {name: 'featureListOffset', type: 'Offset16', value: undefined},
-        {name: 'lookupListOffset', type: 'Offset16', value: undefined},
-        {name: 'featureVariations', type: 'Offset32', value: 0},
+		{name: 'majorVersion', type: 'UINT16', value: 1},
+		{name: 'minorersion', type: 'UINT16', value: 1},
+		{name: 'scriptListOffset', type: 'Offset16', value: 10},
+		{name: 'featureListOffset', type: 'Offset16', value: undefined},
+		{name: 'lookupListOffset', type: 'Offset16', value: undefined},
+		{name: 'featureVariations', type: 'Offset32', value: 0},
 	]);
 }
 

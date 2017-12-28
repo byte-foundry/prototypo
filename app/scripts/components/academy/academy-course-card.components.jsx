@@ -6,7 +6,9 @@ import ReactMarkdown from 'react-markdown';
 
 class AcademyCourseCard extends React.PureComponent {
 	render() {
-		const {tutorial, reading, done, numberOfCompletedParts, className} = this.props;
+		const {
+			tutorial, reading, done, numberOfCompletedParts, className,
+		} = this.props;
 		const classes = classNames({
 			currentlyreading: reading,
 			done,
@@ -43,15 +45,15 @@ class AcademyCourseCard extends React.PureComponent {
 										className="academy-part-count-progress-wrapper-progress"
 										style={{
 											width: `${done
-													? 100
-													: numberOfCompletedParts / tutorial.partCount * 100}%`,
+												? 100
+												: numberOfCompletedParts / tutorial.partCount * 100}%`,
 										}}
 									/>
 								</div>
 								<span className="academy-part-count-text">
 									{done
-											? 'COMPLETE'
-											: `${numberOfCompletedParts} of ${tutorial.partCount}`}
+										? 'COMPLETE'
+										: `${numberOfCompletedParts} of ${tutorial.partCount}`}
 								</span>
 							</div>
 							: false}

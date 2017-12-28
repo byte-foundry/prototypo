@@ -35,6 +35,7 @@ module.exports = merge(base, {
 		new webpack.DefinePlugin({
 			'process.env': {
 				TESTING_FONT: JSON.stringify('yes'),
+				MERGE: JSON.stringify(process.env.MERGE),
 			},
 		}),
 	],

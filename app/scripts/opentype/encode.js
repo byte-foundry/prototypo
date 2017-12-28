@@ -12,7 +12,7 @@ export const encode = {};
 export const sizeOf = {};
 export const print = {};
 
-/* eslint-disable babel/new-cap, no-bitwise, no-param-reassign*/
+/* eslint-disable babel/new-cap, no-bitwise, no-param-reassign */
 encode.BYTE = (v) => {
 	checkArgument(v >= 0 && v <= 255, 'Byte value should be between 0 and 255.');
 	return [v];
@@ -41,7 +41,7 @@ encode.USHORT = v => [(v >> 8) & 0xFF, v & 0xFF];
 sizeOf.USHORT = constant(2);
 
 encode.SHORT = (v) => {
-    // Two's complement
+	// Two's complement
 	if (v >= LIMIT16) {
 		v = -((2 * LIMIT16) - v);
 	}
@@ -66,7 +66,7 @@ encode.ULONG = v => [(v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0x
 sizeOf.ULONG = constant(4);
 
 encode.LONG = (v) => {
-    // Two's complement
+	// Two's complement
 	if (v >= LIMIT32) {
 		v = -((2 * LIMIT32) - v);
 	}
@@ -147,7 +147,7 @@ encode.REAL = (v) => {
 
 	// Some numbers use an epsilon to encode the value.
 	// (e.g. JavaScript will store 0.0000001 as 1e-7)
-    // This code converts it back to a number without the epsilon.
+	// This code converts it back to a number without the epsilon.
 	const m = /\.(\d*?)(?:9{5,20}|0{5,20})\d{0,2}(?:e(.+)|$)/.exec(value);
 
 	if (m) {
@@ -221,7 +221,7 @@ const eightBitMacEncodings = {
 		'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ†°£§¶І®©™Ђђ≠Ѓѓ∞±≤≥іµЈЄєЇїЉљЊњ'
 		+ 'јЅ¬√≈∆«»… ЋћЌќѕ“”‘’÷„ЎўЏџ№Ёёяабвгдежзийклмнопрстуфхцчшщъыьэю',
 	'x-mac-gaelic':
-        // http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/GAELIC.TXT
+	// http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/GAELIC.TXT
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§¶ß®©™´¨≠ÆØḂ±≤≥ḃĊċḊḋḞḟĠġṀæø'
 		+ 'ṁṖṗɼſṠ«»… ÀÃÕŒœ“”‘’ṡẛÿŸṪ€Ŷŷṫ·Ỳỳ⁊ÂÊÁËÈÍÎÏÌÓÔ♣ÒÚÛÙıÝýŴŵẄẅẀẁẂẃ',
 	'x-mac-greek': // Python: 'mac_greek'
@@ -231,7 +231,7 @@ const eightBitMacEncodings = {
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûüÝ°¢£§¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø'
 		+ '¿¡¬√≈∆«»… ÀÃÕŒœ“”‘’÷◊ÿŸ⁄€ÐðÞþý·„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙı¯˘˙˚¸˝˛ˇ',
 	'x-mac-inuit':
-        // http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/INUIT.TXT
+	// http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/INUIT.TXT
 		'ᐃᐄᐅᐆᐊᐋᐱᐲᐳᐴᐸᐹᑉᑎᑏᑐᑑᑕᑖᑦᑭᑮᑯᑰᑲᑳᒃᒋᒌᒍᒎᒐᒑ°ᒡᒥᒦ¶ᒧ®©™ᒨᒪᒫᒻᓂᓃᓄᓅᓇᓈᓐᓯᓰᓱᓲᓴᓵᔅᓕᓖᓗ'
 		+ 'ᓘᓚᓛᓪᔨᔩᔪᔫᔭ… ᔮᔾᕕᕖᕗ“”‘’ᕘᕙᕚᕝᕆᕇᕈᕉᕋᕌᕐᕿᖀᖁᖂᖃᖄᖅᖏᖐᖑᖒᖓᖔᖕᙱᙲᙳᙴᙵᙶᖖᖠᖡᖢᖣᖤᖥᖦᕼŁł',
 	'x-mac-ce': // Python: 'mac_latin2'
@@ -251,9 +251,9 @@ const eightBitMacEncodings = {
 const macEncodingTableCache = typeof WeakMap === 'function' && new WeakMap();
 let macEncodingCacheKeys;
 const getMacEncodingTable = (encoding) => {
-    // Since we use encoding as a cache key for WeakMap, it has to be
-    // a String object and not a literal. And at least on NodeJS 2.10.1,
-    // WeakMap requires that the same String instance is passed for cache hits.
+	// Since we use encoding as a cache key for WeakMap, it has to be
+	// a String object and not a literal. And at least on NodeJS 2.10.1,
+	// WeakMap requires that the same String instance is passed for cache hits.
 	if (!macEncodingCacheKeys) {
 		macEncodingCacheKeys = {};
 
@@ -270,10 +270,10 @@ const getMacEncodingTable = (encoding) => {
 		return undefined;
 	}
 
-    // We can't do "if (cache.has(key)) {return cache.get(key)}" here:
-    // since garbage collection may run at any time, it could also kick in
-    // between the calls to cache.has() and cache.get(). In that case,
-    // we would return 'undefined' even though we do support the encoding.
+	// We can't do "if (cache.has(key)) {return cache.get(key)}" here:
+	// since garbage collection may run at any time, it could also kick in
+	// between the calls to cache.has() and cache.get(). In that case,
+	// we would return 'undefined' even though we do support the encoding.
 	if (macEncodingTableCache) {
 		const cachedTable = macEncodingTableCache.get(cacheKey);
 
@@ -313,18 +313,18 @@ encode.MACSTRING = (str, encoding) => {
 	for (let i = 0; i < str.length; i++) {
 		let c = str.charCodeAt(i);
 
-        // In all eight-bit Mac encodings, the characters 0x00..0x7F are
-        // mapped to U+0000..U+007F; we only need to look up the others.
+		// In all eight-bit Mac encodings, the characters 0x00..0x7F are
+		// mapped to U+0000..U+007F; we only need to look up the others.
 		if (c >= 0x80) {
 			c = table[c];
 			if (c === undefined) {
-                // str contains a Unicode character that cannot be encoded
-                // in the requested encoding.
+				// str contains a Unicode character that cannot be encoded
+				// in the requested encoding.
 				return undefined;
 			}
 		}
 		result[i] = c;
-        // result.push(c);
+		// result.push(c);
 	}
 
 	return result;
@@ -372,13 +372,13 @@ function encodeVarDeltaRunAsBytes(deltas, offset, result) {
 			break;
 		}
 
-        // Within a byte-encoded run of deltas, a single zero is best
-        // stored literally as 0x00 value. However, if we have two or
-        // more zeroes in a sequence, it is better to start a new run.
-        // Fore example, the sequence of deltas [15, 15, 0, 15, 15]
-        // becomes 6 bytes (04 0F 0F 00 0F 0F) when storing the zero
-        // within the current run, but 7 bytes (01 0F 0F 80 01 0F 0F)
-        // when starting a new run.
+		// Within a byte-encoded run of deltas, a single zero is best
+		// stored literally as 0x00 value. However, if we have two or
+		// more zeroes in a sequence, it is better to start a new run.
+		// Fore example, the sequence of deltas [15, 15, 0, 15, 15]
+		// becomes 6 bytes (04 0F 0F 00 0F 0F) when storing the zero
+		// within the current run, but 7 bytes (01 0F 0F 80 01 0F 0F)
+		// when starting a new run.
 		if (value === 0 && pos + 1 < numDeltas && deltas[pos + 1] === 0) {
 			break;
 		}
@@ -405,22 +405,22 @@ function encodeVarDeltaRunAsWords(deltas, offset, result) {
 	while (pos < numDeltas && runLength < 64) {
 		const value = deltas[pos];
 
-        // Within a word-encoded run of deltas, it is easiest to start
-        // a new run (with a different encoding) whenever we encounter
-        // a zero value. For example, the sequence [0x6666, 0, 0x7777]
-        // needs 7 bytes when storing the zero inside the current run
-        // (42 66 66 00 00 77 77), and equally 7 bytes when starting a
-        // new run (40 66 66 80 40 77 77).
+		// Within a word-encoded run of deltas, it is easiest to start
+		// a new run (with a different encoding) whenever we encounter
+		// a zero value. For example, the sequence [0x6666, 0, 0x7777]
+		// needs 7 bytes when storing the zero inside the current run
+		// (42 66 66 00 00 77 77), and equally 7 bytes when starting a
+		// new run (40 66 66 80 40 77 77).
 		if (value === 0) {
 			break;
 		}
 
-        // Within a word-encoded run of deltas, a single value in the
-        // range (-128..127) should be encoded within the current run
-        // because it is more compact. For example, the sequence
-        // [0x6666, 2, 0x7777] becomes 7 bytes when storing the value
-        // literally (42 66 66 00 02 77 77), but 8 bytes when starting
-        // a new run (40 66 66 00 02 40 77 77).
+		// Within a word-encoded run of deltas, a single value in the
+		// range (-128..127) should be encoded within the current run
+		// because it is more compact. For example, the sequence
+		// [0x6666, 2, 0x7777] becomes 7 bytes when storing the value
+		// literally (42 66 66 00 02 77 77), but 8 bytes when starting
+		// a new run (40 66 66 00 02 40 77 77).
 		if (isByteEncodable(value) && pos + 1 < numDeltas && isByteEncodable(deltas[pos + 1])) {
 			break;
 		}
@@ -475,11 +475,11 @@ encode.VARDELTAS = (deltas) => {
 
 encode.INDEX = (l) => {
 	let i;
-    // var offset, offsets, offsetEncoder, encodedOffsets, encodedOffset, data,
-    //    i, v;
-    // Because we have to know which data type to use to encode the offsets,
-    // we have to go through the values twice: once to encode the data and
-    // calculate the offets, then again to encode the offsets using the fitting data type.
+	// var offset, offsets, offsetEncoder, encodedOffsets, encodedOffset, data,
+	//    i, v;
+	// Because we have to know which data type to use to encode the offsets,
+	// we have to go through the values twice: once to encode the data and
+	// calculate the offets, then again to encode the offsets using the fitting data type.
 	let offset = 1; // First offset is always 1.
 	const offsets = [offset];
 	const data = [];
@@ -512,21 +512,23 @@ encode.INDEX = (l) => {
 		encodedOffsets.push(...encodedOffset);
 	}
 
-	return Array.prototype.concat(encode.Card16(l.length),
-                           encode.OffSize(offSize),
-                           encodedOffsets,
-                           data);
+	return Array.prototype.concat(
+		encode.Card16(l.length),
+		encode.OffSize(offSize),
+		encodedOffsets,
+		data,
+	);
 };
 
 sizeOf.INDEX = v => encode.INDEX(v).length;
 
 print.INDEX = (l) => {
 	let i;
-    // var offset, offsets, offsetEncoder, encodedOffsets, encodedOffset, data,
-    //    i, v;
-    // Because we have to know which data type to use to encode the offsets,
-    // we have to go through the values twice: once to encode the data and
-    // calculate the offets, then again to encode the offsets using the fitting data type.
+	// var offset, offsets, offsetEncoder, encodedOffsets, encodedOffset, data,
+	//    i, v;
+	// Because we have to know which data type to use to encode the offsets,
+	// we have to go through the values twice: once to encode the data and
+	// calculate the offets, then again to encode the offsets using the fitting data type.
 	let offset = 1; // First offset is always 1.
 	const offsets = [offset];
 	const data = [];
@@ -575,11 +577,11 @@ encode.DICT = (m) => {
 	const length = keys.length;
 
 	for (let i = 0; i < length; i++) {
-        // Object.keys() return string keys, but our keys are always numeric.
+		// Object.keys() return string keys, but our keys are always numeric.
 		const k = parseInt(keys[i], 0);
 		const v = m[k];
 
-        // Value comes before the key.
+		// Value comes before the key.
 		d = d.concat(encode.OPERAND(v.value, v.type));
 		d = d.concat(encode.OPERATOR(k));
 	}
@@ -595,11 +597,11 @@ print.DICT = (m) => {
 	const length = keys.length;
 
 	for (let i = 0; i < length; i++) {
-        // Object.keys() return string keys, but our keys are always numeric.
+		// Object.keys() return string keys, but our keys are always numeric.
 		const k = parseInt(keys[i], 0);
 		const v = m[k];
 
-        // Value comes before the key.
+		// Value comes before the key.
 		console.log(`${encode.OPERAND(v.value, v.type)}${encode.OPERATOR(k)}	${v.type}	${v.name}`);
 	}
 };
@@ -653,7 +655,7 @@ sizeOf.OP = sizeOf.BYTE;
 const charStringCache = typeof WeakMap === 'function' && new WeakMap();
 
 encode.CHARSTRING = (ops) => {
-    // See encode.MACSTRING for why we don't do "if (wmm && wmm.has(ops))".
+	// See encode.MACSTRING for why we don't do "if (wmm && wmm.has(ops))".
 	if (charStringCache) {
 		const cachedValue = charStringCache.get(ops);
 
@@ -760,7 +762,7 @@ sizeOf.TABLE = (table) => {
 
 		numBytes += sizeOfFunction(value);
 
-        // Subtables take 2 more bytes for offsets.
+		// Subtables take 2 more bytes for offsets.
 		if (field.type === 'TABLE') {
 			numBytes += 2;
 		}

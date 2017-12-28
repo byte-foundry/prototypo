@@ -121,9 +121,7 @@ class AcademyCourse extends React.PureComponent {
 		};
 
 		const headers = parts.slice(1).map((part, index) => {
-			const elem = findDOMNode(this.refs[`${this.courseSlug}-part${index + 2}`]).querySelector(
-				'.title',
-			);
+			const elem = findDOMNode(this.refs[`${this.courseSlug}-part${index + 2}`]).querySelector('.title');
 
 			elem.classList.remove('fixed');
 			return {
@@ -137,9 +135,12 @@ class AcademyCourse extends React.PureComponent {
 		if (parts.length === 1) {
 			this.markAsRead(parts[0].content);
 		}
-		this.setState({...this.state, headers, sidebar, course});
+		this.setState({
+			...this.state, headers, sidebar, course,
+		});
 
 		const currentProgress = this.props.academyProgress[this.courseSlug];
+
 		if ((!currentProgress || !currentProgress.completed) && parts.length > 0) {
 			this.props.setCourseCurrentlyReading(this.courseSlug);
 		}
@@ -175,19 +176,15 @@ class AcademyCourse extends React.PureComponent {
 		this.setState({
 			headers,
 			stickedIndex,
-			scrollPercent: Math.round(
-				event.target.scrollTop
+			scrollPercent: Math.round(event.target.scrollTop
 					/ (document.getElementsByClassName('academy-course-main')[0].offsetHeight - 850)
-					* 100,
-			),
+					* 100),
 		});
 
 		// Logo sticky handling
 		if (event.target.scrollTop >= this.state.sidebar.offset - 130) {
 			document.getElementsByClassName('academy-dashboard-icon')[0].classList.add('fixed');
-			document.getElementsByClassName(
-				'academy-dashboard-icon',
-			)[0].style.left = `${this.courseContentDom.getBoundingClientRect().left - 75}px`;
+			document.getElementsByClassName('academy-dashboard-icon')[0].style.left = `${this.courseContentDom.getBoundingClientRect().left - 75}px`;
 		}
 		else {
 			document.getElementsByClassName('academy-dashboard-icon')[0].classList.remove('fixed');
@@ -198,9 +195,7 @@ class AcademyCourse extends React.PureComponent {
 		if (event.target.scrollTop >= this.state.sidebar.offset) {
 			this.state.sidebar.elem.classList.add('fixed');
 			document.getElementsByClassName('academy-dashboard-icon')[0].classList.add('fixed');
-			document.getElementsByClassName(
-				'academy-dashboard-icon',
-			)[0].style.left = `${this.courseContentDom.getBoundingClientRect().left - 75}px`;
+			document.getElementsByClassName('academy-dashboard-icon')[0].style.left = `${this.courseContentDom.getBoundingClientRect().left - 75}px`;
 			this.state.sidebar.elem.style.left = `${this.courseContentDom.getBoundingClientRect().right
 				+ 20}px`;
 		}
@@ -397,8 +392,7 @@ class AcademyCourse extends React.PureComponent {
 						to={`/academy/course/${basic.slug}`}
 					>
 						{basic.title}
-					</Link>),
-				)}
+					</Link>))}
 			</div>;
 		const partsDisplay
 			= this.state.headers.length > 0
@@ -422,8 +416,7 @@ class AcademyCourse extends React.PureComponent {
 						<span>
 							{header.content}
 						</span>
-					</a>),
-				)}
+					</a>))}
 			</div>;
 		const sidebar = (
 			<div
@@ -442,7 +435,7 @@ class AcademyCourse extends React.PureComponent {
 						this.courseListDom = courseListDom;
 					}}
 				>
-					<Link className="academy-sidebar-menu-item" to={'/academy/home'}>
+					<Link className="academy-sidebar-menu-item" to="/academy/home">
 						<span className="academy-sidebar-menu-item-home-icon" />
 						Academy homepage
 					</Link>
@@ -467,8 +460,7 @@ class AcademyCourse extends React.PureComponent {
 										: ''} ${tutorial.slug === this.courseSlug ? 'is-active' : ''}`}
 								/>
 								{tutorial.title}
-							</Link>),
-						)}
+							</Link>))}
 				</div>
 			</div>
 		);
@@ -490,11 +482,11 @@ class AcademyCourse extends React.PureComponent {
 									. Do you want to learn {this.getNextCourse().objective}
 									? Check out our next course: {this.getNextCourse().title}
 									.
-								</p>
+         </p>
 							: <p>
 								{' '}Good Job, you have learned {course.objective} We do not have anything else to
 									teach you yet. Stay tuned for more!
-								</p>}
+         </p>}
 					</div>
 					<div className="academy-course-finish-validation">
 						<Link
@@ -546,8 +538,7 @@ class AcademyCourse extends React.PureComponent {
 												? 'I finished the last part!'
 												: 'I finished! On to the next part'}
 									</Button>}
-							</div>),
-						)}
+							</div>))}
 					</div>
 					{sidebar}
 				</div>
