@@ -251,6 +251,7 @@ export default class GlyphCanvas extends React.PureComponent {
 			componentMenu: 0,
 		};
 		let componentMenuPos = {};
+		let componentHovered = {};
 		const draggedItems = [];
 		let selectedItems = [];
 		let contourSelected;
@@ -420,13 +421,15 @@ export default class GlyphCanvas extends React.PureComponent {
 
 					// If a component geometry is hovered
 					// We set the correct mode to draw it
-					if (components.length > 0) {
+					if ((appStateValue === appState.DEFAULT || appStateValue === appState.COMPONENT_HOVERED) && components.length > 0) {
 						appStateValue = appState.COMPONENT_HOVERED;
+						componentHovered = components[0];
 					}
 					else if (componentMenu.length > 0) {
 						appStateValue = appState.COMPONENT_MENU_HOVERED;
 					}
 					else {
+						componentHovered = {};
 						appStateValue = appState.DEFAULT;
 					}
 				}
@@ -594,7 +597,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					const components = hotItems.filter(item => item.type === toileType.COMPONENT_CHOICE
 							|| item.type === toileType.COMPONENT_NONE_CHOICE);
 
-					this.toile.drawComponents(glyph.components, hotItems);
+					this.toile.drawComponents(glyph.components, [...hotItems, componentHovered]);
 
 					if (appStateValue === appState.COMPONENT_HOVERED) {
 						const [component] = components;

@@ -94,7 +94,7 @@ const menuTextSize = 30;
 const propsTextSize = 21;
 const componentMenuTextSize = 12;
 const componentMenuWidth = 70;
-const componentMenuInfluenceRadius = 150;
+const componentMenuInfluenceRadius = 100;
 const componentMenuNoneRadius = 20;
 const componentLeashDistance = 50;
 
