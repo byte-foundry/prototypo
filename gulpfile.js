@@ -88,7 +88,7 @@ gulp.task('build', ['clean', 'images', 'cp-genese', 'cp-static', 'prod:dll'], (c
 			// output options
 			}));
 			callback();
-		},
+		}
 	);
 });
 
@@ -215,7 +215,7 @@ gulp.task('build:lib', (callback) => {
 			// output options
 			}));
 			callback();
-		},
+		}
 	);
 });
 
