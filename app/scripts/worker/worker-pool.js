@@ -1,4 +1,4 @@
-/* global require*/
+/* global require */
 import _reduce from 'lodash/reduce';
 import LocalClient from '../stores/local-client.stores.jsx';
 
@@ -50,11 +50,10 @@ function getRandomUuid() {
 }
 
 export default class WorkerPool {
-
 	constructor() {
 		 // Workers for every thread available including a fast lane worker for the canvas
 		const numberOfWorker = navigator.hardwareConcurrency - 1;
-		const ProtoWorker = require('worker-loader!./worker.js');
+		const ProtoWorker = require('worker-loader?inline!./worker.js');
 		let eachJobList = [];
 
 		this.workerArray = [];

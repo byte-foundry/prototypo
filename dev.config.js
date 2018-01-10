@@ -10,7 +10,7 @@ module.exports = merge(base, {
 	cache: true,
 	devtool: 'source-map',
 	entry: {
-		'index': ['whatwg-fetch'],
+		index: ['whatwg-fetch'],
 	},
 	module: {
 		rules: [

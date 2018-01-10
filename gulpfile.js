@@ -203,6 +203,22 @@ gulp.task('debug', ['clean', 'images', 'cp-genese', 'cp-static', 'webpack:dll'],
 	});
 });
 
+gulp.task('build:lib', (callback) => {
+	const webpackConfig = require('./library.config.js');
+	const libConfig = Object.create(webpackConfig);
+
+	webpack(
+		libConfig,
+		(err, stats) => {
+			if (err) throw new gutil.PluginError('webpack', err);
+			gutil.log('[webpack]', stats.toString({
+			// output options
+			}));
+			callback();
+		},
+	);
+});
+
 
 gulp.task('test', callback => gulp.src('')
 	.pipe(nightwatch({

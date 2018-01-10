@@ -71,7 +71,6 @@ const signUpAndLoginMutation = gql`
 `;
 
 export default class HoodieApi {
-
 	static async setup() {
 		HoodieApi.instance = {};
 
@@ -139,7 +138,9 @@ export default class HoodieApi {
 		apolloClient.resetStore();
 	}
 
-	static async signUp(email, password, firstName, {lastName, occupation, phone, skype}) {
+	static async signUp(email, password, firstName, {
+		lastName, occupation, phone, skype,
+	}) {
 		const response = await apolloClient.mutate({
 			mutation: signUpAndLoginMutation,
 			variables: {

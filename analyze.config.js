@@ -10,7 +10,7 @@ module.exports = merge(base, {
 	cache: true,
 	devtool: 'source-map',
 	entry: {
-		'index': ['whatwg-fetch'],
+		index: ['whatwg-fetch'],
 	},
 	module: {
 		rules: [
@@ -44,8 +44,8 @@ module.exports = merge(base, {
 			},
 		}),
 		new BundleAnalyzerPlugin({
-			analyzerHost:'0.0.0.0',
-			analyzerPort:8000,
+			analyzerHost: '0.0.0.0',
+			analyzerPort: 8000,
 			defaultSizes: 'gzip',
 			generateStatsFile: false,
 		}),

@@ -140,7 +140,8 @@
     "test": "jest --colors",
     "lint": "eslint app/scripts/**/*.{js,jsx}",
     "analyze": "webpack --config analyze.config.js",
-    "analyze:prod": "webpack --config analyze-prod.config.js"
+    "analyze:prod": "webpack --config analyze-prod.config.js",
+	"build:lib": "gulp build:lib"
   },
   "repository": {
     "type": "git",

@@ -792,8 +792,16 @@ export default class Toile {
 					const listOfBezier = _flatten(deepListOfBeziers);
 
 					if (hot) {
+						const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+						const [mouseTransformed] = transformCoords(
+							[this.mouse],
+							inverseMatrix,
+							this.height / this.viewMatrix[0],
+						);
+
 						this.context.strokeStyle = blue;
 						this.context.fillStyle = blue;
+						this.drawText(component.id, add2D(mouseTransformed, {x: 15, y: 15}, 20, 'black'));
 					}
 					else {
 						this.context.strokeStyle = green;

@@ -34,7 +34,6 @@ function GlyphError(props) {
 }
 
 export default class FontTester extends React.Component {
-
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -118,7 +117,10 @@ export default class FontTester extends React.Component {
 					<button onClick={this.computeSpectral}>spectral</button>
 					<button onClick={this.computeAntique}>antique</button>
 				</div>
-				<div style={{display: 'flex', flexFlow: 'row wrap', width: '100%', height: '100%', overflow: 'auto'}}>
+				<div style={{
+					display: 'flex', flexFlow: 'row wrap', width: '100%', height: '100%', overflow: 'auto',
+				}}
+				>
 					{glyphsCanvas}
 				</div>
 			</div>
