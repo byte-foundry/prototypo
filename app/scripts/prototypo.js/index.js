@@ -6,11 +6,11 @@ import FontMediator from './mediator/FontMediator';
 import isProduction from '../helpers/is-production.helpers';
 
 export const templateNames = {
-	ELZEVIR: 'elzevir.ptf',
-	GROTESK: 'venus.ptf',
-	FELL: 'john-fell.ptf',
-	SPECTRAL: 'gfnt.ptf',
-	ANTIQUE: 'antique.ptf',
+	ELZEVIR: 'elzevir.ptf?new',
+	GROTESK: 'venus.ptf?new',
+	FELL: 'john-fell.ptf?new',
+	SPECTRAL: 'gfnt.ptf?new',
+	ANTIQUE: 'antique.ptf?new',
 };
 
 const awsUrl = isProduction()
@@ -88,7 +88,8 @@ export class PtypoFont {
 
 		this.glyphsSet
 			= _uniq(Object.keys(json.glyphs)
-				.map(key => String.fromCharCode(json.glyphs[key].unicode)));
+				.map(key => json.glyphs[key].unicode)
+				.filter(unicode => unicode !== undefined));
 	}
 
 	changeParams(paramObj) {
