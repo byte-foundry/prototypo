@@ -177,7 +177,7 @@ export function fontToSfntTable(font) {
 		yMin,
 		xMax,
 		yMax,
-		lowestRectPPEM: 3,
+		lowestRecPPEM: 3,
 		createdTimestamp,
 	});
 
