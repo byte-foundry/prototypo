@@ -105,9 +105,7 @@ export function round2D(a: Point): Point {
 }
 
 export function distance2D(a: Point, b: Point): Point {
-	return Math.sqrt(
-		((a.x - b.x) ** 2) + ((a.y - b.y) ** 2),
-	);
+	return Math.sqrt(((a.x - b.x) ** 2) + ((a.y - b.y) ** 2));
 }
 
 export function normalize2D(a: Point): Point {

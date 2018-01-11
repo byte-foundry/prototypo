@@ -66,19 +66,15 @@ export default class Glyph {
 		this.transformOrigin = constantOrFormula(transformOrigin);
 		this.parameters = _mapValues(parameter, param => constantOrFormula(param));
 		this.contours = outline.contour.map((contour, i) => createContour(contour, i));
-		this.anchors = (anchor || []).map(
-			(item, i) => _mapValues(
-				item,
-				(props, anchorName) => constantOrFormula(props, `anchors.${i}.${anchorName}`),
-			),
-		);
+		this.anchors = (anchor || []).map((item, i) => _mapValues(
+			item,
+			(props, anchorName) => constantOrFormula(props, `anchors.${i}.${anchorName}`),
+		));
 
 		this.analyzeDependency();
 		this.operationOrder = this.solveOperationOrder();
 
-		this.components = outline.component.map(
-			(component, i) => new Component(component, `component.${i}`, this),
-		);
+		this.components = outline.component.map((component, i) => new Component(component, `component.${i}`, this));
 
 		for (let i = 0; i < this.operationOrder.length; i++) {
 			const op = this.operationOrder[i];
@@ -340,11 +336,13 @@ export default class Glyph {
 
 	handleOp(op, opDone, params, localParams, parentAnchors) {
 		const obj = this.getFromXPath(op);
-		let result = obj.getResult(localParams,
+		let result = obj.getResult(
+			localParams,
 			opDone.contours,
 			opDone.anchors,
 			parentAnchors,
-			utils);
+			utils,
+		);
 		const option = op.substr(op.length - 2);
 
 		if (option === '.x' || option === '.y') {
@@ -440,6 +438,7 @@ export default class Glyph {
 			const pickedChanges = _pickBy(localParams.manualChanges[this.name.value].cursors, (value, key) => key.match(new RegExp(`components\.${idx}`))); // eslint-disable-line no-useless-escape
 			const componentManualChanges = _mapKeys(pickedChanges, (value, key) => key.replace(/components\.\d\./g, ''));
 			let componentName = component.base[0].value;
+
 			if (component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]) {
 				componentName = localParams.glyphComponentChoice[this.name.value][component.id.value];
 			}

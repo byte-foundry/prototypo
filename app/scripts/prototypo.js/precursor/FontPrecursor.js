@@ -67,9 +67,7 @@ export default class FontPrecursor {
 
 			return undefined;
 		});
-		const glyphNames = subset.map(
-			char => localParams.altList[char] || this.unicodeToGlyphName[char],
-		);
+		const glyphNames = subset.map(char => localParams.altList[char] || this.unicodeToGlyphName[char]);
 		const glyphs = _reduce(glyphNames, (result, name) => {
 			if (this.glyphs[name]) {
 				result.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));

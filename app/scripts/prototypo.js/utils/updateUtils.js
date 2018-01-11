@@ -133,7 +133,8 @@ export function onLine(params) {
 		: ((params.y - origin.y) / vector[1] * vector[0]) + origin.x;
 }
 
-export function pointOnCurve(pointHandleOut,
+export function pointOnCurve(
+	pointHandleOut,
 	handleOut,
 	pointHandleIn,
 	handleIn,
@@ -163,14 +164,18 @@ export function pointOnCurve(pointHandleOut,
 	}
 
 	for (let i = 0; i < linePrecision; i++) {
-		const point = getPointOnCurve(points,
-			(i / (linePrecision - 1)));
+		const point = getPointOnCurve(
+			points,
+			(i / (linePrecision - 1)),
+		);
 
 		if (previousPoint) {
-			length += distance(previousPoint.x,
+			length += distance(
+				previousPoint.x,
 				previousPoint.y,
 				point.x,
-				point.y);
+				point.y,
+			);
 		}
 
 		previousPoint = point;
@@ -218,12 +223,10 @@ export function split(points, t = 1, base) {
 		const newPoints = [];
 
 		for (let i = 1; i < current.length; i++) {
-			newPoints.push(
-				add2D(
-					mulScalar2D(1 - t, current[i - 1]),
-					mulScalar2D(t, current[i]),
-				),
-			);
+			newPoints.push(add2D(
+				mulScalar2D(1 - t, current[i - 1]),
+				mulScalar2D(t, current[i]),
+			));
 		}
 
 		result = result.concat(newPoints);
@@ -306,8 +309,7 @@ export function align(points, lineStart, lineEnd) {
 		({
 			x: ((v.x - tx) * Math.cos(a)) - ((v.y - ty) * Math.sin(a)),
 			y: ((v.x - tx) * Math.sin(a)) + ((v.y - ty) * Math.cos(a)),
-		}),
-	);
+		}));
 }
 
 function crt(v) {
@@ -387,7 +389,8 @@ export function getIntersectionTValue(
 }
 
 // see https://github.com/Pomax/bezierjs/blob/gh-pages/lib/utils.js line 313
-export function lineCurveIntersection(pointHandleOut,
+export function lineCurveIntersection(
+	pointHandleOut,
 	handleOut,
 	pointHandleIn,
 	handleIn,

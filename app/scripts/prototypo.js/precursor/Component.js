@@ -16,12 +16,10 @@ export default class Component {
 		this.parameters = _mapValues(source.parameters, param => constantOrFormula(param));
 		this.id = constantOrFormula(source.id);
 		this.componentClass = constantOrFormula(source.class);
-		this.anchors = (source.anchor || []).map(
-			(item, i) => _mapValues(
-				item,
-				(props, name) => constantOrFormula(props, `{cursor}.anchors.${i}.${name}`),
-			),
-		);
+		this.anchors = (source.anchor || []).map((item, i) => _mapValues(
+			item,
+			(props, name) => constantOrFormula(props, `{cursor}.anchors.${i}.${name}`),
+		));
 
 		this.transforms = constantOrFormula(source.transforms);
 		this.transformOrigin = constantOrFormula(source.transformOrigin);
@@ -30,7 +28,8 @@ export default class Component {
 	constructComponent(params, contours, parentAnchors, utils, glyphs, parentTransformTuple) {
 		const localParams = {
 			...params,
-			..._mapValues(this.parameters,
+			..._mapValues(
+				this.parameters,
 				param => param.getResult(params),
 			),
 		};
@@ -69,19 +68,17 @@ export default class Component {
 				return prop.getResult(localParams, contours, parentAnchors, utils, glyphs);
 			}
 			else if (name === 'base') {
-				return prop.map(
-					base => ({
-						id: base.getResult(localParams, contours, parentAnchors, utils, glyphs),
-						label: glyphs[base.getResult(
-							localParams,
-							contours,
-							parentAnchors,
-							utils,
-							glyphs,
-						)].componentLabel,
-						componentClass: this.componentClass ? this.componentClass.value : undefined,
-					}),
-				);
+				return prop.map(base => ({
+					id: base.getResult(localParams, contours, parentAnchors, utils, glyphs),
+					label: glyphs[base.getResult(
+						localParams,
+						contours,
+						parentAnchors,
+						utils,
+						glyphs,
+					)].componentLabel,
+					componentClass: this.componentClass ? this.componentClass.value : undefined,
+				}));
 			}
 
 			return undefined;

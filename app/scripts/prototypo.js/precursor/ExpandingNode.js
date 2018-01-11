@@ -14,14 +14,12 @@ export default class ExpandingNode extends Node {
 		if (source.expand) {
 			this.expanding = true;
 			this.expand = _mapValues(source.expand, (item, key) =>
-				constantOrFormula(item, `${this.cursor}expand.${key}`),
-			);
+				constantOrFormula(item, `${this.cursor}expand.${key}`));
 		}
 		else if (source.expandedTo) {
 			this.expanding = false;
 			this.expandedTo = source.expandedTo.map((point, k) =>
-				new Node(point, undefined, undefined, `${this.cursor}expandedTo.${k}.`),
-			);
+				new Node(point, undefined, undefined, `${this.cursor}expandedTo.${k}.`));
 		}
 	}
 

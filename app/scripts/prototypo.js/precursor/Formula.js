@@ -10,14 +10,12 @@ export default class Formula {
 		this.cursor = cursor;
 		this.dependencies = formula._dependencies; // eslint-disable-line no-underscore-dangle
 		/* eslint-disable no-new-func */
-		this.operation = new Function(
-			...['contours', 'anchors', 'parentAnchors', 'Utils']
+		this.operation = new Function(...['contours', 'anchors', 'parentAnchors', 'Utils']
 			.concat(formula._parameters || []) // eslint-disable-line no-underscore-dangle
-			.concat(
-				(typeof formula._operation === 'string' // eslint-disable-line no-underscore-dangle
+			.concat((typeof formula._operation === 'string' // eslint-disable-line no-underscore-dangle
 					&& formula._operation.indexOf('return ') === -1 // eslint-disable-line no-underscore-dangle
-					? 'return ' : ''
-				)
+				? 'return ' : ''
+			)
 				// The operation might be wrapped in a function (e.g. multi-
 				// line code for debugging purpose). In this case, return
 				// must be explicit
@@ -25,12 +23,12 @@ export default class Formula {
 					// [\s\S] need to be used instead of . because
 					// javascript doesn't have a dotall flag (s)
 					.replace(/^function\s*\(\)\s*\{([\s\S]*?)\}$/, '$1')
-				.trim(),
+					.trim(),
 				/* +
 				// add sourceURL pragma to help debugging
 				// TODO: restore sourceURL pragma if it proves necessary
-				'\n\n//# sourceURL=' + path*/
-		));
+				'\n\n//# sourceURL=' + path */
+			));
 		/* eslint-enable no-new-func */
 		this.parameters = formula._parameters; // eslint-disable-line no-underscore-dangle
 		this.analyzing = false;
@@ -55,8 +53,7 @@ ${graph.join(' => ')}
 			}
 			catch (e) {
 				throw new Error(`There was an error while checking glyph ${glyph.name.value} dependencies for cursor: ${dependency}.
-					${e.message}`,
-				);
+					${e.message}`);
 			}
 			graph.pop();
 		});
@@ -67,7 +64,7 @@ ${graph.join(' => ')}
 		const missingParam = _difference(this.parameters, _keys(parameters));
 
 		if (missingParam.length > 0) {
-			console.error(`parameters are missing: ${missingParam}`);  // eslint-disable-line no-console
+			console.error(`parameters are missing: ${missingParam}`); // eslint-disable-line no-console
 		}
 
 		const result = this.operation(
