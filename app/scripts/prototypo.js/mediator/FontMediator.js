@@ -9,7 +9,7 @@ import WorkerPool from '../../worker/worker-pool';
 
 const MERGE_URL = process.env.MERGE ? 'http://localhost:3000' : 'https://merge.prototypo.io';
 
-let oldFont;
+const oldFont = {};
 let localClient;
 let mergeTimeoutRef;
 let instance;
@@ -35,12 +35,19 @@ async function mergeFont(url, action, params, arrayBuffer, mime = 'otf') {
 	return response.arrayBuffer();
 }
 
-function triggerDownload() {
-}
-
 export default class FontMediator {
-	static async init(typedatas = []) {
-		instance = await new FontMediator(typedatas);
+	static async init(typedatas) {
+		instance = new FontMediator(typedatas);
+
+		if (typedatas) {
+			const componentIdAndGlyphPerClass = await instance.addTemplate(typedatas);
+
+			if (!process.env.LIBRARY) {
+				localClient.dispatchAction('/store-value-font', {
+					componentIdAndGlyphPerClass,
+				});
+			}
+		}
 	}
 
 	static instance() {
@@ -51,16 +58,8 @@ export default class FontMediator {
 		return instance;
 	}
 
-	constructor(typedatas) {
+	constructor() {
 		this.workerPool = new WorkerPool();
-
-		this.addTemplate(typedatas).then((componentIdAndGlyphPerClass) => {
-			if (!process.env.LIBRARY) {
-				localClient.dispatchAction('/store-value-font', {
-					componentIdAndGlyphPerClass,
-				});
-			}
-		});
 	}
 
 	addTemplate(typedatas) {
@@ -159,12 +158,17 @@ export default class FontMediator {
 			buffer,
 		);
 
-		if (oldFont) {
-			document.fonts.delete(oldFont);
+		if (fontFace.status === 'error') {
+			console.warn(`error in fontface ${fontName}`); // eslint-disable-line no-console
+			return;
+		}
+
+		if (oldFont[fontName]) {
+			document.fonts.delete(oldFont[fontName]);
 		}
 
 		document.fonts.add(fontFace);
-		oldFont = fontFace;
+		oldFont[fontName] = fontFace;
 	}
 
 	getFontFile(fontName, template, params, subset) {
@@ -196,7 +200,7 @@ export default class FontMediator {
 					});
 				}));
 
-			this.workerPool.doJobs(jobs);
+			this.workerPool.doJobs(jobs, fontName);
 
 			Promise.all(fontPromise).then((fonts) => {
 				clearTimeout(mergeTimeoutRef);
@@ -275,11 +279,11 @@ export default class FontMediator {
 		});
 	}
 
-	mergeFontWithTimeout(arrayBuffer, fontName) {
+	mergeFontWithTimeout(arrayBuffer) {
 		clearTimeout(mergeTimeoutRef);
 
-		return new Promise((resolve, reject) => {
-			const timeout = mergeTimeoutRef = setTimeout(async () => {
+		return new Promise((resolve) => {
+			 const timeout = setTimeout(async () => {
 				const buffer = await mergeFont(
 					MERGE_URL,
 					'mergefont',
@@ -293,11 +297,13 @@ export default class FontMediator {
 					resolve(buffer);
 				}
 			}, 300);
+
+			mergeTimeoutRef = timeout;
 		});
 	}
 
-	getArrayBuffer(fontResult, trigger = false) {
-		return new Promise((resolve, reject) => {
+	getArrayBuffer(fontResult) {
+		return new Promise((resolve) => {
 			this.workerPool.doFastJob({
 				action: {
 					type: 'makeOtf',
@@ -306,10 +312,6 @@ export default class FontMediator {
 					},
 				},
 				callback: ({arrayBuffer}) => {
-					if (trigger) {
-						 triggerDownload(arrayBuffer.buffer, 'hello');
-					}
-
 					resolve(arrayBuffer.buffer);
 
 					// eslint-disable-next-line no-multi-assign
@@ -320,7 +322,7 @@ export default class FontMediator {
 
 	getFontObject(fontName, template, params, subset) {
 		if (!this.workerPool) {
-			return;
+			return false;
 		}
 
 		const jobs = [];
@@ -346,7 +348,7 @@ export default class FontMediator {
 				});
 			}));
 
-		this.workerPool.doJobs(jobs);
+		this.workerPool.doJobs(jobs, fontName);
 
 		return Promise.all(fontPromise).then((fonts) => {
 			let fontResult;
@@ -399,9 +401,11 @@ export default class FontMediator {
 		_forOwn(this.glyphList[template], (glyph) => {
 			if (glyph.unicode) {
 				try {
-					glyphArray.push(this.fontMakers[template].constructFont({
+					const constructedGlyph = this.fontMakers[template].constructFont({
 						...params,
-					}, [glyph.unicode]).glyphs[0]);
+					}, [glyph.unicode]).glyphs[0];
+
+					glyphArray.push(constructedGlyph);
 				}
 				catch (error) {
 					glyphArray.push({error, unicode: glyph.unicode});

@@ -22,49 +22,59 @@ const validTemplates = Object.values(templateNames);
 export default class Ptypo {
 	constructor(token) {
 		this.token = token;
-		this.precusor = {};
+		this.precursor = {};
 	}
 
-	async createFont(fontName, fontTemplate) {
-		if (!this.mediator) {
-			await FontMediator.init();
-			this.mediator = FontMediator.instance();
-		}
+	async init(templates = Object.values(templateNames)) {
+		const typedataPromises = templates.map(fontTemplate => new Promise(async (resolve) => {
+			if (validTemplates.indexOf(fontTemplate) === -1) {
+				throw new Error('template not found, please use a correct template Name');
+			}
 
-		if (validTemplates.indexOf(fontTemplate) === -1) {
-			throw new Error('template not found, please use a correct template Name');
-		}
-		const data = await fetch(awsUrl + fontTemplate, {
-			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${this.token}`,
-			},
-		});
+			const data = await fetch(awsUrl + fontTemplate, {
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${this.token}`,
+				},
+			});
 
-		if (!data.ok && data.statusCode === 403) {
-			throw new Error("The domain from where you're using the Prototypo library is not authorized. You can manage authorized domains in the developers page on your account. See https://app.prototypo.io/#/account/prototypo-library");
-		}
+			if (!data.ok && data.statusCode === 403) {
+				throw new Error("The domain from where you're using the Prototypo library is not authorized. You can manage authorized domains in the developers page on your account. See https://app.prototypo.io/#/account/prototypo-library");
+			}
 
-		const json = await data.json();
+			const json = await data.json();
+
+			this.precursor[fontTemplate] = json;
+
+			resolve({
+				name: fontTemplate,
+				json,
+			});
+		}));
+
+		const typedatas = await Promise.all(typedataPromises);
 
 		if (!this.token /* || TODO: check if AWS returned a free font */) {
 			console.warn("You're using the free version of the Prototypo library. Get a pro account now and access the entire glyphset. https://app.prototypo.io/#/account/subscribe"); // eslint-disable-line no-console
 		}
 
-		if (this.precusor[fontTemplate]) {
-			return Promise.resolve(new PtypoFont(this.mediator, fontTemplate, json, fontName));
+		await FontMediator.init(typedatas);
+
+		this.mediator = FontMediator.instance();
+	}
+
+	async createFont(fontName, fontTemplate) {
+		if (!this.mediator) {
+			await this.init();
+			this.mediator = FontMediator.instance();
+			console.warn('you should initialize your font factory before creating a font');
 		}
 
-		return new Promise(async (resolve) => {
-			await this.mediator.addTemplate([{
-				name: fontTemplate,
-				json,
-			}]);
+		if (validTemplates.indexOf(fontTemplate) === -1) {
+			throw new Error('template not found, please use a correct template Name');
+		}
 
-			this.precusor[fontTemplate] = true;
-
-			resolve(new PtypoFont(this.mediator, fontTemplate, json, fontName));
-		});
+		return Promise.resolve(new PtypoFont(this.mediator, fontTemplate, this.precursor[fontTemplate], fontName));
 	}
 }
 
