@@ -6,7 +6,7 @@ module.exports = {
 		library: ['./app/scripts/prototypo.js/index.js'],
 	},
 	output: {
-		path: path.join(__dirname, 'dist'),
+		path: path.join(__dirname, 'app/scripts/prototypo.js/dist'),
 		publicPath: '',
 		chunkFilename: '[name].bundle.js',
 		filename: '[name].js',

@@ -1,6 +1,6 @@
 /* global require */
 import _reduce from 'lodash/reduce';
-import LocalClient from '../stores/local-client.stores.jsx';
+import LocalClient from '../stores/local-client.stores';
 
 const RANDOM_LENGTH = 10000;
 let randomValues = new Uint32Array(RANDOM_LENGTH);
@@ -53,11 +53,13 @@ export default class WorkerPool {
 	constructor() {
 		 // Workers for every thread available including a fast lane worker for the canvas
 		const numberOfWorker = navigator.hardwareConcurrency - 1;
-		const ProtoWorker = require('worker-loader?inline!./worker.js');
+		const ProtoWorker = require('worker-loader?inline!./worker.js'); // eslint-disable-line global-require, no-webpack-loader-syntax
 		let eachJobList = [];
 
 		this.workerArray = [];
 		this.jobCallback = {};
+		this.jobQueue = {};
+		this.fastJobQueue = [];
 
 		/* #if dev */
 		localClient.dispatchAction('/store-value', {
@@ -87,9 +89,8 @@ export default class WorkerPool {
 					/* #end */
 
 					if (this.fastJobQueue) {
-						const jobToDo = this.fastJobQueue;
+						const jobToDo = this.fastJobQueue.shift();
 
-						this.fastJobQueue = undefined;
 						this.doFastJob(jobToDo);
 					}
 				});
@@ -126,10 +127,15 @@ export default class WorkerPool {
 					/* #end */
 
 					if (!this.areWorkerBusy() && this.jobQueue) {
-						const jobToDo = this.jobQueue;
+						const pipelineNames = Object.keys(this.jobQueue);
 
-						this.jobQueue = undefined;
-						this.doJobs(jobToDo);
+						for (let j = 0; j < pipelineNames.length; j++) {
+							const jobToDo = this.jobQueue[pipelineNames[j]];
+
+							delete this.jobQueue[pipelineNames[j]];
+							this.doJobs(jobToDo);
+							break;
+						}
 					}
 				});
 			}
@@ -145,7 +151,7 @@ export default class WorkerPool {
 		const uuid = getRandomUuid();
 
 		if (this.workerFastLane.working) {
-			this.fastJobQueue = job;
+			this.fastJobQueue.push(job);
 		}
 		else if (job) {
 			const jobId = `${time}-${uuid}`;
@@ -166,13 +172,13 @@ export default class WorkerPool {
 	//	},
 	//	callback: Function,
 	// }
-	doJobs(jobs) {
+	doJobs(jobs, pipeline) {
 		const jobPerWorker = Math.ceil(jobs.length / this.workerArray.length);
 		const time = window.performance.now();
 		const uuid = getRandomUuid();
 
 		if (this.areWorkerBusy()) {
-			this.jobQueue = jobs;
+			this.jobQueue[pipeline] = jobs;
 		}
 		else {
 			for (let i = 0; i < jobs.length; i++) {

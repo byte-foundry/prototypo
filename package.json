@@ -1,6 +1,7 @@
 {
   "name": "prototypo",
   "version": "1.0.0",
+  "main": "dist/library.js",
   "dependencies": {
     "antique.ptf": "byte-foundry/antique.ptf#feat/new-rendering",
     "babel-eslint": "^8.0.3",
