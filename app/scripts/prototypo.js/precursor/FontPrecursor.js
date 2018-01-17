@@ -1,22 +1,27 @@
 import _mapValues from 'lodash/mapValues';
 import _forOwn from 'lodash/forOwn';
-import _reduce from 'lodash/reduce';
 
 import {constantOrFormula} from '../utils/generic';
 
 import Glyph from './Glyph';
 
+const keyToTransform = [
+	'familyName',
+	'version',
+	'description',
+	'ascender',
+	'descender',
+	'cap-height',
+	'descendent-height',
+];
+
 export default class FontPrecursor {
 	constructor(fontSrc) {
 		const {fontinfo, lib} = fontSrc;
 
-		this.familyName = constantOrFormula(fontinfo.familyName);
-		this.version = constantOrFormula(fontinfo.version);
-		this.description = constantOrFormula(fontinfo.description);
-		this.ascender = constantOrFormula(fontinfo.ascender);
-		this.descender = constantOrFormula(fontinfo.descender);
-		this['cap-height'] = constantOrFormula(fontinfo['cap-height']);
-		this['descendent-height'] = constantOrFormula(fontinfo['descendent-height']);
+		keyToTransform.forEach((key) => {
+			this[key] = constantOrFormula(fontinfo[key]);
+		});
 		this.parameters = _mapValues(lib.parameters, param => constantOrFormula(param));
 		this.paramBase = {
 			manualChanges: {},
@@ -60,20 +65,32 @@ export default class FontPrecursor {
 				...params.altList,
 			},
 		};
-		const transformedThis = _mapValues(this, (prop, name) => {
-			if (name !== 'parameters' && name !== 'glyphs' && name !== 'unicodeToGlyphName' && name !== 'paramBase') {
-				return prop.getResult(localParams);
-			}
+		const transformedThis = {};
+		const glyphNames = [];
+		const glyphs = [];
 
-			return undefined;
-		});
-		const glyphNames = subset.map(char => localParams.altList[char] || this.unicodeToGlyphName[char]);
-		const glyphs = _reduce(glyphNames, (result, name) => {
+		for (let i = 0; i < keyToTransform.length; i++) {
+			const key = keyToTransform[i];
+			const prop = this[key];
+
+			transformedThis[key] = prop.getResult(localParams);
+		}
+
+		for (let i = 0; i < subset.length; i++) {
+			const char = subset[i];
+			const altOrDefault = localParams.altList[char] || this.unicodeToGlyphName[char];
+
+			glyphNames.push(altOrDefault);
+		}
+
+
+		for (let i = 0; i < glyphNames.length; i++) {
+			const name = glyphNames[i];
+
 			if (this.glyphs[name]) {
-				result.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));
+				glyphs.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));
 			}
-			return result;
-		}, []);
+		}
 
 		return {
 			...transformedThis,

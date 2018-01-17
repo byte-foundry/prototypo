@@ -6,10 +6,13 @@ import _difference from 'lodash/difference';
 
 import {subtract2D, mulScalar2D, dot2D, add2D, round2D, distance2D} from '../utils/linear';
 import {rayRayIntersection, lineAngle} from '../utils/updateUtils';
-import {readAngle, constantOrFormula} from '../utils/generic';
+import {constantOrFormula} from '../utils/generic';
 
 import Node from './Node';
 import ExpandingNode from './ExpandingNode';
+
+const SMOOTH = 'smooth';
+const LINE = 'line';
 
 function computeHandle(
 	dest,
@@ -45,7 +48,7 @@ function computeHandle(
 	const typeIn = j ? node.typeOut : node.typeIn;
 	const typeOut = j ? node.typeIn : node.typeOut;
 
-	if (typeIn === 'smooth' && typeOut === 'line') {
+	if (typeIn === SMOOTH && typeOut === LINE) {
 		if (nextNode.expandedTo) {
 			dirToPrev = lineAngle(current, nextNode.expandedTo[j]);
 		}
@@ -53,7 +56,7 @@ function computeHandle(
 			dirToPrev = lineAngle(current, nextNode);
 		}
 	}
-	else if (typeOut === 'smooth' && typeIn === 'line') {
+	else if (typeOut === SMOOTH && typeIn === LINE) {
 		if (prevNode.expandedTo) {
 			dirToNext = lineAngle(current, prevNode.expandedTo[j]);
 		}
@@ -157,11 +160,11 @@ function computeHandle(
 		node.expandedTo[j].baseLengthOut = distance2D(outVector, {x: 0, y: 0});
 		/* eslint-enable no-param-reassign */
 		inVector = mulScalar2D(
-			params[`${node.nodeAddress}expandedTo.${j}.tensionIn`] || ((typeIn === 'line') ? 0 : 1),
+			params[`${node.nodeAddress}expandedTo.${j}.tensionIn`] || ((typeIn === LINE) ? 0 : 1),
 			tensionIn === 0 ? untensionedInVector : inVector,
 		);
 		outVector = mulScalar2D(
-			params[`${node.nodeAddress}expandedTo.${j}.tensionOut`] || ((typeOut === 'line') ? 0 : 1),
+			params[`${node.nodeAddress}expandedTo.${j}.tensionOut`] || ((typeOut === LINE) ? 0 : 1),
 			tensionOut === 0 ? untensionOutVector : outVector,
 		);
 	}
@@ -171,11 +174,11 @@ function computeHandle(
 		node.baseLengthOut = distance2D(outVector, {x: 0, y: 0});
 		/* eslint-enable no-param-reassign */
 		inVector = mulScalar2D(
-			params[`${node.nodeAddress}tensionIn`] || ((typeIn === 'line') ? 0 : 1),
+			params[`${node.nodeAddress}tensionIn`] || ((typeIn === LINE) ? 0 : 1),
 			inVector,
 		);
 		outVector = mulScalar2D(
-			params[`${node.nodeAddress}tensionOut`] || ((typeOut === 'line') ? 0 : 1),
+			params[`${node.nodeAddress}tensionOut`] || ((typeOut === LINE) ? 0 : 1),
 			outVector,
 		);
 	}
@@ -249,18 +252,18 @@ class SolvablePath {
 			nodes[i].typeIn = node.typeIn || node.type;
 			nodes[i].typeOut = node.typeOut || node.type;
 
-			if (node.typeOut === 'smooth' && node.dirOut === null) {
+			if (node.typeOut === SMOOTH && node.dirOut === null) {
 				nodes[i].dirOut = nodes[i].dirIn;
 			}
-			else if (node.typeIn === 'smooth' && node.dirIn === null) {
+			else if (node.typeIn === SMOOTH && node.dirIn === null) {
 				nodes[i].dirIn = nodes[i].dirOut;
 			}
 
 			if (node.expand) {
-				const dirIn = readAngle(node.dirIn);
-				const dirOut = readAngle(node.dirOut);
+				const dirIn = node.dirIn;
+				const dirOut = node.dirOut;
 
-				nodes[i].expand.angle = readAngle(node.expand.angle);
+				nodes[i].expand.angle = node.expand.angle;
 				nodes[i].dirIn = dirIn === null || dirIn === undefined
 					? ((nodes[i].expand.angle + (Math.PI / 2)) % (2 * Math.PI))
 					: dirIn;
@@ -269,10 +272,10 @@ class SolvablePath {
 					: dirOut;
 			}
 			else if (node.expandedTo) {
-				const dirIn0 = readAngle(node.expandedTo[0].dirIn);
-				const dirOut0 = readAngle(node.expandedTo[0].dirOut);
-				const dirIn1 = readAngle(node.expandedTo[1].dirIn);
-				const dirOut1 = readAngle(node.expandedTo[1].dirOut);
+				const dirIn0 = node.expandedTo[0].dirIn;
+				const dirOut0 = node.expandedTo[0].dirOut;
+				const dirIn1 = node.expandedTo[1].dirIn;
+				const dirOut1 = node.expandedTo[1].dirOut;
 
 				node.expandedTo[0].dirIn = dirIn0;
 				node.expandedTo[0].dirOut = dirOut0;
@@ -280,8 +283,8 @@ class SolvablePath {
 				node.expandedTo[1].dirOut = dirOut1;
 			}
 			else {
-				nodes[i].dirIn = readAngle(node.dirIn) || 0;
-				nodes[i].dirOut = readAngle(node.dirOut) || 0;
+				nodes[i].dirIn = node.dirIn || 0;
+				nodes[i].dirOut = node.dirOut || 0;
 			}
 
 			nodes[i].tensionIn = node.tensionIn === undefined
@@ -293,10 +296,10 @@ class SolvablePath {
 
 			if (!closed && skeleton) {
 				if (i === 0) {
-					 nodes[i].typeIn = 'line';
+					 nodes[i].typeIn = LINE;
 				}
 				else if (i === nodes.length - 1) {
-					 nodes[i].typeOut = 'line';
+					 nodes[i].typeOut = LINE;
 				}
 			}
 		}
@@ -310,8 +313,8 @@ export class SkeletonPath extends SolvablePath {
 	constructor(source, i) {
 		super(i);
 		this.nodes = source.point.map((point, j) => new ExpandingNode(point, i, j));
-		this.closed = constantOrFormula(false);
-		this.skeleton = constantOrFormula(true);
+		this.closed = constantOrFormula(false, `${this.cursor}closed`);
+		this.skeleton = constantOrFormula(true, `${this.cursor}skeleton`);
 		this.transforms = source.transforms === undefined
 			? constantOrFormula(null, `${this.cursor}transforms`)
 			: constantOrFormula(source.transforms, `${this.cursor}transforms`);
@@ -409,7 +412,7 @@ export class SkeletonPath extends SolvablePath {
 export class ClosedSkeletonPath extends SkeletonPath {
 	constructor(source, i) {
 		super(source, i);
-		this.closed = constantOrFormula(true);
+		this.closed = constantOrFormula(true, `${this.cursor}closed`);
 	}
 
 	static createHandle(dest, params) {
@@ -450,8 +453,8 @@ export class SimplePath extends SolvablePath {
 	constructor(source, i) {
 		super(i);
 		this.nodes = source.point.map((point, j) => new Node(point, i, j));
-		this.closed = constantOrFormula(true);
-		this.skeleton = constantOrFormula(false);
+		this.closed = constantOrFormula(true, `${this.cursor}closed`);
+		this.skeleton = constantOrFormula(false, `${this.cursor}skeleton`);
 		this.exportReversed = constantOrFormula(source.exportReversed);
 		this.transforms = source.transforms === undefined
 			? constantOrFormula(null, `${this.cursor}transforms`)

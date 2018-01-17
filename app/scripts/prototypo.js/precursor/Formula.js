@@ -61,19 +61,27 @@ ${graph.join(' => ')}
 	}
 
 	getResult(parameters, contours, anchors, parentAnchors, utils) {
+		/* #if dev */
 		const missingParam = _difference(this.parameters, _keys(parameters));
 
 		if (missingParam.length > 0) {
 			console.error(`parameters are missing: ${missingParam}`); // eslint-disable-line no-console
 		}
-
-		const result = this.operation(
+		/* #end */
+		const args = [
 			contours,
 			anchors,
 			parentAnchors,
 			utils,
-			...this.parameters.map(name => parameters[name]),
-		);
+		];
+
+		for (let i = 0; i < this.parameters.length; i++) {
+			const name = this.parameters[i];
+
+			args.push(parameters[name]);
+		}
+
+		const result = this.operation.apply(this, args);
 
 		if (typeof result === 'number' && isNaN(result)) {
 			/* eslint-disable no-console */

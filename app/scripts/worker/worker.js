@@ -3,6 +3,8 @@ import {fontToSfntTable} from '../opentype/font';
 
 const fonts = {};
 
+/* eslint-disable no-restricted-globals */
+
 self.onmessage = (e) => {
 	switch (e.data.type) {
 	case 'createFont': {
@@ -19,22 +21,25 @@ self.onmessage = (e) => {
 		self.postMessage({id: e.data.id});
 		break;
 	}
-	case 'constructGlyphs': {
+	case 'constructFont': {
 		const font = fonts[e.data.data.name].constructFont(e.data.data.params, e.data.data.subset);
 
-		self.postMessage({id: e.data.id, font});
-		break;
-	}
-	case 'makeOtf': {
 		const arrayBuffer = fontToSfntTable({
-			...e.data.data.fontResult,
+			...font,
 			fontFamily: {en: e.data.data.fontName || 'Prototypo web font'},
 			fontSubfamily: {en: 'Regular'},
 			postScriptName: {},
 			unitsPerEm: 1024,
 		});
 
-		self.postMessage({id: e.data.id, arrayBuffer});
+		const textEncoder = new TextEncoder('utf-8');
+		const encodedId = textEncoder.encode(e.data.id);
+
+		const resultBuffer = new Uint8Array(1 + encodedId.byteLength + arrayBuffer.byteLength);
+
+		resultBuffer.set([encodedId.byteLength, ...encodedId, ...arrayBuffer], 0);
+
+		self.postMessage(resultBuffer.buffer);
 		break;
 	}
 	default: {
@@ -44,5 +49,7 @@ self.onmessage = (e) => {
 };
 
 self.onerror = () => {
-	self.postMessage();
+	self.postMessage(true);
 };
+
+/* eslint-enable no-restricted-globals */

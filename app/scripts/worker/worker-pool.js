@@ -1,23 +1,16 @@
 /* global require */
 import _reduce from 'lodash/reduce';
+import _find from 'lodash/find';
 import LocalClient from '../stores/local-client.stores';
 
-const RANDOM_LENGTH = 10000;
-let randomValues = new Uint32Array(RANDOM_LENGTH);
-let randomIndex = 0;
-let idleCallbackHandle;
-let ric;
+const RANDOM_ID_POOL_LENGTH = 10000;
+const randomUuid = [];
+let randomUuidIndex = 0;
 
-crypto.getRandomValues(randomValues);
+for (let i = 0; i < RANDOM_ID_POOL_LENGTH; i++) {
+	const uuid = (Math.random() * 10000) + (Math.random() * 100) + Math.random();
 
-if (window.requestIdleCallback) {
-	ric = requestIdleCallback;
-}
-else {
-	ric = (fn) => {
-		fn();
-		return 1;
-	};
+	randomUuid.push(uuid);
 }
 
 let localClient;
@@ -27,32 +20,13 @@ window.addEventListener('fluxServer.setup', () => {
 });
 
 function getRandomUuid() {
-	let uuid;
-
-	if (randomIndex + 1 > RANDOM_LENGTH - 1) {
-		const values = crypto.getRandomValues(new Uint32Array(2));
-
-		uuid = `${values[0]}${values[1]}`;
-		if (!idleCallbackHandle) {
-			idleCallbackHandle = ric(() => {
-				randomValues = new Uint32Array(RANDOM_LENGTH);
-				randomIndex = 0;
-				crypto.getRandomValues(randomValues);
-				idleCallbackHandle = undefined;
-			});
-		}
-	}
-	else {
-		uuid = `${randomValues[randomIndex]}${randomValues[randomIndex + 1]}`;
-	}
-
-	return uuid;
+	return randomUuid[randomUuidIndex++ % randomUuid.length];
 }
 
 export default class WorkerPool {
 	constructor() {
-		 // Workers for every thread available including a fast lane worker for the canvas
-		const numberOfWorker = navigator.hardwareConcurrency - 1;
+		 // Workers for every thread
+		const numberOfWorker = 2;
 		const ProtoWorker = require('worker-loader?inline!./worker.js'); // eslint-disable-line global-require, no-webpack-loader-syntax
 		let eachJobList = [];
 
@@ -70,98 +44,68 @@ export default class WorkerPool {
 		for (let i = 0; i < numberOfWorker; i++) {
 			const worker = new ProtoWorker();
 
-			if (i === numberOfWorker - 1) {
-				this.workerFastLane = {
-					worker,
-					working: false,
-				};
+			this.workerArray.push({
+				worker,
+				working: false,
+			});
 
-				worker.addEventListener('message', (e) => {
-					this.jobCallback[e.data.id](e.data);
-					this.jobCallback[e.data.id] = undefined;
+			worker.addEventListener('message', (e) => {
+				if (e.data instanceof ArrayBuffer) {
+					const data = e.data;
 
-					this.workerFastLane.working = false;
+					const idLengthView = new DataView(data, 0, 1);
+					const idLength = idLengthView.getUint8();
 
-					/* #if dev */
-					localClient.dispatchAction('/store-value', {
-						workerFast: this.workerFastLane.working,
-					});
-					/* #end */
+					const idView = new DataView(data, 1, idLength);
+					const idDecoder = new TextDecoder('utf-8');
+					const id = idDecoder.decode(idView);
 
-					if (this.fastJobQueue) {
-						const jobToDo = this.fastJobQueue.shift();
+					const fontBuffer = data.slice(1 + idLength, data.byteLength);
 
-						this.doFastJob(jobToDo);
-					}
-				});
-			}
-			else {
-				this.workerArray.push({
-					worker,
-					working: false,
-				});
-
-				worker.addEventListener('message', (e) => {
-					if (e.data.id.indexOf('each') === 0) {
-						// TODO(franz): think about timing out
-						if (eachJobList.length < numberOfWorker - 2) {
-							eachJobList.push(1);
-						}
-						else {
-							eachJobList = [];
-							this.jobCallback[e.data.id](e.data);
-							this.jobCallback[e.data.id] = undefined;
-						}
+					this.jobCallback[id](fontBuffer);
+					this.jobCallback[id] = undefined;
+				}
+				else if (e.data.id.indexOf('each') === 0) {
+					// TODO(franz): think about timing out
+					if (eachJobList.length < numberOfWorker - 1) {
+						eachJobList.push(1);
 					}
 					else {
+						eachJobList = [];
 						this.jobCallback[e.data.id](e.data);
 						this.jobCallback[e.data.id] = undefined;
 					}
+				}
 
-					this.workerArray[i].working = false;
+				this.workerArray[i].working = false;
 
-					/* #if dev */
-					localClient.dispatchAction('/store-value', {
-						workers: this.workerArray.map(w => w.working),
-					});
-					/* #end */
-
-					if (!this.areWorkerBusy() && this.jobQueue) {
-						const pipelineNames = Object.keys(this.jobQueue);
-
-						for (let j = 0; j < pipelineNames.length; j++) {
-							const jobToDo = this.jobQueue[pipelineNames[j]];
-
-							delete this.jobQueue[pipelineNames[j]];
-							this.doJobs(jobToDo);
-							break;
-						}
-					}
+				/* #if dev */
+				localClient.dispatchAction('/store-value', {
+					workers: this.workerArray.map(w => w.working),
 				});
-			}
+				/* #end */
+
+				if (!this.areWorkerBusy() && this.jobQueue) {
+					const pipelineNames = Object.keys(this.jobQueue);
+
+					for (let j = 0; j < pipelineNames.length; j++) {
+						const jobToDo = this.jobQueue[pipelineNames[j]];
+
+						delete this.jobQueue[pipelineNames[j]];
+						this.doJob(jobToDo);
+						break;
+					}
+				}
+			});
 		}
+	}
+
+	getFreeWorker() {
+		return _find(this.workerArray, worker => !worker.working);
 	}
 
 	areWorkerBusy() {
-		return _reduce(this.workerArray, (acc, worker) => acc || worker.working, false);
-	}
-
-	doFastJob(job) {
-		const time = window.performance.now();
-		const uuid = getRandomUuid();
-
-		if (this.workerFastLane.working) {
-			this.fastJobQueue.push(job);
-		}
-		else if (job) {
-			const jobId = `${time}-${uuid}`;
-
-			job.action.id = jobId;
-			this.jobCallback[jobId] = job.callback;
-
-			this.workerFastLane.worker.postMessage(job.action);
-			this.workerFastLane.working = true;
-		}
+		return _reduce(this.workerArray, (acc, worker) => acc && worker.working, true);
 	}
 
 	// jobs should be of this form
@@ -172,28 +116,23 @@ export default class WorkerPool {
 	//	},
 	//	callback: Function,
 	// }
-	doJobs(jobs, pipeline) {
-		const jobPerWorker = Math.ceil(jobs.length / this.workerArray.length);
+	doJob(job, pipeline) {
 		const time = window.performance.now();
 		const uuid = getRandomUuid();
 
 		if (this.areWorkerBusy()) {
-			this.jobQueue[pipeline] = jobs;
+			this.jobQueue[pipeline] = job;
 		}
-		else {
-			for (let i = 0; i < jobs.length; i++) {
-				const job = jobs[i];
+		else if (job) {
+			const jobId = `${time}${uuid}`;
 
-				if (job) {
-					const jobId = `${time}-${uuid}-${i}`;
+			job.action.id = jobId;
+			this.jobCallback[jobId] = job.callback;
 
-					job.action.id = jobId;
-					this.jobCallback[jobId] = job.callback;
+			const worker = this.getFreeWorker();
 
-					this.workerArray[Math.floor(i / jobPerWorker)].worker.postMessage(job.action);
-					this.workerArray[Math.floor(i / jobPerWorker)].working = true;
-				}
-			}
+			worker.worker.postMessage(job.action);
+			worker.working = true;
 		}
 	}
 

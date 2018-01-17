@@ -1,4 +1,3 @@
-import _flatten from 'lodash/flatten';
 import _chunk from 'lodash/chunk';
 import _mapValues from 'lodash/mapValues';
 import _reduce from 'lodash/reduce';
@@ -7,48 +6,95 @@ import _flatMap from 'lodash/flatMap';
 import _reverse from 'lodash/reverse';
 import _get from 'lodash/get';
 import _set from 'lodash/set';
-import _pickBy from 'lodash/pickBy';
-import _mapKeys from 'lodash/mapKeys';
+import memoize from 'memoize-immutable';
 
-import {constantOrFormula, createContour, transformGlyph} from '../utils/generic';
+import {constantOrFormula, createContour, transformGlyph, memoizeSplit} from '../utils/generic';
 import * as utils from '../utils/updateUtils';
 
 import Component from './Component';
 import ExpandingNode from './ExpandingNode';
 import {SkeletonPath, SimplePath, ClosedSkeletonPath} from './Path';
 
-function checkAndChangeOrient(beziers, clockwise) {
-	return beziers.map((bezier) => {
-		let count = 0;
-		const flatBezier = _flatten(bezier);
+function getFromGlyphAndXPath(glyph, path) {
+	let result;
 
-		flatBezier.forEach((point, i) => {
-			const next = flatBezier[(i + 1) % flatBezier.length];
+	let pathArray = memoizeSplit(path);
 
-			count += (next.x - point.x) * (next.y + point.y);
+	if (pathArray.length === 1) {
+		result = glyph[pathArray[0]];
+	}
+	else if (pathArray.length > 1) {
+		result = glyph[pathArray[0]];
+		pathArray = pathArray.slice(1, pathArray.length);
+
+		pathArray.forEach((propName) => {
+			if (
+				!((!result[propName] || result[propName] === null)
+					&& result.solveOperationOrder instanceof Function)
+			) {
+				result = result[propName];
+			}
 		});
+	}
 
-		if ((count > 0 && clockwise) || (count < 0 && !clockwise)) {
-			return _chunk(_reverse(flatBezier), 4);
-		}
-		return bezier;
-	});
+
+	if (!(result.solveOperationOrder instanceof Function)) {
+		console.error(`While trying to solve ${this.name.value} operation order, couldn't find ${path}`); // eslint-disable-line no-console, max-len
+	}
+	return result;
 }
 
+const memGetFromXPath = memoize(getFromGlyphAndXPath);
+
+/* eslint-disable */
+function checkAndChangeOrient(beziers, clockwise) {
+	var result = [];
+
+	for (var i = 0; i < beziers.length; i++) {
+		var bezier = beziers[i];
+		var count = 0;
+		var flatBezier = [];
+
+		for (var k = 0; k < bezier.length; k++) {
+			Array.prototype.push.apply(flatBezier, bezier[k]);
+		}
+
+		for (var j = 0; j < flatBezier.length; j++) {
+			var point = flatBezier[j];
+			var next = flatBezier[(j + 1) % flatBezier.length];
+
+			count += (next.x - point.x) * (next.y + point.y);
+		}
+
+		if ((count > 0 && clockwise) || (count < 0 && !clockwise)) {
+			result.push(_chunk(flatBezier.reverse(), 4));
+		}
+		else {
+			result.push(bezier);
+		}
+	}
+
+	return result;
+}
+/* eslint-enable */
+
+const keyToTransform = [
+	'unicode',
+	'name',
+	'componentLabel',
+	'characterName',
+	'tags',
+	'transforms',
+	'transformOrigin',
+];
 
 export default class Glyph {
 	constructor(glyphSrc, paramBase) {
 		const {
-			unicode,
 			name,
-			characterName,
-			tags,
-			transforms,
 			parameter,
 			anchor,
 			outline,
-			transformOrigin,
-			componentLabel,
 		} = glyphSrc;
 
 		paramBase.manualChanges[name] = { // eslint-disable-line no-param-reassign
@@ -57,13 +103,10 @@ export default class Glyph {
 
 		paramBase.glyphComponentChoice[name] = {}; // eslint-disable-line no-param-reassign
 
-		this.unicode = constantOrFormula(unicode);
-		this.name = constantOrFormula(name);
-		this.componentLabel = constantOrFormula(componentLabel);
-		this.characterName = constantOrFormula(characterName);
-		this.tags = constantOrFormula(tags);
-		this.transforms = constantOrFormula(transforms);
-		this.transformOrigin = constantOrFormula(transformOrigin);
+		keyToTransform.forEach((key) => {
+			this[key] = constantOrFormula(glyphSrc[key]);
+		});
+
 		this.parameters = _mapValues(parameter, param => constantOrFormula(param));
 		this.contours = outline.contour.map((contour, i) => createContour(contour, i));
 		this.anchors = (anchor || []).map((item, i) => _mapValues(
@@ -74,7 +117,10 @@ export default class Glyph {
 		this.analyzeDependency();
 		this.operationOrder = this.solveOperationOrder();
 
+		this.resolveOperationTarget();
+
 		this.components = outline.component.map((component, i) => new Component(component, `component.${i}`, this));
+		this.componentsName = this.components.map((c, i) => `components.${i}`);
 
 		for (let i = 0; i < this.operationOrder.length; i++) {
 			const op = this.operationOrder[i];
@@ -112,6 +158,16 @@ export default class Glyph {
 
 			return anchorOp;
 		}, contourOp);
+	}
+
+	resolveOperationTarget() {
+		for (let i = 0; i < this.operationOrder.length; i++) {
+			const op = this.operationOrder[i];
+
+			if (typeof op !== 'object') {
+				this.operationOrder[i] = this.getFromXPath(op);
+			}
+		}
 	}
 
 	createGlyphContour(contours) {
@@ -233,32 +289,7 @@ export default class Glyph {
 	}
 
 	getFromXPath(path) {
-		let result;
-
-		const pathArray = path.split('.');
-
-		if (pathArray.length === 1) {
-			result = this[pathArray[0]];
-		}
-		else if (pathArray.length > 1) {
-			result = this[pathArray[0]];
-			pathArray.shift();
-
-			pathArray.forEach((propName) => {
-				if (
-					!((!result[propName] || result[propName] === null)
-						&& result.solveOperationOrder instanceof Function)
-				) {
-					result = result[propName];
-				}
-			});
-		}
-
-
-		if (!(result.solveOperationOrder instanceof Function)) {
-			console.error(`While trying to solve ${this.name.value} operation order, couldn't find ${path}`); // eslint-disable-line no-console, max-len
-		}
-		return result;
+		return memGetFromXPath(this, path);
 	}
 
 	analyzeDependency(graph) {
@@ -292,50 +323,47 @@ export default class Glyph {
 		});
 	}
 
-	handleObjectOp(op, opDone, params) {
-		const {action, cursor} = op;
+	handleHandleOp({cursor}, opDone, params) {
+		const contour = this.getFromXPath(cursor);
+		const dest = _get(opDone, cursor);
 
-		if (action === 'handle') {
-			const contour = this.getFromXPath(cursor);
-			const dest = _get(opDone, cursor);
+		if (contour.skeleton.value) {
+			SkeletonPath.correctValues(dest);
 
-			if (contour.skeleton.value) {
-				SkeletonPath.correctValues(dest);
-
-				if (contour.closed.value) {
-					ClosedSkeletonPath.createHandle(dest, params.manualChanges[this.name.value].cursors);
-				}
-				else {
-					SkeletonPath.createHandle(dest, params.manualChanges[this.name.value].cursors);
-				}
+			if (contour.closed.value) {
+				ClosedSkeletonPath.createHandle(dest, params.manualChanges[this.name.value].cursors);
 			}
 			else {
-				SimplePath.correctValues(dest);
-
-				_set(opDone, `${cursor}.checkOrientation`, true);
-
-				SimplePath.createHandle(dest, params.manualChanges[this.name.value].cursors);
+				SkeletonPath.createHandle(dest, params.manualChanges[this.name.value].cursors);
 			}
 		}
-		else if (action === 'expand') {
-			const manualChanges = params.manualChanges[this.name.value].cursors;
-			const node = ExpandingNode.applyExpandChange(
-				_get(opDone, cursor),
-				manualChanges,
-				cursor,
-			);
-			const expandedTo = ExpandingNode.expand(node);
+		else {
+			SimplePath.correctValues(dest);
 
-			_set(
-				opDone,
-				`${cursor}.expandedTo`,
-				expandedTo,
-			);
+			_set(opDone, `${cursor}.checkOrientation`, true);
+
+			SimplePath.createHandle(dest, params.manualChanges[this.name.value].cursors);
 		}
 	}
 
-	handleOp(op, opDone, params, localParams, parentAnchors) {
-		const obj = this.getFromXPath(op);
+	handleExpandOp({cursor}, opDone, params) {
+		const manualChanges = params.manualChanges[this.name.value].cursors;
+		const node = ExpandingNode.applyExpandChange(
+			_get(opDone, cursor),
+			manualChanges,
+			cursor,
+		);
+		const expandedTo = ExpandingNode.expand(node);
+
+		_set(
+			opDone,
+			`${cursor}.expandedTo`,
+			expandedTo,
+		);
+	}
+
+	handleOp(obj, opDone, params, localParams, parentAnchors) {
+		const op = obj.cursor;
 		let result = obj.getResult(
 			localParams,
 			opDone.contours,
@@ -366,77 +394,111 @@ export default class Glyph {
 	}
 
 	constructGlyph(params, parentAnchors, glyphs, parentTransformTuple = [[[], undefined]]) {
-		const localParams = {
-			...params,
-			..._mapValues(this.parameters, param => param.getResult(params)),
-		};
+		const localParams = {};
+		const paramKeys = Object.keys(params);
+		const thisParamKeys = Object.keys(this.parameters);
+
+		for (let i = 0; i < paramKeys.length; i++) {
+			localParams[paramKeys[i]] = params[paramKeys[i]];
+		}
+
+		for (let i = 0; i < thisParamKeys.length; i++) {
+			localParams[thisParamKeys[i]] = this.parameters[thisParamKeys[i]].getResult(localParams);
+		}
+
 		const specialProps = this.unicode
 			? (localParams.glyphSpecialProps || {})[this.unicode.value] || {}
 			: {};
 		const baseSpacingLeft = localParams.spacingLeft;
 		const baseSpacingRight = localParams.spacingRight;
+		const transformedThis = {};
 
 		localParams.spacingLeft += specialProps.spacingLeft || 0;
 		localParams.spacingRight += specialProps.spacingRight || 0;
 
 		const opDone = {
 			contours: [],
+			anchors: [],
+			components: [],
 		};
 
 
 		for (let i = 0; i < this.operationOrder.length; i++) {
 			const op = this.operationOrder[i];
 
-			if (typeof op === 'object') {
-				this.handleObjectOp(op, opDone, params);
+			if (op.action === 'handle') {
+				this.handleHandleOp(op, opDone, params);
+			}
+			else if (op.action === 'expand') {
+				this.handleExpandOp(op, opDone, params);
 			}
 			else {
 				this.handleOp(op, opDone, params, localParams, parentAnchors);
 			}
 		}
 
-		const opAnchors = [...(opDone.anchors || [])];
 
-		Object.keys(this.anchors).forEach((key) => {
+		const opAnchors = opDone.anchors;
+		const anchorsKeys = Object.keys(this.anchors);
+
+		for (let i = 0; i < anchorsKeys.length; i++) {
+			const key = anchorsKeys[i];
 			const anchor = this.anchors[key];
 			const ref = opAnchors[key];
 
-			opDone.anchors[key] = _reduce(Object.keys(anchor), (acc, name) => {
-				if (opDone.anchors[key][name]) {
-					acc[name] = ref[name];
-				}
-				else {
-					acc[name] = anchor[name].getResult(
+			const anchorKeys = Object.keys(anchor);
+
+			for (let j = 0; j < anchorKeys.length; j++) {
+				const name = anchorKeys[j];
+				const computedAnchor = opAnchors[key][name]
+					|| anchor[name].getResult(
 						localParams,
 						opDone.contours,
 						opAnchors,
 						parentAnchors,
 						utils,
 					);
+
+				opAnchors[key][name] = computedAnchor;
+			}
+		}
+
+		for (let i = 0; i < keyToTransform.length; i++) {
+			const key = keyToTransform[i];
+			const prop = this[key];
+
+			transformedThis[key] = prop.getResult(localParams, opDone.contours, opDone.anchors, utils, glyphs);
+		}
+
+		if (this.advanceWidth) {
+			transformedThis.advanceWidth = this.advanceWidth.getResult(localParams, opDone.contours, opDone.anchors, utils, glyphs);
+		}
+
+		const transforms = [];
+
+		transforms.push([transformedThis.transforms || [], transformedThis.transformOrigin]);
+		Array.prototype.push.apply(
+			transforms,
+			parentTransformTuple,
+		);
+
+		for (let idx = 0; idx < this.components.length; idx++) {
+			const component = this.components[idx];
+			const componentManualChanges = {};
+			const glyphManualChanges = localParams.manualChanges[this.name.value].cursors;
+
+			const keys = Object.keys(glyphManualChanges);
+
+			for (let i = 0; i < keys.length; i++) {
+				const key = keys[i];
+
+				const criteria = `components.${idx}`;
+
+				if (key.indexOf(criteria) !== -1) {
+					componentManualChanges[key.substr(criteria.length + 1)] = glyphManualChanges[key];
 				}
-
-				return acc;
-			}, opAnchors[key]);
-		});
-
-
-		const transformedThis = _mapValues(this, (prop, name) => {
-			if (prop !== undefined
-				&& !/parameters|contours|anchors|components|operationOrder/.test(name)) {
-				return prop.getResult(localParams, opDone.contours, opDone.anchors, utils, glyphs);
 			}
 
-			return undefined;
-		});
-
-		const transforms = [
-			[transformedThis.transforms || [], transformedThis.transformOrigin],
-			...parentTransformTuple,
-		];
-
-		opDone.components = this.components.map((component, idx) => {
-			const pickedChanges = _pickBy(localParams.manualChanges[this.name.value].cursors, (value, key) => key.match(new RegExp(`components\.${idx}`))); // eslint-disable-line no-useless-escape
-			const componentManualChanges = _mapKeys(pickedChanges, (value, key) => key.replace(/components\.\d\./g, ''));
 			let componentName = component.base[0].value;
 
 			if (component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]) {
@@ -446,25 +508,25 @@ export default class Glyph {
 				componentName = localParams.glyphComponentChoice[component.componentClass.value];
 			}
 
-			const componentParams = {
-				...localParams,
-				manualChanges: {
-					[componentName]: {
-						cursors: componentManualChanges,
-					},
-				},
-				componentChoice: componentName,
-			};
+			const componentParams = {};
+			const localParamsKeys = Object.keys(localParams);
 
-			return component.constructComponent(
+			for (let i = 0; i < localParamsKeys.length; i++) {
+				componentParams[localParamsKeys[i]] = localParams[localParamsKeys[i]];
+			}
+
+			componentParams.manualChanges[componentName] = {cursors: componentManualChanges};
+			componentParams.componentChoice = componentName;
+
+			opDone.components.push(component.constructComponent(
 				componentParams,
 				opDone.contours,
 				opDone.anchors,
 				utils,
 				glyphs,
 				transforms,
-			);
-		});
+			));
+		}
 
 		transformGlyph(
 			opDone,
@@ -473,11 +535,11 @@ export default class Glyph {
 
 		const otContours = this.createGlyphContour(opDone.contours);
 
-		opDone.components.forEach((component) => {
-			if (component.name !== 'none') {
-				otContours.push(...component.otContours);
+		for (let i = 0; i < opDone.components.length; i++) {
+			if (opDone.components[i].name !== 'none') {
+				Array.prototype.push.apply(otContours, opDone.components[i].otContours);
 			}
-		});
+		}
 
 		return {
 			...transformedThis,

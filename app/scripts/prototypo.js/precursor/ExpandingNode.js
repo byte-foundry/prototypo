@@ -4,9 +4,13 @@ import _difference from 'lodash/difference';
 
 import {round2D} from '../utils/linear';
 
-import {constantOrFormula, readAngle} from '../utils/generic';
+import {constantOrFormula} from '../utils/generic';
 
 import Node from './Node';
+
+const EXPAND_WIDTH = '.expand.width';
+const EXPAND_ANGLE = '.expand.angle';
+const EXPAND_DISTR = '.expand.distr';
 
 export default class ExpandingNode extends Node {
 	constructor(source, i, j) {
@@ -43,26 +47,25 @@ export default class ExpandingNode extends Node {
 		/* eslint-disable no-param-reassign */
 		computedNode.expand.baseWidth = computedNode.expand.width;
 		computedNode.expand.baseDistr = computedNode.expand.distr;
-		computedNode.expand.baseAngle = readAngle(computedNode.expand.angle);
-		computedNode.expand.width = computedNode.expand.baseWidth * (changes[`${cursor}.expand.width`] || 1);
-		computedNode.expand.angle = computedNode.expand.baseAngle + (changes[`${cursor}.expand.angle`] || 0);
-		computedNode.expand.distr = computedNode.expand.baseDistr + (changes[`${cursor}.expand.distr`] || 0);
+		computedNode.expand.baseAngle = computedNode.expand.angle;
+		computedNode.expand.width = computedNode.expand.baseWidth * (changes[cursor + EXPAND_WIDTH] || 1);
+		computedNode.expand.angle = computedNode.expand.baseAngle + (changes[cursor + EXPAND_ANGLE] || 0);
+		computedNode.expand.distr = computedNode.expand.baseDistr + (changes[cursor + EXPAND_DISTR] || 0);
 		return computedNode;
 		/* eslint-disable no-param-reassign */
 	}
 
 	static expand(computedNode) {
-		// TODO remove readAngle once we convert all the angle to rad in the ptf
 		const {x, y, expand: {width, angle, distr}} = computedNode;
 
 		return [
 			round2D({
-				x: x - (Math.cos(readAngle(angle)) * width * distr),
-				y: y - (Math.sin(readAngle(angle)) * width * distr),
+				x: x - (Math.cos(angle) * width * distr),
+				y: y - (Math.sin(angle) * width * distr),
 			}),
 			round2D({
-				x: x + (Math.cos(readAngle(angle)) * width * (1 - distr)),
-				y: y + (Math.sin(readAngle(angle)) * width * (1 - distr)),
+				x: x + (Math.cos(angle) * width * (1 - distr)),
+				y: y + (Math.sin(angle) * width * (1 - distr)),
 			}),
 		];
 	}

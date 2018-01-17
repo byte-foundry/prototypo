@@ -1,8 +1,13 @@
 import _mapValues from 'lodash/mapValues';
-import _set from 'lodash/set';
-import _reduce from 'lodash/reduce';
 
 import {constantOrFormula} from '../utils/generic';
+
+const keyToTransform = [
+	'id',
+	'transforms',
+	'transformOrigin',
+	'componentClass',
+];
 
 export default class Component {
 	constructor(source) {
@@ -36,18 +41,20 @@ export default class Component {
 
 		let opDone = {anchors: []};
 
-		Object.keys(this.anchors).forEach((key) => {
+		for (let i = 0; i < Object.keys(this.anchors).length; i++) {
+			const key = Object.keys(this.anchors)[i];
 			const anchor = this.anchors[key];
+			const accumulator = {};
+			const anchorKeys = Object.keys(anchor);
 
-			_set(
-				opDone,
-				`anchors[${key}]`,
-				_reduce(Object.keys(anchor), (acc, name) => {
-					acc[name] = anchor[name].getResult(localParams, contours, acc, parentAnchors, utils);
-					return acc;
-				}, {}),
-			);
-		});
+			for (let j = 0; j < anchorKeys.length; j++) {
+				const name = anchorKeys[j];
+
+				accumulator[name] = anchor[name].getResult(localParams, contours, accumulator, opDone, parentAnchors, utils);
+			}
+
+			opDone.anchors[key] = accumulator;
+		}
 
 		const computedBase = params.componentChoice || this.base[0].getResult(
 			localParams,
@@ -58,32 +65,29 @@ export default class Component {
 		);
 		const compGlyph = glyphs[computedBase];
 
-		const transformedThis = _mapValues(this, (prop, name) => {
-			if (prop !== undefined
-				&& name !== 'anchors'
-				&& name !== 'base'
-				&& name !== 'components'
-				&& name !== 'parameters'
-				&& name !== 'operationOrder') {
-				return prop.getResult(localParams, contours, parentAnchors, utils, glyphs);
-			}
-			else if (name === 'base') {
-				return prop.map(base => ({
-					id: base.getResult(localParams, contours, parentAnchors, utils, glyphs),
-					label: glyphs[base.getResult(
-						localParams,
-						contours,
-						parentAnchors,
-						utils,
-						glyphs,
-					)].componentLabel,
-					componentClass: this.componentClass ? this.componentClass.value : undefined,
-				}));
-			}
+		const transformedThis = {};
 
-			return undefined;
-		});
+		for (let i = 0; i < keyToTransform.length; i++) {
+			const key = keyToTransform[i];
+			const prop = this[key];
 
+			transformedThis[key] = prop.getResult(localParams, contours, parentAnchors, utils, glyphs);
+		}
+
+		const computedBaseArray = [];
+
+		for (let i = 0; i < this.base.length; i++) {
+			const base = this.base[i];
+
+			const componentId = base.getResult(localParams, contours, parentAnchors, utils, glyphs);
+
+			computedBaseArray.push({
+				id: componentId,
+				label: glyphs[componentId].componentLabel,
+				componentClass: this.componentClass ? this.componentClass.value : undefined,
+			});
+		}
+		transformedThis.base = computedBaseArray;
 
 		opDone = {
 			...opDone,

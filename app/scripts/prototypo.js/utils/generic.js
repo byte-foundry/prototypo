@@ -2,16 +2,13 @@ import {transform2D, matrixMul} from './linear';
 import {SimplePath, ClosedSkeletonPath, SkeletonPath} from '../precursor/Path';
 import Formula from '../precursor/Formula';
 import Constant from '../precursor/Constant';
+import memoize from 'memoize-immutable';
 
 export function constantOrFormula(source, cursor) {
 	if (typeof source === 'object' && source !== null && source._operation) { // eslint-disable-line no-underscore-dangle, max-len
 		return new Formula(source, cursor);
 	}
-	else if (source !== undefined) {
-		return new Constant(source, cursor);
-	}
-
-	return undefined;
+	return new Constant(source, cursor);
 }
 
 export function createContour(source, i) {
@@ -25,37 +22,29 @@ export function createContour(source, i) {
 	return new SimplePath(source, i);
 }
 
-const rdeg = /deg$/;
-
-export function readAngle(angle) {
-	if (angle === undefined || angle === null) {
-		return angle;
-	}
-
-	if (typeof angle === 'string' && rdeg.test(angle)) {
-		return parseFloat(angle) * (Math.PI / 180);
-	}
-
-	return parseFloat(angle);
+function fastSplit(string) {
+	return string.split('.');
 }
+
+export const memoizeSplit = memoize(fastSplit, {cache: new Map()});
 
 export const transformByName = {
 	skewX(node, deg, center = {x: 0, y: 0}) {
-		const theta = readAngle(deg);
+		const theta = deg;
 		const skew = [1, Math.tan(theta), 0, 1, 0, 0];
 		const matrix = changeTransformOrigin(center, skew);
 
 		return transform2D(matrix, node);
 	},
 	skewY(node, deg, center = {x: 0, y: 0}) {
-		const theta = readAngle(deg);
+		const theta = deg;
 		const skew = [1, 0, Math.tan(theta), 1, 0, 0];
 		const matrix = changeTransformOrigin(center, skew);
 
 		return transform2D(matrix, node);
 	},
 	rotate(node, deg, center = {x: 0, y: 0}) {
-		const theta = readAngle(deg);
+		const theta = deg;
 		const rotate = [Math.cos(theta), -Math.sin(theta), Math.sin(theta), Math.cos(theta), 0, 0];
 		const matrix = changeTransformOrigin(center, rotate);
 
@@ -98,8 +87,11 @@ export function changeTransformOrigin(origin, transform, z = 1) {
 	);
 }
 
+/* eslint-disable */
 export function transformNode(node, transforms, origin) {
-	transforms.forEach(([name, param]) => {
+	for (var i = 0; i < transforms.length; i++) {
+		var [name, param] = transforms[i];
+
 		exeTransformOnNode(name, node, param, origin);
 		node.addedTransform.push(name);
 		if (node.handleIn) {
@@ -109,21 +101,29 @@ export function transformNode(node, transforms, origin) {
 		if (node.handleOut) {
 			exeTransformOnNode(name, node.handleOut, param, origin);
 		}
-	});
+	}
 }
 
 export function transformGlyph(opDone, transformTuples) {
-	opDone.contours.forEach((contour) => {
-		contour.nodes.forEach((node) => {
+	for (var i = 0; i < opDone.contours.length; i++) {
+		var contour = opDone.contours[i];
+
+		for (var j = 0; j < contour.nodes.length; j++) {
+			var node = contour.nodes[j];
+
 			node.addedTransform = []; // eslint-disable-line no-param-reassign
 			if (node.expandedTo) {
 				node.expandedTo[0].addedTransform = []; // eslint-disable-line no-param-reassign
 				node.expandedTo[1].addedTransform = []; // eslint-disable-line no-param-reassign
 			}
-			[
+
+			var transforms = [
 				...transformTuples,
 				[contour.transforms || [], contour.transformOrigin],
-			].forEach(([transform, origin]) => {
+			]
+
+			for (var k = 0; k < transforms.length; k++) {
+				var [transform, origin] = transforms[k];
 				if (node.expandedTo) {
 					transformNode(node.expandedTo[0], transform, origin);
 					transformNode(node.expandedTo[1], transform, origin);
@@ -132,10 +132,11 @@ export function transformGlyph(opDone, transformTuples) {
 				else {
 					transformNode(node, transform, origin);
 				}
-			});
-		});
-	});
+			}
+		}
+	}
 }
+/* eslint-enable */
 
 function exeTransformOnNode(name, node, param, origin) {
 	const {x, y} = transformByName[name](node, param, origin);
