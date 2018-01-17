@@ -1,4 +1,3 @@
-import _chunk from 'lodash/chunk';
 import _forOwn from 'lodash/forOwn';
 
 import LocalClient from '../../stores/local-client.stores';
@@ -21,6 +20,47 @@ window.addEventListener('fluxServer.setup', () => {
 window.fontResult = undefined;
 window.glyph = undefined;
 
+function getUuid(email, familyName, styleName) {
+	const stringForId = `${new Date().getTime()}${familyName}${email}${styleName}`;
+	let id = '';
+
+	for (let i = 0; i < 16; i++) {
+		if (i < stringForId.length) {
+			id += (stringForId.charCodeAt(i) * Math.random() * 32).toFixed(0).toString(16).padStart(2, '0');
+		}
+		else {
+			id += (Math.random() * 100).toFixed(0).toString(16).padStart(2, '0');
+		}
+
+		if (i === 3 || i === 5 || i === 7 || i === 9) {
+			id += '-';
+		}
+	}
+
+	return id;
+}
+
+function getComponentIdAndGlyphPerClass(typedata) {
+	const fontComponentIdAndGlyphPerClass = {};
+
+	Object.keys(typedata.json.glyphs).forEach((key) => {
+		const glyph = typedata.json.glyphs[key];
+
+		if (glyph.outline.component) {
+			glyph.outline.component.forEach((component) => {
+				if (component.class) {
+					fontComponentIdAndGlyphPerClass[component.class] = [
+						...(fontComponentIdAndGlyphPerClass[component.class] || []),
+						[glyph.name, component.id],
+					];
+				}
+			});
+		}
+	});
+
+	return fontComponentIdAndGlyphPerClass;
+}
+
 async function mergeFont(url, action, params, arrayBuffer, mime = 'otf') {
 	const response = await fetch([
 		url,
@@ -39,15 +79,19 @@ export default class FontMediator {
 	static async init(typedatas) {
 		instance = new FontMediator(typedatas);
 
-		if (typedatas) {
-			const componentIdAndGlyphPerClass = await instance.addTemplate(typedatas);
+		await instance.workerPool.workerReady;
 
-			if (!process.env.LIBRARY) {
-				localClient.dispatchAction('/store-value-font', {
-					componentIdAndGlyphPerClass,
-				});
-			}
+		if (typedatas) {
+			return instance.addTemplate(typedatas).then((componentIdAndGlyphPerClass) => {
+				if (!process.env.LIBRARY) {
+					localClient.dispatchAction('/store-value-font', {
+						componentIdAndGlyphPerClass,
+					});
+				}
+			});
 		}
+
+		return Promise.resolve();
 	}
 
 	static instance() {
@@ -81,24 +125,7 @@ export default class FontMediator {
 						this.glyphList[typedata.name] = typedata.json.glyphs;
 						this.fontMakers[typedata.name] = font;
 
-						const fontComponentIdAndGlyphPerClass = {};
-
-						Object.keys(typedata.json.glyphs).forEach((key) => {
-							const glyph = typedata.json.glyphs[key];
-
-							if (glyph.outline.component) {
-								glyph.outline.component.forEach((component) => {
-									if (component.class) {
-										fontComponentIdAndGlyphPerClass[component.class] = [
-											...(fontComponentIdAndGlyphPerClass[component.class] || []),
-											[glyph.name, component.id],
-										];
-									}
-								});
-							}
-						});
-
-						componentIdAndGlyphPerClass[typedata.name] = fontComponentIdAndGlyphPerClass;
+						componentIdAndGlyphPerClass[typedata.name] = getComponentIdAndGlyphPerClass(typedata);
 
 						const initValues = {};
 
@@ -177,105 +204,55 @@ export default class FontMediator {
 		}
 
 		return new Promise((resolve) => {
-			const jobs = [];
-			const fontPromise = _chunk(
-				subset,
-				Math.ceil(subset.length / this.workerPool.workerArray.length),
-			).map(subsubset =>
-				new Promise((resolveFont) => {
-					jobs.push({
-						action: {
-							type: 'constructGlyphs',
-							data: {
-								name: template,
-								params: {
-									...params,
-								},
-								subset: subsubset,
-							},
+			const job = {
+				action: {
+					type: 'constructGlyphs',
+					data: {
+						name: template,
+						params: {
+							...params,
 						},
-						callback: (font) => {
-							resolveFont(font);
-						},
-					});
-				}));
-
-			this.workerPool.doJobs(jobs, fontName);
-
-			Promise.all(fontPromise).then((fonts) => {
-				clearTimeout(mergeTimeoutRef);
-
-				let fontResult;
-
-				fonts.forEach(({font}) => {
-					if (fontResult) {
-						fontResult.glyphs = [
-							...fontResult.glyphs,
-							...font.glyphs,
-						];
-					}
-					else {
-						fontResult = font;
-					}
-				});
-
-				this.workerPool.doFastJob({
-					action: {
-						type: 'makeOtf',
-						data: {
-							fontResult,
-						},
+						subset,
 					},
-					callback: async ({arrayBuffer}) => {
-						const familyName = this.family.name;
-						const styleName = this.style.name || 'REGULAR';
-						const stringForId = `${new Date().getTime()}${familyName}${this.email}${styleName || 'REGULAR'}`;
-						let id = '';
+				},
+				callback: async (font) => {
+					const familyName = this.family.name;
+					const styleName = this.style.name || 'REGULAR';
 
-						for (let i = 0; i < 16; i++) {
-							if (i < stringForId.length) {
-								id += (stringForId.charCodeAt(i) * Math.random() * 32).toFixed(0).toString(16).padStart(2, '0');
-							}
-							else {
-								id += (Math.random() * 100).toFixed(0).toString(16).padStart(2, '0');
-							}
+					const id = getUuid(this.email, familyName, styleName);
 
-							if (i === 3 || i === 5 || i === 7 || i === 9) {
-								id += '-';
-							}
-						}
+					const mergedFont = await mergeFont(
+						MERGE_URL,
+						'fontfile',
+						[
+							id,
+							familyName,
+							styleName,
+							true,
+						],
+						arrayBuffer,
+					);
 
-						const mergedFont = await mergeFont(
-							MERGE_URL,
-							'fontfile',
-							[
-								id,
-								familyName,
-								styleName,
-								true,
-							],
-							arrayBuffer.buffer,
-						);
+					await mergeFont(
+						MERGE_URL,
+						'fontinfo',
+						[id],
+						JSON.stringify({
+							template: this.template,
+							family: familyName,
+							style: styleName,
+							date: new Date().getTime(),
+							email: this.email,
+							params,
+						}),
+						'json',
+					);
 
-						await mergeFont(
-							MERGE_URL,
-							'fontinfo',
-							[id],
-							JSON.stringify({
-								template: this.template,
-								family: familyName,
-								style: styleName,
-								date: new Date().getTime(),
-								email: this.email,
-								params,
-							}),
-							'json',
-						);
+					resolve(mergedFont);
+				},
+			};
 
-						resolve(mergedFont);
-					},
-				});
-			});
+			this.workerPool.doJob(job, fontName);
 		});
 	}
 
@@ -312,7 +289,7 @@ export default class FontMediator {
 					},
 				},
 				callback: ({arrayBuffer}) => {
-					resolve(arrayBuffer.buffer);
+					resolve(arrayBuffer);
 
 					// eslint-disable-next-line no-multi-assign
 				},
@@ -325,52 +302,28 @@ export default class FontMediator {
 			return false;
 		}
 
-		const jobs = [];
-		const fontPromise = _chunk(
-			subset,
-			Math.ceil(subset.length / this.workerPool.workerArray.length),
-		).map(subsubset =>
-			new Promise((resolve) => {
-				jobs.push({
-					action: {
-						type: 'constructGlyphs',
-						data: {
-							name: template,
-							params: {
-								...params,
-							},
-							subset: subsubset,
+		return new Promise((resolve) => {
+			const job = {
+				action: {
+					type: 'constructFont',
+					data: {
+						name: template,
+						params: {
+							...params,
 						},
+						subset,
 					},
-					callback: (font) => {
-						resolve(font);
-					},
-				});
-			}));
+				},
+				callback: (buffer) => {
+					resolve(buffer);
+				},
+			};
 
-		this.workerPool.doJobs(jobs, fontName);
-
-		return Promise.all(fontPromise).then((fonts) => {
-			let fontResult;
-
-			fonts.forEach(({font}) => {
-				if (fontResult) {
-					fontResult.glyphs = [
-						...fontResult.glyphs,
-						...font.glyphs,
-					];
-				}
-				else {
-					fontResult = font;
-				}
-			});
-
-
-			return fontResult;
+			this.workerPool.doJob(job, fontName);
 		});
 	}
 
-	async getFont(fontName, template, params, subset, glyphCanvasUnicode) {
+	getFont(fontName, template, params, subset, glyphCanvasUnicode) {
 		if (glyphCanvasUnicode) {
 			const glyphForCanvas = this.fontMakers[template].constructFont({
 				...params,
@@ -382,16 +335,14 @@ export default class FontMediator {
 			});
 		}
 
-		const fontResult = await this.getFontObject(fontName, template, params, subset);
-		const arrayBuffer = await this.getArrayBuffer(fontResult, params.trigger);
+		return this.getFontObject(fontName, template, params, subset).then((arrayBuffer) => {
+			this.addToFont(arrayBuffer, fontName);
 
-		this.addToFont(arrayBuffer, fontName);
+			this.mergeFontWithTimeout(arrayBuffer, fontName);
 
-		this.mergeFontWithTimeout(arrayBuffer, fontName);
-
-		window.fontResult = fontResult;
-		localClient.dispatchAction('/store-value-font', {
-			font: Math.random(),
+			localClient.dispatchAction('/store-value-font', {
+				font: Math.random(),
+			});
 		});
 	}
 
