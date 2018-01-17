@@ -18,7 +18,6 @@ import PrototypoWordInput from './views/prototypo-word-input.components.jsx';
 import HandlegripText from './handlegrip/handlegrip-text.components.jsx';
 
 export default class PrototypoWord extends React.PureComponent {
-
 	constructor(props) {
 		super(props);
 
@@ -77,6 +76,7 @@ export default class PrototypoWord extends React.PureComponent {
 		this.client.getStore('/undoableStore', this.lifespan)
 			.onUpdate((head) => {
 				const values = head.toJS().d.controlsValues;
+
 				this.setState({
 					totalHeight: values.xHeight + Math.max(values.capDelta, values.ascender) - values.descender,
 				});
@@ -120,14 +120,10 @@ export default class PrototypoWord extends React.PureComponent {
 			this.alreadyRafed = raf(() => {
 				if (this.state.font) {
 					const {clientWidth, clientHeight} = ReactDOM.findDOMNode(this);
-					const advanceWidthSum = _reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
-						return sum + (
-							_find(this.state.font.glyphs, (glyphItem) => {
-								return glyphItem.unicode === glyph.charCodeAt(0);
-							})
+					const advanceWidthSum = _reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => sum + (
+						_find(this.state.font.glyphs, glyphItem => glyphItem.unicode === glyph.charCodeAt(0))
 							|| {advanceWidth: 500}
-						).advanceWidth;
-					}, 0);
+					).advanceWidth, 0);
 					const widthSize = 100 * clientWidth / (0.1 * advanceWidthSum) * 0.95;
 					const heightSize = 100 * clientHeight / (0.1 * this.state.totalHeight) * 0.8;
 					const rightSize = Math.min(widthSize, heightSize);
@@ -153,9 +149,7 @@ export default class PrototypoWord extends React.PureComponent {
 		raf(() => {
 			if (this.state.glyphProperties) {
 				const {clientWidth, clientHeight} = ReactDOM.findDOMNode(this);
-				const advanceWidthSum = _reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => {
-					return sum + this.state.glyphProperties[glyph.charCodeAt(0)].advanceWidth;
-				}, 0);
+				const advanceWidthSum = _reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => sum + this.state.glyphProperties[glyph.charCodeAt(0)].advanceWidth, 0);
 				const widthSize = 100 * clientWidth / (0.1 * advanceWidthSum);
 				const heightSize = 100 * clientHeight / (0.1 * this.state.totalHeight);
 				const rightSize = Math.min(widthSize, heightSize);
@@ -179,7 +173,7 @@ export default class PrototypoWord extends React.PureComponent {
 			const newText = this.applyDiff(
 				contentToArray(this.props[this.props.field]), // array to update
 				rawToEscapedContent(this.props[this.props.field], this.state.glyphs), // text in memory
-				textDiv.textContent // text updated with user input
+				textDiv.textContent, // text updated with user input
 			);
 
 			this.saveText(newText);
@@ -195,7 +189,9 @@ export default class PrototypoWord extends React.PureComponent {
 		let buffer = textArray;
 		const diffList = diffChars(oldText, newText);
 
-		diffList.forEach(({added, removed, count, value}) => {
+		diffList.forEach(({
+			added, removed, count, value,
+		}) => {
 			if (removed) {
 				buffer = [
 					...buffer.slice(0, currentIndex),
@@ -207,9 +203,7 @@ export default class PrototypoWord extends React.PureComponent {
 			if (added) {
 				buffer = [
 					...buffer.slice(0, currentIndex),
-					...value.split('').map((letter) => {
-						return letter === '/' ? '//' : letter;
-					}),
+					...value.split('').map(letter => (letter === '/' ? '//' : letter)),
 					...buffer.slice(currentIndex),
 				];
 			}
@@ -275,14 +269,14 @@ export default class PrototypoWord extends React.PureComponent {
 			console.log('[RENDER] PrototypoWord');
 		}
 		const style = {
-			'fontFamily': `'${this.props.fontName || 'theyaintus'}', sans-serif`,
-			'fontSize': this.state.uiWordFontSize || '98px',
+			fontFamily: `'${this.props.fontName || 'theyaintus'}', sans-serif`,
+			fontSize: this.state.uiWordFontSize || '98px',
 		};
 
 		const stringClasses = classNames('prototypo-word-string', {
-			'negative': this.props.uiInvertedWordColors,
-			'inverted': this.props.uiInvertedWordView,
-			'indiv': this.state.indivCurrentGroup,
+			negative: this.props.uiInvertedWordColors,
+			inverted: this.props.uiInvertedWordView,
+			indiv: this.state.indivCurrentGroup,
 		});
 
 		const actionBar = classNames({
@@ -316,8 +310,8 @@ export default class PrototypoWord extends React.PureComponent {
 						intercomShift={this.props.viewPanelRightMove}
 						upper
 						left
-						onMouseEnter={() => {this.setState({hoveringContextMenu: true})}}
-						onMouseLeave={() => {this.setState({hoveringContextMenu: false})}}
+						onMouseEnter={() => {this.setState({hoveringContextMenu: true});}}
+						onMouseLeave={() => {this.setState({hoveringContextMenu: false});}}
 					>
 						<ContextualMenuItem
 							active={this.props.uiInvertedWordView}
@@ -333,7 +327,7 @@ export default class PrototypoWord extends React.PureComponent {
 						</ContextualMenuItem>
 					</ViewPanelsMenu>
 					<div className={actionBar}>
-						<CloseButton click={() => { this.props.close('word'); }}/>
+						<CloseButton click={() => {this.props.close('word');}} />
 					</div>
 				</div>
 				<PrototypoWordInput onTypedText={(rawText) => {this.saveText(rawText);}} value={arrayToRawContent(contentToArray(this.props[this.props.field]))} />
