@@ -210,9 +210,9 @@ export class cmap {
 			for (let j = 0; j < unicodes.length; j++) {
 				addSegment(t, unicodes[j], i);
 			}
-
-			t.segments = t.segments.sort((a, b) => a.start - b.start);
 		}
+
+		t.segments = t.segments.sort((a, b) => a.start - b.start);
 
 		addTerminatorSegment(t);
 
@@ -1435,7 +1435,7 @@ export class cff {
 		}
 
 		const strings = [];
-		let topDict = makeTopDict(attrs, strings);
+		const topDict = makeTopDict(attrs, strings);
 
 		t.header = makeCffHeader();
 		t.nameIndex = makeNameIndex([options.postScriptName]);
@@ -1462,8 +1462,9 @@ export class cff {
 		attrs.private[1] = attrs.charStrings + sizeOfTable(t.charStringsIndex);
 
 		// Recreate the Top DICT INDEX with the correct offsets.
-		topDict = makeTopDict(attrs, strings);
-		t.topDictIndex = makeTopDictIndex(topDict);
+		const topDictWithAttrs = makeTopDict(attrs, strings);
+
+		t.topDictIndex = makeTopDictIndex(topDictWithAttrs);
 
 		return t;
 	}

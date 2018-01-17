@@ -1,3 +1,5 @@
+import memoize from 'memoize-immutable';
+
 import _forOwn from 'lodash/forOwn';
 import {checkArgument} from './check';
 
@@ -473,7 +475,7 @@ encode.VARDELTAS = (deltas) => {
 	return result;
 };
 
-encode.INDEX = (l) => {
+encode.INDEX = memoize((l) => {
 	let i;
 	// var offset, offsets, offsetEncoder, encodedOffsets, encodedOffset, data,
 	//    i, v;
@@ -518,7 +520,7 @@ encode.INDEX = (l) => {
 		encodedOffsets,
 		data,
 	);
-};
+});
 
 sizeOf.INDEX = v => encode.INDEX(v).length;
 
@@ -654,7 +656,7 @@ sizeOf.OP = sizeOf.BYTE;
 
 const charStringCache = typeof WeakMap === 'function' && new WeakMap();
 
-encode.CHARSTRING = (ops) => {
+encode.CHARSTRING = memoize((ops) => {
 	// See encode.MACSTRING for why we don't do "if (wmm && wmm.has(ops))".
 	if (charStringCache) {
 		const cachedValue = charStringCache.get(ops);
@@ -678,7 +680,7 @@ encode.CHARSTRING = (ops) => {
 	}
 
 	return d;
-};
+});
 
 sizeOf.CHARSTRING = ops => encode.CHARSTRING(ops).length;
 
