@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+
 const node_modules = path.resolve(__dirname, 'node_modules');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 

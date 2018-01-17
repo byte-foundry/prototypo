@@ -142,7 +142,8 @@
     "lint": "eslint app/scripts/**/*.{js,jsx}",
     "analyze": "webpack --config analyze.config.js",
     "analyze:prod": "webpack --config analyze-prod.config.js",
-	"build:lib": "gulp build:lib"
+	"build:lib": "webpack --config library.config.js",
+	"build:precursor": "webpack --config precursor.config.js"
   },
   "repository": {
     "type": "git",

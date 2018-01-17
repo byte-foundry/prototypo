@@ -4,7 +4,7 @@ const fs = Promise.promisifyAll(require('fs')); // We just want promise seriousl
 const gulp = require('gulp');
 
 // webpack Dep
-const webpack			= require('webpack');
+const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
 // CSS Dep
@@ -17,10 +17,10 @@ const concat = require('gulp-concat');
 const sourcemaps = require('gulp-sourcemaps');
 const filter = require('gulp-filter');
 const autoprefixer = require('gulp-autoprefixer');
-const gutil			= require('gulp-util');
+const gutil	= require('gulp-util');
 
 // Tests
-const nightwatch		= require('gulp-nightwatch');
+const nightwatch = require('gulp-nightwatch');
 
 gulp.task('images', () => {
 	gulp.src(['./app/images/*.*', './app/images/**/*.*'])
@@ -75,7 +75,7 @@ gulp.task('clean', () => {
 	del.sync(['dist']);
 });
 
-gulp.task('build', ['clean', 'images', 'cp-genese', 'cp-static', 'prod:dll'], (callback) => {
+gulp.task('build', ['clean', 'images', 'cp-genese', 'cp-static'], (callback) => {
 	// run webpack
 	const webpackConfig = process.env.NODE_ENV === 'production' ? require('./prod.config') : require('./dev.config');
 	const prototypoConfig = Object.create(webpackConfig);
@@ -202,23 +202,6 @@ gulp.task('debug', ['clean', 'images', 'cp-genese', 'cp-static', 'webpack:dll'],
 		// keep the server alive or continue?
 	});
 });
-
-gulp.task('build:lib', (callback) => {
-	const webpackConfig = require('./library.config.js');
-	const libConfig = Object.create(webpackConfig);
-
-	webpack(
-		libConfig,
-		(err, stats) => {
-			if (err) throw new gutil.PluginError('webpack', err);
-			gutil.log('[webpack]', stats.toString({
-			// output options
-			}));
-			callback();
-		}
-	);
-});
-
 
 gulp.task('test', callback => gulp.src('')
 	.pipe(nightwatch({

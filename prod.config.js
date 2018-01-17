@@ -47,11 +47,11 @@ module.exports = merge(base, {
 			include: __dirname,
 			extractComments: true,
 		}),
-		new webpack.DllReferencePlugin({
+		/* new webpack.DllReferencePlugin({
 			context: __dirname,
 			manifest: require('./dist/dll/libs-manifest'),
 			sourceType: 'this',
-		}),
+		}), */
 	],
 	output: merge(base.output, {
 		filename: '[name].bundle.js',
