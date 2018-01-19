@@ -16,7 +16,7 @@ const keyToTransform = [
 ];
 
 export default class FontPrecursor {
-	constructor(fontSrc) {
+	constructor(fontSrc, {resolveOp} = {resolveOp: true}) {
 		const {fontinfo, lib} = fontSrc;
 
 		keyToTransform.forEach((key) => {
@@ -36,7 +36,7 @@ export default class FontPrecursor {
 				this.unicodeToGlyphName[glyph.unicode] = glyph.name;
 			}
 
-			return new Glyph(glyph, this.paramBase);
+			return new Glyph(glyph, this.paramBase, {resolveOp});
 		});
 
 		// this.analyzeDependency();

@@ -120,10 +120,13 @@ export default class FontMediator {
 					const componentIdAndGlyphPerClass = {};
 
 					typedatas.forEach((typedata) => {
-						const font = new FontPrecursor(typedata.json);
+						if (!process.env.LIBRARY) {
+							const font = new FontPrecursor(typedata.json);
+
+							this.fontMakers[typedata.name] = font;
+						}
 
 						this.glyphList[typedata.name] = typedata.json.glyphs;
-						this.fontMakers[typedata.name] = font;
 
 						componentIdAndGlyphPerClass[typedata.name] = getComponentIdAndGlyphPerClass(typedata);
 
@@ -206,7 +209,7 @@ export default class FontMediator {
 		return new Promise((resolve) => {
 			const job = {
 				action: {
-					type: 'constructGlyphs',
+					type: 'constructFont',
 					data: {
 						name: template,
 						params: {
@@ -215,7 +218,7 @@ export default class FontMediator {
 						subset,
 					},
 				},
-				callback: async (font) => {
+				callback: async (arrayBuffer) => {
 					const familyName = this.family.name;
 					const styleName = this.style.name || 'REGULAR';
 
@@ -338,8 +341,9 @@ export default class FontMediator {
 		return this.getFontObject(fontName, template, params, subset).then((arrayBuffer) => {
 			this.addToFont(arrayBuffer, fontName);
 
-			this.mergeFontWithTimeout(arrayBuffer, fontName);
-
+			return this.mergeFontWithTimeout(arrayBuffer, fontName);
+		}).then((mergedBuffer) => {
+			this.addToFont(mergedBuffer, fontName);
 			localClient.dispatchAction('/store-value-font', {
 				font: Math.random(),
 			});

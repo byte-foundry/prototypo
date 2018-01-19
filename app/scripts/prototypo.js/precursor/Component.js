@@ -23,7 +23,7 @@ export default class Component {
 		this.componentClass = constantOrFormula(source.class);
 		this.anchors = (source.anchor || []).map((item, i) => _mapValues(
 			item,
-			(props, name) => constantOrFormula(props, `{cursor}.anchors.${i}.${name}`),
+			(props, name) => constantOrFormula(props, `anchors.${i}.${name}`),
 		));
 
 		this.transforms = constantOrFormula(source.transforms);
@@ -50,7 +50,7 @@ export default class Component {
 			for (let j = 0; j < anchorKeys.length; j++) {
 				const name = anchorKeys[j];
 
-				accumulator[name] = anchor[name].getResult(localParams, contours, accumulator, opDone, parentAnchors, utils);
+				accumulator[name] = anchor[name].getResult(localParams, contours, accumulator, parentAnchors, utils);
 			}
 
 			opDone.anchors[key] = accumulator;

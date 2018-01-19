@@ -110,15 +110,13 @@ export class PtypoFont {
 		return this.createFont();
 	}
 
-	async createFont() {
-		const font = await this.mediator.getFontObject(
+	async createFont(subset) {
+		const buffer = await this.mediator.getFontObject(
 			this.fontName,
 			this.fontTemplate,
 			this.values,
-			this.glyphsSet,
+			subset || this.glyphsSet,
 		);
-
-		const buffer = await this.mediator.getArrayBuffer(font);
 
 		if (this.noUnmerged) {
 			this.mediator.mergeFontWithTimeout(buffer, this.fontName);

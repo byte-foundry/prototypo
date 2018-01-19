@@ -89,7 +89,7 @@ const keyToTransform = [
 ];
 
 export default class Glyph {
-	constructor(glyphSrc, paramBase) {
+	constructor(glyphSrc, paramBase, {resolveOp}) {
 		const {
 			name,
 			parameter,
@@ -108,16 +108,25 @@ export default class Glyph {
 		});
 
 		this.parameters = _mapValues(parameter, param => constantOrFormula(param));
+		this.paramKeys = Object.keys(this.parameters);
 		this.contours = outline.contour.map((contour, i) => createContour(contour, i));
 		this.anchors = (anchor || []).map((item, i) => _mapValues(
 			item,
 			(props, anchorName) => constantOrFormula(props, `anchors.${i}.${anchorName}`),
 		));
+		this.anchorKeys = Object.keys(this.anchors);
 
 		this.analyzeDependency();
-		this.operationOrder = this.solveOperationOrder();
+		if (glyphSrc.operationOrder) {
+			this.operationOrder = glyphSrc.operationOrder;
+		}
+		else {
+			this.operationOrder = this.solveOperationOrder();
+		}
 
-		this.resolveOperationTarget();
+		if (resolveOp) {
+			this.resolveOperationTarget();
+		}
 
 		this.components = outline.component.map((component, i) => new Component(component, `component.${i}`, this));
 		this.componentsName = this.components.map((c, i) => `components.${i}`);
@@ -396,7 +405,7 @@ export default class Glyph {
 	constructGlyph(params, parentAnchors, glyphs, parentTransformTuple = [[[], undefined]]) {
 		const localParams = {};
 		const paramKeys = Object.keys(params);
-		const thisParamKeys = Object.keys(this.parameters);
+		const thisParamKeys = this.paramKeys;
 
 		for (let i = 0; i < paramKeys.length; i++) {
 			localParams[paramKeys[i]] = params[paramKeys[i]];
@@ -439,12 +448,11 @@ export default class Glyph {
 
 
 		const opAnchors = opDone.anchors;
-		const anchorsKeys = Object.keys(this.anchors);
+		const anchorsKeys = this.anchorKeys;
 
 		for (let i = 0; i < anchorsKeys.length; i++) {
 			const key = anchorsKeys[i];
 			const anchor = this.anchors[key];
-			const ref = opAnchors[key];
 
 			const anchorKeys = Object.keys(anchor);
 
