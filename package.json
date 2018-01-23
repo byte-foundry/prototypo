@@ -1,7 +1,7 @@
 {
   "name": "prototypo",
   "version": "1.0.0",
-  "main": "dist/library.js",
+  "main": "gulpfile.js",
   "dependencies": {
     "antique.ptf": "byte-foundry/antique.ptf#feat/new-rendering",
     "babel-eslint": "^8.0.3",
@@ -126,7 +126,6 @@
     "node": ">=4"
   },
   "description": "Prototypo, kickstarting font creation",
-  "main": "gulpfile.js",
   "directories": {
     "test": "test"
   },
@@ -142,8 +141,8 @@
     "lint": "eslint app/scripts/**/*.{js,jsx}",
     "analyze": "webpack --config analyze.config.js",
     "analyze:prod": "webpack --config analyze-prod.config.js",
-	"build:lib": "webpack --config library.config.js",
-	"build:precursor": "webpack --config precursor.config.js"
+    "build:lib": "webpack --config library.config.js",
+    "build:precursor": "webpack --config precursor.config.js"
   },
   "repository": {
     "type": "git",
