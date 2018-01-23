@@ -24,47 +24,36 @@ const onCurveModMode = {
 	ANGLE_MOD: 0b10,
 };
 
-function handleModification(client, glyph, draggedItem, newPos, smoothMod, contour) {
+function handleModification(client, glyph, draggedItem, newPos, smoothMod) {
 	const {
-		parentId, skeletonId, otherNode, otherDir, transforms,
+		parentId, transforms,
 	} = draggedItem.data;
-	const selectedNodeParent = _get(glyph, parentId);
-	const skeletonNode = contour ? _get(glyph, parentId) : _get(glyph, skeletonId);
-	const newVectorPreTransform = subtract2D(newPos, selectedNodeParent);
+	const handlePos = _get(glyph, draggedItem.id).base;
 	const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
 	const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
+	const newVectorPreTransform = subtract2D(newPos, handlePos);
 	const newVector = {
 		x: newVectorPreTransform.x * xTransform,
 		y: newVectorPreTransform.y * yTransform,
 	};
-	const angle = Math.atan2(newVector.y, newVector.x);
-	const intersection = rayRayIntersection(selectedNodeParent, angle, otherNode, otherDir);
-	let tension = distance2D(newPos, selectedNodeParent)
-		/ (distance2D(intersection, selectedNodeParent) || 1);
-	const dotProductForOrient = dot2D(
-		subtract2D(selectedNodeParent, intersection),
-		subtract2D(newPos, selectedNodeParent),
-	);
 
-	if (dotProductForOrient > 0) {
-		tension *= -1;
+	const direction = toileType.NODE_IN === draggedItem.type || toileType.CONTOUR_NODE_IN === draggedItem.type ? 'in' : 'out';
+	const oppositeDirection = toileType.NODE_IN === draggedItem.type || toileType.CONTOUR_NODE_IN === draggedItem.type ? 'out' : 'in';
+
+	const changes = {
+		[`${draggedItem.data.parentId}.${direction}.x`]: newVector.x,
+		[`${draggedItem.data.parentId}.${direction}.y`]: newVector.y,
+	};
+
+	if (smoothMod) {
+		changes[`${draggedItem.data.parentId}.${oppositeDirection}.x`] = -newVector.x;
+		changes[`${draggedItem.data.parentId}.${oppositeDirection}.y`] = -newVector.y;
 	}
 
-	const dir = toileType.NODE_IN === draggedItem.type || toileType.CONTOUR_NODE_IN === draggedItem.type ? 'In' : 'Out';
-	const opposite = toileType.NODE_IN === draggedItem.type || toileType.CONTOUR_NODE_IN === draggedItem.type ? 'Out' : 'In';
-
-	changesDirOfHandle(
-		glyph,
-		draggedItem,
-		dir,
-		angle,
-		tension,
-		skeletonNode,
-		selectedNodeParent,
-		client,
-		opposite,
-		smoothMod,
-	);
+	client.dispatchAction('/change-glyph-node-manually', {
+		changes,
+		glyphName: glyph.name,
+	});
 }
 
 function changesDirOfHandle(

@@ -1511,7 +1511,7 @@ export default class Toile {
 			x: start.x + (10 / zoom),
 			y: start.y - (propsTextSize * index / zoom),
 		}, 14, darkestGrey);
-		this.drawText(`direction in: ${node.dirIn.toFixed(2)} (${(node.dirIn - node.baseDirIn).toFixed(2)})`, {
+		this.drawText(`direction in: ${node.dirIn.toFixed(2)}`, {
 			x: start.x + (10 / zoom),
 			y: start.y - (propsTextSize * (index + 1) / zoom),
 		}, 14, darkestGrey);
@@ -1519,7 +1519,7 @@ export default class Toile {
 			x: start.x + (10 / zoom),
 			y: start.y - (propsTextSize * (index + 2) / zoom),
 		}, 14, darkestGrey);
-		this.drawText(`direction out: ${node.dirOut.toFixed(2)} (${(node.dirOut - node.baseDirOut).toFixed(2)})`, {
+		this.drawText(`direction out: ${node.dirOut.toFixed(2)}`, {
 			x: start.x + (10 / zoom),
 			y: start.y - (propsTextSize * (index + 3) / zoom),
 		}, 14, darkestGrey);

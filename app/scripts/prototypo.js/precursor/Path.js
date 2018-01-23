@@ -41,12 +41,24 @@ function computeHandle(
 		: (nextNode.dirIn === null
 			? next.dirIn
 			: nextNode.dirIn);
-	let dirToPrev = j ? current.dirOut || node.dirOut : current.dirIn || node.dirIn;
-	let dirToNext = j ? current.dirIn || node.dirIn : current.dirOut || node.dirOut;
-	const tensionIn = j ? node.tensionOut : node.tensionIn;
-	const tensionOut = j ? node.tensionIn : node.tensionOut;
-	const typeIn = j ? node.typeOut : node.typeIn;
-	const typeOut = j ? node.typeIn : node.typeOut;
+	let dirToPrev = (j
+		? current.dirOut || node.dirOut
+		: current.dirIn || node.dirIn) || 0;
+	let dirToNext = (j
+		? current.dirIn || node.dirIn
+		: current.dirOut || node.dirOut) || 0;
+	const tensionIn = j
+		? node.tensionOut
+		: node.tensionIn;
+	const tensionOut = j
+		? node.tensionIn
+		: node.tensionOut;
+	const typeIn = j
+		? node.typeOut
+		: node.typeIn;
+	const typeOut = j
+		? node.typeIn
+		: node.typeOut;
 
 	if (typeIn === SMOOTH && typeOut === LINE) {
 		if (nextNode.expandedTo) {
@@ -63,20 +75,6 @@ function computeHandle(
 		else {
 			dirToNext = lineAngle(current, prevNode);
 		}
-	}
-
-	/* eslint-disable no-param-reassign */
-	dest.baseDirOut = dirToNext;
-	dest.baseDirIn = dirToPrev;
-	/* eslint-enable no-param-reassign */
-
-	if (node.expandedTo) {
-		dirToNext += params[`${node.nodeAddress}expandedTo.${j}.dirOut`] || 0;
-		dirToPrev += params[`${node.nodeAddress}expandedTo.${j}.dirIn`] || 0;
-	}
-	else {
-		dirToNext += params[`${node.nodeAddress}dirOut`] || 0;
-		dirToPrev += params[`${node.nodeAddress}dirIn`] || 0;
 	}
 
 	if ((Math.PI - Math.abs(Math.abs(prevDir - dirToPrev) - Math.PI)) % Math.PI === 0) {
@@ -153,36 +151,13 @@ function computeHandle(
 	const untensionOutVector = subtract2D(outIntersection, current);
 	let inVector = mulScalar2D(tensionIn * 0.6, untensionedInVector);
 	let outVector = mulScalar2D(tensionOut * 0.6, untensionOutVector);
+	const outBase = round2D(add2D(current, outVector));
+	const inBase = round2D(add2D(current, inVector));
 
-	if (node.expandedTo) {
-		/* eslint-disable no-param-reassign */
-		node.expandedTo[j].baseLengthIn = distance2D(inVector, {x: 0, y: 0});
-		node.expandedTo[j].baseLengthOut = distance2D(outVector, {x: 0, y: 0});
-		/* eslint-enable no-param-reassign */
-		inVector = mulScalar2D(
-			params[`${node.nodeAddress}expandedTo.${j}.tensionIn`] || ((typeIn === LINE) ? 0 : 1),
-			tensionIn === 0 ? untensionedInVector : inVector,
-		);
-		outVector = mulScalar2D(
-			params[`${node.nodeAddress}expandedTo.${j}.tensionOut`] || ((typeOut === LINE) ? 0 : 1),
-			tensionOut === 0 ? untensionOutVector : outVector,
-		);
-	}
-	else {
-		/* eslint-disable no-param-reassign */
-		node.baseLengthIn = distance2D(inVector, {x: 0, y: 0});
-		node.baseLengthOut = distance2D(outVector, {x: 0, y: 0});
-		/* eslint-enable no-param-reassign */
-		inVector = mulScalar2D(
-			params[`${node.nodeAddress}tensionIn`] || ((typeIn === LINE) ? 0 : 1),
-			inVector,
-		);
-		outVector = mulScalar2D(
-			params[`${node.nodeAddress}tensionOut`] || ((typeOut === LINE) ? 0 : 1),
-			outVector,
-		);
-	}
-
+	dest.baseTensionIn = distance2D(inVector, {x: 0, y: 0})
+		/ (distance2D(untensionedInVector, {x: 0, y: 0}) * 0.6);
+	dest.baseTensionOut = distance2D(outVector, {x: 0, y: 0})
+		/ (distance2D(untensionOutVector, {x: 0, y: 0}) * 0.6);
 
 	if (
 		inVector.x === undefined
@@ -198,17 +173,47 @@ function computeHandle(
 	}
 
 
+	if (node.expandedTo) {
+		const outMod = {
+			x: params[`${node.nodeAddress}expandedTo.${j}.out.x`] || 0,
+			y: params[`${node.nodeAddress}expandedTo.${j}.out.y`] || 0,
+		};
+		const inMod = {
+			x: params[`${node.nodeAddress}expandedTo.${j}.in.x`] || 0,
+			y: params[`${node.nodeAddress}expandedTo.${j}.in.y`] || 0,
+		};
+
+		inVector = add2D(inVector, inMod);
+		outVector = add2D(outVector, outMod);
+	}
+	else {
+		const outMod = {
+			x: params[`${node.nodeAddress}out.x`] || 0,
+			y: params[`${node.nodeAddress}out.y`] || 0,
+		};
+		const inMod = {
+			x: params[`${node.nodeAddress}in.x`] || 0,
+			y: params[`${node.nodeAddress}in.y`] || 0,
+		};
+
+		inVector = add2D(inVector, inMod);
+		outVector = add2D(outVector, outMod);
+	}
+
+
 	/* eslint-disable no-param-reassign */
-	dest.baseTensionIn = tensionIn;
-	dest.baseTensionOut = tensionOut;
 	dest.baseTypeIn = node.typeIn;
 	dest.baseTypeOut = node.typeOut;
 	dest.dirOut = dirToNext;
 	dest.dirIn = dirToPrev;
-	dest.tensionIn = distance2D(inVector, {x: 0, y: 0}) / (distance2D(untensionedInVector, {x: 0, y: 0}) * 0.6);
-	dest.tensionOut = distance2D(outVector, {x: 0, y: 0}) / (distance2D(untensionOutVector, {x: 0, y: 0}) * 0.6);
+	dest.tensionIn = distance2D(inVector, {x: 0, y: 0})
+		/ (distance2D(untensionedInVector, {x: 0, y: 0}) * 0.6);
+	dest.tensionOut = distance2D(outVector, {x: 0, y: 0})
+		/ (distance2D(untensionOutVector, {x: 0, y: 0}) * 0.6);
 	dest.handleIn = round2D(add2D(current, inVector));
 	dest.handleOut = round2D(add2D(current, outVector));
+	dest.handleIn.base = inBase;
+	dest.handleOut.base = outBase;
 	/* eslint-enable no-param-reassign */
 }
 
