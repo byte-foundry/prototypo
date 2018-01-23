@@ -76,8 +76,8 @@ async function mergeFont(url, action, params, arrayBuffer, mime = 'otf') {
 }
 
 export default class FontMediator {
-	static async init(typedatas) {
-		instance = new FontMediator(typedatas);
+	static async init(typedatas, workerPoolSize) {
+		instance = new FontMediator(workerPoolSize);
 
 		await instance.workerPool.workerReady;
 
@@ -102,8 +102,8 @@ export default class FontMediator {
 		return instance;
 	}
 
-	constructor() {
-		this.workerPool = new WorkerPool();
+	constructor(workerPoolSize) {
+		this.workerPool = new WorkerPool(workerPoolSize);
 	}
 
 	addTemplate(typedatas) {
@@ -282,24 +282,6 @@ export default class FontMediator {
 		});
 	}
 
-	getArrayBuffer(fontResult) {
-		return new Promise((resolve) => {
-			this.workerPool.doFastJob({
-				action: {
-					type: 'makeOtf',
-					data: {
-						fontResult,
-					},
-				},
-				callback: ({arrayBuffer}) => {
-					resolve(arrayBuffer);
-
-					// eslint-disable-next-line no-multi-assign
-				},
-			});
-		});
-	}
-
 	getFontObject(fontName, template, params, subset) {
 		if (!this.workerPool) {
 			return false;
@@ -338,15 +320,56 @@ export default class FontMediator {
 			});
 		}
 
-		return this.getFontObject(fontName, template, params, subset).then((arrayBuffer) => {
-			this.addToFont(arrayBuffer, fontName);
+		return this.getFontObject(
+			fontName,
+			template,
+			params,
+			subset,
+		).then((arrayBuffer) => {
+			const glyphsListLengthView = new DataView(arrayBuffer, 0, 4);
+			const glyphsListLength = glyphsListLengthView.getInt32(0, true);
+
+			const glyphListArray = new Int32Array(
+				arrayBuffer,
+				4,
+				glyphsListLength * 6, // each value is 32bits and there is 4
+			);
+			const glyphValues = [];
+
+			for (let i = 0; i < glyphsListLength * 6; i += 6) {
+				const unicode = glyphListArray[i];
+				const advanceWidth = glyphListArray[i + 1];
+				const spacingLeft = glyphListArray[i + 2];
+				const baseSpacingLeft = glyphListArray[i + 3];
+				const spacingRight = glyphListArray[i + 4];
+				const baseSpacingRight = glyphListArray[i + 5];
+
+				glyphValues.push({
+					unicode,
+					advanceWidth,
+					spacingLeft,
+					spacingRight,
+					baseSpacingLeft,
+					baseSpacingRight,
+				});
+			}
+
+			this.addToFont(
+				arrayBuffer.slice(
+					4 + (glyphsListLength * 4 * 6),
+					arrayBuffer.length,
+				),
+				fontName,
+			);
+
+			window.fontResult = {glyphs: glyphValues};
+			localClient.dispatchAction('/store-value-font', {
+				font: Math.random(),
+			});
 
 			return this.mergeFontWithTimeout(arrayBuffer, fontName);
 		}).then((mergedBuffer) => {
 			this.addToFont(mergedBuffer, fontName);
-			localClient.dispatchAction('/store-value-font', {
-				font: Math.random(),
-			});
 		});
 	}
 

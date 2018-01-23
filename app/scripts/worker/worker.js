@@ -5,6 +5,46 @@ const fonts = {};
 
 /* eslint-disable no-restricted-globals */
 
+// Layout of array is [
+//   number of glyphs,
+//   unicode,
+//   advanceWidth,
+//   spacingLeft,
+//   spacingRight,
+//   unicode,...
+//   ]
+function getFontValuesArray(font) {
+	const glyphValuesArray = [];
+	let length = 0;
+
+	for (let i = 0; i < font.glyphs.length; i++) {
+		const {
+			unicode,
+			spacingLeft,
+			baseSpacingLeft,
+			spacingRight,
+			baseSpacingRight,
+			advanceWidth,
+		} = font.glyphs[i];
+
+		if (unicode) {
+			length++;
+			glyphValuesArray.push(unicode);
+			glyphValuesArray.push(advanceWidth);
+			glyphValuesArray.push(spacingLeft);
+			glyphValuesArray.push(baseSpacingLeft);
+			glyphValuesArray.push(spacingRight);
+			glyphValuesArray.push(baseSpacingRight);
+		}
+	}
+
+	glyphValuesArray.unshift(length);
+
+	const intArray = new Int32Array(glyphValuesArray);
+
+	return new Uint8Array(intArray.buffer);
+}
+
 self.onmessage = (e) => {
 	switch (e.data.type) {
 	case 'createFont': {
@@ -22,8 +62,10 @@ self.onmessage = (e) => {
 		break;
 	}
 	case 'constructFont': {
-		const font = fonts[e.data.data.name].constructFont(e.data.data.params, e.data.data.subset);
-
+		const font = fonts[e.data.data.name].constructFont(
+			e.data.data.params,
+			e.data.data.subset,
+		);
 		const arrayBuffer = fontToSfntTable({
 			...font,
 			fontFamily: {en: e.data.data.fontName || 'Prototypo web font'},
@@ -31,13 +73,19 @@ self.onmessage = (e) => {
 			postScriptName: {},
 			unitsPerEm: 1024,
 		});
-
 		const textEncoder = new TextEncoder('utf-8');
 		const encodedId = textEncoder.encode(e.data.id);
+		const glyphValuesArray = getFontValuesArray(font);
+		const resultBuffer = new Uint8Array(glyphValuesArray.byteLength
+			+ 1 + encodedId.byteLength // ids plus length of ids
+			+ arrayBuffer.byteLength);
 
-		const resultBuffer = new Uint8Array(1 + encodedId.byteLength + arrayBuffer.byteLength);
-
-		resultBuffer.set([encodedId.byteLength, ...encodedId, ...arrayBuffer], 0);
+		resultBuffer.set([
+			encodedId.byteLength,
+			...encodedId,
+			...glyphValuesArray,
+			...arrayBuffer,
+		], 0);
 
 		self.postMessage(resultBuffer.buffer);
 		break;

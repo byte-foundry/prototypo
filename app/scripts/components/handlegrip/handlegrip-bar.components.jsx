@@ -40,20 +40,23 @@ export default class HandlegripBar extends React.Component {
 	render() {
 		const left = this.props.side === 'left';
 		const handleGripClasses = classNames({
-			'handlegrip': true,
+			handlegrip: true,
 			'handlegrip-left': left,
 			'handlegrip-right': !left,
 		});
 
+		console.log(`spacing ${this.props.spacing}`);
+		console.log(`clamped ${this.props.clampedValue}`);
 		const text = (this.props.clampedValue ? this.props.clampedValue + this.props.baseSpacing : this.props.spacing) || '...';
 
+		console.log(`text ${text}`);
 		return (
 			<span
 				className={handleGripClasses}
 				onMouseDown={this.handleDown}
 				style={this.props.style}
 			>
-				<span className="handlegrip-border"></span>
+				<span className="handlegrip-border" />
 				<span className="handlegrip-spacing-number">
 					{text instanceof Number ? text.toFixed(0) : parseInt(text).toFixed(0)}
 				</span>

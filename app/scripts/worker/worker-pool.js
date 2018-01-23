@@ -24,9 +24,9 @@ function getRandomUuid() {
 }
 
 export default class WorkerPool {
-	constructor() {
+	constructor(workerPoolSize = 4) {
 		 // Workers for every thread
-		const numberOfWorker = 2;
+		const numberOfWorker = workerPoolSize;
 		const ProtoWorker = require('worker-loader?inline!./worker.js'); // eslint-disable-line global-require, no-webpack-loader-syntax
 		let eachJobList = [];
 
@@ -54,7 +54,7 @@ export default class WorkerPool {
 					const data = e.data;
 
 					const idLengthView = new DataView(data, 0, 1);
-					const idLength = idLengthView.getUint8();
+					const idLength = idLengthView.getUint8(0);
 
 					const idView = new DataView(data, 1, idLength);
 					const idDecoder = new TextDecoder('utf-8');

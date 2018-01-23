@@ -25,7 +25,7 @@ export default class Ptypo {
 		this.precursor = {};
 	}
 
-	async init(templates = Object.values(templateNames)) {
+	async init(templates = Object.values(templateNames), workerPoolSize) {
 		const typedataPromises = templates.map(fontTemplate => new Promise(async (resolve) => {
 			if (validTemplates.indexOf(fontTemplate) === -1) {
 				throw new Error('template not found, please use a correct template Name');
@@ -58,12 +58,12 @@ export default class Ptypo {
 			console.warn("You're using the free version of the Prototypo library. Get a pro account now and access the entire glyphset. https://app.prototypo.io/#/account/subscribe"); // eslint-disable-line no-console
 		}
 
-		await FontMediator.init(typedatas);
+		await FontMediator.init(typedatas, workerPoolSize);
 
 		this.mediator = FontMediator.instance();
 	}
 
-	async createFont(fontName, fontTemplate) {
+	async createFont(fontName, fontTemplate, alwaysMerge) {
 		if (!this.mediator) {
 			await this.init();
 			this.mediator = FontMediator.instance();
@@ -74,12 +74,18 @@ export default class Ptypo {
 			throw new Error('template not found, please use a correct template Name');
 		}
 
-		return Promise.resolve(new PtypoFont(this.mediator, fontTemplate, this.precursor[fontTemplate], fontName));
+		return Promise.resolve(new PtypoFont(
+			this.mediator,
+			fontTemplate,
+			this.precursor[fontTemplate],
+			fontName,
+			alwaysMerge,
+		));
 	}
 }
 
 export class PtypoFont {
-	constructor(mediator, fontTemplate, json, fontName, noUnmerged) {
+	constructor(mediator, fontTemplate, json, fontName, alwaysMerge) {
 		this.mediator = mediator;
 		this.json = json;
 		this.values = {};
@@ -87,7 +93,7 @@ export class PtypoFont {
 		this.init = {};
 		this.fontName = fontName;
 		this.fontTemplate = fontTemplate;
-		this.noUnmerged = noUnmerged;
+		this.alwaysMerge = alwaysMerge;
 
 		json.controls.forEach((control) => {
 			control.parameters.forEach((param) => {
@@ -102,23 +108,26 @@ export class PtypoFont {
 				.filter(unicode => unicode !== undefined));
 	}
 
-	changeParams(paramObj) {
+	changeParams(paramObj, subset) {
 		Object.keys(paramObj).forEach((key) => {
 			this.values[key] = paramObj[key];
 		});
 
-		return this.createFont();
+		return this.createFont(subset);
 	}
 
 	async createFont(subset) {
+		const unicodeSubset = subset
+			? _uniq(subset.split('').map(char => char.charCodeAt(0)))
+			: undefined;
 		const buffer = await this.mediator.getFontObject(
 			this.fontName,
 			this.fontTemplate,
 			this.values,
-			subset || this.glyphsSet,
+			unicodeSubset || this.glyphsSet,
 		);
 
-		if (this.noUnmerged) {
+		if (this.alwaysMerge) {
 			this.mediator.mergeFontWithTimeout(buffer, this.fontName);
 		}
 		else {
@@ -133,9 +142,9 @@ export class PtypoFont {
 		this.globalHeight = xHeight + Math.max(capDelta, ascender) - descender;
 	}
 
-	changeParam(paramName, paramValue) {
+	changeParam(paramName, paramValue, subset) {
 		this.values[paramName] = paramValue;
-		this.createFont();
+		this.createFont(subset);
 	}
 
 	async getArrayBuffer() {

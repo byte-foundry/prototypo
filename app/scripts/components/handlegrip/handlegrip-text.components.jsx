@@ -2,13 +2,14 @@ import _find from 'lodash/find';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
-import DOM from '../../helpers/dom.helpers.js';
 import {diffChars} from 'diff';
 
-import HandlegripLetter from './handlegrip-letter.components.jsx';
-import RegularLetter from './regular-letter.components.jsx';
+import LocalClient from '../../stores/local-client.stores';
+import DOM from '../../helpers/dom.helpers';
+
+import HandlegripLetter from './handlegrip-letter.components';
+import RegularLetter from './regular-letter.components';
 
 /**
 *	Component : Text in prototypo-word
@@ -26,7 +27,8 @@ export default class HandlegripText extends React.Component {
 			textArray: [],
 			lastKey: 0,
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate
+			= PureRenderMixin.shouldComponentUpdate.bind(this);
 
 		// function bindings
 		this.handleUp = this.handleUp.bind(this);
@@ -44,7 +46,8 @@ export default class HandlegripText extends React.Component {
 			.onUpdate((head) => {
 				this.setState({
 					tracking: head.toJS().d.uiSpacingTracking,
-					letterFontSize: head.toJS().d.uiLetterSpacingLetterFontSize || this.state.letterFontSize,
+					letterFontSize: head.toJS().d.uiLetterSpacingLetterFontSize
+						|| this.state.letterFontSize,
 				});
 			})
 			.onDelete(() => {
@@ -62,7 +65,7 @@ export default class HandlegripText extends React.Component {
 			});
 
 		this.client.getStore('/fontInstanceStore', this.lifespan)
-			.onUpdate((head) => {
+			.onUpdate(() => {
 				this.setState({
 					font: window.fontResult,
 				});
@@ -92,7 +95,7 @@ export default class HandlegripText extends React.Component {
 
 	componentDidUpdate() {
 		if (!this.state.loaded) {
-			const handlegripDOM = ReactDOM.findDOMNode(this);
+			const handlegripDOM = this.node;
 
 			if (handlegripDOM) {
 				handlegripDOM.addEventListener('mouseup', this.handleUp);
@@ -105,7 +108,7 @@ export default class HandlegripText extends React.Component {
 	}
 
 	componentWillUnmount() {
-		const handlegripDOM = ReactDOM.findDOMNode(this);
+		const handlegripDOM = this.node;
 
 		this.lifespan.release();
 		document.removeEventListener('selectstart', this.handleSelectstart);
@@ -117,7 +120,6 @@ export default class HandlegripText extends React.Component {
 	}
 
 	openGlyph(code) {
-		console.log(code);
 		this.client.dispatchAction('/select-glyph', {unicode: code});
 	}
 
@@ -134,9 +136,12 @@ export default class HandlegripText extends React.Component {
 			force: true,
 		});
 
-		const letterOffsetWidth = this.refs.selectedLetter.getClientWidth();
-		const glyph = _find(this.state.font.glyphs, glyphItem => glyphItem.unicode === this.getSelectedLetter().charCodeAt(0));
-		const advanceWidth = glyph.advanceWidth;
+		const letterOffsetWidth = this.selectedLetter.getClientWidth();
+		const glyph = _find(
+			this.state.font.glyphs,
+			glyphItem => glyphItem.unicode === this.getSelectedLetter().charCodeAt(0),
+		);
+		const {advanceWidth} = glyph;
 		const dragginRatio = parseFloat(advanceWidth) / letterOffsetWidth;
 
 		this.client.dispatchAction('/store-value-fast', {
@@ -164,15 +169,24 @@ export default class HandlegripText extends React.Component {
 
 		const leftSideTracking = this.state.tracking === 'left';
 		const newX = e.pageX || e.screenX;
-		const trackingX = this.state.trackingX;
-		const el = ReactDOM.findDOMNode(this);
+		const {trackingX} = this.state;
+		const el = this.node;
 		const {offsetLeft} = DOM.getAbsOffset(el);
-		const letterOffsetWidth = this.refs.selectedLetter.getClientWidth();
+		const letterOffsetWidth = this.selectedLetter.getClientWidth();
 		let clampedNewValue;
 
 		// advanceWidth is in typographic unit
-		const glyph = _find(this.state.font.glyphs, glyphItem => glyphItem.unicode === this.getSelectedLetter().charCodeAt(0));
-		const advanceWidth = glyph.advanceWidth;
+		const glyph = _find(
+			this.state.font.glyphs,
+			glyphItem => glyphItem.unicode === this.getSelectedLetter().charCodeAt(0),
+		);
+		const {
+			advanceWidth,
+			spacingLeft,
+			spacingRight,
+			baseSpacingLeft,
+			baseSpacingRight,
+		} = glyph;
 		// intiate spacing value that will be set w/ dispatchAction
 		const newSpacingValues = {};
 
@@ -189,23 +203,28 @@ export default class HandlegripText extends React.Component {
 			: {};
 
 		// obtain variation value
-		const variation = Math.round((newX - trackingX) * dragginRatio) * (leftSideTracking ? -1 : 1);
+		const variation = Math.round((newX - trackingX) * dragginRatio)
+			* (leftSideTracking ? -1 : 1);
 
 		// compute new value
 		const newValue = (
 			(
-				this.state.unClampedOldValue || (
-					specialPropsObject && specialPropsObject[property]
-						? specialPropsObject[property]
-						: 0
-				)
+				this.state.unClampedOldValue !== undefined
+					? this.state.unClampedOldValue
+					: (
+						specialPropsObject && specialPropsObject[property]
+							? specialPropsObject[property]
+							: 0
+					)
 			)
 			+ (variation)
 		);
 
-		const spacingLeft = glyph.spacingLeft;
-		const spacingRight = glyph.spacingRight;
-		const glyphWidth = glyph.advanceWidth - glyph.spacingLeft - glyph.spacingRight;
+		console.log(newValue);
+
+		const glyphWidth = glyph.advanceWidth
+			- glyph.spacingLeft
+			- glyph.spacingRight;
 
 		// if the new X value is in the element boundaries
 		if (newX >= offsetLeft && newX <= offsetLeft + el.clientWidth) {
@@ -213,14 +232,14 @@ export default class HandlegripText extends React.Component {
 				? spacingRight
 				: spacingLeft;
 
-			clampedNewValue = Math.min(Math.max(newValue, -glyphWidth - otherSpacing + 100), this.props.max);
+			clampedNewValue = Math.min(
+				Math.max(newValue, -glyphWidth - otherSpacing + 100),
+				this.props.max,
+			);
 		}
 		else {
 			clampedNewValue = newX < offsetLeft ? this.props.min : this.props.max;
 		}
-
-		const baseSpacingLeft = glyph.baseSpacingLeft;
-		const baseSpacingRight = glyph.baseSpacingRight;
 
 		// if we are currently tracking left side spacing
 		if (leftSideTracking) {
@@ -230,14 +249,6 @@ export default class HandlegripText extends React.Component {
 		else {
 			newSpacingValues.spacingRight = clampedNewValue + baseSpacingRight;
 		}
-
-		/* if (!Number.isNaN(newValue)) {
-			this.client.dispatchAction('/change-letter-spacing', {
-				value: clampedNewValue,
-				side: this.state.tracking,
-				letter: this.getSelectedLetter(),
-			});
-		} */
 
 		newSpacingValues.unClampedOldValue = newValue;
 		newSpacingValues.clampedValue = clampedNewValue;
@@ -317,7 +328,7 @@ export default class HandlegripText extends React.Component {
 					return (
 						<HandlegripLetter
 							letter={letter}
-							ref="selectedLetter"
+							ref={node => this.selectedLetter = node}
 							openGlyph={() => {this.openGlyph(letter.charCodeAt(0));}}
 							spacingLeft={spacingLeft}
 							spacingRight={spacingRight}
@@ -338,7 +349,12 @@ export default class HandlegripText extends React.Component {
 			});
 
 			return (
-				<div className={this.props.className} spellCheck="false" style={this.props.style}>
+				<div
+					className={this.props.className}
+					spellCheck="false"
+					ref={node => this.node = node}
+					style={this.props.style}
+				>
 					{letterComponents}
 				</div>
 			);

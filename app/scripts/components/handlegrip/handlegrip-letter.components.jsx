@@ -76,15 +76,16 @@ export default class HandlegripLetter extends React.Component {
 					min={this.props.min}
 					max={this.props.max}
 					clampedValue={this.props.tracking === 'left' ? this.props.clampedValue : 0}
-					style={{left: this.props.tracking === 'left'
-						? (-this.props.clampedValue - this.props.baseSpacingLeft + spacingLeft) / this.props.dragginRatio - 5
-						: -5,
+					style={{
+						left: this.props.tracking === 'left'
+							? (-this.props.clampedValue - this.props.baseSpacingLeft + spacingLeft) / this.props.dragginRatio - 5
+							: -5,
 					}}
 					letter={this.props.letter}
 				/>
 				<span className="letter-wrap-wrap">
 					<span ref="letterWrapLetter" className="letter-wrap-letter" onDoubleClick={this.props.openGlyph}>
-						{this.props.letter.replace(/ /g, "\u00a0")}
+						{this.props.letter.replace(/ /g, '\u00a0')}
 					</span>
 					<span className="handlegrip-spacing-number">
 						{advanceWidth.toFixed(0)}
@@ -98,9 +99,10 @@ export default class HandlegripLetter extends React.Component {
 					min={this.props.min}
 					max={this.props.max}
 					clampedValue={this.props.tracking === 'right' ? this.props.clampedValue : 0}
-					style={{right: this.props.tracking === 'right'
-						? (-this.props.clampedValue - this.props.baseSpacingRight + spacingRight) / this.props.dragginRatio - 5
-						: -5,
+					style={{
+						right: this.props.tracking === 'right'
+							? (-this.props.clampedValue - this.props.baseSpacingRight + spacingRight) / this.props.dragginRatio - 5
+							: -5,
 					}}
 					letter={this.props.letter}
 				/>
