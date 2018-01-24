@@ -6,7 +6,7 @@ import FontPrecursor from '../precursor/FontPrecursor';
 
 import WorkerPool from '../../worker/worker-pool';
 
-const MERGE_URL = process.env.MERGE ? 'http://localhost:3000' : 'https://merge.prototypo.io';
+const MERGE_URL = process.env.MERGE ? 'http://localhost:3000' : 'https://merge.prototypo.io/v1';
 
 const oldFont = {};
 let localClient;
@@ -353,12 +353,13 @@ export default class FontMediator {
 					baseSpacingRight,
 				});
 			}
+			const fontBuffer = arrayBuffer.slice(
+				4 + (glyphsListLength * 4 * 6),
+				arrayBuffer.length,
+			);
 
 			this.addToFont(
-				arrayBuffer.slice(
-					4 + (glyphsListLength * 4 * 6),
-					arrayBuffer.length,
-				),
+				fontBuffer,
 				fontName,
 			);
 
@@ -367,7 +368,7 @@ export default class FontMediator {
 				font: Math.random(),
 			});
 
-			return this.mergeFontWithTimeout(arrayBuffer, fontName);
+			return this.mergeFontWithTimeout(fontBuffer, fontName);
 		}).then((mergedBuffer) => {
 			this.addToFont(mergedBuffer, fontName);
 		});

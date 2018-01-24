@@ -263,6 +263,12 @@ class SolvablePath {
 			else if (node.typeIn === SMOOTH && node.dirIn === null) {
 				nodes[i].dirIn = nodes[i].dirOut;
 			}
+			if (node.typeOut === LINE) {
+				nodes[i].tensionOut = 0;
+			}
+			if (node.typeIn === LINE) {
+				nodes[i].tensionIn = 0;
+			}
 
 			if (node.expand) {
 				const dirIn = node.dirIn;
