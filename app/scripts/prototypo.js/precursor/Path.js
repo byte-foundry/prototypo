@@ -257,20 +257,22 @@ class SolvablePath {
 			nodes[i].typeIn = node.typeIn || node.type;
 			nodes[i].typeOut = node.typeOut || node.type;
 
+
 			if (node.typeOut === SMOOTH && node.dirOut === null) {
 				nodes[i].dirOut = nodes[i].dirIn;
 			}
 			else if (node.typeIn === SMOOTH && node.dirIn === null) {
 				nodes[i].dirIn = nodes[i].dirOut;
 			}
-			if (node.typeOut === LINE) {
-				nodes[i].tensionOut = 0;
-			}
-			if (node.typeIn === LINE) {
-				nodes[i].tensionIn = 0;
-			}
 
 			if (node.expand) {
+				if (i === 0 && !closed) {
+					nodes[i].typeIn = LINE;
+				}
+				else if (i === nodes.length - 1 && !closed) {
+					nodes[i].typeOut = LINE;
+				}
+
 				const dirIn = node.dirIn;
 				const dirOut = node.dirOut;
 
@@ -283,6 +285,14 @@ class SolvablePath {
 					: dirOut;
 			}
 			else if (node.expandedTo) {
+				if (i === 0 && !closed) {
+					node.expandedTo[0].typeIn = LINE;
+					node.expandedTo[1].typeOut = LINE;
+				}
+				else if (i === nodes.length - 1 && !closed) {
+					node.expandedTo[1].typeIn = LINE;
+					node.expandedTo[0].typeOut = LINE;
+				}
 				const dirIn0 = node.expandedTo[0].dirIn;
 				const dirOut0 = node.expandedTo[0].dirOut;
 				const dirIn1 = node.expandedTo[1].dirIn;
@@ -298,21 +308,19 @@ class SolvablePath {
 				nodes[i].dirOut = node.dirOut || 0;
 			}
 
+			if (node.typeOut === LINE) {
+				nodes[i].tensionOut = 0;
+			}
+			if (node.typeIn === LINE) {
+				nodes[i].tensionIn = 0;
+			}
+
 			nodes[i].tensionIn = node.tensionIn === undefined
 				? 1
 				: node.tensionIn;
 			nodes[i].tensionOut = node.tensionOut === undefined
 				? 1
 				: node.tensionOut;
-
-			if (!closed && skeleton) {
-				if (i === 0) {
-					 nodes[i].typeIn = LINE;
-				}
-				else if (i === nodes.length - 1) {
-					 nodes[i].typeOut = LINE;
-				}
-			}
 		}
 		/* eslint-enable no-param-reassign */
 
