@@ -37,6 +37,13 @@ export const canvasMode = {
 	COMPONENTS: 2,
 };
 
+export const specialKey = {
+	CTRL: 0b1,
+	SHIFT: 0b10,
+	ALT: 0b100,
+	META: 0b1000,
+};
+
 export const appState = {
 	DEFAULT:	0,
 	BOX_SELECTING:	0b1,
@@ -176,10 +183,10 @@ export default class Toile {
 
 				this.keyboardUp = {
 					keyCode,
-					special: (ctrlKey ? 0b1 : 0)
-						+ (shiftKey ? 0b10 : 0)
-						+ (altKey ? 0b100 : 0)
-						+ (metaKey ? 0b1000 : 0),
+					special: (ctrlKey ? specialKey.CTRL : 0)
+						+ (shiftKey ? specialKey.SHIFT : 0)
+						+ (altKey ? specialKey.ALT : 0)
+						+ (metaKey ? specialKey.META : 0),
 				};
 			});
 
@@ -193,10 +200,10 @@ export default class Toile {
 				} = e;
 				const eventData = {
 					keyCode,
-					special: (ctrlKey ? 0b1 : 0)
-						+ (shiftKey ? 0b10 : 0)
-						+ (altKey ? 0b100 : 0)
-						+ (metaKey ? 0b1000 : 0),
+					special: (ctrlKey ? specialKey.CTRL : 0)
+						+ (shiftKey ? specialKey.SHIFT : 0)
+						+ (altKey ? specialKey.ALT : 0)
+						+ (metaKey ? specialKey.META : 0),
 				};
 
 				if (this.keyboardDown.keyCode !== keyCode) {

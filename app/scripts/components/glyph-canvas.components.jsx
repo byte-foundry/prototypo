@@ -5,7 +5,7 @@ import React from 'react';
 import pleaseWait from 'please-wait';
 import Lifespan from 'lifespan';
 
-import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix, canvasMode} from '../toile/toile';
+import Toile, {mState, toileType, appState, transformCoords, inverseProjectionMatrix, canvasMode, specialKey} from '../toile/toile';
 import {rayRayIntersection} from '../prototypo.js/utils/updateUtils';
 
 import {changeTransformOrigin, glyphBoundingBox} from '../prototypo.js/utils/generic';
@@ -28,7 +28,9 @@ function handleModification(client, glyph, draggedItem, newPos, smoothMod) {
 	const {
 		parentId, transforms,
 	} = draggedItem.data;
-	const handlePos = _get(glyph, draggedItem.id).base;
+	const handle = _get(glyph, draggedItem.id);
+	const handlePos = handle.base;
+	const parent = _get(glyph, parentId);
 	const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
 	const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
 	const newVectorPreTransform = subtract2D(newPos, handlePos);
@@ -36,9 +38,11 @@ function handleModification(client, glyph, draggedItem, newPos, smoothMod) {
 		x: newVectorPreTransform.x * xTransform,
 		y: newVectorPreTransform.y * yTransform,
 	};
+	const isIn = toileType.NODE_IN === draggedItem.type
+		|| toileType.CONTOUR_NODE_IN === draggedItem.type;
 
-	const direction = toileType.NODE_IN === draggedItem.type || toileType.CONTOUR_NODE_IN === draggedItem.type ? 'in' : 'out';
-	const oppositeDirection = toileType.NODE_IN === draggedItem.type || toileType.CONTOUR_NODE_IN === draggedItem.type ? 'out' : 'in';
+	const direction = isIn ? 'in' : 'out';
+	const oppositeDirection = isIn ? 'out' : 'in';
 
 	const changes = {
 		[`${draggedItem.data.parentId}.${direction}.x`]: newVector.x,
@@ -46,36 +50,28 @@ function handleModification(client, glyph, draggedItem, newPos, smoothMod) {
 	};
 
 	if (smoothMod) {
-		changes[`${draggedItem.data.parentId}.${oppositeDirection}.x`] = -newVector.x;
-		changes[`${draggedItem.data.parentId}.${oppositeDirection}.y`] = -newVector.y;
-	}
+		const opposite = isIn
+			? parent.handleOut.base
+			: parent.handleIn.base;
+		const relativeNewPos = subtract2D(newPos, parent);
+		const relativeBasePos = subtract2D(handlePos, parent);
+		const relativeOpPos = subtract2D(opposite, parent);
+		const modAngle = Math.atan2(relativeOpPos.y, relativeOpPos.x)
+			+ Math.atan2(relativeNewPos.y, relativeNewPos.x)
+			- Math.atan2(relativeBasePos.y, relativeBasePos.x);
 
-	client.dispatchAction('/change-glyph-node-manually', {
-		changes,
-		glyphName: glyph.name,
-	});
-}
+		const oppositeLength = distance2D(opposite, parent);
 
-function changesDirOfHandle(
-	glyph,
-	draggedItem,
-	direction,
-	angle,
-	tension,
-	node,
-	parent,
-	client,
-	oppositeDirection,
-	smoothMod,
-) {
-	const diff = angle - parent[`baseDir${direction}`];
-	const changes = {
-		[`${draggedItem.data.parentId}.dir${direction}`]: diff,
-		[`${draggedItem.data.parentId}.tension${direction}`]: tension / (0.6 * (parent[`baseTension${direction}`] || (1 / 0.6))),
-	};
+		const newOpPos = add2D(parent, {
+			x: Math.cos(modAngle) * oppositeLength,
+			y: Math.sin(modAngle) * oppositeLength,
+		});
+		const opVector = subtract2D(newOpPos, opposite);
 
-	if (smoothMod) {
-		changes[`${draggedItem.data.parentId}.${oppositeDirection}`] = angle - node[`dir${oppositeDirection}`];
+		changes[`${draggedItem.data.parentId}.${oppositeDirection}.x`]
+			= opVector.x;
+		changes[`${draggedItem.data.parentId}.${oppositeDirection}.y`]
+			= opVector.y;
 	}
 
 	client.dispatchAction('/change-glyph-node-manually', {
@@ -872,7 +868,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						switch (item.type) {
 						case toileType.NODE_OUT:
 						case toileType.NODE_IN: {
-							const smoothMod = appStateValue & appState.HANDLE_MOD_SMOOTH_MODIFIER;
+							const smoothMod = this.toile.keyboardDown.special & specialKey.SHIFT;
 
 							handleModification(
 								this.client,
@@ -885,7 +881,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						case toileType.CONTOUR_NODE_OUT:
 						case toileType.CONTOUR_NODE_IN: {
-							const smoothMod = appStateValue & appState.HANDLE_MOD_SMOOTH_MODIFIER;
+							const smoothMod = this.toile.keyboardDown.special & specialKey.SHIFT;
 
 							handleModification(
 								this.client,
