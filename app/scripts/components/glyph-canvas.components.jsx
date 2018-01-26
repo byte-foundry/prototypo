@@ -24,7 +24,7 @@ const onCurveModMode = {
 	ANGLE_MOD: 0b10,
 };
 
-function handleModification(client, glyph, draggedItem, newPos, smoothMod) {
+function handleModification(client, glyph, draggedItem, newPos, smoothMod, parallelMod) {
 	const {
 		parentId, transforms,
 	} = draggedItem.data;
@@ -831,18 +831,21 @@ export default class GlyphCanvas extends React.PureComponent {
 				) {
 					interactions = selectedItems.map((item) => {
 						let posVector;
+						const modRange = this.toile.keyboardDown.special & specialKey.SHIFT
+							? 10
+							: 1;
 
 						if (this.toile.keyboardDownRisingEdge.keyCode === 40) {
-							posVector = {x: 0, y: -1};
+							posVector = {x: 0, y: -modRange};
 						}
 						if (this.toile.keyboardDownRisingEdge.keyCode === 38) {
-							posVector = {x: 0, y: 1};
+							posVector = {x: 0, y: modRange};
 						}
 						if (this.toile.keyboardDownRisingEdge.keyCode === 37) {
-							posVector = {x: -1, y: 0};
+							posVector = {x: -modRange, y: 0};
 						}
 						if (this.toile.keyboardDownRisingEdge.keyCode === 39) {
-							posVector = {x: 1, y: 0};
+							posVector = {x: modRange, y: 0};
 						}
 
 						return {
@@ -869,6 +872,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						case toileType.NODE_OUT:
 						case toileType.NODE_IN: {
 							const smoothMod = this.toile.keyboardDown.special & specialKey.SHIFT;
+							const parallelMod = this.toile.keyboardDown.special & specialKey.CTRL;
 
 							handleModification(
 								this.client,
@@ -876,6 +880,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								item,
 								modData,
 								smoothMod,
+								parallelMod,
 							);
 							break;
 						}
@@ -889,18 +894,25 @@ export default class GlyphCanvas extends React.PureComponent {
 								item,
 								modData,
 								smoothMod,
-								true,
 							);
 							break;
 						}
 						case toileType.NODE: {
+							let curveMode = onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD;
+
+							if (this.toile.keyboardDown.special & specialKey.SHIFT) {
+								curveMode &= ~onCurveModMode.WIDTH_MOD;
+							}
+							else if (this.toile.keyboardDown.special & specialKey.CTRL) {
+								curveMode &= ~onCurveModMode.ANGLE_MOD;
+							}
 							onCurveModification(
 								this.client,
 								glyph,
 								item,
 								modData,
 								appStateValue,
-								onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD,
+								curveMode,
 							);
 
 							const id = item.data.parentId;

@@ -420,6 +420,7 @@ export default class Toile {
 		prevDir,
 		nextDir,
 		componentPrefixAddress,
+		parallelId,
 	) {
 		this.drawHandleNode({
 			node,
@@ -432,6 +433,7 @@ export default class Toile {
 			type: toileType.NODE_IN,
 			hotItems,
 			color: inHandleColor,
+			parallelId,
 		}); // in
 		this.drawHandleNode({
 			node,
@@ -444,6 +446,7 @@ export default class Toile {
 			type: toileType.NODE_OUT,
 			hotItems,
 			color: outHandleColor,
+			parallelId,
 		}); // out
 
 		const hot = _find(hotItems, item => item.id === id);
@@ -504,6 +507,7 @@ export default class Toile {
 		type,
 		hotItems,
 		color,
+		parallelId,
 	}) {
 		let handleNode = handle;
 
@@ -536,6 +540,7 @@ export default class Toile {
 					skeletonId: parentId,
 					otherNode,
 					otherDir,
+					parallelId,
 				},
 			});
 		}
@@ -607,6 +612,7 @@ export default class Toile {
 			prevNode.dirOut,
 			nextNode.dirIn,
 			componentPrefixAddress,
+			`${id}.expandedTo.1`,
 		);
 		this.drawExpandedNode(
 			node.expandedTo[1],
@@ -619,6 +625,7 @@ export default class Toile {
 			nextNode.dirIn,
 			prevNode.dirOut,
 			componentPrefixAddress,
+			`${id}.expandedTo.0`,
 		);
 	}
 
