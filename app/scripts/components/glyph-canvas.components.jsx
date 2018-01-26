@@ -475,6 +475,11 @@ export default class GlyphCanvas extends React.PureComponent {
 						else {
 							appStateValue = appState.CONTOUR_POINT_SELECTED;
 						}
+						this.client.dispatchAction('/change-glyph-node-manually', {
+							label: 'manual edition',
+							force: true,
+							changes: {},
+						});
 					}
 					else if (
 						(appStateValue & appState.SKELETON_POINT_SELECTED)
@@ -553,6 +558,11 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 					else if ((appStateValue & appState.DRAGGING_POINTS) && mouseClickRelease) {
 						appStateValue = appState.POINTS_SELECTED;
+						this.client.dispatchAction('/change-glyph-node-manually', {
+							label: 'manual edition',
+							force: true,
+							changes: {},
+						});
 					}
 				}
 
@@ -718,8 +728,8 @@ export default class GlyphCanvas extends React.PureComponent {
 							case toileType.CONTOUR_NODE_IN:
 								this.client.dispatchAction('/change-glyph-node-manually', {
 									changes: {
-										[`${item.data.parentId}.dirIn`]: undefined,
-										[`${item.data.parentId}.tensionIn`]: undefined,
+										[`${item.data.parentId}.in.x`]: undefined,
+										[`${item.data.parentId}.in.y`]: undefined,
 									},
 									glyphName: glyph.name,
 								});
@@ -728,8 +738,8 @@ export default class GlyphCanvas extends React.PureComponent {
 							case toileType.CONTOUR_NODE_OUT:
 								this.client.dispatchAction('/change-glyph-node-manually', {
 									changes: {
-										[`${item.data.parentId}.dirOut`]: undefined,
-										[`${item.data.parentId}.tensionOut`]: undefined,
+										[`${item.data.parentId}.out.x`]: undefined,
+										[`${item.data.parentId}.out.y`]: undefined,
 									},
 									glyphName: glyph.name,
 								});
