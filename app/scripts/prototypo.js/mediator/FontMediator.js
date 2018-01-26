@@ -216,6 +216,7 @@ export default class FontMediator {
 							...params,
 						},
 						subset,
+						forExport: true,
 					},
 				},
 				callback: async (arrayBuffer) => {
