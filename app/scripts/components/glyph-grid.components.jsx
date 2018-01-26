@@ -44,12 +44,10 @@ export default class GlyphGrid extends React.PureComponent {
 	}
 
 	render() {
-		const glyphs = this.state.glyphs.map((glyph, unicode) => {
-			if (!glyph[0].src) {
-				return false;
-			}
+		const glyphs = Object.keys(this.state.glyphs).map((unicode) => {
+			const glyph = this.state.glyphs[unicode];
 
-			if (glyph[0].src.tags.indexOf(this.props.tagSelected) === -1) {
+			if (glyph[0].tags.indexOf(this.props.tagSelected) === -1) {
 				return false;
 			}
 

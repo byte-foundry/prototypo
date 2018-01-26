@@ -86,9 +86,25 @@ export default class FontPrecursor {
 
 		for (let i = 0; i < glyphNames.length; i++) {
 			const name = glyphNames[i];
+			const group = localParams.indiv_glyphs[this.glyphs[name].unicode.value];
+			const indivParam = {};
+
+			if (group) {
+				const indivModifs = localParams.indiv_group_param[group];
+				const keys = Object.keys(indivModifs);
+
+				for (let j = 0; j < keys.length; j++) {
+					const param = keys[j].substr(0, keys[j].length - 4);
+					const mod = indivModifs[keys[j]];
+
+					indivParam[param] = mod.state === 'relative'
+						? localParams[param] * mod.value
+						: localParams[param] + mod.value;
+				}
+			}
 
 			if (this.glyphs[name]) {
-				glyphs.push(this.glyphs[name].constructGlyph(localParams, undefined, this.glyphs));
+				glyphs.push(this.glyphs[name].constructGlyph({...localParams, ...indivParam}, undefined, this.glyphs));
 			}
 		}
 
