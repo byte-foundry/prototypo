@@ -1010,7 +1010,7 @@
 				width: 1200px;
 				left: 50%;
 				transform: translateX(-50%);
-				margin-left: -7px;
+				margin-left: -9px;
 				margin-right: 1px;
 				z-index: 2;
 				&::-webkit-progress-bar {
@@ -1035,8 +1035,10 @@
 			}
 			&.fixed {
 				position: fixed;
-				top: 0px;
+				top: -4px;
 				margin-top: 0;
+				height: inherit !important;
+				max-height: 100vh;
 			}
 			&:not(.fixed) progress {
 				display: none;
