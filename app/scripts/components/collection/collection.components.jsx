@@ -449,6 +449,7 @@ class VariantList extends React.PureComponent {
 				changeName={this.openChangeVariantName}
 				duplicate={this.openDuplicateVariant}
 				delete={this.deleteVariant}
+				onlyVariant={this.props.variants.length === 1}
 			/>),
 		);
 
