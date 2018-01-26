@@ -24,6 +24,7 @@ function computeHandle(
 	nextNode,
 	j,
 	params,
+	curviness,
 ) {
 	let inIntersection;
 	let outIntersection;
@@ -149,8 +150,8 @@ function computeHandle(
 
 	const untensionedInVector = subtract2D(inIntersection, current);
 	const untensionOutVector = subtract2D(outIntersection, current);
-	let inVector = mulScalar2D(tensionIn * 0.6, untensionedInVector);
-	let outVector = mulScalar2D(tensionOut * 0.6, untensionOutVector);
+	let inVector = mulScalar2D(curviness * tensionIn, untensionedInVector);
+	let outVector = mulScalar2D(curviness * tensionOut, untensionOutVector);
 	const outBase = round2D(add2D(current, outVector));
 	const inBase = round2D(add2D(current, inVector));
 
@@ -376,7 +377,7 @@ export class SkeletonPath extends SolvablePath {
 		return _difference(done, cursorToLook).length === done.length - cursorToLook.length;
 	}
 
-	static createHandle(dest, params) {
+	static createHandle(dest, params, curviness) {
 		const {nodes} = dest;
 
 		for (let k = 0; k < nodes.length; k++) {
@@ -422,6 +423,7 @@ export class SkeletonPath extends SolvablePath {
 					nextNode,
 					j,
 					params,
+					curviness,
 				);
 			}
 		}
@@ -434,7 +436,7 @@ export class ClosedSkeletonPath extends SkeletonPath {
 		this.closed = constantOrFormula(true, `${this.cursor}closed`);
 	}
 
-	static createHandle(dest, params) {
+	static createHandle(dest, params, curviness) {
 		const {nodes} = dest;
 
 		for (let k = 0; k < nodes.length; k++) {
@@ -462,6 +464,7 @@ export class ClosedSkeletonPath extends SkeletonPath {
 					nextNode,
 					j,
 					params,
+					curviness,
 				);
 			}
 		}
@@ -501,7 +504,7 @@ export class SimplePath extends SolvablePath {
 		return _difference(done, cursorToLook).length === done.length - cursorToLook.length;
 	}
 
-	static createHandle(dest, params) {
+	static createHandle(dest, params, curviness) {
 		const {nodes} = dest;
 
 		for (let k = 0; k < nodes.length; k++) {
@@ -520,6 +523,7 @@ export class SimplePath extends SolvablePath {
 				nextNode,
 				0,
 				params,
+				curviness,
 			);
 		}
 	}

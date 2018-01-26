@@ -340,10 +340,10 @@ export default class Glyph {
 			SkeletonPath.correctValues(dest);
 
 			if (contour.closed.value) {
-				ClosedSkeletonPath.createHandle(dest, params.manualChanges[this.name.value].cursors);
+				ClosedSkeletonPath.createHandle(dest, params.manualChanges[this.name.value].cursors, params.curviness);
 			}
 			else {
-				SkeletonPath.createHandle(dest, params.manualChanges[this.name.value].cursors);
+				SkeletonPath.createHandle(dest, params.manualChanges[this.name.value].cursors, params.curviness);
 			}
 		}
 		else {
@@ -351,7 +351,7 @@ export default class Glyph {
 
 			_set(opDone, `${cursor}.checkOrientation`, true);
 
-			SimplePath.createHandle(dest, params.manualChanges[this.name.value].cursors);
+			SimplePath.createHandle(dest, params.manualChanges[this.name.value].cursors, params.curviness);
 		}
 	}
 
