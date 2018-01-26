@@ -525,6 +525,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								appStateValue = appState.BOX_SELECTING;
 								mouseBoxStart = mouse.pos;
 							}
+							selectedItems = [];
 						}
 						else {
 							selectedItems = [];
