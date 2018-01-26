@@ -205,6 +205,8 @@ export default class FontMediator {
 		if (!this.workerPool) {
 			return undefined;
 		}
+		const familyName = this.family.name;
+		const styleName = this.style.name || 'REGULAR';
 
 		return new Promise((resolve) => {
 			const job = {
@@ -212,6 +214,8 @@ export default class FontMediator {
 					type: 'constructFont',
 					data: {
 						name: template,
+						familyName,
+						styleName,
 						params: {
 							...params,
 						},
@@ -220,9 +224,6 @@ export default class FontMediator {
 					},
 				},
 				callback: async (arrayBuffer) => {
-					const familyName = this.family.name;
-					const styleName = this.style.name || 'REGULAR';
-
 					const id = getUuid(this.email, familyName, styleName);
 
 					const mergedFont = await mergeFont(

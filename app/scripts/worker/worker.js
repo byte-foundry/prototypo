@@ -68,8 +68,8 @@ self.onmessage = (e) => {
 		);
 		const arrayBuffer = fontToSfntTable({
 			...font,
-			fontFamily: {en: e.data.data.fontName || 'Prototypo web font'},
-			fontSubfamily: {en: 'Regular'},
+			fontFamily: {en: e.data.data.familyName || 'Prototypo web font'},
+			fontSubfamily: {en: e.data.data.styleName || 'Regular'},
 			postScriptName: {},
 			unitsPerEm: 1024,
 		});
