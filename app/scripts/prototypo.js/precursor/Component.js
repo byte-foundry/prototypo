@@ -35,7 +35,7 @@ export default class Component {
 			...params,
 			..._mapValues(
 				this.parameters,
-				param => param.getResult(params),
+				param => param.getResult(params, contours, [], parentAnchors, utils),
 			),
 		};
 
@@ -50,7 +50,13 @@ export default class Component {
 			for (let j = 0; j < anchorKeys.length; j++) {
 				const name = anchorKeys[j];
 
-				accumulator[name] = anchor[name].getResult(localParams, contours, accumulator, parentAnchors, utils);
+				accumulator[name] = anchor[name].getResult(
+					localParams,
+					contours,
+					accumulator,
+					parentAnchors,
+					utils,
+				);
 			}
 
 			opDone.anchors[key] = accumulator;
