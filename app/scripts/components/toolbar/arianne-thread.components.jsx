@@ -86,8 +86,8 @@ class ArianneThread extends React.PureComponent {
 		this.lifespan.release();
 	}
 
-	selectVariant(variant, family) {
-		this.client.dispatchAction('/select-variant', {variant, family});
+	selectVariant(selectedVariant, family) {
+		this.client.dispatchAction('/select-variant', {selectedVariant, family});
 	}
 
 	selectFamily(family) {
