@@ -52,7 +52,7 @@ function handleModification(client, glyph, draggedItem, newPos, smoothMod, paral
 		[`${draggedItem.data.parentId}.${direction}.y`]: newVector.y,
 	};
 
-	if (smoothMod) {
+	if (!smoothMod) {
 		const opposite = isIn
 			? {x: parent.handleOut.xBase, y: parent.handleOut.yBase}
 			: {x: parent.handleIn.xBase, y: parent.handleIn.yBase};
