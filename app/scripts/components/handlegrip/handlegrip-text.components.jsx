@@ -220,8 +220,6 @@ export default class HandlegripText extends React.Component {
 			+ (variation)
 		);
 
-		console.log(newValue);
-
 		const glyphWidth = glyph.advanceWidth
 			- glyph.spacingLeft
 			- glyph.spacingRight;

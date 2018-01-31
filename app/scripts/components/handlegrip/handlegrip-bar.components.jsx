@@ -45,11 +45,8 @@ export default class HandlegripBar extends React.Component {
 			'handlegrip-right': !left,
 		});
 
-		console.log(`spacing ${this.props.spacing}`);
-		console.log(`clamped ${this.props.clampedValue}`);
 		const text = (this.props.clampedValue ? this.props.clampedValue + this.props.baseSpacing : this.props.spacing) || '...';
 
-		console.log(`text ${text}`);
 		return (
 			<span
 				className={handleGripClasses}
