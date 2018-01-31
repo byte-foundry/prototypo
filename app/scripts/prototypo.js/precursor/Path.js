@@ -213,8 +213,10 @@ function computeHandle(
 		/ (distance2D(untensionOutVector, {x: 0, y: 0}) * 0.6);
 	dest.handleIn = round2D(add2D(current, inVector));
 	dest.handleOut = round2D(add2D(current, outVector));
-	dest.handleIn.base = inBase;
-	dest.handleOut.base = outBase;
+	dest.handleIn.xBase = inBase.x;
+	dest.handleIn.yBase = inBase.y;
+	dest.handleOut.xBase = outBase.x;
+	dest.handleOut.yBase = outBase.y;
 	/* eslint-enable no-param-reassign */
 }
 

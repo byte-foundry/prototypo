@@ -29,7 +29,10 @@ function handleModification(client, glyph, draggedItem, newPos, smoothMod, paral
 		parentId, transforms,
 	} = draggedItem.data;
 	const handle = _get(glyph, draggedItem.id);
-	const handlePos = handle.base;
+	const handlePos = {
+		x: handle.xBase,
+		y: handle.yBase,
+	};
 	const parent = _get(glyph, parentId);
 	const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
 	const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
@@ -51,8 +54,8 @@ function handleModification(client, glyph, draggedItem, newPos, smoothMod, paral
 
 	if (smoothMod) {
 		const opposite = isIn
-			? parent.handleOut.base
-			: parent.handleIn.base;
+			? {x: parent.handleOut.xBase, y: parent.handleOut.yBase}
+			: {x: parent.handleIn.xBase, y: parent.handleIn.yBase};
 		const relativeNewPos = subtract2D(newPos, parent);
 		const relativeBasePos = subtract2D(handlePos, parent);
 		const relativeOpPos = subtract2D(opposite, parent);
