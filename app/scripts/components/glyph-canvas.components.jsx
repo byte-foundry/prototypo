@@ -498,10 +498,10 @@ export default class GlyphCanvas extends React.PureComponent {
 								appStateValue = appState.DRAGGING_CONTOUR;
 							}
 							else {
-								selectedItems = [];
 								appStateValue = appState.BOX_SELECTING;
 								mouseBoxStart = mouse.pos;
 							}
+							selectedItems = [];
 						}
 						else {
 							selectedItems = [];
@@ -885,7 +885,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						switch (item.type) {
 						case toileType.NODE_OUT:
 						case toileType.NODE_IN: {
-							const smoothMod = this.toile.keyboardDown.special & specialKey.SHIFT;
+							const smoothMod = this.toile.keyboardDown.special & specialKey.ALT;
 							const parallelMod = this.toile.keyboardDown.special & specialKey.CTRL;
 
 							handleModification(
