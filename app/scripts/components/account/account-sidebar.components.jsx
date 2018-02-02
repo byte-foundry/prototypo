@@ -109,8 +109,8 @@ class AccountSidebar extends React.Component {
 									label="Subscribe to the pro plan"
 								/>,
 								<AccountSidebarSubLink
-									to="/account/subscribe?plan=agency"
-									label="Subscribe to the agency plan"
+									to="/account/subscribe?plan=team"
+									label="Subscribe to the team plan"
 								/>,
 							]}
 					</AccountSidebarLink>
