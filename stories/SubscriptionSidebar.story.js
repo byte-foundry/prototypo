@@ -16,5 +16,6 @@ storiesOf('account/SubscriptionSidebar', module)
 		<SubscriptionSidebar plan="personal_monthly" hasBeenSubscribing />
 	))
 	.add('personal_annual_99', () => <SubscriptionSidebar plan="personal_annual_99" />)
-	.add('agency_monthly', () => <SubscriptionSidebar plan="agency_monthly" />)
-	.add('agency_annual', () => <SubscriptionSidebar plan="agency_annual" />);
+	.add('team_monthly', () => <SubscriptionSidebar plan="team_monthly" />)
+	.add('team_annual', () => <SubscriptionSidebar plan="team_annual" />)
+	.add('personal_annual_99 50% off', () => <SubscriptionSidebar plan="personal_annual_99" percentPrice={0.5} />);

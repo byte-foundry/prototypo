@@ -198,7 +198,7 @@ export class RawSlider extends React.PureComponent {
 		// TODO: better way to inject subscription
 		const {subscription} = this.props;
 		const freeAccount = !this.props.isManagedAccount
-			&& !(subscription && !subscription.plan.id.includes('agency'));
+			&& !(subscription && !subscription.plan.id.includes('team') && !subscription.plan.id.includes('agency'));
 		const credits = this.props.credits;
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const disabled = !this.props.disabled && !(freeAccountAndHasCredits || !freeAccount);

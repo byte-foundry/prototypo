@@ -1,7 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 
-import {monthlyConst, annualConst, agencyMonthlyConst, agencyAnnualConst} from '../../data/plans.data.js';
+import {monthlyConst, annualConst, teamMonthlyConst, teamAnnualConst} from '../../data/plans.data.js';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
@@ -84,10 +84,10 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			this.setState({couponValue: undefined});
 		}
 
-		if (plan !== 'personal_monthly' && plan !== 'personal_annual_99' && plan !== 'agency_monthly' && plan !== 'agency_annual') {
+		if (plan !== 'personal_monthly' && plan !== 'personal_annual_99' && plan !== 'team_monthly' && plan !== 'team_annual') {
 			this.props.onChangePlan({
-				plan: plan.startsWith('agency') ? 'agency_annual' : 'personal_annual_99',
-				quantity: plan.startsWith('agency') ? parseInt(quantity, 10) || 2 : undefined,
+				plan: plan.startsWith('team') ? 'team_annual' : 'personal_annual_99',
+				quantity: plan.startsWith('team') ? parseInt(quantity, 10) || 2 : undefined,
 				coupon,
 			});
 		}
@@ -120,7 +120,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			card: this.refs.card && card.length < 1
 				? this.refs.card.data()
 				: false,
-			quantity: (plan.startsWith('agency') && quantity) || undefined,
+			quantity: (plan.startsWith('team') && quantity) || undefined,
 		});
 	}
 
@@ -200,17 +200,17 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 					)
 				),
 			},
-			'agency_monthly': {
+			'team_monthly': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <strong><Price amount={(agencyMonthlyConst.monthlyPrice * quantity) * percentPrice} country={country}/></strong> once and be subscribed to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <strong><Price amount={(teamMonthlyConst.monthlyPrice * quantity) * percentPrice} country={country}/></strong> once and be subscribed to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
-			'agency_annual': {
+			'team_annual': {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <strong><Price amount={(agencyAnnualConst.annualPrice * quantity * percentPrice)} country={country}/></strong> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <strong><Price amount={(teamAnnualConst.annualPrice * quantity * percentPrice)} country={country}/></strong> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
@@ -275,10 +275,11 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 
 		return (
 			<div className="subscription-card-and-validation normal">
-				{plan.startsWith('agency') && (
+				{plan.startsWith('team') && (
 					<div className="input-with-label">
 						<label className="input-with-label-label" htmlFor="quantity">Quantity:</label>
 						<InputNumber
+							className="pricing-item-subtitle-price-info team"
 							min={2}
 							max={100}
 							value={quantity}
