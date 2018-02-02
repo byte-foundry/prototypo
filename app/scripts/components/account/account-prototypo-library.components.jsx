@@ -63,7 +63,7 @@ class AccountPrototypoLibrary extends React.PureComponent {
 	render() {
 		const {subscription, credits} = this.state;
 		const freeAccount = !this.props.isManagedAccount
-			&& !(subscription && !subscription.plan.id.includes('agency'));
+			&& !(subscription && !subscription.plan.id.includes('team') && !subscription.plan.id.includes('agency'));
 		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
 		const {loading, domains, token} = this.props;
 
