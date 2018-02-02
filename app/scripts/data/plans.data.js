@@ -42,7 +42,7 @@ export const teamMonthlyConst = {
 };
 
 export const teamAnnualConst = {
-	monthlyPrice: 49.9,
+	monthlyPrice: 50,
 	annualPrice: 599,
 	prefix: 'team_annual',
 	description: 'Team annual subscription',
