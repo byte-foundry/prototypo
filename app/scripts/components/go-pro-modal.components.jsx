@@ -173,6 +173,7 @@ class GoProModal extends React.PureComponent {
 									Tune to perfection using the manual edition and component editing
 								</li>
 								<li className="pricing-item-feature">&nbsp;</li>
+								<li className="pricing-item-feature"><br /><br /></li>
 								<li className="pricing-item-feature">&nbsp;</li>
 							</ul>
 							<div className="pricing-item-cta" onClick={this.goSubscribe}>
@@ -183,7 +184,7 @@ class GoProModal extends React.PureComponent {
 						</PricingItem>
 
 						<PricingItem
-							title="Company"
+							title="Team"
 							description={
 								<div className="pricing-item-subtitle-price-info">
 									Great for teams and growing businesses.<br />
@@ -225,6 +226,9 @@ class GoProModal extends React.PureComponent {
 								</li>
 								<li className="pricing-item-feature">
 									Manage your team licenses
+								</li>
+								<li className="pricing-item-feature">
+									Kickoff course to get you started with Prototypo
 								</li>
 								<li className="pricing-item-feature">
 									Premium 24h support
