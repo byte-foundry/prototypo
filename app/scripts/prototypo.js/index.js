@@ -164,7 +164,13 @@ export class PtypoFont {
 		this.globalHeight = xHeight + Math.max(capDelta, ascender) - descender;
 	}
 
-	changeParam(paramName, paramValue, subset) {
+	changeParam(paramName, paramValue, subset, isTween = false) {
+		if (!isTween) {
+			if (this.tweens[paramName]) {
+				clearInterval(this.tweens[paramName].intervalId);
+				delete this.tweens[paramName];
+			}
+		}
 		this.values[paramName] = paramValue;
 		this.createFont(subset);
 	}
@@ -188,7 +194,6 @@ export class PtypoFont {
 		this.tweens[paramName] = {
 			target: paramValue,
 		};
-
 		const id = setInterval(() => {
 			if (elapsed >= duration) {
 				clearInterval(id);
