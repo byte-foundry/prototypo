@@ -436,7 +436,7 @@ ansicolors@~0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/ansicolors/-/ansicolors-0.2.1.tgz#be089599097b74a5c9c4a84a0cdbcdb62bd87aef"
 
-antique.ptf@byte-foundry/antique.ptf, "antique.ptf@github:byte-foundry/antique.ptf":
+antique.ptf@byte-foundry/antique.ptf:
   version "1.0.0"
   resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/c6ddf6adce4a508194e202d5d81b0780561c3693"
   dependencies:
@@ -6590,7 +6590,6 @@ lifespan@FranzPoize/lifespan#master, lifespan@^5.0.1:
 
 lifespan@franzpoize/lifespan#master:
   version "5.0.1"
-  uid "5a9471d668c1213518be5197d1e5f64937dd699f"
   resolved "https://codeload.github.com/franzpoize/lifespan/tar.gz/5a9471d668c1213518be5197d1e5f64937dd699f"
   dependencies:
     lodash "~4.14.0"
@@ -9556,7 +9555,6 @@ remove-trailing-separator@^1.0.1:
 
 remutable@FranzPoize/remutable#master:
   version "3.0.1"
-  uid "4d31d62e4a1ec0eb264088265c7d6808c21ea6ad"
   resolved "https://codeload.github.com/FranzPoize/remutable/tar.gz/4d31d62e4a1ec0eb264088265c7d6808c21ea6ad"
   dependencies:
     crc-32 "^0.3.0"
@@ -9570,7 +9568,7 @@ remutable@franzpoize/remutable#master:
   dependencies:
     crc-32 "^0.3.0"
     immutable "^3.7.3"
-    lodash "^4.17.4"
+    lodash "~4.14.0"
     should "^6.0.3"
 
 renderkid@^2.0.1:

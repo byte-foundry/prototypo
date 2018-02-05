@@ -100,9 +100,7 @@ class Variant extends React.Component {
 						<ContextualMenuItem onClick={this.duplicate}>
 							Duplicate variant
 						</ContextualMenuItem>
-						{onlyVariant
-						? false
-						: (
+						{onlyVariant && (
 							<ContextualMenuItem
 								danger
 								splitButton

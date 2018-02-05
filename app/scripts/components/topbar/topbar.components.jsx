@@ -338,7 +338,7 @@ class Topbar extends React.Component {
 			/>
 		);
 
-		const academyIcon =  !academyProgress.lastCourse && (
+		const academyIcon = !academyProgress.lastCourse && (
 			<TopBarMenuAcademyIcon
 				setText={this.setAcademyText}
 				clearText={this.clearAcademyText}
