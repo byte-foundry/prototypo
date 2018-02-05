@@ -173,7 +173,7 @@ SubscriptionSidebar.propTypes = {
 };
 
 SubscriptionSidebar.defaultProps = {
-	quantity: 2,
+	quantity: 1,
 	hasBeenSubscribing: false,
 	percentPrice: 1,
 	onChangePlan: () => {},

@@ -71,7 +71,7 @@ class InputNumber extends React.Component {
 	}
 
 	render() {
-		const {textValue} = this.state;
+		const {textValue, value} = this.state;
 		const {className, onChange, step, min, max, controls, ...rest} = this.props;
 
 		delete rest.value;
@@ -90,7 +90,7 @@ class InputNumber extends React.Component {
 					onBlur={this.handleBlur}
 					{...rest}
 				/>
-				<span className="input-number-text">users</span>
+				<span className="input-number-text">user{value > 1 && 's'}</span>
 				{controls
 					&& <button className="input-number-increment" onClick={this.increment}>
 						+

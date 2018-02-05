@@ -24,7 +24,7 @@ class GoProModal extends React.PureComponent {
 
 		this.state = {
 			billing: 'annually',
-			teamCount: 4,
+			teamCount: 1,
 		};
 
 		this.goSubscribe = this.goSubscribe.bind(this);
