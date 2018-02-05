@@ -84,10 +84,19 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			this.setState({couponValue: undefined});
 		}
 
+		const newPlan = {};
+
+		if (plan.startsWith('team') && isNaN(parseInt(quantity, 10))) {
+			newPlan.quantity = 1;
+		}
+
 		if (plan !== 'personal_monthly' && plan !== 'personal_annual_99' && plan !== 'team_monthly' && plan !== 'team_annual') {
+			newPlan.plan = plan.startsWith('team') ? 'team_annual' : 'personal_annual_99';
+		}
+
+		if (newPlan.quantity || newPlan.plan) {
 			this.props.onChangePlan({
-				plan: plan.startsWith('team') ? 'team_annual' : 'personal_annual_99',
-				quantity: plan.startsWith('team') ? parseInt(quantity, 10) || 1 : undefined,
+				...newPlan,
 				coupon,
 			});
 		}
