@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import {withRouter} from 'react-router';
 import Lifespan from 'lifespan';
-import {monthlyConst, annualConst, agencyMonthlyConst, agencyAnnualConst} from '../data/plans.data';
+import {monthlyConst, annualConst, teamMonthlyConst, teamAnnualConst} from '../data/plans.data';
 
 import LocalClient from '../stores/local-client.stores';
 import Log from '../services/log.services';
@@ -24,14 +24,14 @@ class GoProModal extends React.PureComponent {
 
 		this.state = {
 			billing: 'annually',
-			agencyCount: 4,
+			teamCount: 4,
 		};
 
 		this.goSubscribe = this.goSubscribe.bind(this);
-		this.goSubscribeAgency = this.goSubscribeAgency.bind(this);
+		this.goSubscribeTeam = this.goSubscribeTeam.bind(this);
 		this.switchMonthlyBilling = this.switchMonthlyBilling.bind(this);
 		this.switchAnnualBilling = this.switchAnnualBilling.bind(this);
-		this.updateAgencyCount = this.updateAgencyCount.bind(this);
+		this.updateTeamCount = this.updateTeamCount.bind(this);
 		this.openIntercomChat = this.openIntercomChat.bind(this);
 	}
 
@@ -75,15 +75,15 @@ class GoProModal extends React.PureComponent {
 		Log.ui('Subscribe.FromFile');
 	}
 
-	goSubscribeAgency() {
-		const {billing, agencyCount} = this.state;
+	goSubscribeTeam() {
+		const {billing, teamCount} = this.state;
 
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
 		this.props.router.push({
 			pathname: '/account/subscribe',
 			query: {
-				plan: billing === 'monthly' ? agencyMonthlyConst.prefix : agencyAnnualConst.prefix,
-				quantity: agencyCount,
+				plan: billing === 'monthly' ? teamMonthlyConst.prefix : teamAnnualConst.prefix,
+				quantity: teamCount,
 			},
 		});
 		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
@@ -98,22 +98,22 @@ class GoProModal extends React.PureComponent {
 		this.setState({billing: 'annually'});
 	}
 
-	updateAgencyCount(value) {
-		this.setState({agencyCount: parseInt(value, 10)});
+	updateTeamCount(value) {
+		this.setState({teamCount: parseInt(value, 10)});
 	}
 
 	openIntercomChat(e) {
 		e.preventDefault();
 
 		window.Intercom('trackEvent', 'clickedOnContactUsFromGoProModal');
-		window.Intercom('showNewMessage', getContactMessage(this.state.agencyCount));
+		window.Intercom('showNewMessage', getContactMessage(this.state.teamCount));
 	}
 
 	render() {
-		const {billing, agencyCount, hasBeenSubscribing} = this.state;
-		const agencyPrice = billing === 'annually'
-			? agencyAnnualConst.monthlyPrice * agencyCount
-			: agencyMonthlyConst.monthlyPrice * agencyCount;
+		const {billing, teamCount, hasBeenSubscribing} = this.state;
+		const teamPrice = billing === 'annually'
+			? teamAnnualConst.monthlyPrice * teamCount
+			: teamMonthlyConst.monthlyPrice * teamCount;
 		const proPrice = billing === 'annually' ? annualConst.monthlyPrice : monthlyConst.price;
 		const currency = getCurrency(this.props.country);
 
@@ -173,6 +173,7 @@ class GoProModal extends React.PureComponent {
 									Tune to perfection using the manual edition and component editing
 								</li>
 								<li className="pricing-item-feature">&nbsp;</li>
+								<li className="pricing-item-feature"><br /><br /></li>
 								<li className="pricing-item-feature">&nbsp;</li>
 							</ul>
 							<div className="pricing-item-cta" onClick={this.goSubscribe}>
@@ -183,12 +184,12 @@ class GoProModal extends React.PureComponent {
 						</PricingItem>
 
 						<PricingItem
-							title="Company"
+							title="Team"
 							description={
 								<div className="pricing-item-subtitle-price-info">
 									Great for teams and growing businesses.<br />
 									<a
-										href={`mailto:account@prototypo.io?subject=Company plan&body=${encodeURI(getContactMessage(agencyCount))}`}
+										href={`mailto:account@prototypo.io?subject=Company plan&body=${encodeURI(getContactMessage(teamCount))}`}
 										className="account-email"
 										onClick={this.openIntercomChat}
 									>
@@ -199,18 +200,19 @@ class GoProModal extends React.PureComponent {
 								</div>
 							}
 							priceInfo={
-								<div className="pricing-item-subtitle-price-info agency">
+								<div className="pricing-item-subtitle-price-info team">
 									<InputNumber
-										min={2}
+										className="pricing-item-subtitle-price-info team"
+										min={1}
 										max={100}
-										value={agencyCount}
-										onChange={this.updateAgencyCount}
+										value={teamCount}
+										onChange={this.updateTeamCount}
 										controls
 									/>
 								</div>
 							}
 							currency={currency}
-							amount={agencyPrice}
+							amount={teamPrice}
 						>
 							<ul className="pricing-item-features">
 								<li className="pricing-item-feature">
@@ -226,11 +228,14 @@ class GoProModal extends React.PureComponent {
 									Manage your team licenses
 								</li>
 								<li className="pricing-item-feature">
+									Kickoff course to get you started with Prototypo
+								</li>
+								<li className="pricing-item-feature">
 									Premium 24h support
 								</li>
 							</ul>
-							{agencyCount <= 10
-								? <div className="pricing-item-cta" onClick={this.goSubscribeAgency}>
+							{teamCount <= 10
+								? <div className="pricing-item-cta" onClick={this.goSubscribeTeam}>
 										Create your team
 									</div>
 								: <div className="pricing-item-cta" onClick={this.openIntercomChat}>

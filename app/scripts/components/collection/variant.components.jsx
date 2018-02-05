@@ -70,7 +70,7 @@ class Variant extends React.Component {
 
 	render() {
 		const {deleteSplit} = this.state;
-		const {selected, variant} = this.props;
+		const {selected, variant, onlyVariant} = this.props;
 
 		const classes = ClassNames({
 			'variant-list-item': true,
@@ -100,16 +100,18 @@ class Variant extends React.Component {
 						<ContextualMenuItem onClick={this.duplicate}>
 							Duplicate variant
 						</ContextualMenuItem>
-						<ContextualMenuItem
-							danger
-							splitButton
-							splitted={deleteSplit}
-							onClick={this.prepareDeleteOrDelete}
-							altLabel="Cancel"
-							altClick={this.cancelDelete}
-						>
-							{deleteSplit ? 'Delete' : 'Delete variant'}
-						</ContextualMenuItem>
+						{onlyVariant && (
+							<ContextualMenuItem
+								danger
+								splitButton
+								splitted={deleteSplit}
+								onClick={this.prepareDeleteOrDelete}
+								altLabel="Cancel"
+								altClick={this.cancelDelete}
+							>
+								{deleteSplit ? 'Delete' : 'Delete variant'}
+							</ContextualMenuItem>
+						)}
 					</div>
 				</ViewPanelsMenu>
 			</div>
@@ -123,6 +125,7 @@ Variant.defaultProps = {
 	changeName: () => {},
 	duplicate: () => {},
 	delete: () => {},
+	onlyVariant: false,
 };
 
 Variant.propTypes = {
@@ -135,6 +138,7 @@ Variant.propTypes = {
 	changeName: PropTypes.func,
 	duplicate: PropTypes.func,
 	delete: PropTypes.func,
+	onlyVariant: PropTypes.bool,
 };
 
 export default Variant;
