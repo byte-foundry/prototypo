@@ -17,7 +17,8 @@ class PricingItem extends React.Component {
 			...rest
 		} = this.props;
 
-		const cost = amount.toString().split('.');
+		const roundedAmount = Math.round(amount * 10) / 10;
+		const cost = roundedAmount.toString().split('.');
 
 		let subtitlePriceInfo = priceInfo;
 

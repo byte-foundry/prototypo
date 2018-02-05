@@ -87,7 +87,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		if (plan !== 'personal_monthly' && plan !== 'personal_annual_99' && plan !== 'team_monthly' && plan !== 'team_annual') {
 			this.props.onChangePlan({
 				plan: plan.startsWith('team') ? 'team_annual' : 'personal_annual_99',
-				quantity: plan.startsWith('team') ? parseInt(quantity, 10) || 2 : undefined,
+				quantity: plan.startsWith('team') ? parseInt(quantity, 10) || 1 : undefined,
 				coupon,
 			});
 		}
@@ -280,7 +280,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 						<label className="input-with-label-label" htmlFor="quantity">Quantity:</label>
 						<InputNumber
 							className="pricing-item-subtitle-price-info team"
-							min={2}
+							min={1}
 							max={100}
 							value={quantity}
 							controls
