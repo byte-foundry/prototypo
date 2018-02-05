@@ -2,6 +2,7 @@
 # yarn lockfile v1
 
 
+<<<<<<< HEAD
 "@babel/helper-builder-react-jsx@7.0.0-beta.38":
   version "7.0.0-beta.38"
   resolved "https://registry.yarnpkg.com/@babel/helper-builder-react-jsx/-/helper-builder-react-jsx-7.0.0-beta.38.tgz#a6f8ffcdd3d48a257e33cfcc1f089e16bd2ce7de"
@@ -49,6 +50,55 @@
 "@babel/types@7.0.0-beta.38":
   version "7.0.0-beta.38"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.0.0-beta.38.tgz#2ce2443f7dc6ad535a67db4940cbd34e64035a6f"
+=======
+"@babel/helper-builder-react-jsx@7.0.0-beta.33":
+  version "7.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@babel/helper-builder-react-jsx/-/helper-builder-react-jsx-7.0.0-beta.33.tgz#bbae5730e6184096e4b844021816b336902a80ae"
+  dependencies:
+    "@babel/types" "7.0.0-beta.33"
+    esutils "^2.0.0"
+
+"@babel/plugin-syntax-jsx@7.0.0-beta.33":
+  version "7.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-jsx/-/plugin-syntax-jsx-7.0.0-beta.33.tgz#72c4b59f4654c47e58751a384e41ba0b2daf0ad1"
+
+"@babel/plugin-transform-react-display-name@7.0.0-beta.33":
+  version "7.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-display-name/-/plugin-transform-react-display-name-7.0.0-beta.33.tgz#72a4bd712a75dff6c0215d1c64a7fda42e247da2"
+
+"@babel/plugin-transform-react-jsx-self@7.0.0-beta.33":
+  version "7.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.0.0-beta.33.tgz#d89db55270ff9cb2473d1e20f52653f864377ada"
+  dependencies:
+    "@babel/plugin-syntax-jsx" "7.0.0-beta.33"
+
+"@babel/plugin-transform-react-jsx-source@7.0.0-beta.33":
+  version "7.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.0.0-beta.33.tgz#9131169d3c863df9d4ae52ea87510e6d005cd575"
+  dependencies:
+    "@babel/plugin-syntax-jsx" "7.0.0-beta.33"
+
+"@babel/plugin-transform-react-jsx@7.0.0-beta.33":
+  version "7.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.0.0-beta.33.tgz#39d5feb0f33b4547d472dc769e0eca6a70dc0019"
+  dependencies:
+    "@babel/helper-builder-react-jsx" "7.0.0-beta.33"
+    "@babel/plugin-syntax-jsx" "7.0.0-beta.33"
+
+"@babel/preset-react@^7.0.0-beta.31":
+  version "7.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.0.0-beta.33.tgz#7760b0d0aac5b46d2c93514ff992c263ea4f6b7a"
+  dependencies:
+    "@babel/plugin-syntax-jsx" "7.0.0-beta.33"
+    "@babel/plugin-transform-react-display-name" "7.0.0-beta.33"
+    "@babel/plugin-transform-react-jsx" "7.0.0-beta.33"
+    "@babel/plugin-transform-react-jsx-self" "7.0.0-beta.33"
+    "@babel/plugin-transform-react-jsx-source" "7.0.0-beta.33"
+
+"@babel/types@7.0.0-beta.33":
+  version "7.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.0.0-beta.33.tgz#d74217bf84524b244f60ba475b4a611c2630564f"
+>>>>>>> feat/change-agency-plan
   dependencies:
     esutils "^2.0.2"
     lodash "^4.2.0"
@@ -6931,6 +6981,13 @@ lodash.words@^3.0.0:
   dependencies:
     lodash._root "^3.0.0"
 
+<<<<<<< HEAD
+=======
+lodash@4.x.x, lodash@^4.0.0, lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.5.0, lodash@^4.5.1, lodash@^4.6.1, lodash@~4.17.4:
+  version "4.17.4"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
+
+>>>>>>> feat/change-agency-plan
 lodash@^3.10.1, lodash@^3.3.1, lodash@^3.8.0, lodash@^3.9.3:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
@@ -11090,6 +11147,7 @@ uglify-js@2.6.4:
     uglify-to-browserify "~1.0.0"
     yargs "~3.10.0"
 
+<<<<<<< HEAD
 uglify-js@3.3.x:
   version "3.3.8"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.3.8.tgz#51e9a5db73afb53ac98603d08224edcd0be45fd8"
@@ -11097,6 +11155,8 @@ uglify-js@3.3.x:
     commander "~2.13.0"
     source-map "~0.6.1"
 
+=======
+>>>>>>> feat/change-agency-plan
 uglify-js@^2.4.24, uglify-js@^2.6, uglify-js@^2.8.29:
   version "2.8.29"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.29.tgz#29c5733148057bb4e1f75df35b7a9cb72e6a59dd"

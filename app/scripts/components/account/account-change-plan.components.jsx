@@ -13,8 +13,8 @@ import getCurrency from '../../helpers/currency.helpers';
 import {
 	monthlyConst,
 	annualConst,
-	agencyMonthlyConst,
-	agencyAnnualConst,
+	teamMonthlyConst,
+	teamAnnualConst,
 } from '../../data/plans.data';
 
 const UNSUBSCRIBE_MESSAGE = `
@@ -54,7 +54,7 @@ export default class AccountChangePlan extends React.Component {
 					loading: false,
 					subscription,
 					plan: subscription.plan.id,
-					selectedPlan: subscription.plan.id.includes('monthly') ? agencyMonthlyConst : agencyAnnualConst,
+					selectedPlan: subscription.plan.id.includes('monthly') ? teamMonthlyConst : teamAnnualConst,
 					numberOfUsers: parseInt((subscription && subscription.quantity) || 0, 10),
 					selection: subscription.plan.id.includes('monthly') ? 'monthly' : 'annual',
 					currency: getCurrency(cards[0].country),
@@ -101,10 +101,10 @@ export default class AccountChangePlan extends React.Component {
 		const {subscription, numberOfUsers, selection, currency} = this.state;
 
 		const {plan} = subscription;
-		const hasAgencyPlan
-			= plan.id.includes(agencyMonthlyConst.prefix) || plan.id.includes(agencyAnnualConst.prefix);
-		const monthlyPlan = (hasAgencyPlan && agencyMonthlyConst) || monthlyConst;
-		const annualPlan = (hasAgencyPlan && agencyAnnualConst) || annualConst;
+		const hasTeamPlan
+			= plan.id.includes(teamMonthlyConst.prefix) || plan.id.includes(teamAnnualConst.prefix);
+		const monthlyPlan = (hasTeamPlan && teamMonthlyConst) || monthlyConst;
+		const annualPlan = (hasTeamPlan && teamAnnualConst) || annualConst;
 
 		return (
 			<div>
@@ -132,11 +132,12 @@ export default class AccountChangePlan extends React.Component {
 
 				</div>
 
-				{hasAgencyPlan
+				{hasTeamPlan
 					&& <div className="account-change-plan-number-of-users">
 						<p>You can update the number of users you manage:</p>
 
 						<InputNumber
+							className="pricing-item-subtitle-price-info team"
 							min={subscription.quantity}
 							max={100}
 							value={numberOfUsers}

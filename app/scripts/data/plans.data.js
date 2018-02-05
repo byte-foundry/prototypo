@@ -33,3 +33,17 @@ export const agencyAnnualConst = {
 	prefix: 'agency_annual',
 	description: 'Agency annual subscription',
 };
+
+export const teamMonthlyConst = {
+	monthlyPrice: 59,
+	annualPrice: 59 * 12,
+	prefix: 'team_monthly',
+	description: 'Team monthly subscription',
+};
+
+export const teamAnnualConst = {
+	monthlyPrice: 50,
+	annualPrice: 599,
+	prefix: 'team_annual',
+	description: 'Team annual subscription',
+};
