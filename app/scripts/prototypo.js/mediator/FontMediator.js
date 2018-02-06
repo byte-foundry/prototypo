@@ -226,8 +226,6 @@ export default class FontMediator {
 				callback: async (arrayBuffer) => {
 					const id = getUuid(this.email, familyName, styleName);
 
-					resolve(arrayBuffer);
-
 					const mergedFont = await mergeFont(
 						MERGE_URL,
 						'fontfile',
