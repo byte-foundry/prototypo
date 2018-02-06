@@ -545,10 +545,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								validPoint = selectedItems.find(s => s.id === node.id);
 							});
 
-							if (validPoint) {
-								appStateValue = appState.DRAGGING_POINTS;
-							}
-							else {
+							if (!validPoint) {
 								selectedItems = [];
 								appStateValue = appState.BOX_SELECTING;
 								mouseBoxStart = mouse.pos;
