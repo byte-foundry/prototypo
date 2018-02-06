@@ -12,7 +12,6 @@ import IndividualizeButton from './individualize-button.components.jsx';
 
 export default class Toolbar extends React.PureComponent {
 	render() {
-
 		return (
 			<div className="toolbar">
 				<div className="toolbar-left">
@@ -76,9 +75,9 @@ class ViewButtons extends React.PureComponent {
 		return (
 			<div className="view-buttons">
 				<div className="view-buttons-label">Views</div>
-				<ViewButton name="glyph" state={this.state.mode.indexOf('glyph') !== -1} click={this.toggleView}/>
-				<ViewButton name="word" state={this.state.mode.indexOf('word') !== -1} click={this.toggleView}/>
-				<ViewButton name="text" state={this.state.mode.indexOf('text') !== -1} click={this.toggleView}/>
+				<ViewButton name="glyph" state={this.state.mode.indexOf('glyph') !== -1} click={this.toggleView} />
+				<ViewButton name="word" state={this.state.mode.indexOf('word') !== -1} click={this.toggleView} />
+				<ViewButton name="text" state={this.state.mode.indexOf('text') !== -1} click={this.toggleView} />
 			</div>
 		);
 	}
@@ -95,7 +94,7 @@ class ViewButton extends React.PureComponent {
 			<div
 				className={`${classes} view-button-${this.props.name}`}
 				onClick={() => {this.props.click(this.props.name);}}
-			></div>
+			/>
 		);
 	}
 }

@@ -89,6 +89,7 @@ export class PtypoFont {
 		this.mediator = mediator;
 		this.json = json;
 		this.values = {};
+		this.tweens = {};
 		this.shouldDownload = false;
 		this.init = {};
 		this.fontName = fontName;
@@ -120,7 +121,7 @@ export class PtypoFont {
 		const unicodeSubset = subset
 			? _uniq(subset.split('').map(char => char.charCodeAt(0)))
 			: undefined;
-		const buffer = await this.mediator.getFontObject(
+		const {fontBuffer} = await this.mediator.getFontObject(
 			this.fontName,
 			this.fontTemplate,
 			this.values,
@@ -128,11 +129,11 @@ export class PtypoFont {
 		);
 
 		if (this.alwaysMerge) {
-			this.mediator.mergeFontWithTimeout(buffer, this.fontName);
+			this.mediator.mergeFontWithTimeout(fontBuffer, this.fontName);
 		}
 		else {
-			this.mediator.addToFont(buffer, this.fontName);
-			this.mediator.mergeFontWithTimeout(buffer, this.fontName);
+			this.mediator.addToFont(fontBuffer, this.fontName);
+			this.mediator.mergeFontWithTimeout(fontBuffer, this.fontName);
 		}
 
 		const {
@@ -147,15 +148,52 @@ export class PtypoFont {
 		this.createFont(subset);
 	}
 
+	tween(paramName, paramValue, steps, aDuration, cb, subset) {
+		if (paramName === 'glyphSpecialProps' || paramName === 'manualChanges') {
+			this.changeParam(paramName, paramValue, subset);
+			return;
+		}
+		const duration = aDuration * 1000;
+		const start = this.values[paramName];
+		let elapsed = 0;
+
+		if (!this.values[paramName]) {
+		  return;
+		}
+		if (this.tweens[paramName]) {
+			clearInterval(this.tweens[paramName].intervalId);
+			delete this.tweens[paramName];
+		}
+		this.tweens[paramName] = {
+			target: paramValue,
+		};
+
+		const id = setInterval(() => {
+			if (elapsed >= duration) {
+				clearInterval(id);
+				if (cb) {
+					cb(paramName);
+				}
+				return;
+			}
+			const newValue = ((start * (duration - elapsed)) + (paramValue * elapsed)) / duration;
+
+			this.changeParam(paramName, newValue, subset);
+			elapsed += duration / steps;
+		}, duration / steps);
+
+		this.tweens[paramName].intervalId = id;
+	}
+
 	async getArrayBuffer() {
-		const font = await this.mediator.getFontObject(
+		const {fontBuffer} = await this.mediator.getFontObject(
 			this.fontName,
 			this.fontTemplate,
 			this.values,
 			this.glyphsSet,
 		);
 
-		return this.mediator.getArrayBuffer(font);
+		return fontBuffer;
 	}
 
 	reset() {

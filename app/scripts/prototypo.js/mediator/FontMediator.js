@@ -7,6 +7,7 @@ import FontPrecursor from '../precursor/FontPrecursor';
 import WorkerPool from '../../worker/worker-pool';
 
 const MERGE_URL = process.env.MERGE ? 'http://localhost:3000' : 'https://merge.prototypo.io/v1';
+const GLYPHR_URL = 'http://www.glyphrstudio.com/online';
 
 const oldFont = {};
 let localClient;
@@ -284,6 +285,21 @@ export default class FontMediator {
 		});
 	}
 
+	openInGlyphr(fontName, template, params, subset) {
+		return this.getFontObject(
+			fontName,
+			template,
+			params,
+			subset,
+		).then(({fontBuffer}) => new Promise((resolve) => {
+			window.open(GLYPHR_URL);
+			window.addEventListener('message', (e) => {
+				e.source.postMessage(fontBuffer, e.origin, [fontBuffer]);
+				resolve();
+			}, {once: true});
+		}));
+	}
+
 	getFontObject(fontName, template, params, subset) {
 		if (!this.workerPool) {
 			return false;
@@ -301,8 +317,43 @@ export default class FontMediator {
 						subset,
 					},
 				},
-				callback: (buffer) => {
-					resolve(buffer);
+				callback: (arrayBuffer) => {
+					const glyphsListLengthView = new DataView(arrayBuffer, 0, 4);
+					const glyphsListLength = glyphsListLengthView.getInt32(0, true);
+
+					const glyphListArray = new Int32Array(
+						arrayBuffer,
+						4,
+						glyphsListLength * 6, // each value is 32bits and there is 4
+					);
+					const glyphValues = [];
+
+					for (let i = 0; i < glyphsListLength * 6; i += 6) {
+						const unicode = glyphListArray[i];
+						const advanceWidth = glyphListArray[i + 1];
+						const spacingLeft = glyphListArray[i + 2];
+						const baseSpacingLeft = glyphListArray[i + 3];
+						const spacingRight = glyphListArray[i + 4];
+						const baseSpacingRight = glyphListArray[i + 5];
+
+						glyphValues.push({
+							unicode,
+							advanceWidth,
+							spacingLeft,
+							spacingRight,
+							baseSpacingLeft,
+							baseSpacingRight,
+						});
+					}
+					const fontBuffer = arrayBuffer.slice(
+						4 + (glyphsListLength * 4 * 6),
+						arrayBuffer.length,
+					);
+
+					resolve({
+						glyphValues,
+						fontBuffer,
+					});
 				},
 			};
 
@@ -327,39 +378,7 @@ export default class FontMediator {
 			template,
 			params,
 			subset,
-		).then((arrayBuffer) => {
-			const glyphsListLengthView = new DataView(arrayBuffer, 0, 4);
-			const glyphsListLength = glyphsListLengthView.getInt32(0, true);
-
-			const glyphListArray = new Int32Array(
-				arrayBuffer,
-				4,
-				glyphsListLength * 6, // each value is 32bits and there is 4
-			);
-			const glyphValues = [];
-
-			for (let i = 0; i < glyphsListLength * 6; i += 6) {
-				const unicode = glyphListArray[i];
-				const advanceWidth = glyphListArray[i + 1];
-				const spacingLeft = glyphListArray[i + 2];
-				const baseSpacingLeft = glyphListArray[i + 3];
-				const spacingRight = glyphListArray[i + 4];
-				const baseSpacingRight = glyphListArray[i + 5];
-
-				glyphValues.push({
-					unicode,
-					advanceWidth,
-					spacingLeft,
-					spacingRight,
-					baseSpacingLeft,
-					baseSpacingRight,
-				});
-			}
-			const fontBuffer = arrayBuffer.slice(
-				4 + (glyphsListLength * 4 * 6),
-				arrayBuffer.length,
-			);
-
+		).then(({glyphValues, fontBuffer}) => {
 			this.addToFont(
 				fontBuffer,
 				fontName,

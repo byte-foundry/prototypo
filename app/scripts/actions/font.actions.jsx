@@ -174,7 +174,7 @@ export default {
 	'/select-variant': ({family, selectedVariant = family.variants[0]}) => {
 		const patchVariant = prototypoStore
 			.set('variant', {id: selectedVariant.id, name: selectedVariant.name})
-			.set('family', {id: family.id, name: family.name, template: family.template}).commit();
+			.set('family', family).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 

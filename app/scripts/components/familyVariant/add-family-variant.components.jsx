@@ -131,8 +131,7 @@ export class AddFamily extends React.PureComponent {
 				selectedFont={this.state.selectedFont}
 				font={font}
 				chooseFont={this.selectFont}
-			/>),
-		);
+			/>));
 
 		const error = this.state.error
 			? (<div className="add-family-form-error">
@@ -230,15 +229,13 @@ AddFamily = compose(
 	}),
 	graphql(createFamilyMutation, {
 		props: ({mutate, ownProps}) => ({
-			createFamily: (name, template) => {
-				return mutate({
-					variables: {
-						ownerId: ownProps.userId,
-						name,
-						template,
-					},
-				});
-			},
+			createFamily: (name, template) => mutate({
+				variables: {
+					ownerId: ownProps.userId,
+					name,
+					template,
+				},
+			}),
 		}),
 		options: {
 			update: (store, {data: {createFamily}}) => {
@@ -339,7 +336,7 @@ export class AddVariantRaw extends React.PureComponent {
 			this.exit();
 
 			this.client.dispatchAction('/select-variant', {
-				variant: {id: createVariant.id, name: createVariant.name},
+				selectedVariant: {id: createVariant.id, name: createVariant.name},
 				family: this.props.family,
 			});
 		}
@@ -364,7 +361,7 @@ export class AddVariantRaw extends React.PureComponent {
 		return (
 			<div className="variant">
 				<SelectWithLabel
-					ref={(node) => this.name = node}
+					ref={node => this.name = node}
 					noResultsText={false}
 					placeholder="Enter a variant name or choose a suggestion with predefined settings"
 					options={this.variants}
@@ -444,42 +441,38 @@ export const AddVariant = graphql(getBaseValuesQuery, {
 
 		return {variantBase: data.family.variants[0]};
 	},
-})(
-	graphql(createVariantMutation, {
-		props: ({mutate, ownProps}) => ({
-			createVariant: name =>
-				mutate({
-					variables: {
-						familyId: ownProps.family.id,
-						name,
-						baseValues: adaptValuesFromName(name, ownProps.variantBase.values),
-					},
-					update: (store, {data: {createVariant}}) => {
-						const data = store.readQuery({query: libraryQuery});
+})(graphql(createVariantMutation, {
+	props: ({mutate, ownProps}) => ({
+		createVariant: name =>
+			mutate({
+				variables: {
+					familyId: ownProps.family.id,
+					name,
+					baseValues: adaptValuesFromName(name, ownProps.variantBase.values),
+				},
+				update: (store, {data: {createVariant}}) => {
+					const data = store.readQuery({query: libraryQuery});
 
-						const family = data.user.library.find(family => family.id === ownProps.family.id);
+					const family = data.user.library.find(family => family.id === ownProps.family.id);
 
-						family.variants.push(createVariant);
+					family.variants.push(createVariant);
 
-						store.writeQuery({
-							query: libraryQuery,
-							data,
-						});
-					},
-				}),
-		}),
-	})(AddVariantRaw),
-);
+					store.writeQuery({
+						query: libraryQuery,
+						data,
+					});
+				},
+			}),
+	}),
+})(AddVariantRaw));
 
 AddVariant.propTypes = {
 	family: PropTypes.shape({
 		id: PropTypes.string.isRequired,
 		name: PropTypes.string.isRequired,
-		variants: PropTypes.arrayOf(
-			PropTypes.shape({
-				id: PropTypes.string.isRequired,
-				name: PropTypes.string.isRequired,
-			}),
-		),
+		variants: PropTypes.arrayOf(PropTypes.shape({
+			id: PropTypes.string.isRequired,
+			name: PropTypes.string.isRequired,
+		})),
 	}),
 };

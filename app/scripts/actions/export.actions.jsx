@@ -1,4 +1,4 @@
-/* global _, URL */
+/* global URL */
 import JSZip from 'jszip';
 
 import {prototypoStore, undoableStore, fontInstanceStore} from '../stores/creation.stores';
@@ -166,36 +166,57 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/export-glyphr': () => {
+	'/export-glyphr': async () => {
 		const exporting = prototypoStore.get('export');
 
 		if (exporting) {
 			return;
 		}
 
-		const family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : 'font';
-		const style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : 'regular';
-
 		const plan = HoodieApi.instance.plan;
 		const credits = prototypoStore.get('credits');
 
 		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
-			return false;
+			return;
 		}
+
+		localClient.dispatchAction('/exporting', {exporting: true});
+
+
+		const family = prototypoStore.get('family').name.replace(/\s/g, '-');
+		const style = prototypoStore.get('variant').name.replace(/\s/g, '-');
 
 		const name = {
 			family,
 			style: `${style.toLowerCase()}`,
 		};
 
-		localClient.dispatchAction('/store-value-font', {
-			exportGlyphrTag: true,
-			exportName: name,
-			exportMerged: false,
-			exportValues: undefined,
-			exportEmail: HoodieApi.instance.email,
-		});
+		exportingError = setTimeout(() => {
+			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
+		}, 10000);
+
+		const fontMediatorInstance = FontMediator.instance();
+		const altList = prototypoStore.get('altList');
+		const values = undoableStore.get('controlsValues');
+		const template = fontInstanceStore.get('templateToLoad');
+		const glyphs = prototypoStore.get('glyphs');
+		const subset = Object.keys(glyphs).filter(key => glyphs[key][0].unicode !== undefined);
+
+		try {
+			 await fontMediatorInstance.openInGlyphr(
+				name,
+				template,
+				{...values, altList},
+				subset,
+			);
+
+			localClient.dispatchAction('/exporting', {exporting: false});
+			localClient.dispatchAction('/end-export-otf');
+		}
+		catch (e) {
+			localClient.dispatchAction('/end-export-otf');
+		}
 	},
 	'/end-export-glyphr': () => {
 		spendCreditsAction();
