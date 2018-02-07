@@ -114,13 +114,14 @@
     "jest": "^22.2.1",
     "jshint-stylish": "~2.0.0",
     "lodash-webpack-plugin": "^0.11.4",
+    "lint-staged": "^6.1.0",
     "lodash.assign": "^3.2.0",
     "mocha": "^2.3.4",
     "nightwatch": "^0.8.15",
     "node-sass": "^4.5.3",
     "prelude-loader": "^0.1.0",
     "prettier": "^1.10.2",
-    "prettier-eslint-cli": "^4.1.1",
+    "prettier-eslint-cli": "^4.7.0",
     "prototypo-flux-testing": "0.0.1",
     "react-storybook-decorator-background": "^1.0.5",
     "react-test-renderer": "^15.6.2",
@@ -154,11 +155,13 @@
     "start:perf": "gulp serve:perf",
     "storybook": "start-storybook -p 6006",
     "test": "NODE_PATH=$pwd/node_modules:$(pwd)/app jest",
-    "lint": "eslint app/scripts/**/*.{js,jsx}",
     "analyze": "webpack --config analyze.config.js",
     "analyze:prod": "webpack --config analyze-prod.config.js",
     "build:lib": "webpack --config library.config.js",
-    "build:precursor": "webpack --config precursor.config.js"
+    "build:precursor": "webpack --config precursor.config.js",
+    "lint": "prettier-eslint stories/** app/scripts/**/*.{js,jsx}",
+	"format": "npm run lint -- --write",
+	"precommit": "lint-staged"
   },
   "repository": {
     "type": "git",
@@ -184,5 +187,15 @@
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
       "\\.(css|scss)$": "<rootDir>/__mocks__/styleMock.js"
     }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "lint-staged": {
+    "*.{js,json,css}": [
+      "npm run format",
+      "git add"
+    ]
   }
 }
