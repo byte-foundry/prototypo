@@ -172,11 +172,13 @@ SubscriptionSidebar.propTypes = {
 	plan: PropTypes.string.isRequired,
 	quantity: PropTypes.number,
 	hasBeenSubscribing: PropTypes.bool,
+	percentPrice: PropTypes.number,
 	onChangePlan: PropTypes.func,
 };
 
 SubscriptionSidebar.defaultProps = {
 	quantity: 2,
 	hasBeenSubscribing: false,
+	percentPrice: 1,
 	onChangePlan: () => {},
 };

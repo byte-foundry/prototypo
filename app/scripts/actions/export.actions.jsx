@@ -1,4 +1,5 @@
 /* global URL */
+import {gql} from 'react-apollo';
 import JSZip from 'jszip';
 
 import {prototypoStore, undoableStore, fontInstanceStore} from '../stores/creation.stores';
@@ -7,6 +8,7 @@ import LocalClient from '../stores/local-client.stores';
 import {FontValues} from '../services/values.services';
 import HoodieApi from '../services/hoodie.services';
 import FontMediator from '../prototypo.js/mediator/FontMediator';
+import apolloClient from '../services/graphcool.services';
 
 let localServer;
 let localClient;
@@ -338,39 +340,66 @@ export default {
 			return;
 		}
 
-		const oldVariant = prototypoStore.get('variant');
-		const family = prototypoStore.get('family');
-
 		const plan = HoodieApi.instance.plan;
 		const credits = prototypoStore.get('credits');
 
 		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
-			return false;
+			return;
 		}
 
-		const setupPatch = prototypoStore
-			.set('familyExported', familyToExport.name)
-			.set('variantToExport', variants.length)
-			.commit();
-
-		localServer.dispatchUpdate('/prototypoStore', setupPatch);
-
-		fontInstance.exportingZip = true;
-		fontInstance._queue = [];
-
-		localClient.dispatchAction('/change-font', {
-			templateToLoad: familyToExport.template,
-			db: 'default',
+		const selectedVariant = prototypoStore.get('variant');
+		const selectedFamily = prototypoStore.get('family');
+		const {data: {family}} = await apolloClient.query({
+			query: gql`
+				query getFamilyValues($id: ID!) {
+					family: Family(id: $id) {
+						name
+						variants {
+							id
+							name
+							values
+						}
+					}
+				}
+			`,
+			variables: {id: selectedFamily.id},
 		});
 
-		fontInstance.addOnceListener('worker.fontLoaded', () => {
-			localClient.dispatchAction('/export-family-after-load', {
-				variants,
-				familyToExport,
-				oldDb: oldVariant.db,
-				template: family.template,
+		if (!family) {
+			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
+			return;
+		}
+
+		const blobs = family.variants.map((variant) => {
+			const blob = {}; // TODO: build each font from variant.values
+
+			return blob.then(blobContent => blobContent);
+		});
+
+		Promise.all(blobs).then((blobBuffers) => {
+			const zip = new JSZip();
+
+			blobBuffers.forEach(({buffer, variant}) => {
+				const variantPatch = prototypoStore.set(
+					'exportedVariant',
+					prototypoStore.get('exportedVariant') + 1,
+				).commit();
+
+				localServer.dispatchUpdate('/prototypoStore', variantPatch);
+				zip.file(`${variant}.otf`, buffer, {binary: true});
 			});
+			const reader = new FileReader();
+
+			reader.onloadend = () => {
+				const a = document.createElement('a');
+
+				a.download = `${family.name}.zip`;
+				a.href = reader.result;
+				a.click();
+			};
+
+			reader.readAsDataURL(zip.generate({type: 'blob'}));
 		});
 	},
 };
