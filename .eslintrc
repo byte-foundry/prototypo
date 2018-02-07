@@ -1,5 +1,8 @@
 {
-	"extends": "airbnb",
+	"extends": [
+		"airbnb-base",
+		"prettier"
+	],
 	"env": {
 		"es6": true,
         "browser": true
@@ -58,6 +61,7 @@
 		"import/extensions": 1
     },
 	"plugins": [
-		"react"
+		"react",
+		"prettier"
 	]
 }
