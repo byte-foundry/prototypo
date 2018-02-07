@@ -82,8 +82,9 @@ export default class HostVariant extends React.PureComponent {
 								<hr />
 								{(uploads.length > 0 && (
 									<ul>
-										{uploads.map(({url, createdAt}) => (
+										{uploads.map(({url, version, createdAt}) => (
 											<HostedVariantLine
+												key={version}
 												url={url}
 												createdAt={createdAt}
 											/>
