@@ -92,10 +92,10 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/export-otf': async ({
-		merged = true,
 		familyName = 'font',
 		variantName = 'regular',
 		exportAs,
+		hosting = false,
 	}) => {
 		const exporting = prototypoStore.get('export');
 
@@ -157,7 +157,17 @@ export default {
 				subset,
 			);
 
-			triggerDownload(buffer, `${name.family} ${name.style}.otf`);
+			if (hosting) {
+				const patch = prototypoStore
+					.set('hostingBuffer', buffer)
+					.commit();
+
+				localServer.dispatchUpdate('/prototypoStore', patch);
+			}
+			else {
+				triggerDownload(buffer, `${name.family} ${name.style}.otf`);
+			}
+
 			localClient.dispatchAction('/exporting', {exporting: false});
 			localClient.dispatchAction('/end-export-otf');
 		}

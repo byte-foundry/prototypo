@@ -31,4 +31,18 @@ const apolloClient = new ApolloClient({
 	connectToDevTools: true,
 });
 
+export const tmpUpload = async (file, name = 'font') => {
+	const data = new FormData();
+
+	data.append('filename', name);
+	data.append('data', file);
+
+	const response = await fetch('https://api.graph.cool/file/v1/ciz3x8qbba0ni0192kaicafgo', {
+		method: 'POST',
+		body: data,
+	});
+
+	return response.json();
+};
+
 export default apolloClient;

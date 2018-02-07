@@ -405,6 +405,7 @@ class VariantList extends React.PureComponent {
 		this.openVariant = this.openVariant.bind(this);
 		this.openChangeVariantName = this.openChangeVariantName.bind(this);
 		this.openDuplicateVariant = this.openDuplicateVariant.bind(this);
+		this.openHostVariant = this.openHostVariant.bind(this);
 		this.deleteVariant = this.deleteVariant.bind(this);
 	}
 
@@ -431,6 +432,14 @@ class VariantList extends React.PureComponent {
 			family: this.props.family,
 		});
 		this.client.dispatchAction('/store-value', {uiShowCollection: false});
+	}
+
+	openHostVariant(variant) {
+		this.client.dispatchAction('/store-value', {
+			openHostVariantModal: true,
+			collectionSelectedVariant: variant,
+			familySelectedVariantCreation: this.props.family,
+		});
 	}
 
 	openChangeVariantName(variant) {
@@ -474,6 +483,7 @@ class VariantList extends React.PureComponent {
 				variant={variant}
 				deleteSplit={deleteSplit}
 				open={this.openVariant}
+				hostFont={this.openHostVariant}
 				changeName={this.openChangeVariantName}
 				duplicate={this.openDuplicateVariant}
 				delete={this.deleteVariant}
