@@ -1055,7 +1055,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					id="hello"
 					ref={(canvas) => {this.canvas = canvas;}}
 					style={{
-						width: '100%', height: '100%', '-webkit-user-drag': 'none', userSelect: 'none', '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0)',
+						width: '100%', height: '100%', WebkitUserDrag: 'none', userSelect: 'none', WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
 					}}
 				/>
 				<FontUpdater />

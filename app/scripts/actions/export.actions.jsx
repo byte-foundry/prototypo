@@ -102,6 +102,10 @@ export default {
 
 		localClient.dispatchAction('/exporting', {exporting: true});
 
+		exportingError = setTimeout(() => {
+			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
+		}, 10000);
+
 		let family;
 		let style;
 
@@ -118,10 +122,6 @@ export default {
 			family,
 			style: `${style.toLowerCase()}`,
 		};
-
-		exportingError = setTimeout(() => {
-			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
-		}, 10000);
 
 		const fontMediatorInstance = FontMediator.instance();
 		const altList = prototypoStore.get('altList');
@@ -185,6 +185,9 @@ export default {
 
 		localClient.dispatchAction('/exporting', {exporting: true});
 
+		exportingError = setTimeout(() => {
+			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
+		}, 10000);
 
 		const family = prototypoStore.get('family').name.replace(/\s/g, '-');
 		const style = prototypoStore.get('variant').name.replace(/\s/g, '-');
@@ -193,10 +196,6 @@ export default {
 			family,
 			style: `${style.toLowerCase()}`,
 		};
-
-		exportingError = setTimeout(() => {
-			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
-		}, 10000);
 
 		const fontMediatorInstance = FontMediator.instance();
 		const altList = prototypoStore.get('altList');
@@ -219,6 +218,91 @@ export default {
 		catch (e) {
 			localClient.dispatchAction('/end-export-otf');
 		}
+	},
+	// TODO add a spend credit action
+	'/export-family-from-reader': ({
+		result, familyToExport, template, oldDb,
+	}) => {
+		const a = document.createElement('a');
+		const _URL = window.URL || window.webkitURL;
+
+		a.download = `${familyToExport.name}.zip`;
+		a.href = result;
+		a.dispatchEvent(new MouseEvent('click'));
+
+		setTimeout(() => {
+			a.href = '#';
+			_URL.revokeObjectURL(result);
+		}, 100);
+
+		fontInstance.exportingZip = false;
+
+		localClient.dispatchAction('/change-font', {
+			templateToLoad: template,
+			db: oldDb,
+		});
+
+		const cleanupPatch = prototypoStore
+			.set('variantToExport', undefined)
+			.set('exportedVariant', 0)
+			.set('familyExported', undefined)
+			.commit();
+
+		localServer.dispatchUpdate('/prototypoStore', cleanupPatch);
+	},
+	'/export-family-from-blob': ({
+		familyToExport, oldDb, blobBuffers, template,
+	}) => {
+		const zip = new JSZip();
+
+		blobBuffers.forEach(({buffer, variant}) => {
+			const variantPatch = prototypoStore.set(
+				'exportedVariant',
+				prototypoStore.get('exportedVariant') + 1,
+			).commit();
+
+			localServer.dispatchUpdate('/prototypoStore', variantPatch);
+			zip.file(`${variant}.otf`, buffer, {binary: true});
+		});
+		const reader = new FileReader();
+
+		reader.onloadend = () => {
+			localClient.dispatchAction('/export-family-from-reader', {
+				result: reader.result,
+				familyToExport,
+				template,
+				oldDb,
+			});
+		};
+
+		reader.readAsDataURL(zip.generate({type: 'blob'}));
+	},
+	'/export-family-from-values': ({
+		familyToExport, valueArray, oldDb, template,
+	}) => {
+		const blobs = [];
+
+		valueArray.forEach((value) => {
+			const blob = fontInstance.getBlob(
+				null, {
+					family: familyToExport.name,
+					style: value.currVariant.name,
+				},
+				false,
+				value.fontValues.values,
+			);
+
+			blobs.push(blob.then(blobContent => blobContent));
+		});
+
+		Promise.all(blobs).then((blobBuffers) => {
+			localClient.dispatchAction('/export-family-from-blob', {
+				familyToExport,
+				oldDb,
+				blobBuffers,
+				template,
+			});
+		});
 	},
 	'/end-export-glyphr': () => {
 		spendCreditsAction();
