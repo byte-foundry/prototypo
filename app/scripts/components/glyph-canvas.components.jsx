@@ -21,9 +21,9 @@ let rafId;
 const MINIMUM_DRAG_THRESHOLD = 6;
 const MINIMUM_DRAG_DIRECTIONAL_THRESHOLD = 10;
 
-const agnosticCtrl = navigator.platform.indexOf('Mac') !== -1
-	? specialKey.META
-	: specialKey.CTRL;
+const agnosticCtrl = navigator.platform.indexOf('Mac') === -1
+	? specialKey.CTRL
+	: specialKey.META;
 
 const directionalMod = {
 	X: 0b1,
@@ -75,9 +75,21 @@ function calculateHandleCoordinateModification(
 	return opVector;
 }
 
-function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unparallelMod) {
+function handleModification(
+	client,
+	glyph,
+	draggedItem,
+	newPos,
+	unsmoothMod,
+	unparallelMod,
+	appMode,
+) {
 	const {
-		parentId, transforms,
+		parentId,
+		transforms,
+		componentPrefixAddress,
+		nodeAddress,
+		componentName,
 	} = draggedItem.data;
 	const handle = _get(glyph, draggedItem.id);
 	const handlePos = {
@@ -109,9 +121,12 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 	const direction = isIn ? 'in' : 'out';
 	const oppositeDirection = isIn ? 'out' : 'in';
 
+	const parentAddress = appMode === canvasMode.SELECT_POINTS_COMPONENT
+		? nodeAddress
+		: `${componentPrefixAddress}${nodeAddress}`;
 	const changes = {
-		[`${draggedItem.data.parentId}.${direction}.x`]: newVector.x,
-		[`${draggedItem.data.parentId}.${direction}.y`]: newVector.y,
+		[`${parentAddress}${direction}.x`]: newVector.x,
+		[`${parentAddress}${direction}.y`]: newVector.y,
 	};
 
 	if (!unsmoothMod && (parent.baseTypeIn === 'smooth' || parent.baseTypeOut === 'smooth')) {
@@ -167,7 +182,11 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 			= parallelOpVector.y * yTransform;
 	}
 
-	changeGlyphManually(changes, glyph, client);
+	const glyphProxy = appMode === canvasMode.SELECT_POINTS_COMPONENT
+		? {name: componentName}
+		: glyph;
+
+	changeGlyphManually(changes, glyphProxy, client);
 }
 
 function onCurveModification(
@@ -177,6 +196,7 @@ function onCurveModification(
 	newPos,
 	appStateValue,
 	modToApply,
+	appMode,
 ) {
 	const {
 		baseWidth,
@@ -228,10 +248,14 @@ function onCurveModification(
 		changes[`${draggedItem.data.modifAddress}.angle`] = angleDiff + angleOffset;
 	}
 
-	changeGlyphManually(changes, glyph, client);
+	const glyphProxy = appMode === canvasMode.SELECT_POINTS_COMPONENT
+		? {name: draggedItem.data.componentName}
+		: glyph;
+
+	changeGlyphManually(changes, glyphProxy, client);
 }
 
-function skeletonPosModification(client, glyph, draggedItem, newPos) {
+function skeletonPosModification(client, glyph, draggedItem, newPos, appMode) {
 	const {base, transforms} = draggedItem.data;
 
 	const mouseVec = subtract2D(newPos, base);
@@ -252,10 +276,14 @@ function skeletonPosModification(client, glyph, draggedItem, newPos) {
 		[`${draggedItem.data.modifAddress}y`]: mouseVec.y * yTransform,
 	};
 
-	changeGlyphManually(changes, glyph, client);
+	const glyphProxy = appMode === canvasMode.SELECT_POINTS_COMPONENT
+		? {name: draggedItem.data.componentName}
+		: glyph;
+
+	changeGlyphManually(changes, glyphProxy, client);
 }
 
-function skeletonDistrModification(client, glyph, draggedItem, newPos) {
+function skeletonDistrModification(client, glyph, draggedItem, newPos, appMode) {
 	const {
 		base,
 		expandedTo,
@@ -278,7 +306,11 @@ function skeletonDistrModification(client, glyph, draggedItem, newPos) {
 		[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
 	};
 
-	changeGlyphManually(changes, glyph, client);
+	const glyphProxy = appMode === canvasMode.SELECT_POINTS_COMPONENT
+		? {name: draggedItem.data.componentName}
+		: glyph;
+
+	changeGlyphManually(changes, glyphProxy, client);
 }
 
 function changeSpacing(client, glyph, draggedItem, newPos) {
@@ -399,8 +431,101 @@ export default class GlyphCanvas extends React.PureComponent {
 		let mouseBoxStart;
 
 		const rafFunc = () => {
-			if (this.toile.keyboardDownRisingEdge.keyCode === 80) {
-				pause = !pause;
+			// Handling all keyboard event
+			let enteringPreview = false;
+			let resetManualPoint = false;
+			let displacementArrow;
+			let exitingPreview = false;
+			let previewMode = false;
+			let modRange = 1;
+			let unparallelMod = false;
+			let unsmoothMod = false;
+			let curveMode = onCurveModMode.WIDTH_MOD // eslint-disable-line no-bitwise
+				| onCurveModMode.ANGLE_MOD;
+			let distrModification = false;
+			let directionalModifier = false;
+
+			if (this.toile.keyboardUpRisingEdge.keyCode) {
+				const {keyCode} = this.toile.keyboardUpRisingEdge;
+
+				if (keyCode === 90) {
+					exitingPreview = true;
+				}
+			}
+
+			if (this.toile.keyboardUp.keyCode) {
+				const {keyCode} = this.toile.keyboardUp;
+
+				// Detect space keyboard up event to reset mode to the previous mode
+				if (keyCode === 32) {
+					appMode = oldAppMode;
+					this.client.dispatchAction('/store-value', {canvasMode: oldAppMode});
+					if (appMode === 'select-points') {
+						appStateValue = oldAppState;
+					}
+
+					oldAppMode = undefined;
+					oldAppState = undefined;
+				}
+				this.toile.clearKeyboardInput();
+			}
+
+			if (this.toile.keyboardDownRisingEdge.keyCode) {
+				const {keyCode} = this.toile.keyboardDownRisingEdge;
+
+				// On space edge down keyboard event switch to move mode
+				// whatever the previous mode is
+				if (keyCode === 32) {
+					oldAppMode = this.state.canvasMode;
+					oldAppState = appStateValue;
+					appMode = canvasMode.MOVE;
+					this.client.dispatchAction('/store-value', {canvasMode: 'move'});
+				}
+				else if (keyCode === 80) {
+					pause = !pause;
+				}
+				else if (keyCode === 90) {
+					enteringPreview = true;
+				}
+				else if (keyCode === 27) {
+					resetManualPoint = true;
+				}
+				else if (keyCode <= 40 && keyCode >= 37) {
+					displacementArrow = {
+						left: keyCode === 37,
+						up: keyCode === 38,
+						right: keyCode === 39,
+						down: keyCode === 40,
+					};
+				}
+			}
+
+			if (this.toile.keyboardDown.keyCode) {
+				const {keyCode, special} = this.toile.keyboardDown;
+
+				if (keyCode === 90) {
+					previewMode = true;
+				}
+				else if (keyCode === 65) {
+					curveMode &= ~onCurveModMode.WIDTH_MOD; // eslint-disable-line no-bitwise
+				}
+				else if (keyCode === 87) {
+					curveMode &= ~onCurveModMode.ANGLE_MOD; // eslint-disable-line no-bitwise
+				}
+				else if (keyCode === 68) {
+					distrModification = true;
+				}
+
+				if (special & specialKey.SHIFT) { // eslint-disable-line no-bitwise
+					modRange = 10;
+					directionalModifier = true;
+				}
+				if (special & agnosticCtrl) { // eslint-disable-line no-bitwise
+					unparallelMod = true;
+				}
+				if (special & specialKey.ALT) { // eslint-disable-line no-bitwise
+					unsmoothMod = true;
+				}
 			}
 
 			/* eslint-disable no-bitwise, max-depth */
@@ -425,9 +550,13 @@ export default class GlyphCanvas extends React.PureComponent {
 			switch (this.state.canvasMode) {
 			case 'components':
 				appMode = canvasMode.COMPONENTS;
+				selectedItems = [];
 				break;
 			case 'select-points':
 				appMode = canvasMode.SELECT_POINTS;
+				break;
+			case 'component-magic':
+				appMode = canvasMode.SELECT_POINTS_COMPONENT;
 				break;
 			case 'move':
 			default:
@@ -449,9 +578,12 @@ export default class GlyphCanvas extends React.PureComponent {
 				const contours = hotItems.filter(item =>
 					item.type === toileType.GLYPH_CONTOUR
 					|| item.type === toileType.GLYPH_COMPONENT_CONTOUR);
-				let componentMenu = hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM_CENTER);
-				let componentChoice = hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM);
-				const componentChoiceClass = hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM_CLASS);
+				let componentMenu
+					= hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM_CENTER);
+				let componentChoice
+					= hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM);
+				const componentChoiceClass
+					= hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM_CLASS);
 				let components = hotItems.filter(item => item.type === toileType.COMPONENT_CHOICE
 						|| item.type === toileType.COMPONENT_NONE_CHOICE);
 
@@ -488,36 +620,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						setTimeout(() => {
 							mouseDoubleClick = false;
 						}, 400);
-					}
-				}
-
-				if (this.toile.keyboardUp.keyCode) {
-					const {keyCode} = this.toile.keyboardUp;
-
-					// Detect space keyboard up event to reset mode to the previous mode
-					if (keyCode === 32) {
-						appMode = oldAppMode;
-						this.client.dispatchAction('/store-value', {canvasMode: oldAppMode});
-						if (appMode === 'select-points') {
-							appStateValue = oldAppState;
-						}
-
-						oldAppMode = undefined;
-						oldAppState = undefined;
-						this.toile.clearKeyboardInput();
-					}
-				}
-
-				if (this.toile.keyboardDownRisingEdge.keyCode) {
-					const {keyCode} = this.toile.keyboardDownRisingEdge;
-
-					// On space edge down keyboard event switch to move mode
-					// whatever the previous mode is
-					if (keyCode === 32) {
-						oldAppMode = this.state.canvasMode;
-						oldAppState = appStateValue;
-						appMode = canvasMode.MOVE;
-						this.client.dispatchAction('/store-value', {canvasMode: 'move'});
 					}
 				}
 
@@ -568,9 +670,15 @@ export default class GlyphCanvas extends React.PureComponent {
 
 					// If a component geometry is hovered
 					// We set the correct mode to draw it
-					if ((appStateValue === appState.DEFAULT || appStateValue === appState.COMPONENT_HOVERED) && components.length > 0) {
+					if (
+						(
+							appStateValue === appState.DEFAULT
+							|| appStateValue === appState.COMPONENT_HOVERED
+						)
+						&& components.length > 0
+					) {
 						appStateValue = appState.COMPONENT_HOVERED;
-						componentHovered = components[0];
+						[componentHovered] = components;
 					}
 					else if (componentMenu.length > 0) {
 						appStateValue = appState.COMPONENT_MENU_HOVERED;
@@ -580,20 +688,31 @@ export default class GlyphCanvas extends React.PureComponent {
 						appStateValue = appState.DEFAULT;
 					}
 				}
-				if (appMode === canvasMode.SELECT_POINTS) {
+				if (
+					appMode === canvasMode.SELECT_POINTS || appMode === canvasMode.SELECT_POINTS_COMPONENT
+				) {
 					// Manual edition mode
 					if ((appStateValue === appState.DEFAULT) && mouse.edge === mState.DOWN) {
-						if (spacingHandle.length > 0) {
-							appStateValue = appState.DRAGGING_SPACING;
-							selectedItems = [spacingHandle[0]];
-							this.storeSelectedItems(selectedItems);
+						if (appMode === canvasMode.SELECT_POINTS) {
+							if (spacingHandle.length > 0) {
+								appStateValue = appState.DRAGGING_SPACING;
+								selectedItems = [spacingHandle[0]];
+								this.storeSelectedItems(selectedItems);
+							}
+							else {
+								appStateValue = appState.BOX_SELECTING;
+								mouseBoxStart = mouse.pos;
+							}
 						}
 						else {
-							appStateValue = appState.BOX_SELECTING;
-							mouseBoxStart = mouse.pos;
+							appStateValue = appState.NOT_SELECTING;
 						}
 					}
-					else if ((appStateValue & appState.BOX_SELECTING) && mouseClickRelease) {
+					else if (
+						(
+							appStateValue & (appState.BOX_SELECTING | appState.NOT_SELECTING)
+						) && mouseClickRelease
+					) {
 						if (boxedItems.length > 0) {
 							selectedItems = boxedItems;
 							appStateValue = appState.POINTS_SELECTED;
@@ -641,7 +760,12 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						this.storeSelectedItems(selectedItems);
 					}
-					else if ((appStateValue & (appState.DRAGGING_CONTOUR_POINT | appState.DRAGGING_SPACING)) && mouseClickRelease) {
+					else if (
+						(
+							appStateValue
+							& (appState.DRAGGING_CONTOUR_POINT | appState.DRAGGING_SPACING)
+						) && mouseClickRelease
+					) {
 						if (selectedItems[0].type === toileType.NODE_SKELETON) {
 							appStateValue = appState.SKELETON_POINT_SELECTED;
 						}
@@ -743,10 +867,6 @@ export default class GlyphCanvas extends React.PureComponent {
 					appStateValue &= ~appState.ZOOMING;
 				}
 
-				const enteringPreview = this.toile.keyboardDownRisingEdge.keyCode === 90;
-				const previewMode = this.toile.keyboardDown.keycode === 90;
-				const exitingPreview = this.toile.keyboardUpRisingEdge.keyCode === 90;
-
 				if (enteringPreview) {
 					oldViewMatrix = this.toile.viewMatrix;
 					this.resetView(glyph, height, width);
@@ -778,7 +898,11 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				this.toile.drawSelectableContour(
 					glyph,
-					appMode === canvasMode.SELECT_POINTS ? hotItems : [],
+					appMode === canvasMode.SELECT_POINTS
+					|| appMode === canvasMode.SELECT_POINTS_COMPONENT
+						? hotItems
+						: [],
+					appMode,
 				);
 
 				//= ========================================================
@@ -825,7 +949,13 @@ export default class GlyphCanvas extends React.PureComponent {
 				// =========================================================
 				// =========================================================
 
-				if (appMode === canvasMode.SELECT_POINTS && !(appStateValue & (appState.DRAGGING_POINTS | appState.DRAGGING_CONTOUR_POINT))) {
+				if (
+					appMode === canvasMode.SELECT_POINTS
+					&& !(
+						appStateValue
+						& (appState.DRAGGING_POINTS | appState.DRAGGING_CONTOUR_POINT)
+					)
+				) {
 					if (spacingHandle.length > 0) {
 						this.canvas.style.cursor = 'ew-resize';
 					}
@@ -890,7 +1020,11 @@ export default class GlyphCanvas extends React.PureComponent {
 						),
 						contourSelected.id,
 						[...hotItems, ...selectedItems],
-						contourSelected.data.componentIdx === undefined ? '' : `components.${contourSelected.data.componentIdx}.`,
+						appMode === canvasMode.SELECT_POINTS
+							&& contourSelected.data.componentIdx === undefined
+							? ''
+							: `components.${contourSelected.data.componentIdx}.`,
+						`${contourSelected.data.name}`,
 					);
 				}
 
@@ -953,7 +1087,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						| appState.SPACING_SELECTED
 					)
 				) {
-					if (this.toile.keyboardDownRisingEdge.keyCode === 27) {
+					if (resetManualPoint) {
 						this.client.dispatchAction('/reset-glyph-points-manually', {
 							glyphName: glyph.base || glyph.name,
 							unicode: glyph.unicode,
@@ -1016,27 +1150,23 @@ export default class GlyphCanvas extends React.PureComponent {
 						| appState.CONTOUR_POINT_SELECTED
 						| appState.SKELETON_POINT_SELECTED
 					)
-					&& this.toile.keyboardDownRisingEdge.keyCode <= 40
-					&& this.toile.keyboardDownRisingEdge.keyCode >= 37
+					&& displacementArrow
 				) {
 					mouseMovement = false;
 					interactions = selectedItems.map((item) => {
 						let posVector;
-						const modRange = this.toile.keyboardDown.special & specialKey.SHIFT
-							? 10
-							: 1;
 
-						if (this.toile.keyboardDownRisingEdge.keyCode === 40) {
-							posVector = {x: 0, y: -modRange};
-						}
-						if (this.toile.keyboardDownRisingEdge.keyCode === 38) {
-							posVector = {x: 0, y: modRange};
-						}
-						if (this.toile.keyboardDownRisingEdge.keyCode === 37) {
+						if (displacementArrow.left) {
 							posVector = {x: -modRange, y: 0};
 						}
-						if (this.toile.keyboardDownRisingEdge.keyCode === 39) {
+						else if (displacementArrow.up) {
+							posVector = {x: 0, y: modRange};
+						}
+						else if (displacementArrow.right) {
 							posVector = {x: modRange, y: 0};
+						}
+						else if (displacementArrow.down) {
+							posVector = {x: 0, y: -modRange};
 						}
 
 						return {
@@ -1056,8 +1186,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 				else if (
 					appStateValue & appState.SPACING_SELECTED
-					&& this.toile.keyboardDownRisingEdge.keyCode <= 40
-					&& this.toile.keyboardDownRisingEdge.keyCode >= 37
+					&& displacementArrow
 				) {
 					mouseMovement = false;
 					const interaction = {
@@ -1070,14 +1199,10 @@ export default class GlyphCanvas extends React.PureComponent {
 						baseCoord = glyph.advanceWidth;
 					}
 
-					const modRange = this.toile.keyboardDown.special & specialKey.SHIFT
-						? 10
-						: 1;
-
-					if (this.toile.keyboardDownRisingEdge.keyCode === 37) {
+					if (displacementArrow.left) {
 						interaction.modData = {x: baseCoord - modRange, y: 0};
 					}
-					if (this.toile.keyboardDownRisingEdge.keyCode === 39) {
+					if (displacementArrow.right) {
 						interaction.modData = {x: baseCoord + modRange, y: 0};
 					}
 
@@ -1085,8 +1210,6 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 
 				if (appStateValue & appState.CONTOUR_POINT_SELECTED) {
-					const unparallelMod = this.toile.keyboardDown.special & agnosticCtrl;
-
 					selectedItems.forEach((item) => {
 						if (!unparallelMod
 							&& (item.type === toileType.NODE_OUT
@@ -1131,7 +1254,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							if (item.id === 'spacingLeft') {
 								const [z,,,, tx, ty] = this.toile.viewMatrix;
 								const newTs = {
-									x: tx + modData.x * z,
+									x: tx + (modData.x * z),
 									y: ty,
 								};
 
@@ -1141,9 +1264,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						case toileType.NODE_OUT:
 						case toileType.NODE_IN: {
-							const unsmoothMod = this.toile.keyboardDown.special & specialKey.ALT;
-							const unparallelMod = this.toile.keyboardDown.special & agnosticCtrl;
-
 							handleModification(
 								this.client,
 								glyph,
@@ -1151,6 +1271,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								modData,
 								unsmoothMod,
 								unparallelMod,
+								appMode,
 							);
 
 							if (!unparallelMod) {
@@ -1167,8 +1288,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						case toileType.CONTOUR_NODE_OUT:
 						case toileType.CONTOUR_NODE_IN: {
-							const unsmoothMod = this.toile.keyboardDown.special & specialKey.ALT;
-
 							handleModification(
 								this.client,
 								glyph,
@@ -1176,18 +1295,11 @@ export default class GlyphCanvas extends React.PureComponent {
 								modData,
 								unsmoothMod,
 								true,
+								appMode,
 							);
 							break;
 						}
 						case toileType.NODE: {
-							let curveMode = onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD;
-
-							if (this.toile.keyboardDown.keyCode === 65) {
-								curveMode &= ~onCurveModMode.WIDTH_MOD;
-							}
-							else if (this.toile.keyboardDown.keyCode === 87) {
-								curveMode &= ~onCurveModMode.ANGLE_MOD;
-							}
 							onCurveModification(
 								this.client,
 								glyph,
@@ -1195,6 +1307,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								modData,
 								appStateValue,
 								curveMode,
+								appMode,
 							);
 
 							const id = item.data.parentId;
@@ -1210,8 +1323,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						case toileType.NODE_SKELETON:
 						case toileType.CONTOUR_NODE: {
-							const distrModification = this.toile.keyboardDown.keyCode === 68;
-
 							if (distrModification) {
 								skeletonDistrModification(
 									this.client,
@@ -1220,7 +1331,7 @@ export default class GlyphCanvas extends React.PureComponent {
 									modData,
 								);
 
-								const id = item.id;
+								const {id} = item;
 								const skeletonNode = _get(glyph, id);
 
 								if (skeletonNode) {
@@ -1228,8 +1339,6 @@ export default class GlyphCanvas extends React.PureComponent {
 								}
 							}
 							else {
-								const directionalModifier = this.toile.keyboardDown.special & specialKey.SHIFT;
-
 								let posModData = modData;
 
 								if (directionalModifier && !directionalNotStarted && mouseMovement) {
@@ -1254,15 +1363,15 @@ export default class GlyphCanvas extends React.PureComponent {
 									}
 								}
 
-
 								skeletonPosModification(
 									this.client,
 									glyph,
 									item,
 									posModData,
+									appMode,
 								);
 
-								const id = item.id;
+								const {id} = item;
 								const skeletonNode = _get(glyph, id);
 
 								if (skeletonNode) {
@@ -1320,31 +1429,23 @@ export default class GlyphCanvas extends React.PureComponent {
 		rafId = raf(rafFunc);
 	}
 
-	cleanUpFrame() {
-		this.toile.clearKeyboardEdges();
-		this.toile.clearMouseEdges();
-		this.toile.clearDelta();
-		this.toile.clearWheelDelta();
-	}
-
 	componentWillUnmount() {
 		this.lifespan.release();
 		rafCancel(rafId);
 	}
 
-	changeParam(param) {
-		return (e) => {
-			const params = {
-				values: {
-					...this.state.values,
-					[param]: parseFloat(e),
-					trigger: false,
-				},
-				demo: true,
-			};
+	setCamera(t, z, height, width) {
+		this.toile.setCamera(t, z, height, width);
+		this.client.dispatchAction('/store-value', {
+			glyphViewMatrix: {
+				t,
+				z,
+			},
+		});
+	}
 
-			this.client.dispatchAction('/change-param', params);
-		};
+	setCameraCenter(t, z, height, width) {
+		this.toile.setCameraCenter(t, z, height, width);
 	}
 
 	download() {
@@ -1369,19 +1470,28 @@ export default class GlyphCanvas extends React.PureComponent {
 		this.setCameraCenter(center, 0.5, -height, width);
 	}
 
-	setCamera(t, z, height, width) {
-		this.toile.setCamera(t, z, height, width);
-		this.client.dispatchAction('/store-value', {
-			glyphViewMatrix: {
-				t,
-				z,
-			},
-		});
+	cleanUpFrame() {
+		this.toile.clearKeyboardEdges();
+		this.toile.clearMouseEdges();
+		this.toile.clearDelta();
+		this.toile.clearWheelDelta();
 	}
 
-	setCameraCenter(t, z, height, width) {
-		this.toile.setCameraCenter(t, z, height, width);
+	changeParam(param) {
+		return (e) => {
+			const params = {
+				values: {
+					...this.state.values,
+					[param]: parseFloat(e),
+					trigger: false,
+				},
+				demo: true,
+			};
+
+			this.client.dispatchAction('/change-param', params);
+		};
 	}
+
 
 	storeSelectedItems(selectedItems) {
 		const storedItems = selectedItems.map(item => ({

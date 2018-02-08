@@ -136,7 +136,16 @@ export default class Glyph {
 			this.resolveOperationTarget();
 		}
 
-		this.components = outline.component.map((component, i) => new Component(component, `component.${i}`, this));
+		this.components = outline.component.map((component, i) => {
+			const componentObject = new Component(component, `component.${i}`, this);
+
+			componentObject.base.forEach((compBase) => {
+				paramBase.manualChanges[compBase.value] = {
+					cursors: {},
+				};
+			});
+			return componentObject;
+		});
 		this.componentsName = this.components.map((c, i) => `components.${i}`);
 
 		for (let i = 0; i < this.operationOrder.length; i++) {
@@ -525,6 +534,15 @@ export default class Glyph {
 			const componentManualChanges = {};
 			const glyphManualChanges = localParams.manualChanges[this.name.value].cursors;
 
+			let componentName = component.base[0].value;
+
+			if (component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]) {
+				componentName = localParams.glyphComponentChoice[this.name.value][component.id.value];
+			}
+			else if (component.componentClass && localParams.glyphComponentChoice[component.componentClass.value]) {
+				componentName = localParams.glyphComponentChoice[component.componentClass.value];
+			}
+
 			const keys = Object.keys(glyphManualChanges);
 
 			for (let i = 0; i < keys.length; i++) {
@@ -537,13 +555,13 @@ export default class Glyph {
 				}
 			}
 
-			let componentName = component.base[0].value;
+			const globalComponentChange = params.manualChanges[componentName].cursors;
+			const globalCompChangeKeys = Object.keys(globalComponentChange);
 
-			if (component.id && localParams.glyphComponentChoice[this.name.value][component.id.value]) {
-				componentName = localParams.glyphComponentChoice[this.name.value][component.id.value];
-			}
-			else if (component.componentClass && localParams.glyphComponentChoice[component.componentClass.value]) {
-				componentName = localParams.glyphComponentChoice[component.componentClass.value];
+			for (let i = 0; i < globalCompChangeKeys.length; i++) {
+				const globalCompChangeKey = globalCompChangeKeys[i];
+
+				componentManualChanges[globalCompChangeKey] = (componentManualChanges[globalCompChangeKey] || 0) + globalComponentChange[globalCompChangeKey];
 			}
 
 			const componentParams = {};
