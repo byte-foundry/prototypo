@@ -75,10 +75,10 @@ const white = '#fefefe';
 const red = '#ff725e';
 
 const transparent = 'transparent';
-const inHandleColor = yellow;
-const outHandleColor = blue;
-const onCurveColor = green;
-const skeletonColor = red;
+const inHandleColor = red;
+const outHandleColor = red;
+const onCurveColor = blue;
+const skeletonColor = green;
 const ringBackground = 'rgba(255,114,94,0.4)';
 
 const pointMenuAnimationLength = 10;
@@ -848,8 +848,9 @@ export default class Toile {
 		});
 	}
 
-	setCamera(point, zoom, height) {
+	setCamera(point, zoom, height, width) {
 		this.height = height;
+		this.width = width;
 		this.viewMatrix = [zoom, 0, 0, -1 * zoom, point.x, point.y];
 	}
 
@@ -858,6 +859,7 @@ export default class Toile {
 			subtract2D({x: width / 2, y: height / 2}, mulScalar2D(zoom, {x: point.x, y: -point.y})),
 			zoom,
 			height,
+			width,
 		);
 	}
 
@@ -1428,9 +1430,9 @@ export default class Toile {
 		const inHot = _find(hotItems, item => item.id === id);
 		const color = inHot ? blue : green;
 
-		this.drawRing(node, radius - 2, radius + 2, undefined, ringBackground);
-		this.drawLine(closestNode, farthestNode, green, undefined, [5, 5, 15, 5]);
-		this.drawCircle(farthestNode, 5, color, color);
+		this.drawRing(node, radius - 0.5, radius + 0.5, undefined, ringBackground);
+		this.drawLine(closestNode, farthestNode, onCurveColor, undefined);
+		this.drawCircle(farthestNode, 3, onCurveColor, onCurveColor);
 	}
 
 	drawSkeletonDistrTool(node) {
@@ -1626,6 +1628,33 @@ export default class Toile {
 		});
 
 		return result;
+	}
+
+	glyphOutsideView(glyph) {
+		for (let i = 0; i < glyph.otContours.length; i++) {
+			for (let j = 0; j < glyph.otContours[i].length; j++) {
+				const pointArray = transformCoords(
+					glyph.otContours[i][j],
+					this.viewMatrix,
+					this.height,
+				);
+
+				for (let k = 0; k < pointArray.length; k++) {
+					const point = pointArray[k];
+
+					if (
+						point.x > 0
+						&& point.x < this.width
+						&& point.y > 0
+						&& point.y < -this.height
+					) {
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
 	}
 
 	getHotInteractiveItem() {

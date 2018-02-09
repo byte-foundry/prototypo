@@ -217,7 +217,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 	componentDidMount() {
 		this.toile = new Toile(this.canvas);
-		this.toile.setCamera({x: 0, y: 0}, 1, this.canvas.clientHeight);
+		this.toile.setCamera({x: 0, y: 0}, 1, this.canvas.clientHeight, this.canvas.clientWidth);
 
 		if (module.hot) {
 			module.hot.accept('../toile/toile', () => {
@@ -307,6 +307,10 @@ export default class GlyphCanvas extends React.PureComponent {
 					appStateValue = appState.DEFAULT;
 					selectedItems = [];
 					this.resetAppMode = false;
+				}
+
+				if (this.toile.glyphOutsideView(glyph)) {
+					this.client.dispatchAction('/store-value', {glyphOutsideView: true});
 				}
 
 				// Detection of double click in any mode
