@@ -700,6 +700,7 @@ export default class Toile {
 			this.drawContour(glyph.otContours[i], undefined, undefined, true, context);
 		}
 
+		context.stroke();
 		context.fill();
 	}
 
@@ -1810,3 +1811,4 @@ export default class Toile {
 	}
 }
 /* eslint-enable no-param-reassign, no-bitwise */
+
