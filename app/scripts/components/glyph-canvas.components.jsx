@@ -251,6 +251,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		let oldAppState;
 		let mouseDoubleClick;
 		let pause = false;
+		let firstDraw = true;
 
 		// Box select variables
 		let mouseBoxStart;
@@ -311,13 +312,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				// Detection of double click in any mode
 				if (mouse.edge === mState.DOWN) {
 					if (mouseDoubleClick) {
-						const bbox = glyphBoundingBox(glyph);
-						const center = mulScalar2D(1 / 2, add2D(
-							bbox[0],
-							bbox[1],
-						));
-
-						this.toile.setCameraCenter(center, 0.5, -height, width);
+						this.resetView(glyph, height, width);
 					}
 					else {
 						mouseDoubleClick = true;
@@ -580,6 +575,10 @@ export default class GlyphCanvas extends React.PureComponent {
 					glyph,
 					this.state.values,
 				);
+				if (firstDraw) {
+					firstDraw = false;
+					this.resetView(glyph, height, width);
+				}
 				this.toile.drawGlyph(glyph, hotItems, this.state.uiOutline);
 				this.toile.drawSelectableContour(
 					glyph,
@@ -638,15 +637,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						| appState.SKELETON_POINT_SELECTED
 					)
 				) {
-					this.toile.drawNodes(
-						_get(
-							glyph,
-							contourSelected.id,
-						),
-						contourSelected.id,
-						[...hotItems, ...draggedItems, ...selectedItems],
-						contourSelected.data.componentIdx === undefined ? '' : `components.${contourSelected.data.componentIdx}.`,
-					);
 					if (contourSelected.data.componentIdx === undefined) {
 						this.toile.drawSelectedContour(_slice(
 							glyph.otContours,
@@ -661,6 +651,16 @@ export default class GlyphCanvas extends React.PureComponent {
 							contourSelected.data.indexes[1],
 						));
 					}
+
+					this.toile.drawNodes(
+						_get(
+							glyph,
+							contourSelected.id,
+						),
+						contourSelected.id,
+						[...hotItems, ...draggedItems, ...selectedItems],
+						contourSelected.data.componentIdx === undefined ? '' : `components.${contourSelected.data.componentIdx}.`,
+					);
 				}
 
 				if (appStateValue & appState.BOX_SELECTING) {
@@ -783,7 +783,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					) {
 						moving = true;
 					} */
-					this.toile.setCamera(newTs, z, -height);
+					this.toile.setCamera(newTs, z, -height, width);
 				}
 				else if (appStateValue & appState.ZOOMING) {
 					const [z,,,, x, y] = this.toile.viewMatrix;
@@ -1045,6 +1045,16 @@ export default class GlyphCanvas extends React.PureComponent {
 		};
 
 		this.client.dispatchAction('/change-param', params);
+	}
+
+	resetView(glyph, height, width) {
+		const bbox = glyphBoundingBox(glyph);
+		const center = mulScalar2D(1 / 2, add2D(
+			bbox[0],
+			bbox[1],
+		));
+
+		this.toile.setCameraCenter(center, 0.5, -height, width);
 	}
 
 	render() {
