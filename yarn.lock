@@ -5421,7 +5421,7 @@ getpass@^0.1.1:
 
 gfnt.ptf@byte-foundry/spectral.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/0eae7ddcfab394147cd8807ec364dacd36532a3f"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/c43ff8a00354512432c8e2c2321e331b5d39d0ff"
   dependencies:
     karma "^2.0.0"
     prototypo-precursor "^1.0.4"
@@ -7165,7 +7165,7 @@ jest@^22.2.1:
 
 john-fell.ptf@byte-foundry/john-fell.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/8a89a8f46d622c3feed71d93f81ebf5489dd2838"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/642c2e273047f91deacccdb660b6bc3c75b5d605"
   dependencies:
     prototypo-precursor "^1.0.4"
 
