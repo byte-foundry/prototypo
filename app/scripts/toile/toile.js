@@ -1399,17 +1399,20 @@ export default class Toile {
 		this.drawArcBetweenVector(node, startVec, endVec, '#24d390');
 	}
 
-	drawNodeTool(node, id, hotItems) {
-		const [farthestNode, closestNode] = node.expand.distr > 0.5
-			? [node.expandedTo[0], node.expandedTo[1]]
-			: [node.expandedTo[1], node.expandedTo[0]];
-		const radius = distance2D(farthestNode, node) * this.viewMatrix[0];
-		const inHot = _find(hotItems, item => item.id === id);
-		const color = inHot ? blue : green;
+	drawAngleTool(node) {
+		const radiusOne = distance2D(node.expandedTo[1], node) * this.viewMatrix[0];
+		const radiusZero = distance2D(node.expandedTo[0], node) * this.viewMatrix[0];
 
-		this.drawRing(node, radius - 0.5, radius + 0.5, undefined, ringBackground);
-		this.drawLine(closestNode, farthestNode, onCurveColor, undefined);
-		this.drawCircle(farthestNode, 3, onCurveColor, onCurveColor);
+		this.drawRing(node, radiusOne - 0.5, radiusOne + 0.5, undefined, ringBackground);
+		this.drawRing(node, radiusZero - 0.5, radiusZero + 0.5, undefined, ringBackground);
+	}
+
+	drawWidthTool(node) {
+		const vector = subtract2D(node.expandedTo[0], node.expandedTo[1]);
+		const start = add2D(node.expandedTo[0], mulScalar2D(100000, vector));
+		const end = subtract2D(node.expandedTo[0], mulScalar2D(100000, vector));
+
+		this.drawLine(start, end, onCurveColor, undefined);
 	}
 
 	drawSkeletonDistrTool(node) {

@@ -795,7 +795,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					this.toile.setCamera({
 						x: z === clampedZoom ? x : newTx,
 						y: z === clampedZoom ? y : newTy,
-					}, clampedZoom, -height);
+					}, clampedZoom, -height, width);
 				}
 				/* else {
 					moving = false;
@@ -923,8 +923,11 @@ export default class GlyphCanvas extends React.PureComponent {
 							const id = item.data.parentId;
 							const skeletonNode = _get(glyph, id);
 
-							if (skeletonNode) {
-								this.toile.drawNodeTool(skeletonNode, `${id}.angle`, hotItems);
+							if (skeletonNode && !(curveMode & onCurveModMode.ANGLE_MOD)) {
+								this.toile.drawWidthTool(skeletonNode);
+							}
+							if (skeletonNode && !(curveMode & onCurveModMode.WIDTH_MOD)) {
+								this.toile.drawAngleTool(skeletonNode);
 							}
 							break;
 						}
