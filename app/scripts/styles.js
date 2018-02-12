@@ -81,6 +81,7 @@ import '../styles/components/shared/modal.scss';
 import '../styles/components/shared/action-form-buttons.scss';
 import '../styles/components/shared/filter-input.scss';
 import '../styles/components/shared/filterable-table.scss';
+import '../styles/components/shared/view-alert.scss';
 import '../styles/components/start.scss';
 import '../styles/components/toolbar/toolbar.scss';
 import '../styles/components/toolbar/arianne-thread.scss';

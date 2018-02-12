@@ -6,7 +6,7 @@ export default class SelectWithLabel extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			value: props.options.find(({value}) => {return value === props.inputValue}),
+			value: props.options.find(({value}) => value === props.inputValue),
 			inputValue: '',
 		};
 	}
@@ -59,7 +59,8 @@ export default class SelectWithLabel extends React.PureComponent {
 					onChange={(value) => {this.handleChangeValue(value);}}
 					onBlurResetsInput={false}
 					onInputChange={(value) => {this.handleChangeInput(value);}}
-					value={value}/>
+					value={value}
+				/>
 				<input type="hidden" name={name} value={value && value.value || ''} />
 			</div>
 		);
@@ -78,6 +79,6 @@ export default class SelectWithLabel extends React.PureComponent {
 	}
 
 	set inputValue(value) {
-		return;
+
 	}
 }

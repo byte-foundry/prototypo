@@ -655,40 +655,9 @@ export default class Toile {
 		});
 	}
 
-	drawAllSkeletonNodes(contours, hotItems) {
-		contours.forEach((contour, i) => {
-			contour.nodes.forEach((node, j) => {
-				const id = `contours.${i}.nodes.${j}`;
-
-				if (contour.skeleton && node.expand) {
-					const hot = _find(hotItems, item => item.id === id);
-					const modifAddress = `${node.nodeAddress}`;
-
-					if (node.expand) {
-						this.drawControlPoint(node, hot, skeletonColor);
-						this.interactionList.push({
-							id,
-							type: toileType.NODE_SKELETON,
-							data: {
-								center: {
-									x: node.x,
-									y: node.y,
-								},
-								base: {
-									x: node.xBase,
-									y: node.yBase,
-								},
-								transforms: node.addedTransform,
-								expandedTo: node.expandedTo,
-								width: node.expand.width,
-								baseDistr: node.expand.baseDistr,
-								radius: nodeHotRadius,
-								modifAddress,
-							},
-						});
-					}
-				}
-			});
+	drawAllNodes(contours, hotItems) {
+		contours.forEach((contour) => {
+			this.drawNodes(contour, contour.id, hotItems);
 		});
 	}
 
@@ -1611,6 +1580,12 @@ export default class Toile {
 
 		this.interactionList.forEach((interactionItem) => {
 			switch (interactionItem.type) {
+			case toileType.CONTOUR_NODE:
+			case toileType.CONTOUR_NODE_IN:
+			case toileType.CONTOUR_NODE_OUT:
+			case toileType.NODE_OUT:
+			case toileType.NODE_IN:
+			case toileType.NODE:
 			case toileType.NODE_SKELETON: {
 				const {center} = interactionItem.data;
 

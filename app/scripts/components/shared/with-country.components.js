@@ -19,7 +19,7 @@ const withCountry = component => class extends React.Component {
 			this.setState({country: data.country_code});
 		}
 		catch (err) {
-				// Failed to fetch can happen if the user has a blocker (ad, tracker...)
+			// Failed to fetch can happen if the user has a blocker (ad, tracker...)
 			trackJs.track(`Error when getting the country: ${err.message}`);
 		}
 	}
@@ -32,6 +32,6 @@ const withCountry = component => class extends React.Component {
 			country,
 		});
 	}
-	};
+};
 
 export default withCountry;

@@ -24,12 +24,26 @@
 		}
 	}
 
-	&-reset-glyph-button {
+	&-reset-buttons {
 		position: absolute;
-		display: block;
 		top: 20px;
-		left: 20px;
+		left: 0px;
+		display: flex;
 		z-index: 2;
+
+		margin-left: -270px;
+		transition: margin 0.3s ease-in;
+
+		&.is-on-canvas {
+			margin-left: 0;
+			transition: margin 0.3s ease-out;
+		}
+
+	}
+
+	&-reset-button {
+		margin-left: 20px;
+		display: block;
 		border: 2px solid $black;
 		color: $black;
 		background-color: $white;
@@ -42,12 +56,6 @@
 
 		&:hover {
 			background-color: $green;
-		}
-
-		margin-left: -200px;
-		&.is-on-canvas {
-			margin-left: 0;
-			transition: margin 0.3s ease;
 		}
 
 		&.disabled {

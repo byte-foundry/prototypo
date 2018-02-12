@@ -309,8 +309,13 @@ export default class GlyphCanvas extends React.PureComponent {
 					this.resetAppMode = false;
 				}
 
-				if (this.toile.glyphOutsideView(glyph)) {
+				const outside = this.toile.glyphOutsideView(glyph);
+
+				if (outside && !this.props.glyphOutsideView) {
 					this.client.dispatchAction('/store-value', {glyphOutsideView: true});
+				}
+				else if (!outside && this.props.glyphOutsideView) {
+					this.client.dispatchAction('/store-value', {glyphOutsideView: false});
 				}
 
 				// Detection of double click in any mode
@@ -445,6 +450,9 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.DEFAULT;
 							mouseBoxStart = undefined;
 						}
+						this.client.dispatchAction('/store-value', {
+							selectedItems,
+						});
 					}
 					else if ((appStateValue & appState.CONTOUR_SELECTED) && mouse.edge === mState.DOWN) {
 						if (nodes.length > 0) {
@@ -468,6 +476,9 @@ export default class GlyphCanvas extends React.PureComponent {
 							contourSelected = undefined;
 							contourSelectedIndex = 0;
 						}
+						this.client.dispatchAction('/store-value', {
+							selectedItems,
+						});
 					}
 					else if ((appStateValue & appState.DRAGGING_CONTOUR_POINT) && mouseClickRelease) {
 						if (selectedItems[0].type === toileType.NODE_SKELETON) {
@@ -506,6 +517,9 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.BOX_SELECTING;
 							mouseBoxStart = mouse.pos;
 						}
+						this.client.dispatchAction('/store-value', {
+							selectedItems,
+						});
 					}
 					else if ((appStateValue & appState.DRAGGING_CONTOUR) && mouseClickRelease) {
 						appStateValue = appState.CONTOUR_SELECTED;
@@ -533,6 +547,9 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.BOX_SELECTING;
 							mouseBoxStart = mouse.pos;
 						}
+						this.client.dispatchAction('/store-value', {
+							selectedItems,
+						});
 					}
 					else if ((appStateValue & appState.POINTS_SELECTED) && mouse.edge === mState.DOWN) {
 						// TODO: shift behavior
@@ -554,6 +571,9 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.BOX_SELECTING;
 							mouseBoxStart = mouse.pos;
 						}
+						this.client.dispatchAction('/store-value', {
+							selectedItems,
+						});
 					}
 					else if ((appStateValue & appState.DRAGGING_POINTS) && mouseClickRelease) {
 						appStateValue = appState.POINTS_SELECTED;
@@ -675,7 +695,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					);
 
 					this.toile.drawRectangleFromCorners(mousePosInWorld, boxStartPosInWorld, 'black');
-					this.toile.drawAllSkeletonNodes(glyph.contours, boxedItems);
+					this.toile.drawAllNodes(glyph.contours, boxedItems);
 				}
 				if (
 					appStateValue & (
@@ -683,7 +703,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						| appState.DRAGGING_POINTS
 					)
 				) {
-					this.toile.drawAllSkeletonNodes(glyph.contours, selectedItems);
+					this.toile.drawAllNodes(glyph.contours, selectedItems);
 				}
 
 				if (
@@ -726,50 +746,9 @@ export default class GlyphCanvas extends React.PureComponent {
 					)
 				) {
 					if (this.toile.keyboardDownRisingEdge.keyCode === 27) {
-						selectedItems.forEach((item) => {
-							switch (item.type) {
-							case toileType.NODE_IN:
-							case toileType.CONTOUR_NODE_IN:
-								this.client.dispatchAction('/change-glyph-node-manually', {
-									changes: {
-										[`${item.data.parentId}.in.x`]: undefined,
-										[`${item.data.parentId}.in.y`]: undefined,
-									},
-									glyphName: glyph.name,
-								});
-								break;
-							case toileType.NODE_OUT:
-							case toileType.CONTOUR_NODE_OUT:
-								this.client.dispatchAction('/change-glyph-node-manually', {
-									changes: {
-										[`${item.data.parentId}.out.x`]: undefined,
-										[`${item.data.parentId}.out.y`]: undefined,
-									},
-									glyphName: glyph.name,
-								});
-								break;
-							case toileType.NODE:
-								this.client.dispatchAction('/change-glyph-node-manually', {
-									changes: {
-										[`${item.data.modifAddress}.width`]: undefined,
-										[`${item.data.modifAddress}.angle`]: undefined,
-									},
-									glyphName: glyph.name,
-								});
-								break;
-							case toileType.CONTOUR_NODE:
-							case toileType.NODE_SKELETON:
-								this.client.dispatchAction('/change-glyph-node-manually', {
-									changes: {
-										[`${item.data.modifAddress}x`]: 0,
-										[`${item.data.modifAddress}y`]: 0,
-									},
-									glyphName: glyph.name,
-								});
-								break;
-							default:
-								break;
-							}
+						this.client.dispatchAction('/reset-glyph-points-manually', {
+							glyphName: glyph.name,
+							points: selectedItems,
 						});
 					}
 				}

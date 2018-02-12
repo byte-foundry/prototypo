@@ -5,6 +5,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import {gql} from 'react-apollo';
 
 import {prototypoStore, undoableStore, fontInstanceStore} from '../stores/creation.stores';
+import {toileType} from '../toile/toile';
 import LocalServer from '../stores/local-server.stores';
 import LocalClient from '../stores/local-client.stores';
 
@@ -498,48 +499,62 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/reset-glyph-node-manually': ({
-		contourId, nodeId, force = true, label = 'reset manual', glyphName,
+	'/reset-glyph-points-manually': ({
+		glyphName, points, force = true, label = 'reset manual',
 	}) => {
-		const variantId = (prototypoStore.get('variant') || {}).id;
-		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
-
-		manualChanges[glyphName] = manualChanges[glyphName] || {};
-		manualChanges[glyphName].cursors = manualChanges[glyphName].cursors || {};
-
-		// adding deltas to modified cursors
-		Object.keys(manualChanges[glyphName].cursors).forEach((cursorKey) => {
-			if (cursorKey.indexOf(`contours.${contourId}.nodes.${nodeId}`) !== -1) {
-				delete manualChanges[glyphName].cursors[cursorKey];
+		points.forEach((item) => {
+			switch (item.type) {
+			case toileType.NODE_IN:
+			case toileType.CONTOUR_NODE_IN:
+				localClient.dispatchAction('/change-glyph-node-manually', {
+					changes: {
+						[`${item.data.parentId}.in.x`]: undefined,
+						[`${item.data.parentId}.in.y`]: undefined,
+					},
+					glyphName,
+				});
+				break;
+			case toileType.NODE_OUT:
+			case toileType.CONTOUR_NODE_OUT:
+				localClient.dispatchAction('/change-glyph-node-manually', {
+					changes: {
+						[`${item.data.parentId}.out.x`]: undefined,
+						[`${item.data.parentId}.out.y`]: undefined,
+					},
+					glyphName,
+				});
+				break;
+			case toileType.NODE:
+				localClient.dispatchAction('/change-glyph-node-manually', {
+					changes: {
+						[`${item.data.modifAddress}.width`]: undefined,
+						[`${item.data.modifAddress}.angle`]: undefined,
+					},
+					glyphName,
+				});
+				break;
+			case toileType.CONTOUR_NODE:
+			case toileType.NODE_SKELETON:
+				localClient.dispatchAction('/change-glyph-node-manually', {
+					changes: {
+						[`${item.data.modifAddress}x`]: 0,
+						[`${item.data.modifAddress}y`]: 0,
+					},
+					glyphName,
+				});
+				break;
+			default:
+				break;
 			}
 		});
 
-		const newParams = {
-			...oldValues,
-			manualChanges: {
-				...manualChanges,
-				[glyphName]: {
-					...manualChanges[glyphName],
-					cursors: {
-						...manualChanges[glyphName].cursors,
-					},
-				},
-			},
-		};
+		const variantId = (prototypoStore.get('variant') || {}).id;
 
-		const patch = undoableStore.set('controlsValues', newParams).commit();
-
-		localServer.dispatchUpdate('/undoableStore', patch);
-
-		debouncedSave(newParams, variantId);
-
-		if (force) {
-			undoWatcher.forceUpdate(patch, label);
-		}
-		else {
-			undoWatcher.update(patch, label);
-		}
+		localClient.dispatchAction('/change-glyph-node-manually', {
+			changes: {},
+			glyphName,
+			force: true,
+		});
 	},
 	'/reset-glyph-manually': ({glyphName, force = true, label = 'reset manual'}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;

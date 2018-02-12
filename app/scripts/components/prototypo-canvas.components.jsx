@@ -11,6 +11,7 @@ import HoodieApi from '../services/hoodie.services';
 
 import {ContextualMenuItem} from './viewPanels/contextual-menu.components';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components';
+import ViewAlert from './shared/view-alert.components';
 import CloseButton from './close-button.components';
 import CanvasGlyphInput from './canvas-glyph-input.components';
 import AlternateMenu from './alternate-menu.components';
@@ -34,6 +35,7 @@ export default class PrototypoCanvas extends React.Component {
 		this.handleLeaveAndClick = this.handleLeaveAndClick.bind(this);
 		this.reset = this.reset.bind(this);
 		this.resetGlyph = this.resetGlyph.bind(this);
+		this.resetPoints = this.resetPoints.bind(this);
 		this.toggleCoords = this.toggleCoords.bind(this);
 		this.toggleDependencies = this.toggleDependencies.bind(this);
 		this.toggleNodes = this.toggleNodes.bind(this);
@@ -74,6 +76,8 @@ export default class PrototypoCanvas extends React.Component {
 					oldCanvasMode: head.toJS().d.oldCanvasMode,
 					altList: head.toJS().d.altList,
 					credits: head.toJS().d.credits,
+					glyphOutsideView: head.toJS().d.glyphOutsideView,
+					selectedItems: head.toJS().d.selectedItems,
 				});
 				this.isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 				this.isFreeWithCredits = (
@@ -233,6 +237,18 @@ export default class PrototypoCanvas extends React.Component {
 			glyphName = this.state.glyphs[this.props.glyphSelected][0].name;
 		}
 		this.client.dispatchAction('/reset-glyph-manually', {glyphName});
+	}
+
+	resetPoints() {
+		let glyphName = '';
+
+		if (this.state.altList[this.props.glyphSelected]) {
+			glyphName = this.state.altList[this.props.glyphSelected];
+		}
+		else {
+			glyphName = this.state.glyphs[this.props.glyphSelected][0].name;
+		}
+		this.client.dispatchAction('/reset-glyph-points-manually', {glyphName, points: this.state.selectedItems});
 	}
 
 	wheel(zoom, center) {
@@ -466,6 +482,12 @@ export default class PrototypoCanvas extends React.Component {
 				/>
 			) : false;
 
+		const outsideAlert
+			= (<ViewAlert
+				inside={this.state.glyphOutsideView}
+				text="The glyph is outside the view ! Try double clicking in the view to bring it back."
+			/>);
+
 		return (
 			<div
 				style={this.props.style}
@@ -475,17 +497,27 @@ export default class PrototypoCanvas extends React.Component {
 				onContextMenu={this.handleContextMenu}
 			>
 				<CanvasBar />
-				<button
-					className={`prototypo-canvas-reset-glyph-button ${this.isManualEdited() ? '' : 'disabled'} ${this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''}`}
-					onClick={this.resetGlyph}
-					disabled={!this.isManualEdited()}
-				>
-					Reset glyph
-				</button>
-				<GlyphCanvas dependencies={this.props.uiDependencies} />
+				<div className={`prototypo-canvas-reset-buttons ${this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''}`}>
+					<button
+						className={`prototypo-canvas-reset-button ${this.isManualEdited() ? '' : 'disabled'}`}
+						onClick={this.resetGlyph}
+						disabled={!this.isManualEdited()}
+					>
+						Reset glyph
+					</button>
+					<button
+						className={`prototypo-canvas-reset-button ${this.state.selectedItems && this.state.selectedItems.length > 0 ? '' : 'disabled'}`}
+						onClick={this.resetPoints}
+						disabled={!(this.state.selectedItems && this.state.selectedItems.length)}
+					>
+						Reset point
+					</button>
+				</div>
+				<GlyphCanvas dependencies={this.props.uiDependencies} glyphOutsideView={this.state.glyphOutsideView} />
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => {this.props.close('glyph');}} />
 				</div>
+				{outsideAlert}
 				<ViewPanelsMenu
 					show={this.state.showContextMenu}
 					shifted={isShifted}
