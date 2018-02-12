@@ -23,7 +23,7 @@ const onCurveModMode = {
 	ANGLE_MOD: 0b10,
 };
 
-function handleModification(client, glyph, draggedItem, newPos, smoothMod, parallelMod) {
+function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, parallelMod) {
 	const {
 		parentId, transforms,
 	} = draggedItem.data;
@@ -51,7 +51,7 @@ function handleModification(client, glyph, draggedItem, newPos, smoothMod, paral
 		[`${draggedItem.data.parentId}.${direction}.y`]: newVector.y,
 	};
 
-	if (!smoothMod) {
+	if (!unsmoothMod && (parent.baseTypeIn === 'smooth' || parent.baseTypeOut === 'smooth')) {
 		const opposite = isIn
 			? {x: parent.handleOut.xBase, y: parent.handleOut.yBase}
 			: {x: parent.handleIn.xBase, y: parent.handleIn.yBase};
@@ -864,7 +864,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						switch (item.type) {
 						case toileType.NODE_OUT:
 						case toileType.NODE_IN: {
-							const smoothMod = this.toile.keyboardDown.special & specialKey.ALT;
+							const unsmoothMod = this.toile.keyboardDown.special & specialKey.ALT;
 							const parallelMod = this.toile.keyboardDown.special & specialKey.CTRL;
 
 							handleModification(
@@ -872,21 +872,21 @@ export default class GlyphCanvas extends React.PureComponent {
 								glyph,
 								item,
 								modData,
-								smoothMod,
+								unsmoothMod,
 								parallelMod,
 							);
 							break;
 						}
 						case toileType.CONTOUR_NODE_OUT:
 						case toileType.CONTOUR_NODE_IN: {
-							const smoothMod = this.toile.keyboardDown.special & specialKey.SHIFT;
+							const unsmoothMod = this.toile.keyboardDown.special & specialKey.ALT;
 
 							handleModification(
 								this.client,
 								glyph,
 								item,
 								modData,
-								smoothMod,
+								unsmoothMod,
 							);
 							break;
 						}
