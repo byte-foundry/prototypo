@@ -482,6 +482,10 @@ export default class Toile {
 								x: node.x,
 								y: node.y,
 							},
+							base: {
+								x: node.xBase,
+								y: node.yBase,
+							},
 							radius: nodeHotRadius,
 							oppositeId,
 							baseWidth: parentNode.expand.baseWidth,

@@ -48,24 +48,35 @@ export default class ExpandingNode extends Node {
 		computedNode.expand.baseWidth = computedNode.expand.width;
 		computedNode.expand.baseDistr = computedNode.expand.distr;
 		computedNode.expand.baseAngle = computedNode.expand.angle;
-		computedNode.expand.width = computedNode.expand.baseWidth * (changes[cursor + EXPAND_WIDTH] || 1);
-		computedNode.expand.angle = computedNode.expand.baseAngle + (changes[cursor + EXPAND_ANGLE] || 0);
-		computedNode.expand.distr = computedNode.expand.baseDistr + (changes[cursor + EXPAND_DISTR] || 0);
+		computedNode.expand.width
+			= computedNode.expand.baseWidth * (changes[cursor + EXPAND_WIDTH] || 1);
+		computedNode.expand.angle
+			= computedNode.expand.baseAngle + (changes[cursor + EXPAND_ANGLE] || 0);
+		computedNode.expand.distr
+			= computedNode.expand.baseDistr + (changes[cursor + EXPAND_DISTR] || 0);
 		return computedNode;
 		/* eslint-disable no-param-reassign */
 	}
 
 	static expand(computedNode) {
-		const {x, y, expand: {width, angle, distr}} = computedNode;
+		const {
+			x, y, expand: {
+				width, angle, distr, baseWidth, baseAngle, baseDistr,
+			},
+		} = computedNode;
 
 		return [
 			round2D({
 				x: x - (Math.cos(angle) * width * distr),
 				y: y - (Math.sin(angle) * width * distr),
+				xBase: x - (Math.cos(baseAngle) * baseWidth * baseDistr),
+				yBase: y - (Math.sin(baseAngle) * baseWidth * baseDistr),
 			}),
 			round2D({
 				x: x + (Math.cos(angle) * width * (1 - distr)),
 				y: y + (Math.sin(angle) * width * (1 - distr)),
+				xBase: x - (Math.cos(baseAngle) * baseWidth * baseDistr),
+				yBase: y - (Math.sin(baseAngle) * baseWidth * baseDistr),
 			}),
 		];
 	}

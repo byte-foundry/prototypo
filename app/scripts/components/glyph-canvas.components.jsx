@@ -89,9 +89,15 @@ function onCurveModification(
 	newPos,
 	appStateValue,
 	modToApply,
+	directionalMod,
 ) {
 	const {
-		baseWidth, oppositeId, baseAngle, skeleton, angleOffset,
+		baseWidth,
+		oppositeId,
+		baseAngle,
+		skeleton,
+		angleOffset,
+		base,
 	} = draggedItem.data;
 	const opposite = _get(glyph, oppositeId);
 	// width factor
@@ -99,6 +105,10 @@ function onCurveModification(
 
 	// angle difference
 	const newVec = subtract2D(newPos, skeleton);
+
+	if (directionalMod) {
+	}
+
 	const angleDiff = Math.atan2(newVec.y, newVec.x) - baseAngle;
 
 	const changes = {};
@@ -891,9 +901,10 @@ export default class GlyphCanvas extends React.PureComponent {
 							break;
 						}
 						case toileType.NODE: {
+							const directionalMod = this.toile.keyboardDown.special & specialKey.SHIFT;
 							let curveMode = onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD;
 
-							if (this.toile.keyboardDown.special & specialKey.SHIFT) {
+							if (this.toile.keyboardDown.special & specialKey.ALT) {
 								curveMode &= ~onCurveModMode.WIDTH_MOD;
 							}
 							else if (this.toile.keyboardDown.special & specialKey.CTRL) {
@@ -906,6 +917,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								modData,
 								appStateValue,
 								curveMode,
+								directionalMod,
 							);
 
 							const id = item.data.parentId;
