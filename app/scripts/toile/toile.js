@@ -659,9 +659,13 @@ export default class Toile {
 		});
 	}
 
-	drawAllNodes(contours, hotItems) {
-		contours.forEach((contour) => {
-			this.drawNodes(contour, contour.id, hotItems);
+	drawAllNodes(glyph, hotItems, componentPrefixAddress = '') {
+		glyph.contours.forEach((contour, i) => {
+			this.drawNodes(contour, `${componentPrefixAddress}contours.${i}`, hotItems);
+		});
+
+		glyph.components.forEach((component, i) => {
+			this.drawAllNodes(component, hotItems, `components.${i}.`);
 		});
 	}
 

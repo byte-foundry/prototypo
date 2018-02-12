@@ -705,7 +705,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					);
 
 					this.toile.drawRectangleFromCorners(mousePosInWorld, boxStartPosInWorld, 'black');
-					this.toile.drawAllNodes(glyph.contours, boxedItems);
+					this.toile.drawAllNodes(glyph, boxedItems);
 				}
 				if (
 					appStateValue & (
@@ -713,7 +713,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						| appState.DRAGGING_POINTS
 					)
 				) {
-					this.toile.drawAllNodes(glyph.contours, selectedItems);
+					this.toile.drawAllNodes(glyph, selectedItems);
 				}
 
 				if (
