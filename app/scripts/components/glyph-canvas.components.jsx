@@ -950,42 +950,46 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						case toileType.NODE_SKELETON:
 						case toileType.CONTOUR_NODE: {
-							const directionalMod = this.toile.keyboardDown.special & specialKey.SHIFT;
+							const distrModification = this.toile.keyboardDown.special & specialKey.CTRL;
 
-							skeletonPosModification(
-								this.client,
-								glyph,
-								item,
-								modData,
-								directionalMod,
-								mouseStart,
-							);
+							if (distrModification) {
+								skeletonDistrModification(
+									this.client,
+									glyph,
+									item,
+									modData,
+								);
 
-							const id = item.id;
-							const skeletonNode = _get(glyph, id);
+								const id = item.id;
+								const skeletonNode = _get(glyph, id);
 
-							if (skeletonNode) {
-								this.toile.drawSkeletonPosTool(skeletonNode, `${id}.pos`, hotItems);
+								if (skeletonNode) {
+									this.toile.drawSkeletonPosTool(skeletonNode, `${id}.pos`, hotItems);
+								}
+							}
+							else {
+								const directionalMod = this.toile.keyboardDown.special & specialKey.SHIFT;
+
+								skeletonPosModification(
+									this.client,
+									glyph,
+									item,
+									modData,
+									directionalMod,
+									mouseStart,
+								);
+
+								const id = item.id;
+								const skeletonNode = _get(glyph, id);
+
+								if (skeletonNode) {
+									this.toile.drawSkeletonPosTool(skeletonNode, `${id}.pos`, hotItems);
+								}
 							}
 							break;
 						}
 						default:
 							break;
-						}
-						if (appStateValue & appState.SKELETON_DISTR) {
-							skeletonDistrModification(
-								this.client,
-								glyph,
-								item,
-								modData,
-							);
-
-							const id = item.id;
-							const skeletonNode = _get(glyph, id);
-
-							if (skeletonNode) {
-								this.toile.drawSkeletonPosTool(skeletonNode, `${id}.pos`, hotItems);
-							}
 						}
 					});
 				}
