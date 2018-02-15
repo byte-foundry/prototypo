@@ -18,6 +18,8 @@ const raf = requestAnimationFrame || webkitRequestAnimationFrame;
 const rafCancel = cancelAnimationFrame || webkitCancelAnimationFrame;
 let rafId;
 
+const MINIMUM_DRAG_THRESHOLD = 6;
+
 const onCurveModMode = {
 	WIDTH_MOD: 0b1,
 	ANGLE_MOD: 0b10,
@@ -271,6 +273,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		let pause = false;
 		let firstDraw = true;
 		let mouseStart;
+		let draggingNotStarted = false;
 
 		// Box select variables
 		let mouseBoxStart;
@@ -484,6 +487,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							selectedItems = [nodes[0]];
 							appStateValue = appState.DRAGGING_CONTOUR_POINT;
 							mouseStart = nodes[0].data.center;
+							draggingNotStarted = true;
 						}
 						else if (contours.length > 0) {
 							if (contours.find(c => c.id === contourSelected.id)) {
@@ -528,6 +532,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							selectedItems = [nodes[0]];
 							appStateValue = appState.DRAGGING_CONTOUR_POINT;
 							mouseStart = nodes[0].data.center;
+							draggingNotStarted = true;
 						}
 						else if (contours.length > 0) {
 							if (contours.find(c => c.id === contourSelected.id)) {
@@ -559,6 +564,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							selectedItems = [nodes[0]];
 							appStateValue = appState.DRAGGING_CONTOUR_POINT;
 							mouseStart = nodes[0].data.center;
+							draggingNotStarted = true;
 						}
 						else if (contours.length > 0) {
 							if (contours.find(c => c.id === contourSelected.id)) {
@@ -689,7 +695,14 @@ export default class GlyphCanvas extends React.PureComponent {
 						| appState.SKELETON_POINT_SELECTED
 					)
 				) {
-					if (contourSelected.data.componentIdx === undefined) {
+					if (draggingNotStarted) {
+						const displacement = distance2D(mouseStart, mousePosInWorld) * this.toile.viewMatrix[0];
+
+						if (displacement > MINIMUM_DRAG_THRESHOLD) {
+							draggingNotStarted = false;
+						}
+					}
+					else if (contourSelected.data.componentIdx === undefined) {
 						this.toile.drawSelectedContour(_slice(
 							glyph.otContours,
 							contourSelected.data.indexes[0],
@@ -872,6 +885,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						| appState.SKELETON_POINT_SELECTED
 						| appState.POINTS_SELECTED
 					)
+					&& !draggingNotStarted
 				) {
 					interactions.forEach((interaction) => {
 						const {item, modData} = interaction;

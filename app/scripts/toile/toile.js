@@ -1430,8 +1430,8 @@ export default class Toile {
 		const radiusOne = distance2D(node.expandedTo[1], node) * this.viewMatrix[0];
 		const radiusZero = distance2D(node.expandedTo[0], node) * this.viewMatrix[0];
 
-		this.drawRing(node, radiusOne - 0.5, radiusOne + 0.5, undefined, ringBackground);
-		this.drawRing(node, radiusZero - 0.5, radiusZero + 0.5, undefined, ringBackground);
+		this.drawRing(node, Math.max(radiusOne - 0.5, 0), radiusOne + 0.5, undefined, ringBackground);
+		this.drawRing(node, Math.max(radiusZero - 0.5, 0), radiusZero + 0.5, undefined, ringBackground);
 	}
 
 	drawWidthTool(node) {
@@ -1705,23 +1705,34 @@ export default class Toile {
 				let polyNumber = 0;
 
 				interactionItem.data.beziers.forEach((bezier) => {
-					const ts = getIntersectionTValue(
-						bezier[0],
-						bezier[1],
-						bezier[3],
-						bezier[2],
-						mouseTransformed,
-						lineEnd,
-					);
+					if (!(
+						bezier[0].x === bezier[1].x
+						&& bezier[0].x === bezier[2].x
+						&& bezier[0].x === bezier[3].x
+						&& bezier[0].y === bezier[1].y
+						&& bezier[0].y === bezier[2].y
+						&& bezier[0].y === bezier[3].y
+					)) {
+						const ts = getIntersectionTValue(
+							bezier[0],
+							bezier[1],
+							bezier[3],
+							bezier[2],
+							mouseTransformed,
+							lineEnd,
+						);
 
-					if (ts) {
-						ts.forEach((t) => {
-							const point = getPointOnCurve(bezier, t);
+						if (ts) {
+							ts.forEach((t) => {
+								const point = getPointOnCurve(bezier, t);
 
-							if (t !== undefined && point.x > mouseTransformed.x) {
-								polyNumber++;
-							}
-						});
+								this.drawCircle(point, 5, '#ff00ff', '#ff00ff');
+
+								if (t !== undefined && point.x > mouseTransformed.x) {
+									polyNumber++;
+								}
+							});
+						}
 					}
 				});
 
