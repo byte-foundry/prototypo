@@ -1,17 +1,16 @@
 const path = require('path');
 const webpack = require('webpack');
-const fs = require('fs');
 const SpritePlugin = require('svg-sprite-loader/plugin');
 
 module.exports = {
 	entry: {
-		bundle: ['react-hot-loader/patch', './app/scripts/main'],
+		index: ['react-hot-loader/patch', './app/scripts/main'],
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),
 		pathinfo: true,
 		publicPath: '',
-		filename: '[name].js',
+		filename: '[name].bundle.js',
 	},
 	module: {
 		strictExportPresence: true,
@@ -19,22 +18,12 @@ module.exports = {
 			{
 				test: /\.jsx?$/,
 				use: [
-					// {
-					// 	loader: 'transform-loader/cacheable',
-					//
-					// 	options: {
-					// 		envify: true,
-					// 	},
-					// },
 					{loader: 'babel-loader', options: {cacheDirectory: true}},
 					'if-loader',
 				],
-				include: path.join(__dirname, 'app'),
-			},
-			{
-				test: /prototypo-canvas/,
-				use: [{loader: 'babel-loader', options: {cacheDirectory: true}}],
-				include: [fs.realpathSync(`${__dirname}/node_modules/prototypo-canvas`)],
+				include: [
+					path.join(__dirname, 'app'),
+				],
 			},
 			{
 				test: /\.scss$/,
@@ -81,22 +70,13 @@ module.exports = {
 				loader: 'raw-loader',
 			},
 		],
-		noParse: /(levelup|dist\/prototypo-canvas)/,
+		noParse: /(levelup)/,
 	},
-	externals: [
-		{
-			'./node/window': true,
-			'./node/extend': true,
-		},
-	],
 	plugins: [
 		new webpack.LoaderOptionsPlugin({
 			options: {
 				'if-loader': 'prod',
 			},
-		}),
-		new webpack.ProvidePlugin({
-			_: 'lodash',
 		}),
 		new SpritePlugin(),
 		// Moment.js is an extremely popular library that bundles large locale files
@@ -108,5 +88,39 @@ module.exports = {
 	],
 	resolve: {
 		extensions: ['.js', '.jsx'],
+		alias: {
+			'lodash-es': 'lodash',
+			'lodash.assign': 'lodash/assign',
+			'lodash.camelcase': 'lodash/camelcase',
+			'lodash.clone': 'lodash/clone',
+			'lodash.clonedeep': 'lodash/clonedeep',
+			'lodash.cond': 'lodash/cond',
+			'lodash.create': 'lodash/create',
+			'lodash.debounce': 'lodash/debounce',
+			'lodash.deburr': 'lodash/deburr',
+			'lodash.defaultsdeep': 'lodash/defaultsdeep',
+			'lodash.debounce': 'lodash/debounce',
+			'lodash.escape': 'lodash/escape',
+			'lodash.flattendeep': 'lodash/flattendeep',
+			'lodash.isarguments': 'lodash/isarguments',
+			'lodash.isarray': 'lodash/isarray',
+			'lodash.isplainobject': 'lodash/isPlainObject',
+			'lodash.isstring': 'lodash/isstring',
+			'lodash.keys': 'lodash/keys',
+			'lodash.mapvalues': 'lodash/mapvalues',
+			'lodash.memoize': 'lodash/memoize',
+			'lodash.merge': 'lodash/merge',
+			'lodash.mergewith': 'lodash/mergewith',
+			'lodash.pick': 'lodash/pick',
+			'lodash.restparam': 'lodash/restparam',
+			'lodash.pick': 'lodash/pick',
+			'lodash.some': 'lodash/some',
+			'lodash.sortby': 'lodash/sortby',
+			'lodash.template': 'lodash/template',
+			'lodash.templatesettings': 'lodash/templatesettings',
+			'lodash.toarray': 'lodash/toarray',
+			'lodash.uniq': 'lodash/uniq',
+			'lodash.words': 'lodash/words',
+		},
 	},
 };

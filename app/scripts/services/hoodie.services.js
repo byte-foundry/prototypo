@@ -1,3 +1,4 @@
+/* global trackJs, _ */
 import queryString from 'query-string';
 import {gql} from 'react-apollo';
 
@@ -68,7 +69,6 @@ const signUpAndLoginMutation = gql`
 `;
 
 export default class HoodieApi {
-
 	static async setup() {
 		HoodieApi.instance = {};
 
@@ -135,7 +135,9 @@ export default class HoodieApi {
 		apolloClient.resetStore();
 	}
 
-	static async signUp(email, password, firstName, {lastName, occupation, phone, skype}) {
+	static async signUp(email, password, firstName, {
+		lastName, occupation, phone, skype,
+	}) {
 		const response = await apolloClient.mutate({
 			mutation: signUpAndLoginMutation,
 			variables: {
@@ -195,7 +197,7 @@ export default class HoodieApi {
 		if (!subscriptionId) {
 			const customer = HoodieApi.instance.customerId;
 
-			return fetchAWS(`/subscriptions`, {
+			return fetchAWS('/subscriptions', {
 				method: 'POST',
 				payload: {customer, ...options},
 			});
@@ -311,7 +313,7 @@ async function setupStripe(data, time = 1000) {
 
 			return;
 		}
-		catch (e) { /* don't need to catch anything, just next step */ }
+		catch (e) {/* don't need to catch anything, just next step */}
 	}
 
 	// if error we poll customerId

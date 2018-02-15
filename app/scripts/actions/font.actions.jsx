@@ -1,21 +1,25 @@
+/* global trackJs */
+import _throttle from 'lodash/throttle';
+import _forOwn from 'lodash/forOwn';
+import _cloneDeep from 'lodash/cloneDeep';
 import {gql} from 'react-apollo';
-import cloneDeep from 'lodash/cloneDeep';
 
-import { prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
-import LocalClient from '../stores/local-client.stores.jsx';
-import {Typefaces} from '../services/typefaces.services.js';
-import {loadFontValues, saveAppValues} from '../helpers/loadValues.helpers.js';
-import {setupFontInstance} from '../helpers/font.helpers.js';
-import {FontValues} from '../services/values.services.js';
-import {BatchUpdate} from '../helpers/undo-stack.helpers.js';
+import {prototypoStore, undoableStore, fontInstanceStore} from '../stores/creation.stores';
+import {toileType} from '../toile/toile';
+import LocalServer from '../stores/local-server.stores';
+import LocalClient from '../stores/local-client.stores';
+
+import {FontValues} from '../services/values.services';
 import apolloClient from '../services/graphcool.services';
+
+import {loadFontValues, saveAppValues} from '../helpers/loadValues.helpers';
+import {BatchUpdate} from '../helpers/undo-stack.helpers';
 
 let localServer;
 let localClient;
 let undoWatcher;
 
-const debouncedSave = _.throttle((values, db, variantId) => {
+const debouncedSave = _throttle((values, variantId) => {
 	FontValues.save({
 		values,
 		variantId,
@@ -32,86 +36,112 @@ window.addEventListener('fluxServer.setup', () => {
 		'controlsValues',
 		localClient,
 		localServer.lifespan,
-		(name) => {
-			return `${name} modification`;
-		},
+		name => `${name} modification`,
 		(headJS) => {
 			debouncedSave(headJS.controlsValues);
-		}
+		},
 	);
 });
 
 export default {
+	'/create-font-instance': ({typedataJSON, appValues, templateToLoad}) => {
+		const typedata = typedataJSON;
+		const {tags, familyName} = typedata.fontinfo;
+		const {controls, presets} = typedata;
+		const db = appValues.values.variantSelected.id;
+
+		localClient.dispatchAction('/store-value-font', {
+			familyName,
+			db,
+			typedata,
+			templateToLoad,
+		});
+
+		localClient.dispatchAction('/create-font', typedata);
+		localClient.dispatchAction('/load-params', {controls, presets});
+		localClient.dispatchAction('/load-tags', tags);
+		loadFontValues(typedata, templateToLoad, db);
+	},
 	'/load-font-instance': async ({appValues}) => {
 		try {
-			const {
-				typedataJSON,
-				familyName,
-				controls,
-				presets,
-				tags,
-				workerUrl,
-				workerDeps,
-				typedata,
-				variantId,
-			} = await setupFontInstance(appValues);
+			const template = appValues.values.familySelected
+				? appValues.values.familySelected.template
+				: 'venus.ptf';
+			const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../dist/templates/${template}/font.json`);
 
-			localClient.dispatchAction('/store-value-font', {
-				familyName,
-				workerUrl,
-				workerDeps,
+			localClient.dispatchAction('/create-font-instance', {
 				typedataJSON,
+				appValues,
+				templateToLoad: template,
 			});
-
-			localClient.dispatchAction('/create-font', familyName);
-			localClient.dispatchAction('/load-params', {controls, presets});
-			localClient.dispatchAction('/load-tags', tags);
-
-			if (variantId) {
-				await loadFontValues(typedata, undefined, variantId);
-			}
-
-			const event = new CustomEvent('values.loaded');
-			window.dispatchEvent(event);
 		}
 		catch (err) {
 			trackJs.track(err);
-			console.log(err);
 		}
-
 	},
-	'/create-font': (familyName) => {
+	'/create-font': (typedata) => {
+		const glyphs = {};
+
+		_forOwn(typedata.glyphs, (glyph) => {
+			if (!glyphs[glyph.unicode]) {
+				glyphs[glyph.unicode] = [];
+			}
+			glyphs[glyph.unicode].push(glyph);
+		});
+
+		localClient.dispatchAction('/load-glyphs', glyphs);
+
 		const patch = prototypoStore
-			.set('fontName', familyName)
+			.set('fontName', typedata.fontinfo.familyName)
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/change-font-from-typedata': async ({typedataJSON, variantId}) => {
-		const typedata = JSON.parse(typedataJSON);
-
+	'/change-font-from-typedata': async ({typedataJSON: typedata, variantId, templateToLoad}) => {
 		localClient.dispatchAction('/store-value-font', {
 			familyName: typedata.fontinfo.familyName,
-			typedataJSON,
+			typedata,
+			templateToLoad,
 		});
 
-		localClient.dispatchAction('/create-font', typedata.fontinfo.familyName);
+		localClient.dispatchAction('/create-font', typedata);
 
 		localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
-		localClient.dispatchAction('/clear-undo-stack');
-
-		loadFontValues(typedata, undefined, variantId);
 	},
-	'/change-font': async ({templateToLoad, db, variantId}) => {
-		const typedataJSON = await Typefaces.getFont(templateToLoad);
+	'/change-font': async ({templateToLoad, variantId}) => {
+		const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../dist/templates/${templateToLoad}/font.json`);
 
+		localClient.dispatchAction('/store-value-font', {
+			changingFont: true,
+		});
 		localClient.dispatchAction('/change-font-from-typedata', {
 			typedataJSON,
 			variantId,
+			templateToLoad,
 		});
+
+		const initValues = {};
+
+		typedataJSON.controls.forEach(group => group.parameters.forEach((param) => {
+			initValues[param.name] = param.init;
+		}));
+
+		const fontValues = await FontValues.get({variantId});
+		const altList = {
+			...typedataJSON.fontinfo.defaultAlts,
+			...fontValues.values.altList,
+		};
+
+		localClient.dispatchAction('/load-values', {...initValues, ...fontValues.values});
+		localClient.dispatchAction('/load-font-infos', {altList});
+
+		localClient.dispatchAction('/clear-undo-stack');
 		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
 		localClient.dispatchAction('/store-value', {uiSpacingMode: false});
+		localClient.dispatchAction('/store-value-font', {
+			changingFont: false,
+		});
 	},
 	'/family-created': async ({name, variants, template}) => {
 		const patchVariant = prototypoStore
@@ -145,11 +175,10 @@ export default {
 			number_of_family: user.libraryMeta.count,
 		});
 	},
-	'/select-variant': ({variant, family}) => {
-		const selectedVariant = variant || family.variants[0];
+	'/select-variant': ({family, selectedVariant = family.variants[0]}) => {
 		const patchVariant = prototypoStore
 			.set('variant', {id: selectedVariant.id, name: selectedVariant.name})
-			.set('family', {id: family.id, name: family.name, template: family.template}).commit();
+			.set('family', family).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 
@@ -159,8 +188,10 @@ export default {
 		});
 		localClient.dispatchAction('/fetch-preset', selectedVariant.id);
 	},
-	'/create-variant-from-ref': async ({ref, name, family, noSwitch}) => {
-		const values = cloneDeep(ref.values);
+	'/create-variant-from-ref': async ({
+		ref, name, family, noSwitch,
+	}) => {
+		const values = _cloneDeep(ref.values);
 		const thicknessTransform = [
 			{string: 'Thin', thickness: 20},
 			{string: 'Light', thickness: 50},
@@ -214,11 +245,11 @@ export default {
 
 		const {data: {user}} = await apolloClient.query({
 			query: gql`
-				query getVariantsCount {
+				query getvariantscount {
 					user {
 						id
 						library {
-							variantsMeta: _variantsMeta {
+							variantsmeta: _variantsmeta {
 								count
 							}
 						}
@@ -227,77 +258,11 @@ export default {
 			`,
 		});
 
-		window.Intercom('update', {
+		window.intercom('update', {
 			number_of_variants: user.library.reduce(
-				(numberOfVariants, {variantsMeta}) => numberOfVariants + variantsMeta.count,
+				(numberofvariants, {variantsmeta}) => numberofvariants + variantsmeta.count,
 				0,
 			),
-		});
-	},
-	'/create-variant': async ({name, familyId, variantBaseId, noSwitch}) => {
-		// if (!name || String(name).trim() === '') {
-		// 	const patch = prototypoStore.set('errorAddVariant', 'Variant name cannot be empty').commit();
-
-		// 	localServer.dispatchUpdate('/prototypoStore', patch);
-		// 	return;
-		// }
-
-		// const {data: {family}} = await apolloClient.query({
-		// 	fetchPolicy: 'cache-first',
-		// 	query: gql`
-		// 		query getFamily($id: ID!) {
-		// 			family: Family(id: $id) {
-		// 				id
-		// 				name
-		// 				template
-		// 				variants {
-		// 					id
-		// 					name
-		// 				}
-		// 			}
-		// 		}
-		// 	`,
-		// 	variables: {id: familyId},
-		// });
-
-		// const already = family.variants.find((item) => {
-		// 	return item.name === name;
-		// });
-
-		// if (already) {
-		// 	const patch = prototypoStore.set('errorAddVariant', 'Variant with this name already exists').commit();
-
-		// 	localServer.dispatchUpdate('/prototypoStore', patch);
-		// 	return;
-		// }
-
-		// const patch = prototypoStore.set('errorAddVariant', undefined).commit();
-
-		// localServer.dispatchUpdate('/prototypoStore', patch);
-
-		// if (!variantBaseId || (variantBaseId && !family.variants.some(f => f.id === variantBaseId))) {
-		// 	variantBaseId = family.variants[0].id;
-		// }
-
-		// const {data: {variantBase}} = await apolloClient.query({
-		// 	fetchPolicy: 'cache-first',
-		// 	query: gql`
-		// 		query getVariantBaseValues($id: ID!) {
-		// 			variantBase: Variant(id: $id) {
-		// 				id
-		// 				values
-		// 			}
-		// 		}
-		// 	`,
-		// 	variables: {id: variantBaseId},
-		// });
-
-		localClient.dispatchAction('/create-variant-from-ref', {
-			name,
-			ref: variantBase,
-			variantId: variantBase.id,
-			family,
-			noSwitch,
 		});
 	},
 	'/delete-variant': ({variant}) => {
@@ -386,10 +351,11 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/change-param': ({values, value, name, force, label}) => {
+	'/change-param': ({
+		values, value, name, force, label,
+	}) => {
 		const indivMode = prototypoStore.get('indivMode');
 		const indivEdit = prototypoStore.get('indivEditingParams');
-		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const currentGroupName = (prototypoStore.get('indivCurrentGroup') || {}).name;
 		let newParams = {...undoableStore.get('controlsValues')};
@@ -430,20 +396,19 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/update-font', newParams);
 
 		if (force) {
-			//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+			// TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 			undoWatcher.forceUpdate(patch, label);
-			debouncedSave(newParams, db, variantId);
+			debouncedSave(newParams, variantId);
 		}
 		else {
 			undoWatcher.update(patch, label);
 		}
-
 	},
-	'/change-param-state': ({name, state, force, label}) => {
-		const db = prototypoStore.get('variant').db;
+	'/change-param-state': ({
+		name, state, force, label,
+	}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const currentGroupName = prototypoStore.get('indivCurrentGroup').name;
 		const newParams = {...undoableStore.get('controlsValues')};
@@ -456,19 +421,19 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/update-font', newParams);
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		if (force) {
-			//TODO(franz): This SHOULD totally end up being in a flux store on hoodie
+			// TODO(franz): This SHOULD totally end up being in a flux store on hoodie
 			undoWatcher.forceUpdate(patch, label);
 		}
 		else {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/change-letter-spacing': ({value, side, letter, label, force}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
+	'/change-letter-spacing': ({
+		value, side, letter, label, force,
+	}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const newParams = {
@@ -491,9 +456,8 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -501,34 +465,16 @@ export default {
 		else {
 			undoWatcher.update(patch, label);
 		}
-
 	},
-	'/change-glyph-node-manually': ({changes, force, label = 'glyph node manual', glyphName}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
+	'/change-glyph-node-manually': ({
+		changes, force, label = 'glyph node manual', glyphName,
+	}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
+		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
 
 		manualChanges[glyphName] = manualChanges[glyphName] || {};
 		manualChanges[glyphName].cursors = manualChanges[glyphName].cursors || {};
-
-		// adding deltas to modified cursors
-		Object.keys(changes).forEach((cursorKey) => {
-			const oldChanges = manualChanges[glyphName].cursors[cursorKey];
-
-			if (typeof oldChanges === 'number') {
-				changes[cursorKey] += oldChanges;
-			}
-			else if (typeof oldChanges === 'object') {
-				Object.keys(changes[cursorKey]).forEach((key) => {
-					if (oldChanges[key] !== undefined) {
-						changes[cursorKey][key] += oldChanges[key];
-					}
-				});
-				// merging objects to keep other changes
-				changes[cursorKey] = {...oldChanges, ...changes[cursorKey]};
-			}
-		});
 
 		const newParams = {
 			...oldValues,
@@ -547,9 +493,8 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -558,54 +503,67 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/reset-glyph-node-manually': ({contourId, nodeId, force = true, label = 'reset manual', glyphName}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
-		const variantId = (prototypoStore.get('variant') || {}).id;
-		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
-
-		manualChanges[glyphName] = manualChanges[glyphName] || {};
-		manualChanges[glyphName].cursors = manualChanges[glyphName].cursors || {};
-
-		// adding deltas to modified cursors
-		Object.keys(manualChanges[glyphName].cursors).forEach((cursorKey) => {
-			if (cursorKey.indexOf(`contours.${contourId}.nodes.${nodeId}`) !== -1) {
-				delete manualChanges[glyphName].cursors[cursorKey];
+	'/reset-glyph-points-manually': ({
+		glyphName, points, force = true, label = 'reset manual',
+	}) => {
+		points.forEach((item) => {
+			switch (item.type) {
+			case toileType.NODE_IN:
+			case toileType.CONTOUR_NODE_IN:
+				localClient.dispatchAction('/change-glyph-node-manually', {
+					changes: {
+						[`${item.data.parentId}.in.x`]: undefined,
+						[`${item.data.parentId}.in.y`]: undefined,
+					},
+					glyphName,
+				});
+				break;
+			case toileType.NODE_OUT:
+			case toileType.CONTOUR_NODE_OUT:
+				localClient.dispatchAction('/change-glyph-node-manually', {
+					changes: {
+						[`${item.data.parentId}.out.x`]: undefined,
+						[`${item.data.parentId}.out.y`]: undefined,
+					},
+					glyphName,
+				});
+				break;
+			case toileType.NODE:
+				localClient.dispatchAction('/change-glyph-node-manually', {
+					changes: {
+						[`${item.data.modifAddress}.width`]: undefined,
+						[`${item.data.modifAddress}.angle`]: undefined,
+					},
+					glyphName,
+				});
+				break;
+			case toileType.CONTOUR_NODE:
+			case toileType.NODE_SKELETON:
+				localClient.dispatchAction('/change-glyph-node-manually', {
+					changes: {
+						[`${item.data.modifAddress}x`]: undefined,
+						[`${item.data.modifAddress}y`]: undefined,
+					},
+					glyphName,
+				});
+				break;
+			default:
+				break;
 			}
 		});
 
-		const newParams = {
-			...oldValues,
-			manualChanges: {
-				...manualChanges,
-				[glyphName]: {
-					...manualChanges[glyphName],
-					cursors: {
-						...manualChanges[glyphName].cursors,
-					},
-				},
-			},
-		};
+		const variantId = (prototypoStore.get('variant') || {}).id;
 
-		const patch = undoableStore.set('controlsValues', newParams).commit();
-
-		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/update-font', newParams);
-
-		debouncedSave(newParams, db, variantId);
-
-		if (force) {
-			undoWatcher.forceUpdate(patch, label);
-		}
-		else {
-			undoWatcher.update(patch, label);
-		}
+		localClient.dispatchAction('/change-glyph-node-manually', {
+			changes: {},
+			glyphName,
+			force: true,
+		});
 	},
 	'/reset-glyph-manually': ({glyphName, force = true, label = 'reset manual'}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = _.cloneDeep(oldValues.manualChanges) || {};
+		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
 
 		delete manualChanges[glyphName];
 
@@ -617,9 +575,8 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -628,9 +585,7 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-
 	'/reset-all-glyphs': ({force = true, label = 'reset all glyphs'}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = {};
@@ -641,9 +596,8 @@ export default {
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
 
 		if (force) {
 			undoWatcher.forceUpdate(patch, label);
@@ -652,9 +606,9 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-
-	'/change-component': ({glyph, id, name, label = 'change component'}) => {
-		const db = (prototypoStore.get('variant') || {}).db;
+	'/change-component': ({
+		glyph, id, name, label = 'change component',
+	}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const newParams = {
@@ -662,17 +616,42 @@ export default {
 			glyphComponentChoice: {...oldValues.glyphComponentChoice},
 		};
 
-		newParams.glyphComponentChoice[glyph.ot.unicode] = {
-			...newParams.glyphComponentChoice[glyph.ot.unicode],
+		newParams.glyphComponentChoice[glyph.name] = {
+			...newParams.glyphComponentChoice[glyph.name],
 			[id]: name,
 		};
 
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/update-font', newParams);
 
-		debouncedSave(newParams, db, variantId);
+		debouncedSave(newParams, variantId);
+
+		undoWatcher.forceUpdate(patch, label);
+	},
+	'/change-component-class': ({componentClass, name, label = 'change component'}) => {
+		const variantId = (prototypoStore.get('variant') || {}).id;
+		const oldValues = undoableStore.get('controlsValues');
+		const template = fontInstanceStore.get('templateToLoad');
+		const componentIdAndGlyphPerClass = fontInstanceStore.get('componentIdAndGlyphPerClass');
+
+		const newParams = {
+			...oldValues,
+			glyphComponentChoice: {...oldValues.glyphComponentChoice},
+		};
+
+		componentIdAndGlyphPerClass[template][componentClass].forEach(([glyphName, id]) => {
+			newParams.glyphComponentChoice[glyphName] = {
+				...newParams.glyphComponentChoice[glyphName],
+				[id]: name,
+			};
+		});
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+
+		debouncedSave(newParams, variantId);
 
 		undoWatcher.forceUpdate(patch, label);
 	},

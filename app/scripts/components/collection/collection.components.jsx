@@ -6,7 +6,7 @@ import {graphql, gql, compose} from 'react-apollo';
 
 import Family from './family.components';
 import Variant from './variant.components';
-import LocalClient from '~/stores/local-client.stores';
+import LocalClient from '../../stores/local-client.stores';
 import Button from '../shared/new-button.components';
 import {collectionsTutorialLabel} from '../../helpers/joyride.helpers';
 
@@ -146,13 +146,11 @@ class Collection extends React.PureComponent {
 }
 
 Collection.propTypes = {
-	families: PropTypes.arrayOf(
-		PropTypes.shape({
-			id: PropTypes.string,
-			name: PropTypes.string,
-			template: PropTypes.string,
-		}),
-	).isRequired,
+	families: PropTypes.arrayOf(PropTypes.shape({
+		id: PropTypes.string,
+		name: PropTypes.string,
+		template: PropTypes.string,
+	})).isRequired,
 	deleteFamily: PropTypes.func,
 	deleteVariant: PropTypes.func,
 };
@@ -316,9 +314,7 @@ class FamilyList extends React.PureComponent {
 
 	render() {
 		const families = this.props.list.map((family) => {
-			const templateInfo = this.props.templateInfos.find(
-				template => template.templateName === family.template,
-			) || {name: 'Undefined'};
+			const templateInfo = this.props.templateInfos.find(template => template.templateName === family.template) || {name: 'Undefined'};
 			let selected;
 
 			if (this.props.selected) {
@@ -397,9 +393,9 @@ class VariantList extends React.PureComponent {
 		});
 	}
 
-	openVariant(variant) {
+	openVariant(selectedVariant) {
 		this.client.dispatchAction('/select-variant', {
-			variant,
+			selectedVariant,
 			family: this.props.family,
 		});
 		this.client.dispatchAction('/store-value', {uiShowCollection: false});
@@ -449,8 +445,7 @@ class VariantList extends React.PureComponent {
 				changeName={this.openChangeVariantName}
 				duplicate={this.openDuplicateVariant}
 				delete={this.deleteVariant}
-			/>),
-		);
+			/>));
 
 		return (
 			<div className="variant-list-container">

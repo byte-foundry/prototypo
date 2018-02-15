@@ -3,9 +3,9 @@ import {graphql, gql} from 'react-apollo';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
 
-import HoodieApi from '~/services/hoodie.services.js';
+import HoodieApi from '../../services/hoodie.services.js';
 
-import LocalClient from '~/stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores.jsx';
 
 
 import {libraryQuery} from '../collection/collection.components';
@@ -50,11 +50,11 @@ class ArianneThread extends React.PureComponent {
 		const store = await this.client.fetch('/prototypoStore');
 		const memoizedListSelector = (list = [], selectedValue, oldValue, oldCriteria) => {
 			if (list.length > 0 && (selectedValue.name !== oldCriteria.name || selectedValue.name === undefined)) {
-				return list.filter((element) => { return selectedValue.name !== element.name; });
+				return list.filter(element => selectedValue.name !== element.name);
 			}
 			return oldValue || voidStateArray;
 		};
-		const familySelector = (families, family) => { return families.find((f) => { return f.name === family.name; }); };
+		const familySelector = (families, family) => families.find(f => f.name === family.name);
 
 		this.client.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
@@ -80,8 +80,8 @@ class ArianneThread extends React.PureComponent {
 					indivMode: head.toJS().d.indivMode,
 					indivCurrentGroup: head.toJS().d.indivCurrentGroup || voidStateObject,
 					steps: head.toJS().d.preset ? head.toJS().d.preset.steps : [],
-                    step: head.toJS().d.step || {},
-                    choice: head.toJS().d.choice || {},
+					step: head.toJS().d.step || {},
+					choice: head.toJS().d.choice || {},
 					isFree,
 					isFreeWithCredits,
 				});
@@ -101,8 +101,8 @@ class ArianneThread extends React.PureComponent {
 		this.lifespan.release();
 	}
 
-	selectVariant(variant, family) {
-		this.client.dispatchAction('/select-variant', {variant, family});
+	selectVariant(selectedVariant, family) {
+		this.client.dispatchAction('/select-variant', {selectedVariant, family});
 	}
 
 	selectFamily(family) {
@@ -153,9 +153,8 @@ class ArianneThread extends React.PureComponent {
 		// 												restrictedFeatureHovered: 'indiv'});
 		// }
 		// else {
-			this.client.dispatchAction('/toggle-individualize');
+		this.client.dispatchAction('/toggle-individualize');
 		// }
-
 	}
 
 	selectGroup(group) {
@@ -176,9 +175,7 @@ class ArianneThread extends React.PureComponent {
 	}
 
 	groupToElement(group) {
-		const glyphs = _.map(group.glyphs, (glyph) => {
-			return String.fromCharCode(glyph);
-		}).join('');
+		const glyphs = group.glyphs.map(glyph => String.fromCharCode(glyph)).join('');
 
 		return (
 			<div>
@@ -199,7 +196,7 @@ class ArianneThread extends React.PureComponent {
 		const family = families.find(({name}) => name === selectedFamily.name) || families[0];
 		const variant = family.variants.find(({name}) => name === selectedVariant.name) || family.variants[0];
 
-		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily}/>;
+		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily} />;
 		const familyItem = (
 			<DropArianneItem
 				label={family.name}
@@ -210,42 +207,45 @@ class ArianneThread extends React.PureComponent {
 			/>
 		);
 
-		const addVariant = <ArianneDropMenuItem item={{name: 'Add new variant...'}} click={this.addVariant}/>;
+		const addVariant = <ArianneDropMenuItem item={{name: 'Add new variant...'}} click={this.addVariant} />;
 		const variantItem = (
-				<DropArianneItem
-					label={variant.name}
-					family={family}
-					variant={variant}
-					list={family.variants ? family.variants.filter(({name}) => { return name !== this.state.variant.name; }) : []}
-					add={addVariant}
-					click={this.selectVariant}
-					toggleId="arianne-item-variant"/>
+			<DropArianneItem
+				label={variant.name}
+				family={family}
+				variant={variant}
+				list={family.variants ? family.variants.filter(({name}) => name !== this.state.variant.name) : []}
+				add={addVariant}
+				click={this.selectVariant}
+				toggleId="arianne-item-variant"
+			/>
 		);
 
 		const addGroup = [
-			<ArianneDropMenuItem key="edit" item={{name: 'Edit groups...'}} click={this.editIndivualizeGroup}/>,
-			<ArianneDropMenuItem key="add" item={{name: 'Add new group...'}} click={this.addIndividualizeGroup}/>,
+			<ArianneDropMenuItem key="edit" item={{name: 'Edit groups...'}} click={this.editIndivualizeGroup} />,
+			<ArianneDropMenuItem key="add" item={{name: 'Add new group...'}} click={this.addIndividualizeGroup} />,
 		];
 
-		const addStep = <ArianneDropMenuItem item={{name: 'Add new step...'}} click={this.addStep}/>;
+		const addStep = <ArianneDropMenuItem item={{name: 'Add new step...'}} click={this.addStep} />;
 		const stepItem = (
-				<DropArianneItem
-					label={this.state.step ? this.state.step.name : ''}
-					list={this.state.steps || []}
-					add={addStep}
-					click={this.selectStep}
-					toggleId="arianne-item-step"/>
+			<DropArianneItem
+				label={this.state.step ? this.state.step.name : ''}
+				list={this.state.steps || []}
+				add={addStep}
+				click={this.selectStep}
+				toggleId="arianne-item-step"
+			/>
 		);
 
-		const addChoice = <ArianneDropMenuItem item={{name: 'Add new choice...'}} click={this.addChoice}/>;
+		const addChoice = <ArianneDropMenuItem item={{name: 'Add new choice...'}} click={this.addChoice} />;
 		const choiceItem = (
-				<DropArianneItem
-					label={this.state.choice ? this.state.choice.name : ''}
-					step={this.state.step || {}}
-					list={this.state.step && this.state.step.choices ? this.state.step.choices.filter(({name}) => { return name !== this.state.choice.name; }) : []}
-					add={addChoice}
-					click={this.selectChoice}
-					toggleId="arianne-item-choice"/>
+			<DropArianneItem
+				label={this.state.choice ? this.state.choice.name : ''}
+				step={this.state.step || {}}
+				list={this.state.step && this.state.step.choices ? this.state.step.choices.filter(({name}) => name !== this.state.choice.name) : []}
+				add={addChoice}
+				click={this.selectChoice}
+				toggleId="arianne-item-choice"
+			/>
 		);
 
 		const groupClasses = classNames({
@@ -259,24 +259,25 @@ class ArianneThread extends React.PureComponent {
 			: 'All glyphs';
 		const groupName = this.state.indivCurrentGroup.name || groupLabel;
 		const group = this.state.groups && (this.state.groups.length > 0 || this.state.indivCurrentGroup.name)
-			? <DropArianneItem
+			? (<DropArianneItem
 				label={groupName}
 				list={this.state.groups}
 				itemToEl={this.groupToElement}
 				add={addGroup}
 				click={this.selectGroup}
 				toggleId="arianne-item-group"
-			/>
-			: <ActionArianneItem
+			/>)
+			: (<ActionArianneItem
 				className={groupClasses}
 				label={groupLabel}
 				img="assets/images/arianne-plus.svg"
 				click={this.toggleIndividualize}
-				toggleId="arianne-item-group"/>;
+				toggleId="arianne-item-group"
+			/>);
 
 		return (
 			<div className="arianne-thread">
-				<RootArianneItem click={this.showCollection}/>
+				<RootArianneItem click={this.showCollection} />
 				{familyItem}
 				{variantItem}
 				{stepItem}
@@ -316,7 +317,7 @@ class RootArianneItem extends React.Component {
 				<div className="arianne-item-action">
 					<span className="arianne-item-action-collection">My projects</span>
 				</div>
-				<div className="arianne-item-arrow"></div>
+				<div className="arianne-item-arrow" />
 			</div>
 		);
 	}
@@ -361,7 +362,6 @@ class DropArianneItem extends React.PureComponent {
 	}
 
 	toggleDisplay() {
-
 		if (this.state.arianneItemDisplayed === this.props.toggleId) {
 			this.client.dispatchAction('/store-value', {
 				arianneItemDisplayed: undefined,
@@ -377,12 +377,12 @@ class DropArianneItem extends React.PureComponent {
 				this.client.dispatchAction('/store-value', {
 					arianneItemDisplayed: undefined,
 				});
-				_.each(document.querySelectorAll(selector), (item) => {
+				Array.prototype.forEach.call(document.querySelectorAll(selector), (item) => {
 					item.removeEventListener('click', outsideClick);
 				});
 			};
 
-			_.each(document.querySelectorAll(selector), (item) => {
+			Array.prototype.forEach.call(document.querySelectorAll(selector), (item) => {
 				item.addEventListener('click', outsideClick);
 			});
 		}
@@ -398,9 +398,9 @@ class DropArianneItem extends React.PureComponent {
 			<div className={classes} onClick={this.toggleDisplay}>
 				<div className="arianne-item-action" >
 					<span className="arianne-item-action-label">{this.props.label}</span>
-					<span className="arianne-item-action-drop arianne-item-action-img"></span>
+					<span className="arianne-item-action-drop arianne-item-action-img" />
 				</div>
-				<div className="arianne-item-arrow"></div>
+				<div className="arianne-item-arrow" />
 				<ArianneDropMenu
 					list={this.props.list}
 					click={this.props.click}
@@ -415,14 +415,13 @@ class DropArianneItem extends React.PureComponent {
 
 class ArianneDropMenu extends React.PureComponent {
 	render() {
-		const items = this.props.list.map((item, index) => {
-			return <ArianneDropMenuItem
-				item={item}
-				key={`${item.name}-${this.props.family}-${index}`}
-				click={this.props.click}
-				family={this.props.family}
-				itemToEl={this.props.itemToEl}/>;
-		});
+		const items = this.props.list.map((item, index) => (<ArianneDropMenuItem
+			item={item}
+			key={`${item.name}-${this.props.family}-${index}`}
+			click={this.props.click}
+			family={this.props.family}
+			itemToEl={this.props.itemToEl}
+		/>));
 
 		return (
 			<ul className="arianne-drop-menu">
@@ -465,9 +464,9 @@ class ActionArianneItem extends React.Component {
 			<div className={classes} onClick={this.props.click}>
 				<div className="arianne-item-action">
 					{this.props.label}
-					<img className="arianne-item-action-plus arianne-item-action-img" src={this.props.img}/>
+					<img className="arianne-item-action-plus arianne-item-action-img" src={this.props.img} />
 				</div>
-				<div className="arianne-item-arrow"></div>
+				<div className="arianne-item-arrow" />
 			</div>
 		);
 	}

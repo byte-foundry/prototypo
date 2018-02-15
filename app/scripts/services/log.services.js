@@ -7,7 +7,7 @@ function Log(category, action, label) {
 	window.ga('send', 'event', category, action, label);
 }
 
-Log.ui = function(action, label) {
+Log.ui = function (action, label) {
 	Log('ui', action, label);
 };
 

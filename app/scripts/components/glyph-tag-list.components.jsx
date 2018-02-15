@@ -1,3 +1,4 @@
+import _mapValues from 'lodash/mapValues';
 import React from 'react';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
@@ -22,11 +23,11 @@ export default class GlyphTagList extends React.PureComponent {
 			'is-active': this.state.show,
 		});
 
-		const pinned = _.map(this.props.pinned, (pin) => {
+		const pinned = this.props.pinned.map((pin) => {
 			return <GlyphPinnedTag tag={pin} selected={this.props.selected} key={`pin${pin}`}/>;
 		});
 
-		const pinnedSearch = _.map(this.props.pinnedSearch, (pin) => {
+		const pinnedSearch = this.props.pinnedSearch.map((pin) => {
 			return <GlyphPinnedSearch search={pin} selected={this.props.selectedSearch} key={`search${pin}`}/>;
 		});
 
@@ -41,7 +42,7 @@ export default class GlyphTagList extends React.PureComponent {
 					<span className="glyph-tag-list-selected-icon"></span>
 				</div>
 				<ul className="glyph-tag-list-dropdown">
-					{_.map(this.props.tags, (tag) => {
+					{this.props.tags.map((tag) => {
 						return (
 							<li
 								key={tag}
@@ -53,7 +54,7 @@ export default class GlyphTagList extends React.PureComponent {
 							</li>
 						);
 					})}
-					{_.map(this.props.savedSearch, (query) => {
+					{this.props.savedSearch.map((query) => {
 						return (
 							<li
 								key={query}

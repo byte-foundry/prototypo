@@ -1,0 +1,54 @@
+.glyph-test {
+	position: relative;
+
+	.glyph-displayed {
+		position: absolute;
+		top: 0;
+		left: 0;
+		border: solid 1px #333;
+		padding: 10px;
+		font-size: 15px;
+	}
+
+	.glyph-canvas {
+		border: solid 1px #333;
+	}
+
+	.glyph-test-link {
+		position: absolute;
+		top: 0;
+		right: 0;
+		border: solid 1px #333;
+		padding: 10px;
+		font-size: 15px;
+	}
+}
+
+.glyph-error {
+	height: 300px;
+    width: 300px;
+    border: solid 1px #333;
+    background: #ff8070;
+    position: relative;
+    overflow: visible;
+
+	&-display {
+
+	}
+
+	&-stack {
+		position: absolute;
+		white-space: nowrap;
+		display: none;
+		z-index: 10;
+		background-color: #ddd;
+	}
+
+	&:hover .glyph-error-stack {
+		display: block;
+	}
+
+	&-glyph {
+		font-size: 80px;
+	}
+}

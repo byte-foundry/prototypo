@@ -224,7 +224,7 @@ export default compose(
 						occupation: values.occupation,
 						phone: values.phone,
 						skype: values.skype,
-					})
+					});
 				}
 
 				mutate({
@@ -233,7 +233,7 @@ export default compose(
 						id: ownProps.id,
 					},
 				});
-			}
+			},
 		}),
 	}),
 )(AccountProfilePanel);

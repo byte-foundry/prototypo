@@ -40,7 +40,7 @@ export default class HandlegripBar extends React.Component {
 	render() {
 		const left = this.props.side === 'left';
 		const handleGripClasses = classNames({
-			'handlegrip': true,
+			handlegrip: true,
 			'handlegrip-left': left,
 			'handlegrip-right': !left,
 		});
@@ -53,9 +53,9 @@ export default class HandlegripBar extends React.Component {
 				onMouseDown={this.handleDown}
 				style={this.props.style}
 			>
-				<span className="handlegrip-border"></span>
+				<span className="handlegrip-border" />
 				<span className="handlegrip-spacing-number">
-					{text instanceof Number ? text.toFixed() : text}
+					{text instanceof Number ? text.toFixed(0) : parseInt(text).toFixed(0)}
 				</span>
 			</span>
 		);

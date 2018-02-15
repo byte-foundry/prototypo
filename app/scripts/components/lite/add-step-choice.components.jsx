@@ -3,7 +3,7 @@ import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {compose, graphql, gql} from 'react-apollo';
-import LocalClient from '~/stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores.jsx';
 import Button from '../shared/button.components.jsx';
 import {libraryQuery} from '../collection/collection.components';
 import {request} from 'graphql-request';
@@ -425,7 +425,7 @@ export class AddChoice extends React.Component {
 
 			this.client.dispatchAction('/edit-choice', newChoice);
 		}
-		else {			
+		else {
 			// Save old choice
 			this.client.dispatchAction('/save-choice-values');
 			try {
@@ -585,7 +585,7 @@ export class ExportLite extends React.Component {
 	createCheckbox(label) {
 		return (
 			<Checkbox label={label} handleCheckboxChange={this.toggleCheckbox} key={label} />
-		)
+		);
 	}
 
 	sendToLite() {
@@ -615,25 +615,21 @@ export class ExportLite extends React.Component {
 				baseValues : "${JSON.stringify(preset.baseValues).replace(/"/g, '\\"')}"
 				ptypoPresetId: "${preset.id}"
 				steps: [
-					${preset.steps.map(
-						step => `
+					${preset.steps.map(step => `
 						{
 							name: "${step.name}"
 							description: "${step.description}"
 							choices:
 							[
-								${step.choices.map(
-									choice => `
+								${step.choices.map(choice => `
 									{
 										name: "${choice.name}"
 										values: "${JSON.stringify(choice.values).replace(/"/g, '\\"')}"
 									}
-								`,
-								)}
+								`)}
 							]
 						}
-					`,
-					)}
+					`)}
 				]
 			) { id }
 		}
@@ -649,25 +645,21 @@ export class ExportLite extends React.Component {
 				needs: [${needs.map(need => `"${need}"`)}]
 				baseValues : "${JSON.stringify(preset.baseValues).replace(/"/g, '\\"')}"
 				steps: [
-					${preset.steps.map(
-						step => `
+					${preset.steps.map(step => `
 						{
 							name: "${step.name}"
 							description: "${step.description}"
 							choices:
 							[
-								${step.choices.map(
-									choice => `
+								${step.choices.map(choice => `
 									{
 										name: "${choice.name}"
 										values: "${JSON.stringify(choice.values).replace(/"/g, '\\"')}"
 									}
-								`,
-								)}
+								`)}
 							]
 						}
-					`,
-					)}
+					`)}
 				]
 			) { id }
 		}
@@ -678,21 +670,19 @@ export class ExportLite extends React.Component {
 			.then((data) =>	{
 				if (data.Preset) {
 					request(GRAPHQL_API, updatePreset(data.Preset.id))
-					.then(res =>
-						this.client.dispatchAction('/store-value', {
-							openExportLiteModal: false,
-						}),
-					)
-					.catch(error => console.log(error));
+						.then(res =>
+							this.client.dispatchAction('/store-value', {
+								openExportLiteModal: false,
+							}))
+						.catch(error => console.log(error));
 				}
 				else {
 					request(GRAPHQL_API, createPreset)
-					.then(res =>
-						this.client.dispatchAction('/store-value', {
-							openExportLiteModal: false,
-						}),
-					)
-					.catch(error => console.log(error));
+						.then(res =>
+							this.client.dispatchAction('/store-value', {
+								openExportLiteModal: false,
+							}))
+						.catch(error => console.log(error));
 				}
 			})
 			.catch(error => console.log(error));
@@ -723,12 +713,12 @@ export class ExportLite extends React.Component {
 			<div className={choiceClass} id="step-create">
 				<div className="add-family-form">
 					{download}
-					<hr/>
+					<hr />
 					<p> Preset suitable for </p>
 					<form action="">
 						{this.needs.map(need => this.createCheckbox(need))}
 					</form>
-					<hr/>
+					<hr />
 					<div className="action-form-buttons">
 						<Button
 							click={(e) => {

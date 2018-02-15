@@ -20,6 +20,8 @@ import selectRenderOptions from './helpers/userAgent.helpers';
 import {loadStuff} from './helpers/appSetup.helpers';
 import isProduction from './helpers/is-production.helpers';
 
+import FontMediator from './prototypo.js/mediator/FontMediator';
+
 import appValuesAction from './actions/appValues.actions';
 import exportAction from './actions/export.actions';
 import fontAction from './actions/font.actions';
@@ -43,11 +45,6 @@ pleaseWait.instance = pleaseWait.pleaseWait({
 	loadingHtml: 'Hello Prototypo',
 });
 
-window.addEventListener('unload', () => {
-	worker.port.postMessage({type: 'closeAll'});
-	worker.port.close();
-});
-
 selectRenderOptions(
 	() => {
 		const content = document.getElementById('content');
@@ -59,108 +56,91 @@ selectRenderOptions(
 
 		ReactDOM.render(<NotABrowser />, content);
 	},
-	() => {
+	async () => {
 		const stripeKey = isProduction()
 			? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
 			: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
 
 		window.Stripe && window.Stripe.setPublishableKey(stripeKey);
 
-		const stores = (window.prototypoStores = Stores);
+		const stores = Stores;
+
+		window.prototypoStores = Stores;
 
 		const prototypoStore = Stores['/prototypoStore'];
 
+		/* eslint-disable no-redeclare */
 		/* #if debug */
-		const localServer = new LocalServer(stores, {
-			debugPath: ['/debugStore', '/save-debug-log', '/store-in-debug-font', '/show-details'],
-			logStore: stores['/prototypoStore'],
-		}).instance;
+		// const localServer = new LocalServer(stores, {
+		//	debugPath: ['/debugStore', '/save-debug-log', '/store-in-debug-font', '/show-details'],
+		//	logStore: stores['/prototypoStore'],
+		// }).instance;
 		/* #end */
-		/* #if prod */
+		/* #if prod,dev */
 		const localServer = new LocalServer(stores).instance;
 		/* #end */
+		/* eslint-enable no-redeclare */
 
 		LocalClient.setup(localServer);
+
+		const actions = Object.assign(
+			{},
+			appValuesAction,
+			exportAction,
+			fontAction,
+			fontControlsAction,
+			fontInfosAction,
+			fontParametersAction,
+			glyphsAction,
+			indivAction,
+			panelAction,
+			searchAction,
+			tagStoreAction,
+			undoStackAction,
+			debugActions,
+			userLifecycleAction,
+			liteAction,
+			{
+				'/load-intercom-info': (data) => {
+					const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();
+
+					localServer.dispatchUpdate('/prototypoStore', patch);
+				},
+			},
+		);
+
+		localServer.on(
+			'action',
+			({path, params}) => {
+				// eventDebugger.storeEvent(path, params);
+				if (process.env.__SHOW_ACTION__) { // eslint-disable-line
+					console.log(`[ACTION] ${path}`);
+				}
+
+				if (actions[path] !== undefined) {
+					actions[path](params);
+				}
+			},
+			localServer.lifespan,
+		);
+
 		const fluxEvent = new Event('fluxServer.setup');
 
 		window.dispatchEvent(fluxEvent);
 
 		const eventDebugger = new EventDebugger();
 
-		async function createStores() {
-			const actions = Object.assign(
-				{},
-				appValuesAction,
-				exportAction,
-				fontAction,
-				fontControlsAction,
-				fontInfosAction,
-				fontParametersAction,
-				glyphsAction,
-				indivAction,
-				panelAction,
-				searchAction,
-				tagStoreAction,
-				undoStackAction,
-				debugActions,
-				userLifecycleAction,
-				liteAction,
-				{
-					'/load-intercom-info': (data) => {
-						const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();
+		const templates = await Promise.all(prototypoStore.get('templateList').map(async ({templateName}) => {
+			const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../dist/templates/${templateName}/font.json`);
 
-						localServer.dispatchUpdate('/prototypoStore', patch);
-					},
-				},
-			);
+			return {
+				name: templateName,
+				json: typedataJSON,
+			};
+		}));
 
-			localServer.on(
-				'action',
-				({path, params}) => {
-					// eventDebugger.storeEvent(path, params);
-					if (process.env.__SHOW_ACTION__) { // eslint-disable-line
-						console.log(`[ACTION] ${path}`);
-					}
+		await FontMediator.init(templates);
 
-					if (actions[path] !== undefined) {
-						actions[path](params);
-					}
-				},
-				localServer.lifespan,
-			);
-
-			/* #if debug */
-			if (location.hash.indexOf('#/replay') === -1) {
-				await loadStuff();
-			}
-			else {
-				await eventDebugger.replayEventFromFile();
-			}
-			/* #end */
-			/* #if prod */
-			try {
-				await HoodieApi.setup();
-
-				await loadStuff();
-			}
-			catch (err) {
-				if (err.message.includes('Not authenticated')) {
-					localServer.dispatchAction('/clean-data');
-				}
-
-				console.log(err);
-				const fontInstanceLoaded = new Event('fontInstance.loaded');
-
-				window.dispatchEvent(fontInstanceLoaded);
-			}
-			/* #end */
-		}
-
-		const canvasEl = (window.canvasElement = document.createElement('canvas'));
-
-		canvasEl.className = 'prototypo-canvas-container-canvas';
-		canvasEl.width = 0;
-		canvasEl.height = 0;
 
 		const content = document.getElementById('content');
 
@@ -170,6 +150,7 @@ selectRenderOptions(
 					location.hash.indexOf('signin') === -1
 					&& location.hash.indexOf('account') === -1
 					&& location.hash.indexOf('signup') === -1
+					&& location.hash.indexOf('testfont') === -1
 				) {
 					location.href = '#/start';
 				}
@@ -190,9 +171,7 @@ selectRenderOptions(
 		window.addEventListener('values.loaded', () => {
 			const render = (Component) => {
 				ReactDOM.render(
-					<AppContainer>
-						<Component />
-					</AppContainer>,
+					<Component />,
 					content,
 				);
 			};
@@ -210,6 +189,30 @@ selectRenderOptions(
 			}
 		});
 
-		createStores();
+		/* #if debug */
+		if (location.hash.indexOf('#/replay') === -1) {
+			await loadStuff();
+		}
+		else {
+			await eventDebugger.replayEventFromFile();
+		}
+		/* #end */
+		/* #if prod,dev */
+		try {
+			await HoodieApi.setup();
+
+			await loadStuff();
+		}
+		catch (err) {
+			if (err.message.includes('Not authenticated')) {
+				localServer.dispatchAction('/clean-data');
+			}
+
+			console.log(err);
+			const fontInstanceLoaded = new Event('fontInstance.loaded');
+
+			window.dispatchEvent(fontInstanceLoaded);
+		}
+		/* #end */
 	},
 );

@@ -4,8 +4,8 @@ import React from 'react';
 import {
 	monthlyConst,
 	annualConst,
-	agencyMonthlyConst,
-	agencyAnnualConst,
+	teamMonthlyConst,
+	teamAnnualConst,
 } from '../../data/plans.data';
 
 import Price from '../shared/price.components';
@@ -25,7 +25,9 @@ export default class SubscriptionSidebar extends React.PureComponent {
 	}
 
 	render() {
-		const {country, plan, quantity, hasBeenSubscribing, percentPrice} = this.props;
+		const {
+			country, plan, quantity, hasBeenSubscribing, percentPrice,
+		} = this.props;
 
 		const plans = {
 			[monthlyConst.prefix]: {
@@ -34,11 +36,11 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					? <span>Try Prototypo Pro without commitment</span>
 					: <span>
 							Try Prototypo Pro subscription for
-							{' '}
+						{' '}
 						<Price amount={1} country={country} />
 						{' '}
 							only
-						</span>,
+       </span>,
 				features: [
 					'More diverse fonts with full range on all parameters',
 					'Perfectly customized with glyph individualization groups',
@@ -76,8 +78,8 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					onClick: this.handleChangePlan({plan: monthlyConst.prefix}),
 				},
 			},
-			[agencyMonthlyConst.prefix]: {
-				header: <span>Agencies<br />Monthly</span>,
+			[teamMonthlyConst.prefix]: {
+				header: <span>Teams<br />Monthly</span>,
 				title: (
 					<span>
 						Prototypo multi-user plan, designed for professionnals, billed monthly
@@ -86,7 +88,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				features: ['All pro features', 'Manage your team licences', 'Premium 24h support'],
 				cta: (
 					<span>
-						<Price amount={agencyMonthlyConst.monthlyPrice * quantity * percentPrice} country={country} />
+						<Price amount={teamMonthlyConst.monthlyPrice * quantity * percentPrice} country={country} />
 						{' '}
 						/ month
 					</span>
@@ -95,18 +97,18 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					<span>
 						No commitment!
 						<br />
-						<Price amount={agencyMonthlyConst.monthlyPrice * percentPrice} country={country} />
+						<Price amount={teamMonthlyConst.monthlyPrice * percentPrice} country={country} />
 						{' '}
 						× {quantity} per month
 					</span>
 				),
 				link: {
 					text: 'Want Prototypo cheaper, check out our annual offer',
-					onClick: this.handleChangePlan({plan: agencyAnnualConst.prefix}),
+					onClick: this.handleChangePlan({plan: teamMonthlyConst.prefix}),
 				},
 			},
-			[agencyAnnualConst.prefix]: {
-				header: <span>Agencies<br />Annual</span>,
+			[teamAnnualConst.prefix]: {
+				header: <span>Teams<br />Annual</span>,
 				title: (
 					<span>
 						Prototypo multi-user plan, designed for professionnals, billed annually
@@ -115,7 +117,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				features: ['All pro features', 'Manage your team licences', 'Premium 24h support'],
 				cta: (
 					<span>
-						<Price amount={agencyAnnualConst.monthlyPrice * quantity * percentPrice} country={country} />
+						<Price amount={teamAnnualConst.monthlyPrice * quantity * percentPrice} country={country} />
 						{' '}
 						/ month
 					</span>
@@ -124,28 +126,30 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					<span>
 						Less money, same features
 						<br />
-						<Price amount={agencyAnnualConst.monthlyPrice * percentPrice} country={country} />
+						<Price amount={teamAnnualConst.monthlyPrice * percentPrice} country={country} />
 						{' '}
 						× {quantity} per month
 					</span>
 				),
 				link: {
 					text: 'Want less commitment, try our monthly offer',
-					onClick: this.handleChangePlan({plan: agencyMonthlyConst.prefix}),
+					onClick: this.handleChangePlan({plan: teamAnnualConst.prefix}),
 				},
 			},
 		};
 
 		if (plans[plan]) {
-			const {header, title, features, cta, subcta, link} = plans[plan];
+			const {
+				header, title, features, cta, subcta, link,
+			} = plans[plan];
 
 			return (
 				<div className="subscription-sidebar">
 					<h1 className="subscription-sidebar-header">{header}</h1>
 					<h2 className="subscription-sidebar-title">{title}</h2>
 					<ul className="subscription-sidebar-list-feat">
-						{features.map(feat => (
-							<li className="subscription-sidebar-list-feat-item">
+						{features.map((feat, i) => (
+							<li className="subscription-sidebar-list-feat-item" key={i}>
 								{feat}
 							</li>
 						))}

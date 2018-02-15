@@ -10,7 +10,10 @@ export default class GlyphPanel extends React.PureComponent {
 		super(props);
 		this.state = {
 			glyphs: {},
-			tags: {},
+			tags: [],
+			tagPinned: [],
+			pinnedSearch: [],
+			savedSearch: [],
 		};
 	}
 
@@ -23,13 +26,13 @@ export default class GlyphPanel extends React.PureComponent {
 				this.setState({
 					show: head.toJS().d.uiMode.indexOf('list') !== -1,
 					tagSelected: head.toJS().d.tagSelected,
-					tagPinned: head.toJS().d.tagPinned,
+					tagPinned: head.toJS().d.tagPinned || [],
 					tags: head.toJS().d.tags,
 					glyphs: head.toJS().d.glyphs,
 					glyphSelected: head.toJS().d.glyphSelected,
 					search: head.toJS().d.glyphSearch,
-					savedSearch: head.toJS().d.savedSearch,
-					pinnedSearch: head.toJS().d.pinnedSearch,
+					savedSearch: head.toJS().d.savedSearch || [],
+					pinnedSearch: head.toJS().d.pinnedSearch || [],
 				});
 			})
 			.onDelete(() => {

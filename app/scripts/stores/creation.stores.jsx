@@ -1,9 +1,9 @@
 import Remutable from 'remutable';
 
 const undoableStore = new Remutable({
-	//font controls store values
+	// font controls store values
 	controlsValues: {},
-	//end font controls store values
+	// end font controls store values
 });
 
 const fastStuffStore = new Remutable({
@@ -14,46 +14,46 @@ const fontInstanceStore = new Remutable({
 
 const prototypoStore = new Remutable({
 
-	//Store values for debug
+	// Store values for debug
 	debugEvents: [],
 	debugValues: {},
 	debugDetails: undefined,
 	debugShowDetails: false,
 	debugIndex: 0,
-	//End store values for debug
+	// End store values for debug
 
-	//undoStack Store values
+	// undoStack Store values
 	undoAt: 0,
-	undoEventList: [ ],
-	//End undoStack store values
+	undoEventList: [],
+	// End undoStack store values
 
-	//font tab store values
+	// font tab store values
 	fontTab: undefined,
-	//End font tab store values
+	// End font tab store values
 
-	//font parameters store values
+	// font parameters store values
 	fontParameters: undefined,
 	fontPresets: undefined,
-	//end font parameters store values
+	// end font parameters store values
 
-	//fonts store values
+	// fonts store values
 	fontName: undefined,
 	fontGlyphs: undefined,
-	//end fonts store values
+	// end fonts store values
 
-	//tag store values
+	// tag store values
 	tagSelected: 'all',
 	tagPinned: [],
 	tags: undefined,
-	//end tag store values
+	// end tag store values
 
-	//glyphs store values
+	// glyphs store values
 	glyphs: {},
 	glyphSelected: 'A',
 	glyphLocked: false,
-	//end glyphs store values
+	// end glyphs store values
 
-	//template list store values
+	// template list store values
 	templateList: [
 		{
 			sample: 'spectral-preview.svg',
@@ -97,9 +97,9 @@ const prototypoStore = new Remutable({
 		},
 	],
 
-	//end template list store values
+	// end template list store values
 
-	//font variant store values
+	// font variant store values
 	openFamilyModal: false,
 	openVariantModal: false,
 	familySelectedVariantCreation: false,
@@ -108,13 +108,13 @@ const prototypoStore = new Remutable({
 	family: {},
 	collectionSelectedFamily: undefined,
 	collectionSelectedVariant: undefined,
-	//end font
+	// end font
 
-	//font infos store values
+	// font infos store values
 	altList: {},
-	//end font infos store values
+	// end font infos store values
 
-	//ui store values
+	// ui store values
 	uiMode: [],
 	uiTextFontSize: 2.1,
 	uiWordFontSize: 4.5,
@@ -138,10 +138,10 @@ const prototypoStore = new Remutable({
 	uiCreatefamilySelectedTemplate: undefined,
 	canvasMode: 'move',
 	uiSliderTooltip: undefined,
-	//end ui store values
+	// end ui store values
 
-	//lite version store values
-    openStepModal: false,
+	// lite version store values
+	openStepModal: false,
 	openChoiceModal: false,
 	stepSelectedChoiceCreation: false,
 	changeNameStep: false,
@@ -149,22 +149,22 @@ const prototypoStore = new Remutable({
 	step: {},
 	collectionSelectedStep: undefined,
 	collectionSelectedChoice: undefined,
-	//end lite version store values
+	// end lite version store values
 
-	//commits store values
+	// commits store values
 	commitsList: [],
 	latestCommit: '',
-	//end commits store values
+	// end commits store values
 
-	//export store values
+	// export store values
 	export: false,
 	errorExport: false,
 	exportedVariant: 0,
 	familyExported: undefined,
 	variantToExport: undefined,
-	//end export store values
+	// end export store values
 
-	//indiv store values
+	// indiv store values
 	indivMode: false,
 	indivSelected: [],
 	indivTagSelected: 'all',
@@ -179,28 +179,28 @@ const prototypoStore = new Remutable({
 	indivErrorEdit: undefined,
 	indivErrorMessage: undefined,
 	indivErrorGlyphs: [],
-	//end indiv store values
+	// end indiv store values
 
-	//intercom store values
+	// intercom store values
 	intecomTags: undefined,
-	//end intercom store values
+	// end intercom store values
 
-	//search store values
+	// search store values
 	savedSearch: [],
 	glyphSearch: undefined,
 	pinnedSearch: undefined,
 	savedSearchError: undefined,
-	//end search store values
+	// end search store values
 
-	//log store values
+	// log store values
 	/* #if debug */
 	patchArray: [],
 	/* #end */
-	//end log store values
+	// end log store values
 
-	//glyph select store values
+	// glyph select store values
 	glyphFocused: false,
-	//end glyph select store values
+	// end glyph select store values
 
 	// first time tutorial store values
 	firstTimeFile: true,
@@ -265,7 +265,6 @@ const planStore = new Remutable({
 		EUR: '144.00€',
 	},
 });
-
 
 
 // [item]: [cost in credits]

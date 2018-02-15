@@ -3,7 +3,7 @@ import Lifespan from 'lifespan';
 import InlineSVG from 'svg-inline-react';
 import {academyTutorialLabel} from '../../helpers/joyride.helpers.js';
 import Button from '../shared/button.components.jsx';
-import LocalClient from '~/stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores.jsx';
 import {Link} from 'react-router';
 
 export default class AcademyModal extends React.Component {

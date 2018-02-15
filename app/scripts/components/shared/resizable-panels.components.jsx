@@ -1,3 +1,4 @@
+import _throttle from 'lodash/throttle';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {DraggableCore} from 'react-draggable';
@@ -13,7 +14,7 @@ export default class ResizablePanels extends React.PureComponent {
 			y: props.defaultY || null,
 		};
 
-		this.handleDrag = _.throttle(this.handleDrag.bind(this), 50);
+		this.handleDrag = _throttle(this.handleDrag.bind(this), 50);
 		this.updateHandlePosition = this.updateHandlePosition.bind(this);
 	}
 
@@ -52,7 +53,7 @@ export default class ResizablePanels extends React.PureComponent {
 			x,
 			y,
 			onChange,
-			...rest,
+			...rest
 		} = this.props;
 		const isVertical = direction === 'vertical';
 		const axis = isVertical ? 'x' : 'y';
@@ -71,9 +72,9 @@ export default class ResizablePanels extends React.PureComponent {
 			};
 		}
 
-		const realAxis = realX ? realX : realY;
+		const realAxis = realX || realY;
 
-		//TODO(franz): Display none when onlyone or onlytwo
+		// TODO(franz): Display none when onlyone or onlytwo
 		return (
 			<div {...rest} style={{...style, position: 'relative'}}>
 				{React.cloneElement(firstChild, {ref: 'firstChild', style: {...firstChild.props.style, display: onlyTwo ? 'none' : firstChild.props.display || 'flex', [property]: `${realAxis}%`}})}
@@ -86,8 +87,8 @@ export default class ResizablePanels extends React.PureComponent {
 				>
 					<div
 						className={classNames('prototypo-panel-handle', {
-							'vertical': isVertical,
-							'dragging': this.state.dragging,
+							vertical: isVertical,
+							dragging: this.state.dragging,
 						})}
 						style={handlePosition}
 					>
