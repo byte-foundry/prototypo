@@ -4197,7 +4197,7 @@ elliptic@^6.0.0:
 
 elzevir.ptf@byte-foundry/elzevir.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/8a8a17f950b5a986bf482a7d01505978e2eaa02b"
+  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/9c85fb63c29ec24f55995ee8722229a97ee3744a"
   dependencies:
     karma "^1.7.0"
     prototypo-precursor "^1.0.4"

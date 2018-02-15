@@ -98,7 +98,6 @@ function onCurveModification(
 		baseAngle,
 		skeleton,
 		angleOffset,
-		base,
 	} = draggedItem.data;
 	const opposite = _get(glyph, oppositeId);
 	const newPosition = newPos;
@@ -517,6 +516,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						else {
 							appStateValue = appState.CONTOUR_POINT_SELECTED;
 						}
+						draggingNotStarted = false;
 						this.client.dispatchAction('/change-glyph-node-manually', {
 							label: 'manual edition',
 							force: true,
