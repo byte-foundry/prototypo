@@ -89,7 +89,6 @@ function onCurveModification(
 	newPos,
 	appStateValue,
 	modToApply,
-	directionalMod,
 ) {
 	const {
 		baseWidth,
@@ -100,14 +99,12 @@ function onCurveModification(
 		base,
 	} = draggedItem.data;
 	const opposite = _get(glyph, oppositeId);
+	const newPosition = newPos;
+
 	// width factor
-	const factor = distance2D(opposite, newPos) / baseWidth;
-
+	const factor = distance2D(opposite, newPosition) / baseWidth;
 	// angle difference
-	const newVec = subtract2D(newPos, skeleton);
-
-	if (directionalMod) {
-	}
+	const newVec = subtract2D(newPosition, skeleton);
 
 	const angleDiff = Math.atan2(newVec.y, newVec.x) - baseAngle;
 
@@ -127,10 +124,21 @@ function onCurveModification(
 	});
 }
 
-function skeletonPosModification(client, glyph, draggedItem, newPos) {
+function skeletonPosModification(client, glyph, draggedItem, newPos, directionalMod, mouseStart) {
 	const {base, transforms} = draggedItem.data;
+	let newPosition = newPos;
 
-	const mouseVec = subtract2D(newPos, base);
+	if (directionalMod) {
+		const deltaVec = subtract2D(mouseStart, newPos);
+		const isXBigger = Math.abs(deltaVec.x) > Math.abs(deltaVec.y);
+
+		newPosition = {
+			x: isXBigger ? newPos.x : mouseStart.x,
+			y: isXBigger ? mouseStart.y : newPos.y,
+		};
+	}
+
+	const mouseVec = subtract2D(newPosition, base);
 	const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
 	const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
 
@@ -262,6 +270,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		let mouseDoubleClick;
 		let pause = false;
 		let firstDraw = true;
+		let mouseStart;
 
 		// Box select variables
 		let mouseBoxStart;
@@ -311,6 +320,12 @@ export default class GlyphCanvas extends React.PureComponent {
 
 
 			if (glyph) {
+				const [mousePosInWorld] = transformCoords(
+					[mouse.pos],
+					inverseProjectionMatrix(this.toile.viewMatrix),
+					this.toile.height / this.toile.viewMatrix[0],
+				);
+
 				// This is used to detect a glyph change event that
 				// makes it necessary to stop all active mode
 				if (this.resetAppMode) {
@@ -468,6 +483,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						if (nodes.length > 0) {
 							selectedItems = [nodes[0]];
 							appStateValue = appState.DRAGGING_CONTOUR_POINT;
+							mouseStart = nodes[0].data.center;
 						}
 						else if (contours.length > 0) {
 							if (contours.find(c => c.id === contourSelected.id)) {
@@ -511,6 +527,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						if (nodes.length > 0) {
 							selectedItems = [nodes[0]];
 							appStateValue = appState.DRAGGING_CONTOUR_POINT;
+							mouseStart = nodes[0].data.center;
 						}
 						else if (contours.length > 0) {
 							if (contours.find(c => c.id === contourSelected.id)) {
@@ -541,6 +558,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						if (nodes.length > 0) {
 							selectedItems = [nodes[0]];
 							appStateValue = appState.DRAGGING_CONTOUR_POINT;
+							mouseStart = nodes[0].data.center;
 						}
 						else if (contours.length > 0) {
 							if (contours.find(c => c.id === contourSelected.id)) {
@@ -698,8 +716,8 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 
 				if (appStateValue & appState.BOX_SELECTING) {
-					const [mousePosInWorld, boxStartPosInWorld] = transformCoords(
-						[mouse.pos, mouseBoxStart],
+					const [boxStartPosInWorld] = transformCoords(
+						[mouseBoxStart],
 						inverseProjectionMatrix(this.toile.viewMatrix),
 						this.toile.height / this.toile.viewMatrix[0],
 					);
@@ -780,11 +798,6 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 				else if (appStateValue & appState.ZOOMING) {
 					const [z,,,, x, y] = this.toile.viewMatrix;
-					const [mousePosInWorld] = transformCoords(
-						[mouse.pos],
-						inverseProjectionMatrix(this.toile.viewMatrix),
-						this.toile.height / z,
-					);
 					const transformMatrix = changeTransformOrigin(
 						mousePosInWorld,
 						[1 + (mouse.wheel / 1000), 0, 0, 1 + (mouse.wheel / 1000), 0, 0],
@@ -810,18 +823,10 @@ export default class GlyphCanvas extends React.PureComponent {
 						| appState.DRAGGING_CONTOUR
 					)
 				) {
-					interactions = selectedItems.map((item) => {
-						const [mousePosInWorld, mouseBeforeDelta] = transformCoords(
-							[mouse.pos, add2D(mouse.pos, mulScalar2D(-1, mouse.delta))],
-							inverseProjectionMatrix(this.toile.viewMatrix),
-							this.toile.height / this.toile.viewMatrix[0],
-						);
-
-						return {
-							item,
-							modData: mousePosInWorld,
-						};
-					});
+					interactions = selectedItems.map(item => ({
+						item,
+						modData: mousePosInWorld,
+					}));
 				}
 				else if (
 					appStateValue & (
@@ -901,7 +906,6 @@ export default class GlyphCanvas extends React.PureComponent {
 							break;
 						}
 						case toileType.NODE: {
-							const directionalMod = this.toile.keyboardDown.special & specialKey.SHIFT;
 							let curveMode = onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD;
 
 							if (this.toile.keyboardDown.special & specialKey.ALT) {
@@ -917,7 +921,6 @@ export default class GlyphCanvas extends React.PureComponent {
 								modData,
 								appStateValue,
 								curveMode,
-								directionalMod,
 							);
 
 							const id = item.data.parentId;
@@ -933,11 +936,15 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						case toileType.NODE_SKELETON:
 						case toileType.CONTOUR_NODE: {
+							const directionalMod = this.toile.keyboardDown.special & specialKey.SHIFT;
+
 							skeletonPosModification(
 								this.client,
 								glyph,
 								item,
 								modData,
+								directionalMod,
+								mouseStart,
 							);
 
 							const id = item.id;
