@@ -362,31 +362,52 @@ export default class Toile {
 		);
 	}
 
-	drawContourNode(node, id, prevNode, nextNode, hotItems, componentPrefixAddress) {
-		this.drawHandleNode({
-			node,
-			otherNode: prevNode,
-			otherDir: prevNode.dirOut,
-			handle: node.handleIn,
-			id,
-			handleId: `${id}.handleIn`,
-			type: toileType.CONTOUR_NODE_IN,
-			hotItems,
-			color: inHandleColor,
-		}); // in
-		this.drawHandleNode({
-			node,
-			otherNode: nextNode,
-			otherDir: nextNode.dirIn,
-			handle: node.handleOut,
-			id,
-			handleId: `${id}.handleOut`,
-			type: toileType.CONTOUR_NODE_OUT,
-			hotItems,
-			color: outHandleColor,
-		}); // out
+	drawSkeletonPoint(node, hotness, fillColor) {
+		const offset = {
+			x: nodeDrawRadius / this.viewMatrix[0],
+			y: nodeDrawRadius / this.viewMatrix[0],
+		};
 
+		this.drawRectangleFromCorners(
+			subtract2D(node, offset),
+			add2D(node, offset),
+			fillColor,
+			hotness ? fillColor : transparent,
+		);
+	}
+
+	drawContourNode(node, id, prevNode, nextNode, hotItems, componentPrefixAddress) {
 		const hot = _find(hotItems, item => item.id === id);
+		const inId = `${id}.handleIn`;
+		const outId = `${id}.handleOut`;
+		const inHot = _find(hotItems, item => item.id === outId);
+		const outHot = _find(hotItems, item => item.id === inId);
+
+		if (hot || inHot || outHot) {
+			this.drawHandleNode({
+				node,
+				otherNode: prevNode,
+				otherDir: prevNode.dirOut,
+				handle: node.handleIn,
+				id,
+				handleId: inId,
+				type: toileType.CONTOUR_NODE_IN,
+				hotItems,
+				color: inHandleColor,
+			}); // in
+			this.drawHandleNode({
+				node,
+				otherNode: nextNode,
+				otherDir: nextNode.dirIn,
+				handle: node.handleOut,
+				id,
+				handleId: outId,
+				type: toileType.CONTOUR_NODE_OUT,
+				hotItems,
+				color: outHandleColor,
+			}); // out
+		}
+
 		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
 
 		this.drawControlPoint(node, hot, onCurveColor);
@@ -422,34 +443,40 @@ export default class Toile {
 		componentPrefixAddress,
 		parallelId,
 	) {
-		this.drawHandleNode({
-			node,
-			otherNode: prevNode,
-			otherDir: prevDir || 0,
-			handle: node.handleIn,
-			id,
-			parentId,
-			handleId: `${id}.handleIn`,
-			type: toileType.NODE_IN,
-			hotItems,
-			color: inHandleColor,
-			parallelId,
-		}); // in
-		this.drawHandleNode({
-			node,
-			otherNode: nextNode,
-			otherDir: nextDir || 0,
-			handle: node.handleOut,
-			id,
-			parentId,
-			handleId: `${id}.handleOut`,
-			type: toileType.NODE_OUT,
-			hotItems,
-			color: outHandleColor,
-			parallelId,
-		}); // out
-
 		const hot = _find(hotItems, item => item.id === id);
+		const inId = `${id}.handleIn`;
+		const outId = `${id}.handleOut`;
+		const inHot = _find(hotItems, item => item.id === outId);
+		const outHot = _find(hotItems, item => item.id === inId);
+
+		if (hot || inHot || outHot) {
+			this.drawHandleNode({
+				node,
+				otherNode: prevNode,
+				otherDir: prevDir || 0,
+				handle: node.handleIn,
+				id,
+				parentId,
+				handleId: inId,
+				type: toileType.NODE_IN,
+				hotItems,
+				color: inHandleColor,
+				parallelId,
+			}); // in
+			this.drawHandleNode({
+				node,
+				otherNode: nextNode,
+				otherDir: nextDir || 0,
+				handle: node.handleOut,
+				id,
+				parentId,
+				handleId: outId,
+				type: toileType.NODE_OUT,
+				hotItems,
+				color: outHandleColor,
+				parallelId,
+			}); // out
+		}
 
 		const drawNode = !(parentNode
 			&& parentNode.x === node.x
@@ -555,7 +582,7 @@ export default class Toile {
 		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
 
 		if (node.expand) {
-			this.drawControlPoint(node, hot, node.handleIn ? onCurveColor : skeletonColor);
+			this.drawSkeletonPoint(node, hot, node.handleIn ? onCurveColor : skeletonColor);
 			this.interactionList.push({
 				id,
 				type: toileType.NODE_SKELETON,
