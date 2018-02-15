@@ -537,8 +537,8 @@ export default {
 			case toileType.NODE_SKELETON:
 				localClient.dispatchAction('/change-glyph-node-manually', {
 					changes: {
-						[`${item.data.modifAddress}x`]: 0,
-						[`${item.data.modifAddress}y`]: 0,
+						[`${item.data.modifAddress}x`]: undefined,
+						[`${item.data.modifAddress}y`]: undefined,
 					},
 					glyphName,
 				});

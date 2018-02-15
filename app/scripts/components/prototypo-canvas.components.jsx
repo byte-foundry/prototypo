@@ -383,7 +383,10 @@ export default class PrototypoCanvas extends React.Component {
 				manualChangesGlyph
 					= this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name];
 			}
-			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0);
+			return (manualChangesGlyph
+				&& Object
+					.keys(manualChangesGlyph.cursors)
+					.filter(key => manualChangesGlyph.cursors[key] !== undefined).length > 0);
 		}
 
 		return false;
