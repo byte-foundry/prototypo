@@ -262,23 +262,29 @@ export default class FontMediator {
 		});
 	}
 
+	async mergeFont(arrayBuffer) {
+		const buffer = await mergeFont(
+			MERGE_URL,
+			'mergefont',
+			[
+				this.email,
+			],
+			arrayBuffer,
+		);
+
+		return buffer;
+	}
+
+	mergeFontWithoutTimeout(arrayBuffer) {
+		return this.mergeFont(arrayBuffer);
+	}
+
 	mergeFontWithTimeout(arrayBuffer) {
 		clearTimeout(mergeTimeoutRef);
 
 		return new Promise((resolve) => {
-			 const timeout = setTimeout(async () => {
-				const buffer = await mergeFont(
-					MERGE_URL,
-					'mergefont',
-					[
-						this.email,
-					],
-					arrayBuffer,
-				);
-
-				if (timeout === mergeTimeoutRef) {
-					resolve(buffer);
-				}
+			const timeout = setTimeout(() => {
+				resolve(this.mergeFont(arrayBuffer));
 			}, 300);
 
 			mergeTimeoutRef = timeout;
