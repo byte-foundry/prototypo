@@ -61,6 +61,10 @@ export default class Ptypo {
 		await FontMediator.init(typedatas, workerPoolSize);
 
 		this.mediator = FontMediator.instance();
+
+		this.mediator.setupInfo({
+			email: `${navigator.languages.length}-${navigator.userAgent.replace(/\D+/g, '')}-${navigator.plugins.length}-${navigator.hardwareConcurrency}-${navigator.deviceMemory}`,
+		});
 	}
 
 	async createFont(fontName, fontTemplate, alwaysMerge) {
@@ -129,11 +133,17 @@ export class PtypoFont {
 		);
 
 		if (this.alwaysMerge) {
-			this.mediator.mergeFontWithTimeout(fontBuffer, this.fontName);
+			this.mediator.mergeFontWithoutTimeout(fontBuffer, this.fontName)
+				.then((mergedBuffer) => {
+					this.mediator.addToFont(mergedBuffer, this.fontName);
+				});
 		}
 		else {
 			this.mediator.addToFont(fontBuffer, this.fontName);
-			this.mediator.mergeFontWithTimeout(fontBuffer, this.fontName);
+			this.mediator.mergeFontWithoutTimeout(fontBuffer, this.fontName)
+				.then((mergedBuffer) => {
+					this.mediator.addToFont(mergedBuffer, this.fontName);
+				});
 		}
 
 		const {
