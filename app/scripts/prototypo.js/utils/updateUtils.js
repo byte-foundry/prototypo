@@ -684,8 +684,8 @@ export function makeCurveInsideSerif(
 	});
 
 	const midPoint = {
-		x: ((leftEdge.x + rightEdge.x) / 2) + (serifTerminal * serifHeight * terminalVector.x * xDir),
-		y: ((leftEdge.y + rightEdge.y) / 2) + (serifTerminal * serifHeight * terminalVector.y * xDir),
+		x: ((leftEdge.x + rightEdge.x) / 2) + (serifTerminal * serifHeight * terminalVector.x),
+		y: ((leftEdge.y + rightEdge.y) / 2) + (serifTerminal * serifHeight * terminalVector.y),
 		dirIn: rotateRad,
 		dirOut: rotateRad,
 	};
