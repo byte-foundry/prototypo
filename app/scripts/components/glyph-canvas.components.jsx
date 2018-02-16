@@ -19,6 +19,12 @@ const rafCancel = cancelAnimationFrame || webkitCancelAnimationFrame;
 let rafId;
 
 const MINIMUM_DRAG_THRESHOLD = 6;
+const MINIMUM_DRAG_DIRECTIONAL_THRESHOLD = 10;
+
+const directionalMod = {
+	X: 0b1,
+	Y: 0b10,
+};
 
 const onCurveModMode = {
 	WIDTH_MOD: 0b1,
@@ -125,21 +131,10 @@ function onCurveModification(
 	});
 }
 
-function skeletonPosModification(client, glyph, draggedItem, newPos, directionalMod, mouseStart) {
+function skeletonPosModification(client, glyph, draggedItem, newPos) {
 	const {base, transforms} = draggedItem.data;
-	let newPosition = newPos;
 
-	if (directionalMod) {
-		const deltaVec = subtract2D(mouseStart, newPos);
-		const isXBigger = Math.abs(deltaVec.x) > Math.abs(deltaVec.y);
-
-		newPosition = {
-			x: isXBigger ? newPos.x : mouseStart.x,
-			y: isXBigger ? mouseStart.y : newPos.y,
-		};
-	}
-
-	const mouseVec = subtract2D(newPosition, base);
+	const mouseVec = subtract2D(newPos, base);
 	const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
 	const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
 
@@ -273,6 +268,8 @@ export default class GlyphCanvas extends React.PureComponent {
 		let firstDraw = true;
 		let mouseStart;
 		let draggingNotStarted = false;
+		let directionalNotStarted = false;
+		let directionalValue;
 
 		// Box select variables
 		let mouseBoxStart;
@@ -286,6 +283,7 @@ export default class GlyphCanvas extends React.PureComponent {
 			const hotItems = this.toile.getHotInteractiveItem();
 
 			let boxedItems = [];
+			let mouseMovement;
 
 			if (mouseBoxStart) {
 				boxedItems = this.toile.getBoxHotInteractiveItem(mouseBoxStart);
@@ -487,6 +485,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.DRAGGING_CONTOUR_POINT;
 							mouseStart = nodes[0].data.center;
 							draggingNotStarted = true;
+							directionalNotStarted = true;
 						}
 						else if (contours.length > 0) {
 							if (contours.find(c => c.id === contourSelected.id)) {
@@ -517,6 +516,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.CONTOUR_POINT_SELECTED;
 						}
 						draggingNotStarted = false;
+						directionalNotStarted = false;
 						this.client.dispatchAction('/change-glyph-node-manually', {
 							label: 'manual edition',
 							force: true,
@@ -533,6 +533,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.DRAGGING_CONTOUR_POINT;
 							mouseStart = nodes[0].data.center;
 							draggingNotStarted = true;
+							directionalNotStarted = true;
 						}
 						else if (contours.length > 0) {
 							if (contours.find(c => c.id === contourSelected.id)) {
@@ -565,6 +566,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.DRAGGING_CONTOUR_POINT;
 							mouseStart = nodes[0].data.center;
 							draggingNotStarted = true;
+							directionalNotStarted = true;
 						}
 						else if (contours.length > 0) {
 							if (contours.find(c => c.id === contourSelected.id)) {
@@ -717,6 +719,18 @@ export default class GlyphCanvas extends React.PureComponent {
 						));
 					}
 
+					if (directionalNotStarted) {
+						const displacement = distance2D(mouseStart, mousePosInWorld) * this.toile.viewMatrix[0];
+						const deltaVec = subtract2D(mouseStart, mousePosInWorld);
+						const isXBigger = Math.abs(deltaVec.x) > Math.abs(deltaVec.y);
+
+						directionalValue = isXBigger ? directionalMod.X : directionalMod.Y;
+
+						if (displacement > MINIMUM_DRAG_DIRECTIONAL_THRESHOLD) {
+							directionalNotStarted = false;
+						}
+					}
+
 					this.toile.drawNodes(
 						_get(
 							glyph,
@@ -840,6 +854,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						item,
 						modData: mousePosInWorld,
 					}));
+					mouseMovement = true;
 				}
 				else if (
 					appStateValue & (
@@ -850,6 +865,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					&& this.toile.keyboardDownRisingEdge.keyCode <= 40
 					&& this.toile.keyboardDownRisingEdge.keyCode >= 37
 				) {
+					mouseMovement = false;
 					interactions = selectedItems.map((item) => {
 						let posVector;
 						const modRange = this.toile.keyboardDown.special & specialKey.SHIFT
@@ -968,15 +984,38 @@ export default class GlyphCanvas extends React.PureComponent {
 								}
 							}
 							else {
-								const directionalMod = this.toile.keyboardDown.special & specialKey.SHIFT;
+								const directionalModifier = this.toile.keyboardDown.special & specialKey.SHIFT;
+
+								let posModData = modData;
+
+								if (directionalModifier && !directionalNotStarted && mouseMovement) {
+									posModData = {
+										x: directionalValue & directionalMod.X ? modData.x : mouseStart.x,
+										y: directionalValue & directionalMod.X ? mouseStart.y : modData.y,
+									};
+
+									if (directionalValue & directionalMod.Y) {
+										this.toile.drawLine(
+											{x: posModData.x, y: 1000000},
+											{x: posModData.x, y: -1000000},
+											'#ff00ff',
+										);
+									}
+									else {
+										this.toile.drawLine(
+											{y: posModData.y, x: 1000000},
+											{y: posModData.y, x: -1000000},
+											'#ff00ff',
+										);
+									}
+								}
+
 
 								skeletonPosModification(
 									this.client,
 									glyph,
 									item,
-									modData,
-									directionalMod,
-									mouseStart,
+									posModData,
 								);
 
 								const id = item.id;
