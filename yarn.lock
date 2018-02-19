@@ -1013,7 +1013,7 @@ ansi-wrap@0.1.0:
 
 antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/484d3dfc3eaf04296999b86e435e38e6405e8324"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/4053114ddf125c5019665692f953e3b672d10675"
   dependencies:
     karma "^1.7.1"
     prototypo-precursor "^1.0.3"
@@ -4225,7 +4225,7 @@ elliptic@^6.0.0:
 
 elzevir.ptf@byte-foundry/elzevir.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/9c85fb63c29ec24f55995ee8722229a97ee3744a"
+  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/89bd06ff7c96d43022a1d7e04c7a9aa0b3ae297c"
   dependencies:
     karma "^1.7.0"
     prototypo-precursor "^1.0.4"
