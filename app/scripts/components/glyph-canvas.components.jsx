@@ -82,6 +82,20 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, par
 			= opVector.x;
 		changes[`${draggedItem.data.parentId}.${oppositeDirection}.y`]
 			= opVector.y;
+
+		if (parallelMod) {
+			changes[`${draggedItem.data.parallelId}.${direction}.x`]
+				= opVector.x;
+			changes[`${draggedItem.data.parallelId}.${direction}.y`]
+				= opVector.y;
+		}
+	}
+
+	if (parallelMod) {
+		changes[`${draggedItem.data.parallelId}.${oppositeDirection}.x`]
+			= newVector.x;
+		changes[`${draggedItem.data.parallelId}.${oppositeDirection}.y`]
+			= newVector.y;
 	}
 
 	client.dispatchAction('/change-glyph-node-manually', {

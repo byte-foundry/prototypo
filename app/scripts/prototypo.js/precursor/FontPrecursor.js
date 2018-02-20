@@ -88,26 +88,28 @@ export default class FontPrecursor {
 			const name = glyphNames[i];
 			const indivParam = {};
 
-			if (localParams.indiv_glyphs) {
-				const group = localParams.indiv_glyphs[this.glyphs[name].unicode.value];
+			if (name !== undefined) {
+				if (localParams.indiv_glyphs) {
+					const group = localParams.indiv_glyphs[this.glyphs[name].unicode.value];
 
-				if (group) {
-					const indivModifs = localParams.indiv_group_param[group];
-					const keys = Object.keys(indivModifs);
+					if (group) {
+						const indivModifs = localParams.indiv_group_param[group];
+						const keys = Object.keys(indivModifs);
 
-					for (let j = 0; j < keys.length; j++) {
-						const param = keys[j].substr(0, keys[j].length - 4);
-						const mod = indivModifs[keys[j]];
+						for (let j = 0; j < keys.length; j++) {
+							const param = keys[j].substr(0, keys[j].length - 4);
+							const mod = indivModifs[keys[j]];
 
-						indivParam[param] = mod.state === 'relative'
-							? localParams[param] * mod.value
-							: localParams[param] + mod.value;
+							indivParam[param] = mod.state === 'relative'
+								? localParams[param] * mod.value
+								: localParams[param] + mod.value;
+						}
 					}
 				}
-			}
 
-			if (this.glyphs[name]) {
-				glyphs.push(this.glyphs[name].constructGlyph({...localParams, ...indivParam}, undefined, this.glyphs));
+				if (this.glyphs[name]) {
+					glyphs.push(this.glyphs[name].constructGlyph({...localParams, ...indivParam}, undefined, this.glyphs));
+				}
 			}
 		}
 
