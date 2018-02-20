@@ -109,12 +109,13 @@
     "gulp-sourcemaps": "^1.5.2",
     "gulp-uglify": "^1.4.0",
     "gulp-util": "^3.0.5",
+    "husky": "^0.14.3",
     "if-loader": "^1.0.1",
     "import-glob-loader": "^1.1.0",
     "jest": "^22.2.1",
     "jshint-stylish": "~2.0.0",
     "lodash-webpack-plugin": "^0.11.4",
-    "lint-staged": "^6.1.0",
+    "lint-staged": "^6.1.1",
     "lodash.assign": "^3.2.0",
     "mocha": "^2.3.4",
     "nightwatch": "^0.8.15",
@@ -184,7 +185,8 @@
       "shared"
     ],
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+        "<rootDir>/__mocks__/fileMock.js",
       "\\.(css|scss)$": "<rootDir>/__mocks__/styleMock.js"
     }
   },
@@ -193,9 +195,7 @@
     "trailingComma": "all"
   },
   "lint-staged": {
-    "*.{js,json,css}": [
-      "npm run format",
-      "git add"
-    ]
+    "stories/**": ["prettier-eslint --write", "git add"],
+    "app/scripts/**.{js,jsx}": ["prettier-eslint --write", "git add"]
   }
 }
