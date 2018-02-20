@@ -415,7 +415,7 @@ ansicolors@~0.2.1:
 
 antique.ptf@byte-foundry/antique.ptf:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/a727de9f79f9a9733be3d8691b6ac411dd37754b"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/8bfbadb13197cab9e4566721c14d5fd195c1db44"
   dependencies:
     karma "^1.7.1"
 
@@ -3268,7 +3268,7 @@ elliptic@^6.0.0:
 
 elzevir.ptf@byte-foundry/elzevir.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/886433eb1545e30665ac7e64f08e355047fbaa33"
+  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/a4193051f994916f40ffe3dd5b7533a5b0bf9c2b"
   dependencies:
     karma "^1.7.0"
 
@@ -4455,7 +4455,7 @@ getpass@^0.1.1:
 
 gfnt.ptf@byte-foundry/spectral.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/9d42f23543a91f493ed2618258a72c3208e8cd67"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/72a3a0a83ce668be5823096f500895c561049dae"
 
 glamor@^2.20.40:
   version "2.20.40"
@@ -5989,7 +5989,7 @@ jest@^18.1.0:
 
 john-fell.ptf@byte-foundry/john-fell.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/ee84fbde2b4b7d7471e107c920883e7f1edb07f3"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/ebe04141ae82a17f7b8bda88478c96b7b6a400b3"
 
 jquery.wheel.js@0.2.0:
   version "0.2.0"
@@ -10793,7 +10793,7 @@ vendors@^1.0.0:
 
 venus.ptf@byte-foundry/venus.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/22d7ce90ae71810212865cc9d0d7c8ee6d6b59d0"
+  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/f9088d63db83098e31974884656d9bc9ce12eb6d"
 
 verror@1.10.0:
   version "1.10.0"
