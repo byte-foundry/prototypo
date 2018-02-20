@@ -10793,7 +10793,7 @@ vendors@^1.0.0:
 
 venus.ptf@byte-foundry/venus.ptf#master:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/f9088d63db83098e31974884656d9bc9ce12eb6d"
+  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/72a28f6af6e3e34f36fc246257688f5cff1b12c9"
 
 verror@1.10.0:
   version "1.10.0"
