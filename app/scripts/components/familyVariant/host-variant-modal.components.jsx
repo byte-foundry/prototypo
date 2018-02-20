@@ -48,11 +48,11 @@ class HostVariantModal extends React.PureComponent {
 
 			this.setState({status: 'hosting'});
 
-			const lastUpload = await this.props.hostFont(url);
+			const hostFont = await this.props.hostFont(url);
 
 			this.setState({
 				status: undefined,
-				justPublished: lastUpload,
+				justPublished: hostFont.data.selectedVariant.latestUploadUrl,
 			});
 		}
 	}

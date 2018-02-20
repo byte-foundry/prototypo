@@ -137,6 +137,7 @@ class Variant extends React.Component {
 Variant.defaultProps = {
 	selected: false,
 	open: () => {},
+	hostFont: () => {},
 	changeName: () => {},
 	duplicate: () => {},
 	delete: () => {},
@@ -150,6 +151,7 @@ Variant.propTypes = {
 	}),
 	selected: PropTypes.bool,
 	open: PropTypes.func,
+	hostFont: PropTypes.func,
 	changeName: PropTypes.func,
 	duplicate: PropTypes.func,
 	delete: PropTypes.func,
