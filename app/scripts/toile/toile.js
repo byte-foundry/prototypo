@@ -442,6 +442,7 @@ export default class Toile {
 		nextDir,
 		componentPrefixAddress,
 		parallelId,
+		parallelParameters,
 	) {
 		const hot = _find(hotItems, item => item.id === id);
 		const inId = `${id}.handleIn`;
@@ -462,6 +463,7 @@ export default class Toile {
 				hotItems,
 				color: inHandleColor,
 				parallelId,
+				parallelParameters,
 			}); // in
 			this.drawHandleNode({
 				node,
@@ -475,6 +477,7 @@ export default class Toile {
 				hotItems,
 				color: outHandleColor,
 				parallelId,
+				parallelParameters,
 			}); // out
 		}
 
@@ -520,6 +523,7 @@ export default class Toile {
 							skeleton: parentNode,
 							baseAngle: parentNode.expand.baseAngle,
 							angleOffset,
+							parallelParameters,
 						},
 					});
 				}
@@ -539,6 +543,7 @@ export default class Toile {
 		hotItems,
 		color,
 		parallelId,
+		parallelParameters,
 	}) {
 		let handleNode = handle;
 
@@ -572,6 +577,7 @@ export default class Toile {
 					otherNode,
 					otherDir,
 					parallelId,
+					parallelParameters,
 				},
 			});
 		}
@@ -632,7 +638,7 @@ export default class Toile {
 			}
 		}
 
-		this.drawExpandedNode(
+		const parametersZero = [
 			node.expandedTo[0],
 			`${id}.expandedTo.0`,
 			node,
@@ -644,8 +650,8 @@ export default class Toile {
 			nextNode.dirIn,
 			componentPrefixAddress,
 			`${id}.expandedTo.1`,
-		);
-		this.drawExpandedNode(
+		];
+		const parametersOne = [
 			node.expandedTo[1],
 			`${id}.expandedTo.1`,
 			node,
@@ -657,7 +663,13 @@ export default class Toile {
 			prevNode.dirOut,
 			componentPrefixAddress,
 			`${id}.expandedTo.0`,
-		);
+			parametersZero,
+		];
+
+		parametersZero.push(parametersOne);
+
+		this.drawExpandedNode(...parametersZero);
+		this.drawExpandedNode(...parametersOne);
 	}
 
 
