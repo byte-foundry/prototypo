@@ -152,7 +152,7 @@ export default compose(
 			return {
 				families: library.map((family) => {
 					const selected
-						= appValues.familySelected && family.name === appValues.familySelected.name;
+						= appValues.familySelected && family.id === appValues.familySelected.id;
 
 					return {
 						...family,
