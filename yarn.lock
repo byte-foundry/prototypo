@@ -415,7 +415,7 @@ ansicolors@~0.2.1:
 
 antique.ptf@byte-foundry/antique.ptf:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/8bfbadb13197cab9e4566721c14d5fd195c1db44"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/25a8aaa7ab5bf8baa0de020346a1697d03344abe"
   dependencies:
     karma "^1.7.1"
 
