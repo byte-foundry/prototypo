@@ -530,9 +530,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.DEFAULT;
 							mouseBoxStart = undefined;
 						}
-						this.client.dispatchAction('/store-value', {
-							selectedItems,
-						});
+						this.storeSelectedItems(selectedItems);
 					}
 					else if ((appStateValue & appState.CONTOUR_SELECTED) && mouse.edge === mState.DOWN) {
 						if (nodes.length > 0) {
@@ -559,9 +557,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							contourSelected = undefined;
 							contourSelectedIndex = 0;
 						}
-						this.client.dispatchAction('/store-value', {
-							selectedItems,
-						});
+						this.storeSelectedItems(selectedItems);
 					}
 					else if ((appStateValue & appState.DRAGGING_CONTOUR_POINT) && mouseClickRelease) {
 						if (selectedItems[0].type === toileType.NODE_SKELETON) {
@@ -605,9 +601,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.BOX_SELECTING;
 							mouseBoxStart = mouse.pos;
 						}
-						this.client.dispatchAction('/store-value', {
-							selectedItems,
-						});
+						this.storeSelectedItems(selectedItems);
 					}
 					else if ((appStateValue & appState.DRAGGING_CONTOUR) && mouseClickRelease) {
 						appStateValue = appState.CONTOUR_SELECTED;
@@ -638,9 +632,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.BOX_SELECTING;
 							mouseBoxStart = mouse.pos;
 						}
-						this.client.dispatchAction('/store-value', {
-							selectedItems,
-						});
+						this.storeSelectedItems(selectedItems);
 					}
 					else if ((appStateValue & appState.POINTS_SELECTED) && mouse.edge === mState.DOWN) {
 						// TODO: shift behavior
@@ -662,9 +654,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.BOX_SELECTING;
 							mouseBoxStart = mouse.pos;
 						}
-						this.client.dispatchAction('/store-value', {
-							selectedItems,
-						});
+						this.storeSelectedItems(selectedItems);
 					}
 					else if ((appStateValue & appState.DRAGGING_POINTS) && mouseClickRelease) {
 						appStateValue = appState.POINTS_SELECTED;
@@ -1183,6 +1173,20 @@ export default class GlyphCanvas extends React.PureComponent {
 		));
 
 		this.toile.setCameraCenter(center, 0.5, -height, width);
+	}
+
+	storeSelectedItems(selectedItems) {
+		const storedItems = selectedItems.map(item => ({
+			type: item.type,
+			data: {
+				parentId: item.data.parentId,
+				modifAddress: item.data.modifAddress,
+			},
+		}));
+
+		this.client.dispatchAction('/store-value', {
+			storedItems,
+		});
 	}
 
 	render() {
