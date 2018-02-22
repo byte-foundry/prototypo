@@ -31,7 +31,14 @@ const onCurveModMode = {
 	ANGLE_MOD: 0b10,
 };
 
-function calculateHandleCoordinateModification(parentRef, ownParent, newPos, handlePos, tension, isIn) {
+function calculateHandleCoordinateModification(
+	parentRef,
+	ownParent,
+	newPos,
+	handlePos,
+	tension,
+	isIn,
+) {
 	const handleBase = isIn
 		? {x: ownParent.handleOut.xBase, y: ownParent.handleOut.yBase}
 		: {x: ownParent.handleIn.xBase, y: ownParent.handleIn.yBase};
@@ -990,6 +997,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								item,
 								modData,
 								unsmoothMod,
+								true,
 							);
 							break;
 						}
