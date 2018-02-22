@@ -86,6 +86,7 @@ const keyToTransform = [
 	'tags',
 	'transforms',
 	'transformOrigin',
+	'base',
 ];
 
 export default class Glyph {
@@ -95,11 +96,18 @@ export default class Glyph {
 			parameter,
 			anchor,
 			outline,
+			base,
 		} = glyphSrc;
 
 		paramBase.manualChanges[name] = { // eslint-disable-line no-param-reassign
 			cursors: {},
 		};
+
+		if (base !== undefined) {
+			paramBase.manualChanges[base] = { // eslint-disable-line no-param-reassign
+				cursors: {},
+			};
+		}
 
 		paramBase.glyphComponentChoice[name] = {}; // eslint-disable-line no-param-reassign
 
@@ -371,7 +379,7 @@ export default class Glyph {
 		);
 	}
 
-	handleOp(obj, opDone, params, localParams, parentAnchors) {
+	handleOp(obj, opDone, localParams, parentAnchors) {
 		const op = obj.cursor;
 		let result = obj.getResult(
 			localParams,
@@ -390,7 +398,7 @@ export default class Glyph {
 			);
 
 			const manualChanges
-				= params.manualChanges[this.name.value].cursors[op] || 0;
+				= localParams.manualChanges[this.name.value].cursors[op] || 0;
 
 			result += manualChanges;
 		}
@@ -410,9 +418,31 @@ export default class Glyph {
 		for (let i = 0; i < paramKeys.length; i++) {
 			localParams[paramKeys[i]] = params[paramKeys[i]];
 		}
+		localParams.manualChanges = {
+			[this.name.value]: {
+				cursors: {},
+			},
+		};
+
+		const manualParamKeys = Object.keys(params.manualChanges[this.name.value].cursors);
+
+		for (let i = 0; i < manualParamKeys.length; i++) {
+			localParams.manualChanges[this.name.value].cursors[manualParamKeys[i]]
+				= params.manualChanges[this.name.value].cursors[manualParamKeys[i]];
+		}
 
 		for (let i = 0; i < thisParamKeys.length; i++) {
 			localParams[thisParamKeys[i]] = this.parameters[thisParamKeys[i]].getResult(localParams);
+		}
+
+		if (this.base.value !== undefined) {
+			const manualParamsKeys = Object.keys(params.manualChanges[this.base.value].cursors);
+
+			for (let i = 0; i < manualParamsKeys.length; i++) {
+				localParams.manualChanges[this.name.value].cursors[manualParamsKeys[i]]
+					= params.manualChanges[this.base.value].cursors[manualParamsKeys[i]]
+					+ (params.manualChanges[this.name.value].cursors[manualParamsKeys[i]] || 0);
+			}
 		}
 
 		const specialProps = this.unicode
@@ -436,13 +466,13 @@ export default class Glyph {
 			const op = this.operationOrder[i];
 
 			if (op.action === 'handle') {
-				this.handleHandleOp(op, opDone, params);
+				this.handleHandleOp(op, opDone, localParams);
 			}
 			else if (op.action === 'expand') {
-				this.handleExpandOp(op, opDone, params);
+				this.handleExpandOp(op, opDone, localParams);
 			}
 			else {
-				this.handleOp(op, opDone, params, localParams, parentAnchors);
+				this.handleOp(op, opDone, localParams, parentAnchors);
 			}
 		}
 
