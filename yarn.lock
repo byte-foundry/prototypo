@@ -996,7 +996,7 @@ ansi-wrap@0.1.0:
 
 antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/2698a7adbd6c98252521254d218c05bd82c808bd"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/5b692cfce3878b4042c733e0493b60e1f44f1ecc"
   dependencies:
     karma "^1.7.1"
     prototypo-precursor "^1.0.3"
@@ -4197,7 +4197,7 @@ elliptic@^6.0.0:
 
 elzevir.ptf@byte-foundry/elzevir.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/5668c35f2c3f5d76a8f49555a18f3059de07b2d4"
+  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/eea75b7744b0cbeb79eb68c52159dacefc525be3"
   dependencies:
     karma "^1.7.0"
     prototypo-precursor "^1.0.4"
@@ -5421,7 +5421,7 @@ getpass@^0.1.1:
 
 gfnt.ptf@byte-foundry/spectral.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/b238a5d6157a975a13bbf913bc1b1c273bcf1abf"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/281248c2a32c3a6770f17eab51b20502d7257a86"
   dependencies:
     karma "^2.0.0"
     prototypo-precursor "^1.0.4"
@@ -7165,7 +7165,7 @@ jest@^22.2.1:
 
 john-fell.ptf@byte-foundry/john-fell.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/d1035848b1b1f08b7c925e225d12f173bce4aee3"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/9c811c037786f5dd7952df0e5fb66523c8cc84b1"
   dependencies:
     prototypo-precursor "^1.0.4"
 
@@ -12610,7 +12610,7 @@ vendors@^1.0.0:
 
 venus.ptf@byte-foundry/venus.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/f8261312d28b2ba49269bacc044ae80c3eea9629"
+  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/733c197199ca6238ff360b246f7a7ab006a46f5c"
   dependencies:
     prototypo-precursor "^1.0.4"
 
