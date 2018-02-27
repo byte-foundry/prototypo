@@ -27,6 +27,9 @@ export default class HandlegripBar extends React.Component {
 	}
 
 	handleDown(e) {
+		if (this.props.noInteraction) {
+			return;
+		}
 		// tells everyone that the tracking begins, and on which side
 		this.client.dispatchAction('/store-value', {uiSpacingTracking: this.props.side});
 
@@ -45,7 +48,10 @@ export default class HandlegripBar extends React.Component {
 			'handlegrip-right': !left,
 		});
 
-		const text = (this.props.clampedValue ? this.props.clampedValue + this.props.baseSpacing : this.props.spacing) || '...';
+		let text = (this.props.clampedValue === undefined ? this.props.spacing : this.props.clampedValue + this.props.baseSpacing) || '...';
+
+		text = text instanceof Number ? text : parseInt(text);
+		const offset = text - this.props.baseSpacing;
 
 		return (
 			<span
@@ -55,7 +61,7 @@ export default class HandlegripBar extends React.Component {
 			>
 				<span className="handlegrip-border" />
 				<span className="handlegrip-spacing-number">
-					{text instanceof Number ? text.toFixed(0) : parseInt(text).toFixed(0)}
+					{text.toFixed(0)} ({offset})
 				</span>
 			</span>
 		);
