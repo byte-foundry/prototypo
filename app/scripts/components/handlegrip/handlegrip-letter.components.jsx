@@ -75,7 +75,7 @@ export default class HandlegripLetter extends React.Component {
 					baseSpacing={this.props.baseSpacingLeft}
 					min={this.props.min}
 					max={this.props.max}
-					clampedValue={this.props.tracking === 'left' ? this.props.clampedValue : 0}
+					clampedValue={this.props.tracking === 'left' ? this.props.clampedValue : undefined}
 					style={{
 						left: this.props.tracking === 'left'
 							? (-this.props.clampedValue - this.props.baseSpacingLeft + spacingLeft) / this.props.dragginRatio - 5
@@ -98,7 +98,7 @@ export default class HandlegripLetter extends React.Component {
 					baseSpacing={this.props.baseSpacingRight}
 					min={this.props.min}
 					max={this.props.max}
-					clampedValue={this.props.tracking === 'right' ? this.props.clampedValue : 0}
+					clampedValue={this.props.tracking === 'right' ? this.props.clampedValue : undefined}
 					style={{
 						right: this.props.tracking === 'right'
 							? (-this.props.clampedValue - this.props.baseSpacingRight + spacingRight) / this.props.dragginRatio - 5

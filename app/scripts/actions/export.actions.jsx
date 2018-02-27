@@ -136,7 +136,6 @@ export default {
 				template,
 				{...values, altList},
 				subset,
-				merged,
 			);
 
 			triggerDownload(buffer, `${name.family} ${name.style}.otf`);

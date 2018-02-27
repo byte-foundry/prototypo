@@ -1013,7 +1013,7 @@ ansi-wrap@0.1.0:
 
 antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/4053114ddf125c5019665692f953e3b672d10675"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/4b2de90fc2a02e9898a1b06a0e4394d86e0f0d27"
   dependencies:
     karma "^1.7.1"
     prototypo-precursor "^1.0.3"
@@ -4225,7 +4225,7 @@ elliptic@^6.0.0:
 
 elzevir.ptf@byte-foundry/elzevir.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/89bd06ff7c96d43022a1d7e04c7a9aa0b3ae297c"
+  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/eea75b7744b0cbeb79eb68c52159dacefc525be3"
   dependencies:
     karma "^1.7.0"
     prototypo-precursor "^1.0.4"
@@ -5437,7 +5437,7 @@ getpass@^0.1.1:
 
 gfnt.ptf@byte-foundry/spectral.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/c43ff8a00354512432c8e2c2321e331b5d39d0ff"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/281248c2a32c3a6770f17eab51b20502d7257a86"
   dependencies:
     karma "^2.0.0"
     prototypo-precursor "^1.0.4"
@@ -7196,7 +7196,7 @@ jest@^22.2.1:
 
 john-fell.ptf@byte-foundry/john-fell.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/642c2e273047f91deacccdb660b6bc3c75b5d605"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/9c811c037786f5dd7952df0e5fb66523c8cc84b1"
   dependencies:
     prototypo-precursor "^1.0.4"
 
@@ -12662,7 +12662,7 @@ vendors@^1.0.0:
 
 venus.ptf@byte-foundry/venus.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/ae5b3f1c9f3a1b00f1b2ed211f13a3d138adbcfb"
+  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/733c197199ca6238ff360b246f7a7ab006a46f5c"
   dependencies:
     prototypo-precursor "^1.0.4"
 

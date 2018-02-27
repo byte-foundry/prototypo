@@ -28,7 +28,8 @@ export const toileType = {
 	COMPONENT_MENU_ITEM: 11,
 	COMPONENT_MENU_ITEM_CLASS: 12,
 	COMPONENT_MENU_ITEM_CENTER: 13,
-	PERF_RECT: 14,
+	SPACING_HANDLE: 14,
+	PERF_RECT: 15,
 };
 
 export const canvasMode = {
@@ -60,6 +61,8 @@ export const appState = {
 	MOVING:	0b100000000000,
 	COMPONENT_HOVERED:	0b1000000000000,
 	COMPONENT_MENU_HOVERED:	0b10000000000000,
+	DRAGGING_SPACING:	0b100000000000000,
+	SPACING_SELECTED:	0b1000000000000000,
 };
 
 const green = '#24d390';
@@ -80,6 +83,8 @@ const outHandleColor = red;
 const onCurveColor = blue;
 const skeletonColor = green;
 const ringBackground = 'rgba(255,114,94,0.4)';
+const nodePropertyBackground = 'rgba(198, 198, 198, 0.4)';
+const baseSpaceHandleColor = 'rgba(255, 0, 255, 0.3)';
 
 const pointMenuAnimationLength = 10;
 const componentMenuAnimationLength = 20;
@@ -104,6 +109,7 @@ const componentMenuWidth = 70;
 const componentMenuInfluenceRadius = 100;
 const componentMenuNoneRadius = 20;
 const componentLeashDistance = 50;
+const spacingInfluence = 5;
 
 const infinityDistance = 10000000;
 
@@ -282,12 +288,28 @@ export default class Toile {
 			x: 0,
 			y: -infinityDistance,
 		};
+		const upperCornerRightRectangleBase = {
+			x: glyph.spacingLeft - glyph.baseSpacingLeft,
+			y: infinityDistance,
+		};
+		const bottomZeroLineBase = {
+			x: glyph.spacingLeft - glyph.baseSpacingLeft,
+			y: -infinityDistance,
+		};
 		const bottomAdvanceWidthLine = {
 			x: glyph.advanceWidth,
 			y: -infinityDistance,
 		};
 		const topAdvanceWidthLine = {
 			x: glyph.advanceWidth,
+			y: infinityDistance,
+		};
+		const bottomAdvanceWidthLineBase = {
+			x: glyph.advanceWidth - glyph.spacingRight + glyph.baseSpacingRight,
+			y: -infinityDistance,
+		};
+		const topAdvanceWidthLineBase = {
+			x: glyph.advanceWidth - glyph.spacingRight + glyph.baseSpacingRight,
 			y: infinityDistance,
 		};
 		const lowerCornerLeftRectangle = {
@@ -311,6 +333,21 @@ export default class Toile {
 			lightestGrey,
 			lightestGrey,
 		);
+
+		// base spacing lines
+		this.drawLine(
+			bottomZeroLineBase,
+			upperCornerRightRectangleBase,
+			baseSpaceHandleColor,
+		);
+		this.drawLine(
+			bottomAdvanceWidthLineBase,
+			topAdvanceWidthLineBase,
+			baseSpaceHandleColor,
+		);
+
+
+		// spacing handle
 		this.drawLine(
 			bottomZeroLine,
 			upperCornerRightRectangle,
@@ -321,6 +358,7 @@ export default class Toile {
 			topAdvanceWidthLine,
 			green,
 		);
+
 		this.drawLine(
 			{x: -infinityDistance, y: values.xHeight},
 			{x: infinityDistance, y: values.xHeight},
@@ -351,6 +389,24 @@ export default class Toile {
 			{x: infinityDistance, y: -values.overshoot},
 			lightGrey,
 		);
+
+		this.interactionList.push({
+			id: 'spacingLeft',
+			type: toileType.SPACING_HANDLE,
+			data: {
+				x: 0,
+				baseSpacing: glyph.baseSpacingLeft,
+			},
+		});
+
+		this.interactionList.push({
+			id: 'spacingRight',
+			type: toileType.SPACING_HANDLE,
+			data: {
+				x: glyph.advanceWidth,
+				baseSpacing: glyph.baseSpacingRight,
+			},
+		});
 	}
 
 	drawControlPoint(node, hotness, fillColor) {
@@ -1587,7 +1643,7 @@ export default class Toile {
 			start,
 			end,
 			undefined,
-			lightGrey,
+			nodePropertyBackground,
 		);
 
 		if (type === toileType.NODE_SKELETON) {
@@ -1687,6 +1743,21 @@ export default class Toile {
 
 		this.interactionList.forEach((interactionItem) => {
 			switch (interactionItem.type) {
+			case toileType.SPACING_HANDLE: {
+				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+				const [mouseTransformed] = transformCoords(
+					[this.mouse],
+					inverseMatrix,
+					this.height / this.viewMatrix[0],
+				);
+				const {x} = interactionItem.data;
+				const distance = Math.abs(x - mouseTransformed.x);
+
+				if (distance <= spacingInfluence / this.viewMatrix[0]) {
+					result.push(interactionItem);
+				}
+				break;
+			}
 			case toileType.COMPONENT_MENU_ITEM_CENTER: {
 				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 				const [mouseTransformed] = transformCoords(
