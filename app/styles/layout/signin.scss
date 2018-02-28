@@ -71,6 +71,16 @@ _:-ms-fullscreen, #notloggedin {
 		text-align: center;
 	}
 
+	&-container {
+		display: flex;
+		flex-direction: column;
+		padding: 0;
+	}
+
+	&-oauth-buttons {
+		padding:30px 40px 10px 40px;
+	}
+
 	&-form {
 		display:flex;
 		width:100%;
