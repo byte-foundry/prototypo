@@ -394,7 +394,6 @@ export default {
 		else {
 			newParams[name] = value;
 		}
-
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);

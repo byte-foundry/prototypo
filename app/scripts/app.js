@@ -6,6 +6,7 @@ import { hot } from 'react-hot-loader'
 import HoodieApi from './services/hoodie.services';
 
 import AcademyApp from './components/academy/academy-app.components';
+import OnboardingApp from './components/onboarding/onboarding-app.components';
 import AcademyDashboard from './components/academy/academy-dashboard.components';
 import AcademyHome from './components/academy/academy-home.components';
 import AcademyCourse from './components/academy/academy-course.components';
@@ -122,6 +123,7 @@ class AppRoutes extends React.PureComponent {
 				<Router history={hashHistory} onUpdate={trackUrl}>
 					<Route component={App} name="app" path="/">
 						<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin} />
+						<Route path="onboarding" component={OnboardingApp} />
 						/* #if debug */
 						<Route path="replay" path="replay/:replayId" component={ReplayViewer} />
 						<Route path="debug" component={ReplayViewer} />
