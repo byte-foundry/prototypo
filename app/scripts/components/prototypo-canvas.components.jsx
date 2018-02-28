@@ -17,6 +17,7 @@ import CanvasGlyphInput from './canvas-glyph-input.components';
 import AlternateMenu from './alternate-menu.components';
 import CanvasBar from './canvasTools/canvas-bar.components';
 import GlyphCanvas from './glyph-canvas.components';
+import {toileType} from '../toile/toile.js';
 
 export default class PrototypoCanvas extends React.Component {
 	constructor(props) {
@@ -248,7 +249,7 @@ export default class PrototypoCanvas extends React.Component {
 		else {
 			glyphName = this.state.glyphs[this.props.glyphSelected][0].name;
 		}
-		this.client.dispatchAction('/reset-glyph-points-manually', {glyphName, points: this.state.selectedItems});
+		this.client.dispatchAction('/reset-glyph-points-manually', {glyphName, unicode: this.props.glyphSelected, points: this.state.selectedItems});
 	}
 
 	wheel(zoom, center) {
@@ -513,7 +514,12 @@ export default class PrototypoCanvas extends React.Component {
 						onClick={this.resetPoints}
 						disabled={!(this.state.selectedItems && this.state.selectedItems.length)}
 					>
-						Reset point
+						Reset {
+							this.state.selectedItems
+								&& this.state.selectedItems.length > 0
+								&& this.state.selectedItems[0].type === toileType.SPACING_HANDLE
+								? 'spacing'
+								: 'point'}
 					</button>
 				</div>
 				<GlyphCanvas dependencies={this.props.uiDependencies} glyphOutsideView={this.state.glyphOutsideView} />

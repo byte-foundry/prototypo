@@ -472,6 +472,8 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 
+				// =========================================================
+				// =========================================================
 				// This is the state machine state changing part
 				// There is 3 first level state
 				if (appMode === canvasMode.MOVE) {
@@ -535,6 +537,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						if (spacingHandle.length > 0) {
 							appStateValue = appState.DRAGGING_SPACING;
 							selectedItems = [spacingHandle[0]];
+							this.storeSelectedItems(selectedItems);
 						}
 						else {
 							appStateValue = appState.BOX_SELECTING;
@@ -576,6 +579,10 @@ export default class GlyphCanvas extends React.PureComponent {
 								contourSelected = undefined;
 								contourSelectedIndex = 0;
 							}
+						}
+						else if (spacingHandle.length > 0) {
+							appStateValue = appState.DRAGGING_SPACING;
+							selectedItems = [spacingHandle[0]];
 						}
 						else {
 							appStateValue = appState.BOX_SELECTING;
@@ -675,6 +682,9 @@ export default class GlyphCanvas extends React.PureComponent {
 						});
 					}
 				}
+				// End of StateMachine
+				// =========================================================
+				// =========================================================
 
 
 				if (mouse.wheel) {
@@ -685,6 +695,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 
 
+				// Drawing basic stuff (glyph, frame, and contours)
 				this.toile.clearCanvas(width, height);
 				this.toile.drawTypographicFrame(
 					glyph,
@@ -700,6 +711,10 @@ export default class GlyphCanvas extends React.PureComponent {
 					appMode === canvasMode.SELECT_POINTS ? hotItems : [],
 				);
 
+				//= ========================================================
+				//= ========================================================
+				// handle hotness of elements in component mode
+				// draw component that are hovered or not
 				if (appMode === canvasMode.COMPONENTS) {
 					this.toile.drawComponents(glyph.components, [...hotItems, componentHovered]);
 
@@ -737,6 +752,8 @@ export default class GlyphCanvas extends React.PureComponent {
 						frameCounters.componentMenu = 0;
 					}
 				}
+				// =========================================================
+				// =========================================================
 
 				if (appMode === canvasMode.SELECT_POINTS && !(appStateValue & (appState.DRAGGING_POINTS | appState.DRAGGING_CONTOUR_POINT))) {
 					if (spacingHandle.length > 0) {
@@ -750,6 +767,9 @@ export default class GlyphCanvas extends React.PureComponent {
 					this.canvas.style.cursor = 'default';
 				}
 
+				// =========================================================
+				// =========================================================
+				// draw stuff when in select-points mode
 				if (
 					appStateValue & (
 						appState.CONTOUR_SELECTED
@@ -860,11 +880,13 @@ export default class GlyphCanvas extends React.PureComponent {
 						appState.POINTS_SELECTED
 						| appState.CONTOUR_POINT_SELECTED
 						| appState.SKELETON_POINT_SELECTED
+						| appState.SPACING_SELECTED
 					)
 				) {
 					if (this.toile.keyboardDownRisingEdge.keyCode === 27) {
 						this.client.dispatchAction('/reset-glyph-points-manually', {
 							glyphName: glyph.name,
+							unicode: glyph.unicode,
 							points: selectedItems,
 						});
 					}
@@ -1070,10 +1092,10 @@ export default class GlyphCanvas extends React.PureComponent {
 						case toileType.NODE: {
 							let curveMode = onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD;
 
-							if (this.toile.keyboardDown.special & specialKey.ALT) {
+							if (this.toile.keyboardDown.keyCode === 65) {
 								curveMode &= ~onCurveModMode.WIDTH_MOD;
 							}
-							else if (this.toile.keyboardDown.special & agnosticCtrl) {
+							else if (this.toile.keyboardDown.keyCode === 87) {
 								curveMode &= ~onCurveModMode.ANGLE_MOD;
 							}
 							onCurveModification(
@@ -1098,7 +1120,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						case toileType.NODE_SKELETON:
 						case toileType.CONTOUR_NODE: {
-							const distrModification = this.toile.keyboardDown.special & agnosticCtrl;
+							const distrModification = this.toile.keyboardDown.keyCode === 68;
 
 							if (distrModification) {
 								skeletonDistrModification(
@@ -1255,6 +1277,7 @@ export default class GlyphCanvas extends React.PureComponent {
 	storeSelectedItems(selectedItems) {
 		const storedItems = selectedItems.map(item => ({
 			type: item.type,
+			id: item.id,
 			data: {
 				parentId: item.data.parentId,
 				modifAddress: item.data.modifAddress,
@@ -1262,7 +1285,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		}));
 
 		this.client.dispatchAction('/store-value', {
-			storedItems,
+			selectedItems: storedItems,
 		});
 	}
 
