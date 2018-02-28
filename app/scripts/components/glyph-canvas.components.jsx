@@ -21,6 +21,10 @@ let rafId;
 const MINIMUM_DRAG_THRESHOLD = 6;
 const MINIMUM_DRAG_DIRECTIONAL_THRESHOLD = 10;
 
+const agnosticCtrl = navigator.platform.indexOf('Mac') !== -1
+	? specialKey.META
+	: specialKey.CTRL;
+
 const directionalMod = {
 	X: 0b1,
 	Y: 0b10,
@@ -1027,7 +1031,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						case toileType.NODE_OUT:
 						case toileType.NODE_IN: {
 							const unsmoothMod = this.toile.keyboardDown.special & specialKey.ALT;
-							const unparallelMod = this.toile.keyboardDown.special & specialKey.CTRL;
+							const unparallelMod = this.toile.keyboardDown.special & agnosticCtrl;
 
 							handleModification(
 								this.client,
@@ -1069,7 +1073,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							if (this.toile.keyboardDown.special & specialKey.ALT) {
 								curveMode &= ~onCurveModMode.WIDTH_MOD;
 							}
-							else if (this.toile.keyboardDown.special & specialKey.CTRL) {
+							else if (this.toile.keyboardDown.special & agnosticCtrl) {
 								curveMode &= ~onCurveModMode.ANGLE_MOD;
 							}
 							onCurveModification(
@@ -1094,7 +1098,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						case toileType.NODE_SKELETON:
 						case toileType.CONTOUR_NODE: {
-							const distrModification = this.toile.keyboardDown.special & specialKey.CTRL;
+							const distrModification = this.toile.keyboardDown.special & agnosticCtrl;
 
 							if (distrModification) {
 								skeletonDistrModification(
