@@ -1,4 +1,3 @@
-import _cloneDeep from 'lodash/cloneDeep';
 import _forOwn from 'lodash/forOwn';
 import {prototypoStore, undoableStore} from '../stores/creation.stores';
 import LocalServer from '../stores/local-server.stores';
@@ -11,13 +10,9 @@ window.addEventListener('fluxServer.setup', () => {
 });
 
 export default {
-	'/load-font-infos': ({altList}) => {
-		const patch = prototypoStore.set('altList', altList).commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patch);
-	},
 	'/set-alternate': ({unicode, glyphName, relatedGlyphs = {}}) => {
-		const altList = _cloneDeep(prototypoStore.get('altList'));
+		const newParams = {...undoableStore.get('controlsValues')};
+		const altList = newParams.altList || {};
 
 		altList[unicode] = glyphName;
 
@@ -25,19 +20,16 @@ export default {
 			altList[relatedUnicode] = alternate;
 		});
 
-		const patch = prototypoStore.set('altList', altList).commit();
+		newParams.altList = {...altList};
 
-		localServer.dispatchUpdate('/prototypoStore', patch);
+		const patch = undoableStore.set('controlsValues', newParams).commit();
 
-		const values = undoableStore.get('controlsValues');
+		localServer.dispatchUpdate('/undoableStore', patch);
 
 		FontValues.save({
 			variantId: prototypoStore.get('variant').id,
 			typeface: prototypoStore.get('variant').db || 'default',
-			values: {
-				...values,
-				altList,
-			},
+			values: newParams,
 		});
 	},
 };

@@ -54,13 +54,8 @@ export async function loadFontValues(typedata, typeface, variantId) {
 
 	try {
 		const fontValues = await FontValues.get({typeface, variantId});
-		const altList = {
-			...typedata.fontinfo.defaultAlts,
-			...fontValues.values.altList,
-		};
 
 		localClient.dispatchAction('/load-values', {...initValues, ...fontValues.values});
-		localClient.dispatchAction('/load-font-infos', {altList});
 	}
 	catch (err) {
 		const values = {altList: typedata.fontinfo.defaultAlts, ...initValues};
@@ -71,7 +66,6 @@ export async function loadFontValues(typedata, typeface, variantId) {
 			values,
 			variantId,
 		});
-		localClient.dispatchAction('/load-font-infos', {altList: values.altList});
 	}
 
 	localClient.dispatchAction('/load-indiv-groups');

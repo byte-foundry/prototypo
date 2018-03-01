@@ -42,6 +42,7 @@ function calculateHandleCoordinateModification(
 	handlePos,
 	tension,
 	isIn,
+	refLength,
 ) {
 	const handleBase = isIn
 		? {x: ownParent.handleOut.xBase, y: ownParent.handleOut.yBase}
@@ -54,10 +55,11 @@ function calculateHandleCoordinateModification(
 		- Math.atan2(relativeBasePos.y, relativeBasePos.x);
 
 	const length = distance2D(handleBase, ownParent);
+	const actualLength = length === 0 ? refLength : length * tension;
 
 	const newOpPos = add2D(ownParent, {
-		x: Math.cos(modAngle) * length * tension,
-		y: Math.sin(modAngle) * length * tension,
+		x: Math.cos(modAngle) * actualLength,
+		y: Math.sin(modAngle) * actualLength,
 	});
 	const opVector = subtract2D(newOpPos, handleBase);
 
@@ -81,7 +83,8 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 		x: newVectorPreTransform.x * xTransform,
 		y: newVectorPreTransform.y * yTransform,
 	};
-	const tension = distance2D(newPos, parent) / distance2D(handlePos, parent);
+	const refLength = distance2D(newPos, parent);
+	const tension = refLength / distance2D(handlePos, parent);
 	const isIn = toileType.NODE_IN === draggedItem.type
 		|| toileType.CONTOUR_NODE_IN === draggedItem.type;
 
@@ -101,6 +104,7 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 			handlePos,
 			tension,
 			isIn,
+			refLength,
 		);
 
 		changes[`${draggedItem.data.parentId}.${oppositeDirection}.x`]
@@ -117,6 +121,7 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 				handlePos,
 				tension,
 				!isIn,
+				refLength,
 			);
 
 			changes[`${draggedItem.data.parallelId}.${direction}.x`]
@@ -135,6 +140,7 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 			handlePos,
 			tension,
 			isIn,
+			refLength,
 		);
 
 		changes[`${draggedItem.data.parallelId}.${oppositeDirection}.x`]
@@ -1014,6 +1020,25 @@ export default class GlyphCanvas extends React.PureComponent {
 					interactions = [interaction];
 				}
 
+				if (appStateValue & appState.CONTOUR_POINT_SELECTED) {
+					const unparallelMod = this.toile.keyboardDown.special & agnosticCtrl;
+
+					selectedItems.forEach((item) => {
+						if (!unparallelMod
+							&& (item.type === toileType.NODE_OUT
+							|| item.type === toileType.NODE_IN)) {
+							const {parallelParameters} = item.data;
+							const node = _get(glyph, parallelParameters[1]);
+
+							parallelParameters[0] = node;
+							parallelParameters[4] = [{id: parallelParameters[1]}];
+
+							this.toile.drawExpandedNode(...item.data.parallelParameters);
+						}
+					});
+				}
+
+
 				if (
 					appStateValue & (
 						appState.DRAGGING_POINTS
@@ -1073,6 +1098,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 								this.toile.drawExpandedNode(...item.data.parallelParameters);
 							}
+
 							break;
 						}
 						case toileType.CONTOUR_NODE_OUT:

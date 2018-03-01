@@ -134,7 +134,6 @@ export default {
 		};
 
 		localClient.dispatchAction('/load-values', {...initValues, ...fontValues.values});
-		localClient.dispatchAction('/load-font-infos', {altList});
 
 		localClient.dispatchAction('/clear-undo-stack');
 		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
