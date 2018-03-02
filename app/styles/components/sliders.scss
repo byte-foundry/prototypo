@@ -192,7 +192,7 @@
 		}
 
 		&-bg {
-			height: 1.9rem;
+			height: 1.2rem;
 			@include themify() {
 				background-color: $theme-background;
 			}
@@ -212,18 +212,18 @@
 
 		&-handle {
 			float: right;
-			width: 1.9rem;
-			height: 1.9rem;
+			width: 1.2rem;
+			height: 1.2rem;
 			@include themify() {
-				border:solid 0.5rem $theme-background;
+				border:solid 0.4rem $theme-background;
 			}
-			background-color: #555555;
+			background-color: $dark-grey;
 		}
 	}
 
 	&-range-limiter-bg {
 		border-radius: 0;
-		height: 1.9rem;
+		height: 1.2rem;
 		width: 100%;
 		background: transparentize(#555, 0.4);
 		position: absolute;
@@ -233,11 +233,11 @@
 		background-size: 25px 25px;
 
 		&.min {
-			-webkit-mask-image: radial-gradient(circle at calc(100%) 50%, transparent 10px, #555 11px);
+			-webkit-mask-image: radial-gradient(circle at calc(100%) 50%, transparent 9px, #555 10px);
 		}
 
 		&.max {
-			-webkit-mask-image: radial-gradient(circle at 0px 50%, transparent 10px, #555 11px);
+			-webkit-mask-image: radial-gradient(circle at 0px 50%, transparent 9px, #555 10px);
 		}
 	}
 
@@ -278,7 +278,7 @@
 		}
 
 		.slider-demo-overlay {
-			top: 5px;
+			top: 3px;
 			width: 270px;
 			left: -35px;
 			height:100%;
