@@ -1,3 +1,4 @@
+/* global trackJs */
 import {gql} from 'react-apollo';
 
 import apolloClient from './graphcool.services';
@@ -18,10 +19,8 @@ function values(prefix) {
 					`,
 					variables: {id: params.variantId},
 				})
-				.then(({data}) => {
-					return data.Variant;
-				})
-				.catch(e => console.log('oops', e));
+					.then(({data}) => data.Variant)
+					.catch(e => trackJs.track(e));
 			}
 			if (prefix === 'newapp') {
 				return apolloClient.query({
@@ -35,11 +34,11 @@ function values(prefix) {
 						}
 					`,
 				})
-				.then(({data}) => {
-					return data.user;
-				})
-				.catch(e => console.log('oops', e));
+					.then(({data}) => data.user)
+					.catch(e => trackJs.track(e));
 			}
+
+			return undefined;
 		},
 		save(params) {
 			if (prefix === 'newfont' && params.variantId) {
@@ -56,7 +55,7 @@ function values(prefix) {
 						values: params.values,
 					},
 				})
-				.catch(e => console.log('oops', e))
+					.catch(e => trackJs.track(e));
 			}
 			if (prefix === 'newapp') {
 				apolloClient.query({
@@ -82,7 +81,7 @@ function values(prefix) {
 							values: JSON.parse(JSON.stringify(params.values)),
 						},
 					})
-					.catch(e => console.log('oops', e))
+						.catch(e => trackJs.track(e));
 				});
 			}
 			// if (location.hash.indexOf('#/replay') === -1 && HoodieApi.isLoggedIn()) {
@@ -92,7 +91,7 @@ function values(prefix) {
 			// }
 			return true;
 		},
-		deleteDb(params) {
+		deleteDb() {
 			// console.log('deleteDb values', prefix, params);
 			// return HoodieApi.instance.store.remove(`${prefix}values`, `${params.typeface}`);
 		},

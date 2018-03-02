@@ -1,3 +1,4 @@
+import _xor from 'lodash/xor';
 import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
@@ -27,7 +28,7 @@ export default {
 		saveAppValues();
 	},
 	'/toggle-pinned': (params) => {
-		const pinned = _.xor(prototypoStore.get('tagPinned'), [params]);
+		const pinned = _xor(prototypoStore.get('tagPinned'), [params]);
 		const patch = prototypoStore
 			.set('tagPinned', pinned)
 			.commit();

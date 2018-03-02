@@ -3,7 +3,7 @@ import Lifespan from 'lifespan';
 import classNames from 'classnames';
 import ScrollArea from 'react-scrollbar/dist/no-css';
 
-import LocalClient from '~/stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores.jsx';
 
 import Button from '../shared/button.components.jsx';
 
@@ -46,7 +46,7 @@ export default class IndivGroupList extends React.Component {
 	}
 
 	render() {
-		const groups = _.map(this.state.groups, (group) => {
+		const groups = this.state.groups.map((group) => {
 			return (
 				<IndivGroup
 					key={group.name}
@@ -95,7 +95,7 @@ class IndivGroup extends React.Component {
 			'indiv-group': true,
 			'is-active': this.props.selected,
 		});
-		const chars = _.map(this.props.glyphs, (glyph) => {
+		const chars = this.props.glyphs.map((glyph) => {
 			return String.fromCharCode(glyph);
 		});
 

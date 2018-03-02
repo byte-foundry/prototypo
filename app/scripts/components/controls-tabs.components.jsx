@@ -11,13 +11,13 @@ export class ControlsTabs extends React.PureComponent {
 			console.log('[RENDER] controls tabs');
 		}
 
-		const headers = _.map(this.props.children, ({props: {iconId, name}}) => {
+		const headers = this.props.children.map(({props: {iconId, name}}) => {
 			return (
 				<ControlsTabHeader iconId={iconId} tab={this.props.tab} name={name} key={`${name}ControlsHeader`}/>
 			);
 		});
 
-		const tab = _.map(this.props.children, (child) => {
+		const tab = this.props.children.map((child) => {
 			if (child.props.name === this.props.tab) {
 				return child;
 			}

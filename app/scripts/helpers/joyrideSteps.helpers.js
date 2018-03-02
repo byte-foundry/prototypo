@@ -4,7 +4,7 @@
 *	@param {object} currentState
 *	@return {array} steps - an array of states, possibly empty
 */
-const buildTutorialSteps = function(previousState, currentState) {
+const buildTutorialSteps = function (previousState, currentState) {
 	// "steps" is an array of tutorial steps
 	const steps = [];
 
@@ -118,54 +118,54 @@ const buildTutorialSteps = function(previousState, currentState) {
 
 		// populate steps according to the new tutorial values
 		switch (currentState.uiJoyrideTutorialValue) {
-			case 'fileTutorial': {
+		case 'fileTutorial': {
 				// only if this is the first time the user is doing the action
-				if (currentState.firstTimeFile) {
-					steps.push(
+			if (currentState.firstTimeFile) {
+				steps.push(
 						predefinedSteps.fileStep1,
-						predefinedSteps.fileStep2
+						predefinedSteps.fileStep2,
 					);
-				}
-				break;
 			}
-			case 'collectionsTutorial': {
-				if (currentState.firstTimeCollection) {
-					steps.push(
+			break;
+		}
+		case 'collectionsTutorial': {
+			if (currentState.firstTimeCollection) {
+				steps.push(
 						predefinedSteps.collectionStep1,
 						predefinedSteps.collectionStep2,
-						predefinedSteps.collectionStep3
+						predefinedSteps.collectionStep3,
 					);
-				}
-				break;
 			}
-			case 'indivGroupsCreationTutorial': {
-				if (currentState.firstTimeIndivCreate) {
-					steps.push(
-						predefinedSteps.indivGroupCreateStep1
+			break;
+		}
+		case 'indivGroupsCreationTutorial': {
+			if (currentState.firstTimeIndivCreate) {
+				steps.push(
+						predefinedSteps.indivGroupCreateStep1,
 					);
-				}
-				break;
 			}
-			case 'indivGroupsEditionTutorial': {
-				if (currentState.firstTimeIndivEdit) {
-					steps.push(
+			break;
+		}
+		case 'indivGroupsEditionTutorial': {
+			if (currentState.firstTimeIndivEdit) {
+				steps.push(
 						predefinedSteps.indivGroupEditStep1,
-						predefinedSteps.indivGroupEditStep2
+						predefinedSteps.indivGroupEditStep2,
 					);
-				}
-				break;
 			}
-			case 'academyTutorial': {
-				if (currentState.firstTimeAcademyJoyride) {
-					steps.push(
-						predefinedSteps.academyStep1
+			break;
+		}
+		case 'academyTutorial': {
+			if (currentState.firstTimeAcademyJoyride) {
+				steps.push(
+						predefinedSteps.academyStep1,
 					);
-				}
-				break;
 			}
-			default: {
-				break;
-			}
+			break;
+		}
+		default: {
+			break;
+		}
 		}
 	}
 

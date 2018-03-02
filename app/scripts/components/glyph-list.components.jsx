@@ -1,3 +1,5 @@
+import _pickBy from 'lodash/pickBy';
+import _forOwn from 'lodash/forOwn';
 import React from 'react';
 import ScrollArea from 'react-scrollbar/dist/no-css';
 import Lifespan from 'lifespan';
@@ -79,9 +81,9 @@ export default class GlyphList extends React.PureComponent {
 			fields.forEach((field) => {
 				tokenOk = tokenOk
 				|| (
-					glyph[0].src[field.name]
+					glyph[0][field.name]
 						&& field.comp(
-							glyph[0].src[field.name].toString().toLowerCase(),
+							glyph[0][field.name].toString().toLowerCase(),
 							token.toLowerCase()
 						)
 				);
@@ -97,10 +99,10 @@ export default class GlyphList extends React.PureComponent {
 			console.log('[RENDER] GlyphList');
 		}
 		const selectedGlyph = this.props.selected;
-		const glyphs = _.pickBy(this.props.glyphs, (glyph) => {
-			if (glyph[0].src) {
+		const glyphs = _pickBy(this.props.glyphs, (glyph) => {
+			if (glyph[0].unicode) {
 				return (
-					glyph[0].src.tags.indexOf(this.props.selectedTag) !== -1
+					glyph[0].tags.indexOf(this.props.selectedTag) !== -1
 					&& (
 						!this.props.search || this.isGlyphInSearch(glyph, this.props.search)
 					)
@@ -110,6 +112,16 @@ export default class GlyphList extends React.PureComponent {
 				return false;
 			}
 		});
+		const glyphComps = []
+		_forOwn(glyphs, (glyph, unicode) => {
+			if (selectedGlyph === unicode) {
+				glyphComps.push(<Glyph glyph={glyph} selected={true} unicode={unicode} key={unicode} manualEdited={this.isManualEdited(glyph)} />);
+			}
+			else {
+				glyphComps.push(<Glyph glyph={glyph} selected={false} unicode={unicode} key={unicode} manualEdited={this.isManualEdited(glyph)} />);
+			}
+
+		})
 
 		return (
 			<div className="glyph-list clearfix">
@@ -122,17 +134,7 @@ export default class GlyphList extends React.PureComponent {
 					pinnedSearch={this.props.pinnedSearch}/>
 				<ScrollArea horizontal={false}>
 					<div className="glyph-list-glyphs">
-						{
-							_.map(glyphs, (glyph, unicode) => {
-								if (selectedGlyph === unicode) {
-									return (<Glyph glyph={glyph} selected={true} unicode={unicode} key={unicode} manualEdited={this.isManualEdited(glyph)} />);
-								}
-								else {
-									return (<Glyph glyph={glyph} selected={false} unicode={unicode} key={unicode} manualEdited={this.isManualEdited(glyph)} />);
-								}
-
-							})
-						}
+						{glyphComps}
 					</div>
 				</ScrollArea>
 				<SearchGlyphList/>

@@ -25,7 +25,9 @@ export default class SubscriptionSidebar extends React.PureComponent {
 	}
 
 	render() {
-		const {country, plan, quantity, hasBeenSubscribing, percentPrice} = this.props;
+		const {
+			country, plan, quantity, hasBeenSubscribing, percentPrice,
+		} = this.props;
 
 		const plans = {
 			[monthlyConst.prefix]: {
@@ -34,11 +36,11 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					? <span>Try Prototypo Pro without commitment</span>
 					: <span>
 							Try Prototypo Pro subscription for
-							{' '}
+						{' '}
 						<Price amount={1} country={country} />
 						{' '}
 							only
-						</span>,
+       </span>,
 				features: [
 					'More diverse fonts with full range on all parameters',
 					'Perfectly customized with glyph individualization groups',
@@ -137,15 +139,17 @@ export default class SubscriptionSidebar extends React.PureComponent {
 		};
 
 		if (plans[plan]) {
-			const {header, title, features, cta, subcta, link} = plans[plan];
+			const {
+				header, title, features, cta, subcta, link,
+			} = plans[plan];
 
 			return (
 				<div className="subscription-sidebar">
 					<h1 className="subscription-sidebar-header">{header}</h1>
 					<h2 className="subscription-sidebar-title">{title}</h2>
 					<ul className="subscription-sidebar-list-feat">
-						{features.map(feat => (
-							<li className="subscription-sidebar-list-feat-item">
+						{features.map((feat, i) => (
+							<li className="subscription-sidebar-list-feat-item" key={i}>
 								{feat}
 							</li>
 						))}

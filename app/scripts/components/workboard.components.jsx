@@ -11,7 +11,6 @@ import LoadingOverlay from './shared/loading-overlay.components.jsx';
 import IndivSidebar from './indivMode/indiv-sidebar.components.jsx';
 
 export default class Workboard extends React.PureComponent {
-
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -71,7 +70,7 @@ export default class Workboard extends React.PureComponent {
 					{loadingOverlay}
 				</ReactCSSTransitionGroup>
 				{sideBar}
-				<PrototypoPanel fontName={this.state.fontName} glyphs={this.state.glyphs}/>
+				<PrototypoPanel fontName={this.state.fontName} glyphs={this.state.glyphs} />
 				<GlyphPanel />
 			</div>
 		);

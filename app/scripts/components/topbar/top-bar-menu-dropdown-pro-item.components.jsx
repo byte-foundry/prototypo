@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import LocalClient from '~/stores/local-client.stores';
+import LocalClient from '../../stores/local-client.stores';
 
 import TopBarMenuDropdownItem from './top-bar-menu-dropdown-item.components';
 

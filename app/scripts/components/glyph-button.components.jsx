@@ -33,7 +33,7 @@ export default class GlyphButton extends React.PureComponent {
 
 		const pinned = [];
 
-		_.forEach(this.props.pinned, (tag) => {
+		this.props.pinned.forEach((tag) => {
 
 			pinned.push(
 				<Pinned

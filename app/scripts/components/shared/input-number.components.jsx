@@ -5,7 +5,9 @@ class InputNumber extends React.Component {
 	constructor(props) {
 		super(props);
 
-		const value = isNaN(parseFloat(props.value)) ? props.defaultValue : parseFloat(props.value);
+		const value = Number.isNaN(parseFloat(props.value))
+			? props.defaultValue
+			: parseFloat(props.value);
 
 		this.state = {
 			value: value || 0,
@@ -20,7 +22,7 @@ class InputNumber extends React.Component {
 	}
 
 	componentWillReceiveProps({value, defaultValue}) {
-		if (isNaN(value)) {
+		if (Number.isNaN(value)) {
 			return this.changeValue(defaultValue);
 		}
 		return this.changeValue(value, false);
@@ -72,7 +74,9 @@ class InputNumber extends React.Component {
 
 	render() {
 		const {textValue, value} = this.state;
-		const {className, onChange, step, min, max, controls, ...rest} = this.props;
+		const {
+			className, onChange, step, min, max, controls, ...rest
+		} = this.props;
 
 		delete rest.value;
 
@@ -81,7 +85,7 @@ class InputNumber extends React.Component {
 				{controls
 					&& <button className="input-number-decrement" onClick={this.decrement}>
 						–
-					</button>}
+					   </button>}
 				<input
 					className="input-number"
 					type="text"
@@ -94,7 +98,7 @@ class InputNumber extends React.Component {
 				{controls
 					&& <button className="input-number-increment" onClick={this.increment}>
 						+
-					</button>}
+					   </button>}
 			</div>
 		);
 	}

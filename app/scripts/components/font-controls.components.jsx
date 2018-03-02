@@ -17,6 +17,7 @@ export default class FontControls extends React.PureComponent {
 		this.state = {
 			tabControls: 'Func',
 			currentGroup: {},
+			parameters: [],
 		};
 	}
 
@@ -31,7 +32,7 @@ export default class FontControls extends React.PureComponent {
 				this.setState({
 					tabControls: headJS.fontTab,
 					credits: headJS.credits,
-					parameters: headJS.fontParameters,
+					parameters: headJS.fontParameters || [],
 					typeface: headJS.variant,
 					indivMode: headJS.indivMode,
 					indivEdit: headJS.indivEditingParams,
@@ -66,7 +67,7 @@ export default class FontControls extends React.PureComponent {
 			);
 		}
 
-		const tabs = _.map(this.state.parameters, (group) => {
+		const tabs = this.state.parameters.map((group) => {
 			return (
 				<ControlsTab iconId={group.label} name={group.label} key={group.label}>
 					<Sliders
