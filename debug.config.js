@@ -1,4 +1,4 @@
-var config = require('./local.config.js');
+const config = require('./local.config.js');
 
 config['if-loader'] = 'debug';
 

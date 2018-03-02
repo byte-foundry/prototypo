@@ -125,12 +125,14 @@ class GoProModal extends React.PureComponent {
 						<div
 							className={`pricing-switch-item ${this.state.billing === 'monthly' ? 'is-active' : ''}`}
 							onClick={this.switchMonthlyBilling}
+							role="button"
 						>
 							Monthly billing
 						</div>
 						<div
 							className={`pricing-switch-item ${this.state.billing === 'annually' ? 'is-active' : ''}`}
 							onClick={this.switchAnnualBilling}
+							role="button"
 						>
 							Annual billing
 						</div>
@@ -156,11 +158,11 @@ class GoProModal extends React.PureComponent {
 												1
 												<sup>st</sup>
 												{' '}
-												month for
+													month for
 												{' '}
 												<Price amount={1} currency={currency} />
-											</div>}
-								</div>
+											   </div>}
+								  </div>
 								: false}
 							<ul className="pricing-item-features">
 								<li className="pricing-item-feature">
@@ -176,7 +178,7 @@ class GoProModal extends React.PureComponent {
 								<li className="pricing-item-feature"><br /><br /></li>
 								<li className="pricing-item-feature">&nbsp;</li>
 							</ul>
-							<div className="pricing-item-cta" onClick={this.goSubscribe}>
+							<div className="pricing-item-cta" onClick={this.goSubscribe} role="button">
 								{this.state.billing === 'monthly' && !hasBeenSubscribing
 									? <span>Try it for <Price amount={1} currency={currency} /></span>
 									: 'Go pro'}
@@ -237,10 +239,10 @@ class GoProModal extends React.PureComponent {
 							{teamCount <= 10
 								? <div className="pricing-item-cta" onClick={this.goSubscribeTeam}>
 										Create your team
-									</div>
+								  </div>
 								: <div className="pricing-item-cta" onClick={this.openIntercomChat}>
 										Get in touch
-									</div>}
+								  </div>}
 						</PricingItem>
 
 					</div>

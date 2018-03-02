@@ -1,3 +1,4 @@
+import _throttle from 'lodash/throttle';
 import {prototypoStore} from '../stores/creation.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import {FontValues, AppValues} from '../services/values.services.js';
@@ -47,21 +48,17 @@ window.addEventListener('appValues.loaded', () => {
 export async function loadFontValues(typedata, typeface, variantId) {
 	const initValues = {};
 
-	_.each(typedata.controls, (group) => {
-		return _.each(group.parameters, (param) => {
-			initValues[param.name] = param.init;
-		});
-	});
+	typedata.controls.forEach(group => group.parameters.forEach((param) => {
+		initValues[param.name] = param.init;
+	}));
 
 	try {
 		const fontValues = await FontValues.get({typeface, variantId});
-		const altList = _.extend(typedata.fontinfo.defaultAlts, fontValues.values.altList);
 
-		localClient.dispatchAction('/load-values', _.extend(initValues, fontValues.values));
-		localClient.dispatchAction('/load-font-infos', {altList});
+		localClient.dispatchAction('/load-values', {...initValues, ...fontValues.values});
 	}
 	catch (err) {
-		const values = _.extend({}, {altList: typedata.fontinfo.defaultAlts}, initValues);
+		const values = {altList: typedata.fontinfo.defaultAlts, ...initValues};
 
 		localClient.dispatchAction('/load-values', values);
 		FontValues.save({
@@ -69,24 +66,27 @@ export async function loadFontValues(typedata, typeface, variantId) {
 			values,
 			variantId,
 		});
-		localClient.dispatchAction('/load-font-infos', {altList: values.altList});
 	}
 
 	localClient.dispatchAction('/load-indiv-groups');
+
+	const event = new CustomEvent('values.loaded');
+
+	window.dispatchEvent(event);
 }
 
-export const saveAppValues = _.throttle(() => {
+export const saveAppValues = _throttle(() => {
 	if (!appValuesLoaded) {
 		return;
 	}
 
-	//TODO(franzp): WOW BE CAREFUL
-	//debugger;
-	//qsdmjkfqsd,qsdlhvklm:({}:w
-	//const appValues = prototypoStore.head.toJS();
+	// TODO(franzp): WOW BE CAREFUL
+	// debugger;
+	// qsdmjkfqsd,qsdlhvklm:({}:w
+	// const appValues = prototypoStore.head.toJS();
 	const appValues = {};
 
-	_.forEach(valuesToLoad, (ref) => {
+	valuesToLoad.forEach((ref) => {
 		appValues[ref.remote] = prototypoStore.get(ref.local);
 	});
 

@@ -27,10 +27,14 @@ class TopBarMenu extends React.PureComponent {
 
 	render() {
 		const {itemDisplayed} = this.state;
-		const {children, ...rest} = this.props;
+		const {
+			children,
+			style,
+			id,
+		} = this.props;
 
 		return (
-			<ul {...rest} className="top-bar-menu">
+			<ul {...{style, id}} className="top-bar-menu" role="menu">
 				{React.Children.map(children, (child, index) => {
 					if (!child || !child.props) {
 						return child;
@@ -112,7 +116,9 @@ class TopBarMenuItem extends React.PureComponent {
 	}
 
 	render() {
-		const {className, noHover, selected, count, children} = this.props;
+		const {
+			className, noHover, selected, count, children,
+		} = this.props;
 
 		const classes = classNames(className, {
 			'topbaritem-displayed': selected,
@@ -121,7 +127,7 @@ class TopBarMenuItem extends React.PureComponent {
 		const id = count ? `topbar-menu-item-${this.props.count}` : '';
 
 		return (
-			<li className={classes} id={id} onClick={this.handleClick}>
+			<li className={classes} id={id} role="menuitem" onClick={this.handleClick}>
 				{children}
 			</li>
 		);

@@ -2,29 +2,22 @@ const path = require('path');
 const webpack = require('webpack');
 const fs = require('fs');
 const merge = require('webpack-merge');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const base = require('./base.config');
 
 module.exports = merge(base, {
 	cache: true,
 	entry: {
-		bundle: ['whatwg-fetch'],
+		index: ['whatwg-fetch'],
 	},
 	module: {
 		rules: [
 			{
 				test: /\.jsx?$/,
 				use: [
-					// {
-					// 	loader: 'transform/cacheable-loader',
-					//
-					// 	options: {
-					// 		envify: true,
-					// 	},
-					// },
 					{
 						loader: 'babel-loader',
-
 						options: {
 							cacheDirectory: true,
 						},
@@ -35,11 +28,6 @@ module.exports = merge(base, {
 			},
 		],
 	},
-	externals: [
-		{
-			'prototypo.js': 'prototypo',
-		},
-	],
 	plugins: [
 		new webpack.LoaderOptionsPlugin({
 			options: {
@@ -51,14 +39,23 @@ module.exports = merge(base, {
 		new webpack.DefinePlugin({
 			'process.env': {
 				NODE_ENV: JSON.stringify('production'),
+				TESTING_FONT: false,
 			},
 		}),
-		new webpack.optimize.UglifyJsPlugin({
-			compress: {
-				conditionals: false,
-			},
-
+		new UglifyJsPlugin({
 			sourceMap: true,
+			include: __dirname,
+			extractComments: true,
 		}),
+		/* new webpack.DllReferencePlugin({
+			context: __dirname,
+			manifest: require('./dist/dll/libs-manifest'),
+			sourceType: 'this',
+		}), */
 	],
+	output: merge(base.output, {
+		filename: '[name].bundle.js',
+		chunkFilename: '[name].bundle.js',
+		path: path.resolve(__dirname, 'dist'),
+	}),
 });

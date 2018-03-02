@@ -1,6 +1,7 @@
-import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
-import LocalServer from '../stores/local-server.stores.jsx';
-import {FontValues} from '../services/values.services.js';
+import _forOwn from 'lodash/forOwn';
+import {prototypoStore, undoableStore} from '../stores/creation.stores';
+import LocalServer from '../stores/local-server.stores';
+import {FontValues} from '../services/values.services';
 
 let localServer;
 
@@ -9,29 +10,26 @@ window.addEventListener('fluxServer.setup', () => {
 });
 
 export default {
-	'/load-font-infos': ({altList}) => {
-		const patch = prototypoStore.set('altList', altList).commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patch);
-	},
-	'/set-alternate': ({unicode, glyphName}) => {
-		const altList = _.cloneDeep(prototypoStore.get('altList'));
+	'/set-alternate': ({unicode, glyphName, relatedGlyphs = {}}) => {
+		const newParams = {...undoableStore.get('controlsValues')};
+		const altList = newParams.altList || {};
 
 		altList[unicode] = glyphName;
 
-		const patch = prototypoStore.set('altList', altList).commit();
+		_forOwn(relatedGlyphs, (alternate, relatedUnicode) => {
+			altList[relatedUnicode] = alternate;
+		});
 
-		localServer.dispatchUpdate('/prototypoStore', patch);
+		newParams.altList = {...altList};
 
-		const values = undoableStore.get('controlsValues');
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
 
 		FontValues.save({
 			variantId: prototypoStore.get('variant').id,
 			typeface: prototypoStore.get('variant').db || 'default',
-			values: {
-				...values,
-				altList,
-			},
+			values: newParams,
 		});
 	},
 };

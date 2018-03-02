@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {graphql, gql} from 'react-apollo';
 
-import LocalClient from '~/stores/local-client.stores';
+import LocalClient from '../../stores/local-client.stores';
 
 import Modal from '../shared/modal.components';
 import InputWithLabel from '../shared/input-with-label.components';

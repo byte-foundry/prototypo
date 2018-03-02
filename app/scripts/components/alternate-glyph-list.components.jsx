@@ -11,7 +11,7 @@ export default class AlternateGlyphList extends React.PureComponent {
 		return (
 			<div className="alternate-glyph-list">
 				{
-					_.map(this.props.alts, (glyph) => {
+					this.props.alts.map((glyph) => {
 						return (
 							<AlternateGlyphListItem unicode={this.props.unicode} glyph={glyph}/>
 						);

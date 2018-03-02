@@ -9,22 +9,28 @@ export default class Tutorials extends React.Component {
 				<div className="tutorials-list">
 					<Tutorial
 						name="Basics"
-						subText="Discovers prototypo basics features"/>
+						subText="Discovers prototypo basics features"
+					/>
 					<Tutorial
 						name="Parameters"
-						subText="Play with your font"/>
+						subText="Play with your font"
+					/>
 					<Tutorial
 						name="Families"
-						subText="Create and manage families and variants"/>
+						subText="Create and manage families and variants"
+					/>
 					<Tutorial
 						name="Glyph list"
-						subText="Personalized your glyph list to make it easier to find the glyphs you're working on"/>
+						subText="Personalized your glyph list to make it easier to find the glyphs you're working on"
+					/>
 					<Tutorial
 						name="Views"
-						subText="Setup your views for easier work"/>
+						subText="Setup your views for easier work"
+					/>
 					<Tutorial
 						name="Individualize Parameters"
-						subText="Discovers the power of good groups of individualized glyphs"/>
+						subText="Discovers the power of good groups of individualized glyphs"
+					/>
 				</div>
 			</div>
 		);

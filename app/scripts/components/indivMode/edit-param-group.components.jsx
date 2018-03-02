@@ -48,16 +48,14 @@ export default class EditParamGroup extends React.Component {
 	}
 
 	render() {
-		const options = _.map(this.state.groups, (group) => {
-				return <option value={group} key={group}>{group}</option>;
-		});
+		const options = this.state.groups.map(group => <option value={group} key={group}>{group}</option>);
 
 		const deletePanel = this.state.preDelete
-			? <DeleteParamGroup glyphs={this.state.glyphs} groupName={this.state.currentGroup}/>
+			? <DeleteParamGroup glyphs={this.state.glyphs} groupName={this.state.currentGroup} />
 			: false;
 
 		const editPanel = this.state.editGroup
-			? <EditParamGroupPanel errorEdit={this.state.errorEdit} glyphsInOther={this.state.otherGroups} glyphs={this.state.glyphs} groupName={this.state.currentGroup}/>
+			? <EditParamGroupPanel errorEdit={this.state.errorEdit} glyphsInOther={this.state.otherGroups} glyphs={this.state.glyphs} groupName={this.state.currentGroup} />
 			: false;
 
 		const glyphGrid = this.state.grid ? (
@@ -65,13 +63,14 @@ export default class EditParamGroup extends React.Component {
 				otherGroups={this.state.otherGroups}
 				tagSelected={this.state.tagSelected}
 				selected={this.state.glyphs}
-				tags={this.state.tags}/>
+				tags={this.state.tags}
+			/>
 		) : false;
 
 		return (
 			<div className="edit-param-group">
 				Editing
-				<select onChange={(e) => { this.selectGroup(e); }} value={this.state.currentGroup} className="edit-param-group-select">
+				<select onChange={(e) => {this.selectGroup(e);}} value={this.state.currentGroup} className="edit-param-group-select">
 					{options}
 				</select>
 				<span className="edit-param-group-button alert" onClick={() => {this.client.dispatchAction('/pre-delete', true);}}>DELETE</span>
