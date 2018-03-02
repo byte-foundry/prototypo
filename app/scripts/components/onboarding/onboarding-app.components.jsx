@@ -47,7 +47,8 @@ export default class OnboardingApp extends React.PureComponent {
 							a,
 							...b.parameters
 						])
-					)
+					),
+					glyphs: head.toJS().d.glyphs
 				});
 			})
 			.onDelete(() => {
@@ -139,10 +140,20 @@ export default class OnboardingApp extends React.PureComponent {
 	}
 
 	renderAlternates(stepData) {
+		// List alternates
+		const alternatesDedup = Object.assign(
+			...Object.keys(this.state.glyphs)
+				.filter(key => this.state.glyphs[key].length > 1 && !this.state.glyphs[key][0].base && key !== 'undefined')
+				.map(key => ({ [key]: this.state.glyphs[key] }))
+		);
 		return (
 			<div className="step step-alternates">
 				<h1>{stepData.title}</h1>
 				{this.props.children}
+
+				{/* this.props.glyphs
+			&& this.props.glyphs[this.props.glyphSelected]
+			&& this.props.glyphs[this.props.glyphSelected].length > 1 */}
 			</div>
 		);
 	}
@@ -209,7 +220,7 @@ export default class OnboardingApp extends React.PureComponent {
 						onClick={() => {
 							this.state.step < onboardingData.steps.length - 1
 								? this.getNextStep()
-								: this.props.history.push('/dashboard');
+								: this.props.history.push("/dashboard");
 						}}
 					>
 						{this.state.step < onboardingData.steps.length - 1
