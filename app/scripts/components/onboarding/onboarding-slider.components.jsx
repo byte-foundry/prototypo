@@ -28,7 +28,8 @@ export default class OnboardingSlider extends React.PureComponent {
 						onChange={(e) => {
 							this.props.onChange({
 								value: parseFloat(e.target.value),
-								name: this.props.name,
+                                name: this.props.name,
+                                force: true,
 							});
 						}}
 					/>

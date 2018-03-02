@@ -20,6 +20,8 @@ export default class CreateFamilyModal extends React.PureComponent {
 	handleCreateFamily(family) {
 		Log.ui('Collection.CreateFamily'); // this is wrong since it's also in the top bar
 		this.client.dispatchAction('/select-variant', {variant: family.variants[0], family});
+		this.client.dispatchAction('/store-value', {uiShowCollection: false});
+		this.props.router.push('/onboarding');
 	}
 
 	render() {

@@ -1,13 +1,87 @@
 @import "../variables";
 
 .onboarding-app {
-	.step {
-		.text {
-            font-size: 75px;    
-            color: $light-grey;        
-            .highlighted {
-                color: $black;
-            }
+	height: 100%;
+	width: 100%;
+	background-color: $green;
+	overflow: auto;
+	padding-top: 80px;
+	.onboarding-wrapper {
+		min-height: 700px;
+		width: 1200px;
+		position: relative;
+		margin: 0 auto 50px;
+		background-color: $lightest-grey;
+		padding: 20px 40px;
+        border-radius: 8px;
+        .backToApp {
+            color: $darkest-grey;
+            border: 2px solid $darkest-grey;
+            border-radius: 10px;
+            padding: 5px 10px;
+            box-shadow: none;
+        }
+        .nextStep {
+            background: $black;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+		.step {
+			.text {
+				text-align: center;
+				font-size: 85px;
+				margin: 0;
+				color: $light-grey;
+				.highlighted {
+					color: $black;
+				}
+			}
+			&.step-serifs-wrapper .text {
+				font-size: 175px;
+			}
+			.step-sliders {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-around;
+				flex-wrap: wrap;
+				align-items: flex-start;
+				align-content: center;
+				.onboarding-slider {
+					label {
+						display: block;
+					}
+				}
+			}
+		}
+		.bubbles {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			flex-wrap: wrap;
+			align-items: flex-start;
+			align-content: center;
+			.bubble {
+				width: 10px;
+				height: 10px;
+				display: inline-block;
+				margin-left: 5px;
+				margin-right: 5px;
+				background-color: transparent;
+				border: 2px solid $light-grey;
+				border-radius: 50%;
+				cursor: pointer;
+				&.previous {
+					background-color: $medium-grey;
+					border-color: $medium-grey;
+				}
+				&.active {
+					background-color: $darkest-grey;
+					border-color: $darkest-grey;
+				}
+			}
 		}
 	}
 }

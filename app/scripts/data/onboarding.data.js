@@ -15,6 +15,14 @@ export default {
 			sliders: ['ascender', 'descender'],
 			description:
 				'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.',
+        },
+        {
+			type: 'sliders',
+			title: 'Define style',
+			letters: 'Hamburgefonstiv',
+			sliders: ['thickness', '_contrast'],
+			description:
+				'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.',
 		},
 		{
 			type: 'sliders',
@@ -34,7 +42,7 @@ export default {
 		{
 			type: 'serifs',
 			title: 'Define serifs',
-			letters: 'i',
+			letters: 'n',
 			sliders: ['serifHeight', 'serifWidth', 'serifMedian'],
 			description:
 				'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.',

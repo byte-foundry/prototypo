@@ -362,9 +362,9 @@ class DropArianneItem extends React.PureComponent {
 
 class ArianneDropMenu extends React.PureComponent {
 	render() {
-		const items = this.props.list.map(item => (<ArianneDropMenuItem
+		const items = this.props.list.map((item, index) => (<ArianneDropMenuItem
 			item={item}
-			key={item.name}
+			key={`${item.name}${index}`}
 			click={this.props.click}
 			family={this.props.family}
 			itemToEl={this.props.itemToEl}

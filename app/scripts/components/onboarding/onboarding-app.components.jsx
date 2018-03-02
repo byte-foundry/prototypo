@@ -1,10 +1,11 @@
 import React from "react";
-import Button from "../shared/button.components";
+import Button from "../shared/new-button.components";
+import { browserHistory } from "react-router";
 import OnboardingSlider from "./onboarding-slider.components";
 import onboardingData from "../../data/onboarding.data";
 import Lifespan from "lifespan";
 import LocalClient from "../../stores/local-client.stores";
-import FontUpdater from '../font-updater.components';
+import FontUpdater from "../font-updater.components";
 
 const flatten = list =>
 	list.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
@@ -83,16 +84,22 @@ export default class OnboardingApp extends React.PureComponent {
 	}
 
 	changeParam(params) {
-		this.client.dispatchAction('/change-param', params);
+		this.client.dispatchAction("/change-param", params);
 	}
 
 	renderHighlightedText(letters) {
-		const charactersArr = 'Hamburgefonstiv'.split('');
+		const charactersArr = "Hamburgefonstiv".split("");
 
 		return (
 			<p className="text">
 				{charactersArr.map(char => (
-					<span className={letters.indexOf(char) > -1 ? 'highlighted' : ''}>{char}</span>
+					<span
+						className={
+							letters.indexOf(char) > -1 ? "highlighted" : ""
+						}
+					>
+						{char}
+					</span>
 				))}
 			</p>
 		);
@@ -102,7 +109,13 @@ export default class OnboardingApp extends React.PureComponent {
 		return (
 			<div className="step step-sliders-wrapper">
 				<h3>{stepData.title}</h3>
-				<div className="text" style={{fontFamily: this.state.fontName}}>{this.renderHighlightedText(stepData.letters)}</div>
+				<p className="description">{stepData.description}</p>
+				<div
+					className="text"
+					style={{ fontFamily: this.state.fontName }}
+				>
+					{this.renderHighlightedText(stepData.letters)}
+				</div>
 				<div className="step-sliders">
 					{stepData.sliders.map(slider => {
 						const sliderData = this.getSliderData(slider);
@@ -121,7 +134,6 @@ export default class OnboardingApp extends React.PureComponent {
 						);
 					})}
 				</div>
-				<p className="description">{stepData.description}</p>
 			</div>
 		);
 	}
@@ -139,7 +151,10 @@ export default class OnboardingApp extends React.PureComponent {
 		return (
 			<div className="step step-serifs-wrapper">
 				<h3>{stepData.title}</h3>
-				<p className="text">{stepData.letters}</p>
+				<p className="description">{stepData.description}</p>
+				<p className="text" style={{ fontFamily: this.state.fontName }}>
+					{stepData.letters}
+				</p>
 				<div className="step-sliders">
 					{stepData.sliders.map(slider => {
 						const sliderData = this.getSliderData(slider);
@@ -151,31 +166,71 @@ export default class OnboardingApp extends React.PureComponent {
 									max={sliderData.maxAdvised}
 									step={sliderData.step}
 									value={this.state.values[sliderData.name]}
+									onChange={this.changeParam}
+									name={sliderData.name}
 								/>
 							)
 						);
 					})}
 				</div>
-				<p className="description">{stepData.description}</p>
 			</div>
 		);
 	}
 
+	defineRender(stepData) {
+		switch (stepData.type) {
+			case "sliders":
+				return this.renderSliders(stepData);
+				break;
+			case "alternates":
+				return this.renderAlternates(stepData);
+				break;
+			case "serifs":
+				return this.renderSerifs(stepData);
+				break;
+			default:
+				return false;
+				break;
+		}
+	}
+
 	render() {
 		const stepData = onboardingData.steps[this.state.step];
-		const displayStates = {
-			sliders: this.renderSliders(stepData),
-			alternates: this.renderAlternates(stepData),
-			serifs: this.renderSerifs(stepData),
-		};
 
 		return (
 			<div className="onboarding-app">
-				<Button neutral click={() => {}} label="Back to library" />
-				{displayStates[stepData.type]}
-				<Button click={this.getPreviousStep} label="Back" />
-				<Button click={this.getNextStep} label="Next" />
-				<FontUpdater />
+				<div className="onboarding-wrapper">
+					<Button neutral className="backToApp" onClick={() => {}}>
+						Back to library
+					</Button>
+					{this.defineRender(stepData)}
+					<Button
+						className="nextStep"
+						onClick={() => {
+							this.state.step < onboardingData.steps.length - 1
+								? this.getNextStep()
+								: this.props.history.push('/dashboard');
+						}}
+					>
+						{this.state.step < onboardingData.steps.length - 1
+							? "Next"
+							: "Finish"}
+					</Button>
+					<FontUpdater />
+
+					<div className="bubbles">
+						{onboardingData.steps.map((step, index) => (
+							<div
+								className={`bubble ${
+									index === this.state.step ? "active" : ""
+								} ${index < this.state.step ? "previous" : ""}`}
+								onClick={() => {
+									this.setState({ step: index });
+								}}
+							/>
+						))}
+					</div>
+				</div>
 			</div>
 		);
 	}
