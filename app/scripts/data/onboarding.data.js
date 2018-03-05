@@ -35,7 +35,23 @@ export default {
 		{
 			type: 'alternates',
 			title: 'Define alternates',
-			letters: 'Pretty',
+			letters: {
+				97: 'Adam', // a
+				99: 'Typeface', // c
+				162: '10¢', // ¢
+				49: '1 for all', // 1
+				36: 'Many $$', // $
+				82: 'Raging', // R
+				52: 'Like 1984', // 4
+				53: 'All 5 of them', // 5
+				71: 'Good!', // G
+				77: 'Marvelous', // M
+				81: 'Quite', // Q
+				116: 'Pretty', // t
+				121: 'Hypnotic', // y
+				126: 'Swirly ~',
+				96: '`',
+			},
 			description:
 				'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.',
 		},
