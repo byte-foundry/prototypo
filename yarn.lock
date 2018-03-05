@@ -964,7 +964,7 @@ ansi-wrap@0.1.0:
 
 antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/4b2de90fc2a02e9898a1b06a0e4394d86e0f0d27"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/4586cba4f975e612ca92b787b47ceaecaf4436ca"
   dependencies:
     karma "^1.7.1"
     prototypo-precursor "^1.0.3"
@@ -5384,7 +5384,7 @@ getpass@^0.1.1:
 
 gfnt.ptf@byte-foundry/spectral.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/281248c2a32c3a6770f17eab51b20502d7257a86"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/9c3cf1d0dbeab9c1a5d35662abd503faf54795da"
   dependencies:
     karma "^2.0.0"
     prototypo-precursor "^1.0.4"
@@ -7149,7 +7149,7 @@ jest@^22.2.1:
 
 john-fell.ptf@byte-foundry/john-fell.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/9c811c037786f5dd7952df0e5fb66523c8cc84b1"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/9e25416957aad067808914dddbabb88b79eccabd"
   dependencies:
     prototypo-precursor "^1.0.4"
 
@@ -12599,7 +12599,7 @@ vendors@^1.0.0:
 
 venus.ptf@byte-foundry/venus.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/733c197199ca6238ff360b246f7a7ab006a46f5c"
+  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/f78c14811eac927c9d4669f96a1cfcb35f104a3c"
   dependencies:
     prototypo-precursor "^1.0.4"
 
