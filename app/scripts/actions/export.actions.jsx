@@ -26,7 +26,7 @@ function triggerDownload(arrayBuffer, filename) {
 	const enFamilyName = filename;
 
 	reader.onloadend = () => {
-		a.download = `${enFamilyName}.otf`;
+		a.download = enFamilyName;
 		a.href = reader.result;
 		a.dispatchEvent(new MouseEvent('click'));
 

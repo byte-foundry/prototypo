@@ -888,7 +888,6 @@ export default class Toile {
 
 						this.context.strokeStyle = blue;
 						this.context.fillStyle = blue;
-						this.drawText(component.id, add2D(mouseTransformed, {x: 15, y: 15}, 20, 'black'));
 					}
 					else {
 						this.context.strokeStyle = green;

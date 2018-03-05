@@ -134,7 +134,6 @@ export default {
 		};
 
 		localClient.dispatchAction('/load-values', {...initValues, ...fontValues.values});
-		localClient.dispatchAction('/load-font-infos', {altList});
 
 		localClient.dispatchAction('/clear-undo-stack');
 		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
@@ -504,7 +503,7 @@ export default {
 		}
 	},
 	'/reset-glyph-points-manually': ({
-		glyphName, points, force = true, label = 'reset manual',
+		glyphName, points, force = true, label = 'reset manual', unicode,
 	}) => {
 		points.forEach((item) => {
 			switch (item.type) {
@@ -516,6 +515,8 @@ export default {
 						[`${item.data.parentId}.in.y`]: undefined,
 					},
 					glyphName,
+					label: 'reset points',
+					force: true,
 				});
 				break;
 			case toileType.NODE_OUT:
@@ -526,6 +527,8 @@ export default {
 						[`${item.data.parentId}.out.y`]: undefined,
 					},
 					glyphName,
+					label: 'reset points',
+					force: true,
 				});
 				break;
 			case toileType.NODE:
@@ -535,6 +538,17 @@ export default {
 						[`${item.data.modifAddress}.angle`]: undefined,
 					},
 					glyphName,
+					label: 'reset points',
+					force: true,
+				});
+				break;
+			case toileType.SPACING_HANDLE:
+				localClient.dispatchAction('/change-letter-spacing', {
+					value: 0,
+					side: item.id === 'spacingLeft' ? 'left' : 'right',
+					letter: String.fromCharCode(unicode),
+					label: 'spacing',
+					force: true,
 				});
 				break;
 			case toileType.CONTOUR_NODE:
@@ -543,8 +557,11 @@ export default {
 					changes: {
 						[`${item.data.modifAddress}x`]: undefined,
 						[`${item.data.modifAddress}y`]: undefined,
+						[`${item.data.modifAddress}expand.distr`]: undefined,
 					},
 					glyphName,
+					label: 'reset points',
+					force: true,
 				});
 				break;
 			default:

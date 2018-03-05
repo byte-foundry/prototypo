@@ -38,7 +38,6 @@ class FontUpdater extends React.PureComponent {
 				this.setState({
 					family: head.toJS().d.family,
 					variant: head.toJS().d.variant,
-					altList: head.toJS().d.altList,
 					uiText: head.toJS().d.uiText,
 					uiWord: head.toJS().d.uiWord,
 					glyph: head.toJS().d.glyphSelected,
@@ -78,7 +77,7 @@ class FontUpdater extends React.PureComponent {
 			this.fontMediatorInstance.getFont(
 				this.state.name,
 				this.state.template,
-				{...this.state.values, altList: this.state.altList},
+				{...this.state.values},
 				subset,
 				this.state.glyph,
 			);
