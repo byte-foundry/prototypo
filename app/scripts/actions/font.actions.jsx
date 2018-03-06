@@ -268,6 +268,8 @@ export default {
 		});
 	},
 	'/delete-variant': ({variant}) => {
+		console.log('DeleteVariant')
+		console.log(variant)
 		const currentVariant = prototypoStore.get('variant');
 		const currentFamily = prototypoStore.get('family');
 
@@ -286,7 +288,6 @@ export default {
 	},
 	'/delete-family': async ({family}) => {
 		const currentFamily = prototypoStore.get('family');
-
 		if (family.name === currentFamily.name && family.template === currentFamily.template) {
 			const {data: {user}} = await apolloClient.query({
 				fetchPolicy: 'cache-first',
@@ -308,9 +309,8 @@ export default {
 				`,
 			});
 
-			const newFamily = user.library[0];
-			const newVariant = newFamily.variants[0];
-
+			const newFamily = {...user.library[0]};
+			const newVariant = {...newFamily.variants[0]};
 			delete newFamily.variants;
 
 			prototypoStore.set('family', newFamily);

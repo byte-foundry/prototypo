@@ -72,6 +72,7 @@ class StartApp extends React.PureComponent {
 	}
 	create(family) {
 		this.client.dispatchAction('/select-variant', {variant: family.variants[0], family});
+		this.client.dispatchAction('/store-value', {onboardingFrom: 'start'});
 		this.props.router.push('/onboarding');
 	}
 	

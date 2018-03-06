@@ -63,5 +63,11 @@ export default {
 			description:
 				'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.',
 		},
+		{
+			type: 'finish',
+			title: 'Congratulations!',
+			description:
+				'Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.',
+		},
 	],
 };

@@ -1,5 +1,6 @@
 import React from "react";
 import _uniq from "lodash/uniq";
+import { graphql, gql, compose } from "react-apollo";
 import Button from "../shared/new-button.components";
 import { browserHistory } from "react-router";
 import OnboardingSlider from "./onboarding-slider.components";
@@ -10,7 +11,7 @@ import FontUpdater from "../font-updater.components";
 
 const flatten = list =>
 	list.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
-export default class OnboardingApp extends React.PureComponent {
+class OnboardingApp extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -42,14 +43,16 @@ export default class OnboardingApp extends React.PureComponent {
 				const headJS = head.toJS().d;
 
 				this.setState({
-					fontName: head.toJS().d.fontName,
+					fontName: headJS.fontName,
 					parameters: flatten(
 						headJS.fontParameters.reduce((a, b) => [
 							a,
 							...b.parameters
 						])
 					),
-					glyphs: head.toJS().d.glyphs
+					onboardingFrom: headJS.onboardingFrom,
+					glyphs: headJS.glyphs,
+					family: headJS.family
 				});
 				this.getAlternateFonts();
 			})
@@ -60,6 +63,7 @@ export default class OnboardingApp extends React.PureComponent {
 		this.getSliderData = this.getSliderData.bind(this);
 		this.renderSliders = this.renderSliders.bind(this);
 		this.renderSerifs = this.renderSerifs.bind(this);
+		this.renderFinish = this.renderFinish.bind(this);
 		this.renderAlternates = this.renderAlternates.bind(this);
 		this.getNextStep = this.getNextStep.bind(this);
 		this.getPreviousStep = this.getPreviousStep.bind(this);
@@ -78,6 +82,7 @@ export default class OnboardingApp extends React.PureComponent {
 	getNextStep() {
 		if (this.state.step + 1 < onboardingData.steps.length) {
 			this.setState({ step: this.state.step + 1 });
+			this.getAlternateFonts();
 		}
 	}
 
@@ -116,9 +121,10 @@ export default class OnboardingApp extends React.PureComponent {
 				isSelected: false
 			})
 		);
-		const allStrings = Object.keys(stepData.letters).reduce(
-			(previous, key) => previous + stepData.letters[key],
-		) + stepData.letters[Object.keys(stepData.letters)[0]];
+		const allStrings =
+			Object.keys(stepData.letters).reduce(
+				(previous, key) => previous + stepData.letters[key]
+			) + stepData.letters[Object.keys(stepData.letters)[0]];
 		this.setState({
 			alternateList,
 			alternatesDedup,
@@ -232,6 +238,15 @@ export default class OnboardingApp extends React.PureComponent {
 		);
 	}
 
+	renderFinish(stepData) {
+		return (
+			<div className="step step-finish">
+				<h3>{stepData.title}</h3>
+				<p className="description">{stepData.description}</p>
+			</div>
+		);
+	}
+
 	renderSerifs(stepData) {
 		return (
 			<div className="step step-serifs-wrapper">
@@ -273,6 +288,9 @@ export default class OnboardingApp extends React.PureComponent {
 			case "serifs":
 				return this.renderSerifs(stepData);
 				break;
+			case "finish":
+				return this.renderFinish(stepData);
+				break;
 			default:
 				return false;
 				break;
@@ -299,13 +317,57 @@ export default class OnboardingApp extends React.PureComponent {
 		);
 	}
 
+	async deleteFamily(family) {
+		try {
+			await this.props.deleteFamily(family);
+			// legacy call use to change the selected family
+			this.client.dispatchAction("/delete-family", {
+				family
+			});
+			await this.props.refetch();
+			switch (this.state.onboardingFrom) {
+				case "library":
+					this.client.dispatchAction("/store-value", {
+						uiShowCollection: true
+					});
+					this.client.dispatchAction("/store-value", {
+						onboardingFrom: undefined
+					});
+					this.props.history.push("/dashboard");
+					break;
+				case "start":
+					this.client.dispatchAction("/store-value", {
+						onboardingFrom: undefined
+					});
+					this.props.history.push("/start");
+					break;
+				default:
+					break;
+			}
+		} catch (err) {
+			// TODO: Error handling
+			this.props.history.push("/start");
+			console.log(err);
+		}
+	}
+
 	render() {
 		const stepData = onboardingData.steps[this.state.step];
+		// Failsafe
+		if (this.state.fontName && !this.state.onboardingFrom) {
+			this.props.history.push("/dashboard");
+		}
 
 		return (
 			<div className="onboarding-app">
 				<div className="onboarding-wrapper">
-					<Button neutral className="backToApp" onClick={() => {}}>
+					<Button
+						neutral
+						className="backToApp"
+						onClick={() => {
+							this.deleteFamily(this.state.family);
+						}}
+					>
 						Back to library
 					</Button>
 					{this.defineRender(stepData)}
@@ -350,3 +412,109 @@ export default class OnboardingApp extends React.PureComponent {
 		);
 	}
 }
+
+export const libraryQuery = gql`
+	query {
+		user {
+			id
+			library {
+				id
+				name
+				template
+				variants {
+					id
+					name
+					values
+				}
+			}
+		}
+	}
+`;
+
+const deleteVariantMutation = gql`
+	mutation deleteVariant($id: ID!) {
+		deleteVariant(id: $id) {
+			id
+		}
+	}
+`;
+
+const deleteFamilyMutation = gql`
+	mutation deleteFamily($id: ID!) {
+		deleteFamily(id: $id) {
+			id
+		}
+	}
+`;
+
+export default compose(
+	graphql(libraryQuery, {
+		options: {
+			fetchPolicy: 'network-only',
+		},
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			if (data.user) {
+				return {
+					families: data.user.library,
+					refetch: data.refetch,
+				};
+			}
+
+			return {refetch: data.refetch};
+		},
+	}),
+	graphql(deleteVariantMutation, {
+		props: ({mutate}) => ({
+			deleteVariant: id =>
+				mutate({
+					variables: {id},
+				}),
+		}),
+		options: {
+			update: (store, {data: {deleteVariant}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library.forEach((family) => {
+					// eslint-disable-next-line
+					family.variants = family.variants.filter(variant => variant.id !== deleteVariant.id);
+				});
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	}),
+	graphql(deleteFamilyMutation, {
+		props: ({mutate, ownProps}) => ({
+			deleteFamily: (family) => {
+				if (!family) {
+					return Promise.reject();
+				}
+
+				// don't worry, mutations are batched, so we're only sending one or two requests
+				// in the future, cascade operations should be available on graphcool
+				const variants = family.variants.map(variant => ownProps.deleteVariant(variant.id));
+
+				return Promise.all([...variants, mutate({variables: {id: family.id}})]);
+			},
+		}),
+		options: {
+			update: (store, {data: {deleteFamily}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library = data.user.library.filter(font => font.id !== deleteFamily.id);
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	}),
+)(OnboardingApp);
