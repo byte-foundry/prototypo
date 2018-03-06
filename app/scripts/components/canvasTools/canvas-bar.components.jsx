@@ -34,15 +34,11 @@ export default class CanvasBar extends React.Component {
 	}
 
 	chooseMode(mode) {
-
 		this.client.dispatchAction('/change-canvas-mode', {canvasMode: mode});
 	}
 
 	render() {
-
-		const buttons = ['move', 'components', 'select-points'].map((item) => {
-			return <CanvasBarButton name={item} key={item} active={item === this.state.canvasMode} click={this.chooseMode}/>;
-		});
+		const buttons = ['move', 'components', 'select-points', 'rounded-skeleton'].map(item => <CanvasBarButton name={item} key={item} active={item === this.state.canvasMode} click={this.chooseMode} />);
 
 		return (
 			<div className="canvas-bar">

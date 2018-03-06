@@ -387,6 +387,9 @@ export default class GlyphCanvas extends React.PureComponent {
 			case 'select-points':
 				appMode = canvasMode.SELECT_POINTS;
 				break;
+			case 'rounded-skeleton':
+				appMode = canvasMode.ROUNDED_SKELETON;
+				break;
 			case 'move':
 			default:
 				appMode = canvasMode.MOVE;
@@ -689,6 +692,8 @@ export default class GlyphCanvas extends React.PureComponent {
 						});
 					}
 				}
+				else if (appMode === canvasMode.ROUNDED_SKELETON) {
+				}
 				// End of StateMachine
 				// =========================================================
 				// =========================================================
@@ -772,6 +777,10 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 				else {
 					this.canvas.style.cursor = 'default';
+				}
+
+				if (appMode === canvasMode.ROUNDED_SKELETON) {
+					this.toile.drawSkeletonEnd(glyph.contours, hotItems);
 				}
 
 				// =========================================================

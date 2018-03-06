@@ -36,6 +36,7 @@ export const canvasMode = {
 	MOVE: 0,
 	SELECT_POINTS: 1,
 	COMPONENTS: 2,
+	ROUNDED_SKELETON: 3,
 };
 
 export const specialKey = {
@@ -726,6 +727,22 @@ export default class Toile {
 
 		this.drawExpandedNode(...parametersZero);
 		this.drawExpandedNode(...parametersOne);
+	}
+
+	drawSkeletonEnd(contours, hotItems) {
+		contours.forEach((contour) => {
+			contour.nodes.forEach((node, i) => {
+				if (contour.skeleton && !contour.closed) {
+					if (i === 0 || i === contour.nodes.length - 1) {
+						this.drawCircle(node.expandedTo[0], 5, '#ff00ff');
+						this.drawCircle(node.expandedTo[1], 5, '#ff00ff');
+
+						this.interactionList.push({
+						});
+					}
+				}
+			});
+		});
 	}
 
 

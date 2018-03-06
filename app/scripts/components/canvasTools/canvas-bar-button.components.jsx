@@ -16,8 +16,7 @@ export default class CanvasBarButton extends React.Component {
 		});
 
 		return (
-			<div className={classes} onClick={() => {this.props.click(this.props.name);}}>
-			</div>
+			<div className={classes} onClick={() => {this.props.click(this.props.name);}} />
 		);
 	}
 }
