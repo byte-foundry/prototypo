@@ -175,6 +175,13 @@ export default {
 
 		saveAppValues();
 	},
+	'/show-base-values': async () => {
+		const currentPreset = _cloneDeep(prototypoStore.get('preset'));
+		const patch = prototypoStore.set('choice', undefined).set('step', undefined).commit();
+		localServer.dispatchUpdate('/prototypoStore', patch);
+		localClient.dispatchAction('/change-param', {values: currentPreset.baseValues});
+		saveAppValues();
+	},
 	'/edit-step': async (step) => {
 		const newStep = {
 			id: step.id,

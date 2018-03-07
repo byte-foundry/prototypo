@@ -65,7 +65,7 @@ export default class StepChoiceDisplay extends React.Component {
 			>
 				{this.state.steps.map(step => (
 					<div key={`step ${step.id}`}>
-						<h3>{step.name}</h3>
+						<h3 onClick={() => {this.client.dispatchAction('/show-base-values');}}>{step.name}</h3>
 						<ul>
 							{step.choices.map(choice => (
 								<li onClick={() => {this.selectChoice(choice);}} key={`choice ${choice.id}`} className={choice.id === this.state.choice.id ? 'active no-cursor' : 'no-cursor'}>{choice.name}</li>

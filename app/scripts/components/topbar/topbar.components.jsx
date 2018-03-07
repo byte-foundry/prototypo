@@ -72,7 +72,7 @@ class Topbar extends React.Component {
 		this.deleteCurrentChoice = this.deleteCurrentChoice.bind(this);
 		this.editCurrentStep = this.editCurrentStep.bind(this);
 		this.editCurrentChoice = this.editCurrentChoice.bind(this);
-		this.openExportLiteModal = this.openExportLiteModal.bind(this);
+		this.showPreset = this.showPreset.bind(this);
 	}
 
 	async componentWillMount() {
@@ -268,6 +268,10 @@ class Topbar extends React.Component {
 
 	startFileTutorial() {
 		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: fileTutorialLabel});
+	}
+
+	showPreset() {
+		this.client.dispatchAction('/show-base-values');
 	}
 
 	saveChoiceValues() {
@@ -613,6 +617,7 @@ class Topbar extends React.Component {
 					<TopBarMenuDropdownItem name="Export data" handler={this.openExportLiteModal} />
 					<TopBarMenuDropdownItem name="Rename step" handler={this.editCurrentStep} />
 					<TopBarMenuDropdownItem name="Delete step" handler={this.deleteCurrentStep} />
+					<TopBarMenuDropdownItem name="Show base values" handler={this.showPreset} />
 					<TopBarMenuDropdownItem name="Rename choice" handler={this.editCurrentChoice} />
 					<TopBarMenuDropdownItem name="Delete choice" handler={this.deleteCurrentChoice} />
 					<TopBarMenuDropdownItem name="Update base font values" handler={this.updateBaseFontValues} />
