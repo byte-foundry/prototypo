@@ -242,6 +242,7 @@ export default class PrototypoPanel extends React.Component {
 						/>
 					</ResizablePanels>
 				</ResizablePanels>
+				<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>
 			</div>
 		);
 	}
