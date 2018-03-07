@@ -37,6 +37,7 @@ export default {
 									name
 									id
 									values
+									fieldDifference
 								}
 							}
 						}
@@ -144,6 +145,7 @@ export default {
 		const newChoice = {
 			id: choice.id,
 			name: choice.name,
+			fieldDifference: [],
 		};
 
 
@@ -311,44 +313,35 @@ export default {
 		const difference = allkeys.reduce(
 			(result, key) => {
 				if (!_isEqual(baseValues[key], currentValues[key])) {
-					result[key] = {baseValues: baseValues[key], currentValues: currentValues[key]};
+					result.push(key);
 				}
 				return result;
 			},
-			{},
+			[],
 		);
 
-		// keep all current values
-		const newValues = {};
-
-		Object.keys(difference).forEach((key) => {
-			newValues[key] = difference[key].currentValues;
-		});
-		console.log('Saved changes : ');
-		console.log(newValues);
-		choice.values = newValues;
-
-		console.log('==========Values to save===========');
-		console.log(newValues);
-		console.log('====================================');
 		try {
 			const {data: {updateChoice}} = await apolloClient.mutate({
 				mutation: gql`
-					mutation updateChoice($id: ID!, $values: Json!) {
-						updateChoice(id: $id, values: $values) {
+					mutation updateChoice($id: ID!, $values: Json!, $fieldDifference: [String!]) {
+						updateChoice(id: $id, values: $values, fieldDifference: $fieldDifference) {
 							id
 						}
 					}
 				`,
 				variables: {
 					id: choice.id,
-					values: JSON.parse(JSON.stringify(newValues)),
+					values: JSON.parse(JSON.stringify(currentValues)),
+					fieldDifference: difference,
 				},
 			});
 
 			console.log('==========Query result===========');
 			console.log(updateChoice);
 			console.log('====================================');
+
+			choice.values = currentValues;
+			choice.fieldDifference = difference;
 
 			const patch = prototypoStore
 				.set('preset', currentPreset)

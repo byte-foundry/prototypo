@@ -621,19 +621,27 @@ export class ExportLite extends React.Component {
 							description: "${step.description}"
 							choices:
 							[
-								${step.choices.map(choice => `
-									{
-										name: "${choice.name}"
-										values: "${JSON.stringify(choice.values).replace(/"/g, '\\"')}"
-									}
-								`)}
+								${step.choices.map((choice) => {
+		const {values, name, fieldDifference} = choice;
+		const valuesToStore = {};
+
+		fieldDifference.forEach((field) => {
+			valuesToStore[field] = values[field];
+		});
+		return `
+										{
+											name: "${name}"
+											values: "${JSON.stringify(valuesToStore).replace(/"/g, '\\"')}"
+										}
+									`;
+	})}
 							]
 						}
-					`)}
+		`)}
 				]
 			) { id }
 		}
-		`;
+			`;
 
 		const updatePreset = presetId => `
 		mutation {
@@ -651,19 +659,27 @@ export class ExportLite extends React.Component {
 							description: "${step.description}"
 							choices:
 							[
-								${step.choices.map(choice => `
-									{
-										name: "${choice.name}"
-										values: "${JSON.stringify(choice.values).replace(/"/g, '\\"')}"
-									}
-								`)}
+								${step.choices.map((choice) => {
+		const {values, name, fieldDifference} = choice;
+		const valuesToStore = {};
+
+		fieldDifference.forEach((field) => {
+			valuesToStore[field] = values[field];
+		});
+		return `
+										{
+											name: "${name}"
+											values: "${JSON.stringify(valuesToStore).replace(/"/g, '\\"')}"
+										}
+		`;
+	})}
 							]
 						}
-					`)}
+		`)}
 				]
 			) { id }
 		}
-		`;
+			`;
 		const GRAPHQL_API = 'https://api.graph.cool/simple/v1/cj6maa0ib2tud01656t4tp4ej';
 
 		request(GRAPHQL_API, findPreset)
