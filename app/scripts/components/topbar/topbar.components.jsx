@@ -380,7 +380,7 @@ class Topbar extends React.Component {
 				alignRight
 			/>);
 
-		const academyIcon = (loadingAcademyProgress || !academyProgress.lastCourse) && (
+		const academyIcon = !academyProgress.lastCourse && (
 			<TopBarMenuAcademyIcon
 				setText={this.setAcademyText}
 				clearText={this.clearAcademyText}

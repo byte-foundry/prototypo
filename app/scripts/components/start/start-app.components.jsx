@@ -54,6 +54,7 @@ class StartApp extends React.PureComponent {
 				this.client.dispatchAction('/select-variant-collection', fonts[0].variants[0]);
 			}
 		});
+		this.client.dispatchAction('/store-value', {uiShowCollection: false});
 	}
 
 	componentWillUnmount() {
@@ -149,7 +150,7 @@ export default compose(
 			return {
 				families: library.map((family) => {
 					const selected
-						= appValues.familySelected && family.name === appValues.familySelected.name;
+						= appValues.familySelected && family.id === appValues.familySelected.id;
 
 					return {
 						...family,

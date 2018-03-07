@@ -35,6 +35,15 @@ const onCurveModMode = {
 	ANGLE_MOD: 0b10,
 };
 
+function changeGlyphManually(changes, glyph, client) {
+	const glyphName = glyph.base || glyph.name;
+
+	client.dispatchAction('/change-glyph-node-manually', {
+		changes,
+		glyphName,
+	});
+}
+
 function calculateHandleCoordinateModification(
 	parentRef,
 	ownParent,
@@ -149,10 +158,7 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 			= parallelOpVector.y;
 	}
 
-	client.dispatchAction('/change-glyph-node-manually', {
-		changes,
-		glyphName: glyph.name,
-	});
+	changeGlyphManually(changes, glyph, client);
 }
 
 function onCurveModification(
@@ -190,10 +196,7 @@ function onCurveModification(
 		changes[`${draggedItem.data.modifAddress}.angle`] = angleDiff + angleOffset;
 	}
 
-	client.dispatchAction('/change-glyph-node-manually', {
-		changes,
-		glyphName: glyph.name,
-	});
+	changeGlyphManually(changes, glyph, client);
 }
 
 function skeletonPosModification(client, glyph, draggedItem, newPos) {
@@ -203,13 +206,12 @@ function skeletonPosModification(client, glyph, draggedItem, newPos) {
 	const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
 	const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
 
-	client.dispatchAction('/change-glyph-node-manually', {
-		changes: {
-			[`${draggedItem.data.modifAddress}x`]: mouseVec.x * xTransform,
-			[`${draggedItem.data.modifAddress}y`]: mouseVec.y * yTransform,
-		},
-		glyphName: glyph.name,
-	});
+	const changes = {
+		[`${draggedItem.data.modifAddress}x`]: mouseVec.x * xTransform,
+		[`${draggedItem.data.modifAddress}y`]: mouseVec.y * yTransform,
+	};
+
+	changeGlyphManually(changes, glyph, client);
 }
 
 function skeletonDistrModification(client, glyph, draggedItem, newPos) {
@@ -229,14 +231,13 @@ function skeletonDistrModification(client, glyph, draggedItem, newPos) {
 		base,
 	);
 
-	client.dispatchAction('/change-glyph-node-manually', {
-		changes: {
-			[`${draggedItem.data.modifAddress}expand.distr`]: (distProjOntoSkel / width) - baseDistr,
-			[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
-			[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
-		},
-		glyphName: glyph.name,
-	});
+	const changes = {
+		[`${draggedItem.data.modifAddress}expand.distr`]: (distProjOntoSkel / width) - baseDistr,
+		[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
+		[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
+	};
+
+	changeGlyphManually(changes, glyph, client);
 }
 
 function changeSpacing(client, glyph, draggedItem, newPos) {

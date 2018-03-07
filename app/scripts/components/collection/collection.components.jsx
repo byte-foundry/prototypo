@@ -107,7 +107,7 @@ class Collection extends React.PureComponent {
 			exportedVariant,
 		} = this.state;
 
-		const selectedFamilyVariants = (families.find(family => family.name === selected.name) || {})
+		const selectedFamilyVariants = (families.find(family => family.id === selected.id) || {})
 			.variants;
 		const variant = selectedFamilyVariants
 			? (<VariantList
@@ -318,7 +318,7 @@ class FamilyList extends React.PureComponent {
 			let selected;
 
 			if (this.props.selected) {
-				selected = family.name === this.props.selected.name;
+				selected = family.id === this.props.selected.id;
 			}
 
 			return (
@@ -445,6 +445,7 @@ class VariantList extends React.PureComponent {
 				changeName={this.openChangeVariantName}
 				duplicate={this.openDuplicateVariant}
 				delete={this.deleteVariant}
+				onlyVariant={this.props.variants.length === 1}
 			/>));
 
 		return (

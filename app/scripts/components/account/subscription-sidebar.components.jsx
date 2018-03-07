@@ -85,7 +85,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 						Prototypo multi-user plan, designed for professionnals, billed monthly
 					</span>
 				),
-				features: ['All pro features', 'Manage your team licences', 'Premium 24h support'],
+				features: ['All pro features', 'Manage your team licences', 'Kickoff course to get you started with Prototypo', 'Premium 24h support'],
 				cta: (
 					<span>
 						<Price amount={teamMonthlyConst.monthlyPrice * quantity * percentPrice} country={country} />
@@ -114,7 +114,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 						Prototypo multi-user plan, designed for professionnals, billed annually
 					</span>
 				),
-				features: ['All pro features', 'Manage your team licences', 'Premium 24h support'],
+				features: ['All pro features', 'Manage your team licences', 'Kickoff course to get you started with Prototypo', 'Premium 24h support'],
 				cta: (
 					<span>
 						<Price amount={teamAnnualConst.monthlyPrice * quantity * percentPrice} country={country} />
@@ -177,7 +177,7 @@ SubscriptionSidebar.propTypes = {
 };
 
 SubscriptionSidebar.defaultProps = {
-	quantity: 2,
+	quantity: 1,
 	hasBeenSubscribing: false,
 	percentPrice: 1,
 	onChangePlan: () => {},

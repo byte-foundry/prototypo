@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import {findDOMNode} from 'react-dom';
 import InlineSVG from 'svg-inline-react';
 import Button from '../shared/new-button.components';
+import ScrollArea from 'react-scrollbar/dist/no-css';
 
 class AcademyCourse extends React.PureComponent {
 	constructor(props) {
@@ -112,12 +113,12 @@ class AcademyCourse extends React.PureComponent {
 		const parts = course.content.split(/[^\#]#{2} +/g);
 		let sidebar = {};
 
-		this.courseSidebarDom.classList.remove('fixed');
+		document.querySelector('.academy-course-main-sidebar').classList.remove('fixed');
 		sidebar = {
-			elem: this.courseSidebarDom,
+			elem: document.querySelector('.academy-course-main-sidebar'),
 			content: this.courseContentDom,
-			offset: this.courseSidebarDom.getBoundingClientRect().top,
-			width: this.courseSidebarDom.offsetWidth,
+			offset: document.querySelector('.academy-course-main-sidebar').getBoundingClientRect().top,
+			width: document.querySelector('.academy-course-main-sidebar').offsetWidth,
 		};
 
 		const headers = parts.slice(1).map((part, index) => {
@@ -419,11 +420,10 @@ class AcademyCourse extends React.PureComponent {
 					</a>))}
 			</div>;
 		const sidebar = (
-			<div
-				className="academy-course-main-sidebar"
-				ref={(courseSidebarDom) => {
-					this.courseSidebarDom = courseSidebarDom;
-				}}
+			<ScrollArea
+					className="academy-course-main-sidebar"
+					contentClassName="academy-course-main-sidebar-content"
+					horizontal={false}
 			>
 				<progress value={this.state.scrollPercent} max="100" />
 				{basics}
@@ -462,7 +462,7 @@ class AcademyCourse extends React.PureComponent {
 								{tutorial.title}
 							</Link>))}
 				</div>
-			</div>
+			</ScrollArea>
 		);
 
 		let finish = false;
