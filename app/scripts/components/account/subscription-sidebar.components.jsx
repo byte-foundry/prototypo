@@ -102,7 +102,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				),
 				link: {
 					text: 'Want Prototypo cheaper, check out our annual offer',
-					onClick: this.handleChangePlan({plan: teamMonthlyConst.prefix}),
+					onClick: this.handleChangePlan({plan: teamAnnualConst.prefix}),
 				},
 			},
 			[teamAnnualConst.prefix]: {
@@ -131,7 +131,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				),
 				link: {
 					text: 'Want less commitment, try our monthly offer',
-					onClick: this.handleChangePlan({plan: teamAnnualConst.prefix}),
+					onClick: this.handleChangePlan({plan: teamMonthlyConst.prefix}),
 				},
 			},
 		};
