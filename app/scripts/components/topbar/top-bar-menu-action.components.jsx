@@ -4,7 +4,9 @@ import classNames from 'classnames';
 
 class TopBarMenuAction extends React.PureComponent {
 	render() {
-		const {active, img, click, name} = this.props;
+		const {
+			active, img, click, name,
+		} = this.props;
 
 		const classes = classNames({
 			'top-bar-menu-item-action': true,
@@ -32,7 +34,7 @@ TopBarMenuAction.defaultProps = {
 };
 
 TopBarMenuAction.propTypes = {
-	img: PropTypes.string.isRequired,
+	img: PropTypes.string,
 	name: PropTypes.string.isRequired,
 	active: PropTypes.bool,
 	click: PropTypes.func,

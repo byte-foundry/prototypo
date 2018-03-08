@@ -180,7 +180,7 @@ export class AddStep extends React.Component {
 		}
 
 		if (this.props.edit) {
-			console.log('====================================');
+			// console.log('====================================');
 			const {data: {updateStep: newStep}} = await this.props.renameStep(name, description);
 
 			this.client.dispatchAction('/edit-step', newStep);
@@ -562,9 +562,9 @@ export class ExportLite extends React.Component {
 					variant: head.toJS().d.variant,
 					family: head.toJS().d.family,
 				});
-				console.log(head.toJS().d.preset);
-				console.log(head.toJS().d.variant);
-				console.log(head.toJS().d.family);
+				// console.log(head.toJS().d.preset);
+				// console.log(head.toJS().d.variant);
+				// console.log(head.toJS().d.family);
 			})
 			.onDelete(() => {
 				this.setState(undefined);

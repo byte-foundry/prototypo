@@ -49,11 +49,14 @@ export default {
 		if (Variant.preset) {
 			const patch = prototypoStore
 				.set('preset', Variant.preset)
-				.set('choice', Variant.preset.steps[0].choices[0])
-				.set('step', Variant.preset.steps[0])
 				.commit();
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
+
+			localClient.dispatchAction('/select-choice', {
+				choice: Variant.preset.steps[0].choices[0],
+				step: Variant.preset.steps[0],
+			});
 		}
 		else {
 			const patch = prototypoStore
@@ -84,10 +87,10 @@ export default {
 			steps,
 		};
 
-		console.log('====================================');
-		console.log('Created preset');
-		console.log(preset);
-		console.log('====================================');
+		// console.log('====================================');
+		// console.log('Created preset');
+		// console.log(preset);
+		// console.log('====================================');
 
 		const patch = prototypoStore
 			.set('preset', preset)
@@ -118,14 +121,14 @@ export default {
 
 		currentPreset.steps.push(fullStep);
 
-		console.log('====================================');
-		console.log('New step:');
-		console.log(newStep);
-		console.log('New choice');
-		console.log(newChoice);
-		console.log('Preset base values');
-		console.log(currentPreset.baseValues);
-		console.log('====================================');
+		// console.log('====================================');
+		// console.log('New step:');
+		// console.log(newStep);
+		// console.log('New choice');
+		// console.log(newChoice);
+		// console.log('Preset base values');
+		// console.log(currentPreset.baseValues);
+		// console.log('====================================');
 
 		localClient.dispatchAction('/change-param', {values: currentPreset.baseValues});
 
@@ -153,12 +156,12 @@ export default {
 		const currentStep = _cloneDeep(prototypoStore.get('step'));
 		const presetStep = currentPreset.steps.find(i => i.id === currentStep.id);
 
-		console.log('====================================');
-		console.log('New choice');
-		console.log(newChoice);
-		console.log('Preset base values');
-		console.log(currentPreset.baseValues);
-		console.log('====================================');
+		// console.log('====================================');
+		// console.log('New choice');
+		// console.log(newChoice);
+		// console.log('Preset base values');
+		// console.log(currentPreset.baseValues);
+		// console.log('====================================');
 
 		currentStep.choices.push(newChoice);
 		presetStep.choices.push(newChoice);
@@ -180,6 +183,7 @@ export default {
 	'/show-base-values': async () => {
 		const currentPreset = _cloneDeep(prototypoStore.get('preset'));
 		const patch = prototypoStore.set('choice', undefined).set('step', undefined).commit();
+
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		localClient.dispatchAction('/change-param', {values: currentPreset.baseValues});
 		saveAppValues();
@@ -228,11 +232,11 @@ export default {
 		const patchChoice = prototypoStore.set('choice', newChoice).set('step', step).commit();
 
 		if (choice) {
-			console.log('New choice values : ');
-			console.log(newChoice);
-			console.log('====================================');
-			console.log(newChoiceValues);
-			console.log('====================================');
+			// console.log('New choice values : ');
+			// console.log(newChoice);
+			// console.log('====================================');
+			// console.log(newChoiceValues);
+			// console.log('====================================');
 
 			// change choice : load choice values and if none : load base values
 			if (Object.keys(newChoiceValues).length > 0) {
@@ -245,8 +249,8 @@ export default {
 
 
 		else {
-			console.log('New step values : ');
-			console.log(step);
+			// console.log('New step values : ');
+			// console.log(step);
 
 			// change step : load first choice values if any and if none : load base values
 			if (newChoiceValues && Object.keys(newChoiceValues).length > 0) {
@@ -304,9 +308,8 @@ export default {
 		const {baseValues} = currentPreset;
 		const currentValues = _cloneDeep(undoableStore.get('controlsValues'));
 
-		console.log('==========Current font values===========');
-		console.log(currentValues);
-		console.log('====================================');
+		// console.log('==========Current font values===========');
+		// console.log('====================================');
 
 		// Get differences between base and current values
 		const allkeys = _union(Object.keys(baseValues), Object.keys(currentValues));
@@ -319,6 +322,8 @@ export default {
 			},
 			[],
 		);
+
+		console.log(`Saving id: ${choice.id}, name: ${choice.name}, fieldDifference: ${difference}`);
 
 		try {
 			const {data: {updateChoice}} = await apolloClient.mutate({
@@ -336,9 +341,9 @@ export default {
 				},
 			});
 
-			console.log('==========Query result===========');
-			console.log(updateChoice);
-			console.log('====================================');
+			// console.log('==========Query result===========');
+			// console.log(updateChoice);
+			// console.log('====================================');
 
 			choice.values = currentValues;
 			choice.fieldDifference = difference;
@@ -354,9 +359,9 @@ export default {
 			saveAppValues();
 		}
 		catch (err) {
-			console.log('============SAVING ERROR==========');
-			console.log(err.message);
-			console.log('====================================');
+			// console.log('============SAVING ERROR==========');
+			// console.log(err.message);
+			// console.log('====================================');
 		}
 	},
 	'/update-base-font-values': async () => {
@@ -365,9 +370,9 @@ export default {
 
 		currentPreset.baseValues = currentValues;
 
-		console.log('=========Values to update==========');
-		console.log(currentValues);
-		console.log('====================================');
+		// console.log('=========Values to update==========');
+		// console.log(currentValues);
+		// console.log('====================================');
 
 		try {
 			const {data: {updatePreset}} = await apolloClient.mutate({
@@ -384,9 +389,9 @@ export default {
 				},
 			});
 
-			console.log('==========Query result===========');
-			console.log(updatePreset);
-			console.log('====================================');
+			// console.log('==========Query result===========');
+			// console.log(updatePreset);
+			// console.log('====================================');
 
 			const patch = prototypoStore
 				.set('preset', currentPreset)
@@ -397,9 +402,9 @@ export default {
 			saveAppValues();
 		}
 		catch (err) {
-			console.log('============SAVING ERROR==========');
-			console.log(err.message);
-			console.log('====================================');
+			// console.log('============SAVING ERROR==========');
+			// console.log(err.message);
+			// console.log('====================================');
 		}
 	},
 	'/deleted-current-step': async (deletedStep) => {

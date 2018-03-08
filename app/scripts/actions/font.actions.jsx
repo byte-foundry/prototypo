@@ -141,6 +141,7 @@ export default {
 		localClient.dispatchAction('/store-value-font', {
 			changingFont: false,
 		});
+		localClient.dispatchAction('/fetch-preset', variantId);
 	},
 	'/family-created': async ({name, variants, template}) => {
 		const patchVariant = prototypoStore
@@ -185,7 +186,6 @@ export default {
 			templateToLoad: family.template,
 			variantId: selectedVariant.id,
 		});
-		localClient.dispatchAction('/fetch-preset', selectedVariant.id);
 	},
 	'/create-variant-from-ref': async ({
 		ref, name, family, noSwitch,
