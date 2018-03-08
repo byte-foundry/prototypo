@@ -6,23 +6,48 @@
 	background-color: $green;
 	overflow: auto;
 	padding-top: 80px;
+
 	.onboarding-wrapper {
-		min-height: 700px;
-		width: 1200px;
+		width: calc(100% - 160px);
 		position: relative;
 		margin: 0 auto 50px;
-		background-color: $lightest-grey;
-		padding: 20px 40px;
+		background-color: $white;
+		padding: 40px;
         border-radius: 8px;
+		display:flex; /* 2 */
+		flex-direction:column; /* 3 */
+
+		.onboarding-content {
+			flex-grow:1;
+
+			h3 {
+				color: $dark-grey;
+			}
+
+			.description {
+				max-width: 750px;
+				color: $medium-grey;
+			}
+
+		}
+
+
         .backToApp {
-            color: $darkest-grey;
-            border: 2px solid $darkest-grey;
-            border-radius: 10px;
-            padding: 5px 10px;
+            color: $medium-grey;
+            border: 2px solid $light-grey;
             box-shadow: none;
+			padding: 6px 12px;
+			font-size: 12px;
+			margin-bottom: 30px;
+			float: right;
+
+			&:hover {
+				color: $dark-grey;
+				border-color: $dark-grey;
+				background-color: $white;
+			}
         }
         .nextStep {
-            background: $black;
             margin-top: 50px;
             margin-bottom: 50px;
             margin-left: auto;
@@ -36,9 +61,11 @@
 				margin: 0;
                 color: $light-grey;
                 transition: color .3s ease;
+
 				.highlighted {
-					color: $black;
+					color: $dark-grey;
 				}
+				padding: 0.4em 0;
 			}
 			&.step-serifs-wrapper .text {
 				font-size: 175px;
@@ -63,11 +90,40 @@
 				flex-wrap: wrap;
 				align-items: flex-start;
                 align-content: center;
+				margin-bottom: 1em;
                 .alternate-choice {
+					border-radius: 10px;
+					border: 3px solid $white;
+					background-color: $white;
+					flex-grow: 1;
+					margin: 0 10px;
+					padding: 10px;
+
+					-webkit-box-shadow:inset 0px 0px 0px 1px $white;
+				    -moz-box-shadow:inset 0px 0px 0px 1px $white;
+				    box-shadow:inset 0px 0px 0px 1px $white;
+					transition: all 200ms ease;
+
+					.text {
+						padding: 0;
+						color: $light-grey;
+						opacity: .3;
+					}
                     cursor: pointer;
-                    &.selected  .text{
-                        color: $medium-grey;
+                    &.selected {
+						-webkit-box-shadow:inset 0px 0px 0px 1px $lightest-grey;
+					    -moz-box-shadow:inset 0px 0px 0px 1px $lightest-grey;
+					    box-shadow:inset 0px 0px 0px 1px $lightest-grey;
+						.text {
+							opacity: 1;
+						}
                     }
+					&:hover {
+						-webkit-box-shadow:inset 0px 0px 0px 5px $green;
+					    -moz-box-shadow:inset 0px 0px 0px 5px $green;
+					    box-shadow:inset 0px 0px 0px 5px $green;
+						transition: all 200ms ease;
+					}
                 }
             }
 		}
@@ -78,6 +134,7 @@
 			flex-wrap: wrap;
 			align-items: flex-start;
 			align-content: center;
+			padding: 20px 0;
 			.bubble {
 				width: 10px;
 				height: 10px;
@@ -87,14 +144,16 @@
 				background-color: transparent;
 				border: 2px solid $light-grey;
 				border-radius: 50%;
-				cursor: pointer;
+
 				&.previous {
-					background-color: $medium-grey;
-					border-color: $medium-grey;
+					background-color: $light-grey;
+					border-color: $light-grey;
+					cursor: pointer;
 				}
 				&.active {
-					background-color: $darkest-grey;
-					border-color: $darkest-grey;
+					background-color: $green;
+					border-color: $green;
+					cursor: pointer;
 				}
 			}
 		}

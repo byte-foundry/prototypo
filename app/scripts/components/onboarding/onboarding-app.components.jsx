@@ -361,39 +361,41 @@ class OnboardingApp extends React.PureComponent {
 		return (
 			<div className="onboarding-app">
 				<div className="onboarding-wrapper">
-					<Button
-						neutral
-						className="backToApp"
-						onClick={() => {
-							this.deleteFamily(this.state.family);
-						}}
-					>
-						Back to library
-					</Button>
-					{this.defineRender(stepData)}
-					<Button
-						className="nextStep"
-						onClick={() => {
-							this.state.step < onboardingData.steps.length - 1
-								? this.getNextStep()
-								: this.props.history.push("/dashboard");
-						}}
-					>
-						{this.state.step < onboardingData.steps.length - 1
-							? "Next"
-							: "Finish"}
-					</Button>
-					<FontUpdater
-						extraFonts={
-							this.state.alternateList &&
-							this.state.baseAlternateFont
-								? [
-										...this.state.alternateList,
-										this.state.baseAlternateFont
-									]
-								: undefined
-						}
-					/>
+					<div className="onboarding-content">
+						<Button
+							neutral
+							className="backToApp"
+							onClick={() => {
+								this.deleteFamily(this.state.family);
+							}}
+						>
+							Back to library
+						</Button>
+						{this.defineRender(stepData)}
+						<Button
+							className="nextStep"
+							onClick={() => {
+								this.state.step < onboardingData.steps.length - 1
+									? this.getNextStep()
+									: this.props.history.push("/dashboard");
+							}}
+						>
+							{this.state.step < onboardingData.steps.length - 1
+								? "Next"
+								: "Finish"}
+						</Button>
+						<FontUpdater
+							extraFonts={
+								this.state.alternateList &&
+								this.state.baseAlternateFont
+									? [
+											...this.state.alternateList,
+											this.state.baseAlternateFont
+										]
+									: undefined
+							}
+						/>
+					</div>
 
 					<div className="bubbles">
 						{onboardingData.steps.map((step, index) => (
@@ -402,7 +404,9 @@ class OnboardingApp extends React.PureComponent {
 									index === this.state.step ? "active" : ""
 								} ${index < this.state.step ? "previous" : ""}`}
 								onClick={() => {
-									this.setState({ step: index });
+									index <= this.state.step ?
+										this.setState({ step: index }) :
+										false;
 								}}
 							/>
 						))}
