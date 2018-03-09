@@ -44,6 +44,7 @@
     "react-dom": "~15.4.0",
     "react-draggable": "^2.2.1",
     "react-hot-loader": "next",
+    "react-dropzone": "^3.13.1",
     "react-joyride": "^1.4.7",
     "react-json-pretty": "^1.6.3",
     "react-markdown": "^2.4.4",
