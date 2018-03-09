@@ -314,7 +314,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 	componentDidMount() {
 		this.toile = new Toile(this.canvas);
-		this.toile.setCamera({x: 0, y: 0}, 1, this.canvas.clientHeight, this.canvas.clientWidth);
+		this.setCamera({x: 0, y: 0}, 1, this.canvas.clientHeight, this.canvas.clientWidth);
 
 		if (module.hot) {
 			module.hot.accept('../toile/toile', () => {
@@ -327,7 +327,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				this.toile = new ToileConstructor(this.canvas);
 
-				this.toile.setCameraCenter(newTs, z, -this.canvas.clientHeight, this.canvas.clientWidth);
+				this.setCameraCenter(newTs, z, -this.canvas.clientHeight, this.canvas.clientWidth);
 			});
 		}
 
@@ -912,7 +912,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					) {
 						moving = true;
 					} */
-					this.toile.setCamera(newTs, z, -height, width);
+					this.setCamera(newTs, z, -height, width);
 				}
 				else if (appStateValue & appState.ZOOMING) {
 					const [z,,,, x, y] = this.toile.viewMatrix;
@@ -923,7 +923,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					const [zoom,,,, newTx, newTy] = matrixMul(transformMatrix, this.toile.viewMatrix);
 					const clampedZoom = Math.max(0.1, Math.min(10, zoom));
 
-					this.toile.setCamera({
+					this.setCamera({
 						x: z === clampedZoom ? x : newTx,
 						y: z === clampedZoom ? y : newTy,
 					}, clampedZoom, -height, width);
@@ -1072,7 +1072,7 @@ export default class GlyphCanvas extends React.PureComponent {
 									y: ty,
 								};
 
-								this.toile.setCamera(newTs, z, -height, width);
+								this.setCamera(newTs, z, -height, width);
 							}
 							break;
 						}
@@ -1298,7 +1298,21 @@ export default class GlyphCanvas extends React.PureComponent {
 			bbox[1],
 		));
 
-		this.toile.setCameraCenter(center, 0.5, -height, width);
+		this.setCameraCenter(center, 0.5, -height, width);
+	}
+
+	setCamera(t, z, height, width) {
+		this.toile.setCamera(t, z, height, width);
+		this.client.dispatchAction('/store-value', {
+			glyphViewMatrix: {
+				t,
+				z,
+			},
+		});
+	}
+
+	setCameraCenter(t, z, height, width) {
+		this.toile.setCameraCenter(t, z, height, width);
 	}
 
 	storeSelectedItems(selectedItems) {

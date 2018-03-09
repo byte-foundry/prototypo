@@ -41,8 +41,11 @@ export default class CanvasShadow extends React.PureComponent {
 		console.log('new props');
 
 		if (nextProps.canvasMode === 'move' && (
-			glyphViewMatrix.matrix._tx !== nextGlyphViewMatrix.matrix._tx || glyphViewMatrix.matrix._ty !== nextGlyphViewMatrix.matrix._ty)) {
-			const {delta} = nextProps.glyphViewMatrix;
+			glyphViewMatrix.t.x !== nextGlyphViewMatrix.t.x || glyphViewMatrix.t.y !== nextGlyphViewMatrix.t.y)) {
+			const delta = {
+				x: nextGlyphViewMatrix.t.x - glyphViewMatrix.t.x,
+				y: nextGlyphViewMatrix.t.y - glyphViewMatrix.t.y,
+			};
 
 			console.log(delta);
 
@@ -53,7 +56,7 @@ export default class CanvasShadow extends React.PureComponent {
 					eyeY: this.state.eyeY - delta.y / this.state.zoom,
 					lastMouseX: this.state.lastMouseX - delta.x,
 					lastMouseY: this.state.lastMouseY - delta.y,
-					glyphZoom: nextProps.glyphViewMatrix.matrix._owner.zoom,
+					glyphZoom: nextProps.glyphViewMatrix.zoom,
 				});
 				break;
 			case 'font':
@@ -62,7 +65,7 @@ export default class CanvasShadow extends React.PureComponent {
 					eyeY: this.state.eyeY + delta.y / this.state.zoom,
 					lastMouseX: this.state.lastMouseX + delta.x,
 					lastMouseY: this.state.lastMouseY + delta.y,
-					glyphZoom: nextProps.glyphViewMatrix.matrix._owner.zoom,
+					glyphZoom: nextProps.glyphViewMatrix.zoom,
 				});
 				break;
 			default:

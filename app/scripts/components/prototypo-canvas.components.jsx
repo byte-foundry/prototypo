@@ -63,7 +63,6 @@ export default class PrototypoCanvas extends React.Component {
 		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.deleteShadow = this.deleteShadow.bind(this);
-		this.getGlyphViewMatrix = this.getGlyphViewMatrix.bind(this);
 	}
 
 	componentWillMount() {
@@ -86,6 +85,7 @@ export default class PrototypoCanvas extends React.Component {
 					credits: head.toJS().d.credits,
 					glyphOutsideView: head.toJS().d.glyphOutsideView,
 					selectedItems: head.toJS().d.selectedItems,
+					glyphViewMatrix: head.toJS().d.glyphViewMatrix,
 				});
 				this.isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 				this.isFreeWithCredits = (
@@ -424,18 +424,6 @@ export default class PrototypoCanvas extends React.Component {
 		this.setState({shadowFile: ''});
 	}
 
-	getGlyphViewMatrix(matrix, delta) {
-		const _matrix = Object.assign({}, matrix._matrix);
-		const _delta = Object.assign({}, delta);
-
-		this.setState({
-			glyphViewMatrix: {
-				matrix: _matrix,
-				delta: _delta,
-			},
-		});
-	}
-
 	preExport() {
 		this.client.dispatchAction('/store-value-font', {exportPlease: false});
 	}
@@ -542,7 +530,7 @@ export default class PrototypoCanvas extends React.Component {
 					<Dropzone
 						className="prototypo-canvas-shadow-dropzone-content"
 						accept="image/jpeg, image/png, .ttf, .otf"
-						multiple="false"
+						multiple={false}
 						onDrop={this.onDrop}
 						rejectClassName="rejected"
 					>
