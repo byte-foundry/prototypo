@@ -1,0 +1,27 @@
+.oauth-button {
+	margin-bottom: 10px;
+
+	&.oauth-button--facebook {
+		background: #3b5998;
+
+		&:hover {
+			background-color: darken(#3b5998, 5%);
+		}
+
+		&:focus:not(:active) {
+			box-shadow: 0 0 0 .1em rgba(#3b5998, .5);
+		}
+	}
+
+	&.oauth-button--twitter {
+		background: #00aced;
+
+		&:hover {
+			background-color: darken(#00aced, 5%);
+		}
+
+		&:focus:not(:active) {
+			box-shadow: 0 0 0 .1em rgba(#00aced, .5);
+		}
+	}
+}
