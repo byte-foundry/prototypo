@@ -582,6 +582,7 @@ export default class Toile {
 							skeleton: parentNode,
 							baseAngle: parentNode.expand.baseAngle,
 							angleOffset,
+							transforms: node.addedTransform,
 							parallelParameters,
 						},
 					});

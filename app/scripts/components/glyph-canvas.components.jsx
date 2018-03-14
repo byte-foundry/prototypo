@@ -85,8 +85,17 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 		y: handle.yBase,
 	};
 	const parent = _get(glyph, parentId);
-	const xTransform = transforms.name.indexOf('scaleX') === -1 ? 1 : transforms.param;
-	const yTransform = transforms.name.indexOf('scaleY') === -1 ? 1 : transforms.param;
+	let xTransform = 1;
+	let yTransform = 1;
+
+	for (let i = 0; i < transforms.length; i++) {
+		const transform = transforms[i];
+
+		if (transform) {
+			xTransform /= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
+			yTransform /= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
+		}
+	}
 	const newVectorPreTransform = subtract2D(newPos, handlePos);
 	const newVector = {
 		x: newVectorPreTransform.x * xTransform,
@@ -117,9 +126,9 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 		);
 
 		changes[`${draggedItem.data.parentId}.${oppositeDirection}.x`]
-			= opVector.x;
+			= opVector.x * xTransform;
 		changes[`${draggedItem.data.parentId}.${oppositeDirection}.y`]
-			= opVector.y;
+			= opVector.y * yTransform;
 
 		if (!unparallelMod) {
 			const parallelParent = _get(glyph, draggedItem.data.parallelId);
@@ -134,9 +143,9 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 			);
 
 			changes[`${draggedItem.data.parallelId}.${direction}.x`]
-				= parallelVector.x;
+				= parallelVector.x * xTransform;
 			changes[`${draggedItem.data.parallelId}.${direction}.y`]
-				= parallelVector.y;
+				= parallelVector.y * xTransform;
 		}
 	}
 
@@ -153,9 +162,9 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 		);
 
 		changes[`${draggedItem.data.parallelId}.${oppositeDirection}.x`]
-			= parallelOpVector.x;
+			= parallelOpVector.x * xTransform;
 		changes[`${draggedItem.data.parallelId}.${oppositeDirection}.y`]
-			= parallelOpVector.y;
+			= parallelOpVector.y * yTransform;
 	}
 
 	changeGlyphManually(changes, glyph, client);
@@ -175,16 +184,39 @@ function onCurveModification(
 		baseAngle,
 		skeleton,
 		angleOffset,
+		transforms,
 	} = draggedItem.data;
 	const opposite = _get(glyph, oppositeId);
 	const newPosition = newPos;
+	const widthVector = subtract2D(opposite, newPosition);
 
+	let xTransform = 1;
+	let yTransform = 1;
+
+	for (let i = 0; i < transforms.length; i++) {
+		const transform = transforms[i];
+
+		if (transform) {
+			xTransform /= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
+			yTransform /= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
+		}
+	}
+
+	const transformedWidthVector = {
+		x: xTransform * widthVector.x,
+		y: yTransform * widthVector.y,
+	};
+	const newWidth = distance2D({x: 0, y: 0}, transformedWidthVector);
 	// width factor
-	const factor = distance2D(opposite, newPosition) / baseWidth;
+	const factor = newWidth / baseWidth;
 	// angle difference
 	const newVec = subtract2D(newPosition, skeleton);
+	const transformedVec = {
+		x: xTransform * newVec.x,
+		y: yTransform * newVec.y,
+	};
 
-	const angleDiff = Math.atan2(newVec.y, newVec.x) - baseAngle;
+	const angleDiff = Math.atan2(transformedVec.y, transformedVec.x) - baseAngle;
 
 	const changes = {};
 
