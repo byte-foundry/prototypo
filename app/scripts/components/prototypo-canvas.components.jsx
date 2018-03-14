@@ -606,7 +606,10 @@ export default class PrototypoCanvas extends React.Component {
 				{shadowButton}
 				{shadowDropzone}
 				{shadowFile}
-				<GlyphCanvas dependencies={this.props.uiDependencies} glyphOutsideView={this.state.glyphOutsideView} />
+				<GlyphCanvas
+					dependencies={this.props.uiDependencies}
+					glyphOutsideView={this.state.glyphOutsideView}
+				/>
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => {this.props.close('glyph');}} />
 				</div>

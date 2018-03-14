@@ -1,5 +1,19 @@
 import React from 'react';
 import LocalClient from '../../stores/local-client.stores.jsx';
+import Toile,
+{
+	mState,
+	toileType,
+	appState,
+	transformCoords,
+	inverseProjectionMatrix,
+	canvasMode,
+	specialKey,
+} from '../../toile/toile';
+
+const raf = requestAnimationFrame || webkitRequestAnimationFrame;
+const rafCancel = cancelAnimationFrame || webkitCancelAnimationFrame;
+let rafId;
 
 export default class CanvasShadow extends React.PureComponent {
 	constructor(props) {
@@ -8,8 +22,6 @@ export default class CanvasShadow extends React.PureComponent {
 			zoom: 1,
 			eyeX: 0,
 			eyeY: 0,
-			tX: 0,
-			tY: 0,
 			imageOriginalWidth: 0,
 			imageOriginalHeight: 0,
 			image: undefined,
@@ -26,8 +38,6 @@ export default class CanvasShadow extends React.PureComponent {
 		this.onMouseDown = this.onMouseDown.bind(this);
 		this.onMouseWheel = this.onMouseWheel.bind(this);
 		this.onDoubleClick = this.onDoubleClick.bind(this);
-		this.onKeyUp = this.onKeyUp.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
 	}
 
 	componentWillMount() {
@@ -56,7 +66,7 @@ export default class CanvasShadow extends React.PureComponent {
 					eyeY: this.state.eyeY - delta.y / this.state.zoom,
 					lastMouseX: this.state.lastMouseX - delta.x,
 					lastMouseY: this.state.lastMouseY - delta.y,
-					glyphZoom: nextProps.glyphViewMatrix.zoom,
+					zoom: nextProps.glyphViewMatrix.z,
 				});
 				break;
 			case 'font':
@@ -65,7 +75,7 @@ export default class CanvasShadow extends React.PureComponent {
 					eyeY: this.state.eyeY + delta.y / this.state.zoom,
 					lastMouseX: this.state.lastMouseX + delta.x,
 					lastMouseY: this.state.lastMouseY + delta.y,
-					glyphZoom: nextProps.glyphViewMatrix.zoom,
+					zoom: nextProps.glyphViewMatrix.z,
 				});
 				break;
 			default:
@@ -74,78 +84,113 @@ export default class CanvasShadow extends React.PureComponent {
 		}
 	}
 
-	componentDidMount() {
-		this.ctx = this.refs.canvas.getContext('2d');
-		this.canvas = this.refs.canvas;
-		this.canvasWidth = this.props.width;
-		this.canvasHeight = this.props.height;
+	async componentDidMount() {
+		this.toile = new Toile(this.canvas);
 		this.type = this.props.shadowFile.type;
 		this.elem = this.props.shadowFile.elem;
 		this.glyph = this.props.glyphSelected.name;
-
-		window.addEventListener('keydown', this.onKeyDown);
-		window.addEventListener('keyup', this.onKeyUp);
+		this.toile.setCameraCenter({x: 0, y: 0}, 1, -this.canvas.clientHeight, this.canvas.clientWidth);
 
 		switch (this.type) {
 		case 'image':
-			this.loadImage();
+			await this.loadImage();
 			break;
 		case 'font':
-			this.loadFont();
+			await this.loadFont();
 			break;
 		default:
 			break;
 		}
+
+		let appStateValue = appState.DEFAULT;
+		let mouse = this.toile.getMouseState();
+		let appMode = canvasMode.UNDEF;
+
+		const rafFunc = () => {
+			const height = this.canvas.clientHeight;
+			const width = this.canvas.clientWidth;
+
+			this.toile.clearCanvas(width, height);
+
+			switch (this.props.canvasMode) {
+			case 'move':
+				appMode = canvasMode.MOVE;
+				break;
+			default:
+				appMode = canvasMode.UNDEF;
+				break;
+			}
+
+			mouse = this.toile.getMouseState();
+
+			if (appMode === canvasMode.MOVE) {
+				// when in move mode the only action possible is to move
+				// this happen if mouse is in down state
+				if (mouse.state === mState.DOWN) {
+					appStateValue = appState.MOVING;
+				}
+				else {
+					appStateValue = appState.DEFAULT;
+				}
+			}
+
+			if (appStateValue & appState.MOVING) {
+				const [z,,,, tx, ty] = this.toile.viewMatrix;
+				const newTs = {
+					x: tx + mouse.delta.x,
+					y: ty + mouse.delta.y,
+				};
+			}
+
+			this.toile.setCamera(this.props.glyphViewMatrix.t, this.props.glyphViewMatrix.z, -height, width);
+
+			this.toile.drawText(`${this.glyph}`, {x: 0, y: 0}, 1000 * this.props.glyphViewMatrix.z, '#fc5454', 'shadowfont');
+			rafId = raf(rafFunc);
+		};
+
+		rafId = raf(rafFunc);
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener('keydown', this.onKeyDown);
-		window.removeEventListener('keyup', this.onKeyUp);
+		rafCancel(rafId);
 	}
 
 	loadImage() {
-		const image = new Image();
+		return new Promise((resolve) => {
+			const image = new Image();
 
-		image.src = this.elem;
-		image.onload = () => {
-			const eyeX = -(this.canvasWidth / 2) + (image.width / 2);
-			const eyeY = -(this.canvasHeight / 2) + (image.height / 2);
+			image.src = this.elem;
+			image.onload = () => {
+				const eyeX = -(this.canvasWidth / 2) + (image.width / 2);
+				const eyeY = -(this.canvasHeight / 2) + (image.height / 2);
 
-		    this.setState({
-		      imageOriginalWidth: image.width,
-		      imageOriginalHeight: image.height,
-		      eyeX,
-		      eyeY,
-			  lastMouseX: eyeX,
-			  lastMouseY: eyeY,
-		      zoom: 1,
-		      image,
-		    });
-	  };
+				this.setState({
+				  imageOriginalWidth: image.width,
+				  imageOriginalHeight: image.height,
+				  eyeX,
+				  eyeY,
+				  lastMouseX: eyeX,
+				  lastMouseY: eyeY,
+				  zoom: 1,
+				  image,
+				});
+
+				resolve();
+			};
+		});
 	}
 
 	loadFont() {
-		const shadowFont = new FontFace('shadowfont', this.elem, {
-			style: 'normal',
-			weight: '400',
-		});
+		return new Promise((resolve) => {
+			const shadowFont = new FontFace('shadowfont', this.elem, {
+				style: 'normal',
+				weight: '400',
+			});
 
-		this.ctx.font = `${500 * this.state.zoom}px shadowfont`;
-		const size = this.ctx.measureText(`${this.glyph}`);
-
-		document.fonts.add(shadowFont);
-		shadowFont.load();
-		document.fonts.ready.then(() => {
-			const eyeX = (this.canvasWidth / 2) - (size.width / 2);
-			const eyeY = (this.canvasHeight / 2) + (250 * this.state.zoom / 2);
-
-			this.setState({
-				eyeX,
-				eyeY,
-				zoom: 1,
-				shadowFont,
-				lastMouseX: eyeX,
-				lastMouseY: eyeY,
+			document.fonts.add(shadowFont);
+			shadowFont.load();
+			document.fonts.ready.then(() => {
+				resolve();
 			});
 		});
 	}
@@ -154,8 +199,8 @@ export default class CanvasShadow extends React.PureComponent {
 		const zoom = this.props.canvasMode === 'move' && this.type === 'font' ? this.state.glyphZoom : this.state.zoom;
 		const viewW = this.canvasWidth;
 		const viewH = this.canvasHeight;
-		const srcWidth = viewW / this.state.zoom;
-		const srcHeight = viewH / this.state.zoom;
+		const srcWidth = viewW * this.state.zoom;
+		const srcHeight = viewH * this.state.zoom;
 		const viewCenterX = ((this.state.eyeX + viewW / 2) - (srcWidth / 2)).toFixed(2);
 		const viewCenterY = ((this.state.eyeY + viewH / 2) - (srcHeight / 2)).toFixed(2);
 
@@ -247,30 +292,8 @@ export default class CanvasShadow extends React.PureComponent {
 		}
 	}
 
-	onKeyUp(e) {
-		if (e.keyCode === 83) {
-			e.preventDefault();
-			e.stopPropagation();
-			this.client.dispatchAction('/toggle-canvas-mode');
-		}
-		if (e.keyCode === 32) {
-			e.preventDefault();
-			e.stopPropagation();
-			this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'shadow'});
-		}
-	}
-
-	onKeyDown(e) {
-		if (e.keyCode === 32) {
-			e.preventDefault();
-			e.stopPropagation();
-			this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
-		}
-	}
-
 	componentDidUpdate() {
 		this.glyph = String.fromCharCode(this.props.glyphSelected.unicode);
-		this.drawOnCanvas();
 	}
 
 	render() {
@@ -278,7 +301,7 @@ export default class CanvasShadow extends React.PureComponent {
 			? (
 				<canvas
 					className="prototypo-canvas-shadow-canvas"
-					ref="canvas"
+					ref={(canvas) => {this.canvas = canvas;}}
 					onMouseMove={this.onMouseMove}
 					onMouseDown={this.onMouseDown}
 					onMouseUp={this.onMouseUp}
@@ -291,7 +314,7 @@ export default class CanvasShadow extends React.PureComponent {
 			: (
 				<canvas
 					className="prototypo-canvas-shadow-canvas"
-					ref="canvas"
+					ref={(canvas) => {this.canvas = canvas;}}
 					width={this.props.width}
 					height={this.props.height}
 				/>

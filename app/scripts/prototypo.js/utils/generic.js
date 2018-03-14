@@ -93,7 +93,7 @@ export function transformNode(node, transforms, origin) {
 		var [name, param] = transforms[i];
 
 		exeTransformOnNode(name, node, param, origin);
-		node.addedTransform.push(name);
+		node.addedTransform.push({name, param});
 		if (node.handleIn) {
 			exeTransformOnNode(name, node.handleIn, param, origin);
 		}

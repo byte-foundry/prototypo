@@ -85,8 +85,8 @@ function handleModification(client, glyph, draggedItem, newPos, unsmoothMod, unp
 		y: handle.yBase,
 	};
 	const parent = _get(glyph, parentId);
-	const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
-	const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
+	const xTransform = transforms.name.indexOf('scaleX') === -1 ? 1 : transforms.param;
+	const yTransform = transforms.name.indexOf('scaleY') === -1 ? 1 : transforms.param;
 	const newVectorPreTransform = subtract2D(newPos, handlePos);
 	const newVector = {
 		x: newVectorPreTransform.x * xTransform,
@@ -203,8 +203,17 @@ function skeletonPosModification(client, glyph, draggedItem, newPos) {
 	const {base, transforms} = draggedItem.data;
 
 	const mouseVec = subtract2D(newPos, base);
-	const xTransform = transforms.indexOf('scaleX') === -1 ? 1 : -1;
-	const yTransform = transforms.indexOf('scaleY') === -1 ? 1 : -1;
+	let xTransform = 1;
+	let yTransform = 1;
+
+	for (let i = 0; i < transforms.length; i++) {
+		const transform = transforms[i];
+
+		if (transform) {
+			xTransform /= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
+			yTransform /= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
+		}
+	}
 
 	const changes = {
 		[`${draggedItem.data.modifAddress}x`]: mouseVec.x * xTransform,
@@ -892,7 +901,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				) {
 					if (this.toile.keyboardDownRisingEdge.keyCode === 27) {
 						this.client.dispatchAction('/reset-glyph-points-manually', {
-							glyphName: glyph.name,
+							glyphName: glyph.base || glyph.name,
 							unicode: glyph.unicode,
 							points: selectedItems,
 						});
