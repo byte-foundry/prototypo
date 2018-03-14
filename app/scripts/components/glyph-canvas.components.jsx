@@ -386,6 +386,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		let appMode;
 		let oldAppMode;
 		let oldAppState;
+		let oldViewMatrix;
 		let mouseDoubleClick;
 		let pause = false;
 		let firstDraw = true;
@@ -503,8 +504,8 @@ export default class GlyphCanvas extends React.PureComponent {
 
 						oldAppMode = undefined;
 						oldAppState = undefined;
+						this.toile.clearKeyboardInput();
 					}
-					this.toile.clearKeyboardInput();
 				}
 
 				if (this.toile.keyboardDownRisingEdge.keyCode) {
@@ -742,6 +743,20 @@ export default class GlyphCanvas extends React.PureComponent {
 					appStateValue &= ~appState.ZOOMING;
 				}
 
+				const enteringPreview = this.toile.keyboardDownRisingEdge.keyCode === 90;
+				const previewMode = this.toile.keyboardDown.keycode === 90;
+				const exitingPreview = this.toile.keyboardUpRisingEdge.keyCode === 90;
+
+				if (enteringPreview) {
+					oldViewMatrix = this.toile.viewMatrix;
+					this.resetView(glyph, height, width);
+				}
+
+				if (exitingPreview) {
+					const [z,,,, tx, ty] = oldViewMatrix;
+
+					this.setCamera({x: tx, y: ty}, z, -height, width);
+				}
 
 				// Drawing basic stuff (glyph, frame, and contours)
 				this.toile.clearCanvas(width, height);
@@ -754,6 +769,13 @@ export default class GlyphCanvas extends React.PureComponent {
 					this.resetView(glyph, height, width);
 				}
 				this.toile.drawGlyph(glyph, hotItems, this.state.uiOutline);
+
+				if (previewMode) {
+					this.cleanUpFrame();
+					rafId = raf(rafFunc);
+					return;
+				}
+
 				this.toile.drawSelectableContour(
 					glyph,
 					appMode === canvasMode.SELECT_POINTS ? hotItems : [],
@@ -1288,16 +1310,21 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 			}
-			this.toile.clearKeyboardEdges();
-			this.toile.clearMouseEdges();
-			this.toile.clearDelta();
-			this.toile.clearWheelDelta();
+
+			this.cleanUpFrame();
 
 			rafId = raf(rafFunc);
 			/* eslint-enable no-bitwise, max-depth */
 		};
 
 		rafId = raf(rafFunc);
+	}
+
+	cleanUpFrame() {
+		this.toile.clearKeyboardEdges();
+		this.toile.clearMouseEdges();
+		this.toile.clearDelta();
+		this.toile.clearWheelDelta();
 	}
 
 	componentWillUnmount() {

@@ -481,25 +481,6 @@ export default class PrototypoCanvas extends React.Component {
 			</ContextualMenuItem>,
 		];
 
-		if (this.state.canvasMode === 'select-points') {
-			menu.splice(
-				1, 0,
-				<ContextualMenuItem
-					key="coords"
-					active={this.props.uiCoords}
-					onClick={this.toggleCoords}
-				>
-					{this.props.uiCoords ? 'Hide' : 'Show'} coords
-				</ContextualMenuItem>,
-				<ContextualMenuItem
-					key="dependencies"
-					active={this.props.uiCoords}
-					onClick={this.toggleDependencies}
-				>
-					{this.props.uiDependencies ? 'Hide' : 'Show'} dependencies
-				</ContextualMenuItem>,
-			);
-		}
 		/* eslint-disable max-len */
 		// const demoOverlay = (isFreeWithoutCreditsInManualEditing || isFreeWithoutCreditsInComponentEditing) ? (
 		// 	<div className="canvas-demo-overlay" onClick={this.restrictedRangeEnter}/>
@@ -529,12 +510,12 @@ export default class PrototypoCanvas extends React.Component {
 				<div className="prototypo-canvas-shadow-dropzone">
 					<Dropzone
 						className="prototypo-canvas-shadow-dropzone-content"
-						accept="image/jpeg, image/png, .ttf, .otf"
+						accept=".ttf, .otf"
 						multiple={false}
 						onDrop={this.onDrop}
 						rejectClassName="rejected"
 					>
-					Drop an image file or a font here, or click to select files to upload.
+					Drop a font here, or click to select files to upload.
 					</Dropzone>
 				</div>
 			);

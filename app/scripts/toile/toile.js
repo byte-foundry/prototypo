@@ -148,6 +148,7 @@ export default class Toile {
 			this.keyboardUp = {};
 			this.keyboardDown = {};
 			this.keyboardDownRisingEdge = {};
+			this.keyboardUpRisingEdge = {};
 
 			canvas.addEventListener('mousemove', (e) => {
 				const {offsetLeft, offsetTop} = DOM.getAbsOffset(canvas);
@@ -190,13 +191,19 @@ export default class Toile {
 					metaKey,
 				} = e;
 
-				this.keyboardUp = {
+				const eventData = {
 					keyCode,
 					special: (ctrlKey ? specialKey.CTRL : 0)
 						+ (shiftKey ? specialKey.SHIFT : 0)
 						+ (altKey ? specialKey.ALT : 0)
 						+ (metaKey ? specialKey.META : 0),
 				};
+
+				if (this.keyboardDown.keyCode === keyCode) {
+					this.keyboardUpRisingEdge = eventData;
+				}
+
+				this.keyboardUp = eventData;
 			});
 
 			document.addEventListener('keydown', (e) => {
@@ -253,10 +260,12 @@ export default class Toile {
 		this.keyboardUp = {};
 		this.keyboardDown = {};
 		this.keyboardDownRisingEdge = {};
+		this.keyboardUpRisingEdge = {};
 	}
 
 	clearKeyboardEdges() {
 		this.keyboardDownRisingEdge = {};
+		this.keyboardUpRisingEdge = {};
 	}
 
 	clearMouseEdges() {

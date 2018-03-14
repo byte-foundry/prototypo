@@ -32,7 +32,6 @@ export default class CanvasShadow extends React.PureComponent {
 		};
 		this.loadImage = this.loadImage.bind(this);
 		this.loadFont = this.loadFont.bind(this);
-		this.drawOnCanvas = this.drawOnCanvas.bind(this);
 		this.onMouseMove = this.onMouseMove.bind(this);
 		this.onMouseUp = this.onMouseUp.bind(this);
 		this.onMouseDown = this.onMouseDown.bind(this);
@@ -88,13 +87,18 @@ export default class CanvasShadow extends React.PureComponent {
 		this.toile = new Toile(this.canvas);
 		this.type = this.props.shadowFile.type;
 		this.elem = this.props.shadowFile.elem;
-		this.glyph = this.props.glyphSelected.name;
-		this.toile.setCameraCenter({x: 0, y: 0}, 1, -this.canvas.clientHeight, this.canvas.clientWidth);
+		this.glyph = String.fromCharCode(this.props.glyphSelected.unicode);
+		const height = this.canvas.clientHeight;
+		const width = this.canvas.clientWidth;
 
-		switch (this.type) {
+		this.toile.setCamera(this.props.glyphViewMatrix.t, this.props.glyphViewMatrix.z, -height, width);
+
+		/*
 		case 'image':
 			await this.loadImage();
 			break;
+		*/
+		switch (this.type) {
 		case 'font':
 			await this.loadFont();
 			break;
@@ -210,12 +214,7 @@ export default class CanvasShadow extends React.PureComponent {
 			if (!this.state.image) {
 				break;
 			}
-			    this.ctx.drawImage(this.state.image, viewCenterX, viewCenterY, srcWidth, srcHeight, 0, 0, viewW, viewH);
-			    break;
-		case 'font':
-			this.ctx.font = `${500 * this.state.zoom}px shadowfont`;
-			this.ctx.fillStyle = '#fc5454';
-			this.ctx.fillText(`${this.glyph}`, viewCenterX, viewCenterY);
+			this.ctx.drawImage(this.state.image, viewCenterX, viewCenterY, srcWidth, srcHeight, 0, 0, viewW, viewH);
 			break;
 		default:
 			break;
