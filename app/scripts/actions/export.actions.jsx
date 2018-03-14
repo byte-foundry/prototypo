@@ -124,7 +124,6 @@ export default {
 		};
 
 		const fontMediatorInstance = FontMediator.instance();
-		const altList = prototypoStore.get('altList');
 		const values = undoableStore.get('controlsValues');
 		const template = fontInstanceStore.get('templateToLoad');
 		const glyphs = prototypoStore.get('glyphs');
@@ -134,7 +133,7 @@ export default {
 			const buffer = await fontMediatorInstance.getFontFile(
 				name,
 				template,
-				{...values, altList},
+				{...values},
 				subset,
 			);
 
