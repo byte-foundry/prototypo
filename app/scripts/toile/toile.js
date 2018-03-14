@@ -33,9 +33,11 @@ export const toileType = {
 };
 
 export const canvasMode = {
+	UNDEF: -1,
 	MOVE: 0,
 	SELECT_POINTS: 1,
 	COMPONENTS: 2,
+	SHADOW: 3,
 };
 
 export const specialKey = {
@@ -85,6 +87,7 @@ const skeletonColor = green;
 const ringBackground = 'rgba(255,114,94,0.4)';
 const nodePropertyBackground = 'rgba(198, 198, 198, 0.4)';
 const baseSpaceHandleColor = 'rgba(255, 0, 255, 0.3)';
+const frameBackground = 'rgba(0, 0, 0, 0.036)';
 
 const pointMenuAnimationLength = 10;
 const componentMenuAnimationLength = 20;
@@ -324,14 +327,14 @@ export default class Toile {
 		this.drawRectangleFromCorners(
 			lowerCornerRightRectangle,
 			upperCornerRightRectangle,
-			lightestGrey,
-			lightestGrey,
+			frameBackground,
+			frameBackground,
 		);
 		this.drawRectangleFromCorners(
 			lowerCornerLeftRectangle,
 			upperCornerLeftRectangle,
-			lightestGrey,
-			lightestGrey,
+			frameBackground,
+			frameBackground,
 		);
 
 		// base spacing lines
@@ -1059,14 +1062,14 @@ export default class Toile {
 		this.context.fill();
 	}
 
-	drawText(text, point, textSize, textColor) {
+	drawText(text, point, textSize, textColor, font = 'Fira sans') {
 		const [transformedPoint] = transformCoords(
 			[point],
 			this.viewMatrix,
 			this.height,
 		);
 
-		this.context.font = `${textSize}px 'Fira sans', sans-serif`;
+		this.context.font = `${textSize}px '${font}', sans-serif`;
 		this.context.fillStyle = textColor;
 
 		this.context.fillText(text, transformedPoint.x, transformedPoint.y);
