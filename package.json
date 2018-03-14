@@ -36,6 +36,7 @@
     "react-dom": "~15.4.0",
     "react-draggable": "^2.2.1",
     "react-facebook-login": "^4.0.1",
+    "react-google-login": "YoruNoHikage/react-google-login",
     "react-joyride": "^1.4.7",
     "react-json-pretty": "^1.6.3",
     "react-markdown": "^2.4.4",

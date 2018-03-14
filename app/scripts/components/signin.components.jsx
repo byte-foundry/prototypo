@@ -102,7 +102,14 @@ export class Signin extends React.Component {
 				</div>
 				<h1 className="account-dashboard-page-title">Welcome back.</h1>
 				<div className="sign-in-container">
-					<OAuthButtons onLogin={this.signIn} className="sign-in-oauth-buttons" />
+					<div className="sign-in-oauth">
+						<label className="sign-in-oauth-label" htmlFor="oauth">Sign in with</label>
+						<OAuthButtons id="oauth" onLogin={this.signIn} className="sign-in-oauth-buttons" />
+					</div>
+					<div className="sign-in-separator">
+						<hr className="sign-in-separator-line" />
+						<span className="sign-in-separator-text">OR</span>
+					</div>
 					<form className="sign-in-form" onSubmit={this.signIn}>
 						<InputWithLabel
 							id="email-sign-in"

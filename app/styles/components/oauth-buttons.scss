@@ -1,8 +1,31 @@
 .oauth-button {
-	margin-bottom: 10px;
+	position: relative;
+	padding-bottom: 8px;
+
+	.oauth-button-icon {
+		position: absolute;
+		vertical-align: middle;
+		padding: 6px;
+		top: 0;
+		left: 0;
+		margin: 1px;
+
+		svg {
+			display: inline;
+			vertical-align: text-bottom;
+		}
+	}
+
+	.oauth-button-content {
+		padding-left: 12px;
+	}
 
 	&.oauth-button--facebook {
 		background: #3b5998;
+
+		.oauth-button-content {
+			padding-left: 20px;
+		}
 
 		&:hover {
 			background-color: darken(#3b5998, 5%);
@@ -22,6 +45,24 @@
 
 		&:focus:not(:active) {
 			box-shadow: 0 0 0 .1em rgba(#00aced, .5);
+		}
+	}
+
+	&.oauth-button--google {
+		background: #fff;
+		color: #757575;
+		border: 1px solid #aaa;
+
+		.oauth-button-icon {
+			padding: 8px;
+		}
+
+		&:hover {
+			background-color: darken(#fff, 5%);
+		}
+
+		&:focus:not(:active) {
+			box-shadow: 0 0 0 .1em rgba(#4285F4, .5);
 		}
 	}
 }

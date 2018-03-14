@@ -247,6 +247,10 @@
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@types/inline-style-prefixer/-/inline-style-prefixer-3.0.1.tgz#8541e636b029124b747952e9a28848286d2b5bf6"
 
+"@types/react@*":
+  version "16.0.40"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.40.tgz#caabc2296886f40b67f6fc80f0f3464476461df9"
+
 "@types/react@^16.0.18":
   version "16.0.25"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.25.tgz#bf696b83fe480c5e0eff4335ee39ebc95884a1ed"
@@ -8627,6 +8631,13 @@ react-draggable@^2.2.1:
 react-facebook-login@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/react-facebook-login/-/react-facebook-login-4.0.1.tgz#7d43672ee86e3f2cd9e8758de1e61eb66a212611"
+
+react-google-login@YoruNoHikage/react-google-login:
+  version "3.0.10"
+  resolved "https://codeload.github.com/YoruNoHikage/react-google-login/tar.gz/aec9c1b22374329aff687a59f2ba0c239193584a"
+  dependencies:
+    "@types/react" "*"
+    prop-types "^15.6.0"
 
 react-hot-loader@next:
   version "3.0.0"
