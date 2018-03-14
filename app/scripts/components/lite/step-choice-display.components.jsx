@@ -38,6 +38,10 @@ export default class StepChoiceDisplay extends React.Component {
 			});
 	}
 
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	selectChoice(choice) {
 		let step;
 
