@@ -81,7 +81,6 @@ export default class PrototypoCanvas extends React.Component {
 					uiWord: head.toJS().d.uiWord || '',
 					canvasMode: head.toJS().d.canvasMode,
 					oldCanvasMode: head.toJS().d.oldCanvasMode,
-					altList: head.toJS().d.altList,
 					credits: head.toJS().d.credits,
 					glyphOutsideView: head.toJS().d.glyphOutsideView,
 					selectedItems: head.toJS().d.selectedItems,
@@ -246,26 +245,40 @@ export default class PrototypoCanvas extends React.Component {
 
 	resetGlyph() {
 		let glyphName = '';
+		let glyph;
 
-		if (this.state.altList[this.props.glyphSelected]) {
-			glyphName = this.state.altList[this.props.glyphSelected];
+		if (this.state.values.altList[this.props.glyphSelected]) {
+			glyphName = this.state.values.altList[this.props.glyphSelected];
+
+			glyph = this.state.glyphs[this.props.glyphSelected].find(glyphItem =>
+				glyphItem.name === glyphName);
 		}
 		else {
-			glyphName = this.state.glyphs[this.props.glyphSelected][0].name;
+			glyph = this.state.glyphs[this.props.glyphSelected][0];
 		}
-		this.client.dispatchAction('/reset-glyph-manually', {glyphName});
+
+		const glyphToReset = glyph.base || glyph.name;
+
+		this.client.dispatchAction('/reset-glyph-manually', {glyphName: glyphToReset});
 	}
 
 	resetPoints() {
 		let glyphName = '';
+		let glyph;
 
-		if (this.state.altList[this.props.glyphSelected]) {
-			glyphName = this.state.altList[this.props.glyphSelected];
+		if (this.state.values.altList[this.props.glyphSelected]) {
+			glyphName = this.state.values.altList[this.props.glyphSelected];
+
+			glyph = this.state.glyphs[this.props.glyphSelected].find(glyphItem =>
+				glyphItem.name === glyphName);
 		}
 		else {
-			glyphName = this.state.glyphs[this.props.glyphSelected][0].name;
+			glyph = this.state.glyphs[this.props.glyphSelected][0];
 		}
-		this.client.dispatchAction('/reset-glyph-points-manually', {glyphName, unicode: this.props.glyphSelected, points: this.state.selectedItems});
+
+		const glyphToReset = glyph.base || glyph.name;
+
+		this.client.dispatchAction('/reset-glyph-points-manually', {glyphName: glyphToReset, unicode: glyph.unicode, points: this.state.selectedItems});
 	}
 
 	wheel(zoom, center) {
@@ -392,9 +405,9 @@ export default class PrototypoCanvas extends React.Component {
 		) {
 			let manualChangesGlyph;
 
-			if (this.state.altList[this.props.glyphSelected]) {
+			if (this.state.values.altList[this.props.glyphSelected]) {
 				manualChangesGlyph
-					= this.state.values.manualChanges[this.state.altList[this.props.glyphSelected]];
+					= this.state.values.manualChanges[this.state.values.altList[this.props.glyphSelected]];
 			}
 			else {
 				manualChangesGlyph

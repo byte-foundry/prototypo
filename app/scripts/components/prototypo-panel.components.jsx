@@ -13,7 +13,6 @@ import PrototypoCanvas from './prototypo-canvas.components';
 import PrototypoWord from './prototypo-word.components';
 
 export default class PrototypoPanel extends React.Component {
-
 	constructor(props) {
 		super(props);
 
@@ -103,8 +102,10 @@ export default class PrototypoPanel extends React.Component {
 	}
 
 	closeRestrictedFeatureOverlay() {
-		this.client.dispatchAction('/store-value', {openRestrictedFeature: false,
-			restrictedFeatureHovered: ''});
+		this.client.dispatchAction('/store-value', {
+			openRestrictedFeature: false,
+			restrictedFeatureHovered: '',
+		});
 	}
 
 	openGoProModal() {
@@ -122,7 +123,7 @@ export default class PrototypoPanel extends React.Component {
 		// TODO(franz): Why ?
 		/* if (!this.state.panel) {
 			return false;
-			}*/
+			} */
 
 		const hasGlyph = this.state.uiMode.indexOf('glyph') !== -1;
 		const hasText = this.state.uiMode.indexOf('text') !== -1;
@@ -133,9 +134,9 @@ export default class PrototypoPanel extends React.Component {
 		const glyphIntercomDisplacement = hasGlyph && !hasText;
 		const wordIntercomDisplacement = hasWord && !hasText && !hasGlyph;
 
-			/* if (hasGlyph && this.state.uiShadow) {
+		/* if (hasGlyph && this.state.uiShadow) {
 			textAndGlyph.push(<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>);
-		}*/
+		} */
 
 		let featureHovered;
 
@@ -154,7 +155,6 @@ export default class PrototypoPanel extends React.Component {
 			break;
 		default:
 			featureHovered = 'This feature is not available to you yet.';
-
 		}
 
 		const restrictedFeatureText = this.state.openRestrictedFeature
