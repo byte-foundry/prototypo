@@ -247,7 +247,7 @@ export default class PrototypoCanvas extends React.Component {
 		let glyphName = '';
 		let glyph;
 
-		if (this.state.values.altList[this.props.glyphSelected]) {
+		if (this.state.values.altList && this.state.values.altList[this.props.glyphSelected]) {
 			glyphName = this.state.values.altList[this.props.glyphSelected];
 
 			glyph = this.state.glyphs[this.props.glyphSelected].find(glyphItem =>
@@ -266,7 +266,7 @@ export default class PrototypoCanvas extends React.Component {
 		let glyphName = '';
 		let glyph;
 
-		if (this.state.values.altList[this.props.glyphSelected]) {
+		if (this.state.values.altList && this.state.values.altList[this.props.glyphSelected]) {
 			glyphName = this.state.values.altList[this.props.glyphSelected];
 
 			glyph = this.state.glyphs[this.props.glyphSelected].find(glyphItem =>
@@ -405,7 +405,7 @@ export default class PrototypoCanvas extends React.Component {
 		) {
 			let manualChangesGlyph;
 
-			if (this.state.values.altList[this.props.glyphSelected]) {
+			if (this.state.values.altList && this.state.values.altList[this.props.glyphSelected]) {
 				manualChangesGlyph
 					= this.state.values.manualChanges[this.state.values.altList[this.props.glyphSelected]];
 			}
