@@ -556,7 +556,7 @@ export default class Glyph {
 				}
 			}
 
-			const globalComponentChange = params.manualChanges[componentName].cursors;
+			const globalComponentChange = (params.manualChanges[componentName] || {cursors: {}}).cursors;
 			const globalCompChangeKeys = Object.keys(globalComponentChange);
 
 			for (let i = 0; i < globalCompChangeKeys.length; i++) {
