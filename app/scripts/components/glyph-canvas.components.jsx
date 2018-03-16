@@ -38,7 +38,7 @@ const onCurveModMode = {
 function changeGlyphManually(changes, glyph, client, globalMode, componentName) {
 	const glyphName = globalMode
 		? componentName
-		: glyph.name;
+		: glyph.base || glyph.name;
 
 	client.dispatchAction('/change-glyph-node-manually', {
 		changes,
