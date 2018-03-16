@@ -35,8 +35,10 @@ const onCurveModMode = {
 	ANGLE_MOD: 0b10,
 };
 
-function changeGlyphManually(changes, glyph, client) {
-	const glyphName = glyph.base || glyph.name;
+function changeGlyphManually(changes, glyph, client, globalMode, componentName) {
+	const glyphName = globalMode
+		? componentName
+		: glyph.name;
 
 	client.dispatchAction('/change-glyph-node-manually', {
 		changes,
@@ -82,10 +84,11 @@ function handleModification(
 	newPos,
 	unsmoothMod,
 	unparallelMod,
-	appMode,
+	globalMode,
 ) {
 	const {
 		parentId,
+		parallelId,
 		transforms,
 		componentPrefixAddress,
 		nodeAddress,
@@ -121,12 +124,9 @@ function handleModification(
 	const direction = isIn ? 'in' : 'out';
 	const oppositeDirection = isIn ? 'out' : 'in';
 
-	const parentAddress = appMode === canvasMode.SELECT_POINTS_COMPONENT
-		? nodeAddress
-		: `${componentPrefixAddress}${nodeAddress}`;
 	const changes = {
-		[`${parentAddress}${direction}.x`]: newVector.x,
-		[`${parentAddress}${direction}.y`]: newVector.y,
+		[`${parentId}.${direction}.x`]: newVector.x,
+		[`${parentId}.${direction}.y`]: newVector.y,
 	};
 
 	if (!unsmoothMod && (parent.baseTypeIn === 'smooth' || parent.baseTypeOut === 'smooth')) {
@@ -140,9 +140,9 @@ function handleModification(
 			refLength,
 		);
 
-		changes[`${draggedItem.data.parentId}.${oppositeDirection}.x`]
+		changes[`${parentId}.${oppositeDirection}.x`]
 			= opVector.x * xTransform;
-		changes[`${draggedItem.data.parentId}.${oppositeDirection}.y`]
+		changes[`${parentId}.${oppositeDirection}.y`]
 			= opVector.y * yTransform;
 
 		if (!unparallelMod) {
@@ -157,9 +157,9 @@ function handleModification(
 				refLength,
 			);
 
-			changes[`${draggedItem.data.parallelId}.${direction}.x`]
+			changes[`${parallelId}.${direction}.x`]
 				= parallelVector.x * xTransform;
-			changes[`${draggedItem.data.parallelId}.${direction}.y`]
+			changes[`${parallelId}.${direction}.y`]
 				= parallelVector.y * xTransform;
 		}
 	}
@@ -176,17 +176,13 @@ function handleModification(
 			refLength,
 		);
 
-		changes[`${draggedItem.data.parallelId}.${oppositeDirection}.x`]
+		changes[`${parallelId}.${oppositeDirection}.x`]
 			= parallelOpVector.x * xTransform;
-		changes[`${draggedItem.data.parallelId}.${oppositeDirection}.y`]
+		changes[`${parallelId}.${oppositeDirection}.y`]
 			= parallelOpVector.y * yTransform;
 	}
 
-	const glyphProxy = appMode === canvasMode.SELECT_POINTS_COMPONENT
-		? {name: componentName}
-		: glyph;
-
-	changeGlyphManually(changes, glyphProxy, client);
+	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
 
 function onCurveModification(
@@ -196,7 +192,7 @@ function onCurveModification(
 	newPos,
 	appStateValue,
 	modToApply,
-	appMode,
+	globalMode,
 ) {
 	const {
 		baseWidth,
@@ -205,6 +201,7 @@ function onCurveModification(
 		skeleton,
 		angleOffset,
 		transforms,
+		componentName,
 	} = draggedItem.data;
 	const opposite = _get(glyph, oppositeId);
 	const newPosition = newPos;
@@ -248,15 +245,11 @@ function onCurveModification(
 		changes[`${draggedItem.data.modifAddress}.angle`] = angleDiff + angleOffset;
 	}
 
-	const glyphProxy = appMode === canvasMode.SELECT_POINTS_COMPONENT
-		? {name: draggedItem.data.componentName}
-		: glyph;
-
-	changeGlyphManually(changes, glyphProxy, client);
+	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
 
-function skeletonPosModification(client, glyph, draggedItem, newPos, appMode) {
-	const {base, transforms} = draggedItem.data;
+function skeletonPosModification(client, glyph, draggedItem, newPos, globalMode) {
+	const {base, transforms, componentName} = draggedItem.data;
 
 	const mouseVec = subtract2D(newPos, base);
 	let xTransform = 1;
@@ -276,19 +269,16 @@ function skeletonPosModification(client, glyph, draggedItem, newPos, appMode) {
 		[`${draggedItem.data.modifAddress}y`]: mouseVec.y * yTransform,
 	};
 
-	const glyphProxy = appMode === canvasMode.SELECT_POINTS_COMPONENT
-		? {name: draggedItem.data.componentName}
-		: glyph;
-
-	changeGlyphManually(changes, glyphProxy, client);
+	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
 
-function skeletonDistrModification(client, glyph, draggedItem, newPos, appMode) {
+function skeletonDistrModification(client, glyph, draggedItem, newPos, global) {
 	const {
 		base,
 		expandedTo,
 		width,
 		baseDistr,
+		componentName,
 	} = draggedItem.data;
 	const skelVec = normalize2D(subtract2D(expandedTo[1], expandedTo[0]));
 	const distProjOntoSkel = Math.min(Math.max(dot2D(
@@ -306,11 +296,11 @@ function skeletonDistrModification(client, glyph, draggedItem, newPos, appMode) 
 		[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
 	};
 
-	const glyphProxy = appMode === canvasMode.SELECT_POINTS_COMPONENT
+	const glyphProxy = globalMode
 		? {name: draggedItem.data.componentName}
 		: glyph;
 
-	changeGlyphManually(changes, glyphProxy, client);
+	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
 
 function changeSpacing(client, glyph, draggedItem, newPos) {
@@ -426,6 +416,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		let draggingNotStarted = false;
 		let directionalNotStarted = false;
 		let directionalValue;
+		let globalMode = false;
 
 		// Box select variables
 		let mouseBoxStart;
@@ -578,6 +569,8 @@ export default class GlyphCanvas extends React.PureComponent {
 				const contours = hotItems.filter(item =>
 					item.type === toileType.GLYPH_CONTOUR
 					|| item.type === toileType.GLYPH_COMPONENT_CONTOUR);
+				const globalContours = hotItems.filter(item =>
+					item.type === toileType.GLYPH_GLOBAL_COMPONENT_CONTOUR);
 				let componentMenu
 					= hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM_CENTER);
 				let componentChoice
@@ -717,15 +710,24 @@ export default class GlyphCanvas extends React.PureComponent {
 							selectedItems = boxedItems;
 							appStateValue = appState.POINTS_SELECTED;
 							mouseBoxStart = undefined;
+							globalMode = false;
 						}
 						else if (contours.length > 0) {
 							contourSelected = contours[contourSelectedIndex % contours.length];
 							contourSelectedIndex++;
 							appStateValue = appState.CONTOUR_SELECTED;
+							globalMode = false;
+						}
+						else if (globalContours.length > 0) {
+							contourSelected = globalContours[contourSelectedIndex % globalContours.length];
+							contourSelectedIndex++;
+							appStateValue = appState.CONTOUR_GLOBAL_SELECTED;
+							globalMode = true;
 						}
 						else {
 							appStateValue = appState.DEFAULT;
 							mouseBoxStart = undefined;
+							globalMode = false;
 						}
 						this.storeSelectedItems(selectedItems);
 					}
@@ -747,6 +749,48 @@ export default class GlyphCanvas extends React.PureComponent {
 								contourSelected = undefined;
 								contourSelectedIndex = 0;
 							}
+						}
+						else if (globalContours.length > 0) {
+							appStateValue = appState.BOX_SELECTING;
+							mouseBoxStart = mouse.pos;
+							contourSelected = undefined;
+							contourSelectedIndex = 0;
+						}
+						else if (spacingHandle.length > 0) {
+							appStateValue = appState.DRAGGING_SPACING;
+							selectedItems = [spacingHandle[0]];
+						}
+						else {
+							appStateValue = appState.BOX_SELECTING;
+							mouseBoxStart = mouse.pos;
+							contourSelected = undefined;
+							contourSelectedIndex = 0;
+						}
+						this.storeSelectedItems(selectedItems);
+					}
+					else if ((appStateValue & appState.CONTOUR_GLOBAL_SELECTED) && mouse.edge === mState.DOWN) {
+						if (nodes.length > 0) {
+							selectedItems = [nodes[0]];
+							appStateValue = appState.DRAGGING_CONTOUR_POINT;
+							mouseStart = nodes[0].data.center;
+							draggingNotStarted = true;
+							directionalNotStarted = true;
+						}
+						else if (contours.length > 0) {
+							if (contours.find(c => c.id === contourSelected.id)) {
+								appStateValue = appState.DRAGGING_CONTOUR;
+							}
+							else {
+								appStateValue = appState.BOX_SELECTING;
+								mouseBoxStart = mouse.pos;
+								contourSelected = undefined;
+								contourSelectedIndex = 0;
+							}
+						}
+						else if (globalContours.length > 0) {
+							contourSelected = globalContours[contourSelectedIndex % globalContours.length];
+							contourSelectedIndex++;
+							appStateValue = appState.CONTOUR_GLOBAL_SELECTED;
 						}
 						else if (spacingHandle.length > 0) {
 							appStateValue = appState.DRAGGING_SPACING;
@@ -812,6 +856,10 @@ export default class GlyphCanvas extends React.PureComponent {
 								mouseBoxStart = mouse.pos;
 							}
 							selectedItems = [];
+						}
+						else if (globalContours.length > 0) {
+							appStateValue = appState.BOX_SELECTING;
+							mouseBoxStart = mouse.pos;
 						}
 						else if (spacingHandle.length > 0) {
 							appStateValue = appState.DRAGGING_SPACING;
@@ -973,6 +1021,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				if (
 					appStateValue & (
 						appState.CONTOUR_SELECTED
+						| appState.CONTOUR_GLOBAL_SELECTED
 						| appState.DRAGGING_CONTOUR_POINT
 						| appState.CONTOUR_POINT_SELECTED
 						| appState.DRAGGING_CONTOUR
@@ -1271,7 +1320,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								modData,
 								unsmoothMod,
 								unparallelMod,
-								appMode,
+								globalMode,
 							);
 
 							if (!unparallelMod) {
@@ -1295,7 +1344,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								modData,
 								unsmoothMod,
 								true,
-								appMode,
+								globalMode,
 							);
 							break;
 						}
@@ -1307,7 +1356,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								modData,
 								appStateValue,
 								curveMode,
-								appMode,
+								globalMode,
 							);
 
 							const id = item.data.parentId;
@@ -1329,6 +1378,7 @@ export default class GlyphCanvas extends React.PureComponent {
 									glyph,
 									item,
 									modData,
+									globalMode,
 								);
 
 								const {id} = item;
@@ -1368,7 +1418,7 @@ export default class GlyphCanvas extends React.PureComponent {
 									glyph,
 									item,
 									posModData,
-									appMode,
+									globalMode,
 								);
 
 								const {id} = item;

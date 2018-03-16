@@ -87,6 +87,7 @@ const keyToTransform = [
 	'transforms',
 	'transformOrigin',
 	'base',
+	'global',
 ];
 
 export default class Glyph {
@@ -561,7 +562,9 @@ export default class Glyph {
 			for (let i = 0; i < globalCompChangeKeys.length; i++) {
 				const globalCompChangeKey = globalCompChangeKeys[i];
 
-				componentManualChanges[globalCompChangeKey] = (componentManualChanges[globalCompChangeKey] || 0) + globalComponentChange[globalCompChangeKey];
+				const criteria = `components.${idx}`;
+
+				componentManualChanges[globalCompChangeKey.substr(criteria.length + 1)] = (componentManualChanges[globalCompChangeKey.substr(criteria.length + 1)] || 0) + globalComponentChange[globalCompChangeKey];
 			}
 
 			const componentParams = {};
