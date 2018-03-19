@@ -2,7 +2,7 @@ import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Lifespan from 'lifespan';
 
-import LocalClient from '~/stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores.jsx';
 
 import CanvasBarButton from './canvas-bar-button.components.jsx';
 
@@ -34,15 +34,11 @@ export default class CanvasBar extends React.Component {
 	}
 
 	chooseMode(mode) {
-
 		this.client.dispatchAction('/change-canvas-mode', {canvasMode: mode});
 	}
 
 	render() {
-
-		const buttons = _.map(['move', 'components', 'select-points'], (item) => {
-			return <CanvasBarButton name={item} key={item} active={item === this.state.canvasMode} click={this.chooseMode}/>;
-		});
+		const buttons = ['move', 'components', 'select-points', 'shadow'].map(item => <CanvasBarButton name={item} key={item} active={item === this.state.canvasMode} click={this.chooseMode} />);
 
 		return (
 			<div className="canvas-bar">
@@ -51,4 +47,3 @@ export default class CanvasBar extends React.Component {
 		);
 	}
 }
-

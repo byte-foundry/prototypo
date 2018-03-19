@@ -35,8 +35,10 @@ class ViewPanelsMenu extends React.PureComponent {
 		window.addEventListener('keydown', this.handleClickOutside);
 	}
 
-	componentWillReceiveProps() {
-		this.reposition();
+	componentWillReceiveProps({show}) {
+		if (show) {
+			this.reposition();
+		}
 	}
 
 	componentWillUnmount() {
@@ -148,7 +150,7 @@ class ViewPanelsMenu extends React.PureComponent {
 						if (node) this.button = node;
 					},
 				})}
-				<Portal ref={(node) => this.portal = node} isOpened={show} beforeClose={this.handleClose}>
+				<Portal ref={node => this.portal = node} isOpened={show} beforeClose={this.handleClose}>
 					<TransitionGroup
 						component="div"
 						style={{left: this.state.x, top: this.state.y}}

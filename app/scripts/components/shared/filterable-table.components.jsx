@@ -15,25 +15,26 @@ export default class FilterableTable extends React.PureComponent {
 				}
 				<thead>
 					<tr>
-						{(() => {
-							return tableHeaders.map((header) => {
-								return (
-									<th className={header.styleClass} colSpan={header.colSpan} onClick={header.onClick}>
-										{header.label}
-									</th>
-								);
-							});
-						})()}
+						{(() => tableHeaders.map(header => (
+							<th
+								className={header.styleClass}
+								key={header.label}
+								colSpan={header.colSpan}
+								onClick={header.onClick}
+							>
+								{header.label}
+							</th>
+						)))()}
 					</tr>
 				</thead>
 				<tbody>
 					{this.props.children}
 				</tbody>
 			</table>
-		)
+		);
 	}
 }
 
 FilterableTable.propTypes = {
-	captionCondition: PropTypes.boolean,
-}
+	captionCondition: PropTypes.bool,
+};

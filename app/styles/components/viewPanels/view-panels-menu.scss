@@ -4,6 +4,7 @@
 	position: absolute;
 	bottom: 20px;
 	right: 20px;
+	z-index: 2;
 
 	&.is-aligned-left {
 		left:20px;

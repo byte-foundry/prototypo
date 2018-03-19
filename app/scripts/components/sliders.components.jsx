@@ -59,10 +59,10 @@ export class Sliders extends React.PureComponent {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] sliders');
 		}
-		const sliders = _.map(this.props.params, (param, i) => {
+		const sliders = this.props.params.map((param, i) => {
 			const individualized = this.props.indivEdit;
 			let value;
-			const paramToUse = {};
+			let paramToUse = {};
 
 			if (this.props.indivMode
 				&& this.props.indivEdit
@@ -70,18 +70,23 @@ export class Sliders extends React.PureComponent {
 				const paramObject = this.state.values.indiv_group_param[this.props.currentGroup][`${param.name}_rel`] || {state: 'relative', value: 1};
 
 				value = paramObject.value;
-					_.assign(paramToUse, param, {
-						state: paramObject.state,
-						name: `${param.name}_rel`,
-						max: paramObject.state === 'relative' ? 1.5 : (param.max - param.min) / 2,
-						min: paramObject.state === 'relative' ? 0.5 : -(param.max - param.min) / 2,
-						maxAdvised: paramObject.state === 'relative' ? 1.25 : (param.max - param.min) / 4,
-						minAdvised: paramObject.state === 'relative' ? 0.25 : -(param.max - param.min) / 4,
-						init: paramObject.state === 'relative' ? 1 : 0,
-					});
+				paramToUse = {
+					...paramToUse,
+					...param,
+					state: paramObject.state,
+					name: `${param.name}_rel`,
+					max: paramObject.state === 'relative' ? 1.5 : (param.max - param.min) / 2,
+					min: paramObject.state === 'relative' ? 0.5 : -(param.max - param.min) / 2,
+					maxAdvised: paramObject.state === 'relative' ? 1.25 : (param.max - param.min) / 4,
+					minAdvised: paramObject.state === 'relative' ? 0.25 : -(param.max - param.min) / 4,
+					init: paramObject.state === 'relative' ? 1 : 0,
+				};
 			}
 			else {
-				_.assign(paramToUse, param);
+				paramToUse = {
+					...paramToUse,
+					...param,
+				};
 				value = this.state.values ? this.state.values[param.name] : undefined;
 			}
 

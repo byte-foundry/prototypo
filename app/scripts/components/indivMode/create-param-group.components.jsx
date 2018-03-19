@@ -17,10 +17,11 @@ export default class CreateParamGroup extends React.Component {
 		this.state = {
 			selected: [],
 			groups: [],
+			tags: [],
 		};
 
-		//We bind member methods in the constructor to avoid
-		//triggering render on children pure render component
+		// We bind member methods in the constructor to avoid
+		// triggering render on children pure render component
 		this.close = this.close.bind(this);
 		this.createGroup = this.createGroup.bind(this);
 		this.selectGlyph = this.selectGlyph.bind(this);
@@ -133,7 +134,6 @@ export default class CreateParamGroup extends React.Component {
 	}
 
 	render() {
-
 		const error = this.state.errorMessage ? (
 			<div className="add-family-form-error">
 				{this.state.errorMessage}
@@ -142,36 +142,37 @@ export default class CreateParamGroup extends React.Component {
 
 		const buttons = this.props.editMode
 			? [
-				<Button key="open" label="Open in prototypo" neutral={true} click={this.openGroup}/>,
-				<Button key="save" label="Save change" neutral={true} click={this.createGroup}/>,
+				<Button key="open" label="Open in prototypo" neutral click={this.openGroup} />,
+				<Button key="save" label="Save change" neutral click={this.createGroup} />,
 				<Button
 					key="delete"
 					label={this.state.glyphGroupDeleteSplit ? 'Delete' : 'Delete group'}
 					altLabel="Cancel"
-					danger={true}
-					splitButton={true}
+					danger
+					splitButton
 					splitted={this.state.glyphGroupDeleteSplit}
 					click={this.prepareDeleteOrDelete}
 					altClick={this.cancelDelete}
 				/>,
 			]
-			: <Button label="Save change" neutral={true} click={this.createGroup}/>;
+			: <Button label="Save change" neutral click={this.createGroup} />;
 
 		return (
 			<div className="create-param-group">
 				<form className="create-param-group-form" onSubmit={this.createGroup}>
 					<div className="create-param-group-form-close">
-						<CloseButton click={this.close}/>
+						<CloseButton click={this.close} />
 					</div>
 					<ScrollArea horizontal={false}>
 						<div className="create-param-group-form-scroll">
-							<InputWithLabel ref="groupname" label="Group name" inputValue={this.props.group ? this.props.group.name : ''}/>
+							<InputWithLabel ref="groupname" label="Group name" inputValue={this.props.group ? this.props.group.name : ''} />
 							<GlyphGrid
 								forbidden={this.state.forbiddenGlyphs}
 								select={this.selectGlyph}
 								tagSelected={this.state.tagSelected}
 								selected={this.props.group ? this.props.group.glyphs : this.state.selected}
-								tags={this.state.tags}/>
+								tags={this.state.tags}
+							/>
 							{error}
 							{buttons}
 						</div>

@@ -1,24 +1,27 @@
+import _mapValues from 'lodash/mapValues';
 import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import PrototypoCanvasContainer from 'prototypo-canvas';
-import HoodieApi from '~/services/hoodie.services.js';
 
-import LocalClient from '../stores/local-client.stores.jsx';
-import Log from '../services/log.services.js';
-import {rawToEscapedContent} from '../helpers/input-transform.helpers';
-import {mapGlyphForApp} from '../helpers/font.helpers.js';
+import Dropzone from 'react-dropzone';
+import LocalClient from '../stores/local-client.stores';
+import Log from '../services/log.services';
+import {mapGlyphForApp} from '../helpers/font.helpers';
+import HoodieApi from '../services/hoodie.services';
 
-import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
-import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
-import CloseButton from './close-button.components.jsx';
-import CanvasGlyphInput from './canvas-glyph-input.components.jsx';
-import AlternateMenu from './alternate-menu.components.jsx';
-import CanvasBar from './canvasTools/canvas-bar.components.jsx';
+import {ContextualMenuItem} from './viewPanels/contextual-menu.components';
+import ViewPanelsMenu from './viewPanels/view-panels-menu.components';
+import ViewAlert from './shared/view-alert.components';
+import CloseButton from './close-button.components';
+import CanvasGlyphInput from './canvas-glyph-input.components';
+import AlternateMenu from './alternate-menu.components';
+import CanvasBar from './canvasTools/canvas-bar.components';
+import GlyphCanvas from './glyph-canvas.components';
+import {toileType} from '../toile/toile.js';
+import CanvasShadow from './canvasTools/canvas-shadow.components.jsx';
 
 export default class PrototypoCanvas extends React.Component {
-
 	constructor(props) {
 		super(props);
 
@@ -28,6 +31,8 @@ export default class PrototypoCanvas extends React.Component {
 			glyphPanelOpened: undefined,
 			uiText: '',
 			uiWord: '',
+			shadowFile: '',
+			glyphViewMatrix: {},
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 		this.handleContextMenu = this.handleContextMenu.bind(this);
@@ -35,26 +40,29 @@ export default class PrototypoCanvas extends React.Component {
 		this.handleLeaveAndClick = this.handleLeaveAndClick.bind(this);
 		this.reset = this.reset.bind(this);
 		this.resetGlyph = this.resetGlyph.bind(this);
+		this.resetPoints = this.resetPoints.bind(this);
 		this.toggleCoords = this.toggleCoords.bind(this);
+		this.toggleDependencies = this.toggleDependencies.bind(this);
 		this.toggleNodes = this.toggleNodes.bind(this);
 		this.toggleOutline = this.toggleOutline.bind(this);
-		this.setGlyphs = this.setGlyphs.bind(this);
 		this.changeComponent = this.changeComponent.bind(this);
 		this.wheel = this.wheel.bind(this);
 		this.acceptShortcut = this.acceptShortcut.bind(this);
 		this.rejectShortcut = this.rejectShortcut.bind(this);
 		this.mouseUp = this.mouseUp.bind(this);
 		this.mouseDown = this.mouseDown.bind(this);
+		this.setGlyphs = this.setGlyphs.bind(this);
 		this.changeManualNode = this.changeManualNode.bind(this);
 		this.resetManualNode = this.resetManualNode.bind(this);
 		this.startLoad = this.startLoad.bind(this);
 		this.endLoad = this.endLoad.bind(this);
-		this.afterFontComputation = this.afterFontComputation.bind(this);
 		this.preExport = this.preExport.bind(this);
 		this.afterExport = this.afterExport.bind(this);
 		this.preExportGlyphr = this.preExportGlyphr.bind(this);
 		this.afterExportGlyphr = this.afterExportGlyphr.bind(this);
 		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
+		this.onDrop = this.onDrop.bind(this);
+		this.deleteShadow = this.deleteShadow.bind(this);
 	}
 
 	componentWillMount() {
@@ -73,11 +81,17 @@ export default class PrototypoCanvas extends React.Component {
 					uiWord: head.toJS().d.uiWord || '',
 					canvasMode: head.toJS().d.canvasMode,
 					oldCanvasMode: head.toJS().d.oldCanvasMode,
-					altList: head.toJS().d.altList,
 					credits: head.toJS().d.credits,
+					glyphOutsideView: head.toJS().d.glyphOutsideView,
+					selectedItems: head.toJS().d.selectedItems,
+					glyphViewMatrix: head.toJS().d.glyphViewMatrix,
+					globalMode: head.toJS().d.globalMode,
 				});
 				this.isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
-				this.isFreeWithCredits = (head.toJS().d.credits && head.toJS().d.credits > 0) && this.isFree;
+				this.isFreeWithCredits = (
+					head.toJS().d.credits
+					&& head.toJS().d.credits > 0
+				) && this.isFree;
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -108,29 +122,11 @@ export default class PrototypoCanvas extends React.Component {
 		this.lifespan.release();
 	}
 
-	wheel(zoom, center) {
-		this.client.dispatchAction('/store-value', {
-			uiZoom: zoom,
-			uiPos: center,
-		});
-	}
-
-	preventSelection(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
-	}
-
-	mouseDown() {
-		document.addEventListener('selectstart', this.preventSelection);
-	}
-
-	mouseUp(zoom, center) {
-		this.client.dispatchAction('/store-value', {
-			uiPos: center,
-			uiZoom: zoom,
-		});
-		document.removeEventListener('selectstart', this.preventSelection);
+	setGlyphs(glyphs) {
+		this.client.dispatchAction('/load-glyphs', _mapValues(
+			glyphs,
+			mapGlyphForApp,
+		));
 	}
 
 	handleContextMenu(e) {
@@ -173,12 +169,11 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	handleShortcut(e) {
-		//if the glyph selectio is focused do nothin
 		if (this.state.glyphFocused) {
 			return;
 		}
-		// Zoom out to initial view
-		if (e.keyCode === 90) {
+		// Zoom out to initial view: Z
+		if (e.keyCode === 90 && !e.ctrlKey) {
 			e.preventDefault();
 			e.stopPropagation();
 			if (!this.oldPos) {
@@ -195,12 +190,22 @@ export default class PrototypoCanvas extends React.Component {
 
 		const unicodes = Object.keys(this.state.glyphs);
 		const currentUnicode = unicodes.indexOf(this.props.glyphSelected);
+		// enter move mode: space
 
 		if (e.keyCode === 32) {
 			e.preventDefault();
 			e.stopPropagation();
-			if (this.state.oldCanvasMode === undefined || this.state.oldCanvasMode === 'move') {
+			if (this.state.oldCanvasMode === undefined || this.state.oldCanvasMode === 'move' || this.state.oldCanvasMode === 'shadow') {
 				this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
+			}
+		}
+
+		// enter shadow mode: s
+		if (e.keyCode === 83) {
+			e.preventDefault();
+			e.stopPropagation();
+			if (this.state.oldCanvasMode === undefined || this.state.oldCanvasMode === 'shadow' || this.state.oldCanvasMode === 'move ') {
+				this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'shadow'});
 			}
 		}
 
@@ -241,14 +246,49 @@ export default class PrototypoCanvas extends React.Component {
 
 	resetGlyph() {
 		let glyphName = '';
+		let glyph;
 
-		if (this.state.altList[this.props.glyphSelected]) {
-			glyphName = this.state.altList[this.props.glyphSelected];
+		if (this.state.values.altList[this.props.glyphSelected]) {
+			glyphName = this.state.values.altList[this.props.glyphSelected];
+
+			glyph = this.state.glyphs[this.props.glyphSelected].find(glyphItem =>
+				glyphItem.name === glyphName);
 		}
 		else {
-			glyphName = this.state.glyphs[this.props.glyphSelected][0].name;
+			glyph = this.state.glyphs[this.props.glyphSelected][0];
 		}
-		this.client.dispatchAction('/reset-glyph-manually', {glyphName});
+
+		const glyphToReset = glyph.base || glyph.name;
+
+		this.client.dispatchAction('/reset-glyph-manually', {glyphName: glyphToReset});
+	}
+
+	resetPoints() {
+		let glyphName = '';
+		let glyph;
+
+		if (this.state.values.altList[this.props.glyphSelected]) {
+			glyphName = this.state.values.altList[this.props.glyphSelected];
+
+			glyph = this.state.glyphs[this.props.glyphSelected].find(glyphItem =>
+				glyphItem.name === glyphName);
+		}
+		else {
+			glyph = this.state.glyphs[this.props.glyphSelected][0];
+		}
+
+		const glyphToReset = glyph.base || glyph.name;
+
+		this.client.dispatchAction('/reset-glyph-points-manually', {
+			glyphName: glyphToReset, unicode: glyph.unicode, points: this.state.selectedItems, globalMode: this.state.globalMode,
+		});
+	}
+
+	wheel(zoom, center) {
+		this.client.dispatchAction('/store-value', {
+			uiZoom: zoom,
+			uiPos: center,
+		});
 	}
 
 	finishShortcut(e) {
@@ -257,7 +297,7 @@ export default class PrototypoCanvas extends React.Component {
 			this.client.dispatchAction('/store-value', this.oldPos);
 			this.oldPos = undefined;
 		}
-		if (e.keyCode === 32) {
+		if (e.keyCode === 32 || e.keyCode === 83) {
 			this.client.dispatchAction('/toggle-canvas-mode');
 		}
 	}
@@ -282,13 +322,17 @@ export default class PrototypoCanvas extends React.Component {
 		const isFreeWithoutCreditsInComponentEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'components';
 
 		if (isFreeWithoutCreditsInComponentEditing) {
-			this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
-														restrictedFeatureHovered: 'componentEditing'});
+			this.client.dispatchAction('/store-value', {
+				openRestrictedFeature: true,
+				restrictedFeatureHovered: 'componentEditing',
+			});
 		}
 
 		if (isFreeWithoutCreditsInManualEditing) {
-			this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
-														restrictedFeatureHovered: 'manualEditing'});
+			this.client.dispatchAction('/store-value', {
+				openRestrictedFeature: true,
+				restrictedFeatureHovered: 'manualEditing',
+			});
 		}
 	}
 
@@ -304,23 +348,41 @@ export default class PrototypoCanvas extends React.Component {
 		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords, uiNodes: this.props.uiCoords ? this.props.uiNodes : true});
 	}
 
-	setGlyphs(glyphs) {
-		this.client.dispatchAction('/load-glyphs', _.mapValues(
-			glyphs,
-			mapGlyphForApp
-		));
+	toggleDependencies() {
+		this.client.dispatchAction('/store-value', {uiDependencies: !this.props.uiDependencies});
 	}
 
+	mouseUp(zoom, center) {
+		this.client.dispatchAction('/store-value', {
+			uiPos: center,
+			uiZoom: zoom,
+		});
+		document.removeEventListener('selectstart', this.preventSelection);
+	}
+
+
+	mouseDown() {
+		document.addEventListener('selectstart', this.preventSelection);
+	}
+
+
+	preventSelection(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	}
+
+
 	changeComponent(object) {
-		//if (!this.isFree || this.isFreeWithCredits) {
-			this.client.dispatchAction('/change-component', object);
-		//}
+		// if (!this.isFree || this.isFreeWithCredits) {
+		this.client.dispatchAction('/change-component', object);
+		// }
 	}
 
 	changeManualNode(params) {
-		//if (!this.isFree || this.isFreeWithCredits) {
-			this.client.dispatchAction('/change-glyph-node-manually', params);
-		//}
+		// if (!this.isFree || this.isFreeWithCredits) {
+		this.client.dispatchAction('/change-glyph-node-manually', params);
+		// }
 	}
 
 	resetManualNode(params) {
@@ -332,19 +394,8 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	endLoad() {
-
 		this.client.dispatchAction('/store-value', {
 			uiFontLoading: false,
-		});
-	}
-
-	afterFontComputation({totalHeight, glyphProperties}) {
-		this.client.dispatchAction('/store-value', {
-			totalHeight,
-		});
-
-		this.client.dispatchAction('/store-value-fast', {
-			glyphProperties,
 		});
 	}
 
@@ -357,17 +408,36 @@ export default class PrototypoCanvas extends React.Component {
 		) {
 			let manualChangesGlyph;
 
-			if (this.state.altList[this.props.glyphSelected]) {
-				manualChangesGlyph = this.state.values.manualChanges[this.state.altList[this.props.glyphSelected]];
+			if (this.state.values.altList[this.props.glyphSelected]) {
+				manualChangesGlyph
+					= this.state.values.manualChanges[this.state.values.altList[this.props.glyphSelected]];
 			}
 			else {
-				manualChangesGlyph = this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name];
+				manualChangesGlyph
+					= this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name];
 			}
-			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0);
+			return (manualChangesGlyph
+				&& Object
+					.keys(manualChangesGlyph.cursors)
+					.filter(key => manualChangesGlyph.cursors[key] !== undefined).length > 0);
 		}
-		else {
-			return false;
+
+		return false;
+	}
+
+	onDrop(accepted, rejected) {
+		if (accepted.length > 0 && rejected.length === 0) {
+			const reader = new FileReader();
+
+			reader.addEventListener('load', () => {
+				this.setState({shadowFile: {elem: reader.result, type: accepted[0].type === '' ? 'font' : 'image'}});
+			}, false);
+			accepted[0].type === '' ? reader.readAsArrayBuffer(accepted[0]) : reader.readAsDataURL(accepted[0]);
 		}
+	}
+
+	deleteShadow() {
+		this.setState({shadowFile: ''});
 	}
 
 	preExport() {
@@ -388,17 +458,19 @@ export default class PrototypoCanvas extends React.Component {
 
 
 	render() {
-		if (process.env.__SHOW_RENDER__) {
-			console.log('[RENDER] PrototypoCanvas');
+		if (process.env.__SHOW_RENDER__) { // eslint-disable-line no-underscore-dangle
+			console.log('[RENDER] PrototypoCanvas'); // eslint-disable-line no-console
 		}
 
+		/* eslint-disable max-len */
 		// const isFreeWithoutCreditsInManualEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'select-points';
 		// const isFreeWithoutCreditsInComponentEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'components';
+		/* eslint-enable max-len */
 
 		const canvasClass = classNames({
 			'is-hidden': this.props.uiMode.indexOf('glyph') === -1,
 			'prototypo-canvas': true,
-			//'is-blocked': isFreeWithoutCreditsInManualEditing,
+			// 'is-blocked': isFreeWithoutCreditsInManualEditing,
 		});
 
 		const textPanelClosed = !this.state.prototypoTextPanelOpened;
@@ -425,86 +497,120 @@ export default class PrototypoCanvas extends React.Component {
 			</ContextualMenuItem>,
 		];
 
-		if (this.state.canvasMode === 'select-points') {
-			menu.splice(1, 0,
-				<ContextualMenuItem
-					key="coords"
-					active={this.props.uiCoords}
-					onClick={this.toggleCoords}
-				>
-					{this.props.uiCoords ? 'hide' : 'show'} coords
-				</ContextualMenuItem>,
-			);
-		}
-
+		/* eslint-disable max-len */
 		// const demoOverlay = (isFreeWithoutCreditsInManualEditing || isFreeWithoutCreditsInComponentEditing) ? (
 		// 	<div className="canvas-demo-overlay" onClick={this.restrictedRangeEnter}/>
 		// ) : false;
-		const demoOverlay = false;
+		// const demoOverlay = false;
+		/* eslint-enable max-len */
 
-		const alternateMenu = this.props.glyphs && this.props.glyphs[this.props.glyphSelected] && this.props.glyphs[this.props.glyphSelected].length > 1 ? (
-			<AlternateMenu alternates={this.props.glyphs[this.props.glyphSelected]} unicode={this.props.glyphSelected}/>
-		) : false;
+		const alternateMenu = this.props.glyphs
+			&& this.props.glyphs[this.props.glyphSelected]
+			&& this.props.glyphs[this.props.glyphSelected].length > 1
+			? (
+				<AlternateMenu
+					alternates={this.props.glyphs[this.props.glyphSelected]}
+					unicode={this.props.glyphSelected}
+				/>
+			) : false;
+
+		const outsideAlert
+			= (<ViewAlert
+				inside={this.state.glyphOutsideView}
+				text="The glyph is outside the view ! Try double clicking in the view to bring it back."
+			/>);
+		let shadowDropzone = false;
+
+		if (this.state.canvasMode === 'shadow' && this.state.shadowFile === '') {
+			shadowDropzone = (
+				<div className="prototypo-canvas-shadow-dropzone">
+					<Dropzone
+						className="prototypo-canvas-shadow-dropzone-content"
+						accept=".ttf, .otf"
+						multiple={false}
+						onDrop={this.onDrop}
+						rejectClassName="rejected"
+					>
+					Drop a font here, or click to select files to upload.
+					</Dropzone>
+				</div>
+			);
+		}
+		let shadowFile = false;
+
+		if (this.state.shadowFile !== '') {
+			shadowFile = (
+				<div>
+					<CanvasShadow
+						shadowFile={this.state.shadowFile}
+						width={this.container.clientWidth}
+						height={this.container.clientHeight}
+						canvasMode={this.state.canvasMode}
+						glyphSelected={this.state.glyphs[this.props.glyphSelected][0]}
+						glyphViewMatrix={this.state.glyphViewMatrix}
+					/>
+				</div>
+			);
+		}
+
+		const shadowButton = this.state.canvasMode === 'shadow'
+			? (
+				<div
+					className="prototypo-canvas-reset-buttons is-on-canvas"
+				>
+					<button
+						className="prototypo-canvas-reset-button"
+						onClick={this.deleteShadow}
+					>
+						Remove shadow
+					</button>
+				</div>
+			)
+			: false;
+
 
 		return (
 			<div
 				style={this.props.style}
 				className={canvasClass}
 				onClick={this.handleLeaveAndClick}
-				ref="container"
 				onMouseLeave={this.handleLeaveAndClick}
-				onContextMenu={this.handleContextMenu}>
-				<CanvasBar/>
-				<button
-					className={`prototypo-canvas-reset-glyph-button ${this.isManualEdited() ? '' : 'disabled'} ${this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''}`}
-					onClick={this.resetGlyph}
-					disabled={!this.isManualEdited()}>
-					Reset glyph
-				</button>
-				{demoOverlay}
-				<PrototypoCanvasContainer
-					familyName={this.state.familyName}
-					json={this.state.typedataJSON}
-					db={this.state.db}
-					workerUrl={this.state.workerUrl}
-					workerDeps={this.state.workerDeps}
-					uiZoom={this.props.uiZoom}
-					uiPos={this.props.uiPos}
-					uiCoords={this.props.uiCoords}
-					uiOutline={this.props.uiOutline}
-					selected={String.fromCharCode(this.state.glyphSelected)}
-					values={this.state.values}
-					subset={this.state.uiText + rawToEscapedContent(this.state.uiWord, this.state.glyphs)}
-					setGlyphs={this.setGlyphs}
-					afterFontComputation={this.afterFontComputation}
-					changeComponent={this.changeComponent}
-					canvasMode={this.state.canvasMode}
-					mouseUp={this.mouseUp}
-					mouseDown={this.mouseDown}
-					mouseLeave={this.rejectShortcut}
-					mouseEnter={this.acceptShortcut}
-					wheel={this.wheel}
-					changeManualNode={this.changeManualNode}
-					resetManualNode={this.resetManualNode}
-					resetView={this.reset}
-					exportTag={this.state.exportPlease}
-					exportGlyphrTag={this.state.exportGlyphrTag}
-					exportName={this.state.exportName}
-					exportMerged={this.state.exportMerged}
-					exportValues={this.state.exportValues}
-					exportEmail={this.state.exportEmail}
-					preExport={this.preExport}
-					afterExport={this.afterExport}
-					preExportGlyphr={this.preExportGlyphr}
-					afterExportGlyphr={this.afterExportGlyphr}
-					preLoad={this.startLoad}
-					afterLoad={this.endLoad}
-					altList={this.state.altList}
-					uiMode={this.props.uiMode}
+				onContextMenu={this.handleContextMenu}
+				ref={(item) => {this.container = item;}}
+			>
+				<CanvasBar />
+				<div className={`prototypo-canvas-reset-buttons ${this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''}`}>
+					<button
+						className={`prototypo-canvas-reset-button ${this.isManualEdited() ? '' : 'disabled'}`}
+						onClick={this.resetGlyph}
+						disabled={!this.isManualEdited()}
+					>
+						Reset glyph
+					</button>
+					<button
+						className={`prototypo-canvas-reset-button ${this.state.selectedItems && this.state.selectedItems.length > 0 ? '' : 'disabled'}`}
+						onClick={this.resetPoints}
+						disabled={!(this.state.selectedItems && this.state.selectedItems.length)}
+					>
+						Reset {
+							this.state.selectedItems
+								&& this.state.selectedItems.length > 0
+								&& this.state.selectedItems[0].type === toileType.SPACING_HANDLE
+								? 'spacing'
+								: 'point'}
+					</button>
+				</div>
+				{shadowButton}
+				{shadowDropzone}
+				{shadowFile}
+				<GlyphCanvas
+					dependencies={this.props.uiDependencies}
+					glyphOutsideView={this.state.glyphOutsideView}
 				/>
 				<div className={actionBarClassNames}>
-					<CloseButton click={() => { this.props.close('glyph'); }}/>
+					<CloseButton click={() => {this.props.close('glyph');}} />
 				</div>
+				{outsideAlert}
 				<ViewPanelsMenu
 					show={this.state.showContextMenu}
 					shifted={isShifted}
@@ -517,7 +623,7 @@ export default class PrototypoCanvas extends React.Component {
 					{menu}
 				</ViewPanelsMenu>
 				<div className="canvas-menu">
-					<CanvasGlyphInput/>
+					<CanvasGlyphInput />
 					{alternateMenu}
 				</div>
 			</div>

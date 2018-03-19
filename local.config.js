@@ -1,19 +1,14 @@
-var path = require('path');
-var webpack = require('webpack');
-var fs = require('fs');
-var merge = require('webpack-merge');
+const path = require('path');
+const webpack = require('webpack');
+const merge = require('webpack-merge');
 
-var base = require('./base.config');
+const base = require('./base.config');
 
 module.exports = merge(base, {
 	cache: true,
-	devtool: 'cheap-module-eval-source-map',
+	devtool: 'cheap-module-source-map',
 	entry: {
-		bundle: [
-			'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
-			'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
-		],
-		'web-import': [
+		index: [
 			'webpack-dev-server/client?http://0.0.0.0:9000', // WebpackDevServer host and port
 			'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
 		],
@@ -30,9 +25,6 @@ module.exports = merge(base, {
 			},
 		],
 	},
-	externals: [{
-		'prototypo.js': 'prototypo',
-	}],
 	plugins: [
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.DllReferencePlugin({
@@ -40,5 +32,16 @@ module.exports = merge(base, {
 			manifest: require('./dist/dll/libs-manifest'),
 			sourceType: 'this',
 		}),
+		new webpack.DefinePlugin({
+			'process.env': {
+				TESTING_FONT: JSON.stringify('yes'),
+				MERGE: JSON.stringify(process.env.MERGE),
+			},
+		}),
 	],
+	output: merge(base.output, {
+		filename: '[name].bundle.js',
+		chunkFilename: '[name].bundle.js',
+		path: path.resolve(__dirname, 'dist'),
+	}),
 });

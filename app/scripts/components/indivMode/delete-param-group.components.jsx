@@ -16,7 +16,7 @@ export default class DeleteParamGroup extends React.Component {
 	}
 
 	render() {
-		const glyphs = _.map(this.props.glyphs, (glyph) => {
+		const glyphs = this.props.glyphs.map((glyph) => {
 			return <div className="delete-param-group-glyph">{String.fromCharCode(glyph)}</div>;
 		});
 

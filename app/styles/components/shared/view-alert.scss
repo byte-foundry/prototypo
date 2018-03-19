@@ -1,0 +1,19 @@
+@import "../../variables";
+
+.view-alert {
+	@include themify() {
+		position: absolute;
+		bottom: -100px;
+		border: solid 1px $theme-background;
+		padding: 5px 30px;
+		max-width: 400px;
+		border-radius: 7px;
+		background-color: $white;
+		transition: bottom .2s ease-out;
+
+		&-is-inside {
+			bottom: 20px;
+		}
+	}
+
+}
