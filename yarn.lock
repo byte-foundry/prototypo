@@ -10346,7 +10346,7 @@ react-treebeard@^2.1.0:
 
 react-twitter-auth@YoruNoHikage/react-twitter-auth:
   version "0.0.11"
-  resolved "https://codeload.github.com/YoruNoHikage/react-twitter-auth/tar.gz/87fa45f87f98b2f6e4417117d070d87b6511bd34"
+  resolved "https://codeload.github.com/YoruNoHikage/react-twitter-auth/tar.gz/966a9df986190e8aff8abfb90ab6e1e501011a27"
   dependencies:
     react-icons "^2.2.5"
     url-search-params-polyfill "^2.0.0"
