@@ -725,6 +725,9 @@ export default class GlyphCanvas extends React.PureComponent {
 							mouseBoxStart = undefined;
 							globalMode = false;
 						}
+						this.client.dispatchAction('/store-value', {
+							globalMode,
+						});
 						this.storeSelectedItems(selectedItems);
 					}
 					else if ((appStateValue & appState.CONTOUR_SELECTED) && mouse.edge === mState.DOWN) {
@@ -1137,6 +1140,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							glyphName: glyph.base || glyph.name,
 							unicode: glyph.unicode,
 							points: selectedItems,
+							globalMode,
 						});
 					}
 				}
@@ -1546,6 +1550,7 @@ export default class GlyphCanvas extends React.PureComponent {
 			data: {
 				parentId: item.data.parentId,
 				modifAddress: item.data.modifAddress,
+				componentName: item.data.componentName,
 			},
 		}));
 

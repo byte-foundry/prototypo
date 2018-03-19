@@ -85,6 +85,7 @@ export default class PrototypoCanvas extends React.Component {
 					glyphOutsideView: head.toJS().d.glyphOutsideView,
 					selectedItems: head.toJS().d.selectedItems,
 					glyphViewMatrix: head.toJS().d.glyphViewMatrix,
+					globalMode: head.toJS().d.globalMode,
 				});
 				this.isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 				this.isFreeWithCredits = (
@@ -247,7 +248,7 @@ export default class PrototypoCanvas extends React.Component {
 		let glyphName = '';
 		let glyph;
 
-		if (this.state.values.altList && this.state.values.altList[this.props.glyphSelected]) {
+		if (this.state.values.altList[this.props.glyphSelected]) {
 			glyphName = this.state.values.altList[this.props.glyphSelected];
 
 			glyph = this.state.glyphs[this.props.glyphSelected].find(glyphItem =>
@@ -266,7 +267,7 @@ export default class PrototypoCanvas extends React.Component {
 		let glyphName = '';
 		let glyph;
 
-		if (this.state.values.altList && this.state.values.altList[this.props.glyphSelected]) {
+		if (this.state.values.altList[this.props.glyphSelected]) {
 			glyphName = this.state.values.altList[this.props.glyphSelected];
 
 			glyph = this.state.glyphs[this.props.glyphSelected].find(glyphItem =>
@@ -278,7 +279,9 @@ export default class PrototypoCanvas extends React.Component {
 
 		const glyphToReset = glyph.base || glyph.name;
 
-		this.client.dispatchAction('/reset-glyph-points-manually', {glyphName: glyphToReset, unicode: glyph.unicode, points: this.state.selectedItems});
+		this.client.dispatchAction('/reset-glyph-points-manually', {
+			glyphName: glyphToReset, unicode: glyph.unicode, points: this.state.selectedItems, globalMode: this.state.globalMode,
+		});
 	}
 
 	wheel(zoom, center) {
@@ -405,7 +408,7 @@ export default class PrototypoCanvas extends React.Component {
 		) {
 			let manualChangesGlyph;
 
-			if (this.state.values.altList && this.state.values.altList[this.props.glyphSelected]) {
+			if (this.state.values.altList[this.props.glyphSelected]) {
 				manualChangesGlyph
 					= this.state.values.manualChanges[this.state.values.altList[this.props.glyphSelected]];
 			}
