@@ -272,7 +272,7 @@ function skeletonPosModification(client, glyph, draggedItem, newPos, globalMode)
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
 
-function skeletonDistrModification(client, glyph, draggedItem, newPos, global) {
+function skeletonDistrModification(client, glyph, draggedItem, newPos, globalMode) {
 	const {
 		base,
 		expandedTo,
@@ -295,10 +295,6 @@ function skeletonDistrModification(client, glyph, draggedItem, newPos, global) {
 		[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
 		[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
 	};
-
-	const glyphProxy = globalMode
-		? {name: draggedItem.data.componentName}
-		: glyph;
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
