@@ -82,9 +82,7 @@ export class Signin extends React.Component {
 			}
 			else {
 				window.trackJs.track(err);
-				errors.push(
-					'An unexpected error occured, please contact support@prototypo.io and mention your current email',
-				);
+				errors.push('An unexpected error occured, please contact support@prototypo.io and mention your current email');
 			}
 
 			this.setState({loading: false, errors, inError: {}});
@@ -115,7 +113,7 @@ export class Signin extends React.Component {
 							id="email-sign-in"
 							name="email-sign-in"
 							type="email"
-							ref={(node) => { this.emailInput = node; }}
+							ref={(node) => {this.emailInput = node;}}
 							placeholder="Email"
 							required
 							label="Email"
@@ -124,7 +122,7 @@ export class Signin extends React.Component {
 							label="Password"
 							id="password-sign-in"
 							name="password-sign-in"
-							ref={(node) => { this.passwordInput = node; }}
+							ref={(node) => {this.passwordInput = node;}}
 							type="password"
 							required
 							placeholder="Password"

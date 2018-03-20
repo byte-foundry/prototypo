@@ -63,20 +63,27 @@ export default {
 		loadFontValues(typedata, templateToLoad, db);
 	},
 	'/load-font-instance': async ({appValues}) => {
-		try {
-			const template = appValues.values.familySelected
-				? appValues.values.familySelected.template
-				: 'venus.ptf';
-			const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../dist/templates/${template}/font.json`);
+		if (!appValues.values.variantSelected) {
+			const event = new CustomEvent('values.loaded');
 
-			localClient.dispatchAction('/create-font-instance', {
-				typedataJSON,
-				appValues,
-				templateToLoad: template,
-			});
+			window.dispatchEvent(event);
 		}
-		catch (err) {
-			trackJs.track(err);
+		else {
+			try {
+				const template = appValues.values.familySelected
+					? appValues.values.familySelected.template
+					: 'venus.ptf';
+				const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../dist/templates/${template}/font.json`);
+
+				localClient.dispatchAction('/create-font-instance', {
+					typedataJSON,
+					appValues,
+					templateToLoad: template,
+				});
+			}
+			catch (err) {
+				trackJs.track(err);
+			}
 		}
 	},
 	'/create-font': (typedata) => {
