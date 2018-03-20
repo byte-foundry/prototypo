@@ -30,6 +30,8 @@ import AccountInvoiceList from './components/account/account-invoice-list.compon
 import AccountPrototypoLibrary from './components/account/account-prototypo-library.components.jsx';
 import Subscription from './components/account/subscription.components';
 import StartApp from './components/start/start-app.components';
+import FontTester from './font-test/font-tester.components.jsx';
+import GlyphTester from './font-test/glyph-tester.components.jsx';
 /* #if debug */
 import ReplayViewer from './debug/replay-viewer.components';
 /* #end */
@@ -123,6 +125,8 @@ export default class AppRoutes extends React.PureComponent {
 						<Route path="replay" path="replay/:replayId" component={ReplayViewer} />
 						<Route path="debug" component={ReplayViewer} />
 						/* #endif */
+						<Route path="testfont" component={FontTester} />
+						<Route path="testglyph/:unicode" component={GlyphTester} />
 						<Route path="signin" component={AccountApp} onEnter={redirectToDashboard}>
 							<Route path="reset" component={ResetPassword} />
 							<Route path="forgotten" component={ForgottenPassword} />

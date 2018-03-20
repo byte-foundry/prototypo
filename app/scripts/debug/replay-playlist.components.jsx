@@ -91,7 +91,7 @@ class Events extends React.Component {
 
 	render() {
 		let eventIndex = 0;
-		const events = _.map(this.state.patchArray, (patch, i) => {
+		const events = this.state.patchArray.map((patch, i) => {
 			if (patch.type === 'action') {
 				return <Event path={patch.path} details={patch.params} index={eventIndex++} key={i}/>;
 			}

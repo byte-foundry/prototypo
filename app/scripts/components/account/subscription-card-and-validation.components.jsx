@@ -1,16 +1,16 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 
-import {monthlyConst, annualConst, teamMonthlyConst, teamAnnualConst} from '../../data/plans.data.js';
+import {monthlyConst, annualConst, teamMonthlyConst, teamAnnualConst} from '../../data/plans.data';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores';
 
-import AddCard from '../shared/add-card.components.jsx';
-import Button from '../shared/button.components.jsx';
-import InputNumber from '../shared/input-number.components.jsx';
-import InputWithLabel from '../shared/input-with-label.components.jsx';
-import Price from '../shared/price.components.jsx';
-import FormError from '../shared/form-error.components.jsx';
+import AddCard from '../shared/add-card.components';
+import Button from '../shared/button.components';
+import InputNumber from '../shared/input-number.components';
+import InputWithLabel from '../shared/input-with-label.components';
+import Price from '../shared/price.components';
+import FormError from '../shared/form-error.components';
 
 export default class SubscriptionCardAndValidation extends React.PureComponent {
 	constructor(props) {
@@ -44,9 +44,11 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
-				const {cards, choosePlanForm, confirmation, hasBeenSubscribing} = head.toJS().d;
+				const {
+					cards, choosePlanForm, confirmation, hasBeenSubscribing,
+				} = head.toJS().d;
 
-				this.setState((state) => ({
+				this.setState(state => ({
 					card: cards || [],
 					couponValue: choosePlanForm.couponValue || this.props.coupon,
 					validCoupon: choosePlanForm.validCoupon,
@@ -86,7 +88,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 
 		const newPlan = {};
 
-		if (plan.startsWith('team') && isNaN(parseInt(quantity, 10))) {
+		if (plan.startsWith('team') && Number.isNaN(parseInt(quantity, 10))) {
 			newPlan.quantity = 1;
 		}
 
@@ -126,8 +128,8 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			plan,
 			vat: '', // this.refs.vat.value,
 			coupon: couponValue,
-			card: this.refs.card && card.length < 1
-				? this.refs.card.data()
+			card: this.card && card.length < 1
+				? this.card.data()
 				: false,
 			quantity: (plan.startsWith('team') && quantity) || undefined,
 		});
@@ -150,11 +152,11 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		this.setState({isFormSubmitted: false});
 	}
 
-	handleCouponSubmit(e) {
+	handleCouponSubmit() {
 		this.client.dispatchAction('/choose-plan', {
-			coupon: this.refs.coupon.inputValue,
+			coupon: this.coupon.inputValue,
 		});
-		this.setState({'isFormSubmitted': true});
+		this.setState({isFormSubmitted: true});
 	}
 
 	render() {
@@ -162,6 +164,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		const {country, plan, quantity} = this.props;
 
 		let percentPrice = 1;
+
 		if (this.state.validCoupon && this.state.validCoupon.percent_off) {
 			percentPrice = (100 - this.state.validCoupon.percent_off) / 100;
 		}
@@ -171,55 +174,55 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		}
 
 		const plans = {
-			'personal_monthly': {
+			personal_monthly: {
 				blurb: (
 					this.state.hasBeenSubscribing
-					? (
-						percentPrice === 1
+						? (
+							percentPrice === 1
+								? (
+									<div>
+								By clicking on the subscribe button below you agree to be charged <strong><Price amount={monthlyConst.price * percentPrice} country={country} /></strong> every month until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+									</div>
+								)
+								: (
+									<div>
+								By clicking on the subscribe button below you agree to be charged <strong><Price amount={monthlyConst.price * percentPrice} country={country} /></strong> for the first month of your Prototypo subscription. You'll also agree to be charged <strong><Price amount={monthlyConst.price} country={country} /></strong> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+									</div>
+								)
+						)
+						: (
+							<div>
+							By clicking on the subscribe button below you agree to and pay <strong><Price amount={monthlyConst.firstMonthPrice * percentPrice} country={country} /></strong> for the first month of your Prototypo subscription. You'll also agree to be charged <strong><Price amount={monthlyConst.price} country={country} /></strong> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+							</div>
+						)
+				),
+			},
+			personal_annual_99: {
+				blurb: (
+					percentPrice === 1
 						? (
 							<div>
-								By clicking on the subscribe button below you agree to be charged <strong><Price amount={monthlyConst.price * percentPrice} country={country}/></strong> every month until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+							By clicking on the subscribe button below you agree to pay <strong><Price amount={annualConst.annualPrice * percentPrice} country={country} /></strong> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
 							</div>
 						)
 						: (
 							<div>
-								By clicking on the subscribe button below you agree to be charged <strong><Price amount={monthlyConst.price * percentPrice} country={country}/></strong> for the first month of your Prototypo subscription. You'll also agree to be charged <strong><Price amount={monthlyConst.price} country={country}/></strong> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+							By clicking on the subscribe button below you agree to pay <strong><Price amount={annualConst.annualPrice * percentPrice} country={country} /></strong> once and subscribe to Prototypo for a full year. You'll also agree to be charged <strong><Price amount={annualConst.annualPrice} country={country} /></strong> every year after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
 							</div>
 						)
-					)
-					: (
-						<div>
-							By clicking on the subscribe button below you agree to and pay <strong><Price amount={monthlyConst.firstMonthPrice * percentPrice} country={country}/></strong> for the first month of your Prototypo subscription. You'll also agree to be charged <strong><Price amount={monthlyConst.price} country={country}/></strong> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
-						</div>
-					)
 				),
 			},
-			'personal_annual_99': {
-				blurb: (
-					percentPrice === 1
-					? (
-						<div>
-							By clicking on the subscribe button below you agree to pay <strong><Price amount={annualConst.annualPrice * percentPrice} country={country}/></strong> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
-						</div>
-					)
-					: (
-						<div>
-							By clicking on the subscribe button below you agree to pay <strong><Price amount={annualConst.annualPrice * percentPrice} country={country}/></strong> once and subscribe to Prototypo for a full year. You'll also agree to be charged <strong><Price amount={annualConst.annualPrice} country={country}/></strong> every year after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
-						</div>
-					)
-				),
-			},
-			'team_monthly': {
+			team_monthly: {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <strong><Price amount={(teamMonthlyConst.monthlyPrice * quantity) * percentPrice} country={country}/></strong> once and be subscribed to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <strong><Price amount={(teamMonthlyConst.monthlyPrice * quantity) * percentPrice} country={country} /></strong> once and be subscribed to Prototypo. You also agree to be charged every month of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
-			'team_annual': {
+			team_annual: {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to pay <strong><Price amount={(teamAnnualConst.annualPrice * quantity * percentPrice)} country={country}/></strong> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to pay <strong><Price amount={(teamAnnualConst.annualPrice * quantity * percentPrice)} country={country} /></strong> once and subscribe to Prototypo for a full year. You also agree to be charged every year of this amount until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
 					</div>
 				),
 			},
@@ -234,8 +237,8 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 				<div>
 					<div className="subscription-card-and-validation-card">
 						<div className="subscription-card-and-validation-card-chip">
-							<div className="subscription-card-and-validation-card-chip-left"></div>
-							<div className="subscription-card-and-validation-card-chip-right"></div>
+							<div className="subscription-card-and-validation-card-chip-left" />
+							<div className="subscription-card-and-validation-card-chip-right" />
 						</div>
 						<div className="subscription-card-and-validation-card-number">
 							**** **** **** {this.state.card[0].last4}
@@ -255,7 +258,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			)
 			: (
 				<div>
-					<AddCard inError={this.state.inError} ref="card" className={`${this.state.validCoupon && this.state.validCoupon.shouldSkipCard ? "disabled" : ''}`}/>
+					<AddCard inError={this.state.inError} ref={(item) => {this.card = item;}} className={`${this.state.validCoupon && this.state.validCoupon.shouldSkipCard ? 'disabled' : ''}`} />
 					<div className="columns subscription-card-and-validation-buttons">
 						{couponValue === undefined && <div className="subscription-card-and-validation-switch half-column" onClick={this.addCoupon}>I have a coupon</div>}
 						{this.state.card.length > 0
@@ -266,7 +269,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		const coupon = couponValue !== undefined && (
 			<div>
 				<form onSubmit={this.handleCouponSubmit}>
-					<InputWithLabel ref="coupon" label="Coupon code" error={false} onChange={this.handleCouponChange} value={this.state.couponValue}/>
+					<InputWithLabel ref={(item) => {this.coupon = item;}} label="Coupon code" error={false} onChange={this.handleCouponChange} value={this.state.couponValue} />
 				</form>
 				{this.state.validCoupon
 					? <div className="subscription-card-and-validation-valid-coupon">{`(ノ✿◕ᗜ◕)ノ━☆ﾟ.*･｡ﾟ ${this.state.validCoupon.label}`}</div>
@@ -276,9 +279,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 			</div>
 		);
 
-		const errors = this.state.errors.map((error, index) => {
-			return <FormError key={index} errorText={error} />;
-		});
+		const errors = this.state.errors.map((error, index) => <FormError key={index} errorText={error} />);
 
 		const {blurb} = plans[plan];
 
@@ -303,7 +304,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 					{blurb}
 				</div>
 				{errors}
-				<Button big label="Subscribe to prototypo" click={this.subscribe} loading={this.state.loading}/>
+				<Button big label="Subscribe to prototypo" click={this.subscribe} loading={this.state.loading} />
 			</div>
 		);
 	}

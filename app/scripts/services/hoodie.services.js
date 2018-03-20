@@ -1,3 +1,4 @@
+/* global trackJs, _ */
 import queryString from 'query-string';
 import {gql} from 'react-apollo';
 
@@ -7,6 +8,8 @@ import LocalClient from '../stores/local-client.stores';
 
 
 const AWS_URL = `https://${isProduction() ? 'e4jpj60rk8' : 'tc1b6vq6o8'}.execute-api.eu-west-1.amazonaws.com/${isProduction() ? 'prod' : 'dev'}`;
+
+export const TWITTER_REQUEST_TOKEN_URL = `${AWS_URL}/auth/twitter/requestToken`;
 
 let localClient;
 
@@ -68,7 +71,6 @@ const signUpAndLoginMutation = gql`
 `;
 
 export default class HoodieApi {
-
 	static async setup() {
 		HoodieApi.instance = {};
 
@@ -135,7 +137,9 @@ export default class HoodieApi {
 		apolloClient.resetStore();
 	}
 
-	static async signUp(email, password, firstName, {lastName, occupation, phone, skype}) {
+	static async signUp(email, password, firstName, {
+		lastName, occupation, phone, skype,
+	}) {
 		const response = await apolloClient.mutate({
 			mutation: signUpAndLoginMutation,
 			variables: {
@@ -195,7 +199,7 @@ export default class HoodieApi {
 		if (!subscriptionId) {
 			const customer = HoodieApi.instance.customerId;
 
-			return fetchAWS(`/subscriptions`, {
+			return fetchAWS('/subscriptions', {
 				method: 'POST',
 				payload: {customer, ...options},
 			});
@@ -311,7 +315,7 @@ async function setupStripe(data, time = 1000) {
 
 			return;
 		}
-		catch (e) { /* don't need to catch anything, just next step */ }
+		catch (e) {/* don't need to catch anything, just next step */}
 	}
 
 	// if error we poll customerId

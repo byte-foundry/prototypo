@@ -1,6 +1,6 @@
 import {Patch} from 'remutable';
 
-const registerToUndoStack = function(remut, storeName, client, lifespan, cb = () => {return;}) {
+const registerToUndoStack = function (remut, storeName, client, lifespan, cb = () => {}) {
 	client.getStore('/prototypoStore', lifespan)
 		.onUpdate(({head}) => {
 			const jsHead = head.toJS();
@@ -20,20 +20,18 @@ const registerToUndoStack = function(remut, storeName, client, lifespan, cb = ()
 				cb(remut.head.toJS());
 			}
 		})
-		.onDelete(() => {return;});
+		.onDelete(() => {});
 };
 
-//Allow to setup granularity for undo stack
+// Allow to setup granularity for undo stack
 class BatchUpdate {
-	constructor(remut, storeName, propName, client, lifespan, labelGenerator, cb, criteria = () => { return false; }) {
+	constructor(remut, storeName, propName, client, lifespan, labelGenerator, cb, criteria = () => false) {
 		registerToUndoStack(remut, storeName, client, lifespan, cb);
 
 		this.storeName = storeName;
 		this.propName = propName;
 		this.client = client;
-		this.criteria = typeof criteria === 'number' ? (newValue, oldValue) => {
-			return Math.abs(newValue - oldValue) > criteria;
-		} : criteria;
+		this.criteria = typeof criteria === 'number' ? (newValue, oldValue) => Math.abs(newValue - oldValue) > criteria : criteria;
 
 		this.labelGenerator = labelGenerator;
 	}

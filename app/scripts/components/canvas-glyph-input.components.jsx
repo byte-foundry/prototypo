@@ -1,3 +1,4 @@
+import _xor from 'lodash/xor';
 import React from 'react';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
@@ -60,7 +61,7 @@ export default class CanvasGlyphInput extends React.PureComponent {
 	}
 
 	toggleView() {
-		const newViewMode = _.xor(this.state.mode, ['list']);
+		const newViewMode = _xor(this.state.mode, ['list']);
 
 		if (newViewMode.length > 0) {
 			this.client.dispatchAction('/store-value', {uiMode: newViewMode});

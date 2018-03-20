@@ -1,3 +1,4 @@
+import _forOwn from 'lodash/forOwn';
 import {prototypoStore, undoableStore, fastStuffStore, fontInstanceStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
@@ -10,7 +11,7 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/store-value': (params) => {
-		_.forEach(params, (value, name) => {
+		_forOwn(params, (value, name) => {
 			prototypoStore.set(name, value);
 		});
 
@@ -20,7 +21,7 @@ export default {
 		saveAppValues();
 	},
 	'/store-value-font': (params) => {
-		_.forEach(params, (value, name) => {
+		_forOwn(params, (value, name) => {
 			fontInstanceStore.set(name, value);
 		});
 
@@ -30,7 +31,7 @@ export default {
 		saveAppValues();
 	},
 	'/store-value-undoable': (params) => {
-		_.forEach(params, (value, name) => {
+		_forOwn(params, (value, name) => {
 			undoableStore.set(name, value);
 		});
 
@@ -40,7 +41,7 @@ export default {
 		saveAppValues();
 	},
 	'/store-value-fast': (params) => {
-		_.forEach(params, (value, name) => {
+		_forOwn(params, (value, name) => {
 			fastStuffStore.set(name, value);
 		});
 
@@ -78,6 +79,5 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();
-
 	},
 };

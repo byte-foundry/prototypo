@@ -1,8 +1,8 @@
 import React from 'react';
 import {Link} from 'react-router';
 
-import LocalClient from '~/stores/local-client.stores.jsx';
-import Log from '~/services/log.services.js';
+import LocalClient from '../../stores/local-client.stores.jsx';
+import Log from '../../services/log.services.js';
 import withCountry from '../shared/with-country.components';
 
 class AllowedTopBarWithPayment extends React.Component {
@@ -20,7 +20,7 @@ class AllowedTopBarWithPayment extends React.Component {
 			openGoProModal: true,
 		});
 	}
-	
+
 	trackSubscriptionClick() {
 		window.Intercom('trackEvent', 'subscriptionClickfromFile');
 		Log.ui('SubscriptionClick.FromFile');

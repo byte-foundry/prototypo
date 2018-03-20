@@ -40,15 +40,15 @@ export default class ExportAs extends React.PureComponent {
 				<div className="modal-container-content">
 					<div className="columns">
 						<div className="half-column">
-							<InputWithLabel label="Family name" ref="family"/>
+							<InputWithLabel label="Family name" ref="family" />
 						</div>
 						<div className="half-column">
-							<InputWithLabel label="Variant name" ref="variant"/>
+							<InputWithLabel label="Variant name" ref="variant" />
 						</div>
 					</div>
 					<div className="action-form-buttons">
-						<Button click={this.exit} label="Cancel" neutral={true}/>
-						<Button click={this.exportAs} label="Export"/>
+						<Button click={this.exit} label="Cancel" neutral />
+						<Button click={this.exportAs} label="Export" />
 					</div>
 				</div>
 			</Modal>
