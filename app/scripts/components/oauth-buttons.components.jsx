@@ -32,6 +32,11 @@ class OAuthButtons extends React.PureComponent {
 	}
 
 	async responseFacebook(response) {
+		if (!response.email || !response.accessToken) {
+			// TODO: handle this nicely
+			return;
+		}
+
 		this.setState({loading: true});
 		const facebookToken = response.accessToken;
 		const graphcoolResponse = await this.props.authenticateFacebookUser(facebookToken);
@@ -40,7 +45,12 @@ class OAuthButtons extends React.PureComponent {
 		this.props.onLogin(response.email, graphcoolToken);
 	}
 
-	async responseTwitter({oauthVerifier, oauthToken}) {
+	async responseTwitter({oauthVerifier, oauthToken, error}) {
+		if (error) {
+			// TODO: handle this nicely
+			return;
+		}
+
 		this.setState({loading: true});
 		const graphcoolResponse = await this.props.authenticateTwitterUser(oauthToken, oauthVerifier);
 		const {email, token} = graphcoolResponse.data.auth;
@@ -49,6 +59,11 @@ class OAuthButtons extends React.PureComponent {
 	}
 
 	async responseGoogle(response) {
+		if (response.error) {
+			// TODO: handle this nicely
+			return;
+		}
+
 		this.setState({loading: true});
 		const graphcoolResponse = await this.props.authenticateGoogleUser(response.accessToken);
 		const {token} = graphcoolResponse.data.auth;
