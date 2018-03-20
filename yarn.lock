@@ -968,7 +968,7 @@ ansi-wrap@0.1.0:
 
 antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/b9cad5defe386ccbfc0d80f5d29d9f8fc6330d3e"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/1966e46bf5b148ec5422911eb71d67b7fe3eef28"
   dependencies:
     karma "^1.7.1"
     prototypo-precursor "^1.0.3"
@@ -5394,7 +5394,7 @@ getpass@^0.1.1:
 
 gfnt.ptf@byte-foundry/spectral.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/85bad0f92baeed833d48117e4f8b1b713905d25e"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/56ff78bb21db2eeb6c1d74d16c65d30749aff736"
   dependencies:
     karma "^2.0.0"
     prototypo-precursor "^1.0.4"
