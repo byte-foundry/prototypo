@@ -4,6 +4,7 @@ import {Link, withRouter} from 'react-router';
 
 import isProduction from '../helpers/is-production.helpers';
 import {loadStuff} from '../helpers/appSetup.helpers';
+import HoodieApi from '../services/hoodie.services';
 
 import FormError from './shared/form-error.components';
 import InputWithLabel from './shared/input-with-label.components';
@@ -28,6 +29,8 @@ export class Signin extends React.Component {
 		window.localStorage.setItem('graphcoolToken', token);
 
 		await loadStuff();
+
+		await HoodieApi.setup();
 
 		window.Intercom('boot', {
 			app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
