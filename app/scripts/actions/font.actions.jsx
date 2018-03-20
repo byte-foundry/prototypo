@@ -510,6 +510,7 @@ export default {
 	}) => {
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
+		const glyphSpecialProps = _cloneDeep(oldValues.glyphSpecialProps) || {};
 
 		points.forEach((item) => {
 			const {
@@ -537,13 +538,12 @@ export default {
 				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}.out.y`];
 				break;
 			case toileType.SPACING_HANDLE:
-				localClient.dispatchAction('/change-letter-spacing', {
-					value: 0,
-					side: item.id === 'spacingLeft' ? 'left' : 'right',
-					letter: String.fromCharCode(unicode),
-					label: 'spacing',
-					force: true,
-				});
+				if (item.id === 'spacingLeft') {
+					glyphSpecialProps[unicode].spacingLeft = 0;
+				}
+				else {
+					glyphSpecialProps[unicode].spacingRight = 0;
+				}
 				break;
 			case toileType.CONTOUR_NODE:
 			case toileType.NODE_SKELETON:
@@ -561,6 +561,7 @@ export default {
 		const newParams = {
 			...oldValues,
 			manualChanges,
+			glyphSpecialProps,
 		};
 
 		const patch = undoableStore.set('controlsValues', newParams).commit();
