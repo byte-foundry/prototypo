@@ -110,7 +110,7 @@ export class Signin extends React.Component {
 						<hr className="sign-in-separator-line" />
 						<span className="sign-in-separator-text">OR</span>
 					</div>
-					<form className="sign-in-form" onSubmit={this.signIn}>
+					<form className="sign-in-form" onSubmit={this.handleSignIn}>
 						<InputWithLabel
 							id="email-sign-in"
 							name="email-sign-in"
