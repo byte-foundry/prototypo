@@ -85,6 +85,7 @@ export default class PrototypoCanvas extends React.Component {
 					glyphOutsideView: head.toJS().d.glyphOutsideView,
 					selectedItems: head.toJS().d.selectedItems,
 					glyphViewMatrix: head.toJS().d.glyphViewMatrix,
+					globalMode: head.toJS().d.globalMode,
 				});
 				this.isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 				this.isFreeWithCredits = (
@@ -278,7 +279,12 @@ export default class PrototypoCanvas extends React.Component {
 
 		const glyphToReset = glyph.base || glyph.name;
 
-		this.client.dispatchAction('/reset-glyph-points-manually', {glyphName: glyphToReset, unicode: glyph.unicode, points: this.state.selectedItems});
+		this.client.dispatchAction('/reset-glyph-points-manually', {
+			glyphName: glyphToReset,
+			unicode: glyph.unicode,
+			points: this.state.selectedItems,
+			globalMode: this.state.globalMode,
+		});
 	}
 
 	wheel(zoom, center) {

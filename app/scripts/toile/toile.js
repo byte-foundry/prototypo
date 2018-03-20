@@ -902,7 +902,7 @@ export default class Toile {
 					},
 				});
 			}
-			else {
+			else if (component.base.length > 1) {
 				component.contours.forEach((contour) => {
 					const hot = _find(hotItems, item => item.id === id);
 					let length;
