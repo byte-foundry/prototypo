@@ -28,9 +28,9 @@ export class Signin extends React.Component {
 	async signIn(email, token) {
 		window.localStorage.setItem('graphcoolToken', token);
 
-		await loadStuff();
-
 		await HoodieApi.setup();
+
+		await loadStuff();
 
 		window.Intercom('boot', {
 			app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
