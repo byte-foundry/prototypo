@@ -71,6 +71,58 @@ _:-ms-fullscreen, #notloggedin {
 		text-align: center;
 	}
 
+	&-container {
+		display: flex;
+		flex-direction: column;
+		padding: 0;
+	}
+
+	&-oauth {
+		padding: 30px 40px 0 40px;
+
+		&-label {
+			display: block;
+			padding-bottom: 15px;
+			color: $medium-grey;
+		}
+
+		&-buttons {
+			display: flex;
+
+			.oauth-button {
+				flex: 1;
+
+				& + .oauth-button {
+					margin-left: 5px;
+				}
+			}
+		}
+	}
+
+	&-separator {
+		position: relative;
+		text-align: center;
+		color: $medium-grey;
+		margin: 30px 40px 0 40px;
+
+		&-text {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			font-size: .8em;
+			background: #fff;
+			padding: 0 5px;
+		}
+
+		&-line {
+			height: 1px;
+			padding: 0;
+			color: $light-grey;
+			background-color: $light-grey;
+			border: 0;
+		}
+	}
+
 	&-form {
 		display:flex;
 		width:100%;

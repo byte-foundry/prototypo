@@ -63,20 +63,27 @@ export default {
 		loadFontValues(typedata, templateToLoad, db);
 	},
 	'/load-font-instance': async ({appValues}) => {
-		try {
-			const template = appValues.values.familySelected
-				? appValues.values.familySelected.template
-				: 'venus.ptf';
-			const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../dist/templates/${template}/font.json`);
+		if (!appValues.values.variantSelected) {
+			const event = new CustomEvent('values.loaded');
 
-			localClient.dispatchAction('/create-font-instance', {
-				typedataJSON,
-				appValues,
-				templateToLoad: template,
-			});
+			window.dispatchEvent(event);
 		}
-		catch (err) {
-			trackJs.track(err);
+		else {
+			try {
+				const template = appValues.values.familySelected
+					? appValues.values.familySelected.template
+					: 'venus.ptf';
+				const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../dist/templates/${template}/font.json`);
+
+				localClient.dispatchAction('/create-font-instance', {
+					typedataJSON,
+					appValues,
+					templateToLoad: template,
+				});
+			}
+			catch (err) {
+				trackJs.track(err);
+			}
 		}
 	},
 	'/create-font': (typedata) => {
@@ -499,66 +506,50 @@ export default {
 		}
 	},
 	'/reset-glyph-points-manually': ({
-		glyphName, points, force = true, label = 'reset manual', unicode,
+		glyphName, points, force = true, label = 'reset manual', unicode, globalMode,
 	}) => {
+		const oldValues = undoableStore.get('controlsValues');
+		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
+		const glyphSpecialProps = _cloneDeep(oldValues.glyphSpecialProps) || {};
+
 		points.forEach((item) => {
+			const {
+				parentId,
+				modifAddress,
+				componentName,
+			} = item.data;
+			const glyphOrCompName = globalMode
+				? componentName
+				: glyphName;
+
 			switch (item.type) {
 			case toileType.NODE_IN:
 			case toileType.CONTOUR_NODE_IN:
-				localClient.dispatchAction('/change-glyph-node-manually', {
-					changes: {
-						[`${item.data.parentId}.in.x`]: undefined,
-						[`${item.data.parentId}.in.y`]: undefined,
-					},
-					glyphName,
-					label: 'reset points',
-					force: true,
-				});
+				delete manualChanges[glyphOrCompName].cursors[`${parentId}.in.x`];
+				delete manualChanges[glyphOrCompName].cursors[`${parentId}.in.y`];
 				break;
 			case toileType.NODE_OUT:
 			case toileType.CONTOUR_NODE_OUT:
-				localClient.dispatchAction('/change-glyph-node-manually', {
-					changes: {
-						[`${item.data.parentId}.out.x`]: undefined,
-						[`${item.data.parentId}.out.y`]: undefined,
-					},
-					glyphName,
-					label: 'reset points',
-					force: true,
-				});
+				delete manualChanges[glyphOrCompName].cursors[`${parentId}.out.x`];
+				delete manualChanges[glyphOrCompName].cursors[`${parentId}.out.y`];
 				break;
 			case toileType.NODE:
-				localClient.dispatchAction('/change-glyph-node-manually', {
-					changes: {
-						[`${item.data.modifAddress}.width`]: undefined,
-						[`${item.data.modifAddress}.angle`]: undefined,
-					},
-					glyphName,
-					label: 'reset points',
-					force: true,
-				});
+				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}.out.x`];
+				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}.out.y`];
 				break;
 			case toileType.SPACING_HANDLE:
-				localClient.dispatchAction('/change-letter-spacing', {
-					value: 0,
-					side: item.id === 'spacingLeft' ? 'left' : 'right',
-					letter: String.fromCharCode(unicode),
-					label: 'spacing',
-					force: true,
-				});
+				if (item.id === 'spacingLeft') {
+					glyphSpecialProps[unicode].spacingLeft = 0;
+				}
+				else {
+					glyphSpecialProps[unicode].spacingRight = 0;
+				}
 				break;
 			case toileType.CONTOUR_NODE:
 			case toileType.NODE_SKELETON:
-				localClient.dispatchAction('/change-glyph-node-manually', {
-					changes: {
-						[`${item.data.modifAddress}x`]: undefined,
-						[`${item.data.modifAddress}y`]: undefined,
-						[`${item.data.modifAddress}expand.distr`]: undefined,
-					},
-					glyphName,
-					label: 'reset points',
-					force: true,
-				});
+				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}x`];
+				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}y`];
+				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}.expand.distr`];
 				break;
 			default:
 				break;
@@ -567,11 +558,24 @@ export default {
 
 		const variantId = (prototypoStore.get('variant') || {}).id;
 
-		localClient.dispatchAction('/change-glyph-node-manually', {
-			changes: {},
-			glyphName,
-			force: true,
-		});
+		const newParams = {
+			...oldValues,
+			manualChanges,
+			glyphSpecialProps,
+		};
+
+		const patch = undoableStore.set('controlsValues', newParams).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+
+		debouncedSave(newParams, variantId);
+
+		if (force) {
+			undoWatcher.forceUpdate(patch, label);
+		}
+		else {
+			undoWatcher.update(patch, label);
+		}
 	},
 	'/reset-glyph-manually': ({glyphName, force = true, label = 'reset manual'}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;

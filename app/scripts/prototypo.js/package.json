@@ -1,6 +1,6 @@
 {
   "name": "prototypo-library",
-  "version": "1.2.10",
+  "version": "1.2.11",
   "description": "This is prototypo parametric font library",
   "main": "dist/library.js",
   "scripts": {

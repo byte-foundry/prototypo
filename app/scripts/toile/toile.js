@@ -23,19 +23,23 @@ export const toileType = {
 	CONTOUR_NODE_OUT: 6,
 	GLYPH_CONTOUR: 7,
 	GLYPH_COMPONENT_CONTOUR: 8,
-	COMPONENT_CHOICE: 9,
-	COMPONENT_NONE_CHOICE: 10,
-	COMPONENT_MENU_ITEM: 11,
-	COMPONENT_MENU_ITEM_CLASS: 12,
-	COMPONENT_MENU_ITEM_CENTER: 13,
-	SPACING_HANDLE: 14,
-	PERF_RECT: 15,
+	GLYPH_GLOBAL_COMPONENT_CONTOUR: 9,
+	COMPONENT_CHOICE: 10,
+	COMPONENT_NONE_CHOICE: 11,
+	COMPONENT_MENU_ITEM: 12,
+	COMPONENT_MENU_ITEM_CLASS: 13,
+	COMPONENT_MENU_ITEM_CENTER: 14,
+	SPACING_HANDLE: 15,
+	PERF_RECT: 16,
 };
 
 export const canvasMode = {
+	UNDEF: -1,
 	MOVE: 0,
 	SELECT_POINTS: 1,
 	COMPONENTS: 2,
+	SHADOW: 3,
+	SELECT_POINTS_COMPONENT: 4,
 };
 
 export const specialKey = {
@@ -52,17 +56,19 @@ export const appState = {
 	DRAGGING_POINTS:	0b100,
 	POINTS_SELECTED_SHIFT:	0b1000,
 	CONTOUR_SELECTED:	0b10000,
-	DRAGGING_CONTOUR_POINT:	0b100000,
-	CONTOUR_POINT_SELECTED:	0b1000000,
-	DRAGGING_CONTOUR:	0b10000000,
-	SKELETON_POINT_SELECTED:	0b100000000,
-	SKELETON_POINT_SELECTED_SHIFT:	0b1000000000,
-	ZOOMING:	0b10000000000,
-	MOVING:	0b100000000000,
-	COMPONENT_HOVERED:	0b1000000000000,
-	COMPONENT_MENU_HOVERED:	0b10000000000000,
-	DRAGGING_SPACING:	0b100000000000000,
-	SPACING_SELECTED:	0b1000000000000000,
+	CONTOUR_GLOBAL_SELECTED:	0b100000,
+	DRAGGING_CONTOUR_POINT:	0b1000000,
+	CONTOUR_POINT_SELECTED:	0b10000000,
+	DRAGGING_CONTOUR:	0b100000000,
+	SKELETON_POINT_SELECTED:	0b1000000000,
+	SKELETON_POINT_SELECTED_SHIFT:	0b10000000000,
+	ZOOMING:	0b100000000000,
+	MOVING:	0b1000000000000,
+	COMPONENT_HOVERED:	0b10000000000000,
+	COMPONENT_MENU_HOVERED:	0b100000000000000,
+	DRAGGING_SPACING:	0b1000000000000000,
+	SPACING_SELECTED:	0b10000000000000000,
+	NOT_SELECTING:	0b100000000000000000,
 };
 
 const green = '#24d390';
@@ -85,6 +91,7 @@ const skeletonColor = green;
 const ringBackground = 'rgba(255,114,94,0.4)';
 const nodePropertyBackground = 'rgba(198, 198, 198, 0.4)';
 const baseSpaceHandleColor = 'rgba(255, 0, 255, 0.3)';
+const frameBackground = 'rgba(0, 0, 0, 0.036)';
 
 const pointMenuAnimationLength = 10;
 const componentMenuAnimationLength = 20;
@@ -145,6 +152,7 @@ export default class Toile {
 			this.keyboardUp = {};
 			this.keyboardDown = {};
 			this.keyboardDownRisingEdge = {};
+			this.keyboardUpRisingEdge = {};
 
 			canvas.addEventListener('mousemove', (e) => {
 				const {offsetLeft, offsetTop} = DOM.getAbsOffset(canvas);
@@ -187,13 +195,19 @@ export default class Toile {
 					metaKey,
 				} = e;
 
-				this.keyboardUp = {
+				const eventData = {
 					keyCode,
 					special: (ctrlKey ? specialKey.CTRL : 0)
 						+ (shiftKey ? specialKey.SHIFT : 0)
 						+ (altKey ? specialKey.ALT : 0)
 						+ (metaKey ? specialKey.META : 0),
 				};
+
+				if (this.keyboardDown.keyCode === keyCode) {
+					this.keyboardUpRisingEdge = eventData;
+				}
+
+				this.keyboardUp = eventData;
 			});
 
 			document.addEventListener('keydown', (e) => {
@@ -250,10 +264,12 @@ export default class Toile {
 		this.keyboardUp = {};
 		this.keyboardDown = {};
 		this.keyboardDownRisingEdge = {};
+		this.keyboardUpRisingEdge = {};
 	}
 
 	clearKeyboardEdges() {
 		this.keyboardDownRisingEdge = {};
+		this.keyboardUpRisingEdge = {};
 	}
 
 	clearMouseEdges() {
@@ -324,14 +340,14 @@ export default class Toile {
 		this.drawRectangleFromCorners(
 			lowerCornerRightRectangle,
 			upperCornerRightRectangle,
-			lightestGrey,
-			lightestGrey,
+			frameBackground,
+			frameBackground,
 		);
 		this.drawRectangleFromCorners(
 			lowerCornerLeftRectangle,
 			upperCornerLeftRectangle,
-			lightestGrey,
-			lightestGrey,
+			frameBackground,
+			frameBackground,
 		);
 
 		// base spacing lines
@@ -432,7 +448,7 @@ export default class Toile {
 		);
 	}
 
-	drawContourNode(node, id, prevNode, nextNode, hotItems, componentPrefixAddress) {
+	drawContourNode(node, id, prevNode, nextNode, hotItems, componentPrefixAddress, componentName) {
 		const hot = _find(hotItems, item => item.id === id);
 		const inId = `${id}.handleIn`;
 		const outId = `${id}.handleOut`;
@@ -450,6 +466,8 @@ export default class Toile {
 				type: toileType.CONTOUR_NODE_IN,
 				hotItems,
 				color: inHandleColor,
+				componentPrefixAddress,
+				componentName,
 			}); // in
 			this.drawHandleNode({
 				node,
@@ -461,6 +479,8 @@ export default class Toile {
 				type: toileType.CONTOUR_NODE_OUT,
 				hotItems,
 				color: outHandleColor,
+				componentPrefixAddress,
+				componentName,
 			}); // out
 		}
 
@@ -482,6 +502,7 @@ export default class Toile {
 				transforms: node.addedTransform,
 				radius: nodeHotRadius,
 				modifAddress,
+				componentName,
 			},
 		});
 	}
@@ -498,6 +519,7 @@ export default class Toile {
 		nextDir,
 		componentPrefixAddress,
 		parallelId,
+		componentName,
 		parallelParameters,
 	) {
 		const hot = _find(hotItems, item => item.id === id);
@@ -520,6 +542,7 @@ export default class Toile {
 				color: inHandleColor,
 				parallelId,
 				parallelParameters,
+				componentName,
 			}); // in
 			this.drawHandleNode({
 				node,
@@ -534,6 +557,7 @@ export default class Toile {
 				color: outHandleColor,
 				parallelId,
 				parallelParameters,
+				componentName,
 			}); // out
 		}
 
@@ -579,7 +603,9 @@ export default class Toile {
 							skeleton: parentNode,
 							baseAngle: parentNode.expand.baseAngle,
 							angleOffset,
+							transforms: node.addedTransform,
 							parallelParameters,
+							componentName,
 						},
 					});
 				}
@@ -600,6 +626,8 @@ export default class Toile {
 		color,
 		parallelId,
 		parallelParameters,
+		componentPrefixAddress,
+		componentName,
 	}) {
 		let handleNode = handle;
 
@@ -634,12 +662,15 @@ export default class Toile {
 					otherDir,
 					parallelId,
 					parallelParameters,
+					nodeAddress: node.nodeAddress,
+					componentPrefixAddress,
+					componentName,
 				},
 			});
 		}
 	}
 
-	drawSkeletonNode(node, id, hotItems, j, nodes, contour, componentPrefixAddress) {
+	drawSkeletonNode(node, id, hotItems, j, nodes, contour, componentPrefixAddress, componentName) {
 		const hot = _find(hotItems, item => item.id === id);
 		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
 
@@ -663,6 +694,7 @@ export default class Toile {
 					baseDistr: node.expand.baseDistr,
 					radius: nodeHotRadius,
 					modifAddress,
+					componentName,
 				},
 			});
 		}
@@ -706,6 +738,7 @@ export default class Toile {
 			nextNode.dirIn,
 			componentPrefixAddress,
 			`${id}.expandedTo.1`,
+			componentName,
 		];
 		const parametersOne = [
 			node.expandedTo[1],
@@ -719,6 +752,7 @@ export default class Toile {
 			prevNode.dirOut,
 			componentPrefixAddress,
 			`${id}.expandedTo.0`,
+			componentName,
 			parametersZero,
 		];
 
@@ -729,27 +763,27 @@ export default class Toile {
 	}
 
 
-	drawNodes(contour = {nodes: []}, contourCursor, hotItems, componentPrefixAddress) {
+	drawNodes(contour = {nodes: []}, contourCursor, hotItems, componentPrefixAddress, componentName) {
 		const nodes = contour.nodes;
 
 		nodes.forEach((node, j) => {
 			const id = `${contourCursor}.nodes.${j}`;
 
 			if (contour.skeleton && node.expand) {
-				this.drawSkeletonNode(node, id, hotItems, j, nodes, contour, componentPrefixAddress);
+				this.drawSkeletonNode(node, id, hotItems, j, nodes, contour, componentPrefixAddress, componentName);
 			}
 			else if (node.expandedTo) {
 				const prevNode = nodes[(j - 1) - (nodes.length * Math.floor((j - 1) / nodes.length))];
 				const nextNode = nodes[(j + 1) % nodes.length];
 
-				this.drawContourNode(node.expandedTo[0], `${id}.expandedTo.0`, prevNode.expandedTo[0], nextNode.expandedTo[0], hotItems, componentPrefixAddress);
-				this.drawContourNode(node.expandedTo[1], `${id}.expandedTo.1`, nextNode.expandedTo[1], prevNode.expandedTo[1], hotItems, componentPrefixAddress);
+				this.drawContourNode(node.expandedTo[0], `${id}.expandedTo.0`, prevNode.expandedTo[0], nextNode.expandedTo[0], hotItems, componentPrefixAddress, componentName);
+				this.drawContourNode(node.expandedTo[1], `${id}.expandedTo.1`, nextNode.expandedTo[1], prevNode.expandedTo[1], hotItems, componentPrefixAddress, componentName);
 			}
 			else {
 				const prevNode = nodes[(j - 1) - (nodes.length * Math.floor((j - 1) / nodes.length))];
 				const nextNode = nodes[(j + 1) % nodes.length];
 
-				this.drawContourNode(node, id, prevNode, nextNode, hotItems, componentPrefixAddress);
+				this.drawContourNode(node, id, prevNode, nextNode, hotItems, componentPrefixAddress, componentName);
 			}
 		});
 	}
@@ -776,55 +810,63 @@ export default class Toile {
 		context.fill();
 	}
 
-	drawSelectableContour(glyph, hotItems, parentId = '', type = toileType.GLYPH_CONTOUR, componentIdx) {
+	drawSelectableContour(glyph, hotItems, appMode, parentId = '', type = toileType.GLYPH_CONTOUR, componentIdx) {
 		let startIndexBeziers = 0;
 
-		glyph.contours.forEach((contour, i) => {
-			const id = `${parentId}contours.${i}`;
-			const hot = _find(hotItems, item => item.id === id);
-			let length;
+		if (appMode !== canvasMode.SELECT_POINTS_COMPONENT) {
+			glyph.contours.forEach((contour, i) => {
+				const id = `${parentId}contours.${i}`;
+				const hot = _find(hotItems, item => item.id === id);
+				let length;
 
-			if (contour.skeleton && contour.closed) {
-				length = 2;
-			}
-			else {
-				length = 1;
-			}
-			const deepListOfBeziers = _slice(
-				glyph.otContours,
-				startIndexBeziers,
-				startIndexBeziers + length,
-			);
-			const listOfBezier = _flatten(deepListOfBeziers);
+				if (contour.skeleton && contour.closed) {
+					length = 2;
+				}
+				else {
+					length = 1;
+				}
+				const deepListOfBeziers = _slice(
+					glyph.otContours,
+					startIndexBeziers,
+					startIndexBeziers + length,
+				);
+				const listOfBezier = _flatten(deepListOfBeziers);
 
 
-			if (hot) {
-				this.context.strokeStyle = green;
-				this.context.lineWidth = 1;
-				this.context.beginPath();
-				deepListOfBeziers.forEach((bez) => {
-					this.drawContour(bez, undefined, undefined, true);
+				if (hot) {
+					this.context.strokeStyle = green;
+					this.context.lineWidth = 1;
+					this.context.beginPath();
+					deepListOfBeziers.forEach((bez) => {
+						this.drawContour(bez, undefined, undefined, true);
+					});
+					this.context.stroke();
+					this.context.lineWidth = 1;
+				}
+
+				this.interactionList.push({
+					id,
+					type,
+					data: {
+						componentIdx,
+						name: glyph.name,
+						beziers: listOfBezier,
+						contour,
+						indexes: [startIndexBeziers, startIndexBeziers + length],
+					},
 				});
-				this.context.stroke();
-				this.context.lineWidth = 1;
-			}
 
-			this.interactionList.push({
-				id,
-				type,
-				data: {
-					componentIdx,
-					beziers: listOfBezier,
-					contour,
-					indexes: [startIndexBeziers, startIndexBeziers + length],
-				},
+				startIndexBeziers += length;
 			});
-
-			startIndexBeziers += length;
-		});
+		}
 
 		glyph.components.forEach((component, i) => {
-			this.drawSelectableContour(component, hotItems, `components.${i}.`, toileType.GLYPH_COMPONENT_CONTOUR, i);
+			if (component.global) {
+				this.drawSelectableContour(component, hotItems, 0, `components.${i}.`, toileType.GLYPH_GLOBAL_COMPONENT_CONTOUR, i);
+			}
+			else {
+				this.drawSelectableContour(component, hotItems, 0, `components.${i}.`, toileType.GLYPH_COMPONENT_CONTOUR, i);
+			}
 		});
 	}
 
@@ -860,7 +902,7 @@ export default class Toile {
 					},
 				});
 			}
-			else {
+			else if (component.base.length > 1) {
 				component.contours.forEach((contour) => {
 					const hot = _find(hotItems, item => item.id === id);
 					let length;
@@ -1059,14 +1101,14 @@ export default class Toile {
 		this.context.fill();
 	}
 
-	drawText(text, point, textSize, textColor) {
+	drawText(text, point, textSize, textColor, font = 'Fira sans') {
 		const [transformedPoint] = transformCoords(
 			[point],
 			this.viewMatrix,
 			this.height,
 		);
 
-		this.context.font = `${textSize}px 'Fira sans', sans-serif`;
+		this.context.font = `${textSize}px '${font}', sans-serif`;
 		this.context.fillStyle = textColor;
 
 		this.context.fillText(text, transformedPoint.x, transformedPoint.y);
@@ -1774,6 +1816,7 @@ export default class Toile {
 			}
 			case toileType.COMPONENT_CHOICE:
 			case toileType.GLYPH_COMPONENT_CONTOUR:
+			case toileType.GLYPH_GLOBAL_COMPONENT_CONTOUR:
 			case toileType.GLYPH_CONTOUR: {
 				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 				const [mouseTransformed] = transformCoords(

@@ -6,7 +6,7 @@
 	border-radius: 5px;
 	position: absolute;
 	top:20px;
-	z-index: 3;
+	z-index: 4;
 	display:flex;
 
 	.move#{&}-button {
@@ -19,6 +19,10 @@
 
 	.select-points#{&}-button {
 		background-image: url('../../../images/select-points.svg');
+	}
+
+	.shadow#{&}-button {
+		background-image: url('../../../images/icon-shadow.svg');
 	}
 
 	&-button {
