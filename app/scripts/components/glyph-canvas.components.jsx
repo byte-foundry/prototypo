@@ -666,8 +666,12 @@ export default class GlyphCanvas extends React.PureComponent {
 						)
 						&& components.length > 0
 					) {
-						appStateValue = appState.COMPONENT_HOVERED;
-						[componentHovered] = components;
+						const [candidateComp] = components;
+
+						if (candidateComp.data.bases.length > 1) {
+							appStateValue = appState.COMPONENT_HOVERED;
+							componentHovered = candidateComp;
+						}
 					}
 					else if (componentMenu.length > 0) {
 						appStateValue = appState.COMPONENT_MENU_HOVERED;
@@ -725,6 +729,9 @@ export default class GlyphCanvas extends React.PureComponent {
 							mouseBoxStart = undefined;
 							globalMode = false;
 						}
+						this.client.dispatchAction('/store-value', {
+							globalMode,
+						});
 						this.storeSelectedItems(selectedItems);
 					}
 					else if ((appStateValue & appState.CONTOUR_SELECTED) && mouse.edge === mState.DOWN) {
@@ -954,7 +961,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				// handle hotness of elements in component mode
 				// draw component that are hovered or not
 				if (appMode === canvasMode.COMPONENTS) {
-					this.toile.drawComponents(glyph.components, [...hotItems, componentHovered]);
+					this.toile.drawComponents(glyph.components, [componentHovered]);
 
 					if (appStateValue === appState.COMPONENT_HOVERED) {
 						const [component] = components;
@@ -1137,6 +1144,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							glyphName: glyph.base || glyph.name,
 							unicode: glyph.unicode,
 							points: selectedItems,
+							globalMode,
 						});
 					}
 				}
@@ -1546,6 +1554,7 @@ export default class GlyphCanvas extends React.PureComponent {
 			data: {
 				parentId: item.data.parentId,
 				modifAddress: item.data.modifAddress,
+				componentName: item.data.componentName,
 			},
 		}));
 

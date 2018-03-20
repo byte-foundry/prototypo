@@ -148,7 +148,7 @@ export default class CanvasShadow extends React.PureComponent {
 
 			this.toile.setCamera(this.props.glyphViewMatrix.t, this.props.glyphViewMatrix.z, -height, width);
 
-			this.toile.drawText(`${this.glyph}`, {x: 0, y: 0}, 1000 * this.props.glyphViewMatrix.z, '#fc5454', 'shadowfont');
+			this.toile.drawText(`${this.glyph}`, {x: 0, y: 0}, 1024 * this.props.glyphViewMatrix.z, '#fc5454', 'shadowfont');
 			rafId = raf(rafFunc);
 		};
 
