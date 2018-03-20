@@ -12,6 +12,11 @@ import Button from './shared/new-button.components';
 import WaitForLoad from './wait-for-load.components';
 
 const FACEBOOK_APP_ID = isProduction() ? '360143951128760' : '569126220107317';
+const GOOGLE_CLIENT_ID = `498899515436-${
+	isProduction()
+		? 'aiq68iif29l3dh8pcrjgn8uvpht180vv'
+		: '7c84imarpufkvf56olbpodnks3d3kg2p'
+}.apps.googleusercontent.com`;
 
 class OAuthButtons extends React.PureComponent {
 	constructor(props) {
@@ -79,7 +84,7 @@ class OAuthButtons extends React.PureComponent {
 						)}
 					/>
 					<GoogleLogin
-						clientId="245602847933-kpiga4d7u65pb105lr8ede4vo5csd9ic.apps.googleusercontent.com"
+						clientId={GOOGLE_CLIENT_ID}
 						buttonText="Login"
 						onSuccess={this.responseGoogle}
 						onFailure={this.responseGoogle}
