@@ -175,3 +175,19 @@ textarea,
     display:block;
     clear:both;
 }
+
+.deprecated-container {
+    height: 100%;
+}
+
+.deprecated-banner {
+	background: #fc5454;
+	color: #fff;
+	padding: 5px;
+	margin: 0;
+	text-align: center;
+}
+
+.deprecated-banner a {
+	text-decoration: underline;
+}

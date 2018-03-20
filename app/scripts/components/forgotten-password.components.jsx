@@ -7,6 +7,8 @@ import Log from '../services/log.services.js';
 import AccountValidationButton from './shared/account-validation-button.components.jsx';
 import InputWithLabel from './shared/input-with-label.components.jsx';
 
+import isProduction from '../helpers/is-production.helpers';
+
 class ForgottenPassword extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -39,20 +41,15 @@ class ForgottenPassword extends React.PureComponent {
 			return;
 		}
 
-		try {
-			await HoodieApi.askPasswordReset(email);
+		window.Intercom('boot', {
+			app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
+			// email,
+			widget: {
+				activator: '#intercom-button',
+			},
+		});
 
-			this.setState({loading: false});
-
-			this.props.history.push('/signin/forgotten?success');
-		}
-		catch (err) {
-			trackJs.track(err);
-			this.setState({
-				errorReset: err.message,
-				loading: false,
-			});
-		}
+		window.Intercom('showNewMessage', "Hello, I'd like to reset the password of my legacy account " + email + ".");
 	}
 
 	redirectToSignin() {

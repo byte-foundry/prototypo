@@ -90,9 +90,6 @@ export default class Signin extends React.Component {
 						<Link to="/signin/forgotten" className="sign-in-help-needed">
 							I forgot my password
 						</Link>
-						<Link to="/signup" className="sign-in-help-needed">
-							I don't have an account
-						</Link>
 						{errors}
 						<AccountValidationButton label="Sign in" loading={this.state.loading}/>
 					</form>

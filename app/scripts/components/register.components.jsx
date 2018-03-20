@@ -1,12 +1,9 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import {Link} from 'react-router';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-import InputWithLabel from './shared/input-with-label.components.jsx';
-import SelectWithLabel from './shared/select-with-label.components.jsx';
-import AccountValidationButton from './shared/account-validation-button.components.jsx';
+import Button from './shared/new-button.components';
 import FormError from './shared/form-error.components.jsx';
 
 export default class Register extends React.Component {
@@ -53,6 +50,10 @@ export default class Register extends React.Component {
 		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname, css, phone, skype, to: this.props.location.query.subscribe ? '/account/subscribe' : this.props.location.query.prevHash, oldQuery: this.props.location.query.subscribe ? {plan: this.props.location.query.subscribe, quantity: this.props.location.query.quantity} : this.props.location.query});
 	}
 
+	redirectToNewVersion() {
+		window.location = 'https://app.prototypo.io/#signup';
+	}
+
 	render() {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Register');
@@ -78,68 +79,10 @@ export default class Register extends React.Component {
 				</div>
 				<h1 className="account-dashboard-page-title">Nice to meet you.</h1>
 				<div className="account-dashboard-container">
-					<form className="sign-in-form" onSubmit={(e) => {this.register(e);}}>
-						<div className="columns">
-							<div className="half-column">
-								<InputWithLabel
-									label="First name"
-									id="firstname"
-									name="firstname"
-									ref="firstname"
-									error={this.state.inError.firstname}
-									placeholder="John"
-									required={true} />
-							</div>
-							<div className="half-column">
-								<InputWithLabel
-									label="Last name"
-									className="sign-in-input"
-									id="lastname"
-									name="lastname"
-									placeholder="Doe"
-									ref="lastname" />
-							</div>
-						</div>
-						<InputWithLabel
-							label="Email"
-							error={this.state.inError.email}
-							id="email-register"
-							name="email-register"
-							required
-							ref="username"
-							inputValue={this.props.location.query.emailSignUp}
-							type="email"
-							placeholder="example@domain.com"/>
-						<InputWithLabel
-							label="Password"
-							info="(at least 8 character long)"
-							error={this.state.inError.password}
-							id="password-register"
-							name="password-register"
-							type="password"
-							ref="password"
-							required />
-						<SelectWithLabel
-							ref="css"
-							label="I am"
-							name="css"
-							className="input-with-label-input"
-							placeholder="an architect"
-							options={jobtitles} />
-						<div className="columns">
-							<div className="half-column">
-								<InputWithLabel label="Phone number" info="(optional)" type="tel" ref="phone"/>
-							</div>
-							<div className="half-column">
-								<InputWithLabel label="Skype ID" info="(optional)" ref="skype"/>
-							</div>
-						</div>
-						<Link to={{pathname: '/signin', query: this.props.location.query}} className="sign-in-help-needed">
-							I already have an account
-						</Link>
-						{errors}
-						<AccountValidationButton loading={this.state.loading} label="Sign up"/>
-					</form>
+					<div className="sign-up-message">
+						<p>Signing up has been deactivated for<br/> this legacy version of Prototypo.</p>
+						<Button onClick={this.redirectToNewVersion}>Take me to the new version!</Button>
+					</div>
 				</div>
 			</div>
 		);

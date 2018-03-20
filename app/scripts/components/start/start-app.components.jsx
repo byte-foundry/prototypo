@@ -79,28 +79,35 @@ class StartApp extends React.PureComponent {
 		}
 
 		return (
-			<div className={`start-app ${families && families.length ? '' : 'noproject'}`}>
-				<div className="go-to-account">
-					<Link className="go-to-account-link" to="/account/home">
-						Go to my account instead →
-					</Link>
-				</div>
-				<div className="start-app-container">
-					<div className="start-base">
-						<div className="start-base-create">
-							<AddFamily start="true" firstTime={!families.length} onCreateFamily={this.open} />
-						</div>
-						<div className="start-base-projects">
-							<div className="load-project">
-								<label className="load-project-label">
-									<span className="load-project-label-order">OR. </span>
-									Continue recent project
-								</label>
-								<ul className="load-project-project">
-									{families.map(family =>
-										<FamilyRow key={family.id} open={this.open} {...family} />,
-									)}
-								</ul>
+			<div className="deprecated-container">
+				<p className="deprecated-banner">
+					You are browsing an old version of Prototypo,
+					the changes won't be reflected on
+					the <a href="https://app.prototypo.io">latest version</a>.
+				</p>
+				<div className={`start-app ${families && families.length ? '' : 'noproject'}`}>
+					<div className="go-to-account">
+						<Link className="go-to-account-link" to="/account/home">
+							Go to my account instead →
+						</Link>
+					</div>
+					<div className="start-app-container">
+						<div className="start-base">
+							<div className="start-base-create">
+								<AddFamily start="true" firstTime={!families.length} onCreateFamily={this.open} />
+							</div>
+							<div className="start-base-projects">
+								<div className="load-project">
+									<label className="load-project-label">
+										<span className="load-project-label-order">OR. </span>
+										Continue recent project
+									</label>
+									<ul className="load-project-project">
+										{families.map(family =>
+											<FamilyRow key={family.id} open={this.open} {...family} />,
+										)}
+									</ul>
+								</div>
 							</div>
 						</div>
 					</div>

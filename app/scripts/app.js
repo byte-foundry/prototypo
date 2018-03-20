@@ -60,7 +60,16 @@ Router.prototype.componentWillReceiveProps = function componentWillReceiveProps(
 
 class App extends React.Component {
 	render() {
-		return this.props.children;
+		return (
+			<div className="deprecated-container">
+				<p className="deprecated-banner">
+					You are browsing an old version of Prototypo,
+					the changes won't be reflected on
+					the <a href="https://app.prototypo.io">latest version</a>.
+				</p>
+				{this.props.children}
+			</div>
+		);
 	}
 }
 
