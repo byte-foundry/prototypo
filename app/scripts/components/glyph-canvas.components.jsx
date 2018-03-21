@@ -108,7 +108,9 @@ function handleModification(
 
 		if (transform) {
 			xTransform /= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
+			xTransform *= transform.name.indexOf('rotate') === -1 ? 1 : Math.cos(transform.param);
 			yTransform /= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
+			yTransform *= transform.name.indexOf('rotate') === -1 ? 1 : Math.sin(transform.param);
 		}
 	}
 	const newVectorPreTransform = subtract2D(newPos, handlePos);
@@ -209,6 +211,7 @@ function onCurveModification(
 
 	let xTransform = 1;
 	let yTransform = 1;
+	let angleTransform = 0;
 
 	for (let i = 0; i < transforms.length; i++) {
 		const transform = transforms[i];
@@ -216,6 +219,7 @@ function onCurveModification(
 		if (transform) {
 			xTransform /= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
 			yTransform /= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
+			angleTransform += transform.name.indexOf('rotate') === -1 ? 0 : transform.param;
 		}
 	}
 
@@ -223,6 +227,7 @@ function onCurveModification(
 		x: xTransform * widthVector.x,
 		y: yTransform * widthVector.y,
 	};
+
 	const newWidth = distance2D({x: 0, y: 0}, transformedWidthVector);
 	// width factor
 	const factor = newWidth / baseWidth;
@@ -233,7 +238,7 @@ function onCurveModification(
 		y: yTransform * newVec.y,
 	};
 
-	const angleDiff = Math.atan2(transformedVec.y, transformedVec.x) - baseAngle;
+	const angleDiff = Math.atan2(transformedVec.y, transformedVec.x) - baseAngle - angleTransform;
 
 	const changes = {};
 
@@ -254,6 +259,7 @@ function skeletonPosModification(client, glyph, draggedItem, newPos, globalMode)
 	const mouseVec = subtract2D(newPos, base);
 	let xTransform = 1;
 	let yTransform = 1;
+	let angleTransform = 0;
 
 	for (let i = 0; i < transforms.length; i++) {
 		const transform = transforms[i];
@@ -261,12 +267,23 @@ function skeletonPosModification(client, glyph, draggedItem, newPos, globalMode)
 		if (transform) {
 			xTransform /= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
 			yTransform /= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
+			angleTransform += transform.name.indexOf('rotate') === -1 ? 0 : transform.param;
 		}
 	}
 
+	const mouseVecScale = {
+		x: mouseVec.x * xTransform,
+		y: mouseVec.y * yTransform,
+	};
+
+	const mouseVecTransform = {
+		x: (mouseVecScale.x * Math.cos(angleTransform)) + (mouseVecScale.y * Math.sin(angleTransform)),
+		y: (mouseVecScale.y * Math.cos(angleTransform)) - (mouseVecScale.x * Math.sin(angleTransform)),
+	};
+
 	const changes = {
-		[`${draggedItem.data.modifAddress}x`]: mouseVec.x * xTransform,
-		[`${draggedItem.data.modifAddress}y`]: mouseVec.y * yTransform,
+		[`${draggedItem.data.modifAddress}x`]: mouseVecTransform.x,
+		[`${draggedItem.data.modifAddress}y`]: mouseVecTransform.y,
 	};
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
