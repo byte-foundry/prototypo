@@ -601,86 +601,19 @@ export class ExportLite extends React.Component {
 
 		const findPreset = `
 			query {
-				Preset(ptypoPresetId:"${preset.id}") {id}
+				Preset(id:"${preset.id}") {id}
 			}
 		`;
-
-		const createPreset = `
-		mutation {
-			createPreset(
-				preset: "${familyName}"
-				variant: "${variant}"
-				template: "${template}"
-				needs: [${needs.map(need => `"${need}"`)}]
-				baseValues : "${JSON.stringify(preset.baseValues).replace(/"/g, '\\"')}"
-				ptypoPresetId: "${preset.id}"
-				steps: [
-					${preset.steps.map(step => `
-						{
-							name: "${step.name}"
-							description: "${step.description}"
-							choices:
-							[
-								${step.choices.map((choice) => {
-		const {values, name, fieldDifference} = choice;
-		const valuesToStore = {};
-
-		fieldDifference.forEach((field) => {
-			valuesToStore[field] = values[field];
-		});
-		return `
-										{
-											name: "${name}"
-											values: "${JSON.stringify(valuesToStore).replace(/"/g, '\\"')}"
-										}
-									`;
-	})}
-							]
-						}
-		`)}
-				]
-			) { id }
-		}
-			`;
 
 		const updatePreset = presetId => `
 		mutation {
 			updatePreset(
 				id: "${presetId}"
-				preset: "${familyName}"
-				variant: "${variant}"
-				template: "${template}"
-				needs: [${needs.map(need => `"${need}"`)}]
-				baseValues : "${JSON.stringify(preset.baseValues).replace(/"/g, '\\"')}"
-				steps: [
-					${preset.steps.map(step => `
-						{
-							name: "${step.name}"
-							description: "${step.description}"
-							choices:
-							[
-								${step.choices.map((choice) => {
-		const {values, name, fieldDifference} = choice;
-		const valuesToStore = {};
-
-		fieldDifference.forEach((field) => {
-			valuesToStore[field] = values[field];
-		});
-		return `
-										{
-											name: "${name}"
-											values: "${JSON.stringify(valuesToStore).replace(/"/g, '\\"')}"
-										}
-		`;
-	})}
-							]
-						}
-		`)}
-				]
+				published: true
 			) { id }
 		}
 			`;
-		const GRAPHQL_API = 'https://api.graph.cool/simple/v1/cj6maa0ib2tud01656t4tp4ej';
+		const GRAPHQL_API = 'https://api.graph.cool/simple/v1/prototypo-new-dev';
 
 		request(GRAPHQL_API, findPreset)
 			.then((data) =>	{
@@ -693,12 +626,7 @@ export class ExportLite extends React.Component {
 						.catch(error => console.log(error));
 				}
 				else {
-					request(GRAPHQL_API, createPreset)
-						.then(res =>
-							this.client.dispatchAction('/store-value', {
-								openExportLiteModal: false,
-							}))
-						.catch(error => console.log(error));
+					console.log('Error: Preset not found on Prototypo')
 				}
 			})
 			.catch(error => console.log(error));
