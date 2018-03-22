@@ -125,9 +125,11 @@ class Collection extends React.PureComponent {
 			<div className="collection">
 				<div className="collection-container">
 					<div className="account-dashboard-icon" onClick={this.returnToDashboard} />
-					<div className="account-dashboard-back-icon" onClick={this.returnToDashboard} />
 					<div className="account-header">
 						<h1 className="account-title">My projects</h1>
+						<div className="account-header-right">
+							<button className="account-dashboard-back-icon" onClick={this.returnToDashboard} />
+						</div>
 					</div>
 					<div className="collection-content">
 						<FamilyList
