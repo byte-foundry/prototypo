@@ -30,7 +30,7 @@ window.addEventListener('fluxServer.setup', () => {
 	localClient = LocalClient.instance();
 	localServer = LocalServer.instance;
 
-	undoWatcher = BatchUpdate.instance(
+	undoWatcher = BatchUpdate.init(
 		undoableStore,
 		'/undoableStore',
 		'controlsValues',
