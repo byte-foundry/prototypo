@@ -38,7 +38,9 @@ class TopBarMenuDropdownItem extends React.PureComponent {
 	}
 
 	render() {
-		const {id, name, shortcut, disabled, separator, checkbox, active, children} = this.props;
+		const {
+			id, name, shortcut, disabled, separator, checkbox, active, children,
+		} = this.props;
 
 		const classes = classNames({
 			'top-bar-menu-item-dropdown-item': true,

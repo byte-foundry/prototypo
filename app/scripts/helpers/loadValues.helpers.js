@@ -56,11 +56,13 @@ export async function loadFontValues(typedata, typeface, variantId) {
 		const fontValues = await FontValues.get({typeface, variantId});
 
 		localClient.dispatchAction('/load-values', {...initValues, ...fontValues.values});
+		localClient.dispatchAction('/clear-undo-stack');
 	}
 	catch (err) {
 		const values = {altList: typedata.fontinfo.defaultAlts, ...initValues};
 
 		localClient.dispatchAction('/load-values', values);
+		localClient.dispatchAction('/clear-undo-stack');
 		FontValues.save({
 			typeface,
 			values,

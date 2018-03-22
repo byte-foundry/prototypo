@@ -181,6 +181,7 @@ export default {
 		saveAppValues();
 	},
 	'/show-base-values': async () => {
+		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
 		const currentPreset = _cloneDeep(prototypoStore.get('preset'));
 		const patch = prototypoStore.set('choice', undefined).set('step', undefined).commit();
 
@@ -217,6 +218,7 @@ export default {
 		saveAppValues();
 	},
 	'/select-choice': ({choice, step}) => {
+		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
 		const preset = prototypoStore.get('preset');
 		// check if values key in choice
 		// if values load values
@@ -504,3 +506,4 @@ export default {
 		saveAppValues();
 	},
 };
+

@@ -615,13 +615,13 @@ class Topbar extends React.Component {
 				</TopBarMenuDropdown>
 				<TopBarMenuDropdown name="Lite">
 					<TopBarMenuDropdownItem name="Export data" handler={this.openExportLiteModal} />
-					<TopBarMenuDropdownItem name="Rename step" handler={this.editCurrentStep} />
-					<TopBarMenuDropdownItem name="Delete step" handler={this.deleteCurrentStep} />
 					<TopBarMenuDropdownItem name="Show base values" handler={this.showPreset} />
-					<TopBarMenuDropdownItem name="Rename choice" handler={this.editCurrentChoice} />
-					<TopBarMenuDropdownItem name="Delete choice" handler={this.deleteCurrentChoice} />
 					<TopBarMenuDropdownItem name="Update base font values" handler={this.updateBaseFontValues} />
-					<TopBarMenuDropdownItem name="Save choice values" handler={this.saveChoiceValues} />
+					<TopBarMenuDropdownItem name="Rename step" disabled={this.state.step === undefined} handler={this.editCurrentStep} />
+					<TopBarMenuDropdownItem name="Delete step" disabled={this.state.step === undefined} handler={this.deleteCurrentStep} />
+					<TopBarMenuDropdownItem name="Rename choice" disabled={this.state.choice === undefined} handler={this.editCurrentChoice} />
+					<TopBarMenuDropdownItem name="Delete choice" disabled={this.state.choice === undefined} handler={this.deleteCurrentChoice} />
+					<TopBarMenuDropdownItem name="Save choice values" disabled={this.state.choice === undefined} handler={this.saveChoiceValues} />
 				</TopBarMenuDropdown>
 				{academyIcon}
 				{academyProgressItem}

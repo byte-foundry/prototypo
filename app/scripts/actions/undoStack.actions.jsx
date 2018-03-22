@@ -5,6 +5,7 @@ const {Patch} = Remutable;
 import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
+import {BatchUpdate} from '../helpers/undo-stack.helpers';
 
 let localServer;
 let localClient;
@@ -63,6 +64,12 @@ export default {
 			.set('undoEventList', [])
 			.set('undoAt', 0)
 			.commit();
+
+		const batchUpdate = BatchUpdate.instance;
+
+		if (batchUpdate) {
+			batchUpdate.reset();
+		}
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},

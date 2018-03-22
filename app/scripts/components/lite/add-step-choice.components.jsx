@@ -241,20 +241,20 @@ export class AddStep extends React.Component {
 			= this.props.edit && this.state.step ? (
 				<input
 					ref="name"
-					key={this.state.step.name}
+					key={`name${this.state.step.name}`}
 					className="add-family-form-input"
 					type="text"
 					placeholder="Step 1"
 					defaultValue={this.state.step.name}
 				/>
 			) : (
-				<input ref="name" className="add-family-form-input" type="text" placeholder="Step 1" />
+				<input ref="name" key="name" className="add-family-form-input" type="text" placeholder="Step 1" />
 			);
 		const descriptionInput
 			= this.props.edit && this.state.step ? (
 				<input
 					ref="description"
-					key={this.state.step.description}
+					key={`description${this.state.step.description}`}
 					className="add-family-form-input"
 					type="text"
 					placeholder="Step description"
@@ -263,6 +263,7 @@ export class AddStep extends React.Component {
 			) : (
 				<input
 					ref="description"
+					name="description"
 					className="add-family-form-input"
 					type="text"
 					placeholder="Step description"
