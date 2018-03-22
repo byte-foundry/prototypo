@@ -15,6 +15,7 @@ import {indivGroupsCreationTutorialLabel, fileTutorialLabel, collectionsTutorial
 
 import withCountry from '../shared/with-country.components';
 import Price from '../shared/price.components';
+import Logout from '../logout.components';
 
 import TopBarMenu from './top-bar-menu.components';
 import TopBarMenuAction from './top-bar-menu-action.components';
@@ -46,7 +47,6 @@ class Topbar extends React.Component {
 		this.exportAs = this.exportAs.bind(this);
 		this.exportMergedOTF = this.exportMergedOTF.bind(this);
 		this.exportFamily = this.exportFamily.bind(this);
-		this.logout = this.logout.bind(this);
 		this.individualize = this.individualize.bind(this);
 		this.setAccountRoute = this.setAccountRoute.bind(this);
 		this.goToSubscribe = this.goToSubscribe.bind(this);
@@ -159,14 +159,9 @@ class Topbar extends React.Component {
 		this.lifespan.release();
 	}
 
-	logout() {
-		this.client.dispatchAction('/sign-out');
-		Log.ui('Topbar.logout');
-	}
-
 	newProject() {
 		this.client.dispatchAction('/store-value', {openFamilyModal: true});
-		Log.ui('Topbar.logout');
+		Log.ui('Topbar.newProject');
 	}
 
 	startTuto() {
@@ -442,9 +437,16 @@ class Topbar extends React.Component {
 							);
 						}}
 					/>
-					<TopBarMenuDropdownItem
-						name="Logout"
-						handler={this.logout}
+					<Logout
+						render={props => (
+							<TopBarMenuDropdownItem
+								name="Logout"
+								handler={() => {
+									Log.ui('Topbar.logout');
+									props.logout();
+								}}
+							/>
+						)}
 					/>
 				</TopBarMenuDropdown>
 				<TopBarMenuDropdown name="Edit">
