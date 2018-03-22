@@ -538,8 +538,8 @@ export default {
 				delete manualChanges[glyphOrCompName].cursors[`${parentId}.out.y`];
 				break;
 			case toileType.NODE:
-				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}.out.x`];
-				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}.out.y`];
+				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}.width`];
+				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}.angle`];
 				break;
 			case toileType.SPACING_HANDLE:
 				if (item.id === 'spacingLeft') {
