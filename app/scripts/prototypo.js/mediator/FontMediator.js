@@ -121,7 +121,7 @@ export default class FontMediator {
 					this.fontMakers = {};
 					const componentIdAndGlyphPerClass = {};
 
-					if (!noCanvas) {
+					if (!this.noCanvas) {
 						typedatas.forEach((typedata) => {
 							if (!process.env.LIBRARY) {
 								const font = new FontPrecursor(typedata.json);
