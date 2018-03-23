@@ -203,7 +203,9 @@ export class PtypoFont {
 			this.glyphsSet,
 		);
 
-		return fontBuffer;
+		const mergedBuffer = await this.mediator.mergeFont(fontBuffer);
+
+		return mergedBuffer;
 	}
 
 	reset() {
