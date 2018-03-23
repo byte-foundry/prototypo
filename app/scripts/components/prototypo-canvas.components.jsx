@@ -602,13 +602,6 @@ export default class PrototypoCanvas extends React.Component {
 								? 'spacing'
 								: 'point'}
 					</button>
-					<button
-						className={`prototypo-canvas-reset-button ${this.state.selectedItems && this.state.selectedItems.length > 0 ? '' : 'disabled'}`}
-						onClick={this.resetPoints}
-						disabled={!(this.state.selectedItems && this.state.selectedItems.length)}
-					>
-						Get base manual changes
-					</button>
 				</div>
 				{shadowButton}
 				{shadowDropzone}
