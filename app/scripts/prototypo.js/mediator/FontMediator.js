@@ -77,8 +77,8 @@ async function mergeFont(url, action, params, arrayBuffer, mime = 'otf') {
 }
 
 export default class FontMediator {
-	static async init(typedatas, workerPoolSize) {
-		instance = new FontMediator(workerPoolSize);
+	static async init(typedatas, workerPoolSize, noCanvas) {
+		instance = new FontMediator(workerPoolSize, noCanvas);
 
 		await instance.workerPool.workerReady;
 
@@ -103,7 +103,8 @@ export default class FontMediator {
 		return instance;
 	}
 
-	constructor(workerPoolSize) {
+	constructor(workerPoolSize, noCanvas = false) {
+		this.noCanvas = noCanvas;
 		this.workerPool = new WorkerPool(workerPoolSize);
 	}
 
@@ -120,29 +121,33 @@ export default class FontMediator {
 					this.fontMakers = {};
 					const componentIdAndGlyphPerClass = {};
 
-					typedatas.forEach((typedata) => {
-						if (!process.env.LIBRARY) {
-							const font = new FontPrecursor(typedata.json);
+					if (!noCanvas) {
+						typedatas.forEach((typedata) => {
+							if (!process.env.LIBRARY) {
+								const font = new FontPrecursor(typedata.json);
 
-							this.fontMakers[typedata.name] = font;
-						}
+								this.fontMakers[typedata.name] = font;
+							}
 
-						this.glyphList[typedata.name] = typedata.json.glyphs;
+							this.glyphList[typedata.name] = typedata.json.glyphs;
 
-						componentIdAndGlyphPerClass[typedata.name] = getComponentIdAndGlyphPerClass(typedata);
+							componentIdAndGlyphPerClass[typedata.name] = getComponentIdAndGlyphPerClass(typedata);
 
-						const initValues = {};
+							const initValues = {};
 
-						typedata.json.controls.forEach((group) => {
-							group.parameters.forEach((param) => {
-								initValues[param.name] = param.init;
+							typedata.json.controls.forEach((group) => {
+								group.parameters.forEach((param) => {
+									initValues[param.name] = param.init;
+								});
 							});
+
+							this.initValues[typedata.name] = initValues;
 						});
-
-						this.initValues[typedata.name] = initValues;
-					});
-
-					resolve(componentIdAndGlyphPerClass);
+						resolve(componentIdAndGlyphPerClass);
+					}
+					else {
+						resolve();
+					}
 				},
 			});
 		});
@@ -368,7 +373,7 @@ export default class FontMediator {
 	}
 
 	getFont(fontName, template, params, subset, glyphCanvasUnicode) {
-		if (glyphCanvasUnicode) {
+		if (glyphCanvasUnicode && !this.noCanvas) {
 			const glyphForCanvas = this.fontMakers[template].constructFont({
 				...params,
 			}, [glyphCanvasUnicode]);
@@ -405,7 +410,7 @@ export default class FontMediator {
 		const glyphArray = [];
 
 		_forOwn(this.glyphList[template], (glyph) => {
-			if (glyph.unicode) {
+			if (glyph.unicode && !this.noCanvas) {
 				try {
 					const constructedGlyph = this.fontMakers[template].constructFont({
 						...params,
