@@ -1,6 +1,7 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import {Link} from 'react-router';
+import {withRouter} from 'react-router';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import isProduction from '../helpers/is-production.helpers';
@@ -13,7 +14,7 @@ import AccountValidationButton from './shared/account-validation-button.componen
 import FormError from './shared/form-error.components.jsx';
 import OAuthButtons from './oauth-buttons.components';
 
-export default class Register extends React.Component {
+class Register extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -79,7 +80,9 @@ export default class Register extends React.Component {
 		const phone = this.refs.phone.inputValue;
 		const skype = this.refs.skype.inputValue;
 
-		this.client.dispatchAction('/sign-up', {username, password, firstname, lastname, css, phone, skype, to: this.props.location.query.subscribe ? '/account/subscribe' : this.props.location.query.prevHash, oldQuery: this.props.location.query.subscribe ? {plan: this.props.location.query.subscribe, quantity: this.props.location.query.quantity} : this.props.location.query});
+		this.client.dispatchAction('/sign-up', {
+			username, password, firstname, lastname, css, phone, skype, to: this.props.location.query.subscribe ? '/account/subscribe' : this.props.location.query.prevHash, oldQuery: this.props.location.query.subscribe ? {plan: this.props.location.query.subscribe, quantity: this.props.location.query.quantity} : this.props.location.query,
+		});
 	}
 
 	render() {
@@ -87,9 +90,7 @@ export default class Register extends React.Component {
 			console.log('[RENDER] Register');
 		}
 
-		const errors = this.state.errors.map((error) => {
-			return <FormError errorText={error}/>;
-		});
+		const errors = this.state.errors.map(error => <FormError errorText={error} />);
 
 		const jobtitles = [
 			{value: 'graphic_designer', label: 'a graphic designer'},
@@ -101,7 +102,7 @@ export default class Register extends React.Component {
 
 		return (
 			<div className="sign-up sign-base">
-				<div className="account-dashboard-icon"/>
+				<div className="account-dashboard-icon" />
 				<div className="account-header">
 					<h1 className="account-title">Sign up</h1>
 				</div>
@@ -126,7 +127,8 @@ export default class Register extends React.Component {
 										ref="firstname"
 										error={this.state.inError.firstname}
 										placeholder="John"
-										required={true} />
+										required
+									/>
 								</div>
 								<div className="half-column">
 									<InputWithLabel
@@ -135,7 +137,8 @@ export default class Register extends React.Component {
 										id="lastname"
 										name="lastname"
 										placeholder="Doe"
-										ref="lastname" />
+										ref="lastname"
+									/>
 								</div>
 							</div>
 							<InputWithLabel
@@ -147,7 +150,8 @@ export default class Register extends React.Component {
 								ref="username"
 								inputValue={this.props.location.query.emailSignUp}
 								type="email"
-								placeholder="example@domain.com"/>
+								placeholder="example@domain.com"
+							/>
 							<InputWithLabel
 								label="Password"
 								info="(at least 8 character long)"
@@ -156,27 +160,29 @@ export default class Register extends React.Component {
 								name="password-register"
 								type="password"
 								ref="password"
-								required />
+								required
+							/>
 							<SelectWithLabel
 								ref="css"
 								label="I am"
 								name="css"
 								className="input-with-label-input"
 								placeholder="an architect"
-								options={jobtitles} />
+								options={jobtitles}
+							/>
 							<div className="columns">
 								<div className="half-column">
-									<InputWithLabel label="Phone number" info="(optional)" type="tel" ref="phone"/>
+									<InputWithLabel label="Phone number" info="(optional)" type="tel" ref="phone" />
 								</div>
 								<div className="half-column">
-									<InputWithLabel label="Skype ID" info="(optional)" ref="skype"/>
+									<InputWithLabel label="Skype ID" info="(optional)" ref="skype" />
 								</div>
 							</div>
 							<Link to={{pathname: '/signin', query: this.props.location.query}} className="sign-in-help-needed">
 								I already have an account
 							</Link>
 							{errors}
-							<AccountValidationButton loading={this.state.loading} label="Sign up"/>
+							<AccountValidationButton loading={this.state.loading} label="Sign up" />
 						</form>
 					</div>
 				</div>
@@ -184,3 +190,14 @@ export default class Register extends React.Component {
 		);
 	}
 }
+
+Register.defaultProps = {
+	render: children => children,
+};
+
+Register.propTypes = {
+	render: PropTypes.func,
+	router: PropTypes.object.isRequired,
+};
+
+export default withRouter(Register);
