@@ -49,7 +49,7 @@ export default class FontPrecursor {
 	}
 
 	constructFont(params, subset) {
-		const localParams = {
+		let localParams = {
 			...params,
 			..._mapValues(this.parameters, param => param.getResult(params)),
 			manualChanges: {
@@ -86,7 +86,7 @@ export default class FontPrecursor {
 
 		for (let i = 0; i < glyphNames.length; i++) {
 			const name = glyphNames[i];
-			const indivParam = {};
+			const indivParam = {...params};
 
 			if (name !== undefined) {
 				if (localParams.indiv_glyphs) {
@@ -101,14 +101,32 @@ export default class FontPrecursor {
 							const mod = indivModifs[keys[j]];
 
 							indivParam[param] = mod.state === 'relative'
-								? localParams[param] * mod.value
-								: localParams[param] + mod.value;
+								? params[param] * mod.value
+								: params[param] + mod.value;
 						}
 					}
+
+					localParams = {
+						...localParams,
+						...indivParam,
+						..._mapValues(this.parameters, param => param.getResult(indivParam)),
+						manualChanges: {
+							...this.paramBase.manualChanges,
+							...localParams.manualChanges,
+						},
+						glyphComponentChoice: {
+							...this.paramBase.glyphComponentChoice,
+							...localParams.glyphComponentChoice,
+						},
+						altList: {
+							...this.paramBase.altList,
+							...localParams.altList,
+						},
+					};
 				}
 
 				if (this.glyphs[name]) {
-					glyphs.push(this.glyphs[name].constructGlyph({...localParams, ...indivParam}, undefined, this.glyphs));
+					glyphs.push(this.glyphs[name].constructGlyph({...localParams}, undefined, this.glyphs));
 				}
 			}
 		}
