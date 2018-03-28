@@ -5,6 +5,7 @@
 		"@babel/syntax-dynamic-import",
 		"@babel/proposal-class-properties",
 		"@babel/transform-flow-strip-types",
+		"react-hot-loader/babel"
 	],
 	"env": {
 		"test": {
