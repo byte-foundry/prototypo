@@ -1,11 +1,10 @@
 import React from 'react';
-import {graphql, gql} from 'react-apollo';
+import PropTypes from 'prop-types';
+import {graphql} from 'react-apollo';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
 
-import HoodieApi from '../../services/hoodie.services.js';
-
-import LocalClient from '../../stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores';
 
 
 import {libraryQuery} from '../collection/collection.components';
@@ -20,8 +19,6 @@ class ArianneThread extends React.PureComponent {
 		this.state = {
 			selectedFamily: {},
 			selectedVariant: {},
-			family: {},
-			variant: {},
 			steps: [],
 			step: {},
 			choice: {},
@@ -49,7 +46,10 @@ class ArianneThread extends React.PureComponent {
 		this.lifespan = new Lifespan();
 		const store = await this.client.fetch('/prototypoStore');
 		const memoizedListSelector = (list = [], selectedValue, oldValue, oldCriteria) => {
-			if (list.length > 0 && (selectedValue.name !== oldCriteria.name || selectedValue.name === undefined)) {
+			if (
+				list.length > 0
+				&& (selectedValue.name !== oldCriteria.name || selectedValue.name === undefined)
+			) {
 				return list.filter(element => selectedValue.name !== element.name);
 			}
 			return oldValue || voidStateArray;
@@ -64,26 +64,21 @@ class ArianneThread extends React.PureComponent {
 						: voidStateObject
 				);
 
-				const isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
-				const isFreeWithCredits = (head.toJS().d.credits && head.toJS().d.credits > 0) && isFree;
-
-				if (!head.toJS().d.preset) {
-					this.client.dispatchAction('/fetch-preset', store.head.toJS().variant.id);
-				}
-
 				this.setState({
-					selectedFamily: head.toJS().d.family,
+					selectedFamily: family,
 					selectedVariant: head.toJS().d.variant,
-					variant: head.toJS().d.variant,
-					groups: memoizedListSelector(head.toJS().d.indivGroups, head.toJS().d.indivCurrentGroup || voidStateObject, this.state.groups, this.state.indivCurrentGroup || voidStateObject),
+					groups: memoizedListSelector(
+						head.toJS().d.indivGroups,
+						head.toJS().d.indivCurrentGroup || voidStateObject,
+						this.state.groups,
+						this.state.indivCurrentGroup || voidStateObject,
+					),
 					indivCreate: head.toJS().d.indivCreate,
 					indivMode: head.toJS().d.indivMode,
 					indivCurrentGroup: head.toJS().d.indivCurrentGroup || voidStateObject,
 					steps: head.toJS().d.preset ? head.toJS().d.preset.steps : [],
 					step: head.toJS().d.step || {},
 					choice: head.toJS().d.choice || {},
-					isFree,
-					isFreeWithCredits,
 				});
 			})
 			.onDelete(() => {
@@ -91,9 +86,13 @@ class ArianneThread extends React.PureComponent {
 			});
 
 		this.setState({
-			family: familySelector(this.props.families, store.head.toJS().family),
-			variant: store.head.toJS().variant,
-			groups: memoizedListSelector(store.head.toJS().indivGroups, {}, this.state.groups, voidStateObject),
+			selectedFamily: familySelector(this.props.families, store.head.toJS().family),
+			selectedVariant: store.head.toJS().variant,
+			groups: memoizedListSelector(
+				store.head.toJS().indivGroups,
+				{},
+				this.state.groups, voidStateObject,
+			),
 		});
 	}
 
@@ -194,7 +193,7 @@ class ArianneThread extends React.PureComponent {
 		}
 
 		const family = families.find(({name}) => name === selectedFamily.name) || families[0];
-		const variant = family.variants.find(({name}) => name === selectedVariant.name) || family.variants[0];
+		const variant = family.variants.find(({name}) => name === selectedVariant.name) || family.variants[0] || {name: 'regular'};
 
 		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily} />;
 		const familyItem = (
@@ -213,7 +212,9 @@ class ArianneThread extends React.PureComponent {
 				label={variant.name}
 				family={family}
 				variant={variant}
-				list={family.variants ? family.variants.filter(({name}) => name !== this.state.variant.name) : []}
+				list={family.variants
+					? family.variants.filter(({id}) => id !== this.state.selectedVariant.id)
+					: []}
 				add={addVariant}
 				click={this.selectVariant}
 				toggleId="arianne-item-variant"
@@ -258,7 +259,8 @@ class ArianneThread extends React.PureComponent {
 			? 'Creating new group...'
 			: 'All glyphs';
 		const groupName = this.state.indivCurrentGroup.name || groupLabel;
-		const group = this.state.groups && (this.state.groups.length > 0 || this.state.indivCurrentGroup.name)
+		const group = this.state.groups
+			&& (this.state.groups.length > 0 || this.state.indivCurrentGroup.name)
 			? (<DropArianneItem
 				label={groupName}
 				list={this.state.groups}
@@ -289,6 +291,7 @@ class ArianneThread extends React.PureComponent {
 }
 
 ArianneThread.propTypes = {
+	families: PropTypes.arrayOf(PropTypes.any),
 };
 
 ArianneThread.defaultProps = {
