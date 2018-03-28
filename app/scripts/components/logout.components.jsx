@@ -39,11 +39,11 @@ class Logout extends React.Component {
 	}
 }
 
-PropTypes.defaultProps = {
+Logout.defaultProps = {
 	render: children => children,
 };
 
-PropTypes.propTypes = {
+Logout.propTypes = {
 	render: PropTypes.func,
 };
 

@@ -18,7 +18,9 @@ export class AccountDashboard extends React.Component {
 	}
 
 	render() {
-		const {firstName, location, route, children} = this.props;
+		const {
+			firstName, location, route, children,
+		} = this.props;
 
 		const titles = {
 			home: 'My account',
