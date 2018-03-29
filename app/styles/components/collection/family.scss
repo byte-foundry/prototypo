@@ -307,7 +307,7 @@
 			position:absolute;
 			z-index:2;
 			background-position: center;
-			background-size: 46%;
+			background-size: 45%;
 			background-image: url("../../../images/prototypo-icon-white.svg");
 			background-repeat: no-repeat;
 			top: 50%;
@@ -357,5 +357,6 @@
 	&.is-active &-provider div {
 		background-color: $green;
 		background-image: url("../../../images/icon-checked-flat.svg");
+		background-size: 45% !important;
 	}
 }
