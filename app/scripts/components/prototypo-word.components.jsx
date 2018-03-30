@@ -162,6 +162,9 @@ export default class PrototypoWord extends React.PureComponent {
 	}
 
 	componentWillUnmount() {
+		const cancelRaf = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+
+		cancelRaf(this.alreadyRafed);
 		this.handleEscapedInput();
 		this.lifespan.release();
 	}

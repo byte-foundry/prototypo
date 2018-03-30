@@ -7,6 +7,7 @@
 }
 
 .account-title {
+	flex: 1;
 }
 
 .account-header {
@@ -17,12 +18,17 @@
 	margin:0;
 	display:flex;
 	align-items: center;
-	justify-content: space-between;
 	background-color: $white;
 	border-top-right-radius: 8px;
+
 	h1 {
 		margin-left: 40px;
 		color: $darkest-grey;
+	}
+
+	&-right {
+		display: flex;
+		align-items: center;
 	}
 }
 
@@ -268,25 +274,37 @@
 	}
 
 	&-back-icon {
+		border: none;
 		background-image: url("../../../images/icon-back.svg");
 		background-repeat: no-repeat;
-		height:36px;
-		padding-left: 30px;
-		position:absolute;
-		right:40px;
-		top:25px;
+		height: 24px;
+		width: 24px;
 		background-color:$white;
-		background-size: 25px 25px;
-		background-position:0px -3px;
+		background-size: 24px 24px;
 		cursor:pointer;
 		display:block;
 		font-size: 15px;
 		color: $light-grey !important;
 		font-weight: 700;
+		outline: none;
 
 		&:hover {
 			color: $green !important;
 			background-image: url("../../../images/icon-back-hover.svg");
+		}
+	}
+
+	&-logout-button {
+		margin-right: 40px;
+		box-shadow: 0 0 0 1px $medium-grey inset;
+		color: $medium-grey;
+
+		&:hover, &:active, &:focus {
+			background-color: $medium-grey;
+		}
+
+		&:focus:not(:active) {
+			box-shadow: 0 0 0 .1em rgba($medium-grey, .5);
 		}
 	}
 }

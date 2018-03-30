@@ -25,7 +25,7 @@ export default class Ptypo {
 		this.precursor = {};
 	}
 
-	async init(templates = Object.values(templateNames), workerPoolSize) {
+	async init(templates = Object.values(templateNames), workerPoolSize, noCanvas = true) {
 		const typedataPromises = templates.map(fontTemplate => new Promise(async (resolve) => {
 			if (validTemplates.indexOf(fontTemplate) === -1) {
 				throw new Error('template not found, please use a correct template Name');
@@ -58,7 +58,7 @@ export default class Ptypo {
 			console.warn("You're using the free version of the Prototypo library. Get a pro account now and access the entire glyphset. https://app.prototypo.io/#/account/subscribe"); // eslint-disable-line no-console
 		}
 
-		await FontMediator.init(typedatas, workerPoolSize);
+		await FontMediator.init(typedatas, workerPoolSize, noCanvas);
 
 		this.mediator = FontMediator.instance();
 
@@ -203,7 +203,9 @@ export class PtypoFont {
 			this.glyphsSet,
 		);
 
-		return fontBuffer;
+		const mergedBuffer = await this.mediator.mergeFont(fontBuffer);
+
+		return mergedBuffer;
 	}
 
 	reset() {

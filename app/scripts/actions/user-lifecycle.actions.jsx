@@ -136,32 +136,7 @@ export default {
 
 		localServer.dispatchUpdate('/userStore', patch);
 	},
-	'/sign-out': async () => {
-		const signinLocation = {
-			pathname: '/signin',
-		};
-
-		try {
-			await HoodieApi.logout();
-			hashHistory.push(signinLocation);
-			window.Intercom('shutdown');
-		}
-		catch (err) {
-			trackJs.track(err);
-			hashHistory.push(signinLocation);
-			window.Intercom('shutdown');
-		}
-
-		localClient.dispatchAction('/clean-data');
-
-	},
 	'/clean-data': () => {
-		localClient.dispatchAction('/clean-form', 'signinForm');
-		localClient.dispatchAction('/clean-form', 'signupForm');
-		localClient.dispatchAction('/clean-form', 'choosePlanForm');
-		localClient.dispatchAction('/clean-form', 'addcardForm');
-		localClient.dispatchAction('/clean-form', 'confirmation');
-
 		const prototypatch = prototypoStore.set('credits', 0).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', prototypatch);
@@ -175,7 +150,7 @@ export default {
 		localServer.dispatchUpdate('/userStore', userPatch);
 
 	},
-	'/sign-up': async ({username, password, firstname, lastname, css = {}, phone, skype, to = '/start', retry, oldQuery = {}}) => {
+	'/sign-up': async ({username, password, firstname, lastname, css = {}, phone, skype, to = '/start', oldQuery = {}}) => {
 		const toLocation = {
 			pathname: to,
 			query: oldQuery,
@@ -269,20 +244,12 @@ export default {
 			}
 		}
 		catch (err) {
-			if (/must sign out/i.test(err.message) && !retry) {
-				await HoodieApi.logout();
-				localStorage.clear();
-				window.Intercom('shutdown');
-				localClient.dispatchAction('/sign-up', {username, password, firstname, lastname, to, retry: true});
-			}
-			else {
-				trackJs.track(err);
-				form.errors.push(err.message);
-				form.loading = false;
-				const patch = userStore.set('signupForm', form).commit();
+			trackJs.track(err);
+			form.errors.push(err.message);
+			form.loading = false;
+			const patch = userStore.set('signupForm', form).commit();
 
-				return localServer.dispatchUpdate('/userStore', patch);
-			}
+			return localServer.dispatchUpdate('/userStore', patch);
 		}
 	},
 	'/choose-plan': ({plan, coupon}) => {

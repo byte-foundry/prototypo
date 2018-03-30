@@ -1,4 +1,5 @@
 import _mapValues from 'lodash/mapValues';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
@@ -23,49 +24,48 @@ export default class GlyphTagList extends React.PureComponent {
 			'is-active': this.state.show,
 		});
 
-		const pinned = this.props.pinned.map((pin) => {
-			return <GlyphPinnedTag tag={pin} selected={this.props.selected} key={`pin${pin}`}/>;
-		});
+		const pinned = this.props.pinned.map(pin => <GlyphPinnedTag tag={pin} selected={this.props.selected} key={`pin${pin}`} />);
 
-		const pinnedSearch = this.props.pinnedSearch.map((pin) => {
-			return <GlyphPinnedSearch search={pin} selected={this.props.selectedSearch} key={`search${pin}`}/>;
-		});
+		const pinnedSearch = this.props.pinnedSearch.map(pin => <GlyphPinnedSearch search={pin} selected={this.props.selectedSearch} key={`search${pin}`} />);
 
 		return (
-			<div className={classes} onClick={() => {
-				this.setState({
-					show: !this.state.show,
-				});
-			}}>
+			<div
+				className={classes}
+				onClick={() => {
+					this.setState({
+						show: !this.state.show,
+					});
+				}}
+			>
 				<div className="glyph-tag-list-selected">
 					Filter by {this.props.selected}
-					<span className="glyph-tag-list-selected-icon"></span>
+					<span className="glyph-tag-list-selected-icon" />
 				</div>
 				<ul className="glyph-tag-list-dropdown">
-					{this.props.tags.map((tag) => {
-						return (
-							<li
-								key={tag}
-								className="glyph-tag-list-dropdown-item">
-								<GlyphTag
-									tag={tag}
-									selected={this.props.selected}
-									pinned={this.props.pinned}/>
-							</li>
-						);
-					})}
-					{this.props.savedSearch.map((query) => {
-						return (
-							<li
-								key={query}
-								className="glyph-tag-list-dropdown-item">
-								<GlyphSearch
-									selected={this.props.selectedSearch}
-									pinned={this.props.pinnedSearch}
-									search={query} />
-							</li>
-						);
-					})}
+					{this.props.tags.map(tag => (
+						<li
+							key={tag}
+							className="glyph-tag-list-dropdown-item"
+						>
+							<GlyphTag
+								tag={tag}
+								selected={this.props.selected}
+								pinned={this.props.pinned}
+							/>
+						</li>
+					))}
+					{this.props.savedSearch.map(query => (
+						<li
+							key={query}
+							className="glyph-tag-list-dropdown-item"
+						>
+							<GlyphSearch
+								selected={this.props.selectedSearch}
+								pinned={this.props.pinnedSearch}
+								search={query}
+							/>
+						</li>
+					))}
 				</ul>
 				{pinned}
 				{pinnedSearch}
@@ -99,18 +99,17 @@ class GlyphPinnedTag extends React.PureComponent {
 	}
 
 	render() {
-
 		const itemClasses = classNames({
 			'glyph-tag': true,
 			'is-active': this.props.selected === this.props.tag,
 		});
 
 		return (
-			<div className={itemClasses} onClick={(e) => { this.selectTag(this.props.tag, e); }}>
+			<div className={itemClasses} onClick={(e) => {this.selectTag(this.props.tag, e);}}>
 				<div className="glyph-tag-name">
 					{this.props.tag}
 				</div>
-				<div className="glyph-tag-button is-pinned" onClick={(e) => { this.removeFromPinned(this.props.tag, e); }}>
+				<div className="glyph-tag-button is-pinned" onClick={(e) => {this.removeFromPinned(this.props.tag, e);}}>
 					<div className="glyph-tag-button-icon">
 						&nbsp;
 					</div>
@@ -147,7 +146,6 @@ class GlyphPinnedSearch extends React.PureComponent {
 	}
 
 	render() {
-
 		const itemClasses = classNames({
 			'glyph-tag': true,
 			'glyph-search': true,
@@ -196,7 +194,6 @@ class GlyphTag extends React.PureComponent {
 	}
 
 	render() {
-
 		const iconClasses = classNames({
 			'glyph-tag-button': true,
 			'is-pinned': this.props.pinned && this.props.pinned.indexOf(this.props.tag) !== -1,
@@ -255,7 +252,6 @@ class GlyphSearch extends React.PureComponent {
 	}
 
 	render() {
-
 		const iconClasses = classNames({
 			'glyph-tag-button': true,
 			'is-pinned': this.props.pinned && this.props.pinned.indexOf(this.props.search) !== -1,
@@ -286,3 +282,11 @@ class GlyphSearch extends React.PureComponent {
 		);
 	}
 }
+
+GlyphTagList.defaultProps = {
+	tags: [],
+};
+
+GlyphTagList.propTypes = {
+	tags: PropTypes.arrayOf(PropTypes.string),
+};
