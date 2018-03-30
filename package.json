@@ -89,7 +89,6 @@
     "css-loader": "^0.23.1",
     "envify": "^3.4.0",
     "eslint-config-airbnb": "^15.0.1",
-    "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^5.0.1",
     "eslint-plugin-prettier": "^2.6.0",
@@ -160,7 +159,8 @@
     "analyze:prod": "webpack --config analyze-prod.config.js",
     "build:lib": "webpack --config library.config.js",
     "build:precursor": "webpack --config precursor.config.js",
-    "lint": "prettier-eslint stories/** app/scripts/**/*.{js,jsx}",
+	"lint": "prettier-eslint stories/** app/scripts/**/*.{js,jsx} *.config.js .babelrc .eslintrc",
+	"lint:check": "npm run lint -- --list-different",
 	"format": "npm run lint -- --write",
 	"precommit": "lint-staged"
   },
@@ -185,17 +185,25 @@
       "shared"
     ],
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
-        "<rootDir>/__mocks__/fileMock.js",
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
       "\\.(css|scss)$": "<rootDir>/__mocks__/styleMock.js"
     }
   },
   "prettier": {
     "singleQuote": true,
-    "trailingComma": "all"
+    "trailingComma": "all",
+    "arrowParens": "always",
+    "useTabs": true,
+    "bracketSpacing": false
   },
   "lint-staged": {
-    "stories/**": ["prettier-eslint --write", "git add"],
-    "app/scripts/**.{js,jsx}": ["prettier-eslint --write", "git add"]
+    "stories/**": [
+      "prettier-eslint --write",
+      "git add"
+    ],
+    "app/scripts/**.{js,jsx}": [
+      "prettier-eslint --write",
+      "git add"
+    ]
   }
 }

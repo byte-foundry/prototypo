@@ -1,22 +1,19 @@
 {
-	"extends": [
-		"airbnb-base",
-		"prettier"
-	],
+	"extends": ["airbnb-base"],
 	"env": {
 		"es6": true,
-        "browser": true
-    },
+		"browser": true
+	},
 	"parser": "babel-eslint",
 	"parserOptions": {
-        "ecmaVersion": 2017,
-        "sourceType": "module",
-        "ecmaFeatures": {
-            "jsx": true,
+		"ecmaVersion": 2017,
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"jsx": true,
 			"experimentalObjectRestSpread": true
-        }
-    },
-    "rules": {
+		}
+	},
+	"rules": {
 		"strict": 0,
 		"no-constant-condition": 2,
 		"no-extra-parens": [2, "functions"],
@@ -48,20 +45,17 @@
 		"no-plusplus": 0,
 		"no-mixed-operators": ["error", {"allowSamePrecedence": true}],
 
-		"indent": [2, "tab"],
-        "react/jsx-indent": [2, "tab"],
-        "react/jsx-indent-props": [2, "tab"],
-        "no-tabs": 0,
+		"indent": "off",
+		"react/jsx-indent": "off",
+		"react/jsx-indent-props": "off",
+		"no-tabs": 0,
 
-        "react/prop-types": 0,
+		"react/prop-types": 0,
 		"react/no-multi-comp": 1,
 		"react/require-default-props": 0,
 		"react/no-unescaped-entities": 0,
 
 		"import/extensions": 1
-    },
-	"plugins": [
-		"react",
-		"prettier"
-	]
+	},
+	"plugins": ["react", "prettier"]
 }
