@@ -4,7 +4,7 @@ const SpritePlugin = require('svg-sprite-loader/plugin');
 
 module.exports = {
 	entry: {
-		index: ['react-hot-loader/patch', './app/scripts/main'],
+		index: ['./app/scripts/main'],
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),

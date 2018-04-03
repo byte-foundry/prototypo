@@ -17,7 +17,7 @@ module.exports = merge(base, {
 		loaders: [
 			{
 				test: /\.jsx?$/,
-				loaders: ['react-hot-loader', 'babel-loader?cacheDirectory', 'if-loader'],
+				loaders: ['babel-loader?cacheDirectory', 'if-loader'],
 				exclude: /node_modules/,
 				include: [
 					path.join(__dirname, 'app'),

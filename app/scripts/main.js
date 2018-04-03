@@ -3,7 +3,6 @@ import pleaseWait from 'please-wait';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {AppContainer} from 'react-hot-loader';
 
 import './styles';
 
@@ -167,24 +166,10 @@ selectRenderOptions(
 			});
 
 		window.addEventListener('values.loaded', () => {
-			const render = (Component) => {
-				ReactDOM.render(
-					<Component />,
-					content,
-				);
-			};
-
-			render(App);
-
-			// If the dev server is available
-			// we can hot reload changes into the browser
-			if (module.hot) {
-				module.hot.accept('./app', () => {
-					const NextApp = require('./app').default; // eslint-disable-line
-
-					render(NextApp);
-				});
-			}
+			ReactDOM.render(
+				<App />,
+				content,
+			);
 		});
 
 		/* #if debug */
