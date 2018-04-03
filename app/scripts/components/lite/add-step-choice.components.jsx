@@ -119,9 +119,9 @@ export class AddStep extends React.Component {
 				this.setState({
 					preset: head.toJS().d.preset,
 					error: head.toJS().d.errorAddStep,
-					step: head.toJS().d.step.name
+					step: head.toJS().d.step && head.toJS().d.step.name
 						? head.toJS().d.step
-						: head.toJS().d.variant.ptypoLite.steps[0],
+						: {},
 				});
 			})
 			.onDelete(() => {
@@ -627,7 +627,7 @@ export class ExportLite extends React.Component {
 						.catch(error => console.log(error));
 				}
 				else {
-					console.log('Error: Preset not found on Prototypo')
+					console.log('Error: Preset not found on Prototypo');
 				}
 			})
 			.catch(error => console.log(error));
