@@ -19,7 +19,10 @@
 		"no-extra-parens": [2, "functions"],
 		"no-inner-declarations": [2, "functions"],
 		"no-negated-in-lhs": 1,
-		"no-unused-expressions": [2, {"allowShortCircuit": true, "allowTernary": true}],
+		"no-unused-expressions": [
+			2,
+			{"allowShortCircuit": true, "allowTernary": true}
+		],
 		"no-useless-call": 2,
 		"vars-on-top": 1,
 		"no-catch-shadow": 2,
@@ -45,7 +48,8 @@
 		"no-plusplus": 0,
 		"no-mixed-operators": ["error", {"allowSamePrecedence": true}],
 
-		"indent": "off",
+		"max-len": "off",
+		"indent": ["error", "tab"],
 		"react/jsx-indent": "off",
 		"react/jsx-indent-props": "off",
 		"no-tabs": 0,
@@ -57,5 +61,12 @@
 
 		"import/extensions": 1
 	},
-	"plugins": ["react", "prettier"]
+	"plugins": ["react", "prettier"],
+	"settings": {
+		"import/resolver": {
+			"node": {
+				"extensions": [".js", ".jsx"]
+			}
+		}
+	}
 }
