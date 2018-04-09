@@ -24,7 +24,7 @@ function getRandomUuid() {
 }
 
 export default class WorkerPool {
-	constructor(workerPoolSize = Math.min(4, navigator.hardwareConcurrency - 1)) {
+	constructor(workerPoolSize = Math.min(4, navigator.hardwareConcurrency - 1 || 2)) {
 		 // Workers for every thread
 		const numberOfWorker = workerPoolSize;
 		const ProtoWorker = require('worker-loader?inline!./worker.js'); // eslint-disable-line global-require, no-webpack-loader-syntax
