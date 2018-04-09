@@ -33,12 +33,13 @@ const createPresetWithValuesMutation = gql`
 		$template: String!
 		$variantId: ID!
 		$baseValues: Json!
+		$defaultStepName: String!
 	) {
 		createPreset(
 			template: $template
 			needs: ["logo"]
 			baseValues: $baseValues
-			steps: [{name: $stepName, description: $stepDescription, choices: [{name: $choiceName}]}]
+			steps: [{name: $stepName, description: $stepDescription, choices: [{name: $choiceName}], defaultStepName: $defaultStepName}]
 			variantId: $variantId
 		) {
 			id
@@ -46,6 +47,7 @@ const createPresetWithValuesMutation = gql`
 				id
 				name
 				description
+				defaultStepName
 				choices {
 					id
 					name
@@ -56,16 +58,18 @@ const createPresetWithValuesMutation = gql`
 `;
 
 const createStepMutation = gql`
-	mutation createStep($name: String!, $description: String!, $presetId: ID!, $choiceName: String!) {
+	mutation createStep($name: String!, $description: String!, $presetId: ID!, $choiceName: String!, $defaultStepName: String!) {
 		createStep(
 			name: $name
 			description: $description
 			presetId: $presetId
+			defaultStepName: $defaultStepName
 			choices: [{name: $choiceName}]
 		) {
 			id
 			name
 			description
+			defaultStepName
 			choices {
 				id
 				name
@@ -84,11 +88,12 @@ const createChoiceMutation = gql`
 `;
 
 const renameStepMutation = gql`
-	mutation renameStep($id: ID!, $newName: String!, $newDescription: String!) {
-		updateStep(id: $id, name: $newName, description: $newDescription) {
+	mutation renameStep($id: ID!, $newName: String!, $newDescription: String!, $defaultStepName: String!) {
+		updateStep(id: $id, name: $newName, description: $newDescription, defaultStepName: $defaultStepName) {
 			id
 			name
 			description
+			defaultStepName
 		}
 	}
 `;
@@ -162,6 +167,7 @@ export class AddStep extends React.Component {
 
 		const name = this.refs.name.value;
 		const description = this.refs.description.value;
+		const defaultStepName = this.refs.defaultStepName.value;
 		const choice = this.props.edit ? '' : this.refs.choice.value;
 
 		if (!String(name).trim()) {
@@ -174,6 +180,11 @@ export class AddStep extends React.Component {
 			return;
 		}
 
+		if (!String(defaultStepName).trim()) {
+			this.setState({error: 'You must choose a name for your default choice'});
+			return;
+		}
+
 		if (!String(choice).trim() && !this.props.edit) {
 			this.setState({error: 'You must choose a name for your first choice.'});
 			return;
@@ -181,18 +192,19 @@ export class AddStep extends React.Component {
 
 		if (this.props.edit) {
 			// console.log('====================================');
-			const {data: {updateStep: newStep}} = await this.props.renameStep(name, description);
+			const {data: {updateStep: newStep}} = await this.props.renameStep(name, description, defaultStepName);
 
 			this.client.dispatchAction('/edit-step', newStep);
 		}
 		else {
 			try {
-				if (this.state.preset) {
+				if (this.props.preset && this.props.preset.id) {
 					const {data: {createStep: newStep}} = await this.props.createStep(
 						name,
 						description,
 						this.props.preset.id,
 						choice,
+						defaultStepName,
 					);
 
 					this.client.dispatchAction('/created-step', newStep);
@@ -203,6 +215,7 @@ export class AddStep extends React.Component {
 						description,
 						choice,
 						this.state.fontValues,
+						defaultStepName,
 					);
 
 					this.client.dispatchAction('/created-preset', {
@@ -270,6 +283,26 @@ export class AddStep extends React.Component {
 				/>
 			);
 
+		const defaultStepName
+			= this.props.edit && this.state.step ? (
+				<input
+					ref="defaultStepName"
+					key={`defaultStepName${this.state.step.defaultStepName}`}
+					className="add-family-form-input"
+					type="text"
+					placeholder="Default choice name"
+					defaultValue={this.state.step.defaultStepName}
+				/>
+			) : (
+				<input
+					ref="defaultStepName"
+					name="defaultStepName"
+					className="add-family-form-input"
+					type="text"
+					placeholder="Default choice name"
+				/>
+			);
+
 		return (
 			<div className={stepClass} id="step-create">
 				<div className="add-family-form">
@@ -282,6 +315,8 @@ export class AddStep extends React.Component {
 						{nameInput}
 						<label className="add-family-form-label">Step description</label>
 						{descriptionInput}
+						<label className="add-family-form-label">Default choice name</label>
+						{defaultStepName}
 						{this.props.edit ? (
 							false
 						) : (
@@ -340,19 +375,20 @@ AddStep = compose(
 	}),
 	graphql(createStepMutation, {
 		props: ({mutate}) => ({
-			createStep: (name, description, presetId, choiceName) => mutate({
+			createStep: (name, description, presetId, choiceName, defaultStepName) => mutate({
 				variables: {
 					presetId,
 					name,
 					description,
 					choiceName,
+					defaultStepName,
 				},
 			}),
 		}),
 	}),
 	graphql(createPresetWithValuesMutation, {
 		props: ({mutate, ownProps}) => ({
-			createPresetWithValues: (name, description, choiceName, fontValues) => mutate({
+			createPresetWithValues: (name, description, choiceName, fontValues, defaultStepName) => mutate({
 				variables: {
 					stepName: name,
 					stepDescription: description,
@@ -360,18 +396,20 @@ AddStep = compose(
 					template: ownProps.variant.template,
 					variantId: ownProps.variant.id,
 					baseValues: JSON.parse(JSON.stringify(fontValues)),
+					defaultStepName,
 				},
 			}),
 		}),
 	}),
 	graphql(renameStepMutation, {
 		props: ({mutate, ownProps}) => ({
-			renameStep: (newName, newDescription) =>
+			renameStep: (newName, newDescription, defaultStepName) =>
 				mutate({
 					variables: {
 						id: ownProps.step.id,
 						newName,
 						newDescription,
+						defaultStepName,
 					},
 				}),
 		}),

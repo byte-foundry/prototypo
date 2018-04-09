@@ -33,6 +33,7 @@ export default {
 								id
 								name
 								description
+								defaultStepName
 								choices {
 									name
 									id
