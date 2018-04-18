@@ -7,7 +7,7 @@ export default class CreateAcademyModal extends React.PureComponent {
 		return (
 			<Modal propName={this.props.propName}>
 				<div className="modal-container-content academy-modal">
-					<AcademyModal/>
+					<AcademyModal />
 				</div>
 			</Modal>
 		);

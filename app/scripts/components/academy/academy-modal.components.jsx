@@ -46,19 +46,18 @@ export default class AcademyModal extends React.Component {
 	}
 
 	render() {
-
 		return (
 			<div className="container">
 				<div onClick={this.showAcademy}><InlineSVG className="academy-modal-icon" element="div" src={require('!svg-inline-loader?classPrefix=modal-!../../../images/academy/medal.svg')} /></div>
 				<h2>Hey there!</h2>
 				<p>
-					Do you want to learn how to use Prototypo?<br/>
+					Do you want to learn how to use Prototypo?<br />
 					Don't worry, we've set up a series of courses just for you.
 				</p>
-				<br/>
+				<br />
 				<div className="action-form-buttons">
-					<Button click={this.exit} label="No thanks, I know what I'm doing" neutral={true}/>
-					<Button click={this.showAcademy} label="Sure, let's go ahead!"/>
+					<Button click={this.exit} label="No thanks, I know what I'm doing" neutral />
+					<Button click={this.showAcademy} label="Sure, let's go ahead!" />
 				</div>
 			</div>
 		);
