@@ -37,6 +37,7 @@ export class Sliders extends React.PureComponent {
 		this.client.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				const {subscription} = head.toJS().d;
+
 				this.setState({
 					subscription,
 				});
@@ -110,7 +111,8 @@ export class Sliders extends React.PureComponent {
 						state={paramToUse.state}
 						individualized={individualized}
 						controlType={paramToUse.controlType}
-						radioValues={paramToUse.radioValues}/>
+						radioValues={paramToUse.radioValues}
+					/>
 				)
 				: (
 					<Slider
@@ -129,7 +131,8 @@ export class Sliders extends React.PureComponent {
 						key={paramToUse.name + i}
 						value={value}
 						state={paramToUse.state}
-						individualized={individualized}/>
+						individualized={individualized}
+					/>
 				);
 		});
 
@@ -159,7 +162,9 @@ export class RawSlider extends React.PureComponent {
 	}
 
 	resetValue() {
-		this.client.dispatchAction('/change-param', {value: this.props.init, name: this.props.name, label: this.props.label, demo: this.props.demo, force: true});
+		this.client.dispatchAction('/change-param', {
+			value: this.props.init, name: this.props.name, label: this.props.label, demo: this.props.demo, force: true,
+		});
 	}
 
 	handleRestrictedRangeEnter() {
@@ -204,7 +209,7 @@ export class RawSlider extends React.PureComponent {
 		const disabled = !this.props.disabled && !(freeAccountAndHasCredits || !freeAccount);
 
 		const classes = classNames({
-			'slider': true,
+			slider: true,
 			'is-coming': this.props.disabled,
 			'is-child': this.props.child,
 		});
@@ -219,7 +224,7 @@ export class RawSlider extends React.PureComponent {
 
 		const indivSwitch = this.props.individualized
 			? (
-				<IndivSwitch name={this.props.name} state={this.props.state}/>
+				<IndivSwitch name={this.props.name} state={this.props.state} />
 			)
 			: false;
 
@@ -257,7 +262,8 @@ export class RawSlider extends React.PureComponent {
 					maxDemo={max}
 					minDemo={min}
 					individualized={this.props.individualized}
-					changeParam={this.changeParam}/>
+					changeParam={this.changeParam}
+				/>
 				<div className="slider-container">
 					<SliderController
 						value={value}
@@ -321,7 +327,7 @@ export class RadioSlider extends React.PureComponent {
 		const value = this.props.value === undefined ? this.props.init : this.props.value;
 
 		const classes = Classnames({
-			'slider': true,
+			slider: true,
 			'radio-slider': true,
 			'is-coming': this.props.disabled,
 			'is-child': this.props.child,
@@ -337,7 +343,7 @@ export class RadioSlider extends React.PureComponent {
 
 		const indivSwitch = this.props.individualized
 			? (
-				<IndivSwitch name={this.props.name} state={this.props.state}/>
+				<IndivSwitch name={this.props.name} state={this.props.state} />
 			)
 			: false;
 
@@ -355,7 +361,8 @@ export class RadioSlider extends React.PureComponent {
 						label={this.props.label}
 						disabled={this.props.disabled}
 						child={this.props.child}
-						radioValues={this.props.radioValues}/>
+						radioValues={this.props.radioValues}
+					/>
 					{indivSwitch}
 				</div>
 			</div>
@@ -373,7 +380,6 @@ export class SliderRadioController extends React.PureComponent {
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
-
 	}
 
 	componentDidMount() {
@@ -396,9 +402,7 @@ export class SliderRadioController extends React.PureComponent {
 	}
 
 	render() {
-		const boxes = this.props.radioValues.map((item) => {
-			return item.value;
-		});
+		const boxes = this.props.radioValues.map(item => item.value);
 
 		const checkBoxes = boxes.map((boxValue, index) => {
 			const isSelected = boxValue === this.props.value;
@@ -408,9 +412,11 @@ export class SliderRadioController extends React.PureComponent {
 					<label>
 						<input
 							onChange={this.handleChange}
-							value={boxValue} checked={isSelected}
+							value={boxValue}
+							checked={isSelected}
 							type="radio"
-							name={`radio-button-${String(this.props.name).trim()}`} />
+							name={`radio-button-${String(this.props.name).trim()}`}
+						/>
 						<span className="box-value-label">
 							{boxValue}
 						</span>
@@ -464,8 +470,18 @@ export class SliderTextController extends React.PureComponent {
 		this.setState({isTyping: true});
 	}
 
-	handleBlur() {
+	handleBlur(e) {
+		const value = this.props.demo
+			? Math.max(Math.min(e.target.value, this.props.maxDemo), this.props.minDemo)
+			: e.target.value;
+
 		this.setState({isTyping: false});
+		this.props.changeParam({
+			name: this.props.name,
+			value: parseFloat(value),
+			label: this.props.label,
+			force: true,
+		});
 	}
 
 	render() {
@@ -513,7 +529,6 @@ class IndivSwitch extends React.PureComponent {
 	}
 
 	render() {
-
 		const indivRelative = classNames({
 			'indiv-switch-btn': true,
 			'indiv-switch-relative': true,

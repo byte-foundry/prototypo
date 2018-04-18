@@ -127,6 +127,7 @@ export class PtypoFont {
 			: undefined;
 		const {fontBuffer} = await this.mediator.getFontObject(
 			this.fontName,
+			'Regular',
 			this.fontTemplate,
 			this.values,
 			unicodeSubset || this.glyphsSet,
@@ -195,17 +196,24 @@ export class PtypoFont {
 		this.tweens[paramName].intervalId = id;
 	}
 
-	async getArrayBuffer() {
+	async getArrayBuffer({
+		merge, familyName, styleName,
+	} = {merge: true}) {
 		const {fontBuffer} = await this.mediator.getFontObject(
-			this.fontName,
+			familyName || this.fontName,
+			styleName || 'Regular',
 			this.fontTemplate,
 			this.values,
 			this.glyphsSet,
 		);
 
-		const mergedBuffer = await this.mediator.mergeFont(fontBuffer);
+		if (merge) {
+			const mergedBuffer = await this.mediator.mergeFont(fontBuffer);
 
-		return mergedBuffer;
+			return mergedBuffer;
+		}
+
+		return fontBuffer;
 	}
 
 	reset() {

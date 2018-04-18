@@ -1,6 +1,7 @@
 import React from 'react';
 import {Router, Route, IndexRoute, hashHistory, IndexRedirect} from 'react-router';
 import {ApolloProvider} from 'react-apollo';
+import { hot } from 'react-hot-loader'
 
 import HoodieApi from './services/hoodie.services';
 
@@ -114,7 +115,7 @@ function trackUrl() {
 	ga('send', 'pageview', {page: this.state.location.pathname});
 }
 
-export default class AppRoutes extends React.PureComponent {
+class AppRoutes extends React.PureComponent {
 	render() {
 		return (
 			<ApolloProvider client={apolloClient}>
@@ -221,3 +222,5 @@ export default class AppRoutes extends React.PureComponent {
 		);
 	}
 }
+
+export default hot(module)(AppRoutes);

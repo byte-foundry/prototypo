@@ -102,6 +102,7 @@ function handleModification(
 	const parent = _get(glyph, parentId);
 	let xTransform = 1;
 	let yTransform = 1;
+	let angleTransform = 0;
 
 	for (let i = 0; i < transforms.length; i++) {
 		const transform = transforms[i];
@@ -109,12 +110,17 @@ function handleModification(
 		if (transform) {
 			xTransform /= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
 			yTransform /= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
+			angleTransform += transform.name.indexOf('rotate') === -1 ? 0 : transform.param;
 		}
 	}
 	const newVectorPreTransform = subtract2D(newPos, handlePos);
-	const newVector = {
+	const newVectorScale = {
 		x: newVectorPreTransform.x * xTransform,
 		y: newVectorPreTransform.y * yTransform,
+	};
+	const newVector = {
+		x: (newVectorScale.x * Math.cos(angleTransform)) + (newVectorScale.y * Math.sin(angleTransform)),
+		y: (newVectorScale.y * Math.cos(angleTransform)) - (newVectorScale.x * Math.sin(angleTransform)),
 	};
 	const refLength = distance2D(newPos, parent);
 	const tension = refLength / distance2D(handlePos, parent);
@@ -139,11 +145,15 @@ function handleModification(
 			isIn,
 			refLength,
 		);
+		const opVectorScale = {
+			x: opVector.x * xTransform,
+			y: opVector.y * yTransform,
+		};
 
 		changes[`${parentId}.${oppositeDirection}.x`]
-			= opVector.x * xTransform;
+			= (opVectorScale.x * Math.cos(angleTransform)) + (opVectorScale.y * Math.sin(angleTransform));
 		changes[`${parentId}.${oppositeDirection}.y`]
-			= opVector.y * yTransform;
+			= (opVectorScale.y * Math.cos(angleTransform)) - (opVectorScale.x * Math.sin(angleTransform));
 
 		if (!unparallelMod) {
 			const parallelParent = _get(glyph, draggedItem.data.parallelId);
@@ -156,11 +166,15 @@ function handleModification(
 				!isIn,
 				refLength,
 			);
+			const parallelVectorScale = {
+				x: parallelVector.x * xTransform,
+				y: parallelVector.y * yTransform,
+			};
 
 			changes[`${parallelId}.${direction}.x`]
-				= parallelVector.x * xTransform;
+				= (parallelVectorScale.x * Math.cos(angleTransform)) + (parallelVectorScale.y * Math.sin(angleTransform));
 			changes[`${parallelId}.${direction}.y`]
-				= parallelVector.y * xTransform;
+				= (parallelVectorScale.y * Math.cos(angleTransform)) - (parallelVectorScale.x * Math.sin(angleTransform));
 		}
 	}
 
@@ -175,11 +189,15 @@ function handleModification(
 			isIn,
 			refLength,
 		);
+		const parallelOpVectorScale = {
+			x: parallelOpVector.x * xTransform,
+			y: parallelOpVector.y * yTransform,
+		};
 
 		changes[`${parallelId}.${oppositeDirection}.x`]
-			= parallelOpVector.x * xTransform;
+			= (parallelOpVectorScale.x * Math.cos(angleTransform)) + (parallelOpVectorScale.y * Math.sin(angleTransform));
 		changes[`${parallelId}.${oppositeDirection}.y`]
-			= parallelOpVector.y * yTransform;
+			= (parallelOpVectorScale.y * Math.cos(angleTransform)) - (parallelOpVectorScale.x * Math.sin(angleTransform));
 	}
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
@@ -209,6 +227,7 @@ function onCurveModification(
 
 	let xTransform = 1;
 	let yTransform = 1;
+	let angleTransform = 0;
 
 	for (let i = 0; i < transforms.length; i++) {
 		const transform = transforms[i];
@@ -216,6 +235,7 @@ function onCurveModification(
 		if (transform) {
 			xTransform /= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
 			yTransform /= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
+			angleTransform += transform.name.indexOf('rotate') === -1 ? 0 : transform.param;
 		}
 	}
 
@@ -223,6 +243,7 @@ function onCurveModification(
 		x: xTransform * widthVector.x,
 		y: yTransform * widthVector.y,
 	};
+
 	const newWidth = distance2D({x: 0, y: 0}, transformedWidthVector);
 	// width factor
 	const factor = newWidth / baseWidth;
@@ -233,7 +254,7 @@ function onCurveModification(
 		y: yTransform * newVec.y,
 	};
 
-	const angleDiff = Math.atan2(transformedVec.y, transformedVec.x) - baseAngle;
+	const angleDiff = Math.atan2(transformedVec.y, transformedVec.x) - baseAngle - angleTransform;
 
 	const changes = {};
 
@@ -254,6 +275,7 @@ function skeletonPosModification(client, glyph, draggedItem, newPos, globalMode)
 	const mouseVec = subtract2D(newPos, base);
 	let xTransform = 1;
 	let yTransform = 1;
+	let angleTransform = 0;
 
 	for (let i = 0; i < transforms.length; i++) {
 		const transform = transforms[i];
@@ -261,12 +283,23 @@ function skeletonPosModification(client, glyph, draggedItem, newPos, globalMode)
 		if (transform) {
 			xTransform /= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
 			yTransform /= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
+			angleTransform += transform.name.indexOf('rotate') === -1 ? 0 : transform.param;
 		}
 	}
 
+	const mouseVecScale = {
+		x: mouseVec.x * xTransform,
+		y: mouseVec.y * yTransform,
+	};
+
+	const mouseVecTransform = {
+		x: (mouseVecScale.x * Math.cos(angleTransform)) + (mouseVecScale.y * Math.sin(angleTransform)),
+		y: (mouseVecScale.y * Math.cos(angleTransform)) - (mouseVecScale.x * Math.sin(angleTransform)),
+	};
+
 	const changes = {
-		[`${draggedItem.data.modifAddress}x`]: mouseVec.x * xTransform,
-		[`${draggedItem.data.modifAddress}y`]: mouseVec.y * yTransform,
+		[`${draggedItem.data.modifAddress}x`]: mouseVecTransform.x,
+		[`${draggedItem.data.modifAddress}y`]: mouseVecTransform.y,
 	};
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
