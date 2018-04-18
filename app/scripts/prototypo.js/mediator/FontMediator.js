@@ -299,6 +299,7 @@ export default class FontMediator {
 	openInGlyphr(fontName, template, params, subset) {
 		return this.getFontObject(
 			fontName,
+			'Regular',
 			template,
 			params,
 			subset,
@@ -311,7 +312,7 @@ export default class FontMediator {
 		}));
 	}
 
-	getFontObject(fontName, template, params, subset) {
+	getFontObject(familyName, styleName, template, params, subset) {
 		if (!this.workerPool) {
 			return false;
 		}
@@ -322,6 +323,8 @@ export default class FontMediator {
 					type: 'constructFont',
 					data: {
 						name: template,
+						familyName,
+						styleName,
 						params: {
 							...params,
 						},
@@ -368,7 +371,7 @@ export default class FontMediator {
 				},
 			};
 
-			this.workerPool.doJob(job, fontName);
+			this.workerPool.doJob(job, familyName);
 		});
 	}
 
@@ -386,6 +389,7 @@ export default class FontMediator {
 
 		return this.getFontObject(
 			fontName,
+			'Regular',
 			template,
 			params,
 			subset,

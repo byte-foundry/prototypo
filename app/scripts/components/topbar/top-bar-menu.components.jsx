@@ -3,34 +3,40 @@ import React from 'react';
 import onClickOutside from 'react-onclickoutside';
 import classNames from 'classnames';
 
+import LocalClient from '../../stores/local-client.stores';
+
 class TopBarMenu extends React.PureComponent {
 	constructor(props) {
 		super(props);
-
-		this.state = {
-			itemDisplayed: null,
-		};
 
 		this.handleClickOutside = this.handleClickOutside.bind(this);
 		this.onSelectItem = this.onSelectItem.bind(this);
 	}
 
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
 	onSelectItem(itemIndex) {
-		this.setState(state => ({itemDisplayed: state.itemDisplayed === itemIndex ? null : itemIndex}));
+		this.client.dispatchAction('/store-value', {
+			topbarItemDisplayed: this.props.topbarItemDisplayed === itemIndex ? null : itemIndex,
+		});
 
 		// TODO: notify composed item
 	}
 
 	handleClickOutside() {
-		this.setState({itemDisplayed: null});
+		this.client.dispatchAction('/store-value', {
+			topbarItemDisplayed: null,
+		});
 	}
 
 	render() {
-		const {itemDisplayed} = this.state;
 		const {
 			children,
 			style,
 			id,
+			topbarItemDisplayed,
 		} = this.props;
 
 		return (
@@ -73,7 +79,7 @@ class TopBarMenu extends React.PureComponent {
 							count={count}
 							noHover={noHover}
 							onMouseEnter={enter}
-							selected={itemDisplayed === index}
+							selected={topbarItemDisplayed === index}
 							onMouseLeave={child && child.props.leave}
 							onSelectItem={this.onSelectItem}
 						>
@@ -96,7 +102,7 @@ TopBarMenu.defaultProps = {
 
 TopBarMenu.propTypes = {
 	className: PropTypes.string,
-	topbarItemDisplayed: PropTypes.number,
+	topbarItemDisplayed: PropTypes.number.isRequired,
 	noHover: PropTypes.bool,
 	count: PropTypes.number,
 };

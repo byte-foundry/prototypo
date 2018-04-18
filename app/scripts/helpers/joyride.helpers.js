@@ -145,47 +145,43 @@ const buildTutorialSteps = function (previousState, currentState) {
 		// populate steps according to the new tutorial values
 		switch (currentState.uiJoyrideTutorialValue) {
 		case fileTutorialLabel: {
-				// only if this is the first time the user is doing the action
+			// only if this is the first time the user is doing the action
 			if (currentState.firstTimeFile) {
 				steps.push(
-						predefinedSteps.fileStep1,
-						predefinedSteps.fileStep2,
-					);
+					predefinedSteps.fileStep1,
+					predefinedSteps.fileStep2,
+				);
 			}
 			break;
 		}
 		case collectionsTutorialLabel: {
 			if (currentState.firstTimeCollection) {
 				steps.push(
-						predefinedSteps.collectionStep1,
-						predefinedSteps.collectionStep2,
-						predefinedSteps.collectionStep3,
-					);
+					predefinedSteps.collectionStep1,
+					predefinedSteps.collectionStep2,
+					predefinedSteps.collectionStep3,
+				);
 			}
 			break;
 		}
 		case indivGroupsCreationTutorialLabel: {
 			if (currentState.firstTimeIndivCreate) {
-				steps.push(
-						predefinedSteps.indivGroupCreateStep1,
-					);
+				steps.push(predefinedSteps.indivGroupCreateStep1);
 			}
 			break;
 		}
 		case indivGroupsEditionTutorialLabel: {
 			if (currentState.firstTimeIndivEdit) {
 				steps.push(
-						predefinedSteps.indivGroupEditStep1,
-						predefinedSteps.indivGroupEditStep2,
-					);
+					predefinedSteps.indivGroupEditStep1,
+					predefinedSteps.indivGroupEditStep2,
+				);
 			}
 			break;
 		}
 		case academyTutorialLabel: {
 			if (currentState.firstTimeAcademyJoyride) {
-				steps.push(
-						predefinedSteps.academyStep1,
-					);
+				steps.push(predefinedSteps.academyStep1);
 			}
 			break;
 		}

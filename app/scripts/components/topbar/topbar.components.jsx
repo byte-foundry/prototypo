@@ -76,6 +76,7 @@ class Topbar extends React.Component {
 					eventList: head.toJS().d.undoEventList,
 					presets: head.toJS().d.fontPresets,
 					indiv: head.toJS().d.indivMode,
+					topbarItemDisplayed: head.toJS().d.topbarItemDisplayed,
 				});
 			})
 			.onDelete(() => {
@@ -358,7 +359,7 @@ class Topbar extends React.Component {
 			: false; */
 
 		return (
-			<TopBarMenu id="topbar">
+			<TopBarMenu id="topbar" topbarItemDisplayed={this.state.topbarItemDisplayed}>
 				<TopBarMenuIcon
 					className="side-tabs-icon-headers"
 					img="assets/images/prototypo-icon.svg"
