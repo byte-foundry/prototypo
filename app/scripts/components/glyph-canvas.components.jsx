@@ -102,21 +102,25 @@ function handleModification(
 	const parent = _get(glyph, parentId);
 	let xTransform = 1;
 	let yTransform = 1;
+	let angleTransform = 0;
 
 	for (let i = 0; i < transforms.length; i++) {
 		const transform = transforms[i];
 
 		if (transform) {
 			xTransform /= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
-			xTransform *= transform.name.indexOf('rotate') === -1 ? 1 : Math.cos(transform.param);
 			yTransform /= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
-			yTransform *= transform.name.indexOf('rotate') === -1 ? 1 : Math.sin(transform.param);
+			angleTransform += transform.name.indexOf('rotate') === -1 ? 0 : transform.param;
 		}
 	}
 	const newVectorPreTransform = subtract2D(newPos, handlePos);
-	const newVector = {
+	const newVectorScale = {
 		x: newVectorPreTransform.x * xTransform,
 		y: newVectorPreTransform.y * yTransform,
+	};
+	const newVector = {
+		x: (newVectorScale.x * Math.cos(angleTransform)) + (newVectorScale.y * Math.sin(angleTransform)),
+		y: (newVectorScale.y * Math.cos(angleTransform)) - (newVectorScale.x * Math.sin(angleTransform)),
 	};
 	const refLength = distance2D(newPos, parent);
 	const tension = refLength / distance2D(handlePos, parent);
@@ -141,11 +145,15 @@ function handleModification(
 			isIn,
 			refLength,
 		);
+		const opVectorScale = {
+			x: opVector.x * xTransform,
+			y: opVector.y * yTransform,
+		};
 
 		changes[`${parentId}.${oppositeDirection}.x`]
-			= opVector.x * xTransform;
+			= (opVectorScale.x * Math.cos(angleTransform)) + (opVectorScale.y * Math.sin(angleTransform));
 		changes[`${parentId}.${oppositeDirection}.y`]
-			= opVector.y * yTransform;
+			= (opVectorScale.y * Math.cos(angleTransform)) - (opVectorScale.x * Math.sin(angleTransform));
 
 		if (!unparallelMod) {
 			const parallelParent = _get(glyph, draggedItem.data.parallelId);
@@ -158,11 +166,15 @@ function handleModification(
 				!isIn,
 				refLength,
 			);
+			const parallelVectorScale = {
+				x: parallelVector.x * xTransform,
+				y: parallelVector.y * yTransform,
+			};
 
 			changes[`${parallelId}.${direction}.x`]
-				= parallelVector.x * xTransform;
+				= (parallelVectorScale.x * Math.cos(angleTransform)) + (parallelVectorScale.y * Math.sin(angleTransform));
 			changes[`${parallelId}.${direction}.y`]
-				= parallelVector.y * xTransform;
+				= (parallelVectorScale.y * Math.cos(angleTransform)) - (parallelVectorScale.x * Math.sin(angleTransform));
 		}
 	}
 
@@ -177,11 +189,15 @@ function handleModification(
 			isIn,
 			refLength,
 		);
+		const parallelOpVectorScale = {
+			x: parallelOpVector.x * xTransform,
+			y: parallelOpVector.y * yTransform,
+		};
 
 		changes[`${parallelId}.${oppositeDirection}.x`]
-			= parallelOpVector.x * xTransform;
+			= (parallelOpVectorScale.x * Math.cos(angleTransform)) + (parallelOpVectorScale.y * Math.sin(angleTransform));
 		changes[`${parallelId}.${oppositeDirection}.y`]
-			= parallelOpVector.y * yTransform;
+			= (parallelOpVectorScale.y * Math.cos(angleTransform)) - (parallelOpVectorScale.x * Math.sin(angleTransform));
 	}
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
