@@ -25,21 +25,24 @@ export default class Ptypo {
 		this.precursor = {};
 	}
 
-	async init(templates = Object.values(templateNames), workerPoolSize, noCanvas = true) {
-		const typedataPromises = templates.map(fontTemplate => new Promise(async (resolve) => {
+	async init(templates = Object.values(templateNames), workerPoolSize, url = awsUrl, noCanvas = true) {
+		const typedataPromises = templates.map(fontTemplate => new Promise(async (resolve, reject) => {
 			if (validTemplates.indexOf(fontTemplate) === -1) {
 				throw new Error('template not found, please use a correct template Name');
 			}
 
-			const data = await fetch(awsUrl + fontTemplate, {
+			const data = await fetch(url + fontTemplate, {
 				method: 'GET',
 				headers: {
 					Authorization: `Bearer ${this.token}`,
 				},
 			});
 
-			if (!data.ok && data.statusCode === 403) {
+			if (!data.ok && data.status === 403) {
 				throw new Error("The domain from where you're using the Prototypo library is not authorized. You can manage authorized domains in the developers page on your account. See https://app.prototypo.io/#/account/prototypo-library");
+			}
+			else if (!data.ok) {
+				reject('Failed to retrieve templates');
 			}
 
 			const json = await data.json();
@@ -52,7 +55,14 @@ export default class Ptypo {
 			});
 		}));
 
-		const typedatas = await Promise.all(typedataPromises);
+		let typedatas;
+
+		try {
+			typedatas = await Promise.all(typedataPromises);
+		}
+		catch (e) {
+			throw new Error('Failed to retrieve template');
+		}
 
 		if (!this.token /* || TODO: check if AWS returned a free font */) {
 			console.warn("You're using the free version of the Prototypo library. Get a pro account now and access the entire glyphset. https://app.prototypo.io/#/account/subscribe"); // eslint-disable-line no-console
