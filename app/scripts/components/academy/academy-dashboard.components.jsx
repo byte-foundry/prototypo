@@ -30,11 +30,7 @@ class AcademyDashboard extends React.Component {
 		if (courseProgress.parts.every(p => p.completed) && !courseProgress.completed) {
 			lastCourse = null;
 			progress.completed = true;
-
-			// this event should be better
-			// but keeping the old one to not mess up the stats
 			window.Intercom('trackEvent', 'finished-academy-course', {name: progress.name});
-			window.Intercom('trackEvent', `finishedAcademyCourse-${progress.name}`);
 		}
 
 		await this.props.saveAcademyProgress({

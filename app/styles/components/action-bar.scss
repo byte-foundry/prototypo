@@ -2,6 +2,7 @@
 	position:absolute;
 	top:20px;
 	right:19px;
+	z-index:2;
 
 	&.is-shifted{
 		right: 219px;
