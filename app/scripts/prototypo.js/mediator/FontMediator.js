@@ -6,7 +6,7 @@ import FontPrecursor from '../precursor/FontPrecursor';
 
 import WorkerPool from '../../worker/worker-pool';
 
-const MERGE_URL = process.env.MERGE ? 'http://localhost:3000' : 'http://vps427386.ovh.net/v1';
+const MERGE_URL = process.env.MERGE ? 'http://localhost:3000' : 'https://merge.prototypo.io/v1';
 const GLYPHR_URL = 'http://www.glyphrstudio.com/online';
 
 const oldFont = {};
