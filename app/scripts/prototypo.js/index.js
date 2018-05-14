@@ -17,7 +17,7 @@ const awsUrl = isProduction()
 	? 'https://e4jpj60rk8.execute-api.eu-west-1.amazonaws.com/prod/fonts/'
 	: 'https://tc1b6vq6o8.execute-api.eu-west-1.amazonaws.com/dev/fonts/';
 
-const validTemplates = Object.values(templateNames);
+const validTemplates = [...Object.values(templateNames), 'T.ptf?website', 'TP.ptf?website', 'EM.ptf?website', 'AAndText.ptf?website', 'E.ptf?website'];
 
 export default class Ptypo {
 	constructor(token) {
