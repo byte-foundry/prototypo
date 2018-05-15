@@ -298,8 +298,8 @@ export default class FontMediator {
 
 	openInGlyphr(fontName, template, params, subset) {
 		return this.getFontObject(
-			fontName,
-			'Regular',
+			fontName.family,
+			fontName.style,
 			template,
 			params,
 			subset,
