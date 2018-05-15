@@ -4,10 +4,10 @@
 	border: none;
 	background-color: $green;
 	color: $white;
-	border-radius: 22px;
-	font-size: 16px;
+	border-radius: 7px;
+	font-size: 14px;
 	font-weight: 600;
-	padding: 10px 30px;
+	padding: 10px 20px;
 	cursor: pointer;
 	outline: none;
 
@@ -67,9 +67,12 @@
 		background: $white;
 
 		&:hover, &:active, &:focus {
-			box-shadow: 0 0 0 2px $medium-grey inset;
 			background: $medium-grey;
 			color: $white;
+		}
+
+		&:focus:not(:active) {
+			box-shadow: 0 0 0 .1em rgba($medium-grey, .5);
 		}
 	}
 

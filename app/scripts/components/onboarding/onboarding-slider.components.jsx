@@ -1,39 +1,33 @@
 import React from 'react';
-import pleaseWait from 'please-wait';
+
+import Slider from '../slider-controller.components';
 
 export default class OnboardingSlider extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
-	componentWillMount() {
-		pleaseWait.instance.finish();
-	}
-
 	render() {
+		const {min, max, value, name, label, onChange} = this.props;
+
 		return (
-			<div className="onboarding-slider">
-				<div className="form-group">
-					<label htmlFor={`slider-${this.props.label}`}>
-						{this.props.label}
-					</label>
-					<input
-						id={`slider-${this.props.label}`}
-						name={`slider-${this.props.label}`}
-						type="range"
-						min={this.props.min}
-						max={this.props.max}
-						value={this.props.value}
-						step={this.props.step}
-						onChange={(e) => {
-							this.props.onChange({
-								value: parseFloat(e.target.value),
-                                name: this.props.name,
-                                force: true,
-							});
-						}}
-					/>
-				</div>
+			<div className="normal onboarding-slider">
+				<label htmlFor={`slider-${this.props.label}`}>
+					{this.props.label}
+				</label>
+				<Slider
+					className="onboarding-slider-controller"
+					changeParam={infos => onChange({
+						value: infos.value,
+						name: infos.name,
+						force: true,
+					})}
+					label={label}
+					min={min}
+					max={max}
+					realMin={min}
+					realMax={max}
+					maxAdvised={max}
+					minAdvised={min}
+					name={name}
+					value={value}
+				/>
 			</div>
 		);
 	}

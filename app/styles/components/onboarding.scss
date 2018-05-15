@@ -33,26 +33,21 @@
 
 
         .backToApp {
-            color: $medium-grey;
-            border: 2px solid $light-grey;
-            box-shadow: none;
 			padding: 6px 12px;
 			font-size: 12px;
-			margin-bottom: 30px;
 			float: right;
+			border-radius: 22px;
+		}
 
-			&:hover {
-				color: $dark-grey;
-				border-color: $dark-grey;
-				background-color: $white;
-			}
-        }
         .nextStep {
             margin-top: 50px;
             margin-bottom: 50px;
             margin-left: auto;
             margin-right: auto;
-            display: block;
+			display: block;
+			border-radius: 22px;
+			font-size: 16px;
+			padding: 10px 30px;
         }
 		.step {
 			.text {
@@ -78,8 +73,14 @@
 				align-items: flex-start;
 				align-content: center;
 				.onboarding-slider {
+					width: 250px;
+
 					label {
 						display: block;
+					}
+
+					&-controller {
+						border: 2px solid $green;
 					}
 				}
             }
@@ -98,6 +99,7 @@
 					flex-grow: 1;
 					margin: 0 10px;
 					padding: 10px;
+					cursor: pointer;
 
 					-webkit-box-shadow:inset 0px 0px 0px 1px $white;
 				    -moz-box-shadow:inset 0px 0px 0px 1px $white;
@@ -109,16 +111,18 @@
 						color: $light-grey;
 						opacity: .3;
 					}
-                    cursor: pointer;
+
                     &.selected {
-						-webkit-box-shadow:inset 0px 0px 0px 1px $lightest-grey;
-					    -moz-box-shadow:inset 0px 0px 0px 1px $lightest-grey;
-					    box-shadow:inset 0px 0px 0px 1px $lightest-grey;
+						-webkit-box-shadow:inset 0px 0px 0px 3px $light-green;
+					    -moz-box-shadow:inset 0px 0px 0px 3px $light-green;
+					    box-shadow:inset 0px 0px 0px 3px $light-green;
 						.text {
 							opacity: 1;
 						}
-                    }
-					&:hover {
+					}
+
+					&:hover, &:focus {
+						outline: none;
 						-webkit-box-shadow:inset 0px 0px 0px 5px $green;
 					    -moz-box-shadow:inset 0px 0px 0px 5px $green;
 					    box-shadow:inset 0px 0px 0px 5px $green;

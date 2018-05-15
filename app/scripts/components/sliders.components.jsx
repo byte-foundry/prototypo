@@ -269,7 +269,6 @@ export class RawSlider extends React.PureComponent {
 						value={value}
 						demo={disabled}
 						name={this.props.name}
-						individualized={this.props.individualized}
 						label={this.props.label}
 						min={this.props.min}
 						max={this.props.max}

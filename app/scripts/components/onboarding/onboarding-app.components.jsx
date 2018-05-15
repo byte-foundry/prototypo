@@ -1,16 +1,18 @@
 import React from "react";
-import _uniq from "lodash/uniq";
 import { graphql, gql, compose } from "react-apollo";
-import Button from "../shared/new-button.components";
-import { browserHistory } from "react-router";
-import OnboardingSlider from "./onboarding-slider.components";
-import onboardingData from "../../data/onboarding.data";
 import Lifespan from "lifespan";
+
+import onboardingData from '../../data/onboarding.data';
 import LocalClient from "../../stores/local-client.stores";
+
+import Button from "../shared/new-button.components";
+import Step from './step.components';
 import FontUpdater from "../font-updater.components";
+import AlternateChoice from './alternate-choice.components';
 
 const flatten = list =>
 	list.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
+
 class OnboardingApp extends React.PureComponent {
 	constructor(props) {
 		super(props);
@@ -20,6 +22,7 @@ class OnboardingApp extends React.PureComponent {
 			parameters: []
 		};
 	}
+
 	componentWillMount() {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
@@ -54,35 +57,30 @@ class OnboardingApp extends React.PureComponent {
 					glyphs: headJS.glyphs,
 					family: headJS.family
 				});
-				this.getAlternateFonts();
 			})
 			.onDelete(() => {
 				this.setState({ parameters: [] });
 			});
 
-		this.getSliderData = this.getSliderData.bind(this);
-		this.renderSliders = this.renderSliders.bind(this);
-		this.renderSerifs = this.renderSerifs.bind(this);
-		this.renderFinish = this.renderFinish.bind(this);
 		this.renderAlternates = this.renderAlternates.bind(this);
 		this.getNextStep = this.getNextStep.bind(this);
 		this.getPreviousStep = this.getPreviousStep.bind(this);
 		this.changeParam = this.changeParam.bind(this);
-		this.getAlternateFonts = this.getAlternateFonts.bind(this);
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (this.state.fontName !== prevState.fontName) {
+			this.getAlternateFonts();
+		}
 	}
 
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
 
-	getSliderData(sliderName) {
-		return this.state.parameters.find(e => e.name === sliderName);
-	}
-
 	getNextStep() {
 		if (this.state.step + 1 < onboardingData.steps.length) {
 			this.setState({ step: this.state.step + 1 });
-			this.getAlternateFonts();
 		}
 	}
 
@@ -93,228 +91,94 @@ class OnboardingApp extends React.PureComponent {
 	}
 
 	getAlternateFonts() {
-		const stepData = onboardingData.steps.find(
-			e => e.type === "alternates"
+		const alternatesUnicodes = Object.keys(this.state.glyphs).filter(
+			key =>
+				this.state.glyphs[key].length > 1
+				&& !this.state.glyphs[key][0].base
+				&& key !== 'undefined',
 		);
-		// List alternates
-		const alternatesDedup = Object.assign(
-			...Object.keys(this.state.glyphs)
-				.filter(
-					key =>
-						this.state.glyphs[key].length > 1 &&
-						!this.state.glyphs[key][0].base &&
-						key !== "undefined"
-				)
-				.map(key => ({ [key]: this.state.glyphs[key] }))
-		);
-		const alternateList = Object.keys(alternatesDedup).map(
-			(alternateKey, index) => ({
-				name: `alternateFont${index}`,
-				subset: stepData.letters[alternateKey],
-				values: {
-					...this.state.values,
-					altList: {
-						[alternateKey]: alternatesDedup[alternateKey][1].name
-					}
-				},
-				unicode: alternatesDedup[alternateKey][1].unicode,
-				isSelected: false
-			})
-		);
-		const allStrings =
-			Object.keys(stepData.letters).reduce(
-				(previous, key) => previous + stepData.letters[key]
-			) + stepData.letters[Object.keys(stepData.letters)[0]];
-		this.setState({
-			alternateList,
-			alternatesDedup,
-			baseAlternateFont: {
-				name: "alternateBase",
-				subset: allStrings,
-				values: {
-					...this.state.values,
-					altList: {}
-				}
-			}
-		});
+		const alternatesDedup = alternatesUnicodes.reduce((acc, key) => {
+			acc[key] = this.state.glyphs[key];
+			return acc;
+		}, {});
+
+		this.setState({alternatesDedup});
 	}
 
 	changeParam(params) {
 		this.client.dispatchAction("/change-param", params);
 	}
 
-	renderSliders(stepData) {
-		return (
-			<div className="step step-sliders-wrapper">
-				<h3>{stepData.title}</h3>
-				<p className="description">{stepData.description}</p>
-				<div
-					className="text"
-					style={{ fontFamily: this.state.fontName }}
-				>
-					{this.renderHighlightedText(stepData.letters)}
-				</div>
-				<div className="step-sliders">
-					{stepData.sliders.map(slider => {
-						const sliderData = this.getSliderData(slider);
-						return (
-							sliderData && (
-								<OnboardingSlider
-									label={sliderData.label}
-									min={sliderData.minAdvised}
-									max={sliderData.maxAdvised}
-									step={sliderData.step}
-									value={this.state.values[sliderData.name]}
-									onChange={this.changeParam}
-									name={sliderData.name}
-								/>
-							)
-						);
-					})}
-				</div>
-			</div>
-		);
-	}
-
 	renderAlternates(stepData) {
-		const { alternateList } = this.state;
-		return (
-			<div className="step step-alternates">
-				<h1>{stepData.title}</h1>
-				<p className="description">{stepData.description}</p>
-				{alternateList.map((alternate, index) => (
-					<div className="alternate-row">
-						<div
-							className={`alternate-choice ${
-								alternate.isSelected ? "" : "selected"
-							}`}
-							style={{ fontFamily: "alternateBase" }}
-							onClick={() => {
-								this.client.dispatchAction("/set-alternate", {
-									unicode: alternate.unicode,
-									glyphName: this.state.alternatesDedup[
-										alternate.unicode
-									][0].name,
-									relatedGlyphs: this.state.alternatesDedup[
-										alternate.unicode
-									][0].relatedGlyphs
-								});
-								alternateList[index].isSelected = false;
-								this.setState({ alternateList });
-							}}
-						>
-							{this.renderHighlightedText(
-								String.fromCharCode(alternate.unicode),
-								stepData.letters[alternate.unicode]
-							)}
-						</div>
-						<div
-							className={`alternate-choice ${
-								alternate.isSelected ? "selected" : ""
-							}`}
-							style={{ fontFamily: alternate.name }}
-							onClick={() => {
-								this.client.dispatchAction("/set-alternate", {
-									unicode: alternate.unicode,
-									glyphName: this.state.alternatesDedup[
-										alternate.unicode
-									][1].name,
-									relatedGlyphs: this.state.alternatesDedup[
-										alternate.unicode
-									][1].relatedGlyphs
-								});
-								alternateList[index].isSelected = true;
-								this.setState({ alternateList });
-							}}
-						>
-							{this.renderHighlightedText(
-								String.fromCharCode(alternate.unicode),
-								stepData.letters[alternate.unicode]
-							)}
-						</div>
-					</div>
-				))}
-			</div>
-		);
-	}
+		const {alternatesDedup, values} = this.state;
 
-	renderFinish(stepData) {
-		return (
-			<div className="step step-finish">
-				<h3>{stepData.title}</h3>
-				<p className="description">{stepData.description}</p>
-			</div>
-		);
-	}
+		const glyphsWithAlternate = Object.entries(alternatesDedup).map(([unicode, alternates], index) => {
+			const selectedAlternateName = (values.altList || {})[unicode] || alternates[0].name;
 
-	renderSerifs(stepData) {
+			return alternates.map((alternate, alternateIndex) => ({
+				name: alternateIndex === 0 ? 'alternateBase' : `alternateFont${index}-${alternateIndex}`,
+				subset: stepData.letters[unicode],
+				unicode,
+				isSelected: selectedAlternateName === alternate.name,
+			}));
+		});
+
 		return (
-			<div className="step step-serifs-wrapper">
-				<h3>{stepData.title}</h3>
-				<p className="description">{stepData.description}</p>
-				<p className="text" style={{ fontFamily: this.state.fontName }}>
-					{stepData.letters}
-				</p>
-				<div className="step-sliders">
-					{stepData.sliders.map(slider => {
-						const sliderData = this.getSliderData(slider);
-						return (
-							sliderData && (
-								<OnboardingSlider
-									label={sliderData.label}
-									min={sliderData.minAdvised}
-									max={sliderData.maxAdvised}
-									step={sliderData.step}
-									value={this.state.values[sliderData.name]}
-									onChange={this.changeParam}
-									name={sliderData.name}
-								/>
-							)
-						);
-					})}
-				</div>
-			</div>
+			<Step className="step-alternates" {...stepData}>
+				{glyphsWithAlternate.map((alternates) => {
+					const {unicode} = alternates[0];
+
+					return (
+						<AlternateChoice
+							alternates={alternates}
+							key={unicode}
+							text={stepData.letters[unicode]}
+							unicode={unicode}
+							onSelect={(alternateIndex) => {
+								this.client.dispatchAction('/set-alternate', {
+									unicode,
+									glyphName: alternatesDedup[unicode][alternateIndex].name,
+									relatedGlyphs: alternatesDedup[unicode][alternateIndex].relatedGlyphs,
+								});
+							}}
+						/>
+					)
+				})}
+			</Step>
 		);
 	}
 
 	defineRender(stepData) {
 		switch (stepData.type) {
 			case "sliders":
-				return this.renderSliders(stepData);
-				break;
+				return (
+					<Step
+						className="step-sliders-wrapper"
+						{...stepData}
+						parameters={this.state.parameters}
+						fontName={this.state.fontName}
+						values={this.state.values}
+						onChangeParam={this.changeParam}
+					/>
+				);
 			case "alternates":
 				return this.renderAlternates(stepData);
-				break;
 			case "serifs":
-				return this.renderSerifs(stepData);
-				break;
+				return (
+					<Step
+						className="step-serifs-wrapper"
+						{...stepData}
+						parameters={this.state.parameters}
+						fontName={this.state.fontName}
+						values={this.state.values}
+						onChangeParam={this.changeParam}
+					/>
+				);
 			case "finish":
-				return this.renderFinish(stepData);
-				break;
+				return <Step className="step-finish" {...stepData} />;
 			default:
-				return false;
-				break;
+				return null;
 		}
-	}
-
-	renderHighlightedText(letters, alternateText) {
-		const charactersArr = alternateText
-			? alternateText.split("")
-			: "Hamburgefonstiv".split("");
-
-		return (
-			<p className="text">
-				{charactersArr.map(char => (
-					<span
-						className={
-							letters.indexOf(char) > -1 ? "highlighted" : ""
-						}
-					>
-						{char}
-					</span>
-				))}
-			</p>
-		);
 	}
 
 	async deleteFamily(family) {
@@ -322,7 +186,7 @@ class OnboardingApp extends React.PureComponent {
 			await this.props.deleteFamily(family);
 			// legacy call use to change the selected family
 			this.client.dispatchAction("/delete-family", {
-				family
+				family,
 			});
 			await this.props.refetch();
 			switch (this.state.onboardingFrom) {
@@ -352,18 +216,72 @@ class OnboardingApp extends React.PureComponent {
 	}
 
 	render() {
-		const stepData = onboardingData.steps[this.state.step];
+		const {step, alternatesDedup, values} = this.state;
+		const stepData = onboardingData.steps[step];
+
 		// Failsafe
 		if (this.state.fontName && !this.state.onboardingFrom) {
-			this.props.history.push("/dashboard");
+			return (
+				<div className="onboarding-app">
+					<div className="onboarding-wrapper">
+						<div className="onboarding-content">
+							<Button
+								outline
+								neutral
+								size="small"
+								className="backToApp"
+								onClick={() => this.props.history.push('/dashboard')}
+							>
+								Return to dashboard
+							</Button>
+						</div>
+					</div>
+				</div>
+			);
 		}
+
+		// Just getting the fonts we need to generate
+		let fontsToGenerate = [];
+
+		if (stepData.type === 'alternates') {
+			fontsToGenerate = Object.keys(alternatesDedup || []).reduce(
+				(arr, glyphUnicode, index) => {
+					const alternatesToGenerate = alternatesDedup[glyphUnicode].map((alternate, alternateIndex) => {
+						// we won't generate a specific variant for the default glyph
+						if (alternateIndex === 0) {
+							return null;
+						}
+
+						return {
+							name: `alternateFont${index}-${alternateIndex}`,
+							subset: stepData.letters[glyphUnicode],
+							values: {
+								...this.state.values,
+								altList: {
+									[glyphUnicode]: alternate.name,
+								},
+							},
+							unicode: alternate.unicode,
+							isSelected: alternateIndex === 0,
+						};
+					}).filter(a => a); // filtering null values
+
+					return arr.concat(alternatesToGenerate);
+				}
+			, []);
+		}
+
+		const {letters} = onboardingData.steps.find(e => e.type === 'alternates');
+		const allStrings = Object.values(letters).join('');
 
 		return (
 			<div className="onboarding-app">
 				<div className="onboarding-wrapper">
 					<div className="onboarding-content">
 						<Button
+							outline
 							neutral
+							size="small"
 							className="backToApp"
 							onClick={() => {
 								this.deleteFamily(this.state.family);
@@ -384,17 +302,18 @@ class OnboardingApp extends React.PureComponent {
 								? "Next"
 								: "Finish"}
 						</Button>
-						<FontUpdater
-							extraFonts={
-								this.state.alternateList &&
-								this.state.baseAlternateFont
-									? [
-											...this.state.alternateList,
-											this.state.baseAlternateFont
-										]
-									: undefined
-							}
-						/>
+						<FontUpdater extraFonts={[
+							...fontsToGenerate,
+							{
+								// base font without any alternates
+								name: 'alternateBase',
+								subset: allStrings,
+								values: {
+									...values,
+									altList: {},
+								},
+							},
+						]} />
 					</div>
 
 					<div className="bubbles">
