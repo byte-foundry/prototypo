@@ -79,8 +79,7 @@ class AcademyCourse extends React.PureComponent {
 			browserHistory.push('/#/academy/home');
 			return;
 		}
-
-		window.Intercom('trackEvent', `openedAcademyCourse-${this.courseSlug}`);
+		window.Intercom('trackEvent', 'opened-academy-course', {name: this.course.title});		
 	}
 
 	reduceChildren(children, child) {
