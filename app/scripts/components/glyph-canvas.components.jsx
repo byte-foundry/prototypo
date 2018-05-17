@@ -35,7 +35,7 @@ const onCurveModMode = {
 	ANGLE_MOD: 0b10,
 };
 
-function changeGlyphManually(changes, glyph, client, globalMode, componentName) {
+export function changeGlyphManually(changes, glyph, client, globalMode, componentName) {
 	const glyphName = globalMode
 		? componentName
 		: glyph.base || glyph.name;
@@ -77,7 +77,7 @@ function calculateHandleCoordinateModification(
 	return opVector;
 }
 
-function handleModification(
+export function handleModification(
 	client,
 	glyph,
 	draggedItem,
@@ -203,7 +203,7 @@ function handleModification(
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
 
-function onCurveModification(
+export function onCurveModification(
 	client,
 	glyph,
 	draggedItem,
@@ -269,7 +269,7 @@ function onCurveModification(
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
 
-function skeletonPosModification(client, glyph, draggedItem, newPos, globalMode) {
+export function skeletonPosModification(client, glyph, draggedItem, newPos, globalMode) {
 	const {base, transforms, componentName} = draggedItem.data;
 
 	const mouseVec = subtract2D(newPos, base);
@@ -305,7 +305,7 @@ function skeletonPosModification(client, glyph, draggedItem, newPos, globalMode)
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
 
-function skeletonDistrModification(client, glyph, draggedItem, newPos, globalMode) {
+export function skeletonDistrModification(client, glyph, draggedItem, newPos, globalMode) {
 	const {
 		base,
 		expandedTo,
@@ -1472,39 +1472,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 					});
 				}
-
-				if (selectedItems.length === 1) {
-					const interactedItem = selectedItems[0];
-
-					if (interactedItem.type === toileType.NODE_SKELETON) {
-						const item = _get(glyph, interactedItem.id);
-
-						this.toile.drawNodeProperty(interactedItem.type, item);
-					}
-					if (interactedItem.type === toileType.NODE) {
-						const item = _get(glyph, interactedItem.id);
-						const parent = _get(glyph, interactedItem.data.parentId);
-
-						this.toile.drawNodeProperty(interactedItem.type, item, parent);
-					}
-					if (interactedItem.type === toileType.CONTOUR_NODE) {
-						const item = _get(glyph, interactedItem.id);
-						const parent = _get(glyph, interactedItem.data.parentId);
-
-						this.toile.drawNodeProperty(interactedItem.type, item, parent);
-					}
-					if (
-						interactedItem.type === toileType.NODE_OUT
-						|| interactedItem.type === toileType.NODE_IN
-						|| interactedItem.type === toileType.CONTOUR_NODE_OUT
-						|| interactedItem.type === toileType.CONTOUR_NODE_IN
-					) {
-						const item = _get(glyph, interactedItem.id);
-						const parent = _get(glyph, interactedItem.data.parentId);
-
-						this.toile.drawNodeProperty(interactedItem.type, item, parent);
-					}
-				}
 			}
 
 			this.cleanUpFrame();
@@ -1514,6 +1481,12 @@ export default class GlyphCanvas extends React.PureComponent {
 		};
 
 		rafId = raf(rafFunc);
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (this.state.glyph !== prevState.glyph) {
+			this.props.onUpdateGlyph(this.state.glyph);
+		}
 	}
 
 	componentWillUnmount() {
@@ -1581,19 +1554,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 
 	storeSelectedItems(selectedItems) {
-		const storedItems = selectedItems.map(item => ({
-			type: item.type,
-			id: item.id,
-			data: {
-				parentId: item.data.parentId,
-				modifAddress: item.data.modifAddress,
-				componentName: item.data.componentName,
-			},
-		}));
-
-		this.client.dispatchAction('/store-value', {
-			selectedItems: storedItems,
-		});
+		this.props.onSelectedItems(selectedItems);
 	}
 
 	render() {
