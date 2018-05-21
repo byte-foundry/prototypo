@@ -176,23 +176,15 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 		const plans = {
 			personal_monthly: {
 				blurb: (
-					this.state.hasBeenSubscribing
+					percentPrice === 1
 						? (
-							percentPrice === 1
-								? (
-									<div>
-								By clicking on the subscribe button below you agree to be charged <strong><Price amount={monthlyConst.price * percentPrice} country={country} /></strong> every month until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
-									</div>
-								)
-								: (
-									<div>
-								By clicking on the subscribe button below you agree to be charged <strong><Price amount={monthlyConst.price * percentPrice} country={country} /></strong> for the first month of your Prototypo subscription. You'll also agree to be charged <strong><Price amount={monthlyConst.price} country={country} /></strong> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
-									</div>
-								)
+							<div>
+						By clicking on the subscribe button below you agree to be charged <strong><Price amount={monthlyConst.price * percentPrice} country={country} /></strong> every month until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+							</div>
 						)
 						: (
 							<div>
-							By clicking on the subscribe button below you agree to and pay <strong><Price amount={monthlyConst.firstMonthPrice * percentPrice} country={country} /></strong> for the first month of your Prototypo subscription. You'll also agree to be charged <strong><Price amount={monthlyConst.price} country={country} /></strong> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
+						By clicking on the subscribe button below you agree to be charged <strong><Price amount={monthlyConst.price * percentPrice} country={country} /></strong> for the first month of your Prototypo subscription. You'll also agree to be charged <strong><Price amount={monthlyConst.price} country={country} /></strong> every month after that first until you cancel your subscription to Prototypo. You also agree to respect Prototypo's <a target="_blank" rel="noopener noreferrer" href="https://prototypo.io/cgu/">EULA</a>.
 							</div>
 						)
 				),
