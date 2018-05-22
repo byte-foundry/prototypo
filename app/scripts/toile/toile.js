@@ -90,8 +90,8 @@ const onCurveColor = blue;
 const skeletonColor = green;
 const ringBackground = 'rgba(255,114,94,0.4)';
 const nodePropertyBackground = 'rgba(198, 198, 198, 0.4)';
-const baseSpaceHandleColor = 'rgba(255, 0, 255, 0.3)';
-const frameBackground = 'rgba(0, 0, 0, 0.036)';
+const baseSpaceHandleColor = 'rgba(255, 0, 255, 0.1)';
+const frameBackground = 'rgba(0, 0, 0, 0)';
 
 const pointMenuAnimationLength = 10;
 const componentMenuAnimationLength = 20;
@@ -367,43 +367,43 @@ export default class Toile {
 		this.drawLine(
 			bottomZeroLine,
 			upperCornerRightRectangle,
-			green,
+			lightestGrey,
 		);
 		this.drawLine(
 			bottomAdvanceWidthLine,
 			topAdvanceWidthLine,
-			green,
+			lightestGrey,
 		);
 
 		this.drawLine(
 			{x: -infinityDistance, y: values.xHeight},
 			{x: infinityDistance, y: values.xHeight},
-			mediumGrey,
+			white,
 		);
 		this.drawLine(
 			{x: -infinityDistance, y: values.xHeight + values.overshoot},
 			{x: infinityDistance, y: values.xHeight + values.overshoot},
-			mediumGrey,
+			white,
 		);
 		this.drawLine(
 			{x: -infinityDistance, y: values.xHeight + values.capDelta},
 			{x: infinityDistance, y: values.xHeight + values.capDelta},
-			mediumGrey,
+			white,
 		);
 		this.drawLine(
 			{x: -infinityDistance, y: values.xHeight + values.capDelta + values.overshoot},
 			{x: infinityDistance, y: values.xHeight + values.capDelta + values.overshoot},
-			mediumGrey,
+			white,
 		);
 		this.drawLine(
 			{x: -infinityDistance, y: 0},
 			{x: infinityDistance, y: 0},
-			mediumGrey,
+			white,
 		);
 		this.drawLine(
 			{x: -infinityDistance, y: -values.overshoot},
 			{x: infinityDistance, y: -values.overshoot},
-			lightGrey,
+			white,
 		);
 
 		this.interactionList.push({
@@ -1989,4 +1989,3 @@ export default class Toile {
 	}
 }
 /* eslint-enable no-param-reassign, no-bitwise */
-
