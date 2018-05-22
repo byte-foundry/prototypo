@@ -1,5 +1,12 @@
 @import "variables";
 
+// Styles pour faire des captures vidéo
+.top-bar-menu-item-icon-img {
+    width: 20px;
+}
+.slider:nth-child(n+8) {
+		display: none !important;
+}
 .slider {
 	color: transparent !important;
 	&-title {
@@ -101,6 +108,9 @@ ul.controls-tabs-headers {
 		}
 	}
 }
+// END — Styles pour faire des captures vidéo
+
+
 
 html {
 	font-size:62.5%;
