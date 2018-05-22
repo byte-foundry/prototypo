@@ -15,6 +15,14 @@ import {
 	mulScalar2D,
 } from '../prototypo.js/utils/linear';
 
+const formatDifference  = (number) => {
+	console.log(number)
+	if (number > 0) {
+		return `+${number}`;
+	}
+	else return number;
+}
+
 class EditNodeProperties extends React.Component {
 	constructor(props) {
 		super(props);
@@ -115,6 +123,7 @@ class EditNodeProperties extends React.Component {
 		if (type === toileType.NODE_SKELETON) {
 			return (
 				<div
+					className="node-properties skeleton"
 					style={{
 						position: 'absolute',
 						left: '20px',
@@ -122,20 +131,18 @@ class EditNodeProperties extends React.Component {
 						zIndex: '3',
 					}}
 				>
-					Skeleton node props<br />
-					x: <input type="number" name="x" onChange={this.handleInput} value={node.x} />
-					({Math.round(node.x - node.xBase)})
-					<br />
-					y: <input type="number" name="y" onChange={this.handleInput} value={node.y} />
-					({Math.round(node.y - node.yBase)})
-					<br />
-					Skeleton expand props<br />
-					width: <input type="number" name="width" onChange={this.handleInput} value={node.expand.width} />
-					({(node.expand.width - node.expand.baseWidth).toFixed(1)})<br />
-					angle: <input type="number" name="angle" onChange={this.handleInput} value={node.expand.angle / (2 * Math.PI) * 360} min={-180} max={180} />
-					({((node.expand.angle - node.expand.baseAngle) / (2 * Math.PI) * 360).toFixed(2)})<br />
-					distr: <input type="number" name="distr" onChange={this.handleInput} value={node.expand.distr} min={0} max={1} step={0.1} />
-					({(node.expand.distr - node.expand.baseDistr).toFixed(2)})
+					<h4>Skeleton props</h4>
+					<p><span>X</span><input type="number" name="x" onChange={this.handleInput} value={node.x} />
+					({formatDifference(Math.round(node.x - node.xBase))})</p>
+					<p><span>Y</span><input type="number" name="y" onChange={this.handleInput} value={node.y} />
+					({formatDifference(Math.round(node.y - node.yBase))})</p>
+					<h4>Expand props</h4>
+					<p><span>Width</span><input type="number" name="width" onChange={this.handleInput} value={node.expand.width} />
+					({formatDifference((node.expand.width - node.expand.baseWidth).toFixed(0))})</p>
+					<p><span>Angle</span><input type="number" name="angle" onChange={this.handleInput} value={node.expand.angle / (2 * Math.PI) * 360} min={-180} max={180} />
+					({formatDifference(((node.expand.angle - node.expand.baseAngle) / (2 * Math.PI) * 360).toFixed(0))})</p>
+					<p><span>Distr</span><input type="number" name="distr" onChange={this.handleInput} value={node.expand.distr} min={0} max={1} step={0.1} />
+					({formatDifference((node.expand.distr - node.expand.baseDistr).toFixed(2))})</p>
 				</div>
 			);
 		}
@@ -148,13 +155,13 @@ class EditNodeProperties extends React.Component {
 						top: '70px',
 						zIndex: '3',
 					}}
+					className="node-properties contour"
 				>
-					Contour node props<br />
-					x: <input type="number" name="x" onChange={this.handleInput} value={node.x} />
-					({Math.round(node.x - node.xBase)})
-					<br />
-					y: <input type="number" name="y" onChange={this.handleInput} value={node.y} />
-					({Math.round(node.y - node.yBase)})
+					<h4>Contour props</h4>
+					<p><span>X</span><input type="number" name="x" onChange={this.handleInput} value={node.x} />
+					({formatDifference(Math.round(node.x - node.xBase))})</p>
+					<p><span>Y</span><input type="number" name="y" onChange={this.handleInput} value={node.y} />
+					({formatDifference(Math.round(node.y - node.yBase))})</p>
 				</div>
 			);
 		}
@@ -172,12 +179,13 @@ class EditNodeProperties extends React.Component {
 						top: '70px',
 						zIndex: '3',
 					}}
+					className="node-properties handle"
 				>
-					Handle props<br />
-					direction in: {Number.isNaN(parent.dirIn) ? '-' : parent.dirIn.toFixed(2)}<br />
-					tension in: {Number.isNaN(parent.tensionIn) ? '-' : `${(parent.tensionIn + parent.baseTensionIn).toFixed(2)} (${parent.tensionIn.toFixed(2)})`}<br />
-					direction out: {Number.isNaN(parent.dirOut) ? '-' : parent.dirOut.toFixed(2)}<br />
-					tension in: {Number.isNaN(parent.tensionOut) ? '-' : `${(parent.tensionOut + parent.baseTensionOut).toFixed(2)} (${parent.tensionOut.toFixed(2)})`}
+					<h4>Handle props</h4>
+					<p><span>Direction in</span>{Number.isNaN(parent.dirIn) ? '-' : parent.dirIn.toFixed(0)}</p>
+					<p><span>Tension in</span>{Number.isNaN(parent.tensionIn) ? '-' : `${(parent.tensionIn + parent.baseTensionIn).toFixed(0)} (${parent.tensionIn.toFixed(0)})`}</p>
+					<p><span>Direction out</span>{Number.isNaN(parent.dirOut) ? '-' : parent.dirOut.toFixed(0)}</p>
+					<p><span>Tension out</span>{Number.isNaN(parent.tensionOut) ? '-' : `${(parent.tensionOut + parent.baseTensionOut).toFixed(0)} (${parent.tensionOut.toFixed(0)})`}</p>
 				</div>
 			);
 		}
@@ -190,15 +198,15 @@ class EditNodeProperties extends React.Component {
 						top: '70px',
 						zIndex: '3',
 					}}
+					className="node-properties node"
 				>
-					Node props<br />
-					x: <input type="number" name="x" onChange={this.handleInput} value={node.x} /><br />
-					y: <input type="number" name="y" onChange={this.handleInput} value={node.y} />
-					<br />
-					Skeleton expand props<br />
-					width: {parent.expand.width.toFixed(1)} ({(parent.expand.width - parent.expand.baseWidth).toFixed(1)})<br />
-					angle: {parent.expand.angle.toFixed(2)} ({(parent.expand.angle - parent.expand.baseAngle).toFixed(2)})<br />
-					distr: {parent.expand.distr.toFixed(2)} ({(parent.expand.distr - parent.expand.baseDistr).toFixed(2)})
+					<h4>Node props</h4>
+					<p><span>X</span> <input type="number" name="x" onChange={this.handleInput} value={node.x} /></p>
+					<p><span>Y</span><input type="number" name="y" onChange={this.handleInput} value={node.y} /></p>
+					<h4>Expand props</h4>
+					<p><span>Width</span>{parent.expand.width.toFixed(0)} ({formatDifference((parent.expand.width - parent.expand.baseWidth).toFixed(0))})</p>
+					<p><span>Angle</span>{parent.expand.angle.toFixed(0)} ({formatDifference((parent.expand.angle - parent.expand.baseAngle).toFixed(0))})</p>
+					<p><span>Distr</span>{parent.expand.distr.toFixed(2)} ({(formatDifference(parent.expand.distr - parent.expand.baseDistr).toFixed(2))})</p>
 				</div>
 			);
 		}
