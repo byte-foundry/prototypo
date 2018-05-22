@@ -108,6 +108,15 @@ ul.controls-tabs-headers {
 		}
 	}
 }
+
+.prototypo-canvas-reset-button {
+	border: 0px solid #191c23;
+	color: transparent;
+	border-top: 6px solid #dadada;
+	&:hover {
+		border-color: #AAA !important;
+	}
+}
 // END — Styles pour faire des captures vidéo
 
 
