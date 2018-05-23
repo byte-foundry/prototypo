@@ -16,16 +16,45 @@ const OnboardingStep = ({
 	onChangeParam,
 }) => {
 	return (
-		<div className="step step-sliders-wrapper">
-			<h3>{title}</h3>
+		<div className={`step ${type === 'serifs' && 'step-serifs-wrapper'} ${type === 'sliders' && 'step-sliders-wrapper'}`}>
+			{type === 'finish' && (
+				<h3
+					className="step-title-finish"
+					style={{fontFamily: fontName}}
+				>
+					{title}
+				</h3>
+			)}
+			{type !== 'finish' && (
+				<h3>{title}</h3>
+			)}
 			<p className="description">{description}</p>
-			{(type === 'sliders' || type === 'serifs') && (
+			{type === 'sliders' && (
 				<div
 					className="text"
 					style={{fontFamily: fontName}}
 				>
 					<HighlightedText letters={letters} />
 				</div>
+			)}
+			{type === 'serifs' && (
+				<div
+					className="text-right"
+					style={{fontFamily: fontName}}
+				>
+					<HighlightedText letters={'Hamburgefonstiv'} />
+				</div>
+			)}
+			{type === 'serifs' && (
+				<div
+					className="text"
+					style={{fontFamily: fontName}}
+				>
+					{letters}
+				</div>
+			)}
+			{type === 'finish' && (
+				<img src="assets/images/onboardingFinish.PNG" alt="glyphView - Description" />
 			)}
 			{(type === 'sliders' || type === 'serifs') && (
 				<div className="step-sliders">

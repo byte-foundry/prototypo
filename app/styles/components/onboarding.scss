@@ -22,10 +22,16 @@
 
 			h3 {
 				color: $dark-grey;
+				font-size: 32px;
+				&.step-title-finish {
+					font-size: 68px;
+					font-weight: normal;
+				}
 			}
 
 			.description {
 				max-width: 750px;
+				font-size: 16px;
 				color: $medium-grey;
 			}
 
@@ -64,6 +70,18 @@
 			}
 			&.step-serifs-wrapper .text {
 				font-size: 175px;
+				color: $dark-grey;
+				p{
+					margin-top: 0;
+				}
+			}
+			&.step-serifs-wrapper .text-right {
+				font-size: 28px;
+				float: right;
+				color: $dark-grey;
+				p {
+					 margin-bottom: 0;
+				}
 			}
 			.step-sliders {
 				display: flex;
@@ -97,8 +115,9 @@
 					border: 3px solid $white;
 					background-color: $white;
 					flex-grow: 1;
-					margin: 0 10px;
-					padding: 10px;
+					margin: 0 8px;
+					padding: 5px 20px;
+					font-size: 68px;
 					cursor: pointer;
 
 					-webkit-box-shadow:inset 0px 0px 0px 1px $white;
@@ -110,12 +129,16 @@
 						padding: 0;
 						color: $light-grey;
 						opacity: .3;
+						margin: 0;
+						p {
+							margin: 0;
+						}
 					}
 
                     &.selected {
-						-webkit-box-shadow:inset 0px 0px 0px 3px $light-green;
-					    -moz-box-shadow:inset 0px 0px 0px 3px $light-green;
-					    box-shadow:inset 0px 0px 0px 3px $light-green;
+						-webkit-box-shadow:inset 0px 0px 0px 2px $light-green;
+					    -moz-box-shadow:inset 0px 0px 0px 2px $light-green;
+					    box-shadow:inset 0px 0px 0px 2px $light-green;
 						.text {
 							opacity: 1;
 						}
@@ -123,13 +146,17 @@
 
 					&:hover, &:focus {
 						outline: none;
-						-webkit-box-shadow:inset 0px 0px 0px 5px $green;
-					    -moz-box-shadow:inset 0px 0px 0px 5px $green;
-					    box-shadow:inset 0px 0px 0px 5px $green;
+						-webkit-box-shadow:inset 0px 0px 0px 2px $green;
+					    -moz-box-shadow:inset 0px 0px 0px 2px $green;
+					    box-shadow:inset 0px 0px 0px 2px $green;
 						transition: all 200ms ease;
 					}
                 }
-            }
+			}
+			img {
+				margin: 0 auto;
+    			display: block;
+			}
 		}
 		.bubbles {
 			display: flex;

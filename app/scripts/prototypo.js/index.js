@@ -194,6 +194,7 @@ export class PtypoFont {
 		this.tweens[paramName] = {
 			target: paramValue,
 		};
+
 		const id = setInterval(() => {
 			if (elapsed >= duration) {
 				clearInterval(id);

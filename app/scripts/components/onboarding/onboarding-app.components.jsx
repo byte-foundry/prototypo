@@ -175,7 +175,7 @@ class OnboardingApp extends React.PureComponent {
 					/>
 				);
 			case "finish":
-				return <Step className="step-finish" {...stepData} />;
+				return <Step className="step-finish" {...stepData} fontName={this.state.fontName}/>;
 			default:
 				return null;
 		}

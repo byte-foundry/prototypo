@@ -1,4 +1,5 @@
 import React from 'react';
+import {withRouter} from 'react-router';
 
 import Log from '../../services/log.services.js';
 import LocalClient from '../../stores/local-client.stores.jsx';
@@ -6,7 +7,7 @@ import LocalClient from '../../stores/local-client.stores.jsx';
 import Modal from '../shared/modal.components';
 import {AddFamily} from './add-family-variant.components';
 
-export default class CreateFamilyModal extends React.PureComponent {
+class CreateFamilyModal extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
@@ -36,3 +37,5 @@ export default class CreateFamilyModal extends React.PureComponent {
 		);
 	}
 }
+
+export default (withRouter(CreateFamilyModal));

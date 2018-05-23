@@ -6,7 +6,7 @@ function HighlightedText({letters, alternateText}) {
 		: 'Hamburgefonstiv'.split('');
 
 	return (
-		<p className="text">
+		<p>
 			{charactersArr.map((char, index) => (
 				<span key={char + index} className={letters.includes(char) ? 'highlighted' : ''}>
 					{char}

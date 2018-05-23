@@ -28,10 +28,12 @@ class AlternateChoice extends React.Component {
 						aria-checked={!font.isSelected}
 						tabIndex="0"
 					>
-						<HighlightedText
-							letters={String.fromCharCode(unicode)}
-							alternateText={text}
-						/>
+						<div className="text">
+							<HighlightedText
+								letters={String.fromCharCode(unicode)}
+								alternateText={text}
+							/>
+						</div>
 					</div>
 				))}
 			</div>
