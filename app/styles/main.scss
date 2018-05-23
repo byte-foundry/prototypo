@@ -81,12 +81,11 @@ ul.controls-tabs-headers {
 	width: 50% !important;
 }
 .toolbar {
-	margin-top: -35px;
 	width: 50% !important;
 	justify-content: flex-end !important;
 	position: absolute;
-	top: 0;
-	left: 50%;
+	top: 0 !important;
+	left: 50% !important;
 	.view-button {
 		background-image: none !important;
 		&::before {
@@ -116,6 +115,11 @@ ul.controls-tabs-headers {
 	&:hover {
 		border-color: #AAA !important;
 	}
+}
+
+.prototypo-word-input {
+  background-color: transparent !important;
+	color: #ddd;
 }
 // END — Styles pour faire des captures vidéo
 
