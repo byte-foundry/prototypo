@@ -271,7 +271,6 @@ export function onCurveModification(
 
 export function skeletonPosModification(client, glyph, draggedItem, newPos, globalMode) {
 	const {base, transforms, componentName} = draggedItem.data;
-
 	const mouseVec = subtract2D(newPos, base);
 	let xTransform = 1;
 	let yTransform = 1;

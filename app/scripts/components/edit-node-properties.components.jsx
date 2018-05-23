@@ -4,10 +4,11 @@ import React from 'react';
 import {
 	skeletonPosModification,
 	changeGlyphManually,
-	// handleModification,
+	handleModification,
+	onCurveModification,
 } from './glyph-canvas.components';
 import LocalClient from '../stores/local-client.stores';
-import {toileType} from '../toile/toile';
+import { toileType } from '../toile/toile';
 import {
 	normalize2D,
 	subtract2D,
@@ -15,8 +16,7 @@ import {
 	mulScalar2D,
 } from '../prototypo.js/utils/linear';
 
-const formatDifference  = (number) => {
-	console.log(number)
+const formatDifference = (number) => {
 	if (number > 0) {
 		return `+${number}`;
 	}
@@ -31,72 +31,20 @@ class EditNodeProperties extends React.Component {
 	}
 
 	handleInput(e) {
-		const {glyph, selectedItem: item} = this.props;
-		const {target: {name, value}} = e;
+		const { glyph, selectedItem: item } = this.props;
+		const { target: { name, value } } = e;
 		const node = _get(glyph, item.id);
-
 		switch (item.type) {
-		case toileType.NODE_OUT:
-		case toileType.NODE_IN:
-		case toileType.CONTOUR_NODE_OUT:
-		case toileType.CONTOUR_NODE_IN:
-			// handleModification(
-			// 	LocalClient.instance(),
-			// 	glyph,
-			// 	item,
-			// 	{
-			// 		x: name === 'x' ? parseInt(value, 10) : node.x,
-			// 		y: name === 'y' ? parseInt(value, 10) : node.y,
-			// 	},
-			// 	false, // unsmoothMod ?
-			// 	true,
-			// 	false,
-			// );
-			break;
-		case toileType.NODE:
-			// onCurveModification(
-			// 	this.client,
-			// 	glyph,
-			// 	item,
-			// 	modData,
-			// 	appStateValue,
-			// 	curveMode,
-			// 	globalMode,
-			// );
-			break;
-		case toileType.NODE_SKELETON:
-		case toileType.CONTOUR_NODE:
-			if (name === 'distr' || name === 'angle' || name === 'width') {
-				const changes = {};
-
-				if (name === 'distr') {
-					const newDistr = parseFloat(value);
-					const skelVec = normalize2D(subtract2D(node.expandedTo[1], node.expandedTo[0]));
-					const newPosition = subtract2D(
-						add2D(mulScalar2D(newDistr * node.expand.width, skelVec), node.expandedTo[0]),
-						item.data.base,
-					);
-
-					changes[`${item.data.modifAddress}expand.distr`] = newDistr - node.expand.baseDistr;
-					changes[`${item.data.modifAddress}x`] = newPosition.x;
-					changes[`${item.data.modifAddress}y`] = newPosition.y;
-				}
-				else if (name === 'angle') {
-					changes[`${item.data.modifAddress}expand.angle`] = parseFloat(value) * 2 * Math.PI / 360 - node.expand.baseAngle;
-				}
-				else if (name === 'width') {
-					changes[`${item.data.modifAddress}expand.width`] = parseFloat(value) / node.expand.baseWidth;
-				}
-
-				changeGlyphManually(
-					changes,
-					glyph,
-					LocalClient.instance(),
-					false,
-				);
-			}
-			else {
-				skeletonPosModification(
+			case toileType.NODE_OUT:
+				break;
+			case toileType.NODE_IN:
+				break;
+			case toileType.CONTOUR_NODE_OUT:
+				break;
+			case toileType.CONTOUR_NODE_IN:
+				break;
+			case toileType.NODE:				
+				onCurveModification(
 					LocalClient.instance(),
 					glyph,
 					item,
@@ -105,17 +53,63 @@ class EditNodeProperties extends React.Component {
 						y: name === 'y' ? parseInt(value, 10) : node.y,
 					},
 					false,
+					3,
+					false,
 				);
-			}
-			break;
-		default:
-			break;
+				break;
+			case toileType.CONTOUR_NODE:
+				break;
+			case toileType.NODE_SKELETON:
+				if (name === 'distr' || name === 'angle' || name === 'width') {
+					const changes = {};
+
+					if (name === 'distr') {
+						const newDistr = parseFloat(value);
+						const skelVec = normalize2D(subtract2D(node.expandedTo[1], node.expandedTo[0]));
+						const newPosition = subtract2D(
+							add2D(mulScalar2D(newDistr * node.expand.width, skelVec), node.expandedTo[0]),
+							item.data.base,
+						);
+
+						changes[`${item.data.modifAddress}expand.distr`] = newDistr - node.expand.baseDistr;
+						changes[`${item.data.modifAddress}x`] = newPosition.x;
+						changes[`${item.data.modifAddress}y`] = newPosition.y;
+					}
+					else if (name === 'angle') {
+						changes[`${item.data.modifAddress}expand.angle`] = parseFloat(value) * 2 * Math.PI / 360 - node.expand.baseAngle;
+					}
+					else if (name === 'width') {
+						changes[`${item.data.modifAddress}expand.width`] = parseFloat(value) / node.expand.baseWidth;
+					}
+
+					changeGlyphManually(
+						changes,
+						glyph,
+						LocalClient.instance(),
+						false,
+					);
+				}
+				else {
+					skeletonPosModification(
+						LocalClient.instance(),
+						glyph,
+						item,
+						{
+							x: name === 'x' ? parseInt(value, 10) : node.x,
+							y: name === 'y' ? parseInt(value, 10) : node.y,
+						},
+						false,
+					);
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
 	render() {
-		const {glyph, selectedItem} = this.props;
-		const {id, type, data} = selectedItem;
+		const { glyph, selectedItem } = this.props;
+		const { id, type, data } = selectedItem;
 
 		const node = _get(glyph, id);
 		const parent = _get(glyph, data.parentId);
@@ -133,16 +127,16 @@ class EditNodeProperties extends React.Component {
 				>
 					<h4>Skeleton props</h4>
 					<p><span>X</span><input type="number" name="x" onChange={this.handleInput} value={node.x} />
-					({formatDifference(Math.round(node.x - node.xBase))})</p>
+						({formatDifference(Math.round(node.x - node.xBase))})</p>
 					<p><span>Y</span><input type="number" name="y" onChange={this.handleInput} value={node.y} />
-					({formatDifference(Math.round(node.y - node.yBase))})</p>
+						({formatDifference(Math.round(node.y - node.yBase))})</p>
 					<h4>Expand props</h4>
 					<p><span>Width</span><input type="number" name="width" onChange={this.handleInput} value={node.expand.width} />
-					({formatDifference((node.expand.width - node.expand.baseWidth).toFixed(0))})</p>
+						({formatDifference((node.expand.width - node.expand.baseWidth).toFixed(0))})</p>
 					<p><span>Angle</span><input type="number" name="angle" onChange={this.handleInput} value={node.expand.angle / (2 * Math.PI) * 360} min={-180} max={180} />
-					({formatDifference(((node.expand.angle - node.expand.baseAngle) / (2 * Math.PI) * 360).toFixed(0))})</p>
+						({formatDifference(((node.expand.angle - node.expand.baseAngle) / (2 * Math.PI) * 360).toFixed(0))})</p>
 					<p><span>Distr</span><input type="number" name="distr" onChange={this.handleInput} value={node.expand.distr} min={0} max={1} step={0.1} />
-					({formatDifference((node.expand.distr - node.expand.baseDistr).toFixed(2))})</p>
+						({formatDifference((node.expand.distr - node.expand.baseDistr).toFixed(2))})</p>
 				</div>
 			);
 		}
@@ -159,9 +153,9 @@ class EditNodeProperties extends React.Component {
 				>
 					<h4>Contour props</h4>
 					<p><span>X</span><input type="number" name="x" onChange={this.handleInput} value={node.x} />
-					({formatDifference(Math.round(node.x - node.xBase))})</p>
+						({formatDifference(Math.round(node.x - node.xBase))})</p>
 					<p><span>Y</span><input type="number" name="y" onChange={this.handleInput} value={node.y} />
-					({formatDifference(Math.round(node.y - node.yBase))})</p>
+						({formatDifference(Math.round(node.y - node.yBase))})</p>
 				</div>
 			);
 		}
