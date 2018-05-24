@@ -55,6 +55,7 @@
     "react-router": "^2.0.0",
     "react-scrollbar": "^0.5.0",
     "react-select": "^1.0.0-beta13",
+    "react-tippy": "^1.2.2",
     "react-transition-group": "^2.2.0",
     "react-twitter-auth": "YoruNoHikage/react-twitter-auth",
     "remutable": "FranzPoize/remutable#master",

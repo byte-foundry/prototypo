@@ -12,17 +12,16 @@
 		position: relative;
 		margin: 0 auto 50px;
 		background-color: $white;
-		padding: 40px;
         border-radius: 8px;
-		display:flex; /* 2 */
-		flex-direction:column; /* 3 */
 
-		.onboarding-content {
+		.onboarding-content {			
+			padding: 60px 120px;
+			padding-bottom: 25px;
 			flex-grow:1;
 
 			h3 {
 				color: $dark-grey;
-				font-size: 32px;
+				font-size: 28px;
 				&.step-title-finish {
 					font-size: 68px;
 					font-weight: normal;
@@ -30,53 +29,92 @@
 			}
 
 			.description {
-				max-width: 750px;
+				max-width: 650px;
 				font-size: 16px;
 				color: $medium-grey;
+				line-height: 1.375em;
 			}
 
 		}
 
 
         .backToApp {
-			padding: 6px 12px;
+			padding: 10px 30px;
 			font-size: 12px;
 			float: right;
 			border-radius: 22px;
+			display: inline-block;
+			margin: 20px 25px 20px 10px;
+		}
+
+		.skip {
+			padding: 10px 0px 2px 0px;
+			font-size: 12px;
+			float: right;
+			border-radius: 0;
+			box-shadow: none;
+			border-bottom: 2px solid #7e7e7e;
+			display: inline-block;
+			margin: 20px 5px 20px 0px;
+			&:hover {
+				background-color: transparent;
+				color: #7a7a7a;
+			}
 		}
 
         .nextStep {
             margin-top: 50px;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             margin-left: auto;
             margin-right: auto;
 			display: block;
-			border-radius: 22px;
-			font-size: 16px;
-			padding: 10px 30px;
+			border-radius: 28px;
+			font-size: 15px;
+			padding: 8px 40px;
         }
 		.step {
 			.text {
 				text-align: center;
-				font-size: 85px;
+				font-size: 105px;
+				line-height: 0.5;
 				margin: 0;
                 color: $light-grey;
-                transition: color .3s ease;
-
+				transition: color .3s ease;
+				p{
+					margin: 0;
+				}
 				.highlighted {
 					color: $dark-grey;
 				}
-				padding: 0.4em 0;
+				padding: 1.1em 0;
+			}
+			&.step-start {
+				img {
+					width: 40%;
+					height: auto;
+					margin-bottom: 50px;
+				}
+				h3 {
+					text-align: center;
+				}
+				.description {
+					max-width: inherit;
+					text-align: center;
+					margin-bottom: 100px;
+				}
 			}
 			&.step-serifs-wrapper .text {
-				font-size: 175px;
+				font-size: 280px;
+				line-height: 0.5;
 				color: $dark-grey;
+				padding: 0.4em 0;
 				p{
 					margin-top: 0;
 				}
 			}
 			&.step-serifs-wrapper .text-right {
-				font-size: 28px;
+				line-height: 0.5;
+				font-size: 45px;
 				float: right;
 				color: $dark-grey;
 				p {
@@ -95,10 +133,18 @@
 
 					label {
 						display: block;
+						text-transform: uppercase;
 					}
 
 					&-controller {
-						border: 2px solid $green;
+						border: 1px solid $light-grey;
+					}
+					.slider-controller-bg {
+						height: 1.5rem;
+					}
+					.slider-controller-handle {
+						height: 1.5rem;
+						width: 1.5rem;
 					}
 				}
             }
@@ -130,6 +176,8 @@
 						color: $light-grey;
 						opacity: .3;
 						margin: 0;
+						font-size: 68px;
+						line-height: inherit;
 						p {
 							margin: 0;
 						}
@@ -189,4 +237,11 @@
 			}
 		}
 	}
+}
+
+.tippy-tooltip {
+	background-color: $green !important;
+}
+.arrow-regular {
+	border-bottom-color: $green !important;
 }

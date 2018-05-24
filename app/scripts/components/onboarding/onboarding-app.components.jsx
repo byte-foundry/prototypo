@@ -2,6 +2,11 @@ import React from "react";
 import { graphql, gql, compose } from "react-apollo";
 import Lifespan from "lifespan";
 
+import {
+	Tooltip,
+} from 'react-tippy';
+import 'react-tippy/dist/tippy.css'
+
 import onboardingData from '../../data/onboarding.data';
 import LocalClient from "../../stores/local-client.stores";
 
@@ -102,7 +107,7 @@ class OnboardingApp extends React.PureComponent {
 			return acc;
 		}, {});
 
-		this.setState({alternatesDedup});
+		this.setState({ alternatesDedup });
 	}
 
 	changeParam(params) {
@@ -110,7 +115,7 @@ class OnboardingApp extends React.PureComponent {
 	}
 
 	renderAlternates(stepData) {
-		const {alternatesDedup, values} = this.state;
+		const { alternatesDedup, values } = this.state;
 
 		const glyphsWithAlternate = Object.entries(alternatesDedup).map(([unicode, alternates], index) => {
 			const selectedAlternateName = (values.altList || {})[unicode] || alternates[0].name;
@@ -126,7 +131,7 @@ class OnboardingApp extends React.PureComponent {
 		return (
 			<Step className="step-alternates" {...stepData}>
 				{glyphsWithAlternate.map((alternates) => {
-					const {unicode} = alternates[0];
+					const { unicode } = alternates[0];
 
 					return (
 						<AlternateChoice
@@ -175,7 +180,9 @@ class OnboardingApp extends React.PureComponent {
 					/>
 				);
 			case "finish":
-				return <Step className="step-finish" {...stepData} fontName={this.state.fontName}/>;
+				return <Step className="step-finish" {...stepData} fontName={this.state.fontName} />;
+			case "start":
+				return <Step className="step-start" {...stepData} />;
 			default:
 				return null;
 		}
@@ -216,24 +223,25 @@ class OnboardingApp extends React.PureComponent {
 	}
 
 	render() {
-		const {step, alternatesDedup, values} = this.state;
+		const { step, alternatesDedup, values } = this.state;
 		const stepData = onboardingData.steps[step];
 
 		// Failsafe
 		if (this.state.fontName && !this.state.onboardingFrom) {
 			return (
 				<div className="onboarding-app">
-					<div className="onboarding-wrapper">
+					<div className="onboarding-wrapper">this.props.history.push("/dashboard");
+						<Button
+							outline
+							neutral
+							size="small"
+							className="backToApp"
+							onClick={() => this.props.history.push('/dashboard')}
+						>
+							Return to dashboard
+						</Button>
 						<div className="onboarding-content">
-							<Button
-								outline
-								neutral
-								size="small"
-								className="backToApp"
-								onClick={() => this.props.history.push('/dashboard')}
-							>
-								Return to dashboard
-							</Button>
+
 						</div>
 					</div>
 				</div>
@@ -268,27 +276,39 @@ class OnboardingApp extends React.PureComponent {
 
 					return arr.concat(alternatesToGenerate);
 				}
-			, []);
+				, []);
 		}
 
-		const {letters} = onboardingData.steps.find(e => e.type === 'alternates');
+		const { letters } = onboardingData.steps.find(e => e.type === 'alternates');
 		const allStrings = Object.values(letters).join('');
 
 		return (
 			<div className="onboarding-app">
 				<div className="onboarding-wrapper">
-					<div className="onboarding-content">
+					<Button
+						outline
+						neutral
+						size="small"
+						className="backToApp"
+						onClick={() => {
+							this.deleteFamily(this.state.family);
+						}}
+					>
+						Back to library
+						</Button>
+					{stepData.type !== 'start' && (
 						<Button
 							outline
 							neutral
 							size="small"
-							className="backToApp"
-							onClick={() => {
-								this.deleteFamily(this.state.family);
-							}}
+							className="skip"
+							onClick={() => this.props.history.push('/dashboard')}
 						>
-							Back to library
+							Skip
 						</Button>
+					)}
+					<div className="onboarding-content">
+
 						{this.defineRender(stepData)}
 						<Button
 							className="nextStep"
@@ -298,9 +318,19 @@ class OnboardingApp extends React.PureComponent {
 									: this.props.history.push("/dashboard");
 							}}
 						>
-							{this.state.step < onboardingData.steps.length - 1
-								? "Next"
-								: "Finish"}
+							{(() => {
+								switch (this.state.step) {
+									case 0:
+										return 'Start';
+										break;
+									case onboardingData.steps.length - 1:
+										return 'Finish';
+										break;
+									default:
+										return 'Next';
+										finish;
+								}
+							})()}
 						</Button>
 						<FontUpdater extraFonts={[
 							...fontsToGenerate,
@@ -314,21 +344,28 @@ class OnboardingApp extends React.PureComponent {
 								},
 							},
 						]} />
-					</div>
-
-					<div className="bubbles">
-						{onboardingData.steps.map((step, index) => (
-							<div
-								className={`bubble ${
-									index === this.state.step ? "active" : ""
-								} ${index < this.state.step ? "previous" : ""}`}
-								onClick={() => {
-									index <= this.state.step ?
-										this.setState({ step: index }) :
-										false;
-								}}
-							/>
-						))}
+						{stepData.type !== 'start' && (<div className="bubbles">
+							{onboardingData.steps.map((step, index) => (
+								<Tooltip
+									title={step.name}
+									position="bottom"
+									trigger="mouseenter"
+									delay="500"
+									arrow="true"
+								>
+									<div
+										className={`bubble ${
+											index === this.state.step ? "active" : ""
+											} ${index < this.state.step ? "previous" : ""}`}
+										onClick={() => {
+											index <= this.state.step ?
+												this.setState({ step: index }) :
+												false;
+										}}
+									/>
+								</Tooltip>
+							))}
+						</div>)}
 					</div>
 				</div>
 			</div>
@@ -375,9 +412,9 @@ export default compose(
 		options: {
 			fetchPolicy: 'network-only',
 		},
-		props: ({data}) => {
+		props: ({ data }) => {
 			if (data.loading) {
-				return {loading: true};
+				return { loading: true };
 			}
 
 			if (data.user) {
@@ -387,19 +424,19 @@ export default compose(
 				};
 			}
 
-			return {refetch: data.refetch};
+			return { refetch: data.refetch };
 		},
 	}),
 	graphql(deleteVariantMutation, {
-		props: ({mutate}) => ({
+		props: ({ mutate }) => ({
 			deleteVariant: id =>
 				mutate({
-					variables: {id},
+					variables: { id },
 				}),
 		}),
 		options: {
-			update: (store, {data: {deleteVariant}}) => {
-				const data = store.readQuery({query: libraryQuery});
+			update: (store, { data: { deleteVariant } }) => {
+				const data = store.readQuery({ query: libraryQuery });
 
 				data.user.library.forEach((family) => {
 					// eslint-disable-next-line
@@ -414,7 +451,7 @@ export default compose(
 		},
 	}),
 	graphql(deleteFamilyMutation, {
-		props: ({mutate, ownProps}) => ({
+		props: ({ mutate, ownProps }) => ({
 			deleteFamily: (family) => {
 				if (!family) {
 					return Promise.reject();
@@ -424,12 +461,12 @@ export default compose(
 				// in the future, cascade operations should be available on graphcool
 				const variants = family.variants.map(variant => ownProps.deleteVariant(variant.id));
 
-				return Promise.all([...variants, mutate({variables: {id: family.id}})]);
+				return Promise.all([...variants, mutate({ variables: { id: family.id } })]);
 			},
 		}),
 		options: {
-			update: (store, {data: {deleteFamily}}) => {
-				const data = store.readQuery({query: libraryQuery});
+			update: (store, { data: { deleteFamily } }) => {
+				const data = store.readQuery({ query: libraryQuery });
 
 				data.user.library = data.user.library.filter(font => font.id !== deleteFamily.id);
 

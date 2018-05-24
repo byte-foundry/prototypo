@@ -1,5 +1,4 @@
 import React from 'react';
-
 import OnboardingSlider from './onboarding-slider.components';
 import HighlightedText from './highlighted-text.components';
 
@@ -14,20 +13,14 @@ const OnboardingStep = ({
 	parameters,
 	values,
 	onChangeParam,
+	className
 }) => {
 	return (
-		<div className={`step ${type === 'serifs' && 'step-serifs-wrapper'} ${type === 'sliders' && 'step-sliders-wrapper'}`}>
-			{type === 'finish' && (
-				<h3
-					className="step-title-finish"
-					style={{fontFamily: fontName}}
-				>
-					{title}
-				</h3>
+		<div className={`step ${className}`}>
+			{type === 'start' && (
+				<img src="assets/images/onboardingIntro.svg" alt="Onboarding - Intro" />
 			)}
-			{type !== 'finish' && (
-				<h3>{title}</h3>
-			)}
+			<h3>{title}</h3>
 			<p className="description">{description}</p>
 			{type === 'sliders' && (
 				<div
@@ -40,6 +33,14 @@ const OnboardingStep = ({
 			{type === 'serifs' && (
 				<div
 					className="text-right"
+					style={{fontFamily: fontName}}
+				>
+					<HighlightedText letters={'Hamburgefonstiv'} />
+				</div>
+			)}
+			{type === 'finish' && (
+				<div
+					className="text"
 					style={{fontFamily: fontName}}
 				>
 					<HighlightedText letters={'Hamburgefonstiv'} />
