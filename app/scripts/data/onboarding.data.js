@@ -4,7 +4,7 @@ export default {
 			type: 'start',
 			title: 'Welcome to the onboarding!',
 			description:
-				'Thanks for choosing your template! Prototypo will now guide you on choosing very quickly some parameters in order to get your project up and running.',
+				'Let’s get you set up for success from the start.',
 			name: 'Start'
 		},
 		{

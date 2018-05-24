@@ -75,7 +75,7 @@
 		.step {
 			.text {
 				text-align: center;
-				font-size: 105px;
+				font-size: 145px;
 				line-height: 0.5;
 				margin: 0;
                 color: $light-grey;
@@ -86,7 +86,7 @@
 				.highlighted {
 					color: $dark-grey;
 				}
-				padding: 1.1em 0;
+				padding: 0.6em 0;
 			}
 			&.step-start {
 				img {
@@ -103,24 +103,7 @@
 					margin-bottom: 100px;
 				}
 			}
-			&.step-serifs-wrapper .text {
-				font-size: 280px;
-				line-height: 0.5;
-				color: $dark-grey;
-				padding: 0.4em 0;
-				p{
-					margin-top: 0;
-				}
-			}
-			&.step-serifs-wrapper .text-right {
-				line-height: 0.5;
-				font-size: 45px;
-				float: right;
-				color: $dark-grey;
-				p {
-					 margin-bottom: 0;
-				}
-			}
+			
 			.step-sliders {
 				display: flex;
 				flex-direction: row;

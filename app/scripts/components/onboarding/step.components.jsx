@@ -22,20 +22,12 @@ const OnboardingStep = ({
 			)}
 			<h3>{title}</h3>
 			<p className="description">{description}</p>
-			{type === 'sliders' && (
+			{(type === 'sliders' || type === 'serifs') && (
 				<div
 					className="text"
 					style={{fontFamily: fontName}}
 				>
 					<HighlightedText letters={letters} />
-				</div>
-			)}
-			{type === 'serifs' && (
-				<div
-					className="text-right"
-					style={{fontFamily: fontName}}
-				>
-					<HighlightedText letters={'Hamburgefonstiv'} />
 				</div>
 			)}
 			{type === 'finish' && (
@@ -44,14 +36,6 @@ const OnboardingStep = ({
 					style={{fontFamily: fontName}}
 				>
 					<HighlightedText letters={'Hamburgefonstiv'} />
-				</div>
-			)}
-			{type === 'serifs' && (
-				<div
-					className="text"
-					style={{fontFamily: fontName}}
-				>
-					{letters}
 				</div>
 			)}
 			{type === 'finish' && (
