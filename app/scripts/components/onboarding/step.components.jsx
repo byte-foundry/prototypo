@@ -22,6 +22,9 @@ const OnboardingStep = ({
 			)}
 			<h3>{title}</h3>
 			<p className="description">{description}</p>
+			{type === 'start' == (
+				<p className="description">Let’s get you set up for success from the start. <br/> In five quick steps, you will create a ready to use font.</p>
+			)}
 			{(type === 'sliders' || type === 'serifs') && (
 				<div
 					className="text"

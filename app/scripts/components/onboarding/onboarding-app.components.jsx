@@ -281,6 +281,7 @@ class OnboardingApp extends React.PureComponent {
 
 		const { letters } = onboardingData.steps.find(e => e.type === 'alternates');
 		const allStrings = Object.values(letters).join('');
+		console.log(this.props.families)
 
 		return (
 			<div className="onboarding-app">
@@ -296,7 +297,7 @@ class OnboardingApp extends React.PureComponent {
 					>
 						Back to library
 						</Button>
-					{stepData.type !== 'start' && (
+					{this.props.families && this.props.families.length > 3 && (
 						<Button
 							outline
 							neutral

@@ -4,7 +4,7 @@ export default {
 			type: 'start',
 			title: 'Welcome to the onboarding!',
 			description:
-				'Let’s get you set up for success from the start.',
+				'',
 			name: 'Start'
 		},
 		{

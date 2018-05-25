@@ -44,7 +44,7 @@
 			float: right;
 			border-radius: 22px;
 			display: inline-block;
-			margin: 20px 25px 20px 10px;
+			margin: 20px 20px 20px 10px;
 		}
 
 		.skip {
@@ -75,7 +75,7 @@
 		.step {
 			.text {
 				text-align: center;
-				font-size: 145px;
+				font-size: 8vw;
 				line-height: 0.5;
 				margin: 0;
                 color: $light-grey;
@@ -86,7 +86,7 @@
 				.highlighted {
 					color: $dark-grey;
 				}
-				padding: 0.6em 0;
+				padding: 0.7em 0;
 			}
 			&.step-start {
 				img {
@@ -101,6 +101,15 @@
 					max-width: inherit;
 					text-align: center;
 					margin-bottom: 100px;
+				}
+			}
+
+			&.step-finish {
+				img {
+					width: 80%;
+					height: auto;
+					margin-bottom: 50px;
+					margin: 0 10%;
 				}
 			}
 			
@@ -185,7 +194,7 @@
                 }
 			}
 			img {
-				margin: 0 auto;
+				margin: 0 30%;
     			display: block;
 			}
 		}
