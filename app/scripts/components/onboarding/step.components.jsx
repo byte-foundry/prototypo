@@ -21,9 +21,11 @@ const OnboardingStep = ({
 				<img src="assets/images/onboardingIntro.svg" alt="Onboarding - Intro" />
 			)}
 			<h3>{title}</h3>
-			<p className="description">{description}</p>
-			{type === 'start' == (
-				<p className="description">Let’s get you set up for success from the start. <br/> In five quick steps, you will create a ready to use font.</p>
+			{type !== 'start' && (
+				<p className="description">{description}</p>
+			)}
+			{type === 'start' && (
+				<p className="description">Let’s get you set up for success from the start. <br/> In five quick steps, you will define the shape of your font <br/> using the recommended parameters. </p>
 			)}
 			{(type === 'sliders' || type === 'serifs') && (
 				<div

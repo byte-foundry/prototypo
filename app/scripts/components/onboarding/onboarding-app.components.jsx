@@ -281,8 +281,6 @@ class OnboardingApp extends React.PureComponent {
 
 		const { letters } = onboardingData.steps.find(e => e.type === 'alternates');
 		const allStrings = Object.values(letters).join('');
-		console.log(this.props.families)
-
 		return (
 			<div className="onboarding-app">
 				<div className="onboarding-wrapper">
