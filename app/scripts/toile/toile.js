@@ -69,6 +69,7 @@ export const appState = {
 	DRAGGING_SPACING:	0b1000000000000000,
 	SPACING_SELECTED:	0b10000000000000000,
 	NOT_SELECTING:	0b100000000000000000,
+	INPUT_CHANGE: 0b1000000000000000000,
 };
 
 const green = '#24d390';
@@ -187,50 +188,54 @@ export default class Toile {
 			});
 
 			document.addEventListener('keyup', (e) => {
-				const {
-					keyCode,
-					ctrlKey,
-					shiftKey,
-					altKey,
-					metaKey,
-				} = e;
+				if (!e.cancelBubble) {
+					const {
+						keyCode,
+						ctrlKey,
+						shiftKey,
+						altKey,
+						metaKey,
+					} = e;
 
-				const eventData = {
-					keyCode,
-					special: (ctrlKey ? specialKey.CTRL : 0)
-						+ (shiftKey ? specialKey.SHIFT : 0)
-						+ (altKey ? specialKey.ALT : 0)
-						+ (metaKey ? specialKey.META : 0),
-				};
+					const eventData = {
+						keyCode,
+						special: (ctrlKey ? specialKey.CTRL : 0)
+							+ (shiftKey ? specialKey.SHIFT : 0)
+							+ (altKey ? specialKey.ALT : 0)
+							+ (metaKey ? specialKey.META : 0),
+					};
 
-				if (this.keyboardDown.keyCode === keyCode) {
-					this.keyboardUpRisingEdge = eventData;
+					if (this.keyboardDown.keyCode === keyCode) {
+						this.keyboardUpRisingEdge = eventData;
+					}
+
+					this.keyboardUp = eventData;
 				}
-
-				this.keyboardUp = eventData;
 			});
 
 			document.addEventListener('keydown', (e) => {
-				const {
-					keyCode,
-					ctrlKey,
-					shiftKey,
-					altKey,
-					metaKey,
-				} = e;
-				const eventData = {
-					keyCode,
-					special: (ctrlKey ? specialKey.CTRL : 0)
-						+ (shiftKey ? specialKey.SHIFT : 0)
-						+ (altKey ? specialKey.ALT : 0)
-						+ (metaKey ? specialKey.META : 0),
-				};
+				if (!e.cancelBubble) {
+					const {
+						keyCode,
+						ctrlKey,
+						shiftKey,
+						altKey,
+						metaKey,
+					} = e;
+					const eventData = {
+						keyCode,
+						special: (ctrlKey ? specialKey.CTRL : 0)
+							+ (shiftKey ? specialKey.SHIFT : 0)
+							+ (altKey ? specialKey.ALT : 0)
+							+ (metaKey ? specialKey.META : 0),
+					};
 
-				if (this.keyboardDown.keyCode !== keyCode) {
-					this.keyboardDownRisingEdge = eventData;
+					if (this.keyboardDown.keyCode !== keyCode) {
+						this.keyboardDownRisingEdge = eventData;
+					}
+
+					this.keyboardDown = eventData;
 				}
-
-				this.keyboardDown = eventData;
 			});
 		}
 
@@ -692,6 +697,8 @@ export default class Toile {
 					expandedTo: node.expandedTo,
 					width: node.expand.width,
 					baseDistr: node.expand.baseDistr,
+					baseWidth: node.expand.baseWidth,
+					baseAngle: node.expand.baseAngle,
 					radius: nodeHotRadius,
 					modifAddress,
 					componentName,

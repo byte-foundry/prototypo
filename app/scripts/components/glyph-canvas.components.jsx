@@ -365,7 +365,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		this.lifespan = new Lifespan();
 
 		this.client.getStore('/fontInstanceStore', this.lifespan)
-			.onUpdate(() => {
+			.onUpdate((head) => {
 				if (
 					this.state.glyph
 					&& window.glyph
@@ -375,6 +375,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 				this.setState({
 					glyph: window.glyph,
+					inputGlyphInteraction: head.toJS().d.inputGlyphInteraction,
 				});
 			})
 			.onDelete(() => {
@@ -1310,6 +1311,19 @@ export default class GlyphCanvas extends React.PureComponent {
 					});
 				}
 
+				if (this.state.inputGlyphInteraction) {
+					const {inputGlyphInteraction} = this.state;
+
+					this.client.dispatchAction('/store-value-font', {inputGlyphInteraction: undefined});
+
+					interactions.push({
+						modData: inputGlyphInteraction.modData,
+						item: selectedItems[0],
+						type: inputGlyphInteraction.type,
+					});
+					appStateValue |= appState.INPUT_CHANGE;
+				}
+
 
 				if (
 					appStateValue & (
@@ -1321,11 +1335,12 @@ export default class GlyphCanvas extends React.PureComponent {
 						| appState.POINTS_SELECTED
 						| appState.DRAGGING_SPACING
 						| appState.SPACING_SELECTED
+						| appState.INPUT_CHANGE
 					)
 					&& !draggingNotStarted
 				) {
 					interactions.forEach((interaction) => {
-						const {item, modData} = interaction;
+						const {item, modData, type} = interaction;
 
 						switch (item.type) {
 						case toileType.SPACING_HANDLE: {
@@ -1408,7 +1423,20 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						case toileType.NODE_SKELETON:
 						case toileType.CONTOUR_NODE: {
-							if (distrModification) {
+							if (
+								type === 'angle'
+								|| type === 'width'
+								|| type === 'distr'
+							) {
+								changeGlyphManually(
+									{
+										[`${item.data.modifAddress}expand.${type}`]: modData[type],
+									},
+									glyph,
+									this.client,
+								);
+							}
+							else if (distrModification) {
 								skeletonDistrModification(
 									this.client,
 									glyph,

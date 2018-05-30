@@ -1,27 +1,15 @@
 import _get from 'lodash/get';
 import React from 'react';
 
-import {
-	skeletonPosModification,
-	changeGlyphManually,
-	handleModification,
-	onCurveModification,
-} from './glyph-canvas.components';
 import LocalClient from '../stores/local-client.stores';
-import { toileType } from '../toile/toile';
-import {
-	normalize2D,
-	subtract2D,
-	add2D,
-	mulScalar2D,
-} from '../prototypo.js/utils/linear';
+import {toileType} from '../toile/toile';
 
 const formatDifference = (number) => {
 	if (number > 0) {
 		return `+${number}`;
 	}
-	else return number;
-}
+	return number;
+};
 
 class EditNodeProperties extends React.Component {
 	constructor(props) {
@@ -30,86 +18,57 @@ class EditNodeProperties extends React.Component {
 		this.handleInput = this.handleInput.bind(this);
 	}
 
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+	stopPropagation(e) {
+		e.stopPropagation();
+		e.nativeEvent.stopPropagation();
+	}
+
 	handleInput(e) {
-		const { glyph, selectedItem: item } = this.props;
-		const { target: { name, value } } = e;
+		const {glyph, selectedItem: item} = this.props;
+		const {target: {name, value}} = e;
 		const node = _get(glyph, item.id);
-		switch (item.type) {
-			case toileType.NODE_OUT:
-				break;
-			case toileType.NODE_IN:
-				break;
-			case toileType.CONTOUR_NODE_OUT:
-				break;
-			case toileType.CONTOUR_NODE_IN:
-				break;
-			case toileType.NODE:				
-				onCurveModification(
-					LocalClient.instance(),
-					glyph,
-					item,
-					{
-						x: name === 'x' ? parseInt(value, 10) : node.x,
-						y: name === 'y' ? parseInt(value, 10) : node.y,
-					},
-					false,
-					3,
-					false,
-				);
-				break;
-			case toileType.CONTOUR_NODE:
-				break;
-			case toileType.NODE_SKELETON:
-				if (name === 'distr' || name === 'angle' || name === 'width') {
-					const changes = {};
 
-					if (name === 'distr') {
-						const newDistr = parseFloat(value);
-						const skelVec = normalize2D(subtract2D(node.expandedTo[1], node.expandedTo[0]));
-						const newPosition = subtract2D(
-							add2D(mulScalar2D(newDistr * node.expand.width, skelVec), node.expandedTo[0]),
-							item.data.base,
-						);
+		if (
+			name === 'x'
+			|| name === 'y'
+		) {
+			const modData = {
+				x: name === 'x' ? parseInt(value, 10) : node.x,
+				y: name === 'y' ? parseInt(value, 10) : node.y,
+			};
 
-						changes[`${item.data.modifAddress}expand.distr`] = newDistr - node.expand.baseDistr;
-						changes[`${item.data.modifAddress}x`] = newPosition.x;
-						changes[`${item.data.modifAddress}y`] = newPosition.y;
-					}
-					else if (name === 'angle') {
-						changes[`${item.data.modifAddress}expand.angle`] = parseFloat(value) * 2 * Math.PI / 360 - node.expand.baseAngle;
-					}
-					else if (name === 'width') {
-						changes[`${item.data.modifAddress}expand.width`] = parseFloat(value) / node.expand.baseWidth;
-					}
+			this.client.dispatchAction('/store-value-font', {
+				inputGlyphInteraction: {
+					modData,
+				},
 
-					changeGlyphManually(
-						changes,
-						glyph,
-						LocalClient.instance(),
-						false,
-					);
-				}
-				else {
-					skeletonPosModification(
-						LocalClient.instance(),
-						glyph,
-						item,
-						{
-							x: name === 'x' ? parseInt(value, 10) : node.x,
-							y: name === 'y' ? parseInt(value, 10) : node.y,
-						},
-						false,
-					);
-				}
-				break;
-			default:
-				break;
+			});
+		}
+		else {
+			const modData = {
+				angle: name === 'angle' ? (parseFloat(value, 10) / 180) * Math.PI - item.data.baseAngle : node.expand.angle,
+				width: name === 'width' ? parseInt(value, 10) / item.data.baseWidth : node.expand.width,
+				distr: name === 'distr' ? parseFloat(value, 10) - item.data.baseDistr : node.expand.distr,
+				x: name === 'x' ? parseInt(value, 10) : node.x,
+				y: name === 'y' ? parseInt(value, 10) : node.y,
+			};
+
+			this.client.dispatchAction('/store-value-font', {
+				inputGlyphInteraction: {
+					modData,
+					type: name,
+				},
+			});
 		}
 	}
 
 	render() {
-		const { glyph, selectedItem } = this.props;
-		const { id, type, data } = selectedItem;
+		const {glyph, selectedItem} = this.props;
+		const {id, type, data} = selectedItem;
 
 		const node = _get(glyph, id);
 		const parent = _get(glyph, data.parentId);
@@ -124,19 +83,26 @@ class EditNodeProperties extends React.Component {
 						top: '70px',
 						zIndex: '3',
 					}}
+					onKeyUp={this.stopPropagation}
+					onKeyDown={this.stopPropagation}
 				>
 					<h4>Skeleton props</h4>
 					<p><span>X</span><input type="number" name="x" onChange={this.handleInput} value={node.x} />
-						({formatDifference(Math.round(node.x - node.xBase))})</p>
+						({formatDifference(Math.round(node.x - node.xBase))})
+					</p>
 					<p><span>Y</span><input type="number" name="y" onChange={this.handleInput} value={node.y} />
-						({formatDifference(Math.round(node.y - node.yBase))})</p>
+						({formatDifference(Math.round(node.y - node.yBase))})
+					</p>
 					<h4>Expand props</h4>
 					<p><span>Width</span><input type="number" name="width" onChange={this.handleInput} value={node.expand.width} />
-						({formatDifference((node.expand.width - node.expand.baseWidth).toFixed(0))})</p>
-					<p><span>Angle</span><input type="number" name="angle" onChange={this.handleInput} value={node.expand.angle / (2 * Math.PI) * 360} min={-180} max={180} />
-						({formatDifference(((node.expand.angle - node.expand.baseAngle) / (2 * Math.PI) * 360).toFixed(0))})</p>
+						({formatDifference((node.expand.width - node.expand.baseWidth).toFixed(0))})
+					</p>
+					<p><span>Angle</span><input type="number" name="angle" onChange={this.handleInput} value={((node.expand.angle / Math.PI) * 180).toFixed(0)} min={-180} max={180} />
+						({formatDifference((((node.expand.angle - node.expand.baseAngle) / Math.PI) * 180).toFixed(0))})
+					</p>
 					<p><span>Distr</span><input type="number" name="distr" onChange={this.handleInput} value={node.expand.distr} min={0} max={1} step={0.1} />
-						({formatDifference((node.expand.distr - node.expand.baseDistr).toFixed(2))})</p>
+						({formatDifference((node.expand.distr - node.expand.baseDistr).toFixed(2))})
+					</p>
 				</div>
 			);
 		}
@@ -150,12 +116,16 @@ class EditNodeProperties extends React.Component {
 						zIndex: '3',
 					}}
 					className="node-properties contour"
+					onKeyUp={this.stopPropagation}
+					onKeyDown={this.stopPropagation}
 				>
 					<h4>Contour props</h4>
 					<p><span>X</span><input type="number" name="x" onChange={this.handleInput} value={node.x} />
-						({formatDifference(Math.round(node.x - node.xBase))})</p>
+						({formatDifference(Math.round(node.x - node.xBase))})
+					</p>
 					<p><span>Y</span><input type="number" name="y" onChange={this.handleInput} value={node.y} />
-						({formatDifference(Math.round(node.y - node.yBase))})</p>
+						({formatDifference(Math.round(node.y - node.yBase))})
+					</p>
 				</div>
 			);
 		}
@@ -174,6 +144,8 @@ class EditNodeProperties extends React.Component {
 						zIndex: '3',
 					}}
 					className="node-properties handle"
+					onKeyUp={this.stopPropagation}
+					onKeyDown={this.stopPropagation}
 				>
 					<h4>Handle props</h4>
 					<p><span>Direction in</span>{Number.isNaN(parent.dirIn) ? '-' : parent.dirIn.toFixed(0)}</p>
@@ -193,14 +165,16 @@ class EditNodeProperties extends React.Component {
 						zIndex: '3',
 					}}
 					className="node-properties node"
+					onKeyUp={this.stopPropagation}
+					onKeyDown={this.stopPropagation}
 				>
 					<h4>Node props</h4>
 					<p><span>X</span> <input type="number" name="x" onChange={this.handleInput} value={node.x} /></p>
 					<p><span>Y</span><input type="number" name="y" onChange={this.handleInput} value={node.y} /></p>
 					<h4>Expand props</h4>
 					<p><span>Width</span>{parent.expand.width.toFixed(0)} ({formatDifference((parent.expand.width - parent.expand.baseWidth).toFixed(0))})</p>
-					<p><span>Angle</span>{parent.expand.angle.toFixed(0)} ({formatDifference((parent.expand.angle - parent.expand.baseAngle).toFixed(0))})</p>
-					<p><span>Distr</span>{parent.expand.distr.toFixed(2)} ({(formatDifference(parent.expand.distr - parent.expand.baseDistr).toFixed(2))})</p>
+					<p><span>Angle</span>{((parent.expand.angle / Math.PI) * 180).toFixed(0)} ({formatDifference((((parent.expand.angle - parent.expand.baseAngle) / Math.PI) * 180).toFixed(0))})</p>
+					<p><span>Distr</span>{parent.expand.distr.toFixed(2)} ({formatDifference((parent.expand.distr - parent.expand.baseDistr).toFixed(2))})</p>
 				</div>
 			);
 		}
