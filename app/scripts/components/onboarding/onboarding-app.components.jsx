@@ -116,7 +116,10 @@ class OnboardingApp extends React.PureComponent {
 
 	renderAlternates(stepData) {
 		const { alternatesDedup, values } = this.state;
-
+		if (Object.entries(alternatesDedup).length === 0) {
+			this.setState({step: this.state.step + 1});
+			return;
+		}
 		const glyphsWithAlternate = Object.entries(alternatesDedup).map(([unicode, alternates], index) => {
 			const selectedAlternateName = (values.altList || {})[unicode] || alternates[0].name;
 

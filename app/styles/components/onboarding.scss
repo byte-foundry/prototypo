@@ -29,7 +29,6 @@
 			}
 
 			.description {
-				max-width: 650px;
 				font-size: 16px;
 				color: $medium-grey;
 				line-height: 1.375em;
@@ -106,10 +105,12 @@
 
 			&.step-finish {
 				img {
-					width: 80%;
+					width: 90%;
+					max-width: 750px;
 					height: auto;
 					margin-bottom: 50px;
-					margin: 0 10%;
+					margin: 0 auto;
+					display: block;
 				}
 			}
 			

@@ -21,20 +21,6 @@ const OnboardingStep = ({
 				<img src="assets/images/onboardingIntro.svg" alt="Onboarding - Intro" />
 			)}
 			<h3>{title}</h3>
-			{type !== 'start' && (
-				<p className="description">{description}</p>
-			)}
-			{type === 'start' && (
-				<p className="description">Let’s get you set up for success from the start. <br/> In five quick steps, you will define the shape of your font <br/> using the recommended parameters. </p>
-			)}
-			{(type === 'sliders' || type === 'serifs') && (
-				<div
-					className="text"
-					style={{fontFamily: fontName}}
-				>
-					<HighlightedText letters={letters} />
-				</div>
-			)}
 			{type === 'finish' && (
 				<div
 					className="text"
@@ -43,16 +29,25 @@ const OnboardingStep = ({
 					<HighlightedText letters={'Hamburgefonstiv'} />
 				</div>
 			)}
+			<p className="description">{description.map(line => <span>{line}<br/></span>)}</p>
+			{(type === 'sliders' || type === 'serifs') && (
+				<div
+					className="text"
+					style={{fontFamily: fontName}}
+				>
+					<HighlightedText letters={letters} />
+				</div>
+			)}			
 			{type === 'finish' && (
-				<img src="assets/images/onboardingFinish.PNG" alt="glyphView - Description" />
+				<img className="glyphview" src="assets/images/onboardingFinish.PNG" alt="glyphView - Description" />
 			)}
 			{(type === 'sliders' || type === 'serifs') && (
 				<div className="step-sliders">
 					{sliders.map((slider) => {
 						const sliderData = parameters.find(p => p.name === slider);
-
+						
 						return (
-							sliderData && (
+							sliderData && !sliderData.disabled && (
 								<OnboardingSlider
 									key={sliderData.name}
 									label={sliderData.label}
