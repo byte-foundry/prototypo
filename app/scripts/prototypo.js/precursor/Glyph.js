@@ -125,7 +125,7 @@ export default class Glyph {
 		));
 		this.anchorKeys = Object.keys(this.anchors);
 
-		this.analyzeDependency();
+		// this.analyzeDependency();
 		if (glyphSrc.operationOrder) {
 			this.operationOrder = glyphSrc.operationOrder;
 		}
