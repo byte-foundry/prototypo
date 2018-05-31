@@ -5,12 +5,23 @@ import { hot } from 'react-hot-loader'
 
 import HoodieApi from './services/hoodie.services';
 
-import AcademyApp from './components/academy/academy-app.components';
+import LibraryApp from './components/library/library-app.components';
+import LibraryMain from './components/library/library-main.components';
+import LibraryList from './components/library/library-list.components';
+import LibraryCreate from './components/library/library-create.components';
+import LibraryReview from './components/library/library-review.components';
+import LibraryHosting from './components/library/library-hosting.components';
+import LibrarySee from './components/library/library-see.components';
+
 import OnboardingApp from './components/onboarding/onboarding-app.components';
+
+import AcademyApp from './components/academy/academy-app.components';
 import AcademyDashboard from './components/academy/academy-dashboard.components';
 import AcademyHome from './components/academy/academy-home.components';
 import AcademyCourse from './components/academy/academy-course.components';
+
 import Dashboard from './components/dashboard.components';
+
 import Signin from './components/signin.components';
 import ForgottenPassword from './components/forgotten-password.components';
 import ResetPassword from './components/reset-password.components';
@@ -31,8 +42,11 @@ import AccountOrganization from './components/account/account-organization.compo
 import AccountInvoiceList from './components/account/account-invoice-list.components';
 import AccountPrototypoLibrary from './components/account/account-prototypo-library.components.jsx';
 import Subscription from './components/account/subscription.components';
+
 import StartApp from './components/start/start-app.components';
+
 import FontTester from './font-test/font-tester.components.jsx';
+
 import GlyphTester from './font-test/glyph-tester.components.jsx';
 /* #if debug */
 import ReplayViewer from './debug/replay-viewer.components';
@@ -202,6 +216,28 @@ class AppRoutes extends React.PureComponent {
 								name="subscribe"
 								onEnter={redirectToSignup}
 							/>
+						</Route>
+						<Route component={LibraryApp} path="library">
+							<IndexRedirect to="home" />
+							<Route component={LibraryMain} path="home" name="list" onEnter={redirectToLogin}>
+								<IndexRoute component={LibraryList} />
+							</Route>
+							<Route
+								path="hosting" component={LibraryMain} name="hosting" onEnter={redirectToLogin}>
+								<IndexRoute component={LibraryHosting} />
+							</Route>
+							<Route
+								path="create" component={LibraryMain} name="create" onEnter={redirectToLogin}>
+								<IndexRoute component={LibraryCreate} />
+							</Route>
+							<Route
+								path="review" component={LibraryReview} name="review" onEnter={redirectToLogin}>
+								<IndexRoute component={LibraryReview} />
+							</Route>
+							<Route
+								path="project" component={LibraryMain} name="see" onEnter={redirectToLogin}>
+								<IndexRoute component={LibrarySee} />
+							</Route>
 						</Route>
 						<Route component={AcademyApp} path="academy">
 							<IndexRedirect to="home" />

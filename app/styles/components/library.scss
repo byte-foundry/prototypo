@@ -1,0 +1,26 @@
+.library-app {
+    .library-main {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch; 
+        .library-sidebar-left {
+            background: #262A36;
+            color: #eee;
+            width: 250px;
+            min-height: 100vh;
+            padding: 25px;
+        }
+        .library-sidebar-right {
+            background: #F4F4F4;
+            color: #262A36;         
+            min-height: 100vh;            
+            width: 250px;
+            padding: 25px;         
+        }
+        .library-list {
+            flex-grow: 2; 
+            background: white;
+            color: #262A36; 
+        }
+    }
+}
