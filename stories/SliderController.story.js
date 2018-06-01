@@ -17,7 +17,21 @@ storiesOf('SliderController', module)
 		return (
 			<SliderController
 				changeParam={action('change-param')}
-				disabled={false}
+				label="Small Cap Thickness"
+				max={100}
+				maxAdvised={90}
+				min={0}
+				minAdvised={0}
+				name="_scThickness"
+				value={0}
+			/>
+		);
+	})
+	.add('disabled', () => {
+		return (
+			<SliderController
+				disabled
+				changeParam={action('change-param')}
 				label="Small Cap Thickness"
 				max={100}
 				maxAdvised={90}
@@ -32,7 +46,6 @@ storiesOf('SliderController', module)
 		return (
 			<SliderController
 				changeParam={action('change-param')}
-				disabled={false}
 				label="Small Cap Thickness"
 				max={100}
 				maxAdvised={90}
@@ -47,7 +60,6 @@ storiesOf('SliderController', module)
 		return (
 			<SliderController
 				changeParam={action('change-param')}
-				disabled={false}
 				label="Small Cap Thickness"
 				max={100}
 				maxAdvised={100}
@@ -62,7 +74,6 @@ storiesOf('SliderController', module)
 		return (
 			<SliderController
 				changeParam={action('change-param')}
-				disabled={false}
 				label="Small Cap Thickness"
 				max={100}
 				maxAdvised={90}
@@ -76,9 +87,8 @@ storiesOf('SliderController', module)
 	.add('restricted', () => {
 		return (
 			<SliderController
-				demo={true}
+				demo
 				changeParam={action('change-param')}
-				disabled={false}
 				label="Small Cap Thickness"
 				max={100}
 				realMax={80}

@@ -71,8 +71,8 @@ class FontUpdater extends React.PureComponent {
 			&& !this.state.changingFont
 		) {
 			const subsetString = this.state.uiText
-				+ rawToEscapedContent(this.state.uiWord, this.state.glyphs);
-			const subset = _uniq(subsetString.split('')).map(letter => letter.charCodeAt(0));
+				+ rawToEscapedContent(this.state.uiWord, this.state.glyphs) + 'Hamburgefonstiv';
+			let subset = _uniq(subsetString.split('')).map(letter => letter.charCodeAt(0));
 
 			this.fontMediatorInstance.getFont(
 				this.state.name,
@@ -81,6 +81,19 @@ class FontUpdater extends React.PureComponent {
 				subset,
 				this.state.glyph,
 			);
+
+			if (this.props.extraFonts) {
+				this.props.extraFonts.forEach((extrafont) => {
+					subset = _uniq(extrafont.subset.split('')).map(letter => letter.charCodeAt(0));
+					this.fontMediatorInstance.getFont(
+						extrafont.name,
+						extrafont.template || this.state.template,
+						{...extrafont.values},
+						subset,
+						extrafont.glyph || this.state.glyph,
+					);
+				});
+			}
 		}
 
 		this.fontMediatorInstance.setupInfo({

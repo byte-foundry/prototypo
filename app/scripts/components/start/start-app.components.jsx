@@ -38,6 +38,7 @@ class StartApp extends React.PureComponent {
 
 		this.returnToDashboard = this.returnToDashboard.bind(this);
 		this.open = this.open.bind(this);
+		this.create = this.create.bind(this);
 	}
 
 	async componentWillMount() {
@@ -67,10 +68,14 @@ class StartApp extends React.PureComponent {
 
 	open(family) {
 		this.client.dispatchAction('/select-variant', {variant: family.variants[0], family});
-
 		this.props.router.push('/dashboard');
 	}
-
+	create(family) {
+		this.client.dispatchAction('/select-variant', {variant: family.variants[0], family});
+		this.client.dispatchAction('/store-value', {onboardingFrom: 'start'});
+		this.props.router.push('/onboarding');
+	}
+	
 	render() {
 		const {loading, families} = this.props;
 
@@ -88,7 +93,7 @@ class StartApp extends React.PureComponent {
 				<div className="start-app-container">
 					<div className="start-base">
 						<div className="start-base-create">
-							<AddFamily start="true" firstTime={!families.length} onCreateFamily={this.open} />
+							<AddFamily start="true" firstTime={!families.length} onCreateFamily={this.create} />
 						</div>
 						<div className="start-base-projects">
 							<div className="load-project">

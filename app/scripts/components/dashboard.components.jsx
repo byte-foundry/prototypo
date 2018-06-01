@@ -212,7 +212,7 @@ class Dashboard extends React.PureComponent {
 		const collection = this.state.collection
 			&& <Collection collectionTransitionTimeout={collectionTransitionTimeout} />;
 		const newFamily = this.state.openFamilyModal
-			&& <CreateFamilyModal propName="openFamilyModal" />;
+			&& <CreateFamilyModal propName="openFamilyModal"/>;
 		const newVariant = this.state.openVariantModal
 			&& <CreateVariantModal family={this.state.familySelectedVariantCreation} propName="openVariantModal" />;
 		const explainAcademy = this.state.firstTimeAcademyModal
