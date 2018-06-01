@@ -20,7 +20,13 @@
         .library-list {
             flex-grow: 2; 
             background: white;
-            color: #262A36; 
+            color: #262A36;
+            height: 100vh;
+
+            .library-item-preview {
+                font-size: 69px;
+                margin: 0;
+            }
         }
     }
 }
