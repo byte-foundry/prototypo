@@ -1,18 +1,18 @@
-import React from "react";
-import { graphql, gql, compose } from "react-apollo";
-import Lifespan from "lifespan";
+import React from 'react';
+import {graphql, gql, compose} from 'react-apollo';
+import Lifespan from 'lifespan';
 
 import {
 	Tooltip,
 } from 'react-tippy';
-import 'react-tippy/dist/tippy.css'
+import 'react-tippy/dist/tippy.css';
 
 import onboardingData from '../../data/onboarding.data';
-import LocalClient from "../../stores/local-client.stores";
+import LocalClient from '../../stores/local-client.stores';
 
-import Button from "../shared/new-button.components";
+import Button from '../shared/new-button.components';
 import Step from './step.components';
-import FontUpdater from "../font-updater.components";
+import FontUpdater from '../font-updater.components';
 import AlternateChoice from './alternate-choice.components';
 
 const flatten = list =>
@@ -24,7 +24,7 @@ class OnboardingApp extends React.PureComponent {
 		this.state = {
 			step: 0,
 			values: undefined,
-			parameters: []
+			parameters: [],
 		};
 	}
 
@@ -33,38 +33,36 @@ class OnboardingApp extends React.PureComponent {
 		this.client = LocalClient.instance();
 
 		this.client
-			.getStore("/undoableStore", this.lifespan)
-			.onUpdate(head => {
+			.getStore('/undoableStore', this.lifespan)
+			.onUpdate((head) => {
 				const headJS = head.toJS().d;
 
 				this.setState({
-					values: headJS.controlsValues
+					values: headJS.controlsValues,
 				});
 			})
 			.onDelete(() => {
-				this.setState({ values: undefined });
+				this.setState({values: undefined});
 			});
 
 		this.client
-			.getStore("/prototypoStore", this.lifespan)
-			.onUpdate(head => {
+			.getStore('/prototypoStore', this.lifespan)
+			.onUpdate((head) => {
 				const headJS = head.toJS().d;
 
 				this.setState({
 					fontName: headJS.fontName,
-					parameters: flatten(
-						headJS.fontParameters.reduce((a, b) => [
-							a,
-							...b.parameters
-						])
-					),
+					parameters: flatten(headJS.fontParameters.reduce((a, b) => [
+						a,
+						...b.parameters,
+					])),
 					onboardingFrom: headJS.onboardingFrom,
 					glyphs: headJS.glyphs,
-					family: headJS.family
+					family: headJS.family,
 				});
 			})
 			.onDelete(() => {
-				this.setState({ parameters: [] });
+				this.setState({parameters: []});
 			});
 
 		this.renderAlternates = this.renderAlternates.bind(this);
@@ -85,37 +83,36 @@ class OnboardingApp extends React.PureComponent {
 
 	getNextStep() {
 		if (this.state.step + 1 < onboardingData.steps.length) {
-			this.setState({ step: this.state.step + 1 });
+			this.setState({step: this.state.step + 1});
 		}
 	}
 
 	getPreviousStep() {
 		if (this.state.step - 1 >= 0) {
-			this.setState({ step: this.state.step - 1 });
+			this.setState({step: this.state.step - 1});
 		}
 	}
 
 	getAlternateFonts() {
-		const alternatesUnicodes = Object.keys(this.state.glyphs).filter(
-			key =>
-				this.state.glyphs[key].length > 1
+		const alternatesUnicodes = Object.keys(this.state.glyphs).filter(key =>
+			this.state.glyphs[key].length > 1
 				&& !this.state.glyphs[key][0].base
-				&& key !== 'undefined',
-		);
+				&& key !== 'undefined');
 		const alternatesDedup = alternatesUnicodes.reduce((acc, key) => {
 			acc[key] = this.state.glyphs[key];
 			return acc;
 		}, {});
 
-		this.setState({ alternatesDedup });
+		this.setState({alternatesDedup});
 	}
 
 	changeParam(params) {
-		this.client.dispatchAction("/change-param", params);
+		this.client.dispatchAction('/change-param', params);
 	}
 
 	renderAlternates(stepData) {
-		const { alternatesDedup, values } = this.state;
+		const {alternatesDedup, values} = this.state;
+
 		if (Object.entries(alternatesDedup).length === 0) {
 			this.setState({step: this.state.step + 1});
 			return;
@@ -134,7 +131,7 @@ class OnboardingApp extends React.PureComponent {
 		return (
 			<Step className="step-alternates" {...stepData}>
 				{glyphsWithAlternate.map((alternates) => {
-					const { unicode } = alternates[0];
+					const {unicode} = alternates[0];
 
 					return (
 						<AlternateChoice
@@ -150,7 +147,7 @@ class OnboardingApp extends React.PureComponent {
 								});
 							}}
 						/>
-					)
+					);
 				})}
 			</Step>
 		);
@@ -158,36 +155,36 @@ class OnboardingApp extends React.PureComponent {
 
 	defineRender(stepData) {
 		switch (stepData.type) {
-			case "sliders":
-				return (
-					<Step
-						className="step-sliders-wrapper"
-						{...stepData}
-						parameters={this.state.parameters}
-						fontName={this.state.fontName}
-						values={this.state.values}
-						onChangeParam={this.changeParam}
-					/>
-				);
-			case "alternates":
-				return this.renderAlternates(stepData);
-			case "serifs":
-				return (
-					<Step
-						className="step-serifs-wrapper"
-						{...stepData}
-						parameters={this.state.parameters}
-						fontName={this.state.fontName}
-						values={this.state.values}
-						onChangeParam={this.changeParam}
-					/>
-				);
-			case "finish":
-				return <Step className="step-finish" {...stepData} fontName={this.state.fontName} />;
-			case "start":
-				return <Step className="step-start" {...stepData} />;
-			default:
-				return null;
+		case 'sliders':
+			return (
+				<Step
+					className="step-sliders-wrapper"
+					{...stepData}
+					parameters={this.state.parameters}
+					fontName={this.state.fontName}
+					values={this.state.values}
+					onChangeParam={this.changeParam}
+				/>
+			);
+		case 'alternates':
+			return this.renderAlternates(stepData);
+		case 'serifs':
+			return (
+				<Step
+					className="step-serifs-wrapper"
+					{...stepData}
+					parameters={this.state.parameters}
+					fontName={this.state.fontName}
+					values={this.state.values}
+					onChangeParam={this.changeParam}
+				/>
+			);
+		case 'finish':
+			return <Step className="step-finish" {...stepData} fontName={this.state.fontName} />;
+		case 'start':
+			return <Step className="step-start" {...stepData} />;
+		default:
+			return null;
 		}
 	}
 
@@ -195,38 +192,39 @@ class OnboardingApp extends React.PureComponent {
 		try {
 			await this.props.deleteFamily(family);
 			// legacy call use to change the selected family
-			this.client.dispatchAction("/delete-family", {
+			this.client.dispatchAction('/delete-family', {
 				family,
 			});
 			await this.props.refetch();
 			switch (this.state.onboardingFrom) {
-				case "library":
-					this.client.dispatchAction("/store-value", {
-						uiShowCollection: true
-					});
-					this.client.dispatchAction("/store-value", {
-						onboardingFrom: undefined
-					});
-					this.props.history.push("/dashboard");
-					break;
-				case "start":
-					this.client.dispatchAction("/store-value", {
-						onboardingFrom: undefined
-					});
-					this.props.history.push("/start");
-					break;
-				default:
-					break;
+			case 'library':
+				this.client.dispatchAction('/store-value', {
+					uiShowCollection: true,
+				});
+				this.client.dispatchAction('/store-value', {
+					onboardingFrom: undefined,
+				});
+				this.props.history.push('/dashboard');
+				break;
+			case 'start':
+				this.client.dispatchAction('/store-value', {
+					onboardingFrom: undefined,
+				});
+				this.props.history.push('/start');
+				break;
+			default:
+				break;
 			}
-		} catch (err) {
+		}
+		catch (err) {
 			// TODO: Error handling
-			this.props.history.push("/start");
+			this.props.history.push('/start');
 			console.log(err);
 		}
 	}
 
 	render() {
-		const { step, alternatesDedup, values } = this.state;
+		const {step, alternatesDedup, values} = this.state;
 		const stepData = onboardingData.steps[step];
 
 		// Failsafe
@@ -243,9 +241,7 @@ class OnboardingApp extends React.PureComponent {
 						>
 							Return to dashboard
 						</Button>
-						<div className="onboarding-content">
-
-						</div>
+						<div className="onboarding-content" />
 					</div>
 				</div>
 			);
@@ -279,11 +275,13 @@ class OnboardingApp extends React.PureComponent {
 
 					return arr.concat(alternatesToGenerate);
 				}
-				, []);
+				, [],
+			);
 		}
 
-		const { letters } = onboardingData.steps.find(e => e.type === 'alternates');
+		const {letters} = onboardingData.steps.find(e => e.type === 'alternates');
 		const allStrings = Object.values(letters).join('');
+
 		return (
 			<div className="onboarding-app">
 				<div className="onboarding-wrapper">
@@ -297,7 +295,7 @@ class OnboardingApp extends React.PureComponent {
 						}}
 					>
 						Back to library
-						</Button>
+					</Button>
 					{this.props.families && this.props.families.length > 3 && (
 						<Button
 							outline
@@ -317,20 +315,20 @@ class OnboardingApp extends React.PureComponent {
 							onClick={() => {
 								this.state.step < onboardingData.steps.length - 1
 									? this.getNextStep()
-									: this.props.history.push("/dashboard");
+									: this.props.history.push('/dashboard');
 							}}
 						>
 							{(() => {
 								switch (this.state.step) {
-									case 0:
-										return 'Start';
-										break;
-									case onboardingData.steps.length - 1:
-										return 'Finish';
-										break;
-									default:
-										return 'Next';
-										finish;
+								case 0:
+									return 'Start';
+									break;
+								case onboardingData.steps.length - 1:
+									return 'Finish';
+									break;
+								default:
+									return 'Next';
+									finish;
 								}
 							})()}
 						</Button>
@@ -345,7 +343,8 @@ class OnboardingApp extends React.PureComponent {
 									altList: {},
 								},
 							},
-						]} />
+						]}
+						/>
 						{stepData.type !== 'start' && (<div className="bubbles">
 							{onboardingData.steps.map((step, index) => (
 								<Tooltip
@@ -357,12 +356,12 @@ class OnboardingApp extends React.PureComponent {
 								>
 									<div
 										className={`bubble ${
-											index === this.state.step ? "active" : ""
-											} ${index < this.state.step ? "previous" : ""}`}
+											index === this.state.step ? 'active' : ''
+										} ${index < this.state.step ? 'previous' : ''}`}
 										onClick={() => {
-											index <= this.state.step ?
-												this.setState({ step: index }) :
-												false;
+											index <= this.state.step
+												? this.setState({step: index})
+												: false;
 										}}
 									/>
 								</Tooltip>
@@ -414,9 +413,9 @@ export default compose(
 		options: {
 			fetchPolicy: 'network-only',
 		},
-		props: ({ data }) => {
+		props: ({data}) => {
 			if (data.loading) {
-				return { loading: true };
+				return {loading: true};
 			}
 
 			if (data.user) {
@@ -426,19 +425,19 @@ export default compose(
 				};
 			}
 
-			return { refetch: data.refetch };
+			return {refetch: data.refetch};
 		},
 	}),
 	graphql(deleteVariantMutation, {
-		props: ({ mutate }) => ({
+		props: ({mutate}) => ({
 			deleteVariant: id =>
 				mutate({
-					variables: { id },
+					variables: {id},
 				}),
 		}),
 		options: {
-			update: (store, { data: { deleteVariant } }) => {
-				const data = store.readQuery({ query: libraryQuery });
+			update: (store, {data: {deleteVariant}}) => {
+				const data = store.readQuery({query: libraryQuery});
 
 				data.user.library.forEach((family) => {
 					// eslint-disable-next-line
@@ -453,7 +452,7 @@ export default compose(
 		},
 	}),
 	graphql(deleteFamilyMutation, {
-		props: ({ mutate, ownProps }) => ({
+		props: ({mutate, ownProps}) => ({
 			deleteFamily: (family) => {
 				if (!family) {
 					return Promise.reject();
@@ -463,12 +462,12 @@ export default compose(
 				// in the future, cascade operations should be available on graphcool
 				const variants = family.variants.map(variant => ownProps.deleteVariant(variant.id));
 
-				return Promise.all([...variants, mutate({ variables: { id: family.id } })]);
+				return Promise.all([...variants, mutate({variables: {id: family.id}})]);
 			},
 		}),
 		options: {
-			update: (store, { data: { deleteFamily } }) => {
-				const data = store.readQuery({ query: libraryQuery });
+			update: (store, {data: {deleteFamily}}) => {
+				const data = store.readQuery({query: libraryQuery});
 
 				data.user.library = data.user.library.filter(font => font.id !== deleteFamily.id);
 

@@ -7,9 +7,8 @@ export default {
 				[
 					'Let’s get you set up for success from the start.',
 					'In five quick steps you will define your font’s shape with the key parameters.'
-
 				],
-			name: 'Start'
+			name: 'Start',
 		},
 		{
 			type: 'sliders',
@@ -33,7 +32,7 @@ export default {
 				[
 					'The thickness and contrast amount define the final usage of your font.',
 					'A very thick and high contrast typeface is suitable for large sizes,',
-					'while a low contrast typeface with regular thickness is best used for texts.'
+					'while a low contrast typeface with regular thickness is best used for texts.',
 				],
 			name: 'Style',
 		},
@@ -46,7 +45,7 @@ export default {
 				[
 					'The ascenders’ and descenders’ length is important to create rhythm, especially in regards to text setting.',
 					'For compact texts with small leading values, it is recommended to have short ascenders and descenders.',
-					'Long ascenders and descenders will work best with looser leading.'
+					'Long ascenders and descenders will work best with looser leading.',
 				],
 			name: 'Ascenders / Descenders',
 		},

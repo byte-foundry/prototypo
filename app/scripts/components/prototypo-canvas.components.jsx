@@ -3,8 +3,8 @@ import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-
 import Dropzone from 'react-dropzone';
+
 import LocalClient from '../stores/local-client.stores';
 import Log from '../services/log.services';
 import {mapGlyphForApp} from '../helpers/font.helpers';
@@ -18,8 +18,9 @@ import CanvasGlyphInput from './canvas-glyph-input.components';
 import AlternateMenu from './alternate-menu.components';
 import CanvasBar from './canvasTools/canvas-bar.components';
 import GlyphCanvas from './glyph-canvas.components';
-import {toileType} from '../toile/toile.js';
-import CanvasShadow from './canvasTools/canvas-shadow.components.jsx';
+import {toileType} from '../toile/toile';
+import CanvasShadow from './canvasTools/canvas-shadow.components';
+import EditNodeProperties from './edit-node-properties.components';
 
 export default class PrototypoCanvas extends React.Component {
 	constructor(props) {
@@ -63,6 +64,8 @@ export default class PrototypoCanvas extends React.Component {
 		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.deleteShadow = this.deleteShadow.bind(this);
+		this.handleSelectedItems = this.handleSelectedItems.bind(this);
+		this.handleUpdateGlyph = this.handleUpdateGlyph.bind(this);
 	}
 
 	componentWillMount() {
@@ -83,7 +86,6 @@ export default class PrototypoCanvas extends React.Component {
 					oldCanvasMode: head.toJS().d.oldCanvasMode,
 					credits: head.toJS().d.credits,
 					glyphOutsideView: head.toJS().d.glyphOutsideView,
-					selectedItems: head.toJS().d.selectedItems,
 					glyphViewMatrix: head.toJS().d.glyphViewMatrix,
 					globalMode: head.toJS().d.globalMode,
 				});
@@ -459,11 +461,31 @@ export default class PrototypoCanvas extends React.Component {
 		this.client.dispatchAction('/end-export-glyphr');
 	}
 
+	handleSelectedItems(selectedItems) {
+		const storedItems = selectedItems.map(item => ({
+			type: item.type,
+			id: item.id,
+			data: {
+				parentId: item.data.parentId,
+				modifAddress: item.data.modifAddress,
+				componentName: item.data.componentName,
+			},
+		}));
+
+		this.setState({selectedItems});
+
+		this.client.dispatchAction('/store-value', {
+			selectedItems: storedItems,
+		});
+	}
+
+	handleUpdateGlyph(glyph) {
+		console.log('update glyph', glyph);
+		this.setState({updatedGlyph: glyph});
+	}
 
 	render() {
-		if (process.env.__SHOW_RENDER__) { // eslint-disable-line no-underscore-dangle
-			console.log('[RENDER] PrototypoCanvas'); // eslint-disable-line no-console
-		}
+		const {selectedItems, updatedGlyph} = this.state;
 
 		/* eslint-disable max-len */
 		// const isFreeWithoutCreditsInManualEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'select-points';
@@ -609,7 +631,15 @@ export default class PrototypoCanvas extends React.Component {
 				<GlyphCanvas
 					dependencies={this.props.uiDependencies}
 					glyphOutsideView={this.state.glyphOutsideView}
+					onSelectedItems={this.handleSelectedItems}
+					onUpdateGlyph={this.handleUpdateGlyph}
 				/>
+				{selectedItems && selectedItems.length === 1 && (
+					<EditNodeProperties
+						glyph={updatedGlyph}
+						selectedItem={selectedItems[0]}
+					/>
+				)}
 				<div className={actionBarClassNames}>
 					<CloseButton click={() => {this.props.close('glyph');}} />
 				</div>
