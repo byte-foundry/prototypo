@@ -116,20 +116,66 @@ export default compose(
 class FamilyList extends React.PureComponent {
 	constructor(props) {
 		super(props);
+		this.state = {
+			isBaseValueLoaded: false,
+		}
+		this.loadInitialValues = this.loadInitialValues.bind(this);
+	}
+
+	async loadInitialValues() {
+		const typedataAntique = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/antique.ptf/font.json`);
+		const antiqueInitValues = {};
+		typedataAntique.controls.forEach(group => group.parameters.forEach((param) => {
+			antiqueInitValues[param.name] = param.init;
+		}));
+		const typedataElzevir = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/elzevir.ptf/font.json`);
+		const elzevirInitValues = {};
+		typedataElzevir.controls.forEach(group => group.parameters.forEach((param) => {
+			elzevirInitValues[param.name] = param.init;
+		}));
+		const typedataSpectral = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/gfnt.ptf/font.json`);
+		const spectralInitValues = {};
+		typedataSpectral.controls.forEach(group => group.parameters.forEach((param) => {
+			spectralInitValues[param.name] = param.init;
+		}));
+		const typedataFell = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/john-fell.ptf/font.json`);
+		const fellInitValues = {};
+		typedataFell.controls.forEach(group => group.parameters.forEach((param) => {
+			fellInitValues[param.name] = param.init;
+		}));
+		const typedataVenus = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/venus.ptf/font.json`);
+		const venusInitValues = {};
+		typedataVenus.controls.forEach(group => group.parameters.forEach((param) => {
+			venusInitValues[param.name] = param.init;
+		}));
+		this.setState({
+			'antique.ptf': antiqueInitValues,
+			'elzevir.ptf': elzevirInitValues,
+			'gfnt.ptf': spectralInitValues,
+			'john-fell.ptf': fellInitValues,
+			'venus.ptf': venusInitValues,
+			isBaseValueLoaded: true,
+		});
+	}
+	
+	componentWillMount() {
+		this.loadInitialValues();
 	}
 
 	render() {
 		let fontsToGenerate = [];
 
 		const prototypoTemplates = this.props.templateInfos && this.props.templateInfos.map((template) => {
-			// fontsToGenerate.push(
-			// 	{
-			// 		name: `template${(template.templateName).split('.').join("")}`,
-			// 		template: template.templateName,
-			// 		subset: 'Hamburgefonstiv 123',
-			// 		values: {},
-			// 	}
-			// );
+			if (this.state.isBaseValueLoaded) {
+				fontsToGenerate.push(
+					{
+						name: `template${(template.templateName).split('.').join("")}`,
+						template: template.templateName,
+						subset: 'Hamburgefonstiv 123',
+						values: this.state[template.templateName],
+					}
+				);
+			}
 			return (
 				<TemplateItem
 					key={template.templateName}
@@ -139,14 +185,19 @@ class FamilyList extends React.PureComponent {
 		})
 		const userProjects = this.props.userProjects.map((family) => {
 			const templateInfo = this.props.templateInfos.find(template => template.templateName === family.template) || {name: 'Undefined'};
-			// fontsToGenerate.push(
-			// 	{
-			// 		name: `user${family.id}`,
-			// 		template: templateInfo.templateName,
-			// 		subset: 'Hamburgefonstiv 123',
-			// 		values: family.variants[0].values,
-			// 	}
-			// );
+			if (this.state.isBaseValueLoaded){
+				fontsToGenerate.push(
+					{
+						name: `user${family.id}`,
+						template: templateInfo.templateName,
+						subset: 'Hamburgefonstiv 123',
+						values: {
+							...this.state[templateInfo.templateName],
+							...family.variants[0].values
+						},
+					}
+				);
+			}
 			return (
 				<FamilyItem
 					key={family.id}
@@ -182,8 +233,6 @@ class FamilyList extends React.PureComponent {
 				/>
 			)
 		}));
-
-		console.log(fontsToGenerate)
 
 		return (
 			<ScrollArea
