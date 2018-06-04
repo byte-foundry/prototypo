@@ -1,3 +1,4 @@
+@import '../variables';
 .library-app {
     .library-main {
         display: flex;
@@ -23,9 +24,52 @@
             color: #262A36;
             height: 100vh;
 
-            .library-item-preview {
-                font-size: 69px;
-                margin: 0;
+            .library-item {
+                margin-bottom: 15px;
+                position: relative;
+
+                .library-item-name {
+                    text-transform: uppercase;
+                    color: $medium-grey;
+                    margin: 0;
+                }
+    
+                .library-item-preview {
+                    font-size: 69px;
+                    margin: 0;
+                }
+
+                .provider {
+                    width:50px;
+                    height:50px;
+                    border: 2px solid $lightest-grey;                                        
+                    position:absolute;
+                    top: 50%;
+                    right: 5%;
+                    transform: translateY(-50%);
+                    border-radius: 50%;
+                    background-repeat: no-repeat;                    
+                    z-index:2;                    
+                    background-position: center;
+                    &.provider-prototypo {
+                        background-color: $black;   
+                        background-size: 45%;
+                        background-image: url("../../images/prototypo-icon-white.svg");                        
+                    }
+            
+                    &.provider-google {
+                        background-color: $white;
+                        background-position: center;
+                        background-size: 65%;
+                        background-image: url("../../images/icon-google.svg");
+                    }
+            
+                    &.provider-production {                        
+                        background-color: $white;
+                        background-size: 85%;
+                        background-image: url("../../images/icon-ProductionType.svg");
+                    }
+                }
             }
         }
     }

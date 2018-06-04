@@ -185,6 +185,7 @@ class FamilyList extends React.PureComponent {
 		})
 		const userProjects = this.props.userProjects.map((family) => {
 			const templateInfo = this.props.templateInfos.find(template => template.templateName === family.template) || {name: 'Undefined'};
+			console.log(templateInfo)
 			if (this.state.isBaseValueLoaded){
 				fontsToGenerate.push(
 					{
@@ -245,7 +246,6 @@ class FamilyList extends React.PureComponent {
 					{prototypoTemplates}
 					{uniquePresets}
 					{userProjects}
-					Bite
 					<FontUpdater extraFonts={fontsToGenerate} />
 				</div>
 			</ScrollArea>			
@@ -260,11 +260,15 @@ class TemplateItem extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="library-template-item">
-				<p>
-					{this.props.template.name} {this.props.template.templateName}
+			<div className="library-item">
+				<p className="library-item-name">
+					{this.props.template.name}
 				</p>
 				<p className="library-item-preview" style={{fontFamily: `template${(this.props.template.templateName).split('.').join("")}`}}>Hamburgefonstiv 123</p>
+				<div
+						className={`provider provider-${this.props.template.provider}`}
+				/>
+				
 			</div>
 		)
 	}
@@ -277,11 +281,14 @@ class FamilyItem extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="library-family-item">
-				<p>
+			<div className="library-item">
+				<p className="library-item-name">
 					{this.props.family.name} from {this.props.template.name}
 				</p>
 				<p className="library-item-preview" style={{fontFamily: `user${this.props.family.id}`}}>Hamburgefonstiv 123</p>
+				<div
+						className={`provider provider-${this.props.template.provider}`}
+				/>
 			</div>
 		)
 	}
@@ -294,11 +301,14 @@ class PresetItem extends React.PureComponent {
 
 	render() {
 		return (			
-			<div className="library-preset-item">
-				<p>
-					{this.props.preset.variant.family.name} from {this.props.template.name}
+			<div className="library-item">
+				<p className="library-item-name">
+					Preset from {this.props.template.name}
 				</p>
 				<p className="library-item-preview" style={{fontFamily: `preset${this.props.preset.id}`}}>Hamburgefonstiv 123</p>
+				<div
+						className={`provider provider-${this.props.template.provider}`}
+				/>
 			</div>
 		)
 	}
