@@ -31,7 +31,7 @@ class LibraryList extends React.PureComponent {
 	render() {
 		return (
 			<div className="library-list">
-				<FamilyList userProjects={this.props.families} presets={this.props.presets} templateInfos={this.state.templateInfos} />
+				<FamilyList libraryFilters={this.props.libraryFilters} userProjects={this.props.families} presets={this.props.presets} templateInfos={this.state.templateInfos} user={{firstName: this.props.firstName, lastName: this.props.lastName}}/>
 			</div>
 		);
 	}
@@ -51,6 +51,16 @@ export const libraryQuery = gql`
 					values
 				}
 			}
+		}
+	}
+`;
+
+const getNameQuery = gql`
+	query getFirstName {
+		user {
+			id
+			firstName
+			lastName
 		}
 	}
 `;
@@ -95,6 +105,18 @@ export default compose(
 			return {refetch: data.refetch};
 		},
 	}),
+	graphql(getNameQuery, {
+		options: {
+			fetchPolicy: 'cache-first',
+		},
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true, firstName: '', lastName: '',};
+			}
+	
+			return data.user;
+		},
+	}),
 	graphql(presetQuery, {
 		options: {
 			fetchPolicy: 'network-only',
@@ -118,8 +140,11 @@ class FamilyList extends React.PureComponent {
 		super(props);
 		this.state = {
 			isBaseValueLoaded: false,
+			activeFilters: {}
 		}
 		this.loadInitialValues = this.loadInitialValues.bind(this);
+		this.generateFonts = this.generateFonts.bind(this);
+		this.filterFonts = this.filterFonts.bind(this);
 	}
 
 	async loadInitialValues() {
@@ -156,16 +181,25 @@ class FamilyList extends React.PureComponent {
 			'venus.ptf': venusInitValues,
 			isBaseValueLoaded: true,
 		});
-	}
-	
-	componentWillMount() {
-		this.loadInitialValues();
+		this.generateFonts();
 	}
 
-	render() {
+	generateFonts() {
+		const customBadgesColor = [
+			'#29ABE2',
+			'#0000FF',
+			'#00FF00',
+			'#FF0000',
+			'#F7931E'
+		]
+		const userColor = customBadgesColor[0];
+		const lmColor = customBadgesColor[1];
+		const hmColor = customBadgesColor [4];
+
 		let fontsToGenerate = [];
+		let fontData = [];
 
-		const prototypoTemplates = this.props.templateInfos && this.props.templateInfos.map((template) => {
+		this.props.templateInfos && this.props.templateInfos.map((template) => {
 			if (this.state.isBaseValueLoaded) {
 				fontsToGenerate.push(
 					{
@@ -175,40 +209,20 @@ class FamilyList extends React.PureComponent {
 						values: this.state[template.templateName],
 					}
 				);
-			}
-			return (
-				<TemplateItem
-					key={template.templateName}
-					template={template}
-				/>
-			)
-		})
-		const userProjects = this.props.userProjects.map((family) => {
-			const templateInfo = this.props.templateInfos.find(template => template.templateName === family.template) || {name: 'Undefined'};
-			console.log(templateInfo)
-			if (this.state.isBaseValueLoaded){
-				fontsToGenerate.push(
-					{
-						name: `user${family.id}`,
-						template: templateInfo.templateName,
-						subset: 'Hamburgefonstiv 123',
-						values: {
-							...this.state[templateInfo.templateName],
-							...family.variants[0].values
-						},
-					}
-				);
-			}
-			return (
-				<FamilyItem
-					key={family.id}
-					family={family}
-					template={templateInfo}
-				/>
-			);
+				fontData.push({
+					template: template.name,
+					name: template.name,
+					tags: [template.provider, 'template'],
+					designer: template.provider,
+					type: 'Template',
+					elem: (<TemplateItem
+						key={template.templateName}
+						template={template}
+					/>)
+				})
+			};
 		});
-
-		const uniquePresets = this.props.presets && this.props.presets.filter(preset => {			
+		this.props.presets && this.props.presets.filter(preset => {			
 			return (
 				preset.variant.family.name !== 'Spectral'
 				&& preset.variant.family.name !== 'Elzevir'
@@ -226,14 +240,80 @@ class FamilyList extends React.PureComponent {
 					values: preset.baseValues,
 				}
 			);
-			return (
-				<PresetItem
+			fontData.push({
+				template: templateInfo.name,				
+				type: 'Presets',
+				name: 'Preset',
+				designer: templateInfo.provider,
+				tags: [templateInfo.provider, 'preset'],
+				elem: (<PresetItem
 					key={preset.id}
 					preset={preset}
 					template={templateInfo}
-				/>
-			)
+					user={preset.ownerInitials}
+					background={preset.ownerInitials === 'LM' ? lmColor : hmColor}
+				/>)
+			})
 		}));
+		this.props.userProjects.map((family) => {
+			const templateInfo = this.props.templateInfos.find(template => template.templateName === family.template) || {name: 'Undefined'};
+			if (this.state.isBaseValueLoaded){
+				fontsToGenerate.push(
+					{
+						name: `user${family.id}`,
+						template: templateInfo.templateName,
+						subset: 'Hamburgefonstiv 123',
+						values: {
+							...this.state[templateInfo.templateName],
+							...family.variants[0].values
+						},
+					}
+				);
+				fontData.push({
+					template: templateInfo.name,
+					name:  family.name,
+					designer: templateInfo.provider,
+					tags: [templateInfo.provider, 'project', family.name],
+					type: 'Fonts',
+					elem: (<FamilyItem
+						key={family.id}
+						family={family}
+						template={templateInfo}
+						user={this.props.user}
+						background={userColor}
+					/>)
+				})
+			}
+		});
+		this.setState({
+			fontsToGenerate,
+			baseFontData: fontData,
+			fontsToDisplay: fontData,
+		});
+	}
+
+	filterFonts() {
+		console.log(this.state.activeFilters)
+		const { baseFontData } = this.state;
+		let fontsToDisplay = baseFontData;
+		Object.keys(this.state.activeFilters).forEach(filterBy => {
+			fontsToDisplay.filter(e => this.state.activeFilters[filterBy].includes(e[filterBy]));
+		});
+		this.setState({fontsToDisplay});
+	}
+	
+	componentWillReceiveProps(newProps) {
+		if (newProps.presets && newProps.presets.length > 1 && !this.state.isBaseValueLoaded) {
+			this.loadInitialValues();
+		}
+		if (newProps.activeFilters !== this.state.activeFilters) {
+			this.setState({activeFilters: newProps.activeFilters});
+			this.filterFonts();
+		}
+	}
+
+	render() {
+		
 
 		return (
 			<ScrollArea
@@ -243,10 +323,8 @@ class FamilyList extends React.PureComponent {
 				style={{overflowX: 'visible'}}
 			>
 				<div className="library-family-list">
-					{prototypoTemplates}
-					{uniquePresets}
-					{userProjects}
-					<FontUpdater extraFonts={fontsToGenerate} />
+					{this.state.fontsToDisplay && this.state.fontsToDisplay.map(font => font.elem)}
+					<FontUpdater extraFonts={this.state.fontsToGenerate} />
 				</div>
 			</ScrollArea>			
 		)
@@ -287,8 +365,11 @@ class FamilyItem extends React.PureComponent {
 				</p>
 				<p className="library-item-preview" style={{fontFamily: `user${this.props.family.id}`}}>Hamburgefonstiv 123</p>
 				<div
-						className={`provider provider-${this.props.template.provider}`}
-				/>
+						className={`provider provider-custom`}
+						style={{backgroundColor: this.props.background}}
+				>
+					{this.props.user.firstName && this.props.user.firstName.charAt(0)}{this.props.user.lastName && this.props.user.lastName.charAt(0)}
+				</div>
 			</div>
 		)
 	}
@@ -307,8 +388,11 @@ class PresetItem extends React.PureComponent {
 				</p>
 				<p className="library-item-preview" style={{fontFamily: `preset${this.props.preset.id}`}}>Hamburgefonstiv 123</p>
 				<div
-						className={`provider provider-${this.props.template.provider}`}
-				/>
+						className={`provider provider-custom`}
+						style={{backgroundColor: this.props.background}}
+				>
+					{this.props.user}
+				</div>
 			</div>
 		)
 	}
