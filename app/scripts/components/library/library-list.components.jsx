@@ -140,7 +140,7 @@ class FamilyList extends React.PureComponent {
 		super(props);
 		this.state = {
 			isBaseValueLoaded: false,
-			activeFilters: {}
+			libraryFilters: {}
 		}
 		this.loadInitialValues = this.loadInitialValues.bind(this);
 		this.generateFonts = this.generateFonts.bind(this);
@@ -244,7 +244,7 @@ class FamilyList extends React.PureComponent {
 				template: templateInfo.name,				
 				type: 'Presets',
 				name: 'Preset',
-				designer: templateInfo.provider,
+				designer: preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM' ? 'Prototypo' : '',
 				tags: [templateInfo.provider, 'preset'],
 				elem: (<PresetItem
 					key={preset.id}
@@ -272,7 +272,7 @@ class FamilyList extends React.PureComponent {
 				fontData.push({
 					template: templateInfo.name,
 					name:  family.name,
-					designer: templateInfo.provider,
+					designer: '',
 					tags: [templateInfo.provider, 'project', family.name],
 					type: 'Fonts',
 					elem: (<FamilyItem
@@ -292,23 +292,25 @@ class FamilyList extends React.PureComponent {
 		});
 	}
 
-	filterFonts() {
-		console.log(this.state.activeFilters)
+	filterFonts(libraryFilters) {
 		const { baseFontData } = this.state;
 		let fontsToDisplay = baseFontData;
-		Object.keys(this.state.activeFilters).forEach(filterBy => {
-			fontsToDisplay.filter(e => this.state.activeFilters[filterBy].includes(e[filterBy]));
+		Object.keys(libraryFilters).forEach(filterBy => {
+			fontsToDisplay = fontsToDisplay.filter(e => {
+				return  libraryFilters[filterBy] === 'All' || libraryFilters[filterBy].toLowerCase().includes(e[filterBy].toLowerCase())
+			});
 		});
 		this.setState({fontsToDisplay});
 	}
 	
 	componentWillReceiveProps(newProps) {
+		console.log((newProps.libraryFilters !== this.state.libraryFilters))
 		if (newProps.presets && newProps.presets.length > 1 && !this.state.isBaseValueLoaded) {
 			this.loadInitialValues();
 		}
-		if (newProps.activeFilters !== this.state.activeFilters) {
-			this.setState({activeFilters: newProps.activeFilters});
-			this.filterFonts();
+		if (newProps.libraryFilters !== this.state.libraryFilters) {
+			this.setState({libraryFilters: newProps.libraryFilters});
+			this.filterFonts(newProps.libraryFilters);
 		}
 	}
 
