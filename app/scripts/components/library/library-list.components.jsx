@@ -78,7 +78,7 @@ export class TemplateItem extends React.PureComponent {
 				<p className="library-item-name">
 					{this.props.template.name}
 				</p>
-				<p className="library-item-preview" style={{fontFamily: `template${(this.props.template.templateName).split('.').join("")}`}}>Hamburgefonstiv 123</p>
+				<p className="library-item-preview" style={{fontFamily: `template${(this.props.template.template).split('.').join("")}`}}>Hamburgefonstiv 123</p>
 				<div
 						className={`provider provider-${this.props.template.provider}`}
 				/>

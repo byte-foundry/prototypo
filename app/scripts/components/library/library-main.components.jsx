@@ -104,7 +104,8 @@ class LibraryMain extends React.PureComponent {
 					}
 				);
 				fontData.push({
-					template: template.name,
+					template: template.templateName,
+					templateName: template.name,
 					name: template.name,
 					tags: [template.provider, 'template'],
 					designer: template.provider,
@@ -136,7 +137,8 @@ class LibraryMain extends React.PureComponent {
 				}
 			);
 			fontData.push({
-				template: templateInfo.name,				
+				template: templateInfo.templateName,
+				templateName: templateInfo.name,				
 				type: 'Presets',
 				name: 'Preset',
 				designer: preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM' ? 'Prototypo' : '',
@@ -166,7 +168,8 @@ class LibraryMain extends React.PureComponent {
 					}
 				);
 				fontData.push({
-					template: templateInfo.name,
+					template: templateInfo.templateName,
+					templateName: templateInfo.name,
 					name:  family.name,
 					designer: '',
 					tags: [templateInfo.provider, 'project', family.name],

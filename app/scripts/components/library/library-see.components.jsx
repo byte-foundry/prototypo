@@ -2,6 +2,7 @@ import React from 'react';
 import pleaseWait from 'please-wait';
 import { LibrarySidebarRight, FamilySidebarActions } from './library-sidebars.components';
 import FontUpdater from "../font-updater.components";
+import LocalClient from '../../stores/local-client.stores';
 
 export default class LibrarySee extends React.PureComponent {
 	constructor(props) {
@@ -65,6 +66,18 @@ export class VariantItem extends React.PureComponent {
 		this.state = {
 			isOpen: false,
 		}
+		this.open = this.open.bind(this);
+	}
+
+	componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+
+	open() {
+		this.client.dispatchAction('/select-variant', {
+			selectedVariant: this.props.variant,
+			family: this.props.family,
+		});
 	}
 
 	render() {
@@ -84,6 +97,9 @@ export class VariantItem extends React.PureComponent {
 					<div className="library-item-variant-actions-group">
 						<div className="library-item-variant-actions-group-title">
 							Actions
+						</div>
+						<div className="library-item-variant-action" onClick={() => {this.open();}}>
+							Open variant
 						</div>
 						<div className="library-item-variant-action">
 							Export variant
