@@ -1,16 +1,105 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
+import { LibrarySidebarRight, FamilySidebarActions } from './library-sidebars.components';
+import FontUpdater from "../font-updater.components";
 
 export default class LibrarySee extends React.PureComponent {
+	constructor(props) {
+		super(props)
+		const family = props.baseFontData.find(e => e.id === props.params.projectID);
+		if(!family) {props.history.push('/library/home')};
+		let fontsToGenerate = [];
+		family.variants.forEach(variant => {
+			const templateInfo = props.templateInfos.find(template => template.templateName === family.template) || {name: 'Undefined'};
+			fontsToGenerate.push(
+				{
+					name: `variant${variant.id}`,
+					template: templateInfo.templateName,
+					subset: 'Hamburgefonstiv 123',
+					values: {
+						...props.templateValues[templateInfo.templateName],
+						...variant.values
+					},
+				}
+			);
+		})
+		this.state = {
+			family,
+			fontsToGenerate
+		}
+	}
 	componentWillMount() {
 		pleaseWait.instance.finish();
 	}
 
 	render() {
-		return (
-			<div className="library-see">
-				I'm not ready yet!
+		return (			
+			<div className="library-content-wrapper">
+				<div className="library-see">
+					<div className="library-see-title">
+						{this.state.family.name} family
+						<div
+							className={`provider provider-custom`}
+							style={{backgroundColor: this.state.family.background}}
+						>
+							{this.state.family.user.firstName && this.state.family.user.firstName.charAt(0)}
+							{this.state.family.user.lastName && this.state.family.user.lastName.charAt(0)}
+						</div>
+					</div>
+					<div className="library-see-variants">
+						{this.state.family && this.state.family.variants && this.state.family.variants.map(variant => (
+							<VariantItem key={`variantItem${variant.id}`} variant={variant} family={this.state.family} />
+						))}
+					</div>
+					<FontUpdater extraFonts={this.state.fontsToGenerate} />
+				</div>
+				<LibrarySidebarRight><FamilySidebarActions/></LibrarySidebarRight>
 			</div>
 		);
+	}
+}
+
+export class VariantItem extends React.PureComponent {
+	constructor(props) {
+		super(props);
+		this.state = {
+			isOpen: false,
+		}
+	}
+
+	render() {
+		return (
+			<div className="library-item">
+				<p className="library-item-name">
+					{this.props.family.name} {this.props.variant.name}
+				</p>
+				<p
+					className="library-item-preview" 
+					style={{fontFamily: `variant${this.props.variant.id}`}}
+					onClick={() => {this.setState({isOpen: !this.state.isOpen});}}
+				>
+					Hamburgefonstiv 123
+				</p>
+				<div className={`library-item-variant-actions ${this.state.isOpen ? 'opened' : ''}`}>
+					<div className="library-item-variant-actions-group">
+						<div className="library-item-variant-actions-group-title">
+							Actions
+						</div>
+						<div className="library-item-variant-action">
+							Export variant
+						</div>
+						<div className="library-item-variant-action">
+							Rename variant
+						</div>
+						<div className="library-item-variant-action">
+							Duplicate variant
+						</div>
+						<div className="library-item-variant-action">
+							Delete variant
+						</div>
+					</div>
+				</div>
+			</div>
+		)
 	}
 }
