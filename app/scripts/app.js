@@ -235,7 +235,7 @@ class AppRoutes extends React.PureComponent {
 								<IndexRoute component={LibraryReview} />
 							</Route>
 							<Route
-								path="project" component={LibraryMain} name="see" onEnter={redirectToLogin}>
+								path="project/:projectID" component={LibraryMain} name="see" onEnter={redirectToLogin}>
 								<IndexRoute component={LibrarySee} />
 							</Route>
 						</Route>

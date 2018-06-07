@@ -1,11 +1,20 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
+import { Link } from 'react-router';
 
 export class LibrarySidebarLeft extends React.PureComponent {
 	render() {
+		console.log(this.props)
 		return (
 			<div className="library-sidebar-left">
-				SidebarLeft
+				<div className="library-sidebar-action-dark">
+					New Project
+				</div>
+				<div className="library-links">
+					<Link to="/library/home" className={`library-link ${this.props.location.pathname === '/library/home' ? 'active' : ''}`}>
+						All
+					</Link>
+				</div>
 			</div>
 		);
 	}
@@ -15,13 +24,34 @@ export class LibrarySidebarRight extends React.PureComponent {
 	render() {
 		return (
 			<div className="library-sidebar-right">
-				<SidebarFilters setActiveFilters={this.props.setActiveFilters}/>
+				{this.props.children}
 			</div>
 		);
 	}
 }
 
-class SidebarFilters extends React.PureComponent {
+export class FamilySidebarActions extends React.PureComponent {
+	constructor(props) {
+		super(props);
+	}
+	render() {
+		return (
+			<div className="sidebar-actions-family">
+				<div className="sidebar-action">
+					Export family
+				</div>
+				<div className="sidebar-action">
+					Family settings
+				</div>
+				<div className="sidebar-action">
+					Add new Variant
+				</div>
+			</div>
+		)
+	}
+}
+
+export class SidebarFilters extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
