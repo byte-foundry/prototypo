@@ -94,13 +94,13 @@ class EditNodeProperties extends React.Component {
 						({formatDifference(Math.round(node.y - node.yBase))})
 					</p>
 					<h4>Expand props</h4>
-					<p><span>Width</span><input type="number" name="width" onChange={this.handleInput} value={node.expand.width} />
+					<p><span>Width</span><input type="number" name="width" onChange={this.handleInput} value={node.expand.width.toFixed(0)} />
 						({formatDifference((node.expand.width - node.expand.baseWidth).toFixed(0))})
 					</p>
 					<p><span>Angle</span><input type="number" name="angle" onChange={this.handleInput} value={((node.expand.angle / Math.PI) * 180).toFixed(0)} min={-180} max={180} />
 						({formatDifference((((node.expand.angle - node.expand.baseAngle) / Math.PI) * 180).toFixed(0))})
 					</p>
-					<p><span>Distr</span><input type="number" name="distr" onChange={this.handleInput} value={node.expand.distr} min={0} max={1} step={0.1} />
+					<p><span>Distr</span><input type="number" name="distr" onChange={this.handleInput} value={node.expand.distr.toFixed(1)} min={0} max={1} step={0.1} />
 						({formatDifference((node.expand.distr - node.expand.baseDistr).toFixed(2))})
 					</p>
 				</div>
