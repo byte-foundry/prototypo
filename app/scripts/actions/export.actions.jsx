@@ -163,6 +163,56 @@ export default {
 			localClient.dispatchAction('/end-export-otf');
 		}
 	},
+	'/export-otf-from-library': async ({
+		merged = true, familyName = 'font', variantName = 'regular' , values, template, glyphs,
+	}) => {
+		const exporting = prototypoStore.get('export');
+
+		if (exporting) {
+			return;
+		}
+
+		const plan = HoodieApi.instance.plan;
+		const credits = prototypoStore.get('credits');
+
+		// forbid export without plan
+		if (!exportAuthorized(plan, credits)) {
+			return;
+		}
+
+		localClient.dispatchAction('/exporting', {exporting: true});
+
+		exportingError = setTimeout(() => {
+			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
+		}, 10000);
+
+		let family = familyName.replace(/\s/g, '-');
+		let style = variantName.replace(/\s/g, '-');
+
+		const name = {
+			family,
+			style: `${style.toLowerCase()}`,
+		};
+
+		const fontMediatorInstance = FontMediator.instance();
+		const subset = Object.keys(glyphs).filter(key => glyphs[key][0].unicode !== undefined);
+
+		try {
+			const buffer = await fontMediatorInstance.getFontFile(
+				name,
+				template,
+				{...values},
+				subset,
+			);
+
+			triggerDownload(buffer, `${name.family} ${name.style}.otf`);
+			localClient.dispatchAction('/exporting', {exporting: false});
+			localClient.dispatchAction('/end-export-otf');
+		}
+		catch (e) {
+			localClient.dispatchAction('/end-export-otf');
+		}
+	},
 	'/end-export-otf': () => {
 		localClient.dispatchAction('/store-value-font', {exportPlease: false});
 		localClient.dispatchAction('/store-value', {uiOnboardstep: 'end'});

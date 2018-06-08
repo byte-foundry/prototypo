@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {graphql} from 'react-apollo';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
+import { withRouter } from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores';
 
@@ -281,7 +282,7 @@ class ArianneThread extends React.PureComponent {
 
 		return (
 			<div className="arianne-thread">
-				<RootArianneItem click={this.showCollection} />
+				<RootArianneItem click={() => {this.props.router.push('/library/home');}} />
 				{familyItem}
 				{variantItem}
 				{group}
@@ -311,7 +312,7 @@ export default graphql(libraryQuery, {
 			families: data.user.library,
 		};
 	},
-})(ArianneThread);
+})(withRouter(ArianneThread));
 
 class RootArianneItem extends React.Component {
 	render() {

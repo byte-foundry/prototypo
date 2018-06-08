@@ -1,11 +1,12 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
-import {graphql, gql, compose} from 'react-apollo';
+import { graphql, gql, compose } from 'react-apollo';
 import Lifespan from 'lifespan';
 import LocalClient from '../../stores/local-client.stores';
+import _forOwn from 'lodash/forOwn';
 
-import {LibrarySidebarLeft } from './library-sidebars.components';
-import {TemplateItem, PresetItem, FamilyItem } from './library-list.components';
+import { LibrarySidebarLeft } from './library-sidebars.components';
+import { TemplateItem, PresetItem, FamilyItem } from './library-list.components';
 
 class LibraryMain extends React.PureComponent {
 	constructor(props) {
@@ -35,33 +36,68 @@ class LibraryMain extends React.PureComponent {
 	}
 
 	setActiveFilters(filters) {
-		this.setState({activeFilters: filters});
-		this.filterFonts(filters);		
+		this.setState({ activeFilters: filters });
+		this.filterFonts(filters);
 	}
 
 	async loadInitialValues() {
 		const typedataAntique = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/antique.ptf/font.json`);
 		const antiqueInitValues = {};
+		const antiqueGlyphs = {};
+		_forOwn(typedataAntique.glyphs, (glyph) => {
+			if (!antiqueGlyphs[glyph.unicode]) {
+				antiqueGlyphs[glyph.unicode] = [];
+			}
+			antiqueGlyphs[glyph.unicode].push(glyph);
+		});
 		typedataAntique.controls.forEach(group => group.parameters.forEach((param) => {
 			antiqueInitValues[param.name] = param.init;
 		}));
 		const typedataElzevir = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/elzevir.ptf/font.json`);
 		const elzevirInitValues = {};
+		const elzevirGlyphs = {};
+		_forOwn(typedataElzevir.glyphs, (glyph) => {
+			if (!elzevirGlyphs[glyph.unicode]) {
+				elzevirGlyphs[glyph.unicode] = [];
+			}
+			elzevirGlyphs[glyph.unicode].push(glyph);
+		});
 		typedataElzevir.controls.forEach(group => group.parameters.forEach((param) => {
 			elzevirInitValues[param.name] = param.init;
 		}));
 		const typedataSpectral = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/gfnt.ptf/font.json`);
 		const spectralInitValues = {};
+		const spectralGlyphs = {};
+		_forOwn(typedataSpectral.glyphs, (glyph) => {
+			if (!spectralGlyphs[glyph.unicode]) {
+				spectralGlyphs[glyph.unicode] = [];
+			}
+			spectralGlyphs[glyph.unicode].push(glyph);
+		});
 		typedataSpectral.controls.forEach(group => group.parameters.forEach((param) => {
 			spectralInitValues[param.name] = param.init;
 		}));
 		const typedataFell = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/john-fell.ptf/font.json`);
 		const fellInitValues = {};
+		const fellGlyphs = {};
+		_forOwn(typedataFell.glyphs, (glyph) => {
+			if (!fellGlyphs[glyph.unicode]) {
+				fellGlyphs[glyph.unicode] = [];
+			}
+			fellGlyphs[glyph.unicode].push(glyph);
+		});
 		typedataFell.controls.forEach(group => group.parameters.forEach((param) => {
 			fellInitValues[param.name] = param.init;
 		}));
 		const typedataVenus = await import(/* webpackChunkName: "ptfs" */`../../../../dist/templates/venus.ptf/font.json`);
 		const venusInitValues = {};
+		const venusGlyphs = {};
+		_forOwn(typedataVenus.glyphs, (glyph) => {
+			if (!venusGlyphs[glyph.unicode]) {
+				venusGlyphs[glyph.unicode] = [];
+			}
+			venusGlyphs[glyph.unicode].push(glyph);
+		});
 		typedataVenus.controls.forEach(group => group.parameters.forEach((param) => {
 			venusInitValues[param.name] = param.init;
 		}));
@@ -72,6 +108,13 @@ class LibraryMain extends React.PureComponent {
 				'gfnt.ptf': spectralInitValues,
 				'john-fell.ptf': fellInitValues,
 				'venus.ptf': venusInitValues
+			},
+			templateGlyphs: {
+				'antique.ptf': antiqueGlyphs,
+				'elzevir.ptf': elzevirGlyphs,
+				'gfnt.ptf': spectralGlyphs,
+				'john-fell.ptf': fellGlyphs,
+				'venus.ptf': venusGlyphs
 			},
 			isBaseValueLoaded: true,
 		});
@@ -88,7 +131,7 @@ class LibraryMain extends React.PureComponent {
 		]
 		const userColor = customBadgesColor[0];
 		const lmColor = customBadgesColor[1];
-		const hmColor = customBadgesColor [4];
+		const hmColor = customBadgesColor[4];
 
 		let fontsToGenerate = [];
 		let fontData = [];
@@ -108,6 +151,7 @@ class LibraryMain extends React.PureComponent {
 					templateName: template.name,
 					name: template.name,
 					tags: [template.provider, 'template'],
+					glyphs: this.state.templateGlyphs[template.templateName],
 					designer: template.provider,
 					id: template.id,
 					type: 'Template',
@@ -118,7 +162,7 @@ class LibraryMain extends React.PureComponent {
 				})
 			};
 		});
-		this.props.presets && this.props.presets.filter(preset => {			
+		this.props.presets && this.props.presets.filter(preset => {
 			return (
 				preset.variant.family.name !== 'Spectral'
 				&& preset.variant.family.name !== 'Elzevir'
@@ -127,7 +171,7 @@ class LibraryMain extends React.PureComponent {
 				&& preset.variant.family.name !== 'Antique'
 			);
 		}).map((preset => {
-			const templateInfo = this.state.templateInfos.find(template => preset.template === template.templateName) || {name: 'Undefined'};
+			const templateInfo = this.state.templateInfos.find(template => preset.template === template.templateName) || { name: 'Undefined' };
 			fontsToGenerate.push(
 				{
 					name: `preset${preset.id}`,
@@ -138,11 +182,12 @@ class LibraryMain extends React.PureComponent {
 			);
 			fontData.push({
 				template: templateInfo.templateName,
-				templateName: templateInfo.name,				
+				templateName: templateInfo.name,
 				type: 'Presets',
 				name: 'Preset',
 				designer: preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM' ? 'Prototypo' : '',
 				tags: [templateInfo.provider, 'preset'],
+				glyphs: this.state.templateGlyphs[templateInfo.templateName],
 				id: preset.id,
 				elem: (<PresetItem
 					key={preset.id}
@@ -154,8 +199,8 @@ class LibraryMain extends React.PureComponent {
 			})
 		}));
 		this.props.families.map((family) => {
-			const templateInfo = this.state.templateInfos.find(template => template.templateName === family.template) || {name: 'Undefined'};
-			if (this.state.isBaseValueLoaded){
+			const templateInfo = this.state.templateInfos.find(template => template.templateName === family.template) || { name: 'Undefined' };
+			if (this.state.isBaseValueLoaded) {
 				fontsToGenerate.push(
 					{
 						name: `user${family.id}`,
@@ -170,19 +215,20 @@ class LibraryMain extends React.PureComponent {
 				fontData.push({
 					template: templateInfo.templateName,
 					templateName: templateInfo.name,
-					name:  family.name,
+					name: family.name,
 					designer: '',
+					glyphs: this.state.templateGlyphs[templateInfo.templateName],
 					tags: [templateInfo.provider, 'project', family.name],
 					type: 'Fonts',
 					variants: family.variants,
 					id: family.id,
-					user: {firstName: this.props.firstName, lastName: this.props.lastName},
+					user: { firstName: this.props.firstName, lastName: this.props.lastName },
 					background: userColor,
 					elem: (<FamilyItem
 						key={family.id}
 						family={family}
 						template={templateInfo}
-						user={{firstName: this.props.firstName, lastName: this.props.lastName}}
+						user={{ firstName: this.props.firstName, lastName: this.props.lastName }}
 						background={userColor}
 					/>)
 				})
@@ -200,10 +246,10 @@ class LibraryMain extends React.PureComponent {
 		let fontsToDisplay = baseFontData;
 		Object.keys(libraryFilters).forEach(filterBy => {
 			fontsToDisplay = fontsToDisplay.filter(e => {
-				return  libraryFilters[filterBy] === 'All' || libraryFilters[filterBy].toLowerCase().includes(e[filterBy].toLowerCase())
+				return libraryFilters[filterBy] === 'All' || libraryFilters[filterBy].toLowerCase().includes(e[filterBy].toLowerCase())
 			});
 		});
-		this.setState({fontsToDisplay});
+		this.setState({ fontsToDisplay });
 	}
 
 	componentWillReceiveProps(newProps) {
@@ -215,8 +261,8 @@ class LibraryMain extends React.PureComponent {
 	render() {
 		return (
 			<div className="library-main">
-				<LibrarySidebarLeft location={this.props.location}/>
-				{React.cloneElement(this.props.children, { baseFontData: this.state.baseFontData, templateValues: this.state.templateValues, templateInfos: this.state.templateInfos, fontsToGenerate: this.state.fontsToGenerate, fontsToDisplay: this.state.fontsToDisplay, setActiveFilters: this.setActiveFilters})}
+				<LibrarySidebarLeft location={this.props.location} />
+				{React.cloneElement(this.props.children, { baseFontData: this.state.baseFontData, templateValues: this.state.templateValues, templateInfos: this.state.templateInfos, fontsToGenerate: this.state.fontsToGenerate, fontsToDisplay: this.state.fontsToDisplay, setActiveFilters: this.setActiveFilters })}
 			</div>
 		);
 	}
@@ -263,9 +309,9 @@ export default compose(
 		options: {
 			fetchPolicy: 'network-only',
 		},
-		props: ({data}) => {
+		props: ({ data }) => {
 			if (data.loading) {
-				return {loading: true};
+				return { loading: true };
 			}
 
 			if (data.user) {
@@ -275,18 +321,18 @@ export default compose(
 				};
 			}
 
-			return {refetch: data.refetch};
+			return { refetch: data.refetch };
 		},
 	}),
 	graphql(getNameQuery, {
 		options: {
 			fetchPolicy: 'cache-first',
 		},
-		props: ({data}) => {
+		props: ({ data }) => {
 			if (data.loading) {
-				return {loading: true, firstName: '', lastName: '',};
+				return { loading: true, firstName: '', lastName: '', };
 			}
-	
+
 			return data.user;
 		},
 	}),
@@ -294,9 +340,9 @@ export default compose(
 		options: {
 			fetchPolicy: 'network-only',
 		},
-		props: ({data}) => {
+		props: ({ data }) => {
 			if (data.loading) {
-				return {loading: true};
+				return { loading: true };
 			}
 
 			if (data.getAllUniquePresets) {
