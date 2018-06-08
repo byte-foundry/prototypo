@@ -4,7 +4,6 @@ import { Link } from 'react-router';
 
 export class LibrarySidebarLeft extends React.PureComponent {
 	render() {
-		console.log(this.props)
 		return (
 			<div className="library-sidebar-left">
 				<div className="library-sidebar-action-dark">

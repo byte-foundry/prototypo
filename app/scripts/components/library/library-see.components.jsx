@@ -28,6 +28,10 @@ export default class LibrarySee extends React.PureComponent {
 			family,
 			fontsToGenerate
 		}
+		this.goToDashboard = this.goToDashboard.bind(this);
+	}
+	goToDashboard() {
+		this.props.history.push('/dashboard');
 	}
 	componentWillMount() {
 		pleaseWait.instance.finish();
@@ -48,8 +52,14 @@ export default class LibrarySee extends React.PureComponent {
 						</div>
 					</div>
 					<div className="library-see-variants">
-						{this.state.family && this.state.family.variants && this.state.family.variants.map(variant => (
-							<VariantItem key={`variantItem${variant.id}`} variant={variant} family={this.state.family} />
+						{this.state.family && this.state.family.variants && this.state.family.variants.map((variant, index) => (
+							<VariantItem
+								key={`variantItem${variant.id}`}
+								variant={variant} family={this.state.family}
+								goToDashboard={this.goToDashboard}
+								values={this.state.fontsToGenerate[index].values}
+								template={this.state.fontsToGenerate[index].template}
+							/>
 						))}
 					</div>
 					<FontUpdater extraFonts={this.state.fontsToGenerate} />
@@ -67,6 +77,7 @@ export class VariantItem extends React.PureComponent {
 			isOpen: false,
 		}
 		this.open = this.open.bind(this);
+		this.export = this.export.bind(this);
 	}
 
 	componentWillMount() {
@@ -78,9 +89,24 @@ export class VariantItem extends React.PureComponent {
 			selectedVariant: this.props.variant,
 			family: this.props.family,
 		});
+		this.props.goToDashboard();
+	}
+
+	export() {
+		console.log(this.props.family)
+		this.client.dispatchAction('/export-otf-from-library', {
+			merged: true,
+			familyName: this.props.family.name,
+			variantName: this.props.variant.name,
+			exportAs: false,
+			values: this.props.values,
+			template: this.props.template,
+			glyphs: this.props.family.glyphs,
+		});
 	}
 
 	render() {
+		console.log(this.props.family)
 		return (
 			<div className="library-item">
 				<p className="library-item-name">
@@ -101,7 +127,7 @@ export class VariantItem extends React.PureComponent {
 						<div className="library-item-variant-action" onClick={() => {this.open();}}>
 							Open variant
 						</div>
-						<div className="library-item-variant-action">
+						<div className="library-item-variant-action" onClick={() => {this.export();}}>
 							Export variant
 						</div>
 						<div className="library-item-variant-action">
