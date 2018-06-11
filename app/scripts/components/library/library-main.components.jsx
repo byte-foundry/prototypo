@@ -20,6 +20,8 @@ class LibraryMain extends React.PureComponent {
 		this.generateFonts = this.generateFonts.bind(this);
 		this.filterFonts = this.filterFonts.bind(this);
 		this.export = this.export.bind(this);
+		this.goToDashboard = this.goToDashboard.bind(this);
+		this.open = this.open.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -34,6 +36,18 @@ class LibraryMain extends React.PureComponent {
 
 	componentWillUnmount() {
 		this.lifespan.release();
+	}
+
+	goToDashboard() {
+		this.props.history.push('/dashboard');
+	}
+
+	open(variant, family) {
+		this.client.dispatchAction('/select-variant', {
+			selectedVariant: variant,
+			family,
+		});
+		this.goToDashboard();
 	}
 
 	export(familyName, variantName = 'Regular', values, template, glyphs) {
@@ -222,6 +236,7 @@ class LibraryMain extends React.PureComponent {
 		this.props.families.map((family) => {
 			const templateInfo = this.state.templateInfos.find(template => template.templateName === family.template) || { name: 'Undefined' };
 			if (this.state.isBaseValueLoaded) {
+				const variantToLoad = family.variants.find(e => e.name.toLowerCase() === 'regular') || family.variants[0]
 				fontsToGenerate.push(
 					{
 						name: `user${family.id}`,
@@ -229,7 +244,7 @@ class LibraryMain extends React.PureComponent {
 						subset: 'Hamburgefonstiv 123',
 						values: {
 							...this.state.templateValues[templateInfo.templateName],
-							...family.variants[0].values
+							...variantToLoad.values
 						},
 					}
 				);
@@ -252,6 +267,8 @@ class LibraryMain extends React.PureComponent {
 						user={{ firstName: this.props.firstName, lastName: this.props.lastName }}
 						background={userColor}
 						history={this.props.history}
+						variantToLoad={variantToLoad}						
+						open={this.open}
 					/>)
 				})
 			}
