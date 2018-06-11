@@ -49,6 +49,7 @@ class FamilyList extends React.PureComponent {
 		super(props);
 		this.state = {}		
 	}
+	
 
 	render() {
 		return (
@@ -69,7 +70,10 @@ class FamilyList extends React.PureComponent {
 
 export class TemplateItem extends React.PureComponent {
 	constructor(props) {
-		super(props)		
+		super(props)	
+		this.state = {
+			isOpen: false,
+		}	
 	}
 
 	render() {
@@ -78,10 +82,24 @@ export class TemplateItem extends React.PureComponent {
 				<p className="library-item-name">
 					{this.props.template.name}
 				</p>
-				<p className="library-item-preview" style={{fontFamily: `template${(this.props.template.templateName).split('.').join("")}`}}>Hamburgefonstiv 123</p>
+				<p
+					className="library-item-preview"
+					style={{fontFamily: `template${(this.props.template.templateName).split('.').join("")}`}}					
+					onClick={() => {this.setState({isOpen: !this.state.isOpen});}}	
+				>
+					Hamburgefonstiv 123
+				</p>
 				<div
 						className={`provider provider-${this.props.template.provider}`}
 				/>
+				<div className={`library-item-actions ${this.state.isOpen ? 'opened' : ''}`}>
+					<div className="library-item-action">
+						Edit
+					</div>
+					<div className="library-item-action" onClick={() => {this.props.export(this.props.template.name, 'regular', this.props.values, this.props.template.templateName, this.props.glyphs)}}>
+						Download
+					</div>
+				</div>
 				
 			</div>
 		)
@@ -137,20 +155,38 @@ export class FamilyItem extends React.PureComponent {
 export class PresetItem extends React.PureComponent {
 	constructor(props) {
 		super(props);
+		this.state = {
+			isOpen: false,
+		}
+		console.log(props)
 	}
 
 	render() {
 		return (			
 			<div className="library-item">
 				<p className="library-item-name">
-					Preset from {this.props.template.name}
+				{this.props.name} from {this.props.template.name}
 				</p>
-				<p className="library-item-preview" style={{fontFamily: `preset${this.props.preset.id}`}}>Hamburgefonstiv 123</p>
+				<p
+					className="library-item-preview"
+					style={{fontFamily: `preset${this.props.preset.id}`}}					
+					onClick={() => {this.setState({isOpen: !this.state.isOpen});}}
+				>
+					Hamburgefonstiv 123
+				</p>
 				<div
 						className={`provider provider-custom`}
 						style={{backgroundColor: this.props.background}}
 				>
 					{this.props.user}
+				</div>
+				<div className={`library-item-actions ${this.state.isOpen ? 'opened' : ''}`}>
+					<div className="library-item-action">
+						Edit
+					</div>
+					<div className="library-item-action" onClick={() => {this.props.export(this.props.name, 'regular', this.props.values, this.props.template.templateName, this.props.glyphs)}}>
+						Download
+					</div>
 				</div>
 			</div>
 		)

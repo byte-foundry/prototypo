@@ -19,6 +19,7 @@ class LibraryMain extends React.PureComponent {
 		this.loadInitialValues = this.loadInitialValues.bind(this);
 		this.generateFonts = this.generateFonts.bind(this);
 		this.filterFonts = this.filterFonts.bind(this);
+		this.export = this.export.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -34,6 +35,19 @@ class LibraryMain extends React.PureComponent {
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
+
+	export(familyName, variantName = 'Regular', values, template, glyphs) {
+		this.client.dispatchAction('/export-otf-from-library', {
+			merged: true,
+			familyName,
+			variantName,
+			exportAs: false,
+			values,
+			template,
+			glyphs,
+		});
+	}
+
 
 	setActiveFilters(filters) {
 		this.setState({ activeFilters: filters });
@@ -157,7 +171,10 @@ class LibraryMain extends React.PureComponent {
 					type: 'Template',
 					elem: (<TemplateItem
 						key={template.templateName}
-						template={template}
+						template={template}						
+						glyphs={this.state.templateGlyphs[template.templateName]}
+						values={this.state.templateValues[template.templateName]}
+						export={this.export}					
 					/>)
 				})
 			};
@@ -184,7 +201,7 @@ class LibraryMain extends React.PureComponent {
 				template: templateInfo.templateName,
 				templateName: templateInfo.name,
 				type: 'Presets',
-				name: 'Preset',
+				name: preset.variant.family.name,
 				designer: preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM' ? 'Prototypo' : '',
 				tags: [templateInfo.provider, 'preset'],
 				glyphs: this.state.templateGlyphs[templateInfo.templateName],
@@ -194,7 +211,11 @@ class LibraryMain extends React.PureComponent {
 					preset={preset}
 					template={templateInfo}
 					user={preset.ownerInitials}
+					name={preset.variant.family.name}
 					background={preset.ownerInitials === 'LM' ? lmColor : hmColor}
+					glyphs={this.state.templateGlyphs[templateInfo.templateName]}
+					values={preset.baseValues}	
+					export={this.export}
 				/>)
 			})
 		}));
@@ -262,7 +283,14 @@ class LibraryMain extends React.PureComponent {
 		return (
 			<div className="library-main">
 				<LibrarySidebarLeft location={this.props.location} />
-				{React.cloneElement(this.props.children, { baseFontData: this.state.baseFontData, templateValues: this.state.templateValues, templateInfos: this.state.templateInfos, fontsToGenerate: this.state.fontsToGenerate, fontsToDisplay: this.state.fontsToDisplay, setActiveFilters: this.setActiveFilters })}
+				{React.cloneElement(this.props.children, {
+					baseFontData: this.state.baseFontData,
+					templateValues: this.state.templateValues,
+					templateInfos: this.state.templateInfos,
+					fontsToGenerate: this.state.fontsToGenerate,
+					fontsToDisplay: this.state.fontsToDisplay,
+					setActiveFilters: this.setActiveFilters
+				})}
 			</div>
 		);
 	}
