@@ -135,7 +135,7 @@ export class FamilyItem extends React.PureComponent {
 				</div>
 				
 				<div className={`library-item-actions ${this.state.isOpen ? 'opened' : ''}`}>
-					<div className="library-item-action">
+					<div className="library-item-action" onClick={() => {this.props.open(this.props.variantToLoad, this.props.family)}}>
 						Edit
 					</div>
 					<div className="library-item-action">
