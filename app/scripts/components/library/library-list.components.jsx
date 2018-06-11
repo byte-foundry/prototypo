@@ -78,7 +78,7 @@ export class TemplateItem extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="library-item">
+			<div className="library-item" tabIndex={0} onBlur={() => {this.setState({isOpen: false})}}>
 				<p className="library-item-name">
 					{this.props.template.name}
 				</p>
@@ -116,7 +116,7 @@ export class FamilyItem extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="library-item">
+			<div className="library-item" tabIndex={0} onBlur={() => {this.setState({isOpen: false})}}>
 				<p className="library-item-name">
 					{this.props.family.name} from {this.props.template.name}
 				</p>
@@ -141,11 +141,9 @@ export class FamilyItem extends React.PureComponent {
 					<div className="library-item-action">
 						Download
 					</div>
-					<Link to={`/library/project/${this.props.family.id}`}>
-						<div className="library-item-action">
-							Open family
-						</div>
-					</Link>
+					<div className="library-item-action" onMouseDown={() => {this.props.history.push(`/library/project/${this.props.family.id}`)}}>
+						Open family
+					</div>
 				</div>
 			</div>
 		)
@@ -163,7 +161,7 @@ export class PresetItem extends React.PureComponent {
 
 	render() {
 		return (			
-			<div className="library-item">
+			<div className="library-item" tabIndex={0} onBlur={() => {this.setState({isOpen: false})}}>
 				<p className="library-item-name">
 				{this.props.name} from {this.props.template.name}
 				</p>
