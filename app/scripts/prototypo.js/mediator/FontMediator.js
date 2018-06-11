@@ -220,7 +220,7 @@ export default class FontMediator {
 		if (!this.workerPool) {
 			return undefined;
 		}
-		const familyName = this.family.name;
+		const familyName = fontName.family;
 		const styleName = this.style.name || 'REGULAR';
 
 		return new Promise((resolve) => {
@@ -253,7 +253,7 @@ export default class FontMediator {
 						'fontinfo',
 						[id],
 						JSON.stringify({
-							template: this.template,
+							template,
 							family: familyName,
 							style: styleName,
 							date: new Date().getTime(),

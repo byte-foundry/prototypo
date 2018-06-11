@@ -196,7 +196,6 @@ export default {
 
 		const fontMediatorInstance = FontMediator.instance();
 		const subset = Object.keys(glyphs).filter(key => glyphs[key][0].unicode !== undefined);
-
 		try {
 			const buffer = await fontMediatorInstance.getFontFile(
 				name,
