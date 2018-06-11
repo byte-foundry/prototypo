@@ -251,6 +251,7 @@ class LibraryMain extends React.PureComponent {
 						template={templateInfo}
 						user={{ firstName: this.props.firstName, lastName: this.props.lastName }}
 						background={userColor}
+						history={this.props.history}
 					/>)
 				})
 			}
