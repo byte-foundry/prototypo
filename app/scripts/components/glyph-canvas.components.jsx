@@ -1499,6 +1499,8 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 					});
 				}
+
+				this.toile.drawRuler(width, height);
 			}
 
 			this.cleanUpFrame();

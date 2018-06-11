@@ -4,7 +4,7 @@ import _slice from 'lodash/slice';
 import _flatten from 'lodash/flatten';
 import _reduce from 'lodash/reduce';
 
-import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D} from '../prototypo.js/utils/linear';
+import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D, round2D} from '../prototypo.js/utils/linear';
 import {getIntersectionTValue, getPointOnCurve} from '../prototypo.js/utils/updateUtils';
 import DOM from '../helpers/dom.helpers';
 
@@ -250,6 +250,7 @@ export default class Toile {
 		// c is x on y influence
 		// tx is x translation
 		// ty is y translation
+		// [a, b, c, d, tx, ty]
 		this.viewMatrix = [1, 0, 0, -1, 0, 0];
 		this.interactionList = [];
 	}
@@ -1872,6 +1873,92 @@ export default class Toile {
 		}
 
 		return undefined;
+	}
+
+	drawRuler(width, height) {
+		const size = 15;
+		const backgroundColor = '#ccc';
+		const strokeColor = 'transparent';
+		const textColor = '#222';
+
+		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+		const [start, hEnd, vEnd, squareSize] = transformCoords([
+			{x: 0, y: 0},
+			{x: width, y: size},
+			{x: size, y: height},
+			{x: size, y: size},
+		], inverseMatrix, this.height / this.viewMatrix[0]);
+
+		const getMarkSize = (mark, interval) => {
+			if (mark % (interval * 5) === 0) {
+				return size;
+			}
+
+			return size / 3;
+		};
+
+		const interval = [1, 2, 5, 10, 20, 50, 100].find((scale) => {
+			return this.viewMatrix[0] * scale > 20;
+		}) || 100;
+
+		const roundedStartX = parseInt(start.x, 10);
+		const roundedStartY = parseInt(start.y, 10);
+		const startX = roundedStartX - (roundedStartX % interval);
+		const startY = roundedStartY - (roundedStartY % interval);
+		const margin = 2 / this.viewMatrix[0];
+		const sizeInWorld = size / this.viewMatrix[0];
+
+		this.drawRectangleFromCorners(start, hEnd, strokeColor, backgroundColor);
+		for (let i = startX; i < parseInt(hEnd.x, 10); i += interval) {
+			const [sizeVec, fullSizeVec] = transformCoords([
+				{x: 0, y: getMarkSize(i, interval)},
+				{x: 0, y: size},
+			], inverseMatrix, this.height / this.viewMatrix[0]);
+
+			// full bar needs text
+			if (fullSizeVec.y - sizeVec.y === 0) {
+				this.drawText(i, {x: i + margin, y: start.y - (sizeInWorld / 2) - margin}, 10, textColor);
+			}
+
+			this.drawLine(
+				{x: i, y: start.y + fullSizeVec.y - sizeVec.y},
+				{x: i, y: fullSizeVec.y},
+				textColor,
+			);
+		}
+
+		this.drawRectangleFromCorners(start, vEnd, strokeColor, backgroundColor);
+		for (let i = startY; i > parseInt(vEnd.y, 10); i -= interval) {
+			const [sizeVec, fullSizeVec] = transformCoords([
+				{x: getMarkSize(i, interval), y: 0},
+				{x: size, y: 0},
+			], inverseMatrix, this.height / this.viewMatrix[0]);
+
+			// full bar needs text
+			if (fullSizeVec.x - sizeVec.x === 0) {
+				this.context.save();
+
+				this.context.fillStyle = textColor;
+				const [co] = transformCoords([
+					{x: start.x + (sizeInWorld / 2) + margin, y: i + margin},
+				], this.viewMatrix, this.height);
+
+				this.context.translate(co.x, co.y);
+				this.context.rotate(-Math.PI / 2);
+				this.context.fillText(i, 0, 0);
+
+				this.context.restore();
+			}
+
+			this.drawLine(
+				{x: start.x + fullSizeVec.x - sizeVec.x, y: i},
+				{x: fullSizeVec.x, y: i},
+				textColor,
+			);
+		}
+
+		// little square to hide the junction
+		this.drawRectangleFromCorners(start, squareSize, strokeColor, backgroundColor);
 	}
 }
 /* eslint-enable no-param-reassign, no-bitwise */
