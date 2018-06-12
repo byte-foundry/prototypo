@@ -384,9 +384,6 @@ export default {
 			}
 
 			const currency = getCurrency(cardCountry);
-			if (plan.includes('monthly') && !coupon && !hasBeenSubscribing) {
-				coupon = `base_coupon_${currency}`;
-			}
 			const data = await HoodieApi.updateSubscription({
 				plan: `${plan}_${currency}_taxfree`,
 				coupon,

@@ -32,15 +32,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 		const plans = {
 			[monthlyConst.prefix]: {
 				header: 'Monthly',
-				title: hasBeenSubscribing
-					? <span>Try Prototypo Pro without commitment</span>
-					: <span>
-							Try Prototypo Pro subscription for
-						{' '}
-						<Price amount={1} country={country} />
-						{' '}
-							only
-       </span>,
+				title: <span>Try Prototypo Pro without commitment</span>,
 				features: [
 					'More diverse fonts with full range on all parameters',
 					'Perfectly customized with glyph individualization groups',
@@ -50,7 +42,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					<span>
 						<Price amount={monthlyConst.price * percentPrice} country={country} />
 						{' '}
-						{hasBeenSubscribing ? ' / month' : <span><br />after the first month</span>}
+						/ month
 					</span>
 				),
 				subcta: 'No commitment!',
