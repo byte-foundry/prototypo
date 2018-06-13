@@ -388,6 +388,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				this.setState({
 					canvasMode: head.toJS().d.canvasMode,
 					uiOutline: head.toJS().d.uiOutline,
+					uiRuler: head.toJS().d.uiRuler,
 				});
 			})
 			.onDelete(() => {
@@ -966,7 +967,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.DRAGGING_SPACING;
 							selectedItems = [spacingHandle[0]];
 						}
-						else /*if (guideHandle.length <= 0)*/ {
+						else {
 							selectedItems = [];
 							appStateValue = appState.BOX_SELECTING;
 							mouseBoxStart = mouse.pos;
@@ -1583,8 +1584,10 @@ export default class GlyphCanvas extends React.PureComponent {
 					});
 				}
 
-				this.toile.drawGuides(this.state.guides, guideHandle);
-				this.toile.drawRuler(width, height);
+				if (this.state.uiRuler) {
+					this.toile.drawGuides(this.state.guides, guideHandle);
+					this.toile.drawRuler(width, height);
+				}
 			}
 
 			this.cleanUpFrame();
