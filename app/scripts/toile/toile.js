@@ -31,6 +31,8 @@ export const toileType = {
 	COMPONENT_MENU_ITEM_CENTER: 14,
 	SPACING_HANDLE: 15,
 	PERF_RECT: 16,
+	GUIDE_HANDLE: 17,
+	RULER: 18,
 };
 
 export const canvasMode = {
@@ -70,6 +72,8 @@ export const appState = {
 	SPACING_SELECTED:	0b10000000000000000,
 	NOT_SELECTING:	0b100000000000000000,
 	INPUT_CHANGE: 0b1000000000000000000,
+	DRAGGING_GUIDE: 0b10000000000000000000,
+	GUIDE_SELECTED: 0b100000000000000000000,
 };
 
 const green = '#24d390';
@@ -1671,6 +1675,7 @@ export default class Toile {
 
 		this.interactionList.forEach((interactionItem) => {
 			switch (interactionItem.type) {
+			case toileType.GUIDE_HANDLE:
 			case toileType.SPACING_HANDLE: {
 				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 				const [mouseTransformed] = transformCoords(
@@ -1678,8 +1683,11 @@ export default class Toile {
 					inverseMatrix,
 					this.height / this.viewMatrix[0],
 				);
-				const {x} = interactionItem.data;
-				const distance = Math.abs(x - mouseTransformed.x);
+				const {x, y} = interactionItem.data;
+				let distance;
+
+				if (typeof x === 'number') distance = Math.abs(x - mouseTransformed.x);
+				else distance = Math.abs(y - mouseTransformed.y);
 
 				if (distance <= spacingInfluence / this.viewMatrix[0]) {
 					result.push(interactionItem);
@@ -1780,6 +1788,7 @@ export default class Toile {
 			}
 			case toileType.COMPONENT_MENU_ITEM:
 			case toileType.COMPONENT_MENU_ITEM_CLASS:
+			case toileType.RULER:
 			case toileType.PERF_RECT: {
 				const {rectStart, rectEnd} = interactionItem.data;
 				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
@@ -1792,8 +1801,13 @@ export default class Toile {
 				if (
 					mouseTransformed.x >= rectStart.x
 					&& mouseTransformed.x <= rectEnd.x
-					&& mouseTransformed.y >= rectStart.y
-					&& mouseTransformed.y <= rectEnd.y
+					&& ((
+						mouseTransformed.y >= rectStart.y
+						&& mouseTransformed.y <= rectEnd.y
+					) || (
+						mouseTransformed.y <= rectStart.y
+						&& mouseTransformed.y >= rectEnd.y
+					))
 				) {
 					result.push(interactionItem);
 				}
@@ -1875,10 +1889,38 @@ export default class Toile {
 		return undefined;
 	}
 
+	drawGuides(guides, hotItems) {
+		this.interactionList.push(...guides.map((guide) => {
+			const isHot = hotItems.some(item => item.id === guide.id);
+			const color = isHot ? 'red' : 'pink';
+
+			if (guide.x) {
+				this.drawLine(
+					{x: guide.x, y: -infinityDistance},
+					{x: guide.x, y: infinityDistance},
+					color,
+				);
+			}
+			else if (guide.y) {
+				this.drawLine(
+					{x: -infinityDistance, y: guide.y},
+					{x: infinityDistance, y: guide.y},
+					color,
+				);
+			}
+
+			return {
+				id: guide.id,
+				type: toileType.GUIDE_HANDLE,
+				data: guide,
+			};
+		}));
+	}
+
 	drawRuler(width, height) {
 		const size = 15;
-		const backgroundColor = '#ccc';
-		const strokeColor = 'transparent';
+		const backgroundColor = '#fff';
+		const strokeColor = '#222';
 		const textColor = '#222';
 
 		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
@@ -1908,6 +1950,7 @@ export default class Toile {
 		const margin = 2 / this.viewMatrix[0];
 		const sizeInWorld = size / this.viewMatrix[0];
 
+		// const horizontalRuler = hotItems.find(item => item.id === 'horizontalRuler') ? backgroundColor : '#f0f';
 		this.drawRectangleFromCorners(start, hEnd, strokeColor, backgroundColor);
 		for (let i = startX; i < parseInt(hEnd.x, 10); i += interval) {
 			const [sizeVec, fullSizeVec] = transformCoords([
@@ -1926,6 +1969,12 @@ export default class Toile {
 				textColor,
 			);
 		}
+
+		this.interactionList.push({
+			id: 'horizontalRuler',
+			type: toileType.RULER,
+			data: {rectStart: start, rectEnd: hEnd},
+		});
 
 		this.drawRectangleFromCorners(start, vEnd, strokeColor, backgroundColor);
 		for (let i = startY; i > parseInt(vEnd.y, 10); i -= interval) {
@@ -1956,6 +2005,12 @@ export default class Toile {
 				textColor,
 			);
 		}
+
+		this.interactionList.push({
+			id: 'verticalRuler',
+			type: toileType.RULER,
+			data: {rectStart: start, rectEnd: vEnd},
+		});
 
 		// little square to hide the junction
 		this.drawRectangleFromCorners(start, squareSize, strokeColor, backgroundColor);
