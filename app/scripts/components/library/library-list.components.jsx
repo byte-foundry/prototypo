@@ -156,7 +156,6 @@ export class PresetItem extends React.PureComponent {
 		this.state = {
 			isOpen: false,
 		}
-		console.log(props)
 	}
 
 	render() {

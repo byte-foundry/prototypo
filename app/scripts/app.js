@@ -11,6 +11,7 @@ import LibraryList from './components/library/library-list.components';
 import LibraryCreate from './components/library/library-create.components';
 import LibraryReview from './components/library/library-review.components';
 import LibraryHosting from './components/library/library-hosting.components';
+import LibraryDetails from './components/library/library-details.components';
 import LibrarySee from './components/library/library-see.components';
 
 import OnboardingApp from './components/onboarding/onboarding-app.components';
@@ -237,6 +238,7 @@ class AppRoutes extends React.PureComponent {
 							<Route
 								path="project/:projectID" component={LibraryMain} name="see" onEnter={redirectToLogin}>
 								<IndexRoute component={LibrarySee} />
+								<Route path="details" component={LibraryDetails} />
 							</Route>
 						</Route>
 						<Route component={AcademyApp} path="academy">

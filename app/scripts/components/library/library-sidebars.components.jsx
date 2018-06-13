@@ -32,6 +32,7 @@ export class LibrarySidebarRight extends React.PureComponent {
 export class FamilySidebarActions extends React.PureComponent {
 	constructor(props) {
 		super(props);
+		console.log(props)
 	}
 	render() {
 		return (
@@ -39,9 +40,20 @@ export class FamilySidebarActions extends React.PureComponent {
 				<div className="sidebar-action">
 					Export family
 				</div>
-				<div className="sidebar-action">
-					Family settings
-				</div>
+				{
+					this.props.mode === "see" && (
+						<Link className="sidebar-action" to={`/library/project/${this.props.familyId}/details`}>
+							Family settings
+						</Link>
+					)
+				}
+				{
+					this.props.mode === "details" && (
+						<Link className="sidebar-action" to={`/library/project/${this.props.familyId}`}>
+							Family dashboard
+						</Link>
+					)
+				}
 				<div className="sidebar-action">
 					Add new Variant
 				</div>
@@ -131,14 +143,15 @@ class SidebarFilter extends React.PureComponent {
 	setElemActive(elem) {
 		const elems = [...this.state.elems];
 		const activeIndex = elems.findIndex(e => e.active === true);
-		const clickedIndex = elems.findIndex (e => e.name === elem.name);
+		const clickedIndex = elems.findIndex(e => e.name === elem.name);
+
 		elems[activeIndex].active = false;
 		elems[clickedIndex].active = true;
 		this.setState({elems});
 		this.props.editActiveFilter(this.state.title.toLowerCase(), elem.name);
 	}
 	render() {
-		return(
+		return ( 
 			<div className="sidebar-filter">
 				<p className="sidebar-filter-title">{this.state.title}</p>
 				<div className="sidebar-filter-elems">
