@@ -586,7 +586,7 @@ Topbar.propTypes = {
 };
 
 Topbar.contextTypes = {
-	router: React.PropTypes.object.isRequired,
+	router: PropTypes.object.isRequired,
 };
 
 // this should later wrap an TopBarAcademy

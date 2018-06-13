@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import {withRouter} from 'react-router';
 import Lifespan from 'lifespan';
 import {monthlyConst, annualConst, teamMonthlyConst, teamAnnualConst} from '../data/plans.data';
@@ -67,11 +68,11 @@ class GoProModal extends React.PureComponent {
 
 	goSubscribe() {
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
-		console.log(this.state.billing)
+		console.log(this.state.billing);
 		console.log({
 			pathname: '/account/subscribe',
 			query: {plan: this.state.billing === 'monthly' ? monthlyConst.prefix : annualConst.prefix},
-		})
+		});
 		this.props.router.push({
 			pathname: '/account/subscribe',
 			query: {plan: this.state.billing === 'monthly' ? monthlyConst.prefix : annualConst.prefix},
@@ -158,7 +159,7 @@ class GoProModal extends React.PureComponent {
 							}
 							currency={currency}
 							amount={proPrice}
-						>							
+						>
 							<ul className="pricing-item-features">
 								<li className="pricing-item-feature">
 									More diverse fonts with full range on all parameters

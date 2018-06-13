@@ -14,17 +14,59 @@ const formatDifference = (number) => {
 class EditNodeProperties extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {};
 
 		this.handleInput = this.handleInput.bind(this);
+		this.savePrevValue = this.savePrevValue.bind(this);
+		this.previousInput = {};
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 	}
 
+	componentWillReceiveProps(nextProps) {
+		const {glyph, selectedItem: item} = nextProps;
+		const node = _get(glyph, item.id);
+
+		if (node.x.toFixed(0) !== this.state.x && node.x.toFixed(0) !== this.previousInput.x) {
+			this.setState({
+				x: node.x.toFixed(0),
+			});
+		}
+		if (node.y.toFixed(0) !== this.state.y && node.y.toFixed(0) !== this.previousInput.y) {
+			this.setState({
+				y: node.y.toFixed(0),
+			});
+		}
+		if (node.expand) {
+			const angleInDeg = ((node.expand.angle) / Math.PI * 180).toFixed(0);
+
+			if (angleInDeg !== this.state.angle && angleInDeg !== this.previousInput.angle) {
+				this.setState({
+					angle: angleInDeg,
+				});
+			}
+			if (node.expand.width.toFixed(0) !== this.state.width && node.expand.width.toFixed(0) !== this.previousInput.width) {
+				this.setState({
+					width: node.expand.width.toFixed(0),
+				});
+			}
+			if (node.expand.distr.toFixed(1) !== this.state.distr && node.expand.distr.toFixed(1) !== this.previousInput.distr) {
+				this.setState({
+					distr: node.expand.distr.toFixed(1),
+				});
+			}
+		}
+	}
+
 	stopPropagation(e) {
 		e.stopPropagation();
 		e.nativeEvent.stopPropagation();
+	}
+
+	savePrevValue(e) {
+		this.previousInput[e.target.name] = e.target.value;
 	}
 
 	handleInput(e) {
@@ -47,6 +89,9 @@ class EditNodeProperties extends React.Component {
 				},
 
 			});
+			this.setState({
+				[name]: e.target.value,
+			});
 		}
 		else {
 			const modData = {
@@ -62,6 +107,10 @@ class EditNodeProperties extends React.Component {
 					modData,
 					type: name,
 				},
+			});
+
+			this.setState({
+				[name]: e.target.value,
 			});
 		}
 	}
@@ -87,20 +136,20 @@ class EditNodeProperties extends React.Component {
 					onKeyDown={this.stopPropagation}
 				>
 					<h4>Skeleton props</h4>
-					<p><span>X</span><input type="number" name="x" onChange={this.handleInput} value={node.x} />
+					<p><span>X</span><input type="number" key="x" name="x" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={this.state.x} />
 						({formatDifference(Math.round(node.x - node.xBase))})
 					</p>
-					<p><span>Y</span><input type="number" name="y" onChange={this.handleInput} value={node.y} />
+					<p><span>Y</span><input type="number" name="y" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={this.state.y} />
 						({formatDifference(Math.round(node.y - node.yBase))})
 					</p>
 					<h4>Expand props</h4>
-					<p><span>Width</span><input type="number" name="width" onChange={this.handleInput} value={node.expand.width.toFixed(0)} />
+					<p><span>Width</span><input type="number" name="width" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={this.state.width} />
 						({formatDifference((node.expand.width - node.expand.baseWidth).toFixed(0))})
 					</p>
-					<p><span>Angle</span><input type="number" name="angle" onChange={this.handleInput} value={((node.expand.angle / Math.PI) * 180).toFixed(0)} min={-180} max={180} />
+					<p><span>Angle</span><input type="number" name="angle" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={this.state.angle} min={-180} max={180} />
 						({formatDifference((((node.expand.angle - node.expand.baseAngle) / Math.PI) * 180).toFixed(0))})
 					</p>
-					<p><span>Distr</span><input type="number" name="distr" onChange={this.handleInput} value={node.expand.distr.toFixed(1)} min={0} max={1} step={0.1} />
+					<p><span>Distr</span><input type="number" name="distr" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={this.state.distr} min={0} max={1} step={0.1} />
 						({formatDifference((node.expand.distr - node.expand.baseDistr).toFixed(2))})
 					</p>
 				</div>
@@ -120,10 +169,10 @@ class EditNodeProperties extends React.Component {
 					onKeyDown={this.stopPropagation}
 				>
 					<h4>Contour props</h4>
-					<p><span>X</span><input type="number" name="x" onChange={this.handleInput} value={node.x} />
+					<p><span>X</span><input type="number" name="x" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={node.x} />
 						({formatDifference(Math.round(node.x - node.xBase))})
 					</p>
-					<p><span>Y</span><input type="number" name="y" onChange={this.handleInput} value={node.y} />
+					<p><span>Y</span><input type="number" name="y" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={node.y} />
 						({formatDifference(Math.round(node.y - node.yBase))})
 					</p>
 				</div>
@@ -169,8 +218,8 @@ class EditNodeProperties extends React.Component {
 					onKeyDown={this.stopPropagation}
 				>
 					<h4>Node props</h4>
-					<p><span>X</span> <input type="number" name="x" onChange={this.handleInput} value={node.x} /></p>
-					<p><span>Y</span><input type="number" name="y" onChange={this.handleInput} value={node.y} /></p>
+					<p><span>X</span> <input type="number" name="x" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={node.x} /></p>
+					<p><span>Y</span><input type="number" name="y" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={node.y} /></p>
 					<h4>Expand props</h4>
 					<p><span>Width</span>{parent.expand.width.toFixed(0)} ({formatDifference((parent.expand.width - parent.expand.baseWidth).toFixed(0))})</p>
 					<p><span>Angle</span>{((parent.expand.angle / Math.PI) * 180).toFixed(0)} ({formatDifference((((parent.expand.angle - parent.expand.baseAngle) / Math.PI) * 180).toFixed(0))})</p>
