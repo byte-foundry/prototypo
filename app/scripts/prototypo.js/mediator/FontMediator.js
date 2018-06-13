@@ -314,7 +314,7 @@ export default class FontMediator {
 		});
 	}
 
-	getFontObject(familyName, styleName, template, params, subset) {
+	getFontObject(familyName, styleName = 'Regular', template, params, subset) {
 		if (!this.workerPool) {
 			return false;
 		}
@@ -373,7 +373,7 @@ export default class FontMediator {
 				},
 			};
 
-			this.workerPool.doJob(job, familyName);
+			this.workerPool.doJob(job, familyName + styleName);
 		});
 	}
 
