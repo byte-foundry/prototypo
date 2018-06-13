@@ -649,13 +649,65 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 
+				// Managing guides and rulers
+				if (mouse.edge === mState.DOWN && !(
+					appStateValue & (
+						appState.DRAGGING_CONTOUR
+						| appState.DRAGGING_CONTOUR_POINT
+						| appState.DRAGGING_POINTS
+						| appState.DRAGGING_SPACING
+				))) {
+					if (guideHandle.length > 0) {
+						appStateValue = appState.DRAGGING_GUIDE;
+						selectedItems = [guideHandle[0]];
+						this.storeSelectedItems(selectedItems);
+					}
+					else if (rulers.length > 0) {
+						const axe = rulers[0].id === 'verticalRuler' ? 'x' : 'y';
+						const newGuide = {
+							id: 'guide' + Date.now(),
+							[axe]: mouse.pos[axe],
+						};
+
+						this.setState(state => ({
+							guides: state.guides.concat(newGuide),
+						}));
+
+						appStateValue = appState.DRAGGING_GUIDE;
+						selectedItems = [{
+							id: newGuide.id,
+							type: toileType.GUIDE_HANDLE,
+							data: {
+								x: newGuide.x,
+								y: newGuide.y,
+							},
+						}];
+						this.storeSelectedItems(selectedItems);
+					}
+				}
+				else if ((appStateValue & appState.GUIDE_SELECTED) && mouseClickRelease) {
+					appStateValue = appState.DRAGGING_GUIDE;
+					selectedItems = [guideHandle[0]];
+					this.storeSelectedItems(selectedItems);
+				}
+				// deleting the guide when it has been released on a ruler
+				else if ((appStateValue & appState.DRAGGING_GUIDE) && mouseClickRelease) {
+					if (selectedItems[0].type === toileType.GUIDE_HANDLE) {
+						if (rulers.length > 0) {
+							this.setState(state => ({
+								guides: state.guides.filter(guide => guide.id !== selectedItems[0].id),
+							}));
+						}
+
+						appStateValue = appState.DEFAULT;
+					}
+				}
+
 				// =========================================================
 				// =========================================================
 				// This is the state machine state changing part
 				// There is 3 first level state
-				if (appMode === canvasMode.MOVE) {
-					// when in move mode the only action possible is to move
-					// this happen if mouse is in down state
+				if (appMode === canvasMode.MOVE && !(appStateValue & (appState.GUIDE_SELECTED | appState.DRAGGING_GUIDE))) {
 					if (mouse.state === mState.DOWN) {
 						appStateValue = appState.MOVING;
 					}
@@ -713,7 +765,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					else if (componentMenu.length > 0) {
 						appStateValue = appState.COMPONENT_MENU_HOVERED;
 					}
-					else {
+					else if (!(appStateValue & (appState.GUIDE_SELECTED | appState.DRAGGING_GUIDE))) {
 						componentHovered = {};
 						appStateValue = appState.DEFAULT;
 					}
@@ -724,36 +776,9 @@ export default class GlyphCanvas extends React.PureComponent {
 					// Manual edition mode
 					if ((appStateValue === appState.DEFAULT) && mouse.edge === mState.DOWN) {
 						if (appMode === canvasMode.SELECT_POINTS) {
-							if (guideHandle.length > 0) {
-								appStateValue = appState.DRAGGING_GUIDE;
-								selectedItems = [guideHandle[0]];
-								this.storeSelectedItems(selectedItems);
-							}
-							else if (spacingHandle.length > 0) {
+							if (spacingHandle.length > 0) {
 								appStateValue = appState.DRAGGING_SPACING;
 								selectedItems = [spacingHandle[0]];
-								this.storeSelectedItems(selectedItems);
-							}
-							else if (rulers.length > 0) {
-								const axe = rulers[0].id === 'verticalRuler' ? 'x' : 'y';
-								const newGuide = {
-									id: 'guide' + Date.now(),
-									[axe]: mouse.pos[axe],
-								};
-
-								this.setState(state => ({
-									guides: state.guides.concat(newGuide),
-								}));
-
-								appStateValue = appState.DRAGGING_GUIDE;
-								selectedItems = [{
-									id: newGuide.id,
-									type: toileType.GUIDE_HANDLE,
-									data: {
-										x: newGuide.x,
-										y: newGuide.y,
-									},
-								}];
 								this.storeSelectedItems(selectedItems);
 							}
 							else {
@@ -823,10 +848,6 @@ export default class GlyphCanvas extends React.PureComponent {
 							contourSelected = undefined;
 							contourSelectedIndex = 0;
 						}
-						else if (guideHandle.length > 0) {
-							appStateValue = appState.DRAGGING_GUIDE;
-							selectedItems = [guideHandle[0]];
-						}
 						else if (spacingHandle.length > 0) {
 							appStateValue = appState.DRAGGING_SPACING;
 							selectedItems = [spacingHandle[0]];
@@ -892,16 +913,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						if (selectedItems[0].type === toileType.NODE_SKELETON) {
 							appStateValue = appState.SKELETON_POINT_SELECTED;
 						}
-						else if (selectedItems[0].type === toileType.GUIDE_HANDLE) {
-							// TODO: check which ruler h or v and which guide h or v
-							if (rulers.length > 0) {
-								this.setState(state => ({
-									guides: state.guides.filter(guide => guide.id !== selectedItems[0].id),
-								}));
-							}
-
-							appStateValue = appState.DEFAULT;
-						}
 						else if (selectedItems[0].type === toileType.SPACING_HANDLE) {
 							appStateValue = appState.SPACING_SELECTED;
 						}
@@ -951,15 +962,11 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue = appState.BOX_SELECTING;
 							mouseBoxStart = mouse.pos;
 						}
-						else if (guideHandle.length > 0) {
-							appStateValue = appState.DRAGGING_GUIDE;
-							selectedItems = [guideHandle[0]];
-						}
 						else if (spacingHandle.length > 0) {
 							appStateValue = appState.DRAGGING_SPACING;
 							selectedItems = [spacingHandle[0]];
 						}
-						else {
+						else /*if (guideHandle.length <= 0)*/ {
 							selectedItems = [];
 							appStateValue = appState.BOX_SELECTING;
 							mouseBoxStart = mouse.pos;
