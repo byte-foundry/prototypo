@@ -1,5 +1,6 @@
 @import '../variables';
 .library-app {
+    color: $dark-grey;
     .library-main {
         display: flex;
         flex-direction: row;
@@ -56,6 +57,7 @@
                 .sidebar-action {
                     margin-bottom: 10px;
                         text-align: center;
+                        display: block;
                         font-size: 14px;
                         padding: 5px 20px;
                         border: 2px solid $dark-grey;
@@ -146,6 +148,134 @@
                     }
                 }
                 
+            }
+            .library-details-form {
+                form {
+                    margin-top: 50px;
+                    display: flex; 
+                    flex-direction: row; 
+                    justify-content: space-around; 
+                    flex-wrap: wrap;
+                    align-content: flex-start; 
+                    .library-details-form-elem {
+                        width: 50%;
+                        padding-left: 40px;
+                        padding-right: 40px;
+                        margin-bottom: 40px;
+                        label {
+                            display: block;
+                            text-transform: uppercase;
+                            font-weight: bold;
+                        }
+                        input {
+                            width: 100%;
+                            background: transparent;
+                            box-shadow: none;
+                            outline: none;
+                            padding: 10px 20px;
+                            margin-top: 10px;
+                            border: 1px solid $dark-grey;
+                            &:focus {
+                                outline: none;
+                            }
+                        }
+                    }
+                }
+            }
+            .library-details-variants {
+                .details-header, .details-form {
+                    margin-top: 50px;
+                    display: flex; 
+                    flex-direction: row; 
+                    justify-content: flex-start; 
+                    flex-wrap: wrap;
+                    align-content: flex-start;
+                    .details-header-elem {
+                        width: 20%;
+                        padding-left: 40px;
+                        padding-right: 40px;
+                        margin-bottom: 10px;
+                        text-transform: uppercase;
+                        font-weight: bold;
+                    }
+                    .details-form-elem {
+                        width: 20%;
+                        padding-left: 40px;
+                        padding-right: 40px;
+                        margin-bottom: 10px;
+                        &.checkbox {
+                            width: 50px;
+                        }
+                        input {
+                            width: 100%;
+                            background: transparent;
+                            box-shadow: none;
+                            outline: none;
+                            padding: 10px 20px;
+                            margin-top: 10px;
+                            border: 1px solid $dark-grey;
+                            &:focus {
+                                outline: none;
+                            }
+                        }
+                        .button-remove {
+                            margin-top: 10px;
+                            text-align: center;
+                            font-size: 14px;
+                            padding: 5px 20px;
+                            display: inline-block;
+                            border: 1px solid $dark-grey;
+                            color: $dark-grey;
+                            background-color:  transparent;
+                            transition: color .3s ease, background-color .3s ease;
+                            border-radius: 30px;
+                            cursor: pointer;                        
+                            &:hover {
+                                background: $dark-grey;
+                                color: white;
+                            }
+                        }
+                        .checkbox,
+                        .checkbox-alt {
+                            background-color: transparent;
+                            display: inline-block;
+                            height: 40px;
+                            margin-top: 10px;
+                            width: 40px;
+                            border: 1px solid $dark-grey;
+                            label {
+                                display: block;
+                                height: 40px;
+                                position: relative;
+                                width: 40px;
+                                &:after {
+                                transform: scaleX(-1) rotate(180deg + -45deg);
+                                border-right: 4px solid $lightest-grey;
+                                border-top: 4px solid $lightest-grey;
+                                content: "";
+                                display: block;
+                                height: 20px;
+                                left: 12px;
+                                position: absolute;
+                                top: 4px;
+                                width: 10px;
+                                }
+                                &:hover:after {
+                                border-color: $light-grey;
+                                }
+                            }
+                            input {
+                                display: none;
+                            }
+                            input:checked + label:after {
+                                border-color: $dark-grey;
+                            }
+                        }
+                    }
+                }
+                .details-form {
+                    margin-top: 10px;
+                }
             }
         }
         .library-item {

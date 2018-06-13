@@ -64,7 +64,7 @@ export default class LibrarySee extends React.PureComponent {
 					</div>
 					<FontUpdater extraFonts={this.state.fontsToGenerate} />
 				</div>
-				<LibrarySidebarRight><FamilySidebarActions/></LibrarySidebarRight>
+				<LibrarySidebarRight><FamilySidebarActions glyphs={this.state.family.glyphs} familyId={this.props.params.projectID} mode="see" /></LibrarySidebarRight>
 			</div>
 		);
 	}
