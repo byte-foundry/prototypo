@@ -1,10 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
 import InlineSVG from 'svg-inline-react';
+import {Link} from 'react-router';
+
 import {academyTutorialLabel} from '../../helpers/joyride.helpers.js';
 import Button from '../shared/button.components.jsx';
 import LocalClient from '../../stores/local-client.stores.jsx';
-import {Link} from 'react-router';
 
 export default class AcademyModal extends React.Component {
 	constructor(props) {
@@ -25,7 +27,7 @@ export default class AcademyModal extends React.Component {
 	}
 
 	static contextTypes = {
-		router: React.PropTypes.object.isRequired,
+		router: PropTypes.object.isRequired,
 	};
 
 	exit() {

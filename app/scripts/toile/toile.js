@@ -69,6 +69,7 @@ export const appState = {
 	DRAGGING_SPACING:	0b1000000000000000,
 	SPACING_SELECTED:	0b10000000000000000,
 	NOT_SELECTING:	0b100000000000000000,
+	INPUT_CHANGE: 0b1000000000000000000,
 };
 
 const green = '#24d390';
@@ -187,50 +188,54 @@ export default class Toile {
 			});
 
 			document.addEventListener('keyup', (e) => {
-				const {
-					keyCode,
-					ctrlKey,
-					shiftKey,
-					altKey,
-					metaKey,
-				} = e;
+				if (!e.cancelBubble) {
+					const {
+						keyCode,
+						ctrlKey,
+						shiftKey,
+						altKey,
+						metaKey,
+					} = e;
 
-				const eventData = {
-					keyCode,
-					special: (ctrlKey ? specialKey.CTRL : 0)
-						+ (shiftKey ? specialKey.SHIFT : 0)
-						+ (altKey ? specialKey.ALT : 0)
-						+ (metaKey ? specialKey.META : 0),
-				};
+					const eventData = {
+						keyCode,
+						special: (ctrlKey ? specialKey.CTRL : 0)
+							+ (shiftKey ? specialKey.SHIFT : 0)
+							+ (altKey ? specialKey.ALT : 0)
+							+ (metaKey ? specialKey.META : 0),
+					};
 
-				if (this.keyboardDown.keyCode === keyCode) {
-					this.keyboardUpRisingEdge = eventData;
+					if (this.keyboardDown.keyCode === keyCode) {
+						this.keyboardUpRisingEdge = eventData;
+					}
+
+					this.keyboardUp = eventData;
 				}
-
-				this.keyboardUp = eventData;
 			});
 
 			document.addEventListener('keydown', (e) => {
-				const {
-					keyCode,
-					ctrlKey,
-					shiftKey,
-					altKey,
-					metaKey,
-				} = e;
-				const eventData = {
-					keyCode,
-					special: (ctrlKey ? specialKey.CTRL : 0)
-						+ (shiftKey ? specialKey.SHIFT : 0)
-						+ (altKey ? specialKey.ALT : 0)
-						+ (metaKey ? specialKey.META : 0),
-				};
+				if (!e.cancelBubble) {
+					const {
+						keyCode,
+						ctrlKey,
+						shiftKey,
+						altKey,
+						metaKey,
+					} = e;
+					const eventData = {
+						keyCode,
+						special: (ctrlKey ? specialKey.CTRL : 0)
+							+ (shiftKey ? specialKey.SHIFT : 0)
+							+ (altKey ? specialKey.ALT : 0)
+							+ (metaKey ? specialKey.META : 0),
+					};
 
-				if (this.keyboardDown.keyCode !== keyCode) {
-					this.keyboardDownRisingEdge = eventData;
+					if (this.keyboardDown.keyCode !== keyCode) {
+						this.keyboardDownRisingEdge = eventData;
+					}
+
+					this.keyboardDown = eventData;
 				}
-
-				this.keyboardDown = eventData;
 			});
 		}
 
@@ -692,6 +697,8 @@ export default class Toile {
 					expandedTo: node.expandedTo,
 					width: node.expand.width,
 					baseDistr: node.expand.baseDistr,
+					baseWidth: node.expand.baseWidth,
+					baseAngle: node.expand.baseAngle,
 					radius: nodeHotRadius,
 					modifAddress,
 					componentName,
@@ -1584,127 +1591,6 @@ export default class Toile {
 	drawSkeletonPosTool(node) {
 		if (node.expandedTo) {
 			this.drawLine(node.expandedTo[0], node.expandedTo[1], red, undefined, [5, 5, 15, 5]);
-		}
-	}
-
-	drawSkeletonProps(node, start, end, zoom, index) {
-		this.drawText('Skeleton node props', {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * index / zoom),
-		}, 14, darkestGrey);
-		this.drawText(`x: ${node.x} (${Math.round(node.x - node.xBase)})`, {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * (index + 1) / zoom),
-		}, 12, darkestGrey);
-
-		this.drawText(`y: ${node.y} (${Math.round(node.y - node.yBase)})`, {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * (index + 2) / zoom),
-		}, 12, darkestGrey);
-	}
-
-	drawExpandProps(node, start, end, zoom, index) {
-		this.drawText('Skeleton expand props', {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * index / zoom),
-		}, 14, darkestGrey);
-		this.drawText(`width: ${node.expand.width.toFixed(1)} (${(node.expand.width - node.expand.baseWidth).toFixed(1)})`, {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * (index + 1) / zoom),
-		}, 12, darkestGrey);
-
-		this.drawText(`angle: ${node.expand.angle.toFixed(2)} (${(node.expand.angle - node.expand.baseAngle).toFixed(2)})`, {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * (index + 2) / zoom),
-		}, 12, darkestGrey);
-
-		this.drawText(`distr: ${node.expand.distr.toFixed(2)} (${(node.expand.distr - node.expand.baseDistr).toFixed(2)})`, {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * (index + 3) / zoom),
-		}, 12, darkestGrey);
-	}
-
-	drawExpandedNodeProps(node, start, end, zoom, index) {
-		this.drawText('Node props', {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * index / zoom),
-		}, 14, darkestGrey);
-		this.drawText(`x: ${node.x}`, {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * (index + 1) / zoom),
-		}, 12, darkestGrey);
-		this.drawText(`y: ${node.y}`, {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * (index + 2) / zoom),
-		}, 12, darkestGrey);
-	}
-
-	drawHandleProps(node, start, end, zoom, index) {
-		this.drawText('Handle props', {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * index / zoom),
-		}, 14, darkestGrey);
-		this.drawText(`direction in: ${node.dirIn.toFixed(2)}`, {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * (index + 1) / zoom),
-		}, 14, darkestGrey);
-		this.drawText(`tension in: ${(node.tensionIn + node.baseTensionIn).toFixed(2)} (${node.tensionIn.toFixed(2)})`, {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * (index + 2) / zoom),
-		}, 14, darkestGrey);
-		this.drawText(`direction out: ${node.dirOut.toFixed(2)}`, {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * (index + 3) / zoom),
-		}, 14, darkestGrey);
-		this.drawText(`tension in: ${(node.tensionOut + node.baseTensionOut).toFixed(2)} (${node.tensionOut.toFixed(2)})`, {
-			x: start.x + (10 / zoom),
-			y: start.y - (propsTextSize * (index + 4) / zoom),
-		}, 14, darkestGrey);
-	}
-
-	drawNodeProperty(type, node, parent) {
-		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
-		const [zoom] = this.viewMatrix;
-		const [start, end] = transformCoords(
-			[
-				{
-					x: 20,
-					y: 70,
-				},
-				{
-					x: 190,
-					y: 240,
-				},
-			],
-			inverseMatrix,
-			this.height / zoom,
-		);
-
-		this.drawRectangleFromCorners(
-			start,
-			end,
-			undefined,
-			nodePropertyBackground,
-		);
-
-		if (type === toileType.NODE_SKELETON) {
-			this.drawSkeletonProps(node, start, end, zoom, 1);
-			this.drawExpandProps(node, start, end, zoom, 4);
-		}
-		else if (type === toileType.CONTOUR_NODE) {
-			this.drawSkeletonProps(node, start, end, zoom, 1);
-		}
-		else if (
-			type === toileType.NODE_OUT
-			|| type === toileType.NODE_IN
-			|| type === toileType.CONTOUR_NODE_OUT
-			|| type === toileType.CONTOUR_NODE_IN
-		) {
-			this.drawHandleProps(parent, start, end, zoom, 1);
-		}
-		else {
-			this.drawExpandedNodeProps(node, start, end, zoom, 1);
-			this.drawExpandProps(parent, start, end, zoom, 4);
 		}
 	}
 

@@ -2,15 +2,13 @@ export default {
 	steps: [
 		{
 			type: 'start',
-			title: 'Welcome to the onboarding!',
+			title: 'Welcome on board!',
 			description:
 				[
 					'Let’s get you set up for success from the start.',
-					'In five quick steps, you will define the shape of your font',
-					'using the recommended parameters.'
-
+					'In five quick steps you will define your font’s shape with the key parameters.'
 				],
-			name: 'Start'
+			name: 'Start',
 		},
 		{
 			type: 'sliders',
@@ -19,22 +17,22 @@ export default {
 			sliders: ['xHeight', 'width'],
 			description:
 				[
-					'Proportion refers to the width of a character in relation to its height.',
-					'It’s a crucial step since it will define a big part of what your typeface will express and how you will be able to use it:',
-					'a title may have some extreme proportions, in contrary to body copy that needs that to be more legible.'
+					'The font proportions refer to the width of a character in relation to its height.',
+					'Getting your proportions right is crucial, since it will have a big impact on your typeface’s final look.',
+					'A title may have extreme proportions, while body texts are commonly more balanced to be legible.'
 				],
 			name: 'Proportions',
 		},
 		{
 			type: 'sliders',
-			title: 'Define the style of your font',
+			title: 'Define your font style',
 			letters: 'Hamburgefonstiv',
 			sliders: ['thickness', '_contrast'],
 			description:
 				[
 					'The thickness and contrast amount define the final usage of your font.',
 					'A very thick and high contrast typeface is suitable for large sizes,',
-					'while a low contrast typeface with regular thickness is best used for texts.'
+					'while a low contrast typeface with regular thickness is best used for texts.',
 				],
 			name: 'Style',
 		},
@@ -45,9 +43,9 @@ export default {
 			sliders: ['ascender', 'descender'],
 			description:
 				[
-					'The ascenders\' and descenders\' length is important to create rhythm and variation, especially in regards to text setting.',
+					'The ascenders’ and descenders’ length is important to create rhythm, especially in regards to text setting.',
 					'For compact texts with small leading values, it is recommended to have short ascenders and descenders.',
-					'Long ascenders and descenders will work best with looser leading.'
+					'Long ascenders and descenders will work best with looser leading.',
 				],
 			name: 'Ascenders / Descenders',
 		},
@@ -74,7 +72,7 @@ export default {
 			name: 'Alternates',
 			description:
 				[
-					'Choosing your alternates is a great way to give your typeface the right tone to make it more unique and flavorful.'
+					'Choosing your alternates is a great way to give your typeface the right tone to make it more unique and impactful.'
 				],
 		},
 		{
@@ -85,9 +83,9 @@ export default {
 			name: 'Serifs',
 			description:
 				[
-					'Serifs are key components of a typeface.',
-					'Their height, width and median directly affect the look of your typeface.',
-					'By using thick slab serifs you\'re able to design solid and sturdy fonts.',
+					'Serifs are key components of a typeface, because their height, width, and median directly affect the look of your typeface.',
+					'',
+					'By using thick slab serifs you’re able to design solid and sturdy fonts.',
 					'Thin and sharp serifs will look great for elegant and refined letters.'
 				],
 		},
@@ -97,10 +95,9 @@ export default {
 			name: 'Finish',
 			description:
 				[
-					'Congratulations, you’re doing great!',
+					'You’re doing great!',
 					'You’ve prototyped your font. Let’s take it a step further and dive into the app to make it even better.',
 					'If you get stuck at any point, we’re just a click away in your in-app chat. Also, the Academy tutorials might come in handy.',
-					'And hey, here’s a little recap of all the shortcuts:'
 				],
 		},
 	],

@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import HoodieApi from '../services/hoodie.services.js';
 import WarningMessage from './warning-message.components.jsx';
@@ -66,7 +67,7 @@ class ForgottenPassword extends React.PureComponent {
 			return (
 				<div className="sign-in-form">
 					<p className="forgotten-password-text">The email has been sent with the reset link.</p>
-					<AccountValidationButton label="Return to signin" click={this.redirectToSignin}/>
+					<AccountValidationButton label="Return to signin" click={this.redirectToSignin} />
 				</div>
 			);
 		}
@@ -77,12 +78,12 @@ class ForgottenPassword extends React.PureComponent {
 		return (
 			<form className="sign-in-form" onSubmit={this.resetPassword}>
 				<p className="forgotten-password-text">Please fill the following input with the email address you've used to register.</p>
-				<InputWithLabel type="email" ref="email" name="email" placeholder="Email address"/>
+				<InputWithLabel type="email" ref="email" name="email" placeholder="Email address" />
 				<p className="forgotten-password-text">We will send you a link by email to reset your password.</p>
-				{warning && <WarningMessage text={warning}/>}
+				{warning && <WarningMessage text={warning} />}
 				<div className="forgotten-password-buttons">
-					<AccountValidationButton label="Cancel" id="cancel" click={this.redirectToSignin}/>
-					<AccountValidationButton loading={this.state.loading} label="Reset Password"/>
+					<AccountValidationButton label="Cancel" id="cancel" click={this.redirectToSignin} />
+					<AccountValidationButton loading={this.state.loading} label="Reset Password" />
 				</div>
 			</form>
 		);
@@ -91,11 +92,11 @@ class ForgottenPassword extends React.PureComponent {
 	render() {
 		return (
 			<div className="forgotten-password sign-in sign-base">
-				<div className="account-dashboard-icon"/>
+				<div className="account-dashboard-icon" />
 				<div className="account-header">
 					<h1 className="account-title">Forgot your password?</h1>
 				</div>
-				<h1 className="account-dashboard-page-title">Don't worry,<br/>we've got your back.</h1>
+				<h1 className="account-dashboard-page-title">Don't worry,<br />we've got your back.</h1>
 				<div className="account-dashboard-container">
 					{this.renderForm()}
 				</div>

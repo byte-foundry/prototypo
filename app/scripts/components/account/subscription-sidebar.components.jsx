@@ -32,25 +32,17 @@ export default class SubscriptionSidebar extends React.PureComponent {
 		const plans = {
 			[monthlyConst.prefix]: {
 				header: 'Monthly',
-				title: hasBeenSubscribing
-					? <span>Try Prototypo Pro without commitment</span>
-					: <span>
-							Try Prototypo Pro subscription for
-						{' '}
-						<Price amount={1} country={country} />
-						{' '}
-							only
-       </span>,
+				title: <span>Try Prototypo Pro without commitment</span>,
 				features: [
-					'More diverse fonts with full range on all parameters',
-					'Perfectly customized with glyph individualization groups',
-					'Tune to perfection using the manual edition and component editing',
+					'Full-range parameters',
+					'Unlimited font exports',
+					'Manual editing, individualisation, developper features',
 				],
 				cta: (
 					<span>
 						<Price amount={monthlyConst.price * percentPrice} country={country} />
 						{' '}
-						{hasBeenSubscribing ? ' / month' : <span><br />after the first month</span>}
+						/ month
 					</span>
 				),
 				subcta: 'No commitment!',
@@ -63,9 +55,9 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				header: 'Annual',
 				title: 'Buy Prototypo Pro subscription for 1 year, get 4 months for free',
 				features: [
-					'More diverse fonts with full range on all parameters',
-					'Perfectly customized with glyph individualization groups',
-					'Tune to perfection using the manual edition and component editing',
+					'Full-range parameters',
+					'Unlimited font exports',
+					'Manual editing, individualisation, developper features',
 				],
 				cta: (
 					<span>
@@ -85,7 +77,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 						Prototypo multi-user plan, designed for professionnals, billed monthly
 					</span>
 				),
-				features: ['All pro features', 'Manage your team licences', 'Kickoff course to get you started with Prototypo', 'Premium 24h support'],
+				features: ['All pro features', 'Team management & user roles', 'Kickoff course', 'Premium 24h support'],
 				cta: (
 					<span>
 						<Price amount={teamMonthlyConst.monthlyPrice * quantity * percentPrice} country={country} />
@@ -114,7 +106,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 						Prototypo multi-user plan, designed for professionnals, billed annually
 					</span>
 				),
-				features: ['All pro features', 'Manage your team licences', 'Kickoff course to get you started with Prototypo', 'Premium 24h support'],
+				features: ['All pro features', 'Team management & user roles', 'Kickoff course', 'Premium 24h support'],
 				cta: (
 					<span>
 						<Price amount={teamAnnualConst.monthlyPrice * quantity * percentPrice} country={country} />

@@ -37,9 +37,6 @@ const OnboardingStep = ({
 				>
 					<HighlightedText letters={letters} />
 				</div>
-			)}			
-			{type === 'finish' && (
-				<img className="glyphview" src="assets/images/onboardingFinish.PNG" alt="glyphView - Description" />
 			)}
 			{(type === 'sliders' || type === 'serifs') && (
 				<div className="step-sliders">

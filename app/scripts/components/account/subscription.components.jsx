@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import {Link, withRouter} from 'react-router';
 import Lifespan from 'lifespan';
 
@@ -71,6 +72,7 @@ class Subscription extends React.Component {
 			return null;
 		}
 		let percentPrice = 1;
+
 		if (this.state.validCoupon && this.state.validCoupon.percent_off) {
 			percentPrice = (100 - this.state.validCoupon.percent_off) / 100;
 		}

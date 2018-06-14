@@ -297,22 +297,24 @@ export default class FontMediator {
 	}
 
 	openInGlyphr(fontName, template, params, subset) {
-		return this.getFontObject(
-			fontName,
-			'Regular',
-			template,
-			params,
-			subset,
-		).then(({fontBuffer}) => new Promise((resolve) => {
-			window.open(GLYPHR_URL);
-			window.addEventListener('message', (e) => {
-				e.source.postMessage(fontBuffer, e.origin, [fontBuffer]);
-				resolve();
-			}, {once: true});
-		}));
+		return new Promise((resolve) => {
+			this.getFontObject(
+				fontName.family,
+				fontName.style,
+				template,
+				params,
+				subset,
+			).then(({fontBuffer}) => {
+				window.open(GLYPHR_URL);
+				window.addEventListener('message', (e) => {
+					e.source.postMessage(fontBuffer, e.origin, [fontBuffer]);
+					resolve();
+				}, {once: true});
+			});
+		});
 	}
 
-	getFontObject(familyName, styleName, template, params, subset) {
+	getFontObject(familyName, styleName = 'Regular', template, params, subset) {
 		if (!this.workerPool) {
 			return false;
 		}
@@ -371,7 +373,7 @@ export default class FontMediator {
 				},
 			};
 
-			this.workerPool.doJob(job, familyName);
+			this.workerPool.doJob(job, familyName + styleName);
 		});
 	}
 

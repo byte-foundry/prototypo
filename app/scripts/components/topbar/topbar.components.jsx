@@ -190,7 +190,7 @@ class Topbar extends React.Component {
 		}); */
 		this.client.dispatchAction('/store-value', {
 			openGoProModal: true,
-			goProModalBilling: 'monthly',
+			goProModalBilling: 'annually',
 		});
 	}
 
@@ -302,8 +302,8 @@ class Topbar extends React.Component {
 			<TopBarMenuButton
 				label={
 					<span>
-						GET THE FULL VERSION FOR{' '}
-						<Price amount={this.state.hasBeenSubscribing ? 8.25 : 1} country={this.props.country} />
+						GET THE FULL VERSION FROM{' '}
+						<Price amount={8.25} country={this.props.country} />
 					</span>
 				}
 				noHover
@@ -586,7 +586,7 @@ Topbar.propTypes = {
 };
 
 Topbar.contextTypes = {
-	router: React.PropTypes.object.isRequired,
+	router: PropTypes.object.isRequired,
 };
 
 // this should later wrap an TopBarAcademy

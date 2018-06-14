@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import AccountValidationButton from './shared/account-validation-button.components.jsx';
 import InputWithLabel from './shared/input-with-label.components.jsx';
@@ -121,13 +122,15 @@ class ResetPassword extends React.PureComponent {
 	}
 
 	render() {
-		const {loading, loadingCheck, error, fetchError, isTokenValid} = this.state;
+		const {
+			loading, loadingCheck, error, fetchError, isTokenValid,
+		} = this.state;
 		const {location} = this.props;
 
 		if (location.query.hasOwnProperty('success')) {
 			return (
 				<div className="forgotten-password sign-in sign-base">
-					<div className="account-dashboard-icon"/>
+					<div className="account-dashboard-icon" />
 					<div className="account-header">
 						<h1 className="account-title">Reset my password</h1>
 					</div>
@@ -147,7 +150,7 @@ class ResetPassword extends React.PureComponent {
 		if (!isTokenValid && !loadingCheck) {
 			return (
 				<div className="forgotten-password sign-in sign-base">
-					<div className="account-dashboard-icon"/>
+					<div className="account-dashboard-icon" />
 					<div className="account-header">
 						<h1 className="account-title">Reset my password</h1>
 					</div>
@@ -166,7 +169,7 @@ class ResetPassword extends React.PureComponent {
 
 		return (
 			<div className="forgotten-password sign-in sign-base">
-				<div className="account-dashboard-icon"/>
+				<div className="account-dashboard-icon" />
 				<div className="account-header">
 					<h1 className="account-title">Reset my password</h1>
 				</div>
@@ -194,7 +197,7 @@ class ResetPassword extends React.PureComponent {
 							type="password"
 							required
 						/>
-						{error || fetchError && <WarningMessage text={error || fetchError}/>}
+						{error || fetchError && <WarningMessage text={error || fetchError} />}
 						<AccountValidationButton loading={loading} label="Reset Password" disabled={!!this.state.error} />
 					</form>
 				</div>

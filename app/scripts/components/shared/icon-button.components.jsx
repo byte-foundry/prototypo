@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 import Icon from './icon.components';
@@ -19,8 +20,8 @@ class IconButton extends React.Component {
 }
 
 IconButton.propTypes = {
-	name: React.PropTypes.string.isRequired,
-	onClick: React.PropTypes.func,
+	name: PropTypes.string.isRequired,
+	onClick: PropTypes.func,
 };
 
 IconButton.defaultProps = {
