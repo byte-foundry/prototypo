@@ -32,7 +32,6 @@ export class LibrarySidebarRight extends React.PureComponent {
 export class FamilySidebarActions extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		console.log(props)
 	}
 	render() {
 		return (
@@ -56,6 +55,24 @@ export class FamilySidebarActions extends React.PureComponent {
 				}
 				<div className="sidebar-action">
 					Add new Variant
+				</div>
+			</div>
+		)
+	}
+}
+
+export class FamilySidebarGlyphs extends React.PureComponent {
+	constructor(props) {
+		super(props);
+	}
+	render() {
+		return (
+			<div className="sidebar-glyphs">
+				<div className="sidebar-glyphs-title">
+					Support
+				</div>
+				<div className="sidebar-glyphs-language">
+					Latin: <span>{Object.keys(this.props.glyphs).filter(key => this.props.glyphs[key][0].unicode !== undefined).length}</span>
 				</div>
 			</div>
 		)
