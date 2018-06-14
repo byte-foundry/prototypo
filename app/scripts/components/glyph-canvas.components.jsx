@@ -652,11 +652,11 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				// Managing guides and rulers
 				if (mouse.edge === mState.DOWN && !(
-					appStateValue & (
-						appState.DRAGGING_CONTOUR
-						| appState.DRAGGING_CONTOUR_POINT
-						| appState.DRAGGING_POINTS
-						| appState.DRAGGING_SPACING
+						appStateValue & (
+							appState.DRAGGING_CONTOUR
+							| appState.DRAGGING_CONTOUR_POINT
+							| appState.DRAGGING_POINTS
+							| appState.DRAGGING_SPACING
 				))) {
 					if (guideHandle.length > 0) {
 						appStateValue = appState.DRAGGING_GUIDE;
@@ -1585,7 +1585,11 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 
 				if (this.state.uiRuler) {
-					this.toile.drawGuides(this.state.guides, guideHandle);
+					this.toile.drawGuides(
+						this.state.guides,
+						// if component menu is hovered, we don't consider the guide
+						componentMenu.length > 0 ? [] : guideHandle,
+					);
 					this.toile.drawRuler(width, height);
 				}
 			}
