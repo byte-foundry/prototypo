@@ -1,10 +1,11 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
-import { LibrarySidebarRight, FamilySidebarActions } from './library-sidebars.components';
+import { LibrarySidebarRight, FamilySidebarActions, FamilySidebarGlyphs } from './library-sidebars.components';
+import { graphql, gql, compose } from 'react-apollo';
 import FontUpdater from "../font-updater.components";
 import LocalClient from '../../stores/local-client.stores';
 
-export default class LibraryDetails extends React.PureComponent {
+class LibraryDetails extends React.PureComponent {
 	constructor(props) {
 		super(props)
 		const family = props.baseFontData.find(e => e.id === props.params.projectID);
@@ -13,6 +14,7 @@ export default class LibraryDetails extends React.PureComponent {
 			family,
 		}
 		this.goToDashboard = this.goToDashboard.bind(this);
+		console.log(props)
 	}
 	componentWillMount() {
 		pleaseWait.instance.finish();
@@ -101,7 +103,7 @@ export default class LibraryDetails extends React.PureComponent {
 						))}
 					</div>
 				</div>
-				<LibrarySidebarRight><FamilySidebarActions glyphs={this.state.family.glyphs} familyId={this.props.params.projectID} mode="details" /></LibrarySidebarRight>
+				<LibrarySidebarRight><FamilySidebarActions familyId={this.props.params.projectID} mode="details" /><FamilySidebarGlyphs glyphs={this.state.family.glyphs} /></LibrarySidebarRight>
 			</div>
 		);
 	}
@@ -176,4 +178,4 @@ export default compose(
 			},
 		},
 	})
-)(Collection);
+)(LibraryDetails);
