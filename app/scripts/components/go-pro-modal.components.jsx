@@ -162,16 +162,25 @@ class GoProModal extends React.PureComponent {
 						>
 							<ul className="pricing-item-features">
 								<li className="pricing-item-feature">
-									More diverse fonts with full range on all parameters
+									48h support
 								</li>
 								<li className="pricing-item-feature">
-									Perfectly customized with glyph individualization groups
+									Full-range parameters
 								</li>
 								<li className="pricing-item-feature">
-									Tune to perfection using the manual edition and component editing
+									Unlimited font exports
 								</li>
-								<li className="pricing-item-feature">&nbsp;</li>
-								<li className="pricing-item-feature"><br /><br /></li>
+								<li className="pricing-item-feature">
+									Manual editing
+								</li>
+								<li className="pricing-item-feature">
+									Glyph individualization
+								</li>
+								<li className="pricing-item-feature">
+									Web preview extension
+								</li>
+								<li className="pricing-item-feature"><br /></li>
+								<li className="pricing-item-feature"><br /></li>
 								<li className="pricing-item-feature">&nbsp;</li>
 							</ul>
 							<div className="pricing-item-cta" onClick={this.goSubscribe} role="button">
@@ -211,23 +220,32 @@ class GoProModal extends React.PureComponent {
 							amount={teamPrice}
 						>
 							<ul className="pricing-item-features">
-								<li className="pricing-item-feature">
-									More diverse fonts with full range on all parameters
+							<li className="pricing-item-feature">
+									24h premium support
 								</li>
 								<li className="pricing-item-feature">
-									Perfectly customized with glyph individualization groups
+									Full-range parameters
 								</li>
 								<li className="pricing-item-feature">
-									Tune to perfection using the manual edition and component editing
+									Unlimited font exports
 								</li>
 								<li className="pricing-item-feature">
-									Manage your team licenses
+									Manual editing
 								</li>
 								<li className="pricing-item-feature">
-									Kickoff course to get you started with Prototypo
+									Glyph individualization
 								</li>
 								<li className="pricing-item-feature">
-									Premium 24h support
+									Web preview extension
+								</li>
+								<li className="pricing-item-feature">
+									Team management
+								</li>
+								<li className="pricing-item-feature">
+									User roles
+								</li>
+								<li className="pricing-item-feature">
+									Kickoff course
 								</li>
 							</ul>
 							{teamCount <= 10
