@@ -29,7 +29,8 @@ const defaultValues = {
 		firstTimeIndivCreate: true,
 		firstTimeIndivEdit: true,
 		firstTimeAcademyModal: true,
-		firstTimeAcademyJoyride: true,
+		rulerDisplayed: true,
+		guides: [],
 	},
 };
 

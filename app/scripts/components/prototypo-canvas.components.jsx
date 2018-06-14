@@ -32,6 +32,7 @@ export default class PrototypoCanvas extends React.Component {
 			glyphPanelOpened: undefined,
 			uiText: '',
 			uiWord: '',
+			uiRuler: true,
 			shadowFile: '',
 			glyphViewMatrix: {},
 		};

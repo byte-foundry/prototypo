@@ -9894,7 +9894,13 @@ prototypo-flux-testing@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/prototypo-flux-testing/-/prototypo-flux-testing-0.0.1.tgz#33694eb51c05ed4241b7072c5e49c0dda6587a3f"
 
-prototypo-precursor@^1.0.3, prototypo-precursor@^1.0.4:
+prototypo-precursor@1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/prototypo-precursor/-/prototypo-precursor-1.0.7.tgz#4ac6dd0ff827cfeb0048566a35961c364d3a3607"
+  dependencies:
+    lodash "~4.14.0"
+
+prototypo-precursor@^1.0.4:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/prototypo-precursor/-/prototypo-precursor-1.0.6.tgz#b1398f8170ee892ff7c32657dbd16ee10966e6f8"
   dependencies:

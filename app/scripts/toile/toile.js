@@ -87,6 +87,8 @@ const lightGrey = '#c6c6c6';
 const lightestGrey = '#f6f6f6';
 const white = '#fefefe';
 const red = '#ff725e';
+const pureRed = '#ff0000';
+const unsatRed = '#d00000';
 
 const transparent = 'transparent';
 const inHandleColor = red;
@@ -97,6 +99,11 @@ const ringBackground = 'rgba(255,114,94,0.4)';
 const nodePropertyBackground = 'rgba(198, 198, 198, 0.4)';
 const baseSpaceHandleColor = 'rgba(255, 0, 255, 0.3)';
 const frameBackground = 'rgba(0, 0, 0, 0.036)';
+const rulerBackground = white;
+const rulerGraduation = darkestGrey;
+const rulerText = darkestGrey;
+const guideColor = pureRed;
+const guideHotColor = red;
 
 const pointMenuAnimationLength = 10;
 const componentMenuAnimationLength = 20;
@@ -1046,6 +1053,7 @@ export default class Toile {
 		this.context.beginPath();
 		this.context.strokeStyle = strokeColor;
 		this.context.setLineDash(dash);
+		this.context.strokeWidth = 0.75;
 		this.context.moveTo(start.x, start.y);
 		this.context.lineTo(end.x, end.y);
 		this.context.stroke();
@@ -1805,9 +1813,9 @@ export default class Toile {
 						mouseTransformed.y >= rectStart.y
 						&& mouseTransformed.y <= rectEnd.y
 					) || (
-						mouseTransformed.y <= rectStart.y
+							mouseTransformed.y <= rectStart.y
 						&& mouseTransformed.y >= rectEnd.y
-					))
+						))
 				) {
 					result.push(interactionItem);
 				}
@@ -1892,7 +1900,7 @@ export default class Toile {
 	drawGuides(guides, hotItems) {
 		this.interactionList.push(...guides.map((guide) => {
 			const isHot = hotItems.some(item => item.id === guide.id);
-			const color = isHot ? 'red' : 'pink';
+			const color = isHot ? guideHotColor : guideColor;
 
 			if (guide.x) {
 				this.drawLine(
@@ -1919,9 +1927,9 @@ export default class Toile {
 
 	drawRuler(width, height) {
 		const size = 15;
-		const backgroundColor = '#fff';
-		const strokeColor = '#222';
-		const textColor = '#222';
+		const backgroundColor = rulerBackground;
+		const strokeColor = rulerGraduation;
+		const textColor = darkestGrey;
 
 		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 		const [start, hEnd, vEnd, squareSize] = transformCoords([
@@ -1939,9 +1947,7 @@ export default class Toile {
 			return size / 3;
 		};
 
-		const interval = [1, 2, 5, 10, 20, 50, 100].find((scale) => {
-			return this.viewMatrix[0] * scale > 20;
-		}) || 100;
+		const interval = [1, 2, 5, 10, 20, 50, 100].find(scale => this.viewMatrix[0] * scale > 20) || 100;
 
 		const roundedStartX = parseInt(start.x, 10);
 		const roundedStartY = parseInt(start.y, 10);
