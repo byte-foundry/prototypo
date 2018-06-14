@@ -1,7 +1,7 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
 
-export default class LibraryApp extends React.PureComponent {
+export default class LibraryApp extends React.Component {
 	componentWillMount() {
 		pleaseWait.instance.finish();
 	}

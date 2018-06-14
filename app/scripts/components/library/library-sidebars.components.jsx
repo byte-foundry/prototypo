@@ -2,7 +2,7 @@ import React from 'react';
 import pleaseWait from 'please-wait';
 import { Link } from 'react-router';
 
-export class LibrarySidebarLeft extends React.PureComponent {
+export class LibrarySidebarLeft extends React.Component {
 	render() {
 		return (
 			<div className="library-sidebar-left">
@@ -19,7 +19,7 @@ export class LibrarySidebarLeft extends React.PureComponent {
 	}
 }
 
-export class LibrarySidebarRight extends React.PureComponent {
+export class LibrarySidebarRight extends React.Component {
 	render() {
 		return (
 			<div className="library-sidebar-right">
@@ -29,7 +29,7 @@ export class LibrarySidebarRight extends React.PureComponent {
 	}
 }
 
-export class FamilySidebarActions extends React.PureComponent {
+export class FamilySidebarActions extends React.Component {
 	constructor(props) {
 		super(props);
 	}
@@ -61,7 +61,7 @@ export class FamilySidebarActions extends React.PureComponent {
 	}
 }
 
-export class FamilySidebarGlyphs extends React.PureComponent {
+export class FamilySidebarGlyphs extends React.Component {
 	constructor(props) {
 		super(props);
 	}
@@ -72,14 +72,14 @@ export class FamilySidebarGlyphs extends React.PureComponent {
 					Support
 				</div>
 				<div className="sidebar-glyphs-language">
-					Latin: <span>{Object.keys(this.props.glyphs).filter(key => this.props.glyphs[key][0].unicode !== undefined).length}</span>
+					Latin<span>{Object.keys(this.props.glyphs).filter(key => this.props.glyphs[key][0].unicode !== undefined).length}</span>
 				</div>
 			</div>
 		)
 	}
 }
 
-export class SidebarFilters extends React.PureComponent {
+export class SidebarFilters extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -148,7 +148,7 @@ export class SidebarFilters extends React.PureComponent {
 	}
 }
 
-class SidebarFilter extends React.PureComponent {
+class SidebarFilter extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {

@@ -72,6 +72,20 @@
                         }
                 }
             }
+            .sidebar-glyphs {
+                .sidebar-glyphs-title {
+                    margin-top: 40px;
+                    font-weight: bold;
+                }
+                .sidebar-glyphs-language {
+                    margin-top: 10px;
+                    text-transform: uppercase;
+                    span {
+                        color: $medium-grey;
+                        margin-left: 10px;
+                    }
+                }
+            }
         }
         .library-content-wrapper {
             display: flex;

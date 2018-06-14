@@ -8,7 +8,7 @@ import _forOwn from 'lodash/forOwn';
 import { LibrarySidebarLeft } from './library-sidebars.components';
 import { TemplateItem, PresetItem, FamilyItem } from './library-list.components';
 
-class LibraryMain extends React.PureComponent {
+class LibraryMain extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -39,7 +39,7 @@ class LibraryMain extends React.PureComponent {
 	}
 
 	goToDashboard() {
-		this.props.history.push('/dashboard');
+		this.props.router.push('/dashboard');
 	}
 
 	open(variant, family) {
@@ -266,7 +266,7 @@ class LibraryMain extends React.PureComponent {
 						template={templateInfo}
 						user={{ firstName: this.props.firstName, lastName: this.props.lastName }}
 						background={userColor}
-						history={this.props.history}
+						router={this.props.router}
 						variantToLoad={variantToLoad}						
 						open={this.open}
 					/>)

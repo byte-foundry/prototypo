@@ -9,10 +9,9 @@ import FontUpdater from "../font-updater.components";
 import {graphql, gql, compose} from 'react-apollo';
 import { LibrarySidebarRight, SidebarFilters } from './library-sidebars.components';
 
-class LibraryList extends React.PureComponent {
+class LibraryList extends React.Component {
 	constructor(props) {
 		super(props);
-
 		this.state = {};
 	}	
 
@@ -44,7 +43,7 @@ LibraryList.defaultProps = {
 
 export default LibraryList;
 
-class FamilyList extends React.PureComponent {
+class FamilyList extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {}		
@@ -68,7 +67,7 @@ class FamilyList extends React.PureComponent {
 	}
 }
 
-export class TemplateItem extends React.PureComponent {
+export class TemplateItem extends React.Component {
 	constructor(props) {
 		super(props)	
 		this.state = {
@@ -106,7 +105,7 @@ export class TemplateItem extends React.PureComponent {
 	}
 }
 
-export class FamilyItem extends React.PureComponent {
+export class FamilyItem extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -141,7 +140,7 @@ export class FamilyItem extends React.PureComponent {
 					<div className="library-item-action">
 						Download
 					</div>
-					<div className="library-item-action" onMouseDown={() => {this.props.history.push(`/library/project/${this.props.family.id}`)}}>
+					<div className="library-item-action" onMouseDown={() => {this.props.router && this.props.router.push(`/library/project/${this.props.family.id}`)}}>
 						Open family
 					</div>
 				</div>
@@ -150,7 +149,7 @@ export class FamilyItem extends React.PureComponent {
 	}
 }
 
-export class PresetItem extends React.PureComponent {
+export class PresetItem extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
