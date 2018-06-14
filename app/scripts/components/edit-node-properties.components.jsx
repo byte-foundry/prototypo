@@ -218,8 +218,8 @@ class EditNodeProperties extends React.Component {
 					onKeyDown={this.stopPropagation}
 				>
 					<h4>Node props</h4>
-					<p><span>X</span> <input type="number" name="x" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={node.x} /></p>
-					<p><span>Y</span><input type="number" name="y" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={node.y} /></p>
+					<p><span>X</span> <input type="number" name="x" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={this.state.x} /></p>
+					<p><span>Y</span><input type="number" name="y" onKeyDown={this.savePrevValue} onChange={this.handleInput} value={this.state.y} /></p>
 					<h4>Expand props</h4>
 					<p><span>Width</span>{parent.expand.width.toFixed(0)} ({formatDifference((parent.expand.width - parent.expand.baseWidth).toFixed(0))})</p>
 					<p><span>Angle</span>{((parent.expand.angle / Math.PI) * 180).toFixed(0)} ({formatDifference((((parent.expand.angle - parent.expand.baseAngle) / Math.PI) * 180).toFixed(0))})</p>

@@ -222,8 +222,12 @@ export function onCurveModification(
 		componentName,
 	} = draggedItem.data;
 	const opposite = _get(glyph, oppositeId);
+	const current = _get(glyph, draggedItem.id);
 	const newPosition = newPos;
-	const widthVector = subtract2D(opposite, newPosition);
+	const halfWidth = distance2D({x: 0, y: 0}, subtract2D(current, skeleton));
+	const otherHalfWidth = distance2D({x: 0, y: 0}, subtract2D(opposite, skeleton));
+	const widthFactor = (halfWidth + otherHalfWidth) / halfWidth;
+	const widthVector = subtract2D(skeleton, newPosition);
 
 	let xTransform = 1;
 	let yTransform = 1;
@@ -246,7 +250,7 @@ export function onCurveModification(
 
 	const newWidth = distance2D({x: 0, y: 0}, transformedWidthVector);
 	// width factor
-	const factor = newWidth / baseWidth;
+	const factor = newWidth * widthFactor / baseWidth;
 	// angle difference
 	const newVec = subtract2D(newPosition, skeleton);
 	const transformedVec = {
