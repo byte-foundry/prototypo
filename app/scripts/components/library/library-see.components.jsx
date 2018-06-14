@@ -4,9 +4,9 @@ import { LibrarySidebarRight, FamilySidebarActions } from './library-sidebars.co
 import FontUpdater from "../font-updater.components";
 import LocalClient from '../../stores/local-client.stores';
 
-export default class LibrarySee extends React.PureComponent {
+export default class LibrarySee extends React.Component {
 	constructor(props) {
-		super(props)
+		super(props);
 		const family = props.baseFontData.find(e => e.id === props.params.projectID);
 		if(!family) {props.history.push('/library/home')};
 		let fontsToGenerate = [];
@@ -70,7 +70,7 @@ export default class LibrarySee extends React.PureComponent {
 	}
 }
 
-export class VariantItem extends React.PureComponent {
+export class VariantItem extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {

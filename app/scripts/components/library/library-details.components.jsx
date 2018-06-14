@@ -5,7 +5,7 @@ import { graphql, gql, compose } from 'react-apollo';
 import FontUpdater from "../font-updater.components";
 import LocalClient from '../../stores/local-client.stores';
 
-class LibraryDetails extends React.PureComponent {
+class LibraryDetails extends React.Component {
 	constructor(props) {
 		super(props)
 		const family = props.baseFontData.find(e => e.id === props.params.projectID);
