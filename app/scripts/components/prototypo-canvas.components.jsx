@@ -32,6 +32,7 @@ export default class PrototypoCanvas extends React.Component {
 			glyphPanelOpened: undefined,
 			uiText: '',
 			uiWord: '',
+			uiRuler: true,
 			shadowFile: '',
 			glyphViewMatrix: {},
 		};
@@ -46,6 +47,7 @@ export default class PrototypoCanvas extends React.Component {
 		this.toggleDependencies = this.toggleDependencies.bind(this);
 		this.toggleNodes = this.toggleNodes.bind(this);
 		this.toggleOutline = this.toggleOutline.bind(this);
+		this.toggleRuler = this.toggleRuler.bind(this);
 		this.changeComponent = this.changeComponent.bind(this);
 		this.wheel = this.wheel.bind(this);
 		this.acceptShortcut = this.acceptShortcut.bind(this);
@@ -349,6 +351,10 @@ export default class PrototypoCanvas extends React.Component {
 		this.client.dispatchAction('/store-value', {uiOutline: !this.props.uiOutline});
 	}
 
+	toggleRuler() {
+		this.client.dispatchAction('/store-value', {uiRuler: !this.props.uiRuler});
+	}
+
 	toggleCoords() {
 		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords, uiNodes: this.props.uiCoords ? this.props.uiNodes : true});
 	}
@@ -486,6 +492,7 @@ export default class PrototypoCanvas extends React.Component {
 
 	render() {
 		const {selectedItems, updatedGlyph} = this.state;
+		const {uiRuler, uiOutline} = this.props;
 
 		/* eslint-disable max-len */
 		// const isFreeWithoutCreditsInManualEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'select-points';
@@ -508,11 +515,18 @@ export default class PrototypoCanvas extends React.Component {
 
 		const menu = [
 			<ContextualMenuItem
+				key="ruler"
+				active={uiRuler}
+				onClick={this.toggleRuler}
+			>
+				{uiRuler ? 'Hide' : 'Show'} ruler
+			</ContextualMenuItem>,
+			<ContextualMenuItem
 				key="outline"
-				active={this.props.uiOutline}
+				active={uiOutline}
 				onClick={this.toggleOutline}
 			>
-				{this.props.uiOutline ? 'Hide' : 'Show'} outline
+				{uiOutline ? 'Hide' : 'Show'} outline
 			</ContextualMenuItem>,
 			<ContextualMenuItem
 				key="reset"

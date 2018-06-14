@@ -357,6 +357,8 @@ export default class GlyphCanvas extends React.PureComponent {
 		super(props);
 		this.state = {
 			values: {},
+			uiRuler: true,
+			guides: [],
 		};
 
 		this.changeParam = this.changeParam.bind(this);
@@ -391,6 +393,8 @@ export default class GlyphCanvas extends React.PureComponent {
 				this.setState({
 					canvasMode: head.toJS().d.canvasMode,
 					uiOutline: head.toJS().d.uiOutline,
+					uiRuler: head.toJS().d.uiRuler,
+					guides: head.toJS().d.guides,
 				});
 			})
 			.onDelete(() => {
@@ -574,7 +578,8 @@ export default class GlyphCanvas extends React.PureComponent {
 			switch (this.state.canvasMode) {
 			case 'components':
 				appMode = canvasMode.COMPONENTS;
-				selectedItems = [];
+				// unselect everything but guides
+				selectedItems = selectedItems.filter(item => item.type === toileType.GUIDE_HANDLE);
 				break;
 			case 'select-points':
 				appMode = canvasMode.SELECT_POINTS;
@@ -599,6 +604,7 @@ export default class GlyphCanvas extends React.PureComponent {
 			if (glyph) {
 				const nodes = hotItems.filter(item => item.type <= toileType.CONTOUR_NODE_OUT);
 				const spacingHandle = hotItems.filter(item => item.type === toileType.SPACING_HANDLE);
+				const guideHandle = hotItems.filter(item => item.type === toileType.GUIDE_HANDLE);
 				const contours = hotItems.filter(item =>
 					item.type === toileType.GLYPH_CONTOUR
 					|| item.type === toileType.GLYPH_COMPONENT_CONTOUR);
@@ -612,6 +618,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					= hotItems.filter(item => item.type === toileType.COMPONENT_MENU_ITEM_CLASS);
 				let components = hotItems.filter(item => item.type === toileType.COMPONENT_CHOICE
 						|| item.type === toileType.COMPONENT_NONE_CHOICE);
+				const rulers = hotItems.filter(item => item.type === toileType.RULER);
 
 				const [mousePosInWorld] = transformCoords(
 					[mouse.pos],
@@ -649,13 +656,63 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 				}
 
+				// Managing guides and rulers
+				if (mouse.edge === mState.DOWN && !(
+					appStateValue & (
+						appState.DRAGGING_CONTOUR
+							| appState.DRAGGING_CONTOUR_POINT
+							| appState.DRAGGING_POINTS
+							| appState.DRAGGING_SPACING
+					))) {
+					if (guideHandle.length > 0) {
+						appStateValue = appState.DRAGGING_GUIDE;
+						selectedItems = [guideHandle[0]];
+						this.storeSelectedItems(selectedItems);
+					}
+					else if (rulers.length > 0) {
+						const axe = rulers[0].id === 'verticalRuler' ? 'x' : 'y';
+						const newGuide = {
+							id: `guide${Date.now()}`,
+							[axe]: mouse.pos[axe],
+						};
+
+						this.client.dispatchAction('/store-value', {guides: this.state.guides.concat(newGuide)});
+
+						appStateValue = appState.DRAGGING_GUIDE;
+						selectedItems = [{
+							id: newGuide.id,
+							type: toileType.GUIDE_HANDLE,
+							data: {
+								x: newGuide.x,
+								y: newGuide.y,
+							},
+						}];
+						this.storeSelectedItems(selectedItems);
+					}
+				}
+				else if ((appStateValue & appState.GUIDE_SELECTED) && mouseClickRelease) {
+					appStateValue = appState.DRAGGING_GUIDE;
+					selectedItems = [guideHandle[0]];
+					this.storeSelectedItems(selectedItems);
+				}
+				// deleting the guide when it has been released on a ruler
+				else if ((appStateValue & appState.DRAGGING_GUIDE) && mouseClickRelease) {
+					if (selectedItems[0].type === toileType.GUIDE_HANDLE) {
+						if (rulers.length > 0) {
+							this.client.dispatchAction('/store-value', {
+								guides: this.state.guides.filter(guide => guide.id !== selectedItems[0].id),
+							});
+						}
+
+						appStateValue = appState.DEFAULT;
+					}
+				}
+
 				// =========================================================
 				// =========================================================
 				// This is the state machine state changing part
 				// There is 3 first level state
-				if (appMode === canvasMode.MOVE) {
-					// when in move mode the only action possible is to move
-					// this happen if mouse is in down state
+				if (appMode === canvasMode.MOVE && !(appStateValue & (appState.GUIDE_SELECTED | appState.DRAGGING_GUIDE))) {
 					if (mouse.state === mState.DOWN) {
 						appStateValue = appState.MOVING;
 					}
@@ -713,7 +770,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					else if (componentMenu.length > 0) {
 						appStateValue = appState.COMPONENT_MENU_HOVERED;
 					}
-					else {
+					else if (!(appStateValue & (appState.GUIDE_SELECTED | appState.DRAGGING_GUIDE))) {
 						componentHovered = {};
 						appStateValue = appState.DEFAULT;
 					}
@@ -832,6 +889,10 @@ export default class GlyphCanvas extends React.PureComponent {
 							contourSelectedIndex++;
 							appStateValue = appState.CONTOUR_GLOBAL_SELECTED;
 						}
+						else if (guideHandle.length > 0) {
+							appStateValue = appState.DRAGGING_GUIDE;
+							selectedItems = [guideHandle[0]];
+						}
 						else if (spacingHandle.length > 0) {
 							appStateValue = appState.DRAGGING_SPACING;
 							selectedItems = [spacingHandle[0]];
@@ -847,7 +908,11 @@ export default class GlyphCanvas extends React.PureComponent {
 					else if (
 						(
 							appStateValue
-							& (appState.DRAGGING_CONTOUR_POINT | appState.DRAGGING_SPACING)
+							& (
+								appState.DRAGGING_CONTOUR_POINT
+								| appState.DRAGGING_SPACING
+								| appState.DRAGGING_GUIDE
+							)
 						) && mouseClickRelease
 					) {
 						if (selectedItems[0].type === toileType.NODE_SKELETON) {
@@ -875,6 +940,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							& (
 								appState.CONTOUR_POINT_SELECTED
 								| appState.SPACING_SELECTED
+								| appState.GUIDE_SELECTED
 								| appState.SKELETON_POINT_SELECTED
 							)
 						)
@@ -1037,14 +1103,18 @@ export default class GlyphCanvas extends React.PureComponent {
 				// =========================================================
 				// =========================================================
 
-				if (
-					appMode === canvasMode.SELECT_POINTS
-					&& !(
-						appStateValue
-						& (appState.DRAGGING_POINTS | appState.DRAGGING_CONTOUR_POINT)
-					)
+				if (!(
+					appStateValue
+						& (
+							appState.DRAGGING_POINTS
+							| appState.DRAGGING_CONTOUR_POINT
+						)
+				)
 				) {
-					if (spacingHandle.length > 0) {
+					if (guideHandle.length > 0) {
+						this.canvas.style.cursor = guideHandle[0].data.y ? 'ns-resize' : 'ew-resize';
+					}
+					else if (appMode === canvasMode.SELECT_POINTS && spacingHandle.length > 0) {
 						this.canvas.style.cursor = 'ew-resize';
 					}
 					else {
@@ -1266,7 +1336,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					});
 				}
 				else if (
-					appStateValue & appState.DRAGGING_SPACING
+					appStateValue & (appState.DRAGGING_SPACING | appState.DRAGGING_GUIDE)
 				) {
 					interactions = [{
 						item: selectedItems[0],
@@ -1275,7 +1345,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					mouseMovement = true;
 				}
 				else if (
-					appStateValue & appState.SPACING_SELECTED
+					appStateValue & (appState.SPACING_SELECTED | appState.GUIDE_SELECTED)
 					&& displacementArrow
 				) {
 					mouseMovement = false;
@@ -1338,6 +1408,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						| appState.SKELETON_POINT_SELECTED
 						| appState.POINTS_SELECTED
 						| appState.DRAGGING_SPACING
+						| appState.DRAGGING_GUIDE
 						| appState.SPACING_SELECTED
 						| appState.INPUT_CHANGE
 					)
@@ -1347,6 +1418,19 @@ export default class GlyphCanvas extends React.PureComponent {
 						const {item, modData, type} = interaction;
 
 						switch (item.type) {
+						case toileType.GUIDE_HANDLE: {
+							const guides = this.state.guides.map((guide) => {
+								if (guide.id === item.id) {
+									return typeof guide.x === 'number'
+										? {id: guide.id, x: modData.x}
+										: {id: guide.id, y: modData.y};
+								}
+								return guide;
+							});
+
+							this.client.dispatchAction('/store-value', {guides});
+							break;
+						}
 						case toileType.SPACING_HANDLE: {
 							changeSpacing(
 								this.client,
@@ -1502,6 +1586,15 @@ export default class GlyphCanvas extends React.PureComponent {
 							break;
 						}
 					});
+				}
+
+				if (this.state.uiRuler) {
+					this.toile.drawGuides(
+						this.state.guides,
+						// if component menu is hovered, we don't consider the guide
+						componentMenu.length > 0 ? [] : guideHandle,
+					);
+					this.toile.drawRuler(width, height);
 				}
 			}
 

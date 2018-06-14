@@ -130,6 +130,8 @@ const prototypoStore = new Remutable({
 	uiZoom: undefined,
 	uiNodes: undefined,
 	uiOutline: undefined,
+	uiRuler: true,
+	guides: [],
 	uiCoords: undefined,
 	uiShadow: undefined,
 	uiText: '',

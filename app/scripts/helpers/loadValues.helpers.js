@@ -35,6 +35,8 @@ export const valuesToLoad = [
 	{remote: 'firstTimeAcademyModal', local: 'firstTimeAcademyModal'},
 	{remote: 'canvasPanelWidth', local: 'canvasPanelWidth'},
 	{remote: 'wordPanelHeight', local: 'wordPanelHeight'},
+	{remote: 'rulerDisplayed', local: 'uiRuler'},
+	{remote: 'guides', local: 'guides'},
 ];
 
 window.addEventListener('fluxServer.setup', () => {

@@ -4,7 +4,7 @@ import _slice from 'lodash/slice';
 import _flatten from 'lodash/flatten';
 import _reduce from 'lodash/reduce';
 
-import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D} from '../prototypo.js/utils/linear';
+import {distance2D, subtract2D, add2D, mulScalar2D, normalize2D, round2D} from '../prototypo.js/utils/linear';
 import {getIntersectionTValue, getPointOnCurve} from '../prototypo.js/utils/updateUtils';
 import DOM from '../helpers/dom.helpers';
 
@@ -31,6 +31,8 @@ export const toileType = {
 	COMPONENT_MENU_ITEM_CENTER: 14,
 	SPACING_HANDLE: 15,
 	PERF_RECT: 16,
+	GUIDE_HANDLE: 17,
+	RULER: 18,
 };
 
 export const canvasMode = {
@@ -70,6 +72,8 @@ export const appState = {
 	SPACING_SELECTED:	0b10000000000000000,
 	NOT_SELECTING:	0b100000000000000000,
 	INPUT_CHANGE: 0b1000000000000000000,
+	DRAGGING_GUIDE: 0b10000000000000000000,
+	GUIDE_SELECTED: 0b100000000000000000000,
 };
 
 const green = '#24d390';
@@ -83,6 +87,8 @@ const lightGrey = '#c6c6c6';
 const lightestGrey = '#f6f6f6';
 const white = '#fefefe';
 const red = '#ff725e';
+const pureRed = '#ff0000';
+const unsatRed = '#d00000';
 
 const transparent = 'transparent';
 const inHandleColor = red;
@@ -93,6 +99,11 @@ const ringBackground = 'rgba(255,114,94,0.4)';
 const nodePropertyBackground = 'rgba(198, 198, 198, 0.4)';
 const baseSpaceHandleColor = 'rgba(255, 0, 255, 0.3)';
 const frameBackground = 'rgba(0, 0, 0, 0.036)';
+const rulerBackground = white;
+const rulerGraduation = darkestGrey;
+const rulerText = darkestGrey;
+const guideColor = pureRed;
+const guideHotColor = red;
 
 const pointMenuAnimationLength = 10;
 const componentMenuAnimationLength = 20;
@@ -250,6 +261,7 @@ export default class Toile {
 		// c is x on y influence
 		// tx is x translation
 		// ty is y translation
+		// [a, b, c, d, tx, ty]
 		this.viewMatrix = [1, 0, 0, -1, 0, 0];
 		this.interactionList = [];
 	}
@@ -1041,6 +1053,7 @@ export default class Toile {
 		this.context.beginPath();
 		this.context.strokeStyle = strokeColor;
 		this.context.setLineDash(dash);
+		this.context.strokeWidth = 0.75;
 		this.context.moveTo(start.x, start.y);
 		this.context.lineTo(end.x, end.y);
 		this.context.stroke();
@@ -1670,6 +1683,7 @@ export default class Toile {
 
 		this.interactionList.forEach((interactionItem) => {
 			switch (interactionItem.type) {
+			case toileType.GUIDE_HANDLE:
 			case toileType.SPACING_HANDLE: {
 				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
 				const [mouseTransformed] = transformCoords(
@@ -1677,8 +1691,11 @@ export default class Toile {
 					inverseMatrix,
 					this.height / this.viewMatrix[0],
 				);
-				const {x} = interactionItem.data;
-				const distance = Math.abs(x - mouseTransformed.x);
+				const {x, y} = interactionItem.data;
+				let distance;
+
+				if (typeof x === 'number') distance = Math.abs(x - mouseTransformed.x);
+				else distance = Math.abs(y - mouseTransformed.y);
 
 				if (distance <= spacingInfluence / this.viewMatrix[0]) {
 					result.push(interactionItem);
@@ -1779,6 +1796,7 @@ export default class Toile {
 			}
 			case toileType.COMPONENT_MENU_ITEM:
 			case toileType.COMPONENT_MENU_ITEM_CLASS:
+			case toileType.RULER:
 			case toileType.PERF_RECT: {
 				const {rectStart, rectEnd} = interactionItem.data;
 				const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
@@ -1791,8 +1809,13 @@ export default class Toile {
 				if (
 					mouseTransformed.x >= rectStart.x
 					&& mouseTransformed.x <= rectEnd.x
-					&& mouseTransformed.y >= rectStart.y
-					&& mouseTransformed.y <= rectEnd.y
+					&& ((
+						mouseTransformed.y >= rectStart.y
+						&& mouseTransformed.y <= rectEnd.y
+					) || (
+							mouseTransformed.y <= rectStart.y
+						&& mouseTransformed.y >= rectEnd.y
+						))
 				) {
 					result.push(interactionItem);
 				}
@@ -1872,6 +1895,131 @@ export default class Toile {
 		}
 
 		return undefined;
+	}
+
+	drawGuides(guides, hotItems) {
+		this.interactionList.push(...guides.map((guide) => {
+			const isHot = hotItems.some(item => item.id === guide.id);
+			const color = isHot ? guideHotColor : guideColor;
+
+			if (guide.x) {
+				this.drawLine(
+					{x: guide.x, y: -infinityDistance},
+					{x: guide.x, y: infinityDistance},
+					color,
+				);
+			}
+			else if (guide.y) {
+				this.drawLine(
+					{x: -infinityDistance, y: guide.y},
+					{x: infinityDistance, y: guide.y},
+					color,
+				);
+			}
+
+			return {
+				id: guide.id,
+				type: toileType.GUIDE_HANDLE,
+				data: guide,
+			};
+		}));
+	}
+
+	drawRuler(width, height) {
+		const size = 15;
+		const backgroundColor = rulerBackground;
+		const strokeColor = rulerGraduation;
+		const textColor = darkestGrey;
+
+		const inverseMatrix = inverseProjectionMatrix(this.viewMatrix);
+		const [start, hEnd, vEnd, squareSize] = transformCoords([
+			{x: 0, y: 0},
+			{x: width, y: size},
+			{x: size, y: height},
+			{x: size, y: size},
+		], inverseMatrix, this.height / this.viewMatrix[0]);
+
+		const getMarkSize = (mark, interval) => {
+			if (mark % (interval * 5) === 0) {
+				return size;
+			}
+
+			return size / 3;
+		};
+
+		const interval = [1, 2, 5, 10, 20, 50, 100].find(scale => this.viewMatrix[0] * scale > 20) || 100;
+
+		const roundedStartX = parseInt(start.x, 10);
+		const roundedStartY = parseInt(start.y, 10);
+		const startX = roundedStartX - (roundedStartX % interval);
+		const startY = roundedStartY - (roundedStartY % interval);
+		const margin = 2 / this.viewMatrix[0];
+		const sizeInWorld = size / this.viewMatrix[0];
+
+		// const horizontalRuler = hotItems.find(item => item.id === 'horizontalRuler') ? backgroundColor : '#f0f';
+		this.drawRectangleFromCorners(start, hEnd, strokeColor, backgroundColor);
+		for (let i = startX; i < parseInt(hEnd.x, 10); i += interval) {
+			const [sizeVec, fullSizeVec] = transformCoords([
+				{x: 0, y: getMarkSize(i, interval)},
+				{x: 0, y: size},
+			], inverseMatrix, this.height / this.viewMatrix[0]);
+
+			// full bar needs text
+			if (fullSizeVec.y - sizeVec.y === 0) {
+				this.drawText(i, {x: i + margin, y: start.y - (sizeInWorld / 2) - margin}, 10, textColor);
+			}
+
+			this.drawLine(
+				{x: i, y: start.y + fullSizeVec.y - sizeVec.y},
+				{x: i, y: fullSizeVec.y},
+				textColor,
+			);
+		}
+
+		this.interactionList.push({
+			id: 'horizontalRuler',
+			type: toileType.RULER,
+			data: {rectStart: start, rectEnd: hEnd},
+		});
+
+		this.drawRectangleFromCorners(start, vEnd, strokeColor, backgroundColor);
+		for (let i = startY; i > parseInt(vEnd.y, 10); i -= interval) {
+			const [sizeVec, fullSizeVec] = transformCoords([
+				{x: getMarkSize(i, interval), y: 0},
+				{x: size, y: 0},
+			], inverseMatrix, this.height / this.viewMatrix[0]);
+
+			// full bar needs text
+			if (fullSizeVec.x - sizeVec.x === 0) {
+				this.context.save();
+
+				this.context.fillStyle = textColor;
+				const [co] = transformCoords([
+					{x: start.x + (sizeInWorld / 2) + margin, y: i + margin},
+				], this.viewMatrix, this.height);
+
+				this.context.translate(co.x, co.y);
+				this.context.rotate(-Math.PI / 2);
+				this.context.fillText(i, 0, 0);
+
+				this.context.restore();
+			}
+
+			this.drawLine(
+				{x: start.x + fullSizeVec.x - sizeVec.x, y: i},
+				{x: fullSizeVec.x, y: i},
+				textColor,
+			);
+		}
+
+		this.interactionList.push({
+			id: 'verticalRuler',
+			type: toileType.RULER,
+			data: {rectStart: start, rectEnd: vEnd},
+		});
+
+		// little square to hide the junction
+		this.drawRectangleFromCorners(start, squareSize, strokeColor, backgroundColor);
 	}
 }
 /* eslint-enable no-param-reassign, no-bitwise */

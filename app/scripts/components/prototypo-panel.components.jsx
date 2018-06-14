@@ -45,6 +45,7 @@ export default class PrototypoPanel extends React.Component {
 					uiPos: head.toJS().d.uiPos,
 					uiNodes: head.toJS().d.uiNodes,
 					uiOutline: head.toJS().d.uiOutline,
+					uiRuler: head.toJS().d.uiRuler,
 					uiCoords: head.toJS().d.uiCoords,
 					uiShadow: head.toJS().d.uiShadow,
 					uiInvertedTextView: head.toJS().d.uiInvertedTextView,
@@ -218,6 +219,7 @@ export default class PrototypoPanel extends React.Component {
 							uiPos={this.state.uiPos}
 							uiNodes={this.state.uiNodes}
 							uiOutline={this.state.uiOutline}
+							uiRuler={this.state.uiRuler}
 							uiCoords={this.state.uiCoords}
 							uiDependencies={this.state.uiDependencies}
 							uiShadow={this.state.uiShadow}
