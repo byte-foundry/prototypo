@@ -106,3 +106,74 @@ export default class LibraryDetails extends React.PureComponent {
 		);
 	}
 }
+
+const libraryQuery = gql`
+	query {
+		user {
+			id
+			library {
+				id
+				name
+				template
+				variants {
+					id
+					name
+					values
+				}
+			}
+		}
+	}
+`;
+
+const deleteVariantMutation = gql`
+	mutation deleteVariant($id: ID!) {
+		deleteVariant(id: $id) {
+			id
+		}
+	}
+`;
+
+export default compose(
+	graphql(libraryQuery, {
+		options: {
+			fetchPolicy: 'network-only',
+		},
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			if (data.user) {
+				return {
+					families: data.user.library,
+					refetch: data.refetch,
+				};
+			}
+
+			return {refetch: data.refetch};
+		},
+	}),
+	graphql(deleteVariantMutation, {
+		props: ({mutate}) => ({
+			deleteVariant: id =>
+				mutate({
+					variables: {id},
+				}),
+		}),
+		options: {
+			update: (store, {data: {deleteVariant}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library.forEach((family) => {
+					// eslint-disable-next-line
+					family.variants = family.variants.filter(variant => variant.id !== deleteVariant.id);
+				});
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	})
+)(Collection);
