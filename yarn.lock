@@ -968,7 +968,7 @@ ansi-wrap@0.1.0:
 
 antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/7f9ce30a73649f25377c8954899d4672a2a5bfd8"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/9fa9f1dfad947b5814445d2f52a61960e42d4532"
   dependencies:
     karma "^1.7.1"
     prototypo-precursor "1.0.7"
