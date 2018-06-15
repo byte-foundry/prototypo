@@ -31,7 +31,7 @@ export default class LibrarySee extends React.Component {
 		this.goToDashboard = this.goToDashboard.bind(this);
 	}
 	goToDashboard() {
-		this.props.history.push('/dashboard');
+		this.props.router.push('/dashboard');
 	}
 	componentWillMount() {
 		pleaseWait.instance.finish();
@@ -64,7 +64,7 @@ export default class LibrarySee extends React.Component {
 					</div>
 					<FontUpdater extraFonts={this.state.fontsToGenerate} />
 				</div>
-				<LibrarySidebarRight><FamilySidebarActions glyphs={this.state.family.glyphs} familyId={this.props.params.projectID} mode="see" /></LibrarySidebarRight>
+				<LibrarySidebarRight><FamilySidebarActions glyphs={this.state.family.glyphs} family={this.state.family} familyId={this.props.params.projectID} mode="see" /></LibrarySidebarRight>
 			</div>
 		);
 	}

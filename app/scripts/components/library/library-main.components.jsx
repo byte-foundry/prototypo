@@ -5,6 +5,7 @@ import Lifespan from 'lifespan';
 import LocalClient from '../../stores/local-client.stores';
 import _forOwn from 'lodash/forOwn';
 
+import CreateVariantModal from '../familyVariant/create-variant-modal.components.jsx';
 import { LibrarySidebarLeft } from './library-sidebars.components';
 import { TemplateItem, PresetItem, FamilyItem } from './library-list.components';
 
@@ -32,6 +33,16 @@ class LibraryMain extends React.Component {
 		this.setState({
 			templateInfos: prototypoStore.head.toJS().templateList,
 		});
+
+		this.client.getStore('/prototypoStore', this.lifespan)
+			.onUpdate((head) => {
+				console.log()
+				this.setState({
+					openFamilyModal: head.toJS().d.openFamilyModal,
+					openVariantModal: head.toJS().d.openVariantModal,
+					familySelectedVariantCreation: head.toJS().d.familySelectedVariantCreation,
+				});
+			})
 	}
 
 	componentWillUnmount() {
@@ -309,6 +320,8 @@ class LibraryMain extends React.Component {
 					fontsToDisplay: this.state.fontsToDisplay,
 					setActiveFilters: this.setActiveFilters
 				})}
+				{this.state.openVariantModal
+			&& <CreateVariantModal family={this.state.familySelectedVariantCreation} propName="openVariantModal" />}
 			</div>
 		);
 	}

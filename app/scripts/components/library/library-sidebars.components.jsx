@@ -1,6 +1,7 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
 import { Link } from 'react-router';
+import LocalClient from '../../stores/local-client.stores';
 
 export class LibrarySidebarLeft extends React.Component {
 	render() {
@@ -32,6 +33,16 @@ export class LibrarySidebarRight extends React.Component {
 export class FamilySidebarActions extends React.Component {
 	constructor(props) {
 		super(props);
+		this.addVariant = this.addVariant.bind(this);
+	}
+	async componentWillMount() {
+		this.client = LocalClient.instance();
+	}
+	addVariant() {
+		this.client.dispatchAction('/store-value', {
+			openVariantModal: true,
+			familySelectedVariantCreation: this.props.family,
+		});
 	}
 	render() {
 		return (
@@ -53,7 +64,7 @@ export class FamilySidebarActions extends React.Component {
 						</Link>
 					)
 				}
-				<div className="sidebar-action">
+				<div className="sidebar-action" onClick={() => {this.addVariant()}}>
 					Add new Variant
 				</div>
 			</div>
