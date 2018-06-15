@@ -1,15 +1,13 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
-import {graphql, gql} from 'react-apollo';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';
 import SliderHelpText from '../../images/sliders/helpText.json';
 
 import SliderController from './slider-controller.components';
-
-const demoRatio = 0.7;
 
 export class Sliders extends React.PureComponent {
 	constructor(props) {
@@ -58,9 +56,8 @@ export class Sliders extends React.PureComponent {
 			return false;
 		}
 
-		if (process.env.__SHOW_RENDER__) {
-			console.log('[RENDER] sliders');
-		}
+		const {advancedMode} = this.props;
+
 		const sliders = this.props.params.map((param, i) => {
 			const individualized = this.props.indivEdit;
 			let value;
@@ -112,7 +109,6 @@ export class Sliders extends React.PureComponent {
 
 			return isRadio ? (
 				<RadioSlider
-					demo={paramToUse.demo}
 					disabled={paramToUse.disabled}
 					init={paramToUse.init}
 					label={paramToUse.label}
@@ -131,7 +127,6 @@ export class Sliders extends React.PureComponent {
 				/>
 			) : (
 				<Slider
-					demo={paramToUse.demo}
 					subscription={this.state.subscription}
 					credits={this.props.credits}
 					disabled={paramToUse.disabled}
@@ -147,6 +142,7 @@ export class Sliders extends React.PureComponent {
 					value={value}
 					state={paramToUse.state}
 					individualized={individualized}
+					advanced={advancedMode}
 				/>
 			);
 		});
@@ -155,23 +151,16 @@ export class Sliders extends React.PureComponent {
 	}
 }
 
-export class RawSlider extends React.PureComponent {
+export class Slider extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
 		this.changeParam = this.changeParam.bind(this);
-		this.handleRestrictedRangeEnter = this.handleRestrictedRangeEnter.bind(
-			this,
-		);
+		this.resetValue = this.resetValue.bind(this);
 	}
 
 	componentWillMount() {
-		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
 	}
 
 	resetValue() {
@@ -179,15 +168,7 @@ export class RawSlider extends React.PureComponent {
 			value: this.props.init,
 			name: this.props.name,
 			label: this.props.label,
-			demo: this.props.demo,
 			force: true,
-		});
-	}
-
-	handleRestrictedRangeEnter() {
-		this.client.dispatchAction('/store-value', {
-			openRestrictedFeature: true,
-			restrictedFeatureHovered: 'slider',
 		});
 	}
 
@@ -220,109 +201,78 @@ export class RawSlider extends React.PureComponent {
 	}
 
 	render() {
-		if (process.env.__SHOW_RENDER__) {
-			console.log('[RENDER] slider');
-		}
-		const value
-			= this.props.value === undefined ? this.props.init : this.props.value;
-		// TODO: better way to inject subscription
-		const {subscription} = this.props;
-		const freeAccount
-			= !this.props.isManagedAccount
-			&& !(
-				subscription
-				&& !subscription.plan.id.includes('team')
-				&& !subscription.plan.id.includes('agency')
-			);
-		const credits = this.props.credits;
-		const freeAccountAndHasCredits = credits && credits > 0 && freeAccount;
-		const disabled
-			= !this.props.disabled && !(freeAccountAndHasCredits || !freeAccount);
+		const {
+			name,
+			min,
+			max,
+			minAdvised,
+			maxAdvised,
+			init,
+			disabled,
+			child,
+			individualized,
+			label,
+			state,
+			advanced,
+		} = this.props;
+		const value = this.props.value === undefined ? init : this.props.value;
 
 		const classes = classNames({
 			slider: true,
-			'is-coming': this.props.disabled,
-			'is-child': this.props.child,
+			'is-coming': disabled,
+			'is-child': child,
 		});
 
-		const devOverlay = this.props.disabled ? (
+		const devOverlay = disabled && (
 			<div className="slider-demo-overlay-text">
 				This feature is currently in development
 			</div>
-		) : (
-			false
 		);
 
-		const indivSwitch = this.props.individualized ? (
-			<IndivSwitch name={this.props.name} state={this.props.state} />
-		) : (
-			false
+		const indivSwitch = individualized && (
+			<IndivSwitch name={name} state={state} />
 		);
 
-		let sliderTooltipButton;
-
-		if (SliderHelpText[this.props.name]) {
-			sliderTooltipButton = (
-				<div
-					className="slider-tooltip"
-					onClick={() => {
-						this.showTooltip(this.props.name);
-					}}
-				>
-					?
-				</div>
-			);
-		}
-
-		const max = disabled
-			? demoRatio * this.props.max + (1 - demoRatio) * this.props.init
-			: this.props.max;
-		const min = disabled
-			? demoRatio * this.props.min + (1 - demoRatio) * this.props.init
-			: this.props.min;
+		const sliderTooltipButton = !!SliderHelpText[name] && (
+			<div
+				className="slider-tooltip"
+				onClick={() => {
+					this.showTooltip(name);
+				}}
+			>
+				?
+			</div>
+		);
 
 		return (
 			<div className={classes}>
 				<div className="slider-demo-overlay">{devOverlay}</div>
-				<label className="slider-title">{this.props.label}</label>
+				<label className="slider-title">{label}</label>
 				{sliderTooltipButton}
-				<div
-					className="slider-reset"
-					onClick={() => {
-						this.resetValue();
-					}}
-				>
+				<div className="slider-reset" onClick={this.resetValue}>
 					reset
 				</div>
 				<SliderTextController
-					demo={disabled}
 					value={value}
-					name={this.props.name}
-					label={this.props.label}
-					disabled={this.props.disabled}
-					minAdvised={this.props.minAdvised}
-					maxAdvised={this.props.maxAdvised}
-					maxDemo={max}
-					minDemo={min}
-					individualized={this.props.individualized}
+					name={name}
+					label={label}
+					disabled={disabled}
+					minAdvised={minAdvised}
+					maxAdvised={maxAdvised}
+					individualized={individualized}
 					changeParam={this.changeParam}
 				/>
 				<div className="slider-container">
 					<SliderController
 						value={value}
-						demo={disabled}
-						name={this.props.name}
-						label={this.props.label}
-						min={this.props.min}
-						max={this.props.max}
-						realMin={min}
-						realMax={max}
-						minAdvised={this.props.minAdvised}
-						maxAdvised={this.props.maxAdvised}
-						disabled={this.props.disabled}
+						name={name}
+						label={label}
+						min={advanced ? min : minAdvised}
+						max={advanced ? max : maxAdvised}
+						minAdvised={minAdvised}
+						maxAdvised={maxAdvised}
+						disabled={disabled}
 						changeParam={this.changeParam}
-						child={this.props.child}
-						onRestrictedRangeEnter={this.handleRestrictedRangeEnter}
 					/>
 					{indivSwitch}
 				</div>
@@ -331,26 +281,21 @@ export class RawSlider extends React.PureComponent {
 	}
 }
 
-const query = gql`
-	query {
-		user {
-			id
-			manager {
-				id
-			}
-		}
-	}
-`;
-
-export const Slider = graphql(query, {
-	props({data}) {
-		const {user} = data;
-
-		return {
-			isManagedAccount: user && user.manager,
-		};
-	},
-})(RawSlider);
+Slider.propTypes = {
+	name: PropTypes.string,
+	min: PropTypes.number.isRequired,
+	max: PropTypes.number.isRequired,
+	minAdvised: PropTypes.number,
+	maxAdvised: PropTypes.number,
+	value: PropTypes.number,
+	init: PropTypes.number,
+	disabled: PropTypes.bool,
+	child: PropTypes.bool,
+	individualized: PropTypes.bool,
+	label: PropTypes.string,
+	state: PropTypes.string,
+	advanced: PropTypes.bool,
+};
 
 export class RadioSlider extends React.PureComponent {
 	componentWillMount() {
@@ -455,7 +400,9 @@ export class SliderRadioController extends React.PureComponent {
 							value={boxValue}
 							checked={isSelected}
 							type="radio"
-							name={`radio-button-${String(this.props.name).trim()}`}
+							name={`radio-button-${String(
+								this.props.name,
+							).trim()}`}
 						/>
 						<span className="box-value-label">{boxValue}</span>
 					</label>
@@ -489,12 +436,7 @@ export class SliderTextController extends React.PureComponent {
 	}
 
 	handleChange(e) {
-		const value = this.props.demo
-			? Math.max(
-				Math.min(e.target.value, this.props.maxDemo),
-				this.props.minDemo,
-			)
-			: e.target.value;
+		const value = e.target.value;
 
 		this.props.changeParam({
 			name: this.props.name,
@@ -508,12 +450,7 @@ export class SliderTextController extends React.PureComponent {
 	}
 
 	handleBlur(e) {
-		const value = this.props.demo
-			? Math.max(
-				Math.min(e.target.value, this.props.maxDemo),
-				this.props.minDemo,
-			)
-			: e.target.value;
+		const value = e.target.value;
 
 		this.setState({isTyping: false});
 		this.props.changeParam({
@@ -535,7 +472,9 @@ export class SliderTextController extends React.PureComponent {
 				className={classes}
 				type="number"
 				value={
-					this.state.isTyping ? this.props.value : this.props.value.toFixed(2)
+					this.state.isTyping
+						? this.props.value
+						: this.props.value.toFixed(2)
 				}
 				onChange={this.handleChange}
 				onClick={this.handleClick}
