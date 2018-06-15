@@ -40,12 +40,12 @@ class LibraryDetails extends React.Component {
 						<form action="" method="">
 							<div className="library-details-form-elem">
 								<label htmlFor="name">Family name</label>
-								<input type="text" id="name" name="user_name" />
+								<input type="text" id="name" name="family_name" value={this.state.family.name} />
 							</div>
 							<div className="library-details-form-elem" />
 							<div className="library-details-form-elem">
 								<label htmlFor="mail">Designer</label>
-								<input type="text" id="name" name="user_name" />
+								<input type="text" id="name" name="user_name" value={`${this.state.family.user.firstName} ${this.state.family.user.lastName}`} />
 							</div>
 							<div className="library-details-form-elem">
 								<label htmlFor="msg">Designer URL</label>
@@ -53,11 +53,11 @@ class LibraryDetails extends React.Component {
 							</div>
 							<div className="library-details-form-elem">
 								<label htmlFor="msg">Foundry</label>
-								<input type="text" id="name" name="user_name" />
+								<input type="text" id="name" name="user_name" value="Prototypo" />
 							</div>
 							<div className="library-details-form-elem">
 								<label htmlFor="msg">Foundry URL</label>
-								<input type="text" id="name" name="user_name" />
+								<input type="text" id="name" name="user_name" value="https://prototypo.io/"/>
 							</div>
 						</form>
 					</div>
@@ -80,13 +80,26 @@ class LibraryDetails extends React.Component {
 						{this.state.family && this.state.family.variants && this.state.family.variants.map((variant, index) => (
 							<div className="details-form">
 								<div className="details-form-elem">
-									<input type="text" id="settings" name="style_settings" />
+									<input type="text" id="settings" name="style_settings" value={variant.name} />
 								</div>
 								<div className="details-form-elem">
-									<input type="text" id="weight" name="weight" />
+									<select name="style-weight">
+										<option value="200">200</option>
+										<option value="300">300</option>
+										<option value="400">400</option>
+										<option value="500">500</option>
+										<option value="600">600</option>
+										<option value="700">700</option>
+										<option value="800">800</option>
+										<option value="900">900</option>
+									</select>
 								</div>
 								<div className="details-form-elem">
-									<input type="text" id="width" name="width" />
+								<select name="style-width">
+										<option value="normal">normal</option>
+										<option value="condensed">condensed</option>
+										<option value="extended">extended</option>
+									</select>
 								</div>
 								<div className="details-form-elem checkbox">
 									<div className="checkbox">
@@ -95,15 +108,17 @@ class LibraryDetails extends React.Component {
 									</div>
 								</div>
 								<div className="details-form-elem">
-									<div className="button-remove">
-										Remove
-									</div>
+									{index !== 0 && (
+										<div className="button-remove" onClick={() => {this.props.deleteVariant(variant.id)}}>
+											Remove
+										</div>
+									)}
 								</div>
 							</div>
 						))}
 					</div>
 				</div>
-				<LibrarySidebarRight><FamilySidebarActions familyId={this.props.params.projectID} mode="details" /><FamilySidebarGlyphs glyphs={this.state.family.glyphs} /></LibrarySidebarRight>
+				<LibrarySidebarRight><FamilySidebarActions familyId={this.props.params.projectID} family={this.state.family} mode="details" /><FamilySidebarGlyphs glyphs={this.state.family.glyphs} /></LibrarySidebarRight>
 			</div>
 		);
 	}

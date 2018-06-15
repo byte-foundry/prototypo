@@ -181,7 +181,7 @@
                             text-transform: uppercase;
                             font-weight: bold;
                         }
-                        input {
+                        input, select {
                             width: 100%;
                             background: transparent;
                             box-shadow: none;
@@ -220,7 +220,7 @@
                         &.checkbox {
                             width: 50px;
                         }
-                        input {
+                        input, select {
                             width: 100%;
                             background: transparent;
                             box-shadow: none;
