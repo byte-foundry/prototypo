@@ -7,22 +7,29 @@ export default class SubscriptionWidget extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] SubscriptionWidget');
 		}
-		const since = `Since ${moment.unix(this.props.subscription.start).format('DD/MM/YYYY')}`;
-		const trial = `Trial ends the ${moment.unix(this.props.subscription.trial_end).format('DD/MM/YYYY')}`;
-		const amount = `$${(this.props.subscription.plan.amount / 100).toFixed(2)}/month`;
+		const since = `Since ${moment
+			.unix(this.props.subscription.start)
+			.format('DD/MM/YYYY')}`;
+		const trial = `Trial ends the ${moment
+			.unix(this.props.subscription.trial_end)
+			.format('DD/MM/YYYY')}`;
+		const amount = `$${(this.props.subscription.plan.amount / 100).toFixed(
+			2,
+		)}/month`;
 		let infos;
 
 		if (this.props.subscription.trial_end) {
-			infos = (
-				<div className="subscription-widget-info-cell">{trial}</div>
-			);
+			infos = <div className="subscription-widget-info-cell">{trial}</div>;
 		}
-		else if (this.props.subscription.discount && this.props.subscription.discount.coupon) {
-			const coupon = `Discount will ends the ${moment.unix(this.props.subscription.discount.end).format('DD/MM/YYYY')}`;
+		else if (
+			this.props.subscription.discount
+			&& this.props.subscription.discount.coupon
+		) {
+			const coupon = `Discount will ends the ${moment
+				.unix(this.props.subscription.discount.end)
+				.format('DD/MM/YYYY')}`;
 
-			infos = (
-				<div className="subscription-widget-info-cell">{coupon}</div>
-			);
+			infos = <div className="subscription-widget-info-cell">{coupon}</div>;
 		}
 		return (
 			<div className="subscription-widget">
@@ -33,7 +40,14 @@ export default class SubscriptionWidget extends React.Component {
 						{infos}
 						<div className="subscription-widget-info-cell">{amount}</div>
 						<div className="subscription-widget-info-cell">
-							<button className="subscription-widget-info-cell-button" onClick={() => {this.props.unsubscribe(this.props.subscription.id);}}>Cancel</button>
+							<button
+								className="subscription-widget-info-cell-button"
+								onClick={() => {
+									this.props.unsubscribe(this.props.subscription.id);
+								}}
+							>
+								Cancel
+							</button>
 						</div>
 					</div>
 				</WaitForLoad>

@@ -14,8 +14,8 @@ class AccountHome extends React.Component {
 		return (
 			<div className="account-base account-home">
 				<p>
-					Welcome to your Prototypo account dashboard.
-					You'll find all the necessary info to manage your subscription and billing here.
+					Welcome to your Prototypo account dashboard. You'll find all the
+					necessary info to manage your subscription and billing here.
 				</p>
 				<h2>Resources</h2>
 				<div className="account-home-resources">
@@ -33,10 +33,13 @@ class AccountHome extends React.Component {
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							<h3 className="account-home-resources-item-tile">Youtube channel</h3>
+							<h3 className="account-home-resources-item-tile">
+								Youtube channel
+							</h3>
 							<img width="200" src={youtube} alt="YouTube" />
 							<p>
-								You will find tutorials and other interesting videos on our Youtube channel!
+								You will find tutorials and other interesting videos on our
+								Youtube channel!
 							</p>
 						</a>
 					</div>
@@ -47,10 +50,10 @@ class AccountHome extends React.Component {
 							onClick={this.openIntercom}
 							title="If this link doesn't work, you may need to turn off your privacy blocker"
 						>
-							<h3 className="account-home-resources-item-tile">Need help or infos?</h3>
-							<p>
-								If there's anything you need, you can contact us!
-							</p>
+							<h3 className="account-home-resources-item-tile">
+								Need help or infos?
+							</h3>
+							<p>If there's anything you need, you can contact us!</p>
 						</a>
 					</div>
 				</div>

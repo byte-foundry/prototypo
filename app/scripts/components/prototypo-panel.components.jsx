@@ -20,12 +20,16 @@ export default class PrototypoPanel extends React.Component {
 			uiMode: [],
 		};
 
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 		this.toggleView = this.toggleView.bind(this);
 		this.resetView = this.resetView.bind(this);
 		this.changePanelWidth = this.changePanelWidth.bind(this);
 		this.changePanelHeight = this.changePanelHeight.bind(this);
-		this.closeRestrictedFeatureOverlay = this.closeRestrictedFeatureOverlay.bind(this);
+		this.closeRestrictedFeatureOverlay = this.closeRestrictedFeatureOverlay.bind(
+			this,
+		);
 		this.openGoProModal = this.openGoProModal.bind(this);
 	}
 
@@ -33,7 +37,8 @@ export default class PrototypoPanel extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					glyphs: head.toJS().d.glyphs,
@@ -79,14 +84,12 @@ export default class PrototypoPanel extends React.Component {
 		});
 	}
 
-
 	toggleView(name) {
 		// if we are closing glyph mode, we want glyph list to be hidden
-		const modes = (
-			name === 'glyph' && this.state.uiMode.indexOf('glyph') !== -1
+		const modes
+			= name === 'glyph' && this.state.uiMode.indexOf('glyph') !== -1
 				? _without(this.state.uiMode, 'list')
-				: this.state.uiMode
-		);
+				: this.state.uiMode;
 		const newViewMode = _xor(modes, [name]);
 
 		if (newViewMode.length > 0) {
@@ -143,35 +146,49 @@ export default class PrototypoPanel extends React.Component {
 
 		switch (this.state.restrictedFeatureHovered) {
 		case 'indiv':
-			featureHovered = 'This is the individualization mode, an advanced feature not available to you yet.';
+			featureHovered
+					= 'This is the individualization mode, an advanced feature not available to you yet.';
 			break;
 		case 'slider':
-			featureHovered = 'To unlock the full slider range on all parameters and design stronger identities with unique fonts.';
+			featureHovered
+					= 'To unlock the full slider range on all parameters and design stronger identities with unique fonts.';
 			break;
 		case 'componentEditing':
-			featureHovered = 'This is the component editing view, an advanced feature not available to you yet.';
+			featureHovered
+					= 'This is the component editing view, an advanced feature not available to you yet.';
 			break;
 		case 'manualEditing':
-			featureHovered = 'This is the manual editing view, an advanced feature not available to you yet.';
+			featureHovered
+					= 'This is the manual editing view, an advanced feature not available to you yet.';
 			break;
 		default:
 			featureHovered = 'This feature is not available to you yet.';
 		}
 
-		const restrictedFeatureText = this.state.openRestrictedFeature
-			? (
-				<div className="panel-demo-overlay" onClick={this.closeRestrictedFeatureOverlay}>
-					<div className="panel-demo-overlay-text">
-						<InlineSVG element="div" src={require('!svg-inline-loader!../../images/academy/lock.svg')} onClick={this.openGoProModal} />
-						<p>
-							{featureHovered}
-						</p>
+		const restrictedFeatureText = this.state.openRestrictedFeature ? (
+			<div
+				className="panel-demo-overlay"
+				onClick={this.closeRestrictedFeatureOverlay}
+			>
+				<div className="panel-demo-overlay-text">
+					<InlineSVG
+						element="div"
+						src={require('!svg-inline-loader!../../images/academy/lock.svg')}
+						onClick={this.openGoProModal}
+					/>
+					<p>{featureHovered}</p>
 
-						<div className="panel-demo-overlay-text-gopro-cta" onClick={this.openGoProModal}>Upgrade to the full version</div>
+					<div
+						className="panel-demo-overlay-text-gopro-cta"
+						onClick={this.openGoProModal}
+					>
+						Upgrade to the full version
 					</div>
 				</div>
-			)
-			: false;
+			</div>
+		) : (
+			false
+		);
 
 		return (
 			<div id="prototypopanel" key="justAcontainer">
@@ -244,7 +261,9 @@ export default class PrototypoPanel extends React.Component {
 						/>
 					</ResizablePanels>
 				</ResizablePanels>
-				<div className="shadow-of-the-colossus" key="shadow">{String.fromCharCode(this.state.glyphSelected)}</div>
+				<div className="shadow-of-the-colossus" key="shadow">
+					{String.fromCharCode(this.state.glyphSelected)}
+				</div>
 			</div>
 		);
 	}

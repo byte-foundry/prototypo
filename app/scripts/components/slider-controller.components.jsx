@@ -39,13 +39,16 @@ export default class SliderController extends React.PureComponent {
 			return;
 		}
 
-		const realMin = typeof this.props.realMin === 'number' ? this.props.realMin : min;
-		const realMax = typeof this.props.realMax === 'number' ? this.props.realMax : max;
+		const realMin
+			= typeof this.props.realMin === 'number' ? this.props.realMin : min;
+		const realMax
+			= typeof this.props.realMax === 'number' ? this.props.realMax : max;
 
 		this.setState({tracking: true});
 		const newX = e.pageX || e.screenX;
 		const {offsetLeft} = DOM.getAbsOffset(this.node);
-		let newValue = ((newX - offsetLeft) / this.node.offsetWidth * (max - min)) + min;
+		let newValue
+			= (newX - offsetLeft) / this.node.offsetWidth * (max - min) + min;
 
 		newValue = Math.min(Math.max(newValue, realMin), realMax);
 
@@ -81,15 +84,18 @@ export default class SliderController extends React.PureComponent {
 
 		const {min, max, value, name, changeParam} = this.props;
 
-		const realMin = typeof this.props.realMin === 'number' ? this.props.realMin : min;
-		const realMax = typeof this.props.realMax === 'number' ? this.props.realMax : max;
+		const realMin
+			= typeof this.props.realMin === 'number' ? this.props.realMin : min;
+		const realMax
+			= typeof this.props.realMax === 'number' ? this.props.realMax : max;
 
 		const newX = e.pageX || e.screenX;
 		const {offsetLeft} = DOM.getAbsOffset(this.node);
 		let newValue;
 
 		if (newX >= offsetLeft && newX <= offsetLeft + this.node.clientWidth) {
-			const variation = (newX - this.currentX) / this.node.offsetWidth * (max - min);
+			const variation
+				= (newX - this.currentX) / this.node.offsetWidth * (max - min);
 
 			newValue = value + variation;
 
@@ -114,15 +120,20 @@ export default class SliderController extends React.PureComponent {
 		const {min, max, value, demo, className} = this.props;
 		const ratio = 96.0;
 
-		const realMin = typeof this.props.realMin === 'number' ? this.props.realMin : min;
-		const realMax = typeof this.props.realMax === 'number' ? this.props.realMax : max;
+		const realMin
+			= typeof this.props.realMin === 'number' ? this.props.realMin : min;
+		const realMax
+			= typeof this.props.realMax === 'number' ? this.props.realMax : max;
 
-		const minAdvised = typeof this.props.minAdvised === 'number' ? this.props.minAdvised : min;
-		const maxAdvised = typeof this.props.maxAdvised === 'number' ? this.props.maxAdvised : max;
+		const minAdvised
+			= typeof this.props.minAdvised === 'number' ? this.props.minAdvised : min;
+		const maxAdvised
+			= typeof this.props.maxAdvised === 'number' ? this.props.maxAdvised : max;
 
-		const translateX = (max - Math.min(Math.max(value, min), max)) / (max - min) * ratio;
+		const translateX
+			= (max - Math.min(Math.max(value, min), max)) / (max - min) * ratio;
 		const translateDemoMin = (max - realMin) / (max - min) * ratio;
-		const translateDemoMax = 100 - ((max - realMax) / (max - min) * ratio);
+		const translateDemoMax = 100 - (max - realMax) / (max - min) * ratio;
 
 		const transform = {
 			transform: `translateX(-${translateX}%)`,
@@ -155,7 +166,9 @@ export default class SliderController extends React.PureComponent {
 		return (
 			<div
 				className={sliderClasses}
-				ref={(node) => { this.node = node; }}
+				ref={(node) => {
+					this.node = node;
+				}}
 				onMouseDown={this.handleDown}
 			>
 				<div className={classes} style={transform}>
@@ -163,8 +176,16 @@ export default class SliderController extends React.PureComponent {
 				</div>
 				{demo && (
 					<span>
-						<div onClick={this.restrictedRangeEnter} className={demoClassesMin} style={transformDemoMin} />
-						<div onClick={this.restrictedRangeEnter} className={demoClassesMax} style={transformDemoMax} />
+						<div
+							onClick={this.restrictedRangeEnter}
+							className={demoClassesMin}
+							style={transformDemoMin}
+						/>
+						<div
+							onClick={this.restrictedRangeEnter}
+							className={demoClassesMax}
+							style={transformDemoMax}
+						/>
 					</span>
 				)}
 			</div>

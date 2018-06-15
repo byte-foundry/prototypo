@@ -6,14 +6,11 @@ const undoableStore = new Remutable({
 	// end font controls store values
 });
 
-const fastStuffStore = new Remutable({
-});
+const fastStuffStore = new Remutable({});
 
-const fontInstanceStore = new Remutable({
-});
+const fontInstanceStore = new Remutable({});
 
 const prototypoStore = new Remutable({
-
 	// Store values for debug
 	debugEvents: [],
 	debugValues: {},
@@ -217,8 +214,7 @@ const userStore = new Remutable({
 		errors: [],
 		inError: {},
 	},
-	choosePlanForm: {
-	},
+	choosePlanForm: {},
 	addcardForm: {
 		errors: [],
 		inError: {},

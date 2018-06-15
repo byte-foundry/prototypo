@@ -19,7 +19,8 @@ class TopBarMenu extends React.PureComponent {
 
 	onSelectItem(itemIndex) {
 		this.client.dispatchAction('/store-value', {
-			topbarItemDisplayed: this.props.topbarItemDisplayed === itemIndex ? null : itemIndex,
+			topbarItemDisplayed:
+				this.props.topbarItemDisplayed === itemIndex ? null : itemIndex,
 		});
 
 		// TODO: notify composed item
@@ -32,12 +33,7 @@ class TopBarMenu extends React.PureComponent {
 	}
 
 	render() {
-		const {
-			children,
-			style,
-			id,
-			topbarItemDisplayed,
-		} = this.props;
+		const {children, style, id, topbarItemDisplayed} = this.props;
 
 		return (
 			<ul {...{style, id}} className="top-bar-menu" role="menu">
@@ -83,7 +79,9 @@ class TopBarMenu extends React.PureComponent {
 							onMouseLeave={child && child.props.leave}
 							onSelectItem={this.onSelectItem}
 						>
-							{child && child.type.getHeader && child.type.getHeader(child.props)}
+							{child
+								&& child.type.getHeader
+								&& child.type.getHeader(child.props)}
 							{child}
 						</TopBarMenuItem>
 					);
@@ -122,9 +120,7 @@ class TopBarMenuItem extends React.PureComponent {
 	}
 
 	render() {
-		const {
-			className, noHover, selected, count, children,
-		} = this.props;
+		const {className, noHover, selected, count, children} = this.props;
 
 		const classes = classNames(className, {
 			'topbaritem-displayed': selected,
@@ -133,7 +129,12 @@ class TopBarMenuItem extends React.PureComponent {
 		const id = count ? `topbar-menu-item-${this.props.count}` : '';
 
 		return (
-			<li className={classes} id={id} role="menuitem" onClick={this.handleClick}>
+			<li
+				className={classes}
+				id={id}
+				role="menuitem"
+				onClick={this.handleClick}
+			>
 				{children}
 			</li>
 		);

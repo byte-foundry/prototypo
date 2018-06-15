@@ -88,13 +88,19 @@ class AccountProfilePanel extends React.PureComponent {
 		}
 
 		return (
-			<form className="account-base account-profile-panel" onSubmit={this.changeAccount}>
-				<DisplayWithLabel label="My email">
-					{email}
-				</DisplayWithLabel>
+			<form
+				className="account-base account-profile-panel"
+				onSubmit={this.changeAccount}
+			>
+				<DisplayWithLabel label="My email">{email}</DisplayWithLabel>
 				<div className="columns">
 					<div className="half-column">
-						<InputWithLabel ref="firstName" label="First name" required inputValue={firstName} />
+						<InputWithLabel
+							ref="firstName"
+							label="First name"
+							required
+							inputValue={firstName}
+						/>
 					</div>
 					<div className="half-column">
 						<InputWithLabel
@@ -137,13 +143,20 @@ class AccountProfilePanel extends React.PureComponent {
 				</div>
 				<div className="columns">
 					<div className="half-column">
-						<InputWithLabel label="Phone number" type="tel" ref="phone" inputValue={phone} />
+						<InputWithLabel
+							label="Phone number"
+							type="tel"
+							ref="phone"
+							inputValue={phone}
+						/>
 					</div>
 					<div className="half-column">
 						<InputWithLabel label="Skype ID" ref="skype" inputValue={skype} />
 					</div>
 				</div>
-				{success && <FormSuccess successText="You've successfully updated your profile." />}
+				{success && (
+					<FormSuccess successText="You've successfully updated your profile." />
+				)}
 				{errors && <FormError errorText={errors} />}
 				<AccountValidationButton label="Save infos" />
 			</form>
@@ -169,24 +182,24 @@ const userProfileQuery = gql`
 
 const updateProfileMutation = gql`
 	mutation updateProfile(
-		$id: ID!,
-		$firstName: String,
-		$lastName: String,
-		$occupation: String,
-		$website: String,
-		$twitter: String,
-		$phone: String,
-		$skype: String,
+		$id: ID!
+		$firstName: String
+		$lastName: String
+		$occupation: String
+		$website: String
+		$twitter: String
+		$phone: String
+		$skype: String
 	) {
 		updateUser(
-			id: $id,
-			firstName: $firstName,
-			lastName: $lastName,
-			occupation: $occupation,
-			website: $website,
-			twitter: $twitter,
-			phone: $phone,
-			skype: $skype,
+			id: $id
+			firstName: $firstName
+			lastName: $lastName
+			occupation: $occupation
+			website: $website
+			twitter: $twitter
+			phone: $phone
+			skype: $skype
 		) {
 			id
 			email
@@ -215,7 +228,8 @@ export default compose(
 		props: ({mutate, ownProps}) => ({
 			updateProfile: (values) => {
 				if (window.Intercom) {
-					const fullName = values.firstName + (values.lastName ? ` ${values.lastName}` : '');
+					const fullName
+						= values.firstName + (values.lastName ? ` ${values.lastName}` : '');
 
 					window.Intercom('update', {
 						name: fullName,

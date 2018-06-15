@@ -18,12 +18,20 @@ export default class ExpandingNode extends Node {
 		if (source.expand) {
 			this.expanding = true;
 			this.expand = _mapValues(source.expand, (item, key) =>
-				constantOrFormula(item, `${this.cursor}expand.${key}`));
+				constantOrFormula(item, `${this.cursor}expand.${key}`),
+			);
 		}
 		else if (source.expandedTo) {
 			this.expanding = false;
-			this.expandedTo = source.expandedTo.map((point, k) =>
-				new Node(point, undefined, undefined, `${this.cursor}expandedTo.${k}.`));
+			this.expandedTo = source.expandedTo.map(
+				(point, k) =>
+					new Node(
+						point,
+						undefined,
+						undefined,
+						`${this.cursor}expandedTo.${k}.`,
+					),
+			);
 		}
 	}
 
@@ -40,7 +48,10 @@ export default class ExpandingNode extends Node {
 
 		// if all the op are done we should have a length 5 short because
 		// we removed the 5 necessary cursor
-		return _difference(done, cursorToLook).length === done.length - cursorToLook.length;
+		return (
+			_difference(done, cursorToLook).length
+			=== done.length - cursorToLook.length
+		);
 	}
 
 	static applyExpandChange(computedNode, changes, cursor) {
@@ -60,23 +71,23 @@ export default class ExpandingNode extends Node {
 
 	static expand(computedNode) {
 		const {
-			x, y, expand: {
-				width, angle, distr, baseWidth, baseAngle, baseDistr,
-			},
+			x,
+			y,
+			expand: {width, angle, distr, baseWidth, baseAngle, baseDistr},
 		} = computedNode;
 
 		return [
 			round2D({
-				x: x - (Math.cos(angle) * width * distr),
-				y: y - (Math.sin(angle) * width * distr),
-				xBase: x - (Math.cos(baseAngle) * baseWidth * baseDistr),
-				yBase: y - (Math.sin(baseAngle) * baseWidth * baseDistr),
+				x: x - Math.cos(angle) * width * distr,
+				y: y - Math.sin(angle) * width * distr,
+				xBase: x - Math.cos(baseAngle) * baseWidth * baseDistr,
+				yBase: y - Math.sin(baseAngle) * baseWidth * baseDistr,
 			}),
 			round2D({
-				x: x + (Math.cos(angle) * width * (1 - distr)),
-				y: y + (Math.sin(angle) * width * (1 - distr)),
-				xBase: x - (Math.cos(baseAngle) * baseWidth * baseDistr),
-				yBase: y - (Math.sin(baseAngle) * baseWidth * baseDistr),
+				x: x + Math.cos(angle) * width * (1 - distr),
+				y: y + Math.sin(angle) * width * (1 - distr),
+				xBase: x - Math.cos(baseAngle) * baseWidth * baseDistr,
+				yBase: y - Math.sin(baseAngle) * baseWidth * baseDistr,
 			}),
 		];
 	}

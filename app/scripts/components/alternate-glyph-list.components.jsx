@@ -10,13 +10,12 @@ export default class AlternateGlyphList extends React.PureComponent {
 		}
 		return (
 			<div className="alternate-glyph-list">
-				{
-					this.props.alts.map((glyph) => {
-						return (
-							<AlternateGlyphListItem unicode={this.props.unicode} glyph={glyph}/>
-						);
-					})
-				}
+				{this.props.alts.map(glyph => (
+					<AlternateGlyphListItem
+						unicode={this.props.unicode}
+						glyph={glyph}
+					/>
+				))}
 			</div>
 		);
 	}
@@ -42,7 +41,11 @@ class AlternateGlyphListItem extends React.PureComponent {
 	render() {
 		return (
 			<div onClick={this.alternate}>
-				<Glyph glyph={glyph} unicode={this.props.unicode} key={this.props.name}/>
+				<Glyph
+					glyph={glyph}
+					unicode={this.props.unicode}
+					key={this.props.name}
+				/>
 			</div>
 		);
 	}

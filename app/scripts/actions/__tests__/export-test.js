@@ -20,12 +20,12 @@ const LocalClient = require('scripts/stores/local-client.stores.jsx').default;
 const actions = require('scripts/actions/export.actions.jsx').default;
 const setupFluxActionTest = require('prototypo-flux-testing');
 
-jest.mock('scripts/services/hoodie.services.js', () => ({
-}));
+jest.mock('scripts/services/hoodie.services.js', () => ({}));
 
 describe('export', () => {
 	setupFluxActionTest(actions, LocalServer, LocalClient, stores);
-	const appValues = require('scripts/helpers/loadValues.helpers.js').valuesToLoad;
+	const appValues = require('scripts/helpers/loadValues.helpers.js')
+		.valuesToLoad;
 	const localClient = LocalClient.instance();
 	const localServer = LocalServer.instance;
 
@@ -63,6 +63,5 @@ describe('export', () => {
 		expect(stores.prototypoStore.commit.mock.calls.length).toBe(2);
 	});
 
-	it('should export an otf', () => {
-	});
+	it('should export an otf', () => {});
 });

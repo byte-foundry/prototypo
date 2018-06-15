@@ -10,25 +10,29 @@ export default class Formula {
 		this.cursor = cursor;
 		this.dependencies = formula._dependencies; // eslint-disable-line no-underscore-dangle
 		/* eslint-disable no-new-func */
-		this.operation = new Function(...['contours', 'anchors', 'parentAnchors', 'Utils']
-			.concat(formula._parameters || []) // eslint-disable-line no-underscore-dangle
-			.concat((typeof formula._operation === 'string' // eslint-disable-line no-underscore-dangle
+		this.operation = new Function(
+			...['contours', 'anchors', 'parentAnchors', 'Utils']
+				.concat(formula._parameters || []) // eslint-disable-line no-underscore-dangle
+				.concat(
+					(typeof formula._operation === 'string' // eslint-disable-line no-underscore-dangle
 					&& formula._operation.indexOf('return ') === -1 // eslint-disable-line no-underscore-dangle
-				? 'return ' : ''
-			)
-				// The operation might be wrapped in a function (e.g. multi-
-				// line code for debugging purpose). In this case, return
-				// must be explicit
-				+ formula._operation.toString() // eslint-disable-line no-underscore-dangle
-					// [\s\S] need to be used instead of . because
-					// javascript doesn't have a dotall flag (s)
-					.replace(/^function\s*\(\)\s*\{([\s\S]*?)\}$/, '$1')
-					.trim(),
-				/* +
+						? 'return '
+						: '')
+						// The operation might be wrapped in a function (e.g. multi-
+						// line code for debugging purpose). In this case, return
+						// must be explicit
+						+ formula._operation
+							.toString() // eslint-disable-line no-underscore-dangle
+							// [\s\S] need to be used instead of . because
+							// javascript doesn't have a dotall flag (s)
+							.replace(/^function\s*\(\)\s*\{([\s\S]*?)\}$/, '$1')
+							.trim(),
+					/* +
 				// add sourceURL pragma to help debugging
 				// TODO: restore sourceURL pragma if it proves necessary
 				'\n\n//# sourceURL=' + path */
-			));
+				),
+		);
 		/* eslint-enable no-new-func */
 		this.parameters = formula._parameters; // eslint-disable-line no-underscore-dangle
 		this.analyzing = false;
@@ -37,7 +41,9 @@ export default class Formula {
 	analyzeDependency(glyph, graph = []) {
 		graph.push(this.cursor);
 		if (this.analyzing) {
-			throw new Error(`There is a circular dependency for glyph ${glyph.name.value} following the subsequent graph:
+			throw new Error(`There is a circular dependency for glyph ${
+				glyph.name.value
+			} following the subsequent graph:
 ${graph.join(' => ')}
 `);
 		}
@@ -52,7 +58,9 @@ ${graph.join(' => ')}
 				}
 			}
 			catch (e) {
-				throw new Error(`There was an error while checking glyph ${glyph.name.value} dependencies for cursor: ${dependency}.
+				throw new Error(`There was an error while checking glyph ${
+					glyph.name.value
+				} dependencies for cursor: ${dependency}.
 					${e.message}`);
 			}
 			graph.pop();
@@ -68,12 +76,7 @@ ${graph.join(' => ')}
 			console.error(`parameters are missing: ${missingParam}`); // eslint-disable-line no-console
 		}
 		/* #end */
-		const args = [
-			contours,
-			anchors,
-			parentAnchors,
-			utils,
-		];
+		const args = [contours, anchors, parentAnchors, utils];
 
 		for (let i = 0; i < this.parameters.length; i++) {
 			const name = this.parameters[i];
@@ -100,76 +103,128 @@ ${this.dependencies.map(name => `${name}: ${_get(contours, name)}`)}`);
 
 	solveOperationOrder(glyph, operationOrder) {
 		const result = [];
-		const operationsToSolve = _difference(_uniq(this.dependencies), operationOrder);
+		const operationsToSolve = _difference(
+			_uniq(this.dependencies),
+			operationOrder,
+		);
 
 		if (operationsToSolve.length > 0) {
-			result.push(..._reduce(operationsToSolve, (acc, xpath) => {
-				const expandedIndex = xpath.indexOf('expandedTo');
-				const processedOps = [...operationOrder, ...result, ...acc];
+			result.push(
+				..._reduce(
+					operationsToSolve,
+					(acc, xpath) => {
+						const expandedIndex = xpath.indexOf('expandedTo');
+						const processedOps = [...operationOrder, ...result, ...acc];
 
-				// We don't have to compute dependcy on parentAnchors they are not
-				// our responsability and should be provided by parent
-				if (xpath.indexOf('parentAnchors') !== -1) {
-					return acc;
-				}
+						// We don't have to compute dependcy on parentAnchors they are not
+						// our responsability and should be provided by parent
+						if (xpath.indexOf('parentAnchors') !== -1) {
+							return acc;
+						}
 
-				if (xpath.match(/handle(Out|In)/)) {
-					const contourPath = xpath.split('.').slice(0, 2).join('.');
-					const contour = glyph.getFromXPath(contourPath);
+						if (xpath.match(/handle(Out|In)/)) {
+							const contourPath = xpath
+								.split('.')
+								.slice(0, 2)
+								.join('.');
+							const contour = glyph.getFromXPath(contourPath);
 
-					acc.push(...contour.solveOperationOrder(glyph, [...processedOps]));
-				}
-				/* eslint-disable no-negated-condition, max-depth */
-				else if (expandedIndex !== -1) {
-					const base = xpath.substr(0, expandedIndex - 1);
-					const node = glyph.getFromXPath(`${base}`);
+							acc.push(
+								...contour.solveOperationOrder(glyph, [...processedOps]),
+							);
+						}
+						else if (expandedIndex !== -1) {
+							/* eslint-disable no-negated-condition, max-depth */
+							const base = xpath.substr(0, expandedIndex - 1);
+							const node = glyph.getFromXPath(`${base}`);
 
-					if (node.expandedTo) {
-						if (process.env.TESTING_FONT === 'yes') {
-							if (!glyph.getFromXPath(xpath)) {
-								console.log(`${glyph.name.value} on cursor ${xpath}`); // eslint-disable-line no-console
+							if (node.expandedTo) {
+								if (process.env.TESTING_FONT === 'yes') {
+									if (!glyph.getFromXPath(xpath)) {
+										console.log(`${glyph.name.value} on cursor ${xpath}`); // eslint-disable-line no-console
+									}
+								}
+								acc.push(
+									...glyph
+										.getFromXPath(xpath)
+										.solveOperationOrder(glyph, [...processedOps]),
+								);
+							}
+							else {
+								if (process.env.TESTING_FONT === 'yes') {
+									if (
+										!glyph.getFromXPath(`${base}.expand.width`)
+										|| !glyph.getFromXPath(`${base}.expand.distr`)
+										|| !glyph.getFromXPath(`${base}.expand.angle`)
+										|| !glyph.getFromXPath(`${base}.x`)
+										|| !glyph.getFromXPath(`${base}.y`)
+									) {
+										console.log(`${glyph.name.value} on cursor ${base}`); // eslint-disable-line no-console
+									}
+								}
+								const expandResult = glyph
+									.getFromXPath(`${base}.expand.width`)
+									.solveOperationOrder(glyph, processedOps);
+
+								expandResult.push(
+									...glyph
+										.getFromXPath(`${base}.expand.distr`)
+										.solveOperationOrder(glyph, [
+											...processedOps,
+											...expandResult,
+										]),
+								);
+								expandResult.push(
+									...glyph
+										.getFromXPath(`${base}.expand.angle`)
+										.solveOperationOrder(glyph, [
+											...processedOps,
+											...expandResult,
+										]),
+								);
+								expandResult.push(
+									...glyph
+										.getFromXPath(`${base}.x`)
+										.solveOperationOrder(glyph, [
+											...processedOps,
+											...expandResult,
+										]),
+								);
+								expandResult.push(
+									...glyph
+										.getFromXPath(`${base}.y`)
+										.solveOperationOrder(glyph, [
+											...processedOps,
+											...expandResult,
+										]),
+								);
+
+								const opToAdd = {
+									action: 'expand',
+									cursor: base,
+								};
+
+								if (!_find([...processedOps, ...expandResult], opToAdd)) {
+									expandResult.push(opToAdd);
+								}
+
+								acc.push(...expandResult);
 							}
 						}
-						acc.push(...glyph.getFromXPath(xpath).solveOperationOrder(glyph, [...processedOps]));
-					}
-					else {
-						if (process.env.TESTING_FONT === 'yes') {
-							if (
-								!glyph.getFromXPath(`${base}.expand.width`)
-								|| !glyph.getFromXPath(`${base}.expand.distr`)
-								|| !glyph.getFromXPath(`${base}.expand.angle`)
-								|| !glyph.getFromXPath(`${base}.x`)
-								|| !glyph.getFromXPath(`${base}.y`)
-							) {
-								console.log(`${glyph.name.value} on cursor ${base}`); // eslint-disable-line no-console
-							}
-						}
-						const expandResult = glyph.getFromXPath(`${base}.expand.width`).solveOperationOrder(glyph, processedOps);
-
-						expandResult.push(...glyph.getFromXPath(`${base}.expand.distr`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
-						expandResult.push(...glyph.getFromXPath(`${base}.expand.angle`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
-						expandResult.push(...glyph.getFromXPath(`${base}.x`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
-						expandResult.push(...glyph.getFromXPath(`${base}.y`).solveOperationOrder(glyph, [...processedOps, ...expandResult]));
-
-						const opToAdd = {
-							action: 'expand',
-							cursor: base,
-						};
-
-						if (!_find([...processedOps, ...expandResult], opToAdd)) {
-							expandResult.push(opToAdd);
+						else {
+							/* eslint-disable no-negated-condition, max-depth */
+							acc.push(
+								...glyph
+									.getFromXPath(xpath)
+									.solveOperationOrder(glyph, processedOps),
+							);
 						}
 
-						acc.push(...expandResult);
-					}
-				}
-				/* eslint-disable no-negated-condition, max-depth */
-				else {
-					acc.push(...glyph.getFromXPath(xpath).solveOperationOrder(glyph, processedOps));
-				}
-
-				return acc;
-			}, []));
+						return acc;
+					},
+					[],
+				),
+			);
 		}
 
 		if ([...operationOrder, ...result].indexOf(this.cursor) === -1) {

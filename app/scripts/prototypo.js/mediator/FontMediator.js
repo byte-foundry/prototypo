@@ -6,7 +6,9 @@ import FontPrecursor from '../precursor/FontPrecursor';
 
 import WorkerPool from '../../worker/worker-pool';
 
-const MERGE_URL = process.env.MERGE ? 'http://localhost:3000' : 'https://merge.prototypo.io/v1';
+const MERGE_URL = process.env.MERGE
+	? 'http://localhost:3000'
+	: 'https://merge.prototypo.io/v1';
 const GLYPHR_URL = 'http://www.glyphrstudio.com/online';
 
 const oldFont = {};
@@ -27,10 +29,16 @@ function getUuid(email, familyName, styleName) {
 
 	for (let i = 0; i < 16; i++) {
 		if (i < stringForId.length) {
-			id += (stringForId.charCodeAt(i) * Math.random() * 32).toFixed(0).toString(16).padStart(2, '0');
+			id += (stringForId.charCodeAt(i) * Math.random() * 32)
+				.toFixed(0)
+				.toString(16)
+				.padStart(2, '0');
 		}
 		else {
-			id += (Math.random() * 100).toFixed(0).toString(16).padStart(2, '0');
+			id += (Math.random() * 100)
+				.toFixed(0)
+				.toString(16)
+				.padStart(2, '0');
 		}
 
 		if (i === 3 || i === 5 || i === 7 || i === 9) {
@@ -63,11 +71,7 @@ function getComponentIdAndGlyphPerClass(typedata) {
 }
 
 async function mergeFont(url, action, params, arrayBuffer, mime = 'otf') {
-	const response = await fetch([
-		url,
-		action,
-		...params,
-	].join('/'), {
+	const response = await fetch([url, action, ...params].join('/'), {
 		method: 'POST',
 		headers: {'Content-Type': `application/${mime}`},
 		body: arrayBuffer,
@@ -83,13 +87,15 @@ export default class FontMediator {
 		await instance.workerPool.workerReady;
 
 		if (typedatas) {
-			return instance.addTemplate(typedatas).then((componentIdAndGlyphPerClass) => {
-				if (!process.env.LIBRARY) {
-					localClient.dispatchAction('/store-value-font', {
-						componentIdAndGlyphPerClass,
-					});
-				}
-			});
+			return instance
+				.addTemplate(typedatas)
+				.then((componentIdAndGlyphPerClass) => {
+					if (!process.env.LIBRARY) {
+						localClient.dispatchAction('/store-value-font', {
+							componentIdAndGlyphPerClass,
+						});
+					}
+				});
 		}
 
 		return Promise.resolve();
@@ -131,7 +137,9 @@ export default class FontMediator {
 
 							this.glyphList[typedata.name] = typedata.json.glyphs;
 
-							componentIdAndGlyphPerClass[typedata.name] = getComponentIdAndGlyphPerClass(typedata);
+							componentIdAndGlyphPerClass[
+								typedata.name
+							] = getComponentIdAndGlyphPerClass(typedata);
 
 							const initValues = {};
 
@@ -153,9 +161,7 @@ export default class FontMediator {
 		});
 	}
 
-	setupInfo({
-		family, style, email, template,
-	}) {
+	setupInfo({family, style, email, template}) {
 		if (!instance) {
 			throw new Error('cannot return an instance before init');
 		}
@@ -167,7 +173,13 @@ export default class FontMediator {
 	}
 
 	reset(fontName, template, subset, glyphCanvasUnicode) {
-		return this.getFont(fontName, template, this.initValues[template], subset, glyphCanvasUnicode);
+		return this.getFont(
+			fontName,
+			template,
+			this.initValues[template],
+			subset,
+			glyphCanvasUnicode,
+		);
 	}
 
 	reloadFont(fontName, json) {
@@ -189,10 +201,7 @@ export default class FontMediator {
 	}
 
 	addToFont(buffer, fontName) {
-		const fontFace = new FontFace(
-			fontName,
-			buffer,
-		);
+		const fontFace = new FontFace(fontName, buffer);
 
 		if (fontFace.status === 'error') {
 			console.warn(`error in fontface ${fontName}`); // eslint-disable-line no-console
@@ -235,12 +244,7 @@ export default class FontMediator {
 					const mergedFont = await mergeFont(
 						MERGE_URL,
 						'fontfile',
-						[
-							id,
-							familyName,
-							styleName,
-							true,
-						],
+						[id, familyName, styleName, true],
 						arrayBuffer,
 					);
 
@@ -271,9 +275,7 @@ export default class FontMediator {
 		const buffer = await mergeFont(
 			MERGE_URL,
 			'mergefont',
-			[
-				this.email,
-			],
+			[this.email],
 			arrayBuffer,
 		);
 
@@ -306,10 +308,14 @@ export default class FontMediator {
 				subset,
 			).then(({fontBuffer}) => {
 				window.open(GLYPHR_URL);
-				window.addEventListener('message', (e) => {
-					e.source.postMessage(fontBuffer, e.origin, [fontBuffer]);
-					resolve();
-				}, {once: true});
+				window.addEventListener(
+					'message',
+					(e) => {
+						e.source.postMessage(fontBuffer, e.origin, [fontBuffer]);
+						resolve();
+					},
+					{once: true},
+				);
 			});
 		});
 	}
@@ -362,7 +368,7 @@ export default class FontMediator {
 						});
 					}
 					const fontBuffer = arrayBuffer.slice(
-						4 + (glyphsListLength * 4 * 6),
+						4 + glyphsListLength * 4 * 6,
 						arrayBuffer.length,
 					);
 
@@ -379,9 +385,12 @@ export default class FontMediator {
 
 	getFont(fontName, template, params, subset, glyphCanvasUnicode) {
 		if (glyphCanvasUnicode && !this.noCanvas) {
-			const glyphForCanvas = this.fontMakers[template].constructFont({
-				...params,
-			}, [glyphCanvasUnicode]);
+			const glyphForCanvas = this.fontMakers[template].constructFont(
+				{
+					...params,
+				},
+				[glyphCanvasUnicode],
+			);
 
 			[window.glyph] = glyphForCanvas.glyphs;
 			localClient.dispatchAction('/store-value-font', {
@@ -389,27 +398,20 @@ export default class FontMediator {
 			});
 		}
 
-		return this.getFontObject(
-			fontName,
-			'Regular',
-			template,
-			params,
-			subset,
-		).then(({glyphValues, fontBuffer}) => {
-			this.addToFont(
-				fontBuffer,
-				fontName,
-			);
+		return this.getFontObject(fontName, 'Regular', template, params, subset)
+			.then(({glyphValues, fontBuffer}) => {
+				this.addToFont(fontBuffer, fontName);
 
-			window.fontResult = {glyphs: glyphValues};
-			localClient.dispatchAction('/store-value-font', {
-				font: Math.random(),
+				window.fontResult = {glyphs: glyphValues};
+				localClient.dispatchAction('/store-value-font', {
+					font: Math.random(),
+				});
+
+				return this.mergeFontWithTimeout(fontBuffer, fontName);
+			})
+			.then((mergedBuffer) => {
+				this.addToFont(mergedBuffer, fontName);
 			});
-
-			return this.mergeFontWithTimeout(fontBuffer, fontName);
-		}).then((mergedBuffer) => {
-			this.addToFont(mergedBuffer, fontName);
-		});
 	}
 
 	getAllGlyphForCanvas(template, params = this.initValues[template]) {
@@ -418,9 +420,12 @@ export default class FontMediator {
 		_forOwn(this.glyphList[template], (glyph) => {
 			if (glyph.unicode && !this.noCanvas) {
 				try {
-					const constructedGlyph = this.fontMakers[template].constructFont({
-						...params,
-					}, [glyph.unicode]).glyphs[0];
+					const constructedGlyph = this.fontMakers[template].constructFont(
+						{
+							...params,
+						},
+						[glyph.unicode],
+					).glyphs[0];
 
 					glyphArray.push(constructedGlyph);
 				}

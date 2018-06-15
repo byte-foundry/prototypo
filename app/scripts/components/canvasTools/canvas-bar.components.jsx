@@ -9,7 +9,9 @@ import CanvasBarButton from './canvas-bar-button.components.jsx';
 export default class CanvasBar extends React.Component {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 		this.chooseMode = this.chooseMode.bind(this);
 		this.state = {};
 	}
@@ -18,7 +20,8 @@ export default class CanvasBar extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					canvasMode: head.toJS().d.canvasMode,
@@ -38,12 +41,17 @@ export default class CanvasBar extends React.Component {
 	}
 
 	render() {
-		const buttons = ['move', 'components', 'select-points', 'shadow'].map(item => <CanvasBarButton name={item} key={item} active={item === this.state.canvasMode} click={this.chooseMode} />);
-
-		return (
-			<div className="canvas-bar">
-				{buttons}
-			</div>
+		const buttons = ['move', 'components', 'select-points', 'shadow'].map(
+			item => (
+				<CanvasBarButton
+					name={item}
+					key={item}
+					active={item === this.state.canvasMode}
+					click={this.chooseMode}
+				/>
+			),
 		);
+
+		return <div className="canvas-bar">{buttons}</div>;
 	}
 }

@@ -9,7 +9,11 @@ import classNames from 'classnames';
 import {diffChars} from 'diff';
 import {prototypoStore} from '../stores/creation.stores.jsx';
 
-import {contentToArray, arrayToRawContent, rawToEscapedContent} from '../helpers/input-transform.helpers.js';
+import {
+	contentToArray,
+	arrayToRawContent,
+	rawToEscapedContent,
+} from '../helpers/input-transform.helpers.js';
 
 import {ContextualMenuItem} from './viewPanels/contextual-menu.components.jsx';
 import ViewPanelsMenu from './viewPanels/view-panels-menu.components.jsx';
@@ -56,7 +60,8 @@ export default class PrototypoWord extends React.PureComponent {
 			uiWordSelection: prototypoStore.get('uiWordSelection') || 0,
 		});
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					glyphPanelOpened: head.toJS().d.uiMode.indexOf('list') !== -1,
@@ -73,19 +78,24 @@ export default class PrototypoWord extends React.PureComponent {
 				this.setState(undefined);
 			});
 
-		this.client.getStore('/undoableStore', this.lifespan)
+		this.client
+			.getStore('/undoableStore', this.lifespan)
 			.onUpdate((head) => {
 				const values = head.toJS().d.controlsValues;
 
 				this.setState({
-					totalHeight: values.xHeight + Math.max(values.capDelta, values.ascender) - values.descender,
+					totalHeight:
+						values.xHeight
+						+ Math.max(values.capDelta, values.ascender)
+						- values.descender,
 				});
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 
-		this.client.getStore('/fontInstanceStore', this.lifespan)
+		this.client
+			.getStore('/fontInstanceStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					font: window.fontResult,
@@ -99,7 +109,10 @@ export default class PrototypoWord extends React.PureComponent {
 	setupText() {
 		const content = this.props[this.props.field];
 		const transformedContent = rawToEscapedContent(content, this.state.glyphs);
-		const newString = transformedContent && transformedContent.length > 0 ? transformedContent : '';
+		const newString
+			= transformedContent && transformedContent.length > 0
+				? transformedContent
+				: '';
 
 		if (newString !== this.state.uiWordString) {
 			this.client.dispatchAction('/store-value', {
@@ -109,23 +122,39 @@ export default class PrototypoWord extends React.PureComponent {
 	}
 
 	saveText(text) {
-		this.client.dispatchAction('/store-text', {value: text, propName: this.props.field});
+		this.client.dispatchAction('/store-text', {
+			value: text,
+			propName: this.props.field,
+		});
 	}
 
 	componentDidUpdate() {
 		this.setupText();
-		const raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
+		const raf
+			= window.requestAnimationFrame || window.webkitRequestAnimationFrame;
 
 		if (!this.alreadyRafed) {
 			this.alreadyRafed = raf(() => {
 				if (this.state.font) {
 					const {clientWidth, clientHeight} = ReactDOM.findDOMNode(this);
-					const advanceWidthSum = _reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => sum + (
-						_find(this.state.font.glyphs, glyphItem => glyphItem.unicode === glyph.charCodeAt(0))
-							|| {advanceWidth: 500}
-					).advanceWidth, 0);
+					const advanceWidthSum = _reduce(
+						rawToEscapedContent(
+							this.state.uiWordString || '',
+							this.state.glyphs,
+						).split(''),
+						(sum, glyph) =>
+							sum
+							+ (
+								_find(
+									this.state.font.glyphs,
+									glyphItem => glyphItem.unicode === glyph.charCodeAt(0),
+								) || {advanceWidth: 500}
+							).advanceWidth,
+						0,
+					);
 					const widthSize = 100 * clientWidth / (0.1 * advanceWidthSum) * 0.95;
-					const heightSize = 100 * clientHeight / (0.1 * this.state.totalHeight) * 0.8;
+					const heightSize
+						= 100 * clientHeight / (0.1 * this.state.totalHeight) * 0.8;
 					const rightSize = Math.min(widthSize, heightSize);
 
 					this.client.dispatchAction('/store-value', {
@@ -144,12 +173,21 @@ export default class PrototypoWord extends React.PureComponent {
 
 	componentDidMount() {
 		this.setupText();
-		const raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame;
+		const raf
+			= window.requestAnimationFrame || window.webkitRequestAnimationFrame;
 
 		raf(() => {
 			if (this.state.glyphProperties) {
 				const {clientWidth, clientHeight} = ReactDOM.findDOMNode(this);
-				const advanceWidthSum = _reduce(rawToEscapedContent(this.state.uiWordString || '', this.state.glyphs).split(''), (sum, glyph) => sum + this.state.glyphProperties[glyph.charCodeAt(0)].advanceWidth, 0);
+				const advanceWidthSum = _reduce(
+					rawToEscapedContent(
+						this.state.uiWordString || '',
+						this.state.glyphs,
+					).split(''),
+					(sum, glyph) =>
+						sum + this.state.glyphProperties[glyph.charCodeAt(0)].advanceWidth,
+					0,
+				);
 				const widthSize = 100 * clientWidth / (0.1 * advanceWidthSum);
 				const heightSize = 100 * clientHeight / (0.1 * this.state.totalHeight);
 				const rightSize = Math.min(widthSize, heightSize);
@@ -162,7 +200,8 @@ export default class PrototypoWord extends React.PureComponent {
 	}
 
 	componentWillUnmount() {
-		const cancelRaf = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+		const cancelRaf
+			= window.cancelAnimationFrame || window.mozCancelAnimationFrame;
 
 		cancelRaf(this.alreadyRafed);
 		this.handleEscapedInput();
@@ -192,9 +231,7 @@ export default class PrototypoWord extends React.PureComponent {
 		let buffer = textArray;
 		const diffList = diffChars(oldText, newText);
 
-		diffList.forEach(({
-			added, removed, count, value,
-		}) => {
+		diffList.forEach(({added, removed, count, value}) => {
 			if (removed) {
 				buffer = [
 					...buffer.slice(0, currentIndex),
@@ -254,7 +291,9 @@ export default class PrototypoWord extends React.PureComponent {
 	}
 
 	invertedView() {
-		this.client.dispatchAction('/store-value', {uiInvertedWordView: !this.props.uiInvertedWordView});
+		this.client.dispatchAction('/store-value', {
+			uiInvertedWordView: !this.props.uiInvertedWordView,
+		});
 	}
 
 	toggleSpacingMode() {
@@ -264,7 +303,9 @@ export default class PrototypoWord extends React.PureComponent {
 	}
 
 	toggleColors() {
-		this.client.dispatchAction('/store-value', {uiInvertedWordColors: !this.props.uiInvertedWordColors});
+		this.client.dispatchAction('/store-value', {
+			uiInvertedWordColors: !this.props.uiInvertedWordColors,
+		});
 	}
 
 	render() {
@@ -287,7 +328,9 @@ export default class PrototypoWord extends React.PureComponent {
 			'is-shifted': this.state.glyphPanelOpened,
 		});
 
-		const whiteBlackSwitchText = this.props.uiInvertedWordColors ? 'black on white' : 'white on black';
+		const whiteBlackSwitchText = this.props.uiInvertedWordColors
+			? 'black on white'
+			: 'white on black';
 
 		return (
 			<div
@@ -313,8 +356,12 @@ export default class PrototypoWord extends React.PureComponent {
 						intercomShift={this.props.viewPanelRightMove}
 						upper
 						left
-						onMouseEnter={() => {this.setState({hoveringContextMenu: true});}}
-						onMouseLeave={() => {this.setState({hoveringContextMenu: false});}}
+						onMouseEnter={() => {
+							this.setState({hoveringContextMenu: true});
+						}}
+						onMouseLeave={() => {
+							this.setState({hoveringContextMenu: false});
+						}}
 					>
 						<ContextualMenuItem
 							active={this.props.uiInvertedWordView}
@@ -330,10 +377,21 @@ export default class PrototypoWord extends React.PureComponent {
 						</ContextualMenuItem>
 					</ViewPanelsMenu>
 					<div className={actionBar}>
-						<CloseButton click={() => {this.props.close('word');}} />
+						<CloseButton
+							click={() => {
+								this.props.close('word');
+							}}
+						/>
 					</div>
 				</div>
-				<PrototypoWordInput onTypedText={(rawText) => {this.saveText(rawText);}} value={arrayToRawContent(contentToArray(this.props[this.props.field]))} />
+				<PrototypoWordInput
+					onTypedText={(rawText) => {
+						this.saveText(rawText);
+					}}
+					value={arrayToRawContent(
+						contentToArray(this.props[this.props.field]),
+					)}
+				/>
 			</div>
 		);
 	}

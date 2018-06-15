@@ -24,9 +24,11 @@ class AccountPrototypoLibrary extends React.PureComponent {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				const {credits} = head.toJS().d;
+
 				this.setState({
 					credits,
 				});
@@ -35,9 +37,11 @@ class AccountPrototypoLibrary extends React.PureComponent {
 				this.setState(undefined);
 			});
 
-		this.client.getStore('/userStore', this.lifespan)
+		this.client
+			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				const {subscription} = head.toJS().d;
+
 				this.setState({
 					subscription,
 				});
@@ -62,30 +66,31 @@ class AccountPrototypoLibrary extends React.PureComponent {
 
 	render() {
 		const {subscription, credits} = this.state;
-		const freeAccount = !this.props.isManagedAccount
-			&& !(subscription && !subscription.plan.id.includes('team') && !subscription.plan.id.includes('agency'));
-		const freeAccountAndHasCredits = (credits && credits > 0) && freeAccount;
+		const freeAccount
+			= !this.props.isManagedAccount
+			&& !(
+				subscription
+				&& !subscription.plan.id.includes('team')
+				&& !subscription.plan.id.includes('agency')
+			);
+		const freeAccountAndHasCredits = credits && credits > 0 && freeAccount;
 		const {loading, domains, token} = this.props;
 
 		const tableHeaders = [
 			{
-				styleClass: classnames('sortable-table-header-cell', 'sortable-table-domain'),
+				styleClass: classnames(
+					'sortable-table-header-cell',
+					'sortable-table-domain',
+				),
 				label: 'Domain name',
 			},
 		];
 
-		const domainContent = domains.map(domain =>
-			(
-				<tr
-					key={domain}
-					className={classnames('sortable-table-row')}
-				>
-					<td className="sortable-table-cell">
-						{domain}
-					</td>
-				</tr>
-			),
-		);
+		const domainContent = domains.map(domain => (
+			<tr key={domain} className={classnames('sortable-table-row')}>
+				<td className="sortable-table-cell">{domain}</td>
+			</tr>
+		));
 
 		const payingContent = (
 			<div>
@@ -109,7 +114,9 @@ class AccountPrototypoLibrary extends React.PureComponent {
 								/>
 							</td>
 							<td>
-								<Button size="small" onClick={this.handleSubmit}>Add authorized domain</Button>
+								<Button size="small" onClick={this.handleSubmit}>
+									Add authorized domain
+								</Button>
 							</td>
 						</tr>
 						{domainContent}
@@ -121,22 +128,38 @@ class AccountPrototypoLibrary extends React.PureComponent {
 		const freeContent = (
 			<div>
 				<h3 className="account-dashboard-container-small-title">
-					You do not have a plan for the moment. To take full advantage of the library you'll need to subscribe to Prototypo.
+					You do not have a plan for the moment. To take full advantage of the
+					library you'll need to subscribe to Prototypo.
 				</h3>
 				<p>
 					<img style={{width: '100%'}} src="assets/images/go-pro.gif" />
 				</p>
 				<p>
-					Subscribe to our <Link className="account-link" to="account/subscribe">pro plan</Link> to benefit of the full power of Prototypo's library without restrictions!
+					Subscribe to our{' '}
+					<Link className="account-link" to="account/subscribe">
+						pro plan
+					</Link>{' '}
+					to benefit of the full power of Prototypo's library without
+					restrictions!
 				</p>
 			</div>
-		)
+		);
 
 		return (
 			<div className="account-base account-prototypo-library">
 				<h1>Documentation</h1>
 				<div>
-					Check out the <a href="https://doc.prototypo.io" target="_blank" rel="noopener noreferrer">documentation</a> to learn how to use the prototypo library.<br />To use the library you will need the token under here and you'll also need to add the domain name where you'll want to use the library.
+					Check out the{' '}
+					<a
+						href="https://doc.prototypo.io"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						documentation
+					</a>{' '}
+					to learn how to use the prototypo library.<br />To use the library you
+					will need the token under here and you'll also need to add the domain
+					name where you'll want to use the library.
 				</div>
 				{freeAccountAndHasCredits || !freeAccount ? payingContent : freeContent}
 			</div>
@@ -145,9 +168,7 @@ class AccountPrototypoLibrary extends React.PureComponent {
 }
 
 AccountPrototypoLibrary.propTypes = {
-	domains: PropTypes.arrayOf(
-		PropTypes.string,
-	).isRequired,
+	domains: PropTypes.arrayOf(PropTypes.string).isRequired,
 	token: PropTypes.string,
 };
 
@@ -179,10 +200,7 @@ const addAccessToken = gql`
 
 const createAccessToken = gql`
 	mutation createTokenForUser($id: ID!, $domainNames: String!) {
-		createAccessToken(
-			userId: $id
-			domains: $domainNames
-		) {
+		createAccessToken(userId: $id, domains: $domainNames) {
 			domains
 			token
 		}
@@ -204,23 +222,26 @@ export default graphql(query, {
 		}
 
 		userId = data.user.id;
-		isManagedAccount = data.user && data.user.manager
+		isManagedAccount = data.user && data.user.manager;
 
 		if (data.user.accessToken) {
 			accessTokenId = data.user.accessToken.id;
 		}
 		else {
-			return apolloClient.mutate({
-				mutation: createAccessToken,
-				variables: {
-					id: userId,
-					domainNames: 'localhost',
-				},
-			}).then(async () => {
-				await data.refetch();
-			}).catch((e) => {
-				console.log(e);
-			});
+			return apolloClient
+				.mutate({
+					mutation: createAccessToken,
+					variables: {
+						id: userId,
+						domainNames: 'localhost',
+					},
+				})
+				.then(async () => {
+					await data.refetch();
+				})
+				.catch((e) => {
+					console.log(e);
+				});
 		}
 
 		return {

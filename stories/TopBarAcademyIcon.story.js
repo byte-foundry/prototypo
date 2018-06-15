@@ -6,15 +6,16 @@ import TopBarMenuAcademyIcon from '../app/scripts/components/topbar/top-bar-menu
 
 storiesOf('TopBar/MenuAcademyIcon', module)
 	.addDecorator(story => (
-		<div style={{width: '300px', margin: 'auto', padding: '20px'}} className="normal">
+		<div
+			style={{width: '300px', margin: 'auto', padding: '20px'}}
+			className="normal"
+		>
 			{story()}
 		</div>
-		))
+	))
 	.addDecorator(backgroundColor(['#303030']))
 	.add('default', () => (
-		<TopBarMenuAcademyIcon
-			icon={require('../app/images/graduate-cap.svg')}
-		/>
+		<TopBarMenuAcademyIcon icon={require('../app/images/graduate-cap.svg')} />
 	))
 	.add('hover', () => (
 		<TopBarMenuAcademyIcon

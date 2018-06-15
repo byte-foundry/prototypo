@@ -36,7 +36,9 @@ export default class PrototypoCanvas extends React.Component {
 			shadowFile: '',
 			glyphViewMatrix: {},
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 		this.handleContextMenu = this.handleContextMenu.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.handleLeaveAndClick = this.handleLeaveAndClick.bind(this);
@@ -74,7 +76,8 @@ export default class PrototypoCanvas extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					prototypoTextPanelOpened: head.toJS().d.uiMode.indexOf('text') !== -1,
@@ -91,17 +94,17 @@ export default class PrototypoCanvas extends React.Component {
 					glyphViewMatrix: head.toJS().d.glyphViewMatrix,
 					globalMode: head.toJS().d.globalMode,
 				});
-				this.isFree = HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
-				this.isFreeWithCredits = (
-					head.toJS().d.credits
-					&& head.toJS().d.credits > 0
-				) && this.isFree;
+				this.isFree
+					= HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+				this.isFreeWithCredits
+					= head.toJS().d.credits && head.toJS().d.credits > 0 && this.isFree;
 			})
 			.onDelete(() => {
 				this.setState(undefined);
 			});
 
-		this.client.getStore('/fontInstanceStore', this.lifespan)
+		this.client
+			.getStore('/fontInstanceStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState(head.toJS().d);
 			})
@@ -109,7 +112,8 @@ export default class PrototypoCanvas extends React.Component {
 				this.setState(undefined);
 			});
 
-		this.client.getStore('/undoableStore', this.lifespan)
+		this.client
+			.getStore('/undoableStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					values: head.toJS().d.controlsValues,
@@ -127,10 +131,10 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	setGlyphs(glyphs) {
-		this.client.dispatchAction('/load-glyphs', _mapValues(
-			glyphs,
-			mapGlyphForApp,
-		));
+		this.client.dispatchAction(
+			'/load-glyphs',
+			_mapValues(glyphs, mapGlyphForApp),
+		);
 	}
 
 	handleContextMenu(e) {
@@ -187,7 +191,10 @@ export default class PrototypoCanvas extends React.Component {
 					uiNodes: this.props.uiNodes,
 					uiOutline: this.props.uiOutline,
 				};
-				this.client.dispatchAction('/store-value', {uiNodes: false, uiOutline: false});
+				this.client.dispatchAction('/store-value', {
+					uiNodes: false,
+					uiOutline: false,
+				});
 				this.reset();
 			}
 		}
@@ -199,7 +206,11 @@ export default class PrototypoCanvas extends React.Component {
 		if (e.keyCode === 32) {
 			e.preventDefault();
 			e.stopPropagation();
-			if (this.state.oldCanvasMode === undefined || this.state.oldCanvasMode === 'move' || this.state.oldCanvasMode === 'shadow') {
+			if (
+				this.state.oldCanvasMode === undefined
+				|| this.state.oldCanvasMode === 'move'
+				|| this.state.oldCanvasMode === 'shadow'
+			) {
 				this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
 			}
 		}
@@ -208,34 +219,48 @@ export default class PrototypoCanvas extends React.Component {
 		if (e.keyCode === 83) {
 			e.preventDefault();
 			e.stopPropagation();
-			if (this.state.oldCanvasMode === undefined || this.state.oldCanvasMode === 'shadow' || this.state.oldCanvasMode === 'move ') {
-				this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'shadow'});
+			if (
+				this.state.oldCanvasMode === undefined
+				|| this.state.oldCanvasMode === 'shadow'
+				|| this.state.oldCanvasMode === 'move '
+			) {
+				this.client.dispatchAction('/toggle-canvas-mode', {
+					canvasMode: 'shadow',
+				});
 			}
 		}
 
 		// navigate in glyph list: left
 		if (e.keyCode === 37) {
 			if (currentUnicode - 1 >= 1) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 1]});
+				this.client.dispatchAction('/select-glyph', {
+					unicode: unicodes[currentUnicode - 1],
+				});
 			}
 		}
 		// navigate in glyph list: right
 		if (e.keyCode === 39) {
 			if (currentUnicode + 1 <= unicodes.length - 1) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 1]});
+				this.client.dispatchAction('/select-glyph', {
+					unicode: unicodes[currentUnicode + 1],
+				});
 			}
 		}
 		// TODO: it only works when glyph list displays all glyphs
 		// navigate in glyph list: up
 		if (e.keyCode === 38) {
 			if (currentUnicode - 4 >= 1) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode - 4]});
+				this.client.dispatchAction('/select-glyph', {
+					unicode: unicodes[currentUnicode - 4],
+				});
 			}
 		}
 		// navigate in glyph list: down
 		if (e.keyCode === 40) {
 			if (currentUnicode + 4 <= unicodes.length - 1) {
-				this.client.dispatchAction('/select-glyph', {unicode: unicodes[currentUnicode + 4]});
+				this.client.dispatchAction('/select-glyph', {
+					unicode: unicodes[currentUnicode + 4],
+				});
 			}
 		}
 	}
@@ -252,11 +277,15 @@ export default class PrototypoCanvas extends React.Component {
 		let glyphName = '';
 		let glyph;
 
-		if (this.state.values.altList && this.state.values.altList[this.props.glyphSelected]) {
+		if (
+			this.state.values.altList
+			&& this.state.values.altList[this.props.glyphSelected]
+		) {
 			glyphName = this.state.values.altList[this.props.glyphSelected];
 
-			glyph = this.state.glyphs[this.props.glyphSelected].find(glyphItem =>
-				glyphItem.name === glyphName);
+			glyph = this.state.glyphs[this.props.glyphSelected].find(
+				glyphItem => glyphItem.name === glyphName,
+			);
 		}
 		else {
 			glyph = this.state.glyphs[this.props.glyphSelected][0];
@@ -264,18 +293,24 @@ export default class PrototypoCanvas extends React.Component {
 
 		const glyphToReset = glyph.base || glyph.name;
 
-		this.client.dispatchAction('/reset-glyph-manually', {glyphName: glyphToReset});
+		this.client.dispatchAction('/reset-glyph-manually', {
+			glyphName: glyphToReset,
+		});
 	}
 
 	resetPoints() {
 		let glyphName = '';
 		let glyph;
 
-		if (this.state.values.altList && this.state.values.altList[this.props.glyphSelected]) {
+		if (
+			this.state.values.altList
+			&& this.state.values.altList[this.props.glyphSelected]
+		) {
 			glyphName = this.state.values.altList[this.props.glyphSelected];
 
-			glyph = this.state.glyphs[this.props.glyphSelected].find(glyphItem =>
-				glyphItem.name === glyphName);
+			glyph = this.state.glyphs[this.props.glyphSelected].find(
+				glyphItem => glyphItem.name === glyphName,
+			);
 		}
 		else {
 			glyph = this.state.glyphs[this.props.glyphSelected][0];
@@ -310,8 +345,12 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	acceptShortcut() {
-		this.handleZoomCb = (e) => {this.handleShortcut(e);};
-		this.finishZoomCb = (e) => {this.finishShortcut(e);};
+		this.handleZoomCb = (e) => {
+			this.handleShortcut(e);
+		};
+		this.finishZoomCb = (e) => {
+			this.finishShortcut(e);
+		};
 		window.addEventListener('keydown', this.handleZoomCb);
 		window.addEventListener('keyup', this.finishZoomCb);
 	}
@@ -325,8 +364,14 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	restrictedRangeEnter() {
-		const isFreeWithoutCreditsInManualEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'select-points';
-		const isFreeWithoutCreditsInComponentEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'components';
+		const isFreeWithoutCreditsInManualEditing
+			= this.isFree
+			&& !this.isFreeWithCredits
+			&& this.state.canvasMode === 'select-points';
+		const isFreeWithoutCreditsInComponentEditing
+			= this.isFree
+			&& !this.isFreeWithCredits
+			&& this.state.canvasMode === 'components';
 
 		if (isFreeWithoutCreditsInComponentEditing) {
 			this.client.dispatchAction('/store-value', {
@@ -348,7 +393,9 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	toggleOutline() {
-		this.client.dispatchAction('/store-value', {uiOutline: !this.props.uiOutline});
+		this.client.dispatchAction('/store-value', {
+			uiOutline: !this.props.uiOutline,
+		});
 	}
 
 	toggleRuler() {
@@ -356,11 +403,16 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	toggleCoords() {
-		this.client.dispatchAction('/store-value', {uiCoords: !this.props.uiCoords, uiNodes: this.props.uiCoords ? this.props.uiNodes : true});
+		this.client.dispatchAction('/store-value', {
+			uiCoords: !this.props.uiCoords,
+			uiNodes: this.props.uiCoords ? this.props.uiNodes : true,
+		});
 	}
 
 	toggleDependencies() {
-		this.client.dispatchAction('/store-value', {uiDependencies: !this.props.uiDependencies});
+		this.client.dispatchAction('/store-value', {
+			uiDependencies: !this.props.uiDependencies,
+		});
 	}
 
 	mouseUp(zoom, center) {
@@ -371,18 +423,15 @@ export default class PrototypoCanvas extends React.Component {
 		document.removeEventListener('selectstart', this.preventSelection);
 	}
 
-
 	mouseDown() {
 		document.addEventListener('selectstart', this.preventSelection);
 	}
-
 
 	preventSelection(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		return false;
 	}
-
 
 	changeComponent(object) {
 		// if (!this.isFree || this.isFreeWithCredits) {
@@ -411,7 +460,8 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	isManualEdited() {
-		if (this.state.values
+		if (
+			this.state.values
 			&& this.props.glyphSelected
 			&& this.state.glyphs
 			&& this.state.glyphs[this.props.glyphSelected]
@@ -419,18 +469,25 @@ export default class PrototypoCanvas extends React.Component {
 		) {
 			let manualChangesGlyph;
 
-			if (this.state.values.altList && this.state.values.altList[this.props.glyphSelected]) {
-				manualChangesGlyph
-					= this.state.values.manualChanges[this.state.values.altList[this.props.glyphSelected]];
+			if (
+				this.state.values.altList
+				&& this.state.values.altList[this.props.glyphSelected]
+			) {
+				manualChangesGlyph = this.state.values.manualChanges[
+					this.state.values.altList[this.props.glyphSelected]
+				];
 			}
 			else {
-				manualChangesGlyph
-					= this.state.values.manualChanges[this.state.glyphs[this.props.glyphSelected][0].name];
+				manualChangesGlyph = this.state.values.manualChanges[
+					this.state.glyphs[this.props.glyphSelected][0].name
+				];
 			}
-			return (manualChangesGlyph
-				&& Object
-					.keys(manualChangesGlyph.cursors)
-					.filter(key => manualChangesGlyph.cursors[key] !== undefined).length > 0);
+			return (
+				manualChangesGlyph
+				&& Object.keys(manualChangesGlyph.cursors).filter(
+					key => manualChangesGlyph.cursors[key] !== undefined,
+				).length > 0
+			);
 		}
 
 		return false;
@@ -440,10 +497,21 @@ export default class PrototypoCanvas extends React.Component {
 		if (accepted.length > 0 && rejected.length === 0) {
 			const reader = new FileReader();
 
-			reader.addEventListener('load', () => {
-				this.setState({shadowFile: {elem: reader.result, type: accepted[0].type === '' ? 'font' : 'image'}});
-			}, false);
-			accepted[0].type === '' ? reader.readAsArrayBuffer(accepted[0]) : reader.readAsDataURL(accepted[0]);
+			reader.addEventListener(
+				'load',
+				() => {
+					this.setState({
+						shadowFile: {
+							elem: reader.result,
+							type: accepted[0].type === '' ? 'font' : 'image',
+						},
+					});
+				},
+				false,
+			);
+			accepted[0].type === ''
+				? reader.readAsArrayBuffer(accepted[0])
+				: reader.readAsDataURL(accepted[0]);
 		}
 	}
 
@@ -528,10 +596,7 @@ export default class PrototypoCanvas extends React.Component {
 			>
 				{uiOutline ? 'Hide' : 'Show'} outline
 			</ContextualMenuItem>,
-			<ContextualMenuItem
-				key="reset"
-				onClick={this.reset}
-			>
+			<ContextualMenuItem key="reset" onClick={this.reset}>
 				Reset view
 			</ContextualMenuItem>,
 		];
@@ -543,21 +608,24 @@ export default class PrototypoCanvas extends React.Component {
 		// const demoOverlay = false;
 		/* eslint-enable max-len */
 
-		const alternateMenu = this.props.glyphs
+		const alternateMenu
+			= this.props.glyphs
 			&& this.props.glyphs[this.props.glyphSelected]
-			&& this.props.glyphs[this.props.glyphSelected].length > 1
-			? (
-				<AlternateMenu
-					alternates={this.props.glyphs[this.props.glyphSelected]}
-					unicode={this.props.glyphSelected}
-				/>
-			) : false;
+			&& this.props.glyphs[this.props.glyphSelected].length > 1 ? (
+					<AlternateMenu
+						alternates={this.props.glyphs[this.props.glyphSelected]}
+						unicode={this.props.glyphSelected}
+					/>
+				) : (
+					false
+				);
 
-		const outsideAlert
-			= (<ViewAlert
+		const outsideAlert = (
+			<ViewAlert
 				inside={this.state.glyphOutsideView}
 				text="The glyph is outside the view ! Try double clicking in the view to bring it back."
-			/>);
+			/>
+		);
 		let shadowDropzone = false;
 
 		if (this.state.canvasMode === 'shadow' && this.state.shadowFile === '') {
@@ -570,7 +638,7 @@ export default class PrototypoCanvas extends React.Component {
 						onDrop={this.onDrop}
 						rejectClassName="rejected"
 					>
-					Drop a font here, or click to select files to upload.
+						Drop a font here, or click to select files to upload.
 					</Dropzone>
 				</div>
 			);
@@ -592,11 +660,9 @@ export default class PrototypoCanvas extends React.Component {
 			);
 		}
 
-		const shadowButton = this.state.canvasMode === 'shadow'
-			? (
-				<div
-					className="prototypo-canvas-reset-buttons is-on-canvas"
-				>
+		const shadowButton
+			= this.state.canvasMode === 'shadow' ? (
+				<div className="prototypo-canvas-reset-buttons is-on-canvas">
 					<button
 						className="prototypo-canvas-reset-button"
 						onClick={this.deleteShadow}
@@ -604,9 +670,9 @@ export default class PrototypoCanvas extends React.Component {
 						Remove shadow
 					</button>
 				</div>
-			)
-			: false;
-
+			) : (
+				false
+			);
 
 		return (
 			<div
@@ -615,28 +681,42 @@ export default class PrototypoCanvas extends React.Component {
 				onClick={this.handleLeaveAndClick}
 				onMouseLeave={this.handleLeaveAndClick}
 				onContextMenu={this.handleContextMenu}
-				ref={(item) => {this.container = item;}}
+				ref={(item) => {
+					this.container = item;
+				}}
 			>
 				<CanvasBar />
-				<div className={`prototypo-canvas-reset-buttons ${this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''}`}>
+				<div
+					className={`prototypo-canvas-reset-buttons ${
+						this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''
+					}`}
+				>
 					<button
-						className={`prototypo-canvas-reset-button ${this.isManualEdited() ? '' : 'disabled'}`}
+						className={`prototypo-canvas-reset-button ${
+							this.isManualEdited() ? '' : 'disabled'
+						}`}
 						onClick={this.resetGlyph}
 						disabled={!this.isManualEdited()}
 					>
 						Reset glyph
 					</button>
 					<button
-						className={`prototypo-canvas-reset-button ${this.state.selectedItems && this.state.selectedItems.length > 0 ? '' : 'disabled'}`}
+						className={`prototypo-canvas-reset-button ${
+							this.state.selectedItems && this.state.selectedItems.length > 0
+								? ''
+								: 'disabled'
+						}`}
 						onClick={this.resetPoints}
-						disabled={!(this.state.selectedItems && this.state.selectedItems.length)}
+						disabled={
+							!(this.state.selectedItems && this.state.selectedItems.length)
+						}
 					>
-						Reset {
-							this.state.selectedItems
-								&& this.state.selectedItems.length > 0
-								&& this.state.selectedItems[0].type === toileType.SPACING_HANDLE
-								? 'spacing'
-								: 'point'}
+						Reset{' '}
+						{this.state.selectedItems
+						&& this.state.selectedItems.length > 0
+						&& this.state.selectedItems[0].type === toileType.SPACING_HANDLE
+							? 'spacing'
+							: 'point'}
 					</button>
 				</div>
 				{shadowButton}
@@ -648,14 +728,19 @@ export default class PrototypoCanvas extends React.Component {
 					onSelectedItems={this.handleSelectedItems}
 					onUpdateGlyph={this.handleUpdateGlyph}
 				/>
-				{selectedItems && selectedItems.length === 1 && (
+				{selectedItems
+					&& selectedItems.length === 1 && (
 					<EditNodeProperties
 						glyph={updatedGlyph}
 						selectedItem={selectedItems[0]}
 					/>
 				)}
 				<div className={actionBarClassNames}>
-					<CloseButton click={() => {this.props.close('glyph');}} />
+					<CloseButton
+						click={() => {
+							this.props.close('glyph');
+						}}
+					/>
 				</div>
 				{outsideAlert}
 				<ViewPanelsMenu

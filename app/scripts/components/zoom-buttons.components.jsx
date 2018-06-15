@@ -7,8 +7,18 @@ export default class ZoomButtons extends React.Component {
 		}
 		return (
 			<div className="zoom-buttons">
-				<ZoomButton text="+" click={() => { this.props.plus(); }}/>
-				<ZoomButton text="-" click={() => { this.props.minus(); }}/>
+				<ZoomButton
+					text="+"
+					click={() => {
+						this.props.plus();
+					}}
+				/>
+				<ZoomButton
+					text="-"
+					click={() => {
+						this.props.minus();
+					}}
+				/>
 			</div>
 		);
 	}
@@ -20,7 +30,12 @@ class ZoomButton extends React.Component {
 			console.log('[RENDER] zoom button');
 		}
 		return (
-			<div className="zoom-button" onClick={() => { this.props.click(); }}>
+			<div
+				className="zoom-button"
+				onClick={() => {
+					this.props.click();
+				}}
+			>
 				<span>{this.props.text}</span>
 			</div>
 		);

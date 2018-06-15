@@ -39,7 +39,9 @@ class OAuthButtons extends React.PureComponent {
 
 		this.setState({loading: true});
 		const facebookToken = response.accessToken;
-		const graphcoolResponse = await this.props.authenticateFacebookUser(facebookToken);
+		const graphcoolResponse = await this.props.authenticateFacebookUser(
+			facebookToken,
+		);
 		const graphcoolToken = graphcoolResponse.data.auth.token;
 
 		this.props.onLogin(response.email, graphcoolToken);
@@ -52,7 +54,10 @@ class OAuthButtons extends React.PureComponent {
 		}
 
 		this.setState({loading: true});
-		const graphcoolResponse = await this.props.authenticateTwitterUser(oauthToken, oauthVerifier);
+		const graphcoolResponse = await this.props.authenticateTwitterUser(
+			oauthToken,
+			oauthVerifier,
+		);
 		const {email, token} = graphcoolResponse.data.auth;
 
 		this.props.onLogin(email, token);
@@ -65,7 +70,9 @@ class OAuthButtons extends React.PureComponent {
 		}
 
 		this.setState({loading: true});
-		const graphcoolResponse = await this.props.authenticateGoogleUser(response.accessToken);
+		const graphcoolResponse = await this.props.authenticateGoogleUser(
+			response.accessToken,
+		);
 		const {token} = graphcoolResponse.data.auth;
 
 		this.props.onLogin(response.profileObj.email, token);
@@ -84,7 +91,11 @@ class OAuthButtons extends React.PureComponent {
 						fields="name,email"
 						callback={this.responseFacebook}
 						render={renderProps => (
-							<Button className="oauth-button oauth-button--facebook" fluid onClick={renderProps.onClick}>
+							<Button
+								className="oauth-button oauth-button--facebook"
+								fluid
+								onClick={renderProps.onClick}
+							>
 								Facebook
 							</Button>
 						)}
@@ -93,7 +104,11 @@ class OAuthButtons extends React.PureComponent {
 						callback={this.responseTwitter}
 						requestTokenUrl={TWITTER_REQUEST_TOKEN_URL}
 						render={renderProps => (
-							<Button className="oauth-button oauth-button--twitter" fluid onClick={renderProps.onClick}>
+							<Button
+								className="oauth-button oauth-button--twitter"
+								fluid
+								onClick={renderProps.onClick}
+							>
 								Twitter
 							</Button>
 						)}
@@ -104,7 +119,11 @@ class OAuthButtons extends React.PureComponent {
 						onSuccess={this.responseGoogle}
 						onFailure={this.responseGoogle}
 						render={renderProps => (
-							<Button className="oauth-button oauth-button--google" fluid onClick={renderProps.onClick}>
+							<Button
+								className="oauth-button oauth-button--google"
+								fluid
+								onClick={renderProps.onClick}
+							>
 								Google
 							</Button>
 						)}
@@ -127,35 +146,38 @@ OAuthButtons.propTypes = {
 };
 
 const getUserQuery = gql`
-  query getUser {
-    user {
-      id
-    }
-  }
+	query getUser {
+		user {
+			id
+		}
+	}
 `;
 
 const authenticateGoogleUserMutation = gql`
-  mutation authenticateGoogleUser($token: String!) {
-    auth: authenticateGoogleUser(googleToken: $token) {
-      token
-    }
-  }
+	mutation authenticateGoogleUser($token: String!) {
+		auth: authenticateGoogleUser(googleToken: $token) {
+			token
+		}
+	}
 `;
 
 const authenticateTwitterUserMutation = gql`
-  mutation authenticateTwitterUser($token: String!, $verifier: String!) {
-    auth: authenticateTwitterUser(oAuthToken: $token, oAuthVerifier: $verifier) {
-      token
-    }
-  }
+	mutation authenticateTwitterUser($token: String!, $verifier: String!) {
+		auth: authenticateTwitterUser(
+			oAuthToken: $token
+			oAuthVerifier: $verifier
+		) {
+			token
+		}
+	}
 `;
 
 const authenticateFacebookUserMutation = gql`
-  mutation AuthenticateFacebookUser($facebookToken: String!) {
-    auth: authenticateFacebookUser(facebookToken: $facebookToken) {
-      token
-    }
-  }
+	mutation AuthenticateFacebookUser($facebookToken: String!) {
+		auth: authenticateFacebookUser(facebookToken: $facebookToken) {
+			token
+		}
+	}
 `;
 
 export default compose(
@@ -166,12 +188,14 @@ export default compose(
 	}),
 	graphql(authenticateTwitterUserMutation, {
 		props: ({mutate}) => ({
-			authenticateTwitterUser: (token, verifier) => mutate({variables: {token, verifier}}),
+			authenticateTwitterUser: (token, verifier) =>
+				mutate({variables: {token, verifier}}),
 		}),
 	}),
 	graphql(authenticateFacebookUserMutation, {
 		props: ({mutate}) => ({
-			authenticateFacebookUser: facebookToken => mutate({variables: {facebookToken}}),
+			authenticateFacebookUser: facebookToken =>
+				mutate({variables: {facebookToken}}),
 		}),
 	}),
 	graphql(getUserQuery, {

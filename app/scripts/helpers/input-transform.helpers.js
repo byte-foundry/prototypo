@@ -5,22 +5,25 @@ export function rawToEscapedContent(rawText, glyphs = {}) {
 
 // ['t', 'e', 's', 't', '/ampersand ', '//', 's', 'e', 'e'] -> test&/see
 export function arrayToEscapedContent(textArray, glyphs = {}) {
-	return textArray.map((letter) => {
-		if (letter === '//') {
-			return '/';
-		}
-		if (letter.startsWith('/')) {
-			const glyphName = letter.slice(1).trim();
-
-			const [glyph] = Object.values(glyphs).find(([g]) => glyphName === g.glyphName) || [];
-
-			if (glyph) {
-				return String.fromCharCode(glyph.unicode);
+	return textArray
+		.map((letter) => {
+			if (letter === '//') {
+				return '/';
 			}
-			return '';
-		}
-		return letter;
-	}).join('');
+			if (letter.startsWith('/')) {
+				const glyphName = letter.slice(1).trim();
+
+				const [glyph]
+					= Object.values(glyphs).find(([g]) => glyphName === g.glyphName) || [];
+
+				if (glyph) {
+					return String.fromCharCode(glyph.unicode);
+				}
+				return '';
+			}
+			return letter;
+		})
+		.join('');
 }
 
 // ['t', 'e', 's', 't', '/ampersand ', '//', 's', 'e', 'e'] -> test&//see

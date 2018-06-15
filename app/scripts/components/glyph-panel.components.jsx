@@ -21,7 +21,8 @@ export default class GlyphPanel extends React.PureComponent {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					show: head.toJS().d.uiMode.indexOf('list') !== -1,
@@ -79,7 +80,8 @@ export default class GlyphPanel extends React.PureComponent {
 					selectedTag={this.state.tagSelected}
 					search={this.state.search}
 					savedSearch={this.state.savedSearch}
-					pinnedSearch={this.state.pinnedSearch}/>
+					pinnedSearch={this.state.pinnedSearch}
+				/>
 			</div>
 		);
 	}

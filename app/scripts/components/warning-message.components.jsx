@@ -5,8 +5,6 @@ export default class WarningMessage extends React.Component {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] WarningMessage');
 		}
-		return (
-			<div className="warning-message">{this.props.text}</div>
-		);
+		return <div className="warning-message">{this.props.text}</div>;
 	}
 }

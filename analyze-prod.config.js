@@ -4,7 +4,8 @@ const fs = require('fs');
 const merge = require('webpack-merge');
 
 const base = require('./prod.config');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+	.BundleAnalyzerPlugin;
 
 module.exports = merge(base, {
 	cache: true,
@@ -16,8 +17,8 @@ module.exports = merge(base, {
 			},
 		}),
 		new BundleAnalyzerPlugin({
-			analyzerHost:'0.0.0.0',
-			analyzerPort:8000,
+			analyzerHost: '0.0.0.0',
+			analyzerPort: 8000,
 		}),
 	],
 });

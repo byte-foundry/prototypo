@@ -8,16 +8,16 @@ export default class OnboardingSlider extends React.PureComponent {
 
 		return (
 			<div className="normal onboarding-slider">
-				<label htmlFor={`slider-${this.props.label}`}>
-					{this.props.label}
-				</label>
+				<label htmlFor={`slider-${this.props.label}`}>{this.props.label}</label>
 				<Slider
 					className="onboarding-slider-controller"
-					changeParam={infos => onChange({
-						value: infos.value,
-						name: infos.name,
-						force: true,
-					})}
+					changeParam={infos =>
+						onChange({
+							value: infos.value,
+							name: infos.name,
+							force: true,
+						})
+					}
 					label={label}
 					min={min}
 					max={max}

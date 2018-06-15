@@ -74,18 +74,17 @@ class InputNumber extends React.Component {
 
 	render() {
 		const {textValue, value} = this.state;
-		const {
-			className, onChange, step, min, max, controls, ...rest
-		} = this.props;
+		const {className, onChange, step, min, max, controls, ...rest} = this.props;
 
 		delete rest.value;
 
 		return (
 			<div className={className}>
-				{controls
-					&& <button className="input-number-decrement" onClick={this.decrement}>
+				{controls && (
+					<button className="input-number-decrement" onClick={this.decrement}>
 						–
-					   </button>}
+					</button>
+				)}
 				<input
 					className="input-number"
 					type="text"
@@ -95,10 +94,11 @@ class InputNumber extends React.Component {
 					{...rest}
 				/>
 				<span className="input-number-text">user{value > 1 && 's'}</span>
-				{controls
-					&& <button className="input-number-increment" onClick={this.increment}>
+				{controls && (
+					<button className="input-number-increment" onClick={this.increment}>
 						+
-					   </button>}
+					</button>
+				)}
 			</div>
 		);
 	}

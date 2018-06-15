@@ -11,4 +11,6 @@ storiesOf('TopBar/MenuButton', module)
 			<TopBarMenuRaw>{story()}</TopBarMenuRaw>
 		</div>
 	))
-	.add('default', () => <TopBarMenuButton noHover centered alignRight label="Hit me" />);
+	.add('default', () => (
+		<TopBarMenuButton noHover centered alignRight label="Hit me" />
+	));

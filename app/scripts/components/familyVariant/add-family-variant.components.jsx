@@ -63,8 +63,12 @@ export class AddFamily extends React.PureComponent {
 		this.client.dispatchAction('/store-value', {
 			errorAddFamily: undefined,
 		});
-		this.client.dispatchAction('/store-value', {uiCreatefamilySelectedTemplate});
-		this.client.dispatchAction('/store-value', {uiOnboardstep: 'creatingFamily-2'});
+		this.client.dispatchAction('/store-value', {
+			uiCreatefamilySelectedTemplate,
+		});
+		this.client.dispatchAction('/store-value', {
+			uiOnboardstep: 'creatingFamily-2',
+		});
 
 		this.name.focus();
 	}
@@ -125,34 +129,43 @@ export class AddFamily extends React.PureComponent {
 			'with-error': !!this.state.error,
 		});
 
-		const templateList = this.state.fonts.map(font =>
-			(<FamilyTemplateChoice
+		const templateList = this.state.fonts.map(font => (
+			<FamilyTemplateChoice
 				key={font.name}
 				selectedFont={this.state.selectedFont}
 				font={font}
 				chooseFont={this.selectFont}
-			/>));
+			/>
+		));
 
-		const error = this.state.error
-			? (<div className="add-family-form-error">
-				{this.state.error}
-			</div>)
-			: false;
+		const error = this.state.error ? (
+			<div className="add-family-form-error">{this.state.error}</div>
+		) : (
+			false
+		);
 
 		return (
 			<div id="font-create" className={familyClass}>
 				<div className="add-family-form">
 					<label className="add-family-form-label">
-						<span className="add-family-form-label-order">1. </span>Choose a font template
+						<span className="add-family-form-label-order">1. </span>Choose a
+						font template
 					</label>
 					<div className="add-family-form-template-list">
-						<ScrollArea contentClassName="add-family-form-template-list-content" horizontal={false}>
+						<ScrollArea
+							contentClassName="add-family-form-template-list-content"
+							horizontal={false}
+						>
 							{templateList}
 						</ScrollArea>
 					</div>
 					<form onSubmit={this.createFont}>
-						<label htmlFor="add-family-form-name" className="add-family-form-label">
-							<span className="add-family-form-label-order">2. </span>Choose a family name
+						<label
+							htmlFor="add-family-form-name"
+							className="add-family-form-label"
+						>
+							<span className="add-family-form-label-order">2. </span>Choose a
+							family name
 						</label>
 						<input
 							ref={node => (this.name = node)}
@@ -164,10 +177,11 @@ export class AddFamily extends React.PureComponent {
 						/>
 						{error}
 						<div className="action-form-buttons">
-							{!start
-								&& <Button onClick={this.exit} outline neutral>
+							{!start && (
+								<Button onClick={this.exit} outline neutral>
 									Cancel
-								</Button>}
+								</Button>
+							)}
 							<Button type="submit" outline>
 								{start ? 'Create project' : 'Create family'}
 							</Button>
@@ -229,13 +243,14 @@ AddFamily = compose(
 	}),
 	graphql(createFamilyMutation, {
 		props: ({mutate, ownProps}) => ({
-			createFamily: (name, template) => mutate({
-				variables: {
-					ownerId: ownProps.userId,
-					name,
-					template,
-				},
-			}),
+			createFamily: (name, template) =>
+				mutate({
+					variables: {
+						ownerId: ownProps.userId,
+						name,
+						template,
+					},
+				}),
 		}),
 		options: {
 			update: (store, {data: {createFamily}}) => {
@@ -257,7 +272,9 @@ export class FamilyTemplateChoice extends React.Component {
 		const classes = Classnames({
 			'family-template-choice': true,
 			clearfix: true,
-			'is-active': this.props.selectedFont && this.props.selectedFont.name === this.props.font.name,
+			'is-active':
+				this.props.selectedFont
+				&& this.props.selectedFont.name === this.props.font.name,
 		});
 
 		return (
@@ -268,9 +285,7 @@ export class FamilyTemplateChoice extends React.Component {
 				}}
 			>
 				<div className="family-template-choice-provider">
-					<div
-						className={`provider-${this.props.font.provider}`}
-					/>
+					<div className={`provider-${this.props.font.provider}`} />
 				</div>
 				<div className="family-template-choice-sample">
 					<img src={`/assets/images/${this.props.font.sampleLarge}`} alt="" />
@@ -361,15 +376,12 @@ export class AddVariantRaw extends React.PureComponent {
 		return (
 			<div className="variant">
 				<SelectWithLabel
-					ref={node => this.name = node}
+					ref={node => (this.name = node)}
 					noResultsText={false}
 					placeholder="Enter a variant name or choose a suggestion with predefined settings"
 					options={this.variants}
 				/>
-				{error
-					&& <div className="add-family-form-error">
-						{error}
-					</div>}
+				{error && <div className="add-family-form-error">{error}</div>}
 				<div className="action-form-buttons">
 					<Button onClick={this.exit} outline neutral>
 						Cancel
@@ -441,38 +453,44 @@ export const AddVariant = graphql(getBaseValuesQuery, {
 
 		return {variantBase: data.family.variants[0]};
 	},
-})(graphql(createVariantMutation, {
-	props: ({mutate, ownProps}) => ({
-		createVariant: name =>
-			mutate({
-				variables: {
-					familyId: ownProps.family.id,
-					name,
-					baseValues: adaptValuesFromName(name, ownProps.variantBase.values),
-				},
-				update: (store, {data: {createVariant}}) => {
-					const data = store.readQuery({query: libraryQuery});
+})(
+	graphql(createVariantMutation, {
+		props: ({mutate, ownProps}) => ({
+			createVariant: name =>
+				mutate({
+					variables: {
+						familyId: ownProps.family.id,
+						name,
+						baseValues: adaptValuesFromName(name, ownProps.variantBase.values),
+					},
+					update: (store, {data: {createVariant}}) => {
+						const data = store.readQuery({query: libraryQuery});
 
-					const family = data.user.library.find(family => family.id === ownProps.family.id);
+						const family = data.user.library.find(
+							family => family.id === ownProps.family.id,
+						);
 
-					family.variants.push(createVariant);
+						family.variants.push(createVariant);
 
-					store.writeQuery({
-						query: libraryQuery,
-						data,
-					});
-				},
-			}),
-	}),
-})(AddVariantRaw));
+						store.writeQuery({
+							query: libraryQuery,
+							data,
+						});
+					},
+				}),
+		}),
+	})(AddVariantRaw),
+);
 
 AddVariant.propTypes = {
 	family: PropTypes.shape({
 		id: PropTypes.string.isRequired,
 		name: PropTypes.string.isRequired,
-		variants: PropTypes.arrayOf(PropTypes.shape({
-			id: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
-		})),
+		variants: PropTypes.arrayOf(
+			PropTypes.shape({
+				id: PropTypes.string.isRequired,
+				name: PropTypes.string.isRequired,
+			}),
+		),
 	}),
 };

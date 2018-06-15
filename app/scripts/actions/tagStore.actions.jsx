@@ -11,16 +11,12 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/load-tags': (params) => {
-		const patch = prototypoStore
-			.set('tags', params)
-			.commit();
+		const patch = prototypoStore.set('tags', params).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/select-tag': (params) => {
-		const patch = prototypoStore
-			.set('tagSelected', params)
-			.commit();
+		const patch = prototypoStore.set('tagSelected', params).commit();
 		const patchSearch = prototypoStore.set('glyphSearch', undefined).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
@@ -29,9 +25,7 @@ export default {
 	},
 	'/toggle-pinned': (params) => {
 		const pinned = _xor(prototypoStore.get('tagPinned'), [params]);
-		const patch = prototypoStore
-			.set('tagPinned', pinned)
-			.commit();
+		const patch = prototypoStore.set('tagPinned', pinned).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();

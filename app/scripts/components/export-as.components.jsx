@@ -36,7 +36,9 @@ export default class ExportAs extends React.PureComponent {
 	render() {
 		return (
 			<Modal propName={this.props.propName}>
-				<div className="modal-container-title account-header">Export font as&hellip;</div>
+				<div className="modal-container-title account-header">
+					Export font as&hellip;
+				</div>
 				<div className="modal-container-content">
 					<div className="columns">
 						<div className="half-column">

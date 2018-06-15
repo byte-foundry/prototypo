@@ -80,10 +80,7 @@ class DuplicateVariant extends React.PureComponent {
 				</div>
 				<div className="modal-container-content">
 					<InputWithLabel onChange={this.saveName} inputValue={variant.name} />
-					{error
-						&& <div className="add-family-form-error">
-							{error}
-						</div>}
+					{error && <div className="add-family-form-error">{error}</div>}
 					<div className="action-form-buttons">
 						<Button onClick={this.exit} outline neutral>
 							Cancel
@@ -121,7 +118,11 @@ const getBaseValuesQuery = gql`
 `;
 
 const duplicateVariantMutation = gql`
-	mutation duplicateVariant($familyId: ID!, $name: String!, $baseValues: Json!) {
+	mutation duplicateVariant(
+		$familyId: ID!
+		$name: String!
+		$baseValues: Json!
+	) {
 		createVariant(name: $name, values: $baseValues, familyId: $familyId) {
 			id
 			name
@@ -152,7 +153,9 @@ export default graphql(getBaseValuesQuery, {
 					update: (store, {data: {createVariant}}) => {
 						const data = store.readQuery({query: libraryQuery});
 
-						const family = data.user.library.find(family => family.id === ownProps.family.id);
+						const family = data.user.library.find(
+							family => family.id === ownProps.family.id,
+						);
 
 						family.variants.push(createVariant);
 

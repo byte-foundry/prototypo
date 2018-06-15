@@ -8,7 +8,10 @@ function HighlightedText({letters, alternateText}) {
 	return (
 		<p>
 			{charactersArr.map((char, index) => (
-				<span key={char + index} className={letters.includes(char) ? 'highlighted' : ''}>
+				<span
+					key={char + index}
+					className={letters.includes(char) ? 'highlighted' : ''}
+				>
 					{char}
 				</span>
 			))}

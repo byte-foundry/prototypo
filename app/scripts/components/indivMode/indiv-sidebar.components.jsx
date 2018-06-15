@@ -17,7 +17,8 @@ export default class IndivSidebar extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					createParamGroup: head.toJS().d.indivCreate,
@@ -36,11 +37,18 @@ export default class IndivSidebar extends React.Component {
 
 	render() {
 		const transitionTimeout = 300;
-		const rightPanel = this.state.createParamGroup
-			? <CreateParamGroup transitionTimeout={transitionTimeout} key="create"/>
-			: this.state.editParamGroup
-				? <CreateParamGroup transitionTimeout={transitionTimeout} key={this.state.selectedGroup.name} group={this.state.selectedGroup} editMode={true}/>
-				: false;
+		const rightPanel = this.state.createParamGroup ? (
+			<CreateParamGroup transitionTimeout={transitionTimeout} key="create" />
+		) : this.state.editParamGroup ? (
+			<CreateParamGroup
+				transitionTimeout={transitionTimeout}
+				key={this.state.selectedGroup.name}
+				group={this.state.selectedGroup}
+				editMode={true}
+			/>
+		) : (
+			false
+		);
 
 		return (
 			<div className="indiv-sidebar">
@@ -49,7 +57,8 @@ export default class IndivSidebar extends React.Component {
 					component="div"
 					transitionName="indiv-sidebar-right-panel"
 					transitionEnterTimeout={transitionTimeout}
-					transitionLeaveTimeout={transitionTimeout}>
+					transitionLeaveTimeout={transitionTimeout}
+				>
 					{rightPanel}
 				</ReactCSSTransitionGroup>
 			</div>

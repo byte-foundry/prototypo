@@ -6,7 +6,6 @@ import LocalServer from '../app/scripts/stores/local-server.stores';
 import {TopBarMenuRaw} from '../app/scripts/components/topbar/top-bar-menu.components';
 import TopBarMenuItem from '../app/scripts/components/topbar/top-bar-menu-item.components';
 
-
 const localServer = new LocalServer({}).instance;
 
 LocalClient.setup(localServer);

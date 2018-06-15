@@ -34,11 +34,13 @@ export default class GlyphButton extends React.PureComponent {
 		const pinned = [];
 
 		this.props.pinned.forEach((tag) => {
-			pinned.push(<Pinned
-				tag={tag}
-				selected={this.props.selected}
-				key={`button${tag}`}
-			/>);
+			pinned.push(
+				<Pinned
+					tag={tag}
+					selected={this.props.selected}
+					key={`button${tag}`}
+				/>,
+			);
 		});
 
 		const lockClasses = classNames({
@@ -49,10 +51,11 @@ export default class GlyphButton extends React.PureComponent {
 		return (
 			<div className="glyph-btn-list">
 				<div className="glyph-btn-list-btn clearfix">
-					<label className="glyph-btn-list-btn-label">
-						Glyph list
-					</label>
-					<div className="glyph-btn-list-btn-wrapper" onClick={this.toggleLockList}>
+					<label className="glyph-btn-list-btn-label">Glyph list</label>
+					<div
+						className="glyph-btn-list-btn-wrapper"
+						onClick={this.toggleLockList}
+					>
 						<div className={lockClasses} />
 					</div>
 				</div>
@@ -90,13 +93,8 @@ class Pinned extends React.PureComponent {
 		});
 
 		return (
-			<div
-				className="glyph-btn-list-btn clearfix"
-				onClick={this.selectTag}
-			>
-				<label className={tagClasses}>
-					{this.props.tag}
-				</label>
+			<div className="glyph-btn-list-btn clearfix" onClick={this.selectTag}>
+				<label className={tagClasses}>{this.props.tag}</label>
 				<div className="glyph-btn-list-btn-tag-wrapper">
 					<div
 						className="glyph-btn-list-btn-tag-wrapper-close"
