@@ -660,6 +660,8 @@ export default class PrototypoCanvas extends React.Component {
 			);
 		}
 
+		const inputNodeItems = selectedItems && selectedItems.filter(item => item.type < 7);
+
 		const shadowButton
 			= this.state.canvasMode === 'shadow' ? (
 				<div className="prototypo-canvas-reset-buttons is-on-canvas">
@@ -728,11 +730,11 @@ export default class PrototypoCanvas extends React.Component {
 					onSelectedItems={this.handleSelectedItems}
 					onUpdateGlyph={this.handleUpdateGlyph}
 				/>
-				{selectedItems
-					&& selectedItems.length === 1 && (
+				{inputNodeItems
+					&& inputNodeItems.length === 1 && (
 					<EditNodeProperties
 						glyph={updatedGlyph}
-						selectedItem={selectedItems[0]}
+						selectedItem={inputNodeItems[0]}
 					/>
 				)}
 				<div className={actionBarClassNames}>
