@@ -53,6 +53,7 @@ export default class PrototypoText extends React.Component {
 		this.setTextToFameuxWhisky = this.setTextToFameuxWhisky.bind(this);
 		this.setTextToAlphabet = this.setTextToAlphabet.bind(this);
 		this.setTextToLorem = this.setTextToLorem.bind(this);
+		this.setTextToAllGlyphs = this.setTextToAllGlyphs.bind(this);
 		this.close = this.close.bind(this);
 		this.invertedView = this.invertedView.bind(this);
 		this.toggleColors = this.toggleColors.bind(this);
@@ -68,6 +69,7 @@ export default class PrototypoText extends React.Component {
 			.onUpdate((head) => {
 				this.setState({
 					glyphPanelOpened: head.toJS().d.uiMode.indexOf('list') !== -1,
+					glyphs: head.toJS().d.glyphs,
 				});
 			})
 			.onDelete(() => {
@@ -205,6 +207,18 @@ export default class PrototypoText extends React.Component {
 		});
 	}
 
+	setTextToAllGlyphs() {
+		this.setText(
+			Object.keys(this.state.glyphs).filter(
+				key => this.state.glyphs[key][0].unicode !== undefined,
+			).map(e => String.fromCharCode(e)).join('')
+		);
+		this.setState({
+			showContextMenu: false,
+			showInsertMenu: false,
+		});
+	}
+
 	setTextToLorem() {
 		this
 			.setText(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae scelerisque urna, eget consequat lectus. Pellentesque lacus magna, tincidunt quis libero non, pellentesque sagittis libero. Nam vitae ante eu lectus sodales sagittis. Duis eget mauris aliquet, gravida quam id, sodales sem. Etiam aliquam mi nec aliquam tincidunt. Nullam mollis mi nec mi luctus faucibus. Fusce cursus massa eget dui accumsan rhoncus. Quisque consectetur libero augue, eget dictum lacus pretium ac. Praesent scelerisque ipsum at aliquam tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed porta risus at aliquam venenatis.
@@ -318,6 +332,9 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 					</ContextualMenuItem>
 					<ContextualMenuItem onClick={this.setTextToLorem}>
 						Lorem ipsum
+					</ContextualMenuItem>
+					<ContextualMenuItem onClick={this.setTextToAllGlyphs}>
+						All glyphs
 					</ContextualMenuItem>
 				</ViewPanelsMenu>
 				<div className={actionBar}>
