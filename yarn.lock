@@ -970,12 +970,13 @@ ansi-wrap@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/ansi-wrap/-/ansi-wrap-0.1.0.tgz#a82250ddb0015e9a27ca82e82ea603bbfa45efaf"
 
-antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
+antique.ptf@byte-foundry/antique.ptf#feat/simplified-parameters:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/9fa9f1dfad947b5814445d2f52a61960e42d4532"
+  resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/e9e8ede4fc96a8bc76f599e315c4508cfb8a97cb"
   dependencies:
     karma "^1.7.1"
     prototypo-precursor "1.0.7"
+    yargs "^11.0.0"
 
 any-observable@^0.2.0:
   version "0.2.0"
@@ -4242,9 +4243,9 @@ elliptic@^6.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
 
-elzevir.ptf@byte-foundry/elzevir.ptf#feat/new-rendering:
+elzevir.ptf@byte-foundry/elzevir.ptf#feat/simplified-parameters:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/2cc2f375e2d26dca613bd47f84df9084c40f8701"
+  resolved "https://codeload.github.com/byte-foundry/elzevir.ptf/tar.gz/8f443fde29f396f75eba29e77dd3ddc1a6f98a74"
   dependencies:
     karma "^1.7.0"
     prototypo-precursor "^1.0.4"
@@ -5549,9 +5550,9 @@ getpass@^0.1.1:
   dependencies:
     assert-plus "^1.0.0"
 
-gfnt.ptf@byte-foundry/spectral.ptf#feat/new-rendering:
+gfnt.ptf@byte-foundry/spectral.ptf#feat/simplified-parameters:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/b87f17ef079400e3ee6a9af4274e9b92a841795f"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/a224a73e5bd326c932bc9f0aa446fbb40ffd15e0"
   dependencies:
     karma "^2.0.0"
     prototypo-precursor "^1.0.4"
@@ -7346,9 +7347,9 @@ jest@^22.2.1:
     import-local "^1.0.0"
     jest-cli "^22.4.2"
 
-john-fell.ptf@byte-foundry/john-fell.ptf#feat/new-rendering:
+john-fell.ptf@byte-foundry/john-fell.ptf#feat/simplified-parameters:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/e2c99c90124a3a15bf92753ec199209826e06cef"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/0cfa4b9e8cb4ac327f07af56335890d4efcd8cd7"
   dependencies:
     prototypo-precursor "^1.0.4"
     yargs "^11.0.0"
@@ -10176,7 +10177,7 @@ prototypo-flux-testing@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/prototypo-flux-testing/-/prototypo-flux-testing-0.0.1.tgz#33694eb51c05ed4241b7072c5e49c0dda6587a3f"
 
-prototypo-precursor@1.0.7:
+prototypo-precursor@1.0.7, prototypo-precursor@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/prototypo-precursor/-/prototypo-precursor-1.0.7.tgz#4ac6dd0ff827cfeb0048566a35961c364d3a3607"
   dependencies:
@@ -13035,9 +13036,9 @@ vendors@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/vendors/-/vendors-1.0.1.tgz#37ad73c8ee417fb3d580e785312307d274847f22"
 
-venus.ptf@byte-foundry/venus.ptf#feat/new-rendering:
+venus.ptf@byte-foundry/venus.ptf#feat/simplified-params:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/d233bc372537ffa540fc5f233009d8a68c31ba39"
+  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/5348164dc3a8483dcf48bc23c38d6419aa27ebd2"
   dependencies:
     prototypo-precursor "^1.0.7"
     yargs "^11.0.0"
@@ -13503,6 +13504,12 @@ yargs-parser@^8.0.0, yargs-parser@^8.1.0:
   dependencies:
     camelcase "^4.1.0"
 
+yargs-parser@^9.0.2:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-9.0.2.tgz#9ccf6a43460fe4ed40a9bb68f48d43b8a68cc077"
+  dependencies:
+    camelcase "^4.1.0"
+
 yargs@10.0.3:
   version "10.0.3"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-10.0.3.tgz#6542debd9080ad517ec5048fb454efe9e4d4aaae"
@@ -13554,6 +13561,23 @@ yargs@^10.0.3:
     which-module "^2.0.0"
     y18n "^3.2.1"
     yargs-parser "^8.1.0"
+
+yargs@^11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-11.0.0.tgz#c052931006c5eee74610e5fc0354bedfd08a201b"
+  dependencies:
+    cliui "^4.0.0"
+    decamelize "^1.1.1"
+    find-up "^2.1.0"
+    get-caller-file "^1.0.1"
+    os-locale "^2.0.0"
+    require-directory "^2.1.1"
+    require-main-filename "^1.0.1"
+    set-blocking "^2.0.0"
+    string-width "^2.0.0"
+    which-module "^2.0.0"
+    y18n "^3.2.1"
+    yargs-parser "^9.0.2"
 
 yargs@^7.0.0:
   version "7.1.0"
