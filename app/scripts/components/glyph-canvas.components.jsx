@@ -552,12 +552,16 @@ export default class GlyphCanvas extends React.PureComponent {
 				= onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD; // eslint-disable-line no-bitwise
 			let distrModification = false;
 			let directionalModifier = false;
+			let deleteMod = false;
 
 			if (this.toile.keyboardUpRisingEdge.keyCode) {
 				const {keyCode} = this.toile.keyboardUpRisingEdge;
 
 				if (keyCode === 90) {
 					exitingPreview = true;
+				}
+				else if (keyCode === 46) {
+					deleteMod = true;
 				}
 			}
 
@@ -795,13 +799,23 @@ export default class GlyphCanvas extends React.PureComponent {
 						this.storeSelectedItems(selectedItems);
 					}
 				}
-				else if (
-					appStateValue & appState.GUIDE_SELECTED
-					&& mouseClickRelease
-				) {
-					appStateValue = appState.DRAGGING_GUIDE;
-					selectedItems = [guideHandle[0]];
-					this.storeSelectedItems(selectedItems);
+				else if (appStateValue & appState.GUIDE_SELECTED) {
+					if (mouseClickRelease) {
+						appStateValue = appState.DEFAULT;
+						selectedItems = [];
+						this.storeSelectedItems(selectedItems);
+					}
+					else if (deleteMod) {
+						this.client.dispatchAction('/store-value', {
+							guides: this.state.guides.filter(
+								guide => guide.id !== selectedItems[0].id,
+							),
+						});
+
+						appStateValue = appState.DEFAULT;
+						selectedItems = [];
+						this.storeSelectedItems(selectedItems);
+					}
 				}
 				else if (
 					appStateValue & appState.DRAGGING_GUIDE
@@ -815,9 +829,12 @@ export default class GlyphCanvas extends React.PureComponent {
 									guide => guide.id !== selectedItems[0].id,
 								),
 							});
+							appStateValue = appState.DEFAULT;
 						}
-
-						appStateValue = appState.DEFAULT;
+						else {
+							appStateValue = appState.GUIDE_SELECTED;
+							this.storeSelectedItems(selectedItems);
+						}
 					}
 				}
 
@@ -1760,6 +1777,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						this.state.guides,
 						// if component menu is hovered, we don't consider the guide
 						componentMenu.length > 0 ? [] : guideHandle,
+						selectedItems.filter(item => item.type === toileType.GUIDE_HANDLE),
 					);
 					this.toile.drawRuler(width, height);
 				}

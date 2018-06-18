@@ -2041,11 +2041,12 @@ export default class Toile {
 		return undefined;
 	}
 
-	drawGuides(guides, hotItems) {
+	drawGuides(guides, hotItems, selectedItems) {
 		this.interactionList.push(
 			...guides.map((guide) => {
 				const isHot = hotItems.some(item => item.id === guide.id);
-				const color = isHot ? guideHotColor : guideColor;
+				const isSelected = selectedItems.some(item => item.id === guide.id);
+				const color = isHot || isSelected ? guideHotColor : guideColor;
 
 				if (guide.x) {
 					this.drawLine(
