@@ -35,6 +35,7 @@ export default class PrototypoCanvas extends React.Component {
 			uiRuler: true,
 			shadowFile: '',
 			glyphViewMatrix: {},
+			selectedItems: [],
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
 			this,
@@ -80,8 +81,10 @@ export default class PrototypoCanvas extends React.Component {
 			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					prototypoTextPanelOpened: head.toJS().d.uiMode.indexOf('text') !== -1,
-					glyphPanelOpened: head.toJS().d.uiMode.indexOf('list') !== -1,
+					prototypoTextPanelOpened:
+						head.toJS().d.uiMode.indexOf('text') !== -1,
+					glyphPanelOpened:
+						head.toJS().d.uiMode.indexOf('list') !== -1,
 					glyphs: head.toJS().d.glyphs,
 					glyphFocused: head.toJS().d.glyphFocused,
 					glyphSelected: head.toJS().d.glyphSelected,
@@ -95,9 +98,12 @@ export default class PrototypoCanvas extends React.Component {
 					globalMode: head.toJS().d.globalMode,
 				});
 				this.isFree
-					= HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
+					= HoodieApi.instance
+					&& HoodieApi.instance.plan.indexOf('free_') !== -1;
 				this.isFreeWithCredits
-					= head.toJS().d.credits && head.toJS().d.credits > 0 && this.isFree;
+					= head.toJS().d.credits
+					&& head.toJS().d.credits > 0
+					&& this.isFree;
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -211,7 +217,9 @@ export default class PrototypoCanvas extends React.Component {
 				|| this.state.oldCanvasMode === 'move'
 				|| this.state.oldCanvasMode === 'shadow'
 			) {
-				this.client.dispatchAction('/toggle-canvas-mode', {canvasMode: 'move'});
+				this.client.dispatchAction('/toggle-canvas-mode', {
+					canvasMode: 'move',
+				});
 			}
 		}
 
@@ -389,7 +397,9 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	toggleNodes() {
-		this.client.dispatchAction('/store-value', {uiNodes: !this.props.uiNodes});
+		this.client.dispatchAction('/store-value', {
+			uiNodes: !this.props.uiNodes,
+		});
 	}
 
 	toggleOutline() {
@@ -399,7 +409,9 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	toggleRuler() {
-		this.client.dispatchAction('/store-value', {uiRuler: !this.props.uiRuler});
+		this.client.dispatchAction('/store-value', {
+			uiRuler: !this.props.uiRuler,
+		});
 	}
 
 	toggleCoords() {
@@ -528,7 +540,9 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	preExportGlyphr() {
-		this.client.dispatchAction('/store-value-font', {exportGlyphrTag: false});
+		this.client.dispatchAction('/store-value-font', {
+			exportGlyphrTag: false,
+		});
 	}
 
 	afterExportGlyphr() {
@@ -554,7 +568,6 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	handleUpdateGlyph(glyph) {
-		console.log('update glyph', glyph);
 		this.setState({updatedGlyph: glyph});
 	}
 
@@ -628,7 +641,10 @@ export default class PrototypoCanvas extends React.Component {
 		);
 		let shadowDropzone = false;
 
-		if (this.state.canvasMode === 'shadow' && this.state.shadowFile === '') {
+		if (
+			this.state.canvasMode === 'shadow'
+			&& this.state.shadowFile === ''
+		) {
 			shadowDropzone = (
 				<div className="prototypo-canvas-shadow-dropzone">
 					<Dropzone
@@ -653,14 +669,14 @@ export default class PrototypoCanvas extends React.Component {
 						width={this.container.clientWidth}
 						height={this.container.clientHeight}
 						canvasMode={this.state.canvasMode}
-						glyphSelected={this.state.glyphs[this.props.glyphSelected][0]}
+						glyphSelected={
+							this.state.glyphs[this.props.glyphSelected][0]
+						}
 						glyphViewMatrix={this.state.glyphViewMatrix}
 					/>
 				</div>
 			);
 		}
-
-		const inputNodeItems = selectedItems && selectedItems.filter(item => item.type < 7);
 
 		const shadowButton
 			= this.state.canvasMode === 'shadow' ? (
@@ -676,6 +692,13 @@ export default class PrototypoCanvas extends React.Component {
 				false
 			);
 
+		// Nodes are order from 0 to 7
+		const inputNodeItems = selectedItems.filter(item => item.type < 7);
+		const isSpacingSelected
+			= selectedItems.length > 0
+			&& selectedItems[0].type === toileType.SPACING_HANDLE;
+		const isNodeSelected = !!inputNodeItems[0];
+
 		return (
 			<div
 				style={this.props.style}
@@ -690,7 +713,9 @@ export default class PrototypoCanvas extends React.Component {
 				<CanvasBar />
 				<div
 					className={`prototypo-canvas-reset-buttons ${
-						this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''
+						this.state.canvasMode === 'select-points'
+							? 'is-on-canvas'
+							: ''
 					}`}
 				>
 					<button
@@ -704,21 +729,14 @@ export default class PrototypoCanvas extends React.Component {
 					</button>
 					<button
 						className={`prototypo-canvas-reset-button ${
-							this.state.selectedItems && this.state.selectedItems.length > 0
+							isSpacingSelected || isNodeSelected
 								? ''
 								: 'disabled'
 						}`}
 						onClick={this.resetPoints}
-						disabled={
-							!(this.state.selectedItems && this.state.selectedItems.length)
-						}
+						disabled={!(isSpacingSelected || isNodeSelected)}
 					>
-						Reset{' '}
-						{this.state.selectedItems
-						&& this.state.selectedItems.length > 0
-						&& this.state.selectedItems[0].type === toileType.SPACING_HANDLE
-							? 'spacing'
-							: 'point'}
+						Reset {isSpacingSelected ? 'spacing' : 'point'}
 					</button>
 				</div>
 				{shadowButton}
@@ -730,8 +748,7 @@ export default class PrototypoCanvas extends React.Component {
 					onSelectedItems={this.handleSelectedItems}
 					onUpdateGlyph={this.handleUpdateGlyph}
 				/>
-				{inputNodeItems
-					&& inputNodeItems.length === 1 && (
+				{inputNodeItems.length === 1 && (
 					<EditNodeProperties
 						glyph={updatedGlyph}
 						selectedItem={inputNodeItems[0]}

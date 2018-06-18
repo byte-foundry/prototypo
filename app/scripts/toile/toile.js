@@ -112,8 +112,8 @@ const frameBackground = 'rgba(0, 0, 0, 0.036)';
 const rulerBackground = white;
 const rulerGraduation = darkestGrey;
 const rulerText = darkestGrey;
-const guideColor = pureRed;
-const guideHotColor = red;
+const guideColor = red;
+const guideHotColor = pureRed;
 
 const pointMenuAnimationLength = 10;
 const componentMenuAnimationLength = 20;
@@ -2041,11 +2041,12 @@ export default class Toile {
 		return undefined;
 	}
 
-	drawGuides(guides, hotItems) {
+	drawGuides(guides, hotItems, selectedItems) {
 		this.interactionList.push(
 			...guides.map((guide) => {
 				const isHot = hotItems.some(item => item.id === guide.id);
-				const color = isHot ? guideHotColor : guideColor;
+				const isSelected = selectedItems.some(item => item.id === guide.id);
+				const color = isHot || isSelected ? guideHotColor : guideColor;
 
 				if (guide.x) {
 					this.drawLine(
