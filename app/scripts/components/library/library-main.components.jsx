@@ -6,6 +6,8 @@ import LocalClient from '../../stores/local-client.stores';
 import _forOwn from 'lodash/forOwn';
 
 import CreateVariantModal from '../familyVariant/create-variant-modal.components.jsx';
+import ChangeNameVariant from '../familyVariant/change-name-variant.components.jsx';
+import DuplicateVariant from '../familyVariant/duplicate-variant.components.jsx';
 import { LibrarySidebarLeft } from './library-sidebars.components';
 import { TemplateItem, PresetItem, FamilyItem } from './library-list.components';
 
@@ -40,7 +42,10 @@ class LibraryMain extends React.Component {
 				this.setState({
 					openFamilyModal: head.toJS().d.openFamilyModal,
 					openVariantModal: head.toJS().d.openVariantModal,
+					openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
+					openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
 					familySelectedVariantCreation: head.toJS().d.familySelectedVariantCreation,
+					collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
 				});
 			})
 	}
@@ -322,6 +327,22 @@ class LibraryMain extends React.Component {
 				})}
 				{this.state.openVariantModal
 			&& <CreateVariantModal family={this.state.familySelectedVariantCreation} propName="openVariantModal" />}
+			{
+				this.state.openChangeVariantNameModal && (
+					<ChangeNameVariant
+					family={this.state.familySelectedVariantCreation}
+					variant={this.state.collectionSelectedVariant}
+					propName="openChangeVariantNameModal"
+				/>
+				)
+			}
+			{this.state.openDuplicateVariantModal && (
+				<DuplicateVariant
+					family={this.state.familySelectedVariantCreation}
+					variant={this.state.collectionSelectedVariant}
+					propName="openDuplicateVariantModal"
+				/>
+			)}
 			</div>
 		);
 	}

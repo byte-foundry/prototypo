@@ -108,7 +108,7 @@ class LibraryDetails extends React.Component {
 									</div>
 								</div>
 								<div className="details-form-elem">
-									{index !== 0 && (
+									{this.state.family.variants.length > 1 && (
 										<div className="button-remove" onClick={() => {this.props.deleteVariant(variant.id)}}>
 											Remove
 										</div>
