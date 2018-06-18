@@ -45,7 +45,7 @@ class ForgottenPassword extends React.PureComponent {
 
 			this.setState({loading: false});
 
-			this.props.history.push('/signin/forgotten?success');
+			this.props.router.push('/signin/forgotten?success');
 		}
 		catch (err) {
 			trackJs.track(err);
@@ -57,7 +57,7 @@ class ForgottenPassword extends React.PureComponent {
 	}
 
 	redirectToSignin() {
-		this.props.history.push('/signin');
+		this.props.router.push('/signin');
 	}
 
 	renderForm() {

@@ -46,7 +46,7 @@ export default class AccountChangePlan extends React.Component {
 				const {subscription, cards} = head.toJS().d;
 
 				if (!subscription) {
-					this.props.history.push('/account/subscribe');
+					this.props.router.push('/account/subscribe');
 					return;
 				}
 
@@ -86,7 +86,7 @@ export default class AccountChangePlan extends React.Component {
 			quantity: numberOfUsers,
 		});
 
-		this.props.history.push({
+		this.props.router.push({
 			pathname: '/account/details/confirm-plan',
 			query: {
 				plan,

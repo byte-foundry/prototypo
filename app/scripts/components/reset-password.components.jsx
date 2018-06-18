@@ -73,11 +73,11 @@ class ResetPassword extends React.PureComponent {
 	}
 
 	redirectToDashboard() {
-		this.props.history.push('/dashboard');
+		this.props.router.push('/dashboard');
 	}
 
 	redirectToReset() {
-		this.props.history.push('/signin/forgotten');
+		this.props.router.push('/signin/forgotten');
 	}
 
 	componentDidMount() {

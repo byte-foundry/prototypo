@@ -85,7 +85,7 @@ class AccountBillingAddress extends React.PureComponent {
 
 			this.setState({loadingForm: false});
 
-			this.props.history.push({
+			this.props.router.push({
 				pathname: '/account/details/billing-address',
 				query: {success: true},
 			});

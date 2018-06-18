@@ -14,7 +14,7 @@ export class AccountDashboard extends React.Component {
 	}
 
 	returnToDashboard() {
-		this.props.history.push('/dashboard');
+		this.props.router.push('/dashboard');
 	}
 
 	render() {

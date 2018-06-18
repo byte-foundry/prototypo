@@ -18,6 +18,7 @@ const flatten = list =>
 
 class OnboardingApp extends React.PureComponent {
 	constructor(props) {
+		console.log(props)
 		super(props);
 		this.state = {
 			step: 0,
@@ -216,13 +217,13 @@ class OnboardingApp extends React.PureComponent {
 				this.client.dispatchAction('/store-value', {
 					onboardingFrom: undefined,
 				});
-				this.props.history.push('/dashboard');
+				this.props.router.push('/dashboard');
 				break;
 			case 'start':
 				this.client.dispatchAction('/store-value', {
 					onboardingFrom: undefined,
 				});
-				this.props.history.push('/start');
+				this.props.router.push('/start');
 				break;
 			default:
 				break;
@@ -230,7 +231,7 @@ class OnboardingApp extends React.PureComponent {
 		}
 		catch (err) {
 			// TODO: Error handling
-			this.props.history.push('/start');
+			this.props.router.push('/start');
 			console.log(err);
 		}
 	}
@@ -244,13 +245,13 @@ class OnboardingApp extends React.PureComponent {
 			return (
 				<div className="onboarding-app">
 					<div className="onboarding-wrapper">
-						this.props.history.push("/dashboard");
+						this.props.router.push("/dashboard");
 						<Button
 							outline
 							neutral
 							size="small"
 							className="backToApp"
-							onClick={() => this.props.history.push('/dashboard')}
+							onClick={() => this.props.router.push('/dashboard')}
 						>
 							Return to dashboard
 						</Button>
@@ -318,7 +319,7 @@ class OnboardingApp extends React.PureComponent {
 							neutral
 							size="small"
 							className="skip"
-							onClick={() => this.props.history.push('/dashboard')}
+							onClick={() => this.props.router.push('/dashboard')}
 						>
 								Skip
 						</Button>
@@ -330,7 +331,7 @@ class OnboardingApp extends React.PureComponent {
 							onClick={() => {
 								this.state.step < onboardingData.steps.length - 1
 									? this.getNextStep()
-									: this.props.history.push('/dashboard');
+									: this.props.router.push('/dashboard');
 							}}
 						>
 							{(() => {
