@@ -1,10 +1,11 @@
 import React from 'react';
 import pleaseWait from 'please-wait';
+import { graphql, gql, compose } from 'react-apollo';
 import { LibrarySidebarRight, FamilySidebarActions } from './library-sidebars.components';
 import FontUpdater from "../font-updater.components";
 import LocalClient from '../../stores/local-client.stores';
 
-export default class LibrarySee extends React.Component {
+class LibrarySee extends React.Component {
 	constructor(props) {
 		super(props);
 		const family = props.baseFontData.find(e => e.id === props.params.projectID);
@@ -78,6 +79,8 @@ export class VariantItem extends React.Component {
 		}
 		this.open = this.open.bind(this);
 		this.export = this.export.bind(this);
+		this.rename = this.rename.bind(this);
+		this.duplicate = this.duplicate.bind(this);
 	}
 
 	componentWillMount() {
@@ -90,6 +93,22 @@ export class VariantItem extends React.Component {
 			family: this.props.family,
 		});
 		this.props.goToDashboard();
+	}
+
+	rename() {
+		this.client.dispatchAction('/store-value', {
+			openChangeVariantNameModal: true,
+			collectionSelectedVariant: this.props.variant,
+			familySelectedVariantCreation: this.props.family,
+		});
+	}
+
+	duplicate() {
+		this.client.dispatchAction('/store-value', {
+			openDuplicateVariantModal: true,
+			collectionSelectedVariant: this.props.variant,
+			familySelectedVariantCreation: this.props.family,
+		});
 	}
 
 	export() {
@@ -108,7 +127,7 @@ export class VariantItem extends React.Component {
 	render() {
 		console.log(this.props.family)
 		return (
-			<div className="library-item">
+			<div className="library-item" tabIndex={0} onBlur={() => {this.setState({isOpen: false})}}>
 				<p className="library-item-name">
 					{this.props.family.name} {this.props.variant.name}
 				</p>
@@ -130,18 +149,94 @@ export class VariantItem extends React.Component {
 						<div className="library-item-variant-action" onClick={() => {this.export();}}>
 							Export variant
 						</div>
-						<div className="library-item-variant-action">
+						<div className="library-item-variant-action" onClick={() => {this.rename();}}>
 							Rename variant
 						</div>
-						<div className="library-item-variant-action">
+						<div className="library-item-variant-action" onClick={() => {this.duplicate();}}>
 							Duplicate variant
 						</div>
-						<div className="library-item-variant-action">
-							Delete variant
-						</div>
+						{
+							this.props.family.variants.length > 1 && (
+								<div className="library-item-variant-action" onClick={() => {this.props.deleteVariant(this.props.variant.id)}}>
+									Delete variant
+								</div>
+							)
+						}
 					</div>
 				</div>
 			</div>
 		)
 	}
 }
+
+
+const libraryQuery = gql`
+	query {
+		user {
+			id
+			library {
+				id
+				name
+				template
+				variants {
+					id
+					name
+					values
+				}
+			}
+		}
+	}
+`;
+
+const deleteVariantMutation = gql`
+	mutation deleteVariant($id: ID!) {
+		deleteVariant(id: $id) {
+			id
+		}
+	}
+`;
+
+export default compose(
+	graphql(libraryQuery, {
+		options: {
+			fetchPolicy: 'network-only',
+		},
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			if (data.user) {
+				return {
+					families: data.user.library,
+					refetch: data.refetch,
+				};
+			}
+
+			return {refetch: data.refetch};
+		},
+	}),
+	graphql(deleteVariantMutation, {
+		props: ({mutate}) => ({
+			deleteVariant: id =>
+				mutate({
+					variables: {id},
+				}),
+		}),
+		options: {
+			update: (store, {data: {deleteVariant}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library.forEach((family) => {
+					// eslint-disable-next-line
+					family.variants = family.variants.filter(variant => variant.id !== deleteVariant.id);
+				});
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	})
+)(LibrarySee);
