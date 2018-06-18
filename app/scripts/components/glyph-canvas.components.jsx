@@ -619,26 +619,28 @@ export default class GlyphCanvas extends React.PureComponent {
 					previewMode = true;
 				}
 				else if (keyCode === 65) {
-					curveMode &= ~onCurveModMode.WIDTH_MOD; // eslint-disable-line no-bitwise
+					// eslint-disable-next-line no-bitwise
+					curveMode &= ~onCurveModMode.WIDTH_MOD;
 				}
 				else if (keyCode === 87) {
-					curveMode &= ~onCurveModMode.ANGLE_MOD; // eslint-disable-line no-bitwise
+					// eslint-disable-next-line no-bitwise
+					curveMode &= ~onCurveModMode.ANGLE_MOD;
 				}
 				else if (keyCode === 68) {
 					distrModification = true;
 				}
 
+				// eslint-disable-next-line no-bitwise
 				if (special & specialKey.SHIFT) {
-					// eslint-disable-line no-bitwise
 					modRange = 10;
 					directionalModifier = true;
 				}
+				// eslint-disable-next-line no-bitwise
 				if (special & agnosticCtrl) {
-					// eslint-disable-line no-bitwise
 					unparallelMod = true;
 				}
+				// eslint-disable-next-line no-bitwise
 				if (special & specialKey.ALT) {
-					// eslint-disable-line no-bitwise
 					unsmoothMod = true;
 				}
 			}

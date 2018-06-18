@@ -112,8 +112,8 @@ const frameBackground = 'rgba(0, 0, 0, 0.036)';
 const rulerBackground = white;
 const rulerGraduation = darkestGrey;
 const rulerText = darkestGrey;
-const guideColor = pureRed;
-const guideHotColor = red;
+const guideColor = red;
+const guideHotColor = pureRed;
 
 const pointMenuAnimationLength = 10;
 const componentMenuAnimationLength = 20;
