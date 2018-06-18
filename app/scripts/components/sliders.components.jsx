@@ -62,7 +62,9 @@ export class Sliders extends React.PureComponent {
 			const individualized = this.props.indivEdit;
 			let value;
 			let paramToUse = {};
-
+			if (!this.props.advancedMode && param.advanced) {
+				return false;
+			};
 			if (
 				this.props.indivMode
 				&& this.props.indivEdit
