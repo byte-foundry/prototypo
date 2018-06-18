@@ -4,12 +4,7 @@ import classnames from 'classnames';
 
 class ViewAlert extends React.PureComponent {
 	render() {
-		const {
-			text,
-			className,
-			inside,
-			...rest
-		} = this.props;
+		const {text, className, inside, ...rest} = this.props;
 
 		const classes = classnames({
 			'view-alert': true,
@@ -17,11 +12,7 @@ class ViewAlert extends React.PureComponent {
 			...className,
 		});
 
-		return (
-			<div className={classes}>
-				{text}
-			</div>
-		);
+		return <div className={classes}>{text}</div>;
 	}
 }
 

@@ -22,7 +22,11 @@ import ChangeNameVariant from './familyVariant/change-name-variant.components.js
 import DuplicateVariant from './familyVariant/duplicate-variant.components.jsx';
 import GoProModal from './go-pro-modal.components.jsx';
 
-import {buildTutorialSteps, handleNextStep, handleClosed} from '../helpers/joyride.helpers.js';
+import {
+	buildTutorialSteps,
+	handleNextStep,
+	handleClosed,
+} from '../helpers/joyride.helpers.js';
 
 class Dashboard extends React.PureComponent {
 	constructor(props) {
@@ -57,12 +61,14 @@ class Dashboard extends React.PureComponent {
 			firstTimeIndivCreate: prototypoStore.head.toJS().firstTimeIndivCreate,
 			firstTimeIndivEdit: prototypoStore.head.toJS().firstTimeIndivEdit,
 			firstTimeAcademyModal: prototypoStore.head.toJS().firstTimeAcademyModal,
-			firstTimeAcademyJoyride: prototypoStore.head.toJS().firstTimeAcademyJoyride,
+			firstTimeAcademyJoyride: prototypoStore.head.toJS()
+				.firstTimeAcademyJoyride,
 		});
 
 		let firstContactTimeoutMade = false;
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				if (this.props.library && this.props.library.length <= 0) {
 					this.props.router.push('/start');
@@ -82,7 +88,8 @@ class Dashboard extends React.PureComponent {
 				this.setState({
 					openFamilyModal: head.toJS().d.openFamilyModal,
 					openVariantModal: head.toJS().d.openVariantModal,
-					familySelectedVariantCreation: head.toJS().d.familySelectedVariantCreation,
+					familySelectedVariantCreation: head.toJS().d
+						.familySelectedVariantCreation,
 					collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
 					openChangeFamilyNameModal: head.toJS().d.openChangeFamilyNameModal,
 					openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
@@ -122,9 +129,9 @@ class Dashboard extends React.PureComponent {
 	}
 
 	/**
-	*	adds given steps to the state
-	*	@param {array} steps - an array containing joyride steps objects
-	*/
+	 *	adds given steps to the state
+	 *	@param {array} steps - an array containing joyride steps objects
+	 */
 	addSteps(steps) {
 		const joyride = this.refs.joyride;
 
@@ -134,7 +141,9 @@ class Dashboard extends React.PureComponent {
 
 		this.setState((currentState) => {
 			if (currentState.joyrideSteps) {
-				currentState.joyrideSteps = currentState.joyrideSteps.concat(joyride.parseSteps(steps));
+				currentState.joyrideSteps = currentState.joyrideSteps.concat(
+					joyride.parseSteps(steps),
+				);
 			}
 			return currentState;
 		});
@@ -191,7 +200,7 @@ class Dashboard extends React.PureComponent {
 		}
 
 		const classes = classNames({
-			indiv: this.state.indiv && !(this.state.collection),
+			indiv: this.state.indiv && !this.state.collection,
 			normal: !this.state.indiv || this.state.collection,
 		});
 
@@ -209,25 +218,46 @@ class Dashboard extends React.PureComponent {
 			skip: 'Skip',
 		};
 
-		const collection = this.state.collection
-			&& <Collection collectionTransitionTimeout={collectionTransitionTimeout} />;
-		const newFamily = this.state.openFamilyModal
-			&& <CreateFamilyModal propName="openFamilyModal"/>;
-		const newVariant = this.state.openVariantModal
-			&& <CreateVariantModal family={this.state.familySelectedVariantCreation} propName="openVariantModal" />;
-		const explainAcademy = this.state.firstTimeAcademyModal
-			&& <CreateAcademyModal propName="openAcademyModal" />;
-		const changeNameFamily = this.state.openChangeFamilyNameModal
-			&& <ChangeNameFamily family={this.state.familySelectedVariantCreation} propName="openChangeFamilyNameModal" />;
-		const changeNameVariant = this.state.openChangeVariantNameModal
-			&& <ChangeNameVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant} propName="openChangeVariantNameModal" />;
-		const duplicateVariant = this.state.openDuplicateVariantModal
-			&& <DuplicateVariant family={this.state.familySelectedVariantCreation} variant={this.state.collectionSelectedVariant} propName="openDuplicateVariantModal" />;
-		const goPro = this.state.openGoProModal
-			&& <GoProModal propName="openGoProModal" />;
+		const collection = this.state.collection && (
+			<Collection collectionTransitionTimeout={collectionTransitionTimeout} />
+		);
+		const newFamily = this.state.openFamilyModal && (
+			<CreateFamilyModal propName="openFamilyModal" />
+		);
+		const newVariant = this.state.openVariantModal && (
+			<CreateVariantModal
+				family={this.state.familySelectedVariantCreation}
+				propName="openVariantModal"
+			/>
+		);
+		const explainAcademy = this.state.firstTimeAcademyModal && (
+			<CreateAcademyModal propName="openAcademyModal" />
+		);
+		const changeNameFamily = this.state.openChangeFamilyNameModal && (
+			<ChangeNameFamily
+				family={this.state.familySelectedVariantCreation}
+				propName="openChangeFamilyNameModal"
+			/>
+		);
+		const changeNameVariant = this.state.openChangeVariantNameModal && (
+			<ChangeNameVariant
+				family={this.state.familySelectedVariantCreation}
+				variant={this.state.collectionSelectedVariant}
+				propName="openChangeVariantNameModal"
+			/>
+		);
+		const duplicateVariant = this.state.openDuplicateVariantModal && (
+			<DuplicateVariant
+				family={this.state.familySelectedVariantCreation}
+				variant={this.state.collectionSelectedVariant}
+				propName="openDuplicateVariantModal"
+			/>
+		);
+		const goPro = this.state.openGoProModal && (
+			<GoProModal propName="openGoProModal" />
+		);
 
-		const exportAs = this.state.exportAs
-			&& <ExportAs propName="exportAs" />;
+		const exportAs = this.state.exportAs && <ExportAs propName="exportAs" />;
 
 		if (this.props.location.query.showModal) {
 			this.client.dispatchAction('/store-value', {
@@ -292,11 +322,8 @@ const getUserFontsAndFirstContactMadeQuery = gql`
 
 const setFirstContactMadeMutation = gql`
 	mutation setFirstContact($id: ID!) {
-		updateUser(
-			id: $id,
-			firstContactMade: true
-		) {
-		id
+		updateUser(id: $id, firstContactMade: true) {
+			id
 		}
 	}
 `;

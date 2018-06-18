@@ -23,7 +23,8 @@ class FontUpdater extends React.PureComponent {
 			email: this.props.email,
 		});
 
-		this.client.getStore('/undoableStore', this.lifespan)
+		this.client
+			.getStore('/undoableStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					values: head.toJS().d.controlsValues,
@@ -33,7 +34,8 @@ class FontUpdater extends React.PureComponent {
 				this.setState(undefined);
 			});
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					family: head.toJS().d.family,
@@ -49,7 +51,8 @@ class FontUpdater extends React.PureComponent {
 				this.setState(undefined);
 			});
 
-		this.client.getStore('/fontInstanceStore', this.lifespan)
+		this.client
+			.getStore('/fontInstanceStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					changingFont: head.toJS().d.changingFont,
@@ -70,9 +73,13 @@ class FontUpdater extends React.PureComponent {
 			&& this.state.glyph !== undefined
 			&& !this.state.changingFont
 		) {
-			const subsetString = this.state.uiText
-				+ rawToEscapedContent(this.state.uiWord, this.state.glyphs) + 'Hamburgefonstiv';
-			let subset = _uniq(subsetString.split('')).map(letter => letter.charCodeAt(0));
+			const subsetString
+				= `${this.state.uiText
+				+ rawToEscapedContent(this.state.uiWord, this.state.glyphs)
+				 }Hamburgefonstiv`;
+			let subset = _uniq(subsetString.split('')).map(letter =>
+				letter.charCodeAt(0),
+			);
 
 			this.fontMediatorInstance.getFont(
 				this.state.name,
@@ -84,7 +91,9 @@ class FontUpdater extends React.PureComponent {
 
 			if (this.props.extraFonts) {
 				this.props.extraFonts.forEach((extrafont) => {
-					subset = _uniq(extrafont.subset.split('')).map(letter => letter.charCodeAt(0));
+					subset = _uniq(extrafont.subset.split('')).map(letter =>
+						letter.charCodeAt(0),
+					);
 					this.fontMediatorInstance.getFont(
 						extrafont.name,
 						extrafont.template || this.state.template,
@@ -109,7 +118,6 @@ class FontUpdater extends React.PureComponent {
 		this.lifespan.release();
 	}
 
-
 	render() {
 		return false;
 	}
@@ -123,12 +131,14 @@ const userProfileQuery = gql`
 	}
 `;
 
-export default compose(graphql(userProfileQuery, {
-	props: ({data}) => {
-		if (data.loading) {
-			return {loading: true};
-		}
+export default compose(
+	graphql(userProfileQuery, {
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
 
-		return data.user;
-	},
-}))(FontUpdater);
+			return data.user;
+		},
+	}),
+)(FontUpdater);

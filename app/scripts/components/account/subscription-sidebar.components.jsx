@@ -26,7 +26,11 @@ export default class SubscriptionSidebar extends React.PureComponent {
 
 	render() {
 		const {
-			country, plan, quantity, hasBeenSubscribing, percentPrice,
+			country,
+			plan,
+			quantity,
+			hasBeenSubscribing,
+			percentPrice,
 		} = this.props;
 
 		const plans = {
@@ -40,8 +44,10 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				],
 				cta: (
 					<span>
-						<Price amount={monthlyConst.price * percentPrice} country={country} />
-						{' '}
+						<Price
+							amount={monthlyConst.price * percentPrice}
+							country={country}
+						/>{' '}
 						/ month
 					</span>
 				),
@@ -53,7 +59,8 @@ export default class SubscriptionSidebar extends React.PureComponent {
 			},
 			[annualConst.prefix]: {
 				header: 'Annual',
-				title: 'Buy Prototypo Pro subscription for 1 year, get 4 months for free',
+				title:
+					'Buy Prototypo Pro subscription for 1 year, get 4 months for free',
 				features: [
 					'Full-range parameters',
 					'Unlimited font exports',
@@ -61,27 +68,47 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				],
 				cta: (
 					<span>
-						<Price amount={annualConst.monthlyPrice * percentPrice} country={country} /> / month
+						<Price
+							amount={annualConst.monthlyPrice * percentPrice}
+							country={country}
+						/>{' '}
+						/ month
 					</span>
 				),
-				subcta: <span>Less money, same features<br />Get 4 months free</span>,
+				subcta: (
+					<span>
+						Less money, same features<br />Get 4 months free
+					</span>
+				),
 				link: {
 					text: 'Want less commitment, try our monthly offer',
 					onClick: this.handleChangePlan({plan: monthlyConst.prefix}),
 				},
 			},
 			[teamMonthlyConst.prefix]: {
-				header: <span>Teams<br />Monthly</span>,
-				title: (
+				header: (
 					<span>
-						Prototypo multi-user plan, designed for professionnals, billed monthly
+						Teams<br />Monthly
 					</span>
 				),
-				features: ['All pro features', 'Team management & user roles', 'Kickoff course', 'Premium 24h support'],
+				title: (
+					<span>
+						Prototypo multi-user plan, designed for professionnals, billed
+						monthly
+					</span>
+				),
+				features: [
+					'All pro features',
+					'Team management & user roles',
+					'Kickoff course',
+					'Premium 24h support',
+				],
 				cta: (
 					<span>
-						<Price amount={teamMonthlyConst.monthlyPrice * quantity * percentPrice} country={country} />
-						{' '}
+						<Price
+							amount={teamMonthlyConst.monthlyPrice * quantity * percentPrice}
+							country={country}
+						/>{' '}
 						/ month
 					</span>
 				),
@@ -89,8 +116,10 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					<span>
 						No commitment!
 						<br />
-						<Price amount={teamMonthlyConst.monthlyPrice * percentPrice} country={country} />
-						{' '}
+						<Price
+							amount={teamMonthlyConst.monthlyPrice * percentPrice}
+							country={country}
+						/>{' '}
 						× {quantity} per month
 					</span>
 				),
@@ -100,17 +129,29 @@ export default class SubscriptionSidebar extends React.PureComponent {
 				},
 			},
 			[teamAnnualConst.prefix]: {
-				header: <span>Teams<br />Annual</span>,
-				title: (
+				header: (
 					<span>
-						Prototypo multi-user plan, designed for professionnals, billed annually
+						Teams<br />Annual
 					</span>
 				),
-				features: ['All pro features', 'Team management & user roles', 'Kickoff course', 'Premium 24h support'],
+				title: (
+					<span>
+						Prototypo multi-user plan, designed for professionnals, billed
+						annually
+					</span>
+				),
+				features: [
+					'All pro features',
+					'Team management & user roles',
+					'Kickoff course',
+					'Premium 24h support',
+				],
 				cta: (
 					<span>
-						<Price amount={teamAnnualConst.monthlyPrice * quantity * percentPrice} country={country} />
-						{' '}
+						<Price
+							amount={teamAnnualConst.monthlyPrice * quantity * percentPrice}
+							country={country}
+						/>{' '}
 						/ month
 					</span>
 				),
@@ -118,8 +159,10 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					<span>
 						Less money, same features
 						<br />
-						<Price amount={teamAnnualConst.monthlyPrice * percentPrice} country={country} />
-						{' '}
+						<Price
+							amount={teamAnnualConst.monthlyPrice * percentPrice}
+							country={country}
+						/>{' '}
 						× {quantity} per month
 					</span>
 				),
@@ -131,9 +174,7 @@ export default class SubscriptionSidebar extends React.PureComponent {
 		};
 
 		if (plans[plan]) {
-			const {
-				header, title, features, cta, subcta, link,
-			} = plans[plan];
+			const {header, title, features, cta, subcta, link} = plans[plan];
 
 			return (
 				<div className="subscription-sidebar">
@@ -149,7 +190,11 @@ export default class SubscriptionSidebar extends React.PureComponent {
 					<div className="subscription-sidebar-separator" />
 					<div className="subscription-sidebar-cta">{cta}</div>
 					<div className="subscription-sidebar-subcta">{subcta}</div>
-					<a href="/account/subscribe" className="subscription-sidebar-link" onClick={link.onClick}>
+					<a
+						href="/account/subscribe"
+						className="subscription-sidebar-link"
+						onClick={link.onClick}
+					>
 						{link.text}
 					</a>
 				</div>

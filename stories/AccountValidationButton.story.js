@@ -6,4 +6,6 @@ import AccountValidationButton from '../app/scripts/components/shared/account-va
 storiesOf('shared/AccountValidationButton', module)
 	.add('default', () => <AccountValidationButton label="Hit me!" />)
 	.add('loading', () => <AccountValidationButton label="Hit me!" loading />)
-	.add('disabled', () => <AccountValidationButton label="You can't hit me!" disabled />);
+	.add('disabled', () => (
+		<AccountValidationButton label="You can't hit me!" disabled />
+	));

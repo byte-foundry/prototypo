@@ -2,7 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {withRouter} from 'react-router';
 import Lifespan from 'lifespan';
-import {monthlyConst, annualConst, teamMonthlyConst, teamAnnualConst} from '../data/plans.data';
+import {
+	monthlyConst,
+	annualConst,
+	teamMonthlyConst,
+	teamAnnualConst,
+} from '../data/plans.data';
 
 import LocalClient from '../stores/local-client.stores';
 import Log from '../services/log.services';
@@ -44,7 +49,9 @@ class GoProModal extends React.PureComponent {
 			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					billing: head.toJS().d.goProModalBilling ? head.toJS().d.goProModalBilling : 'annually',
+					billing: head.toJS().d.goProModalBilling
+						? head.toJS().d.goProModalBilling
+						: 'annually',
 				});
 			})
 			.onDelete(() => {
@@ -71,11 +78,21 @@ class GoProModal extends React.PureComponent {
 		console.log(this.state.billing);
 		console.log({
 			pathname: '/account/subscribe',
-			query: {plan: this.state.billing === 'monthly' ? monthlyConst.prefix : annualConst.prefix},
+			query: {
+				plan:
+					this.state.billing === 'monthly'
+						? monthlyConst.prefix
+						: annualConst.prefix,
+			},
 		});
 		this.props.router.push({
 			pathname: '/account/subscribe',
-			query: {plan: this.state.billing === 'monthly' ? monthlyConst.prefix : annualConst.prefix},
+			query: {
+				plan:
+					this.state.billing === 'monthly'
+						? monthlyConst.prefix
+						: annualConst.prefix,
+			},
 		});
 		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
 		Log.ui('Subscribe.FromFile');
@@ -88,7 +105,10 @@ class GoProModal extends React.PureComponent {
 		this.props.router.push({
 			pathname: '/account/subscribe',
 			query: {
-				plan: billing === 'monthly' ? teamMonthlyConst.prefix : teamAnnualConst.prefix,
+				plan:
+					billing === 'monthly'
+						? teamMonthlyConst.prefix
+						: teamAnnualConst.prefix,
 				quantity: teamCount,
 			},
 		});
@@ -121,26 +141,31 @@ class GoProModal extends React.PureComponent {
 
 	render() {
 		const {billing, teamCount, hasBeenSubscribing} = this.state;
-		const teamPrice = billing === 'annually'
-			? teamAnnualConst.monthlyPrice * teamCount
-			: teamMonthlyConst.monthlyPrice * teamCount;
-		const proPrice = billing === 'annually' ? annualConst.monthlyPrice : monthlyConst.price;
+		const teamPrice
+			= billing === 'annually'
+				? teamAnnualConst.monthlyPrice * teamCount
+				: teamMonthlyConst.monthlyPrice * teamCount;
+		const proPrice
+			= billing === 'annually' ? annualConst.monthlyPrice : monthlyConst.price;
 		const currency = getCurrency(this.props.country);
 
 		return (
 			<Modal propName={this.props.propName}>
 				<div className="modal-container-content">
-
 					<div className="pricing-switch">
 						<div
-							className={`pricing-switch-item ${this.state.billing === 'monthly' ? 'is-active' : ''}`}
+							className={`pricing-switch-item ${
+								this.state.billing === 'monthly' ? 'is-active' : ''
+							}`}
 							onClick={this.switchMonthlyBilling}
 							role="button"
 						>
 							Monthly billing
 						</div>
 						<div
-							className={`pricing-switch-item ${this.state.billing === 'annually' ? 'is-active' : ''}`}
+							className={`pricing-switch-item ${
+								this.state.billing === 'annually' ? 'is-active' : ''
+							}`}
 							onClick={this.switchAnnualBilling}
 							role="button"
 						>
@@ -161,29 +186,27 @@ class GoProModal extends React.PureComponent {
 							amount={proPrice}
 						>
 							<ul className="pricing-item-features">
-								<li className="pricing-item-feature">
-									48h support
-								</li>
-								<li className="pricing-item-feature">
-									Full-range parameters
-								</li>
-								<li className="pricing-item-feature">
-									Unlimited font exports
-								</li>
-								<li className="pricing-item-feature">
-									Manual editing
-								</li>
+								<li className="pricing-item-feature">48h support</li>
+								<li className="pricing-item-feature">Full-range parameters</li>
+								<li className="pricing-item-feature">Unlimited font exports</li>
+								<li className="pricing-item-feature">Manual editing</li>
 								<li className="pricing-item-feature">
 									Glyph individualization
 								</li>
+								<li className="pricing-item-feature">Web preview extension</li>
 								<li className="pricing-item-feature">
-									Web preview extension
+									<br />
 								</li>
-								<li className="pricing-item-feature"><br /></li>
-								<li className="pricing-item-feature"><br /></li>
+								<li className="pricing-item-feature">
+									<br />
+								</li>
 								<li className="pricing-item-feature">&nbsp;</li>
 							</ul>
-							<div className="pricing-item-cta" onClick={this.goSubscribe} role="button">
+							<div
+								className="pricing-item-cta"
+								onClick={this.goSubscribe}
+								role="button"
+							>
 								Go pro
 							</div>
 						</PricingItem>
@@ -194,13 +217,14 @@ class GoProModal extends React.PureComponent {
 								<div className="pricing-item-subtitle-price-info">
 									Great for teams and growing businesses.<br />
 									<a
-										href={`mailto:account@prototypo.io?subject=Company plan&body=${encodeURI(getContactMessage(teamCount))}`}
+										href={`mailto:account@prototypo.io?subject=Company plan&body=${encodeURI(
+											getContactMessage(teamCount),
+										)}`}
 										className="account-email"
 										onClick={this.openIntercomChat}
 									>
 										Contact us
-									</a>
-									{' '}
+									</a>{' '}
 									for more informations!
 								</div>
 							}
@@ -220,43 +244,34 @@ class GoProModal extends React.PureComponent {
 							amount={teamPrice}
 						>
 							<ul className="pricing-item-features">
-							<li className="pricing-item-feature">
-									24h premium support
-								</li>
-								<li className="pricing-item-feature">
-									Full-range parameters
-								</li>
-								<li className="pricing-item-feature">
-									Unlimited font exports
-								</li>
-								<li className="pricing-item-feature">
-									Manual editing
-								</li>
+								<li className="pricing-item-feature">24h premium support</li>
+								<li className="pricing-item-feature">Full-range parameters</li>
+								<li className="pricing-item-feature">Unlimited font exports</li>
+								<li className="pricing-item-feature">Manual editing</li>
 								<li className="pricing-item-feature">
 									Glyph individualization
 								</li>
-								<li className="pricing-item-feature">
-									Web preview extension
-								</li>
-								<li className="pricing-item-feature">
-									Team management
-								</li>
-								<li className="pricing-item-feature">
-									User roles
-								</li>
-								<li className="pricing-item-feature">
-									Kickoff course
-								</li>
+								<li className="pricing-item-feature">Web preview extension</li>
+								<li className="pricing-item-feature">Team management</li>
+								<li className="pricing-item-feature">User roles</li>
+								<li className="pricing-item-feature">Kickoff course</li>
 							</ul>
-							{teamCount <= 10
-								? <div className="pricing-item-cta" onClick={this.goSubscribeTeam}>
-										Create your team
-								  </div>
-								: <div className="pricing-item-cta" onClick={this.openIntercomChat}>
-										Get in touch
-								  </div>}
+							{teamCount <= 10 ? (
+								<div
+									className="pricing-item-cta"
+									onClick={this.goSubscribeTeam}
+								>
+									Create your team
+								</div>
+							) : (
+								<div
+									className="pricing-item-cta"
+									onClick={this.openIntercomChat}
+								>
+									Get in touch
+								</div>
+							)}
 						</PricingItem>
-
 					</div>
 				</div>
 			</Modal>

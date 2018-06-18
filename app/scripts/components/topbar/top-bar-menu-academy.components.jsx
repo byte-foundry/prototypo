@@ -17,11 +17,16 @@ class TopBarMenuAcademy extends React.PureComponent {
 					/>
 				</Link>
 				{course.parts.map(part => (
-					<Link key={part.name} to={`/academy/course/${course.slug}/${part.name}`}>
+					<Link
+						key={part.name}
+						to={`/academy/course/${course.slug}/${part.name}`}
+					>
 						<span
 							onMouseEnter={() => setText(`${course.name} - ${part.name}`)}
 							onMouseLeave={() => clearText()}
-							className={`top-bar-menu-item-academy-part ${part.completed ? 'completed' : ''}`}
+							className={`top-bar-menu-item-academy-part ${
+								part.completed ? 'completed' : ''
+							}`}
 						/>
 					</Link>
 				))}

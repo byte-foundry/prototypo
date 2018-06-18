@@ -7,10 +7,6 @@ export default class AcademyApp extends React.PureComponent {
 	}
 
 	render() {
-		return (
-			<div className="academy-app">
-				{this.props.children}
-			</div>
-		);
+		return <div className="academy-app">{this.props.children}</div>;
 	}
 }

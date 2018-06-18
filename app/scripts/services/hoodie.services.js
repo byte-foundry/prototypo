@@ -6,8 +6,9 @@ import apolloClient from './graphcool.services';
 import isProduction from '../helpers/is-production.helpers';
 import LocalClient from '../stores/local-client.stores';
 
-
-const AWS_URL = `https://${isProduction() ? 'e4jpj60rk8' : 'tc1b6vq6o8'}.execute-api.eu-west-1.amazonaws.com/${isProduction() ? 'prod' : 'dev'}`;
+const AWS_URL = `https://${
+	isProduction() ? 'e4jpj60rk8' : 'tc1b6vq6o8'
+}.execute-api.eu-west-1.amazonaws.com/${isProduction() ? 'prod' : 'dev'}`;
 
 export const TWITTER_REQUEST_TOKEN_URL = `${AWS_URL}/auth/twitter/requestToken`;
 
@@ -44,22 +45,22 @@ async function fetchAWS(endpoint, params = {}) {
 
 const signUpAndLoginMutation = gql`
 	mutation signUpAndLogin(
-		$firstName: String!,
-		$email: String!,
-		$password: String!,
-		$lastName: String,
-		$occupation: String,
-		$phone: String,
-		$skype: String,
+		$firstName: String!
+		$email: String!
+		$password: String!
+		$lastName: String
+		$occupation: String
+		$phone: String
+		$skype: String
 	) {
 		signupEmailUser(
-			email: $email,
-			password: $password,
-			firstName: $firstName,
-			lastName: $lastName,
-			occupation: $occupation,
-			phone: $phone,
-			skype: $skype,
+			email: $email
+			password: $password
+			firstName: $firstName
+			lastName: $lastName
+			occupation: $occupation
+			phone: $phone
+			skype: $skype
 		) {
 			id
 		}
@@ -98,7 +99,12 @@ export default class HoodieApi {
 		return setupStripe(setupHoodie(response.data.user));
 	}
 
-	static async createGraphCoolUser(email, password, firstName = 'there', lastName) {
+	static async createGraphCoolUser(
+		email,
+		password,
+		firstName = 'there',
+		lastName,
+	) {
 		const response = await apolloClient.mutate({
 			mutation: signUpAndLoginMutation,
 			variables: {
@@ -109,7 +115,10 @@ export default class HoodieApi {
 			},
 		});
 
-		window.localStorage.setItem('graphcoolToken', response.data.signinUser.token);
+		window.localStorage.setItem(
+			'graphcoolToken',
+			response.data.signinUser.token,
+		);
 	}
 
 	static async login(user, password) {
@@ -137,9 +146,12 @@ export default class HoodieApi {
 		apolloClient.resetStore();
 	}
 
-	static async signUp(email, password, firstName, {
-		lastName, occupation, phone, skype,
-	}) {
+	static async signUp(
+		email,
+		password,
+		firstName,
+		{lastName, occupation, phone, skype},
+	) {
 		const response = await apolloClient.mutate({
 			mutation: signUpAndLoginMutation,
 			variables: {
@@ -315,7 +327,9 @@ async function setupStripe(data, time = 1000) {
 
 			return;
 		}
-		catch (e) {/* don't need to catch anything, just next step */}
+		catch (e) {
+			/* don't need to catch anything, just next step */
+		}
 	}
 
 	// if error we poll customerId

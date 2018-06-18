@@ -36,7 +36,10 @@ export default {
 
 				undoableStore.apply(Patch.fromJSON(event.patch));
 				localServer.dispatchUpdate('/prototypoStore', patch);
-				localServer.dispatchUpdate('/undoableStore', Patch.fromJSON(event.patch));
+				localServer.dispatchUpdate(
+					'/undoableStore',
+					Patch.fromJSON(event.patch),
+				);
 			}
 		}
 	},
@@ -49,12 +52,14 @@ export default {
 		}
 
 		newEventList.push({
-			patch: patch.toJSON && patch.toJSON() || patch,
+			patch: (patch.toJSON && patch.toJSON()) || patch,
 			store,
 			label,
 		});
-		const eventPatch = prototypoStore.set('undoEventList', newEventList)
-			.set('undoAt', newEventList.length - 1).commit();
+		const eventPatch = prototypoStore
+			.set('undoEventList', newEventList)
+			.set('undoAt', newEventList.length - 1)
+			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', eventPatch);
 	},

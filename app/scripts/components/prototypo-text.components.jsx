@@ -26,12 +26,11 @@ function createIndivStrategy(regex) {
 	};
 }
 
-const IndivSpan = ({children}) => {
-	return <span className="prototypo-text-editor-indiv-character">{children}</span>;
-};
+const IndivSpan = ({children}) => (
+	<span className="prototypo-text-editor-indiv-character">{children}</span>
+);
 
 export default class PrototypoText extends React.Component {
-
 	constructor(props) {
 		super(props);
 
@@ -40,7 +39,9 @@ export default class PrototypoText extends React.Component {
 			glyphPanelOpened: undefined,
 			editorState: EditorState.createEmpty(),
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 		// function bindings
 		this.saveText = this.saveText.bind(this);
 		this.onEditorChange = this.onEditorChange.bind(this);
@@ -52,6 +53,7 @@ export default class PrototypoText extends React.Component {
 		this.setTextToFameuxWhisky = this.setTextToFameuxWhisky.bind(this);
 		this.setTextToAlphabet = this.setTextToAlphabet.bind(this);
 		this.setTextToLorem = this.setTextToLorem.bind(this);
+		this.setTextToAllGlyphs = this.setTextToAllGlyphs.bind(this);
 		this.close = this.close.bind(this);
 		this.invertedView = this.invertedView.bind(this);
 		this.toggleColors = this.toggleColors.bind(this);
@@ -62,10 +64,12 @@ export default class PrototypoText extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					glyphPanelOpened: head.toJS().d.uiMode.indexOf('list') !== -1,
+					glyphs: head.toJS().d.glyphs,
 				});
 			})
 			.onDelete(() => {
@@ -78,7 +82,10 @@ export default class PrototypoText extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		if (!this.state.editorState.getCurrentContent().getPlainText() && nextProps[nextProps.field]) {
+		if (
+			!this.state.editorState.getCurrentContent().getPlainText()
+			&& nextProps[nextProps.field]
+		) {
 			this.setText(nextProps[nextProps.field]);
 		}
 		this.updateIndivGroupDecorator(nextProps.indivCurrentGroup);
@@ -92,13 +99,17 @@ export default class PrototypoText extends React.Component {
 
 			if (nextIndivGroup.glyphs) {
 				const glyphsString = nextIndivGroup.glyphs
-										.map((unicode) => { return String.fromCharCode(unicode); })
-										.join('');
+					.map(unicode => String.fromCharCode(unicode))
+					.join('');
 
-				decorator = new CompositeDecorator([{
-					strategy: createIndivStrategy(new RegExp(`[${escapeStringRegexp(glyphsString)}]+`, 'g')),
-					component: IndivSpan,
-				}]);
+				decorator = new CompositeDecorator([
+					{
+						strategy: createIndivStrategy(
+							new RegExp(`[${escapeStringRegexp(glyphsString)}]+`, 'g'),
+						),
+						component: IndivSpan,
+					},
+				]);
 			}
 
 			this.setState({editorState: EditorState.set(editorState, {decorator})});
@@ -106,19 +117,21 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setText(text) {
-
 		this.setState({
 			editorState: EditorState.push(
 				this.state.editorState,
 				ContentState.createFromText(text),
-				'change-block-data'
+				'change-block-data',
 			),
 		});
 		this.saveText(text);
 	}
 
 	saveText(text) {
-		this.client.dispatchAction('/store-text', {value: text, propName: this.props.field});
+		this.client.dispatchAction('/store-text', {
+			value: text,
+			propName: this.props.field,
+		});
 	}
 
 	onEditorChange(editorState) {
@@ -163,6 +176,7 @@ export default class PrototypoText extends React.Component {
 
 	changeTextFontSize(uiTextFontSizeToClamp) {
 		const uiTextFontSize = Math.max(0.7, uiTextFontSizeToClamp);
+
 		this.client.dispatchAction('/store-value', {uiTextFontSize});
 	}
 
@@ -184,7 +198,21 @@ export default class PrototypoText extends React.Component {
 
 	setTextToAlphabet() {
 		// this.setText(`!"#$;'()*+,-./0123456789:;;=;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]_abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöøùúûüÿĀāĂăĆĈĊċČčĎďĒēĔĕĖėĚěĜĞğĠġĤĨĩĪīĬĭİıĴĹĽľŃŇňŌōŎŏŔŘřŚŜŞşŠšŤťŨũŪūŬŭŮůŴŶŸŹŻżŽžǫȦẀẂẄẼỲ‘’“”…‹›{|};€¡¢«»ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
-		this.setText(`0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ`);
+		this.setText(
+			'0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘʀꜱᴛᴜᴠᴡʏᴢ',
+		);
+		this.setState({
+			showContextMenu: false,
+			showInsertMenu: false,
+		});
+	}
+
+	setTextToAllGlyphs() {
+		this.setText(
+			Object.keys(this.state.glyphs).filter(
+				key => this.state.glyphs[key][0].unicode !== undefined,
+			).map(e => String.fromCharCode(e)).join('')
+		);
 		this.setState({
 			showContextMenu: false,
 			showInsertMenu: false,
@@ -192,7 +220,8 @@ export default class PrototypoText extends React.Component {
 	}
 
 	setTextToLorem() {
-		this.setText(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae scelerisque urna, eget consequat lectus. Pellentesque lacus magna, tincidunt quis libero non, pellentesque sagittis libero. Nam vitae ante eu lectus sodales sagittis. Duis eget mauris aliquet, gravida quam id, sodales sem. Etiam aliquam mi nec aliquam tincidunt. Nullam mollis mi nec mi luctus faucibus. Fusce cursus massa eget dui accumsan rhoncus. Quisque consectetur libero augue, eget dictum lacus pretium ac. Praesent scelerisque ipsum at aliquam tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed porta risus at aliquam venenatis.
+		this
+			.setText(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae scelerisque urna, eget consequat lectus. Pellentesque lacus magna, tincidunt quis libero non, pellentesque sagittis libero. Nam vitae ante eu lectus sodales sagittis. Duis eget mauris aliquet, gravida quam id, sodales sem. Etiam aliquam mi nec aliquam tincidunt. Nullam mollis mi nec mi luctus faucibus. Fusce cursus massa eget dui accumsan rhoncus. Quisque consectetur libero augue, eget dictum lacus pretium ac. Praesent scelerisque ipsum at aliquam tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed porta risus at aliquam venenatis.
 
 Morbi faucibus mauris mi, sit amet laoreet sapien dapibus tristique. Suspendisse vitae molestie quam, ut cursus justo. Aenean sodales mauris vitae libero venenatis sollicitudin. Aenean condimentum nisl nec rhoncus elementum. Sed est ipsum, aliquam quis justo id, ornare tincidunt massa. Donec sit amet finibus sem. Sed euismod ex sed lorem hendrerit placerat. Praesent congue congue ultrices. Nam maximus metus rhoncus ligula porta sagittis. Maecenas pharetra placerat eleifend.
 
@@ -204,11 +233,15 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 	}
 
 	invertedView() {
-		this.client.dispatchAction('/store-value', {uiInvertedTextView: !this.props.uiInvertedTextView});
+		this.client.dispatchAction('/store-value', {
+			uiInvertedTextView: !this.props.uiInvertedTextView,
+		});
 	}
 
 	toggleColors() {
-		this.client.dispatchAction('/store-value', {uiInvertedTextColors: !this.props.uiInvertedTextColors});
+		this.client.dispatchAction('/store-value', {
+			uiInvertedTextColors: !this.props.uiInvertedTextColors,
+		});
 	}
 
 	close() {
@@ -220,16 +253,20 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 			console.log('[RENDER] PrototypoText');
 		}
 		const panelStyle = {
-			'backgroundColor': this.props.uiInvertedTextColors ? '#232323' : '#fefefe',
+			backgroundColor: this.props.uiInvertedTextColors ? '#232323' : '#fefefe',
 		};
 		const contentStyle = {
-			'fontFamily': `'${this.state.editorState.getCurrentContent().getPlainText().length > 0 ? (this.props.fontName || 'theyaintus') : 'Fira Sans'}', sans-serif`,
-			'fontSize': `${this.props.uiTextFontSize || 1}em`,
+			fontFamily: `'${
+				this.state.editorState.getCurrentContent().getPlainText().length > 0
+					? this.props.fontName || 'theyaintus'
+					: 'Fira Sans'
+			}', sans-serif`,
+			fontSize: `${this.props.uiTextFontSize || 1}em`,
 		};
 		const editorClassNames = classNames('prototypo-text-editor', {
-			'negative': this.props.uiInvertedTextColors,
-			'inverted': this.props.uiInvertedTextView,
-			'indiv': this.props.indivCurrentGroup,
+			negative: this.props.uiInvertedTextColors,
+			inverted: this.props.uiInvertedTextView,
+			indiv: this.props.indivCurrentGroup,
 		});
 		const actionBar = classNames({
 			'action-bar': true,
@@ -271,7 +308,10 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 						active={this.props.uiInvertedTextColors}
 						onClick={this.toggleColors}
 					>
-						Switch to {this.props.uiInvertedTextColors ? 'black on white' : 'white on black'}
+						Switch to{' '}
+						{this.props.uiInvertedTextColors
+							? 'black on white'
+							: 'white on black'}
 					</ContextualMenuItem>
 				</ViewPanelsMenu>
 				<ViewPanelsMenu
@@ -293,12 +333,19 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 					<ContextualMenuItem onClick={this.setTextToLorem}>
 						Lorem ipsum
 					</ContextualMenuItem>
+					<ContextualMenuItem onClick={this.setTextToAllGlyphs}>
+						All glyphs
+					</ContextualMenuItem>
 				</ViewPanelsMenu>
 				<div className={actionBar}>
-					<CloseButton click={this.close}/>
+					<CloseButton click={this.close} />
 					<ZoomButtons
-						plus={() => { this.changeTextFontSize(this.props.uiTextFontSize + 0.3); }}
-						minus={() => { this.changeTextFontSize(this.props.uiTextFontSize - 0.3); }}
+						plus={() => {
+							this.changeTextFontSize(this.props.uiTextFontSize + 0.3);
+						}}
+						minus={() => {
+							this.changeTextFontSize(this.props.uiTextFontSize - 0.3);
+						}}
 					/>
 				</div>
 			</div>

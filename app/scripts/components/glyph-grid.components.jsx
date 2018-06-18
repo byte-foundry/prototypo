@@ -17,7 +17,8 @@ export default class GlyphGrid extends React.PureComponent {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					glyphs: head.toJS().d.glyphs,
@@ -31,7 +32,6 @@ export default class GlyphGrid extends React.PureComponent {
 	componentWillUnmount() {
 		this.lifespan.release();
 	}
-
 
 	selectTag(e) {
 		this.client.dispatchAction('/select-indiv-tag', e.target.value);
@@ -51,8 +51,10 @@ export default class GlyphGrid extends React.PureComponent {
 				return false;
 			}
 
-			const isSelected = this.props.selected && this.props.selected.indexOf(unicode) !== -1;
-			const forbidden = this.props.forbidden && this.props.forbidden.indexOf(unicode) !== -1;
+			const isSelected
+				= this.props.selected && this.props.selected.indexOf(unicode) !== -1;
+			const forbidden
+				= this.props.forbidden && this.props.forbidden.indexOf(unicode) !== -1;
 
 			const classes = classNames({
 				'glyphs-grid-glyph': true,
@@ -60,29 +62,44 @@ export default class GlyphGrid extends React.PureComponent {
 				'is-disabled': forbidden,
 			});
 
-			return <div className={classes} key={unicode} onClick={() => {this.selectGlyph(unicode, isSelected, forbidden);}}>{String.fromCharCode(unicode)}</div>;
+			return (
+				<div
+					className={classes}
+					key={unicode}
+					onClick={() => {
+						this.selectGlyph(unicode, isSelected, forbidden);
+					}}
+				>
+					{String.fromCharCode(unicode)}
+				</div>
+			);
 		});
 
-		const tags = this.props.tags.map(tag => <option value={tag} key={tag}>{tag}</option>);
+		const tags = this.props.tags.map(tag => (
+			<option value={tag} key={tag}>
+				{tag}
+			</option>
+		));
 
 		return (
 			<div className="glyphs-grid">
 				<div className="glyphs-grid-header">
-					<div className="glyphs-grid-header-title">
-						Add glyphs
-					</div>
+					<div className="glyphs-grid-header-title">Add glyphs</div>
 					<div className="glyphs-grid-filter">
 						Filter by:
-						<select className="glyphs-grid-filter-select" onChange={(e) => {this.selectTag(e);}}>
+						<select
+							className="glyphs-grid-filter-select"
+							onChange={(e) => {
+								this.selectTag(e);
+							}}
+						>
 							{tags}
 						</select>
 					</div>
 				</div>
 				<div className="glyphs-grid-scroll-container">
 					<ScrollArea horizontal={false}>
-						<div className="glyphs-grid-scroll-content">
-							{glyphs}
-						</div>
+						<div className="glyphs-grid-scroll-content">{glyphs}</div>
 					</ScrollArea>
 				</div>
 			</div>

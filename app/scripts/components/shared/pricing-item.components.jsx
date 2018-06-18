@@ -24,9 +24,7 @@ class PricingItem extends React.Component {
 
 		if (typeof priceInfo === 'string') {
 			subtitlePriceInfo = (
-				<div className="pricing-item-subtitle-price-info">
-					{priceInfo}
-				</div>
+				<div className="pricing-item-subtitle-price-info">{priceInfo}</div>
 			);
 		}
 
@@ -46,25 +44,34 @@ class PricingItem extends React.Component {
 			>
 				<div className="pricing-item-title">
 					{title}
-					{description
-						&& <div className="pricing-item-title-more">
-							{description}
-						</div>}
+					{description && (
+						<div className="pricing-item-title-more">{description}</div>
+					)}
 				</div>
 				<div className="pricing-item-subtitle">
 					<div className="pricing-item-subtitle-price">
 						<div className="pricing-item-subtitle-price-value">
 							<span>
-								{currency !== 'EUR'
-									&& <span className="pricing-item-subtitle-price-value-currency">$</span>}
+								{currency !== 'EUR' && (
+									<span className="pricing-item-subtitle-price-value-currency">
+										$
+									</span>
+								)}
 								{cost[0]}
-								{cost[1]
-									&& <span className="pricing-item-subtitle-price-value-small">
+								{cost[1] && (
+									<span className="pricing-item-subtitle-price-value-small">
 										.{cost[1]}
-									</span>}
-								{currency === 'EUR'
-									&& <span className="pricing-item-subtitle-price-value-currency"> €</span>}
-								<span className="pricing-item-subtitle-price-value-freq">per month</span>
+									</span>
+								)}
+								{currency === 'EUR' && (
+									<span className="pricing-item-subtitle-price-value-currency">
+										{' '}
+										€
+									</span>
+								)}
+								<span className="pricing-item-subtitle-price-value-freq">
+									per month
+								</span>
 							</span>
 						</div>
 						{subtitlePriceInfo}

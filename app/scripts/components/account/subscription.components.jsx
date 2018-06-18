@@ -51,7 +51,7 @@ class Subscription extends React.Component {
 		const query = {...location.query};
 
 		if (plan) query.plan = plan;
-		if (quantity) query.quantity = (quantity && quantity.toString()) || undefined;
+		if (quantity) {query.quantity = (quantity && quantity.toString()) || undefined;}
 		if (coupon) {
 			query.coupon = coupon;
 		}
@@ -68,7 +68,10 @@ class Subscription extends React.Component {
 		const {plan, quantity, coupon} = location.query;
 
 		if (!plan) {
-			this.props.router.replace({...this.props.location, query: {plan: 'personal_annual_99'}});
+			this.props.router.replace({
+				...this.props.location,
+				query: {plan: 'personal_annual_99'},
+			});
 			return null;
 		}
 		let percentPrice = 1;
@@ -79,7 +82,10 @@ class Subscription extends React.Component {
 
 		return (
 			<div className="subscription">
-				<Link to="/dashboard" className="account-dashboard-icon is-in-subscription" />
+				<Link
+					to="/dashboard"
+					className="account-dashboard-icon is-in-subscription"
+				/>
 				<div className="account-dashboard-container">
 					<SubscriptionSidebar
 						plan={plan}

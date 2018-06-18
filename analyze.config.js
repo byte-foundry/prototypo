@@ -4,7 +4,8 @@ const fs = require('fs');
 const merge = require('webpack-merge');
 
 const base = require('./base.config');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+	.BundleAnalyzerPlugin;
 
 module.exports = merge(base, {
 	cache: true,

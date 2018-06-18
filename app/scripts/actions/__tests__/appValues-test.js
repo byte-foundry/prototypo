@@ -22,7 +22,8 @@ const setupFluxActionTest = require('prototypo-flux-testing');
 
 describe('appValues', () => {
 	setupFluxActionTest(actions, LocalServer, LocalClient, stores);
-	const appValues = require('scripts/helpers/loadValues.helpers.js').valuesToLoad;
+	const appValues = require('scripts/helpers/loadValues.helpers.js')
+		.valuesToLoad;
 	const localClient = LocalClient.instance();
 	const localServer = LocalServer.instance;
 

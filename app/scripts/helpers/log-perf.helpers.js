@@ -14,7 +14,8 @@ export function resetArray() {
 
 export function setupPerf() {
 	canvas = document.createElement('canvas');
-	canvas.style.cssText = 'background: transparent; position: fixed; width: 20%; height: 100%; margin-left: 80%;top: 0;';
+	canvas.style.cssText
+		= 'background: transparent; position: fixed; width: 20%; height: 100%; margin-left: 80%;top: 0;';
 
 	document.body.appendChild(canvas);
 

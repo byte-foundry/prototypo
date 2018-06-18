@@ -6,7 +6,9 @@ export default class LocalClient {
 			LocalClient.ServerInstance = server;
 		}
 		else if (server) {
-			throw new Error('You cannot instantiate the local client with a server twice');
+			throw new Error(
+				'You cannot instantiate the local client with a server twice',
+			);
 		}
 	}
 

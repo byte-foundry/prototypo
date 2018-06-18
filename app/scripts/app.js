@@ -1,7 +1,13 @@
 import React from 'react';
-import {Router, Route, IndexRoute, hashHistory, IndexRedirect} from 'react-router';
+import {
+	Router,
+	Route,
+	IndexRoute,
+	hashHistory,
+	IndexRedirect,
+} from 'react-router';
 import {ApolloProvider} from 'react-apollo';
-import { hot } from 'react-hot-loader'
+import {hot} from 'react-hot-loader';
 
 import HoodieApi from './services/hoodie.services';
 
@@ -61,7 +67,9 @@ import apolloClient from './services/graphcool.services';
 
 // This is a hacky function to get the hot reload during development
 // this will go away as soon as we upgrade to RR4
-Router.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+Router.prototype.componentWillReceiveProps = function componentWillReceiveProps(
+	nextProps,
+) {
 	const components = [];
 
 	function grabComponents(element) {
@@ -137,20 +145,36 @@ class AppRoutes extends React.PureComponent {
 			<ApolloProvider client={apolloClient}>
 				<Router history={hashHistory} onUpdate={trackUrl}>
 					<Route component={App} name="app" path="/">
-						<Route path="dashboard" component={Dashboard} onEnter={redirectToLogin} />
+						<Route
+							path="dashboard"
+							component={Dashboard}
+							onEnter={redirectToLogin}
+						/>
 						<Route path="onboarding" component={OnboardingApp} />
 						/* #if debug */
-						<Route path="replay" path="replay/:replayId" component={ReplayViewer} />
+						<Route
+							path="replay"
+							path="replay/:replayId"
+							component={ReplayViewer}
+						/>
 						<Route path="debug" component={ReplayViewer} />
 						/* #endif */
 						<Route path="testfont" component={FontTester} />
 						<Route path="testglyph/:unicode" component={GlyphTester} />
-						<Route path="signin" component={AccountApp} onEnter={redirectToDashboard}>
+						<Route
+							path="signin"
+							component={AccountApp}
+							onEnter={redirectToDashboard}
+						>
 							<Route path="reset" component={ResetPassword} />
 							<Route path="forgotten" component={ForgottenPassword} />
 							<IndexRoute component={Signin} />
 						</Route>
-						<Route path="signup" component={AccountApp} onEnter={redirectToDashboard}>
+						<Route
+							path="signup"
+							component={AccountApp}
+							onEnter={redirectToDashboard}
+						>
 							<IndexRoute component={Register} />
 						</Route>
 						<Route component={AccountApp} path="account">
@@ -163,7 +187,12 @@ class AppRoutes extends React.PureComponent {
 							>
 								<IndexRoute component={AccountInvoiceList} />
 							</Route>
-							<Route component={AccountDashboard} path="home" name="home" onEnter={redirectToLogin}>
+							<Route
+								component={AccountDashboard}
+								path="home"
+								name="home"
+								onEnter={redirectToLogin}
+							>
 								<IndexRoute component={AccountHome} />
 							</Route>
 							<Route
@@ -181,7 +210,10 @@ class AppRoutes extends React.PureComponent {
 								onEnter={redirectToLogin}
 							>
 								<IndexRoute component={AccountProfile} />
-								<Route path="change-password" component={AccountChangePassword} />
+								<Route
+									path="change-password"
+									component={AccountChangePassword}
+								/>
 							</Route>
 							<Route
 								path="details"
@@ -190,7 +222,10 @@ class AppRoutes extends React.PureComponent {
 								onEnter={redirectToLogin}
 							>
 								<IndexRoute component={AccountSubscription} />
-								<Route path="billing-address" component={AccountBillingAddress} />
+								<Route
+									path="billing-address"
+									component={AccountBillingAddress}
+								/>
 								<Route path="add-card" component={AccountAddCard} />
 								<Route path="change-plan" component={AccountChangePlan} />
 								<Route path="confirm-plan" component={AccountConfirmPlan} />
@@ -243,7 +278,12 @@ class AppRoutes extends React.PureComponent {
 						</Route>
 						<Route component={AcademyApp} path="academy">
 							<IndexRedirect to="home" />
-							<Route component={AcademyDashboard} path="home" name="home" onEnter={redirectToLogin}>
+							<Route
+								component={AcademyDashboard}
+								path="home"
+								name="home"
+								onEnter={redirectToLogin}
+							>
 								<IndexRoute component={AcademyHome} />
 							</Route>
 							<Route

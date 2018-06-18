@@ -35,6 +35,8 @@ export const valuesToLoad = [
 	{remote: 'firstTimeAcademyModal', local: 'firstTimeAcademyModal'},
 	{remote: 'canvasPanelWidth', local: 'canvasPanelWidth'},
 	{remote: 'wordPanelHeight', local: 'wordPanelHeight'},
+	{remote: 'rulerDisplayed', local: 'uiRuler'},
+	{remote: 'guides', local: 'guides'},
 ];
 
 window.addEventListener('fluxServer.setup', () => {
@@ -48,14 +50,19 @@ window.addEventListener('appValues.loaded', () => {
 export async function loadFontValues(typedata, typeface, variantId) {
 	const initValues = {};
 
-	typedata.controls.forEach(group => group.parameters.forEach((param) => {
-		initValues[param.name] = param.init;
-	}));
+	typedata.controls.forEach(group =>
+		group.parameters.forEach((param) => {
+			initValues[param.name] = param.init;
+		}),
+	);
 
 	try {
 		const fontValues = await FontValues.get({typeface, variantId});
 
-		localClient.dispatchAction('/load-values', {...initValues, ...fontValues.values});
+		localClient.dispatchAction('/load-values', {
+			...initValues,
+			...fontValues.values,
+		});
 	}
 	catch (err) {
 		const values = {altList: typedata.fontinfo.defaultAlts, ...initValues};

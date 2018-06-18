@@ -27,7 +27,8 @@ export default class Workboard extends React.PureComponent {
 			glyphs: prototypoStore.get('fontGlyphs'),
 		});
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					fontName: head.toJS().d.fontName,
@@ -51,9 +52,7 @@ export default class Workboard extends React.PureComponent {
 			console.log('[RENDER] Workboard');
 		}
 
-		const loadingOverlay = this.state.fontLoading
-			? <LoadingOverlay />
-			: false;
+		const loadingOverlay = this.state.fontLoading ? <LoadingOverlay /> : false;
 
 		let sideBar = false;
 
@@ -66,11 +65,18 @@ export default class Workboard extends React.PureComponent {
 
 		return (
 			<div id="workboard">
-				<ReactCSSTransitionGroup transitionName="loading-overlay" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+				<ReactCSSTransitionGroup
+					transitionName="loading-overlay"
+					transitionEnterTimeout={300}
+					transitionLeaveTimeout={300}
+				>
 					{loadingOverlay}
 				</ReactCSSTransitionGroup>
 				{sideBar}
-				<PrototypoPanel fontName={this.state.fontName} glyphs={this.state.glyphs} />
+				<PrototypoPanel
+					fontName={this.state.fontName}
+					glyphs={this.state.glyphs}
+				/>
 				<GlyphPanel />
 			</div>
 		);

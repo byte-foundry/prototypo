@@ -19,7 +19,7 @@ export const debugActions = {
 		const debugLog = {
 			events: prototypoStore.get('debugEvents'),
 			message: `voluntarily submitted by ${HoodieApi.instance.email}`,
-			stack: (new Error()).stack,
+			stack: new Error().stack,
 			date: new Date(),
 			values: prototypoStore.get('debugValues'),
 		};
@@ -44,12 +44,18 @@ export const debugActions = {
 		prototypoStore.set('values', values).commit();
 	},
 	'/show-details': (details) => {
-		const patch = prototypoStore.set('debugDetails', details).set('debugShowDetails', true).commit();
+		const patch = prototypoStore
+			.set('debugDetails', details)
+			.set('debugShowDetails', true)
+			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'close-details': () => {
-		const patch = prototypoStore.set('debugDetails', '').set('debugShowDetails', false).commit();
+		const patch = prototypoStore
+			.set('debugDetails', '')
+			.set('debugShowDetails', false)
+			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
@@ -57,9 +63,10 @@ export const debugActions = {
 
 export default class EventDebugger {
 	storeEvent(path, params) {
-		if (path.indexOf('debug') === -1
-			&& location.hash.indexOf('#/replay') === -1) {
-
+		if (
+			path.indexOf('debug') === -1
+			&& location.hash.indexOf('#/replay') === -1
+		) {
 			if (path === '/login') {
 				prototypoStore.set('debugEvents', []);
 			}
@@ -90,9 +97,6 @@ export default class EventDebugger {
 				}, 200);
 			});
 		}
-		else {
-			return;
-		}
 	}
 
 	replayEvents(values, events) {
@@ -110,14 +114,16 @@ export default class EventDebugger {
 		const hash = location.hash.split('?')[0].split('/');
 
 		try {
-			const result = await fetch(`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`);
+			const result = await fetch(
+				`${debugServerUrl}/events-logs/${hash[hash.length - 1]}.json`,
+			);
 			const data = await result.json();
 			let eventsToPlay = data.events;
 			const values = data.values;
 
 			for (let i = 0; i < eventsToPlay.length; i++) {
 				if (eventsToPlay[i].path === '/login') {
-					eventsToPlay = eventsToPlay.slice(i+1);
+					eventsToPlay = eventsToPlay.slice(i + 1);
 				}
 			}
 

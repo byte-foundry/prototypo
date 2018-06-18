@@ -7,7 +7,6 @@ import GlyphCanvas from '../components/glyph-canvas.components';
 import CanvasBar from '../components/canvasTools/canvas-bar.components';
 
 export default class GlyphTester extends React.Component {
-
 	constructor(props) {
 		super(props);
 		this.state = {};

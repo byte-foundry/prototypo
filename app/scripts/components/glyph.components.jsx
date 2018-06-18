@@ -21,7 +21,8 @@ export default class Glyph extends React.PureComponent {
 		if (process.env.__SHOW_RENDER__) {
 			console.log('[RENDER] Glyph');
 		}
-		const showAlts = Array.isArray(this.props.glyph) && this.props.glyph.length > 1;
+		const showAlts
+			= Array.isArray(this.props.glyph) && this.props.glyph.length > 1;
 		const classes = classNames({
 			'glyph-list-glyph': true,
 			'is-selected': this.props.selected,
@@ -34,7 +35,9 @@ export default class Glyph extends React.PureComponent {
 
 		return (
 			<div className={classes} onClick={this.selectGlyph}>
-				<label className="glyph-list-glyph-label">{String.fromCharCode(this.props.unicode)}</label>
+				<label className="glyph-list-glyph-label">
+					{String.fromCharCode(this.props.unicode)}
+				</label>
 				<div className="glyph-list-glyph-top-right-indicator" />
 				<div className="glyph-list-glyph-top-left-indicator" />
 				<div className="glyph-list-glyph-bottom-left-indicator" />

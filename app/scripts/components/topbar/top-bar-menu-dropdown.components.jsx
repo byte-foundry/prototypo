@@ -3,9 +3,9 @@ import React from 'react';
 import classNames from 'classnames';
 
 /**
-*	TopBarMenuDropdown is nestable
-*	meaning that you can put a TopBarMenuDropdown inside a TopBarMenuDropdownItem
-*/
+ *	TopBarMenuDropdown is nestable
+ *	meaning that you can put a TopBarMenuDropdown inside a TopBarMenuDropdownItem
+ */
 class TopBarMenuDropdown extends React.PureComponent {
 	static getHeader({name, img}) {
 		const content = {
@@ -17,7 +17,11 @@ class TopBarMenuDropdown extends React.PureComponent {
 				false
 			),
 			img: img ? (
-				<img className="top-bar-menu-item-img" src={img} key={`imgheader${name}`}>
+				<img
+					className="top-bar-menu-item-img"
+					src={img}
+					key={`imgheader${name}`}
+				>
 					{name}
 				</img>
 			) : (

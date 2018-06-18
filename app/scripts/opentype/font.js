@@ -43,7 +43,7 @@ export const usWidthClasses = {
 };
 
 function log2(v) {
-	return Math.log(v) / Math.log(2) | 0;
+	return (Math.log(v) / Math.log(2)) | 0;
 }
 
 function computeCheckSum(bytes) {
@@ -54,10 +54,11 @@ function computeCheckSum(bytes) {
 	let sum = 0;
 
 	for (let i = 0; i < bytes.length; i += 4) {
-		sum += (bytes[i] << 24)
+		sum
+			+= (bytes[i] << 24)
 			+ (bytes[i + 1] << 16)
 			+ (bytes[i + 2] << 8)
-			+ (bytes[i + 3]);
+			+ bytes[i + 3];
 	}
 
 	sum %= Math.pow(2, 32);
@@ -118,7 +119,9 @@ export function fontToSfntTable(font) {
 		const unicode = glyph.unicode;
 
 		if (isNaN(glyph.advanceWidth)) {
-			throw new Error(`Glyph ${glyph.name} (${i}): advanceWidth is not a number`);
+			throw new Error(
+				`Glyph ${glyph.name} (${i}): advanceWidth is not a number`,
+			);
 		}
 
 		if (firstCharIndex > unicode && unicode > 0) {
@@ -135,16 +138,18 @@ export function fontToSfntTable(font) {
 			ulUnicodeRange1 |= 1 << position;
 		}
 		else if (position < 64) {
-			ulUnicodeRange2 |= 1 << position - 32;
+			ulUnicodeRange2 |= 1 << (position - 32);
 		}
 		else if (position < 96) {
-			ulUnicodeRange3 |= 1 << position - 64;
+			ulUnicodeRange3 |= 1 << (position - 64);
 		}
 		else if (position < 123) {
-			ulUnicodeRange4 |= 1 << position - 96;
+			ulUnicodeRange4 |= 1 << (position - 96);
 		}
 		else {
-			throw new Error('Unicode ranges bits > 123 are reserved for internal usage');
+			throw new Error(
+				'Unicode ranges bits > 123 are reserved for internal usage',
+			);
 		}
 
 		if (glyph.name === '.notdef') {
@@ -162,7 +167,8 @@ export function fontToSfntTable(font) {
 		advanceWidths.push(glyph.advanceWidth);
 	}
 	const advanceWidthMax: number = Math.max.apply(null, advanceWidths);
-	const advanceWithAvg: number = _reduce(advanceWidths, (acc, item) => acc + item, 0) / advanceWidths.length;
+	const advanceWithAvg: number
+		= _reduce(advanceWidths, (acc, item) => acc + item, 0) / advanceWidths.length;
 	const minLeftSideBearing: number = Math.min.apply(null, leftSideBearings);
 	const maxLeftSideBearing: number = Math.min.apply(null, leftSideBearings);
 	const xMin: number = Math.min.apply(null, xMins);
@@ -211,7 +217,8 @@ export function fontToSfntTable(font) {
 		usWinAscent: yMax,
 		usWinDescent: Math.abs(yMin),
 		ulCodePageRange1: 1,
-		sxHeight: metricsForChar(font, 'xyvw', {yMax: Math.round(ascender / 2)}).yMax,
+		sxHeight: metricsForChar(font, 'xyvw', {yMax: Math.round(ascender / 2)})
+			.yMax,
 		sCapHeight: metricsForChar(font, 'HIKLEFJMNTZBDPRAGOQSUVWXY', {yMax}).yMax,
 		usDefaultChar: hasSpace ? 32 : 0,
 		usBreakChar: hasSpace ? 32 : 0,
@@ -223,7 +230,9 @@ export function fontToSfntTable(font) {
 	const englishFamilyName = fontFamily.en;
 	const englishStyleName = fontSubfamily.en;
 	const englishFullName = `${englishFamilyName} ${englishStyleName}`;
-	const postScriptNameString = postScriptName.en || `${englishFamilyName.replace(/\s/g, '')}-${englishStyleName}`;
+	const postScriptNameString
+		= postScriptName.en
+		|| `${englishFamilyName.replace(/\s/g, '')}-${englishStyleName}`;
 
 	const names = {
 		fontFamily,
@@ -247,7 +256,8 @@ export function fontToSfntTable(font) {
 
 	const languageTags = [];
 	const nameTable = name.make(names, languageTags);
-	const ltagTable = languageTags.length > 0 ? ltag.make(languageTags) : undefined;
+	const ltagTable
+		= languageTags.length > 0 ? ltag.make(languageTags) : undefined;
 
 	const postTable = post.make();
 	const cffTable = cff.make(glyphs, {
@@ -260,7 +270,17 @@ export function fontToSfntTable(font) {
 		fontBBox: [0, yMin, ascender, advanceWidthMax],
 	});
 
-	const tables = [headTable, hheaTable, maxpTable, os2Table, nameTable, cmapTable, postTable, cffTable, hmtxTable];
+	const tables = [
+		headTable,
+		hheaTable,
+		maxpTable,
+		os2Table,
+		nameTable,
+		cmapTable,
+		postTable,
+		cffTable,
+		hmtxTable,
+	];
 
 	if (ltagTable) {
 		tables.push(ltagTable);
@@ -274,7 +294,7 @@ export function fontToSfntTable(font) {
 
 	for (let i = 0; i < tableFields.length; i++) {
 		if (tableFields[i].name === 'head table') {
-			tableFields[i].value.checkSumAdjustment = 0xB1B0AFBA - checkSum;
+			tableFields[i].value.checkSumAdjustment = 0xb1b0afba - checkSum;
 			checkSumAdjusted = true;
 			break;
 		}
@@ -290,7 +310,11 @@ export function fontToSfntTable(font) {
 function makeTableRecord(tag, checkSum, offset, length) {
 	return buildTableObj('Table Record', [
 		{name: 'tag', type: 'TAG', value: tag === undefined ? '' : tag},
-		{name: 'checkSum', type: 'ULONG', value: checkSum === undefined ? 0 : checkSum},
+		{
+			name: 'checkSum',
+			type: 'ULONG',
+			value: checkSum === undefined ? 0 : checkSum,
+		},
 		{name: 'offset', type: 'ULONG', value: offset === undefined ? 0 : offset},
 		{name: 'length', type: 'ULONG', value: length === undefined ? 0 : length},
 	]);
@@ -316,7 +340,8 @@ function makeSfntTable(tables) {
 	const recordFields = [];
 	const tableFields = [];
 
-	let offset = sizeOfTable(sfnt) + (sizeOfTable(makeTableRecord()) * sfnt.numTables);
+	let offset
+		= sizeOfTable(sfnt) + sizeOfTable(makeTableRecord()) * sfnt.numTables;
 
 	while (offset % 4 !== 0) {
 		offset += 1;
@@ -326,15 +351,30 @@ function makeSfntTable(tables) {
 	for (let i = 0; i < tables.length; i += 1) {
 		const t = tables[i];
 
-		checkArgument(t.tableName.length === 4, `Table name ${t.tableName} is invalid.`);
+		checkArgument(
+			t.tableName.length === 4,
+			`Table name ${t.tableName} is invalid.`,
+		);
 
 		const tableLength = sizeOfTable(t);
-		const tableRecord = makeTableRecord(t.tableName, computeCheckSum(encodeTable(t)), offset, tableLength);
+		const tableRecord = makeTableRecord(
+			t.tableName,
+			computeCheckSum(encodeTable(t)),
+			offset,
+			tableLength,
+		);
 
-		recordFields.push({name: `${tableRecord.tag} Table Record`, type: 'RECORD', value: tableRecord});
+		recordFields.push({
+			name: `${tableRecord.tag} Table Record`,
+			type: 'RECORD',
+			value: tableRecord,
+		});
 		tableFields.push({name: `${t.tableName} table`, type: 'RECORD', value: t});
 		offset += tableLength;
-		checkArgument(!isNaN(offset), 'Something went wrong calculating the offset.');
+		checkArgument(
+			!isNaN(offset),
+			'Something went wrong calculating the offset.',
+		);
 		while (offset % 4 !== 0) {
 			offset += 1;
 			tableFields.push({name: 'padding', type: 'BYTE', value: 0});

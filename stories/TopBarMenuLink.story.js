@@ -12,7 +12,12 @@ storiesOf('TopBar/MenuLink', module)
 		</div>
 	))
 	.add('default', () => (
-		<TopBarMenuLink link="/account" title="Account settings" img="icon-profile.svg" action />
+		<TopBarMenuLink
+			link="/account"
+			title="Account settings"
+			img="icon-profile.svg"
+			action
+		/>
 	))
 	.add('darkBackground', () => (
 		<TopBarMenuLink

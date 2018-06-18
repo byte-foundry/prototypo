@@ -38,17 +38,17 @@ encode.CHARARRAY = (v) => {
 
 sizeOf.CHARARRAY = v => v.length;
 
-encode.USHORT = v => [(v >> 8) & 0xFF, v & 0xFF];
+encode.USHORT = v => [(v >> 8) & 0xff, v & 0xff];
 
 sizeOf.USHORT = constant(2);
 
 encode.SHORT = (v) => {
 	// Two's complement
 	if (v >= LIMIT16) {
-		v = -((2 * LIMIT16) - v);
+		v = -(2 * LIMIT16 - v);
 	}
 
-	return [(v >> 8) & 0xFF, v & 0xFF];
+	return [(v >> 8) & 0xff, v & 0xff];
 };
 
 sizeOf.SHORT = constant(2);
@@ -59,21 +59,26 @@ sizeOf.UINT16 = sizeOf.SHORT;
 encode.Offset16 = encode.SHORT;
 sizeOf.Offset16 = sizeOf.SHORT;
 
-encode.UINT24 = v => [(v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
+encode.UINT24 = v => [(v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff];
 
 sizeOf.UINT24 = constant(3);
 
-encode.ULONG = v => [(v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
+encode.ULONG = v => [
+	(v >> 24) & 0xff,
+	(v >> 16) & 0xff,
+	(v >> 8) & 0xff,
+	v & 0xff,
+];
 
 sizeOf.ULONG = constant(4);
 
 encode.LONG = (v) => {
 	// Two's complement
 	if (v >= LIMIT32) {
-		v = -((2 * LIMIT32) - v);
+		v = -(2 * LIMIT32 - v);
 	}
 
-	return [(v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
+	return [(v >> 24) & 0xff, (v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff];
 };
 
 sizeOf.LONG = constant(4);
@@ -87,16 +92,22 @@ sizeOf.FWORD = sizeOf.SHORT;
 encode.UFWORD = encode.USHORT;
 sizeOf.UFWORD = sizeOf.USHORT;
 
-encode.LONGDATETIME = v => [0, 0, 0, 0, (v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF]; // eslint-disable-line max-len
+encode.LONGDATETIME = v => [
+	0,
+	0,
+	0,
+	0,
+	(v >> 24) & 0xff,
+	(v >> 16) & 0xff,
+	(v >> 8) & 0xff,
+	v & 0xff,
+]; // eslint-disable-line max-len
 
 sizeOf.LONGDATETIME = constant(8);
 
 encode.TAG = (v) => {
 	checkArgument(v.length === 4, 'Tag should be exactly 4 ASCII characters.');
-	return [v.charCodeAt(0),
-		v.charCodeAt(1),
-		v.charCodeAt(2),
-		v.charCodeAt(3)];
+	return [v.charCodeAt(0), v.charCodeAt(1), v.charCodeAt(2), v.charCodeAt(3)];
 };
 
 sizeOf.TAG = constant(4);
@@ -120,12 +131,12 @@ encode.NUMBER = (v) => {
 	else if (v >= 108 && v <= 1131) {
 		const val = v - 108;
 
-		return [(val >> 8) + 247, val & 0xFF];
+		return [(val >> 8) + 247, val & 0xff];
 	}
 	else if (v >= -1131 && v <= -108) {
 		const val = -v - 108;
 
-		return [(val >> 8) + 251, val & 0xFF];
+		return [(val >> 8) + 251, val & 0xff];
 	}
 	else if (v >= -32768 && v <= 32767) {
 		return encode.NUMBER16(v);
@@ -136,11 +147,17 @@ encode.NUMBER = (v) => {
 
 sizeOf.NUMBER = v => encode.NUMBER(v).length;
 
-encode.NUMBER16 = v => [28, (v >> 8) & 0xFF, v & 0xFF];
+encode.NUMBER16 = v => [28, (v >> 8) & 0xff, v & 0xff];
 
 sizeOf.NUMBER16 = constant(3);
 
-encode.NUMBER32 = v => [29, (v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF];
+encode.NUMBER32 = v => [
+	29,
+	(v >> 24) & 0xff,
+	(v >> 16) & 0xff,
+	(v >> 8) & 0xff,
+	v & 0xff,
+];
 
 sizeOf.NUMBER32 = constant(4);
 
@@ -153,7 +170,7 @@ encode.REAL = (v) => {
 	const m = /\.(\d*?)(?:9{5,20}|0{5,20})\d{0,2}(?:e(.+)|$)/.exec(value);
 
 	if (m) {
-		const epsilon = parseFloat(`1e${((m[2] ? +m[2] : 0) + m[1].length)}`);
+		const epsilon = parseFloat(`1e${(m[2] ? +m[2] : 0) + m[1].length}`);
 
 		value = (Math.round(v * epsilon) / epsilon).toString();
 	}
@@ -178,7 +195,7 @@ encode.REAL = (v) => {
 		}
 	}
 
-	nibbles += (nibbles.length & 1) ? 'f' : 'ff';
+	nibbles += nibbles.length & 1 ? 'f' : 'ff';
 	const out = [30];
 
 	for (i = 0; i < nibbles.length; i += 2) {
@@ -202,8 +219,8 @@ encode.UTF16 = (v) => {
 	for (let i = 0; i < v.length; i++) {
 		const codepoint = v.charCodeAt(i);
 
-		b[b.length] = (codepoint >> 8) & 0xFF;
-		b[b.length] = codepoint & 0xFF;
+		b[b.length] = (codepoint >> 8) & 0xff;
+		b[b.length] = codepoint & 0xff;
 	}
 
 	return b;
@@ -216,36 +233,44 @@ encode.UTF16 = (v) => {
 sizeOf.UTF16 = v => v.length * 2;
 
 const eightBitMacEncodings = {
-	'x-mac-croatian': // Python: 'mac_croatian'
+	// Python: 'mac_croatian'
+	'x-mac-croatian':
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§¶ß®Š™´¨≠ŽØ∞±≤≥∆µ∂∑∏š∫ªºΩžø'
 		+ '¿¡¬√≈Ć«Č… ÀÃÕŒœĐ“”‘’÷◊©⁄€Æ»·„‰ÂćÁčÈÍÎÏÌÓÔđÒÚÛÙı¯πË˚¸Êæˇ',
-	'x-mac-cyrillic': // Python: 'mac_cyrillic'
+	// Python: 'mac_cyrillic'
+	'x-mac-cyrillic':
 		'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ†°£§¶І®©™Ђђ≠Ѓѓ∞±≤≥іµЈЄєЇїЉљЊњ'
 		+ 'јЅ¬√≈∆«»… ЋћЌќѕ“”‘’÷„ЎўЏџ№Ёёяабвгдежзийклмнопрстуфхцчшщъыьэю',
 	'x-mac-gaelic':
-	// http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/GAELIC.TXT
+		// http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/GAELIC.TXT
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§¶ß®©™´¨≠ÆØḂ±≤≥ḃĊċḊḋḞḟĠġṀæø'
 		+ 'ṁṖṗɼſṠ«»… ÀÃÕŒœ“”‘’ṡẛÿŸṪ€Ŷŷṫ·Ỳỳ⁊ÂÊÁËÈÍÎÏÌÓÔ♣ÒÚÛÙıÝýŴŵẄẅẀẁẂẃ',
-	'x-mac-greek': // Python: 'mac_greek'
+	// Python: 'mac_greek'
+	'x-mac-greek':
 		'Ä¹²É³ÖÜ΅àâä΄¨çéèêë£™îï½‰ôö¦€ùûü†ΓΔΘΛΞΠß®©ΣΪ§≠°·Α±≤≥¥ΒΕΖΗΙΚΜΦΫΨΩ'
 		+ 'άΝ¬ΟΡ≈Τ«»… ΥΧΆΈœ―“”‘’÷ΉΊΌΎέήίόΏύαβψδεφγηιξκλμνοπώρστθωςχυζϊϋΐΰ\u00AD',
-	'x-mac-icelandic': // Python: 'mac_iceland'
+	// Python: 'mac_iceland'
+	'x-mac-icelandic':
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûüÝ°¢£§¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø'
 		+ '¿¡¬√≈∆«»… ÀÃÕŒœ“”‘’÷◊ÿŸ⁄€ÐðÞþý·„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙı¯˘˙˚¸˝˛ˇ',
 	'x-mac-inuit':
-	// http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/INUIT.TXT
+		// http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/INUIT.TXT
 		'ᐃᐄᐅᐆᐊᐋᐱᐲᐳᐴᐸᐹᑉᑎᑏᑐᑑᑕᑖᑦᑭᑮᑯᑰᑲᑳᒃᒋᒌᒍᒎᒐᒑ°ᒡᒥᒦ¶ᒧ®©™ᒨᒪᒫᒻᓂᓃᓄᓅᓇᓈᓐᓯᓰᓱᓲᓴᓵᔅᓕᓖᓗ'
 		+ 'ᓘᓚᓛᓪᔨᔩᔪᔫᔭ… ᔮᔾᕕᕖᕗ“”‘’ᕘᕙᕚᕝᕆᕇᕈᕉᕋᕌᕐᕿᖀᖁᖂᖃᖄᖅᖏᖐᖑᖒᖓᖔᖕᙱᙲᙳᙴᙵᙶᖖᖠᖡᖢᖣᖤᖥᖦᕼŁł',
-	'x-mac-ce': // Python: 'mac_latin2'
+	// Python: 'mac_latin2'
+	'x-mac-ce':
 		'ÄĀāÉĄÖÜáąČäčĆćéŹźĎíďĒēĖóėôöõúĚěü†°Ę£§¶ß®©™ę¨≠ģĮįĪ≤≥īĶ∂∑łĻļĽľĹĺŅ'
 		+ 'ņŃ¬√ńŇ∆«»… ňŐÕőŌ“”‘’÷◊ōŔŕŘřŖŗŠ„šŚśÁŤťÍŽžŪÓÔūŮÚůŰűŲųÝýķŻŁżĢˇ',
-	macintosh: // Python: 'mac_roman'
+	// Python: 'mac_roman'
+	macintosh:
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø'
 		+ '¿¡¬√≈∆«»… ÀÃÕŒœ“”‘’÷◊ÿŸ⁄€ﬁﬂ‡·„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙı¯˘˙˚¸˝˛ˇ',
-	'x-mac-romanian': // Python: 'mac_romanian'
+	// Python: 'mac_romanian'
+	'x-mac-romanian':
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§¶ß®©™´¨≠ĂȘ∞±≤≥¥µ∂∑∏π∫ªºΩăș'
 		+ '¿¡¬√≈∆«»… ÀÃÕŒœ“”‘’÷◊ÿŸ⁄€Țț‡·„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙı¯˘˙˚¸˝˛ˇ',
-	'x-mac-turkish': // Python: 'mac_turkish'
+	// Python: 'mac_turkish'
+	'x-mac-turkish':
 		'ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø'
 		+ '¿¡¬√≈∆«»… ÀÃÕŒœ“”‘’÷◊ÿŸĞğİıŞş‡·„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙ¯˘˙˚¸˝˛ˇ',
 };
@@ -423,7 +448,11 @@ function encodeVarDeltaRunAsWords(deltas, offset, result) {
 		// [0x6666, 2, 0x7777] becomes 7 bytes when storing the value
 		// literally (42 66 66 00 02 77 77), but 8 bytes when starting
 		// a new run (40 66 66 00 02 40 77 77).
-		if (isByteEncodable(value) && pos + 1 < numDeltas && isByteEncodable(deltas[pos + 1])) {
+		if (
+			isByteEncodable(value)
+			&& pos + 1 < numDeltas
+			&& isByteEncodable(deltas[pos + 1])
+		) {
 			break;
 		}
 
@@ -499,7 +528,7 @@ encode.INDEX = memoize((l) => {
 	}
 
 	const encodedOffsets = [];
-	const offSize = (1 + (Math.floor(Math.log(offset) / Math.log(2)) / 8)) | 0;
+	const offSize = (1 + Math.floor(Math.log(offset) / Math.log(2)) / 8) | 0;
 	const offsetEncoder = [
 		undefined,
 		encode.BYTE,
@@ -548,7 +577,7 @@ print.INDEX = (l) => {
 	}
 
 	const encodedOffsets = [];
-	const offSize = (1 + (Math.floor(Math.log(offset) / Math.log(2)) / 8)) | 0;
+	const offSize = (1 + Math.floor(Math.log(offset) / Math.log(2)) / 8) | 0;
 	const offsetEncoder = [
 		undefined,
 		encode.BYTE,
@@ -604,7 +633,11 @@ print.DICT = (m) => {
 		const v = m[k];
 
 		// Value comes before the key.
-		console.log(`${encode.OPERAND(v.value, v.type)}${encode.OPERATOR(k)}	${v.type}	${v.name}`);
+		console.log(
+			`${encode.OPERAND(v.value, v.type)}${encode.OPERATOR(k)}	${v.type}	${
+				v.name
+			}`,
+		);
 	}
 };
 
@@ -625,7 +658,10 @@ encode.OPERAND = (v, type) => {
 
 	if (Array.isArray(type)) {
 		for (let i = 0; i < type.length; i++) {
-			checkArgument(v.length === type.length, `Not enough arguments given for type ${type}`);
+			checkArgument(
+				v.length === type.length,
+				`Not enough arguments given for type ${type}`,
+			);
 			d = d.concat(encode.OPERAND(v[i], type[i]));
 		}
 	}
@@ -687,21 +723,30 @@ sizeOf.CHARSTRING = ops => encode.CHARSTRING(ops).length;
 encode.OBJECT = (v) => {
 	const encodingFunction = encode[v.type];
 
-	checkArgument(encodingFunction !== undefined, `No encoding function for type ${v.type}`);
+	checkArgument(
+		encodingFunction !== undefined,
+		`No encoding function for type ${v.type}`,
+	);
 	return encodingFunction(v.value);
 };
 
 sizeOf.OBJECT = (v) => {
 	const sizeOfFunction = sizeOf[v.type];
 
-	checkArgument(sizeOfFunction !== undefined, `No sizeOf function for type ${v.type}`);
+	checkArgument(
+		sizeOfFunction !== undefined,
+		`No sizeOf function for type ${v.type}`,
+	);
 	return sizeOfFunction(v.value);
 };
 
 print.OBJECT = (v) => {
 	const printFunction = print[v.type];
 
-	checkArgument(printFunction !== undefined, `No print function for type ${v.type}`);
+	checkArgument(
+		printFunction !== undefined,
+		`No print function for type ${v.type}`,
+	);
 	printFunction(v.value);
 };
 
@@ -716,7 +761,10 @@ encode.TABLE = (table) => {
 		const encodingFunction = encode[field.type];
 		let value = table[field.name];
 
-		checkArgument(encodingFunction !== undefined, `No encoding function for field type ${field.type} (${field.name})`);
+		checkArgument(
+			encodingFunction !== undefined,
+			`No encoding function for field type ${field.type} (${field.name})`,
+		);
 
 		if (value === undefined) {
 			value = field.value;
@@ -756,7 +804,10 @@ sizeOf.TABLE = (table) => {
 		const sizeOfFunction = sizeOf[field.type];
 		let value = table[field.name];
 
-		checkArgument(sizeOfFunction !== undefined, `No sizeOf function for field type ${field.type} (${field.name})`);
+		checkArgument(
+			sizeOfFunction !== undefined,
+			`No sizeOf function for field type ${field.type} (${field.name})`,
+		);
 
 		if (value === undefined) {
 			value = field.value;
@@ -789,11 +840,17 @@ encode.ARRAY = (array) => {
 		for (let i = 0; i < length; i++) {
 			const item = array[i];
 
-			checkArgument(type === item.type, `Item must be of type ${type} but is of type ${item.type}`);
+			checkArgument(
+				type === item.type,
+				`Item must be of type ${type} but is of type ${item.type}`,
+			);
 
 			const encodingFunction = encode[item.type || 'TABLE'];
 
-			checkArgument(encodingFunction !== undefined, `No encoding function for field type ${item.type} (${item.name})`);
+			checkArgument(
+				encodingFunction !== undefined,
+				`No encoding function for field type ${item.type} (${item.name})`,
+			);
 
 			result.push(encodingFunction(item));
 		}

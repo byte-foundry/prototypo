@@ -7,10 +7,6 @@ export default class AccountApp extends React.Component {
 	}
 
 	render() {
-		return (
-			<div className="account-app">
-				{this.props.children}
-			</div>
-		);
+		return <div className="account-app">{this.props.children}</div>;
 	}
 }

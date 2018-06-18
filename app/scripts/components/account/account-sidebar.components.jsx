@@ -19,7 +19,9 @@ class AccountSidebarLinkRaw extends React.Component {
 		return (
 			<li className={classes}>
 				<Link to={to}>{label}</Link>
-				{children && <ul className="account-sidebar-menu-item-options">{children}</ul>}
+				{children && (
+					<ul className="account-sidebar-menu-item-options">{children}</ul>
+				)}
 			</li>
 		);
 	}
@@ -81,26 +83,45 @@ class AccountSidebar extends React.Component {
 
 		if (subscription || managed) {
 			accountsLinks.push([
-				<AccountSidebarSubLink to="/account/details/add-card" label="Add a card" />,
-				<AccountSidebarSubLink to="/account/details/billing-address" label="My billing address" />,
+				<AccountSidebarSubLink
+					to="/account/details/add-card"
+					label="Add a card"
+				/>,
+				<AccountSidebarSubLink
+					to="/account/details/billing-address"
+					label="My billing address"
+				/>,
 			]);
 		}
 
 		if (subscription) {
 			accountsLinks.push(
-				<AccountSidebarSubLink to="/account/details/change-plan" label="Change plan" />,
+				<AccountSidebarSubLink
+					to="/account/details/change-plan"
+					label="Change plan"
+				/>,
 			);
 		}
 
 		return (
 			<div className="account-sidebar">
 				<ul className="account-sidebar-menu">
-
 					<AccountSidebarLink to="/account/home" slug="home" label="Home" />
-					<AccountSidebarLink to="/account/profile" slug="profile" label="My profile">
-						<AccountSidebarSubLink to="/account/profile/change-password" label="Change password" />
+					<AccountSidebarLink
+						to="/account/profile"
+						slug="profile"
+						label="My profile"
+					>
+						<AccountSidebarSubLink
+							to="/account/profile/change-password"
+							label="Change password"
+						/>
 					</AccountSidebarLink>
-					<AccountSidebarLink to="/account/details" slug="account" label="Account settings">
+					<AccountSidebarLink
+						to="/account/details"
+						slug="account"
+						label="Account settings"
+					>
 						{accountsLinks.length > 0
 							? accountsLinks
 							: [
@@ -115,14 +136,23 @@ class AccountSidebar extends React.Component {
 							]}
 					</AccountSidebarLink>
 					{subscription
-						&& subscription.quantity > 1
-						&& <AccountSidebarLink
+						&& subscription.quantity > 1 && (
+						<AccountSidebarLink
 							to="/account/organization"
 							slug="organization"
 							label="Manage sub users"
-						/>}
-					<AccountSidebarLink to="/account/prototypo-library" slug="developers" label="Developers" />
-					<AccountSidebarLink to="/account/billing" slug="billing" label="Billing history" />
+						/>
+					)}
+					<AccountSidebarLink
+						to="/account/prototypo-library"
+						slug="developers"
+						label="Developers"
+					/>
+					<AccountSidebarLink
+						to="/account/billing"
+						slug="billing"
+						label="Billing history"
+					/>
 				</ul>
 			</div>
 		);

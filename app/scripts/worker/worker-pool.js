@@ -8,7 +8,7 @@ const randomUuid = [];
 let randomUuidIndex = 0;
 
 for (let i = 0; i < RANDOM_ID_POOL_LENGTH; i++) {
-	const uuid = (Math.random() * 10000) + (Math.random() * 100) + Math.random();
+	const uuid = Math.random() * 10000 + Math.random() * 100 + Math.random();
 
 	randomUuid.push(uuid);
 }
@@ -24,8 +24,10 @@ function getRandomUuid() {
 }
 
 export default class WorkerPool {
-	constructor(workerPoolSize = Math.min(4, navigator.hardwareConcurrency - 1 || 2)) {
-		 // Workers for every thread
+	constructor(
+		workerPoolSize = Math.min(4, navigator.hardwareConcurrency - 1 || 2),
+	) {
+		// Workers for every thread
 		const numberOfWorker = workerPoolSize;
 		const ProtoWorker = require('worker-loader?inline!./worker.js'); // eslint-disable-line global-require, no-webpack-loader-syntax
 		let eachJobList = [];
@@ -105,7 +107,11 @@ export default class WorkerPool {
 	}
 
 	areWorkerBusy() {
-		return _reduce(this.workerArray, (acc, worker) => acc && worker.working, true);
+		return _reduce(
+			this.workerArray,
+			(acc, worker) => acc && worker.working,
+			true,
+		);
 	}
 
 	// jobs should be of this form

@@ -2,7 +2,11 @@
 import {gql} from 'react-apollo';
 import JSZip from 'jszip';
 
-import {prototypoStore, undoableStore, fontInstanceStore} from '../stores/creation.stores';
+import {
+	prototypoStore,
+	undoableStore,
+	fontInstanceStore,
+} from '../stores/creation.stores';
 import LocalServer from '../stores/local-server.stores';
 import LocalClient from '../stores/local-client.stores';
 import {FontValues} from '../services/values.services';
@@ -36,18 +40,17 @@ function triggerDownload(arrayBuffer, filename) {
 		}, 100);
 	};
 
-	reader.readAsDataURL(new Blob(
-		[new DataView(arrayBuffer)],
-		{type: 'font/opentype'},
-	));
+	reader.readAsDataURL(
+		new Blob([new DataView(arrayBuffer)], {type: 'font/opentype'}),
+	);
 }
 
 /**
-*	Checks for export authorization for a given (plan,credits) couple
-*	@param {string} the current user's plan
-*	@param {number} the current user's credit amount
-*	@return {boolean} wether the user is authorized to export or not
-*/
+ *	Checks for export authorization for a given (plan,credits) couple
+ *	@param {string} the current user's plan
+ *	@param {number} the current user's credit amount
+ *	@return {boolean} wether the user is authorized to export or not
+ */
 function exportAuthorized(plan, credits) {
 	const currentCreditCost = prototypoStore.get('currentCreditCost');
 	const paidPlan = plan.indexOf('free_') === -1;
@@ -65,8 +68,8 @@ function exportAuthorized(plan, credits) {
 }
 
 /**
-*	Dispatches an event that will spend credits (to be done on export success callback)
-*/
+ *	Dispatches an event that will spend credits (to be done on export success callback)
+ */
 function spendCreditsAction() {
 	const plan = HoodieApi.instance.plan;
 
@@ -79,12 +82,18 @@ function spendCreditsAction() {
 
 export default {
 	'/exporting': ({exporting, errorExport}) => {
-		const patch = prototypoStore.set('export', exporting).set('errorExport', errorExport).commit();
+		const patch = prototypoStore
+			.set('export', exporting)
+			.set('errorExport', errorExport)
+			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/export-otf': async ({
-		merged = true, familyName = 'font', variantName = 'regular', exportAs,
+		merged = true,
+		familyName = 'font',
+		variantName = 'regular',
+		exportAs,
 	}) => {
 		const exporting = prototypoStore.get('export');
 
@@ -103,7 +112,10 @@ export default {
 		localClient.dispatchAction('/exporting', {exporting: true});
 
 		exportingError = setTimeout(() => {
-			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
+			localClient.dispatchAction('/exporting', {
+				exporting: false,
+				errorExport: true,
+			});
 		}, 10000);
 
 		let family;
@@ -114,8 +126,12 @@ export default {
 			style = variantName;
 		}
 		else {
-			family = prototypoStore.get('family').name ? prototypoStore.get('family').name.replace(/\s/g, '-') : familyName;
-			style = prototypoStore.get('variant').name ? prototypoStore.get('variant').name.replace(/\s/g, '-') : variantName;
+			family = prototypoStore.get('family').name
+				? prototypoStore.get('family').name.replace(/\s/g, '-')
+				: familyName;
+			style = prototypoStore.get('variant').name
+				? prototypoStore.get('variant').name.replace(/\s/g, '-')
+				: variantName;
 		}
 
 		const name = {
@@ -127,7 +143,9 @@ export default {
 		const values = undoableStore.get('controlsValues');
 		const template = fontInstanceStore.get('templateToLoad');
 		const glyphs = prototypoStore.get('glyphs');
-		const subset = Object.keys(glyphs).filter(key => glyphs[key][0].unicode !== undefined);
+		const subset = Object.keys(glyphs).filter(
+			key => glyphs[key][0].unicode !== undefined,
+		);
 
 		try {
 			const buffer = await fontMediatorInstance.getFontFile(
@@ -211,7 +229,10 @@ export default {
 			return false;
 		}
 
-		const patch = prototypoStore.set('exportAs', exportAs).set('mergedExportAs', merged).commit();
+		const patch = prototypoStore
+			.set('exportAs', exportAs)
+			.set('mergedExportAs', merged)
+			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
@@ -233,7 +254,10 @@ export default {
 		localClient.dispatchAction('/exporting', {exporting: true});
 
 		exportingError = setTimeout(() => {
-			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
+			localClient.dispatchAction('/exporting', {
+				exporting: false,
+				errorExport: true,
+			});
 		}, 10000);
 
 		const family = prototypoStore.get('family').name.replace(/\s/g, '-');
@@ -249,10 +273,12 @@ export default {
 		const values = undoableStore.get('controlsValues');
 		const template = fontInstanceStore.get('templateToLoad');
 		const glyphs = prototypoStore.get('glyphs');
-		const subset = Object.keys(glyphs).filter(key => glyphs[key][0].unicode !== undefined);
+		const subset = Object.keys(glyphs).filter(
+			key => glyphs[key][0].unicode !== undefined,
+		);
 
 		try {
-			 await fontMediatorInstance.openInGlyphr(
+			await fontMediatorInstance.openInGlyphr(
 				name,
 				template,
 				{...values, altList},
@@ -267,9 +293,7 @@ export default {
 		}
 	},
 	// TODO add a spend credit action
-	'/export-family-from-reader': ({
-		result, familyToExport, template, oldDb,
-	}) => {
+	'/export-family-from-reader': ({result, familyToExport, template, oldDb}) => {
 		const a = document.createElement('a');
 		const _URL = window.URL || window.webkitURL;
 
@@ -298,15 +322,17 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', cleanupPatch);
 	},
 	'/export-family-from-blob': ({
-		familyToExport, oldDb, blobBuffers, template,
+		familyToExport,
+		oldDb,
+		blobBuffers,
+		template,
 	}) => {
 		const zip = new JSZip();
 
 		blobBuffers.forEach(({buffer, variant}) => {
-			const variantPatch = prototypoStore.set(
-				'exportedVariant',
-				prototypoStore.get('exportedVariant') + 1,
-			).commit();
+			const variantPatch = prototypoStore
+				.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
+				.commit();
 
 			localServer.dispatchUpdate('/prototypoStore', variantPatch);
 			zip.file(`${variant}.otf`, buffer, {binary: true});
@@ -325,13 +351,17 @@ export default {
 		reader.readAsDataURL(zip.generate({type: 'blob'}));
 	},
 	'/export-family-from-values': ({
-		familyToExport, valueArray, oldDb, template,
+		familyToExport,
+		valueArray,
+		oldDb,
+		template,
 	}) => {
 		const blobs = [];
 
 		valueArray.forEach((value) => {
 			const blob = fontInstance.getBlob(
-				null, {
+				null,
+				{
 					family: familyToExport.name,
 					style: value.currVariant.name,
 				},
@@ -355,9 +385,7 @@ export default {
 		spendCreditsAction();
 	},
 	// TODO add a spend credit action
-	'/export-family-from-reader': ({
-		result, familyToExport, template, oldDb,
-	}) => {
+	'/export-family-from-reader': ({result, familyToExport, template, oldDb}) => {
 		const a = document.createElement('a');
 		const _URL = window.URL || window.webkitURL;
 
@@ -386,15 +414,17 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', cleanupPatch);
 	},
 	'/export-family-from-blob': ({
-		familyToExport, oldDb, blobBuffers, template,
+		familyToExport,
+		oldDb,
+		blobBuffers,
+		template,
 	}) => {
 		const zip = new JSZip();
 
 		blobBuffers.forEach(({buffer, variant}) => {
-			const variantPatch = prototypoStore.set(
-				'exportedVariant',
-				prototypoStore.get('exportedVariant') + 1,
-			).commit();
+			const variantPatch = prototypoStore
+				.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
+				.commit();
 
 			localServer.dispatchUpdate('/prototypoStore', variantPatch);
 			zip.file(`${variant}.otf`, buffer, {binary: true});
@@ -413,13 +443,17 @@ export default {
 		reader.readAsDataURL(zip.generate({type: 'blob'}));
 	},
 	'/export-family-from-values': ({
-		familyToExport, valueArray, oldDb, template,
+		familyToExport,
+		valueArray,
+		oldDb,
+		template,
 	}) => {
 		const blobs = [];
 
 		valueArray.forEach((value) => {
 			const blob = fontInstance.getBlob(
-				null, {
+				null,
+				{
 					family: familyToExport.name,
 					style: value.currVariant.name,
 				},
@@ -440,20 +474,26 @@ export default {
 		});
 	},
 	'/export-family-after-load': ({
-		familyToExport, variants, oldDb, template,
+		familyToExport,
+		variants,
+		oldDb,
+		template,
 	}) => {
 		const values = [];
 
 		for (let i = 0; i < variants.length; i++) {
 			const currVariant = variants[i];
 
-			values.push(FontValues.get({typeface: currVariant.db, variantId: currVariant.id})
-				.then(fontValues => ({
+			values.push(
+				FontValues.get({
+					typeface: currVariant.db,
+					variantId: currVariant.id,
+				}).then(fontValues => ({
 					currVariant,
 					fontValues,
-				})));
+				})),
+			);
 		}
-
 
 		Promise.all(values).then((valueArray) => {
 			localClient.dispatchAction('/export-family-from-values', {
@@ -498,7 +538,10 @@ export default {
 		});
 
 		if (!family) {
-			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
+			localClient.dispatchAction('/exporting', {
+				exporting: false,
+				errorExport: true,
+			});
 			return;
 		}
 
@@ -512,10 +555,9 @@ export default {
 			const zip = new JSZip();
 
 			blobBuffers.forEach(({buffer, variant}) => {
-				const variantPatch = prototypoStore.set(
-					'exportedVariant',
-					prototypoStore.get('exportedVariant') + 1,
-				).commit();
+				const variantPatch = prototypoStore
+					.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
+					.commit();
 
 				localServer.dispatchUpdate('/prototypoStore', variantPatch);
 				zip.file(`${variant}.otf`, buffer, {binary: true});

@@ -22,66 +22,73 @@ window.addEventListener('fluxServer.setup', async () => {
 
 function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
 	const form = userStore.get('addcardForm');
+
 	form.errors = [];
 	form.inError = {};
 	form.loading = true;
 	const cleanPatch = userStore.set('addcardForm', form).commit();
+
 	localServer.dispatchUpdate('/userStore', cleanPatch);
 	return new Promise((resolve, reject) => {
-		window.Stripe.card.createToken({
-			number,
-			cvc,
-			exp_month: expMonth,
-			exp_year: expYear,
-			name: fullname,
-		}, async (status, data) => {
-			if (data.error) {
-				form.loading = false;
-				form.errors.push(data.error.message);
-				const patch = userStore.set('addcardForm', form).commit();
-				localServer.dispatchUpdate('/userStore', patch);
-				reject(data.error.message);
-			}
+		window.Stripe.card.createToken(
+			{
+				number,
+				cvc,
+				exp_month: expMonth,
+				exp_year: expYear,
+				name: fullname,
+			},
+			async (status, data) => {
+				if (data.error) {
+					form.loading = false;
+					form.errors.push(data.error.message);
+					const patch = userStore.set('addcardForm', form).commit();
 
-			// TODO : GraphQL request to get the VAT
+					localServer.dispatchUpdate('/userStore', patch);
+					reject(data.error.message);
+				}
 
-			try {
-				const response = await HoodieApi.updateCustomer({
-					business_vat_id: vat, // Stripe way of storing VAT
-					source: data.id,
-					metadata: {
-						vat_number: vat, // Quaderno way of reading VAT
-					},
-				});
+				// TODO : GraphQL request to get the VAT
 
-				/* DEPRECATED Backward compatibility, should be removed when every component uses the cards property in userStore */
-				let patch = userStore.set('cards', response.sources.data).commit();
+				try {
+					const response = await HoodieApi.updateCustomer({
+						business_vat_id: vat, // Stripe way of storing VAT
+						source: data.id,
+						metadata: {
+							vat_number: vat, // Quaderno way of reading VAT
+						},
+					});
 
-				localServer.dispatchUpdate('/userStore', patch);
+					/* DEPRECATED Backward compatibility, should be removed when every component uses the cards property in userStore */
+					let patch = userStore.set('cards', response.sources.data).commit();
 
-				form.loading = false;
-				patch = userStore.set('addcardForm', form).commit();
-				localServer.dispatchUpdate('/userStore', patch);
+					localServer.dispatchUpdate('/userStore', patch);
 
-				resolve(data.card);
-			}
-			catch (err) {
-				form.loading = false;
-				form.errors.push(err);
-				const patch = userStore.set('addcardForm', form).commit();
-				localServer.dispatchUpdate('/userStore', patch);
-				reject(err);
-			}
-		});
+					form.loading = false;
+					patch = userStore.set('addcardForm', form).commit();
+					localServer.dispatchUpdate('/userStore', patch);
+
+					resolve(data.card);
+				}
+				catch (err) {
+					form.loading = false;
+					form.errors.push(err);
+					const patch = userStore.set('addcardForm', form).commit();
+
+					localServer.dispatchUpdate('/userStore', patch);
+					reject(err);
+				}
+			},
+		);
 	});
 }
 
 /**
-*	Spend credits via hoodie api
-*	@param {object} options - the options of the transaction
-*	@param {number} options.amout - amount of credits to be spent
-*	@returns {promise} promise containing response from hoodie credits spending or an error
-*/
+ *	Spend credits via hoodie api
+ *	@param {object} options - the options of the transaction
+ *	@param {number} options.amout - amount of credits to be spent
+ *	@returns {promise} promise containing response from hoodie credits spending or an error
+ */
 function spendCredits({amount}) {
 	return new Promise(async (resolve, reject) => {
 		if (parseInt(amount) > 0) {
@@ -97,9 +104,7 @@ function spendCredits({amount}) {
 	});
 }
 
-const validateCoupon = debounce((options) => {
-	return localClient.dispatchAction('/validate-coupon', options);
-}, 500);
+const validateCoupon = debounce(options => localClient.dispatchAction('/validate-coupon', options), 500);
 
 export default {
 	'/load-customer-data': ({sources, subscriptions, metadata}) => {
@@ -109,7 +114,9 @@ export default {
 			.set('hasBeenSubscribing', metadata.hasBeenSubscribing || false)
 			.commit();
 
-		const creditsPatch = prototypoStore.set('credits', parseInt(metadata.credits, 10) || 0).commit();
+		const creditsPatch = prototypoStore
+			.set('credits', parseInt(metadata.credits, 10) || 0)
+			.commit();
 
 		localServer.dispatchUpdate('/userStore', userPatch);
 		localServer.dispatchUpdate('/prototypoStore', creditsPatch);
@@ -148,9 +155,18 @@ export default {
 			.commit();
 
 		localServer.dispatchUpdate('/userStore', userPatch);
-
 	},
-	'/sign-up': async ({username, password, firstname, lastname, css = {}, phone, skype, to = '/start', oldQuery = {}}) => {
+	'/sign-up': async ({
+		username,
+		password,
+		firstname,
+		lastname,
+		css = {},
+		phone,
+		skype,
+		to = '/start',
+		oldQuery = {},
+	}) => {
 		const toLocation = {
 			pathname: to,
 			query: oldQuery,
@@ -164,7 +180,7 @@ export default {
 
 		localServer.dispatchUpdate('/userStore', cleanPatch);
 
-		//Check each input for error
+		// Check each input for error
 		if (!username || !password || !firstname) {
 			form.inError = {
 				username: !username,
@@ -185,7 +201,7 @@ export default {
 		}
 
 		if (password.length < 8) {
-			//password is not long enough
+			// password is not long enough
 			form.inError = {
 				password: true,
 			};
@@ -235,7 +251,10 @@ export default {
 			fbq('track', 'Lead');
 			localServer.dispatchUpdate('/userStore', endPatch);
 
-			if (toLocation.pathname === '/dashboard' || toLocation.pathname === '/start') {
+			if (
+				toLocation.pathname === '/dashboard'
+				|| toLocation.pathname === '/start'
+			) {
 				await loadStuff();
 				hashHistory.push(toLocation);
 			}
@@ -298,7 +317,10 @@ export default {
 
 		return localServer.dispatchUpdate('/userStore', patch);
 	},
-	'/confirm-plan': ({plan, pathQuery = {pathname: '/account/create/add-card'}}) => {
+	'/confirm-plan': ({
+		plan,
+		pathQuery = {pathname: '/account/create/add-card'},
+	}) => {
 		const form = userStore.get('choosePlanForm');
 
 		form.error = undefined;
@@ -351,9 +373,9 @@ export default {
 		const form = userStore.get('confirmation');
 
 		const hasBeenSubscribing = userStore.get('hasBeenSubscribing');
-		let coupon = userStore.get('choosePlanForm').couponValue;
+		const coupon = userStore.get('choosePlanForm').couponValue;
 		const validCoupon = userStore.get('choosePlanForm').validCoupon;
-		const { fullname, number, expMonth, expYear, cvc } = card || {};
+		const {fullname, number, expMonth, expYear, cvc} = card || {};
 
 		form.errors = [];
 		form.loading = true;
@@ -364,11 +386,17 @@ export default {
 		const cards = userStore.get('cards');
 		let cardCountry = cards[0] ? cards[0].country : undefined;
 
-		if (!cardCountry && (validCoupon && !validCoupon.shouldSkipCard) && (!fullname || !number || !expMonth || !expYear || !cvc)) {
+		if (
+			!cardCountry
+			&& (validCoupon && !validCoupon.shouldSkipCard)
+			&& (!fullname || !number || !expMonth || !expYear || !cvc)
+		) {
 			const requiredFields = [fullname, number, expMonth, expYear, cvc];
-			const errorText = requiredFields.reduce((sum, field) => {
-				return sum + !!field;
-			}).length > 1 ? 'These fields are' : 'This field is';
+			const errorText
+				= requiredFields.reduce((sum, field) => sum + !!field).length > 1
+					? 'These fields are'
+					: 'This field is';
+
 			form.errors.push(`${errorText} required`);
 			form.loading = false;
 			const patch = userStore.set('confirmation', form).commit();
@@ -399,6 +427,7 @@ export default {
 				.commit();
 
 			const transacId = `${plan}_${data.id}`;
+
 			ga('ecommerce:addTransaction', {
 				id: transacId,
 				affiliation: 'Prototypo',
@@ -432,24 +461,28 @@ export default {
 		catch (err) {
 			trackJs.track(err);
 
-			if ((/no such coupon/i).test(err.message)) {
-				form.errors.push('This coupon appears to no longer be valid, please contact us.');
+			if (/no such coupon/i.test(err.message)) {
+				form.errors.push(
+					'This coupon appears to no longer be valid, please contact us.',
+				);
 			}
 			if (typeof err === 'string') {
 				form.errors.push(err);
 			}
 			if (/no attached payment source/i.test(err.message)) {
-				form.errors.push('Payment details appear to be invalid, please contact us.');
+				form.errors.push(
+					'Payment details appear to be invalid, please contact us.',
+				);
 			}
 			else {
-				form.errors.push('Unexpected error, please contact us at support@prototypo.io if you don\'t know how to solve it');
+				form.errors.push(
+					"Unexpected error, please contact us at support@prototypo.io if you don't know how to solve it",
+				);
 				form.errors.push(err.message);
 			}
 
 			form.loading = false;
-			const patch = userStore
-				.set('confirmation', form)
-				.commit();
+			const patch = userStore.set('confirmation', form).commit();
 
 			localServer.dispatchUpdate('/userStore', patch);
 		}
@@ -457,9 +490,11 @@ export default {
 	'/spend-credits': async (options) => {
 		const {credits} = await spendCredits(options);
 
-		localClient.dispatchAction('/store-value', {spendCreditsNewCreditAmount: credits});
+		localClient.dispatchAction('/store-value', {
+			spendCreditsNewCreditAmount: credits,
+		});
 		window.Intercom('update', {
-			'export_credits': credits,
+			export_credits: credits,
 		});
 	},
 };

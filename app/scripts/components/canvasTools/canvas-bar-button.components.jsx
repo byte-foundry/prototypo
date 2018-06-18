@@ -5,7 +5,9 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 export default class CanvasBarButton extends React.Component {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 	}
 
 	render() {
@@ -16,9 +18,12 @@ export default class CanvasBarButton extends React.Component {
 		});
 
 		return (
-			<div className={classes} onClick={() => {this.props.click(this.props.name);}}>
-			</div>
+			<div
+				className={classes}
+				onClick={() => {
+					this.props.click(this.props.name);
+				}}
+			/>
 		);
 	}
 }
-

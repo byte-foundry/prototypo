@@ -15,9 +15,7 @@ window.addEventListener('fluxServer.setup', () => {
 
 export default {
 	'/load-glyphs': (params) => {
-		const patch = prototypoStore
-			.set('glyphs', params)
-			.commit();
+		const patch = prototypoStore.set('glyphs', params).commit();
 
 		localClient.dispatchAction('/check-glyph-valid', {glyphs: params});
 		localServer.dispatchUpdate('/prototypoStore', patch);

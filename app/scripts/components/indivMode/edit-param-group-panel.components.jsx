@@ -17,36 +17,71 @@ export default class EditParamGroupPanel extends React.Component {
 	}
 
 	saveGroup() {
-		this.client.dispatchAction('/save-param-group', {name: this.refs.name.value});
+		this.client.dispatchAction('/save-param-group', {
+			name: this.refs.name.value,
+		});
 	}
 
 	render() {
-
-		const glyphs = this.props.glyphs.map((glyph) => {
-			return <div key={glyph} onClick={() => { this.removeGlyph(glyph);}} className="edit-param-group-panel-glyph">{String.fromCharCode(glyph)}</div>;
-		});
+		const glyphs = this.props.glyphs.map(glyph => (
+			<div
+				key={glyph}
+				onClick={() => {
+					this.removeGlyph(glyph);
+				}}
+				className="edit-param-group-panel-glyph"
+			>
+				{String.fromCharCode(glyph)}
+			</div>
+		));
 
 		const error = this.props.errorEdit ? (
 			<div className="create-param-group-panel-error">
-				<span className="create-param-group-panel-error-message">{this.props.errorEdit}</span>
+				<span className="create-param-group-panel-error-message">
+					{this.props.errorEdit}
+				</span>
 			</div>
-		) : false;
+		) : (
+			false
+		);
 
 		return (
 			<div className="edit-param-group-panel">
 				Editing group
-				<input type="text" ref="name" className="edit-param-group-panel-input" defaultValue={this.props.groupName}></input>
-				<p>
-					Glyphs in this group
-				</p>
-				<div className="delete-param-group-glyphs">
-					{glyphs}
-				</div>
-				<button className="create-param-group-form-add-glyph" onClick={(e) => { this.toggleGlyphs(e); }}>Add multiple glyph to this group</button>
+				<input
+					type="text"
+					ref="name"
+					className="edit-param-group-panel-input"
+					defaultValue={this.props.groupName}
+				/>
+				<p>Glyphs in this group</p>
+				<div className="delete-param-group-glyphs">{glyphs}</div>
+				<button
+					className="create-param-group-form-add-glyph"
+					onClick={(e) => {
+						this.toggleGlyphs(e);
+					}}
+				>
+					Add multiple glyph to this group
+				</button>
 				{error}
 				<div className="create-param-group-form-buttons">
-					<button className="create-param-group-form-buttons-cancel" onClick={() => {this.client.dispatchAction('/edit-param-group', false);}}>Cancel</button>
-					<button className="create-param-group-form-buttons-submit" onClick={() => {this.saveGroup();}}>Save</button>
+					<button
+						className="create-param-group-form-buttons-cancel"
+						onClick={() => {
+							this.client.dispatchAction('/edit-param-group', false);
+						}}
+					>
+						Cancel
+					</button>
+					<button
+						className="create-param-group-form-buttons-submit"
+						onClick={() => {
+							this.saveGroup();
+						}}
+					>
+						Save
+					</button>
 				</div>
 			</div>
 		);
