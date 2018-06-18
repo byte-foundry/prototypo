@@ -35,6 +35,7 @@ export default class PrototypoCanvas extends React.Component {
 			uiRuler: true,
 			shadowFile: '',
 			glyphViewMatrix: {},
+			selectedItems: [],
 		};
 		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
 			this,
@@ -676,6 +677,21 @@ export default class PrototypoCanvas extends React.Component {
 				false
 			);
 
+		const isSpacingSelected
+			= selectedItems.length > 0
+			&& selectedItems[0].type === toileType.SPACING_HANDLE;
+		const isNodeSelected
+			= selectedItems.length > 0
+			&& [
+				toileType.NODE,
+				toileType.NODE_IN,
+				toileType.NODE_OUT,
+				toileType.NODE_SKELETON,
+				toileType.CONTOUR_NODE,
+				toileType.CONTOUR_NODE_IN,
+				toileType.CONTOUR_NODE_OUT,
+			].includes(selectedItems[0].type);
+
 		return (
 			<div
 				style={this.props.style}
@@ -704,21 +720,12 @@ export default class PrototypoCanvas extends React.Component {
 					</button>
 					<button
 						className={`prototypo-canvas-reset-button ${
-							this.state.selectedItems && this.state.selectedItems.length > 0
-								? ''
-								: 'disabled'
+							isSpacingSelected || isNodeSelected ? '' : 'disabled'
 						}`}
 						onClick={this.resetPoints}
-						disabled={
-							!(this.state.selectedItems && this.state.selectedItems.length)
-						}
+						disabled={!(isSpacingSelected || isNodeSelected)}
 					>
-						Reset{' '}
-						{this.state.selectedItems
-						&& this.state.selectedItems.length > 0
-						&& this.state.selectedItems[0].type === toileType.SPACING_HANDLE
-							? 'spacing'
-							: 'point'}
+						Reset {isSpacingSelected ? 'spacing' : 'point'}
 					</button>
 				</div>
 				{shadowButton}
