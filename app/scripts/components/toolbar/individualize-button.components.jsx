@@ -1,17 +1,14 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import Classnames from 'classnames';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
 export default class IndividualizeButton extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
 	}
 
 	componentWillMount() {
