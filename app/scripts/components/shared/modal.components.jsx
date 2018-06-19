@@ -7,7 +7,9 @@ import Log from '../../services/log.services.js';
 export default class Modal extends React.Component {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 		this.onBackdropClick = this.onBackdropClick.bind(this);
 	}
 
@@ -16,7 +18,7 @@ export default class Modal extends React.Component {
 	}
 
 	onBackdropClick(e) {
-		if(e.target !== this.refs.backdrop) {
+		if (e.target !== this.refs.backdrop) {
 			return;
 		}
 
@@ -28,9 +30,7 @@ export default class Modal extends React.Component {
 	render() {
 		return (
 			<div className="modal" onClick={this.onBackdropClick} ref="backdrop">
-				<div className="modal-container">
-					{this.props.children}
-				</div>
+				<div className="modal-container">{this.props.children}</div>
 			</div>
 		);
 	}

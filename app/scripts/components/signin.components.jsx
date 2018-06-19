@@ -85,7 +85,9 @@ export class Signin extends React.Component {
 			}
 			else {
 				window.trackJs.track(err);
-				errors.push('An unexpected error occured, please contact support@prototypo.io and mention your current email');
+				errors.push(
+					'An unexpected error occured, please contact support@prototypo.io and mention your current email',
+				);
 			}
 
 			this.setState({loading: false, errors, inError: {}});
@@ -93,7 +95,9 @@ export class Signin extends React.Component {
 	}
 
 	render() {
-		const errors = this.state.errors.map(error => <FormError errorText={error} />);
+		const errors = this.state.errors.map(error => (
+			<FormError errorText={error} />
+		));
 
 		return (
 			<div className="sign-in sign-base">
@@ -104,8 +108,14 @@ export class Signin extends React.Component {
 				<h1 className="account-dashboard-page-title">Welcome back.</h1>
 				<div className="sign-in-container">
 					<div className="sign-in-oauth">
-						<label className="sign-in-oauth-label" htmlFor="oauth">Sign in with</label>
-						<OAuthButtons id="oauth" onLogin={this.signIn} className="sign-in-oauth-buttons" />
+						<label className="sign-in-oauth-label" htmlFor="oauth">
+							Sign in with
+						</label>
+						<OAuthButtons
+							id="oauth"
+							onLogin={this.signIn}
+							className="sign-in-oauth-buttons"
+						/>
 					</div>
 					<div className="sign-in-separator">
 						<hr className="sign-in-separator-line" />
@@ -116,7 +126,9 @@ export class Signin extends React.Component {
 							id="email-sign-in"
 							name="email-sign-in"
 							type="email"
-							ref={(node) => {this.emailInput = node;}}
+							ref={(node) => {
+								this.emailInput = node;
+							}}
 							placeholder="Email"
 							required
 							label="Email"
@@ -125,7 +137,9 @@ export class Signin extends React.Component {
 							label="Password"
 							id="password-sign-in"
 							name="password-sign-in"
-							ref={(node) => {this.passwordInput = node;}}
+							ref={(node) => {
+								this.passwordInput = node;
+							}}
 							type="password"
 							required
 							placeholder="Password"
@@ -137,7 +151,10 @@ export class Signin extends React.Component {
 							I don't have an account
 						</Link>
 						{errors}
-						<AccountValidationButton label="Sign in" loading={this.state.loading} />
+						<AccountValidationButton
+							label="Sign in"
+							loading={this.state.loading}
+						/>
 					</form>
 				</div>
 			</div>
@@ -155,11 +172,12 @@ const authenticateEmailUserMutation = gql`
 
 export default graphql(authenticateEmailUserMutation, {
 	props: ({mutate}) => ({
-		authenticateEmailUser: (email, password) => mutate({
-			variables: {
-				email,
-				password,
-			},
-		}),
+		authenticateEmailUser: (email, password) =>
+			mutate({
+				variables: {
+					email,
+					password,
+				},
+			}),
 	}),
 })(withRouter(Signin));

@@ -7,10 +7,8 @@ export default class CloseButton extends React.PureComponent {
 		}
 
 		return (
-			<div
-				onClick={this.props.click}
-				className="close-button">
-				<div className="close-button-icon"></div>
+			<div onClick={this.props.click} className="close-button">
+				<div className="close-button-icon" />
 			</div>
 		);
 	}

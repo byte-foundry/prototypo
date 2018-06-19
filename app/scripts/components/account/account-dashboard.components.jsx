@@ -14,13 +14,11 @@ export class AccountDashboard extends React.Component {
 	}
 
 	returnToDashboard() {
-		this.props.history.push('/dashboard');
+		this.props.router.push('/dashboard');
 	}
 
 	render() {
-		const {
-			firstName, location, route, children,
-		} = this.props;
+		const {firstName, location, route, children} = this.props;
 
 		const titles = {
 			home: 'My account',
@@ -51,7 +49,9 @@ export class AccountDashboard extends React.Component {
 		};
 		const title = titles[route.name];
 		const subtitle
-			= subtitles[location.pathname.split('/')[location.pathname.split('/').length - 1]];
+			= subtitles[
+				location.pathname.split('/')[location.pathname.split('/').length - 1]
+			];
 
 		return (
 			<div className="account-dashboard">
@@ -59,9 +59,7 @@ export class AccountDashboard extends React.Component {
 					<div className="account-dashboard-icon" />
 				</Link>
 				<div className="account-header">
-					<h1 className="account-title">
-						{title}
-					</h1>
+					<h1 className="account-title">{title}</h1>
 					<div className="account-header-right">
 						<Logout
 							render={props => (
@@ -75,14 +73,17 @@ export class AccountDashboard extends React.Component {
 								</Button>
 							)}
 						/>
-						<button className="account-dashboard-back-icon" onClick={this.returnToDashboard} />
+						<button
+							className="account-dashboard-back-icon"
+							onClick={this.returnToDashboard}
+						/>
 					</div>
 				</div>
-				{subtitle === ''
-					? false
-					: <h1 className="account-dashboard-page-title">
-						{subtitle}
-					</h1>}
+				{subtitle === '' ? (
+					false
+				) : (
+					<h1 className="account-dashboard-page-title">{subtitle}</h1>
+				)}
 				<div className="account-dashboard-container">
 					<AccountSidebar />
 					{children}

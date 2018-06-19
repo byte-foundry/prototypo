@@ -5,13 +5,15 @@ import Lifespan from 'lifespan';
 import classNames from 'classnames';
 
 /**
-*	Component : the handlegrip (green bar) surrounding the letter
-*	@extends React.Component
-*/
+ *	Component : the handlegrip (green bar) surrounding the letter
+ *	@extends React.Component
+ */
 export default class HandlegripBar extends React.Component {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 
 		// function bindings
 		this.handleDown = this.handleDown.bind(this);
@@ -31,11 +33,16 @@ export default class HandlegripBar extends React.Component {
 			return;
 		}
 		// tells everyone that the tracking begins, and on which side
-		this.client.dispatchAction('/store-value', {uiSpacingTracking: this.props.side});
+		this.client.dispatchAction('/store-value', {
+			uiSpacingTracking: this.props.side,
+		});
 
 		const newX = e.pageX || e.screenX;
 
-		this.client.dispatchAction('/store-value-fast', {uiTrackingX: newX, clampedValue: this.props.spacing - this.props.baseSpacing});
+		this.client.dispatchAction('/store-value-fast', {
+			uiTrackingX: newX,
+			clampedValue: this.props.spacing - this.props.baseSpacing,
+		});
 
 		e.stopPropagation();
 	}
@@ -48,7 +55,10 @@ export default class HandlegripBar extends React.Component {
 			'handlegrip-right': !left,
 		});
 
-		let text = (this.props.clampedValue === undefined ? this.props.spacing : this.props.clampedValue + this.props.baseSpacing) || '...';
+		let text
+			= (this.props.clampedValue === undefined
+				? this.props.spacing
+				: this.props.clampedValue + this.props.baseSpacing) || '...';
 
 		text = text instanceof Number ? text : parseInt(text);
 		const offset = text - this.props.baseSpacing;

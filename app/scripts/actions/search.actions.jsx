@@ -33,7 +33,10 @@ export default {
 			localServer.dispatchUpdate('/prototypoStore', patch);
 		}
 		else {
-			const patch = prototypoStore.set('savedSearchError', 'This search already exists');
+			const patch = prototypoStore.set(
+				'savedSearchError',
+				'This search already exists',
+			);
 
 			localServer.dispatchUpdate('/prototypoStore', patch);
 		}
@@ -41,9 +44,7 @@ export default {
 	},
 	'/toggle-pinned-search': ({query}) => {
 		const pinned = _xor(prototypoStore.get('pinnedSearch'), [query]);
-		const patch = prototypoStore
-			.set('pinnedSearch', pinned)
-			.commit();
+		const patch = prototypoStore.set('pinnedSearch', pinned).commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 		saveAppValues();

@@ -23,15 +23,16 @@ export default class GlyphList extends React.PureComponent {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/undoableStore', this.lifespan)
-		.onUpdate((head) => {
-			this.setState({
-				manualChanges: head.toJS().d.controlsValues.manualChanges,
+		this.client
+			.getStore('/undoableStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					manualChanges: head.toJS().d.controlsValues.manualChanges,
+				});
+			})
+			.onDelete(() => {
+				this.setState(undefined);
 			});
-		})
-		.onDelete(() => {
-			this.setState(undefined);
-		});
 	}
 
 	componentWillUnmount() {
@@ -42,7 +43,9 @@ export default class GlyphList extends React.PureComponent {
 		if (this.state.manualChanges) {
 			const manualChangesGlyph = this.state.manualChanges[glyph[0].name];
 
-			return (manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0);
+			return (
+				manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0
+			);
 		}
 	}
 
@@ -51,15 +54,11 @@ export default class GlyphList extends React.PureComponent {
 		const fields = [
 			{
 				name: 'glyphName',
-				comp: (field, srch) => {
-					return field.indexOf(srch) !== -1;
-				},
+				comp: (field, srch) => field.indexOf(srch) !== -1,
 			},
 			{
 				name: 'unicode',
-				comp: (field, srch) => {
-					return field.indexOf(srch) !== -1;
-				},
+				comp: (field, srch) => field.indexOf(srch) !== -1,
 			},
 			{
 				name: 'characterName',
@@ -79,14 +78,13 @@ export default class GlyphList extends React.PureComponent {
 			let tokenOk = false;
 
 			fields.forEach((field) => {
-				tokenOk = tokenOk
-				|| (
-					glyph[0][field.name]
+				tokenOk
+					= tokenOk
+					|| (glyph[0][field.name]
 						&& field.comp(
 							glyph[0][field.name].toString().toLowerCase(),
-							token.toLowerCase()
-						)
-				);
+							token.toLowerCase(),
+						));
 			});
 			isOk = isOk && tokenOk;
 		});
@@ -103,25 +101,37 @@ export default class GlyphList extends React.PureComponent {
 			if (glyph[0].unicode) {
 				return (
 					glyph[0].tags.indexOf(this.props.selectedTag) !== -1
-					&& (
-						!this.props.search || this.isGlyphInSearch(glyph, this.props.search)
-					)
+					&& (!this.props.search || this.isGlyphInSearch(glyph, this.props.search))
+				);
+			}
+			return false;
+		});
+		const glyphComps = [];
+
+		_forOwn(glyphs, (glyph, unicode) => {
+			if (selectedGlyph === unicode) {
+				glyphComps.push(
+					<Glyph
+						glyph={glyph}
+						selected={true}
+						unicode={unicode}
+						key={unicode}
+						manualEdited={this.isManualEdited(glyph)}
+					/>,
 				);
 			}
 			else {
-				return false;
+				glyphComps.push(
+					<Glyph
+						glyph={glyph}
+						selected={false}
+						unicode={unicode}
+						key={unicode}
+						manualEdited={this.isManualEdited(glyph)}
+					/>,
+				);
 			}
 		});
-		const glyphComps = []
-		_forOwn(glyphs, (glyph, unicode) => {
-			if (selectedGlyph === unicode) {
-				glyphComps.push(<Glyph glyph={glyph} selected={true} unicode={unicode} key={unicode} manualEdited={this.isManualEdited(glyph)} />);
-			}
-			else {
-				glyphComps.push(<Glyph glyph={glyph} selected={false} unicode={unicode} key={unicode} manualEdited={this.isManualEdited(glyph)} />);
-			}
-
-		})
 
 		return (
 			<div className="glyph-list clearfix">
@@ -131,13 +141,12 @@ export default class GlyphList extends React.PureComponent {
 					tags={this.props.tags}
 					savedSearch={this.props.savedSearch}
 					selectedSearch={this.props.search}
-					pinnedSearch={this.props.pinnedSearch}/>
+					pinnedSearch={this.props.pinnedSearch}
+				/>
 				<ScrollArea horizontal={false}>
-					<div className="glyph-list-glyphs">
-						{glyphComps}
-					</div>
+					<div className="glyph-list-glyphs">{glyphComps}</div>
 				</ScrollArea>
-				<SearchGlyphList/>
+				<SearchGlyphList />
 			</div>
 		);
 	}

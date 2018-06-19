@@ -7,19 +7,23 @@ const networkInterface = createBatchingNetworkInterface({
 	batchInterval: 10,
 });
 
-networkInterface.use([{
-	applyBatchMiddleware(req, next) {
-		if (!req.options.headers) {
-			req.options.headers = {};
-		}
+networkInterface.use([
+	{
+		applyBatchMiddleware(req, next) {
+			if (!req.options.headers) {
+				req.options.headers = {};
+			}
 
-		// get the authentication token from local storage if it exists
-		if (localStorage.getItem('graphcoolToken')) {
-			req.options.headers.authorization = `Bearer ${localStorage.getItem('graphcoolToken')}`;
-		}
-		next();
+			// get the authentication token from local storage if it exists
+			if (localStorage.getItem('graphcoolToken')) {
+				req.options.headers.authorization = `Bearer ${localStorage.getItem(
+					'graphcoolToken',
+				)}`;
+			}
+			next();
+		},
 	},
-}]);
+]);
 
 const apolloClient = new ApolloClient({
 	networkInterface,

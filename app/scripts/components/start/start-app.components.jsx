@@ -17,9 +17,7 @@ const FamilyRow = ({open, selected, ...family}) => {
 			onDoubleClick={openFamily}
 			className={`load-project-project-item ${selected ? 'selected' : ''}`}
 		>
-			<span className="load-project-project-item-name">
-				{family.name}
-			</span>
+			<span className="load-project-project-item-name">{family.name}</span>
 			<Button
 				className="load-project-project-item-button"
 				onClick={openFamily}
@@ -38,6 +36,7 @@ class StartApp extends React.PureComponent {
 
 		this.returnToDashboard = this.returnToDashboard.bind(this);
 		this.open = this.open.bind(this);
+		this.create = this.create.bind(this);
 	}
 
 	async componentWillMount() {
@@ -51,7 +50,10 @@ class StartApp extends React.PureComponent {
 
 			if (collectionSelectedFamily === {} && fonts[0]) {
 				this.client.dispatchAction('/select-family-collection', fonts[0]);
-				this.client.dispatchAction('/select-variant-collection', fonts[0].variants[0]);
+				this.client.dispatchAction(
+					'/select-variant-collection',
+					fonts[0].variants[0],
+				);
 			}
 		});
 		this.client.dispatchAction('/store-value', {uiShowCollection: false});
@@ -66,9 +68,19 @@ class StartApp extends React.PureComponent {
 	}
 
 	open(family) {
-		this.client.dispatchAction('/select-variant', {variant: family.variants[0], family});
-
+		this.client.dispatchAction('/select-variant', {
+			variant: family.variants[0],
+			family,
+		});
 		this.props.router.push('/dashboard');
+	}
+	create(family) {
+		this.client.dispatchAction('/select-variant', {
+			variant: family.variants[0],
+			family,
+		});
+		this.client.dispatchAction('/store-value', {onboardingFrom: 'start'});
+		this.props.router.push('/onboarding');
 	}
 
 	render() {
@@ -79,7 +91,11 @@ class StartApp extends React.PureComponent {
 		}
 
 		return (
-			<div className={`start-app ${families && families.length ? '' : 'noproject'}`}>
+			<div
+				className={`start-app ${
+					families && families.length ? '' : 'noproject'
+				}`}
+			>
 				<div className="go-to-account">
 					<Link className="go-to-account-link" to="/account/home">
 						Go to my account instead →
@@ -88,7 +104,11 @@ class StartApp extends React.PureComponent {
 				<div className="start-app-container">
 					<div className="start-base">
 						<div className="start-base-create">
-							<AddFamily start="true" firstTime={!families.length} onCreateFamily={this.open} />
+							<AddFamily
+								start="true"
+								firstTime={!families.length}
+								onCreateFamily={this.create}
+							/>
 						</div>
 						<div className="start-base-projects">
 							<div className="load-project">
@@ -97,8 +117,9 @@ class StartApp extends React.PureComponent {
 									Continue recent project
 								</label>
 								<ul className="load-project-project">
-									{families.map(family =>
-										<FamilyRow key={family.id} open={this.open} {...family} />)}
+									{families.map(family => (
+										<FamilyRow key={family.id} open={this.open} {...family} />
+									))}
 								</ul>
 							</div>
 						</div>
@@ -114,10 +135,12 @@ StartApp.defaultProps = {
 };
 
 StartApp.propTypes = {
-	families: PropTypes.arrayOf(PropTypes.shape({
-		id: PropTypes.string.isRequired,
-		name: PropTypes.string.isRequired,
-	})),
+	families: PropTypes.arrayOf(
+		PropTypes.shape({
+			id: PropTypes.string.isRequired,
+			name: PropTypes.string.isRequired,
+		}),
+	),
 };
 
 const getUserLibraryQuery = gql`
@@ -150,7 +173,8 @@ export default compose(
 			return {
 				families: library.map((family) => {
 					const selected
-						= appValues.familySelected && family.id === appValues.familySelected.id;
+						= appValues.familySelected
+						&& family.id === appValues.familySelected.id;
 
 					return {
 						...family,

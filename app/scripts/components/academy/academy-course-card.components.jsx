@@ -7,7 +7,11 @@ import ReactMarkdown from 'react-markdown';
 class AcademyCourseCard extends React.PureComponent {
 	render() {
 		const {
-			tutorial, reading, done, numberOfCompletedParts, className,
+			tutorial,
+			reading,
+			done,
+			numberOfCompletedParts,
+			className,
 		} = this.props;
 		const classes = classNames({
 			currentlyreading: reading,
@@ -25,28 +29,30 @@ class AcademyCourseCard extends React.PureComponent {
 							alt={`${tutorial.title} header`}
 						/>{' '}
 						<Link
-							className={`academy-startcourse ${reading ? 'currentlyreading' : ''}`}
+							className={`academy-startcourse ${
+								reading ? 'currentlyreading' : ''
+							}`}
 							to={`/academy/course/${tutorial.slug}`}
 						>
 							{reading ? 'Currently reading' : 'Start course'}
 						</Link>{' '}
 					</div>
 					<div className="academy-course-list-elem-content">
-						<h2>
-							{tutorial.title}
-						</h2>
+						<h2>{tutorial.title}</h2>
 						<ReactMarkdown source={tutorial.header} />
 					</div>
 					<div className="academy-course-list-elem-footer">
-						{tutorial.partCount || done
-							? <div className={`academy-part-count ${done ? 'done' : ''}`}>
+						{tutorial.partCount || done ? (
+							<div className={`academy-part-count ${done ? 'done' : ''}`}>
 								<div className="academy-part-count-progress-wrapper">
 									<span
 										className="academy-part-count-progress-wrapper-progress"
 										style={{
-											width: `${done
-												? 100
-												: numberOfCompletedParts / tutorial.partCount * 100}%`,
+											width: `${
+												done
+													? 100
+													: numberOfCompletedParts / tutorial.partCount * 100
+											}%`,
 										}}
 									/>
 								</div>
@@ -56,14 +62,18 @@ class AcademyCourseCard extends React.PureComponent {
 										: `${numberOfCompletedParts} of ${tutorial.partCount}`}
 								</span>
 							</div>
-							: false}
+						) : (
+							false
+						)}
 						<div className="academy-readingtime">
 							<img src="assets/images/icon-clock.svg" alt="readingTime icon" />{' '}
 							<span>{tutorial.readingTime} min</span>
 						</div>
 						<div className="academy-coursetype">
 							<img
-								src={`assets/images/academy/icon-course-${tutorial.isVideo ? 'video' : 'text'}.svg`}
+								src={`assets/images/academy/icon-course-${
+									tutorial.isVideo ? 'video' : 'text'
+								}.svg`}
 								alt="courseType icon"
 							/>
 						</div>

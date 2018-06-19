@@ -5,7 +5,8 @@ import Constant from '../precursor/Constant';
 import memoize from 'memoize-immutable';
 
 export function constantOrFormula(source, cursor) {
-	if (typeof source === 'object' && source !== null && source._operation) { // eslint-disable-line no-underscore-dangle, max-len
+	if (typeof source === 'object' && source !== null && source._operation) {
+		// eslint-disable-line no-underscore-dangle, max-len
 		return new Formula(source, cursor);
 	}
 	return new Constant(source, cursor);
@@ -45,7 +46,14 @@ export const transformByName = {
 	},
 	rotate(node, deg, center = {x: 0, y: 0}) {
 		const theta = deg;
-		const rotate = [Math.cos(theta), -Math.sin(theta), Math.sin(theta), Math.cos(theta), 0, 0];
+		const rotate = [
+			Math.cos(theta),
+			-Math.sin(theta),
+			Math.sin(theta),
+			Math.cos(theta),
+			0,
+			0,
+		];
 		const matrix = changeTransformOrigin(center, rotate);
 
 		return transform2D(matrix, node);
@@ -78,13 +86,7 @@ export function changeTransformOrigin(origin, transform, z = 1) {
 	const preTransform = [z, 0, 0, z, -origin.x, -origin.y];
 	const postTransform = [z, 0, 0, z, origin.x, origin.y];
 
-	return matrixMul(
-		matrixMul(
-			preTransform,
-			transform,
-		),
-		postTransform,
-	);
+	return matrixMul(matrixMul(preTransform, transform), postTransform);
 }
 
 /* eslint-disable */
@@ -120,7 +122,7 @@ export function transformGlyph(opDone, transformTuples) {
 			var transforms = [
 				...transformTuples,
 				[contour.transforms || [], contour.transformOrigin],
-			]
+			];
 
 			for (var k = 0; k < transforms.length; k++) {
 				var [transform, origin] = transforms[k];
@@ -128,8 +130,7 @@ export function transformGlyph(opDone, transformTuples) {
 					transformNode(node.expandedTo[0], transform, origin);
 					transformNode(node.expandedTo[1], transform, origin);
 					transformNode(node, transform, origin);
-				}
-				else {
+				} else {
 					transformNode(node, transform, origin);
 				}
 			}
@@ -140,7 +141,11 @@ export function transformGlyph(opDone, transformTuples) {
 
 function exeTransformOnNode(name, node, param, origin) {
 	const {x, y} = transformByName[name](node, param, origin);
-	const {x: xBase, y: yBase} = transformByName[name]({x: node.xBase, y: node.yBase}, param, origin);
+	const {x: xBase, y: yBase} = transformByName[name](
+		{x: node.xBase, y: node.yBase},
+		param,
+		origin,
+	);
 
 	node.x = x; // eslint-disable-line no-param-reassign
 	node.y = y; // eslint-disable-line no-param-reassign

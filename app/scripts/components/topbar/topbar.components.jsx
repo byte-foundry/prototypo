@@ -11,7 +11,11 @@ import Log from '../../services/log.services';
 
 import LocalClient from '../../stores/local-client.stores';
 
-import {indivGroupsCreationTutorialLabel, fileTutorialLabel, collectionsTutorialLabel} from '../../helpers/joyride.helpers';
+import {
+	indivGroupsCreationTutorialLabel,
+	fileTutorialLabel,
+	collectionsTutorialLabel,
+} from '../../helpers/joyride.helpers';
 
 import withCountry from '../shared/with-country.components';
 import Price from '../shared/price.components';
@@ -138,7 +142,9 @@ class Topbar extends React.Component {
 	resetAllParams() {
 		this.client.fetch('/prototypoStore').then((typedata) => {
 			const params = typedata.head.toJS().fontParameters;
-			const flattenParams = _flatten(_map(params, paramObject => paramObject.parameters));
+			const flattenParams = _flatten(
+				_map(params, paramObject => paramObject.parameters),
+			);
 			const defaultParams = _transform(
 				flattenParams,
 				(result, param) => {
@@ -147,7 +153,11 @@ class Topbar extends React.Component {
 				{},
 			);
 
-			this.client.dispatchAction('/change-param', {values: defaultParams, demo: true, force: true});
+			this.client.dispatchAction('/change-param', {
+				values: defaultParams,
+				demo: true,
+				force: true,
+			});
 		});
 	}
 
@@ -166,7 +176,10 @@ class Topbar extends React.Component {
 	}
 
 	startTuto() {
-		this.client.dispatchAction('/store-value', {uiOnboard: false, uiOnboardstep: 'welcome'});
+		this.client.dispatchAction('/store-value', {
+			uiOnboard: false,
+			uiOnboardstep: 'welcome',
+		});
 	}
 
 	individualize() {
@@ -190,7 +203,7 @@ class Topbar extends React.Component {
 		}); */
 		this.client.dispatchAction('/store-value', {
 			openGoProModal: true,
-			goProModalBilling: 'monthly',
+			goProModalBilling: 'annually',
 		});
 	}
 
@@ -198,7 +211,9 @@ class Topbar extends React.Component {
 		e.stopPropagation();
 		e.preventDefault();
 		this.client.dispatchAction('/store-value', {firstTimeFile: true});
-		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: fileTutorialLabel});
+		this.client.dispatchAction('/store-value', {
+			uiJoyrideTutorialValue: fileTutorialLabel,
+		});
 		this.client.dispatchAction('/store-value', {topbarItemDisplayed: 1});
 		return false;
 	}
@@ -244,9 +259,10 @@ class Topbar extends React.Component {
 		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
 	}
 
-
 	startFileTutorial() {
-		this.client.dispatchAction('/store-value', {uiJoyrideTutorialValue: fileTutorialLabel});
+		this.client.dispatchAction('/store-value', {
+			uiJoyrideTutorialValue: fileTutorialLabel,
+		});
 	}
 
 	render() {
@@ -254,46 +270,40 @@ class Topbar extends React.Component {
 		const whereAt = this.state.at || 0;
 		const undoDisabled = whereAt < 1;
 		const redoDisabled = whereAt > this.state.eventList.length - 2;
-		const undoText = `Undo ${this.state.eventList.length && !undoDisabled
-			? this.state.eventList[whereAt].label
-			: ''}`;
-		const redoText = `Redo ${redoDisabled ? '' : this.state.eventList[whereAt + 1].label}`;
+		const undoText = `Undo ${
+			this.state.eventList.length && !undoDisabled
+				? this.state.eventList[whereAt].label
+				: ''
+		}`;
+		const redoText = `Redo ${
+			redoDisabled ? '' : this.state.eventList[whereAt + 1].label
+		}`;
 		const credits = this.state.credits; // eslint-disable-line prefer-destructuring
 		const freeAccount = !this.props.manager && !this.state.subscription;
-		const otfExportCost = this.state.creditChoices ? this.state.creditChoices.exportOtf : 0;
+		const otfExportCost = this.state.creditChoices
+			? this.state.creditChoices.exportOtf
+			: 0;
 		const glyphrExportCost = this.state.creditChoices
 			? this.state.creditChoices.exportGlyphr
 			: 0;
 		const exporting = this.state.export && (
-			<TopBarMenuAction
-				name="Exporting..."
-				click={() => {
-
-				}}
-				action
-			/>
+			<TopBarMenuAction name="Exporting..." click={() => {}} action />
 		);
 		const errorExporting = this.state.errorExport && (
 			<TopBarMenuAction
 				name={
-					this.state.errorExport.message ? (
-						this.state.errorExport.message
-					) : (
-						'An error occured during exporting'
-					)
+					this.state.errorExport.message
+						? this.state.errorExport.message
+						: 'An error occured during exporting'
 				}
-				click={() => {
-
-				}}
+				click={() => {}}
 				action
 			/>
 		);
 		const creditExportLabel = !!this.state.credits && (
 			<TopBarMenuAction
 				name={`${this.state.credits} credits`}
-				click={() => {
-
-				}}
+				click={() => {}}
 				action
 				alignRight
 			/>
@@ -302,8 +312,8 @@ class Topbar extends React.Component {
 			<TopBarMenuButton
 				label={
 					<span>
-						GET THE FULL VERSION FOR{' '}
-						<Price amount={this.state.hasBeenSubscribing ? 8.25 : 1} country={this.props.country} />
+						GET THE FULL VERSION FROM{' '}
+						<Price amount={8.25} country={this.props.country} />
 					</span>
 				}
 				noHover
@@ -324,18 +334,18 @@ class Topbar extends React.Component {
 		);
 
 		const academyProgressItem = !loadingAcademyProgress
-		&& academyProgress.lastCourse
-		&& academyProgress[academyProgress.lastCourse] && (
-		<TopBarMenuAcademy
-					course={academyProgress[academyProgress.lastCourse]}
-					setText={this.setAcademyText}
-					clearText={this.clearAcademyText}
-					text={this.state.academyText}
-					id="progress-academy"
-					headerClassName="academy-progress-container"
-					icon={this.getRightAcademyIcon()}
-				/>
-			);
+			&& academyProgress.lastCourse
+			&& academyProgress[academyProgress.lastCourse] && (
+			<TopBarMenuAcademy
+				course={academyProgress[academyProgress.lastCourse]}
+				setText={this.setAcademyText}
+				clearText={this.clearAcademyText}
+				text={this.state.academyText}
+				id="progress-academy"
+				headerClassName="academy-progress-container"
+				icon={this.getRightAcademyIcon()}
+			/>
+		);
 
 		/* const presetSubMenu = this.state.presets
 			? (
@@ -359,7 +369,10 @@ class Topbar extends React.Component {
 			: false; */
 
 		return (
-			<TopBarMenu id="topbar" topbarItemDisplayed={this.state.topbarItemDisplayed}>
+			<TopBarMenu
+				id="topbar"
+				topbarItemDisplayed={this.state.topbarItemDisplayed}
+			>
 				<TopBarMenuIcon
 					className="side-tabs-icon-headers"
 					img="assets/images/prototypo-icon.svg"
@@ -463,7 +476,9 @@ class Topbar extends React.Component {
 						shortcut="ctrl+z"
 						handler={() => {
 							if (!undoDisabled) {
-								this.client.dispatchAction('/go-back', {eventIndex: this.state.at});
+								this.client.dispatchAction('/go-back', {
+									eventIndex: this.state.at,
+								});
 							}
 						}}
 					/>
@@ -474,7 +489,9 @@ class Topbar extends React.Component {
 						shortcut="ctrl+y"
 						handler={() => {
 							if (!redoDisabled) {
-								this.client.dispatchAction('/go-forward', {eventIndex: this.state.at});
+								this.client.dispatchAction('/go-forward', {
+									eventIndex: this.state.at,
+								});
 							}
 						}}
 					/>
@@ -540,7 +557,11 @@ class Topbar extends React.Component {
 							window.open('https://www.prototypo.io/faq', 'faq');
 						}}
 					/>
-					<TopBarMenuDropdownItem name="Academy" id="access-academy" handler={this.showAcademy} />
+					<TopBarMenuDropdownItem
+						name="Academy"
+						id="access-academy"
+						handler={this.showAcademy}
+					/>
 					<TopBarMenuDropdownItem
 						name="Restart collection tutorial"
 						handler={this.resetCollectionTutorial}
@@ -586,7 +607,7 @@ Topbar.propTypes = {
 };
 
 Topbar.contextTypes = {
-	router: React.PropTypes.object.isRequired,
+	router: PropTypes.object.isRequired,
 };
 
 // this should later wrap an TopBarAcademy

@@ -23,7 +23,8 @@ export default class CanvasGlyphInput extends React.PureComponent {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					selected: head.toJS().d.glyphSelected,
@@ -50,7 +51,9 @@ export default class CanvasGlyphInput extends React.PureComponent {
 			}
 			else {
 				this.setState({inputError: true});
-				setTimeout(() => { this.setState({inputError: false}); }, 200);
+				setTimeout(() => {
+					this.setState({inputError: false});
+				}, 200);
 			}
 		}
 	}
@@ -93,8 +96,15 @@ export default class CanvasGlyphInput extends React.PureComponent {
 
 		return (
 			<div className="canvas-menu-item canvas-glyph-input">
-				<div className="canvas-glyph-input-label is-active" onClick={this.toggleView}>Glyphs List</div>
-				<div className={classes} onClick={this.setupGlyphAccess}>{String.fromCharCode(this.state.selected)}</div>
+				<div
+					className="canvas-glyph-input-label is-active"
+					onClick={this.toggleView}
+				>
+					Glyphs List
+				</div>
+				<div className={classes} onClick={this.setupGlyphAccess}>
+					{String.fromCharCode(this.state.selected)}
+				</div>
 			</div>
 		);
 	}

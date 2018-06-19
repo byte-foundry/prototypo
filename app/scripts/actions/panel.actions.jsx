@@ -1,5 +1,10 @@
 import _forOwn from 'lodash/forOwn';
-import {prototypoStore, undoableStore, fastStuffStore, fontInstanceStore} from '../stores/creation.stores.jsx';
+import {
+	prototypoStore,
+	undoableStore,
+	fastStuffStore,
+	fontInstanceStore,
+} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {saveAppValues} from '../helpers/loadValues.helpers.js';
 
@@ -60,13 +65,17 @@ export default {
 		}
 	},
 	'/change-canvas-mode': ({canvasMode}) => {
-		prototypoStore.set('canvasMode', canvasMode).set('oldCanvasMode', undefined);
+		prototypoStore
+			.set('canvasMode', canvasMode)
+			.set('oldCanvasMode', undefined);
 
 		const patch = prototypoStore.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/toggle-canvas-mode': ({canvasMode = prototypoStore.get('oldCanvasMode')}) => {
+	'/toggle-canvas-mode': ({
+		canvasMode = prototypoStore.get('oldCanvasMode'),
+	}) => {
 		prototypoStore.set('oldCanvasMode', prototypoStore.get('canvasMode'));
 		prototypoStore.set('canvasMode', canvasMode);
 

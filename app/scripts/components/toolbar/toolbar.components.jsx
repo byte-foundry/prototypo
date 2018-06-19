@@ -41,7 +41,8 @@ class ViewButtons extends React.PureComponent {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					mode: head.toJS().d.uiMode,
@@ -58,11 +59,10 @@ class ViewButtons extends React.PureComponent {
 
 	toggleView(name) {
 		// if we are closing glyph mode, we want glyph list to be hidden
-		const modes = (
-			name === 'glyph' && this.state.mode.indexOf('glyph') !== -1
+		const modes
+			= name === 'glyph' && this.state.mode.indexOf('glyph') !== -1
 				? _without(this.state.mode, 'list')
-				: this.state.mode
-		);
+				: this.state.mode;
 		const newViewMode = _xor(modes, [name]);
 
 		if (newViewMode.length > 0) {
@@ -75,9 +75,21 @@ class ViewButtons extends React.PureComponent {
 		return (
 			<div className="view-buttons">
 				<div className="view-buttons-label">Views</div>
-				<ViewButton name="glyph" state={this.state.mode.indexOf('glyph') !== -1} click={this.toggleView} />
-				<ViewButton name="word" state={this.state.mode.indexOf('word') !== -1} click={this.toggleView} />
-				<ViewButton name="text" state={this.state.mode.indexOf('text') !== -1} click={this.toggleView} />
+				<ViewButton
+					name="glyph"
+					state={this.state.mode.indexOf('glyph') !== -1}
+					click={this.toggleView}
+				/>
+				<ViewButton
+					name="word"
+					state={this.state.mode.indexOf('word') !== -1}
+					click={this.toggleView}
+				/>
+				<ViewButton
+					name="text"
+					state={this.state.mode.indexOf('text') !== -1}
+					click={this.toggleView}
+				/>
 			</div>
 		);
 	}
@@ -93,7 +105,9 @@ class ViewButton extends React.PureComponent {
 		return (
 			<div
 				className={`${classes} view-button-${this.props.name}`}
-				onClick={() => {this.props.click(this.props.name);}}
+				onClick={() => {
+					this.props.click(this.props.name);
+				}}
 			/>
 		);
 	}

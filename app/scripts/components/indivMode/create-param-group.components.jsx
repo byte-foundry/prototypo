@@ -29,14 +29,17 @@ export default class CreateParamGroup extends React.Component {
 		this.cancelDelete = this.cancelDelete.bind(this);
 		this.openGroup = this.openGroup.bind(this);
 
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					tags: head.toJS().d.tags,
@@ -59,7 +62,7 @@ export default class CreateParamGroup extends React.Component {
 			this.client.dispatchAction('/store-value', {
 				uiJoyrideTutorialValue: indivGroupsCreationTutorialLabel,
 			});
-		}, (this.props.transitionTimeout + 100));
+		}, this.props.transitionTimeout + 100);
 	}
 
 	componentWillUnmount() {
@@ -106,10 +109,16 @@ export default class CreateParamGroup extends React.Component {
 
 	selectGlyph(unicode, isSelected) {
 		if (this.props.editMode) {
-			this.client.dispatchAction('/add-glyph-to-indiv-edit', {unicode, isSelected});
+			this.client.dispatchAction('/add-glyph-to-indiv-edit', {
+				unicode,
+				isSelected,
+			});
 		}
 		else {
-			this.client.dispatchAction('/add-glyph-to-indiv-create', {unicode, isSelected});
+			this.client.dispatchAction('/add-glyph-to-indiv-create', {
+				unicode,
+				isSelected,
+			});
 		}
 	}
 
@@ -135,15 +144,25 @@ export default class CreateParamGroup extends React.Component {
 
 	render() {
 		const error = this.state.errorMessage ? (
-			<div className="add-family-form-error">
-				{this.state.errorMessage}
-			</div>
-		) : false;
+			<div className="add-family-form-error">{this.state.errorMessage}</div>
+		) : (
+			false
+		);
 
-		const buttons = this.props.editMode
-			? [
-				<Button key="open" label="Open in prototypo" neutral click={this.openGroup} />,
-				<Button key="save" label="Save change" neutral click={this.createGroup} />,
+		const buttons = this.props.editMode ? (
+			[
+				<Button
+					key="open"
+					label="Open in prototypo"
+					neutral
+					click={this.openGroup}
+				/>,
+				<Button
+					key="save"
+					label="Save change"
+					neutral
+					click={this.createGroup}
+				/>,
 				<Button
 					key="delete"
 					label={this.state.glyphGroupDeleteSplit ? 'Delete' : 'Delete group'}
@@ -155,7 +174,9 @@ export default class CreateParamGroup extends React.Component {
 					altClick={this.cancelDelete}
 				/>,
 			]
-			: <Button label="Save change" neutral click={this.createGroup} />;
+		) : (
+			<Button label="Save change" neutral click={this.createGroup} />
+		);
 
 		return (
 			<div className="create-param-group">
@@ -165,12 +186,20 @@ export default class CreateParamGroup extends React.Component {
 					</div>
 					<ScrollArea horizontal={false}>
 						<div className="create-param-group-form-scroll">
-							<InputWithLabel ref="groupname" label="Group name" inputValue={this.props.group ? this.props.group.name : ''} />
+							<InputWithLabel
+								ref="groupname"
+								label="Group name"
+								inputValue={this.props.group ? this.props.group.name : ''}
+							/>
 							<GlyphGrid
 								forbidden={this.state.forbiddenGlyphs}
 								select={this.selectGlyph}
 								tagSelected={this.state.tagSelected}
-								selected={this.props.group ? this.props.group.glyphs : this.state.selected}
+								selected={
+									this.props.group
+										? this.props.group.glyphs
+										: this.state.selected
+								}
 								tags={this.state.tags}
 							/>
 							{error}

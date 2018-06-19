@@ -11,9 +11,19 @@ import Toile from '../toile/toile';
 function GlyphTest(props) {
 	return (
 		<div className="glyph-test">
-			<div className="glyph-displayed">{String.fromCharCode(props.unicode)}</div>
-			<Link to={`/testglyph/${props.unicode}`} className="glyph-test-link">view</Link>
-			<canvas className="glyph-canvas" width="300" height="300" style={{width: '300px', height: '300px'}} ref={props.canvasRef} />
+			<div className="glyph-displayed">
+				{String.fromCharCode(props.unicode)}
+			</div>
+			<Link to={`/testglyph/${props.unicode}`} className="glyph-test-link">
+				view
+			</Link>
+			<canvas
+				className="glyph-canvas"
+				width="300"
+				height="300"
+				style={{width: '300px', height: '300px'}}
+				ref={props.canvasRef}
+			/>
 		</div>
 	);
 }
@@ -25,10 +35,14 @@ function GlyphError(props) {
 			<div
 				className="glyph-error-stack"
 				dangerouslySetInnerHTML={{
-					__html: props.glyph.error.stack.replace(/</g, '&lt;').replace(/\n/g, '<br />'),
+					__html: props.glyph.error.stack
+						.replace(/</g, '&lt;')
+						.replace(/\n/g, '<br />'),
 				}}
 			/>
-			<div className="glyph-error-glyph">{String.fromCharCode(props.glyph.unicode)}</div>
+			<div className="glyph-error-glyph">
+				{String.fromCharCode(props.glyph.unicode)}
+			</div>
 		</div>
 	);
 }
@@ -46,7 +60,8 @@ export default class FontTester extends React.Component {
 		this.toile = new Toile();
 		this.toile.setCamera({x: 0, y: 0}, 0.2, -200);
 
-		this.client.getStore('/fontInstanceStore', this.lifespan)
+		this.client
+			.getStore('/fontInstanceStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					glyphArray: head.toJS().d.glyphArray,
@@ -62,8 +77,17 @@ export default class FontTester extends React.Component {
 
 		glyphs.forEach((glyph, index) => {
 			if (!glyph.error) {
-				this.toile.clearCanvas(300, 300, this[glyph.name + index].getContext('2d'));
-				this.toile.drawGlyph(glyph, [], false, this[glyph.name + index].getContext('2d'));
+				this.toile.clearCanvas(
+					300,
+					300,
+					this[glyph.name + index].getContext('2d'),
+				);
+				this.toile.drawGlyph(
+					glyph,
+					[],
+					false,
+					this[glyph.name + index].getContext('2d'),
+				);
 			}
 		});
 	}
@@ -95,18 +119,22 @@ export default class FontTester extends React.Component {
 	render() {
 		const glyphs = window.glyphArray || [];
 
-		const glyphsCanvas = glyphs.map((glyph, index) => {
-			if (glyph.error) {
-				return <GlyphError glyph={glyph} />;
-			}
-			return (
-				<GlyphTest
-					unicode={glyph.unicode}
-					canvasRef={(el) => {this[glyph.name + index] = el;}}
-					key={glyph.name + index}
-				/>
-			);
-		}).filter(el => el);
+		const glyphsCanvas = glyphs
+			.map((glyph, index) => {
+				if (glyph.error) {
+					return <GlyphError glyph={glyph} />;
+				}
+				return (
+					<GlyphTest
+						unicode={glyph.unicode}
+						canvasRef={(el) => {
+							this[glyph.name + index] = el;
+						}}
+						key={glyph.name + index}
+					/>
+				);
+			})
+			.filter(el => el);
 
 		return (
 			<div style={{height: '100%'}}>
@@ -117,9 +145,14 @@ export default class FontTester extends React.Component {
 					<button onClick={this.computeSpectral}>spectral</button>
 					<button onClick={this.computeAntique}>antique</button>
 				</div>
-				<div style={{
-					display: 'flex', flexFlow: 'row wrap', width: '100%', height: '100%', overflow: 'auto',
-				}}
+				<div
+					style={{
+						display: 'flex',
+						flexFlow: 'row wrap',
+						width: '100%',
+						height: '100%',
+						overflow: 'auto',
+					}}
 				>
 					{glyphsCanvas}
 				</div>

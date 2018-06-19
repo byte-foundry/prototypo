@@ -32,11 +32,7 @@ export default class SelectWithLabel extends React.PureComponent {
 	}
 
 	render() {
-		const {
-			label, info, required,
-			name,
-			...selectProps
-		} = this.props;
+		const {label, info, required, name, ...selectProps} = this.props;
 		const {value} = this.state;
 
 		const inputClass = classNames({
@@ -50,35 +46,35 @@ export default class SelectWithLabel extends React.PureComponent {
 				<label className="input-with-label-label">
 					{label}
 					{info && <span className="input-with-label-label-info">{info}</span>}
-					{required && <span className="input-with-label-label-required">*</span>}
+					{required && (
+						<span className="input-with-label-label-required">*</span>
+					)}
 				</label>
 				<Select
 					{...selectProps}
 					ref="input"
 					className={inputClass}
-					onChange={(value) => {this.handleChangeValue(value);}}
+					onChange={(value) => {
+						this.handleChangeValue(value);
+					}}
 					onBlurResetsInput={false}
-					onInputChange={(value) => {this.handleChangeInput(value);}}
+					onInputChange={(value) => {
+						this.handleChangeInput(value);
+					}}
 					value={value}
 				/>
-				<input type="hidden" name={name} value={value && value.value || ''} />
+				<input type="hidden" name={name} value={(value && value.value) || ''} />
 			</div>
 		);
 	}
 
 	get inputValue() {
-		const selectValue = this.refs
-			? this.refs.input.props.value
-			: undefined;
+		const selectValue = this.refs ? this.refs.input.props.value : undefined;
 
-		const inputValue = this.state
-			? {value: this.state.inputValue}
-			: undefined;
+		const inputValue = this.state ? {value: this.state.inputValue} : undefined;
 
 		return selectValue || inputValue;
 	}
 
-	set inputValue(value) {
-
-	}
+	set inputValue(value) {}
 }

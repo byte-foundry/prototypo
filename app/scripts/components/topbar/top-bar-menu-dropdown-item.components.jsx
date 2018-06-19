@@ -4,7 +4,10 @@ import classNames from 'classnames';
 
 function setupKeyboardShortcut(key, modifier, cb) {
 	document.addEventListener('keydown', (e) => {
-		if ((!modifier || e[`${modifier}Key`]) && e.keyCode === key.toUpperCase().charCodeAt(0)) {
+		if (
+			(!modifier || e[`${modifier}Key`])
+			&& e.keyCode === key.toUpperCase().charCodeAt(0)
+		) {
 			cb();
 		}
 	});
@@ -38,7 +41,16 @@ class TopBarMenuDropdownItem extends React.PureComponent {
 	}
 
 	render() {
-		const {id, name, shortcut, disabled, separator, checkbox, active, children} = this.props;
+		const {
+			id,
+			name,
+			shortcut,
+			disabled,
+			separator,
+			checkbox,
+			active,
+			children,
+		} = this.props;
 
 		const classes = classNames({
 			'top-bar-menu-item-dropdown-item': true,
@@ -51,7 +63,11 @@ class TopBarMenuDropdownItem extends React.PureComponent {
 		return (
 			<li className={classes} onClick={this.handleClick} id={id}>
 				<span className="top-bar-menu-item-dropdown-item-title">{name}</span>
-				{shortcut && <span className="top-bar-menu-item-dropdown-item-shortcut">{shortcut}</span>}
+				{shortcut && (
+					<span className="top-bar-menu-item-dropdown-item-shortcut">
+						{shortcut}
+					</span>
+				)}
 				{children}
 			</li>
 		);

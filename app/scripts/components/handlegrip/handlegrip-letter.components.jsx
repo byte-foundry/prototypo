@@ -6,39 +6,40 @@ import DOM from '../../helpers/dom.helpers.js';
 import HandlegripBar from './handlegrip-bar.components.jsx';
 
 /**
-*	Component : a letter where you can set spacing
-*	With a drag'n'dropable handlegrip
-*	@extends React.Component
-*/
+ *	Component : a letter where you can set spacing
+ *	With a drag'n'dropable handlegrip
+ *	@extends React.Component
+ */
 export default class HandlegripLetter extends React.Component {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 	}
 
 	/**
-	*	get the current letter's clientWidth property
-	*	@returns {number} the clientWidth property
-	*/
+	 *	get the current letter's clientWidth property
+	 *	@returns {number} the clientWidth property
+	 */
 	getClientWidth() {
 		return this.refs.letterWrapLetter.clientWidth;
 	}
 
 	/**
-	*	get the current letter's offsetLeft property
-	*	@returns {number} the offsetLeft property
-	*/
+	 *	get the current letter's offsetLeft property
+	 *	@returns {number} the offsetLeft property
+	 */
 	getAbsOffset() {
 		return DOM.getAbsOffset(this.refs.letterWrapLetter).offsetLeft;
 	}
 
-
 	/**
-	*	get the current left bar's offsetLeft and clientWidth properties
-	*	@returns {object} - the object containing offsetLeft and clientWidth properties
-	*	@returns {number} object.offsetLeft - the offsetLeft property
-	*	@returns {number} object.clientWidth - the clientWidth property
-	*/
+	 *	get the current left bar's offsetLeft and clientWidth properties
+	 *	@returns {object} - the object containing offsetLeft and clientWidth properties
+	 *	@returns {number} object.offsetLeft - the offsetLeft property
+	 *	@returns {number} object.clientWidth - the clientWidth property
+	 */
 	getLeftBar() {
 		const leftbarElement = ReactDOM.findDOMNode(this.refs.leftbar);
 		const offsetLeft = DOM.getAbsOffset(leftbarElement).offsetLeft;
@@ -48,11 +49,11 @@ export default class HandlegripLetter extends React.Component {
 	}
 
 	/**
-	*	get the current right bar's offsetLeft and clientWidth properties
-	*	@returns {object} - the object containing offsetLeft and clientWidth properties
-	*	@returns {number} object.offsetLeft - the offsetLeft property
-	*	@returns {number} object.clientWidth - the clientWidth property
-	*/
+	 *	get the current right bar's offsetLeft and clientWidth properties
+	 *	@returns {object} - the object containing offsetLeft and clientWidth properties
+	 *	@returns {number} object.offsetLeft - the offsetLeft property
+	 *	@returns {number} object.clientWidth - the clientWidth property
+	 */
 	getRightBar() {
 		const rightbarElement = ReactDOM.findDOMNode(this.refs.rightbar);
 		const offsetLeft = DOM.getAbsOffset(rightbarElement).offsetLeft;
@@ -75,16 +76,27 @@ export default class HandlegripLetter extends React.Component {
 					baseSpacing={this.props.baseSpacingLeft}
 					min={this.props.min}
 					max={this.props.max}
-					clampedValue={this.props.tracking === 'left' ? this.props.clampedValue : undefined}
+					clampedValue={
+						this.props.tracking === 'left' ? this.props.clampedValue : undefined
+					}
 					style={{
-						left: this.props.tracking === 'left'
-							? (-this.props.clampedValue - this.props.baseSpacingLeft + spacingLeft) / this.props.dragginRatio - 5
-							: -5,
+						left:
+							this.props.tracking === 'left'
+								? (-this.props.clampedValue
+										- this.props.baseSpacingLeft
+										+ spacingLeft)
+										/ this.props.dragginRatio
+									- 5
+								: -5,
 					}}
 					letter={this.props.letter}
 				/>
 				<span className="letter-wrap-wrap">
-					<span ref="letterWrapLetter" className="letter-wrap-letter" onDoubleClick={this.props.openGlyph}>
+					<span
+						ref="letterWrapLetter"
+						className="letter-wrap-letter"
+						onDoubleClick={this.props.openGlyph}
+					>
 						{this.props.letter.replace(/ /g, '\u00a0')}
 					</span>
 					<span className="handlegrip-spacing-number">
@@ -98,11 +110,20 @@ export default class HandlegripLetter extends React.Component {
 					baseSpacing={this.props.baseSpacingRight}
 					min={this.props.min}
 					max={this.props.max}
-					clampedValue={this.props.tracking === 'right' ? this.props.clampedValue : undefined}
+					clampedValue={
+						this.props.tracking === 'right'
+							? this.props.clampedValue
+							: undefined
+					}
 					style={{
-						right: this.props.tracking === 'right'
-							? (-this.props.clampedValue - this.props.baseSpacingRight + spacingRight) / this.props.dragginRatio - 5
-							: -5,
+						right:
+							this.props.tracking === 'right'
+								? (-this.props.clampedValue
+										- this.props.baseSpacingRight
+										+ spacingRight)
+										/ this.props.dragginRatio
+									- 5
+								: -5,
 					}}
 					letter={this.props.letter}
 				/>

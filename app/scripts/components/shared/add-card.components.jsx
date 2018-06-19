@@ -28,8 +28,8 @@ export default class AddCard extends React.PureComponent {
 	}
 
 	onCreditCardTypeChanged(type) {
-        this.setState({creditCardType: type});
-    }
+		this.setState({creditCardType: type});
+	}
 
 	handleExpirationChange(event) {
 		if (event.target.rawValue.length === 4) {
@@ -42,25 +42,62 @@ export default class AddCard extends React.PureComponent {
 
 		return (
 			<div className={`${this.props.className} add-card`}>
-				<InputWithLabel inputRef={(ref) => { this.fullname = ref; }} label="Full name" error={inError.fullname} info="(as it appears on the card)" required={true}/>
-				<div className={`input-with-subline ${this.state.creditCardType === 'unknown' ? '' : this.state.creditCardType}`}>
-					<InputWithLabel label="Card number" error={inError.number} required={true}>
+				<InputWithLabel
+					inputRef={(ref) => {
+						this.fullname = ref;
+					}}
+					label="Full name"
+					error={inError.fullname}
+					info="(as it appears on the card)"
+					required={true}
+				/>
+				<div
+					className={`input-with-subline ${
+						this.state.creditCardType === 'unknown'
+							? ''
+							: this.state.creditCardType
+					}`}
+				>
+					<InputWithLabel
+						label="Card number"
+						error={inError.number}
+						required={true}
+					>
 						<Cleave
-							htmlRef={(ref) => { this.number = ref; }}
+							htmlRef={(ref) => {
+								this.number = ref;
+							}}
 							placeholder="1111 2222 3333 4444"
-							options={{creditCard: true, onCreditCardTypeChanged: this.onCreditCardTypeChanged.bind(this)}}
+							options={{
+								creditCard: true,
+								onCreditCardTypeChanged: this.onCreditCardTypeChanged.bind(
+									this,
+								),
+							}}
 							onChange={this.handleNumberChange.bind(this)}
 						/>
 					</InputWithLabel>
 				</div>
 				<div className="input-card-subline clearfix">
-					<a href="https://stripe.com/" target="_blank"><img className="input-card-subline-poweredbystripe" src="assets/images/powered_by_stripe.svg" alt="powered by stripe"/></a>
+					<a href="https://stripe.com/" target="_blank">
+						<img
+							className="input-card-subline-poweredbystripe"
+							src="assets/images/powered_by_stripe.svg"
+							alt="powered by stripe"
+						/>
+					</a>
 				</div>
 				<div className="columns">
 					<div className="third-column">
-						<InputWithLabel label="Expiration date" error={inError.expMonth} required={true}>
+						<InputWithLabel
+							label="Expiration date"
+							error={inError.expMonth}
+							required={true}
+						>
 							<Cleave
-								htmlRef={(ref) => { this.expiration = ref; }}
+								htmlRef={(ref) => {
+									this.expiration = ref;
+								}}
 								placeholder="MM/YY"
 								options={{date: true, datePattern: ['m', 'y']}}
 								onChange={this.handleExpirationChange.bind(this)}
@@ -68,7 +105,16 @@ export default class AddCard extends React.PureComponent {
 						</InputWithLabel>
 					</div>
 					<div className="third-column">
-						<InputWithLabel inputRef={(ref) => { this.cvc = ref; }} label="CVC" error={inError.cvc} required={true} placeholder="123" maxLength="4" />
+						<InputWithLabel
+							inputRef={(ref) => {
+								this.cvc = ref;
+							}}
+							label="CVC"
+							error={inError.cvc}
+							required={true}
+							placeholder="123"
+							maxLength="4"
+						/>
 					</div>
 				</div>
 			</div>

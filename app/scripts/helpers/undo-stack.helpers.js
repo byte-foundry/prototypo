@@ -1,7 +1,14 @@
 import {Patch} from 'remutable';
 
-const registerToUndoStack = function (remut, storeName, client, lifespan, cb = () => {}) {
-	client.getStore('/prototypoStore', lifespan)
+const registerToUndoStack = function (
+	remut,
+	storeName,
+	client,
+	lifespan,
+	cb = () => {},
+) {
+	client
+		.getStore('/prototypoStore', lifespan)
 		.onUpdate(({head}) => {
 			const jsHead = head.toJS();
 			let patch;
@@ -25,13 +32,25 @@ const registerToUndoStack = function (remut, storeName, client, lifespan, cb = (
 
 // Allow to setup granularity for undo stack
 class BatchUpdate {
-	constructor(remut, storeName, propName, client, lifespan, labelGenerator, cb, criteria = () => false) {
+	constructor(
+		remut,
+		storeName,
+		propName,
+		client,
+		lifespan,
+		labelGenerator,
+		cb,
+		criteria = () => false,
+	) {
 		registerToUndoStack(remut, storeName, client, lifespan, cb);
 
 		this.storeName = storeName;
 		this.propName = propName;
 		this.client = client;
-		this.criteria = typeof criteria === 'number' ? (newValue, oldValue) => Math.abs(newValue - oldValue) > criteria : criteria;
+		this.criteria
+			= typeof criteria === 'number'
+				? (newValue, oldValue) => Math.abs(newValue - oldValue) > criteria
+				: criteria;
 
 		this.labelGenerator = labelGenerator;
 	}
@@ -43,8 +62,17 @@ class BatchUpdate {
 			newPatch = Patch.combine(this.patch, patch);
 		}
 
-		if (patch.mutations[this.propName].f && this.criteria(patch.mutations[this.propName].t[prop], patch.mutations[this.propName].f[prop])) {
-			this.client.dispatchAction('/store-action', {store: this.storeName, newPatch});
+		if (
+			patch.mutations[this.propName].f
+			&& this.criteria(
+				patch.mutations[this.propName].t[prop],
+				patch.mutations[this.propName].f[prop],
+			)
+		) {
+			this.client.dispatchAction('/store-action', {
+				store: this.storeName,
+				newPatch,
+			});
 			this.patch = undefined;
 		}
 		else {
@@ -59,12 +87,13 @@ class BatchUpdate {
 			newPatch = Patch.combine(this.patch, patch);
 		}
 
-		this.client.dispatchAction('/store-action', {store: this.storeName, patch: newPatch, label: this.labelGenerator(prop)});
+		this.client.dispatchAction('/store-action', {
+			store: this.storeName,
+			patch: newPatch,
+			label: this.labelGenerator(prop),
+		});
 		this.patch = undefined;
 	}
 }
 
-export {
-	registerToUndoStack,
-	BatchUpdate,
-};
+export {registerToUndoStack, BatchUpdate};

@@ -5,20 +5,32 @@ export default class InputWithLabel extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
-		Object.defineProperty(this, 'inputValue', {get: this.getInputValue.bind(this)});
+		Object.defineProperty(this, 'inputValue', {
+			get: this.getInputValue.bind(this),
+		});
 	}
 
 	static defaultProps = {
-		inputRef: () => { return; },
-		onChange: () => { return; },
+		inputRef: () => {
+
+		},
+		onChange: () => {
+
+		},
 	};
 
 	render() {
 		const {
 			onChange,
-			error, warning, info,
-			label, placeholder, inputValue, required,
-			inputRef, children,
+			error,
+			warning,
+			info,
+			label,
+			placeholder,
+			inputValue,
+			required,
+			inputRef,
+			children,
 			size,
 			...rest
 		} = this.props;
@@ -30,20 +42,26 @@ export default class InputWithLabel extends React.PureComponent {
 		});
 
 		const child = children || (
-			<input {...rest}
-				ref={(ref) => { this.input = this.input || ref; inputRef(ref); }}
+			<input
+				{...rest}
+				ref={(ref) => {
+					this.input = this.input || ref;
+					inputRef(ref);
+				}}
 				placeholder={placeholder}
 				onChange={onChange}
 			/>
 		);
 
-		const labelContent = label
-			?  <label className="input-with-label-label">
-					{label}
-					{info && <span className="input-with-label-label-info">{info}</span>}
-					{required && <span className="input-with-label-label-required">*</span>}
-				</label>
-			: false
+		const labelContent = label ? (
+			<label className="input-with-label-label">
+				{label}
+				{info && <span className="input-with-label-label-info">{info}</span>}
+				{required && <span className="input-with-label-label-required">*</span>}
+			</label>
+		) : (
+			false
+		);
 
 		return (
 			<div className="input-with-label">
@@ -58,12 +76,14 @@ export default class InputWithLabel extends React.PureComponent {
 
 	getInputValue() {
 		if (this.props.children) {
-			console.warn("You're trying to access to a value of a child you can access. Use a ref instead.");
+			console.warn(
+				"You're trying to access to a value of a child you can access. Use a ref instead.",
+			);
 		}
 		return this.input ? this.input.value : undefined;
 	}
 
 	set inputValue(value) {
-		return;
+
 	}
 }

@@ -26,7 +26,8 @@ export default class AccountConfirmPlan extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/userStore', this.lifespan)
+		this.client
+			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				if (this.props.location.query.plan) {
 					const planBase = this.props.location.query.plan;
@@ -43,8 +44,7 @@ export default class AccountConfirmPlan extends React.Component {
 					HoodieApi.getUpcomingInvoice({
 						subscription_plan: planId,
 						subscription_quantity: this.props.location.query.quantity,
-					})
-					.then((data) => {
+					}).then((data) => {
 						this.setState({
 							invoice: data,
 							loading: false,
@@ -85,10 +85,7 @@ export default class AccountConfirmPlan extends React.Component {
 				<h1 className="subscription-title">This is what you will be charged</h1>
 				<WaitForLoad loaded={!loading}>
 					{invoice && <Invoice {...invoice} />}
-					<Button
-						style={{float: 'right'}}
-						onClick={this.confirmPlanChange}
-					>
+					<Button style={{float: 'right'}} onClick={this.confirmPlanChange}>
 						<WaitForLoad loading={confirmationLoading} secColor>
 							Confirm change
 						</WaitForLoad>
@@ -103,22 +100,19 @@ class Invoice extends React.Component {
 	render() {
 		const {currency, lines} = this.props;
 
-		const currencySymbol = currency === 'USD'
-			? {
-				before: '$',
-				after: '',
-			}
-			: {
-				before: '',
-				after: '€',
-			};
+		const currencySymbol
+			= currency === 'USD'
+				? {
+					before: '$',
+					after: '',
+				}
+				: {
+					before: '',
+					after: '€',
+				};
 
-		const total = lines.data.reduce((sum, line) => {
-			return sum + line.amount;
-		}, 0);
-		const invoiceLines = lines.data.map((line) => {
-			return <InvoiceLine line={line} symbol={currencySymbol}/>;
-		});
+		const total = lines.data.reduce((sum, line) => sum + line.amount, 0);
+		const invoiceLines = lines.data.map(line => <InvoiceLine line={line} symbol={currencySymbol} />);
 
 		return (
 			<table className="invoice">
@@ -132,7 +126,11 @@ class Invoice extends React.Component {
 					{invoiceLines}
 					<tr className="invoice-total">
 						<td className="invoice-total-label">Total</td>
-						<td className="invoice-total-amount">{currencySymbol.before + ((total / 100).toFixed(2)) + currencySymbol.after}</td>
+						<td className="invoice-total-amount">
+							{currencySymbol.before
+								+ (total / 100).toFixed(2)
+								+ currencySymbol.after}
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -146,7 +144,9 @@ class InvoiceLine extends React.Component {
 		let desc = this.props.line.description;
 
 		if (line.plan && !desc) {
-			const plan = Object.values(Plans).filter(({prefix}) => line.plan.id.includes(prefix))[0];
+			const plan = Object.values(Plans).filter(({prefix}) =>
+				line.plan.id.includes(prefix),
+			)[0];
 			const planName = (plan && plan.description) || 'Unknown plan';
 
 			const startDate = moment.unix(this.props.line.period.start).format('L');

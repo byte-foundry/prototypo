@@ -170,12 +170,13 @@ class AcademyHome extends React.PureComponent {
 						element="div"
 						src={require('!svg-inline-loader?classPrefix=blackpen-!../../../images/academy/blackpen.svg')}
 					/>
-					{academyCompleted
-						&& <InlineSVG
+					{academyCompleted && (
+						<InlineSVG
 							className="academy-home-header-icon-medal"
 							element="div"
 							src={require('!svg-inline-loader?classPrefix=medal-!../../../images/academy/medal-home.svg')}
-						/>}
+						/>
+					)}
 				</div>
 				<div className="academy-home-tags">
 					<div
@@ -183,21 +184,25 @@ class AcademyHome extends React.PureComponent {
 						onClick={() => {
 							this.setActiveTag('all');
 						}}
-						className={`academy-home-tags-tag ${activeTag === 'all' ? 'active' : ''}`}
+						className={`academy-home-tags-tag ${
+							activeTag === 'all' ? 'active' : ''
+						}`}
 					>
 						All courses
 					</div>
-					{this.state.tags.map(tag =>
-						(<div
+					{this.state.tags.map(tag => (
+						<div
 							key={`tag-${tag}`}
-							className={`academy-home-tags-tag ${activeTag === tag ? 'active' : ''}`}
+							className={`academy-home-tags-tag ${
+								activeTag === tag ? 'active' : ''
+							}`}
 							onClick={() => {
 								this.setActiveTag(tag);
 							}}
 						>
 							{tag}
-						</div>),
-					)}
+						</div>
+					))}
 				</div>
 				<ReactMotionFlip
 					className="academy-course-list"
@@ -205,17 +210,25 @@ class AcademyHome extends React.PureComponent {
 					springConfig={{stiffness: 220, damping: 30}}
 				>
 					{this.state.courses
-						.filter(tutorial => activeTag === 'all' || tutorial.tags.includes(activeTag))
+						.filter(
+							tutorial =>
+								activeTag === 'all' || tutorial.tags.includes(activeTag),
+						)
 						.map((tutorial) => {
 							const progress = academyProgress[tutorial.slug] || {};
-							const numberOfCompletedParts = (progress.parts || [])
-								.reduce((count, {completed}) => count + (completed ? 1 : 0), 0);
+							const numberOfCompletedParts = (progress.parts || []).reduce(
+								(count, {completed}) => count + (completed ? 1 : 0),
+								0,
+							);
 
 							return (
 								<CourseCard
 									key={tutorial.title}
 									reading={academyProgress.lastCourse === tutorial.slug}
-									done={tutorial.partCount > 0 && numberOfCompletedParts === tutorial.partCount}
+									done={
+										tutorial.partCount > 0
+										&& numberOfCompletedParts === tutorial.partCount
+									}
 									tutorial={tutorial}
 									numberOfCompletedParts={numberOfCompletedParts}
 								/>

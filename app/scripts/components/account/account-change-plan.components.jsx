@@ -46,7 +46,7 @@ export default class AccountChangePlan extends React.Component {
 				const {subscription, cards} = head.toJS().d;
 
 				if (!subscription) {
-					this.props.history.push('/account/subscribe');
+					this.props.router.push('/account/subscribe');
 					return;
 				}
 
@@ -54,9 +54,16 @@ export default class AccountChangePlan extends React.Component {
 					loading: false,
 					subscription,
 					plan: subscription.plan.id,
-					selectedPlan: subscription.plan.id.includes('monthly') ? teamMonthlyConst : teamAnnualConst,
-					numberOfUsers: parseInt((subscription && subscription.quantity) || 0, 10),
-					selection: subscription.plan.id.includes('monthly') ? 'monthly' : 'annual',
+					selectedPlan: subscription.plan.id.includes('monthly')
+						? teamMonthlyConst
+						: teamAnnualConst,
+					numberOfUsers: parseInt(
+						(subscription && subscription.quantity) || 0,
+						10,
+					),
+					selection: subscription.plan.id.includes('monthly')
+						? 'monthly'
+						: 'annual',
 					currency: getCurrency(cards[0].country),
 				});
 			})
@@ -79,7 +86,7 @@ export default class AccountChangePlan extends React.Component {
 			quantity: numberOfUsers,
 		});
 
-		this.props.history.push({
+		this.props.router.push({
 			pathname: '/account/details/confirm-plan',
 			query: {
 				plan,
@@ -102,14 +109,14 @@ export default class AccountChangePlan extends React.Component {
 
 		const {plan} = subscription;
 		const hasTeamPlan
-			= plan.id.includes(teamMonthlyConst.prefix) || plan.id.includes(teamAnnualConst.prefix);
+			= plan.id.includes(teamMonthlyConst.prefix)
+			|| plan.id.includes(teamAnnualConst.prefix);
 		const monthlyPlan = (hasTeamPlan && teamMonthlyConst) || monthlyConst;
 		const annualPlan = (hasTeamPlan && teamAnnualConst) || annualConst;
 
 		return (
 			<div>
 				<div className="pricing">
-
 					<PricingItem
 						title="Monthly"
 						description="Flexible pricing with no commitment"
@@ -117,7 +124,9 @@ export default class AccountChangePlan extends React.Component {
 						currency={currency}
 						amount={monthlyPlan.monthlyPrice * numberOfUsers}
 						current={plan.id.includes(monthlyPlan.prefix)}
-						onClick={() => this.setState({selection: 'monthly', selectedPlan: monthlyPlan})}
+						onClick={() =>
+							this.setState({selection: 'monthly', selectedPlan: monthlyPlan})
+						}
 					/>
 
 					<PricingItem
@@ -127,13 +136,14 @@ export default class AccountChangePlan extends React.Component {
 						currency={currency}
 						amount={annualPlan.monthlyPrice * numberOfUsers}
 						current={plan.id.includes(annualPlan.prefix)}
-						onClick={() => this.setState({selection: 'annual', selectedPlan: annualPlan})}
+						onClick={() =>
+							this.setState({selection: 'annual', selectedPlan: annualPlan})
+						}
 					/>
-
 				</div>
 
-				{hasTeamPlan
-					&& <div className="account-change-plan-number-of-users">
+				{hasTeamPlan && (
+					<div className="account-change-plan-number-of-users">
 						<p>You can update the number of users you manage:</p>
 
 						<InputNumber
@@ -144,12 +154,16 @@ export default class AccountChangePlan extends React.Component {
 							onChange={this.changeNumberOfUsers}
 							controls
 						/>
-					</div>}
+					</div>
+				)}
 
 				<div className="account-change-plan-actions">
 					<Button
 						onClick={this.confirmChange}
-						disabled={plan.id.includes(selection) && numberOfUsers <= subscription.quantity}
+						disabled={
+							plan.id.includes(selection)
+							&& numberOfUsers <= subscription.quantity
+						}
 					>
 						Apply change
 					</Button>
@@ -166,8 +180,11 @@ export default class AccountChangePlan extends React.Component {
 				<header className="manage-sub-users-header">
 					<h1 className="manage-sub-users-title">Change Plan</h1>
 					<p className="manage-sub-users-sidephrase">
-						Want to downgrade? <a
-							href={`mailto:account@prototypo.io?subject=Cancelling my subscription&body=${encodeURI(UNSUBSCRIBE_MESSAGE)}`}
+						Want to downgrade?{' '}
+						<a
+							href={`mailto:account@prototypo.io?subject=Cancelling my subscription&body=${encodeURI(
+								UNSUBSCRIBE_MESSAGE,
+							)}`}
 							className="account-email"
 							onClick={this.downgrade}
 							title="If this link doesn't work, you may need to turn off your privacy blocker"

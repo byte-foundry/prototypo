@@ -4,7 +4,11 @@ import _forOwn from 'lodash/forOwn';
 import _cloneDeep from 'lodash/cloneDeep';
 import {gql} from 'react-apollo';
 
-import {prototypoStore, undoableStore, fontInstanceStore} from '../stores/creation.stores';
+import {
+	prototypoStore,
+	undoableStore,
+	fontInstanceStore,
+} from '../stores/creation.stores';
 import {toileType} from '../toile/toile';
 import LocalServer from '../stores/local-server.stores';
 import LocalClient from '../stores/local-client.stores';
@@ -73,7 +77,7 @@ export default {
 				const template = appValues.values.familySelected
 					? appValues.values.familySelected.template
 					: 'venus.ptf';
-				const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../dist/templates/${template}/font.json`);
+				const typedataJSON = await import(/* webpackChunkName: "ptfs" */ `../../../dist/templates/${template}/font.json`);
 
 				localClient.dispatchAction('/create-font-instance', {
 					typedataJSON,
@@ -104,7 +108,11 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/change-font-from-typedata': async ({typedataJSON: typedata, variantId, templateToLoad}) => {
+	'/change-font-from-typedata': async ({
+		typedataJSON: typedata,
+		variantId,
+		templateToLoad,
+	}) => {
 		localClient.dispatchAction('/store-value-font', {
 			familyName: typedata.fontinfo.familyName,
 			typedata,
@@ -113,11 +121,14 @@ export default {
 
 		localClient.dispatchAction('/create-font', typedata);
 
-		localClient.dispatchAction('/load-params', {controls: typedata.controls, presets: typedata.presets});
+		localClient.dispatchAction('/load-params', {
+			controls: typedata.controls,
+			presets: typedata.presets,
+		});
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 	},
 	'/change-font': async ({templateToLoad, variantId}) => {
-		const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../../dist/templates/${templateToLoad}/font.json`);
+		const typedataJSON = await import(/* webpackChunkName: "ptfs" */ `../../../dist/templates/${templateToLoad}/font.json`);
 
 		localClient.dispatchAction('/store-value-font', {
 			changingFont: true,
@@ -130,9 +141,11 @@ export default {
 
 		const initValues = {};
 
-		typedataJSON.controls.forEach(group => group.parameters.forEach((param) => {
-			initValues[param.name] = param.init;
-		}));
+		typedataJSON.controls.forEach(group =>
+			group.parameters.forEach((param) => {
+				initValues[param.name] = param.init;
+			}),
+		);
 
 		const fontValues = await FontValues.get({variantId});
 		const altList = {
@@ -140,10 +153,15 @@ export default {
 			...fontValues.values.altList,
 		};
 
-		localClient.dispatchAction('/load-values', {...initValues, ...fontValues.values});
+		localClient.dispatchAction('/load-values', {
+			...initValues,
+			...fontValues.values,
+		});
 
 		localClient.dispatchAction('/clear-undo-stack');
-		localClient.dispatchAction('/toggle-individualize', {targetIndivValue: false});
+		localClient.dispatchAction('/toggle-individualize', {
+			targetIndivValue: false,
+		});
 		localClient.dispatchAction('/store-value', {uiSpacingMode: false});
 		localClient.dispatchAction('/store-value-font', {
 			changingFont: false,
@@ -181,7 +199,8 @@ export default {
 	'/select-variant': ({family, selectedVariant = family.variants[0]}) => {
 		const patchVariant = prototypoStore
 			.set('variant', {id: selectedVariant.id, name: selectedVariant.name})
-			.set('family', family).commit();
+			.set('family', family)
+			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 
@@ -190,9 +209,7 @@ export default {
 			variantId: selectedVariant.id,
 		});
 	},
-	'/create-variant-from-ref': async ({
-		ref, name, family, noSwitch,
-	}) => {
+	'/create-variant-from-ref': async ({ref, name, family, noSwitch}) => {
 		const values = _cloneDeep(ref.values);
 		const thicknessTransform = [
 			{string: 'Thin', thickness: 20},
@@ -217,7 +234,11 @@ export default {
 		const {data: {variant}} = await apolloClient.mutate({
 			mutation: gql`
 				mutation createVariant($name: String!, $familyId: ID!, $values: Json) {
-					variant: createVariant(name: $name, familyId: $familyId, values: $values) {
+					variant: createVariant(
+						name: $name
+						familyId: $familyId
+						values: $values
+					) {
 						id
 						name
 					}
@@ -262,12 +283,15 @@ export default {
 
 		window.intercom('update', {
 			number_of_variants: user.library.reduce(
-				(numberofvariants, {variantsmeta}) => numberofvariants + variantsmeta.count,
+				(numberofvariants, {variantsmeta}) =>
+					numberofvariants + variantsmeta.count,
 				0,
 			),
 		});
 	},
 	'/delete-variant': ({variant}) => {
+		console.log('DeleteVariant');
+		console.log(variant);
 		const currentVariant = prototypoStore.get('variant');
 		const currentFamily = prototypoStore.get('family');
 
@@ -287,7 +311,10 @@ export default {
 	'/delete-family': async ({family}) => {
 		const currentFamily = prototypoStore.get('family');
 
-		if (family.name === currentFamily.name && family.template === currentFamily.template) {
+		if (
+			family.name === currentFamily.name
+			&& family.template === currentFamily.template
+		) {
 			const {data: {user}} = await apolloClient.query({
 				fetchPolicy: 'cache-first',
 				query: gql`
@@ -308,8 +335,8 @@ export default {
 				`,
 			});
 
-			const newFamily = user.library[0];
-			const newVariant = newFamily.variants[0];
+			const newFamily = {...user.library[0]};
+			const newVariant = {...newFamily.variants[0]};
 
 			delete newFamily.variants;
 
@@ -339,7 +366,9 @@ export default {
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
 	'/select-variant-collection': (variant) => {
-		const patch = prototypoStore.set('collectionSelectedVariant', variant).commit();
+		const patch = prototypoStore
+			.set('collectionSelectedVariant', variant)
+			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
@@ -353,13 +382,12 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/change-param': ({
-		values, value, name, force, label,
-	}) => {
+	'/change-param': ({values, value, name, force, label}) => {
 		const indivMode = prototypoStore.get('indivMode');
 		const indivEdit = prototypoStore.get('indivEditingParams');
 		const variantId = (prototypoStore.get('variant') || {}).id;
-		const currentGroupName = (prototypoStore.get('indivCurrentGroup') || {}).name;
+		const currentGroupName = (prototypoStore.get('indivCurrentGroup') || {})
+			.name;
 		let newParams = {...undoableStore.get('controlsValues')};
 
 		if (indivMode && indivEdit && !values) {
@@ -408,9 +436,7 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/change-param-state': ({
-		name, state, force, label,
-	}) => {
+	'/change-param-state': ({name, state, force, label}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const currentGroupName = prototypoStore.get('indivCurrentGroup').name;
 		const newParams = {...undoableStore.get('controlsValues')};
@@ -433,9 +459,7 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/change-letter-spacing': ({
-		value, side, letter, label, force,
-	}) => {
+	'/change-letter-spacing': ({value, side, letter, label, force}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const newParams = {
@@ -446,7 +470,8 @@ export default {
 		const unicode = letter.charCodeAt(0);
 
 		newParams.glyphSpecialProps = newParams.glyphSpecialProps || {};
-		newParams.glyphSpecialProps[unicode] = {...newParams.glyphSpecialProps[unicode]} || {};
+		newParams.glyphSpecialProps[unicode]
+			= {...newParams.glyphSpecialProps[unicode]} || {};
 
 		if (side === 'left') {
 			newParams.glyphSpecialProps[unicode].spacingLeft = value;
@@ -469,7 +494,10 @@ export default {
 		}
 	},
 	'/change-glyph-node-manually': ({
-		changes, force, label = 'glyph node manual', glyphName,
+		changes,
+		force,
+		label = 'glyph node manual',
+		glyphName,
 	}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
@@ -506,21 +534,20 @@ export default {
 		}
 	},
 	'/reset-glyph-points-manually': ({
-		glyphName, points, force = true, label = 'reset manual', unicode, globalMode,
+		glyphName,
+		points,
+		force = true,
+		label = 'reset manual',
+		unicode,
+		globalMode,
 	}) => {
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
 		const glyphSpecialProps = _cloneDeep(oldValues.glyphSpecialProps) || {};
 
 		points.forEach((item) => {
-			const {
-				parentId,
-				modifAddress,
-				componentName,
-			} = item.data;
-			const glyphOrCompName = globalMode
-				? componentName
-				: glyphName;
+			const {parentId, modifAddress, componentName} = item.data;
+			const glyphOrCompName = globalMode ? componentName : glyphName;
 
 			switch (item.type) {
 			case toileType.NODE_IN:
@@ -534,8 +561,12 @@ export default {
 				delete manualChanges[glyphOrCompName].cursors[`${parentId}.out.y`];
 				break;
 			case toileType.NODE:
-				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}.width`];
-				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}.angle`];
+				delete manualChanges[glyphOrCompName].cursors[
+					`${modifAddress}.width`
+				];
+				delete manualChanges[glyphOrCompName].cursors[
+					`${modifAddress}.angle`
+				];
 				break;
 			case toileType.SPACING_HANDLE:
 				if (item.id === 'spacingLeft') {
@@ -549,7 +580,9 @@ export default {
 			case toileType.NODE_SKELETON:
 				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}x`];
 				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}y`];
-				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}.expand.distr`];
+				delete manualChanges[glyphOrCompName].cursors[
+					`${modifAddress}.expand.distr`
+				];
 				break;
 			default:
 				break;
@@ -577,7 +610,11 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/reset-glyph-manually': ({glyphName, force = true, label = 'reset manual'}) => {
+	'/reset-glyph-manually': ({
+		glyphName,
+		force = true,
+		label = 'reset manual',
+	}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
@@ -623,9 +660,7 @@ export default {
 			undoWatcher.update(patch, label);
 		}
 	},
-	'/change-component': ({
-		glyph, id, name, label = 'change component',
-	}) => {
+	'/change-component': ({glyph, id, name, label = 'change component'}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const newParams = {
@@ -646,23 +681,31 @@ export default {
 
 		undoWatcher.forceUpdate(patch, label);
 	},
-	'/change-component-class': ({componentClass, name, label = 'change component'}) => {
+	'/change-component-class': ({
+		componentClass,
+		name,
+		label = 'change component',
+	}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
 		const template = fontInstanceStore.get('templateToLoad');
-		const componentIdAndGlyphPerClass = fontInstanceStore.get('componentIdAndGlyphPerClass');
+		const componentIdAndGlyphPerClass = fontInstanceStore.get(
+			'componentIdAndGlyphPerClass',
+		);
 
 		const newParams = {
 			...oldValues,
 			glyphComponentChoice: {...oldValues.glyphComponentChoice},
 		};
 
-		componentIdAndGlyphPerClass[template][componentClass].forEach(([glyphName, id]) => {
-			newParams.glyphComponentChoice[glyphName] = {
-				...newParams.glyphComponentChoice[glyphName],
-				[id]: name,
-			};
-		});
+		componentIdAndGlyphPerClass[template][componentClass].forEach(
+			([glyphName, id]) => {
+				newParams.glyphComponentChoice[glyphName] = {
+					...newParams.glyphComponentChoice[glyphName],
+					[id]: name,
+				};
+			},
+		);
 
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 

@@ -1,175 +1,240 @@
-@import '../variables';
+@import "../variables";
 
-.full-modal-container {
-	width:100%;
-	height:100%;
-	display:flex;
-	position:absolute;
-	top: 0;
-	left: 0;
-	justify-content: center;
-	align-items: center;
-	background-color:rgba($dark-grey, 0.7);
-}
+.onboarding-app {
+	height: 100%;
+	width: 100%;
+	background-color: $green;
+	overflow: auto;
+	padding-top: 80px;
 
-.onboarding {
-	z-index:10;
-	transition: all .2s ease;
-}
-
-.onboarding-step {
-	background-color: lighten($yellow, 10%);
-	padding:20px;
-	color:$dark-grey;
-	padding: 20px 50px;
-	max-width: 450px;
-
-	&:after {
-		content: "";
-		display: block;
-		z-index: -1;
-		background-color: $yellow;
-		position: absolute;
-		top: 0.5em;
-		right: -0.5em;
-		left: 0.5em;
-		bottom: -0.5em;
-		transform: rotate(2deg)
-	}
-
-	p {
-		font-size: 1.1em;
-		a {
-			color: $red;
-		}
-	}
-
-	&-title {
-		font-size:1.4em;
-		margin:10px 0px;
-		color: $red;
+	.onboarding-wrapper {
+		width: calc(100% - 160px);
 		position: relative;
-	}
+		margin: 0 auto 50px;
+		background-color: $white;
+        border-radius: 8px;
 
-	ul {
-		padding-left: 0;
-		li {
-			list-style-type: none;
-			margin-top: 1em;
-		}
-	}
+		.onboarding-content {			
+			padding: 60px 120px;
+			padding-bottom: 25px;
+			flex-grow:1;
 
-	&-footer {
-		margin-top: 5em;
-		text-align: right;
-		padding-bottom:10px;
-
-		&-btn {
-			border:none;
-			color: $blue;
-			background-color:$white;
-			border-radius:3px;
-			margin-left:10px;
-			padding: 10px 15px;
-
-			&.exit {
-				background-color: $white;
-				color: $red;
-				&:hover {
-					color: $white;
-					background-color: $red;
+			h3 {
+				color: $dark-grey;
+				font-size: 28px;
+				&.step-title-finish {
+					font-size: 68px;
+					font-weight: normal;
 				}
 			}
 
+			.description {
+				font-size: 16px;
+				color: $medium-grey;
+				line-height: 1.375em;
+			}
+
+		}
+
+
+        .backToApp {
+			padding: 10px 30px;
+			font-size: 12px;
+			float: right;
+			border-radius: 22px;
+			display: inline-block;
+			margin: 20px 20px 20px 10px;
+		}
+
+		.skip {
+			padding: 10px 0px 2px 0px;
+			font-size: 12px;
+			float: right;
+			border-radius: 0;
+			box-shadow: none;
+			border-bottom: 2px solid #7e7e7e;
+			display: inline-block;
+			margin: 20px 5px 20px 0px;
 			&:hover {
-				background-color: $blue;
-				color:$white;
+				background-color: transparent;
+				color: #7a7a7a;
+			}
+		}
+
+        .nextStep {
+            margin-top: 50px;
+            margin-bottom: 40px;
+            margin-left: auto;
+            margin-right: auto;
+			display: block;
+			border-radius: 28px;
+			font-size: 15px;
+			padding: 8px 40px;
+        }
+		.step {
+			.text {
+				text-align: center;
+				font-size: 8vw;
+				line-height: 0.5;
+				margin: 0;
+                color: $light-grey;
+				transition: color .3s ease;
+				p{
+					margin: 0;
+				}
+				.highlighted {
+					color: $dark-grey;
+				}
+				padding: 0.7em 0;
+			}
+			&.step-start {
+				img {
+					width: 40%;
+					height: auto;
+					margin-bottom: 50px;
+				}
+				h3 {
+					text-align: center;
+				}
+				.description {
+					max-width: inherit;
+					text-align: center;
+					margin-bottom: 100px;
+				}
+			}
+
+			&.step-finish {
+				img {
+					width: 90%;
+					max-width: 750px;
+					height: auto;
+					margin-bottom: 50px;
+					margin: 0 auto;
+					display: block;
+				}
+			}
+			
+			.step-sliders {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-around;
+				flex-wrap: wrap;
+				align-items: flex-start;
+				align-content: center;
+				.onboarding-slider {
+					width: 250px;
+
+					label {
+						display: block;
+						text-transform: uppercase;
+					}
+
+					&-controller {
+						border: 1px solid $light-grey;
+					}
+					.slider-controller-bg {
+						height: 1.5rem;
+					}
+					.slider-controller-handle {
+						height: 1.5rem;
+						width: 1.5rem;
+					}
+				}
+            }
+            .alternate-row {
+                display: flex;
+				flex-direction: row;
+				justify-content: space-around;
+				flex-wrap: wrap;
+				align-items: flex-start;
+                align-content: center;
+				margin-bottom: 1em;
+                .alternate-choice {
+					border-radius: 10px;
+					border: 3px solid $white;
+					background-color: $white;
+					flex-grow: 1;
+					margin: 0 8px;
+					padding: 5px 20px;
+					font-size: 68px;
+					cursor: pointer;
+
+					-webkit-box-shadow:inset 0px 0px 0px 1px $white;
+				    -moz-box-shadow:inset 0px 0px 0px 1px $white;
+				    box-shadow:inset 0px 0px 0px 1px $white;
+					transition: all 200ms ease;
+
+					.text {
+						padding: 0;
+						color: $light-grey;
+						opacity: .3;
+						margin: 0;
+						font-size: 68px;
+						line-height: inherit;
+						p {
+							margin: 0;
+						}
+					}
+
+                    &.selected {
+						-webkit-box-shadow:inset 0px 0px 0px 2px $light-green;
+					    -moz-box-shadow:inset 0px 0px 0px 2px $light-green;
+					    box-shadow:inset 0px 0px 0px 2px $light-green;
+						.text {
+							opacity: 1;
+						}
+					}
+
+					&:hover, &:focus {
+						outline: none;
+						-webkit-box-shadow:inset 0px 0px 0px 2px $green;
+					    -moz-box-shadow:inset 0px 0px 0px 2px $green;
+					    box-shadow:inset 0px 0px 0px 2px $green;
+						transition: all 200ms ease;
+					}
+                }
+			}
+			img {
+				margin: 0 30%;
+    			display: block;
+			}
+		}
+		.bubbles {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			flex-wrap: wrap;
+			align-items: flex-start;
+			align-content: center;
+			padding: 20px 0;
+			.bubble {
+				width: 10px;
+				height: 10px;
+				display: inline-block;
+				margin-left: 5px;
+				margin-right: 5px;
+				background-color: transparent;
+				border: 2px solid $light-grey;
+				border-radius: 50%;
+
+				&.previous {
+					background-color: $light-grey;
+					border-color: $light-grey;
+					cursor: pointer;
+				}
+				&.active {
+					background-color: $green;
+					border-color: $green;
+					cursor: pointer;
+				}
 			}
 		}
 	}
-
-	&-close {
-		position:absolute;
-		right:20px;
-		background-color: darken($yellow, 15%);
-		border-radius:50%;
-		height:20px;
-		cursor:pointer;
-
-		&:hover {
-			background-color: darken($yellow, 10%);
-		}
-	}
 }
 
-.indicator {
-	position:absolute;
-
-	&.is-inverse:before {
-		border-right-color: $yellow;
-	}
-
-	&.is-inverse.is-top:before {
-		border-right-color: transparent;
-		border-bottom-color: $yellow;
-	}
-
-	&.is-top:before {
-		border: solid 20px transparent;
-		border-bottom: solid 20px $white;
-		border-top: none;
-		left:40%;
-		top:-35px;
-		animation-name: shake-v;
-	}
-
-	&:before {
-		content: ' ';
-		border: solid 20px transparent;
-		border-right: solid 20px $yellow;
-		border-left: none;
-		width: 0;
-		display: block;
-		position: absolute;
-		left: -31px;
-		top: 44px;
-		animation-name: shake;
-		animation-duration: 5s;
-		animation-fill-mode: both;
-		animation-timing-function: ease-in-out;
-		animation-iteration-count:infinite;
-	}
+.tippy-tooltip {
+	background-color: $green !important;
 }
-
-@-webkit-keyframes shake {
-	0%, 100% {-webkit-transform: translateX(5px);}
-	10%, 30%, 50%, 70%, 90% {-webkit-transform: translateX(-10px);}
-	20%, 40%, 60%, 80% {-webkit-transform: translateX(5px);}
-}
-
-@keyframes shake {
-	0%, 100% {transform: translateX(5px);}
-	10%, 30%, 50%, 70%, 90% {transform: translateX(-10px);}
-	20%, 40%, 60%, 80% {transform: translateX(5px);}
-}
-
-
-@-webkit-keyframes shake-v {
-	0%, 100% {-webkit-transform: translateY(5px);}
-	10%, 30%, 50%, 70%, 90% {-webkit-transform: translateY(-10px);}
-	20%, 40%, 60%, 80% {-webkit-transform: translateY(5px);}
-}
-
-@keyframes shake-v {
-	0%, 100% {transform: translateY(5px);}
-	10%, 30%, 50%, 70%, 90% {transform: translateY(-10px);}
-	20%, 40%, 60%, 80% {transform: translateY(5px);}
-}
-
-.onboarding-list-title {
-	margin:0;
-}
-
-#export-2 {
-	max-width: 700px;
+.arrow-regular {
+	border-bottom-color: $green !important;
 }

@@ -1,10 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
 import InlineSVG from 'svg-inline-react';
+import {Link} from 'react-router';
+
 import {academyTutorialLabel} from '../../helpers/joyride.helpers.js';
 import Button from '../shared/button.components.jsx';
 import LocalClient from '../../stores/local-client.stores.jsx';
-import {Link} from 'react-router';
 
 export default class AcademyModal extends React.Component {
 	constructor(props) {
@@ -25,7 +27,7 @@ export default class AcademyModal extends React.Component {
 	}
 
 	static contextTypes = {
-		router: React.PropTypes.object.isRequired,
+		router: PropTypes.object.isRequired,
 	};
 
 	exit() {
@@ -48,7 +50,13 @@ export default class AcademyModal extends React.Component {
 	render() {
 		return (
 			<div className="container">
-				<div onClick={this.showAcademy}><InlineSVG className="academy-modal-icon" element="div" src={require('!svg-inline-loader?classPrefix=modal-!../../../images/academy/medal.svg')} /></div>
+				<div onClick={this.showAcademy}>
+					<InlineSVG
+						className="academy-modal-icon"
+						element="div"
+						src={require('!svg-inline-loader?classPrefix=modal-!../../../images/academy/medal.svg')}
+					/>
+				</div>
 				<h2>Hey there!</h2>
 				<p>
 					Do you want to learn how to use Prototypo?<br />
@@ -56,7 +64,11 @@ export default class AcademyModal extends React.Component {
 				</p>
 				<br />
 				<div className="action-form-buttons">
-					<Button click={this.exit} label="No thanks, I know what I'm doing" neutral />
+					<Button
+						click={this.exit}
+						label="No thanks, I know what I'm doing"
+						neutral
+					/>
 					<Button click={this.showAcademy} label="Sure, let's go ahead!" />
 				</div>
 			</div>

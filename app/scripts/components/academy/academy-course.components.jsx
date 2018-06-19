@@ -72,14 +72,18 @@ class AcademyCourse extends React.PureComponent {
 
 	loadCourse(slug) {
 		this.courseSlug = slug;
-		this.course = this.tutorials.content.find(tutorial => tutorial.slug === this.courseSlug);
+		this.course = this.tutorials.content.find(
+			tutorial => tutorial.slug === this.courseSlug,
+		);
 
 		if (!this.course) {
 			// invalid courseSlug supplied, redirect.
 			browserHistory.push('/#/academy/home');
 			return;
 		}
-		window.Intercom('trackEvent', 'opened-academy-course', {name: this.course.title});		
+		window.Intercom('trackEvent', 'opened-academy-course', {
+			name: this.course.title,
+		});
 	}
 
 	reduceChildren(children, child) {
@@ -95,14 +99,17 @@ class AcademyCourse extends React.PureComponent {
 	}
 
 	createElement(tagName, props, children) {
-		const nodeChildren = Array.isArray(children) && children.reduce(this.reduceChildren, []);
+		const nodeChildren
+			= Array.isArray(children) && children.reduce(this.reduceChildren, []);
 
 		return React.createElement(tagName, props, nodeChildren || children);
 	}
 
 	bindData() {
 		document.getElementsByClassName('academy-app')[0].scrollTop = 0;
-		const course = this.tutorials.content.find(tutorial => tutorial.slug === this.courseSlug);
+		const course = this.tutorials.content.find(
+			tutorial => tutorial.slug === this.courseSlug,
+		);
 
 		if (!course) {
 			// invalid courseSlug supplied, redirect.
@@ -112,16 +119,22 @@ class AcademyCourse extends React.PureComponent {
 		const parts = course.content.split(/[^\#]#{2} +/g);
 		let sidebar = {};
 
-		document.querySelector('.academy-course-main-sidebar').classList.remove('fixed');
+		document
+			.querySelector('.academy-course-main-sidebar')
+			.classList.remove('fixed');
 		sidebar = {
 			elem: document.querySelector('.academy-course-main-sidebar'),
 			content: this.courseContentDom,
-			offset: document.querySelector('.academy-course-main-sidebar').getBoundingClientRect().top,
+			offset: document
+				.querySelector('.academy-course-main-sidebar')
+				.getBoundingClientRect().top,
 			width: document.querySelector('.academy-course-main-sidebar').offsetWidth,
 		};
 
 		const headers = parts.slice(1).map((part, index) => {
-			const elem = findDOMNode(this.refs[`${this.courseSlug}-part${index + 2}`]).querySelector('.title');
+			const elem = findDOMNode(
+				this.refs[`${this.courseSlug}-part${index + 2}`],
+			).querySelector('.title');
 
 			elem.classList.remove('fixed');
 			return {
@@ -136,7 +149,10 @@ class AcademyCourse extends React.PureComponent {
 			this.markAsRead(parts[0].content);
 		}
 		this.setState({
-			...this.state, headers, sidebar, course,
+			...this.state,
+			headers,
+			sidebar,
+			course,
 		});
 
 		const currentProgress = this.props.academyProgress[this.courseSlug];
@@ -167,7 +183,10 @@ class AcademyCourse extends React.PureComponent {
 			};
 		});
 
-		if (stickedIndex === 0 && event.target.scrollTop <= updatedHeaders[0].offset) {
+		if (
+			stickedIndex === 0
+			&& event.target.scrollTop <= updatedHeaders[0].offset
+		) {
 			stickedIndex = -1;
 		}
 		if (updatedHeaders[stickedIndex]) {
@@ -176,28 +195,45 @@ class AcademyCourse extends React.PureComponent {
 		this.setState({
 			headers,
 			stickedIndex,
-			scrollPercent: Math.round(event.target.scrollTop
-					/ (document.getElementsByClassName('academy-course-main')[0].offsetHeight - 850)
-					* 100),
+			scrollPercent: Math.round(
+				event.target.scrollTop
+					/ (document.getElementsByClassName('academy-course-main')[0]
+						.offsetHeight
+						- 850)
+					* 100,
+			),
 		});
 
 		// Logo sticky handling
 		if (event.target.scrollTop >= this.state.sidebar.offset - 130) {
-			document.getElementsByClassName('academy-dashboard-icon')[0].classList.add('fixed');
-			document.getElementsByClassName('academy-dashboard-icon')[0].style.left = `${this.courseContentDom.getBoundingClientRect().left - 75}px`;
+			document
+				.getElementsByClassName('academy-dashboard-icon')[0]
+				.classList.add('fixed');
+			document.getElementsByClassName(
+				'academy-dashboard-icon',
+			)[0].style.left = `${this.courseContentDom.getBoundingClientRect().left
+				- 75}px`;
 		}
 		else {
-			document.getElementsByClassName('academy-dashboard-icon')[0].classList.remove('fixed');
-			document.getElementsByClassName('academy-dashboard-icon')[0].style.left = 'inherit';
+			document
+				.getElementsByClassName('academy-dashboard-icon')[0]
+				.classList.remove('fixed');
+			document.getElementsByClassName('academy-dashboard-icon')[0].style.left
+				= 'inherit';
 		}
 
 		// Sidebar sticky handling
 		if (event.target.scrollTop >= this.state.sidebar.offset) {
 			this.state.sidebar.elem.classList.add('fixed');
-			document.getElementsByClassName('academy-dashboard-icon')[0].classList.add('fixed');
-			document.getElementsByClassName('academy-dashboard-icon')[0].style.left = `${this.courseContentDom.getBoundingClientRect().left - 75}px`;
-			this.state.sidebar.elem.style.left = `${this.courseContentDom.getBoundingClientRect().right
-				+ 20}px`;
+			document
+				.getElementsByClassName('academy-dashboard-icon')[0]
+				.classList.add('fixed');
+			document.getElementsByClassName(
+				'academy-dashboard-icon',
+			)[0].style.left = `${this.courseContentDom.getBoundingClientRect().left
+				- 75}px`;
+			this.state.sidebar.elem.style.left = `${this.courseContentDom.getBoundingClientRect()
+				.right + 20}px`;
 		}
 		else {
 			this.state.sidebar.elem.classList.remove('fixed');
@@ -232,7 +268,11 @@ class AcademyCourse extends React.PureComponent {
 				</div>
 			);
 		}
-		return this.createElement(`h${props.level}`, this.getCoreProps(props), props.children);
+		return this.createElement(
+			`h${props.level}`,
+			this.getCoreProps(props),
+			props.children,
+		);
 	}
 
 	imgRenderer(props) {
@@ -241,7 +281,12 @@ class AcademyCourse extends React.PureComponent {
 
 		if (!src.match(urlRegexp) && this.state.course) {
 			return (
-				<img src={`assets/images/academy/courses/${this.state.course.title}/${src}`} alt={alt} />
+				<img
+					src={`assets/images/academy/courses/${
+						this.state.course.title
+					}/${src}`}
+					alt={alt}
+				/>
 			);
 		}
 		return <img src={src} alt={alt} />;
@@ -251,11 +296,7 @@ class AcademyCourse extends React.PureComponent {
 		const {href, children} = props;
 
 		if (href.includes('/academy')) {
-			return (
-				<Link to={href}>
-					{children}
-				</Link>
-			);
+			return <Link to={href}>{children}</Link>;
 		}
 		return (
 			<a target="_blank" href={href} className="out">
@@ -279,8 +320,11 @@ class AcademyCourse extends React.PureComponent {
 						returnstring = `${returnstring} ${regexResult[0]}`;
 					}
 					else {
-						returnstring = `${returnstring} ${regexResult[1]}="assets/images/academy/courses/${this
-							.state.course.title}/${regexResult[2]}"`;
+						returnstring = `${returnstring} ${
+							regexResult[1]
+						}="assets/images/academy/courses/${this.state.course.title}/${
+							regexResult[2]
+						}"`;
 					}
 				}
 				else {
@@ -289,11 +333,17 @@ class AcademyCourse extends React.PureComponent {
 			}
 			literal = `${returnstring}>`;
 		}
-		const nodeProps = props.escapeHtml ? {} : {dangerouslySetInnerHTML: {__html: literal}};
+		const nodeProps = props.escapeHtml
+			? {}
+			: {dangerouslySetInnerHTML: {__html: literal}};
 		const children = props.escapeHtml ? [props.literal] : null;
 
 		if (props.escapeHtml || !props.skipHtml) {
-			return this.createElement(props.isBlock ? 'div' : 'span', nodeProps, children);
+			return this.createElement(
+				props.isBlock ? 'div' : 'span',
+				nodeProps,
+				children,
+			);
 		}
 	}
 
@@ -312,10 +362,13 @@ class AcademyCourse extends React.PureComponent {
 			name: this.course.title,
 			rewarded: false,
 			completed: false,
-			parts: this.course.content.split(/[^\#]#{2} +/g).slice(1).map(value => ({
-				name: value.split(/\r\n|\r|\n/g)[0],
-				completed: false,
-			})),
+			parts: this.course.content
+				.split(/[^\#]#{2} +/g)
+				.slice(1)
+				.map(value => ({
+					name: value.split(/\r\n|\r|\n/g)[0],
+					completed: false,
+				})),
 
 			...this.props.academyProgress[this.courseSlug],
 		};
@@ -337,7 +390,9 @@ class AcademyCourse extends React.PureComponent {
 	isPartRead(part) {
 		const course = this.props.academyProgress[this.courseSlug];
 
-		return !!(course && !!course.parts.find(p => p.name === part && p.completed));
+		return !!(
+			course && !!course.parts.find(p => p.name === part && p.completed)
+		);
 	}
 
 	isCourseDone(slug) {
@@ -349,12 +404,16 @@ class AcademyCourse extends React.PureComponent {
 	areAllPartsRead() {
 		const progress = this.props.academyProgress[this.courseSlug];
 
-		return progress && progress.parts && progress.parts.every(p => p.completed);
+		return (
+			progress && progress.parts && progress.parts.every(p => p.completed)
+		);
 	}
 
 	getNextCourse() {
 		return this.tutorials.content[
-			this.tutorials.content.findIndex(tutorial => tutorial.slug === this.courseSlug) + 1
+			this.tutorials.content.findIndex(
+				tutorial => tutorial.slug === this.courseSlug,
+			) + 1
 		];
 	}
 
@@ -365,7 +424,9 @@ class AcademyCourse extends React.PureComponent {
 			Link: this.linkRenderer,
 			HtmlInline: this.htmlRenderer,
 		};
-		const course = this.tutorials.content.find(tutorial => tutorial.slug === this.courseSlug);
+		const course = this.tutorials.content.find(
+			tutorial => tutorial.slug === this.courseSlug,
+		);
 
 		if (!course) {
 			// invalid courseSlug supplied, redirect.
@@ -381,48 +442,50 @@ class AcademyCourse extends React.PureComponent {
 			}
 		});
 
-		const basics
-			= course.basics.length > 0
-			&& <div>
+		const basics = course.basics.length > 0 && (
+			<div>
 				<h3>Basics</h3>
-				{course.basics.map(basic =>
-					(<Link
+				{course.basics.map(basic => (
+					<Link
 						key={basic.slug}
 						className="academy-sidebar-menu-item"
 						to={`/academy/course/${basic.slug}`}
 					>
 						{basic.title}
-					</Link>))}
-			</div>;
-		const partsDisplay
-			= this.state.headers.length > 0
-			&& <div>
+					</Link>
+				))}
+			</div>
+		);
+		const partsDisplay = this.state.headers.length > 0 && (
+			<div>
 				<h3>Parts</h3>
-				{this.state.headers.map(header =>
-					(<a
+				{this.state.headers.map(header => (
+					<a
 						href={`#/academy/${course.slug}/${header.content}`}
 						key={header.content}
-						className={`academy-sidebar-menu-item ${header.active ? 'is-active' : ''}`}
+						className={`academy-sidebar-menu-item ${
+							header.active ? 'is-active' : ''
+						}`}
 						onClick={(e) => {
 							e.preventDefault();
 							header.elem.scrollIntoView();
 						}}
 					>
 						<span
-							className={`academy-sidebar-menu-item-checkmark ${this.isPartRead(header.content)
-								? 'active'
-								: ''}`}
+							className={`academy-sidebar-menu-item-checkmark ${
+								this.isPartRead(header.content) ? 'active' : ''
+							}`}
 						/>
-						<span>
-							{header.content}
-						</span>
-					</a>))}
-			</div>;
+						<span>{header.content}</span>
+					</a>
+				))}
+			</div>
+		);
 		const sidebar = (
 			<ScrollArea
-					className="academy-course-main-sidebar"
-					contentClassName="academy-course-main-sidebar-content"
-					horizontal={false}
+				className="academy-course-main-sidebar"
+				contentClassName="academy-course-main-sidebar-content"
+				horizontal={false}
 			>
 				<progress value={this.state.scrollPercent} max="100" />
 				{basics}
@@ -445,21 +508,22 @@ class AcademyCourse extends React.PureComponent {
 
 							return dateA > dateB ? 1 : -1;
 						})
-						.map(tutorial =>
-							(<Link
+						.map(tutorial => (
+							<Link
 								key={tutorial.slug}
-								className={`academy-sidebar-menu-item ${tutorial.slug === this.courseSlug
-									? 'is-active'
-									: ''}`}
+								className={`academy-sidebar-menu-item ${
+									tutorial.slug === this.courseSlug ? 'is-active' : ''
+								}`}
 								to={`/academy/course/${tutorial.slug}`}
 							>
 								<span
-									className={`academy-sidebar-menu-item-checkmark ${this.isCourseDone(tutorial.slug)
-										? 'is-done'
-										: ''} ${tutorial.slug === this.courseSlug ? 'is-active' : ''}`}
+									className={`academy-sidebar-menu-item-checkmark ${
+										this.isCourseDone(tutorial.slug) ? 'is-done' : ''
+									} ${tutorial.slug === this.courseSlug ? 'is-active' : ''}`}
 								/>
 								{tutorial.title}
-							</Link>))}
+							</Link>
+						))}
 				</div>
 			</ScrollArea>
 		);
@@ -475,17 +539,20 @@ class AcademyCourse extends React.PureComponent {
 						src={require('!svg-inline-loader!../../../images/academy/cup.svg')}
 					/>
 					<div className="academy-course-finish-text">
-						{this.getNextCourse()
-							? <p>
-									Good Job, you have learned {course.objective}
-									. Do you want to learn {this.getNextCourse().objective}
-									? Check out our next course: {this.getNextCourse().title}
-									.
-         </p>
-							: <p>
-								{' '}Good Job, you have learned {course.objective} We do not have anything else to
-									teach you yet. Stay tuned for more!
-         </p>}
+						{this.getNextCourse() ? (
+							<p>
+								Good Job, you have learned {course.objective}
+								. Do you want to learn {this.getNextCourse().objective}
+								? Check out our next course: {this.getNextCourse().title}
+								.
+							</p>
+						) : (
+							<p>
+								{' '}
+								Good Job, you have learned {course.objective} We do not have
+								anything else to teach you yet. Stay tuned for more!
+							</p>
+						)}
 					</div>
 					<div className="academy-course-finish-validation">
 						<Link
@@ -507,7 +574,9 @@ class AcademyCourse extends React.PureComponent {
 		return (
 			<div
 				key={this.courseName}
-				className={`academy-base academy-course ${course.isVideo ? 'is-video' : ''}`}
+				className={`academy-base academy-course ${
+					course.isVideo ? 'is-video' : ''
+				}`}
 			>
 				<div className="academy-course-main">
 					<div
@@ -516,15 +585,18 @@ class AcademyCourse extends React.PureComponent {
 							this.courseContentDom = courseContentDom;
 						}}
 					>
-						{parts.map((part, index) =>
-							(<div key={index} className="academy-course-main-content-part clearfix">
+						{parts.map((part, index) => (
+							<div
+								key={index}
+								className="academy-course-main-content-part clearfix"
+							>
 								<ReactMarkdown
 									source={part}
 									renderers={renderers}
 									ref={`${this.courseSlug}-part${index + 1}`}
 								/>
-								{index > 0
-									&& <Button
+								{index > 0 && (
+									<Button
 										className="part-progress-complete-button"
 										size="large"
 										outline
@@ -536,8 +608,10 @@ class AcademyCourse extends React.PureComponent {
 											: index === parts.length - 1
 												? 'I finished the last part!'
 												: 'I finished! On to the next part'}
-									</Button>}
-							</div>))}
+									</Button>
+								)}
+							</div>
+						))}
 					</div>
 					{sidebar}
 				</div>

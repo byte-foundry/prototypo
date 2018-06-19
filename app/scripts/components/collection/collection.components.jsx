@@ -54,7 +54,10 @@ class Collection extends React.PureComponent {
 			});
 
 			if (!collectionSelectedFamily) {
-				this.client.dispatchAction('/select-family-collection', this.props.families[0]);
+				this.client.dispatchAction(
+					'/select-family-collection',
+					this.props.families[0],
+				);
 				this.client.dispatchAction(
 					'/select-variant-collection',
 					this.props.families[0].variants[0],
@@ -107,10 +110,11 @@ class Collection extends React.PureComponent {
 			exportedVariant,
 		} = this.state;
 
-		const selectedFamilyVariants = (families.find(family => family.id === selected.id) || {})
-			.variants;
-		const variant = selectedFamilyVariants
-			? (<VariantList
+		const selectedFamilyVariants = (
+			families.find(family => family.id === selected.id) || {}
+		).variants;
+		const variant = selectedFamilyVariants ? (
+			<VariantList
 				variants={selectedFamilyVariants}
 				selectedVariantId={this.state.selectedVariant.id}
 				askSubscribe={askSubscribeFamily}
@@ -118,17 +122,25 @@ class Collection extends React.PureComponent {
 				exportedVariant={exportedVariant}
 				family={selected}
 				deleteVariant={this.props.deleteVariant}
-			/>)
-			: false;
+			/>
+		) : (
+			false
+		);
 
 		return (
 			<div className="collection">
 				<div className="collection-container">
-					<div className="account-dashboard-icon" onClick={this.returnToDashboard} />
+					<div
+						className="account-dashboard-icon"
+						onClick={this.returnToDashboard}
+					/>
 					<div className="account-header">
 						<h1 className="account-title">My projects</h1>
 						<div className="account-header-right">
-							<button className="account-dashboard-back-icon" onClick={this.returnToDashboard} />
+							<button
+								className="account-dashboard-back-icon"
+								onClick={this.returnToDashboard}
+							/>
 						</div>
 					</div>
 					<div className="collection-content">
@@ -148,11 +160,13 @@ class Collection extends React.PureComponent {
 }
 
 Collection.propTypes = {
-	families: PropTypes.arrayOf(PropTypes.shape({
-		id: PropTypes.string,
-		name: PropTypes.string,
-		template: PropTypes.string,
-	})).isRequired,
+	families: PropTypes.arrayOf(
+		PropTypes.shape({
+			id: PropTypes.string,
+			name: PropTypes.string,
+			template: PropTypes.string,
+		}),
+	).isRequired,
 	deleteFamily: PropTypes.func,
 	deleteVariant: PropTypes.func,
 };
@@ -230,7 +244,9 @@ export default compose(
 
 				data.user.library.forEach((family) => {
 					// eslint-disable-next-line
-					family.variants = family.variants.filter(variant => variant.id !== deleteVariant.id);
+					family.variants = family.variants.filter(
+						variant => variant.id !== deleteVariant.id,
+					);
 				});
 
 				store.writeQuery({
@@ -251,7 +267,9 @@ export default compose(
 
 				// don't worry, mutations are batched, so we're only sending one or two requests
 				// in the future, cascade operations should be available on graphcool
-				const variants = family.variants.map(variant => ownProps.deleteVariant(variant.id));
+				const variants = family.variants.map(variant =>
+					ownProps.deleteVariant(variant.id),
+				);
 
 				return Promise.all([...variants, mutate({variables: {id}})]);
 			},
@@ -260,7 +278,9 @@ export default compose(
 			update: (store, {data: {deleteFamily}}) => {
 				const data = store.readQuery({query: libraryQuery});
 
-				data.user.library = data.user.library.filter(font => font.id !== deleteFamily.id);
+				data.user.library = data.user.library.filter(
+					font => font.id !== deleteFamily.id,
+				);
 
 				store.writeQuery({
 					query: libraryQuery,
@@ -316,7 +336,9 @@ class FamilyList extends React.PureComponent {
 
 	render() {
 		const families = this.props.list.map((family) => {
-			const templateInfo = this.props.templateInfos.find(template => template.templateName === family.template) || {name: 'Undefined'};
+			const templateInfo = this.props.templateInfos.find(
+				template => template.templateName === family.template,
+			) || {name: 'Undefined'};
 			let selected;
 
 			if (this.props.selected) {
@@ -437,8 +459,8 @@ class VariantList extends React.PureComponent {
 	render() {
 		const {deleteSplit} = this.state;
 
-		const variants = this.props.variants.map(variant =>
-			(<Variant
+		const variants = this.props.variants.map(variant => (
+			<Variant
 				key={variant.id}
 				family={this.props.family}
 				variant={variant}
@@ -448,7 +470,8 @@ class VariantList extends React.PureComponent {
 				duplicate={this.openDuplicateVariant}
 				delete={this.deleteVariant}
 				onlyVariant={this.props.variants.length === 1}
-			/>));
+			/>
+		));
 
 		return (
 			<div className="variant-list-container">

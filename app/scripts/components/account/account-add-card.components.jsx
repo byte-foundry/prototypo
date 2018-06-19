@@ -19,7 +19,8 @@ export default class AccountAddCard extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/userStore', this.lifespan)
+		this.client
+			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					loading: head.toJS().d.addcardForm.loading,
@@ -50,15 +51,21 @@ export default class AccountAddCard extends React.Component {
 	}
 
 	render() {
-		const errors = this.state.errors.map((error) => {
-			return <FormError errorText={error} />;
-		});
+		const errors = this.state.errors.map(error => <FormError errorText={error} />);
 
 		return (
-			<form onSubmit={(e) => {this.addCard(e);}} className="account-base account-add-card">
-				<AddCard ref="card" inError={this.state.inError}/>
+			<form
+				onSubmit={(e) => {
+					this.addCard(e);
+				}}
+				className="account-base account-add-card"
+			>
+				<AddCard ref="card" inError={this.state.inError} />
 				{errors}
-				<AccountValidationButton loading={this.state.loading} label="Add card"/>
+				<AccountValidationButton
+					loading={this.state.loading}
+					label="Add card"
+				/>
 			</form>
 		);
 	}

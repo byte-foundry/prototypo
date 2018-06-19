@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import AccountValidationButton from './shared/account-validation-button.components.jsx';
 import InputWithLabel from './shared/input-with-label.components.jsx';
@@ -62,17 +63,21 @@ class ResetPassword extends React.PureComponent {
 
 		this.setState({error: null});
 
-		if (form['password-check'].value && form['password'].value !== form['password-check'].value) { // eslint-disable-line
+		if (
+			form['password-check'].value
+			&& form.password.value !== form['password-check'].value
+		) {
+			// eslint-disable-line
 			this.setState({error: 'The fields do not match'});
 		}
 	}
 
 	redirectToDashboard() {
-		this.props.history.push('/dashboard');
+		this.props.router.push('/dashboard');
 	}
 
 	redirectToReset() {
-		this.props.history.push('/signin/forgotten');
+		this.props.router.push('/signin/forgotten');
 	}
 
 	componentDidMount() {
@@ -127,13 +132,16 @@ class ResetPassword extends React.PureComponent {
 		if (location.query.hasOwnProperty('success')) {
 			return (
 				<div className="forgotten-password sign-in sign-base">
-					<div className="account-dashboard-icon"/>
+					<div className="account-dashboard-icon" />
 					<div className="account-header">
 						<h1 className="account-title">Reset my password</h1>
 					</div>
 					<div className="account-dashboard-container">
 						<div className="sign-in-form">
-							<p>Your password has been successfully resetted. You can now go the app!</p>
+							<p>
+								Your password has been successfully resetted. You can now go the
+								app!
+							</p>
 							<AccountValidationButton
 								click={this.redirectToDashboard}
 								label="Go to the app"
@@ -147,13 +155,16 @@ class ResetPassword extends React.PureComponent {
 		if (!isTokenValid && !loadingCheck) {
 			return (
 				<div className="forgotten-password sign-in sign-base">
-					<div className="account-dashboard-icon"/>
+					<div className="account-dashboard-icon" />
 					<div className="account-header">
 						<h1 className="account-title">Reset my password</h1>
 					</div>
 					<div className="account-dashboard-container">
 						<div className="sign-in-form">
-							<p>It seems the link you clicked on is not valid anymore! Try requesting a new password.</p>
+							<p>
+								It seems the link you clicked on is not valid anymore! Try
+								requesting a new password.
+							</p>
 							<AccountValidationButton
 								click={this.redirectToReset}
 								label="Reset my password"
@@ -166,16 +177,21 @@ class ResetPassword extends React.PureComponent {
 
 		return (
 			<div className="forgotten-password sign-in sign-base">
-				<div className="account-dashboard-icon"/>
+				<div className="account-dashboard-icon" />
 				<div className="account-header">
 					<h1 className="account-title">Reset my password</h1>
 				</div>
 				<div className="account-dashboard-container">
-					<form className="sign-in-form" onSubmit={this.resetPassword} onChange={this.handleForm}>
+					<form
+						className="sign-in-form"
+						onSubmit={this.resetPassword}
+						onChange={this.handleForm}
+					>
 						<p className="forgotten-password-text">
-							Please enter a new password:
-							{' '}
-							<span style={{fontSize: '8px'}}>(and please, don't forget it this time!)</span>
+							Please enter a new password:{' '}
+							<span style={{fontSize: '8px'}}>
+								(and please, don't forget it this time!)
+							</span>
 						</p>
 						<InputWithLabel
 							label="Password"
@@ -194,8 +210,13 @@ class ResetPassword extends React.PureComponent {
 							type="password"
 							required
 						/>
-						{error || fetchError && <WarningMessage text={error || fetchError}/>}
-						<AccountValidationButton loading={loading} label="Reset Password" disabled={!!this.state.error} />
+						{error
+							|| (fetchError && <WarningMessage text={error || fetchError} />)}
+						<AccountValidationButton
+							loading={loading}
+							label="Reset Password"
+							disabled={!!this.state.error}
+						/>
 					</form>
 				</div>
 			</div>

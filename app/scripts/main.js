@@ -99,7 +99,9 @@ selectRenderOptions(
 			userLifecycleAction,
 			{
 				'/load-intercom-info': (data) => {
-					const patch = prototypoStore.set('intercomTags', data.tags.tags).commit();
+					const patch = prototypoStore
+						.set('intercomTags', data.tags.tags)
+						.commit();
 
 					localServer.dispatchUpdate('/prototypoStore', patch);
 				},
@@ -110,7 +112,8 @@ selectRenderOptions(
 			'action',
 			({path, params}) => {
 				// eventDebugger.storeEvent(path, params);
-				if (process.env.__SHOW_ACTION__) { // eslint-disable-line
+				if (process.env.__SHOW_ACTION__) {
+					// eslint-disable-line
 					console.log(`[ACTION] ${path}`);
 				}
 
@@ -127,17 +130,18 @@ selectRenderOptions(
 
 		const eventDebugger = new EventDebugger();
 
-		const templates = await Promise.all(prototypoStore.get('templateList').map(async ({templateName}) => {
-			const typedataJSON = await import(/* webpackChunkName: "ptfs" */`../../dist/templates/${templateName}/font.json`);
+		const templates = await Promise.all(
+			prototypoStore.get('templateList').map(async ({templateName}) => {
+				const typedataJSON = await import(/* webpackChunkName: "ptfs" */ `../../dist/templates/${templateName}/font.json`);
 
-			return {
-				name: templateName,
-				json: typedataJSON,
-			};
-		}));
+				return {
+					name: templateName,
+					json: typedataJSON,
+				};
+			}),
+		);
 
 		await FontMediator.init(templates);
-
 
 		const content = document.getElementById('content');
 
@@ -166,10 +170,7 @@ selectRenderOptions(
 			});
 
 		window.addEventListener('values.loaded', () => {
-			ReactDOM.render(
-				<App />,
-				content,
-			);
+			ReactDOM.render(<App />, content);
 		});
 
 		/* #if debug */

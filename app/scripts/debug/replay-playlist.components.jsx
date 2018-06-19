@@ -11,15 +11,18 @@ export default class ReplayPlaylist extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
-		.onUpdate(({head}) => {
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
 				this.setState({
 					debugDetails: head.toJS().debugDetails,
 					debugShowDetails: head.toJS().debugShowDetails,
@@ -35,14 +38,16 @@ export default class ReplayPlaylist extends React.Component {
 	}
 
 	render() {
-		const details = this.state.debugShowDetails
-			? <EventDetails details={this.state.debugDetails} />
-			: false;
+		const details = this.state.debugShowDetails ? (
+			<EventDetails details={this.state.debugDetails} />
+		) : (
+			false
+		);
 
 		return (
 			<div className="replay-playlist">
-				<ReplayPlayer/>
-				<Events/>
+				<ReplayPlayer />
+				<Events />
 				{details}
 			</div>
 		);
@@ -53,12 +58,8 @@ class ReplayPlayer extends React.Component {
 	render() {
 		return (
 			<div className="replay-player">
-				<div className="replay-player-play">
-					&lt;
-				</div>
-				<div className="replay-player-pause">
-					{"||"}
-				</div>
+				<div className="replay-player-play">&lt;</div>
+				<div className="replay-player-pause">{'||'}</div>
 			</div>
 		);
 	}
@@ -74,8 +75,9 @@ class Events extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
-		.onUpdate(({head}) => {
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
 				this.setState({
 					patchArray: head.toJS().patchArray,
 				});
@@ -93,18 +95,21 @@ class Events extends React.Component {
 		let eventIndex = 0;
 		const events = this.state.patchArray.map((patch, i) => {
 			if (patch.type === 'action') {
-				return <Event path={patch.path} details={patch.params} index={eventIndex++} key={i}/>;
+				return (
+					<Event
+						path={patch.path}
+						details={patch.params}
+						index={eventIndex++}
+						key={i}
+					/>
+				);
 			}
-			else {
-				return <Patch path={patch.path} details={patch.patch} key={i}/>
-			}
+			return <Patch path={patch.path} details={patch.patch} key={i} />;
 		});
 
 		return (
 			<ScrollArea horizontal={false}>
-			<ul className="events">
-				{events}
-				</ul>
+				<ul className="events">{events}</ul>
 			</ScrollArea>
 		);
 	}
@@ -113,7 +118,9 @@ class Events extends React.Component {
 class Patch extends React.Component {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 	}
 
 	render() {
@@ -124,16 +131,10 @@ class Patch extends React.Component {
 
 		return (
 			<li className={classes}>
-				<div className="event-name patch-name">
-					{this.props.path}
-				</div>
+				<div className="event-name patch-name">{this.props.path}</div>
 				<div className="event-buttons">
-					<div className="event-buttons-go-here">
-						Go here
-					</div>
-					<div className="event-buttons-details">
-						Deets
-					</div>
+					<div className="event-buttons-go-here">Go here</div>
+					<div className="event-buttons-details">Deets</div>
 				</div>
 			</li>
 		);
@@ -144,15 +145,18 @@ class Event extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
-		.onUpdate(({head}) => {
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
+			.onUpdate(({head}) => {
 				this.setState({
 					debugIndex: head.toJS().debugIndex,
 				});
@@ -178,14 +182,15 @@ class Event extends React.Component {
 
 		return (
 			<li className={classes}>
-				<div className="event-name">
-					{this.props.path}
-				</div>
+				<div className="event-name">{this.props.path}</div>
 				<div className="event-buttons">
-					<div className="event-buttons-go-here">
-						Go here
-					</div>
-					<div className="event-buttons-details" onClick={() => {this.showDetails();}}>
+					<div className="event-buttons-go-here">Go here</div>
+					<div
+						className="event-buttons-details"
+						onClick={() => {
+							this.showDetails();
+						}}
+					>
 						Deets
 					</div>
 				</div>
@@ -207,11 +212,18 @@ class EventDetails extends React.Component {
 		return (
 			<div className="event-details">
 				<h1 className="event-details-title">Action details</h1>
-				<div className="event-details-close" onClick={() => {this.closeDetails()}}>Close</div>
+				<div
+					className="event-details-close"
+					onClick={() => {
+						this.closeDetails();
+					}}
+				>
+					Close
+				</div>
 				<ScrollArea>
-					<JSONPretty json={this.props.details}></JSONPretty>
+					<JSONPretty json={this.props.details} />
 				</ScrollArea>
 			</div>
-		)
+		);
 	}
 }

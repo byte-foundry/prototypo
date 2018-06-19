@@ -9,7 +9,7 @@ export default class PrototypoWordInput extends React.Component {
 	}
 
 	componentWillReceiveProps({value}) {
-		if(!this.state.focus && this.props.value !== value) {
+		if (!this.state.focus && this.props.value !== value) {
 			this.refs.input.value = value;
 		}
 	}
@@ -24,9 +24,15 @@ export default class PrototypoWordInput extends React.Component {
 				autoCorrect="off"
 				spellCheck="false"
 				type="text"
-				onChange={(e) => {onTypedText(e.target.value);}}
-				onFocus={() => {this.setState({focus: true});}}
-				onBlur={() => {this.setState({focus: false});}}
+				onChange={(e) => {
+					onTypedText(e.target.value);
+				}}
+				onFocus={() => {
+					this.setState({focus: true});
+				}}
+				onBlur={() => {
+					this.setState({focus: false});
+				}}
 				defaultValue={value}
 			/>
 		);

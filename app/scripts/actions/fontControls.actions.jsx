@@ -16,11 +16,12 @@ export default {
 	'/load-values': (p) => {
 		const params = cloneDeep(p);
 
-		const patch = undoableStore
-			.set('controlsValues', params)
-			.commit();
+		const patch = undoableStore.set('controlsValues', params).commit();
 
 		localServer.dispatchUpdate('/undoableStore', patch);
-		localClient.dispatchAction('/store-action', {store: '/undoableStore', patch});
+		localClient.dispatchAction('/store-action', {
+			store: '/undoableStore',
+			patch,
+		});
 	},
 };

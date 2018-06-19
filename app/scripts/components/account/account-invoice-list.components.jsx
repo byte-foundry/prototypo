@@ -16,7 +16,8 @@ export default class AccountInvoiceList extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/userStore', this.lifespan)
+		this.client
+			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					invoices: head.toJS().d.invoices || [],
@@ -34,20 +35,17 @@ export default class AccountInvoiceList extends React.Component {
 	}
 
 	render() {
-		const invoices = this.state.invoices.length > 0 ? this.state.invoices.map((invoice) => {
-			return <InvoiceLink invoice={invoice} key={invoice.id}/>;
-		}) : (
-			<p>
-				You haven't any invoices for the moment.
-			</p>
-		);
+		const invoices
+			= this.state.invoices.length > 0 ? (
+				this.state.invoices.map(invoice => <InvoiceLink invoice={invoice} key={invoice.id} />)
+			) : (
+				<p>You haven't any invoices for the moment.</p>
+			);
 
 		return (
 			<div className="account-base">
 				<h1>Your invoices</h1>
-				<ul className="list">
-					{invoices}
-				</ul>
+				<ul className="list">{invoices}</ul>
 			</div>
 		);
 	}
@@ -55,14 +53,28 @@ export default class AccountInvoiceList extends React.Component {
 
 class InvoiceLink extends React.Component {
 	render() {
-		const {created_at, currency, permalink, secure_id, total_cents} = this.props.invoice;
+		const {
+			created_at,
+			currency,
+			permalink,
+			secure_id,
+			total_cents,
+		} = this.props.invoice;
 
 		return (
 			<li className="list-item">
-				<span className="list-item-date">{moment.unix(created_at).format('L')}</span>
+				<span className="list-item-date">
+					{moment.unix(created_at).format('L')}
+				</span>
 				<span className="list-item-text">{secure_id}</span>
-				<span className="list-item-text">{currency === 'USD' && '$'}{total_cents / 100}{currency === 'EUR' && '€'}</span>
-				<a className="list-item-download" target="_blank" href={permalink}>Download</a>
+				<span className="list-item-text">
+					{currency === 'USD' && '$'}
+					{total_cents / 100}
+					{currency === 'EUR' && '€'}
+				</span>
+				<a className="list-item-download" target="_blank" href={permalink}>
+					Download
+				</a>
 			</li>
 		);
 	}

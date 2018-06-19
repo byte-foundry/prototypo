@@ -4,7 +4,10 @@ import {countries} from 'country-data';
 import InputWithLabel from './input-with-label.components';
 import SelectWithLabel from './select-with-label.components';
 
-const countryOptions = countries.all.map(({name, alpha2}) => ({value: alpha2, label: name}));
+const countryOptions = countries.all.map(({name, alpha2}) => ({
+	value: alpha2,
+	label: name,
+}));
 
 export default class BillingAddress extends React.PureComponent {
 	render() {
@@ -62,7 +65,11 @@ export default class BillingAddress extends React.PureComponent {
 				</div>
 				<div className="columns">
 					<div className="half-column">
-						<InputWithLabel name="region" inputValue={address.region} label="Region" />
+						<InputWithLabel
+							name="region"
+							inputValue={address.region}
+							label="Region"
+						/>
 					</div>
 					<div className="half-column">
 						<SelectWithLabel

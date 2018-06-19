@@ -27,10 +27,15 @@ class AcademyDashboard extends React.Component {
 		const progress = courseProgress;
 		let {lastCourse} = this.props.academyProgress;
 
-		if (courseProgress.parts.every(p => p.completed) && !courseProgress.completed) {
+		if (
+			courseProgress.parts.every(p => p.completed)
+			&& !courseProgress.completed
+		) {
 			lastCourse = null;
 			progress.completed = true;
-			window.Intercom('trackEvent', 'finished-academy-course', {name: progress.name});
+			window.Intercom('trackEvent', 'finished-academy-course', {
+				name: progress.name,
+			});
 		}
 
 		await this.props.saveAcademyProgress({
@@ -44,9 +49,14 @@ class AcademyDashboard extends React.Component {
 
 	checkAllCourseRead() {
 		const {academyCompleted, academyProgress} = this.props;
-		const allCoursesProgress = Object.values(academyProgress).filter(p => typeof p === 'object');
+		const allCoursesProgress = Object.values(academyProgress).filter(
+			p => typeof p === 'object',
+		);
 
-		if (!academyCompleted && allCoursesProgress.every(c => c && c.completed)) {
+		if (
+			!academyCompleted
+			&& allCoursesProgress.every(c => c && c.completed)
+		) {
 			window.Intercom('trackEvent', 'finishedAllCourses');
 			this.props.setCompletedAcademy();
 		}
@@ -86,15 +96,13 @@ class AcademyDashboard extends React.Component {
 					{backlinkTitle[this.props.route.name]}
 				</Link>
 				<div className="academy-header">
-					<h1 className="academy-title">
-						{title}
-					</h1>
+					<h1 className="academy-title">{title}</h1>
 				</div>
-				{this.props.route.name === 'home'
-					? false
-					: <h1 className="academy-dashboard-page-title">
-						{titles[curRoute]}
-					</h1>}
+				{this.props.route.name === 'home' ? (
+					false
+				) : (
+					<h1 className="academy-dashboard-page-title">{titles[curRoute]}</h1>
+				)}
 				<div className="academy-dashboard-container">
 					{React.cloneElement(this.props.children, {
 						setCourseCurrentlyReading: this.setCourseCurrentlyReading,
@@ -182,7 +190,8 @@ export default compose(
 			skip: !userId,
 		}),
 		props: ({mutate, ownProps}) => ({
-			saveAcademyProgress: values => mutate({variables: {userId: ownProps.userId, values}}),
+			saveAcademyProgress: values =>
+				mutate({variables: {userId: ownProps.userId, values}}),
 		}),
 	}),
 )(AcademyDashboard);

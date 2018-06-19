@@ -17,25 +17,31 @@ export default class Label extends React.Component {
 			'is-warning': warning,
 		});
 
-		return React.Children.map(children, (child) => {
-			return React.cloneElement(child, {
-				className: `${child.props.className || ''} ${inputClass}`,
-			});
-		});
+		return React.Children.map(children, child => React.cloneElement(child, {
+			className: `${child.props.className || ''} ${inputClass}`,
+		}));
 	}
 
 	render() {
-		const required = this.props.required
-			? <span className="input-with-label-label-required">*</span>
-			: false;
+		const required = this.props.required ? (
+			<span className="input-with-label-label-required">*</span>
+		) : (
+			false
+		);
 
-		const info = this.props.info
-			? <span className="input-with-label-label-info">{this.props.info}</span>
-			: false;
+		const info = this.props.info ? (
+			<span className="input-with-label-label-info">{this.props.info}</span>
+		) : (
+			false
+		);
 
 		return (
 			<div className="input-with-label">
-				<label className="input-with-label-label">{this.props.label}{info}{required}</label>
+				<label className="input-with-label-label">
+					{this.props.label}
+					{info}
+					{required}
+				</label>
 				{this.renderChildren()}
 			</div>
 		);

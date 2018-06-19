@@ -77,15 +77,16 @@ self.onmessage = (e) => {
 		if (e.data.data.forExport) {
 			const textEncoder = new TextEncoder('utf-8');
 			const encodedId = textEncoder.encode(e.data.id);
-			const resultBuffer = new Uint8Array(1
-				+ encodedId.byteLength // ids plus length of ids
-				+ arrayBuffer.byteLength);
+			const resultBuffer = new Uint8Array(
+				1
+					+ encodedId.byteLength // ids plus length of ids
+						+ arrayBuffer.byteLength,
+			);
 
-			resultBuffer.set([
-				encodedId.byteLength,
-				...encodedId,
-				...arrayBuffer,
-			], 0);
+			resultBuffer.set(
+				[encodedId.byteLength, ...encodedId, ...arrayBuffer],
+				0,
+			);
 
 			self.postMessage(resultBuffer.buffer);
 		}
@@ -93,16 +94,22 @@ self.onmessage = (e) => {
 			const textEncoder = new TextEncoder('utf-8');
 			const encodedId = textEncoder.encode(e.data.id);
 			const glyphValuesArray = getFontValuesArray(font);
-			const resultBuffer = new Uint8Array(glyphValuesArray.byteLength
-				+ 1 + encodedId.byteLength // ids plus length of ids
-				+ arrayBuffer.byteLength);
+			const resultBuffer = new Uint8Array(
+				glyphValuesArray.byteLength
+					+ 1
+					+ encodedId.byteLength // ids plus length of ids
+						+ arrayBuffer.byteLength,
+			);
 
-			resultBuffer.set([
-				encodedId.byteLength,
-				...encodedId,
-				...glyphValuesArray,
-				...arrayBuffer,
-			], 0);
+			resultBuffer.set(
+				[
+					encodedId.byteLength,
+					...encodedId,
+					...glyphValuesArray,
+					...arrayBuffer,
+				],
+				0,
+			);
 
 			self.postMessage(resultBuffer.buffer);
 		}
