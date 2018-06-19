@@ -2,7 +2,6 @@ import _mapValues from 'lodash/mapValues';
 import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Dropzone from 'react-dropzone';
 
 import LocalClient from '../stores/local-client.stores';
@@ -22,7 +21,7 @@ import {toileType} from '../toile/toile';
 import CanvasShadow from './canvasTools/canvas-shadow.components';
 import EditNodeProperties from './edit-node-properties.components';
 
-export default class PrototypoCanvas extends React.Component {
+export default class PrototypoCanvas extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
@@ -36,10 +35,9 @@ export default class PrototypoCanvas extends React.Component {
 			shadowFile: '',
 			glyphViewMatrix: {},
 			selectedItems: [],
+			error: false,
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
+
 		this.handleContextMenu = this.handleContextMenu.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.handleLeaveAndClick = this.handleLeaveAndClick.bind(this);
@@ -568,12 +566,34 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	handleUpdateGlyph(glyph) {
-		this.setState({updatedGlyph: glyph});
+		this.setState(({selectedItems, updatedGlyph = {}}) => ({
+			updatedGlyph: glyph,
+			// removing any selectedItems when changing glyph
+			selectedItems: updatedGlyph.name === glyph.name ? selectedItems : [],
+		}));
+	}
+
+	componentDidCatch(error) {
+		trackJs.track(error);
+		this.setState({error: true});
 	}
 
 	render() {
-		const {selectedItems, updatedGlyph} = this.state;
+		const {selectedItems, updatedGlyph, error} = this.state;
 		const {uiRuler, uiOutline} = this.props;
+
+		if (error) {
+			return (
+				<div style={{
+					...this.props.style,
+					margin: 'auto',
+					flexDirection: 'column',
+					textAlign: 'center',
+				}}>
+					<p>Oops something went wrong. Try refreshing the page.</p>
+				</div>
+			);
+		}
 
 		/* eslint-disable max-len */
 		// const isFreeWithoutCreditsInManualEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'select-points';
