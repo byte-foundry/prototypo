@@ -14,7 +14,20 @@ const formatDifference = (number) => {
 class EditNodeProperties extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+
+		const {glyph, selectedItem: item} = props;
+		const node = _get(glyph, item.id);
+
+		this.state = {
+			x: node.x.toFixed(0),
+			y: node.y.toFixed(0),
+		};
+
+		if (node.expand) {
+			this.state.angle = (node.expand.angle / Math.PI * 180).toFixed(0);
+			this.state.width = node.expand.width.toFixed(0);
+			this.state.distr = node.expand.distr.toFixed(1);
+		}
 
 		this.handleInput = this.handleInput.bind(this);
 		this.savePrevValue = this.savePrevValue.bind(this);
