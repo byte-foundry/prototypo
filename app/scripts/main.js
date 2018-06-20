@@ -4,6 +4,8 @@ import pleaseWait from 'please-wait';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import _forOwn from 'lodash/forOwn';
+
 import './styles';
 
 import NotABrowser from './components/not-a-browser.components';
@@ -133,15 +135,35 @@ selectRenderOptions(
 		const templates = await Promise.all(
 			prototypoStore.get('templateList').map(async ({templateName}) => {
 				const typedataJSON = await import(/* webpackChunkName: "ptfs" */ `../../dist/templates/${templateName}/font.json`);
+				const glyphs = [];
 
+				_forOwn(typedataJSON.glyphs, (glyph) => {
+					if (!glyphs[glyph.unicode]) {
+						glyphs[glyph.unicode] = [];
+					}
+					glyphs[glyph.unicode].push(glyph);
+				});
+				const initValues = {};
+
+				typedataJSON.controls.forEach(group =>
+					group.parameters.forEach((param) => {
+						initValues[param.name] = param.init;
+					}),
+				);
 				return {
 					name: templateName,
 					json: typedataJSON,
+					initValues,
+					glyphs,
 				};
 			}),
 		);
 
 		await FontMediator.init(templates);
+
+		const patch = prototypoStore.set('templatesData', templates).commit();
+
+		localServer.dispatchUpdate('/prototypoStore', patch);
 
 		const content = document.getElementById('content');
 
