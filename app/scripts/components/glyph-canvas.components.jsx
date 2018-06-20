@@ -65,6 +65,8 @@ export function changeGlyphManually(
 	client.dispatchAction('/change-glyph-node-manually', {
 		changes,
 		glyphName,
+		label: 'manual edition',
+		force: true,
 	});
 }
 
