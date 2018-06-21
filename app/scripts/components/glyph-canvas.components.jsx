@@ -557,12 +557,12 @@ export default class GlyphCanvas extends React.PureComponent {
 			let deleteMod = false;
 
 			if (this.toile.keyboardUpRisingEdge.keyCode) {
-				const {keyCode} = this.toile.keyboardUpRisingEdge;
+				const {keyCode, special} = this.toile.keyboardUpRisingEdge;
 
-				if (keyCode === 90) {
+				if (keyCode === 90 && !special) {
 					exitingPreview = true;
 				}
-				else if (keyCode === 46) {
+				else if (keyCode === 46 || keyCode === 8) {
 					deleteMod = true;
 				}
 			}
@@ -585,7 +585,7 @@ export default class GlyphCanvas extends React.PureComponent {
 			}
 
 			if (this.toile.keyboardDownRisingEdge.keyCode) {
-				const {keyCode} = this.toile.keyboardDownRisingEdge;
+				const {keyCode, special} = this.toile.keyboardDownRisingEdge;
 
 				// On space edge down keyboard event switch to move mode
 				// whatever the previous mode is
@@ -598,7 +598,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				else if (keyCode === 80) {
 					pause = !pause;
 				}
-				else if (keyCode === 90) {
+				else if (keyCode === 90 && !special) {
 					enteringPreview = true;
 				}
 				else if (keyCode === 27) {
@@ -617,7 +617,7 @@ export default class GlyphCanvas extends React.PureComponent {
 			if (this.toile.keyboardDown.keyCode) {
 				const {keyCode, special} = this.toile.keyboardDown;
 
-				if (keyCode === 90) {
+				if (keyCode === 90 && !special) {
 					previewMode = true;
 				}
 				else if (keyCode === 65) {
@@ -751,7 +751,13 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				// Detection of double click in any mode
 				if (mouse.edge === mState.DOWN) {
-					if (mouseDoubleClick) {
+					// resetting the view is only possible when nothing is selected
+					if (mouseDoubleClick && (
+						appStateValue === appState.DEFAULT || appStateValue & (
+							appState.CONTOUR_SELECTED
+							| appState.CONTOUR_GLOBAL_SELECTED
+						)
+					)) {
 						this.resetView(glyph, height, width);
 					}
 					else {
@@ -773,7 +779,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							| appState.DRAGGING_SPACING)
 					)
 				) {
-					if (guideHandle.length > 0) {
+					if (guideHandle.length > 0 && nodes.length === 0) {
 						appStateValue = appState.DRAGGING_GUIDE;
 						selectedItems = [guideHandle[0]];
 						this.storeSelectedItems(selectedItems);
