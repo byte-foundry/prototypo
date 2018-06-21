@@ -42,7 +42,7 @@ class ArianneThread extends React.PureComponent {
 			list = [],
 			selectedValue,
 			oldValue,
-			oldCriteria,
+			oldCriteria, 
 		) => {
 			if (
 				list.length > 0
