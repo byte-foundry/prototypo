@@ -556,8 +556,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				let modRange = 1;
 				let unparallelMod = false;
 				let unsmoothMod = false;
-				let curveMode
-					= onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD; // eslint-disable-line no-bitwise
+				let curveMode = onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD; // eslint-disable-line no-bitwise
 				let distrModification = false;
 				let directionalModifier = false;
 				let deleteMod = false;
@@ -579,7 +578,9 @@ export default class GlyphCanvas extends React.PureComponent {
 					// Detect space keyboard up event to reset mode to the previous mode
 					if (keyCode === 32) {
 						appMode = oldAppMode;
-						this.client.dispatchAction('/store-value', {canvasMode: oldAppMode});
+						this.client.dispatchAction('/store-value', {
+							canvasMode: oldAppMode,
+						});
 						if (appMode === 'select-points') {
 							appStateValue = oldAppState;
 						}
@@ -730,7 +731,9 @@ export default class GlyphCanvas extends React.PureComponent {
 							item.type === toileType.COMPONENT_CHOICE
 							|| item.type === toileType.COMPONENT_NONE_CHOICE,
 					);
-					const rulers = hotItems.filter(item => item.type === toileType.RULER);
+					const rulers = hotItems.filter(
+						item => item.type === toileType.RULER,
+					);
 
 					const [mousePosInWorld] = transformCoords(
 						[mouse.pos],
@@ -749,21 +752,26 @@ export default class GlyphCanvas extends React.PureComponent {
 					const outside = this.toile.glyphOutsideView(glyph);
 
 					if (outside && !this.props.glyphOutsideView) {
-						this.client.dispatchAction('/store-value', {glyphOutsideView: true});
+						this.client.dispatchAction('/store-value', {
+							glyphOutsideView: true,
+						});
 					}
 					else if (!outside && this.props.glyphOutsideView) {
-						this.client.dispatchAction('/store-value', {glyphOutsideView: false});
+						this.client.dispatchAction('/store-value', {
+							glyphOutsideView: false,
+						});
 					}
 
 					// Detection of double click in any mode
 					if (mouse.edge === mState.DOWN) {
 						// resetting the view is only possible when nothing is selected
-						if (mouseDoubleClick && (
-							appStateValue === appState.DEFAULT || appStateValue & (
-								appState.CONTOUR_SELECTED
-								| appState.CONTOUR_GLOBAL_SELECTED
-							)
-						)) {
+						if (
+							mouseDoubleClick
+							&& (appStateValue === appState.DEFAULT
+								|| appStateValue
+									& (appState.CONTOUR_SELECTED
+										| appState.CONTOUR_GLOBAL_SELECTED))
+						) {
 							this.resetView(glyph, height, width);
 						}
 						else {
@@ -860,7 +868,10 @@ export default class GlyphCanvas extends React.PureComponent {
 					// There is 3 first level state
 					if (
 						appMode === canvasMode.MOVE
-						&& !(appStateValue & (appState.GUIDE_SELECTED | appState.DRAGGING_GUIDE))
+						&& !(
+							appStateValue
+							& (appState.GUIDE_SELECTED | appState.DRAGGING_GUIDE)
+						)
 					) {
 						if (mouse.state === mState.DOWN) {
 							appStateValue = appState.MOVING;
@@ -952,7 +963,8 @@ export default class GlyphCanvas extends React.PureComponent {
 							}
 						}
 						else if (
-							appStateValue & (appState.BOX_SELECTING | appState.NOT_SELECTING)
+							appStateValue
+								& (appState.BOX_SELECTING | appState.NOT_SELECTING)
 							&& mouseClickRelease
 						) {
 							if (boxedItems.length > 0) {
@@ -1209,7 +1221,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 					if (previewMode) {
 						this.cleanUpFrame();
-						this.setState({rafId: raf(rafFunc)})
+						this.setState({rafId: raf(rafFunc)});
 						return;
 					}
 
@@ -1324,7 +1336,8 @@ export default class GlyphCanvas extends React.PureComponent {
 						else {
 							this.toile.drawSelectedContour(
 								_slice(
-									glyph.components[contourSelected.data.componentIdx].otContours,
+									glyph.components[contourSelected.data.componentIdx]
+										.otContours,
 									contourSelected.data.indexes[0],
 									contourSelected.data.indexes[1],
 								),
@@ -1338,7 +1351,9 @@ export default class GlyphCanvas extends React.PureComponent {
 							const deltaVec = subtract2D(mouseStart, mousePosInWorld);
 							const isXBigger = Math.abs(deltaVec.x) > Math.abs(deltaVec.y);
 
-							directionalValue = isXBigger ? directionalMod.X : directionalMod.Y;
+							directionalValue = isXBigger
+								? directionalMod.X
+								: directionalMod.Y;
 
 							if (displacement > MINIMUM_DRAG_DIRECTIONAL_THRESHOLD) {
 								directionalNotStarted = false;
@@ -1653,7 +1668,9 @@ export default class GlyphCanvas extends React.PureComponent {
 									parallelParameters[0] = node;
 									parallelParameters[4] = [{id: parallelParameters[1]}];
 
-									this.toile.drawExpandedNode(...item.data.parallelParameters);
+									this.toile.drawExpandedNode(
+										...item.data.parallelParameters,
+									);
 								}
 
 								break;
@@ -1695,7 +1712,11 @@ export default class GlyphCanvas extends React.PureComponent {
 							}
 							case toileType.NODE_SKELETON:
 							case toileType.CONTOUR_NODE: {
-								if (type === 'angle' || type === 'width' || type === 'distr') {
+								if (
+									type === 'angle'
+										|| type === 'width'
+										|| type === 'distr'
+								) {
 									changeGlyphManually(
 										{
 											[`${item.data.modifAddress}expand.${type}`]: modData[
@@ -1793,7 +1814,9 @@ export default class GlyphCanvas extends React.PureComponent {
 							this.state.guides,
 							// if component menu is hovered, we don't consider the guide
 							componentMenu.length > 0 ? [] : guideHandle,
-							selectedItems.filter(item => item.type === toileType.GUIDE_HANDLE),
+							selectedItems.filter(
+								item => item.type === toileType.GUIDE_HANDLE,
+							),
 						);
 						this.toile.drawRuler(width, height);
 					}
@@ -1801,7 +1824,7 @@ export default class GlyphCanvas extends React.PureComponent {
 
 				this.cleanUpFrame();
 
-				this.setState({rafId: raf(rafFunc)})
+				this.setState({rafId: raf(rafFunc)});
 				/* eslint-enable no-bitwise, max-depth */
 			}
 			catch (error) {

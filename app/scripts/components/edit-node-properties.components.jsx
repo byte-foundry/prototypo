@@ -217,9 +217,7 @@ class EditNodeProperties extends React.Component {
 							value={this.state.width}
 						/>
 						({formatDifference(
-							(node.expand.width - node.expand.baseWidth).toFixed(
-								0,
-							),
+							(node.expand.width - node.expand.baseWidth).toFixed(0),
 						)})
 					</p>
 					<p>
@@ -254,9 +252,7 @@ class EditNodeProperties extends React.Component {
 							step={0.1}
 						/>
 						({formatDifference(
-							(node.expand.distr - node.expand.baseDistr).toFixed(
-								2,
-							),
+							(node.expand.distr - node.expand.baseDistr).toFixed(2),
 						)})
 					</p>
 				</div>
@@ -322,33 +318,27 @@ class EditNodeProperties extends React.Component {
 					<h4>Handle props</h4>
 					<p>
 						<span>Direction in</span>
-						{Number.isNaN(parent.dirIn)
-							? '-'
-							: parent.dirIn.toFixed(0)}
+						{Number.isNaN(parent.dirIn) ? '-' : parent.dirIn.toFixed(0)}
 					</p>
 					<p>
 						<span>Tension in</span>
 						{Number.isNaN(parent.tensionIn)
 							? '-'
-							: `${(
-								parent.tensionIn + parent.baseTensionIn
-							).toFixed(0)} (${parent.tensionIn.toFixed(0)})`}
+							: `${(parent.tensionIn + parent.baseTensionIn).toFixed(
+								0,
+							)} (${parent.tensionIn.toFixed(0)})`}
 					</p>
 					<p>
 						<span>Direction out</span>
-						{Number.isNaN(parent.dirOut)
-							? '-'
-							: parent.dirOut.toFixed(0)}
+						{Number.isNaN(parent.dirOut) ? '-' : parent.dirOut.toFixed(0)}
 					</p>
 					<p>
 						<span>Tension out</span>
 						{Number.isNaN(parent.tensionOut)
 							? '-'
-							: `${(
-								parent.tensionOut + parent.baseTensionOut
-							).toFixed(0)} (${parent.tensionOut.toFixed(
+							: `${(parent.tensionOut + parent.baseTensionOut).toFixed(
 								0,
-							)})`}
+							)} (${parent.tensionOut.toFixed(0)})`}
 					</p>
 				</div>
 			);
@@ -391,9 +381,7 @@ class EditNodeProperties extends React.Component {
 					<p>
 						<span>Width</span>
 						{parent.expand.width.toFixed(0)} ({formatDifference(
-							(
-								parent.expand.width - parent.expand.baseWidth
-							).toFixed(0),
+							(parent.expand.width - parent.expand.baseWidth).toFixed(0),
 						)})
 					</p>
 					<p>
@@ -402,8 +390,7 @@ class EditNodeProperties extends React.Component {
 							0,
 						)} ({formatDifference(
 							(
-								(parent.expand.angle
-									- parent.expand.baseAngle)
+								(parent.expand.angle - parent.expand.baseAngle)
 								/ Math.PI
 								* 180
 							).toFixed(0),
@@ -412,9 +399,7 @@ class EditNodeProperties extends React.Component {
 					<p>
 						<span>Distr</span>
 						{parent.expand.distr.toFixed(2)} ({formatDifference(
-							(
-								parent.expand.distr - parent.expand.baseDistr
-							).toFixed(2),
+							(parent.expand.distr - parent.expand.baseDistr).toFixed(2),
 						)})
 					</p>
 				</div>

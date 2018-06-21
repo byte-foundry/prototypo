@@ -80,10 +80,8 @@ export default class PrototypoCanvas extends React.PureComponent {
 			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					prototypoTextPanelOpened:
-						head.toJS().d.uiMode.indexOf('text') !== -1,
-					glyphPanelOpened:
-						head.toJS().d.uiMode.indexOf('list') !== -1,
+					prototypoTextPanelOpened: head.toJS().d.uiMode.indexOf('text') !== -1,
+					glyphPanelOpened: head.toJS().d.uiMode.indexOf('list') !== -1,
 					glyphs: head.toJS().d.glyphs,
 					glyphFocused: head.toJS().d.glyphFocused,
 					glyphSelected: head.toJS().d.glyphSelected,
@@ -97,12 +95,9 @@ export default class PrototypoCanvas extends React.PureComponent {
 					globalMode: head.toJS().d.globalMode,
 				});
 				this.isFree
-					= HoodieApi.instance
-					&& HoodieApi.instance.plan.indexOf('free_') !== -1;
+					= HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 				this.isFreeWithCredits
-					= head.toJS().d.credits
-					&& head.toJS().d.credits > 0
-					&& this.isFree;
+					= head.toJS().d.credits && head.toJS().d.credits > 0 && this.isFree;
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -595,12 +590,14 @@ export default class PrototypoCanvas extends React.PureComponent {
 
 		if (error) {
 			return (
-				<div style={{
-					...this.props.style,
-					margin: 'auto',
-					flexDirection: 'column',
-					textAlign: 'center',
-				}}>
+				<div
+					style={{
+						...this.props.style,
+						margin: 'auto',
+						flexDirection: 'column',
+						textAlign: 'center',
+					}}
+				>
 					<p>Oops something went wrong. Try refreshing the page.</p>
 				</div>
 			);
@@ -672,10 +669,7 @@ export default class PrototypoCanvas extends React.PureComponent {
 		);
 		let shadowDropzone = false;
 
-		if (
-			this.state.canvasMode === 'shadow'
-			&& this.state.shadowFile === ''
-		) {
+		if (this.state.canvasMode === 'shadow' && this.state.shadowFile === '') {
 			shadowDropzone = (
 				<div className="prototypo-canvas-shadow-dropzone">
 					<Dropzone
@@ -700,9 +694,7 @@ export default class PrototypoCanvas extends React.PureComponent {
 						width={this.container.clientWidth}
 						height={this.container.clientHeight}
 						canvasMode={this.state.canvasMode}
-						glyphSelected={
-							this.state.glyphs[this.props.glyphSelected][0]
-						}
+						glyphSelected={this.state.glyphs[this.props.glyphSelected][0]}
 						glyphViewMatrix={this.state.glyphViewMatrix}
 					/>
 				</div>
@@ -744,9 +736,7 @@ export default class PrototypoCanvas extends React.PureComponent {
 				<CanvasBar />
 				<div
 					className={`prototypo-canvas-reset-buttons ${
-						this.state.canvasMode === 'select-points'
-							? 'is-on-canvas'
-							: ''
+						this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''
 					}`}
 				>
 					<button
@@ -760,9 +750,7 @@ export default class PrototypoCanvas extends React.PureComponent {
 					</button>
 					<button
 						className={`prototypo-canvas-reset-button ${
-							isSpacingSelected || isNodeSelected
-								? ''
-								: 'disabled'
+							isSpacingSelected || isNodeSelected ? '' : 'disabled'
 						}`}
 						onClick={this.resetPoints}
 						disabled={!(isSpacingSelected || isNodeSelected)}
