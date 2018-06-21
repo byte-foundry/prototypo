@@ -65,7 +65,7 @@ export async function loadStuff() {
 			`,
 		});
 
-		const allPresets = await apolloClient.query({
+		const allPresetsQuery = await apolloClient.query({
 			fetchPolicy: 'network-only',
 			query: gql`
 				query {
@@ -77,9 +77,10 @@ export async function loadStuff() {
 		});
 
 		const families = response.data.user.library;
-		const allPresets =  allPresets.data.getAllUniquePresets.presets,
+		const allPresets = allPresetsQuery.data.getAllUniquePresets.presets;
 
 		appValues = await AppValues.get({typeface: 'default'});
+
 		appValues = {
 			...appValues,
 			values: {...defaultValues.values, ...appValues.values},
