@@ -36,6 +36,7 @@ export default class PrototypoCanvas extends React.PureComponent {
 			glyphViewMatrix: {},
 			selectedItems: [],
 			error: false,
+			__devReloadKey: 'init',
 		};
 
 		this.handleContextMenu = this.handleContextMenu.bind(this);
@@ -126,6 +127,16 @@ export default class PrototypoCanvas extends React.PureComponent {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+	}
+
+	componentDidMount() {
+		// This enable the glyph canvas component to be hot reloaded
+		// By changing the key of the component, it is recreated
+		if (module.hot) {
+			module.hot.accept('./glyph-canvas.components', () => {
+				this.setState({__devReloadKey: Date.now(), error: false});
+			});
+		}
 	}
 
 	componentWillUnmount() {
@@ -767,6 +778,8 @@ export default class PrototypoCanvas extends React.PureComponent {
 					glyphOutsideView={this.state.glyphOutsideView}
 					onSelectedItems={this.handleSelectedItems}
 					onUpdateGlyph={this.handleUpdateGlyph}
+					// eslint-disable-next-line no-underscore-dangle
+					key={this.state.__devReloadKey}
 				/>
 				{inputNodeItems.length === 1 && (
 					<EditNodeProperties
