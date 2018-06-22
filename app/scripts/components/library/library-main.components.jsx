@@ -19,6 +19,9 @@ class LibraryMain extends React.Component {
 		this.export = this.export.bind(this);
 		this.goToDashboard = this.goToDashboard.bind(this);
 		this.open = this.open.bind(this);
+		this.rename = this.rename.bind(this);
+		this.duplicate = this.duplicate.bind(this);
+		this.deleteVariant = this.deleteVariant.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -65,6 +68,37 @@ class LibraryMain extends React.Component {
 		this.goToDashboard();
 	}
 
+	rename(variant, family) {
+		this.client.dispatchAction('/store-value', {
+			openChangeVariantNameModal: true,
+			collectionSelectedVariant: variant,
+			familySelectedVariantCreation: family,
+		});
+	}
+
+	async deleteVariant(variant, family) {
+		try {
+			await this.props.deleteVariant(variant.id);
+
+			// legacy call use to change the selected variant
+			this.client.dispatchAction('/delete-variant', {
+				variant,
+				familyName: family.name,
+			});
+		}
+		catch (err) {
+			// TODO: Error handling
+		}
+	}
+
+	duplicate(variant, family) {
+		this.client.dispatchAction('/store-value', {
+			openDuplicateVariantModal: true,
+			collectionSelectedVariant: variant,
+			familySelectedVariantCreation: family,
+		});
+	}
+
 	export(familyName, variantName = 'Regular', values, template, glyphs) {
 		this.client.dispatchAction('/export-otf-from-library', {
 			merged: true,
@@ -92,6 +126,9 @@ class LibraryMain extends React.Component {
 					setActiveFilters: this.setActiveFilters,
 					open: this.open,
 					export: this.export,
+					rename: this.rename,
+					duplicate: this.duplicate,
+					deleteVariant: this.deleteVariant,
 					user: {
 						firstName: this.props.firstName,
 						lastName: this.props.lastName,
@@ -158,6 +195,14 @@ export const presetQuery = gql`
 	}
 `;
 
+const deleteVariantMutation = gql`
+	mutation deleteVariant($id: ID!) {
+		deleteVariant(id: $id) {
+			id
+		}
+	}
+`;
+
 export default compose(
 	graphql(libraryQuery, {
 		options: {
@@ -190,6 +235,31 @@ export default compose(
 				firstName: data.user.firstName,
 				lastName: data.user.lastName,
 			};
+		},
+	}),
+	graphql(deleteVariantMutation, {
+		props: ({mutate}) => ({
+			deleteVariant: id =>
+				mutate({
+					variables: {id},
+				}),
+		}),
+		options: {
+			update: (store, {data: {deleteVariant}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library.forEach((family) => {
+					// eslint-disable-next-line
+					family.variants = family.variants.filter(
+						variant => variant.id !== deleteVariant.id,
+					);
+				});
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
 		},
 	}),
 	graphql(presetQuery, {

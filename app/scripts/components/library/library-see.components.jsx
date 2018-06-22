@@ -32,38 +32,54 @@ class LibrarySee extends React.Component {
 		const prototypoStore = await this.client.fetch('/prototypoStore');
 		const templateValues = prototypoStore.head
 			.toJS()
-			.templatesData.find(e => e.name === this.state.family.template).initValues;
+			.templatesData.find(e => e.name === this.state.family.template);
 		const templateName = prototypoStore.head
 			.toJS()
 			.templateList.find(
-				template => template.templateName === this.state.family.template,
+				template =>
+					template.templateName === this.state.family.template,
 			).templateName;
 
 		this.generateVariants(templateValues, templateName);
 	}
 
-	generateVariants(templateValues, templateName) {
+	generateVariants(templateValues, templateName, families) {
+		const family = families
+			? families.find(e => e.id === this.props.params.projectID)
+			: this.state.family;
 		const fontsToGenerate = [];
 
-		this.state.family.variants.forEach((variant) => {
+		family.variants.forEach((variant) => {
 			fontsToGenerate.push({
 				name: `variant${variant.id}`,
 				template: templateName,
 				subset: 'Hamburgefonstiv 123',
 				values: {
-					...templateValues,
+					...templateValues.initValues,
 					...variant.values,
 				},
+				glyphs: templateValues.glyphs,
 			});
 		});
 		this.setState({
 			fontsToGenerate,
+			templateValues,
+			templateName,
+			family: families ? family : this.state.family,
 		});
 	}
 
+	componentWillReceiveProps(newProps) {
+		if (this.props.families !== newProps.families) {
+			this.generateVariants(
+				this.state.templateValues,
+				this.state.templateName,
+				newProps.families,
+			);
+		}
+	}
+
 	render() {
-		console.log(this.state)
-		console.log(this.props)
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">
@@ -98,6 +114,14 @@ class LibrarySee extends React.Component {
 										this.state.fontsToGenerate[index]
 											.template
 									}
+									glyphs={
+										this.state.fontsToGenerate[index].glyphs
+									}
+									open={this.props.open}
+									duplicate={this.props.duplicate}
+									rename={this.props.rename}
+									export={this.props.export}
+									delete={this.props.deleteVariant}
 								/>
 							))}
 					</div>
@@ -122,55 +146,13 @@ export class VariantItem extends React.Component {
 		this.state = {
 			isOpen: false,
 		};
-		this.open = this.open.bind(this);
-		this.export = this.export.bind(this);
-		this.rename = this.rename.bind(this);
-		this.duplicate = this.duplicate.bind(this);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 	}
 
-	open() {
-		this.client.dispatchAction('/select-variant', {
-			selectedVariant: this.props.variant,
-			family: this.props.family,
-		});
-		this.props.goToDashboard();
-	}
-
-	rename() {
-		this.client.dispatchAction('/store-value', {
-			openChangeVariantNameModal: true,
-			collectionSelectedVariant: this.props.variant,
-			familySelectedVariantCreation: this.props.family,
-		});
-	}
-
-	duplicate() {
-		this.client.dispatchAction('/store-value', {
-			openDuplicateVariantModal: true,
-			collectionSelectedVariant: this.props.variant,
-			familySelectedVariantCreation: this.props.family,
-		});
-	}
-
-	export() {
-		console.log(this.props.family);
-		this.client.dispatchAction('/export-otf-from-library', {
-			merged: true,
-			familyName: this.props.family.name,
-			variantName: this.props.variant.name,
-			exportAs: false,
-			values: this.props.values,
-			template: this.props.template,
-			glyphs: this.props.family.glyphs,
-		});
-	}
-
 	render() {
-		console.log(this.props.family);
 		return (
 			<div
 				className="library-item"
@@ -203,7 +185,10 @@ export class VariantItem extends React.Component {
 						<div
 							className="library-item-variant-action"
 							onClick={() => {
-								this.open();
+								this.props.open(
+									this.props.variant,
+									this.props.family,
+								);
 							}}
 						>
 							Open variant
@@ -211,7 +196,13 @@ export class VariantItem extends React.Component {
 						<div
 							className="library-item-variant-action"
 							onClick={() => {
-								this.export();
+								this.props.export(
+									this.props.family.name,
+									this.props.variant.name,
+									this.props.values,
+									this.props.template,
+									this.props.glyphs,
+								);
 							}}
 						>
 							Export variant
@@ -219,7 +210,10 @@ export class VariantItem extends React.Component {
 						<div
 							className="library-item-variant-action"
 							onClick={() => {
-								this.rename();
+								this.props.rename(
+									this.props.variant,
+									this.props.family,
+								);
 							}}
 						>
 							Rename variant
@@ -227,7 +221,10 @@ export class VariantItem extends React.Component {
 						<div
 							className="library-item-variant-action"
 							onClick={() => {
-								this.duplicate();
+								this.props.duplicate(
+									this.props.variant,
+									this.props.family,
+								);
 							}}
 						>
 							Duplicate variant
@@ -236,8 +233,9 @@ export class VariantItem extends React.Component {
 							<div
 								className="library-item-variant-action"
 								onClick={() => {
-									this.props.deleteVariant(
-										this.props.variant.id,
+									this.props.delete(
+										this.props.variant,
+										this.props.family,
 									);
 								}}
 							>
@@ -251,75 +249,4 @@ export class VariantItem extends React.Component {
 	}
 }
 
-const libraryQuery = gql`
-	query {
-		user {
-			id
-			library {
-				id
-				name
-				template
-				variants {
-					id
-					name
-					values
-				}
-			}
-		}
-	}
-`;
-
-const deleteVariantMutation = gql`
-	mutation deleteVariant($id: ID!) {
-		deleteVariant(id: $id) {
-			id
-		}
-	}
-`;
-
-export default compose(
-	graphql(libraryQuery, {
-		options: {
-			fetchPolicy: 'network-only',
-		},
-		props: ({data}) => {
-			if (data.loading) {
-				return {loading: true};
-			}
-
-			if (data.user) {
-				return {
-					families: data.user.library,
-					refetch: data.refetch,
-				};
-			}
-
-			return {refetch: data.refetch};
-		},
-	}),
-	graphql(deleteVariantMutation, {
-		props: ({mutate}) => ({
-			deleteVariant: id =>
-				mutate({
-					variables: {id},
-				}),
-		}),
-		options: {
-			update: (store, {data: {deleteVariant}}) => {
-				const data = store.readQuery({query: libraryQuery});
-
-				data.user.library.forEach((family) => {
-					// eslint-disable-next-line
-					family.variants = family.variants.filter(
-						variant => variant.id !== deleteVariant.id,
-					);
-				});
-
-				store.writeQuery({
-					query: libraryQuery,
-					data,
-				});
-			},
-		},
-	}),
-)(LibrarySee);
+export default LibrarySee;
