@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {graphql, gql} from 'react-apollo';
+import {libraryQuery} from '../collection/collection.components';
 
 import LocalClient from '../../stores/local-client.stores';
 
@@ -69,12 +70,17 @@ class ChangeNameVariant extends React.PureComponent {
 						onChange={this.saveNewName}
 						inputValue={variant.name}
 					/>
-					{error && <div className="add-family-form-error">{error}</div>}
+					{error && (
+						<div className="add-family-form-error">{error}</div>
+					)}
 					<div className="action-form-buttons">
 						<Button onClick={this.exit} outline neutral>
 							Cancel
 						</Button>
-						<Button onClick={this.editVariant} disabled={isNotValid}>
+						<Button
+							onClick={this.editVariant}
+							disabled={isNotValid}
+						>
 							Change variant name
 						</Button>
 					</div>
@@ -110,5 +116,21 @@ export default graphql(renameVariantMutation, {
 					newName,
 				},
 			}),
+		update: (store, {data: {updateVariant}}) => {
+			const data = store.readQuery({query: libraryQuery});
+			const family = data.user.library.find(
+				family => family.id === ownProps.family.id,
+			);
+			const variant = family.variants.find(
+				variant => variant.id === ownProps.variant.id,
+			);
+
+			variant.name = updateVariant.name;
+
+			store.writeQuery({
+				query: libraryQuery,
+				data,
+			});
+		},
 	}),
 })(ChangeNameVariant);
