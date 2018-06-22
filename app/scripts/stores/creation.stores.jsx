@@ -21,7 +21,7 @@ const prototypoStore = new Remutable({
 	// End store values for debug
 
 	// undoStack Store values
-	undoAt: 0,
+	undoAt: -1,
 	undoEventList: [],
 	// End undoStack store values
 
