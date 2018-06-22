@@ -61,13 +61,15 @@ class ChangeNameFamily extends React.PureComponent {
 
 		return (
 			<Modal propName={propName}>
-				<div className="modal-container-title account-header">Rename family</div>
+				<div className="modal-container-title account-header">
+					Rename family
+				</div>
 				<div className="modal-container-content">
-					<InputWithLabel onChange={this.saveNewName} inputValue={family.name} />
-					{error
-						&& <div className="add-family-form-error">
-							{error}
-						</div>}
+					<InputWithLabel
+						onChange={this.saveNewName}
+						inputValue={family.name}
+					/>
+					{error && <div className="add-family-form-error">{error}</div>}
 					<div className="action-form-buttons">
 						<Button onClick={this.exit} outline neutral>
 							Cancel

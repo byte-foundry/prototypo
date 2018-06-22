@@ -183,7 +183,9 @@
 		margin-top: 2px;
 		flex:1;
 		/* fix a overflow hidden and border-radius error in chrome */
+		mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
 		-webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
+		mask-repeat: repeat;
 		-webkit-mask-repeat: repeat;
 
 		&, &-bg, &-handle {
@@ -200,10 +202,6 @@
 			&.is-not-advised {
 				background-color:$red;
 			}
-		}
-
-		&-bg.is-indiv &-handle {
-			border-color:$yellow;
 		}
 
 		&-bg.is-not-advised &-handle {
@@ -233,10 +231,12 @@
 		background-size: 25px 25px;
 
 		&.min {
+			mask-image: radial-gradient(circle at calc(100%) 50%, transparent 9px, #555 10px);
 			-webkit-mask-image: radial-gradient(circle at calc(100%) 50%, transparent 9px, #555 10px);
 		}
 
 		&.max {
+			mask-image: radial-gradient(circle at 0px 50%, transparent 9px, #555 10px);
 			-webkit-mask-image: radial-gradient(circle at 0px 50%, transparent 9px, #555 10px);
 		}
 	}

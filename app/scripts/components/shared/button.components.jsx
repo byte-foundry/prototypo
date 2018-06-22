@@ -7,7 +7,9 @@ import WaitForLoad from '../wait-for-load.components.jsx';
 export default class Button extends React.Component {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
+		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
+			this,
+		);
 	}
 
 	render() {
@@ -30,17 +32,17 @@ export default class Button extends React.Component {
 			neutral: true,
 			'is-active': isSplitted,
 		});
-		const splitButton = this.props.splitButton
-			? (
-				<div className={splitRight} onClick={this.props.altClick} >
-					{this.props.altLabel}
-				</div>
-			)
-			: false;
+		const splitButton = this.props.splitButton ? (
+			<div className={splitRight} onClick={this.props.altClick}>
+				{this.props.altLabel}
+			</div>
+		) : (
+			false
+		);
 
 		return (
 			<div className="button-container">
-				<div className={classes} onClick={this.props.click} >
+				<div className={classes} onClick={this.props.click}>
 					<WaitForLoad loaded={!this.props.loading}>
 						{this.props.label}
 					</WaitForLoad>

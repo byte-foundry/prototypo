@@ -86,13 +86,19 @@ class Variant extends React.Component {
 				onDoubleClick={this.open}
 				onContextMenu={this.handleContextMenu}
 			>
-				<div className="variant-list-item-name">
-					{variant.name}
-				</div>
-				<Button className="variant-list-open-button" onClick={this.open} size="tiny" outline>
+				<div className="variant-list-item-name">{variant.name}</div>
+				<Button
+					className="variant-list-open-button"
+					onClick={this.open}
+					size="tiny"
+					outline
+				>
 					Open
 				</Button>
-				<ViewPanelsMenu show={this.state.showContextMenu} toggle={this.toggleContextMenu}>
+				<ViewPanelsMenu
+					show={this.state.showContextMenu}
+					toggle={this.toggleContextMenu}
+				>
 					<div className="variant-info-container">
 						<ContextualMenuItem onClick={this.changeName}>
 							Change variant name

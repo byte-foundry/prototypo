@@ -11,11 +11,14 @@ export class ControlsTabs extends React.PureComponent {
 			console.log('[RENDER] controls tabs');
 		}
 
-		const headers = this.props.children.map(({props: {iconId, name}}) => {
-			return (
-				<ControlsTabHeader iconId={iconId} tab={this.props.tab} name={name} key={`${name}ControlsHeader`}/>
-			);
-		});
+		const headers = this.props.children.map(({props: {iconId, name}}) => (
+			<ControlsTabHeader
+				iconId={iconId}
+				tab={this.props.tab}
+				name={name}
+				key={`${name}ControlsHeader`}
+			/>
+		));
 
 		const tab = this.props.children.map((child) => {
 			if (child.props.name === this.props.tab) {
@@ -25,9 +28,7 @@ export class ControlsTabs extends React.PureComponent {
 
 		return (
 			<div className="controls-tabs">
-				<ul className="controls-tabs-headers">
-					{headers}
-				</ul>
+				<ul className="controls-tabs-headers">{headers}</ul>
 				<div className="controls-tabs-sliders">
 					<ScrollArea horizontal={false}>
 						<div className="controls-tabs-container" id="parameters">
@@ -41,7 +42,6 @@ export class ControlsTabs extends React.PureComponent {
 }
 
 class ControlsTabHeader extends React.PureComponent {
-
 	constructor(props) {
 		super(props);
 		this.changeTab = this.changeTab.bind(this);
@@ -63,12 +63,12 @@ class ControlsTabHeader extends React.PureComponent {
 		});
 
 		return (
-			<li className={classes}
-				id={this.props.iconId}
-				onClick={this.changeTab}>
-				<div className="controls-tabs-icon-legend is-legend-active">{this.props.name}</div>
+			<li className={classes} id={this.props.iconId} onClick={this.changeTab}>
+				<div className="controls-tabs-icon-legend is-legend-active">
+					{this.props.name}
+				</div>
 			</li>
-		)
+		);
 	}
 }
 
@@ -88,5 +88,4 @@ export class ControlsTab extends React.PureComponent {
 			</div>
 		);
 	}
-
 }

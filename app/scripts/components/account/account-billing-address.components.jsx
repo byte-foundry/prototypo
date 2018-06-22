@@ -36,7 +36,14 @@ class AccountBillingAddress extends React.PureComponent {
 		const vat = e.target.vat.value;
 
 		try {
-			if (!buyerName || !buildingNumber || !streetName || !city || !postalCode || !country) {
+			if (
+				!buyerName
+				|| !buildingNumber
+				|| !streetName
+				|| !city
+				|| !postalCode
+				|| !country
+			) {
 				this.setState({
 					inError: {
 						buyerName: !buyerName,
@@ -78,7 +85,7 @@ class AccountBillingAddress extends React.PureComponent {
 
 			this.setState({loadingForm: false});
 
-			this.props.history.push({
+			this.props.router.push({
 				pathname: '/account/details/billing-address',
 				query: {success: true},
 			});
@@ -116,7 +123,10 @@ class AccountBillingAddress extends React.PureComponent {
 		const fullName = firstName + (lastName ? ` ${lastName}` : '');
 
 		return (
-			<form onSubmit={this.handleSubmit} className="account-base account-billing-address">
+			<form
+				onSubmit={this.handleSubmit}
+				className="account-base account-billing-address"
+			>
 				<BillingAddress
 					buyerName={buyerName || fullName}
 					address={{
@@ -131,9 +141,13 @@ class AccountBillingAddress extends React.PureComponent {
 					inError={inError}
 				/>
 				{errors && <FormError errorText={errors} />}
-				{location.query.success
-					&& <FormSuccess successText="You've successfully changed your billing address" />}
-				<AccountValidationButton loading={loadingForm} label="Confirm address change" />
+				{location.query.success && (
+					<FormSuccess successText="You've successfully changed your billing address" />
+				)}
+				<AccountValidationButton
+					loading={loadingForm}
+					label="Confirm address change"
+				/>
 			</form>
 		);
 	}
@@ -159,26 +173,26 @@ const userAddressQuery = gql`
 
 const updateAddressMutation = gql`
 	mutation updateAddress(
-		$id: ID!,
-		$buyerName: String,
-		$buildingNumber: String,
-		$streetName: String,
-		$city: String,
-		$postalCode: String,
-		$region: String,
-		$country: String,
-		$vat: String,
+		$id: ID!
+		$buyerName: String
+		$buildingNumber: String
+		$streetName: String
+		$city: String
+		$postalCode: String
+		$region: String
+		$country: String
+		$vat: String
 	) {
 		updateUser(
-			id: $id,
-			buyerName: $buyerName,
-			buildingNumber: $buildingNumber,
-			streetName: $streetName,
-			city: $city,
-			postalCode: $postalCode,
-			region: $region,
-			country: $country,
-			vat: $vat,
+			id: $id
+			buyerName: $buyerName
+			buildingNumber: $buildingNumber
+			streetName: $streetName
+			city: $city
+			postalCode: $postalCode
+			region: $region
+			country: $country
+			vat: $vat
 		) {
 			id
 			buyerName

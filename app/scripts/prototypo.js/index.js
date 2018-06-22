@@ -17,7 +17,14 @@ const awsUrl = isProduction()
 	? 'https://e4jpj60rk8.execute-api.eu-west-1.amazonaws.com/prod/fonts/'
 	: 'https://tc1b6vq6o8.execute-api.eu-west-1.amazonaws.com/dev/fonts/';
 
-const validTemplates = [...Object.values(templateNames), 'T.ptf?website', 'TP.ptf?website', 'EM.ptf?website', 'AAndText.ptf?website', 'E.ptf?website'];
+const validTemplates = [
+	...Object.values(templateNames),
+	'T.ptf?website',
+	'TP.ptf?website',
+	'EM.ptf?website',
+	'AAndText.ptf?website',
+	'E.ptf?website',
+];
 
 export default class Ptypo {
 	constructor(token) {
@@ -25,35 +32,47 @@ export default class Ptypo {
 		this.precursor = {};
 	}
 
-	async init(templates = Object.values(templateNames), workerPoolSize, url = awsUrl, noCanvas = true) {
-		const typedataPromises = templates.map(fontTemplate => new Promise(async (resolve, reject) => {
-			if (validTemplates.indexOf(fontTemplate) === -1) {
-				throw new Error('template not found, please use a correct template Name');
-			}
+	async init(
+		templates = Object.values(templateNames),
+		workerPoolSize,
+		url = awsUrl,
+		noCanvas = true,
+	) {
+		const typedataPromises = templates.map(
+			fontTemplate =>
+				new Promise(async (resolve, reject) => {
+					if (validTemplates.indexOf(fontTemplate) === -1) {
+						throw new Error(
+							'template not found, please use a correct template Name',
+						);
+					}
 
-			const data = await fetch(url + fontTemplate, {
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${this.token}`,
-				},
-			});
+					const data = await fetch(url + fontTemplate, {
+						method: 'GET',
+						headers: {
+							Authorization: `Bearer ${this.token}`,
+						},
+					});
 
-			if (!data.ok && data.status === 403) {
-				throw new Error("The domain from where you're using the Prototypo library is not authorized. You can manage authorized domains in the developers page on your account. See https://app.prototypo.io/#/account/prototypo-library");
-			}
-			else if (!data.ok) {
-				reject('Failed to retrieve templates');
-			}
+					if (!data.ok && data.status === 403) {
+						throw new Error(
+							"The domain from where you're using the Prototypo library is not authorized. You can manage authorized domains in the developers page on your account. See https://app.prototypo.io/#/account/prototypo-library",
+						);
+					}
+					else if (!data.ok) {
+						reject('Failed to retrieve templates');
+					}
 
-			const json = await data.json();
+					const json = await data.json();
 
-			this.precursor[fontTemplate] = json;
+					this.precursor[fontTemplate] = json;
 
-			resolve({
-				name: fontTemplate,
-				json,
-			});
-		}));
+					resolve({
+						name: fontTemplate,
+						json,
+					});
+				}),
+		);
 
 		let typedatas;
 
@@ -65,7 +84,9 @@ export default class Ptypo {
 		}
 
 		if (!this.token /* || TODO: check if AWS returned a free font */) {
-			console.warn("You're using the free version of the Prototypo library. Get a pro account now and access the entire glyphset. https://app.prototypo.io/#/account/subscribe"); // eslint-disable-line no-console
+			console.warn(
+				"You're using the free version of the Prototypo library. Get a pro account now and access the entire glyphset. https://app.prototypo.io/#/account/subscribe",
+			); // eslint-disable-line no-console
 		}
 
 		await FontMediator.init(typedatas, workerPoolSize, noCanvas);
@@ -73,7 +94,12 @@ export default class Ptypo {
 		this.mediator = FontMediator.instance();
 
 		this.mediator.setupInfo({
-			email: `${navigator.languages.length}-${navigator.userAgent.replace(/\D+/g, '')}-${navigator.plugins.length}-${navigator.hardwareConcurrency}-${navigator.deviceMemory}`,
+			email: `${navigator.languages.length}-${navigator.userAgent.replace(
+				/\D+/g,
+				'',
+			)}-${navigator.plugins.length}-${navigator.hardwareConcurrency}-${
+				navigator.deviceMemory
+			}`,
 		});
 	}
 
@@ -81,20 +107,24 @@ export default class Ptypo {
 		if (!this.mediator) {
 			await this.init();
 			this.mediator = FontMediator.instance();
-			console.warn('you should initialize your font factory before creating a font');
+			console.warn(
+				'you should initialize your font factory before creating a font',
+			);
 		}
 
 		if (validTemplates.indexOf(fontTemplate) === -1) {
 			throw new Error('template not found, please use a correct template Name');
 		}
 
-		return Promise.resolve(new PtypoFont(
-			this.mediator,
-			fontTemplate,
-			this.precursor[fontTemplate],
-			fontName,
-			alwaysMerge,
-		));
+		return Promise.resolve(
+			new PtypoFont(
+				this.mediator,
+				fontTemplate,
+				this.precursor[fontTemplate],
+				fontName,
+				alwaysMerge,
+			),
+		);
 	}
 }
 
@@ -117,10 +147,11 @@ export class PtypoFont {
 			});
 		});
 
-		this.glyphsSet
-			= _uniq(Object.keys(json.glyphs)
+		this.glyphsSet = _uniq(
+			Object.keys(json.glyphs)
 				.map(key => json.glyphs[key].unicode)
-				.filter(unicode => unicode !== undefined));
+				.filter(unicode => unicode !== undefined),
+		);
 	}
 
 	changeParams(paramObj, subset) {
@@ -144,27 +175,33 @@ export class PtypoFont {
 		);
 
 		if (this.alwaysMerge) {
-			this.mediator.mergeFontWithoutTimeout(fontBuffer, this.fontName)
+			this.mediator
+				.mergeFontWithoutTimeout(fontBuffer, this.fontName)
 				.then((mergedBuffer) => {
 					this.mediator.addToFont(mergedBuffer, this.fontName);
 				});
 		}
 		else {
 			this.mediator.addToFont(fontBuffer, this.fontName);
-			this.mediator.mergeFontWithoutTimeout(fontBuffer, this.fontName)
+			this.mediator
+				.mergeFontWithoutTimeout(fontBuffer, this.fontName)
 				.then((mergedBuffer) => {
 					this.mediator.addToFont(mergedBuffer, this.fontName);
 				});
 		}
 
-		const {
-			xHeight, capDelta, ascender, descender,
-		} = this.values;
+		const {xHeight, capDelta, ascender, descender} = this.values;
 
 		this.globalHeight = xHeight + Math.max(capDelta, ascender) - descender;
 	}
 
-	changeParam(paramName, paramValue, subset) {
+	changeParam(paramName, paramValue, subset, isTween = false) {
+		if (!isTween) {
+			if (this.tweens[paramName]) {
+				clearInterval(this.tweens[paramName].intervalId);
+				delete this.tweens[paramName];
+			}
+		}
 		this.values[paramName] = paramValue;
 		this.createFont(subset);
 	}
@@ -179,7 +216,7 @@ export class PtypoFont {
 		let elapsed = 0;
 
 		if (!this.values[paramName]) {
-		  return;
+			return;
 		}
 		if (this.tweens[paramName]) {
 			clearInterval(this.tweens[paramName].intervalId);
@@ -197,7 +234,8 @@ export class PtypoFont {
 				}
 				return;
 			}
-			const newValue = ((start * (duration - elapsed)) + (paramValue * elapsed)) / duration;
+			const newValue
+				= (start * (duration - elapsed) + paramValue * elapsed) / duration;
 
 			this.changeParam(paramName, newValue, subset);
 			elapsed += duration / steps;
@@ -206,9 +244,7 @@ export class PtypoFont {
 		this.tweens[paramName].intervalId = id;
 	}
 
-	async getArrayBuffer({
-		merge, familyName, styleName,
-	} = {merge: true}) {
+	async getArrayBuffer({merge, familyName, styleName} = {merge: true}) {
 		const {fontBuffer} = await this.mediator.getFontObject(
 			familyName || this.fontName,
 			styleName || 'Regular',

@@ -30,9 +30,7 @@ module.exports = {
 		],
 	},
 	module: {
-		noParse: [
-			/(levelup)/,
-		],
+		noParse: [/(levelup)/],
 	},
 	output: {
 		path: path.join(__dirname, 'dist/dll/'),

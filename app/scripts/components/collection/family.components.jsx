@@ -99,11 +99,12 @@ class Family extends React.PureComponent {
 			>
 				<div className={sampleClasses} />
 				<div className="family-info">
-					<div className="family-info-name">
-						{family.name}
-					</div>
+					<div className="family-info-name">{family.name}</div>
 					<div className="family-info-base">
-						FROM<span className="family-info-base-template"> {templateName}</span>
+						FROM<span className="family-info-base-template">
+							{' '}
+							{templateName}
+						</span>
 					</div>
 				</div>
 				<ViewPanelsMenu show={showContextMenu} toggle={this.toggleContextMenu}>

@@ -5,7 +5,10 @@ import CopyPasteInput from '../app/scripts/components/shared/copy-paste-input.co
 
 storiesOf('shared/CopyPasteInput', module)
 	.addDecorator(story => (
-		<div style={{margin: 'auto', padding: '20px', textAlign: 'center'}} className="normal">
+		<div
+			style={{margin: 'auto', padding: '20px', textAlign: 'center'}}
+			className="normal"
+		>
 			{story()}
 		</div>
 	))

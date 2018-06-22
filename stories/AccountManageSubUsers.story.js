@@ -6,13 +6,16 @@ import backgroundColor from 'react-storybook-decorator-background';
 import {AccountManageSubUsers} from '../app/scripts/components/account/account-manage-sub-users.components';
 
 storiesOf('account/AccountManageSubUsers', module)
-	.addDecorator(story => <div style={{width: '700px', margin: 'auto', padding: '20px'}} className="normal">{story()}</div>)
-	.addDecorator(backgroundColor(['#3b3b3b']))
-	.add('empty state', () => (
-		<AccountManageSubUsers
-			members={[]}
-		/>
+	.addDecorator(story => (
+		<div
+			style={{width: '700px', margin: 'auto', padding: '20px'}}
+			className="normal"
+		>
+			{story()}
+		</div>
 	))
+	.addDecorator(backgroundColor(['#3b3b3b']))
+	.add('empty state', () => <AccountManageSubUsers members={[]} />)
 	.add('loading', () => (
 		<AccountManageSubUsers
 			members={[{email: 'user@example.com', status: 'loading'}]}
@@ -37,15 +40,14 @@ storiesOf('account/AccountManageSubUsers', module)
 			onRemoveUser={action('on-remove-user')}
 		/>
 	))
-	.add('with limited quantity', () => (
-		<AccountManageSubUsers
-			max={10}
-		/>
-	))
+	.add('with limited quantity', () => <AccountManageSubUsers max={10} />)
 	.add('with short quantity left', () => (
 		<AccountManageSubUsers
 			max={5}
-			members={[{email: 'user@example.com', status: 'active'}, {email: 'user2@example.com', status: 'active'}]}
+			members={[
+				{email: 'user@example.com', status: 'active'},
+				{email: 'user2@example.com', status: 'active'},
+			]}
 			onAddUser={action('on-add-user')}
 			onRemoveUser={action('on-remove-user')}
 		/>
@@ -53,7 +55,10 @@ storiesOf('account/AccountManageSubUsers', module)
 	.add('full', () => (
 		<AccountManageSubUsers
 			max={2}
-			members={[{email: 'user@example.com', status: 'active'}, {email: 'user2@example.com', status: 'active'}]}
+			members={[
+				{email: 'user@example.com', status: 'active'},
+				{email: 'user2@example.com', status: 'active'},
+			]}
 			onAddUser={action('on-add-user')}
 			onRemoveUser={action('on-remove-user')}
 		/>

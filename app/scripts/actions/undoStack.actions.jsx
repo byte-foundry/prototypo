@@ -18,7 +18,7 @@ export default {
 	'/go-back': ({eventIndex}) => {
 		const event = prototypoStore.get('undoEventList')[eventIndex];
 
-		if (eventIndex > 0) {
+		if (eventIndex >= 0) {
 			const revert = Patch.revert(Patch.fromJSON(event.patch));
 			const patch = prototypoStore.set('undoAt', eventIndex - 1).commit();
 
@@ -36,7 +36,10 @@ export default {
 
 				undoableStore.apply(Patch.fromJSON(event.patch));
 				localServer.dispatchUpdate('/prototypoStore', patch);
-				localServer.dispatchUpdate('/undoableStore', Patch.fromJSON(event.patch));
+				localServer.dispatchUpdate(
+					'/undoableStore',
+					Patch.fromJSON(event.patch),
+				);
 			}
 		}
 	},
@@ -49,19 +52,21 @@ export default {
 		}
 
 		newEventList.push({
-			patch: patch.toJSON && patch.toJSON() || patch,
+			patch: (patch.toJSON && patch.toJSON()) || patch,
 			store,
 			label,
 		});
-		const eventPatch = prototypoStore.set('undoEventList', newEventList)
-			.set('undoAt', newEventList.length - 1).commit();
+		const eventPatch = prototypoStore
+			.set('undoEventList', newEventList)
+			.set('undoAt', newEventList.length - 1)
+			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', eventPatch);
 	},
 	'/clear-undo-stack': () => {
 		const patch = prototypoStore
 			.set('undoEventList', [])
-			.set('undoAt', 0)
+			.set('undoAt', -1)
 			.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);

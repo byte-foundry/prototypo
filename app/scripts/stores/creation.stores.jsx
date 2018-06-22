@@ -3,17 +3,15 @@ import Remutable from 'remutable';
 const undoableStore = new Remutable({
 	// font controls store values
 	controlsValues: {},
+	guides: [],
 	// end font controls store values
 });
 
-const fastStuffStore = new Remutable({
-});
+const fastStuffStore = new Remutable({});
 
-const fontInstanceStore = new Remutable({
-});
+const fontInstanceStore = new Remutable({});
 
 const prototypoStore = new Remutable({
-
 	// Store values for debug
 	debugEvents: [],
 	debugValues: {},
@@ -23,7 +21,7 @@ const prototypoStore = new Remutable({
 	// End store values for debug
 
 	// undoStack Store values
-	undoAt: 0,
+	undoAt: -1,
 	undoEventList: [],
 	// End undoStack store values
 
@@ -130,6 +128,8 @@ const prototypoStore = new Remutable({
 	uiZoom: undefined,
 	uiNodes: undefined,
 	uiOutline: undefined,
+	uiRuler: true,
+	guides: [],
 	uiCoords: undefined,
 	uiShadow: undefined,
 	uiText: '',
@@ -171,7 +171,7 @@ const prototypoStore = new Remutable({
 	// end indiv store values
 
 	// intercom store values
-	intecomTags: undefined,
+	intercomTags: undefined,
 	// end intercom store values
 
 	// search store values
@@ -215,8 +215,7 @@ const userStore = new Remutable({
 		errors: [],
 		inError: {},
 	},
-	choosePlanForm: {
-	},
+	choosePlanForm: {},
 	addcardForm: {
 		errors: [],
 		inError: {},

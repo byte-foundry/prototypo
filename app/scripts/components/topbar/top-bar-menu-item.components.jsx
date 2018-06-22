@@ -12,7 +12,11 @@ class TopBarMenuItem extends React.PureComponent {
 				false
 			),
 			img: img ? (
-				<img className="top-bar-menu-item-img" src={img} key={`imgheader${name}`}>
+				<img
+					className="top-bar-menu-item-img"
+					src={img}
+					key={`imgheader${name}`}
+				>
 					{name}
 				</img>
 			) : (
@@ -26,9 +30,7 @@ class TopBarMenuItem extends React.PureComponent {
 	render() {
 		const {children, name, ...rest} = this.props;
 
-		return (
-			<li {...rest}>{children}</li>
-		);
+		return <li {...rest}>{children}</li>;
 	}
 }
 

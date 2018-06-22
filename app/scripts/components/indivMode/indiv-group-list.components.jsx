@@ -21,7 +21,8 @@ export default class IndivGroupList extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					groups: head.toJS().d.indivGroups,
@@ -46,29 +47,35 @@ export default class IndivGroupList extends React.Component {
 	}
 
 	render() {
-		const groups = this.state.groups.map((group) => {
-			return (
-				<IndivGroup
-					key={group.name}
-					name={group.name}
-					glyphs={group.glyphs}
-					select={this.selectGroup}
-					selected={this.state.selected && group.name === this.state.selected.name}/>
-			);
-		});
+		const groups = this.state.groups.map(group => (
+			<IndivGroup
+				key={group.name}
+				name={group.name}
+				glyphs={group.glyphs}
+				select={this.selectGroup}
+				selected={
+					this.state.selected && group.name === this.state.selected.name
+				}
+			/>
+		));
 
-		const noGroupMessage = this.state.groups.length === 0
-			? <div className="indiv-group-list-message">No groups for the moment.<br/>Create your first one!</div>
-			: (
+		const noGroupMessage
+			= this.state.groups.length === 0 ? (
 				<div className="indiv-group-list-message">
-					<Button dark={true} click={this.create} label="Create a new group"/>
+					No groups for the moment.<br />Create your first one!
+				</div>
+			) : (
+				<div className="indiv-group-list-message">
+					<Button dark={true} click={this.create} label="Create a new group" />
 				</div>
 			);
 
 		return (
 			<div className="indiv-group-list">
 				<ScrollArea horizontal={false}>
-					<div className="indiv-group-list-title">Your groups of individualization</div>
+					<div className="indiv-group-list-title">
+						Your groups of individualization
+					</div>
 					{noGroupMessage}
 					{groups}
 				</ScrollArea>
@@ -95,17 +102,19 @@ class IndivGroup extends React.Component {
 			'indiv-group': true,
 			'is-active': this.props.selected,
 		});
-		const chars = this.props.glyphs.map((glyph) => {
-			return String.fromCharCode(glyph);
-		});
+		const chars = this.props.glyphs.map(glyph => String.fromCharCode(glyph));
 
 		return (
 			<div className={classes} onClick={this.select}>
-				<div className="indiv-group-title">
-					{this.props.name}
-				</div>
+				<div className="indiv-group-title">{this.props.name}</div>
 				<div className="indiv-group-infos">
-					<span className="indiv-group-infos-glyphs-number">{this.props.glyphs.length} GLYPHS</span> &mdash; <span className="indiv-group-infos-glyphs-list">{chars.join('')}</span>
+					<span className="indiv-group-infos-glyphs-number">
+						{this.props.glyphs.length} GLYPHS
+					</span>{' '}
+					&mdash;{' '}
+					<span className="indiv-group-infos-glyphs-list">
+						{chars.join('')}
+					</span>
 				</div>
 			</div>
 		);

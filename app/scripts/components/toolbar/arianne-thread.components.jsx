@@ -37,24 +37,32 @@ class ArianneThread extends React.PureComponent {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 		const store = await this.client.fetch('/prototypoStore');
-		const memoizedListSelector = (list = [], selectedValue, oldValue, oldCriteria) => {
+		const memoizedListSelector = (
+			list = [],
+			selectedValue,
+			oldValue,
+			oldCriteria,
+		) => {
 			if (
 				list.length > 0
-				&& (selectedValue.name !== oldCriteria.name || selectedValue.name === undefined)
+				&& (selectedValue.name !== oldCriteria.name
+					|| selectedValue.name === undefined)
 			) {
 				return list.filter(element => selectedValue.name !== element.name);
 			}
 			return oldValue || voidStateArray;
 		};
-		const familySelector = (families, family) => families.find(f => f.name === family.name);
+		const familySelector = (families, family) =>
+			families.find(f => f.name === family.name);
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
-				const family = familySelector(this.props.families, head.toJS().d.family) || (
-					this.props.families.length > 0
+				const family
+					= familySelector(this.props.families, head.toJS().d.family)
+					|| (this.props.families.length > 0
 						? this.props.families[0]
-						: voidStateObject
-				);
+						: voidStateObject);
 
 				this.setState({
 					selectedFamily: family,
@@ -75,12 +83,16 @@ class ArianneThread extends React.PureComponent {
 			});
 
 		this.setState({
-			selectedFamily: familySelector(this.props.families, store.head.toJS().family),
+			selectedFamily: familySelector(
+				this.props.families,
+				store.head.toJS().family,
+			),
 			selectedVariant: store.head.toJS().variant,
 			groups: memoizedListSelector(
 				store.head.toJS().indivGroups,
 				{},
-				this.state.groups, voidStateObject,
+				this.state.groups,
+				voidStateObject,
 			),
 		});
 	}
@@ -127,28 +139,43 @@ class ArianneThread extends React.PureComponent {
 	}
 
 	selectGroup(group) {
-		this.client.dispatchAction('/store-value', {indivMode: true, indivCurrentGroup: group, indivEditingParams: true});
+		this.client.dispatchAction('/store-value', {
+			indivMode: true,
+			indivCurrentGroup: group,
+			indivEditingParams: true,
+		});
 	}
 
 	addIndividualizeGroup() {
-		this.client.dispatchAction('/toggle-individualize', {targetIndivValue: true});
+		this.client.dispatchAction('/toggle-individualize', {
+			targetIndivValue: true,
+		});
 		this.client.dispatchAction('/store-value', {
 			indivCreate: true,
 		});
 	}
 
 	editIndivualizeGroup() {
-		this.client.dispatchAction('/toggle-individualize', {targetIndivValue: true});
-		this.client.dispatchAction('/store-value', {indivCurrentGroup: this.state.indivCurrentGroup});
-		this.client.dispatchAction('/store-value', {indivEdit: !!this.state.indivCurrentGroup.name});
+		this.client.dispatchAction('/toggle-individualize', {
+			targetIndivValue: true,
+		});
+		this.client.dispatchAction('/store-value', {
+			indivCurrentGroup: this.state.indivCurrentGroup,
+		});
+		this.client.dispatchAction('/store-value', {
+			indivEdit: !!this.state.indivCurrentGroup.name,
+		});
 	}
 
 	groupToElement(group) {
-		const glyphs = group.glyphs.map(glyph => String.fromCharCode(glyph)).join('');
+		const glyphs = group.glyphs
+			.map(glyph => String.fromCharCode(glyph))
+			.join('');
 
 		return (
 			<div>
-				<span>{group.name}</span> - <span className="indiv-group-infos-glyphs-list">{glyphs}</span>
+				<span>{group.name}</span> -{' '}
+				<span className="indiv-group-infos-glyphs-list">{glyphs}</span>
 			</div>
 		);
 	}
@@ -162,10 +189,19 @@ class ArianneThread extends React.PureComponent {
 			return <p>Loading...</p>;
 		}
 
-		const family = families.find(({name}) => name === selectedFamily.name) || families[0];
-		const variant = family.variants.find(({name}) => name === selectedVariant.name) || family.variants[0] || {name: 'regular'};
+		const family
+			= families.find(({name}) => name === selectedFamily.name) || families[0];
+		const variant = family.variants.find(
+			({name}) => name === selectedVariant.name,
+		)
+			|| family.variants[0] || {name: 'regular'};
 
-		const addFamily = <ArianneDropMenuItem item={{name: 'Add new family...'}} click={this.addFamily} />;
+		const addFamily = (
+			<ArianneDropMenuItem
+				item={{name: 'Add new family...'}}
+				click={this.addFamily}
+			/>
+		);
 		const familyItem = (
 			<DropArianneItem
 				label={family.name}
@@ -176,15 +212,24 @@ class ArianneThread extends React.PureComponent {
 			/>
 		);
 
-		const addVariant = <ArianneDropMenuItem item={{name: 'Add new variant...'}} click={this.addVariant} />;
+		const addVariant = (
+			<ArianneDropMenuItem
+				item={{name: 'Add new variant...'}}
+				click={this.addVariant}
+			/>
+		);
 		const variantItem = (
 			<DropArianneItem
 				label={variant.name}
 				family={family}
 				variant={variant}
-				list={family.variants
-					? family.variants.filter(({id}) => id !== this.state.selectedVariant.id)
-					: []}
+				list={
+					family.variants
+						? family.variants.filter(
+							({id}) => id !== this.state.selectedVariant.id,
+						)
+						: []
+				}
 				add={addVariant}
 				click={this.selectVariant}
 				toggleId="arianne-item-variant"
@@ -192,8 +237,16 @@ class ArianneThread extends React.PureComponent {
 		);
 
 		const addGroup = [
-			<ArianneDropMenuItem key="edit" item={{name: 'Edit groups...'}} click={this.editIndivualizeGroup} />,
-			<ArianneDropMenuItem key="add" item={{name: 'Add new group...'}} click={this.addIndividualizeGroup} />,
+			<ArianneDropMenuItem
+				key="edit"
+				item={{name: 'Edit groups...'}}
+				click={this.editIndivualizeGroup}
+			/>,
+			<ArianneDropMenuItem
+				key="add"
+				item={{name: 'Add new group...'}}
+				click={this.addIndividualizeGroup}
+			/>,
 		];
 		const groupClasses = classNames({
 			'arianne-item': true,
@@ -205,23 +258,26 @@ class ArianneThread extends React.PureComponent {
 			? 'Creating new group...'
 			: 'All glyphs';
 		const groupName = this.state.indivCurrentGroup.name || groupLabel;
-		const group = this.state.groups
-			&& (this.state.groups.length > 0 || this.state.indivCurrentGroup.name)
-			? (<DropArianneItem
-				label={groupName}
-				list={this.state.groups}
-				itemToEl={this.groupToElement}
-				add={addGroup}
-				click={this.selectGroup}
-				toggleId="arianne-item-group"
-			/>)
-			: (<ActionArianneItem
-				className={groupClasses}
-				label={groupLabel}
-				img="assets/images/arianne-plus.svg"
-				click={this.toggleIndividualize}
-				toggleId="arianne-item-group"
-			/>);
+		const group
+			= this.state.groups
+			&& (this.state.groups.length > 0 || this.state.indivCurrentGroup.name) ? (
+					<DropArianneItem
+						label={groupName}
+						list={this.state.groups}
+						itemToEl={this.groupToElement}
+						add={addGroup}
+						click={this.selectGroup}
+						toggleId="arianne-item-group"
+					/>
+				) : (
+					<ActionArianneItem
+						className={groupClasses}
+						label={groupLabel}
+						img="assets/images/arianne-plus.svg"
+						click={this.toggleIndividualize}
+						toggleId="arianne-item-group"
+					/>
+				);
 
 		return (
 			<div className="arianne-thread">
@@ -291,7 +347,8 @@ class DropArianneItem extends React.PureComponent {
 			arianneItemDisplayed: head.toJS().arianneItemDisplayed,
 		});
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((store) => {
 				this.setState({
 					arianneItemDisplayed: store.toJS().d.arianneItemDisplayed,
@@ -324,26 +381,33 @@ class DropArianneItem extends React.PureComponent {
 				this.client.dispatchAction('/store-value', {
 					arianneItemDisplayed: undefined,
 				});
-				Array.prototype.forEach.call(document.querySelectorAll(selector), (item) => {
-					item.removeEventListener('click', outsideClick);
-				});
+				Array.prototype.forEach.call(
+					document.querySelectorAll(selector),
+					(item) => {
+						item.removeEventListener('click', outsideClick);
+					},
+				);
 			};
 
-			Array.prototype.forEach.call(document.querySelectorAll(selector), (item) => {
-				item.addEventListener('click', outsideClick);
-			});
+			Array.prototype.forEach.call(
+				document.querySelectorAll(selector),
+				(item) => {
+					item.addEventListener('click', outsideClick);
+				},
+			);
 		}
 	}
 
 	render() {
 		const classes = classNames({
 			'arianne-item': true,
-			'arianne-item-displayed': this.state.arianneItemDisplayed === this.props.toggleId,
+			'arianne-item-displayed':
+				this.state.arianneItemDisplayed === this.props.toggleId,
 		});
 
 		return (
 			<div className={classes} onClick={this.toggleDisplay}>
-				<div className="arianne-item-action" >
+				<div className="arianne-item-action">
 					<span className="arianne-item-action-label">{this.props.label}</span>
 					<span className="arianne-item-action-drop arianne-item-action-img" />
 				</div>
@@ -362,13 +426,15 @@ class DropArianneItem extends React.PureComponent {
 
 class ArianneDropMenu extends React.PureComponent {
 	render() {
-		const items = this.props.list.map(item => (<ArianneDropMenuItem
-			item={item}
-			key={item.name}
-			click={this.props.click}
-			family={this.props.family}
-			itemToEl={this.props.itemToEl}
-		/>));
+		const items = this.props.list.map((item, index) => (
+			<ArianneDropMenuItem
+				item={item}
+				key={item.name}
+				click={this.props.click}
+				family={this.props.family}
+				itemToEl={this.props.itemToEl}
+			/>
+		));
 
 		return (
 			<ul className="arianne-drop-menu">
@@ -411,7 +477,10 @@ class ActionArianneItem extends React.Component {
 			<div className={classes} onClick={this.props.click}>
 				<div className="arianne-item-action">
 					{this.props.label}
-					<img className="arianne-item-action-plus arianne-item-action-img" src={this.props.img} />
+					<img
+						className="arianne-item-action-plus arianne-item-action-img"
+						src={this.props.img}
+					/>
 				</div>
 				<div className="arianne-item-arrow" />
 			</div>

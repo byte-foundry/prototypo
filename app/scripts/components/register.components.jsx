@@ -30,7 +30,8 @@ class Register extends React.Component {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/userStore', this.lifespan)
+		this.client
+			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					inError: head.toJS().d.signupForm.inError,
@@ -81,7 +82,22 @@ class Register extends React.Component {
 		const skype = this.skype.inputValue;
 
 		this.client.dispatchAction('/sign-up', {
-			username, password, firstname, lastname, css, phone, skype, to: this.props.location.query.subscribe ? '/account/subscribe' : this.props.location.query.prevHash, oldQuery: this.props.location.query.subscribe ? {plan: this.props.location.query.subscribe, quantity: this.props.location.query.quantity} : this.props.location.query,
+			username,
+			password,
+			firstname,
+			lastname,
+			css,
+			phone,
+			skype,
+			to: this.props.location.query.subscribe
+				? '/account/subscribe'
+				: this.props.location.query.prevHash,
+			oldQuery: this.props.location.query.subscribe
+				? {
+					plan: this.props.location.query.subscribe,
+					quantity: this.props.location.query.quantity,
+				}
+				: this.props.location.query,
 		});
 	}
 
@@ -90,7 +106,9 @@ class Register extends React.Component {
 			console.log('[RENDER] Register');
 		}
 
-		const errors = this.state.errors.map(error => <FormError errorText={error} />);
+		const errors = this.state.errors.map(error => (
+			<FormError errorText={error} />
+		));
 
 		const jobtitles = [
 			{value: 'graphic_designer', label: 'a graphic designer'},
@@ -110,21 +128,34 @@ class Register extends React.Component {
 				<div className="account-dashboard-container">
 					<div className="sign-in-container">
 						<div className="sign-in-oauth">
-							<label className="sign-in-oauth-label" htmlFor="oauth">Sign up with</label>
-							<OAuthButtons id="oauth" onLogin={this.signIn} className="sign-in-oauth-buttons" />
+							<label className="sign-in-oauth-label" htmlFor="oauth">
+								Sign up with
+							</label>
+							<OAuthButtons
+								id="oauth"
+								onLogin={this.signIn}
+								className="sign-in-oauth-buttons"
+							/>
 						</div>
 						<div className="sign-in-separator">
 							<hr className="sign-in-separator-line" />
 							<span className="sign-in-separator-text">OR</span>
 						</div>
-						<form className="sign-in-form" onSubmit={(e) => {this.register(e);}}>
+						<form
+							className="sign-in-form"
+							onSubmit={(e) => {
+								this.register(e);
+							}}
+						>
 							<div className="columns">
 								<div className="half-column">
 									<InputWithLabel
 										label="First name"
 										id="firstname"
 										name="firstname"
-										ref={(firstname) => {this.firstname = firstname;}}
+										ref={(firstname) => {
+											this.firstname = firstname;
+										}}
 										error={this.state.inError.firstname}
 										placeholder="John"
 										required
@@ -137,7 +168,9 @@ class Register extends React.Component {
 										id="lastname"
 										name="lastname"
 										placeholder="Doe"
-										ref={(lastname) => {this.lastname = lastname;}}
+										ref={(lastname) => {
+											this.lastname = lastname;
+										}}
 									/>
 								</div>
 							</div>
@@ -147,7 +180,9 @@ class Register extends React.Component {
 								id="email-register"
 								name="email-register"
 								required
-								ref={(username) => {this.username = username;}}
+								ref={(username) => {
+									this.username = username;
+								}}
 								inputValue={this.props.location.query.emailSignUp}
 								type="email"
 								placeholder="example@domain.com"
@@ -159,11 +194,15 @@ class Register extends React.Component {
 								id="password-register"
 								name="password-register"
 								type="password"
-								ref={(password) => {this.password = password;}}
+								ref={(password) => {
+									this.password = password;
+								}}
 								required
 							/>
 							<SelectWithLabel
-								ref={(css) => {this.css = css;}}
+								ref={(css) => {
+									this.css = css;
+								}}
 								label="I am"
 								name="css"
 								className="input-with-label-input"
@@ -172,17 +211,36 @@ class Register extends React.Component {
 							/>
 							<div className="columns">
 								<div className="half-column">
-									<InputWithLabel label="Phone number" info="(optional)" type="tel" ref={(phone) => {this.phone = phone;}} />
+									<InputWithLabel
+										label="Phone number"
+										info="(optional)"
+										type="tel"
+										ref={(phone) => {
+											this.phone = phone;
+										}}
+									/>
 								</div>
 								<div className="half-column">
-									<InputWithLabel label="Skype ID" info="(optional)" ref={(skype) => {this.skype = skype;}} />
+									<InputWithLabel
+										label="Skype ID"
+										info="(optional)"
+										ref={(skype) => {
+											this.skype = skype;
+										}}
+									/>
 								</div>
 							</div>
-							<Link to={{pathname: '/signin', query: this.props.location.query}} className="sign-in-help-needed">
+							<Link
+								to={{pathname: '/signin', query: this.props.location.query}}
+								className="sign-in-help-needed"
+							>
 								I already have an account
 							</Link>
 							{errors}
-							<AccountValidationButton loading={this.state.loading} label="Sign up" />
+							<AccountValidationButton
+								loading={this.state.loading}
+								label="Sign up"
+							/>
 						</form>
 					</div>
 				</div>

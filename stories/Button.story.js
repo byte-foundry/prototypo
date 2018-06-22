@@ -5,7 +5,10 @@ import Button from '../app/scripts/components/shared/new-button.components';
 
 storiesOf('shared/Button', module)
 	.addDecorator(story => (
-		<div style={{margin: 'auto', padding: '20px', textAlign: 'center'}} className="normal">
+		<div
+			style={{margin: 'auto', padding: '20px', textAlign: 'center'}}
+			className="normal"
+		>
 			{story()}
 		</div>
 	))

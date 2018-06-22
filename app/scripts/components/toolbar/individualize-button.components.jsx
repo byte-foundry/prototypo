@@ -1,22 +1,22 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import Classnames from 'classnames';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
 export default class IndividualizeButton extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(this);
 	}
 
 	componentWillMount() {
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					individualize: head.toJS().d.indivMode,
@@ -27,7 +27,8 @@ export default class IndividualizeButton extends React.PureComponent {
 				this.setState(undefined);
 			});
 
-		this.client.getStore('/userStore', this.lifespan)
+		this.client
+			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					subscription: head.toJS().d.subscription,
@@ -44,7 +45,7 @@ export default class IndividualizeButton extends React.PureComponent {
 
 	individualize() {
 		// if (this.state.credits > 0 && this.state.subscription !== undefined) {
-			this.client.dispatchAction('/toggle-individualize');
+		this.client.dispatchAction('/toggle-individualize');
 		// }
 		// else {
 		// 	this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
@@ -54,7 +55,6 @@ export default class IndividualizeButton extends React.PureComponent {
 	}
 
 	render() {
-
 		// const isFree = (!this.state.credits || this.state.credits <= 0 || !this.state.subscription);
 
 		const buttonClass = Classnames({
@@ -72,10 +72,23 @@ export default class IndividualizeButton extends React.PureComponent {
 		});
 
 		return (
-			<div className="individualize-button" onClick={() => { this.individualize(); }}>
+			<div
+				className="individualize-button"
+				onClick={() => {
+					this.individualize();
+				}}
+			>
 				<div className={activeAllClassName}>All glyphs</div>
-				<div className={buttonClass} onClick={() => { this.individualize(); }} >
-					<div className="individualize-button-switch-toggle" title="Individualize parameters"></div>
+				<div
+					className={buttonClass}
+					onClick={() => {
+						this.individualize();
+					}}
+				>
+					<div
+						className="individualize-button-switch-toggle"
+						title="Individualize parameters"
+					/>
 				</div>
 				<div className={activeGroupsClassName}>Groups of glyphs</div>
 			</div>

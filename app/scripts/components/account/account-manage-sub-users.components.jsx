@@ -20,7 +20,9 @@ try {
 catch (err) {}
 
 const STATUS_ICONS = {
-	pending: <Icon className="manage-sub-users-icon" name="sub-account-pending" />,
+	pending: (
+		<Icon className="manage-sub-users-icon" name="sub-account-pending" />
+	),
 	active: <Icon className="manage-sub-users-icon" name="sub-account-active" />,
 	loading: <WaitForLoad loading />,
 };
@@ -51,24 +53,29 @@ class MemberRow extends React.Component {
 				</td>
 				<td className="sortable-table-cell sortable-table-email">
 					{filter
-						? member.email.split(new RegExp(`(${filter})`)).map(text => (
-							<span
-								className={
-									new RegExp(`(${filter})`).test(text) ? 'sortable-table-cell-filter' : ''
-								}
-							>
-								{text}
-							</span>
-						))
+						? member.email
+							.split(new RegExp(`(${filter})`))
+							.map(text => (
+								<span
+									className={
+										new RegExp(`(${filter})`).test(text)
+											? 'sortable-table-cell-filter'
+											: ''
+									}
+								>
+									{text}
+								</span>
+							))
 						: member.email}
 				</td>
 				<td className="sortable-table-cell sortable-table-name">
 					{[member.firstName, member.lastName].join(' ')}
 				</td>
-				{onRemoveRow
-					&& <td className="sortable-table-cell sortable-table-actions">
+				{onRemoveRow && (
+					<td className="sortable-table-cell sortable-table-actions">
 						<IconButton name="delete" onClick={this.handleRemoveButton} />
-					</td>}
+					</td>
+				)}
 			</tr>
 		);
 	}
@@ -237,7 +244,9 @@ export class AccountManageSubUsers extends React.Component {
 					/>
 				</td>
 				<td>
-					<Button size="small" onClick={this.handleCreate}>Create user</Button>
+					<Button size="small" onClick={this.handleCreate}>
+						Create user
+					</Button>
 				</td>
 			</tr>
 		);
@@ -259,7 +268,9 @@ export class AccountManageSubUsers extends React.Component {
 					/>
 				</td>
 				<td>
-					<Button size="small" onClick={this.handleSubmit}>Add User</Button>
+					<Button size="small" onClick={this.handleSubmit}>
+						Add User
+					</Button>
 				</td>
 			</tr>
 		);
@@ -281,21 +292,22 @@ export class AccountManageSubUsers extends React.Component {
 	}
 
 	render() {
-		const {
-			loading, members, max, onAddUser,
-		} = this.props;
-		const {
-			filter, sort, loadingCreation, loadingRemoval, error,
-		} = this.state;
+		const {loading, members, max, onAddUser} = this.props;
+		const {filter, sort, loadingCreation, loadingRemoval, error} = this.state;
 		const slotsLeft = max - members.length;
 
 		const sortClass = sort.asc ? 'asc' : 'desc';
 		const headersClasses = ['status', 'email', 'name'].reduce(
 			(obj, header) => ({
 				...obj,
-				[header]: classnames('sortable-table-header-cell', `sortable-table-${header}`, {
-					[`sortable-table-header-cell-sort-${sortClass}`]: sort.property === header,
-				}),
+				[header]: classnames(
+					'sortable-table-header-cell',
+					`sortable-table-${header}`,
+					{
+						[`sortable-table-header-cell-sort-${sortClass}`]:
+							sort.property === header,
+					},
+				),
 			}),
 			{},
 		);
@@ -322,16 +334,17 @@ export class AccountManageSubUsers extends React.Component {
 			});
 		}
 
-		const caption = (<span>
-			{slotsLeft} slots left on {max}
-			{slotsLeft < 4 && ' • '}
-			{
-				slotsLeft < 4
-				&& <Link to="/account/details/change-plan">
-					Update your subscription
-       </Link>
-			}
-                   </span>);
+		const caption = (
+			<span>
+				{slotsLeft} slots left on {max}
+				{slotsLeft < 4 && ' • '}
+				{slotsLeft < 4 && (
+					<Link to="/account/details/change-plan">
+						Update your subscription
+					</Link>
+				)}
+			</span>
+		);
 
 		const tableHeaders = [
 			{
@@ -366,33 +379,45 @@ export class AccountManageSubUsers extends React.Component {
 					</div>
 				</header>
 				<WaitForLoad loading={loading}>
-					<FilterableTable captionCondition={max > 0} caption={caption} tableHeaders={tableHeaders}>
-						{error
-								&& <tr key="warning">
-									<td className="sortable-table-warning-message" colSpan={4}>
-										{error}
-									</td>
-								</tr>}
+					<FilterableTable
+						captionCondition={max > 0}
+						caption={caption}
+						tableHeaders={tableHeaders}
+					>
+						{error && (
+							<tr key="warning">
+								<td className="sortable-table-warning-message" colSpan={4}>
+									{error}
+								</td>
+							</tr>
+						)}
 						{onAddUser && !filter && !loadingCreation && this.renderForm()}
-						{!members.length
-								&& <tr>
-									<td colSpan={4}>
-										<p style={{textAlign: 'center'}}>
-											You don't manage any user for now.
-										</p>
-									</td>
-								</tr>}
+						{!members.length && (
+							<tr>
+								<td colSpan={4}>
+									<p style={{textAlign: 'center'}}>
+										You don't manage any user for now.
+									</p>
+								</td>
+							</tr>
+						)}
 						{!!members.length
-								&& !filteredMembers.length
-								&& <tr>
-									<td colSpan={4}>
-										<p style={{textAlign: 'center'}}>
+							&& !filteredMembers.length && (
+							<tr>
+								<td colSpan={4}>
+									<p style={{textAlign: 'center'}}>
 											No user match this filter
-										</p>
-									</td>
-								</tr>}
+									</p>
+								</td>
+							</tr>
+						)}
 						{filteredMembers.map((member, i) => (
-							<MemberRow member={member} key={i} filter={filter} onRemoveRow={this.handleRemoveButton} />
+							<MemberRow
+								member={member}
+								key={i}
+								filter={filter}
+								onRemoveRow={this.handleRemoveButton}
+							/>
 						))}
 					</FilterableTable>
 				</WaitForLoad>
@@ -402,11 +427,13 @@ export class AccountManageSubUsers extends React.Component {
 }
 
 AccountManageSubUsers.propTypes = {
-	members: PropTypes.arrayOf(PropTypes.shape({
-		id: PropTypes.string,
-		email: PropTypes.string,
-		status: PropTypes.string,
-	}).isRequired).isRequired,
+	members: PropTypes.arrayOf(
+		PropTypes.shape({
+			id: PropTypes.string,
+			email: PropTypes.string,
+			status: PropTypes.string,
+		}).isRequired,
+	).isRequired,
 	max: PropTypes.number,
 	onAddUser: PropTypes.func,
 	onRemoveUser: PropTypes.func,

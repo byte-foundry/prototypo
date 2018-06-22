@@ -6,7 +6,7 @@ import onClickOutside from 'react-onclickoutside';
 class ContextualMenu extends React.PureComponent {
 	handleClickOutside = () => {
 		this.props.onClickOutside();
-	}
+	};
 
 	render() {
 		const classes = classNames({
@@ -17,9 +17,7 @@ class ContextualMenu extends React.PureComponent {
 
 		return (
 			<div className={classes}>
-				<ul className="contextual-menu-list">
-					{this.props.children}
-				</ul>
+				<ul className="contextual-menu-list">{this.props.children}</ul>
 			</div>
 		);
 	}
@@ -51,27 +49,34 @@ class ContextualMenuItem extends React.PureComponent {
 	}
 
 	render() {
-		const {className, active, splitted, onClick, altClick, children, altLabel} = this.props;
+		const {
+			className,
+			active,
+			splitted,
+			onClick,
+			altClick,
+			children,
+			altLabel,
+		} = this.props;
 
-		const classes = classNames({
-			'contextual-menu-list-item': true,
-			'is-active': active,
-			'is-split': splitted,
-			clearfix: splitted,
-		}, className);
+		const classes = classNames(
+			{
+				'contextual-menu-list-item': true,
+				'is-active': active,
+				'is-split': splitted,
+				clearfix: splitted,
+			},
+			className,
+		);
 
 		if (splitted) {
 			return (
 				<li className={classes}>
 					<div className="btn danger" onClick={this.handleClick}>
-						<span>
-							{children}
-						</span>
+						<span>{children}</span>
 					</div>
 					<div className="btn" onClick={altClick}>
-						<span>
-							{altLabel}
-						</span>
+						<span>{altLabel}</span>
 					</div>
 				</li>
 			);
@@ -102,7 +107,10 @@ ContextualMenuItem.propTypes = {
 class ContextualMenuDropDown extends React.Component {
 	render() {
 		return (
-			<li className="contextual-menu-list-item with-dropdown" onClick={this.props.click}>
+			<li
+				className="contextual-menu-list-item with-dropdown"
+				onClick={this.props.click}
+			>
 				{this.props.text}
 				<ul className="contextual-menu-list-item-dropdown">
 					{this.props.options}

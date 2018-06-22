@@ -22,9 +22,7 @@ module.exports = {
 					{loader: 'babel-loader', options: {cacheDirectory: true}},
 					'if-loader',
 				],
-				include: [
-					path.join(__dirname, 'app'),
-				],
+				include: [path.join(__dirname, 'app')],
 			},
 		],
 		noParse: /(levelup)/,

@@ -15,11 +15,11 @@ export default class WaitForLoad extends React.Component {
 			return (
 				<div className="wait-for-load">
 					<div className={rectClass}>
-						<div className="sk-rect1"></div>
-						<div className="sk-rect2"></div>
-						<div className="sk-rect3"></div>
-						<div className="sk-rect4"></div>
-						<div className="sk-rect5"></div>
+						<div className="sk-rect1" />
+						<div className="sk-rect2" />
+						<div className="sk-rect3" />
+						<div className="sk-rect4" />
+						<div className="sk-rect5" />
 					</div>
 				</div>
 			);

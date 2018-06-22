@@ -24,9 +24,21 @@ export default class GlyphTagList extends React.PureComponent {
 			'is-active': this.state.show,
 		});
 
-		const pinned = this.props.pinned.map(pin => <GlyphPinnedTag tag={pin} selected={this.props.selected} key={`pin${pin}`} />);
+		const pinned = this.props.pinned.map(pin => (
+			<GlyphPinnedTag
+				tag={pin}
+				selected={this.props.selected}
+				key={`pin${pin}`}
+			/>
+		));
 
-		const pinnedSearch = this.props.pinnedSearch.map(pin => <GlyphPinnedSearch search={pin} selected={this.props.selectedSearch} key={`search${pin}`} />);
+		const pinnedSearch = this.props.pinnedSearch.map(pin => (
+			<GlyphPinnedSearch
+				search={pin}
+				selected={this.props.selectedSearch}
+				key={`search${pin}`}
+			/>
+		));
 
 		return (
 			<div
@@ -43,10 +55,7 @@ export default class GlyphTagList extends React.PureComponent {
 				</div>
 				<ul className="glyph-tag-list-dropdown">
 					{this.props.tags.map(tag => (
-						<li
-							key={tag}
-							className="glyph-tag-list-dropdown-item"
-						>
+						<li key={tag} className="glyph-tag-list-dropdown-item">
 							<GlyphTag
 								tag={tag}
 								selected={this.props.selected}
@@ -55,10 +64,7 @@ export default class GlyphTagList extends React.PureComponent {
 						</li>
 					))}
 					{this.props.savedSearch.map(query => (
-						<li
-							key={query}
-							className="glyph-tag-list-dropdown-item"
-						>
+						<li key={query} className="glyph-tag-list-dropdown-item">
 							<GlyphSearch
 								selected={this.props.selectedSearch}
 								pinned={this.props.pinnedSearch}
@@ -105,14 +111,20 @@ class GlyphPinnedTag extends React.PureComponent {
 		});
 
 		return (
-			<div className={itemClasses} onClick={(e) => {this.selectTag(this.props.tag, e);}}>
-				<div className="glyph-tag-name">
-					{this.props.tag}
-				</div>
-				<div className="glyph-tag-button is-pinned" onClick={(e) => {this.removeFromPinned(this.props.tag, e);}}>
-					<div className="glyph-tag-button-icon">
-						&nbsp;
-					</div>
+			<div
+				className={itemClasses}
+				onClick={(e) => {
+					this.selectTag(this.props.tag, e);
+				}}
+			>
+				<div className="glyph-tag-name">{this.props.tag}</div>
+				<div
+					className="glyph-tag-button is-pinned"
+					onClick={(e) => {
+						this.removeFromPinned(this.props.tag, e);
+					}}
+				>
+					<div className="glyph-tag-button-icon">&nbsp;</div>
 				</div>
 			</div>
 		);
@@ -142,7 +154,9 @@ class GlyphPinnedSearch extends React.PureComponent {
 
 	removeFromPinned(e) {
 		e.stopPropagation();
-		this.client.dispatchAction('/toggle-pinned-search', {query: this.props.query});
+		this.client.dispatchAction('/toggle-pinned-search', {
+			query: this.props.query,
+		});
 	}
 
 	render() {
@@ -157,10 +171,11 @@ class GlyphPinnedSearch extends React.PureComponent {
 				<div className="glyph-tag-name glyph-search-name">
 					{this.props.search}
 				</div>
-				<div className="glyph-tag-button is-pinned" onClick={this.removeFromPinned}>
-					<div className="glyph-tag-button-icon">
-						&nbsp;
-					</div>
+				<div
+					className="glyph-tag-button is-pinned"
+					onClick={this.removeFromPinned}
+				>
+					<div className="glyph-tag-button-icon">&nbsp;</div>
 				</div>
 			</div>
 		);
@@ -196,7 +211,8 @@ class GlyphTag extends React.PureComponent {
 	render() {
 		const iconClasses = classNames({
 			'glyph-tag-button': true,
-			'is-pinned': this.props.pinned && this.props.pinned.indexOf(this.props.tag) !== -1,
+			'is-pinned':
+				this.props.pinned && this.props.pinned.indexOf(this.props.tag) !== -1,
 		});
 
 		const itemClasses = classNames({
@@ -206,13 +222,9 @@ class GlyphTag extends React.PureComponent {
 
 		return (
 			<div className={itemClasses} onClick={this.selectTag}>
-				<div className="glyph-tag-name">
-					{this.props.tag}
-				</div>
+				<div className="glyph-tag-name">{this.props.tag}</div>
 				<div className={iconClasses} onClick={this.addToPinned}>
-					<div className="glyph-tag-button-icon">
-						&nbsp;
-					</div>
+					<div className="glyph-tag-button-icon">&nbsp;</div>
 				</div>
 			</div>
 		);
@@ -243,18 +255,24 @@ class GlyphSearch extends React.PureComponent {
 
 	addToPinned(e) {
 		e.stopPropagation();
-		this.client.dispatchAction('/toggle-pinned-search', {query: this.props.search});
+		this.client.dispatchAction('/toggle-pinned-search', {
+			query: this.props.search,
+		});
 	}
 
 	deleteSearch(e) {
 		e.stopPropagation();
-		this.client.dispatchAction('/delete-search-glyph', {query: this.props.search});
+		this.client.dispatchAction('/delete-search-glyph', {
+			query: this.props.search,
+		});
 	}
 
 	render() {
 		const iconClasses = classNames({
 			'glyph-tag-button': true,
-			'is-pinned': this.props.pinned && this.props.pinned.indexOf(this.props.search) !== -1,
+			'is-pinned':
+				this.props.pinned
+				&& this.props.pinned.indexOf(this.props.search) !== -1,
 		});
 
 		const itemClasses = classNames({
@@ -274,9 +292,7 @@ class GlyphSearch extends React.PureComponent {
 					</div>
 				</div>
 				<div className={iconClasses} onClick={this.addToPinned}>
-					<div className="glyph-tag-button-icon">
-						&nbsp;
-					</div>
+					<div className="glyph-tag-button-icon">&nbsp;</div>
 				</div>
 			</div>
 		);

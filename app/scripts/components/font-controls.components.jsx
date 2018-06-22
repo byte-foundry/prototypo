@@ -11,7 +11,6 @@ import SliderTooltip from './slider-tooltip.components.jsx';
 const voidCurrentGroup = {};
 
 export default class FontControls extends React.PureComponent {
-
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -25,7 +24,8 @@ export default class FontControls extends React.PureComponent {
 		this.lifespan = new Lifespan();
 		this.client = LocalClient.instance();
 
-		this.client.getStore('/prototypoStore', this.lifespan)
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				const headJS = head.toJS().d;
 
@@ -43,7 +43,6 @@ export default class FontControls extends React.PureComponent {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-
 	}
 
 	componentWillUnmount() {
@@ -55,30 +54,31 @@ export default class FontControls extends React.PureComponent {
 			console.log('[RENDER] font controls');
 		}
 
-		const hasSliderTooltip = this.state.uiSliderTooltip && this.state.uiSliderTooltip.display;
+		const hasSliderTooltip
+			= this.state.uiSliderTooltip && this.state.uiSliderTooltip.display;
 		let sliderTooltip;
 		const transitionTimeout = 300;
 
 		if (hasSliderTooltip) {
 			sliderTooltip = (
-					<SliderTooltip key={'slider-tooltip'}
-						sliderName={this.state.uiSliderTooltip.sliderName}
-					/>
+				<SliderTooltip
+					key={'slider-tooltip'}
+					sliderName={this.state.uiSliderTooltip.sliderName}
+				/>
 			);
 		}
 
-		const tabs = this.state.parameters.map((group) => {
-			return (
-				<ControlsTab iconId={group.label} name={group.label} key={group.label}>
-					<Sliders
-						params={group.parameters}
-						credits={this.state.credits}
-						indivMode={this.state.indivMode}
-						indivEdit={this.state.indivEdit}
-						currentGroup={this.state.currentGroup.name}/>
-				</ControlsTab>
-			);
-		});
+		const tabs = this.state.parameters.map(group => (
+			<ControlsTab iconId={group.label} name={group.label} key={group.label}>
+				<Sliders
+					params={group.parameters}
+					credits={this.state.credits}
+					indivMode={this.state.indivMode}
+					indivEdit={this.state.indivEdit}
+					currentGroup={this.state.currentGroup.name}
+				/>
+			</ControlsTab>
+		));
 
 		return (
 			<div className="font-controls" id="sidebar">
@@ -86,12 +86,11 @@ export default class FontControls extends React.PureComponent {
 					component="div"
 					transitionName="slider-tooltip-animation"
 					transitionEnterTimeout={transitionTimeout}
-					transitionLeaveTimeout={transitionTimeout}>
+					transitionLeaveTimeout={transitionTimeout}
+				>
 					{sliderTooltip}
 				</ReactCSSTransitionGroup>
-				<ControlsTabs tab={this.state.tabControls} >
-					{tabs}
-				</ControlsTabs>
+				<ControlsTabs tab={this.state.tabControls}>{tabs}</ControlsTabs>
 			</div>
 		);
 	}

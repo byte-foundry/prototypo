@@ -33,24 +33,32 @@ class AllowedTopBarWithPayment extends React.Component {
 	render() {
 		const {freeAccount, credits} = this.props;
 
-		const overlay = freeAccount && (!credits || credits <= 0)
-			? (
+		const overlay
+			= freeAccount && (!credits || credits <= 0) ? (
 				<div className="allowed-top-bar-with-payment-demo-overlay">
 					<div className="allowed-top-bar-with-payment-demo-overlay-text">
 						<Link to="/account/subscribe" onClick={this.trackSubscriptionClick}>
-							<span>This feature is available with the professional subscription</span>
+							<span>
+								This feature is available with the professional subscription
+							</span>
 						</Link>
 						<div className="allowed-top-bar-with-payment-demo-overlay-text-more">
-							<div className="allowed-top-bar-with-payment-demo-overlay-text-more-half" onClick={this.openGoProModal}>
+							<div
+								className="allowed-top-bar-with-payment-demo-overlay-text-more-half"
+								onClick={this.openGoProModal}
+							>
 								<div className="allowed-top-bar-with-payment-demo-overlay-text-more-wrap allowed-top-bar-with-payment-subscribe">
-									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">Subscribe to full version</div>
+									<div className="allowed-top-bar-with-payment-demo-overlay-text-more-text">
+										Subscribe to full version
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			)
-			: false;
+			) : (
+				false
+			);
 
 		return (
 			<div className="allowed-top-bar-with-payment is-disabled">

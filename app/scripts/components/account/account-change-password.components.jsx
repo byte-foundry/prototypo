@@ -40,7 +40,10 @@ class AccountChangePassword extends React.Component {
 		}
 		catch (err) {
 			if (err.graphQLErrors && err.graphQLErrors[0].code === 5001) {
-				this.setState({loading: false, errors: err.graphQLErrors[0].functionError});
+				this.setState({
+					loading: false,
+					errors: err.graphQLErrors[0].functionError,
+				});
 				return;
 			}
 			this.setState({loading: false, errors: err.message});
@@ -51,7 +54,10 @@ class AccountChangePassword extends React.Component {
 		const {success, errors, loading} = this.state;
 
 		return (
-			<form className="account-base account-change-password" onSubmit={this.changePassword}>
+			<form
+				className="account-base account-change-password"
+				onSubmit={this.changePassword}
+			>
 				<InputWithLabel
 					ref={(node) => {
 						this.password = node;
@@ -82,7 +88,9 @@ class AccountChangePassword extends React.Component {
 						/>
 					</div>
 				</div>
-				{success && <FormSuccess successText="You've successfully changed your password." />}
+				{success && (
+					<FormSuccess successText="You've successfully changed your password." />
+				)}
 				{errors && <FormError errorText={errors} />}
 				<AccountValidationButton label="Change password" loading={loading} />
 			</form>
@@ -103,8 +111,16 @@ const currentEmailQuery = gql`
 `;
 
 const updatePasswordMutation = gql`
-	mutation updateProfile($email: String!, $password: String!, $newPassword: String!) {
-		updatePassword(email: $email, password: $password, newPassword: $newPassword) {
+	mutation updateProfile(
+		$email: String!
+		$password: String!
+		$newPassword: String!
+	) {
+		updatePassword(
+			email: $email
+			password: $password
+			newPassword: $newPassword
+		) {
 			id
 		}
 	}

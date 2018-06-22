@@ -23,7 +23,7 @@ export default class CopyPasteInput extends React.PureComponent {
 		}
 		catch (err) {
 			this.setState({
-				message: 'Can\'t copy :(',
+				message: "Can't copy :(",
 			});
 		}
 	}
@@ -38,18 +38,15 @@ export default class CopyPasteInput extends React.PureComponent {
 						<InputWithLabel
 							inputValue={content}
 							size="small"
-							inputRef={
-								(input) => {
-									this.input = input;
-								}
-							}
+							inputRef={(input) => {
+								this.input = input;
+							}}
 						/>
 					</div>
 					<div className="third-column">
-						<Button
-							size="small"
-							onClick={this.copyToClipboard}
-						>{this.state.message}</Button>
+						<Button size="small" onClick={this.copyToClipboard}>
+							{this.state.message}
+						</Button>
 					</div>
 				</div>
 			</div>

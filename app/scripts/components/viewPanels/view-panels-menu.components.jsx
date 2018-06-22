@@ -136,11 +136,11 @@ class ViewPanelsMenu extends React.PureComponent {
 			'is-intercom-shift': intercomShift,
 		});
 
-		const button = text
-			? (<div className={textClasses}>
-				{text}
-			</div>)
-			: <div className={iconClasses} />;
+		const button = text ? (
+			<div className={textClasses}>{text}</div>
+		) : (
+			<div className={iconClasses} />
+		);
 
 		return (
 			<div className={classes}>
@@ -150,7 +150,11 @@ class ViewPanelsMenu extends React.PureComponent {
 						if (node) this.button = node;
 					},
 				})}
-				<Portal ref={node => this.portal = node} isOpened={show} beforeClose={this.handleClose}>
+				<Portal
+					ref={node => (this.portal = node)}
+					isOpened={show}
+					beforeClose={this.handleClose}
+				>
 					<TransitionGroup
 						component="div"
 						style={{left: this.state.x, top: this.state.y}}
