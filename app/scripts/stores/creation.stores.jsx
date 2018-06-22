@@ -3,6 +3,7 @@ import Remutable from 'remutable';
 const undoableStore = new Remutable({
 	// font controls store values
 	controlsValues: {},
+	guides: [],
 	// end font controls store values
 });
 
@@ -20,7 +21,7 @@ const prototypoStore = new Remutable({
 	// End store values for debug
 
 	// undoStack Store values
-	undoAt: 0,
+	undoAt: -1,
 	undoEventList: [],
 	// End undoStack store values
 
@@ -170,7 +171,7 @@ const prototypoStore = new Remutable({
 	// end indiv store values
 
 	// intercom store values
-	intecomTags: undefined,
+	intercomTags: undefined,
 	// end intercom store values
 
 	// search store values

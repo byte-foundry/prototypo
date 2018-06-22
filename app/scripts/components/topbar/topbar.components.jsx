@@ -44,6 +44,7 @@ class Topbar extends React.Component {
 			credits: undefined,
 			creditChoices: undefined,
 			presets: null,
+			at: -1,
 		};
 
 		// function binding to avoid unnecessary re-render
@@ -267,8 +268,8 @@ class Topbar extends React.Component {
 
 	render() {
 		const {academyProgress, loadingAcademyProgress} = this.props;
-		const whereAt = this.state.at || 0;
-		const undoDisabled = whereAt < 1;
+		const whereAt = this.state.at;
+		const undoDisabled = whereAt < 0;
 		const redoDisabled = whereAt > this.state.eventList.length - 2;
 		const undoText = `Undo ${
 			this.state.eventList.length && !undoDisabled

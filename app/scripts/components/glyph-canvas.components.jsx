@@ -466,7 +466,6 @@ export default class GlyphCanvas extends React.PureComponent {
 					canvasMode: head.toJS().d.canvasMode,
 					uiOutline: head.toJS().d.uiOutline,
 					uiRuler: head.toJS().d.uiRuler,
-					guides: head.toJS().d.guides,
 				});
 			})
 			.onDelete(() => {
@@ -478,6 +477,7 @@ export default class GlyphCanvas extends React.PureComponent {
 			.onUpdate((head) => {
 				this.setState({
 					values: head.toJS().d.controlsValues,
+					guides: head.toJS().d.guides,
 				});
 			})
 			.onDelete(() => {
@@ -803,9 +803,10 @@ export default class GlyphCanvas extends React.PureComponent {
 							const newGuide = {
 								id: `guide${Date.now()}`,
 								[axe]: mouse.pos[axe],
+								isNew: true,
 							};
 
-							this.client.dispatchAction('/store-value', {
+							this.client.dispatchAction('/change-guides', {
 								guides: this.state.guides.concat(newGuide),
 							});
 
@@ -817,6 +818,7 @@ export default class GlyphCanvas extends React.PureComponent {
 									data: {
 										x: newGuide.x,
 										y: newGuide.y,
+										isNew: true,
 									},
 								},
 							];
@@ -830,10 +832,12 @@ export default class GlyphCanvas extends React.PureComponent {
 							this.storeSelectedItems(selectedItems);
 						}
 						else if (deleteMod) {
-							this.client.dispatchAction('/store-value', {
+							this.client.dispatchAction('/change-guides', {
 								guides: this.state.guides.filter(
 									guide => guide.id !== selectedItems[0].id,
 								),
+								label: 'delete guide',
+								force: true,
 							});
 
 							appStateValue = appState.DEFAULT;
@@ -848,14 +852,28 @@ export default class GlyphCanvas extends React.PureComponent {
 						// deleting the guide when it has been released on a ruler
 						if (selectedItems[0].type === toileType.GUIDE_HANDLE) {
 							if (rulers.length > 0) {
-								this.client.dispatchAction('/store-value', {
+								this.client.dispatchAction('/change-guides', {
 									guides: this.state.guides.filter(
 										guide => guide.id !== selectedItems[0].id,
 									),
+									label: 'delete guide',
+									force: true,
 								});
 								appStateValue = appState.DEFAULT;
 							}
 							else {
+								let label = 'move guide';
+
+								if (selectedItems[0].data.isNew) {
+									delete selectedItems[0].data.isNew;
+									label = 'add guide';
+								}
+
+								this.client.dispatchAction('/change-guides', {
+									guides: this.state.guides,
+									label,
+									force: true,
+								});
 								appStateValue = appState.GUIDE_SELECTED;
 								this.storeSelectedItems(selectedItems);
 							}
@@ -1632,7 +1650,9 @@ export default class GlyphCanvas extends React.PureComponent {
 									return guide;
 								});
 
-								this.client.dispatchAction('/store-value', {guides});
+								this.client.dispatchAction('/change-guides', {
+									guides,
+								});
 								break;
 							}
 							case toileType.SPACING_HANDLE: {

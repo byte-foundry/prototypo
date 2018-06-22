@@ -1,4 +1,8 @@
-import {prototypoStore, userStore} from '../stores/creation.stores.jsx';
+import {
+	prototypoStore,
+	undoableStore,
+	userStore,
+} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import {valuesToLoad} from '../helpers/loadValues.helpers.js';
 
@@ -26,6 +30,12 @@ export default {
 		const patch = prototypoStore.commit();
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
+
+		// Saving the guides into the undoable store
+		// see /change-guides for resync/save to get them back into the app values
+		const guidePatch = undoableStore.set('guides', values.guides);
+
+		localServer.dispatchUpdate('/undoableStore', guidePatch);
 
 		const valuesLoadedEvent = new Event('appValues.loaded');
 
