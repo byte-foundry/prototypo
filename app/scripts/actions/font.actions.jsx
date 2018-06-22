@@ -501,19 +501,19 @@ export default {
 	}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
+		const postDepManualChanges = _cloneDeep(oldValues.postDepManualChanges) || {};
 
-		manualChanges[glyphName] = manualChanges[glyphName] || {};
-		manualChanges[glyphName].cursors = manualChanges[glyphName].cursors || {};
+		postDepManualChanges[glyphName] = postDepManualChanges[glyphName] || {};
+		postDepManualChanges[glyphName].cursors = postDepManualChanges[glyphName].cursors || {};
 
 		const newParams = {
 			...oldValues,
-			manualChanges: {
-				...manualChanges,
+			postDepManualChanges: {
+				...postDepManualChanges,
 				[glyphName]: {
-					...manualChanges[glyphName],
+					...postDepManualChanges[glyphName],
 					cursors: {
-						...manualChanges[glyphName].cursors,
+						...postDepManualChanges[glyphName].cursors,
 						...changes,
 					},
 				},

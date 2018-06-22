@@ -120,8 +120,8 @@ const componentMenuAnimationLength = 20;
 const menuMass = 0.5;
 const pixelPerMeter = 500;
 
-const nodeDrawRadius = 3;
-const nodeHotDrawRadius = 3;
+const nodeDrawRadius = 2;
+const nodeHotDrawRadius = 2;
 const nodeHotRadius = 6;
 const componentHotRadius = 50; // eslint-disable-line no-unused-vars
 
@@ -459,7 +459,7 @@ export default class Toile {
 		prevNode,
 		nextNode,
 		hotItems,
-		componentPrefixAddress,
+		componentPrefixAddress = '',
 		componentName,
 	) {
 		const hot = _find(hotItems, item => item.id === id);
@@ -530,7 +530,7 @@ export default class Toile {
 		nextNode,
 		prevDir,
 		nextDir,
-		componentPrefixAddress,
+		componentPrefixAddress = '',
 		parallelId,
 		componentName,
 		parallelParameters,
@@ -541,97 +541,83 @@ export default class Toile {
 		const inHot = _find(hotItems, item => item.id === outId);
 		const outHot = _find(hotItems, item => item.id === inId);
 
-		if (hot || inHot || outHot) {
-			this.drawHandleNode({
-				node,
-				otherNode: prevNode,
-				otherDir: prevDir || 0,
-				handle: node.handleIn,
-				id,
-				parentId,
-				handleId: inId,
-				type: toileType.NODE_IN,
-				hotItems,
-				color: inHandleColor,
-				parallelId,
-				parallelParameters,
-				componentName,
-			}); // in
-			this.drawHandleNode({
-				node,
-				otherNode: nextNode,
-				otherDir: nextDir || 0,
-				handle: node.handleOut,
-				id,
-				parentId,
-				handleId: outId,
-				type: toileType.NODE_OUT,
-				hotItems,
-				color: outHandleColor,
-				parallelId,
-				parallelParameters,
-				componentName,
-			}); // out
-		}
+		this.drawHandleNode({
+			node,
+			otherNode: prevNode,
+			otherDir: prevDir || 0,
+			handle: node.handleIn,
+			id,
+			parentId,
+			handleId: inId,
+			type: toileType.NODE_IN,
+			hotItems,
+			color: inHandleColor,
+			parallelId,
+			parallelParameters,
+			componentName,
+		}); // in
+		this.drawHandleNode({
+			node,
+			otherNode: nextNode,
+			otherDir: nextDir || 0,
+			handle: node.handleOut,
+			id,
+			parentId,
+			handleId: outId,
+			type: toileType.NODE_OUT,
+			hotItems,
+			color: outHandleColor,
+			parallelId,
+			parallelParameters,
+			componentName,
+		}); // out
 
-		const drawNode = !(
-			parentNode
-			&& parentNode.x === node.x
-			&& parentNode.y === node.y
+		this.drawControlPoint(
+			node,
+			hot,
+			node.handleIn ? onCurveColor : skeletonColor,
 		);
 
-		if (drawNode) {
-			this.drawControlPoint(
-				node,
-				hot,
-				node.handleIn ? onCurveColor : skeletonColor,
-			);
-		}
+		if (node.handleIn || node.handleOut) {
+			const {oppositeId, angleOffset}
+				= parentNode.expandedTo[0] === node
+					? {
+						oppositeId: `${parentId}.expandedTo[1]`,
+						angleOffset: Math.PI,
+					}
+					: {
+						oppositeId: `${parentId}.expandedTo[0]`,
+						angleOffset: 0,
+					};
+			const modifAddress = `${componentPrefixAddress}${
+				parentNode.nodeAddress
+			}expand`;
 
-		if (id) {
-			if (node.handleIn || node.handleOut) {
-				if (drawNode) {
-					const {oppositeId, angleOffset}
-						= parentNode.expandedTo[0] === node
-							? {
-								oppositeId: `${parentId}.expandedTo[1]`,
-								angleOffset: Math.PI,
-							}
-							: {
-								oppositeId: `${parentId}.expandedTo[0]`,
-								angleOffset: 0,
-							};
-					const modifAddress = `${componentPrefixAddress}${
-						parentNode.nodeAddress
-					}expand`;
-
-					this.interactionList.push({
-						id,
-						type: toileType.NODE,
-						data: {
-							parentId,
-							center: {
-								x: node.x,
-								y: node.y,
-							},
-							base: {
-								x: node.xBase,
-								y: node.yBase,
-							},
-							radius: nodeHotRadius,
-							oppositeId,
-							baseWidth: parentNode.expand.baseWidth,
-							modifAddress,
-							skeleton: parentNode,
-							baseAngle: parentNode.expand.baseAngle,
-							angleOffset,
-							transforms: node.addedTransform,
-							parallelParameters,
-							componentName,
-						},
-					});
-				}
-			}
+			this.interactionList.push({
+				id,
+				type: toileType.NODE,
+				data: {
+					parentId,
+					center: {
+						x: node.x,
+						y: node.y,
+					},
+					base: {
+						x: node.xBase,
+						y: node.yBase,
+					},
+					radius: nodeHotRadius,
+					oppositeId,
+					baseWidth: parentNode.expand.baseWidth,
+					modifAddress,
+					skeleton: parentNode,
+					baseAngle: parentNode.expand.baseAngle,
+					angleOffset,
+					transforms: node.addedTransform,
+					parallelParameters,
+					componentName,
+				},
+			});
 		}
 	}
 
@@ -648,7 +634,7 @@ export default class Toile {
 		color,
 		parallelId,
 		parallelParameters,
-		componentPrefixAddress,
+		componentPrefixAddress = '',
 		componentName,
 	}) {
 		let handleNode = handle;
@@ -699,42 +685,11 @@ export default class Toile {
 		j,
 		nodes,
 		contour,
-		componentPrefixAddress,
+		componentPrefixAddress = '',
 		componentName,
 	) {
 		const hot = _find(hotItems, item => item.id === id);
 		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
-
-		if (node.expand) {
-			this.drawSkeletonPoint(
-				node,
-				hot,
-				node.handleIn ? onCurveColor : skeletonColor,
-			);
-			this.interactionList.push({
-				id,
-				type: toileType.NODE_SKELETON,
-				data: {
-					center: {
-						x: node.x,
-						y: node.y,
-					},
-					base: {
-						x: node.xBase,
-						y: node.yBase,
-					},
-					transforms: node.addedTransform,
-					expandedTo: node.expandedTo,
-					width: node.expand.width,
-					baseDistr: node.expand.baseDistr,
-					baseWidth: node.expand.baseWidth,
-					baseAngle: node.expand.baseAngle,
-					radius: nodeHotRadius,
-					modifAddress,
-					componentName,
-				},
-			});
-		}
 
 		let prevNode
 			= nodes[j - 1 - nodes.length * Math.floor((j - 1) / nodes.length)];
@@ -797,7 +752,7 @@ export default class Toile {
 		contour = {nodes: []},
 		contourCursor,
 		hotItems,
-		componentPrefixAddress,
+		componentPrefixAddress = '',
 		componentName,
 	) {
 		const nodes = contour.nodes;

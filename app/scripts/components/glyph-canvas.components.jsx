@@ -264,13 +264,7 @@ export function onCurveModification(
 	const opposite = _get(glyph, oppositeId);
 	const current = _get(glyph, draggedItem.id);
 	const newPosition = newPos;
-	const halfWidth = distance2D({x: 0, y: 0}, subtract2D(current, skeleton));
-	const otherHalfWidth = distance2D(
-		{x: 0, y: 0},
-		subtract2D(opposite, skeleton),
-	);
-	const widthFactor = (halfWidth + otherHalfWidth) / halfWidth;
-	const widthVector = subtract2D(skeleton, newPosition);
+	const deltaVector = subtract2D({x: current.xBase, y: current.yBase}, newPos);
 
 	let xTransform = 1;
 	let yTransform = 1;
@@ -290,34 +284,18 @@ export function onCurveModification(
 	}
 
 	const transformedWidthVector = {
-		x: xTransform * widthVector.x,
-		y: yTransform * widthVector.y,
+		x: xTransform * deltaVector.x,
+		y: yTransform * deltaVector.y,
 	};
-
-	const newWidth = distance2D({x: 0, y: 0}, transformedWidthVector);
-	// width factor
-	const factor = newWidth * widthFactor / baseWidth;
-	// angle difference
-	const newVec = subtract2D(newPosition, skeleton);
-	const transformedVec = {
-		x: xTransform * newVec.x,
-		y: yTransform * newVec.y,
-	};
-
-	const angleDiff
-		= Math.atan2(transformedVec.y, transformedVec.x) - baseAngle - angleTransform;
 
 	const changes = {};
 
-	if (modToApply & onCurveModMode.WIDTH_MOD) {
-		// eslint-disable-line no-bitwise
-		changes[`${draggedItem.data.modifAddress}.width`] = factor;
-	}
-
-	if (modToApply & onCurveModMode.ANGLE_MOD) {
-		// eslint-disable-line no-bitwise
-		changes[`${draggedItem.data.modifAddress}.angle`] = angleDiff + angleOffset;
-	}
+	changes[`${draggedItem.id}.x`] = transformedWidthVector.x;
+	changes[`${draggedItem.id}.y`] = transformedWidthVector.y;
+	changes[`${draggedItem.id}.in.x`] = transformedWidthVector.x;
+	changes[`${draggedItem.id}.in.y`] = transformedWidthVector.y;
+	changes[`${draggedItem.id}.out.x`] = transformedWidthVector.x;
+	changes[`${draggedItem.id}.out.y`] = transformedWidthVector.y;
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
@@ -922,20 +900,22 @@ export default class GlyphCanvas extends React.PureComponent {
 						appStateValue === appState.DEFAULT
 						&& mouse.edge === mState.DOWN
 					) {
-						if (appMode === canvasMode.SELECT_POINTS) {
-							if (spacingHandle.length > 0) {
-								appStateValue = appState.DRAGGING_SPACING;
-								selectedItems = [spacingHandle[0]];
-								this.storeSelectedItems(selectedItems);
-							}
-							else {
-								appStateValue = appState.BOX_SELECTING;
-								mouseBoxStart = mouse.pos;
-							}
+						if (nodes.length > 0) {
+							selectedItems = [nodes[0]];
+							appStateValue = appState.DRAGGING_CONTOUR_POINT;
+							mouseStart = nodes[0].data.center;
+							draggingNotStarted = true;
+							directionalNotStarted = true;
+						}
+						else if (spacingHandle.length > 0) {
+							appStateValue = appState.DRAGGING_SPACING;
+							selectedItems = [spacingHandle[0]];
 						}
 						else {
-							appStateValue = appState.NOT_SELECTING;
+							appStateValue = appState.BOX_SELECTING;
+							mouseBoxStart = mouse.pos;
 						}
+						this.storeSelectedItems(selectedItems);
 					}
 					else if (
 						appStateValue & (appState.BOX_SELECTING | appState.NOT_SELECTING)
@@ -947,20 +927,6 @@ export default class GlyphCanvas extends React.PureComponent {
 							mouseBoxStart = undefined;
 							globalMode = false;
 						}
-						else if (contours.length > 0) {
-							contourSelected
-								= contours[contourSelectedIndex % contours.length];
-							contourSelectedIndex++;
-							appStateValue = appState.CONTOUR_SELECTED;
-							globalMode = false;
-						}
-						else if (globalContours.length > 0) {
-							contourSelected
-								= globalContours[contourSelectedIndex % globalContours.length];
-							contourSelectedIndex++;
-							appStateValue = appState.CONTOUR_GLOBAL_SELECTED;
-							globalMode = true;
-						}
 						else {
 							appStateValue = appState.DEFAULT;
 							mouseBoxStart = undefined;
@@ -969,90 +935,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						this.client.dispatchAction('/store-value', {
 							globalMode,
 						});
-						this.storeSelectedItems(selectedItems);
-					}
-					else if (
-						appStateValue & appState.CONTOUR_SELECTED
-						&& mouse.edge === mState.DOWN
-					) {
-						if (nodes.length > 0) {
-							selectedItems = [nodes[0]];
-							appStateValue = appState.DRAGGING_CONTOUR_POINT;
-							mouseStart = nodes[0].data.center;
-							draggingNotStarted = true;
-							directionalNotStarted = true;
-						}
-						else if (contours.length > 0) {
-							if (contours.find(c => c.id === contourSelected.id)) {
-								appStateValue = appState.DRAGGING_CONTOUR;
-							}
-							else {
-								appStateValue = appState.BOX_SELECTING;
-								mouseBoxStart = mouse.pos;
-								contourSelected = undefined;
-								contourSelectedIndex = 0;
-							}
-						}
-						else if (globalContours.length > 0) {
-							appStateValue = appState.BOX_SELECTING;
-							mouseBoxStart = mouse.pos;
-							contourSelected = undefined;
-							contourSelectedIndex = 0;
-						}
-						else if (spacingHandle.length > 0) {
-							appStateValue = appState.DRAGGING_SPACING;
-							selectedItems = [spacingHandle[0]];
-						}
-						else {
-							appStateValue = appState.BOX_SELECTING;
-							mouseBoxStart = mouse.pos;
-							contourSelected = undefined;
-							contourSelectedIndex = 0;
-						}
-						this.storeSelectedItems(selectedItems);
-					}
-					else if (
-						appStateValue & appState.CONTOUR_GLOBAL_SELECTED
-						&& mouse.edge === mState.DOWN
-					) {
-						if (nodes.length > 0) {
-							selectedItems = [nodes[0]];
-							appStateValue = appState.DRAGGING_CONTOUR_POINT;
-							mouseStart = nodes[0].data.center;
-							draggingNotStarted = true;
-							directionalNotStarted = true;
-						}
-						else if (contours.length > 0) {
-							if (contours.find(c => c.id === contourSelected.id)) {
-								appStateValue = appState.DRAGGING_CONTOUR;
-							}
-							else {
-								appStateValue = appState.BOX_SELECTING;
-								mouseBoxStart = mouse.pos;
-								contourSelected = undefined;
-								contourSelectedIndex = 0;
-							}
-						}
-						else if (globalContours.length > 0) {
-							contourSelected
-								= globalContours[contourSelectedIndex % globalContours.length];
-							contourSelectedIndex++;
-							appStateValue = appState.CONTOUR_GLOBAL_SELECTED;
-						}
-						else if (guideHandle.length > 0) {
-							appStateValue = appState.DRAGGING_GUIDE;
-							selectedItems = [guideHandle[0]];
-						}
-						else if (spacingHandle.length > 0) {
-							appStateValue = appState.DRAGGING_SPACING;
-							selectedItems = [spacingHandle[0]];
-						}
-						else {
-							appStateValue = appState.BOX_SELECTING;
-							mouseBoxStart = mouse.pos;
-							contourSelected = undefined;
-							contourSelectedIndex = 0;
-						}
 						this.storeSelectedItems(selectedItems);
 					}
 					else if (
@@ -1078,12 +960,6 @@ export default class GlyphCanvas extends React.PureComponent {
 							force: true,
 							changes: {},
 						});
-					}
-					else if (
-						appStateValue & appState.DRAGGING_CONTOUR
-						&& mouseClickRelease
-					) {
-						appStateValue = appState.CONTOUR_SELECTED;
 					}
 					else if (
 						appStateValue
@@ -1199,15 +1075,6 @@ export default class GlyphCanvas extends React.PureComponent {
 					return;
 				}
 
-				this.toile.drawSelectableContour(
-					glyph,
-					appMode === canvasMode.SELECT_POINTS
-					|| appMode === canvasMode.SELECT_POINTS_COMPONENT
-						? hotItems
-						: [],
-					appMode,
-				);
-
 				//= ========================================================
 				//= ========================================================
 				// handle hotness of elements in component mode
@@ -1277,14 +1144,19 @@ export default class GlyphCanvas extends React.PureComponent {
 					this.canvas.style.cursor = 'default';
 				}
 
+				if (appMode === canvasMode.SELECT_POINTS) {
+					this.toile.drawAllNodes(
+						glyph,
+						[...hotItems, ...selectedItems],
+					);
+				}
+
 				// =========================================================
 				// =========================================================
 				// draw stuff when in select-points mode
 				if (
 					appStateValue
-					& (appState.CONTOUR_SELECTED
-						| appState.CONTOUR_GLOBAL_SELECTED
-						| appState.DRAGGING_CONTOUR_POINT
+					& (appState.DRAGGING_CONTOUR_POINT
 						| appState.CONTOUR_POINT_SELECTED
 						| appState.DRAGGING_CONTOUR
 						| appState.SKELETON_POINT_SELECTED)
@@ -1297,24 +1169,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						if (displacement > MINIMUM_DRAG_THRESHOLD) {
 							draggingNotStarted = false;
 						}
-					}
-					else if (contourSelected.data.componentIdx === undefined) {
-						this.toile.drawSelectedContour(
-							_slice(
-								glyph.otContours,
-								contourSelected.data.indexes[0],
-								contourSelected.data.indexes[1],
-							),
-						);
-					}
-					else {
-						this.toile.drawSelectedContour(
-							_slice(
-								glyph.components[contourSelected.data.componentIdx].otContours,
-								contourSelected.data.indexes[0],
-								contourSelected.data.indexes[1],
-							),
-						);
 					}
 
 					if (directionalNotStarted) {
@@ -1330,17 +1184,6 @@ export default class GlyphCanvas extends React.PureComponent {
 							directionalNotStarted = false;
 						}
 					}
-
-					this.toile.drawNodes(
-						_get(glyph, contourSelected.id),
-						contourSelected.id,
-						[...hotItems, ...selectedItems],
-						appMode === canvasMode.SELECT_POINTS
-						&& contourSelected.data.componentIdx === undefined
-							? ''
-							: `components.${contourSelected.data.componentIdx}.`,
-						`${contourSelected.data.name}`,
-					);
 				}
 
 				if (appStateValue & appState.BOX_SELECTING) {

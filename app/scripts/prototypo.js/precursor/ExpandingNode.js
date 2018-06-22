@@ -77,18 +77,18 @@ export default class ExpandingNode extends Node {
 		} = computedNode;
 
 		return [
-			round2D({
-				x: x - Math.cos(angle) * width * distr,
-				y: y - Math.sin(angle) * width * distr,
-				xBase: x - Math.cos(baseAngle) * baseWidth * baseDistr,
-				yBase: y - Math.sin(baseAngle) * baseWidth * baseDistr,
-			}),
-			round2D({
-				x: x + Math.cos(angle) * width * (1 - distr),
-				y: y + Math.sin(angle) * width * (1 - distr),
-				xBase: x - Math.cos(baseAngle) * baseWidth * baseDistr,
-				yBase: y - Math.sin(baseAngle) * baseWidth * baseDistr,
-			}),
+			{
+				x: Math.round(x - Math.cos(angle) * width * distr),
+				y: Math.round(y - Math.sin(angle) * width * distr),
+				xBase: Math.round(x - Math.cos(baseAngle) * baseWidth * baseDistr),
+				yBase: Math.round(y - Math.sin(baseAngle) * baseWidth * baseDistr),
+			},
+			{
+				x: Math.round(x + Math.cos(angle) * width * (1 - distr)),
+				y: Math.round(y + Math.sin(angle) * width * (1 - distr)),
+				xBase: Math.round(x - Math.cos(baseAngle) * baseWidth * baseDistr),
+				yBase: Math.round(y - Math.sin(baseAngle) * baseWidth * baseDistr),
+			},
 		];
 	}
 }

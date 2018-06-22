@@ -461,9 +461,18 @@ export default class Glyph {
 				cursors: {},
 			},
 		};
+		localParams.postDepManualChanges = {
+			[this.name.value]: {
+				cursors: {},
+			},
+		};
 
 		const manualParamKeys = Object.keys(
 			params.manualChanges[this.name.value].cursors,
+		);
+
+		const postDepManualParamKeys = Object.keys(
+			params.postDepManualChanges[this.name.value].cursors,
 		);
 
 		for (let i = 0; i < manualParamKeys.length; i++) {
@@ -475,6 +484,11 @@ export default class Glyph {
 			localParams[thisParamKeys[i]] = this.parameters[
 				thisParamKeys[i]
 			].getResult(localParams);
+		}
+
+		for (let i = 0; i < postDepManualParamKeys.length; i++) {
+			localParams.postDepManualChanges[this.name.value].cursors[postDepManualParamKeys[i]]
+				= params.postDepManualChanges[this.name.value].cursors[postDepManualParamKeys[i]];
 		}
 
 		if (this.base.value !== undefined) {
@@ -520,6 +534,15 @@ export default class Glyph {
 			else {
 				this.handleOp(op, opDone, localParams, parentAnchors);
 			}
+		}
+
+		const localParamsKeys = Object.keys(localParams.postDepManualChanges[this.name.value].cursors);
+
+		for (let i =0; i < localParamsKeys.length; i++) {
+			const cursor = localParamsKeys[i];
+
+			const obj = _get(opDone, cursor);
+			console.log(obj);
 		}
 
 		const opAnchors = opDone.anchors;
