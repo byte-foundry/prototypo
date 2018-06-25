@@ -7,9 +7,9 @@ export class LibrarySidebarLeft extends React.Component {
 	render() {
 		return (
 			<div className="library-sidebar-left">
-				<div className="library-sidebar-action-dark">
+				<Link to="/library/create" className="library-sidebar-action-dark">
 					New Project
-				</div>
+				</Link>
 				<div className="library-links">
 					<Link to="/library/home" className={`library-link ${this.props.location.pathname === '/library/home' ? 'active' : ''}`}>
 						All

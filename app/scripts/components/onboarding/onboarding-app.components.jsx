@@ -18,13 +18,23 @@ const flatten = list =>
 
 class OnboardingApp extends React.PureComponent {
 	constructor(props) {
-		console.log(props);
 		super(props);
 		this.state = {
 			step: 0,
 			values: undefined,
 			parameters: [],
+			selectedTemplate: props.location.state.template,
+			selectedValues: props.location.state.values,
+			familyName: '',
+			createdFamily: false,
+			creatingFamily: false,
+			familyNameError: '',
 		};
+		this.renderAlternates = this.renderAlternates.bind(this);
+		this.getNextStep = this.getNextStep.bind(this);
+		this.getPreviousStep = this.getPreviousStep.bind(this);
+		this.changeParam = this.changeParam.bind(this);
+		this.createProject = this.createProject.bind(this);
 	}
 
 	componentWillMount() {
@@ -57,7 +67,6 @@ class OnboardingApp extends React.PureComponent {
 							[],
 						),
 					),
-					onboardingFrom: headJS.onboardingFrom,
 					glyphs: headJS.glyphs,
 					family: headJS.family,
 				});
@@ -65,11 +74,6 @@ class OnboardingApp extends React.PureComponent {
 			.onDelete(() => {
 				this.setState({parameters: []});
 			});
-
-		this.renderAlternates = this.renderAlternates.bind(this);
-		this.getNextStep = this.getNextStep.bind(this);
-		this.getPreviousStep = this.getPreviousStep.bind(this);
-		this.changeParam = this.changeParam.bind(this);
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -92,6 +96,42 @@ class OnboardingApp extends React.PureComponent {
 		if (this.state.step - 1 >= 0) {
 			this.setState({step: this.state.step - 1});
 		}
+	}
+
+	async createProject() {
+		console.log(this.state)
+		this.setState({familyNameError: ''});
+		const name = this.state.familyName;
+
+		if (!String(name).trim()) {
+			this.setState({error: 'You must choose a name for your family'});
+			return;
+		}
+
+		try {
+			this.setState({creatingFamily: true})
+			const {data: {createFamily: newFont}} = await this.props.createFamily(
+				name,
+				this.state.selectedTemplate,
+				this.state.selectedValues,
+			);
+
+			this.setState({creatingFamily: false})
+			this.setState({createFamily: true})
+			this.client.dispatchAction('/family-created', newFont);
+
+			this.client.dispatchAction('/change-font', {
+				templateToLoad: newFont.template,
+				variantId: newFont.variants[0].id,
+			});
+			this.getNextStep();
+		}
+		catch (err) {
+			this.setState({creatingFamily: false})
+			this.setState({familyNameError: err.message});
+		}
+
+
 	}
 
 	getAlternateFonts() {
@@ -212,25 +252,7 @@ class OnboardingApp extends React.PureComponent {
 				family,
 			});
 			await this.props.refetch();
-			switch (this.state.onboardingFrom) {
-			case 'library':
-				this.client.dispatchAction('/store-value', {
-					uiShowCollection: true,
-				});
-				this.client.dispatchAction('/store-value', {
-					onboardingFrom: undefined,
-				});
-				this.props.router.push('/dashboard');
-				break;
-			case 'start':
-				this.client.dispatchAction('/store-value', {
-					onboardingFrom: undefined,
-				});
-				this.props.router.push('/start');
-				break;
-			default:
-				break;
-			}
+			this.props.router.push('/library');
 		}
 		catch (err) {
 			// TODO: Error handling
@@ -244,25 +266,6 @@ class OnboardingApp extends React.PureComponent {
 		const stepData = onboardingData.steps[step];
 
 		// Failsafe
-		if (this.state.fontName && !this.state.onboardingFrom) {
-			return (
-				<div className="onboarding-app">
-					<div className="onboarding-wrapper">
-						this.props.router.push("/dashboard");
-						<Button
-							outline
-							neutral
-							size="small"
-							className="backToApp"
-							onClick={() => this.props.router.push('/dashboard')}
-						>
-							Return to dashboard
-						</Button>
-						<div className="onboarding-content" />
-					</div>
-				</div>
-			);
-		}
 
 		// Just getting the fonts we need to generate
 		let fontsToGenerate = [];
@@ -316,7 +319,7 @@ class OnboardingApp extends React.PureComponent {
 						Back to library
 					</Button>
 					{this.props.families
-						&& this.props.families.length > 3 && (
+						&& this.props.families.length > 3 && stepData.type !== 'start' &&  (
 						<Button
 							outline
 							neutral
@@ -329,31 +332,57 @@ class OnboardingApp extends React.PureComponent {
 					)}
 					<div className="onboarding-content">
 						{this.defineRender(stepData)}
-						<Button
-							className="nextStep"
-							loading={this.state.parameters === []}
-							onClick={() => {
-								if (this.state.parameters !== []) {
-									this.state.step < onboardingData.steps.length - 1
-										? this.getNextStep()
-										: this.props.router.push('/dashboard');
-								}
-							}}
-						>
-							{(() => {
-								switch (this.state.step) {
-								case 0:
-									return 'Start';
-									break;
-								case onboardingData.steps.length - 1:
-									return 'Finish';
-									break;
-								default:
-									return 'Next';
-									finish;
-								}
-							})()}
-						</Button>
+						{stepData.type === 'start' && (
+							<div className="step step-start-second">
+								<p className="description">
+									But first, let's give your project a name.
+								</p>
+								<input type="text" name="familyName" id="familyName-Input" value={this.state.familyName} onChange={(e) => {this.setState({familyName: e.target.value});}}/>
+								{this.state.familyNameError !== '' && (
+									<p className="description error">
+										{this.state.familyNameError}
+									</p>
+								)}
+								<Button
+									className="create"
+									onClick={() => {this.createProject();}}
+								>
+									Start designing
+								</Button>
+								<h3>Need inspiration?</h3>
+								<p className="description">
+									A good name for a typeface should reflect its design and its purpose. <br/>
+									You can use <a href="http://namecheck.fontdata.com/about/" target="_blank" rel="noopener noreferrer">http://namecheck.fontdata.com/about/</a> to check the availibility of the chosen name.
+								</p>
+							</div>
+						)}
+						{stepData.type !== 'start' && (
+							<Button
+								className="nextStep"
+								loading={this.state.parameters === []}
+								onClick={() => {
+									if (this.state.parameters !== []) {
+										this.state.step < onboardingData.steps.length - 1
+											? this.getNextStep()
+											: this.props.router.push('/dashboard');
+									}
+								}}
+							>
+								{(() => {
+									switch (this.state.step) {
+									case 0:
+										return 'Start';
+										break;
+									case onboardingData.steps.length - 1:
+										return 'Finish';
+										break;
+									default:
+										return 'Next';
+										finish;
+									}
+								})()}
+							</Button>
+						)}
 						<FontUpdater
 							extraFonts={[
 								...fontsToGenerate,
@@ -433,6 +462,39 @@ const deleteFamilyMutation = gql`
 	}
 `;
 
+const getUserIdQuery = gql`
+	query getUserId {
+		user {
+			id
+		}
+	}
+`;
+
+const createFamilyMutation = gql`
+	mutation createFamily($name: String!, $template: String!, $values: Json! $ownerId: ID!) {
+		createFamily(
+			name: $name
+			template: $template
+			ownerId: $ownerId
+			variants: [
+				{
+					name: "Regular"
+					values: $values
+				}
+			]
+		) {
+			id
+			name
+			template
+			variants {
+				id
+				name
+				values
+			}
+		}
+	}
+`;
+
 export default compose(
 	graphql(libraryQuery, {
 		options: {
@@ -501,6 +563,40 @@ export default compose(
 				data.user.library = data.user.library.filter(
 					font => font.id !== deleteFamily.id,
 				);
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	}),
+	graphql(getUserIdQuery, {
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			return {userId: data.user.id};
+		},
+	}),
+	graphql(createFamilyMutation, {
+		props: ({mutate, ownProps}) => ({
+			createFamily: (name, template, values) =>
+				mutate({
+					variables: {
+						ownerId: ownProps.userId,
+						name,
+						template,
+						values: JSON.stringify(values),
+					},
+				}),
+		}),
+		options: {
+			update: (store, {data: {createFamily}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library.push(createFamily);
 
 				store.writeQuery({
 					query: libraryQuery,
