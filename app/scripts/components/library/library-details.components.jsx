@@ -14,7 +14,6 @@ class LibraryDetails extends React.Component {
 			family,
 		}
 		this.goToDashboard = this.goToDashboard.bind(this);
-		console.log(props)
 	}
 	componentWillMount() {
 		pleaseWait.instance.finish();
