@@ -249,11 +249,11 @@ class OnboardingApp extends React.PureComponent {
 				family,
 			});
 			await this.props.refetch();
-			this.props.router.push('/library');
+			this.props.router.push('/library/create');
 		}
 		catch (err) {
 			// TODO: Error handling
-			this.props.router.push('/start');
+			this.props.router.push('/library/create');
 			console.log(err);
 		}
 	}
@@ -465,7 +465,7 @@ const getUserIdQuery = gql`
 `;
 
 const createFamilyMutation = gql`
-	mutation createFamily($name: String!, $template: String!, $values: Json! $ownerId: ID!) {
+	mutation createFamily($name: String!, $template: String!, $values: Json $ownerId: ID!) {
 		createFamily(
 			name: $name
 			template: $template
