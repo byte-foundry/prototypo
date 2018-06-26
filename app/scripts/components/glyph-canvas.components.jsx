@@ -89,7 +89,7 @@ function calculateHandleCoordinateModification(
 		- Math.atan2(relativeBasePos.y, relativeBasePos.x);
 
 	const length = distance2D(handleBase, ownParent);
-	const actualLength = length === 0 ? refLength : length * tension;
+	const actualLength = length === 0 ? refLength : length;
 
 	const newOpPos = add2D(ownParent, {
 		x: Math.cos(modAngle) * actualLength,
@@ -158,8 +158,8 @@ export function handleModification(
 		= toileType.NODE_IN === draggedItem.type
 		|| toileType.CONTOUR_NODE_IN === draggedItem.type;
 
-	const direction = isIn ? 'in' : 'out';
-	const oppositeDirection = isIn ? 'out' : 'in';
+	const direction = isIn ? 'handleIn' : 'handleOut';
+	const oppositeDirection = isIn ? 'handleOut' : 'handleIn';
 
 	const changes = {
 		[`${parentId}.${direction}.x`]: newVector.x,
@@ -190,54 +190,6 @@ export function handleModification(
 		changes[`${parentId}.${oppositeDirection}.y`]
 			= opVectorScale.y * Math.cos(angleTransform)
 			- opVectorScale.x * Math.sin(angleTransform);
-
-		if (!unparallelMod) {
-			const parallelParent = _get(glyph, draggedItem.data.parallelId);
-			const parallelVector = calculateHandleCoordinateModification(
-				parent,
-				parallelParent,
-				newPos,
-				handlePos,
-				tension,
-				!isIn,
-				refLength,
-			);
-			const parallelVectorScale = {
-				x: parallelVector.x * xTransform,
-				y: parallelVector.y * yTransform,
-			};
-
-			changes[`${parallelId}.${direction}.x`]
-				= parallelVectorScale.x * Math.cos(angleTransform)
-				+ parallelVectorScale.y * Math.sin(angleTransform);
-			changes[`${parallelId}.${direction}.y`]
-				= parallelVectorScale.y * Math.cos(angleTransform)
-				- parallelVectorScale.x * Math.sin(angleTransform);
-		}
-	}
-
-	if (!unparallelMod) {
-		const parallelParent = _get(glyph, draggedItem.data.parallelId);
-		const parallelOpVector = calculateHandleCoordinateModification(
-			parent,
-			parallelParent,
-			newPos,
-			handlePos,
-			tension,
-			isIn,
-			refLength,
-		);
-		const parallelOpVectorScale = {
-			x: parallelOpVector.x * xTransform,
-			y: parallelOpVector.y * yTransform,
-		};
-
-		changes[`${parallelId}.${oppositeDirection}.x`]
-			= parallelOpVectorScale.x * Math.cos(angleTransform)
-			+ parallelOpVectorScale.y * Math.sin(angleTransform);
-		changes[`${parallelId}.${oppositeDirection}.y`]
-			= parallelOpVectorScale.y * Math.cos(angleTransform)
-			- parallelOpVectorScale.x * Math.sin(angleTransform);
 	}
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
@@ -264,7 +216,7 @@ export function onCurveModification(
 	const opposite = _get(glyph, oppositeId);
 	const current = _get(glyph, draggedItem.id);
 	const newPosition = newPos;
-	const deltaVector = subtract2D({x: current.xBase, y: current.yBase}, newPos);
+	const deltaVector = subtract2D(newPos, {x: current.xBase, y: current.yBase});
 
 	let xTransform = 1;
 	let yTransform = 1;
@@ -292,10 +244,10 @@ export function onCurveModification(
 
 	changes[`${draggedItem.id}.x`] = transformedWidthVector.x;
 	changes[`${draggedItem.id}.y`] = transformedWidthVector.y;
-	changes[`${draggedItem.id}.in.x`] = transformedWidthVector.x;
-	changes[`${draggedItem.id}.in.y`] = transformedWidthVector.y;
-	changes[`${draggedItem.id}.out.x`] = transformedWidthVector.x;
-	changes[`${draggedItem.id}.out.y`] = transformedWidthVector.y;
+	changes[`${draggedItem.id}.handleIn.x`] = transformedWidthVector.x;
+	changes[`${draggedItem.id}.handleIn.y`] = transformedWidthVector.y;
+	changes[`${draggedItem.id}.handleOut.x`] = transformedWidthVector.x;
+	changes[`${draggedItem.id}.handleOut.y`] = transformedWidthVector.y;
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }

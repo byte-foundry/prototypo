@@ -80,14 +80,14 @@ export default class ExpandingNode extends Node {
 			{
 				x: Math.round(x - Math.cos(angle) * width * distr),
 				y: Math.round(y - Math.sin(angle) * width * distr),
-				xBase: Math.round(x - Math.cos(baseAngle) * baseWidth * baseDistr),
-				yBase: Math.round(y - Math.sin(baseAngle) * baseWidth * baseDistr),
+				xBase: Math.round(x - Math.cos(angle) * width * distr),
+				yBase: Math.round(y - Math.sin(angle) * width * distr),
 			},
 			{
 				x: Math.round(x + Math.cos(angle) * width * (1 - distr)),
 				y: Math.round(y + Math.sin(angle) * width * (1 - distr)),
-				xBase: Math.round(x - Math.cos(baseAngle) * baseWidth * baseDistr),
-				yBase: Math.round(y - Math.sin(baseAngle) * baseWidth * baseDistr),
+				xBase: Math.round(x + Math.cos(angle) * width * (1 - distr)),
+				yBase: Math.round(y + Math.sin(angle) * width * (1 - distr)),
 			},
 		];
 	}

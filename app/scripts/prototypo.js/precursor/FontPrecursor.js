@@ -27,6 +27,7 @@ export default class FontPrecursor {
 		);
 		this.paramBase = {
 			manualChanges: {},
+			postDepManualChanges: {},
 			altList: {},
 			glyphComponentChoice: {},
 		};
@@ -57,6 +58,10 @@ export default class FontPrecursor {
 			manualChanges: {
 				...this.paramBase.manualChanges,
 				...params.manualChanges,
+			},
+			postDepManualChanges: {
+				...this.paramBase.postDepManualChanges,
+				...params.postDepManualChanges,
 			},
 			glyphComponentChoice: {
 				...this.paramBase.glyphComponentChoice,
@@ -119,6 +124,10 @@ export default class FontPrecursor {
 						manualChanges: {
 							...this.paramBase.manualChanges,
 							...localParams.manualChanges,
+						},
+						postDepManualChanges: {
+							...this.paramBase.postDepManualChanges,
+							...params.postDepManualChanges,
 						},
 						glyphComponentChoice: {
 							...this.paramBase.glyphComponentChoice,

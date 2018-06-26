@@ -107,9 +107,17 @@ export default class Glyph {
 			// eslint-disable-line no-param-reassign
 			cursors: {},
 		};
+		paramBase.postDepManualChanges[name] = {
+			// eslint-disable-line no-param-reassign
+			cursors: {},
+		};
 
 		if (base !== undefined) {
 			paramBase.manualChanges[base] = {
+				// eslint-disable-line no-param-reassign
+				cursors: {},
+			};
+			paramBase.postDepManualChanges[base] = {
 				// eslint-disable-line no-param-reassign
 				cursors: {},
 			};
@@ -540,9 +548,14 @@ export default class Glyph {
 
 		for (let i =0; i < localParamsKeys.length; i++) {
 			const cursor = localParamsKeys[i];
+			const parentCursor = cursor.substr(0, cursor.length - 2);
+			const downCursor = cursor.substr(-1);
 
-			const obj = _get(opDone, cursor);
-			console.log(obj);
+			const obj = _get(opDone, parentCursor);
+
+			if (obj) {
+				obj[downCursor] += localParams.postDepManualChanges[this.name.value].cursors[cursor];
+			}
 		}
 
 		const opAnchors = opDone.anchors;
@@ -665,6 +678,9 @@ export default class Glyph {
 			componentParams.manualChanges[componentName] = {
 				cursors: componentManualChanges,
 			};
+			componentParams.postDepManualChanges[componentName] = {
+				cursors: {},
+			}
 			componentParams.componentChoice = componentName;
 
 			opDone.components.push(
