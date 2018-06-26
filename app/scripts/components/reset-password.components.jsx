@@ -36,7 +36,7 @@ class ResetPassword extends React.PureComponent {
 
 		this.setState({loading: true});
 
-		const {location, history} = this.props;
+		const {location, router} = this.props;
 
 		try {
 			await HoodieApi.resetPassword(
@@ -47,7 +47,7 @@ class ResetPassword extends React.PureComponent {
 
 			this.setState({loading: false});
 
-			history.replace('/signin/reset?success');
+			router.replace('/signin/reset?success');
 		}
 		catch (err) {
 			trackJs.track(err);
@@ -81,7 +81,7 @@ class ResetPassword extends React.PureComponent {
 	}
 
 	componentDidMount() {
-		const {history, location} = this.props;
+		const {location} = this.props;
 		const {success, id, resetToken} = location.query;
 
 		// history parses query and replaces + with spaces
@@ -98,7 +98,7 @@ class ResetPassword extends React.PureComponent {
 		this.setState({isTokenValid: false});
 	}
 
-	componentWillReceiveProps({location, history}) {
+	componentWillReceiveProps({location}) {
 		const {success, id, resetToken} = location.query;
 
 		if (success) {
@@ -129,7 +129,9 @@ class ResetPassword extends React.PureComponent {
 		const {loading, loadingCheck, error, fetchError, isTokenValid} = this.state;
 		const {location} = this.props;
 
-		if (location.query.hasOwnProperty('success')) {
+		const query = new URLSearchParams(location.search);
+
+		if (query.has('success')) {
 			return (
 				<div className="forgotten-password sign-in sign-base">
 					<div className="account-dashboard-icon" />
@@ -226,7 +228,7 @@ class ResetPassword extends React.PureComponent {
 
 ResetPassword.propTypes = {
 	location: PropTypes.object.isRequired,
-	history: PropTypes.object.isRequired,
+	router: PropTypes.object.isRequired,
 };
 
 export default ResetPassword;
