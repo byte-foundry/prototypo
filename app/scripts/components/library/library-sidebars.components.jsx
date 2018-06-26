@@ -82,9 +82,13 @@ export class FamilySidebarGlyphs extends React.Component {
 				<div className="sidebar-glyphs-title">
 					Support
 				</div>
-				<div className="sidebar-glyphs-language">
-					Latin<span>{Object.keys(this.props.glyphs).filter(key => this.props.glyphs[key][0].unicode !== undefined).length}</span>
-				</div>
+				{
+					this.props.glyphs && (
+						<div className="sidebar-glyphs-language">
+							Latin<span>{Object.keys(this.props.glyphs).filter(key => this.props.glyphs[key][0].unicode !== undefined).length}</span>
+						</div>
+					)
+				}
 			</div>
 		)
 	}
