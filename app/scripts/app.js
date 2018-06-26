@@ -102,7 +102,7 @@ function redirectToDashboard(nextState, replace) {
 		}
 		else {
 			replace({
-				pathname: '/start',
+				pathname: '/library/home',
 				state: {nextPathname: nextState.location.pathname},
 			});
 		}
@@ -255,23 +255,44 @@ class AppRoutes extends React.PureComponent {
 						</Route>
 						<Route component={LibraryApp} path="library">
 							<IndexRedirect to="home" />
-							<Route component={LibraryMain} path="home" name="list" onEnter={redirectToLogin}>
+							<Route
+								component={LibraryMain}
+								path="home"
+								name="list"
+								onEnter={redirectToLogin}
+							>
 								<IndexRoute component={LibraryList} />
 							</Route>
 							<Route
-								path="hosting" component={LibraryMain} name="hosting" onEnter={redirectToLogin}>
+								path="hosting"
+								component={LibraryMain}
+								name="hosting"
+								onEnter={redirectToLogin}
+							>
 								<IndexRoute component={LibraryHosting} />
 							</Route>
 							<Route
-								path="create" component={LibraryMain} name="create" onEnter={redirectToLogin}>
+								path="create"
+								component={LibraryMain}
+								name="create"
+								onEnter={redirectToLogin}
+							>
 								<IndexRoute component={LibraryCreate} />
 							</Route>
 							<Route
-								path="review" component={LibraryReview} name="review" onEnter={redirectToLogin}>
+								path="review"
+								component={LibraryReview}
+								name="review"
+								onEnter={redirectToLogin}
+							>
 								<IndexRoute component={LibraryReview} />
 							</Route>
 							<Route
-								path="project/:projectID" component={LibraryMain} name="see" onEnter={redirectToLogin}>
+								path="project/:projectID"
+								component={LibraryMain}
+								name="see"
+								onEnter={redirectToLogin}
+							>
 								<IndexRoute component={LibrarySee} />
 								<Route path="details" component={LibraryDetails} />
 							</Route>

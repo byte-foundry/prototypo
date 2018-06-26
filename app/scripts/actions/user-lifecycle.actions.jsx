@@ -164,7 +164,7 @@ export default {
 		css = {},
 		phone,
 		skype,
-		to = '/start',
+		to = '/library/home',
 		oldQuery = {},
 	}) => {
 		const toLocation = {
@@ -253,7 +253,7 @@ export default {
 
 			if (
 				toLocation.pathname === '/dashboard'
-				|| toLocation.pathname === '/start'
+				|| toLocation.pathname === '/library/home'
 			) {
 				await loadStuff();
 				hashHistory.push(toLocation);

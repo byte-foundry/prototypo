@@ -175,7 +175,7 @@ selectRenderOptions(
 					&& location.hash.indexOf('signup') === -1
 					&& location.hash.indexOf('testfont') === -1
 				) {
-					location.href = '#/start';
+					location.href = '#/library/home';
 				}
 			})
 			.catch(() => {
@@ -184,7 +184,7 @@ selectRenderOptions(
 					&& location.hash.indexOf('account') === -1
 					&& location.hash.indexOf('signup') === -1
 				) {
-					location.href = '#/start';
+					location.href = '#/library/home';
 				}
 				const event = new CustomEvent('values.loaded');
 
