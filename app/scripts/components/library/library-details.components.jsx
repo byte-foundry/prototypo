@@ -8,15 +8,23 @@ import LocalClient from '../../stores/local-client.stores';
 class LibraryDetails extends React.Component {
 	constructor(props) {
 		super(props)
-		const family = props.baseFontData.find(e => e.id === props.params.projectID);
+		const family = this.props.families.find(
+			e => e.id === this.props.params.projectID,
+		);
 		if (!family) { props.history.push('/library/home') };
 		this.state = {
 			family,
 		}
 		this.goToDashboard = this.goToDashboard.bind(this);
 	}
-	componentWillMount() {
-		pleaseWait.instance.finish();
+	async componentWillMount() {
+		this.client = LocalClient.instance();
+		const prototypoStore = await this.client.fetch('/prototypoStore');
+		const familyGlyphs = prototypoStore.head
+			.toJS()
+			.templatesData.find(e => e.name === this.state.family.template).glyphs;
+
+		this.setState({familyGlyphs});
 	}
 	goToDashboard() {
 		this.props.history.push('/dashboard');
@@ -31,8 +39,8 @@ class LibraryDetails extends React.Component {
 							className={`provider provider-custom`}
 							style={{ backgroundColor: this.state.family.background }}
 						>
-							{this.state.family.user.firstName && this.state.family.user.firstName.charAt(0)}
-							{this.state.family.user.lastName && this.state.family.user.lastName.charAt(0)}
+							{this.props.user.firstName && this.props.user.firstName.charAt(0)}
+							{this.props.user.lastName && this.props.user.lastName.charAt(0)}
 						</div>
 					</div>
 					<div className="library-details-form">
@@ -44,7 +52,7 @@ class LibraryDetails extends React.Component {
 							<div className="library-details-form-elem" />
 							<div className="library-details-form-elem">
 								<label htmlFor="mail">Designer</label>
-								<input type="text" id="name" name="user_name" value={`${this.state.family.user.firstName} ${this.state.family.user.lastName}`} />
+								<input type="text" id="name" name="user_name" value={`${this.props.user.firstName} ${this.props.user.lastName}`} />
 							</div>
 							<div className="library-details-form-elem">
 								<label htmlFor="msg">Designer URL</label>
@@ -117,7 +125,7 @@ class LibraryDetails extends React.Component {
 						))}
 					</div>
 				</div>
-				<LibrarySidebarRight><FamilySidebarActions familyId={this.props.params.projectID} family={this.state.family} mode="details" /><FamilySidebarGlyphs glyphs={this.state.family.glyphs} /></LibrarySidebarRight>
+				<LibrarySidebarRight><FamilySidebarActions familyId={this.props.params.projectID} family={this.state.family} mode="details" /><FamilySidebarGlyphs glyphs={this.state.familyGlyphs} /></LibrarySidebarRight>
 			</div>
 		);
 	}
