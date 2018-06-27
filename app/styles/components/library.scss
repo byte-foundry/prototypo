@@ -107,6 +107,9 @@
             background: white;
             color: $dark-grey;
             height: 100vh;
+            max-height: 100vh;
+            overflow-y: auto;
+            padding-bottom: 20px;
             .library-see-variants {
                 margin-top: 40px;
             }
@@ -293,6 +296,9 @@
                     margin-top: 10px;
                 }
             }
+        }
+        .library-family-list {
+            padding-bottom: 80px;
         }
         .library-item {
             margin-bottom: 25px;

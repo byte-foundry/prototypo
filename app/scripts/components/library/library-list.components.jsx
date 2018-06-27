@@ -241,6 +241,9 @@ class LibraryList extends React.Component {
 		if (newProps.activeFilters !== this.props.activeFilters) {
 			this.filterFonts(newProps.activeFilters);
 		}
+		if (newProps.families !== this.props.families) {
+			this.generateFonts(newProps.families, newProps.presets);
+		}
 	}
 
 	render() {
