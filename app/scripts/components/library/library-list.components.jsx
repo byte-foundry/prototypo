@@ -18,6 +18,7 @@ class LibraryList extends React.Component {
 		this.state = {};
 		this.generateFonts = this.generateFonts.bind(this);
 		this.filterFonts = this.filterFonts.bind(this);
+		this.createProject = this.createProject.bind(this);
 	}
 
 	async componentWillMount() {
@@ -66,6 +67,13 @@ class LibraryList extends React.Component {
 		this.setState({fontsToDisplay});
 	}
 
+	createProject(template, values) {
+		this.props.router.push({
+			pathname: '/onboarding',
+			state: {template, values},
+		})
+	}
+
 	generateFonts(f, p) {
 		const families = f || this.props.families;
 		const presets = p || this.props.presets;
@@ -112,6 +120,7 @@ class LibraryList extends React.Component {
 							glyphs={templateData.glyphs}
 							values={templateData.initValues}
 							export={this.props.export}
+							createProject={this.createProject}
 						/>
 					),
 				});
@@ -160,6 +169,7 @@ class LibraryList extends React.Component {
 								template={templateInfo}
 								user={preset.ownerInitials}
 								name={preset.variant.family.name}
+								createProject={this.createProject}
 								background={
 									preset.ownerInitials === 'LM'
 										? lmColor
@@ -346,7 +356,15 @@ export class TemplateItem extends React.Component {
 						this.state.isOpen ? 'opened' : ''
 					}`}
 				>
-					<div className="library-item-action">Edit</div>
+					<div className="library-item-action"
+						onClick={() => {
+							this.props.createProject(
+								this.props.template.templateName
+							);
+						}}
+					>
+						Edit
+					</div>
 					<div
 						className="library-item-action"
 						onClick={() => {
@@ -493,7 +511,16 @@ export class PresetItem extends React.Component {
 						this.state.isOpen ? 'opened' : ''
 					}`}
 				>
-					<div className="library-item-action">Edit</div>
+					<div className="library-item-action"
+						onClick={() => {
+							this.props.createProject(
+								this.props.template.templateName,
+								this.props.values,
+							);
+						}}
+					>
+						Edit
+					</div>
 					<div
 						className="library-item-action"
 						onClick={() => {
