@@ -67,7 +67,6 @@ class LibraryList extends React.Component {
 	}
 
 	generateFonts(f, p) {
-		console.log(this.props);
 		const families = f || this.props.families;
 		const presets = p || this.props.presets;
 		const customBadgesColor = [
@@ -118,6 +117,7 @@ class LibraryList extends React.Component {
 				});
 			});
 		presets
+			&& this.state.templateInfos
 			&& presets
 				.filter(
 					preset =>
@@ -172,7 +172,7 @@ class LibraryList extends React.Component {
 						),
 					});
 				});
-		families.forEach((family) => {
+		families && this.state.templateInfos && families.forEach((family) => {
 			const templateInfo = this.state.templateInfos.find(
 				template => template.templateName === family.template,
 			) || {name: 'Undefined'};

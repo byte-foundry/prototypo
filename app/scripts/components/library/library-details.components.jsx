@@ -11,11 +11,12 @@ class LibraryDetails extends React.Component {
 		const family = this.props.families.find(
 			e => e.id === this.props.params.projectID,
 		);
-		if (!family) { props.history.push('/library/home') };
+		if (!family) { props.router.push('/library/home') };
 		this.state = {
 			family,
 		}
 		this.goToDashboard = this.goToDashboard.bind(this);
+		this.deleteFamily = this.deleteFamily.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -26,8 +27,12 @@ class LibraryDetails extends React.Component {
 
 		this.setState({familyGlyphs});
 	}
+	deleteFamily() {
+		this.props.deleteFamily(this.props.params.projectID);
+		this.props.router.push('/library/home');
+	}
 	goToDashboard() {
-		this.props.history.push('/dashboard');
+		this.props.router.push('/dashboard');
 	}
 	render() {
 		return (
@@ -125,7 +130,7 @@ class LibraryDetails extends React.Component {
 						))}
 					</div>
 				</div>
-				<LibrarySidebarRight><FamilySidebarActions familyId={this.props.params.projectID} family={this.state.family} mode="details" /><FamilySidebarGlyphs glyphs={this.state.familyGlyphs} /></LibrarySidebarRight>
+				<LibrarySidebarRight><FamilySidebarActions familyId={this.props.params.projectID} deleteFamily={this.deleteFamily} family={this.state.family} mode="details" /><FamilySidebarGlyphs glyphs={this.state.familyGlyphs} /></LibrarySidebarRight>
 			</div>
 		);
 	}
@@ -145,6 +150,14 @@ const libraryQuery = gql`
 					values
 				}
 			}
+		}
+	}
+`;
+
+const deleteFamilyMutation = gql`
+	mutation deleteFamily($id: ID!) {
+		deleteFamily(id: $id) {
+			id
 		}
 	}
 `;
@@ -199,5 +212,35 @@ export default compose(
 				});
 			},
 		},
-	})
+	}),
+	graphql(deleteFamilyMutation, {
+		props: ({mutate, ownProps}) => ({
+			deleteFamily: (id) => {
+				const family = ownProps.families.find(f => f.id === id);
+
+				if (!family) {
+					return Promise.reject();
+				}
+				const variants = family.variants.map(variant =>
+					ownProps.deleteVariant(variant.id),
+				);
+
+				return Promise.all([...variants, mutate({variables: {id}})]);
+			},
+		}),
+		options: {
+			update: (store, {data: {deleteFamily}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				data.user.library = data.user.library.filter(
+					font => font.id !== deleteFamily.id,
+				);
+
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	}),
 )(LibraryDetails);
