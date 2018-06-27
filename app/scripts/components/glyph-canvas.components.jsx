@@ -70,34 +70,25 @@ export function changeGlyphManually(
 
 function calculateHandleCoordinateModification(
 	parentRef,
-	ownParent,
 	newPos,
-	handlePos,
-	tension,
-	isIn,
-	refLength,
+	opHandle
 ) {
-	const handleBase = isIn
-		? {x: ownParent.handleOut.xBase, y: ownParent.handleOut.yBase}
-		: {x: ownParent.handleIn.xBase, y: ownParent.handleIn.yBase};
-	const relativeNewPos = subtract2D(newPos, parentRef);
-	const relativeBasePos = subtract2D(handlePos, parentRef);
-	const relativeOpPos = subtract2D(handleBase, ownParent);
-	const modAngle
-		= Math.atan2(relativeOpPos.y, relativeOpPos.x)
-		+ Math.atan2(relativeNewPos.y, relativeNewPos.x)
-		- Math.atan2(relativeBasePos.y, relativeBasePos.x);
-
-	const length = distance2D(handleBase, ownParent);
-	const actualLength = length === 0 ? refLength : length;
-
-	const newOpPos = add2D(ownParent, {
-		x: Math.cos(modAngle) * actualLength,
-		y: Math.sin(modAngle) * actualLength,
+	const d = subtract2D(newPos, parentRef);
+	const zero = {x: 0, y: 0};
+	const dr = distance2D(d, zero);
+	const radius = distance2D(opHandle, parentRef);
+	const pointa = mulScalar2D( 1 / (dr ** 2), {
+		x: Math.sign(d.y) * d.x * Math.sqrt((radius ** 2) * (dr ** 2)),
+		y: Math.abs(d.y) * Math.sqrt((radius ** 2) * (dr ** 2)),
 	});
-	const opVector = subtract2D(newOpPos, handleBase);
+	const pointb = mulScalar2D( 1 / (dr ** 2), {
+		x: -Math.sign(d.y) * d.x * Math.sqrt((radius ** 2) * (dr ** 2)),
+		y: -Math.abs(d.y) * Math.sqrt((radius ** 2) * (dr ** 2)),
+	});
 
-	return opVector;
+	const point = dot2D(d, pointa) <= 0 ? pointa : pointb;
+
+	return add2D(point, parentRef);
 }
 
 export function handleModification(
@@ -108,6 +99,7 @@ export function handleModification(
 	unsmoothMod,
 	unparallelMod,
 	globalMode,
+	toile,
 ) {
 	const {
 		parentId,
@@ -116,8 +108,10 @@ export function handleModification(
 		componentPrefixAddress,
 		nodeAddress,
 		componentName,
+		opId,
 	} = draggedItem.data;
 	const handle = _get(glyph, draggedItem.id);
+	const opHandle = _get(glyph, opId);
 	const handlePos = {
 		x: handle.xBase,
 		y: handle.yBase,
@@ -172,24 +166,12 @@ export function handleModification(
 	) {
 		const opVector = calculateHandleCoordinateModification(
 			parent,
-			parent,
 			newPos,
-			handlePos,
-			tension,
-			isIn,
-			refLength,
+			opHandle
 		);
-		const opVectorScale = {
-			x: opVector.x * xTransform,
-			y: opVector.y * yTransform,
-		};
-
-		changes[`${parentId}.${oppositeDirection}.x`]
-			= opVectorScale.x * Math.cos(angleTransform)
-			+ opVectorScale.y * Math.sin(angleTransform);
-		changes[`${parentId}.${oppositeDirection}.y`]
-			= opVectorScale.y * Math.cos(angleTransform)
-			- opVectorScale.x * Math.sin(angleTransform);
+		const modVector = subtract2D(opVector, {x: opHandle.xBase, y: opHandle.yBase});
+		changes[`${parentId}.${oppositeDirection}.x`] = modVector.x;
+		changes[`${parentId}.${oppositeDirection}.y`] = modVector.y;
 	}
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
@@ -213,41 +195,27 @@ export function onCurveModification(
 		transforms,
 		componentName,
 	} = draggedItem.data;
-	const opposite = _get(glyph, oppositeId);
 	const current = _get(glyph, draggedItem.id);
 	const newPosition = newPos;
 	const deltaVector = subtract2D(newPos, {x: current.xBase, y: current.yBase});
 
-	let xTransform = 1;
-	let yTransform = 1;
-	let angleTransform = 0;
+	const inOffest = subtract2D(current.handleIn, current);
+	const outOffset = subtract2D(current.handleOut, current);
 
-	for (let i = 0; i < transforms.length; i++) {
-		const transform = transforms[i];
+	const inNewPos = add2D(newPos, inOffest);
+	const outNewPos = add2D(newPos, outOffset);
 
-		if (transform) {
-			xTransform
-				/= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
-			yTransform
-				/= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
-			angleTransform
-				+= transform.name.indexOf('rotate') === -1 ? 0 : transform.param;
-		}
-	}
-
-	const transformedWidthVector = {
-		x: xTransform * deltaVector.x,
-		y: yTransform * deltaVector.y,
-	};
+	const inVector = subtract2D(inNewPos, {x: current.handleIn.xBase, y: current.handleIn.yBase});
+	const outVector = subtract2D(outNewPos, {x: current.handleOut.xBase, y: current.handleOut.yBase});
 
 	const changes = {};
 
-	changes[`${draggedItem.id}.x`] = transformedWidthVector.x;
-	changes[`${draggedItem.id}.y`] = transformedWidthVector.y;
-	changes[`${draggedItem.id}.handleIn.x`] = transformedWidthVector.x;
-	changes[`${draggedItem.id}.handleIn.y`] = transformedWidthVector.y;
-	changes[`${draggedItem.id}.handleOut.x`] = transformedWidthVector.x;
-	changes[`${draggedItem.id}.handleOut.y`] = transformedWidthVector.y;
+	changes[`${draggedItem.id}.x`] = deltaVector.x;
+	changes[`${draggedItem.id}.y`] = deltaVector.y;
+	changes[`${draggedItem.id}.handleIn.x`] = inVector.x;
+	changes[`${draggedItem.id}.handleIn.y`] = inVector.y;
+	changes[`${draggedItem.id}.handleOut.x`] = outVector.x;
+	changes[`${draggedItem.id}.handleOut.y`] = outVector.y;
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
@@ -1425,6 +1393,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								unsmoothMod,
 								unparallelMod,
 								globalMode,
+								this.toile,
 							);
 
 							if (!unparallelMod) {
@@ -1449,29 +1418,54 @@ export default class GlyphCanvas extends React.PureComponent {
 								unsmoothMod,
 								true,
 								globalMode,
+								this.toile,
 							);
 							break;
 						}
 						case toileType.NODE: {
+							let posModData = modData;
+
+							if (
+								directionalModifier
+									&& !directionalNotStarted
+									&& mouseMovement
+							) {
+								posModData = {
+									x:
+											directionalValue & directionalMod.X
+												? modData.x
+												: mouseStart.x,
+									y:
+											directionalValue & directionalMod.X
+												? mouseStart.y
+												: modData.y,
+								};
+
+								if (directionalValue & directionalMod.Y) {
+									this.toile.drawLine(
+										{x: posModData.x, y: 1000000},
+										{x: posModData.x, y: -1000000},
+										'#ff00ff',
+									);
+								}
+								else {
+									this.toile.drawLine(
+										{y: posModData.y, x: 1000000},
+										{y: posModData.y, x: -1000000},
+										'#ff00ff',
+									);
+								}
+							}
+
 							onCurveModification(
 								this.client,
 								glyph,
 								item,
-								modData,
+								posModData,
 								appStateValue,
 								curveMode,
 								globalMode,
 							);
-
-							const id = item.data.parentId;
-							const skeletonNode = _get(glyph, id);
-
-							if (skeletonNode && !(curveMode & onCurveModMode.ANGLE_MOD)) {
-								this.toile.drawWidthTool(skeletonNode);
-							}
-							if (skeletonNode && !(curveMode & onCurveModMode.WIDTH_MOD)) {
-								this.toile.drawAngleTool(skeletonNode);
-							}
 							break;
 						}
 						case toileType.NODE_SKELETON:
