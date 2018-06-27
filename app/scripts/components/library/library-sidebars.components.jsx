@@ -92,6 +92,16 @@ export class FamilySidebarActions extends React.Component {
 				>
 					Add new Variant
 				</div>
+				{this.props.mode === 'details' && (
+					<div
+						className="sidebar-action"
+						onClick={() => {
+							this.props.deleteFamily();
+						}}
+					>
+						Delete family
+					</div>
+				)}
 			</div>
 		);
 	}
