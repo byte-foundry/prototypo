@@ -67,7 +67,13 @@ export class FamilySidebarActions extends React.Component {
 	render() {
 		return (
 			<div className="sidebar-actions-family">
-				<div className="sidebar-action">Export family</div>
+				<div className="sidebar-action"
+					onClick={() => {
+						this.props.exportFamily();
+					}}
+				>
+					Export family
+				</div>
 				{this.props.mode === 'see' && (
 					<Link
 						className="sidebar-action"

@@ -17,6 +17,7 @@ class LibraryDetails extends React.Component {
 		}
 		this.goToDashboard = this.goToDashboard.bind(this);
 		this.deleteFamily = this.deleteFamily.bind(this);
+		this.exportFamily = this.exportFamily.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -24,8 +25,23 @@ class LibraryDetails extends React.Component {
 		const familyGlyphs = prototypoStore.head
 			.toJS()
 			.templatesData.find(e => e.name === this.state.family.template).glyphs;
+		const templateValues = prototypoStore.head
+			.toJS()
+			.templatesData.find(e => e.name === this.state.family.template);
 
-		this.setState({familyGlyphs});
+		this.setState({familyGlyphs, templateValues});
+	}
+	exportFamily() {
+		const valueArray = this.state.family.variants.map(variant => ({...this.state.templateValues.initValues, ...variant.values}));
+		const variantNames = this.state.family.variants.map(variant => variant.name);
+
+		this.client.dispatchAction('/export-family-from-library', {
+			familyName: this.state.family.name,
+			variantNames,
+			valueArray,
+			template: this.state.family.template,
+			glyphs: this.state.familyGlyphs,
+		});
 	}
 	deleteFamily() {
 		this.props.deleteFamily(this.props.params.projectID);
@@ -130,7 +146,7 @@ class LibraryDetails extends React.Component {
 						))}
 					</div>
 				</div>
-				<LibrarySidebarRight><FamilySidebarActions familyId={this.props.params.projectID} deleteFamily={this.deleteFamily} family={this.state.family} mode="details" /><FamilySidebarGlyphs glyphs={this.state.familyGlyphs} /></LibrarySidebarRight>
+				<LibrarySidebarRight><FamilySidebarActions familyId={this.props.params.projectID} deleteFamily={this.deleteFamily}  exportFamily={this.exportFamily} family={this.state.family} mode="details" /><FamilySidebarGlyphs glyphs={this.state.familyGlyphs} /></LibrarySidebarRight>
 			</div>
 		);
 	}
