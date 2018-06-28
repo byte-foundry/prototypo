@@ -379,6 +379,7 @@ export class TemplateItem extends React.Component {
 					>
 						Download
 					</div>
+					<input type="text" name="displayedWord" value="Hamburgefonstiv 123"/>
 				</div>
 			</div>
 		);
@@ -465,6 +466,7 @@ export class FamilyItem extends React.Component {
 					>
 						Open family
 					</div>
+					<input type="text" name="displayedWord" value="Hamburgefonstiv 123"/>
 				</div>
 			</div>
 		);
@@ -535,6 +537,7 @@ export class PresetItem extends React.Component {
 					>
 						Download
 					</div>
+					<input type="text" name="displayedWord" value="Hamburgefonstiv 123"/>
 				</div>
 			</div>
 		);
