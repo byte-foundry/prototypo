@@ -169,6 +169,7 @@ export default {
 		const exporting = prototypoStore.get('export');
 
 		if (exporting) {
+			console.log('Already exporting, sorry!')
 			return;
 		}
 
@@ -184,6 +185,7 @@ export default {
 
 		exportingError = setTimeout(() => {
 			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
+			console.log('Export timed out')
 		}, 10000);
 
 		let family = familyName.replace(/\s/g, '-');
@@ -211,6 +213,92 @@ export default {
 		catch (e) {
 			localClient.dispatchAction('/end-export-otf');
 		}
+	},
+	'/export-family-from-library': async ({
+		familyName = 'font', variantNames, valueArray, template, glyphs,
+	}) => {
+		const exporting = prototypoStore.get('export');
+
+		if (exporting) {
+			console.log('Already exporting, sorry!')
+			return;
+		}
+
+		const plan = HoodieApi.instance.plan;
+		const credits = prototypoStore.get('credits');
+
+		// forbid export without plan
+		if (!exportAuthorized(plan, credits)) {
+			return;
+		}
+
+		localClient.dispatchAction('/exporting', {exporting: true});
+
+		exportingError = setTimeout(() => {
+			console.log('Export timed out')
+			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
+		}, 25000);
+
+		const promiseArray = [];
+		const fontMediatorInstance = FontMediator.instance();
+		const subset = Object.keys(glyphs).filter(key => glyphs[key][0].unicode !== undefined);
+
+		variantNames.forEach((variantName, index) => {
+			console.log(`exporting ${variantName} number ${index}`)
+			promiseArray.push(new Promise((resolve, reject) => {
+				const family = familyName.replace(/\s/g, '-');
+				const style = variantName ? variantName.replace(/\s/g, '-') : 'regular';
+				const name = {
+					family,
+					style: `${style.toLowerCase()}`,
+				};
+
+				fontMediatorInstance.getFontFile(
+					name,
+					template,
+					{...valueArray[index]},
+					subset,
+				).then(buffer => {
+					console.log(`${variantName} Buffer recieved!`)
+					resolve(buffer)
+				}).catch(e => {
+					reject(e);					
+					console.log(e)
+				});
+			}));
+		});
+		const zip = new JSZip();
+
+		Promise.all(promiseArray).then((blobBuffers) => {
+			console.log('All buffers recieved, exporting zip file')
+			blobBuffers.forEach((buffer, index) => {
+				const variantName = variantNames[index] ? variantNames[index].replace(/\s/g, '-').toLowerCase() : 'regular';
+				const variantPatch = prototypoStore
+					.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
+					.commit();
+
+				localServer.dispatchUpdate('/prototypoStore', variantPatch);
+				zip.file(`${familyName.replace(/\s/g, '-')} ${variantName}.otf`, buffer, {binary: true});
+			});
+			const reader = new FileReader();
+
+			reader.onloadend = () => {
+				const dl = document.createElement('a');
+				const URL = window.URL || window.webkitURL;
+
+				dl.download = `${familyName.replace(/\s/g, '-')}.zip`;
+				dl.href = reader.result;
+				clearTimeout(exportingError);
+				dl.dispatchEvent(new MouseEvent('click'));
+				setTimeout(() => {
+					dl.href = '#';
+					URL.revokeObjectURL(reader.result);
+					localClient.dispatchAction('/exporting', {exporting: false});
+					localClient.dispatchAction('/end-export-otf');
+				}, 500);
+			};
+			reader.readAsDataURL(zip.generate({type: 'blob'}));
+		}).catch(() => localClient.dispatchAction('/end-export-otf'));
 	},
 	'/end-export-otf': () => {
 		localClient.dispatchAction('/store-value-font', {exportPlease: false});

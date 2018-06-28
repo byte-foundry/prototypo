@@ -23,9 +23,22 @@ class LibrarySee extends React.Component {
 		};
 		this.generateVariants = this.generateVariants.bind(this);
 		this.goToDashboard = this.goToDashboard.bind(this);
+		this.exportFamily = this.exportFamily.bind(this);
 	}
 	goToDashboard() {
 		this.props.router.push('/dashboard');
+	}
+	exportFamily() {
+		const valueArray = this.state.fontsToGenerate.map(font => font.values);
+		const variantNames = this.state.family.variants.map(variant => variant.name);
+
+		this.client.dispatchAction('/export-family-from-library', {
+			familyName: this.state.family.name,
+			variantNames,
+			valueArray,
+			template: this.state.family.template,
+			glyphs: this.state.fontsToGenerate[0].glyphs,
+		});
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -132,6 +145,7 @@ class LibrarySee extends React.Component {
 						glyphs={this.state.family.glyphs}
 						family={this.state.family}
 						familyId={this.props.params.projectID}
+						exportFamily={this.exportFamily}
 						mode="see"
 					/>
 				</LibrarySidebarRight>
