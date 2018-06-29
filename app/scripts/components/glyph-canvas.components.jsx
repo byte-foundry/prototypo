@@ -1220,12 +1220,14 @@ export default class GlyphCanvas extends React.PureComponent {
 					if (enteringPreview) {
 						oldViewMatrix = this.toile.viewMatrix;
 						this.resetView(glyph, height, width);
+						appStateValue = appState.PREVIEWING;
 					}
 
-					if (exitingPreview) {
+					if (appStateValue === appState.PREVIEWING && exitingPreview) {
 						const [z, , , , tx, ty] = oldViewMatrix;
 
 						this.setCamera({x: tx, y: ty}, z, -height, width);
+						appStateValue = appState.DEFAULT;
 					}
 
 					// Drawing basic stuff (glyph, frame, and contours)
