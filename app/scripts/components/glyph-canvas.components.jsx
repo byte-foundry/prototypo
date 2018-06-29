@@ -938,6 +938,17 @@ export default class GlyphCanvas extends React.PureComponent {
 								appStateValue = appState.BOX_SELECTING;
 								mouseBoxStart = mouse.pos;
 							}
+							else {
+								appStateValue = appState.DRAGGING_POINTS;
+								selectedItems.forEach((item) => {
+									if (validPoint.id !== item.id) {
+										item.offsetVector = subtract2D(item.data.center, validPoint.data.center);
+									}
+									else {
+										item.offsetVector = {x: 0, y: 0};
+									}
+								});
+							}
 						}
 						else {
 							selectedItems = [];
@@ -1233,7 +1244,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				) {
 					interactions = selectedItems.map(item => ({
 						item,
-						modData: mousePosInWorld,
+						modData: add2D(mousePosInWorld, item.offsetVector || {x: 0, y: 0}),
 					}));
 					mouseMovement = true;
 				}
@@ -1422,6 +1433,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							);
 							break;
 						}
+						case toileType.CONTOUR_NODE:
 						case toileType.NODE: {
 							let posModData = modData;
 
@@ -1466,95 +1478,6 @@ export default class GlyphCanvas extends React.PureComponent {
 								curveMode,
 								globalMode,
 							);
-							break;
-						}
-						case toileType.NODE_SKELETON:
-						case toileType.CONTOUR_NODE: {
-							if (type === 'angle' || type === 'width' || type === 'distr') {
-								changeGlyphManually(
-									{
-										[`${item.data.modifAddress}expand.${type}`]: modData[
-											type
-										],
-									},
-									glyph,
-									this.client,
-								);
-							}
-							else if (distrModification) {
-								skeletonDistrModification(
-									this.client,
-									glyph,
-									item,
-									modData,
-									globalMode,
-								);
-
-								const {id} = item;
-								const skeletonNode = _get(glyph, id);
-
-								if (skeletonNode) {
-									this.toile.drawSkeletonPosTool(
-										skeletonNode,
-										`${id}.pos`,
-										hotItems,
-									);
-								}
-							}
-							else {
-								let posModData = modData;
-
-								if (
-									directionalModifier
-										&& !directionalNotStarted
-										&& mouseMovement
-								) {
-									posModData = {
-										x:
-												directionalValue & directionalMod.X
-													? modData.x
-													: mouseStart.x,
-										y:
-												directionalValue & directionalMod.X
-													? mouseStart.y
-													: modData.y,
-									};
-
-									if (directionalValue & directionalMod.Y) {
-										this.toile.drawLine(
-											{x: posModData.x, y: 1000000},
-											{x: posModData.x, y: -1000000},
-											'#ff00ff',
-										);
-									}
-									else {
-										this.toile.drawLine(
-											{y: posModData.y, x: 1000000},
-											{y: posModData.y, x: -1000000},
-											'#ff00ff',
-										);
-									}
-								}
-
-								skeletonPosModification(
-									this.client,
-									glyph,
-									item,
-									posModData,
-									globalMode,
-								);
-
-								const {id} = item;
-								const skeletonNode = _get(glyph, id);
-
-								if (skeletonNode) {
-									this.toile.drawSkeletonPosTool(
-										skeletonNode,
-										`${id}.pos`,
-										hotItems,
-									);
-								}
-							}
 							break;
 						}
 						default:

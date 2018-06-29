@@ -207,7 +207,7 @@ export class PtypoFont {
 	}
 
 	tween(paramName, paramValue, steps, aDuration, cb, subset) {
-		if (paramName === 'glyphSpecialProps' || paramName === 'manualChanges') {
+		if (paramName === 'glyphSpecialProps' || paramName === 'manualChanges' || paramName === 'postDepManualChanges') {
 			this.changeParam(paramName, paramValue, subset);
 			return;
 		}
