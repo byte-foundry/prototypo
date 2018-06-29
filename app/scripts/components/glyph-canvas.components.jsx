@@ -27,6 +27,7 @@ import {
 	normalize2D,
 	add2D,
 	distance2D,
+	round2D,
 } from '../prototypo.js/utils/linear';
 
 import LocalClient from '../stores/local-client.stores';
@@ -197,7 +198,7 @@ export function onCurveModification(
 	} = draggedItem.data;
 	const current = _get(glyph, draggedItem.id);
 	const newPosition = newPos;
-	const deltaVector = subtract2D(newPos, {x: current.xBase, y: current.yBase});
+	const deltaVector = round2D(subtract2D(newPos, {x: current.xBase, y: current.yBase}));
 
 	const inOffest = subtract2D(current.handleIn, current);
 	const outOffset = subtract2D(current.handleOut, current);
@@ -205,8 +206,8 @@ export function onCurveModification(
 	const inNewPos = add2D(newPos, inOffest);
 	const outNewPos = add2D(newPos, outOffset);
 
-	const inVector = subtract2D(inNewPos, {x: current.handleIn.xBase, y: current.handleIn.yBase});
-	const outVector = subtract2D(outNewPos, {x: current.handleOut.xBase, y: current.handleOut.yBase});
+	const inVector = round2D(subtract2D(inNewPos, {x: current.handleIn.xBase, y: current.handleIn.yBase}));
+	const outVector = round2D(subtract2D(outNewPos, {x: current.handleOut.xBase, y: current.handleOut.yBase}));
 
 	const changes = {};
 
