@@ -19,6 +19,7 @@ class LibraryList extends React.Component {
 		this.generateFonts = this.generateFonts.bind(this);
 		this.filterFonts = this.filterFonts.bind(this);
 		this.createProject = this.createProject.bind(this);
+		this.selectFont = this.selectFont.bind(this);
 	}
 
 	async componentWillMount() {
@@ -74,6 +75,71 @@ class LibraryList extends React.Component {
 		})
 	}
 
+	getTemplateProps(template, templateData) {
+		return () => {
+			return {
+				key: template.templateName,
+				template: template,
+				glyphs: templateData.glyphs,
+				values: templateData.initValues,
+				export: this.props.export,
+				createProject: this.createProject,
+				click: this.selectFont,
+				isOpen: this.state.selectedFont === template.templateName,
+				familyId: template.templateName,
+			};
+		};
+	}
+
+	getPresetProps(preset, templateInfo, templateData, lmColor, hmColor) {
+		return () => {
+			return {
+				key: preset.id,
+				preset: preset,
+				template: templateInfo,
+				user: preset.ownerInitials,
+				name: preset.variant.family.name,
+				createProject: this.createProject,
+				background:
+					preset.ownerInitials === 'LM'
+						? lmColor
+						: hmColor
+				,
+				glyphs: templateData.glyphs,
+				values: preset.baseValues,
+				export: this.props.export,
+				click: this.selectFont,
+				isOpen: this.state.selectedFont === preset.id,
+				familyId: preset.id,
+			}
+		};
+	}
+
+	getFamilyProps(family, templateInfo, templateData, variantToLoad, userColor) {
+		return () => {
+			return {
+				key: family.id,
+				family: family,
+				template: templateInfo,
+				user: this.props.user,
+				background: userColor,
+				router: this.props.router,
+				variantToLoad: variantToLoad,
+				open: this.props.open,
+				export: this.props.export,
+				glyphs: templateData.glyphs,
+				values: {
+					...templateData.initValues,
+					...variantToLoad.values,
+				},
+				variantName: variantToLoad.name.toLowerCase(),
+				click: this.selectFont,
+				isOpen: this.state.selectedFont === family.id,
+				familyId: family.id,
+			};
+		};
+	}
+
 	generateFonts(f, p) {
 		const families = f || this.props.families;
 		const presets = p || this.props.presets;
@@ -113,16 +179,8 @@ class LibraryList extends React.Component {
 					designer: template.provider,
 					id: template.id,
 					type: 'Template',
-					elem: (
-						<TemplateItem
-							key={template.templateName}
-							template={template}
-							glyphs={templateData.glyphs}
-							values={templateData.initValues}
-							export={this.props.export}
-							createProject={this.createProject}
-						/>
-					),
+					props: this.getTemplateProps(template, templateData),
+					elem: TemplateItem,
 				});
 			});
 		presets
@@ -162,24 +220,8 @@ class LibraryList extends React.Component {
 								: '',
 						tags: [templateInfo.provider, 'preset'],
 						id: preset.id,
-						elem: (
-							<PresetItem
-								key={preset.id}
-								preset={preset}
-								template={templateInfo}
-								user={preset.ownerInitials}
-								name={preset.variant.family.name}
-								createProject={this.createProject}
-								background={
-									preset.ownerInitials === 'LM'
-										? lmColor
-										: hmColor
-								}
-								glyphs={templateData.glyphs}
-								values={preset.baseValues}
-								export={this.props.export}
-							/>
-						),
+						props: this.getPresetProps(preset, templateInfo, templateData, lmColor, hmColor),
+						elem: PresetItem,
 					});
 				});
 		families && this.state.templateInfos && families.forEach((family) => {
@@ -218,25 +260,8 @@ class LibraryList extends React.Component {
 					lastName: this.props.lastName,
 				},
 				background: userColor,
-				elem: (
-					<FamilyItem
-						key={family.id}
-						family={family}
-						template={templateInfo}
-						user={this.props.user}
-						background={userColor}
-						router={this.props.router}
-						variantToLoad={variantToLoad}
-						open={this.props.open}
-						export={this.props.export}
-						glyphs={templateData.glyphs}
-						values={{
-							...templateData.initValues,
-							...variantToLoad.values,
-						}}
-						variantName={variantToLoad.name.toLowerCase()}
-					/>
-				),
+				props: this.getFamilyProps(family, templateInfo, templateData, variantToLoad, userColor),
+				elem: FamilyItem,
 			});
 		});
 		this.setState({
@@ -254,6 +279,12 @@ class LibraryList extends React.Component {
 		if (newProps.families !== this.props.families) {
 			this.generateFonts(newProps.families, newProps.presets);
 		}
+	}
+
+	selectFont(id) {
+		this.setState({
+			selectedFont: this.state.selectedFont === id ? undefined : id,
+		});
 	}
 
 	render() {
@@ -307,7 +338,7 @@ class FamilyList extends React.Component {
 			>
 				<div className="library-family-list">
 					{this.props.fontsToDisplay
-						&& this.props.fontsToDisplay.map(font => font.elem)}
+							&& this.props.fontsToDisplay.map(font => React.createElement(font.elem, {...font.props()}))}
 					<FontUpdater extraFonts={this.props.fontsToGenerate} />
 				</div>
 			</ScrollArea>
@@ -318,9 +349,21 @@ class FamilyList extends React.Component {
 export class TemplateItem extends React.Component {
 	constructor(props) {
 		super(props);
+		this.selectFont = this.selectFont.bind(this);
 		this.state = {
-			isOpen: false,
-		};
+			text: 'Hamburgefonstiv 123',
+		}
+		this.onTextChange = this.onTextChange.bind(this);
+	}
+
+	onTextChange({target: {value}}) {
+		this.setState({
+			text: value,
+		});
+	}
+
+	selectFont() {
+		this.props.click(this.props.familyId);
 	}
 
 	render() {
@@ -328,9 +371,6 @@ export class TemplateItem extends React.Component {
 			<div
 				className="library-item"
 				tabIndex={0}
-				onBlur={() => {
-					this.setState({isOpen: false});
-				}}
 			>
 				<p className="library-item-name">{this.props.template.name}</p>
 				<p
@@ -340,11 +380,9 @@ export class TemplateItem extends React.Component {
 							.split('.')
 							.join('')}`,
 					}}
-					onClick={() => {
-						this.setState({isOpen: !this.state.isOpen});
-					}}
+					onClick={this.selectFont}
 				>
-					Hamburgefonstiv 123
+					{this.state.text}
 				</p>
 				<div
 					className={`provider provider-${
@@ -353,7 +391,7 @@ export class TemplateItem extends React.Component {
 				/>
 				<div
 					className={`library-item-actions ${
-						this.state.isOpen ? 'opened' : ''
+						this.props.isOpen ? 'opened' : ''
 					}`}
 				>
 					<div className="library-item-action"
@@ -379,7 +417,7 @@ export class TemplateItem extends React.Component {
 					>
 						Download
 					</div>
-					<input type="text" name="displayedWord" value="Hamburgefonstiv 123"/>
+					<input type="text" name="displayedWord" value={this.state.text} onChange={this.onTextChange}/>
 				</div>
 			</div>
 		);
@@ -389,9 +427,11 @@ export class TemplateItem extends React.Component {
 export class FamilyItem extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			isOpen: false,
-		};
+		this.selectFont = this.selectFont.bind(this);
+	}
+
+	selectFont() {
+		this.props.click(this.props.familyId);
 	}
 
 	render() {
@@ -399,9 +439,6 @@ export class FamilyItem extends React.Component {
 			<div
 				className="library-item"
 				tabIndex={0}
-				onBlur={() => {
-					this.setState({isOpen: false});
-				}}
 			>
 				<p className="library-item-name">
 					{this.props.family.name} from {this.props.template.name}
@@ -409,9 +446,7 @@ export class FamilyItem extends React.Component {
 				<p
 					className="library-item-preview"
 					style={{fontFamily: `user${this.props.family.id}`}}
-					onClick={() => {
-						this.setState({isOpen: !this.state.isOpen});
-					}}
+					onClick={this.selectFont}
 				>
 					Hamburgefonstiv 123
 				</p>
@@ -427,7 +462,7 @@ export class FamilyItem extends React.Component {
 
 				<div
 					className={`library-item-actions ${
-						this.state.isOpen ? 'opened' : ''
+						this.props.isOpen ? 'opened' : ''
 					}`}
 				>
 					<div
@@ -476,19 +511,19 @@ export class FamilyItem extends React.Component {
 export class PresetItem extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			isOpen: false,
-		};
+		this.selectFont = this.selectFont.bind(this);
 	}
+
+	selectFont() {
+		this.props.click(this.props.familyId);
+	}
+
 
 	render() {
 		return (
 			<div
 				className="library-item"
 				tabIndex={0}
-				onBlur={() => {
-					this.setState({isOpen: false});
-				}}
 			>
 				<p className="library-item-name">
 					{this.props.name} from {this.props.template.name}
@@ -496,9 +531,7 @@ export class PresetItem extends React.Component {
 				<p
 					className="library-item-preview"
 					style={{fontFamily: `preset${this.props.preset.id}`}}
-					onClick={() => {
-						this.setState({isOpen: !this.state.isOpen});
-					}}
+					onClick={this.selectFont}
 				>
 					Hamburgefonstiv 123
 				</p>
@@ -510,7 +543,7 @@ export class PresetItem extends React.Component {
 				</div>
 				<div
 					className={`library-item-actions ${
-						this.state.isOpen ? 'opened' : ''
+						this.props.isOpen ? 'opened' : ''
 					}`}
 				>
 					<div className="library-item-action"

@@ -4,7 +4,7 @@
     .library-main {
         display: flex;
         flex-direction: row;
-        align-items: stretch; 
+        align-items: stretch;
         .library-sidebar-left {
             background: $dark-grey;
             color: #eee;
@@ -29,12 +29,12 @@
                 border-radius: 30px;
                 text-transform: uppercase;
                 font-size: 16px;
-                cursor: pointer;                        
+                cursor: pointer;
                 &:hover {
                     background: $green;
                     color: $dark-grey;
                 }
-                
+
             }
             .library-links {
                 margin-top: 40px;
@@ -51,10 +51,10 @@
         }
         .library-sidebar-right {
             background: #F4F4F4;
-            color: $dark-grey;         
-            min-height: 100vh;            
+            color: $dark-grey;
+            min-height: 100vh;
             width: 250px;
-            padding: 25px;        
+            padding: 25px;
             .sidebar-actions-family {
                 .sidebar-action {
                     margin-bottom: 10px;
@@ -67,7 +67,7 @@
                         background-color:  transparent;
                         transition: color .3s ease, background-color .3s ease;
                         border-radius: 30px;
-                        cursor: pointer;                        
+                        cursor: pointer;
                         &:hover {
                             background: $dark-grey;
                             color: white;
@@ -92,18 +92,28 @@
         .library-content-wrapper {
             display: flex;
             flex-direction: row;
-            align-items: stretch; 
+            align-items: stretch;
         }
         .library-list {
-            flex-grow: 2; 
+            flex-grow: 2;
             background: white;
             color: $dark-grey;
             height: 100vh;
-            
+
+			&--create {
+				height: calc(100vh - 102px);
+			}
+
+			&-title {
+				text-transform: uppercase;
+				color: $dark-grey;
+				padding-left: 40px;
+				margin: 30px 0;
+			}
         }
         .library-see {
             margin-top: 40px;
-            flex-grow: 2; 
+            flex-grow: 2;
             background: white;
             color: $dark-grey;
             height: 100vh;
@@ -159,23 +169,23 @@
                         background-color:  transparent;
                         transition: color .3s ease, background-color .3s ease;
                         border-radius: 30px;
-                        cursor: pointer;                        
+                        cursor: pointer;
                         &:hover {
                             background: $green;
                             color: $dark-grey;
                         }
                     }
                 }
-                
+
             }
             .library-details-form {
                 form {
                     margin-top: 50px;
-                    display: flex; 
-                    flex-direction: row; 
-                    justify-content: space-around; 
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-around;
                     flex-wrap: wrap;
-                    align-content: flex-start; 
+                    align-content: flex-start;
                     .library-details-form-elem {
                         width: 50%;
                         padding-left: 40px;
@@ -204,9 +214,9 @@
             .library-details-variants {
                 .details-header, .details-form {
                     margin-top: 50px;
-                    display: flex; 
-                    flex-direction: row; 
-                    justify-content: flex-start; 
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-start;
                     flex-wrap: wrap;
                     align-content: flex-start;
                     .details-header-elem {
@@ -248,7 +258,7 @@
                             background-color:  transparent;
                             transition: color .3s ease, background-color .3s ease;
                             border-radius: 30px;
-                            cursor: pointer;                        
+                            cursor: pointer;
                             &:hover {
                                 background: $dark-grey;
                                 color: white;
@@ -301,7 +311,8 @@
             padding-bottom: 80px;
         }
         .library-item {
-            margin-bottom: 25px;
+            margin-bottom: 15px;
+            padding-top: 15px;
             position: relative;
             cursor: pointer;
             width: calc(100vw - 500px);
@@ -326,7 +337,7 @@
                 padding-left: 40px;
                 padding-right: 40px;
                 margin-bottom: 20px;
-            }        
+            }
 
             .library-item-actions {
                 background: $dark-grey;
@@ -348,7 +359,7 @@
                     clear: both;
                 }
                 .library-item-action {
-                    
+
                     text-align: center;
                     float: left;
                     margin-right: 15px;
@@ -360,7 +371,7 @@
                     transition: color .3s ease, background-color .3s ease;
                     float: left;
                     border-radius: 30px;
-                    cursor: pointer;                        
+                    cursor: pointer;
                     &:hover {
                         background: $green;
                         color: $dark-grey;
@@ -374,46 +385,46 @@
                     color: $medium-grey;
                     box-shadow: none;
                     border: none;
-                    border-radius: 20px; 
+                    border-radius: 20px;
                     outline: none;
                     &:focus {
                         outline: none;
                     }
                 }
             }
-            
+
         }
         .provider {
             width:50px;
             height:50px;
-            border: 2px solid $lightest-grey;                                        
+            border: 2px solid $lightest-grey;
             position:absolute;
             top: 40%;
             right: 5%;
             transform: translateY(-40%);
             border-radius: 50%;
-            background-repeat: no-repeat;                    
-            z-index:2;                    
+            background-repeat: no-repeat;
+            z-index:2;
             background-position: center;
             &.provider-prototypo {
-                background-color: $black;   
+                background-color: $black;
                 background-size: 45%;
-                background-image: url("../../images/prototypo-icon-white.svg");                        
+                background-image: url("../../images/prototypo-icon-white.svg");
             }
-    
+
             &.provider-google {
                 background-color: $white;
                 background-position: center;
                 background-size: 65%;
                 background-image: url("../../images/icon-google.svg");
             }
-    
-            &.provider-production {                        
+
+            &.provider-production {
                 background-color: $white;
                 background-size: 85%;
                 background-image: url("../../images/icon-ProductionType.svg");
             }
-            &.provider-custom {                        
+            &.provider-custom {
                text-align: center;
                line-height: 46px;
                text-transform: uppercase;
@@ -431,7 +442,7 @@
                     text-transform: uppercase;
                     color: $dark-grey;
                     width: 100%;
-                    font-weight: bold;                    
+                    font-weight: bold;
                 }
                 .sidebar-filter-elems {
                     display: block;
