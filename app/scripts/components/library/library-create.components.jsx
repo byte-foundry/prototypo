@@ -252,7 +252,8 @@ class LibraryCreate extends React.Component {
 	render() {
 		return (
 			<div className="library-content-wrapper">
-				<div className="library-list">
+				<div className="library-list library-list--create">
+					<h1 className="library-list-title">Choose a template to start</h1>
 					<FamilyList
 						fontsToGenerate={this.state.fontsToGenerate}
 						fontsToDisplay={this.state.fontsToDisplay}
@@ -334,7 +335,7 @@ export class TemplateItem extends React.Component {
 					className={`provider provider-${
 						this.props.template.provider
 					}`}
-				/>				
+				/>
 			</div>
 		);
 	}
