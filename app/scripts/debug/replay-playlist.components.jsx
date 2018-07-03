@@ -3,17 +3,14 @@ import Lifespan from 'lifespan';
 import Classnames from 'classnames';
 import ScrollArea from 'react-scrollbar/dist/no-css';
 import JSONPretty from 'react-json-pretty';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 
-export default class ReplayPlaylist extends React.Component {
+export default class ReplayPlaylist extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
 	}
 
 	componentWillMount() {

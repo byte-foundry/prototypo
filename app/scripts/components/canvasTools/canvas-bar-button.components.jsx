@@ -1,15 +1,7 @@
 import React from 'react';
 import Classnames from 'classnames';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-export default class CanvasBarButton extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
-	}
-
+export default class CanvasBarButton extends React.PureComponent {
 	render() {
 		const classes = Classnames({
 			[this.props.name]: true,

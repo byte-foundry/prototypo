@@ -2,7 +2,6 @@ import React from 'react';
 import LocalClient from '../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import ScrollArea from 'react-scrollbar/dist/no-css';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Editor, EditorState, ContentState, CompositeDecorator} from 'draft-js';
 import escapeStringRegexp from 'escape-string-regexp';
 
@@ -30,7 +29,7 @@ const IndivSpan = ({children}) => (
 	<span className="prototypo-text-editor-indiv-character">{children}</span>
 );
 
-export default class PrototypoText extends React.Component {
+export default class PrototypoText extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
@@ -39,10 +38,7 @@ export default class PrototypoText extends React.Component {
 			glyphPanelOpened: undefined,
 			editorState: EditorState.createEmpty(),
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
-		// function bindings
+
 		this.saveText = this.saveText.bind(this);
 		this.onEditorChange = this.onEditorChange.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);

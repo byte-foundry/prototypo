@@ -1,19 +1,17 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Lifespan from 'lifespan';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
 import CanvasBarButton from './canvas-bar-button.components.jsx';
 
-export default class CanvasBar extends React.Component {
+export default class CanvasBar extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
-		this.chooseMode = this.chooseMode.bind(this);
+
 		this.state = {};
+
+		this.chooseMode = this.chooseMode.bind(this);
 	}
 
 	componentWillMount() {

@@ -1,18 +1,15 @@
 import React from 'react';
 
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import LocalClient from '../stores/local-client.stores.jsx';
 
 import CloseButton from './close-button.components.jsx';
 import HelpText from '../../images/sliders/helpText.json';
 
-export default class SliderTooltip extends React.Component {
+export default class SliderTooltip extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
+
 		this.closeTooltip = this.closeTooltip.bind(this);
 		this.getNextTooltip = this.getNextTooltip.bind(this);
 		this.getPreviousTooltip = this.getPreviousTooltip.bind(this);
