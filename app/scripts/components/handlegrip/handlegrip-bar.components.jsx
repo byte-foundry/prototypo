@@ -1,5 +1,4 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
@@ -8,14 +7,10 @@ import classNames from 'classnames';
  *	Component : the handlegrip (green bar) surrounding the letter
  *	@extends React.Component
  */
-export default class HandlegripBar extends React.Component {
+export default class HandlegripBar extends React.PureComponent {
 	constructor(props) {
 		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
 
-		// function bindings
 		this.handleDown = this.handleDown.bind(this);
 	}
 

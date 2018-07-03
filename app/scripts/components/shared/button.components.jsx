@@ -1,17 +1,9 @@
 import React from 'react';
 import ClassNames from 'classnames';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import WaitForLoad from '../wait-for-load.components.jsx';
 
-export default class Button extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
-	}
-
+export default class Button extends React.PureComponent {
 	render() {
 		const isSplitted = this.props.splitted;
 		const classes = ClassNames({

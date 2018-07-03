@@ -35,7 +35,6 @@
     "raw-loader": "^0.5.1",
     "react": "^16.4.0",
     "react-addons-css-transition-group": "^15.6.2",
-    "react-addons-pure-render-mixin": "^15.6.2",
     "react-apollo": "^1.4.3",
     "react-dom": "^16.4.0",
     "react-draggable": "^2.2.1",

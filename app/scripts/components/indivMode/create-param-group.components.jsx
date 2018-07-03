@@ -1,6 +1,5 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import ScrollArea from 'react-scrollbar/dist/no-css';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
@@ -11,9 +10,10 @@ import CloseButton from '../close-button.components.jsx';
 import GlyphGrid from '../glyph-grid.components.jsx';
 import {indivGroupsCreationTutorialLabel} from '../../helpers/joyride.helpers.js';
 
-export default class CreateParamGroup extends React.Component {
+export default class CreateParamGroup extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			selected: [],
 			groups: [],
@@ -28,10 +28,6 @@ export default class CreateParamGroup extends React.Component {
 		this.prepareDeleteOrDelete = this.prepareDeleteOrDelete.bind(this);
 		this.cancelDelete = this.cancelDelete.bind(this);
 		this.openGroup = this.openGroup.bind(this);
-
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
 	}
 
 	componentWillMount() {

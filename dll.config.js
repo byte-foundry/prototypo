@@ -9,7 +9,6 @@ module.exports = {
 			'react',
 			'react-dom',
 			'react-addons-css-transition-group',
-			'react-addons-pure-render-mixin',
 			'react-draggable',
 			'react-joyride',
 			'react-json-pretty',
