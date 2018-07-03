@@ -1,6 +1,6 @@
-import deepEqual from 'lodash/isEqual';
-import _uniq from 'lodash/uniq';
 import React from 'react';
+import _uniq from 'lodash/uniq';
+import deepEqual from 'lodash/isEqual';
 import PropTypes from 'prop-types';
 
 import FontMediator from '../prototypo.js/mediator/FontMediator';

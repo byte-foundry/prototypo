@@ -1,6 +1,7 @@
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 
 import Dashboard from './account-dashboard.components';
 import InputWithLabel from '../shared/input-with-label.components';

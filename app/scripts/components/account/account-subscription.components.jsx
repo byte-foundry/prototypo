@@ -1,9 +1,10 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import Lifespan from 'lifespan';
 import moment from 'moment';
 import {Link} from 'react-router-dom';
 import uniqWith from 'lodash/uniqWith';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 
 import LocalClient from '../../stores/local-client.stores';
 

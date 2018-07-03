@@ -1,5 +1,4 @@
 import React from 'react';
-import {graphql, gql, compose} from 'react-apollo';
 import {Link} from 'react-router-dom';
 
 import {

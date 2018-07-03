@@ -4,7 +4,6 @@ import Lifespan from 'lifespan';
 import LocalClient from '../../stores/local-client.stores';
 import ScrollArea from 'react-scrollbar/dist/no-css';
 import FontUpdater from '../font-updater.components';
-import {graphql, gql, compose} from 'react-apollo';
 import {
 	LibrarySidebarRight,
 	SidebarFilters,

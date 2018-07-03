@@ -1,4 +1,4 @@
-import {gql} from 'react-apollo';
+import gql from 'graphql-tag';
 import {AppValues} from '../services/values.services.js';
 import LocalClient from '../stores/local-client.stores.jsx';
 import apolloClient from '../services/graphcool.services';

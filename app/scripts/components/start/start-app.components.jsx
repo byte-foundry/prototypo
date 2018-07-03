@@ -1,7 +1,8 @@
+import gql from 'graphql-tag';
 import Lifespan from 'lifespan';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {compose, gql, graphql} from 'react-apollo';
+import {compose, graphql} from 'react-apollo';
 import {Link, withRouter} from 'react-router-dom';
 
 import LocalClient from '../../stores/local-client.stores';

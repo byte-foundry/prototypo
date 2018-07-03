@@ -1,6 +1,7 @@
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {gql, graphql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 import {Link, withRouter} from 'react-router-dom';
 
 class AcademyDashboard extends React.Component {

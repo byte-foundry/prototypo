@@ -1,6 +1,7 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import Dropzone from 'react-dropzone';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 import {LibrarySidebarRight} from './library-sidebars.components';
 import LocalClient from '../../stores/local-client.stores';
 

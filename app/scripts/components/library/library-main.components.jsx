@@ -1,6 +1,7 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import {TransitionGroup, CSSTransition} from 'react-transition-group';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
 import InlineSVG from 'svg-inline-react';
 import Lifespan from 'lifespan';

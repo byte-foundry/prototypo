@@ -1,8 +1,9 @@
+import gql from 'graphql-tag';
 import Lifespan from 'lifespan';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ScrollArea from 'react-scrollbar/dist/no-css';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 
 import Family from './family.components';
 import Variant from './variant.components';

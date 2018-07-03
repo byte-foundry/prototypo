@@ -1,7 +1,8 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 import {indivGroupsEditionTutorialLabel} from '../helpers/joyride.helpers.js';

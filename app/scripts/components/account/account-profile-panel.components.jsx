@@ -1,5 +1,6 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 
 import Dashboard from './account-dashboard.components';
 import InputWithLabel from '../shared/input-with-label.components';

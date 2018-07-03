@@ -1,8 +1,9 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import {Link} from 'react-router-dom';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 
 import FilterInput from '../shared/filter-input.components';
 import FilterableTable from '../shared/filterable-table.components';

@@ -1,10 +1,11 @@
+import gql from 'graphql-tag';
 import _xor from 'lodash/xor';
 import _flatten from 'lodash/flatten';
 import _map from 'lodash/map';
 import _transform from 'lodash/transform';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 import {withRouter} from 'react-router';
 import Lifespan from 'lifespan';
 

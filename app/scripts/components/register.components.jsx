@@ -1,5 +1,6 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import {gql, graphql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 import {Redirect, Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 

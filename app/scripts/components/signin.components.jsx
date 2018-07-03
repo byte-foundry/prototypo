@@ -1,5 +1,6 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 import {Redirect, Link, withRouter} from 'react-router-dom';
 
 import isProduction from '../helpers/is-production.helpers';
@@ -75,7 +76,7 @@ export class Signin extends React.Component {
 			this.setState({loading: false, errors, inError: {}});
 		}
 		catch (err) {
-			if (err.graphQLErrors[0].code === 5001) {
+			if (err.graphQLErrors && err.graphQLErrors[0].code === 5001) {
 				errors.push(err.graphQLErrors[0].functionError);
 			}
 			else {
@@ -91,7 +92,7 @@ export class Signin extends React.Component {
 
 	render() {
 		const errors = this.state.errors.map(error => (
-			<FormError errorText={error} />
+			<FormError key={error} errorText={error} />
 		));
 
 		if (!this.state.loading && this.props.user) {

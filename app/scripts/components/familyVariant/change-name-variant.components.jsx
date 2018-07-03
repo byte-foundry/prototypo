@@ -1,8 +1,9 @@
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {graphql, gql} from 'react-apollo';
-import {libraryQuery} from '../collection/collection.components';
+import {graphql} from 'react-apollo';
 
+import {libraryQuery} from '../collection/collection.components';
 import LocalClient from '../../stores/local-client.stores';
 
 import Modal from '../shared/modal.components';

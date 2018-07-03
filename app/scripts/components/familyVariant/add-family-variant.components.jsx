@@ -1,6 +1,7 @@
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {compose, graphql, gql} from 'react-apollo';
+import {compose, graphql} from 'react-apollo';
 import Classnames from 'classnames';
 import Lifespan from 'lifespan';
 import ScrollArea from 'react-scrollbar/dist/no-css';
