@@ -1,5 +1,5 @@
 import React from 'react';
-import {withRouter} from 'react-router';
+import {withRouter} from 'react-router-dom';
 
 import Log from '../../services/log.services.js';
 import LocalClient from '../../stores/local-client.stores.jsx';
@@ -26,7 +26,7 @@ class CreateFamilyModal extends React.PureComponent {
 		});
 		this.client.dispatchAction('/store-value', {uiShowCollection: false});
 		this.client.dispatchAction('/store-value', {onboardingFrom: 'library'});
-		this.props.router.push('/onboarding');
+		this.props.history.push('/onboarding');
 	}
 
 	render() {

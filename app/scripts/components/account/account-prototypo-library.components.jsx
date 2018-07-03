@@ -2,12 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Lifespan from 'lifespan';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {graphql, gql} from 'react-apollo';
 
 import apolloClient from '../../services/graphcool.services';
-import LocalClient from '../../stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores';
 
+import Dashboard from './account-dashboard.components';
 import CopyPasteInput from '../shared/copy-paste-input.components';
 import FilterableTable from '../shared/filterable-table.components';
 import WaitForLoad from '../wait-for-load.components';
@@ -16,8 +17,12 @@ import Button from '../shared/new-button.components';
 class AccountPrototypoLibrary extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
+		this.state = {
+			loadingUpdate: false,
+		};
+
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.state = {};
 	}
 
 	componentWillMount() {
@@ -55,17 +60,20 @@ class AccountPrototypoLibrary extends React.PureComponent {
 		this.lifespan.release();
 	}
 
-	handleSubmit(e) {
+	async handleSubmit(e) {
 		e.preventDefault();
 
-		const newDomains = this.props.domains;
+		const newDomains = [...this.props.domains, this.url.value];
 
-		newDomains.push(this.url.value);
-		this.props.updateDomain(newDomains);
+		this.setState({loadingUpdate: true});
+
+		await this.props.updateDomain(newDomains);
+
+		this.setState({loadingUpdate: false});
 	}
 
 	render() {
-		const {subscription, credits} = this.state;
+		const {subscription, credits, loadingUpdate} = this.state;
 		const freeAccount
 			= !this.props.isManagedAccount
 			&& !(
@@ -99,7 +107,7 @@ class AccountPrototypoLibrary extends React.PureComponent {
 					<CopyPasteInput content={token} />
 				</WaitForLoad>
 				<h1>Authorized domains</h1>
-				<WaitForLoad loading={loading}>
+				<WaitForLoad loading={loading || loadingUpdate}>
 					<FilterableTable tableHeaders={tableHeaders}>
 						<tr className="sortable-table-add-user-form">
 							<td colSpan={2}>
@@ -136,7 +144,7 @@ class AccountPrototypoLibrary extends React.PureComponent {
 				</p>
 				<p>
 					Subscribe to our{' '}
-					<Link className="account-link" to="account/subscribe">
+					<Link className="account-link" to="subscribe">
 						pro plan
 					</Link>{' '}
 					to benefit of the full power of Prototypo's library without
@@ -146,23 +154,27 @@ class AccountPrototypoLibrary extends React.PureComponent {
 		);
 
 		return (
-			<div className="account-base account-prototypo-library">
-				<h1>Documentation</h1>
-				<div>
-					Check out the{' '}
-					<a
-						href="https://doc.prototypo.io"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						documentation
-					</a>{' '}
-					to learn how to use the prototypo library.<br />To use the library you
-					will need the token under here and you'll also need to add the domain
-					name where you'll want to use the library.
+			<Dashboard title="Welcome developers!">
+				<div className="account-base account-prototypo-library">
+					<h1>Documentation</h1>
+					<div>
+						Check out the{' '}
+						<a
+							href="https://doc.prototypo.io"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							documentation
+						</a>{' '}
+						to learn how to use the prototypo library.<br />To use the library
+						you will need the token under here and you'll also need to add the
+						domain name where you'll want to use the library.
+					</div>
+					{freeAccountAndHasCredits || !freeAccount
+						? payingContent
+						: freeContent}
 				</div>
-				{freeAccountAndHasCredits || !freeAccount ? payingContent : freeContent}
-			</div>
+			</Dashboard>
 		);
 	}
 }
@@ -248,17 +260,33 @@ export default graphql(query, {
 			domains: data.user.accessToken.domains.split(',') || [],
 			isManagedAccount,
 			token: data.user.accessToken.token,
-			updateDomain: async (domainNames) => {
-				await apolloClient.mutate({
-					mutation: addAccessToken,
+		};
+	},
+})(
+	graphql(addAccessToken, {
+		props: ({mutate}) => ({
+			updateDomain: domainNames =>
+				mutate({
 					variables: {
 						id: accessTokenId,
 						domainNames: domainNames.join(','),
 					},
-				});
+				}),
+		}),
+		options: {
+			update: (store, {data: {updateAccessToken}}) => {
+				const data = store.readQuery({query});
 
-				await data.refetch();
+				data.user.accessToken = {
+					id: accessTokenId,
+					...updateAccessToken,
+				};
+
+				store.writeQuery({
+					query,
+					data,
+				});
 			},
-		};
-	},
-})(AccountPrototypoLibrary);
+		},
+	})(AccountPrototypoLibrary),
+);

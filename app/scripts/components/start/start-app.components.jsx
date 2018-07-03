@@ -1,9 +1,8 @@
 import Lifespan from 'lifespan';
-import pleaseWait from 'please-wait';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {compose, gql, graphql} from 'react-apollo';
-import {Link, withRouter} from 'react-router';
+import {Link, withRouter} from 'react-router-dom';
 
 import LocalClient from '../../stores/local-client.stores';
 import {AddFamily} from '../familyVariant/add-family-variant.components';
@@ -40,8 +39,6 @@ class StartApp extends React.PureComponent {
 	}
 
 	async componentWillMount() {
-		pleaseWait.instance.finish();
-
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 
@@ -72,7 +69,7 @@ class StartApp extends React.PureComponent {
 			variant: family.variants[0],
 			family,
 		});
-		this.props.router.push('/dashboard');
+		this.props.history.push('/dashboard');
 	}
 	create(family) {
 		this.client.dispatchAction('/select-variant', {
@@ -80,7 +77,7 @@ class StartApp extends React.PureComponent {
 			family,
 		});
 		this.client.dispatchAction('/store-value', {onboardingFrom: 'start'});
-		this.props.router.push('/onboarding');
+		this.props.history.push('/onboarding');
 	}
 
 	render() {
@@ -97,7 +94,7 @@ class StartApp extends React.PureComponent {
 				}`}
 			>
 				<div className="go-to-account">
-					<Link className="go-to-account-link" to="/account/home">
+					<Link className="go-to-account-link" to="/account">
 						Go to my account instead →
 					</Link>
 				</div>

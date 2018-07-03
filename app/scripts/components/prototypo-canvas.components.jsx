@@ -59,8 +59,6 @@ export default class PrototypoCanvas extends React.PureComponent {
 		this.setGlyphs = this.setGlyphs.bind(this);
 		this.changeManualNode = this.changeManualNode.bind(this);
 		this.resetManualNode = this.resetManualNode.bind(this);
-		this.startLoad = this.startLoad.bind(this);
-		this.endLoad = this.endLoad.bind(this);
 		this.preExport = this.preExport.bind(this);
 		this.afterExport = this.afterExport.bind(this);
 		this.preExportGlyphr = this.preExportGlyphr.bind(this);
@@ -463,16 +461,6 @@ export default class PrototypoCanvas extends React.PureComponent {
 
 	resetManualNode(params) {
 		this.client.dispatchAction('/reset-glyph-node-manually', params);
-	}
-
-	startLoad() {
-		this.client.dispatchAction('/store-value', {uiFontLoading: true});
-	}
-
-	endLoad() {
-		this.client.dispatchAction('/store-value', {
-			uiFontLoading: false,
-		});
 	}
 
 	isManualEdited() {

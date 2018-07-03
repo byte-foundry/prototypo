@@ -1,14 +1,6 @@
 import React from 'react';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-export default class LoadingOverlay extends React.Component {
-	constructor(props) {
-		super(props);
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
-	}
-
+export default class LoadingOverlay extends React.PureComponent {
 	render() {
 		return (
 			<div className="loading-overlay">

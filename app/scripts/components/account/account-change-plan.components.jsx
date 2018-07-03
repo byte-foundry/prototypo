@@ -1,11 +1,13 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import {withRouter} from 'react-router';
 import Lifespan from 'lifespan';
 
 import InputNumber from '../shared/input-number.components';
 import PricingItem from '../shared/pricing-item.components';
 import Button from '../shared/new-button.components';
 import WaitForLoad from '../wait-for-load.components';
+import Dashboard from './account-dashboard.components';
 
 import LocalClient from '../../stores/local-client.stores';
 import getCurrency from '../../helpers/currency.helpers';
@@ -23,7 +25,7 @@ Hi,
 I would like to cancel my subscription to Prototypo.
 `.trim();
 
-export default class AccountChangePlan extends React.Component {
+class AccountChangePlan extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -46,7 +48,7 @@ export default class AccountChangePlan extends React.Component {
 				const {subscription, cards} = head.toJS().d;
 
 				if (!subscription) {
-					this.props.router.push('/account/subscribe');
+					this.props.history.push('/account/subscribe');
 					return;
 				}
 
@@ -86,7 +88,7 @@ export default class AccountChangePlan extends React.Component {
 			quantity: numberOfUsers,
 		});
 
-		this.props.router.push({
+		this.props.history.push({
 			pathname: '/account/details/confirm-plan',
 			query: {
 				plan,
@@ -176,26 +178,30 @@ export default class AccountChangePlan extends React.Component {
 		const {loading} = this.state;
 
 		return (
-			<div className="account-base account-change-plan">
-				<header className="manage-sub-users-header">
-					<h1 className="manage-sub-users-title">Change Plan</h1>
-					<p className="manage-sub-users-sidephrase">
-						Want to downgrade?{' '}
-						<a
-							href={`mailto:account@prototypo.io?subject=Cancelling my subscription&body=${encodeURI(
-								UNSUBSCRIBE_MESSAGE,
-							)}`}
-							className="account-email"
-							onClick={this.downgrade}
-							title="If this link doesn't work, you may need to turn off your privacy blocker"
-						>
-							Contact us!
-						</a>
-					</p>
-				</header>
+			<Dashboard title="Change my plan">
+				<div className="account-base account-change-plan">
+					<header className="manage-sub-users-header">
+						<h1 className="manage-sub-users-title">Change Plan</h1>
+						<p className="manage-sub-users-sidephrase">
+							Want to downgrade?{' '}
+							<a
+								href={`mailto:account@prototypo.io?subject=Cancelling my subscription&body=${encodeURI(
+									UNSUBSCRIBE_MESSAGE,
+								)}`}
+								className="account-email"
+								onClick={this.downgrade}
+								title="If this link doesn't work, you may need to turn off your privacy blocker"
+							>
+								Contact us!
+							</a>
+						</p>
+					</header>
 
-				{loading ? <WaitForLoad loading /> : this.renderChoices()}
-			</div>
+					{loading ? <WaitForLoad loading /> : this.renderChoices()}
+				</div>
+			</Dashboard>
 		);
 	}
 }
+
+export default withRouter(AccountChangePlan);

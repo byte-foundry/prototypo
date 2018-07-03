@@ -3,6 +3,7 @@ import Lifespan from 'lifespan';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 
+import Dashboard from './account-dashboard.components';
 import AccountManageSubUsers from './account-manage-sub-users.components';
 
 export default class AccountOrganization extends React.Component {
@@ -36,9 +37,11 @@ export default class AccountOrganization extends React.Component {
 		const {subscription} = this.state;
 
 		return (
-			<div className="account-base account-organization">
-				<AccountManageSubUsers max={subscription && subscription.quantity} />
-			</div>
+			<Dashboard title="Organization">
+				<div className="account-base account-organization">
+					<AccountManageSubUsers max={subscription && subscription.quantity} />
+				</div>
+			</Dashboard>
 		);
 	}
 }

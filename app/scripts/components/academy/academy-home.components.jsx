@@ -1,7 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep';
 import PropTypes from 'prop-types';
 import React from 'react';
-import TutorialContent from 'tutorial-content';
 import InlineSVG from 'svg-inline-react';
 import ReactMotionFlip from 'react-motion-flip';
 
@@ -17,7 +16,6 @@ class AcademyHome extends React.PureComponent {
 			courses: [],
 		};
 
-		this.tutorials = new TutorialContent();
 		this.setActiveTag = this.setActiveTag.bind(this);
 		this.areAllCourseRead = this.areAllCourseRead.bind(this);
 	}
@@ -30,7 +28,7 @@ class AcademyHome extends React.PureComponent {
 		// Map through the course to :
 		// Get title, header and slug
 		// Get part count from progress or init the progress
-		this.tutorials.content.forEach((tutorial) => {
+		this.props.tutorials.content.forEach((tutorial) => {
 			let parts = [];
 
 			tutorial.tags.forEach((tag) => {

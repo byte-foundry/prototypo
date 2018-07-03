@@ -134,7 +134,6 @@ const prototypoStore = new Remutable({
 	uiShadow: undefined,
 	uiText: '',
 	uiWord: '',
-	uiFontLoading: false,
 	uiCreatefamilySelectedTemplate: undefined,
 	canvasMode: 'move',
 	uiSliderTooltip: undefined,

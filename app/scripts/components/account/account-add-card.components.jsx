@@ -1,10 +1,12 @@
 import React from 'react';
-import AddCard from '../shared/add-card.components.jsx';
-import AccountValidationButton from '../shared/account-validation-button.components.jsx';
 import Lifespan from 'lifespan';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
-import FormError from '../shared/form-error.components.jsx';
+import LocalClient from '../../stores/local-client.stores';
+
+import AddCard from '../shared/add-card.components';
+import AccountValidationButton from '../shared/account-validation-button.components';
+import FormError from '../shared/form-error.components';
+import Dashboard from './account-dashboard.components';
 
 export default class AccountAddCard extends React.Component {
 	constructor(props) {
@@ -51,22 +53,21 @@ export default class AccountAddCard extends React.Component {
 	}
 
 	render() {
-		const errors = this.state.errors.map(error => <FormError errorText={error} />);
+		const errors = this.state.errors.map(error => (
+			<FormError errorText={error} />
+		));
 
 		return (
-			<form
-				onSubmit={(e) => {
-					this.addCard(e);
-				}}
-				className="account-base account-add-card"
-			>
-				<AddCard ref="card" inError={this.state.inError} />
-				{errors}
-				<AccountValidationButton
-					loading={this.state.loading}
-					label="Add card"
-				/>
-			</form>
+			<Dashboard title="Add a card">
+				<form onSubmit={this.addCard} className="account-base account-add-card">
+					<AddCard ref="card" inError={this.state.inError} />
+					{errors}
+					<AccountValidationButton
+						loading={this.state.loading}
+						label="Add card"
+					/>
+				</form>
+			</Dashboard>
 		);
 	}
 }

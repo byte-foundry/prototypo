@@ -1,13 +1,12 @@
-import {hashHistory} from 'react-router';
 import Lifespan from 'lifespan';
 import debounce from 'lodash/debounce';
 
+import hashHistory from '../services/history.services';
 import {userStore, prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
 import {loadStuff} from '../helpers/appSetup.helpers.js';
-import isProduction from '../helpers/is-production.helpers';
 import getCurrency from '../helpers/currency.helpers.js';
 
 let localServer;
@@ -158,120 +157,6 @@ export default {
 			.commit();
 
 		localServer.dispatchUpdate('/userStore', userPatch);
-	},
-	'/sign-up': async ({
-		username,
-		password,
-		firstname,
-		lastname,
-		css = {},
-		phone,
-		skype,
-		to = '/library/home',
-		oldQuery = {},
-	}) => {
-		const toLocation = {
-			pathname: to,
-			query: oldQuery,
-		};
-		const form = userStore.get('signupForm');
-
-		form.errors = [];
-		form.inError = {};
-		form.loading = true;
-		const cleanPatch = userStore.set('signupForm', form).commit();
-
-		localServer.dispatchUpdate('/userStore', cleanPatch);
-
-		// Check each input for error
-		if (!username || !password || !firstname) {
-			form.inError = {
-				username: !username,
-				password: !password,
-				firstname: !firstname,
-			};
-			form.errors.push('Fields with a * are required');
-			form.loading = false;
-			const patch = userStore.set('signupForm', form).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-		if (!/\S+?@\S+?\.\S+?/.test(username)) {
-			form.inError = {
-				username: true,
-			};
-			form.errors.push('Your email is invalid');
-		}
-
-		if (password.length < 8) {
-			// password is not long enough
-			form.inError = {
-				password: true,
-			};
-			form.errors.push('Your password must be at least 8 character long');
-		}
-
-		if (form.errors.length > 0) {
-			form.loading = false;
-			const patch = userStore.set('signupForm', form).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-
-		const curedLastname = lastname ? ` ${lastname}` : '';
-
-		try {
-			await HoodieApi.signUp(username.toLowerCase(), password, firstname, {
-				lastName: lastname,
-				occupation: css.value,
-				phone,
-				skype,
-			});
-
-			HoodieApi.setup();
-
-			window.Intercom('boot', {
-				app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
-				email: username,
-				name: firstname + curedLastname,
-				occupation: css.value,
-				phone: phone || undefined, // avoid empty string being recorded into Intercom
-				skype,
-				ABtest: Math.floor(Math.random() * 100),
-				widget: {
-					activator: '#intercom-button',
-				},
-			});
-
-			form.errors = [];
-			form.inError = {};
-			form.loading = false;
-			const endPatch = userStore.set('signupForm', form).commit();
-
-			HoodieApi.instance.plan = 'free_none';
-			HoodieApi.instance.email = username;
-			fbq('track', 'Lead');
-			localServer.dispatchUpdate('/userStore', endPatch);
-
-			if (
-				toLocation.pathname === '/dashboard'
-				|| toLocation.pathname === '/library/home'
-			) {
-				await loadStuff();
-				hashHistory.push(toLocation);
-			}
-			else {
-				hashHistory.push(toLocation);
-			}
-		}
-		catch (err) {
-			trackJs.track(err);
-			form.errors.push(err.message);
-			form.loading = false;
-			const patch = userStore.set('signupForm', form).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
 	},
 	'/choose-plan': ({plan, coupon}) => {
 		const form = userStore.get('choosePlanForm');

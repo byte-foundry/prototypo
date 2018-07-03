@@ -272,7 +272,7 @@ class LibraryFontInUseCreate extends React.Component {
 				this.state.fontInUseMetadata.fonts,
 				this.state.fontInUseMetadata.images,
 			)
-			.then(() => this.props.router.push('/library/fontinuse'));
+			.then(() => this.props.history.push('/library/fontinuse'));
 	}
 	updateFontInUse() {
 		this.props
@@ -285,7 +285,7 @@ class LibraryFontInUseCreate extends React.Component {
 				this.state.fontInUseMetadata.fonts,
 				this.state.fontInUseMetadata.images,
 			)
-			.then(() => this.props.router.push('/library/fontinuse'));
+			.then(() => this.props.history.push('/library/fontinuse'));
 	}
 	deleteFontInUse() {
 		this.props
@@ -293,7 +293,7 @@ class LibraryFontInUseCreate extends React.Component {
 				this.state.fontInUseMetadata.id,
 				this.state.fontInUseMetadata.fonts,
 			)
-			.then(() => this.props.router.push('/library/fontinuse'));
+			.then(() => this.props.history.push('/library/fontinuse'));
 	}
 	render() {
 		return (

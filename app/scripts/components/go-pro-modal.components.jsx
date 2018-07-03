@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withRouter} from 'react-router';
+import {withRouter} from 'react-router-dom';
 import Lifespan from 'lifespan';
 import {
 	monthlyConst,
@@ -75,24 +75,14 @@ class GoProModal extends React.PureComponent {
 
 	goSubscribe() {
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
-		console.log(this.state.billing);
-		console.log({
+		this.props.history.push({
 			pathname: '/account/subscribe',
-			query: {
+			search: new URLSearchParams({
 				plan:
 					this.state.billing === 'monthly'
 						? monthlyConst.prefix
 						: annualConst.prefix,
-			},
-		});
-		this.props.router.push({
-			pathname: '/account/subscribe',
-			query: {
-				plan:
-					this.state.billing === 'monthly'
-						? monthlyConst.prefix
-						: annualConst.prefix,
-			},
+			}).toString(),
 		});
 		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
 		Log.ui('Subscribe.FromFile');
@@ -102,15 +92,15 @@ class GoProModal extends React.PureComponent {
 		const {billing, teamCount} = this.state;
 
 		this.client.dispatchAction('/store-value', {openGoProModal: false});
-		this.props.router.push({
+		this.props.history.push({
 			pathname: '/account/subscribe',
-			query: {
+			search: new URLSearchParams({
 				plan:
 					billing === 'monthly'
 						? teamMonthlyConst.prefix
 						: teamAnnualConst.prefix,
 				quantity: teamCount,
-			},
+			}).toString(),
 		});
 		window.Intercom('trackEvent', 'openSubscribeFromGoPro');
 		Log.ui('Subscribe.FromFile');
@@ -140,7 +130,7 @@ class GoProModal extends React.PureComponent {
 	}
 
 	render() {
-		const {billing, teamCount, hasBeenSubscribing} = this.state;
+		const {billing, teamCount} = this.state;
 		const teamPrice
 			= billing === 'annually'
 				? teamAnnualConst.monthlyPrice * teamCount
@@ -278,9 +268,5 @@ class GoProModal extends React.PureComponent {
 		);
 	}
 }
-
-GoProModal.propTypes = {
-	router: PropTypes.object.isRequired,
-};
 
 export default withRouter(withCountry(GoProModal));

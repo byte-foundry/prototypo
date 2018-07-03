@@ -1,5 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
+
 import {LibrarySidebarRight} from './library-sidebars.components';
 
 export default class LibraryFontsInUse extends React.Component {
@@ -10,7 +11,7 @@ export default class LibraryFontsInUse extends React.Component {
 		);
 
 		if (!fontInUse) {
-			props.router.push('/library/fontinuse');
+			props.history.push('/library/fontinuse');
 		}
 
 		this.state = {

@@ -1,12 +1,13 @@
 import React from 'react';
 import {graphql, gql, compose} from 'react-apollo';
+import {Link} from 'react-router-dom';
+
 import {
 	LibrarySidebarRight,
 	FamilySidebarActions,
 	FamilySidebarGlyphs,
 	SidebarTags,
 } from './library-sidebars.components';
-import {Link} from 'react-router';
 import FontUpdater from '../font-updater.components';
 import LocalClient from '../../stores/local-client.stores';
 
@@ -24,22 +25,25 @@ const isUrl = new RegExp(
 class LibrarySee extends React.Component {
 	constructor(props) {
 		super(props);
-		const family = this.props.families.find(
-			e => e.id === this.props.params.projectID,
+
+		const {projectID} = props.match.params;
+
+		const family = props.families.find(
+			e => e.id === projectID,
 		);
 
 		let teamProject;
 
-		if (this.props.subUsers && this.props.subUsers.length > 0) {
-			teamProject = this.props.subUsers
+		if (props.subUsers && props.subUsers.length > 0) {
+			teamProject = props.subUsers
 				.find(u =>
-					u.library.find(f => f.id === this.props.params.projectID),
+					u.library.find(f => f.id === projectID),
 				)
-				.library.find(f => f.id === this.props.params.projectID);
+				.library.find(f => f.id === projectID);
 		}
 
 		if (!family && !teamProject) {
-			props.router.push('/library/home');
+			props.history.push('/library');
 		}
 
 		this.state = {
@@ -51,7 +55,7 @@ class LibrarySee extends React.Component {
 		this.exportFamily = this.exportFamily.bind(this);
 	}
 	goToDashboard() {
-		this.props.router.push('/dashboard');
+		this.props.history.push('/dashboard');
 	}
 	exportFamily() {
 		const valueArray = this.state.family.variants.map(variant => ({
@@ -142,6 +146,9 @@ class LibrarySee extends React.Component {
 	}
 
 	componentWillReceiveProps(newProps) {
+		const {projectID: oldProjectID} = this.props.match.params;
+		const {projectID} = newProps.match.params;
+
 		if (this.props.families !== newProps.families) {
 			const family = newProps.families.find(
 				e => e.id === newProps.params.projectID,
@@ -152,13 +159,13 @@ class LibrarySee extends React.Component {
 			if (newProps.subUsers && newProps.subUsers.length > 0) {
 				teamProject = newProps.subUsers
 					.find(u =>
-						u.library.find(f => f.id === newProps.params.projectID),
+						u.library.find(f => f.id === projectID),
 					)
-					.library.find(f => f.id === newProps.params.projectID);
+					.library.find(f => f.id === projectID);
 			}
 
 			if (!family && !teamProject) {
-				this.props.router.push('/library/home');
+				this.props.history.push('/library');
 			}
 			this.setState({
 				family: family || teamProject,
@@ -167,22 +174,22 @@ class LibrarySee extends React.Component {
 
 			this.generateVariants(family || teamProject);
 		}
-		if (this.props.params.projectID !== newProps.params.projectID) {
+		if (oldProjectID !== projectID) {
 			const family = this.props.families.find(
-				e => e.id === newProps.params.projectID,
+				e => e.id === projectID,
 			);
 			let teamProject;
 
 			if (newProps.subUsers && newProps.subUsers.length > 0) {
 				teamProject = newProps.subUsers
 					.find(u =>
-						u.library.find(f => f.id === newProps.params.projectID),
+						u.library.find(f => f.id === projectID),
 					)
-					.library.find(f => f.id === newProps.params.projectID);
+					.library.find(f => f.id === projectID);
 			}
 
 			if (!family && !teamProject) {
-				this.props.router.push('/library/home');
+				this.props.history.push('/library');
 			}
 			this.setState({
 				family: family || teamProject,
@@ -193,6 +200,8 @@ class LibrarySee extends React.Component {
 	}
 
 	render() {
+		const {projectID} = this.props.match.params;
+
 		const fontInUses = this.props.fontInUses.filter(
 			fontInUse =>
 				!!fontInUse.fontUsed.find(
@@ -289,7 +298,7 @@ class LibrarySee extends React.Component {
 					<FamilySidebarActions
 						glyphs={this.state.family.glyphs}
 						family={this.state.family}
-						familyId={this.props.params.projectID}
+						familyId={projectID}
 						exportFamily={this.exportFamily}
 						mode="see"
 						isPersonal={this.state.isPersonal}

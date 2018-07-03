@@ -1,7 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import Lifespan from 'lifespan';
-import pleaseWait from 'please-wait';
 
 import LocalClient from '../stores/local-client.stores';
 import FontMediator from '../prototypo.js/mediator/FontMediator';
@@ -54,7 +53,6 @@ export default class FontTester extends React.Component {
 	}
 
 	componentWillMount() {
-		pleaseWait.instance.finish();
 		this.client = LocalClient.instance();
 		this.lifespan = new Lifespan();
 		this.toile = new Toile();

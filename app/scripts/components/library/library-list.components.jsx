@@ -1,7 +1,6 @@
 import React from 'react';
 import _uniq from 'lodash/uniq';
-import pleaseWait from 'please-wait';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
 import ScrollArea from 'react-scrollbar/dist/no-css';
@@ -72,7 +71,7 @@ class LibraryList extends React.Component {
 	}
 
 	createProject(template, values) {
-		this.props.router.push({
+		this.props.history.push({
 			pathname: '/onboarding',
 			state: {template, values},
 		});
@@ -191,7 +190,6 @@ class LibraryList extends React.Component {
 				template: templateInfo,
 				user: this.props.user,
 				background: userColor,
-				router: this.props.router,
 				variantToLoad,
 				open: this.props.open,
 				export: this.props.export,
@@ -572,15 +570,17 @@ class LibraryList extends React.Component {
 				this.state.mode,
 			);
 		}
-		if (newProps.location.query !== this.props.location.query) {
+		if (newProps.location.search !== this.props.location.search) {
+			const query = new URLSearchParams(newProps.location.search);
+
 			this.setState({
-				mode: newProps.location.query && newProps.location.query.mode,
+				mode: query.get('mode'),
 			});
 			this.filterFonts(
 				this.state.activeFilters,
 				this.state.librarySelectedTags,
 				this.state.search,
-				newProps.location.query && newProps.location.query.mode,
+				query.get('mode'),
 			);
 		}
 	}
@@ -592,9 +592,9 @@ class LibraryList extends React.Component {
 	}
 
 	getEmptyMessage() {
-		const mode = this.props.location.query && this.props.location.query.mode;
+		const query = new URLSearchParams(this.props.location.search);
 
-		if (mode === 'personnal') {
+		if (query.get('mode') === 'personal') {
 			return (
 				<div className="library-see-description">
 					<p>
@@ -609,7 +609,7 @@ class LibraryList extends React.Component {
 				</div>
 			);
 		}
-		if (mode === 'favorites') {
+		if (query.get('mode') === 'favorites') {
 			return (
 				<div className="library-see-description">
 					<p>
@@ -619,7 +619,7 @@ class LibraryList extends React.Component {
 						</span>
 					</p>
 					<p>
-						<Link to="/library/home">Back to the list</Link>
+						<Link to="/library">Back to the list</Link>
 					</p>
 				</div>
 			);
@@ -648,6 +648,8 @@ class LibraryList extends React.Component {
 	}
 
 	render() {
+		const query = new URLSearchParams(this.props.location.search);
+
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-list library-see">
@@ -901,17 +903,12 @@ export class FamilyItem extends React.Component {
 					>
 						Download
 					</div>
-					<div
+					<Link
 						className="library-item-action"
-						onMouseDown={() => {
-							this.props.router
-								&& this.props.router.push(
-									`/library/project/${this.props.family.id}`,
-								);
-						}}
+						to={`/library/project/${this.props.family.id}`}
 					>
 						Open family
-					</div>
+					</Link>
 					<input
 						type="text"
 						name="displayedWord"

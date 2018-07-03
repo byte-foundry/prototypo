@@ -14,6 +14,7 @@ module.exports = {
 			'react-joyride',
 			'react-json-pretty',
 			'react-router',
+			'react-router-dom',
 			'react-scrollbar/dist/no-css',
 			'react-select',
 			'moment',

@@ -1,17 +1,18 @@
 import React from 'react';
 import Lifespan from 'lifespan';
 import moment from 'moment';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import uniqWith from 'lodash/uniqWith';
 import {graphql, gql} from 'react-apollo';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
+import LocalClient from '../../stores/local-client.stores';
 
-import getCurrency from '../../helpers/currency.helpers.js';
+import getCurrency from '../../helpers/currency.helpers';
 import HoodieApi from '../../services/hoodie.services';
 
-import DisplayWithLabel from '../shared/display-with-label.components.jsx';
-import FormSuccess from '../shared/form-success.components.jsx';
+import Dashboard from './account-dashboard.components';
+import DisplayWithLabel from '../shared/display-with-label.components';
+import FormSuccess from '../shared/form-success.components';
 import Price from '../shared/price.components';
 import Button from '../shared/new-button.components';
 
@@ -59,7 +60,7 @@ export class AccountSubscription extends React.PureComponent {
 
 	render() {
 		const {cards, subscription, credits} = this.state;
-		const {manager, acceptManager, removeManager} = this.props;
+		const {manager, acceptManager, removeManager, location} = this.props;
 
 		const noCard = (
 			<div>
@@ -68,14 +69,14 @@ export class AccountSubscription extends React.PureComponent {
 				</h3>
 				{subscription && !subscription.cancel_at_period_end ? (
 					<p>
-						<Link className="account-link" to="/account/details/add-card">
+						<Link className="account-link" to="details/add-card">
 							Add a card
 						</Link>{' '}
 						to set up your renewal automatically.
 					</p>
 				) : (
 					<p>
-						<Link className="account-link" to="/account/details/add-card">
+						<Link className="account-link" to="details/add-card">
 							Add a card
 						</Link>{' '}
 						before subscribing.
@@ -95,22 +96,23 @@ export class AccountSubscription extends React.PureComponent {
 		const cardDetail
 			= cards.length > 0 ? (
 				<DisplayWithLabel label="Your card">
-					{uniqWith(cards, (first, sec) => first.fingerprint === sec.fingerprint).map(card =>
+					{uniqWith(
+						cards,
+						(first, sec) => first.fingerprint === sec.fingerprint,
+					).map(card => (
 						// dedupe cards
-						 (
-							<div className="account-subscription-card" key={card.id}>
-								<div className="account-subscription-card-number">
-									**** **** **** {card.last4}
-								</div>
-								<div className="account-subscription-name">{card.name}</div>
-								<div className="account-subscription-card-expiry">
-									Expires on {String(card.exp_month).padStart(2, 0)}/{
-										card.exp_year
-									}
-								</div>
+						<div className="account-subscription-card" key={card.id}>
+							<div className="account-subscription-card-number">
+								**** **** **** {card.last4}
 							</div>
-						),
-					)}
+							<div className="account-subscription-name">{card.name}</div>
+							<div className="account-subscription-card-expiry">
+								Expires on {String(card.exp_month).padStart(2, 0)}/{
+									card.exp_year
+								}
+							</div>
+						</div>
+					))}
 				</DisplayWithLabel>
 			) : (
 				noCard
@@ -126,10 +128,9 @@ export class AccountSubscription extends React.PureComponent {
 			</div>
 		);
 
-		const successCard = this.props.location.query.newCard ? (
+		const query = new URLSearchParams(location.search);
+		const successCard = query.has('newCard') && (
 			<FormSuccess successText="You've successfully added a card" />
-		) : (
-			false
 		);
 
 		const noPlan = (
@@ -142,7 +143,7 @@ export class AccountSubscription extends React.PureComponent {
 				</p>
 				<p>
 					Subscribe to our{' '}
-					<Link className="account-link" to="account/subscribe">
+					<Link className="account-link" to="subscribe">
 						pro plan
 					</Link>{' '}
 					to benefit of the full power of Prototypo without restrictions to
@@ -234,14 +235,16 @@ export class AccountSubscription extends React.PureComponent {
 		);
 
 		return (
-			<div className="account-dashboard-container-main">
-				<div className="account-base account-subscription">
-					{content}
-					{!!credits && creditsDetails}
-					{cardDetail}
-					{successCard}
+			<Dashboard title="My account settings">
+				<div className="account-dashboard-container-main">
+					<div className="account-base account-subscription">
+						{content}
+						{!!credits && creditsDetails}
+						{cardDetail}
+						{successCard}
+					</div>
 				</div>
-			</div>
+			</Dashboard>
 		);
 	}
 }

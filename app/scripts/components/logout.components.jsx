@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {withRouter} from 'react-router';
+import {withRouter} from 'react-router-dom';
 
 import LocalClient from '../stores/local-client.stores';
 import HoodieApi from '../services/hoodie.services';
@@ -24,7 +24,7 @@ class Logout extends React.Component {
 			window.trackJs.track(err);
 		}
 
-		this.props.router.push({
+		this.props.history.push({
 			pathname: '/signin',
 		});
 		window.Intercom('shutdown');

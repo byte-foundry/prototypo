@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Link, withRouter} from 'react-router';
+import {Redirect, Link, withRouter} from 'react-router-dom';
 import Lifespan from 'lifespan';
 
 import SubscriptionSidebar from './subscription-sidebar.components.jsx';
@@ -35,9 +35,11 @@ class Subscription extends React.Component {
 
 		// a "?fromWebsite=true" parameter must be added to the link
 		// on the pricing section of prototypo.io website to track the user
-		if (this.props.location.query.fromWebsite) {
+		const query = new URLSearchParams(this.props.location.search);
+
+		if (query.has('fromWebsite')) {
 			this.client.dispatchAction('/store-value', {
-				newUserFromWebSite: String(this.props.location.query.fromWebsite),
+				newUserFromWebSite: query.get('fromWebsite'),
 			});
 		}
 	}
@@ -47,32 +49,38 @@ class Subscription extends React.Component {
 	}
 
 	handleChangePlan({plan, quantity, coupon}) {
-		const {router, location} = this.props;
-		const query = {...location.query};
+		const {history, location} = this.props;
+		const query = new URLSearchParams(location.search);
 
-		if (plan) query.plan = plan;
-		if (quantity) {query.quantity = (quantity && quantity.toString()) || undefined;}
-		if (coupon) {
-			query.coupon = coupon;
-		}
-		else delete query.coupon;
-		router.replace({
+		if (plan) query.set('plan', plan);
+		if (quantity) query.set('quantity', quantity || undefined);
+		if (coupon) query.set('coupon', coupon);
+		else query.delete('coupon');
+
+		history.replace({
 			...location,
-			query,
+			search: query.toString(),
 		});
 	}
 
 	render() {
 		const {hasBeenSubscribing} = this.state;
 		const {country, location} = this.props;
-		const {plan, quantity, coupon} = location.query;
 
-		if (!plan) {
-			this.props.router.replace({
-				...this.props.location,
-				query: {plan: 'personal_annual_99'},
-			});
-			return null;
+		const query = new URLSearchParams(location.search);
+
+		if (!query.has('plan')) {
+			query.set('plan', 'personal_annual_99');
+
+			return (
+				<Redirect
+					replace
+					to={{
+						...this.props.location,
+						search: query.toString(),
+					}}
+				/>
+			);
 		}
 		let percentPrice = 1;
 
@@ -88,17 +96,17 @@ class Subscription extends React.Component {
 				/>
 				<div className="account-dashboard-container">
 					<SubscriptionSidebar
-						plan={plan}
-						quantity={parseInt(quantity, 10)}
-						country={country}
+						plan={query.get('plan')}
+						quantity={parseInt(query.get('quantity'), 10)}
+						country={query.get('coupon')}
 						onChangePlan={this.handleChangePlan}
 						hasBeenSubscribing={hasBeenSubscribing}
 						percentPrice={percentPrice}
 					/>
 					<SubscriptionCardAndValidation
-						plan={plan}
-						quantity={parseInt(quantity, 10)}
-						coupon={coupon}
+						plan={query.get('plan')}
+						quantity={parseInt(query.get('quantity'), 10)}
+						coupon={query.get('coupon')}
 						country={country}
 						onChangePlan={this.handleChangePlan}
 					/>

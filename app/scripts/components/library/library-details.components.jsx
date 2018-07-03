@@ -1,5 +1,4 @@
 import React from 'react';
-import pleaseWait from 'please-wait';
 import {
 	LibrarySidebarRight,
 	FamilySidebarActions,
@@ -14,11 +13,11 @@ class LibraryDetails extends React.Component {
 	constructor(props) {
 		super(props);
 		const family = this.props.families.find(
-			e => e.id === this.props.params.projectID,
+			e => e.id === this.props.match.params.projectID,
 		);
 
 		if (!family) {
-			props.router.push('/library/home');
+			props.history.push('/library');
 		}
 		this.state = {
 			family,
@@ -38,7 +37,6 @@ class LibraryDetails extends React.Component {
 				name: variant.name,
 			})),
 		};
-		this.goToDashboard = this.goToDashboard.bind(this);
 		this.deleteFamily = this.deleteFamily.bind(this);
 		this.exportFamily = this.exportFamily.bind(this);
 		this.updateFamilyData = this.updateFamilyData.bind(this);
@@ -61,11 +59,11 @@ class LibraryDetails extends React.Component {
 	componentWillReceiveProps(newProps) {
 		if (newProps.families !== this.props.families) {
 			const family = newProps.families.find(
-				e => e.id === newProps.params.projectID,
+				e => e.id === newProps.match.params.projectID,
 			);
 
 			if (!family) {
-				newProps.router.push('/library/home');
+				newProps.history.push('/library');
 			}
 			this.setState({
 				family,
@@ -130,8 +128,8 @@ class LibraryDetails extends React.Component {
 		});
 	}
 	deleteFamily() {
-		this.props.deleteFamily(this.props.params.projectID);
-		this.props.router.push('/library/home');
+		this.props.deleteFamily(this.props.match.params.projectID);
+		this.props.history.push('/library');
 	}
 	updateFamily() {
 		this.props.updateFamily(
@@ -159,9 +157,6 @@ class LibraryDetails extends React.Component {
 
 		variantMetadata[index].isModified = false;
 		this.setState({variantMetadata});
-	}
-	goToDashboard() {
-		this.props.router.push('/dashboard');
 	}
 	render() {
 		return (
@@ -347,7 +342,7 @@ class LibraryDetails extends React.Component {
 				</div>
 				<LibrarySidebarRight>
 					<FamilySidebarActions
-						familyId={this.props.params.projectID}
+						familyId={this.props.match.params.projectID}
 						deleteFamily={this.deleteFamily}
 						exportFamily={this.exportFamily}
 						family={this.state.family}
