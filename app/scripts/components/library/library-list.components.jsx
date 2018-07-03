@@ -4,7 +4,6 @@ import {Link, withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
 import ScrollArea from 'react-scrollbar/dist/no-css';
-import {graphql, gql, compose} from 'react-apollo';
 
 import FontUpdater from '../font-updater.components';
 import LocalClient from '../../stores/local-client.stores';

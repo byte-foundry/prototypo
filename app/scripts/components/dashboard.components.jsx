@@ -1,5 +1,6 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 import {Redirect, withRouter} from 'react-router-dom';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';

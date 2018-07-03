@@ -1,3 +1,4 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import {
 	LibrarySidebarRight,
@@ -5,7 +6,7 @@ import {
 	FamilySidebarGlyphs,
 	SidebarTags,
 } from './library-sidebars.components';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 import FontUpdater from '../font-updater.components';
 import Lifespan from 'lifespan';
 import LocalClient from '../../stores/local-client.stores';

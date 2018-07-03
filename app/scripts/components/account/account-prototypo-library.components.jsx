@@ -1,9 +1,10 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Lifespan from 'lifespan';
 import {Link} from 'react-router-dom';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 
 import apolloClient from '../../services/graphcool.services';
 import LocalClient from '../../stores/local-client.stores';

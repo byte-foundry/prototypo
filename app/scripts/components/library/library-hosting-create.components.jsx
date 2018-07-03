@@ -1,8 +1,9 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import {withRouter} from 'react-router-dom';
 import Lifespan from 'lifespan';
 import cloneDeep from 'lodash/cloneDeep';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 import {LibrarySidebarRight} from './library-sidebars.components';
 import {tmpUpload} from '../../services/graphcool.services';
 import LocalClient from '../../stores/local-client.stores';

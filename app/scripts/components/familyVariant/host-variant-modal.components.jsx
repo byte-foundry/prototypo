@@ -1,6 +1,7 @@
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 
 import LocalClient from '../../stores/local-client.stores';
 import {tmpUpload} from '../../services/graphcool.services';

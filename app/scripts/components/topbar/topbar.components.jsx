@@ -1,3 +1,4 @@
+import gql from 'graphql-tag';
 import _xor from 'lodash/xor';
 import _flatten from 'lodash/flatten';
 import _map from 'lodash/map';
@@ -6,7 +7,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {withRouter} from 'react-router';
-import {graphql, gql, compose} from 'react-apollo';
+import {graphql, compose} from 'react-apollo';
 import Lifespan from 'lifespan';
 
 import Log from '../../services/log.services';

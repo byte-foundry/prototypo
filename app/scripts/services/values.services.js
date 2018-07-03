@@ -1,5 +1,5 @@
 /* global trackJs */
-import {gql} from 'react-apollo';
+import gql from 'graphql-tag';
 
 import apolloClient from './graphcool.services';
 

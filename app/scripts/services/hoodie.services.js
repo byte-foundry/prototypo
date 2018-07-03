@@ -1,5 +1,5 @@
 /* global trackJs, _ */
-import {gql} from 'react-apollo';
+import gql from 'graphql-tag';
 
 import apolloClient from './graphcool.services';
 import isProduction from '../helpers/is-production.helpers';
@@ -335,7 +335,6 @@ async function setupStripe(data, time = 1000) {
 
 	// if error we poll customerId
 	setTimeout(async () => {
-		// const newData = await HoodieApi.instance.account.fetch();
 		const response = await apolloClient.query({
 			query: gql`
 				query setupStripe {

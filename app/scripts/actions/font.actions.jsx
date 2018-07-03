@@ -2,7 +2,7 @@
 import _throttle from 'lodash/throttle';
 import _forOwn from 'lodash/forOwn';
 import _cloneDeep from 'lodash/cloneDeep';
-import {gql} from 'react-apollo';
+import gql from 'graphql-tag';
 
 import {
 	prototypoStore,

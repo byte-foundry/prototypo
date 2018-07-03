@@ -1,5 +1,6 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import {compose, graphql, gql} from 'react-apollo';
+import {compose, graphql} from 'react-apollo';
 
 import HoodieApi from '../../services/hoodie.services';
 

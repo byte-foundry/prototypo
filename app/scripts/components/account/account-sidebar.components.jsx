@@ -1,8 +1,9 @@
+import gql from 'graphql-tag';
 import React from 'react';
 import classNames from 'classnames';
 import {Link, matchPath, withRouter} from 'react-router-dom';
 import Lifespan from 'lifespan';
-import {graphql, gql} from 'react-apollo';
+import {graphql} from 'react-apollo';
 import {createLocation} from 'history';
 
 import LocalClient from '../../stores/local-client.stores';
