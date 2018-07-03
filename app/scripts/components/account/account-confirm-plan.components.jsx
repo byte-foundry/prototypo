@@ -29,8 +29,11 @@ export default class AccountConfirmPlan extends React.Component {
 		this.client
 			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
-				if (this.props.location.query.plan) {
-					const planBase = this.props.location.query.plan;
+				const {location} = this.props;
+				const query = new URLSearchParams(location.search);
+
+				if (query.has('plan')) {
+					const planBase = query.get('plan');
 					const currency = getCurrency(head.toJS().d.cards[0].country);
 					const planId = `${planBase}_${currency}_taxfree`;
 
@@ -43,7 +46,7 @@ export default class AccountConfirmPlan extends React.Component {
 
 					HoodieApi.getUpcomingInvoice({
 						subscription_plan: planId,
-						subscription_quantity: this.props.location.query.quantity,
+						subscription_quantity: query.get('quantity'),
 					}).then((data) => {
 						this.setState({
 							invoice: data,
@@ -62,8 +65,9 @@ export default class AccountConfirmPlan extends React.Component {
 	}
 
 	confirmPlanChange() {
-		const {location} = this.props;
 		const {plan, currency} = this.state;
+
+		const query = new URLSearchParams(this.props.location.search);
 
 		window.Intercom('trackEvent', 'change-plan-confirm', {
 			plan,
@@ -72,7 +76,7 @@ export default class AccountConfirmPlan extends React.Component {
 		this.client.dispatchAction('/confirm-buy', {
 			plan,
 			currency,
-			quantity: parseInt(location.query.quantity, 10) || undefined,
+			quantity: parseInt(query.get('quantity'), 10) || undefined,
 			pathname: '/account/details',
 		});
 	}
@@ -112,7 +116,9 @@ class Invoice extends React.Component {
 				};
 
 		const total = lines.data.reduce((sum, line) => sum + line.amount, 0);
-		const invoiceLines = lines.data.map(line => <InvoiceLine line={line} symbol={currencySymbol} />);
+		const invoiceLines = lines.data.map(line => (
+			<InvoiceLine line={line} symbol={currencySymbol} />
+		));
 
 		return (
 			<table className="invoice">

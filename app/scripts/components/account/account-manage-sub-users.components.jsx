@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {graphql, gql} from 'react-apollo';
 
 import FilterInput from '../shared/filter-input.components';
@@ -339,9 +339,7 @@ export class AccountManageSubUsers extends React.Component {
 				{slotsLeft} slots left on {max}
 				{slotsLeft < 4 && ' • '}
 				{slotsLeft < 4 && (
-					<Link to="/account/details/change-plan">
-						Update your subscription
-					</Link>
+					<Link to="details/change-plan">Update your subscription</Link>
 				)}
 			</span>
 		);

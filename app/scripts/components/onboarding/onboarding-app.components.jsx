@@ -1,6 +1,7 @@
 import React from 'react';
 import {graphql, gql, compose} from 'react-apollo';
 import Lifespan from 'lifespan';
+import classnames from 'classnames';
 
 import {Tooltip} from 'react-tippy';
 import 'react-tippy/dist/tippy.css';
@@ -22,6 +23,7 @@ const flatten = list =>
 class OnboardingApp extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			step: 0,
 			values: undefined,
@@ -101,7 +103,7 @@ class OnboardingApp extends React.PureComponent {
 			this.state.family.variants[0].id,
 			this.state.values,
 		);
-		this.props.router.push('/dashboard');
+		this.props.history.push('/dashboard');
 	}
 
 	getPreviousStep() {
@@ -297,13 +299,13 @@ class OnboardingApp extends React.PureComponent {
 				family,
 			});
 			await this.props.refetch();
-			this.props.router.push('/library/create');
 		}
 		catch (err) {
 			// TODO: Error handling
-			this.props.router.push('/library/create');
 			console.log(err);
 		}
+
+		this.props.history.push('/library/create');
 	}
 
 	render() {
@@ -316,8 +318,6 @@ class OnboardingApp extends React.PureComponent {
 			createFamily,
 		} = this.state;
 		const stepData = onboardingData.steps[step];
-
-		// Failsafe
 
 		// Just getting the fonts we need to generate
 		let fontsToGenerate = [];
@@ -417,7 +417,7 @@ class OnboardingApp extends React.PureComponent {
 							neutral
 							size="small"
 							className="skip"
-							onClick={() => this.props.router.push('/dashboard')}
+							onClick={() => this.props.history.push('/dashboard')}
 						>
 								Skip
 						</Button>
@@ -511,15 +511,17 @@ class OnboardingApp extends React.PureComponent {
 										arrow="true"
 									>
 										<div
-											className={`bubble ${
-												index === this.state.step ? 'active' : ''
-											} ${index < this.state.step ? 'previous' : ''}`}
+											className={classnames({
+												bubble: true,
+												active: index === this.state.step,
+												previous: index < this.state.step,
+											})}
 											onClick={() => {
-												index <= this.state.step
-													? this.setState({
+												if (index <= this.state.step) {
+													this.setState({
 														step: index,
-													})
-													: false;
+													});
+												}
 											}}
 										/>
 									</Tooltip>

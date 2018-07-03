@@ -1,6 +1,6 @@
 import React from 'react';
 import {graphql, gql} from 'react-apollo';
-import {Link, withRouter} from 'react-router';
+import {Redirect, Link, withRouter} from 'react-router-dom';
 
 import isProduction from '../helpers/is-production.helpers';
 import {loadStuff} from '../helpers/appSetup.helpers';
@@ -39,11 +39,7 @@ export class Signin extends React.Component {
 				activator: '#intercom-button',
 			},
 		});
-
-		this.props.router.push({
-			pathname: this.props.location.query.prevHash || '/library/home',
-			query: this.props.location.query,
-		});
+		window.trackJs.addMetadata('username', email);
 	}
 
 	async handleSignIn(e) {
@@ -54,7 +50,7 @@ export class Signin extends React.Component {
 
 		const errors = [];
 
-		this.setState({loading: false, errors, inError: {}});
+		this.setState({loading: true, errors, inError: {}});
 
 		if (!email || !password) {
 			errors.push('Fields with a * are required');
@@ -98,68 +94,98 @@ export class Signin extends React.Component {
 			<FormError errorText={error} />
 		));
 
+		if (!this.state.loading && this.props.user) {
+			const query = new URLSearchParams(this.props.location.search);
+			const nextLocation = query.has('prevHash')
+				? decodeURIComponent(query.get('prevHash'))
+				: '/library';
+
+			query.delete('prevHash');
+
+			return (
+				<Redirect
+					to={{
+						...this.props.location,
+						pathname: nextLocation,
+						search: query.toString(),
+					}}
+					replace
+				/>
+			);
+		}
+
 		return (
-			<div className="sign-in sign-base">
-				<div className="account-dashboard-icon" />
-				<div className="account-header">
-					<h1 className="account-title">Sign in</h1>
-				</div>
-				<h1 className="account-dashboard-page-title">Welcome back.</h1>
-				<div className="sign-in-container">
-					<div className="sign-in-oauth">
-						<label className="sign-in-oauth-label" htmlFor="oauth">
-							Sign in with
-						</label>
-						<OAuthButtons
-							id="oauth"
-							onLogin={this.signIn}
-							className="sign-in-oauth-buttons"
-						/>
+			<div className="account-app">
+				<div className="sign-in sign-base">
+					<div className="account-dashboard-icon" />
+					<div className="account-header">
+						<h1 className="account-title">Sign in</h1>
 					</div>
-					<div className="sign-in-separator">
-						<hr className="sign-in-separator-line" />
-						<span className="sign-in-separator-text">OR</span>
+					<h1 className="account-dashboard-page-title">Welcome back.</h1>
+					<div className="sign-in-container">
+						<div className="sign-in-oauth">
+							<label className="sign-in-oauth-label" htmlFor="oauth">
+								Sign in with
+							</label>
+							<OAuthButtons
+								id="oauth"
+								onLogin={this.signIn}
+								className="sign-in-oauth-buttons"
+							/>
+						</div>
+						<div className="sign-in-separator">
+							<hr className="sign-in-separator-line" />
+							<span className="sign-in-separator-text">OR</span>
+						</div>
+						<form className="sign-in-form" onSubmit={this.handleSignIn}>
+							<InputWithLabel
+								id="email-sign-in"
+								name="email-sign-in"
+								type="email"
+								ref={(node) => {
+									this.emailInput = node;
+								}}
+								placeholder="Email"
+								required
+								label="Email"
+							/>
+							<InputWithLabel
+								label="Password"
+								id="password-sign-in"
+								name="password-sign-in"
+								ref={(node) => {
+									this.passwordInput = node;
+								}}
+								type="password"
+								required
+								placeholder="Password"
+							/>
+							<Link to="/signin/forgotten" className="sign-in-help-needed">
+								I forgot my password
+							</Link>
+							<Link to="/signup" className="sign-in-help-needed">
+								I don't have an account
+							</Link>
+							{errors}
+							<AccountValidationButton
+								label="Sign in"
+								loading={this.state.loading}
+							/>
+						</form>
 					</div>
-					<form className="sign-in-form" onSubmit={this.handleSignIn}>
-						<InputWithLabel
-							id="email-sign-in"
-							name="email-sign-in"
-							type="email"
-							ref={(node) => {
-								this.emailInput = node;
-							}}
-							placeholder="Email"
-							required
-							label="Email"
-						/>
-						<InputWithLabel
-							label="Password"
-							id="password-sign-in"
-							name="password-sign-in"
-							ref={(node) => {
-								this.passwordInput = node;
-							}}
-							type="password"
-							required
-							placeholder="Password"
-						/>
-						<Link to="/signin/forgotten" className="sign-in-help-needed">
-							I forgot my password
-						</Link>
-						<Link to="/signup" className="sign-in-help-needed">
-							I don't have an account
-						</Link>
-						{errors}
-						<AccountValidationButton
-							label="Sign in"
-							loading={this.state.loading}
-						/>
-					</form>
 				</div>
 			</div>
 		);
 	}
 }
+
+const loggedInUserQuery = gql`
+	query loggedInUserQuery {
+		user {
+			id
+		}
+	}
+`;
 
 const authenticateEmailUserMutation = gql`
 	mutation authenticateEmailUser($email: String!, $password: String!) {
@@ -179,4 +205,11 @@ export default graphql(authenticateEmailUserMutation, {
 				},
 			}),
 	}),
-})(withRouter(Signin));
+})(
+	graphql(loggedInUserQuery, {
+		props: ({data}) => ({
+			loadingUser: data.loading,
+			user: data.user,
+		}),
+	})(withRouter(Signin)),
+);

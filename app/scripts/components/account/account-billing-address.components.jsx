@@ -8,6 +8,7 @@ import AccountValidationButton from '../shared/account-validation-button.compone
 import FormError from '../shared/form-error.components';
 import FormSuccess from '../shared/form-success.components';
 import WaitForLoad from '../wait-for-load.components';
+import Dashboard from './account-dashboard.components';
 
 class AccountBillingAddress extends React.PureComponent {
 	constructor(props) {
@@ -85,9 +86,11 @@ class AccountBillingAddress extends React.PureComponent {
 
 			this.setState({loadingForm: false});
 
-			this.props.router.push({
+			const query = new URLSearchParams({success: true});
+
+			this.props.history.push({
 				pathname: '/account/details/billing-address',
-				query: {success: true},
+				search: query.toString(),
 			});
 		}
 		catch (err) {
@@ -114,41 +117,47 @@ class AccountBillingAddress extends React.PureComponent {
 
 		if (loading) {
 			return (
-				<div className="account-base account-billing-address">
-					<WaitForLoad loading />
-				</div>
+				<Dashboard title="My billing address">
+					<div className="account-base account-billing-address">
+						<WaitForLoad loading />
+					</div>
+				</Dashboard>
 			);
 		}
 
 		const fullName = firstName + (lastName ? ` ${lastName}` : '');
 
+		const query = new URLSearchParams(location.search);
+
 		return (
-			<form
-				onSubmit={this.handleSubmit}
-				className="account-base account-billing-address"
-			>
-				<BillingAddress
-					buyerName={buyerName || fullName}
-					address={{
-						building_number: buildingNumber,
-						street_name: streetName,
-						city,
-						postal_code: postalCode,
-						region,
-						country,
-					}}
-					vat={vat}
-					inError={inError}
-				/>
-				{errors && <FormError errorText={errors} />}
-				{location.query.success && (
-					<FormSuccess successText="You've successfully changed your billing address" />
-				)}
-				<AccountValidationButton
-					loading={loadingForm}
-					label="Confirm address change"
-				/>
-			</form>
+			<Dashboard title="My billing address">
+				<form
+					onSubmit={this.handleSubmit}
+					className="account-base account-billing-address"
+				>
+					<BillingAddress
+						buyerName={buyerName || fullName}
+						address={{
+							building_number: buildingNumber,
+							street_name: streetName,
+							city,
+							postal_code: postalCode,
+							region,
+							country,
+						}}
+						vat={vat}
+						inError={inError}
+					/>
+					{errors && <FormError errorText={errors} />}
+					{query.has('success') && (
+						<FormSuccess successText="You've successfully changed your billing address" />
+					)}
+					<AccountValidationButton
+						loading={loadingForm}
+						label="Confirm address change"
+					/>
+				</form>
+			</Dashboard>
 		);
 	}
 }

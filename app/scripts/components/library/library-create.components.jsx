@@ -1,6 +1,4 @@
 import React from 'react';
-import pleaseWait from 'please-wait';
-import {Link} from 'react-router';
 import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
 import LocalClient from '../../stores/local-client.stores';
@@ -46,7 +44,7 @@ class LibraryCreate extends React.Component {
 	}
 
 	createProject(template, values, abstractedFontMeta) {
-		this.props.router.push({
+		this.props.history.push({
 			pathname: '/onboarding',
 			state: {template, values, abstractedFontMeta},
 		});
@@ -96,7 +94,6 @@ class LibraryCreate extends React.Component {
 			template: templateInfo,
 			user: this.props.user,
 			background: userColor,
-			router: this.props.router,
 			variantToLoad,
 			createProject: this.createProject,
 			open: this.props.open,

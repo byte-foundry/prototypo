@@ -354,7 +354,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 						</div>
 					</div>
 					<div className="columns subscription-card-and-validation-buttons">
-						{couponValue === undefined && (
+						{typeof couponValue !== 'string' && (
 							<div
 								className="subscription-card-and-validation-switch half-column"
 								onClick={this.addCoupon}
@@ -384,7 +384,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 						}`}
 					/>
 					<div className="columns subscription-card-and-validation-buttons">
-						{couponValue === undefined && (
+						{typeof couponValue !== 'string' && (
 							<div
 								className="subscription-card-and-validation-switch half-column"
 								onClick={this.addCoupon}
@@ -403,7 +403,7 @@ export default class SubscriptionCardAndValidation extends React.PureComponent {
 					</div>
 				</div>
 			);
-		const coupon = couponValue !== undefined && (
+		const coupon = typeof couponValue === 'string' && (
 			<div>
 				<form onSubmit={this.handleCouponSubmit}>
 					<InputWithLabel

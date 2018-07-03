@@ -1,12 +1,11 @@
 import React from 'react';
-import pleaseWait from 'please-wait';
 
-export default class LibraryApp extends React.Component {
-	componentWillMount() {
-		pleaseWait.instance.finish();
-	}
+import LibraryMain from './library-main.components';
 
-	render() {
-		return <div className="library-app">{this.props.children}</div>;
-	}
-}
+const LibraryApp = () => (
+	<div className="library-app">
+		<LibraryMain />
+	</div>
+);
+
+export default LibraryApp;

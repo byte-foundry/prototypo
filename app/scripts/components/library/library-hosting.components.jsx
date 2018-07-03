@@ -86,6 +86,7 @@ export default class LibraryHosting extends React.Component {
 		.join('')}
 `;
 	}
+
 	render() {
 		return (
 			<div className="library-content-wrapper">

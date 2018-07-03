@@ -1,10 +1,20 @@
 import React from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import {TransitionGroup, CSSTransition} from 'react-transition-group';
 import {graphql, gql, compose} from 'react-apollo';
+import {Switch, Route, Redirect, withRouter} from 'react-router-dom';
 import InlineSVG from 'svg-inline-react';
 import Lifespan from 'lifespan';
 import LocalClient from '../../stores/local-client.stores';
 
+import LibraryList from './library-list.components';
+import LibraryHosting from './library-hosting.components';
+import LibraryCreate from './library-create.components';
+import LibraryReview from './library-review.components';
+import LibraryFontsInUseList from './library-fontinuse-list.components';
+import LibraryFontsInUseCreate from './library-fontinuse-create.components';
+import LibraryFontsInUse from './library-fontinuse.components';
+import LibrarySee from './library-see.components';
+import LibraryDetails from './library-details.components';
 import CreateVariantModal from '../familyVariant/create-variant-modal.components.jsx';
 import ChangeNameVariant from '../familyVariant/change-name-variant.components.jsx';
 import DuplicateVariant from '../familyVariant/duplicate-variant.components.jsx';
@@ -21,7 +31,6 @@ class LibraryMain extends React.Component {
 		};
 		this.setActiveFilters = this.setActiveFilters.bind(this);
 		this.export = this.export.bind(this);
-		this.goToDashboard = this.goToDashboard.bind(this);
 		this.open = this.open.bind(this);
 		this.rename = this.rename.bind(this);
 		this.duplicate = this.duplicate.bind(this);
@@ -41,30 +50,32 @@ class LibraryMain extends React.Component {
 			templateInfos: prototypoStore.head.toJS().templateList,
 		});
 
-		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
-			this.setState({
-				openVariantModal: head.toJS().d.openVariantModal,
-				openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
-				openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
-				familySelectedVariantCreation: head.toJS().d
-					.familySelectedVariantCreation,
-				collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
-				templatesData: head.toJS().d.templatesData,
-				search: head.toJS().d.librarySearchString,
-				librarySelectedTags: head.toJS().d.librarySelectedTags,
-				openRestrictedFeature: head.toJS().d.openRestrictedFeature,
-				restrictedFeatureHovered: head.toJS().d.restrictedFeatureHovered,
-				openGoProModal: head.toJS().d.openGoProModal,
+		this.client
+			.getStore('/prototypoStore', this.lifespan)
+			.onUpdate((head) => {
+				this.setState({
+					openVariantModal: head.toJS().d.openVariantModal,
+					openChangeVariantNameModal: head.toJS().d
+						.openChangeVariantNameModal,
+					openDuplicateVariantModal: head.toJS().d
+						.openDuplicateVariantModal,
+					familySelectedVariantCreation: head.toJS().d
+						.familySelectedVariantCreation,
+					collectionSelectedVariant: head.toJS().d
+						.collectionSelectedVariant,
+					templatesData: head.toJS().d.templatesData,
+					search: head.toJS().d.librarySearchString,
+					librarySelectedTags: head.toJS().d.librarySelectedTags,
+					openRestrictedFeature: head.toJS().d.openRestrictedFeature,
+					restrictedFeatureHovered: head.toJS().d
+						.restrictedFeatureHovered,
+					openGoProModal: head.toJS().d.openGoProModal,
+				});
 			});
-		});
 	}
 
 	componentWillUnmount() {
 		this.lifespan.release();
-	}
-
-	goToDashboard() {
-		this.props.router.push('/dashboard');
 	}
 
 	open(variant, family) {
@@ -72,7 +83,7 @@ class LibraryMain extends React.Component {
 			selectedVariant: variant,
 			family,
 		});
-		this.goToDashboard();
+		this.props.history.push('/dashboard');
 	}
 
 	rename(variant, family) {
@@ -194,55 +205,121 @@ class LibraryMain extends React.Component {
 			false
 		);
 
+		const childProps = {
+			activeFilters: this.state.activeFilters,
+			families: this.props.families,
+			subUsers: this.props.subUsers,
+			presets: this.props.presets,
+			setActiveFilters: this.setActiveFilters,
+			fontInUses: this.props.fontInUses,
+			open: this.open,
+			export: this.export,
+			rename: this.rename,
+			duplicate: this.duplicate,
+			deleteVariant: this.deleteVariant,
+			updateTags: this.props.updateTags,
+			favourites: this.props.favourites,
+			addFavourite: this.props.addFavourite,
+			hostedDomains: this.props.hostedDomains,
+			createFavourite: this.props.createFavourite,
+			deleteFavourite: this.props.deleteFavourite,
+			abstractedTemplates: this.props.abstractedTemplates,
+			user: {
+				firstName: this.props.firstName,
+				lastName: this.props.lastName,
+				id: this.props.userId,
+			},
+			search: this.state.search,
+			librarySelectedTags: this.state.librarySelectedTags,
+		};
+
+		const renderWithAllData = Child => routerProps => (
+			<Child {...routerProps} {...childProps} />
+		);
+
 		return (
 			<div className="library-main">
 				<LibrarySidebarLeft
-					location={this.props.location}
 					subUsers={this.props.subUsers}
 					userId={this.props.userId}
 					families={this.props.families}
-					routeParams={this.props.params}
 					favourites={this.props.favourites}
 					router={this.props.router}
 				/>
-				{this.props.loading && (
-					<ReactCSSTransitionGroup
-						transitionName="loading-overlay"
-						transitionEnterTimeout={300}
-						transitionLeaveTimeout={300}
-					>
-						<LoadingOverlay />
-					</ReactCSSTransitionGroup>
-				)}
-				{React.cloneElement(this.props.children, {
-					activeFilters: this.state.activeFilters,
-					families: this.props.families,
-					subUsers: this.props.subUsers,
-					presets: this.props.presets,
-					setActiveFilters: this.setActiveFilters,
-					fontInUses: this.props.fontInUses,
-					open: this.open,
-					export: this.export,
-					rename: this.rename,
-					duplicate: this.duplicate,
-					deleteVariant: this.deleteVariant,
-					updateTags: this.props.updateTags,
-					favourites: this.props.favourites,
-					addFavourite: this.props.addFavourite,
-					hostedDomains: this.props.hostedDomains,
-					createFavourite: this.props.createFavourite,
-					deleteFavourite: this.props.deleteFavourite,
-					abstractedTemplates: this.props.abstractedTemplates,
-					user: {
-						firstName: this.props.firstName,
-						lastName: this.props.lastName,
-						id: this.props.userId,
-					},
-					search: this.state.search,
-					librarySelectedTags: this.state.librarySelectedTags,
-				})}
+				<TransitionGroup>
+					{this.props.loading ? (
+						<CSSTransition
+							className="loading-overlay"
+							timeout={{enter: 300, exit: 300}}
+						>
+							<LoadingOverlay />
+						</CSSTransition>
+					) : (
+						<Switch>
+							<Route
+								path="/library"
+								render={renderWithAllData(LibraryList)}
+								exact
+							/>
+							<Route
+								path="/library/hosting"
+								render={renderWithAllData(LibraryHosting)}
+								exact
+							/>
+							<Route
+								path="/library/create"
+								render={renderWithAllData(LibraryCreate)}
+								exact
+							/>
+							<Route
+								path="/library/review"
+								render={renderWithAllData(LibraryReview)}
+								exact
+							/>
+							<Route
+								path="/library/fontinuse"
+								render={renderWithAllData(
+									LibraryFontsInUseList,
+								)}
+								exact
+							/>
+							<Route
+								path="/library/fontinuse/create"
+								render={renderWithAllData(
+									LibraryFontsInUseCreate,
+								)}
+								exact
+							/>
+							<Route
+								path="/library/fontinuse/:fontinuseID"
+								render={renderWithAllData(LibraryFontsInUse)}
+								exact
+							/>
+							<Route
+								path="/library/fontinuse/:fontinuseID/edit"
+								render={renderWithAllData(
+									LibraryFontsInUseCreate,
+								)}
+								exact
+							/>
+							<Route
+								path="/library/project/:projectID"
+								render={renderWithAllData(LibrarySee)}
+								exact
+							/>
+							<Route
+								path="/library/project/:projectID/details"
+								render={renderWithAllData(LibraryDetails)}
+								exact
+							/>
+							<Redirect to="/library" />
+						</Switch>
+					)}
+				</TransitionGroup>
 				{restrictedFeatureText}
-				{this.state.openGoProModal && <GoProModal propName="openGoProModal" />}
+				{this.state.openGoProModal && (
+					<GoProModal propName="openGoProModal" />
+				)}
 				{this.state.openVariantModal && (
 					<CreateVariantModal
 						family={this.state.familySelectedVariantCreation}
@@ -542,6 +619,7 @@ const addFavouriteMutation = gql`
 `;
 
 export default compose(
+	withRouter,
 	graphql(libraryQuery, {
 		options: {
 			fetchPolicy: 'cache-first',
@@ -571,7 +649,9 @@ export default compose(
 			}
 			if (data.user) {
 				return {
-					subUsers: data.user.manager ? data.user.manager.subUsers : [],
+					subUsers: data.user.manager
+						? data.user.manager.subUsers
+						: [],
 					refetch: data.refetch,
 				};
 			}
@@ -622,7 +702,8 @@ export default compose(
 					data.user.favourites.findIndex(
 						f =>
 							f.id
-							=== removeFromUserOnAbstractedFont.favouritesAbstractedFont.id,
+							=== removeFromUserOnAbstractedFont
+								.favouritesAbstractedFont.id,
 					),
 					1,
 				);
@@ -664,8 +745,14 @@ export default compose(
 					break;
 				case 'Variant':
 					variant = dataLibrary.user.library
-						.find(f => f.id === createAbstractedFont.variant.family.id)
-						.variants.find(v => v.id === createAbstractedFont.variant.id);
+						.find(
+							f =>
+								f.id
+									=== createAbstractedFont.variant.family.id,
+						)
+						.variants.find(
+							v => v.id === createAbstractedFont.variant.id,
+						);
 
 					variant.abstractedFont = {id: createAbstractedFont.id};
 					break;
@@ -727,7 +814,9 @@ export default compose(
 		options: {
 			update: (store, {data: {updateFamily}}) => {
 				const data = store.readQuery({query: libraryQuery});
-				const family = data.user.library.find(f => f.id === updateFamily.id);
+				const family = data.user.library.find(
+					f => f.id === updateFamily.id,
+				);
 
 				family.tags = [...updateFamily.tags];
 				store.writeQuery({

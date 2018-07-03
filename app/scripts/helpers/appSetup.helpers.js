@@ -117,13 +117,11 @@ export async function loadStuff() {
 				name: variantSelected.name,
 			};
 		}
+
+		localClient.dispatchAction('/load-app-values', appValues);
 	}
 	catch (err) {
 		appValues = defaultValues;
 		console.error(err);
 	}
-
-	localClient.dispatchAction('/load-app-values', appValues);
-
-	localClient.dispatchAction('/load-font-instance', {appValues});
 }

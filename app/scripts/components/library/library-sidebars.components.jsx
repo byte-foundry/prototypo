@@ -1,10 +1,10 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Route, Link, matchPath, withRouter} from 'react-router-dom';
 
 import LocalClient from '../../stores/local-client.stores';
 import LibraryButton from './library-button.components';
 
-export class LibrarySidebarLeft extends React.Component {
+class LibrarySidebarLeftRaw extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -15,6 +15,7 @@ export class LibrarySidebarLeft extends React.Component {
 	}
 	render() {
 		const subUserLibrary = [];
+		const query = new URLSearchParams(this.props.location.search);
 
 		this.props.subUsers
 			&& this.props.subUsers.forEach((subUser) => {
@@ -25,18 +26,20 @@ export class LibrarySidebarLeft extends React.Component {
 			});
 
 		let subUsersProjects = subUserLibrary.map(f => (
-			<p
-				className={`sidebar-left-project ${
-					this.props.routeParams && f.id === this.props.routeParams.projectID
-						? 'active'
-						: ''
-				}`}
-			>
-				<Link to={`/library/project/${f.id}`}>
-					<span className="big">{f.name}</span>
-					<span className="small">({f.variants.length})</span>
-				</Link>
-			</p>
+			<Route path={`/library/project/${f.id}`}>
+				{({match}) => (
+					<p
+						className={`sidebar-left-project ${
+							match ? 'active' : ''
+						}`}
+					>
+						<Link to={`/library/project/${f.id}`}>
+							<span className="big">{f.name}</span>
+							<span className="small">({f.variants.length})</span>
+						</Link>
+					</p>
+				)}
+			</Route>
 		));
 
 		if (subUsersProjects.length > 9) {
@@ -45,7 +48,7 @@ export class LibrarySidebarLeft extends React.Component {
 			subUsersProjects = subUsersProjects.slice(0, 9);
 			subUsersProjects.push(
 				<p className="sidebar-left-project">
-					<Link to="/library/home?mode=team">
+					<Link to="/library?mode=team">
 						And {initialsubUsersProjectsLength - 9} more...
 					</Link>
 				</p>,
@@ -53,11 +56,9 @@ export class LibrarySidebarLeft extends React.Component {
 		}
 
 		const isSubUserActive
-			= (this.props.location.pathname === '/library/home'
-				&& this.props.location.query.mode
-				&& this.props.location.query.mode === 'team')
-			|| (this.props.routeParams
-				&& subUserLibrary.find(e => e.id === this.props.routeParams.projectID));
+			= (this.props.location.pathname === '/library'
+				&& query.get('mode') === 'team')
+			|| (subUserLibrary.some(e => e.id === this.props.match.params.projectID));
 
 		let userProjects = [];
 
@@ -86,19 +87,20 @@ export class LibrarySidebarLeft extends React.Component {
 				)
 				.forEach((family) => {
 					userProjects.push(
-						<p
-							className={`sidebar-left-project ${
-								this.props.routeParams
-								&& family.id === this.props.routeParams.projectID
-									? 'active'
-									: ''
-							}`}
-						>
-							<Link to={`/library/project/${family.id}`}>
-								<span className="big">{family.name}</span>
-								<span className="small">({family.variants.length})</span>
-							</Link>
-						</p>,
+						<Route path={`/library/project/${family.id}`}>
+							{({match}) => (
+								<p
+									className={`sidebar-left-project ${
+										match ? 'active' : ''
+									}`}
+								>
+									<Link to={`/library/project/${family.id}`}>
+										<span className="big">{family.name}</span>
+										<span className="small">({family.variants.length})</span>
+									</Link>
+								</p>
+							)}
+						</Route>,
 					);
 				});
 
@@ -116,13 +118,11 @@ export class LibrarySidebarLeft extends React.Component {
 		}
 
 		const isUserProjectActive
-			= (this.props.location.pathname === '/library/home'
-				&& this.props.location.query.mode
-				&& this.props.location.query.mode === 'personal')
-			|| (this.props.routeParams
-				&& this.props.families
-				&& this.props.families.find(
-					e => e.id === this.props.routeParams.projectID,
+			= (this.props.location.pathname === '/library'
+				&& query.get('mode') === 'personal')
+			|| (this.props.families
+				&& this.props.families.some(
+					e => matchPath(`/library/project/${e.id}`),
 				));
 
 		let userFavourites = [];
@@ -137,28 +137,28 @@ export class LibrarySidebarLeft extends React.Component {
 				.forEach((abstractedFont) => {
 					if (abstractedFont.type !== 'Family' || abstractedFont.family) {
 						userFavourites.push(
-							<p
-								className={`sidebar-left-project ${
-									this.props.routeParams
-									&& abstractedFont.type === 'Family'
-									&& abstractedFont.family.id === this.props.routeParams.projectID
-										? 'active'
-										: ''
-								}`}
-							>
-								{abstractedFont.type === 'Family' ? (
-									<Link to={`/library/project/${abstractedFont.family.id}`}>
-										<span className="big">{abstractedFont.name}</span>{' '}
-										<span className="small">
-											({abstractedFont.family.variants.length})
-										</span>
-									</Link>
-								) : (
-									<Link to="/library/home?mode=favorites">
-										<span>{abstractedFont.name}</span>{' '}
-									</Link>
+							<Route path={`/library/project/${abstractedFont.family.id}`}>
+								{({match}) => (
+									<p
+										className={`sidebar-left-project ${
+											abstractedFont.type === 'Family' && match ? 'active' : ''
+										}`}
+									>
+										{abstractedFont.type === 'Family' ? (
+											<Link to={`/library/project/${abstractedFont.family.id}`}>
+												<span className="big">{abstractedFont.name}</span>{' '}
+												<span className="small">
+													({abstractedFont.family.variants.length})
+												</span>
+											</Link>
+										) : (
+											<Link to="/library?mode=favorites">
+												<span>{abstractedFont.name}</span>{' '}
+											</Link>
+										)}
+									</p>
 								)}
-							</p>,
+							</Route>,
 						);
 					}
 				});
@@ -169,7 +169,7 @@ export class LibrarySidebarLeft extends React.Component {
 			userFavourites = userFavourites.slice(0, 9);
 			userFavourites.push(
 				<p className="sidebar-left-project">
-					<Link to="/library/home?mode=favorites">
+					<Link to="/library?mode=favorites">
 						And {initialuserFavouritesLength - 9} more...
 					</Link>
 				</p>,
@@ -177,16 +177,14 @@ export class LibrarySidebarLeft extends React.Component {
 		}
 
 		const isUserFavouritesActive
-			= (this.props.location.pathname === '/library/home'
-				&& this.props.location.query.mode
-				&& this.props.location.query.mode === 'favorites')
-			|| (this.props.routeParams
-				&& this.props.favourites
-				&& this.props.favourites.find(
+			= (this.props.location.pathname === '/library'
+				&& query.get('mode') === 'favorites')
+			|| (this.props.favourites
+				&& this.props.favourites.some(
 					e =>
 						e.type === 'Family'
 						&& e.family
-						&& e.family.id === this.props.routeParams.projectID,
+						&& matchPath(`/library/project/${e.family.id}`),
 				));
 
 		return (
@@ -207,7 +205,7 @@ export class LibrarySidebarLeft extends React.Component {
 						dark
 						big
 						onClick={() => {
-							this.props.router.push('/library/home');
+							this.props.history.push('/library/home');
 						}}
 					/>
 				)}
@@ -216,12 +214,10 @@ export class LibrarySidebarLeft extends React.Component {
 						<div className="library-links">
 							<div>
 								<Link
-									to="/library/home"
+									to="/library"
 									className={`library-link ${
-										this.props.location.pathname === '/library/home'
-										&& !this.props.location.query.mode
-											? 'active'
-											: ''
+										this.props.location.pathname === '/library'
+										&& !query.has('mode') ? 'active' : ''
 									}`}
 								>
 									<span className="library-link-arrow hidden">▶</span>All
@@ -269,7 +265,7 @@ export class LibrarySidebarLeft extends React.Component {
 										>
 												▶
 										</span>{' '}
-										<Link to="/library/home?mode=team">Team library</Link>
+										<Link to="/library?mode=team">Team library</Link>
 									</p>
 									{this.state.isTeamOpened && subUsersProjects}
 								</div>
@@ -295,7 +291,7 @@ export class LibrarySidebarLeft extends React.Component {
 									>
 										▶
 									</span>{' '}
-									<Link to="/library/home?mode=favorites">Favorites</Link>
+									<Link to="/library?mode=favorites">Favorites</Link>
 								</p>
 								{this.state.isFavoritesOpened && userFavourites}
 							</div>
@@ -332,6 +328,8 @@ export class LibrarySidebarLeft extends React.Component {
 		);
 	}
 }
+
+export const LibrarySidebarLeft = withRouter(LibrarySidebarLeftRaw);
 
 export class LibrarySidebarRight extends React.Component {
 	constructor(props) {

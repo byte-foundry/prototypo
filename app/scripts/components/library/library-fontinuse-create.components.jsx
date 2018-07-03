@@ -311,7 +311,7 @@ class LibraryFontInUseCreate extends React.Component {
 					this.state.fontInUseMetadata.images,
 				)
 				.then(() => {
-					this.props.router.push('/library/fontinuse');
+					this.props.history.push('/library/fontinuse');
 					this.setState({
 						loading: false,
 					});
@@ -338,7 +338,7 @@ class LibraryFontInUseCreate extends React.Component {
 					this.state.fontInUseMetadata.images,
 				)
 				.then(() => {
-					this.props.router.push('/library/fontinuse');
+					this.props.history.push('/library/fontinuse');
 					this.setState({
 						loading: false,
 					});
@@ -356,7 +356,7 @@ class LibraryFontInUseCreate extends React.Component {
 					this.state.fontInUseMetadata.fonts,
 				)
 				.then(() => {
-					this.props.router.push('/library/fontinuse');
+					this.props.history.push('/library/fontinuse');
 					this.setState({
 						loading: false,
 					});

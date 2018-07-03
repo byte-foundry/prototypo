@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 
 import LocalClient from '../../stores/local-client.stores.jsx';
 import Log from '../../services/log.services.js';

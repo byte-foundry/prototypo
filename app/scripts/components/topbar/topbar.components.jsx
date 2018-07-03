@@ -5,6 +5,7 @@ import _transform from 'lodash/transform';
 import _cloneDeep from 'lodash/cloneDeep';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {withRouter} from 'react-router';
 import {graphql, gql, compose} from 'react-apollo';
 import Lifespan from 'lifespan';
 
@@ -57,7 +58,6 @@ class Topbar extends React.Component {
 		this.exportMergedOTF = this.exportMergedOTF.bind(this);
 		this.exportFamily = this.exportFamily.bind(this);
 		this.individualize = this.individualize.bind(this);
-		this.setAccountRoute = this.setAccountRoute.bind(this);
 		this.goToSubscribe = this.goToSubscribe.bind(this);
 		this.resetFileTutorial = this.resetFileTutorial.bind(this);
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
@@ -248,7 +248,7 @@ class Topbar extends React.Component {
 	}
 
 	newProject() {
-		this.props.router.push('/library/create');
+		this.props.history.push('/library/create');
 	}
 
 	startTuto() {
@@ -274,9 +274,6 @@ class Topbar extends React.Component {
 	goToSubscribe() {
 		window.Intercom('trackEvent', 'clickTakeFullAdvantageOfPrototypo');
 		Log.ui('GoPro.open');
-		/* this.context.router.push({
-			pathname: '/account/subscribe',
-		}); */
 		this.client.dispatchAction('/store-value', {
 			openGoProModal: true,
 			goProModalBilling: 'annually',
@@ -314,10 +311,8 @@ class Topbar extends React.Component {
 		}
 	}
 
-	setAccountRoute() {}
-
 	showAcademy() {
-		this.context.router.push('/academy');
+		this.props.history.push('/academy');
 	}
 
 	clearAcademyText() {
@@ -403,7 +398,9 @@ class Topbar extends React.Component {
 			/>
 		);
 
-		const academyIcon = !academyProgress.lastCourse && (
+		const academyIcon = (!academyProgress.lastCourse
+			|| (academyProgress.lastCourse
+				&& !academyProgress[academyProgress.lastCourse])) && (
 			<TopBarMenuAcademyIcon
 				setText={this.setAcademyText}
 				clearText={this.clearAcademyText}
@@ -696,10 +693,6 @@ Topbar.propTypes = {
 	}),
 };
 
-Topbar.contextTypes = {
-	router: PropTypes.object.isRequired,
-};
-
 // this should later wrap an TopBarAcademy
 // instead of being on this component
 const getAcademyValuesQuery = gql`
@@ -762,4 +755,4 @@ export default compose(
 			return {refetch: data.refetch};
 		},
 	}),
-)(withCountry(Topbar));
+)(withCountry(withRouter(Topbar)));

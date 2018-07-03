@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 import AccountValidationButton from './shared/account-validation-button.components.jsx';
 import InputWithLabel from './shared/input-with-label.components.jsx';
@@ -31,26 +31,28 @@ class ResetPassword extends React.PureComponent {
 		}
 
 		if (e.target.password.value.length < 8) {
-			return this.setState({error: 'Password is too short'});
+			this.setState({error: 'Password is too short'});
+			return;
 		}
 
 		this.setState({loading: true});
 
-		const {location, router} = this.props;
+		const {location, history} = this.props;
+		const query = new URLSearchParams(location.search);
 
 		try {
 			await HoodieApi.resetPassword(
-				location.query.id.replace(/ /g, '+'), // avoid blank
-				location.query.resetToken,
+				query.get('id').replace(/ /g, '+'), // avoid blank
+				query.get('resetToken'),
 				e.target.password.value,
 			);
 
 			this.setState({loading: false});
 
-			router.replace('/signin/reset?success');
+			history.replace('/signin/reset?success');
 		}
 		catch (err) {
-			trackJs.track(err);
+			window.trackJs.track(err);
 			this.setState({
 				fetchError: err.message,
 				loading: false,
@@ -67,46 +69,49 @@ class ResetPassword extends React.PureComponent {
 			form['password-check'].value
 			&& form.password.value !== form['password-check'].value
 		) {
-			// eslint-disable-line
 			this.setState({error: 'The fields do not match'});
 		}
 	}
 
 	redirectToDashboard() {
-		this.props.router.push('/dashboard');
+		this.props.history.push('/dashboard');
 	}
 
 	redirectToReset() {
-		this.props.router.push('/signin/forgotten');
+		this.props.history.push('/signin/forgotten');
 	}
 
 	componentDidMount() {
-		const {location} = this.props;
-		const {success, id, resetToken} = location.query;
+		const query = new URLSearchParams(this.props.location.search);
 
-		// history parses query and replaces + with spaces
-		const idWithPlus = id.replace(/ /g, '+');
-
-		if (success) {
+		if (query.has('success')) {
 			return;
 		}
 
-		if (id && resetToken) {
-			return this.checkResetToken(idWithPlus, resetToken);
+		if (query.has('id') && query.has('resetToken')) {
+			// parsed query replaces + with spaces
+			const idWithPlus = query.get('id').replace(/ /g, '+');
+
+			this.checkResetToken(idWithPlus, query.get('resetToken'));
+			return;
 		}
 
 		this.setState({isTokenValid: false});
 	}
 
 	componentWillReceiveProps({location}) {
-		const {success, id, resetToken} = location.query;
+		const query = new URLSearchParams(location.search);
 
-		if (success) {
+		if (query.has('success')) {
 			return;
 		}
 
-		if (id && resetToken) {
-			return this.checkResetToken(id, resetToken);
+		if (query.has('id') && query.has('resetToken')) {
+			// history parses query and replaces + with spaces
+			const idWithPlus = query.get('id').replace(/ /g, '+');
+
+			this.checkResetToken(idWithPlus, query.get('resetToken'));
+			return;
 		}
 
 		this.setState({isTokenValid: false});
@@ -133,21 +138,23 @@ class ResetPassword extends React.PureComponent {
 
 		if (query.has('success')) {
 			return (
-				<div className="forgotten-password sign-in sign-base">
-					<div className="account-dashboard-icon" />
-					<div className="account-header">
-						<h1 className="account-title">Reset my password</h1>
-					</div>
-					<div className="account-dashboard-container">
-						<div className="sign-in-form">
-							<p>
-								Your password has been successfully resetted. You can now go the
-								app!
-							</p>
-							<AccountValidationButton
-								click={this.redirectToDashboard}
-								label="Go to the app"
-							/>
+				<div className="account-app">
+					<div className="forgotten-password sign-in sign-base">
+						<div className="account-dashboard-icon" />
+						<div className="account-header">
+							<h1 className="account-title">Reset my password</h1>
+						</div>
+						<div className="account-dashboard-container">
+							<div className="sign-in-form">
+								<p>
+									Your password has been successfully resetted. You can now go
+									the app!
+								</p>
+								<AccountValidationButton
+									click={this.redirectToDashboard}
+									label="Go to the app"
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -156,21 +163,23 @@ class ResetPassword extends React.PureComponent {
 
 		if (!isTokenValid && !loadingCheck) {
 			return (
-				<div className="forgotten-password sign-in sign-base">
-					<div className="account-dashboard-icon" />
-					<div className="account-header">
-						<h1 className="account-title">Reset my password</h1>
-					</div>
-					<div className="account-dashboard-container">
-						<div className="sign-in-form">
-							<p>
-								It seems the link you clicked on is not valid anymore! Try
-								requesting a new password.
-							</p>
-							<AccountValidationButton
-								click={this.redirectToReset}
-								label="Reset my password"
-							/>
+				<div className="account-app">
+					<div className="forgotten-password sign-in sign-base">
+						<div className="account-dashboard-icon" />
+						<div className="account-header">
+							<h1 className="account-title">Reset my password</h1>
+						</div>
+						<div className="account-dashboard-container">
+							<div className="sign-in-form">
+								<p>
+									It seems the link you clicked on is not valid anymore! Try
+									requesting a new password.
+								</p>
+								<AccountValidationButton
+									click={this.redirectToReset}
+									label="Reset my password"
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -178,48 +187,50 @@ class ResetPassword extends React.PureComponent {
 		}
 
 		return (
-			<div className="forgotten-password sign-in sign-base">
-				<div className="account-dashboard-icon" />
-				<div className="account-header">
-					<h1 className="account-title">Reset my password</h1>
-				</div>
-				<div className="account-dashboard-container">
-					<form
-						className="sign-in-form"
-						onSubmit={this.resetPassword}
-						onChange={this.handleForm}
-					>
-						<p className="forgotten-password-text">
-							Please enter a new password:{' '}
-							<span style={{fontSize: '8px'}}>
-								(and please, don't forget it this time!)
-							</span>
-						</p>
-						<InputWithLabel
-							label="Password"
-							info="(at least 8 character long)"
-							placeholder="Password"
-							error={!!this.state.error}
-							name="password"
-							type="password"
-							required
-						/>
-						<InputWithLabel
-							label="Confirm password"
-							placeholder="Password"
-							error={!!this.state.error}
-							name="password-check"
-							type="password"
-							required
-						/>
-						{error
-							|| (fetchError && <WarningMessage text={error || fetchError} />)}
-						<AccountValidationButton
-							loading={loading}
-							label="Reset Password"
-							disabled={!!this.state.error}
-						/>
-					</form>
+			<div className="account-app">
+				<div className="forgotten-password sign-in sign-base">
+					<div className="account-dashboard-icon" />
+					<div className="account-header">
+						<h1 className="account-title">Reset my password</h1>
+					</div>
+					<div className="account-dashboard-container">
+						<form
+							className="sign-in-form"
+							onSubmit={this.resetPassword}
+							onChange={this.handleForm}
+						>
+							<p className="forgotten-password-text">
+								Please enter a new password:{' '}
+								<span style={{fontSize: '8px'}}>
+									(and please, don't forget it this time!)
+								</span>
+							</p>
+							<InputWithLabel
+								label="Password"
+								info="(at least 8 character long)"
+								placeholder="Password"
+								error={!!this.state.error}
+								name="password"
+								type="password"
+								required
+							/>
+							<InputWithLabel
+								label="Confirm password"
+								placeholder="Password"
+								error={!!this.state.error}
+								name="password-check"
+								type="password"
+								required
+							/>
+							{error
+								|| (fetchError && <WarningMessage text={error || fetchError} />)}
+							<AccountValidationButton
+								loading={loading}
+								label="Reset Password"
+								disabled={!!this.state.error}
+							/>
+						</form>
+					</div>
 				</div>
 			</div>
 		);
@@ -228,7 +239,7 @@ class ResetPassword extends React.PureComponent {
 
 ResetPassword.propTypes = {
 	location: PropTypes.object.isRequired,
-	router: PropTypes.object.isRequired,
+	history: PropTypes.object.isRequired,
 };
 
 export default ResetPassword;

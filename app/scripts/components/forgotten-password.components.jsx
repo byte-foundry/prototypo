@@ -1,5 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import {withRouter} from 'react-router';
 
 import HoodieApi from '../services/hoodie.services.js';
 import WarningMessage from './warning-message.components.jsx';
@@ -45,7 +46,7 @@ class ForgottenPassword extends React.PureComponent {
 
 			this.setState({loading: false});
 
-			this.props.router.push('/signin/forgotten?success');
+			this.props.history.push('/signin/forgotten?success');
 		}
 		catch (err) {
 			trackJs.track(err);
@@ -57,7 +58,7 @@ class ForgottenPassword extends React.PureComponent {
 	}
 
 	redirectToSignin() {
-		this.props.router.push('/signin');
+		this.props.history.push('/signin');
 	}
 
 	renderForm() {
@@ -116,23 +117,25 @@ class ForgottenPassword extends React.PureComponent {
 
 	render() {
 		return (
-			<div className="forgotten-password sign-in sign-base">
-				<div className="account-dashboard-icon" />
-				<div className="account-header">
-					<h1 className="account-title">Forgot your password?</h1>
+			<div className="account-app">
+				<div className="forgotten-password sign-in sign-base">
+					<div className="account-dashboard-icon" />
+					<div className="account-header">
+						<h1 className="account-title">Forgot your password?</h1>
+					</div>
+					<h1 className="account-dashboard-page-title">
+						Don't worry,<br />we've got your back.
+					</h1>
+					<div className="account-dashboard-container">{this.renderForm()}</div>
 				</div>
-				<h1 className="account-dashboard-page-title">
-					Don't worry,<br />we've got your back.
-				</h1>
-				<div className="account-dashboard-container">{this.renderForm()}</div>
 			</div>
 		);
 	}
 }
 
 ForgottenPassword.propTypes = {
-	router: PropTypes.object.isRequired,
+	history: PropTypes.object.isRequired,
 	location: PropTypes.object.isRequired,
 };
 
-export default ForgottenPassword;
+export default withRouter(ForgottenPassword);

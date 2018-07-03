@@ -1,5 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
+
 import {LibrarySidebarRight} from './library-sidebars.components';
 import LibraryButton from './library-button.components';
 

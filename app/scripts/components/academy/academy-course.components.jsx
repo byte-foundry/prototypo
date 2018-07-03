@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Link, browserHistory} from 'react-router';
-import TutorialContent from 'tutorial-content';
+import {NavLink, Link, Redirect} from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import {findDOMNode} from 'react-dom';
 import InlineSVG from 'svg-inline-react';
-import Button from '../shared/new-button.components';
 import ScrollArea from 'react-scrollbar/dist/no-css';
+
+import Button from '../shared/new-button.components';
 
 class AcademyCourse extends React.PureComponent {
 	constructor(props) {
@@ -18,7 +18,6 @@ class AcademyCourse extends React.PureComponent {
 			scrollPercent: 0,
 		};
 
-		this.tutorials = new TutorialContent();
 		this.headerRenderer = this.headerRenderer.bind(this);
 		this.imgRenderer = this.imgRenderer.bind(this);
 		this.linkRenderer = this.linkRenderer.bind(this);
@@ -45,11 +44,11 @@ class AcademyCourse extends React.PureComponent {
 		if (newProps.params.courseSlug !== this.courseSlug) {
 			window.removeEventListener('scroll', this.handleScroll, true);
 			this.loadCourse(newProps.params.courseSlug);
-			this.state = {
+			this.setState({
 				stickedIndex: -1,
 				headers: [],
 				scrollPercent: 0,
-			};
+			});
 		}
 	}
 
@@ -72,13 +71,12 @@ class AcademyCourse extends React.PureComponent {
 
 	loadCourse(slug) {
 		this.courseSlug = slug;
-		this.course = this.tutorials.content.find(
+		this.course = this.props.tutorials.content.find(
 			tutorial => tutorial.slug === this.courseSlug,
 		);
 
 		if (!this.course) {
-			// invalid courseSlug supplied, redirect.
-			browserHistory.push('/#/academy/home');
+			// invalid courseSlug supplied, ignoring, will be redirected
 			return;
 		}
 		window.Intercom('trackEvent', 'opened-academy-course', {
@@ -107,13 +105,12 @@ class AcademyCourse extends React.PureComponent {
 
 	bindData() {
 		document.getElementsByClassName('academy-app')[0].scrollTop = 0;
-		const course = this.tutorials.content.find(
+		const course = this.props.tutorials.content.find(
 			tutorial => tutorial.slug === this.courseSlug,
 		);
 
 		if (!course) {
-			// invalid courseSlug supplied, redirect.
-			browserHistory.push('/#/academy/home');
+			// invalid courseSlug supplied, ignoring, will be redirected.
 			return false;
 		}
 		const parts = course.content.split(/[^\#]#{2} +/g);
@@ -410,8 +407,8 @@ class AcademyCourse extends React.PureComponent {
 	}
 
 	getNextCourse() {
-		return this.tutorials.content[
-			this.tutorials.content.findIndex(
+		return this.props.tutorials.content[
+			this.props.tutorials.content.findIndex(
 				tutorial => tutorial.slug === this.courseSlug,
 			) + 1
 		];
@@ -424,15 +421,10 @@ class AcademyCourse extends React.PureComponent {
 			Link: this.linkRenderer,
 			HtmlInline: this.htmlRenderer,
 		};
-		const course = this.tutorials.content.find(
+		const course = this.props.tutorials.content.find(
 			tutorial => tutorial.slug === this.courseSlug,
 		);
 
-		if (!course) {
-			// invalid courseSlug supplied, redirect.
-			browserHistory.push('/#/academy/home');
-			return false;
-		}
 		const parts = course.content.split(/[^\#]#{2} +/g);
 		const partsName = parts.map(part => part.split(/\r\n|\r|\n/g)[0]);
 
@@ -497,11 +489,11 @@ class AcademyCourse extends React.PureComponent {
 						this.courseListDom = courseListDom;
 					}}
 				>
-					<Link className="academy-sidebar-menu-item" to="/academy/home">
+					<Link className="academy-sidebar-menu-item" to="/academy">
 						<span className="academy-sidebar-menu-item-home-icon" />
 						Academy homepage
 					</Link>
-					{this.tutorials.content
+					{this.props.tutorials.content
 						.sort((a, b) => {
 							const dateA = new Date(a.date).getTime();
 							const dateB = new Date(b.date).getTime();
@@ -509,11 +501,10 @@ class AcademyCourse extends React.PureComponent {
 							return dateA > dateB ? 1 : -1;
 						})
 						.map(tutorial => (
-							<Link
+							<NavLink
 								key={tutorial.slug}
-								className={`academy-sidebar-menu-item ${
-									tutorial.slug === this.courseSlug ? 'is-active' : ''
-								}`}
+								activeClassName="is-active"
+								className="academy-sidebar-menu-item"
 								to={`/academy/course/${tutorial.slug}`}
 							>
 								<span
@@ -522,7 +513,7 @@ class AcademyCourse extends React.PureComponent {
 									} ${tutorial.slug === this.courseSlug ? 'is-active' : ''}`}
 								/>
 								{tutorial.title}
-							</Link>
+							</NavLink>
 						))}
 				</div>
 			</ScrollArea>
@@ -559,7 +550,7 @@ class AcademyCourse extends React.PureComponent {
 							to={
 								this.getNextCourse()
 									? `/academy/course/${this.getNextCourse().slug}`
-									: '/academy/home'
+									: '/academy'
 							}
 						>
 							<div className="academy-button">
@@ -630,7 +621,6 @@ AcademyCourse.propTypes = {
 	academyProgress: PropTypes.shape({
 		lastCourse: PropTypes.string,
 	}),
-	markPartAsRead: PropTypes.func,
 	setCourseCurrentlyReading: PropTypes.func,
 	saveCourseProgress: PropTypes.func,
 };

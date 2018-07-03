@@ -1,5 +1,4 @@
 /* global trackJs, _ */
-import queryString from 'query-string';
 import {gql} from 'react-apollo';
 
 import apolloClient from './graphcool.services';
@@ -234,7 +233,7 @@ export default class HoodieApi {
 	}
 
 	static getUpcomingInvoice(options) {
-		const query = queryString.stringify({
+		const query = new URLSearchParams({
 			...options,
 			subscriptionId: HoodieApi.instance.subscriptionId,
 			customer: HoodieApi.instance.customerId,

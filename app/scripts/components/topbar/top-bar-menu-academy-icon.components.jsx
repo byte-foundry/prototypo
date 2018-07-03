@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 
 class TopBarMenuAcademyIcon extends React.PureComponent {
 	static getHeader() {
@@ -12,7 +12,7 @@ class TopBarMenuAcademyIcon extends React.PureComponent {
 
 		return (
 			<div className="top-bar-menu-item-academy">
-				<Link to="/academy/home">
+				<Link to="/academy">
 					<img
 						className="top-bar-menu-item-academy-img is-alone"
 						src={icon}
