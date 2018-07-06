@@ -58,6 +58,80 @@ class LibraryCreate extends React.Component {
 		})
 	}
 
+	getTemplateProps(template, templateData) {
+		return () => {
+			return {
+				key: template.templateName,
+				template: template,
+				glyphs: templateData.glyphs,
+				values: templateData.initValues,
+				export: this.props.export,
+				createProject: this.createProject,
+				click: this.selectFont,
+				isOpen: this.state.selectedFont === template.templateName,
+				familyId: template.templateName,
+				fontName: `template${template.templateName
+					.split('.')
+					.join('')}`,
+				values: templateData.initValues,
+				templateName: template.templateName,
+			};
+		};
+	}
+
+	getPresetProps(preset, templateInfo, templateData, lmColor, hmColor) {
+		return () => {
+			return {
+				key: preset.id,
+				preset: preset,
+				template: templateInfo,
+				user: preset.ownerInitials,
+				name: preset.variant.family.name,
+				createProject: this.createProject,
+				background:
+					preset.ownerInitials === 'LM'
+						? lmColor
+						: hmColor
+				,
+				glyphs: templateData.glyphs,
+				values: preset.baseValues,
+				export: this.props.export,
+				click: this.selectFont,
+				isOpen: this.state.selectedFont === preset.id,
+				familyId: preset.id,
+				fontName: `preset${preset.id}`,
+				templateName: templateInfo.templateName,
+			}
+		};
+	}
+
+	getFamilyProps(family, templateInfo, templateData, variantToLoad, userColor) {
+		return () => {
+			return {
+				key: family.id,
+				family: family,
+				template: templateInfo,
+				user: this.props.user,
+				background: userColor,
+				router: this.props.router,
+				variantToLoad: variantToLoad,
+				open: this.props.open,
+				export: this.props.export,
+				glyphs: templateData.glyphs,
+				values: {
+					...templateData.initValues,
+					...variantToLoad.values,
+				},
+				variantName: variantToLoad.name.toLowerCase(),
+				click: this.selectFont,
+				isOpen: this.state.selectedFont === family.id,
+				familyId: family.id,
+				templateName: templateInfo.templateName,
+				fontName: `user${family.id}`,
+			};
+		};
+	}
+
 	filterFonts(activeFilters) {
 		const {baseFontData} = this.state;
 		let fontsToDisplay = baseFontData;
@@ -97,14 +171,6 @@ class LibraryCreate extends React.Component {
 					e => e.name === template.templateName,
 				);
 
-				fontsToGenerate.push({
-					name: `template${template.templateName
-						.split('.')
-						.join('')}`,
-					template: template.templateName,
-					subset: 'Hamburgefonstiv 123',
-					values: templateData.initValues,
-				});
 				fontData.push({
 					template: template.templateName,
 					templateName: template.name,
@@ -113,15 +179,8 @@ class LibraryCreate extends React.Component {
 					designer: template.provider,
 					id: template.id,
 					type: 'Template',
-					elem: (
-						<TemplateItem
-							key={template.templateName}
-							template={template}
-							glyphs={templateData.glyphs}
-							values={templateData.initValues}
-							createProject={this.createProject}
-						/>
-					),
+					props: this.getTemplateProps(template, templateData),
+					elem: TemplateItem,
 				});
 			});
 		presets
@@ -160,23 +219,8 @@ class LibraryCreate extends React.Component {
 								: '',
 						tags: [templateInfo.provider, 'preset'],
 						id: preset.id,
-						elem: (
-							<PresetItem
-								key={preset.id}
-								preset={preset}
-								template={templateInfo}
-								user={preset.ownerInitials}
-								name={preset.variant.family.name}
-								background={
-									preset.ownerInitials === 'LM'
-										? lmColor
-										: hmColor
-								}
-								glyphs={templateData.glyphs}
-								values={preset.baseValues}
-								createProject={this.createProject}
-							/>
-						),
+						props: this.getPresetProps(preset, templateInfo, templateData, lmColor, hmColor),
+						elem: PresetItem,
 					});
 				});
 		families.forEach((family) => {
@@ -215,28 +259,11 @@ class LibraryCreate extends React.Component {
 					lastName: this.props.lastName,
 				},
 				background: userColor,
-				elem: (
-					<FamilyItem
-						key={family.id}
-						family={family}
-						template={templateInfo}
-						user={this.props.user}
-						background={userColor}
-						router={this.props.router}
-						variantToLoad={variantToLoad}
-						glyphs={templateData.glyphs}
-						createProject={this.createProject}
-						values={{
-							...templateData.initValues,
-							...variantToLoad.values,
-						}}
-						variantName={variantToLoad.name.toLowerCase()}
-					/>
-				),
+				props: this.getFamilyProps(family, templateInfo, templateData, variantToLoad, userColor),
+				elem: FamilyItem,
 			});
 		});
 		this.setState({
-			fontsToGenerate,
 			baseFontData: fontData,
 			fontsToDisplay: fontData,
 			isBaseValueLoaded: true,
@@ -255,7 +282,6 @@ class LibraryCreate extends React.Component {
 				<div className="library-list library-list--create">
 					<h1 className="library-list-title">Choose a template to start</h1>
 					<FamilyList
-						fontsToGenerate={this.state.fontsToGenerate}
 						fontsToDisplay={this.state.fontsToDisplay}
 					/>
 				</div>
@@ -301,8 +327,7 @@ class FamilyList extends React.Component {
 			>
 				<div className="library-family-list">
 					{this.props.fontsToDisplay
-						&& this.props.fontsToDisplay.map(font => font.elem)}
-					<FontUpdater extraFonts={this.props.fontsToGenerate} />
+							&& this.props.fontsToDisplay.map(font => React.createElement(font.elem, {...font.props()}))}
 				</div>
 			</ScrollArea>
 		);
@@ -335,6 +360,13 @@ export class TemplateItem extends React.Component {
 					className={`provider provider-${
 						this.props.template.provider
 					}`}
+				/>
+				<FontUpdater
+					name={this.props.fontName}
+					values={this.props.values}
+					template={this.props.templateName}
+					subset="Hamburgefonstiv 123"
+					glyph="0"
 				/>
 			</div>
 		);
@@ -370,6 +402,13 @@ export class FamilyItem extends React.Component {
 					{this.props.user.lastName
 						&& this.props.user.lastName.charAt(0)}
 				</div>
+				<FontUpdater
+					name={this.props.fontName}
+					values={this.props.values}
+					template={this.props.templateName}
+					subset="Hamburgefonstiv 123"
+					glyph="0"
+				/>
 			</div>
 		);
 	}
@@ -401,6 +440,13 @@ export class PresetItem extends React.Component {
 				>
 					{this.props.user}
 				</div>
+				<FontUpdater
+					name={this.props.fontName}
+					values={this.props.values}
+					template={this.props.templateName}
+					subset="Hamburgefonstiv 123"
+					glyph="0"
+				/>
 			</div>
 		);
 	}
