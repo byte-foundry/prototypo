@@ -15,7 +15,7 @@ export default class GlyphList extends React.PureComponent {
 		super(props);
 
 		this.state = {
-			manualChanges: {},
+			postDepManualChanges: {},
 		};
 	}
 
@@ -27,7 +27,8 @@ export default class GlyphList extends React.PureComponent {
 			.getStore('/undoableStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					manualChanges: head.toJS().d.controlsValues.manualChanges,
+					postDepManualChanges: head.toJS().d.controlsValues
+						.postDepManualChanges,
 				});
 			})
 			.onDelete(() => {
@@ -40,8 +41,8 @@ export default class GlyphList extends React.PureComponent {
 	}
 
 	isManualEdited(glyph) {
-		if (this.state.manualChanges) {
-			const manualChangesGlyph = this.state.manualChanges[glyph[0].name];
+		if (this.state.postDepManualChanges) {
+			const manualChangesGlyph = this.state.postDepManualChanges[glyph[0].name];
 
 			return (
 				manualChangesGlyph && Object.keys(manualChangesGlyph.cursors).length > 0
