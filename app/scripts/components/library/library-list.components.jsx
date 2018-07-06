@@ -1,4 +1,5 @@
 import React from 'react';
+import _uniq from 'lodash/uniq';
 import pleaseWait from 'please-wait';
 import {Link} from 'react-router';
 import PropTypes from 'prop-types';
@@ -87,6 +88,11 @@ class LibraryList extends React.Component {
 				click: this.selectFont,
 				isOpen: this.state.selectedFont === template.templateName,
 				familyId: template.templateName,
+				fontName: `template${template.templateName
+					.split('.')
+					.join('')}`,
+				values: templateData.initValues,
+				templateName: template.templateName,
 			};
 		};
 	}
@@ -111,6 +117,8 @@ class LibraryList extends React.Component {
 				click: this.selectFont,
 				isOpen: this.state.selectedFont === preset.id,
 				familyId: preset.id,
+				fontName: `preset${preset.id}`,
+				templateName: templateInfo.templateName,
 			}
 		};
 	}
@@ -136,6 +144,8 @@ class LibraryList extends React.Component {
 				click: this.selectFont,
 				isOpen: this.state.selectedFont === family.id,
 				familyId: family.id,
+				templateName: templateInfo.templateName,
+				fontName: `user${family.id}`,
 			};
 		};
 	}
@@ -154,7 +164,6 @@ class LibraryList extends React.Component {
 		const lmColor = customBadgesColor[1];
 		const hmColor = customBadgesColor[4];
 
-		const fontsToGenerate = [];
 		const fontData = [];
 
 		this.state.templateInfos
@@ -163,14 +172,6 @@ class LibraryList extends React.Component {
 					e => e.name === template.templateName,
 				);
 
-				fontsToGenerate.push({
-					name: `template${template.templateName
-						.split('.')
-						.join('')}`,
-					template: template.templateName,
-					subset: 'Hamburgefonstiv 123',
-					values: templateData.initValues,
-				});
 				fontData.push({
 					template: template.templateName,
 					templateName: template.name,
@@ -202,12 +203,6 @@ class LibraryList extends React.Component {
 						e => e.name === preset.template,
 					);
 
-					fontsToGenerate.push({
-						name: `preset${preset.id}`,
-						template: templateInfo.templateName,
-						subset: 'Hamburgefonstiv 123',
-						values: preset.baseValues,
-					});
 					fontData.push({
 						template: templateInfo.templateName,
 						templateName: templateInfo.name,
@@ -237,15 +232,6 @@ class LibraryList extends React.Component {
 					e => e.name.toLowerCase() === 'regular',
 				) || family.variants[0];
 
-			fontsToGenerate.push({
-				name: `user${family.id}`,
-				template: templateInfo.templateName,
-				subset: 'Hamburgefonstiv 123',
-				values: {
-					...templateData.initValues,
-					...variantToLoad.values,
-				},
-			});
 			fontData.push({
 				template: templateInfo.templateName,
 				templateName: templateInfo.name,
@@ -265,7 +251,6 @@ class LibraryList extends React.Component {
 			});
 		});
 		this.setState({
-			fontsToGenerate,
 			baseFontData: fontData,
 			fontsToDisplay: fontData,
 			isBaseValueLoaded: true,
@@ -292,7 +277,6 @@ class LibraryList extends React.Component {
 			<div className="library-content-wrapper">
 				<div className="library-list">
 					<FamilyList
-						fontsToGenerate={this.state.fontsToGenerate}
 						fontsToDisplay={this.state.fontsToDisplay}
 					/>
 				</div>
@@ -339,7 +323,6 @@ class FamilyList extends React.Component {
 				<div className="library-family-list">
 					{this.props.fontsToDisplay
 							&& this.props.fontsToDisplay.map(font => React.createElement(font.elem, {...font.props()}))}
-					<FontUpdater extraFonts={this.props.fontsToGenerate} />
 				</div>
 			</ScrollArea>
 		);
@@ -419,6 +402,13 @@ export class TemplateItem extends React.Component {
 					</div>
 					<input type="text" name="displayedWord" value={this.state.text} onChange={this.onTextChange}/>
 				</div>
+				<FontUpdater
+					name={this.props.fontName}
+					values={this.props.values}
+					template={this.props.templateName}
+					subset={this.state.text}
+					glyph="0"
+				/>
 			</div>
 		);
 	}
@@ -503,6 +493,13 @@ export class FamilyItem extends React.Component {
 					</div>
 					<input type="text" name="displayedWord" value="Hamburgefonstiv 123"/>
 				</div>
+				<FontUpdater
+					name={this.props.fontName}
+					values={this.props.values}
+					template={this.props.templateName}
+					subset="Hamburgefonstiv 123"
+					glyph="0"
+				/>
 			</div>
 		);
 	}
@@ -520,6 +517,9 @@ export class PresetItem extends React.Component {
 
 
 	render() {
+		const subset = _uniq('Hamburgefonstiv 123'.split('')).map(letter =>
+			letter.charCodeAt(0),
+		);
 		return (
 			<div
 				className="library-item"
@@ -572,6 +572,13 @@ export class PresetItem extends React.Component {
 					</div>
 					<input type="text" name="displayedWord" value="Hamburgefonstiv 123"/>
 				</div>
+				<FontUpdater
+					name={this.props.fontName}
+					values={this.props.values}
+					template={this.props.templateName}
+					subset="Hamburgefonstiv 123"
+					glyph="0"
+				/>
 			</div>
 		);
 	}

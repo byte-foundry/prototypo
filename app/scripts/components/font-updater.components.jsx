@@ -2,10 +2,9 @@ import _uniq from 'lodash/uniq';
 import React from 'react';
 import Lifespan from 'lifespan';
 import {graphql, gql, compose} from 'react-apollo';
+import PropTypes from 'prop-types';
 
 import FontMediator from '../prototypo.js/mediator/FontMediator';
-
-import {rawToEscapedContent} from '../helpers/input-transform.helpers';
 
 import LocalClient from '../stores/local-client.stores';
 
@@ -24,39 +23,10 @@ class FontUpdater extends React.PureComponent {
 		});
 
 		this.client
-			.getStore('/undoableStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					values: head.toJS().d.controlsValues,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client
-			.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					family: head.toJS().d.family,
-					variant: head.toJS().d.variant,
-					uiText: head.toJS().d.uiText,
-					uiWord: head.toJS().d.uiWord,
-					glyph: head.toJS().d.glyphSelected,
-					name: head.toJS().d.fontName,
-					glyphs: head.toJS().d.glyphs,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client
 			.getStore('/fontInstanceStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
 					changingFont: head.toJS().d.changingFont,
-					template: head.toJS().d.templateToLoad,
 				});
 			})
 			.onDelete(() => {
@@ -66,49 +36,30 @@ class FontUpdater extends React.PureComponent {
 
 	componentDidUpdate() {
 		if (
-			this.state.template !== undefined
-			&& this.state.name !== undefined
-			&& this.state.uiText !== undefined
-			&& this.state.uiWord !== undefined
-			&& this.state.glyph !== undefined
+			this.props.template !== undefined
+			&& this.props.name !== undefined
+			&& this.props.subset !== undefined
+			&& this.props.glyph !== undefined
 			&& !this.state.changingFont
 		) {
-			const subsetString
-				= `${this.state.uiText
-				+ rawToEscapedContent(this.state.uiWord, this.state.glyphs)
-				 }`;
-			let subset = _uniq(subsetString.split('')).map(letter =>
+			let subset = _uniq(this.props.subset.split('')).map(letter =>
 				letter.charCodeAt(0),
 			);
 
 			this.fontMediatorInstance.getFont(
-				this.state.name,
-				this.state.template,
-				{...this.state.values},
+				this.props.name,
+				this.props.template,
+				{...this.props.values},
 				subset,
-				this.state.glyph,
+				this.props.glyph,
 			);
 
-			if (this.props.extraFonts) {
-				this.props.extraFonts.forEach((extrafont) => {
-					subset = _uniq(extrafont.subset.split('')).map(letter =>
-						letter.charCodeAt(0),
-					);
-					this.fontMediatorInstance.getFont(
-						extrafont.name,
-						extrafont.template || this.state.template,
-						{...extrafont.values},
-						subset,
-						extrafont.glyph || this.state.glyph,
-					);
-				});
-			}
 		}
 
 		this.fontMediatorInstance.setupInfo({
-			family: this.state.family,
-			style: this.state.variant,
-			template: this.state.template,
+			family: this.props.family,
+			style: this.props.variant,
+			template: this.props.template,
 		});
 
 		return false;
@@ -132,14 +83,13 @@ const userProfileQuery = gql`
 `;
 
 FontUpdater.propTypes = {
-	fonts: PropTypes.arrayOf(
-		PropTypes.shape({
-			name: PropTypes.string.isRequired,
-			template: PropTypes.string.isRequired,
-			values: PropTypes.object.isRequired,
-			subset: PropTypes.arrayOf(PropTypes.number),
-		}),
-	).isRequired,
+	family: PropTypes.string,
+	variant: PropTypes.string,
+	name: PropTypes.string.isRequired,
+	template: PropTypes.string.isRequired,
+	values: PropTypes.object,
+	subset: PropTypes.string.isRequired,
+	glyph: PropTypes.string.isRequired,
 }
 
 FontUpdater.defaultProps = {
