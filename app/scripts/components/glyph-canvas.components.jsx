@@ -29,6 +29,8 @@ import {
 	distance2D,
 } from '../prototypo.js/utils/linear';
 
+import {rawToEscapedContent} from '../helpers/input-transform.helpers';
+
 import LocalClient from '../stores/local-client.stores';
 
 import FontUpdater from './font-updater.components';
@@ -450,6 +452,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				this.setState({
 					glyph: window.glyph,
 					inputGlyphInteraction: head.toJS().d.inputGlyphInteraction,
+					template: head.toJS().d.templateToLoad,
 				});
 			})
 			.onDelete(() => {
@@ -464,6 +467,13 @@ export default class GlyphCanvas extends React.PureComponent {
 					uiOutline: head.toJS().d.uiOutline,
 					uiRuler: head.toJS().d.uiRuler,
 					guides: head.toJS().d.guides,
+					family: head.toJS().d.family,
+					variant: head.toJS().d.variant,
+					uiText: head.toJS().d.uiText,
+					uiWord: head.toJS().d.uiWord,
+					glyph: head.toJS().d.glyphSelected,
+					name: head.toJS().d.fontName,
+					glyphs: head.toJS().d.glyphs,
 				});
 			})
 			.onDelete(() => {
@@ -1865,6 +1875,10 @@ export default class GlyphCanvas extends React.PureComponent {
 	}
 
 	render() {
+		const subsetString
+			= `${this.state.uiText
+			+ rawToEscapedContent(this.state.uiWord, this.state.glyphs)
+			 }`;
 		return (
 			<div className="prototypo-canvas-container">
 				<canvas
@@ -1880,7 +1894,15 @@ export default class GlyphCanvas extends React.PureComponent {
 						WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
 					}}
 				/>
-				<FontUpdater />
+				<FontUpdater
+					family={this.state.family}
+					variant={this.state.variant}
+					name={this.state.name}
+					template={this.state.template}
+					values={this.state.values}
+					subset={subsetString}
+					glyph={this.state.glyph}
+				/>
 			</div>
 		);
 	}

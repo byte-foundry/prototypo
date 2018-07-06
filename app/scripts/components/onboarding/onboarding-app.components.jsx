@@ -301,6 +301,27 @@ class OnboardingApp extends React.PureComponent {
 		const {letters} = onboardingData.steps.find(e => e.type === 'alternates');
 		const allStrings = Object.values(letters).join('');
 
+		updaters = fontsToGenerate.map((font) => {
+			return <FontUpdater
+				name={font.name}
+				subset={font.subset}
+				values={font.values}
+				template={this.state.template}
+				glyph="0"
+			/>
+		});
+
+		updaters.push(<FontUpdater
+			name='alternateBase'
+			subset={allStrings}
+			values={{
+				...values,
+				altList: {}
+			}}
+			template={this.state.template}
+			glyphs="0"
+		/>);
+
 		return (
 			<div className="onboarding-app">
 				<div className="onboarding-wrapper">
@@ -377,20 +398,7 @@ class OnboardingApp extends React.PureComponent {
 								})()}
 							</Button>
 						)}
-						<FontUpdater
-							extraFonts={[
-								...fontsToGenerate,
-								{
-									// base font without any alternates
-									name: 'alternateBase',
-									subset: allStrings,
-									values: {
-										...values,
-										altList: {},
-									},
-								},
-							]}
-						/>
+						{{updaters}}
 						{stepData.type !== 'start' && (
 							<div className="bubbles">
 								{onboardingData.steps.map((step, index) => (
