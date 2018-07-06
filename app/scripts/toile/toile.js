@@ -121,8 +121,8 @@ const componentMenuAnimationLength = 20;
 const menuMass = 0.5;
 const pixelPerMeter = 500;
 
-const nodeDrawRadius = 2;
-const nodeHotDrawRadius = 2;
+const offCurveDrawRadius = 3;
+const onCurveDrawRadius = 5;
 const nodeHotRadius = 6;
 const componentHotRadius = 50; // eslint-disable-line no-unused-vars
 
@@ -431,13 +431,8 @@ export default class Toile {
 		});
 	}
 
-	drawControlPoint(node, hotness, fillColor) {
-		this.drawCircle(
-			node,
-			hotness ? nodeHotDrawRadius : nodeDrawRadius,
-			fillColor,
-			hotness ? fillColor : transparent,
-		);
+	drawControlPoint(node, hotness, fillColor, size) {
+		this.drawCircle(node, size, fillColor, hotness ? fillColor : transparent);
 	}
 
 	drawSkeletonPoint(node, hotness, fillColor) {
@@ -500,7 +495,7 @@ export default class Toile {
 
 		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
 
-		this.drawControlPoint(node, hot, onCurveColor);
+		this.drawControlPoint(node, hot, onCurveColor, onCurveDrawRadius);
 		this.interactionList.push({
 			id,
 			type: toileType.CONTOUR_NODE,
@@ -579,6 +574,7 @@ export default class Toile {
 			node,
 			hot,
 			node.handleIn ? onCurveColor : skeletonColor,
+			onCurveDrawRadius,
 		);
 
 		if (node.handleIn || node.handleOut) {
@@ -655,7 +651,7 @@ export default class Toile {
 		const inHot = _find(hotItems, item => item.id === handleId);
 
 		this.drawLine(handleNode, node, color, color);
-		this.drawControlPoint(handleNode, inHot, color);
+		this.drawControlPoint(handleNode, inHot, color, offCurveDrawRadius);
 
 		if (handleId) {
 			this.interactionList.push({
@@ -829,7 +825,9 @@ export default class Toile {
 		});
 
 		glyph.components.forEach((component, i) => {
-			this.drawAllNodes(component, hotItems, `components.${i}.`);
+			if (component.name !== 'none') {
+				this.drawAllNodes(component, hotItems, `components.${i}.`);
+			}
 		});
 	}
 

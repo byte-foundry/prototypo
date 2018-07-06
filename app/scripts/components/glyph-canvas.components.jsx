@@ -448,6 +448,7 @@ export default class GlyphCanvas extends React.PureComponent {
 		let oldAppMode;
 		let oldAppState;
 		let oldViewMatrix;
+		let oldCanvasMode;
 		let mouseDoubleClick;
 		let pause = false;
 		let firstDraw = true;
@@ -572,11 +573,10 @@ export default class GlyphCanvas extends React.PureComponent {
 				/* eslint-disable no-bitwise, max-depth */
 				const hotItems = this.toile.getHotInteractiveItem();
 
-				let boxedItems = [];
 				let mouseMovement;
 
 				if (mouseBoxStart) {
-					boxedItems = this.toile.getBoxHotInteractiveItem(mouseBoxStart);
+					hotItems.push(...this.toile.getBoxHotInteractiveItem(mouseBoxStart));
 				}
 				const width = this.canvas.clientWidth;
 				const height = this.canvas.clientHeight;
@@ -902,8 +902,8 @@ export default class GlyphCanvas extends React.PureComponent {
 								& (appState.BOX_SELECTING | appState.NOT_SELECTING)
 							&& mouseClickRelease
 						) {
-							if (boxedItems.length > 0) {
-								selectedItems = boxedItems;
+							if (hotItems.length > 0) {
+								selectedItems = hotItems;
 								appStateValue = appState.POINTS_SELECTED;
 								mouseBoxStart = undefined;
 								globalMode = false;
@@ -1003,33 +1003,68 @@ export default class GlyphCanvas extends React.PureComponent {
 						) {
 							// TODO: shift behavior
 							if (nodes.length > 0) {
-								let validPoint = false;
+								if (
+									this.toile.keyboardDown.keyCode
+									&& this.toile.keyboardDown.special & specialKey.SHIFT
+								) {
+									nodes.forEach((node) => {
+										let toAdd = true;
+										let toRemove;
 
-								nodes.forEach((node) => {
-									validPoint = selectedItems.find(s => s.id === node.id);
-								});
+										selectedItems.forEach((item, idx) => {
+											if (node.id == item.id) {
+												toRemove = idx;
+												toAdd = false;
+											}
+										});
 
-								if (!validPoint) {
-									selectedItems = [];
-									appStateValue = appState.BOX_SELECTING;
-									mouseBoxStart = mouse.pos;
-								}
-								else {
-									appStateValue = appState.DRAGGING_POINTS;
-									selectedItems.forEach((item) => {
-										if (validPoint.id !== item.id) {
-											item.offsetVector = subtract2D(
-												item.data.center,
-												validPoint.data.center,
-											);
+										if (toAdd) {
+											selectedItems.push(node);
 										}
 										else {
-											item.offsetVector = {x: 0, y: 0};
+											selectedItems.splice(toRemove, 1);
 										}
+									});
+									appStateValue = appState.DRAGGING_POINTS;
+									selectedItems.forEach((item) => {
+										item.offsetVector = subtract2D(
+											item.data.center,
+											nodes[0].data.center,
+										);
 									});
 									mouseStart = nodes[0].data.center;
 									draggingNotStarted = true;
 									directionalNotStarted = true;
+								}
+								else {
+									let validPoint = false;
+
+									nodes.forEach((node) => {
+										validPoint = selectedItems.find(s => s.id === node.id);
+									});
+
+									if (!validPoint) {
+										selectedItems = [];
+										appStateValue = appState.BOX_SELECTING;
+										mouseBoxStart = mouse.pos;
+									}
+									else {
+										appStateValue = appState.DRAGGING_POINTS;
+										selectedItems.forEach((item) => {
+											if (validPoint.id !== item.id) {
+												item.offsetVector = subtract2D(
+													item.data.center,
+													validPoint.data.center,
+												);
+											}
+											else {
+												item.offsetVector = {x: 0, y: 0};
+											}
+										});
+										mouseStart = nodes[0].data.center;
+										draggingNotStarted = true;
+										directionalNotStarted = true;
+									}
 								}
 							}
 							else {
@@ -1082,7 +1117,12 @@ export default class GlyphCanvas extends React.PureComponent {
 						firstDraw = false;
 						this.resetView(glyph, height, width);
 					}
-					this.toile.drawGlyph(glyph, hotItems, this.state.uiOutline);
+					this.toile.drawGlyph(
+						glyph,
+						hotItems,
+						(this.state.uiOutline || appMode === canvasMode.SELECT_POINTS)
+							&& !(appStateValue === appState.PREVIEWING),
+					);
 
 					if (previewMode) {
 						this.cleanUpFrame();
@@ -1214,13 +1254,6 @@ export default class GlyphCanvas extends React.PureComponent {
 							boxStartPosInWorld,
 							'black',
 						);
-						this.toile.drawAllNodes(glyph, boxedItems);
-					}
-					if (
-						appStateValue
-						& (appState.POINTS_SELECTED | appState.DRAGGING_POINTS)
-					) {
-						this.toile.drawAllNodes(glyph, selectedItems);
 					}
 
 					if (
@@ -1327,6 +1360,21 @@ export default class GlyphCanvas extends React.PureComponent {
 							| appState.DRAGGING_POINTS
 							| appState.DRAGGING_CONTOUR)
 					) {
+						let postMousePosInWorld = mousePosInWorld;
+
+						if (directionalModifier && !directionalNotStarted) {
+							postMousePosInWorld = {
+								x:
+									directionalValue & directionalMod.X
+										? mousePosInWorld.x
+										: mouseStart.x,
+								y:
+									directionalValue & directionalMod.X
+										? mouseStart.y
+										: mousePosInWorld.y,
+							};
+						}
+
 						interactions = selectedItems.map(item => ({
 							item,
 							modData: add2D(
@@ -1503,10 +1551,6 @@ export default class GlyphCanvas extends React.PureComponent {
 
 									parallelParameters[0] = node;
 									parallelParameters[4] = [{id: parallelParameters[1]}];
-
-									this.toile.drawExpandedNode(
-										...item.data.parallelParameters,
-									);
 								}
 
 								break;
@@ -1527,24 +1571,13 @@ export default class GlyphCanvas extends React.PureComponent {
 							}
 							case toileType.CONTOUR_NODE:
 							case toileType.NODE: {
-								let posModData = modData;
+								const posModData = modData;
 
 								if (
 									directionalModifier
 										&& !directionalNotStarted
 										&& mouseMovement
 								) {
-									posModData = {
-										x:
-												directionalValue & directionalMod.X
-													? modData.x
-													: mouseStart.x,
-										y:
-												directionalValue & directionalMod.X
-													? mouseStart.y
-													: modData.y,
-									};
-
 									if (directionalValue & directionalMod.Y) {
 										this.toile.drawLine(
 											{x: posModData.x, y: 1000000},
