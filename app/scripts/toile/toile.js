@@ -468,36 +468,34 @@ export default class Toile {
 		const inHot = _find(hotItems, item => item.id === outId);
 		const outHot = _find(hotItems, item => item.id === inId);
 
-		if (hot || inHot || outHot) {
-			this.drawHandleNode({
-				node,
-				otherNode: prevNode,
-				otherDir: prevNode.dirOut,
-				handle: node.handleIn,
-				id,
-				handleId: inId,
-				opId: outId,
-				type: toileType.CONTOUR_NODE_IN,
-				hotItems,
-				color: inHandleColor,
-				componentPrefixAddress,
-				componentName,
-			}); // in
-			this.drawHandleNode({
-				node,
-				otherNode: nextNode,
-				otherDir: nextNode.dirIn,
-				handle: node.handleOut,
-				id,
-				handleId: outId,
-				opId: inId,
-				type: toileType.CONTOUR_NODE_OUT,
-				hotItems,
-				color: outHandleColor,
-				componentPrefixAddress,
-				componentName,
-			}); // out
-		}
+		this.drawHandleNode({
+			node,
+			otherNode: prevNode,
+			otherDir: prevNode.dirOut,
+			handle: node.handleIn,
+			id,
+			handleId: inId,
+			opId: outId,
+			type: toileType.CONTOUR_NODE_IN,
+			hotItems,
+			color: inHandleColor,
+			componentPrefixAddress,
+			componentName,
+		}); // in
+		this.drawHandleNode({
+			node,
+			otherNode: nextNode,
+			otherDir: nextNode.dirIn,
+			handle: node.handleOut,
+			id,
+			handleId: outId,
+			opId: inId,
+			type: toileType.CONTOUR_NODE_OUT,
+			hotItems,
+			color: outHandleColor,
+			componentPrefixAddress,
+			componentName,
+		}); // out
 
 		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
 

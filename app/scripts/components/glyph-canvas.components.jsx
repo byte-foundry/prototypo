@@ -196,15 +196,20 @@ export function onCurveModification(
 		transforms,
 		componentName,
 	} = draggedItem.data;
+
+
+	if (modToApply & onCurveModMode.WIDTH_MOD) {
+	}
+
 	const current = _get(glyph, draggedItem.id);
-	const newPosition = newPos;
-	const deltaVector = round2D(subtract2D(newPos, {x: current.xBase, y: current.yBase}));
+	const newPosition = round2D(newPos);
+	const deltaVector = round2D(subtract2D(newPos, round2D({x: current.xBase, y: current.yBase})));
 
-	const inOffest = subtract2D(current.handleIn, current);
-	const outOffset = subtract2D(current.handleOut, current);
+	const inOffest = round2D(subtract2D(current.handleIn, current));
+	const outOffset = round2D(subtract2D(current.handleOut, current));
 
-	const inNewPos = add2D(newPos, inOffest);
-	const outNewPos = add2D(newPos, outOffset);
+	const inNewPos = round2D(add2D(newPos, inOffest));
+	const outNewPos = round2D(add2D(newPos, outOffset));
 
 	const inVector = round2D(subtract2D(inNewPos, {x: current.handleIn.xBase, y: current.handleIn.yBase}));
 	const outVector = round2D(subtract2D(outNewPos, {x: current.handleOut.xBase, y: current.handleOut.yBase}));
@@ -448,7 +453,7 @@ export default class GlyphCanvas extends React.PureComponent {
 			let unparallelMod = false;
 			let unsmoothMod = false;
 			let curveMode
-				= onCurveModMode.WIDTH_MOD | onCurveModMode.ANGLE_MOD; // eslint-disable-line no-bitwise
+				= 0; // eslint-disable-line no-bitwise
 			let distrModification = false;
 			let directionalModifier = false;
 			let deleteMod = false;
@@ -519,11 +524,11 @@ export default class GlyphCanvas extends React.PureComponent {
 				}
 				else if (keyCode === 65) {
 					// eslint-disable-next-line no-bitwise
-					curveMode &= ~onCurveModMode.WIDTH_MOD;
+					curveMode |= onCurveModMode.WIDTH_MOD;
 				}
 				else if (keyCode === 87) {
 					// eslint-disable-next-line no-bitwise
-					curveMode &= ~onCurveModMode.ANGLE_MOD;
+					curveMode |= onCurveModMode.ANGLE_MOD;
 				}
 				else if (keyCode === 68) {
 					distrModification = true;
@@ -891,8 +896,17 @@ export default class GlyphCanvas extends React.PureComponent {
 						&& mouse.edge === mState.DOWN
 					) {
 						if (nodes.length > 0) {
-							selectedItems = [nodes[0]];
-							appStateValue = appState.DRAGGING_CONTOUR_POINT;
+							if (this.toile.keyboardDown.keyCode && this.toile.keyboardDown.special & specialKey.SHIFT) {
+								selectedItems.push(...nodes);
+								appStateValue = appState.DRAGGING_POINTS;
+								selectedItems.forEach((item) => {
+									item.offsetVector = subtract2D(item.data.center, nodes[0].data.center);
+								});
+							}
+							else {
+								selectedItems = [nodes[0]];
+								appStateValue = appState.DRAGGING_CONTOUR_POINT;
+							}
 							mouseStart = nodes[0].data.center;
 							draggingNotStarted = true;
 							directionalNotStarted = true;
@@ -949,6 +963,9 @@ export default class GlyphCanvas extends React.PureComponent {
 										item.offsetVector = {x: 0, y: 0};
 									}
 								});
+								mouseStart = nodes[0].data.center;
+								draggingNotStarted = true;
+								directionalNotStarted = true;
 							}
 						}
 						else {
@@ -1090,6 +1107,8 @@ export default class GlyphCanvas extends React.PureComponent {
 					appStateValue
 					& (appState.DRAGGING_CONTOUR_POINT
 						| appState.CONTOUR_POINT_SELECTED
+						| appState.DRAGGING_POINTS
+						| appState.POINTS_SELECTED
 						| appState.DRAGGING_CONTOUR
 						| appState.SKELETON_POINT_SELECTED)
 				) {

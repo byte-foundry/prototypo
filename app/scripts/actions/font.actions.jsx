@@ -552,20 +552,32 @@ export default {
 			switch (item.type) {
 			case toileType.NODE_IN:
 			case toileType.CONTOUR_NODE_IN:
-				delete postDepManualChanges[glyphOrCompName].cursors[`${parentId}.in.x`];
-				delete postDepManualChanges[glyphOrCompName].cursors[`${parentId}.in.y`];
+				delete postDepManualChanges[glyphOrCompName].cursors[`${parentId}.handleIn.x`];
+				delete postDepManualChanges[glyphOrCompName].cursors[`${parentId}.handleIn.y`];
 				break;
 			case toileType.NODE_OUT:
 			case toileType.CONTOUR_NODE_OUT:
-				delete postDepManualChanges[glyphOrCompName].cursors[`${parentId}.out.x`];
-				delete postDepManualChanges[glyphOrCompName].cursors[`${parentId}.out.y`];
+				delete postDepManualChanges[glyphOrCompName].cursors[`${parentId}.handleOut.x`];
+				delete postDepManualChanges[glyphOrCompName].cursors[`${parentId}.handleOut.y`];
 				break;
 			case toileType.NODE:
 				delete postDepManualChanges[glyphOrCompName].cursors[
-					`${modifAddress}.width`
+					`${item.id}.x`
 				];
 				delete postDepManualChanges[glyphOrCompName].cursors[
-					`${modifAddress}.angle`
+					`${item.id}.y`
+				];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${item.id}.handleIn.x`
+				];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${item.id}.handleIn.y`
+				];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${item.id}.handleOut.x`
+				];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${item.id}.handleOut.y`
 				];
 				break;
 			case toileType.SPACING_HANDLE:
