@@ -301,8 +301,9 @@ class OnboardingApp extends React.PureComponent {
 		const {letters} = onboardingData.steps.find(e => e.type === 'alternates');
 		const allStrings = Object.values(letters).join('');
 
-		updaters = fontsToGenerate.map((font) => {
+		const updaters = fontsToGenerate.map((font) => {
 			return <FontUpdater
+				key={font.name}
 				name={font.name}
 				subset={font.subset}
 				values={font.values}
@@ -398,7 +399,7 @@ class OnboardingApp extends React.PureComponent {
 								})()}
 							</Button>
 						)}
-						{{updaters}}
+						{updaters}
 						{stepData.type !== 'start' && (
 							<div className="bubbles">
 								{onboardingData.steps.map((step, index) => (
