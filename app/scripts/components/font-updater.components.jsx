@@ -76,7 +76,7 @@ class FontUpdater extends React.PureComponent {
 			const subsetString
 				= `${this.state.uiText
 				+ rawToEscapedContent(this.state.uiWord, this.state.glyphs)
-				 }Hamburgefonstiv`;
+				 }`;
 			let subset = _uniq(subsetString.split('')).map(letter =>
 				letter.charCodeAt(0),
 			);
@@ -130,6 +130,21 @@ const userProfileQuery = gql`
 		}
 	}
 `;
+
+FontUpdater.propTypes = {
+	fonts: PropTypes.arrayOf(
+		PropTypes.shape({
+			name: PropTypes.string.isRequired,
+			template: PropTypes.string.isRequired,
+			values: PropTypes.object.isRequired,
+			subset: PropTypes.arrayOf(PropTypes.number),
+		}),
+	).isRequired,
+}
+
+FontUpdater.defaultProps = {
+	fonts: [],
+}
 
 export default compose(
 	graphql(userProfileQuery, {
