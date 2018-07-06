@@ -107,9 +107,17 @@ export default class Glyph {
 			// eslint-disable-line no-param-reassign
 			cursors: {},
 		};
+		paramBase.postDepManualChanges[name] = {
+			// eslint-disable-line no-param-reassign
+			cursors: {},
+		};
 
 		if (base !== undefined) {
 			paramBase.manualChanges[base] = {
+				// eslint-disable-line no-param-reassign
+				cursors: {},
+			};
+			paramBase.postDepManualChanges[base] = {
 				// eslint-disable-line no-param-reassign
 				cursors: {},
 			};
@@ -461,9 +469,18 @@ export default class Glyph {
 				cursors: {},
 			},
 		};
+		localParams.postDepManualChanges = {
+			[this.name.value]: {
+				cursors: {},
+			},
+		};
 
 		const manualParamKeys = Object.keys(
 			params.manualChanges[this.name.value].cursors,
+		);
+
+		const postDepManualParamKeys = Object.keys(
+			params.postDepManualChanges[this.name.value].cursors,
 		);
 
 		for (let i = 0; i < manualParamKeys.length; i++) {
@@ -475,6 +492,15 @@ export default class Glyph {
 			localParams[thisParamKeys[i]] = this.parameters[
 				thisParamKeys[i]
 			].getResult(localParams);
+		}
+
+		for (let i = 0; i < postDepManualParamKeys.length; i++) {
+			localParams.postDepManualChanges[this.name.value].cursors[
+				postDepManualParamKeys[i]
+			]
+				= params.postDepManualChanges[this.name.value].cursors[
+					postDepManualParamKeys[i]
+				];
 		}
 
 		if (this.base.value !== undefined) {
@@ -519,6 +545,23 @@ export default class Glyph {
 			}
 			else {
 				this.handleOp(op, opDone, localParams, parentAnchors);
+			}
+		}
+
+		const localParamsKeys = Object.keys(
+			localParams.postDepManualChanges[this.name.value].cursors,
+		);
+
+		for (let i = 0; i < localParamsKeys.length; i++) {
+			const cursor = localParamsKeys[i];
+			const parentCursor = cursor.substr(0, cursor.length - 2);
+			const downCursor = cursor.substr(-1);
+
+			const obj = _get(opDone, parentCursor);
+
+			if (obj) {
+				obj[downCursor]
+					+= localParams.postDepManualChanges[this.name.value].cursors[cursor];
 			}
 		}
 
@@ -581,8 +624,11 @@ export default class Glyph {
 		for (let idx = 0; idx < this.components.length; idx++) {
 			const component = this.components[idx];
 			const componentManualChanges = {};
+			const componentPostDepManualChanges = {};
 			const glyphManualChanges
 				= localParams.manualChanges[this.name.value].cursors;
+			const glyphPostDepManualChanges
+				= localParams.postDepManualChanges[this.name.value].cursors;
 
 			let componentName = component.base[0].value;
 
@@ -601,6 +647,9 @@ export default class Glyph {
 					= localParams.glyphComponentChoice[component.componentClass.value];
 			}
 
+			// We all know this is ugly AF however runing a function is cost intensive and
+			// we can't really afford anything here
+			// We could develop a inliner transform
 			const keys = Object.keys(glyphManualChanges);
 
 			for (let i = 0; i < keys.length; i++) {
@@ -632,6 +681,39 @@ export default class Glyph {
 					] || 0) + globalComponentChange[globalCompChangeKey];
 			}
 
+			const postDepKeys = Object.keys(glyphPostDepManualChanges);
+
+			for (let i = 0; i < postDepKeys.length; i++) {
+				const key = postDepKeys[i];
+
+				const criteria = `components.${idx}`;
+
+				if (key.indexOf(criteria) !== -1) {
+					componentPostDepManualChanges[key.substr(criteria.length + 1)]
+						= glyphPostDepManualChanges[key];
+				}
+			}
+
+			const globalPostDepComponentChange = (
+				params.postDepManualChanges[componentName] || {cursors: {}}
+			).cursors;
+			const globalPostDepCompChangeKeys = Object.keys(
+				globalPostDepComponentChange,
+			);
+
+			for (let i = 0; i < globalPostDepCompChangeKeys.length; i++) {
+				const globalPostDepCompChangeKey = globalPostDepCompChangeKeys[i];
+
+				const criteria = `components.${idx}`;
+
+				componentPostDepManualChanges[
+					globalPostDepCompChangeKey.substr(criteria.length + 1)
+				]
+					= (componentPostDepManualChanges[
+						globalPostDepCompChangeKey.substr(criteria.length + 1)
+					] || 0) + globalPostDepComponentChange[globalPostDepCompChangeKey];
+			}
+
 			const componentParams = {};
 			const localParamsKeys = Object.keys(localParams);
 
@@ -641,6 +723,9 @@ export default class Glyph {
 
 			componentParams.manualChanges[componentName] = {
 				cursors: componentManualChanges,
+			};
+			componentParams.postDepManualChanges[componentName] = {
+				cursors: componentPostDepManualChanges,
 			};
 			componentParams.componentChoice = componentName;
 

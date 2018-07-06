@@ -511,19 +511,21 @@ export default {
 	}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
+		const postDepManualChanges
+			= _cloneDeep(oldValues.postDepManualChanges) || {};
 
-		manualChanges[glyphName] = manualChanges[glyphName] || {};
-		manualChanges[glyphName].cursors = manualChanges[glyphName].cursors || {};
+		postDepManualChanges[glyphName] = postDepManualChanges[glyphName] || {};
+		postDepManualChanges[glyphName].cursors
+			= postDepManualChanges[glyphName].cursors || {};
 
 		const newParams = {
 			...oldValues,
-			manualChanges: {
-				...manualChanges,
+			postDepManualChanges: {
+				...postDepManualChanges,
 				[glyphName]: {
-					...manualChanges[glyphName],
+					...postDepManualChanges[glyphName],
 					cursors: {
-						...manualChanges[glyphName].cursors,
+						...postDepManualChanges[glyphName].cursors,
 						...changes,
 					},
 				},
@@ -568,7 +570,8 @@ export default {
 		globalMode,
 	}) => {
 		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
+		const postDepManualChanges
+			= _cloneDeep(oldValues.postDepManualChanges) || {};
 		const glyphSpecialProps = _cloneDeep(oldValues.glyphSpecialProps) || {};
 
 		points.forEach((item) => {
@@ -578,20 +581,36 @@ export default {
 			switch (item.type) {
 			case toileType.NODE_IN:
 			case toileType.CONTOUR_NODE_IN:
-				delete manualChanges[glyphOrCompName].cursors[`${parentId}.in.x`];
-				delete manualChanges[glyphOrCompName].cursors[`${parentId}.in.y`];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${parentId}.handleIn.x`
+				];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${parentId}.handleIn.y`
+				];
 				break;
 			case toileType.NODE_OUT:
 			case toileType.CONTOUR_NODE_OUT:
-				delete manualChanges[glyphOrCompName].cursors[`${parentId}.out.x`];
-				delete manualChanges[glyphOrCompName].cursors[`${parentId}.out.y`];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${parentId}.handleOut.x`
+				];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${parentId}.handleOut.y`
+				];
 				break;
 			case toileType.NODE:
-				delete manualChanges[glyphOrCompName].cursors[
-					`${modifAddress}.width`
+				delete postDepManualChanges[glyphOrCompName].cursors[`${item.id}.x`];
+				delete postDepManualChanges[glyphOrCompName].cursors[`${item.id}.y`];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${item.id}.handleIn.x`
 				];
-				delete manualChanges[glyphOrCompName].cursors[
-					`${modifAddress}.angle`
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${item.id}.handleIn.y`
+				];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${item.id}.handleOut.x`
+				];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${item.id}.handleOut.y`
 				];
 				break;
 			case toileType.SPACING_HANDLE:
@@ -604,9 +623,13 @@ export default {
 				break;
 			case toileType.CONTOUR_NODE:
 			case toileType.NODE_SKELETON:
-				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}x`];
-				delete manualChanges[glyphOrCompName].cursors[`${modifAddress}y`];
-				delete manualChanges[glyphOrCompName].cursors[
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${modifAddress}x`
+				];
+				delete postDepManualChanges[glyphOrCompName].cursors[
+					`${modifAddress}y`
+				];
+				delete postDepManualChanges[glyphOrCompName].cursors[
 					`${modifAddress}.expand.distr`
 				];
 				break;
@@ -619,7 +642,7 @@ export default {
 
 		const newParams = {
 			...oldValues,
-			manualChanges,
+			postDepManualChanges,
 			glyphSpecialProps,
 		};
 
@@ -643,13 +666,14 @@ export default {
 	}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = _cloneDeep(oldValues.manualChanges) || {};
+		const postDepManualChanges
+			= _cloneDeep(oldValues.postDepManualChanges) || {};
 
-		delete manualChanges[glyphName];
+		delete postDepManualChanges[glyphName];
 
 		const newParams = {
 			...oldValues,
-			manualChanges,
+			postDepManualChanges,
 		};
 
 		const patch = undoableStore.set('controlsValues', newParams).commit();
@@ -668,10 +692,10 @@ export default {
 	'/reset-all-glyphs': ({force = true, label = 'reset all glyphs'}) => {
 		const variantId = (prototypoStore.get('variant') || {}).id;
 		const oldValues = undoableStore.get('controlsValues');
-		const manualChanges = {};
+		const postDepManualChanges = {};
 		const newParams = {
 			...oldValues,
-			manualChanges,
+			postDepManualChanges,
 		};
 		const patch = undoableStore.set('controlsValues', newParams).commit();
 

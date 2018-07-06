@@ -481,7 +481,7 @@ export default class PrototypoCanvas extends React.PureComponent {
 			&& this.props.glyphSelected
 			&& this.state.glyphs
 			&& this.state.glyphs[this.props.glyphSelected]
-			&& this.state.values.manualChanges
+			&& this.state.values.postDepManualChanges
 		) {
 			let manualChangesGlyph;
 
@@ -489,12 +489,12 @@ export default class PrototypoCanvas extends React.PureComponent {
 				this.state.values.altList
 				&& this.state.values.altList[this.props.glyphSelected]
 			) {
-				manualChangesGlyph = this.state.values.manualChanges[
+				manualChangesGlyph = this.state.values.postDepManualChanges[
 					this.state.values.altList[this.props.glyphSelected]
 				];
 			}
 			else {
-				manualChangesGlyph = this.state.values.manualChanges[
+				manualChangesGlyph = this.state.values.postDepManualChanges[
 					this.state.glyphs[this.props.glyphSelected][0].name
 				];
 			}
