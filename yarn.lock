@@ -7347,7 +7347,7 @@ jest@^22.2.1:
 
 john-fell.ptf@byte-foundry/john-fell.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/99dac2a2f9b540e3116a5561cdd0cbe8bf061b87"
+  resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/e2c99c90124a3a15bf92753ec199209826e06cef"
   dependencies:
     prototypo-precursor "^1.0.4"
 
