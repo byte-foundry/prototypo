@@ -64,6 +64,7 @@ export default {
 				121: 'Hypnotic', // y
 				126: 'Swirly ~',
 				96: '`',
+				48: '0123',
 			},
 			name: 'Alternates',
 			description: [
