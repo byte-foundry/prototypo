@@ -4,14 +4,18 @@ import pleaseWait from 'please-wait';
 import {Link} from 'react-router';
 import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
-import LocalClient from '../../stores/local-client.stores';
 import ScrollArea from 'react-scrollbar/dist/no-css';
-import FontUpdater from '../font-updater.components';
 import {graphql, gql, compose} from 'react-apollo';
+
+import FontUpdater from '../font-updater.components';
+import LocalClient from '../../stores/local-client.stores';
+
 import {
 	LibrarySidebarRight,
 	SidebarFilters,
 } from './library-sidebars.components';
+
+import LibrarySearch from './library-search.components';
 
 class LibraryList extends React.Component {
 	constructor(props) {
@@ -50,7 +54,14 @@ class LibraryList extends React.Component {
 					templatesData: head.toJS().d.templatesData,
 				});
 				this.generateFonts();
+			})
+			.onDelete(() => {
+				this.setState(undefined);
 			});
+	}
+
+	componentWillUnmount() {
+		this.lifespan.release();
 	}
 
 	filterFonts(activeFilters) {
@@ -281,6 +292,7 @@ class LibraryList extends React.Component {
 					/>
 				</div>
 				<LibrarySidebarRight>
+					<LibrarySearch />
 					<SidebarFilters
 						setActiveFilters={this.props.setActiveFilters}
 					/>
@@ -418,10 +430,20 @@ export class FamilyItem extends React.Component {
 	constructor(props) {
 		super(props);
 		this.selectFont = this.selectFont.bind(this);
+		this.state = {
+			text: 'Hamburgefonstiv 123',
+		}
+		this.onTextChange = this.onTextChange.bind(this);
 	}
 
 	selectFont() {
 		this.props.click(this.props.familyId);
+	}
+
+	onTextChange({target: {value}}) {
+		this.setState({
+			text: value,
+		});
 	}
 
 	render() {
@@ -438,7 +460,7 @@ export class FamilyItem extends React.Component {
 					style={{fontFamily: `user${this.props.family.id}`}}
 					onClick={this.selectFont}
 				>
-					Hamburgefonstiv 123
+					{this.state.text}
 				</p>
 				<div
 					className={'provider provider-custom'}
@@ -491,13 +513,13 @@ export class FamilyItem extends React.Component {
 					>
 						Open family
 					</div>
-					<input type="text" name="displayedWord" value="Hamburgefonstiv 123"/>
+					<input type="text" name="displayedWord" value={this.state.text} onChange={this.onTextChange}/>
 				</div>
 				<FontUpdater
 					name={this.props.fontName}
 					values={this.props.values}
 					template={this.props.templateName}
-					subset="Hamburgefonstiv 123"
+					subset={this.state.text}
 					glyph="0"
 				/>
 			</div>
@@ -509,17 +531,23 @@ export class PresetItem extends React.Component {
 	constructor(props) {
 		super(props);
 		this.selectFont = this.selectFont.bind(this);
+		this.state = {
+			text: 'Hamburgefonstiv 123',
+		}
+		this.onTextChange = this.onTextChange.bind(this);
 	}
 
 	selectFont() {
 		this.props.click(this.props.familyId);
 	}
 
+	onTextChange({target: {value}}) {
+		this.setState({
+			text: value,
+		});
+	}
 
 	render() {
-		const subset = _uniq('Hamburgefonstiv 123'.split('')).map(letter =>
-			letter.charCodeAt(0),
-		);
 		return (
 			<div
 				className="library-item"
@@ -533,7 +561,7 @@ export class PresetItem extends React.Component {
 					style={{fontFamily: `preset${this.props.preset.id}`}}
 					onClick={this.selectFont}
 				>
-					Hamburgefonstiv 123
+					{this.state.text}
 				</p>
 				<div
 					className={'provider provider-custom'}
@@ -570,13 +598,13 @@ export class PresetItem extends React.Component {
 					>
 						Download
 					</div>
-					<input type="text" name="displayedWord" value="Hamburgefonstiv 123"/>
+					<input type="text" name="displayedWord" value={this.state.text} onChange={this.onTextChange}/>
 				</div>
 				<FontUpdater
 					name={this.props.fontName}
 					values={this.props.values}
 					template={this.props.templateName}
-					subset="Hamburgefonstiv 123"
+					subset={this.state.text}
 					glyph="0"
 				/>
 			</div>

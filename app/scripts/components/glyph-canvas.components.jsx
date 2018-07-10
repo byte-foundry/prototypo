@@ -425,7 +425,6 @@ export default class GlyphCanvas extends React.PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			values: {},
 			uiRuler: true,
 			guides: [],
 		};
@@ -471,7 +470,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					variant: head.toJS().d.variant,
 					uiText: head.toJS().d.uiText,
 					uiWord: head.toJS().d.uiWord,
-					glyph: head.toJS().d.glyphSelected,
+					glyphUnicode: head.toJS().d.glyphSelected,
 					name: head.toJS().d.fontName,
 					glyphs: head.toJS().d.glyphs,
 				});
@@ -1877,8 +1876,24 @@ export default class GlyphCanvas extends React.PureComponent {
 	render() {
 		const subsetString
 			= `${this.state.uiText
-			+ rawToEscapedContent(this.state.uiWord, this.state.glyphs)
+			+ rawToEscapedContent(this.state.uiWord || '', this.state.glyphs)
 			 }`;
+
+		const updater =
+			this.state.name
+			&& this.state.template
+			&& this.state.values
+			&& subsetString !== undefined
+			&& this.state.glyphUnicode
+			&& <FontUpdater
+					family={this.state.family}
+					variant={this.state.variant}
+					name={this.state.name}
+					template={this.state.template}
+					values={this.state.values}
+					subset={subsetString}
+					glyph={this.state.glyphUnicode}
+				/>;
 		return (
 			<div className="prototypo-canvas-container">
 				<canvas
@@ -1894,15 +1909,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
 					}}
 				/>
-				<FontUpdater
-					family={this.state.family}
-					variant={this.state.variant}
-					name={this.state.name}
-					template={this.state.template}
-					values={this.state.values}
-					subset={subsetString}
-					glyph={this.state.glyph}
-				/>
+				{updater}
 			</div>
 		);
 	}

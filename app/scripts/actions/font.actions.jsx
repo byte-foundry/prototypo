@@ -127,7 +127,7 @@ export default {
 		});
 		localClient.dispatchAction('/load-tags', typedata.fontinfo.tags);
 	},
-	'/change-font': async ({templateToLoad, variantId}) => {
+	'/change-font': async ({templateToLoad, variant, family}) => {
 		const typedataJSON = await import(/* webpackChunkName: "ptfs" */ `../../../dist/templates/${templateToLoad}/font.json`);
 
 		localClient.dispatchAction('/store-value-font', {
@@ -135,7 +135,7 @@ export default {
 		});
 		localClient.dispatchAction('/change-font-from-typedata', {
 			typedataJSON,
-			variantId,
+			variantId: variant.id,
 			templateToLoad,
 		});
 
@@ -147,7 +147,14 @@ export default {
 			}),
 		);
 
-		const fontValues = await FontValues.get({variantId});
+		const fontValues = await FontValues.get({variantId: variant.id});
+
+		const patchVariant = prototypoStore
+			.set('variant', variant)
+			.set('family', family)
+			.commit();
+		localServer.dispatchUpdate('/prototypoStore', patchVariant);
+
 		const altList = {
 			...typedataJSON.fontinfo.defaultAlts,
 			...fontValues.values.altList,
@@ -197,16 +204,10 @@ export default {
 		});
 	},
 	'/select-variant': ({family, selectedVariant = family.variants[0]}) => {
-		const patchVariant = prototypoStore
-			.set('variant', {id: selectedVariant.id, name: selectedVariant.name})
-			.set('family', family)
-			.commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patchVariant);
-
 		localClient.dispatchAction('/change-font', {
 			templateToLoad: family.template,
-			variantId: selectedVariant.id,
+			variant: {id: selectedVariant.id, name: selectedVariant.name},
+			family,
 		});
 	},
 	'/create-variant-from-ref': async ({ref, name, family, noSwitch}) => {
