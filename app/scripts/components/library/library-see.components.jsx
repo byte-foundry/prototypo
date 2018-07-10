@@ -62,20 +62,21 @@ class LibrarySee extends React.Component {
 			: this.state.family;
 		const fontsToGenerate = [];
 
-		family.variants.forEach((variant) => {
-			fontsToGenerate.push({
-				name: `variant${variant.id}`,
-				template: templateName,
+		const variants = family.variants.map((variant) => {
+			return {
+				...variant,
+				fontName: `variant${variant.id}`,
+				templateName: templateName,
 				subset: 'Hamburgefonstiv 123',
 				values: {
 					...templateValues.initValues,
 					...variant.values,
 				},
 				glyphs: templateValues.glyphs,
-			});
+			};
 		});
 		this.setState({
-			fontsToGenerate,
+			variants,
 			templateValues,
 			templateName,
 			family: families ? family : this.state.family,
@@ -112,23 +113,22 @@ class LibrarySee extends React.Component {
 					</div>
 					<div className="library-see-variants">
 						{this.state.family
-							&& this.state.family.variants
-							&& this.state.fontsToGenerate
-							&& this.state.family.variants.map((variant, index) => (
+							&& this.state.variants
+							&& this.state.variants.map((variant, index) => (
 								<VariantItem
 									key={`variantItem${variant.id}`}
 									variant={variant}
 									family={this.state.family}
 									goToDashboard={this.goToDashboard}
 									values={
-										this.state.fontsToGenerate[index].values
+										this.state.variants[index].values
 									}
 									template={
-										this.state.fontsToGenerate[index]
+										this.state.variants[index]
 											.template
 									}
 									glyphs={
-										this.state.fontsToGenerate[index].glyphs
+										this.state.variants[index].glyphs
 									}
 									open={this.props.open}
 									duplicate={this.props.duplicate}
@@ -138,7 +138,6 @@ class LibrarySee extends React.Component {
 								/>
 							))}
 					</div>
-					<FontUpdater extraFonts={this.state.fontsToGenerate} />
 				</div>
 				<LibrarySidebarRight>
 					<FamilySidebarActions
@@ -167,6 +166,9 @@ export class VariantItem extends React.Component {
 	}
 
 	render() {
+		const subset = 'Hamburgefonstiv 123'.split('').map(letter =>
+			letter.charCodeAt(0),
+		);
 		return (
 			<div
 				className="library-item"
@@ -256,6 +258,13 @@ export class VariantItem extends React.Component {
 								Delete variant
 							</div>
 						)}
+						<FontUpdater
+							name={this.props.variant.fontName}
+							values={this.props.variant.values}
+							template={this.props.variant.templateName}
+							subset="Hamburgefonstiv 123"
+							glyph="0"
+						/>
 					</div>
 				</div>
 			</div>

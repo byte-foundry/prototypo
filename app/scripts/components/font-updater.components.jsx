@@ -40,6 +40,7 @@ class FontUpdater extends React.PureComponent {
 			&& this.props.name !== undefined
 			&& this.props.subset !== undefined
 			&& this.props.glyph !== undefined
+			&& this.props.values !== undefined
 			&& !this.state.changingFont
 		) {
 			let subset = _uniq(this.props.subset.split('')).map(letter =>
@@ -87,7 +88,7 @@ FontUpdater.propTypes = {
 	variant: PropTypes.string,
 	name: PropTypes.string.isRequired,
 	template: PropTypes.string.isRequired,
-	values: PropTypes.object,
+	values: PropTypes.object.isRequired,
 	subset: PropTypes.string.isRequired,
 	glyph: PropTypes.string.isRequired,
 }
