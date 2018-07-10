@@ -18,22 +18,7 @@ storiesOf('TopBar/MenuAcademy', module)
 			<TopBarMenuRaw>{story()}</TopBarMenuRaw>
 		</div>
 	))
-	.add('default', () => (
-		<TopBarMenuAcademy
-			setText={action('set-text')}
-			clearText={action('clear-text')}
-			icon={require('../app/images/graduate-cap.svg')}
-			course={course}
-			headerClassName="academy-progress-container"
-		/>
-	))
+	.add('default', () => <TopBarAcademy headerClassName="no-hover" />)
 	.add('with text set (hover)', () => (
-		<TopBarMenuAcademy
-			setText={action('set-text')}
-			clearText={action('clear-text')}
-			icon={require('../app/images/graduate-cap.svg')}
-			course={course}
-			text="Test - Part 1"
-			headerClassName="academy-progress-container"
-		/>
+		<TopBarAcademy headerClassName="no-hover" course={course} />
 	));

@@ -26,17 +26,6 @@ export default class IndividualizeButton extends React.PureComponent {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					subscription: head.toJS().d.subscription,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
 	}
 
 	componentWillUnmount() {
@@ -44,22 +33,12 @@ export default class IndividualizeButton extends React.PureComponent {
 	}
 
 	individualize() {
-		// if (this.state.credits > 0 && this.state.subscription !== undefined) {
 		this.client.dispatchAction('/toggle-individualize');
-		// }
-		// else {
-		// 	this.client.dispatchAction('/store-value', {openRestrictedFeature: true,
-		// 												restrictedFeatureHovered: 'indiv'});
-		// 	window.Intercom('trackEvent', 'clickOnIndivWithoutSub');
-		// }
 	}
 
 	render() {
-		// const isFree = (!this.state.credits || this.state.credits <= 0 || !this.state.subscription);
-
 		const buttonClass = Classnames({
 			'individualize-button-switch': true,
-			// 'is-free' : isFree,
 			'is-active': this.state.individualize,
 		});
 		const activeAllClassName = Classnames({

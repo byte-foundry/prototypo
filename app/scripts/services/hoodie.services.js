@@ -17,7 +17,7 @@ window.addEventListener('fluxServer.setup', async () => {
 	localClient = LocalClient.instance();
 });
 
-async function fetchAWS(endpoint, params = {}) {
+export async function fetchAWS(endpoint, params = {}) {
 	const {headers = {}, payload, ...rest} = params;
 
 	const response = await fetch(AWS_URL + endpoint, {
@@ -41,34 +41,6 @@ async function fetchAWS(endpoint, params = {}) {
 
 	return Promise.reject(error);
 }
-
-const signUpAndLoginMutation = gql`
-	mutation signUpAndLogin(
-		$firstName: String!
-		$email: String!
-		$password: String!
-		$lastName: String
-		$occupation: String
-		$phone: String
-		$skype: String
-	) {
-		signupEmailUser(
-			email: $email
-			password: $password
-			firstName: $firstName
-			lastName: $lastName
-			occupation: $occupation
-			phone: $phone
-			skype: $skype
-		) {
-			id
-		}
-
-		auth: authenticateEmailUser(email: $email, password: $password) {
-			token
-		}
-	}
-`;
 
 export default class HoodieApi {
 	static async setup() {
@@ -95,82 +67,51 @@ export default class HoodieApi {
 			throw new Error('Not authenticated yet');
 		}
 
-		trackJs.addMetadata('username', response.data.user.email);
+		const data = response.data.user;
 
-		return setupStripe(setupHoodie(response.data.user));
-	}
+		trackJs.addMetadata('username', data.email);
 
-	static async createGraphCoolUser(
-		email,
-		password,
-		firstName = 'there',
-		lastName,
-	) {
-		const response = await apolloClient.mutate({
-			mutation: signUpAndLoginMutation,
-			variables: {
-				email,
-				password,
-				lastName,
-				firstName,
-			},
-		});
+		HoodieApi.instance.plan = 'free_none';
 
-		window.localStorage.setItem(
-			'graphcoolToken',
-			response.data.signinUser.token,
-		);
-	}
+		if (data.manager) {
+			HoodieApi.instance.plan = 'managed';
+		}
 
-	static async login(user, password) {
-		const response = await apolloClient.mutate({
-			mutation: gql`
-				mutation login($email: String!, $password: String!) {
-					auth: authenticateEmailUser(email: $email, password: $password) {
-						token
-					}
+		if (window.Intercom) {
+			window.Intercom('boot', {
+				app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
+				email: data.email,
+				widget: {
+					activator: '#intercom-button',
+				},
+			});
+		}
+
+		window.ga('set', 'userId', data.email);
+
+		if (data.stripe) {
+			HoodieApi.instance.customerId = data.stripe;
+
+			try {
+				const customer = await HoodieApi.getCustomerInfo();
+				const [subscription] = customer.subscriptions.data;
+
+				if (subscription) {
+					HoodieApi.instance.subscriptionId = subscription.id;
+					HoodieApi.instance.plan = subscription.plan.id;
 				}
-			`,
-			variables: {
-				email: user,
-				password,
-			},
-		});
 
-		window.localStorage.setItem('graphcoolToken', response.data.auth.token);
-
-		return HoodieApi.setup();
+				localClient.dispatchAction('/load-customer-data', customer);
+			}
+			catch (e) {
+				/* don't need to catch anything, just next step */
+			}
+		}
 	}
 
 	static async logout() {
 		window.localStorage.removeItem('graphcoolToken');
 		apolloClient.resetStore();
-	}
-
-	static async signUp(
-		email,
-		password,
-		firstName,
-		{lastName, occupation, phone, skype},
-	) {
-		const response = await apolloClient.mutate({
-			mutation: signUpAndLoginMutation,
-			variables: {
-				email,
-				password,
-				firstName,
-				lastName: lastName || undefined,
-				occupation: occupation || undefined,
-				phone: phone || undefined,
-				skype: skype || undefined,
-			},
-		});
-
-		window.localStorage.setItem('graphcoolToken', response.data.auth.token);
-	}
-
-	static isLoggedIn() {
-		return !!window.localStorage.getItem('graphcoolToken');
 	}
 
 	static async askPasswordReset(email) {
@@ -224,12 +165,10 @@ export default class HoodieApi {
 		});
 	}
 
-	static getCustomerInfo(options) {
+	static getCustomerInfo() {
 		const customerId = HoodieApi.instance.customerId;
 
-		return fetchAWS(`/customers/${customerId}`, {
-			payload: options,
-		});
+		return fetchAWS(`/customers/${customerId}`);
 	}
 
 	static getUpcomingInvoice(options) {
@@ -286,66 +225,4 @@ export default class HoodieApi {
 			method: 'DELETE',
 		});
 	}
-}
-
-function setupHoodie(data) {
-	HoodieApi.instance.hoodieId = data.id;
-	HoodieApi.instance.email = data.email;
-	HoodieApi.instance.plan = 'free_none';
-
-	if (data.manager) {
-		HoodieApi.instance.plan = 'managed';
-	}
-
-	if (window.Intercom) {
-		window.Intercom('boot', {
-			app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
-			email: HoodieApi.instance.email,
-			widget: {
-				activator: '#intercom-button',
-			},
-		});
-	}
-
-	window.ga('set', 'userId', HoodieApi.instance.email);
-	return data;
-}
-
-async function setupStripe(data, time = 1000) {
-	if (data.stripe) {
-		HoodieApi.instance.customerId = data.stripe;
-
-		try {
-			const customer = await HoodieApi.getCustomerInfo();
-			const [subscription] = customer.subscriptions.data;
-
-			if (subscription) {
-				HoodieApi.instance.subscriptionId = subscription.id;
-				HoodieApi.instance.plan = subscription.plan.id;
-			}
-
-			localClient.dispatchAction('/load-customer-data', customer);
-
-			return;
-		}
-		catch (e) {
-			/* don't need to catch anything, just next step */
-		}
-	}
-
-	// if error we poll customerId
-	setTimeout(async () => {
-		const response = await apolloClient.query({
-			query: gql`
-				query setupStripe {
-					user {
-						id
-						stripe
-					}
-				}
-			`,
-		});
-
-		setupStripe(response.data.user, 2 * time || 1000);
-	}, time);
 }

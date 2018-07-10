@@ -54,35 +54,8 @@ class AccountSidebarSubLinkRaw extends React.Component {
 const AccountSidebarSubLink = withRouter(AccountSidebarSubLinkRaw);
 
 class AccountSidebar extends React.Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {};
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					subscription: head.toJS().d.subscription,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
 	render() {
-		const {subscription} = this.state;
-		const {managed} = this.props;
+		const {subscription, managed} = this.props;
 
 		const accountsLinks = [];
 
@@ -173,6 +146,10 @@ const query = gql`
 	query {
 		user {
 			id
+			subscription @client {
+				id
+				quantity
+			}
 			manager {
 				id
 			}
@@ -189,6 +166,7 @@ export default graphql(query, {
 		if (data.user) {
 			return {
 				managed: !!data.user.manager,
+				subscription: data.user.subscription,
 			};
 		}
 

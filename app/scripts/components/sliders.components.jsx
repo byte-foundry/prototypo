@@ -35,19 +35,6 @@ export class Sliders extends React.PureComponent {
 			.onDelete(() => {
 				this.setState({values: undefined});
 			});
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				const {subscription} = head.toJS().d;
-
-				this.setState({
-					subscription,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
 	}
 
 	componentWillUnmount() {
@@ -133,7 +120,6 @@ export class Sliders extends React.PureComponent {
 			) : (
 				<Slider
 					demo={paramToUse.demo}
-					subscription={this.state.subscription}
 					credits={this.props.credits}
 					disabled={paramToUse.disabled}
 					init={paramToUse.init}
@@ -227,9 +213,9 @@ export class RawSlider extends React.PureComponent {
 		const value
 			= this.props.value === undefined ? this.props.init : this.props.value;
 		// TODO: better way to inject subscription
-		const {subscription} = this.props;
+		const {subscription, isManagedAccount} = this.props;
 		const freeAccount
-			= !this.props.isManagedAccount
+			= !isManagedAccount
 			&& !(
 				subscription
 				&& !subscription.plan.id.includes('team')
@@ -336,6 +322,12 @@ const query = gql`
 	query {
 		user {
 			id
+			subscription @client {
+				id
+				plan {
+					id
+				}
+			}
 			manager {
 				id
 			}
@@ -349,6 +341,7 @@ export const Slider = graphql(query, {
 
 		return {
 			isManagedAccount: user && user.manager,
+			subscription: user && user.subscription,
 		};
 	},
 })(RawSlider);

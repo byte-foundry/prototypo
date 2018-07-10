@@ -5,15 +5,11 @@ import Button from './new-button.components';
 import InputWithLabel from './input-with-label.components';
 
 export default class CopyPasteInput extends React.PureComponent {
-	constructor(props) {
-		super(props);
-		this.copyToClipboard = this.copyToClipboard.bind(this);
-		this.state = {
-			message: 'Copy to clipboard',
-		};
-	}
+	state = {
+		message: '',
+	};
 
-	copyToClipboard() {
+	copyToClipboard = () => {
 		this.input.select();
 		try {
 			document.execCommand('copy');
@@ -26,7 +22,7 @@ export default class CopyPasteInput extends React.PureComponent {
 				message: "Can't copy :(",
 			});
 		}
-	}
+	};
 
 	render() {
 		const {content} = this.props;
@@ -36,6 +32,8 @@ export default class CopyPasteInput extends React.PureComponent {
 				<div className="columns">
 					<div className="two-third-column">
 						<InputWithLabel
+							onFocus={e => e.target.select()}
+							onBlur={() => this.setState({message: ''})}
 							inputValue={content}
 							size="small"
 							inputRef={(input) => {
@@ -45,7 +43,7 @@ export default class CopyPasteInput extends React.PureComponent {
 					</div>
 					<div className="third-column">
 						<Button size="small" onClick={this.copyToClipboard}>
-							{this.state.message}
+							{this.state.message || 'Copy to clipboard'}
 						</Button>
 					</div>
 				</div>

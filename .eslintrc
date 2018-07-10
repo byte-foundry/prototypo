@@ -52,6 +52,7 @@
 		"indent": ["error", "tab"],
 		"react/jsx-indent": "off",
 		"react/jsx-indent-props": "off",
+		"react/jsx-uses-vars": ["error"],
 		"no-tabs": 0,
 
 		"react/prop-types": 0,
