@@ -1,13 +1,13 @@
+import {filter} from 'graphql-anywhere';
 import gql from 'graphql-tag';
 import _xor from 'lodash/xor';
 import _flatten from 'lodash/flatten';
 import _map from 'lodash/map';
 import _transform from 'lodash/transform';
 import _cloneDeep from 'lodash/cloneDeep';
-import PropTypes from 'prop-types';
 import React from 'react';
+import {Query, graphql, compose} from 'react-apollo';
 import {withRouter} from 'react-router';
-import {graphql, compose} from 'react-apollo';
 import Lifespan from 'lifespan';
 
 import Log from '../../services/log.services';
@@ -32,11 +32,18 @@ import TopBarMenuButton from './top-bar-menu-button.components';
 import TopBarMenuDropdown from './top-bar-menu-dropdown.components';
 import TopBarMenuDropdownItem from './top-bar-menu-dropdown-item.components';
 import TopBarMenuDropdownProItem from './top-bar-menu-dropdown-pro-item.components';
-import TopBarMenuAcademy from './top-bar-menu-academy.components';
-import TopBarMenuAcademyIcon from './top-bar-menu-academy-icon.components';
+import TopBarAcademy from './top-bar-academy.components';
 import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components';
 
 import {libraryQuery, presetQuery} from '../library/library-main.components';
+
+const GET_NETWORK_STATUS = gql`
+	query getNetworkStatus {
+		networkStatus @client {
+			isConnected
+		}
+	}
+`;
 
 class Topbar extends React.Component {
 	constructor(props) {
@@ -62,12 +69,8 @@ class Topbar extends React.Component {
 		this.goToSubscribe = this.goToSubscribe.bind(this);
 		this.resetFileTutorial = this.resetFileTutorial.bind(this);
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
-		// this.setPreset = this.setPreset.bind(this);
 		this.resetIndivTutorial = this.resetIndivTutorial.bind(this);
-		this.setAcademyText = this.setAcademyText.bind(this);
 		this.showAcademy = this.showAcademy.bind(this);
-		this.clearAcademyText = this.clearAcademyText.bind(this);
-		this.getRightAcademyIcon = this.getRightAcademyIcon.bind(this);
 	}
 
 	async componentWillMount() {
@@ -98,7 +101,6 @@ class Topbar extends React.Component {
 			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					subscription: head.toJS().d.subscription,
 					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
 				});
 			})
@@ -125,15 +127,6 @@ class Topbar extends React.Component {
 	exportAs() {
 		this.client.dispatchAction('/set-up-export-otf', {merged: true});
 		Log.ui('Topbar.exportOTF', 'merged');
-	}
-
-	setAcademyText(name, isIcon) {
-		if (name) {
-			this.setState({academyText: name, academyCapIconHovered: isIcon});
-		}
-		else {
-			this.setState({academyCapIconHovered: isIcon});
-		}
 	}
 
 	exportGlyphr() {
@@ -316,18 +309,6 @@ class Topbar extends React.Component {
 		this.props.history.push('/academy');
 	}
 
-	clearAcademyText() {
-		this.setState({academyText: '', academyCapIconHovered: false});
-	}
-	getRightAcademyIcon() {
-		if (this.state.academyCapIconHovered) {
-			return this.state.indiv
-				? 'assets/images/graduate-cap-yellow.svg'
-				: 'assets/images/graduate-cap-green.svg';
-		}
-		return 'assets/images/graduate-cap.svg';
-	}
-
 	exportOTF(merged) {
 		this.client.dispatchAction('/export-otf', {merged});
 		Log.ui('Topbar.exportOTF', merged ? 'merged' : 'not merged');
@@ -340,11 +321,10 @@ class Topbar extends React.Component {
 	}
 
 	render() {
-		const {academyProgress, loadingAcademyProgress} = this.props;
+		const {loading, user, user: {subscription} = {}} = this.props;
 		const {advancedMode} = this.state;
-
 		const whereAt = this.state.at || 0;
-		const undoDisabled = whereAt < 1;
+		const undoDisabled = whereAt < 0;
 		const redoDisabled = whereAt > this.state.eventList.length - 2;
 		const undoText = `Undo ${
 			this.state.eventList.length && !undoDisabled
@@ -355,27 +335,23 @@ class Topbar extends React.Component {
 			redoDisabled ? '' : this.state.eventList[whereAt + 1].label
 		}`;
 		const credits = this.state.credits; // eslint-disable-line prefer-destructuring
-		const freeAccount = !this.props.manager && !this.state.subscription;
+		const freeAccount = !this.props.manager && !subscription;
 		const otfExportCost = this.state.creditChoices
 			? this.state.creditChoices.exportOtf
 			: 0;
 		const glyphrExportCost = this.state.creditChoices
 			? this.state.creditChoices.exportGlyphr
 			: 0;
-		const exporting = this.state.export && (
-			<TopBarMenuAction name="Exporting..." click={() => {}} action />
-		);
-		const errorExporting = this.state.errorExport && (
-			<TopBarMenuAction
-				name={
-					this.state.errorExport.message
-						? this.state.errorExport.message
-						: 'An error occured during exporting'
-				}
-				click={() => {}}
-				action
-			/>
-		);
+
+		const exporting = this.state.export && 'Exporting...';
+		const errorExporting
+			= this.state.errorExport
+			&& (this.state.errorExport.message
+				? this.state.errorExport.message
+				: 'An error occured during exporting');
+
+		const notificationMessage = exporting || errorExporting || null;
+
 		const creditExportLabel = !!this.state.credits && (
 			<TopBarMenuAction
 				name={`${this.state.credits} credits`}
@@ -398,53 +374,6 @@ class Topbar extends React.Component {
 				alignRight
 			/>
 		);
-
-		const academyIcon = (!academyProgress.lastCourse
-			|| (academyProgress.lastCourse
-				&& !academyProgress[academyProgress.lastCourse])) && (
-			<TopBarMenuAcademyIcon
-				setText={this.setAcademyText}
-				clearText={this.clearAcademyText}
-				id="progress-academy"
-				headerClassName="academy-progress-container"
-				icon={this.getRightAcademyIcon()}
-			/>
-		);
-
-		const academyProgressItem = !loadingAcademyProgress
-			&& academyProgress.lastCourse
-			&& academyProgress[academyProgress.lastCourse] && (
-			<TopBarMenuAcademy
-				course={academyProgress[academyProgress.lastCourse]}
-				setText={this.setAcademyText}
-				clearText={this.clearAcademyText}
-				text={this.state.academyText}
-				id="progress-academy"
-				headerClassName="academy-progress-container"
-				icon={this.getRightAcademyIcon()}
-			/>
-		);
-
-		/* const presetSubMenu = this.state.presets
-			? (
-				<TopBarMenuDropdownItem name="Choose a preset ...">
-					<TopBarMenuDropdown>
-						{
-							_.keys(this.state.presets).map((preset, index) => {
-								return (
-									<TopBarMenuDropdownItem
-										name={preset}
-										handler={this.setPreset}
-										handlerParam={preset}
-										key={index}
-									/>
-								);
-							})
-						}
-					</TopBarMenuDropdown>
-				</TopBarMenuDropdownItem>
-			)
-			: false; */
 
 		return (
 			<TopBarMenu
@@ -496,7 +425,7 @@ class Topbar extends React.Component {
 							name="Export to Glyphr Studio"
 							id="export-to-glyphr-studio"
 							freeAccount={freeAccount}
-							cost={otfExportCost}
+							cost={glyphrExportCost}
 							handler={this.exportGlyphr}
 							credits={this.state.credits}
 							separator
@@ -573,7 +502,6 @@ class Topbar extends React.Component {
 							}
 						}}
 					/>
-					{/* <TopBarMenuDropdownItem name="Choose a preset" handler={() => {}}/> */}
 					<TopBarMenuDropdownItem
 						name="Reset all parameters"
 						handler={() => {
@@ -663,10 +591,12 @@ class Topbar extends React.Component {
 						handler={this.resetIndivTutorial}
 					/>
 				</TopBarMenuDropdown>
-				{academyIcon}
-				{academyProgressItem}
-				{exporting}
-				{errorExporting}
+				<TopBarAcademy
+					id="progress-academy"
+					headerClassName="no-hover"
+					isIndiv={this.state.indiv}
+					{...(loading ? {} : filter(TopBarAcademy.fragments.user, user))}
+				/>
 				<TopBarMenuLink
 					link="/account"
 					title="Account settings"
@@ -675,6 +605,24 @@ class Topbar extends React.Component {
 					alignRight
 					action
 				/>
+				<Query query={GET_NETWORK_STATUS} ignoreParent>
+					{({loadingNetwork, data: {networkStatus}}) => {
+						const offlineMessage
+							= !loadingNetwork && !networkStatus.isConnected
+								? 'Network has been lost'
+								: null;
+
+						if (notificationMessage || offlineMessage) {
+							return (
+								<li className="top-bar-menu-item no-hover is-aligned-right">
+									{notificationMessage || offlineMessage}
+								</li>
+							);
+						}
+
+						return null;
+					}}
+				</Query>
 				{creditExportLabel}
 				{callToAction}
 			</TopBarMenu>
@@ -682,43 +630,36 @@ class Topbar extends React.Component {
 	}
 }
 
-Topbar.defaultProps = {
-	academyProgress: {
-		lastCourse: null,
-	},
-};
-
-Topbar.propTypes = {
-	academyProgress: PropTypes.shape({
-		lastCourse: PropTypes.string,
-	}),
-};
-
-// this should later wrap an TopBarAcademy
-// instead of being on this component
-const getAcademyValuesQuery = gql`
-	query getAcademyValues {
+const GET_USER_TOP_BAR_VALUES = gql`
+	query getUserTopBarValues {
 		user {
 			id
-			academyProgress
+			subscription @client {
+				id
+				plan {
+					id
+				}
+			}
 			manager {
 				id
 			}
+
+			...AcademyUserValues
 		}
 	}
+
+	${TopBarAcademy.fragments.user}
 `;
 
 export default compose(
-	graphql(getAcademyValuesQuery, {
+	graphql(GET_USER_TOP_BAR_VALUES, {
+		fetchPolicy: 'network-only',
 		props({data}) {
 			if (data.loading) {
-				return {loadingAcademyProgress: true};
+				return {loading: true};
 			}
 
-			return {
-				academyProgress: data.user.academyProgress,
-				manager: data.user.manager,
-			};
+			return {user: data.user};
 		},
 	}),
 	graphql(presetQuery, {

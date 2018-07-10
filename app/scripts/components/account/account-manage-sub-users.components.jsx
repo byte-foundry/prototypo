@@ -446,6 +446,10 @@ const query = gql`
 	query getSubUsers {
 		user {
 			id
+			subscription @client {
+				id
+				quantity
+			}
 			subUsers {
 				id
 				firstName
@@ -478,6 +482,7 @@ export default graphql(query, {
 		].sort((a, b) => a.email > b.email);
 
 		return {
+			max: data.user.subscription.quantity,
 			members,
 			onAddUser: async (infos) => {
 				await HoodieApi.addManagedUser(data.user.id, infos);

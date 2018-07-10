@@ -8,6 +8,7 @@ import getCurrency from '../../helpers/currency.helpers.js';
 import HoodieApi from '../../services/hoodie.services.js';
 import Button from '../shared/new-button.components';
 import WaitForLoad from '../wait-for-load.components';
+import Dashboard from './account-dashboard.components';
 
 import * as Plans from '../../data/plans.data';
 
@@ -85,17 +86,21 @@ export default class AccountConfirmPlan extends React.Component {
 		const {invoice, loading, confirmationLoading} = this.state;
 
 		return (
-			<div className="account-base account-confirm-plan">
-				<h1 className="subscription-title">This is what you will be charged</h1>
-				<WaitForLoad loaded={!loading}>
-					{invoice && <Invoice {...invoice} />}
-					<Button style={{float: 'right'}} onClick={this.confirmPlanChange}>
-						<WaitForLoad loading={confirmationLoading} secColor>
-							Confirm change
-						</WaitForLoad>
-					</Button>
-				</WaitForLoad>
-			</div>
+			<Dashboard title="Change my plan">
+				<div className="account-base account-confirm-plan">
+					<h1 className="subscription-title">
+						This is what you will be charged
+					</h1>
+					<WaitForLoad loaded={!loading}>
+						{invoice && <Invoice {...invoice} />}
+						<Button style={{float: 'right'}} onClick={this.confirmPlanChange}>
+							<WaitForLoad loading={confirmationLoading} secColor>
+								Confirm change
+							</WaitForLoad>
+						</Button>
+					</WaitForLoad>
+				</div>
+			</Dashboard>
 		);
 	}
 }

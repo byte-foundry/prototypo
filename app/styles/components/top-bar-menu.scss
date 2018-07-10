@@ -212,7 +212,7 @@
 			}
 		}
 
-		&:hover:not(.academy-progress-container), &.topbaritem-displayed {
+		&:hover, &.topbaritem-displayed {
 			@include themify() {
 				background-color: $theme-background;
 				color: $theme-color;
@@ -225,6 +225,7 @@
 		&.no-hover:hover {
 			background: transparent;
 			background-color: transparent;
+			cursor: default;
 		}
 
 		&.is-centered {

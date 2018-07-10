@@ -16,10 +16,12 @@ import DisplayWithLabel from '../shared/display-with-label.components';
 import FormSuccess from '../shared/form-success.components';
 import Price from '../shared/price.components';
 import Button from '../shared/new-button.components';
+import WaitForLoad from '../wait-for-load.components';
 
 export class AccountSubscription extends React.PureComponent {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			cards: [],
 		};
@@ -32,10 +34,9 @@ export class AccountSubscription extends React.PureComponent {
 		this.client
 			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
-				const {subscription, cards} = head.toJS().d;
+				const {cards} = head.toJS().d;
 
 				this.setState({
-					subscription,
 					cards,
 				});
 			})
@@ -60,8 +61,27 @@ export class AccountSubscription extends React.PureComponent {
 	}
 
 	render() {
-		const {cards, subscription, credits} = this.state;
-		const {manager, acceptManager, removeManager, location} = this.props;
+		const {cards, credits} = this.state;
+		const {
+			loading,
+			subscription,
+			manager,
+			acceptManager,
+			removeManager,
+			location,
+		} = this.props;
+
+		if (loading) {
+			return (
+				<Dashboard title="My account settings">
+					<div className="account-dashboard-container-main">
+						<div className="account-base account-subscription">
+							<WaitForLoad loading />
+						</div>
+					</div>
+				</Dashboard>
+			);
+		}
 
 		const noCard = (
 			<div>
@@ -254,6 +274,18 @@ const query = gql`
 	query getManager {
 		user {
 			id
+			subscription @client {
+				id
+				current_period_end
+				cancel_at_period_end
+				trial_end
+				quantity
+				plan {
+					id
+					name
+					currency
+				}
+			}
 			manager {
 				id
 				email
@@ -268,8 +300,7 @@ const query = gql`
 
 export default graphql(query, {
 	props: ({data}) => {
-		if (data.loading || !data.user) {
-			// TMP: don't fail if there's no graphcool account
+		if (data.loading) {
 			return {loading: true};
 		}
 
@@ -277,6 +308,7 @@ export default graphql(query, {
 		const possibleManager = manager || pendingManager;
 
 		return {
+			subscription: data.user.subscription,
 			manager: possibleManager && {
 				email: possibleManager.email,
 				pending: !manager && !!pendingManager,

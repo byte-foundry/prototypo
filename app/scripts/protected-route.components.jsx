@@ -8,7 +8,7 @@ class ProtectedRoute extends React.Component {
 		const {loading, user, location} = this.props;
 
 		if (loading) {
-			return <p>loading du swag</p>;
+			return <p>loading</p>;
 		}
 
 		if (!user) {

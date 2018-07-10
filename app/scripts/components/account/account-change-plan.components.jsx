@@ -1,5 +1,7 @@
+import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {Query, Redirect} from 'react-apollo';
 import {withRouter} from 'react-router';
 import Lifespan from 'lifespan';
 
@@ -25,12 +27,27 @@ Hi,
 I would like to cancel my subscription to Prototypo.
 `.trim();
 
+const GET_USER_SUBSCRIPTION = gql`
+	query getUserSubscription {
+		user {
+			id
+			subscription @client {
+				id
+				quantity
+				plan {
+					id
+				}
+			}
+		}
+	}
+`;
+
 class AccountChangePlan extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			loading: true,
+			loadingCard: true,
 		};
 
 		this.confirmChange = this.confirmChange.bind(this);
@@ -45,27 +62,10 @@ class AccountChangePlan extends React.Component {
 		this.client
 			.getStore('/userStore', this.lifespan)
 			.onUpdate((head) => {
-				const {subscription, cards} = head.toJS().d;
-
-				if (!subscription) {
-					this.props.history.push('/account/subscribe');
-					return;
-				}
+				const {cards} = head.toJS().d;
 
 				this.setState({
-					loading: false,
-					subscription,
-					plan: subscription.plan.id,
-					selectedPlan: subscription.plan.id.includes('monthly')
-						? teamMonthlyConst
-						: teamAnnualConst,
-					numberOfUsers: parseInt(
-						(subscription && subscription.quantity) || 0,
-						10,
-					),
-					selection: subscription.plan.id.includes('monthly')
-						? 'monthly'
-						: 'annual',
+					loadingCard: false,
 					currency: getCurrency(cards[0].country),
 				});
 			})
@@ -75,17 +75,19 @@ class AccountChangePlan extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.client.dispatchAction('/clean-form', 'choosePlanForm');
 		this.lifespan.release();
 	}
 
-	confirmChange() {
-		const {selectedPlan, numberOfUsers} = this.state;
-		const plan = selectedPlan.prefix;
+	confirmChange({subscription: {quantity, plan}}) {
+		const initialPlan = (plan.id.includes('monthly')
+			? teamMonthlyConst
+			: teamAnnualConst
+		).prefix;
+		const {selectedPlan = initialPlan, numberOfUsers = quantity} = this.state;
 
-		Intercom('trackEvent', 'change-plan-select', {
-			plan,
-			quantity: numberOfUsers,
+		window.Intercom('trackEvent', 'change-plan-select', {
+			plan: selectedPlan,
+			quantity,
 		});
 
 		this.props.history.push({
@@ -99,17 +101,22 @@ class AccountChangePlan extends React.Component {
 
 	downgrade(e) {
 		e.preventDefault();
-		Intercom('showNewMessage', UNSUBSCRIBE_MESSAGE);
+		window.Intercom('showNewMessage', UNSUBSCRIBE_MESSAGE);
 	}
 
 	changeNumberOfUsers(value) {
 		this.setState({numberOfUsers: parseInt(value, 10)});
 	}
 
-	renderChoices() {
-		const {subscription, numberOfUsers, selection, currency} = this.state;
+	renderChoices({subscription}) {
+		const {plan, quantity} = subscription;
+		const initialSelection = plan.id.includes('monthly') ? 'monthly' : 'annual';
+		const {
+			currency,
+			numberOfUsers = quantity,
+			selection = initialSelection,
+		} = this.state;
 
-		const {plan} = subscription;
 		const hasTeamPlan
 			= plan.id.includes(teamMonthlyConst.prefix)
 			|| plan.id.includes(teamAnnualConst.prefix);
@@ -127,7 +134,10 @@ class AccountChangePlan extends React.Component {
 						amount={monthlyPlan.monthlyPrice * numberOfUsers}
 						current={plan.id.includes(monthlyPlan.prefix)}
 						onClick={() =>
-							this.setState({selection: 'monthly', selectedPlan: monthlyPlan})
+							this.setState({
+								selection: 'monthly',
+								selectedPlan: monthlyPlan,
+							})
 						}
 					/>
 
@@ -139,7 +149,10 @@ class AccountChangePlan extends React.Component {
 						amount={annualPlan.monthlyPrice * numberOfUsers}
 						current={plan.id.includes(annualPlan.prefix)}
 						onClick={() =>
-							this.setState({selection: 'annual', selectedPlan: annualPlan})
+							this.setState({
+								selection: 'annual',
+								selectedPlan: annualPlan,
+							})
 						}
 					/>
 				</div>
@@ -150,7 +163,7 @@ class AccountChangePlan extends React.Component {
 
 						<InputNumber
 							className="pricing-item-subtitle-price-info team"
-							min={subscription.quantity}
+							min={quantity}
 							max={100}
 							value={numberOfUsers}
 							onChange={this.changeNumberOfUsers}
@@ -161,11 +174,8 @@ class AccountChangePlan extends React.Component {
 
 				<div className="account-change-plan-actions">
 					<Button
-						onClick={this.confirmChange}
-						disabled={
-							plan.id.includes(selection)
-							&& numberOfUsers <= subscription.quantity
-						}
+						onClick={() => this.confirmChange({subscription})}
+						disabled={plan.id.includes(selection) && numberOfUsers <= quantity}
 					>
 						Apply change
 					</Button>
@@ -175,31 +185,43 @@ class AccountChangePlan extends React.Component {
 	}
 
 	render() {
-		const {loading} = this.state;
-
 		return (
-			<Dashboard title="Change my plan">
-				<div className="account-base account-change-plan">
-					<header className="manage-sub-users-header">
-						<h1 className="manage-sub-users-title">Change Plan</h1>
-						<p className="manage-sub-users-sidephrase">
-							Want to downgrade?{' '}
-							<a
-								href={`mailto:account@prototypo.io?subject=Cancelling my subscription&body=${encodeURI(
-									UNSUBSCRIBE_MESSAGE,
-								)}`}
-								className="account-email"
-								onClick={this.downgrade}
-								title="If this link doesn't work, you may need to turn off your privacy blocker"
-							>
-								Contact us!
-							</a>
-						</p>
-					</header>
+			<Query query={GET_USER_SUBSCRIPTION}>
+				{({loading, data: {user}}) => {
+					if (!loading && user && !user.subscription) {
+						return <Redirect to="/account/subscribe" />;
+					}
 
-					{loading ? <WaitForLoad loading /> : this.renderChoices()}
-				</div>
-			</Dashboard>
+					return (
+						<Dashboard title="Change my plan">
+							<div className="account-base account-change-plan">
+								<header className="manage-sub-users-header">
+									<h1 className="manage-sub-users-title">Change Plan</h1>
+									<p className="manage-sub-users-sidephrase">
+										Want to downgrade?{' '}
+										<a
+											href={`mailto:account@prototypo.io?subject=Cancelling my subscription&body=${encodeURI(
+												UNSUBSCRIBE_MESSAGE,
+											)}`}
+											className="account-email"
+											onClick={this.downgrade}
+											title="If this link doesn't work, you may need to turn off your privacy blocker"
+										>
+											Contact us!
+										</a>
+									</p>
+								</header>
+
+								{loading || this.state.loadingCard ? (
+									<WaitForLoad loading />
+								) : (
+									this.renderChoices(user)
+								)}
+							</div>
+						</Dashboard>
+					);
+				}}
+			</Query>
 		);
 	}
 }

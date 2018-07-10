@@ -52,11 +52,11 @@ class Register extends React.Component {
 
 	async register(e) {
 		e.preventDefault();
-		e.stopPropagation();
+
 		const email = this.email.inputValue;
 		const password = this.password.inputValue;
-		const firstname = this.firstname.inputValue;
-		const lastname = this.lastname.inputValue;
+		const firstName = this.firstname.inputValue;
+		const lastName = this.lastname.inputValue;
 		const occupation = this.occupation.inputValue.value;
 		const phone = this.phone.inputValue;
 		const skype = this.skype.inputValue;
@@ -71,13 +71,13 @@ class Register extends React.Component {
 		});
 
 		// Check each input for error
-		if (!email || !password || !firstname) {
+		if (!email || !password || !firstName) {
 			this.setState({
 				errors: ['Fields with a * are required'],
 				inError: {
 					email: !email,
 					password: !password,
-					firstname: !firstname,
+					firstname: !firstName,
 				},
 				loading: false,
 			});
@@ -105,22 +105,29 @@ class Register extends React.Component {
 			return;
 		}
 
-		const curedLastname = lastname ? ` ${lastname}` : '';
+		const curedLastname = lastName ? ` ${lastName}` : '';
 
 		try {
-			await HoodieApi.signUp(email.toLowerCase(), password, firstname, {
-				lastName: lastname,
-				occupation,
-				phone,
-				skype,
-			});
+			const response = await this.props.signUpAndLogin(
+				email.toLowerCase(),
+				password,
+				firstName,
+				{
+					lastName: lastName || undefined,
+					occupation: occupation || undefined,
+					phone: phone || undefined,
+					skype: skype || undefined,
+				},
+			);
+
+			window.localStorage.setItem('graphcoolToken', response.data.auth.token);
 
 			HoodieApi.setup();
 
 			window.Intercom('boot', {
 				app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
 				email,
-				name: firstname + curedLastname,
+				name: firstName + curedLastname,
 				occupation,
 				phone: phone || undefined, // avoid empty string being recorded into Intercom
 				skype,
@@ -130,16 +137,13 @@ class Register extends React.Component {
 				},
 			});
 			window.trackJs.addMetadata('username', email);
+			window.fbq('track', 'Lead');
 
 			this.setState({
 				errors: [],
 				inError: {},
 				loading: false,
 			});
-
-			HoodieApi.instance.plan = 'free_none';
-			HoodieApi.instance.email = email;
-			window.fbq('track', 'Lead');
 		}
 		catch (err) {
 			window.trackJs.track(err);
@@ -336,9 +340,49 @@ const loggedInUserQuery = gql`
 	}
 `;
 
+const signUpAndLoginMutation = gql`
+	mutation signUpAndLogin(
+		$firstName: String!
+		$email: String!
+		$password: String!
+		$lastName: String
+		$occupation: String
+		$phone: String
+		$skype: String
+	) {
+		signupEmailUser(
+			email: $email
+			password: $password
+			firstName: $firstName
+			lastName: $lastName
+			occupation: $occupation
+			phone: $phone
+			skype: $skype
+		) {
+			id
+		}
+
+		auth: authenticateEmailUser(email: $email, password: $password) {
+			token
+		}
+	}
+`;
+
 export default graphql(loggedInUserQuery, {
 	props: ({data}) => ({
 		loadingUser: data.loading,
 		user: data.user,
 	}),
-})(Register);
+})(
+	graphql(signUpAndLoginMutation, {
+		props: ({mutate}) => ({
+			signUpAndLogin: (email, password, firstName, options) =>
+				mutate({
+					email,
+					password,
+					firstName,
+					...options,
+				}),
+		}),
+	})(Register),
+);
