@@ -49,6 +49,21 @@
                 }
             }
         }
+        .library-search {
+            input, select {
+                width: 100%;
+                background: transparent;
+                box-shadow: none;
+                outline: none;
+                padding: 10px 20px;
+                margin-top: 10px;
+                border: 1px solid $dark-grey;
+                border-radius: 20px;
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
         .library-sidebar-right {
             background: #F4F4F4;
             color: $dark-grey;
@@ -99,6 +114,7 @@
             background: white;
             color: $dark-grey;
             height: 100vh;
+            min-width: calc(100vw - 500px);
 
 			&--create {
 				height: calc(100vh - 102px);

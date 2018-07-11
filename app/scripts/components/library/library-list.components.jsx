@@ -25,6 +25,7 @@ class LibraryList extends React.Component {
 		this.filterFonts = this.filterFonts.bind(this);
 		this.createProject = this.createProject.bind(this);
 		this.selectFont = this.selectFont.bind(this);
+		this.searchFonts = this.searchFonts.bind(this);
 	}
 
 	async componentWillMount() {
@@ -91,7 +92,7 @@ class LibraryList extends React.Component {
 		return () => {
 			return {
 				key: template.templateName,
-				template: template,
+				template,
 				glyphs: templateData.glyphs,
 				values: templateData.initValues,
 				export: this.props.export,
@@ -109,56 +110,51 @@ class LibraryList extends React.Component {
 	}
 
 	getPresetProps(preset, templateInfo, templateData, lmColor, hmColor) {
-		return () => {
-			return {
-				key: preset.id,
-				preset: preset,
-				template: templateInfo,
-				user: preset.ownerInitials,
-				name: preset.variant.family.name,
-				createProject: this.createProject,
-				background:
-					preset.ownerInitials === 'LM'
-						? lmColor
-						: hmColor
-				,
-				glyphs: templateData.glyphs,
-				values: preset.baseValues,
-				export: this.props.export,
-				click: this.selectFont,
-				isOpen: this.state.selectedFont === preset.id,
-				familyId: preset.id,
-				fontName: `preset${preset.id}`,
-				templateName: templateInfo.templateName,
-			}
-		};
+		return () => ({
+			key: preset.id,
+			preset,
+			template: templateInfo,
+			user: preset.ownerInitials,
+			name: preset.variant.family.name,
+			createProject: this.createProject,
+			background:
+				preset.ownerInitials === 'LM'
+					? lmColor
+					: hmColor,
+			glyphs: templateData.glyphs,
+			values: preset.baseValues,
+			export: this.props.export,
+			click: this.selectFont,
+			isOpen: this.state.selectedFont === preset.id,
+			familyId: preset.id,
+			fontName: `preset${preset.id}`,
+			templateName: templateInfo.templateName,
+		});
 	}
 
 	getFamilyProps(family, templateInfo, templateData, variantToLoad, userColor) {
-		return () => {
-			return {
-				key: family.id,
-				family: family,
-				template: templateInfo,
-				user: this.props.user,
-				background: userColor,
-				router: this.props.router,
-				variantToLoad: variantToLoad,
-				open: this.props.open,
-				export: this.props.export,
-				glyphs: templateData.glyphs,
-				values: {
-					...templateData.initValues,
-					...variantToLoad.values,
-				},
-				variantName: variantToLoad.name.toLowerCase(),
-				click: this.selectFont,
-				isOpen: this.state.selectedFont === family.id,
-				familyId: family.id,
-				templateName: templateInfo.templateName,
-				fontName: `user${family.id}`,
-			};
-		};
+		return () => ({
+			key: family.id,
+			family,
+			template: templateInfo,
+			user: this.props.user,
+			background: userColor,
+			router: this.props.router,
+			variantToLoad,
+			open: this.props.open,
+			export: this.props.export,
+			glyphs: templateData.glyphs,
+			values: {
+				...templateData.initValues,
+				...variantToLoad.values,
+			},
+			variantName: variantToLoad.name.toLowerCase(),
+			click: this.selectFont,
+			isOpen: this.state.selectedFont === family.id,
+			familyId: family.id,
+			templateName: templateInfo.templateName,
+			fontName: `user${family.id}`,
+		});
 	}
 
 	generateFonts(f, p) {
@@ -268,12 +264,26 @@ class LibraryList extends React.Component {
 		});
 	}
 
+	searchFonts(searchString) {
+		const newFiltered = this.state.baseFontData.filter(font => (
+			font.template.toLowerCase().includes(searchString.toLowerCase())
+			|| font.templateName.toLowerCase().includes(searchString.toLowerCase())
+			|| font.name.toLowerCase().includes(searchString.toLowerCase())
+			|| font.tags.find(e => e.toLowerCase().includes(searchString.toLowerCase()))
+		));
+
+		this.setState({fontsToDisplay: newFiltered});
+	}
+
 	componentWillReceiveProps(newProps) {
 		if (newProps.activeFilters !== this.props.activeFilters) {
 			this.filterFonts(newProps.activeFilters);
 		}
 		if (newProps.families !== this.props.families) {
 			this.generateFonts(newProps.families, newProps.presets);
+		}
+		if (newProps.search !== this.props.search) {
+			this.searchFonts(newProps.search);
 		}
 	}
 
@@ -598,7 +608,7 @@ export class PresetItem extends React.Component {
 					>
 						Download
 					</div>
-					<input type="text" name="displayedWord" value={this.state.text} onChange={this.onTextChange}/>
+					<input type="text" name="displayedWord" value={this.state.text} onChange={this.onTextChange} placeholder="Search"/>
 				</div>
 				<FontUpdater
 					name={this.props.fontName}
