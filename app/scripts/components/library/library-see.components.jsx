@@ -3,6 +3,8 @@ import {graphql, gql, compose} from 'react-apollo';
 import {
 	LibrarySidebarRight,
 	FamilySidebarActions,
+	FamilySidebarGlyphs,
+	SidebarTags,
 } from './library-sidebars.components';
 import FontUpdater from '../font-updater.components';
 import LocalClient from '../../stores/local-client.stores';
@@ -147,6 +149,10 @@ class LibrarySee extends React.Component {
 						exportFamily={this.exportFamily}
 						mode="see"
 					/>
+					{this.state.templateValues && (						
+						<FamilySidebarGlyphs glyphs={this.state.templateValues.glyphs} />
+					)}
+					<SidebarTags tags={this.state.family.tags} familyId={this.state.family.id} updateTags={this.props.updateTags} mode="readonly" />
 				</LibrarySidebarRight>
 			</div>
 		);

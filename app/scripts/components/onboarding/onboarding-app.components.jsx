@@ -445,6 +445,7 @@ export const libraryQuery = gql`
 				id
 				name
 				template
+				tags
 				variants {
 					id
 					name
@@ -495,6 +496,7 @@ const createFamilyMutation = gql`
 			id
 			name
 			template
+			tags
 			variants {
 				id
 				name
