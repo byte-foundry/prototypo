@@ -13,6 +13,7 @@ import LocalClient from '../../stores/local-client.stores';
 import {
 	LibrarySidebarRight,
 	SidebarFilters,
+	SidebarTags,
 } from './library-sidebars.components';
 
 import LibrarySearch from './library-search.components';
@@ -226,6 +227,8 @@ class LibraryList extends React.Component {
 						elem: PresetItem,
 					});
 				});
+		const allTags = [];
+
 		families && this.state.templateInfos && families.forEach((family) => {
 			const templateInfo = this.state.templateInfos.find(
 				template => template.templateName === family.template,
@@ -234,6 +237,7 @@ class LibraryList extends React.Component {
 				e => e.name === family.template,
 			);
 
+			family.tags.map(tag => allTags.push(tag));
 			const variantToLoad
 				= family.variants.find(
 					e => e.name.toLowerCase() === 'regular',
@@ -257,10 +261,19 @@ class LibraryList extends React.Component {
 				elem: FamilyItem,
 			});
 		});
+
+		const tagsDedup = [];
+
+		allTags.forEach((item) => {
+			if (tagsDedup.indexOf(item) < 0) {
+				tagsDedup.push(item);
+			}
+		});
 		this.setState({
 			baseFontData: fontData,
 			fontsToDisplay: fontData,
 			isBaseValueLoaded: true,
+			tags: tagsDedup,
 		});
 	}
 
@@ -306,6 +319,7 @@ class LibraryList extends React.Component {
 					<SidebarFilters
 						setActiveFilters={this.props.setActiveFilters}
 					/>
+					<SidebarTags tags={this.state.tags} mode="interactive" />
 				</LibrarySidebarRight>
 			</div>
 		);

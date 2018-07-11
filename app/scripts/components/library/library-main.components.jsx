@@ -130,6 +130,7 @@ class LibraryMain extends React.Component {
 					rename: this.rename,
 					duplicate: this.duplicate,
 					deleteVariant: this.deleteVariant,
+					updateTags: this.props.updateTags,
 					user: {
 						firstName: this.props.firstName,
 						lastName: this.props.lastName,
@@ -169,6 +170,7 @@ export const libraryQuery = gql`
 				id
 				name
 				template
+				tags
 				variants {
 					id
 					name
@@ -193,6 +195,15 @@ export const presetQuery = gql`
 	query {
 		getAllUniquePresets {
 			presets
+		}
+	}
+`;
+
+const updateTagsMutation = gql`
+	mutation updateTags($id: ID!, $newTags: [String!]) {
+		updateFamily(id: $id, tags: $newTags) {
+			id
+			tags
 		}
 	}
 `;
@@ -238,6 +249,29 @@ export default compose(
 				lastName: data.user.lastName,
 			};
 		},
+	}),
+	graphql(updateTagsMutation, {
+		props: ({mutate}) => ({
+			updateTags: (id, newTags) =>
+				mutate({
+					variables: {
+						id,
+						newTags,
+					},
+				}),
+			update: (store, {data: {updateFamily}}) => {
+				const data = store.readQuery({query: libraryQuery});
+				const family = data.user.library.find(
+					f => f.id === updateFamily.id,
+				);
+	
+				family.tags = updateFamily.tags;
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		}),
 	}),
 	graphql(deleteVariantMutation, {
 		props: ({mutate}) => ({

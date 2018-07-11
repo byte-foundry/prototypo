@@ -1,6 +1,6 @@
 import React from 'react';
-import pleaseWait from 'please-wait';
 import {Link} from 'react-router';
+
 import LocalClient from '../../stores/local-client.stores';
 
 export class LibrarySidebarLeft extends React.Component {
@@ -67,7 +67,8 @@ export class FamilySidebarActions extends React.Component {
 	render() {
 		return (
 			<div className="sidebar-actions-family">
-				<div className="sidebar-action"
+				<div
+					className="sidebar-action"
 					onClick={() => {
 						this.props.exportFamily();
 					}}
@@ -246,6 +247,119 @@ class SidebarFilter extends React.Component {
 							{elem.name}
 						</div>
 					))}
+				</div>
+			</div>
+		);
+	}
+}
+
+export class SidebarTags extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			tags: [],
+			newTag: '',
+			addButtonActive: false,
+		};
+		this.setActiveTag = this.setActiveTag.bind(this);
+		this.addTag = this.addTag.bind(this);
+	}
+	setActiveTag(elem) {}
+	addTag() {
+		const newTags = [...this.props.tags];
+
+		newTags.push(this.state.newTag);
+		this.props.updateTags(this.props.familyId, newTags);
+		this.setState({
+			newTag: '',
+			addButtonActive: false,
+		});
+	}
+	componentWillMount() {
+		const tagsDedup = [];
+
+		this.props.tags && this.props.tags.forEach((item) => {
+			if (tagsDedup.indexOf(item) < 0) {
+				tagsDedup.push(item);
+			}
+		});
+		const newTags = tagsDedup.map(tag => ({
+			name: tag,
+			active: false,
+		}));
+
+		this.setState({tags: newTags});
+	}
+	componentWillReceiveProps(newProps) {
+		if (newProps.tags !== this.props.tags) {
+			const tagsDedup = [];
+
+			newProps.tags && newProps.tags.forEach((item) => {
+				if (tagsDedup.indexOf(item) < 0) {
+					tagsDedup.push(item);
+				}
+			});
+			const newTags = tagsDedup.map(tag => ({
+				name: tag,
+				active: false,
+			}));
+
+			this.setState({tags: newTags});
+		}
+	}
+	render() {
+		return (
+			<div className="sidebar-tags">
+				<p className="sidebar-tags-title">Tags</p>
+				<div className="sidebar-tags-elems">
+					{this.state.tags.map(elem => (
+						<div
+							className={`sidebar-tags-elem ${
+								elem.active ? 'active' : ''
+							} ${this.props.mode}`}
+							onClick={() => {
+								if (this.props.mode !== 'readonly') {
+									this.setActiveTag(elem);
+								}
+							}}
+							key={`tag${elem.name}`}
+						>
+							{elem.name}
+						</div>
+					))}
+				</div>
+				<div
+					className={`sidebar-tags-add ${
+						this.state.addButtonActive ? 'active' : ''
+					}`}
+					onClick={() => {
+						this.setState({addButtonActive: true});
+					}}
+				>
+					{this.props.mode === 'readonly'
+					&& this.state.addButtonActive ? (
+							<input
+								type="text"
+								name=""
+								id=""
+								tabIndex="0"
+								placeholder="type then press enter.."
+								onBlur={() => {
+									this.setState({addButtonActive: false});
+								}}
+								value={this.state.newTag}
+								onChange={(e) => {
+									this.setState({newTag: e.target.value});
+								}}
+								onKeyDown={(e) => {
+									if (e.keyCode === 13) {
+										this.addTag();
+									}
+								}}
+							/>
+						) : (
+							<span>+</span>
+						)}
 				</div>
 			</div>
 		);

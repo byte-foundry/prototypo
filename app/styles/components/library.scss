@@ -52,15 +52,20 @@
         .library-search {
             input, select {
                 width: 100%;
-                background: transparent;
+                background: white;
                 box-shadow: none;
                 outline: none;
                 padding: 10px 20px;
                 margin-top: 10px;
-                border: 1px solid $dark-grey;
+                border: none;
                 border-radius: 20px;
                 &:focus {
                     outline: none;
+                }
+                &::placeholder {
+                    color: $dark-grey;
+                    opacity: 1;
+                    font-style: italic;
                 }
             }
         }
@@ -483,6 +488,77 @@
                             background-color: $dark-grey;
                         }
                     }
+                }
+            }
+        }
+        .sidebar-tags {
+            margin-bottom: 20px;
+            .sidebar-tags-title {
+                display: block;
+                font-size:  14px;
+                text-transform: uppercase;
+                color: $dark-grey;
+                width: 100%;
+                font-weight: bold;
+            }
+            .sidebar-tags-elems {
+                display: block;
+                margin-bottom: .5em;
+                &:after {
+                    content: "";
+                    display: table;
+                    clear: both;
+                }
+                .sidebar-tags-elem {
+                    font-size: 14px;
+                    padding: 5px 20px;
+                    border: 1px solid $dark-grey;
+                    background-color:  transparent;
+                    transition: color .3s ease, background-color .3s ease;
+                    float: left;
+                    margin-right: 5px;
+                    margin-bottom: 5px;
+                    border-radius: 30px;
+                    cursor: pointer;
+                    &.readonly {
+                        cursor: initial;
+                    }
+                    &.active {
+                        color: white;
+                        background-color: $dark-grey;
+                    }
+                }
+            }
+            .sidebar-tags-add {
+                display: inline-block;
+                border: 1px solid $dark-grey;
+                font-size:  18px;
+                color: $dark-grey;
+                font-weight: bold;
+                padding: 0px 8px;
+                border-radius: 50%;
+                width: 28px;
+                cursor: pointer;
+                transition: border-radius .3s ease, padding .3s ease, font-size .3s ease, width .3s ease;
+                &.active {
+                    border-radius: 10px;
+                    display: block;
+                    font-size: 14px;
+                    font-weight: normal;
+                    width: 100%;
+                    overflow: hidden;
+
+                    input {
+                        padding: 4px 8px;
+                        background: transparent;
+                        box-shadow: none;
+                        border: none;
+                        outline: none;
+                        &:focus {
+                            outline: none;
+                        }
+                    }
+
                 }
             }
         }
