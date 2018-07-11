@@ -902,7 +902,40 @@ export default class GlyphCanvas extends React.PureComponent {
 								& (appState.BOX_SELECTING | appState.NOT_SELECTING)
 							&& mouseClickRelease
 						) {
-							if (hotItems.length > 0) {
+							if (
+								this.toile.keyboardDown.keyCode
+								&& this.toile.keyboardDown.special & specialKey.SHIFT
+							) {
+								nodes.forEach((node) => {
+									let toAdd = true;
+									let toRemove;
+
+									selectedItems.forEach((item, idx) => {
+										if (node.id == item.id) {
+											toRemove = idx;
+											toAdd = false;
+										}
+									});
+
+									if (toAdd) {
+										selectedItems.push(node);
+									}
+									else {
+										selectedItems.splice(toRemove, 1);
+									}
+								});
+								appStateValue = appState.DRAGGING_POINTS;
+								selectedItems.forEach((item) => {
+									item.offsetVector = subtract2D(
+										item.data.center,
+										nodes[0].data.center,
+									);
+								});
+								mouseStart = nodes[0].data.center;
+								draggingNotStarted = true;
+								directionalNotStarted = true;
+							}
+							else if (hotItems.length > 0) {
 								selectedItems = hotItems;
 								appStateValue = appState.POINTS_SELECTED;
 								mouseBoxStart = undefined;
@@ -951,42 +984,13 @@ export default class GlyphCanvas extends React.PureComponent {
 							&& mouse.edge === mState.DOWN
 						) {
 							if (nodes.length > 0) {
-								if (
-									this.toile.keyboardDown.keyCode
-									&& this.toile.keyboardDown.special & specialKey.SHIFT
-								) {
-									selectedItems.push(...nodes);
-									appStateValue = appState.DRAGGING_POINTS;
-									selectedItems.forEach((item) => {
-										item.offsetVector = subtract2D(
-											item.data.center,
-											nodes[0].data.center,
-										);
-									});
-								}
-								else {
-									selectedItems = [nodes[0]];
-									appStateValue = appState.DRAGGING_CONTOUR_POINT;
-								}
+								selectedItems = [nodes[0]];
+								appStateValue = appState.DRAGGING_CONTOUR_POINT;
 								mouseStart = nodes[0].data.center;
 								draggingNotStarted = true;
 								directionalNotStarted = true;
 							}
-							else if (contours.length > 0 && contourSelected) {
-								if (contours.find(c => c.id === contourSelected.id)) {
-									appStateValue = appState.DRAGGING_CONTOUR;
-								}
-								else {
-									appStateValue = appState.BOX_SELECTING;
-									mouseBoxStart = mouse.pos;
-								}
-								selectedItems = [];
-							}
-							else if (globalContours.length > 0) {
-								appStateValue = appState.BOX_SELECTING;
-								mouseBoxStart = mouse.pos;
-							}
-							else if (spacingHandle.length > 0) {
+							if (spacingHandle.length > 0) {
 								appStateValue = appState.DRAGGING_SPACING;
 								selectedItems = [spacingHandle[0]];
 							}
@@ -1003,68 +1007,33 @@ export default class GlyphCanvas extends React.PureComponent {
 						) {
 							// TODO: shift behavior
 							if (nodes.length > 0) {
-								if (
-									this.toile.keyboardDown.keyCode
-									&& this.toile.keyboardDown.special & specialKey.SHIFT
-								) {
-									nodes.forEach((node) => {
-										let toAdd = true;
-										let toRemove;
+								let validPoint = false;
 
-										selectedItems.forEach((item, idx) => {
-											if (node.id == item.id) {
-												toRemove = idx;
-												toAdd = false;
-											}
-										});
+								nodes.forEach((node) => {
+									validPoint = selectedItems.find(s => s.id === node.id);
+								});
 
-										if (toAdd) {
-											selectedItems.push(node);
-										}
-										else {
-											selectedItems.splice(toRemove, 1);
-										}
-									});
+								if (!validPoint) {
+									selectedItems = [];
+									appStateValue = appState.BOX_SELECTING;
+									mouseBoxStart = mouse.pos;
+								}
+								else {
 									appStateValue = appState.DRAGGING_POINTS;
 									selectedItems.forEach((item) => {
-										item.offsetVector = subtract2D(
-											item.data.center,
-											nodes[0].data.center,
-										);
+										if (validPoint.id !== item.id) {
+											item.offsetVector = subtract2D(
+												item.data.center,
+												validPoint.data.center,
+											);
+										}
+										else {
+											item.offsetVector = {x: 0, y: 0};
+										}
 									});
 									mouseStart = nodes[0].data.center;
 									draggingNotStarted = true;
 									directionalNotStarted = true;
-								}
-								else {
-									let validPoint = false;
-
-									nodes.forEach((node) => {
-										validPoint = selectedItems.find(s => s.id === node.id);
-									});
-
-									if (!validPoint) {
-										selectedItems = [];
-										appStateValue = appState.BOX_SELECTING;
-										mouseBoxStart = mouse.pos;
-									}
-									else {
-										appStateValue = appState.DRAGGING_POINTS;
-										selectedItems.forEach((item) => {
-											if (validPoint.id !== item.id) {
-												item.offsetVector = subtract2D(
-													item.data.center,
-													validPoint.data.center,
-												);
-											}
-											else {
-												item.offsetVector = {x: 0, y: 0};
-											}
-										});
-										mouseStart = nodes[0].data.center;
-										draggingNotStarted = true;
-										directionalNotStarted = true;
-									}
 								}
 							}
 							else {
@@ -1450,24 +1419,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 
 						interactions = [interaction];
-					}
-
-					if (appStateValue & appState.CONTOUR_POINT_SELECTED) {
-						selectedItems.forEach((item) => {
-							if (
-								!unparallelMod
-								&& (item.type === toileType.NODE_OUT
-									|| item.type === toileType.NODE_IN)
-							) {
-								const {parallelParameters} = item.data;
-								const node = _get(glyph, parallelParameters[1]);
-
-								parallelParameters[0] = node;
-								parallelParameters[4] = [{id: parallelParameters[1]}];
-
-								this.toile.drawExpandedNode(...item.data.parallelParameters);
-							}
-						});
 					}
 
 					if (this.state.inputGlyphInteraction) {
