@@ -31,8 +31,12 @@ class LibrarySee extends React.Component {
 		this.props.router.push('/dashboard');
 	}
 	exportFamily() {
-		const valueArray = this.state.fontsToGenerate.map(font => font.values);
-		const variantNames = this.state.family.variants.map(variant => variant.name);
+		const valueArray = this.state.fontsToGenerate.map(
+			font => font.values,
+		);
+		const variantNames = this.state.family.variants.map(
+			variant => variant.name,
+		);
 
 		this.client.dispatchAction('/export-family-from-library', {
 			familyName: this.state.family.name,
@@ -64,19 +68,18 @@ class LibrarySee extends React.Component {
 			: this.state.family;
 		const fontsToGenerate = [];
 
-		const variants = family.variants.map((variant) => {
-			return {
-				...variant,
-				fontName: `variant${variant.id}`,
-				templateName: templateName,
-				subset: 'Hamburgefonstiv 123',
-				values: {
-					...templateValues.initValues,
-					...variant.values,
-				},
-				glyphs: templateValues.glyphs,
-			};
-		});
+		const variants = family.variants.map(variant => ({
+			...variant,
+			fontName: `variant${variant.id}`,
+			templateName,
+			subset: 'Hamburgefonstiv 123',
+			values: {
+				...templateValues.initValues,
+				...variant.values,
+			},
+			glyphs: templateValues.glyphs,
+		}));
+
 		this.setState({
 			variants,
 			templateValues,
@@ -122,16 +125,11 @@ class LibrarySee extends React.Component {
 									variant={variant}
 									family={this.state.family}
 									goToDashboard={this.goToDashboard}
-									values={
-										this.state.variants[index].values
-									}
+									values={this.state.variants[index].values}
 									template={
-										this.state.variants[index]
-											.template
+										this.state.variants[index].template
 									}
-									glyphs={
-										this.state.variants[index].glyphs
-									}
+									glyphs={this.state.variants[index].glyphs}
 									open={this.props.open}
 									duplicate={this.props.duplicate}
 									rename={this.props.rename}
@@ -149,10 +147,17 @@ class LibrarySee extends React.Component {
 						exportFamily={this.exportFamily}
 						mode="see"
 					/>
-					{this.state.templateValues && (						
-						<FamilySidebarGlyphs glyphs={this.state.templateValues.glyphs} />
+					{this.state.templateValues && (
+						<FamilySidebarGlyphs
+							glyphs={this.state.templateValues.glyphs}
+						/>
 					)}
-					<SidebarTags tags={this.state.family.tags} familyId={this.state.family.id} updateTags={this.props.updateTags} mode="readonly" />
+					<SidebarTags
+						tags={this.state.family.tags}
+						familyId={this.state.family.id}
+						updateTags={this.props.updateTags}
+						mode="readonly"
+					/>
 				</LibrarySidebarRight>
 			</div>
 		);
@@ -172,9 +177,10 @@ export class VariantItem extends React.Component {
 	}
 
 	render() {
-		const subset = 'Hamburgefonstiv 123'.split('').map(letter =>
-			letter.charCodeAt(0),
-		);
+		const subset = 'Hamburgefonstiv 123'
+			.split('')
+			.map(letter => letter.charCodeAt(0));
+
 		return (
 			<div
 				className="library-item"
