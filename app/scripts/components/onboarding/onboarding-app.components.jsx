@@ -18,7 +18,7 @@ const flatten = list =>
 
 class OnboardingApp extends React.PureComponent {
 	constructor(props) {
-		console.log(props)
+		console.log(props);
 		super(props);
 		this.state = {
 			step: 0,
@@ -52,7 +52,10 @@ class OnboardingApp extends React.PureComponent {
 				this.setState({
 					fontName: headJS.fontName,
 					parameters: flatten(
-						headJS.fontParameters.reduce((a, b) => [a, ...b.parameters]),
+						(headJS.fontParameters || []).reduce(
+							(a, b) => [a, ...b.parameters],
+							[],
+						),
 					),
 					onboardingFrom: headJS.onboardingFrom,
 					glyphs: headJS.glyphs,
@@ -328,10 +331,13 @@ class OnboardingApp extends React.PureComponent {
 						{this.defineRender(stepData)}
 						<Button
 							className="nextStep"
+							loading={this.state.parameters === []}
 							onClick={() => {
-								this.state.step < onboardingData.steps.length - 1
-									? this.getNextStep()
-									: this.props.router.push('/dashboard');
+								if (this.state.parameters !== []) {
+									this.state.step < onboardingData.steps.length - 1
+										? this.getNextStep()
+										: this.props.router.push('/dashboard');
+								}
 							}}
 						>
 							{(() => {

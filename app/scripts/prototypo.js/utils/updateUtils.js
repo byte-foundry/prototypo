@@ -15,7 +15,7 @@ export function lineLineIntersection(p1, p2, p3, p4) {
 	const d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
 
 	if (d === 0) {
-		return null;
+		return p1;
 	}
 
 	return {
@@ -379,7 +379,7 @@ export function lineCurveIntersection(
 		points,
 	);
 
-	return split(points, result[0], [pointHandleIn, pointHandleOut]);
+	return split(points, result[0] || 0, [pointHandleIn, pointHandleOut]);
 }
 
 export function log(...rest) {
