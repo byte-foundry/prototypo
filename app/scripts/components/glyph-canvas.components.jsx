@@ -168,12 +168,20 @@ export function handleModification(
 			opHandle,
 		);
 		const modVector = subtract2D(opVector, {
-			x: opHandle.xBase,
-			y: opHandle.yBase,
+			x: opHandle.xBase * xTransform,
+			y: opHandle.yBase * yTransform,
 		});
+		const transformedModVector = {
+			x:
+				modVector.x * Math.cos(angleTransform)
+				+ modVector.y * Math.sin(angleTransform),
+			y:
+				modVector.y * Math.cos(angleTransform)
+				- modVector.x * Math.sin(angleTransform),
+		};
 
-		changes[`${parentId}.${oppositeDirection}.x`] = modVector.x;
-		changes[`${parentId}.${oppositeDirection}.y`] = modVector.y;
+		changes[`${parentId}.${oppositeDirection}.x`] = transformedModVector.x;
+		changes[`${parentId}.${oppositeDirection}.y`] = transformedModVector.y;
 	}
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
@@ -228,12 +236,67 @@ export function onCurveModification(
 
 	const changes = {};
 
-	changes[`${draggedItem.id}.x`] = deltaVector.x;
-	changes[`${draggedItem.id}.y`] = deltaVector.y;
-	changes[`${draggedItem.id}.handleIn.x`] = inVector.x;
-	changes[`${draggedItem.id}.handleIn.y`] = inVector.y;
-	changes[`${draggedItem.id}.handleOut.x`] = outVector.x;
-	changes[`${draggedItem.id}.handleOut.y`] = outVector.y;
+	let xTransform = 1;
+	let yTransform = 1;
+	let angleTransform = 0;
+
+	for (let i = 0; i < transforms.length; i++) {
+		const transform = transforms[i];
+
+		if (transform) {
+			xTransform
+				/= transform.name.indexOf('scaleX') === -1 ? 1 : transform.param;
+			yTransform
+				/= transform.name.indexOf('scaleY') === -1 ? 1 : transform.param;
+			angleTransform
+				+= transform.name.indexOf('rotate') === -1 ? 0 : transform.param;
+		}
+	}
+
+	const scaledDeltaVector = {
+		x: deltaVector.x * xTransform,
+		y: deltaVector.y * yTransform,
+	};
+	const scaledInVector = {
+		x: inVector.x * xTransform,
+		y: inVector.y * yTransform,
+	};
+	const scaledOutVector = {
+		x: outVector.x * xTransform,
+		y: outVector.y * yTransform,
+	};
+
+	const transformedDeltaVector = {
+		x:
+			scaledDeltaVector.x * Math.cos(angleTransform)
+			+ scaledDeltaVector.y * Math.sin(angleTransform),
+		y:
+			scaledDeltaVector.y * Math.cos(angleTransform)
+			- scaledDeltaVector.x * Math.sin(angleTransform),
+	};
+	const transformedInVector = {
+		x:
+			scaledInVector.x * Math.cos(angleTransform)
+			+ scaledInVector.y * Math.sin(angleTransform),
+		y:
+			scaledInVector.y * Math.cos(angleTransform)
+			- scaledInVector.x * Math.sin(angleTransform),
+	};
+	const transformedOutVector = {
+		x:
+			scaledOutVector.x * Math.cos(angleTransform)
+			+ scaledOutVector.y * Math.sin(angleTransform),
+		y:
+			scaledOutVector.y * Math.cos(angleTransform)
+			- scaledOutVector.x * Math.sin(angleTransform),
+	};
+
+	changes[`${draggedItem.id}.x`] = transformedDeltaVector.x;
+	changes[`${draggedItem.id}.y`] = transformedDeltaVector.y;
+	changes[`${draggedItem.id}.handleIn.x`] = transformedInVector.x;
+	changes[`${draggedItem.id}.handleIn.y`] = transformedInVector.y;
+	changes[`${draggedItem.id}.handleOut.x`] = transformedOutVector.x;
+	changes[`${draggedItem.id}.handleOut.y`] = transformedOutVector.y;
 
 	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
