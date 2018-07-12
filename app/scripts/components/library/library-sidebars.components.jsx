@@ -252,7 +252,7 @@ class SidebarFilter extends React.Component {
 		);
 	}
 }
-
+//eslint-disable-next-line
 export class SidebarTags extends React.Component {
 	constructor(props) {
 		super(props);
@@ -263,26 +263,58 @@ export class SidebarTags extends React.Component {
 		};
 		this.setActiveTag = this.setActiveTag.bind(this);
 		this.addTag = this.addTag.bind(this);
+		this.removeTag = this.removeTag.bind(this);
 	}
-	setActiveTag(elem) {}
-	addTag() {
+	setActiveTag(elem) {
+		const newTags = [...this.state.tags];
+		const newTagsIndex = newTags.findIndex(e => e.name === elem);
+
+		newTags[newTagsIndex].active = !newTags[newTagsIndex].active;
+		this.setState({tags: newTags});
+		const filteredTags = newTags.filter(e => e.active).map(e => e.name);
+
+		this.client.dispatchAction('/store-value', {
+			librarySelectedTags: filteredTags,
+		});
+	}
+	addTag(e, doNotClose = false) {
 		const newTags = [...this.props.tags];
 
-		newTags.push(this.state.newTag);
-		this.props.updateTags(this.props.familyId, newTags);
+		if (
+			this.state.newTag.trim(' ') !== ''
+			&& newTags.findIndex(e => e === this.state.newTag) === -1
+		) {
+			newTags.push(this.state.newTag);
+			this.props.updateTags(this.props.familyId, newTags);
+		}
+
 		this.setState({
 			newTag: '',
-			addButtonActive: false,
+			addButtonActive: doNotClose,
 		});
+
+		if (doNotClose) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
 	}
-	componentWillMount() {
+	removeTag(elem) {
+		const newTags = [...this.props.tags];
+
+		newTags.splice(newTags.findIndex(e => e === elem), 1);
+		this.props.updateTags(this.props.familyId, newTags);
+	}
+	async componentWillMount() {
+		this.client = LocalClient.instance();
+
 		const tagsDedup = [];
 
-		this.props.tags && this.props.tags.forEach((item) => {
-			if (tagsDedup.indexOf(item) < 0) {
-				tagsDedup.push(item);
-			}
-		});
+		this.props.tags
+			&& this.props.tags.forEach((item) => {
+				if (tagsDedup.indexOf(item) < 0) {
+					tagsDedup.push(item);
+				}
+			});
 		const newTags = tagsDedup.map(tag => ({
 			name: tag,
 			active: false,
@@ -291,14 +323,15 @@ export class SidebarTags extends React.Component {
 		this.setState({tags: newTags});
 	}
 	componentWillReceiveProps(newProps) {
-		if (newProps.tags !== this.props.tags) {
+		if (JSON.stringify(newProps.tags) !== JSON.stringify(this.props.tags)) {
 			const tagsDedup = [];
 
-			newProps.tags && newProps.tags.forEach((item) => {
-				if (tagsDedup.indexOf(item) < 0) {
-					tagsDedup.push(item);
-				}
-			});
+			newProps.tags
+				&& newProps.tags.forEach((item) => {
+					if (tagsDedup.indexOf(item) < 0) {
+						tagsDedup.push(item);
+					}
+				});
 			const newTags = tagsDedup.map(tag => ({
 				name: tag,
 				active: false,
@@ -319,7 +352,10 @@ export class SidebarTags extends React.Component {
 							} ${this.props.mode}`}
 							onClick={() => {
 								if (this.props.mode !== 'readonly') {
-									this.setActiveTag(elem);
+									this.setActiveTag(elem.name);
+								}
+								else {
+									this.removeTag(elem.name);
 								}
 							}}
 							key={`tag${elem.name}`}
@@ -329,37 +365,39 @@ export class SidebarTags extends React.Component {
 					))}
 				</div>
 				<div
-					className={`sidebar-tags-add ${
+					className={`sidebar-tags-add ${this.props.mode} ${
 						this.state.addButtonActive ? 'active' : ''
 					}`}
 					onClick={() => {
 						this.setState({addButtonActive: true});
 					}}
 				>
-					{this.props.mode === 'readonly'
-					&& this.state.addButtonActive ? (
-							<input
-								type="text"
-								name=""
-								id=""
-								tabIndex="0"
-								placeholder="type then press enter.."
-								onBlur={() => {
-									this.setState({addButtonActive: false});
-								}}
-								value={this.state.newTag}
-								onChange={(e) => {
-									this.setState({newTag: e.target.value});
-								}}
-								onKeyDown={(e) => {
-									if (e.keyCode === 13) {
-										this.addTag();
-									}
-								}}
-							/>
-						) : (
-							<span>+</span>
-						)}
+					{this.state.addButtonActive ? (
+						<input
+							type="text"
+							name=""
+							id=""
+							tabIndex="0"
+							placeholder="type then press enter.."
+							onBlur={() => {
+								this.setState({addButtonActive: false});
+							}}
+							value={this.state.newTag}
+							onChange={(e) => {
+								this.setState({newTag: e.target.value});
+							}}
+							onKeyDown={(e) => {
+								if (e.keyCode === 13) {
+									this.addTag(e);
+								}
+								if (e.keyCode === 188) {
+									this.addTag(e, true);
+								}
+							}}
+						/>
+					) : (
+						<span>+</span>
+					)}
 				</div>
 			</div>
 		);

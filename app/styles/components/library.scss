@@ -520,9 +520,6 @@
                     margin-bottom: 5px;
                     border-radius: 30px;
                     cursor: pointer;
-                    &.readonly {
-                        cursor: initial;
-                    }
                     &.active {
                         color: white;
                         background-color: $dark-grey;
@@ -540,6 +537,9 @@
                 width: 28px;
                 cursor: pointer;
                 transition: border-radius .3s ease, padding .3s ease, font-size .3s ease, width .3s ease;
+                &.interactive {
+                    display: none;
+                }
                 &.active {
                     border-radius: 10px;
                     display: block;

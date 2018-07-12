@@ -115,6 +115,7 @@ class LibraryCreate extends React.Component {
 				background: userColor,
 				router: this.props.router,
 				variantToLoad: variantToLoad,
+				createProject: this.createProject,
 				open: this.props.open,
 				export: this.props.export,
 				glyphs: templateData.glyphs,

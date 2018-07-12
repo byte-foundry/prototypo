@@ -49,6 +49,7 @@ class LibraryMain extends React.Component {
 						.collectionSelectedVariant,
 					templatesData: head.toJS().d.templatesData,
 					search: head.toJS().d.librarySearchString,
+					librarySelectedTags: head.toJS().d.librarySelectedTags,
 				});
 			});
 	}
@@ -136,6 +137,7 @@ class LibraryMain extends React.Component {
 						lastName: this.props.lastName,
 					},
 					search: this.state.search,
+					librarySelectedTags: this.state.librarySelectedTags,
 				})}
 				{this.state.openVariantModal && (
 					<CreateVariantModal

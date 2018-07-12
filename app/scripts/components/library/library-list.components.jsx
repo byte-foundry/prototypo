@@ -27,6 +27,7 @@ class LibraryList extends React.Component {
 		this.createProject = this.createProject.bind(this);
 		this.selectFont = this.selectFont.bind(this);
 		this.searchFonts = this.searchFonts.bind(this);
+		this.searchTags = this.searchTags.bind(this);
 	}
 
 	async componentWillMount() {
@@ -86,28 +87,24 @@ class LibraryList extends React.Component {
 		this.props.router.push({
 			pathname: '/onboarding',
 			state: {template, values},
-		})
+		});
 	}
 
 	getTemplateProps(template, templateData) {
-		return () => {
-			return {
-				key: template.templateName,
-				template,
-				glyphs: templateData.glyphs,
-				values: templateData.initValues,
-				export: this.props.export,
-				createProject: this.createProject,
-				click: this.selectFont,
-				isOpen: this.state.selectedFont === template.templateName,
-				familyId: template.templateName,
-				fontName: `template${template.templateName
-					.split('.')
-					.join('')}`,
-				values: templateData.initValues,
-				templateName: template.templateName,
-			};
-		};
+		return () => ({
+			key: template.templateName,
+			template,
+			glyphs: templateData.glyphs,
+			values: templateData.initValues,
+			export: this.props.export,
+			createProject: this.createProject,
+			click: this.selectFont,
+			isOpen: this.state.selectedFont === template.templateName,
+			familyId: template.templateName,
+			fontName: `template${template.templateName.split('.').join('')}`,
+			values: templateData.initValues,
+			templateName: template.templateName,
+		});
 	}
 
 	getPresetProps(preset, templateInfo, templateData, lmColor, hmColor) {
@@ -118,10 +115,7 @@ class LibraryList extends React.Component {
 			user: preset.ownerInitials,
 			name: preset.variant.family.name,
 			createProject: this.createProject,
-			background:
-				preset.ownerInitials === 'LM'
-					? lmColor
-					: hmColor,
+			background: preset.ownerInitials === 'LM' ? lmColor : hmColor,
 			glyphs: templateData.glyphs,
 			values: preset.baseValues,
 			export: this.props.export,
@@ -133,7 +127,13 @@ class LibraryList extends React.Component {
 		});
 	}
 
-	getFamilyProps(family, templateInfo, templateData, variantToLoad, userColor) {
+	getFamilyProps(
+		family,
+		templateInfo,
+		templateData,
+		variantToLoad,
+		userColor,
+	) {
 		return () => ({
 			key: family.id,
 			family,
@@ -184,7 +184,7 @@ class LibraryList extends React.Component {
 					template: template.templateName,
 					templateName: template.name,
 					name: template.name,
-					tags: [template.provider, 'template'],
+					tags: [],
 					designer: template.provider,
 					id: template.id,
 					type: 'Template',
@@ -221,71 +221,103 @@ class LibraryList extends React.Component {
 							|| preset.ownerInitials === 'HM'
 								? 'Prototypo'
 								: '',
-						tags: [templateInfo.provider, 'preset'],
 						id: preset.id,
-						props: this.getPresetProps(preset, templateInfo, templateData, lmColor, hmColor),
+						tags: [],
+						props: this.getPresetProps(
+							preset,
+							templateInfo,
+							templateData,
+							lmColor,
+							hmColor,
+						),
 						elem: PresetItem,
 					});
 				});
 		const allTags = [];
 
-		families && this.state.templateInfos && families.forEach((family) => {
-			const templateInfo = this.state.templateInfos.find(
-				template => template.templateName === family.template,
-			) || {name: 'Undefined'};
-			const templateData = this.state.templatesData.find(
-				e => e.name === family.template,
-			);
+		families
+			&& this.state.templateInfos
+			&& families.forEach((family) => {
+				const templateInfo = this.state.templateInfos.find(
+					template => template.templateName === family.template,
+				) || {name: 'Undefined'};
+				const templateData = this.state.templatesData.find(
+					e => e.name === family.template,
+				);
 
-			family.tags.map(tag => allTags.push(tag));
-			const variantToLoad
-				= family.variants.find(
-					e => e.name.toLowerCase() === 'regular',
-				) || family.variants[0];
+				family.tags && family.tags.map(tag => allTags.push(tag));
+				const variantToLoad
+					= family.variants.find(
+						e => e.name.toLowerCase() === 'regular',
+					) || family.variants[0];
 
-			fontData.push({
-				template: templateInfo.templateName,
-				templateName: templateInfo.name,
-				name: family.name,
-				designer: '',
-				tags: [templateInfo.provider, 'project', family.name],
-				type: 'Fonts',
-				variants: family.variants,
-				id: family.id,
-				user: {
-					firstName: this.props.firstName,
-					lastName: this.props.lastName,
-				},
-				background: userColor,
-				props: this.getFamilyProps(family, templateInfo, templateData, variantToLoad, userColor),
-				elem: FamilyItem,
+				fontData.push({
+					template: templateInfo.templateName,
+					templateName: templateInfo.name,
+					name: family.name,
+					designer: '',
+					type: 'Fonts',
+					tags: family.tags,
+					variants: family.variants,
+					id: family.id,
+					user: {
+						firstName: this.props.firstName,
+						lastName: this.props.lastName,
+					},
+					background: userColor,
+					props: this.getFamilyProps(
+						family,
+						templateInfo,
+						templateData,
+						variantToLoad,
+						userColor,
+					),
+					elem: FamilyItem,
+				});
 			});
-		});
 
-		const tagsDedup = [];
+		const tagCount = allTags.reduce((obj, val) => {
+			obj[val] = (obj[val] || 0) + 1;
+			return obj;
+		}, {});
+		const tagsDedup = Object.keys(tagCount).sort(
+			(a, b) => tagCount[b] - tagCount[a],
+		);
 
-		allTags.forEach((item) => {
-			if (tagsDedup.indexOf(item) < 0) {
-				tagsDedup.push(item);
-			}
-		});
 		this.setState({
 			baseFontData: fontData,
 			fontsToDisplay: fontData,
 			isBaseValueLoaded: true,
-			tags: tagsDedup,
+			tags: tagsDedup.slice(0, 10),
 		});
 	}
 
 	searchFonts(searchString) {
-		const newFiltered = this.state.baseFontData.filter(font => (
-			font.template.toLowerCase().includes(searchString.toLowerCase())
-			|| font.templateName.toLowerCase().includes(searchString.toLowerCase())
-			|| font.name.toLowerCase().includes(searchString.toLowerCase())
-			|| font.tags.find(e => e.toLowerCase().includes(searchString.toLowerCase()))
-		));
+		const newFiltered = this.state.baseFontData.filter(
+			font =>
+				font.template
+					.toLowerCase()
+					.includes(searchString.toLowerCase())
+				|| font.templateName
+					.toLowerCase()
+					.includes(searchString.toLowerCase())
+				|| font.name.toLowerCase().includes(searchString.toLowerCase())
+				|| font.tags.find(e =>
+					e.toLowerCase().includes(searchString.toLowerCase()),
+				),
+		);
 
 		this.setState({fontsToDisplay: newFiltered});
+	}
+
+	searchTags(selectedTags) {
+		if (this.state.baseFontData) {
+			const newFiltered = this.state.baseFontData.filter(font =>
+				font.tags && selectedTags.every(elem => font.tags.indexOf(elem) > -1),
+			);
+
+			this.setState({fontsToDisplay: newFiltered});
+		}
 	}
 
 	componentWillReceiveProps(newProps) {
@@ -297,6 +329,12 @@ class LibraryList extends React.Component {
 		}
 		if (newProps.search !== this.props.search) {
 			this.searchFonts(newProps.search);
+		}
+		if (
+			JSON.stringify(newProps.librarySelectedTags)
+			!== JSON.stringify(this.props.librarySelectedTags)
+		) {
+			this.searchTags(newProps.librarySelectedTags);
 		}
 	}
 
@@ -310,9 +348,7 @@ class LibraryList extends React.Component {
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-list">
-					<FamilyList
-						fontsToDisplay={this.state.fontsToDisplay}
-					/>
+					<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
 				</div>
 				<LibrarySidebarRight>
 					<LibrarySearch />
@@ -358,7 +394,9 @@ class FamilyList extends React.Component {
 			>
 				<div className="library-family-list">
 					{this.props.fontsToDisplay
-							&& this.props.fontsToDisplay.map(font => React.createElement(font.elem, {...font.props()}))}
+						&& this.props.fontsToDisplay.map(font =>
+							React.createElement(font.elem, {...font.props()}),
+						)}
 				</div>
 			</ScrollArea>
 		);
@@ -371,7 +409,7 @@ export class TemplateItem extends React.Component {
 		this.selectFont = this.selectFont.bind(this);
 		this.state = {
 			text: 'Hamburgefonstiv 123',
-		}
+		};
 		this.onTextChange = this.onTextChange.bind(this);
 	}
 
@@ -387,10 +425,7 @@ export class TemplateItem extends React.Component {
 
 	render() {
 		return (
-			<div
-				className="library-item"
-				tabIndex={0}
-			>
+			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">{this.props.template.name}</p>
 				<p
 					className="library-item-preview"
@@ -413,10 +448,11 @@ export class TemplateItem extends React.Component {
 						this.props.isOpen ? 'opened' : ''
 					}`}
 				>
-					<div className="library-item-action"
+					<div
+						className="library-item-action"
 						onClick={() => {
 							this.props.createProject(
-								this.props.template.templateName
+								this.props.template.templateName,
 							);
 						}}
 					>
@@ -436,7 +472,12 @@ export class TemplateItem extends React.Component {
 					>
 						Download
 					</div>
-					<input type="text" name="displayedWord" value={this.state.text} onChange={this.onTextChange}/>
+					<input
+						type="text"
+						name="displayedWord"
+						value={this.state.text}
+						onChange={this.onTextChange}
+					/>
 				</div>
 				<FontUpdater
 					name={this.props.fontName}
@@ -456,7 +497,7 @@ export class FamilyItem extends React.Component {
 		this.selectFont = this.selectFont.bind(this);
 		this.state = {
 			text: 'Hamburgefonstiv 123',
-		}
+		};
 		this.onTextChange = this.onTextChange.bind(this);
 	}
 
@@ -472,10 +513,7 @@ export class FamilyItem extends React.Component {
 
 	render() {
 		return (
-			<div
-				className="library-item"
-				tabIndex={0}
-			>
+			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
 					{this.props.family.name} from {this.props.template.name}
 				</p>
@@ -537,7 +575,12 @@ export class FamilyItem extends React.Component {
 					>
 						Open family
 					</div>
-					<input type="text" name="displayedWord" value={this.state.text} onChange={this.onTextChange}/>
+					<input
+						type="text"
+						name="displayedWord"
+						value={this.state.text}
+						onChange={this.onTextChange}
+					/>
 				</div>
 				<FontUpdater
 					name={this.props.fontName}
@@ -557,7 +600,7 @@ export class PresetItem extends React.Component {
 		this.selectFont = this.selectFont.bind(this);
 		this.state = {
 			text: 'Hamburgefonstiv 123',
-		}
+		};
 		this.onTextChange = this.onTextChange.bind(this);
 	}
 
@@ -573,10 +616,7 @@ export class PresetItem extends React.Component {
 
 	render() {
 		return (
-			<div
-				className="library-item"
-				tabIndex={0}
-			>
+			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
 					{this.props.name} from {this.props.template.name}
 				</p>
@@ -598,7 +638,8 @@ export class PresetItem extends React.Component {
 						this.props.isOpen ? 'opened' : ''
 					}`}
 				>
-					<div className="library-item-action"
+					<div
+						className="library-item-action"
 						onClick={() => {
 							this.props.createProject(
 								this.props.template.templateName,
@@ -622,7 +663,13 @@ export class PresetItem extends React.Component {
 					>
 						Download
 					</div>
-					<input type="text" name="displayedWord" value={this.state.text} onChange={this.onTextChange} placeholder="Search"/>
+					<input
+						type="text"
+						name="displayedWord"
+						value={this.state.text}
+						onChange={this.onTextChange}
+						placeholder="Search"
+					/>
 				</div>
 				<FontUpdater
 					name={this.props.fontName}
