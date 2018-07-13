@@ -99,7 +99,6 @@ class LibrarySee extends React.Component {
 	}
 
 	render() {
-		console.log(this.props)
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">

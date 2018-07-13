@@ -22,10 +22,27 @@ class LibraryDetails extends React.Component {
 		}
 		this.state = {
 			family,
+			familyMetadata: {
+				name: family.name,
+				designer: family.designer,
+				designerUrl: family.designerUrl,
+				foundry: family.foundry,
+				foundryUrl: family.foundryUrl,
+				isModified: false,
+			},
+			variantMetadata: family.variants.map(variant => ({
+				isModified: false,
+				width: variant.width,
+				italic: variant.italic,
+				weight: variant.weight,
+				name: variant.name,
+			})),
 		};
 		this.goToDashboard = this.goToDashboard.bind(this);
 		this.deleteFamily = this.deleteFamily.bind(this);
 		this.exportFamily = this.exportFamily.bind(this);
+		this.updateFamilyData = this.updateFamilyData.bind(this);
+		this.updateVariantData = this.updateVariantData.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -39,6 +56,20 @@ class LibraryDetails extends React.Component {
 			.templatesData.find(e => e.name === this.state.family.template);
 
 		this.setState({familyGlyphs, templateValues});
+	}
+	updateFamilyData(event, field) {
+		const familyMetadata = {...this.state.familyMetadata};
+
+		familyMetadata[field] = event.target.value;
+		familyMetadata.isModified = true;
+		this.setState({familyMetadata});
+	}
+	updateVariantData(event, field, index) {
+		const variantMetadata = {...this.state.variantMetadata};
+
+		variantMetadata[index][field] = event.target.value;
+		variantMetadata[index].isModified = true;
+		this.setState({variantMetadata});
 	}
 	exportFamily() {
 		const valueArray = this.state.family.variants.map(variant => ({
@@ -73,7 +104,7 @@ class LibraryDetails extends React.Component {
 						<div
 							className={'provider provider-custom'}
 							style={{
-								backgroundColor: this.state.family.background,
+								backgroundColor: '#29ABE2',
 							}}
 						>
 							{this.props.user.firstName
@@ -90,7 +121,10 @@ class LibraryDetails extends React.Component {
 									type="text"
 									id="name"
 									name="family_name"
-									value={this.state.family.name}
+									value={this.state.familyMetadata.name}
+									onChange={(e) => {
+										this.updateFamilyData(e, 'name');
+									}}
 								/>
 							</div>
 							<div className="library-details-form-elem" />
@@ -100,14 +134,25 @@ class LibraryDetails extends React.Component {
 									type="text"
 									id="name"
 									name="user_name"
-									value={`${this.props.user.firstName} ${
-										this.props.user.lastName
-									}`}
+									value={this.state.familyMetadata.designer}
+									onChange={(e) => {
+										this.updateFamilyData(e, 'designer');
+									}}
 								/>
 							</div>
 							<div className="library-details-form-elem">
 								<label htmlFor="msg">Designer URL</label>
-								<input type="text" id="name" name="user_name" />
+								<input
+									type="text"
+									id="name"
+									name="user_name"
+									value={
+										this.state.familyMetadata.designerUrl
+									}
+									onChange={(e) => {
+										this.updateFamilyData(e, 'designerUrl');
+									}}
+								/>
 							</div>
 							<div className="library-details-form-elem">
 								<label htmlFor="msg">Foundry</label>
@@ -115,7 +160,10 @@ class LibraryDetails extends React.Component {
 									type="text"
 									id="name"
 									name="user_name"
-									value="Prototypo"
+									value={this.state.familyMetadata.foundry}
+									onChange={(e) => {
+										this.updateFamilyData(e, 'foundry');
+									}}
 								/>
 							</div>
 							<div className="library-details-form-elem">
@@ -124,9 +172,17 @@ class LibraryDetails extends React.Component {
 									type="text"
 									id="name"
 									name="user_name"
-									value="https://prototypo.io/"
+									value={this.state.familyMetadata.foundryUrl}
+									onChange={(e) => {
+										this.updateFamilyData(e, 'foundryUrl');
+									}}
 								/>
 							</div>
+							{this.state.familyMetadata.isModified && (
+								<div className="library-details-form-button">
+									Update
+								</div>
+							)}
 						</form>
 					</div>
 					<div className="library-details-variants">
@@ -148,32 +204,77 @@ class LibraryDetails extends React.Component {
 											type="text"
 											id="settings"
 											name="style_settings"
-											value={variant.name}
+											value={
+												this.state.variantMetadata[
+													index
+												].name
+											}
+											onChange={(e) => {
+												this.updateVariantData(
+													e,
+													'name',
+													index,
+												);
+											}}
 										/>
 									</div>
 									<div className="details-form-elem">
-										<select name="style-weight">
-											<option value="200">200</option>
-											<option value="300">300</option>
-											<option value="400">400</option>
-											<option value="500">500</option>
-											<option value="600">600</option>
-											<option value="700">700</option>
-											<option value="800">800</option>
-											<option value="900">900</option>
+										<select
+											name="style-weight"
+											value={
+												this.state.variantMetadata[
+													index
+												].weight
+											}
+											onChange={(e) => {
+												this.updateVariantData(
+													e,
+													'weight',
+													index,
+												);
+											}}
+										>
+											{[
+												200,
+												300,
+												400,
+												500,
+												600,
+												700,
+												800,
+												900,
+											].map(weight => (
+												<option value={weight}>
+													{weight}
+												</option>
+											))}
 										</select>
 									</div>
 									<div className="details-form-elem">
-										<select name="style-width">
-											<option value="normal">
-												normal
-											</option>
-											<option value="condensed">
-												condensed
-											</option>
-											<option value="extended">
-												extended
-											</option>
+										<select
+											name="style-width"
+											value={
+												this.state.variantMetadata[
+													index
+												].width
+											}
+											onChange={(e) => {
+												this.updateVariantData(
+													e,
+													'width',
+													index,
+												);
+											}}
+										>
+											{[
+												'normal',
+												'condensed',
+												'extended',
+											].map(width => (
+												<option value={width}>
+													{width}
+												</option>
+											))}
 										</select>
 									</div>
 									<div className="details-form-elem checkbox">
@@ -182,10 +283,29 @@ class LibraryDetails extends React.Component {
 												type="checkbox"
 												id="italic"
 												name="italic"
+												checked={
+													this.state.variantMetadata[
+														index
+													].italic
+												}
+												onChange={(e) => {
+													this.updateVariantData(
+														e,
+														'italic',
+														index,
+													);
+												}}
 											/>
 											<label htmlFor="italic" />
 										</div>
 									</div>
+									{this.state.variantMetadata[index].isModified && (
+										<div className="details-form-elem">
+											<div className="library-details-form-button">
+												Update
+											</div>
+										</div>
+									)}
 									<div className="details-form-elem">
 										{this.state.family.variants.length
 											> 1 && (
@@ -214,7 +334,12 @@ class LibraryDetails extends React.Component {
 						mode="details"
 					/>
 					<FamilySidebarGlyphs glyphs={this.state.familyGlyphs} />
-					<SidebarTags tags={this.state.family.tags} familyId={this.state.family.id} updateTags={this.props.updateTags} mode="readonly" />
+					<SidebarTags
+						tags={this.state.family.tags}
+						familyId={this.state.family.id}
+						updateTags={this.props.updateTags}
+						mode="readonly"
+					/>
 				</LibrarySidebarRight>
 			</div>
 		);
@@ -230,10 +355,17 @@ const libraryQuery = gql`
 				name
 				template
 				tags
+				designer
+				designerUrl
+				foundry
+				foundryUrl
 				variants {
 					id
 					name
 					values
+					width
+					weight
+					italic
 				}
 			}
 		}
