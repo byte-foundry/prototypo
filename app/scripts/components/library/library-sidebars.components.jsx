@@ -252,7 +252,7 @@ class SidebarFilter extends React.Component {
 		);
 	}
 }
-//eslint-disable-next-line
+// eslint-disable-next-line
 export class SidebarTags extends React.Component {
 	constructor(props) {
 		super(props);
@@ -278,7 +278,7 @@ export class SidebarTags extends React.Component {
 		});
 	}
 	addTag(e, doNotClose = false) {
-		const newTags = [...this.props.tags];
+		const newTags = [...(this.props.tags || [])];
 
 		if (
 			this.state.newTag.trim(' ') !== ''
@@ -364,6 +364,12 @@ export class SidebarTags extends React.Component {
 						</div>
 					))}
 				</div>
+				{this.props.mode !== 'readonly'
+					&& this.state.tags.length === 0 && (
+					<span>
+							No tags yet. Open one of your project to add one!
+					</span>
+				)}
 				<div
 					className={`sidebar-tags-add ${this.props.mode} ${
 						this.state.addButtonActive ? 'active' : ''
