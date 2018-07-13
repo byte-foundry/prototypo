@@ -1,125 +1,125 @@
 @import '../variables';
 .library-app {
-    color: $dark-grey;
-    .library-main {
-        display: flex;
-        flex-direction: row;
-        align-items: stretch;
-        .library-sidebar-left {
-            background: $dark-grey;
-            color: #eee;
-            width: 250px;
-            min-height: 100vh;
-            padding: 25px;
-            display: inline-block;
-            position: relative;
+	color: $dark-grey;
+	.library-main {
+		display: flex;
+		flex-direction: row;
+		align-items: stretch;
+		.library-sidebar-left {
+			background: $dark-grey;
+			color: #eee;
+			width: 250px;
+			min-height: 100vh;
+			padding: 25px;
+			display: inline-block;
+			position: relative;
 
-            .library-sidebar-action-dark {
-                margin-right: auto;
-                margin-left: auto;
-                text-align: center;
-                width: 100%;
-                display: inline-block;
-                font-size: 14px;
-                padding: 10px 20px;
-                border: 3px solid $green;
-                color: $green;
-                background-color:  transparent;
-                transition: color .3s ease, background-color .3s ease;
-                border-radius: 30px;
-                text-transform: uppercase;
-                font-size: 16px;
-                cursor: pointer;
-                &:hover {
-                    background: $green;
-                    color: $dark-grey;
-                }
-
-            }
-            .library-links {
-                margin-top: 40px;
-                color: $green;
-                font-size: 16px;
-                color: white;
-                .library-link {
-                    &.active {
-                        color: $green;
-                        font-weight: bold;
-                    }
-                }
-            }
-        }
-        .library-search {
-            input, select {
-                width: 100%;
-                background: white;
-                box-shadow: none;
-                outline: none;
-                padding: 10px 20px;
-                margin-top: 10px;
-                border: none;
-                border-radius: 20px;
-                &:focus {
-                    outline: none;
-                }
-                &::placeholder {
-                    color: $dark-grey;
-                    opacity: 1;
-                    font-style: italic;
-                }
-            }
-        }
-        .library-sidebar-right {
-            background: #F4F4F4;
-            color: $dark-grey;
-            min-height: 100vh;
-            width: 250px;
-            padding: 25px;
-            .sidebar-actions-family {
-                .sidebar-action {
-                    margin-bottom: 10px;
-                        text-align: center;
-                        display: block;
-                        font-size: 14px;
-                        padding: 5px 20px;
-                        border: 2px solid $dark-grey;
-                        color: $dark-grey;
-                        background-color:  transparent;
-                        transition: color .3s ease, background-color .3s ease;
-                        border-radius: 30px;
-                        cursor: pointer;
-                        &:hover {
-                            background: $dark-grey;
-                            color: white;
-                        }
-                }
-            }
-            .sidebar-glyphs {
-                .sidebar-glyphs-title {
-                    margin-top: 40px;
-                    font-weight: bold;
-                }
-                .sidebar-glyphs-language {
-                    margin-top: 10px;
-                    text-transform: uppercase;
-                    span {
-                        color: $medium-grey;
-                        margin-left: 10px;
-                    }
-                }
-            }
-        }
-        .library-content-wrapper {
-            display: flex;
-            flex-direction: row;
-            align-items: stretch;
-        }
-        .library-list {
-            flex-grow: 2;
-            background: white;
-            color: $dark-grey;
-            height: 100vh;
-            min-width: calc(100vw - 500px);
+			.library-sidebar-action-dark {
+				margin-right: auto;
+				margin-left: auto;
+				text-align: center;
+				width: 100%;
+				display: inline-block;
+				font-size: 14px;
+				padding: 10px 20px;
+				border: 3px solid $green;
+				color: $green;
+				background-color: transparent;
+				transition: color 0.3s ease, background-color 0.3s ease;
+				border-radius: 30px;
+				text-transform: uppercase;
+				font-size: 16px;
+				cursor: pointer;
+				&:hover {
+					background: $green;
+					color: $dark-grey;
+				}
+			}
+			.library-links {
+				margin-top: 40px;
+				color: $green;
+				font-size: 16px;
+				color: white;
+				.library-link {
+					&.active {
+						color: $green;
+						font-weight: bold;
+					}
+				}
+			}
+		}
+		.library-search {
+			input,
+			select {
+				width: 100%;
+				background: white;
+				box-shadow: none;
+				outline: none;
+				padding: 10px 20px;
+				margin-top: 10px;
+				border: none;
+				border-radius: 20px;
+				&:focus {
+					outline: none;
+				}
+				&::placeholder {
+					color: $dark-grey;
+					opacity: 1;
+					font-style: italic;
+				}
+			}
+		}
+		.library-sidebar-right {
+			background: #f4f4f4;
+			color: $dark-grey;
+			min-height: 100vh;
+			width: 250px;
+			padding: 25px;
+			.sidebar-actions-family {
+				.sidebar-action {
+					margin-bottom: 10px;
+					text-align: center;
+					display: block;
+					font-size: 14px;
+					padding: 5px 20px;
+					border: 2px solid $dark-grey;
+					color: $dark-grey;
+					background-color: transparent;
+					transition: color 0.3s ease, background-color 0.3s ease;
+					border-radius: 30px;
+					cursor: pointer;
+					&:hover {
+						background: $dark-grey;
+						color: white;
+					}
+				}
+			}
+			.sidebar-glyphs {
+				.sidebar-glyphs-title {
+					margin-top: 40px;
+					font-weight: bold;
+				}
+				.sidebar-glyphs-language {
+					margin-top: 10px;
+					text-transform: uppercase;
+					span {
+						color: $medium-grey;
+						margin-left: 10px;
+					}
+				}
+			}
+		}
+		.library-content-wrapper {
+			display: flex;
+			flex-direction: row;
+			align-items: stretch;
+		}
+		.library-list {
+			flex-grow: 2;
+			background: white;
+			color: $dark-grey;
+			height: 100vh;
+			min-width: calc(100vw - 500px);
 
 			&--create {
 				height: calc(100vh - 102px);
@@ -131,436 +131,459 @@
 				padding-left: 40px;
 				margin: 30px 0;
 			}
-        }
-        .library-see {
-            margin-top: 40px;
-            flex-grow: 2;
-            background: white;
-            color: $dark-grey;
-            height: 100vh;
-            max-height: 100vh;
-            overflow-y: auto;
-            padding-bottom: 20px;
-            .library-see-variants {
-                margin-top: 40px;
-            }
-            .library-see-title {
-                position: relative;
-                font-size: 40px;
-                padding-left: 40px;
-                padding-right: 40px;
-                width: calc(100vw - 500px);
-            }
+		}
+		.library-see {
+			margin-top: 40px;
+			flex-grow: 2;
+			background: white;
+			color: $dark-grey;
+			height: 100vh;
+			max-height: 100vh;
+			overflow-y: auto;
+			padding-bottom: 20px;
+			.library-see-variants {
+				margin-top: 40px;
+			}
+			.library-see-title {
+				position: relative;
+				font-size: 40px;
+				padding-left: 40px;
+				padding-right: 40px;
+				width: calc(100vw - 500px);
+			}
 
-            .library-item-variant-actions {
-                background: $dark-grey;
-                padding-top: 0;
-                padding-bottom: 0;
-                padding-left: 40px;
-                padding-right: 40px;
-                max-height: 0px;
-                transition: all .1s ease;
-                overflow: hidden;
-                &.opened {
-                    max-height: 350px;
-                    padding-top: 10px;
-                    padding-bottom: 10px;
-                }
-                &:after {
-                    content: "";
-                    display: table;
-                    clear: both;
-                }
-                .library-item-variant-actions-group {
-                    float: left;
-                    margin-right: 40px;
-                    .library-item-variant-actions-group-title {
-                        color: white;
-                        font-size: 14px;
-                        font-weight: bold;
-                        margin-bottom: 20px;
-                    }
-                    .library-item-variant-action {
-                        margin-bottom: 10px;
-                        text-align: center;
-                        font-size: 14px;
-                        padding: 5px 20px;
-                        border: 3px solid $green;
-                        color: $green;
-                        background-color:  transparent;
-                        transition: color .3s ease, background-color .3s ease;
-                        border-radius: 30px;
-                        cursor: pointer;
-                        &:hover {
-                            background: $green;
-                            color: $dark-grey;
-                        }
-                    }
-                }
+			.library-item-variant-actions {
+				background: $dark-grey;
+				padding-top: 0;
+				padding-bottom: 0;
+				padding-left: 40px;
+				padding-right: 40px;
+				max-height: 0px;
+				transition: all 0.1s ease;
+				overflow: hidden;
+				&.opened {
+					max-height: 350px;
+					padding-top: 10px;
+					padding-bottom: 10px;
+				}
+				&:after {
+					content: '';
+					display: table;
+					clear: both;
+				}
+				.library-item-variant-actions-group {
+					float: left;
+					margin-right: 40px;
+					.library-item-variant-actions-group-title {
+						color: white;
+						font-size: 14px;
+						font-weight: bold;
+						margin-bottom: 20px;
+					}
+					.library-item-variant-action {
+						margin-bottom: 10px;
+						text-align: center;
+						font-size: 14px;
+						padding: 5px 20px;
+						border: 3px solid $green;
+						color: $green;
+						background-color: transparent;
+						transition: color 0.3s ease, background-color 0.3s ease;
+						border-radius: 30px;
+						cursor: pointer;
+						&:hover {
+							background: $green;
+							color: $dark-grey;
+						}
+					}
+				}
+			}
+			.library-details-form {
+				form {
+					margin-top: 50px;
+					display: flex;
+					flex-direction: row;
+					justify-content: space-around;
+					flex-wrap: wrap;
+					align-content: flex-start;
 
-            }
-            .library-details-form {
-                form {
-                    margin-top: 50px;
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: space-around;
-                    flex-wrap: wrap;
-                    align-content: flex-start;
-                    .library-details-form-elem {
-                        width: 50%;
-                        padding-left: 40px;
-                        padding-right: 40px;
-                        margin-bottom: 40px;
-                        label {
-                            display: block;
-                            text-transform: uppercase;
-                            font-weight: bold;
-                        }
-                        input, select {
-                            width: 100%;
-                            background: transparent;
-                            box-shadow: none;
-                            outline: none;
-                            padding: 10px 20px;
-                            margin-top: 10px;
-                            border: 1px solid $dark-grey;
-                            &:focus {
-                                outline: none;
-                            }
-                        }
-                    }
-                }
-            }
-            .library-details-variants {
-                .details-header, .details-form {
-                    margin-top: 50px;
-                    display: flex;
-                    flex-direction: row;
-                    justify-content: flex-start;
-                    flex-wrap: wrap;
-                    align-content: flex-start;
-                    .details-header-elem {
-                        width: 20%;
-                        padding-left: 40px;
-                        padding-right: 40px;
-                        margin-bottom: 10px;
-                        text-transform: uppercase;
-                        font-weight: bold;
-                    }
-                    .details-form-elem {
-                        width: 20%;
-                        padding-left: 40px;
-                        padding-right: 40px;
-                        margin-bottom: 10px;
-                        &.checkbox {
-                            width: 50px;
-                        }
-                        input, select {
-                            width: 100%;
-                            background: transparent;
-                            box-shadow: none;
-                            outline: none;
-                            padding: 10px 20px;
-                            margin-top: 10px;
-                            border: 1px solid $dark-grey;
-                            &:focus {
-                                outline: none;
-                            }
-                        }
-                        .button-remove {
-                            margin-top: 10px;
-                            text-align: center;
-                            font-size: 14px;
-                            padding: 5px 20px;
-                            display: inline-block;
-                            border: 1px solid $dark-grey;
-                            color: $dark-grey;
-                            background-color:  transparent;
-                            transition: color .3s ease, background-color .3s ease;
-                            border-radius: 30px;
-                            cursor: pointer;
-                            &:hover {
-                                background: $dark-grey;
-                                color: white;
-                            }
-                        }
-                        .checkbox,
-                        .checkbox-alt {
-                            background-color: transparent;
-                            display: inline-block;
-                            height: 40px;
-                            margin-top: 10px;
-                            width: 40px;
-                            border: 1px solid $dark-grey;
-                            label {
-                                display: block;
-                                height: 40px;
-                                position: relative;
-                                width: 40px;
-                                &:after {
-                                transform: scaleX(-1) rotate(180deg + -45deg);
-                                border-right: 4px solid $lightest-grey;
-                                border-top: 4px solid $lightest-grey;
-                                content: "";
-                                display: block;
-                                height: 20px;
-                                left: 12px;
-                                position: absolute;
-                                top: 4px;
-                                width: 10px;
-                                }
-                                &:hover:after {
-                                border-color: $light-grey;
-                                }
-                            }
-                            input {
-                                display: none;
-                            }
-                            input:checked + label:after {
-                                border-color: $dark-grey;
-                            }
-                        }
-                    }
-                }
-                .details-form {
-                    margin-top: 10px;
-                }
-            }
-        }
-        .library-family-list {
-            padding-bottom: 80px;
-        }
-        .library-item {
-            margin-bottom: 15px;
-            padding-top: 15px;
-            position: relative;
-            cursor: pointer;
-            width: calc(100vw - 500px);
+					.library-details-form-elem {
+						width: 50%;
+						padding-left: 40px;
+						padding-right: 40px;
+						margin-bottom: 40px;
+						label {
+							display: block;
+							text-transform: uppercase;
+							font-weight: bold;
+						}
+						input,
+						select {
+							width: 100%;
+							background: transparent;
+							box-shadow: none;
+							outline: none;
+							padding: 10px 20px;
+							margin-top: 10px;
+							border: 1px solid $dark-grey;
+							&:focus {
+								outline: none;
+							}
+						}
+					}
+				}
+			}
+			.library-details-form-button {
+				margin-top: 10px;
+				text-align: center;
+				font-size: 14px;
+				padding: 5px 20px;
+				display: inline-block;
+				border: 1px solid $dark-grey;
+				color: $dark-grey;
+				background-color: transparent;
+				transition: color 0.3s ease, background-color 0.3s ease;
+				border-radius: 30px;
+				cursor: pointer;
+				&:hover {
+					background: $dark-grey;
+					color: white;
+				}
+			}
+			.library-details-variants {
+				.details-header,
+				.details-form {
+					margin-top: 50px;
+					display: flex;
+					flex-direction: row;
+					justify-content: flex-start;
+					flex-wrap: wrap;
+					align-content: flex-start;
+					.details-header-elem {
+						width: 20%;
+						padding-left: 40px;
+						padding-right: 40px;
+						margin-bottom: 10px;
+						text-transform: uppercase;
+						font-weight: bold;
+					}
+					.details-form-elem {
+						width: 20%;
+						padding-left: 40px;
+						padding-right: 40px;
+						margin-bottom: 10px;
+						&.checkbox {
+							width: 50px;
+						}
+						input,
+						select {
+							width: 100%;
+							background: transparent;
+							box-shadow: none;
+							outline: none;
+							padding: 10px 20px;
+							margin-top: 10px;
+							border: 1px solid $dark-grey;
+							&:focus {
+								outline: none;
+							}
+						}
+						.button-remove {
+							margin-top: 10px;
+							text-align: center;
+							font-size: 14px;
+							padding: 5px 20px;
+							display: inline-block;
+							border: 1px solid $dark-grey;
+							color: $dark-grey;
+							background-color: transparent;
+							transition: color 0.3s ease,
+								background-color 0.3s ease;
+							border-radius: 30px;
+							cursor: pointer;
+							&:hover {
+								background: $dark-grey;
+								color: white;
+							}
+						}
+						.checkbox,
+						.checkbox-alt {
+							background-color: transparent;
+							display: inline-block;
+							height: 40px;
+							margin-top: 10px;
+							width: 40px;
+							border: 1px solid $dark-grey;
+							label {
+								display: block;
+								height: 40px;
+								position: relative;
+								width: 40px;
+								&:after {
+									transform: scaleX(-1)
+										rotate(180deg + -45deg);
+									border-right: 4px solid $lightest-grey;
+									border-top: 4px solid $lightest-grey;
+									content: '';
+									display: block;
+									height: 20px;
+									left: 12px;
+									position: absolute;
+									top: 4px;
+									width: 10px;
+								}
+								&:hover:after {
+									border-color: $light-grey;
+								}
+							}
+							input {
+								display: none;
+							}
+							input:checked + label:after {
+								border-color: $dark-grey;
+							}
+						}
+					}
+				}
+				.details-form {
+					margin-top: 10px;
+				}
+			}
+		}
+		.library-family-list {
+			padding-bottom: 80px;
+		}
+		.library-item {
+			margin-bottom: 15px;
+			padding-top: 15px;
+			position: relative;
+			cursor: pointer;
+			width: calc(100vw - 500px);
 
-            &:focus {
-                outline: none;
-            }
+			&:focus {
+				outline: none;
+			}
 
-            .library-item-name {
-                text-transform: uppercase;
-                color: $medium-grey;
-                margin: 0;
-                padding-left: 40px;
-                padding-right: 40px;
-            }
+			.library-item-name {
+				text-transform: uppercase;
+				color: $medium-grey;
+				margin: 0;
+				padding-left: 40px;
+				padding-right: 40px;
+			}
 
-            .library-item-preview {
-                font-size: 69px;
-                line-height: 1;
-                margin: 0;
-                margin-top: 10px;
-                padding-left: 40px;
-                padding-right: 40px;
-                margin-bottom: 20px;
-            }
+			.library-item-preview {
+				font-size: 69px;
+				line-height: 1;
+				margin: 0;
+				margin-top: 10px;
+				padding-left: 40px;
+				padding-right: 40px;
+				margin-bottom: 20px;
+				max-width: 88%;
+				overflow: hidden;
+				white-space: nowrap;
+			}
 
-            .library-item-actions {
-                background: $dark-grey;
-                padding-top: 0;
-                padding-bottom: 0;
-                padding-left: 40px;
-                padding-right: 40px;
-                max-height: 0px;
-                transition: all .1s ease;
-                overflow: hidden;
-                &.opened {
-                    max-height: 350px;
-                    padding-top: 10px;
-                    padding-bottom: 10px;
-                }
-                &:after {
-                    content: "";
-                    display: table;
-                    clear: both;
-                }
-                .library-item-action {
+			.library-item-actions {
+				background: $dark-grey;
+				padding-top: 0;
+				padding-bottom: 0;
+				padding-left: 40px;
+				padding-right: 40px;
+				max-height: 0px;
+				transition: all 0.1s ease;
+				overflow: hidden;
+				&.opened {
+					max-height: 350px;
+					padding-top: 10px;
+					padding-bottom: 10px;
+				}
+				&:after {
+					content: '';
+					display: table;
+					clear: both;
+				}
+				.library-item-action {
+					text-align: center;
+					float: left;
+					margin-right: 15px;
+					font-size: 14px;
+					padding: 5px 20px;
+					border: 3px solid $green;
+					color: $green;
+					background-color: transparent;
+					transition: color 0.3s ease, background-color 0.3s ease;
+					float: left;
+					border-radius: 30px;
+					cursor: pointer;
+					&:hover {
+						background: $green;
+						color: $dark-grey;
+					}
+				}
+				input {
+					float: right;
+					padding: 10px 20px;
+					width: 400px;
+					background: white;
+					color: $medium-grey;
+					box-shadow: none;
+					border: none;
+					border-radius: 20px;
+					outline: none;
+					&:focus {
+						outline: none;
+					}
+				}
+			}
+		}
+		.provider {
+			width: 50px;
+			height: 50px;
+			border: 2px solid $lightest-grey;
+			position: absolute;
+			top: 40%;
+			right: 5%;
+			transform: translateY(-40%);
+			border-radius: 50%;
+			background-repeat: no-repeat;
+			z-index: 2;
+			background-position: center;
+			&.provider-prototypo {
+				background-color: $black;
+				background-size: 45%;
+				background-image: url('../../images/prototypo-icon-white.svg');
+			}
 
-                    text-align: center;
-                    float: left;
-                    margin-right: 15px;
-                    font-size: 14px;
-                    padding: 5px 20px;
-                    border: 3px solid $green;
-                    color: $green;
-                    background-color:  transparent;
-                    transition: color .3s ease, background-color .3s ease;
-                    float: left;
-                    border-radius: 30px;
-                    cursor: pointer;
-                    &:hover {
-                        background: $green;
-                        color: $dark-grey;
-                    }
-                }
-                input {
-                    float: right;
-                    padding: 10px 20px;
-                    width: 400px;
-                    background: white;
-                    color: $medium-grey;
-                    box-shadow: none;
-                    border: none;
-                    border-radius: 20px;
-                    outline: none;
-                    &:focus {
-                        outline: none;
-                    }
-                }
-            }
+			&.provider-google {
+				background-color: $white;
+				background-position: center;
+				background-size: 65%;
+				background-image: url('../../images/icon-google.svg');
+			}
 
-        }
-        .provider {
-            width:50px;
-            height:50px;
-            border: 2px solid $lightest-grey;
-            position:absolute;
-            top: 40%;
-            right: 5%;
-            transform: translateY(-40%);
-            border-radius: 50%;
-            background-repeat: no-repeat;
-            z-index:2;
-            background-position: center;
-            &.provider-prototypo {
-                background-color: $black;
-                background-size: 45%;
-                background-image: url("../../images/prototypo-icon-white.svg");
-            }
+			&.provider-production {
+				background-color: $white;
+				background-size: 85%;
+				background-image: url('../../images/icon-ProductionType.svg');
+			}
+			&.provider-custom {
+				text-align: center;
+				line-height: 46px;
+				text-transform: uppercase;
+				font-weight: bold;
+				color: white;
+				font-size: 16px;
+			}
+		}
+		.sidebar-filters {
+			.sidebar-filter {
+				margin-bottom: 20px;
+				.sidebar-filter-title {
+					display: block;
+					font-size: 14px;
+					text-transform: uppercase;
+					color: $dark-grey;
+					width: 100%;
+					font-weight: bold;
+				}
+				.sidebar-filter-elems {
+					display: block;
+					&:after {
+						content: '';
+						display: table;
+						clear: both;
+					}
+					.sidebar-filter-elem {
+						font-size: 14px;
+						padding: 5px 20px;
+						border: 1px solid $dark-grey;
+						background-color: transparent;
+						transition: color 0.3s ease, background-color 0.3s ease;
+						float: left;
+						margin-right: 5px;
+						margin-bottom: 5px;
+						border-radius: 30px;
+						cursor: pointer;
+						&.active {
+							color: white;
+							background-color: $dark-grey;
+						}
+					}
+				}
+			}
+		}
+		.sidebar-tags {
+			margin-bottom: 20px;
+			.sidebar-tags-title {
+				display: block;
+				font-size: 14px;
+				text-transform: uppercase;
+				color: $dark-grey;
+				width: 100%;
+				font-weight: bold;
+			}
+			.sidebar-tags-elems {
+				display: block;
+				margin-bottom: 0.5em;
+				&:after {
+					content: '';
+					display: table;
+					clear: both;
+				}
+				.sidebar-tags-elem {
+					font-size: 14px;
+					padding: 5px 20px;
+					border: 1px solid $dark-grey;
+					background-color: transparent;
+					transition: color 0.3s ease, background-color 0.3s ease;
+					float: left;
+					margin-right: 5px;
+					margin-bottom: 5px;
+					border-radius: 30px;
+					cursor: pointer;
+					&.active {
+						color: white;
+						background-color: $dark-grey;
+					}
+				}
+			}
+			.sidebar-tags-add {
+				display: inline-block;
+				border: 1px solid $dark-grey;
+				font-size: 18px;
+				color: $dark-grey;
+				font-weight: bold;
+				padding: 0px 8px;
+				border-radius: 50%;
+				width: 28px;
+				cursor: pointer;
+				transition: border-radius 0.3s ease, padding 0.3s ease,
+					font-size 0.3s ease, width 0.3s ease;
+				&.interactive {
+					display: none;
+				}
+				&.active {
+					border-radius: 10px;
+					display: block;
+					font-size: 14px;
+					font-weight: normal;
+					width: 100%;
+					overflow: hidden;
 
-            &.provider-google {
-                background-color: $white;
-                background-position: center;
-                background-size: 65%;
-                background-image: url("../../images/icon-google.svg");
-            }
-
-            &.provider-production {
-                background-color: $white;
-                background-size: 85%;
-                background-image: url("../../images/icon-ProductionType.svg");
-            }
-            &.provider-custom {
-               text-align: center;
-               line-height: 46px;
-               text-transform: uppercase;
-               font-weight: bold;
-               color: white;
-               font-size: 16px;
-            }
-        }
-        .sidebar-filters {
-            .sidebar-filter {
-                margin-bottom: 20px;
-                .sidebar-filter-title {
-                    display: block;
-                    font-size:  14px;
-                    text-transform: uppercase;
-                    color: $dark-grey;
-                    width: 100%;
-                    font-weight: bold;
-                }
-                .sidebar-filter-elems {
-                    display: block;
-                    &:after {
-                        content: "";
-                        display: table;
-                        clear: both;
-                    }
-                    .sidebar-filter-elem {
-                        font-size: 14px;
-                        padding: 5px 20px;
-                        border: 1px solid $dark-grey;
-                        background-color:  transparent;
-                        transition: color .3s ease, background-color .3s ease;
-                        float: left;
-                        margin-right: 5px;
-                        margin-bottom: 5px;
-                        border-radius: 30px;
-                        cursor: pointer;
-                        &.active {
-                            color: white;
-                            background-color: $dark-grey;
-                        }
-                    }
-                }
-            }
-        }
-        .sidebar-tags {
-            margin-bottom: 20px;
-            .sidebar-tags-title {
-                display: block;
-                font-size:  14px;
-                text-transform: uppercase;
-                color: $dark-grey;
-                width: 100%;
-                font-weight: bold;
-            }
-            .sidebar-tags-elems {
-                display: block;
-                margin-bottom: .5em;
-                &:after {
-                    content: "";
-                    display: table;
-                    clear: both;
-                }
-                .sidebar-tags-elem {
-                    font-size: 14px;
-                    padding: 5px 20px;
-                    border: 1px solid $dark-grey;
-                    background-color:  transparent;
-                    transition: color .3s ease, background-color .3s ease;
-                    float: left;
-                    margin-right: 5px;
-                    margin-bottom: 5px;
-                    border-radius: 30px;
-                    cursor: pointer;
-                    &.active {
-                        color: white;
-                        background-color: $dark-grey;
-                    }
-                }
-            }
-            .sidebar-tags-add {
-                display: inline-block;
-                border: 1px solid $dark-grey;
-                font-size:  18px;
-                color: $dark-grey;
-                font-weight: bold;
-                padding: 0px 8px;
-                border-radius: 50%;
-                width: 28px;
-                cursor: pointer;
-                transition: border-radius .3s ease, padding .3s ease, font-size .3s ease, width .3s ease;
-                &.interactive {
-                    display: none;
-                }
-                &.active {
-                    border-radius: 10px;
-                    display: block;
-                    font-size: 14px;
-                    font-weight: normal;
-                    width: 100%;
-                    overflow: hidden;
-
-                    input {
-                        padding: 4px 8px;
-                        background: transparent;
-                        box-shadow: none;
-                        border: none;
-                        outline: none;
-                        &:focus {
-                            outline: none;
-                        }
-                    }
-
-                }
-            }
-        }
-    }
+					input {
+						padding: 4px 8px;
+						background: transparent;
+						box-shadow: none;
+						border: none;
+						outline: none;
+						&:focus {
+							outline: none;
+						}
+					}
+				}
+			}
+		}
+	}
 }
