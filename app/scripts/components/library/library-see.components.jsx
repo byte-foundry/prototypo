@@ -99,6 +99,7 @@ class LibrarySee extends React.Component {
 	}
 
 	render() {
+		console.log(this.props)
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">
@@ -107,7 +108,7 @@ class LibrarySee extends React.Component {
 						<div
 							className={'provider provider-custom'}
 							style={{
-								backgroundColor: this.state.family.background,
+								backgroundColor: '#29ABE2',
 							}}
 						>
 							{this.props.user.firstName

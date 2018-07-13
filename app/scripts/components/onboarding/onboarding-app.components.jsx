@@ -62,7 +62,10 @@ class OnboardingApp extends React.PureComponent {
 				this.setState({
 					fontName: headJS.fontName,
 					parameters: flatten(
-						headJS.fontParameters.reduce((a, b) => [a, ...b.parameters]),
+						headJS.fontParameters.reduce((a, b) => [
+							a,
+							...b.parameters,
+						]),
 					),
 					glyphs: headJS.glyphs,
 					family: headJS.family,
@@ -96,7 +99,6 @@ class OnboardingApp extends React.PureComponent {
 	}
 
 	async createProject() {
-		console.log(this.state)
 		this.setState({familyNameError: ''});
 		const name = this.state.familyName;
 
@@ -106,29 +108,30 @@ class OnboardingApp extends React.PureComponent {
 		}
 
 		try {
-			this.setState({creatingFamily: true})
-			const {data: {createFamily: newFont}} = await this.props.createFamily(
+			this.setState({creatingFamily: true});
+			const {
+				data: {createFamily: newFont},
+			} = await this.props.createFamily(
 				name,
 				this.state.selectedTemplate,
 				this.state.selectedValues,
 			);
 
-			this.setState({creatingFamily: false})
-			this.setState({createFamily: true})
+			this.setState({creatingFamily: false});
+			this.setState({createFamily: true});
 			this.client.dispatchAction('/family-created', newFont);
 
 			this.client.dispatchAction('/change-font', {
 				templateToLoad: newFont.template,
-				variantId: newFont.variants[0].id,
+				variant: newFont.variants[0],
+				family: newFont,
 			});
 			this.getNextStep();
 		}
 		catch (err) {
-			this.setState({creatingFamily: false})
+			this.setState({creatingFamily: false});
 			this.setState({familyNameError: err.message});
 		}
-
-
 	}
 
 	getAlternateFonts() {
@@ -188,9 +191,12 @@ class OnboardingApp extends React.PureComponent {
 							onSelect={(alternateIndex) => {
 								this.client.dispatchAction('/set-alternate', {
 									unicode,
-									glyphName: alternatesDedup[unicode][alternateIndex].name,
+									glyphName:
+										alternatesDedup[unicode][alternateIndex]
+											.name,
 									relatedGlyphs:
-										alternatesDedup[unicode][alternateIndex].relatedGlyphs,
+										alternatesDedup[unicode][alternateIndex]
+											.relatedGlyphs,
 								});
 							}}
 						/>
@@ -259,7 +265,14 @@ class OnboardingApp extends React.PureComponent {
 	}
 
 	render() {
-		const {step, alternatesDedup, values} = this.state;
+		const {
+			step,
+			alternatesDedup,
+			values,
+			selectedTemplate,
+			fontName,
+			createFamily,
+		} = this.state;
 		const stepData = onboardingData.steps[step];
 
 		// Failsafe
@@ -298,30 +311,49 @@ class OnboardingApp extends React.PureComponent {
 			);
 		}
 
-		const {letters} = onboardingData.steps.find(e => e.type === 'alternates');
+		const {letters} = onboardingData.steps.find(
+			e => e.type === 'alternates',
+		);
 		const allStrings = Object.values(letters).join('');
 
-		const updaters = fontsToGenerate.map((font) => {
-			return <FontUpdater
+		const updaters = fontsToGenerate.map(font => (
+			<FontUpdater
 				key={font.name}
 				name={font.name}
 				subset={font.subset}
 				values={font.values}
-				template={this.state.template}
+				template={this.state.selectedTemplate}
 				glyph="0"
 			/>
-		});
+		));
 
-		updaters.push(<FontUpdater
-			name='alternateBase'
-			subset={allStrings}
-			values={{
-				...values,
-				altList: {}
-			}}
-			template={this.state.template}
-			glyphs="0"
-		/>);
+		if (values && selectedTemplate && fontName && createFamily) {
+			updaters.push(
+				<FontUpdater
+					name="alternateBase"
+					subset={allStrings}
+					values={{
+						...values,
+						altList: {},
+					}}
+					template={selectedTemplate}
+					glyph="0"
+				/>,
+			);
+
+			updaters.push(
+				<FontUpdater
+					name={fontName}
+					subset="Hamburgefonstiv"
+					values={{
+						...values,
+						altList: {},
+					}}
+					template={selectedTemplate}
+					glyph="0"
+				/>,
+			);
+		}
 
 		return (
 			<div className="onboarding-app">
@@ -338,13 +370,16 @@ class OnboardingApp extends React.PureComponent {
 						Back to library
 					</Button>
 					{this.props.families
-						&& this.props.families.length > 3 && stepData.type !== 'start' &&  (
+						&& this.props.families.length > 3
+						&& stepData.type !== 'start' && (
 						<Button
 							outline
 							neutral
 							size="small"
 							className="skip"
-							onClick={() => this.props.router.push('/dashboard')}
+							onClick={() =>
+								this.props.router.push('/dashboard')
+							}
 						>
 								Skip
 						</Button>
@@ -356,7 +391,17 @@ class OnboardingApp extends React.PureComponent {
 								<p className="description">
 									But first, let's give your project a name.
 								</p>
-								<input type="text" name="familyName" id="familyName-Input" value={this.state.familyName} onChange={(e) => {this.setState({familyName: e.target.value});}}/>
+								<input
+									type="text"
+									name="familyName"
+									id="familyName-Input"
+									value={this.state.familyName}
+									onChange={(e) => {
+										this.setState({
+											familyName: e.target.value,
+										});
+									}}
+								/>
 								{this.state.familyNameError !== '' && (
 									<p className="description error">
 										{this.state.familyNameError}
@@ -364,14 +409,26 @@ class OnboardingApp extends React.PureComponent {
 								)}
 								<Button
 									className="create"
-									onClick={() => {this.createProject();}}
+									onClick={() => {
+										this.createProject();
+									}}
 								>
 									Start designing
 								</Button>
 								<h3>Need inspiration?</h3>
 								<p className="description">
-									A good name for a typeface should reflect its design and its purpose. <br/>
-									You can use <a href="http://namecheck.fontdata.com/about/" target="_blank" rel="noopener noreferrer">http://namecheck.fontdata.com/about/</a> to check the availibility of the chosen name.
+									A good name for a typeface should reflect
+									its design and its purpose. <br />
+									You can use{' '}
+									<a
+										href="http://namecheck.fontdata.com/about/"
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										http://namecheck.fontdata.com/about/
+									</a>{' '}
+									to check the availibility of the chosen
+									name.
 								</p>
 							</div>
 						)}
@@ -379,7 +436,8 @@ class OnboardingApp extends React.PureComponent {
 							<Button
 								className="nextStep"
 								onClick={() => {
-									this.state.step < onboardingData.steps.length - 1
+									this.state.step
+									< onboardingData.steps.length - 1
 										? this.getNextStep()
 										: this.props.router.push('/dashboard');
 								}}
@@ -412,11 +470,19 @@ class OnboardingApp extends React.PureComponent {
 									>
 										<div
 											className={`bubble ${
-												index === this.state.step ? 'active' : ''
-											} ${index < this.state.step ? 'previous' : ''}`}
+												index === this.state.step
+													? 'active'
+													: ''
+											} ${
+												index < this.state.step
+													? 'previous'
+													: ''
+											}`}
 											onClick={() => {
 												index <= this.state.step
-													? this.setState({step: index})
+													? this.setState({
+														step: index,
+													})
 													: false;
 											}}
 										/>
@@ -475,17 +541,17 @@ const getUserIdQuery = gql`
 `;
 
 const createFamilyMutation = gql`
-	mutation createFamily($name: String!, $template: String!, $values: Json $ownerId: ID!) {
+	mutation createFamily(
+		$name: String!
+		$template: String!
+		$values: Json
+		$ownerId: ID!
+	) {
 		createFamily(
 			name: $name
 			template: $template
 			ownerId: $ownerId
-			variants: [
-				{
-					name: "Regular"
-					values: $values
-				}
-			]
+			variants: [{name: "Regular", values: $values}]
 		) {
 			id
 			name
@@ -558,7 +624,10 @@ export default compose(
 					ownProps.deleteVariant(variant.id),
 				);
 
-				return Promise.all([...variants, mutate({variables: {id: family.id}})]);
+				return Promise.all([
+					...variants,
+					mutate({variables: {id: family.id}}),
+				]);
 			},
 		}),
 		options: {

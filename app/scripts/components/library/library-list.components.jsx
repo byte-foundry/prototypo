@@ -84,6 +84,8 @@ class LibraryList extends React.Component {
 	}
 
 	createProject(template, values) {
+		console.log(template);
+		console.log(values);
 		this.props.router.push({
 			pathname: '/onboarding',
 			state: {template, values},
@@ -134,28 +136,29 @@ class LibraryList extends React.Component {
 		variantToLoad,
 		userColor,
 	) {
-		return () => ({
-			key: family.id,
-			family,
-			template: templateInfo,
-			user: this.props.user,
-			background: userColor,
-			router: this.props.router,
-			variantToLoad,
-			open: this.props.open,
-			export: this.props.export,
-			glyphs: templateData.glyphs,
-			values: {
-				...templateData.initValues,
-				...variantToLoad.values,
-			},
-			variantName: variantToLoad.name.toLowerCase(),
-			click: this.selectFont,
-			isOpen: this.state.selectedFont === family.id,
-			familyId: family.id,
-			templateName: templateInfo.templateName,
-			fontName: `user${family.id}`,
-		});
+		return () =>
+			variantToLoad && {
+				key: family.id,
+				family,
+				template: templateInfo,
+				user: this.props.user,
+				background: userColor,
+				router: this.props.router,
+				variantToLoad,
+				open: this.props.open,
+				export: this.props.export,
+				glyphs: templateData.glyphs,
+				values: {
+					...templateData.initValues,
+					...variantToLoad.values,
+				},
+				variantName: variantToLoad.name.toLowerCase(),
+				click: this.selectFont,
+				isOpen: this.state.selectedFont === family.id,
+				familyId: family.id,
+				templateName: templateInfo.templateName,
+				fontName: `user${family.id}`,
+			};
 	}
 
 	generateFonts(f, p) {
@@ -251,31 +254,32 @@ class LibraryList extends React.Component {
 						e => e.name.toLowerCase() === 'regular',
 					) || family.variants[0];
 
-				fontData.push({
-					template: templateInfo.templateName,
-					templateName: templateInfo.name,
-					name: family.name,
-					designer: '',
-					type: 'Fonts',
-					tags: family.tags,
-					variants: family.variants,
-					id: family.id,
-					user: {
-						firstName: this.props.firstName,
-						lastName: this.props.lastName,
-					},
-					background: userColor,
-					props: this.getFamilyProps(
-						family,
-						templateInfo,
-						templateData,
-						variantToLoad,
-						userColor,
-					),
-					elem: FamilyItem,
-				});
+				if (variantToLoad) {
+					fontData.push({
+						template: templateInfo.templateName,
+						templateName: templateInfo.name,
+						name: family.name,
+						designer: '',
+						type: 'Fonts',
+						tags: family.tags,
+						variants: family.variants,
+						id: family.id,
+						user: {
+							firstName: this.props.firstName,
+							lastName: this.props.lastName,
+						},
+						background: userColor,
+						props: this.getFamilyProps(
+							family,
+							templateInfo,
+							templateData,
+							variantToLoad,
+							userColor,
+						),
+						elem: FamilyItem,
+					});
+				}
 			});
-
 		const tagCount = allTags.reduce((obj, val) => {
 			obj[val] = (obj[val] || 0) + 1;
 			return obj;
@@ -312,8 +316,10 @@ class LibraryList extends React.Component {
 
 	searchTags(selectedTags) {
 		if (this.state.baseFontData) {
-			const newFiltered = this.state.baseFontData.filter(font =>
-				font.tags && selectedTags.every(elem => font.tags.indexOf(elem) > -1),
+			const newFiltered = this.state.baseFontData.filter(
+				font =>
+					font.tags
+					&& selectedTags.every(elem => font.tags.indexOf(elem) > -1),
 			);
 
 			this.setState({fontsToDisplay: newFiltered});
