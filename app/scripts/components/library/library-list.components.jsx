@@ -297,25 +297,27 @@ class LibraryList extends React.Component {
 	}
 
 	searchFonts(searchString) {
-		const newFiltered = this.state.baseFontData.filter(
-			font =>
-				font.template
-					.toLowerCase()
-					.includes(searchString.toLowerCase())
-				|| font.templateName
-					.toLowerCase()
-					.includes(searchString.toLowerCase())
-				|| font.name.toLowerCase().includes(searchString.toLowerCase())
-				|| font.tags.find(e =>
-					e.toLowerCase().includes(searchString.toLowerCase()),
-				),
-		);
+		if (Array.isArray(this.state.baseFontData)) {
+			const newFiltered = this.state.baseFontData.filter(
+				font =>
+					font.template
+						.toLowerCase()
+						.includes(searchString.toLowerCase())
+					|| font.templateName
+						.toLowerCase()
+						.includes(searchString.toLowerCase())
+					|| font.name.toLowerCase().includes(searchString.toLowerCase())
+					|| (font.tags && font.tags.find(e =>
+						e.toLowerCase().includes(searchString.toLowerCase()),
+					)),
+			);
 
-		this.setState({fontsToDisplay: newFiltered});
+			this.setState({fontsToDisplay: newFiltered});
+		}
 	}
 
 	searchTags(selectedTags) {
-		if (this.state.baseFontData) {
+		if (Array.isArray(this.state.baseFontData)) {
 			const newFiltered = this.state.baseFontData.filter(
 				font =>
 					font.tags
