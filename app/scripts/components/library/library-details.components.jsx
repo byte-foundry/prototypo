@@ -43,6 +43,8 @@ class LibraryDetails extends React.Component {
 		this.exportFamily = this.exportFamily.bind(this);
 		this.updateFamilyData = this.updateFamilyData.bind(this);
 		this.updateVariantData = this.updateVariantData.bind(this);
+		this.updateFamily = this.updateFamily.bind(this);
+		this.updateVariant = this.updateVariant.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -57,6 +59,35 @@ class LibraryDetails extends React.Component {
 
 		this.setState({familyGlyphs, templateValues});
 	}
+	componentWillReceiveProps(newProps) {
+		if (newProps.families !== this.props.families) {
+			const family = newProps.families.find(
+				e => e.id === newProps.params.projectID,
+			);
+
+			if (!family) {
+				newProps.router.push('/library/home');
+			}
+			this.setState({
+				family,
+				familyMetadata: {
+					name: family.name,
+					designer: family.designer,
+					designerUrl: family.designerUrl,
+					foundry: family.foundry,
+					foundryUrl: family.foundryUrl,
+					isModified: false,
+				},
+				variantMetadata: family.variants.map(variant => ({
+					isModified: false,
+					width: variant.width,
+					italic: variant.italic,
+					weight: variant.weight,
+					name: variant.name,
+				})),
+			});
+		}
+	}
 	updateFamilyData(event, field) {
 		const familyMetadata = {...this.state.familyMetadata};
 
@@ -67,7 +98,7 @@ class LibraryDetails extends React.Component {
 	updateVariantData(event, field, index) {
 		const variantMetadata = {...this.state.variantMetadata};
 
-		variantMetadata[index][field] = event.target.value;
+		variantMetadata[index][field] = field === 'italic' ? !variantMetadata[index].italic : event.target.value;
 		variantMetadata[index].isModified = true;
 		this.setState({variantMetadata});
 	}
@@ -91,6 +122,33 @@ class LibraryDetails extends React.Component {
 	deleteFamily() {
 		this.props.deleteFamily(this.props.params.projectID);
 		this.props.router.push('/library/home');
+	}
+	updateFamily() {
+		this.props.updateFamily(
+			this.state.family.id,
+			this.state.familyMetadata.name,
+			this.state.familyMetadata.designer,
+			this.state.familyMetadata.designerUrl,
+			this.state.familyMetadata.foundry,
+			this.state.familyMetadata.foundryUrl,
+		);
+		const familyMetadata = {...this.state.familyMetadata};
+
+		familyMetadata.isModified = true;
+		this.setState({familyMetadata});
+	}
+	updateVariant(id, index) {
+		this.props.updateVariant(
+			id,
+			this.state.variantMetadata[index].name,
+			parseInt(this.state.variantMetadata[index].weight, 10),
+			this.state.variantMetadata[index].width,
+			this.state.variantMetadata[index].italic,
+		);
+		const variantMetadata = {...this.state.variantMetadata};
+
+		variantMetadata[index].isModified = false;
+		this.setState({variantMetadata});
 	}
 	goToDashboard() {
 		this.props.router.push('/dashboard');
@@ -179,7 +237,12 @@ class LibraryDetails extends React.Component {
 								/>
 							</div>
 							{this.state.familyMetadata.isModified && (
-								<div className="library-details-form-button">
+								<div
+									className="library-details-form-button"
+									onClick={() => {
+										this.updateFamily();
+									}}
+								>
 									Update
 								</div>
 							)}
@@ -202,8 +265,8 @@ class LibraryDetails extends React.Component {
 									<div className="details-form-elem">
 										<input
 											type="text"
-											id="settings"
-											name="style_settings"
+											id={`name${index}`}
+											name={`name${index}`}
 											value={
 												this.state.variantMetadata[
 													index
@@ -220,7 +283,7 @@ class LibraryDetails extends React.Component {
 									</div>
 									<div className="details-form-elem">
 										<select
-											name="style-weight"
+											name={`weight${index}`}
 											value={
 												this.state.variantMetadata[
 													index
@@ -252,7 +315,7 @@ class LibraryDetails extends React.Component {
 									</div>
 									<div className="details-form-elem">
 										<select
-											name="style-width"
+											name={`width${index}`}
 											value={
 												this.state.variantMetadata[
 													index
@@ -281,10 +344,10 @@ class LibraryDetails extends React.Component {
 										<div className="checkbox">
 											<input
 												type="checkbox"
-												id="italic"
-												name="italic"
+												id={`italic${index}`}
+												name={`italic${index}`}
 												checked={
-													this.state.variantMetadata[
+													!!this.state.variantMetadata[
 														index
 													].italic
 												}
@@ -296,12 +359,21 @@ class LibraryDetails extends React.Component {
 													);
 												}}
 											/>
-											<label htmlFor="italic" />
+											<label htmlFor={`italic${index}`} />
 										</div>
 									</div>
-									{this.state.variantMetadata[index].isModified && (
+									{this.state.variantMetadata[index]
+										.isModified && (
 										<div className="details-form-elem">
-											<div className="library-details-form-button">
+											<div
+												className="library-details-form-button"
+												onClick={() => {
+													this.updateVariant(
+														variant.id,
+														index,
+													);
+												}}
+											>
 												Update
 											</div>
 										</div>
@@ -388,6 +460,60 @@ const deleteVariantMutation = gql`
 	}
 `;
 
+const updateFamilyDataMutation = gql`
+	mutation updateFamily(
+		$id: ID!
+		$name: String!
+		$designer: String!
+		$designerUrl: String!
+		$foundry: String!
+		$foundryUrl: String!
+	) {
+		updateFamily(
+			id: $id
+			name: $name
+			designer: $designer
+			designerUrl: $designerUrl
+			foundry: $foundry
+			foundryUrl: $foundryUrl
+		) {
+			id
+			name
+			designer
+			designerUrl
+			foundry
+			foundryUrl
+		}
+	}
+`;
+
+const updateVariantDataMutation = gql`
+	mutation updateVariant(
+		$id: ID!
+		$name: String!
+		$weight: Int!
+		$width: String!
+		$italic: Boolean!
+	) {
+		updateVariant(
+			id: $id
+			name: $name
+			weight: $weight
+			width: $width
+			italic: $italic
+		) {
+			id
+			name
+			weight
+			width
+			italic
+			family {
+				id
+			}
+		}
+	}
+`;
+
 export default compose(
 	graphql(libraryQuery, {
 		options: {
@@ -456,6 +582,76 @@ export default compose(
 					font => font.id !== deleteFamily.id,
 				);
 
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	}),
+	graphql(updateFamilyDataMutation, {
+		props: ({mutate}) => ({
+			updateFamily: (
+				id,
+				name,
+				designer,
+				designerUrl,
+				foundry,
+				foundryUrl,
+			) =>
+				mutate({
+					variables: {
+						id,
+						name,
+						designer,
+						designerUrl,
+						foundry,
+						foundryUrl,
+					},
+				}),
+		}),
+		options: {
+			update: (store, {data: {updateFamily}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				const family = data.user.library.find(
+					f => f.id === updateFamily.id,
+				);
+
+				family.name = updateFamily.name;
+				family.designer = updateFamily.designer;
+				family.designerUrl = updateFamily.designerUrl;
+				family.foundry = updateFamily.foundry;
+				family.foundryUrl = updateFamily.foundryUrl;
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	}),
+	graphql(updateVariantDataMutation, {
+		props: ({mutate}) => ({
+			updateVariant: (id, name, weight, width, italic) =>
+				mutate({
+					variables: {id, name, weight, width, italic},
+				}),
+		}),
+		options: {
+			update: (store, {data: {updateVariant}}) => {
+				const data = store.readQuery({query: libraryQuery});
+
+				const family = data.user.library.find(
+					f => f.id === updateVariant.family.id,
+				);
+				const variant = family.variants.find(
+					v => v.id === updateVariant.id,
+				);
+
+				variant.name = updateVariant.name;
+				variant.designer = updateVariant.weight;
+				variant.designerUrl = updateVariant.width;
+				variant.foundry = updateVariant.italic;
 				store.writeQuery({
 					query: libraryQuery,
 					data,

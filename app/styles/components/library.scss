@@ -260,7 +260,7 @@
 					flex-wrap: wrap;
 					align-content: flex-start;
 					.details-header-elem {
-						width: 20%;
+						width: 18%;
 						padding-left: 40px;
 						padding-right: 40px;
 						margin-bottom: 10px;
@@ -268,7 +268,7 @@
 						font-weight: bold;
 					}
 					.details-form-elem {
-						width: 20%;
+						width: 18%;
 						padding-left: 40px;
 						padding-right: 40px;
 						margin-bottom: 10px;
@@ -381,7 +381,8 @@
 				padding-right: 40px;
 				margin-bottom: 20px;
 				max-width: 88%;
-				overflow: hidden;
+				overflow-x: hidden;
+				overflow-x: visible;
 				white-space: nowrap;
 			}
 
