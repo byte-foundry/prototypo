@@ -31,9 +31,10 @@ class LibrarySee extends React.Component {
 		this.props.router.push('/dashboard');
 	}
 	exportFamily() {
-		const valueArray = this.state.fontsToGenerate.map(
-			font => font.values,
-		);
+		const valueArray = this.state.family.variants.map(variant => ({
+			...this.state.templateValues.initValues,
+			...variant.values,
+		}));
 		const variantNames = this.state.family.variants.map(
 			variant => variant.name,
 		);
@@ -43,7 +44,7 @@ class LibrarySee extends React.Component {
 			variantNames,
 			valueArray,
 			template: this.state.family.template,
-			glyphs: this.state.fontsToGenerate[0].glyphs,
+			glyphs: this.state.variants[0].glyphs,
 		});
 	}
 	async componentWillMount() {
@@ -228,7 +229,7 @@ export class VariantItem extends React.Component {
 									this.props.family.name,
 									this.props.variant.name,
 									this.props.values,
-									this.props.template,
+									this.props.family.template,
 									this.props.glyphs,
 								);
 							}}

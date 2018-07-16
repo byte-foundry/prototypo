@@ -178,6 +178,7 @@ export default {
 
 		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
+			console.log('You need a plan to export')
 			return;
 		}
 
@@ -218,7 +219,6 @@ export default {
 		familyName = 'font', variantNames, valueArray, template, glyphs,
 	}) => {
 		const exporting = prototypoStore.get('export');
-
 		if (exporting) {
 			console.log('Already exporting, sorry!')
 			return;
@@ -229,6 +229,7 @@ export default {
 
 		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
+			console.log('You need a plan to export')
 			return;
 		}
 
@@ -252,7 +253,7 @@ export default {
 					family,
 					style: `${style.toLowerCase()}`,
 				};
-
+				console.log('getting font file')
 				fontMediatorInstance.getFontFile(
 					name,
 					template,
@@ -262,8 +263,8 @@ export default {
 					console.log(`${variantName} Buffer recieved!`)
 					resolve(buffer)
 				}).catch(e => {
-					reject(e);					
 					console.log(e)
+					reject(e);			
 				});
 			}));
 		});
@@ -298,9 +299,14 @@ export default {
 				}, 500);
 			};
 			reader.readAsDataURL(zip.generate({type: 'blob'}));
-		}).catch(() => localClient.dispatchAction('/end-export-otf'));
+		}).catch((e) => {
+			console.log('An error occured')
+			console.log(e)
+			localClient.dispatchAction('/end-export-otf')
+		});
 	},
 	'/end-export-otf': () => {
+		console.log('Export finished')
 		localClient.dispatchAction('/store-value-font', {exportPlease: false});
 		localClient.dispatchAction('/store-value', {uiOnboardstep: 'end'});
 		clearTimeout(exportingError);

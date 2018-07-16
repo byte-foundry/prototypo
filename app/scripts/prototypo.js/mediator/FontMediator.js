@@ -221,7 +221,7 @@ export default class FontMediator {
 			return undefined;
 		}
 		const familyName = fontName.family;
-		const styleName = this.style.name || 'REGULAR';
+		const styleName = fontName.style || 'REGULAR';
 
 		return new Promise((resolve) => {
 			const job = {
