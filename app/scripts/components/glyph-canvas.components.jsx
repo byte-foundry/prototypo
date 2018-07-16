@@ -961,8 +961,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							this.storeSelectedItems(selectedItems);
 						}
 						else if (
-							appStateValue
-								& (appState.BOX_SELECTING | appState.NOT_SELECTING)
+							appStateValue & appState.BOX_SELECTING
 							&& mouseClickRelease
 						) {
 							if (
