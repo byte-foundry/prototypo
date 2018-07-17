@@ -560,7 +560,11 @@ const createFamilyMutation = gql`
 			name: $name
 			template: $template
 			ownerId: $ownerId
-			variants: [{name: "Regular", values: $values}]
+			designer: ""
+			designerUrl: ""
+			foundry: "Prototypo"
+			foundryUrl: "https://prototypo.io/"
+			variants: [{name: "Regular", values: $values, weight: 400, width: "normal", italic: false}]
 		) {
 			id
 			name
@@ -570,6 +574,9 @@ const createFamilyMutation = gql`
 				id
 				name
 				values
+				weight
+				width
+				italic
 			}
 		}
 	}
