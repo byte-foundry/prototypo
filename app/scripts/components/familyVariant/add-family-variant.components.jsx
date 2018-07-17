@@ -326,112 +326,112 @@ export class AddVariantRaw extends React.PureComponent {
 				label: 'Thin',
 				value: 'Thin',
 				thickness: 100,
-				width: 'normal',
+				width: 'medium',
 				italic: false,
 			}, // 20
 			{
 				label: 'Thin Italic',
 				value: 'Thin Italic',
 				thickness: 100,
-				width: 'normal',
+				width: 'medium',
 				italic: true,
 			},
 			{
 				label: 'Light',
 				value: 'Light',
 				thickness: 200,
-				width: 'normal',
+				width: 'medium',
 				italic: false,
 			}, // 50
 			{
 				label: 'Light Italic',
 				value: 'Light Italic',
 				thickness: 200,
-				width: 'normal',
+				width: 'medium',
 				italic: true,
 			},
 			{
 				label: 'Book',
 				value: 'Book',
 				thickness: 300,
-				width: 'normal',
+				width: 'medium',
 				italic: false,
 			}, // 70
 			{
 				label: 'Book Italic',
 				value: 'Book Italic',
 				thickness: 300,
-				width: 'normal',
+				width: 'medium',
 				italic: true,
 			},
 			{
 				label: 'Regular',
 				value: 'Regular',
 				thickness: 400,
-				width: 'normal',
+				width: 'medium',
 				italic: false,
 			},
 			{
 				label: 'Regular Italic',
 				value: 'Regular Italic',
 				thickness: 400,
-				width: 'normal',
+				width: 'medium',
 				italic: true,
 			},
 			{
 				label: 'Semi-Bold',
 				value: 'Semi-Bold',
 				thickness: 600,
-				width: 'normal',
+				width: 'medium',
 				italic: false,
 			}, // 100
 			{
 				label: 'Semi-Bold Italic',
 				value: 'Semi-Bold Italic',
 				thickness: 600,
-				width: 'normal',
+				width: 'medium',
 				italic: true,
 			},
 			{
 				label: 'Bold',
 				value: 'Bold',
 				thickness: 700,
-				width: 'normal',
+				width: 'medium',
 				italic: false,
 			}, // 115
 			{
 				label: 'Bold Italic',
 				value: 'Bold Italic',
 				thickness: 700,
-				width: 'normal',
+				width: 'medium',
 				italic: true,
 			},
 			{
 				label: 'Extra-Bold',
 				value: 'Extra-Bold',
 				thickness: 800,
-				width: 'normal',
+				width: 'medium',
 				italic: false,
 			}, // 135
 			{
 				label: 'Extra-Bold Italic',
 				value: 'Extra-Bold Italic',
 				thickness: 800,
-				width: 'normal',
+				width: 'medium',
 				italic: true,
 			},
 			{
 				label: 'Black',
 				value: 'Black',
 				thickness: 900,
-				width: 'normal',
+				width: 'medium',
 				italic: false,
 			}, // 150
 			{
 				label: 'Black Italic',
 				value: 'Black Italic',
 				thickness: 900,
-				width: 'normal',
+				width: 'medium',
 				italic: true,
 			},
 		];
@@ -460,7 +460,7 @@ export class AddVariantRaw extends React.PureComponent {
 			const {data: {createVariant}} = await this.props.createVariant(
 				meta ? meta.value : name,
 				meta ? meta.thickness : 400,
-				meta ? meta.width : 'normal',
+				meta ? meta.width : 'medium',
 				meta ? meta.italic : false,
 			);
 

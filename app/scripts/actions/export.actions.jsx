@@ -54,7 +54,8 @@ function triggerDownload(arrayBuffer, filename) {
 function exportAuthorized(plan, credits) {
 	const currentCreditCost = prototypoStore.get('currentCreditCost');
 	const paidPlan = plan.indexOf('free_') === -1;
-	const enoughCredits = credits && credits > 0 && currentCreditCost <= credits;
+	const enoughCredits
+		= credits && credits > 0 && currentCreditCost <= credits;
 
 	if (!paidPlan && !enoughCredits) {
 		localClient.dispatchAction('/store-value', {
@@ -76,7 +77,9 @@ function spendCreditsAction() {
 	if (plan.indexOf('free_') !== -1) {
 		const currentCreditCost = prototypoStore.get('currentCreditCost');
 
-		localClient.dispatchAction('/spend-credits', {amount: currentCreditCost});
+		localClient.dispatchAction('/spend-credits', {
+			amount: currentCreditCost,
+		});
 	}
 }
 
@@ -164,12 +167,24 @@ export default {
 		}
 	},
 	'/export-otf-from-library': async ({
-		merged = true, familyName = 'font', variantName = 'regular' , values, template, glyphs,
+		merged = true,
+		familyName = 'font',
+		variantName = 'regular',
+		values,
+		template,
+		glyphs,
+		designer,
+		designerUrl,
+		foundry,
+		foundryUrl,
+		weight,
+		width,
+		italic,
 	}) => {
 		const exporting = prototypoStore.get('export');
 
 		if (exporting) {
-			console.log('Already exporting, sorry!')
+			console.log('Already exporting, sorry!');
 			return;
 		}
 
@@ -178,19 +193,22 @@ export default {
 
 		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
-			console.log('You need a plan to export')
+			console.log('You need a plan to export');
 			return;
 		}
 
 		localClient.dispatchAction('/exporting', {exporting: true});
 
 		exportingError = setTimeout(() => {
-			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
-			console.log('Export timed out')
+			localClient.dispatchAction('/exporting', {
+				exporting: false,
+				errorExport: true,
+			});
+			console.log('Export timed out');
 		}, 10000);
 
-		let family = familyName.replace(/\s/g, '-');
-		let style = variantName.replace(/\s/g, '-');
+		const family = familyName.replace(/\s/g, '-');
+		const style = variantName.replace(/\s/g, '-');
 
 		const name = {
 			family,
@@ -198,13 +216,23 @@ export default {
 		};
 
 		const fontMediatorInstance = FontMediator.instance();
-		const subset = Object.keys(glyphs).filter(key => glyphs[key][0].unicode !== undefined);
+		const subset = Object.keys(glyphs).filter(
+			key => glyphs[key][0].unicode !== undefined,
+		);
+
 		try {
 			const buffer = await fontMediatorInstance.getFontFile(
 				name,
 				template,
 				{...values},
 				subset,
+				designer,
+				designerUrl,
+				foundry,
+				foundryUrl,
+				weight,
+				width,
+				italic,
 			);
 
 			triggerDownload(buffer, `${name.family} ${name.style}.otf`);
@@ -216,11 +244,21 @@ export default {
 		}
 	},
 	'/export-family-from-library': async ({
-		familyName = 'font', variantNames, valueArray, template, glyphs,
+		familyName = 'font',
+		variantNames,
+		valueArray,
+		metadataArray,
+		template,
+		glyphs,
+		designer,
+		designerUrl,
+		foundry,
+		foundryUrl,
 	}) => {
 		const exporting = prototypoStore.get('export');
+
 		if (exporting) {
-			console.log('Already exporting, sorry!')
+			console.log('Already exporting, sorry!');
 			return;
 		}
 
@@ -229,84 +267,117 @@ export default {
 
 		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
-			console.log('You need a plan to export')
+			console.log('You need a plan to export');
 			return;
 		}
 
 		localClient.dispatchAction('/exporting', {exporting: true});
 
 		exportingError = setTimeout(() => {
-			console.log('Export timed out')
-			localClient.dispatchAction('/exporting', {exporting: false, errorExport: true});
+			console.log('Export timed out');
+			localClient.dispatchAction('/exporting', {
+				exporting: false,
+				errorExport: true,
+			});
 		}, 25000);
 
 		const promiseArray = [];
 		const fontMediatorInstance = FontMediator.instance();
-		const subset = Object.keys(glyphs).filter(key => glyphs[key][0].unicode !== undefined);
+		const subset = Object.keys(glyphs).filter(
+			key => glyphs[key][0].unicode !== undefined,
+		);
 
 		variantNames.forEach((variantName, index) => {
-			console.log(`exporting ${variantName} number ${index}`)
-			promiseArray.push(new Promise((resolve, reject) => {
-				const family = familyName.replace(/\s/g, '-');
-				const style = variantName ? variantName.replace(/\s/g, '-') : 'regular';
-				const name = {
-					family,
-					style: `${style.toLowerCase()}`,
-				};
-				console.log('getting font file')
-				fontMediatorInstance.getFontFile(
-					name,
-					template,
-					{...valueArray[index]},
-					subset,
-				).then(buffer => {
-					console.log(`${variantName} Buffer recieved!`)
-					resolve(buffer)
-				}).catch(e => {
-					console.log(e)
-					reject(e);			
-				});
-			}));
+			console.log(`exporting ${variantName} number ${index}`);
+			promiseArray.push(
+				new Promise((resolve, reject) => {
+					const family = familyName.replace(/\s/g, '-');
+					const style = variantName
+						? variantName.replace(/\s/g, '-')
+						: 'regular';
+					const name = {
+						family,
+						style: `${style.toLowerCase()}`,
+					};
+
+					console.log('getting font file');
+					fontMediatorInstance
+						.getFontFile(
+							name,
+							template,
+							{...valueArray[index]},
+							subset,
+							designer,
+							designerUrl,
+							foundry,
+							foundryUrl,
+							metadataArray[index].weight,
+							metadataArray[index].width,
+							metadataArray[index].italic,
+						)
+						.then((buffer) => {
+							console.log(`${variantName} Buffer recieved!`);
+							resolve(buffer);
+						})
+						.catch((e) => {
+							console.log(e);
+							reject(e);
+						});
+				}),
+			);
 		});
 		const zip = new JSZip();
 
-		Promise.all(promiseArray).then((blobBuffers) => {
-			console.log('All buffers recieved, exporting zip file')
-			blobBuffers.forEach((buffer, index) => {
-				const variantName = variantNames[index] ? variantNames[index].replace(/\s/g, '-').toLowerCase() : 'regular';
-				const variantPatch = prototypoStore
-					.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
-					.commit();
+		Promise.all(promiseArray)
+			.then((blobBuffers) => {
+				console.log('All buffers recieved, exporting zip file');
+				blobBuffers.forEach((buffer, index) => {
+					const variantName = variantNames[index]
+						? variantNames[index].replace(/\s/g, '-').toLowerCase()
+						: 'regular';
+					const variantPatch = prototypoStore
+						.set(
+							'exportedVariant',
+							prototypoStore.get('exportedVariant') + 1,
+						)
+						.commit();
 
-				localServer.dispatchUpdate('/prototypoStore', variantPatch);
-				zip.file(`${familyName.replace(/\s/g, '-')} ${variantName}.otf`, buffer, {binary: true});
+					localServer.dispatchUpdate('/prototypoStore', variantPatch);
+					zip.file(
+						`${familyName.replace(/\s/g, '-')} ${variantName}.otf`,
+						buffer,
+						{binary: true},
+					);
+				});
+				const reader = new FileReader();
+
+				reader.onloadend = () => {
+					const dl = document.createElement('a');
+					const URL = window.URL || window.webkitURL;
+
+					dl.download = `${familyName.replace(/\s/g, '-')}.zip`;
+					dl.href = reader.result;
+					clearTimeout(exportingError);
+					dl.dispatchEvent(new MouseEvent('click'));
+					setTimeout(() => {
+						dl.href = '#';
+						URL.revokeObjectURL(reader.result);
+						localClient.dispatchAction('/exporting', {
+							exporting: false,
+						});
+						localClient.dispatchAction('/end-export-otf');
+					}, 500);
+				};
+				reader.readAsDataURL(zip.generate({type: 'blob'}));
+			})
+			.catch((e) => {
+				console.log('An error occured');
+				console.log(e);
+				localClient.dispatchAction('/end-export-otf');
 			});
-			const reader = new FileReader();
-
-			reader.onloadend = () => {
-				const dl = document.createElement('a');
-				const URL = window.URL || window.webkitURL;
-
-				dl.download = `${familyName.replace(/\s/g, '-')}.zip`;
-				dl.href = reader.result;
-				clearTimeout(exportingError);
-				dl.dispatchEvent(new MouseEvent('click'));
-				setTimeout(() => {
-					dl.href = '#';
-					URL.revokeObjectURL(reader.result);
-					localClient.dispatchAction('/exporting', {exporting: false});
-					localClient.dispatchAction('/end-export-otf');
-				}, 500);
-			};
-			reader.readAsDataURL(zip.generate({type: 'blob'}));
-		}).catch((e) => {
-			console.log('An error occured')
-			console.log(e)
-			localClient.dispatchAction('/end-export-otf')
-		});
 	},
 	'/end-export-otf': () => {
-		console.log('Export finished')
+		console.log('Export finished');
 		localClient.dispatchAction('/store-value-font', {exportPlease: false});
 		localClient.dispatchAction('/store-value', {uiOnboardstep: 'end'});
 		clearTimeout(exportingError);
@@ -387,7 +458,12 @@ export default {
 		}
 	},
 	// TODO add a spend credit action
-	'/export-family-from-reader': ({result, familyToExport, template, oldDb}) => {
+	'/export-family-from-reader': ({
+		result,
+		familyToExport,
+		template,
+		oldDb,
+	}) => {
 		const a = document.createElement('a');
 		const _URL = window.URL || window.webkitURL;
 
@@ -425,7 +501,10 @@ export default {
 
 		blobBuffers.forEach(({buffer, variant}) => {
 			const variantPatch = prototypoStore
-				.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
+				.set(
+					'exportedVariant',
+					prototypoStore.get('exportedVariant') + 1,
+				)
 				.commit();
 
 			localServer.dispatchUpdate('/prototypoStore', variantPatch);
@@ -479,7 +558,12 @@ export default {
 		spendCreditsAction();
 	},
 	// TODO add a spend credit action
-	'/export-family-from-reader': ({result, familyToExport, template, oldDb}) => {
+	'/export-family-from-reader': ({
+		result,
+		familyToExport,
+		template,
+		oldDb,
+	}) => {
 		const a = document.createElement('a');
 		const _URL = window.URL || window.webkitURL;
 
@@ -517,7 +601,10 @@ export default {
 
 		blobBuffers.forEach(({buffer, variant}) => {
 			const variantPatch = prototypoStore
-				.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
+				.set(
+					'exportedVariant',
+					prototypoStore.get('exportedVariant') + 1,
+				)
 				.commit();
 
 			localServer.dispatchUpdate('/prototypoStore', variantPatch);
@@ -650,7 +737,10 @@ export default {
 
 			blobBuffers.forEach(({buffer, variant}) => {
 				const variantPatch = prototypoStore
-					.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
+					.set(
+						'exportedVariant',
+						prototypoStore.get('exportedVariant') + 1,
+					)
 					.commit();
 
 				localServer.dispatchUpdate('/prototypoStore', variantPatch);

@@ -567,6 +567,13 @@ export class FamilyItem extends React.Component {
 								this.props.values,
 								this.props.template.templateName,
 								this.props.glyphs,
+								this.props.family.designer,
+								this.props.family.designerUrl,
+								this.props.family.foundry,
+								this.props.family.foundryUrl,
+								this.props.variantToLoad.weight,
+								this.props.variantToLoad.width,
+								this.props.variantToLoad.italic,
 							);
 						}}
 					>

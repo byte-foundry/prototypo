@@ -101,7 +101,20 @@ class LibraryMain extends React.Component {
 		});
 	}
 
-	export(familyName, variantName = 'Regular', values, template, glyphs) {
+	export(
+		familyName,
+		variantName = 'Regular',
+		values,
+		template,
+		glyphs,
+		designer,
+		designerUrl,
+		foundry,
+		foundryUrl,
+		weight,
+		width,
+		italic,
+	) {
 		this.client.dispatchAction('/export-otf-from-library', {
 			merged: true,
 			familyName,
@@ -110,6 +123,13 @@ class LibraryMain extends React.Component {
 			values,
 			template,
 			glyphs,
+			designer,
+			designerUrl,
+			foundry,
+			foundryUrl,
+			weight,
+			width,
+			italic,
 		});
 	}
 
@@ -273,7 +293,7 @@ export default compose(
 				const family = data.user.library.find(
 					f => f.id === updateFamily.id,
 				);
-	
+
 				family.tags = updateFamily.tags;
 				store.writeQuery({
 					query: libraryQuery,

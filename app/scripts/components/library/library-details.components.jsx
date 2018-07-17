@@ -110,13 +110,23 @@ class LibraryDetails extends React.Component {
 		const variantNames = this.state.family.variants.map(
 			variant => variant.name,
 		);
+		const metadataArray = this.state.family.variants.map(variant => ({
+			width: variant.width,
+			weight: variant.weight,
+			italic: variant.italic,
+		}));
 
 		this.client.dispatchAction('/export-family-from-library', {
 			familyName: this.state.family.name,
 			variantNames,
 			valueArray,
+			metadataArray,
 			template: this.state.family.template,
 			glyphs: this.state.familyGlyphs,
+			designer: this.state.family.designer,
+			designerUrl: this.state.family.designerUrl,
+			foundry: this.state.family.foundry,
+			foundryUrl: this.state.family.foundryUrl,
 		});
 	}
 	deleteFamily() {
@@ -330,9 +340,9 @@ class LibraryDetails extends React.Component {
 											}}
 										>
 											{[
-												'normal',
+												'medium',
 												'condensed',
-												'extended',
+												'expanded',
 											].map(width => (
 												<option value={width}>
 													{width}
