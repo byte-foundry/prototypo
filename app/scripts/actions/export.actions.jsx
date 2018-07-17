@@ -194,6 +194,10 @@ export default {
 		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
 			console.log('You need a plan to export');
+			localClient.dispatchAction('/store-value', {
+				openRestrictedFeature: true,
+				restrictedFeatureHovered: 'export',
+			});
 			return;
 		}
 
@@ -267,6 +271,10 @@ export default {
 
 		// forbid export without plan
 		if (!exportAuthorized(plan, credits)) {
+			localClient.dispatchAction('/store-value', {
+				openRestrictedFeature: true,
+				restrictedFeatureHovered: 'export',
+			});
 			console.log('You need a plan to export');
 			return;
 		}

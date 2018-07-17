@@ -1,11 +1,13 @@
 import React from 'react';
 import {graphql, gql, compose} from 'react-apollo';
+import InlineSVG from 'svg-inline-react';
 import Lifespan from 'lifespan';
 import LocalClient from '../../stores/local-client.stores';
 
 import CreateVariantModal from '../familyVariant/create-variant-modal.components.jsx';
 import ChangeNameVariant from '../familyVariant/change-name-variant.components.jsx';
 import DuplicateVariant from '../familyVariant/duplicate-variant.components.jsx';
+import GoProModal from '../go-pro-modal.components.jsx';
 import {LibrarySidebarLeft} from './library-sidebars.components';
 
 class LibraryMain extends React.Component {
@@ -22,6 +24,10 @@ class LibraryMain extends React.Component {
 		this.rename = this.rename.bind(this);
 		this.duplicate = this.duplicate.bind(this);
 		this.deleteVariant = this.deleteVariant.bind(this);
+		this.closeRestrictedFeatureOverlay = this.closeRestrictedFeatureOverlay.bind(
+			this,
+		);
+		this.openGoProModal = this.openGoProModal.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -50,6 +56,9 @@ class LibraryMain extends React.Component {
 					templatesData: head.toJS().d.templatesData,
 					search: head.toJS().d.librarySearchString,
 					librarySelectedTags: head.toJS().d.librarySelectedTags,
+					openRestrictedFeature: head.toJS().d.openRestrictedFeature,
+					restrictedFeatureHovered: head.toJS().d.restrictedFeatureHovered,
+					openGoProModal: head.toJS().d.openGoProModal,
 				});
 			});
 	}
@@ -137,7 +146,58 @@ class LibraryMain extends React.Component {
 		this.setState({activeFilters: filters});
 	}
 
+	openGoProModal() {
+		// TODO: Intercom tracking
+		this.client.dispatchAction('/store-value', {
+			openGoProModal: true,
+		});
+	}
+
+	closeRestrictedFeatureOverlay() {
+		this.client.dispatchAction('/store-value', {
+			openRestrictedFeature: false,
+			restrictedFeatureHovered: '',
+		});
+	}
+
+
 	render() {
+		let featureHovered;
+
+		switch (this.state.restrictedFeatureHovered) {
+		case 'export':
+			featureHovered
+					= 'To export as many projects as you want with unlimited rights';
+			break;
+		default:
+			featureHovered = 'This feature is not available to you yet.';
+		}
+
+		const restrictedFeatureText = this.state.openRestrictedFeature ? (
+			<div
+				className="panel-demo-overlay"
+				onClick={this.closeRestrictedFeatureOverlay}
+			>
+				<div className="panel-demo-overlay-text">
+					<InlineSVG
+						element="div"
+						src={require('!svg-inline-loader!../../../images/academy/lock.svg')}
+						onClick={this.openGoProModal}
+					/>
+					<p>{featureHovered}</p>
+
+					<div
+						className="panel-demo-overlay-text-gopro-cta"
+						onClick={this.openGoProModal}
+					>
+						Upgrade to the full version
+					</div>
+				</div>
+			</div>
+		) : (
+			false
+		);
+
 		return (
 			<div className="library-main">
 				<LibrarySidebarLeft location={this.props.location} />
@@ -159,6 +219,10 @@ class LibraryMain extends React.Component {
 					search: this.state.search,
 					librarySelectedTags: this.state.librarySelectedTags,
 				})}
+				{restrictedFeatureText}
+				{this.state.openGoProModal && (
+					<GoProModal propName="openGoProModal" />
+				)}
 				{this.state.openVariantModal && (
 					<CreateVariantModal
 						family={this.state.familySelectedVariantCreation}
