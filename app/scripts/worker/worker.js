@@ -3,6 +3,12 @@ import {fontToSfntTable} from '../opentype/font';
 
 const fonts = {};
 
+/* eslint-disable no-bitwise */
+/* eslint-disable prefer-numeric-literals */
+const getfsSelection = (weight, italic) =>
+	(weight > 500 ? parseInt('0000000000100000', 2) : parseInt('0000000001000000', 2))
+	| (italic ? parseInt('0000000000000001', 2) : parseInt('0000000000000000', 2));
+
 /* eslint-disable no-restricted-globals */
 
 // Layout of array is [
@@ -66,12 +72,20 @@ self.onmessage = (e) => {
 			e.data.data.params,
 			e.data.data.subset,
 		);
+
 		const arrayBuffer = fontToSfntTable({
 			...font,
 			fontFamily: {en: e.data.data.familyName || 'Prototypo web font'},
 			fontSubfamily: {en: e.data.data.styleName || 'Regular'},
 			postScriptName: {},
 			unitsPerEm: 1024,
+			usWeightClass: e.data.data.weight,
+			usWidthClass: e.data.data.width,
+			manufacturer: e.data.data.foundry,
+			manufacturerURL: e.data.data.foundryUrl,
+			designer: e.data.data.designer,
+			designerURL: e.data.data.designerUrl,
+			fsSelection: getfsSelection(e.data.data.weight, e.data.data.italic),
 		});
 
 		if (e.data.data.forExport) {

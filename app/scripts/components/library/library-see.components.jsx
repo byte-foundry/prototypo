@@ -38,13 +38,23 @@ class LibrarySee extends React.Component {
 		const variantNames = this.state.family.variants.map(
 			variant => variant.name,
 		);
+		const metadataArray = this.state.family.variants.map(variant => ({
+			width: variant.width,
+			weight: variant.weight,
+			italic: variant.italic,
+		}));
 
 		this.client.dispatchAction('/export-family-from-library', {
 			familyName: this.state.family.name,
 			variantNames,
 			valueArray,
+			metadataArray,
 			template: this.state.family.template,
 			glyphs: this.state.variants[0].glyphs,
+			designer: this.state.family.designer,
+			designerUrl: this.state.family.designerUrl,
+			foundry: this.state.family.foundry,
+			foundryUrl: this.state.family.foundryUrl,
 		});
 	}
 	async componentWillMount() {
@@ -231,6 +241,13 @@ export class VariantItem extends React.Component {
 									this.props.values,
 									this.props.family.template,
 									this.props.glyphs,
+									this.props.family.designer,
+									this.props.family.designerUrl,
+									this.props.family.foundry,
+									this.props.family.foundryUrl,
+									this.props.variant.weight,
+									this.props.variant.width,
+									this.props.variant.italic,
 								);
 							}}
 						>
