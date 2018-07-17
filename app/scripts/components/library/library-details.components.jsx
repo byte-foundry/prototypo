@@ -505,6 +505,7 @@ const updateVariantDataMutation = gql`
 			id
 			name
 			weight
+			values
 			width
 			italic
 			family {
