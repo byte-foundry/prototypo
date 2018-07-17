@@ -568,6 +568,13 @@ const createFamilyMutation = gql`
 			name
 			template
 			tags
+			id
+			name
+			template
+			designer
+			designerUrl
+			foundry
+			foundryUrl
 			variants {
 				id
 				name
