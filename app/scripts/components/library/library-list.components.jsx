@@ -21,13 +21,16 @@ import LibrarySearch from './library-search.components';
 class LibraryList extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			search: '',
+			activeFilters: [],
+			librarySelectedTags: [],
+			mode: '',
+		};
 		this.generateFonts = this.generateFonts.bind(this);
 		this.filterFonts = this.filterFonts.bind(this);
 		this.createProject = this.createProject.bind(this);
 		this.selectFont = this.selectFont.bind(this);
-		this.searchFonts = this.searchFonts.bind(this);
-		this.searchTags = this.searchTags.bind(this);
 	}
 
 	async componentWillMount() {
@@ -67,25 +70,7 @@ class LibraryList extends React.Component {
 		this.lifespan.release();
 	}
 
-	filterFonts(activeFilters) {
-		const {baseFontData} = this.state;
-		let fontsToDisplay = baseFontData;
-
-		Object.keys(activeFilters).forEach((filterBy) => {
-			fontsToDisplay = fontsToDisplay.filter(
-				e =>
-					activeFilters[filterBy] === 'All'
-					|| activeFilters[filterBy]
-						.toLowerCase()
-						.includes(e[filterBy].toLowerCase()),
-			);
-		});
-		this.setState({fontsToDisplay});
-	}
-
 	createProject(template, values) {
-		console.log(template);
-		console.log(values);
 		this.props.router.push({
 			pathname: '/onboarding',
 			state: {template, values},
@@ -261,7 +246,7 @@ class LibraryList extends React.Component {
 						name: family.name,
 						designer: '',
 						type: 'Fonts',
-						tags: family.tags,
+						tags: family.tags || [],
 						variants: family.variants,
 						id: family.id,
 						user: {
@@ -296,53 +281,108 @@ class LibraryList extends React.Component {
 		});
 	}
 
-	searchFonts(searchString) {
-		if (Array.isArray(this.state.baseFontData)) {
-			const newFiltered = this.state.baseFontData.filter(
-				font =>
-					font.template
+	filterFonts(activeFilters, selectedTags, searchString, mode) {
+		const {baseFontData} = this.state;
+
+		// Filter
+		let fontsToDisplay = baseFontData;
+
+		Object.keys(activeFilters).forEach((filterBy) => {
+			fontsToDisplay = fontsToDisplay.filter(
+				e =>
+					activeFilters[filterBy] === 'All'
+					|| activeFilters[filterBy]
 						.toLowerCase()
-						.includes(searchString.toLowerCase())
-					|| font.templateName
-						.toLowerCase()
-						.includes(searchString.toLowerCase())
-					|| font.name.toLowerCase().includes(searchString.toLowerCase())
-					|| (font.tags && font.tags.find(e =>
+						.includes(e[filterBy].toLowerCase()),
+			);
+		});
+
+		// Tags
+		fontsToDisplay = fontsToDisplay.filter(
+			font =>
+				font.tags
+				&& selectedTags.every(elem => font.tags.indexOf(elem) > -1),
+		);
+
+		// Search
+		fontsToDisplay = fontsToDisplay.filter(
+			font =>
+				font.template
+					.toLowerCase()
+					.includes(searchString.toLowerCase())
+				|| font.templateName
+					.toLowerCase()
+					.includes(searchString.toLowerCase())
+				|| font.name.toLowerCase().includes(searchString.toLowerCase())
+				|| (font.tags
+					&& font.tags.find(e =>
 						e.toLowerCase().includes(searchString.toLowerCase()),
 					)),
-			);
+		);
 
-			this.setState({fontsToDisplay: newFiltered});
+		// Mode
+
+		let type = '';
+
+		switch (mode) {
+		case 'personnal':
+			type = 'Fonts';
+			break;
+		default:
+			break;
 		}
-	}
 
-	searchTags(selectedTags) {
-		if (Array.isArray(this.state.baseFontData)) {
-			const newFiltered = this.state.baseFontData.filter(
-				font =>
-					font.tags
-					&& selectedTags.every(elem => font.tags.indexOf(elem) > -1),
-			);
+		fontsToDisplay = fontsToDisplay.filter(font =>
+			font.type.includes(type),
+		);
 
-			this.setState({fontsToDisplay: newFiltered});
-		}
+		this.setState({fontsToDisplay});
 	}
 
 	componentWillReceiveProps(newProps) {
 		if (newProps.activeFilters !== this.props.activeFilters) {
-			this.filterFonts(newProps.activeFilters);
+			this.setState({activeFilters: newProps.activeFilters});
+			this.filterFonts(
+				newProps.activeFilters,
+				this.state.librarySelectedTags,
+				this.state.search,
+				this.state.mode,
+			);
 		}
 		if (newProps.families !== this.props.families) {
 			this.generateFonts(newProps.families, newProps.presets);
 		}
 		if (newProps.search !== this.props.search) {
-			this.searchFonts(newProps.search);
+			this.setState({search: newProps.search});
+			this.filterFonts(
+				this.state.activeFilters,
+				this.state.librarySelectedTags,
+				newProps.search,
+				this.state.mode,
+			);
 		}
 		if (
 			JSON.stringify(newProps.librarySelectedTags)
 			!== JSON.stringify(this.props.librarySelectedTags)
 		) {
-			this.searchTags(newProps.librarySelectedTags);
+			this.setState({librarySelectedTags: newProps.librarySelectedTags});
+			this.filterFonts(
+				this.state.activeFilters,
+				newProps.librarySelectedTags,
+				this.state.search,
+				this.state.mode,
+			);
+		}
+		if (newProps.location.query !== this.props.location.query) {
+			this.setState({
+				mode: newProps.location.query && newProps.location.query.mode,
+			});
+			this.filterFonts(
+				this.state.activeFilters,
+				this.state.librarySelectedTags,
+				this.state.search,
+				newProps.location.query && newProps.location.query.mode,
+			);
 		}
 	}
 
@@ -434,7 +474,10 @@ export class TemplateItem extends React.Component {
 	render() {
 		return (
 			<div className="library-item" tabIndex={0}>
-				<p className="library-item-name">{this.props.template.name}</p>
+				<p className="library-item-name">
+					<span className="star-icon">★</span>
+					{this.props.template.name}
+				</p>
 				<p
 					className="library-item-preview"
 					style={{
@@ -523,6 +566,7 @@ export class FamilyItem extends React.Component {
 		return (
 			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
+					<span className="star-icon">★</span>
 					{this.props.family.name} from {this.props.template.name}
 				</p>
 				<p
@@ -633,6 +677,7 @@ export class PresetItem extends React.Component {
 		return (
 			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
+					<span className="star-icon">★</span>
 					{this.props.name} from {this.props.template.name}
 				</p>
 				<p

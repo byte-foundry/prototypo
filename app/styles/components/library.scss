@@ -41,9 +41,12 @@
 				font-size: 16px;
 				color: white;
 				.library-link {
-					&.active {
+					&.active {						
 						color: $green;
 						font-weight: bold;
+						span {
+							color: $dark-grey;
+						}
 					}
 				}
 			}
@@ -370,6 +373,15 @@
 				margin: 0;
 				padding-left: 40px;
 				padding-right: 40px;
+				.star-icon {
+					font-size: 150%;
+					margin-right: 10px;
+					cursor: pointer;
+					color: $light-grey;
+					&.active {
+						color: $yellow;
+					}
+				}
 			}
 
 			.library-item-preview {
