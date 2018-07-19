@@ -28,12 +28,28 @@ export class LibrarySidebarLeft extends React.Component {
 						<Link
 							to="/library/home"
 							className={`library-link ${
-								this.props.location.pathname === '/library/home'
+								this.props.location.pathname
+									=== '/library/home'
+								&& !this.props.location.query.mode
 									? 'active'
 									: ''
 							}`}
 						>
-							All
+							<span> > </span>All
+						</Link>
+						<br />
+						<Link
+							to="/library/home?mode=personnal"
+							className={`library-link ${
+								this.props.location.pathname
+									=== '/library/home'
+								&& this.props.location.query.mode
+								&& this.props.location.query.mode === 'personnal'
+									? 'active'
+									: ''
+							}`}
+						>
+							<span> > </span>Personnal library
 						</Link>
 					</div>
 				)}
