@@ -120,6 +120,7 @@ class LibraryList extends React.Component {
 		templateData,
 		variantToLoad,
 		userColor,
+		isFromTeam = false,
 	) {
 		return () =>
 			variantToLoad && {
@@ -143,6 +144,7 @@ class LibraryList extends React.Component {
 				familyId: family.id,
 				templateName: templateInfo.templateName,
 				fontName: `user${family.id}`,
+				isFromTeam,
 			};
 	}
 
@@ -156,6 +158,15 @@ class LibraryList extends React.Component {
 			'#FF0000',
 			'#F7931E',
 		];
+
+		const subUserColors = [
+			'#A9B247',
+			'#29FF58',
+			'#00B288',
+			'#246699',
+			'#4C2556',
+		];
+
 		const userColor = customBadgesColor[0];
 		const lmColor = customBadgesColor[1];
 		const hmColor = customBadgesColor[4];
@@ -265,6 +276,58 @@ class LibraryList extends React.Component {
 					});
 				}
 			});
+
+		this.props.subUsers
+			&& this.state.templateInfos
+			&& this.props.subUsers.forEach((subUser, index) => {
+				const subUserColor
+					= subUserColors[index % subUserColors.length];
+
+				subUser.id !== this.props.user.id
+					&& subUser.library.forEach((family) => {
+						const templateInfo = this.state.templateInfos.find(
+							template =>
+								template.templateName === family.template,
+						) || {name: 'Undefined'};
+						const templateData = this.state.templatesData.find(
+							e => e.name === family.template,
+						);
+
+						family.tags
+							&& family.tags.map(tag => allTags.push(tag));
+						const variantToLoad
+							= family.variants.find(
+								e => e.name.toLowerCase() === 'regular',
+							) || family.variants[0];
+
+						if (variantToLoad) {
+							fontData.push({
+								template: templateInfo.templateName,
+								templateName: templateInfo.name,
+								name: family.name,
+								designer: '',
+								type: 'SubUser',
+								tags: family.tags || [],
+								variants: family.variants,
+								id: family.id,
+								user: {
+									firstName: subUser.firstName,
+									lastName: subUser.lastName,
+								},
+								background: subUserColor,
+								props: this.getFamilyProps(
+									family,
+									templateInfo,
+									templateData,
+									variantToLoad,
+									subUserColor,
+									true,
+								),
+								elem: FamilyItem,
+							});
+						}
+					});
+			});
 		const tagCount = allTags.reduce((obj, val) => {
 			obj[val] = (obj[val] || 0) + 1;
 			return obj;
@@ -327,6 +390,9 @@ class LibraryList extends React.Component {
 		switch (mode) {
 		case 'personnal':
 			type = 'Fonts';
+			break;
+		case 'team':
+			type = 'SubUser';
 			break;
 		default:
 			break;
@@ -591,17 +657,19 @@ export class FamilyItem extends React.Component {
 						this.props.isOpen ? 'opened' : ''
 					}`}
 				>
-					<div
-						className="library-item-action"
-						onClick={() => {
-							this.props.open(
-								this.props.variantToLoad,
-								this.props.family,
-							);
-						}}
-					>
-						Edit
-					</div>
+					{!this.props.isFromTeam && (
+						<div
+							className="library-item-action"
+							onClick={() => {
+								this.props.open(
+									this.props.variantToLoad,
+									this.props.family,
+								);
+							}}
+						>
+							Edit
+						</div>
+					)}
 					<div
 						className="library-item-action"
 						onClick={() => {

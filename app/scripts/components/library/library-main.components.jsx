@@ -57,7 +57,8 @@ class LibraryMain extends React.Component {
 					search: head.toJS().d.librarySearchString,
 					librarySelectedTags: head.toJS().d.librarySelectedTags,
 					openRestrictedFeature: head.toJS().d.openRestrictedFeature,
-					restrictedFeatureHovered: head.toJS().d.restrictedFeatureHovered,
+					restrictedFeatureHovered: head.toJS().d
+						.restrictedFeatureHovered,
 					openGoProModal: head.toJS().d.openGoProModal,
 				});
 			});
@@ -160,7 +161,6 @@ class LibraryMain extends React.Component {
 		});
 	}
 
-
 	render() {
 		let featureHovered;
 
@@ -200,10 +200,17 @@ class LibraryMain extends React.Component {
 
 		return (
 			<div className="library-main">
-				<LibrarySidebarLeft location={this.props.location} />
+				<LibrarySidebarLeft
+					location={this.props.location}
+					subUsers={this.props.subUsers}
+					userId={this.props.userId}
+					families={this.props.families}
+					routeParams={this.props.params}
+				/>
 				{React.cloneElement(this.props.children, {
 					activeFilters: this.state.activeFilters,
 					families: this.props.families,
+					subUsers: this.props.subUsers,
 					presets: this.props.presets,
 					setActiveFilters: this.setActiveFilters,
 					open: this.open,
@@ -215,6 +222,7 @@ class LibraryMain extends React.Component {
 					user: {
 						firstName: this.props.firstName,
 						lastName: this.props.lastName,
+						id: this.props.userId,
 					},
 					search: this.state.search,
 					librarySelectedTags: this.state.librarySelectedTags,
@@ -268,6 +276,40 @@ export const libraryQuery = gql`
 					width
 					weight
 					italic
+				}
+			}
+		}
+	}
+`;
+
+export const teamQuery = gql`
+	query {
+		user {
+			id
+			manager {
+				id
+				subUsers {
+					id
+					firstName
+					lastName
+					library {
+						id
+						name
+						template
+						tags
+						designer
+						designerUrl
+						foundry
+						foundryUrl
+						variants {
+							id
+							name
+							values
+							width
+							weight
+							italic
+						}
+					}
 				}
 			}
 		}
@@ -329,6 +371,26 @@ export default compose(
 			return {refetch: data.refetch};
 		},
 	}),
+	graphql(teamQuery, {
+		options: {
+			fetchPolicy: 'cache-first',
+		},
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+			if (data.user) {
+				return {
+					subUsers: data.user.manager
+						? data.user.manager.subUsers
+						: [],
+					refetch: data.refetch,
+				};
+			}
+
+			return {refetch: data.refetch};
+		},
+	}),
 	graphql(getNameQuery, {
 		options: {
 			fetchPolicy: 'cache-first',
@@ -340,6 +402,7 @@ export default compose(
 			return {
 				firstName: data.user.firstName,
 				lastName: data.user.lastName,
+				userId: data.user.id,
 			};
 		},
 	}),

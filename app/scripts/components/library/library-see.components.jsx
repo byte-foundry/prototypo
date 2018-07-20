@@ -15,13 +15,19 @@ class LibrarySee extends React.Component {
 		const family = this.props.families.find(
 			e => e.id === this.props.params.projectID,
 		);
+		const teamProject = this.props.subUsers
+			.find(u =>
+				u.library.find(f => f.id === this.props.params.projectID),
+			)
+			.library.find(f => f.id === this.props.params.projectID);
 
-		if (!family) {
-			props.history.push('/library/home');
+		if (!family && !teamProject) {
+			props.router.push('/library/home');
 		}
 
 		this.state = {
-			family,
+			family: family || teamProject,
+			isPersonnal: !!family,
 		};
 		this.generateVariants = this.generateVariants.bind(this);
 		this.goToDashboard = this.goToDashboard.bind(this);
@@ -73,10 +79,8 @@ class LibrarySee extends React.Component {
 		this.generateVariants(templateValues, templateName);
 	}
 
-	generateVariants(templateValues, templateName, families) {
-		const family = families
-			? families.find(e => e.id === this.props.params.projectID)
-			: this.state.family;
+	generateVariants(templateValues, templateName, newFamily) {
+		const family = newFamily || this.state.family;
 		const fontsToGenerate = [];
 
 		const variants = family.variants.map(variant => ({
@@ -95,16 +99,56 @@ class LibrarySee extends React.Component {
 			variants,
 			templateValues,
 			templateName,
-			family: families ? family : this.state.family,
 		});
 	}
 
 	componentWillReceiveProps(newProps) {
 		if (this.props.families !== newProps.families) {
+			const family = this.props.families.find(
+				e => e.id === newProps.params.projectID,
+			);
+			const teamProject = this.props.subUsers
+				.find(u =>
+					u.library.find(f => f.id === newProps.params.projectID),
+				)
+				.library.find(f => f.id === newProps.params.projectID);
+
+			if (!family && !teamProject) {
+				this.props.router.push('/library/home');
+			}
+
+			this.setState({
+				family: family || teamProject,
+				isPersonnal: !!family,
+			});
+
 			this.generateVariants(
 				this.state.templateValues,
 				this.state.templateName,
-				newProps.families,
+				family || teamProject,
+			);
+		}
+		if (this.props.params.projectID !== newProps.params.projectID) {
+			const family = this.props.families.find(
+				e => e.id === newProps.params.projectID,
+			);
+			const teamProject = this.props.subUsers
+				.find(u =>
+					u.library.find(f => f.id === newProps.params.projectID),
+				)
+				.library.find(f => f.id === newProps.params.projectID);
+
+			if (!family && !teamProject) {
+				this.props.router.push('/library/home');
+			}
+			this.setState({
+				family: family || teamProject,
+				isPersonnal: !!family,
+			});
+			this.generateVariants(
+				this.state.templateValues,
+				this.state.templateName,
+				family || teamProject,
 			);
 		}
 	}
@@ -146,6 +190,7 @@ class LibrarySee extends React.Component {
 									rename={this.props.rename}
 									export={this.props.export}
 									delete={this.props.deleteVariant}
+									isPersonnal={this.state.isPersonnal}
 								/>
 							))}
 					</div>
@@ -157,6 +202,7 @@ class LibrarySee extends React.Component {
 						familyId={this.props.params.projectID}
 						exportFamily={this.exportFamily}
 						mode="see"
+						isPersonnal={this.state.isPersonnal}
 					/>
 					{this.state.templateValues && (
 						<FamilySidebarGlyphs
@@ -168,6 +214,7 @@ class LibrarySee extends React.Component {
 						familyId={this.state.family.id}
 						updateTags={this.props.updateTags}
 						mode="readonly"
+						isPersonnal={this.state.isPersonnal}
 					/>
 				</LibrarySidebarRight>
 			</div>
@@ -232,50 +279,58 @@ export class VariantItem extends React.Component {
 						>
 							Open variant
 						</div>
-						<div
-							className="library-item-variant-action"
-							onClick={() => {
-								this.props.export(
-									this.props.family.name,
-									this.props.variant.name,
-									this.props.values,
-									this.props.family.template,
-									this.props.glyphs,
-									this.props.family.designer,
-									this.props.family.designerUrl,
-									this.props.family.foundry,
-									this.props.family.foundryUrl,
-									this.props.variant.weight,
-									this.props.variant.width,
-									this.props.variant.italic,
-								);
-							}}
-						>
-							Export variant
-						</div>
-						<div
-							className="library-item-variant-action"
-							onClick={() => {
-								this.props.rename(
-									this.props.variant,
-									this.props.family,
-								);
-							}}
-						>
-							Rename variant
-						</div>
-						<div
-							className="library-item-variant-action"
-							onClick={() => {
-								this.props.duplicate(
-									this.props.variant,
-									this.props.family,
-								);
-							}}
-						>
-							Duplicate variant
-						</div>
-						{this.props.family.variants.length > 1 && (
+
+						{this.props.isPersonnal && (
+							<div
+								className="library-item-variant-action"
+								onClick={() => {
+									this.props.export(
+										this.props.family.name,
+										this.props.variant.name,
+										this.props.values,
+										this.props.family.template,
+										this.props.glyphs,
+										this.props.family.designer,
+										this.props.family.designerUrl,
+										this.props.family.foundry,
+										this.props.family.foundryUrl,
+										this.props.variant.weight,
+										this.props.variant.width,
+										this.props.variant.italic,
+									);
+								}}
+							>
+								Export variant
+							</div>
+						)}
+						{this.props.isPersonnal && (
+							<div
+								className="library-item-variant-action"
+								onClick={() => {
+									this.props.rename(
+										this.props.variant,
+										this.props.family,
+									);
+								}}
+							>
+								Rename variant
+							</div>
+						)}
+						{this.props.isPersonnal && (
+							<div
+								className="library-item-variant-action"
+								onClick={() => {
+									this.props.duplicate(
+										this.props.variant,
+										this.props.family,
+									);
+								}}
+							>
+								Duplicate variant
+							</div>
+						)}
+						{this.props.isPersonnal
+							&& this.props.family.variants.length > 1 && (
 							<div
 								className="library-item-variant-action"
 								onClick={() => {
@@ -285,7 +340,7 @@ export class VariantItem extends React.Component {
 									);
 								}}
 							>
-								Delete variant
+									Delete variant
 							</div>
 						)}
 						<FontUpdater
@@ -295,6 +350,14 @@ export class VariantItem extends React.Component {
 							subset="Hamburgefonstiv 123"
 							glyph="0"
 						/>
+					</div>
+					<div className="library-item-variant-actions-group">
+						<div className="library-item-variant-actions-group-title">
+							Informations
+						</div>
+						<p>Weight: {this.props.variant.weight}</p>
+						<p>Width: {this.props.variant.width}</p>
+						{this.props.variant.italic && <p>Italic</p>}
 					</div>
 				</div>
 			</div>
