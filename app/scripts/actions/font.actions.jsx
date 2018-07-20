@@ -346,18 +346,21 @@ export default {
 			});
 
 			const newFamily = {...user.library[0]};
-			const newVariant = {...newFamily.variants[0]};
 
-			delete newFamily.variants;
+			if (newFamily.variants) {
+				const newVariant = {...newFamily.variants[0]};
 
-			prototypoStore.set('family', newFamily);
-			prototypoStore.set('variant', newVariant);
-			localClient.dispatchAction('/change-font', {
-				templateToLoad: newFamily.template,
-				variantId: newVariant.id,
-			});
+				delete newFamily.variants;
 
-			localServer.dispatchUpdate('/prototypoStore', prototypoStore.commit());
+				prototypoStore.set('family', newFamily);
+				prototypoStore.set('variant', newVariant);
+				localClient.dispatchAction('/change-font', {
+					templateToLoad: newFamily.template,
+					variantId: newVariant.id,
+				});
+
+				localServer.dispatchUpdate('/prototypoStore', prototypoStore.commit());
+			}
 		}
 
 		saveAppValues();
