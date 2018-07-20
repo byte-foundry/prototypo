@@ -70,16 +70,16 @@ export class LibrarySidebarLeft extends React.Component {
 				);
 			});
 
-			if (userProjects.length > 9) {
-				const initialuserProjectsLength = userProjects.length;
-	
-				userProjects = userProjects.slice(0, 9);
-				userProjects.push(
-					<p className="sidebar-left-project">
-						And {initialuserProjectsLength - 9} more...
-					</p>,
-				);
-			}
+		if (userProjects.length > 9) {
+			const initialuserProjectsLength = userProjects.length;
+
+			userProjects = userProjects.slice(0, 9);
+			userProjects.push(
+				<p className="sidebar-left-project">
+					And {initialuserProjectsLength - 9} more...
+				</p>,
+			);
+		}
 
 		const isUserProjectActive
 			= (this.props.location.pathname === '/library/home'
