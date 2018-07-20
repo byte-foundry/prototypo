@@ -13,7 +13,6 @@
 			padding: 25px;
 			display: inline-block;
 			position: relative;
-
 			.library-sidebar-action-dark {
 				margin-right: auto;
 				margin-left: auto;
@@ -50,6 +49,15 @@
 					}
 				}
 			}
+			.sidebar-left-project {
+				margin-top: 5px;
+				margin-bottom: 5px;
+				padding-left: 30px; 
+				&.active {
+					color: $green;
+					font-weight: bold;
+				}
+			}
 		}
 		.library-search {
 			input,
@@ -79,22 +87,23 @@
 			width: 250px;
 			padding: 25px;
 			.sidebar-actions-family {
-				.sidebar-action {
-					margin-bottom: 10px;
-					text-align: center;
-					display: block;
-					font-size: 14px;
-					padding: 5px 20px;
-					border: 2px solid $dark-grey;
-					color: $dark-grey;
-					background-color: transparent;
-					transition: color 0.3s ease, background-color 0.3s ease;
-					border-radius: 30px;
-					cursor: pointer;
-					&:hover {
-						background: $dark-grey;
-						color: white;
-					}
+				
+			}
+			.sidebar-action {
+				margin-bottom: 10px;
+				text-align: center;
+				display: block;
+				font-size: 14px;
+				padding: 5px 20px;
+				border: 2px solid $dark-grey;
+				color: $dark-grey;
+				background-color: transparent;
+				transition: color 0.3s ease, background-color 0.3s ease;
+				border-radius: 30px;
+				cursor: pointer;
+				&:hover {
+					background: $dark-grey;
+					color: white;
 				}
 			}
 			.sidebar-glyphs {
@@ -182,6 +191,10 @@
 						font-size: 14px;
 						font-weight: bold;
 						margin-bottom: 20px;
+					}
+					p {
+						color: white;
+						font-size: 12px;
 					}
 					.library-item-variant-action {
 						margin-bottom: 10px;

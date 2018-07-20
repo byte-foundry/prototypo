@@ -5,6 +5,92 @@ import LocalClient from '../../stores/local-client.stores';
 
 export class LibrarySidebarLeft extends React.Component {
 	render() {
+		const subUserLibrary = [];
+
+		this.props.subUsers
+			&& this.props.subUsers.forEach((subUser) => {
+				subUser.id !== this.props.userId
+					&& subUser.library.forEach((family) => {
+						subUserLibrary.push(family);
+					});
+			});
+
+		let subUsersProjects = subUserLibrary.map(f => (
+			<p
+				className={`sidebar-left-project ${
+					this.props.routeParams
+					&& f.id === this.props.routeParams.projectID
+						? 'active'
+						: ''
+				}`}
+			>
+				<Link to={`/library/project/${f.id}`}>
+					{f.name} ({f.variants.length})
+				</Link>
+			</p>
+		));
+
+		if (subUsersProjects.length > 9) {
+			const initialsubUsersProjectsLength = subUsersProjects.length;
+
+			subUsersProjects = subUsersProjects.slice(0, 9);
+			subUsersProjects.push(
+				<p className="sidebar-left-project">
+					And {initialsubUsersProjectsLength - 9} more...
+				</p>,
+			);
+		}
+
+		const isSubUserActive
+			= (this.props.location.pathname === '/library/home'
+				&& this.props.location.query.mode
+				&& this.props.location.query.mode === 'team')
+			|| (this.props.routeParams
+				&& subUserLibrary.find(
+					e => e.id === this.props.routeParams.projectID,
+				));
+
+		let userProjects = [];
+
+		this.props.families
+			&& this.props.families.forEach((family) => {
+				userProjects.push(
+					<p
+						className={`sidebar-left-project ${
+							this.props.routeParams
+							&& family.id === this.props.routeParams.projectID
+								? 'active'
+								: ''
+						}`}
+					>
+						<Link to={`/library/project/${family.id}`}>
+							{family.name} ({family.variants.length})
+						</Link>
+					</p>,
+				);
+			});
+
+			if (userProjects.length > 9) {
+				const initialuserProjectsLength = userProjects.length;
+	
+				userProjects = userProjects.slice(0, 9);
+				userProjects.push(
+					<p className="sidebar-left-project">
+						And {initialuserProjectsLength - 9} more...
+					</p>,
+				);
+			}
+
+		const isUserProjectActive
+			= (this.props.location.pathname === '/library/home'
+				&& this.props.location.query.mode
+				&& this.props.location.query.mode === 'personnal')
+			|| (this.props.routeParams
+				&& this.props.families
+				&& this.props.families.find(
+					e => e.id === this.props.routeParams.projectID,
+				));
+
 		return (
 			<div className="library-sidebar-left">
 				{this.props.location.pathname !== '/library/create' && (
@@ -25,32 +111,45 @@ export class LibrarySidebarLeft extends React.Component {
 				)}
 				{this.props.location.pathname !== '/library/create' && (
 					<div className="library-links">
-						<Link
-							to="/library/home"
-							className={`library-link ${
-								this.props.location.pathname
-									=== '/library/home'
-								&& !this.props.location.query.mode
-									? 'active'
-									: ''
-							}`}
-						>
-							<span> > </span>All
-						</Link>
-						<br />
-						<Link
-							to="/library/home?mode=personnal"
-							className={`library-link ${
-								this.props.location.pathname
-									=== '/library/home'
-								&& this.props.location.query.mode
-								&& this.props.location.query.mode === 'personnal'
-									? 'active'
-									: ''
-							}`}
-						>
-							<span> > </span>Personnal library
-						</Link>
+						<div>
+							<Link
+								to="/library/home"
+								className={`library-link ${
+									this.props.location.pathname
+										=== '/library/home'
+									&& !this.props.location.query.mode
+										? 'active'
+										: ''
+								}`}
+							>
+								<span> > </span>All
+							</Link>
+						</div>
+						<div>
+							<Link
+								to="/library/home?mode=personnal"
+								className={`library-link ${
+									isUserProjectActive ? 'active' : ''
+								}`}
+							>
+								<span> > </span>Personnal library
+							</Link>
+							{userProjects}
+						</div>
+						{this.props.subUsers
+							&& this.props.subUsers.length > 0 && (
+							<div>
+								<Link
+									to="/library/home?mode=team"
+									className={`library-link ${
+										isSubUserActive ? 'active' : ''
+									}`}
+								>
+									<span> > </span>Team library
+								</Link>
+								{subUsersProjects}
+							</div>
+						)}
 					</div>
 				)}
 			</div>
@@ -61,7 +160,12 @@ export class LibrarySidebarLeft extends React.Component {
 export class LibrarySidebarRight extends React.Component {
 	render() {
 		return (
-			<div className="library-sidebar-right">{this.props.children}</div>
+			<div className="library-sidebar-right">
+				<Link to="/account/home" className="sidebar-action">
+					My account
+				</Link>
+				{this.props.children}
+			</div>
 		);
 	}
 }
@@ -91,38 +195,46 @@ export class FamilySidebarActions extends React.Component {
 				>
 					Export family
 				</div>
-				{this.props.mode === 'see' && (
+				{this.props.isPersonnal
+					&& this.props.mode === 'see' && (
 					<Link
 						className="sidebar-action"
-						to={`/library/project/${this.props.familyId}/details`}
+						to={`/library/project/${
+							this.props.familyId
+						}/details`}
 					>
-						Family settings
+							Family settings
 					</Link>
 				)}
-				{this.props.mode === 'details' && (
+				{this.props.isPersonnal
+					&& this.props.mode === 'details' && (
 					<Link
 						className="sidebar-action"
 						to={`/library/project/${this.props.familyId}`}
 					>
-						Family dashboard
+							Family dashboard
 					</Link>
 				)}
-				<div
-					className="sidebar-action"
-					onClick={() => {
-						this.addVariant();
-					}}
-				>
-					Add new Variant
-				</div>
-				{this.props.mode === 'details' && (
+				{this.props.isPersonnal && (
+					<div
+						className="sidebar-action"
+						onClick={() => {
+							this.addVariant();
+						}}
+					>
+						Add new Variant
+					</div>
+				)}
+
+				{this.props.isPersonnal
+					&& this.props.mode === 'details' && (
 					<div
 						className="sidebar-action"
 						onClick={() => {
 							this.props.deleteFamily();
 						}}
 					>
-						Delete family
+							Delete family
 					</div>
 				)}
 			</div>
@@ -386,41 +498,43 @@ export class SidebarTags extends React.Component {
 							No tags yet. Open one of your project to add one!
 					</span>
 				)}
-				<div
-					className={`sidebar-tags-add ${this.props.mode} ${
-						this.state.addButtonActive ? 'active' : ''
-					}`}
-					onClick={() => {
-						this.setState({addButtonActive: true});
-					}}
-				>
-					{this.state.addButtonActive ? (
-						<input
-							type="text"
-							name=""
-							id=""
-							tabIndex="0"
-							placeholder="type then press enter.."
-							onBlur={() => {
-								this.setState({addButtonActive: false});
-							}}
-							value={this.state.newTag}
-							onChange={(e) => {
-								this.setState({newTag: e.target.value});
-							}}
-							onKeyDown={(e) => {
-								if (e.keyCode === 13) {
-									this.addTag(e);
-								}
-								if (e.keyCode === 188) {
-									this.addTag(e, true);
-								}
-							}}
-						/>
-					) : (
-						<span>+</span>
-					)}
-				</div>
+				{this.props.isPersonnal && (
+					<div
+						className={`sidebar-tags-add ${this.props.mode} ${
+							this.state.addButtonActive ? 'active' : ''
+						}`}
+						onClick={() => {
+							this.setState({addButtonActive: true});
+						}}
+					>
+						{this.state.addButtonActive ? (
+							<input
+								type="text"
+								name=""
+								id=""
+								tabIndex="0"
+								placeholder="type then press enter.."
+								onBlur={() => {
+									this.setState({addButtonActive: false});
+								}}
+								value={this.state.newTag}
+								onChange={(e) => {
+									this.setState({newTag: e.target.value});
+								}}
+								onKeyDown={(e) => {
+									if (e.keyCode === 13) {
+										this.addTag(e);
+									}
+									if (e.keyCode === 188) {
+										this.addTag(e, true);
+									}
+								}}
+							/>
+						) : (
+							<span>+</span>
+						)}
+					</div>
+				)}
 			</div>
 		);
 	}
