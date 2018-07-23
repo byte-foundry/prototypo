@@ -268,41 +268,41 @@ export class VariantItem extends React.Component {
 						<div className="library-item-variant-actions-group-title">
 							Actions
 						</div>
-						<div
-							className="library-item-variant-action"
-							onClick={() => {
-								this.props.open(
-									this.props.variant,
-									this.props.family,
-								);
-							}}
-						>
-							Open variant
-						</div>
-
 						{this.props.isPersonnal && (
 							<div
 								className="library-item-variant-action"
 								onClick={() => {
-									this.props.export(
-										this.props.family.name,
-										this.props.variant.name,
-										this.props.values,
-										this.props.family.template,
-										this.props.glyphs,
-										this.props.family.designer,
-										this.props.family.designerUrl,
-										this.props.family.foundry,
-										this.props.family.foundryUrl,
-										this.props.variant.weight,
-										this.props.variant.width,
-										this.props.variant.italic,
+									this.props.open(
+										this.props.variant,
+										this.props.family,
 									);
 								}}
 							>
-								Export variant
+								Open variant
 							</div>
 						)}
+
+						<div
+							className="library-item-variant-action"
+							onClick={() => {
+								this.props.export(
+									this.props.family.name,
+									this.props.variant.name,
+									this.props.values,
+									this.props.family.template,
+									this.props.glyphs,
+									this.props.family.designer,
+									this.props.family.designerUrl,
+									this.props.family.foundry,
+									this.props.family.foundryUrl,
+									this.props.variant.weight,
+									this.props.variant.width,
+									this.props.variant.italic,
+								);
+							}}
+						>
+							Export variant
+						</div>
 						{this.props.isPersonnal && (
 							<div
 								className="library-item-variant-action"
