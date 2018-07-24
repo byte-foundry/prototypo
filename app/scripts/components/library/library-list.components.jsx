@@ -470,6 +470,12 @@ class LibraryList extends React.Component {
 						setActiveFilters={this.props.setActiveFilters}
 					/>
 					<SidebarTags tags={this.state.tags} mode="interactive" />
+					<Link
+						className="sidebar-action"
+						to="/library/fontinuse/create"
+					>
+							Add fontsinuse
+					</Link>
 				</LibrarySidebarRight>
 			</div>
 		);

@@ -9,6 +9,7 @@
 			background: $dark-grey;
 			color: #eee;
 			width: 250px;
+			min-width: 250px;
 			min-height: 100vh;
 			padding: 25px;
 			display: inline-block;
@@ -126,6 +127,9 @@
 			flex-direction: row;
 			align-items: stretch;
 		}
+		.library-list, .library-see {
+			width: calc(100% - 500px);
+		}
 		.library-list {
 			flex-grow: 2;
 			background: white;
@@ -152,7 +156,7 @@
 			height: 100vh;
 			max-height: 100vh;
 			overflow-y: auto;
-			padding-bottom: 20px;
+			padding-bottom: 50px;
 			.library-see-variants {
 				margin-top: 40px;
 			}
@@ -244,6 +248,60 @@
 							border: 1px solid $dark-grey;
 							&:focus {
 								outline: none;
+							}
+							&.opened {
+								border-bottom: none;
+							}
+						}
+						.font-list {
+							margin-top: 5px;
+							.font-list-elem {
+								padding: 5px 8px;
+								border: 1px solid $dark-grey;
+								border-radius: 15px;
+								margin-right: 5px;
+								cursor: pointer;
+							}
+						}
+						.suggestions {
+							border: 1px solid $dark-grey;
+							border-top: none;
+							padding-top: 5px;
+							max-height: 200px;
+							overflow-x: hidden;
+							overflow-y: auto;
+							.suggestion {
+								padding: 20px;
+								padding-top: 5px;
+								padding-bottom: 5px;
+								cursor: pointer;
+								&:hover {
+									background-color: #ddd;
+								}
+							}
+						}
+						.images {
+							margin-top: 5px;
+							img {
+								height: 200px;
+								width: auto;
+								display: inline-block;
+								margin-left: 10px;
+								cursor: pointer;
+							}
+						}
+						.dropzone-content {
+							border: 1px dashed $dark-grey;
+							text-align: center;
+							font-size: 18px;
+							margin-top: 20px;
+							margin-bottom: 20px;
+							padding-top: 20px;
+							padding-bottom: 20px;
+							&.rejected {
+								color: $red;
+								border-color: $red;
+								background-color: transparentize($red, 0.9);
 							}
 						}
 					}
