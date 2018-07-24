@@ -19,6 +19,9 @@ import LibraryReview from './components/library/library-review.components';
 import LibraryHosting from './components/library/library-hosting.components';
 import LibraryDetails from './components/library/library-details.components';
 import LibrarySee from './components/library/library-see.components';
+import LibraryFontsInUse from './components/library/library-fontinuse.components';
+import LibraryFontsInUseCreate from './components/library/library-fontinuse-create.components';
+import LibraryFontsInUseList from './components/library/library-fontinuse-list.components';
 
 import OnboardingApp from './components/onboarding/onboarding-app.components';
 
@@ -139,6 +142,7 @@ function trackUrl() {
 	ga('send', 'pageview', {page: this.state.location.pathname});
 }
 
+// eslint-disable-next-line
 class AppRoutes extends React.PureComponent {
 	render() {
 		return (
@@ -286,6 +290,25 @@ class AppRoutes extends React.PureComponent {
 								onEnter={redirectToLogin}
 							>
 								<IndexRoute component={LibraryReview} />
+							</Route>
+							<Route
+								exact
+								path="fontinuse"
+								component={LibraryMain}
+								name="fontInUseList"
+								onEnter={redirectToLogin}
+							>
+								<IndexRoute component={LibraryFontsInUseList} />
+								<Route path="create" component={LibraryFontsInUseCreate} />
+							</Route>
+							<Route
+								path="fontinuse/:fontinuseID"
+								component={LibraryMain}
+								name="seeFontInUse"
+								onEnter={redirectToLogin}
+							>
+								<IndexRoute component={LibraryFontsInUse} />
+								<Route path="edit" component={LibraryFontsInUseCreate} />
 							</Route>
 							<Route
 								path="project/:projectID"
