@@ -13029,7 +13029,7 @@ vendors@^1.0.0:
 
 venus.ptf@byte-foundry/venus.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/3a3ac0b428df1402bec9d7c2f5899c94d7a01605"
+  resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/6214fea6b21cbf2e8fdbb1d0a7bcc57f8ee18904"
   dependencies:
     prototypo-precursor "^1.0.4"
 
