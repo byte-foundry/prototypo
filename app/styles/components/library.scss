@@ -36,11 +36,14 @@
 				}
 			}
 			.library-links {
-				margin-top: 40px;
+				margin-top: 20px;
+				margin-bottom: 20px;
 				color: $green;
 				font-size: 16px;
 				color: white;
 				.library-link {
+					padding-top: 10px;
+					padding-bottom: 5px;
 					&.active {						
 						color: $green;
 						font-weight: bold;

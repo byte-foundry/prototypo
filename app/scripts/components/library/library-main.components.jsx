@@ -219,6 +219,9 @@ class LibraryMain extends React.Component {
 					duplicate: this.duplicate,
 					deleteVariant: this.deleteVariant,
 					updateTags: this.props.updateTags,
+					favourites: this.props.favourites,
+					addFavourite: this.props.addFavourite,
+					deleteFavourite: this.props.deleteFavourite,
 					user: {
 						firstName: this.props.firstName,
 						lastName: this.props.lastName,
@@ -316,12 +319,23 @@ export const teamQuery = gql`
 	}
 `;
 
-const getNameQuery = gql`
-	query getFirstName {
+const libraryUserQuery = gql`
+	query getLibraryUserInfos {
 		user {
 			id
 			firstName
 			lastName
+			favourites {
+				id
+				type
+				preset {
+					id
+				}
+				family {
+					id
+				}
+				template
+			}
 		}
 	}
 `;
@@ -347,6 +361,30 @@ const deleteVariantMutation = gql`
 	mutation deleteVariant($id: ID!) {
 		deleteVariant(id: $id) {
 			id
+		}
+	}
+`;
+
+const deleteFavouriteMutation = gql`
+	mutation deleteAbstractedFont($id: ID!) {
+		deleteAbstractedFont(id: $id) {
+			id
+		}
+	}
+`;
+
+const addFavouriteMutation = gql`
+	mutation createAbstractedFont($userId: ID!, $type: FontType!, $familyId: ID, $template: String, $presetId: ID) {
+		createAbstractedFont(userId: $userId, type: $type, familyId: $familyId, template: $template, presetId: $presetId) {
+			id
+			type
+			preset {
+				id
+			}
+			family {
+				id
+			}
+			template
 		}
 	}
 `;
@@ -391,19 +429,75 @@ export default compose(
 			return {refetch: data.refetch};
 		},
 	}),
-	graphql(getNameQuery, {
+	graphql(libraryUserQuery, {
 		options: {
 			fetchPolicy: 'cache-first',
 		},
 		props: ({data}) => {
 			if (data.loading) {
-				return {loading: true, firstName: '', lastName: ''};
+				return {
+					loading: true,
+					firstName: '',
+					lastName: '',
+					favourites: [],
+				};
 			}
 			return {
 				firstName: data.user.firstName,
 				lastName: data.user.lastName,
 				userId: data.user.id,
+				favourites: data.user.favourites,
 			};
+		},
+	}),
+	graphql(deleteFavouriteMutation, {
+		props: ({mutate}) => ({
+			deleteFavourite: id =>
+				mutate({
+					variables: {
+						id,
+					},
+				}),
+		}),
+		options: {
+			update: (store, {data: {deleteAbstractedFont}}) => {
+				const data = store.readQuery({query: libraryUserQuery});
+
+				data.user.favourites.splice(
+					data.user.favourites.findIndex(
+						f => f.id === deleteAbstractedFont.id,
+					),
+					1,
+				);
+				store.writeQuery({
+					query: libraryUserQuery,
+					data,
+				});
+			},
+		},
+	}),
+	graphql(addFavouriteMutation, {
+		props: ({mutate, ownProps}) => ({
+			addFavourite: (type, familyId, template, presetId) =>
+				mutate({
+					variables: {
+						userId: ownProps.userId,
+						type,
+						familyId,
+						template,
+						presetId,
+					},
+				}),
+		}),
+		options: {
+			update: (store, {data: {createAbstractedFont}}) => {
+				const data = store.readQuery({query: libraryUserQuery});
+				data.user.favourites.push(createAbstractedFont)
+				store.writeQuery({
+					query: libraryUserQuery,
+					data,
+				});
+			},
 		},
 	}),
 	graphql(updateTagsMutation, {
@@ -415,6 +509,8 @@ export default compose(
 						newTags,
 					},
 				}),
+		}),
+		options: {
 			update: (store, {data: {updateFamily}}) => {
 				const data = store.readQuery({query: libraryQuery});
 				const family = data.user.library.find(
@@ -427,7 +523,7 @@ export default compose(
 					data,
 				});
 			},
-		}),
+		},
 	}),
 	graphql(deleteVariantMutation, {
 		props: ({mutate}) => ({

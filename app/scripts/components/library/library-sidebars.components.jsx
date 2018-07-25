@@ -110,46 +110,67 @@ export class LibrarySidebarLeft extends React.Component {
 					</Link>
 				)}
 				{this.props.location.pathname !== '/library/create' && (
-					<div className="library-links">
-						<div>
-							<Link
-								to="/library/home"
-								className={`library-link ${
-									this.props.location.pathname
-										=== '/library/home'
-									&& !this.props.location.query.mode
-										? 'active'
-										: ''
-								}`}
-							>
-								<span> > </span>All
-							</Link>
-						</div>
-						<div>
-							<Link
-								to="/library/home?mode=personnal"
-								className={`library-link ${
-									isUserProjectActive ? 'active' : ''
-								}`}
-							>
-								<span> > </span>Personnal library
-							</Link>
-							{userProjects}
-						</div>
-						{this.props.subUsers
-							&& this.props.subUsers.length > 0 && (
+					<div>
+						<div className="library-links">
 							<div>
 								<Link
-									to="/library/home?mode=team"
+									to="/library/home"
 									className={`library-link ${
-										isSubUserActive ? 'active' : ''
+										this.props.location.pathname
+											=== '/library/home'
+										&& !this.props.location.query.mode
+											? 'active'
+											: ''
 									}`}
 								>
-									<span> > </span>Team library
+									<span> > </span>All
 								</Link>
-								{subUsersProjects}
 							</div>
-						)}
+							<div>
+								<Link
+									to="/library/home?mode=personnal"
+									className={`library-link ${
+										isUserProjectActive ? 'active' : ''
+									}`}
+								>
+									<span> > </span>Personnal library
+								</Link>
+								{userProjects}
+							</div>
+							{this.props.subUsers
+								&& this.props.subUsers.length > 0 && (
+								<div>
+									<Link
+										to="/library/home?mode=team"
+										className={`library-link ${
+											isSubUserActive ? 'active' : ''
+										}`}
+									>
+										<span> > </span>Team library
+									</Link>
+									{subUsersProjects}
+								</div>
+							)}
+						</div>
+						<hr />
+						<div className="library-links">
+							<div>
+								<Link
+									to="/library/home?mode=favorites"
+									className={`library-link ${
+										this.props.location.pathname
+											=== '/library/home'
+										&& this.props.location.query.mode
+										&& this.props.location.query.mode
+											=== 'favorites'
+											? 'active'
+											: ''
+									}`}
+								>
+									<span> > </span>Favorites
+								</Link>
+							</div>
+						</div>
 					</div>
 				)}
 			</div>
