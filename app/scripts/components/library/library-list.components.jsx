@@ -31,6 +31,7 @@ class LibraryList extends React.Component {
 		this.filterFonts = this.filterFonts.bind(this);
 		this.createProject = this.createProject.bind(this);
 		this.selectFont = this.selectFont.bind(this);
+		this.updateFavourites = this.updateFavourites.bind(this);
 	}
 
 	async componentWillMount() {
@@ -77,7 +78,44 @@ class LibraryList extends React.Component {
 		});
 	}
 
-	getTemplateProps(template, templateData) {
+	updateFavourites(favourite, type, id) {
+		const favourites = [...this.props.favourites];
+		let relatedKey;
+
+		switch (type) {
+		case 'Template':
+			relatedKey = 'template';
+			break;
+		case 'Preset':
+			relatedKey = 'preset';
+			break;
+		case 'Family':
+			relatedKey = 'family';
+			break;
+		default:
+			break;
+		}
+		if (favourite) {
+			this.props.deleteFavourite(favourite.id);
+		}
+		else {
+			switch (type) {
+			case 'Template':
+				this.props.addFavourite(type, undefined, id, undefined);
+				break;
+			case 'Preset':
+				this.props.addFavourite(type, undefined, undefined, id);
+				break;
+			case 'Family':
+				this.props.addFavourite(type, id, undefined, undefined);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	getTemplateProps(template, templateData, favourites) {
 		return () => ({
 			key: template.templateName,
 			template,
@@ -89,12 +127,22 @@ class LibraryList extends React.Component {
 			isOpen: this.state.selectedFont === template.templateName,
 			familyId: template.templateName,
 			fontName: `template${template.templateName.split('.').join('')}`,
-			values: templateData.initValues,
 			templateName: template.templateName,
+			favourite: favourites.find(
+				f => f.type === 'Template' && f.template === template.name,
+			),
+			updateFavourites: this.updateFavourites,
 		});
 	}
 
-	getPresetProps(preset, templateInfo, templateData, lmColor, hmColor) {
+	getPresetProps(
+		preset,
+		templateInfo,
+		templateData,
+		lmColor,
+		hmColor,
+		favourites,
+	) {
 		return () => ({
 			key: preset.id,
 			preset,
@@ -111,6 +159,10 @@ class LibraryList extends React.Component {
 			familyId: preset.id,
 			fontName: `preset${preset.id}`,
 			templateName: templateInfo.templateName,
+			favourite: favourites.find(
+				f => f.type === 'Preset' && f.preset.id === preset.id,
+			),
+			updateFavourites: this.updateFavourites,
 		});
 	}
 
@@ -121,6 +173,7 @@ class LibraryList extends React.Component {
 		variantToLoad,
 		userColor,
 		isFromTeam = false,
+		favourites,
 	) {
 		return () =>
 			variantToLoad && {
@@ -145,12 +198,17 @@ class LibraryList extends React.Component {
 				templateName: templateInfo.templateName,
 				fontName: `user${family.id}`,
 				isFromTeam,
+				favourite: favourites.find(
+					f => f.type === 'Family' && f.family.id === family.id,
+				),
+				updateFavourites: this.updateFavourites,
 			};
 	}
 
-	generateFonts(f, p) {
+	generateFonts(f, p, fa) {
 		const families = f || this.props.families;
 		const presets = p || this.props.presets;
+		const favourites = fa || this.props.favourites || [];
 		const customBadgesColor = [
 			'#29ABE2',
 			'#0000FF',
@@ -187,7 +245,11 @@ class LibraryList extends React.Component {
 					designer: template.provider,
 					id: template.id,
 					type: 'Template',
-					props: this.getTemplateProps(template, templateData),
+					props: this.getTemplateProps(
+						template,
+						templateData,
+						favourites,
+					),
 					elem: TemplateItem,
 				});
 			});
@@ -228,6 +290,7 @@ class LibraryList extends React.Component {
 							templateData,
 							lmColor,
 							hmColor,
+							favourites,
 						),
 						elem: PresetItem,
 					});
@@ -271,6 +334,8 @@ class LibraryList extends React.Component {
 							templateData,
 							variantToLoad,
 							userColor,
+							false,
+							favourites,
 						),
 						elem: FamilyItem,
 					});
@@ -322,6 +387,7 @@ class LibraryList extends React.Component {
 									variantToLoad,
 									subUserColor,
 									true,
+									favourites,
 								),
 								elem: FamilyItem,
 							});
@@ -342,10 +408,17 @@ class LibraryList extends React.Component {
 			isBaseValueLoaded: true,
 			tags: tagsDedup.slice(0, 10),
 		});
+		this.filterFonts(
+			this.props.activeFilters,
+			this.state.librarySelectedTags,
+			this.state.search,
+			this.state.mode,
+			fontData,
+		);
 	}
 
-	filterFonts(activeFilters, selectedTags, searchString, mode) {
-		const {baseFontData} = this.state;
+	filterFonts(activeFilters, selectedTags, searchString, mode, newBaseFontData) {
+		const baseFontData = newBaseFontData || this.state.baseFontData;
 
 		// Filter
 		let fontsToDisplay = baseFontData;
@@ -402,6 +475,10 @@ class LibraryList extends React.Component {
 			font.type.includes(type),
 		);
 
+		if (mode === 'favorites') {
+			fontsToDisplay = fontsToDisplay.filter(font => !!font.props().favourite);
+		}
+
 		this.setState({fontsToDisplay});
 	}
 
@@ -415,8 +492,15 @@ class LibraryList extends React.Component {
 				this.state.mode,
 			);
 		}
-		if (newProps.families !== this.props.families) {
-			this.generateFonts(newProps.families, newProps.presets);
+		if (
+			newProps.families !== this.props.families
+			|| newProps.favourites !== this.props.favourites
+		) {
+			this.generateFonts(
+				newProps.families,
+				newProps.presets,
+				newProps.favourites,
+			);
 		}
 		if (newProps.search !== this.props.search) {
 			this.setState({search: newProps.search});
@@ -474,7 +558,7 @@ class LibraryList extends React.Component {
 						className="sidebar-action"
 						to="/library/fontinuse/create"
 					>
-							Add fontsinuse
+						Add fontsinuse
 					</Link>
 				</LibrarySidebarRight>
 			</div>
@@ -547,7 +631,20 @@ export class TemplateItem extends React.Component {
 		return (
 			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
-					<span className="star-icon">★</span>
+					<span
+						className={`star-icon ${
+							this.props.favourite ? 'active' : ''
+						}`}
+						onClick={() => {
+							this.props.updateFavourites(
+								this.props.favourite,
+								'Template',
+								this.props.template.name,
+							);
+						}}
+					>
+						★
+					</span>
 					{this.props.template.name}
 				</p>
 				<p
@@ -638,7 +735,20 @@ export class FamilyItem extends React.Component {
 		return (
 			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
-					<span className="star-icon">★</span>
+					<span
+						className={`star-icon ${
+							this.props.favourite ? 'active' : ''
+						}`}
+						onClick={() => {
+							this.props.updateFavourites(
+								this.props.favourite,
+								'Family',
+								this.props.family.id,
+							);
+						}}
+					>
+						★
+					</span>
 					{this.props.family.name} from {this.props.template.name}
 				</p>
 				<p
@@ -751,7 +861,20 @@ export class PresetItem extends React.Component {
 		return (
 			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
-					<span className="star-icon">★</span>
+					<span
+						className={`star-icon ${
+							this.props.favourite ? 'active' : ''
+						}`}
+						onClick={() => {
+							this.props.updateFavourites(
+								this.props.favourite,
+								'Preset',
+								this.props.preset.id,
+							);
+						}}
+					>
+						★
+					</span>
 					{this.props.name} from {this.props.template.name}
 				</p>
 				<p

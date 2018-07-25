@@ -421,147 +421,15 @@ const addFontInUseMutation = gql`
 `;
 
 export default compose(
-	graphql(libraryQuery, {
-		options: {
-			fetchPolicy: 'network-only',
-		},
-		props: ({data}) => {
-			if (data.loading) {
-				return {loading: true};
-			}
-
-			if (data.user) {
-				return {
-					families: data.user.library,
-					refetch: data.refetch,
-				};
-			}
-
-			return {refetch: data.refetch};
-		},
-	}),
-	graphql(deleteVariantMutation, {
+	graphql(addFontInUseMutation, {
 		props: ({mutate}) => ({
-			deleteVariant: id =>
+			addFontInUse: id =>
 				mutate({
 					variables: {id},
 				}),
 		}),
 		options: {
 			update: (store, {data: {deleteVariant}}) => {
-				const data = store.readQuery({query: libraryQuery});
-
-				data.user.library.forEach((family) => {
-					// eslint-disable-next-line
-					family.variants = family.variants.filter(
-						variant => variant.id !== deleteVariant.id,
-					);
-				});
-
-				store.writeQuery({
-					query: libraryQuery,
-					data,
-				});
-			},
-		},
-	}),
-	graphql(deleteFamilyMutation, {
-		props: ({mutate, ownProps}) => ({
-			deleteFamily: (id) => {
-				const family = ownProps.families.find(f => f.id === id);
-
-				if (!family) {
-					return Promise.reject();
-				}
-				const variants = family.variants.map(variant =>
-					ownProps.deleteVariant(variant.id),
-				);
-
-				return Promise.all([...variants, mutate({variables: {id}})]);
-			},
-		}),
-		options: {
-			update: (store, {data: {deleteFamily}}) => {
-				const data = store.readQuery({query: libraryQuery});
-
-				data.user.library = data.user.library.filter(
-					font => font.id !== deleteFamily.id,
-				);
-
-				store.writeQuery({
-					query: libraryQuery,
-					data,
-				});
-			},
-		},
-	}),
-	graphql(updateFamilyDataMutation, {
-		props: ({mutate}) => ({
-			updateFamily: (
-				id,
-				name,
-				designer,
-				designerUrl,
-				foundry,
-				foundryUrl,
-			) =>
-				mutate({
-					variables: {
-						id,
-						name,
-						designer,
-						designerUrl,
-						foundry,
-						foundryUrl,
-					},
-				}),
-		}),
-		options: {
-			update: (store, {data: {updateFamily}}) => {
-				const data = store.readQuery({query: libraryQuery});
-
-				const family = data.user.library.find(
-					f => f.id === updateFamily.id,
-				);
-
-				family.name = updateFamily.name;
-				family.designer = updateFamily.designer;
-				family.designerUrl = updateFamily.designerUrl;
-				family.foundry = updateFamily.foundry;
-				family.foundryUrl = updateFamily.foundryUrl;
-				store.writeQuery({
-					query: libraryQuery,
-					data,
-				});
-			},
-		},
-	}),
-	graphql(updateVariantDataMutation, {
-		props: ({mutate}) => ({
-			updateVariant: (id, name, weight, width, italic) =>
-				mutate({
-					variables: {id, name, weight, width, italic},
-				}),
-		}),
-		options: {
-			update: (store, {data: {updateVariant}}) => {
-				const data = store.readQuery({query: libraryQuery});
-
-				const family = data.user.library.find(
-					f => f.id === updateVariant.family.id,
-				);
-				const variant = family.variants.find(
-					v => v.id === updateVariant.id,
-				);
-
-				variant.name = updateVariant.name;
-				variant.designer = updateVariant.weight;
-				variant.designerUrl = updateVariant.width;
-				variant.foundry = updateVariant.italic;
-				store.writeQuery({
-					query: libraryQuery,
-					data,
-				});
 			},
 		},
 	}),
