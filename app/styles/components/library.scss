@@ -426,6 +426,48 @@
 					margin-top: 10px;
 				}
 			}
+			
+		}
+		.library-fontinuse-list {
+			.library-fontinuse {
+				margin-top: 30px;
+				margin-bottom: 30px;
+				display: flex; 
+				flex-direction: row;
+				.library-fontinuse-left {	
+					padding-left: 40px;
+					padding-right: 20px;					
+					width: 50%;
+					img {
+						height: 400px;
+						width: auto;
+						max-width: 100%;
+						float: right;
+						margin-bottom: 15px;
+					}
+				}
+				.library-fontinuse-right {
+					padding-left: 20px;
+					padding-right: 40px;	
+					p {
+						margin-top: 0;
+						margin-bottom: 20px;
+						label {
+							display: block;
+							font-weight: bold;
+						}
+						a {
+							text-decoration: underline;
+						}
+						span {
+							margin-right: 8px;
+						}
+					}
+				}
+			}
+		}
+		.library-see .library-fontinuse-list {
+			margin-top: 80px;
 		}
 		.library-family-list {
 			padding-bottom: 80px;

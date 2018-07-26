@@ -6,6 +6,7 @@ import {
 	FamilySidebarGlyphs,
 	SidebarTags,
 } from './library-sidebars.components';
+import {Link} from 'react-router';
 import FontUpdater from '../font-updater.components';
 import LocalClient from '../../stores/local-client.stores';
 
@@ -102,6 +103,33 @@ class LibrarySee extends React.Component {
 		});
 	}
 
+	renderFont(fontUsed) {
+		switch (fontUsed.type) {
+		case 'Template':
+			return (
+				<span className="library-fontinuse-font">
+					{fontUsed.name}
+				</span>
+			);
+		case 'Preset':
+			return (
+				<span className="library-fontinuse-font">
+					{fontUsed.name}
+				</span>
+			);
+		case 'Family':
+			return (
+				<span className="library-fontinuse-font">
+					<Link to={`/library/project/${fontUsed.family.id}`}>
+						{fontUsed.name}
+					</Link>
+				</span>
+			);
+		default:
+			return false;
+		}
+	}
+
 	componentWillReceiveProps(newProps) {
 		if (this.props.families !== newProps.families) {
 			const family = this.props.families.find(
@@ -154,6 +182,12 @@ class LibrarySee extends React.Component {
 	}
 
 	render() {
+		const fontInUses = this.props.fontInUses.filter(fontInUse =>
+			!!fontInUse.fontUsed.find(
+				f => f.type === 'Family' && f.family.id === this.state.family.id,
+			),
+		);
+
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">
@@ -192,6 +226,59 @@ class LibrarySee extends React.Component {
 									delete={this.props.deleteVariant}
 									isPersonnal={this.state.isPersonnal}
 								/>
+							))}
+					</div>
+					<div className="library-fontinuse-list">
+						{fontInUses
+							&& fontInUses.map(fontInUse => (
+								<div className="library-fontinuse">
+									<div className="library-fontinuse-left">
+										{fontInUse.images.map(image => (
+											<img
+												src={`${image.replace(
+													'files.',
+													'images.',
+												)}/800x`}
+											/>
+										))}
+									</div>
+									<div className="library-fontinuse-right">
+										<p>
+											<label>Client</label>
+											<a
+												href={fontInUse.clientUrl}
+												target="_blank"
+											>
+												{fontInUse.client}
+											</a>
+										</p>
+										<p>
+											<label>Related fonts</label>
+											{fontInUse.fontUsed.map(
+												fontUsed =>
+													this.renderFont(fontUsed),
+											)}
+										</p>
+										<p>
+											<label>Designer</label>
+											<a
+												href={fontInUse.designerUrl}
+												target="_blank"
+											>
+												{fontInUse.designer}
+											</a>
+										</p>
+										<p className="library-fontinuse-button">
+											<Link
+												to={`/library/fontinuse/${
+													fontInUse.id
+												}/edit`}
+											>
+												Edit
+											</Link>
+										</p>
+									</div>
+								</div>
 							))}
 					</div>
 				</div>

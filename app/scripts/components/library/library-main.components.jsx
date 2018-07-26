@@ -213,6 +213,7 @@ class LibraryMain extends React.Component {
 					subUsers: this.props.subUsers,
 					presets: this.props.presets,
 					setActiveFilters: this.setActiveFilters,
+					fontInUses: this.props.fontInUses,
 					open: this.open,
 					export: this.export,
 					rename: this.rename,
@@ -325,6 +326,26 @@ const libraryUserQuery = gql`
 			id
 			firstName
 			lastName
+			fontInUses {
+				id
+				client
+				clientUrl
+				designer
+				designerUrl
+				images
+				fontUsed {
+					id
+					name
+					family {
+						id
+					}
+					type
+					template
+					preset {
+						id
+					}
+				}
+			}
 			favourites {
 				id
 				type
@@ -374,10 +395,11 @@ const deleteFavouriteMutation = gql`
 `;
 
 const addFavouriteMutation = gql`
-	mutation createAbstractedFont($userId: ID!, $type: FontType!, $familyId: ID, $template: String, $presetId: ID) {
-		createAbstractedFont(userId: $userId, type: $type, familyId: $familyId, template: $template, presetId: $presetId) {
+	mutation createAbstractedFont($userId: ID!, $type: FontType!, $familyId: ID, $template: String, $presetId: ID, $name: String!) {
+		createAbstractedFont(userId: $userId, type: $type, familyId: $familyId, template: $template, presetId: $presetId, name: $name) {
 			id
 			type
+			name
 			preset {
 				id
 			}
@@ -447,6 +469,7 @@ export default compose(
 				lastName: data.user.lastName,
 				userId: data.user.id,
 				favourites: data.user.favourites,
+				fontInUses: data.user.fontInUses,
 			};
 		},
 	}),
@@ -478,7 +501,7 @@ export default compose(
 	}),
 	graphql(addFavouriteMutation, {
 		props: ({mutate, ownProps}) => ({
-			addFavourite: (type, familyId, template, presetId) =>
+			addFavourite: (type, familyId, template, presetId, name) =>
 				mutate({
 					variables: {
 						userId: ownProps.userId,
@@ -486,6 +509,7 @@ export default compose(
 						familyId,
 						template,
 						presetId,
+						name,
 					},
 				}),
 		}),
