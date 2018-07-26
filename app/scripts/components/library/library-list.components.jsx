@@ -78,7 +78,7 @@ class LibraryList extends React.Component {
 		});
 	}
 
-	updateFavourites(favourite, type, id) {
+	updateFavourites(favourite, type, id, name) {
 		const favourites = [...this.props.favourites];
 		let relatedKey;
 
@@ -101,13 +101,13 @@ class LibraryList extends React.Component {
 		else {
 			switch (type) {
 			case 'Template':
-				this.props.addFavourite(type, undefined, id, undefined);
+				this.props.addFavourite(type, undefined, id, undefined, name);
 				break;
 			case 'Preset':
-				this.props.addFavourite(type, undefined, undefined, id);
+				this.props.addFavourite(type, undefined, undefined, id, name);
 				break;
 			case 'Family':
-				this.props.addFavourite(type, id, undefined, undefined);
+				this.props.addFavourite(type, id, undefined, undefined, name);
 				break;
 			default:
 				break;
@@ -640,6 +640,7 @@ export class TemplateItem extends React.Component {
 								this.props.favourite,
 								'Template',
 								this.props.template.name,
+								this.props.template.name,
 							);
 						}}
 					>
@@ -744,6 +745,7 @@ export class FamilyItem extends React.Component {
 								this.props.favourite,
 								'Family',
 								this.props.family.id,
+								this.props.family.name,
 							);
 						}}
 					>
@@ -870,6 +872,7 @@ export class PresetItem extends React.Component {
 								this.props.favourite,
 								'Preset',
 								this.props.preset.id,
+								this.props.name,
 							);
 						}}
 					>
