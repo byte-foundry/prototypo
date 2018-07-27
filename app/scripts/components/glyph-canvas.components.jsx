@@ -240,20 +240,50 @@ export function onCurveModification(
 		componentName,
 	} = draggedItem.data;
 
+	const current = _get(glyph, draggedItem.id);
+	const opposite = _get(glyph, oppositeId);
+	let posToUse = newPos;
+
 	if (modToApply & onCurveModMode.WIDTH_MOD) {
+		const newBaseVector = normalize2D(
+			subtract2D(
+				{
+					x: current.xBase,
+					y: current.yBase,
+				},
+				{
+					x: opposite.xBase,
+					y: opposite.yBase,
+				},
+			),
+		);
+		const newBaseAngle = Math.atan2(newBaseVector.y, newBaseVector.x);
+		const translateVector = subtract2D({x: 0, y: 0}, opposite);
+		const translatedPos = add2D(translateVector, newPos);
+		const newBaseProjectedPoint = {
+			x:
+				translatedPos.x * Math.cos(newBaseAngle)
+				+ translatedPos.y * Math.sin(newBaseAngle),
+			y:
+				-translatedPos.x * Math.sin(newBaseAngle)
+				+ translatedPos.y * Math.cos(newBaseAngle),
+		};
+
+		posToUse = add2D(opposite, {
+			x: newBaseProjectedPoint.x * newBaseVector.x,
+			y: newBaseProjectedPoint.x * newBaseVector.y,
+		});
 	}
 
-	const current = _get(glyph, draggedItem.id);
-	const newPosition = round2D(newPos);
 	const deltaVector = round2D(
-		subtract2D(newPos, round2D({x: current.xBase, y: current.yBase})),
+		subtract2D(posToUse, round2D({x: current.xBase, y: current.yBase})),
 	);
 
 	const inOffest = round2D(subtract2D(current.handleIn, current));
 	const outOffset = round2D(subtract2D(current.handleOut, current));
 
-	const inNewPos = round2D(add2D(newPos, inOffest));
-	const outNewPos = round2D(add2D(newPos, outOffset));
+	const inNewPos = round2D(add2D(posToUse, inOffest));
+	const outNewPos = round2D(add2D(posToUse, outOffset));
 
 	const inVector = round2D(
 		subtract2D(inNewPos, {
@@ -572,11 +602,11 @@ export default class GlyphCanvas extends React.PureComponent {
 					if (keyCode === 90 && !special) {
 						previewMode = true;
 					}
-					else if (keyCode === 65) {
+					else if (keyCode === 87) {
 						// eslint-disable-next-line no-bitwise
 						curveMode |= onCurveModMode.WIDTH_MOD;
 					}
-					else if (keyCode === 87) {
+					else if (keyCode === 65) {
 						// eslint-disable-next-line no-bitwise
 						curveMode |= onCurveModMode.ANGLE_MOD;
 					}
@@ -1014,8 +1044,19 @@ export default class GlyphCanvas extends React.PureComponent {
 							&& mouse.edge === mState.DOWN
 						) {
 							if (nodes.length > 0) {
-								const selectedHot = nodes.filter(node => selectedItems.reduce((acc, item) => acc || item.id === node.id, false));
-								const notSelectedHot = nodes.filter(node => !selectedItems.reduce((acc, item) => acc || item.id === node.id, false));
+								const selectedHot = nodes.filter(node =>
+									selectedItems.reduce(
+										(acc, item) => acc || item.id === node.id,
+										false,
+									),
+								);
+								const notSelectedHot = nodes.filter(
+									node =>
+										!selectedItems.reduce(
+											(acc, item) => acc || item.id === node.id,
+											false,
+										),
+								);
 
 								if (selectedHot.length > 0) {
 									appStateValue = appState.PRE_DRAGGING_POINTS;
@@ -1399,7 +1440,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						interactions = selectedItems.map(item => ({
 							item,
 							modData: add2D(
-								mousePosInWorld,
+								postMousePosInWorld,
 								item.offsetVector || {x: 0, y: 0},
 							),
 						}));
