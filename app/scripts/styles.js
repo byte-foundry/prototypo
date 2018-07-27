@@ -95,6 +95,7 @@ import '../styles/components/views/prototypo-word-input.scss';
 import '../styles/components/indivMode/indiv-group-list.scss';
 import '../styles/components/indivMode/indiv-sidebar.scss';
 import '../styles/components/canvasTools/canvas-bar.scss';
+import '../styles/components/library.scss';
 import '../styles/components/academy.scss';
 import '../styles/components/academy/academy-app.scss';
 import '../styles/lib/spinners/3-wave.scss';

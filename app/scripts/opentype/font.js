@@ -203,7 +203,9 @@ export function fontToSfntTable(font) {
 	const os2Table = os2.make({
 		xAvgCharWidth: Math.round(advanceWithAvg),
 		usWeightClass: usWeightClass || usWeightClasses.NORMAL,
-		usWidthClass: usWidthClass || usWidthClasses.MEDIUM,
+		usWidthClass: usWidthClass
+			? usWidthClasses[usWidthClass.toUpperCase()]
+			: usWidthClasses.MEDIUM,
 		usFirstCharIndex: firstCharIndex,
 		usLastCharIndex: lastCharIndex,
 		ulUnicodeRange1,
