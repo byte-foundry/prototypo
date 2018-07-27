@@ -132,10 +132,10 @@ class LibrarySee extends React.Component {
 
 	componentWillReceiveProps(newProps) {
 		if (this.props.families !== newProps.families) {
-			const family = this.props.families.find(
+			const family = newProps.families.find(
 				e => e.id === newProps.params.projectID,
 			);
-			const teamProject = this.props.subUsers
+			const teamProject = newProps.subUsers
 				.find(u =>
 					u.library.find(f => f.id === newProps.params.projectID),
 				)
@@ -144,11 +144,11 @@ class LibrarySee extends React.Component {
 			if (!family && !teamProject) {
 				this.props.router.push('/library/home');
 			}
-
 			this.setState({
 				family: family || teamProject,
 				isPersonnal: !!family,
 			});
+			
 
 			this.generateVariants(
 				this.state.templateValues,

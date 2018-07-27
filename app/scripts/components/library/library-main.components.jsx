@@ -541,7 +541,7 @@ export default compose(
 					f => f.id === updateFamily.id,
 				);
 
-				family.tags = updateFamily.tags;
+				family.tags = [...updateFamily.tags];
 				store.writeQuery({
 					query: libraryQuery,
 					data,
