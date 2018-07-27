@@ -23,16 +23,14 @@ class LibraryFontInUseCreate extends React.Component {
 				clientUrl: fontInUse.clientUrl,
 				isModified: false,
 				images: fontInUse.images,
-				fonts: fontInUse.fontUsed.map(fontUsed => (
-					{
-						id: fontUsed.id,
-						type: fontUsed.type,
-						name: fontUsed.name,
-						familyId: fontUsed.family && fontUsed.family.id,
-						template: fontUsed.template,
-						presetId: fontUsed.preset && fontUsed.preset.id,
-					}
-				)),
+				fonts: fontInUse.fontUsed.map(fontUsed => ({
+					id: fontUsed.id,
+					type: fontUsed.type,
+					name: fontUsed.name,
+					familyId: fontUsed.family && fontUsed.family.id,
+					template: fontUsed.template,
+					presetId: fontUsed.preset && fontUsed.preset.id,
+				})),
 			};
 		}
 
@@ -60,6 +58,7 @@ class LibraryFontInUseCreate extends React.Component {
 		);
 		this.createFontInUse = this.createFontInUse.bind(this);
 		this.updateFontInUse = this.updateFontInUse.bind(this);
+		this.deleteFontInUse = this.deleteFontInUse.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -79,7 +78,7 @@ class LibraryFontInUseCreate extends React.Component {
 		);
 
 		if (!alreadyAdded) {
-			fonts.push(suggestion);
+			fonts.push({...suggestion, isNew: true});
 		}
 		this.setState({
 			fontInUseMetadata: {
@@ -212,7 +211,7 @@ class LibraryFontInUseCreate extends React.Component {
 		});
 	}
 	onDrop(acceptedFiles) {
-		const images = this.state.fontInUseMetadata.images;
+		const images = [...this.state.fontInUseMetadata.images];
 
 		acceptedFiles.forEach((file) => {
 			images.push(file.preview);
@@ -253,7 +252,7 @@ class LibraryFontInUseCreate extends React.Component {
 		});
 	}
 	removeImage(image) {
-		const images = this.state.fontInUseMetadata.images;
+		const images = [...this.state.fontInUseMetadata.images];
 		const imageIndex = images.find(i => i === image);
 
 		images.splice(imageIndex, 1);
@@ -265,30 +264,45 @@ class LibraryFontInUseCreate extends React.Component {
 		});
 	}
 	createFontInUse() {
-		this.props.addFontInUse(
-			this.state.fontInUseMetadata.designer,
-			this.state.fontInUseMetadata.designerUrl,
-			this.state.fontInUseMetadata.client,
-			this.state.fontInUseMetadata.clientUrl,
-			this.state.fontInUseMetadata.fonts,
-			this.state.fontInUseMetadata.images,
-		);
+		this.props
+			.addFontInUse(
+				this.state.fontInUseMetadata.designer,
+				this.state.fontInUseMetadata.designerUrl,
+				this.state.fontInUseMetadata.client,
+				this.state.fontInUseMetadata.clientUrl,
+				this.state.fontInUseMetadata.fonts,
+				this.state.fontInUseMetadata.images,
+			)
+			.then(() => this.props.router.push('/library/fontinuse'));
 	}
 	updateFontInUse() {
-		this.props.updateFontInUse(
-			this.state.fontInUseMetadata.designer,
-			this.state.fontInUseMetadata.designerUrl,
-			this.state.fontInUseMetadata.client,
-			this.state.fontInUseMetadata.clientUrl,
-			this.state.fontInUseMetadata.fonts,
-			this.state.fontInUseMetadata.images,
-		);
+		this.props
+			.editFontInUse(
+				this.state.fontInUseMetadata.id,
+				this.state.fontInUseMetadata.designer,
+				this.state.fontInUseMetadata.designerUrl,
+				this.state.fontInUseMetadata.client,
+				this.state.fontInUseMetadata.clientUrl,
+				this.state.fontInUseMetadata.fonts,
+				this.state.fontInUseMetadata.images,
+			)
+			.then(() => this.props.router.push('/library/fontinuse'));
+	}
+	deleteFontInUse() {
+		this.props
+			.deleteFontInUse(
+				this.state.fontInUseMetadata.id,
+				this.state.fontInUseMetadata.fonts,
+			)
+			.then(() => this.props.router.push('/library/fontinuse'));
 	}
 	render() {
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">
-					<div className="library-see-title">{this.state.isEdit ? 'Edit' : 'Add'} a font in use</div>
+					<div className="library-see-title">
+						{this.state.isEdit ? 'Edit' : 'Add'} a font in use
+					</div>
 					<div className="library-details-form">
 						<form action="" method="">
 							<div className="library-details-form-elem">
@@ -438,7 +452,7 @@ class LibraryFontInUseCreate extends React.Component {
 								<div
 									className="library-details-form-button"
 									onClick={() => {
-										this.props.deleteFontInUse(this.state.fontInUseMetadata.id, this.state.fontInUseMetadata.fonts);
+										this.deleteFontInUse();
 									}}
 								>
 									Delete font in use
@@ -448,10 +462,13 @@ class LibraryFontInUseCreate extends React.Component {
 								<div
 									className="library-details-form-button"
 									onClick={() => {
-										this.state.isEdit ? this.updateFontInUse() : this.createFontInUse();
+										this.state.isEdit
+											? this.updateFontInUse()
+											: this.createFontInUse();
 									}}
 								>
-									{this.state.isEdit ? 'Edit' : 'Create'} font in use
+									{this.state.isEdit ? 'Edit' : 'Create'} font
+									in use
 								</div>
 							)}
 						</form>
@@ -533,7 +550,7 @@ const createAbstractedFontMutation = gql`
 `;
 
 const addFontInUseMutation = gql`
-	mutation addFontInUse(
+	mutation createFontInUse(
 		$designer: String!
 		$designerUrl: String
 		$client: String!
@@ -552,27 +569,66 @@ const addFontInUseMutation = gql`
 			creatorId: $creatorId
 		) {
 			id
-			designer
-			designerUrl
 			client
 			clientUrl
+			designer
+			designerUrl
+			images
 			fontUsed {
+				id
+				name
 				family {
 					id
-					name
 				}
 				type
 				template
 				preset {
 					id
-					variant {
-						family {
-							name
-						}
-					}
 				}
 			}
+		}
+	}
+`;
+
+const editFontInUseMutation = gql`
+	mutation updateFontInUse(
+		$id: ID!
+		$designer: String!
+		$designerUrl: String
+		$client: String!
+		$clientUrl: String
+		$fontUsedIds: [ID!]
+		$images: [String!]
+		$creatorId: ID
+	) {
+		updateFontInUse(
+			id: $id
+			designer: $designer
+			designerUrl: $designerUrl
+			client: $client
+			clientUrl: $clientUrl
+			fontUsedIds: $fontUsedIds
+			images: $images
+			creatorId: $creatorId
+		) {
+			id
+			client
+			clientUrl
+			designer
+			designerUrl
 			images
+			fontUsed {
+				id
+				name
+				family {
+					id
+				}
+				type
+				template
+				preset {
+					id
+				}
+			}
 		}
 	}
 `;
@@ -602,7 +658,7 @@ export default compose(
 	}),
 	graphql(deleteAbstractedFontMutation, {
 		props: ({mutate}) => ({
-			deleteAbstractedFont: (id) =>
+			deleteAbstractedFont: id =>
 				mutate({
 					variables: {
 						id,
@@ -630,9 +686,8 @@ export default compose(
 					),
 				);
 
-				return Promise.all(abstractedFonts).then((createdFonts) => {
-					ownProps.router.push('/library/fontinuse');
-					return mutate({
+				return Promise.all(abstractedFonts).then(createdFonts =>
+					mutate({
 						variables: {
 							designer,
 							designerUrl,
@@ -644,53 +699,122 @@ export default compose(
 							images,
 							creatorId: ownProps.user.id,
 						},
-					});
-				});
-			},
-			options: {
-				update: (store, {data: {addFontInUse}}) => {
-					const data = store.readQuery({query: libraryUserQuery});
-
-					console.log(addFontInUse);
-
-					data.user.fontUsed.push(addFontInUse);
-					store.writeQuery({
-						query: libraryUserQuery,
-						data,
-					});
-				},
+					}),
+				);
 			},
 		}),
-	}),
-	graphql(deleteFontInUseMutation, {
-		props: ({mutate, ownProps}) => ({
-			deleteFontInUse: (
-				id,
-				fontUsed,
-			) => {
-				const deletedAbstractedFont = []
-				fontUsed.forEach(font =>
-					font.id && deletedAbstractedFont.push(ownProps.deleteAbstractedFont(font.id)),
-				);
-
-				return Promise.all(deletedAbstractedFont).then(() => {
-					ownProps.router.push('/library/fontinuse');
-					return mutate({
-						variables: {
-							id,
-						},
-					});
-				});
-			},
-			update: (store, {data: {deleteFontInUse}}) => {
+		options: {
+			update: (store, {data: {createFontInUse}}) => {
 				const data = store.readQuery({query: libraryUserQuery});
 
-				data.user.fontUsed.splice(data.user.fontUsed.findIndex(f => f.id === deleteFontInUse.id), 1);
+				data.user.fontInUses.push(createFontInUse);
 				store.writeQuery({
 					query: libraryUserQuery,
 					data,
 				});
 			},
+		},
+	}),
+	graphql(editFontInUseMutation, {
+		props: ({mutate, ownProps}) => ({
+			editFontInUse: (
+				id,
+				designer,
+				designerUrl,
+				client,
+				clientUrl,
+				fontUsed,
+				images,
+			) => {
+				const abstractedFontsCreated = fontUsed
+					.filter(font => !font.isNew)
+					.map(font => font.id);
+				const abstractedFontsToCreate = fontUsed
+					.filter(font => font.isNew)
+					.map(font =>
+						ownProps.createAbstractedFont(
+							font.type,
+							font.familyId,
+							font.template,
+							font.presetId,
+							font.name,
+						),
+					);
+
+				return Promise.all(abstractedFontsToCreate).then(
+					createdFonts =>
+						mutate({
+							variables: {
+								id,
+								designer,
+								designerUrl,
+								client,
+								clientUrl,
+								fontUsedIds: [
+									...abstractedFontsCreated,
+									...createdFonts.map(
+										font =>
+											font.data.createAbstractedFont.id,
+									),
+								],
+								images,
+								creatorId: ownProps.user.id,
+							},
+						}),
+				);
+			},
 		}),
+		options: {
+			update: (store, {data: {updateFontInUse}}) => {
+				const data = store.readQuery({query: libraryUserQuery});
+
+				const fontInUseIndex = data.user.fontUsed.findIndex(
+					f => f.id === updateFontInUse.id,
+				);
+
+				data.user.fontInUses[fontInUseIndex] = updateFontInUse;
+				store.writeQuery({
+					query: libraryUserQuery,
+					data,
+				});
+			},
+		},
+	}),
+	graphql(deleteFontInUseMutation, {
+		props: ({mutate, ownProps}) => ({
+			deleteFontInUse: (id, fontUsed) => {
+				const deletedAbstractedFont = [];
+
+				fontUsed.forEach(
+					font =>
+						font.id
+						&& deletedAbstractedFont.push(
+							ownProps.deleteAbstractedFont(font.id),
+						),
+				);
+
+				return Promise.all(deletedAbstractedFont).then(() =>
+					mutate({
+						variables: {
+							id,
+						},
+					}),
+				);
+			},
+		}),
+		update: (store, {data: {deleteFontInUse}}) => {
+			const data = store.readQuery({query: libraryUserQuery});
+
+			data.user.fontInUses.splice(
+				data.user.fontInUses.findIndex(
+					f => f.id === deleteFontInUse.id,
+				),
+				1,
+			);
+			store.writeQuery({
+				query: libraryUserQuery,
+				data,
+			});
+		},
 	}),
 )(LibraryFontInUseCreate);

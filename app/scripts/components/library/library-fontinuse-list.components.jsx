@@ -34,7 +34,6 @@ export default class LibraryFontsInUseList extends React.Component {
 		}
 	}
 	render() {
-		console.log(this.props.fontInUses)
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">
