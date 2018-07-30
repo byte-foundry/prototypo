@@ -5,6 +5,7 @@ import React from 'react';
 import {ApolloProvider} from 'react-apollo';
 import ReactDOM from 'react-dom';
 import {Router, Route} from 'react-router-dom';
+import {StripeProvider} from 'react-stripe-elements';
 
 import _forOwn from 'lodash/forOwn';
 
@@ -47,6 +48,10 @@ const loader = pleaseWait.pleaseWait({
 	loadingHtml: 'Hello Prototypo',
 });
 
+const STRIPE_PUBLISHABLE_KEY = isProduction()
+	? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
+	: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
+
 selectRenderOptions(
 	() => {
 		ReactDOM.render(<IAmMobile />, document.getElementById('content'), () => {
@@ -59,12 +64,6 @@ selectRenderOptions(
 		});
 	},
 	async () => {
-		const stripeKey = isProduction()
-			? 'pk_live_CVrzdDZTEowrAZaRizc4G14c'
-			: 'pk_test_PkwKlOWOqSoimNJo2vsT21sE';
-
-		window.Stripe && window.Stripe.setPublishableKey(stripeKey);
-
 		const stores = Stores;
 
 		window.prototypoStores = Stores;
@@ -176,9 +175,11 @@ selectRenderOptions(
 
 		ReactDOM.render(
 			<ApolloProvider client={apolloClient}>
-				<Router history={history}>
-					<Route component={App} />
-				</Router>
+				<StripeProvider apiKey={STRIPE_PUBLISHABLE_KEY}>
+					<Router history={history}>
+						<Route component={App} />
+					</Router>
+				</StripeProvider>
 			</ApolloProvider>,
 			document.getElementById('content'),
 			() => {

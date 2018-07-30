@@ -3113,10 +3113,6 @@ clean-css@4.1.x:
   dependencies:
     source-map "0.5.x"
 
-cleave.js@^0.7.14:
-  version "0.7.23"
-  resolved "https://registry.yarnpkg.com/cleave.js/-/cleave.js-0.7.23.tgz#55a6906fb60f611276aab9c0def726ee8530c49b"
-
 cli-cursor@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/cli-cursor/-/cli-cursor-1.0.2.tgz#64da3f7d56a54412e59794bd62dc35295e8f2987"
@@ -10669,6 +10665,12 @@ react-split-pane@^0.1.74:
 react-storybook-decorator-background@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/react-storybook-decorator-background/-/react-storybook-decorator-background-1.0.5.tgz#e6f76250703792c50c6c4de393bb126e9dae428b"
+
+react-stripe-elements@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-stripe-elements/-/react-stripe-elements-2.0.1.tgz#197db4762c57bf73a07d852564ebdbac52954094"
+  dependencies:
+    prop-types "^15.5.10"
 
 react-style-proptype@^3.0.0:
   version "3.2.0"
