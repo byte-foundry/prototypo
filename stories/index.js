@@ -16,3 +16,4 @@ import './TopBarMenuDropdownItem.story';
 import './TopBarAcademy.story';
 import './TopBarAcademyIcon.story';
 import './Onboarding.story';
+import './FakeCard.story';

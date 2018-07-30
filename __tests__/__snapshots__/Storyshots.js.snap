@@ -4890,6 +4890,94 @@ exports[`Storyshots shared/CopyPasteInput default 1`] = `
 </div>
 `;
 
+exports[`Storyshots shared/FakeCard custom values 1`] = `
+<div
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+    }
+  }
+>
+  <div
+    className="subscription-card-and-validation-card"
+  >
+    <div
+      className="subscription-card-and-validation-card-chip"
+    >
+      <div
+        className="subscription-card-and-validation-card-chip-left"
+      />
+      <div
+        className="subscription-card-and-validation-card-chip-right"
+      />
+    </div>
+    <div
+      className="subscription-card-and-validation-card-number"
+    >
+      **** **** **** 
+      4242
+    </div>
+    <div
+      className="subscription-card-and-validation-card-date"
+    >
+      12
+      /
+      25
+    </div>
+    <div
+      className="subscription-card-and-validation-card-name"
+    >
+      Jean Michel Avous
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared/FakeCard default 1`] = `
+<div
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+    }
+  }
+>
+  <div
+    className="subscription-card-and-validation-card"
+  >
+    <div
+      className="subscription-card-and-validation-card-chip"
+    >
+      <div
+        className="subscription-card-and-validation-card-chip-left"
+      />
+      <div
+        className="subscription-card-and-validation-card-chip-right"
+      />
+    </div>
+    <div
+      className="subscription-card-and-validation-card-number"
+    >
+      **** **** **** 
+      1234
+    </div>
+    <div
+      className="subscription-card-and-validation-card-date"
+    >
+      1
+      /
+      20
+    </div>
+    <div
+      className="subscription-card-and-validation-card-name"
+    >
+      Mr Jean Michel Avous
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots shared/PricingItem $$$ 1`] = `
 <div
   className="normal"
