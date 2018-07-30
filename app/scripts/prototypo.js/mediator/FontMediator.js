@@ -207,7 +207,7 @@ export default class FontMediator {
 		oldFont[fontName] = fontFace;
 	}
 
-	getFontFile(fontName, template, params, subset) {
+	getFontFile(fontName, template, params, subset, merged = true) {
 		if (!this.workerPool) {
 			return undefined;
 		}
@@ -259,7 +259,7 @@ export default class FontMediator {
 						'json',
 					);
 
-					resolve(mergedFont);
+					resolve(merged ? mergedFont : arrayBuffer);
 				},
 			};
 
