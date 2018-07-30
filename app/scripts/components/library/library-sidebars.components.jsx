@@ -160,6 +160,18 @@ export class LibrarySidebarLeft extends React.Component {
 							</div>
 							<div>
 								<Link
+									to="/library/hosting"
+									className={`library-link ${
+										this.props.location.pathname === '/library/hosting'
+											? 'active'
+											: ''
+									}`}
+								>
+									<span> > </span>Hosted fonts
+								</Link>
+							</div>
+							<div>
+								<Link
 									to="/library/fontinuse"
 									className={`library-link ${
 										this.props.location.pathname === '/library/fontinuse'
