@@ -53,6 +53,7 @@ class Topbar extends React.Component {
 		this.resetFileTutorial = this.resetFileTutorial.bind(this);
 		this.resetCollectionTutorial = this.resetCollectionTutorial.bind(this);
 		// this.setPreset = this.setPreset.bind(this);
+		this.exportSourceFile = this.exportSourceFile.bind(this);
 		this.resetIndivTutorial = this.resetIndivTutorial.bind(this);
 		this.setAcademyText = this.setAcademyText.bind(this);
 		this.showAcademy = this.showAcademy.bind(this);
@@ -126,6 +127,11 @@ class Topbar extends React.Component {
 	exportMergedOTF() {
 		this.client.dispatchAction('/export-otf', {merged: true});
 		Log.ui('Topbar.exportOTF', 'merged');
+	}
+
+	exportSourceFile() {
+		this.client.dispatchAction('/export-otf', {merged: false});
+		Log.ui('Topbar.exportOTF', 'unmerged');
 	}
 
 	exportAs() {
@@ -461,6 +467,14 @@ class Topbar extends React.Component {
 							cost={otfExportCost}
 							credits={this.state.credits}
 							handler={this.exportAs}
+						/>
+						<TopBarMenuDropdownProItem
+							name="Export source file"
+							id="export-to-unmerged-otf"
+							freeAccount={freeAccount}
+							cost={otfExportCost}
+							credits={this.state.credits}
+							handler={this.exportSourceFile}
 						/>
 						<TopBarMenuDropdownProItem
 							name="Export to Glyphr Studio"
