@@ -131,9 +131,16 @@ class LibrarySee extends React.Component {
 			const family = newProps.families.find(
 				e => e.id === newProps.params.projectID,
 			);
-			const teamProject = newProps.subUsers
-				.find(u => u.library.find(f => f.id === newProps.params.projectID))
-				.library.find(f => f.id === newProps.params.projectID);
+
+			let teamProject;
+
+			if (newProps.subUsers && newProps.subUsers.length > 0) {
+				teamProject = newProps.subUsers
+					.find(u =>
+						u.library.find(f => f.id === newProps.params.projectID),
+					)
+					.library.find(f => f.id === newProps.params.projectID);
+			}
 
 			if (!family && !teamProject) {
 				this.props.router.push('/library/home');
@@ -153,9 +160,15 @@ class LibrarySee extends React.Component {
 			const family = this.props.families.find(
 				e => e.id === newProps.params.projectID,
 			);
-			const teamProject = this.props.subUsers
-				.find(u => u.library.find(f => f.id === newProps.params.projectID))
-				.library.find(f => f.id === newProps.params.projectID);
+			let teamProject;
+
+			if (newProps.subUsers && newProps.subUsers.length > 0) {
+				teamProject = newProps.subUsers
+					.find(u =>
+						u.library.find(f => f.id === newProps.params.projectID),
+					)
+					.library.find(f => f.id === newProps.params.projectID);
+			}
 
 			if (!family && !teamProject) {
 				this.props.router.push('/library/home');
