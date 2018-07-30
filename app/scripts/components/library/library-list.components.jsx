@@ -294,7 +294,9 @@ class LibraryList extends React.Component {
 			&& families.forEach((family) => {
 				const templateInfo = this.state.templateInfos.find(
 					template => template.templateName === family.template,
-				) || {name: 'Undefined'};
+				);
+
+				if (!templateInfo) return;
 				const templateData = this.state.templatesData.find(
 					e => e.name === family.template,
 				);
