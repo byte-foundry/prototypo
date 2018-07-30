@@ -16,9 +16,16 @@ class LibrarySee extends React.Component {
 		const family = this.props.families.find(
 			e => e.id === this.props.params.projectID,
 		);
-		const teamProject = this.props.subUsers
-			.find(u => u.library.find(f => f.id === this.props.params.projectID))
-			.library.find(f => f.id === this.props.params.projectID);
+
+		let teamProject;
+
+		if (this.props.subUsers && this.props.subUsers.length > 0) {
+			teamProject = this.props.subUsers
+				.find(u =>
+					u.library.find(f => f.id === this.props.params.projectID),
+				)
+				.library.find(f => f.id === this.props.params.projectID);
+		}
 
 		if (!family && !teamProject) {
 			props.router.push('/library/home');
