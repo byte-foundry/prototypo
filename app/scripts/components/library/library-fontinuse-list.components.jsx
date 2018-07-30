@@ -10,17 +10,9 @@ export default class LibraryFontsInUseList extends React.Component {
 	renderFont(fontUsed) {
 		switch (fontUsed.type) {
 		case 'Template':
-			return (
-				<span className="library-fontinuse-font">
-					{fontUsed.name}
-				</span>
-			);
+			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
 		case 'Preset':
-			return (
-				<span className="library-fontinuse-font">
-					{fontUsed.name}
-				</span>
-			);
+			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
 		case 'Family':
 			return (
 				<span className="library-fontinuse-font">
@@ -44,46 +36,30 @@ export default class LibraryFontsInUseList extends React.Component {
 								<div className="library-fontinuse">
 									<div className="library-fontinuse-left">
 										{fontInUse.images.map(image => (
-											<img
-												src={`${image.replace(
-													'files.',
-													'images.',
-												)}/800x`}
-											/>
+											<img src={`${image.replace('files.', 'images.')}/800x`} />
 										))}
 									</div>
 									<div className="library-fontinuse-right">
 										<p>
 											<label>Client</label>
-											<a
-												href={fontInUse.clientUrl}
-												target="_blank"
-											>
+											<a href={fontInUse.clientUrl} target="_blank">
 												{fontInUse.client}
 											</a>
 										</p>
 										<p>
 											<label>Related fonts</label>
-											{fontInUse.fontUsed.map(
-												fontUsed =>
-													this.renderFont(fontUsed),
+											{fontInUse.fontUsed.map(fontUsed =>
+												this.renderFont(fontUsed),
 											)}
 										</p>
 										<p>
 											<label>Designer</label>
-											<a
-												href={fontInUse.designerUrl}
-												target="_blank"
-											>
+											<a href={fontInUse.designerUrl} target="_blank">
 												{fontInUse.designer}
 											</a>
 										</p>
 										<p className="library-fontinuse-button">
-											<Link
-												to={`/library/fontinuse/${
-													fontInUse.id
-												}/edit`}
-											>
+											<Link to={`/library/fontinuse/${fontInUse.id}/edit`}>
 												Edit
 											</Link>
 										</p>
@@ -93,10 +69,7 @@ export default class LibraryFontsInUseList extends React.Component {
 					</div>
 				</div>
 				<LibrarySidebarRight>
-					<Link
-						className="sidebar-action"
-						to="/library/fontinuse/create"
-					>
+					<Link className="sidebar-action" to="/library/fontinuse/create">
 						Add fontsinuse
 					</Link>
 				</LibrarySidebarRight>

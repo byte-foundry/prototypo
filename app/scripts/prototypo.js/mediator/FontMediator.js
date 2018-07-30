@@ -216,7 +216,19 @@ export default class FontMediator {
 		oldFont[fontName] = fontFace;
 	}
 
-	getFontFile(fontName, template, params, subset, designer, designerUrl, foundry, foundryUrl, weight, width, italic) {
+	getFontFile(
+		fontName,
+		template,
+		params,
+		subset,
+		designer,
+		designerUrl,
+		foundry,
+		foundryUrl,
+		weight,
+		width,
+		italic,
+	) {
 		if (!this.workerPool) {
 			return undefined;
 		}

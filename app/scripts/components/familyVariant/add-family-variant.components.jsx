@@ -99,9 +99,10 @@ export class AddFamily extends React.PureComponent {
 
 		// TODO: grab the default values
 		try {
-			const {
-				data: {createFamily: newFont},
-			} = await this.props.createFamily(name, selectedFont.templateName);
+			const {data: {createFamily: newFont}} = await this.props.createFamily(
+				name,
+				selectedFont.templateName,
+			);
 
 			this.client.dispatchAction('/family-created', newFont);
 
@@ -149,8 +150,8 @@ export class AddFamily extends React.PureComponent {
 			<div id="font-create" className={familyClass}>
 				<div className="add-family-form">
 					<label className="add-family-form-label">
-						<span className="add-family-form-label-order">1. </span>Choose
-						a font template
+						<span className="add-family-form-label-order">1. </span>Choose a
+						font template
 					</label>
 					<div className="add-family-form-template-list">
 						<ScrollArea
@@ -165,9 +166,8 @@ export class AddFamily extends React.PureComponent {
 							htmlFor="add-family-form-name"
 							className="add-family-form-label"
 						>
-							<span className="add-family-form-label-order">
-								2.{' '}
-							</span>Choose a family name
+							<span className="add-family-form-label-order">2. </span>Choose a
+							family name
 						</label>
 						<input
 							ref={node => (this.name = node)}
@@ -302,10 +302,7 @@ export class FamilyTemplateChoice extends React.Component {
 					<div className={`provider-${this.props.font.provider}`} />
 				</div>
 				<div className="family-template-choice-sample">
-					<img
-						src={`/assets/images/${this.props.font.sampleLarge}`}
-						alt=""
-					/>
+					<img src={`/assets/images/${this.props.font.sampleLarge}`} alt="" />
 				</div>
 			</div>
 		);
@@ -448,7 +445,9 @@ export class AddVariantRaw extends React.PureComponent {
 	async createVariant() {
 		this.setState({error: null});
 		const name = this.name.inputValue.value;
-		const meta = this.variants.find(e => e.value === this.name.inputValue.value);
+		const meta = this.variants.find(
+			e => e.value === this.name.inputValue.value,
+		);
 
 		try {
 			// TODO: check duplicates, on Graphcool ?
@@ -556,8 +555,22 @@ const getBaseValuesQuery = gql`
 `;
 
 const createVariantMutation = gql`
-	mutation createVariant($familyId: ID!, $name: String!, $baseValues: Json!, $weight: Int!, $width: String!, $italic: Boolean!) {
-		createVariant(name: $name, values: $baseValues, familyId: $familyId, weight: $weight, width: $width, italic: $italic) {
+	mutation createVariant(
+		$familyId: ID!
+		$name: String!
+		$baseValues: Json!
+		$weight: Int!
+		$width: String!
+		$italic: Boolean!
+	) {
+		createVariant(
+			name: $name
+			values: $baseValues
+			familyId: $familyId
+			weight: $weight
+			width: $width
+			italic: $italic
+		) {
 			id
 			name
 			weight
@@ -585,10 +598,7 @@ export const AddVariant = graphql(getBaseValuesQuery, {
 					variables: {
 						familyId: ownProps.family.id,
 						name,
-						baseValues: adaptValuesFromName(
-							name,
-							ownProps.variantBase.values,
-						),
+						baseValues: adaptValuesFromName(name, ownProps.variantBase.values),
 						weight,
 						width,
 						italic,

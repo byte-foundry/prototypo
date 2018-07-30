@@ -93,8 +93,7 @@ class LibraryFontInUseCreate extends React.Component {
 	removeFont(font) {
 		const fonts = this.state.fontInUseMetadata.fonts;
 		const fontIndex = fonts.findIndex(
-			e =>
-				(e.type === 'Family' ? e.id === font.id : e.name === font.name),
+			e => (e.type === 'Family' ? e.id === font.id : e.name === font.name),
 		);
 
 		fonts.splice(fontIndex, 1);
@@ -158,9 +157,7 @@ class LibraryFontInUseCreate extends React.Component {
 		const familyFound
 			= this.props.families
 			&& this.props.families.filter(family =>
-				family.name
-					.toLowerCase()
-					.includes(event.target.value.toLowerCase()),
+				family.name.toLowerCase().includes(event.target.value.toLowerCase()),
 			);
 
 		familyFound
@@ -228,8 +225,7 @@ class LibraryFontInUseCreate extends React.Component {
 							const placeHolderIndex = images.findIndex(
 								i => i === file.preview,
 							);
-							const newImages = this.state.fontInUseMetadata
-								.images;
+							const newImages = this.state.fontInUseMetadata.images;
 
 							newImages[placeHolderIndex] = data.url;
 							this.setState({
@@ -311,9 +307,7 @@ class LibraryFontInUseCreate extends React.Component {
 									type="text"
 									id="name"
 									name="user_name"
-									value={
-										this.state.fontInUseMetadata.designer
-									}
+									value={this.state.fontInUseMetadata.designer}
 									onChange={(e) => {
 										this.updateFontInUseData(e, 'designer');
 									}}
@@ -325,14 +319,9 @@ class LibraryFontInUseCreate extends React.Component {
 									type="text"
 									id="name"
 									name="user_name"
-									value={
-										this.state.fontInUseMetadata.designerUrl
-									}
+									value={this.state.fontInUseMetadata.designerUrl}
 									onChange={(e) => {
-										this.updateFontInUseData(
-											e,
-											'designerUrl',
-										);
+										this.updateFontInUseData(e, 'designerUrl');
 									}}
 								/>
 							</div>
@@ -354,34 +343,24 @@ class LibraryFontInUseCreate extends React.Component {
 									type="text"
 									id="name"
 									name="user_name"
-									value={
-										this.state.fontInUseMetadata.clientUrl
-									}
+									value={this.state.fontInUseMetadata.clientUrl}
 									onChange={(e) => {
-										this.updateFontInUseData(
-											e,
-											'clientUrl',
-										);
+										this.updateFontInUseData(e, 'clientUrl');
 									}}
 								/>
 							</div>
 							<div className="library-details-form-elem">
 								<label htmlFor="msg">Fonts used</label>
-								{this.state.fontInUseMetadata.fonts.length
-									> 0 && (
+								{this.state.fontInUseMetadata.fonts.length > 0 && (
 									<div className="font-list">
-										{this.state.fontInUseMetadata.fonts.map(
-											font => (
-												<span
-													className="font-list-elem"
-													onClick={() =>
-														this.removeFont(font)
-													}
-												>
-													{font.name}
-												</span>
-											),
-										)}
+										{this.state.fontInUseMetadata.fonts.map(font => (
+											<span
+												className="font-list-elem"
+												onClick={() => this.removeFont(font)}
+											>
+												{font.name}
+											</span>
+										))}
 									</div>
 								)}
 								<input
@@ -390,8 +369,7 @@ class LibraryFontInUseCreate extends React.Component {
 									name="user_name"
 									autoComplete="off"
 									className={`${
-										this.state.autocompleteSuggestions
-											.length > 0
+										this.state.autocompleteSuggestions.length > 0
 											? 'opened'
 											: ''
 									}`}
@@ -400,41 +378,31 @@ class LibraryFontInUseCreate extends React.Component {
 										this.updateAutocompleteSuggestions(e);
 									}}
 								/>
-								{this.state.autocompleteSuggestions.length
-									> 0 && (
+								{this.state.autocompleteSuggestions.length > 0 && (
 									<div className="suggestions">
-										{this.state.autocompleteSuggestions.map(
-											suggestion => (
-												<div
-													className="suggestion"
-													onClick={() =>
-														this.addSuggestion(
-															suggestion,
-														)
-													}
-												>
-													{suggestion.name}
-												</div>
-											),
-										)}
+										{this.state.autocompleteSuggestions.map(suggestion => (
+											<div
+												className="suggestion"
+												onClick={() => this.addSuggestion(suggestion)}
+											>
+												{suggestion.name}
+											</div>
+										))}
 									</div>
 								)}
 							</div>
 							<div className="library-details-form-elem">
 								<label htmlFor="msg">Visuals</label>
-								{this.state.fontInUseMetadata.images.length
-									> 0 && (
+								{this.state.fontInUseMetadata.images.length > 0 && (
 									<div className="images">
-										{this.state.fontInUseMetadata.images.map(
-											image => (
-												<img
-													src={image}
-													onClick={() => {
-														this.removeImage(image);
-													}}
-												/>
-											),
-										)}
+										{this.state.fontInUseMetadata.images.map(image => (
+											<img
+												src={image}
+												onClick={() => {
+													this.removeImage(image);
+												}}
+											/>
+										))}
 									</div>
 								)}
 								<Dropzone
@@ -444,8 +412,7 @@ class LibraryFontInUseCreate extends React.Component {
 									onDrop={this.onDrop}
 									rejectClassName="rejected"
 								>
-									Drop images, or click to select files to
-									upload.
+									Drop images, or click to select files to upload.
 								</Dropzone>
 							</div>
 							{this.state.isEdit && (
@@ -467,8 +434,7 @@ class LibraryFontInUseCreate extends React.Component {
 											: this.createFontInUse();
 									}}
 								>
-									{this.state.isEdit ? 'Edit' : 'Create'} font
-									in use
+									{this.state.isEdit ? 'Edit' : 'Create'} font in use
 								</div>
 							)}
 						</form>
@@ -741,26 +707,24 @@ export default compose(
 						),
 					);
 
-				return Promise.all(abstractedFontsToCreate).then(
-					createdFonts =>
-						mutate({
-							variables: {
-								id,
-								designer,
-								designerUrl,
-								client,
-								clientUrl,
-								fontUsedIds: [
-									...abstractedFontsCreated,
-									...createdFonts.map(
-										font =>
-											font.data.createAbstractedFont.id,
-									),
-								],
-								images,
-								creatorId: ownProps.user.id,
-							},
-						}),
+				return Promise.all(abstractedFontsToCreate).then(createdFonts =>
+					mutate({
+						variables: {
+							id,
+							designer,
+							designerUrl,
+							client,
+							clientUrl,
+							fontUsedIds: [
+								...abstractedFontsCreated,
+								...createdFonts.map(
+									font => font.data.createAbstractedFont.id,
+								),
+							],
+							images,
+							creatorId: ownProps.user.id,
+						},
+					}),
 				);
 			},
 		}),
@@ -788,9 +752,7 @@ export default compose(
 				fontUsed.forEach(
 					font =>
 						font.id
-						&& deletedAbstractedFont.push(
-							ownProps.deleteAbstractedFont(font.id),
-						),
+						&& deletedAbstractedFont.push(ownProps.deleteAbstractedFont(font.id)),
 				);
 
 				return Promise.all(deletedAbstractedFont).then(() =>
@@ -806,9 +768,7 @@ export default compose(
 			const data = store.readQuery({query: libraryUserQuery});
 
 			data.user.fontInUses.splice(
-				data.user.fontInUses.findIndex(
-					f => f.id === deleteFontInUse.id,
-				),
+				data.user.fontInUses.findIndex(f => f.id === deleteFontInUse.id),
 				1,
 			);
 			store.writeQuery({

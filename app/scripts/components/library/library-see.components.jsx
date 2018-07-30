@@ -16,11 +16,16 @@ class LibrarySee extends React.Component {
 		const family = this.props.families.find(
 			e => e.id === this.props.params.projectID,
 		);
-		const teamProject = this.props.subUsers
-			.find(u =>
-				u.library.find(f => f.id === this.props.params.projectID),
-			)
-			.library.find(f => f.id === this.props.params.projectID);
+
+		let teamProject;
+
+		if (this.props.subUsers && this.props.subUsers.length > 0) {
+			teamProject = this.props.subUsers
+				.find(u =>
+					u.library.find(f => f.id === this.props.params.projectID),
+				)
+				.library.find(f => f.id === this.props.params.projectID);
+		}
 
 		if (!family && !teamProject) {
 			props.router.push('/library/home');
@@ -73,8 +78,7 @@ class LibrarySee extends React.Component {
 		const templateName = prototypoStore.head
 			.toJS()
 			.templateList.find(
-				template =>
-					template.templateName === this.state.family.template,
+				template => template.templateName === this.state.family.template,
 			).templateName;
 
 		this.generateVariants(templateValues, templateName);
@@ -106,17 +110,9 @@ class LibrarySee extends React.Component {
 	renderFont(fontUsed) {
 		switch (fontUsed.type) {
 		case 'Template':
-			return (
-				<span className="library-fontinuse-font">
-					{fontUsed.name}
-				</span>
-			);
+			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
 		case 'Preset':
-			return (
-				<span className="library-fontinuse-font">
-					{fontUsed.name}
-				</span>
-			);
+			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
 		case 'Family':
 			return (
 				<span className="library-fontinuse-font">
@@ -135,11 +131,16 @@ class LibrarySee extends React.Component {
 			const family = newProps.families.find(
 				e => e.id === newProps.params.projectID,
 			);
-			const teamProject = newProps.subUsers
-				.find(u =>
-					u.library.find(f => f.id === newProps.params.projectID),
-				)
-				.library.find(f => f.id === newProps.params.projectID);
+
+			let teamProject;
+
+			if (newProps.subUsers && newProps.subUsers.length > 0) {
+				teamProject = newProps.subUsers
+					.find(u =>
+						u.library.find(f => f.id === newProps.params.projectID),
+					)
+					.library.find(f => f.id === newProps.params.projectID);
+			}
 
 			if (!family && !teamProject) {
 				this.props.router.push('/library/home');
@@ -148,7 +149,6 @@ class LibrarySee extends React.Component {
 				family: family || teamProject,
 				isPersonnal: !!family,
 			});
-			
 
 			this.generateVariants(
 				this.state.templateValues,
@@ -160,11 +160,15 @@ class LibrarySee extends React.Component {
 			const family = this.props.families.find(
 				e => e.id === newProps.params.projectID,
 			);
-			const teamProject = this.props.subUsers
-				.find(u =>
-					u.library.find(f => f.id === newProps.params.projectID),
-				)
-				.library.find(f => f.id === newProps.params.projectID);
+			let teamProject;
+
+			if (newProps.subUsers && newProps.subUsers.length > 0) {
+				teamProject = newProps.subUsers
+					.find(u =>
+						u.library.find(f => f.id === newProps.params.projectID),
+					)
+					.library.find(f => f.id === newProps.params.projectID);
+			}
 
 			if (!family && !teamProject) {
 				this.props.router.push('/library/home');
@@ -182,10 +186,11 @@ class LibrarySee extends React.Component {
 	}
 
 	render() {
-		const fontInUses = this.props.fontInUses.filter(fontInUse =>
-			!!fontInUse.fontUsed.find(
-				f => f.type === 'Family' && f.family.id === this.state.family.id,
-			),
+		const fontInUses = this.props.fontInUses.filter(
+			fontInUse =>
+				!!fontInUse.fontUsed.find(
+					f => f.type === 'Family' && f.family.id === this.state.family.id,
+				),
 		);
 
 		return (
@@ -199,10 +204,8 @@ class LibrarySee extends React.Component {
 								backgroundColor: '#29ABE2',
 							}}
 						>
-							{this.props.user.firstName
-								&& this.props.user.firstName.charAt(0)}
-							{this.props.user.lastName
-								&& this.props.user.lastName.charAt(0)}
+							{this.props.user.firstName && this.props.user.firstName.charAt(0)}
+							{this.props.user.lastName && this.props.user.lastName.charAt(0)}
 						</div>
 					</div>
 					<div className="library-see-variants">
@@ -215,9 +218,7 @@ class LibrarySee extends React.Component {
 									family={this.state.family}
 									goToDashboard={this.goToDashboard}
 									values={this.state.variants[index].values}
-									template={
-										this.state.variants[index].template
-									}
+									template={this.state.variants[index].template}
 									glyphs={this.state.variants[index].glyphs}
 									open={this.props.open}
 									duplicate={this.props.duplicate}
@@ -234,46 +235,30 @@ class LibrarySee extends React.Component {
 								<div className="library-fontinuse">
 									<div className="library-fontinuse-left">
 										{fontInUse.images.map(image => (
-											<img
-												src={`${image.replace(
-													'files.',
-													'images.',
-												)}/800x`}
-											/>
+											<img src={`${image.replace('files.', 'images.')}/800x`} />
 										))}
 									</div>
 									<div className="library-fontinuse-right">
 										<p>
 											<label>Client</label>
-											<a
-												href={fontInUse.clientUrl}
-												target="_blank"
-											>
+											<a href={fontInUse.clientUrl} target="_blank">
 												{fontInUse.client}
 											</a>
 										</p>
 										<p>
 											<label>Related fonts</label>
-											{fontInUse.fontUsed.map(
-												fontUsed =>
-													this.renderFont(fontUsed),
+											{fontInUse.fontUsed.map(fontUsed =>
+												this.renderFont(fontUsed),
 											)}
 										</p>
 										<p>
 											<label>Designer</label>
-											<a
-												href={fontInUse.designerUrl}
-												target="_blank"
-											>
+											<a href={fontInUse.designerUrl} target="_blank">
 												{fontInUse.designer}
 											</a>
 										</p>
 										<p className="library-fontinuse-button">
-											<Link
-												to={`/library/fontinuse/${
-													fontInUse.id
-												}/edit`}
-											>
+											<Link to={`/library/fontinuse/${fontInUse.id}/edit`}>
 												Edit
 											</Link>
 										</p>
@@ -292,9 +277,7 @@ class LibrarySee extends React.Component {
 						isPersonnal={this.state.isPersonnal}
 					/>
 					{this.state.templateValues && (
-						<FamilySidebarGlyphs
-							glyphs={this.state.templateValues.glyphs}
-						/>
+						<FamilySidebarGlyphs glyphs={this.state.templateValues.glyphs} />
 					)}
 					<SidebarTags
 						tags={this.state.family.tags}
@@ -359,10 +342,7 @@ export class VariantItem extends React.Component {
 							<div
 								className="library-item-variant-action"
 								onClick={() => {
-									this.props.open(
-										this.props.variant,
-										this.props.family,
-									);
+									this.props.open(this.props.variant, this.props.family);
 								}}
 							>
 								Open variant
@@ -394,10 +374,7 @@ export class VariantItem extends React.Component {
 							<div
 								className="library-item-variant-action"
 								onClick={() => {
-									this.props.rename(
-										this.props.variant,
-										this.props.family,
-									);
+									this.props.rename(this.props.variant, this.props.family);
 								}}
 							>
 								Rename variant
@@ -407,10 +384,7 @@ export class VariantItem extends React.Component {
 							<div
 								className="library-item-variant-action"
 								onClick={() => {
-									this.props.duplicate(
-										this.props.variant,
-										this.props.family,
-									);
+									this.props.duplicate(this.props.variant, this.props.family);
 								}}
 							>
 								Duplicate variant
@@ -421,10 +395,7 @@ export class VariantItem extends React.Component {
 							<div
 								className="library-item-variant-action"
 								onClick={() => {
-									this.props.delete(
-										this.props.variant,
-										this.props.family,
-									);
+									this.props.delete(this.props.variant, this.props.family);
 								}}
 							>
 									Delete variant

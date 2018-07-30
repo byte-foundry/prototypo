@@ -20,17 +20,9 @@ export default class LibraryFontsInUse extends React.Component {
 	renderFont(fontUsed) {
 		switch (fontUsed.type) {
 		case 'Template':
-			return (
-				<span className="library-fontinuse-font">
-					{fontUsed.name}
-				</span>
-			);
+			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
 		case 'Preset':
-			return (
-				<span className="library-fontinuse-font">
-					{fontUsed.name}
-				</span>
-			);
+			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
 		case 'Family':
 			return (
 				<span className="library-fontinuse-font">
@@ -52,52 +44,32 @@ export default class LibraryFontsInUse extends React.Component {
 						{this.state.fontInUse && (
 							<div className="library-fontinuse">
 								<div className="library-fontinuse-left">
-									{this.state.fontInUse.images.map(
-										image => (
-											<img
-												src={`${image.replace(
-													'files.',
-													'images.',
-												)}/800x`}
-											/>
-										),
-									)}
+									{this.state.fontInUse.images.map(image => (
+										<img src={`${image.replace('files.', 'images.')}/800x`} />
+									))}
 								</div>
 								<div className="library-fontinuse-right">
 									<p>
 										<label>Client</label>
-										<a
-											href={
-												this.state.fontInUse.clientUrl
-											}
-											target="_blank"
-										>
+										<a href={this.state.fontInUse.clientUrl} target="_blank">
 											{this.state.fontInUse.client}
 										</a>
 									</p>
 									<p>
 										<label>Related fonts</label>
-										{this.state.fontInUse.fontUsed.map(
-											fontUsed =>
-												this.renderFont(fontUsed),
+										{this.state.fontInUse.fontUsed.map(fontUsed =>
+											this.renderFont(fontUsed),
 										)}
 									</p>
 									<p>
 										<label>Designer</label>
-										<a
-											href={
-												this.state.fontInUse.designerUrl
-											}
-											target="_blank"
-										>
+										<a href={this.state.fontInUse.designerUrl} target="_blank">
 											{this.state.fontInUse.designer}
 										</a>
 									</p>
 									<p className="library-fontinuse-button">
 										<Link
-											to={`/library/fontinuse/${
-												this.state.fontInUse.id
-											}/edit`}
+											to={`/library/fontinuse/${this.state.fontInUse.id}/edit`}
 										>
 											Edit
 										</Link>
@@ -108,10 +80,7 @@ export default class LibraryFontsInUse extends React.Component {
 					</div>
 				</div>
 				<LibrarySidebarRight>
-					<Link
-						className="sidebar-action"
-						to="/library/fontinuse/create"
-					>
+					<Link className="sidebar-action" to="/library/fontinuse/create">
 						Add fontsinuse
 					</Link>
 				</LibrarySidebarRight>

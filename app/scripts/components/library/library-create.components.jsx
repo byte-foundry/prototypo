@@ -31,106 +31,89 @@ class LibraryCreate extends React.Component {
 			templateInfos: prototypoStore.head.toJS().templateList,
 		});
 
-		this.client
-			.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					openFamilyModal: head.toJS().d.openFamilyModal,
-					openVariantModal: head.toJS().d.openVariantModal,
-					openChangeVariantNameModal: head.toJS().d
-						.openChangeVariantNameModal,
-					openDuplicateVariantModal: head.toJS().d
-						.openDuplicateVariantModal,
-					familySelectedVariantCreation: head.toJS().d
-						.familySelectedVariantCreation,
-					collectionSelectedVariant: head.toJS().d
-						.collectionSelectedVariant,
-					templatesData: head.toJS().d.templatesData,
-				});
-				this.generateFonts();
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
+			this.setState({
+				openFamilyModal: head.toJS().d.openFamilyModal,
+				openVariantModal: head.toJS().d.openVariantModal,
+				openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
+				openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
+				familySelectedVariantCreation: head.toJS().d
+					.familySelectedVariantCreation,
+				collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
+				templatesData: head.toJS().d.templatesData,
 			});
+			this.generateFonts();
+		});
 	}
 
 	createProject(template, values) {
 		this.props.router.push({
 			pathname: '/onboarding',
 			state: {template, values},
-		})
+		});
 	}
 
 	getTemplateProps(template, templateData) {
-		return () => {
-			return {
-				key: template.templateName,
-				template: template,
-				glyphs: templateData.glyphs,
-				values: templateData.initValues,
-				export: this.props.export,
-				createProject: this.createProject,
-				click: this.selectFont,
-				isOpen: this.state.selectedFont === template.templateName,
-				familyId: template.templateName,
-				fontName: `template${template.templateName
-					.split('.')
-					.join('')}`,
-				values: templateData.initValues,
-				templateName: template.templateName,
-			};
-		};
+		return () => ({
+			key: template.templateName,
+			template,
+			glyphs: templateData.glyphs,
+			values: templateData.initValues,
+			export: this.props.export,
+			createProject: this.createProject,
+			click: this.selectFont,
+			isOpen: this.state.selectedFont === template.templateName,
+			familyId: template.templateName,
+			fontName: `template${template.templateName.split('.').join('')}`,
+			values: templateData.initValues,
+			templateName: template.templateName,
+		});
 	}
 
 	getPresetProps(preset, templateInfo, templateData, lmColor, hmColor) {
-		return () => {
-			return {
-				key: preset.id,
-				preset: preset,
-				template: templateInfo,
-				user: preset.ownerInitials,
-				name: preset.variant.family.name,
-				createProject: this.createProject,
-				background:
-					preset.ownerInitials === 'LM'
-						? lmColor
-						: hmColor
-				,
-				glyphs: templateData.glyphs,
-				values: preset.baseValues,
-				export: this.props.export,
-				click: this.selectFont,
-				isOpen: this.state.selectedFont === preset.id,
-				familyId: preset.id,
-				fontName: `preset${preset.id}`,
-				templateName: templateInfo.templateName,
-			}
-		};
+		return () => ({
+			key: preset.id,
+			preset,
+			template: templateInfo,
+			user: preset.ownerInitials,
+			name: preset.variant.family.name,
+			createProject: this.createProject,
+			background: preset.ownerInitials === 'LM' ? lmColor : hmColor,
+			glyphs: templateData.glyphs,
+			values: preset.baseValues,
+			export: this.props.export,
+			click: this.selectFont,
+			isOpen: this.state.selectedFont === preset.id,
+			familyId: preset.id,
+			fontName: `preset${preset.id}`,
+			templateName: templateInfo.templateName,
+		});
 	}
 
 	getFamilyProps(family, templateInfo, templateData, variantToLoad, userColor) {
-		return () => {
-			return {
-				key: family.id,
-				family: family,
-				template: templateInfo,
-				user: this.props.user,
-				background: userColor,
-				router: this.props.router,
-				variantToLoad: variantToLoad,
-				createProject: this.createProject,
-				open: this.props.open,
-				export: this.props.export,
-				glyphs: templateData.glyphs,
-				values: {
-					...templateData.initValues,
-					...variantToLoad.values,
-				},
-				variantName: variantToLoad.name.toLowerCase(),
-				click: this.selectFont,
-				isOpen: this.state.selectedFont === family.id,
-				familyId: family.id,
-				templateName: templateInfo.templateName,
-				fontName: `user${family.id}`,
-			};
-		};
+		return () => ({
+			key: family.id,
+			family,
+			template: templateInfo,
+			user: this.props.user,
+			background: userColor,
+			router: this.props.router,
+			variantToLoad,
+			createProject: this.createProject,
+			open: this.props.open,
+			export: this.props.export,
+			glyphs: templateData.glyphs,
+			values: {
+				...templateData.initValues,
+				...variantToLoad.values,
+			},
+			variantName: variantToLoad.name.toLowerCase(),
+			click: this.selectFont,
+			isOpen: this.state.selectedFont === family.id,
+			familyId: family.id,
+			templateName: templateInfo.templateName,
+			fontName: `user${family.id}`,
+		});
 	}
 
 	filterFonts(activeFilters) {
@@ -214,13 +197,18 @@ class LibraryCreate extends React.Component {
 						type: 'Presets',
 						name: preset.variant.family.name,
 						designer:
-							preset.ownerInitials === 'LM'
-							|| preset.ownerInitials === 'HM'
+							preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
 								? 'Prototypo'
 								: '',
 						tags: [templateInfo.provider, 'preset'],
 						id: preset.id,
-						props: this.getPresetProps(preset, templateInfo, templateData, lmColor, hmColor),
+						props: this.getPresetProps(
+							preset,
+							templateInfo,
+							templateData,
+							lmColor,
+							hmColor,
+						),
 						elem: PresetItem,
 					});
 				});
@@ -233,9 +221,8 @@ class LibraryCreate extends React.Component {
 			);
 
 			const variantToLoad
-				= family.variants.find(
-					e => e.name.toLowerCase() === 'regular',
-				) || family.variants[0];
+				= family.variants.find(e => e.name.toLowerCase() === 'regular')
+				|| family.variants[0];
 
 			fontsToGenerate.push({
 				name: `user${family.id}`,
@@ -260,7 +247,13 @@ class LibraryCreate extends React.Component {
 					lastName: this.props.lastName,
 				},
 				background: userColor,
-				props: this.getFamilyProps(family, templateInfo, templateData, variantToLoad, userColor),
+				props: this.getFamilyProps(
+					family,
+					templateInfo,
+					templateData,
+					variantToLoad,
+					userColor,
+				),
 				elem: FamilyItem,
 			});
 		});
@@ -282,14 +275,10 @@ class LibraryCreate extends React.Component {
 			<div className="library-content-wrapper">
 				<div className="library-list library-list--create">
 					<h1 className="library-list-title">Choose a template to start</h1>
-					<FamilyList
-						fontsToDisplay={this.state.fontsToDisplay}
-					/>
+					<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
 				</div>
 				<LibrarySidebarRight>
-					<SidebarFilters
-						setActiveFilters={this.props.setActiveFilters}
-					/>
+					<SidebarFilters setActiveFilters={this.props.setActiveFilters} />
 				</LibrarySidebarRight>
 			</div>
 		);
@@ -328,7 +317,9 @@ class FamilyList extends React.Component {
 			>
 				<div className="library-family-list">
 					{this.props.fontsToDisplay
-							&& this.props.fontsToDisplay.map(font => React.createElement(font.elem, {...font.props()}))}
+						&& this.props.fontsToDisplay.map(font =>
+							React.createElement(font.elem, {...font.props()}),
+						)}
 				</div>
 			</ScrollArea>
 		);
@@ -342,9 +333,7 @@ export class TemplateItem extends React.Component {
 
 	render() {
 		return (
-			<div
-				className="library-item"
-			>
+			<div className="library-item">
 				<p className="library-item-name">{this.props.template.name}</p>
 				<p
 					className="library-item-preview"
@@ -353,15 +342,13 @@ export class TemplateItem extends React.Component {
 							.split('.')
 							.join('')}`,
 					}}
-					onClick={() =>  {this.props.createProject(this.props.template.templateName)}}
+					onClick={() => {
+						this.props.createProject(this.props.template.templateName);
+					}}
 				>
 					Hamburgefonstiv 123
 				</p>
-				<div
-					className={`provider provider-${
-						this.props.template.provider
-					}`}
-				/>
+				<div className={`provider provider-${this.props.template.provider}`} />
 				<FontUpdater
 					name={this.props.fontName}
 					values={this.props.values}
@@ -381,16 +368,19 @@ export class FamilyItem extends React.Component {
 
 	render() {
 		return (
-			<div
-				className="library-item"
-			>
+			<div className="library-item">
 				<p className="library-item-name">
 					{this.props.family.name} from {this.props.template.name}
 				</p>
 				<p
 					className="library-item-preview"
 					style={{fontFamily: `user${this.props.family.id}`}}
-					onClick={() =>  {this.props.createProject(this.props.template.templateName, this.props.values)}}
+					onClick={() => {
+						this.props.createProject(
+							this.props.template.templateName,
+							this.props.values,
+						);
+					}}
 				>
 					Hamburgefonstiv 123
 				</p>
@@ -398,10 +388,8 @@ export class FamilyItem extends React.Component {
 					className={'provider provider-custom'}
 					style={{backgroundColor: this.props.background}}
 				>
-					{this.props.user.firstName
-						&& this.props.user.firstName.charAt(0)}
-					{this.props.user.lastName
-						&& this.props.user.lastName.charAt(0)}
+					{this.props.user.firstName && this.props.user.firstName.charAt(0)}
+					{this.props.user.lastName && this.props.user.lastName.charAt(0)}
 				</div>
 				<FontUpdater
 					name={this.props.fontName}
@@ -422,16 +410,19 @@ export class PresetItem extends React.Component {
 
 	render() {
 		return (
-			<div
-				className="library-item"
-			>
+			<div className="library-item">
 				<p className="library-item-name">
 					{this.props.name} from {this.props.template.name}
 				</p>
 				<p
 					className="library-item-preview"
 					style={{fontFamily: `preset${this.props.preset.id}`}}
-					onClick={() =>  {this.props.createProject(this.props.template.templateName, this.props.values)}}
+					onClick={() => {
+						this.props.createProject(
+							this.props.template.templateName,
+							this.props.values,
+						);
+					}}
 				>
 					Hamburgefonstiv 123
 				</p>

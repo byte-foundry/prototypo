@@ -51,8 +51,7 @@ class LibraryDetails extends React.Component {
 		const prototypoStore = await this.client.fetch('/prototypoStore');
 		const familyGlyphs = prototypoStore.head
 			.toJS()
-			.templatesData.find(e => e.name === this.state.family.template)
-			.glyphs;
+			.templatesData.find(e => e.name === this.state.family.template).glyphs;
 		const templateValues = prototypoStore.head
 			.toJS()
 			.templatesData.find(e => e.name === this.state.family.template);
@@ -98,7 +97,8 @@ class LibraryDetails extends React.Component {
 	updateVariantData(event, field, index) {
 		const variantMetadata = {...this.state.variantMetadata};
 
-		variantMetadata[index][field] = field === 'italic' ? !variantMetadata[index].italic : event.target.value;
+		variantMetadata[index][field]
+			= field === 'italic' ? !variantMetadata[index].italic : event.target.value;
 		variantMetadata[index].isModified = true;
 		this.setState({variantMetadata});
 	}
@@ -175,10 +175,8 @@ class LibraryDetails extends React.Component {
 								backgroundColor: '#29ABE2',
 							}}
 						>
-							{this.props.user.firstName
-								&& this.props.user.firstName.charAt(0)}
-							{this.props.user.lastName
-								&& this.props.user.lastName.charAt(0)}
+							{this.props.user.firstName && this.props.user.firstName.charAt(0)}
+							{this.props.user.lastName && this.props.user.lastName.charAt(0)}
 						</div>
 					</div>
 					<div className="library-details-form">
@@ -214,9 +212,7 @@ class LibraryDetails extends React.Component {
 									type="text"
 									id="name"
 									name="user_name"
-									value={
-										this.state.familyMetadata.designerUrl
-									}
+									value={this.state.familyMetadata.designerUrl}
 									onChange={(e) => {
 										this.updateFamilyData(e, 'designerUrl');
 									}}
@@ -260,9 +256,7 @@ class LibraryDetails extends React.Component {
 					</div>
 					<div className="library-details-variants">
 						<div className="details-header">
-							<div className="details-header-elem">
-								Styles settings
-							</div>
+							<div className="details-header-elem">Styles settings</div>
 							<div className="details-header-elem">Weight</div>
 							<div className="details-header-elem">Width</div>
 							<div className="details-header-elem">Italic</div>
@@ -277,76 +271,35 @@ class LibraryDetails extends React.Component {
 											type="text"
 											id={`name${index}`}
 											name={`name${index}`}
-											value={
-												this.state.variantMetadata[
-													index
-												].name
-											}
+											value={this.state.variantMetadata[index].name}
 											onChange={(e) => {
-												this.updateVariantData(
-													e,
-													'name',
-													index,
-												);
+												this.updateVariantData(e, 'name', index);
 											}}
 										/>
 									</div>
 									<div className="details-form-elem">
 										<select
 											name={`weight${index}`}
-											value={
-												this.state.variantMetadata[
-													index
-												].weight
-											}
+											value={this.state.variantMetadata[index].weight}
 											onChange={(e) => {
-												this.updateVariantData(
-													e,
-													'weight',
-													index,
-												);
+												this.updateVariantData(e, 'weight', index);
 											}}
 										>
-											{[
-												200,
-												300,
-												400,
-												500,
-												600,
-												700,
-												800,
-												900,
-											].map(weight => (
-												<option value={weight}>
-													{weight}
-												</option>
-											))}
+											{[200, 300, 400, 500, 600, 700, 800, 900].map(
+												weight => <option value={weight}>{weight}</option>,
+											)}
 										</select>
 									</div>
 									<div className="details-form-elem">
 										<select
 											name={`width${index}`}
-											value={
-												this.state.variantMetadata[
-													index
-												].width
-											}
+											value={this.state.variantMetadata[index].width}
 											onChange={(e) => {
-												this.updateVariantData(
-													e,
-													'width',
-													index,
-												);
+												this.updateVariantData(e, 'width', index);
 											}}
 										>
-											{[
-												'medium',
-												'condensed',
-												'expanded',
-											].map(width => (
-												<option value={width}>
-													{width}
-												</option>
+											{['medium', 'condensed', 'expanded'].map(width => (
+												<option value={width}>{width}</option>
 											))}
 										</select>
 									</div>
@@ -356,32 +309,20 @@ class LibraryDetails extends React.Component {
 												type="checkbox"
 												id={`italic${index}`}
 												name={`italic${index}`}
-												checked={
-													!!this.state.variantMetadata[
-														index
-													].italic
-												}
+												checked={!!this.state.variantMetadata[index].italic}
 												onChange={(e) => {
-													this.updateVariantData(
-														e,
-														'italic',
-														index,
-													);
+													this.updateVariantData(e, 'italic', index);
 												}}
 											/>
 											<label htmlFor={`italic${index}`} />
 										</div>
 									</div>
-									{this.state.variantMetadata[index]
-										.isModified && (
+									{this.state.variantMetadata[index].isModified && (
 										<div className="details-form-elem">
 											<div
 												className="library-details-form-button"
 												onClick={() => {
-													this.updateVariant(
-														variant.id,
-														index,
-													);
+													this.updateVariant(variant.id, index);
 												}}
 											>
 												Update
@@ -389,14 +330,11 @@ class LibraryDetails extends React.Component {
 										</div>
 									)}
 									<div className="details-form-elem">
-										{this.state.family.variants.length
-											> 1 && (
+										{this.state.family.variants.length > 1 && (
 											<div
 												className="button-remove"
 												onClick={() => {
-													this.props.deleteVariant(
-														variant.id,
-													);
+													this.props.deleteVariant(variant.id);
 												}}
 											>
 												Remove
@@ -604,14 +542,7 @@ export default compose(
 	}),
 	graphql(updateFamilyDataMutation, {
 		props: ({mutate}) => ({
-			updateFamily: (
-				id,
-				name,
-				designer,
-				designerUrl,
-				foundry,
-				foundryUrl,
-			) =>
+			updateFamily: (id, name, designer, designerUrl, foundry, foundryUrl) =>
 				mutate({
 					variables: {
 						id,
@@ -627,9 +558,7 @@ export default compose(
 			update: (store, {data: {updateFamily}}) => {
 				const data = store.readQuery({query: libraryQuery});
 
-				const family = data.user.library.find(
-					f => f.id === updateFamily.id,
-				);
+				const family = data.user.library.find(f => f.id === updateFamily.id);
 
 				family.name = updateFamily.name;
 				family.designer = updateFamily.designer;
@@ -657,9 +586,7 @@ export default compose(
 				const family = data.user.library.find(
 					f => f.id === updateVariant.family.id,
 				);
-				const variant = family.variants.find(
-					v => v.id === updateVariant.id,
-				);
+				const variant = family.variants.find(v => v.id === updateVariant.id);
 
 				variant.name = updateVariant.name;
 				variant.designer = updateVariant.weight;

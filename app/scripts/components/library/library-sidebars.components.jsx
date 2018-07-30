@@ -18,8 +18,7 @@ export class LibrarySidebarLeft extends React.Component {
 		let subUsersProjects = subUserLibrary.map(f => (
 			<p
 				className={`sidebar-left-project ${
-					this.props.routeParams
-					&& f.id === this.props.routeParams.projectID
+					this.props.routeParams && f.id === this.props.routeParams.projectID
 						? 'active'
 						: ''
 				}`}
@@ -46,9 +45,7 @@ export class LibrarySidebarLeft extends React.Component {
 				&& this.props.location.query.mode
 				&& this.props.location.query.mode === 'team')
 			|| (this.props.routeParams
-				&& subUserLibrary.find(
-					e => e.id === this.props.routeParams.projectID,
-				));
+				&& subUserLibrary.find(e => e.id === this.props.routeParams.projectID));
 
 		let userProjects = [];
 
@@ -94,18 +91,12 @@ export class LibrarySidebarLeft extends React.Component {
 		return (
 			<div className="library-sidebar-left">
 				{this.props.location.pathname !== '/library/create' && (
-					<Link
-						to="/library/create"
-						className="library-sidebar-action-dark"
-					>
+					<Link to="/library/create" className="library-sidebar-action-dark">
 						New Project
 					</Link>
 				)}
 				{this.props.location.pathname === '/library/create' && (
-					<Link
-						to="/library/home"
-						className="library-sidebar-action-dark"
-					>
+					<Link to="/library/home" className="library-sidebar-action-dark">
 						Back to library
 					</Link>
 				)}
@@ -116,8 +107,7 @@ export class LibrarySidebarLeft extends React.Component {
 								<Link
 									to="/library/home"
 									className={`library-link ${
-										this.props.location.pathname
-											=== '/library/home'
+										this.props.location.pathname === '/library/home'
 										&& !this.props.location.query.mode
 											? 'active'
 											: ''
@@ -158,11 +148,9 @@ export class LibrarySidebarLeft extends React.Component {
 								<Link
 									to="/library/home?mode=favorites"
 									className={`library-link ${
-										this.props.location.pathname
-											=== '/library/home'
+										this.props.location.pathname === '/library/home'
 										&& this.props.location.query.mode
-										&& this.props.location.query.mode
-											=== 'favorites'
+										&& this.props.location.query.mode === 'favorites'
 											? 'active'
 											: ''
 									}`}
@@ -174,8 +162,7 @@ export class LibrarySidebarLeft extends React.Component {
 								<Link
 									to="/library/fontinuse"
 									className={`library-link ${
-										this.props.location.pathname
-											=== '/library/fontinuse'
+										this.props.location.pathname === '/library/fontinuse'
 											? 'active'
 											: ''
 									}`}
@@ -233,9 +220,7 @@ export class FamilySidebarActions extends React.Component {
 					&& this.props.mode === 'see' && (
 					<Link
 						className="sidebar-action"
-						to={`/library/project/${
-							this.props.familyId
-						}/details`}
+						to={`/library/project/${this.props.familyId}/details`}
 					>
 							Family settings
 					</Link>
@@ -289,9 +274,7 @@ export class FamilySidebarGlyphs extends React.Component {
 						Latin<span>
 							{
 								Object.keys(this.props.glyphs).filter(
-									key =>
-										this.props.glyphs[key][0].unicode
-										!== undefined,
+									key => this.props.glyphs[key][0].unicode !== undefined,
 								).length
 							}
 						</span>
@@ -398,9 +381,7 @@ class SidebarFilter extends React.Component {
 				<div className="sidebar-filter-elems">
 					{this.state.elems.map(elem => (
 						<div
-							className={`sidebar-filter-elem ${
-								elem.active ? 'active' : ''
-							}`}
+							className={`sidebar-filter-elem ${elem.active ? 'active' : ''}`}
 							onClick={() => {
 								this.setElemActive(elem);
 							}}
@@ -509,9 +490,9 @@ export class SidebarTags extends React.Component {
 				<div className="sidebar-tags-elems">
 					{this.state.tags.map(elem => (
 						<div
-							className={`sidebar-tags-elem ${
-								elem.active ? 'active' : ''
-							} ${this.props.mode}`}
+							className={`sidebar-tags-elem ${elem.active ? 'active' : ''} ${
+								this.props.mode
+							}`}
 							onClick={() => {
 								if (this.props.mode !== 'readonly') {
 									this.setActiveTag(elem.name);
@@ -528,9 +509,7 @@ export class SidebarTags extends React.Component {
 				</div>
 				{this.props.mode !== 'readonly'
 					&& this.state.tags.length === 0 && (
-					<span>
-							No tags yet. Open one of your project to add one!
-					</span>
+					<span>No tags yet. Open one of your project to add one!</span>
 				)}
 				{this.props.isPersonnal && (
 					<div

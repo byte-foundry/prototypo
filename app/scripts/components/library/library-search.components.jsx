@@ -16,14 +16,19 @@ export default class LibrarySearch extends React.PureComponent {
 	render() {
 		return (
 			<div className="library-search">
-				<input type="text" placeholder="Search" value={this.state.search} onChange={(e) => {
-					this.setState({
-						search: e.target.value,
-					});
-					this.client.dispatchAction('/store-value', {
-						librarySearchString: e.target.value,
-					});
-				}}/>
+				<input
+					type="text"
+					placeholder="Search"
+					value={this.state.search}
+					onChange={(e) => {
+						this.setState({
+							search: e.target.value,
+						});
+						this.client.dispatchAction('/store-value', {
+							librarySearchString: e.target.value,
+						});
+					}}
+				/>
 			</div>
 		);
 	}

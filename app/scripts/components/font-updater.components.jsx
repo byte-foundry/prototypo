@@ -43,7 +43,7 @@ class FontUpdater extends React.PureComponent {
 			&& this.props.values !== undefined
 			&& !this.state.changingFont
 		) {
-			let subset = _uniq(this.props.subset.split('')).map(letter =>
+			const subset = _uniq(this.props.subset.split('')).map(letter =>
 				letter.charCodeAt(0),
 			);
 
@@ -54,7 +54,6 @@ class FontUpdater extends React.PureComponent {
 				subset,
 				this.props.glyph,
 			);
-
 		}
 
 		this.fontMediatorInstance.setupInfo({
@@ -91,11 +90,11 @@ FontUpdater.propTypes = {
 	values: PropTypes.object.isRequired,
 	subset: PropTypes.string.isRequired,
 	glyph: PropTypes.string.isRequired,
-}
+};
 
 FontUpdater.defaultProps = {
 	fonts: [],
-}
+};
 
 export default compose(
 	graphql(userProfileQuery, {

@@ -50,14 +50,11 @@ class LibraryList extends React.Component {
 				this.setState({
 					openFamilyModal: head.toJS().d.openFamilyModal,
 					openVariantModal: head.toJS().d.openVariantModal,
-					openChangeVariantNameModal: head.toJS().d
-						.openChangeVariantNameModal,
-					openDuplicateVariantModal: head.toJS().d
-						.openDuplicateVariantModal,
+					openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
+					openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
 					familySelectedVariantCreation: head.toJS().d
 						.familySelectedVariantCreation,
-					collectionSelectedVariant: head.toJS().d
-						.collectionSelectedVariant,
+					collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
 					templatesData: head.toJS().d.templatesData,
 				});
 				this.generateFonts();
@@ -245,11 +242,7 @@ class LibraryList extends React.Component {
 					designer: template.provider,
 					id: template.id,
 					type: 'Template',
-					props: this.getTemplateProps(
-						template,
-						templateData,
-						favourites,
-					),
+					props: this.getTemplateProps(template, templateData, favourites),
 					elem: TemplateItem,
 				});
 			});
@@ -278,8 +271,7 @@ class LibraryList extends React.Component {
 						type: 'Presets',
 						name: preset.variant.family.name,
 						designer:
-							preset.ownerInitials === 'LM'
-							|| preset.ownerInitials === 'HM'
+							preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
 								? 'Prototypo'
 								: '',
 						id: preset.id,
@@ -309,9 +301,8 @@ class LibraryList extends React.Component {
 
 				family.tags && family.tags.map(tag => allTags.push(tag));
 				const variantToLoad
-					= family.variants.find(
-						e => e.name.toLowerCase() === 'regular',
-					) || family.variants[0];
+					= family.variants.find(e => e.name.toLowerCase() === 'regular')
+					|| family.variants[0];
 
 				if (variantToLoad) {
 					fontData.push({
@@ -345,25 +336,21 @@ class LibraryList extends React.Component {
 		this.props.subUsers
 			&& this.state.templateInfos
 			&& this.props.subUsers.forEach((subUser, index) => {
-				const subUserColor
-					= subUserColors[index % subUserColors.length];
+				const subUserColor = subUserColors[index % subUserColors.length];
 
 				subUser.id !== this.props.user.id
 					&& subUser.library.forEach((family) => {
 						const templateInfo = this.state.templateInfos.find(
-							template =>
-								template.templateName === family.template,
+							template => template.templateName === family.template,
 						) || {name: 'Undefined'};
 						const templateData = this.state.templatesData.find(
 							e => e.name === family.template,
 						);
 
-						family.tags
-							&& family.tags.map(tag => allTags.push(tag));
+						family.tags && family.tags.map(tag => allTags.push(tag));
 						const variantToLoad
-							= family.variants.find(
-								e => e.name.toLowerCase() === 'regular',
-							) || family.variants[0];
+							= family.variants.find(e => e.name.toLowerCase() === 'regular')
+							|| family.variants[0];
 
 						if (variantToLoad) {
 							fontData.push({
@@ -417,7 +404,13 @@ class LibraryList extends React.Component {
 		);
 	}
 
-	filterFonts(activeFilters, selectedTags, searchString, mode, newBaseFontData) {
+	filterFonts(
+		activeFilters,
+		selectedTags,
+		searchString,
+		mode,
+		newBaseFontData,
+	) {
 		const baseFontData = newBaseFontData || this.state.baseFontData;
 
 		// Filter
@@ -436,19 +429,14 @@ class LibraryList extends React.Component {
 		// Tags
 		fontsToDisplay = fontsToDisplay.filter(
 			font =>
-				font.tags
-				&& selectedTags.every(elem => font.tags.indexOf(elem) > -1),
+				font.tags && selectedTags.every(elem => font.tags.indexOf(elem) > -1),
 		);
 
 		// Search
 		fontsToDisplay = fontsToDisplay.filter(
 			font =>
-				font.template
-					.toLowerCase()
-					.includes(searchString.toLowerCase())
-				|| font.templateName
-					.toLowerCase()
-					.includes(searchString.toLowerCase())
+				font.template.toLowerCase().includes(searchString.toLowerCase())
+				|| font.templateName.toLowerCase().includes(searchString.toLowerCase())
 				|| font.name.toLowerCase().includes(searchString.toLowerCase())
 				|| (font.tags
 					&& font.tags.find(e =>
@@ -471,12 +459,12 @@ class LibraryList extends React.Component {
 			break;
 		}
 
-		fontsToDisplay = fontsToDisplay.filter(font =>
-			font.type.includes(type),
-		);
+		fontsToDisplay = fontsToDisplay.filter(font => font.type.includes(type));
 
 		if (mode === 'favorites') {
-			fontsToDisplay = fontsToDisplay.filter(font => !!font.props().favourite);
+			fontsToDisplay = fontsToDisplay.filter(
+				font => !!font.props().favourite,
+			);
 		}
 
 		this.setState({fontsToDisplay});
@@ -550,14 +538,9 @@ class LibraryList extends React.Component {
 				</div>
 				<LibrarySidebarRight>
 					<LibrarySearch />
-					<SidebarFilters
-						setActiveFilters={this.props.setActiveFilters}
-					/>
+					<SidebarFilters setActiveFilters={this.props.setActiveFilters} />
 					<SidebarTags tags={this.state.tags} mode="interactive" />
-					<Link
-						className="sidebar-action"
-						to="/library/fontinuse/create"
-					>
+					<Link className="sidebar-action" to="/library/fontinuse/create">
 						Add fontsinuse
 					</Link>
 				</LibrarySidebarRight>
@@ -632,9 +615,7 @@ export class TemplateItem extends React.Component {
 			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
 					<span
-						className={`star-icon ${
-							this.props.favourite ? 'active' : ''
-						}`}
+						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,
@@ -659,11 +640,7 @@ export class TemplateItem extends React.Component {
 				>
 					{this.state.text}
 				</p>
-				<div
-					className={`provider provider-${
-						this.props.template.provider
-					}`}
-				/>
+				<div className={`provider provider-${this.props.template.provider}`} />
 				<div
 					className={`library-item-actions ${
 						this.props.isOpen ? 'opened' : ''
@@ -672,9 +649,7 @@ export class TemplateItem extends React.Component {
 					<div
 						className="library-item-action"
 						onClick={() => {
-							this.props.createProject(
-								this.props.template.templateName,
-							);
+							this.props.createProject(this.props.template.templateName);
 						}}
 					>
 						Edit
@@ -737,9 +712,7 @@ export class FamilyItem extends React.Component {
 			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
 					<span
-						className={`star-icon ${
-							this.props.favourite ? 'active' : ''
-						}`}
+						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,
@@ -764,10 +737,8 @@ export class FamilyItem extends React.Component {
 					className={'provider provider-custom'}
 					style={{backgroundColor: this.props.background}}
 				>
-					{this.props.user.firstName
-						&& this.props.user.firstName.charAt(0)}
-					{this.props.user.lastName
-						&& this.props.user.lastName.charAt(0)}
+					{this.props.user.firstName && this.props.user.firstName.charAt(0)}
+					{this.props.user.lastName && this.props.user.lastName.charAt(0)}
 				</div>
 
 				<div
@@ -779,10 +750,7 @@ export class FamilyItem extends React.Component {
 						<div
 							className="library-item-action"
 							onClick={() => {
-								this.props.open(
-									this.props.variantToLoad,
-									this.props.family,
-								);
+								this.props.open(this.props.variantToLoad, this.props.family);
 							}}
 						>
 							Edit
@@ -864,9 +832,7 @@ export class PresetItem extends React.Component {
 			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
 					<span
-						className={`star-icon ${
-							this.props.favourite ? 'active' : ''
-						}`}
+						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,

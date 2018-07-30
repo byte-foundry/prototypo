@@ -70,17 +70,12 @@ class ChangeNameVariant extends React.PureComponent {
 						onChange={this.saveNewName}
 						inputValue={variant.name}
 					/>
-					{error && (
-						<div className="add-family-form-error">{error}</div>
-					)}
+					{error && <div className="add-family-form-error">{error}</div>}
 					<div className="action-form-buttons">
 						<Button onClick={this.exit} outline neutral>
 							Cancel
 						</Button>
-						<Button
-							onClick={this.editVariant}
-							disabled={isNotValid}
-						>
+						<Button onClick={this.editVariant} disabled={isNotValid}>
 							Change variant name
 						</Button>
 					</div>

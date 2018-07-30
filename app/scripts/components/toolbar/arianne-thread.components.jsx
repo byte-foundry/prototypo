@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {graphql} from 'react-apollo';
 import Lifespan from 'lifespan';
 import classNames from 'classnames';
-import { withRouter } from 'react-router';
+import {withRouter} from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores';
 
@@ -42,7 +42,7 @@ class ArianneThread extends React.PureComponent {
 			list = [],
 			selectedValue,
 			oldValue,
-			oldCriteria, 
+			oldCriteria,
 		) => {
 			if (
 				list.length > 0
@@ -282,7 +282,11 @@ class ArianneThread extends React.PureComponent {
 
 		return (
 			<div className="arianne-thread">
-				<RootArianneItem click={() => {this.props.router.push('/library/home');}} />
+				<RootArianneItem
+					click={() => {
+						this.props.router.push('/library/home');
+					}}
+				/>
 				{familyItem}
 				{variantItem}
 				{group}

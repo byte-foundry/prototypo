@@ -54,8 +54,7 @@ function triggerDownload(arrayBuffer, filename) {
 function exportAuthorized(plan, credits) {
 	const currentCreditCost = prototypoStore.get('currentCreditCost');
 	const paidPlan = plan.indexOf('free_') === -1;
-	const enoughCredits
-		= credits && credits > 0 && currentCreditCost <= credits;
+	const enoughCredits = credits && credits > 0 && currentCreditCost <= credits;
 
 	if (!paidPlan && !enoughCredits) {
 		localClient.dispatchAction('/store-value', {
@@ -344,10 +343,7 @@ export default {
 						? variantNames[index].replace(/\s/g, '-').toLowerCase()
 						: 'regular';
 					const variantPatch = prototypoStore
-						.set(
-							'exportedVariant',
-							prototypoStore.get('exportedVariant') + 1,
-						)
+						.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
 						.commit();
 
 					localServer.dispatchUpdate('/prototypoStore', variantPatch);
@@ -466,12 +462,7 @@ export default {
 		}
 	},
 	// TODO add a spend credit action
-	'/export-family-from-reader': ({
-		result,
-		familyToExport,
-		template,
-		oldDb,
-	}) => {
+	'/export-family-from-reader': ({result, familyToExport, template, oldDb}) => {
 		const a = document.createElement('a');
 		const _URL = window.URL || window.webkitURL;
 
@@ -509,10 +500,7 @@ export default {
 
 		blobBuffers.forEach(({buffer, variant}) => {
 			const variantPatch = prototypoStore
-				.set(
-					'exportedVariant',
-					prototypoStore.get('exportedVariant') + 1,
-				)
+				.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
 				.commit();
 
 			localServer.dispatchUpdate('/prototypoStore', variantPatch);
@@ -566,12 +554,7 @@ export default {
 		spendCreditsAction();
 	},
 	// TODO add a spend credit action
-	'/export-family-from-reader': ({
-		result,
-		familyToExport,
-		template,
-		oldDb,
-	}) => {
+	'/export-family-from-reader': ({result, familyToExport, template, oldDb}) => {
 		const a = document.createElement('a');
 		const _URL = window.URL || window.webkitURL;
 
@@ -609,10 +592,7 @@ export default {
 
 		blobBuffers.forEach(({buffer, variant}) => {
 			const variantPatch = prototypoStore
-				.set(
-					'exportedVariant',
-					prototypoStore.get('exportedVariant') + 1,
-				)
+				.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
 				.commit();
 
 			localServer.dispatchUpdate('/prototypoStore', variantPatch);
@@ -745,10 +725,7 @@ export default {
 
 			blobBuffers.forEach(({buffer, variant}) => {
 				const variantPatch = prototypoStore
-					.set(
-						'exportedVariant',
-						prototypoStore.get('exportedVariant') + 1,
-					)
+					.set('exportedVariant', prototypoStore.get('exportedVariant') + 1)
 					.commit();
 
 				localServer.dispatchUpdate('/prototypoStore', variantPatch);

@@ -6,7 +6,9 @@ const fonts = {};
 /* eslint-disable no-bitwise */
 /* eslint-disable prefer-numeric-literals */
 const getfsSelection = (weight, italic) =>
-	(weight > 500 ? parseInt('0000000000100000', 2) : parseInt('0000000001000000', 2))
+	(weight > 500
+		? parseInt('0000000000100000', 2)
+		: parseInt('0000000001000000', 2))
 	| (italic ? parseInt('0000000000000001', 2) : parseInt('0000000000000000', 2));
 
 /* eslint-disable no-restricted-globals */

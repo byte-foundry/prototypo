@@ -7,10 +7,6 @@ export default class LibraryApp extends React.Component {
 	}
 
 	render() {
-		return (
-			<div className="library-app">
-				{this.props.children}
-			</div>
-		);
+		return <div className="library-app">{this.props.children}</div>;
 	}
 }

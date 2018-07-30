@@ -39,29 +39,23 @@ class LibraryMain extends React.Component {
 			templateInfos: prototypoStore.head.toJS().templateList,
 		});
 
-		this.client
-			.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					openFamilyModal: head.toJS().d.openFamilyModal,
-					openVariantModal: head.toJS().d.openVariantModal,
-					openChangeVariantNameModal: head.toJS().d
-						.openChangeVariantNameModal,
-					openDuplicateVariantModal: head.toJS().d
-						.openDuplicateVariantModal,
-					familySelectedVariantCreation: head.toJS().d
-						.familySelectedVariantCreation,
-					collectionSelectedVariant: head.toJS().d
-						.collectionSelectedVariant,
-					templatesData: head.toJS().d.templatesData,
-					search: head.toJS().d.librarySearchString,
-					librarySelectedTags: head.toJS().d.librarySelectedTags,
-					openRestrictedFeature: head.toJS().d.openRestrictedFeature,
-					restrictedFeatureHovered: head.toJS().d
-						.restrictedFeatureHovered,
-					openGoProModal: head.toJS().d.openGoProModal,
-				});
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
+			this.setState({
+				openFamilyModal: head.toJS().d.openFamilyModal,
+				openVariantModal: head.toJS().d.openVariantModal,
+				openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
+				openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
+				familySelectedVariantCreation: head.toJS().d
+					.familySelectedVariantCreation,
+				collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
+				templatesData: head.toJS().d.templatesData,
+				search: head.toJS().d.librarySearchString,
+				librarySelectedTags: head.toJS().d.librarySelectedTags,
+				openRestrictedFeature: head.toJS().d.openRestrictedFeature,
+				restrictedFeatureHovered: head.toJS().d.restrictedFeatureHovered,
+				openGoProModal: head.toJS().d.openGoProModal,
 			});
+		});
 	}
 
 	componentWillUnmount() {
@@ -232,9 +226,7 @@ class LibraryMain extends React.Component {
 					librarySelectedTags: this.state.librarySelectedTags,
 				})}
 				{restrictedFeatureText}
-				{this.state.openGoProModal && (
-					<GoProModal propName="openGoProModal" />
-				)}
+				{this.state.openGoProModal && <GoProModal propName="openGoProModal" />}
 				{this.state.openVariantModal && (
 					<CreateVariantModal
 						family={this.state.familySelectedVariantCreation}
@@ -395,8 +387,22 @@ const deleteFavouriteMutation = gql`
 `;
 
 const addFavouriteMutation = gql`
-	mutation createAbstractedFont($userId: ID!, $type: FontType!, $familyId: ID, $template: String, $presetId: ID, $name: String!) {
-		createAbstractedFont(userId: $userId, type: $type, familyId: $familyId, template: $template, presetId: $presetId, name: $name) {
+	mutation createAbstractedFont(
+		$userId: ID!
+		$type: FontType!
+		$familyId: ID
+		$template: String
+		$presetId: ID
+		$name: String!
+	) {
+		createAbstractedFont(
+			userId: $userId
+			type: $type
+			familyId: $familyId
+			template: $template
+			presetId: $presetId
+			name: $name
+		) {
 			id
 			type
 			name
@@ -441,9 +447,7 @@ export default compose(
 			}
 			if (data.user) {
 				return {
-					subUsers: data.user.manager
-						? data.user.manager.subUsers
-						: [],
+					subUsers: data.user.manager ? data.user.manager.subUsers : [],
 					refetch: data.refetch,
 				};
 			}
@@ -516,7 +520,8 @@ export default compose(
 		options: {
 			update: (store, {data: {createAbstractedFont}}) => {
 				const data = store.readQuery({query: libraryUserQuery});
-				data.user.favourites.push(createAbstractedFont)
+
+				data.user.favourites.push(createAbstractedFont);
 				store.writeQuery({
 					query: libraryUserQuery,
 					data,
@@ -537,9 +542,7 @@ export default compose(
 		options: {
 			update: (store, {data: {updateFamily}}) => {
 				const data = store.readQuery({query: libraryQuery});
-				const family = data.user.library.find(
-					f => f.id === updateFamily.id,
-				);
+				const family = data.user.library.find(f => f.id === updateFamily.id);
 
 				family.tags = [...updateFamily.tags];
 				store.writeQuery({
