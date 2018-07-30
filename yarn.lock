@@ -983,7 +983,8 @@ antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
   resolved "https://codeload.github.com/byte-foundry/antique.ptf/tar.gz/9fa9f1dfad947b5814445d2f52a61960e42d4532"
   dependencies:
     karma "^1.7.1"
-    prototypo-precursor "^1.0.3"
+    prototypo-precursor "1.0.7"
+    yargs "^11.0.0"
 
 any-observable@^0.2.0:
   version "0.2.0"
@@ -3104,10 +3105,6 @@ clean-css@4.1.x:
   resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-4.1.9.tgz#35cee8ae7687a49b98034f70de00c4edd3826301"
   dependencies:
     source-map "0.5.x"
-
-cleave.js@^0.7.14:
-  version "0.7.23"
-  resolved "https://registry.yarnpkg.com/cleave.js/-/cleave.js-0.7.23.tgz#55a6906fb60f611276aab9c0def726ee8530c49b"
 
 cli-cursor@^1.0.2:
   version "1.0.2"
@@ -5601,6 +5598,7 @@ gfnt.ptf@byte-foundry/spectral.ptf#feat/new-rendering:
   dependencies:
     karma "^2.0.0"
     prototypo-precursor "^1.0.4"
+    yargs "^11.0.0"
 
 glamor@^2.20.40:
   version "2.20.40"
@@ -7391,6 +7389,7 @@ john-fell.ptf@byte-foundry/john-fell.ptf#feat/new-rendering:
   resolved "https://codeload.github.com/byte-foundry/john-fell.ptf/tar.gz/e2c99c90124a3a15bf92753ec199209826e06cef"
   dependencies:
     prototypo-precursor "^1.0.4"
+    yargs "^11.0.0"
 
 js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.4.3"
@@ -10650,6 +10649,12 @@ react-storybook-decorator-background@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/react-storybook-decorator-background/-/react-storybook-decorator-background-1.0.5.tgz#e6f76250703792c50c6c4de393bb126e9dae428b"
 
+react-stripe-elements@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-stripe-elements/-/react-stripe-elements-2.0.1.tgz#197db4762c57bf73a07d852564ebdbac52954094"
+  dependencies:
+    prop-types "^15.5.10"
+
 react-style-proptype@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/react-style-proptype/-/react-style-proptype-3.2.0.tgz#be5de15358b890d83aecfaf6634cc033aa2b1483"
@@ -13071,7 +13076,8 @@ venus.ptf@byte-foundry/venus.ptf#feat/new-rendering:
   version "1.0.0"
   resolved "https://codeload.github.com/byte-foundry/venus.ptf/tar.gz/ad4c9d48b3e866ce734e634d0e8fc36fd7874e63"
   dependencies:
-    prototypo-precursor "^1.0.4"
+    prototypo-precursor "^1.0.7"
+    yargs "^11.0.0"
 
 verror@1.10.0:
   version "1.10.0"
