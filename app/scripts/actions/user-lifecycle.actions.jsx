@@ -104,7 +104,10 @@ function spendCredits({amount}) {
 	});
 }
 
-const validateCoupon = debounce(options => localClient.dispatchAction('/validate-coupon', options), 500);
+const validateCoupon = debounce(
+	options => localClient.dispatchAction('/validate-coupon', options),
+	500,
+);
 
 export default {
 	'/load-customer-data': ({sources, subscriptions, metadata}) => {
@@ -239,7 +242,6 @@ export default {
 					activator: '#intercom-button',
 				},
 			});
-			trackJs.addMetadata('username', username);
 
 			form.errors = [];
 			form.inError = {};

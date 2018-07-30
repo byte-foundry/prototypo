@@ -62,7 +62,6 @@ class Register extends React.Component {
 				activator: '#intercom-button',
 			},
 		});
-		window.trackJs.addMetadata('username', email);
 
 		this.props.router.push({
 			pathname: this.props.location.query.prevHash || '/library/home',

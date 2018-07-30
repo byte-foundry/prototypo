@@ -62,10 +62,10 @@ class OnboardingApp extends React.PureComponent {
 				this.setState({
 					fontName: headJS.fontName,
 					parameters: flatten(
-						headJS.fontParameters.reduce((a, b) => [
-							a,
-							...b.parameters,
-						]),
+						(headJS.fontParameters || []).reduce(
+							(a, b) => [a, ...b.parameters],
+							[],
+						),
 					),
 					glyphs: headJS.glyphs,
 					family: headJS.family,
@@ -109,9 +109,7 @@ class OnboardingApp extends React.PureComponent {
 
 		try {
 			this.setState({creatingFamily: true});
-			const {
-				data: {createFamily: newFont},
-			} = await this.props.createFamily(
+			const {data: {createFamily: newFont}} = await this.props.createFamily(
 				name,
 				this.state.selectedTemplate,
 				this.state.selectedValues,
@@ -191,12 +189,9 @@ class OnboardingApp extends React.PureComponent {
 							onSelect={(alternateIndex) => {
 								this.client.dispatchAction('/set-alternate', {
 									unicode,
-									glyphName:
-										alternatesDedup[unicode][alternateIndex]
-											.name,
+									glyphName: alternatesDedup[unicode][alternateIndex].name,
 									relatedGlyphs:
-										alternatesDedup[unicode][alternateIndex]
-											.relatedGlyphs,
+										alternatesDedup[unicode][alternateIndex].relatedGlyphs,
 								});
 							}}
 						/>
@@ -311,9 +306,7 @@ class OnboardingApp extends React.PureComponent {
 			);
 		}
 
-		const {letters} = onboardingData.steps.find(
-			e => e.type === 'alternates',
-		);
+		const {letters} = onboardingData.steps.find(e => e.type === 'alternates');
 		const allStrings = Object.values(letters).join('');
 
 		const updaters = fontsToGenerate.map(font => (
@@ -377,9 +370,7 @@ class OnboardingApp extends React.PureComponent {
 							neutral
 							size="small"
 							className="skip"
-							onClick={() =>
-								this.props.router.push('/dashboard')
-							}
+							onClick={() => this.props.router.push('/dashboard')}
 						>
 								Skip
 						</Button>
@@ -417,8 +408,8 @@ class OnboardingApp extends React.PureComponent {
 								</Button>
 								<h3>Need inspiration?</h3>
 								<p className="description">
-									A good name for a typeface should reflect
-									its design and its purpose. <br />
+									A good name for a typeface should reflect its design and its
+									purpose. <br />
 									You can use{' '}
 									<a
 										href="http://namecheck.fontdata.com/about/"
@@ -427,19 +418,20 @@ class OnboardingApp extends React.PureComponent {
 									>
 										http://namecheck.fontdata.com/about/
 									</a>{' '}
-									to check the availibility of the chosen
-									name.
+									to check the availibility of the chosen name.
 								</p>
 							</div>
 						)}
 						{stepData.type !== 'start' && (
 							<Button
 								className="nextStep"
+								loading={this.state.parameters === []}
 								onClick={() => {
-									this.state.step
-									< onboardingData.steps.length - 1
-										? this.getNextStep()
-										: this.props.router.push('/dashboard');
+									if (this.state.parameters !== []) {
+										this.state.step < onboardingData.steps.length - 1
+											? this.getNextStep()
+											: this.props.router.push('/dashboard');
+									}
 								}}
 							>
 								{(() => {
@@ -470,14 +462,8 @@ class OnboardingApp extends React.PureComponent {
 									>
 										<div
 											className={`bubble ${
-												index === this.state.step
-													? 'active'
-													: ''
-											} ${
-												index < this.state.step
-													? 'previous'
-													: ''
-											}`}
+												index === this.state.step ? 'active' : ''
+											} ${index < this.state.step ? 'previous' : ''}`}
 											onClick={() => {
 												index <= this.state.step
 													? this.setState({
@@ -562,7 +548,15 @@ const createFamilyMutation = gql`
 			designerUrl: ""
 			foundry: "Prototypo"
 			foundryUrl: "https://prototypo.io/"
-			variants: [{name: "Regular", values: $values, weight: 400, width: "normal", italic: false}]
+			variants: [
+				{
+					name: "Regular"
+					values: $values
+					weight: 400
+					width: "normal"
+					italic: false
+				}
+			]
 		) {
 			id
 			name
@@ -645,10 +639,7 @@ export default compose(
 					ownProps.deleteVariant(variant.id),
 				);
 
-				return Promise.all([
-					...variants,
-					mutate({variables: {id: family.id}}),
-				]);
+				return Promise.all([...variants, mutate({variables: {id: family.id}})]);
 			},
 		}),
 		options: {

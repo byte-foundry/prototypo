@@ -2,7 +2,6 @@ import _mapValues from 'lodash/mapValues';
 import React from 'react';
 import classNames from 'classnames';
 import Lifespan from 'lifespan';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 import Dropzone from 'react-dropzone';
 
 import LocalClient from '../stores/local-client.stores';
@@ -22,7 +21,7 @@ import {toileType} from '../toile/toile';
 import CanvasShadow from './canvasTools/canvas-shadow.components';
 import EditNodeProperties from './edit-node-properties.components';
 
-export default class PrototypoCanvas extends React.Component {
+export default class PrototypoCanvas extends React.PureComponent {
 	constructor(props) {
 		super(props);
 
@@ -36,10 +35,10 @@ export default class PrototypoCanvas extends React.Component {
 			shadowFile: '',
 			glyphViewMatrix: {},
 			selectedItems: [],
+			error: false,
+			__devReloadKey: 'init',
 		};
-		this.shouldComponentUpdate = PureRenderMixin.shouldComponentUpdate.bind(
-			this,
-		);
+
 		this.handleContextMenu = this.handleContextMenu.bind(this);
 		this.toggleContextMenu = this.toggleContextMenu.bind(this);
 		this.handleLeaveAndClick = this.handleLeaveAndClick.bind(this);
@@ -81,10 +80,8 @@ export default class PrototypoCanvas extends React.Component {
 			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					prototypoTextPanelOpened:
-						head.toJS().d.uiMode.indexOf('text') !== -1,
-					glyphPanelOpened:
-						head.toJS().d.uiMode.indexOf('list') !== -1,
+					prototypoTextPanelOpened: head.toJS().d.uiMode.indexOf('text') !== -1,
+					glyphPanelOpened: head.toJS().d.uiMode.indexOf('list') !== -1,
 					glyphs: head.toJS().d.glyphs,
 					glyphFocused: head.toJS().d.glyphFocused,
 					glyphSelected: head.toJS().d.glyphSelected,
@@ -98,12 +95,9 @@ export default class PrototypoCanvas extends React.Component {
 					globalMode: head.toJS().d.globalMode,
 				});
 				this.isFree
-					= HoodieApi.instance
-					&& HoodieApi.instance.plan.indexOf('free_') !== -1;
+					= HoodieApi.instance && HoodieApi.instance.plan.indexOf('free_') !== -1;
 				this.isFreeWithCredits
-					= head.toJS().d.credits
-					&& head.toJS().d.credits > 0
-					&& this.isFree;
+					= head.toJS().d.credits && head.toJS().d.credits > 0 && this.isFree;
 			})
 			.onDelete(() => {
 				this.setState(undefined);
@@ -128,6 +122,16 @@ export default class PrototypoCanvas extends React.Component {
 			.onDelete(() => {
 				this.setState(undefined);
 			});
+	}
+
+	componentDidMount() {
+		// This enable the glyph canvas component to be hot reloaded
+		// By changing the key of the component, it is recreated
+		if (module.hot) {
+			module.hot.accept('./glyph-canvas.components', () => {
+				this.setState({__devReloadKey: Date.now(), error: false});
+			});
+		}
 	}
 
 	componentWillUnmount() {
@@ -568,12 +572,36 @@ export default class PrototypoCanvas extends React.Component {
 	}
 
 	handleUpdateGlyph(glyph) {
-		this.setState({updatedGlyph: glyph});
+		this.setState(({selectedItems, updatedGlyph = {}}) => ({
+			updatedGlyph: glyph,
+			// removing any selectedItems when changing glyph
+			selectedItems: updatedGlyph.name === glyph.name ? selectedItems : [],
+		}));
+	}
+
+	componentDidCatch(error) {
+		trackJs.track(error);
+		this.setState({error: true});
 	}
 
 	render() {
-		const {selectedItems, updatedGlyph} = this.state;
+		const {selectedItems, updatedGlyph, error} = this.state;
 		const {uiRuler, uiOutline} = this.props;
+
+		if (error) {
+			return (
+				<div
+					style={{
+						...this.props.style,
+						margin: 'auto',
+						flexDirection: 'column',
+						textAlign: 'center',
+					}}
+				>
+					<p>Oops something went wrong. Try refreshing the page.</p>
+				</div>
+			);
+		}
 
 		/* eslint-disable max-len */
 		// const isFreeWithoutCreditsInManualEditing = this.isFree && !this.isFreeWithCredits && this.state.canvasMode === 'select-points';
@@ -641,10 +669,7 @@ export default class PrototypoCanvas extends React.Component {
 		);
 		let shadowDropzone = false;
 
-		if (
-			this.state.canvasMode === 'shadow'
-			&& this.state.shadowFile === ''
-		) {
+		if (this.state.canvasMode === 'shadow' && this.state.shadowFile === '') {
 			shadowDropzone = (
 				<div className="prototypo-canvas-shadow-dropzone">
 					<Dropzone
@@ -669,9 +694,7 @@ export default class PrototypoCanvas extends React.Component {
 						width={this.container.clientWidth}
 						height={this.container.clientHeight}
 						canvasMode={this.state.canvasMode}
-						glyphSelected={
-							this.state.glyphs[this.props.glyphSelected][0]
-						}
+						glyphSelected={this.state.glyphs[this.props.glyphSelected][0]}
 						glyphViewMatrix={this.state.glyphViewMatrix}
 					/>
 				</div>
@@ -713,9 +736,7 @@ export default class PrototypoCanvas extends React.Component {
 				<CanvasBar />
 				<div
 					className={`prototypo-canvas-reset-buttons ${
-						this.state.canvasMode === 'select-points'
-							? 'is-on-canvas'
-							: ''
+						this.state.canvasMode === 'select-points' ? 'is-on-canvas' : ''
 					}`}
 				>
 					<button
@@ -729,9 +750,7 @@ export default class PrototypoCanvas extends React.Component {
 					</button>
 					<button
 						className={`prototypo-canvas-reset-button ${
-							isSpacingSelected || isNodeSelected
-								? ''
-								: 'disabled'
+							isSpacingSelected || isNodeSelected ? '' : 'disabled'
 						}`}
 						onClick={this.resetPoints}
 						disabled={!(isSpacingSelected || isNodeSelected)}
@@ -747,6 +766,8 @@ export default class PrototypoCanvas extends React.Component {
 					glyphOutsideView={this.state.glyphOutsideView}
 					onSelectedItems={this.handleSelectedItems}
 					onUpdateGlyph={this.handleUpdateGlyph}
+					// eslint-disable-next-line no-underscore-dangle
+					key={this.state.__devReloadKey}
 				/>
 				{inputNodeItems.length === 1 && (
 					<EditNodeProperties

@@ -201,7 +201,7 @@
       "prettier-eslint --write",
       "git add"
     ],
-    "app/scripts/**.{js,jsx}": [
+    "app/scripts/**/**.{js,jsx}": [
       "prettier-eslint --write",
       "git add"
     ]

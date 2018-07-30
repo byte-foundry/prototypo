@@ -4,7 +4,7 @@ import isProduction from '../helpers/is-production.helpers';
 
 const networkInterface = createBatchingNetworkInterface({
 	uri: `https://api.graph.cool/simple/v1/prototypo${
-		isProduction() ? '-beta' : '-new-dev'
+		isProduction() ? '' : '-new-dev'
 	}`,
 	batchInterval: 10,
 });

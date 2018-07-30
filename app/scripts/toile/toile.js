@@ -84,6 +84,7 @@ export const appState = {
 	INPUT_CHANGE: 0b1000000000000000000,
 	DRAGGING_GUIDE: 0b10000000000000000000,
 	GUIDE_SELECTED: 0b100000000000000000000,
+	PREVIEWING: 0b1000000000000000000000,
 };
 
 const green = '#24d390';
@@ -1838,7 +1839,9 @@ export default class Toile {
 				const {x, y} = interactionItem.data;
 				let distance;
 
-				if (typeof x === 'number') {distance = Math.abs(x - mouseTransformed.x);}
+				if (typeof x === 'number') {
+					distance = Math.abs(x - mouseTransformed.x);
+				}
 				else distance = Math.abs(y - mouseTransformed.y);
 
 				if (distance <= spacingInfluence / this.viewMatrix[0]) {

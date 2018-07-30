@@ -96,6 +96,8 @@ export default class HoodieApi {
 			throw new Error('Not authenticated yet');
 		}
 
+		trackJs.addMetadata('username', response.data.user.email);
+
 		return setupStripe(setupHoodie(response.data.user));
 	}
 

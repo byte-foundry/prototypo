@@ -63,7 +63,9 @@ class ForgottenPassword extends React.PureComponent {
 	renderForm() {
 		const {location} = this.props;
 
-		if (location.query.hasOwnProperty('success')) {
+		const query = new URLSearchParams(location.search);
+
+		if (query.has('success')) {
 			return (
 				<div className="sign-in-form">
 					<p className="forgotten-password-text">
@@ -129,7 +131,7 @@ class ForgottenPassword extends React.PureComponent {
 }
 
 ForgottenPassword.propTypes = {
-	history: PropTypes.object.isRequired,
+	router: PropTypes.object.isRequired,
 	location: PropTypes.object.isRequired,
 };
 

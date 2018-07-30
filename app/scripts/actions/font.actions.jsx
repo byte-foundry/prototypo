@@ -22,6 +22,7 @@ import {BatchUpdate} from '../helpers/undo-stack.helpers';
 let localServer;
 let localClient;
 let undoWatcher;
+let undoGuidesWatcher;
 
 const debouncedSave = _throttle((values, variantId) => {
 	FontValues.save({
@@ -44,6 +45,15 @@ window.addEventListener('fluxServer.setup', () => {
 		(headJS) => {
 			debouncedSave(headJS.controlsValues);
 		},
+	);
+
+	undoGuidesWatcher = new BatchUpdate(
+		undoableStore,
+		'/undoableStore',
+		'guides',
+		localClient,
+		localServer.lifespan,
+		name => `${name} modification`,
 	);
 });
 
@@ -153,6 +163,7 @@ export default {
 			.set('variant', variant)
 			.set('family', family)
 			.commit();
+
 		localServer.dispatchUpdate('/prototypoStore', patchVariant);
 
 		const altList = {
@@ -532,6 +543,22 @@ export default {
 		}
 		else {
 			undoWatcher.update(patch, label);
+		}
+	},
+	'/change-guides': ({guides, force, label = 'change guide'}) => {
+		const patch = undoableStore.set('guides', guides).commit();
+
+		localServer.dispatchUpdate('/undoableStore', patch);
+
+		if (force) {
+			undoGuidesWatcher.forceUpdate(patch, label);
+			// saving the guides into the prototypoStore to sync into the app values
+			localClient.dispatchAction('/store-value', {
+				guides,
+			});
+		}
+		else {
+			undoGuidesWatcher.update(patch, label);
 		}
 	},
 	'/reset-glyph-points-manually': ({
