@@ -12,6 +12,7 @@ class Button extends React.Component {
 			children,
 			className,
 			neutral,
+			link,
 			...rest
 		} = this.props;
 
@@ -20,11 +21,13 @@ class Button extends React.Component {
 			{
 				'new-button--tiny': size === 'tiny',
 				'new-button--small': size === 'small',
+				'new-button--big': size === 'big',
 				'new-button--large': size === 'large',
 				'new-button--disabled': disabled,
-				'new-button--outline': outline,
+				'new-button--outline': !link && outline,
 				'new-button--fluid': fluid,
 				'new-button--neutral': neutral,
+				'new-button--link': link,
 			},
 			className,
 		);
@@ -37,12 +40,26 @@ class Button extends React.Component {
 	}
 }
 
+Button.defaultProps = {
+	type: 'button',
+	size: null,
+	disabled: false,
+	outline: false,
+	fluid: false,
+	className: '',
+	neutral: false,
+	link: false,
+};
+
 Button.propTypes = {
-	size: PropTypes.oneOf(['tiny', 'small', 'large']),
+	type: PropTypes.oneOf(['submit', 'reset', 'button', 'menu']),
+	size: PropTypes.oneOf(['tiny', 'small', 'big', 'large']),
 	disabled: PropTypes.bool,
 	outline: PropTypes.bool,
 	fluid: PropTypes.bool,
 	className: PropTypes.string,
+	neutral: PropTypes.bool,
+	link: PropTypes.bool,
 };
 
 export default Button;

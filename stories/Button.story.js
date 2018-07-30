@@ -18,4 +18,10 @@ storiesOf('shared/Button', module)
 	.add('size="small"', () => <Button size="small">Hit me!</Button>)
 	.add('size="large"', () => <Button size="large">Hit me!</Button>)
 	.add('outline', () => <Button outline>Hit me!</Button>)
-	.add('fluid', () => <Button fluid>Hit me!</Button>);
+	.add('fluid', () => <Button fluid>Hit me!</Button>)
+	.add('link', () => <Button link>Hit me!</Button>)
+	.add('disabled link', () => (
+		<Button disabled link>
+			Hit me!
+		</Button>
+	));
