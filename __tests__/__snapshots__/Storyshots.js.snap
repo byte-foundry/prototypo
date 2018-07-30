@@ -4068,7 +4068,8 @@ exports[`Storyshots shared/Button default 1`] = `
 >
   <button
     className="new-button"
-    disabled={undefined}
+    disabled={false}
+    type="button"
   >
     Hit me!
   </button>
@@ -4089,8 +4090,30 @@ exports[`Storyshots shared/Button disabled 1`] = `
   <button
     className="new-button new-button--disabled"
     disabled={true}
+    type="button"
   >
     You can't hit me!
+  </button>
+</div>
+`;
+
+exports[`Storyshots shared/Button disabled link 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }
+>
+  <button
+    className="new-button new-button--disabled new-button--link"
+    disabled={true}
+    type="button"
+  >
+    Hit me!
   </button>
 </div>
 `;
@@ -4108,7 +4131,29 @@ exports[`Storyshots shared/Button fluid 1`] = `
 >
   <button
     className="new-button new-button--fluid"
-    disabled={undefined}
+    disabled={false}
+    type="button"
+  >
+    Hit me!
+  </button>
+</div>
+`;
+
+exports[`Storyshots shared/Button link 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }
+>
+  <button
+    className="new-button new-button--link"
+    disabled={false}
+    type="button"
   >
     Hit me!
   </button>
@@ -4128,7 +4173,8 @@ exports[`Storyshots shared/Button outline 1`] = `
 >
   <button
     className="new-button new-button--outline"
-    disabled={undefined}
+    disabled={false}
+    type="button"
   >
     Hit me!
   </button>
@@ -4148,7 +4194,8 @@ exports[`Storyshots shared/Button size="large" 1`] = `
 >
   <button
     className="new-button new-button--large"
-    disabled={undefined}
+    disabled={false}
+    type="button"
   >
     Hit me!
   </button>
@@ -4168,7 +4215,8 @@ exports[`Storyshots shared/Button size="small" 1`] = `
 >
   <button
     className="new-button new-button--small"
-    disabled={undefined}
+    disabled={false}
+    type="button"
   >
     Hit me!
   </button>
@@ -4188,7 +4236,8 @@ exports[`Storyshots shared/Button size="tiny" 1`] = `
 >
   <button
     className="new-button new-button--tiny"
-    disabled={undefined}
+    disabled={false}
+    type="button"
   >
     Hit me!
   </button>

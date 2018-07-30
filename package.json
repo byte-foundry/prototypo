@@ -133,7 +133,7 @@
     "prettier-eslint-cli": "4.7.1",
     "prototypo-flux-testing": "0.0.1",
     "react-storybook-decorator-background": "^1.0.5",
-    "react-test-renderer": "^15.6.2",
+    "react-test-renderer": "^16.4.1",
     "sass-loader": "^3.1.2",
     "style-loader": "^0.13.0",
     "svg-inline-loader": "^0.7.1",
@@ -186,6 +186,7 @@
     "testRegex": "/__tests__/.*\\.(ts|tsx|js)$",
     "moduleFileExtensions": [
       "js",
+      "json",
       "jsx"
     ],
     "moduleDirectories": [
