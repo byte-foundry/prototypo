@@ -1,54 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Redirect, Link, withRouter} from 'react-router-dom';
-import Lifespan from 'lifespan';
+import {Elements} from 'react-stripe-elements';
 
-import SubscriptionSidebar from './subscription-sidebar.components.jsx';
-import SubscriptionCardAndValidation from './subscription-card-and-validation.components.jsx';
-import LocalClient from '../../stores/local-client.stores.jsx';
+import SubscriptionSidebar from './subscription-sidebar.components';
+import SubscriptionCardAndValidation from './subscription-card-and-validation.components';
 import withCountry from '../shared/with-country.components';
 
 class Subscription extends React.Component {
-	constructor(props) {
-		super(props);
+	state = {
+		validCoupon: null,
+	};
 
-		this.state = {};
-
-		this.handleChangePlan = this.handleChangePlan.bind(this);
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
-					validCoupon: head.toJS().d.choosePlanForm.validCoupon,
-				});
-			})
-			.onDelete(() => {
-				this.setState({hasBeenSubscribing: false});
-			});
-
-		// a "?fromWebsite=true" parameter must be added to the link
-		// on the pricing section of prototypo.io website to track the user
-		const query = new URLSearchParams(this.props.location.search);
-
-		if (query.has('fromWebsite')) {
-			this.client.dispatchAction('/store-value', {
-				newUserFromWebSite: query.get('fromWebsite'),
-			});
-		}
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
-	handleChangePlan({plan, quantity, coupon}) {
+	handleChangePlan = ({plan, quantity, coupon}) => {
 		const {history, location} = this.props;
 		const query = new URLSearchParams(location.search);
 
@@ -61,10 +25,12 @@ class Subscription extends React.Component {
 			...location,
 			search: query.toString(),
 		});
-	}
+	};
+
+	saveValidCoupon = validCoupon => this.setState({validCoupon});
 
 	render() {
-		const {hasBeenSubscribing} = this.state;
+		const {validCoupon} = this.state;
 		const {country, location} = this.props;
 
 		const query = new URLSearchParams(location.search);
@@ -84,8 +50,8 @@ class Subscription extends React.Component {
 		}
 		let percentPrice = 1;
 
-		if (this.state.validCoupon && this.state.validCoupon.percent_off) {
-			percentPrice = (100 - this.state.validCoupon.percent_off) / 100;
+		if (validCoupon && validCoupon.percent_off) {
+			percentPrice = (100 - validCoupon.percent_off) / 100;
 		}
 
 		return (
@@ -98,18 +64,20 @@ class Subscription extends React.Component {
 					<SubscriptionSidebar
 						plan={query.get('plan')}
 						quantity={parseInt(query.get('quantity'), 10)}
-						country={query.get('coupon')}
-						onChangePlan={this.handleChangePlan}
-						hasBeenSubscribing={hasBeenSubscribing}
-						percentPrice={percentPrice}
-					/>
-					<SubscriptionCardAndValidation
-						plan={query.get('plan')}
-						quantity={parseInt(query.get('quantity'), 10)}
-						coupon={query.get('coupon')}
 						country={country}
 						onChangePlan={this.handleChangePlan}
+						percentPrice={percentPrice}
 					/>
+					<Elements>
+						<SubscriptionCardAndValidation
+							plan={query.get('plan')}
+							quantity={parseInt(query.get('quantity'), 10)}
+							coupon={query.get('coupon')}
+							country={country}
+							onChangePlan={this.handleChangePlan}
+							onSelectCoupon={this.saveValidCoupon}
+						/>
+					</Elements>
 				</div>
 			</div>
 		);

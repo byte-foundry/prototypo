@@ -4379,6 +4379,72 @@ exports[`Storyshots shared/FakeCard default 1`] = `
 </div>
 `;
 
+exports[`Storyshots shared/LoadingButton default 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }
+>
+  <button
+    className="new-button"
+    disabled={false}
+    type="button"
+  >
+    <div>
+      Hit me!
+    </div>
+  </button>
+</div>
+`;
+
+exports[`Storyshots shared/LoadingButton loading 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }
+>
+  <button
+    className="new-button new-button--disabled"
+    disabled={true}
+    type="button"
+  >
+    <div
+      className="wait-for-load"
+    >
+      <div
+        className="sk-spinner sk-spinner-wave sk-secondary-color"
+      >
+        <div
+          className="sk-rect1"
+        />
+        <div
+          className="sk-rect2"
+        />
+        <div
+          className="sk-rect3"
+        />
+        <div
+          className="sk-rect4"
+        />
+        <div
+          className="sk-rect5"
+        />
+      </div>
+    </div>
+  </button>
+</div>
+`;
+
 exports[`Storyshots shared/PricingItem $$$ 1`] = `
 <div
   className="normal"
