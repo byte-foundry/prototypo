@@ -429,22 +429,29 @@ class LibraryList extends React.Component {
 		});
 
 		// Tags
-		fontsToDisplay = fontsToDisplay.filter(
-			font =>
-				font.tags && selectedTags.every(elem => font.tags.indexOf(elem) > -1),
-		);
+		fontsToDisplay
+			= fontsToDisplay
+			&& fontsToDisplay.filter(
+				font =>
+					font.tags
+					&& selectedTags.every(elem => font.tags.indexOf(elem) > -1),
+			);
 
 		// Search
-		fontsToDisplay = fontsToDisplay.filter(
-			font =>
-				font.template.toLowerCase().includes(searchString.toLowerCase())
-				|| font.templateName.toLowerCase().includes(searchString.toLowerCase())
-				|| font.name.toLowerCase().includes(searchString.toLowerCase())
-				|| (font.tags
-					&& font.tags.find(e =>
-						e.toLowerCase().includes(searchString.toLowerCase()),
-					)),
-		);
+		fontsToDisplay
+			= fontsToDisplay
+			&& fontsToDisplay.filter(
+				font =>
+					font.template.toLowerCase().includes(searchString.toLowerCase())
+					|| font.templateName
+						.toLowerCase()
+						.includes(searchString.toLowerCase())
+					|| font.name.toLowerCase().includes(searchString.toLowerCase())
+					|| (font.tags
+						&& font.tags.find(e =>
+							e.toLowerCase().includes(searchString.toLowerCase()),
+						)),
+			);
 
 		// Mode
 
@@ -461,12 +468,14 @@ class LibraryList extends React.Component {
 			break;
 		}
 
-		fontsToDisplay = fontsToDisplay.filter(font => font.type.includes(type));
+		fontsToDisplay
+			= fontsToDisplay
+			&& fontsToDisplay.filter(font => font.type.includes(type));
 
 		if (mode === 'favorites') {
-			fontsToDisplay = fontsToDisplay.filter(
-				font => !!font.props().favourite,
-			);
+			fontsToDisplay
+				= fontsToDisplay
+				&& fontsToDisplay.filter(font => !!font.props().favourite);
 		}
 
 		this.setState({fontsToDisplay});
