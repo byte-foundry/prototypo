@@ -1,5 +1,5 @@
 import React from 'react';
-import Lifespan from 'lifespan';
+import {withRouter} from 'react-router-dom';
 import {injectStripe} from 'react-stripe-elements';
 import debounce from 'lodash/debounce';
 
@@ -10,7 +10,6 @@ import {
 	teamAnnualConst,
 } from '../../data/plans.data';
 
-import LocalClient from '../../stores/local-client.stores';
 import HoodieApi from '../../services/hoodie.services';
 
 import FakeCard from '../shared/fake-card.components';
@@ -48,43 +47,11 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 	}
 
 	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
 		this.checkPlan(this.props.plan, this.props.quantity, this.props.coupon);
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				const {
-					cards,
-					choosePlanForm,
-					confirmation,
-					hasBeenSubscribing,
-				} = head.toJS().d;
-
-				this.setState(state => ({
-					card: cards || [],
-					couponValue: choosePlanForm.couponValue || this.props.coupon,
-					validCoupon: choosePlanForm.validCoupon,
-					wasValidCoupon: choosePlanForm.validCoupon || state.wasValidCoupon,
-					loading: confirmation.loading,
-					inError: confirmation.inError || {},
-					errors: confirmation.errors,
-					hasBeenSubscribing,
-				}));
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
 	}
 
 	componentWillReceiveProps({plan, quantity, coupon}) {
 		this.checkPlan(plan, quantity, coupon);
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
 	}
 
 	choosePlan = ({plan, coupon}) => {
@@ -128,7 +95,7 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 
 	checkPlan(plan, quantity, coupon) {
 		if (this.props.coupon !== coupon || !this.state.firstTimeCheck) {
-			this.client.dispatchAction('/choose-plan', {
+			this.choosePlan({
 				plan,
 				quantity,
 				coupon,
@@ -224,7 +191,7 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 	async subscribe(e) {
 		e.preventDefault();
 
-		const {plan, quantity, cards} = this.props;
+		const {plan, quantity, cards, history} = this.props;
 		const {couponValue} = this.state;
 
 		this.setState({loading: true});
@@ -242,12 +209,21 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 
 		const currency = getCurrency(source.country);
 
-		this.client.dispatchAction('/confirm-buy', {
+		const data = await HoodieApi.updateSubscription({
 			plan: `${plan}_${currency}_taxfree`,
-			vat: '', // this.refs.vat.value,
 			coupon: couponValue,
 			quantity: (plan.startsWith('team') && quantity) || undefined,
 		});
+
+		this.setState({loading: false});
+
+		history.replace('/account/success');
+
+		// TMP
+		const customer = await HoodieApi.getCustomerInfo();
+
+		this.client.dispatchAction('/load-customer-data', customer);
+		// TMP
 	}
 
 	handleChangeQuantity(value) {
@@ -275,7 +251,7 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 			loading,
 			loadingAddCard,
 		} = this.state;
-		const {country, plan, quantity} = this.props;
+		const {country, plan, cards, quantity} = this.props;
 
 		let percentPrice = 1;
 
@@ -442,9 +418,9 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 		}
 
 		const card
-			= this.state.card.length > 0 && !this.state.changeCard ? (
+			= cards.length > 0 && !this.state.changeCard ? (
 				<React.Fragment>
-					<FakeCard card={this.state.card[0]} />
+					<FakeCard card={cards[0]} />
 					<div className="subscription-card-and-validation-buttons">
 						{!showCoupon && (
 							<Button
@@ -477,7 +453,7 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 								: ''
 						}`}
 					/>
-					{(!showCoupon || this.state.card.length > 0) && (
+					{(!showCoupon || cards.length > 0) && (
 						<div className="columns subscription-card-and-validation-buttons">
 							{!showCoupon && (
 								<Button
@@ -488,7 +464,7 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 									I have a coupon
 								</Button>
 							)}
-							{this.state.card.length > 0 && (
+							{cards.length > 0 && (
 								<Button
 									className="subscription-card-and-validation-switch is-right"
 									onClick={this.keepCard}
@@ -572,4 +548,6 @@ SubscriptionCardAndValidation.defaultProps = {
 	onSelectCoupon: () => {},
 };
 
-export default injectStripe(SubscriptionCardAndValidation);
+export default injectStripe(
+	withRouter(SubscriptionCardAndValidation),
+);
