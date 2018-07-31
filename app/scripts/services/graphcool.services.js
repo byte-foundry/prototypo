@@ -1,4 +1,3 @@
-import gql from 'graphql-tag';
 import {ApolloClient} from 'apollo-client';
 import {ApolloLink} from 'apollo-link';
 import {withClientState} from 'apollo-link-state';
@@ -6,9 +5,10 @@ import {createHttpLink} from 'apollo-link-http';
 import {setContext} from 'apollo-link-context';
 import {onError} from 'apollo-link-error';
 import {InMemoryCache} from 'apollo-cache-inmemory';
+import merge from 'lodash/merge';
 
 import isProduction from '../helpers/is-production.helpers';
-import {fetchAWS} from './hoodie.services';
+import stripeResolvers from '../resolvers/stripe.resolvers';
 
 export const ERRORS = {
 	GraphQLArgumentsException: 3000,
@@ -71,7 +71,8 @@ const cache = new InMemoryCache({
 	// 	}),
 });
 
-const errorLink = onError(({networkError, graphQLErrors}) => {
+const errorLink = onError(({operation, networkError, graphQLErrors}) => {
+	console.log(operation, networkError, graphQLErrors);
 	if (networkError) {
 		cache.writeData({
 			data: {
@@ -106,52 +107,9 @@ const resolvers = {
 				__typename: 'NetworkStatus',
 			};
 
+			cache.writeData({data: networkStatus});
+
 			return networkStatus;
-		},
-	},
-	User: {
-		// Load the subscription from a lambda and put it into the cache
-		subscription: async (obj, args, {cache}) => {
-			const query = gql`
-				query getStripeId {
-					user {
-						stripe
-					}
-				}
-			`;
-			const {user: {stripe}} = cache.readQuery({query});
-
-			// To think about: does Apollo merge null (from the server)
-			// with {subscription:...} into null or into the second object?
-
-			const customer = await fetchAWS(`/customers/${stripe}`);
-			const [subscription] = customer.subscriptions.data;
-
-			if (!subscription) {
-				return null;
-			}
-
-			// TODO: object property filter
-			const data = {
-				__typename: 'StripeSubscription',
-				// ...subscription,
-				id: subscription.id,
-				quantity: subscription.quantity,
-				current_period_end: subscription.current_period_end,
-				cancel_at_period_end: subscription.cancel_at_period_end,
-				trial_end: subscription.trial_end,
-				plan: {
-					__typename: 'StripePlan',
-					// ...subscription.plan,
-					id: subscription.plan.id,
-					name: subscription.plan.name,
-					currency: subscription.plan.currency,
-				},
-			};
-
-			cache.writeData({data});
-
-			return data;
 		},
 	},
 };
@@ -168,6 +126,26 @@ const typeDefs = `
 		isConnected: Boolean!
 	}
 
+	type StripeQuadernoInvoice {
+		id: ID!
+		created_at: String!
+		currency: String!
+		permalink: String!
+		number: String!
+		secure_id: String!
+		total_cents: String!
+	}
+
+	type StripeCard {
+		id: ID!
+		fingerprint: String!
+		name: String
+		last4: String!
+		exp_month: Int!
+		exp_year: Int!
+		country: String!
+	}
+
 	type StripePlan {
 		id: ID!
 	}
@@ -179,6 +157,11 @@ const typeDefs = `
 
 	type Mutation {
 		updateNetworkStatus(isConnected: Boolean!): NetworkStatus!
+
+		# Stripe-related mutations
+
+		createSubscription(plan: String!, quantity: Int, coupon: String): StripeSubscription!
+		updateSubscription($id: ID!, $newPlan: String, $quantity: Int): StripeSubscription!
 	}
 
 	type Query {
@@ -186,7 +169,12 @@ const typeDefs = `
 	}
 `;
 
-const stateLink = withClientState({resolvers, defaults, cache, typeDefs});
+const stateLink = withClientState({
+	resolvers: merge(stripeResolvers, resolvers),
+	defaults,
+	cache,
+	typeDefs,
+});
 
 const client = new ApolloClient({
 	link: ApolloLink.from([withToken, errorLink, stateLink, httpLink]),
