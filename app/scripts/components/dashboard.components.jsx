@@ -14,6 +14,7 @@ import Toolbar from './toolbar/toolbar.components.jsx';
 import Workboard from './workboard.components.jsx';
 import ExportAs from './export-as.components.jsx';
 import Collection from './collection/collection.components.jsx';
+import HostVariantModal from './familyVariant/host-variant-modal.components';
 import CreateFamilyModal from './familyVariant/create-family-modal.components.jsx';
 import CreateVariantModal from './familyVariant/create-variant-modal.components.jsx';
 import CreateAcademyModal from './academy/create-academy-modal.components.jsx';
@@ -92,6 +93,7 @@ class Dashboard extends React.PureComponent {
 						.familySelectedVariantCreation,
 					collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
 					openChangeFamilyNameModal: head.toJS().d.openChangeFamilyNameModal,
+					openHostVariantModal: head.toJS().d.openHostVariantModal,
 					openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
 					openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
 					openGoProModal: head.toJS().d.openGoProModal,
@@ -233,6 +235,13 @@ class Dashboard extends React.PureComponent {
 		const explainAcademy = this.state.firstTimeAcademyModal && (
 			<CreateAcademyModal propName="openAcademyModal" />
 		);
+		const hostVariantModal = this.state.openHostVariantModal && (
+			<HostVariantModal
+				family={this.state.familySelectedVariantCreation}
+				variant={this.state.collectionSelectedVariant}
+				propName="openHostVariantModal"
+			/>
+		);
 		const changeNameFamily = this.state.openChangeFamilyNameModal && (
 			<ChangeNameFamily
 				family={this.state.familySelectedVariantCreation}
@@ -296,6 +305,7 @@ class Dashboard extends React.PureComponent {
 				>
 					{newFamily}
 					{newVariant}
+					{hostVariantModal}
 					{changeNameFamily}
 					{changeNameVariant}
 					{duplicateVariant}

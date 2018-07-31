@@ -7,6 +7,7 @@ import './AccountValidationButton.story';
 import './Button.story';
 import './PricingItem.story';
 import './CopyPasteInput.story';
+import './HostVariant.story';
 import './TopBarMenu.story';
 import './TopBarMenuButton.story';
 import './TopBarMenuLink.story';
