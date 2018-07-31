@@ -284,7 +284,7 @@ class ArianneThread extends React.PureComponent {
 			<div className="arianne-thread">
 				<RootArianneItem
 					click={() => {
-						this.props.router.push('/library/home');
+						this.showCollection();
 					}}
 				/>
 				{familyItem}
