@@ -48,6 +48,42 @@ const resolverMap = {
 
 			return data;
 		},
+		cards: async (obj, args, {cache}) => {
+			const query = gql`
+				query getStripeId {
+					user {
+						stripe
+					}
+				}
+			`;
+			const {user: {stripe}} = cache.readQuery({query});
+
+			const customer = await fetchAWS(`/customers/${stripe}`);
+			const cards = customer.sources.data.filter(
+				src => src.object === 'card',
+			);
+
+			const data = cards.map((src) => {
+				const card = {
+					__typename: 'StripeCard',
+					...src,
+				};
+
+				// remove warning
+				delete card.metadata;
+
+				return card;
+			});
+
+			cache.writeData({
+				data: {
+					__typename: 'User',
+					cards: data,
+				},
+			});
+
+			return data;
+		},
 		invoices: async (obj, args, {cache}) => {
 			const query = gql`
 				query getStripeIdAndSubscriptionId {

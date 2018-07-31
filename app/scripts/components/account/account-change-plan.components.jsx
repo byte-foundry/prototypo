@@ -1,9 +1,8 @@
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Query, Redirect} from 'react-apollo';
-import {withRouter} from 'react-router';
-import Lifespan from 'lifespan';
+import {Query} from 'react-apollo';
+import {Redirect, withRouter} from 'react-router';
 
 import InputNumber from '../shared/input-number.components';
 import PricingItem from '../shared/pricing-item.components';
@@ -11,7 +10,6 @@ import Button from '../shared/new-button.components';
 import WaitForLoad from '../wait-for-load.components';
 import Dashboard from './account-dashboard.components';
 
-import LocalClient from '../../stores/local-client.stores';
 import getCurrency from '../../helpers/currency.helpers';
 
 import {
@@ -27,8 +25,8 @@ Hi,
 I would like to cancel my subscription to Prototypo.
 `.trim();
 
-const GET_USER_SUBSCRIPTION = gql`
-	query getUserSubscription {
+const GET_SUBSCRIPTION_AND_CARDS = gql`
+	query getSubscriptionAndCards {
 		user {
 			id
 			subscription @client {
@@ -37,6 +35,14 @@ const GET_USER_SUBSCRIPTION = gql`
 				plan {
 					id
 				}
+			}
+			cards @client {
+				id
+				name
+				last4
+				exp_month
+				exp_year
+				country
 			}
 		}
 	}
@@ -47,35 +53,14 @@ class AccountChangePlan extends React.Component {
 		super(props);
 
 		this.state = {
-			loadingCard: true,
+			selection: undefined,
+			selectedPlan: undefined,
+			numberOfUsers: undefined,
 		};
 
 		this.confirmChange = this.confirmChange.bind(this);
 		this.downgrade = this.downgrade.bind(this);
 		this.changeNumberOfUsers = this.changeNumberOfUsers.bind(this);
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				const {cards} = head.toJS().d;
-
-				this.setState({
-					loadingCard: false,
-					currency: getCurrency(cards[0].country),
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
 	}
 
 	confirmChange({subscription: {quantity, plan}}) {
@@ -86,16 +71,16 @@ class AccountChangePlan extends React.Component {
 		const {selectedPlan = initialPlan, numberOfUsers = quantity} = this.state;
 
 		window.Intercom('trackEvent', 'change-plan-select', {
-			plan: selectedPlan,
+			plan: selectedPlan.prefix,
 			quantity,
 		});
 
 		this.props.history.push({
 			pathname: '/account/details/confirm-plan',
-			query: {
-				plan,
+			search: new URLSearchParams({
+				plan: selectedPlan.prefix,
 				quantity: numberOfUsers,
-			},
+			}).toString(),
 		});
 	}
 
@@ -108,14 +93,10 @@ class AccountChangePlan extends React.Component {
 		this.setState({numberOfUsers: parseInt(value, 10)});
 	}
 
-	renderChoices({subscription}) {
+	renderChoices({subscription, currency}) {
 		const {plan, quantity} = subscription;
 		const initialSelection = plan.id.includes('monthly') ? 'monthly' : 'annual';
-		const {
-			currency,
-			numberOfUsers = quantity,
-			selection = initialSelection,
-		} = this.state;
+		const {numberOfUsers = quantity, selection = initialSelection} = this.state;
 
 		const hasTeamPlan
 			= plan.id.includes(teamMonthlyConst.prefix)
@@ -186,11 +167,15 @@ class AccountChangePlan extends React.Component {
 
 	render() {
 		return (
-			<Query query={GET_USER_SUBSCRIPTION}>
+			<Query query={GET_SUBSCRIPTION_AND_CARDS}>
 				{({loading, data: {user}}) => {
 					if (!loading && user && !user.subscription) {
 						return <Redirect to="/account/subscribe" />;
 					}
+
+					const currency = getCurrency(
+						user && user.cards[0] && user.cards[0].country,
+					);
 
 					return (
 						<Dashboard title="Change my plan">
@@ -212,10 +197,13 @@ class AccountChangePlan extends React.Component {
 									</p>
 								</header>
 
-								{loading || this.state.loadingCard ? (
+								{loading ? (
 									<WaitForLoad loading />
 								) : (
-									this.renderChoices(user)
+									this.renderChoices({
+										subscription: user.subscription,
+										currency,
+									})
 								)}
 							</div>
 						</Dashboard>
