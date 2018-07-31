@@ -225,6 +225,7 @@ export function onCurveModification(
 	manualChangeBatcher,
 	glyph,
 	draggedItem,
+	onCurveBasePoints,
 	newPos,
 	appStateValue,
 	modToApply,
@@ -241,22 +242,12 @@ export function onCurveModification(
 	} = draggedItem.data;
 
 	const current = _get(glyph, draggedItem.id);
-	const opposite = _get(glyph, oppositeId);
+	const opposite = onCurveBasePoints.opposite;
+	const currentBase = onCurveBasePoints.current;
 	let posToUse = newPos;
 
-	if (modToApply & onCurveModMode.WIDTH_MOD) {
-		const newBaseVector = normalize2D(
-			subtract2D(
-				{
-					x: current.xBase,
-					y: current.yBase,
-				},
-				{
-					x: opposite.xBase,
-					y: opposite.yBase,
-				},
-			),
-		);
+	if (modToApply & onCurveModMode.WIDTH_MOD && opposite && currentBase) {
+		const newBaseVector = normalize2D(subtract2D(currentBase, opposite));
 		const newBaseAngle = Math.atan2(newBaseVector.y, newBaseVector.x);
 		const translateVector = subtract2D({x: 0, y: 0}, opposite);
 		const translatedPos = add2D(translateVector, newPos);
@@ -273,6 +264,13 @@ export function onCurveModification(
 			x: newBaseProjectedPoint.x * newBaseVector.x,
 			y: newBaseProjectedPoint.x * newBaseVector.y,
 		});
+	}
+
+	if (modToApply & onCurveModMode.ANGLE_MOD && opposite && currentBase) {
+		const previousLength = distance2D(currentBase, opposite);
+		const direction = normalize2D(subtract2D(posToUse, opposite));
+
+		posToUse = add2D(opposite, mulScalar2D(previousLength, direction));
 	}
 
 	const deltaVector = round2D(
@@ -519,6 +517,9 @@ export default class GlyphCanvas extends React.PureComponent {
 
 		// Box select variables
 		let mouseBoxStart;
+
+		// on curve modification width and angle base points
+		let onCurveBasePoints = {};
 
 		const rafFunc = () => {
 			try {
@@ -939,9 +940,18 @@ export default class GlyphCanvas extends React.PureComponent {
 							&& mouse.edge === mState.DOWN
 						) {
 							if (nodes.length > 0) {
-								selectedItems = [nodes[0]];
+								const [currentNode] = nodes;
+
+								selectedItems = [currentNode];
 								appStateValue = appState.DRAGGING_POINTS;
-								mouseStart = nodes[0].data.center;
+								mouseStart = currentNode.data.center;
+								if (currentNode.type === toileType.NODE) {
+									onCurveBasePoints.current = currentNode.data.center;
+									onCurveBasePoints.opposite = _get(
+										glyph,
+										currentNode.data.oppositeId,
+									);
+								}
 								draggingNotStarted = true;
 								directionalNotStarted = true;
 							}
@@ -1084,9 +1094,18 @@ export default class GlyphCanvas extends React.PureComponent {
 							&& mouse.edge === mState.DOWN
 						) {
 							if (nodes.length > 0) {
-								selectedItems = [nodes[0]];
+								const [currentNode] = nodes;
+
+								selectedItems = [currentNode];
 								appStateValue = appState.DRAGGING_POINTS;
-								mouseStart = nodes[0].data.center;
+								mouseStart = currentNode.data.center;
+								if (currentNode.type === toileType.NODE) {
+									onCurveBasePoints.current = currentNode.data.center;
+									onCurveBasePoints.opposite = _get(
+										glyph,
+										currentNode.data.oppositeId,
+									);
+								}
 								draggingNotStarted = true;
 								directionalNotStarted = true;
 							}
@@ -1130,9 +1149,24 @@ export default class GlyphCanvas extends React.PureComponent {
 								if (displacement > MINIMUM_DRAG_THRESHOLD) {
 									draggingNotStarted = false;
 									appStateValue = appState.DRAGGING_POINTS;
-									selectedItems.forEach((item) => {
-										item.offsetVector = subtract2D(
-											item.data.center,
+
+									if (selectedItems.length === 1) {
+										const [currentNode] = selectedItems;
+
+										if (currentNode.type === toileType.NODE) {
+											onCurveBasePoints.current = currentNode.data.center;
+											onCurveBasePoints.opposite = _get(
+												glyph,
+												currentNode.data.oppositeId,
+											);
+										}
+									}
+
+									selectedItems.forEach((selectedItem) => {
+										const item = _get(glyph, selectedItem.id);
+
+										selectedItem.offsetVector = subtract2D(
+											item,
 											preSelection[0].data.center,
 										);
 									});
@@ -1169,9 +1203,23 @@ export default class GlyphCanvas extends React.PureComponent {
 									else {
 										selectedItems = preSelection;
 									}
-									selectedItems.forEach((item) => {
+
+									if (selectedItems.length === 1) {
+										const [currentNode] = selectedItems;
+
+										if (currentNode.type === toileType.NODE) {
+											onCurveBasePoints.current = currentNode.data.center;
+											onCurveBasePoints.opposite = _get(
+												glyph,
+												currentNode.data.oppositeId,
+											);
+										}
+									}
+									selectedItems.forEach(({id}) => {
+										const item = _get(glyph, id);
+
 										item.offsetVector = subtract2D(
-											item.data.center,
+											item,
 											preSelection[0].data.center,
 										);
 									});
@@ -1183,6 +1231,8 @@ export default class GlyphCanvas extends React.PureComponent {
 							&& mouseClickRelease
 						) {
 							appStateValue = appState.POINTS_SELECTED;
+							onCurveBasePoints = {};
+							preSelection = undefined;
 							this.client.dispatchAction('/change-glyph-node-manually', {
 								label: 'manual edition',
 								force: true,
@@ -1636,6 +1686,7 @@ export default class GlyphCanvas extends React.PureComponent {
 									this.manualChangeBatcher,
 									glyph,
 									item,
+									onCurveBasePoints,
 									posModData,
 									appStateValue,
 									curveMode,
