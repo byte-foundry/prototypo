@@ -214,6 +214,7 @@ export default class Toile {
 
 					if (this.keyboardDown.keyCode === keyCode) {
 						this.keyboardUpRisingEdge = eventData;
+						this.keyboardDown = {};
 					}
 
 					this.keyboardUp = eventData;

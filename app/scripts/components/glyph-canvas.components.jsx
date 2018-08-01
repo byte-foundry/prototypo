@@ -527,6 +527,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				let enteringPreview = false;
 				let resetManualPoint = false;
 				let displacementArrow;
+				let supprPressed;
 				let exitingPreview = false;
 				let previewMode = false;
 				let modRange = 1;
@@ -570,6 +571,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				if (this.toile.keyboardDownRisingEdge.keyCode) {
 					const {keyCode, special} = this.toile.keyboardDownRisingEdge;
 
+					console.log(keyCode);
 					// On space edge down keyboard event switch to move mode
 					// whatever the previous mode is
 					if (keyCode === 32) {
@@ -594,6 +596,10 @@ export default class GlyphCanvas extends React.PureComponent {
 							right: keyCode === 39,
 							down: keyCode === 40,
 						};
+					}
+					else if (keyCode === 46 || keyCode === 8) {
+						supprPressed = true;
+						unsmoothMod = true;
 					}
 				}
 
@@ -1522,6 +1528,20 @@ export default class GlyphCanvas extends React.PureComponent {
 								modData: add2D(_get(glyph, item.id), posVector),
 							};
 						});
+					}
+					else if (appStateValue & appState.POINTS_SELECTED && supprPressed) {
+						mouseMovement = false;
+						interactions = selectedItems
+							.filter(item => (
+								item.type === toileType.NODE_OUT
+									|| item.type === toileType.NODE_IN
+									|| item.type === toileType.CONTOUR_NODE_OUT
+									|| item.type === toileType.CONTOUR_NODE_IN
+							))
+							.map(item => ({
+								item,
+								modData: _get(glyph, item.data.parentId),
+							}));
 					}
 					else if (
 						appStateValue
