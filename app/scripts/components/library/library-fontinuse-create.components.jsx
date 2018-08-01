@@ -231,6 +231,7 @@ class LibraryFontInUseCreate extends React.Component {
 							this.setState({
 								fontInUseMetadata: {
 									...this.state.fontInUseMetadata,
+									isModified: true,
 									images: newImages,
 								},
 							});
@@ -243,6 +244,7 @@ class LibraryFontInUseCreate extends React.Component {
 		this.setState({
 			fontInUseMetadata: {
 				...this.state.fontInUseMetadata,
+				isModified: true,
 				images,
 			},
 		});
@@ -255,6 +257,7 @@ class LibraryFontInUseCreate extends React.Component {
 		this.setState({
 			fontInUseMetadata: {
 				...this.state.fontInUseMetadata,
+				isModified: true,
 				images,
 			},
 		});
