@@ -442,7 +442,7 @@ class LibraryFontInUseCreate extends React.Component {
 											: this.createFontInUse();
 									}}
 								>
-									{this.state.isEdit ? 'Edit' : 'Create'} font in use
+									{this.state.isEdit ? 'Save' : 'Create'} font in use
 								</div>
 							)}
 						</form>
