@@ -200,6 +200,7 @@ class LibraryMain extends React.Component {
 					userId={this.props.userId}
 					families={this.props.families}
 					routeParams={this.props.params}
+					favourites={this.props.favourites}
 				/>
 				{React.cloneElement(this.props.children, {
 					activeFilters: this.state.activeFilters,
@@ -341,11 +342,15 @@ const libraryUserQuery = gql`
 			favourites {
 				id
 				type
+				name
 				preset {
 					id
 				}
 				family {
 					id
+					variants {
+						id
+					}
 				}
 				template
 			}

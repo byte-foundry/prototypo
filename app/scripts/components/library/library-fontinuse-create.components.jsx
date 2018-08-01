@@ -482,12 +482,16 @@ const libraryUserQuery = gql`
 			}
 			favourites {
 				id
+				name
 				type
 				preset {
 					id
 				}
 				family {
 					id
+					variants {
+						id
+					}
 				}
 				template
 			}

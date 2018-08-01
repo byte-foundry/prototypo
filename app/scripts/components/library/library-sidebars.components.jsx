@@ -4,6 +4,14 @@ import {Link} from 'react-router';
 import LocalClient from '../../stores/local-client.stores';
 
 export class LibrarySidebarLeft extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			isPersonalOpened: false,
+			isTeamOpened: false,
+			isFavoritesOpened: false,
+		};
+	}
 	render() {
 		const subUserLibrary = [];
 
@@ -24,7 +32,8 @@ export class LibrarySidebarLeft extends React.Component {
 				}`}
 			>
 				<Link to={`/library/project/${f.id}`}>
-					{f.name} ({f.variants.length})
+					<span>{f.name}</span>{' '}
+					<span className="small">({f.variants.length})</span>
 				</Link>
 			</p>
 		));
@@ -35,7 +44,9 @@ export class LibrarySidebarLeft extends React.Component {
 			subUsersProjects = subUsersProjects.slice(0, 9);
 			subUsersProjects.push(
 				<p className="sidebar-left-project">
-					And {initialsubUsersProjectsLength - 9} more...
+					<Link to="/library/home?mode=team">
+						And {initialsubUsersProjectsLength - 9} more...
+					</Link>
 				</p>,
 			);
 		}
@@ -61,7 +72,8 @@ export class LibrarySidebarLeft extends React.Component {
 						}`}
 					>
 						<Link to={`/library/project/${family.id}`}>
-							{family.name} ({family.variants.length})
+							<span>{family.name}</span>{' '}
+							<span className="small">({family.variants.length})</span>
 						</Link>
 					</p>,
 				);
@@ -72,9 +84,9 @@ export class LibrarySidebarLeft extends React.Component {
 
 			userProjects = userProjects.slice(0, 9);
 			userProjects.push(
-				<p className="sidebar-left-project">
+				<Link to="/library/home?mode=personnal">
 					And {initialuserProjectsLength - 9} more...
-				</p>,
+				</Link>,
 			);
 		}
 
@@ -86,6 +98,59 @@ export class LibrarySidebarLeft extends React.Component {
 				&& this.props.families
 				&& this.props.families.find(
 					e => e.id === this.props.routeParams.projectID,
+				));
+
+		let userFavourites = [];
+
+		this.props.favourites
+			&& this.props.favourites.forEach((abstractedFont) => {
+				userFavourites.push(
+					<p
+						className={`sidebar-left-project ${
+							this.props.routeParams
+							&& abstractedFont.type === 'Family'
+							&& abstractedFont.family.id === this.props.routeParams.projectID
+								? 'active'
+								: ''
+						}`}
+					>
+						{abstractedFont.type === 'Family' ? (
+							<Link to={`/library/project/${abstractedFont.family.id}`}>
+								<span>{abstractedFont.name}</span>{' '}
+								<span className="small">
+									({abstractedFont.family.variants.length})
+								</span>
+							</Link>
+						) : (
+							<Link to="/library/home?mode=favorites">
+								<span>{abstractedFont.name}</span>{' '}
+							</Link>
+						)}
+					</p>,
+				);
+			});
+
+		if (userFavourites.length > 9) {
+			const initialuserFavouritesLength = userFavourites.length;
+
+			userFavourites = userFavourites.slice(0, 9);
+			userFavourites.push(
+				<Link to="/library/home?mode=personnal">
+					And {initialuserFavouritesLength - 9} more...
+				</Link>,
+			);
+		}
+
+		const isUserFavouritesActive
+			= (this.props.location.pathname === '/library/home'
+				&& this.props.location.query.mode
+				&& this.props.location.query.mode === 'favorites')
+			|| (this.props.routeParams
+				&& this.props.favourites
+				&& this.props.favourites.find(
+					e =>
+						e.type === 'Family'
+						&& e.family.id === this.props.routeParams.projectID,
 				));
 
 		return (
@@ -113,50 +178,82 @@ export class LibrarySidebarLeft extends React.Component {
 											: ''
 									}`}
 								>
-									<span> > </span>All
+									<span className="library-link-arrow hidden">▶</span>All
 								</Link>
 							</div>
 							<div>
-								<Link
-									to="/library/home?mode=personnal"
+								<p
 									className={`library-link ${
 										isUserProjectActive ? 'active' : ''
 									}`}
 								>
-									<span> > </span>Personal library
-								</Link>
-								{userProjects}
+									<span
+										className={`library-link-arrow ${
+											this.state.isPersonalOpened ? 'active' : ''
+										}`}
+										onClick={() => {
+											this.setState({
+												isPersonalOpened: !this.state.isPersonalOpened,
+											});
+										}}
+									>
+										▶
+									</span>{' '}
+									<Link to="/library/home?mode=personnal">
+										Personal library
+									</Link>
+								</p>
+								{this.state.isPersonalOpened && userProjects}
 							</div>
 							{this.props.subUsers
 								&& this.props.subUsers.length > 0 && (
 								<div>
-									<Link
-										to="/library/home?mode=team"
+									<p
 										className={`library-link ${
 											isSubUserActive ? 'active' : ''
 										}`}
 									>
-										<span> > </span>Team library
-									</Link>
-									{subUsersProjects}
+										<span
+											className={`library-link-arrow ${
+												this.state.isTeamOpened ? 'active' : ''
+											}`}
+											onClick={() => {
+												this.setState({
+													isTeamOpened: !this.state.isTeamOpened,
+												});
+											}}
+										>
+												▶
+										</span>{' '}
+										<Link to="/library/home?mode=team">Team library</Link>
+									</p>
+									{this.state.isTeamOpened && subUsersProjects}
 								</div>
 							)}
 						</div>
 						<hr />
 						<div className="library-links">
 							<div>
-								<Link
-									to="/library/home?mode=favorites"
+								<p
 									className={`library-link ${
-										this.props.location.pathname === '/library/home'
-										&& this.props.location.query.mode
-										&& this.props.location.query.mode === 'favorites'
-											? 'active'
-											: ''
+										isUserFavouritesActive ? 'active' : ''
 									}`}
 								>
-									<span> > </span>Favorites
-								</Link>
+									<span
+										className={`library-link-arrow ${
+											this.state.isFavoritesOpened ? 'active' : ''
+										}`}
+										onClick={() => {
+											this.setState({
+												isFavoritesOpened: !this.state.isFavoritesOpened,
+											});
+										}}
+									>
+										▶
+									</span>{' '}
+									<Link to="/library/home?mode=favorites">Favorites</Link>
+								</p>
+								{this.state.isFavoritesOpened && userFavourites}
 							</div>
 							<div>
 								<Link
@@ -167,7 +264,8 @@ export class LibrarySidebarLeft extends React.Component {
 											: ''
 									}`}
 								>
-									<span> > </span>Fonts in use
+									<span className="library-link-arrow hidden">▶</span>Fonts in
+									use
 								</Link>
 							</div>
 						</div>
