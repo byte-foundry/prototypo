@@ -295,6 +295,9 @@ class LibrarySee extends React.Component {
 						mode="see"
 						isPersonnal={this.state.isPersonnal}
 					/>
+					<Link className="sidebar-action" to="/library/fontinuse/create">
+						Add fontsinuse
+					</Link>
 					{this.state.templateValues && (
 						<FamilySidebarGlyphs glyphs={this.state.templateValues.glyphs} />
 					)}
