@@ -310,6 +310,7 @@ class LibraryFontInUseCreate extends React.Component {
 									type="text"
 									id="name"
 									name="user_name"
+									placeholder="Designer name"
 									value={this.state.fontInUseMetadata.designer}
 									onChange={(e) => {
 										this.updateFontInUseData(e, 'designer');
@@ -322,6 +323,7 @@ class LibraryFontInUseCreate extends React.Component {
 									type="text"
 									id="name"
 									name="user_name"
+									placeholder="Designer website"
 									value={this.state.fontInUseMetadata.designerUrl}
 									onChange={(e) => {
 										this.updateFontInUseData(e, 'designerUrl');
@@ -334,6 +336,7 @@ class LibraryFontInUseCreate extends React.Component {
 									type="text"
 									id="name"
 									name="user_name"
+									placeholder="Client name"
 									value={this.state.fontInUseMetadata.client}
 									onChange={(e) => {
 										this.updateFontInUseData(e, 'client');
@@ -346,6 +349,7 @@ class LibraryFontInUseCreate extends React.Component {
 									type="text"
 									id="name"
 									name="user_name"
+									placeholder="Client url"
 									value={this.state.fontInUseMetadata.clientUrl}
 									onChange={(e) => {
 										this.updateFontInUseData(e, 'clientUrl');
@@ -371,6 +375,7 @@ class LibraryFontInUseCreate extends React.Component {
 									id="name"
 									name="user_name"
 									autoComplete="off"
+									placeholder="Type your font name..."
 									className={`${
 										this.state.autocompleteSuggestions.length > 0
 											? 'opened'
