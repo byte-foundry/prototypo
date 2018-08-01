@@ -1,12 +1,8 @@
 import gql from 'graphql-tag';
 import React from 'react';
-import Lifespan from 'lifespan';
-import moment from 'moment';
 import {Link} from 'react-router-dom';
 import uniqWith from 'lodash/uniqWith';
 import {graphql} from 'react-apollo';
-
-import LocalClient from '../../stores/local-client.stores';
 
 import getCurrency from '../../helpers/currency.helpers';
 import HoodieApi from '../../services/hoodie.services';
@@ -19,51 +15,11 @@ import Button from '../shared/new-button.components';
 import WaitForLoad from '../wait-for-load.components';
 
 export class AccountSubscription extends React.PureComponent {
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			cards: [],
-		};
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				const {cards} = head.toJS().d;
-
-				this.setState({
-					cards,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client
-			.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					credits: head.toJS().d.credits,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
 	render() {
-		const {cards, credits} = this.state;
 		const {
 			loading,
+			cards,
+			credits,
 			subscription,
 			manager,
 			acceptManager,
@@ -173,7 +129,15 @@ export class AccountSubscription extends React.PureComponent {
 			</div>
 		);
 
+		const formatter = new Intl.DateTimeFormat('en-US');
+		const trialEnd = formatter.format(
+			new Date(subscription.current_period_end * 1000),
+		);
+		const currentPeriodEnd = formatter.format(
+			new Date(subscription.current_period_end * 1000),
+		);
 		const {plan} = subscription || {};
+
 		const content = plan ? (
 			<div>
 				<div className="account-subscription-plan">
@@ -183,15 +147,12 @@ export class AccountSubscription extends React.PureComponent {
 							<span> x{subscription.quantity}</span>
 						)}
 						{subscription.status === 'trialing' && (
-							<span className="badge">
-								trial until {moment.unix(subscription.trial_end).format('L')}
-							</span>
+							<span className="badge">trial until {trialEnd}</span>
 						)}
 						{subscription.status !== 'trialing'
 							&& subscription.cancel_at_period_end && (
 							<span className="badge danger">
-									cancels on{' '}
-								{moment.unix(subscription.current_period_end).format('L')}
+									cancels on {currentPeriodEnd}
 							</span>
 						)}
 					</DisplayWithLabel>
@@ -199,29 +160,22 @@ export class AccountSubscription extends React.PureComponent {
 				{subscription.cancel_at_period_end && (
 					<p>
 						Your subscription has been canceled and will automatically end on{' '}
-						<strong>
-							{moment.unix(subscription.current_period_end).format('L')}
-						</strong>.
+						<strong>{currentPeriodEnd}</strong>.
 					</p>
 				)}
 				{!subscription.cancel_at_period_end
 					&& cards.length < 1 && (
 					<p>
 							Your subscription will be canceled on{' '}
-						<strong>
-							{moment.unix(subscription.current_period_end).format('L')}
-						</strong>{' '}
-							because you don't have any card registered.
+						<strong>{currentPeriodEnd}</strong> because you don't have any
+							card registered.
 					</p>
 				)}
 				{!subscription.cancel_at_period_end
 					&& cards.length > 1 && (
 					<p>
 							Your subscription will automatically renew on{' '}
-						<strong>
-							{moment.unix(subscription.current_period_end).format('L')}{' '}
-						</strong>
-							and you will be charged{' '}
+						<strong>{currentPeriodEnd}</strong> and you will be charged{' '}
 						<strong>
 							<Price amount={plan.amount / 100} currency={currency} />
 						</strong>.
@@ -286,6 +240,15 @@ const query = gql`
 					currency
 				}
 			}
+			cards @client {
+				id
+				fingerprint
+				last4
+				exp_month
+				exp_year
+				country
+			}
+			credits @client
 			manager {
 				id
 				email
@@ -304,11 +267,20 @@ export default graphql(query, {
 			return {loading: true};
 		}
 
-		const {id, manager, pendingManager} = data.user;
+		const {
+			id,
+			manager,
+			pendingManager,
+			subscription,
+			cards,
+			credits,
+		} = data.user;
 		const possibleManager = manager || pendingManager;
 
 		return {
-			subscription: data.user.subscription,
+			cards,
+			credits,
+			subscription,
 			manager: possibleManager && {
 				email: possibleManager.email,
 				pending: !manager && !!pendingManager,
