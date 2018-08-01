@@ -106,6 +106,23 @@ const resolverMap = {
 
 			return credits;
 		},
+		hasBeenSubscribing: async (obj, args, {cache}) => {
+			const query = gql`
+				query getStripeId {
+					user {
+						stripe
+					}
+				}
+			`;
+			const {user: {stripe}} = cache.readQuery({query});
+
+			const customer = await fetchAWS(`/customers/${stripe}`);
+			const {hasBeenSubscribing = false} = customer.metadata;
+
+			cache.writeData({data: hasBeenSubscribing});
+
+			return hasBeenSubscribing;
+		},
 		invoices: async (obj, args, {cache}) => {
 			const query = gql`
 				query getStripeIdAndSubscriptionId {

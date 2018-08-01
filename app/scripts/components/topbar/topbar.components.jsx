@@ -97,17 +97,6 @@ class Topbar extends React.Component {
 				this.setState(undefined);
 			});
 
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					hasBeenSubscribing: head.toJS().d.hasBeenSubscribing,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
 		const creditChoices = await this.client.fetch('/creditStore');
 
 		this.setState({

@@ -210,14 +210,12 @@ export default class SubscriptionSidebar extends React.PureComponent {
 SubscriptionSidebar.propTypes = {
 	plan: PropTypes.string.isRequired,
 	quantity: PropTypes.number,
-	hasBeenSubscribing: PropTypes.bool,
 	percentPrice: PropTypes.number,
 	onChangePlan: PropTypes.func,
 };
 
 SubscriptionSidebar.defaultProps = {
 	quantity: 1,
-	hasBeenSubscribing: false,
 	percentPrice: 1,
 	onChangePlan: () => {},
 };

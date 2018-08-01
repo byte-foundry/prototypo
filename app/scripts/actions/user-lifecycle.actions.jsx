@@ -113,7 +113,6 @@ export default {
 		const userPatch = userStore
 			.set('subscription', subscriptions.data[0])
 			.set('cards', sources.data)
-			.set('hasBeenSubscribing', metadata.hasBeenSubscribing || false)
 			.commit();
 
 		const creditsPatch = prototypoStore
@@ -153,7 +152,6 @@ export default {
 		const userPatch = userStore
 			.set('subscription', undefined)
 			.set('cards', undefined)
-			.set('hasBeenSubscribing', undefined)
 			.commit();
 
 		localServer.dispatchUpdate('/userStore', userPatch);
@@ -259,7 +257,6 @@ export default {
 	'/confirm-buy': async ({plan, card, pathname, quantity}) => {
 		const form = userStore.get('confirmation');
 
-		const hasBeenSubscribing = userStore.get('hasBeenSubscribing');
 		const coupon = userStore.get('choosePlanForm').couponValue;
 		const validCoupon = userStore.get('choosePlanForm').validCoupon;
 		const {fullname, number, expMonth, expYear, cvc} = card || {};
@@ -310,7 +307,6 @@ export default {
 
 			const patch = userStore
 				.set('confirmation', form)
-				.set('hasBeenSubscribing', 'true')
 				.commit();
 
 			const transacId = `${plan}_${data.id}`;

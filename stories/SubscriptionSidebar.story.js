@@ -12,9 +12,6 @@ storiesOf('account/SubscriptionSidebar', module)
 	.add('personal_monthly', () => (
 		<SubscriptionSidebar plan="personal_monthly" />
 	))
-	.add('personal_monthly (no first month offer)', () => (
-		<SubscriptionSidebar plan="personal_monthly" hasBeenSubscribing />
-	))
 	.add('personal_annual_99', () => (
 		<SubscriptionSidebar plan="personal_annual_99" />
 	))
