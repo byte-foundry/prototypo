@@ -123,7 +123,7 @@ export class LibrarySidebarLeft extends React.Component {
 										isUserProjectActive ? 'active' : ''
 									}`}
 								>
-									<span> > </span>Personnal library
+									<span> > </span>Personal library
 								</Link>
 								{userProjects}
 							</div>
