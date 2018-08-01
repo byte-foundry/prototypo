@@ -2,11 +2,8 @@ import gql from 'graphql-tag';
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Lifespan from 'lifespan';
 import {Link} from 'react-router-dom';
 import {graphql} from 'react-apollo';
-
-import LocalClient from '../../stores/local-client.stores';
 
 import Dashboard from './account-dashboard.components';
 import CopyPasteInput from '../shared/copy-paste-input.components';
@@ -26,33 +23,11 @@ class AccountPrototypoLibrary extends React.PureComponent {
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	componentWillMount() {
-		this.lifespan = new Lifespan();
-		this.client = LocalClient.instance();
-
-		this.client
-			.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				const {credits} = head.toJS().d;
-
-				this.setState({
-					credits,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.user && !nextProps.user.accessToken) {
 			// there's no access token yet
 			this.props.createAccessToken();
 		}
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
 	}
 
 	async handleSubmit(e) {
@@ -78,8 +53,8 @@ class AccountPrototypoLibrary extends React.PureComponent {
 	};
 
 	render() {
-		const {loading, user, domains, token, subscription} = this.props;
-		const {credits, loadingUpdate} = this.state;
+		const {loading, user, credits, domains, token, subscription} = this.props;
+		const {loadingUpdate} = this.state;
 
 		const freeAccount
 			= !this.props.isManagedAccount
@@ -170,7 +145,7 @@ class AccountPrototypoLibrary extends React.PureComponent {
 			<Dashboard title="Welcome developers!">
 				<div className="account-base account-prototypo-library">
 					<h1>Documentation</h1>
-					<div>
+					<p>
 						Check out the{' '}
 						<a
 							className="account-link"
@@ -183,8 +158,11 @@ class AccountPrototypoLibrary extends React.PureComponent {
 						to learn how to use the prototypo library.<br />To use the library
 						you will need the token under here and you'll also need to add the
 						domain name where you'll want to use the library.
-					</div>
-					<WaitForLoad loading={(!user || !user.accessToken) && loading}>
+					</p>
+					<WaitForLoad
+						loading={(!user || !user.accessToken) && loading}
+						size="big"
+					>
 						{freeAccountAndHasCredits || !freeAccount
 							? payingContent
 							: freeContent}
@@ -208,6 +186,7 @@ const query = gql`
 	query getAccessToken {
 		user {
 			id
+			credits @client
 			subscription @client {
 				id
 				plan {
