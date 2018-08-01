@@ -45,7 +45,8 @@ const OnboardingStep = ({
 
 					return (
 						sliderData
-							&& !sliderData.disabled && (
+						&& values
+						&& !sliderData.disabled && (
 							<OnboardingSlider
 								key={sliderData.name}
 								label={sliderData.label}
