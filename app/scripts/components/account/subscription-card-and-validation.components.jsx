@@ -33,7 +33,6 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 			couponError: null,
 			inError: {},
 			errors: [],
-			hasBeenSubscribing: false,
 			firstTimeCheck: false,
 		};
 
