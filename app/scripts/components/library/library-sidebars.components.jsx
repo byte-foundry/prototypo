@@ -182,7 +182,10 @@ export class LibrarySidebarRight extends React.Component {
 	render() {
 		return (
 			<div className="library-sidebar-right">
-				<Link to="/account/home" className="sidebar-action">
+				<Link
+					to="/account/home"
+					className="sidebar-action sidebar-action-account"
+				>
 					My account
 				</Link>
 				{this.props.children}

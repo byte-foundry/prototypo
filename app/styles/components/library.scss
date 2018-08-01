@@ -110,6 +110,13 @@
 					color: white;
 				}
 			}
+			.sidebar-action-account {
+				border-color: $green;
+				color: $dark-grey;
+				&:hover {
+					background: $green;
+				}
+			}
 			.sidebar-glyphs {
 				.sidebar-glyphs-title {
 					margin-top: 40px;
