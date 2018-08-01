@@ -400,7 +400,9 @@ class OnboardingApp extends React.PureComponent {
 								)}
 								<Button
 									className="create"
-									disabled={this.state.familyName === ''}
+									disabled={
+										this.state.familyName === '' || this.state.parameters === []
+									}
 									onClick={() => {
 										this.createProject();
 									}}

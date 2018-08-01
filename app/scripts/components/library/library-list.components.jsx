@@ -455,14 +455,48 @@ class LibraryList extends React.Component {
 			= fontsToDisplay
 			&& fontsToDisplay.filter(
 				font =>
-					font.template.toLowerCase().includes(searchString.toLowerCase())
+					font.template
+						.toLowerCase()
+						.normalize('NFD')
+						.replace(/[\u0300-\u036f]/g, '')
+						.includes(
+							searchString
+								.toLowerCase()
+								.normalize('NFD')
+								.replace(/[\u0300-\u036f]/g, ''),
+						)
 					|| font.templateName
 						.toLowerCase()
-						.includes(searchString.toLowerCase())
-					|| font.name.toLowerCase().includes(searchString.toLowerCase())
+						.normalize('NFD')
+						.replace(/[\u0300-\u036f]/g, '')
+						.includes(
+							searchString
+								.toLowerCase()
+								.normalize('NFD')
+								.replace(/[\u0300-\u036f]/g, ''),
+						)
+					|| font.name
+						.toLowerCase()
+						.normalize('NFD')
+						.replace(/[\u0300-\u036f]/g, '')
+						.includes(
+							searchString
+								.toLowerCase()
+								.normalize('NFD')
+								.replace(/[\u0300-\u036f]/g, ''),
+						)
 					|| (font.tags
 						&& font.tags.find(e =>
-							e.toLowerCase().includes(searchString.toLowerCase()),
+							e
+								.toLowerCase()
+								.normalize('NFD')
+								.replace(/[\u0300-\u036f]/g, '')
+								.includes(
+									searchString
+										.toLowerCase()
+										.normalize('NFD')
+										.replace(/[\u0300-\u036f]/g, ''),
+								),
 						)),
 			);
 
