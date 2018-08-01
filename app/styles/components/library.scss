@@ -5,6 +5,10 @@
 		display: flex;
 		flex-direction: row;
 		align-items: stretch;
+
+		.modal {
+			background-color: transparentize($dark-grey, 0.5);
+		}
 		.library-sidebar-left {
 			background: $dark-grey;
 			color: #eee;
