@@ -209,7 +209,7 @@ class LibraryList extends React.Component {
 				fontName: `user${family.id}`,
 				isFromTeam,
 				favourite: favourites.find(
-					f => f.type === 'Family' && f.family.id === family.id,
+					f => f.type === 'Family' && f.family && f.family.id === family.id,
 				),
 				updateFavourites: this.updateFavourites,
 			};
@@ -591,8 +591,37 @@ class LibraryList extends React.Component {
 	render() {
 		return (
 			<div className="library-content-wrapper">
-				<div className="library-list">
-					<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
+				<div className="library-list library-see">
+					{this.state.fontsToDisplay
+					&& this.state.fontsToDisplay.length === 0 ? (
+							<div>
+								<div className="library-see-title">There is nothing here!</div>
+								<div className="library-see-description">
+									<p>
+										{this.props.location.query.mode === 'personnal' ? (
+											<span>
+											Dive into Prototypo by creating your first project with
+											our templates or Unique presets
+											</span>
+										) : (
+											<span>
+											You have not starred any fonts yet. Simply click on the
+											star icon to tag fonts as your favorites in your library.
+											</span>
+										)}
+									</p>
+									<p>
+										{this.props.location.query.mode === 'personnal' ? (
+											<Link to="/library/create">Create your font now</Link>
+										) : (
+											<Link to="/library/home">Back to the list</Link>
+										)}
+									</p>
+								</div>
+							</div>
+						) : (
+							<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
+						)}
 				</div>
 				<LibrarySidebarRight>
 					<LibrarySearch />

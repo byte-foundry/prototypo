@@ -104,30 +104,32 @@ export class LibrarySidebarLeft extends React.Component {
 
 		this.props.favourites
 			&& this.props.favourites.forEach((abstractedFont) => {
-				userFavourites.push(
-					<p
-						className={`sidebar-left-project ${
-							this.props.routeParams
-							&& abstractedFont.type === 'Family'
-							&& abstractedFont.family.id === this.props.routeParams.projectID
-								? 'active'
-								: ''
-						}`}
-					>
-						{abstractedFont.type === 'Family' ? (
-							<Link to={`/library/project/${abstractedFont.family.id}`}>
-								<span>{abstractedFont.name}</span>{' '}
-								<span className="small">
-									({abstractedFont.family.variants.length})
-								</span>
-							</Link>
-						) : (
-							<Link to="/library/home?mode=favorites">
-								<span>{abstractedFont.name}</span>{' '}
-							</Link>
-						)}
-					</p>,
-				);
+				if (abstractedFont.type !== 'Family' || abstractedFont.family) {
+					userFavourites.push(
+						<p
+							className={`sidebar-left-project ${
+								this.props.routeParams
+								&& abstractedFont.type === 'Family'
+								&& abstractedFont.family.id === this.props.routeParams.projectID
+									? 'active'
+									: ''
+							}`}
+						>
+							{abstractedFont.type === 'Family' ? (
+								<Link to={`/library/project/${abstractedFont.family.id}`}>
+									<span>{abstractedFont.name}</span>{' '}
+									<span className="small">
+										({abstractedFont.family.variants.length})
+									</span>
+								</Link>
+							) : (
+								<Link to="/library/home?mode=favorites">
+									<span>{abstractedFont.name}</span>{' '}
+								</Link>
+							)}
+						</p>,
+					);
+				}
 			});
 
 		if (userFavourites.length > 9) {
@@ -150,6 +152,7 @@ export class LibrarySidebarLeft extends React.Component {
 				&& this.props.favourites.find(
 					e =>
 						e.type === 'Family'
+						&& e.family
 						&& e.family.id === this.props.routeParams.projectID,
 				));
 

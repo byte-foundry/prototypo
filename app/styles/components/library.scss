@@ -226,6 +226,18 @@
 				padding-right: 40px;
 				width: calc(100vw - 500px);
 			}
+	
+			.library-see-description {
+				position: relative;
+				font-size: 18px;
+				padding-left: 40px;
+				padding-right: 40px;
+				margin-top: 35px;
+				max-width: 850px;
+ 				a {
+					border-bottom: 1px solid $dark-grey;
+				}
+			}
 
 			.library-item-variant-actions {
 				background: $dark-grey;

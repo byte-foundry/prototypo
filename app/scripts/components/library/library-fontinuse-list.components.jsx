@@ -40,7 +40,25 @@ export default class LibraryFontsInUseList extends React.Component {
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">
-					<div className="library-see-title">Fonts in use</div>
+					{this.props.fontInUses.length === 0 ? (
+						<div>
+							<div className="library-see-title">No fonts in use yet.</div>
+							<div className="library-see-description">
+								<p>
+									Create a font in use to keep track of your work and get easy
+									access to the fonts you used.
+								</p>
+								<p>
+									<Link to="/library/fontinuse/create">
+										Create a font in use
+									</Link>
+								</p>
+							</div>
+						</div>
+					) : (
+						<div className="library-see-title">Fonts in use</div>
+					)}
+
 					<div className="library-fontinuse-list">
 						{this.props.fontInUses
 							&& this.props.fontInUses.map(fontInUse => (
