@@ -87,7 +87,7 @@ export class LibrarySidebarLeft extends React.Component {
 				<p className="sidebar-left-project">
 					<Link to="/library/home?mode=personnal">
 						And {initialuserProjectsLength - 9} more...
-					</Link>,
+					</Link>
 				</p>,
 			);
 		}
@@ -139,9 +139,11 @@ export class LibrarySidebarLeft extends React.Component {
 
 			userFavourites = userFavourites.slice(0, 9);
 			userFavourites.push(
-				<Link to="/library/home?mode=personnal">
-					And {initialuserFavouritesLength - 9} more...
-				</Link>,
+				<p className="sidebar-left-project">
+					<Link to="/library/home?mode=personnal">
+						And {initialuserFavouritesLength - 9} more...
+					</Link>
+				</p>,
 			);
 		}
 
