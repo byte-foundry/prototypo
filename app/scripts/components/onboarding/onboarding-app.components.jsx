@@ -721,7 +721,7 @@ export default compose(
 				mutate({
 					variables: {
 						id,
-						values: JSON.stringify(values),
+						values,
 					},
 				}),
 		}),
@@ -732,7 +732,7 @@ export default compose(
 					f => f.id === updateVariant.family.id,
 				).variants[0];
 
-				variant.values = JSON.parse(updateVariant.values);
+				variant.values = updateVariant.values;
 				store.writeQuery({
 					query: libraryQuery,
 					data,

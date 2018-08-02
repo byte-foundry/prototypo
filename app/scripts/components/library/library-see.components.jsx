@@ -83,20 +83,21 @@ class LibrarySee extends React.Component {
 	async componentWillMount() {
 		this.client = LocalClient.instance();
 		const prototypoStore = await this.client.fetch('/prototypoStore');
-		const templateValues = prototypoStore.head
-			.toJS()
-			.templatesData.find(e => e.name === this.state.family.template);
-		const templateName = prototypoStore.head
-			.toJS()
-			.templateList.find(
-				template => template.templateName === this.state.family.template,
-			).templateName;
+		const templatesData = prototypoStore.head.toJS().templatesData;
+		const templateList = prototypoStore.head.toJS().templateList;
 
-		this.generateVariants(templateValues, templateName);
+		this.setState({templatesData, templateList});
+		this.generateVariants(this.state.family);
 	}
 
-	generateVariants(templateValues, templateName, newFamily) {
+	generateVariants(newFamily) {
 		const family = newFamily || this.state.family;
+		const templateValues = this.state.templatesData.find(
+			e => e.name === family.template,
+		);
+		const templateName = this.state.templateList.find(
+			template => template.templateName === family.template,
+		).templateName;
 		const fontsToGenerate = [];
 
 		const variants = family.variants.map(variant => ({
@@ -106,15 +107,15 @@ class LibrarySee extends React.Component {
 			subset: 'Hamburgefonstiv 123',
 			values: {
 				...templateValues.initValues,
-				...variant.values,
+				...(typeof variant.values === 'object'
+					? variant.values
+					: JSON.parse(variant.values)),
 			},
 			glyphs: templateValues.glyphs,
 		}));
 
 		this.setState({
 			variants,
-			templateValues,
-			templateName,
 		});
 	}
 
@@ -161,11 +162,7 @@ class LibrarySee extends React.Component {
 				isPersonnal: !!family,
 			});
 
-			this.generateVariants(
-				this.state.templateValues,
-				this.state.templateName,
-				family || teamProject,
-			);
+			this.generateVariants(family || teamProject);
 		}
 		if (this.props.params.projectID !== newProps.params.projectID) {
 			const family = this.props.families.find(
@@ -188,11 +185,7 @@ class LibrarySee extends React.Component {
 				family: family || teamProject,
 				isPersonnal: !!family,
 			});
-			this.generateVariants(
-				this.state.templateValues,
-				this.state.templateName,
-				family || teamProject,
-			);
+			this.generateVariants(family || teamProject);
 		}
 	}
 
@@ -425,7 +418,11 @@ export class VariantItem extends React.Component {
 						)}
 						<FontUpdater
 							name={this.props.variant.fontName}
-							values={this.props.variant.values}
+							values={
+								typeof this.props.variant.values === 'object'
+									? this.props.variant.values
+									: JSON.parse(this.props.variant.values)
+							}
 							template={this.props.variant.templateName}
 							subset="Hamburgefonstiv 123"
 							glyph="0"

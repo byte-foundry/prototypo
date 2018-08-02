@@ -199,7 +199,9 @@ class LibraryList extends React.Component {
 				glyphs: templateData.glyphs,
 				values: {
 					...templateData.initValues,
-					...variantToLoad.values,
+					...(typeof variantToLoad.values === 'object'
+						? variantToLoad.values
+						: JSON.parse(variantToLoad.values)),
 				},
 				variantName: variantToLoad.name.toLowerCase(),
 				click: this.selectFont,
@@ -302,6 +304,7 @@ class LibraryList extends React.Component {
 				});
 		const allTags = [];
 
+		console.log(families);
 		families
 			&& this.state.templateInfos
 			&& families.forEach((family) => {
@@ -788,6 +791,7 @@ export class FamilyItem extends React.Component {
 	}
 
 	render() {
+		console.log(this.props.values);
 		return (
 			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
