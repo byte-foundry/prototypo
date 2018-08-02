@@ -360,8 +360,17 @@ const libraryUserQuery = gql`
 
 export const presetQuery = gql`
 	query {
-		getAllUniquePresets {
-			presets
+		allPresets(filter: {published: true}) {
+			id
+			ownerInitials
+			variant {
+				name
+				family {
+					name
+				}
+			}
+			template
+			baseValues
 		}
 	}
 `;
@@ -591,9 +600,9 @@ export default compose(
 				return {loading: true};
 			}
 
-			if (data.getAllUniquePresets) {
+			if (data.allPresets) {
 				return {
-					presets: data.getAllUniquePresets.presets,
+					presets: data.allPresets,
 				};
 			}
 		},
