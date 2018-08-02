@@ -84,9 +84,11 @@ export class LibrarySidebarLeft extends React.Component {
 
 			userProjects = userProjects.slice(0, 9);
 			userProjects.push(
-				<Link to="/library/home?mode=personnal">
-					And {initialuserProjectsLength - 9} more...
-				</Link>,
+				<p className="sidebar-left-project">
+					<Link to="/library/home?mode=personnal">
+						And {initialuserProjectsLength - 9} more...
+					</Link>,
+				</p>,
 			);
 		}
 
