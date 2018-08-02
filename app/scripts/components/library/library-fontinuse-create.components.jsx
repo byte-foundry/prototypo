@@ -776,17 +776,19 @@ export default compose(
 				);
 			},
 		}),
-		update: (store, {data: {deleteFontInUse}}) => {
-			const data = store.readQuery({query: libraryUserQuery});
+		options: {
+			update: (store, {data: {deleteFontInUse}}) => {
+				const data = store.readQuery({query: libraryUserQuery});
 
-			data.user.fontInUses.splice(
-				data.user.fontInUses.findIndex(f => f.id === deleteFontInUse.id),
-				1,
-			);
-			store.writeQuery({
-				query: libraryUserQuery,
-				data,
-			});
+				data.user.fontInUses.splice(
+					data.user.fontInUses.findIndex(f => f.id === deleteFontInUse.id),
+					1,
+				);
+				store.writeQuery({
+					query: libraryUserQuery,
+					data,
+				});
+			},
 		},
 	}),
 )(LibraryFontInUseCreate);
