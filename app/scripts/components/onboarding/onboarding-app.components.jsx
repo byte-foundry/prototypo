@@ -35,6 +35,7 @@ class OnboardingApp extends React.PureComponent {
 		this.getPreviousStep = this.getPreviousStep.bind(this);
 		this.changeParam = this.changeParam.bind(this);
 		this.createProject = this.createProject.bind(this);
+		this.finishOnboarding = this.finishOnboarding.bind(this);
 	}
 
 	componentWillMount() {
@@ -90,6 +91,14 @@ class OnboardingApp extends React.PureComponent {
 		if (this.state.step + 1 < onboardingData.steps.length) {
 			this.setState({step: this.state.step + 1});
 		}
+	}
+
+	finishOnboarding() {
+		this.props.updateVariant(
+			this.state.family.variants[0].id,
+			this.state.values,
+		);
+		this.props.router.push('/dashboard');
 	}
 
 	getPreviousStep() {
@@ -433,7 +442,7 @@ class OnboardingApp extends React.PureComponent {
 									if (this.state.parameters !== []) {
 										this.state.step < onboardingData.steps.length - 1
 											? this.getNextStep()
-											: this.props.router.push('/dashboard');
+											: this.finishOnboarding();
 									}
 								}}
 							>
@@ -507,6 +516,18 @@ export const libraryQuery = gql`
 					weight
 					italic
 				}
+			}
+		}
+	}
+`;
+
+const updateVariantMutation = gql`
+	mutation updateVariant($id: ID!, $values: Json) {
+		updateVariant(id: $id, values: $values) {
+			id
+			values
+			family {
+				id
 			}
 		}
 	}
@@ -687,6 +708,31 @@ export default compose(
 
 				data.user.library.push(createFamily);
 
+				store.writeQuery({
+					query: libraryQuery,
+					data,
+				});
+			},
+		},
+	}),
+	graphql(updateVariantMutation, {
+		props: ({mutate}) => ({
+			updateVariant: (id, values) =>
+				mutate({
+					variables: {
+						id,
+						values: JSON.stringify(values),
+					},
+				}),
+		}),
+		options: {
+			update: (store, {data: {updateVariant}}) => {
+				const data = store.readQuery({query: libraryQuery});
+				const variant = data.user.library.find(
+					f => f.id === updateVariant.family.id,
+				).variants[0];
+
+				variant.values = JSON.parse(updateVariant.values);
 				store.writeQuery({
 					query: libraryQuery,
 					data,
