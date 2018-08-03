@@ -98,6 +98,13 @@
 					display: flex;
 					flex-direction: row;
 					justify-content: space-between;
+					.big {
+						width: 85%;
+						white-space: nowrap;
+						overflow: hidden;
+						height: 24px;
+						text-overflow: ellipsis;
+					}
 					.small {
 						font-size: 80%;
 						color: transparentize($white, 0.5);

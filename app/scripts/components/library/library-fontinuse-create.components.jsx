@@ -483,6 +483,7 @@ const libraryUserQuery = gql`
 			favourites {
 				id
 				name
+				updatedAt
 				type
 				preset {
 					id

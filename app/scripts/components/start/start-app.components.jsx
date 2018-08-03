@@ -154,6 +154,7 @@ const getUserLibraryQuery = gql`
 				template
 				variants {
 					id
+					updatedAt
 					name
 				}
 			}

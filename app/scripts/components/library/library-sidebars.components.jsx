@@ -60,24 +60,46 @@ export class LibrarySidebarLeft extends React.Component {
 
 		let userProjects = [];
 
-		this.props.families
-			&& this.props.families.forEach((family) => {
-				userProjects.push(
-					<p
-						className={`sidebar-left-project ${
-							this.props.routeParams
-							&& family.id === this.props.routeParams.projectID
-								? 'active'
-								: ''
-						}`}
-					>
-						<Link to={`/library/project/${family.id}`}>
-							<span>{family.name}</span>{' '}
-							<span className="small">({family.variants.length})</span>
-						</Link>
-					</p>,
-				);
-			});
+		console.log(typeof this.props.families);
+		let families;
+
+		if (this.props.families) {
+			families = JSON.parse(JSON.stringify(this.props.families));
+			console.log(families);
+		}
+
+		families
+			&& families.forEach(
+				f =>
+					f.variants
+					&& f.variants.sort(
+						(a, b) => Date.parse(a.updatedAt) < Date.parse(b.updatedAt),
+					),
+			);
+		families
+			&& families
+				.sort(
+					(a, b) =>
+						Date.parse(a.variants[0].updatedAt)
+						< Date.parse(b.variants[0].updatedAt),
+				)
+				.forEach((family) => {
+					userProjects.push(
+						<p
+							className={`sidebar-left-project ${
+								this.props.routeParams
+								&& family.id === this.props.routeParams.projectID
+									? 'active'
+									: ''
+							}`}
+						>
+							<Link to={`/library/project/${family.id}`}>
+								<span className="big">{family.name}</span>{' '}
+								<span className="small">({family.variants.length})</span>
+							</Link>
+						</p>,
+					);
+				});
 
 		if (userProjects.length > 9) {
 			const initialuserProjectsLength = userProjects.length;

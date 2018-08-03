@@ -268,11 +268,13 @@ export const libraryQuery = gql`
 				foundryUrl
 				variants {
 					id
+					updatedAt
 					name
 					values
 					width
 					weight
 					italic
+					updatedAt
 				}
 			}
 		}
@@ -300,6 +302,7 @@ export const teamQuery = gql`
 						foundryUrl
 						variants {
 							id
+							updatedAt
 							name
 							values
 							width
@@ -342,6 +345,7 @@ const libraryUserQuery = gql`
 			favourites {
 				id
 				type
+				updatedAt
 				name
 				preset {
 					id

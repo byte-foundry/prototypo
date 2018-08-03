@@ -304,7 +304,6 @@ class LibraryList extends React.Component {
 				});
 		const allTags = [];
 
-		console.log(families);
 		families
 			&& this.state.templateInfos
 			&& families.forEach((family) => {
@@ -791,7 +790,6 @@ export class FamilyItem extends React.Component {
 	}
 
 	render() {
-		console.log(this.props.values);
 		return (
 			<div className="library-item" tabIndex={0}>
 				<p className="library-item-name">
