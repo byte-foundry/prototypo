@@ -1,6 +1,5 @@
 import React from 'react';
 import Lifespan from 'lifespan';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import LocalClient from '../stores/local-client.stores.jsx';
 

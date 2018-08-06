@@ -56,12 +56,6 @@ class DuplicateVariant extends React.PureComponent {
 		catch (err) {
 			this.setState({error: err.message});
 		}
-		// this.client.dispatchAction('/create-variant', {
-		// 	name: this.refs.newName.inputValue,
-		// 	familyId: this.props.family.id,
-		// 	variantBaseId: this.props.variant.id,
-		// 	noSwitch: true,
-		// });
 	}
 
 	saveName(e) {

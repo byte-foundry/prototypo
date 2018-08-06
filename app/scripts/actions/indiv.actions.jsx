@@ -3,14 +3,11 @@ import _cloneDeep from 'lodash/cloneDeep';
 import {prototypoStore, undoableStore} from '../stores/creation.stores.jsx';
 import Log from '../services/log.services.js';
 import LocalServer from '../stores/local-server.stores.jsx';
-import LocalClient from '../stores/local-client.stores.jsx';
 import {FontValues} from '../services/values.services.js';
 
 let localServer;
-let localClient;
 
 window.addEventListener('fluxServer.setup', () => {
-	localClient = LocalClient.instance();
 	localServer = LocalServer.instance;
 });
 
@@ -19,7 +16,9 @@ function getGroupsAndGlyphsFromGroups(groups) {
 		groups.map((name) => {
 			const glyphs = Object.keys(
 				undoableStore.get('controlsValues').indiv_glyphs,
-			).filter(key => undoableStore.get('controlsValues').indiv_glyphs[key] === name);
+			).filter(
+				key => undoableStore.get('controlsValues').indiv_glyphs[key] === name,
+			);
 
 			return {name, glyphs};
 		}),
@@ -186,9 +185,8 @@ export default {
 			.set(
 				'indivGlyphs',
 				Object.keys(undoableStore.get('controlsValues').indiv_glyphs).filter(
-					key => (
-						undoableStore.get('controlsValues').indiv_glyphs[key] === name
-					),
+					key =>
+						undoableStore.get('controlsValues').indiv_glyphs[key] === name,
 				),
 			)
 			.set('indivEditGroup', false)
@@ -238,11 +236,12 @@ export default {
 	'/edit-param-group': (state) => {
 		const otherGroups = Object.keys(
 			undoableStore.get('controlsValues').indiv_glyphs,
-		).filter(key => (
-			!!undoableStore.get('controlsValues').indiv_glyphs[key]
+		).filter(
+			key =>
+				!!undoableStore.get('controlsValues').indiv_glyphs[key]
 				&& undoableStore.get('controlsValues').indiv_glyphs[key]
-					!== prototypoStore.get('indivCurrentGroup')
-		));
+					!== prototypoStore.get('indivCurrentGroup'),
+		);
 		const patch = prototypoStore
 			.set('indivEditGroup', state)
 			.set('indivPreDelete', false)
@@ -262,10 +261,9 @@ export default {
 			.set(
 				'indivSelected',
 				Object.keys(undoableStore.get('controlsValues').indiv_glyphs).filter(
-					key => (
+					key =>
 						undoableStore.get('controlsValues').indiv_glyphs[key]
-							=== prototypoStore.get('indivCurrentGroup')
-					),
+						=== prototypoStore.get('indivCurrentGroup'),
 				),
 			)
 			.commit();
@@ -439,7 +437,9 @@ export default {
 			.set('indivErrorMessage', undefined)
 			.set(
 				'indivOtherGroups',
-				Object.keys(values.indiv_glyphs).filter(key => values.indiv_glyphs[key] !== group.name),
+				Object.keys(values.indiv_glyphs).filter(
+					key => values.indiv_glyphs[key] !== group.name,
+				),
 			)
 			.set(
 				'indivGroups',

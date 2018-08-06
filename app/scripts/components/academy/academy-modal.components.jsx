@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Lifespan from 'lifespan';
 import InlineSVG from 'svg-inline-react';
-import {Link, withRouter} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 
 import {academyTutorialLabel} from '../../helpers/joyride.helpers.js';
 import Button from '../shared/button.components.jsx';

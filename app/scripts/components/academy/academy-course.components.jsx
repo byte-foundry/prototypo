@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {NavLink, Link, Redirect} from 'react-router-dom';
+import {NavLink, Link} from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import {findDOMNode} from 'react-dom';
 import InlineSVG from 'svg-inline-react';
