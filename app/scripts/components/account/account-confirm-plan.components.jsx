@@ -1,89 +1,37 @@
+import gql from 'graphql-tag';
 import React from 'react';
-import Lifespan from 'lifespan';
-import moment from 'moment';
+import {Query} from 'react-apollo';
+import {Redirect} from 'react-router-dom';
 
-import LocalClient from '../../stores/local-client.stores.jsx';
-import getCurrency from '../../helpers/currency.helpers.js';
-
-import HoodieApi from '../../services/hoodie.services.js';
-import Button from '../shared/new-button.components';
 import WaitForLoad from '../wait-for-load.components';
 import Dashboard from './account-dashboard.components';
+import ConfirmPlanForm from './confirm-plan-form.components';
 
-import * as Plans from '../../data/plans.data';
+const GET_SUBSCRIPTION_AND_CARDS = gql`
+	query getCards {
+		user {
+			id
+			subscription @client {
+				id
+				plan {
+					id
+					currency
+				}
+			}
+			cards @client {
+				id
+			}
+		}
+	}
+`;
 
 export default class AccountConfirmPlan extends React.Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			loading: true,
-		};
-
-		this.confirmPlanChange = this.confirmPlanChange.bind(this);
-	}
-
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
-
-		this.client
-			.getStore('/userStore', this.lifespan)
-			.onUpdate((head) => {
-				const {location} = this.props;
-				const query = new URLSearchParams(location.search);
-
-				if (query.has('plan')) {
-					const planBase = query.get('plan');
-					const currency = getCurrency(head.toJS().d.cards[0].country);
-					const planId = `${planBase}_${currency}_taxfree`;
-
-					this.setState({
-						loading: !this.state.invoice, // if invoice already here, don't show we're reloading it
-						confirmationLoading: head.toJS().d.confirmation.loading,
-						plan: planBase,
-						currency,
-					});
-
-					HoodieApi.getUpcomingInvoice({
-						subscription_plan: planId,
-						subscription_quantity: query.get('quantity'),
-					}).then((data) => {
-						this.setState({
-							invoice: data,
-							loading: false,
-						});
-					});
-				}
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
-	}
-
-	confirmPlanChange() {
-		const {plan, currency} = this.state;
-
-		const query = new URLSearchParams(this.props.location.search);
-
-		window.Intercom('trackEvent', 'change-plan-confirm', {
-			plan,
-		});
-
-		this.client.dispatchAction('/confirm-buy', {
-			plan,
-			currency,
-			quantity: parseInt(query.get('quantity'), 10) || undefined,
-			pathname: '/account/details',
-		});
-	}
-
 	render() {
-		const {invoice, loading, confirmationLoading} = this.state;
+		const {history, location} = this.props;
+
+		const query = new URLSearchParams(location.search);
+		const plan = query.get('plan');
+		const quantity = parseInt(query.get('quantity'), 10) || undefined;
 
 		return (
 			<Dashboard title="Change my plan">
@@ -91,92 +39,38 @@ export default class AccountConfirmPlan extends React.Component {
 					<h1 className="subscription-title">
 						This is what you will be charged
 					</h1>
-					<WaitForLoad loaded={!loading}>
-						{invoice && <Invoice {...invoice} />}
-						<Button style={{float: 'right'}} onClick={this.confirmPlanChange}>
-							<WaitForLoad loading={confirmationLoading} secColor>
-								Confirm change
-							</WaitForLoad>
-						</Button>
-					</WaitForLoad>
+					<Query query={GET_SUBSCRIPTION_AND_CARDS}>
+						{({data, loading}) => {
+							if (loading) {return <WaitForLoad loading={loading} />;}
+
+							const {cards = [], subscription} = data.user;
+
+							if (!subscription) {return <Redirect to="/account/subscribe" />;}
+
+							if (cards.length <= 0) return <p>No card</p>;
+
+							return (
+								<ConfirmPlanForm
+									newPlan={`${plan}_${subscription.plan.currency.toUpperCase()}_taxfree`}
+									newQuantity={quantity}
+									subscriptionId={subscription.plan.id}
+									onUpdateSubscription={() => {
+										window.Intercom(
+											'trackEvent',
+											'change-plan-confirm',
+											{
+												plan,
+											},
+										);
+
+										history.push('/account/details');
+									}}
+								/>
+							);
+						}}
+					</Query>
 				</div>
 			</Dashboard>
-		);
-	}
-}
-
-class Invoice extends React.Component {
-	render() {
-		const {currency, lines} = this.props;
-
-		const currencySymbol
-			= currency === 'USD'
-				? {
-					before: '$',
-					after: '',
-				}
-				: {
-					before: '',
-					after: '€',
-				};
-
-		const total = lines.data.reduce((sum, line) => sum + line.amount, 0);
-		const invoiceLines = lines.data.map(line => (
-			<InvoiceLine line={line} symbol={currencySymbol} />
-		));
-
-		return (
-			<table className="invoice">
-				<thead>
-					<tr>
-						<th className="invoice-big-head">Description</th>
-						<th>Amount</th>
-					</tr>
-				</thead>
-				<tbody>
-					{invoiceLines}
-					<tr className="invoice-total">
-						<td className="invoice-total-label">Total</td>
-						<td className="invoice-total-amount">
-							{currencySymbol.before
-								+ (total / 100).toFixed(2)
-								+ currencySymbol.after}
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		);
-	}
-}
-
-class InvoiceLine extends React.Component {
-	render() {
-		const {line} = this.props;
-		let desc = this.props.line.description;
-
-		if (line.plan && !desc) {
-			const plan = Object.values(Plans).filter(({prefix}) =>
-				line.plan.id.includes(prefix),
-			)[0];
-			const planName = (plan && plan.description) || 'Unknown plan';
-
-			const startDate = moment.unix(this.props.line.period.start).format('L');
-			const endDate = moment.unix(this.props.line.period.end).format('L');
-
-			const quantityDesc = line.quantity > 1 ? `${line.quantity} x ` : '';
-
-			desc = `${quantityDesc}${planName} from ${startDate} to ${endDate}`;
-		}
-
-		return (
-			<tr className="invoice-line">
-				<td>{desc}</td>
-				<td>
-					{this.props.symbol.before
-						+ (this.props.line.amount / 100).toFixed(2)
-						+ this.props.symbol.after}
-				</td>
-			</tr>
 		);
 	}
 }

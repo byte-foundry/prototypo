@@ -1,12 +1,10 @@
 import Lifespan from 'lifespan';
-import debounce from 'lodash/debounce';
 
 import hashHistory from '../services/history.services';
 import {userStore, prototypoStore} from '../stores/creation.stores.jsx';
 import LocalServer from '../stores/local-server.stores.jsx';
 import LocalClient from '../stores/local-client.stores.jsx';
 import HoodieApi from '../services/hoodie.services.js';
-import {loadStuff} from '../helpers/appSetup.helpers.js';
 import getCurrency from '../helpers/currency.helpers.js';
 
 let localServer;
@@ -18,69 +16,6 @@ window.addEventListener('fluxServer.setup', async () => {
 	localClient = LocalClient.instance();
 	localClient.lifespan = new Lifespan();
 });
-
-function addCard({card: {fullname, number, expMonth, expYear, cvc}, vat}) {
-	const form = userStore.get('addcardForm');
-
-	form.errors = [];
-	form.inError = {};
-	form.loading = true;
-	const cleanPatch = userStore.set('addcardForm', form).commit();
-
-	localServer.dispatchUpdate('/userStore', cleanPatch);
-	return new Promise((resolve, reject) => {
-		window.Stripe.card.createToken(
-			{
-				number,
-				cvc,
-				exp_month: expMonth,
-				exp_year: expYear,
-				name: fullname,
-			},
-			async (status, data) => {
-				if (data.error) {
-					form.loading = false;
-					form.errors.push(data.error.message);
-					const patch = userStore.set('addcardForm', form).commit();
-
-					localServer.dispatchUpdate('/userStore', patch);
-					reject(data.error.message);
-				}
-
-				// TODO : GraphQL request to get the VAT
-
-				try {
-					const response = await HoodieApi.updateCustomer({
-						business_vat_id: vat, // Stripe way of storing VAT
-						source: data.id,
-						metadata: {
-							vat_number: vat, // Quaderno way of reading VAT
-						},
-					});
-
-					/* DEPRECATED Backward compatibility, should be removed when every component uses the cards property in userStore */
-					let patch = userStore.set('cards', response.sources.data).commit();
-
-					localServer.dispatchUpdate('/userStore', patch);
-
-					form.loading = false;
-					patch = userStore.set('addcardForm', form).commit();
-					localServer.dispatchUpdate('/userStore', patch);
-
-					resolve(data.card);
-				}
-				catch (err) {
-					form.loading = false;
-					form.errors.push(err);
-					const patch = userStore.set('addcardForm', form).commit();
-
-					localServer.dispatchUpdate('/userStore', patch);
-					reject(err);
-				}
-			},
-		);
-	});
-}
 
 /**
  *	Spend credits via hoodie api
@@ -243,131 +178,6 @@ export default {
 		}
 		else {
 			hashHistory.push(pathQuery);
-		}
-	},
-	'/add-card': async (options) => {
-		const toPath = {
-			pathname: options.pathQuery.path || '/account/profile',
-			query: options.pathQuery.query,
-		};
-
-		await addCard(options);
-		hashHistory.push(toPath);
-	},
-	'/confirm-buy': async ({plan, card, pathname, quantity}) => {
-		const form = userStore.get('confirmation');
-
-		const coupon = userStore.get('choosePlanForm').couponValue;
-		const validCoupon = userStore.get('choosePlanForm').validCoupon;
-		const {fullname, number, expMonth, expYear, cvc} = card || {};
-
-		form.errors = [];
-		form.loading = true;
-		const cleanPatch = userStore.set('confirmation', form).commit();
-
-		localServer.dispatchUpdate('/userStore', cleanPatch);
-
-		const cards = userStore.get('cards');
-		let cardCountry = cards[0] ? cards[0].country : undefined;
-
-		if (
-			!cardCountry
-			&& (validCoupon && !validCoupon.shouldSkipCard)
-			&& (!fullname || !number || !expMonth || !expYear || !cvc)
-		) {
-			const requiredFields = [fullname, number, expMonth, expYear, cvc];
-			const errorText
-				= requiredFields.reduce((sum, field) => sum + !!field).length > 1
-					? 'These fields are'
-					: 'This field is';
-
-			form.errors.push(`${errorText} required`);
-			form.loading = false;
-			const patch = userStore.set('confirmation', form).commit();
-
-			return localServer.dispatchUpdate('/userStore', patch);
-		}
-
-		try {
-			if (card) {
-				const cardCreated = await addCard({card});
-
-				cardCountry = cardCreated.country;
-			}
-
-			const currency = getCurrency(cardCountry);
-			const data = await HoodieApi.updateSubscription({
-				plan: `${plan}_${currency}_taxfree`,
-				coupon,
-				quantity,
-			});
-
-			form.loading = false;
-			HoodieApi.instance.plan = data.plan.id;
-
-			const patch = userStore
-				.set('confirmation', form)
-				.commit();
-
-			const transacId = `${plan}_${data.id}`;
-
-			ga('ecommerce:addTransaction', {
-				id: transacId,
-				affiliation: 'Prototypo',
-				revenue: data.plan.amount / 100,
-				currency,
-			});
-
-			ga('ecommerce:addItem', {
-				id: transacId,
-				name: data.plan.id,
-				sku: `${plan}_${currency}_taxfree`,
-				category: 'Subscriptions',
-				price: data.plan.amount / 100,
-			});
-
-			ga('ecommerce:send');
-			fbq('track', 'CompleteRegistration');
-
-			await loadStuff();
-
-			hashHistory.push({
-				pathname: pathname || '/account/success',
-			});
-
-			localServer.dispatchUpdate('/userStore', patch);
-
-			const customer = await HoodieApi.getCustomerInfo();
-
-			localClient.dispatchAction('/load-customer-data', customer);
-		}
-		catch (err) {
-			trackJs.track(err);
-
-			if (/no such coupon/i.test(err.message)) {
-				form.errors.push(
-					'This coupon appears to no longer be valid, please contact us.',
-				);
-			}
-			if (typeof err === 'string') {
-				form.errors.push(err);
-			}
-			if (/no attached payment source/i.test(err.message)) {
-				form.errors.push(
-					'Payment details appear to be invalid, please contact us.',
-				);
-			}
-			else {
-				form.errors.push(
-					"Unexpected error, please contact us at support@prototypo.io if you don't know how to solve it",
-				);
-				form.errors.push(err.message);
-			}
-
-			form.loading = false;
-			const patch = userStore.set('confirmation', form).commit();
-
-			localServer.dispatchUpdate('/userStore', patch);
 		}
 	},
 	'/spend-credits': async (options) => {
