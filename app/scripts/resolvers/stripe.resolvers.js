@@ -1,9 +1,67 @@
 import gql from 'graphql-tag';
 
-import {fetchAWS} from '../services/hoodie.services';
+import HoodieApi, {fetchAWS} from '../services/hoodie.services';
 
 const resolverMap = {
 	Mutation: {
+		createSubscription: async (_, {plan, coupon, quantity}, {cache}) => {
+			const customer = HoodieApi.instance.customerId;
+			const subscription = await fetchAWS('/subscriptions', {
+				method: 'POST',
+				payload: {
+					customer,
+					plan,
+					coupon,
+					quantity,
+				},
+			});
+
+			// TODO: object property filter
+			const data = {
+				__typename: 'StripeSubscription',
+				// ...subscription,
+				id: subscription.id,
+				quantity: subscription.quantity,
+				current_period_end: subscription.current_period_end,
+				cancel_at_period_end: subscription.cancel_at_period_end,
+				trial_end: subscription.trial_end,
+				plan: {
+					__typename: 'StripePlan',
+					// ...subscription.plan,
+					id: subscription.plan.id,
+					name: subscription.plan.name,
+					currency: subscription.plan.currency,
+				},
+			};
+
+			cache.writeData({data});
+
+			// DEPRECATED
+			HoodieApi.instance.plan = data.plan.id;
+
+			// Analytics in a custom link?
+			const transacId = `${plan}_${data.id}`;
+
+			window.ga('ecommerce:addTransaction', {
+				id: transacId,
+				affiliation: 'Prototypo',
+				revenue: data.plan.amount / 100,
+				currency: data.plan.currency,
+			});
+
+			window.ga('ecommerce:addItem', {
+				id: transacId,
+				name: data.plan.id,
+				sku: `${plan}_${data.plan.currency}_taxfree`,
+				category: 'Subscriptions',
+				price: data.plan.amount / 100,
+			});
+
+			window.ga('ecommerce:send');
+			window.fbq('track', 'CompleteRegistration');
+
+			return data;
+		},
 		updateSubscription: async (_, {id, plan, quantity}, {cache}) => {
 			const subscription = await fetchAWS(`/subscriptions/${id}`, {
 				method: 'PUT',
