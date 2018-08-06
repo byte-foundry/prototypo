@@ -100,8 +100,6 @@ export default class HoodieApi {
 					HoodieApi.instance.subscriptionId = subscription.id;
 					HoodieApi.instance.plan = subscription.plan.id;
 				}
-
-				localClient.dispatchAction('/load-customer-data', customer);
 			}
 			catch (e) {
 				/* don't need to catch anything, just next step */
