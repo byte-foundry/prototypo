@@ -1,4 +1,6 @@
+import gql from 'graphql-tag';
 import React from 'react';
+import {graphql} from 'react-apollo';
 import {withRouter} from 'react-router-dom';
 import {injectStripe} from 'react-stripe-elements';
 import debounce from 'lodash/debounce';
@@ -208,7 +210,7 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 
 		const currency = getCurrency(source.country);
 
-		const data = await HoodieApi.updateSubscription({
+		this.props.createSubscription({
 			plan: `${plan}_${currency}_taxfree`,
 			coupon: couponValue,
 			quantity: (plan.startsWith('team') && quantity) || undefined,
@@ -217,12 +219,6 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 		this.setState({loading: false});
 
 		history.replace('/account/success');
-
-		// TMP
-		const customer = await HoodieApi.getCustomerInfo();
-
-		this.client.dispatchAction('/load-customer-data', customer);
-		// TMP
 	}
 
 	handleChangeQuantity(value) {
@@ -547,6 +543,14 @@ SubscriptionCardAndValidation.defaultProps = {
 	onSelectCoupon: () => {},
 };
 
-export default injectStripe(
-	withRouter(SubscriptionCardAndValidation),
-);
+const CREATE_SUBSCRIPTION = gql`
+	mutation createSubscription($plan: String!, $quantity: Int, $coupon: String) {
+		id
+	}
+`;
+
+export default graphql(CREATE_SUBSCRIPTION, {
+	props: ({mutate}) => ({
+		createSubscription: variables => mutate({variables}),
+	}),
+})(withRouter(injectStripe(SubscriptionCardAndValidation)));
