@@ -7,15 +7,9 @@ import AccountSidebar from './account-sidebar.components';
 import Button from '../shared/new-button.components';
 
 export class AccountDashboard extends React.Component {
-	constructor(props) {
-		super(props);
-
-		this.returnToDashboard = this.returnToDashboard.bind(this);
-	}
-
-	returnToDashboard() {
+	returnToDashboard = () => {
 		this.props.history.push('/library');
-	}
+	};
 
 	render() {
 		const {title, children} = this.props;

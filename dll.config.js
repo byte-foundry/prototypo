@@ -21,7 +21,6 @@ module.exports = {
 			'lifespan',
 			'nexus-flux',
 			'remutable',
-			'bluebird',
 			'jszip',
 			'lodash',
 			'diff',
