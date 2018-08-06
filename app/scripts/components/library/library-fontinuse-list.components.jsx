@@ -25,12 +25,14 @@ export default class LibraryFontsInUseList extends React.Component {
 		case 'Preset':
 			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
 		case 'Family':
-			return (
+			return fontUsed.family ? (
 				<span className="library-fontinuse-font">
 					<Link to={`/library/project/${fontUsed.family.id}`}>
 						{fontUsed.name}
 					</Link>
 				</span>
+			) : (
+				<span className="library-fontinuse-font">{fontUsed.name}</span>
 			);
 		default:
 			return false;

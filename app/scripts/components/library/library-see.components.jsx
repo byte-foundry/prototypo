@@ -83,22 +83,23 @@ class LibrarySee extends React.Component {
 	async componentWillMount() {
 		this.client = LocalClient.instance();
 		const prototypoStore = await this.client.fetch('/prototypoStore');
-		const templatesData = prototypoStore.head.toJS().templatesData;
-		const templateList = prototypoStore.head.toJS().templateList;
+		const templatesData = await prototypoStore.head.toJS().templatesData;
+		const templateList = await prototypoStore.head.toJS().templateList;
 
 		this.setState({templatesData, templateList});
-		this.generateVariants(this.state.family);
+		this.generateVariants(this.state.family, templatesData, templateList);
 	}
 
-	generateVariants(newFamily) {
+	generateVariants(newFamily, newTemplatesData, newTemplateList) {
 		const family = newFamily || this.state.family;
-		const templateValues = this.state.templatesData.find(
+		const templatesData = newTemplatesData || this.state.templatesData;
+		const templateList = newTemplateList || this.state.templateList;
+		const templateValues = templatesData.find(
 			e => e.name === family.template,
 		);
-		const templateName = this.state.templateList.find(
+		const templateName = templateList.find(
 			template => template.templateName === family.template,
 		).templateName;
-		const fontsToGenerate = [];
 
 		const variants = family.variants.map(variant => ({
 			...variant,
@@ -126,12 +127,14 @@ class LibrarySee extends React.Component {
 		case 'Preset':
 			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
 		case 'Family':
-			return (
+			return fontUsed.family ? (
 				<span className="library-fontinuse-font">
 					<Link to={`/library/project/${fontUsed.family.id}`}>
 						{fontUsed.name}
 					</Link>
 				</span>
+			) : (
+				<span className="library-fontinuse-font">{fontUsed.name}</span>
 			);
 		default:
 			return false;
@@ -193,7 +196,10 @@ class LibrarySee extends React.Component {
 		const fontInUses = this.props.fontInUses.filter(
 			fontInUse =>
 				!!fontInUse.fontUsed.find(
-					f => f.type === 'Family' && f.family.id === this.state.family.id,
+					f =>
+						f.type === 'Family'
+						&& f.family
+						&& f.family.id === this.state.family.id,
 				),
 		);
 

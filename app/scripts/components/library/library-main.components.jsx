@@ -424,6 +424,7 @@ const addFavouriteMutation = gql`
 			id
 			type
 			name
+			updatedAt
 			preset {
 				id
 			}
@@ -486,13 +487,15 @@ export default compose(
 					favourites: [],
 				};
 			}
-			return {
-				firstName: data.user.firstName,
-				lastName: data.user.lastName,
-				userId: data.user.id,
-				favourites: data.user.favourites,
-				fontInUses: data.user.fontInUses,
-			};
+			return (
+				data.user && {
+					firstName: data.user.firstName,
+					lastName: data.user.lastName,
+					userId: data.user.id,
+					favourites: data.user.favourites,
+					fontInUses: data.user.fontInUses,
+				}
+			);
 		},
 	}),
 	graphql(deleteFavouriteMutation, {
