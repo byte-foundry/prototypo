@@ -4,14 +4,11 @@ window._ = require('lodash');
 const Remutable = require('remutable').default;
 
 const prototypoStore = new Remutable({});
-const userStore = new Remutable({});
 const stores = {
 	default: {
 		'/prototypoStore': prototypoStore,
-		'/userStore': userStore,
 	},
 	prototypoStore,
-	userStore,
 };
 
 jest.setMock('scripts/stores/creation.stores.jsx', stores);

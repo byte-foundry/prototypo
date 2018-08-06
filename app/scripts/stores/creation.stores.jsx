@@ -201,18 +201,6 @@ const prototypoStore = new Remutable({
 	// end first time tutorial store values
 });
 
-const userStore = new Remutable({
-	cards: [],
-	choosePlanForm: {},
-	addcardForm: {
-		errors: [],
-		inError: {},
-	},
-	confirmation: {
-		errors: [],
-	},
-});
-
 const planStore = new Remutable({
 	personal_monthly: {
 		id: 'personal_monthly',
@@ -253,7 +241,6 @@ const stores = {
 	'/fontInstanceStore': fontInstanceStore,
 	'/undoableStore': undoableStore,
 	'/fastStuffStore': fastStuffStore,
-	'/userStore': userStore,
 	'/planStore': planStore,
 	'/creditStore': creditStore,
 };
@@ -264,7 +251,6 @@ export {
 	prototypoStore,
 	undoableStore,
 	fastStuffStore,
-	userStore,
 	planStore,
 	creditStore,
 };

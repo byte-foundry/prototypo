@@ -4,14 +4,11 @@ window._ = require('lodash');
 const Remutable = require('remutable').default;
 
 const prototypoStore = new Remutable({});
-const userStore = new Remutable({});
 const stores = {
 	default: {
 		'/prototypoStore': prototypoStore,
-		'/userStore': userStore,
 	},
 	prototypoStore,
-	userStore,
 };
 
 jest.setMock('scripts/stores/creation.stores.jsx', stores);
@@ -31,8 +28,6 @@ describe('appValues', () => {
 		localServer.dispatchUpdate = jest.fn();
 		stores.prototypoStore.commit = jest.fn();
 		stores.prototypoStore.set = jest.fn();
-		stores.userStore.commit = jest.fn();
-		stores.userStore.set = jest.fn(() => stores.userStore);
 	});
 
 	it('should load values properly', () => {
