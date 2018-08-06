@@ -577,6 +577,7 @@ const createVariantMutation = gql`
 			values
 			width
 			italic
+			updatedAt
 		}
 	}
 `;
