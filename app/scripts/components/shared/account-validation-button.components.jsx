@@ -1,22 +1,38 @@
 import React from 'react';
+import classNames from 'classnames';
 
-import WaitForLoad from '../wait-for-load.components.jsx';
+import Button from '../shared/new-button.components';
+import WaitForLoad from '../wait-for-load.components';
 
 export default class AccountValidationButton extends React.PureComponent {
 	render() {
-		const type = this.props.click ? 'button' : 'submit';
+		const {
+			loading,
+			disabled,
+			click,
+			label,
+			outline,
+			children,
+			className,
+			...rest
+		} = this.props;
+		const type = click ? 'button' : 'submit';
+
+		const classes = classNames(className, 'account-button account-validation-button');
 
 		return (
-			<button
+			<Button
 				type={type}
-				className="account-button account-validation-button"
-				disabled={this.props.disabled || this.props.loading}
-				onClick={this.props.click}
+				className={classes}
+				disabled={disabled || loading}
+				onClick={click}
+				outline={outline}
+				{...rest}
 			>
-				<WaitForLoad loaded={!this.props.loading} secColor={true}>
-					{this.props.label}
+				<WaitForLoad loaded={!loading} secColor={!outline}>
+					{children || label}
 				</WaitForLoad>
-			</button>
+			</Button>
 		);
 	}
 }

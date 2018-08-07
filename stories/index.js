@@ -18,3 +18,4 @@ import './TopBarMenuDropdownItem.story';
 // import './TopBarAcademyIcon.story';
 import './Onboarding.story';
 import './FakeCard.story';
+import './Loading.story';

@@ -14,19 +14,24 @@
 
 .sk-spinner-wave {
   &.sk-spinner {
-    margin: $spinkit-spinner-margin;
-    width: 50px;
-    height: 30px;
+	display: flex;
+	justify-content: center;
     text-align: center;
-    font-size: 10px;
+	position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-height: 1em;
+    height: 1em;
+    bottom: 0;
+	margin: auto;
   }
 
   div {
     background-color: $spinkit-spinner-color;
     height: 100%;
-    width: 6px;
-    display: inline-block;
-    margin:0 1px;
+    width: 0.2em;
+	margin: 0 0.05em;
 
     animation: sk-waveStretchDelay 1.2s infinite ease-in-out;
   }
