@@ -56,7 +56,9 @@ export default class LibraryHosting extends React.Component {
 					</div>
 				</div>
 				<LibrarySidebarRight>
-					<div className="sidebar-action">Add website</div>
+					<Link to="/library/hosting/create" className="sidebar-action">
+						Add website
+					</Link>
 				</LibrarySidebarRight>
 			</div>
 		);

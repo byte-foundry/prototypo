@@ -38,27 +38,35 @@ const OnboardingStep = ({
 				<HighlightedText letters={letters} />
 			</div>
 		)}
+		{(!values || values.length === 0) && (
+			<p className="description error">
+				Please wait, we are loading your project.
+			</p>
+		)}
 		{(type === 'sliders' || type === 'serifs') && (
 			<div className="step-sliders">
-				{sliders.map((slider) => {
-					const sliderData = parameters.find(p => p.name === slider);
+				{values
+					&& Object.keys(values).length > 0
+					&& sliders.map((slider) => {
+						const sliderData = parameters.find(p => p.name === slider);
 
-					return (
-						sliderData
+						return (
+							sliderData
+							&& values
 							&& !sliderData.disabled && (
-							<OnboardingSlider
-								key={sliderData.name}
-								label={sliderData.label}
-								min={sliderData.minAdvised}
-								max={sliderData.maxAdvised}
-								step={sliderData.step}
-								value={values[sliderData.name]}
-								onChange={onChangeParam}
-								name={sliderData.name}
-							/>
-						)
-					);
-				})}
+								<OnboardingSlider
+									key={sliderData.name}
+									label={sliderData.label}
+									min={sliderData.minAdvised}
+									max={sliderData.maxAdvised}
+									step={sliderData.step}
+									value={values[sliderData.name]}
+									onChange={onChangeParam}
+									name={sliderData.name}
+								/>
+							)
+						);
+					})}
 			</div>
 		)}
 		{children}

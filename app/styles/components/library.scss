@@ -5,6 +5,10 @@
 		display: flex;
 		flex-direction: row;
 		align-items: stretch;
+
+		.modal {
+			background-color: transparentize($dark-grey, 0.5);
+		}
 		.library-sidebar-left {
 			background: $dark-grey;
 			color: #eee;
@@ -29,11 +33,15 @@
 				border-radius: 30px;
 				text-transform: uppercase;
 				font-size: 16px;
+				font-weight: bold;
 				cursor: pointer;
 				&:hover {
 					background: $green;
-					color: $dark-grey;
+					color: $white;
 				}
+			}
+			hr {
+				border-color: transparentize($white, 0.9);
 			}
 			.library-links {
 				margin-top: 20px;
@@ -41,25 +49,72 @@
 				color: $green;
 				font-size: 16px;
 				color: white;
+				p:not(.sidebar-left-project) {
+					margin: 0;
+				}
 				.library-link {
+					position: relative;
+					display: inline-block;
 					padding-top: 10px;
 					padding-bottom: 5px;
-					&.active {
+					padding-left: 20px;
+					transition: all .2s ease;
+					&:hover {
+						color: $green;
+					}
+					&.active {						
 						color: $green;
 						font-weight: bold;
-						span {
-							color: $dark-grey;
-						}
+					}
+				}
+				.library-link-arrow {
+					position: absolute;
+					top: 50%;
+					left: 0px;
+					transform: translateY(-5px);
+					font-size: 10px;
+					cursor: pointer;
+					transition: all .2s ease;
+					&.hidden {
+						display: none;
+					}
+					&.active {
+						transform: translateY(-5px) rotate(90deg);
+					}
+					&:hover {
+						color: $green;
 					}
 				}
 			}
 			.sidebar-left-project {
-				margin-top: 5px;
-				margin-bottom: 5px;
-				padding-left: 30px;
+				display: block;
+				margin-top: 3px;
+				margin-bottom: 3px;
+				padding-left: 40px; 
+				color: transparentize($white, 0.1);
+				transition: all .2s ease;
+				a {
+					width: 100%;
+					display: flex;
+					flex-direction: row;
+					justify-content: space-between;
+					.big {
+						width: 85%;
+						white-space: nowrap;
+						overflow: hidden;
+						height: 24px;
+						text-overflow: ellipsis;
+					}
+					.small {
+						font-size: 80%;
+						color: transparentize($white, 0.5);
+					}
+				}
+				&:hover {
+					color: $green;
+				}
 				&.active {
 					color: $green;
-					font-weight: bold;
 				}
 			}
 		}
@@ -103,10 +158,18 @@
 				background-color: transparent;
 				transition: color 0.3s ease, background-color 0.3s ease;
 				border-radius: 30px;
+				font-weight: bold;
 				cursor: pointer;
 				&:hover {
 					background: $dark-grey;
 					color: white;
+				}
+			}
+			.sidebar-action-account {
+				border-color: $green;
+				color: $dark-grey;
+				&:hover {
+					background: $green;
 				}
 			}
 			.sidebar-glyphs {
@@ -171,6 +234,7 @@
 				margin-top: 35px;
 				width: calc(100vw - 500px);
 			}
+	
 			.library-see-description {
 				position: relative;
 				font-size: 18px;
@@ -178,8 +242,7 @@
 				padding-right: 40px;
 				margin-top: 35px;
 				max-width: 850px;
-
-				a {
+ 				a {
 					border-bottom: 1px solid $dark-grey;
 				}
 			}
@@ -230,6 +293,87 @@
 						&:hover {
 							background: $green;
 							color: $dark-grey;
+						}
+					}
+				}
+			}
+			.library-hosting-font-list {
+				margin-top: 10px;
+				.hosted-font {
+					font-size: 35px;
+					line-height: 1;
+					margin: 0;
+					margin-bottom: 10px;
+					max-width: 88%;
+					overflow-x: hidden;
+					overflow-x: visible;
+					white-space: nowrap;
+				}
+			}
+			.library-hosting-form {
+				margin-top: 50px;
+				.library-hosting-form-elem {
+					width: 100%;
+					padding-left: 40px;
+					padding-right: 40px;
+					margin-bottom: 40px;
+					label {
+						display: block;
+						text-transform: uppercase;
+						font-weight: bold;
+					}
+					input,
+					select {
+						width: 50%;
+						background: transparent;
+						box-shadow: none;
+						outline: none;
+						padding: 10px 20px;
+						margin-top: 10px;
+						border: 1px solid $dark-grey;
+						&.library-hosting-form-elem-input-big {
+							padding: 15px 30px;
+							font-size: 50px;
+						}
+						&:focus {
+							outline: none;
+						}
+						&.opened {
+							border-bottom: none;
+						}
+					}
+					.font-list {
+						margin-top: 5px;
+						.font-list-elem {
+							padding: 5px 8px;
+							border: 1px solid $dark-grey;
+							border-radius: 15px;
+							margin-right: 5px;
+							cursor: pointer;
+						}
+					}
+					.suggestions {
+						border: 1px solid $dark-grey;
+						border-top: none;
+						padding-top: 5px;
+						max-height: 200px;
+						overflow-x: hidden;
+						overflow-y: auto;
+						width: 50%;
+						.suggestion {							
+							padding-top: 5px;
+							padding-bottom: 5px;
+							.suggestion-family {
+								padding: 5px 20px;
+								font-weight: bold;
+							}
+							.suggestion-variant {
+								padding: 5px 20px;
+								cursor: pointer;
+								&:hover {
+									background-color: #ddd;
+								}
+							}
 						}
 					}
 				}
@@ -497,6 +641,23 @@
 					}
 				}
 			}
+			.library-hosting-form-button {
+				margin-top: 10px;
+				text-align: center;
+				font-size: 14px;
+				padding: 5px 20px;
+				display: inline-block;
+				border: 1px solid $dark-grey;
+				color: $dark-grey;
+				background-color: transparent;
+				transition: color 0.3s ease, background-color 0.3s ease;
+				border-radius: 30px;
+				cursor: pointer;
+				&:hover {
+					background: $dark-grey;
+					color: white;
+				}
+			}
 		}
 		.library-fontinuse-list {
 			.library-fontinuse {
@@ -509,8 +670,7 @@
 					padding-right: 20px;
 					width: 50%;
 					img {
-						height: 400px;
-						width: auto;
+						height: auto;
 						max-width: 100%;
 						float: right;
 						margin-bottom: 15px;

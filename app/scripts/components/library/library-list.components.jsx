@@ -26,12 +26,14 @@ class LibraryList extends React.Component {
 			activeFilters: [],
 			librarySelectedTags: [],
 			mode: '',
+			displayedText: 'Hamburgefonstiv 123',
 		};
 		this.generateFonts = this.generateFonts.bind(this);
 		this.filterFonts = this.filterFonts.bind(this);
 		this.createProject = this.createProject.bind(this);
 		this.selectFont = this.selectFont.bind(this);
 		this.updateFavourites = this.updateFavourites.bind(this);
+		this.onTextChange = this.onTextChange.bind(this);
 	}
 
 	async componentWillMount() {
@@ -75,6 +77,11 @@ class LibraryList extends React.Component {
 		});
 	}
 
+	onTextChange(text) {
+		this.setState({
+			displayedText: text,
+		});
+	}
 	updateFavourites(favourite, type, id, name) {
 		const favourites = [...this.props.favourites];
 		let relatedKey;
@@ -125,6 +132,8 @@ class LibraryList extends React.Component {
 			familyId: template.templateName,
 			fontName: `template${template.templateName.split('.').join('')}`,
 			templateName: template.templateName,
+			displayedText: this.state.displayedText,
+			onTextChange: this.onTextChange,
 			favourite: favourites.find(
 				f => f.type === 'Template' && f.template === template.name,
 			),
@@ -154,6 +163,8 @@ class LibraryList extends React.Component {
 			click: this.selectFont,
 			isOpen: this.state.selectedFont === preset.id,
 			familyId: preset.id,
+			displayedText: this.state.displayedText,
+			onTextChange: this.onTextChange,
 			fontName: `preset${preset.id}`,
 			templateName: templateInfo.templateName,
 			favourite: favourites.find(
@@ -183,10 +194,14 @@ class LibraryList extends React.Component {
 				variantToLoad,
 				open: this.props.open,
 				export: this.props.export,
+				displayedText: this.state.displayedText,
+				onTextChange: this.onTextChange,
 				glyphs: templateData.glyphs,
 				values: {
 					...templateData.initValues,
-					...variantToLoad.values,
+					...(typeof variantToLoad.values === 'object'
+						? variantToLoad.values
+						: JSON.parse(variantToLoad.values)),
 				},
 				variantName: variantToLoad.name.toLowerCase(),
 				click: this.selectFont,
@@ -196,7 +211,7 @@ class LibraryList extends React.Component {
 				fontName: `user${family.id}`,
 				isFromTeam,
 				favourite: favourites.find(
-					f => f.type === 'Family' && f.family.id === family.id,
+					f => f.type === 'Family' && f.family && f.family.id === family.id,
 				),
 				updateFavourites: this.updateFavourites,
 			};
@@ -442,14 +457,48 @@ class LibraryList extends React.Component {
 			= fontsToDisplay
 			&& fontsToDisplay.filter(
 				font =>
-					font.template.toLowerCase().includes(searchString.toLowerCase())
+					font.template
+						.toLowerCase()
+						.normalize('NFD')
+						.replace(/[\u0300-\u036f]/g, '')
+						.includes(
+							searchString
+								.toLowerCase()
+								.normalize('NFD')
+								.replace(/[\u0300-\u036f]/g, ''),
+						)
 					|| font.templateName
 						.toLowerCase()
-						.includes(searchString.toLowerCase())
-					|| font.name.toLowerCase().includes(searchString.toLowerCase())
+						.normalize('NFD')
+						.replace(/[\u0300-\u036f]/g, '')
+						.includes(
+							searchString
+								.toLowerCase()
+								.normalize('NFD')
+								.replace(/[\u0300-\u036f]/g, ''),
+						)
+					|| font.name
+						.toLowerCase()
+						.normalize('NFD')
+						.replace(/[\u0300-\u036f]/g, '')
+						.includes(
+							searchString
+								.toLowerCase()
+								.normalize('NFD')
+								.replace(/[\u0300-\u036f]/g, ''),
+						)
 					|| (font.tags
 						&& font.tags.find(e =>
-							e.toLowerCase().includes(searchString.toLowerCase()),
+							e
+								.toLowerCase()
+								.normalize('NFD')
+								.replace(/[\u0300-\u036f]/g, '')
+								.includes(
+									searchString
+										.toLowerCase()
+										.normalize('NFD')
+										.replace(/[\u0300-\u036f]/g, ''),
+								),
 						)),
 			);
 
@@ -544,8 +593,37 @@ class LibraryList extends React.Component {
 	render() {
 		return (
 			<div className="library-content-wrapper">
-				<div className="library-list">
-					<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
+				<div className="library-list library-see">
+					{this.state.fontsToDisplay
+					&& this.state.fontsToDisplay.length === 0 ? (
+							<div>
+								<div className="library-see-title">There is nothing here!</div>
+								<div className="library-see-description">
+									<p>
+										{this.props.location.query.mode === 'personnal' ? (
+											<span>
+											Dive into Prototypo by creating your first project with
+											our templates or Unique presets
+											</span>
+										) : (
+											<span>
+											You have not starred any fonts yet. Simply click on the
+											star icon to tag fonts as your favorites in your library.
+											</span>
+										)}
+									</p>
+									<p>
+										{this.props.location.query.mode === 'personnal' ? (
+											<Link to="/library/create">Create your font now</Link>
+										) : (
+											<Link to="/library/home">Back to the list</Link>
+										)}
+									</p>
+								</div>
+							</div>
+						) : (
+							<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
+						)}
 				</div>
 				<LibrarySidebarRight>
 					<LibrarySearch />
@@ -612,9 +690,7 @@ export class TemplateItem extends React.Component {
 	}
 
 	onTextChange({target: {value}}) {
-		this.setState({
-			text: value,
-		});
+		this.props.onTextChange(value);
 	}
 
 	selectFont() {
@@ -649,7 +725,7 @@ export class TemplateItem extends React.Component {
 					}}
 					onClick={this.selectFont}
 				>
-					{this.state.text}
+					{this.props.displayedText}
 				</p>
 				<div className={`provider provider-${this.props.template.provider}`} />
 				<div
@@ -682,7 +758,7 @@ export class TemplateItem extends React.Component {
 					<input
 						type="text"
 						name="displayedWord"
-						value={this.state.text}
+						value={this.props.displayedText}
 						onChange={this.onTextChange}
 					/>
 				</div>
@@ -690,7 +766,7 @@ export class TemplateItem extends React.Component {
 					name={this.props.fontName}
 					values={this.props.values}
 					template={this.props.templateName}
-					subset={this.state.text}
+					subset={this.props.displayedText}
 					glyph="0"
 				/>
 			</div>
@@ -702,9 +778,6 @@ export class FamilyItem extends React.Component {
 	constructor(props) {
 		super(props);
 		this.selectFont = this.selectFont.bind(this);
-		this.state = {
-			text: 'Hamburgefonstiv 123',
-		};
 		this.onTextChange = this.onTextChange.bind(this);
 	}
 
@@ -713,9 +786,7 @@ export class FamilyItem extends React.Component {
 	}
 
 	onTextChange({target: {value}}) {
-		this.setState({
-			text: value,
-		});
+		this.props.onTextChange(value);
 	}
 
 	render() {
@@ -742,7 +813,7 @@ export class FamilyItem extends React.Component {
 					style={{fontFamily: `user${this.props.family.id}`}}
 					onClick={this.selectFont}
 				>
-					{this.state.text}
+					{this.props.displayedText}
 				</p>
 				<div
 					className={'provider provider-custom'}
@@ -802,7 +873,7 @@ export class FamilyItem extends React.Component {
 					<input
 						type="text"
 						name="displayedWord"
-						value={this.state.text}
+						value={this.props.displayedText}
 						onChange={this.onTextChange}
 					/>
 				</div>
@@ -810,7 +881,7 @@ export class FamilyItem extends React.Component {
 					name={this.props.fontName}
 					values={this.props.values}
 					template={this.props.templateName}
-					subset={this.state.text}
+					subset={this.props.displayedText}
 					glyph="0"
 				/>
 			</div>
@@ -833,9 +904,7 @@ export class PresetItem extends React.Component {
 	}
 
 	onTextChange({target: {value}}) {
-		this.setState({
-			text: value,
-		});
+		this.props.onTextChange(value);
 	}
 
 	render() {
@@ -862,7 +931,7 @@ export class PresetItem extends React.Component {
 					style={{fontFamily: `preset${this.props.preset.id}`}}
 					onClick={this.selectFont}
 				>
-					{this.state.text}
+					{this.props.displayedText}
 				</p>
 				<div
 					className={'provider provider-custom'}
@@ -903,7 +972,7 @@ export class PresetItem extends React.Component {
 					<input
 						type="text"
 						name="displayedWord"
-						value={this.state.text}
+						value={this.props.displayedText}
 						onChange={this.onTextChange}
 						placeholder="Search"
 					/>
@@ -912,7 +981,7 @@ export class PresetItem extends React.Component {
 					name={this.props.fontName}
 					values={this.props.values}
 					template={this.props.templateName}
-					subset={this.state.text}
+					subset={this.props.displayedText}
 					glyph="0"
 				/>
 			</div>

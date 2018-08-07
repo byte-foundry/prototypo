@@ -200,6 +200,7 @@ class LibraryMain extends React.Component {
 					userId={this.props.userId}
 					families={this.props.families}
 					routeParams={this.props.params}
+					favourites={this.props.favourites}
 				/>
 				{React.cloneElement(this.props.children, {
 					activeFilters: this.state.activeFilters,
@@ -267,11 +268,13 @@ export const libraryQuery = gql`
 				foundryUrl
 				variants {
 					id
+					updatedAt
 					name
 					values
 					width
 					weight
 					italic
+					updatedAt
 				}
 			}
 		}
@@ -299,6 +302,7 @@ export const teamQuery = gql`
 						foundryUrl
 						variants {
 							id
+							updatedAt
 							name
 							values
 							width
@@ -341,11 +345,16 @@ const libraryUserQuery = gql`
 			favourites {
 				id
 				type
+				updatedAt
+				name
 				preset {
 					id
 				}
 				family {
 					id
+					variants {
+						id
+					}
 				}
 				template
 			}
@@ -355,8 +364,17 @@ const libraryUserQuery = gql`
 
 export const presetQuery = gql`
 	query {
-		getAllUniquePresets {
-			presets
+		allPresets(filter: {published: true}) {
+			id
+			ownerInitials
+			variant {
+				name
+				family {
+					name
+				}
+			}
+			template
+			baseValues
 		}
 	}
 `;
@@ -406,6 +424,7 @@ const addFavouriteMutation = gql`
 			id
 			type
 			name
+			updatedAt
 			preset {
 				id
 			}
@@ -468,13 +487,15 @@ export default compose(
 					favourites: [],
 				};
 			}
-			return {
-				firstName: data.user.firstName,
-				lastName: data.user.lastName,
-				userId: data.user.id,
-				favourites: data.user.favourites,
-				fontInUses: data.user.fontInUses,
-			};
+			return (
+				data.user && {
+					firstName: data.user.firstName,
+					lastName: data.user.lastName,
+					userId: data.user.id,
+					favourites: data.user.favourites,
+					fontInUses: data.user.fontInUses,
+				}
+			);
 		},
 	}),
 	graphql(deleteFavouriteMutation, {
@@ -586,9 +607,9 @@ export default compose(
 				return {loading: true};
 			}
 
-			if (data.getAllUniquePresets) {
+			if (data.allPresets) {
 				return {
-					presets: data.getAllUniquePresets.presets,
+					presets: data.allPresets,
 				};
 			}
 		},

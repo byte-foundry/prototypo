@@ -69,15 +69,24 @@ export async function loadStuff() {
 			fetchPolicy: 'network-only',
 			query: gql`
 				query {
-					getAllUniquePresets {
-						presets
+					allPresets(filter: {published: true}) {
+						id
+						ownerInitials
+						variant {
+							name
+							family {
+								name
+							}
+						}
+						template
+						baseValues
 					}
 				}
 			`,
 		});
 
 		const families = response.data.user.library;
-		const allPresets = allPresetsQuery.data.getAllUniquePresets.presets;
+		const allPresets = allPresetsQuery.data.allPresets;
 
 		appValues = await AppValues.get({typeface: 'default'});
 

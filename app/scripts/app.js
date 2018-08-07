@@ -17,6 +17,7 @@ import LibraryList from './components/library/library-list.components';
 import LibraryCreate from './components/library/library-create.components';
 import LibraryReview from './components/library/library-review.components';
 import LibraryHosting from './components/library/library-hosting.components';
+import LibraryHostingCreate from './components/library/library-hosting-create.components';
 import LibraryDetails from './components/library/library-details.components';
 import LibrarySee from './components/library/library-see.components';
 import LibraryFontsInUse from './components/library/library-fontinuse.components';
@@ -274,6 +275,7 @@ class AppRoutes extends React.PureComponent {
 								onEnter={redirectToLogin}
 							>
 								<IndexRoute component={LibraryHosting} />
+								<Route path="create" component={LibraryHostingCreate} />
 							</Route>
 							<Route
 								path="create"

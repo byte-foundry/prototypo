@@ -253,6 +253,7 @@ export default {
 					) {
 						id
 						name
+						updatedAt
 					}
 				}
 			`,

@@ -274,7 +274,9 @@ class LibraryCreate extends React.Component {
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-list library-list--create">
-					<h1 className="library-list-title">Choose a template to start</h1>
+					<h1 className="library-list-title">
+						START OUT BY CHOOSING A TEMPLATE
+					</h1>
 					<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
 				</div>
 				<LibrarySidebarRight>

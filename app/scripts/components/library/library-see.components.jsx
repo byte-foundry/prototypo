@@ -10,6 +10,17 @@ import {Link} from 'react-router';
 import FontUpdater from '../font-updater.components';
 import LocalClient from '../../stores/local-client.stores';
 
+const isUrl = new RegExp(
+	'^(https?:\\/\\/)?'
+		+ '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'
+		+ '((\\d{1,3}\\.){3}\\d{1,3}))'
+		+ '(\\:\\d+)?'
+		+ '(\\/[-a-z\\d%@_.~+&:]*)*'
+		+ '(\\?[;&a-z\\d%@_.,~+&:=-]*)?'
+		+ '(\\#[-a-z\\d_]*)?$',
+	'i',
+);
+
 class LibrarySee extends React.Component {
 	constructor(props) {
 		super(props);
@@ -72,21 +83,23 @@ class LibrarySee extends React.Component {
 	async componentWillMount() {
 		this.client = LocalClient.instance();
 		const prototypoStore = await this.client.fetch('/prototypoStore');
-		const templateValues = prototypoStore.head
-			.toJS()
-			.templatesData.find(e => e.name === this.state.family.template);
-		const templateName = prototypoStore.head
-			.toJS()
-			.templateList.find(
-				template => template.templateName === this.state.family.template,
-			).templateName;
+		const templatesData = await prototypoStore.head.toJS().templatesData;
+		const templateList = await prototypoStore.head.toJS().templateList;
 
-		this.generateVariants(templateValues, templateName);
+		this.setState({templatesData, templateList});
+		this.generateVariants(this.state.family, templatesData, templateList);
 	}
 
-	generateVariants(templateValues, templateName, newFamily) {
+	generateVariants(newFamily, newTemplatesData, newTemplateList) {
 		const family = newFamily || this.state.family;
-		const fontsToGenerate = [];
+		const templatesData = newTemplatesData || this.state.templatesData;
+		const templateList = newTemplateList || this.state.templateList;
+		const templateValues = templatesData.find(
+			e => e.name === family.template,
+		);
+		const templateName = templateList.find(
+			template => template.templateName === family.template,
+		).templateName;
 
 		const variants = family.variants.map(variant => ({
 			...variant,
@@ -95,15 +108,15 @@ class LibrarySee extends React.Component {
 			subset: 'Hamburgefonstiv 123',
 			values: {
 				...templateValues.initValues,
-				...variant.values,
+				...(typeof variant.values === 'object'
+					? variant.values
+					: JSON.parse(variant.values)),
 			},
 			glyphs: templateValues.glyphs,
 		}));
 
 		this.setState({
 			variants,
-			templateValues,
-			templateName,
 		});
 	}
 
@@ -114,12 +127,14 @@ class LibrarySee extends React.Component {
 		case 'Preset':
 			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
 		case 'Family':
-			return (
+			return fontUsed.family ? (
 				<span className="library-fontinuse-font">
 					<Link to={`/library/project/${fontUsed.family.id}`}>
 						{fontUsed.name}
 					</Link>
 				</span>
+			) : (
+				<span className="library-fontinuse-font">{fontUsed.name}</span>
 			);
 		default:
 			return false;
@@ -150,11 +165,7 @@ class LibrarySee extends React.Component {
 				isPersonnal: !!family,
 			});
 
-			this.generateVariants(
-				this.state.templateValues,
-				this.state.templateName,
-				family || teamProject,
-			);
+			this.generateVariants(family || teamProject);
 		}
 		if (this.props.params.projectID !== newProps.params.projectID) {
 			const family = this.props.families.find(
@@ -177,11 +188,7 @@ class LibrarySee extends React.Component {
 				family: family || teamProject,
 				isPersonnal: !!family,
 			});
-			this.generateVariants(
-				this.state.templateValues,
-				this.state.templateName,
-				family || teamProject,
-			);
+			this.generateVariants(family || teamProject);
 		}
 	}
 
@@ -189,7 +196,10 @@ class LibrarySee extends React.Component {
 		const fontInUses = this.props.fontInUses.filter(
 			fontInUse =>
 				!!fontInUse.fontUsed.find(
-					f => f.type === 'Family' && f.family.id === this.state.family.id,
+					f =>
+						f.type === 'Family'
+						&& f.family
+						&& f.family.id === this.state.family.id,
 				),
 		);
 
@@ -241,9 +251,13 @@ class LibrarySee extends React.Component {
 									<div className="library-fontinuse-right">
 										<p>
 											<label>Client</label>
-											<a href={fontInUse.clientUrl} target="_blank">
-												{fontInUse.client}
-											</a>
+											{isUrl.test(fontInUse.clientUrl) ? (
+												<a href={fontInUse.clientUrl} target="_blank">
+													{fontInUse.client}
+												</a>
+											) : (
+												<span>{fontInUse.client}</span>
+											)}
 										</p>
 										<p>
 											<label>Related fonts</label>
@@ -253,9 +267,13 @@ class LibrarySee extends React.Component {
 										</p>
 										<p>
 											<label>Designer</label>
-											<a href={fontInUse.designerUrl} target="_blank">
-												{fontInUse.designer}
-											</a>
+											{isUrl.test(fontInUse.designerUrl) ? (
+												<a href={fontInUse.designerUrl} target="_blank">
+													{fontInUse.designer}
+												</a>
+											) : (
+												<span>{fontInUse.designer}</span>
+											)}
 										</p>
 										<p className="library-fontinuse-button">
 											<Link to={`/library/fontinuse/${fontInUse.id}/edit`}>
@@ -276,6 +294,9 @@ class LibrarySee extends React.Component {
 						mode="see"
 						isPersonnal={this.state.isPersonnal}
 					/>
+					<Link className="sidebar-action" to="/library/fontinuse/create">
+						Add fontsinuse
+					</Link>
 					{this.state.templateValues && (
 						<FamilySidebarGlyphs glyphs={this.state.templateValues.glyphs} />
 					)}
@@ -403,7 +424,11 @@ export class VariantItem extends React.Component {
 						)}
 						<FontUpdater
 							name={this.props.variant.fontName}
-							values={this.props.variant.values}
+							values={
+								typeof this.props.variant.values === 'object'
+									? this.props.variant.values
+									: JSON.parse(this.props.variant.values)
+							}
 							template={this.props.variant.templateName}
 							subset="Hamburgefonstiv 123"
 							glyph="0"

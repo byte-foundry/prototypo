@@ -192,6 +192,7 @@ export const libraryQuery = gql`
 				foundryUrl
 				variants {
 					id
+					updatedAt
 					name
 					values
 					width
