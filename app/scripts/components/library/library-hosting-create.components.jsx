@@ -13,11 +13,16 @@ export default class LibraryHostingCreate extends React.Component {
 			autocompleteText: '',
 			autocompleteSuggestions: [],
 			addedFonts: [],
+			errors: {
+				domain: false,
+				hostedFonts: false,
+			},
 		};
 		this.updateAutocompleteSuggestions = this.updateAutocompleteSuggestions.bind(
 			this,
 		);
 		this.addSuggestion = this.addSuggestion.bind(this);
+		this.addWebsite = this.addWebsite.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -39,6 +44,13 @@ export default class LibraryHostingCreate extends React.Component {
 			let templateData;
 			let preset;
 			let family;
+
+			this.setState({
+				errors: {
+					domain: false,
+					hostedFonts: false,
+				},
+			});
 
 			switch (suggestion.type) {
 			case 'Template':
@@ -196,6 +208,45 @@ export default class LibraryHostingCreate extends React.Component {
 		});
 	}
 
+	addWebsite() {
+		const domain = this.state.domain
+			.replace('http://', '')
+			.replace('https://', '')
+			.split(/[/?#]/)[0]
+			.toLowerCase()
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '');
+
+		this.setState({domain});
+		const isUrl = /^([a-zA-Z0-9]+(([\-]?[a-zA-Z0-9]+)*\.)+)*[a-zA-Z]{2,}$/;
+
+		if (!isUrl.test(domain)) {
+			this.setState({
+				errors: {
+					domain: true,
+					hostedFonts: false,
+				},
+			});
+			return;
+		}
+
+		if (this.state.addedFonts.length === 0) {
+			this.setState({
+				errors: {
+					domain: false,
+					hostedFonts: true,
+				},
+			});
+			return;
+		}
+		this.setState({
+			errors: {
+				domain: false,
+				hostedFonts: false,
+			},
+		});
+	}
+
 	render() {
 		return (
 			<div className="library-content-wrapper">
@@ -215,12 +266,25 @@ export default class LibraryHostingCreate extends React.Component {
 									id="domain"
 									name="hosting_domain"
 									placeholder="www.mysite.com"
-									className="library-hosting-form-elem-input-big"
+									className={`library-hosting-form-elem-input-big ${
+										this.state.errors.domain ? 'is-error' : ''
+									}`}
 									value={this.state.domain}
 									onChange={(e) => {
-										this.setState({domain: e.target.value});
+										this.setState({
+											domain: e.target.value,
+											errors: {
+												...this.state.errors,
+												domain: false,
+											},
+										});
 									}}
 								/>
+								{this.state.errors.domain && (
+									<p className="library-hosting-form-elem-error">
+										The domain you entered is incorrect. Please re-check it.
+									</p>
+								)}
 							</div>
 							<div className="library-hosting-form-elem">
 								<label htmlFor="list">Hosted fonts</label>
@@ -255,6 +319,11 @@ export default class LibraryHostingCreate extends React.Component {
 												/>
 											</div>
 										))
+									)}
+									{this.state.errors.domain && (
+										<p className="library-hosting-form-elem-error">
+											Please add at least one font to your website.
+										</p>
 									)}
 								</div>
 							</div>
@@ -300,7 +369,12 @@ export default class LibraryHostingCreate extends React.Component {
 								)}
 							</div>
 							<div className="library-hosting-form-elem">
-								<div className="library-hosting-form-button" onClick={() => {}}>
+								<div
+									className="library-hosting-form-button"
+									onClick={() => {
+										this.addWebsite();
+									}}
+								>
 									Add website
 								</div>
 							</div>

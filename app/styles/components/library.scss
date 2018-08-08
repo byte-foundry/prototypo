@@ -334,6 +334,12 @@
 						&.library-hosting-form-elem-input-big {
 							padding: 15px 30px;
 							font-size: 50px;
+							transition: all .2s ease;
+							&.is-error {
+								border-color: $red;
+								border-width: 2px;
+								color: $medium-grey;
+							}
 						}
 						&:focus {
 							outline: none;
@@ -375,6 +381,10 @@
 								}
 							}
 						}
+					}
+					.library-hosting-form-elem-error {
+						color: $red;
+						font-weight: bold;
 					}
 				}
 			}
