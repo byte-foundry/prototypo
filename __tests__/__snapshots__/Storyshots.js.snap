@@ -32,7 +32,81 @@ exports[`Storyshots SliderController 50% filled 1`] = `
         className="slider-controller-bg"
         style={
           Object {
-            "transform": "translateX(-46%)",
+            "transform": "translateX(-48%)",
+          }
+        }
+      >
+        <div
+          className="slider-controller-handle"
+        />
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }
+  >
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      }
+    />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots SliderController disabled 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }
+>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }
+  >
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}
+    >
+      <div
+        className="slider-controller-bg"
+        style={
+          Object {
+            "transform": "translateX(-96%)",
           }
         }
       >
@@ -106,7 +180,7 @@ exports[`Storyshots SliderController empty 1`] = `
         className="slider-controller-bg"
         style={
           Object {
-            "transform": "translateX(-92%)",
+            "transform": "translateX(-96%)",
           }
         }
       >
@@ -254,7 +328,7 @@ exports[`Storyshots SliderController restricted 1`] = `
         className="slider-controller-bg"
         style={
           Object {
-            "transform": "translateX(-27.599999999999998%)",
+            "transform": "translateX(-28.799999999999997%)",
           }
         }
       >
@@ -269,7 +343,7 @@ exports[`Storyshots SliderController restricted 1`] = `
           style={
             Object {
               "marginLeft": "-10px",
-              "transform": "translateX(-36.800000000000004%)",
+              "transform": "translateX(-38.400000000000006%)",
             }
           }
         />
@@ -279,7 +353,7 @@ exports[`Storyshots SliderController restricted 1`] = `
           style={
             Object {
               "marginLeft": "-10px",
-              "transform": "translateX(81.6%)",
+              "transform": "translateX(80.8%)",
             }
           }
         />
@@ -350,7 +424,7 @@ exports[`Storyshots SliderController unadvised state 1`] = `
         className="slider-controller-bg is-not-advised"
         style={
           Object {
-            "transform": "translateX(-4.6000000000000005%)",
+            "transform": "translateX(-4.800000000000001%)",
           }
         }
       >
@@ -414,11 +488,7 @@ exports[`Storyshots TopBar/Menu with items 1`] = `
     onClick={[Function]}
     role="menuitem"
   >
-    <span
-      className="top-bar-menu-item-title"
-    >
-      Item 1
-    </span>
+    Item 1
     <li>
       Item 1
     </li>
@@ -429,11 +499,7 @@ exports[`Storyshots TopBar/Menu with items 1`] = `
     onClick={[Function]}
     role="menuitem"
   >
-    <span
-      className="top-bar-menu-item-title"
-    >
-      Item 1
-    </span>
+    Item 1
     <li>
       Item 2
     </li>
@@ -444,11 +510,7 @@ exports[`Storyshots TopBar/Menu with items 1`] = `
     onClick={[Function]}
     role="menuitem"
   >
-    <span
-      className="top-bar-menu-item-title"
-    >
-      Item 1
-    </span>
+    Item 1
     <li>
       Item 3
     </li>
@@ -467,7 +529,7 @@ exports[`Storyshots TopBar/MenuAcademy default 1`] = `
     style={undefined}
   >
     <li
-      className="top-bar-menu-item academy-progress-container"
+      className="top-bar-menu-item"
       id=""
       onClick={[Function]}
       role="menuitem"
@@ -476,44 +538,14 @@ exports[`Storyshots TopBar/MenuAcademy default 1`] = `
         className="top-bar-menu-item-academy"
       >
         <a
+          href="/academy"
           onClick={[Function]}
-          style={Object {}}
         >
           <img
-            className="top-bar-menu-item-academy-img"
+            className="top-bar-menu-item-academy-img is-alone"
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
-            src="test-file-stub"
-          />
-        </a>
-        <a
-          onClick={[Function]}
-          style={Object {}}
-        >
-          <span
-            className="top-bar-menu-item-academy-part "
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-          />
-        </a>
-        <a
-          onClick={[Function]}
-          style={Object {}}
-        >
-          <span
-            className="top-bar-menu-item-academy-part "
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
-          />
-        </a>
-        <a
-          onClick={[Function]}
-          style={Object {}}
-        >
-          <span
-            className="top-bar-menu-item-academy-part "
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
+            src="assets/images/graduate-cap.svg"
           />
         </a>
         <span
@@ -538,7 +570,7 @@ exports[`Storyshots TopBar/MenuAcademy with text set (hover) 1`] = `
     style={undefined}
   >
     <li
-      className="top-bar-menu-item academy-progress-container"
+      className="top-bar-menu-item"
       id=""
       onClick={[Function]}
       role="menuitem"
@@ -547,19 +579,19 @@ exports[`Storyshots TopBar/MenuAcademy with text set (hover) 1`] = `
         className="top-bar-menu-item-academy"
       >
         <a
+          href="/academy/course/course-test"
           onClick={[Function]}
-          style={Object {}}
         >
           <img
-            className="top-bar-menu-item-academy-img"
+            className="top-bar-menu-item-academy-img "
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
-            src="test-file-stub"
+            src="assets/images/graduate-cap.svg"
           />
         </a>
         <a
+          href="/academy/course/course-test/Part 1"
           onClick={[Function]}
-          style={Object {}}
         >
           <span
             className="top-bar-menu-item-academy-part "
@@ -568,8 +600,8 @@ exports[`Storyshots TopBar/MenuAcademy with text set (hover) 1`] = `
           />
         </a>
         <a
+          href="/academy/course/course-test/Part 2"
           onClick={[Function]}
-          style={Object {}}
         >
           <span
             className="top-bar-menu-item-academy-part "
@@ -578,8 +610,8 @@ exports[`Storyshots TopBar/MenuAcademy with text set (hover) 1`] = `
           />
         </a>
         <a
+          href="/academy/course/course-test/Part 3"
           onClick={[Function]}
-          style={Object {}}
         >
           <span
             className="top-bar-menu-item-academy-part "
@@ -590,154 +622,10 @@ exports[`Storyshots TopBar/MenuAcademy with text set (hover) 1`] = `
         <span
           className="top-bar-menu-item-academy-text"
         >
-          Test - Part 1
+          
         </span>
       </div>
     </li>
-  </ul>
-</div>
-`;
-
-exports[`Storyshots TopBar/MenuAcademyIcon default 1`] = `
-<div
-  style={
-    Object {
-      "backgroundColor": "#303030",
-      "bottom": 0,
-      "left": 0,
-      "position": "absolute",
-      "right": 0,
-      "top": 0,
-      "transition": "background-color 0.25s ease-in-out",
-    }
-  }
->
-  <div
-    className="normal"
-    style={
-      Object {
-        "margin": "auto",
-        "padding": "20px",
-        "width": "300px",
-      }
-    }
-  >
-    <div
-      className="top-bar-menu-item-academy"
-    >
-      <a
-        onClick={[Function]}
-        style={Object {}}
-      >
-        <img
-          className="top-bar-menu-item-academy-img is-alone"
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          src="test-file-stub"
-        />
-      </a>
-    </div>
-  </div>
-  <ul
-    style={
-      Object {
-        "bottom": "10px",
-        "margin": 0,
-        "overflow": "auto",
-        "position": "absolute",
-        "right": "10px",
-      }
-    }
-  >
-    <li
-      onClick={[Function]}
-      style={
-        Object {
-          "backgroundColor": "#303030",
-          "borderRadius": "4px",
-          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
-          "cursor": "pointer",
-          "display": "block",
-          "float": "left",
-          "height": "20px",
-          "margin": "0 0 0 10px",
-          "transition": "opacity 0.25s ease-in-out",
-          "width": "20px",
-        }
-      }
-    />
-  </ul>
-</div>
-`;
-
-exports[`Storyshots TopBar/MenuAcademyIcon hover 1`] = `
-<div
-  style={
-    Object {
-      "backgroundColor": "#303030",
-      "bottom": 0,
-      "left": 0,
-      "position": "absolute",
-      "right": 0,
-      "top": 0,
-      "transition": "background-color 0.25s ease-in-out",
-    }
-  }
->
-  <div
-    className="normal"
-    style={
-      Object {
-        "margin": "auto",
-        "padding": "20px",
-        "width": "300px",
-      }
-    }
-  >
-    <div
-      className="top-bar-menu-item-academy"
-    >
-      <a
-        onClick={[Function]}
-        style={Object {}}
-      >
-        <img
-          className="top-bar-menu-item-academy-img is-alone"
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          src="test-file-stub"
-        />
-      </a>
-    </div>
-  </div>
-  <ul
-    style={
-      Object {
-        "bottom": "10px",
-        "margin": 0,
-        "overflow": "auto",
-        "position": "absolute",
-        "right": "10px",
-      }
-    }
-  >
-    <li
-      onClick={[Function]}
-      style={
-        Object {
-          "backgroundColor": "#303030",
-          "borderRadius": "4px",
-          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
-          "cursor": "pointer",
-          "display": "block",
-          "float": "left",
-          "height": "20px",
-          "margin": "0 0 0 10px",
-          "transition": "opacity 0.25s ease-in-out",
-          "width": "20px",
-        }
-      }
-    />
   </ul>
 </div>
 `;
@@ -765,9 +653,7 @@ exports[`Storyshots TopBar/MenuButton default 1`] = `
           className="button small"
           onClick={undefined}
         >
-          <div>
-            Hit me
-          </div>
+          Hit me
         </div>
       </div>
     </li>
@@ -804,11 +690,7 @@ exports[`Storyshots TopBar/MenuDropdown default 1`] = `
         onClick={[Function]}
         role="menuitem"
       >
-        <span
-          className="top-bar-menu-item-title"
-        >
-          Test
-        </span>
+        Test
         <ul
           className="top-bar-menu-item-dropdown"
           id={undefined}
@@ -881,11 +763,7 @@ exports[`Storyshots TopBar/MenuDropdown small 1`] = `
         onClick={[Function]}
         role="menuitem"
       >
-        <span
-          className="top-bar-menu-item-title"
-        >
-          Test
-        </span>
+        Test
         <ul
           className="top-bar-menu-item-dropdown is-small"
           id={undefined}
@@ -958,11 +836,7 @@ exports[`Storyshots TopBar/MenuDropdown with item 1`] = `
         onClick={[Function]}
         role="menuitem"
       >
-        <span
-          className="top-bar-menu-item-title"
-        >
-          Test
-        </span>
+        Test
         <ul
           className="top-bar-menu-item-dropdown"
           id={undefined}
@@ -1514,7 +1388,7 @@ exports[`Storyshots TopBar/MenuLink alignRight 1`] = `
     style={undefined}
   >
     <li
-      className="top-bar-menu-item is-aligned-right is-action is-icon-menu"
+      className="top-bar-menu-item"
       id=""
       onClick={[Function]}
       role="menuitem"
@@ -1524,8 +1398,8 @@ exports[`Storyshots TopBar/MenuLink alignRight 1`] = `
       >
         <a
           className="top-bar-menu-link"
+          href="/account"
           onClick={[Function]}
-          style={Object {}}
         >
           <img
             src="assets/images/icon-profile.svg"
@@ -1548,7 +1422,7 @@ exports[`Storyshots TopBar/MenuLink darkBackground 1`] = `
     style={undefined}
   >
     <li
-      className="top-bar-menu-item is-action is-icon-menu img-dark-background"
+      className="top-bar-menu-item"
       id=""
       onClick={[Function]}
       role="menuitem"
@@ -1558,8 +1432,8 @@ exports[`Storyshots TopBar/MenuLink darkBackground 1`] = `
       >
         <a
           className="top-bar-menu-link"
+          href="/account"
           onClick={[Function]}
-          style={Object {}}
         >
           <img
             src="assets/images/icon-profile.svg"
@@ -1582,7 +1456,7 @@ exports[`Storyshots TopBar/MenuLink default 1`] = `
     style={undefined}
   >
     <li
-      className="top-bar-menu-item is-action is-icon-menu"
+      className="top-bar-menu-item"
       id=""
       onClick={[Function]}
       role="menuitem"
@@ -1592,8 +1466,8 @@ exports[`Storyshots TopBar/MenuLink default 1`] = `
       >
         <a
           className="top-bar-menu-link"
+          href="/account"
           onClick={[Function]}
-          style={Object {}}
         >
           <img
             src="assets/images/icon-profile.svg"
@@ -1668,81 +1542,79 @@ exports[`Storyshots account/AccountManageSubUsers active 1`] = `
           </div>
         </div>
       </header>
-      <div>
-        <table
-          className="sortable-table"
-        >
-          <thead>
-            <tr>
-              <th
-                className="sortable-table-header-cell sortable-table-status"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Status
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Email
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-name"
-                colSpan={1}
-                onClick={[Function]}
-              >
-                Name
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              className="sortable-table-row"
+      <table
+        className="sortable-table"
+      >
+        <thead>
+          <tr>
+            <th
+              className="sortable-table-header-cell sortable-table-status"
+              colSpan={undefined}
+              onClick={[Function]}
             >
-              <td
-                className="sortable-table-cell sortable-table-status"
+              Status
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Email
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-name"
+              colSpan={1}
+              onClick={[Function]}
+            >
+              Name
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="sortable-table-row"
+          >
+            <td
+              className="sortable-table-cell sortable-table-status"
+            >
+              <svg
+                className="icon manage-sub-users-icon"
+              >
+                <use
+                  xlinkHref={undefined}
+                />
+              </svg>
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-email"
+            >
+              user@example.com
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-name"
+            >
+               
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-actions"
+            >
+              <button
+                className="icon-button"
+                name="delete"
+                onClick={[Function]}
               >
                 <svg
-                  className="icon manage-sub-users-icon"
+                  className="icon"
                 >
                   <use
                     xlinkHref={undefined}
                   />
                 </svg>
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-email"
-              >
-                user@example.com
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-name"
-              >
-                 
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-actions"
-              >
-                <button
-                  className="icon-button"
-                  name="delete"
-                  onClick={[Function]}
-                >
-                  <svg
-                    className="icon"
-                  >
-                    <use
-                      xlinkHref={undefined}
-                    />
-                  </svg>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <ul
@@ -1840,54 +1712,52 @@ exports[`Storyshots account/AccountManageSubUsers empty state 1`] = `
           </div>
         </div>
       </header>
-      <div>
-        <table
-          className="sortable-table"
-        >
-          <thead>
-            <tr>
-              <th
-                className="sortable-table-header-cell sortable-table-status"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Status
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Email
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-name"
-                colSpan={1}
-                onClick={[Function]}
-              >
-                Name
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td
-                colSpan={4}
-              >
-                <p
-                  style={
-                    Object {
-                      "textAlign": "center",
-                    }
+      <table
+        className="sortable-table"
+      >
+        <thead>
+          <tr>
+            <th
+              className="sortable-table-header-cell sortable-table-status"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Status
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Email
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-name"
+              colSpan={1}
+              onClick={[Function]}
+            >
+              Name
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td
+              colSpan={4}
+            >
+              <p
+                style={
+                  Object {
+                    "textAlign": "center",
                   }
-                >
-                  You don't manage any user for now.
-                </p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                }
+              >
+                You don't manage any user for now.
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <ul
@@ -1985,139 +1855,137 @@ exports[`Storyshots account/AccountManageSubUsers full 1`] = `
           </div>
         </div>
       </header>
-      <div>
-        <table
-          className="sortable-table"
+      <table
+        className="sortable-table"
+      >
+        <caption
+          className="sortable-table-caption"
         >
-          <caption
-            className="sortable-table-caption"
+          <span>
+            0
+             slots left on 
+            2
+             • 
+            <a
+              href="/details/change-plan"
+              onClick={[Function]}
+            >
+              Update your subscription
+            </a>
+          </span>
+        </caption>
+        <thead>
+          <tr>
+            <th
+              className="sortable-table-header-cell sortable-table-status"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Status
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Email
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-name"
+              colSpan={1}
+              onClick={[Function]}
+            >
+              Name
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="sortable-table-row"
           >
-            <span>
-              0
-               slots left on 
-              2
-               • 
-              <a
-                onClick={[Function]}
-                style={Object {}}
-              >
-                Update your subscription
-              </a>
-            </span>
-          </caption>
-          <thead>
-            <tr>
-              <th
-                className="sortable-table-header-cell sortable-table-status"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Status
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Email
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-name"
-                colSpan={1}
-                onClick={[Function]}
-              >
-                Name
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              className="sortable-table-row"
+            <td
+              className="sortable-table-cell sortable-table-status"
             >
-              <td
-                className="sortable-table-cell sortable-table-status"
+              <svg
+                className="icon manage-sub-users-icon"
+              >
+                <use
+                  xlinkHref={undefined}
+                />
+              </svg>
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-email"
+            >
+              user2@example.com
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-name"
+            >
+               
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-actions"
+            >
+              <button
+                className="icon-button"
+                name="delete"
+                onClick={[Function]}
               >
                 <svg
-                  className="icon manage-sub-users-icon"
+                  className="icon"
                 >
                   <use
                     xlinkHref={undefined}
                   />
                 </svg>
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-email"
-              >
-                user2@example.com
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-name"
-              >
-                 
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-actions"
-              >
-                <button
-                  className="icon-button"
-                  name="delete"
-                  onClick={[Function]}
-                >
-                  <svg
-                    className="icon"
-                  >
-                    <use
-                      xlinkHref={undefined}
-                    />
-                  </svg>
-                </button>
-              </td>
-            </tr>
-            <tr
-              className="sortable-table-row"
+              </button>
+            </td>
+          </tr>
+          <tr
+            className="sortable-table-row"
+          >
+            <td
+              className="sortable-table-cell sortable-table-status"
             >
-              <td
-                className="sortable-table-cell sortable-table-status"
+              <svg
+                className="icon manage-sub-users-icon"
+              >
+                <use
+                  xlinkHref={undefined}
+                />
+              </svg>
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-email"
+            >
+              user@example.com
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-name"
+            >
+               
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-actions"
+            >
+              <button
+                className="icon-button"
+                name="delete"
+                onClick={[Function]}
               >
                 <svg
-                  className="icon manage-sub-users-icon"
+                  className="icon"
                 >
                   <use
                     xlinkHref={undefined}
                   />
                 </svg>
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-email"
-              >
-                user@example.com
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-name"
-              >
-                 
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-actions"
-              >
-                <button
-                  className="icon-button"
-                  name="delete"
-                  onClick={[Function]}
-                >
-                  <svg
-                    className="icon"
-                  >
-                    <use
-                      xlinkHref={undefined}
-                    />
-                  </svg>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <ul
@@ -2215,97 +2083,95 @@ exports[`Storyshots account/AccountManageSubUsers loading 1`] = `
           </div>
         </div>
       </header>
-      <div>
-        <table
-          className="sortable-table"
-        >
-          <thead>
-            <tr>
-              <th
-                className="sortable-table-header-cell sortable-table-status"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Status
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Email
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-name"
-                colSpan={1}
-                onClick={[Function]}
-              >
-                Name
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              className="sortable-table-row sortable-table-row--loading"
+      <table
+        className="sortable-table"
+      >
+        <thead>
+          <tr>
+            <th
+              className="sortable-table-header-cell sortable-table-status"
+              colSpan={undefined}
+              onClick={[Function]}
             >
-              <td
-                className="sortable-table-cell sortable-table-status"
+              Status
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Email
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-name"
+              colSpan={1}
+              onClick={[Function]}
+            >
+              Name
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="sortable-table-row sortable-table-row--loading"
+          >
+            <td
+              className="sortable-table-cell sortable-table-status"
+            >
+              <div
+                className="wait-for-load"
               >
                 <div
-                  className="wait-for-load"
+                  className="sk-spinner sk-spinner-wave"
                 >
                   <div
-                    className="sk-spinner sk-spinner-wave"
-                  >
-                    <div
-                      className="sk-rect1"
-                    />
-                    <div
-                      className="sk-rect2"
-                    />
-                    <div
-                      className="sk-rect3"
-                    />
-                    <div
-                      className="sk-rect4"
-                    />
-                    <div
-                      className="sk-rect5"
-                    />
-                  </div>
+                    className="sk-rect1"
+                  />
+                  <div
+                    className="sk-rect2"
+                  />
+                  <div
+                    className="sk-rect3"
+                  />
+                  <div
+                    className="sk-rect4"
+                  />
+                  <div
+                    className="sk-rect5"
+                  />
                 </div>
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-email"
+              </div>
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-email"
+            >
+              user@example.com
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-name"
+            >
+               
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-actions"
+            >
+              <button
+                className="icon-button"
+                name="delete"
+                onClick={[Function]}
               >
-                user@example.com
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-name"
-              >
-                 
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-actions"
-              >
-                <button
-                  className="icon-button"
-                  name="delete"
-                  onClick={[Function]}
+                <svg
+                  className="icon"
                 >
-                  <svg
-                    className="icon"
-                  >
-                    <use
-                      xlinkHref={undefined}
-                    />
-                  </svg>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                  <use
+                    xlinkHref={undefined}
+                  />
+                </svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <ul
@@ -2403,81 +2269,79 @@ exports[`Storyshots account/AccountManageSubUsers pending 1`] = `
           </div>
         </div>
       </header>
-      <div>
-        <table
-          className="sortable-table"
-        >
-          <thead>
-            <tr>
-              <th
-                className="sortable-table-header-cell sortable-table-status"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Status
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Email
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-name"
-                colSpan={1}
-                onClick={[Function]}
-              >
-                Name
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              className="sortable-table-row"
+      <table
+        className="sortable-table"
+      >
+        <thead>
+          <tr>
+            <th
+              className="sortable-table-header-cell sortable-table-status"
+              colSpan={undefined}
+              onClick={[Function]}
             >
-              <td
-                className="sortable-table-cell sortable-table-status"
+              Status
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Email
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-name"
+              colSpan={1}
+              onClick={[Function]}
+            >
+              Name
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="sortable-table-row"
+          >
+            <td
+              className="sortable-table-cell sortable-table-status"
+            >
+              <svg
+                className="icon manage-sub-users-icon"
+              >
+                <use
+                  xlinkHref={undefined}
+                />
+              </svg>
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-email"
+            >
+              user@example.com
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-name"
+            >
+               
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-actions"
+            >
+              <button
+                className="icon-button"
+                name="delete"
+                onClick={[Function]}
               >
                 <svg
-                  className="icon manage-sub-users-icon"
+                  className="icon"
                 >
                   <use
                     xlinkHref={undefined}
                   />
                 </svg>
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-email"
-              >
-                user@example.com
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-name"
-              >
-                 
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-actions"
-              >
-                <button
-                  className="icon-button"
-                  name="delete"
-                  onClick={[Function]}
-                >
-                  <svg
-                    className="icon"
-                  >
-                    <use
-                      xlinkHref={undefined}
-                    />
-                  </svg>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <ul
@@ -2575,81 +2439,79 @@ exports[`Storyshots account/AccountManageSubUsers removable 1`] = `
           </div>
         </div>
       </header>
-      <div>
-        <table
-          className="sortable-table"
-        >
-          <thead>
-            <tr>
-              <th
-                className="sortable-table-header-cell sortable-table-status"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Status
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Email
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-name"
-                colSpan={1}
-                onClick={[Function]}
-              >
-                Name
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              className="sortable-table-row"
+      <table
+        className="sortable-table"
+      >
+        <thead>
+          <tr>
+            <th
+              className="sortable-table-header-cell sortable-table-status"
+              colSpan={undefined}
+              onClick={[Function]}
             >
-              <td
-                className="sortable-table-cell sortable-table-status"
+              Status
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Email
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-name"
+              colSpan={1}
+              onClick={[Function]}
+            >
+              Name
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="sortable-table-row"
+          >
+            <td
+              className="sortable-table-cell sortable-table-status"
+            >
+              <svg
+                className="icon manage-sub-users-icon"
+              >
+                <use
+                  xlinkHref={undefined}
+                />
+              </svg>
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-email"
+            >
+              user@example.com
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-name"
+            >
+               
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-actions"
+            >
+              <button
+                className="icon-button"
+                name="delete"
+                onClick={[Function]}
               >
                 <svg
-                  className="icon manage-sub-users-icon"
+                  className="icon"
                 >
                   <use
                     xlinkHref={undefined}
                   />
                 </svg>
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-email"
-              >
-                user@example.com
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-name"
-              >
-                 
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-actions"
-              >
-                <button
-                  className="icon-button"
-                  name="delete"
-                  onClick={[Function]}
-                >
-                  <svg
-                    className="icon"
-                  >
-                    <use
-                      xlinkHref={undefined}
-                    />
-                  </svg>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <ul
@@ -2747,78 +2609,77 @@ exports[`Storyshots account/AccountManageSubUsers with add user form 1`] = `
           </div>
         </div>
       </header>
-      <div>
-        <table
-          className="sortable-table"
-        >
-          <thead>
-            <tr>
-              <th
-                className="sortable-table-header-cell sortable-table-status"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Status
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Email
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-name"
-                colSpan={1}
-                onClick={[Function]}
-              >
-                Name
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              className="sortable-table-add-user-form"
+      <table
+        className="sortable-table"
+      >
+        <thead>
+          <tr>
+            <th
+              className="sortable-table-header-cell sortable-table-status"
+              colSpan={undefined}
+              onClick={[Function]}
             >
-              <td />
-              <td
-                colSpan={2}
+              Status
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Email
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-name"
+              colSpan={1}
+              onClick={[Function]}
+            >
+              Name
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="sortable-table-add-user-form"
+          >
+            <td />
+            <td
+              colSpan={2}
+            >
+              <input
+                className="sortable-table-add-user-form-email"
+                name="email"
+                placeholder="email@example.com"
+                type="email"
+              />
+            </td>
+            <td>
+              <button
+                className="new-button new-button--small"
+                disabled={false}
+                onClick={[Function]}
+                type="button"
               >
-                <input
-                  className="sortable-table-add-user-form-email"
-                  name="email"
-                  placeholder="email@example.com"
-                  type="email"
-                />
-              </td>
-              <td>
-                <button
-                  className="new-button new-button--small"
-                  disabled={undefined}
-                  onClick={[Function]}
-                >
-                  Add User
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td
-                colSpan={4}
-              >
-                <p
-                  style={
-                    Object {
-                      "textAlign": "center",
-                    }
+                Add User
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td
+              colSpan={4}
+            >
+              <p
+                style={
+                  Object {
+                    "textAlign": "center",
                   }
-                >
-                  You don't manage any user for now.
-                </p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                }
+              >
+                You don't manage any user for now.
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <ul
@@ -2916,63 +2777,61 @@ exports[`Storyshots account/AccountManageSubUsers with limited quantity 1`] = `
           </div>
         </div>
       </header>
-      <div>
-        <table
-          className="sortable-table"
+      <table
+        className="sortable-table"
+      >
+        <caption
+          className="sortable-table-caption"
         >
-          <caption
-            className="sortable-table-caption"
-          >
-            <span>
-              10
-               slots left on 
-              10
-            </span>
-          </caption>
-          <thead>
-            <tr>
-              <th
-                className="sortable-table-header-cell sortable-table-status"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Status
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Email
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-name"
-                colSpan={1}
-                onClick={[Function]}
-              >
-                Name
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td
-                colSpan={4}
-              >
-                <p
-                  style={
-                    Object {
-                      "textAlign": "center",
-                    }
+          <span>
+            10
+             slots left on 
+            10
+          </span>
+        </caption>
+        <thead>
+          <tr>
+            <th
+              className="sortable-table-header-cell sortable-table-status"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Status
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Email
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-name"
+              colSpan={1}
+              onClick={[Function]}
+            >
+              Name
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td
+              colSpan={4}
+            >
+              <p
+                style={
+                  Object {
+                    "textAlign": "center",
                   }
-                >
-                  You don't manage any user for now.
-                </p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                }
+              >
+                You don't manage any user for now.
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <ul
@@ -3070,163 +2929,162 @@ exports[`Storyshots account/AccountManageSubUsers with short quantity left 1`] =
           </div>
         </div>
       </header>
-      <div>
-        <table
-          className="sortable-table"
+      <table
+        className="sortable-table"
+      >
+        <caption
+          className="sortable-table-caption"
         >
-          <caption
-            className="sortable-table-caption"
+          <span>
+            3
+             slots left on 
+            5
+             • 
+            <a
+              href="/details/change-plan"
+              onClick={[Function]}
+            >
+              Update your subscription
+            </a>
+          </span>
+        </caption>
+        <thead>
+          <tr>
+            <th
+              className="sortable-table-header-cell sortable-table-status"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Status
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
+              colSpan={undefined}
+              onClick={[Function]}
+            >
+              Email
+            </th>
+            <th
+              className="sortable-table-header-cell sortable-table-name"
+              colSpan={1}
+              onClick={[Function]}
+            >
+              Name
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="sortable-table-add-user-form"
           >
-            <span>
-              3
-               slots left on 
-              5
-               • 
-              <a
-                onClick={[Function]}
-                style={Object {}}
-              >
-                Update your subscription
-              </a>
-            </span>
-          </caption>
-          <thead>
-            <tr>
-              <th
-                className="sortable-table-header-cell sortable-table-status"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Status
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-email sortable-table-header-cell-sort-desc"
-                colSpan={undefined}
-                onClick={[Function]}
-              >
-                Email
-              </th>
-              <th
-                className="sortable-table-header-cell sortable-table-name"
-                colSpan={1}
-                onClick={[Function]}
-              >
-                Name
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              className="sortable-table-add-user-form"
+            <td />
+            <td
+              colSpan={2}
             >
-              <td />
-              <td
-                colSpan={2}
+              <input
+                className="sortable-table-add-user-form-email"
+                name="email"
+                placeholder="email@example.com"
+                type="email"
+              />
+            </td>
+            <td>
+              <button
+                className="new-button new-button--small"
+                disabled={false}
+                onClick={[Function]}
+                type="button"
               >
-                <input
-                  className="sortable-table-add-user-form-email"
-                  name="email"
-                  placeholder="email@example.com"
-                  type="email"
+                Add User
+              </button>
+            </td>
+          </tr>
+          <tr
+            className="sortable-table-row"
+          >
+            <td
+              className="sortable-table-cell sortable-table-status"
+            >
+              <svg
+                className="icon manage-sub-users-icon"
+              >
+                <use
+                  xlinkHref={undefined}
                 />
-              </td>
-              <td>
-                <button
-                  className="new-button new-button--small"
-                  disabled={undefined}
-                  onClick={[Function]}
-                >
-                  Add User
-                </button>
-              </td>
-            </tr>
-            <tr
-              className="sortable-table-row"
+              </svg>
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-email"
             >
-              <td
-                className="sortable-table-cell sortable-table-status"
+              user2@example.com
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-name"
+            >
+               
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-actions"
+            >
+              <button
+                className="icon-button"
+                name="delete"
+                onClick={[Function]}
               >
                 <svg
-                  className="icon manage-sub-users-icon"
+                  className="icon"
                 >
                   <use
                     xlinkHref={undefined}
                   />
                 </svg>
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-email"
-              >
-                user2@example.com
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-name"
-              >
-                 
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-actions"
-              >
-                <button
-                  className="icon-button"
-                  name="delete"
-                  onClick={[Function]}
-                >
-                  <svg
-                    className="icon"
-                  >
-                    <use
-                      xlinkHref={undefined}
-                    />
-                  </svg>
-                </button>
-              </td>
-            </tr>
-            <tr
-              className="sortable-table-row"
+              </button>
+            </td>
+          </tr>
+          <tr
+            className="sortable-table-row"
+          >
+            <td
+              className="sortable-table-cell sortable-table-status"
             >
-              <td
-                className="sortable-table-cell sortable-table-status"
+              <svg
+                className="icon manage-sub-users-icon"
+              >
+                <use
+                  xlinkHref={undefined}
+                />
+              </svg>
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-email"
+            >
+              user@example.com
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-name"
+            >
+               
+            </td>
+            <td
+              className="sortable-table-cell sortable-table-actions"
+            >
+              <button
+                className="icon-button"
+                name="delete"
+                onClick={[Function]}
               >
                 <svg
-                  className="icon manage-sub-users-icon"
+                  className="icon"
                 >
                   <use
                     xlinkHref={undefined}
                   />
                 </svg>
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-email"
-              >
-                user@example.com
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-name"
-              >
-                 
-              </td>
-              <td
-                className="sortable-table-cell sortable-table-actions"
-              >
-                <button
-                  className="icon-button"
-                  name="delete"
-                  onClick={[Function]}
-                >
-                  <svg
-                    className="icon"
-                  >
-                    <use
-                      xlinkHref={undefined}
-                    />
-                  </svg>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <ul
@@ -3302,17 +3160,17 @@ exports[`Storyshots account/SubscriptionSidebar personal_annual_99 1`] = `
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          More diverse fonts with full range on all parameters
+          Full-range parameters
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Perfectly customized with glyph individualization groups
+          Unlimited font exports
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Tune to perfection using the manual edition and component editing
+          Manual editing, individualisation, developper features
         </li>
       </ul>
       <div
@@ -3325,7 +3183,8 @@ exports[`Storyshots account/SubscriptionSidebar personal_annual_99 1`] = `
           <span>
             US$ 8.25
           </span>
-           / month
+           
+          / month
         </span>
       </div>
       <div
@@ -3339,7 +3198,7 @@ exports[`Storyshots account/SubscriptionSidebar personal_annual_99 1`] = `
       </div>
       <a
         className="subscription-sidebar-link"
-        href="/account/subscribe"
+        href="subscribe?plan=personal_monthly"
         onClick={[Function]}
       >
         Want less commitment, try our monthly offer
@@ -3419,17 +3278,17 @@ exports[`Storyshots account/SubscriptionSidebar personal_annual_99 50% off 1`] =
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          More diverse fonts with full range on all parameters
+          Full-range parameters
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Perfectly customized with glyph individualization groups
+          Unlimited font exports
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Tune to perfection using the manual edition and component editing
+          Manual editing, individualisation, developper features
         </li>
       </ul>
       <div
@@ -3442,7 +3301,8 @@ exports[`Storyshots account/SubscriptionSidebar personal_annual_99 50% off 1`] =
           <span>
             US$ 4.13
           </span>
-           / month
+           
+          / month
         </span>
       </div>
       <div
@@ -3456,126 +3316,10 @@ exports[`Storyshots account/SubscriptionSidebar personal_annual_99 50% off 1`] =
       </div>
       <a
         className="subscription-sidebar-link"
-        href="/account/subscribe"
+        href="subscribe?plan=personal_monthly"
         onClick={[Function]}
       >
         Want less commitment, try our monthly offer
-      </a>
-    </div>
-  </div>
-  <ul
-    style={
-      Object {
-        "bottom": "10px",
-        "margin": 0,
-        "overflow": "auto",
-        "position": "absolute",
-        "right": "10px",
-      }
-    }
-  >
-    <li
-      onClick={[Function]}
-      style={
-        Object {
-          "backgroundColor": "#24d390",
-          "borderRadius": "4px",
-          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
-          "cursor": "pointer",
-          "display": "block",
-          "float": "left",
-          "height": "20px",
-          "margin": "0 0 0 10px",
-          "transition": "opacity 0.25s ease-in-out",
-          "width": "20px",
-        }
-      }
-    />
-  </ul>
-</div>
-`;
-
-exports[`Storyshots account/SubscriptionSidebar personal_monthly (no first month offer) 1`] = `
-<div
-  style={
-    Object {
-      "backgroundColor": "#24d390",
-      "bottom": 0,
-      "left": 0,
-      "position": "absolute",
-      "right": 0,
-      "top": 0,
-      "transition": "background-color 0.25s ease-in-out",
-    }
-  }
->
-  <div
-    style={
-      Object {
-        "margin": "20px auto",
-        "width": "350px",
-      }
-    }
-  >
-    <div
-      className="subscription-sidebar"
-    >
-      <h1
-        className="subscription-sidebar-header"
-      >
-        Monthly
-      </h1>
-      <h2
-        className="subscription-sidebar-title"
-      >
-        <span>
-          Try Prototypo Pro without commitment
-        </span>
-      </h2>
-      <ul
-        className="subscription-sidebar-list-feat"
-      >
-        <li
-          className="subscription-sidebar-list-feat-item"
-        >
-          More diverse fonts with full range on all parameters
-        </li>
-        <li
-          className="subscription-sidebar-list-feat-item"
-        >
-          Perfectly customized with glyph individualization groups
-        </li>
-        <li
-          className="subscription-sidebar-list-feat-item"
-        >
-          Tune to perfection using the manual edition and component editing
-        </li>
-      </ul>
-      <div
-        className="subscription-sidebar-separator"
-      />
-      <div
-        className="subscription-sidebar-cta"
-      >
-        <span>
-          <span>
-            US$ 15
-          </span>
-           
-           / month
-        </span>
-      </div>
-      <div
-        className="subscription-sidebar-subcta"
-      >
-        No commitment!
-      </div>
-      <a
-        className="subscription-sidebar-link"
-        href="/account/subscribe"
-        onClick={[Function]}
-      >
-        Want Prototypo cheaper, check out our annual offer
       </a>
     </div>
   </div>
@@ -3645,13 +3389,7 @@ exports[`Storyshots account/SubscriptionSidebar personal_monthly 1`] = `
         className="subscription-sidebar-title"
       >
         <span>
-          Try Prototypo Pro subscription for
-           
-          <span>
-            US$ 1
-          </span>
-           
-          only
+          Try Prototypo Pro without commitment
         </span>
       </h2>
       <ul
@@ -3660,17 +3398,17 @@ exports[`Storyshots account/SubscriptionSidebar personal_monthly 1`] = `
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          More diverse fonts with full range on all parameters
+          Full-range parameters
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Perfectly customized with glyph individualization groups
+          Unlimited font exports
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Tune to perfection using the manual edition and component editing
+          Manual editing, individualisation, developper features
         </li>
       </ul>
       <div
@@ -3684,10 +3422,7 @@ exports[`Storyshots account/SubscriptionSidebar personal_monthly 1`] = `
             US$ 15
           </span>
            
-          <span>
-            <br />
-            after the first month
-          </span>
+          / month
         </span>
       </div>
       <div
@@ -3697,7 +3432,7 @@ exports[`Storyshots account/SubscriptionSidebar personal_monthly 1`] = `
       </div>
       <a
         className="subscription-sidebar-link"
-        href="/account/subscribe"
+        href="subscribe?plan=personal_annual_99"
         onClick={[Function]}
       >
         Want Prototypo cheaper, check out our annual offer
@@ -3788,7 +3523,12 @@ exports[`Storyshots account/SubscriptionSidebar team_annual 1`] = `
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Manage your team licences
+          Team management & user roles
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item"
+        >
+          Kickoff course
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
@@ -3804,7 +3544,7 @@ exports[`Storyshots account/SubscriptionSidebar team_annual 1`] = `
       >
         <span>
           <span>
-            US$ 99.8
+            US$ 49.9
           </span>
            
           / month
@@ -3821,13 +3561,13 @@ exports[`Storyshots account/SubscriptionSidebar team_annual 1`] = `
           </span>
            
           × 
-          2
+          1
            per month
         </span>
       </div>
       <a
         className="subscription-sidebar-link"
-        href="/account/subscribe"
+        href="subscribe?plan=team_monthly"
         onClick={[Function]}
       >
         Want less commitment, try our monthly offer
@@ -3918,7 +3658,12 @@ exports[`Storyshots account/SubscriptionSidebar team_monthly 1`] = `
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Manage your team licences
+          Team management & user roles
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item"
+        >
+          Kickoff course
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
@@ -3934,7 +3679,7 @@ exports[`Storyshots account/SubscriptionSidebar team_monthly 1`] = `
       >
         <span>
           <span>
-            US$ 118
+            US$ 59
           </span>
            
           / month
@@ -3951,13 +3696,13 @@ exports[`Storyshots account/SubscriptionSidebar team_monthly 1`] = `
           </span>
            
           × 
-          2
+          1
            per month
         </span>
       </div>
       <a
         className="subscription-sidebar-link"
-        href="/account/subscribe"
+        href="subscribe?plan=team_annual"
         onClick={[Function]}
       >
         Want Prototypo cheaper, check out our annual offer
@@ -3996,35 +3741,429 @@ exports[`Storyshots account/SubscriptionSidebar team_monthly 1`] = `
 </div>
 `;
 
+exports[`Storyshots onboarding/OnboardingStep finish 1`] = `
+<div
+  className="step undefined"
+>
+  <h3 />
+  <div
+    className="text"
+    style={
+      Object {
+        "fontFamily": "sans-serif",
+      }
+    }
+  >
+    <p>
+      <span
+        className="highlighted"
+      >
+        H
+      </span>
+      <span
+        className="highlighted"
+      >
+        a
+      </span>
+      <span
+        className="highlighted"
+      >
+        m
+      </span>
+      <span
+        className="highlighted"
+      >
+        b
+      </span>
+      <span
+        className="highlighted"
+      >
+        u
+      </span>
+      <span
+        className="highlighted"
+      >
+        r
+      </span>
+      <span
+        className="highlighted"
+      >
+        g
+      </span>
+      <span
+        className="highlighted"
+      >
+        e
+      </span>
+      <span
+        className="highlighted"
+      >
+        f
+      </span>
+      <span
+        className="highlighted"
+      >
+        o
+      </span>
+      <span
+        className="highlighted"
+      >
+        n
+      </span>
+      <span
+        className="highlighted"
+      >
+        s
+      </span>
+      <span
+        className="highlighted"
+      >
+        t
+      </span>
+      <span
+        className="highlighted"
+      >
+        i
+      </span>
+      <span
+        className="highlighted"
+      >
+        v
+      </span>
+    </p>
+  </div>
+  <p
+    className="description"
+  >
+    <span>
+      description
+      <br />
+    </span>
+  </p>
+  <p
+    className="description error"
+  >
+    Please wait, we are loading your project.
+  </p>
+</div>
+`;
+
+exports[`Storyshots onboarding/OnboardingStep serifs 1`] = `
+<div
+  className="step undefined"
+>
+  <h3 />
+  <p
+    className="description"
+  >
+    <span>
+      description
+      <br />
+    </span>
+  </p>
+  <div
+    className="text"
+    style={
+      Object {
+        "fontFamily": "sans-serif",
+      }
+    }
+  >
+    <p>
+      <span
+        className=""
+      >
+        H
+      </span>
+      <span
+        className="highlighted"
+      >
+        a
+      </span>
+      <span
+        className=""
+      >
+        m
+      </span>
+      <span
+        className=""
+      >
+        b
+      </span>
+      <span
+        className=""
+      >
+        u
+      </span>
+      <span
+        className="highlighted"
+      >
+        r
+      </span>
+      <span
+        className=""
+      >
+        g
+      </span>
+      <span
+        className="highlighted"
+      >
+        e
+      </span>
+      <span
+        className=""
+      >
+        f
+      </span>
+      <span
+        className=""
+      >
+        o
+      </span>
+      <span
+        className=""
+      >
+        n
+      </span>
+      <span
+        className="highlighted"
+      >
+        s
+      </span>
+      <span
+        className="highlighted"
+      >
+        t
+      </span>
+      <span
+        className=""
+      >
+        i
+      </span>
+      <span
+        className=""
+      >
+        v
+      </span>
+    </p>
+  </div>
+  <div
+    className="step-sliders"
+  >
+    <div
+      className="normal onboarding-slider"
+    >
+      <label
+        htmlFor="slider-serif width"
+      >
+        serif width
+      </label>
+      <div
+        className="slider-controller onboarding-slider-controller"
+        onMouseDown={[Function]}
+      >
+        <div
+          className="slider-controller-bg"
+          style={
+            Object {
+              "transform": "translateX(-19.200000000000003%)",
+            }
+          }
+        >
+          <div
+            className="slider-controller-handle"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots onboarding/OnboardingStep sliders 1`] = `
+<div
+  className="step undefined"
+>
+  <h3 />
+  <p
+    className="description"
+  >
+    <span>
+      description
+      <br />
+    </span>
+  </p>
+  <div
+    className="text"
+    style={
+      Object {
+        "fontFamily": "sans-serif",
+      }
+    }
+  >
+    <p>
+      <span
+        className=""
+      >
+        H
+      </span>
+      <span
+        className="highlighted"
+      >
+        a
+      </span>
+      <span
+        className=""
+      >
+        m
+      </span>
+      <span
+        className=""
+      >
+        b
+      </span>
+      <span
+        className=""
+      >
+        u
+      </span>
+      <span
+        className="highlighted"
+      >
+        r
+      </span>
+      <span
+        className=""
+      >
+        g
+      </span>
+      <span
+        className="highlighted"
+      >
+        e
+      </span>
+      <span
+        className=""
+      >
+        f
+      </span>
+      <span
+        className=""
+      >
+        o
+      </span>
+      <span
+        className=""
+      >
+        n
+      </span>
+      <span
+        className="highlighted"
+      >
+        s
+      </span>
+      <span
+        className="highlighted"
+      >
+        t
+      </span>
+      <span
+        className=""
+      >
+        i
+      </span>
+      <span
+        className=""
+      >
+        v
+      </span>
+    </p>
+  </div>
+  <div
+    className="step-sliders"
+  >
+    <div
+      className="normal onboarding-slider"
+    >
+      <label
+        htmlFor="slider-thickness"
+      >
+        thickness
+      </label>
+      <div
+        className="slider-controller onboarding-slider-controller"
+        onMouseDown={[Function]}
+      >
+        <div
+          className="slider-controller-bg"
+          style={
+            Object {
+              "transform": "translateX(-19.200000000000003%)",
+            }
+          }
+        >
+          <div
+            className="slider-controller-handle"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots onboarding/OnboardingStep start 1`] = `
+<div
+  className="step undefined"
+>
+  <img
+    alt="Onboarding - Intro"
+    src="assets/images/onboardingIntro.svg"
+  />
+  <h3>
+    Title
+  </h3>
+  <p
+    className="description"
+  >
+    <span>
+      description
+      <br />
+    </span>
+  </p>
+  <p
+    className="description error"
+  >
+    Please wait, we are loading your project.
+  </p>
+</div>
+`;
+
 exports[`Storyshots shared/AccountValidationButton default 1`] = `
 <button
-  className="account-button account-validation-button"
-  disabled={undefined}
+  className="new-button account-button account-validation-button"
+  disabled={false}
   onClick={undefined}
   type="submit"
 >
-  <div>
-    Hit me!
-  </div>
+  Hit me!
 </button>
 `;
 
 exports[`Storyshots shared/AccountValidationButton disabled 1`] = `
 <button
-  className="account-button account-validation-button"
+  className="new-button new-button--disabled account-button account-validation-button"
   disabled={true}
   onClick={undefined}
   type="submit"
 >
-  <div>
-    You can't hit me!
-  </div>
+  You can't hit me!
 </button>
 `;
 
 exports[`Storyshots shared/AccountValidationButton loading 1`] = `
 <button
-  className="account-button account-validation-button"
+  className="new-button new-button--disabled account-button account-validation-button"
   disabled={true}
   onClick={undefined}
   type="submit"
@@ -4270,7 +4409,9 @@ exports[`Storyshots shared/CopyPasteInput default 1`] = `
           <input
             className="input-with-label-input is-small"
             defaultValue="hello"
+            onBlur={[Function]}
             onChange={[Function]}
+            onFocus={[Function]}
             placeholder={undefined}
           />
         </div>
@@ -4280,8 +4421,9 @@ exports[`Storyshots shared/CopyPasteInput default 1`] = `
       >
         <button
           className="new-button new-button--small"
-          disabled={undefined}
+          disabled={false}
           onClick={[Function]}
+          type="button"
         >
           Copy to clipboard
         </button>
@@ -4379,6 +4521,282 @@ exports[`Storyshots shared/FakeCard default 1`] = `
 </div>
 `;
 
+exports[`Storyshots shared/Loading default 1`] = `
+<div
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+    }
+  }
+>
+  Not loading
+</div>
+`;
+
+exports[`Storyshots shared/Loading inside a block 1`] = `
+<div
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "backgroundColor": "black",
+        "height": "300px",
+      }
+    }
+  >
+    <div
+      className="wait-for-load"
+    >
+      <div
+        className="sk-spinner sk-spinner-wave"
+      >
+        <div
+          className="sk-rect1"
+        />
+        <div
+          className="sk-rect2"
+        />
+        <div
+          className="sk-rect3"
+        />
+        <div
+          className="sk-rect4"
+        />
+        <div
+          className="sk-rect5"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared/Loading loading 1`] = `
+<div
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+    }
+  }
+>
+  <div
+    className="wait-for-load"
+  >
+    <div
+      className="sk-spinner sk-spinner-wave"
+    >
+      <div
+        className="sk-rect1"
+      />
+      <div
+        className="sk-rect2"
+      />
+      <div
+        className="sk-rect3"
+      />
+      <div
+        className="sk-rect4"
+      />
+      <div
+        className="sk-rect5"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared/Loading secColor 1`] = `
+<div
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "backgroundColor": "black",
+        "height": "300px",
+      }
+    }
+  >
+    <div
+      className="wait-for-load"
+    >
+      <div
+        className="sk-spinner sk-spinner-wave sk-secondary-color"
+      >
+        <div
+          className="sk-rect1"
+        />
+        <div
+          className="sk-rect2"
+        />
+        <div
+          className="sk-rect3"
+        />
+        <div
+          className="sk-rect4"
+        />
+        <div
+          className="sk-rect5"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared/Loading size="big" 1`] = `
+<div
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+    }
+  }
+>
+  <div
+    className="wait-for-load wait-for-load--big"
+  >
+    <div
+      className="sk-spinner sk-spinner-wave"
+    >
+      <div
+        className="sk-rect1"
+      />
+      <div
+        className="sk-rect2"
+      />
+      <div
+        className="sk-rect3"
+      />
+      <div
+        className="sk-rect4"
+      />
+      <div
+        className="sk-rect5"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared/Loading size="large" 1`] = `
+<div
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+    }
+  }
+>
+  <div
+    className="wait-for-load wait-for-load--large"
+  >
+    <div
+      className="sk-spinner sk-spinner-wave"
+    >
+      <div
+        className="sk-rect1"
+      />
+      <div
+        className="sk-rect2"
+      />
+      <div
+        className="sk-rect3"
+      />
+      <div
+        className="sk-rect4"
+      />
+      <div
+        className="sk-rect5"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared/Loading size="small" 1`] = `
+<div
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+    }
+  }
+>
+  <div
+    className="wait-for-load wait-for-load--small"
+  >
+    <div
+      className="sk-spinner sk-spinner-wave"
+    >
+      <div
+        className="sk-rect1"
+      />
+      <div
+        className="sk-rect2"
+      />
+      <div
+        className="sk-rect3"
+      />
+      <div
+        className="sk-rect4"
+      />
+      <div
+        className="sk-rect5"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots shared/Loading size="tiny" 1`] = `
+<div
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+    }
+  }
+>
+  <div
+    className="wait-for-load wait-for-load--tiny"
+  >
+    <div
+      className="sk-spinner sk-spinner-wave"
+    >
+      <div
+        className="sk-rect1"
+      />
+      <div
+        className="sk-rect2"
+      />
+      <div
+        className="sk-rect3"
+      />
+      <div
+        className="sk-rect4"
+      />
+      <div
+        className="sk-rect5"
+      />
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots shared/LoadingButton default 1`] = `
 <div
   className="normal"
@@ -4395,9 +4813,7 @@ exports[`Storyshots shared/LoadingButton default 1`] = `
     disabled={false}
     type="button"
   >
-    <div>
-      Hit me!
-    </div>
+    Hit me!
   </button>
 </div>
 `;
@@ -4534,7 +4950,8 @@ exports[`Storyshots shared/PricingItem default 1`] = `
             <span
               className="pricing-item-subtitle-price-value-currency"
             >
-               €
+               
+              €
             </span>
             <span
               className="pricing-item-subtitle-price-value-freq"
@@ -4586,7 +5003,8 @@ exports[`Storyshots shared/PricingItem selected 1`] = `
             <span
               className="pricing-item-subtitle-price-value-currency"
             >
-               €
+               
+              €
             </span>
             <span
               className="pricing-item-subtitle-price-value-freq"
@@ -4638,7 +5056,8 @@ exports[`Storyshots shared/PricingItem with children 1`] = `
             <span
               className="pricing-item-subtitle-price-value-currency"
             >
-               €
+               
+              €
             </span>
             <span
               className="pricing-item-subtitle-price-value-freq"
@@ -4706,7 +5125,8 @@ exports[`Storyshots shared/PricingItem with price info 1`] = `
             <span
               className="pricing-item-subtitle-price-value-currency"
             >
-               €
+               
+              €
             </span>
             <span
               className="pricing-item-subtitle-price-value-freq"
@@ -4763,7 +5183,8 @@ exports[`Storyshots shared/PricingItem with title 1`] = `
             <span
               className="pricing-item-subtitle-price-value-currency"
             >
-               €
+               
+              €
             </span>
             <span
               className="pricing-item-subtitle-price-value-freq"

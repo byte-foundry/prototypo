@@ -2,10 +2,12 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
 import backgroundColor from 'react-storybook-decorator-background';
+import storyRouter from 'storybook-react-router';
 
 import {AccountManageSubUsers} from '../app/scripts/components/account/account-manage-sub-users.components';
 
 storiesOf('account/AccountManageSubUsers', module)
+	.addDecorator(storyRouter())
 	.addDecorator(story => (
 		<div
 			style={{width: '700px', margin: 'auto', padding: '20px'}}

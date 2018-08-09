@@ -1,11 +1,13 @@
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import storyRouter from 'storybook-react-router';
 
 import {TopBarMenuRaw} from '../app/scripts/components/topbar/top-bar-menu.components';
 
 import TopBarMenuLink from '../app/scripts/components/topbar/top-bar-menu-link.components';
 
 storiesOf('TopBar/MenuLink', module)
+	.addDecorator(storyRouter())
 	.addDecorator(story => (
 		<div className="normal">
 			<TopBarMenuRaw>{story()}</TopBarMenuRaw>
