@@ -1,10 +1,12 @@
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import backgroundColor from 'react-storybook-decorator-background';
+import storyRouter from 'storybook-react-router';
 
 import SubscriptionSidebar from '../app/scripts/components/account/subscription-sidebar.components';
 
 storiesOf('account/SubscriptionSidebar', module)
+	.addDecorator(storyRouter())
 	.addDecorator(story => (
 		<div style={{width: '350px', margin: '20px auto'}}>{story()}</div>
 	))

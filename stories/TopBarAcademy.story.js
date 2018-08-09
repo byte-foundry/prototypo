@@ -1,10 +1,11 @@
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {action} from '@storybook/addon-actions';
+import storyRouter from 'storybook-react-router';
 
 import {TopBarMenuRaw} from '../app/scripts/components/topbar/top-bar-menu.components';
 
-import TopBarMenuAcademy from '../app/scripts/components/topbar/top-bar-menu-academy.components';
+import TopBarAcademy from '../app/scripts/components/topbar/top-bar-academy.components';
 
 const course = {
 	name: 'Course test',
@@ -13,6 +14,7 @@ const course = {
 };
 
 storiesOf('TopBar/MenuAcademy', module)
+	.addDecorator(storyRouter())
 	.addDecorator(story => (
 		<div className="normal">
 			<TopBarMenuRaw>{story()}</TopBarMenuRaw>
@@ -20,5 +22,11 @@ storiesOf('TopBar/MenuAcademy', module)
 	))
 	.add('default', () => <TopBarAcademy headerClassName="no-hover" />)
 	.add('with text set (hover)', () => (
-		<TopBarAcademy headerClassName="no-hover" course={course} />
+		<TopBarAcademy
+			headerClassName="no-hover"
+			academyProgress={{
+				lastCourse: 'Last course',
+				'Last course': course,
+			}}
+		/>
 	));
