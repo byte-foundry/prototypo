@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {Route, Redirect, Switch} from 'react-router-dom';
 
@@ -8,6 +9,7 @@ import AcademyApp from './components/academy/academy-app.components';
 import LibraryApp from './components/library/library-app.components';
 import OnboardingApp from './components/onboarding/onboarding-app.components';
 import Dashboard from './components/dashboard.components';
+import MobileDashboard from './components/i-am-mobile.components';
 
 import Signin from './components/signin.components';
 import ForgottenPassword from './components/forgotten-password.components';
@@ -42,6 +44,27 @@ class App extends React.Component {
 	}
 
 	render() {
+		if (this.props.isMobile) {
+			return (
+				<Switch>
+					<Route path="/signin" exact component={Signin} />
+					<Route path="/signin/reset" component={ResetPassword} />
+					<Route
+						path="/signin/forgotten"
+						component={ForgottenPassword}
+					/>
+					<Route path="/signup" component={Register} />
+
+					<ProtectedRoute
+						path="/dashboard"
+						component={MobileDashboard}
+					/>
+
+					<Redirect path="*" to="/dashboard" />
+				</Switch>
+			);
+		}
+
 		return (
 			<Switch>
 				<Route path="/signin" exact component={Signin} />
@@ -75,5 +98,13 @@ class App extends React.Component {
 		);
 	}
 }
+
+App.defaultProps = {
+	isMobile: false,
+};
+
+App.propTypes = {
+	isMobile: PropTypes.bool,
+};
 
 export default hot(module)(App);

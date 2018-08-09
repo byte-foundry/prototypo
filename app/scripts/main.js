@@ -54,9 +54,23 @@ const STRIPE_PUBLISHABLE_KEY = isProduction()
 
 selectRenderOptions(
 	() => {
-		ReactDOM.render(<IAmMobile />, document.getElementById('content'), () => {
-			loader.finish();
-		});
+		ReactDOM.render(
+			<ApolloProvider client={apolloClient}>
+				<StripeProvider apiKey={STRIPE_PUBLISHABLE_KEY}>
+					<Router history={history}>
+						<Route
+							render={routeProps => (
+								<App {...routeProps} isMobile />
+							)}
+						/>
+					</Router>
+				</StripeProvider>
+			</ApolloProvider>,
+			document.getElementById('content'),
+			() => {
+				loader.finish();
+			},
+		);
 	},
 	() => {
 		ReactDOM.render(<NotABrowser />, document.getElementById('content'), () => {

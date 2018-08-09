@@ -212,6 +212,13 @@
 	padding-top:80px;
 }
 
+@media all and (max-width: 600px) {
+	.account-app {
+		padding-top: 0;
+		padding: 10px;
+	}
+}
+
 .account-dashboard {
 	min-height: 700px;
 	width: 1155px;
