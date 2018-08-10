@@ -217,6 +217,7 @@ class LibraryMain extends React.Component {
 					updateTags: this.props.updateTags,
 					favourites: this.props.favourites,
 					addFavourite: this.props.addFavourite,
+					hostedDomains: this.props.hostedDomains,
 					deleteFavourite: this.props.deleteFavourite,
 					user: {
 						firstName: this.props.firstName,
@@ -344,9 +345,9 @@ const libraryUserQuery = gql`
 			}
 			favourites {
 				id
-				type
-				updatedAt
 				name
+				updatedAt
+				type
 				preset {
 					id
 				}
@@ -357,6 +358,19 @@ const libraryUserQuery = gql`
 					}
 				}
 				template
+			}
+			hostedDomains {
+				id
+				domain
+				hostedVariants {
+					id
+					createdAt
+					origin {
+						id
+					}
+					url
+					version
+				}
 			}
 		}
 	}
@@ -494,6 +508,7 @@ export default compose(
 					userId: data.user.id,
 					favourites: data.user.favourites,
 					fontInUses: data.user.fontInUses,
+					hostedDomains: data.user.hostedDomains,
 				}
 			);
 		},

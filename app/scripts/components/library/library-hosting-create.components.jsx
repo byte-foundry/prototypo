@@ -1,10 +1,13 @@
 import React from 'react';
 import {Link} from 'react-router';
+import Lifespan from 'lifespan';
+import {graphql, gql, compose} from 'react-apollo';
 import {LibrarySidebarRight} from './library-sidebars.components';
+import {tmpUpload} from '../../services/graphcool.services';
 import LocalClient from '../../stores/local-client.stores';
 import FontUpdater from '../font-updater.components';
 
-export default class LibraryHostingCreate extends React.Component {
+class LibraryHostingCreate extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -22,16 +25,56 @@ export default class LibraryHostingCreate extends React.Component {
 			this,
 		);
 		this.addSuggestion = this.addSuggestion.bind(this);
-		this.addWebsite = this.addWebsite.bind(this);
+		this.hostFonts = this.hostFonts.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+
 		const prototypoStore = await this.client.fetch('/prototypoStore');
 
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
+			this.setState({
+				buffers: head.toJS().d.hostingBuffers,
+			});
+		});
 		this.setState({
 			templateInfos: await prototypoStore.head.toJS().templateList,
 			templatesData: await prototypoStore.head.toJS().templatesData,
 		});
+	}
+	async componentDidUpdate(prevState) {
+		if (
+			prevState.buffers !== this.state.buffers
+			&& this.state.status === 'generating'
+		) {
+			this.setState({status: 'uploading'});
+
+			const urls = await Promise.all(
+				this.state.buffers.map(async (buffer, index) =>
+					tmpUpload(
+						new Blob([new Uint8Array(buffer)]),
+						`${this.state.addedFonts[index]} ${
+							this.state.addedFonts[index].variant.name
+						}`,
+					),
+				),
+			);
+
+			const hostedFonts = await Promise.all(
+				urls.map(({url}, index) =>
+					this.props.hostFont(this.state.addedFonts[index].variant.id, url),
+				),
+			);
+
+			this.props
+				.createHostedDomain(
+					this.state.domain,
+					hostedFonts.map(({data}) => data.hostFont.id),
+				)
+				.then(() => this.props.router.push('/library/hosting'));
+			this.setState({status: 'hosting'});
+		}
 	}
 	addSuggestion(suggestion, variant) {
 		if (
@@ -44,6 +87,7 @@ export default class LibraryHostingCreate extends React.Component {
 			let templateData;
 			let preset;
 			let family;
+			let glyphs;
 
 			this.setState({
 				errors: {
@@ -57,6 +101,7 @@ export default class LibraryHostingCreate extends React.Component {
 				templateData = this.state.templatesData.find(
 					e => e.name === suggestion.templateName,
 				);
+				glyphs = templateData.glyphs;
 				values = templateData.initValues;
 				template = templateData.templateName;
 				break;
@@ -68,6 +113,10 @@ export default class LibraryHostingCreate extends React.Component {
 				template = this.state.templateInfos.find(
 					t => preset.template === t.templateName,
 				).templateName;
+				templateData = this.state.templatesData.find(
+					e => e.name === preset.template,
+				);
+				glyphs = templateData.glyphs;
 				break;
 			case 'Family':
 				family
@@ -76,6 +125,7 @@ export default class LibraryHostingCreate extends React.Component {
 				templateData = this.state.templatesData.find(
 					e => e.name === family.template,
 				);
+				glyphs = templateData.glyphs;
 				values = {
 					...templateData.initValues,
 					...(typeof variant.values === 'object'
@@ -98,6 +148,7 @@ export default class LibraryHostingCreate extends React.Component {
 						variant,
 						template,
 						values,
+						glyphs,
 					},
 				]),
 			});
@@ -208,7 +259,7 @@ export default class LibraryHostingCreate extends React.Component {
 		});
 	}
 
-	addWebsite() {
+	hostFonts() {
 		const domain = this.state.domain
 			.replace('http://', '')
 			.replace('https://', '')
@@ -245,6 +296,41 @@ export default class LibraryHostingCreate extends React.Component {
 				hostedFonts: false,
 			},
 		});
+		const familyNames = [];
+		const variantNames = [];
+		const valueArray = [];
+		const metadataArray = [];
+		const templateArray = [];
+		const glyphsArray = [];
+
+		this.state.addedFonts.forEach((addedFont) => {
+			familyNames.push(addedFont.name);
+			variantNames.push(addedFont.variant.name);
+			valueArray.push(addedFont.values);
+			metadataArray.push({
+				weight: addedFont.variant.weight,
+				width: addedFont.variant.width,
+				italic: !!addedFont.variant.italic,
+			});
+			templateArray.push(addedFont.template);
+			glyphsArray.push(addedFont.glyphs);
+		});
+		try {
+			this.setState({status: 'generating'});
+
+			// generate the font
+			this.client.dispatchAction('/host-from-library', {
+				familyNames,
+				variantNames,
+				valueArray,
+				metadataArray,
+				templateArray,
+				glyphsArray,
+			});
+		}
+		catch (err) {
+			console.log(err.message);
+		}
 	}
 
 	render() {
@@ -372,7 +458,7 @@ export default class LibraryHostingCreate extends React.Component {
 								<div
 									className="library-hosting-form-button"
 									onClick={() => {
-										this.addWebsite();
+										this.hostFonts();
 									}}
 								>
 									Add website
@@ -390,3 +476,136 @@ export default class LibraryHostingCreate extends React.Component {
 		);
 	}
 }
+
+const hostVariantMutation = gql`
+	mutation hostVariant($id: ID!, $tmpFileUrl: String!) {
+		hostFont(variantId: $id, tmpFileUrl: $tmpFileUrl) {
+			id
+			url
+			version
+			createdAt
+		}
+	}
+`;
+
+const createHostedDomainMutation = gql`
+	mutation createHostedDomain(
+		$domain: String!
+		$creatorId: ID!
+		$hostedVariantsIds: [ID!]!
+	) {
+		createHostedDomain(
+			domain: $domain
+			creatorId: $creatorId
+			hostedVariantsIds: $hostedVariantsIds
+		) {
+			id
+			domain
+			hostedVariants {
+				id
+				url
+				createdAt
+				origin {
+					id
+				}
+				version
+			}
+		}
+	}
+`;
+
+const libraryUserQuery = gql`
+	query getLibraryUserInfos {
+		user {
+			id
+			firstName
+			lastName
+			fontInUses {
+				id
+				client
+				clientUrl
+				designer
+				designerUrl
+				images
+				fontUsed {
+					id
+					name
+					family {
+						id
+					}
+					type
+					template
+					preset {
+						id
+					}
+				}
+			}
+			favourites {
+				id
+				name
+				updatedAt
+				type
+				preset {
+					id
+				}
+				family {
+					id
+					variants {
+						id
+					}
+				}
+				template
+			}
+			hostedDomains {
+				id
+				domain
+				hostedVariants {
+					id
+					createdAt
+					origin {
+						id
+					}
+					url
+					version
+				}
+			}
+		}
+	}
+`;
+
+export default compose(
+	graphql(hostVariantMutation, {
+		props: ({mutate}) => ({
+			hostFont: (id, tmpFileUrl) =>
+				mutate({
+					variables: {
+						id,
+						tmpFileUrl,
+					},
+				}),
+		}),
+	}),
+	graphql(createHostedDomainMutation, {
+		props: ({mutate, ownProps}) => ({
+			createHostedDomain: (domain, hostedVariantsIds) =>
+				mutate({
+					variables: {
+						domain,
+						hostedVariantsIds,
+						creatorId: ownProps.user.id,
+					},
+				}),
+		}),
+		options: {
+			update: (store, {data: {createHostedDomain}}) => {
+				const data = store.readQuery({query: libraryUserQuery});
+
+				data.user.hostedDomains.push(createHostedDomain);
+				store.writeQuery({
+					query: libraryUserQuery,
+					data,
+				});
+			},
+		},
+	}),
+)(LibraryHostingCreate);

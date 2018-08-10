@@ -496,6 +496,19 @@ const libraryUserQuery = gql`
 				}
 				template
 			}
+			hostedDomains {
+				id
+				domain
+				hostedVariants {
+					id
+					createdAt
+					origin {
+						id
+					}
+					url
+					version
+				}
+			}
 		}
 	}
 `;

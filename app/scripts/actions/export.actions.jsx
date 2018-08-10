@@ -158,9 +158,7 @@ export default {
 			);
 
 			if (hosting) {
-				const patch = prototypoStore
-					.set('hostingBuffer', buffer)
-					.commit();
+				const patch = prototypoStore.set('hostingBuffer', buffer).commit();
 
 				localServer.dispatchUpdate('/prototypoStore', patch);
 			}
@@ -383,6 +381,74 @@ export default {
 					}, 500);
 				};
 				reader.readAsDataURL(zip.generate({type: 'blob'}));
+			})
+			.catch((e) => {
+				console.log('An error occured');
+				console.log(e);
+				localClient.dispatchAction('/end-export-otf');
+			});
+	},
+	'/host-from-library': async ({
+		familyNames,
+		variantNames,
+		valueArray,
+		metadataArray,
+		templateArray,
+		glyphsArray,
+	}) => {
+		const promiseArray = [];
+		const fontMediatorInstance = FontMediator.instance();
+
+		variantNames.forEach((variantName, index) => {
+			console.log(`exporting ${variantName} number ${index}`);
+			promiseArray.push(
+				new Promise((resolve, reject) => {
+					const subset = Object.keys(glyphsArray[index]).filter(
+						key => glyphsArray[index][key][0].unicode !== undefined,
+					);
+					const family = familyNames[index].replace(/\s/g, '-');
+					const style = variantName
+						? variantName.replace(/\s/g, '-')
+						: 'regular';
+					const name = {
+						family,
+						style: `${style.toLowerCase()}`,
+					};
+
+					console.log('getting font file');
+					fontMediatorInstance
+						.getFontFile(
+							name,
+							templateArray[index],
+							{...valueArray[index]},
+							subset,
+							undefined,
+							undefined,
+							undefined,
+							undefined,
+							metadataArray[index].weight,
+							metadataArray[index].width,
+							metadataArray[index].italic,
+						)
+						.then((buffer) => {
+							console.log(`${variantName} Buffer recieved!`);
+							resolve(buffer);
+						})
+						.catch((e) => {
+							console.log(e);
+							reject(e);
+						});
+				}),
+			);
+		});
+
+		Promise.all(promiseArray)
+			.then((blobBuffers) => {
+				const patch = prototypoStore
+					.set('hostingBuffers', blobBuffers)
+					.commit();
+
+				localServer.dispatchUpdate('/prototypoStore', patch);
 			})
 			.catch((e) => {
 				console.log('An error occured');
