@@ -194,7 +194,7 @@ class LibraryCreate extends React.Component {
 					fontData.push({
 						template: templateInfo.templateName,
 						templateName: templateInfo.name,
-						type: 'Presets',
+						type: 'Preset',
 						name: preset.variant.family.name,
 						designer:
 							preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
@@ -239,7 +239,7 @@ class LibraryCreate extends React.Component {
 				name: family.name,
 				designer: '',
 				tags: [templateInfo.provider, 'project', family.name],
-				type: 'Fonts',
+				type: 'Font',
 				variants: family.variants,
 				id: family.id,
 				user: {

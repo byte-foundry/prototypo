@@ -283,7 +283,7 @@ class LibraryList extends React.Component {
 					fontData.push({
 						template: templateInfo.templateName,
 						templateName: templateInfo.name,
-						type: 'Presets',
+						type: 'Preset',
 						name: preset.variant.family.name,
 						designer:
 							preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
@@ -327,7 +327,7 @@ class LibraryList extends React.Component {
 						templateName: templateInfo.name,
 						name: family.name,
 						designer: '',
-						type: 'Fonts',
+						type: 'Font',
 						tags: family.tags || [],
 						variants: family.variants,
 						id: family.id,
@@ -507,8 +507,8 @@ class LibraryList extends React.Component {
 		let type = '';
 
 		switch (mode) {
-		case 'personnal':
-			type = 'Fonts';
+		case 'personal':
+			type = 'Font';
 			break;
 		case 'team':
 			type = 'SubUser';
@@ -600,7 +600,7 @@ class LibraryList extends React.Component {
 								<div className="library-see-title">There is nothing here!</div>
 								<div className="library-see-description">
 									<p>
-										{this.props.location.query.mode === 'personnal' ? (
+										{this.props.location.query.mode === 'personal' ? (
 											<span>
 											Dive into Prototypo by creating your first project with
 											our templates or Unique presets
@@ -613,7 +613,7 @@ class LibraryList extends React.Component {
 										)}
 									</p>
 									<p>
-										{this.props.location.query.mode === 'personnal' ? (
+										{this.props.location.query.mode === 'personal' ? (
 											<Link to="/library/create">Create your font now</Link>
 										) : (
 											<Link to="/library/home">Back to the list</Link>
@@ -655,11 +655,6 @@ LibraryList.defaultProps = {
 export default LibraryList;
 
 class FamilyList extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
-
 	render() {
 		return (
 			<ScrollArea
@@ -669,15 +664,26 @@ class FamilyList extends React.Component {
 				style={{overflowX: 'visible'}}
 			>
 				<div className="library-family-list">
-					{this.props.fontsToDisplay
-						&& this.props.fontsToDisplay.map(font =>
-							React.createElement(font.elem, {...font.props()}),
-						)}
+					{this.props.fontsToDisplay.map(font => (
+						React.createElement(font.elem, font.props())
+					))}
 				</div>
 			</ScrollArea>
 		);
 	}
 }
+
+FamilyList.defaultProps = {
+	fontsToDisplay: [],
+};
+
+FamilyList.propTypes = {
+	fontsToDisplay: PropTypes.arrayOf(
+		PropTypes.shape({
+			type: PropTypes.oneOf(['Template', 'Preset', 'Font']),
+		}),
+	),
+};
 
 export class TemplateItem extends React.Component {
 	constructor(props) {

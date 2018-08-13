@@ -352,7 +352,7 @@ class LibraryDetails extends React.Component {
 						exportFamily={this.exportFamily}
 						family={this.state.family}
 						mode="details"
-						isPersonnal={true}
+						isPersonal={true}
 					/>
 					<FamilySidebarGlyphs glyphs={this.state.familyGlyphs} />
 					<SidebarTags
@@ -360,7 +360,7 @@ class LibraryDetails extends React.Component {
 						familyId={this.state.family.id}
 						updateTags={this.props.updateTags}
 						mode="readonly"
-						isPersonnal={true}
+						isPersonal={true}
 					/>
 				</LibrarySidebarRight>
 			</div>

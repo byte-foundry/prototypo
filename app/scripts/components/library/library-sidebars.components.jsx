@@ -105,7 +105,7 @@ export class LibrarySidebarLeft extends React.Component {
 			userProjects = userProjects.slice(0, 9);
 			userProjects.push(
 				<p className="sidebar-left-project">
-					<Link to="/library/home?mode=personnal">
+					<Link to="/library?mode=personal">
 						And {initialuserProjectsLength - 9} more...
 					</Link>
 				</p>,
@@ -115,7 +115,7 @@ export class LibrarySidebarLeft extends React.Component {
 		const isUserProjectActive
 			= (this.props.location.pathname === '/library/home'
 				&& this.props.location.query.mode
-				&& this.props.location.query.mode === 'personnal')
+				&& this.props.location.query.mode === 'personal')
 			|| (this.props.routeParams
 				&& this.props.families
 				&& this.props.families.find(
@@ -232,7 +232,7 @@ export class LibrarySidebarLeft extends React.Component {
 									>
 										▶
 									</span>{' '}
-									<Link to="/library/home?mode=personnal">
+									<Link to="/library?mode=personal">
 										Personal library
 									</Link>
 								</p>
@@ -350,7 +350,7 @@ export class FamilySidebarActions extends React.Component {
 				>
 					Export family
 				</div>
-				{this.props.isPersonnal
+				{this.props.isPersonal
 					&& this.props.mode === 'see' && (
 					<Link
 						className="sidebar-action"
@@ -359,7 +359,7 @@ export class FamilySidebarActions extends React.Component {
 							Family settings
 					</Link>
 				)}
-				{this.props.isPersonnal
+				{this.props.isPersonal
 					&& this.props.mode === 'details' && (
 					<Link
 						className="sidebar-action"
@@ -368,7 +368,7 @@ export class FamilySidebarActions extends React.Component {
 							Family dashboard
 					</Link>
 				)}
-				{this.props.isPersonnal && (
+				{this.props.isPersonal && (
 					<div
 						className="sidebar-action"
 						onClick={() => {
@@ -379,7 +379,7 @@ export class FamilySidebarActions extends React.Component {
 					</div>
 				)}
 
-				{this.props.isPersonnal
+				{this.props.isPersonal
 					&& this.props.mode === 'details' && (
 					<div
 						className="sidebar-action"
@@ -453,11 +453,11 @@ export class SidebarFilters extends React.Component {
 						},
 						{
 							active: false,
-							name: 'Presets',
+							name: 'Preset',
 						},
 						{
 							active: false,
-							name: 'Fonts',
+							name: 'Font',
 						},
 					]}
 					editActiveFilter={this.editActiveFilter}
@@ -645,7 +645,7 @@ export class SidebarTags extends React.Component {
 					&& this.state.tags.length === 0 && (
 					<span>No tags yet. Open one of your project to add one!</span>
 				)}
-				{this.props.isPersonnal && (
+				{this.props.isPersonal && (
 					<div
 						className={`sidebar-tags-add ${this.props.mode} ${
 							this.state.addButtonActive ? 'active' : ''

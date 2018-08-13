@@ -44,7 +44,7 @@ class LibrarySee extends React.Component {
 
 		this.state = {
 			family: family || teamProject,
-			isPersonnal: !!family,
+			isPersonal: !!family,
 		};
 		this.generateVariants = this.generateVariants.bind(this);
 		this.goToDashboard = this.goToDashboard.bind(this);
@@ -162,7 +162,7 @@ class LibrarySee extends React.Component {
 			}
 			this.setState({
 				family: family || teamProject,
-				isPersonnal: !!family,
+				isPersonal: !!family,
 			});
 
 			this.generateVariants(family || teamProject);
@@ -186,7 +186,7 @@ class LibrarySee extends React.Component {
 			}
 			this.setState({
 				family: family || teamProject,
-				isPersonnal: !!family,
+				isPersonal: !!family,
 			});
 			this.generateVariants(family || teamProject);
 		}
@@ -235,7 +235,7 @@ class LibrarySee extends React.Component {
 									rename={this.props.rename}
 									export={this.props.export}
 									delete={this.props.deleteVariant}
-									isPersonnal={this.state.isPersonnal}
+									isPersonal={this.state.isPersonal}
 								/>
 							))}
 					</div>
@@ -292,7 +292,7 @@ class LibrarySee extends React.Component {
 						familyId={this.props.params.projectID}
 						exportFamily={this.exportFamily}
 						mode="see"
-						isPersonnal={this.state.isPersonnal}
+						isPersonal={this.state.isPersonal}
 					/>
 					<Link className="sidebar-action" to="/library/fontinuse/create">
 						Add fontsinuse
@@ -305,7 +305,7 @@ class LibrarySee extends React.Component {
 						familyId={this.state.family.id}
 						updateTags={this.props.updateTags}
 						mode="readonly"
-						isPersonnal={this.state.isPersonnal}
+						isPersonal={this.state.isPersonal}
 					/>
 				</LibrarySidebarRight>
 			</div>
@@ -359,7 +359,7 @@ export class VariantItem extends React.Component {
 						<div className="library-item-variant-actions-group-title">
 							Actions
 						</div>
-						{this.props.isPersonnal && (
+						{this.props.isPersonal && (
 							<div
 								className="library-item-variant-action"
 								onClick={() => {
@@ -391,7 +391,7 @@ export class VariantItem extends React.Component {
 						>
 							Export variant
 						</div>
-						{this.props.isPersonnal && (
+						{this.props.isPersonal && (
 							<div
 								className="library-item-variant-action"
 								onClick={() => {
@@ -401,7 +401,7 @@ export class VariantItem extends React.Component {
 								Rename variant
 							</div>
 						)}
-						{this.props.isPersonnal && (
+						{this.props.isPersonal && (
 							<div
 								className="library-item-variant-action"
 								onClick={() => {
@@ -411,7 +411,7 @@ export class VariantItem extends React.Component {
 								Duplicate variant
 							</div>
 						)}
-						{this.props.isPersonnal
+						{this.props.isPersonal
 							&& this.props.family.variants.length > 1 && (
 							<div
 								className="library-item-variant-action"

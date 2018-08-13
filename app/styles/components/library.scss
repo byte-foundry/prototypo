@@ -62,7 +62,7 @@
 					&:hover {
 						color: $green;
 					}
-					&.active {						
+					&.active {
 						color: $green;
 						font-weight: bold;
 					}
@@ -90,7 +90,7 @@
 				display: block;
 				margin-top: 3px;
 				margin-bottom: 3px;
-				padding-left: 40px; 
+				padding-left: 40px;
 				color: transparentize($white, 0.1);
 				transition: all .2s ease;
 				a {
@@ -146,7 +146,7 @@
 			width: 250px;
 			padding: 25px;
 			.sidebar-actions-family {
-				
+
 			}
 			.sidebar-action {
 				margin-bottom: 10px;
@@ -215,14 +215,12 @@
 			}
 		}
 		.library-see {
-			margin-top: 40px;
 			flex-grow: 2;
 			background: white;
 			color: $dark-grey;
 			height: 100vh;
 			max-height: 100vh;
 			overflow-y: auto;
-			padding-bottom: 50px;
 			.library-see-variants {
 				margin-top: 40px;
 			}
@@ -233,7 +231,7 @@
 				padding-right: 40px;
 				width: calc(100vw - 500px);
 			}
-	
+
 			.library-see-description {
 				position: relative;
 				font-size: 18px;
@@ -501,17 +499,17 @@
 					margin-top: 10px;
 				}
 			}
-			
+
 		}
 		.library-fontinuse-list {
 			.library-fontinuse {
 				margin-top: 30px;
 				margin-bottom: 30px;
-				display: flex; 
+				display: flex;
 				flex-direction: row;
-				.library-fontinuse-left {	
+				.library-fontinuse-left {
 					padding-left: 40px;
-					padding-right: 20px;					
+					padding-right: 20px;
 					width: 50%;
 					img {
 						height: auto;
@@ -522,7 +520,7 @@
 				}
 				.library-fontinuse-right {
 					padding-left: 20px;
-					padding-right: 40px;	
+					padding-right: 40px;
 					p {
 						margin-top: 0;
 						margin-bottom: 20px;
