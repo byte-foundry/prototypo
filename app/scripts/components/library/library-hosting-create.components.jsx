@@ -61,9 +61,24 @@ class LibraryHostingCreate extends React.Component {
 				),
 			);
 
+			const abstractedFontIds = await Promise.all(
+				this.state.addedFonts.map(async addedFont =>
+					this.props.createAbstractedFont(
+						addedFont.abstractedFontMeta.type,
+						addedFont.abstractedFontMeta.familyId,
+						addedFont.abstractedFontMeta.template,
+						addedFont.abstractedFontMeta.presetId,
+						addedFont.abstractedFontMeta.name,
+					),
+				),
+			);
+
 			const hostedFonts = await Promise.all(
 				urls.map(({url}, index) =>
-					this.props.hostFont(this.state.addedFonts[index].variant.id, url),
+					this.props.hostFont(
+						abstractedFontIds[index].data.createAbstractedFont.id,
+						url,
+					),
 				),
 			);
 
@@ -88,6 +103,7 @@ class LibraryHostingCreate extends React.Component {
 			let preset;
 			let family;
 			let glyphs;
+			let abstractedFontMeta;
 
 			this.setState({
 				errors: {
@@ -103,7 +119,14 @@ class LibraryHostingCreate extends React.Component {
 				);
 				glyphs = templateData.glyphs;
 				values = templateData.initValues;
-				template = templateData.templateName;
+				template = templateData.name;
+				abstractedFontMeta = {
+					type: 'Template',
+					familyId: undefined,
+					template: templateData.name,
+					presetId: undefined,
+					name: suggestion.name,
+				};
 				break;
 			case 'Preset':
 				preset
@@ -117,6 +140,13 @@ class LibraryHostingCreate extends React.Component {
 					e => e.name === preset.template,
 				);
 				glyphs = templateData.glyphs;
+				abstractedFontMeta = {
+					type: 'Preset',
+					familyId: undefined,
+					template: undefined,
+					presetId: suggestion.id,
+					name: suggestion.name,
+				};
 				break;
 			case 'Family':
 				family
@@ -135,6 +165,13 @@ class LibraryHostingCreate extends React.Component {
 				template = this.state.templateInfos.find(
 					t => t.templateName === family.template,
 				).templateName;
+				abstractedFontMeta = {
+					type: 'Family',
+					familyId: suggestion.id,
+					template: undefined,
+					presetId: undefined,
+					name: suggestion.name,
+				};
 				break;
 			default:
 				break;
@@ -149,6 +186,7 @@ class LibraryHostingCreate extends React.Component {
 						template,
 						values,
 						glyphs,
+						abstractedFontMeta,
 					},
 				]),
 			});
@@ -173,6 +211,9 @@ class LibraryHostingCreate extends React.Component {
 					name: t.familyName,
 					id: `template${t.familyName}`,
 					templateName: t.templateName,
+					presetId: undefined,
+					familyId: undefined,
+					template: t.templateName,
 					variants: [
 						{
 							id: 'base',
@@ -199,6 +240,9 @@ class LibraryHostingCreate extends React.Component {
 					type: 'Preset',
 					name: `${p.variant.family.name}`,
 					id: p.id,
+					presetId: p.id,
+					familyId: undefined,
+					template: undefined,
 					variants: [
 						{
 							id: 'base',
@@ -249,6 +293,9 @@ class LibraryHostingCreate extends React.Component {
 					type: 'Family',
 					name: `${f.name}`,
 					variants: f.variants,
+					presetId: undefined,
+					familyId: f.id,
+					template: undefined,
 				}),
 			);
 		this.setState({
@@ -514,6 +561,34 @@ const createHostedDomainMutation = gql`
 	}
 `;
 
+const deleteAbstractedFontMutation = gql`
+	mutation deleteAbstractedFont($id: ID!) {
+		deleteAbstractedFont(id: $id) {
+			id
+		}
+	}
+`;
+
+const createAbstractedFontMutation = gql`
+	mutation createAbstractedFont(
+		$type: FontType!
+		$familyId: ID
+		$template: String
+		$presetId: ID
+		$name: String!
+	) {
+		createAbstractedFont(
+			type: $type
+			familyId: $familyId
+			template: $template
+			presetId: $presetId
+			name: $name
+		) {
+			id
+		}
+	}
+`;
+
 const libraryUserQuery = gql`
 	query getLibraryUserInfos {
 		user {
@@ -607,5 +682,19 @@ export default compose(
 				});
 			},
 		},
+	}),
+	graphql(createAbstractedFontMutation, {
+		props: ({mutate}) => ({
+			createAbstractedFont: (type, familyId, template, presetId, name) =>
+				mutate({
+					variables: {
+						type,
+						familyId,
+						template,
+						presetId,
+						name,
+					},
+				}),
+		}),
 	}),
 )(LibraryHostingCreate);
