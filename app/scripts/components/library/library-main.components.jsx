@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {graphql, gql, compose} from 'react-apollo';
 import InlineSVG from 'svg-inline-react';
 import Lifespan from 'lifespan';
@@ -7,6 +8,7 @@ import LocalClient from '../../stores/local-client.stores';
 import CreateVariantModal from '../familyVariant/create-variant-modal.components.jsx';
 import ChangeNameVariant from '../familyVariant/change-name-variant.components.jsx';
 import DuplicateVariant from '../familyVariant/duplicate-variant.components.jsx';
+import LoadingOverlay from '../shared/loading-overlay.components.jsx';
 import GoProModal from '../go-pro-modal.components.jsx';
 import {LibrarySidebarLeft} from './library-sidebars.components';
 
@@ -202,6 +204,15 @@ class LibraryMain extends React.Component {
 					routeParams={this.props.params}
 					favourites={this.props.favourites}
 				/>
+				{this.props.loading && (
+					<ReactCSSTransitionGroup
+						transitionName="loading-overlay"
+						transitionEnterTimeout={300}
+						transitionLeaveTimeout={300}
+					>
+						<LoadingOverlay />
+					</ReactCSSTransitionGroup>
+				)}
 				{React.cloneElement(this.props.children, {
 					activeFilters: this.state.activeFilters,
 					families: this.props.families,
