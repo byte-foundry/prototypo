@@ -545,21 +545,69 @@
 			padding-bottom: 80px;
 		}
 		.library-item {
-			margin-bottom: 15px;
-			padding-top: 15px;
+			padding-top: 25px;
 			position: relative;
 			cursor: pointer;
 			width: calc(100vw - 500px);
+			box-shadow: 0 0 0 rgba(0,0,0,0.16), 0 0 0 rgba(0,0,0,0.23);
+			transition: box-shadow .2s ease;
+			overflow: hidden;
+			&:hover {
+				box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+				.type {
+					left: 0;
+				}
+			}
 
 			&:focus {
 				outline: none;
 			}
 
+			.type {
+				position: absolute;
+				left: -60px;
+				top: 155px;
+				transform: translateY(0) rotate(-90deg);
+				text-transform: uppercase;
+				transform-origin: top left;
+				font-size: 85%;
+				color: transparentize($dark-grey, 0.7);
+				width: 155px;
+				padding-top: 10px;
+				padding-bottom: 10px;
+				text-align: center;
+				transition: left .3 ease;
+				letter-spacing: 0.07em;
+			}
+
+			&.library-template {
+				.type {
+					background: transparentize($dark-grey, 0.1);
+					color: white;
+				}
+			}
+
+
+			&.library-preset {
+				.type {
+					background: $medium-grey;
+					color: white;
+				}
+			}
+
+			&.library-family {
+				.type {
+					background: $lightest-grey;
+					color: $dark-grey;
+				}
+			}
+
+
 			.library-item-name {
 				text-transform: uppercase;
 				color: $medium-grey;
 				margin: 0;
-				padding-left: 40px;
+				padding-left: 60px;
 				padding-right: 40px;
 				.star-icon {
 					font-size: 150%;
@@ -570,6 +618,14 @@
 						color: $yellow;
 					}
 				}
+				.small {
+					font-size: 75%;
+					color: transparentize($dark-grey, 0.5);
+				}
+
+				.medium {
+					color: transparentize($dark-grey, 0.5);
+				}
 			}
 
 			.library-item-preview {
@@ -577,13 +633,17 @@
 				line-height: 1;
 				margin: 0;
 				margin-top: 10px;
-				padding-left: 40px;
+				padding-left: 60px;
 				padding-right: 40px;
-				margin-bottom: 20px;
+				padding-bottom: 20px;
 				max-width: 88%;
 				overflow-x: hidden;
 				overflow-x: visible;
 				white-space: nowrap;
+				transition: color .2s ease;
+				&:hover {
+					color: darken($dark-grey, 20%);
+				}
 			}
 
 			.library-item-actions {

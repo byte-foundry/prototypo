@@ -741,7 +741,13 @@ export class TemplateItem extends React.Component {
 
 	render() {
 		return (
-			<div className="library-item" tabIndex={0}>
+			<div
+				className={`library-item library-template ${
+					this.props.isOpen ? 'opened' : ''
+				}`}
+				tabIndex={0}
+			>
+				<span className="type">Template</span>
 				<p className="library-item-name">
 					<span
 						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
@@ -833,7 +839,13 @@ export class FamilyItem extends React.Component {
 
 	render() {
 		return (
-			<div className="library-item" tabIndex={0}>
+			<div
+				className={`library-item library-family ${
+					this.props.isOpen ? 'opened' : ''
+				}`}
+				tabIndex={0}
+			>
+				<span className="type">Project</span>
 				<p className="library-item-name">
 					<span
 						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
@@ -848,7 +860,8 @@ export class FamilyItem extends React.Component {
 					>
 						★
 					</span>
-					{this.props.family.name} from {this.props.template.name}
+					{this.props.family.name}{' '}
+					<span className="small">from {this.props.template.name}</span>
 				</p>
 				<p
 					className="library-item-preview"
@@ -951,7 +964,13 @@ export class PresetItem extends React.Component {
 
 	render() {
 		return (
-			<div className="library-item" tabIndex={0}>
+			<div
+				className={`library-item library-preset ${
+					this.props.isOpen ? 'opened' : ''
+				}`}
+				tabIndex={0}
+			>
+				<span className="type">Preset</span>
 				<p className="library-item-name">
 					<span
 						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
@@ -966,7 +985,8 @@ export class PresetItem extends React.Component {
 					>
 						★
 					</span>
-					{this.props.name} from {this.props.template.name}
+					{this.props.name}{' '}
+					<span className="small">from {this.props.template.name}</span>
 				</p>
 				<p
 					className="library-item-preview"
