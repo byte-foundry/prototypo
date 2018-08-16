@@ -79,6 +79,7 @@ export class LibrarySidebarLeft extends React.Component {
 				.sort(
 					(a, b) =>
 						a.variants[0]
+						&& b.variants[0]
 						&& Date.parse(a.variants[0].updatedAt)
 							< Date.parse(b.variants[0].updatedAt),
 				)
