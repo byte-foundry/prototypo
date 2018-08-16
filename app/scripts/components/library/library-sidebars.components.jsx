@@ -78,8 +78,9 @@ export class LibrarySidebarLeft extends React.Component {
 			&& families
 				.sort(
 					(a, b) =>
-						Date.parse(a.variants[0].updatedAt)
-						< Date.parse(b.variants[0].updatedAt),
+						a.variants[0]
+						&& Date.parse(a.variants[0].updatedAt)
+							< Date.parse(b.variants[0].updatedAt),
 				)
 				.forEach((family) => {
 					userProjects.push(
@@ -232,9 +233,7 @@ export class LibrarySidebarLeft extends React.Component {
 									>
 										▶
 									</span>{' '}
-									<Link to="/library?mode=personal">
-										Personal library
-									</Link>
+									<Link to="/library?mode=personal">Personal library</Link>
 								</p>
 								{this.state.isPersonalOpened && userProjects}
 							</div>
