@@ -104,7 +104,10 @@ function spendCredits({amount}) {
 	});
 }
 
-const validateCoupon = debounce(options => localClient.dispatchAction('/validate-coupon', options), 500);
+const validateCoupon = debounce(
+	options => localClient.dispatchAction('/validate-coupon', options),
+	500,
+);
 
 export default {
 	'/load-customer-data': ({sources, subscriptions, metadata}) => {
@@ -164,7 +167,7 @@ export default {
 		css = {},
 		phone,
 		skype,
-		to = '/start',
+		to = '/library/home',
 		oldQuery = {},
 	}) => {
 		const toLocation = {
@@ -239,7 +242,6 @@ export default {
 					activator: '#intercom-button',
 				},
 			});
-			trackJs.addMetadata('username', username);
 
 			form.errors = [];
 			form.inError = {};
@@ -253,7 +255,7 @@ export default {
 
 			if (
 				toLocation.pathname === '/dashboard'
-				|| toLocation.pathname === '/start'
+				|| toLocation.pathname === '/library/home'
 			) {
 				await loadStuff();
 				hashHistory.push(toLocation);

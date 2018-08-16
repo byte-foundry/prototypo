@@ -14,7 +14,7 @@ export class AccountDashboard extends React.Component {
 	}
 
 	returnToDashboard() {
-		this.props.router.push('/dashboard');
+		this.props.router.push('/library/home');
 	}
 
 	render() {
@@ -55,7 +55,7 @@ export class AccountDashboard extends React.Component {
 
 		return (
 			<div className="account-dashboard">
-				<Link to="/dashboard">
+				<Link to="/library/home">
 					<div className="account-dashboard-icon" />
 				</Link>
 				<div className="account-header">

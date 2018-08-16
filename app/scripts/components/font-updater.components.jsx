@@ -1,144 +1,78 @@
+import deepEqual from 'lodash/isEqual';
 import _uniq from 'lodash/uniq';
 import React from 'react';
-import Lifespan from 'lifespan';
-import {graphql, gql, compose} from 'react-apollo';
+import PropTypes from 'prop-types';
 
 import FontMediator from '../prototypo.js/mediator/FontMediator';
 
-import {rawToEscapedContent} from '../helpers/input-transform.helpers';
-
-import LocalClient from '../stores/local-client.stores';
-
-class FontUpdater extends React.PureComponent {
+class FontUpdater extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
-	}
 
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
 		this.fontMediatorInstance = FontMediator.instance();
-		this.fontMediatorInstance.setupInfo({
-			email: this.props.email,
-		});
-
-		this.client
-			.getStore('/undoableStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					values: head.toJS().d.controlsValues,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client
-			.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					family: head.toJS().d.family,
-					variant: head.toJS().d.variant,
-					uiText: head.toJS().d.uiText,
-					uiWord: head.toJS().d.uiWord,
-					glyph: head.toJS().d.glyphSelected,
-					name: head.toJS().d.fontName,
-					glyphs: head.toJS().d.glyphs,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
-
-		this.client
-			.getStore('/fontInstanceStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					changingFont: head.toJS().d.changingFont,
-					template: head.toJS().d.templateToLoad,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
 	}
 
-	componentDidUpdate() {
-		if (
-			this.state.template !== undefined
-			&& this.state.name !== undefined
-			&& this.state.uiText !== undefined
-			&& this.state.uiWord !== undefined
-			&& this.state.glyph !== undefined
-			&& !this.state.changingFont
-		) {
-			const subsetString
-				= `${this.state.uiText
-				+ rawToEscapedContent(this.state.uiWord, this.state.glyphs)
-				 }Hamburgefonstiv`;
-			let subset = _uniq(subsetString.split('')).map(letter =>
-				letter.charCodeAt(0),
-			);
+	shouldComponentUpdate(nextProps) {
+		const subset = _uniq(this.props.subset.split('')).join('');
+		const nextSubset = _uniq(nextProps.subset.split('')).join('');
 
-			this.fontMediatorInstance.getFont(
-				this.state.name,
-				this.state.template,
-				{...this.state.values},
-				subset,
-				this.state.glyph,
-			);
-
-			if (this.props.extraFonts) {
-				this.props.extraFonts.forEach((extrafont) => {
-					subset = _uniq(extrafont.subset.split('')).map(letter =>
-						letter.charCodeAt(0),
-					);
-					this.fontMediatorInstance.getFont(
-						extrafont.name,
-						extrafont.template || this.state.template,
-						{...extrafont.values},
-						subset,
-						extrafont.glyph || this.state.glyph,
-					);
-				});
-			}
-		}
-
-		this.fontMediatorInstance.setupInfo({
-			family: this.state.family,
-			style: this.state.variant,
-			template: this.state.template,
-		});
-
-		return false;
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
+		return !(
+			nextProps.family === this.props.family
+			&& nextProps.variant === this.props.variant
+			&& nextProps.name === this.props.name
+			&& nextProps.template === this.props.template
+			&& nextSubset === subset
+			&& nextProps.glyph === this.props.glyph
+			&& deepEqual(nextProps.values, this.props.values)
+		);
 	}
 
 	render() {
+		const {
+			template,
+			name,
+			subset,
+			glyph,
+			values,
+			family,
+			variant,
+		} = this.props;
+
+		const subsetCodes = _uniq(subset.split('')).map(letter =>
+			letter.charCodeAt(0),
+		);
+
+		this.fontMediatorInstance.setupInfo({
+			family,
+			style: variant,
+			template,
+		});
+
+		this.fontMediatorInstance.getFont(
+			name,
+			template,
+			values,
+			subsetCodes,
+			glyph,
+		);
+
 		return false;
 	}
 }
 
-const userProfileQuery = gql`
-	query getUserProfile {
-		user {
-			email
-		}
-	}
-`;
+FontUpdater.propTypes = {
+	family: PropTypes.string,
+	variant: PropTypes.string,
+	name: PropTypes.string.isRequired,
+	template: PropTypes.string.isRequired,
+	values: PropTypes.object.isRequired,
+	subset: PropTypes.string.isRequired,
+	glyph: PropTypes.string.isRequired,
+};
 
-export default compose(
-	graphql(userProfileQuery, {
-		props: ({data}) => {
-			if (data.loading) {
-				return {loading: true};
-			}
+FontUpdater.defaultProps = {
+	family: 'Prototypo Font',
+	variant: 'Regular',
+};
 
-			return data.user;
-		},
-	}),
-)(FontUpdater);
+export default FontUpdater;

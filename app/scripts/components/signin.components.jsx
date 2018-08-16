@@ -39,10 +39,9 @@ export class Signin extends React.Component {
 				activator: '#intercom-button',
 			},
 		});
-		window.trackJs.addMetadata('username', email);
 
 		this.props.router.push({
-			pathname: this.props.location.query.prevHash || '/start',
+			pathname: this.props.location.query.prevHash || '/library/home',
 			query: this.props.location.query,
 		});
 	}

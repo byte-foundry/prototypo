@@ -96,6 +96,11 @@
 					background: transparentize($theme-background, 0.9);
 					color: $theme-background;
 				}
+				&.accepted {
+					color: $green;
+					border-color: $green;
+					background-color: transparentize($green, 0.9);
+				}
 				&.rejected {
 					color: $red;
 					border-color: $red;

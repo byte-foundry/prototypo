@@ -30,6 +30,8 @@ import {
 	round2D,
 } from '../prototypo.js/utils/linear';
 
+import {rawToEscapedContent} from '../helpers/input-transform.helpers';
+
 import LocalClient from '../stores/local-client.stores';
 
 import FontUpdater from './font-updater.components';
@@ -368,6 +370,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				this.setState({
 					glyph: window.glyph,
 					inputGlyphInteraction: head.toJS().d.inputGlyphInteraction,
+					template: head.toJS().d.templateToLoad,
 				});
 			})
 			.onDelete(() => {
@@ -381,6 +384,14 @@ export default class GlyphCanvas extends React.PureComponent {
 					canvasMode: head.toJS().d.canvasMode,
 					uiOutline: head.toJS().d.uiOutline,
 					uiRuler: head.toJS().d.uiRuler,
+					guides: head.toJS().d.guides,
+					family: head.toJS().d.family,
+					variant: head.toJS().d.variant,
+					uiText: head.toJS().d.uiText,
+					uiWord: head.toJS().d.uiWord,
+					glyphUnicode: head.toJS().d.glyphSelected,
+					name: head.toJS().d.fontName,
+					glyphs: head.toJS().d.glyphs,
 				});
 			})
 			.onDelete(() => {
@@ -1680,6 +1691,25 @@ export default class GlyphCanvas extends React.PureComponent {
 			throw this.state.error;
 		}
 
+		const subsetString = `${this.state.uiText
+			+ rawToEscapedContent(this.state.uiWord || '', this.state.glyphs)}`;
+
+		const updater = this.state.name
+			&& this.state.template
+			&& this.state.values
+			&& subsetString !== undefined
+			&& this.state.glyphUnicode && (
+			<FontUpdater
+				family={this.state.family}
+				variant={this.state.variant}
+				name={this.state.name}
+				template={this.state.template}
+				values={this.state.values}
+				subset={subsetString}
+				glyph={this.state.glyphUnicode}
+			/>
+		);
+
 		return (
 			<div className="prototypo-canvas-container">
 				<canvas
@@ -1695,7 +1725,7 @@ export default class GlyphCanvas extends React.PureComponent {
 						WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
 					}}
 				/>
-				<FontUpdater />
+				{updater}
 			</div>
 		);
 	}

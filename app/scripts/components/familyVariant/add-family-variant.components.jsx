@@ -112,7 +112,9 @@ export class AddFamily extends React.PureComponent {
 			});
 
 			Log.ui(`createFamily.${selectedFont.templateName}`);
-			this.client.dispatchAction('/store-value', {uiOnboardstep: 'customize'});
+			this.client.dispatchAction('/store-value', {
+				uiOnboardstep: 'customize',
+			});
 
 			this.props.onCreateFamily(newFont);
 		}
@@ -217,15 +219,27 @@ const createFamilyMutation = gql`
 			name: $name
 			template: $template
 			ownerId: $ownerId
-			variants: [{name: "Regular"}]
+			designer: ""
+			designerUrl: ""
+			foundry: "Prototypo"
+			foundryUrl: "https://prototypo.io/"
+			variants: [{name: "Regular", width: "normal", weight: 400, italic: false}]
 		) {
 			id
 			name
 			template
+			designer
+			designerUrl
+			foundry
+			foundryUrl
+			tags
 			variants {
 				id
 				name
 				values
+				weight
+				width
+				italic
 			}
 		}
 	}
@@ -305,22 +319,118 @@ export class AddVariantRaw extends React.PureComponent {
 		};
 
 		this.variants = [
-			{label: 'Thin', value: 'Thin'}, // 20
-			{label: 'Thin Italic', value: 'Thin Italic'},
-			{label: 'Light', value: 'Light'}, // 50
-			{label: 'Light Italic', value: 'Light Italic'},
-			{label: 'Book', value: 'Book'}, // 70
-			{label: 'Book Italic', value: 'Book Italic'},
-			{label: 'Regular', value: 'Regular'},
-			{label: 'Regular Italic', value: 'Regular Italic'},
-			{label: 'Semi-Bold', value: 'Semi-Bold'}, // 100
-			{label: 'Semi-Bold Italic', value: 'Semi-Bold Italic'},
-			{label: 'Bold', value: 'Bold'}, // 115
-			{label: 'Bold Italic', value: 'Bold Italic'},
-			{label: 'Extra-Bold', value: 'Extra-Bold'}, // 135
-			{label: 'Extra-Bold Italic', value: 'Extra-Bold Italic'},
-			{label: 'Black', value: 'Black'}, // 150
-			{label: 'Black Italic', value: 'Black Italic'},
+			{
+				label: 'Thin',
+				value: 'Thin',
+				thickness: 100,
+				width: 'medium',
+				italic: false,
+			}, // 20
+			{
+				label: 'Thin Italic',
+				value: 'Thin Italic',
+				thickness: 100,
+				width: 'medium',
+				italic: true,
+			},
+			{
+				label: 'Light',
+				value: 'Light',
+				thickness: 200,
+				width: 'medium',
+				italic: false,
+			}, // 50
+			{
+				label: 'Light Italic',
+				value: 'Light Italic',
+				thickness: 200,
+				width: 'medium',
+				italic: true,
+			},
+			{
+				label: 'Book',
+				value: 'Book',
+				thickness: 300,
+				width: 'medium',
+				italic: false,
+			}, // 70
+			{
+				label: 'Book Italic',
+				value: 'Book Italic',
+				thickness: 300,
+				width: 'medium',
+				italic: true,
+			},
+			{
+				label: 'Regular',
+				value: 'Regular',
+				thickness: 400,
+				width: 'medium',
+				italic: false,
+			},
+			{
+				label: 'Regular Italic',
+				value: 'Regular Italic',
+				thickness: 400,
+				width: 'medium',
+				italic: true,
+			},
+			{
+				label: 'Semi-Bold',
+				value: 'Semi-Bold',
+				thickness: 600,
+				width: 'medium',
+				italic: false,
+			}, // 100
+			{
+				label: 'Semi-Bold Italic',
+				value: 'Semi-Bold Italic',
+				thickness: 600,
+				width: 'medium',
+				italic: true,
+			},
+			{
+				label: 'Bold',
+				value: 'Bold',
+				thickness: 700,
+				width: 'medium',
+				italic: false,
+			}, // 115
+			{
+				label: 'Bold Italic',
+				value: 'Bold Italic',
+				thickness: 700,
+				width: 'medium',
+				italic: true,
+			},
+			{
+				label: 'Extra-Bold',
+				value: 'Extra-Bold',
+				thickness: 800,
+				width: 'medium',
+				italic: false,
+			}, // 135
+			{
+				label: 'Extra-Bold Italic',
+				value: 'Extra-Bold Italic',
+				thickness: 800,
+				width: 'medium',
+				italic: true,
+			},
+			{
+				label: 'Black',
+				value: 'Black',
+				thickness: 900,
+				width: 'medium',
+				italic: false,
+			}, // 150
+			{
+				label: 'Black Italic',
+				value: 'Black Italic',
+				thickness: 900,
+				width: 'medium',
+				italic: true,
+			},
 		];
 
 		this.createVariant = this.createVariant.bind(this);
@@ -334,8 +444,10 @@ export class AddVariantRaw extends React.PureComponent {
 
 	async createVariant() {
 		this.setState({error: null});
-
 		const name = this.name.inputValue.value;
+		const meta = this.variants.find(
+			e => e.value === this.name.inputValue.value,
+		);
 
 		try {
 			// TODO: check duplicates, on Graphcool ?
@@ -344,14 +456,22 @@ export class AddVariantRaw extends React.PureComponent {
 				throw new Error('You need to enter a name');
 			}
 
-			const {data: {createVariant}} = await this.props.createVariant(name);
+			const {data: {createVariant}} = await this.props.createVariant(
+				meta ? meta.value : name,
+				meta ? meta.thickness : 400,
+				meta ? meta.width : 'medium',
+				meta ? meta.italic : false,
+			);
 
 			Log.ui('Collection.createVariant');
 
 			this.exit();
 
 			this.client.dispatchAction('/select-variant', {
-				selectedVariant: {id: createVariant.id, name: createVariant.name},
+				selectedVariant: {
+					id: createVariant.id,
+					name: createVariant.name,
+				},
 				family: this.props.family,
 			});
 		}
@@ -435,11 +555,29 @@ const getBaseValuesQuery = gql`
 `;
 
 const createVariantMutation = gql`
-	mutation createVariant($familyId: ID!, $name: String!, $baseValues: Json!) {
-		createVariant(name: $name, values: $baseValues, familyId: $familyId) {
+	mutation createVariant(
+		$familyId: ID!
+		$name: String!
+		$baseValues: Json!
+		$weight: Int!
+		$width: String!
+		$italic: Boolean!
+	) {
+		createVariant(
+			name: $name
+			values: $baseValues
+			familyId: $familyId
+			weight: $weight
+			width: $width
+			italic: $italic
+		) {
 			id
 			name
+			weight
 			values
+			width
+			italic
+			updatedAt
 		}
 	}
 `;
@@ -456,12 +594,15 @@ export const AddVariant = graphql(getBaseValuesQuery, {
 })(
 	graphql(createVariantMutation, {
 		props: ({mutate, ownProps}) => ({
-			createVariant: name =>
+			createVariant: (name, weight, width, italic) =>
 				mutate({
 					variables: {
 						familyId: ownProps.family.id,
 						name,
 						baseValues: adaptValuesFromName(name, ownProps.variantBase.values),
+						weight,
+						width,
+						italic,
 					},
 					update: (store, {data: {createVariant}}) => {
 						const data = store.readQuery({query: libraryQuery});

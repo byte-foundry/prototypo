@@ -185,10 +185,19 @@ export const libraryQuery = gql`
 				id
 				name
 				template
+				tags
+				designer
+				designerUrl
+				foundry
+				foundryUrl
 				variants {
 					id
+					updatedAt
 					name
 					values
+					width
+					weight
+					italic
 				}
 			}
 		}
