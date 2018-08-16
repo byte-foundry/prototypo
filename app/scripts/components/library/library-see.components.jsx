@@ -117,6 +117,7 @@ class LibrarySee extends React.Component {
 
 		this.setState({
 			variants,
+			templateValues,
 		});
 	}
 
