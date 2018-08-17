@@ -115,6 +115,9 @@ class LibrarySee extends React.Component {
 			glyphs: templateValues.glyphs,
 		}));
 
+		console.log(variants);
+		console.log(templateValues);
+
 		this.setState({
 			variants,
 			templateValues,
