@@ -210,7 +210,7 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 
 		const currency = getCurrency(source.country);
 
-		this.props.createSubscription({
+		await this.props.createSubscription({
 			plan: `${plan}_${currency}_taxfree`,
 			coupon: couponValue,
 			quantity: (plan.startsWith('team') && quantity) || undefined,
@@ -502,39 +502,37 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 		const {blurb} = plans[plan];
 
 		return (
-			<div className="subscription-card-and-validation normal">
-				<form onSubmit={this.subscribe}>
-					{plan.startsWith('team') && (
-						<div className="input-with-label">
-							<label className="input-with-label-label" htmlFor="quantity">
-								Quantity:
-							</label>
-							<InputNumber
-								className="pricing-item-subtitle-price-info team"
-								min={1}
-								max={100}
-								value={quantity}
-								controls
-								onChange={this.handleChangeQuantity}
-							/>
-						</div>
-					)}
-					<WaitForLoad loading={loadingAddCard}>{card}</WaitForLoad>
-					{coupon}
-					<div className="subscription-card-and-validation-legal">{blurb}</div>
-					{errors}
-					<LoadingButton
-						type="submit"
-						size="big"
-						fluid
-						outline
-						loading={loading}
-						disabled={couponValue && !validCoupon}
-					>
-						Subscribe to prototypo
-					</LoadingButton>
-				</form>
-			</div>
+			<form onSubmit={this.subscribe}>
+				{plan.startsWith('team') && (
+					<div className="input-with-label">
+						<label className="input-with-label-label" htmlFor="quantity">
+							Quantity:
+						</label>
+						<InputNumber
+							className="pricing-item-subtitle-price-info team"
+							min={1}
+							max={100}
+							value={quantity}
+							controls
+							onChange={this.handleChangeQuantity}
+						/>
+					</div>
+				)}
+				<WaitForLoad loading={loadingAddCard}>{card}</WaitForLoad>
+				{coupon}
+				<div className="subscription-card-and-validation-legal">{blurb}</div>
+				{errors}
+				<LoadingButton
+					type="submit"
+					size="big"
+					fluid
+					outline
+					loading={loading}
+					disabled={couponValue && !validCoupon}
+				>
+					Subscribe to prototypo
+				</LoadingButton>
+			</form>
 		);
 	}
 }
@@ -545,7 +543,8 @@ SubscriptionCardAndValidation.defaultProps = {
 
 const CREATE_SUBSCRIPTION = gql`
 	mutation createSubscription($plan: String!, $quantity: Int, $coupon: String) {
-		id
+		createSubscription(plan: $plan, quantity: $quantity, coupon: $coupon)
+			@client
 	}
 `;
 
