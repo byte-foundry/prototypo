@@ -129,14 +129,20 @@ export class AccountSubscription extends React.PureComponent {
 			</div>
 		);
 
-		const formatter = new Intl.DateTimeFormat('en-US');
-		const trialEnd = formatter.format(
-			new Date(subscription.current_period_end * 1000),
-		);
-		const currentPeriodEnd = formatter.format(
-			new Date(subscription.current_period_end * 1000),
-		);
 		const {plan} = subscription || {};
+		const formatter = new Intl.DateTimeFormat('en-US');
+
+		let trialEnd;
+		let currentPeriodEnd;
+
+		if (plan) {
+			trialEnd = formatter.format(
+				new Date(subscription.current_period_end * 1000),
+			);
+			currentPeriodEnd = formatter.format(
+				new Date(subscription.current_period_end * 1000),
+			);
+		}
 
 		const content = plan ? (
 			<div>
