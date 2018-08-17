@@ -336,7 +336,6 @@ export class TemplateItem extends React.Component {
 	render() {
 		return (
 			<div className="library-item library-template">
-				.
 				<span className="type">Template</span>
 				<p className="library-item-name">{this.props.template.name}</p>
 				<p
