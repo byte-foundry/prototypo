@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import {LibrarySidebarRight} from './library-sidebars.components';
+import LibraryButton from './library-button.components';
 
 const isUrl = new RegExp(
 	'^(https?:\\/\\/)?'
@@ -108,9 +109,14 @@ export default class LibraryFontsInUseList extends React.Component {
 					</div>
 				</div>
 				<LibrarySidebarRight>
-					<Link className="sidebar-action" to="/library/fontinuse/create">
-						Add fontsinuse
-					</Link>
+					<LibraryButton
+						name="Add fontsinuse"
+						bold
+						full
+						onClick={() => {
+							this.props.router.push('/library/fontinuse/create');
+						}}
+					/>
 				</LibrarySidebarRight>
 			</div>
 		);

@@ -3,6 +3,7 @@ import Dropzone from 'react-dropzone';
 import {graphql, gql, compose} from 'react-apollo';
 import {LibrarySidebarRight} from './library-sidebars.components';
 import LocalClient from '../../stores/local-client.stores';
+import LibraryButton from './library-button.components';
 
 class LibraryFontInUseCreate extends React.Component {
 	constructor(props) {
@@ -43,6 +44,7 @@ class LibraryFontInUseCreate extends React.Component {
 				isModified: false,
 				images: [],
 				fonts: [],
+				loading: false,
 			},
 			autocompleteText: '',
 			autocompleteSuggestions: [],
@@ -210,35 +212,42 @@ class LibraryFontInUseCreate extends React.Component {
 	onDrop(acceptedFiles) {
 		const images = [...this.state.fontInUseMetadata.images];
 
-		acceptedFiles.forEach((file) => {
+		acceptedFiles.forEach(async (file) => {
 			images.push(file.preview);
 			const formData = new FormData();
 
-			formData.append('data', file);
-			fetch('https://api.graph.cool/file/v1/prototypo-new-dev', {
-				method: 'POST',
-				body: formData,
-			}).then((response) => {
-				if (response.status === 200) {
-					return response.json().then((data) => {
-						if (data.url) {
-							const placeHolderIndex = images.findIndex(
-								i => i === file.preview,
-							);
-							const newImages = this.state.fontInUseMetadata.images;
-
-							newImages[placeHolderIndex] = data.url;
-							this.setState({
-								fontInUseMetadata: {
-									...this.state.fontInUseMetadata,
-									isModified: true,
-									images: newImages,
-								},
-							});
-						}
-					});
-				}
+			this.setState({
+				loading: true,
 			});
+			formData.append('data', file);
+			const response = await fetch(
+				'https://api.graph.cool/file/v1/prototypo-new-dev',
+				{
+					method: 'POST',
+					body: formData,
+				},
+			);
+
+			if (response.status === 200) {
+				return response.json().then((data) => {
+					if (data.url) {
+						const placeHolderIndex = images.findIndex(
+							i => i === file.preview,
+						);
+						const newImages = this.state.fontInUseMetadata.images;
+
+						newImages[placeHolderIndex] = data.url;
+						this.setState({
+							fontInUseMetadata: {
+								...this.state.fontInUseMetadata,
+								isModified: true,
+								images: newImages,
+							},
+							loading: false,
+						});
+					}
+				});
+			}
 		});
 
 		this.setState({
@@ -263,37 +272,67 @@ class LibraryFontInUseCreate extends React.Component {
 		});
 	}
 	createFontInUse() {
-		this.props
-			.addFontInUse(
-				this.state.fontInUseMetadata.designer,
-				this.state.fontInUseMetadata.designerUrl,
-				this.state.fontInUseMetadata.client,
-				this.state.fontInUseMetadata.clientUrl,
-				this.state.fontInUseMetadata.fonts,
-				this.state.fontInUseMetadata.images,
-			)
-			.then(() => this.props.router.push('/library/fontinuse'));
+		if (!this.state.loading) {
+			this.setState({
+				loading: true,
+			});
+			this.props
+				.addFontInUse(
+					this.state.fontInUseMetadata.designer,
+					this.state.fontInUseMetadata.designerUrl,
+					this.state.fontInUseMetadata.client,
+					this.state.fontInUseMetadata.clientUrl,
+					this.state.fontInUseMetadata.fonts,
+					this.state.fontInUseMetadata.images,
+				)
+				.then(() => {
+					this.props.router.push('/library/fontinuse');
+					this.setState({
+						loading: false,
+					});
+				});
+		}
 	}
 	updateFontInUse() {
-		this.props
-			.editFontInUse(
-				this.state.fontInUseMetadata.id,
-				this.state.fontInUseMetadata.designer,
-				this.state.fontInUseMetadata.designerUrl,
-				this.state.fontInUseMetadata.client,
-				this.state.fontInUseMetadata.clientUrl,
-				this.state.fontInUseMetadata.fonts,
-				this.state.fontInUseMetadata.images,
-			)
-			.then(() => this.props.router.push('/library/fontinuse'));
+		if (!this.state.loading) {
+			this.setState({
+				loading: true,
+			});
+			this.props
+				.editFontInUse(
+					this.state.fontInUseMetadata.id,
+					this.state.fontInUseMetadata.designer,
+					this.state.fontInUseMetadata.designerUrl,
+					this.state.fontInUseMetadata.client,
+					this.state.fontInUseMetadata.clientUrl,
+					this.state.fontInUseMetadata.fonts,
+					this.state.fontInUseMetadata.images,
+				)
+				.then(() => {
+					this.props.router.push('/library/fontinuse');
+					this.setState({
+						loading: false,
+					});
+				});
+		}
 	}
 	deleteFontInUse() {
-		this.props
-			.deleteFontInUse(
-				this.state.fontInUseMetadata.id,
-				this.state.fontInUseMetadata.fonts,
-			)
-			.then(() => this.props.router.push('/library/fontinuse'));
+		if (!this.state.loading) {
+			this.setState({
+				loading: true,
+			});
+			this.props
+				.deleteFontInUse(
+					this.state.fontInUseMetadata.id,
+					this.state.fontInUseMetadata.fonts,
+				)
+				.then(() => {
+					this.props.router.push('/library/fontinuse');
+					this.setState({
+						loading: false,
+					});
+				});
+		}
 	}
 	render() {
 		return (
@@ -424,26 +463,24 @@ class LibraryFontInUseCreate extends React.Component {
 								</Dropzone>
 							</div>
 							{this.state.isEdit && (
-								<div
-									className="library-details-form-button"
+								<LibraryButton
+									name="Delete font in use"
+									loading={this.state.loading}
 									onClick={() => {
 										this.deleteFontInUse();
 									}}
-								>
-									Delete font in use
-								</div>
+								/>
 							)}
 							{this.state.fontInUseMetadata.isModified && (
-								<div
-									className="library-details-form-button"
+								<LibraryButton
+									name={`${this.state.isEdit ? 'Save' : 'Create'} font in use`}
+									loading={this.state.loading}
 									onClick={() => {
 										this.state.isEdit
 											? this.updateFontInUse()
 											: this.createFontInUse();
 									}}
-								>
-									{this.state.isEdit ? 'Save' : 'Create'} font in use
-								</div>
+								/>
 							)}
 						</form>
 					</div>
