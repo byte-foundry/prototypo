@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {Redirect, Link, withRouter} from 'react-router-dom';
 import {Elements} from 'react-stripe-elements';
 
+import WaitForLoad from '../wait-for-load.components';
 import SubscriptionSidebar from './subscription-sidebar.components';
 import SubscriptionCardAndValidation from './subscription-card-and-validation.components';
 import withCountry from '../shared/with-country.components';
@@ -76,40 +77,47 @@ class Subscription extends React.Component {
 		}
 
 		return (
-			<Query query={GET_SUBSCRIPTION_AND_CARDS}>
-				{({loading, data: {user}}) =>
-					(!loading && user && user.subscription ? (
-						<Redirect to="/account/details" />
-					) : (
-						<div className="subscription">
-							<Link
-								to="/dashboard"
-								className="account-dashboard-icon is-in-subscription"
-							/>
-							<div className="account-dashboard-container">
-								<SubscriptionSidebar
-									plan={query.get('plan')}
-									quantity={parseInt(query.get('quantity'), 10)}
-									country={country}
-									onChangePlan={this.handleChangePlan}
-									percentPrice={percentPrice}
-								/>
-								<Elements>
-									<SubscriptionCardAndValidation
-										cards={user.cards}
-										plan={query.get('plan')}
-										quantity={parseInt(query.get('quantity'), 10)}
-										coupon={query.get('coupon')}
-										country={country}
-										onChangePlan={this.handleChangePlan}
-										onSelectCoupon={this.saveValidCoupon}
-									/>
-								</Elements>
-							</div>
-						</div>
-					))
-				}
-			</Query>
+			<div className="subscription">
+				<Link
+					to="/dashboard"
+					className="account-dashboard-icon is-in-subscription"
+				/>
+				<div className="account-dashboard-container">
+					<SubscriptionSidebar
+						plan={query.get('plan')}
+						quantity={parseInt(query.get('quantity'), 10)}
+						country={country}
+						onChangePlan={this.handleChangePlan}
+						percentPrice={percentPrice}
+					/>
+					<div className="subscription-card-and-validation normal">
+						<Query query={GET_SUBSCRIPTION_AND_CARDS}>
+							{({loading, data: {user}}) => {
+								if (loading) {
+									return <WaitForLoad loading />;
+								}
+								if (user.subscription) {
+									return <Redirect to="/account/details" />;
+								}
+
+								return (
+									<Elements>
+										<SubscriptionCardAndValidation
+											cards={user.cards}
+											plan={query.get('plan')}
+											quantity={parseInt(query.get('quantity'), 10)}
+											coupon={query.get('coupon')}
+											country={country}
+											onChangePlan={this.handleChangePlan}
+											onSelectCoupon={this.saveValidCoupon}
+										/>
+									</Elements>
+								);
+							}}
+						</Query>
+					</div>
+				</div>
+			</div>
 		);
 	}
 }
