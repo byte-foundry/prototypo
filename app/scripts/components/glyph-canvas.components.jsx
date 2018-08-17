@@ -1700,8 +1700,8 @@ export default class GlyphCanvas extends React.PureComponent {
 			&& subsetString !== undefined
 			&& this.state.glyphUnicode && (
 			<FontUpdater
-				family={this.state.family}
-				variant={this.state.variant}
+				family={this.state.family.name}
+				variant={this.state.variant.name}
 				name={this.state.name}
 				template={this.state.template}
 				values={this.state.values}

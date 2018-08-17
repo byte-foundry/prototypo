@@ -594,7 +594,7 @@ class LibraryList extends React.Component {
 	getEmptyMessage() {
 		const mode = this.props.location.query && this.props.location.query.mode;
 
-		if (mode === 'personnal') {
+		if (mode === 'personal') {
 			return (
 				<div className="library-see-description">
 					<p>
