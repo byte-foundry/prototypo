@@ -7,8 +7,11 @@ import {
 	SidebarTags,
 } from './library-sidebars.components';
 import {Link} from 'react-router';
+import Lifespan from 'lifespan';
 import FontUpdater from '../font-updater.components';
 import LocalClient from '../../stores/local-client.stores';
+
+import LibraryButton from './library-button.components';
 
 const isUrl = new RegExp(
 	'^(https?:\\/\\/)?'
@@ -82,6 +85,13 @@ class LibrarySee extends React.Component {
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
+			this.setState({
+				exporting: head.toJS().d.export,
+				errorExport: head.toJS().d.errorExport,
+			});
+		});
 		const prototypoStore = await this.client.fetch('/prototypoStore');
 		const templatesData = await prototypoStore.head.toJS().templatesData;
 		const templateList = await prototypoStore.head.toJS().templateList;
@@ -114,9 +124,6 @@ class LibrarySee extends React.Component {
 			},
 			glyphs: templateValues.glyphs,
 		}));
-
-		console.log(variants);
-		console.log(templateValues);
 
 		this.setState({
 			variants,
@@ -240,6 +247,8 @@ class LibrarySee extends React.Component {
 									export={this.props.export}
 									delete={this.props.deleteVariant}
 									isPersonal={this.state.isPersonal}
+									exporting={this.state.exporting}
+									errorExport={this.state.errorExport}
 								/>
 							))}
 					</div>
@@ -297,10 +306,18 @@ class LibrarySee extends React.Component {
 						exportFamily={this.exportFamily}
 						mode="see"
 						isPersonal={this.state.isPersonal}
+						router={this.props.router}
+						exporting={this.state.exporting}
+						errorExport={this.state.errorExport}
 					/>
-					<Link className="sidebar-action" to="/library/fontinuse/create">
-						Add fontsinuse
-					</Link>
+					<LibraryButton
+						name="Add fontsinuse"
+						bold
+						full
+						onClick={() => {
+							this.props.router.push('/library/fontinuse/create');
+						}}
+					/>
 					{this.state.templateValues && (
 						<FamilySidebarGlyphs glyphs={this.state.templateValues.glyphs} />
 					)}
@@ -364,18 +381,19 @@ export class VariantItem extends React.Component {
 							Actions
 						</div>
 						{this.props.isPersonal && (
-							<div
-								className="library-item-variant-action"
+							<LibraryButton
+								name="Open variant"
+								dark
 								onClick={() => {
 									this.props.open(this.props.variant, this.props.family);
 								}}
-							>
-								Open variant
-							</div>
+							/>
 						)}
-
-						<div
-							className="library-item-variant-action"
+						<LibraryButton
+							name="Export variant"
+							dark
+							loading={this.props.exporting}
+							error={this.props.errorExport}
 							onClick={() => {
 								this.props.export(
 									this.props.family.name,
@@ -392,39 +410,34 @@ export class VariantItem extends React.Component {
 									this.props.variant.italic,
 								);
 							}}
-						>
-							Export variant
-						</div>
+						/>
 						{this.props.isPersonal && (
-							<div
-								className="library-item-variant-action"
+							<LibraryButton
+								name="Rename variant"
+								dark
 								onClick={() => {
 									this.props.rename(this.props.variant, this.props.family);
 								}}
-							>
-								Rename variant
-							</div>
+							/>
 						)}
 						{this.props.isPersonal && (
-							<div
-								className="library-item-variant-action"
+							<LibraryButton
+								name="Duplicate variant"
+								dark
 								onClick={() => {
 									this.props.duplicate(this.props.variant, this.props.family);
 								}}
-							>
-								Duplicate variant
-							</div>
+							/>
 						)}
 						{this.props.isPersonal
 							&& this.props.family.variants.length > 1 && (
-							<div
-								className="library-item-variant-action"
+							<LibraryButton
+								name="Delete variant"
+								dark
 								onClick={() => {
 									this.props.delete(this.props.variant, this.props.family);
 								}}
-							>
-									Delete variant
-							</div>
+							/>
 						)}
 						<FontUpdater
 							name={this.props.variant.fontName}
