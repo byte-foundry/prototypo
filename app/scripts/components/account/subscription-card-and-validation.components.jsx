@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {graphql} from 'react-apollo';
 import {withRouter} from 'react-router-dom';
@@ -478,6 +479,7 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 					ref={(item) => {
 						this.coupon = item;
 					}}
+					placeholder="COUPON"
 					label="Coupon code"
 					error={false}
 					onChange={this.handleCouponChange}
@@ -538,18 +540,31 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 }
 
 SubscriptionCardAndValidation.defaultProps = {
+	cards: [],
 	onSelectCoupon: () => {},
 };
 
-const CREATE_SUBSCRIPTION = gql`
+SubscriptionCardAndValidation.propTypes = {
+	coupon: PropTypes.string,
+	plan: PropTypes.string,
+	quantity: PropTypes.number,
+	cards: PropTypes.arrayOf(PropTypes.object),
+	onSelectCoupon: PropTypes.func,
+};
+
+export const CREATE_SUBSCRIPTION = gql`
 	mutation createSubscription($plan: String!, $quantity: Int, $coupon: String) {
 		createSubscription(plan: $plan, quantity: $quantity, coupon: $coupon)
 			@client
 	}
 `;
 
-export default graphql(CREATE_SUBSCRIPTION, {
-	props: ({mutate}) => ({
-		createSubscription: variables => mutate({variables}),
-	}),
-})(withRouter(injectStripe(SubscriptionCardAndValidation)));
+export default withRouter(
+	injectStripe(
+		graphql(CREATE_SUBSCRIPTION, {
+			props: ({mutate}) => ({
+				createSubscription: variables => mutate({variables}),
+			}),
+		})(SubscriptionCardAndValidation),
+	),
+);
