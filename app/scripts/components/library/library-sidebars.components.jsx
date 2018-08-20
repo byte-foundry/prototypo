@@ -137,7 +137,7 @@ class LibrarySidebarLeftRaw extends React.Component {
 				.forEach((abstractedFont) => {
 					if (abstractedFont.type !== 'Family' || abstractedFont.family) {
 						userFavourites.push(
-							<Route path={`/library/project/${abstractedFont.family.id}`}>
+							<Route path={`/library/project/${abstractedFont.family && abstractedFont.family.id}`}>
 								{({match}) => (
 									<p
 										className={`sidebar-left-project ${
