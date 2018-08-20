@@ -27,13 +27,27 @@ html {
 	src: url("../fonts/venus8.otf");
 }
 
+@font-face {
+  font-family: Ligne;
+  src: url("../fonts/Ligne-MEDIUM.otf");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Ligne;
+  src: url("../fonts/Ligne-BOLD.otf");
+  font-weight: 700;
+  font-style: normal;
+}
+
 body {
 	overflow: hidden;
 	font-size:1.4em;
 	line-height:1.5;
 
-	font-family: 'Fira Sans', sans-serif;
-	font-weight: normal;
+	font-family: Ligne, sans-serif;
+	font-weight: 500;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 
@@ -41,7 +55,7 @@ body {
 }
 
 h1 {
-	font-family: 'Fira Sans', sans-serif;
+	font-family: Ligne, sans-serif;
 	font-weight: 700;
 	color: $light-grey;
 }

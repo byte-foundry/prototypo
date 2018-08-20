@@ -1184,7 +1184,7 @@ export default class Toile {
 		this.context.fill();
 	}
 
-	drawText(text, point, textSize, textColor, font = 'Fira sans') {
+	drawText(text, point, textSize, textColor, font = 'Ligne') {
 		const [transformedPoint] = transformCoords(
 			[point],
 			this.viewMatrix,
@@ -1200,10 +1200,10 @@ export default class Toile {
 	measureNodeMenuName(point) {
 		const text = labelForMenu[point.type] || 'hello';
 
-		return this.measureText(text, menuTextSize, 'Fira sans');
+		return this.measureText(text, menuTextSize, 'Ligne');
 	}
 
-	measureText(text, size = 20, font = 'Fira sans') {
+	measureText(text, size = 20, font = 'Ligne') {
 		this.context.font = `${size}px '${font}', sans-serif`;
 
 		return this.context.measureText(text);
@@ -1541,7 +1541,7 @@ export default class Toile {
 
 			this.drawRectangleFromCorners(start, end, undefined, '#24d390');
 			tools.forEach((tool, j) => {
-				const width = this.measureText(tool.key, 15, 'Fira sans').width;
+				const width = this.measureText(tool.key, 15, 'Ligne').width;
 				const toolStart = add2D(
 					start,
 					mulScalar2D(j / this.viewMatrix[0], {x: 30, y: 0}),
@@ -1684,7 +1684,7 @@ export default class Toile {
 		this.drawCircle(toolPos, 8, 'transparent', red);
 
 		const distribText = node.expand.distr.toFixed(1);
-		const distribTextSize = this.measureText(distribText, 15, 'Fira sans');
+		const distribTextSize = this.measureText(distribText, 15, 'Ligne');
 		const distribCoordsPos = add2D(mulScalar2D(1 / zoom, {x: 20, y: 0}), node);
 
 		this.drawText(
