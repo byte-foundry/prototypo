@@ -6,6 +6,7 @@ import {LibrarySidebarRight} from './library-sidebars.components';
 import {tmpUpload} from '../../services/graphcool.services';
 import LocalClient from '../../stores/local-client.stores';
 import FontUpdater from '../font-updater.components';
+import LibraryButton from './library-button.components';
 
 class LibraryHostingCreate extends React.Component {
 	constructor(props) {
@@ -19,7 +20,9 @@ class LibraryHostingCreate extends React.Component {
 			errors: {
 				domain: false,
 				hostedFonts: false,
+				hosting: false,
 			},
+			loading: false,
 		};
 		this.updateAutocompleteSuggestions = this.updateAutocompleteSuggestions.bind(
 			this,
@@ -87,7 +90,19 @@ class LibraryHostingCreate extends React.Component {
 					this.state.domain,
 					hostedFonts.map(({data}) => data.hostFont.id),
 				)
-				.then(() => this.props.router.push('/library/hosting'));
+				.then(() => {
+					this.props.router.push('/library/hosting');
+					clearTimeout(this.state.hostingTimeout);
+					this.setState({
+						errors: {
+							domain: false,
+							hostedFonts: false,
+							hosting: false,
+						},
+						hostingTimeout: undefined,
+						loading: false,
+					});
+				});
 			this.setState({status: 'hosting'});
 		}
 	}
@@ -307,6 +322,9 @@ class LibraryHostingCreate extends React.Component {
 	}
 
 	hostFonts() {
+		if (this.state.hostingTimeout) {
+			return;
+		}
 		const domain = this.state.domain
 			.replace('http://', '')
 			.replace('https://', '')
@@ -328,21 +346,30 @@ class LibraryHostingCreate extends React.Component {
 			return;
 		}
 
-		if (this.state.addedFonts.length === 0) {
+		const timerId = setTimeout(() => {
+			clearTimeout(this.state.hostingTimeout);
 			this.setState({
 				errors: {
 					domain: false,
-					hostedFonts: true,
+					hostedFonts: false,
+					hosting: true,
 				},
+				loading: false,
+				hostingTimeout: undefined,
 			});
-			return;
-		}
+		}, 10000);
+
 		this.setState({
 			errors: {
 				domain: false,
 				hostedFonts: false,
 			},
+			loading: true,
+			autocompleteText: '',
+			autocompleteSuggestions: [],
+			hostingTimeout: timerId,
 		});
+
 		const familyNames = [];
 		const variantNames = [];
 		const valueArray = [];
@@ -377,6 +404,15 @@ class LibraryHostingCreate extends React.Component {
 		}
 		catch (err) {
 			console.log(err.message);
+			clearTimeout(this.state.hostingTimeout);
+			this.setState({
+				errors: {
+					domain: false,
+					hostedFonts: false,
+					hosting: true,
+				},
+				hostingTimeout: undefined,
+			});
 		}
 	}
 
@@ -453,7 +489,7 @@ class LibraryHostingCreate extends React.Component {
 											</div>
 										))
 									)}
-									{this.state.errors.domain && (
+									{this.state.errors.hostedFonts && (
 										<p className="library-hosting-form-elem-error">
 											Please add at least one font to your website.
 										</p>
@@ -502,22 +538,43 @@ class LibraryHostingCreate extends React.Component {
 								)}
 							</div>
 							<div className="library-hosting-form-elem">
-								<div
-									className="library-hosting-form-button"
+								{this.state.errors.hosting && (
+									<p className="library-hosting-form-elem-error">
+										Something happenened while trying to host your fonts. Please
+										retry or contact us using the in-app chat.
+									</p>
+								)}
+								<LibraryButton
+									name="Add website"
+									floated
+									disabled={
+										this.state.addedFonts.length === 0
+										|| this.state.domain === ''
+									}
+									error={this.state.errors.hosting}
+									loading={this.state.loading}
 									onClick={() => {
-										this.hostFonts();
+										if (
+											this.state.addedFonts.length > 0
+											&& this.state.domain !== ''
+										) {
+											this.hostFonts();
+										}
 									}}
-								>
-									Add website
-								</div>
+								/>
 							</div>
 						</div>
 					</div>
 				</div>
 				<LibrarySidebarRight>
-					<Link to="/library/hosting" className="sidebar-action">
-						Back to the list
-					</Link>
+					<LibraryButton
+						name="Back to the list"
+						bold
+						full
+						onClick={() => {
+							this.props.router.push('/library/hosting');
+						}}
+					/>
 				</LibrarySidebarRight>
 			</div>
 		);

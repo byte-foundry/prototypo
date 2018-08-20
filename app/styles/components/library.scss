@@ -30,6 +30,25 @@
 		&.button-loading {
 			cursor: initial;
 		}
+		&.button-disabled {
+			cursor: initial;
+			color: $medium-grey;
+			border-color: $medium-grey;
+			&:hover {
+				color: $medium-grey;
+				border-color: $medium-grey;
+				background: transparent;
+			}
+		}
+		&.button-error {
+			color: $red;
+			border-color: $red;
+			&:hover {
+				color: $white;
+				border-color: $red;
+				background: $red;
+			}
+		}
 		&.button-dark {
 			border-color: $green;
 			color: $green;

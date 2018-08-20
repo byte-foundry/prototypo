@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import {LibrarySidebarRight} from './library-sidebars.components';
+import LibraryButton from './library-button.components';
 
 export default class LibraryHosting extends React.Component {
 	constructor(props) {
@@ -30,7 +31,7 @@ export default class LibraryHosting extends React.Component {
 										magnis dis parturient montes, nascetur ridiculus mus.
 									</p>
 									<p>
-										<Link to="/library/hosting/add">
+										<Link to="/library/hosting/create">
 											Start using my fonts on the web
 										</Link>
 									</p>
@@ -57,9 +58,14 @@ export default class LibraryHosting extends React.Component {
 					</div>
 				</div>
 				<LibrarySidebarRight>
-					<Link to="/library/hosting/create" className="sidebar-action">
-						Add website
-					</Link>
+					<LibraryButton
+						name="Add a website"
+						bold
+						full
+						onClick={() => {
+							this.props.router.push('/library/hosting/create');
+						}}
+					/>
 				</LibrarySidebarRight>
 			</div>
 		);

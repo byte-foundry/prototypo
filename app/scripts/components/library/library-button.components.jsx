@@ -16,6 +16,8 @@ export default class LibraryButton extends React.Component {
           ${this.props.bold ? ' button-bold ' : ''}
 					${this.props.full ? ' button-full ' : ''}
 					${this.props.loading ? ' button-loading ' : ''}
+					${this.props.error ? ' button-error ' : ''}
+					${this.props.disabled ? ' button-disabled ' : ''}
         `}
 				onClick={this.props.onClick}
 			>
