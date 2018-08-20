@@ -9,8 +9,14 @@ export default class LibrarySearch extends React.PureComponent {
 		this.state = {};
 	}
 
-	componentWillMount() {
+	async componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
+			this.setState({
+				search: head.toJS().d.librarySearchString,
+			});
+		});
 	}
 
 	render() {
@@ -21,9 +27,6 @@ export default class LibrarySearch extends React.PureComponent {
 					placeholder="Search"
 					value={this.state.search}
 					onChange={(e) => {
-						this.setState({
-							search: e.target.value,
-						});
 						this.client.dispatchAction('/store-value', {
 							librarySearchString: e.target.value,
 						});

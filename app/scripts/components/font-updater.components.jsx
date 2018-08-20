@@ -1,86 +1,56 @@
+import deepEqual from 'lodash/isEqual';
 import _uniq from 'lodash/uniq';
 import React from 'react';
-import Lifespan from 'lifespan';
-import {graphql, gql, compose} from 'react-apollo';
 import PropTypes from 'prop-types';
 
 import FontMediator from '../prototypo.js/mediator/FontMediator';
 
-import LocalClient from '../stores/local-client.stores';
-
-class FontUpdater extends React.PureComponent {
+class FontUpdater extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
-	}
 
-	componentWillMount() {
-		this.client = LocalClient.instance();
-		this.lifespan = new Lifespan();
 		this.fontMediatorInstance = FontMediator.instance();
-		this.fontMediatorInstance.setupInfo({
-			email: this.props.email,
-		});
-
-		this.client
-			.getStore('/fontInstanceStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					changingFont: head.toJS().d.changingFont,
-				});
-			})
-			.onDelete(() => {
-				this.setState(undefined);
-			});
 	}
 
-	componentDidUpdate() {
-		if (
-			this.props.template !== undefined
-			&& this.props.name !== undefined
-			&& this.props.subset !== undefined
-			&& this.props.glyph !== undefined
-			&& this.props.values !== undefined
-			&& !this.state.changingFont
-		) {
-			const subset = _uniq(this.props.subset.split('')).map(letter =>
-				letter.charCodeAt(0),
-			);
+	shouldComponentUpdate(nextProps) {
+		const subset = _uniq(this.props.subset.split('')).join('');
+		const nextSubset = _uniq(nextProps.subset.split('')).join('');
 
-			this.fontMediatorInstance.getFont(
-				this.props.name,
-				this.props.template,
-				{...this.props.values},
-				subset,
-				this.props.glyph,
-			);
-		}
-
-		this.fontMediatorInstance.setupInfo({
-			family: this.props.family,
-			style: this.props.variant,
-			template: this.props.template,
-		});
-
-		return false;
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
+		return !(
+			nextProps.family === this.props.family
+			&& nextProps.variant === this.props.variant
+			&& nextProps.name === this.props.name
+			&& nextProps.template === this.props.template
+			&& nextSubset === subset
+			&& nextProps.glyph === this.props.glyph
+			&& deepEqual(nextProps.values, this.props.values)
+		);
 	}
 
 	render() {
+		const {template, name, subset, glyph, values, family, variant} = this.props;
+
+		const subsetCodes = _uniq(subset.split('')).map(letter =>
+			letter.charCodeAt(0),
+		);
+
+		this.fontMediatorInstance.setupInfo({
+			family,
+			style: variant,
+			template,
+		});
+
+		this.fontMediatorInstance.getFont(
+			name,
+			template,
+			values,
+			subsetCodes,
+			glyph,
+		);
+
 		return false;
 	}
 }
-
-const userProfileQuery = gql`
-	query getUserProfile {
-		user {
-			email
-		}
-	}
-`;
 
 FontUpdater.propTypes = {
 	family: PropTypes.string,
@@ -93,17 +63,8 @@ FontUpdater.propTypes = {
 };
 
 FontUpdater.defaultProps = {
-	fonts: [],
+	family: 'Prototypo Font',
+	variant: 'Regular',
 };
 
-export default compose(
-	graphql(userProfileQuery, {
-		props: ({data}) => {
-			if (data.loading) {
-				return {loading: true};
-			}
-
-			return data.user;
-		},
-	}),
-)(FontUpdater);
+export default FontUpdater;

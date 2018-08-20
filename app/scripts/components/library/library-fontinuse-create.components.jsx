@@ -167,7 +167,7 @@ class LibraryFontInUseCreate extends React.Component {
 					familyId: f.id,
 					template: undefined,
 					presetId: undefined,
-					isPersonnal: true,
+					isPersonal: true,
 					name: `${f.name}`,
 				}),
 			);
@@ -192,7 +192,7 @@ class LibraryFontInUseCreate extends React.Component {
 			&& teamFound.forEach(f =>
 				autocompleteSuggestions.push({
 					type: 'Family',
-					isPersonnal: false,
+					isPersonal: false,
 					id: f.id,
 					familyId: f.id,
 					template: undefined,

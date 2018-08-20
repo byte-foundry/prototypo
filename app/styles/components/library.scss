@@ -62,7 +62,7 @@
 					&:hover {
 						color: $green;
 					}
-					&.active {						
+					&.active {
 						color: $green;
 						font-weight: bold;
 					}
@@ -90,7 +90,7 @@
 				display: block;
 				margin-top: 3px;
 				margin-bottom: 3px;
-				padding-left: 40px; 
+				padding-left: 40px;
 				color: transparentize($white, 0.1);
 				transition: all .2s ease;
 				a {
@@ -215,14 +215,12 @@
 			}
 		}
 		.library-see {
-			margin-top: 10px;
 			flex-grow: 2;
 			background: white;
 			color: $dark-grey;
 			height: 100vh;
 			max-height: 100vh;
 			overflow-y: auto;
-			padding-bottom: 50px;
 			.library-see-variants {
 				margin-top: 40px;
 			}
@@ -234,7 +232,7 @@
 				margin-top: 35px;
 				width: calc(100vw - 500px);
 			}
-	
+
 			.library-see-description {
 				position: relative;
 				font-size: 18px;

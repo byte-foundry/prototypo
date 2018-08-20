@@ -34,6 +34,7 @@ class LibraryList extends React.Component {
 		this.selectFont = this.selectFont.bind(this);
 		this.updateFavourites = this.updateFavourites.bind(this);
 		this.onTextChange = this.onTextChange.bind(this);
+		this.getEmptyMessage = this.getEmptyMessage.bind(this);
 	}
 
 	async componentWillMount() {
@@ -283,7 +284,7 @@ class LibraryList extends React.Component {
 					fontData.push({
 						template: templateInfo.templateName,
 						templateName: templateInfo.name,
-						type: 'Presets',
+						type: 'Preset',
 						name: preset.variant.family.name,
 						designer:
 							preset.ownerInitials === 'LM' || preset.ownerInitials === 'HM'
@@ -327,7 +328,7 @@ class LibraryList extends React.Component {
 						templateName: templateInfo.name,
 						name: family.name,
 						designer: '',
-						type: 'Fonts',
+						type: 'Font',
 						tags: family.tags || [],
 						variants: family.variants,
 						id: family.id,
@@ -422,10 +423,10 @@ class LibraryList extends React.Component {
 	}
 
 	filterFonts(
-		activeFilters,
-		selectedTags,
-		searchString,
-		mode,
+		activeFilters = [],
+		selectedTags = [],
+		searchString = '',
+		mode = '',
 		newBaseFontData,
 	) {
 		const baseFontData = newBaseFontData || this.state.baseFontData;
@@ -507,8 +508,8 @@ class LibraryList extends React.Component {
 		let type = '';
 
 		switch (mode) {
-		case 'personnal':
-			type = 'Fonts';
+		case 'personal':
+			type = 'Font';
 			break;
 		case 'team':
 			type = 'SubUser';
@@ -590,6 +591,62 @@ class LibraryList extends React.Component {
 		});
 	}
 
+	getEmptyMessage() {
+		const mode = this.props.location.query && this.props.location.query.mode;
+
+		if (mode === 'personnal') {
+			return (
+				<div className="library-see-description">
+					<p>
+						<span>
+							Dive into Prototypo by creating your first project with our
+							templates or Unique presets
+						</span>
+					</p>
+					<p>
+						<Link to="/library/create">Create your font now</Link>
+					</p>
+				</div>
+			);
+		}
+		if (mode === 'favorites') {
+			return (
+				<div className="library-see-description">
+					<p>
+						<span>
+							You have not starred any fonts yet. Simply click on the star icon
+							to tag fonts as your favorites in your library.
+						</span>
+					</p>
+					<p>
+						<Link to="/library/home">Back to the list</Link>
+					</p>
+				</div>
+			);
+		}
+		return (
+			<div className="library-see-description">
+				<p>
+					<span>Your search didn't return any results.</span>
+				</p>
+				<p>
+					<Link
+						to="/library"
+						onClick={() => {
+							this.filterFonts();
+							this.client.dispatchAction('/store-value', {
+								librarySearchString: '',
+								librarySelectedTags: [],
+							});
+						}}
+					>
+						Clear search data
+					</Link>
+				</p>
+			</div>
+		);
+	}
+
 	render() {
 		return (
 			<div className="library-content-wrapper">
@@ -598,28 +655,7 @@ class LibraryList extends React.Component {
 					&& this.state.fontsToDisplay.length === 0 ? (
 							<div>
 								<div className="library-see-title">There is nothing here!</div>
-								<div className="library-see-description">
-									<p>
-										{this.props.location.query.mode === 'personnal' ? (
-											<span>
-											Dive into Prototypo by creating your first project with
-											our templates or Unique presets
-											</span>
-										) : (
-											<span>
-											You have not starred any fonts yet. Simply click on the
-											star icon to tag fonts as your favorites in your library.
-											</span>
-										)}
-									</p>
-									<p>
-										{this.props.location.query.mode === 'personnal' ? (
-											<Link to="/library/create">Create your font now</Link>
-										) : (
-											<Link to="/library/home">Back to the list</Link>
-										)}
-									</p>
-								</div>
+								{this.getEmptyMessage()}
 							</div>
 						) : (
 							<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
@@ -655,11 +691,6 @@ LibraryList.defaultProps = {
 export default LibraryList;
 
 class FamilyList extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
-
 	render() {
 		return (
 			<ScrollArea
@@ -669,15 +700,26 @@ class FamilyList extends React.Component {
 				style={{overflowX: 'visible'}}
 			>
 				<div className="library-family-list">
-					{this.props.fontsToDisplay
-						&& this.props.fontsToDisplay.map(font =>
-							React.createElement(font.elem, {...font.props()}),
-						)}
+					{this.props.fontsToDisplay.map(font =>
+						React.createElement(font.elem, font.props()),
+					)}
 				</div>
 			</ScrollArea>
 		);
 	}
 }
+
+FamilyList.defaultProps = {
+	fontsToDisplay: [],
+};
+
+FamilyList.propTypes = {
+	fontsToDisplay: PropTypes.arrayOf(
+		PropTypes.shape({
+			type: PropTypes.oneOf(['Template', 'Preset', 'Font']),
+		}),
+	),
+};
 
 export class TemplateItem extends React.Component {
 	constructor(props) {
