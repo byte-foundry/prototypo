@@ -30,7 +30,7 @@ $heightPercentage: 100%;
 		z-index: 0;
 
 		& .handlegrip-spacing-number {
-			font-family: 'Fira Sans', sans-serif;
+			font-family: Ligne, sans-serif;
 			text-align: center;
 			left: 0;
 			width: 100%;
@@ -38,7 +38,7 @@ $heightPercentage: 100%;
 	}
 }
 .handlegrip {
-	font-family: 'Fira Sans', sans-serif;
+	font-family: Ligne, sans-serif;
 	cursor: ew-resize;
 	height: $heightPercentage;
 	position: absolute;

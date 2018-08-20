@@ -45,7 +45,7 @@
 			}
 		}
 		&.button-bold {
-			font-weight: bold;
+			font-weight: 700;
 		}
 		&.button-highlight {
 			border-color: $green;
@@ -68,7 +68,7 @@
 			border-radius: 30px;
 			text-transform: uppercase;
 			font-size: 16px;
-			font-weight: bold;
+			font-weight: 700;
 		}
 		&.floated {
 			float: left;
@@ -117,7 +117,6 @@
 					}
 					&.active {
 						color: $green;
-						font-weight: bold;
 					}
 				}
 				.library-link-arrow {
@@ -208,7 +207,7 @@
 			.sidebar-glyphs {
 				.sidebar-glyphs-title {
 					margin-top: 40px;
-					font-weight: bold;
+					font-weight: 700;
 				}
 				.sidebar-glyphs-language {
 					margin-top: 10px;
@@ -302,7 +301,7 @@
 					.library-item-variant-actions-group-title {
 						color: white;
 						font-size: 14px;
-						font-weight: bold;
+						font-weight: 700;
 						margin-bottom: 20px;
 					}
 					p {
@@ -328,7 +327,7 @@
 						label {
 							display: block;
 							text-transform: uppercase;
-							font-weight: bold;
+							font-weight: 700;
 						}
 						input,
 						select {
@@ -406,7 +405,7 @@
 				font-size: 14px;
 				padding: 5px 20px;
 				display: inline-block;
-				border: 1px solid $dark-grey;
+				border: 2px solid $dark-grey;
 				color: $dark-grey;
 				background-color: transparent;
 				transition: color 0.3s ease, background-color 0.3s ease;
@@ -432,7 +431,7 @@
 						padding-right: 40px;
 						margin-bottom: 10px;
 						text-transform: uppercase;
-						font-weight: bold;
+						font-weight: 700;
 					}
 					.details-form-elem {
 						width: 18%;
@@ -543,7 +542,7 @@
 						margin-bottom: 20px;
 						label {
 							display: block;
-							font-weight: bold;
+							font-weight: 700;
 						}
 						a {
 							text-decoration: underline;
@@ -732,7 +731,7 @@
 				text-align: center;
 				line-height: 46px;
 				text-transform: uppercase;
-				font-weight: bold;
+				font-weight: 700;
 				color: white;
 				font-size: 16px;
 			}
@@ -746,7 +745,7 @@
 					text-transform: uppercase;
 					color: $dark-grey;
 					width: 100%;
-					font-weight: bold;
+					font-weight: 700;
 				}
 				.sidebar-filter-elems {
 					display: block;
@@ -758,7 +757,7 @@
 					.sidebar-filter-elem {
 						font-size: 14px;
 						padding: 5px 20px;
-						border: 1px solid $dark-grey;
+						border: 2px solid $dark-grey;
 						background-color: transparent;
 						transition: color 0.3s ease, background-color 0.3s ease;
 						float: left;
@@ -782,7 +781,7 @@
 				text-transform: uppercase;
 				color: $dark-grey;
 				width: 100%;
-				font-weight: bold;
+				font-weight: 700;
 			}
 			.sidebar-tags-elems {
 				display: block;
@@ -795,7 +794,7 @@
 				.sidebar-tags-elem {
 					font-size: 14px;
 					padding: 5px 20px;
-					border: 1px solid $dark-grey;
+					border: 2px solid $dark-grey;
 					background-color: transparent;
 					transition: color 0.3s ease, background-color 0.3s ease;
 					float: left;
@@ -811,10 +810,10 @@
 			}
 			.sidebar-tags-add {
 				display: inline-block;
-				border: 1px solid $dark-grey;
+				border: 2px solid $dark-grey;
 				font-size: 18px;
 				color: $dark-grey;
-				font-weight: bold;
+				font-weight: 700;
 				padding: 0px 8px;
 				border-radius: 50%;
 				width: 28px;

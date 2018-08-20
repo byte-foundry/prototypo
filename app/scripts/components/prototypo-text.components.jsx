@@ -209,9 +209,10 @@ export default class PrototypoText extends React.Component {
 
 	setTextToAllGlyphs() {
 		this.setText(
-			Object.keys(this.state.glyphs).filter(
-				key => this.state.glyphs[key][0].unicode !== undefined,
-			).map(e => String.fromCharCode(e)).join('')
+			Object.keys(this.state.glyphs)
+				.filter(key => this.state.glyphs[key][0].unicode !== undefined)
+				.map(e => String.fromCharCode(e))
+				.join(''),
 		);
 		this.setState({
 			showContextMenu: false,
@@ -259,7 +260,7 @@ Cras eget dictum tortor. Etiam non auctor justo, vitae suscipit dolor. Maecenas 
 			fontFamily: `'${
 				this.state.editorState.getCurrentContent().getPlainText().length > 0
 					? this.props.fontName || 'theyaintus'
-					: 'Fira Sans'
+					: 'Ligne'
 			}', sans-serif`,
 			fontSize: `${this.props.uiTextFontSize || 1}em`,
 		};
