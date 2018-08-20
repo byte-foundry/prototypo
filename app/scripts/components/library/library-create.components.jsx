@@ -335,7 +335,8 @@ export class TemplateItem extends React.Component {
 
 	render() {
 		return (
-			<div className="library-item">
+			<div className="library-item library-template">
+				<span className="type">Template</span>
 				<p className="library-item-name">{this.props.template.name}</p>
 				<p
 					className="library-item-preview"
@@ -370,9 +371,11 @@ export class FamilyItem extends React.Component {
 
 	render() {
 		return (
-			<div className="library-item">
+			<div className="library-item library-family">
+				<span className="type">Project</span>
 				<p className="library-item-name">
-					{this.props.family.name} from {this.props.template.name}
+					{this.props.family.name}{' '}
+					<span className="small">from {this.props.template.name}</span>
 				</p>
 				<p
 					className="library-item-preview"
@@ -412,9 +415,11 @@ export class PresetItem extends React.Component {
 
 	render() {
 		return (
-			<div className="library-item">
+			<div className="library-item library-preset">
+				<span className="type">Preset</span>
 				<p className="library-item-name">
-					{this.props.name} from {this.props.template.name}
+					{this.props.name}{' '}
+					<span className="small">from {this.props.template.name}</span>
 				</p>
 				<p
 					className="library-item-preview"

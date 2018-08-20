@@ -434,7 +434,7 @@ class ArianneDropMenu extends React.PureComponent {
 		const items = this.props.list.map((item, index) => (
 			<ArianneDropMenuItem
 				item={item}
-				key={item.name}
+				key={item.id || item.name}
 				click={this.props.click}
 				family={this.props.family}
 				itemToEl={this.props.itemToEl}

@@ -1,6 +1,81 @@
 @import '../variables';
 .library-app {
 	color: $dark-grey;
+
+	.library-button {
+		text-align: center;
+		margin-right: 15px;
+		margin-bottom: 10px;
+		font-size: 14px;
+		padding: 5px 20px;
+		border: 2px solid $dark-grey;
+		color: $dark-grey;
+		background-color: transparent;
+		transition: color 0.3s ease, background-color 0.3s ease;
+		border-radius: 30px;
+		cursor: pointer;
+		.sk-spinner-wave div {
+			background: $dark-grey;
+			height: 8px;
+			width: 4px;
+			margin: 0 2px;
+		}
+		&:hover {
+			background: $dark-grey;
+			color: $white;
+			.sk-spinner-wave div {
+				background: $white;
+			}
+		}
+		&.button-loading {
+			cursor: initial;
+		}
+		&.button-dark {
+			border-color: $green;
+			color: $green;
+			&:hover {
+				background: $green;
+				color: $dark-grey;
+				.sk-spinner-wave div {
+					background: $white;
+				}
+			}
+			.sk-spinner-wave div {
+				background: $green;
+			}
+		}
+		&.button-bold {
+			font-weight: bold;
+		}
+		&.button-highlight {
+			border-color: $green;
+			color: $dark-grey;
+			&:hover {
+				background: $green;
+				color: $white;
+			}
+		}
+		&.button-full {
+			width: 100%;
+		}
+		&.button-big {
+			margin-right: auto;
+			margin-left: auto;
+			width: 100%;
+			display: inline-block;
+			padding: 10px 20px;
+			border: 3px solid $green;
+			border-radius: 30px;
+			text-transform: uppercase;
+			font-size: 16px;
+			font-weight: bold;
+		}
+		&.floated {
+			float: left;
+			margin-bottom: 0;
+		}
+	}
+
 	.library-main {
 		display: flex;
 		flex-direction: row;
@@ -18,28 +93,6 @@
 			padding: 25px;
 			display: inline-block;
 			position: relative;
-			.library-sidebar-action-dark {
-				margin-right: auto;
-				margin-left: auto;
-				text-align: center;
-				width: 100%;
-				display: inline-block;
-				font-size: 14px;
-				padding: 10px 20px;
-				border: 3px solid $green;
-				color: $green;
-				background-color: transparent;
-				transition: color 0.3s ease, background-color 0.3s ease;
-				border-radius: 30px;
-				text-transform: uppercase;
-				font-size: 16px;
-				font-weight: bold;
-				cursor: pointer;
-				&:hover {
-					background: $green;
-					color: $white;
-				}
-			}
 			hr {
 				border-color: transparentize($white, 0.9);
 			}
@@ -145,26 +198,6 @@
 			min-height: 100vh;
 			width: 250px;
 			padding: 25px;
-			.sidebar-actions-family {
-			}
-			.sidebar-action {
-				margin-bottom: 10px;
-				text-align: center;
-				display: block;
-				font-size: 14px;
-				padding: 5px 20px;
-				border: 2px solid $dark-grey;
-				color: $dark-grey;
-				background-color: transparent;
-				transition: color 0.3s ease, background-color 0.3s ease;
-				border-radius: 30px;
-				font-weight: bold;
-				cursor: pointer;
-				&:hover {
-					background: $dark-grey;
-					color: white;
-				}
-			}
 			.sidebar-action-account {
 				border-color: $green;
 				color: $dark-grey;
@@ -229,7 +262,7 @@
 				font-size: 40px;
 				padding-left: 40px;
 				padding-right: 40px;
-				margin-top: 35px;
+				padding-top: 40px;
 				width: calc(100vw - 500px);
 			}
 
@@ -276,22 +309,6 @@
 					p {
 						color: white;
 						font-size: 12px;
-					}
-					.library-item-variant-action {
-						margin-bottom: 10px;
-						text-align: center;
-						font-size: 14px;
-						padding: 5px 20px;
-						border: 3px solid $green;
-						color: $green;
-						background-color: transparent;
-						transition: color 0.3s ease, background-color 0.3s ease;
-						border-radius: 30px;
-						cursor: pointer;
-						&:hover {
-							background: $green;
-							color: $dark-grey;
-						}
 					}
 				}
 			}
@@ -713,21 +730,69 @@
 			padding-bottom: 80px;
 		}
 		.library-item {
-			margin-bottom: 15px;
-			padding-top: 15px;
+			padding-top: 25px;
 			position: relative;
 			cursor: pointer;
 			width: calc(100vw - 500px);
+			box-shadow: 0 0 0 rgba(0,0,0,0.16), 0 0 0 rgba(0,0,0,0.23);
+			transition: box-shadow .2s ease;
+			overflow: hidden;
+			&:hover {
+				box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+				.type {
+					left: 0;
+				}
+			}
 
 			&:focus {
 				outline: none;
 			}
 
+			.type {
+				position: absolute;
+				left: -60px;
+				top: 155px;
+				transform: translateY(0) rotate(-90deg);
+				text-transform: uppercase;
+				transform-origin: top left;
+				font-size: 85%;
+				color: transparentize($dark-grey, 0.7);
+				width: 155px;
+				padding-top: 10px;
+				padding-bottom: 10px;
+				text-align: center;
+				transition: left .3s ease;
+				letter-spacing: 0.07em;
+			}
+
+			&.library-template {
+				.type {
+					background: transparentize($dark-grey, 0.1);
+					color: white;
+				}
+			}
+
+
+			&.library-preset {
+				.type {
+					background: $medium-grey;
+					color: white;
+				}
+			}
+
+			&.library-family {
+				.type {
+					background: $lightest-grey;
+					color: $dark-grey;
+				}
+			}
+
+
 			.library-item-name {
 				text-transform: uppercase;
 				color: $medium-grey;
 				margin: 0;
-				padding-left: 40px;
+				padding-left: 60px;
 				padding-right: 40px;
 				.star-icon {
 					font-size: 150%;
@@ -738,6 +803,14 @@
 						color: $yellow;
 					}
 				}
+				.small {
+					font-size: 75%;
+					color: transparentize($dark-grey, 0.5);
+				}
+
+				.medium {
+					color: transparentize($dark-grey, 0.5);
+				}
 			}
 
 			.library-item-preview {
@@ -745,13 +818,17 @@
 				line-height: 1;
 				margin: 0;
 				margin-top: 10px;
-				padding-left: 40px;
+				padding-left: 60px;
 				padding-right: 40px;
-				margin-bottom: 20px;
+				padding-bottom: 20px;
 				max-width: 88%;
 				overflow-x: hidden;
 				overflow-x: visible;
 				white-space: nowrap;
+				transition: color .2s ease;
+				&:hover {
+					color: darken($dark-grey, 20%);
+				}
 			}
 
 			.library-item-actions {
@@ -772,24 +849,6 @@
 					content: '';
 					display: table;
 					clear: both;
-				}
-				.library-item-action {
-					text-align: center;
-					float: left;
-					margin-right: 15px;
-					font-size: 14px;
-					padding: 5px 20px;
-					border: 3px solid $green;
-					color: $green;
-					background-color: transparent;
-					transition: color 0.3s ease, background-color 0.3s ease;
-					float: left;
-					border-radius: 30px;
-					cursor: pointer;
-					&:hover {
-						background: $green;
-						color: $dark-grey;
-					}
 				}
 				input {
 					float: right;

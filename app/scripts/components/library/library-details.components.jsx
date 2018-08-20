@@ -353,6 +353,7 @@ class LibraryDetails extends React.Component {
 						family={this.state.family}
 						mode="details"
 						isPersonal={true}
+						router={this.props.router}
 					/>
 					<FamilySidebarGlyphs glyphs={this.state.familyGlyphs} />
 					<SidebarTags

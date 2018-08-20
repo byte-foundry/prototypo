@@ -203,6 +203,7 @@ class LibraryMain extends React.Component {
 					families={this.props.families}
 					routeParams={this.props.params}
 					favourites={this.props.favourites}
+					router={this.props.router}
 				/>
 				{this.props.loading && (
 					<ReactCSSTransitionGroup
