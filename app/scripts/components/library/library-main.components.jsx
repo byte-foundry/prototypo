@@ -374,6 +374,7 @@ const libraryUserQuery = gql`
 			hostedDomains {
 				id
 				domain
+				updatedAt
 				hostedVariants {
 					id
 					createdAt

@@ -20,7 +20,7 @@ export default class LibraryHosting extends React.Component {
 						Free plan: 1000 views / month / website
 					</div>
 					<div className="library-hosting">
-						{this.state.hostedDomains.length === 0 && (
+						{this.props.hostedDomains.length === 0 && (
 							<div>
 								<div className="library-see-title">There is nothing here!</div>
 								<div className="library-see-description">
@@ -39,21 +39,27 @@ export default class LibraryHosting extends React.Component {
 							</div>
 						)}
 						<div className="library-hosting-list">
-							{/* <div className="library-hosting-website">
-								<p className="library-hosting-website-name">
-									www.monsite.com
-									<div
-										className="button-edit"
-										onClick={() => {}}
-									>
-										Edit
+							{this.props.hostedDomains.map(hostedDomain => (
+								<div className="library-hosting-website">
+									<p className="library-hosting-website-name">
+										{hostedDomain.domain}
+										<div className="button-edit" onClick={() => {}}>
+											Edit
+										</div>
+									</p>
+									<div className="library-hosting-website-infos">
+										<span>
+											{hostedDomain.hostedVariants.length} hosted fonts
+										</span>
+										<span>
+											Last update:{' '}
+											{new Intl.DateTimeFormat('en-US').format(
+												new Date(hostedDomain.updatedAt),
+											)}
+										</span>
 									</div>
-								</p>
-								<div className="library-hosting-website-infos">
-									<span>5 hosted fonts</span>
-									<span>Last update: 26. nov. 2017</span>
 								</div>
-							</div> */}
+							))}
 						</div>
 					</div>
 				</div>

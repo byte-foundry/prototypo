@@ -76,6 +76,8 @@ class LibraryHostingCreate extends React.Component {
 				),
 			);
 
+			console.log(abstractedFontIds);
+
 			const hostedFonts = await Promise.all(
 				urls.map(({url}, index) =>
 					this.props.hostFont(
@@ -84,6 +86,8 @@ class LibraryHostingCreate extends React.Component {
 					),
 				),
 			);
+
+			console.log(hostedFonts);
 
 			this.props
 				.createHostedDomain(
@@ -583,11 +587,12 @@ class LibraryHostingCreate extends React.Component {
 
 const hostVariantMutation = gql`
 	mutation hostVariant($id: ID!, $tmpFileUrl: String!) {
-		hostFont(variantId: $id, tmpFileUrl: $tmpFileUrl) {
+		hostFont(id: $id, tmpFileUrl: $tmpFileUrl) {
 			id
 			url
 			version
 			createdAt
+			updatedAt
 		}
 	}
 `;
@@ -605,6 +610,7 @@ const createHostedDomainMutation = gql`
 		) {
 			id
 			domain
+			updatedAt
 			hostedVariants {
 				id
 				url
