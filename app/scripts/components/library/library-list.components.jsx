@@ -232,11 +232,11 @@ class LibraryList extends React.Component {
 		const presets = p || this.props.presets;
 		const favourites = fa || this.props.favourites || [];
 		const customBadgesColor = [
-			'#29ABE2',
-			'#0000FF',
-			'#00FF00',
-			'#FF0000',
-			'#F7931E',
+			'#003049',
+			'#D62828',
+			'#F77F00',
+			'#FCBF49',
+			'#71AF2F',
 		];
 
 		const subUserColors = [
