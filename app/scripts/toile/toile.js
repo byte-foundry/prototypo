@@ -644,6 +644,8 @@ export default class Toile {
 			const normalizePrev = normalize2D(prevVec);
 			const handleVec = add2D(mulScalar2D(prevDist / 3, normalizePrev), handle);
 
+			handle.ghostHandle = handleVec;
+
 			handleNode = handleVec;
 		}
 

@@ -951,6 +951,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								selectedItems = [currentNode];
 								appStateValue = appState.DRAGGING_POINTS;
 								mouseStart = currentNode.data.center;
+								console.log(mouseStart);
 								if (currentNode.type === toileType.NODE) {
 									onCurveBasePoints.current = currentNode.data.center;
 									onCurveBasePoints.opposite = _get(
@@ -995,8 +996,8 @@ export default class GlyphCanvas extends React.PureComponent {
 											selectedItems.push(node);
 										}
 									});
-									appStateValue = appStateValue.POINTS_SELECTED;
-									mouseStart = undefined;
+									appStateValue = appState.POINTS_SELECTED;
+									mouseBoxStart = undefined;
 								}
 								else {
 									selectedItems = hotItems;
@@ -1128,6 +1129,8 @@ export default class GlyphCanvas extends React.PureComponent {
 						}
 						else if (appStateValue & appState.PRE_DRAGGING_POINTS) {
 							if (mouseClickRelease) {
+								mouseBoxStart = undefined;
+
 								if (
 									this.toile.keyboardDown.keyCode
 									&& this.toile.keyboardDown.special & specialKey.SHIFT
@@ -1169,18 +1172,25 @@ export default class GlyphCanvas extends React.PureComponent {
 									}
 
 									selectedItems.forEach((selectedItem) => {
-										const item = _get(glyph, selectedItem.id);
+										if (preSelection[0].id !== selectedItem.id) {
+											const item = _get(glyph, selectedItem.id);
 
-										selectedItem.offsetVector = subtract2D(
-											item,
-											preSelection[0].data.center,
-										);
+											selectedItem.offsetVector = subtract2D(
+												item.ghostHandle || item,
+												mouseStart,
+											);
+										}
+										else {
+											selectedItem.offsetVector = undefined;
+										}
 									});
 								}
 							}
 						}
 						else if (appStateValue & appState.ON_NON_SELECTED_POINTS) {
 							if (mouseClickRelease) {
+								mouseBoxStart = undefined;
+
 								if (
 									this.toile.keyboardDown.keyCode
 									&& this.toile.keyboardDown.special & specialKey.SHIFT
@@ -1225,7 +1235,7 @@ export default class GlyphCanvas extends React.PureComponent {
 										const item = _get(glyph, id);
 
 										item.offsetVector = subtract2D(
-											item,
+											item.ghostHandle || item,
 											preSelection[0].data.center,
 										);
 									});
@@ -1523,21 +1533,24 @@ export default class GlyphCanvas extends React.PureComponent {
 								posVector = {x: 0, y: -modRange};
 							}
 
+							const node = _get(glyph, item.id);
+
 							return {
 								item,
-								modData: add2D(_get(glyph, item.id), posVector),
+								modData: add2D(node.ghostHandle || node, posVector),
 							};
 						});
 					}
 					else if (appStateValue & appState.POINTS_SELECTED && supprPressed) {
 						mouseMovement = false;
 						interactions = selectedItems
-							.filter(item => (
-								item.type === toileType.NODE_OUT
+							.filter(
+								item =>
+									item.type === toileType.NODE_OUT
 									|| item.type === toileType.NODE_IN
 									|| item.type === toileType.CONTOUR_NODE_OUT
-									|| item.type === toileType.CONTOUR_NODE_IN
-							))
+									|| item.type === toileType.CONTOUR_NODE_IN,
+							)
 							.map(item => ({
 								item,
 								modData: _get(glyph, item.data.parentId),
