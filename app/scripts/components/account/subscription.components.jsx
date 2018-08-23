@@ -101,7 +101,7 @@ class Subscription extends React.Component {
 								}
 
 								return (
-									<Elements>
+									<Elements locale="en">
 										<SubscriptionCardAndValidation
 											cards={user.cards}
 											plan={query.get('plan')}

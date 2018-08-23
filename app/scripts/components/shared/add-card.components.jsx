@@ -13,6 +13,7 @@ export default class AddCard extends React.PureComponent {
 		return (
 			<div className={classes}>
 				<InputWithLabel
+					id="add-card-fullname"
 					name="fullname"
 					label="Full name"
 					error={inError.fullname}
