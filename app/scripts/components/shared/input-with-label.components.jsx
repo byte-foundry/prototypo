@@ -11,16 +11,13 @@ export default class InputWithLabel extends React.PureComponent {
 	}
 
 	static defaultProps = {
-		inputRef: () => {
-
-		},
-		onChange: () => {
-
-		},
+		inputRef: () => {},
+		onChange: () => {},
 	};
 
 	render() {
 		const {
+			id,
 			onChange,
 			error,
 			warning,
@@ -50,11 +47,12 @@ export default class InputWithLabel extends React.PureComponent {
 				}}
 				placeholder={placeholder}
 				onChange={onChange}
+				id={id}
 			/>
 		);
 
 		const labelContent = label ? (
-			<label className="input-with-label-label">
+			<label className="input-with-label-label" htmlFor={id}>
 				{label}
 				{info && <span className="input-with-label-label-info">{info}</span>}
 				{required && <span className="input-with-label-label-required">*</span>}
@@ -83,7 +81,5 @@ export default class InputWithLabel extends React.PureComponent {
 		return this.input ? this.input.value : undefined;
 	}
 
-	set inputValue(value) {
-
-	}
+	set inputValue(value) {}
 }
