@@ -153,29 +153,32 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 
 	addCard = async (options) => {
 		this.setState({loadingAddCard: true});
-
-		const {token} = await this.props.stripe.createToken(options);
-
-		// This bit of code is there to analyze the need of 3D secure
-		// among our users and to know if the failing payment is due
-		// to their card requiring it.
-		// We shall fully move to Sources later.
 		try {
-			// eslint-disable-next-line no-shadow
-			const {source} = await this.props.stripe.createSource({
-				type: 'card',
-				owner: options,
-			});
+			const {token, error} = await this.props.stripe.createToken(options);
 
-			window.Intercom('update', {
-				'3d-secure': source.card.three_d_secure,
-			});
-		}
-		catch (err) {
-			window.trackJs.track(err);
-		}
+			if (error) {
+				throw new Error(error.message);
+			}
 
-		try {
+			// This bit of code is there to analyze the need of 3D secure
+			// among our users and to know if the failing payment is due
+			// to their card requiring it.
+			// We shall fully move to Sources later.
+			try {
+				// eslint-disable-next-line no-shadow
+				const {source} = await this.props.stripe.createSource({
+					type: 'card',
+					owner: options,
+				});
+
+				window.Intercom('update', {
+					'3d-secure': source.card.three_d_secure,
+				});
+			}
+			catch (err) {
+				window.trackJs.track(err);
+			}
+
 			await HoodieApi.updateCustomer({
 				source: token.id,
 			});
@@ -185,8 +188,9 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 			return token.card;
 		}
 		catch (err) {
-			this.setState({loadingAddCard: false, errors: [err.message]});
-			return err;
+			this.setState({loadingAddCard: false});
+
+			throw err;
 		}
 	};
 
@@ -194,19 +198,29 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 		e.preventDefault();
 
 		const {plan, quantity, cards, history} = this.props;
-		const {couponValue} = this.state;
+		const {changeCard, couponValue} = this.state;
 
 		this.setState({loading: true});
 
 		let source;
 
-		if (cards.length > 0) {
+		if (!changeCard && cards.length > 0) {
 			source = cards[0];
 		}
 		else {
-			const fullname = e.target.fullname.value;
+			try {
+				const fullname = e.target.fullname.value.trim();
 
-			source = await this.addCard({name: fullname});
+				if (fullname.length <= 0) {
+					throw new Error('Full name is incomplete');
+				}
+
+				source = await this.addCard({name: fullname});
+			}
+			catch (err) {
+				this.setState({loading: false, errors: [err.message]});
+				return;
+			}
 		}
 
 		const currency = getCurrency(source.country);
@@ -264,16 +278,15 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 				blurb:
 					percentPrice === 1 ? (
 						<div>
-							By clicking on the subscribe button below you agree
-							to be charged{' '}
+							By clicking on the subscribe button below you agree to be charged{' '}
 							<strong>
 								<Price
 									amount={monthlyConst.price * percentPrice}
 									country={country}
 								/>
 							</strong>{' '}
-							every month until you cancel your subscription to
-							Prototypo. You also agree to respect Prototypo's{' '}
+							every month until you cancel your subscription to Prototypo. You
+							also agree to respect Prototypo's{' '}
 							<a
 								className="account-link"
 								target="_blank"
@@ -285,25 +298,20 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 						</div>
 					) : (
 						<div>
-							By clicking on the subscribe button below you agree
-							to be charged{' '}
+							By clicking on the subscribe button below you agree to be charged{' '}
 							<strong>
 								<Price
 									amount={monthlyConst.price * percentPrice}
 									country={country}
 								/>
 							</strong>{' '}
-							for the first month of your Prototypo subscription.
-							You'll also agree to be charged{' '}
+							for the first month of your Prototypo subscription. You'll also
+							agree to be charged{' '}
 							<strong>
-								<Price
-									amount={monthlyConst.price}
-									country={country}
-								/>
+								<Price amount={monthlyConst.price} country={country} />
 							</strong>{' '}
-							every month after that first until you cancel your
-							subscription to Prototypo. You also agree to respect
-							Prototypo's{' '}
+							every month after that first until you cancel your subscription to
+							Prototypo. You also agree to respect Prototypo's{' '}
 							<a
 								className="account-link"
 								target="_blank"
@@ -319,20 +327,16 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 				blurb:
 					percentPrice === 1 ? (
 						<div>
-							By clicking on the subscribe button below you agree
-							to pay{' '}
+							By clicking on the subscribe button below you agree to pay{' '}
 							<strong>
 								<Price
-									amount={
-										annualConst.annualPrice * percentPrice
-									}
+									amount={annualConst.annualPrice * percentPrice}
 									country={country}
 								/>
 							</strong>{' '}
-							once and subscribe to Prototypo for a full year. You
-							also agree to be charged every year of this amount
-							until you cancel your subscription to Prototypo. You
-							also agree to respect Prototypo's{' '}
+							once and subscribe to Prototypo for a full year. You also agree to
+							be charged every year of this amount until you cancel your
+							subscription to Prototypo. You also agree to respect Prototypo's{' '}
 							<a
 								className="account-link"
 								target="_blank"
@@ -344,27 +348,20 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 						</div>
 					) : (
 						<div>
-							By clicking on the subscribe button below you agree
-							to pay{' '}
+							By clicking on the subscribe button below you agree to pay{' '}
 							<strong>
 								<Price
-									amount={
-										annualConst.annualPrice * percentPrice
-									}
+									amount={annualConst.annualPrice * percentPrice}
 									country={country}
 								/>
 							</strong>{' '}
-							once and subscribe to Prototypo for a full year.
-							You'll also agree to be charged{' '}
+							once and subscribe to Prototypo for a full year. You'll also agree
+							to be charged{' '}
 							<strong>
-								<Price
-									amount={annualConst.annualPrice}
-									country={country}
-								/>
+								<Price amount={annualConst.annualPrice} country={country} />
 							</strong>{' '}
-							every year after that first until you cancel your
-							subscription to Prototypo. You also agree to respect
-							Prototypo's{' '}
+							every year after that first until you cancel your subscription to
+							Prototypo. You also agree to respect Prototypo's{' '}
 							<a
 								className="account-link"
 								target="_blank"
@@ -379,22 +376,16 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 			team_monthly: {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to
-						pay{' '}
+						By clicking on the subscribe button below you agree to pay{' '}
 						<strong>
 							<Price
-								amount={
-									teamMonthlyConst.monthlyPrice
-									* quantity
-									* percentPrice
-								}
+								amount={teamMonthlyConst.monthlyPrice * quantity * percentPrice}
 								country={country}
 							/>
 						</strong>{' '}
-						once and be subscribed to Prototypo. You also agree to
-						be charged every month of this amount until you cancel
-						your subscription to Prototypo. You also agree to
-						respect Prototypo's{' '}
+						once and be subscribed to Prototypo. You also agree to be charged
+						every month of this amount until you cancel your subscription to
+						Prototypo. You also agree to respect Prototypo's{' '}
 						<a
 							className="account-link"
 							target="_blank"
@@ -409,22 +400,16 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 			team_annual: {
 				blurb: (
 					<div>
-						By clicking on the subscribe button below you agree to
-						pay{' '}
+						By clicking on the subscribe button below you agree to pay{' '}
 						<strong>
 							<Price
-								amount={
-									teamAnnualConst.annualPrice
-									* quantity
-									* percentPrice
-								}
+								amount={teamAnnualConst.annualPrice * quantity * percentPrice}
 								country={country}
 							/>
 						</strong>{' '}
-						once and subscribe to Prototypo for a full year. You
-						also agree to be charged every year of this amount until
-						you cancel your subscription to Prototypo. You also
-						agree to respect Prototypo's{' '}
+						once and subscribe to Prototypo for a full year. You also agree to
+						be charged every year of this amount until you cancel your
+						subscription to Prototypo. You also agree to respect Prototypo's{' '}
 						<a
 							className="account-link"
 							target="_blank"
@@ -473,8 +458,7 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 							this.card = item;
 						}}
 						className={`${
-							this.state.validCoupon
-							&& this.state.validCoupon.shouldSkipCard
+							this.state.validCoupon && this.state.validCoupon.shouldSkipCard
 								? 'disabled'
 								: ''
 						}`}
@@ -534,13 +518,10 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 		const {blurb} = plans[plan];
 
 		return (
-			<form onSubmit={this.subscribe}>
+			<form data-testid="subscribe-form" onSubmit={this.subscribe}>
 				{plan.startsWith('team') && (
 					<div className="input-with-label">
-						<label
-							className="input-with-label-label"
-							htmlFor="quantity"
-						>
+						<label className="input-with-label-label" htmlFor="quantity">
 							Quantity:
 						</label>
 						<InputNumber
@@ -553,11 +534,9 @@ class SubscriptionCardAndValidation extends React.PureComponent {
 						/>
 					</div>
 				)}
-				<WaitForLoad loading={loadingAddCard}>{card}</WaitForLoad>
+				{card}
 				{coupon}
-				<div className="subscription-card-and-validation-legal">
-					{blurb}
-				</div>
+				<div className="subscription-card-and-validation-legal">{blurb}</div>
 				{errors}
 				<LoadingButton
 					type="submit"
@@ -588,11 +567,7 @@ SubscriptionCardAndValidation.propTypes = {
 };
 
 export const CREATE_SUBSCRIPTION = gql`
-	mutation createSubscription(
-		$plan: String!
-		$quantity: Int
-		$coupon: String
-	) {
+	mutation createSubscription($plan: String!, $quantity: Int, $coupon: String) {
 		createSubscription(plan: $plan, quantity: $quantity, coupon: $coupon)
 			@client
 	}
