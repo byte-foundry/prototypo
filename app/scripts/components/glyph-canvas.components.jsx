@@ -55,21 +55,49 @@ const onCurveModMode = {
 	ANGLE_MOD: 0b10,
 };
 
+class ManualChangeBatcher {
+	constructor(client) {
+		this.changes = {};
+		this.client = client;
+	}
+
+	addManualChange(change, glyphName) {
+		this.changes = {
+			...this.changes,
+			[glyphName]: {
+				...this.changes[glyphName],
+				...change,
+			},
+		};
+	}
+
+	applyManualChange() {
+		const keys = Object.keys(this.changes);
+
+		for (let i = 0; i < keys.length; i++) {
+			const glyphName = keys[i];
+			const changes = this.changes[glyphName];
+
+			this.client.dispatchAction('/change-glyph-node-manually', {
+				changes,
+				glyphName,
+				label: 'manual edition',
+			});
+		}
+		this.changes = {};
+	}
+}
+
 export function changeGlyphManually(
 	changes,
 	glyph,
-	client,
+	manualChangeBatcher,
 	globalMode,
 	componentName,
 ) {
 	const glyphName = globalMode ? componentName : glyph.base || glyph.name;
 
-	client.dispatchAction('/change-glyph-node-manually', {
-		changes,
-		glyphName,
-		label: 'manual edition',
-		force: true,
-	});
+	manualChangeBatcher.addManualChange(changes, glyphName);
 }
 
 function calculateHandleCoordinateModification(parentRef, newPos, opHandle) {
@@ -92,7 +120,7 @@ function calculateHandleCoordinateModification(parentRef, newPos, opHandle) {
 }
 
 export function handleModification(
-	client,
+	manualChangeBatcher,
 	glyph,
 	draggedItem,
 	newPos,
@@ -170,21 +198,36 @@ export function handleModification(
 			opHandle,
 		);
 		const modVector = subtract2D(opVector, {
-			x: opHandle.xBase,
-			y: opHandle.yBase,
+			x: opHandle.xBase * xTransform,
+			y: opHandle.yBase * yTransform,
 		});
+		const transformedModVector = {
+			x:
+				modVector.x * Math.cos(angleTransform)
+				+ modVector.y * Math.sin(angleTransform),
+			y:
+				modVector.y * Math.cos(angleTransform)
+				- modVector.x * Math.sin(angleTransform),
+		};
 
-		changes[`${parentId}.${oppositeDirection}.x`] = modVector.x;
-		changes[`${parentId}.${oppositeDirection}.y`] = modVector.y;
+		changes[`${parentId}.${oppositeDirection}.x`] = transformedModVector.x;
+		changes[`${parentId}.${oppositeDirection}.y`] = transformedModVector.y;
 	}
 
-	changeGlyphManually(changes, glyph, client, globalMode, componentName);
+	changeGlyphManually(
+		changes,
+		glyph,
+		manualChangeBatcher,
+		globalMode,
+		componentName,
+	);
 }
 
 export function onCurveModification(
-	client,
+	manualChangeBatcher,
 	glyph,
 	draggedItem,
+	onCurveBasePoints,
 	newPos,
 	appStateValue,
 	modToApply,
@@ -200,20 +243,47 @@ export function onCurveModification(
 		componentName,
 	} = draggedItem.data;
 
-	if (modToApply & onCurveModMode.WIDTH_MOD) {
+	const current = _get(glyph, draggedItem.id);
+	const opposite = onCurveBasePoints.opposite;
+	const currentBase = onCurveBasePoints.current;
+	let posToUse = newPos;
+
+	if (modToApply & onCurveModMode.WIDTH_MOD && opposite && currentBase) {
+		const newBaseVector = normalize2D(subtract2D(currentBase, opposite));
+		const newBaseAngle = Math.atan2(newBaseVector.y, newBaseVector.x);
+		const translateVector = subtract2D({x: 0, y: 0}, opposite);
+		const translatedPos = add2D(translateVector, newPos);
+		const newBaseProjectedPoint = {
+			x:
+				translatedPos.x * Math.cos(newBaseAngle)
+				+ translatedPos.y * Math.sin(newBaseAngle),
+			y:
+				-translatedPos.x * Math.sin(newBaseAngle)
+				+ translatedPos.y * Math.cos(newBaseAngle),
+		};
+
+		posToUse = add2D(opposite, {
+			x: newBaseProjectedPoint.x * newBaseVector.x,
+			y: newBaseProjectedPoint.x * newBaseVector.y,
+		});
 	}
 
-	const current = _get(glyph, draggedItem.id);
-	const newPosition = round2D(newPos);
+	if (modToApply & onCurveModMode.ANGLE_MOD && opposite && currentBase) {
+		const previousLength = distance2D(currentBase, opposite);
+		const direction = normalize2D(subtract2D(posToUse, opposite));
+
+		posToUse = add2D(opposite, mulScalar2D(previousLength, direction));
+	}
+
 	const deltaVector = round2D(
-		subtract2D(newPos, round2D({x: current.xBase, y: current.yBase})),
+		subtract2D(posToUse, round2D({x: current.xBase, y: current.yBase})),
 	);
 
 	const inOffest = round2D(subtract2D(current.handleIn, current));
 	const outOffset = round2D(subtract2D(current.handleOut, current));
 
-	const inNewPos = round2D(add2D(newPos, inOffest));
-	const outNewPos = round2D(add2D(newPos, outOffset));
+	const inNewPos = round2D(add2D(posToUse, inOffest));
+	const outNewPos = round2D(add2D(posToUse, outOffset));
 
 	const inVector = round2D(
 		subtract2D(inNewPos, {
@@ -230,25 +300,6 @@ export function onCurveModification(
 
 	const changes = {};
 
-	changes[`${draggedItem.id}.x`] = deltaVector.x;
-	changes[`${draggedItem.id}.y`] = deltaVector.y;
-	changes[`${draggedItem.id}.handleIn.x`] = inVector.x;
-	changes[`${draggedItem.id}.handleIn.y`] = inVector.y;
-	changes[`${draggedItem.id}.handleOut.x`] = outVector.x;
-	changes[`${draggedItem.id}.handleOut.y`] = outVector.y;
-
-	changeGlyphManually(changes, glyph, client, globalMode, componentName);
-}
-
-export function skeletonPosModification(
-	client,
-	glyph,
-	draggedItem,
-	newPos,
-	globalMode,
-) {
-	const {base, transforms, componentName} = draggedItem.data;
-	const mouseVec = subtract2D(newPos, base);
 	let xTransform = 1;
 	let yTransform = 1;
 	let angleTransform = 0;
@@ -266,54 +317,58 @@ export function skeletonPosModification(
 		}
 	}
 
-	const mouseVecScale = {
-		x: mouseVec.x * xTransform,
-		y: mouseVec.y * yTransform,
+	const scaledDeltaVector = {
+		x: deltaVector.x * xTransform,
+		y: deltaVector.y * yTransform,
+	};
+	const scaledInVector = {
+		x: inVector.x * xTransform,
+		y: inVector.y * yTransform,
+	};
+	const scaledOutVector = {
+		x: outVector.x * xTransform,
+		y: outVector.y * yTransform,
 	};
 
-	const mouseVecTransform = {
+	const transformedDeltaVector = {
 		x:
-			mouseVecScale.x * Math.cos(angleTransform)
-			+ mouseVecScale.y * Math.sin(angleTransform),
+			scaledDeltaVector.x * Math.cos(angleTransform)
+			+ scaledDeltaVector.y * Math.sin(angleTransform),
 		y:
-			mouseVecScale.y * Math.cos(angleTransform)
-			- mouseVecScale.x * Math.sin(angleTransform),
+			scaledDeltaVector.y * Math.cos(angleTransform)
+			- scaledDeltaVector.x * Math.sin(angleTransform),
+	};
+	const transformedInVector = {
+		x:
+			scaledInVector.x * Math.cos(angleTransform)
+			+ scaledInVector.y * Math.sin(angleTransform),
+		y:
+			scaledInVector.y * Math.cos(angleTransform)
+			- scaledInVector.x * Math.sin(angleTransform),
+	};
+	const transformedOutVector = {
+		x:
+			scaledOutVector.x * Math.cos(angleTransform)
+			+ scaledOutVector.y * Math.sin(angleTransform),
+		y:
+			scaledOutVector.y * Math.cos(angleTransform)
+			- scaledOutVector.x * Math.sin(angleTransform),
 	};
 
-	const changes = {
-		[`${draggedItem.data.modifAddress}x`]: mouseVecTransform.x,
-		[`${draggedItem.data.modifAddress}y`]: mouseVecTransform.y,
-	};
+	changes[`${draggedItem.id}.x`] = transformedDeltaVector.x;
+	changes[`${draggedItem.id}.y`] = transformedDeltaVector.y;
+	changes[`${draggedItem.id}.handleIn.x`] = transformedInVector.x;
+	changes[`${draggedItem.id}.handleIn.y`] = transformedInVector.y;
+	changes[`${draggedItem.id}.handleOut.x`] = transformedOutVector.x;
+	changes[`${draggedItem.id}.handleOut.y`] = transformedOutVector.y;
 
-	changeGlyphManually(changes, glyph, client, globalMode, componentName);
-}
-
-export function skeletonDistrModification(
-	client,
+	changeGlyphManually(
+		changes,
 	glyph,
-	draggedItem,
-	newPos,
+		manualChangeBatcher,
 	globalMode,
-) {
-	const {base, expandedTo, width, baseDistr, componentName} = draggedItem.data;
-	const skelVec = normalize2D(subtract2D(expandedTo[1], expandedTo[0]));
-	const distProjOntoSkel = Math.min(
-		Math.max(dot2D(subtract2D(newPos, expandedTo[0]), skelVec), 0),
-		width,
+		componentName,
 	);
-	const mouseVec = subtract2D(
-		add2D(mulScalar2D(distProjOntoSkel, skelVec), expandedTo[0]),
-		base,
-	);
-
-	const changes = {
-		[`${draggedItem.data.modifAddress}expand.distr`]:
-			distProjOntoSkel / width - baseDistr,
-		[`${draggedItem.data.modifAddress}x`]: mouseVec.x,
-		[`${draggedItem.data.modifAddress}y`]: mouseVec.y,
-	};
-
-	changeGlyphManually(changes, glyph, client, globalMode, componentName);
 }
 
 function changeSpacing(client, glyph, draggedItem, newPos) {
@@ -355,6 +410,7 @@ export default class GlyphCanvas extends React.PureComponent {
 	componentWillMount() {
 		pleaseWait.instance.finish();
 		this.client = LocalClient.instance();
+		this.manualChangeBatcher = new ManualChangeBatcher(this.client);
 		this.lifespan = new Lifespan();
 
 		this.client
@@ -455,10 +511,12 @@ export default class GlyphCanvas extends React.PureComponent {
 		// let dragging = true;
 		let mouse = this.toile.getMouseState();
 		let appStateValue = appState.DEFAULT;
+		let preSelection;
 		let appMode;
 		let oldAppMode;
 		let oldAppState;
 		let oldViewMatrix;
+		let oldCanvasMode;
 		let mouseDoubleClick;
 		let pause = false;
 		let firstDraw = true;
@@ -471,12 +529,16 @@ export default class GlyphCanvas extends React.PureComponent {
 		// Box select variables
 		let mouseBoxStart;
 
+		// on curve modification width and angle base points
+		let onCurveBasePoints = {};
+
 		const rafFunc = () => {
 			try {
 				// Handling all keyboard event
 				let enteringPreview = false;
 				let resetManualPoint = false;
 				let displacementArrow;
+				let supprPressed;
 				let exitingPreview = false;
 				let previewMode = false;
 				let modRange = 1;
@@ -520,6 +582,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				if (this.toile.keyboardDownRisingEdge.keyCode) {
 					const {keyCode, special} = this.toile.keyboardDownRisingEdge;
 
+					console.log(keyCode);
 					// On space edge down keyboard event switch to move mode
 					// whatever the previous mode is
 					if (keyCode === 32) {
@@ -545,6 +608,10 @@ export default class GlyphCanvas extends React.PureComponent {
 							down: keyCode === 40,
 						};
 					}
+					else if (keyCode === 46 || keyCode === 8) {
+						supprPressed = true;
+						unsmoothMod = true;
+					}
 				}
 
 				if (this.toile.keyboardDown.keyCode) {
@@ -553,11 +620,11 @@ export default class GlyphCanvas extends React.PureComponent {
 					if (keyCode === 90 && !special) {
 						previewMode = true;
 					}
-					else if (keyCode === 65) {
+					else if (keyCode === 87) {
 						// eslint-disable-next-line no-bitwise
 						curveMode |= onCurveModMode.WIDTH_MOD;
 					}
-					else if (keyCode === 87) {
+					else if (keyCode === 65) {
 						// eslint-disable-next-line no-bitwise
 						curveMode |= onCurveModMode.ANGLE_MOD;
 					}
@@ -583,11 +650,10 @@ export default class GlyphCanvas extends React.PureComponent {
 				/* eslint-disable no-bitwise, max-depth */
 				const hotItems = this.toile.getHotInteractiveItem();
 
-				let boxedItems = [];
 				let mouseMovement;
 
 				if (mouseBoxStart) {
-					boxedItems = this.toile.getBoxHotInteractiveItem(mouseBoxStart);
+					hotItems.push(...this.toile.getBoxHotInteractiveItem(mouseBoxStart));
 				}
 				const width = this.canvas.clientWidth;
 				const height = this.canvas.clientHeight;
@@ -714,7 +780,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						&& !(
 							appStateValue
 							& (appState.DRAGGING_CONTOUR
-								| appState.DRAGGING_CONTOUR_POINT
 								| appState.DRAGGING_POINTS
 								| appState.DRAGGING_SPACING)
 						)
@@ -892,9 +957,19 @@ export default class GlyphCanvas extends React.PureComponent {
 							&& mouse.edge === mState.DOWN
 						) {
 							if (nodes.length > 0) {
-								selectedItems = [nodes[0]];
-								appStateValue = appState.DRAGGING_CONTOUR_POINT;
-								mouseStart = nodes[0].data.center;
+								const [currentNode] = nodes;
+
+								selectedItems = [currentNode];
+								appStateValue = appState.DRAGGING_POINTS;
+								mouseStart = currentNode.data.center;
+								console.log(mouseStart);
+								if (currentNode.type === toileType.NODE) {
+									onCurveBasePoints.current = currentNode.data.center;
+									onCurveBasePoints.opposite = _get(
+										glyph,
+										currentNode.data.oppositeId,
+									);
+								}
 								draggingNotStarted = true;
 								directionalNotStarted = true;
 							}
@@ -909,17 +984,41 @@ export default class GlyphCanvas extends React.PureComponent {
 							this.storeSelectedItems(selectedItems);
 						}
 						else if (
-							appStateValue
-								& (appState.BOX_SELECTING | appState.NOT_SELECTING)
+							appStateValue & appState.BOX_SELECTING
 							&& mouseClickRelease
 						) {
-							if (boxedItems.length > 0) {
-								selectedItems = boxedItems;
+							if (hotItems.length > 0) {
+								if (
+									this.toile.keyboardDown.keyCode
+									&& this.toile.keyboardDown.special & specialKey.SHIFT
+								) {
+									nodes.forEach((node) => {
+										let toAdd = true;
+										let toRemove;
+
+										selectedItems.forEach((item, idx) => {
+											if (node.id == item.id) {
+												toRemove = idx;
+												toAdd = false;
+											}
+										});
+
+										if (toAdd) {
+											selectedItems.push(node);
+										}
+									});
+									appStateValue = appState.POINTS_SELECTED;
+									mouseBoxStart = undefined;
+								}
+								else {
+									selectedItems = hotItems;
 								appStateValue = appState.POINTS_SELECTED;
 								mouseBoxStart = undefined;
 								globalMode = false;
 							}
+							}
 							else {
+								selectedItems = [];
 								appStateValue = appState.DEFAULT;
 								mouseBoxStart = undefined;
 								globalMode = false;
@@ -930,21 +1029,36 @@ export default class GlyphCanvas extends React.PureComponent {
 							this.storeSelectedItems(selectedItems);
 						}
 						else if (
-							appStateValue
-								& (appState.DRAGGING_CONTOUR_POINT
-									| appState.DRAGGING_SPACING
-									| appState.DRAGGING_GUIDE)
+							appStateValue & appState.DRAGGING_SPACING
 							&& mouseClickRelease
 						) {
-							if (selectedItems[0].type === toileType.NODE_SKELETON) {
-								appStateValue = appState.SKELETON_POINT_SELECTED;
-							}
-							else if (selectedItems[0].type === toileType.SPACING_HANDLE) {
 								appStateValue = appState.SPACING_SELECTED;
+							draggingNotStarted = false;
+							directionalNotStarted = false;
+							this.client.dispatchAction('/change-glyph-node-manually', {
+								label: 'manual edition',
+								force: true,
+								changes: {},
+							});
 							}
-							else {
-								appStateValue = appState.CONTOUR_POINT_SELECTED;
+						else if (
+							appStateValue & appState.DRAGGING_GUIDE
+							&& mouseClickRelease
+						) {
+							appStateValue = appState.GUIDE_SELECTED;
+							draggingNotStarted = false;
+							directionalNotStarted = false;
+							this.client.dispatchAction('/change-glyph-node-manually', {
+								label: 'manual edition',
+								force: true,
+								changes: {},
+							});
 							}
+						else if (
+							appStateValue & appState.DRAGGING_POINTS
+							&& mouseClickRelease
+						) {
+							appStateValue = appState.POINTS_SELECTED;
 							draggingNotStarted = false;
 							directionalNotStarted = false;
 							this.client.dispatchAction('/change-glyph-node-manually', {
@@ -954,50 +1068,66 @@ export default class GlyphCanvas extends React.PureComponent {
 							});
 						}
 						else if (
-							appStateValue
-								& (appState.CONTOUR_POINT_SELECTED
-									| appState.SPACING_SELECTED
-									| appState.GUIDE_SELECTED
-									| appState.SKELETON_POINT_SELECTED)
+							appStateValue & appState.POINTS_SELECTED
 							&& mouse.edge === mState.DOWN
 						) {
 							if (nodes.length > 0) {
-								if (
-									this.toile.keyboardDown.keyCode
-									&& this.toile.keyboardDown.special & specialKey.SHIFT
-								) {
-									selectedItems.push(...nodes);
-									appStateValue = appState.DRAGGING_POINTS;
-									selectedItems.forEach((item) => {
-										item.offsetVector = subtract2D(
-											item.data.center,
-											nodes[0].data.center,
+								const selectedHot = nodes.filter(node =>
+									selectedItems.reduce(
+										(acc, item) => acc || item.id === node.id,
+										false,
+									),
 										);
-									});
+								const notSelectedHot = nodes.filter(
+									node =>
+										!selectedItems.reduce(
+											(acc, item) => acc || item.id === node.id,
+											false,
+										),
+								);
+
+								if (selectedHot.length > 0) {
+									appStateValue = appState.PRE_DRAGGING_POINTS;
+									preSelection = selectedHot;
+									mouseStart = selectedHot[0].data.center;
+									draggingNotStarted = true;
+									directionalNotStarted = true;
 								}
-								else {
-									selectedItems = [nodes[0]];
-									appStateValue = appState.DRAGGING_CONTOUR_POINT;
-								}
-								mouseStart = nodes[0].data.center;
+								else if (notSelectedHot.length > 0) {
+									appStateValue = appState.ON_NON_SELECTED_POINTS;
+									preSelection = notSelectedHot;
+									mouseStart = notSelectedHot[0].data.center;
 								draggingNotStarted = true;
 								directionalNotStarted = true;
 							}
-							else if (contours.length > 0 && contourSelected) {
-								if (contours.find(c => c.id === contourSelected.id)) {
-									appStateValue = appState.DRAGGING_CONTOUR;
 								}
 								else {
 									appStateValue = appState.BOX_SELECTING;
 									mouseBoxStart = mouse.pos;
 								}
-								selectedItems = [];
 							}
-							else if (globalContours.length > 0) {
-								appStateValue = appState.BOX_SELECTING;
-								mouseBoxStart = mouse.pos;
+						else if (
+							appStateValue
+								& (appState.SPACING_SELECTED | appState.GUIDE_SELECTED)
+							&& mouse.edge === mState.DOWN
+						) {
+							if (nodes.length > 0) {
+								const [currentNode] = nodes;
+
+								selectedItems = [currentNode];
+								appStateValue = appState.DRAGGING_POINTS;
+								mouseStart = currentNode.data.center;
+								if (currentNode.type === toileType.NODE) {
+									onCurveBasePoints.current = currentNode.data.center;
+									onCurveBasePoints.opposite = _get(
+										glyph,
+										currentNode.data.oppositeId,
+									);
 							}
-							else if (spacingHandle.length > 0) {
+								draggingNotStarted = true;
+								directionalNotStarted = true;
+							}
+							if (spacingHandle.length > 0) {
 								appStateValue = appState.DRAGGING_SPACING;
 								selectedItems = [spacingHandle[0]];
 							}
@@ -1008,53 +1138,128 @@ export default class GlyphCanvas extends React.PureComponent {
 							}
 							this.storeSelectedItems(selectedItems);
 						}
-						else if (
-							appStateValue & appState.POINTS_SELECTED
-							&& mouse.edge === mState.DOWN
+						else if (appStateValue & appState.PRE_DRAGGING_POINTS) {
+							if (mouseClickRelease) {
+								mouseBoxStart = undefined;
+
+								if (
+									this.toile.keyboardDown.keyCode
+									&& this.toile.keyboardDown.special & specialKey.SHIFT
 						) {
-							// TODO: shift behavior
-							if (nodes.length > 0) {
-								let validPoint = false;
+									preSelection.forEach((node) => {
+										const idx = selectedItems.findIndex(
+											item => node.id === item.id,
+										);
 
-								nodes.forEach((node) => {
-									validPoint = selectedItems.find(s => s.id === node.id);
+										if (idx !== -1) {
+											selectedItems.splice(idx, 1);
+										}
 								});
-
-								if (!validPoint) {
-									selectedItems = [];
-									appStateValue = appState.BOX_SELECTING;
-									mouseBoxStart = mouse.pos;
 								}
 								else {
+									selectedItems = preSelection;
+								}
+								appStateValue = appState.POINTS_SELECTED;
+							}
+							else {
+								const displacement
+									= distance2D(mouseStart, mousePosInWorld)
+									* this.toile.viewMatrix[0];
+
+								if (displacement > MINIMUM_DRAG_THRESHOLD) {
+									draggingNotStarted = false;
 									appStateValue = appState.DRAGGING_POINTS;
-									selectedItems.forEach((item) => {
-										if (validPoint.id !== item.id) {
-											item.offsetVector = subtract2D(
-												item.data.center,
-												validPoint.data.center,
+
+									if (selectedItems.length === 1) {
+										const [currentNode] = selectedItems;
+
+										if (currentNode.type === toileType.NODE) {
+											onCurveBasePoints.current = currentNode.data.center;
+											onCurveBasePoints.opposite = _get(
+												glyph,
+												currentNode.data.oppositeId,
+											);
+										}
+									}
+
+									selectedItems.forEach((selectedItem) => {
+										if (preSelection[0].id !== selectedItem.id) {
+											const item = _get(glyph, selectedItem.id);
+
+											selectedItem.offsetVector = subtract2D(
+												item.ghostHandle || item,
+												mouseStart,
 											);
 										}
 										else {
-											item.offsetVector = {x: 0, y: 0};
+											selectedItem.offsetVector = undefined;
 										}
 									});
-									mouseStart = nodes[0].data.center;
-									draggingNotStarted = true;
-									directionalNotStarted = true;
 								}
 							}
+						}
+						else if (appStateValue & appState.ON_NON_SELECTED_POINTS) {
+							if (mouseClickRelease) {
+								mouseBoxStart = undefined;
+
+								if (
+									this.toile.keyboardDown.keyCode
+									&& this.toile.keyboardDown.special & specialKey.SHIFT
+								) {
+									selectedItems.push(...preSelection);
+								}
 							else {
-								selectedItems = [];
-								appStateValue = appState.BOX_SELECTING;
-								mouseBoxStart = mouse.pos;
+									selectedItems = preSelection;
+								}
+								appStateValue = appState.POINTS_SELECTED;
 							}
-							this.storeSelectedItems(selectedItems);
+							else {
+								const displacement
+									= distance2D(mouseStart, mousePosInWorld)
+									* this.toile.viewMatrix[0];
+
+								if (displacement > MINIMUM_DRAG_THRESHOLD) {
+									draggingNotStarted = false;
+									appStateValue = appState.DRAGGING_POINTS;
+									if (
+										this.toile.keyboardDown.keyCode
+										&& this.toile.keyboardDown.special & specialKey.SHIFT
+									) {
+										selectedItems.push(...preSelection);
+									}
+									else {
+										selectedItems = preSelection;
+									}
+
+									if (selectedItems.length === 1) {
+										const [currentNode] = selectedItems;
+
+										if (currentNode.type === toileType.NODE) {
+											onCurveBasePoints.current = currentNode.data.center;
+											onCurveBasePoints.opposite = _get(
+												glyph,
+												currentNode.data.oppositeId,
+											);
+										}
+									}
+									selectedItems.forEach(({id}) => {
+										const item = _get(glyph, id);
+
+										item.offsetVector = subtract2D(
+											item.ghostHandle || item,
+											preSelection[0].data.center,
+										);
+									});
+								}
+							}
 						}
 						else if (
 							appStateValue & appState.DRAGGING_POINTS
 							&& mouseClickRelease
 						) {
 							appStateValue = appState.POINTS_SELECTED;
+							onCurveBasePoints = {};
+							preSelection = undefined;
 							this.client.dispatchAction('/change-glyph-node-manually', {
 								label: 'manual edition',
 								force: true,
@@ -1093,7 +1298,12 @@ export default class GlyphCanvas extends React.PureComponent {
 						firstDraw = false;
 						this.resetView(glyph, height, width);
 					}
-					this.toile.drawGlyph(glyph, hotItems, this.state.uiOutline);
+					this.toile.drawGlyph(
+						glyph,
+						hotItems,
+						(this.state.uiOutline || appMode === canvasMode.SELECT_POINTS)
+							&& !(appStateValue === appState.PREVIEWING),
+					);
 
 					if (previewMode) {
 						this.cleanUpFrame();
@@ -1148,7 +1358,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					if (
 						!(
 							appStateValue
-							& (appState.DRAGGING_POINTS | appState.DRAGGING_CONTOUR_POINT)
+							& (appState.DRAGGING_POINTS | appState.DRAGGING_POINTS)
 						)
 					) {
 						if (guideHandle.length > 0) {
@@ -1179,12 +1389,9 @@ export default class GlyphCanvas extends React.PureComponent {
 					// draw stuff when in select-points mode
 					if (
 						appStateValue
-						& (appState.DRAGGING_CONTOUR_POINT
-							| appState.CONTOUR_POINT_SELECTED
-							| appState.DRAGGING_POINTS
+						& (appState.DRAGGING_POINTS
 							| appState.POINTS_SELECTED
-							| appState.DRAGGING_CONTOUR
-							| appState.SKELETON_POINT_SELECTED)
+							| appState.DRAGGING_CONTOUR)
 					) {
 						if (draggingNotStarted) {
 							const displacement
@@ -1225,55 +1432,11 @@ export default class GlyphCanvas extends React.PureComponent {
 							boxStartPosInWorld,
 							'black',
 						);
-						this.toile.drawAllNodes(glyph, boxedItems);
-					}
-					if (
-						appStateValue
-						& (appState.POINTS_SELECTED | appState.DRAGGING_POINTS)
-					) {
-						this.toile.drawAllNodes(glyph, selectedItems);
-					}
-
-					if (
-						this.props.dependencies
-						&& appStateValue
-							& (appState.CONTOUR_POINT_SELECTED
-								| appState.SKELETON_POINT_SELECTED)
-						&& selectedItems.length === 1
-					) {
-						const selectedPointDeps = _get(
-							glyph.dependencyTree,
-							selectedItems[0].id,
-						);
-						const selectedPoint = _get(glyph, selectedItems[0].id);
-
-						if (selectedPointDeps) {
-							Object.keys(selectedPointDeps).forEach((key) => {
-								const deps = selectedPointDeps[key];
-
-								if (deps instanceof Array) {
-									deps.forEach((dep) => {
-										if (dep.indexOf('anchor') === -1) {
-											const pointAddress = dep
-												.split('.')
-												.slice(0, 4)
-												.join('.');
-											const dependerPoint = _get(glyph, pointAddress);
-
-											this.toile.drawDependencies(dependerPoint, selectedPoint);
-										}
-									});
-								}
-							});
-						}
 					}
 
 					if (
 						appStateValue
-						& (appState.POINTS_SELECTED
-							| appState.CONTOUR_POINT_SELECTED
-							| appState.SKELETON_POINT_SELECTED
-							| appState.SPACING_SELECTED)
+						& (appState.POINTS_SELECTED | appState.SPACING_SELECTED)
 					) {
 						if (resetManualPoint) {
 							this.client.dispatchAction('/reset-glyph-points-manually', {
@@ -1334,24 +1497,34 @@ export default class GlyphCanvas extends React.PureComponent {
 
 					if (
 						appStateValue
-						& (appState.DRAGGING_CONTOUR_POINT
-							| appState.DRAGGING_POINTS
-							| appState.DRAGGING_CONTOUR)
+						& (appState.DRAGGING_POINTS | appState.DRAGGING_CONTOUR)
 					) {
+						let postMousePosInWorld = mousePosInWorld;
+
+						if (directionalModifier && !directionalNotStarted) {
+							postMousePosInWorld = {
+								x:
+									directionalValue & directionalMod.X
+										? mousePosInWorld.x
+										: mouseStart.x,
+								y:
+									directionalValue & directionalMod.X
+										? mouseStart.y
+										: mousePosInWorld.y,
+							};
+						}
+
 						interactions = selectedItems.map(item => ({
 							item,
 							modData: add2D(
-								mousePosInWorld,
+								postMousePosInWorld,
 								item.offsetVector || {x: 0, y: 0},
 							),
 						}));
 						mouseMovement = true;
 					}
 					else if (
-						appStateValue
-							& (appState.POINTS_SELECTED
-								| appState.CONTOUR_POINT_SELECTED
-								| appState.SKELETON_POINT_SELECTED)
+						appStateValue & appState.POINTS_SELECTED
 						&& displacementArrow
 					) {
 						mouseMovement = false;
@@ -1371,11 +1544,28 @@ export default class GlyphCanvas extends React.PureComponent {
 								posVector = {x: 0, y: -modRange};
 							}
 
+							const node = _get(glyph, item.id);
+
 							return {
 								item,
-								modData: add2D(_get(glyph, item.id), posVector),
+								modData: add2D(node.ghostHandle || node, posVector),
 							};
 						});
+					}
+					else if (appStateValue & appState.POINTS_SELECTED && supprPressed) {
+						mouseMovement = false;
+						interactions = selectedItems
+							.filter(
+								item =>
+									item.type === toileType.NODE_OUT
+									|| item.type === toileType.NODE_IN
+									|| item.type === toileType.CONTOUR_NODE_OUT
+									|| item.type === toileType.CONTOUR_NODE_IN,
+							)
+							.map(item => ({
+								item,
+								modData: _get(glyph, item.data.parentId),
+							}));
 					}
 					else if (
 						appStateValue
@@ -1415,24 +1605,6 @@ export default class GlyphCanvas extends React.PureComponent {
 						interactions = [interaction];
 					}
 
-					if (appStateValue & appState.CONTOUR_POINT_SELECTED) {
-						selectedItems.forEach((item) => {
-							if (
-								!unparallelMod
-								&& (item.type === toileType.NODE_OUT
-									|| item.type === toileType.NODE_IN)
-							) {
-								const {parallelParameters} = item.data;
-								const node = _get(glyph, parallelParameters[1]);
-
-								parallelParameters[0] = node;
-								parallelParameters[4] = [{id: parallelParameters[1]}];
-
-								this.toile.drawExpandedNode(...item.data.parallelParameters);
-							}
-						});
-					}
-
 					if (this.state.inputGlyphInteraction) {
 						const {inputGlyphInteraction} = this.state;
 
@@ -1451,10 +1623,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					if (
 						appStateValue
 							& (appState.DRAGGING_POINTS
-								| appState.DRAGGING_CONTOUR_POINT
 								| appState.DRAGGING_CONTOUR
-								| appState.CONTOUR_POINT_SELECTED
-								| appState.SKELETON_POINT_SELECTED
 								| appState.POINTS_SELECTED
 								| appState.DRAGGING_SPACING
 								| appState.DRAGGING_GUIDE
@@ -1498,7 +1667,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							case toileType.NODE_OUT:
 							case toileType.NODE_IN: {
 								handleModification(
-									this.client,
+									this.manualChangeBatcher,
 									glyph,
 									item,
 									modData,
@@ -1514,10 +1683,6 @@ export default class GlyphCanvas extends React.PureComponent {
 
 									parallelParameters[0] = node;
 									parallelParameters[4] = [{id: parallelParameters[1]}];
-
-									this.toile.drawExpandedNode(
-										...item.data.parallelParameters,
-									);
 								}
 
 								break;
@@ -1525,7 +1690,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							case toileType.CONTOUR_NODE_OUT:
 							case toileType.CONTOUR_NODE_IN: {
 								handleModification(
-									this.client,
+									this.manualChangeBatcher,
 									glyph,
 									item,
 									modData,
@@ -1538,24 +1703,13 @@ export default class GlyphCanvas extends React.PureComponent {
 							}
 							case toileType.CONTOUR_NODE:
 							case toileType.NODE: {
-								let posModData = modData;
+								const posModData = modData;
 
 								if (
 									directionalModifier
 										&& !directionalNotStarted
 										&& mouseMovement
 								) {
-									posModData = {
-										x:
-												directionalValue & directionalMod.X
-													? modData.x
-													: mouseStart.x,
-										y:
-												directionalValue & directionalMod.X
-													? mouseStart.y
-													: modData.y,
-									};
-
 									if (directionalValue & directionalMod.Y) {
 										this.toile.drawLine(
 											{x: posModData.x, y: 1000000},
@@ -1573,9 +1727,10 @@ export default class GlyphCanvas extends React.PureComponent {
 								}
 
 								onCurveModification(
-									this.client,
+									this.manualChangeBatcher,
 									glyph,
 									item,
+									onCurveBasePoints,
 									posModData,
 									appStateValue,
 									curveMode,
@@ -1605,6 +1760,7 @@ export default class GlyphCanvas extends React.PureComponent {
 				this.cleanUpFrame();
 
 				this.setState({rafId: raf(rafFunc)});
+				this.manualChangeBatcher.applyManualChange();
 				/* eslint-enable no-bitwise, max-depth */
 			}
 			catch (error) {
