@@ -1857,11 +1857,9 @@ export default class Toile {
 							lineEnd,
 						);
 
-						if (ts) {
+						if (ts <= 1 && ts >= 0) {
 							ts.forEach((t) => {
 								const point = getPointOnCurve(bezier, t);
-
-								this.drawCircle(point, 5, '#ff00ff', '#ff00ff');
 
 								if (t !== undefined && point.x > mouseTransformed.x) {
 									polyNumber++;
