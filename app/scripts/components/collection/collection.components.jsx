@@ -198,6 +198,9 @@ export const libraryQuery = gql`
 					width
 					weight
 					italic
+					abstractedFont {
+						id
+					}
 				}
 			}
 		}

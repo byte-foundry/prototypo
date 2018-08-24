@@ -565,7 +565,7 @@
 			position: relative;
 			cursor: pointer;
 			width: calc(100vw - 500px);
-			transition: all 2s ease;
+			transition: background-color .4s ease;
 			overflow: hidden;
 			border-bottom: 1px solid $lightest-grey;
 			&:hover {

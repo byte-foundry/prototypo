@@ -133,14 +133,14 @@ class LibrarySee extends React.Component {
 
 	renderFont(fontUsed) {
 		switch (fontUsed.type) {
-		case 'Template':
+		case 'TEMPLATE':
 			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
-		case 'Preset':
+		case 'PRESET':
 			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
-		case 'Family':
-			return fontUsed.family ? (
+		case 'VARIANT':
+			return fontUsed.variant ? (
 				<span className="library-fontinuse-font">
-					<Link to={`/library/project/${fontUsed.family.id}`}>
+					<Link to={`/library/project/${fontUsed.variant.family.id}`}>
 						{fontUsed.name}
 					</Link>
 				</span>
@@ -208,9 +208,9 @@ class LibrarySee extends React.Component {
 			fontInUse =>
 				!!fontInUse.fontUsed.find(
 					f =>
-						f.type === 'Family'
-						&& f.family
-						&& f.family.id === this.state.family.id,
+						f.type === 'VARIANT'
+						&& f.variant
+						&& this.state.family.variants.find(v => v.id === f.variant.id),
 				),
 		);
 

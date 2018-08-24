@@ -19,11 +19,11 @@ export default class LibraryFontsInUse extends React.Component {
 	}
 	renderFont(fontUsed) {
 		switch (fontUsed.type) {
-		case 'Template':
+		case 'TEMPLATE':
 			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
-		case 'Preset':
+		case 'PRESET':
 			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
-		case 'Family':
+		case 'VARIANT':
 			return (
 				<span className="library-fontinuse-font">
 					<Link to={`/library/project/${fontUsed.family.id}`}>

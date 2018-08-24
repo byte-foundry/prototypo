@@ -28,7 +28,7 @@ class LibraryFontInUseCreate extends React.Component {
 					id: fontUsed.id,
 					type: fontUsed.type,
 					name: fontUsed.name,
-					familyId: fontUsed.family && fontUsed.family.id,
+					variantId: fontUsed.variant && fontUsed.variant.id,
 					template: fontUsed.template,
 					presetId: fontUsed.preset && fontUsed.preset.id,
 				})),
@@ -71,11 +71,12 @@ class LibraryFontInUseCreate extends React.Component {
 		});
 	}
 	addSuggestion(suggestion) {
+		console.log(suggestion);
 		const fonts = [...this.state.fontInUseMetadata.fonts];
 		const alreadyAdded = fonts.find(
 			e =>
 				(e.type === 'Family'
-					? e.familyId === suggestion.familyId
+					? e.variantId === suggestion.variantId
 					: e.name === suggestion.name),
 		);
 
@@ -117,6 +118,7 @@ class LibraryFontInUseCreate extends React.Component {
 	updateAutocompleteSuggestions(event) {
 		this.setState({autocompleteText: event.target.value});
 		const autocompleteSuggestions = [];
+		const abstractedTemplates = this.props.abstractedTemplates;
 
 		const templateFound
 			= this.state.templateInfos
@@ -129,11 +131,14 @@ class LibraryFontInUseCreate extends React.Component {
 		templateFound
 			&& templateFound.forEach(t =>
 				autocompleteSuggestions.push({
-					type: 'Template',
+					type: 'TEMPLATE',
 					name: t.familyName,
-					familyId: undefined,
+					variantId: undefined,
 					template: t.familyName,
 					presetId: undefined,
+					abstractedFontId: abstractedTemplates.find(
+						at => at.template === t.name,
+					).id,
 				}),
 			);
 
@@ -148,11 +153,12 @@ class LibraryFontInUseCreate extends React.Component {
 		presetFound
 			&& presetFound.forEach(p =>
 				autocompleteSuggestions.push({
-					type: 'Preset',
+					type: 'PRESET',
 					name: `${p.variant.family.name}`,
-					familyId: undefined,
+					variantId: undefined,
 					template: undefined,
 					presetId: p.id,
+					abstractedFontId: p.abstractedFont && p.abstractedFont.id,
 				}),
 			);
 
@@ -165,12 +171,18 @@ class LibraryFontInUseCreate extends React.Component {
 		familyFound
 			&& familyFound.forEach(f =>
 				autocompleteSuggestions.push({
-					type: 'Family',
-					familyId: f.id,
+					type: 'VARIANT',
+					variantId:
+						(f.variants.find(e => e.name.toLowerCase() === 'regular')
+							&& f.variants.find(e => e.name.toLowerCase() === 'regular').id)
+						|| f.variants[0].id,
 					template: undefined,
 					presetId: undefined,
 					isPersonal: true,
 					name: `${f.name}`,
+					abstractedFontId:
+						f.variants.find(v => v.abstractedFont)
+						&& f.variants.find(v => v.abstractedFont.id).abstractedFont.id,
 				}),
 			);
 
@@ -193,13 +205,18 @@ class LibraryFontInUseCreate extends React.Component {
 		teamFound
 			&& teamFound.forEach(f =>
 				autocompleteSuggestions.push({
-					type: 'Family',
-					isPersonal: false,
-					id: f.id,
-					familyId: f.id,
+					type: 'VARIANT',
+					variantId:
+						(f.variants.find(e => e.name.toLowerCase() === 'regular')
+							&& f.variants.find(e => e.name.toLowerCase() === 'regular').id)
+						|| f.variants[0].id,
 					template: undefined,
 					presetId: undefined,
+					isPersonal: true,
 					name: `${f.name}`,
+					abstractedFontId:
+						f.variants.find(v => v.abstractedFont)
+						&& f.variants.find(v => v.abstractedFont.id).abstractedFont.id,
 				}),
 			);
 		this.setState({
@@ -507,7 +524,7 @@ const libraryUserQuery = gql`
 				fontUsed {
 					id
 					name
-					family {
+					variant {
 						id
 					}
 					type
@@ -525,11 +542,8 @@ const libraryUserQuery = gql`
 				preset {
 					id
 				}
-				family {
+				variant {
 					id
-					variants {
-						id
-					}
 				}
 				template
 			}
@@ -548,14 +562,14 @@ const deleteAbstractedFontMutation = gql`
 const createAbstractedFontMutation = gql`
 	mutation createAbstractedFont(
 		$type: FontType!
-		$familyId: ID
+		$variantId: ID
 		$template: String
 		$presetId: ID
 		$name: String!
 	) {
 		createAbstractedFont(
 			type: $type
-			familyId: $familyId
+			variantId: $variantId
 			template: $template
 			presetId: $presetId
 			name: $name
@@ -593,8 +607,11 @@ const addFontInUseMutation = gql`
 			fontUsed {
 				id
 				name
-				family {
+				variant {
 					id
+					family {
+						id
+					}
 				}
 				type
 				template
@@ -636,8 +653,11 @@ const editFontInUseMutation = gql`
 			fontUsed {
 				id
 				name
-				family {
+				variant {
 					id
+					family {
+						id
+					}
 				}
 				type
 				template
@@ -660,11 +680,11 @@ const deleteFontInUseMutation = gql`
 export default compose(
 	graphql(createAbstractedFontMutation, {
 		props: ({mutate}) => ({
-			createAbstractedFont: (type, familyId, template, presetId, name) =>
+			createAbstractedFont: (type, variantId, template, presetId, name) =>
 				mutate({
 					variables: {
 						type,
-						familyId,
+						variantId,
 						template,
 						presetId,
 						name,
@@ -692,15 +712,20 @@ export default compose(
 				fontUsed,
 				images,
 			) => {
-				const abstractedFonts = fontUsed.map(font =>
-					ownProps.createAbstractedFont(
-						font.type,
-						font.familyId,
-						font.template,
-						font.presetId,
-						font.name,
-					),
+				const abstractedAlreadyCreated = fontUsed.filter(
+					f => f.abstractedFontId,
 				);
+				const abstractedFonts = fontUsed
+					.filter(f => !f.abstractedFontId)
+					.map(font =>
+						ownProps.createAbstractedFont(
+							font.type,
+							font.variantId,
+							font.template,
+							font.presetId,
+							font.name,
+						),
+					);
 
 				return Promise.all(abstractedFonts).then(createdFonts =>
 					mutate({
@@ -709,9 +734,14 @@ export default compose(
 							designerUrl,
 							client,
 							clientUrl,
-							fontUsedIds: createdFonts.map(
-								font => font.data.createAbstractedFont.id,
-							),
+							fontUsedIds: [
+								...createdFonts.map(
+									font => font.data.createAbstractedFont.id,
+								),
+								...abstractedAlreadyCreated.map(
+									font => font.abstractedFontId,
+								),
+							],
 							images,
 							creatorId: ownProps.user.id,
 						},
@@ -750,7 +780,7 @@ export default compose(
 					.map(font =>
 						ownProps.createAbstractedFont(
 							font.type,
-							font.familyId,
+							font.variantId,
 							font.template,
 							font.presetId,
 							font.name,
@@ -782,7 +812,7 @@ export default compose(
 			update: (store, {data: {updateFontInUse}}) => {
 				const data = store.readQuery({query: libraryUserQuery});
 
-				const fontInUseIndex = data.user.fontUsed.findIndex(
+				const fontInUseIndex = data.user.fontInUses.findIndex(
 					f => f.id === updateFontInUse.id,
 				);
 
@@ -795,24 +825,13 @@ export default compose(
 		},
 	}),
 	graphql(deleteFontInUseMutation, {
-		props: ({mutate, ownProps}) => ({
-			deleteFontInUse: (id, fontUsed) => {
-				const deletedAbstractedFont = [];
-
-				fontUsed.forEach(
-					font =>
-						font.id
-						&& deletedAbstractedFont.push(ownProps.deleteAbstractedFont(font.id)),
-				);
-
-				return Promise.all(deletedAbstractedFont).then(() =>
-					mutate({
-						variables: {
-							id,
-						},
-					}),
-				);
-			},
+		props: ({mutate}) => ({
+			deleteFontInUse: id =>
+				mutate({
+					variables: {
+						id,
+					},
+				}),
 		}),
 		options: {
 			update: (store, {data: {deleteFontInUse}}) => {
