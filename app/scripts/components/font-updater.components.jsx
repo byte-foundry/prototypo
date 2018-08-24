@@ -28,15 +28,7 @@ class FontUpdater extends React.Component {
 	}
 
 	render() {
-		const {
-			template,
-			name,
-			subset,
-			glyph,
-			values,
-			family,
-			variant,
-		} = this.props;
+		const {template, name, subset, glyph, values, family, variant} = this.props;
 
 		const subsetCodes = _uniq(subset.split('')).map(letter =>
 			letter.charCodeAt(0),
@@ -60,19 +52,22 @@ class FontUpdater extends React.Component {
 	}
 }
 
-FontUpdater.propTypes = {
-	family: PropTypes.string,
-	variant: PropTypes.string,
-	name: PropTypes.string.isRequired,
-	template: PropTypes.string.isRequired,
-	values: PropTypes.object.isRequired,
-	subset: PropTypes.string.isRequired,
-	glyph: PropTypes.string.isRequired,
-};
-
 FontUpdater.defaultProps = {
+	name: 'CustomFont',
 	family: 'Prototypo Font',
 	variant: 'Regular',
+	values: {},
+	subset: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+};
+
+FontUpdater.propTypes = {
+	name: PropTypes.string,
+	template: PropTypes.string.isRequired,
+	values: PropTypes.object,
+	family: PropTypes.string,
+	variant: PropTypes.string,
+	subset: PropTypes.string,
+	glyph: PropTypes.string,
 };
 
 export default FontUpdater;
