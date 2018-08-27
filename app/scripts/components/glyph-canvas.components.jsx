@@ -134,15 +134,7 @@ export function handleModification(
 	globalMode,
 	toile,
 ) {
-	const {
-		parentId,
-		parallelId,
-		transforms,
-		componentPrefixAddress,
-		nodeAddress,
-		componentName,
-		opId,
-	} = draggedItem.data;
+	const {parentId, transforms, componentName, opId} = draggedItem.data;
 	const handle = _get(glyph, draggedItem.id);
 	const opHandle = _get(glyph, opId);
 	const handlePos = {
@@ -1248,11 +1240,11 @@ export default class GlyphCanvas extends React.PureComponent {
 											);
 										}
 									}
-									selectedItems.forEach(({id}) => {
-										const item = _get(glyph, id);
+									selectedItems.forEach((item) => {
+										const node = _get(glyph, item.id);
 
 										item.offsetVector = subtract2D(
-											item.ghostHandle || item,
+											node.ghostHandle || node,
 											preSelection[0].data.center,
 										);
 									});
@@ -1560,7 +1552,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 					else if (appStateValue & appState.POINTS_SELECTED && supprPressed) {
 						mouseMovement = false;
-						interactions = selectedItems
+						const interactions = selectedItems
 							.filter(
 								item =>
 									item.type === toileType.NODE_OUT
@@ -1568,7 +1560,7 @@ export default class GlyphCanvas extends React.PureComponent {
 									|| item.type === toileType.CONTOUR_NODE_OUT
 									|| item.type === toileType.CONTOUR_NODE_IN,
 							)
-							.map(item => ({
+							.forEach(item => ({
 								item,
 								modData: _get(glyph, item.data.parentId),
 							}));
@@ -1625,6 +1617,8 @@ export default class GlyphCanvas extends React.PureComponent {
 						});
 						appStateValue |= appState.INPUT_CHANGE;
 					}
+
+					interactions.sort((a, b) => a.item.type < b.item.type);
 
 					if (
 						appStateValue
