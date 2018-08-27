@@ -253,6 +253,8 @@ class SolvablePath {
 			nodes[i].nodeAddress = node.nodeAddress;
 			nodes[i].x = Math.round(node.x);
 			nodes[i].y = Math.round(node.y);
+			nodes[i].xBase = Math.round(node.x);
+			nodes[i].yBase = Math.round(node.y);
 
 			nodes[i].typeIn = node.typeIn || node.type;
 			nodes[i].typeOut = node.typeOut || node.type;
