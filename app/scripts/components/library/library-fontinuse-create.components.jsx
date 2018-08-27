@@ -553,7 +553,7 @@ const libraryUserQuery = gql`
 				hostedVariants {
 					id
 					createdAt
-					origin {
+					abstractedFont {
 						id
 					}
 					url

@@ -615,7 +615,7 @@ const createHostedDomainMutation = gql`
 				id
 				url
 				createdAt
-				origin {
+				abstractedFont {
 					id
 				}
 				version
@@ -700,7 +700,7 @@ const libraryUserQuery = gql`
 				hostedVariants {
 					id
 					createdAt
-					origin {
+					abstractedFont {
 						id
 					}
 					url
