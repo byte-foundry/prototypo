@@ -792,7 +792,7 @@ export class TemplateItem extends React.Component {
 					}`}
 				>
 					<LibraryButton
-						name="Edit"
+						name="Create from this template"
 						floated
 						dark
 						onClick={() => {
@@ -899,7 +899,7 @@ export class FamilyItem extends React.Component {
 					{!this.props.isFromTeam && (
 						<LibraryButton
 							floated
-							name="Edit"
+							name="Open in the editor"
 							dark
 							onClick={() => {
 								this.props.open(this.props.variantToLoad, this.props.family);
@@ -1023,7 +1023,7 @@ export class PresetItem extends React.Component {
 					}`}
 				>
 					<LibraryButton
-						name="Edit"
+						name="Create from this preset"
 						floated
 						dark
 						onClick={() => {

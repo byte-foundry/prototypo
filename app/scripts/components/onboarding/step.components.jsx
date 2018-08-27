@@ -38,11 +38,6 @@ const OnboardingStep = ({
 				<HighlightedText letters={letters} />
 			</div>
 		)}
-		{(!values || values.length === 0) && (
-			<p className="description error">
-				Please wait, we are loading your project.
-			</p>
-		)}
 		{(type === 'sliders' || type === 'serifs') && (
 			<div className="step-sliders">
 				{values

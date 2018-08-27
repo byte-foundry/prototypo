@@ -594,13 +594,13 @@
 			.type {
 				position: absolute;
 				left: -60px;
-				top: 145px;
+				top: 146px;
 				transform: translateY(0) rotate(-90deg);
 				text-transform: uppercase;
 				transform-origin: top left;
 				font-size: 85%;
 				color: transparentize($dark-grey, 0.7);
-				width: 145px;
+				width: 146px;
 				padding-top: 10px;
 				padding-bottom: 10px;
 				text-align: center;
@@ -681,7 +681,7 @@
 				background: $dark-grey;
 				padding-top: 0;
 				padding-bottom: 0;
-				padding-left: 40px;
+				padding-left: 60px;
 				padding-right: 40px;
 				max-height: 0px;
 				transition: all 0.1s ease;

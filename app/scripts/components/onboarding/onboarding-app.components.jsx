@@ -418,7 +418,7 @@ class OnboardingApp extends React.PureComponent {
 								>
 									Start designing
 								</Button>
-								<h3>Need inspiration?</h3>
+								{/* <h3>Need inspiration?</h3>
 								<p className="description">
 									A good name for a typeface should reflect its design and its
 									purpose. <br />
@@ -431,7 +431,7 @@ class OnboardingApp extends React.PureComponent {
 										http://namecheck.fontdata.com/about/
 									</a>{' '}
 									to check the availibility of the chosen name.
-								</p>
+								</p> */}
 							</div>
 						)}
 						{stepData.type !== 'start' && (
