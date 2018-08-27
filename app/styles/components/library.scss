@@ -64,7 +64,7 @@
 			}
 		}
 		&.button-bold {
-			font-weight: bold;
+			font-weight: 700;
 		}
 		&.button-highlight {
 			border-color: $green;
@@ -87,7 +87,7 @@
 			border-radius: 30px;
 			text-transform: uppercase;
 			font-size: 16px;
-			font-weight: bold;
+			font-weight: 700;
 		}
 		&.floated {
 			float: left;
@@ -136,7 +136,6 @@
 					}
 					&.active {
 						color: $green;
-						font-weight: bold;
 					}
 				}
 				.library-link-arrow {
@@ -227,7 +226,7 @@
 			.sidebar-glyphs {
 				.sidebar-glyphs-title {
 					margin-top: 40px;
-					font-weight: bold;
+					font-weight: 700;
 				}
 				.sidebar-glyphs-language {
 					margin-top: 10px;
@@ -322,7 +321,7 @@
 					.library-item-variant-actions-group-title {
 						color: white;
 						font-size: 14px;
-						font-weight: bold;
+						font-weight: 700;
 						margin-bottom: 20px;
 					}
 					p {
@@ -441,7 +440,7 @@
 						label {
 							display: block;
 							text-transform: uppercase;
-							font-weight: bold;
+							font-weight: 700;
 						}
 						input,
 						select {
@@ -519,7 +518,7 @@
 				font-size: 14px;
 				padding: 5px 20px;
 				display: inline-block;
-				border: 1px solid $dark-grey;
+				border: 2px solid $dark-grey;
 				color: $dark-grey;
 				background-color: transparent;
 				transition: color 0.3s ease, background-color 0.3s ease;
@@ -545,7 +544,7 @@
 						padding-right: 40px;
 						margin-bottom: 10px;
 						text-transform: uppercase;
-						font-weight: bold;
+						font-weight: 700;
 					}
 					.details-form-elem {
 						width: 18%;
@@ -730,7 +729,7 @@
 						margin-bottom: 20px;
 						label {
 							display: block;
-							font-weight: bold;
+							font-weight: 700;
 						}
 						a {
 							text-decoration: underline;
@@ -753,11 +752,12 @@
 			position: relative;
 			cursor: pointer;
 			width: calc(100vw - 500px);
-			box-shadow: 0 0 0 rgba(0,0,0,0.16), 0 0 0 rgba(0,0,0,0.23);
-			transition: box-shadow .2s ease;
+			transition: background-color .4s ease;
 			overflow: hidden;
+			border-bottom: 1px solid $lightest-grey;
 			&:hover {
-				box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+				background-color: $lightest-grey;
+				transition: all .4s ease;
 				.type {
 					left: 0;
 				}
@@ -770,13 +770,13 @@
 			.type {
 				position: absolute;
 				left: -60px;
-				top: 155px;
+				top: 145px;
 				transform: translateY(0) rotate(-90deg);
 				text-transform: uppercase;
 				transform-origin: top left;
 				font-size: 85%;
 				color: transparentize($dark-grey, 0.7);
-				width: 155px;
+				width: 145px;
 				padding-top: 10px;
 				padding-bottom: 10px;
 				text-align: center;
@@ -810,14 +810,17 @@
 			.library-item-name {
 				text-transform: uppercase;
 				color: $medium-grey;
+				font-size: .9em;
+				letter-spacing: .03em;
 				margin: 0;
 				padding-left: 60px;
 				padding-right: 40px;
 				.star-icon {
-					font-size: 150%;
+					font-size: 120%;
 					margin-right: 10px;
 					cursor: pointer;
 					color: $light-grey;
+					&:hover,
 					&.active {
 						color: $yellow;
 					}
@@ -919,21 +922,21 @@
 				text-align: center;
 				line-height: 46px;
 				text-transform: uppercase;
-				font-weight: bold;
+				font-weight: 700;
 				color: white;
 				font-size: 16px;
 			}
 		}
 		.sidebar-filters {
 			.sidebar-filter {
-				margin-bottom: 20px;
+				margin: 20px 0 30px;
 				.sidebar-filter-title {
 					display: block;
 					font-size: 14px;
 					text-transform: uppercase;
 					color: $dark-grey;
 					width: 100%;
-					font-weight: bold;
+					font-weight: 700;
 				}
 				.sidebar-filter-elems {
 					display: block;
@@ -945,7 +948,7 @@
 					.sidebar-filter-elem {
 						font-size: 14px;
 						padding: 5px 20px;
-						border: 1px solid $dark-grey;
+						border: 2px solid $dark-grey;
 						background-color: transparent;
 						transition: color 0.3s ease, background-color 0.3s ease;
 						float: left;
@@ -953,7 +956,8 @@
 						margin-bottom: 5px;
 						border-radius: 30px;
 						cursor: pointer;
-						&.active {
+						&.active,
+						&:hover {
 							color: white;
 							background-color: $dark-grey;
 						}
@@ -969,7 +973,7 @@
 				text-transform: uppercase;
 				color: $dark-grey;
 				width: 100%;
-				font-weight: bold;
+				font-weight: 700;
 			}
 			.sidebar-tags-elems {
 				display: block;
@@ -982,7 +986,7 @@
 				.sidebar-tags-elem {
 					font-size: 14px;
 					padding: 5px 20px;
-					border: 1px solid $dark-grey;
+					border: 2px solid $dark-grey;
 					background-color: transparent;
 					transition: color 0.3s ease, background-color 0.3s ease;
 					float: left;
@@ -990,7 +994,8 @@
 					margin-bottom: 5px;
 					border-radius: 30px;
 					cursor: pointer;
-					&.active {
+					&.active,
+					&:hover {
 						color: white;
 						background-color: $dark-grey;
 					}
@@ -998,16 +1003,21 @@
 			}
 			.sidebar-tags-add {
 				display: inline-block;
-				border: 1px solid $dark-grey;
-				font-size: 18px;
+				border: 2px solid $dark-grey;
+				font-size: 1.9em;
 				color: $dark-grey;
-				font-weight: bold;
-				padding: 0px 8px;
+				font-weight: 700;
+		    line-height: 0.7;
+				text-align: center;
 				border-radius: 50%;
 				width: 28px;
+				height: 28px;
 				cursor: pointer;
-				transition: border-radius 0.3s ease, padding 0.3s ease,
-					font-size 0.3s ease, width 0.3s ease;
+				transition: all 0.3s ease;
+				&:hover {
+					color: $white;
+					background-color: $dark-grey;
+				}
 				&.interactive {
 					display: none;
 				}
@@ -1018,6 +1028,11 @@
 					font-weight: normal;
 					width: 100%;
 					overflow: hidden;
+
+					&:hover {
+						color: $dark-grey;
+						background-color: $white;
+					}
 
 					input {
 						padding: 4px 8px;

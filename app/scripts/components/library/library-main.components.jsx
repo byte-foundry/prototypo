@@ -230,7 +230,9 @@ class LibraryMain extends React.Component {
 					favourites: this.props.favourites,
 					addFavourite: this.props.addFavourite,
 					hostedDomains: this.props.hostedDomains,
+					createFavourite: this.props.createFavourite,
 					deleteFavourite: this.props.deleteFavourite,
+					abstractedTemplates: this.props.abstractedTemplates,
 					user: {
 						firstName: this.props.firstName,
 						lastName: this.props.lastName,
@@ -288,6 +290,9 @@ export const libraryQuery = gql`
 					weight
 					italic
 					updatedAt
+					abstractedFont {
+						id
+					}
 				}
 			}
 		}
@@ -345,8 +350,11 @@ const libraryUserQuery = gql`
 				fontUsed {
 					id
 					name
-					family {
+					variant {
 						id
+						family {
+							id
+						}
 					}
 					type
 					template
@@ -363,9 +371,9 @@ const libraryUserQuery = gql`
 				preset {
 					id
 				}
-				family {
+				variant {
 					id
-					variants {
+					family {
 						id
 					}
 				}
@@ -394,6 +402,9 @@ export const presetQuery = gql`
 		allPresets(filter: {published: true}) {
 			id
 			ownerInitials
+			abstractedFont {
+				id
+			}
 			variant {
 				name
 				family {
@@ -402,6 +413,15 @@ export const presetQuery = gql`
 			}
 			template
 			baseValues
+		}
+	}
+`;
+
+export const abstractedTemplatesQuery = gql`
+	query {
+		allAbstractedFonts(filter: {type: TEMPLATE}) {
+			id
+			template
 		}
 	}
 `;
@@ -424,26 +444,31 @@ const deleteVariantMutation = gql`
 `;
 
 const deleteFavouriteMutation = gql`
-	mutation deleteAbstractedFont($id: ID!) {
-		deleteAbstractedFont(id: $id) {
-			id
+	mutation deleteFavourite($userID: ID!, $abstractedFontID: ID!) {
+		removeFromUserOnAbstractedFont(
+			usersUserId: $userID
+			favouritesAbstractedFontId: $abstractedFontID
+		) {
+			favouritesAbstractedFont {
+				id
+			}
 		}
 	}
 `;
 
-const addFavouriteMutation = gql`
+const createFavouriteMutation = gql`
 	mutation createAbstractedFont(
-		$userId: ID!
+		$usersIds: [ID!]!
 		$type: FontType!
-		$familyId: ID
+		$variantId: ID
 		$template: String
 		$presetId: ID
 		$name: String!
 	) {
 		createAbstractedFont(
-			userId: $userId
+			usersIds: $usersIds
 			type: $type
-			familyId: $familyId
+			variantId: $variantId
 			template: $template
 			presetId: $presetId
 			name: $name
@@ -455,10 +480,39 @@ const addFavouriteMutation = gql`
 			preset {
 				id
 			}
-			family {
+			variant {
 				id
+				family {
+					id
+				}
 			}
 			template
+		}
+	}
+`;
+
+const addFavouriteMutation = gql`
+	mutation addFavourite($userID: ID!, $abstractedFontID: ID!) {
+		addToUserOnAbstractedFont(
+			usersUserId: $userID
+			favouritesAbstractedFontId: $abstractedFontID
+		) {
+			favouritesAbstractedFont {
+				id
+				type
+				name
+				updatedAt
+				preset {
+					id
+				}
+				variant {
+					id
+					family {
+						id
+					}
+				}
+				template
+			}
 		}
 	}
 `;
@@ -527,21 +581,24 @@ export default compose(
 		},
 	}),
 	graphql(deleteFavouriteMutation, {
-		props: ({mutate}) => ({
-			deleteFavourite: id =>
+		props: ({mutate, ownProps}) => ({
+			deleteFavourite: abstractedFontID =>
 				mutate({
 					variables: {
-						id,
+						userID: ownProps.userId,
+						abstractedFontID,
 					},
 				}),
 		}),
 		options: {
-			update: (store, {data: {deleteAbstractedFont}}) => {
+			update: (store, {data: {removeFromUserOnAbstractedFont}}) => {
 				const data = store.readQuery({query: libraryUserQuery});
 
 				data.user.favourites.splice(
 					data.user.favourites.findIndex(
-						f => f.id === deleteAbstractedFont.id,
+						f =>
+							f.id
+							=== removeFromUserOnAbstractedFont.favouritesAbstractedFont.id,
 					),
 					1,
 				);
@@ -552,14 +609,14 @@ export default compose(
 			},
 		},
 	}),
-	graphql(addFavouriteMutation, {
+	graphql(createFavouriteMutation, {
 		props: ({mutate, ownProps}) => ({
-			addFavourite: (type, familyId, template, presetId, name) =>
+			createFavourite: (type, variantId, template, presetId, name) =>
 				mutate({
 					variables: {
-						userId: ownProps.userId,
+						usersIds: [ownProps.userId],
 						type,
-						familyId,
+						variantId,
 						template,
 						presetId,
 						name,
@@ -568,9 +625,64 @@ export default compose(
 		}),
 		options: {
 			update: (store, {data: {createAbstractedFont}}) => {
+				const dataUser = store.readQuery({query: libraryUserQuery});
+				const dataLibrary = store.readQuery({query: libraryQuery});
+				const dataPreset = store.readQuery({query: presetQuery});
+				let variant;
+				let preset;
+
+				switch (createAbstractedFont.type) {
+				case 'Preset':
+					preset = dataPreset.allPresets.find(
+						p => p.id === createAbstractedFont.preset.id,
+					);
+					preset.abstractedFont = {id: createAbstractedFont.id};
+					break;
+				case 'Variant':
+					variant = dataLibrary.user.library
+						.find(f => f.id === createAbstractedFont.variant.family.id)
+						.variants.find(v => v.id === createAbstractedFont.variant.id);
+
+					variant.abstractedFont = {id: createAbstractedFont.id};
+					break;
+				default:
+					break;
+				}
+
+				dataUser.user.favourites.push(createAbstractedFont);
+
+				store.writeQuery({
+					query: libraryUserQuery,
+					data: dataUser,
+				});
+				store.writeQuery({
+					query: libraryQuery,
+					data: dataLibrary,
+				});
+				store.writeQuery({
+					query: presetQuery,
+					data: dataPreset,
+				});
+			},
+		},
+	}),
+	graphql(addFavouriteMutation, {
+		props: ({mutate, ownProps}) => ({
+			addFavourite: abstractedFontID =>
+				mutate({
+					variables: {
+						userID: ownProps.userId,
+						abstractedFontID,
+					},
+				}),
+		}),
+		options: {
+			update: (store, {data: {addToUserOnAbstractedFont}}) => {
 				const data = store.readQuery({query: libraryUserQuery});
 
-				data.user.favourites.push(createAbstractedFont);
+				data.user.favourites.push(
+					addToUserOnAbstractedFont.favouritesAbstractedFont,
+				);
 				store.writeQuery({
 					query: libraryUserQuery,
 					data,
@@ -638,6 +750,22 @@ export default compose(
 			if (data.allPresets) {
 				return {
 					presets: data.allPresets,
+				};
+			}
+		},
+	}),
+	graphql(abstractedTemplatesQuery, {
+		options: {
+			fetchPolicy: 'cache-first',
+		},
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			if (data.allAbstractedFonts) {
+				return {
+					abstractedTemplates: data.allAbstractedFonts,
 				};
 			}
 		},

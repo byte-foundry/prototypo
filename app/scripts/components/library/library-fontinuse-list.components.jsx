@@ -21,14 +21,14 @@ export default class LibraryFontsInUseList extends React.Component {
 	}
 	renderFont(fontUsed) {
 		switch (fontUsed.type) {
-		case 'Template':
+		case 'TEMPLATE':
 			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
-		case 'Preset':
+		case 'PRESET':
 			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
-		case 'Family':
-			return fontUsed.family ? (
+		case 'VARIANT':
+			return fontUsed.variant ? (
 				<span className="library-fontinuse-font">
-					<Link to={`/library/project/${fontUsed.family.id}`}>
+					<Link to={`/library/project/${fontUsed.variant.family.id}`}>
 						{fontUsed.name}
 					</Link>
 				</span>
@@ -40,10 +40,11 @@ export default class LibraryFontsInUseList extends React.Component {
 		}
 	}
 	render() {
+		console.log(this.props.fontInUses);
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">
-					{this.props.fontInUses.length === 0 ? (
+					{this.props.fontInUses && this.props.fontInUses.length === 0 ? (
 						<div>
 							<div className="library-see-title">No fonts in use yet.</div>
 							<div className="library-see-description">

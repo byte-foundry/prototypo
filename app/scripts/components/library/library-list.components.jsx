@@ -86,36 +86,25 @@ class LibraryList extends React.Component {
 			displayedText: text,
 		});
 	}
-	updateFavourites(favourite, type, id, name) {
-		const favourites = [...this.props.favourites];
-		let relatedKey;
-
-		switch (type) {
-		case 'Template':
-			relatedKey = 'template';
-			break;
-		case 'Preset':
-			relatedKey = 'preset';
-			break;
-		case 'Family':
-			relatedKey = 'family';
-			break;
-		default:
-			break;
-		}
+	updateFavourites(favourite, type, id, name, abstractedFontId) {
 		if (favourite) {
 			this.props.deleteFavourite(favourite.id);
 		}
+		else if (abstractedFontId) {
+			this.props.addFavourite(abstractedFontId);
+		}
 		else {
 			switch (type) {
-			case 'Template':
-				this.props.addFavourite(type, undefined, id, undefined, name);
+			case 'TEMPLATE':
+				this.props.addFavourite(
+					this.props.abstractedTemplates.find(e => e.template === name).id,
+				);
 				break;
-			case 'Preset':
-				this.props.addFavourite(type, undefined, undefined, id, name);
+			case 'PRESET':
+				this.props.createFavourite(type, undefined, undefined, id, name);
 				break;
-			case 'Family':
-				this.props.addFavourite(type, id, undefined, undefined, name);
+			case 'VARIANT':
+				this.props.createFavourite(type, id, undefined, undefined, name);
 				break;
 			default:
 				break;
@@ -141,7 +130,7 @@ class LibraryList extends React.Component {
 			displayedText: this.state.displayedText,
 			onTextChange: this.onTextChange,
 			favourite: favourites.find(
-				f => f.type === 'Template' && f.template === template.name,
+				f => f.type === 'TEMPLATE' && f.template === template.name,
 			),
 			updateFavourites: this.updateFavourites,
 		});
@@ -175,8 +164,9 @@ class LibraryList extends React.Component {
 			onTextChange: this.onTextChange,
 			fontName: `preset${preset.id}`,
 			templateName: templateInfo.templateName,
+			abstractedFontId: preset.abstractedFont && preset.abstractedFont.id,
 			favourite: favourites.find(
-				f => f.type === 'Preset' && f.preset.id === preset.id,
+				f => f.type === 'PRESET' && f.preset && f.preset.id === preset.id,
 			),
 			updateFavourites: this.updateFavourites,
 		});
@@ -221,8 +211,13 @@ class LibraryList extends React.Component {
 				fontName: `user${family.id}`,
 				isFromTeam,
 				favourite: favourites.find(
-					f => f.type === 'Family' && f.family && f.family.id === family.id,
+					f =>
+						f.type === 'VARIANT'
+						&& variantToLoad
+						&& variantToLoad.id === f.variant.id,
 				),
+				abstractedFontId:
+					variantToLoad.abstractedFont && variantToLoad.abstractedFont.id,
 				updateFavourites: this.updateFavourites,
 			};
 	}
@@ -232,11 +227,11 @@ class LibraryList extends React.Component {
 		const presets = p || this.props.presets;
 		const favourites = fa || this.props.favourites || [];
 		const customBadgesColor = [
-			'#29ABE2',
-			'#0000FF',
-			'#00FF00',
-			'#FF0000',
-			'#F7931E',
+			'#003049',
+			'#D62828',
+			'#F77F00',
+			'#FCBF49',
+			'#71AF2F',
 		];
 
 		const subUserColors = [
@@ -768,7 +763,7 @@ export class TemplateItem extends React.Component {
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,
-								'Template',
+								'TEMPLATE',
 								this.props.template.name,
 								this.props.template.name,
 							);
@@ -868,9 +863,10 @@ export class FamilyItem extends React.Component {
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,
-								'Family',
-								this.props.family.id,
+								'VARIANT',
+								this.props.variantToLoad.id,
 								this.props.family.name,
+								this.props.abstractedFontId,
 							);
 						}}
 					>
@@ -995,9 +991,10 @@ export class PresetItem extends React.Component {
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,
-								'Preset',
+								'PRESET',
 								this.props.preset.id,
 								this.props.name,
+								this.props.abstractedFontId,
 							);
 						}}
 					>
