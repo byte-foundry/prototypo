@@ -213,6 +213,7 @@ class LibraryList extends React.Component {
 				favourite: favourites.find(
 					f =>
 						f.type === 'VARIANT'
+						&& f.variant
 						&& variantToLoad
 						&& variantToLoad.id === f.variant.id,
 				),
