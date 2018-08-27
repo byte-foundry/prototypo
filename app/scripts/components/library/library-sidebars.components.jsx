@@ -425,6 +425,9 @@ export class FamilySidebarActions extends React.Component {
 								this.setState({confirmDelete: true});
 							}
 						}}
+						onBlur={() => {
+							this.setState({confirmDelete: false});
+						}}
 					/>
 				)}
 			</div>
