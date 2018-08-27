@@ -431,7 +431,7 @@ const deleteVariantMutation = gql`
 const deleteFavouriteMutation = gql`
 	mutation deleteFavourite($userID: ID!, $abstractedFontID: ID!) {
 		removeFromUserOnAbstractedFont(
-			userUserId: $userID
+			usersUserId: $userID
 			favouritesAbstractedFontId: $abstractedFontID
 		) {
 			favouritesAbstractedFont {
@@ -443,7 +443,7 @@ const deleteFavouriteMutation = gql`
 
 const createFavouriteMutation = gql`
 	mutation createAbstractedFont(
-		$userId: ID!
+		$usersIds: [ID!]!
 		$type: FontType!
 		$variantId: ID
 		$template: String
@@ -451,7 +451,7 @@ const createFavouriteMutation = gql`
 		$name: String!
 	) {
 		createAbstractedFont(
-			userId: $userId
+			usersIds: $usersIds
 			type: $type
 			variantId: $variantId
 			template: $template
@@ -479,7 +479,7 @@ const createFavouriteMutation = gql`
 const addFavouriteMutation = gql`
 	mutation addFavourite($userID: ID!, $abstractedFontID: ID!) {
 		addToUserOnAbstractedFont(
-			userUserId: $userID
+			usersUserId: $userID
 			favouritesAbstractedFontId: $abstractedFontID
 		) {
 			favouritesAbstractedFont {
@@ -598,7 +598,7 @@ export default compose(
 			createFavourite: (type, variantId, template, presetId, name) =>
 				mutate({
 					variables: {
-						userId: ownProps.userId,
+						usersIds: [ownProps.userId],
 						type,
 						variantId,
 						template,
@@ -612,11 +612,6 @@ export default compose(
 				const dataUser = store.readQuery({query: libraryUserQuery});
 				const dataLibrary = store.readQuery({query: libraryQuery});
 				const dataPreset = store.readQuery({query: presetQuery});
-
-				console.log(dataUser);
-				console.log(dataLibrary);
-				console.log(dataPreset);
-				console.log(createAbstractedFont);
 				let variant;
 				let preset;
 
@@ -639,10 +634,6 @@ export default compose(
 				}
 
 				dataUser.user.favourites.push(createAbstractedFont);
-
-				console.log(dataUser);
-				console.log(dataLibrary);
-				console.log(dataPreset);
 
 				store.writeQuery({
 					query: libraryUserQuery,
