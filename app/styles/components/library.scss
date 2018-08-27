@@ -55,6 +55,14 @@
 				color: $white;
 			}
 		}
+		&.button-error {
+			border-color: $red;
+			color: $red;
+			&:hover {
+				background: $red;
+				color: $white;
+			}
+		}
 		&.button-full {
 			width: 100%;
 		}
@@ -817,10 +825,10 @@
 			.sidebar-tags-add {
 				display: inline-block;
 				border: 2px solid $dark-grey;
-				font-size: 1.9em;
-				color: $dark-grey;
+				font-size: 24px;
+				color: #262a36;
 				font-weight: 700;
-		    line-height: 0.7;
+				line-height: 0.8;
 				text-align: center;
 				border-radius: 50%;
 				width: 28px;
