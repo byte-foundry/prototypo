@@ -1,6 +1,11 @@
 import {add2D, mulScalar2D, subtract2D} from '../utils/linear';
 
 const infinityPointScale = 5000000;
+const epsilon = 0.000001;
+
+export function approximately(a, b, precision = epsilon) {
+	return Math.abs(a - b) <= precision;
+}
 
 // The following function should be useless, thanks to paper
 export function lineLineIntersection(p1, p2, p3, p4) {
@@ -308,18 +313,41 @@ export function getIntersectionTValue(
 	const pc = p[2].y;
 	const pd = p[3].y;
 	const d = -pa + 3 * pb - 3 * pc + pd;
-	const a = (3 * pa - 6 * pb + 3 * pc) / d;
-	const b = (-3 * pa + 3 * pb) / d;
-	const c = pa / d;
-	const p3 = (3 * b - a * a) / 3 / 3;
-	const q = (2 * a ** 3 - 9 * a * b + 27 * c) / 27;
-	const q2 = q / 2;
-	const discriminant = q2 ** 2 + p3 ** 3;
+	let a = 3 * pa - 6 * pb + 3 * pc;
+	let b = -3 * pa + 3 * pb;
+	let c = pa;
 	let u1;
 	let v1;
 	let x1;
 	let x2;
 	let x3;
+
+	if (approximately(d, 0)) {
+		// this is not a cubic curve.
+		if (approximately(a, 0)) {
+			// in fact, this is not a quadratic curve either.
+			if (approximately(b, 0)) {
+				// in fact in fact, there are no solutions.
+				return [];
+			}
+			// linear solution:
+			return [-c / b].filter(reduce);
+		}
+		// quadratic solution:
+		var q = Math.sqrt(b * b - 4 * a * c),
+			a2 = 2 * a;
+
+		return [(q - b) / a2, (-b - q) / a2].filter(reduce);
+	}
+
+	a /= d;
+	b /= d;
+	c /= d;
+
+	const p3 = (3 * b - a * a) / 3 / 3;
+	const q = (2 * a ** 3 - 9 * a * b + 27 * c) / 27;
+	const q2 = q / 2;
+	const discriminant = q2 ** 2 + p3 ** 3;
 
 	let result;
 

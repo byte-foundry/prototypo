@@ -69,11 +69,9 @@ export const appState = {
 	POINTS_SELECTED_SHIFT: 0b1000,
 	CONTOUR_SELECTED: 0b10000,
 	CONTOUR_GLOBAL_SELECTED: 0b100000,
-	DRAGGING_CONTOUR_POINT: 0b1000000,
-	CONTOUR_POINT_SELECTED: 0b10000000,
+	PRE_DRAGGING_POINTS: 0b1000000,
+	ON_NON_SELECTED_POINTS: 0b10000000,
 	DRAGGING_CONTOUR: 0b100000000,
-	SKELETON_POINT_SELECTED: 0b1000000000,
-	SKELETON_POINT_SELECTED_SHIFT: 0b10000000000,
 	ZOOMING: 0b100000000000,
 	MOVING: 0b1000000000000,
 	COMPONENT_HOVERED: 0b10000000000000,
@@ -121,8 +119,8 @@ const componentMenuAnimationLength = 20;
 const menuMass = 0.5;
 const pixelPerMeter = 500;
 
-const nodeDrawRadius = 2;
-const nodeHotDrawRadius = 2;
+const offCurveDrawRadius = 3;
+const onCurveDrawRadius = 5;
 const nodeHotRadius = 6;
 const componentHotRadius = 50; // eslint-disable-line no-unused-vars
 
@@ -216,6 +214,7 @@ export default class Toile {
 
 					if (this.keyboardDown.keyCode === keyCode) {
 						this.keyboardUpRisingEdge = eventData;
+						this.keyboardDown = {};
 					}
 
 					this.keyboardUp = eventData;
@@ -431,13 +430,8 @@ export default class Toile {
 		});
 	}
 
-	drawControlPoint(node, hotness, fillColor) {
-		this.drawCircle(
-			node,
-			hotness ? nodeHotDrawRadius : nodeDrawRadius,
-			fillColor,
-			hotness ? fillColor : transparent,
-		);
+	drawControlPoint(node, hotness, fillColor, size) {
+		this.drawCircle(node, size, fillColor, hotness ? fillColor : transparent);
 	}
 
 	drawSkeletonPoint(node, hotness, fillColor) {
@@ -473,6 +467,9 @@ export default class Toile {
 			node,
 			otherNode: prevNode,
 			otherDir: prevNode.dirOut,
+			otherHandle: {
+				id: prevNode.handleOut.id,
+			},
 			handle: node.handleIn,
 			id,
 			handleId: inId,
@@ -487,6 +484,7 @@ export default class Toile {
 			node,
 			otherNode: nextNode,
 			otherDir: nextNode.dirIn,
+			otherHandle: nextNode.handleIn,
 			handle: node.handleOut,
 			id,
 			handleId: outId,
@@ -500,7 +498,7 @@ export default class Toile {
 
 		const modifAddress = `${componentPrefixAddress}${node.nodeAddress}`;
 
-		this.drawControlPoint(node, hot, onCurveColor);
+		this.drawControlPoint(node, hot, onCurveColor, onCurveDrawRadius);
 		this.interactionList.push({
 			id,
 			type: toileType.CONTOUR_NODE,
@@ -546,6 +544,7 @@ export default class Toile {
 			node,
 			otherNode: prevNode,
 			otherDir: prevDir || 0,
+			otherHandle: prevNode.handleOut,
 			handle: node.handleIn,
 			id,
 			parentId,
@@ -562,6 +561,7 @@ export default class Toile {
 			node,
 			otherNode: nextNode,
 			otherDir: nextDir || 0,
+			otherHandle: nextNode.handleIn,
 			handle: node.handleOut,
 			id,
 			parentId,
@@ -579,6 +579,7 @@ export default class Toile {
 			node,
 			hot,
 			node.handleIn ? onCurveColor : skeletonColor,
+			onCurveDrawRadius,
 		);
 
 		if (node.handleIn || node.handleOut) {
@@ -628,6 +629,7 @@ export default class Toile {
 		node,
 		otherNode,
 		otherDir,
+		otherHandle,
 		handle,
 		id,
 		parentId,
@@ -649,13 +651,15 @@ export default class Toile {
 			const normalizePrev = normalize2D(prevVec);
 			const handleVec = add2D(mulScalar2D(prevDist / 3, normalizePrev), handle);
 
+			handle.ghostHandle = handleVec;
+
 			handleNode = handleVec;
 		}
 
 		const inHot = _find(hotItems, item => item.id === handleId);
 
 		this.drawLine(handleNode, node, color, color);
-		this.drawControlPoint(handleNode, inHot, color);
+		this.drawControlPoint(handleNode, inHot, color, offCurveDrawRadius);
 
 		if (handleId) {
 			this.interactionList.push({
@@ -673,6 +677,7 @@ export default class Toile {
 					opId,
 					otherNode,
 					otherDir,
+					otherHandle,
 					parallelId,
 					parallelParameters,
 					nodeAddress: node.nodeAddress,
@@ -829,7 +834,9 @@ export default class Toile {
 		});
 
 		glyph.components.forEach((component, i) => {
-			this.drawAllNodes(component, hotItems, `components.${i}.`);
+			if (component.name !== 'none') {
+				this.drawAllNodes(component, hotItems, `components.${i}.`);
+			}
 		});
 	}
 
@@ -1858,11 +1865,9 @@ export default class Toile {
 							lineEnd,
 						);
 
-						if (ts) {
+						if (ts <= 1 && ts >= 0) {
 							ts.forEach((t) => {
 								const point = getPointOnCurve(bezier, t);
-
-								this.drawCircle(point, 5, '#ff00ff', '#ff00ff');
 
 								if (t !== undefined && point.x > mouseTransformed.x) {
 									polyNumber++;
