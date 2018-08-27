@@ -298,8 +298,21 @@ class LibraryDetails extends React.Component {
 												this.updateVariantData(e, 'width', index);
 											}}
 										>
-											{['medium', 'condensed', 'expanded'].map(width => (
-												<option value={width}>{width}</option>
+											{[
+												{
+													name: 'normal',
+													value: 'medium',
+												},
+												{
+													name: 'condensed',
+													value: 'condensed',
+												},
+												{
+													name: 'expanded',
+													value: 'expanded',
+												},
+											].map(width => (
+												<option value={width.value}>{width.name}</option>
 											))}
 										</select>
 									</div>

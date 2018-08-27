@@ -13,6 +13,9 @@
 		background-color: transparent;
 		transition: color 0.3s ease, background-color 0.3s ease;
 		border-radius: 30px;
+		&:focus {
+			outline: none;
+		}
 		cursor: pointer;
 		.sk-spinner-wave div {
 			background: $dark-grey;

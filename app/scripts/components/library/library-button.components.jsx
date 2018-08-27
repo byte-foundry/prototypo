@@ -6,6 +6,7 @@ export default class LibraryButton extends React.Component {
 	render() {
 		return (
 			<div
+				tabIndex="0"
 				className={`
           library-button
           ${this.props.big ? ' button-big ' : ''}
@@ -19,6 +20,7 @@ export default class LibraryButton extends React.Component {
 					${this.props.error ? ' button-error ' : ''}
         `}
 				onClick={this.props.onClick}
+				onBlur={this.props.onBlur}
 			>
 				{this.props.loading ? (
 					<div className="sk-spinner-wave">
