@@ -105,12 +105,17 @@ function calculateHandleCoordinateModification(parentRef, newPos, opHandle) {
 	const zero = {x: 0, y: 0};
 	const dr = distance2D(d, zero);
 	const radius = distance2D(opHandle, parentRef);
+	let sign = 1;
+
+	if (d.y !== 0) {
+		sign = Math.sign(d.y);
+	}
 	const pointa = mulScalar2D(1 / dr ** 2, {
-		x: Math.sign(d.y) * d.x * Math.sqrt(radius ** 2 * dr ** 2),
+		x: sign * d.x * Math.sqrt(radius ** 2 * dr ** 2),
 		y: Math.abs(d.y) * Math.sqrt(radius ** 2 * dr ** 2),
 	});
 	const pointb = mulScalar2D(1 / dr ** 2, {
-		x: -Math.sign(d.y) * d.x * Math.sqrt(radius ** 2 * dr ** 2),
+		x: -sign * d.x * Math.sqrt(radius ** 2 * dr ** 2),
 		y: -Math.abs(d.y) * Math.sqrt(radius ** 2 * dr ** 2),
 	});
 
@@ -364,9 +369,9 @@ export function onCurveModification(
 
 	changeGlyphManually(
 		changes,
-	glyph,
+		glyph,
 		manualChangeBatcher,
-	globalMode,
+		globalMode,
 		componentName,
 	);
 }
@@ -440,7 +445,6 @@ export default class GlyphCanvas extends React.PureComponent {
 					canvasMode: head.toJS().d.canvasMode,
 					uiOutline: head.toJS().d.uiOutline,
 					uiRuler: head.toJS().d.uiRuler,
-					guides: head.toJS().d.guides,
 					family: head.toJS().d.family,
 					variant: head.toJS().d.variant,
 					uiText: head.toJS().d.uiText,
@@ -770,7 +774,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							mouseDoubleClick = true;
 							setTimeout(() => {
 								mouseDoubleClick = false;
-							}, 400);
+							}, 300);
 						}
 					}
 
@@ -1012,10 +1016,10 @@ export default class GlyphCanvas extends React.PureComponent {
 								}
 								else {
 									selectedItems = hotItems;
-								appStateValue = appState.POINTS_SELECTED;
-								mouseBoxStart = undefined;
-								globalMode = false;
-							}
+									appStateValue = appState.POINTS_SELECTED;
+									mouseBoxStart = undefined;
+									globalMode = false;
+								}
 							}
 							else {
 								selectedItems = [];
@@ -1032,7 +1036,7 @@ export default class GlyphCanvas extends React.PureComponent {
 							appStateValue & appState.DRAGGING_SPACING
 							&& mouseClickRelease
 						) {
-								appStateValue = appState.SPACING_SELECTED;
+							appStateValue = appState.SPACING_SELECTED;
 							draggingNotStarted = false;
 							directionalNotStarted = false;
 							this.client.dispatchAction('/change-glyph-node-manually', {
@@ -1040,7 +1044,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								force: true,
 								changes: {},
 							});
-							}
+						}
 						else if (
 							appStateValue & appState.DRAGGING_GUIDE
 							&& mouseClickRelease
@@ -1053,7 +1057,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								force: true,
 								changes: {},
 							});
-							}
+						}
 						else if (
 							appStateValue & appState.DRAGGING_POINTS
 							&& mouseClickRelease
@@ -1077,7 +1081,7 @@ export default class GlyphCanvas extends React.PureComponent {
 										(acc, item) => acc || item.id === node.id,
 										false,
 									),
-										);
+								);
 								const notSelectedHot = nodes.filter(
 									node =>
 										!selectedItems.reduce(
@@ -1097,15 +1101,15 @@ export default class GlyphCanvas extends React.PureComponent {
 									appStateValue = appState.ON_NON_SELECTED_POINTS;
 									preSelection = notSelectedHot;
 									mouseStart = notSelectedHot[0].data.center;
-								draggingNotStarted = true;
-								directionalNotStarted = true;
-							}
-								}
-								else {
-									appStateValue = appState.BOX_SELECTING;
-									mouseBoxStart = mouse.pos;
+									draggingNotStarted = true;
+									directionalNotStarted = true;
 								}
 							}
+							else {
+								appStateValue = appState.BOX_SELECTING;
+								mouseBoxStart = mouse.pos;
+							}
+						}
 						else if (
 							appStateValue
 								& (appState.SPACING_SELECTED | appState.GUIDE_SELECTED)
@@ -1123,7 +1127,7 @@ export default class GlyphCanvas extends React.PureComponent {
 										glyph,
 										currentNode.data.oppositeId,
 									);
-							}
+								}
 								draggingNotStarted = true;
 								directionalNotStarted = true;
 							}
@@ -1145,7 +1149,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								if (
 									this.toile.keyboardDown.keyCode
 									&& this.toile.keyboardDown.special & specialKey.SHIFT
-						) {
+								) {
 									preSelection.forEach((node) => {
 										const idx = selectedItems.findIndex(
 											item => node.id === item.id,
@@ -1154,11 +1158,12 @@ export default class GlyphCanvas extends React.PureComponent {
 										if (idx !== -1) {
 											selectedItems.splice(idx, 1);
 										}
-								});
+									});
 								}
 								else {
 									selectedItems = preSelection;
 								}
+								this.storeSelectedItems(selectedItems);
 								appStateValue = appState.POINTS_SELECTED;
 							}
 							else {
@@ -1208,9 +1213,10 @@ export default class GlyphCanvas extends React.PureComponent {
 								) {
 									selectedItems.push(...preSelection);
 								}
-							else {
+								else {
 									selectedItems = preSelection;
 								}
+								this.storeSelectedItems(selectedItems);
 								appStateValue = appState.POINTS_SELECTED;
 							}
 							else {
