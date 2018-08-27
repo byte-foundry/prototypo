@@ -2,6 +2,7 @@ import deepEqual from 'lodash/isEqual';
 import _uniq from 'lodash/uniq';
 import React from 'react';
 import PropTypes from 'prop-types';
+import HoodieApi from '../services/hoodie.services.js';
 
 import FontMediator from '../prototypo.js/mediator/FontMediator';
 
@@ -28,15 +29,7 @@ class FontUpdater extends React.Component {
 	}
 
 	render() {
-		const {
-			template,
-			name,
-			subset,
-			glyph,
-			values,
-			family,
-			variant,
-		} = this.props;
+		const {template, name, subset, glyph, values, family, variant} = this.props;
 
 		const subsetCodes = _uniq(subset.split('')).map(letter =>
 			letter.charCodeAt(0),
@@ -46,6 +39,7 @@ class FontUpdater extends React.Component {
 			family,
 			style: variant,
 			template,
+			email: HoodieApi.instance.email,
 		});
 
 		this.fontMediatorInstance.getFont(
