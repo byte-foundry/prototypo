@@ -224,7 +224,7 @@
 					margin-top: 5.5%;
 					margin-left:16.5%;
 					transition: 1s;
-					-webkit-backface-visibility: hidden;
+					backface-visibility: hidden;
 					z-index: 5;
 					&:hover{
 						margin-top: 5%;
@@ -247,7 +247,7 @@
 					margin-top: 5%;
 					margin-left:2.5%;
 					transition: 1s;
-					-webkit-backface-visibility: hidden;
+					backface-visibility: hidden;
 					z-index: 5;
 
 					.st3 {
@@ -276,7 +276,7 @@
 					margin-top: 15.5%;
 					margin-left:11%;
 					transition: 1s;
-					-webkit-backface-visibility: hidden;
+					backface-visibility: hidden;
 					z-index: 5;
 					.loupe-st2 {
 						opacity: 0.8;
@@ -304,7 +304,7 @@
 					margin-left:25%;
 					z-index: 5;
 					transition: 1s;
-					-webkit-backface-visibility: hidden;
+					backface-visibility: hidden;
 					&:hover {
 						transform: rotate(-4deg);
 						margin-top: 13.5%;
@@ -326,7 +326,7 @@
 					margin-top: 7%;
 					margin-left:22%;
 					transition: 1s;
-					-webkit-backface-visibility: hidden;
+					backface-visibility: hidden;
 					z-index: 5;
 					&:hover{
 						transform: rotate(-25deg);
@@ -349,7 +349,7 @@
 					margin-top: 4%;
 					margin-left:41%;
 					transition: 0.5s;
-					-webkit-backface-visibility: hidden;
+					backface-visibility: hidden;
 					z-index: 5;
 					&:hover{
 						transform: rotate(50deg);
@@ -372,7 +372,7 @@
 					margin-top: 12%;
 					margin-left:41%;
 					transition: 1.4s;
-					-webkit-backface-visibility: hidden;
+					backface-visibility: hidden;
 					z-index: 5;
 					&:hover{
 						margin-top: 13%;
@@ -395,7 +395,7 @@
 					margin-top: 2%;
 					margin-left:51%;
 					transition: 1.4s;
-					-webkit-backface-visibility: hidden;
+					backface-visibility: hidden;
 					z-index: 5;
 					&:hover{
 						transform: rotate(20deg);
@@ -419,7 +419,7 @@
 					margin-left:71%;
 					z-index: 5;
 					transition: 1s;
-					-webkit-backface-visibility: hidden;
+					backface-visibility: hidden;
 					&:hover {
 						margin-left: 71.5%;
 						margin-top: 3.5%;
@@ -490,7 +490,7 @@
 					margin-top: 10.5%;
 					margin-left:43%;
 					transition: 1.4s;
-					-webkit-backface-visibility: hidden;
+					backface-visibility: hidden;
 					z-index: 5;
 					.postit-st1 {
 						opacity:0.35;
@@ -517,7 +517,7 @@
 					margin-top: 14%;
 					margin-left:41%;
 					transition: 1.4s;
-					-webkit-backface-visibility: hidden;
+					backface-visibility: hidden;
 					z-index: 5;
 					.medal-ribbon-1, .medal-ribbon-2 {
 						transform-origin: top;

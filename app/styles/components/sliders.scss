@@ -168,8 +168,7 @@
 		color: $medium-grey;
 
 		// we'll use textfield appearance until we've figured out sth better
-		-moz-appearance: textfield;
-		-webkit-appearance: textfield;
+		appearance: textfield;
 
 		&.is-indiv {
 			//Do not put more than 43px without checking that it make serif terminal curve go crazy
@@ -185,9 +184,7 @@
 		flex:1;
 		/* fix a overflow hidden and border-radius error in chrome */
 		mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
-		-webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
 		mask-repeat: repeat;
-		-webkit-mask-repeat: repeat;
 
 		&, &-bg, &-handle {
 			border-radius: 1rem;
@@ -233,12 +230,10 @@
 
 		&.min {
 			mask-image: radial-gradient(circle at calc(100%) 50%, transparent 9px, #555 10px);
-			-webkit-mask-image: radial-gradient(circle at calc(100%) 50%, transparent 9px, #555 10px);
 		}
 
 		&.max {
 			mask-image: radial-gradient(circle at 0px 50%, transparent 9px, #555 10px);
-			-webkit-mask-image: radial-gradient(circle at 0px 50%, transparent 9px, #555 10px);
 		}
 	}
 

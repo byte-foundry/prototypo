@@ -33,7 +33,6 @@
 		&::after {
 			content: "";
 		    background: no-repeat center $dark-grey;
-			-webkit-mask:  url('../../images/selected-icon.svg') no-repeat center;
 			mask: url('../../images/selected-icon.svg') no-repeat center;
 			float: right;
 		    width: 50px;
