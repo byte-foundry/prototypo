@@ -1248,6 +1248,8 @@ export default class GlyphCanvas extends React.PureComponent {
 											preSelection[0].data.center,
 										);
 									});
+
+									this.storeSelectedItems(selectedItems);
 								}
 							}
 						}
@@ -1552,7 +1554,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 					else if (appStateValue & appState.POINTS_SELECTED && supprPressed) {
 						mouseMovement = false;
-						const interactions = selectedItems
+						interactions = selectedItems
 							.filter(
 								item =>
 									item.type === toileType.NODE_OUT
@@ -1560,7 +1562,7 @@ export default class GlyphCanvas extends React.PureComponent {
 									|| item.type === toileType.CONTOUR_NODE_OUT
 									|| item.type === toileType.CONTOUR_NODE_IN,
 							)
-							.forEach(item => ({
+							.map(item => ({
 								item,
 								modData: _get(glyph, item.data.parentId),
 							}));
