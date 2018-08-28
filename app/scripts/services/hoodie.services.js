@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import apolloClient from './graphcool.services';
 import isProduction from '../helpers/is-production.helpers';
 import LocalClient from '../stores/local-client.stores';
+import {loadStuff} from '../helpers/appSetup.helpers';
 
 const AWS_URL = `https://${
 	isProduction() ? 'e4jpj60rk8' : 'tc1b6vq6o8'
@@ -105,6 +106,8 @@ export default class HoodieApi {
 				/* don't need to catch anything, just next step */
 			}
 		}
+
+		await loadStuff();
 	}
 
 	static async logout() {

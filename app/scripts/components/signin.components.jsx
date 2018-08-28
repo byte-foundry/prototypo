@@ -4,7 +4,6 @@ import {graphql} from 'react-apollo';
 import {Redirect, Link, withRouter} from 'react-router-dom';
 
 import isProduction from '../helpers/is-production.helpers';
-import {loadStuff} from '../helpers/appSetup.helpers';
 import HoodieApi from '../services/hoodie.services';
 
 import FormError from './shared/form-error.components';
@@ -31,8 +30,6 @@ export class Signin extends React.Component {
 
 		await HoodieApi.setup();
 
-		await loadStuff();
-
 		window.Intercom('boot', {
 			app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
 			email,
@@ -41,6 +38,8 @@ export class Signin extends React.Component {
 			},
 		});
 		window.trackJs.addMetadata('username', email);
+
+		await this.props.refetch();
 	}
 
 	async handleSignIn(e) {
@@ -138,7 +137,11 @@ export class Signin extends React.Component {
 							<hr className="sign-in-separator-line" />
 							<span className="sign-in-separator-text">OR</span>
 						</div>
-						<form className="sign-in-form" onSubmit={this.handleSignIn}>
+						<form
+							className="sign-in-form"
+							onSubmit={this.handleSignIn}
+							data-testid="sign-in-form"
+						>
 							<InputWithLabel
 								id="email-sign-in"
 								name="email-sign-in"
@@ -180,15 +183,15 @@ export class Signin extends React.Component {
 	}
 }
 
-const loggedInUserQuery = gql`
-	query loggedInUserQuery {
+export const LOGGED_IN_USER = gql`
+	query loggedInUser {
 		user {
 			id
 		}
 	}
 `;
 
-const authenticateEmailUserMutation = gql`
+export const AUTHENTICATE_EMAIL_USER = gql`
 	mutation authenticateEmailUser($email: String!, $password: String!) {
 		auth: authenticateEmailUser(email: $email, password: $password) {
 			token
@@ -196,7 +199,7 @@ const authenticateEmailUserMutation = gql`
 	}
 `;
 
-export default graphql(authenticateEmailUserMutation, {
+export default graphql(AUTHENTICATE_EMAIL_USER, {
 	props: ({mutate}) => ({
 		authenticateEmailUser: (email, password) =>
 			mutate({
@@ -207,8 +210,9 @@ export default graphql(authenticateEmailUserMutation, {
 			}),
 	}),
 })(
-	graphql(loggedInUserQuery, {
+	graphql(LOGGED_IN_USER, {
 		props: ({data}) => ({
+			refetch: data.refetch,
 			loadingUser: data.loading,
 			user: data.user,
 		}),

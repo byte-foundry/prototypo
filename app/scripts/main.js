@@ -23,7 +23,6 @@ import Stores from './stores/creation.stores';
 import history from './services/history.services';
 
 import selectRenderOptions from './helpers/userAgent.helpers';
-import {loadStuff} from './helpers/appSetup.helpers';
 import isProduction from './helpers/is-production.helpers';
 
 import FontMediator from './prototypo.js/mediator/FontMediator';
@@ -164,8 +163,6 @@ selectRenderOptions(
 
 		try {
 			await HoodieApi.setup();
-
-			await loadStuff();
 		}
 		catch (err) {
 			if (!err.message.includes('Not authenticated yet')) {
