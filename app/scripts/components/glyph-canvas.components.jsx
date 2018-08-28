@@ -1560,7 +1560,7 @@ export default class GlyphCanvas extends React.PureComponent {
 									|| item.type === toileType.CONTOUR_NODE_OUT
 									|| item.type === toileType.CONTOUR_NODE_IN,
 							)
-							.forEach(item => ({
+							.map(item => ({
 								item,
 								modData: _get(glyph, item.data.parentId),
 							}));
