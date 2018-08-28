@@ -8,9 +8,6 @@ const WebpackDevServer = require('webpack-dev-server');
 const del = require('del');
 const gutil	= require('gulp-util');
 
-// Tests
-const nightwatch = require('gulp-nightwatch');
-
 gulp.task('images', () => {
 	gulp.src(['./app/images/*.*', './app/images/**/*.*'])
 		.pipe(gulp.dest('./dist/assets/images/'));
@@ -171,13 +168,3 @@ gulp.task('debug', ['clean', 'images', 'cp-genese', 'cp-static', 'webpack:dll'],
 		// keep the server alive or continue?
 	});
 });
-
-gulp.task('test', callback => gulp.src('')
-	.pipe(nightwatch({
-		cliArgs: {
-			env: 'default,chrome_win8,chrome_win7,firefox_win7,chrome_mac,firefox_mac',
-		},
-	})));
-
-gulp.task('test:basic', callback => gulp.src('')
-	.pipe(nightwatch()));
