@@ -1552,7 +1552,7 @@ export default class GlyphCanvas extends React.PureComponent {
 					}
 					else if (appStateValue & appState.POINTS_SELECTED && supprPressed) {
 						mouseMovement = false;
-						const interactions = selectedItems
+						interactions = selectedItems
 							.filter(
 								item =>
 									item.type === toileType.NODE_OUT
