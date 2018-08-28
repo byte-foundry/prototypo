@@ -16,7 +16,7 @@
 
 		.onboarding-content {			
 			padding: 60px 120px;
-			padding-bottom: 25px;
+			padding-bottom: 65px;
 			flex-grow:1;
 
 			h3 {
@@ -106,6 +106,9 @@
 			&.step-start-second {
 				width: 40%;
 				margin: 0 30%;
+				.description {
+					text-align: center;
+				}
 				input {
 					width: 100%;
 					background: transparent;

@@ -7,7 +7,7 @@ import {withRouter} from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores';
 
-import {libraryQuery} from '../collection/collection.components';
+import {libraryQuery} from '../library/library-main.components';
 
 const voidStateObject = {};
 const voidStateArray = [];
@@ -111,7 +111,7 @@ class ArianneThread extends React.PureComponent {
 	}
 
 	addFamily() {
-		this.client.dispatchAction('/store-value', {openFamilyModal: true});
+		this.props.router.push('/library/create');
 	}
 
 	addVariant() {
@@ -284,7 +284,7 @@ class ArianneThread extends React.PureComponent {
 			<div className="arianne-thread">
 				<RootArianneItem
 					click={() => {
-						this.showCollection();
+						this.props.router.push('/library/home');
 					}}
 				/>
 				{familyItem}
@@ -323,7 +323,7 @@ class RootArianneItem extends React.Component {
 		return (
 			<div className="arianne-item" onClick={this.props.click}>
 				<div className="arianne-item-action">
-					<span className="arianne-item-action-collection">My projects</span>
+					<span className="arianne-item-action-collection">Library</span>
 				</div>
 				<div className="arianne-item-arrow" />
 			</div>

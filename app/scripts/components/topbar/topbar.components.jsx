@@ -172,8 +172,7 @@ class Topbar extends React.Component {
 	}
 
 	newProject() {
-		this.client.dispatchAction('/store-value', {openFamilyModal: true});
-		Log.ui('Topbar.newProject');
+		this.props.router.push('/library/create');
 	}
 
 	startTuto() {

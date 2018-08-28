@@ -54,8 +54,6 @@ import AccountInvoiceList from './components/account/account-invoice-list.compon
 import AccountPrototypoLibrary from './components/account/account-prototypo-library.components.jsx';
 import Subscription from './components/account/subscription.components';
 
-import StartApp from './components/start/start-app.components';
-
 import FontTester from './font-test/font-tester.components.jsx';
 
 import GlyphTester from './font-test/glyph-tester.components.jsx';
@@ -342,7 +340,6 @@ class AppRoutes extends React.PureComponent {
 							</Route>
 						</Route>
 					</Route>
-					<Route path="start" component={StartApp} onEnter={redirectToLogin} />
 				</Router>
 			</ApolloProvider>
 		);

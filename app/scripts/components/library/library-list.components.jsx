@@ -52,7 +52,6 @@ class LibraryList extends React.Component {
 			.getStore('/prototypoStore', this.lifespan)
 			.onUpdate((head) => {
 				this.setState({
-					openFamilyModal: head.toJS().d.openFamilyModal,
 					openVariantModal: head.toJS().d.openVariantModal,
 					openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
 					openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
@@ -213,6 +212,7 @@ class LibraryList extends React.Component {
 				favourite: favourites.find(
 					f =>
 						f.type === 'VARIANT'
+						&& f.variant
 						&& variantToLoad
 						&& variantToLoad.id === f.variant.id,
 				),
@@ -791,7 +791,7 @@ export class TemplateItem extends React.Component {
 					}`}
 				>
 					<LibraryButton
-						name="Edit"
+						name="Create from this template"
 						floated
 						dark
 						onClick={() => {
@@ -898,7 +898,7 @@ export class FamilyItem extends React.Component {
 					{!this.props.isFromTeam && (
 						<LibraryButton
 							floated
-							name="Edit"
+							name="Open in the editor"
 							dark
 							onClick={() => {
 								this.props.open(this.props.variantToLoad, this.props.family);
@@ -1022,7 +1022,7 @@ export class PresetItem extends React.Component {
 					}`}
 				>
 					<LibraryButton
-						name="Edit"
+						name="Create from this preset"
 						floated
 						dark
 						onClick={() => {

@@ -334,6 +334,9 @@ export class LibrarySidebarLeft extends React.Component {
 }
 
 export class LibrarySidebarRight extends React.Component {
+	constructor(props) {
+		super(props);
+	}
 	render() {
 		return (
 			<div className="library-sidebar-right">
@@ -356,6 +359,9 @@ export class LibrarySidebarRight extends React.Component {
 export class FamilySidebarActions extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			confirmDelete: false,
+		};
 		this.addVariant = this.addVariant.bind(this);
 	}
 	async componentWillMount() {
@@ -420,11 +426,20 @@ export class FamilySidebarActions extends React.Component {
 				{this.props.isPersonal
 					&& this.props.mode === 'details' && (
 					<LibraryButton
-						name="Delete family"
+						name={`${this.state.confirmDelete ? 'Confirm' : 'Delete family'}`}
 						bold
 						full
+						error={this.state.confirmDelete}
 						onClick={() => {
-							this.props.deleteFamily();
+							if (this.state.confirmDelete) {
+								this.props.deleteFamily();
+							}
+							else {
+								this.setState({confirmDelete: true});
+							}
+						}}
+						onBlur={() => {
+							this.setState({confirmDelete: false});
 						}}
 					/>
 				)}

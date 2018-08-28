@@ -13,6 +13,9 @@
 		background-color: transparent;
 		transition: color 0.3s ease, background-color 0.3s ease;
 		border-radius: 30px;
+		&:focus {
+			outline: none;
+		}
 		cursor: pointer;
 		.sk-spinner-wave div {
 			background: $dark-grey;
@@ -71,6 +74,14 @@
 			color: $dark-grey;
 			&:hover {
 				background: $green;
+				color: $white;
+			}
+		}
+		&.button-error {
+			border-color: $red;
+			color: $red;
+			&:hover {
+				background: $red;
 				color: $white;
 			}
 		}
@@ -770,13 +781,13 @@
 			.type {
 				position: absolute;
 				left: -60px;
-				top: 145px;
+				top: 146px;
 				transform: translateY(0) rotate(-90deg);
 				text-transform: uppercase;
 				transform-origin: top left;
 				font-size: 85%;
 				color: transparentize($dark-grey, 0.7);
-				width: 145px;
+				width: 146px;
 				padding-top: 10px;
 				padding-bottom: 10px;
 				text-align: center;
@@ -857,7 +868,7 @@
 				background: $dark-grey;
 				padding-top: 0;
 				padding-bottom: 0;
-				padding-left: 40px;
+				padding-left: 60px;
 				padding-right: 40px;
 				max-height: 0px;
 				transition: all 0.1s ease;
@@ -1004,10 +1015,10 @@
 			.sidebar-tags-add {
 				display: inline-block;
 				border: 2px solid $dark-grey;
-				font-size: 1.9em;
-				color: $dark-grey;
+				font-size: 24px;
+				color: #262a36;
 				font-weight: 700;
-		    line-height: 0.7;
+				line-height: 0.8;
 				text-align: center;
 				border-radius: 50%;
 				width: 28px;

@@ -2,6 +2,7 @@ import deepEqual from 'lodash/isEqual';
 import _uniq from 'lodash/uniq';
 import React from 'react';
 import PropTypes from 'prop-types';
+import HoodieApi from '../services/hoodie.services.js';
 
 import FontMediator from '../prototypo.js/mediator/FontMediator';
 
@@ -38,6 +39,7 @@ class FontUpdater extends React.Component {
 			family,
 			style: variant,
 			template,
+			email: HoodieApi.instance.email,
 		});
 
 		this.fontMediatorInstance.getFont(
