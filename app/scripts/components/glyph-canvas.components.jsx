@@ -1248,6 +1248,8 @@ export default class GlyphCanvas extends React.PureComponent {
 											preSelection[0].data.center,
 										);
 									});
+
+									this.storeSelectedItems(selectedItems);
 								}
 							}
 						}
