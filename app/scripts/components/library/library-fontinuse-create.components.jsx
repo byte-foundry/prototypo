@@ -502,7 +502,7 @@ class LibraryFontInUseCreate extends React.Component {
 						</form>
 					</div>
 				</div>
-				<LibrarySidebarRight />
+				<LibrarySidebarRight router={this.props.router} />
 			</div>
 		);
 	}

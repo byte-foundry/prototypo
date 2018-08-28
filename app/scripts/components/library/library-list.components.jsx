@@ -666,7 +666,7 @@ class LibraryList extends React.Component {
 							<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
 						)}
 				</div>
-				<LibrarySidebarRight>
+				<LibrarySidebarRight router={this.props.router}>
 					<LibrarySearch />
 					<SidebarFilters setActiveFilters={this.props.setActiveFilters} />
 					<SidebarTags tags={this.state.tags} mode="interactive" />
