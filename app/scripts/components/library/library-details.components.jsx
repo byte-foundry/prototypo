@@ -367,7 +367,7 @@ class LibraryDetails extends React.Component {
 							))}
 					</div>
 				</div>
-				<LibrarySidebarRight>
+				<LibrarySidebarRight router={this.props.router}>
 					<FamilySidebarActions
 						familyId={this.props.params.projectID}
 						deleteFamily={this.deleteFamily}
