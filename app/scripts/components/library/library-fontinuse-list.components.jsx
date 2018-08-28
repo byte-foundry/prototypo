@@ -109,7 +109,7 @@ export default class LibraryFontsInUseList extends React.Component {
 							))}
 					</div>
 				</div>
-				<LibrarySidebarRight>
+				<LibrarySidebarRight router={this.props.router}>
 					<LibraryButton
 						name="Add fontsinuse"
 						bold

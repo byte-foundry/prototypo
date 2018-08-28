@@ -298,7 +298,7 @@ class LibrarySee extends React.Component {
 							))}
 					</div>
 				</div>
-				<LibrarySidebarRight>
+				<LibrarySidebarRight router={this.props.router}>
 					<FamilySidebarActions
 						glyphs={this.state.family.glyphs}
 						family={this.state.family}

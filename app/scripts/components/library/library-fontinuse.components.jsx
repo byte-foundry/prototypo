@@ -79,7 +79,7 @@ export default class LibraryFontsInUse extends React.Component {
 						)}
 					</div>
 				</div>
-				<LibrarySidebarRight>
+				<LibrarySidebarRight router={this.props.router}>
 					<Link className="sidebar-action" to="/library/fontinuse/create">
 						Add fontsinuse
 					</Link>
