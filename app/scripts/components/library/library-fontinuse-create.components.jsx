@@ -4,6 +4,7 @@ import {graphql, gql, compose} from 'react-apollo';
 import {LibrarySidebarRight} from './library-sidebars.components';
 import LocalClient from '../../stores/local-client.stores';
 import LibraryButton from './library-button.components';
+import {libraryQuery, presetQuery} from './library-main.components';
 
 class LibraryFontInUseCreate extends React.Component {
 	constructor(props) {
@@ -71,7 +72,6 @@ class LibraryFontInUseCreate extends React.Component {
 		});
 	}
 	addSuggestion(suggestion) {
-		console.log(suggestion);
 		const fonts = [...this.state.fontInUseMetadata.fonts];
 		const alreadyAdded = fonts.find(
 			e =>
@@ -575,6 +575,19 @@ const createAbstractedFontMutation = gql`
 			name: $name
 		) {
 			id
+			type
+			name
+			updatedAt
+			preset {
+				id
+			}
+			variant {
+				id
+				family {
+					id
+				}
+			}
+			template
 		}
 	}
 `;
@@ -691,6 +704,40 @@ export default compose(
 					},
 				}),
 		}),
+		options: {
+			update: (store, {data: {createAbstractedFont}}) => {
+				const dataLibrary = store.readQuery({query: libraryQuery});
+				const dataPreset = store.readQuery({query: presetQuery});
+				let variant;
+				let preset;
+
+				switch (createAbstractedFont.type) {
+				case 'PRESET':
+					preset = dataPreset.allPresets.find(
+						p => p.id === createAbstractedFont.preset.id,
+					);
+					preset.abstractedFont = {id: createAbstractedFont.id};
+					break;
+				case 'VARIANT':
+					variant = dataLibrary.user.library
+						.find(f => f.id === createAbstractedFont.variant.family.id)
+						.variants.find(v => v.id === createAbstractedFont.variant.id);
+
+					variant.abstractedFont = {id: createAbstractedFont.id};
+					break;
+				default:
+					break;
+				}
+				store.writeQuery({
+					query: libraryQuery,
+					data: dataLibrary,
+				});
+				store.writeQuery({
+					query: presetQuery,
+					data: dataPreset,
+				});
+			},
+		},
 	}),
 	graphql(deleteAbstractedFontMutation, {
 		props: ({mutate}) => ({
