@@ -12,7 +12,6 @@ export default class LibraryHosting extends React.Component {
 	}
 
 	render() {
-		console.log(this.props.hostedDomains);
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">

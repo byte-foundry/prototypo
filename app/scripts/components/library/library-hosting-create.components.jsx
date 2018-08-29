@@ -7,6 +7,7 @@ import {tmpUpload} from '../../services/graphcool.services';
 import LocalClient from '../../stores/local-client.stores';
 import FontUpdater from '../font-updater.components';
 import LibraryButton from './library-button.components';
+import {libraryQuery, presetQuery} from './library-main.components';
 
 class LibraryHostingCreate extends React.Component {
 	constructor(props) {
@@ -64,50 +65,64 @@ class LibraryHostingCreate extends React.Component {
 				),
 			);
 
+			console.log(this.state.addedFonts);
+			const abstractedFontCreated = this.state.addedFonts
+				.filter(f => f.variant.abstractedFont)
+				.map(f => f.variant.abstractedFont.id);
+
+			console.log(abstractedFontCreated);
 			const abstractedFontIds = await Promise.all(
-				this.state.addedFonts.map(async addedFont =>
-					this.props.createAbstractedFont(
-						addedFont.abstractedFontMeta.type,
-						addedFont.abstractedFontMeta.familyId,
-						addedFont.abstractedFontMeta.template,
-						addedFont.abstractedFontMeta.presetId,
-						addedFont.abstractedFontMeta.name,
+				this.state.addedFonts
+					.filter(f => !f.variant.abstractedFont)
+					.map(async addedFont =>
+						this.props.createAbstractedFont(
+							addedFont.abstractedFontMeta.type,
+							addedFont.variant.id,
+							addedFont.abstractedFontMeta.template,
+							addedFont.abstractedFontMeta.presetId,
+							addedFont.abstractedFontMeta.name,
+						),
 					),
-				),
 			);
 
 			console.log(abstractedFontIds);
 
-			const hostedFonts = await Promise.all(
-				urls.map(({url}, index) =>
-					this.props.hostFont(
-						abstractedFontIds[index].data.createAbstractedFont.id,
-						url,
-					),
-				),
-			);
+			const allAbstractedFonts = [
+				...abstractedFontCreated,
+				...abstractedFontIds.map(af => af.data.createAbstractedFont.id),
+			];
 
-			console.log(hostedFonts);
+			console.log(allAbstractedFonts);
+			// const hostedFonts = await Promise.all(
+			// 	urls.map(({url}, index) =>
+			// 		this.props.hostFont(
+			// 			abstractedFontIds[index].data.createAbstractedFont.id,
+			// 			url,
+			// 		),
+			// 	),
+			// );
 
-			this.props
-				.createHostedDomain(
-					this.state.domain,
-					hostedFonts.map(({data}) => data.hostFont.id),
-				)
-				.then(() => {
-					this.props.router.push('/library/hosting');
-					clearTimeout(this.state.hostingTimeout);
-					this.setState({
-						errors: {
-							domain: false,
-							hostedFonts: false,
-							hosting: false,
-						},
-						hostingTimeout: undefined,
-						loading: false,
-					});
-				});
-			this.setState({status: 'hosting'});
+			// console.log(hostedFonts);
+
+			// this.props
+			// 	.createHostedDomain(
+			// 		this.state.domain,
+			// 		hostedFonts.map(({data}) => data.hostFont.id),
+			// 	)
+			// 	.then(() => {
+			// 		this.props.router.push('/library/hosting');
+			// 		clearTimeout(this.state.hostingTimeout);
+			// 		this.setState({
+			// 			errors: {
+			// 				domain: false,
+			// 				hostedFonts: false,
+			// 				hosting: false,
+			// 			},
+			// 			hostingTimeout: undefined,
+			// 			loading: false,
+			// 		});
+			// 	});
+			// this.setState({status: 'hosting'});
 		}
 	}
 	addSuggestion(suggestion, variant) {
@@ -132,7 +147,7 @@ class LibraryHostingCreate extends React.Component {
 			});
 
 			switch (suggestion.type) {
-			case 'Template':
+			case 'TEMPLATE':
 				templateData = this.state.templatesData.find(
 					e => e.name === suggestion.templateName,
 				);
@@ -140,14 +155,14 @@ class LibraryHostingCreate extends React.Component {
 				values = templateData.initValues;
 				template = templateData.name;
 				abstractedFontMeta = {
-					type: 'Template',
+					type: 'TEMPLATE',
 					familyId: undefined,
 					template: templateData.name,
 					presetId: undefined,
 					name: suggestion.name,
 				};
 				break;
-			case 'Preset':
+			case 'PRESET':
 				preset
 						= this.props.presets
 						&& this.props.presets.find(p => p.id === suggestion.id);
@@ -160,14 +175,14 @@ class LibraryHostingCreate extends React.Component {
 				);
 				glyphs = templateData.glyphs;
 				abstractedFontMeta = {
-					type: 'Preset',
+					type: 'PRESET',
 					familyId: undefined,
 					template: undefined,
 					presetId: suggestion.id,
 					name: suggestion.name,
 				};
 				break;
-			case 'Family':
+			case 'VARIANT':
 				family
 						= this.props.families
 						&& this.props.families.find(p => p.id === suggestion.id);
@@ -185,7 +200,7 @@ class LibraryHostingCreate extends React.Component {
 					t => t.templateName === family.template,
 				).templateName;
 				abstractedFontMeta = {
-					type: 'Family',
+					type: 'VARIANT',
 					familyId: suggestion.id,
 					template: undefined,
 					presetId: undefined,
@@ -214,6 +229,7 @@ class LibraryHostingCreate extends React.Component {
 	updateAutocompleteSuggestions(event) {
 		this.setState({autocompleteText: event.target.value});
 		const autocompleteSuggestions = [];
+		const abstractedTemplates = this.props.abstractedTemplates;
 
 		const templateFound
 			= this.state.templateInfos
@@ -226,7 +242,7 @@ class LibraryHostingCreate extends React.Component {
 		templateFound
 			&& templateFound.forEach(t =>
 				autocompleteSuggestions.push({
-					type: 'Template',
+					type: 'TEMPLATE',
 					name: t.familyName,
 					id: `template${t.familyName}`,
 					templateName: t.templateName,
@@ -240,6 +256,9 @@ class LibraryHostingCreate extends React.Component {
 							weight: 500,
 							italic: false,
 							width: 'normal',
+							abstractedFont: {
+								id: abstractedTemplates.find(at => at.template === t.name).id,
+							},
 						},
 					],
 				}),
@@ -256,7 +275,7 @@ class LibraryHostingCreate extends React.Component {
 		presetFound
 			&& presetFound.forEach(p =>
 				autocompleteSuggestions.push({
-					type: 'Preset',
+					type: 'PRESET',
 					name: `${p.variant.family.name}`,
 					id: p.id,
 					presetId: p.id,
@@ -264,11 +283,14 @@ class LibraryHostingCreate extends React.Component {
 					template: undefined,
 					variants: [
 						{
-							id: 'base',
+							id: p.id,
 							name: 'regular',
 							weight: 500,
 							italic: false,
 							width: 'normal',
+							abstractedFont: {
+								id: p.abstractedFont && p.abstractedFont.id,
+							},
 						},
 					],
 				}),
@@ -283,7 +305,7 @@ class LibraryHostingCreate extends React.Component {
 		familyFound
 			&& familyFound.forEach(f =>
 				autocompleteSuggestions.push({
-					type: 'Family',
+					type: 'VARIANT',
 					id: f.id,
 					name: `${f.name}`,
 					variants: f.variants,
@@ -309,7 +331,7 @@ class LibraryHostingCreate extends React.Component {
 		teamFound
 			&& teamFound.forEach(f =>
 				autocompleteSuggestions.push({
-					type: 'Family',
+					type: 'VARIANT',
 					name: `${f.name}`,
 					variants: f.variants,
 					presetId: undefined,
@@ -635,14 +657,14 @@ const deleteAbstractedFontMutation = gql`
 const createAbstractedFontMutation = gql`
 	mutation createAbstractedFont(
 		$type: FontType!
-		$familyId: ID
+		$variantId: ID
 		$template: String
 		$presetId: ID
 		$name: String!
 	) {
 		createAbstractedFont(
 			type: $type
-			familyId: $familyId
+			variantId: $variantId
 			template: $template
 			presetId: $presetId
 			name: $name
@@ -748,16 +770,50 @@ export default compose(
 	}),
 	graphql(createAbstractedFontMutation, {
 		props: ({mutate}) => ({
-			createAbstractedFont: (type, familyId, template, presetId, name) =>
+			createAbstractedFont: (type, variantId, template, presetId, name) =>
 				mutate({
 					variables: {
 						type,
-						familyId,
+						variantId,
 						template,
 						presetId,
 						name,
 					},
 				}),
 		}),
+		options: {
+			update: (store, {data: {createAbstractedFont}}) => {
+				const dataLibrary = store.readQuery({query: libraryQuery});
+				const dataPreset = store.readQuery({query: presetQuery});
+				let variant;
+				let preset;
+
+				switch (createAbstractedFont.type) {
+				case 'Preset':
+					preset = dataPreset.allPresets.find(
+						p => p.id === createAbstractedFont.preset.id,
+					);
+					preset.abstractedFont = {id: createAbstractedFont.id};
+					break;
+				case 'Variant':
+					variant = dataLibrary.user.library
+						.find(f => f.id === createAbstractedFont.variant.family.id)
+						.variants.find(v => v.id === createAbstractedFont.variant.id);
+
+					variant.abstractedFont = {id: createAbstractedFont.id};
+					break;
+				default:
+					break;
+				}
+				store.writeQuery({
+					query: libraryQuery,
+					data: dataLibrary,
+				});
+				store.writeQuery({
+					query: presetQuery,
+					data: dataPreset,
+				});
+			},
+		},
 	}),
 )(LibraryHostingCreate);
