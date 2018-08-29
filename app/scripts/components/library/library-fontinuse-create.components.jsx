@@ -296,9 +296,13 @@ class LibraryFontInUseCreate extends React.Component {
 			this.props
 				.addFontInUse(
 					this.state.fontInUseMetadata.designer,
-					this.state.fontInUseMetadata.designerUrl,
+					this.state.fontInUseMetadata.designerUrl
+						.replace('http://', '')
+						.replace('https://', ''),
 					this.state.fontInUseMetadata.client,
-					this.state.fontInUseMetadata.clientUrl,
+					this.state.fontInUseMetadata.clientUrl
+						.replace('http://', '')
+						.replace('https://', ''),
 					this.state.fontInUseMetadata.fonts,
 					this.state.fontInUseMetadata.images,
 				)
@@ -319,9 +323,13 @@ class LibraryFontInUseCreate extends React.Component {
 				.editFontInUse(
 					this.state.fontInUseMetadata.id,
 					this.state.fontInUseMetadata.designer,
-					this.state.fontInUseMetadata.designerUrl,
+					this.state.fontInUseMetadata.designerUrl
+						.replace('http://', '')
+						.replace('https://', ''),
 					this.state.fontInUseMetadata.client,
-					this.state.fontInUseMetadata.clientUrl,
+					this.state.fontInUseMetadata.clientUrl
+						.replace('http://', '')
+						.replace('https://', ''),
 					this.state.fontInUseMetadata.fonts,
 					this.state.fontInUseMetadata.images,
 				)
