@@ -378,10 +378,12 @@ export default graphql(loggedInUserQuery, {
 		props: ({mutate}) => ({
 			signUpAndLogin: (email, password, firstName, options) =>
 				mutate({
-					email,
-					password,
-					firstName,
-					...options,
+					variables: {
+						email,
+						password,
+						firstName,
+						...options,
+					},
 				}),
 		}),
 	})(Register),
