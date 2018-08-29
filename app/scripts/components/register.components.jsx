@@ -93,7 +93,7 @@ class Register extends React.Component {
 		if (password.length < 8) {
 			// password is not long enough
 			inError.password = true;
-			errors.push('Your password must be at least 8 character long');
+			errors.push('Your password must be at least 8 characters long');
 		}
 
 		if (errors.length > 0) {
@@ -123,6 +123,8 @@ class Register extends React.Component {
 			window.localStorage.setItem('graphcoolToken', response.data.auth.token);
 
 			HoodieApi.setup();
+
+			await this.props.refetch();
 
 			window.Intercom('boot', {
 				app_id: isProduction() ? 'mnph1bst' : 'desv6ocn',
@@ -227,7 +229,11 @@ class Register extends React.Component {
 								<hr className="sign-in-separator-line" />
 								<span className="sign-in-separator-text">OR</span>
 							</div>
-							<form className="sign-in-form" onSubmit={this.register}>
+							<form
+								className="sign-in-form"
+								onSubmit={this.register}
+								data-testid="register-form"
+							>
 								<div className="columns">
 									<div className="half-column">
 										<InputWithLabel
@@ -332,7 +338,7 @@ class Register extends React.Component {
 	}
 }
 
-const loggedInUserQuery = gql`
+export const LOGGED_IN_USER = gql`
 	query loggedInUserQuery {
 		user {
 			id
@@ -340,7 +346,7 @@ const loggedInUserQuery = gql`
 	}
 `;
 
-const signUpAndLoginMutation = gql`
+export const SIGN_UP_AND_LOGIN = gql`
 	mutation signUpAndLogin(
 		$firstName: String!
 		$email: String!
@@ -368,20 +374,23 @@ const signUpAndLoginMutation = gql`
 	}
 `;
 
-export default graphql(loggedInUserQuery, {
+export default graphql(LOGGED_IN_USER, {
 	props: ({data}) => ({
 		loadingUser: data.loading,
 		user: data.user,
+		refetch: data.refetch,
 	}),
 })(
-	graphql(signUpAndLoginMutation, {
+	graphql(SIGN_UP_AND_LOGIN, {
 		props: ({mutate}) => ({
 			signUpAndLogin: (email, password, firstName, options) =>
 				mutate({
-					email,
-					password,
-					firstName,
-					...options,
+					variables: {
+						email,
+						password,
+						firstName,
+						...options,
+					},
 				}),
 		}),
 	})(Register),
