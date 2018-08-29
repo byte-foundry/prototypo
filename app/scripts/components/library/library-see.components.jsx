@@ -265,7 +265,7 @@ class LibrarySee extends React.Component {
 										<p>
 											<label>Client</label>
 											{isUrl.test(fontInUse.clientUrl) ? (
-												<a href={fontInUse.clientUrl} target="_blank">
+												<a href={`//${fontInUse.clientUrl}`} target="_blank">
 													{fontInUse.client}
 												</a>
 											) : (
@@ -281,7 +281,7 @@ class LibrarySee extends React.Component {
 										<p>
 											<label>Designer</label>
 											{isUrl.test(fontInUse.designerUrl) ? (
-												<a href={fontInUse.designerUrl} target="_blank">
+												<a href={`//${fontInUse.desigherUrl}`} target="_blank">
 													{fontInUse.designer}
 												</a>
 											) : (
