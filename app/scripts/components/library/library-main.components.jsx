@@ -333,7 +333,7 @@ export const teamQuery = gql`
 	}
 `;
 
-const libraryUserQuery = gql`
+export const libraryUserQuery = gql`
 	query getLibraryUserInfos {
 		user {
 			id

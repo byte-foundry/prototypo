@@ -7,7 +7,11 @@ import {tmpUpload} from '../../services/graphcool.services';
 import LocalClient from '../../stores/local-client.stores';
 import FontUpdater from '../font-updater.components';
 import LibraryButton from './library-button.components';
-import {libraryQuery, presetQuery} from './library-main.components';
+import {
+	libraryQuery,
+	presetQuery,
+	libraryUserQuery,
+} from './library-main.components';
 
 class LibraryHostingCreate extends React.Component {
 	constructor(props) {
@@ -64,20 +68,20 @@ class LibraryHostingCreate extends React.Component {
 					),
 				),
 			);
-
-			console.log(this.state.addedFonts);
 			const abstractedFontCreated = this.state.addedFonts
-				.filter(f => f.variant.abstractedFont)
+				.filter(f => f.variant.abstractedFont && f.variant.abstractedFont.id)
 				.map(f => f.variant.abstractedFont.id);
-
-			console.log(abstractedFontCreated);
 			const abstractedFontIds = await Promise.all(
 				this.state.addedFonts
-					.filter(f => !f.variant.abstractedFont)
+					.filter(
+						f => !f.variant.abstractedFont || !f.variant.abstractedFont.id,
+					)
 					.map(async addedFont =>
 						this.props.createAbstractedFont(
 							addedFont.abstractedFontMeta.type,
-							addedFont.variant.id,
+							addedFont.abstractedFontMeta.type === 'VARIANT'
+								? addedFont.variant.id
+								: undefined,
 							addedFont.abstractedFontMeta.template,
 							addedFont.abstractedFontMeta.presetId,
 							addedFont.abstractedFontMeta.name,
@@ -85,44 +89,36 @@ class LibraryHostingCreate extends React.Component {
 					),
 			);
 
-			console.log(abstractedFontIds);
-
 			const allAbstractedFonts = [
 				...abstractedFontCreated,
 				...abstractedFontIds.map(af => af.data.createAbstractedFont.id),
 			];
 
-			console.log(allAbstractedFonts);
-			// const hostedFonts = await Promise.all(
-			// 	urls.map(({url}, index) =>
-			// 		this.props.hostFont(
-			// 			abstractedFontIds[index].data.createAbstractedFont.id,
-			// 			url,
-			// 		),
-			// 	),
-			// );
+			const hostedFonts = await Promise.all(
+				urls.map(({url}, index) =>
+					this.props.hostFont(allAbstractedFonts[index], url),
+				),
+			);
 
-			// console.log(hostedFonts);
-
-			// this.props
-			// 	.createHostedDomain(
-			// 		this.state.domain,
-			// 		hostedFonts.map(({data}) => data.hostFont.id),
-			// 	)
-			// 	.then(() => {
-			// 		this.props.router.push('/library/hosting');
-			// 		clearTimeout(this.state.hostingTimeout);
-			// 		this.setState({
-			// 			errors: {
-			// 				domain: false,
-			// 				hostedFonts: false,
-			// 				hosting: false,
-			// 			},
-			// 			hostingTimeout: undefined,
-			// 			loading: false,
-			// 		});
-			// 	});
-			// this.setState({status: 'hosting'});
+			this.props
+				.createHostedDomain(
+					this.state.domain,
+					hostedFonts.map(({data}) => data.hostFont.id),
+				)
+				.then(() => {
+					this.props.router.push('/library/hosting');
+					clearTimeout(this.state.hostingTimeout);
+					this.setState({
+						errors: {
+							domain: false,
+							hostedFonts: false,
+							hosting: false,
+						},
+						hostingTimeout: undefined,
+						loading: false,
+					});
+				});
+			this.setState({status: 'hosting'});
 		}
 	}
 	addSuggestion(suggestion, variant) {
@@ -614,7 +610,6 @@ const hostVariantMutation = gql`
 			url
 			version
 			createdAt
-			updatedAt
 		}
 	}
 `;
@@ -670,65 +665,6 @@ const createAbstractedFontMutation = gql`
 			name: $name
 		) {
 			id
-		}
-	}
-`;
-
-const libraryUserQuery = gql`
-	query getLibraryUserInfos {
-		user {
-			id
-			firstName
-			lastName
-			fontInUses {
-				id
-				client
-				clientUrl
-				designer
-				designerUrl
-				images
-				fontUsed {
-					id
-					name
-					family {
-						id
-					}
-					type
-					template
-					preset {
-						id
-					}
-				}
-			}
-			favourites {
-				id
-				name
-				updatedAt
-				type
-				preset {
-					id
-				}
-				family {
-					id
-					variants {
-						id
-					}
-				}
-				template
-			}
-			hostedDomains {
-				id
-				domain
-				hostedVariants {
-					id
-					createdAt
-					abstractedFont {
-						id
-					}
-					url
-					version
-				}
-			}
 		}
 	}
 `;
@@ -789,13 +725,13 @@ export default compose(
 				let preset;
 
 				switch (createAbstractedFont.type) {
-				case 'Preset':
+				case 'PRESET':
 					preset = dataPreset.allPresets.find(
 						p => p.id === createAbstractedFont.preset.id,
 					);
 					preset.abstractedFont = {id: createAbstractedFont.id};
 					break;
-				case 'Variant':
+				case 'VARIANT':
 					variant = dataLibrary.user.library
 						.find(f => f.id === createAbstractedFont.variant.family.id)
 						.variants.find(v => v.id === createAbstractedFont.variant.id);
