@@ -291,6 +291,7 @@ class Register extends React.Component {
 									ref={(occupation) => {
 										this.occupation = occupation;
 									}}
+									id="register-occupation"
 									label="I am"
 									name="occupation"
 									className="input-with-label-input"
@@ -300,6 +301,7 @@ class Register extends React.Component {
 								<div className="columns">
 									<div className="half-column">
 										<InputWithLabel
+											id="register-tel"
 											label="Phone number"
 											info="(optional)"
 											type="tel"
@@ -310,6 +312,7 @@ class Register extends React.Component {
 									</div>
 									<div className="half-column">
 										<InputWithLabel
+											id="register-skype"
 											label="Skype ID"
 											info="(optional)"
 											ref={(skype) => {

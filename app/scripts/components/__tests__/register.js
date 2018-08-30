@@ -102,4 +102,97 @@ describe('Register', () => {
 
 		await waitForElement(() => getByText('Library'));
 	});
+
+	it('should be able to register with everything we ask for', async () => {
+		const mocks = [
+			{
+				request: {query: LOGGED_IN_USER},
+				result: {
+					data: {
+						user: null,
+					},
+				},
+			},
+			{
+				request: {
+					query: SIGN_UP_AND_LOGIN,
+					variables: {
+						email: 'test@test.test',
+						password: 'password',
+						firstName: 'Jean-Michel',
+						lastName: 'Jam',
+						occupation: 'web_developer',
+						phone: '+33600000000',
+						skype: 'jeanmicheljamskype',
+					},
+				},
+				result: {
+					data: {
+						signupEmailUser: {id: 'userid'},
+						auth: {token: 'token'},
+					},
+				},
+			},
+			{
+				request: {query: LOGGED_IN_USER},
+				result: {
+					data: {
+						user: {
+							id: 'userid',
+						},
+					},
+				},
+			},
+		];
+
+		const {getByText, getByTestId, getByLabelText} = render(
+			<MockedProvider mocks={mocks} addTypename={false}>
+				<MemoryRouter initialEntries={['/register']} initialIndex={0}>
+					<Switch>
+						<Route path="/register" component={Register} />
+						<Route path="/library" render={() => <p>Library</p>} />
+					</Switch>
+				</MemoryRouter>
+			</MockedProvider>,
+		);
+
+		// waiting for the loading to finish
+		const form = await waitForElement(() => getByTestId('register-form'));
+
+		fireEvent.change(getByLabelText('First name', {exact: false}), {
+			target: {value: 'Jean-Michel'},
+		});
+		fireEvent.change(getByLabelText('Last name', {exact: false}), {
+			target: {value: 'Jam'},
+		});
+		fireEvent.change(getByLabelText('Email', {exact: false}), {
+			target: {value: 'test@test.test'},
+		});
+		fireEvent.change(getByLabelText('Password', {exact: false}), {
+			target: {value: 'password'},
+		});
+		fireEvent.change(getByLabelText('I am', {exact: false}), {
+			target: {value: 'web_developer'},
+		});
+		fireEvent.change(getByLabelText('Phone number', {exact: false}), {
+			target: {value: '+33600000000'},
+		});
+		fireEvent.change(getByLabelText('Skype', {exact: false}), {
+			target: {value: 'jeanmicheljamskype'},
+		});
+		// Until event submission is supported by JSDOM
+		fireEvent.submit(form, {
+			target: {
+				firstname: {value: 'Jean-Michel'},
+				lastname: {value: 'Jam'},
+				email: {value: 'test@test.test'},
+				password: {value: 'password'},
+				occupation: {value: 'web_developer'},
+				phone: {value: '+33600000000'},
+				skype: {value: 'jeanmicheljamskype'},
+			},
+		});
+
+		await waitForElement(() => getByText('Library'));
+	});
 });
