@@ -11,7 +11,7 @@ export default class SelectWithLabel extends React.PureComponent {
 		};
 	}
 
-	handleChangeValue(value) {
+	handleChangeValue = (value) => {
 		if (Array.isArray(value)) {
 			this.setState({
 				value: undefined,
@@ -22,17 +22,17 @@ export default class SelectWithLabel extends React.PureComponent {
 				value,
 			});
 		}
-	}
+	};
 
-	handleChangeInput(inputValue) {
+	handleChangeInput = (inputValue) => {
 		this.setState({
 			inputValue,
 			value: undefined,
 		});
-	}
+	};
 
 	render() {
-		const {label, info, required, name, ...selectProps} = this.props;
+		const {label, info, required, name, id, ...selectProps} = this.props;
 		const {value} = this.state;
 
 		const inputClass = classNames({
@@ -43,7 +43,7 @@ export default class SelectWithLabel extends React.PureComponent {
 
 		return (
 			<div className="input-with-label">
-				<label className="input-with-label-label">
+				<label className="input-with-label-label" htmlFor={id}>
 					{label}
 					{info && <span className="input-with-label-label-info">{info}</span>}
 					{required && (
@@ -51,16 +51,13 @@ export default class SelectWithLabel extends React.PureComponent {
 					)}
 				</label>
 				<Select
+					id={id}
 					{...selectProps}
 					ref="input"
 					className={inputClass}
-					onChange={(value) => {
-						this.handleChangeValue(value);
-					}}
+					onChange={this.handleChangeValue}
+					onInputChange={this.handleChangeInput}
 					onBlurResetsInput={false}
-					onInputChange={(value) => {
-						this.handleChangeInput(value);
-					}}
 					value={value}
 				/>
 				<input type="hidden" name={name} value={(value && value.value) || ''} />
