@@ -34,6 +34,9 @@ class LibraryHostingCreate extends React.Component {
 		);
 		this.addSuggestion = this.addSuggestion.bind(this);
 		this.hostFonts = this.hostFonts.bind(this);
+		this.removeAddedFont = this.removeAddedFont.bind(this);
+		this.checkIntegrity = this.checkIntegrity.bind(this);
+		this.removeDuplicates = this.removeDuplicates.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -207,20 +210,101 @@ class LibraryHostingCreate extends React.Component {
 				break;
 			}
 
-			this.setState({
-				addedFonts: this.state.addedFonts.concat([
-					{
-						...suggestion,
-						id: `${suggestion.id}${variant.id}`,
-						variant,
-						template,
-						values,
-						glyphs,
-						abstractedFontMeta,
-					},
-				]),
+			this.checkIntegrity({
+				...suggestion,
+				id: `${suggestion.id}${variant.id}`,
+				variant,
+				template,
+				values,
+				glyphs,
+				abstractedFontMeta,
 			});
 		}
+	}
+	checkIntegrity(font, af) {
+		const addedFonts = af || this.state.addedFonts;
+		const fontToAdd = font;
+
+		fontToAdd.integrity = undefined;
+		fontToAdd.integrityType = undefined;
+
+		if (fontToAdd.type === 'VARIANT') {
+			if (
+				addedFonts.find(
+					f =>
+						f.type === 'VARIANT'
+						&& f.name === fontToAdd.name
+						&& f.abstractedFontMeta.familyId
+							!== fontToAdd.abstractedFontMeta.familyId,
+				)
+			) {
+				fontToAdd.integrity
+					= 'A project with a similar name already exists in this website';
+				fontToAdd.integrityType = 'familyName';
+			}
+			if (
+				addedFonts.find(
+					f =>
+						f.type === 'VARIANT'
+						&& f.abstractedFontMeta.familyId
+							=== fontToAdd.abstractedFontMeta.familyId
+						&& f.variant.width === fontToAdd.variant.width
+						&& f.variant.weight === fontToAdd.variant.weight
+						&& f.variant.italic === fontToAdd.variant.italic,
+				)
+			) {
+				fontToAdd.integrity
+					= 'A variant with the same metadatas is already added';
+				fontToAdd.integrityType = 'metadata';
+			}
+		}
+		this.setState({
+			addedFonts: addedFonts.concat([
+				{
+					...fontToAdd,
+				},
+			]),
+		});
+	}
+
+	removeAddedFont(addedFontId) {
+		const {addedFonts} = this.state;
+
+		addedFonts.splice(addedFonts.findIndex(f => f.id === addedFontId), 1);
+		this.setState({addedFonts});
+	}
+	removeDuplicates(addedFont) {
+		let {addedFonts} = this.state;
+
+		switch (addedFont.integrityType) {
+		case 'familyName':
+			addedFonts = addedFonts.filter(
+				f =>
+					!(
+						f.type === 'VARIANT'
+							&& f.name === addedFont.name
+							&& f.abstractedFontMeta.familyId
+								!== addedFont.abstractedFontMeta.familyId
+					),
+			);
+			break;
+		case 'metadata':
+			addedFonts = addedFonts.filter(
+				f =>
+					!(
+						f.type === 'VARIANT'
+							&& f.abstractedFontMeta.familyId
+								=== addedFont.abstractedFontMeta.familyId
+							&& f.variant.width === addedFont.variant.width
+							&& f.variant.weight === addedFont.variant.weight
+							&& f.variant.italic === addedFont.variant.italic
+					),
+			);
+			break;
+		default:
+			break;
+		}
+		this.checkIntegrity(addedFont, addedFonts);
 	}
 	updateAutocompleteSuggestions(event) {
 		this.setState({autocompleteText: event.target.value});
@@ -497,6 +581,24 @@ class LibraryHostingCreate extends React.Component {
 													{font.variant.width}{' '}
 													{font.variant.italic ? 'italic' : 'normal'}
 												</span>
+												<div
+													className="button-edit"
+													onClick={() => {
+														this.removeAddedFont(font.id);
+													}}
+												>
+													Remove
+												</div>
+												{font.integrity && (
+													<div
+														className="button-edit"
+														onClick={() => {
+															this.removeDuplicates(font);
+														}}
+													>
+														Use this version
+													</div>
+												)}
 												<FontUpdater
 													name={`preview${font.id}`}
 													values={font.values}
@@ -508,6 +610,9 @@ class LibraryHostingCreate extends React.Component {
 													}`}
 													glyph="0"
 												/>
+												{font.integrity && (
+													<p className="integrity-error">{font.integrity}</p>
+												)}
 											</div>
 										))
 									)}
