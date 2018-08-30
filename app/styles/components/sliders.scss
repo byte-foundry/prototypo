@@ -2,7 +2,7 @@
 
 .slider {
 	margin-bottom:15px;
-	font-size: 0.8em;
+	font-size: 0.7em;
 	position:relative;
 	z-index:1;
 
@@ -112,6 +112,7 @@
 		padding-left: 0.8em;
 		display: inline-block;
 		pointer-events: none;
+		margin-bottom: .5em;
 	}
 
 	&-reset {

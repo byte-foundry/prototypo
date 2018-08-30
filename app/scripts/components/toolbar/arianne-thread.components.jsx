@@ -323,7 +323,7 @@ class RootArianneItem extends React.Component {
 		return (
 			<div className="arianne-item" onClick={this.props.click}>
 				<div className="arianne-item-action">
-					<span className="arianne-item-action-collection">My projects</span>
+					<span className="arianne-item-action-collection">My library</span>
 				</div>
 				<div className="arianne-item-arrow" />
 			</div>

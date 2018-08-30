@@ -31,8 +31,8 @@
 
 	&-reset-buttons {
 		position: absolute;
-		top: 20px;
-		left: 0px;
+		top: 30px;
+		left: 18px;
 		display: flex;
 		z-index: 3;
 
@@ -180,7 +180,7 @@
 .canvas-menu {
 	position: absolute;
 	bottom: 18px;
-	left: 20px;
+	left: 38px;
 	display: flex;
 	flex-flow: row nowrap;
 	z-index: 3;
