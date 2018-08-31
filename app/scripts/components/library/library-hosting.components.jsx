@@ -19,7 +19,8 @@ export default class LibraryHosting extends React.Component {
 						Free plan: 1000 views / month / website
 					</div>
 					<div className="library-hosting">
-						{this.props.hostedDomains.length === 0 && (
+						{(!this.props.hostedDomains
+							|| this.props.hostedDomains.length === 0) && (
 							<div>
 								<div className="library-see-title">There is nothing here!</div>
 								<div className="library-see-description">
@@ -42,7 +43,14 @@ export default class LibraryHosting extends React.Component {
 								<div className="library-hosting-website">
 									<p className="library-hosting-website-name">
 										{hostedDomain.domain}
-										<div className="button-edit" onClick={() => {}}>
+										<div
+											className="button-edit"
+											onClick={() => {
+												this.props.router.push(
+													`/library/hosting/${hostedDomain.id}/edit`,
+												);
+											}}
+										>
 											Edit
 										</div>
 									</p>

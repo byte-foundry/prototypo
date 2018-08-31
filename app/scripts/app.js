@@ -276,6 +276,14 @@ class AppRoutes extends React.PureComponent {
 								<Route path="create" component={LibraryHostingCreate} />
 							</Route>
 							<Route
+								path="hosting/:hostedDomainId"
+								component={LibraryMain}
+								name="seeHosting"
+								onEnter={redirectToLogin}
+							>
+								<Route path="edit" component={LibraryHostingCreate} />
+							</Route>
+							<Route
 								path="create"
 								component={LibraryMain}
 								name="create"

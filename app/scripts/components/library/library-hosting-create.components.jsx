@@ -16,8 +16,8 @@ import {
 class LibraryHostingCreate extends React.Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
-			hostedDomains: [],
 			domain: '',
 			autocompleteText: '',
 			autocompleteSuggestions: [],
@@ -50,9 +50,172 @@ class LibraryHostingCreate extends React.Component {
 				buffers: head.toJS().d.hostingBuffers,
 			});
 		});
+
+		const templateInfos = await prototypoStore.head.toJS().templateList;
+		const templatesData = await prototypoStore.head.toJS().templatesData;
+		let hostedDomainMetadata;
+
+		if (this.props.params && this.props.params.hostedDomainId) {
+			const hostedDomain = this.props.hostedDomains.find(
+				e => e.id === this.props.params.hostedDomainId,
+			);
+
+			let template;
+			let values;
+			let templateData;
+			let preset;
+			let family;
+			let glyphs;
+			let abstractedFontMeta;
+			let variantData;
+			let templateInfo;
+
+			hostedDomainMetadata = {
+				domain: hostedDomain.domain,
+				autocompleteText: '',
+				autocompleteSuggestions: [],
+				errors: {
+					domain: false,
+					hostedFonts: false,
+					hosting: false,
+					integrity: false,
+				},
+				loading: false,
+				addedFonts: hostedDomain.hostedVariants.map((variant) => {
+					if (!variant.abstractedFont) return false;
+					switch (variant.abstractedFont.type) {
+					case 'PRESET':
+						preset = this.props.presets.find(
+							p => p.id === variant.abstractedFont.preset.id,
+						);
+						values = preset.baseValues;
+						template = templateInfos.find(
+							t => preset.template === t.templateName,
+						).templateName;
+						templateData = templatesData.find(
+							e => e.name === preset.template,
+						);
+						glyphs = templateData.glyphs;
+						abstractedFontMeta = {
+							type: 'PRESET',
+							familyId: undefined,
+							template: undefined,
+							presetId: preset.id,
+							name: preset.name,
+						};
+						return {
+							type: 'PRESET',
+							name: `${preset.variant.family.name}`,
+							id: `${preset.id}${preset.id}`,
+							presetId: preset.id,
+							familyId: undefined,
+							isOld: true,
+							template,
+							values,
+							glyphs,
+							abstractedFontMeta,
+							variant: {
+								id: preset.id,
+								name: 'regular',
+								weight: 500,
+								italic: false,
+								width: 'normal',
+								abstractedFont: {
+									id: variant.abstractedFont.id,
+								},
+							},
+						};
+					case 'TEMPLATE':
+						templateInfo = templateInfos.find(
+							e => e.name === variant.abstractedFont.template,
+						);
+						templateData = templatesData.find(
+							e => e.name === templateInfo.templateName,
+						);
+						glyphs = templateData.glyphs;
+						values = templateData.initValues;
+						template = templateData.name;
+						abstractedFontMeta = {
+							type: 'TEMPLATE',
+							familyId: undefined,
+							template: templateData.name,
+							presetId: undefined,
+							name: variant.abstractedFont.template,
+						};
+						return {
+							type: 'TEMPLATE',
+							name: variant.abstractedFont.template,
+							id: `template${templateData.familyName}base`,
+							templateName: templateData.templateName,
+							presetId: undefined,
+							familyId: undefined,
+							isOld: true,
+							template,
+							values,
+							glyphs,
+							abstractedFontMeta,
+							variant: {
+								id: 'base',
+								name: 'regular',
+								weight: 500,
+								italic: false,
+								width: 'normal',
+								abstractedFont: {
+									id: variant.abstractedFont.id,
+								},
+							},
+						};
+					case 'VARIANT':
+						family
+								= this.props.families
+								&& this.props.families.find(
+									p => p.id === variant.abstractedFont.variant.family.id,
+								);
+						templateData = templatesData.find(
+							e => e.name === family.template,
+						);
+						glyphs = templateData.glyphs;
+						variantData = family.variants.find(
+							v => variant.abstractedFont.variant.id,
+						);
+						values = {
+							...templateData.initValues,
+							...(typeof variantData.values === 'object'
+								? variantData.values
+								: JSON.parse(variantData.values)),
+						};
+						template = templateInfos.find(
+							t => t.templateName === family.template,
+						).templateName;
+						abstractedFontMeta = {
+							type: 'VARIANT',
+							familyId: variant.abstractedFont.variant.family.id,
+							template: undefined,
+							presetId: undefined,
+							name: family.name,
+						};
+						return {
+							type: 'VARIANT',
+							id: `${family.id}${variantData.id}`,
+							name: `${family.name}`,
+							isOld: true,
+							template,
+							values,
+							glyphs,
+							abstractedFontMeta,
+							variant: variantData,
+						};
+					default:
+						return false;
+					}
+				}),
+			};
+		}
+
 		this.setState({
-			templateInfos: await prototypoStore.head.toJS().templateList,
-			templatesData: await prototypoStore.head.toJS().templatesData,
+			templateInfos,
+			templatesData,
+			...hostedDomainMetadata,
 		});
 	}
 	async componentDidUpdate(prevState) {
@@ -587,51 +750,56 @@ class LibraryHostingCreate extends React.Component {
 											input below!
 										</div>
 									) : (
-										this.state.addedFonts.map(font => (
-											<div className="hosted-font">
-												<span
-													style={{
-														fontFamily: `preview${font.id}`,
-													}}
-												>
-													{font.name} {font.variant.name} {font.variant.weight}{' '}
-													{font.variant.width}{' '}
-													{font.variant.italic ? 'italic' : 'normal'}
-												</span>
-												<div
-													className="button-edit"
-													onClick={() => {
-														this.removeAddedFont(font.id);
-													}}
-												>
-													Remove
-												</div>
-												{font.integrity && (
-													<div
-														className="button-edit"
-														onClick={() => {
-															this.removeDuplicates(font);
-														}}
-													>
-														Use this version
+										this.state.addedFonts.map(
+											font =>
+												font.name && (
+													<div className="hosted-font">
+														<span
+															style={{
+																fontFamily: `preview${font.id}`,
+															}}
+														>
+															{font.name} {font.variant.name}{' '}
+															{font.variant.weight} {font.variant.width}{' '}
+															{font.variant.italic ? 'italic' : 'normal'}
+														</span>
+														<div
+															className="button-edit"
+															onClick={() => {
+																this.removeAddedFont(font.id);
+															}}
+														>
+															Remove
+														</div>
+														{font.integrity && (
+															<div
+																className="button-edit"
+																onClick={() => {
+																	this.removeDuplicates(font);
+																}}
+															>
+																Use this version
+															</div>
+														)}
+														<FontUpdater
+															name={`preview${font.id}`}
+															values={font.values}
+															template={font.template}
+															subset={`${font.name}${font.variant.name}${' '}${
+																font.variant.weight
+															}${font.variant.width}${
+																font.variant.italic ? 'italic' : 'normal'
+															}`}
+															glyph="0"
+														/>
+														{font.integrity && (
+															<p className="integrity-error">
+																{font.integrity}
+															</p>
+														)}
 													</div>
-												)}
-												<FontUpdater
-													name={`preview${font.id}`}
-													values={font.values}
-													template={font.template}
-													subset={`${font.name}${font.variant.name}${' '}${
-														font.variant.weight
-													}${font.variant.width}${
-														font.variant.italic ? 'italic' : 'normal'
-													}`}
-													glyph="0"
-												/>
-												{font.integrity && (
-													<p className="integrity-error">{font.integrity}</p>
-												)}
-											</div>
-										))
+												),
+										)
 									)}
 									{this.state.errors.hostedFonts && (
 										<p className="library-hosting-form-elem-error">

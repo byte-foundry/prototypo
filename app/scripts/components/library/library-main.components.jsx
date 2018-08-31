@@ -387,6 +387,17 @@ export const libraryUserQuery = gql`
 					createdAt
 					abstractedFont {
 						id
+						type
+						template
+						preset {
+							id
+						}
+						variant {
+							id
+							family {
+								id
+							}
+						}
 					}
 					url
 					version
