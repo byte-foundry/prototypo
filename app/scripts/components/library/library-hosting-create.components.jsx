@@ -26,6 +26,7 @@ class LibraryHostingCreate extends React.Component {
 				domain: false,
 				hostedFonts: false,
 				hosting: false,
+				integrity: false,
 			},
 			loading: false,
 		};
@@ -447,6 +448,20 @@ class LibraryHostingCreate extends React.Component {
 				errors: {
 					domain: true,
 					hostedFonts: false,
+					integrity: false,
+				},
+			});
+			return;
+		}
+
+		const integrity = this.state.addedFonts.find(f => f.integrity);
+
+		if (integrity) {
+			this.setState({
+				errors: {
+					domain: false,
+					hostedFonts: false,
+					integrity: true,
 				},
 			});
 			return;
@@ -459,6 +474,7 @@ class LibraryHostingCreate extends React.Component {
 					domain: false,
 					hostedFonts: false,
 					hosting: true,
+					integrity: false,
 				},
 				loading: false,
 				hostingTimeout: undefined,
@@ -469,6 +485,7 @@ class LibraryHostingCreate extends React.Component {
 			errors: {
 				domain: false,
 				hostedFonts: false,
+				integrity: false,
 			},
 			loading: true,
 			autocompleteText: '',
@@ -619,6 +636,12 @@ class LibraryHostingCreate extends React.Component {
 									{this.state.errors.hostedFonts && (
 										<p className="library-hosting-form-elem-error">
 											Please add at least one font to your website.
+										</p>
+									)}
+									{this.state.errors.integrity && (
+										<p className="library-hosting-form-elem-error">
+											There is some integrity issues in your domain. Please fix
+											them before continuing.
 										</p>
 									)}
 								</div>
