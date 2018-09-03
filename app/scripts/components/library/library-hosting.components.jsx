@@ -39,34 +39,35 @@ export default class LibraryHosting extends React.Component {
 							</div>
 						)}
 						<div className="library-hosting-list">
-							{this.props.hostedDomains.map(hostedDomain => (
-								<div className="library-hosting-website">
-									<p className="library-hosting-website-name">
-										{hostedDomain.domain}
-										<div
-											className="button-edit"
-											onClick={() => {
-												this.props.router.push(
-													`/library/hosting/${hostedDomain.id}/edit`,
-												);
-											}}
-										>
-											Edit
+							{this.props.hostedDomains
+								&& this.props.hostedDomains.map(hostedDomain => (
+									<div className="library-hosting-website">
+										<p className="library-hosting-website-name">
+											{hostedDomain.domain}
+											<div
+												className="button-edit"
+												onClick={() => {
+													this.props.router.push(
+														`/library/hosting/${hostedDomain.id}/edit`,
+													);
+												}}
+											>
+												Edit
+											</div>
+										</p>
+										<div className="library-hosting-website-infos">
+											<span>
+												{hostedDomain.hostedVariants.length} hosted fonts
+											</span>
+											<span>
+												Last update:{' '}
+												{new Intl.DateTimeFormat('en-US').format(
+													new Date(hostedDomain.updatedAt),
+												)}
+											</span>
 										</div>
-									</p>
-									<div className="library-hosting-website-infos">
-										<span>
-											{hostedDomain.hostedVariants.length} hosted fonts
-										</span>
-										<span>
-											Last update:{' '}
-											{new Intl.DateTimeFormat('en-US').format(
-												new Date(hostedDomain.updatedAt),
-											)}
-										</span>
 									</div>
-								</div>
-							))}
+								))}
 						</div>
 					</div>
 				</div>

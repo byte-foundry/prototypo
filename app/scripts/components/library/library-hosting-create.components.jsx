@@ -22,6 +22,7 @@ class LibraryHostingCreate extends React.Component {
 			autocompleteText: '',
 			autocompleteSuggestions: [],
 			addedFonts: [],
+			fontsToRemove: [],
 			errors: {
 				domain: false,
 				hostedFonts: false,
@@ -38,6 +39,7 @@ class LibraryHostingCreate extends React.Component {
 		this.removeAddedFont = this.removeAddedFont.bind(this);
 		this.checkIntegrity = this.checkIntegrity.bind(this);
 		this.removeDuplicates = this.removeDuplicates.bind(this);
+		this.updateVersion = this.updateVersion.bind(this);
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
@@ -70,9 +72,12 @@ class LibraryHostingCreate extends React.Component {
 			let variantData;
 			let templateInfo;
 
+			console.log(hostedDomain.hostedVariants);
+
 			hostedDomainMetadata = {
 				domain: hostedDomain.domain,
 				autocompleteText: '',
+				fontsToRemove: [],
 				autocompleteSuggestions: [],
 				errors: {
 					domain: false,
@@ -110,6 +115,7 @@ class LibraryHostingCreate extends React.Component {
 							presetId: preset.id,
 							familyId: undefined,
 							isOld: true,
+							hostedId: variant.id,
 							template,
 							values,
 							glyphs,
@@ -150,6 +156,7 @@ class LibraryHostingCreate extends React.Component {
 							presetId: undefined,
 							familyId: undefined,
 							isOld: true,
+							hostedId: variant.id,
 							template,
 							values,
 							glyphs,
@@ -199,6 +206,7 @@ class LibraryHostingCreate extends React.Component {
 							id: `${family.id}${variantData.id}`,
 							name: `${family.name}`,
 							isOld: true,
+							hostedId: variant.id,
 							template,
 							values,
 							glyphs,
@@ -235,11 +243,17 @@ class LibraryHostingCreate extends React.Component {
 					),
 				),
 			);
+
+			console.log(this.state.addedFonts);
+
+			// TODO: Delete the hosted files if a font is removed / to updated
+
 			const abstractedFontCreated = this.state.addedFonts
 				.filter(f => f.variant.abstractedFont && f.variant.abstractedFont.id)
 				.map(f => f.variant.abstractedFont.id);
 			const abstractedFontIds = await Promise.all(
 				this.state.addedFonts
+					.filter(f => !f.isOld)
 					.filter(
 						f => !f.variant.abstractedFont || !f.variant.abstractedFont.id,
 					)
@@ -267,24 +281,54 @@ class LibraryHostingCreate extends React.Component {
 				),
 			);
 
-			this.props
-				.createHostedDomain(
-					this.state.domain,
-					hostedFonts.map(({data}) => data.hostFont.id),
-				)
-				.then(() => {
-					this.props.router.push('/library/hosting');
-					clearTimeout(this.state.hostingTimeout);
-					this.setState({
-						errors: {
-							domain: false,
-							hostedFonts: false,
-							hosting: false,
-						},
-						hostingTimeout: undefined,
-						loading: false,
+			console.log(this.state.updating);
+
+			if (this.state.updating) {
+				const allHostedFonts = [
+					...hostedFonts.map(({data}) => data.hostFont.id),
+					...this.state.addedFonts
+						.filter(f => f.isOld)
+						.map(f => f.hostedId),
+				];
+
+				console.log(allHostedFonts);
+
+				this.props
+					.updateHostedDomain(this.state.domain, allHostedFonts)
+					.then(() => {
+						this.props.router.push('/library/hosting');
+						clearTimeout(this.state.hostingTimeout);
+						this.setState({
+							errors: {
+								domain: false,
+								hostedFonts: false,
+								hosting: false,
+							},
+							hostingTimeout: undefined,
+							loading: false,
+						});
 					});
-				});
+			}
+			else {
+				this.props
+					.createHostedDomain(
+						this.state.domain,
+						hostedFonts.map(({data}) => data.hostFont.id),
+					)
+					.then(() => {
+						this.props.router.push('/library/hosting');
+						clearTimeout(this.state.hostingTimeout);
+						this.setState({
+							errors: {
+								domain: false,
+								hostedFonts: false,
+								hosting: false,
+							},
+							hostingTimeout: undefined,
+							loading: false,
+						});
+					});
+			}
 			this.setState({status: 'hosting'});
 		}
 	}
@@ -430,12 +474,26 @@ class LibraryHostingCreate extends React.Component {
 			]),
 		});
 	}
-
-	removeAddedFont(addedFontId) {
+	updateVersion(font) {
 		const {addedFonts} = this.state;
+		const addedFont = addedFonts.find(f => f.id === font.id);
 
-		addedFonts.splice(addedFonts.findIndex(f => f.id === addedFontId), 1);
+		addedFont.isOld = false;
+		addedFont.isUpdated = true;
 		this.setState({addedFonts});
+	}
+	removeAddedFont(addedFont) {
+		const {addedFonts, fontsToRemove} = this.state;
+
+		if (addedFont.isOld) {
+			fontsToRemove.concat([
+				{
+					...addedFont,
+				},
+			]);
+		}
+		addedFonts.splice(addedFonts.findIndex(f => f.id === addedFont.id), 1);
+		this.setState({addedFonts, fontsToRemove});
 	}
 	removeDuplicates(addedFont) {
 		let {addedFonts} = this.state;
@@ -591,7 +649,8 @@ class LibraryHostingCreate extends React.Component {
 		});
 	}
 
-	hostFonts() {
+	hostFonts(update = false) {
+		console.log(update);
 		if (this.state.hostingTimeout) {
 			return;
 		}
@@ -663,7 +722,7 @@ class LibraryHostingCreate extends React.Component {
 		const templateArray = [];
 		const glyphsArray = [];
 
-		this.state.addedFonts.forEach((addedFont) => {
+		this.state.addedFonts.filter(f => !f.isOld).forEach((addedFont) => {
 			familyNames.push(addedFont.name);
 			variantNames.push(addedFont.variant.name);
 			valueArray.push(addedFont.values);
@@ -676,7 +735,7 @@ class LibraryHostingCreate extends React.Component {
 			glyphsArray.push(addedFont.glyphs);
 		});
 		try {
-			this.setState({status: 'generating'});
+			this.setState({status: 'generating', updating: update});
 
 			// generate the font
 			this.client.dispatchAction('/host-from-library', {
@@ -763,14 +822,26 @@ class LibraryHostingCreate extends React.Component {
 															{font.variant.weight} {font.variant.width}{' '}
 															{font.variant.italic ? 'italic' : 'normal'}
 														</span>
+														{font.isUpdated && <span> (Updated)</span>}
 														<div
 															className="button-edit"
 															onClick={() => {
-																this.removeAddedFont(font.id);
+																this.removeAddedFont(font);
 															}}
 														>
 															Remove
 														</div>
+														{font.isOld
+															&& !font.integrity && (
+															<div
+																className="button-edit"
+																onClick={() => {
+																	this.updateVersion(font);
+																}}
+															>
+																	Update version
+															</div>
+														)}
 														{font.integrity && (
 															<div
 																className="button-edit"
@@ -863,7 +934,11 @@ class LibraryHostingCreate extends React.Component {
 									</p>
 								)}
 								<LibraryButton
-									name="Add website"
+									name={
+										this.props.params && this.props.params.hostedDomainId
+											? 'Update domain'
+											: 'Add domain'
+									}
 									floated
 									disabled={
 										this.state.addedFonts.length === 0
@@ -876,7 +951,11 @@ class LibraryHostingCreate extends React.Component {
 											this.state.addedFonts.length > 0
 											&& this.state.domain !== ''
 										) {
-											this.hostFonts();
+											this.hostFonts(
+												!!(
+													this.props.params && this.props.params.hostedDomainId
+												),
+											);
 										}
 									}}
 								/>
@@ -937,10 +1016,31 @@ const createHostedDomainMutation = gql`
 	}
 `;
 
-const deleteAbstractedFontMutation = gql`
-	mutation deleteAbstractedFont($id: ID!) {
-		deleteAbstractedFont(id: $id) {
+const updateHostedDomainMutation = gql`
+	mutation updateHostedDomain(
+		$hostedDomainId: ID!
+		$domain: String!
+		$creatorId: ID!
+		$hostedVariantsIds: [ID!]!
+	) {
+		updateHostedDomain(
+			id: $hostedDomainId
+			domain: $domain
+			creatorId: $creatorId
+			hostedVariantsIds: $hostedVariantsIds
+		) {
 			id
+			domain
+			updatedAt
+			hostedVariants {
+				id
+				url
+				createdAt
+				abstractedFont {
+					id
+				}
+				version
+			}
 		}
 	}
 `;
@@ -993,6 +1093,33 @@ export default compose(
 				const data = store.readQuery({query: libraryUserQuery});
 
 				data.user.hostedDomains.push(createHostedDomain);
+				store.writeQuery({
+					query: libraryUserQuery,
+					data,
+				});
+			},
+		},
+	}),
+	graphql(updateHostedDomainMutation, {
+		props: ({mutate, ownProps}) => ({
+			updateHostedDomain: (domain, hostedVariantsIds) =>
+				mutate({
+					variables: {
+						hostedDomainId: ownProps.params.hostedDomainId,
+						domain,
+						hostedVariantsIds,
+						creatorId: ownProps.user.id,
+					},
+				}),
+		}),
+		options: {
+			update: (store, {data: {updateHostedDomain}}) => {
+				const data = store.readQuery({query: libraryUserQuery});
+				const hostedDomainIndex = data.user.hostedDomains.findIndex(
+					f => f.id === updateHostedDomain.id,
+				);
+
+				data.user.hostedDomains[hostedDomainIndex] = updateHostedDomain;
 				store.writeQuery({
 					query: libraryUserQuery,
 					data,
