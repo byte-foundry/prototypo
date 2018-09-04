@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import Lifespan from 'lifespan';
+import cloneDeep from 'lodash/cloneDeep';
 import {graphql, gql, compose} from 'react-apollo';
 import {LibrarySidebarRight} from './library-sidebars.components';
 import {tmpUpload} from '../../services/graphcool.services';
@@ -231,64 +232,63 @@ class LibraryHostingCreate extends React.Component {
 			prevState.buffers !== this.state.buffers
 			&& this.state.status === 'generating'
 		) {
-			this.setState({status: 'uploading'});
+			const addedFonts = cloneDeep(this.state.addedFonts);
 
+			this.setState({status: 'uploading'});
+			const buffers = [...this.state.buffers];
+			const exportedFonts = buffers.map(b =>
+				addedFonts.find(f => f.id === b.id),
+			);
 			const urls = await Promise.all(
 				this.state.buffers.map(async (buffer, index) =>
 					tmpUpload(
 						new Blob([new Uint8Array(buffer)]),
-						`${this.state.addedFonts[index]} ${
-							this.state.addedFonts[index].variant.name
-						}`,
+						`${exportedFonts[index].id}`,
+					),
+				),
+			);
+			// TODO: Delete the hosted files if a font is removed / to updated
+
+			const exportedWithoutAbstracted = exportedFonts.filter(
+				f => !f.variant.abstractedFont || !f.variant.abstractedFont.id,
+			);
+
+			const abstractedFontIds = await Promise.all(
+				exportedWithoutAbstracted.map(async addedFont =>
+					this.props.createAbstractedFont(
+						addedFont.abstractedFontMeta.type,
+						addedFont.abstractedFontMeta.type === 'VARIANT'
+							? addedFont.variant.id
+							: undefined,
+						addedFont.abstractedFontMeta.template,
+						addedFont.abstractedFontMeta.presetId,
+						addedFont.abstractedFontMeta.name,
 					),
 				),
 			);
 
-			console.log(this.state.addedFonts);
-
-			// TODO: Delete the hosted files if a font is removed / to updated
-
-			const abstractedFontCreated = this.state.addedFonts
-				.filter(f => f.variant.abstractedFont && f.variant.abstractedFont.id)
-				.map(f => f.variant.abstractedFont.id);
-			const abstractedFontIds = await Promise.all(
-				this.state.addedFonts
-					.filter(f => !f.isOld)
-					.filter(
-						f => !f.variant.abstractedFont || !f.variant.abstractedFont.id,
-					)
-					.map(async addedFont =>
-						this.props.createAbstractedFont(
-							addedFont.abstractedFontMeta.type,
-							addedFont.abstractedFontMeta.type === 'VARIANT'
-								? addedFont.variant.id
-								: undefined,
-							addedFont.abstractedFontMeta.template,
-							addedFont.abstractedFontMeta.presetId,
-							addedFont.abstractedFontMeta.name,
-						),
-					),
-			);
-
-			const allAbstractedFonts = [
-				...abstractedFontCreated,
-				...abstractedFontIds.map(af => af.data.createAbstractedFont.id),
-			];
+			exportedWithoutAbstracted.forEach((e, index) => {
+				e.variant.abstractedFont
+					? (e.variant.abstractedFont.id
+							= abstractedFontIds[index].data.createAbstractedFont.id)
+					: (e.variant.abstractedFont = {
+						id: abstractedFontIds[index].data.createAbstractedFont.id,
+					});
+			});
 
 			const hostedFonts = await Promise.all(
 				urls.map(({url}, index) =>
-					this.props.hostFont(allAbstractedFonts[index], url),
+					this.props.hostFont(
+						exportedFonts[index].variant.abstractedFont.id,
+						url,
+					),
 				),
 			);
-
-			console.log(this.state.updating);
 
 			if (this.state.updating) {
 				const allHostedFonts = [
 					...hostedFonts.map(({data}) => data.hostFont.id),
-					...this.state.addedFonts
-						.filter(f => f.isOld)
-						.map(f => f.hostedId),
+					...addedFonts.filter(f => f.isOld).map(f => f.hostedId),
 				];
 
 				console.log(allHostedFonts);
@@ -730,9 +730,18 @@ class LibraryHostingCreate extends React.Component {
 				weight: addedFont.variant.weight,
 				width: addedFont.variant.width,
 				italic: !!addedFont.variant.italic,
+				id: addedFont.id,
 			});
 			templateArray.push(addedFont.template);
 			glyphsArray.push(addedFont.glyphs);
+		});
+		console.log({
+			familyNames,
+			variantNames,
+			valueArray,
+			metadataArray,
+			templateArray,
+			glyphsArray,
 		});
 		try {
 			this.setState({status: 'generating', updating: update});
@@ -832,7 +841,8 @@ class LibraryHostingCreate extends React.Component {
 															Remove
 														</div>
 														{font.isOld
-															&& !font.integrity && (
+															&& !font.integrity
+															&& font.type === 'VARIANT' && (
 															<div
 																className="button-edit"
 																onClick={() => {
@@ -1005,11 +1015,22 @@ const createHostedDomainMutation = gql`
 			updatedAt
 			hostedVariants {
 				id
-				url
 				createdAt
 				abstractedFont {
 					id
+					type
+					template
+					preset {
+						id
+					}
+					variant {
+						id
+						family {
+							id
+						}
+					}
 				}
+				url
 				version
 			}
 		}
@@ -1034,11 +1055,22 @@ const updateHostedDomainMutation = gql`
 			updatedAt
 			hostedVariants {
 				id
-				url
 				createdAt
 				abstractedFont {
 					id
+					type
+					template
+					preset {
+						id
+					}
+					variant {
+						id
+						family {
+							id
+						}
+					}
 				}
+				url
 				version
 			}
 		}

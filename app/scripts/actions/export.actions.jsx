@@ -432,7 +432,10 @@ export default {
 						)
 						.then((buffer) => {
 							console.log(`${variantName} Buffer recieved!`);
-							resolve(buffer);
+							resolve({
+								buffer,
+								id: metadataArray[index].id,
+							});
 						})
 						.catch((e) => {
 							console.log(e);
