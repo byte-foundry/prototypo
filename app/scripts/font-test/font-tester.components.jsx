@@ -116,6 +116,10 @@ export default class FontTester extends React.Component {
 		FontMediator.instance().getAllGlyphForCanvas('gfnt.ptf');
 	}
 
+	computeSpectral() {
+		FontMediator.instance().getAllGlyphForCanvas('ligne.ptf');
+	}
+
 	render() {
 		const glyphs = window.glyphArray || [];
 

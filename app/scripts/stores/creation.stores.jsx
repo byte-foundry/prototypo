@@ -93,6 +93,14 @@ const prototypoStore = new Remutable({
 			templateName: 'john-fell.ptf',
 			provider: 'prototypo',
 		},
+		{
+			sample: 'ligne-preview.svg',
+			sampleLarge: 'template-ligne.svg',
+			name: 'Prototypo Ligne',
+			familyName: 'Prototypo Ligne',
+			templateName: 'ligne.ptf',
+			provider: 'prototypo',
+		},
 	],
 
 	// end template list store values

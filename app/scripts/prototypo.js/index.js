@@ -11,6 +11,7 @@ export const templateNames = {
 	FELL: 'john-fell.ptf?new',
 	SPECTRAL: 'gfnt.ptf?new',
 	ANTIQUE: 'antique.ptf?new',
+	LIGNE: 'ligne.ptf?new',
 };
 
 const awsUrl = isProduction()
