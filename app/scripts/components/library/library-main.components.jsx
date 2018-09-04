@@ -388,6 +388,7 @@ export const libraryUserQuery = gql`
 					abstractedFont {
 						id
 						type
+						name
 						template
 						preset {
 							id

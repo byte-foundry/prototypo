@@ -73,8 +73,6 @@ class LibraryHostingCreate extends React.Component {
 			let variantData;
 			let templateInfo;
 
-			console.log(hostedDomain.hostedVariants);
-
 			hostedDomainMetadata = {
 				domain: hostedDomain.domain,
 				autocompleteText: '',
@@ -240,9 +238,9 @@ class LibraryHostingCreate extends React.Component {
 				addedFonts.find(f => f.id === b.id),
 			);
 			const urls = await Promise.all(
-				this.state.buffers.map(async (buffer, index) =>
+				buffers.map(async (buffer, index) =>
 					tmpUpload(
-						new Blob([new Uint8Array(buffer)]),
+						new Blob([new Uint8Array(buffer.buffer)]),
 						`${exportedFonts[index].id}`,
 					),
 				),
@@ -290,8 +288,6 @@ class LibraryHostingCreate extends React.Component {
 					...hostedFonts.map(({data}) => data.hostFont.id),
 					...addedFonts.filter(f => f.isOld).map(f => f.hostedId),
 				];
-
-				console.log(allHostedFonts);
 
 				this.props
 					.updateHostedDomain(this.state.domain, allHostedFonts)
@@ -650,7 +646,6 @@ class LibraryHostingCreate extends React.Component {
 	}
 
 	hostFonts(update = false) {
-		console.log(update);
 		if (this.state.hostingTimeout) {
 			return;
 		}
@@ -734,14 +729,6 @@ class LibraryHostingCreate extends React.Component {
 			});
 			templateArray.push(addedFont.template);
 			glyphsArray.push(addedFont.glyphs);
-		});
-		console.log({
-			familyNames,
-			variantNames,
-			valueArray,
-			metadataArray,
-			templateArray,
-			glyphsArray,
 		});
 		try {
 			this.setState({status: 'generating', updating: update});
@@ -1018,6 +1005,7 @@ const createHostedDomainMutation = gql`
 				createdAt
 				abstractedFont {
 					id
+					name
 					type
 					template
 					preset {
@@ -1059,6 +1047,7 @@ const updateHostedDomainMutation = gql`
 				abstractedFont {
 					id
 					type
+					name
 					template
 					preset {
 						id

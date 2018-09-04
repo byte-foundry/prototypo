@@ -9,8 +9,58 @@ export default class LibraryHosting extends React.Component {
 		this.state = {
 			hostedDomains: [],
 		};
+		this.generateCss = this.generateCss.bind(this);
 	}
+	generateCss(hostedDomain) {
+		let familyData;
+		let variantData;
 
+		return `
+			${hostedDomain.hostedVariants
+		.map((hostedFont) => {
+			switch (hostedFont.abstractedFont.type) {
+			case 'PRESET':
+				return `
+						@font-face {
+							font-family: '${hostedFont.abstractedFont.name}';
+							font-style: normal;
+							font-weight: 500;
+							src: url(${hostedFont.url}) format("opentype");
+						}
+`;
+			case 'TEMPLATE':
+				return `
+						@font-face {
+							font-family: '${hostedFont.abstractedFont.name}';
+							font-style: normal;
+							font-weight: 500;
+							src: url(${hostedFont.url}) format("opentype");
+						}
+`;
+			case 'VARIANT':
+				familyData
+								= this.props.families
+								&& this.props.families.find(
+									p => p.id === hostedFont.abstractedFont.variant.family.id,
+								);
+				variantData = familyData.variants.find(
+					v => hostedFont.abstractedFont.variant.id,
+				);
+				return `
+						@font-face {
+							font-family: '${hostedFont.abstractedFont.name}';
+							font-style: ${variantData.italic ? 'italic' : 'normal'};
+							font-weight: ${variantData.weight};
+							src: url(${hostedFont.url}) format("opentype");
+						}
+`;
+			default:
+				return '';
+			}
+		})
+		.join('')}
+`;
+	}
 	render() {
 		return (
 			<div className="library-content-wrapper">
@@ -65,6 +115,11 @@ export default class LibraryHosting extends React.Component {
 													new Date(hostedDomain.updatedAt),
 												)}
 											</span>
+										</div>
+										<div>
+											<pre>
+												<code>{this.generateCss(hostedDomain)}</code>
+											</pre>
 										</div>
 									</div>
 								))}
