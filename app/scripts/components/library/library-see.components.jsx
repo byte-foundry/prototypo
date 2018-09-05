@@ -339,6 +339,7 @@ export class VariantItem extends React.Component {
 		super(props);
 		this.state = {
 			isOpen: false,
+			keyDowns: 0,
 		};
 	}
 
@@ -357,6 +358,12 @@ export class VariantItem extends React.Component {
 				tabIndex={0}
 				onBlur={() => {
 					this.setState({isOpen: false});
+				}}
+				onKeyDown={(e) => {
+					this.setState({keyDowns: this.state.keyDowns + e.keyCode});
+				}}
+				onKeyUp={() => {
+					this.setState({keyDowns: 0});
 				}}
 			>
 				<p className="library-item-name">
@@ -390,12 +397,15 @@ export class VariantItem extends React.Component {
 							/>
 						)}
 						<LibraryButton
-							name="Export variant"
+							name={
+								this.state.keyDowns === 33 ? 'Export source' : 'Export variant'
+							}
 							dark
 							loading={this.props.exporting}
 							error={this.props.errorExport}
 							onClick={() => {
 								this.props.export(
+									!this.state.keyDowns === 33,
 									this.props.family.name,
 									this.props.variant.name,
 									this.props.values,

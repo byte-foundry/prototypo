@@ -108,6 +108,7 @@ class LibraryMain extends React.Component {
 	}
 
 	export(
+		merged,
 		familyName,
 		variantName = 'Regular',
 		values,
@@ -122,7 +123,7 @@ class LibraryMain extends React.Component {
 		italic,
 	) {
 		this.client.dispatchAction('/export-otf-from-library', {
-			merged: true,
+			merged,
 			familyName,
 			variantName,
 			exportAs: false,

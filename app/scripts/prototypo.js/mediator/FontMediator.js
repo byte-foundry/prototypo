@@ -228,6 +228,7 @@ export default class FontMediator {
 		weight,
 		width,
 		italic,
+		merged = true,
 	) {
 		if (!this.workerPool) {
 			return undefined;
@@ -282,7 +283,7 @@ export default class FontMediator {
 						'json',
 					);
 
-					resolve(mergedFont);
+					resolve(merged ? mergedFont : arrayBuffer);
 				},
 			};
 

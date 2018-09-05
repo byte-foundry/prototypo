@@ -236,6 +236,7 @@ export default {
 				weight,
 				width,
 				italic,
+				merged,
 			);
 
 			triggerDownload(buffer, `${name.family} ${name.style}.otf`);

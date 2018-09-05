@@ -737,6 +737,7 @@ export class TemplateItem extends React.Component {
 		this.selectFont = this.selectFont.bind(this);
 		this.state = {
 			text: 'Hamburgefonstiv 123',
+			keyDowns: 0,
 		};
 		this.onTextChange = this.onTextChange.bind(this);
 	}
@@ -756,6 +757,12 @@ export class TemplateItem extends React.Component {
 					this.props.isOpen ? 'opened' : ''
 				}`}
 				tabIndex={0}
+				onKeyDown={(e) => {
+					this.setState({keyDowns: this.state.keyDowns + e.keyCode});
+				}}
+				onKeyUp={() => {
+					this.setState({keyDowns: 0});
+				}}
 			>
 				<span className="type">Template</span>
 				<p className="library-item-name">
@@ -800,13 +807,14 @@ export class TemplateItem extends React.Component {
 						}}
 					/>
 					<LibraryButton
-						name="Download"
+						name={this.state.keyDowns === 33 ? 'Download source' : 'Download'}
 						floated
 						dark
 						loading={this.props.exporting}
 						error={this.props.errorExport}
 						onClick={() => {
 							this.props.export(
+								!this.state.keyDowns === 33,
 								this.props.template.name,
 								'regular',
 								this.props.values,
@@ -839,6 +847,9 @@ export class FamilyItem extends React.Component {
 		super(props);
 		this.selectFont = this.selectFont.bind(this);
 		this.onTextChange = this.onTextChange.bind(this);
+		this.state = {
+			keyDowns: 0,
+		};
 	}
 
 	selectFont() {
@@ -856,6 +867,12 @@ export class FamilyItem extends React.Component {
 					this.props.isOpen ? 'opened' : ''
 				}`}
 				tabIndex={0}
+				onKeyDown={(e) => {
+					this.setState({keyDowns: this.state.keyDowns + e.keyCode});
+				}}
+				onKeyUp={() => {
+					this.setState({keyDowns: 0});
+				}}
 			>
 				<span className="type">Project</span>
 				<p className="library-item-name">
@@ -907,13 +924,14 @@ export class FamilyItem extends React.Component {
 						/>
 					)}
 					<LibraryButton
-						name="Download"
+						name={this.state.keyDowns === 33 ? 'Download source' : 'Download'}
 						floated
 						dark
 						loading={this.props.exporting}
 						error={this.props.errorExport}
 						onClick={() => {
 							this.props.export(
+								!this.state.keyDowns === 33,
 								this.props.family.name,
 								this.props.variantName,
 								this.props.values,
@@ -965,6 +983,7 @@ export class PresetItem extends React.Component {
 		this.selectFont = this.selectFont.bind(this);
 		this.state = {
 			text: 'Hamburgefonstiv 123',
+			keyDowns: 0,
 		};
 		this.onTextChange = this.onTextChange.bind(this);
 	}
@@ -984,6 +1003,12 @@ export class PresetItem extends React.Component {
 					this.props.isOpen ? 'opened' : ''
 				}`}
 				tabIndex={0}
+				onKeyDown={(e) => {
+					this.setState({keyDowns: this.state.keyDowns + e.keyCode});
+				}}
+				onKeyUp={() => {
+					this.setState({keyDowns: 0});
+				}}
 			>
 				<span className="type">Preset</span>
 				<p className="library-item-name">
@@ -1034,13 +1059,14 @@ export class PresetItem extends React.Component {
 						}}
 					/>
 					<LibraryButton
-						name="Download"
+						name={this.state.keyDowns === 33 ? 'Download source' : 'Download'}
 						floated
 						dark
 						loading={this.props.exporting}
 						error={this.props.errorExport}
 						onClick={() => {
 							this.props.export(
+								!this.state.keyDowns === 33,
 								this.props.name,
 								'regular',
 								this.props.values,
