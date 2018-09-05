@@ -977,7 +977,6 @@ export default class GlyphCanvas extends React.PureComponent {
 								appStateValue = appState.BOX_SELECTING;
 								mouseBoxStart = mouse.pos;
 							}
-							this.storeSelectedItems(selectedItems);
 						}
 						else if (
 							appStateValue & appState.BOX_SELECTING
@@ -1000,7 +999,7 @@ export default class GlyphCanvas extends React.PureComponent {
 										});
 
 										if (toAdd) {
-											selectedItems.push(node);
+											selectedItems = [...selectedItems, node];
 										}
 									});
 									appStateValue = appState.POINTS_SELECTED;
@@ -1062,6 +1061,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								force: true,
 								changes: {},
 							});
+							this.storeSelectedItems(selectedItems);
 						}
 						else if (
 							appStateValue & appState.POINTS_SELECTED
@@ -1203,7 +1203,7 @@ export default class GlyphCanvas extends React.PureComponent {
 									this.toile.keyboardDown.keyCode
 									&& this.toile.keyboardDown.special & specialKey.SHIFT
 								) {
-									selectedItems.push(...preSelection);
+									selectedItems = [...selectedItems, ...preSelection];
 								}
 								else {
 									selectedItems = preSelection;
@@ -1223,7 +1223,7 @@ export default class GlyphCanvas extends React.PureComponent {
 										this.toile.keyboardDown.keyCode
 										&& this.toile.keyboardDown.special & specialKey.SHIFT
 									) {
-										selectedItems.push(...preSelection);
+										selectedItems = [...selectedItems, ...preSelection];
 									}
 									else {
 										selectedItems = preSelection;
