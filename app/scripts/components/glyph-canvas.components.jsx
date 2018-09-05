@@ -977,7 +977,6 @@ export default class GlyphCanvas extends React.PureComponent {
 								appStateValue = appState.BOX_SELECTING;
 								mouseBoxStart = mouse.pos;
 							}
-							this.storeSelectedItems(selectedItems);
 						}
 						else if (
 							appStateValue & appState.BOX_SELECTING
@@ -1062,6 +1061,7 @@ export default class GlyphCanvas extends React.PureComponent {
 								force: true,
 								changes: {},
 							});
+							this.storeSelectedItems(selectedItems);
 						}
 						else if (
 							appStateValue & appState.POINTS_SELECTED
