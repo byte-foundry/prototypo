@@ -135,7 +135,7 @@ class Collection extends React.PureComponent {
 						onClick={this.returnToDashboard}
 					/>
 					<div className="account-header">
-						<h1 className="account-title">My projects</h1>
+						<h1 className="account-title">My library</h1>
 						<div className="account-header-right">
 							<button
 								className="account-dashboard-back-icon"
@@ -198,6 +198,9 @@ export const libraryQuery = gql`
 					width
 					weight
 					italic
+					abstractedFont {
+						id
+					}
 				}
 			}
 		}

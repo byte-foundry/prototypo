@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import {LibrarySidebarRight} from './library-sidebars.components';
+import LibraryButton from './library-button.components';
 
 const isUrl = new RegExp(
 	'^(https?:\\/\\/)?'
@@ -20,14 +21,14 @@ export default class LibraryFontsInUseList extends React.Component {
 	}
 	renderFont(fontUsed) {
 		switch (fontUsed.type) {
-		case 'Template':
+		case 'TEMPLATE':
 			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
-		case 'Preset':
+		case 'PRESET':
 			return <span className="library-fontinuse-font">{fontUsed.name}</span>;
-		case 'Family':
-			return fontUsed.family ? (
+		case 'VARIANT':
+			return fontUsed.variant ? (
 				<span className="library-fontinuse-font">
-					<Link to={`/library/project/${fontUsed.family.id}`}>
+					<Link to={`/library/project/${fontUsed.variant.family.id}`}>
 						{fontUsed.name}
 					</Link>
 				</span>
@@ -39,10 +40,11 @@ export default class LibraryFontsInUseList extends React.Component {
 		}
 	}
 	render() {
+		console.log(this.props.fontInUses);
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">
-					{this.props.fontInUses.length === 0 ? (
+					{this.props.fontInUses && this.props.fontInUses.length === 0 ? (
 						<div>
 							<div className="library-see-title">No fonts in use yet.</div>
 							<div className="library-see-description">
@@ -74,7 +76,7 @@ export default class LibraryFontsInUseList extends React.Component {
 										<p>
 											<label>Client</label>
 											{isUrl.test(fontInUse.clientUrl) ? (
-												<a href={fontInUse.clientUrl} target="_blank">
+												<a href={`//${fontInUse.clientUrl}`} target="_blank">
 													{fontInUse.client}
 												</a>
 											) : (
@@ -90,7 +92,7 @@ export default class LibraryFontsInUseList extends React.Component {
 										<p>
 											<label>Designer</label>
 											{isUrl.test(fontInUse.designerUrl) ? (
-												<a href={fontInUse.designerUrl} target="_blank">
+												<a href={`//${fontInUse.designerUrl}`} target="_blank">
 													{fontInUse.designer}
 												</a>
 											) : (
@@ -107,10 +109,15 @@ export default class LibraryFontsInUseList extends React.Component {
 							))}
 					</div>
 				</div>
-				<LibrarySidebarRight>
-					<Link className="sidebar-action" to="/library/fontinuse/create">
-						Add fontsinuse
-					</Link>
+				<LibrarySidebarRight router={this.props.router}>
+					<LibraryButton
+						name="Add fontsinuse"
+						bold
+						full
+						onClick={() => {
+							this.props.router.push('/library/fontinuse/create');
+						}}
+					/>
 				</LibrarySidebarRight>
 			</div>
 		);

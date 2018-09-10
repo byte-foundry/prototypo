@@ -2,7 +2,7 @@
 
 .slider {
 	margin-bottom:15px;
-	font-size: 0.8em;
+	font-size: 0.7em;
 	position:relative;
 	z-index:1;
 
@@ -112,6 +112,7 @@
 		padding-left: 0.8em;
 		display: inline-block;
 		pointer-events: none;
+		margin-bottom: .5em;
 	}
 
 	&-reset {
@@ -137,7 +138,7 @@
 		display: inline-block;
 		cursor: pointer;
 		color: darken($white, 25%);
-		font-weight: bold;
+		font-weight: 700;
 		transition: background-color 200ms ease, color 200ms ease;
 		background-color: darken($dark-grey, 2%);
 		border-radius: 50%;

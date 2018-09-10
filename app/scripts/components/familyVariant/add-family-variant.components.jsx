@@ -578,6 +578,9 @@ const createVariantMutation = gql`
 			width
 			italic
 			updatedAt
+			abstractedFont {
+				id
+			}
 		}
 	}
 `;

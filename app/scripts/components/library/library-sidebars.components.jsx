@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores';
+import LibraryButton from './library-button.components';
 
 export class LibrarySidebarLeft extends React.Component {
 	constructor(props) {
@@ -78,8 +79,10 @@ export class LibrarySidebarLeft extends React.Component {
 			&& families
 				.sort(
 					(a, b) =>
-						Date.parse(a.variants[0].updatedAt)
-						< Date.parse(b.variants[0].updatedAt),
+						a.variants[0]
+						&& b.variants[0]
+						&& Date.parse(a.variants[0].updatedAt)
+							< Date.parse(b.variants[0].updatedAt),
 				)
 				.forEach((family) => {
 					userProjects.push(
@@ -189,14 +192,24 @@ export class LibrarySidebarLeft extends React.Component {
 		return (
 			<div className="library-sidebar-left">
 				{this.props.location.pathname !== '/library/create' && (
-					<Link to="/library/create" className="library-sidebar-action-dark">
-						New Project
-					</Link>
+					<LibraryButton
+						name="New Project"
+						dark
+						big
+						onClick={() => {
+							this.props.router.push('/library/create');
+						}}
+					/>
 				)}
 				{this.props.location.pathname === '/library/create' && (
-					<Link to="/library/home" className="library-sidebar-action-dark">
-						Back to library
-					</Link>
+					<LibraryButton
+						name="Back to Library"
+						dark
+						big
+						onClick={() => {
+							this.props.router.push('/library/home');
+						}}
+					/>
 				)}
 				{this.props.location.pathname !== '/library/create' && (
 					<div>
@@ -232,9 +245,7 @@ export class LibrarySidebarLeft extends React.Component {
 									>
 										▶
 									</span>{' '}
-									<Link to="/library?mode=personal">
-										Personal library
-									</Link>
+									<Link to="/library?mode=personal">Personal library</Link>
 								</p>
 								{this.state.isPersonalOpened && userProjects}
 							</div>
@@ -310,15 +321,22 @@ export class LibrarySidebarLeft extends React.Component {
 }
 
 export class LibrarySidebarRight extends React.Component {
+	constructor(props) {
+		super(props);
+	}
 	render() {
 		return (
 			<div className="library-sidebar-right">
-				<Link
-					to="/account/home"
-					className="sidebar-action sidebar-action-account"
-				>
-					My account
-				</Link>
+				<LibraryButton
+					name="My account"
+					dark
+					bold
+					highlight
+					full
+					onClick={() => {
+						this.props.router.push('/account/home');
+					}}
+				/>
 				{this.props.children}
 			</div>
 		);
@@ -328,6 +346,9 @@ export class LibrarySidebarRight extends React.Component {
 export class FamilySidebarActions extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			confirmDelete: false,
+		};
 		this.addVariant = this.addVariant.bind(this);
 	}
 	async componentWillMount() {
@@ -342,53 +363,72 @@ export class FamilySidebarActions extends React.Component {
 	render() {
 		return (
 			<div className="sidebar-actions-family">
-				<div
-					className="sidebar-action"
+				<LibraryButton
+					name="Export family"
+					bold
+					full
+					loading={this.props.exporting}
+					error={this.props.errorExport}
 					onClick={() => {
 						this.props.exportFamily();
 					}}
-				>
-					Export family
-				</div>
+				/>
 				{this.props.isPersonal
 					&& this.props.mode === 'see' && (
-					<Link
-						className="sidebar-action"
-						to={`/library/project/${this.props.familyId}/details`}
-					>
-							Family settings
-					</Link>
+					<LibraryButton
+						name="Family settings"
+						bold
+						full
+						onClick={() => {
+							this.props.router.push(
+								`/library/project/${this.props.familyId}/details`,
+							);
+						}}
+					/>
 				)}
 				{this.props.isPersonal
 					&& this.props.mode === 'details' && (
-					<Link
-						className="sidebar-action"
-						to={`/library/project/${this.props.familyId}`}
-					>
-							Family dashboard
-					</Link>
+					<LibraryButton
+						name="Family dashboard"
+						bold
+						full
+						onClick={() => {
+							this.props.router.push(
+								`/library/project/${this.props.familyId}`,
+							);
+						}}
+					/>
 				)}
 				{this.props.isPersonal && (
-					<div
-						className="sidebar-action"
+					<LibraryButton
+						name="Add new Variant"
+						bold
+						full
 						onClick={() => {
 							this.addVariant();
 						}}
-					>
-						Add new Variant
-					</div>
+					/>
 				)}
 
 				{this.props.isPersonal
 					&& this.props.mode === 'details' && (
-					<div
-						className="sidebar-action"
+					<LibraryButton
+						name={`${this.state.confirmDelete ? 'Confirm' : 'Delete family'}`}
+						bold
+						full
+						error={this.state.confirmDelete}
 						onClick={() => {
-							this.props.deleteFamily();
+							if (this.state.confirmDelete) {
+								this.props.deleteFamily();
+							}
+							else {
+								this.setState({confirmDelete: true});
+							}
 						}}
-					>
-							Delete family
-					</div>
+						onBlur={() => {
+							this.setState({confirmDelete: false});
+						}}
+					/>
 				)}
 			</div>
 		);

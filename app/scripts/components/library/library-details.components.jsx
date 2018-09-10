@@ -8,6 +8,7 @@ import {
 } from './library-sidebars.components';
 import {graphql, gql, compose} from 'react-apollo';
 import FontUpdater from '../font-updater.components';
+import Lifespan from 'lifespan';
 import LocalClient from '../../stores/local-client.stores';
 
 class LibraryDetails extends React.Component {
@@ -48,7 +49,15 @@ class LibraryDetails extends React.Component {
 	}
 	async componentWillMount() {
 		this.client = LocalClient.instance();
+		this.lifespan = new Lifespan();
 		const prototypoStore = await this.client.fetch('/prototypoStore');
+
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
+			this.setState({
+				exporting: head.toJS().d.export,
+				errorExport: head.toJS().d.errorExport,
+			});
+		});
 		const familyGlyphs = prototypoStore.head
 			.toJS()
 			.templatesData.find(e => e.name === this.state.family.template).glyphs;
@@ -298,8 +307,21 @@ class LibraryDetails extends React.Component {
 												this.updateVariantData(e, 'width', index);
 											}}
 										>
-											{['medium', 'condensed', 'expanded'].map(width => (
-												<option value={width}>{width}</option>
+											{[
+												{
+													name: 'normal',
+													value: 'medium',
+												},
+												{
+													name: 'condensed',
+													value: 'condensed',
+												},
+												{
+													name: 'expanded',
+													value: 'expanded',
+												},
+											].map(width => (
+												<option value={width.value}>{width.name}</option>
 											))}
 										</select>
 									</div>
@@ -345,7 +367,7 @@ class LibraryDetails extends React.Component {
 							))}
 					</div>
 				</div>
-				<LibrarySidebarRight>
+				<LibrarySidebarRight router={this.props.router}>
 					<FamilySidebarActions
 						familyId={this.props.params.projectID}
 						deleteFamily={this.deleteFamily}
@@ -353,6 +375,9 @@ class LibraryDetails extends React.Component {
 						family={this.state.family}
 						mode="details"
 						isPersonal={true}
+						router={this.props.router}
+						exporting={this.state.exporting}
+						errorExport={this.state.errorExport}
 					/>
 					<FamilySidebarGlyphs glyphs={this.state.familyGlyphs} />
 					<SidebarTags

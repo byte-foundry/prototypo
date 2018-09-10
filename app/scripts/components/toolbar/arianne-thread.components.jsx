@@ -323,7 +323,7 @@ class RootArianneItem extends React.Component {
 		return (
 			<div className="arianne-item" onClick={this.props.click}>
 				<div className="arianne-item-action">
-					<span className="arianne-item-action-collection">My projects</span>
+					<span className="arianne-item-action-collection">My library</span>
 				</div>
 				<div className="arianne-item-arrow" />
 			</div>
@@ -434,7 +434,7 @@ class ArianneDropMenu extends React.PureComponent {
 		const items = this.props.list.map((item, index) => (
 			<ArianneDropMenuItem
 				item={item}
-				key={item.name}
+				key={item.id || item.name}
 				click={this.props.click}
 				family={this.props.family}
 				itemToEl={this.props.itemToEl}

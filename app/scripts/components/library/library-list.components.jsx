@@ -17,6 +17,7 @@ import {
 } from './library-sidebars.components';
 
 import LibrarySearch from './library-search.components';
+import LibraryButton from './library-button.components';
 
 class LibraryList extends React.Component {
 	constructor(props) {
@@ -59,6 +60,8 @@ class LibraryList extends React.Component {
 						.familySelectedVariantCreation,
 					collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
 					templatesData: head.toJS().d.templatesData,
+					exporting: head.toJS().d.export,
+					errorExport: head.toJS().d.errorExport,
 				});
 				this.generateFonts();
 			})
@@ -83,36 +86,25 @@ class LibraryList extends React.Component {
 			displayedText: text,
 		});
 	}
-	updateFavourites(favourite, type, id, name) {
-		const favourites = [...this.props.favourites];
-		let relatedKey;
-
-		switch (type) {
-		case 'Template':
-			relatedKey = 'template';
-			break;
-		case 'Preset':
-			relatedKey = 'preset';
-			break;
-		case 'Family':
-			relatedKey = 'family';
-			break;
-		default:
-			break;
-		}
+	updateFavourites(favourite, type, id, name, abstractedFontId) {
 		if (favourite) {
 			this.props.deleteFavourite(favourite.id);
 		}
+		else if (abstractedFontId) {
+			this.props.addFavourite(abstractedFontId);
+		}
 		else {
 			switch (type) {
-			case 'Template':
-				this.props.addFavourite(type, undefined, id, undefined, name);
+			case 'TEMPLATE':
+				this.props.addFavourite(
+					this.props.abstractedTemplates.find(e => e.template === name).id,
+				);
 				break;
-			case 'Preset':
-				this.props.addFavourite(type, undefined, undefined, id, name);
+			case 'PRESET':
+				this.props.createFavourite(type, undefined, undefined, id, name);
 				break;
-			case 'Family':
-				this.props.addFavourite(type, id, undefined, undefined, name);
+			case 'VARIANT':
+				this.props.createFavourite(type, id, undefined, undefined, name);
 				break;
 			default:
 				break;
@@ -127,6 +119,8 @@ class LibraryList extends React.Component {
 			glyphs: templateData.glyphs,
 			values: templateData.initValues,
 			export: this.props.export,
+			exporting: this.state.exporting,
+			errorExport: this.state.errorExport,
 			createProject: this.createProject,
 			click: this.selectFont,
 			isOpen: this.state.selectedFont === template.templateName,
@@ -136,7 +130,7 @@ class LibraryList extends React.Component {
 			displayedText: this.state.displayedText,
 			onTextChange: this.onTextChange,
 			favourite: favourites.find(
-				f => f.type === 'Template' && f.template === template.name,
+				f => f.type === 'TEMPLATE' && f.template === template.name,
 			),
 			updateFavourites: this.updateFavourites,
 		});
@@ -161,6 +155,8 @@ class LibraryList extends React.Component {
 			glyphs: templateData.glyphs,
 			values: preset.baseValues,
 			export: this.props.export,
+			exporting: this.state.exporting,
+			errorExport: this.state.errorExport,
 			click: this.selectFont,
 			isOpen: this.state.selectedFont === preset.id,
 			familyId: preset.id,
@@ -168,8 +164,9 @@ class LibraryList extends React.Component {
 			onTextChange: this.onTextChange,
 			fontName: `preset${preset.id}`,
 			templateName: templateInfo.templateName,
+			abstractedFontId: preset.abstractedFont && preset.abstractedFont.id,
 			favourite: favourites.find(
-				f => f.type === 'Preset' && f.preset.id === preset.id,
+				f => f.type === 'PRESET' && f.preset && f.preset.id === preset.id,
 			),
 			updateFavourites: this.updateFavourites,
 		});
@@ -195,6 +192,8 @@ class LibraryList extends React.Component {
 				variantToLoad,
 				open: this.props.open,
 				export: this.props.export,
+				exporting: this.state.exporting,
+				errorExport: this.state.errorExport,
 				displayedText: this.state.displayedText,
 				onTextChange: this.onTextChange,
 				glyphs: templateData.glyphs,
@@ -212,8 +211,14 @@ class LibraryList extends React.Component {
 				fontName: `user${family.id}`,
 				isFromTeam,
 				favourite: favourites.find(
-					f => f.type === 'Family' && f.family && f.family.id === family.id,
+					f =>
+						f.type === 'VARIANT'
+						&& f.variant
+						&& variantToLoad
+						&& variantToLoad.id === f.variant.id,
 				),
+				abstractedFontId:
+					variantToLoad.abstractedFont && variantToLoad.abstractedFont.id,
 				updateFavourites: this.updateFavourites,
 			};
 	}
@@ -223,11 +228,11 @@ class LibraryList extends React.Component {
 		const presets = p || this.props.presets;
 		const favourites = fa || this.props.favourites || [];
 		const customBadgesColor = [
-			'#29ABE2',
-			'#0000FF',
-			'#00FF00',
-			'#FF0000',
-			'#F7931E',
+			'#003049',
+			'#D62828',
+			'#F77F00',
+			'#FCBF49',
+			'#71AF2F',
 		];
 
 		const subUserColors = [
@@ -594,7 +599,7 @@ class LibraryList extends React.Component {
 	getEmptyMessage() {
 		const mode = this.props.location.query && this.props.location.query.mode;
 
-		if (mode === 'personnal') {
+		if (mode === 'personal') {
 			return (
 				<div className="library-see-description">
 					<p>
@@ -661,13 +666,18 @@ class LibraryList extends React.Component {
 							<FamilyList fontsToDisplay={this.state.fontsToDisplay} />
 						)}
 				</div>
-				<LibrarySidebarRight>
+				<LibrarySidebarRight router={this.props.router}>
 					<LibrarySearch />
 					<SidebarFilters setActiveFilters={this.props.setActiveFilters} />
 					<SidebarTags tags={this.state.tags} mode="interactive" />
-					<Link className="sidebar-action" to="/library/fontinuse/create">
-						Add fontsinuse
-					</Link>
+					<LibraryButton
+						name="Add fontsinuse"
+						bold
+						full
+						onClick={() => {
+							this.props.router.push('/library/fontinuse/create');
+						}}
+					/>
 				</LibrarySidebarRight>
 			</div>
 		);
@@ -727,6 +737,7 @@ export class TemplateItem extends React.Component {
 		this.selectFont = this.selectFont.bind(this);
 		this.state = {
 			text: 'Hamburgefonstiv 123',
+			keyDowns: 0,
 		};
 		this.onTextChange = this.onTextChange.bind(this);
 	}
@@ -741,14 +752,26 @@ export class TemplateItem extends React.Component {
 
 	render() {
 		return (
-			<div className="library-item" tabIndex={0}>
+			<div
+				className={`library-item library-template ${
+					this.props.isOpen ? 'opened' : ''
+				}`}
+				tabIndex={0}
+				onKeyDown={(e) => {
+					this.setState({keyDowns: this.state.keyDowns + e.keyCode});
+				}}
+				onKeyUp={() => {
+					this.setState({keyDowns: 0});
+				}}
+			>
+				<span className="type">Template</span>
 				<p className="library-item-name">
 					<span
 						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,
-								'Template',
+								'TEMPLATE',
 								this.props.template.name,
 								this.props.template.name,
 							);
@@ -775,18 +798,23 @@ export class TemplateItem extends React.Component {
 						this.props.isOpen ? 'opened' : ''
 					}`}
 				>
-					<div
-						className="library-item-action"
+					<LibraryButton
+						name="Create from this template"
+						floated
+						dark
 						onClick={() => {
 							this.props.createProject(this.props.template.templateName);
 						}}
-					>
-						Edit
-					</div>
-					<div
-						className="library-item-action"
+					/>
+					<LibraryButton
+						name={this.state.keyDowns === 33 ? 'Download source' : 'Download'}
+						floated
+						dark
+						loading={this.props.exporting}
+						error={this.props.errorExport}
 						onClick={() => {
 							this.props.export(
+								!this.state.keyDowns === 33,
 								this.props.template.name,
 								'regular',
 								this.props.values,
@@ -794,9 +822,7 @@ export class TemplateItem extends React.Component {
 								this.props.glyphs,
 							);
 						}}
-					>
-						Download
-					</div>
+					/>
 					<input
 						type="text"
 						name="displayedWord"
@@ -821,6 +847,9 @@ export class FamilyItem extends React.Component {
 		super(props);
 		this.selectFont = this.selectFont.bind(this);
 		this.onTextChange = this.onTextChange.bind(this);
+		this.state = {
+			keyDowns: 0,
+		};
 	}
 
 	selectFont() {
@@ -833,22 +862,36 @@ export class FamilyItem extends React.Component {
 
 	render() {
 		return (
-			<div className="library-item" tabIndex={0}>
+			<div
+				className={`library-item library-family ${
+					this.props.isOpen ? 'opened' : ''
+				}`}
+				tabIndex={0}
+				onKeyDown={(e) => {
+					this.setState({keyDowns: this.state.keyDowns + e.keyCode});
+				}}
+				onKeyUp={() => {
+					this.setState({keyDowns: 0});
+				}}
+			>
+				<span className="type">Project</span>
 				<p className="library-item-name">
 					<span
 						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,
-								'Family',
-								this.props.family.id,
+								'VARIANT',
+								this.props.variantToLoad.id,
 								this.props.family.name,
+								this.props.abstractedFontId,
 							);
 						}}
 					>
 						★
 					</span>
-					{this.props.family.name} from {this.props.template.name}
+					{this.props.family.name}{' '}
+					<span className="small">from {this.props.template.name}</span>
 				</p>
 				<p
 					className="library-item-preview"
@@ -871,19 +914,24 @@ export class FamilyItem extends React.Component {
 					}`}
 				>
 					{!this.props.isFromTeam && (
-						<div
-							className="library-item-action"
+						<LibraryButton
+							floated
+							name="Open in the editor"
+							dark
 							onClick={() => {
 								this.props.open(this.props.variantToLoad, this.props.family);
 							}}
-						>
-							Edit
-						</div>
+						/>
 					)}
-					<div
-						className="library-item-action"
+					<LibraryButton
+						name={this.state.keyDowns === 33 ? 'Download source' : 'Download'}
+						floated
+						dark
+						loading={this.props.exporting}
+						error={this.props.errorExport}
 						onClick={() => {
 							this.props.export(
+								!this.state.keyDowns === 33,
 								this.props.family.name,
 								this.props.variantName,
 								this.props.values,
@@ -898,20 +946,18 @@ export class FamilyItem extends React.Component {
 								this.props.variantToLoad.italic,
 							);
 						}}
-					>
-						Download
-					</div>
-					<div
-						className="library-item-action"
-						onMouseDown={() => {
+					/>
+					<LibraryButton
+						name="Open family"
+						floated
+						dark
+						onClick={() => {
 							this.props.router
 								&& this.props.router.push(
 									`/library/project/${this.props.family.id}`,
 								);
 						}}
-					>
-						Open family
-					</div>
+					/>
 					<input
 						type="text"
 						name="displayedWord"
@@ -937,6 +983,7 @@ export class PresetItem extends React.Component {
 		this.selectFont = this.selectFont.bind(this);
 		this.state = {
 			text: 'Hamburgefonstiv 123',
+			keyDowns: 0,
 		};
 		this.onTextChange = this.onTextChange.bind(this);
 	}
@@ -951,22 +998,36 @@ export class PresetItem extends React.Component {
 
 	render() {
 		return (
-			<div className="library-item" tabIndex={0}>
+			<div
+				className={`library-item library-preset ${
+					this.props.isOpen ? 'opened' : ''
+				}`}
+				tabIndex={0}
+				onKeyDown={(e) => {
+					this.setState({keyDowns: this.state.keyDowns + e.keyCode});
+				}}
+				onKeyUp={() => {
+					this.setState({keyDowns: 0});
+				}}
+			>
+				<span className="type">Preset</span>
 				<p className="library-item-name">
 					<span
 						className={`star-icon ${this.props.favourite ? 'active' : ''}`}
 						onClick={() => {
 							this.props.updateFavourites(
 								this.props.favourite,
-								'Preset',
+								'PRESET',
 								this.props.preset.id,
 								this.props.name,
+								this.props.abstractedFontId,
 							);
 						}}
 					>
 						★
 					</span>
-					{this.props.name} from {this.props.template.name}
+					{this.props.name}{' '}
+					<span className="small">from {this.props.template.name}</span>
 				</p>
 				<p
 					className="library-item-preview"
@@ -986,21 +1047,26 @@ export class PresetItem extends React.Component {
 						this.props.isOpen ? 'opened' : ''
 					}`}
 				>
-					<div
-						className="library-item-action"
+					<LibraryButton
+						name="Create from this preset"
+						floated
+						dark
 						onClick={() => {
 							this.props.createProject(
 								this.props.template.templateName,
 								this.props.values,
 							);
 						}}
-					>
-						Edit
-					</div>
-					<div
-						className="library-item-action"
+					/>
+					<LibraryButton
+						name={this.state.keyDowns === 33 ? 'Download source' : 'Download'}
+						floated
+						dark
+						loading={this.props.exporting}
+						error={this.props.errorExport}
 						onClick={() => {
 							this.props.export(
+								!this.state.keyDowns === 33,
 								this.props.name,
 								'regular',
 								this.props.values,
@@ -1008,9 +1074,7 @@ export class PresetItem extends React.Component {
 								this.props.glyphs,
 							);
 						}}
-					>
-						Download
-					</div>
+					/>
 					<input
 						type="text"
 						name="displayedWord"
