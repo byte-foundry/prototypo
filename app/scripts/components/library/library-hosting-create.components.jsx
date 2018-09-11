@@ -172,6 +172,9 @@ class LibraryHostingCreate extends React.Component {
 							},
 						};
 					case 'VARIANT':
+						if (!variant.abstractedFont.variant) {
+							return false;
+						}
 						family
 								= this.props.families
 								&& this.props.families.find(
@@ -232,25 +235,37 @@ class LibraryHostingCreate extends React.Component {
 		) {
 			const addedFonts = cloneDeep(this.state.addedFonts);
 
+			console.log('Buffers recieved:');
 			this.setState({status: 'uploading'});
 			const buffers = [...this.state.buffers];
-			const exportedFonts = buffers.map(b =>
-				addedFonts.find(f => f.id === b.id),
+			const exportedFonts = [];
+
+			buffers.forEach(b =>
+				exportedFonts.push({
+					buffer: b.buffer,
+					...addedFonts.find(f => f.id === b.id),
+				}),
 			);
+
 			const urls = await Promise.all(
-				buffers.map(async (buffer, index) =>
-					tmpUpload(
-						new Blob([new Uint8Array(buffer.buffer)]),
-						`${exportedFonts[index].id}`,
+				exportedFonts
+					.filter(f => !f.isOld)
+					.map(async (buffer, index) =>
+						tmpUpload(
+							new Blob([new Uint8Array(buffer.buffer)]),
+							`${exportedFonts[index].id}`,
+						),
 					),
-				),
 			);
 			// TODO: Delete the hosted files if a font is removed / to updated
 
 			const exportedWithoutAbstracted = exportedFonts.filter(
-				f => !f.variant.abstractedFont || !f.variant.abstractedFont.id,
+				f => !!(!f.variant.abstractedFont || !f.variant.abstractedFont.id),
 			);
 
+			console.log('exported without abstracted:');
+			console.log(exportedWithoutAbstracted);
+			console.log(urls);
 			const abstractedFontIds = await Promise.all(
 				exportedWithoutAbstracted.map(async addedFont =>
 					this.props.createAbstractedFont(
@@ -289,6 +304,11 @@ class LibraryHostingCreate extends React.Component {
 					...addedFonts.filter(f => f.isOld).map(f => f.hostedId),
 				];
 
+				console.log('all hosted fonts');
+				console.log(allHostedFonts);
+				console.log('---');
+				console.log(hostedFonts);
+				console.log(addedFonts);
 				this.props
 					.updateHostedDomain(this.state.domain, allHostedFonts)
 					.then(() => {
@@ -696,7 +716,7 @@ class LibraryHostingCreate extends React.Component {
 				loading: false,
 				hostingTimeout: undefined,
 			});
-		}, 10000);
+		}, 20000);
 
 		this.setState({
 			errors: {
@@ -717,6 +737,8 @@ class LibraryHostingCreate extends React.Component {
 		const templateArray = [];
 		const glyphsArray = [];
 
+		console.log('fonts to host:');
+		console.log(this.state.addedFonts.filter(f => !f.isOld));
 		this.state.addedFonts.filter(f => !f.isOld).forEach((addedFont) => {
 			familyNames.push(addedFont.name);
 			variantNames.push(addedFont.variant.name);

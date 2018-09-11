@@ -8,9 +8,31 @@ export default class LibraryHosting extends React.Component {
 		super(props);
 		this.state = {
 			hostedDomains: [],
+			showCopiedMessage: false,
 		};
 		this.generateCss = this.generateCss.bind(this);
+		this.copyToClipboard = this.copyToClipboard.bind(this);
 	}
+
+	copyToClipboard(hostedDomain) {
+		const el = document.createElement('textarea');
+
+		el.value = this.generateCss(hostedDomain);
+		document.body.appendChild(el);
+		el.select();
+		document.execCommand('copy');
+		document.body.removeChild(el);
+
+		this.setState({
+			showCopiedMessage: true,
+		});
+		const timerId = setTimeout(() => {
+			this.setState({
+				showCopiedMessage: false,
+			});
+		}, 3000);
+	}
+
 	generateCss(hostedDomain) {
 		let familyData;
 		let variantData;
@@ -38,6 +60,9 @@ export default class LibraryHosting extends React.Component {
 						}
 `;
 			case 'VARIANT':
+				if (!hostedFont.abstractedFont.variant) {
+					break;
+				}
 				familyData
 								= this.props.families
 								&& this.props.families.find(
@@ -104,6 +129,14 @@ export default class LibraryHosting extends React.Component {
 											>
 												Edit
 											</div>
+											<div
+												className="button-edit"
+												onClick={() => {
+													this.copyToClipboard(hostedDomain);
+												}}
+											>
+												Copy CSS
+											</div>
 										</p>
 										<div className="library-hosting-website-infos">
 											<span>
@@ -116,14 +149,14 @@ export default class LibraryHosting extends React.Component {
 												)}
 											</span>
 										</div>
-										<div>
-											<pre>
-												<code>{this.generateCss(hostedDomain)}</code>
-											</pre>
-										</div>
 									</div>
 								))}
 						</div>
+						{this.state.showCopiedMessage && (
+							<p className="library-hosting-message">
+								CSS copied to clipboard.
+							</p>
+						)}
 					</div>
 				</div>
 				<LibrarySidebarRight>

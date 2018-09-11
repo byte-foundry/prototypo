@@ -683,6 +683,10 @@
 			padding-left: 40px;
 			padding-right: 40px;
 			width: calc(100vw - 500px);
+			.library-hosting-message {
+				font-size: 25px;
+				color: $green;
+			}
 			.library-hosting-list {
 				.library-hosting-website {
 					margin-top: 15px;
@@ -694,13 +698,12 @@
 						margin: 0;
 						.button-edit {
 							display: none;
-							position: absolute;
-							top: 50%;
-							right: -80px;
+							position: relative;
 							transform: translateY(-50%);
 							text-align: center;
 							font-size: 14px;
 							padding: 5px 20px;
+							margin: 0 10px;
 							border: 1px solid $dark-grey;
 							color: $dark-grey;
 							background-color: transparent;
