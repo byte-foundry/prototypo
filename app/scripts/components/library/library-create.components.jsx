@@ -33,7 +33,6 @@ class LibraryCreate extends React.Component {
 
 		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
 			this.setState({
-				openFamilyModal: head.toJS().d.openFamilyModal,
 				openVariantModal: head.toJS().d.openVariantModal,
 				openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
 				openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,

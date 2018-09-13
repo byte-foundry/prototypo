@@ -4,7 +4,11 @@ import {graphql, gql, compose} from 'react-apollo';
 import {LibrarySidebarRight} from './library-sidebars.components';
 import LocalClient from '../../stores/local-client.stores';
 import LibraryButton from './library-button.components';
-import {libraryQuery, presetQuery} from './library-main.components';
+import {
+	libraryQuery,
+	presetQuery,
+	libraryUserQuery,
+} from './library-main.components';
 
 class LibraryFontInUseCreate extends React.Component {
 	constructor(props) {
@@ -515,49 +519,6 @@ class LibraryFontInUseCreate extends React.Component {
 		);
 	}
 }
-
-const libraryUserQuery = gql`
-	query getLibraryUserInfos {
-		user {
-			id
-			firstName
-			lastName
-			fontInUses {
-				id
-				client
-				clientUrl
-				designer
-				designerUrl
-				images
-				fontUsed {
-					id
-					name
-					variant {
-						id
-					}
-					type
-					template
-					preset {
-						id
-					}
-				}
-			}
-			favourites {
-				id
-				name
-				updatedAt
-				type
-				preset {
-					id
-				}
-				variant {
-					id
-				}
-				template
-			}
-		}
-	}
-`;
 
 const deleteAbstractedFontMutation = gql`
 	mutation deleteAbstractedFont($id: ID!) {

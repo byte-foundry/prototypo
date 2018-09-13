@@ -1,5 +1,139 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Storyshots HostVariant custom status 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }
+>
+  <div>
+    <div>
+      <div>
+        <p>
+          Working... 
+          generating
+        </p>
+        <div>
+          <hr />
+          <ul>
+            <li>
+              <b>
+                2018-01-01
+              </b>
+               
+              <input
+                onFocus={[Function]}
+                type="text"
+                value="example.org/myfont?versionId=46fwe63"
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots HostVariant default 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }
+>
+  <div>
+    <div>
+      No latest link available, publish a new version to get one!
+    </div>
+    <button
+      className="new-button new-button--outline new-button--fluid new-button--neutral"
+      disabled={undefined}
+      onClick={[Function]}
+    >
+      Publish a new version
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots HostVariant empty with custom status 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }
+>
+  <p>
+    Working... 
+    hosting
+  </p>
+</div>
+`;
+
+exports[`Storyshots HostVariant with hosted files 1`] = `
+<div
+  className="normal"
+  style={
+    Object {
+      "margin": "auto",
+      "padding": "20px",
+      "textAlign": "center",
+    }
+  }
+>
+  <div>
+    <div>
+      <div>
+        <div>
+          <input
+            onFocus={[Function]}
+            type="text"
+            value="example.org"
+          />
+          <button
+            className="new-button new-button--outline new-button--fluid new-button--neutral"
+            disabled={undefined}
+            onClick={[Function]}
+          >
+            Publish a new version
+          </button>
+        </div>
+        <div>
+          <hr />
+          <ul>
+            <li>
+              <b>
+                2018-01-01
+              </b>
+               
+              <input
+                onFocus={[Function]}
+                type="text"
+                value="example.org/myfont?versionId=46fwe63"
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots SliderController 50% filled 1`] = `
 <div
   style={
@@ -32,7 +166,81 @@ exports[`Storyshots SliderController 50% filled 1`] = `
         className="slider-controller-bg"
         style={
           Object {
-            "transform": "translateX(-46%)",
+            "transform": "translateX(-48%)",
+          }
+        }
+      >
+        <div
+          className="slider-controller-handle"
+        />
+      </div>
+    </div>
+  </div>
+  <ul
+    style={
+      Object {
+        "bottom": "10px",
+        "margin": 0,
+        "overflow": "auto",
+        "position": "absolute",
+        "right": "10px",
+      }
+    }
+  >
+    <li
+      onClick={[Function]}
+      style={
+        Object {
+          "backgroundColor": "#3b3b3b",
+          "borderRadius": "4px",
+          "boxShadow": "inset 0 0 0 2px rgba(0, 0, 0, 0.5)",
+          "cursor": "pointer",
+          "display": "block",
+          "float": "left",
+          "height": "20px",
+          "margin": "0 0 0 10px",
+          "transition": "opacity 0.25s ease-in-out",
+          "width": "20px",
+        }
+      }
+    />
+  </ul>
+</div>
+`;
+
+exports[`Storyshots SliderController disabled 1`] = `
+<div
+  style={
+    Object {
+      "backgroundColor": "#3b3b3b",
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "transition": "background-color 0.25s ease-in-out",
+    }
+  }
+>
+  <div
+    className="normal"
+    style={
+      Object {
+        "margin": "auto",
+        "padding": "20px",
+        "width": "300px",
+      }
+    }
+  >
+    <div
+      className="slider-controller"
+      onMouseDown={[Function]}
+    >
+      <div
+        className="slider-controller-bg"
+        style={
+          Object {
+            "transform": "translateX(-96%)",
           }
         }
       >
@@ -106,7 +314,7 @@ exports[`Storyshots SliderController empty 1`] = `
         className="slider-controller-bg"
         style={
           Object {
-            "transform": "translateX(-92%)",
+            "transform": "translateX(-96%)",
           }
         }
       >
@@ -254,7 +462,7 @@ exports[`Storyshots SliderController restricted 1`] = `
         className="slider-controller-bg"
         style={
           Object {
-            "transform": "translateX(-27.599999999999998%)",
+            "transform": "translateX(-28.799999999999997%)",
           }
         }
       >
@@ -269,7 +477,7 @@ exports[`Storyshots SliderController restricted 1`] = `
           style={
             Object {
               "marginLeft": "-10px",
-              "transform": "translateX(-36.800000000000004%)",
+              "transform": "translateX(-38.400000000000006%)",
             }
           }
         />
@@ -279,7 +487,7 @@ exports[`Storyshots SliderController restricted 1`] = `
           style={
             Object {
               "marginLeft": "-10px",
-              "transform": "translateX(81.6%)",
+              "transform": "translateX(80.8%)",
             }
           }
         />
@@ -350,7 +558,7 @@ exports[`Storyshots SliderController unadvised state 1`] = `
         className="slider-controller-bg is-not-advised"
         style={
           Object {
-            "transform": "translateX(-4.6000000000000005%)",
+            "transform": "translateX(-4.800000000000001%)",
           }
         }
       >
@@ -3302,17 +3510,17 @@ exports[`Storyshots account/SubscriptionSidebar personal_annual_99 1`] = `
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          More diverse fonts with full range on all parameters
+          Full-range parameters
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Perfectly customized with glyph individualization groups
+          Unlimited font exports
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Tune to perfection using the manual edition and component editing
+          Manual editing, individualisation, developper features
         </li>
       </ul>
       <div
@@ -3325,7 +3533,8 @@ exports[`Storyshots account/SubscriptionSidebar personal_annual_99 1`] = `
           <span>
             US$ 8.25
           </span>
-           / month
+           
+          / month
         </span>
       </div>
       <div
@@ -3419,17 +3628,17 @@ exports[`Storyshots account/SubscriptionSidebar personal_annual_99 50% off 1`] =
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          More diverse fonts with full range on all parameters
+          Full-range parameters
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Perfectly customized with glyph individualization groups
+          Unlimited font exports
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Tune to perfection using the manual edition and component editing
+          Manual editing, individualisation, developper features
         </li>
       </ul>
       <div
@@ -3442,7 +3651,8 @@ exports[`Storyshots account/SubscriptionSidebar personal_annual_99 50% off 1`] =
           <span>
             US$ 4.13
           </span>
-           / month
+           
+          / month
         </span>
       </div>
       <div
@@ -3538,17 +3748,17 @@ exports[`Storyshots account/SubscriptionSidebar personal_monthly (no first month
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          More diverse fonts with full range on all parameters
+          Full-range parameters
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Perfectly customized with glyph individualization groups
+          Unlimited font exports
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Tune to perfection using the manual edition and component editing
+          Manual editing, individualisation, developper features
         </li>
       </ul>
       <div
@@ -3562,7 +3772,7 @@ exports[`Storyshots account/SubscriptionSidebar personal_monthly (no first month
             US$ 15
           </span>
            
-           / month
+          / month
         </span>
       </div>
       <div
@@ -3645,13 +3855,7 @@ exports[`Storyshots account/SubscriptionSidebar personal_monthly 1`] = `
         className="subscription-sidebar-title"
       >
         <span>
-          Try Prototypo Pro subscription for
-           
-          <span>
-            US$ 1
-          </span>
-           
-          only
+          Try Prototypo Pro without commitment
         </span>
       </h2>
       <ul
@@ -3660,17 +3864,17 @@ exports[`Storyshots account/SubscriptionSidebar personal_monthly 1`] = `
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          More diverse fonts with full range on all parameters
+          Full-range parameters
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Perfectly customized with glyph individualization groups
+          Unlimited font exports
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Tune to perfection using the manual edition and component editing
+          Manual editing, individualisation, developper features
         </li>
       </ul>
       <div
@@ -3684,10 +3888,7 @@ exports[`Storyshots account/SubscriptionSidebar personal_monthly 1`] = `
             US$ 15
           </span>
            
-          <span>
-            <br />
-            after the first month
-          </span>
+          / month
         </span>
       </div>
       <div
@@ -3788,7 +3989,12 @@ exports[`Storyshots account/SubscriptionSidebar team_annual 1`] = `
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Manage your team licences
+          Team management & user roles
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item"
+        >
+          Kickoff course
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
@@ -3804,7 +4010,7 @@ exports[`Storyshots account/SubscriptionSidebar team_annual 1`] = `
       >
         <span>
           <span>
-            US$ 99.8
+            US$ 49.9
           </span>
            
           / month
@@ -3821,7 +4027,7 @@ exports[`Storyshots account/SubscriptionSidebar team_annual 1`] = `
           </span>
            
           × 
-          2
+          1
            per month
         </span>
       </div>
@@ -3918,7 +4124,12 @@ exports[`Storyshots account/SubscriptionSidebar team_monthly 1`] = `
         <li
           className="subscription-sidebar-list-feat-item"
         >
-          Manage your team licences
+          Team management & user roles
+        </li>
+        <li
+          className="subscription-sidebar-list-feat-item"
+        >
+          Kickoff course
         </li>
         <li
           className="subscription-sidebar-list-feat-item"
@@ -3934,7 +4145,7 @@ exports[`Storyshots account/SubscriptionSidebar team_monthly 1`] = `
       >
         <span>
           <span>
-            US$ 118
+            US$ 59
           </span>
            
           / month
@@ -3951,7 +4162,7 @@ exports[`Storyshots account/SubscriptionSidebar team_monthly 1`] = `
           </span>
            
           × 
-          2
+          1
            per month
         </span>
       </div>
@@ -3993,6 +4204,394 @@ exports[`Storyshots account/SubscriptionSidebar team_monthly 1`] = `
       }
     />
   </ul>
+</div>
+`;
+
+exports[`Storyshots onboarding/OnboardingStep finish 1`] = `
+<div
+  className="step undefined"
+>
+  <h3 />
+  <div
+    className="text"
+    style={
+      Object {
+        "fontFamily": "sans-serif",
+      }
+    }
+  >
+    <p>
+      <span
+        className="highlighted"
+      >
+        H
+      </span>
+      <span
+        className="highlighted"
+      >
+        a
+      </span>
+      <span
+        className="highlighted"
+      >
+        m
+      </span>
+      <span
+        className="highlighted"
+      >
+        b
+      </span>
+      <span
+        className="highlighted"
+      >
+        u
+      </span>
+      <span
+        className="highlighted"
+      >
+        r
+      </span>
+      <span
+        className="highlighted"
+      >
+        g
+      </span>
+      <span
+        className="highlighted"
+      >
+        e
+      </span>
+      <span
+        className="highlighted"
+      >
+        f
+      </span>
+      <span
+        className="highlighted"
+      >
+        o
+      </span>
+      <span
+        className="highlighted"
+      >
+        n
+      </span>
+      <span
+        className="highlighted"
+      >
+        s
+      </span>
+      <span
+        className="highlighted"
+      >
+        t
+      </span>
+      <span
+        className="highlighted"
+      >
+        i
+      </span>
+      <span
+        className="highlighted"
+      >
+        v
+      </span>
+    </p>
+  </div>
+  <p
+    className="description"
+  >
+    <span>
+      description
+      <br />
+    </span>
+  </p>
+</div>
+`;
+
+exports[`Storyshots onboarding/OnboardingStep serifs 1`] = `
+<div
+  className="step undefined"
+>
+  <h3 />
+  <p
+    className="description"
+  >
+    <span>
+      description
+      <br />
+    </span>
+  </p>
+  <div
+    className="text"
+    style={
+      Object {
+        "fontFamily": "sans-serif",
+      }
+    }
+  >
+    <p>
+      <span
+        className=""
+      >
+        H
+      </span>
+      <span
+        className="highlighted"
+      >
+        a
+      </span>
+      <span
+        className=""
+      >
+        m
+      </span>
+      <span
+        className=""
+      >
+        b
+      </span>
+      <span
+        className=""
+      >
+        u
+      </span>
+      <span
+        className="highlighted"
+      >
+        r
+      </span>
+      <span
+        className=""
+      >
+        g
+      </span>
+      <span
+        className="highlighted"
+      >
+        e
+      </span>
+      <span
+        className=""
+      >
+        f
+      </span>
+      <span
+        className=""
+      >
+        o
+      </span>
+      <span
+        className=""
+      >
+        n
+      </span>
+      <span
+        className="highlighted"
+      >
+        s
+      </span>
+      <span
+        className="highlighted"
+      >
+        t
+      </span>
+      <span
+        className=""
+      >
+        i
+      </span>
+      <span
+        className=""
+      >
+        v
+      </span>
+    </p>
+  </div>
+  <div
+    className="step-sliders"
+  >
+    <div
+      className="normal onboarding-slider"
+    >
+      <label
+        htmlFor="slider-serif width"
+      >
+        serif width
+      </label>
+      <div
+        className="slider-controller onboarding-slider-controller"
+        onMouseDown={[Function]}
+      >
+        <div
+          className="slider-controller-bg"
+          style={
+            Object {
+              "transform": "translateX(-19.200000000000003%)",
+            }
+          }
+        >
+          <div
+            className="slider-controller-handle"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots onboarding/OnboardingStep sliders 1`] = `
+<div
+  className="step undefined"
+>
+  <h3 />
+  <p
+    className="description"
+  >
+    <span>
+      description
+      <br />
+    </span>
+  </p>
+  <div
+    className="text"
+    style={
+      Object {
+        "fontFamily": "sans-serif",
+      }
+    }
+  >
+    <p>
+      <span
+        className=""
+      >
+        H
+      </span>
+      <span
+        className="highlighted"
+      >
+        a
+      </span>
+      <span
+        className=""
+      >
+        m
+      </span>
+      <span
+        className=""
+      >
+        b
+      </span>
+      <span
+        className=""
+      >
+        u
+      </span>
+      <span
+        className="highlighted"
+      >
+        r
+      </span>
+      <span
+        className=""
+      >
+        g
+      </span>
+      <span
+        className="highlighted"
+      >
+        e
+      </span>
+      <span
+        className=""
+      >
+        f
+      </span>
+      <span
+        className=""
+      >
+        o
+      </span>
+      <span
+        className=""
+      >
+        n
+      </span>
+      <span
+        className="highlighted"
+      >
+        s
+      </span>
+      <span
+        className="highlighted"
+      >
+        t
+      </span>
+      <span
+        className=""
+      >
+        i
+      </span>
+      <span
+        className=""
+      >
+        v
+      </span>
+    </p>
+  </div>
+  <div
+    className="step-sliders"
+  >
+    <div
+      className="normal onboarding-slider"
+    >
+      <label
+        htmlFor="slider-thickness"
+      >
+        thickness
+      </label>
+      <div
+        className="slider-controller onboarding-slider-controller"
+        onMouseDown={[Function]}
+      >
+        <div
+          className="slider-controller-bg"
+          style={
+            Object {
+              "transform": "translateX(-19.200000000000003%)",
+            }
+          }
+        >
+          <div
+            className="slider-controller-handle"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots onboarding/OnboardingStep start 1`] = `
+<div
+  className="step undefined"
+>
+  <img
+    alt="Onboarding - Intro"
+    src="assets/images/onboardingIntro.svg"
+  />
+  <h3>
+    Title
+  </h3>
+  <p
+    className="description"
+  >
+    <span>
+      description
+      <br />
+    </span>
+  </p>
 </div>
 `;
 
@@ -4331,7 +4930,8 @@ exports[`Storyshots shared/PricingItem default 1`] = `
             <span
               className="pricing-item-subtitle-price-value-currency"
             >
-               €
+               
+              €
             </span>
             <span
               className="pricing-item-subtitle-price-value-freq"
@@ -4383,7 +4983,8 @@ exports[`Storyshots shared/PricingItem selected 1`] = `
             <span
               className="pricing-item-subtitle-price-value-currency"
             >
-               €
+               
+              €
             </span>
             <span
               className="pricing-item-subtitle-price-value-freq"
@@ -4435,7 +5036,8 @@ exports[`Storyshots shared/PricingItem with children 1`] = `
             <span
               className="pricing-item-subtitle-price-value-currency"
             >
-               €
+               
+              €
             </span>
             <span
               className="pricing-item-subtitle-price-value-freq"
@@ -4503,7 +5105,8 @@ exports[`Storyshots shared/PricingItem with price info 1`] = `
             <span
               className="pricing-item-subtitle-price-value-currency"
             >
-               €
+               
+              €
             </span>
             <span
               className="pricing-item-subtitle-price-value-freq"
@@ -4560,7 +5163,8 @@ exports[`Storyshots shared/PricingItem with title 1`] = `
             <span
               className="pricing-item-subtitle-price-value-currency"
             >
-               €
+               
+              €
             </span>
             <span
               className="pricing-item-subtitle-price-value-freq"

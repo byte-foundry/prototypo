@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {graphql, gql} from 'react-apollo';
-import {libraryQuery} from '../collection/collection.components';
+import {libraryQuery} from '../library/library-main.components';
 
 import LocalClient from '../../stores/local-client.stores';
 

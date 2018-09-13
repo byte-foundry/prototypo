@@ -13,8 +13,7 @@ import Topbar from './topbar/topbar.components.jsx';
 import Toolbar from './toolbar/toolbar.components.jsx';
 import Workboard from './workboard.components.jsx';
 import ExportAs from './export-as.components.jsx';
-import Collection from './collection/collection.components.jsx';
-import CreateFamilyModal from './familyVariant/create-family-modal.components.jsx';
+import HostVariantModal from './familyVariant/host-variant-modal.components';
 import CreateVariantModal from './familyVariant/create-variant-modal.components.jsx';
 import CreateAcademyModal from './academy/create-academy-modal.components.jsx';
 import ChangeNameFamily from './familyVariant/change-name-family.components.jsx';
@@ -86,22 +85,19 @@ class Dashboard extends React.PureComponent {
 				}
 
 				this.setState({
-					openFamilyModal: head.toJS().d.openFamilyModal,
 					openVariantModal: head.toJS().d.openVariantModal,
 					familySelectedVariantCreation: head.toJS().d
 						.familySelectedVariantCreation,
-					collectionSelectedVariant: head.toJS().d.collectionSelectedVariant,
 					openChangeFamilyNameModal: head.toJS().d.openChangeFamilyNameModal,
+					openHostVariantModal: head.toJS().d.openHostVariantModal,
 					openChangeVariantNameModal: head.toJS().d.openChangeVariantNameModal,
 					openDuplicateVariantModal: head.toJS().d.openDuplicateVariantModal,
 					openGoProModal: head.toJS().d.openGoProModal,
 					step: head.toJS().d.uiOnboardstep,
-					collection: head.toJS().d.uiShowCollection,
 					indiv: head.toJS().d.indivMode,
 					exportAs: head.toJS().d.exportAs,
 					uiJoyrideTutorialValue: head.toJS().d.uiJoyrideTutorialValue,
 					firstTimeFile: head.toJS().d.firstTimeFile,
-					firstTimeCollection: head.toJS().d.firstTimeCollection,
 					firstTimeIndivCreate: head.toJS().d.firstTimeIndivCreate,
 					firstTimeIndivEdit: head.toJS().d.firstTimeIndivEdit,
 					firstTimeAcademyModal: head.toJS().d.firstTimeAcademyModal,
@@ -200,12 +196,11 @@ class Dashboard extends React.PureComponent {
 		}
 
 		const classes = classNames({
-			indiv: this.state.indiv && !this.state.collection,
-			normal: !this.state.indiv || this.state.collection,
+			indiv: this.state.indiv,
+			normal: !this.state.indiv,
 		});
 
 		// timeouts : they are also used for tutorial triggering
-		const collectionTransitionTimeout = 300;
 		const panelTransitionTimeout = 200;
 
 		// here modify ReactJoyride's labels
@@ -217,13 +212,6 @@ class Dashboard extends React.PureComponent {
 			next: 'Next',
 			skip: 'Skip',
 		};
-
-		const collection = this.state.collection && (
-			<Collection collectionTransitionTimeout={collectionTransitionTimeout} />
-		);
-		const newFamily = this.state.openFamilyModal && (
-			<CreateFamilyModal propName="openFamilyModal" />
-		);
 		const newVariant = this.state.openVariantModal && (
 			<CreateVariantModal
 				family={this.state.familySelectedVariantCreation}
@@ -232,6 +220,13 @@ class Dashboard extends React.PureComponent {
 		);
 		const explainAcademy = this.state.firstTimeAcademyModal && (
 			<CreateAcademyModal propName="openAcademyModal" />
+		);
+		const hostVariantModal = this.state.openHostVariantModal && (
+			<HostVariantModal
+				family={this.state.familySelectedVariantCreation}
+				variant={this.state.collectionSelectedVariant}
+				propName="openHostVariantModal"
+			/>
 		);
 		const changeNameFamily = this.state.openChangeFamilyNameModal && (
 			<ChangeNameFamily
@@ -282,20 +277,13 @@ class Dashboard extends React.PureComponent {
 				<Toolbar />
 				<Workboard />
 				<ReactCSSTransitionGroup
-					transitionName="collection"
-					transitionEnterTimeout={collectionTransitionTimeout}
-					transitionLeaveTimeout={collectionTransitionTimeout}
-				>
-					{collection}
-				</ReactCSSTransitionGroup>
-				<ReactCSSTransitionGroup
 					component="span"
 					transitionName="modal"
 					transitionEnterTimeout={panelTransitionTimeout}
 					transitionLeaveTimeout={panelTransitionTimeout}
 				>
-					{newFamily}
 					{newVariant}
+					{hostVariantModal}
 					{changeNameFamily}
 					{changeNameVariant}
 					{duplicateVariant}
