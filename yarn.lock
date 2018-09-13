@@ -5551,7 +5551,7 @@ getpass@^0.1.1:
 
 gfnt.ptf@byte-foundry/spectral.ptf#feat/new-rendering:
   version "1.0.0"
-  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/8bbe34a1f9dda2319cdc3f2d6d3c09eb9d1001a1"
+  resolved "https://codeload.github.com/byte-foundry/spectral.ptf/tar.gz/ad93a1cd28a650ea9dda3827de3bbe447ddc89dc"
   dependencies:
     karma "^2.0.0"
     prototypo-precursor "^1.0.4"
