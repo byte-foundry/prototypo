@@ -27,7 +27,7 @@ const OnboardingStep = ({
 		)}
 		<p className="description">
 			{description.map(line => (
-				<span>
+				<span key={line}>
 					{line}
 					<br />
 				</span>
