@@ -17,23 +17,16 @@ export default class HostVariant extends React.PureComponent {
 		super(props);
 
 		this.state = {
-			displayAll: true
+			displayAll: true,
 		};
 	}
 
 	render() {
-		const {
-			uploads,
-			latestUploadUrl,
-			status,
-			publishNewVersion
-		} = this.props;
+		const {uploads, latestUploadUrl, status, publishNewVersion} = this.props;
 		const {displayAll} = this.state;
 
 		const publishing
-			= status === 'generating'
-			|| status === 'uploading'
-			|| status === 'hosting';
+			= status === 'generating' || status === 'uploading' || status === 'hosting';
 		const published = status === 'published';
 
 		const topElements = (publishing && <p>Working... {status}</p>) || (
@@ -45,10 +38,7 @@ export default class HostVariant extends React.PureComponent {
 						value={latestUploadUrl}
 					/>
 				) : (
-					<div>
-						No latest link available, publish a new version to get
-						one!
-					</div>
+					<div>No latest link available, publish a new version to get one!</div>
 				)}
 				<Button onClick={publishNewVersion} outline neutral fluid>
 					Publish a new version
@@ -64,16 +54,14 @@ export default class HostVariant extends React.PureComponent {
 			<div>
 				{published && (
 					<p>
-						Your hosted font has been updated and it should be
-						available soon
+						Your hosted font has been updated and it should be available soon
 					</p>
 				)}
 				<div>
 					<div>
 						{!displayAll && (
 							<a onClick={this.showOlderVersions} href="#">
-								Want to use a specific older version of the
-								font?
+								Want to use a specific older version of the font?
 							</a>
 						)}
 						{topElements}
@@ -92,8 +80,8 @@ export default class HostVariant extends React.PureComponent {
 									</ul>
 								)) || (
 									<div>
-										No version has been published yet. Click
-										on publish to get a link.
+										No version has been published yet. Click on publish to get a
+										link.
 									</div>
 								)}
 							</div>
@@ -109,7 +97,7 @@ HostVariant.defaultProps = {
 	latestUploadUrl: '',
 	uploads: [],
 	status: '',
-	publishNewVersion: () => {}
+	publishNewVersion: () => {},
 };
 
 HostVariant.propTypes = {
@@ -118,9 +106,9 @@ HostVariant.propTypes = {
 		PropTypes.shape({
 			url: PropTypes.string,
 			version: PropTypes.string,
-			createdAt: PropTypes.string
-		})
+			createdAt: PropTypes.string,
+		}),
 	),
 	status: PropTypes.string,
-	publishNewVersion: PropTypes.func
+	publishNewVersion: PropTypes.func,
 };

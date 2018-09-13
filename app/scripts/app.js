@@ -17,6 +17,7 @@ import LibraryList from './components/library/library-list.components';
 import LibraryCreate from './components/library/library-create.components';
 import LibraryReview from './components/library/library-review.components';
 import LibraryHosting from './components/library/library-hosting.components';
+import LibraryHostingCreate from './components/library/library-hosting-create.components';
 import LibraryDetails from './components/library/library-details.components';
 import LibrarySee from './components/library/library-see.components';
 import LibraryFontsInUse from './components/library/library-fontinuse.components';
@@ -52,8 +53,6 @@ import AccountOrganization from './components/account/account-organization.compo
 import AccountInvoiceList from './components/account/account-invoice-list.components';
 import AccountPrototypoLibrary from './components/account/account-prototypo-library.components.jsx';
 import Subscription from './components/account/subscription.components';
-
-import StartApp from './components/start/start-app.components';
 
 import FontTester from './font-test/font-tester.components.jsx';
 
@@ -274,6 +273,15 @@ class AppRoutes extends React.PureComponent {
 								onEnter={redirectToLogin}
 							>
 								<IndexRoute component={LibraryHosting} />
+								<Route path="create" component={LibraryHostingCreate} />
+							</Route>
+							<Route
+								path="hosting/:hostedDomainId"
+								component={LibraryMain}
+								name="seeHosting"
+								onEnter={redirectToLogin}
+							>
+								<Route path="edit" component={LibraryHostingCreate} />
 							</Route>
 							<Route
 								path="create"
@@ -340,7 +348,6 @@ class AppRoutes extends React.PureComponent {
 							</Route>
 						</Route>
 					</Route>
-					<Route path="start" component={StartApp} onEnter={redirectToLogin} />
 				</Router>
 			</ApolloProvider>
 		);

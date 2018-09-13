@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 
 export default class LibraryButton extends React.Component {
 	componentWillMount() {}
@@ -13,26 +14,29 @@ export default class LibraryButton extends React.Component {
 			full,
 			loading,
 			error,
+			disabled,
 			onClick,
 			onBlur,
 			name,
 			...rest
 		} = this.props;
 
+		const classes = classnames('library-button', {
+			'button-big': big,
+			'button-dark': dark,
+			'button-highlight': highlight,
+			floated,
+			'button-bold': floated,
+			'button-full': full,
+			'button-loading': loading,
+			'button-error': error,
+			'button-disabled': disabled,
+		});
+
 		return (
 			<div
 				tabIndex="0"
-				className={`
-          library-button
-          ${big ? ' button-big ' : ''}
-          ${dark ? ' button-dark ' : ''}
-          ${highlight ? ' button-highlight ' : ''}
-          ${floated ? ' floated ' : ''}
-          ${bold ? ' button-bold ' : ''}
-					${full ? ' button-full ' : ''}
-					${loading ? ' button-loading ' : ''}
-					${error ? ' button-error ' : ''}
-        `}
+				className={classes}
 				onMouseDown={onClick}
 				onBlur={onBlur}
 				{...rest}

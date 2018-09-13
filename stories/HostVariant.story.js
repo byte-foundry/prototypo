@@ -22,7 +22,7 @@ storiesOf('HostVariant', module)
 					createdAt: '2018-01-01T19:49:34.000Z',
 					url: 'example.org/myfont?versionId=46fwe63',
 					version: '46fwe63',
-				}
+				},
 			]}
 		/>
 	))
@@ -36,7 +36,7 @@ storiesOf('HostVariant', module)
 					createdAt: '2018-01-01T19:49:34.000Z',
 					url: 'example.org/myfont?versionId=46fwe63',
 					version: '46fwe63',
-				}
+				},
 			]}
 		/>
 	))

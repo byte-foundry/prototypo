@@ -976,7 +976,6 @@ antique.ptf@byte-foundry/antique.ptf#feat/new-rendering:
   dependencies:
     karma "^1.7.1"
     prototypo-precursor "1.0.7"
-    yargs "^11.0.0"
 
 any-observable@^0.2.0:
   version "0.2.0"
@@ -10177,7 +10176,7 @@ prototypo-flux-testing@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/prototypo-flux-testing/-/prototypo-flux-testing-0.0.1.tgz#33694eb51c05ed4241b7072c5e49c0dda6587a3f"
 
-prototypo-precursor@^1.0.3:
+prototypo-precursor@1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/prototypo-precursor/-/prototypo-precursor-1.0.7.tgz#4ac6dd0ff827cfeb0048566a35961c364d3a3607"
   dependencies:

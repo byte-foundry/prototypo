@@ -27,23 +27,24 @@ class HostVariantModal extends React.PureComponent {
 	componentWillMount() {
 		this.client = LocalClient.instance();
 
-		this.client
-			.getStore('/prototypoStore', this.lifespan)
-			.onUpdate((head) => {
-				this.setState({
-					buffer: head.toJS().d.hostingBuffer,
-				});
+		this.client.getStore('/prototypoStore', this.lifespan).onUpdate((head) => {
+			this.setState({
+				buffer: head.toJS().d.hostingBuffer,
 			});
+		});
 	}
 
 	async componentDidUpdate(prevState) {
-		if (prevState.buffer !== this.state.buffer && this.state.status === 'generating') {
+		if (
+			prevState.buffer !== this.state.buffer
+			&& this.state.status === 'generating'
+		) {
 			this.setState({status: 'uploading'});
 
 			// upload file to graphcool and get the URL
 			const {url} = await tmpUpload(
 				new Blob([new Uint8Array(this.state.buffer)]),
-				`${this.props.family.name} ${this.props.variant.name}`
+				`${this.props.family.name} ${this.props.variant.name}`,
 			);
 
 			this.setState({status: 'hosting'});
@@ -91,14 +92,12 @@ class HostVariantModal extends React.PureComponent {
 
 		return (
 			<Modal propName={propName}>
-				<div className="modal-container-title account-header">
-					Hosting
-				</div>
+				<div className="modal-container-title account-header">Hosting</div>
 				<div className="modal-container-content">
 					{justPublished && (
 						<p>
-							Your font is ready at {justPublished}, just
-							copy/paste the link where you want to use it.
+							Your font is ready at {justPublished}, just copy/paste the link
+							where you want to use it.
 						</p>
 					)}
 					{loading ? (
@@ -114,9 +113,7 @@ class HostVariantModal extends React.PureComponent {
 							latestUploadUrl={latestUploadUrl}
 						/>
 					)}
-					{error && (
-						<div className="add-family-form-error">{error}</div>
-					)}
+					{error && <div className="add-family-form-error">{error}</div>}
 					<div className="action-form-buttons">
 						<Button onClick={this.exit} outline neutral>
 							Close

@@ -7,7 +7,7 @@ import {withRouter} from 'react-router';
 
 import LocalClient from '../../stores/local-client.stores';
 
-import {libraryQuery} from '../collection/collection.components';
+import {libraryQuery} from '../library/library-main.components';
 
 const voidStateObject = {};
 const voidStateArray = [];
@@ -111,7 +111,7 @@ class ArianneThread extends React.PureComponent {
 	}
 
 	addFamily() {
-		this.client.dispatchAction('/store-value', {openFamilyModal: true});
+		this.props.router.push('/library/create');
 	}
 
 	addVariant() {

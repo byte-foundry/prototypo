@@ -388,11 +388,6 @@ export default {
 
 		localServer.dispatchUpdate('/prototypoStore', patch);
 	},
-	'/close-create-family-modal': () => {
-		const patch = prototypoStore.set('openFamilyModal', false).commit();
-
-		localServer.dispatchUpdate('/prototypoStore', patch);
-	},
 	'/close-create-variant-modal': () => {
 		const patch = prototypoStore.set('openVariantModal', false).commit();
 
