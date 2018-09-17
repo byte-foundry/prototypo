@@ -45,6 +45,7 @@ class Topbar extends React.Component {
 			creditChoices: undefined,
 			presets: null,
 			at: -1,
+			advancedMode: false,
 		};
 
 		// function binding to avoid unnecessary re-render
@@ -82,6 +83,7 @@ class Topbar extends React.Component {
 					presets: head.toJS().d.fontPresets,
 					indiv: head.toJS().d.indivMode,
 					topbarItemDisplayed: head.toJS().d.topbarItemDisplayed,
+					advancedMode: head.toJS().d.advancedMode,
 				});
 			})
 			.onDelete(() => {
@@ -156,7 +158,6 @@ class Topbar extends React.Component {
 
 			this.client.dispatchAction('/change-param', {
 				values: defaultParams,
-				demo: true,
 				force: true,
 			});
 		});
@@ -165,10 +166,6 @@ class Topbar extends React.Component {
 	resetAllChanges() {
 		this.resetAllParams();
 		this.client.dispatchAction('/reset-all-glyphs', {});
-	}
-
-	componentWillUnmount() {
-		this.lifespan.release();
 	}
 
 	newProject() {
@@ -227,7 +224,9 @@ class Topbar extends React.Component {
 	}
 
 	resetIndivTutorial() {
-		this.client.dispatchAction('/store-value', {firstTimeIndivCreate: true});
+		this.client.dispatchAction('/store-value', {
+			firstTimeIndivCreate: true,
+		});
 		this.client.dispatchAction('/store-value', {
 			uiJoyrideTutorialValue: indivGroupsCreationTutorialLabel,
 		});
@@ -267,8 +266,10 @@ class Topbar extends React.Component {
 
 	render() {
 		const {academyProgress, loadingAcademyProgress} = this.props;
-		const whereAt = this.state.at;
-		const undoDisabled = whereAt < 0;
+		const {advancedMode} = this.state;
+
+		const whereAt = this.state.at || 0;
+		const undoDisabled = whereAt < 1;
 		const redoDisabled = whereAt > this.state.eventList.length - 2;
 		const undoText = `Undo ${
 			this.state.eventList.length && !undoDisabled
@@ -506,6 +507,16 @@ class Topbar extends React.Component {
 						name="Reset all changes"
 						handler={() => {
 							this.resetAllChanges();
+						}}
+					/>
+					<TopBarMenuDropdownItem
+						name={`${
+							advancedMode ? 'Deactivate' : 'Activate'
+						} experimental mode`}
+						handler={() => {
+							this.client.dispatchAction('/store-value', {
+								advancedMode: !advancedMode,
+							});
 						}}
 					/>
 				</TopBarMenuDropdown>
