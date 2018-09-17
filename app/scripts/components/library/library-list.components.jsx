@@ -152,7 +152,10 @@ class LibraryList extends React.Component {
 			createProject: this.createProject,
 			background: preset.ownerInitials === 'LM' ? lmColor : hmColor,
 			glyphs: templateData.glyphs,
-			values: preset.baseValues,
+			values: {
+				...templateData.initValues,
+				...preset.baseValues,
+			},
 			export: this.props.export,
 			exporting: this.state.exporting,
 			errorExport: this.state.errorExport,
@@ -275,7 +278,8 @@ class LibraryList extends React.Component {
 						&& preset.variant.family.name !== 'Elzevir'
 						&& preset.variant.family.name !== 'Grotesk'
 						&& preset.variant.family.name !== 'Fell'
-						&& preset.variant.family.name !== 'Antique',
+						&& preset.variant.family.name !== 'Antique'
+						&& preset.variant.family.name !== 'Prototypo Grotesk',
 				)
 				.forEach((preset) => {
 					const templateInfo = this.state.templateInfos.find(
