@@ -17,7 +17,6 @@ export default class SliderController extends React.PureComponent {
 		this.handleUp = this.handleUp.bind(this);
 		this.handleMove = this.handleMove.bind(this);
 		this.handleSelectstart = this.handleSelectstart.bind(this);
-		this.restrictedRangeEnter = this.restrictedRangeEnter.bind(this);
 	}
 
 	componentWillMount() {
@@ -39,18 +38,13 @@ export default class SliderController extends React.PureComponent {
 			return;
 		}
 
-		const realMin
-			= typeof this.props.realMin === 'number' ? this.props.realMin : min;
-		const realMax
-			= typeof this.props.realMax === 'number' ? this.props.realMax : max;
-
 		this.setState({tracking: true});
 		const newX = e.pageX || e.screenX;
 		const {offsetLeft} = DOM.getAbsOffset(this.node);
 		let newValue
-			= (newX - offsetLeft) / this.node.offsetWidth * (max - min) + min;
+			= ((newX - offsetLeft) / this.node.offsetWidth * (max - min)) + min;
 
-		newValue = Math.min(Math.max(newValue, realMin), realMax);
+		newValue = Math.min(Math.max(newValue, min), max);
 
 		changeParam({value: newValue, name, label});
 		this.currentX = newX;
@@ -71,23 +65,12 @@ export default class SliderController extends React.PureComponent {
 		e.stopPropagation();
 	}
 
-	restrictedRangeEnter(e) {
-		this.props.onRestrictedRangeEnter();
-
-		e.stopPropagation();
-	}
-
 	handleMove(e) {
 		if (!this.state.tracking) {
 			return;
 		}
 
 		const {min, max, value, name, changeParam} = this.props;
-
-		const realMin
-			= typeof this.props.realMin === 'number' ? this.props.realMin : min;
-		const realMax
-			= typeof this.props.realMax === 'number' ? this.props.realMax : max;
 
 		const newX = e.pageX || e.screenX;
 		const {offsetLeft} = DOM.getAbsOffset(this.node);
@@ -99,10 +82,10 @@ export default class SliderController extends React.PureComponent {
 
 			newValue = value + variation;
 
-			newValue = Math.min(Math.max(newValue, realMin), realMax);
+			newValue = Math.min(Math.max(newValue, min), max);
 		}
 		else {
-			newValue = newX < offsetLeft ? realMin : realMax;
+			newValue = newX < offsetLeft ? min : max;
 		}
 
 		changeParam({value: newValue, name});
@@ -112,55 +95,34 @@ export default class SliderController extends React.PureComponent {
 	// This prevents preview text to be selected whil using the sliders
 	handleSelectstart(e) {
 		if (this.state.tracking) {
-			return e.preventDefault();
+			e.preventDefault();
 		}
 	}
 
 	render() {
-		const {min, max, value, demo, className} = this.props;
+		const {min, max, value, className} = this.props;
 		const ratio = 96.0;
 
-		const realMin
-			= typeof this.props.realMin === 'number' ? this.props.realMin : min;
-		const realMax
-			= typeof this.props.realMax === 'number' ? this.props.realMax : max;
-
 		const minAdvised
-			= typeof this.props.minAdvised === 'number' ? this.props.minAdvised : min;
+			= typeof this.props.minAdvised === 'number'
+				? this.props.minAdvised
+				: min;
 		const maxAdvised
-			= typeof this.props.maxAdvised === 'number' ? this.props.maxAdvised : max;
+			= typeof this.props.maxAdvised === 'number'
+				? this.props.maxAdvised
+				: max;
 
 		const translateX
 			= (max - Math.min(Math.max(value, min), max)) / (max - min) * ratio;
-		const translateDemoMin = (max - realMin) / (max - min) * ratio;
-		const translateDemoMax = 100 - (max - realMax) / (max - min) * ratio;
 
 		const transform = {
 			transform: `translateX(-${translateX}%)`,
-		};
-		const transformDemoMin = {
-			transform: `translateX(-${translateDemoMin}%)`,
-			marginLeft: '-10px',
-		};
-		const transformDemoMax = {
-			transform: `translateX(${translateDemoMax}%)`,
-			marginLeft: '-10px',
 		};
 
 		const sliderClasses = classNames('slider-controller', className);
 		const classes = classNames({
 			'slider-controller-bg': true,
 			'is-not-advised': value < minAdvised || value > maxAdvised,
-		});
-
-		const demoClassesMin = classNames({
-			'slider-range-limiter-bg': true,
-			min: true,
-		});
-
-		const demoClassesMax = classNames({
-			'slider-range-limiter-bg': true,
-			max: true,
 		});
 
 		return (
@@ -174,20 +136,6 @@ export default class SliderController extends React.PureComponent {
 				<div className={classes} style={transform}>
 					<div className="slider-controller-handle" />
 				</div>
-				{demo && (
-					<span>
-						<div
-							onClick={this.restrictedRangeEnter}
-							className={demoClassesMin}
-							style={transformDemoMin}
-						/>
-						<div
-							onClick={this.restrictedRangeEnter}
-							className={demoClassesMax}
-							style={transformDemoMax}
-						/>
-					</span>
-				)}
 			</div>
 		);
 	}
@@ -206,7 +154,5 @@ SliderController.propTypes = {
 	max: PropTypes.number,
 	minAdvised: PropTypes.number,
 	maxAdvised: PropTypes.number,
-	realMin: PropTypes.number,
-	realMax: PropTypes.number,
 	className: PropTypes.string,
 };

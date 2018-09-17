@@ -253,7 +253,6 @@ class ArianneThread extends React.PureComponent {
 			'arianne-item': true,
 			'is-active': this.state.indivMode,
 			'is-creating': this.state.indivCreate,
-			// 'is-demo': isFreeWithoutCredits,
 		});
 		const groupLabel = this.state.indivCreate
 			? 'Creating new group...'
