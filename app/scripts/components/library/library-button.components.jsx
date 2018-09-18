@@ -35,7 +35,7 @@ export default class LibraryButton extends React.Component {
 
 		return (
 			<div
-				tabIndex="0"
+				tabIndex="1"
 				className={classes}
 				onMouseDown={onClick}
 				onBlur={onBlur}

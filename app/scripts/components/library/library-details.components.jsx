@@ -38,6 +38,7 @@ class LibraryDetails extends React.Component {
 				weight: variant.weight,
 				name: variant.name,
 			})),
+			confirmDelete: false,
 		};
 		this.goToDashboard = this.goToDashboard.bind(this);
 		this.deleteFamily = this.deleteFamily.bind(this);
@@ -351,15 +352,40 @@ class LibraryDetails extends React.Component {
 											</div>
 										</div>
 									)}
-									<div className="details-form-elem">
+									<div
+										className="details-form-elem"
+										tabIndex="0"
+										onBlur={() => {
+											this.setState({
+												confirmDelete: {
+													...this.state.confirmDelete,
+													[variant.id]: false,
+												},
+											});
+										}}
+									>
 										{this.state.family.variants.length > 1 && (
 											<div
 												className="button-remove"
-												onClick={() => {
-													this.props.deleteVariant(variant.id);
+												onClick={(e) => {
+													if (this.state.confirmDelete[variant.id]) {
+														this.props.deleteVariant(variant.id);
+													}
+													else {
+														this.setState({
+															confirmDelete: {
+																...this.state.confirmDelete,
+																[variant.id]: true,
+															},
+														});
+													}
 												}}
 											>
-												Remove
+												{`${
+													this.state.confirmDelete[variant.id]
+														? 'Confirm deletion'
+														: 'Delete variant'
+												}`}
 											</div>
 										)}
 									</div>

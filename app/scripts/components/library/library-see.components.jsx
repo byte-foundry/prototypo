@@ -340,6 +340,7 @@ export class VariantItem extends React.Component {
 		this.state = {
 			isOpen: false,
 			keyDowns: 0,
+			confirmDelete: false,
 		};
 	}
 
@@ -357,7 +358,7 @@ export class VariantItem extends React.Component {
 				className="library-item"
 				tabIndex={0}
 				onBlur={() => {
-					this.setState({isOpen: false});
+					this.setState({isOpen: false, confirmDelete: false});
 				}}
 				onKeyDown={(e) => {
 					this.setState({keyDowns: this.state.keyDowns + e.keyCode});
@@ -442,10 +443,22 @@ export class VariantItem extends React.Component {
 						{this.props.isPersonal
 							&& this.props.family.variants.length > 1 && (
 							<LibraryButton
-								name="Delete variant"
+								name={`${
+									this.state.confirmDelete ? 'Confirm' : 'Delete variant'
+								}`}
 								dark
-								onClick={() => {
-									this.props.delete(this.props.variant, this.props.family);
+								error={this.state.confirmDelete}
+								onClick={(e) => {
+									if (this.state.confirmDelete) {
+										this.props.delete(this.props.variant, this.props.family);
+									}
+									else {
+										this.setState({confirmDelete: true});
+									}
+									setTimeout(() => {
+										this.setState({confirmDelete: false});
+									}, 600);
+									e.preventDefault();
 								}}
 							/>
 						)}

@@ -90,9 +90,9 @@ export default class LibraryHosting extends React.Component {
 		return (
 			<div className="library-content-wrapper">
 				<div className="library-see">
-					<div className="library-hosting-plan">
+					{/* <div className="library-hosting-plan">
 						Free plan: 1000 views / month / website
-					</div>
+					</div> */}
 					<div className="library-hosting">
 						{(!this.props.hostedDomains
 							|| this.props.hostedDomains.length === 0) && (
