@@ -19,6 +19,10 @@ export default class LibrarySearch extends React.PureComponent {
 		});
 	}
 
+	componentWillUnmount() {
+		this.lifespan.release();
+	}
+
 	render() {
 		return (
 			<div className="library-search">

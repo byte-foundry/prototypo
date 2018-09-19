@@ -17,38 +17,42 @@ class FontUpdater extends React.Component {
 		const subset = _uniq(this.props.subset.split('')).join('');
 		const nextSubset = _uniq(nextProps.subset.split('')).join('');
 
-		return !(
-			nextProps.family === this.props.family
-			&& nextProps.variant === this.props.variant
-			&& nextProps.name === this.props.name
-			&& nextProps.template === this.props.template
-			&& nextSubset === subset
-			&& nextProps.glyph === this.props.glyph
-			&& deepEqual(nextProps.values, this.props.values)
+		return (
+			!(
+				nextProps.family === this.props.family
+				&& nextProps.variant === this.props.variant
+				&& nextProps.name === this.props.name
+				&& nextProps.template === this.props.template
+				&& nextSubset === subset
+				&& nextProps.glyph === this.props.glyph
+				&& deepEqual(nextProps.values, this.props.values)
+			) && Object.keys(nextProps.values).length !== 0
 		);
 	}
 
 	render() {
 		const {template, name, subset, glyph, values, family, variant} = this.props;
 
-		const subsetCodes = _uniq(subset.split('')).map(letter =>
-			letter.charCodeAt(0),
-		);
+		if (Object.keys(values).length !== 0) {
+			const subsetCodes = _uniq(subset.split('')).map(letter =>
+				letter.charCodeAt(0),
+			);
 
-		this.fontMediatorInstance.setupInfo({
-			family,
-			style: variant,
-			template,
-			email: HoodieApi.instance.email,
-		});
+			this.fontMediatorInstance.setupInfo({
+				family,
+				style: variant,
+				template,
+				email: HoodieApi.instance.email,
+			});
 
-		this.fontMediatorInstance.getFont(
-			name,
-			template,
-			values,
-			subsetCodes,
-			glyph,
-		);
+			this.fontMediatorInstance.getFont(
+				name,
+				template,
+				values,
+				subsetCodes,
+				glyph,
+			);
+		}
 
 		return false;
 	}
