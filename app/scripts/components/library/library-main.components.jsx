@@ -281,6 +281,18 @@ export const libraryQuery = gql`
 				designerUrl
 				foundry
 				foundryUrl
+				from {
+					type
+					preset {
+						id
+					}
+					variant {
+						id
+						family {
+							id
+						}
+					}
+				}
 				variants {
 					id
 					updatedAt

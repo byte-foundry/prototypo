@@ -2,9 +2,10 @@ import _xor from 'lodash/xor';
 import _flatten from 'lodash/flatten';
 import _map from 'lodash/map';
 import _transform from 'lodash/transform';
+import _cloneDeep from 'lodash/cloneDeep';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {graphql, gql} from 'react-apollo';
+import {graphql, gql, compose} from 'react-apollo';
 import Lifespan from 'lifespan';
 
 import Log from '../../services/log.services';
@@ -32,6 +33,8 @@ import TopBarMenuDropdownProItem from './top-bar-menu-dropdown-pro-item.componen
 import TopBarMenuAcademy from './top-bar-menu-academy.components';
 import TopBarMenuAcademyIcon from './top-bar-menu-academy-icon.components';
 import AllowedTopBarWithPayment from './allowed-top-bar-with-payment.components';
+
+import {libraryQuery, presetQuery} from '../library/library-main.components';
 
 class Topbar extends React.Component {
 	constructor(props) {
@@ -142,30 +145,106 @@ class Topbar extends React.Component {
 		Log.ui('Topbar.exportFamily');
 	}
 
-	resetAllParams() {
-		this.client.fetch('/prototypoStore').then((typedata) => {
-			const params = typedata.head.toJS().fontParameters;
+	async resetAllParams() {
+		const store = await this.client.fetch('/prototypoStore');
+		const undoableStore = await this.client.fetch('/undoableStore');
+		const currentFamily = store.head.toJS().family;
+		const currentValues = undoableStore.head.toJS().controlsValues;
+		const fontParameters = store.head.toJS().fontParameters;
+
+		const family = this.props.families.find(f => f.id === currentFamily.id);
+		let newValues;
+
+		if (family.from) {
+			if (family.from.type === 'PRESET') {
+				newValues = _cloneDeep(
+					this.props.presets.find(p => p.id === family.from.preset.id)
+						.baseValues,
+				);
+			}
+			if (family.from.type === 'VARIANT') {
+				newValues = _cloneDeep(
+					this.props.families
+						.find(f => f.id === family.from.variant.family.id)
+						.variants.find(v => v.id === family.from.variant.id).values,
+				);
+			}
+		}
+		else {
 			const flattenParams = _flatten(
-				_map(params, paramObject => paramObject.parameters),
+				_map(fontParameters, paramObject => paramObject.parameters),
 			);
-			const defaultParams = _transform(
+
+			newValues = _transform(
 				flattenParams,
 				(result, param) => {
 					result[param.name] = param.init;
 				},
 				{},
 			);
+		}
 
-			this.client.dispatchAction('/change-param', {
-				values: defaultParams,
-				force: true,
-			});
+		newValues.postDepManualChanges = currentValues.postDepManualChanges;
+		newValues.altList = currentValues.altList;
+		newValues.glyphSpecialProps = currentValues.glyphSpecialProps;
+		newValues.glyphComponentChoice = currentValues.glyphComponentChoice;
+		newValues.indiv_glyphs = currentValues.indiv_glyphs;
+		newValues.indiv_group_param = currentValues.indiv_group_param;
+
+		this.client.dispatchAction('/change-param', {
+			values: newValues,
+			demo: true,
+			force: true,
 		});
 	}
 
-	resetAllChanges() {
-		this.resetAllParams();
-		this.client.dispatchAction('/reset-all-glyphs', {});
+	async resetAllChanges() {
+		const store = await this.client.fetch('/prototypoStore');
+		const undoableStore = await this.client.fetch('/undoableStore');
+		const currentFamily = store.head.toJS().family;
+		const currentValues = undoableStore.head.toJS().controlsValues;
+		const fontParameters = store.head.toJS().fontParameters;
+
+		const family = this.props.families.find(f => f.id === currentFamily.id);
+		let newValues;
+
+		if (family.from) {
+			if (family.from.type === 'PRESET') {
+				newValues = _cloneDeep(
+					this.props.presets.find(p => p.id === family.from.preset.id)
+						.baseValues,
+				);
+			}
+			if (family.from.type === 'VARIANT') {
+				newValues = _cloneDeep(
+					this.props.families
+						.find(f => f.id === family.from.variant.family.id)
+						.variants.find(v => v.id === family.from.variant.id).values,
+				);
+			}
+		}
+		else {
+			const flattenParams = _flatten(
+				_map(fontParameters, paramObject => paramObject.parameters),
+			);
+
+			newValues = _transform(
+				flattenParams,
+				(result, param) => {
+					result[param.name] = param.init;
+				},
+				{},
+			);
+		}
+		newValues.postDepManualChanges = newValues.manualChanges || {};
+		newValues.indiv_glyphs = currentValues.indiv_glyphs;
+		newValues.indiv_group_param = currentValues.indiv_group_param;
+
+		this.client.dispatchAction('/change-param', {
+			values: newValues,
+			demo: true,
+			force: true,
+		});
 	}
 
 	newProject() {
@@ -635,15 +714,52 @@ const getAcademyValuesQuery = gql`
 	}
 `;
 
-export default graphql(getAcademyValuesQuery, {
-	props({data}) {
-		if (data.loading) {
-			return {loadingAcademyProgress: true};
-		}
+export default compose(
+	graphql(getAcademyValuesQuery, {
+		props({data}) {
+			if (data.loading) {
+				return {loadingAcademyProgress: true};
+			}
 
-		return {
-			academyProgress: data.user.academyProgress,
-			manager: data.user.manager,
-		};
-	},
-})(withCountry(Topbar));
+			return {
+				academyProgress: data.user.academyProgress,
+				manager: data.user.manager,
+			};
+		},
+	}),
+	graphql(presetQuery, {
+		options: {
+			fetchPolicy: 'cache-first',
+		},
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			if (data.allPresets) {
+				return {
+					presets: data.allPresets,
+				};
+			}
+		},
+	}),
+	graphql(libraryQuery, {
+		options: {
+			fetchPolicy: 'cache-first',
+		},
+		props: ({data}) => {
+			if (data.loading) {
+				return {loading: true};
+			}
+
+			if (data.user) {
+				return {
+					families: data.user.library,
+					refetch: data.refetch,
+				};
+			}
+
+			return {refetch: data.refetch};
+		},
+	}),
+)(withCountry(Topbar));

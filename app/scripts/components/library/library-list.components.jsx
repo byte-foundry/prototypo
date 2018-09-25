@@ -73,10 +73,10 @@ class LibraryList extends React.Component {
 		this.lifespan.release();
 	}
 
-	createProject(template, values) {
+	createProject(template, values, abstractedFontMeta) {
 		this.props.router.push({
 			pathname: '/onboarding',
-			state: {template, values},
+			state: {template, values, abstractedFontMeta},
 		});
 	}
 
@@ -1058,6 +1058,11 @@ export class PresetItem extends React.Component {
 							this.props.createProject(
 								this.props.template.templateName,
 								this.props.values,
+								{
+									type: 'PRESET',
+									presetId: this.props.preset.id,
+									name: this.props.name,
+								},
 							);
 						}}
 					/>
